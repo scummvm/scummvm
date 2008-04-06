@@ -127,7 +127,7 @@ void Resources::reloadData() {
 			RoomResource *rec = (RoomResource *) (mb->data() + offsetVal);
 
 			RoomData *newEntry = new RoomData(rec, paths);
-			_roomData.push_back(newEntry);
+			_roomData.push_back(RoomDataList::value_type(newEntry));
 
 			uint8 numExits = rec->numExits;
 			if (numExits > 0) {
@@ -136,7 +136,7 @@ void Resources::reloadData() {
 
 				for (uint16 exitCtr = 0; exitCtr < numExits; ++exitCtr, ++exitRes) {
 					RoomExitData *exit = new RoomExitData(exitRes);
-					newEntry->exits.push_back(exit);
+					newEntry->exits.push_back(RoomExitList::value_type(exit));
 				}
 			}
 		}
@@ -158,7 +158,7 @@ void Resources::reloadData() {
 					(mb->data() + offsetVal);
 				while (READ_LE_UINT16(&re->hotspotId) != 0xffff) {
 					RoomExitHotspotData *newEntry = new RoomExitHotspotData(re);
-					room->exitHotspots.push_back(newEntry);
+					room->exitHotspots.push_back(RoomExitHotspotList::value_type(newEntry));
 					++re;
 				}
 			}
@@ -172,7 +172,7 @@ void Resources::reloadData() {
 	RoomExitJoinResource *joinRec = (RoomExitJoinResource *) mb->data();
 	while (READ_LE_UINT16(&joinRec->hotspot1Id) != 0xffff) {
 		RoomExitJoinData *newEntry = new RoomExitJoinData(joinRec);
-		_exitJoins.push_back(newEntry);
+		_exitJoins.push_back(RoomExitJoinList::value_type(newEntry));
 
 		GET_NEXT(joinRec, RoomExitJoinResource);
 	}
@@ -195,7 +195,7 @@ void Resources::reloadData() {
 	++offset;
 	while (READ_LE_UINT16(offset) != 0xffff) {
 		RandomActionSet *actionSet = new RandomActionSet(offset);
-		_randomActions.push_back(actionSet);
+		_randomActions.push_back(RandomActionList::value_type(actionSet));
 	}
 
 	// Loop through loading the schedules
@@ -203,7 +203,7 @@ void Resources::reloadData() {
 	while ((startOffset = READ_LE_UINT16(++offset)) != 0xffff) {
 		CharacterScheduleResource *res = (CharacterScheduleResource *) (mb->data() + startOffset);
 		CharacterScheduleSet *newEntry = new CharacterScheduleSet(res, ++ctr);
-		_charSchedules.push_back(newEntry);
+		_charSchedules.push_back(CharacterScheduleList::value_type(newEntry));
 	}
 	delete mb;
 
@@ -212,7 +212,7 @@ void Resources::reloadData() {
 	HotspotResource *hsRec = (HotspotResource *) mb->data();
 	while (READ_LE_UINT16(&hsRec->hotspotId) != 0xffff) {
 		HotspotData *newEntry = new HotspotData(hsRec);
-		_hotspotData.push_back(newEntry);
+		_hotspotData.push_back(HotspotDataList::value_type(newEntry));
 
 		GET_NEXT(hsRec, HotspotResource);
 	}
@@ -223,7 +223,7 @@ void Resources::reloadData() {
 	HotspotOverrideResource *hsoRec = (HotspotOverrideResource *) mb->data();
 	while (READ_LE_UINT16(&hsoRec->hotspotId) != 0xffff) {
 		HotspotOverrideData *newEntry = new HotspotOverrideData(hsoRec);
-		_hotspotOverrides.push_back(newEntry);
+		_hotspotOverrides.push_back(HotspotOverrideList::value_type(newEntry));
 		++hsoRec;
 	}
 	delete mb;
@@ -233,7 +233,7 @@ void Resources::reloadData() {
 	HotspotAnimResource *animRec = (HotspotAnimResource *) mb->data();
 	while (READ_LE_UINT16(&animRec->animRecordId) != 0xffff) {
 		HotspotAnimData *newEntry = new HotspotAnimData(animRec);
-		_animData.push_back(newEntry);
+		_animData.push_back(HotspotAnimList::value_type(newEntry));
 
 		// Handle any direction frames
 		AnimRecordTemp dirEntries[4] = {
@@ -248,7 +248,7 @@ void Resources::reloadData() {
 					(mb->data() + offsetVal);
 				while (READ_LE_UINT16(&moveRec->frameNumber) != 0xffff) {
 					MovementData *newMove = new MovementData(moveRec);
-					dirEntries[dirCtr].list->push_back(newMove);
+					dirEntries[dirCtr].list->push_back(MovementDataList::value_type(newMove));
 					++moveRec;
 				}
 			}
@@ -279,7 +279,7 @@ void Resources::reloadData() {
 
 		HotspotActionList *list = new HotspotActionList(
 			recordId, mb->data() + offsetVal);
-		_actionsList.push_back(list);
+		_actionsList.push_back(HotspotActionSet::value_type(list));
 	}
 	delete mb;
 
@@ -291,7 +291,7 @@ void Resources::reloadData() {
 		uint16 *offsets = (uint16 *) (mb->data() + READ_LE_UINT16(&thHeader->offset));
 		TalkHeaderData *newEntry = new TalkHeaderData(hotspotId, offsets);
 
-		_talkHeaders.push_back(newEntry);
+		_talkHeaders.push_back(TalkHeaderList::value_type(newEntry));
 		++thHeader;
 	}
 	delete mb;
@@ -316,18 +316,18 @@ void Resources::reloadData() {
 		TalkDataResource *entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->listOffset));
 		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
-			data->entries.push_back(newEntry);
+			data->entries.push_back(TalkEntryList::value_type(newEntry));
 			++entry;
 		}
 
 		entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->responsesOffset));
 		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
-			data->responses.push_back(newEntry);
+			data->responses.push_back(TalkEntryList::value_type(newEntry));
 			++entry;
 		}
 
-		_talkData.push_back(data);
+		_talkData.push_back(TalkDataList::value_type(data));
 		++tdHeader;
 	}
 	delete mb;
@@ -337,7 +337,7 @@ void Resources::reloadData() {
 	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();
 	while (READ_LE_UINT16(coordRec) != 0xffff) {
 		RoomExitCoordinates *newEntry = new RoomExitCoordinates(coordRec);
-		_coordinateList.push_back(newEntry);
+		_coordinateList.push_back(RoomExitCoordinatesList::value_type(newEntry));
 		++coordRec;
 	}
 	delete mb;
@@ -346,7 +346,7 @@ void Resources::reloadData() {
 	mb = d.getEntry(EXIT_HOTSPOT_ID_LIST);
 	RoomExitIndexedHotspotResource *indexedRec = (RoomExitIndexedHotspotResource *) mb->data();
 	while (READ_LE_UINT16(indexedRec) != 0xffff) {
-		_indexedRoomExitHospots.push_back(new RoomExitIndexedHotspotData(indexedRec));
+		_indexedRoomExitHospots.push_back(RoomExitIndexedHotspotList::value_type(new RoomExitIndexedHotspotData(indexedRec)));
 		indexedRec++;
 	}
 
@@ -373,7 +373,7 @@ RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
 	RoomExitJoinList::iterator i;
 
 	for (i = _exitJoins.begin(); i != _exitJoins.end(); ++i) {
-		RoomExitJoinData *rec = *i;
+		RoomExitJoinData *rec = (*i).get();
 		if ((rec->hotspots[0].hotspotId == hotspotId) || (rec->hotspots[1].hotspotId == hotspotId))
 			return rec;
 	}
@@ -389,7 +389,7 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 	RoomDataList::iterator i;
 
 	for (i = _roomData.begin(); i != _roomData.end(); ++i) {
-		RoomData *rec = *i;
+		RoomData *rec = (*i).get();
 		if (rec->roomNumber == roomNumber) return rec;
 		++rec;
 	}
@@ -446,7 +446,7 @@ HotspotData *Resources::getHotspot(uint16 hotspotId) {
 	HotspotDataList::iterator i;
 
 	for (i = _hotspotData.begin(); i != _hotspotData.end(); ++i) {
-		HotspotData *rec = *i;
+		HotspotData *rec = (*i).get();
 		if (rec->hotspotId == hotspotId) return rec;
 	}
 
@@ -457,7 +457,7 @@ Hotspot *Resources::getActiveHotspot(uint16 hotspotId) {
 	HotspotList::iterator i;
 
 	for (i = _activeHotspots.begin(); i != _activeHotspots.end(); ++i) {
-		Hotspot *rec = *i;
+		Hotspot *rec = (*i).get();
 		if (rec->hotspotId() == hotspotId) return rec;
 	}
 
@@ -469,7 +469,7 @@ HotspotOverrideData *Resources::getHotspotOverride(uint16 hotspotId) {
 	HotspotOverrideList::iterator i;
 
 	for (i = _hotspotOverrides.begin(); i != _hotspotOverrides.end(); ++i) {
-		HotspotOverrideData *rec = *i;
+		HotspotOverrideData *rec = (*i).get();
 		if (rec->hotspotId == hotspotId) return rec;
 	}
 
@@ -480,7 +480,7 @@ HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
 	HotspotAnimList::iterator i;
 
 	for (i = _animData.begin(); i != _animData.end(); ++i) {
-		HotspotAnimData *rec = *i;
+		HotspotAnimData *rec = (*i).get();
 		if (rec->animRecordId == animRecordId) return rec;
 	}
 
@@ -492,7 +492,7 @@ int Resources::getAnimationIndex(HotspotAnimData *animData) {
 	int index = 0;
 
 	for (i = _animData.begin(); i != _animData.end(); ++i, ++index) {
-		HotspotAnimData *rec = *i;
+		HotspotAnimData *rec = (*i).get();
 		if (rec == animData)
 			return index;
 	}
@@ -511,7 +511,7 @@ uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 TalkHeaderData *Resources::getTalkHeader(uint16 hotspotId) {
 	TalkHeaderList::iterator i;
 	for (i = _talkHeaders.begin(); i != _talkHeaders.end(); ++i) {
-		TalkHeaderData *rec = *i;
+		TalkHeaderData *rec = (*i).get();
 		if (rec->characterId == hotspotId) return rec;
 	}
 	return NULL;
@@ -637,7 +637,7 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 	HotspotData *hData = getHotspot(hotspotId);
 	assert(hData);
 	Hotspot *hotspot = new Hotspot(hData);
-	_activeHotspots.push_back(hotspot);
+	_activeHotspots.push_back(HotspotList::value_type(hotspot));
 
 	if (hotspotId < FIRST_NONCHARACTER_ID) {
 		// Default characters to facing upwards until they start moving
@@ -649,14 +649,14 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 }
 
 void Resources::addHotspot(Hotspot *hotspot) {
-	_activeHotspots.push_back(hotspot);
+	_activeHotspots.push_back(HotspotList::value_type(hotspot));
 }
 
 void Resources::deactivateHotspot(uint16 hotspotId, bool isDestId) {
 	HotspotList::iterator i = _activeHotspots.begin();
 
 	while (i != _activeHotspots.end()) {
-		Hotspot *h = *i;
+		Hotspot *h = (*i).get();
 		if ((!isDestId && (h->hotspotId() == hotspotId)) ||
 			(isDestId && (h->destHotspotId() == hotspotId) && (h->hotspotId() == 0xffff))) {
 			_activeHotspots.erase(i);
@@ -671,7 +671,7 @@ void Resources::deactivateHotspot(Hotspot *hotspot) {
 	HotspotList::iterator i = _activeHotspots.begin();
 
 	while (i != _activeHotspots.end()) {
-		Hotspot *h = *i;
+		Hotspot *h = (*i).get();
 		if (h == hotspot) {
 			_activeHotspots.erase(i);
 			break;
@@ -686,7 +686,7 @@ uint16 Resources::numInventoryItems() {
 	HotspotDataList &list = _hotspotData;
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = *i;
+		HotspotData *rec = (*i).get();
 		if (rec->roomNumber == PLAYER_ID) ++numItems;
 	}
 
@@ -715,7 +715,7 @@ void Resources::setTalkData(uint16 offset) {
 
 	TalkDataList::iterator i;
 	for (i = _talkData.begin(); i != _talkData.end(); ++i) {
-		TalkData *rec = *i;
+		TalkData *rec = (*i).get();
 		if (rec->recordId == offset) {
 			_activeTalkData = rec;
 			return;
@@ -732,7 +732,7 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	// Save out the schedule for any non-active NPCs
 	HotspotDataList::iterator i;
 	for (i = _hotspotData.begin(); i != _hotspotData.end(); ++i) {
-		HotspotData *rec = *i;
+		HotspotData *rec = (*i).get();
 		if (!rec->npcSchedule.isEmpty()) {
 			Hotspot *h = getActiveHotspot(rec->hotspotId);
 			if (h == NULL) {

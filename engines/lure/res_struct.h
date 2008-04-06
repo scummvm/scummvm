@@ -29,6 +29,7 @@
 #include "lure/luredefs.h"
 #include "common/list.h"
 #include "common/file.h"
+#include "common/ptr.h"
 
 namespace Lure {
 
@@ -249,53 +250,6 @@ struct SoundDescResource {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-/**
- * Class template for a derived list that destroys the contained
- * object when the record containing it is destroyed. It's not
- * perfect, since the underlying list doesn't have virtual
- * methods, but it's sufficient for my usage.
- */
-template <class T>
-class ManagedList: public Common::List<T> {
-	typedef typename Common::List<T> Common_List;
-public:
-	~ManagedList() {
-		clear();
-	}
-
-	void clear() {
-		typename Common_List::iterator i = Common_List::begin();
-		while (i != Common_List::end()) {
-			T v = *i;
-			i = Common_List::erase(i);
-			delete v;
-		}
-	}
-
-	typename Common_List::iterator erase(typename Common_List::iterator pos) {
-		T obj = *pos;
-		typename Common_List::iterator result = Common_List::erase(pos);
-		delete obj;
-		return result;
-	}
-
-	typename Common_List::iterator erase(typename Common_List::iterator first,
-			typename Common_List::iterator last) {
-
-		while (first != last)
-			erase(first++);
-
-		return last;
-	}
-
-	T operator[](int index) {
-		typename Common_List::iterator i = Common_List::begin();
-		while (index-- > 0)
-			++i;
-		return *i;
-	}
-};
-
 /** Enumeration used for direction facings */
 enum Direction {UP, DOWN, LEFT, RIGHT, NO_DIRECTION};
 
@@ -312,7 +266,7 @@ public:
 	uint16 destRoomNumber;
 };
 
-typedef ManagedList<RoomExitHotspotData *> RoomExitHotspotList;
+typedef Common::List<Common::SharedPtr<RoomExitHotspotData> > RoomExitHotspotList;
 
 class RoomExitData {
 public:
@@ -326,7 +280,7 @@ public:
 	uint16 x, y;
 };
 
-class RoomExitList: public ManagedList<RoomExitData *> {
+class RoomExitList: public Common::List<Common::SharedPtr<RoomExitData> > {
 public:
 	RoomExitData *checkExits(int16 xp, int16 yp);
 };
@@ -381,7 +335,7 @@ public:
 	RoomPathsData paths;
 };
 
-class RoomDataList: public ManagedList<RoomData *> {
+class RoomDataList: public Common::List<Common::SharedPtr<RoomData> > {
 public:
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);
@@ -404,7 +358,7 @@ public:
 	byte blocked;
 };
 
-class RoomExitJoinList: public ManagedList<RoomExitJoinData *> {
+class RoomExitJoinList: public Common::List<Common::SharedPtr<RoomExitJoinData> > {
 public:
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);
@@ -418,7 +372,7 @@ public:
 	uint16 sequenceOffset;
 };
 
-class HotspotActionList: public ManagedList<HotspotActionData *> {
+class HotspotActionList: public Common::List<Common::SharedPtr<HotspotActionData> > {
 public:
 	uint16 recordId;
 
@@ -426,7 +380,7 @@ public:
 	uint16 getActionOffset(Action action);
 };
 
-class HotspotActionSet: public ManagedList<HotspotActionList *> {
+class HotspotActionSet: public Common::List<Common::SharedPtr<HotspotActionList> > {
 public:
 	HotspotActionList *getActions(uint16 recordId);
 };
@@ -503,7 +457,8 @@ public:
 
 class CurrentActionStack {
 private:
-	ManagedList<CurrentActionEntry *> _actions;
+	typedef Common::List<Common::SharedPtr<CurrentActionEntry> > ActionsList;
+	ActionsList _actions;
 	void validateStack() {
 		if (_actions.size() > 20)
 			error("NPC character got an excessive number of pending actions");
@@ -521,27 +476,27 @@ public:
 	void list() { list(NULL); }
 
 	void addBack(CurrentAction newAction, uint16 roomNum) {
-		_actions.push_back(new CurrentActionEntry(newAction, roomNum));
+		_actions.push_back(ActionsList::value_type(new CurrentActionEntry(newAction, roomNum)));
 		validateStack();
 	}
 	void addBack(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
-		_actions.push_back(new CurrentActionEntry(newAction, rec, roomNum));
+		_actions.push_back(ActionsList::value_type(new CurrentActionEntry(newAction, rec, roomNum)));
 		validateStack();
 	}
 	void addBack(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
-		_actions.push_back(new CurrentActionEntry(newAction, roomNum, param1, param2));
+		_actions.push_back(ActionsList::value_type(new CurrentActionEntry(newAction, roomNum, param1, param2)));
 		validateStack();
 	}
 	void addFront(CurrentAction newAction, uint16 roomNum) {
-		_actions.push_front(new CurrentActionEntry(newAction, roomNum));
+		_actions.push_front(ActionsList::value_type(new CurrentActionEntry(newAction, roomNum)));
 		validateStack();
 	}
 	void addFront(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
-		_actions.push_front(new CurrentActionEntry(newAction, rec, roomNum));
+		_actions.push_front(ActionsList::value_type(new CurrentActionEntry(newAction, rec, roomNum)));
 		validateStack();
 	}
 	void addFront(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
-		_actions.push_front(new CurrentActionEntry(newAction, roomNum, param1, param2));
+		_actions.push_front(ActionsList::value_type(new CurrentActionEntry(newAction, roomNum, param1, param2)));
 		validateStack();
 	}
 
@@ -612,7 +567,7 @@ public:
 	void loadFromStream(ReadStream *stream);
 };
 
-class HotspotDataList: public ManagedList<HotspotData *> {
+class HotspotDataList: public Common::List<Common::SharedPtr<HotspotData> > {
 public:
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);
@@ -626,7 +581,7 @@ public:
 	int16 xs, xe, ys, ye;
 };
 
-typedef ManagedList<HotspotOverrideData *> HotspotOverrideList;
+typedef Common::List<Common::SharedPtr<HotspotOverrideData> > HotspotOverrideList;
 
 class MovementData {
 public:
@@ -637,7 +592,7 @@ public:
 	int16 yChange;
 };
 
-class MovementDataList: public ManagedList<MovementData *> {
+class MovementDataList: public Common::List<Common::SharedPtr<MovementData> > {
 public:
 	bool getFrame(uint16 currentFrame, int16 &xChange, int16 &yChange,
 		uint16 &nextFrame);
@@ -659,7 +614,7 @@ public:
 	MovementDataList upFrames, downFrames;
 };
 
-typedef ManagedList<HotspotAnimData *> HotspotAnimList;
+typedef Common::List<Common::SharedPtr<HotspotAnimData> > HotspotAnimList;
 
 // Talk header list
 
@@ -675,7 +630,7 @@ public:
 	uint16 getEntry(int index);
 };
 
-typedef ManagedList<TalkHeaderData *> TalkHeaderList;
+typedef Common::List<Common::SharedPtr<TalkHeaderData> > TalkHeaderList;
 
 class TalkEntryData {
 public:
@@ -686,7 +641,7 @@ public:
 	uint16 postSequenceId;
 };
 
-typedef ManagedList<TalkEntryData *> TalkEntryList;
+typedef Common::List<Common::SharedPtr<TalkEntryData> > TalkEntryList;
 
 class TalkData {
 public:
@@ -700,7 +655,7 @@ public:
 	TalkEntryData *getResponse(int index);
 };
 
-class TalkDataList: public ManagedList<TalkData *> {
+class TalkDataList: public Common::List<Common::SharedPtr<TalkData> > {
 public:
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);
@@ -722,7 +677,7 @@ public:
 	RoomExitCoordinateData &getData(uint16 destRoomNumber);
 };
 
-class RoomExitCoordinatesList: public ManagedList<RoomExitCoordinates *> {
+class RoomExitCoordinatesList: public Common::List<Common::SharedPtr<RoomExitCoordinates> > {
 public:
 	RoomExitCoordinates &getEntry(uint16 roomNumber);
 };
@@ -736,7 +691,7 @@ public:
 	uint16 hotspotId;
 };
 
-class RoomExitIndexedHotspotList: public ManagedList<RoomExitIndexedHotspotData *> {
+class RoomExitIndexedHotspotList: public Common::List<Common::SharedPtr<RoomExitIndexedHotspotData> > {
 public:
 	uint16 getHotspot(uint16 roomNumber, uint8 hotspotIndexId);
 };
@@ -755,7 +710,7 @@ public:
 	bool canClear;
 };
 
-class SequenceDelayList: public ManagedList<SequenceDelayData *> {
+class SequenceDelayList: public Common::List<Common::SharedPtr<SequenceDelayData> > {
 public:
 	void add(uint16 delay, uint16 seqOffset, bool canClear);
 	void tick();
@@ -769,7 +724,7 @@ public:
 
 extern const int actionNumParams[NPC_JUMP_ADDRESS+1];
 
-class CharacterScheduleSet: public ManagedList<CharacterScheduleEntry *> {
+class CharacterScheduleSet: public Common::List<Common::SharedPtr<CharacterScheduleEntry> > {
 private:
 	uint16 _id;
 public:
@@ -778,7 +733,7 @@ public:
 	uint16 id() { return _id; }
 };
 
-class CharacterScheduleList: public ManagedList<CharacterScheduleSet *> {
+class CharacterScheduleList: public Common::List<Common::SharedPtr<CharacterScheduleSet> > {
 public:
 	CharacterScheduleEntry *getEntry(uint16 id, CharacterScheduleSet *currentSet = NULL);
 };
@@ -815,7 +770,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-class RandomActionList: public ManagedList<RandomActionSet *> {
+class RandomActionList: public Common::List<Common::SharedPtr<RandomActionSet> > {
 public:
 	RandomActionSet *getRoom(uint16 roomNumber);
 	void saveToStream(Common::WriteStream *stream);
@@ -834,7 +789,7 @@ public:
 
 class Hotspot;
 
-class PausedCharacterList: public ManagedList<PausedCharacter *> {
+class PausedCharacterList: public Common::List<Common::SharedPtr<PausedCharacter> > {
 public:
 	void reset(uint16 hotspotId);
 	void countdown();

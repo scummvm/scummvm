@@ -138,7 +138,7 @@ void Room::leaveRoom() {
 	HotspotList &list = r.activeHotspots();
 	HotspotList::iterator i = list.begin();
 	while (i != list.end()) {
-		Hotspot *h = i.operator*();
+		Hotspot *h = (i.operator*()).get();
 		if (!h->persistant()) {
 			i = list.erase(i);
 		} else {
@@ -153,7 +153,7 @@ void Room::loadRoomHotspots() {
 
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = *i;
+		HotspotData *rec = (*i).get();
 
 		if ((rec->hotspotId < 0x7530) && (rec->roomNumber == _roomNumber) &&
 			(rec->layer != 0))
@@ -178,7 +178,7 @@ void Room::checkRoomHotspots() {
 	// Loop for each range of hotspot Ids
 	for (int ctr = 0; ctr < 4; ++ctr) {
 		for (i = list.begin(); i != list.end(); ++i) {
-			entry = *i;
+			entry = (*i).get();
 			if ((entry->hotspotId < rangeStart[ctr]) || (entry->hotspotId > rangeEnd[ctr]))
 				// Hotspot outside range, so skip it
 				continue;
@@ -252,7 +252,7 @@ CursorType Room::checkRoomExits() {
 
 	RoomExitHotspotList::iterator i;
 	for (i = exits.begin(); i != exits.end(); ++i) {
-		RoomExitHotspotData *rec = *i;
+		RoomExitHotspotData *rec = (*i).get();
 		skipFlag = false;
 
 		if (rec->hotspotId != 0) {
@@ -449,7 +449,7 @@ void Room::update() {
 	List<Hotspot *> tempList;
 	List<Hotspot *>::iterator iTemp;
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot *h = i.operator*();
+		Hotspot *h = (i.operator*()).get();
 		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) ||
 			h->skipFlag() || !h->isActiveAnimation())
 			continue;

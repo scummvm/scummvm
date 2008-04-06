@@ -72,7 +72,7 @@ void Game::tick() {
 	uint16 *idList = new uint16[res.activeHotspots().size()];
 	int idSize = 0;
 	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
-		Hotspot *hotspot = *i;
+		Hotspot *hotspot = (*i).get();
 
 		if (!_preloadFlag || ((hotspot->layer() != 0xff) &&
 			(hotspot->hotspotId() < FIRST_NONCHARACTER_ID)))

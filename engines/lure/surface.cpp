@@ -1288,7 +1288,7 @@ CopyProtectionDialog::CopyProtectionDialog() {
 			h->setColourOffset(ptr->startColour);
 			h->setAnimation(ptr->animId);
 
-			_hotspots.push_back(h);
+			_hotspots.push_back(HotspotsList::value_type(h));
 		}
 
 		++ptr;
@@ -1309,9 +1309,30 @@ bool CopyProtectionDialog::show() {
 		s->copyTo(&screen.screen(), 0, MENUBAR_Y_SIZE);
 		delete s;
 
+		// Get needed hotspots
+		HotspotsList::iterator hotspot0 = _hotspots.begin();
+		HotspotsList::iterator hotspot1 = _hotspots.begin();
+		for (int i = 0; i < 1; i++)
+			++hotspot1;
+		HotspotsList::iterator hotspot2 = _hotspots.begin();
+		for (int i = 0; i < 2; i++)
+			++hotspot2;
+		HotspotsList::iterator hotspot3 = _hotspots.begin();
+		for (int i = 0; i < 3; i++)
+			++hotspot3;
+		HotspotsList::iterator hotspot4 = _hotspots.begin();
+		for (int i = 0; i < 4; i++)
+			++hotspot4;
+		HotspotsList::iterator hotspot5 = _hotspots.begin();
+		for (int i = 0; i < 5; i++)
+			++hotspot5;
+		HotspotsList::iterator hotspot6 = _hotspots.begin();
+		for (int i = 0; i < 6; i++)
+			++hotspot6;
+
 		// Add wording header and display screen
-		_hotspots[2]->setFrameNumber(1);
-		_hotspots[2]->copyTo(&screen.screen());
+		(hotspot2->get())->setFrameNumber(1);
+		(hotspot2->get())->copyTo(&screen.screen());
 		screen.update();
 		screen.setPalette(&p);
 
@@ -1321,8 +1342,8 @@ bool CopyProtectionDialog::show() {
 		} while (!events.interruptableDelay(100));
 
 		// Change title text to selection
-		_hotspots[2]->setFrameNumber(0);
-		_hotspots[2]->copyTo(&screen.screen());
+		(hotspot2->get())->setFrameNumber(0);
+		(hotspot2->get())->copyTo(&screen.screen());
 		screen.update();
 
 		// Clear any prior try
@@ -1334,15 +1355,21 @@ bool CopyProtectionDialog::show() {
 					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
 						// Remove the last number typed
 						--_charIndex;
-						_hotspots[_charIndex + 3]->setFrameNumber(10);   // Blank space
-						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
+						HotspotsList::iterator tmpHotspot = _hotspots.begin();
+						for (int i = 0; i < _charIndex + 3; i++)
+							++tmpHotspot;
+						(tmpHotspot->get())->setFrameNumber(10);   // Blank space
+						(tmpHotspot->get())->copyTo(&screen.screen());
 
 						screen.update();
 					} else if ((events.event().kbd.keycode >= Common::KEYCODE_0) &&
 								(events.event().kbd.keycode <= Common::KEYCODE_9)) {
+						HotspotsList::iterator tmpHotspot = _hotspots.begin();
+						for (int i = 0; i < _charIndex + 3; i++)
+							++tmpHotspot;
 						// Number pressed
-						_hotspots[_charIndex + 3]->setFrameNumber(events.event().kbd.ascii - '0');
-						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
+						(tmpHotspot->get())->setFrameNumber(events.event().kbd.ascii - '0');
+						(tmpHotspot->get())->copyTo(&screen.screen());
 
 						++_charIndex;
 					}
@@ -1360,11 +1387,11 @@ bool CopyProtectionDialog::show() {
 			return false;
 
 		// At this point, two page numbers have been entered - validate them
-		int page1 = (_hotspots[3]->frameNumber() * 10) + _hotspots[4]->frameNumber();
-		int page2 = (_hotspots[5]->frameNumber() * 10) + _hotspots[6]->frameNumber();
+		int page1 = ((hotspot3->get())->frameNumber() * 10) + (hotspot4->get())->frameNumber();
+		int page2 = ((hotspot5->get())->frameNumber() * 10) + (hotspot6->get())->frameNumber();
 
-		if ((page1 == pageNumbers[_hotspots[0]->frameNumber()]) &&
-			(page2 == pageNumbers[_hotspots[1]->frameNumber()]))
+		if ((page1 == pageNumbers[(hotspot0->get())->frameNumber()]) &&
+			(page2 == pageNumbers[(hotspot1->get())->frameNumber()]))
 			return true;
 	}
 
@@ -1377,10 +1404,12 @@ void CopyProtectionDialog::chooseCharacters() {
 	int char1 = _rnd.getRandomNumber(19);
 	int char2 = _rnd.getRandomNumber(19);
 
-	_hotspots[0]->setFrameNumber(char1);
-	_hotspots[0]->copyTo(&screen.screen());
-	_hotspots[1]->setFrameNumber(char2);
-	_hotspots[1]->copyTo(&screen.screen());
+	HotspotsList::iterator curHotspot = _hotspots.begin();
+	(curHotspot->get())->setFrameNumber(char1);
+	(curHotspot->get())->copyTo(&screen.screen());
+	++curHotspot;
+	(curHotspot->get())->setFrameNumber(char2);
+	(curHotspot->get())->copyTo(&screen.screen());
 
 	screen.update();
 }

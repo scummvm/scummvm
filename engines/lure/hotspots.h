@@ -112,7 +112,8 @@ class PathFinder {
 private:
 	Hotspot *_hotspot;
 	bool _inUse;
-	ManagedList<WalkingActionEntry *> _list;
+	typedef Common::List<Common::SharedPtr<WalkingActionEntry> > WalkingActionList;
+	WalkingActionList _list;
 	RoomPathsDecompressedData _layer;
 	int _stepCtr;
 	bool _inProgress;
@@ -134,10 +135,10 @@ private:
 	void scanLine(int numScans, int changeAmount, uint16 *&pEnd, int &v);
 
 	void add(Direction dir, int steps) {
-		_list.push_front(new WalkingActionEntry(dir, steps));
+		_list.push_front(WalkingActionList::value_type(new WalkingActionEntry(dir, steps)));
 	}
 	void addBack(Direction dir, int steps) {
-		_list.push_back(new WalkingActionEntry(dir, steps));
+		_list.push_back(WalkingActionList::value_type(new WalkingActionEntry(dir, steps)));
 	}
 public:
 	PathFinder(Hotspot *h);
@@ -470,7 +471,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-class HotspotList: public ManagedList<Hotspot *> {
+class HotspotList: public Common::List<Common::SharedPtr<Hotspot> > {
 public:
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);

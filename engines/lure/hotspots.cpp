@@ -224,7 +224,10 @@ void Hotspot::setAnimationIndex(int animIndex) {
 	Resources &r = Resources::getReference();
 
 	// Get the animation specified
-	HotspotAnimData *tempAnim = r.animRecords()[animIndex];
+	HotspotAnimList::iterator anim = r.animRecords().begin();
+	for (int i = 0; i < animIndex; i++)
+		++anim;
+	HotspotAnimData *tempAnim = (*anim).get();
 
 	_animId = tempAnim->animRecordId;
 	if (_data)
@@ -1161,7 +1164,7 @@ bool Hotspot::doorCloseCheck(uint16 doorId) {
 	HotspotList::iterator i;
 	HotspotList &lst = res.activeHotspots();
 	for (i = lst.begin(); i != lst.end(); ++i) {
-		Hotspot *hsCurrent = *i;
+		Hotspot *hsCurrent = (*i).get();
 
 		// Skip entry if it's the door or the character
 		if ((hsCurrent->hotspotId() == hotspotId()) ||
@@ -1868,7 +1871,7 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 	HotspotDataList &list = res.hotspotData();
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = *i;
+		HotspotData *rec = (*i).get();
 
 		if (rec->roomNumber == PLAYER_ID) {
 			if (numItems++ == 0) strcat(buffer, ": ");
@@ -3421,7 +3424,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			if (i != entries.end()) ++i;
 
 		for (; i != entries.end(); ++i) {
-			entry = *i;
+			entry = (*i).get();
 			uint8 flags = (uint8) (entry->descId >> 14);
 			if (flags == 3)
 				// Skip the entry
@@ -4345,9 +4348,9 @@ void PathFinder::list(char *buffer) {
 		printf("Pathfinder::list\n");
 	}
 
-	ManagedList<WalkingActionEntry *>::iterator i;
+	WalkingActionList::iterator i;
 	for (i = _list.begin(); i != _list.end(); ++i) {
-		WalkingActionEntry *e = *i;
+		WalkingActionEntry *e = (*i).get();
 		if (buffer) {
 			sprintf(buffer, "Direction=%d, numSteps=%d\n", e->direction(), e->numSteps());
 			buffer += strlen(buffer);
@@ -4469,9 +4472,9 @@ void PathFinder::saveToStream(Common::WriteStream *stream) {
 		stream->write(_layer, sizeof(RoomPathsDecompressedData));
 
 		// Save any active step sequence
-		ManagedList<WalkingActionEntry *>::iterator i;
+		WalkingActionList::iterator i;
 		for (i = _list.begin(); i != _list.end(); ++i) {
-			WalkingActionEntry *entry = *i;
+			WalkingActionEntry *entry = (*i).get();
 			stream->writeByte(entry->direction());
 			stream->writeSint16LE(entry->rawSteps());
 		}
@@ -4491,7 +4494,7 @@ void PathFinder::loadFromStream(Common::ReadStream *stream) {
 		uint8 direction;
 		while ((direction = stream->readByte()) != 0xff) {
 			int steps = stream->readSint16LE();
-			_list.push_back(new WalkingActionEntry((Direction) direction, steps));
+			_list.push_back(WalkingActionList::value_type(new WalkingActionEntry((Direction) direction, steps)));
 		}
 		_stepCtr = stream->readSint16LE();
 	}
@@ -4640,7 +4643,7 @@ bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 void HotspotList::saveToStream(WriteStream *stream) {
 	HotspotList::iterator i;
 	for (i = begin(); i != end(); ++i) {
-		Hotspot *hotspot = *i;
+		Hotspot *hotspot = (*i).get();
 		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Saving hotspot %xh", hotspot->hotspotId());
 		bool dynamicObject = hotspot->hotspotId() != hotspot->originalId();
 		stream->writeUint16LE(hotspot->originalId());

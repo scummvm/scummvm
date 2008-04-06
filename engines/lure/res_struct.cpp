@@ -151,7 +151,7 @@ bool RoomExitData::insideRect(int16 xp, int16 yp) {
 RoomExitData *RoomExitList::checkExits(int16 xp, int16 yp) {
 	iterator i;
 	for (i = begin(); i != end(); i++) {
-		RoomExitData *rec = *i;
+		RoomExitData *rec = (*i).get();
 		if (rec->insideRect(xp, yp)) {
 			return rec;
 		}
@@ -285,7 +285,7 @@ void RoomDataList::saveToStream(WriteStream *stream) {
 	RoomDataList::iterator i;
 
 	for (i = begin(); i != end(); ++i) {
-		RoomData *rec = *i;
+		RoomData *rec = (*i).get();
 		stream->writeByte(rec->flags);
 		const byte *pathData = rec->paths.data();
 		stream->write(pathData, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
@@ -297,7 +297,7 @@ void RoomDataList::loadFromStream(ReadStream *stream) {
 	byte data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
 
 	for (i = begin(); i != end(); ++i) {
-		RoomData *rec = *i;
+		RoomData *rec = (*i).get();
 		rec->flags = stream->readByte();
 		stream->read(data, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
 		rec->paths.load(data);
@@ -322,7 +322,7 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 
 void RoomExitJoinList::saveToStream(WriteStream *stream) {
 	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
-		RoomExitJoinData *rec = *i;
+		RoomExitJoinData *rec = (*i).get();
 
 		stream->writeUint16LE(rec->hotspots[0].hotspotId);
 		stream->writeUint16LE(rec->hotspots[1].hotspotId);
@@ -339,7 +339,7 @@ void RoomExitJoinList::saveToStream(WriteStream *stream) {
 
 void RoomExitJoinList::loadFromStream(ReadStream *stream) {
 	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
-		RoomExitJoinData *rec = *i;
+		RoomExitJoinData *rec = (*i).get();
 
 		uint16 hotspot1Id = stream->readUint16LE();
 		if (hotspot1Id == 0xffff) error("Invalid room exit join list");
@@ -371,7 +371,7 @@ HotspotActionData::HotspotActionData(HotspotActionResource *rec) {
 uint16 HotspotActionList::getActionOffset(Action action) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		HotspotActionData *rec = *i;
+		HotspotActionData *rec = (*i).get();
 		if (rec->action == action) return rec->sequenceOffset;
 	}
 
@@ -539,7 +539,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 void HotspotDataList::saveToStream(WriteStream *stream) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		HotspotData *hotspot = *i;
+		HotspotData *hotspot = (*i).get();
 		stream->writeUint16LE(hotspot->hotspotId);
 		hotspot->saveToStream(stream);
 	}
@@ -585,7 +585,7 @@ bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange,
 	iterator i;
 
 	for (i = begin(); i != end(); ++i) {
-		MovementData *rec = *i;
+		MovementData *rec = (*i).get();
 		if (foundFlag || (i == begin())) {
 			xChange = rec->xChange;
 			yChange = rec->yChange;
@@ -624,14 +624,14 @@ HotspotActionList::HotspotActionList(uint16 id, byte *data) {
 		GET_NEXT(actionRec, HotspotActionResource)) {
 
 		HotspotActionData *actionEntry = new HotspotActionData(actionRec);
-		push_back(actionEntry);
+		push_back(HotspotActionList::value_type(actionEntry));
 	}
 }
 
 HotspotActionList *HotspotActionSet::getActions(uint16 recordId) {
 	HotspotActionSet::iterator i;
 	for (i = begin(); i != end(); ++i) {
-		HotspotActionList *list = *i;
+		HotspotActionList *list = (*i).get();
 		if (list->recordId == recordId) return list;
 	}
 
@@ -697,7 +697,7 @@ TalkEntryData *TalkData::getResponse(int index) {
 		++i;
 	}
 
-	return *i;
+	return (*i).get();
 }
 
 // The following class acts as a container for all the NPC conversations
@@ -705,11 +705,11 @@ TalkEntryData *TalkData::getResponse(int index) {
 void TalkDataList::saveToStream(WriteStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
-		TalkData *rec = *i;
+		TalkData *rec = (*i).get();
 		TalkEntryList::iterator i2;
 
 		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
-			TalkEntryData *entry = *i2;
+			TalkEntryData *entry = (*i2).get();
 			stream->writeUint16LE(entry->descId);
 		}
 	}
@@ -718,11 +718,11 @@ void TalkDataList::saveToStream(WriteStream *stream) {
 void TalkDataList::loadFromStream(ReadStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
-		TalkData *rec = *i;
+		TalkData *rec = (*i).get();
 		TalkEntryList::iterator i2;
 
 		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
-			TalkEntryData *entry = *i2;
+			TalkEntryData *entry = (*i2).get();
 			entry->descId = stream->readUint16LE();
 		}
 	}
@@ -780,7 +780,7 @@ void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List add sequence=%xh delay=%d canClear=%d",
 		seqOffset, delay, (int)canClear);
 	SequenceDelayData *entry = new SequenceDelayData(delay, seqOffset, canClear);
-	push_front(entry);
+	push_front(SequenceDelayList::value_type(entry));
 }
 
 void SequenceDelayList::tick() {
@@ -790,7 +790,7 @@ void SequenceDelayList::tick() {
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d", currTime);
 
 	for (i = begin(); i != end(); i++) {
-		SequenceDelayData *entry = *i;
+		SequenceDelayData *entry = (*i).get();
 		debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check %xh at time %d", entry->sequenceOffset, entry->timeoutCtr);
 
 		if (currTime >= entry->timeoutCtr) {
@@ -807,7 +807,7 @@ void SequenceDelayList::clear(bool forceClear) {
 	SequenceDelayList::iterator i = begin();
 
 	while (i != end()) {
-		SequenceDelayData *entry = *i;
+		SequenceDelayData *entry = (*i).get();
 		if (entry->canClear || forceClear)
 			i = erase(i);
 		else
@@ -820,7 +820,7 @@ void SequenceDelayList::saveToStream(WriteStream *stream) {
 	SequenceDelayList::iterator i;
 
 	for (i = begin(); i != end(); ++i) {
-		SequenceDelayData *entry = *i;
+		SequenceDelayData *entry = (*i).get();
 		stream->writeUint16LE(entry->sequenceOffset);
 		stream->writeUint32LE((currTime > entry->timeoutCtr ) ? 0 :
 			entry->timeoutCtr - currTime);
@@ -838,7 +838,7 @@ void SequenceDelayList::loadFromStream(ReadStream *stream) {
 	while ((seqOffset = stream->readUint16LE()) != 0) {
 		uint32 delay = currTime + stream->readUint32LE();
 		bool canClear = stream->readByte() != 0;
-		push_back(SequenceDelayData::load(delay, seqOffset, canClear));
+		push_back(SequenceDelayList::value_type(SequenceDelayData::load(delay, seqOffset, canClear)));
 	}
 }
 
@@ -913,9 +913,9 @@ CharacterScheduleEntry *CharacterScheduleEntry::next() {
 	if (_parent) {
 		CharacterScheduleSet::iterator i;
 		for (i = _parent->begin(); i != _parent->end(); ++i) {
-			if (*i == this) {
+			if ((*i).get() == this) {
 				++i;
-				CharacterScheduleEntry *result = (i == _parent->end()) ? NULL : *i;
+				CharacterScheduleEntry *result = (i == _parent->end()) ? NULL : (*i).get();
 				return result;
 			}
 		}
@@ -933,7 +933,7 @@ CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint1
 
 	while (rec->action != 0) {
 		CharacterScheduleEntry *r = new CharacterScheduleEntry(this, rec);
-		push_back(r);
+		push_back(CharacterScheduleSet::value_type(r));
 	}
 
 	_id = setId;
@@ -962,7 +962,7 @@ CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterSche
 
 		if (i == end())
 			error("Invalid index %d specified for support data set", id >> 8);
-		currentSet = *i;
+		currentSet = (*i).get();
 	}
 
 	// Get the indexed instruction in the specified set
@@ -975,7 +975,7 @@ CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterSche
 	if (i == currentSet->end())
 		error("Invalid index %d specified within support data set", id & 0x3ff);
 
-	return *i;
+	return (*i).get();
 }
 
 uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
@@ -985,7 +985,7 @@ uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
 
 	iterator i;
 	for (i = begin(); i != end(); ++i, ++result)
-		if (*i == rec) break;
+		if ((*i).get() == rec) break;
 	if (i == end())
 		error("Parent child relationship missing in character schedule set");
 	return result;
@@ -1015,7 +1015,7 @@ RandomActionSet::~RandomActionSet() {
 RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		RandomActionSet *v = *i;
+		RandomActionSet *v = (*i).get();
 		if (v->roomNumber() == roomNumber)
 			return v;
 	}
@@ -1058,7 +1058,7 @@ RoomExitIndexedHotspotData::RoomExitIndexedHotspotData(RoomExitIndexedHotspotRes
 uint16 RoomExitIndexedHotspotList::getHotspot(uint16 roomNumber, uint8 hotspotIndexId) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		RoomExitIndexedHotspotData *entry = *i;
+		RoomExitIndexedHotspotData *entry = (*i).get();
 		if ((entry->roomNumber == roomNumber) && (entry->hotspotIndex == hotspotIndexId))
 			return entry->hotspotId;
 	}
@@ -1080,7 +1080,7 @@ PausedCharacter::PausedCharacter(uint16 SrcCharId, uint16 DestCharId) {
 void PausedCharacterList::reset(uint16 hotspotId) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		PausedCharacter *rec = *i;
+		PausedCharacter *rec = (*i).get();
 
 		if (rec->srcCharId == hotspotId) {
 			rec->counter = 1;
@@ -1094,7 +1094,7 @@ void PausedCharacterList::countdown() {
 	iterator i = begin();
 
 	while (i != end()) {
-		PausedCharacter *rec = *i;
+		PausedCharacter *rec = (*i).get();
 		--rec->counter;
 
 		// Handle reflecting counter to hotspot
@@ -1115,7 +1115,7 @@ void PausedCharacterList::scan(Hotspot &h) {
 	if (h.blockedState() != BS_NONE) {
 
 		for (i = begin(); i != end(); ++i) {
-			PausedCharacter *rec = *i;
+			PausedCharacter *rec = (*i).get();
 
 			if (rec->srcCharId == h.hotspotId()) {
 				rec->counter = IDLE_COUNTDOWN_SIZE;
@@ -1145,7 +1145,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		// calling character and the impinging list entry
 		bool foundEntry = false;
 		for (i = res.pausedList().begin(); !foundEntry && (i != res.pausedList().end()); ++i) {
-			PausedCharacter *rec = *i;
+			PausedCharacter *rec = (*i).get();
 			foundEntry = (rec->srcCharId == charId) &&
 				(rec->destCharId == hotspot->hotspotId());
 		}
@@ -1161,7 +1161,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 
 		// Add a new paused character entry
 		PausedCharacter *entry = new PausedCharacter(charId, hotspot->hotspotId());
-		res.pausedList().push_back(entry);
+		res.pausedList().push_back(PausedCharacterList::value_type(entry));
 		charHotspot->setBlockedState(BS_INITIAL);
 
 		if (hotspot->hotspotId() < START_EXIT_ID) {
@@ -1444,7 +1444,7 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
 }
 
 void CurrentActionStack::list(char *buffer) {
-	ManagedList<CurrentActionEntry *>::iterator i;
+	ActionsList::iterator i;
 
 	if (buffer) {
 		sprintf(buffer, "CurrentActionStack::list num_actions=%d\n", size());
@@ -1454,7 +1454,7 @@ void CurrentActionStack::list(char *buffer) {
 		printf("CurrentActionStack::list num_actions=%d\n", size());
 
 	for (i = _actions.begin(); i != _actions.end(); ++i) {
-		CurrentActionEntry *entry = *i;
+		CurrentActionEntry *entry = (*i).get();
 		if (buffer) {
 			sprintf(buffer, "style=%d room#=%d", entry->action(), entry->roomNumber());
 			buffer += strlen(buffer);
@@ -1508,7 +1508,7 @@ void CurrentActionStack::list(char *buffer) {
 }
 
 void CurrentActionStack::saveToStream(WriteStream *stream) {
-	ManagedList<CurrentActionEntry *>::iterator i;
+	ActionsList::iterator i;
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
 	char buffer[MAX_DESC_SIZE];
@@ -1516,7 +1516,7 @@ void CurrentActionStack::saveToStream(WriteStream *stream) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer);
 
 	for (i = _actions.begin(); i != _actions.end(); ++i) {
-		CurrentActionEntry *rec = *i;
+		CurrentActionEntry *rec = (*i).get();
 		rec->saveToStream(stream);
 	}
 	stream->writeByte(0xff);      // End of list marker
@@ -1528,15 +1528,15 @@ void CurrentActionStack::loadFromStream(ReadStream *stream) {
 
 	_actions.clear();
 	while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
-		_actions.push_back(rec);
+		_actions.push_back(ActionsList::value_type(rec));
 }
 
 void CurrentActionStack::copyFrom(CurrentActionStack &stack) {
-	ManagedList<CurrentActionEntry *>::iterator i;
+	ActionsList::iterator i;
 
 	for (i = stack._actions.begin(); i != stack._actions.end(); ++i) {
-		CurrentActionEntry *rec = *i;
-		_actions.push_back(new CurrentActionEntry(rec));
+		CurrentActionEntry *rec = (*i).get();
+		_actions.push_back(ActionsList::value_type(new CurrentActionEntry(rec)));
 	}
 }
 

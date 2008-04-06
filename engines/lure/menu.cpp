@@ -273,7 +273,7 @@ uint16 PopupMenu::ShowInventory() {
 
 	HotspotDataList::iterator i;
 	for (i = rsc.hotspotData().begin(); i != rsc.hotspotData().end(); ++i) {
-		HotspotData *hotspot = *i;
+		HotspotData *hotspot = (*i).get();
 		if (hotspot->roomNumber == PLAYER_ID) {
 			idList[itemCtr] = hotspot->hotspotId;
 			char *hotspotName = itemNames[itemCtr++] = (char *) malloc(MAX_HOTSPOT_NAME_SIZE);
@@ -314,7 +314,7 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 
 	// Loop for rooms
 	for (ir = rooms.begin(); ir != rooms.end(); ++ir) {
-		RoomData *roomData = *ir;
+		RoomData *roomData = (*ir).get();
 		// Pre-condition checks for whether to skip room
 		if ((roomData->hdrFlags != 15) && ((roomData->hdrFlags & fields.hdrFlagMask()) == 0))
 			continue;
@@ -334,7 +334,7 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 
 	// Loop for hotspots
 	for (ih = hotspots.begin(); ih != hotspots.end(); ++ih) {
-		HotspotData *hotspot = *ih;
+		HotspotData *hotspot = (*ih).get();
 
 		if ((hotspot->headerFlags != 15) &&
 			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))

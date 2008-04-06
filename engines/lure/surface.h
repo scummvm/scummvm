@@ -28,6 +28,7 @@
 
 
 #include "common/str.h"
+#include "common/ptr.h"
 #include "lure/disk.h"
 #include "lure/luredefs.h"
 
@@ -140,7 +141,8 @@ public:
 class CopyProtectionDialog {
 private:
 	Common::RandomSource _rnd;
-	ManagedList<Hotspot *> _hotspots;
+	typedef Common::List<Common::SharedPtr<Hotspot> > HotspotsList;
+	HotspotsList _hotspots;
 	int _charIndex;
 
 	void chooseCharacters();
