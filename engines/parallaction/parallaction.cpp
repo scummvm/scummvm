@@ -130,7 +130,6 @@ int Parallaction::init() {
 	_location._endComment = NULL;
 
 	_pathBuffer = 0;
-	_activeZone = 0;
 
 	_screenSize = _screenWidth * _screenHeight;
 
@@ -139,8 +138,6 @@ int Parallaction::init() {
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
 
 	initInventory();	// needs to be pushed into subclass
-
-	_hoverZone = NULL;
 
 	_gfx = new Gfx(this);
 
@@ -288,7 +285,7 @@ void Parallaction::processInput(InputData *data) {
 	case kEvAction:
 		debugC(2, kDebugInput, "processInput: kEvAction");
 		_procCurrentHoverItem = -1;
-		_hoverZone = NULL;
+		_hoverZone = nullZonePtr;
 		pauseJobs();
 		runZone(data->_zone);
 		resumeJobs();
@@ -296,7 +293,7 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvOpenInventory:
 		_procCurrentHoverItem = -1;
-		_hoverZone = NULL;
+		_hoverZone = nullZonePtr;
 		_gfx->setFloatingLabel(0);
 		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
 			setArrowCursor();
@@ -319,7 +316,7 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvWalk:
 		debugC(2, kDebugInput, "processInput: kEvWalk");
-		_hoverZone = NULL;
+		_hoverZone = nullZonePtr;
 		setArrowCursor();
 		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
 		break;
@@ -329,13 +326,13 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvSaveGame:
-		_hoverZone = NULL;
+		_hoverZone = nullZonePtr;
 		saveGame();
 		setArrowCursor();
 		break;
 
 	case kEvLoadGame:
-		_hoverZone = NULL;
+		_hoverZone = nullZonePtr;
 		loadGame();
 		setArrowCursor();
 		break;
@@ -440,25 +437,25 @@ bool Parallaction::translateGameInput() {
 	}
 
 	// test if mouse is hovering on an interactive zone for the currently selected inventory item
-	Zone *z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
+	ZonePtr z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
 
-	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
+	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || ((z->_type & 0xFFFF) != kZoneCommand))) {
 		_input._event = kEvWalk;
 		return true;
 	}
 
-	if ((z != _hoverZone) && (_hoverZone != NULL)) {
-		_hoverZone = NULL;
+	if ((z != _hoverZone) && (_hoverZone)) {
+		_hoverZone = nullZonePtr;
 		_input._event = kEvExitZone;
 		return true;
 	}
 
-	if (z == NULL) {
+	if (!z) {
 		_input._event = kEvNone;
 		return true;
 	}
 
-	if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
+	if ((!_hoverZone) && ((z->_flags & kFlagsNoName) == 0)) {
 		_hoverZone = z;
 		_input._event = kEvEnterZone;
 		_input._label = z->_label;
@@ -512,9 +509,9 @@ bool Parallaction::translateInventoryInput() {
 		}
 
 		_engineFlags &= ~kEngineDragging;
-		Zone *z = hitZone(kZoneMerge, _activeItem._index, getInventoryItemIndex(_input._inventoryIndex));
+		ZonePtr z = hitZone(kZoneMerge, _activeItem._index, getInventoryItemIndex(_input._inventoryIndex));
 
-		if (z != NULL) {
+		if (z) {
 			dropItem(z->u.merge->_obj1);
 			dropItem(z->u.merge->_obj2);
 			addInventoryItem(z->u.merge->_obj3);
@@ -623,12 +620,12 @@ void Parallaction::parseStatement() {
 
 
 
-Animation *Parallaction::findAnimation(const char *name) {
+AnimationPtr& Parallaction::findAnimation(const char *name) {
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 
-	return NULL;
+	return nullAnimationPtr;
 }
 
 void Parallaction::freeAnimations() {
@@ -773,7 +770,7 @@ void Parallaction::doLocationEnterTransition() {
 
 
 
-Zone *Parallaction::findZone(const char *name) {
+ZonePtr Parallaction::findZone(const char *name) {
 
 	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
@@ -792,7 +789,7 @@ void Parallaction::freeZones() {
 
 		// NOTE : this condition has been relaxed compared to the original, to allow the engine
 		// to retain special - needed - zones that were lost across location switches.
-		Zone* z = *it;
+		ZonePtr z = *it;
 		if (((z->_top == -1) || (z->_left == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
@@ -810,36 +807,36 @@ const char Character::_suffixTras[] = "tras";
 const char Character::_empty[] = "\0";
 
 
-Character::Character(Parallaction *vm) : _vm(vm), _builder(&_ani) {
+Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation), _builder(_ani) {
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
 
 	_dummy = false;
 
-	_ani._left = 150;
-	_ani._top = 100;
-	_ani._z = 10;
-	_ani._oldPos.x = -1000;
-	_ani._oldPos.y = -1000;
-	_ani._frame = 0;
-	_ani._flags = kFlagsActive | kFlagsNoName;
-	_ani._type = kZoneYou;
-	strncpy(_ani._name, "yourself", ZONENAME_LENGTH);
+	_ani->_left = 150;
+	_ani->_top = 100;
+	_ani->_z = 10;
+	_ani->_oldPos.x = -1000;
+	_ani->_oldPos.y = -1000;
+	_ani->_frame = 0;
+	_ani->_flags = kFlagsActive | kFlagsNoName;
+	_ani->_type = kZoneYou;
+	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
 }
 
 void Character::getFoot(Common::Point &foot) {
-	foot.x = _ani._left + _ani.width() / 2;
-	foot.y = _ani._top + _ani.height();
+	foot.x = _ani->_left + _ani->width() / 2;
+	foot.y = _ani->_top + _ani->height();
 }
 
 void Character::setFoot(const Common::Point &foot) {
-	_ani._left = foot.x - _ani.width() / 2;
-	_ani._top = foot.y - _ani.height();
+	_ani->_left = foot.x - _ani->width() / 2;
+	_ani->_top = foot.y - _ani->height();
 }
 
 void Character::scheduleWalk(int16 x, int16 y) {
-	if ((_ani._flags & kFlagsRemove) || (_ani._flags & kFlagsActive) == 0) {
+	if ((_ani->_flags & kFlagsRemove) || (_ani->_flags & kFlagsActive) == 0) {
 		return;
 	}
 
@@ -853,7 +850,7 @@ void Character::free() {
 	delete _head;
 	delete _objs;
 
-	_ani.gfxobj = NULL;
+	_ani->gfxobj = NULL;
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;

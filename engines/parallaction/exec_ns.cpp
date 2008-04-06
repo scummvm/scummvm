@@ -61,7 +61,7 @@ typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	inst->_a->_flags |= kFlagsActive;
 	inst->_a->_flags &= ~kFlagsRemove;
@@ -74,7 +74,7 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	_instRunCtxt.program->_loopCounter = inst->_opB.getRValue();
 	_instRunCtxt.program->_loopStart = _instRunCtxt.inst;
@@ -88,7 +88,7 @@ DECLARE_INSTRUCTION_OPCODE(endloop) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 	int16 _si = inst->_opB.getRValue();
 
 	if (inst->_flags & kInstMod) {	// mod
@@ -114,7 +114,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	int16 _si = inst->_opB.getRValue();
 	int16 *lvalue = inst->_opA.getLValue();
@@ -125,7 +125,7 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 
 
 DECLARE_INSTRUCTION_OPCODE(put) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 	Graphics::Surface v18;
 	v18.w = inst->_a->width();
 	v18.h = inst->_a->height();
@@ -168,7 +168,7 @@ DECLARE_INSTRUCTION_OPCODE(sound) {
 
 
 DECLARE_INSTRUCTION_OPCODE(move) {
-	Instruction *inst = (*_instRunCtxt.inst);
+	InstructionPtr inst = (*_instRunCtxt.inst);
 
 	int16 x = inst->_opA.getRValue();
 	int16 y = inst->_opB.getRValue();
@@ -262,14 +262,14 @@ DECLARE_COMMAND_OPCODE(close) {
 
 
 DECLARE_COMMAND_OPCODE(on) {
-	Zone *z = _cmdRunCtxt.cmd->u._zone;
+	ZonePtr z = _cmdRunCtxt.cmd->u._zone;
 	// WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
 	// the pointer to get structure members, thus leading to crashes in systems with memory
 	// protection.
 	// As a side note, the overwritten address is the 5th entry in the DOS interrupt table
 	// (print screen handler): this suggests that a system would hang when the print screen
 	// key is pressed after playing Nippon Safes, provided that this code path is taken.
-	if (z != NULL) {
+	if (z) {
 		z->_flags &= ~kFlagsRemove;
 		z->_flags |= kFlagsActive;
 		if ((z->_type & 0xFFFF) == kZoneGet) {
@@ -285,7 +285,7 @@ DECLARE_COMMAND_OPCODE(off) {
 
 
 DECLARE_COMMAND_OPCODE(call) {
-	callFunction(_cmdRunCtxt.cmd->u._callable, _cmdRunCtxt.z);
+	callFunction(_cmdRunCtxt.cmd->u._callable, &_cmdRunCtxt.z);
 }
 
 
@@ -325,7 +325,7 @@ void Parallaction_ns::drawAnimations() {
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
-		Animation *v18 = *it;
+		AnimationPtr v18 = *it;
 		GfxObj *obj = v18->gfxobj;
 
 		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
@@ -376,7 +376,7 @@ void Parallaction_ns::runScripts() {
 
 	for (ProgramList::iterator it = _programs.begin(); it != _programs.end(); it++) {
 
-		Animation *a = (*it)->_anim;
+		AnimationPtr a = (*it)->_anim;
 
 		if (a->_flags & kFlagsCharacter)
 			a->_z = a->_top + a->height();
@@ -392,7 +392,7 @@ void Parallaction_ns::runScripts() {
 			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
-			_instRunCtxt.anim = a;
+			_instRunCtxt.anim = AnimationPtr(a);
 			_instRunCtxt.program = *it;
 			_instRunCtxt.modCounter = modCounter;
 			_instRunCtxt.suspend = false;
@@ -414,9 +414,9 @@ label1:
 			a->_z = a->_top + a->height();
 	}
 
-	_char._ani._z = _char._ani.height() + _char._ani._top;
-	if (_char._ani.gfxobj) {
-		_char._ani.gfxobj->z = _char._ani._z;
+	_char._ani->_z = _char._ani->height() + _char._ani->_top;
+	if (_char._ani->gfxobj) {
+		_char._ani->gfxobj->z = _char._ani->_z;
 	}
 	modCounter++;
 
@@ -424,7 +424,7 @@ label1:
 }
 
 
-void Parallaction::runCommands(CommandList& list, Zone *z) {
+void Parallaction::runCommands(CommandList& list, ZonePtr z) {
 	if (list.size() == 0)
 		return;
 
@@ -433,7 +433,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 	CommandList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
 
-		Command *cmd = *it;
+		CommandPtr cmd = *it;
 		uint32 v8 = _localFlags[_currentLocationIndex];
 
 		if (_engineFlags & kEngineQuit)
@@ -496,7 +496,7 @@ void Parallaction::displayComment(ExamineData *data) {
 
 
 
-uint16 Parallaction::runZone(Zone *z) {
+uint16 Parallaction::runZone(ZonePtr& z) {
 	debugC(3, kDebugExec, "runZone (%s)", z->_name);
 
 	uint16 subtype = z->_type & 0xFFFF;
@@ -542,7 +542,7 @@ uint16 Parallaction::runZone(Zone *z) {
 //
 //	ZONE TYPE: DOOR
 //
-void Parallaction::updateDoor(Zone *z) {
+void Parallaction::updateDoor(ZonePtr& z) {
 
 	if (z->u.door->gfxobj) {
 		uint frame = (z->_flags & kFlagsClosed ? 0 : 1);
@@ -559,7 +559,7 @@ void Parallaction::updateDoor(Zone *z) {
 //	ZONE TYPE: GET
 //
 
-int16 Parallaction::pickupItem(Zone *z) {
+int16 Parallaction::pickupItem(ZonePtr &z) {
 	int r = addInventoryItem(z->u.get->_icon);
 	if (r != -1) {
 		_gfx->showGfxObj(z->u.get->gfxobj, false);
@@ -570,7 +570,7 @@ int16 Parallaction::pickupItem(Zone *z) {
 
 
 
-Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
+ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 //	printf("hitZone(%i, %i, %i)", type, x, y);
 
 	uint16 _di = y;
@@ -579,7 +579,7 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
 //		printf("Zone name: %s", z->_name);
 
-		Zone *z = *it;
+		ZonePtr z = *it;
 
 		if (z->_flags & kFlagsRemove) continue;
 
@@ -614,13 +614,13 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 			if (z->_left != -1)
 				continue;
-			if (_si < _char._ani._left)
+			if (_si < _char._ani->_left)
 				continue;
-			if (_si > (_char._ani._left + _char._ani.width()))
+			if (_si > (_char._ani->_left + _char._ani->width()))
 				continue;
-			if (_di < _char._ani._top)
+			if (_di < _char._ani->_top)
 				continue;
-			if (_di > (_char._ani._top + _char._ani.height()))
+			if (_di > (_char._ani->_top + _char._ani->height()))
 				continue;
 
 		}
@@ -639,7 +639,7 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	int16 _a, _b, _c, _d, _e, _f;
 	for (AnimationList::iterator ait = _animations.begin(); ait != _animations.end(); ait++) {
 
-		Animation *a = *ait;
+		AnimationPtr a = *ait;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
 		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range
@@ -657,7 +657,7 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 	}
 
-	return NULL;
+	return nullZonePtr;
 }
 
 

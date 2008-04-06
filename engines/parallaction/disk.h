@@ -26,7 +26,8 @@
 #ifndef PARALLACTION_DISK_H
 #define PARALLACTION_DISK_H
 
-#include "parallaction/defs.h"
+#define PATH_LEN 200
+
 #include "common/file.h"
 #include "graphics/surface.h"
 

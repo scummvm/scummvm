@@ -179,26 +179,24 @@ DECLARE_ANIM_PARSER(endanimation)  {
 	popParserTables();
 }
 
-Animation *Parallaction_ns::parseAnimation(Script& script, AnimationList &list, char *name) {
+void Parallaction_ns::parseAnimation(Script& script, AnimationList &list, char *name) {
 	debugC(5, kDebugParser, "parseAnimation(name: %s)", name);
 
-	Animation *a = new Animation;
+	AnimationPtr a(new Animation);
 
 	strncpy(a->_name, name, ZONENAME_LENGTH);
 
-	list.push_front(a);
+	list.push_front(AnimationPtr(a));
 
 	_locParseCtxt.a = a;
 	_locParseCtxt.script = &script;
 
 	pushParserTables(&_locationAnimParsers, _locationAnimStmt);
-
-	return a;
 }
 
-void Parallaction_ns::parseInstruction(Program *program) {
+void Parallaction_ns::parseInstruction(ProgramPtr &program) {
 
-	Instruction *inst = new Instruction;
+	InstructionPtr inst(new Instruction);
 
 	if (_tokens[0][1] == '.') {
 		_tokens[0][1] = '\0';
@@ -221,14 +219,14 @@ void Parallaction_ns::parseInstruction(Program *program) {
 	return;
 }
 
-void Parallaction_ns::loadProgram(Animation *a, const char *filename) {
+void Parallaction_ns::loadProgram(AnimationPtr &a, const char *filename) {
 	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_name, filename);
 
 	Script *script = _disk->loadScript(filename);
-	Program *program = new Program;
+	ProgramPtr program(new Program);
 	program->_anim = a;
 
-	_instParseCtxt.openIf = NULL;
+	_instParseCtxt.openIf = nullInstructionPtr;
 	_instParseCtxt.end = false;
 	_instParseCtxt.program = program;
 
@@ -415,7 +413,7 @@ void Parallaction_ns::parseRValue(ScriptVar &v, const char *str) {
 		return;
 	}
 
-	Animation *a;
+	AnimationPtr a;
 	if (str[1] == '.') {
 		a = findAnimation(&str[2]);
 	} else {
@@ -445,7 +443,7 @@ void Parallaction_ns::parseLValue(ScriptVar &v, const char *str) {
 		return;
 	}
 
-	Animation *a;
+	AnimationPtr a;
 	if (str[1] == '.') {
 		a = findAnimation(&str[2]);
 	} else {
@@ -501,7 +499,7 @@ DECLARE_COMMAND_PARSER(zone)  {
 	createCommand(_lookup);
 
 	_locParseCtxt.cmd->u._zone = findZone(_tokens[_locParseCtxt.nextToken]);
-	if (_locParseCtxt.cmd->u._zone == NULL) {
+	if (!_locParseCtxt.cmd->u._zone) {
 		saveCommandForward(_tokens[_locParseCtxt.nextToken], _locParseCtxt.cmd);
 	}
 	_locParseCtxt.nextToken++;
@@ -584,7 +582,7 @@ DECLARE_COMMAND_PARSER(endcommands)  {
 void Parallaction_ns::parseCommandFlags() {
 
 	int _si = _locParseCtxt.nextToken;
-	Command *cmd = _locParseCtxt.cmd;
+	CommandPtr cmd = _locParseCtxt.cmd;
 
 	if (!scumm_stricmp(_tokens[_si], "flags")) {
 		_si++;
@@ -650,12 +648,12 @@ void Parallaction_ns::addCommand() {
 void Parallaction_ns::createCommand(uint id) {
 
 	_locParseCtxt.nextToken = 1;
-	_locParseCtxt.cmd = new Command;
+	_locParseCtxt.cmd = CommandPtr(new Command);
 	_locParseCtxt.cmd->_id = id;
 
 }
 
-void Parallaction_ns::saveCommandForward(const char *name, Command* cmd) {
+void Parallaction_ns::saveCommandForward(const char *name, CommandPtr &cmd) {
 	assert(_numForwardedCommands < MAX_FORWARDS);
 
 	strcpy(_forwardedCommands[_numForwardedCommands].name, name);
@@ -858,12 +856,12 @@ DECLARE_LOCATION_PARSER(location)  {
 	switchBackground(_location._name, mask);
 
 	if (_tokens[2][0] != '\0') {
-		_char._ani._left = atoi(_tokens[2]);
-		_char._ani._top = atoi(_tokens[3]);
+		_char._ani->_left = atoi(_tokens[2]);
+		_char._ani->_top = atoi(_tokens[3]);
 	}
 
 	if (_tokens[4][0] != '\0') {
-		_char._ani._frame = atoi(_tokens[4]);
+		_char._ani->_frame = atoi(_tokens[4]);
 	}
 }
 
@@ -1023,10 +1021,10 @@ void Parallaction_ns::parseWalkNodes(Script& script, WalkNodeList &list) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
 
-			WalkNode *v4 = new WalkNode(
+			WalkNodePtr v4(new WalkNode(
 				atoi(_tokens[1]),
 				atoi(_tokens[2])
-			);
+			));
 
 			list.push_front(v4);
 		}
@@ -1267,7 +1265,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 		return;
 	}
 
-	Zone *z = new Zone;
+	ZonePtr z(new Zone);
 
 	strncpy(z->_name, name, ZONENAME_LENGTH);
 
@@ -1284,7 +1282,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 
 
 
-void Parallaction_ns::parseGetData(Script &script, Zone *z) {
+void Parallaction_ns::parseGetData(Script &script, ZonePtr &z) {
 
 	GetData *data = new GetData;
 
@@ -1315,7 +1313,7 @@ void Parallaction_ns::parseGetData(Script &script, Zone *z) {
 }
 
 
-void Parallaction_ns::parseExamineData(Script &script, Zone *z) {
+void Parallaction_ns::parseExamineData(Script &script, ZonePtr &z) {
 
 	ExamineData *data = new ExamineData;
 
@@ -1336,7 +1334,7 @@ void Parallaction_ns::parseExamineData(Script &script, Zone *z) {
 }
 
 
-void Parallaction_ns::parseDoorData(Script &script, Zone *z) {
+void Parallaction_ns::parseDoorData(Script &script, ZonePtr &z) {
 
 	DoorData *data = new DoorData;
 
@@ -1380,7 +1378,7 @@ void Parallaction_ns::parseDoorData(Script &script, Zone *z) {
 }
 
 
-void Parallaction_ns::parseMergeData(Script &script, Zone *z) {
+void Parallaction_ns::parseMergeData(Script &script, ZonePtr &z) {
 
 	MergeData *data = new MergeData;
 
@@ -1403,7 +1401,7 @@ void Parallaction_ns::parseMergeData(Script &script, Zone *z) {
 
 }
 
-void Parallaction_ns::parseHearData(Script &script, Zone *z) {
+void Parallaction_ns::parseHearData(Script &script, ZonePtr &z) {
 
 	HearData *data = new HearData;
 
@@ -1424,7 +1422,7 @@ void Parallaction_ns::parseHearData(Script &script, Zone *z) {
 
 }
 
-void Parallaction_ns::parseSpeakData(Script &script, Zone *z) {
+void Parallaction_ns::parseSpeakData(Script &script, ZonePtr &z) {
 
 	SpeakData *data = new SpeakData;
 
@@ -1445,7 +1443,7 @@ void Parallaction_ns::parseSpeakData(Script &script, Zone *z) {
 }
 
 
-void Parallaction_ns::parseZoneTypeBlock(Script &script, Zone *z) {
+void Parallaction_ns::parseZoneTypeBlock(Script &script, ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
 
 	switch (z->_type & 0xFFFF) {

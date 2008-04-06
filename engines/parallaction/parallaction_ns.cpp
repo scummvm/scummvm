@@ -137,7 +137,7 @@ int Parallaction_ns::init() {
 	initOpcodes();
 	initParsers();
 
-	_animations.push_front(&_char._ani);
+	_animations.push_front(_char._ani);
 
 	Parallaction::init();
 
@@ -153,7 +153,7 @@ Parallaction_ns::~Parallaction_ns() {
 	delete _instructionNames;
 	delete _locationStmt;
 
-	_animations.remove(&_char._ani);
+	_animations.remove(_char._ani);
 
 }
 
@@ -278,8 +278,8 @@ void Parallaction_ns::showSlide(const char *name) {
 
 void Parallaction_ns::runPendingZones() {
 	if (_activeZone) {
-		Zone *z = _activeZone;	// speak Zone or sound
-		_activeZone = NULL;
+		ZonePtr z = _activeZone;	// speak Zone or sound
+		_activeZone = nullZonePtr;
 		runZone(z);
 	}
 }
@@ -295,12 +295,12 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setFloatingLabel(0);
 	_gfx->freeLabels();
 
-	_hoverZone = NULL;
+	_hoverZone = nullZonePtr;
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
 	}
 
-	_animations.remove(&_char._ani);
+	_animations.remove(_char._ani);
 
 	freeLocation();
 
@@ -320,19 +320,19 @@ void Parallaction_ns::changeLocation(char *location) {
 		changeCharacter(locname.character());
 	}
 
-	_animations.push_front(&_char._ani);
+	_animations.push_front(_char._ani);
 
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
 
-	_char._ani._oldPos.x = -1000;
-	_char._ani._oldPos.y = -1000;
+	_char._ani->_oldPos.x = -1000;
+	_char._ani->_oldPos.y = -1000;
 
-	_char._ani.field_50 = 0;
+	_char._ani->field_50 = 0;
 	if (_location._startPosition.x != -1000) {
-		_char._ani._left = _location._startPosition.x;
-		_char._ani._top = _location._startPosition.y;
-		_char._ani._frame = _location._startFrame;
+		_char._ani->_left = _location._startPosition.x;
+		_char._ani->_top = _location._startPosition.y;
+		_char._ani->_frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
 	}
@@ -376,7 +376,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	freeCharacter();
 
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-	_char._ani.gfxobj = _gfx->loadAnim(_char.getFullName());
+	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
 
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {
@@ -414,7 +414,7 @@ void Parallaction_ns::cleanupGame() {
 	_engineFlags &= ~kEngineTransformedDonna;
 
 	// this code saves main character animation from being removed from the following code
-	_animations.remove(&_char._ani);
+	_animations.remove(_char._ani);
 	_numLocations = 0;
 	_commandFlags = 0;
 
@@ -431,7 +431,7 @@ void Parallaction_ns::cleanupGame() {
 	_engineFlags &= ~kEngineQuit;
 
 	// main character animation is restored
-	_animations.push_front(&_char._ani);
+	_animations.push_front(_char._ani);
 	_score = 0;
 
 	return;

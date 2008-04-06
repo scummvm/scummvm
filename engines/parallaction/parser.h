@@ -28,8 +28,6 @@
 
 #include "common/stream.h"
 
-#include "parallaction/defs.h"
-
 namespace Parallaction {
 
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
@@ -63,4 +61,5 @@ public:
 } // namespace Parallaction
 
 #endif
+
 

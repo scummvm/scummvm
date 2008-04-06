@@ -156,7 +156,7 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 				"| name               | l | t | r | b |  type  |  flag  |\n"
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
-		Zone *z = *b;
+		ZonePtr z = *b;
 		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, z->_left, z->_top, z->_right, z->_bottom, z->_type, z->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
@@ -174,7 +174,7 @@ bool Debugger::Cmd_Animations(int argc, const char **argv) {
 				"| name               | x | y | z | f |  type  |  flag  | \n"
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
-		Animation *a = *b;
+		AnimationPtr a = *b;
 		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_name, a->_left, a->_top, a->_z, a->_frame, a->_type, a->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
@@ -230,7 +230,7 @@ bool Debugger::Cmd_Programs(int argc, const char** argv) {
 				"| # | bound animation    |  status  |\n"
 				"+---+--------------------+----------+\n");
 	for ( ; b != e; b++, i++) {
-		Program *p = *b;
+		ProgramPtr p = *b;
 		DebugPrintf("|%3i|%-20s|%-10s|\n", i, p->_anim->_name, status[p->_status] );
 	}
 	DebugPrintf("+---+--------------------+---------+\n");

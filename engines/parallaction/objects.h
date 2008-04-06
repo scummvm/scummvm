@@ -27,8 +27,7 @@
 #define PARALLACTION_ZONE_H
 
 #include "common/list.h"
-
-#include "parallaction/defs.h"
+#include "common/ptr.h"
 
 #include "parallaction/graphics.h"
 
@@ -42,6 +41,19 @@ struct Question;
 struct Answer;
 struct Instruction;
 struct Program;
+
+typedef Common::SharedPtr<Zone> ZonePtr;
+typedef Common::List<ZonePtr> ZoneList;
+extern ZonePtr nullZonePtr;
+
+typedef Common::SharedPtr<Animation> AnimationPtr;
+typedef Common::List<AnimationPtr> AnimationList;
+extern AnimationPtr nullAnimationPtr;
+
+typedef Common::SharedPtr<Instruction> InstructionPtr;
+typedef Common::List<InstructionPtr> InstructionList;
+extern InstructionPtr nullInstructionPtr;
+
 
 enum ZoneTypes {
 	kZoneExamine	   = 1,					// zone displays comment if activated
@@ -91,9 +103,11 @@ enum CommandFlags {
 	kFlagsTestTrue		= 2
 };
 
+
+
 struct CommandData {
 	uint32			_flags;
-	Zone*			_zone;
+	ZonePtr			_zone;
 	char*			_string;
 	uint16			_callable;
 	uint16			_object;
@@ -133,7 +147,8 @@ struct Command {
 	~Command();
 };
 
-typedef ManagedList<Command*> CommandList;
+typedef Common::SharedPtr<Command> CommandPtr;
+typedef Common::List<CommandPtr> CommandList;
 
 
 #define NUM_QUESTIONS		20
@@ -278,7 +293,7 @@ struct Zone {
 	// BRA specific
 	uint			_index;
 	char			*_linkedName;
-	Animation		*_linkedAnim;
+	AnimationPtr	_linkedAnim;
 
 	Zone();
 	virtual ~Zone();
@@ -289,8 +304,6 @@ struct Zone {
 	virtual uint16 height() const;
 };
 
-typedef Zone* ZonePointer;
-typedef ManagedList<ZonePointer> ZoneList;
 
 struct LocalVariable {
 	int16		_value;
@@ -336,15 +349,14 @@ enum InstructionFlags {
 	kInstUnk20			= 0x20
 };
 
-typedef ManagedList<Instruction*> InstructionList;
 
 struct Instruction {
 	uint32	_index;
 	uint32	_flags;
 
 	// common
-	Animation	*_a;
-	Zone		*_z;
+	AnimationPtr	_a;
+	ZonePtr		_z;
 	int16		_immediate;
 	ScriptVar	_opA;
 	ScriptVar	_opB;
@@ -369,7 +381,7 @@ enum {
 };
 
 struct Program {
-	Animation		*_anim;
+	AnimationPtr	_anim;
 
 	LocalVariable	*_locals;
 
@@ -390,7 +402,8 @@ struct Program {
 	int16		addLocal(const char *name, int16 value = 0, int16 min = -10000, int16 max = 10000);
 };
 
-typedef ManagedList<Program*> ProgramList;
+typedef Common::SharedPtr<Program> ProgramPtr;
+typedef Common::List<ProgramPtr> ProgramList;
 
 struct Animation : public Zone {
 
@@ -414,10 +427,6 @@ struct Animation : public Zone {
 	uint16 getFrameNum() const;
 	byte* getFrameData(uint32 index) const;
 };
-
-typedef Animation* AnimationPointer;
-typedef ManagedList<AnimationPointer> AnimationList;
-
 
 class Table {
 

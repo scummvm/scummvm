@@ -30,6 +30,9 @@
 namespace Parallaction {
 
 
+ZonePtr nullZonePtr;
+AnimationPtr nullAnimationPtr;
+InstructionPtr nullInstructionPtr;
 
 Command::Command() {
 	_id = 0;
@@ -126,7 +129,6 @@ Zone::Zone() {
 	// BRA specific
 	_index = 0;
 	_linkedName = 0;
-	_linkedAnim = 0;
 }
 
 Zone::~Zone() {
@@ -230,8 +232,6 @@ Instruction::Instruction() {
 	_flags = 0;
 
 	// common
-	_a = 0;
-	_z = 0;
 	_immediate = 0;
 
 	// BRA specific

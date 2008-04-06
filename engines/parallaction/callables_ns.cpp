@@ -40,9 +40,9 @@ namespace Parallaction {
 	game callables data members
 */
 
-static Zone *_moveSarcZone0 = NULL;
+static ZonePtr _moveSarcZone0;
 static int16 _introSarcData1 = 0;
-static Zone *_moveSarcZone1 = NULL;
+static ZonePtr _moveSarcZone1;
 
 // part completion messages
 static const char *endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
@@ -56,14 +56,14 @@ static const char *endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE", "OF THIS ADV
 static const char *endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
 
 static uint16 num_foglie = 0;
-static Zone *_moveSarcZones[5];
-static Zone *_moveSarcExaZones[5];
+static ZonePtr _moveSarcZones[5];
+static ZonePtr _moveSarcExaZones[5];
 
 /*
 	intro callables data members
 */
 
-static Animation *_rightHandAnim;
+static AnimationPtr _rightHandAnim;
 
 static uint16 _rightHandPositions[684] = {
 	0x0064, 0x0046, 0x006c, 0x0046, 0x0074, 0x0046, 0x007c, 0x0046,
@@ -215,12 +215,12 @@ void Parallaction_ns::_c_fade(void *parm) {
 
 void Parallaction_ns::_c_moveSarc(void *parm) {
 
-	Animation *a;
+	AnimationPtr a;
 
 	if (_introSarcData2 != 0) {
 
 		_introSarcData2 = 0;
-		if (_moveSarcZones[0] == NULL) {
+		if (!_moveSarcZones[0]) {
 
 			_moveSarcZones[0] = findZone("sarc1");
 			_moveSarcZones[1] = findZone("sarc2");
@@ -238,7 +238,7 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 
 		a = findAnimation("sposta");
 
-		_moveSarcZone1 = (Zone*)parm;
+		_moveSarcZone1 = *(ZonePtr*)parm;
 
 		for (uint16 _si = 0; _si < 5; _si++) {
 			if (_moveSarcZones[_si] == _moveSarcZone1) {

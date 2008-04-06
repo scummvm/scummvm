@@ -123,7 +123,7 @@ DECLARE_COMMAND_OPCODE(close) {
 
 DECLARE_COMMAND_OPCODE(on) {
 	CommandData *data = &_cmdRunCtxt.cmd->u;
-	Zone *z = data->_zone;
+	ZonePtr z = data->_zone;
 
 	if (z) {
 		z->_flags |= kFlagsActive;
@@ -138,7 +138,7 @@ DECLARE_COMMAND_OPCODE(on) {
 
 DECLARE_COMMAND_OPCODE(off) {
 	CommandData *data = &_cmdRunCtxt.cmd->u;
-	Zone *z = data->_zone;
+	ZonePtr z = data->_zone;
 
 	if (z) {
 		z->_flags |= kFlagsRemove;
@@ -151,7 +151,7 @@ DECLARE_COMMAND_OPCODE(off) {
 
 
 DECLARE_COMMAND_OPCODE(call) {
-	callFunction(_cmdRunCtxt.cmd->u._callable, _cmdRunCtxt.z);
+	callFunction(_cmdRunCtxt.cmd->u._callable, &_cmdRunCtxt.z);
 }
 
 
@@ -316,8 +316,8 @@ DECLARE_COMMAND_OPCODE(offsave) {
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	Instruction *inst = *_instRunCtxt.inst;
-	Zone *z = inst->_z;
+	InstructionPtr inst = *_instRunCtxt.inst;
+	ZonePtr z = inst->_z;
 
 	if (z) {
 		z->_flags |= kFlagsActive;
@@ -331,8 +331,8 @@ DECLARE_INSTRUCTION_OPCODE(on) {
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	Instruction *inst = *_instRunCtxt.inst;
-	Zone *z = inst->_z;
+	InstructionPtr inst = *_instRunCtxt.inst;
+	ZonePtr z = inst->_z;
 
 	if (z) {
 		z->_flags |= kFlagsRemove;
@@ -345,7 +345,7 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	int16 rvalue = inst->_opB.getRValue();
 	int16* lvalue = inst->_opA.getLValue();
@@ -356,7 +356,7 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	_instRunCtxt.program->_loopCounter = inst->_opB.getRValue();
 	_instRunCtxt.program->_loopStart = _instRunCtxt.inst;
@@ -364,7 +364,7 @@ DECLARE_INSTRUCTION_OPCODE(loop) {
 
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	int16 rvalue = inst->_opB.getRValue();
 
@@ -432,7 +432,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 
 
 DECLARE_INSTRUCTION_OPCODE(color) {
-	Instruction *inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_instRunCtxt.inst;
 
 	int16 entry = inst->_opB.getRValue();
 
@@ -456,7 +456,7 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(text) {
-	Instruction *inst = (*_instRunCtxt.inst);
+	InstructionPtr inst = (*_instRunCtxt.inst);
 	setupSubtitles(inst->_text, inst->_text2, inst->_y);
 }
 

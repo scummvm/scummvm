@@ -26,13 +26,12 @@
 #ifndef PARALLACTION_GRAPHICS_H
 #define PARALLACTION_GRAPHICS_H
 
+#include "common/list.h"
 #include "common/rect.h"
 #include "common/hash-str.h"
 #include "common/stream.h"
 
 #include "graphics/surface.h"
-
-#include "parallaction/defs.h"
 
 
 namespace Parallaction {
@@ -601,6 +600,7 @@ protected:
 
 
 #endif
+
 
 
 

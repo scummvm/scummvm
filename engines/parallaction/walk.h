@@ -26,7 +26,8 @@
 #ifndef PARALLACTION_WALK_H
 #define PARALLACTION_WALK_H
 
-#include "parallaction/defs.h"
+#include "common/ptr.h"
+#include "common/list.h"
 
 namespace Parallaction {
 
@@ -44,22 +45,23 @@ public:
 	void getPoint(Common::Point &p) const;
 };
 
-typedef ManagedList<WalkNode*> WalkNodeList;
+typedef Common::SharedPtr<WalkNode> WalkNodePtr;
+typedef Common::List<WalkNodePtr> WalkNodeList;
 
 
 class PathBuilder {
 
-	Animation		*_anim;
+	AnimationPtr	_anim;
 
 	WalkNodeList	*_list;
-	Common::List<WalkNode*>		_subPath;
+	WalkNodeList	_subPath;
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
-	uint16 walkFunc1(int16 x, int16 y, WalkNode *Node);
+	uint16 walkFunc1(int16 x, int16 y, WalkNodePtr& Node);
 
 public:
-	PathBuilder(Animation *anim);
+	PathBuilder(AnimationPtr &anim);
 	WalkNodeList* buildPath(uint16 x, uint16 y);
 
 };

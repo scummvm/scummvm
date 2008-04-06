@@ -28,7 +28,7 @@
 namespace Parallaction {
 
 static uint16 _doorData1 = 1000;
-static Zone *_zoneTrap = NULL;
+static ZonePtr _zoneTrap;
 
 static uint16	walkData1 = 0;
 static uint16	walkData2 = 0;	// next walk frame
@@ -129,7 +129,7 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 		(*nearest)->getPoint(v20);
 		v34 = v30 = v20.sqrDist(stop);
 
-		_subPath.push_back(new WalkNode(**nearest));
+		_subPath.push_back(WalkNodePtr(new WalkNode(**nearest)));
 	}
 
 	return v34;
@@ -154,14 +154,13 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	correctPathPoint(to);
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
-	WalkNode *v48 = new WalkNode(to.x, to.y);
-	WalkNode *v44 = new WalkNode(*v48);
+	WalkNodePtr v48(new WalkNode(to.x, to.y));
+	WalkNodePtr v44 = v48;
 
 	uint16 v38 = walkFunc1(to.x, to.y, v44);
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
-		delete v44;
 
 		_list = new WalkNodeList;
 		_list->push_back(v48);
@@ -198,7 +197,6 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	printNodes(_list, "complete");
 #endif
 
-	delete v44;
 	return _list;
 }
 
@@ -210,7 +208,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
+uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr &Node) {
 
 	Common::Point arg(x, y);
 
@@ -261,7 +259,7 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	return 1;
 }
 
-void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
+void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr& from) {
 
 	if ((pos.x < from->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
@@ -282,7 +280,7 @@ void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 	return;
 }
 
-int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNode* from) {
+int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr& from) {
 
 	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
 
@@ -295,7 +293,7 @@ int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNode* fr
 
 	// walk frame selection
 	int16 v16;
-	if (_char._ani.getFrameNum() == 20) {
+	if (_char._ani->getFrameNum() == 20) {
 
 		if (dist.x > dist.y) {
 			walkData2 = (from->_x > pos.x) ? 0 : 7;
@@ -329,7 +327,7 @@ uint16 Parallaction::checkDoor() {
 
 	if (_currentLocationIndex != _doorData1) {
 		_doorData1 = _currentLocationIndex;
-		_zoneTrap = NULL;
+		_zoneTrap = nullZonePtr;
 	}
 
 	_engineFlags &= ~kEngineWalking;
@@ -337,16 +335,16 @@ uint16 Parallaction::checkDoor() {
 	Common::Point foot;
 
 	_char.getFoot(foot);
-	Zone *z = hitZone(kZoneDoor, foot.x, foot.y);
+	ZonePtr z = hitZone(kZoneDoor, foot.x, foot.y);
 
-	if (z != NULL) {
+	if (z) {
 
 		if ((z->_flags & kFlagsClosed) == 0) {
 			_location._startPosition = z->u.door->_startPos;
 			_location._startFrame = z->u.door->_startFrame;
 
 			scheduleLocationSwitch(z->u.door->_location);
-			_zoneTrap = NULL;
+			_zoneTrap = nullZonePtr;
 
 		} else {
 			runCommands(z->_commands, z);
@@ -356,23 +354,23 @@ uint16 Parallaction::checkDoor() {
 	_char.getFoot(foot);
 	z = hitZone(kZoneTrap, foot.x, foot.y);
 
-	if (z != NULL) {
+	if (z) {
 		_localFlags[_currentLocationIndex] |= kFlagsEnter;
 		runCommands(z->_commands, z);
 		_localFlags[_currentLocationIndex] &= ~kFlagsEnter;
 		_zoneTrap = z;
 	} else
-	if (_zoneTrap != NULL) {
+	if (_zoneTrap) {
 		_localFlags[_currentLocationIndex] |= kFlagsExit;
 		runCommands(_zoneTrap->_commands, _zoneTrap);
 		_localFlags[_currentLocationIndex] &= ~kFlagsExit;
-		_zoneTrap = NULL;
+		_zoneTrap = nullZonePtr;
 	}
 
 //	printf("done\n");
 
-	_char._ani._frame = walkData2;
-	return _char._ani._frame;
+	_char._ani->_frame = walkData2;
+	return _char._ani->_frame;
 }
 
 
@@ -388,8 +386,8 @@ void Parallaction_ns::walk() {
 
 	WalkNodeList *list = _char._walkPath;
 
-	_char._ani._oldPos.x = _char._ani._left;
-	_char._ani._oldPos.y = _char._ani._top;
+	_char._ani->_oldPos.x = _char._ani->_left;
+	_char._ani->_oldPos.y = _char._ani->_top;
 
 	Common::Point pos;
 	_char.getFoot(pos);
@@ -416,14 +414,14 @@ void Parallaction_ns::walk() {
 
 	_char.setFoot(pos);
 
-	Common::Point newpos(_char._ani._left, _char._ani._top);
+	Common::Point newpos(_char._ani->_left, _char._ani->_top);
 
-	if (newpos == _char._ani._oldPos) {
+	if (newpos == _char._ani->_oldPos) {
 		debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
 //		j->_finished = 1;
 		finalizeWalk(list);
 	} else {
-		_char._ani._frame = v16 + walkData2 + 1;
+		_char._ani->_frame = v16 + walkData2 + 1;
 	}
 
 	return;
@@ -444,7 +442,7 @@ void WalkNode::getPoint(Common::Point &p) const {
 	p.y = _y;
 }
 
-PathBuilder::PathBuilder(Animation *anim) : _anim(anim), _list(0) {
+PathBuilder::PathBuilder(AnimationPtr &anim) : _anim(anim), _list(0) {
 }
 
 

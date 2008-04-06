@@ -130,14 +130,14 @@ DECLARE_LOCATION_PARSER(location)  {
 	// TODO: handle background horizontal flip (via a context parameter)
 
 	if (_tokens[nextToken][0] != '\0') {
-		_char._ani._left = atoi(_tokens[nextToken]);
+		_char._ani->_left = atoi(_tokens[nextToken]);
 		nextToken++;
-		_char._ani._top = atoi(_tokens[nextToken]);
+		_char._ani->_top = atoi(_tokens[nextToken]);
 		nextToken++;
 	}
 
 	if (_tokens[nextToken][0] != '\0') {
-		_char._ani._frame = atoi(_tokens[nextToken]);
+		_char._ani->_frame = atoi(_tokens[nextToken]);
 	}
 }
 
@@ -695,11 +695,11 @@ DECLARE_INSTRUCTION_PARSER(if_op)  {
 DECLARE_INSTRUCTION_PARSER(endif)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(endif) ");
 
-	if (_instParseCtxt.openIf == 0)
+	if (!_instParseCtxt.openIf)
 		error("unexpected 'endif'");
 
 //	_instParseCtxt.openIf->_endif = _instParseCtxt.inst;
-	_instParseCtxt.openIf = NULL;
+	_instParseCtxt.openIf = nullInstructionPtr;
 }
 
 
@@ -716,14 +716,14 @@ void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
 		return;
 	}
 
-	Animation *a;
+	AnimationPtr a;
 	if (str[1] == '.') {
 		a = findAnimation(&str[2]);
 		if (!a) {
 			error("unknown animation '%s' in script", &str[2]);
 		}
 	} else
-		a = _instParseCtxt.a;
+		a = AnimationPtr(_instParseCtxt.a);
 
 	if (str[0] == 'X') {
 		v.setField(&a->_left);

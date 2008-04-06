@@ -34,7 +34,7 @@
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 
-#include "parallaction/defs.h"
+#define PATH_LEN 200
 
 class MidiParser;
 

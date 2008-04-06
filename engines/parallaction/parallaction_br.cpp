@@ -64,8 +64,6 @@ int Parallaction_br::init() {
 
 	_soundMan = new DummySoundMan(this);
 
-	_activeZone2 = 0;
-
 	initResources();
 	initFonts();
 	initCursors();
@@ -192,17 +190,17 @@ void Parallaction_br::startPart() {
 }
 
 void Parallaction_br::runPendingZones() {
-	Zone *z;
+	ZonePtr z;
 
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
-		_activeZone = NULL;
+		_activeZone = nullZonePtr;
 //		runZone(z);			// FIXME: BRA doesn't handle sound yet
 	}
 
 	if (_activeZone2) {
 		z = _activeZone2;	// speak Zone or sound
-		_activeZone2 = NULL;
+		_activeZone2 = nullZonePtr;
 		runZone(z);
 	}
 }
