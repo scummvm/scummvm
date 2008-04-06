@@ -81,9 +81,10 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	}
 
 	bool newSoundFile = false;
+	uint32 waitTime = 0;
 	if (_sceneList[newScene].sound != _lastMusicCommand) {
 		newSoundFile = true;
-		//XXX
+		waitTime = _system->getMillis() + 1000;
 		_sound->beginFadeOut();
 	}
 	
@@ -113,7 +114,13 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	_sceneExit4 = scene.exit4;
 
 	if (newSoundFile) {
-		//XXX while (snd_isPlaying()) ;
+		if (_sound->getMusicType() == Sound::kAdlib) {
+			while (0/*snd_isPlaying()*/)
+				_system->delayMillis(10);
+		} else {
+			while (waitTime > _system->getMillis())
+				_system->delayMillis(10);
+		}
 		snd_loadSoundFile(_sceneList[newScene].sound);
 	}
 

@@ -69,6 +69,16 @@ public:
 	Sound(KyraEngine *vm, Audio::Mixer *mixer);
 	virtual ~Sound();
 
+	enum kType {
+		kAdlib,
+		kMidiMT32,
+		kMidiGM,
+		kTowns
+	};
+
+	virtual kType getMusicType() const = 0;
+	virtual kType getSfxType() const { return getMusicType(); }
+
 	/**
 	 * Initializes the output device.
 	 *
@@ -221,6 +231,8 @@ public:
 	SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer);
 	~SoundAdlibPC();
 
+	kType getMusicType() const { return kAdlib; }
+
 	bool init();
 	void process();
 
@@ -273,6 +285,8 @@ public:
 	SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
 	~SoundMidiPC();
 
+	kType getMusicType() const { return isMT32() ? kMidiMT32 : kMidiGM; }
+
 	bool init() { return true; }
 
 	void updateVolumeSettings() { /*XXX*/ }
@@ -302,7 +316,7 @@ public:
 	void setPassThrough(bool b)	{ _passThrough = b; }
 
 	void hasNativeMT32(bool nativeMT32);
-	bool isMT32() { return _nativeMT32; }
+	bool isMT32() const { return _nativeMT32; }
 
 private:
 	void setVolume(int vol);
@@ -342,6 +356,8 @@ class SoundTowns : public MidiDriver, public Sound {
 public:
 	SoundTowns(KyraEngine *vm, Audio::Mixer *mixer);
 	~SoundTowns();
+
+	kType getMusicType() const { return kTowns; }
 
 	bool init();
 	void process();
@@ -398,6 +414,8 @@ public:
 	SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer);
 	~SoundTowns_v2();
 
+	kType getMusicType() const { return kTowns; }
+
 	bool init();
 	void process();
 
@@ -423,6 +441,9 @@ class MixedSoundDriver : public Sound {
 public:
 	MixedSoundDriver(KyraEngine *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
 	~MixedSoundDriver() { delete _music; delete _sfx; }
+
+	kType getMusicType() const { return _music->getMusicType(); }
+	kType getSfxType() const { return _sfx->getSfxType(); }
 
 	bool init() { return (_music->init() && _sfx->init()); }
 	void process() { _music->process(); _sfx->process(); }

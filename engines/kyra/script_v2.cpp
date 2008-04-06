@@ -1675,7 +1675,14 @@ int KyraEngine_v2::o2_getBoolFromStack(ScriptState *script) {
 
 int KyraEngine_v2::o2_getSfxDriver(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getSfxDriver(%p) ()", (const void *)script);
-	return 1;	// HACK: this is AdLib driver, maybe we should return 6 for MT-32 or 7 for General MIDI too when we're using that
+	if (_sound->getSfxType() == Sound::kAdlib)
+		return 1;
+	else if (_sound->getSfxType() == Sound::kMidiMT32)
+		return 6;
+	else if (_sound->getSfxType() == Sound::kMidiGM)
+		return 7;
+	// TODO: find nice default value
+	return 0;
 }
 
 int KyraEngine_v2::o2_getVocSupport(ScriptState *script) {
@@ -1686,7 +1693,14 @@ int KyraEngine_v2::o2_getVocSupport(ScriptState *script) {
 
 int KyraEngine_v2::o2_getMusicDriver(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getMusicDriver(%p) ()", (const void *)script);
-	return 1;	// HACK: this is AdLib driver, maybe we should return 6 for MT-32 or 7 for General MIDI too when we're using that
+	if (_sound->getMusicType() == Sound::kAdlib)
+		return 1;
+	else if (_sound->getMusicType() == Sound::kMidiMT32)
+		return 6;
+	else if (_sound->getMusicType() == Sound::kMidiGM)
+		return 7;
+	// TODO: find nice default value
+	return 0;
 }
 
 int KyraEngine_v2::o2_setVocHigh(ScriptState *script) {
