@@ -319,14 +319,14 @@ public:
 
 	OpcodeSet	_commandOpcodes;
 
-	struct {
+	struct ParallactionStruct1 {
 		CommandPtr cmd;
 		ZonePtr	z;
 	} _cmdRunCtxt;
 
 	OpcodeSet	_instructionOpcodes;
 
-	struct {
+	struct ParallactionStruct2 {
 		AnimationPtr	anim;
 		ProgramPtr		program;
 		InstructionList::iterator inst;
