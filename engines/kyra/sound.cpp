@@ -25,6 +25,8 @@
 
 
 #include "common/system.h"
+#include "common/config-manager.h"
+
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 
@@ -146,33 +148,52 @@ bool Sound::voiceIsPlaying(const char *file) {
 SoundMidiPC::SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
 	_driver = driver;
 	_passThrough = false;
-	_eventFromMusic = false;
-	_fadeMusicOut = _sfxIsPlaying = false;
-	_fadeStartTime = 0;
-	_isPlaying = _nativeMT32 = _useC55 = false;
-	_soundEffect = _parser = 0;
-	_soundEffectSource = _parserSource = 0;
 
-	memset(_channel, 0, sizeof(MidiChannel*) * 32);
-	memset(_channelVolume, 50, sizeof(uint8) * 16);
+	_musicParser = _sfxParser = 0;
+	_isMusicPlaying = _isSfxPlaying = false;
+	_eventFromMusic = false;
+	
+	_nativeMT32 = _useC55 = false;
+
+	memset(_channel, 0, sizeof(_channel));
+	memset(_channelVolume, 50, sizeof(_channelVolume));
 	_channelVolume[10] = 100;
 	for (int i = 0; i < 16; ++i)
 		_virChannel[i] = i;
-	_volume = 0;
 
 	int ret = open();
 	if (ret != MERR_ALREADY_OPEN && ret != 0)
-		error("couldn't open midi driver");
+		error("Couldn't open midi driver");
 }
 
 SoundMidiPC::~SoundMidiPC() {
-	stopMusic();
-	stopSoundEffect();
-
 	Common::StackLock lock(_mutex);
+
+	delete _musicParser;
+	delete _sfxParser;
 
 	_driver->setTimerCallback(0, 0);
 	close();
+}
+
+bool SoundMidiPC::init() {
+	_musicParser = MidiParser::createParser_XMIDI();
+	_sfxParser = MidiParser::createParser_XMIDI();
+
+	if (!_musicParser || !_sfxParser)
+		return false;
+
+	_musicParser->setMidiDriver(this);
+	_sfxParser->setMidiDriver(this);
+
+	return true;
+}
+
+void SoundMidiPC::updateVolumeSettings() {
+	_musicVolume = ConfMan.getInt("music_volume");
+	_sfxVolume = ConfMan.getInt("sfx_volume");
+
+	updateChannelVolume(_musicVolume);
 }
 
 void SoundMidiPC::hasNativeMT32(bool nativeMT32) {
@@ -185,23 +206,13 @@ void SoundMidiPC::hasNativeMT32(bool nativeMT32) {
 		_useC55 = false;
 }
 
-void SoundMidiPC::setVolume(int volume) {
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
-
-	if (_volume == volume)
-		return;
-
-	_volume = volume;
+void SoundMidiPC::updateChannelVolume(uint8 volume) {
 	for (int i = 0; i < 32; ++i) {
 		if (_channel[i]) {
-			if (i >= 16) {
-				_channel[i]->volume(_channelVolume[i - 16] * _volume / 255);
-			} else {
-				_channel[i]->volume(_channelVolume[i] * _volume / 255);
-			}
+			if (i >= 16)
+				_channel[i]->volume(_channelVolume[i - 16] * volume / 255);
+			else
+				_channel[i]->volume(_channelVolume[i] * volume / 255);
 		}
 	}
 }
@@ -235,9 +246,9 @@ void SoundMidiPC::send(uint32 b) {
 	// anyone feels like doing a proper implementation, please refer to
 	// the Exult project, and do it in midiparser_xmidi.cpp
 
-	if ((b & 0xFFF0) == 0x74B0) {
+	if ((b & 0xFFF0) == 0x74B0 && _eventFromMusic) {
 		debugC(9, kDebugLevelMain | kDebugLevelSound, "SoundMidiPC: Looping song");
-		_parser->property(MidiParser::mpAutoLoop, true);
+		_musicParser->property(MidiParser::mpAutoLoop, true);
 		return;
 	}
 
@@ -248,6 +259,8 @@ void SoundMidiPC::send(uint32 b) {
 		return;
 	}
 
+	const uint8 volume = /*_eventFromMusic ? */_musicVolume/* : _sfxVolume*/;
+
 	uint8 channel = (byte)(b & 0x0F);
 	if (((b & 0xFFF0) == 0x6FB0 || (b & 0xFFF0) == 0x6EB0) && channel != 9) {
 		if (_virChannel[channel] == channel) {
@@ -255,17 +268,17 @@ void SoundMidiPC::send(uint32 b) {
 			if (!_channel[_virChannel[channel]])
 				_channel[_virChannel[channel]] = _driver->allocateChannel();
 			if (_channel[_virChannel[channel]])
-				_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
+				_channel[_virChannel[channel]]->volume(_channelVolume[channel] * volume / 255);
 		}
 		return;
 	}
 
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
-		uint8 volume = (uint8)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _volume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
+		uint8 vol = (uint8)((b >> 16) & 0x7F);
+		_channelVolume[channel] = vol;
+		vol = vol * volume / 255;
+		b = (b & 0xFF00FFFF) | (vol << 16);
 	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32 && !_useC55) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	} else if ((b & 0xFFF0) == 0x007BB0) {
@@ -278,7 +291,7 @@ void SoundMidiPC::send(uint32 b) {
 	if (!_channel[_virChannel[channel]]) {
 		_channel[_virChannel[channel]] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 		if (_channel[_virChannel[channel]])
-			_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
+			_channel[_virChannel[channel]]->volume(_channelVolume[channel] * volume / 255);
 	}
 	if (_channel[_virChannel[channel]])
 		_channel[_virChannel[channel]]->send(b);
@@ -292,7 +305,7 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 			for (int i = 0; i < 16; ++i)
 				_virChannel[i] = i;
 		} else {
-			_sfxIsPlaying = false;
+			_isSfxPlaying = false;
 		}
 		break;
 	default:
@@ -301,184 +314,141 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
+
+struct DeleterArray {
+	void operator ()(byte *ptr) {
+		delete [] ptr;
+	}
+};
+
 void SoundMidiPC::loadSoundFile(uint file) {
-	char filename[25];
-	sprintf(filename, "%s.%s", fileListEntry(file), _useC55 ? "C55" : "XMI");
-
-	uint32 size;
-	uint8 *data = (_vm->resource())->fileData(filename, &size);
-
-	if (!data) {
-		warning("couldn't load '%s'", filename);
-		return;
-	}
-
-	playMusic(data, size);
-	loadSoundEffectFile(file);
-}
-
-void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
-	stopMusic();
-
 	Common::StackLock lock(_mutex);
 
-	_parserSource = data;
-	_parser = MidiParser::createParser_XMIDI();
-	assert(_parser);
+	Common::String filename = fileListEntry(file);
+	filename += ".";
+	filename += _useC55 ? "C55" : "XMI";
 
-	if (!_parser->loadMusic(data, size)) {
-		warning("Error reading track");
-		delete _parser;
-		_parser = 0;
-		return;
-	}
-
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(getBaseTempo());
-	_parser->setTempo(0);
-}
-
-void SoundMidiPC::loadSoundEffectFile(uint file) {
-	char filename[25];
-	sprintf(filename, "%s.%s", fileListEntry(file), _useC55 ? "C55" : "XMI");
-
-	uint32 size;
-	uint8 *data = (_vm->resource())->fileData(filename, &size);
-
-	if (!data) {
-		warning("couldn't load '%s'", filename);
-		return;
-	}
-
-	loadSoundEffectFile(data, size);
-}
-
-void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
-	stopSoundEffect();
-
-	Common::StackLock lock(_mutex);
-
-	_soundEffectSource = data;
-	_soundEffect = MidiParser::createParser_XMIDI();
-	assert(_soundEffect);
-
-	if (!_soundEffect->loadMusic(data, size)) {
-		warning("Error reading track");
-		delete _parser;
-		_parser = 0;
-		return;
-	}
-
-	_soundEffect->setMidiDriver(this);
-	_soundEffect->setTimerRate(getBaseTempo());
-	_soundEffect->setTempo(0);
-	_soundEffect->property(MidiParser::mpAutoLoop, false);
-}
-
-void SoundMidiPC::stopMusic() {
-	Common::StackLock lock(_mutex);
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-		delete _parser;
-		_parser = 0;
-		delete [] _parserSource;
-		_parserSource = 0;
-
+	if (filename == _currentTrack) {
+		_isMusicPlaying = _isSfxPlaying = false;
 		_fadeStartTime = 0;
 		_fadeMusicOut = false;
-		setVolume(255);
+		updateChannelVolume(_musicVolume);
+		_musicParser->setTempo(0);
+		_sfxParser->setTempo(0);
+		_musicParser->property(MidiParser::mpAutoLoop, false);
+		_sfxParser->property(MidiParser::mpAutoLoop, false);
+		return;
 	}
-}
 
-void SoundMidiPC::stopSoundEffect() {
-	Common::StackLock lock(_mutex);
+	uint32 size;
+	uint8 *data = (_vm->resource())->fileData(filename.c_str(), &size);
 
-	_sfxIsPlaying = false;
-	if (_soundEffect) {
-		_soundEffect->unloadMusic();
-		delete _soundEffect;
-		_soundEffect = 0;
-		delete [] _soundEffectSource;
-		_soundEffectSource = 0;
+	if (!data) {
+		warning("Couldn't load soundfile '%s'", filename.c_str());
+		return;
+	}
+
+	_currentTrack = filename;
+
+	_midiFile = Common::SharedPtr<byte>(data, DeleterArray());
+	_musicParser->unloadMusic();
+
+	_isMusicPlaying = _isSfxPlaying = false;
+	_fadeStartTime = 0;
+	_fadeMusicOut = false;
+	updateChannelVolume(_musicVolume);
+
+	if (_musicParser->loadMusic(_midiFile.get(), size)) {
+		_musicParser->setTimerRate(getBaseTempo());
+		_musicParser->setTempo(0);
+		_musicParser->property(MidiParser::mpAutoLoop, false);
+	} else {
+		warning("Error parsing music track '%s'", filename.c_str());
+	}
+
+	if (_sfxParser->loadMusic(_midiFile.get(), size)) {
+		_sfxParser->setTimerRate(getBaseTempo());
+		_sfxParser->setTempo(0);
+		_sfxParser->property(MidiParser::mpAutoLoop, false);
+	} else {
+		warning("Error parsing sfx track '%s'", filename.c_str());
 	}
 }
 
 void SoundMidiPC::onTimer(void *refCon) {
-	SoundMidiPC *music = (SoundMidiPC *)refCon;
-	Common::StackLock lock(music->_mutex);
+	SoundMidiPC *sound = (SoundMidiPC *)refCon;
+	Common::StackLock lock(sound->_mutex);
 
 	// this should be set to the fadeToBlack value
 	static const uint32 musicFadeTime = 2 * 1000;
 
-	if (music->_fadeMusicOut && music->_fadeStartTime + musicFadeTime > music->_vm->_system->getMillis()) {
-		byte volume = (byte)((musicFadeTime - (music->_vm->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
-		music->setVolume(volume);
-	} else if (music->_fadeStartTime) {
-		music->_fadeStartTime = 0;
-		music->_fadeMusicOut = false;
-		music->_isPlaying = false;
+	if (sound->_fadeMusicOut && sound->_fadeStartTime + musicFadeTime > sound->_vm->_system->getMillis()) {
+		byte volume = (byte)((musicFadeTime - (sound->_vm->_system->getMillis() - sound->_fadeStartTime)) * sound->_musicVolume / musicFadeTime);
+		sound->updateChannelVolume(volume);
+	} else if (sound->_fadeStartTime) {
+		sound->_fadeStartTime = 0;
+		sound->_fadeMusicOut = false;
+		sound->_isMusicPlaying = false;
 
-		music->_eventFromMusic = true;
+		sound->_eventFromMusic = true;
 		// from sound/midiparser.cpp
 		for (int i = 0; i < 128; ++i) {
 			for (int j = 0; j < 16; ++j) {
-				music->send(0x80 | j | i << 8);
+				sound->send(0x80 | j | i << 8);
 			}
 		}
 
 		for (int i = 0; i < 16; ++i)
-			music->send(0x007BB0 | i);
+			sound->send(0x007BB0 | i);
 	}
 
-	if (music->_isPlaying) {
-		if (music->_parser) {
-			music->_eventFromMusic = true;
-			music->_parser->onTimer();
-		}
+	if (sound->_isMusicPlaying) {
+		sound->_eventFromMusic = true;
+		sound->_musicParser->onTimer();
 	}
 
-	if (music->_sfxIsPlaying) {
-		if (music->_soundEffect) {
-			music->_eventFromMusic = false;
-			music->_soundEffect->onTimer();
-		}
+	if (sound->_isSfxPlaying) {
+		sound->_eventFromMusic = false;
+		sound->_sfxParser->onTimer();
 	}
 }
 
 void SoundMidiPC::playTrack(uint8 track) {
-	if (_parser && (track != 0 || _nativeMT32) && _musicEnabled) {
-		_isPlaying = true;
+	Common::StackLock lock(_mutex);
+
+	if (_musicParser && (track != 0 || _nativeMT32) && _musicEnabled) {
+		_isMusicPlaying = true;
 		_fadeMusicOut = false;
 		_fadeStartTime = 0;
-		setVolume(255);
-		_parser->setTrack(track);
-		_parser->jumpToTick(0);
-		_parser->setTempo(1);
-		_parser->property(MidiParser::mpAutoLoop, false);
+		updateChannelVolume(_musicVolume);
+		_musicParser->setTrack(track);
+		_musicParser->jumpToTick(0);
+		_musicParser->setTempo(1);
+		_musicParser->property(MidiParser::mpAutoLoop, false);
 	}
 }
 
 void SoundMidiPC::haltTrack() {
-	if (_parser) {
-		_isPlaying = false;
+	Common::StackLock lock(_mutex);
+
+	if (_musicParser) {
+		_isMusicPlaying = false;
 		_fadeMusicOut = false;
 		_fadeStartTime = 0;
-		setVolume(255);
-		_parser->setTrack(0);
-		_parser->jumpToTick(0);
-		_parser->setTempo(0);
+		updateChannelVolume(_musicVolume);
+		_musicParser->setTrack(0);
+		_musicParser->jumpToTick(0);
+		_musicParser->setTempo(0);
 	}
 }
 
 void SoundMidiPC::playSoundEffect(uint8 track) {
-	if (_soundEffect && _sfxEnabled) {
-		_sfxIsPlaying = true;
-		_soundEffect->setTrack(track);
-		_soundEffect->jumpToTick(0);
-		_soundEffect->setTempo(1);
-		_soundEffect->property(MidiParser::mpAutoLoop, false);
+	if (_sfxParser && _sfxEnabled) {
+		_isSfxPlaying = true;
+		_sfxParser->setTrack(track);
+		_sfxParser->jumpToTick(0);
+		_sfxParser->setTempo(1);
+		_sfxParser->property(MidiParser::mpAutoLoop, false);
 	}
 }
 
@@ -486,6 +456,8 @@ void SoundMidiPC::beginFadeOut() {
 	_fadeMusicOut = true;
 	_fadeStartTime = _vm->_system->getMillis();
 }
+
+#pragma mark -
 
 void KyraEngine::snd_playTheme(int file, int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);

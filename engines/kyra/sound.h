@@ -42,16 +42,16 @@
 #ifndef KYRA_SOUND_H
 #define KYRA_SOUND_H
 
+#include "kyra/kyra.h"
 
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/mutex.h"
+#include "common/ptr.h"
 
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
 #include "sound/softsynth/ym2612.h"
-
-#include "kyra/kyra.h"
 
 namespace Audio {
 class AudioStream;
@@ -303,9 +303,9 @@ public:
 
 	kType getMusicType() const { return isMT32() ? kMidiMT32 : kMidiGM; }
 
-	bool init() { return true; }
+	bool init();
 
-	void updateVolumeSettings() { /*XXX*/ }
+	void updateVolumeSettings();
 
 	void loadSoundFile(uint file);
 
@@ -335,35 +335,43 @@ public:
 	bool isMT32() const { return _nativeMT32; }
 
 private:
-	void setVolume(int vol);
-
-	void playMusic(uint8 *data, uint32 size);
-	void stopMusic();
-	void loadSoundEffectFile(uint file);
-	void loadSoundEffectFile(uint8 *data, uint32 size);
-
-	void stopSoundEffect();
+	void updateChannelVolume(uint8 vol);
 
 	static void onTimer(void *data);
 
-	MidiChannel *_channel[32];
-	int _virChannel[16];
+	// Our channel handling
+	uint8 _virChannel[16];
 	uint8 _channelVolume[16];
-	MidiDriver *_driver;
-	bool _nativeMT32;
-	bool _useC55;
-	bool _passThrough;
-	uint8 _volume;
-	bool _isPlaying;
-	bool _sfxIsPlaying;
+
+	MidiChannel *_channel[32];
+
+	// Music/Sfx volume
+	uint8 _musicVolume;
+	uint8 _sfxVolume;
+
 	uint32 _fadeStartTime;
 	bool _fadeMusicOut;
-	bool _eventFromMusic;
-	MidiParser *_parser;
-	byte *_parserSource;
-	MidiParser *_soundEffect;
-	byte *_soundEffectSource;
 
+	// Midi file related
+	Common::SharedPtr<byte> _midiFile;
+	Common::String _currentTrack;
+
+	// Music related
+	MidiParser *_musicParser;
+
+	bool _isMusicPlaying;
+	bool _eventFromMusic;
+
+	// Sfx related
+	MidiParser *_sfxParser;
+
+	bool _isSfxPlaying;
+
+	// misc
+	bool _nativeMT32;
+	bool _useC55;
+	MidiDriver *_driver;
+	bool _passThrough;
 	Common::Mutex _mutex;
 };
 
