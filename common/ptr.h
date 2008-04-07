@@ -175,7 +175,9 @@ public:
 	 * This should just be used for debugging purposes.
 	 */
 	RefValue refCount() const { return _refCount ? *_refCount : 0; }
+#if !((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95))
 private:
+#endif
 	void decRef() {
 		if (_refCount) {
 			--(*_refCount);
@@ -208,5 +210,6 @@ bool operator !=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r)
 
 
 #endif
+
 
 
