@@ -172,7 +172,7 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 	//
 	if (!file) {
 		fileBuf.toUppercase();
-		pathBuf += fileBuf;
+		pathBuf = dirBuf + fileBuf;
 		file = fopen(pathBuf.c_str(), mode);
 	}
 
@@ -181,7 +181,7 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 	//
 	if (!file) {
 		fileBuf.toLowercase();
-		pathBuf += fileBuf;
+		pathBuf = dirBuf + fileBuf;
 		file = fopen(pathBuf.c_str(), mode);
 	}
 
@@ -191,7 +191,7 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 	if (!file) {
 		fileBuf.toLowercase();
 		fileBuf.setChar(toupper(fileBuf[0]),0);
-		pathBuf += fileBuf;
+		pathBuf = dirBuf + fileBuf;
 		file = fopen(pathBuf.c_str(), mode);
 	}
 
