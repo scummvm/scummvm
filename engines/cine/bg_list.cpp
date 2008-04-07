@@ -36,129 +36,116 @@
 namespace Cine {
 
 uint32 var8;
-BGIncrustList *bgIncrustList;
+Common::List<BGIncrust> bgIncrustList;
 
+/*! \brief Add masked sprite to the background
+ * \param objIdx Sprite description
+ * \param addList Add sprite to incrust list if true
+ * \todo Fix incrust objects on CT background. Always drawing incrust elements
+ * on CT background breaks game zones
+ */
 void addToBGList(int16 objIdx, bool addList) {
 	int16 x = objectTable[objIdx].x;
 	int16 y = objectTable[objIdx].y;
-	int16 width = animDataTable[objectTable[objIdx].frame].var1;
-	int16 height = animDataTable[objectTable[objIdx].frame].height;
+	int16 width = animDataTable[objectTable[objIdx].frame]._var1;
+	int16 height = animDataTable[objectTable[objIdx].frame]._height;
+	const byte *data = animDataTable[objectTable[objIdx].frame].data();
+	const byte *mask = animDataTable[objectTable[objIdx].frame].mask();
 //	int16 part = objectTable[objIdx].part;
 
+	// Operation Stealth may switch among multiple backgrounds
 	if (g_cine->getGameType() == GType_OS) {
-		drawSpriteRaw2(animDataTable[objectTable[objIdx].frame].ptr1, objectTable[objIdx].part, width, height, page2Raw, x, y);
+		for (int i = 0; i < 8; i++) {
+			if (additionalBgTable[i]) {
+				drawSpriteRaw2(data, objectTable[objIdx].part, width, height, additionalBgTable[i], x, y);
+			}
+		}
 	} else {
-		drawSpriteRaw(animDataTable[objectTable[objIdx].frame].ptr1, animDataTable[objectTable[objIdx].frame].ptr2, width, height, page2Raw, x, y);
+		drawSpriteRaw(data, mask, width, height, page2Raw, x, y);
 	}
 
 	if (addList)
 		createBgIncrustListElement(objIdx, 0);
 }
 
+/*! \brief Add filled sprite to the background
+ * \param objIdx Sprite description
+ * \param addList Add sprite to incrust list if true
+ * \todo Fix incrust objects on CT background. Always drawing incrust elements
+ * on CT background breaks game zones
+ */
 void addSpriteFilledToBGList(int16 objIdx, bool addList) {
 	int16 x = objectTable[objIdx].x;
 	int16 y = objectTable[objIdx].y;
-	int16 width = animDataTable[objectTable[objIdx].frame].width;
-	int16 height = animDataTable[objectTable[objIdx].frame].height;
+	int16 width = animDataTable[objectTable[objIdx].frame]._width;
+	int16 height = animDataTable[objectTable[objIdx].frame]._height;
+	const byte *data = animDataTable[objectTable[objIdx].frame].data();
 
-	if (animDataTable[objectTable[objIdx].frame].ptr1) {
-		gfxFillSprite(animDataTable[objectTable[objIdx].frame].ptr1, width / 2, height, page2Raw, x, y);
+	if (data) {
+		// Operation Stealth may switch among multiple backgrounds
+		if (g_cine->getGameType() == GType_OS) {
+			for (int i = 0; i < 8; i++) {
+				if (additionalBgTable[i]) {
+					gfxFillSprite(data, width / 2, height, additionalBgTable[i], x, y);
+				}
+			}
+		} else {
+			gfxFillSprite(data, width / 2, height, page2Raw, x, y);
+		}
 	}
 
 	if (addList)
 		createBgIncrustListElement(objIdx, 1);
 }
 
+/*! \brief Add new element to incrust list
+ * \param objIdx Element description
+ * \param param Type of element
+ */
 void createBgIncrustListElement(int16 objIdx, int16 param) {
-	BGIncrustList *bgIncrustPtr = bgIncrustList;
-	BGIncrustList *bgIncrustPtrP = 0;
+	BGIncrust tmp;
 
-	// Find first empty element
-	while (bgIncrustPtr) {
-		bgIncrustPtrP = bgIncrustPtr;
-		bgIncrustPtr = bgIncrustPtr->next;
-	}
+	tmp.objIdx = objIdx;
+	tmp.param = param;
+	tmp.x = objectTable[objIdx].x;
+	tmp.y = objectTable[objIdx].y;
+	tmp.frame = objectTable[objIdx].frame;
+	tmp.part = objectTable[objIdx].part;
 
-	bgIncrustPtr = new BGIncrustList;
-	if (bgIncrustPtrP)
-		bgIncrustPtrP->next = bgIncrustPtr;
-	else
-		bgIncrustList = bgIncrustPtr;
-
-	bgIncrustPtr->next = 0;
-
-	bgIncrustPtr->objIdx = objIdx;
-	bgIncrustPtr->param = param;
-    bgIncrustPtr->x = objectTable[objIdx].x;
-    bgIncrustPtr->y = objectTable[objIdx].y;
-    bgIncrustPtr->frame = objectTable[objIdx].frame;
-    bgIncrustPtr->part = objectTable[objIdx].part;
+	bgIncrustList.push_back(tmp);
 }
 
-void freeBgIncrustList(void) {
-	BGIncrustList *bgIncrustPtr = bgIncrustList;
-	BGIncrustList *bgIncrustPtrN;
-
-	while (bgIncrustPtr) {
-		bgIncrustPtrN = bgIncrustPtr->next;
-		delete bgIncrustPtr;
-		bgIncrustPtr = bgIncrustPtrN;
-	}
-
-	resetBgIncrustList();
-}
-
+/*! \brief Reset var8 (probably something related to bgIncrustList
+ */
 void resetBgIncrustList(void) {
-	bgIncrustList = NULL;
 	var8 = 0;
 }
 
-void loadBgIncrustFromSave(Common::InSaveFile *fHandle) {
-	BGIncrustList *bgIncrustPtr = bgIncrustList;
-	BGIncrustList *bgIncrustPtrP = 0;
+/*! \brief Restore incrust list from savefile
+ * \param fHandle Savefile open for reading
+ */
+void loadBgIncrustFromSave(Common::InSaveFile &fHandle) {
+	BGIncrust tmp;
+	int size = fHandle.readSint16BE();
 
-	// Find first empty element
-	while (bgIncrustPtr) {
-		bgIncrustPtrP = bgIncrustPtr;
-		bgIncrustPtr = bgIncrustPtr->next;
-	}
+	for (int i = 0; i < size; i++) {
+		fHandle.readUint32BE();
+		fHandle.readUint32BE();
 
-	bgIncrustPtr = new BGIncrustList;
-	if (bgIncrustPtrP)
-		bgIncrustPtrP->next = bgIncrustPtr;
-	else
-		bgIncrustList = bgIncrustPtr;
+		tmp.objIdx = fHandle.readUint16BE();
+		tmp.param = fHandle.readUint16BE();
+		tmp.x = fHandle.readUint16BE();
+		tmp.y = fHandle.readUint16BE();
+		tmp.frame = fHandle.readUint16BE();
+		tmp.part = fHandle.readUint16BE();
+	
+		bgIncrustList.push_back(tmp);
 
-	bgIncrustPtr->next = 0;
-
-	fHandle->readUint32BE();
-	fHandle->readUint32BE();
-
-	bgIncrustPtr->objIdx = fHandle->readUint16BE();
-	bgIncrustPtr->param = fHandle->readUint16BE();
-    bgIncrustPtr->x = fHandle->readUint16BE();
-    bgIncrustPtr->y = fHandle->readUint16BE();
-    bgIncrustPtr->frame = fHandle->readUint16BE();
-    bgIncrustPtr->part = fHandle->readUint16BE();
-}
-
-void reincrustAllBg(void) {
-	BGIncrustList *bgIncrustPtr = bgIncrustList;
-
-	while (bgIncrustPtr) {
-#if 0
-		objectTable[bgIncrustPtr->objIdx].x = bgIncrustPtr->x;
-		objectTable[bgIncrustPtr->objIdx].y = bgIncrustPtr->y;
-		objectTable[bgIncrustPtr->objIdx].frame = bgIncrustPtr->frame;
-		objectTable[bgIncrustPtr->objIdx].part = bgIncrustPtr->part;
-#endif
-		if (bgIncrustPtr->param == 0) {
-			addToBGList(bgIncrustPtr->objIdx, false);
+		if (tmp.param == 0) {
+			addToBGList(tmp.objIdx, false);
 		} else {
-			addSpriteFilledToBGList(bgIncrustPtr->objIdx, false);
+			addSpriteFilledToBGList(tmp.objIdx, false);
 		}
-
-		bgIncrustPtr = bgIncrustPtr->next;
 	}
 }
 

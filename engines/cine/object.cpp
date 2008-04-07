@@ -231,7 +231,9 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 		objectTable[objIdx].frame = newValue;
 		break;
 	case 4:
-		if (newValue == -1) {
+		// is it really in Future Wars? it breaks the newspaper machine
+		// on the airport in Operation Stealth
+		if (newValue == -1 && g_cine->getGameType() != Cine::GType_OS) {
 			objectTable[objIdx].costume = globalVars[0];
 		} else {
 			objectTable[objIdx].costume = newValue;
@@ -243,8 +245,8 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	}
 }
 
-byte compareObjectParam(byte objIdx, byte type, int16 value) {
-	byte compareResult = 0;
+uint16 compareObjectParam(byte objIdx, byte type, int16 value) {
+	uint16 compareResult = 0;
 	int16 objectParam = getObjectParam(objIdx, type);
 
 	if (objectParam > value) {

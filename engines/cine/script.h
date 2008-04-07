@@ -27,17 +27,39 @@
 #define CINE_SCRIPT_H
 
 #include "common/savefile.h"
+#include "common/array.h"
+#include "common/list.h"
+#include "common/ptr.h"
 
 namespace Cine {
 
 #define SCRIPT_STACK_SIZE 50
+#define LOCAL_VARS_SIZE 50
 
+/*! \brief Fixed size array of script variables.
+ *
+ * Array size can be set in constructors, once the instance is created,
+ * it cannot be changed directly.
+ */
+
+class FWScript;
+
+typedef int (FWScript::*opFunc)();
+
+struct Opcode {
+	opFunc proc;
+	const char *args;
+};
+
+/*! \brief Fixed size array for script variables
+ */
 class ScriptVars {
 private:
-	unsigned int _size;
-	int16 *_vars;
+	unsigned int _size; ///< Size of array
+	int16 *_vars; ///< Variable values
 
 public:
+	// Explicit to prevent var=0 instead of var[i]=0 typos.
 	explicit ScriptVars(unsigned int len = 50);
 	ScriptVars(Common::InSaveFile &fHandle, unsigned int len = 50);
 	ScriptVars(const ScriptVars &src);
@@ -47,26 +69,298 @@ public:
 	int16 &operator[](unsigned int idx);
 	int16 operator[](unsigned int idx) const;
 
-	void save(Common::OutSaveFile &fHandle);
-	void save(Common::OutSaveFile &fHandle, unsigned int len);
+	void save(Common::OutSaveFile &fHandle) const;
+	void save(Common::OutSaveFile &fHandle, unsigned int len) const;
 	void load(Common::InSaveFile &fHandle);
 	void load(Common::InSaveFile &fHandle, unsigned int len);
 	void reset(void);
 };
 
-struct ScriptStruct {
-	byte *ptr;
-	uint16 size;
-	int16 stack[SCRIPT_STACK_SIZE];
+class FWScriptInfo;
+
+/*! \brief Script bytecode and initial labels, ScriptStruct replacement.
+ *
+ * _data is one byte longer to make sure strings in bytecode are properly
+ * terminated
+ */
+class RawScript {
+private:
+	byte *_data; ///< Script bytecode
+	ScriptVars _labels; ///< Initial script labels
+
+protected:
+	void computeLabels(const FWScriptInfo &info);
+	int getNextLabel(const FWScriptInfo &info, int offset) const;
+
+public:
+	uint16 _size; ///< Bytecode length
+
+	explicit RawScript(uint16 size);
+	RawScript(const FWScriptInfo &info, const byte *data, uint16 size);
+	RawScript(const RawScript &src);
+	~RawScript(void);
+
+	RawScript &operator=(const RawScript &src);
+
+	void setData(const FWScriptInfo &info, const byte *data);
+	/*! \brief Size of script
+	 * \return Size of script
+	 */
+	const ScriptVars &labels(void) const;
+	byte getByte(unsigned int pos) const;
+	uint16 getWord(unsigned int pos) const;
+	const char *getString(unsigned int pos) const;
+	uint16 getLabel(const FWScriptInfo &info, byte index, uint16 offset) const;
 };
+
+/*! \brief Object script class, RelObjectScript replacement
+ *
+ * Script parameters are not used, this class is required by different
+ * script initialization of object scripts
+ */
+class RawObjectScript : public RawScript {
+public:
+	int16 _runCount; ///< How many times the script was used
+	uint16 _param1; ///< Additional parameter not used at the moment
+	uint16 _param2; ///< Additional parameter not used at the moment
+	uint16 _param3; ///< Additional parameter not used at the moment
+
+	RawObjectScript(uint16 size, uint16 p1, uint16 p2, uint16 p3);
+	RawObjectScript(const FWScriptInfo &info, const byte *data, uint16 size, uint16 p1, uint16 p2, uint16 p3);
+
+	/// \brief Run the script one more time
+	/// \return Run count before incrementation
+	int16 run(void) { return _runCount++; }
+};
+
+/*! \brief Future Wars script, prcLinkedListStruct replacement
+ * \todo Rewrite _globalVars initialization
+ */
+class FWScript {
+private:
+	const RawScript &_script; ///< Script bytecode reference
+	uint16 _pos; ///< Current position in script
+	uint16 _line; ///< Current opcode index in bytecode for debugging
+	uint16 _compare; ///< Last compare result
+	ScriptVars _labels; ///< Current script labels
+	ScriptVars _localVars; ///< Local script variables
+	ScriptVars &_globalVars; ///< Global variables reference
+	FWScriptInfo *_info; ///< Script info
+
+	static const Opcode _opcodeTable[];
+	static const unsigned int _numOpcodes;
+
+protected:
+	int o1_modifyObjectParam();
+	int o1_getObjectParam();
+	int o1_addObjectParam();
+	int o1_subObjectParam();
+	int o1_add2ObjectParam();
+	int o1_sub2ObjectParam();
+	int o1_compareObjectParam();
+	int o1_setupObject();
+	int o1_checkCollision();
+	int o1_loadVar();
+	int o1_addVar();
+	int o1_subVar();
+	int o1_mulVar();
+	int o1_divVar();
+	int o1_compareVar();
+	int o1_modifyObjectParam2();
+	int o1_loadMask0();
+	int o1_unloadMask0();
+	int o1_addToBgList();
+	int o1_loadMask1();
+	int o1_unloadMask1();
+	int o1_loadMask4();
+	int o1_unloadMask4();
+	int o1_addSpriteFilledToBgList();
+	int o1_op1B();
+	int o1_label();
+	int o1_goto();
+	int o1_gotoIfSup();
+	int o1_gotoIfSupEqu();
+	int o1_gotoIfInf();
+	int o1_gotoIfInfEqu();
+	int o1_gotoIfEqu();
+	int o1_gotoIfDiff();
+	int o1_removeLabel();
+	int o1_loop();
+	int o1_startGlobalScript();
+	int o1_endGlobalScript();
+	int o1_loadAnim();
+	int o1_loadBg();
+	int o1_loadCt();
+	int o1_loadPart();
+	int o1_closePart();
+	int o1_loadNewPrcName();
+	int o1_requestCheckPendingDataLoad();
+	int o1_blitAndFade();
+	int o1_fadeToBlack();
+	int o1_transformPaletteRange();
+	int o1_setDefaultMenuColor2();
+	int o1_palRotate();
+	int o1_break();
+	int o1_endScript();
+	int o1_message();
+	int o1_loadGlobalVar();
+	int o1_compareGlobalVar();
+	int o1_declareFunctionName();
+	int o1_freePartRange();
+	int o1_unloadAllMasks();
+	int o1_setScreenDimensions();
+	int o1_displayBackground();
+	int o1_initializeZoneData();
+	int o1_setZoneDataEntry();
+	int o1_getZoneDataEntry();
+	int o1_setDefaultMenuColor();
+	int o1_allowPlayerInput();
+	int o1_disallowPlayerInput();
+	int o1_changeDataDisk();
+	int o1_loadMusic();
+	int o1_playMusic();
+	int o1_fadeOutMusic();
+	int o1_stopSample();
+	int o1_op71();
+	int o1_op72();
+	int o1_op73();
+	int o1_playSample();
+	int o1_disableSystemMenu();
+	int o1_loadMask5();
+	int o1_unloadMask5();
+
+	// pointers to member functions in C++ suck...
+	int o2_loadPart();
+	int o2_addSeqListElement();
+	int o2_removeSeq();
+	int o2_playSample();
+	int o2_playSampleAlt();
+	int o2_op81();
+	int o2_op82();
+	int o2_isSeqRunning();
+	int o2_gotoIfSupNearest();
+	int o2_gotoIfSupEquNearest();
+	int o2_gotoIfInfNearest();
+	int o2_gotoIfInfEquNearest();
+	int o2_gotoIfEquNearest();
+	int o2_gotoIfDiffNearest();
+	int o2_startObjectScript();
+	int o2_stopObjectScript();
+	int o2_op8D();
+	int o2_addBackground();
+	int o2_removeBackground();
+	int o2_loadAbs();
+	int o2_loadBg();
+	int o2_wasZoneChecked();
+	int o2_op9B();
+	int o2_op9C();
+	int o2_useBgScroll();
+	int o2_setAdditionalBgVScroll();
+	int o2_op9F();
+	int o2_addGfxElementA0();
+	int o2_removeGfxElementA0();
+	int o2_opA2();
+	int o2_opA3();
+	int o2_loadMask22();
+	int o2_unloadMask22();
+
+	byte getNextByte();
+	uint16 getNextWord();
+	const char *getNextString();
+
+	void load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos);
+
+	FWScript(const RawScript &script, int16 index, FWScriptInfo *info);
+	FWScript(RawObjectScript &script, int16 index, FWScriptInfo *info);
+	FWScript(const FWScript &src, FWScriptInfo *info);
+
+public:
+	int16 _index; ///< Index in script table
+
+	FWScript(const RawScript &script, int16 index);
+//	FWScript(const RawObjectScript &script, int16 index);
+	FWScript(const FWScript &src);
+	~FWScript(void);
+
+	int execute();
+	void save(Common::OutSaveFile &fHandle) const;
+
+	friend class FWScriptInfo;
+
+	// workaround for bug in g++ which prevents protected member functions
+	// of FWScript from being used in OSScript::_opcodeTable[]
+	// initialization ("error: protected within this context")
+	friend class OSScript;
+};
+
+/*! \brief Operation Stealth script, prcLinkedListStruct replacement
+ */
+class OSScript : public FWScript {
+private:
+	static const Opcode _opcodeTable[];
+	static const unsigned int _numOpcodes;
+
+protected:
+	void load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos);
+
+public:
+	OSScript(const RawScript &script, int16 index);
+	OSScript(RawObjectScript &script, int16 index);
+	OSScript(const OSScript &src);
+
+	friend class OSScriptInfo;
+};
+
+/*! \brief Future Wars script factory and info
+ */
+class FWScriptInfo {
+protected:
+	virtual opFunc opcodeHandler(byte opcode) const;
+
+public:
+	virtual ~FWScriptInfo() {}
+
+	virtual const char *opcodeInfo(byte opcode) const;
+	virtual FWScript *create(const RawScript &script, int16 index) const;
+	virtual FWScript *create(const RawObjectScript &script, int16 index) const;
+	virtual FWScript *create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const;
+	virtual FWScript *create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const;
+
+	friend class FWScript;
+};
+
+/*! \brief Operation Stealth script factory and info
+ */
+class OSScriptInfo : public FWScriptInfo {
+protected:
+	virtual opFunc opcodeHandler(byte opcode) const;
+
+public:
+	virtual ~OSScriptInfo() {}
+
+	virtual const char *opcodeInfo(byte opcode) const;
+	virtual FWScript *create(const RawScript &script, int16 index) const;
+	virtual FWScript *create(const RawObjectScript &script, int16 index) const;
+	virtual FWScript *create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const;
+	virtual FWScript *create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const;
+
+	friend class FWScript;
+};
+
+typedef Common::SharedPtr<FWScript> ScriptPtr;
+typedef Common::SharedPtr<RawScript> RawScriptPtr;
+typedef Common::SharedPtr<RawObjectScript> RawObjectScriptPtr;
+typedef Common::List<ScriptPtr> ScriptList;
+typedef Common::Array<RawScriptPtr> RawScriptArray;
+typedef Common::Array<RawObjectScriptPtr> RawObjectScriptArray;
 
 #define NUM_MAX_SCRIPT 50
 
-extern ScriptStruct scriptTable[NUM_MAX_SCRIPT];
+extern RawScriptArray scriptTable;
+extern FWScriptInfo *scriptInfo;
 
 void setupOpcodes();
 
-void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize);
 void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
@@ -79,126 +373,12 @@ void addScriptToList0(uint16 idx);
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);
 
 void runObjectScript(int16 entryIdx);
-int16 stopObjectScript(int16 entryIdx);
 
 void executeList1(void);
 void executeList0(void);
 
 void purgeList1(void);
 void purgeList0(void);
-
-void o1_modifyObjectParam();
-void o1_getObjectParam();
-void o1_addObjectParam();
-void o1_subObjectParam();
-void o1_add2ObjectParam();
-void o1_sub2ObjectParam();
-void o1_compareObjectParam();
-void o1_setupObject();
-void o1_checkCollision();
-void o1_loadVar();
-void o1_addVar();
-void o1_subVar();
-void o1_mulVar();
-void o1_divVar();
-void o1_compareVar();
-void o1_modifyObjectParam2();
-void o1_loadMask0();
-void o1_unloadMask0();
-void o1_addToBgList();
-void o1_loadMask1();
-void o1_unloadMask1();
-void o1_loadMask4();
-void o1_unloadMask4();
-void o1_addSpriteFilledToBgList();
-void o1_op1B();
-void o1_label();
-void o1_goto();
-void o1_gotoIfSup();
-void o1_gotoIfSupEqu();
-void o1_gotoIfInf();
-void o1_gotoIfInfEqu();
-void o1_gotoIfEqu();
-void o1_gotoIfDiff();
-void o1_removeLabel();
-void o1_loop();
-void o1_startGlobalScript();
-void o1_endGlobalScript();
-void o1_loadAnim();
-void o1_loadBg();
-void o1_loadCt();
-void o1_loadPart();
-void o1_closePart();
-void o1_loadNewPrcName();
-void o1_requestCheckPendingDataLoad();
-void o1_blitAndFade();
-void o1_fadeToBlack();
-void o1_transformPaletteRange();
-void o1_setDefaultMenuColor2();
-void o1_palRotate();
-void o1_break();
-void o1_endScript();
-void o1_message();
-void o1_loadGlobalVar();
-void o1_compareGlobalVar();
-void o1_declareFunctionName();
-void o1_freePartRange();
-void o1_unloadAllMasks();
-void o1_setScreenDimensions();
-void o1_displayBackground();
-void o1_initializeZoneData();
-void o1_setZoneDataEntry();
-void o1_getZoneDataEntry();
-void o1_setDefaultMenuColor();
-void o1_allowPlayerInput();
-void o1_disallowPlayerInput();
-void o1_changeDataDisk();
-void o1_loadMusic();
-void o1_playMusic();
-void o1_fadeOutMusic();
-void o1_stopSample();
-void o1_op71();
-void o1_op72();
-void o1_op73();
-void o1_playSample();
-void o1_playSample();
-void o1_disableSystemMenu();
-void o1_loadMask5();
-void o1_unloadMask5();
-
-void o2_loadPart();
-void o2_addSeqListElement();
-void o2_removeSeq();
-void o2_playSample();
-void o2_playSampleAlt();
-void o2_op81();
-void o2_op82();
-void o2_isSeqRunning();
-void o2_gotoIfSupNearest();
-void o2_gotoIfSupEquNearest();
-void o2_gotoIfInfNearest();
-void o2_gotoIfInfEquNearest();
-void o2_gotoIfEquNearest();
-void o2_gotoIfDiffNearest();
-void o2_startObjectScript();
-void o2_stopObjectScript();
-void o2_op8D();
-void o2_addBackground();
-void o2_removeBackground();
-void o2_loadAbs();
-void o2_loadBg();
-void o2_wasZoneChecked();
-void o2_op9B();
-void o2_op9C();
-void o2_useBgScroll();
-void o2_setAdditionalBgVScroll();
-void o2_op9F();
-void o2_addGfxElementA0();
-void o2_opA1();
-void o2_opA2();
-void o2_opA3();
-void o2_loadMask22();
-void o2_unloadMask22();
 
 } // End of namespace Cine
 

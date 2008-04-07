@@ -35,26 +35,8 @@ struct PartBuffer {
 	uint32 unpackedSize;
 };
 
-struct AnimData {
-	uint16 width;
-	uint16 var1;
-	uint16 bpp;
-	uint16 height;
-
-	byte *ptr1;
-	byte *ptr2;
-	int16 fileIdx;
-	int16 frameIdx;
-	char name[10];
-
-	// Not part of the data, but used when saving/restoring it.
-	bool refresh;
-};
-
 #define NUM_MAX_PARTDATA 255
-#define NUM_MAX_ANIMDATA 255
 
-extern AnimData *animDataTable;
 extern PartBuffer *partBuffer;
 
 void loadPart(const char *partName);

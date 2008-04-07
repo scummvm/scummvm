@@ -28,21 +28,9 @@
 
 namespace Cine {
 
-struct prcLinkedListStruct {
-	struct prcLinkedListStruct *next;
-	int16 stack[SCRIPT_STACK_SIZE];
-	ScriptVars localVars;
-	uint16 compareResult;
-	uint16 scriptPosition;
-	byte *scriptPtr;
-	int16 scriptIdx;
-};
+extern ScriptList globalScripts;
+extern ScriptList objectScripts;
 
-extern prcLinkedListStruct globalScriptsHead;
-extern prcLinkedListStruct objScriptList;
-
-void resetglobalScriptsHead(void);
-void freePrcLinkedList(void);
 void loadPrc(const char *pPrcName);
 
 } // End of namespace Cine

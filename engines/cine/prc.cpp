@@ -33,34 +33,14 @@
 
 namespace Cine {
 
-prcLinkedListStruct globalScriptsHead;
-prcLinkedListStruct objScriptList;
+ScriptList globalScripts;
+ScriptList objectScripts;
 
 //char currentPrcName[20];
 
-void resetglobalScriptsHead(void) {
-	globalScriptsHead.next = NULL;
-	globalScriptsHead.scriptIdx = -1;
-}
-
-void freePrcLinkedList(void) {
-	prcLinkedListStruct *currentHead = globalScriptsHead.next;
-
-	while (currentHead) {
-		prcLinkedListStruct *temp;
-
-		assert(currentHead);
-
-		temp = currentHead->next;
-
-		delete currentHead;
-
-		currentHead = temp;
-	}
-
-	resetglobalScriptsHead();
-}
-
+/*! \todo Is script size of 0 valid?
+ * \todo Fix script dump code
+ */
 void loadPrc(const char *pPrcName) {
 	byte i;
 	uint16 numScripts;
@@ -68,14 +48,8 @@ void loadPrc(const char *pPrcName) {
 
 	assert(pPrcName);
 
-	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
-		if (scriptTable[i].ptr) {
-			assert(scriptTable[i].ptr);
-			free(scriptTable[i].ptr);
-			scriptTable[i].ptr = NULL;
-			scriptTable[i].size = 0;
-		}
-	}
+	globalScripts.clear();
+	scriptTable.clear();
 
 	// This is copy protection. Used to hang the machine
 	if (!scumm_stricmp(pPrcName, "L201.ANI")) {
@@ -100,17 +74,18 @@ void loadPrc(const char *pPrcName) {
 	assert(numScripts <= NUM_MAX_SCRIPT);
 
 	for (i = 0; i < numScripts; i++) {
-		scriptTable[i].size = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
+		RawScriptPtr tmp(new RawScript(READ_BE_UINT16(scriptPtr)));
+		scriptPtr += 2;
+		assert(tmp);
+		scriptTable.push_back(tmp);
 	}
 
 	for (i = 0; i < numScripts; i++) {
-		uint16 size = scriptTable[i].size;
+		uint16 size = scriptTable[i]->_size;
+		// TODO: delete the test?
 		if (size) {
-			scriptTable[i].ptr = (byte *) malloc(size);
-			assert(scriptTable[i].ptr);
-			memcpy(scriptTable[i].ptr, scriptPtr, size);
+			scriptTable[i]->setData(*scriptInfo, scriptPtr);
 			scriptPtr += size;
-			computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 		}
 	}
 

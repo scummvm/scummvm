@@ -33,7 +33,6 @@ namespace Cine {
 
 uint16 numElementInPart;
 
-AnimData *animDataTable;
 PartBuffer *partBuffer;
 
 void loadPart(const char *partName) {

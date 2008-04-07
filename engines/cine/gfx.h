@@ -37,6 +37,10 @@ extern byte *page3Raw;
 extern uint16 c_palette[256];
 extern byte colorMode256;
 extern byte palette256[256 * 3];
+extern byte newPalette[256 * 3];
+extern byte newColorMode;
+extern byte ctColorMode;
+extern byte bgColorMode;
 
 void gfxInit();
 void gfxDestroy();
@@ -46,10 +50,10 @@ void gfxCopyPage(byte *source, byte *dest);
 void transformPaletteRange(byte startColor, byte numColor, int8 r, int8 g, int8 b);
 void gfxFlipPage(void);
 
-void gfxDrawMaskedSprite(byte *ptr, byte *msk, uint16 width, uint16 height, byte *page, int16 x, int16 y);
-void gfxFillSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy, uint8 fillColor = 0);
+void gfxDrawMaskedSprite(const byte *ptr, const byte *msk, uint16 width, uint16 height, byte *page, int16 x, int16 y);
+void gfxFillSprite(const byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy, uint8 fillColor = 0);
 
-void gfxUpdateSpriteMask(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+void gfxUpdateSpriteMask(const byte *spritePtr, const byte *spriteMskPtr, int16 width, int16 height, const byte *maskPtr,
     int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx);
 
 void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
@@ -57,19 +61,23 @@ void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);
 
 void gfxResetPage(byte *pagePtr);
 
-int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width);
+int16 gfxGetBit(int16 x, int16 y, const byte *ptr, int16 width);
+byte gfxGetColor(int16 x, int16 y, const byte *ptr, int16 width);
 
 void gfxResetRawPage(byte *pageRaw);
 void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h);
 void gfxCopyRawPage(byte *source, byte * dest);
 void gfxFlipRawPage(byte *frontBuffer);
-void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
+void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
-void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
+void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
+void maskBgOverlay(const byte *spritePtr, const byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
 
+void fadeFromBlack(void);
 void fadeToBlack(void);
 
-void gfxDrawMaskedSprite(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
+// wtf?!
+//void gfxDrawMaskedSprite(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
 void gfxWaitVBL(void);
 void gfxRedrawMouseCursor(void);
 

@@ -602,9 +602,9 @@ bool PCSoundFxPlayer::load(const char *song) {
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
 		_instrumentsData[i] = NULL;
 
-		char instrument[13];
+		char instrument[64];
 		memcpy(instrument, _sfxData + 20 + i * 30, 12);
-		instrument[12] = '\0';
+		instrument[63] = '\0';
 
 		if (strlen(instrument) != 0) {
 			char *dot = strrchr(instrument, '.');

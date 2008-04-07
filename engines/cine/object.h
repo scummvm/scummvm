@@ -74,7 +74,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param);
 
 void addObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 void subObjectParam(byte objIdx, byte paramIdx, int16 newValue);
-byte compareObjectParam(byte objIdx, byte param1, int16 param2);
+uint16 compareObjectParam(byte objIdx, byte param1, int16 param2);
 
 } // End of namespace Cine
 

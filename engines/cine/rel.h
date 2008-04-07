@@ -26,23 +26,10 @@
 #ifndef CINE_REL_H
 #define CINE_REL_H
 
+#include "cine/script.h"
 namespace Cine {
 
-struct RelObjectScript {
-	byte *data;
-	uint16 size;
-	uint16 obj1Param1;
-	uint16 obj1Param2;
-	uint16 obj2Param;
-	uint16 runCount;
-};
-
-#define NUM_MAX_REL 255
-
-extern RelObjectScript relTable[NUM_MAX_REL];
-
-void releaseObjectScripts(void);
-void resetObjectScriptHead(void);
+extern RawObjectScriptArray relTable;
 
 void loadRel(char *pRelName);
 

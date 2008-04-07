@@ -31,45 +31,21 @@
 
 namespace Cine {
 
-RelObjectScript relTable[NUM_MAX_REL];
+RawObjectScriptArray relTable; ///< Object script bytecode table
 
-void resetObjectScriptHead(void) {
-	objScriptList.next = NULL;
-	objScriptList.scriptIdx = -1;
-}
-
-void releaseObjectScripts(void) {
-	prcLinkedListStruct *currentHead = objScriptList.next;
-
-	while (currentHead) {
-		prcLinkedListStruct *temp;
-
-		assert(currentHead);
-
-		temp = currentHead->next;
-
-		delete currentHead;
-
-		currentHead = temp;
-	}
-
-	resetObjectScriptHead();
-}
-
+/*! \todo Is script size of 0 valid?
+ * \todo Fix script dump code
+ */
 void loadRel(char *pRelName) {
 	uint16 numEntry;
 	uint16 i;
+	uint16 size, p1, p2, p3;
 	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
-	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].data) {
-			free(relTable[i].data);
-			relTable[i].data = NULL;
-			relTable[i].size = 0;
-		}
-	}
+	objectScripts.clear();
+	relTable.clear();
 
 	ptr = dataPtr = readBundleFile(findFileInBundle(pRelName));
 
@@ -77,24 +53,22 @@ void loadRel(char *pRelName) {
 
 	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 
-	assert(numEntry <= NUM_MAX_REL);
-
 	for (i = 0; i < numEntry; i++) {
-		relTable[i].size = READ_BE_UINT16(ptr); ptr += 2;
-		relTable[i].obj1Param1 = READ_BE_UINT16(ptr); ptr += 2;
-		relTable[i].obj1Param2 = READ_BE_UINT16(ptr); ptr += 2;
-		relTable[i].obj2Param = READ_BE_UINT16(ptr); ptr += 2;
-		relTable[i].runCount = 0;
+		size = READ_BE_UINT16(ptr); ptr += 2;
+		p1 = READ_BE_UINT16(ptr); ptr += 2;
+		p2 = READ_BE_UINT16(ptr); ptr += 2;
+		p3 = READ_BE_UINT16(ptr); ptr += 2;
+		RawObjectScriptPtr tmp(new RawObjectScript(size, p1, p2, p3));
+		assert(tmp);
+		relTable.push_back(tmp);
 	}
 
 	for (i = 0; i < numEntry; i++) {
-		if (relTable[i].size) {
-			relTable[i].data = (byte *)malloc(relTable[i].size);
-
-			assert(relTable[i].data);
-
-			memcpy(relTable[i].data, ptr, relTable[i].size);
-			ptr += relTable[i].size;
+		size = relTable[i]->_size;
+		// TODO: delete the test?
+		if (size) {
+			relTable[i]->setData(*scriptInfo, ptr);
+			ptr += size;
 		}
 	}
 

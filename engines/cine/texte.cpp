@@ -40,7 +40,7 @@ const CommandeType *confirmMenu;
 const char **otherMessages;
 const char *commandPrepositionOn;
 
-void generateMask(byte *sprite, byte *mask, uint16 size, byte transparency);
+void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
 void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
 	Common::File pFileHandle;

@@ -29,11 +29,11 @@
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/list.h"
 
 namespace Cine {
 
-struct BGIncrustList {
-	struct BGIncrustList *next;
+struct BGIncrust {
 	byte *unkPtr;
 	int16 objIdx;
 	int16 param;
@@ -43,17 +43,15 @@ struct BGIncrustList {
 	int16 part;
 };
 
-extern BGIncrustList *bgIncrustList;
+extern Common::List<BGIncrust> bgIncrustList;
 extern uint32 var8;
 
 void addToBGList(int16 objIdx, bool addList = true);
 void addSpriteFilledToBGList(int16 idx, bool addList = true);
 
 void createBgIncrustListElement(int16 objIdx, int16 param);
-void freeBgIncrustList(void);
 void resetBgIncrustList(void);
-void loadBgIncrustFromSave(Common::InSaveFile *fHandle);
-void reincrustAllBg(void);
+void loadBgIncrustFromSave(Common::InSaveFile &fHandle);
 
 } // End of namespace Cine
 

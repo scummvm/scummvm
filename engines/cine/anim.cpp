@@ -23,6 +23,9 @@
  *
  */
 
+/*! \file
+ * \todo Make resource manager class and make load* functions its members
+ */
 
 #include "common/endian.h"
 #include "common/stream.h"
@@ -46,11 +49,9 @@ struct AnimHeader2Struct {
 	uint16 field_E;
 };
 
-static uint16 animDataCount = 0;
+AnimData animDataTable[NUM_MAX_ANIMDATA];
 
-AnimHeaderStruct animHeader;
-
-static const AnimDataEntry animData[] = {
+static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
 	{"TITRE2", 0xF},
 	{"ET", 0xC},
@@ -184,135 +185,250 @@ static const AnimDataEntry animData[] = {
 	{"FIN", 0x9},
 };
 
-static void freeAnimData(byte idx) {
-	assert(idx < NUM_MAX_ANIMDATA);
-	if (animDataTable[idx].ptr1) {
-		free(animDataTable[idx].ptr1);
-		free(animDataTable[idx].ptr2);
-		memset(&animDataTable[idx], 0, sizeof(AnimData));
-		animDataTable[idx].fileIdx = -1;
-		animDataTable[idx].frameIdx = -1;
-		if (animDataCount > 0)
-			animDataCount--;
+void convertMask(byte *dest, const byte *source, int16 width, int16 height);
+void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
+void convert8BBP(byte *dest, const byte *source, int16 width, int16 height);
+void convert8BBP2(byte *dest, byte *source, int16 width, int16 height);
+
+AnimData::AnimData() : _width(0), _height(0), _bpp(0), _var1(0), _data(NULL),
+	_mask(NULL), _fileIdx(-1), _frameIdx(-1), _realWidth(0), _size(0) {
+
+	memset(_name, 0, 10);
+}
+
+/*! \brief Copy constructor
+ */
+AnimData::AnimData(const AnimData &src) : _width(src._width),
+	_height(src._height), _bpp(src._bpp), _var1(src._var1),
+	_data(NULL), _mask(NULL), _fileIdx(src._fileIdx),
+	_frameIdx(src._frameIdx), _realWidth(src._realWidth), _size(src._size) {
+
+	if (src._data) {
+		_data = new byte[_size];
+		assert(_data);
+		memcpy(_data, src._data, _size*sizeof(byte));
+	}
+
+	if(src._mask) {
+		_mask = new byte[_size];
+		assert(_mask);
+		memcpy(_mask, src._mask, _size*sizeof(byte));
+	}
+
+	memset(_name, 0, 10);
+	strcpy(_name, src._name);
+}
+
+/*! \brief Destructor
+ */
+AnimData::~AnimData() {
+	clear();
+}
+
+/*! \brief Assingment operator
+ */
+AnimData &AnimData::operator=(const AnimData &src) {
+	AnimData tmp = src;
+	byte *ptr;
+
+	_width = tmp._width;
+	_height = tmp._height;
+	_bpp = tmp._bpp;
+	_var1 = tmp._var1;
+
+	ptr = _data;
+	_data = tmp._data;
+	tmp._data = ptr;
+
+	ptr = _mask;
+	_mask = tmp._mask;
+	tmp._mask = ptr;
+
+	_fileIdx = tmp._fileIdx;
+	_frameIdx = tmp._frameIdx;
+	memset(_name, 0, 10);
+	strcpy(_name, tmp._name);
+	_realWidth = tmp._realWidth;
+	_size = tmp._size;
+
+	return *this;
+}
+
+byte AnimData::getColor(int x, int y) {
+	assert(_data);
+	assert(x >= 0 && x < _realWidth && y >= 0 && y <= _height);
+	assert(x + y * _realWidth < _size);
+
+	return _data[x + y * _realWidth];
+}
+
+/*! \brief Load and decode image frame
+ * \param d Encoded image data
+ * \param type Encoding type
+ * \param w Image width
+ * \param h Image height
+ * \param file Data file index in bundle
+ * \param frame Image frame index
+ * \param n Part name
+ * \param transparent Transparent color (for ANIM_MASKSPRITE)
+ */
+void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
+	int16 frame, const char *n, byte transparent) {
+
+	assert(d);
+
+	if (_data) {
+		clear();
+	}
+
+	_width = w * 2;
+	_height = h;
+	_var1 = _width >> 3;
+	_data = NULL;
+	_mask = NULL;
+	_fileIdx = file;
+	_frameIdx = frame;
+	memset(_name, 0, 10);
+	strcpy(_name, n);
+	_realWidth = w;
+
+	switch (type) {
+	case ANIM_RAW:
+		_width = w;
+		_var1 = w >> 3;
+		_bpp = 4;
+		_size = w * h;
+		_data = new byte[_size];
+		assert(_data);
+		memcpy(_data, d, _size*sizeof(byte));
+		break;
+
+	case ANIM_MASK:
+		_bpp = 1;
+		_size = w * h * 8;
+		_data = new byte[_size];
+		_realWidth = w * 8;
+		assert(_data);
+		convertMask(_data, d, w, h);
+		break;
+
+	case ANIM_SPRITE:
+		_bpp = 4;
+		_size = w * h * 2;
+		_data = new byte[_size];
+		_realWidth = w * 2;
+		assert(_data);
+		gfxConvertSpriteToRaw(_data, d, w, h);
+		break;
+
+	case ANIM_MASKSPRITE:
+		_bpp = 4;
+		_size = w * h * 2;
+		_data = new byte[_size];
+		_mask = new byte[_size];
+		_realWidth = w * 2;
+		assert(_data && _mask);
+		gfxConvertSpriteToRaw(_data, d, w, h);
+		generateMask(_data, _mask, _size, transparent);
+		break;
+
+	case ANIM_PALSPRITE:
+		_bpp = 5;
+		_size = w * h * 2;
+		_data = new byte[_size];
+		_realWidth = w * 2;
+		assert(_data);
+		convert8BBP(_data, d, w, h);
+		break;
+
+	case ANIM_FULLSPRITE:
+		_bpp = 8;
+		_var1 = _width >> 4;
+		_size = w * h;
+		_data = new byte[_size];
+		assert(_data);
+		convert8BBP2(_data, d, w, h);
+		break;
+
+	default:
+		error("AnimData::load: unknown image type");
 	}
 }
 
+/*! \brief Reset image
+ */
+void AnimData::clear() {
+	delete[] _data;
+	delete [] _mask;
+
+	_width = 0;
+	_height = 0;
+	_bpp = 0;
+	_var1 = 0;
+	_data = NULL;
+	_mask = NULL;
+	_fileIdx = -1;
+	_frameIdx = -1;
+	memset(_name, 0, 10);
+	_size = 0;
+}
+
+/*! \brief Write image identifiers to savefile
+ * \param fHandle Savefile open for writing
+ */
+void AnimData::save(Common::OutSaveFile &fHandle) const {
+	fHandle.writeUint16BE(_width);
+	fHandle.writeUint16BE(_var1);
+	fHandle.writeUint16BE(_bpp);
+	fHandle.writeUint16BE(_height);
+	// Just because I write pointers to a file doesn't mean
+	// anyone should actually read those values back!
+	fHandle.writeUint32BE((uint32)_data);
+	fHandle.writeUint32BE((uint32)_mask);
+	fHandle.writeUint16BE(_fileIdx);
+	fHandle.writeUint16BE(_frameIdx);
+	fHandle.write(_name, 10);
+}
+
+/*! \brief Clear part of animDataTable
+ * \param startIdx First image frame to be cleared
+ * \param numIdx Number of image frames to be cleared
+ */
 void freeAnimDataRange(byte startIdx, byte numIdx) {
 	for (byte i = 0; i < numIdx; i++) {
-		freeAnimData(i + startIdx);
+		animDataTable[startIdx + i].clear();
 	}
 }
 
+/*! \brief Clear whole animDataTable
+ */
 void freeAnimDataTable() {
 	freeAnimDataRange(0, NUM_MAX_ANIMDATA);
 }
 
+/*! \brief Find transparent color index for image
+ * \brief animName Image file name
+ */
 static byte getAnimTransparentColor(const char *animName) {
 	char name[15];
 
 	removeExtention(name, animName);
 
-	for (int i = 0; i < ARRAYSIZE(animData); i++) {
-		if (!strcmp(name, animData[i].name)) {
-			return animData[i].color;
+	for (int i = 0; i < ARRAYSIZE(transparencyData); i++) {
+		if (!strcmp(name, transparencyData[i].name)) {
+			return transparencyData[i].color;
 		}
 	}
 	return 0;
 }
 
-int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
-	uint16 i;
-	uint32 frameSize;
-
-	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		if (!animDataTable[i].ptr1)
-			break;
-	}
-
-	if (i == NUM_MAX_ANIMDATA)
-		return -1;
-
-	if (!isMask) {		// sprite + generated mask
-		frameSize = width * height;
-
-		animDataTable[i].ptr1 = (byte *)malloc(frameSize);
-		animDataTable[i].ptr2 = (byte *)malloc(frameSize);
-	} else {
-		// mask
-		frameSize = width * height * 8;
-
-		animDataTable[i].ptr1 = (byte *)malloc(frameSize);
-		animDataTable[i].ptr2 = NULL;
-	}
-
-	animDataTable[i].width = width;
-	animDataTable[i].var1 = width >> 3;
-	animDataTable[i].bpp = 4;
-	animDataTable[i].height = height;
-
-	animDataTable[i].fileIdx = -1;
-	animDataTable[i].frameIdx = -1;
-
-	animDataCount++;
-
-	return i;
-}
-
-int16 reserveFrame(uint16 width, uint16 height, uint16 type, int16 idx) {
-	uint16 i;
-	uint32 frameSize;
-
-	if (idx >= 0) {
-		i = (uint16) idx;
-	} else {
-		for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-			if (!animDataTable[i].ptr1)
-				break;
-		}
-
-		if (i == NUM_MAX_ANIMDATA)
-			return -1;
-	}
-
-	frameSize = width * height;
-
-	if (type == 4) {		// 256 color sprites
-		frameSize *= 2;
-		type = 8;
-		width *= 2;
-	}
-
-	if (type == 5) {
-		frameSize += 16;
-	}
-
-	frameSize *= 2;
-
-	animDataTable[i].ptr1 = (byte *)malloc(frameSize);
-
-	assert(animDataTable[i].ptr1);
-
-	animDataTable[i].width = width;
-
-	if (type == 5) {
-		animDataTable[i].var1 = width / 8;
-	} else {
-		animDataTable[i].var1 = width / 16;
-	}
-
-	animDataTable[i].bpp = type;
-
-	animDataTable[i].height = height;
-
-	animDataTable[i].fileIdx = -1;
-	animDataTable[i].frameIdx = -1;
-
-	animDataCount++;
-
-	return i;
-}
-
-void generateMask(byte * sprite, byte * mask, uint16 size, byte transparency) {
+/*! \brief Generate mask for image
+ * \param[in] sprite Image data
+ * \param[out] mask Image mask
+ * \param size Image data length
+ * \param transparency Transparent color index
+ */
+void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency) {
 	for (uint16 i = 0; i < size; i++) {
 		if (*(sprite++) != transparency) {
 			*(mask++) = 0;
@@ -322,7 +438,13 @@ void generateMask(byte * sprite, byte * mask, uint16 size, byte transparency) {
 	}
 }
 
-void convertMask(byte * dest, byte * source, int16 width, int16 height) {
+/*! \brief Decode 1bpp mask
+ * \param[out] dest Decoded mask
+ * \param[in] source Encoded mask
+ * \param width Mask width
+ * \param height Mask height
+ */
+void convertMask(byte *dest, const byte *source, int16 width, int16 height) {
 	int16 i, j;
 	byte maskEntry;
 
@@ -335,7 +457,13 @@ void convertMask(byte * dest, byte * source, int16 width, int16 height) {
 	}
 }
 
-void convert4BBP(byte * dest, byte * source, int16 width, int16 height) {
+/*! \brief Decode 4bpp sprite
+ * \param[out] dest Decoded image
+ * \param[in] source Encoded image
+ * \param width Image width
+ * \param height Image height
+ */
+void convert4BBP(byte *dest, const byte *source, int16 width, int16 height) {
 	byte maskEntry;
 
 	for (int16 i = 0; i < width * height; i++) {
@@ -345,7 +473,11 @@ void convert4BBP(byte * dest, byte * source, int16 width, int16 height) {
 	}
 }
 
-void loadAnimHeader(Common::MemoryReadStream readS) {
+/*! \brief Read image header
+ * \param[out] animHeader Image header reference
+ * \param readS Input stream open for reading
+ */
+void loadAnimHeader(AnimHeaderStruct &animHeader, Common::MemoryReadStream readS) {
 	animHeader.field_0 = readS.readByte();
 	animHeader.field_1 = readS.readByte();
 	animHeader.field_2 = readS.readByte();
@@ -366,115 +498,109 @@ void loadAnimHeader(Common::MemoryReadStream readS) {
 	animHeader.field_14 = readS.readUint16BE();
 }
 
+/*! \brief Find next empty space animDataTable
+ * \param start First index to check
+ */
+int emptyAnimSpace(int start = 0) {
+	for (; start < NUM_MAX_ANIMDATA; start++) {
+		if (!animDataTable[start].data()) {
+			return start;
+		}
+	}
+
+	return -1;
+}
+
+/*! \brief Load SPL data into animDataTable
+ * \param resourceName SPL filename
+ * \param idx Target index in animDataTable
+ */
 void loadSpl(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
-	int16 entry;
+	int entry;
+
+	if (foundFileIdx < 0) {
+		return;
+	}
+
 	byte *dataPtr = readBundleFile(foundFileIdx);
 
-	if (idx >= 0) {
-		entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
-		memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
-	} else {
-		entry = allocFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, -1);
-		assert(entry != -1);
-		memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
-
-		animDataTable[entry].fileIdx = foundFileIdx;
-		animDataTable[entry].frameIdx = 0;
-		strcpy(animDataTable[entry].name, currentPartName);
-	}
+	entry = idx < 0 ? emptyAnimSpace() : idx;
+	assert(entry >= 0);
+	animDataTable[entry].load(dataPtr, ANIM_RAW, partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
 }
 
+/*! \brief Load 1bpp mask
+ * \param resourceName Mask filename
+ */
 void loadMsk(const char *resourceName) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
-	int16 entry;
+	int entry = 0;
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	byte *ptr;
+	AnimHeaderStruct animHeader;
 
 	Common::MemoryReadStream readS(dataPtr, 0x16);
-	loadAnimHeader(readS);
+	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
-	for (int16 i = 0; i < animHeader.numFrames; i++) {
-		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 1);
-
-		assert(entry != -1);
-
-		convertMask(animDataTable[entry].ptr1, ptr, animHeader.frameWidth, animHeader.frameHeight);
+	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
+		entry = emptyAnimSpace(entry);
+		assert(entry >= 0);
+		animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
-
-		animDataTable[entry].fileIdx = foundFileIdx;
-		animDataTable[entry].frameIdx = i;
-		strcpy(animDataTable[entry].name, currentPartName);
 	}
 
 	free(dataPtr);
 }
 
+/*! \brief Load animation
+ * \param resourceName Animation filename
+ */
 void loadAni(const char *resourceName) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
-	int16 entry;
+	int entry = 0;
 	byte *dataPtr = readBundleFile(foundFileIdx);
-	byte *ptr, *animPtr;
+	byte *ptr;
 	byte transparentColor;
-	uint32 fullSize;
+	AnimHeaderStruct animHeader;
 
 	Common::MemoryReadStream readS(dataPtr, 0x16);
-	loadAnimHeader(readS);
+	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
 	transparentColor = getAnimTransparentColor(resourceName);
 
-	fullSize = animHeader.frameWidth * animHeader.frameHeight;
-
-	for (int16 i = 0; i < animHeader.numFrames; i++) {
-		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 0);
-
-		assert(entry != -1);
+	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
+		entry = emptyAnimSpace(entry);
+		assert(entry >= 0);
 
 		// special case transparency handling
 		if (!strcmp(resourceName, "L2202.ANI")) {
-			if (i < 2) {
-				transparentColor = 0;
-			} else {
-				transparentColor = 7;
-			}
+			transparentColor = i < 2 ? 0 : 7;
+		} else if (!strcmp(resourceName, "L4601.ANI")) {
+			transparentColor = i < 1 ? 0xE : 0;
 		}
 
-		if (!strcmp(resourceName, "L4601.ANI")) {
-			if (i < 1) {
-				transparentColor = 0xE;
-			} else {
-				transparentColor = 0;
-			}
-		}
-
-		animPtr = (byte *)malloc(fullSize);
-
-		memcpy(animPtr, ptr, fullSize);
-		ptr += fullSize;
-
-		gfxConvertSpriteToRaw(animDataTable[entry].ptr1, animPtr, animHeader.frameWidth, animHeader.frameHeight);
-
-		generateMask(animDataTable[entry].ptr1, animDataTable[entry].ptr2, animHeader.frameWidth * 2 * animHeader.frameHeight, transparentColor);
-
-		free(animPtr);
-
-		animDataTable[entry].fileIdx = foundFileIdx;
-		animDataTable[entry].frameIdx = i;
-		strcpy(animDataTable[entry].name, currentPartName);
+		animDataTable[entry].load(ptr, ANIM_MASKSPRITE, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName, transparentColor);
+		ptr += animHeader.frameWidth * animHeader.frameHeight;
 	}
 
 	free(dataPtr);
 }
 
-void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
-	byte table[16];
+/*! \brief Decode 16 color image with palette
+ * \param[out] dest Decoded image
+ * \param[in] source Encoded image
+ * \param width Image width
+ * \param height Image height
+ */
+void convert8BBP(byte *dest, const byte *source, int16 width, int16 height) {
+	const byte *table = source;
 	byte color;
 
-	memcpy(table, source, 16);
 	source += 16;
 
 	for (uint16 i = 0; i < width * height; i++) {
@@ -485,16 +611,24 @@ void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
 	}
 }
 
-void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
-	uint16 i, j, k, m;
+/*! \brief Decode 8bit image
+ * \param[out] dest Decoded image
+ * \param[in] source Encoded image
+ * \param width Image width
+ * \param height Image height
+ * \attention Data in source are destroyed during decoding
+ */
+void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
+	uint16 i, j;
+	int k, m;
 	byte color;
 
 	for (j = 0; j < (width * height) / 16; j++) {
 		// m = 0: even bits, m = 1: odd bits
-		for (m = 0; m < 2; m++) {
+		for (m = 0; m <= 1; m++) {
 			for (i = 0; i < 8; i++) {
 				color = 0;
-				for (k = 14 + m; k >= 0 + m; k = k - 2) {
+				for (k = 14 + m; k >= 0; k -= 2) {
 					color |= ((*(source + k) & 0x080) >> 7);
 					*(source + k) <<= 1;
 					if (k > 0 + m)
@@ -508,14 +642,17 @@ void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 	}	// end j
 }
 
+/*! \brief Load image set
+ * \param resourceName Image set filename
+ * \param idx Target index in animDataTable
+ */
 void loadSet(const char *resourceName, int16 idx) {
 	AnimHeader2Struct header2;
-	uint32 fullSize;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
-	int16 entry, typeParam;
+	int16 entry = idx >= 0 ? idx : 0;
 	byte *ptr, *startOfDataPtr, *dataPtr, *origDataPtr;
-	byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+	int type;
 
 	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 	assert(!memcmp(dataPtr, "SET", 3));
@@ -526,9 +663,7 @@ void loadSet(const char *resourceName, int16 idx) {
 
 	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
 
-	for (int16 i = 0; i < numSpriteInAnim; i++) {
-		typeParam = 0;
-
+	for (int16 i = 0; i < numSpriteInAnim; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
 
 		header2.field_0 = readS.readUint32BE();
@@ -541,56 +676,37 @@ void loadSet(const char *resourceName, int16 idx) {
 
 		ptr += 0x10;
 
-		fullSize = header2.width * header2.height;
-
-		if (header2.type == 5) {
-			fullSize += 16;
-		}
-
-		if (header2.type == 4) {
-			header2.type = 5;
-			typeParam = 1;
-		}
-
-		if (idx >= 0)
-			entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
-		else
-			entry = reserveFrame(header2.width * 2, header2.height, header2.type, -1);
-
-		assert(entry != -1);
+		entry = idx < 0 ? emptyAnimSpace(entry) : idx + i;
+		assert(entry >= 0);
 
 		dataPtr = startOfDataPtr + header2.field_0;
 
-		if (typeParam) {
-			memcpy(animDataTable[entry].ptr1, table, 0x10);
-			gfxConvertSpriteToRaw(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			//memcpy(animDataTable[entry].ptr1 + 0x10, dataPtr, fullSize);
+		if (header2.type == 1) {
+			type = ANIM_MASK;
+		} else if (header2.type == 4) {
+			type = ANIM_SPRITE;
+		} else if (header2.type == 5) {
+			type = ANIM_PALSPRITE;
 		} else {
-			if (header2.type == 1) {
-				convert4BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			} else if (header2.type == 5) {
-				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			} else if (header2.type == 4) {
-				error("loadSet: header2.type == 4");
-			} else {
-				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			}
+			type = ANIM_FULLSPRITE;
 		}
 
-		animDataTable[entry].fileIdx = foundFileIdx;
-		animDataTable[entry].frameIdx = i;
-		strcpy(animDataTable[entry].name, currentPartName);
+		animDataTable[entry].load(dataPtr, type, header2.width, header2.height, foundFileIdx, i, currentPartName);
 	}
 
 	free(origDataPtr);
 }
 
+/*! \brief Load SEQ data into animDataTable
+ * \param resourceName SEQ data filename
+ * \param idx Target index in animDataTable
+ */
 void loadSeq(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
 	byte *dataPtr = readBundleFile(foundFileIdx);
-	int16 entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
+	int entry = idx < 0 ? emptyAnimSpace() : idx;
 
-	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
+	animDataTable[entry].load(dataPtr+0x16, ANIM_RAW, partBuffer[foundFileIdx].unpackedSize-0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
 }
 
@@ -624,6 +740,8 @@ void loadResource(const char *resourceName) {
 	error("loadResource: Cannot determine type for '%s'", resourceName);
 }
 
+/*! \todo There seems to be some additional resource file that is not loaded
+ */
 void loadAbs(const char *resourceName, uint16 idx) {
 	/* byte isMask = 0; */
 	/* byte isSpl = 0; */
@@ -632,6 +750,7 @@ void loadAbs(const char *resourceName, uint16 idx) {
 		loadSet(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".H32")) {
+		warning("Ignoring file %s (load at %d)", resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".SEQ")) {
 		loadSeq(resourceName, idx);
@@ -640,116 +759,108 @@ void loadAbs(const char *resourceName, uint16 idx) {
 		loadSpl(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".AMI")) {
+		warning("Ignoring file %s (load at %d)", resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".ANI")) {
+		warning("Ignoring file %s (load at %d)", resourceName, idx);
 		return;
 	}
 
 	error("loadAbs: Cannot determine type for '%s'", resourceName);
 }
 
-void loadResourcesFromSave() {
-	int16 currentAnim, foundFileIdx, fullSize, entry, i;
+/*! \brief Load animDataTable from save
+ * \param fHandle Savefile open for reading
+ * \param broken Broken/correct file format switch
+ * \todo Add Operation Stealth savefile support
+ *
+ * Unlike the old code, this one actually rebuilds the table one frame
+ * at a time.
+ */
+void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken) {
+	int16 currentAnim, foundFileIdx;
 	int8 isMask = 0, isSpl = 0;
-	byte *dataPtr, *ptr, *animPtr;
-	char animName[256], part[256];
+	byte *dataPtr, *ptr;
+	char *animName, part[256];
 	byte transparentColor;
 	AnimData *currentPtr;
+	AnimHeaderStruct animHeader;
+
+	uint16 width, height, bpp, var1;
+	int16  frame;
+	char name[10];
+	int type;
 
 	strcpy(part, currentPartName);
 
 	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim++) {
 		currentPtr = &animDataTable[currentAnim];
-		if (currentPtr->refresh && currentPtr->fileIdx != -1) {
-			if (strcmp(currentPartName, currentPtr->name)) {
-				closePart();
-				loadPart(currentPtr->name);
+
+		width = fHandle.readUint16BE();
+		var1 = fHandle.readUint16BE();
+		bpp = fHandle.readUint16BE();
+		height = fHandle.readUint16BE();
+
+		if (!broken) {
+			if (!fHandle.readUint32BE()) {
+				fHandle.skip(18);
+				continue;
 			}
+			fHandle.readUint32BE();
+		}
 
-			foundFileIdx = currentPtr->fileIdx;
+		foundFileIdx = fHandle.readSint16BE();
+		frame = fHandle.readSint16BE();
+		fHandle.read(name, 10);
 
-			strcpy(animName, partBuffer[foundFileIdx].partName);
-			ptr = dataPtr = readBundleFile(foundFileIdx);
+		if (foundFileIdx < 0 || (broken && !fHandle.readByte())) {
+			continue;
+		}
 
-			isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;
-			isMask = (strstr(animName, ".MSK")) ? 1 : 0;
+		if (strcmp(currentPartName, name)) {
+			closePart();
+			loadPart(name);
+		}
 
-			if (isSpl) {
-				animHeader.frameWidth = (uint16) partBuffer[foundFileIdx].unpackedSize;
-				animHeader.frameHeight = 1;
-				animHeader.numFrames = 1;
-				isMask = -1;
+		animName = partBuffer[foundFileIdx].partName;
+		ptr = dataPtr = readBundleFile(foundFileIdx);
+
+		isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;
+		isMask = (strstr(animName, ".MSK")) ? 1 : 0;
+
+		if (isSpl) {
+			width = (uint16) partBuffer[foundFileIdx].unpackedSize;
+			height = 1;
+			frame = 0;
+			type = ANIM_RAW;
+		} else {
+			Common::MemoryReadStream readS(ptr, 0x16);
+			loadAnimHeader(animHeader, readS);
+			ptr += 0x16;
+
+			width = animHeader.frameWidth;
+			height = animHeader.frameHeight;
+
+			if (isMask) {
+				type = ANIM_MASK;
 			} else {
-				Common::MemoryReadStream readS(ptr, 0x22);
-
-				loadAnimHeader(readS);
-
-				ptr += 0x16;
-			}
-
-			{
-				fullSize = animHeader.frameWidth * animHeader.frameHeight;
+				type = ANIM_MASKSPRITE;
 
 				loadRelatedPalette(animName);
-
 				transparentColor = getAnimTransparentColor(animName);
 
-				for (i = 0; i < animHeader.numFrames; i++) { // load all the frames
-					// special case transparency handling
-					if (!strcmp(animName, "L2202.ANI")) {
-						if (i < 2) {
-							transparentColor = 0;
-						} else {
-							transparentColor = 7;
-						}
-					}
-
-					if (!strcmp(animName, "L4601.ANI")) {
-						if (i < 1) {
-							transparentColor = 0xE;
-						} else {
-							transparentColor = 0;
-						}
-					}
-
-					currentPtr[i].ptr1 = NULL;
-					entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, isMask);
-
-					currentPtr->fileIdx = foundFileIdx;
-
-					assert(entry != -1);
-
-					if (isSpl) {
-						memcpy(animDataTable[entry].ptr1, ptr, fullSize);
-						ptr += fullSize;
-					} else {
-						if (!isMask) {
-							animPtr = (byte *)malloc(fullSize);
-							memcpy(animPtr, ptr, fullSize);
-							ptr += fullSize;
-
-							gfxConvertSpriteToRaw(animDataTable[entry].ptr1, animPtr,
-										animHeader.frameWidth, animHeader.frameHeight);
-							generateMask(animDataTable[entry].ptr1, animDataTable[entry].ptr2,
-										animHeader.frameWidth * 2 *animHeader.frameHeight, transparentColor);
-
-							free(animPtr);
-						} else {
-							convertMask(animDataTable[entry].ptr1, ptr, animHeader.frameWidth,
-										animHeader.frameHeight);
-							ptr += fullSize;
-						}
-					}
-
-					//animDataTable[entry].fileIdx = foundFileIdx; // Only when reading from bundles
-
-					animDataTable[entry].frameIdx = i;
-					strcpy(animDataTable[entry].name, currentPartName);
+				// special case transparency handling
+				if (!strcmp(animName, "L2202.ANI")) {
+					transparentColor = (frame < 2) ? 0 : 7;
+				} else if (!strcmp(animName, "L4601.ANI")) {
+					transparentColor = (frame < 1) ? 0xE : 0;
 				}
 			}
-
-			free(dataPtr);
 		}
+
+		ptr += frame * width * height;
+		currentPtr->load(ptr, type, width, height, foundFileIdx, frame, name, transparentColor);
+		free(dataPtr);
 	}
 
 	loadPart(part);

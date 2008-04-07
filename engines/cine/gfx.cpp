@@ -37,6 +37,10 @@ namespace Cine {
 uint16 c_palette[256];
 byte colorMode256 = 0;
 byte palette256[256 * 3];
+byte newPalette[256 * 3];
+byte newColorMode = 0;
+byte ctColorMode = 0;
+byte bgColorMode = 0;
 
 byte *screenBuffer;
 byte *page1Raw;
@@ -157,7 +161,7 @@ void transformPaletteRange(byte startColor, byte stopColor, int8 r, int8 g, int8
 	//gfxFlipPage(page2);
 }
 
-void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y, uint8 fillColor) {
+void gfxFillSprite(const byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y, uint8 fillColor) {
 	int16 i, j;
 
 	for (i = 0; i < height; i++) {
@@ -180,7 +184,7 @@ void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int
 	}
 }
 
-void gfxDrawMaskedSprite(byte *spritePtr, byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+void gfxDrawMaskedSprite(const byte *spritePtr, const byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
 	int16 i, j;
 
 	for (i = 0; i < height; i++) {
@@ -198,7 +202,7 @@ void gfxDrawMaskedSprite(byte *spritePtr, byte *maskPtr, uint16 width, uint16 he
 	}
 }
 
-void gfxUpdateSpriteMask(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+void gfxUpdateSpriteMask(const byte *spritePtr, const byte *spriteMskPtr, int16 width, int16 height, const byte *maskPtr,
 	int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx) {
 	int16 i, j, d, spritePitch, maskPitch;
 
@@ -299,8 +303,8 @@ void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte
 	}
 }
 
-int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width) {
-	byte *ptrToData = (ptr) + y * width + x;
+int16 gfxGetBit(int16 x, int16 y, const byte *ptr, int16 width) {
+	const byte *ptrToData = (ptr) + y * width + x;
 
 	if (x > width) {
 		return 0;
@@ -379,7 +383,7 @@ void gfxFlipRawPage(byte *frontBuffer) {
 	g_system->copyRectToScreen(screenBuffer, 320, 0, 0, 320, 200);
 }
 
-void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
+void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int16 height,
 				   byte *page, int16 x, int16 y) {
 	int16 i, j;
 
@@ -406,7 +410,7 @@ void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
 	}
 }
 
-void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height,
+void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 height,
 					byte *page, int16 x, int16 y) {
 	int16 i, j;
 
@@ -425,11 +429,84 @@ void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height,
 	}
 }
 
+void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 height,
+				   byte *page, int16 x, int16 y) {
+	int16 i, j;
+
+	for (i = 0; i < height; i++) {
+		byte *destPtr = page + x + y * 320;
+		const byte *srcPtr = bgPtr + x + y * 320;
+		destPtr += i * 320;
+		srcPtr += i * 320;
+
+		for (j = 0; j < width * 8; j++) {
+			if ((!maskPtr || !(*maskPtr)) && (x + j >= 0
+					&& x + j < 320 && i + y >= 0 && i + y < 200)) {
+				*destPtr = *srcPtr;
+			}
+
+			destPtr++;
+			srcPtr++;
+			maskPtr++;
+		}
+	}
+}
+
+/*! \todo Fix rendering to prevent fadein artifacts
+ */
+void fadeFromBlack() {
+	int i, j;
+	int r, g, b, tr, tg, tb;
+	if (newColorMode == 2) {
+		colorMode256 = 1;
+		memset(palette256, 0, 256*3);
+	} else if (newColorMode == 1) {
+		colorMode256 = 0;
+		memset(c_palette, 0, 16 * sizeof(uint16));
+	}
+
+	for (i = 0; i < 8; i++ ) {
+		gfxFlipRawPage(page1Raw);
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+
+		if (colorMode256) {
+			for (j = 0; j < 256*3; j++) {
+				r = palette256[j] + (newPalette[j] + 7) / 8;
+				palette256[j] = CLIP(r, 0, (int)newPalette[j]);
+			}
+		} else {
+			for (j = 0; j < 16; j++) {
+				r = c_palette[j] & 0xf;
+				g = (c_palette[j] & 0xf0) >> 4;
+				b = (c_palette[j] & 0xf00) >> 8;
+
+				tr = tempPalette[j] & 0xf;
+				tg = (tempPalette[j] & 0xf0) >> 4;
+				tb = (tempPalette[j] & 0xf00) >> 8;
+
+				r = CLIP(r + (tr + 7) / 8, 0, tr);
+				g = CLIP(g + (tg + 7) / 8, 0, tg);
+				b = CLIP(b + (tb + 7) / 8, 0, tb);
+
+				c_palette[j] = r | (g << 4) | (b << 8);
+			}
+
+		}
+	}
+
+	if (colorMode256) {
+		memcpy(palette256, newPalette, 256*3);
+	} else {
+		memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
+	}
+}
+
 void fadeToBlack() {
 	for (int i = 0; i < 8; i++) {
 		if (colorMode256) {
-			for (int j = 0; j < 256; j++) {
-				palette256[j] = transformColor(palette256[j], -1, -1, -1);
+			for (int j = 0; j < 256*3; j++) {
+				palette256[j] = CLIP(palette256[j] - 32, 0, 255);
 			}
 		} else {
 			for (int j = 0; j < 16; j++) {
@@ -449,7 +526,17 @@ void blitRawScreen(byte *frontBuffer) {
 void flip(void) {
 	blitRawScreen(page1Raw);
 	if (fadeRequired) {
-		memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
+		if (newColorMode == 3) {
+			newColorMode = ctColorMode + 1;
+		}
+
+		if (newColorMode == 2) {
+			colorMode256 = 1;
+			memcpy(palette256, newPalette, 256*3);
+		} else {
+			colorMode256 = 0;
+			memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
+		}
 		fadeRequired = false;
 	}
 }

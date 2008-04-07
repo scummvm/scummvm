@@ -27,10 +27,17 @@
 #define CINE_BG_H
 
 namespace Cine {
+struct bgData {
+	byte *data;
+	byte colorMode;
+	byte *highPalette;
+	uint16 *lowPalette;
+};
 
 byte loadBg(const char *bgName);
 byte loadCt(const char *bgName);
 
+//extern bgData additionalBgTable[9];
 extern byte *additionalBgTable[9];
 extern byte currentAdditionalBgIdx;
 extern byte currentAdditionalBgIdx2;

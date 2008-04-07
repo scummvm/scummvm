@@ -111,8 +111,6 @@ void CineEngine::initialize() {
 
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
 
-	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
-
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		readVolCnf();
 	}
@@ -124,29 +122,23 @@ void CineEngine::initialize() {
 		loadErrmessDat("errmess.dat");
 	}
 
-	memset(objectTable, 0, sizeof(objectTable));
-	memset(scriptTable, 0, sizeof(scriptTable));
-	memset(messageTable, 0, sizeof(messageTable));
-	memset(relTable, 0, sizeof(relTable));
+	// in case ScummVM engines can be restarted in the future
+	scriptTable.clear();
+	relTable.clear();
+	objectScripts.clear();
+	globalScripts.clear();
+	bgIncrustList.clear();
+	freeAnimDataTable();
 
-	for (int i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].ptr1 = animDataTable[i].ptr2 = NULL;
-	}
+	memset(objectTable, 0, sizeof(objectTable));
+	memset(messageTable, 0, sizeof(messageTable));
 
 	overlayHead.next = overlayHead.previous = NULL;
 
 	var8 = 0;
-	bgIncrustList = NULL;
-
-	objScriptList.next = NULL;
-	objScriptList.scriptPtr = NULL;
-
-	globalScriptsHead.next = NULL;
-	globalScriptsHead.scriptPtr = NULL;
+//	bgIncrustList = NULL;
 
 	var2 = var3 = var4 = var5 = 0;
-
-	freePrcLinkedList();
 
 	_preLoad = false;
 	if (ConfMan.hasKey("save_slot")) {

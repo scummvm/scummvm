@@ -189,11 +189,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	quitFlag = 0;
 
 	if (_preLoad == false) {
-		freeAnimDataTable();
 		resetMessageHead();
 		resetSeqList();
-		resetglobalScriptsHead();
-		resetObjectScriptHead();
 		resetBgIncrustList();
 
 		setTextWindow(0, 0, 20, 200);
@@ -318,14 +315,10 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 	hideMouse();
 	g_sound->stopMusic();
-	freeAnimDataTable();
 	unloadAllMasks();
-	freePrcLinkedList();
-	releaseObjectScripts();
 	// if (g_cine->getGameType() == Cine::GType_OS) {
 	//	freeUnkList();
 	// }
-	freeBgIncrustList();
 	closePart();
 }
 

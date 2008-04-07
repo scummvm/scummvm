@@ -29,16 +29,13 @@
 
 #include "cine/cine.h"
 #include "cine/various.h"
+#include "cine/bg.h"
 
 namespace Cine {
 
 uint16 bgVar0;
 byte *additionalBgTable[9];
 byte currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
-
-void loadCtHigh(byte * currentPtr) {
-	memcpy(page3Raw, currentPtr, 320 * 200);
-}
 
 byte loadCt(const char *ctName) {
 	uint16 header[32];
@@ -52,10 +49,17 @@ byte loadCt(const char *ctName) {
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 		if (bpp == 8) {
+			ctColorMode = 1;
+			memcpy(newPalette, ptr, 256*3);
 			ptr += 3 * 256;
-			loadCtHigh(ptr);
+			memcpy(page3Raw, ptr, 320 * 200);
 		} else {
-			ptr += 32;
+			ctColorMode = 0;
+			for (int i = 0; i < 16; i++) {
+				tempPalette[i] = READ_BE_UINT16(ptr);
+				ptr += 2;
+			}
+
 			gfxResetRawPage(page3Raw);
 			gfxConvertSpriteToRaw(page3Raw, ptr, 160, 200);
 		}
@@ -78,12 +82,14 @@ byte loadCt(const char *ctName) {
 }
 
 void loadBgHigh(const char *currentPtr) {
-	memcpy(palette256, currentPtr, 256 * 3);
+	memcpy(newPalette, currentPtr, 256 * 3);
 	currentPtr += 256 * 3;
 
 	memcpy(page2Raw, currentPtr, 320 * 200);
 
-	colorMode256 = 1;
+	newColorMode = 2;
+	bgColorMode = 1;
+
 }
 
 byte loadBg(const char *bgName) {
@@ -99,7 +105,8 @@ byte loadBg(const char *bgName) {
 	if (bpp == 8) {
 		loadBgHigh((const char *)ptr);
 	} else {
-		colorMode256 = 0;
+		newColorMode = 1;
+		bgColorMode = 0;
 
 		for (int i = 0; i < 16; i++) {
 			tempPalette[i] = READ_BE_UINT16(ptr);
@@ -127,12 +134,22 @@ void addBackground(const char *bgName, uint16 bgIdx) {
 
 	additionalBgTable[bgIdx] = (byte *) malloc(320 * 200);
 
+	debug("addBackground %d", bgIdx);
+
 	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
+
 	if (bpp == 8) {
+		bgColorMode = 1;
+		memcpy(newPalette, ptr, 256*3);
 		ptr += 3 * 256;
 		memcpy(additionalBgTable[bgIdx], ptr, 320 * 200);
 	} else {
-		ptr += 32;
+		bgColorMode = 0;
+		for (int i = 0; i < 16; i++) {
+			tempPalette[i] = READ_BE_UINT16(ptr);
+			ptr += 2;
+		}
+
 		gfxConvertSpriteToRaw(additionalBgTable[bgIdx], ptr, 160, 200);
 	}
 	free(dataPtr);

@@ -124,64 +124,10 @@ void stopMusicAfterFadeOut(void) {
 //	}
 }
 
-int16 stopObjectScript(int16 entryIdx) {
-	prcLinkedListStruct *currentHead = &objScriptList;
-	prcLinkedListStruct *tempHead = currentHead;
-
-	currentHead = tempHead->next;
-
-	while (currentHead) {
-		if (currentHead->scriptIdx == entryIdx) {
-			currentHead->scriptIdx = -1;
-			return 0;
-		}
-
-		currentHead = currentHead->next;
-	}
-
-	return -1;
-}
-
 void runObjectScript(int16 entryIdx) {
-	uint16 i;
-	prcLinkedListStruct *pNewElement;
-	prcLinkedListStruct *currentHead = &objScriptList;
-	prcLinkedListStruct *tempHead = currentHead;
-
-	currentHead = tempHead->next;
-
-	while (currentHead) {
-		tempHead = currentHead;
-
-		assert(tempHead);
-
-		currentHead = tempHead->next;
-	}
-
-	pNewElement = new prcLinkedListStruct;
-
-	assert(pNewElement);
-
-	pNewElement->next = tempHead->next;
-	tempHead->next = pNewElement;
-
-	// copy the stack into the script instance
-	for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
-		pNewElement->stack[i] = 0;
-	}
-
-	pNewElement->compareResult = 0;
-	pNewElement->scriptPosition = 0;
-
-	pNewElement->scriptPtr = (byte *)relTable[entryIdx].data;
-	pNewElement->scriptIdx = entryIdx;
-
-	if (g_cine->getGameType() == Cine::GType_OS) {
-		pNewElement->localVars[0] = relTable[entryIdx].runCount;
-		++relTable[entryIdx].runCount;
-	}
-
-	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].size);
+	ScriptPtr tmp(scriptInfo->create(*relTable[entryIdx], entryIdx));
+	assert(tmp);
+	objectScripts.push_back(tmp);
 }
 
 void addPlayerCommandMessage(int16 cmd) {
@@ -214,30 +160,31 @@ void addPlayerCommandMessage(int16 cmd) {
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSelectedObject) {
 	int16 i;
-	int16 di = -1;
+	int16 found = -1;
 
-	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].data && relTable[i].obj1Param1 == param1 && relTable[i].obj1Param2 == pSelectedObject->idx) {
+	for (i = 0; i < (int16)relTable.size(); i++) {
+		if (relTable[i]->_param1 == param1 && relTable[i]->_param2 == pSelectedObject->idx) {
 			if (param2 == 1) {
-				di = i;
+				found = i;
 			} else if (param2 == 2) {
-				if (relTable[i].obj2Param == pSelectedObject->param) {
-					di = i;
+				if (relTable[i]->_param3 == pSelectedObject->param) {
+					found = i;
 				}
 			}
 		}
 
-		if (di != -1)
+		if (found != -1)
 			break;
 	}
 
-	return di;
+	return found;
 }
 
 int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	overlayHeadElement *currentHead = overlayHead.previous;
 
 	int16 objX, objY, frame, part, threshold, height, xdif, ydif;
+	int width;
 
 	while (currentHead) {
 		if (currentHead->type < 2) {
@@ -250,27 +197,29 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 				part = objectTable[currentHead->objIdx].part;
 
 				if (currentHead->type == 0) {
-					threshold = animDataTable[frame].var1;
+					threshold = animDataTable[frame]._var1;
 				} else {
-					threshold = animDataTable[frame].width / 2;
+					threshold = animDataTable[frame]._width / 2;
 				}
 
-				height = animDataTable[frame].height;
+				height = animDataTable[frame]._height;
+				width = animDataTable[frame]._realWidth;
 
 				xdif = x - objX;
 				ydif = y - objY;
 
 				if ((xdif >= 0) && ((threshold << 4) > xdif) && (ydif > 0) && (ydif < height)) {
-					if (animDataTable[frame].ptr1) {
-						if (g_cine->getGameType() == Cine::GType_OS)
-							return currentHead->objIdx;
-
-						if (currentHead->type == 0)	{ // use generated mask
-							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].ptr2, animDataTable[frame].width)) {
+					if (animDataTable[frame].data()) {
+						if (g_cine->getGameType() == Cine::GType_OS) {
+							if(xdif < width && (currentHead->type == 1 || animDataTable[frame].getColor(xdif, ydif) != objectTable[currentHead->objIdx].part)) {
+								return currentHead->objIdx;
+							}
+						} else if (currentHead->type == 0)	{ // use generated mask
+							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].mask(), animDataTable[frame]._width)) {
 								return currentHead->objIdx;
 							}
 						} else if (currentHead->type == 1) { // is mask
-							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].ptr1, animDataTable[frame].width * 4)) {
+							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].data(), animDataTable[frame]._width * 4)) {
 								return currentHead->objIdx;
 							}
 						}
@@ -302,38 +251,38 @@ bool CineEngine::loadSaveDirectory(void) {
 	return true;
 }
 
+/*! \brief Restore script list item from savefile
+ * \param fHandle Savefile handlem open for reading
+ * \param isGlobal Restore object or global script?
+ */
 void loadScriptFromSave(Common::InSaveFile *fHandle, bool isGlobal) {
-	int16 i;
+	ScriptVars localVars, labels;
+	uint16 compare, pos;
+	int16 idx;
 
-	prcLinkedListStruct *newElement;
-	prcLinkedListStruct *currentHead = &globalScriptsHead;
-	prcLinkedListStruct *tempHead = currentHead;
+	labels.load(*fHandle);
+	localVars.load(*fHandle);
 
-	currentHead = tempHead->next;
+	compare = fHandle->readUint16BE();
+	pos = fHandle->readUint16BE();
+	idx = fHandle->readUint16BE();
 
-	while (currentHead) {
-		tempHead = currentHead;
-		currentHead = tempHead->next;
+	// no way to reinitialize these
+	if (idx < 0) {
+		return;
 	}
 
-	newElement = new prcLinkedListStruct;
-
-	newElement->next = tempHead->next;
-	tempHead->next = newElement;
-
-	for (i = 0; i < SCRIPT_STACK_SIZE; i++)
-		newElement->stack[i] = fHandle->readUint16BE();
-
-	newElement->localVars.load(*fHandle);
-
-	newElement->compareResult = fHandle->readUint16BE();
-	newElement->scriptPosition = fHandle->readUint16BE();
-	newElement->scriptIdx = fHandle->readUint16BE();
-
-	if (isGlobal)
-		newElement->scriptPtr = scriptTable[newElement->scriptIdx].ptr;
-	else
-		newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].data;
+	// original code loaded everything into globalScripts, this should be
+	// the correct behavior
+	if (isGlobal) {
+		ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx, labels, localVars, compare, pos));
+		assert(tmp);
+		globalScripts.push_back(tmp);
+	} else {
+		ScriptPtr tmp(scriptInfo->create(*relTable[idx], idx, labels, localVars, compare, pos));
+		assert(tmp);
+		objectScripts.push_back(tmp);
+	}
 }
 
 void loadOverlayFromSave(Common::InSaveFile *fHandle) {
@@ -370,26 +319,106 @@ void loadOverlayFromSave(Common::InSaveFile *fHandle) {
 	currentHead->previous = newElement;
 }
 
-void setupScriptList(bool isGlobal) {
-	prcLinkedListStruct *currentHead;
+/*! \brief Savefile format tester
+ * \param fHandle Savefile to check
+ *
+ * This function seeks through savefile and tries to guess if it's the original
+ * savegame format or broken format from ScummVM 0.10/0.11
+ * The test is incomplete but this should cover 99.99% of cases.
+ * If anyone makes a savefile which could confuse this test, assert will
+ * report it
+ */
+bool brokenSave(Common::InSaveFile &fHandle) {
+	// Backward seeking not supported in compressed savefiles
+	// if you really want it, finish it yourself
+	return false;
 
-	if (isGlobal)
-		currentHead = globalScriptsHead.next;
-	else
-		currentHead = objScriptList.next;
+	// fixed size part: 14093 bytes (12308 bytes in broken save)
+	// animDataTable begins at byte 6431
 
-	while (currentHead) {
-		if (isGlobal)
-			currentHead->scriptPtr = scriptTable[currentHead->scriptIdx].ptr;
-		else
-			currentHead->scriptPtr = (byte *)relTable[currentHead->scriptIdx].data;
-		currentHead = currentHead->next;
+	int filesize = fHandle.size();
+	int startpos = fHandle.pos();
+	int pos, tmp;
+	bool correct = false, broken = false;
+
+	// check for correct format
+	while (filesize > 14093) {
+		pos = 14093;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 206;
+		if (pos >= filesize) break;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 206;
+		if (pos >= filesize) break;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 20;
+		if (pos >= filesize) break;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 20;
+
+		if (pos == filesize) correct = true;
+		break;
 	}
+	debug(5, "brokenSave: correct format check %s: size=%d, pos=%d",
+		correct ? "passed" : "failed", filesize, pos);
+
+	// check for broken format
+	while (filesize > 12308) {
+		pos = 12308;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 206;
+		if (pos >= filesize) break;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 206;
+		if (pos >= filesize) break;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 20;
+		if (pos >= filesize) break;
+
+		fHandle.seek(pos);
+		tmp = fHandle.readUint16BE();
+		pos += 2 + tmp * 20;
+
+		if (pos == filesize) broken = true;
+		break;
+	}
+	debug(5, "brokenSave: broken format check %s: size=%d, pos=%d",
+		broken ? "passed" : "failed", filesize, pos);
+
+	// there's a very small chance that both cases will match
+	// if anyone runs into it, you'll have to walk through
+	// the animDataTable and try to open part file for each entry
+	if (!correct && !broken) {
+		error("brokenSave: file format check failed");
+	} else if (correct && broken) {
+		error("brokenSave: both file formats seem to apply");
+	}
+
+	fHandle.seek(startpos);
+	debug(5, "brokenSave: detected %s file format",
+		correct ? "correct" : "broken");
+
+	return broken;
 }
 
 bool CineEngine::makeLoad(char *saveName) {
 	int16 i;
 	int16 size;
+	bool broken;
 	Common::InSaveFile *fHandle;
 
 	fHandle = g_saveFileMan->openForLoading(saveName);
@@ -408,29 +437,13 @@ bool CineEngine::makeLoad(char *saveName) {
 	// if (g_cine->getGameType() == Cine::GType_OS) {
 	//	freeUnkList();
 	// }
-	freePrcLinkedList();
-	releaseObjectScripts();
-	freeBgIncrustList();
+	bgIncrustList.clear();
 	closePart();
 
-	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].data) {
-			free(relTable[i].data);
-			relTable[i].data = NULL;
-			relTable[i].size = 0;
-			relTable[i].obj1Param1 = 0;
-			relTable[i].obj1Param2 = 0;
-			relTable[i].obj2Param = 0;
-		}
-	}
-
-	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
-		if (scriptTable[i].ptr) {
-			free(scriptTable[i].ptr);
-			scriptTable[i].ptr = NULL;
-			scriptTable[i].size = 0;
-		}
-	}
+	objectScripts.clear();
+	globalScripts.clear();
+	relTable.clear();
+	scriptTable.clear();
 
 	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
 		messageTable[i].len = 0;
@@ -478,6 +491,8 @@ bool CineEngine::makeLoad(char *saveName) {
 
 	checkForPendingDataLoadSwitch = 0;
 
+	broken = brokenSave(*fHandle);
+
 	currentDisk = fHandle->readUint16BE();
 
 	fHandle->read(currentPartName, 13);
@@ -490,6 +505,28 @@ bool CineEngine::makeLoad(char *saveName) {
 	fHandle->read(currentMsgName, 13);
 	fHandle->read(currentBgName[0], 13);
 	fHandle->read(currentCtName, 13);
+
+	checkDataDisk(currentDisk);
+
+	if (strlen(currentPartName)) {
+		loadPart(currentPartName);
+	}
+
+	if (strlen(currentPrcName)) {
+		loadPrc(currentPrcName);
+	}
+
+	if (strlen(currentRelName)) {
+		loadRel(currentRelName);
+	}
+
+	if (strlen(currentBgName[0])) {
+		loadBg(currentBgName[0]);
+	}
+
+	if (strlen(currentCtName)) {
+		loadCt(currentCtName);
+	}
 
 	fHandle->readUint16BE();
 	fHandle->readUint16BE();
@@ -540,18 +577,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	fHandle->readUint16BE();
 	fHandle->readUint16BE();
 
-	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].width = fHandle->readUint16BE();
-		animDataTable[i].var1 = fHandle->readUint16BE();
-		animDataTable[i].bpp = fHandle->readUint16BE();
-		animDataTable[i].height = fHandle->readUint16BE();
-		animDataTable[i].ptr1 = NULL;
-		animDataTable[i].ptr2 = NULL;
-		animDataTable[i].fileIdx = fHandle->readSint16BE();
-		animDataTable[i].frameIdx = fHandle->readSint16BE();
-		fHandle->read(animDataTable[i].name, 10);
-		animDataTable[i].refresh = (fHandle->readByte() != 0);
-	}
+	loadResourcesFromSave(*fHandle, broken);
 
 	// TODO: handle screen params (really required ?)
 	fHandle->readUint16BE();
@@ -576,43 +602,13 @@ bool CineEngine::makeLoad(char *saveName) {
 		loadOverlayFromSave(fHandle);
 	}
 
-	size = fHandle->readSint16BE();
-	for (i = 0; i < size; i++) {
-		loadBgIncrustFromSave(fHandle);
-	}
+	loadBgIncrustFromSave(*fHandle);
 
 	delete fHandle;
-
-	checkDataDisk(currentDisk);
-
-	if (strlen(currentPartName)) {
-		loadPart(currentPartName);
-	}
-
-	if (strlen(currentPrcName)) {
-		loadPrc(currentPrcName);
-		setupScriptList(true);
-	}
-
-	if (strlen(currentRelName)) {
-		loadRel(currentRelName);
-		setupScriptList(false);
-	}
 
 	if (strlen(currentMsgName)) {
 		loadMsg(currentMsgName);
 	}
-
-	if (strlen(currentBgName[0])) {
-		loadBg(currentBgName[0]);
-	}
-
-	if (strlen(currentCtName)) {
-		loadCt(currentCtName);
-	}
-
-	loadResourcesFromSave();
-	reincrustAllBg();
 
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 
@@ -702,21 +698,7 @@ void makeSave(char *saveFileName) {
 	fHandle->writeUint16BE(0x1E);
 
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		fHandle->writeUint16BE(animDataTable[i].width);
-		fHandle->writeUint16BE(animDataTable[i].var1);
-		fHandle->writeUint16BE(animDataTable[i].bpp);
-		fHandle->writeUint16BE(animDataTable[i].height);
-		fHandle->writeSint16BE(animDataTable[i].fileIdx);
-		fHandle->writeSint16BE(animDataTable[i].frameIdx);
-		fHandle->write(animDataTable[i].name, 10);
-
-		// Horrifyingly, cinE used to dump the entire struct to the
-		// save file, including the data pointers. While these pointers
-		// would be invalid after loading, the loadResourcesFromSave()
-		// function would still test if ptr1 was non-NULL, presumably
-		// to see if the object was present in the room.
-
-		fHandle->writeByte(animDataTable[i].ptr1 ? 1 : 0);
+		animDataTable[i].save(*fHandle);
 	}
 
 	fHandle->writeUint16BE(0);  // Screen params, unhandled
@@ -727,60 +709,15 @@ void makeSave(char *saveFileName) {
 	fHandle->writeUint16BE(0);
 
 	{
-		int16 numScript = 0;
-		prcLinkedListStruct *currentHead = globalScriptsHead.next;
-
-		while (currentHead) {
-			numScript++;
-			currentHead = currentHead->next;
+		ScriptList::iterator it;
+		fHandle->writeUint16BE(globalScripts.size());
+		for (it = globalScripts.begin(); it != globalScripts.end(); ++it) {
+			(*it)->save(*fHandle);
 		}
 
-		fHandle->writeUint16BE(numScript);
-
-		// actual save
-		currentHead = globalScriptsHead.next;
-
-		while (currentHead) {
-			for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
-				fHandle->writeUint16BE(currentHead->stack[i]);
-			}
-
-			currentHead->localVars.save(*fHandle);
-
-			fHandle->writeUint16BE(currentHead->compareResult);
-			fHandle->writeUint16BE(currentHead->scriptPosition);
-			fHandle->writeUint16BE(currentHead->scriptIdx);
-
-			currentHead = currentHead->next;
-		}
-	}
-
-	{
-		int16 numScript = 0;
-		prcLinkedListStruct *currentHead = objScriptList.next;
-
-		while (currentHead) {
-			numScript++;
-			currentHead = currentHead->next;
-		}
-
-		fHandle->writeUint16BE(numScript);
-
-		// actual save
-		currentHead = objScriptList.next;
-
-		while (currentHead) {
-			for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
-				fHandle->writeUint16BE(currentHead->stack[i]);
-			}
-
-			currentHead->localVars.save(*fHandle);
-
-			fHandle->writeUint16BE(currentHead->compareResult);
-			fHandle->writeUint16BE(currentHead->scriptPosition);
-			fHandle->writeUint16BE(currentHead->scriptIdx);
-
-			currentHead = currentHead->next;
+		fHandle->writeUint16BE(objectScripts.size());
+		for (it = objectScripts.begin(); it != objectScripts.end(); ++it) {
+			(*it)->save(*fHandle);
 		}
 	}
 
@@ -812,6 +749,20 @@ void makeSave(char *saveFileName) {
 		}
 	}
 
+	Common::List<BGIncrust>::iterator it;
+	fHandle->writeUint16BE(bgIncrustList.size());
+
+	for (it = bgIncrustList.begin(); it != bgIncrustList.end(); ++it) {
+		fHandle->writeUint32BE(0); // next
+		fHandle->writeUint32BE(0); // unkPtr
+		fHandle->writeUint16BE(it->objIdx);
+		fHandle->writeUint16BE(it->param);
+		fHandle->writeUint16BE(it->x);
+		fHandle->writeUint16BE(it->y);
+		fHandle->writeUint16BE(it->frame);
+		fHandle->writeUint16BE(it->part);
+	}
+/*
 	int numBgIncrustList = 0;
 	BGIncrustList *bgIncrustPtr = bgIncrustList;
 
@@ -834,6 +785,7 @@ void makeSave(char *saveFileName) {
 
 		bgIncrustPtr = bgIncrustPtr->next;
 	}
+*/
 
 	delete fHandle;
 
@@ -985,7 +937,11 @@ int drawChar(byte character, int16 x, int16 y) {
 
 		if (characterWidth) {
 			byte characterIdx = fontParamTable[character].characterIdx;
-			drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, x, y);
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				drawSpriteRaw2(textTable[characterIdx][0], 0, 2, 8, page1Raw, x, y);
+			} else {
+				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, x, y);
+			}
 			x += characterWidth + 1;
 		}
 	}
@@ -1726,8 +1682,8 @@ uint16 executePlayerInput(void) {
 	return var_5E;
 }
 
-void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
-				byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+void drawSprite(overlayHeadElement *currentOverlay, const byte *spritePtr,
+				const byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
 	byte *ptr = NULL;
 	byte *msk = NULL;
 	byte i = 0;
@@ -1754,11 +1710,11 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 
 			maskSpriteIdx = objectTable[pCurrentOverlay->objIdx].frame;
 
-			maskWidth = animDataTable[maskSpriteIdx].width / 2;
-			maskHeight = animDataTable[maskSpriteIdx].height;
-			gfxUpdateSpriteMask(spritePtr, maskPtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, msk, x, y, maskX, maskY, i++);
+			maskWidth = animDataTable[maskSpriteIdx]._width / 2;
+			maskHeight = animDataTable[maskSpriteIdx]._height;
+			gfxUpdateSpriteMask(spritePtr, maskPtr, width, height, animDataTable[maskSpriteIdx].data(), maskWidth, maskHeight, ptr, msk, x, y, maskX, maskY, i++);
 #ifdef DEBUG_SPRITE_MASK
-			gfxFillSprite(animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, page, maskX, maskY, 1);
+			gfxFillSprite(animDataTable[maskSpriteIdx].data(), maskWidth, maskHeight, page, maskX, maskY, 1);
 #endif
 		}
 
@@ -1790,7 +1746,7 @@ void backupOverlayPage(void) {
 				if (i > 200) {
 					memcpy(page1Raw + (i - additionalBgVScroll) * 320, scrollBg + (i - 200) * 320, 320);
 				} else {
-					memcpy(page1Raw + (i - additionalBgVScroll) * 320, bgPage + (i) * 320, 320);
+					memcpy(page1Raw + (i - additionalBgVScroll) * 320, bgPage + (i-1) * 320, 320);
 				}
 			}
 		}
@@ -1805,7 +1761,7 @@ void drawMessage(const char *messagePtr, int16 x, int16 y, int16 width, int16 co
 	uint16 lineResult, fullLineWidth;
 	uint16 interWordSize, interWordSizeRemain;
 	const char *endOfMessagePtr;
-	byte currentChar, characterWidth;
+	byte currentChar; //, characterWidth;
 
 	gfxDrawPlainBoxRaw(x, y, x + width, y + 4, color, page1Raw);
 
@@ -1854,13 +1810,7 @@ void drawMessage(const char *messagePtr, int16 x, int16 y, int16 width, int16 co
 				if (interWordSizeRemain)
 					interWordSizeRemain = 0;
 			} else {
-				characterWidth = fontParamTable[currentChar].characterWidth;
-
-				if (characterWidth) {
-					byte characterIdx = fontParamTable[currentChar].characterIdx;
-					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
-					localX += characterWidth + 1;
-				}
+				localX = drawChar(currentChar, localX, localY);
 			}
 		} while ((messagePtr < endOfMessagePtr) && !endOfMessageReached);
 
@@ -1910,6 +1860,10 @@ void drawFailureMessage(byte cmd) {
 	freeOverlay(cmd, 3);
 }
 
+/*! \todo Fix Operation Stealth logo in intro (the green text after the plane
+ * takes off). Each letter should slowly grow top-down, it has something to
+ * do with object 10 (some mask or something)
+ */
 void drawOverlays(void) {
 	uint16 partVar1, partVar2;
 	AnimData *pPart;
@@ -1942,12 +1896,13 @@ void drawOverlays(void) {
 					if (g_cine->getGameType() == Cine::GType_OS) {
 						pPart = &animDataTable[objPtr->frame];
 
-						partVar1 = pPart->var1;
-						partVar2 = pPart->height;
+						partVar1 = pPart->_var1;
+						partVar2 = pPart->_height;
 
-						if (pPart->ptr1) {
-							// NOTE: is the mask supposed to be in ptr1? Shouldn't that be ptr2, like below?
-							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
+						if (pPart->data()) {
+							// NOTE: is the mask supposed to be in data()? Shouldn't that be mask(), like below?
+							// OS sprites don't use masks, see drawSprite() -- next_ghost
+							drawSprite(currentOverlay, pPart->data(), pPart->data(), partVar1, partVar2, page1Raw, x, y);
 						}
 					} else {
 						part = objPtr->part;
@@ -1956,11 +1911,11 @@ void drawOverlays(void) {
 
 						pPart = &animDataTable[objPtr->frame];
 
-						partVar1 = pPart->var1;
-						partVar2 = pPart->height;
+						partVar1 = pPart->_var1;
+						partVar2 = pPart->_height;
 
-						if (pPart->ptr1) {
-							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr2, partVar1, partVar2, page1Raw, x, y);
+						if (pPart->data()) {
+							drawSprite(currentOverlay, pPart->data(), pPart->mask(), partVar1, partVar2, page1Raw, x, y);
 						}
 					}
 				}
@@ -2013,6 +1968,7 @@ void drawOverlays(void) {
 				x = objPtr->x;
 				y = objPtr->y;
 
+
 				if (objPtr->frame >= 0) {
 					part = objPtr->part;
 
@@ -2020,11 +1976,11 @@ void drawOverlays(void) {
 
 					pPart = &animDataTable[objPtr->frame];
 
-					partVar1 = pPart->width / 2;
-					partVar2 = pPart->height;
+					partVar1 = pPart->_width / 2;
+					partVar2 = pPart->_height;
 
-					if (pPart->ptr1) {
-						gfxFillSprite(pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
+					if (pPart->data()) {
+						gfxFillSprite(pPart->data(), partVar1, partVar2, page1Raw, x, y);
 					}
 				}
 				break;
@@ -2040,22 +1996,15 @@ void drawOverlays(void) {
 
 				var5 = currentOverlay->x;
 
-				if (objPtr->frame >= 0) {
-					if (var5 <= 8) {
-						if (additionalBgTable[var5]) {
-							if (animDataTable[objPtr->frame].bpp == 1) {
-								int16 x2;
-								int16 y2;
+				if (objPtr->frame >= 0 && var5 <= 8 && additionalBgTable[var5] && animDataTable[objPtr->frame]._bpp == 1) {
+					int16 x2;
+					int16 y2;
 
-								x2 = animDataTable[objPtr->frame].width / 2;
-								y2 = animDataTable[objPtr->frame].height;
+					x2 = animDataTable[objPtr->frame]._width / 2;
+					y2 = animDataTable[objPtr->frame]._height;
 
-								if (animDataTable[objPtr->frame].ptr1) {
-									// drawSpriteRaw(animDataTable[objPtr->frame].ptr1, animDataTable[objPtr->frame].ptr1, x2, y2,
-									//				additionalBgTable[currentAdditionalBgIdx], x, y);
-								}
-							}
-						}
+					if (animDataTable[objPtr->frame].data()) {
+						maskBgOverlay(additionalBgTable[var5], animDataTable[objPtr->frame].data(), x2, y2, page1Raw, x, y);
 					}
 				}
 				break;
@@ -2075,9 +2024,6 @@ void mainLoopSub6(void) {
 
 void checkForPendingDataLoad(void) {
 	if (newPrcName[0] != 0) {
-		freePrcLinkedList();
-		resetglobalScriptsHead();
-
 		loadPrc(newPrcName);
 
 		strcpy(currentPrcName, newPrcName);
@@ -2087,9 +2033,6 @@ void checkForPendingDataLoad(void) {
 	}
 
 	if (newRelName[0] != 0) {
-		releaseObjectScripts();
-		resetObjectScriptHead();
-
 		loadRel(newRelName);
 
 		strcpy(currentRelName, newRelName);
@@ -2315,10 +2258,10 @@ void resetGfxEntityEntry(uint16 objIdx) {
 #endif
 }
 
-uint16 addAni(uint16 param1, uint16 param2, byte *ptr, SeqListElement *element, uint16 param3, int16 *param4) {
-	byte *currentPtr = ptr;
-	byte *ptrData;
-	byte *ptr2;
+uint16 addAni(uint16 param1, uint16 param2, const byte *ptr, SeqListElement *element, uint16 param3, int16 *param4) {
+	const byte *currentPtr = ptr;
+	const byte *ptrData;
+	const byte *ptr2;
 	int16 di;
 
 	assert(ptr);
@@ -2360,7 +2303,7 @@ uint16 addAni(uint16 param1, uint16 param2, byte *ptr, SeqListElement *element, 
 void processSeqListElement(SeqListElement *element) {
 	int16 x = objectTable[element->var6].x;
 	int16 y = objectTable[element->var6].y;
-	byte *ptr1 = animDataTable[element->varA].ptr1;
+	const byte *ptr1 = animDataTable[element->varA].data();
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;

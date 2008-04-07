@@ -23,6 +23,9 @@
  *
  */
 
+/*! \file
+ * Script interpreter file
+ */
 
 #include "common/endian.h"
 
@@ -31,435 +34,423 @@
 #include "cine/object.h"
 #include "cine/sound.h"
 #include "cine/various.h"
+#include "cine/script.h"
 
 namespace Cine {
 
-prcLinkedListStruct *_currentScriptElement;
-byte *_currentScriptPtr;
-uint16 _currentScriptParams;
-uint16 _currentPosition;
-uint16 _currentLine;
-uint16 _closeScript;
+uint16 compareVars(int16 a, int16 b);
+void palRotate(byte a, byte b, byte c);
+void removeSeq(uint16 param1, uint16 param2, uint16 param3);
+uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
+void addGfxElementA0(int16 param1, int16 param2);
+void removeGfxElementA0(int16 idx, int16 param);
 
-struct Opcode {
-	void (*proc)();
-	const char *args;
+const Opcode FWScript::_opcodeTable[] = {
+	/* 00 */
+	{ &FWScript::o1_modifyObjectParam, "bbw" },
+	{ &FWScript::o1_getObjectParam, "bbb" },
+	{ &FWScript::o1_addObjectParam, "bbw" },
+	{ &FWScript::o1_subObjectParam, "bbw" },
+	/* 04 */
+	{ &FWScript::o1_add2ObjectParam, "bbw" },
+	{ &FWScript::o1_sub2ObjectParam, "bbw" },
+	{ &FWScript::o1_compareObjectParam, "bbw" },
+	{ &FWScript::o1_setupObject, "bwwww" },
+	/* 08 */
+	{ &FWScript::o1_checkCollision, "bwwww" },
+	{ &FWScript::o1_loadVar, "bc" },
+	{ &FWScript::o1_addVar, "bc" },
+	{ &FWScript::o1_subVar, "bc" },
+	/* 0C */
+	{ &FWScript::o1_mulVar, "bc" },
+	{ &FWScript::o1_divVar, "bc" },
+	{ &FWScript::o1_compareVar, "bc" },
+	{ &FWScript::o1_modifyObjectParam2, "bbb" },
+	/* 10 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_loadMask0, "b" },
+	/* 14 */
+	{ &FWScript::o1_unloadMask0, "b" },
+	{ &FWScript::o1_addToBgList, "b" },
+	{ &FWScript::o1_loadMask1, "b" },
+	{ &FWScript::o1_unloadMask1, "b" },
+	/* 18 */
+	{ &FWScript::o1_loadMask4, "b" },
+	{ &FWScript::o1_unloadMask4, "b" },
+	{ &FWScript::o1_addSpriteFilledToBgList, "b" },
+	{ &FWScript::o1_op1B, "" },
+	/* 1C */
+	{ 0, 0 },
+	{ &FWScript::o1_label, "l" },
+	{ &FWScript::o1_goto, "b" },
+	{ &FWScript::o1_gotoIfSup, "b" },
+	/* 20 */
+	{ &FWScript::o1_gotoIfSupEqu, "b" },
+	{ &FWScript::o1_gotoIfInf, "b" },
+	{ &FWScript::o1_gotoIfInfEqu, "b" },
+	{ &FWScript::o1_gotoIfEqu, "b" },
+	/* 24 */
+	{ &FWScript::o1_gotoIfDiff, "b" },
+	{ &FWScript::o1_removeLabel, "b" },
+	{ &FWScript::o1_loop, "bb" },
+	{ 0, 0 },
+	/* 28 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 2C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 30 */
+	{ 0, 0 },
+	{ &FWScript::o1_startGlobalScript, "b" },
+	{ &FWScript::o1_endGlobalScript, "b" },
+	{ 0, 0 },
+	/* 34 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 38 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_loadAnim, "s" },
+	/* 3C */
+	{ &FWScript::o1_loadBg, "s" },
+	{ &FWScript::o1_loadCt, "s" },
+	{ 0, 0 },
+	{ &FWScript::o1_loadPart, "s" },
+	/* 40 */
+	{ &FWScript::o1_closePart, "" },
+	{ &FWScript::o1_loadNewPrcName, "bs" },
+	{ &FWScript::o1_requestCheckPendingDataLoad, "" },
+	{ 0, 0 },
+	/* 44 */
+	{ 0, 0 },
+	{ &FWScript::o1_blitAndFade, "" },
+	{ &FWScript::o1_fadeToBlack, "" },
+	{ &FWScript::o1_transformPaletteRange, "bbwww" },
+	/* 48 */
+	{ 0, 0 },
+	{ &FWScript::o1_setDefaultMenuColor2, "b" },
+	{ &FWScript::o1_palRotate, "bbb" },
+	{ 0, 0 },
+	/* 4C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_break, "" },
+	/* 50 */
+	{ &FWScript::o1_endScript, "x" },
+	{ &FWScript::o1_message, "bwwww" },
+	{ &FWScript::o1_loadGlobalVar, "bc" },
+	{ &FWScript::o1_compareGlobalVar, "bc" },
+	/* 54 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 58 */
+	{ 0, 0 },
+	{ &FWScript::o1_declareFunctionName, "s" },
+	{ &FWScript::o1_freePartRange, "bb" },
+	{ &FWScript::o1_unloadAllMasks, "" },
+	// 5C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 60 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_setScreenDimensions, "wwww" },
+	/* 64 */
+	{ &FWScript::o1_displayBackground, "" },
+	{ &FWScript::o1_initializeZoneData, "" },
+	{ &FWScript::o1_setZoneDataEntry, "bw" },
+	{ &FWScript::o1_getZoneDataEntry, "bb" },
+	/* 68 */
+	{ &FWScript::o1_setDefaultMenuColor, "b" },
+	{ &FWScript::o1_allowPlayerInput, "" },
+	{ &FWScript::o1_disallowPlayerInput, "" },
+	{ &FWScript::o1_changeDataDisk, "b" },
+	/* 6C */
+	{ 0, 0 },
+	{ &FWScript::o1_loadMusic, "s" },
+	{ &FWScript::o1_playMusic, "" },
+	{ &FWScript::o1_fadeOutMusic, "" },
+	/* 70 */
+	{ &FWScript::o1_stopSample, "" },
+	{ &FWScript::o1_op71, "bw" },
+	{ &FWScript::o1_op72, "wbw" },
+	{ &FWScript::o1_op73, "wbw" },
+	/* 74 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_playSample, "bbwbww" },
+	/* 78 */
+	{ &FWScript::o1_playSample, "bbwbww" },
+	{ &FWScript::o1_disableSystemMenu, "b" },
+	{ &FWScript::o1_loadMask5, "b" },
+	{ &FWScript::o1_unloadMask5, "b" }
 };
+const unsigned int FWScript::_numOpcodes = ARRAYSIZE(FWScript::_opcodeTable);
 
-const Opcode *_opcodeTable;
-int _numOpcodes;
 
+const Opcode OSScript::_opcodeTable[] = {
+	/* 00 */
+	{ &FWScript::o1_modifyObjectParam, "bbw" },
+	{ &FWScript::o1_getObjectParam, "bbb" },
+	{ &FWScript::o1_addObjectParam, "bbw" },
+	{ &FWScript::o1_subObjectParam, "bbw" },
+	/* 04 */
+	{ &FWScript::o1_add2ObjectParam, "bbw" },
+	{ &FWScript::o1_sub2ObjectParam, "bbw" },
+	{ &FWScript::o1_compareObjectParam, "bbw" },
+	{ &FWScript::o1_setupObject, "bwwww" },
+	/* 08 */
+	{ &FWScript::o1_checkCollision, "bwwww" },
+	{ &FWScript::o1_loadVar, "bc" },
+	{ &FWScript::o1_addVar, "bc" },
+	{ &FWScript::o1_subVar, "bc" },
+	/* 0C */
+	{ &FWScript::o1_mulVar, "bc" },
+	{ &FWScript::o1_divVar, "bc" },
+	{ &FWScript::o1_compareVar, "bc" },
+	{ &FWScript::o1_modifyObjectParam2, "bbb" },
+	/* 10 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_loadMask0, "b" },
+	/* 14 */
+	{ &FWScript::o1_unloadMask0, "b" },
+	{ &FWScript::o1_addToBgList, "b" },
+	{ &FWScript::o1_loadMask1, "b" },
+	{ &FWScript::o1_unloadMask1, "b" },
+	/* 18 */
+	{ &FWScript::o1_loadMask4, "b" },
+	{ &FWScript::o1_unloadMask4, "b" },
+	{ &FWScript::o1_addSpriteFilledToBgList, "b" },
+	{ &FWScript::o1_op1B, "" },
+	/* 1C */
+	{ 0, 0 },
+	{ &FWScript::o1_label, "l" },
+	{ &FWScript::o1_goto, "b" },
+	{ &FWScript::o1_gotoIfSup, "b" },
+	/* 20 */
+	{ &FWScript::o1_gotoIfSupEqu, "b" },
+	{ &FWScript::o1_gotoIfInf, "b" },
+	{ &FWScript::o1_gotoIfInfEqu, "b" },
+	{ &FWScript::o1_gotoIfEqu, "b" },
+	/* 24 */
+	{ &FWScript::o1_gotoIfDiff, "b" },
+	{ &FWScript::o1_removeLabel, "b" },
+	{ &FWScript::o1_loop, "bb" },
+	{ 0, 0 },
+	/* 28 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 2C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 30 */
+	{ 0, 0 },
+	{ &FWScript::o1_startGlobalScript, "b" },
+	{ &FWScript::o1_endGlobalScript, "b" },
+	{ 0, 0 },
+	/* 34 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 38 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_loadAnim, "s" },
+	/* 3C */
+	{ &FWScript::o1_loadBg, "s" },
+	{ &FWScript::o1_loadCt, "s" },
+	{ 0, 0 },
+	{ &FWScript::o2_loadPart, "s" },
+	/* 40 */
+	{ 0, 0 }, /* o1_closePart, triggered by some scripts (STARTA.PRC 4 for ex.) */
+	{ &FWScript::o1_loadNewPrcName, "bs" },
+	{ &FWScript::o1_requestCheckPendingDataLoad, "" },
+	{ 0, 0 },
+	/* 44 */
+	{ 0, 0 },
+	{ &FWScript::o1_blitAndFade, "" },
+	{ &FWScript::o1_fadeToBlack, "" },
+	{ &FWScript::o1_transformPaletteRange, "bbwww" },
+	/* 48 */
+	{ 0, 0 },
+	{ &FWScript::o1_setDefaultMenuColor2, "b" },
+	{ &FWScript::o1_palRotate, "bbb" },
+	{ 0, 0 },
+	/* 4C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_break, "" },
+	/* 50 */
+	{ &FWScript::o1_endScript, "x" },
+	{ &FWScript::o1_message, "bwwww" },
+	{ &FWScript::o1_loadGlobalVar, "bc" },
+	{ &FWScript::o1_compareGlobalVar, "bc" },
+	/* 54 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 58 */
+	{ 0, 0 },
+	{ &FWScript::o1_declareFunctionName, "s" },
+	{ &FWScript::o1_freePartRange, "bb" },
+	{ &FWScript::o1_unloadAllMasks, "" },
+	// 5C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 60 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o1_setScreenDimensions, "wwww" },
+	/* 64 */
+	{ &FWScript::o1_displayBackground, "" },
+	{ &FWScript::o1_initializeZoneData, "" },
+	{ &FWScript::o1_setZoneDataEntry, "bw" },
+	{ &FWScript::o1_getZoneDataEntry, "bb" },
+	/* 68 */
+	{ &FWScript::o1_setDefaultMenuColor, "b" },
+	{ &FWScript::o1_allowPlayerInput, "" },
+	{ &FWScript::o1_disallowPlayerInput, "" },
+	{ &FWScript::o1_changeDataDisk, "b" },
+	/* 6C */
+	{ 0, 0 },
+	{ &FWScript::o1_loadMusic, "s" },
+	{ &FWScript::o1_playMusic, "" },
+	{ &FWScript::o1_fadeOutMusic, "" },
+	/* 70 */
+	{ &FWScript::o1_stopSample, "" },
+	{ &FWScript::o1_op71, "bw" },
+	{ &FWScript::o1_op72, "wbw" },
+	{ &FWScript::o1_op72, "wbw" },
+	/* 74 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o2_playSample, "bbwbww" },
+	/* 78 */
+	{ &FWScript::o2_playSampleAlt, "bbwbww" },
+	{ &FWScript::o1_disableSystemMenu, "b" },
+	{ &FWScript::o1_loadMask5, "b" },
+	{ &FWScript::o1_unloadMask5, "b" },
+	/* 7C */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o2_addSeqListElement, "bbbbwww" },
+	/* 80 */
+	{ &FWScript::o2_removeSeq, "bb" },
+	{ &FWScript::o2_op81, "" },
+	{ &FWScript::o2_op82, "bbw" },
+	{ &FWScript::o2_isSeqRunning, "bb" },
+	/* 84 */
+	{ &FWScript::o2_gotoIfSupNearest, "b" },
+	{ &FWScript::o2_gotoIfSupEquNearest, "b" },
+	{ &FWScript::o2_gotoIfInfNearest, "b" },
+	{ &FWScript::o2_gotoIfInfEquNearest, "b" },
+	/* 88 */
+	{ &FWScript::o2_gotoIfEquNearest, "b" },
+	{ &FWScript::o2_gotoIfDiffNearest, "b" },
+	{ 0, 0 },
+	{ &FWScript::o2_startObjectScript, "b" },
+	/* 8C */
+	{ &FWScript::o2_stopObjectScript, "b" },
+	{ &FWScript::o2_op8D, "wwwwwwww" },
+	{ &FWScript::o2_addBackground, "bs" },
+	{ &FWScript::o2_removeBackground, "b" },
+	/* 90 */
+	{ &FWScript::o2_loadAbs, "bs" },
+	{ &FWScript::o2_loadBg, "b" },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 94 */
+	{ 0, 0 },
+	{ &FWScript::o1_changeDataDisk, "b" },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* 98 */
+	{ 0, 0 },
+	{ 0, 0 },
+	{ &FWScript::o2_wasZoneChecked, "" },
+	{ &FWScript::o2_op9B, "wwwwwwww" },
+	/* 9C */
+	{ &FWScript::o2_op9C, "wwww" },
+	{ &FWScript::o2_useBgScroll, "b" },
+	{ &FWScript::o2_setAdditionalBgVScroll, "c" },
+	{ &FWScript::o2_op9F, "ww" },
+	/* A0 */
+	{ &FWScript::o2_addGfxElementA0, "ww" },
+	{ &FWScript::o2_removeGfxElementA0, "ww" },
+	{ &FWScript::o2_opA2, "ww" },
+	{ &FWScript::o2_opA3, "ww" },
+	/* A4 */
+	{ &FWScript::o2_loadMask22, "b" },
+	{ &FWScript::o2_unloadMask22, "b" },
+	{ 0, 0 },
+	{ 0, 0 },
+	/* A8 */
+	{ 0, 0 },
+	{ &FWScript::o1_changeDataDisk, "b" }
+};
+const unsigned int OSScript::_numOpcodes = ARRAYSIZE(OSScript::_opcodeTable);
+
+FWScriptInfo *scriptInfo; ///< Script factory
+RawScriptArray scriptTable; ///< Table of script bytecode
+
+/*! \todo: replace with script subsystem
+ */
 void setupOpcodes() {
-	static const Opcode opcodeTableFW[] = {
-		/* 00 */
-		{ o1_modifyObjectParam, "bbw" },
-		{ o1_getObjectParam, "bbb" },
-		{ o1_addObjectParam, "bbw" },
-		{ o1_subObjectParam, "bbw" },
-		/* 04 */
-		{ o1_add2ObjectParam, "bbw" },
-		{ o1_sub2ObjectParam, "bbw" },
-		{ o1_compareObjectParam, "bbw" },
-		{ o1_setupObject, "bwwww" },
-		/* 08 */
-		{ o1_checkCollision, "bwwww" },
-		{ o1_loadVar, "bc" },
-		{ o1_addVar, "bc" },
-		{ o1_subVar, "bc" },
-		/* 0C */
-		{ o1_mulVar, "bc" },
-		{ o1_divVar, "bc" },
-		{ o1_compareVar, "bc" },
-		{ o1_modifyObjectParam2, "bbb" },
-		/* 10 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_loadMask0, "b" },
-		/* 14 */
-		{ o1_unloadMask0, "b" },
-		{ o1_addToBgList, "b" },
-		{ o1_loadMask1, "b" },
-		{ o1_unloadMask1, "b" },
-		/* 18 */
-		{ o1_loadMask4, "b" },
-		{ o1_unloadMask4, "b" },
-		{ o1_addSpriteFilledToBgList, "b" },
-		{ o1_op1B, "" },
-		/* 1C */
-		{ 0, 0 },
-		{ o1_label, "l" },
-		{ o1_goto, "b" },
-		{ o1_gotoIfSup, "b" },
-		/* 20 */
-		{ o1_gotoIfSupEqu, "b" },
-		{ o1_gotoIfInf, "b" },
-		{ o1_gotoIfInfEqu, "b" },
-		{ o1_gotoIfEqu, "b" },
-		/* 24 */
-		{ o1_gotoIfDiff, "b" },
-		{ o1_removeLabel, "b" },
-		{ o1_loop, "bb" },
-		{ 0, 0 },
-		/* 28 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 2C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 30 */
-		{ 0, 0 },
-		{ o1_startGlobalScript, "b" },
-		{ o1_endGlobalScript, "b" },
-		{ 0, 0 },
-		/* 34 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 38 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_loadAnim, "s" },
-		/* 3C */
-		{ o1_loadBg, "s" },
-		{ o1_loadCt, "s" },
-		{ 0, 0 },
-		{ o1_loadPart, "s" },
-		/* 40 */
-		{ o1_closePart, "" },
-		{ o1_loadNewPrcName, "bs" },
-		{ o1_requestCheckPendingDataLoad, "" },
-		{ 0, 0 },
-		/* 44 */
-		{ 0, 0 },
-		{ o1_blitAndFade, "" },
-		{ o1_fadeToBlack, "" },
-		{ o1_transformPaletteRange, "bbwww" },
-		/* 48 */
-		{ 0, 0 },
-		{ o1_setDefaultMenuColor2, "b" },
-		{ o1_palRotate, "bbb" },
-		{ 0, 0 },
-		/* 4C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_break, "" },
-		/* 50 */
-		{ o1_endScript, "x" },
-		{ o1_message, "bwwww" },
-		{ o1_loadGlobalVar, "bc" },
-		{ o1_compareGlobalVar, "bc" },
-		/* 54 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 58 */
-		{ 0, 0 },
-		{ o1_declareFunctionName, "s" },
-		{ o1_freePartRange, "bb" },
-		{ o1_unloadAllMasks, "" },
-		// 5C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 60 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_setScreenDimensions, "wwww" },
-		/* 64 */
-		{ o1_displayBackground, "" },
-		{ o1_initializeZoneData, "" },
-		{ o1_setZoneDataEntry, "bw" },
-		{ o1_getZoneDataEntry, "bb" },
-		/* 68 */
-		{ o1_setDefaultMenuColor, "b" },
-		{ o1_allowPlayerInput, "" },
-		{ o1_disallowPlayerInput, "" },
-		{ o1_changeDataDisk, "b" },
-		/* 6C */
-		{ 0, 0 },
-		{ o1_loadMusic, "s" },
-		{ o1_playMusic, "" },
-		{ o1_fadeOutMusic, "" },
-		/* 70 */
-		{ o1_stopSample, "" },
-		{ o1_op71, "bw" },
-		{ o1_op72, "wbw" },
-		{ o1_op73, "wbw" },
-		/* 74 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_playSample, "bbwbww" },
-		/* 78 */
-		{ o1_playSample, "bbwbww" },
-		{ o1_disableSystemMenu, "b" },
-		{ o1_loadMask5, "b" },
-		{ o1_unloadMask5, "b" }
-	};
-
-	// TODO: We need to verify the Operation Stealth opcodes.
-
-	static const Opcode opcodeTableOS[] = {
-		/* 00 */
-		{ o1_modifyObjectParam, "bbw" },
-		{ o1_getObjectParam, "bbb" },
-		{ o1_addObjectParam, "bbw" },
-		{ o1_subObjectParam, "bbw" },
-		/* 04 */
-		{ o1_add2ObjectParam, "bbw" },
-		{ o1_sub2ObjectParam, "bbw" },
-		{ o1_compareObjectParam, "bbw" },
-		{ o1_setupObject, "bwwww" },
-		/* 08 */
-		{ o1_checkCollision, "bwwww" },
-		{ o1_loadVar, "bc" },
-		{ o1_addVar, "bc" },
-		{ o1_subVar, "bc" },
-		/* 0C */
-		{ o1_mulVar, "bc" },
-		{ o1_divVar, "bc" },
-		{ o1_compareVar, "bc" },
-		{ o1_modifyObjectParam2, "bbb" },
-		/* 10 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_loadMask0, "b" },
-		/* 14 */
-		{ o1_unloadMask0, "b" },
-		{ o1_addToBgList, "b" },
-		{ o1_loadMask1, "b" },
-		{ o1_unloadMask1, "b" },
-		/* 18 */
-		{ o1_loadMask4, "b" },
-		{ o1_unloadMask4, "b" },
-		{ o1_addSpriteFilledToBgList, "b" },
-		{ o1_op1B, "" },
-		/* 1C */
-		{ 0, 0 },
-		{ o1_label, "l" },
-		{ o1_goto, "b" },
-		{ o1_gotoIfSup, "b" },
-		/* 20 */
-		{ o1_gotoIfSupEqu, "b" },
-		{ o1_gotoIfInf, "b" },
-		{ o1_gotoIfInfEqu, "b" },
-		{ o1_gotoIfEqu, "b" },
-		/* 24 */
-		{ o1_gotoIfDiff, "b" },
-		{ o1_removeLabel, "b" },
-		{ o1_loop, "bb" },
-		{ 0, 0 },
-		/* 28 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 2C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 30 */
-		{ 0, 0 },
-		{ o1_startGlobalScript, "b" },
-		{ o1_endGlobalScript, "b" },
-		{ 0, 0 },
-		/* 34 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 38 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_loadAnim, "s" },
-		/* 3C */
-		{ o1_loadBg, "s" },
-		{ o1_loadCt, "s" },
-		{ 0, 0 },
-		{ o2_loadPart, "s" },
-		/* 40 */
-		{ 0, 0 }, /* o1_closePart, triggered by some scripts (STARTA.PRC 4 for ex.) */
-		{ o1_loadNewPrcName, "bs" },
-		{ o1_requestCheckPendingDataLoad, "" },
-		{ 0, 0 },
-		/* 44 */
-		{ 0, 0 },
-		{ o1_blitAndFade, "" },
-		{ o1_fadeToBlack, "" },
-		{ o1_transformPaletteRange, "bbwww" },
-		/* 48 */
-		{ 0, 0 },
-		{ o1_setDefaultMenuColor2, "b" },
-		{ o1_palRotate, "bbb" },
-		{ 0, 0 },
-		/* 4C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_break, "" },
-		/* 50 */
-		{ o1_endScript, "x" },
-		{ o1_message, "bwwww" },
-		{ o1_loadGlobalVar, "bc" },
-		{ o1_compareGlobalVar, "bc" },
-		/* 54 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 58 */
-		{ 0, 0 },
-		{ o1_declareFunctionName, "s" },
-		{ o1_freePartRange, "bb" },
-		{ o1_unloadAllMasks, "" },
-		// 5C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 60 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o1_setScreenDimensions, "wwww" },
-		/* 64 */
-		{ o1_displayBackground, "" },
-		{ o1_initializeZoneData, "" },
-		{ o1_setZoneDataEntry, "bw" },
-		{ o1_getZoneDataEntry, "bb" },
-		/* 68 */
-		{ o1_setDefaultMenuColor, "b" },
-		{ o1_allowPlayerInput, "" },
-		{ o1_disallowPlayerInput, "" },
-		{ o1_changeDataDisk, "b" },
-		/* 6C */
-		{ 0, 0 },
-		{ o1_loadMusic, "s" },
-		{ o1_playMusic, "" },
-		{ o1_fadeOutMusic, "" },
-		/* 70 */
-		{ o1_stopSample, "" },
-		{ o1_op71, "bw" },
-		{ o1_op72, "wbw" },
-		{ o1_op72, "wbw" },
-		/* 74 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o2_playSample, "bbwbww" },
-		/* 78 */
-		{ o2_playSampleAlt, "bbwbww" },
-		{ o1_disableSystemMenu, "b" },
-		{ o1_loadMask5, "b" },
-		{ o1_unloadMask5, "b" },
-		/* 7C */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o2_addSeqListElement, "bbbbwww" },
-		/* 80 */
-		{ o2_removeSeq, "bb" },
-		{ o2_op81, "" },
-		{ o2_op82, "bbw" },
-		{ o2_isSeqRunning, "bb" },
-		/* 84 */
-		{ o2_gotoIfSupNearest, "b" },
-		{ o2_gotoIfSupEquNearest, "b" },
-		{ o2_gotoIfInfNearest, "b" },
-		{ o2_gotoIfInfEquNearest, "b" },
-		/* 88 */
-		{ o2_gotoIfEquNearest, "b" },
-		{ o2_gotoIfDiffNearest, "b" },
-		{ 0, 0 },
-		{ o2_startObjectScript, "b" },
-		/* 8C */
-		{ o2_stopObjectScript, "b" },
-		{ o2_op8D, "wwwwwwww" },
-		{ o2_addBackground, "bs" },
-		{ o2_removeBackground, "b" },
-		/* 90 */
-		{ o2_loadAbs, "bs" },
-		{ o2_loadBg, "b" },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 94 */
-		{ 0, 0 },
-		{ o1_changeDataDisk, "b" },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* 98 */
-		{ 0, 0 },
-		{ 0, 0 },
-		{ o2_wasZoneChecked, "" },
-		{ o2_op9B, "wwwwwwww" },
-		/* 9C */
-		{ o2_op9C, "wwww" },
-		{ o2_useBgScroll, "b" },
-		{ o2_setAdditionalBgVScroll, "c" },
-		{ o2_op9F, "ww" },
-		/* A0 */
-		{ o2_addGfxElementA0, "ww" },
-		{ o2_opA1, "ww" },
-		{ o2_opA2, "ww" },
-		{ o2_opA3, "ww" },
-		/* A4 */
-		{ o2_loadMask22, "b" },
-		{ o2_unloadMask22, "b" },
-		{ 0, 0 },
-		{ 0, 0 },
-		/* A8 */
-		{ 0, 0 },
-		{ o1_changeDataDisk, "b" }
-	};
-
+	static FWScriptInfo fw;
+	static OSScriptInfo os;
 	if (g_cine->getGameType() == Cine::GType_FW) {
-		_opcodeTable = opcodeTableFW;
-		_numOpcodes = ARRAYSIZE(opcodeTableFW);
+		scriptInfo = &fw;
 	} else {
-		_opcodeTable = opcodeTableOS;
-		_numOpcodes = ARRAYSIZE(opcodeTableOS);
+		scriptInfo = &os;
 	}
 }
 
-byte getNextByte() {
-	byte val = *(_currentScriptPtr + _currentPosition);
-	_currentPosition++;
-	return val;
-}
-
-uint16 getNextWord() {
-	uint16 val = READ_BE_UINT16(_currentScriptPtr + _currentPosition);
-	_currentPosition += 2;
-	return val;
-}
-
-const char *getNextString() {
-	const char *val = (const char *)(_currentScriptPtr + _currentPosition);
-	_currentPosition += strlen(val) + 1;
-	return val;
-}
-
-// empty array
+/*! \brief Allocate empty array
+ * \param len Size of array
+ *
+ * Explicit to prevent var=0 instead of var[i]=0 typos.
+ */
 ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
 	assert(_vars);
 	reset();
 }
 
-// read game save, for later use
+/*! \brief Allocate array and read contents from savefile
+ * \param fHandle Savefile open for reading
+ * \param len Size of array
+ */
 ScriptVars::ScriptVars(Common::InSaveFile &fHandle, unsigned int len)
 	: _size(len), _vars(new int16[len]) {
 
@@ -468,16 +459,21 @@ ScriptVars::ScriptVars(Common::InSaveFile &fHandle, unsigned int len)
 	load(fHandle);
 }
 
-// copy constructor
+/*! \brief Copy constructor
+ */
 ScriptVars::ScriptVars(const ScriptVars &src) : _size(src._size), _vars(new int16[_size]) {
 	assert(_vars);
 	memcpy(_vars, src._vars, _size * sizeof(int16));
 }
 
+/*! \brief Destructor
+ */
 ScriptVars::~ScriptVars(void) {
 	delete[] _vars;
 }
 
+/*! \brief Assignment operator
+ */
 ScriptVars &ScriptVars::operator=(const ScriptVars &src) {
 	ScriptVars tmp(src);
 	int16 *tmpvars = _vars;
@@ -489,49 +485,1997 @@ ScriptVars &ScriptVars::operator=(const ScriptVars &src) {
 	return *this;
 }
 
-// array access
+/*! \brief Direct array item access
+ * \param idx Item index
+ * \return Reference to item
+ */
 int16 &ScriptVars::operator[](unsigned int idx) {
-	debugN(5, "assert(%d < %d)", idx, _size);
+	debug(6, "assert(%d < %d)", idx, _size);
 	assert(idx < _size);
 	return _vars[idx];
 }
 
+/*! \brief Direct read-only array item access
+ * \param idx Item index
+ * \return Copy of item
+ */
 int16 ScriptVars::operator[](unsigned int idx) const {
-	debugN(5, "assert(%d < %d)\n", idx, _size);
+	debug(6, "assert(%d < %d)", idx, _size);
 	assert(idx < _size);
 	return _vars[idx];
 }
 
-// dump to savefile
-void ScriptVars::save(Common::OutSaveFile &fHandle) {
+/*! \brief Savefile writer
+ * \param fHandle Savefile open for writing
+ */
+void ScriptVars::save(Common::OutSaveFile &fHandle) const {
 	save(fHandle, _size);
 }
 
-// globalVars[255] is not written to savefiles...
-void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) {
-	debugN(5, "assert(%d <= %d)\n", len, _size);
+/*! \brief Savefile writer with data length limit
+ * \param fHandle Savefile open for writing
+ * \param len Length of data to be written (len <= _size)
+ */
+void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) const {
+	debug(6, "assert(%d <= %d)", len, _size);
 	assert(len <= _size);
 	for (unsigned int i = 0; i < len; i++) {
 		fHandle.writeUint16BE(_vars[i]);
 	}
 }
 
-// read from savefile
+/*! \brief Restore array from savefile
+ * \param fHandle Savefile open for reading
+ */
 void ScriptVars::load(Common::InSaveFile &fHandle) {
 	load(fHandle, _size);
 }
 
+/*! \brief Restore part of array from savefile
+ * \param fHandle Savefile open for reading
+ * \param len Length of data to be read
+ */
 void ScriptVars::load(Common::InSaveFile &fHandle, unsigned int len) {
-	debugN(5, "assert(%d <= %d)\n", len, _size);
+	debug(6, "assert(%d <= %d)", len, _size);
 	assert(len <= _size);
 	for (unsigned int i = 0; i < len; i++) {
 		_vars[i] = fHandle.readUint16BE();
 	}
 }
 
+/*! \brief Reset all values to 0
+ */
 void ScriptVars::reset(void) {
 	memset( _vars, 0, _size * sizeof(int16));
 }
+
+/*! \brief Constructor for partial loading
+ * \param s Size of bytecode which will be added later
+ *
+ * This constructor _MUST_ be followed by setdata() method call before the
+ * instance can be used. It leaves the instance in partially invalid state.
+ */
+RawScript::RawScript(uint16 s) : _size(s), _data(NULL),
+	_labels(SCRIPT_STACK_SIZE) { }
+
+/*! \brief Complete constructor
+ * \param data Script bytecode
+ * \param s Bytecode length
+ */
+RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s) :
+	_size(s), _data(NULL), _labels(SCRIPT_STACK_SIZE) {
+
+	setData(info, data);
+}
+
+/*! \brief Copy constructor
+ */
+RawScript::RawScript(const RawScript &src) : _size(src._size),
+	_data(new byte[_size+1]), _labels(src._labels) {
+
+	assert(_data);
+	memcpy(_data, src._data, _size+1);
+}
+
+/*! \brief Destructor
+ */
+RawScript::~RawScript(void) {
+	delete[] _data;
+}
+
+/*! \brief Assignment operator
+ */
+RawScript &RawScript::operator=(const RawScript &src) {
+	assert(src._data);
+	byte *tmp = new byte[src._size+1];
+
+	assert(tmp);
+	_labels = src._labels;
+	_size = src._size;
+
+	delete[] _data;
+	_data = tmp;
+	memcpy(_data, src._data, _size);
+	_data[_size] = 0;
+
+	return *this;
+}
+
+/*! \brief Get the next label in bytecode
+ * \param info Script info instance
+ * \param offset Starting offset
+ * \return Index of the next label in bytecode or _size on end of bytecode
+ *
+ * computeScriptStackSub replacement
+ */
+int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
+	assert(_data);
+	int pos = offset;
+
+	assert(pos >= 0);
+
+	while (pos < _size) {
+		uint8 opcode = _data[pos++];
+		const char *ptr = info.opcodeInfo(opcode);
+
+		if (!ptr) {
+			continue;
+		}
+
+		for (; *ptr; ++ptr) {
+			switch (*ptr) {
+			case 'b': // byte
+				pos++;
+				break;
+			case 'w': // word
+				pos += 2;
+				break;
+			case 'c': { // byte != 0 ? byte : word
+					uint8 test = _data[pos];
+					pos++;
+					if (test) {
+						pos++;
+					} else {
+						pos += 2;
+					}
+				}
+				break;
+			case 'l': // label
+				return pos;
+			case 's': // string
+				while (_data[pos++] != 0);
+				break;
+			case 'x': // exit script
+				return -pos-1;
+			}
+		}
+	}
+	return _size;
+}
+
+/*! \brief Calculate initial script labels
+ * \param info Script info instance
+ *
+ * computeScriptStack replacement
+ */
+void RawScript::computeLabels(const FWScriptInfo &info) {
+	assert(_data);
+	int pos = 0;
+	int i;
+
+	// reset labels
+	for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
+		_labels[i] = -1;
+	}
+
+	// parse bytecode
+	while ((pos = getNextLabel(info, pos)) >= 0) {
+		i = _data[pos];
+		_labels[i] = ++pos;
+	}
+}
+
+/*! \brief find the next label from current position
+ * \param info Script info instance
+ * \param index Label index to look for
+ * \param offset Current position in script
+ * \return Position of next instruction following the label
+ *
+ * computeScriptStackFromScript replacement
+ */
+uint16 RawScript::getLabel(const FWScriptInfo &info, byte index, uint16 offset)
+	const {
+
+	assert(_data);
+	int pos = offset;
+
+	while ((pos = getNextLabel(info, pos)) >= 0) {
+		if (_data[pos++] == index) {
+			return pos;
+		}
+	}
+
+	return -pos - 1;
+}
+
+/*! \brief Copy bytecode and calculate labels
+ * \param data Bytecode to copy, must be _size long
+ */
+void RawScript::setData(const FWScriptInfo &info, const byte *data) {
+	assert(!_data); // this function should be called only once per instance
+	_data = new byte[_size+1];
+
+	assert(data && _data);
+	memcpy(_data, data, _size * sizeof(byte));
+	_data[_size] = 0;
+
+	computeLabels(info);
+}
+
+/*! \brief Initial script labels
+ * \return Precalculated script labels
+ */
+const ScriptVars &RawScript::labels(void) const {
+	assert(_data);
+	return _labels;
+}
+
+/*! \brief One byte of bytecode
+ * \param pos Index in bytecode
+ * \return Byte from bytecode
+ */
+byte RawScript::getByte(unsigned int pos) const {
+	assert(_data && pos < _size);
+
+	return _data[pos];
+}
+
+/*! \brief One word of bytecode
+ * \param pos Index of the first byte in bytecode
+ * \return Word of bytecode
+ */
+uint16 RawScript::getWord(unsigned int pos) const {
+	assert(_data && pos+1 < _size);
+
+	return READ_BE_UINT16(_data + pos);
+}
+
+/*! \brief String in bytecode
+ * \param pos Index of the first char in string
+ * \return Pointer to part of bytecode
+ */
+const char *RawScript::getString(unsigned int pos) const {
+	assert(_data && pos < _size);
+
+	return (const char*)(_data+pos);
+}
+
+/*! \brief Constructor for partial loading
+ * \param size Size of bytecode which will be added later
+ * \param p1 First object script parameter
+ * \param p2 Second object script parameter
+ * \param p3 Third object script parameter
+ *
+ * This constructor _MUST_ be followed by setdata() method call before the
+ * instance can be used. It leaves the instance in partially invalid state.
+ */
+RawObjectScript::RawObjectScript(uint16 s, uint16 p1, uint16 p2, uint16 p3)
+	: RawScript(s), _runCount(0), _param1(p1), _param2(p2), _param3(p3)
+{ }
+
+/*! \brief Complete constructor
+ * \param data Script bytecode
+ * \param s Bytecode length
+ * \param p1 First object script parameter
+ * \param p2 Second object script parameter
+ * \param p3 Third object script parameter
+ */
+RawObjectScript::RawObjectScript(const FWScriptInfo &info, const byte *data,
+	uint16 s, uint16 p1, uint16 p2, uint16 p3) : RawScript(info, data, s),
+	_runCount(0), _param1(p1), _param2(p2), _param3(p3) { }
+
+/*! \brief Contructor for global scripts
+ * \param script Script bytecode reference
+ * \param idx Script bytecode index
+ */
+FWScript::FWScript(const RawScript &script, int16 idx) : _script(script),
+	_pos(0), _line(0), _compare(0), _index(idx),
+	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
+	_globalVars(globalVars), _info(new FWScriptInfo) { }
+
+/*! \brief Copy constructor
+ */
+FWScript::FWScript(const FWScript &src) : _script(src._script), _pos(src._pos),
+	_line(src._line), _compare(src._compare), _index(src._index),
+	_labels(src._labels), _localVars(src._localVars),
+	_globalVars(src._globalVars), _info(new FWScriptInfo) { }
+
+/*! \brief Contructor for global scripts in derived classes
+ * \param script Script bytecode reference
+ * \param idx Script bytecode index
+ */
+FWScript::FWScript(const RawScript &script, int16 idx, FWScriptInfo *info) :
+	_script(script), _pos(0), _line(0), _compare(0), _index(idx),
+	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
+	_globalVars(globalVars), _info(info) { }
+
+/*! \brief Constructor for object scripts in derived classes
+ * \param script Script bytecode reference
+ * \param idx Script bytecode index
+ */
+FWScript::FWScript(RawObjectScript &script, int16 idx, FWScriptInfo *info) :
+	_script(script), _pos(0), _line(0), _compare(0), _index(idx),
+	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
+	_globalVars(globalVars), _info(info) {
+
+	_localVars[0] = script.run();
+}
+
+/*! \brief Copy constructor for derived classes
+ */
+FWScript::FWScript(const FWScript &src, FWScriptInfo *info) :
+	_script(src._script), _pos(src._pos), _line(src._line),
+	_compare(src._compare), _index(src._index), _labels(src._labels),
+	_localVars(src._localVars), _globalVars(src._globalVars), _info(info) { }
+
+FWScript::~FWScript(void) {
+	delete _info;
+}
+
+/*! \brief Read next byte from bytecode
+ * \return Byte from bytecode
+ */
+byte FWScript::getNextByte() {
+	byte val = _script.getByte(_pos);
+	_pos++;
+	return val;
+}
+
+/*! \brief Read next word from bytecode
+ * \return Word from bytecode
+ */
+uint16 FWScript::getNextWord() {
+	uint16 val = _script.getWord(_pos);
+	_pos += 2;
+	return val;
+}
+
+/*! \brief Read next string from bytecode
+ * \return Pointer to string
+ */
+const char *FWScript::getNextString() {
+	const char *val = _script.getString(_pos);
+	_pos += strlen(val) + 1;
+	return val;
+}
+
+/*! \brief Restore script state from savefile
+ * \param labels Restored script labels
+ * \param local Restored local script variables
+ * \param compare Restored last comparison result
+ * \param pos Restored script position
+ */
+void FWScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) {
+	assert(pos < _script._size);
+	_labels = labels;
+	_localVars = local;
+	_compare = compare;
+	_pos = _line = pos;
+}
+
+/*! \brief Execute script
+ * \return <0 on script termination, >0 on script pause
+ *
+ * executeScript replacement.
+ * Instruction handler must return 0 if the script should continue or
+ * nonzero with the same meaning as return value of this function
+ */
+int FWScript::execute() {
+	int ret = 0;
+
+	while (!ret) {
+		_line = _pos;
+		byte opcode = getNextByte();
+		opFunc handler = _info->opcodeHandler(opcode);
+
+		if (handler) {
+			ret = (this->*handler)();
+		}
+	}
+
+	return ret;
+}
+
+/*! \brief Save script to savefile
+ * \param fHandle Savefile handle
+ */
+void FWScript::save(Common::OutSaveFile &fHandle) const {
+	_labels.save(fHandle);
+	_localVars.save(fHandle);
+	fHandle.writeUint16BE(_compare);
+	fHandle.writeUint16BE(_pos);
+	// data order sucks...
+	fHandle.writeUint16BE(_index);
+}
+
+/*! \brief Contructor for global scripts
+ * \param script Script bytecode reference
+ * \param idx Script bytecode index
+ */
+OSScript::OSScript(const RawScript &script, int16 idx) :
+	FWScript(script, idx, new OSScriptInfo) {}
+
+/*! \brief Constructor for object scripts
+ * \param script Script bytecode reference
+ * \param idx Script bytecode index
+ */
+OSScript::OSScript(RawObjectScript &script, int16 idx) :
+	FWScript(script, idx, new OSScriptInfo) {}
+
+/*! \brief Copy constructor
+ */
+OSScript::OSScript(const OSScript &src) : FWScript(src, new OSScriptInfo) {}
+
+/*! \brief Restore script state from savefile
+ * \param labels Restored script labels
+ * \param local Restored local script variables
+ * \param compare Restored last comparison result
+ * \param pos Restored script position
+ */
+void OSScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) {
+	FWScript::load(labels, local, compare, pos);
+}
+/*! \brief Get opcode info string
+ * \param opcode Opcode to look for in opcode table
+ */
+const char *FWScriptInfo::opcodeInfo(byte opcode) const {
+	if (opcode == 0 || opcode > FWScript::_numOpcodes) {
+		return NULL;
+	}
+
+	if (!FWScript::_opcodeTable[opcode - 1].args) {
+		warning("Undefined opcode 0x%02X in FWScriptInfo::opcodeInfo", opcode - 1);
+		return NULL;
+	}
+
+	return FWScript::_opcodeTable[opcode - 1].args;
+}
+
+/*! \brief Get opcode handler pointer
+ * \param opcode Opcode to look for in opcode table
+ */
+opFunc FWScriptInfo::opcodeHandler(byte opcode) const {
+	if (opcode == 0 || opcode > FWScript::_numOpcodes) {
+		return NULL;
+	}
+
+	if (!FWScript::_opcodeTable[opcode - 1].proc) {
+		warning("Undefined opcode 0x%02X in FWScriptInfo::opcodeHandler", opcode - 1);
+		return NULL;
+	}
+
+	return FWScript::_opcodeTable[opcode - 1].proc;
+}
+
+/*! \brief Create new FWScript instance
+ * \param script Script bytecode
+ * \param index Bytecode index
+ */
+FWScript *FWScriptInfo::create(const RawScript &script, int16 index) const {
+	return new FWScript(script, index);
+}
+
+/*! \brief Create new FWScript instance
+ * \param script Object script bytecode
+ * \param index Bytecode index
+ */
+FWScript *FWScriptInfo::create(const RawObjectScript &script, int16 index) const {
+	return new FWScript(script, index);
+}
+
+/*! \brief Load saved FWScript instance
+ * \param script Script bytecode
+ * \param index Bytecode index
+ * \param local Local variables
+ * \param labels Script labels
+ * \param compare Last compare result
+ * \param pos Position in script
+ */
+FWScript *FWScriptInfo::create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
+	FWScript *tmp = new FWScript(script, index);
+	assert(tmp);
+	tmp->load(labels, local, compare, pos);
+	return tmp;
+}
+
+/*! \brief Load saved FWScript instance
+ * \param script Object script bytecode
+ * \param index Bytecode index
+ * \param local Local variables
+ * \param labels Script labels
+ * \param compare Last compare result
+ * \param pos Position in script
+ */
+FWScript *FWScriptInfo::create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
+	FWScript *tmp = new FWScript(script, index);
+	assert(tmp);
+	tmp->load(labels, local, compare, pos);
+	return tmp;
+}
+
+/*! \brief Get opcode info string
+ * \param opcode Opcode to look for in opcode table
+ */
+const char *OSScriptInfo::opcodeInfo(byte opcode) const {
+	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
+		return NULL;
+	}
+
+	if (!OSScript::_opcodeTable[opcode - 1].args) {
+		warning("Undefined opcode 0x%02X in OSScriptInfo::opcodeInfo", opcode - 1);
+		return NULL;
+	}
+
+	return OSScript::_opcodeTable[opcode - 1].args;
+}
+
+/*! \brief Get opcode handler pointer
+ * \param opcode Opcode to look for in opcode table
+ */
+opFunc OSScriptInfo::opcodeHandler(byte opcode) const {
+	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
+		return NULL;
+	}
+
+	if (!OSScript::_opcodeTable[opcode - 1].proc) {
+		warning("Undefined opcode 0x%02X in OSScriptInfo::opcodeHandler", opcode - 1);
+		return NULL;
+	}
+
+	return OSScript::_opcodeTable[opcode - 1].proc;
+}
+
+/*! \brief Create new OSScript instance
+ * \param script Script bytecode
+ * \param index Bytecode index
+ */
+FWScript *OSScriptInfo::create(const RawScript &script, int16 index) const {
+	return new OSScript(script, index);
+}
+
+/*! \brief Create new OSScript instance
+ * \param script Object script bytecode
+ * \param index Bytecode index
+ */
+FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index) const {
+	return new OSScript(script, index);
+}
+
+/*! \brief Load saved OSScript instance
+ * \param script Script bytecode
+ * \param index Bytecode index
+ * \param local Local variables
+ * \param labels Script labels
+ * \param compare Last compare result
+ * \param pos Position in script
+ */
+FWScript *OSScriptInfo::create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
+	OSScript *tmp = new OSScript(script, index);
+	assert(tmp);
+	tmp->load(labels, local, compare, pos);
+	return tmp;
+}
+
+/*! \brief Load saved OSScript instance
+ * \param script Object script bytecode
+ * \param index Bytecode index
+ * \param local Local variables
+ * \param labels Script labels
+ * \param compare Last compare result
+ * \param pos Position in script
+ */
+FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
+	OSScript *tmp = new OSScript(script, index);
+	assert(tmp);
+	tmp->load(labels, local, compare, pos);
+	return tmp;
+}
+
+// ------------------------------------------------------------------------
+// FUTURE WARS opcodes
+// ------------------------------------------------------------------------
+
+int FWScript::o1_modifyObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	modifyObjectParam(objIdx, paramIdx, newValue);
+	return 0;
+}
+
+int FWScript::o1_getObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	byte newValue = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", _line, objIdx, paramIdx, newValue);
+
+	_localVars[newValue] = getObjectParam(objIdx, paramIdx);
+	return 0;
+}
+
+int FWScript::o1_addObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	addObjectParam(objIdx, paramIdx, newValue);
+	return 0;
+}
+
+int FWScript::o1_subObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	subObjectParam(objIdx, paramIdx, newValue);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_add2ObjectParam() {
+	uint16 a = getNextByte();
+	uint16 b = getNextByte();
+	uint16 c = getNextWord();
+	warning("STUB: o1_add2ObjectParam(%x, %x, %x)", a, b, c);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_sub2ObjectParam() {
+	uint16 a = getNextByte();
+	uint16 b = getNextByte();
+	uint16 c = getNextWord();
+	warning("STUB: o1_sub2ObjectParam(%x, %x, %x)", a, b, c);
+	return 0;
+}
+
+int FWScript::o1_compareObjectParam() {
+	byte objIdx = getNextByte();
+	byte param1 = getNextByte();
+	int16 param2 = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: compareObjectParam(objIdx:%d,type:%d,value:%d)", _line, objIdx, param1, param2);
+
+	_compare = compareObjectParam(objIdx, param1, param2);
+	return 0;
+}
+
+int FWScript::o1_setupObject() {
+	byte objIdx = getNextByte();
+	int16 param1 = getNextWord();
+	int16 param2 = getNextWord();
+	int16 param3 = getNextWord();
+	int16 param4 = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: setupObject(objIdx:%d,%d,%d,%d,%d)", _line, objIdx, param1, param2, param3, param4);
+
+	setupObject(objIdx, param1, param2, param3, param4);
+	return 0;
+}
+
+int FWScript::o1_checkCollision() {
+	byte objIdx = getNextByte();
+	int16 param1 = getNextWord();
+	int16 param2 = getNextWord();
+	int16 param3 = getNextWord();
+	int16 param4 = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: checkCollision(objIdx:%d,%d,%d,%d,%d)", _line, objIdx, param1, param2, param3, param4);
+
+	_compare = checkCollision(objIdx, param1, param2, param3, param4);
+	return 0;
+}
+
+int FWScript::o1_loadVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+		int16 var;
+
+		switch (varType) {
+		case 1:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = var[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] = _localVars[dataIdx];
+			break;
+		case 2:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = globalVars[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] = _globalVars[dataIdx];
+			break;
+		case 3:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = mouseX", _line, varIdx);
+			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&var, &dummyU16);
+			_localVars[varIdx] = var;
+			break;
+		case 4:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = mouseY", _line, varIdx);
+			getMouseData(mouseUpdateStatus, &dummyU16, &dummyU16, (uint16 *)&var);
+			_localVars[varIdx] = var;
+			break;
+		case 5:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = rand mod %d", _line, varIdx, dataIdx);
+			_localVars[varIdx] = g_cine->_rnd.getRandomNumber(dataIdx - 1);
+			break;
+		case 8:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].packedSize", _line, varIdx, dataIdx);
+			_localVars[varIdx] = partBuffer[dataIdx].packedSize;
+			break;
+		case 9:
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].unpackedSize", _line, varIdx, dataIdx);
+			_localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
+			break;
+		default:
+			error("executeScript: o1_loadVar: Unknown variable type %d", varType);
+		}
+	} else {
+		int16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] = %d", _line, varIdx, value);
+		_localVars[varIdx] = value;
+	}
+
+	return 0;
+}
+
+int FWScript::o1_addVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] += var[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] += _localVars[dataIdx];
+		} else if (varType == 2) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] += globalVar[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] += _globalVars[dataIdx];
+		}
+	} else {
+		int16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] += %d", _line, varIdx, value);
+		_localVars[varIdx] += value;
+	}
+
+	return 0;
+}
+
+int FWScript::o1_subVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] -= var[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] -= _localVars[dataIdx];
+		} else if (varType == 2) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] -= globalVar[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] -= _globalVars[dataIdx];
+		}
+
+	} else {
+		int16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] -= %d", _line, varIdx, value);
+		_localVars[varIdx] -= value;
+	}
+
+	return 0;
+}
+
+int FWScript::o1_mulVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] *= var[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] *= _localVars[dataIdx];
+		} else if (varType == 2) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] *= globalVar[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] *= _globalVars[dataIdx];
+		}
+	} else {
+		int16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] *= %d", _line, varIdx, value);
+		_localVars[varIdx] *= value;
+	}
+
+	return 0;
+}
+
+int FWScript::o1_divVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] /= var[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] /= _localVars[dataIdx];
+		} else if (varType == 2) {
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] /= globalVar[%d]", _line, varIdx, dataIdx);
+			_localVars[varIdx] /= _globalVars[dataIdx];
+		}
+	} else {
+		int16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: var[%d] /= %d", _line, varIdx, value);
+		_localVars[varIdx] /= value;
+	}
+
+	return 0;
+}
+
+int FWScript::o1_compareVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and var[%d]", _line, varIdx, dataIdx);
+			_compare = compareVars(_localVars[varIdx], _localVars[dataIdx]);
+		} else if (varType == 2) {
+			debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and globalVar[%d]", _line, varIdx, dataIdx);
+			_compare = compareVars(_localVars[varIdx], _globalVars[dataIdx]);
+		}
+	} else {
+		int16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and %d", _line, varIdx, value);
+		_compare = compareVars(_localVars[varIdx], value);
+	}
+
+	return 0;
+}
+
+int FWScript::o1_modifyObjectParam2() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	byte newValue = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", _line, objIdx, paramIdx, newValue);
+
+	modifyObjectParam(objIdx, paramIdx, _localVars[newValue]);
+	return 0;
+}
+
+int FWScript::o1_loadMask0() {
+	// OP_loadV7Element
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: addSpriteOverlay(%d)", _line, param);
+	loadOverlayElement(param, 0);
+	return 0;
+}
+
+int FWScript::o1_unloadMask0() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay(%d)", _line, param);
+	freeOverlay(param, 0);
+	return 0;
+}
+
+int FWScript::o1_addToBgList() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: addToBGList(%d)", _line, param);
+	addToBGList(param);
+	return 0;
+}
+
+int FWScript::o1_loadMask1() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: addOverlay1(%d)", _line, param);
+	loadOverlayElement(param, 1);
+	return 0;
+}
+
+int FWScript::o1_unloadMask1() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: removeOverlay1(%d)", _line, param);
+	freeOverlay(param, 1);
+	return 0;
+}
+
+int FWScript::o1_loadMask4() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: addOverlayType4(%d)", _line, param);
+	loadOverlayElement(param, 4);
+	return 0;
+}
+
+int FWScript::o1_unloadMask4() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay4(%d)", _line, param);
+	freeOverlay(param, 4);
+	return 0;
+}
+
+int FWScript::o1_addSpriteFilledToBgList() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: op1A(%d) -> TODO !", _line, param);
+	addSpriteFilledToBGList(param);
+	return 0;
+}
+
+int FWScript::o1_op1B() {
+	debugC(5, kCineDebugScript, "Line: %d: freeBgIncrustList", _line);
+	bgIncrustList.clear();
+	return 0;
+}
+
+int FWScript::o1_label() {
+	byte labelIdx = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: label(%d)", _line, labelIdx);
+	_labels[labelIdx] = _pos;
+	return 0;
+}
+
+int FWScript::o1_goto() {
+	byte labelIdx = getNextByte();
+
+	assert(_labels[labelIdx] != -1);
+
+	debugC(5, kCineDebugScript, "Line: %d: goto label(%d)", _line, labelIdx);
+	_pos = _labels[labelIdx];
+	return 0;
+}
+
+int FWScript::o1_gotoIfSup() {
+	byte labelIdx = getNextByte();
+
+	if (_compare == kCmpGT) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto %d (true)", _line, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_gotoIfSupEqu() {
+	byte labelIdx = getNextByte();
+
+	if (_compare & (kCmpGT | kCmpEQ)) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto %d (true)", _line, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_gotoIfInf() {
+	byte labelIdx = getNextByte();
+
+	if (_compare == kCmpLT) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto %d (true)", _line, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_gotoIfInfEqu() {
+	byte labelIdx = getNextByte();
+
+	if (_compare & (kCmpLT | kCmpEQ)) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto %d (true)", _line, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_gotoIfEqu() {
+	byte labelIdx = getNextByte();
+
+	if (_compare == kCmpEQ) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto %d (true)", _line, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_gotoIfDiff() {
+	byte labelIdx = getNextByte();
+
+	if (_compare != kCmpEQ) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto %d (true)", _line, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_removeLabel() {
+	byte labelIdx = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: removeLabel(%d)", _line, labelIdx);
+	_labels[labelIdx] = -1;
+	return 0;
+}
+
+int FWScript::o1_loop() {
+	byte varIdx = getNextByte();
+	byte labelIdx = getNextByte();
+
+	_localVars[varIdx]--;
+
+	if (_localVars[varIdx] >= 0) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: loop(var[%d]) goto %d (continue)", _line, varIdx, labelIdx);
+		_pos = _labels[labelIdx];
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: loop(var[%d]) goto %d (stop)", _line, varIdx, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o1_startGlobalScript() {
+	// OP_startScript
+	byte param = getNextByte();
+
+	assert(param < NUM_MAX_SCRIPT);
+
+	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _line, param);
+	addScriptToList0(param);
+	return 0;
+}
+
+int FWScript::o1_endGlobalScript() {
+	byte scriptIdx = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: stopGlobalScript(%d)", _line, scriptIdx);
+
+	ScriptList::iterator it = globalScripts.begin();
+
+	for (; it != globalScripts.end(); ++it) {
+		if ((*it)->_index == scriptIdx) {
+			(*it)->_index = -1;
+		}
+	}
+
+	return 0;
+}
+
+int FWScript::o1_loadAnim() {
+	// OP_loadResource
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadResource(\"%s\")", _line, param);
+	loadResource(param);
+	return 0;
+}
+
+int FWScript::o1_loadBg() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _line, param);
+
+	loadBg(param);
+	bgIncrustList.clear();
+	bgVar0 = 0;
+	return 0;
+}
+
+int FWScript::o1_loadCt() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _line, param);
+	loadCt(param);
+	return 0;
+}
+
+int FWScript::o1_loadPart() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _line, param);
+	loadPart(param);
+	return 0;
+}
+
+int FWScript::o1_closePart() {
+	debugC(5, kCineDebugScript, "Line: %d: closePart", _line);
+	closePart();
+	return 0;
+}
+
+int FWScript::o1_loadNewPrcName() {
+	// OP_loadData
+	byte param1 = getNextByte();
+	const char *param2 = getNextString();
+
+	assert(param1 <= 3);
+
+	switch (param1) {
+	case 0:
+		debugC(5, kCineDebugScript, "Line: %d: loadPrc(\"%s\")", _line, param2);
+		strcpy(newPrcName, param2);
+		break;
+	case 1:
+		debugC(5, kCineDebugScript, "Line: %d: loadRel(\"%s\")", _line, param2);
+		strcpy(newRelName, param2);
+		break;
+	case 2:
+		debugC(5, kCineDebugScript, "Line: %d: loadObject(\"%s\")", _line, param2);
+		strcpy(newObjectName, param2);
+		break;
+	case 3:
+		debugC(5, kCineDebugScript, "Line: %d: loadMsg(\"%s\")", _line, param2);
+		strcpy(newMsgName, param2);
+		break;
+	}
+	return 0;
+}
+
+int FWScript::o1_requestCheckPendingDataLoad() {
+	debugC(5, kCineDebugScript, "Line: %d: request data load", _line);
+	checkForPendingDataLoadSwitch = 1;
+	return 0;
+}
+
+int FWScript::o1_blitAndFade() {
+	debugC(5, kCineDebugScript, "Line: %d: request fadein", _line);
+	// TODO: use real code
+
+	drawOverlays();
+	fadeRequired = true;
+	flip();
+
+//	fadeFromBlack();
+	return 0;
+}
+
+int FWScript::o1_fadeToBlack() {
+	debugC(5, kCineDebugScript, "Line: %d: request fadeout", _line);
+
+	fadeToBlack();
+	return 0;
+}
+
+int FWScript::o1_transformPaletteRange() {
+	byte startColor = getNextByte();
+	byte numColor = getNextByte();
+	uint16 r = getNextWord();
+	uint16 g = getNextWord();
+	uint16 b = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d)", _line, startColor, numColor, r, g, b);
+
+	transformPaletteRange(startColor, numColor, r, g, b);
+	return 0;
+}
+
+int FWScript::o1_setDefaultMenuColor2() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _line, param);
+	defaultMenuBoxColor2 = param;
+	return 0;
+}
+
+int FWScript::o1_palRotate() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+	byte c = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: palRotate(%d,%d,%d)", _line, a, b, c);
+	palRotate(a, b, c);
+	return 0;
+}
+
+/*!\brief Pause script
+ * \todo Make sure it works
+ */
+int FWScript::o1_break() {
+	debugC(5, kCineDebugScript, "Line: %d: break", _line);
+
+	return 1;
+}
+
+/*! \brief Terminate script
+ * \todo Make sure it works
+ */
+int FWScript::o1_endScript() {
+	debugC(5, kCineDebugScript, "Line: %d: endScript", _line);
+
+	return -1;
+}
+
+int FWScript::o1_message() {
+	byte param1 = getNextByte();
+	uint16 param2 = getNextWord();
+	uint16 param3 = getNextWord();
+	uint16 param4 = getNextWord();
+	uint16 param5 = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: message(%d,%d,%d,%d,%d)", _line, param1, param2, param3, param4, param5);
+
+	addMessage(param1, param2, param3, param4, param5);
+	return 0;
+}
+
+int FWScript::o1_loadGlobalVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte dataIdx = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = var[%d]", _line, varIdx, dataIdx);
+			_globalVars[varIdx] = _localVars[dataIdx];
+		} else {
+			debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = globalVars[%d]", _line, varIdx, dataIdx);
+			_globalVars[varIdx] = _globalVars[dataIdx];
+		}
+	} else {
+		uint16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = %d", _line, varIdx, value);
+		_globalVars[varIdx] = value;
+	}
+
+	return 0;
+}
+
+int FWScript::o1_compareGlobalVar() {
+	byte varIdx = getNextByte();
+	byte varType = getNextByte();
+
+	if (varType) {
+		byte value = getNextByte();
+
+		if (varType == 1) {
+			debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and var[%d]", _line, varIdx, value);
+			_compare = compareVars(_globalVars[varIdx], _localVars[value]);
+		} else {
+			debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and globalVars[%d]", _line, varIdx, value);
+			_compare = compareVars(_globalVars[varIdx], _globalVars[value]);
+		}
+	} else {
+		uint16 value = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _line, varIdx, value);
+
+		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {	// TODO: fix
+			_compare = 1;
+		} else {
+			_compare = compareVars(_globalVars[varIdx], value);
+		}
+	}
+
+	return 0;
+}
+
+int FWScript::o1_declareFunctionName() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: comment(%s)", _line, param);
+	return 0;
+}
+
+int FWScript::o1_freePartRange() {
+	byte startIdx = getNextByte();
+	byte numIdx = getNextByte();
+
+	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
+
+	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _line, startIdx, numIdx);
+	freeAnimDataRange(startIdx, numIdx);
+	return 0;
+}
+
+int FWScript::o1_unloadAllMasks() {
+	debugC(5, kCineDebugScript, "Line: %d: unloadAllMasks()", _line);
+	unloadAllMasks();
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_setScreenDimensions() {
+	uint16 a = getNextWord();
+	uint16 b = getNextWord();
+	uint16 c = getNextWord();
+	uint16 d = getNextWord();
+	warning("STUB: o1_setScreenDimensions(%x, %x, %x, %x)", a, b, c, d);
+	// setupScreenParam
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_displayBackground() {
+	warning("STUB: o1_displayBackground()");
+	return 0;
+}
+
+int FWScript::o1_initializeZoneData() {
+	debugC(5, kCineDebugScript, "Line: %d: initializeZoneData()", _line);
+
+	for (int i = 0; i < NUM_MAX_ZONE; i++) {
+		zoneData[i] = i;
+	}
+	return 0;
+}
+
+int FWScript::o1_setZoneDataEntry() {
+	byte zoneIdx = getNextByte();
+	uint16 var = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: setZone[%d] = %d", _line, zoneIdx, var);
+	zoneData[zoneIdx] = var;
+	return 0;
+}
+
+int FWScript::o1_getZoneDataEntry() {
+	byte zoneIdx = getNextByte();
+	byte var = getNextByte();
+
+	_localVars[var] = zoneData[zoneIdx];
+	return 0;
+}
+
+int FWScript::o1_setDefaultMenuColor() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _line, param);
+	defaultMenuBoxColor = param;
+	return 0;
+}
+
+int FWScript::o1_allowPlayerInput() {
+	debugC(5, kCineDebugScript, "Line: %d: allowPlayerInput()", _line);
+	allowPlayerInput = 1;
+	return 0;
+}
+
+int FWScript::o1_disallowPlayerInput() {
+	debugC(5, kCineDebugScript, "Line: %d: dissallowPlayerInput()", _line);
+	allowPlayerInput = 0;
+	return 0;
+}
+
+int FWScript::o1_changeDataDisk() {
+	byte newDisk = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: changeDataDisk(%d)", _line, newDisk);
+	checkDataDisk(newDisk);
+	return 0;
+}
+
+int FWScript::o1_loadMusic() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _line, param);
+	g_sound->loadMusic(param);
+	return 0;
+}
+
+int FWScript::o1_playMusic() {
+	debugC(5, kCineDebugScript, "Line: %d: playMusic()", _line);
+	g_sound->playMusic();
+	return 0;
+}
+
+int FWScript::o1_fadeOutMusic() {
+	debugC(5, kCineDebugScript, "Line: %d: fadeOutMusic()", _line);
+	g_sound->fadeOutMusic();
+	return 0;
+}
+
+int FWScript::o1_stopSample() {
+	debugC(5, kCineDebugScript, "Line: %d: stopSample()", _line);
+	g_sound->stopMusic();
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_op71() {
+	byte a = getNextByte();
+	uint16 b = getNextWord();
+	warning("STUB: o1_op71(%x, %x)", a, b);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_op72() {
+	uint16 a = getNextWord();
+	byte b = getNextByte();
+	uint16 c = getNextWord();
+	warning("STUB: o1_op72(%x, %x, %x)", a, b, c);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o1_op73() {
+	// I believe this opcode is identical to o1_op72(). In fact, Operation
+	// Stealth doesn't even have it. It uses o1_op72() instead.
+	uint16 a = getNextWord();
+	byte b = getNextByte();
+	uint16 c = getNextWord();
+	warning("STUB: o1_op72(%x, %x, %x)", a, b, c);
+	return 0;
+}
+
+int FWScript::o1_playSample() {
+	debugC(5, kCineDebugScript, "Line: %d: playSample()", _line);
+
+	byte anim = getNextByte();
+	byte channel = getNextByte();
+
+	uint16 freq = getNextWord();
+	byte repeat = getNextByte();
+
+	int16 volume = getNextWord();
+	uint16 size = getNextWord();
+
+	const byte *data = animDataTable[anim].data();
+
+	if (!data) {
+		return 0;
+	}
+
+	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
+		if (size == 0xFFFF) {
+			size = animDataTable[anim]._width * animDataTable[anim]._height;
+		}
+		if (channel < 10) { // || _currentOpcode == 0x78
+			int channel1, channel2;
+			if (channel == 0) {
+				channel1 = 0;
+				channel2 = 1;
+			} else {
+				channel1 = 2;
+				channel2 = 3;
+			}
+			g_sound->playSound(channel1, freq, data, size, -1, volume, 63, repeat);
+			g_sound->playSound(channel2, freq, data, size,  1, volume,  0, repeat);
+		} else {
+			channel -= 10;
+			if (volume > 63) {
+				volume = 63;
+			}
+			g_sound->playSound(channel, freq, data, size, 0, 0, volume, repeat);
+		}
+	} else {
+		if (volume > 63 || volume < 0) {
+			volume = 63;
+		}
+		if (channel >= 10) {
+			channel -= 10;
+		}
+		if (volume < 50) {
+			volume = 50;
+		}
+		if (g_cine->getGameType() == Cine::GType_OS && size == 0) {
+			return 0;
+		}
+		g_sound->stopMusic();
+		if (size == 0xFFFF) {
+			g_sound->playSound(channel, 0, data, 0, 0, 0, volume, 0);
+		} else {
+			g_sound->stopSound(channel);
+		}
+	}
+	return 0;
+}
+
+int FWScript::o1_disableSystemMenu() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: disableSystemMenu(%d)", _line, param);
+	disableSystemMenu = (param != 0);
+	return 0;
+}
+
+int FWScript::o1_loadMask5() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: addOverlay5(%d)", _line, param);
+	loadOverlayElement(param, 5);
+	return 0;
+}
+
+int FWScript::o1_unloadMask5() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: freeOverlay5(%d)", _line, param);
+	freeOverlay(param, 5);
+	return 0;
+}
+
+// ------------------------------------------------------------------------
+// OPERATION STEALTH opcodes
+// ------------------------------------------------------------------------
+
+int FWScript::o2_loadPart() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _line, param);
+	return 0;
+}
+
+int FWScript::o2_playSample() {
+	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
+		// no-op in these versions
+		getNextByte();
+		getNextByte();
+		getNextWord();
+		getNextByte();
+		getNextWord();
+		getNextWord();
+		return 0;
+	}
+	return o1_playSample();
+}
+
+int FWScript::o2_playSampleAlt() {
+	byte num = getNextByte();
+	byte channel = getNextByte();
+	uint16 frequency = getNextWord();
+	getNextByte();
+	getNextWord();
+	uint16 size = getNextWord();
+
+	if (size == 0xFFFF) {
+		size = animDataTable[num]._width * animDataTable[num]._height;
+	}
+	if (animDataTable[num].data()) {
+		if (g_cine->getPlatform() == Common::kPlatformPC) {
+			// if speaker output is available, play sound on it
+			// if it's another device, don't play anything
+			// TODO: implement this, it's used in the introduction for example
+			// on each letter displayed
+		} else {
+			g_sound->playSound(channel, frequency, animDataTable[num].data(), size, 0, 0, 63, 0);
+		}
+	}
+	return 0;
+}
+
+int FWScript::o2_addSeqListElement() {
+	byte param1 = getNextByte();
+	byte param2 = getNextByte();
+	byte param3 = getNextByte();
+	byte param4 = getNextByte();
+	uint16 param5 = getNextWord();
+	uint16 param6 = getNextWord();
+	uint16 param7 = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: addSeqListElement(%d,%d,%d,%d,%d,%d,%d)", _line, param1, param2, param3, param4, param5, param6, param7);
+	addSeqListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
+	return 0;
+}
+
+int FWScript::o2_removeSeq() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: removeSeq(%d,%d) -> TODO", _line, a, b);
+	removeSeq(a, 0, b);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_op81() {
+	warning("STUB: o2_op81()");
+	// freeUnkList();
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_op82() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+	uint16 c = getNextWord();
+	warning("STUB: o2_op82(%x, %x, %x)", a, b, c);
+	return 0;
+}
+
+int FWScript::o2_isSeqRunning() {
+	byte a = getNextByte();
+	byte b = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: OP83(%d,%d) -> TODO", _line, a, b);
+
+	if (isSeqRunning(a, 0, b)) {
+		_compare = 1;
+	} else {
+		_compare = 0;
+	}
+	return 0;
+}
+
+/*! \todo The assert may produce false positives and requires testing
+ */
+int FWScript::o2_gotoIfSupNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_compare == kCmpGT) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto nearest %d (true)", _line, labelIdx);
+		_pos = _script.getLabel(*_info, labelIdx, _pos);
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(>) goto nearest %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+/*! \todo The assert may produce false positives and requires testing
+ */
+int FWScript::o2_gotoIfSupEquNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_compare & (kCmpGT | kCmpEQ)) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto nearest %d (true)", _line, labelIdx);
+		_pos = _script.getLabel(*_info, labelIdx, _pos);
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto nearest %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+/*! \todo The assert may produce false positives and requires testing
+ */
+int FWScript::o2_gotoIfInfNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_compare == kCmpLT) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto nearest %d (true)", _line, labelIdx);
+		_pos = _script.getLabel(*_info, labelIdx, _pos);
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(<) goto nearest %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+/*! \todo The assert may produce false positives and requires testing
+ */
+int FWScript::o2_gotoIfInfEquNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_compare & (kCmpLT | kCmpEQ)) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto nearest %d (true)", _line, labelIdx);
+		_pos = _script.getLabel(*_info, labelIdx, _pos);
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto nearest %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+/*! \todo The assert may produce false positives and requires testing
+ */
+int FWScript::o2_gotoIfEquNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_compare == kCmpEQ) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto nearest %d (true)", _line, labelIdx);
+		_pos = _script.getLabel(*_info, labelIdx, _pos);
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(==) goto nearest %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+/*! \todo The assert may produce false positives and requires testing
+ */
+int FWScript::o2_gotoIfDiffNearest() {
+	byte labelIdx = getNextByte();
+
+	if (_compare != kCmpEQ) {
+		assert(_labels[labelIdx] != -1);
+
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto nearest %d (true)", _line, labelIdx);
+		_pos = _script.getLabel(*_info, labelIdx, _pos);
+	} else {
+		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto nearest %d (false)", _line, labelIdx);
+	}
+	return 0;
+}
+
+int FWScript::o2_startObjectScript() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: startObjectScript(%d)", _line, param);
+	runObjectScript(param);
+	return 0;
+}
+
+int FWScript::o2_stopObjectScript() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: stopObjectScript(%d)", _line, param);
+	ScriptList::iterator it = objectScripts.begin();
+
+	for (; it != objectScripts.end(); ++it) {
+		if ((*it)->_index == param) {
+			(*it)->_index = -1;
+		}
+	}
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_op8D() {
+	uint16 a = getNextWord();
+	uint16 b = getNextWord();
+	uint16 c = getNextWord();
+	uint16 d = getNextWord();
+	uint16 e = getNextWord();
+	uint16 f = getNextWord();
+	uint16 g = getNextWord();
+	uint16 h = getNextWord();
+	warning("STUB: o2_op8D(%x, %x, %x, %x, %x, %x, %x, %x)", a, b, c, d, e, f, g, h);
+	// _currentScriptElement->compareResult = ...
+	return 0;
+}
+
+int FWScript::o2_addBackground() {
+	byte param1 = getNextByte();
+	const char *param2 = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: addBackground(%s,%d)", _line, param2, param1);
+	addBackground(param2, param1);
+	return 0;
+}
+
+int FWScript::o2_removeBackground() {
+	byte param = getNextByte();
+
+	assert(param);
+
+	debugC(5, kCineDebugScript, "Line: %d: removeBackground(%d)", _line, param);
+
+	if (additionalBgTable[param]) {
+		free(additionalBgTable[param]);
+		additionalBgTable[param] = NULL;
+	}
+
+	if (currentAdditionalBgIdx == param) {
+		currentAdditionalBgIdx = 0;
+	}
+
+	if (currentAdditionalBgIdx2 == param) {
+		currentAdditionalBgIdx2 = 0;
+	}
+
+	strcpy(currentBgName[param], "");
+	return 0;
+}
+
+int FWScript::o2_loadAbs() {
+	byte param1 = getNextByte();
+	const char *param2 = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadABS(%d,%s)", _line, param1, param2);
+	loadAbs(param2, param1);
+	return 0;
+}
+
+int FWScript::o2_loadBg() {
+	byte param = getNextByte();
+
+	assert(param <= 8);
+
+	debugC(5, kCineDebugScript, "Line: %d: useBg(%d)", _line, param);
+
+	if (additionalBgTable[param]) {
+		currentAdditionalBgIdx = param;
+		if (param == 8) {
+			newColorMode = 3;
+		} else {
+			newColorMode = bgColorMode + 1;
+		}
+		//if (_screenNeedFadeOut == 0) {
+		//	adBgVar1 = 1;
+		//}
+		fadeRequired = true;
+	}
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_wasZoneChecked() {
+	warning("STUB: o2_wasZoneChecked()");
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_op9B() {
+	uint16 a = getNextWord();
+	uint16 b = getNextWord();
+	uint16 c = getNextWord();
+	uint16 d = getNextWord();
+	uint16 e = getNextWord();
+	uint16 f = getNextWord();
+	uint16 g = getNextWord();
+	uint16 h = getNextWord();
+	warning("STUB: o2_op9B(%x, %x, %x, %x, %x, %x, %x, %x)", a, b, c, d, e, f, g, h);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_op9C() {
+	uint16 a = getNextWord();
+	uint16 b = getNextWord();
+	uint16 c = getNextWord();
+	uint16 d = getNextWord();
+	warning("STUB: o2_op9C(%x, %x, %x, %x)", a, b, c, d);
+	return 0;
+}
+
+int FWScript::o2_useBgScroll() {
+	byte param = getNextByte();
+
+	assert(param <= 8);
+
+	debugC(5, kCineDebugScript, "Line: %d: useBgScroll(%d)", _line, param);
+
+	if (additionalBgTable[param]) {
+		currentAdditionalBgIdx2 = param;
+	}
+	return 0;
+}
+
+int FWScript::o2_setAdditionalBgVScroll() {
+	byte param1 = getNextByte();
+
+	if (param1) {
+		byte param2 = getNextByte();
+
+		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = var[%d]", _line, param2);
+		additionalBgVScroll = _localVars[param2];
+	} else {
+		uint16 param2 = getNextWord();
+
+		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = %d", _line, param2);
+		additionalBgVScroll = param2;
+	}
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_op9F() {
+	warning("o2_op9F()");
+	getNextWord();
+	getNextWord();
+	return 0;
+}
+
+int FWScript::o2_addGfxElementA0() {
+	uint16 param1 = getNextWord();
+	uint16 param2 = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: addGfxElementA0(%d,%d)", _line, param1, param2);
+	addGfxElementA0(param1, param2);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_removeGfxElementA0() {
+	uint16 idx = getNextWord();
+	uint16 param = getNextWord();
+	warning("STUB? o2_removeGfxElementA0(%x, %x)", idx, param);
+	removeGfxElementA0(idx, param);
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_opA2() {
+	uint16 a = getNextWord();
+	uint16 b = getNextWord();
+	warning("STUB: o2_opA2(%x, %x)", a, b);
+	// addGfxElementA2();
+	return 0;
+}
+
+/*! \todo Implement this instruction
+ */
+int FWScript::o2_opA3() {
+	uint16 a = getNextWord();
+	uint16 b = getNextWord();
+	warning("STUB: o2_opA3(%x, %x)", a, b);
+	// removeGfxElementA2();
+	return 0;
+}
+
+int FWScript::o2_loadMask22() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: addOverlay22(%d)", _line, param);
+	loadOverlayElement(param, 22);
+	return 0;
+}
+
+int FWScript::o2_unloadMask22() {
+	byte param = getNextByte();
+
+	debugC(5, kCineDebugScript, "Line: %d: removeOverlay22(%d)", _line, param);
+	freeOverlay(param, 22);
+	return 0;
+}
+
+//-----------------------------------------------------------------------
 
 void addGfxElementA0(int16 param1, int16 param2) {
 	overlayHeadElement *currentHead = &overlayHead;
@@ -575,6 +2519,27 @@ void addGfxElementA0(int16 param1, int16 param2) {
 	currentHead->previous = newElement;
 }
 
+/*! \todo Check that it works
+ */
+void removeGfxElementA0(int16 idx, int16 param) {
+	overlayHeadElement *parent = &overlayHead;
+	overlayHeadElement *head = overlayHead.next;
+	overlayHeadElement *tmp;
+
+	while (head) {
+		if (head->objIdx == idx && head->x == param) {
+			parent->next = head->next;
+			tmp = head->next ? head->next : &overlayHead;
+			tmp->previous = parent;
+			delete head;
+			return;
+		}
+
+		parent = head;
+		head = head->next;
+	}
+}
+
 void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
 	SeqListElement *currentHead = &seqList;
 	SeqListElement *tempHead = currentHead;
@@ -605,100 +2570,6 @@ uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
 	return 0;
 }
 
-ScriptStruct scriptTable[NUM_MAX_SCRIPT];
-
-void stopGlobalScript(uint16 scriptIdx) {
-	prcLinkedListStruct *currentHead = &globalScriptsHead;
-	prcLinkedListStruct *tempHead = currentHead;
-
-	currentHead = tempHead->next;
-
-	while (currentHead && (currentHead->scriptIdx != scriptIdx)) {
-		tempHead = currentHead;
-		currentHead = tempHead->next;
-	}
-
-	if (!currentHead) {
-		return;
-	}
-
-	if (currentHead->scriptIdx != scriptIdx) {
-		return;
-	}
-
-	currentHead->scriptIdx = -1;
-}
-
-uint16 computeScriptStackSub(bool computeAllLabels, byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, byte labelIndex, uint16 startOffset) {
-	uint16 position;
-
-	if (computeAllLabels) {
-		for (int i = 0; i < SCRIPT_STACK_SIZE; i++) {
-			stackPtr[i] = -1;
-		}
-		position = 0;
-	} else {
-		position = startOffset;
-	}
-	while (position < scriptSize) {
-		uint8 opcode = scriptPtr[position];
-		position++;
-		if (opcode == 0 || opcode > _numOpcodes) {
-			continue;
-		}
-		if (!_opcodeTable[opcode - 1].args) {
-			warning("Undefined opcode 0x%02X in computeScriptStackSub", opcode - 1);
-			continue;
-		}
-		for (const char *p = _opcodeTable[opcode - 1].args; *p; ++p) {
-			switch (*p) {
-			case 'b': // byte
-				position++;
-				break;
-			case 'w': // word
-				position += 2;
-				break;
-			case 'c': { // byte != 0 ? byte : word
-					uint8 test = scriptPtr[position];
-					position++;
-					if (test) {
-						position++;
-					} else {
-						position += 2;
-					}
-				}
-				break;
-			case 'l': { // label
-					uint8 index = scriptPtr[position];
-					position++;
-					if (computeAllLabels) {
-						stackPtr[index] = position;
-					} else {
-						if (labelIndex == index) {
-							return position;
-						}
-					}
-				}
-				break;
-			case 's': // string
-				while (scriptPtr[position++] != 0);
-				break;
-			case 'x': // exit script
-				return position;
-			}
-		}
-	}
-	return position;
-}
-
-void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize) {
-	computeScriptStackSub(true, scriptPtr, stackPtr, scriptSize, 0, 0);
-}
-
-uint16 computeScriptStackFromScript(byte *scriptPtr, uint16 currentPosition, uint16 labelIdx, uint16 scriptSize) {
-	return computeScriptStackSub(false, scriptPtr, (int16 *)&dummyU16, (uint16)scriptSize, labelIdx, currentPosition);
-}
-
 void palRotate(byte a, byte b, byte c) {
 	if (c == 1) {
 		uint16 currentColor = c_palette[b];
@@ -712,90 +2583,9 @@ void palRotate(byte a, byte b, byte c) {
 }
 
 void addScriptToList0(uint16 idx) {
-	uint16 i;
-	prcLinkedListStruct *pNewElement;
-	prcLinkedListStruct *currentHead = &globalScriptsHead;
-	prcLinkedListStruct *tempHead = currentHead;
-
-	assert(idx <= NUM_MAX_SCRIPT);
-
-	currentHead = tempHead->next;
-
-	while (currentHead) {
-		tempHead = currentHead;
-
-		assert(tempHead);
-
-		currentHead = tempHead->next;
-	}
-
-	pNewElement = new prcLinkedListStruct;
-
-	assert(pNewElement);
-
-	pNewElement->next = tempHead->next;
-	tempHead->next = pNewElement;
-
-	// copy the stack into the script instance
-	for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
-		pNewElement->stack[i] = scriptTable[idx].stack[i];
-	}
-
-	pNewElement->compareResult = 0;
-	pNewElement->scriptPosition = 0;
-
-	pNewElement->scriptPtr = scriptTable[idx].ptr;
-	pNewElement->scriptIdx = idx;
-}
-
-int16 endScript0(uint16 scriptIdx) {
-	prcLinkedListStruct *currentHead = &globalScriptsHead;
-	prcLinkedListStruct *tempHead = currentHead;
-
-	//assert(scriptIdx <= NUM_MAX_SCRIPT);
-
-	currentHead = tempHead->next;
-
-	while (currentHead && currentHead->scriptIdx != scriptIdx) {
-		tempHead = currentHead;
-		currentHead = tempHead->next;
-	}
-
-	if (!currentHead) {
-		return -1;
-	}
-
-	if (currentHead->scriptIdx != scriptIdx) {
-		return -1;
-	}
-
-	currentHead->scriptIdx = -1;
-
-	return 0;
-}
-
-int16 endScript1(uint16 scriptIdx) {
-	prcLinkedListStruct *currentHead = &objScriptList;
-	prcLinkedListStruct *tempHead = currentHead;
-
-	currentHead = tempHead->next;
-
-	while (currentHead && currentHead->scriptIdx != scriptIdx) {
-		tempHead = currentHead;
-		currentHead = tempHead->next;
-	}
-
-	if (!currentHead) {
-		return -1;
-	}
-
-	if (currentHead->scriptIdx != scriptIdx) {
-		return -1;
-	}
-
-	currentHead->scriptIdx = -1;
-
-	return 0;
+	ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx));
+	assert(tmp);
+	globalScripts.push_back(tmp);
 }
 
 int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
@@ -852,1257 +2642,30 @@ uint16 compareVars(int16 a, int16 b) {
 	return flag;
 }
 
-// ------------------------------------------------------------------------
-// FUTURE WARS opcodes
-// ------------------------------------------------------------------------
-
-void o1_modifyObjectParam() {
-	byte objIdx = getNextByte();
-	byte paramIdx = getNextByte();
-	int16 newValue = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _currentLine, objIdx, paramIdx, newValue);
-
-	modifyObjectParam(objIdx, paramIdx, newValue);
-}
-
-void o1_getObjectParam() {
-	byte objIdx = getNextByte();
-	byte paramIdx = getNextByte();
-	byte newValue = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: getObjectParam(objIdx:%d,paramIdx:%d,var:%d)", _currentLine, objIdx, paramIdx, newValue);
-
-	_currentScriptElement->localVars[newValue] = getObjectParam(objIdx, paramIdx);
-}
-
-void o1_addObjectParam() {
-	byte objIdx = getNextByte();
-	byte paramIdx = getNextByte();
-	int16 newValue = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _currentLine, objIdx, paramIdx, newValue);
-
-	addObjectParam(objIdx, paramIdx, newValue);
-}
-
-void o1_subObjectParam() {
-	byte objIdx = getNextByte();
-	byte paramIdx = getNextByte();
-	int16 newValue = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _currentLine, objIdx, paramIdx, newValue);
-
-	subObjectParam(objIdx, paramIdx, newValue);
-}
-
-void o1_add2ObjectParam() {
-	getNextByte();
-	getNextByte();
-	getNextWord();
-	warning("STUB: o1_add2ObjectParam()");
-}
-
-void o1_sub2ObjectParam() {
-	getNextByte();
-	getNextByte();
-	getNextWord();
-	warning("STUB: o1_sub2ObjectParam()");
-}
-
-void o1_compareObjectParam() {
-	byte objIdx = getNextByte();
-	byte param1 = getNextByte();
-	int16 param2 = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: compareObjectParam(objIdx:%d,type:%d,value:%d)", _currentLine, objIdx, param1, param2);
-
-	_currentScriptElement->compareResult = compareObjectParam(objIdx, param1, param2);
-}
-
-void o1_setupObject() {
-	byte objIdx = getNextByte();
-	int16 param1 = getNextWord();
-	int16 param2 = getNextWord();
-	int16 param3 = getNextWord();
-	int16 param4 = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: setupObject(objIdx:%d,%d,%d,%d,%d)", _currentLine, objIdx, param1, param2, param3, param4);
-
-	setupObject(objIdx, param1, param2, param3, param4);
-}
-
-void o1_checkCollision() {
-	byte objIdx = getNextByte();
-	int16 param1 = getNextWord();
-	int16 param2 = getNextWord();
-	int16 param3 = getNextWord();
-	int16 param4 = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: checkCollision(objIdx:%d,%d,%d,%d,%d)", _currentLine, objIdx, param1, param2, param3, param4);
-
-	_currentScriptElement->compareResult = checkCollision(objIdx, param1, param2, param3, param4);
-}
-
-void o1_loadVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-		int16 var;
-
-		switch (varType) {
-		case 1:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = var[%d]", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = _currentScriptElement->localVars[dataIdx];
-			break;
-		case 2:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = globalVars[%d]", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = globalVars[dataIdx];
-			break;
-		case 3:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = mouseX", _currentLine, varIdx);
-			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&var, (uint16 *)&dummyU16);
-			_currentScriptElement->localVars[varIdx] = var;
-			break;
-		case 4:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = mouseY", _currentLine, varIdx);
-			getMouseData(mouseUpdateStatus, &dummyU16, (uint16 *)&dummyU16, (uint16 *)&var);
-			_currentScriptElement->localVars[varIdx] = var;
-			break;
-		case 5:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = rand mod %d", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = g_cine->_rnd.getRandomNumber(dataIdx - 1);
-			break;
-		case 8:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].packedSize", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = partBuffer[dataIdx].packedSize;
-			break;
-		case 9:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].unpackedSize", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
-			break;
-		default:
-			error("executeScript: o1_loadVar: Unknown variable type %d", varType);
-		}
-	} else {
-		int16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] = %d", _currentLine, varIdx, value);
-		_currentScriptElement->localVars[varIdx] = value;
-	}
-}
-
-void o1_addVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] += var[%d]", _currentLine, varIdx, dataIdx);
-		_currentScriptElement->localVars[varIdx] += _currentScriptElement->localVars[dataIdx];
-	} else {
-		int16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] += %d", _currentLine, varIdx, value);
-		_currentScriptElement->localVars[varIdx] += value;
-	}
-}
-
-void o1_subVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] -= var[%d]", _currentLine, varIdx, dataIdx);
-		_currentScriptElement->localVars[varIdx] -= _currentScriptElement->localVars[dataIdx];
-	} else {
-		int16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] -= %d", _currentLine, varIdx, value);
-		_currentScriptElement->localVars[varIdx] -= value;
-	}
-}
-
-void o1_mulVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] *= var[%d]", _currentLine, varIdx, dataIdx);
-		_currentScriptElement->localVars[varIdx] *= _currentScriptElement->localVars[dataIdx];
-	} else {
-		int16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] *= %d", _currentLine, varIdx, value);
-		_currentScriptElement->localVars[varIdx] *= value;
-	}
-}
-
-void o1_divVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] /= var[%d]", _currentLine, varIdx, dataIdx);
-		_currentScriptElement->localVars[varIdx] /= _currentScriptElement->localVars[dataIdx];
-	} else {
-		int16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: var[%d] /= %d", _currentLine, varIdx, value);
-		_currentScriptElement->localVars[varIdx] /= value;
-	}
-}
-
-void o1_compareVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-
-		// printf("Val: %d\n", dataIdx);
-
-		if (varType == 1) {
-			assert(varIdx < 50);
-			assert(dataIdx < 50);
-
-			debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and var[%d]", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], _currentScriptElement->localVars[dataIdx]);
-		} else if (varType == 2) {
-			assert(varIdx < 50);
-
-			debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and globalVar[%d]", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], globalVars[dataIdx]);
-		}
-	} else {
-		int16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: compare var[%d] and %d", _currentLine, varIdx, value);
-		_currentScriptElement->compareResult = compareVars(_currentScriptElement->localVars[varIdx], value);
-	}
-}
-
-void o1_modifyObjectParam2() {
-	byte objIdx = getNextByte();
-	byte paramIdx = getNextByte();
-	byte newValue = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: modifyObjectParam2(objIdx:%d,paramIdx:%d,var[%d])", _currentLine, objIdx, paramIdx, newValue);
-
-	modifyObjectParam(objIdx, paramIdx, _currentScriptElement->localVars[newValue]);
-}
-
-void o1_loadMask0() {
-	// OP_loadV7Element
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: addSpriteOverlay(%d)", _currentLine, param);
-	loadOverlayElement(param, 0);
-}
-
-void o1_unloadMask0() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay(%d)", _currentLine, param);
-	freeOverlay(param, 0);
-}
-
-void o1_addToBgList() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: addToBGList(%d)", _currentLine, param);
-	addToBGList(param);
-}
-
-void o1_loadMask1() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: addOverlay1(%d)", _currentLine, param);
-	loadOverlayElement(param, 1);
-}
-
-void o1_unloadMask1() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: removeOverlay1(%d)", _currentLine, param);
-	freeOverlay(param, 1);
-}
-
-void o1_loadMask4() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: addOverlayType4(%d)", _currentLine, param);
-	loadOverlayElement(param, 4);
-}
-
-void o1_unloadMask4() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay4(%d)", _currentLine, param);
-	freeOverlay(param, 4);
-}
-
-void o1_addSpriteFilledToBgList() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: op1A(%d) -> TODO !", _currentLine, param);
-	addSpriteFilledToBGList(param);
-}
-
-void o1_op1B() {
-	debugC(5, kCineDebugScript, "Line: %d: freeBgIncrustList", _currentLine);
-	freeBgIncrustList();
-}
-
-void o1_label() {
-	byte labelIdx = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: label(%d)", _currentLine, labelIdx);
-	_currentScriptElement->stack[labelIdx] = _currentPosition;
-}
-
-void o1_goto() {
-	byte labelIdx = getNextByte();
-
-	assert(_currentScriptElement->stack[labelIdx] != -1);
-
-	debugC(5, kCineDebugScript, "Line: %d: goto label(%d)", _currentLine, labelIdx);
-	_currentPosition = _currentScriptElement->stack[labelIdx];
-}
-
-void o1_gotoIfSup() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult == kCmpGT) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(>) goto %d (true)", _currentLine, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(>) goto %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o1_gotoIfSupEqu() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult & (kCmpGT | kCmpEQ)) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto %d (true)", _currentLine, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o1_gotoIfInf() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult == kCmpLT) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(<) goto %d (true)", _currentLine, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(<) goto %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o1_gotoIfInfEqu() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult & (kCmpLT | kCmpEQ)) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto %d (true)", _currentLine, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o1_gotoIfEqu() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult == kCmpEQ) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(==) goto %d (true)", _currentLine, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(==) goto %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o1_gotoIfDiff() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult != kCmpEQ) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto %d (true)", _currentLine, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o1_removeLabel() {
-	byte labelIdx = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: removeLabel(%d)", _currentLine, labelIdx);
-	_currentScriptElement->stack[labelIdx] = -1;
-}
-
-void o1_loop() {
-	byte varIdx = getNextByte();
-	byte labelIdx = getNextByte();
-
-	_currentScriptElement->localVars[varIdx]--;
-
-	if (_currentScriptElement->localVars[varIdx] >= 0) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: loop(var[%d]) goto %d (continue)", _currentLine, varIdx, labelIdx);
-		_currentPosition = _currentScriptElement->stack[labelIdx];
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: loop(var[%d]) goto %d (stop)", _currentLine, varIdx, labelIdx);
-	}
-}
-
-void o1_startGlobalScript() {
-	// OP_startScript
-	byte param = getNextByte();
-
-	assert(param < NUM_MAX_SCRIPT);
-
-	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _currentLine, param);
-	addScriptToList0(param);
-}
-
-void o1_endGlobalScript() {
-	byte scriptIdx = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: stopGlobalScript(%d)", _currentLine, scriptIdx);
-	stopGlobalScript(scriptIdx);
-}
-
-void o1_loadAnim() {
-	// OP_loadResource
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadResource(\"%s\")", _currentLine, param);
-	loadResource(param);
-}
-
-void o1_loadBg() {
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _currentLine, param);
-
-	loadBg(param);
-	freeBgIncrustList();
-	bgVar0 = 0;
-}
-
-void o1_loadCt() {
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _currentLine, param);
-	loadCt(param);
-}
-
-void o1_loadPart() {
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _currentLine, param);
-	loadPart(param);
-}
-
-void o1_closePart() {
-	debugC(5, kCineDebugScript, "Line: %d: closePart", _currentLine);
-	closePart();
-}
-
-void o1_loadNewPrcName() {
-	// OP_loadData
-	byte param1 = getNextByte();
-	const char *param2 = getNextString();
-
-	assert(param1 <= 3);
-
-	switch (param1) {
-	case 0:
-		debugC(5, kCineDebugScript, "Line: %d: loadPrc(\"%s\")", _currentLine, param2);
-		strcpy(newPrcName, param2);
-		break;
-	case 1:
-		debugC(5, kCineDebugScript, "Line: %d: loadRel(\"%s\")", _currentLine, param2);
-		strcpy(newRelName, param2);
-		break;
-	case 2:
-		debugC(5, kCineDebugScript, "Line: %d: loadObject(\"%s\")", _currentLine, param2);
-		strcpy(newObjectName, param2);
-		break;
-	case 3:
-		debugC(5, kCineDebugScript, "Line: %d: loadMsg(\"%s\")", _currentLine, param2);
-		strcpy(newMsgName, param2);
-		break;
-	}
-}
-
-void o1_requestCheckPendingDataLoad() {
-	debugC(5, kCineDebugScript, "Line: %d: request data load", _currentLine);
-	checkForPendingDataLoadSwitch = 1;
-}
-
-void o1_blitAndFade() {
-	debugC(5, kCineDebugScript, "Line: %d: request fadein", _currentLine);
-	// TODO: use real code
-
-	drawOverlays();
-	fadeRequired = true;
-	flip();
-}
-
-void o1_fadeToBlack() {
-	debugC(5, kCineDebugScript, "Line: %d: request fadeout", _currentLine);
-
-	fadeToBlack();
-}
-
-void o1_transformPaletteRange() {
-	byte startColor = getNextByte();
-	byte numColor = getNextByte();
-	uint16 r = getNextWord();
-	uint16 g = getNextWord();
-	uint16 b = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d)", _currentLine, startColor, numColor, r, g, b);
-
-	transformPaletteRange(startColor, numColor, r, g, b);
-}
-
-void o1_setDefaultMenuColor2() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _currentLine, param);
-	defaultMenuBoxColor2 = param;
-}
-
-void o1_palRotate() {
-	byte a = getNextByte();
-	byte b = getNextByte();
-	byte c = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: palRotate(%d,%d,%d)", _currentLine, a, b, c);
-	palRotate(a, b, c);
-}
-
-void o1_break() {
-	debugC(5, kCineDebugScript, "Line: %d: break", _currentLine);
-
-	_currentScriptElement->scriptPosition = _currentPosition;
-	_closeScript = 1;
-}
-
-void o1_endScript() {
-	debugC(5, kCineDebugScript, "Line: %d: endScript", _currentLine);
-
-	if (_currentScriptParams == 0) {
-		endScript0(_currentScriptElement->scriptIdx);
-	} else {
-		endScript1(_currentScriptElement->scriptIdx);
-	}
-
-	_closeScript = 1;
-}
-
-void o1_message() {
-	byte param1 = getNextByte();
-	uint16 param2 = getNextWord();
-	uint16 param3 = getNextWord();
-	uint16 param4 = getNextWord();
-	uint16 param5 = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: message(%d,%d,%d,%d,%d)", _currentLine, param1, param2, param3, param4, param5);
-
-	addMessage(param1, param2, param3, param4, param5);
-}
-
-void o1_loadGlobalVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte dataIdx = getNextByte();
-
-		if (varType == 1) {
-			debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = var[%d]", _currentLine, varIdx, dataIdx);
-			globalVars[varIdx] = _currentScriptElement->localVars[dataIdx];
-		} else {
-			debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = globalVars[%d]", _currentLine, varIdx, dataIdx);
-			globalVars[varIdx] = globalVars[dataIdx];
-		}
-	} else {
-		uint16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: globalVars[%d] = %d", _currentLine, varIdx, value);
-		globalVars[varIdx] = value;
-	}
-}
-
-void o1_compareGlobalVar() {
-	byte varIdx = getNextByte();
-	byte varType = getNextByte();
-
-	if (varType) {
-		byte value = getNextByte();
-
-		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and var[%d]", _currentLine, varIdx, value);
-		_currentScriptElement->compareResult = compareVars(globalVars[varIdx], _currentScriptElement->localVars[value]);
-	} else {
-		uint16 value = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _currentLine, varIdx, value);
-
-		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {	// TODO: fix
-			_currentScriptElement->compareResult = 1;
-		} else {
-			_currentScriptElement->compareResult = compareVars(globalVars[varIdx], value);
-		}
-	}
-}
-
-void o1_declareFunctionName() {
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: comment(%s)", _currentLine, param);
-}
-
-void o1_freePartRange() {
-	byte startIdx = getNextByte();
-	byte numIdx = getNextByte();
-
-	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
-
-	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _currentLine, startIdx, numIdx);
-	freeAnimDataRange(startIdx, numIdx);
-}
-
-void o1_unloadAllMasks() {
-	debugC(5, kCineDebugScript, "Line: %d: unloadAllMasks()", _currentLine);
-	unloadAllMasks();
-}
-
-void o1_setScreenDimensions() {
-	warning("STUB: o1_setScreenDimensions()");
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	// setupScreenParam
-}
-
-void o1_displayBackground() {
-	warning("STUB: o1_displayBackground()");
-}
-
-void o1_initializeZoneData() {
-	debugC(5, kCineDebugScript, "Line: %d: initializeZoneData()", _currentLine);
-
-	for (int i = 0; i < NUM_MAX_ZONE; i++) {
-		zoneData[i] = i;
-	}
-}
-
-void o1_setZoneDataEntry() {
-	byte zoneIdx = getNextByte();
-	uint16 var = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: setZone[%d] = %d", _currentLine, zoneIdx, var);
-	zoneData[zoneIdx] = var;
-}
-
-void o1_getZoneDataEntry() {
-	byte zoneIdx = getNextByte();
-	byte var = getNextByte();
-
-	_currentScriptElement->localVars[var] = zoneData[zoneIdx];
-}
-
-void o1_setDefaultMenuColor() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _currentLine, param);
-	defaultMenuBoxColor = param;
-}
-
-void o1_allowPlayerInput() {
-	debugC(5, kCineDebugScript, "Line: %d: allowPlayerInput()", _currentLine);
-	allowPlayerInput = 1;
-}
-
-void o1_disallowPlayerInput() {
-	debugC(5, kCineDebugScript, "Line: %d: dissallowPlayerInput()", _currentLine);
-	allowPlayerInput = 0;
-}
-
-void o1_changeDataDisk() {
-	byte newDisk = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: changeDataDisk(%d)", _currentLine, newDisk);
-	checkDataDisk(newDisk);
-}
-
-void o1_loadMusic() {
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _currentLine, param);
-	g_sound->loadMusic(param);
-}
-
-void o1_playMusic() {
-	debugC(5, kCineDebugScript, "Line: %d: playMusic()", _currentLine);
-	g_sound->playMusic();
-}
-
-void o1_fadeOutMusic() {
-	debugC(5, kCineDebugScript, "Line: %d: fadeOutMusic()", _currentLine);
-	g_sound->fadeOutMusic();
-}
-
-void o1_stopSample() {
-	debugC(5, kCineDebugScript, "Line: %d: stopSample()", _currentLine);
-	g_sound->stopMusic();
-}
-
-void o1_op71() {
-	warning("STUB: o1_op71()");
-	getNextByte();
-	getNextWord();
-}
-
-void o1_op72() {
-	warning("STUB: o1_op72()");
-	getNextWord();
-	getNextByte();
-	getNextWord();
-}
-
-void o1_op73() {
-	// I believe this opcode is identical to o1_op72(). In fact, Operation
-	// Stealth doesn't even have it. It uses o1_op72() instead.
-	warning("STUB: o1_op73()");
-	getNextWord();
-	getNextByte();
-	getNextWord();
-}
-
-void o1_playSample() {
-	debugC(5, kCineDebugScript, "Line: %d: playSample()", _currentLine);
-
-	byte anim = getNextByte();
-	byte channel = getNextByte();
-
-	uint16 freq = getNextWord();
-	byte repeat = getNextByte();
-
-	int16 volume = getNextWord();
-	uint16 size = getNextWord();
-
-	if (!animDataTable[anim].ptr1) {
-		return;
-	}
-
-	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
-		if (size == 0xFFFF) {
-			size = animDataTable[anim].width * animDataTable[anim].height;
-		}
-		if (channel < 10) { // || _currentOpcode == 0x78
-			int channel1, channel2;
-			if (channel == 0) {
-				channel1 = 0;
-				channel2 = 1;
-			} else {
-				channel1 = 2;
-				channel2 = 3;
-			}
-			g_sound->playSound(channel1, freq, animDataTable[anim].ptr1, size, -1, volume, 63, repeat);
-			g_sound->playSound(channel2, freq, animDataTable[anim].ptr1, size,  1, volume,  0, repeat);
-		} else {
-			channel -= 10;
-			if (volume > 63) {
-				volume = 63;
-			}
-			g_sound->playSound(channel, freq, animDataTable[anim].ptr1, size, 0, 0, volume, repeat);
-		}
-	} else {
-		if (volume > 63 || volume < 0) {
-			volume = 63;
-		}
-		if (channel >= 10) {
-			channel -= 10;
-		}
-		if (volume < 50) {
-			volume = 50;
-		}
-		if (g_cine->getGameType() == Cine::GType_OS && size == 0) {
-			return;
-		}
-		g_sound->stopMusic();
-		if (size == 0xFFFF) {
-			g_sound->playSound(channel, 0, animDataTable[anim].ptr1, 0, 0, 0, volume, 0);
-		} else {
-			g_sound->stopSound(channel);
-		}
-	}
-}
-
-void o1_disableSystemMenu() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: disableSystemMenu(%d)", _currentLine, param);
-	disableSystemMenu = (param != 0);
-}
-
-void o1_loadMask5() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: addOverlay5(%d)", _currentLine, param);
-	loadOverlayElement(param, 5);
-}
-
-void o1_unloadMask5() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: freeOverlay5(%d)", _currentLine, param);
-	freeOverlay(param, 5);
-}
-
-// ------------------------------------------------------------------------
-// OPERATION STEALTH opcodes
-// ------------------------------------------------------------------------
-
-void o2_loadPart() {
-	const char *param = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _currentLine, param);
-}
-
-void o2_playSample() {
-	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
-		// no-op in these versions
-		getNextByte();
-		getNextByte();
-		getNextWord();
-		getNextByte();
-		getNextWord();
-		getNextWord();
-		return;
-	}
-	o1_playSample();
-}
-
-void o2_playSampleAlt() {
-	byte num = getNextByte();
-	byte channel = getNextByte();
-	uint16 frequency = getNextWord();
-	getNextByte();
-	getNextWord();
-	uint16 size = getNextWord();
-
-	if (size == 0xFFFF) {
-		size = animDataTable[num].width * animDataTable[num].height;
-	}
-	if (animDataTable[num].ptr1) {
-		if (g_cine->getPlatform() == Common::kPlatformPC) {
-			// if speaker output is available, play sound on it
-			// if it's another device, don't play anything
-			// TODO: implement this, it's used in the introduction for example
-			// on each letter displayed
-		} else {
-			g_sound->playSound(channel, frequency, animDataTable[num].ptr1, size, 0, 0, 63, 0);
-		}
-	}
-}
-
-void o2_addSeqListElement() {
-	byte param1 = getNextByte();
-	byte param2 = getNextByte();
-	byte param3 = getNextByte();
-	byte param4 = getNextByte();
-	uint16 param5 = getNextWord();
-	uint16 param6 = getNextWord();
-	uint16 param7 = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: addSeqListElement(%d,%d,%d,%d,%d,%d,%d)", _currentLine, param1, param2, param3, param4, param5, param6, param7);
-	addSeqListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
-}
-
-void o2_removeSeq() {
-	byte a = getNextByte();
-	byte b = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: removeSeq(%d,%d) -> TODO", _currentLine, a, b);
-	removeSeq(a, 0, b);
-}
-
-void o2_op81() {
-	warning("STUB: o2_op81()");
-	// freeUnkList();
-}
-
-void o2_op82() {
-	warning("STUB: o2_op82()");
-	getNextByte();
-	getNextByte();
-	getNextWord();
-}
-
-void o2_isSeqRunning() {
-	byte a = getNextByte();
-	byte b = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: OP83(%d,%d) -> TODO", _currentLine, a, b);
-
-	if (isSeqRunning(a, 0, b)) {
-		_currentScriptElement->compareResult = 1;
-	} else {
-		_currentScriptElement->compareResult = 0;
-	}
-}
-
-void o2_gotoIfSupNearest() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult == kCmpGT) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(>) goto nearest %d (true)", _currentLine, labelIdx);
-		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(>) goto nearest %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o2_gotoIfSupEquNearest() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult & (kCmpGT | kCmpEQ)) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto nearest %d (true)", _currentLine, labelIdx);
-		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(>=) goto nearest %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o2_gotoIfInfNearest() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult == kCmpLT) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(<) goto nearest %d (true)", _currentLine, labelIdx);
-		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(<) goto nearest %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o2_gotoIfInfEquNearest() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult & (kCmpLT | kCmpEQ)) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto nearest %d (true)", _currentLine, labelIdx);
-		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(<=) goto nearest %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o2_gotoIfEquNearest() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult == kCmpEQ) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(==) goto nearest %d (true)", _currentLine, labelIdx);
-		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(==) goto nearest %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o2_gotoIfDiffNearest() {
-	byte labelIdx = getNextByte();
-
-	if (_currentScriptElement->compareResult != kCmpEQ) {
-		assert(_currentScriptElement->stack[labelIdx] != -1);
-
-		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto nearest %d (true)", _currentLine, labelIdx);
-		_currentPosition = computeScriptStackFromScript(_currentScriptElement->scriptPtr, _currentPosition, labelIdx, scriptTable[_currentScriptElement->scriptIdx].size);
-	} else {
-		debugC(5, kCineDebugScript, "Line: %d: if(!=) goto nearest %d (false)", _currentLine, labelIdx);
-	}
-}
-
-void o2_startObjectScript() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: startObjectScript(%d)", _currentLine, param);
-	runObjectScript(param);
-}
-
-void o2_stopObjectScript() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: stopObjectScript(%d)", _currentLine, param);
-	stopObjectScript(param);
-}
-
-void o2_op8D() {
-	warning("STUB: o2_op8D()");
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	// _currentScriptElement->compareResult = ...
-}
-
-void o2_addBackground() {
-	byte param1 = getNextByte();
-	const char *param2 = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: addBackground(%s,%d)", _currentLine, param2, param1);
-	addBackground(param2, param1);
-}
-
-void o2_removeBackground() {
-	byte param = getNextByte();
-
-	assert(param);
-
-	debugC(5, kCineDebugScript, "Line: %d: removeBackground(%d)", _currentLine, param);
-
-	if (additionalBgTable[param]) {
-		free(additionalBgTable[param]);
-		additionalBgTable[param] = NULL;
-	}
-
-	if (currentAdditionalBgIdx == param) {
-		currentAdditionalBgIdx = 0;
-	}
-
-	if (currentAdditionalBgIdx2 == param) {
-		currentAdditionalBgIdx2 = 0;
-	}
-
-	strcpy(currentBgName[param], "");
-}
-
-void o2_loadAbs() {
-	byte param1 = getNextByte();
-	const char *param2 = getNextString();
-
-	debugC(5, kCineDebugScript, "Line: %d: loadABS(%d,%s)", _currentLine, param1, param2);
-	loadAbs(param2, param1);
-}
-
-void o2_loadBg() {
-	byte param = getNextByte();
-
-	assert(param <= 8);
-
-	debugC(5, kCineDebugScript, "Line: %d: useBg(%d)", _currentLine, param);
-
-	if (additionalBgTable[param]) {
-		currentAdditionalBgIdx = param;
-		//if (_screenNeedFadeOut == 0) {
-		//	adBgVar1 = 1;
-		//}
-		fadeRequired = true;
-	}
-}
-
-void o2_wasZoneChecked() {
-	warning("STUB: o2_wasZoneChecked()");
-}
-
-void o2_op9B() {
-	warning("STUB: o2_op9B()");
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-}
-
-void o2_op9C() {
-	warning("STUB: o2_op9C()");
-	getNextWord();
-	getNextWord();
-	getNextWord();
-	getNextWord();
-}
-
-void o2_useBgScroll() {
-	byte param = getNextByte();
-
-	assert(param <= 8);
-
-	debugC(5, kCineDebugScript, "Line: %d: useBgScroll(%d)", _currentLine, param);
-
-	if (additionalBgTable[param]) {
-		currentAdditionalBgIdx2 = param;
-	}
-}
-
-void o2_setAdditionalBgVScroll() {
-	byte param1 = getNextByte();
-
-	if (param1) {
-		byte param2 = getNextByte();
-
-		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = var[%d]", _currentLine, param2);
-		additionalBgVScroll = _currentScriptElement->localVars[param2];
-	} else {
-		uint16 param2 = getNextWord();
-
-		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = %d", _currentLine, param2);
-		additionalBgVScroll = param2;
-	}
-}
-
-void o2_op9F() {
-	warning("o2_op9F()");
-	getNextWord();
-	getNextWord();
-}
-
-void o2_addGfxElementA0() {
-	uint16 param1 = getNextWord();
-	uint16 param2 = getNextWord();
-
-	debugC(5, kCineDebugScript, "Line: %d: addGfxElementA0(%d,%d)", _currentLine, param1, param2);
-	addGfxElementA0(param1, param2);
-}
-
-void o2_opA1() {
-	warning("STUB: o2_opA1()");
-	getNextWord();
-	getNextWord();
-	// removeGfxElementA0( ... );
-}
-
-void o2_opA2() {
-	warning("STUB: o2_opA2()");
-	getNextWord();
-	getNextWord();
-	// addGfxElementA2();
-}
-
-void o2_opA3() {
-	warning("STUB: o2_opA3()");
-	getNextWord();
-	getNextWord();
-	// removeGfxElementA2();
-}
-
-void o2_loadMask22() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: addOverlay22(%d)", _currentLine, param);
-	loadOverlayElement(param, 22);
-}
-
-void o2_unloadMask22() {
-	byte param = getNextByte();
-
-	debugC(5, kCineDebugScript, "Line: %d: removeOverlay22(%d)", _currentLine, param);
-	freeOverlay(param, 22);
-}
-
-// ------------------------------------------------------------------------
-
-void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
-	assert(scriptElement);
-
-	if (scriptElement->scriptIdx == -1) {
-		return;
-	}
-
-	assert(scriptElement->scriptPtr);
-
-	_currentScriptElement = scriptElement;
-	_currentScriptParams = params;
-	_currentScriptPtr = scriptElement->scriptPtr;
-	_currentPosition = scriptElement->scriptPosition;
-
-	_closeScript = 0;
-
-	while (!_closeScript) {
-		_currentLine = _currentPosition;
-
-		byte opcode = getNextByte();
-
-		if (opcode && opcode < _numOpcodes) {
-			if (_opcodeTable[opcode - 1].proc)
-				(_opcodeTable[opcode - 1].proc) ();
-			else
-				warning("Undefined opcode 0x%02X in executeScript", opcode - 1);
-		}
-	}
-}
-
 void executeList1(void) {
-	prcLinkedListStruct *currentHead = objScriptList.next;
-
-	while (currentHead) {
-		prcLinkedListStruct *tempHead;
-
-		tempHead = currentHead->next;
-
-		executeScript(currentHead, 1);
-
-		currentHead = tempHead;
+	ScriptList::iterator it = objectScripts.begin();
+	for (; it != objectScripts.end();) {
+		if ((*it)->_index < 0 || (*it)->execute() < 0) {
+			it = objectScripts.erase(it);
+		} else {
+			++it;
+		}
 	}
 }
 
 void executeList0(void) {
-	prcLinkedListStruct *currentHead = globalScriptsHead.next;
-
-	while (currentHead) {
-		prcLinkedListStruct *tempHead;
-
-		executeScript(currentHead, 0);
-
-		tempHead = currentHead->next;
-		currentHead = tempHead;
+	ScriptList::iterator it = globalScripts.begin();
+	for (; it != globalScripts.end();) {
+		if ((*it)->_index < 0 || (*it)->execute() < 0) {
+			it = globalScripts.erase(it);
+		} else {
+			++it;
+		}
 	}
 }
 
+/*! \todo objectScripts.clear()?
+ */
 void purgeList1(void) {
 }
 
@@ -2463,7 +3026,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			}
 		case 0x1B:
 			{
-				sprintf(lineBuffer, "freeBgIncrustList()\n");
+				sprintf(lineBuffer, "bgIncrustList.clear()\n");
 				break;
 			}
 		case 0x1D:
@@ -2804,7 +3367,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 				sprintf(lineBuffer, "disallowPlayerInput()\n");
 				break;
 			}
-		case OP_changeDataDisk:
+		case 0x6B:
 			{
 				byte newDisk;
 
@@ -2878,7 +3441,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				if (opcode - 1 == 0x77) {
 					sprintf(lineBuffer, "playSample(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
-				else if (opcode - 1 == 0x78) {
+				} else if (opcode - 1 == 0x78) {
 					sprintf(lineBuffer, "OP_78(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 				}
 
