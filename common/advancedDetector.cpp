@@ -376,8 +376,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
-		if ((language != UNK_LANG && g->language != language) ||
-			(platform != kPlatformUnknown && g->platform != platform)) {
+		if ((language != UNK_LANG && g->language != UNK_LANG && g->language != language) ||
+			(platform != kPlatformUnknown && g->platform != kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
 
