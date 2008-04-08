@@ -1281,11 +1281,10 @@ fi
 #
 if test "$_mt32emu" = no ; then
 	_def_mt32emu='#undef USE_MT32EMU'
-	add_to_config_mk_if_no yes 'USE_MT32EMU = 1'
 else
 	_def_mt32emu='#define USE_MT32EMU'
-	add_to_config_mk_if_no no 'USE_MT32EMU = 1'
 fi
+add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 
 #
 # Check for math lib
@@ -1312,11 +1311,10 @@ if test "$_vorbis" = yes ; then
 	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
 	INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
-	add_to_config_mk_if_no no 'USE_VORBIS = 1'
 else
 	_def_vorbis='#undef USE_VORBIS'
-	add_to_config_mk_if_no yes 'USE_VORBIS = 1'
 fi
+add_to_config_mk_if_yes "$_vorbis" 'USE_VORBIS = 1'
 echo "$_vorbis"
 
 #
@@ -1337,14 +1335,13 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
-	add_to_config_mk_if_no no 'USE_TREMOR = 1'
 else
 	if test "$_vorbis" = yes; then
 		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
 	fi
 	_def_tremor='#undef USE_TREMOR'
-	add_to_config_mk_if_no yes 'USE_TREMOR = 1'
 fi
+add_to_config_mk_if_yes "$_tremor" 'USE_TREMOR = 1'
 echo "$_tremor"
 
 #
@@ -1368,11 +1365,10 @@ if test "$_flac" = yes ; then
 		LIBS="$LIBS $FLAC_LIBS -lFLAC"
 	fi
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
-	add_to_config_mk_if_no no 'USE_FLAC = 1'
 else
 	_def_flac='#undef USE_FLAC'
-	add_to_config_mk_if_no yes 'USE_FLAC = 1'
 fi
+add_to_config_mk_if_yes "$_flac" 'USE_FLAC = 1'
 echo "$_flac"
 
 #
@@ -1391,11 +1387,10 @@ if test "$_mad" = yes ; then
 	_def_mad='#define USE_MAD'
 	LIBS="$LIBS $MAD_LIBS -lmad"
 	INCLUDES="$INCLUDES $MAD_CFLAGS"
-	add_to_config_mk_if_no no 'USE_MAD = 1'
 else
 	_def_mad='#undef USE_MAD'
-	add_to_config_mk_if_no yes 'USE_MAD = 1'
 fi
+add_to_config_mk_if_yes "$_mad" 'USE_MAD = 1'
 echo "$_mad"
 
 #
@@ -1480,11 +1475,10 @@ if test "$_mpeg2" = yes ; then
 	_def_mpeg2='#define USE_MPEG2'
 	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
 	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
-	add_to_config_mk_if_no no 'USE_MPEG2 = 1'
 else
 	_def_mpeg2='#undef USE_MPEG2'
-	add_to_config_mk_if_no yes 'USE_MPEG2 = 1'
 fi
+add_to_config_mk_if_yes "$_mpeg2" 'USE_MPEG2 = 1'
 echo "$_mpeg2"
 
 #
