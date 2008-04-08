@@ -1078,7 +1078,7 @@ int ScummEngine::init() {
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_system->initSize(Common::kHercW, Common::kHercH);
 			defaultTo1XScaler = true;
-		} else if (_useCJKMode) {
+		} else if (_useCJKMode && _game.id != GID_DIG) {
 			_system->initSize(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier);
 			defaultTo1XScaler = true;
 		} else {

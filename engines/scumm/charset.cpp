@@ -74,7 +74,7 @@ void ScummEngine::loadCJKFont() {
 			break;
 		case Common::JA_JPN:
 			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
-			numChar = 1024; //FIXME: sev needs japanese font files to clarify font size
+			numChar = 1024;
 			break;
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
