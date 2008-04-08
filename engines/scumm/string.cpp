@@ -1371,7 +1371,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 				// That was another index entry
 				_languageIndexSize++;
 			} else {
-				error("Unknwon languag.bnd entry found: '%s'\n", ptr);
+				error("Unknown language.bnd entry found: '%s'\n", ptr);
 			}
 
 			// Skip over newlines (and turn them into null bytes)
