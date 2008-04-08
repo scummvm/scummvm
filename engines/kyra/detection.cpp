@@ -301,29 +301,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra2",
 			"CD",
 			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		KYRA2_CD_FLAGS
-	},
-	{
-		{
-			"kyra2",
-			"CD",
-			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
-			Common::DE_DEU,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		KYRA2_CD_FLAGS
-	},
-	{
-		{
-			"kyra2",
-			"CD",
-			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
-			Common::FR_FRA,
+			Common::UNK_LANG,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -382,29 +360,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra3",
 			0,
 			AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		KYRA3_CD_FLAGS
-	},
-	{
-		{
-			"kyra3",
-			0,
-			AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
-			Common::DE_DEU,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		KYRA3_CD_FLAGS
-	},
-	{
-		{
-			"kyra3",
-			0,
-			AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
-			Common::FR_FRA,
+			Common::UNK_LANG,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -479,6 +435,9 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		else
 			flags.lang = Common::EN_ANY;
 	}
+
+	if (flags.lang == Common::EN_USA || flags.lang == Common::EN_GRB)
+		flags.lang = Common::EN_ANY;
 
 	switch (flags.gameID) {
 	case Kyra::GI_KYRA1:

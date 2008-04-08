@@ -2261,6 +2261,28 @@ void KyraEngine_v2::registerDefaultSettings() {
 
 void KyraEngine_v2::writeSettings() {
 	ConfMan.setInt("talkspeed", ((_configTextspeed-2) * 255) / 95);
+
+	switch (_lang) {
+	case 1:
+		_flags.lang = Common::FR_FRA;
+		break;
+
+	case 2:
+		_flags.lang = Common::DE_DEU;
+		break;
+
+	case 3:
+		_flags.lang = Common::JA_JPN;
+		break;
+	
+	case 0:
+	default:
+		_flags.lang = Common::EN_ANY;
+		break;
+	}
+
+	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
+
 	KyraEngine::writeSettings();
 }
 
