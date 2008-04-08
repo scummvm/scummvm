@@ -1424,6 +1424,10 @@ cmd(clear_lines) {
 	/* Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423 */
 	l = p1 ? p1 : p0;
 
+	// Agent06 incorrectly calls clear.lines(1,150,0), see ScummVM bugs
+	// #1935838 and #1935842
+	l = (l <= 24) ? l : 24;
+
 	g_agi->clearLines(p0, l, p2);
 	g_agi->flushLines(p0, l);
 }
