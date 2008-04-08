@@ -205,8 +205,6 @@ protected:
 	GameFlags _flags;
 	int _lang;
 
-	void updateLanguage();
-
 	// opcode
 	virtual void setupOpcodeTable() = 0;
 	Common::Array<const Opcode*> _opcodes;
