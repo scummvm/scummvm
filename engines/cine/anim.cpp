@@ -383,8 +383,8 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
 	fHandle.writeUint16BE(_height);
 	// Just because I write pointers to a file doesn't mean
 	// anyone should actually read those values back!
-	fHandle.writeUint32BE((uint32)_data);
-	fHandle.writeUint32BE((uint32)_mask);
+	fHandle.writeUint32BE((uint32)(long)_data);
+	fHandle.writeUint32BE((uint32)(long)_mask);
 	fHandle.writeUint16BE(_fileIdx);
 	fHandle.writeUint16BE(_frameIdx);
 	fHandle.write(_name, 10);
