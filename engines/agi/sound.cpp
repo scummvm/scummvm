@@ -107,9 +107,9 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 		// Finalize the header info using the 8-bit unsigned sample data
 		_header.finalize(stream);
 
-		// Convert sample data from 8-bit unsigned to 16-bit signed format
+		// Convert sample data from 8-bit unsigned to 8-bit signed format
 		stream.seek(sampleStartPos);
-		_sample = new int16[_header.sampleSize];
+		_sample = new int8[_header.sampleSize];
 		if (_sample != NULL)
 			_isValid = _manager.convertWave(stream, _sample, _header.sampleSize);
 	}
@@ -236,7 +236,8 @@ static const instrumentSetInfo instSetV1 = {
 	6, 7, 10, 9, 11, 9, 15, 8, 5, 5,
 	17, 16, 18, 12, 14, 5, 5, 5, 5, 5,
 	0, 1, 2, 9, 3, 4, 15, 2, 2, 2,
-	25, 13, 13, 25, 5, 5, 5, 5, 5, 5}
+	25, 13, 13, 25},
+	5
 };
 
 /** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
@@ -246,7 +247,8 @@ static const instrumentSetInfo instSetV2 = {
 	7, 9, 12, 8, 13, 11, 17, 10, 6, 6,
 	19, 18, 20, 14, 16, 6, 6, 6, 6, 6,
 	0, 1, 2, 4, 3, 5, 17, 2, 2, 2,
-	27, 15, 15, 27, 6, 6, 6, 6, 6, 6}
+	27, 15, 15, 27},
+	6
 };
 
 /** Information about different Apple IIGS AGI executables. */
@@ -268,7 +270,6 @@ static const IIgsExeInfo IIgsExeInfos[] = {
 
 static IIgsInstrumentHeader g_instruments[MAX_INSTRUMENTS];
 static uint g_numInstruments = 0;
-static int16 g_wave[SIERRASTANDARD_SIZE]; // FIXME? Should this be allocated from the heap? (Size is 128KiB)
 // Time (In milliseconds) in Apple IIGS mixing buffer time granularity
 // (i.e. in IIGS_BUFFER_SIZE / getRate() seconds granularity)
 static uint32 g_IIgsBufGranMillis = 0;
@@ -771,7 +772,7 @@ uint32 SoundMgr::mixSound(void) {
 		for (i = 0; i < IIGS_BUFFER_SIZE; i++) {
 			b = _IIgsChannel.sample[fracToInt(_IIgsChannel.pos)];
 			// DOESN'T DO MIXING YET! ONLY ONE SAMPLE PER PLAYING!
-			_sndBuffer[i] = (int16) (b * tempVol);
+			_sndBuffer[i] = (int16) (b * tempVol * 256);
 			_IIgsChannel.pos += _IIgsChannel.posAdd;
 
 			if (_IIgsChannel.pos >= intToFrac(_IIgsChannel.size)) {
@@ -950,28 +951,28 @@ bool SoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsEx
 }
 
 /**
- * Convert sample from 8-bit unsigned to 16-bit signed format.
+ * Convert sample from 8-bit unsigned to 8-bit signed format.
  * @param source  Source stream containing the 8-bit unsigned sample data.
- * @param dest  Destination buffer for the 16-bit signed sample data.
+ * @param dest  Destination buffer for the 8-bit signed sample data.
  * @param length  Length of the sample data to be converted.
  */
-bool SoundMgr::convertWave(Common::SeekableReadStream &source, int16 *dest, uint length) {
-	// Convert the wave from 8-bit unsigned to 16-bit signed format
+bool SoundMgr::convertWave(Common::SeekableReadStream &source, int8 *dest, uint length) {
+	// Convert the wave from 8-bit unsigned to 8-bit signed format
 	for (uint i = 0; i < length; i++)
-		dest[i] = (int16) ((source.readByte() - 128) * 256);
+		dest[i] = (int8) ((int) source.readByte() - 128);
 	return !source.ioFailed();
 }
 
-Common::MemoryReadStream *SoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+Common::SharedPtr<Common::MemoryReadStream> SoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
 	Common::File file;
 
 	// Open the wave file and read it into memory
 	file.open(wavePath);
-	Common::MemoryReadStream *uint8Wave = file.readStream(file.size());
+	Common::SharedPtr<Common::MemoryReadStream> uint8Wave(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got the whole wave file
-	if (uint8Wave != NULL && uint8Wave->size() == SIERRASTANDARD_SIZE) {
+	if (uint8Wave && uint8Wave->size() == SIERRASTANDARD_SIZE) {
 		// Check wave file's md5sum
 		char md5str[32+1];
 		Common::md5_file_string(*uint8Wave, md5str, SIERRASTANDARD_SIZE);
@@ -984,8 +985,7 @@ Common::MemoryReadStream *SoundMgr::loadWaveFile(const Common::String &wavePath,
 		return uint8Wave;
 	} else { // Couldn't read the wave file or it had incorrect size
 		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
-		delete uint8Wave; // Free the memory buffer allocated for reading the wave file
-		return NULL;
+		return Common::SharedPtr<Common::MemoryReadStream>(); // Return a NULL shared pointer
 	}
 }
 
@@ -1057,19 +1057,16 @@ bool SoundMgr::loadInstruments() {
 	}
 
 	// First load the wave file and then load the instrument headers.
-	// Finally fix the instruments' lengths using the wave file data
-	// (A zero in the wave file data can end the sample prematurely)
-	// and convert the wave file from 8-bit unsigned to 16-bit signed format.
-	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->getPath(), *exeInfo);
-	// Seek the wave to its
-	if (uint8Wave != NULL)
-		uint8Wave->seek(0);
-
-	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo) &&
-		finalizeInstruments(*uint8Wave) && convertWave(*uint8Wave, g_wave, uint8Wave->size());
-
-	delete uint8Wave; // Free the 8-bit unsigned wave file buffer
-	return result;
+	// Finally convert the wave file from 8-bit unsigned to 8-bit signed format.
+	// As none of the tested SIERRASTANDARD-files have zeroes in them there's
+	// no need to check for true sample size (A zero in the sample data would
+	// end the sample prematurely).
+	Common::SharedPtr<Common::MemoryReadStream> uint8Wave = loadWaveFile(waveFsnode->getPath(), *exeInfo);
+	if (uint8Wave && loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo)) {
+		_gsWave.resize(uint8Wave->size()); // Allocate space for the 8-bit signed version of the SIERRASTANDARD-file
+		return convertWave(*uint8Wave, _gsWave.begin(), uint8Wave->size());
+	} else // Error loading the wave file or the instrument headers
+		return false;
 }
 
 static void fillAudio(void *udata, int16 *stream, uint len) {

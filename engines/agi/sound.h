@@ -30,6 +30,8 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "common/frac.h"
+#include "common/array.h"
+#include "common/ptr.h"
 
 namespace Agi {
 
@@ -195,7 +197,7 @@ struct AgiNote {
 
 struct IIgsChannelInfo {
 	IIgsInstrumentHeader ins; ///< Instrument info
-	const int16 *sample; ///< Source sample data (16-bit signed format)
+	const int8 *sample; ///< Source sample data (8-bit signed format)
 	frac_t pos;     ///< Current sample position
 	frac_t posAdd;  ///< Current sample position adder (Calculated using note, vibrato etc)
 	frac_t note;    ///< Note
@@ -311,10 +313,10 @@ public:
 	~IIgsSample() { delete[] _sample; }
 	virtual uint16 type() { return _header.type; }
 	const IIgsSampleHeader &getHeader() const { return _header; }
-	const int16 *getSample() const { return _sample; }
+	const int8 *getSample() const { return _sample; }
 protected:
 	IIgsSampleHeader _header; ///< Apple IIGS AGI sample header
-	int16 *_sample;           ///< Sample data (16-bit signed format)
+	int8 *_sample;           ///< Sample data (8-bit signed format)
 };
 
 /** Apple IIGS AGI instrument set information. */
@@ -323,7 +325,11 @@ struct instrumentSetInfo {
 	uint instCount;          ///< Amount of instrument in the set
 	const char *md5;         ///< MD5 hex digest of the whole instrument set
 	const char *waveFileMd5; ///< MD5 hex digest of the wave file (i.e. the sample data used by the instruments)
-	const uint midiProgToInst[50]; ///< Lookup table for the MIDI program number to instrument number mapping
+	const byte midiProgToInst[44]; ///< Lookup table for the MIDI program number to instrument number mapping
+	const byte undefinedInst; ///< The undefined instrument number
+
+	// Maps the MIDI program number to an instrument number
+	byte mapMidiProgToInst(uint midiProg) { return midiProg < ARRAYSIZE(midiProgToInst) ? midiProgToInst[midiProg] : undefinedInst; }
 };
 
 /** Apple IIGS AGI executable file information. */
@@ -380,6 +386,7 @@ private:
 
 	int16 *_sndBuffer;
 	const int16 *_waveform;
+	Common::Array<int8> _gsWave;
 
 	void premixerCall(int16 *buf, uint len);
 
@@ -401,8 +408,8 @@ public:
 	Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum = -1);
 	const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) const;
 	bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo);
-	bool convertWave(Common::SeekableReadStream &source, int16 *dest, uint length);
-	Common::MemoryReadStream *loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo);
+	bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint length);
+	Common::SharedPtr<Common::MemoryReadStream> loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo);
 };
 
 } // End of namespace Agi
