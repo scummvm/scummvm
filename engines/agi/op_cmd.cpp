@@ -1104,7 +1104,7 @@ cmd(pause) {
 
 cmd(set_menu) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, curLogic->numTexts);
-	if (curLogic->texts != NULL && p0 < curLogic->numTexts)
+	if (curLogic->texts != NULL && p0 <= curLogic->numTexts)
 		g_agi->_menu->add(curLogic->texts[p0 - 1]);
 }
 
