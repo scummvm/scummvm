@@ -780,7 +780,7 @@ void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken) {
 	int8 isMask = 0, isSpl = 0;
 	byte *dataPtr, *ptr;
 	char *animName, part[256];
-	byte transparentColor;
+	byte transparentColor = 0;
 	AnimData *currentPtr;
 	AnimHeaderStruct animHeader;
 

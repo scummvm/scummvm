@@ -555,7 +555,7 @@ bool AgiEngine::matchWord(void) {
 		return false;
 	}
 	// Lookup word in the dictionary
-	int line = 0, cmpRes, len;
+	int line = 0, cmpRes = 0, len = 0;
 	char target[MAXWORDLEN];
 
 	strncpy(target, _currentCode.c_str(), MAXWORDLEN);
