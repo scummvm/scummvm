@@ -1406,7 +1406,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsOffscreenRight = 0;
 		_dsOffscreenScaleVal2 = _dsOffscreenLeft;
 		_dsOffscreenLeft <<= 8;
-		_dsOffscreenScaleVal1 = _dsOffscreenLeft % _dsScaleW;
+		_dsOffscreenScaleVal1 = (_dsOffscreenLeft % _dsScaleW) * -1;
 		_dsOffscreenLeft /= _dsScaleW;
 	}
 
@@ -1482,14 +1482,14 @@ int Screen::drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt)
 	if (src == dst || !cnt)
 		return _dsOffscreenScaleVal1;
 
-	while (cnt-- > 0) {
+	do {
 		if (*src++)
 			continue;
 		found = true;
 		cnt = cnt + 1 - (*src++);
-	}
+	} while (--cnt > 0);
 
-	if (!found)
+	if (!found || !cnt)
 		return _dsOffscreenScaleVal1;
 
 	_dsTmpWidth += cnt;
@@ -1511,14 +1511,14 @@ int Screen::drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cn
 	if (src == dst || !cnt)
 		return _dsOffscreenScaleVal1;
 
-	while (cnt-- > 0) {
+	do {
 		if (*src++)
 			continue;
 		found = true;
 		cnt = cnt + 1 - (*src++);
-	}
+	} while (--cnt > 0);
 
-	if (!found)
+	if (!found || !cnt)
 		return _dsOffscreenScaleVal1;
 
 	_dsTmpWidth += cnt;
@@ -1539,11 +1539,11 @@ int Screen::drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	if (cnt <= 0)
 		return 0;
 
-	while (cnt-- > 0) {
+	do {
 		if (*src++)
 			continue;
 		cnt = cnt + 1 - (*src++);
-	}
+	} while (--cnt > 0);
 
 	return 0;
 }
@@ -1552,15 +1552,15 @@ int Screen::drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt)
 	cnt = _dsTmpWidth;
 	bool found = false;
 
-	if (cnt <= 0)
+	if (cnt == 0)
 		return 0;
 
-	while (cnt-- > 0) {
+	do {
 		if (*src++)
 			continue;
 		found = true;
 		cnt = cnt + 1 - (*src++);
-	}
+	} while (--cnt > 0);
 
 	return found ? 0 : _dsOffscreenScaleVal1;
 }
