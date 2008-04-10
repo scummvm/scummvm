@@ -259,7 +259,7 @@ void SoundMidiPC::send(uint32 b) {
 		return;
 	}
 
-	const uint8 volume = /*_eventFromMusic ? */_musicVolume/* : _sfxVolume*/;
+	const int volume = /*_eventFromMusic ? */_musicVolume/* : _sfxVolume*/;
 
 	uint8 channel = (byte)(b & 0x0F);
 	if (((b & 0xFFF0) == 0x6FB0 || (b & 0xFFF0) == 0x6EB0) && channel != 9) {
@@ -280,11 +280,11 @@ void SoundMidiPC::send(uint32 b) {
 		vol = vol * volume / 255;
 		b = (b & 0xFF00FFFF) | (vol << 16);
 	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32 && !_useC55) {
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+		b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
 		//has currently been allocated
-		if (!_channel[channel])
+		if (!_channel[_virChannel[channel]])
 			return;
 	}
 
