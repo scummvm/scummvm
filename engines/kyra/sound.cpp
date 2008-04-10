@@ -155,6 +155,9 @@ SoundMidiPC::SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver
 	
 	_nativeMT32 = _useC55 = false;
 
+	_fadeStartTime = 0;
+	_fadeMusicOut = false;
+
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 50, sizeof(_channelVolume));
 	_channelVolume[10] = 100;
@@ -381,26 +384,28 @@ void SoundMidiPC::onTimer(void *refCon) {
 	Common::StackLock lock(sound->_mutex);
 
 	// this should be set to the fadeToBlack value
-	static const uint32 musicFadeTime = 2 * 1000;
+	static const uint32 musicFadeTime = 1 * 1000;
 
-	if (sound->_fadeMusicOut && sound->_fadeStartTime + musicFadeTime > sound->_vm->_system->getMillis()) {
-		byte volume = (byte)((musicFadeTime - (sound->_vm->_system->getMillis() - sound->_fadeStartTime)) * sound->_musicVolume / musicFadeTime);
-		sound->updateChannelVolume(volume);
-	} else if (sound->_fadeStartTime) {
-		sound->_fadeStartTime = 0;
-		sound->_fadeMusicOut = false;
-		sound->_isMusicPlaying = false;
+	if (sound->_fadeMusicOut) {
+		if (sound->_fadeStartTime + musicFadeTime > sound->_vm->_system->getMillis()) {
+			byte volume = (byte)((musicFadeTime - (sound->_vm->_system->getMillis() - sound->_fadeStartTime)) * sound->_musicVolume / musicFadeTime);
+			sound->updateChannelVolume(volume);
+		} else {
+			sound->_fadeStartTime = 0;
+			sound->_fadeMusicOut = false;
+			sound->_isMusicPlaying = false;
 
-		sound->_eventFromMusic = true;
-		// from sound/midiparser.cpp
-		for (int i = 0; i < 128; ++i) {
-			for (int j = 0; j < 16; ++j) {
-				sound->send(0x80 | j | i << 8);
+			sound->_eventFromMusic = true;
+			// from sound/midiparser.cpp
+			for (int i = 0; i < 128; ++i) {
+				for (int j = 0; j < 16; ++j) {
+					sound->send(0x80 | j | i << 8);
+				}
 			}
-		}
 
-		for (int i = 0; i < 16; ++i)
-			sound->send(0x007BB0 | i);
+			for (int i = 0; i < 16; ++i)
+				sound->send(0x007BB0 | i);
+		}
 	}
 
 	if (sound->_isMusicPlaying) {
