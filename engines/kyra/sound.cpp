@@ -443,6 +443,8 @@ void SoundMidiPC::haltTrack() {
 }
 
 void SoundMidiPC::playSoundEffect(uint8 track) {
+	Common::StackLock lock(_mutex);
+
 	if (_sfxParser && _sfxEnabled) {
 		_isSfxPlaying = true;
 		_sfxParser->setTrack(track);
