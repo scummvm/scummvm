@@ -277,6 +277,7 @@ void AgiEngine::handleKeys(int key) {
 	static uint8 formatedEntry[256];
 	int l = _game.lineUserInput;
 	int fg = _game.colorFg, bg = _game.colorBg;
+	int promptLength = strlen(agiSprintf(_game.strings[0]));
 
 	setvar(vWordNotFound, 0);
 
@@ -329,10 +330,10 @@ void AgiEngine::handleKeys(int key) {
 			break;
 
 		/* erase cursor */
-		_gfx->printCharacter(_game.cursorPos + 1, l, ' ', fg, bg);
+		_gfx->printCharacter(_game.cursorPos + promptLength, l, ' ', fg, bg);
 		_game.inputBuffer[--_game.cursorPos] = 0;
 		/* Print cursor */
-		_gfx->printCharacter(_game.cursorPos + 1, l, _game.cursorChar, fg, bg);
+		_gfx->printCharacter(_game.cursorPos + promptLength, l, _game.cursorChar, fg, bg);
 
 #ifdef __DS__
 		DS::findWordCompletions((char *) _game.inputBuffer);
@@ -355,10 +356,10 @@ void AgiEngine::handleKeys(int key) {
 #endif
 
 		/* echo */
-		_gfx->printCharacter(_game.cursorPos, l, _game.inputBuffer[_game.cursorPos - 1], fg, bg);
+		_gfx->printCharacter(_game.cursorPos + promptLength - 1, l, _game.inputBuffer[_game.cursorPos - 1], fg, bg);
 
 		/* Print cursor */
-		_gfx->printCharacter(_game.cursorPos + 1, l, _game.cursorChar, fg, bg);
+		_gfx->printCharacter(_game.cursorPos + promptLength, l, _game.cursorChar, fg, bg);
 		break;
 	}
 }

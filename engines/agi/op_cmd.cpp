@@ -1373,6 +1373,8 @@ cmd(set_string) {
 	if (p0 > MAX_STRINGS)
 		return;
 	strcpy(game.strings[p0], curLogic->texts[p1 - 1]);
+	if (p0 == 0 && game.hasPrompt)
+		g_agi->writePrompt();
 }
 
 cmd(display) {

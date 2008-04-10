@@ -93,7 +93,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 				x1++;
 
 				/* DF: changed the len-1 to len... */
-				if (x1 == len && m[1] != '\n')
+				if (x1 == len && m[len] != '\n')
 					y1++, x1 = foff = 0;
 			} else {
 				y1++;
@@ -627,6 +627,7 @@ void AgiEngine::writeStatus() {
  */
 void AgiEngine::writePrompt() {
 	int l, fg, bg, pos;
+	int promptLength = strlen(agiSprintf(_game.strings[0]));
 
 	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL)
 		return;
@@ -640,9 +641,9 @@ void AgiEngine::writePrompt() {
 	clearLines(l, l, _game.colorBg);
 
 	debugC(4, kDebugLevelText, "prompt = '%s'", agiSprintf(_game.strings[0]));
-	printText(_game.strings[0], 0, 0, l, 1, fg, bg);
-	printText((char *)_game.inputBuffer, 0, 1, l, pos + 1, fg, bg);
-	_gfx->printCharacter(pos + 1, l, _game.cursorChar, fg, bg);
+	printText(_game.strings[0], 0, 0, l, promptLength + 1, fg, bg);
+	printText((char *)_game.inputBuffer, 0, promptLength, l, pos + 1, fg, bg);
+	_gfx->printCharacter(pos + promptLength, l, _game.cursorChar, fg, bg);
 
 	flushLines(l, l);
 	_gfx->doUpdate();
