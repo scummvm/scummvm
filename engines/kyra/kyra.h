@@ -151,7 +151,7 @@ public:
 	int resetGameFlag(int flag);
 
 	// sound
-	virtual void snd_playTheme(int file, int track = 0);
+	virtual void snd_playTheme(int file, int track);
 	virtual void snd_playSoundEffect(int id);
 	virtual void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id) = 0;

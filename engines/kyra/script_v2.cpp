@@ -459,7 +459,7 @@ int KyraEngine_v2::o2_checkForItem(ScriptState *script) {
 int KyraEngine_v2::o2_loadSoundFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
 	if (_sound->hasSoundFile(stackPos(0)))
-		snd_playTheme(stackPos(0));
+		snd_playTheme(stackPos(0), -1);
 	return 0;
 }
 

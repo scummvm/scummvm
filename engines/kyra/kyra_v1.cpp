@@ -401,7 +401,7 @@ void KyraEngine_v1::startup() {
 	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, &_opcodes))
 		error("Could not load \"_NPC.EMC\" script");
 
-	snd_playTheme(1);
+	snd_playTheme(1, 0);
 	if (_gameToLoad == -1) {
 		enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 		if (_abortIntroFlag && _skipIntroFlag) {

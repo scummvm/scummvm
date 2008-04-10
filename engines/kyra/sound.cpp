@@ -460,13 +460,14 @@ void SoundMidiPC::beginFadeOut() {
 #pragma mark -
 
 void KyraEngine::snd_playTheme(int file, int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d, %d)", file, track);
 	if (_curMusicTheme == file)
 		return;
 
 	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(_curMusicTheme);
-	_sound->playTrack(track);
+	if (track != -1)
+		_sound->playTrack(track);
 }
 
 void KyraEngine::snd_playSoundEffect(int track) {
@@ -492,7 +493,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 		assert(command*2+1 < _trackMapSize);
 		if (_curMusicTheme != _trackMap[command*2]) {
 			if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)
-				snd_playTheme(_trackMap[command*2]);
+				snd_playTheme(_trackMap[command*2], -1);
 		}
 
 		if (command != 1) {
