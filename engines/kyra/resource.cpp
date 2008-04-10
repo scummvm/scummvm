@@ -129,7 +129,10 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		return false;
 
 	ResFileMap::iterator iter = _map.find(filename);
-	if (iter != _map.end() && iter->_value.preload) {
+	if (iter == _map.end())
+		return false;
+
+	if (iter->_value.preload) {
 		iter->_value.mounted = true;
 		return true;
 	}
