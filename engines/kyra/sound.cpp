@@ -350,8 +350,9 @@ void SoundMidiPC::loadSoundFile(uint file) {
 
 	_currentTrack = filename;
 
-	_midiFile = Common::SharedPtr<byte>(data, DeleterArray());
 	_musicParser->unloadMusic();
+	_sfxParser->unloadMusic();
+	_midiFile = Common::SharedPtr<byte>(data, DeleterArray());
 
 	_isMusicPlaying = _isSfxPlaying = false;
 	_fadeStartTime = 0;
