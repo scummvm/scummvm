@@ -22,6 +22,7 @@ RANLIB  = psp-ranlib
 STRIP   = psp-strip
 MKDIR	= mkdir -p
 RM	= rm -f
+RM_REC	= rm -rf
 MKSFO	= mksfo
 PACK_PBP = pack-pbp
 FIXUP	= psp-fixup-imports
@@ -61,8 +62,6 @@ OBJS := psp_main.o \
 	kbd_ls_c.o \
 	kbd_l_c.o \
 	trace.o
-
-MODULE_DIRS += .
 
 include $(srcdir)/Makefile.common
 
