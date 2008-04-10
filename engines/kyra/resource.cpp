@@ -125,11 +125,11 @@ bool Resource::reset() {
 }
 
 bool Resource::loadPakFile(const Common::String &filename) {
-	ResFileMap::iterator iter = _map.find(filename);
-	if (iter == _map.end())
+	if (!isAccessable(filename))
 		return false;
 
-	if (iter->_value.preload) {
+	ResFileMap::iterator iter = _map.find(filename);
+	if (iter != _map.end() && iter->_value.preload) {
 		iter->_value.mounted = true;
 		return true;
 	}
@@ -139,9 +139,6 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		error("no archive loader for file '%s' found which is of type %d", filename.c_str(), iter->_value.type);
 		return false;
 	}
-
-	if (!isAccessable(filename))
-		return false;
 
 	Common::SeekableReadStream *stream = getFileStream(filename);
 	if (!stream) {
@@ -250,77 +247,17 @@ void Resource::unloadPakFile(const Common::String &filename) {
 	}
 }
 
-bool Resource::isInPakList(const Common::String &filename) const {
+bool Resource::isInPakList(const Common::String &filename) {
 	return isAccessable(filename);
 }
 
 void Resource::unloadAllPakFiles() {
 	// remove all entries
 	_map.clear();
-
-	addSearchPath(ConfMan.get("path"));
-	addSearchPath(ConfMan.get("extrapath"));
-	
-	Common::File temp;
-	
-	ResFileMap::iterator iter = _map.find(StaticResource::staticDataFilename());
-	if (iter == _map.end()) {
-		if (temp.open(StaticResource::staticDataFilename())) {
-			ResFileEntry entry;
-			entry.parent = "";
-			entry.size = temp.size();
-			entry.mounted = true;
-			entry.preload = false;
-			entry.prot = false;
-			entry.type = ResFileEntry::kAutoDetect;
-			entry.offset = 0;
-			_map[StaticResource::staticDataFilename()] = entry;
-			temp.close();
-		}
-	}
-
 	detectFileTypes();
 }
 
-bool Resource::addSearchPath(const Common::String &path) {
-	if (path.empty())
-		return false;
-
-	FilesystemNode dir(path);
-
-	if (!dir.exists() || !dir.isDirectory()) {
-		warning("invalid data path '%s'", dir.getPath().c_str());
-		return false;
-	}
-
-	FSList fslist;
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("can't list files inside path '%s'", dir.getPath().c_str());
-		return false;
-	}
-
-	Common::File temp;
-
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		ResFileEntry entry;
-		entry.parent = "";
-		if (!temp.open(file->getPath()))
-			error("couldn't open file '%s'", file->getName().c_str());
-		entry.size = temp.size();
-		entry.offset = 0;
-		entry.mounted = false;
-		entry.preload = false;
-		entry.prot = false;
-		entry.type = ResFileEntry::kAutoDetect;
-		_map[file->getName()] = entry;
-		temp.close();
-	}
-
-	detectFileTypes();
-	return true;
-}
-
-uint8 *Resource::fileData(const char *file, uint32 *size) const {
+uint8 *Resource::fileData(const char *file, uint32 *size) {
 	Common::SeekableReadStream *stream = getFileStream(file);
 	if (!stream)
 		return 0;
@@ -335,7 +272,7 @@ uint8 *Resource::fileData(const char *file, uint32 *size) const {
 	return buffer;
 }
 
-uint32 Resource::getFileSize(const char *file) const {
+uint32 Resource::getFileSize(const char *file) {
 	if (!isAccessable(file))
 		return 0;
 
@@ -356,7 +293,7 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 	return true;
 }
 
-Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) const {
+Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
 	if (!isAccessable(file))
 		return 0;
 
@@ -385,7 +322,9 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 	return 0;
 }
 
-bool Resource::isAccessable(const Common::String &file) const {
+bool Resource::isAccessable(const Common::String &file) {
+	checkFile(file);
+
 	ResFileMap::const_iterator iter = _map.find(file);
 	while (iter != _map.end()) {
 		if (!iter->_value.parent.empty()) {
@@ -403,6 +342,26 @@ bool Resource::isAccessable(const Common::String &file) const {
 		}
 	}
 	return false;
+}
+
+void Resource::checkFile(const Common::String &file) {
+	if (_map.find(file) == _map.end() && Common::File::exists(file)) {
+		Common::File temp;
+		if (temp.open(file)) {
+			ResFileEntry entry;
+			entry.parent = "";
+			entry.size = temp.size();
+			entry.mounted = file.compareToIgnoreCase(StaticResource::staticDataFilename());
+			entry.preload = false;
+			entry.prot = false;
+			entry.type = ResFileEntry::kAutoDetect;
+			entry.offset = 0;
+			_map[file] = entry;
+			temp.close();
+
+			detectFileTypes();
+		}
+	}
 }
 
 void Resource::detectFileTypes() {

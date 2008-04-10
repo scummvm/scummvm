@@ -92,24 +92,23 @@ public:
 
 	bool reset();
 
-	bool addSearchPath(const Common::String &path);
-
 	bool loadPakFile(const Common::String &filename);
 	void unloadPakFile(const Common::String &filename);
-	bool isInPakList(const Common::String &filename) const;
+	bool isInPakList(const Common::String &filename);
 
 	bool loadFileList(const Common::String &filedata);
 	bool loadFileList(const char * const *filelist, uint32 numFiles);
 	// This unloads *all* pakfiles, even kyra.dat and protected ones
 	void unloadAllPakFiles();
 
-	uint32 getFileSize(const char *file) const;
-	uint8* fileData(const char *file, uint32 *size) const;
-	Common::SeekableReadStream *getFileStream(const Common::String &file) const;
+	uint32 getFileSize(const char *file);
+	uint8* fileData(const char *file, uint32 *size);
+	Common::SeekableReadStream *getFileStream(const Common::String &file);
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 protected:
-	bool isAccessable(const Common::String &file) const;
+	void checkFile(const Common::String &file);
+	bool isAccessable(const Common::String &file);
 
 	void detectFileTypes();
 
