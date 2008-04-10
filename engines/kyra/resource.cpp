@@ -82,6 +82,7 @@ bool Resource::reset() {
 		return true;
 	} else if (_vm->game() == GI_KYRA3) {
 		loadPakFile("WESTWOOD.001");
+		loadFileList("FILEDATA.FDT");
 	}
 
 	FSList fslist;
