@@ -184,6 +184,7 @@ const ExtractEntry kyra1EngDemo[] = {
 	{ kDemo2Seq, 0x000153E5, 0x00015408 },
 	{ kDemo3Seq, 0x00015408, 0x00015461 },
 	{ kDemo4Seq, 0x00015461, 0x00015481 },
+	{ kAudioTracksIntro, 0x00014E6E, 0x00014E74 },
 	{ -1, 0, 0 }
 };
 

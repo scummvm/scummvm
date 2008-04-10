@@ -852,7 +852,7 @@ bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, co
 		dst += 2;
 		outsize -= 2;
 		
-		for (int i = 0; i < 20; i ++) {
+		for (int j = 0; j < 20; j++) {
 			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 			src += 2;
 			dst += 2;

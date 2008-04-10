@@ -43,7 +43,7 @@ namespace Kyra {
 void KyraEngine_v1::seq_demo() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_demo()");
 
-	snd_playTheme(9, 2);
+	snd_playTheme(0, 2);
 
 	_screen->loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);

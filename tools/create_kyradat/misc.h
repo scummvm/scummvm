@@ -183,6 +183,7 @@ const int kyra1DemoNeed[] = {
 	kDemo2Seq,
 	kDemo3Seq,
 	kDemo4Seq,
+	kAudioTracksIntro,
 	-1
 };
 
