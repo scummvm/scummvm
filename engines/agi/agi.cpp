@@ -69,7 +69,7 @@ void AgiEngine::processEvents() {
 		case Common::EVENT_PREDICTIVE_DIALOG:
 			if (_predictiveDialogRunning)
 				break;
-			if (_game.playerControl && predictiveDialog()) {
+			if (predictiveDialog()) {
 				if (_game.inputMode == INPUT_NORMAL) {
 					strcpy((char *)_game.inputBuffer, _predictiveResult);
 					handleKeys(KEY_ENTER);

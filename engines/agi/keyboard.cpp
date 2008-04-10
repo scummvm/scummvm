@@ -135,6 +135,17 @@ int AgiEngine::handleController(int key) {
 		}
 	}
 
+	// Show predictive dialog if the user clicks on input area
+	if (key == BUTTON_LEFT &&
+			(int)g_mouse.y >= _game.lineUserInput * CHAR_LINES &&
+			(int)g_mouse.y <= (_game.lineUserInput + 1) * CHAR_LINES) {
+		if (predictiveDialog()) {
+			strcpy((char *)_game.inputBuffer, _predictiveResult);
+			handleKeys(KEY_ENTER);
+		}
+		return true;
+	}
+
 	if (_game.playerControl) {
 		int d = 0;
 
@@ -165,16 +176,6 @@ int AgiEngine::handleController(int key) {
 				d = 6;
 				break;
 			}
-		}
-
-		if (key == BUTTON_LEFT &&
-				(int)g_mouse.y >= _game.lineUserInput * CHAR_LINES &&
-				(int)g_mouse.y <= (_game.lineUserInput + 1) * CHAR_LINES) {
-			if (predictiveDialog()) {
-				strcpy((char *)_game.inputBuffer, _predictiveResult);
-				handleKeys(KEY_ENTER);
-			}
-			return true;
 		}
 
 		if (!(getFeatures() & GF_AGIMOUSE)) {
