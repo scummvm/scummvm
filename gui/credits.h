@@ -280,7 +280,7 @@ static const char *credits[] = {
 "\\C\\c0""Jeroen Janssen",
 "\\C\\c2""Numerous readability and bugfix patches",
 "\\C\\c0""Andreas Karlsson",
-"\\C\\c2""Initial port for EPOC/SymbianOS",
+"\\C\\c2""Initial port for SymbianOS",
 "\\C\\c0""Claudio Matsuoka",
 "\\C\\c2""Daily Linux builds",
 "\\C\\c0""Thomas Mayer",
