@@ -161,11 +161,15 @@ static String generatePreferredTarget(const String &id, const ADGameDescription 
 		res = res + "-demo";
 	}
 
+	if (desc->flags & ADGF_CD) {
+		res = res + "-cd";
+	}
+
 	if (desc->platform != kPlatformPC && desc->platform != kPlatformUnknown) {
 		res = res + "-" + getPlatformAbbrev(desc->platform);
 	}
 
-	if (desc->language != EN_ANY && desc->language != UNK_LANG) {
+	if (desc->language != EN_ANY && desc->language != UNK_LANG && !(desc->flags & ADGF_DROPLANGUAGE)) {
 		res = res + "-" + getLanguageCode(desc->language);
 	}
 
