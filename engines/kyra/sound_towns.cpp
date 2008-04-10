@@ -1414,7 +1414,7 @@ void SoundTowns_v2::playTrack(uint8 track) {
 		AudioCD.updateCD();
 	} else if (_musicEnabled) {
 		char musicfile[13];
-		sprintf(musicfile, "%s%d.twn", fileListEntry(0), track);
+		sprintf(musicfile, fileListEntry(0), track);
 		if (_twnTrackData)
 			delete [] _twnTrackData;
 		_twnTrackData = _vm->resource()->fileData(musicfile, 0);

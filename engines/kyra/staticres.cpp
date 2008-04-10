@@ -1201,9 +1201,9 @@ void KyraEngine_v2::initStaticResource() {
 	_sequenceSoundList = tmpSndLst;
 
 	// assign music data
-	static const char *fmtMusicFileListIntro[] = { "intro" };
-	static const char *fmtMusicFileListFinale[] = { "finale" };
-	static const char *fmtMusicFileListIngame[] = { "k2" };
+	static const char *fmtMusicFileListIntro[] = { "intro%d.twn" };
+	static const char *fmtMusicFileListFinale[] = { "finale%d.twn" };
+	static const char *fmtMusicFileListIngame[] = { "km%02d.twn" };
 
 	static const AudioDataStruct soundData_PC[] = {
 		{ _musicFileListIntro, _musicFileListIntroSize, 0, 0 },
