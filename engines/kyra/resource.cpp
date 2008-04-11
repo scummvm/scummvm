@@ -355,7 +355,7 @@ void Resource::checkFile(const Common::String &file) {
 			ResFileEntry entry;
 			entry.parent = "";
 			entry.size = temp.size();
-			entry.mounted = file.compareToIgnoreCase(StaticResource::staticDataFilename());
+			entry.mounted = file.compareToIgnoreCase(StaticResource::staticDataFilename()) != 0;
 			entry.preload = false;
 			entry.prot = false;
 			entry.type = ResFileEntry::kAutoDetect;
