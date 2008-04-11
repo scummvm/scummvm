@@ -1282,6 +1282,7 @@ cmd(accept_input) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
 	g_agi->newInputMode(INPUT_NORMAL);
 	game.inputEnabled = true;
+	g_agi->writePrompt();
 }
 
 cmd(prevent_input) {
@@ -1373,8 +1374,6 @@ cmd(set_string) {
 	if (p0 > MAX_STRINGS)
 		return;
 	strcpy(game.strings[p0], curLogic->texts[p1 - 1]);
-	if (p0 == 0 && game.hasPrompt)
-		g_agi->writePrompt();
 }
 
 cmd(display) {
