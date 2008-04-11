@@ -147,7 +147,7 @@ public:
 
 	virtual void processMillis(uint32 &millis) = 0;
 
-	/** Return the current key state */
+	/** Return the current mouse position */
 	virtual Common::Point getMousePos() const = 0;
 
 	/**
