@@ -694,12 +694,16 @@ void ScummEngine_v99he::resetScummVars() {
 
 void ScummEngine::resetScummVars() {
 	if (_game.heversion < 70 && _game.version <= 6) {
+		// VAR_SOUNDCARD modes
+		// 0 PC Speaker
+		// 1 Tandy
+		// 2 CMS
+		// 3 Adlib
+		// 4 Roland
 		switch (_musicType) {
 		case MDT_NONE:
-			VAR(VAR_SOUNDCARD) = 0;
-			break;
 		case MDT_PCSPK:
-			VAR(VAR_SOUNDCARD) = 1;
+			VAR(VAR_SOUNDCARD) = 0;
 			break;
 		case MDT_ADLIB:
 			VAR(VAR_SOUNDCARD) = 3;
