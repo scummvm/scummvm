@@ -2111,7 +2111,16 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		}
 	}
 
-	if ((_musicType == MDT_ADLIB) && ad_offs != 0) {
+	if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
+		if (_game.features & GF_OLD_BUNDLE) {
+			_fileHandle->seek(wa_offs, SEEK_SET);
+			_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
+		} else {
+			_fileHandle->seek(wa_offs - 6, SEEK_SET);
+			_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
+		}
+		return 1;
+	} else if (ad_offs != 0) {
 		// AD resources have a header, instrument definitions and one MIDI track.
 		// We build an 'ADL ' resource from that:
 		//   8 bytes resource header
@@ -2132,15 +2141,6 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		_fileHandle->read(ptr, ad_size);
 		convertADResource(_res, _game, idx, ptr, ad_size);
 		free(ptr);
-		return 1;
-	} else if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
-		if (_game.features & GF_OLD_BUNDLE) {
-			_fileHandle->seek(wa_offs, SEEK_SET);
-			_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
-		} else {
-			_fileHandle->seek(wa_offs - 6, SEEK_SET);
-			_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
-		}
 		return 1;
 	} else if (ro_offs != 0) {
 		_fileHandle->seek(ro_offs - 2, SEEK_SET);
