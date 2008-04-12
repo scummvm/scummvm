@@ -46,7 +46,7 @@ void KyraEngine_v1::seq_demo() {
 	snd_playTheme(0, 2);
 
 	_screen->loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	delay(60 * _tickLength);
