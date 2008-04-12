@@ -180,7 +180,7 @@ int KyraEngine_v1::init() {
 	assert(*_animator);
 	_text = new TextDisplayer(this, screen());
 	assert(_text);
-	_gui = new GUI_v1(this);
+	_gui = new GUI_v1(this, _screen);
 	assert(_gui);
 
 	initStaticResource();

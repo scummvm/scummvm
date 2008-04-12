@@ -202,18 +202,6 @@ public:
 
 	virtual Movie *createWSAMovie();
 protected:
-	// Main menu code, also used for Kyra 3
-	static const char *_mainMenuStrings[];
-
-	virtual void gui_initMainMenu() {}
-	int gui_handleMainMenu();
-	virtual void gui_updateMainMenuAnimation();
-	void gui_drawMainMenu(const char *const *strings, int select);
-	void gui_drawMainBox(int x, int y, int w, int h, int fill);
-	bool gui_mainMenuGetInput();
-
-	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
-
 	// intro/outro
 	void seq_playSequences(int startSeq, int endSeq = -1);
 
@@ -328,6 +316,8 @@ protected:
 	void loadItemShapes();
 
 	// run
+	MainMenu *_menu;
+
 	bool _runFlag;
 	bool _showCredits;
 

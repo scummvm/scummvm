@@ -186,7 +186,7 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 
 #pragma mark -
 
-GUI_v1::GUI_v1(KyraEngine_v1 *vm) : GUI(vm), _vm(vm) {
+GUI_v1::GUI_v1(KyraEngine_v1 *vm, Screen_v1 *screen) : GUI(vm), _vm(vm), _screen(screen) {
 	_menu = 0;
 	initStaticResource();
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::scrollUp);
@@ -212,16 +212,16 @@ int GUI_v1::processButtonList(Button *list, uint16 inputFlag) {
 
 		int x = list->x;
 		int y = list->y;
-		assert(list->dimTableIndex < _screen->_screenDimTableCount);
+		assert(_screen->getScreenDim(list->dimTableIndex) != 0);
 		if (x < 0) {
-			x += _screen->_screenDimTable[list->dimTableIndex].w << 3;
+			x += _screen->getScreenDim(list->dimTableIndex)->w << 3;
 		}
-		x += _screen->_screenDimTable[list->dimTableIndex].sx << 3;
+		x += _screen->getScreenDim(list->dimTableIndex)->sx << 3;
 
 		if (y < 0) {
-			y += _screen->_screenDimTable[list->dimTableIndex].h;
+			y += _screen->getScreenDim(list->dimTableIndex)->h;
 		}
-		y += _screen->_screenDimTable[list->dimTableIndex].sy;
+		y += _screen->getScreenDim(list->dimTableIndex)->sy;
 
 		Common::Point mouse = _vm->getMousePos();
 		if (mouse.x >= x && mouse.y >= y && x + list->width >= mouse.x && y + list->height >= mouse.y) {
@@ -302,12 +302,12 @@ void GUI_v1::processButton(Button *button) {
 
 	int x = button->x;
 	int y = button->y;
-	assert(button->dimTableIndex < _screen->_screenDimTableCount);
+	assert(_screen->getScreenDim(button->dimTableIndex) != 0);
 	if (x < 0)
-		x += _screen->_screenDimTable[button->dimTableIndex].w << 3;
+		x += _screen->getScreenDim(button->dimTableIndex)->w << 3;
 
 	if (y < 0)
-		y += _screen->_screenDimTable[button->dimTableIndex].h;
+		y += _screen->getScreenDim(button->dimTableIndex)->h;
 
 	if (processType == 1 && shape)
 		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);

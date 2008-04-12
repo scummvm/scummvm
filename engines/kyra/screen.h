@@ -98,7 +98,7 @@ public:
 	Screen(KyraEngine *vm, OSystem *system);
 	virtual ~Screen();
 
-	bool init();
+	virtual bool init();
 
 	void updateScreen();
 
@@ -165,11 +165,13 @@ public:
 
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 
-	void setTextColorMap(const uint8 *cmap);
+	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
 
-	virtual void setScreenDim(int dim);
-	virtual const ScreenDim *getScreenDim(int dim);
+	virtual void setScreenDim(int dim) = 0;
+	virtual const ScreenDim *getScreenDim(int dim) = 0;
+
+	const ScreenDim *_curDim;
 
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
@@ -179,64 +181,16 @@ public:
 
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
-	int drawShapeMarginNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeMarginNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	void drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	void drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	void drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	void drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-
-	void drawShapePlotType0(uint8 *dst, uint8 cmd);
-	void drawShapePlotType4(uint8 *dst, uint8 cmd);
-	void drawShapePlotType8(uint8 *dst, uint8 cmd);
-	void drawShapePlotType9(uint8 *dst, uint8 cmd);
-	void drawShapePlotType11_15(uint8 *dst, uint8 cmd);
-	void drawShapePlotType12(uint8 *dst, uint8 cmd);
-	void drawShapePlotType13(uint8 *dst, uint8 cmd);
-	void drawShapePlotType14(uint8 *dst, uint8 cmd);		
-
-	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);
-	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	typedef void (Screen::*DsPlotFunc)(uint8 *dst, uint8 cmd);
-
-	DsMarginSkipFunc _dsProcessMargin;
-	DsMarginSkipFunc _dsScaleSkip;
-	DsLineFunc _dsProcessLine;
-	DsPlotFunc _dsPlot;
-
-	const uint8 *_dsTable;
-	int _dsTableLoopCount;
-	const uint8 *_dsTable2;
-	int _dsDrawLayer;
-	uint8 *_dsDstPage;
-	int _dsTmpWidth;
-	int _dsOffscreenLeft;
-	int _dsOffscreenRight;
-	int _dsScaleW;
-	int _dsScaleH;
-	int _dsOffscreenScaleVal1;
-	int _dsOffscreenScaleVal2;
-	int _drawShapeVar1;
-	int _drawShapeVar3;
-	int _drawShapeVar4;
-	int _drawShapeVar5;
-
 	// mouse handling
 	void hideMouse();
 	void showMouse();
+	bool isMouseVisible() const;
 	void setMouseCursor(int x, int y, byte *shape);
 
 	// rect handling
-	virtual int getRectSize(int w, int h);
+	virtual int getRectSize(int w, int h) = 0;
 
 	void rectClip(int &x, int &y, int w, int h);
-
-	void addBitBlitRect(int x, int y, int w, int h);
-	void bitBlitRects();
 
 	// misc
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
@@ -251,19 +205,11 @@ public:
 	byte getShapeFlag1(int x, int y);
 	byte getShapeFlag2(int x, int y);
 
-	void savePageToDisk(const char *file, int page);
-	void loadPageFromDisk(const char *file, int page);
-	void deletePageFromDisk(int page);
+	int getDrawLayer(int x, int y);
+	int getDrawLayer2(int x, int y, int height);
 
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
-
-	void copyBackgroundBlock(int x, int page, int flag);
-	void copyBackgroundBlock2(int x);
-
-	// kyra1 specific?
-	int getDrawLayer(int x, int y);
-	int getDrawLayer2(int x, int y, int height);
 
 	int _charWidth;
 	int _charOffset;
@@ -272,11 +218,6 @@ public:
 	uint8 *_shapePages[2];
 	FontId _currentFont;
 	bool _disableScreen;
-
-	const ScreenDim *_curDim;
-
-	static const ScreenDim _screenDimTable[];
-	static const int _screenDimTableCount;
 
 	// decoding functions
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
@@ -329,9 +270,6 @@ protected:
 	uint8 *_sjisTempPage2;
 	uint8 *_sjisSourceChar;
 
-	uint8 *_saveLoadPage[8];
-	uint8 *_saveLoadPageOvl[8];
-
 	uint8 *_screenPalette;
 	uint8 *_palettes[6];
 
@@ -346,10 +284,6 @@ protected:
 
 	int _mouseLockCount;
 
-	Rect *_bitBlitRects;
-	int _bitBlitNum;
-	uint8 *_unkPtr1, *_unkPtr2;
-
 	enum {
 		kMaxDirtyRects = 50
 	};
@@ -363,11 +297,93 @@ protected:
 	OSystem *_system;
 	KyraEngine *_vm;
 
+	// shape
+	int drawShapeMarginNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	void drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+
+	void drawShapePlotType0(uint8 *dst, uint8 cmd);
+	void drawShapePlotType4(uint8 *dst, uint8 cmd);
+	void drawShapePlotType8(uint8 *dst, uint8 cmd);
+	void drawShapePlotType9(uint8 *dst, uint8 cmd);
+	void drawShapePlotType11_15(uint8 *dst, uint8 cmd);
+	void drawShapePlotType12(uint8 *dst, uint8 cmd);
+	void drawShapePlotType13(uint8 *dst, uint8 cmd);
+	void drawShapePlotType14(uint8 *dst, uint8 cmd);		
+
+	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);
+	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	typedef void (Screen::*DsPlotFunc)(uint8 *dst, uint8 cmd);
+
+	DsMarginSkipFunc _dsProcessMargin;
+	DsMarginSkipFunc _dsScaleSkip;
+	DsLineFunc _dsProcessLine;
+	DsPlotFunc _dsPlot;
+
+	const uint8 *_dsTable;
+	int _dsTableLoopCount;
+	const uint8 *_dsTable2;
+	int _dsDrawLayer;
+	uint8 *_dsDstPage;
+	int _dsTmpWidth;
+	int _dsOffscreenLeft;
+	int _dsOffscreenRight;
+	int _dsScaleW;
+	int _dsScaleH;
+	int _dsOffscreenScaleVal1;
+	int _dsOffscreenScaleVal2;
+	int _drawShapeVar1;
+	int _drawShapeVar3;
+	int _drawShapeVar4;
+	int _drawShapeVar5;
+
 	// init
 	virtual void setResolution();
 
 	// debug
 	bool _debugEnabled;
+};
+
+class ScreenEx : public Screen {
+public:
+	ScreenEx(KyraEngine *vm, OSystem *system) : Screen(vm, system) {}
+
+	// screen page handling
+	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
+					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
+
+	// palette handling
+	uint8 *generateOverlay(const uint8 *palette, uint8 *buffer, int color, uint16 factor);
+	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
+	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors);
+
+	// shape handling
+	uint8 *getPtrToShape(uint8 *shpFile, int shape);
+	const uint8 *getPtrToShape(const uint8 *shpFile, int shape);
+
+	int getShapeScaledWidth(const uint8 *shpFile, int scale);
+	int getShapeScaledHeight(const uint8 *shpFile, int scale);
+
+	uint16 getShapeSize(const uint8 *shp);
+
+	uint8 *makeShapeCopy(const uint8 *src, int index);
+
+	// rect handling
+	int getRectSize(int w, int h);
+
+	// text display
+	void setTextColorMap(const uint8 *cmap);
+
+	// layer handling
+	virtual int getLayer(int x, int y);
+protected:
 };
 
 } // End of namespace Kyra

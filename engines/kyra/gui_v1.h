@@ -89,7 +89,7 @@ class KyraEngine_v1;
 class GUI_v1 : public GUI {
 	friend class KyraEngine_v1;
 public:
-	GUI_v1(KyraEngine_v1 *vm);
+	GUI_v1(KyraEngine_v1 *vm, Screen_v1 *screen);
 	~GUI_v1();
 
 	void processButton(Button *button);
@@ -150,6 +150,7 @@ private:
 	const char *getMenuItemLabel(const MenuItem &menuItem) { return menuItem.labelString; }
 
 	KyraEngine_v1 *_vm;
+	Screen_v1 *_screen;
 
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;

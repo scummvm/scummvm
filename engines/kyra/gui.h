@@ -191,6 +191,57 @@ protected:
 	int getNextSavegameSlot();
 };
 
+class Movie;
+
+class MainMenu {
+public:
+	MainMenu(KyraEngine *vm);
+	virtual ~MainMenu() {}
+
+	struct Animation {
+		Animation() : anim(0), startFrame(0), endFrame(0), delay(0) {}
+
+		Movie *anim;
+		int startFrame;
+		int endFrame;
+		int delay;
+	};
+
+	struct StaticData {
+		const char *strings[4];
+
+		uint8 menuTable[11];
+		uint8 colorTable[4];
+		uint8 colorNormal, colorFlash;
+	};
+
+	void init(StaticData data, Animation anim);
+	int handle(int dim);
+private:
+	KyraEngine *_vm;
+	Screen *_screen;
+	OSystem *_system;
+
+	bool _quitFlag;
+
+	StaticData _static;
+	struct AnimIntern {
+		int curFrame;
+		int direction;
+	};
+	Animation _anim;
+	AnimIntern _animIntern;
+
+	uint32 _nextUpdate;
+
+	void updateAnimation();
+	void draw(int select);
+	void drawBox(int x, int y, int w, int h, int fill);
+	bool getInput();
+
+	void printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
+};
+
 } // end of namesapce Kyra
 
 #endif

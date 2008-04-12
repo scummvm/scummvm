@@ -83,6 +83,8 @@ bool Resource::reset() {
 	} else if (_vm->game() == GI_KYRA3) {
 		loadPakFile("WESTWOOD.001");
 		loadFileList("FILEDATA.FDT");
+
+		return true;
 	}
 
 	FSList fslist;
@@ -258,7 +260,6 @@ bool Resource::isInPakList(const Common::String &filename) {
 void Resource::unloadAllPakFiles() {
 	// remove all entries
 	_map.clear();
-	detectFileTypes();
 }
 
 uint8 *Resource::fileData(const char *file, uint32 *size) {

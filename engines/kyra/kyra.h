@@ -128,6 +128,9 @@ public:
 
 	Common::RandomSource _rnd;
 
+	// input
+	Common::Point getMousePos() const;
+
 	// config specific
 	bool speechEnabled();
 	bool textEnabled();
@@ -223,7 +226,6 @@ protected:
 	int _trackMapSize;
 
 	// input
-	Common::Point getMousePos() const;
 	void setMousePos(int x, int y);
 
 	// pathfinder

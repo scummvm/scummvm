@@ -26,17 +26,21 @@
 #ifndef KYRA_KYRA_V3_H
 #define KYRA_KYRA_V3_H
 
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra.h"
+#include "kyra/screen_v3.h"
 
 namespace Kyra {
 
 class SoundDigital;
+class Screen_v3;
+class MainMenu;
 
-class KyraEngine_v3 : public KyraEngine_v2 {
+class KyraEngine_v3 : public KyraEngine {
 public:
 	KyraEngine_v3(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v3();
 
+	Screen *screen() { return _screen; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 
 	int go();
@@ -52,6 +56,7 @@ private:
 
 	void setupOpcodeTable() {}
 
+	Screen_v3 *_screen;
 	SoundDigital *_soundDigital;
 
 	// sound specific
@@ -71,8 +76,25 @@ private:
 
 	int musicUpdate(int forceRestart);
 
-	virtual void gui_initMainMenu();
-	virtual void gui_updateMainMenuAnimation();
+	void snd_playVoiceFile(int) {}
+
+	// main menu
+	void initMainMenu();
+	void uninitMainMenu();
+
+	Movie *_menuAnim;
+	MainMenu *_menu;
+
+	// game speed
+	bool skipFlag() const { return false; }
+	void resetSkipFlag(bool) {}
+
+	// timer
+	void setupTimers() {}
+	void setWalkspeed(uint8) {}
+
+	// pathfinder
+	bool lineIsPassable(int, int) { return false; }
 
 	// unknown
 private:
@@ -91,9 +113,7 @@ private:
 	uint8 *_unkShapeTable[20];
 
 	// main menu
-	Movie *_mainMenuLogo;
-	int _mainMenuFrame;
-	int _mainMenuFrameAdd;
+	static const char *_mainMenuStrings[];
 
 	// translation stuff
 	uint8 *_scoreFile;
@@ -106,7 +126,6 @@ private:
 
 	// shapes
 	uint8 *_gameShapes[50];
-	uint8 *_shapePoolBuffer;
 
 	uint8 *_mouseSHPBuf;
 
@@ -117,22 +136,6 @@ private:
 	uint8 *_itemList;
 
 	void initItems();
-
-	// used for CSH loading and some sound stuff (maybe voice files?)
-private:
-	uint8 *_tableBuffer1;
-	uint8 *_tableBuffer2;
-	int _unkTableValue;
-
-	// do not think of thouching the code belonging to these functions
-	int initTableBuffer(uint8 *buf, int size);
-	void updateTableBuffer(uint8 *buf);
-	int getTableSize(uint8 *buf);
-	uint8 *allocTableSpace(uint8 *buf, int size, int id);
-	uint8 *findIdInTable(uint8 *buf, int id);
-
-	int addShapeToTable(const uint8 *buf, int id, int shapeNum);
-	uint8 *findShapeInTable(int id);
 
 	// resource specific
 private:

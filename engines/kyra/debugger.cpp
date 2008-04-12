@@ -74,10 +74,11 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 	}
 
 	if (_vm->gameFlags().gameID != GI_KYRA1 && _vm->resource()->getFileSize(argv[1]) != 768) {
-		_vm->screen()->savePageToDisk("TEMP", 5);
+		uint8 buffer[320*200];
+		_vm->screen()->copyRegionToBuffer(5, 0, 0, 320, 200, buffer);
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
 		memcpy(palette, _vm->screen()->getCPagePtr(5), 768);
-		_vm->screen()->loadPageFromDisk("TEMP", 5);
+		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
 	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
 		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
 		return true;

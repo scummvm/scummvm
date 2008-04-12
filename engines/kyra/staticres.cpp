@@ -31,6 +31,9 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_v3.h"
 #include "kyra/screen.h"
+#include "kyra/screen_v1.h"
+#include "kyra/screen_v2.h"
+#include "kyra/screen_v3.h"
 #include "kyra/resource.h"
 #include "kyra/gui_v1.h"
 
@@ -1259,7 +1262,7 @@ void KyraEngine_v2::initStaticResource() {
 	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
 }
 
-const ScreenDim Screen::_screenDimTable[] = {
+const ScreenDim Screen_v1::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x01, 0x08, 0x26, 0x80, 0x0F, 0x0C, 0x00, 0x00 },
@@ -1273,7 +1276,7 @@ const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x03, 0x28, 0x22, 0x46, 0x0F, 0x0D, 0x00, 0x00 }
 };
 
-const int Screen::_screenDimTableCount = ARRAYSIZE(Screen::_screenDimTable);
+const int Screen_v1::_screenDimTableCount = ARRAYSIZE(Screen_v1::_screenDimTable);
 
 const ScreenDim Screen_v2::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },
@@ -1292,14 +1295,14 @@ const ScreenDim Screen_v2::_screenDimTable[] = {
 
 const int Screen_v2::_screenDimTableCount = ARRAYSIZE(Screen_v2::_screenDimTable);
 
-const ScreenDim Screen_v2::_screenDimTableK3[] = {
+const ScreenDim Screen_v3::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
 };
 
-const int Screen_v2::_screenDimTableCountK3 = ARRAYSIZE(Screen_v2::_screenDimTableK3);
+const int Screen_v3::_screenDimTableCount = ARRAYSIZE(Screen_v3::_screenDimTable);
 
 const int8 KyraEngine::_addXPosTable[] = {
 	 4,  4,  0, -4, -4, -4,  0,  4
@@ -1480,7 +1483,7 @@ const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMa
 
 // Kyra 2 and 3 main menu
 
-const char *KyraEngine_v2::_mainMenuStrings[] = {
+const char *KyraEngine_v3::_mainMenuStrings[] = {
 	"Start a new game",
 	"Introduction",
 	"Load a game",

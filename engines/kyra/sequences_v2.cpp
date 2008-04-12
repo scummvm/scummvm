@@ -351,7 +351,7 @@ int KyraEngine_v2::seq_introTitle(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		int cp = _screen->setCurPage(0);
 		_screen->showMouse();
 		_system->updateScreen();
-		_menuChoice = gui_handleMainMenu() + 1;
+		_menuChoice = _menu->handle(11) + 1;
 		_seqEndTime = 0;
 		_seqSubframePlaying = false;
 		if (_menuChoice == 4)
@@ -2044,7 +2044,7 @@ void KyraEngine_v2::seq_loadNestedSequence(int wsaNum, int seqNum) {
 	NestedSequence s = _sequences->seqn[seqNum];
 
 	if (!_activeWSA[wsaNum].movie) {
-		_activeWSA[wsaNum].movie = new WSAMovieV2(this);
+		_activeWSA[wsaNum].movie = new WSAMovieV2(this, _screen);
 		assert(_activeWSA[wsaNum].movie);
 	}
 
@@ -2572,7 +2572,7 @@ void KyraEngine_v2::seq_scrollPage() {
 }
 
 void KyraEngine_v2::seq_showStarcraftLogo() {
-	WSAMovieV2 *ci = new WSAMovieV2(this);
+	WSAMovieV2 *ci = new WSAMovieV2(this, _screen);
 	assert(ci);
 	_screen->clearPage(2);
 	_res->loadPakFile("INTROGEN.PAK");
@@ -2614,7 +2614,7 @@ void KyraEngine_v2::seq_showStarcraftLogo() {
 
 void KyraEngine_v2::seq_init() {
 	_seqProcessedString = new char[200];
-	_seqWsa = new WSAMovieV2(this);
+	_seqWsa = new WSAMovieV2(this, _screen);
 	_activeWSA = new ActiveWSA[8];
 	_activeText = new ActiveText[10];
 
@@ -2636,6 +2636,15 @@ void KyraEngine_v2::seq_init() {
 			_defaultShapeTable[numShp] = _screen->getPtrToShape(_newShapeFiledata, numShp);
 		} while (_defaultShapeTable[numShp]);
 	}
+
+	MainMenu::StaticData data = {
+		{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98] },
+		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6, 0x00, 0x01, 0x02, 0x03 },
+		{ 0xd8, 0xda, 0xd9, 0xd8 },
+		0xd7, 0xd6
+	};
+	_menu = new MainMenu(this);
+	_menu->init(data, MainMenu::Animation());
 }
 
 void KyraEngine_v2::seq_uninit() {
@@ -2658,6 +2667,9 @@ void KyraEngine_v2::seq_uninit() {
 		_staticres->unloadId(k2SeqplayShapeAnimData);
 
 	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
+
+	delete _menu;
+	_menu = 0;
 }
 
 #pragma mark -

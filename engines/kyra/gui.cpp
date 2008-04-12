@@ -27,6 +27,7 @@
 
 #include "kyra/screen.h"
 #include "kyra/text.h"
+#include "kyra/wsamovie.h"
 
 #include "common/savefile.h"
 
@@ -332,6 +333,198 @@ int GUI::getNextSavegameSlot() {
 	}
 	warning("Didn't save: Ran out of saveGame filenames");
 	return 0;
+}
+
+#pragma mark -
+
+MainMenu::MainMenu(KyraEngine *vm) : _vm(vm), _screen(0) {
+	_screen = _vm->screen();
+	_nextUpdate = 0;
+	_system = g_system;
+}
+
+void MainMenu::init(StaticData data, Animation anim) {
+	_static = data;
+	_anim = anim;
+	_animIntern.curFrame = _anim.startFrame;
+	_animIntern.direction = 1;
+}
+
+void MainMenu::updateAnimation() {
+	if (_anim.anim) {
+		uint32 now = _system->getMillis();
+		if (now > _nextUpdate) {
+			_nextUpdate = now + _anim.delay * _vm->tickLength();
+
+			_anim.anim->displayFrame(_animIntern.curFrame, 0);
+			_animIntern.curFrame += _animIntern.direction ;
+			if (_animIntern.curFrame < _anim.startFrame) {
+				_animIntern.curFrame = _anim.startFrame;
+				_animIntern.direction = 1;
+			} else if (_animIntern.curFrame > _anim.endFrame) {
+				_animIntern.curFrame = _anim.endFrame;
+				_animIntern.direction = -1;
+			}
+		}
+	}
+
+	_screen->updateScreen();
+}
+
+bool MainMenu::getInput() {
+	Common::Event event;
+
+	while (_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_quitFlag = true;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			return true;
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
+int MainMenu::handle(int dim) {
+	debugC(9, kDebugLevelMain, "MainMenu::handle(%d)", dim);
+	int command = -1;
+	_quitFlag = false;
+
+	uint8 colorMap[16];
+	memset(colorMap, 0, sizeof(colorMap));
+	_screen->setTextColorMap(colorMap);
+
+	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
+	int charWidthBackUp = _screen->_charWidth;
+
+	_screen->_charWidth = -2;
+	_screen->setScreenDim(dim);
+
+	int backUpX = _screen->_curDim->sx;
+	int backUpY = _screen->_curDim->sy;
+	int backUpWidth = _screen->_curDim->w;
+	int backUpHeight = _screen->_curDim->h;
+	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 0, 3);
+
+	int x = _screen->_curDim->sx << 3;
+	int y = _screen->_curDim->sy;
+	int width = _screen->_curDim->w << 3;
+	int height =  _screen->_curDim->h;
+
+	drawBox(x, y, width, height, 1);
+	drawBox(x + 1, y + 1, width - 2, height - 2, 0);
+
+	int selected = 0;
+
+	draw(selected);
+
+	_screen->showMouse();
+
+	int fh = _screen->getFontHeight();
+	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
+
+	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
+
+	while (!_quitFlag) {
+		updateAnimation();
+		bool mousePressed = getInput();
+
+		Common::Point mouse = _vm->getMousePos();
+		if (menuRect.contains(mouse)) {
+			int item = (mouse.y - menuRect.top) / fh;
+
+			if (item != selected) {
+				printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.colorNormal, 0, 5);
+				printString(_static.strings[item], textPos, menuRect.top + item * fh, _static.colorFlash, 0, 5);
+
+				selected = item;
+			}
+
+			if (mousePressed) {
+				for (int i = 0; i < 3; i++) {
+					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.colorNormal, 0, 5);
+					_screen->updateScreen();
+					_system->delayMillis(50);
+					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.colorFlash, 0, 5);
+					_screen->updateScreen();
+					_system->delayMillis(50);
+				}
+				command = item;
+				break;
+			}
+		}
+		_system->delayMillis(10);
+	}
+
+	if (_quitFlag)
+		command = -1;
+
+	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
+	_screen->_charWidth = charWidthBackUp;
+	_screen->setFont(oldFont);
+
+	return command;
+}
+
+void MainMenu::draw(int select) {
+	debugC(9, kDebugLevelMain, "MainMenu::draw(%d)", select);
+	int top = _screen->_curDim->sy;
+	top += _static.menuTable[1];
+
+	for (int i = 0; i < _static.menuTable[3]; ++i) {
+		int curY = top + i * _screen->getFontHeight();
+		int color = (i == select) ? _static.menuTable[6] : _static.menuTable[5];
+		printString(_static.strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5);
+	}
+}
+
+void MainMenu::drawBox(int x, int y, int w, int h, int fill) {
+	debugC(9, kDebugLevelMain, "MainMenu::drawBox(%d, %d, %d, %d, %d)", x, y, w, h, fill);
+	--w; --h;
+
+	if (fill)
+		_screen->fillRect(x, y, x+w, y+h, _static.colorTable[0]);
+
+	_screen->drawClippedLine(x, y+h, x+w, y+h, _static.colorTable[1]);
+	_screen->drawClippedLine(x+w, y, x+w, y+h, _static.colorTable[1]);
+	_screen->drawClippedLine(x, y, x+w, y, _static.colorTable[2]);
+	_screen->drawClippedLine(x, y, x, y+h, _static.colorTable[2]);
+
+	_screen->setPagePixel(_screen->_curPage, x, y+h, _static.colorTable[3]);
+	_screen->setPagePixel(_screen->_curPage, x+w, y, _static.colorTable[3]);
+}
+
+void MainMenu::printString(const char *format, int x, int y, int col1, int col2, int flags, ...) {
+	debugC(9, kDebugLevelMain, "MainMenu::printString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
+	if (!format)
+		return;
+
+	char string[512];
+	va_list vaList;
+	va_start(vaList, flags);
+	vsprintf(string, format, vaList);
+	va_end(vaList);
+
+	if (flags & 1)
+		x -= _screen->getTextWidth(string) >> 1;
+
+	if (flags & 2)
+		x -= _screen->getTextWidth(string);
+
+	if (flags & 4) {
+		_screen->printText(string, x - 1, y, 240, col2);
+		_screen->printText(string, x, y + 1, 240, col2);
+	}
+
+	if (flags & 8) {
+		_screen->printText(string, x - 1, y, 227, col2);
+		_screen->printText(string, x, y + 1, 227, col2);
+	}
+
+	_screen->printText(string, x, y, col1, col2);
 }
 
 } // end of namespace Kyra

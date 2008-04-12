@@ -33,8 +33,6 @@
 
 namespace Kyra {
 
-#define BITBLIT_RECTS 10
-
 Screen::Screen(KyraEngine *vm, OSystem *system)
 	: _system(system), _vm(vm) {
 }
@@ -61,21 +59,6 @@ Screen::~Screen() {
 		for (int i = 0; i < ARRAYSIZE(_palettes); ++i)
 			delete [] _palettes[i];
 	}
-
-	delete [] _bitBlitRects;
-
-	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
-		delete [] _saveLoadPage[i];
-		_saveLoadPage[i] = 0;
-	}
-
-	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
-		delete [] _saveLoadPageOvl[i];
-		_saveLoadPageOvl[i] = 0;
-	}
-
-	delete [] _unkPtr1;
-	delete [] _unkPtr2;
 
 	delete [] _dirtyRects;
 }
@@ -125,7 +108,7 @@ bool Screen::init() {
 	}
 
 	setScreenPalette(_currentPalette);
-	_curDim = &_screenDimTable[0];
+	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
 	memset(_fonts, 0, sizeof(_fonts));
@@ -137,20 +120,6 @@ bool Screen::init() {
 	_animBlockSize = 0;
 	_mouseLockCount = 1;
 	CursorMan.showMouse(false);
-
-	_bitBlitRects = new Rect[BITBLIT_RECTS];
-	assert(_bitBlitRects);
-	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
-	_bitBlitNum = 0;
-	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
-	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));
-
-	_unkPtr1 = new uint8[getRectSize(1, 144)];
-	assert(_unkPtr1);
-	memset(_unkPtr1, 0, getRectSize(1, 144));
-	_unkPtr2 = new uint8[getRectSize(1, 144)];
-	assert(_unkPtr2);
-	memset(_unkPtr2, 0, getRectSize(1, 144));
 
 	_forceFullUpdate = false;
 	_numDirtyRects = 0;
@@ -877,11 +846,6 @@ void Screen::setAnimBlockPtr(int size) {
 	_animBlockSize = size;
 }
 
-void Screen::setTextColorMap(const uint8 *cmap) {
-	debugC(9, kDebugLevelScreen, "Screen::setTextColorMap(%p)", (const void *)cmap);
-	setTextColor(cmap, 0, 11);
-}
-
 void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 	debugC(9, kDebugLevelScreen, "Screen::setTextColor(%p, %d, %d)", (const void *)cmap, a, b);
 	memcpy(&_textColorsMap[a], cmap, b-a+1);
@@ -1106,18 +1070,6 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->charSizeOffset + 4));
-}
-
-void Screen::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen::setScreenDim(%d)", dim);
-	assert(dim < _screenDimTableCount);
-	_curDim = &_screenDimTable[dim];
-}
-
-const ScreenDim *Screen::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen::getScreenDim(%d)", dim);
-	assert(dim < _screenDimTableCount);
-	return &_screenDimTable[dim];
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
@@ -2386,20 +2338,6 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 	return (to - toPtr);
 }
 
-int Screen::getRectSize(int x, int y) {
-	if (x < 1)
-		x = 1;
-	else if (x > 40)
-		x = 40;
-
-	if (y < 1)
-		y = 1;
-	else if (y > 200)
-		y = 200;
-
-	return ((x*y) << 3);
-}
-
 void Screen::hideMouse() {
 	debugC(9, kDebugLevelScreen, "Screen::hideMouse()");
 	++_mouseLockCount;
@@ -2414,6 +2352,11 @@ void Screen::showMouse() {
 
 	if (_mouseLockCount > 0)
 		_mouseLockCount--;
+}
+
+
+bool Screen::isMouseVisible() const {
+	return _mouseLockCount == 0;
 }
 
 void Screen::setShapePages(int page1, int page2) {
@@ -2526,137 +2469,6 @@ byte Screen::getShapeFlag2(int x, int y) {
 	return color;
 }
 
-int Screen::setNewShapeHeight(uint8 *shape, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p, %d)", (const void *)shape, height);
-	if (_vm->gameFlags().useAltShapeHeader)
-		shape += 2;
-
-	int oldHeight = shape[2];
-	shape[2] = height;
-	return oldHeight;
-}
-
-int Screen::resetShapeHeight(uint8 *shape) {
-	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p)", (const void *)shape);
-	if (_vm->gameFlags().useAltShapeHeader)
-		shape += 2;
-
-	int oldHeight = shape[2];
-	shape[2] = shape[5];
-	return oldHeight;
-}
-
-void Screen::addBitBlitRect(int x, int y, int w, int h) {
-	debugC(9, kDebugLevelScreen, "Screen::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
-	if (_bitBlitNum >= BITBLIT_RECTS)
-		error("too many bit blit rects");
-
-	_bitBlitRects[_bitBlitNum].x = x;
-	_bitBlitRects[_bitBlitNum].y = y;
-	_bitBlitRects[_bitBlitNum].x2 = w;
-	_bitBlitRects[_bitBlitNum].y2 = h;
-	++_bitBlitNum;
-}
-
-void Screen::bitBlitRects() {
-	debugC(9, kDebugLevelScreen, "Screen::bitBlitRects()");
-	Rect *cur = _bitBlitRects;
-	while (_bitBlitNum) {
-		_bitBlitNum--;
-		copyRegion(cur->x, cur->y, cur->x, cur->y, cur->x2, cur->y2, 2, 0);
-		++cur;
-	}
-}
-
-void Screen::savePageToDisk(const char *file, int page) {
-	debugC(9, kDebugLevelScreen, "Screen::savePageToDisk('%s', %d)", file, page);
-	if (!_saveLoadPage[page/2]) {
-		_saveLoadPage[page/2] = new uint8[SCREEN_W * SCREEN_H];
-		assert(_saveLoadPage[page/2]);
-	}
-	memcpy(_saveLoadPage[page/2], getPagePtr(page), SCREEN_W * SCREEN_H);
-
-	if (_useOverlays) {
-		if (!_saveLoadPageOvl[page/2]) {
-			_saveLoadPageOvl[page/2] = new uint8[SCREEN_OVL_SJIS_SIZE];
-			assert(_saveLoadPageOvl[page/2]);
-		}
-
-		uint8 *srcPage = getOverlayPtr(page);
-		if (!srcPage) {
-			warning("trying to save unsupported overlay page %d", page);
-			return;
-		}
-
-		memcpy(_saveLoadPageOvl[page/2], srcPage, SCREEN_OVL_SJIS_SIZE);
-	}
-}
-
-void Screen::loadPageFromDisk(const char *file, int page) {
-	debugC(9, kDebugLevelScreen, "Screen::loadPageFromDisk('%s', %d)", file, page);
-	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
-	delete [] _saveLoadPage[page/2];
-
-	if (_saveLoadPageOvl[page/2]) {
-		uint8 *dstPage = getOverlayPtr(page);
-		if (!dstPage) {
-			warning("trying to restore unsupported overlay page %d", page);
-			return;
-		}
-
-		memcpy(dstPage, _saveLoadPageOvl[page/2], SCREEN_OVL_SJIS_SIZE);
-		delete [] _saveLoadPageOvl[page/2];
-		_saveLoadPageOvl[page/2] = 0;
-	}	_saveLoadPage[page/2] = 0;
-}
-
-void Screen::deletePageFromDisk(int page) {
-	debugC(9, kDebugLevelScreen, "Screen::deletePageFromDisk(%d)", page);
-	delete [] _saveLoadPage[page/2];
-	_saveLoadPage[page/2] = 0;
-
-	if (_saveLoadPageOvl[page/2]) {
-		delete [] _saveLoadPageOvl[page/2];
-		_saveLoadPageOvl[page/2] = 0;
-	}
-}
-
-void Screen::blockInRegion(int x, int y, int width, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::blockInRegion(%d, %d, %d, %d)", x, y, width, height);
-	assert(_shapePages[0]);
-	byte *toPtr = _shapePages[0] + (y * 320 + x);
-	for (int i = 0; i < height; ++i) {
-		byte *backUpTo = toPtr;
-		for (int i2 = 0; i2 < width; ++i2)
-			*toPtr++ &= 0x7F;
-		toPtr = (backUpTo + 320);
-	}
-}
-
-void Screen::blockOutRegion(int x, int y, int width, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::blockOutRegion(%d, %d, %d, %d)", x, y, width, height);
-	assert(_shapePages[0]);
-	byte *toPtr = _shapePages[0] + (y * 320 + x);
-	for (int i = 0; i < height; ++i) {
-		byte *backUpTo = toPtr;
-		for (int i2 = 0; i2 < width; ++i2)
-			*toPtr++ |= 0x80;
-		toPtr = (backUpTo + 320);
-	}
-}
-
-void Screen::rectClip(int &x, int &y, int w, int h) {
-	if (x < 0)
-		x = 0;
-	else if (x + w >= 320)
-		x = 320 - w;
-
-	if (y < 0)
-		y = 0;
-	else if (y + h >= 200)
-		y = 200 - h;
-}
-
 int Screen::getDrawLayer(int x, int y) {
 	debugC(9, kDebugLevelScreen, "Screen::getDrawLayer(%d, %d)", x, y);
 	int xpos = x - 8;
@@ -2695,50 +2507,61 @@ int Screen::getDrawLayer2(int x, int y, int height) {
 	return layer;
 }
 
-void Screen::copyBackgroundBlock(int x, int page, int flag) {
-	debugC(9, kDebugLevelScreen, "Screen::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
 
-	if (x < 1)
-		return;
+int Screen::setNewShapeHeight(uint8 *shape, int height) {
+	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p, %d)", (const void *)shape, height);
+	if (_vm->gameFlags().useAltShapeHeader)
+		shape += 2;
 
-	int height = 128;
-	if (flag)
-		height += 8;
-	if (!(x & 1))
-		++x;
-	if (x == 19)
-		x = 17;
-
-	uint8 *ptr1 = _unkPtr1;
-	uint8 *ptr2 = _unkPtr2;
-	int oldVideoPage = _curPage;
-	_curPage = page;
-
-	int curX = x;
-	hideMouse();
-	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
-	for (int i = 0; i < 19; ++i) {
-		int tempX = curX + 1;
-		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr1);
-		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr2);
-		int newXPos = curX + x;
-		if (newXPos > 37)
-			newXPos = newXPos % 38;
-
-		tempX = newXPos + 1;
-		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr2);
-		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr1);
-		curX += x*2;
-		if (curX > 37) {
-			curX = curX % 38;
-		}
-	}
-	showMouse();
-	_curPage = oldVideoPage;
+	int oldHeight = shape[2];
+	shape[2] = height;
+	return oldHeight;
 }
 
-void Screen::copyBackgroundBlock2(int x) {
-	copyBackgroundBlock(x, 4, 1);
+int Screen::resetShapeHeight(uint8 *shape) {
+	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p)", (const void *)shape);
+	if (_vm->gameFlags().useAltShapeHeader)
+		shape += 2;
+
+	int oldHeight = shape[2];
+	shape[2] = shape[5];
+	return oldHeight;
+}
+
+void Screen::blockInRegion(int x, int y, int width, int height) {
+	debugC(9, kDebugLevelScreen, "Screen::blockInRegion(%d, %d, %d, %d)", x, y, width, height);
+	assert(_shapePages[0]);
+	byte *toPtr = _shapePages[0] + (y * 320 + x);
+	for (int i = 0; i < height; ++i) {
+		byte *backUpTo = toPtr;
+		for (int i2 = 0; i2 < width; ++i2)
+			*toPtr++ &= 0x7F;
+		toPtr = (backUpTo + 320);
+	}
+}
+
+void Screen::blockOutRegion(int x, int y, int width, int height) {
+	debugC(9, kDebugLevelScreen, "Screen::blockOutRegion(%d, %d, %d, %d)", x, y, width, height);
+	assert(_shapePages[0]);
+	byte *toPtr = _shapePages[0] + (y * 320 + x);
+	for (int i = 0; i < height; ++i) {
+		byte *backUpTo = toPtr;
+		for (int i2 = 0; i2 < width; ++i2)
+			*toPtr++ |= 0x80;
+		toPtr = (backUpTo + 320);
+	}
+}
+
+void Screen::rectClip(int &x, int &y, int w, int h) {
+	if (x < 0)
+		x = 0;
+	else if (x + w >= 320)
+		x = 320 - w;
+
+	if (y < 0)
+		y = 0;
+	else if (y + h >= 200)
+		y = 200 - h;
 }
 
 void Screen::shakeScreen(int times) {
@@ -3215,6 +3038,306 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 		}
 		dst += pitch;
 	}
+}
+
+#pragma mark -
+
+uint8 *ScreenEx::generateOverlay(const uint8 *palette, uint8 *buffer, int startColor, uint16 factor) {
+	if (!palette || !buffer)
+		return buffer;
+
+	factor = MIN<uint16>(255, factor);
+	factor >>= 1;
+	factor &= 0xFF;
+
+	const byte col1 = palette[startColor * 3 + 0];
+	const byte col2 = palette[startColor * 3 + 1];
+	const byte col3 = palette[startColor * 3 + 2];
+
+	uint8 *dst = buffer;
+	*dst++ = 0;
+
+	for (int i = 1; i != 255; ++i) {
+		uint8 processedPalette[3];
+		const uint8 *src = palette + i*3;
+		byte col;
+		
+		col = *src++;
+		col -= ((((col - col1) * factor) << 1) >> 8) & 0xFF;
+		processedPalette[0] = col;
+
+		col = *src++;
+		col -= ((((col - col2) * factor) << 1) >> 8) & 0xFF;
+		processedPalette[1] = col;
+
+		col = *src++;
+		col -= ((((col - col3) * factor) << 1) >> 8) & 0xFF;
+		processedPalette[2] = col;
+
+		*dst++ = findLeastDifferentColor(processedPalette, palette+3, 255)+1;
+	}
+
+	return buffer;
+}
+
+void ScreenEx::applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay) {
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x, y, w, h);
+
+	uint8 *dst = getPagePtr(pageNum) + y * 320 + x;
+	while (h--) {
+		for (int wi = 0; wi < w; ++wi) {
+			uint8 index = *dst;
+			*dst++ = overlay[index];
+		}
+		dst += 320 - w;
+	}
+}
+
+int ScreenEx::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors) {
+	int m = 0x7fff;
+	int r = 0x101;
+
+	for (int i = 0; i < numColors; i++) {
+		int v = paletteEntry[0] - *palette++;
+		int c = v * v;
+		v = paletteEntry[1] - *palette++;
+		c += (v * v);
+		v = paletteEntry[2] - *palette++;
+		c += (v * v);
+
+		if (c <= m) {
+			m = c;
+			r = i;
+		}
+	}
+
+	return r;
+}
+
+void ScreenEx::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
+							int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2) {
+	uint8 *dstPtr = getPagePtr(_curPage);
+	uint8 *origDst = dstPtr;
+
+	const ScreenDim *dim = getScreenDim(dimState);
+	int dimX1 = dim->sx << 3;
+	int dimX2 = dim->w << 3;
+	dimX2 += dimX1;
+
+	int dimY1 = dim->sy;
+	int dimY2 = dim->h;
+	dimY2 += dimY1;
+
+	int temp = y - dimY1;
+	if (temp < 0) {
+		if ((temp += h) <= 0)
+			return;
+		else {
+			SWAP(temp, h);
+			y += temp - h;
+			src += (temp - h) * w;
+		}
+	}
+
+	temp = dimY2 - y;
+	if (temp <= 0)
+		return;
+
+	if (temp < h)
+		h = temp;
+
+	int srcOffset = 0;
+	temp = x - dimX1;
+	if (temp < 0) {
+		temp = -temp;
+		srcOffset = temp;
+		x += temp;
+		w -= temp;
+	}
+
+	int srcAdd = 0;
+
+	temp = dimX2 - x;
+	if (temp <= 0)
+		return;
+
+	if (temp < w) {
+		SWAP(w, temp);
+		temp -= w;
+		srcAdd = temp;
+	}
+
+	dstPtr += y * SCREEN_W + x;
+	uint8 *dst = dstPtr;
+
+	if (_curPage == 0 || _curPage == 1)
+		addDirtyRect(x, y, w, h);
+
+	clearOverlayRect(_curPage, x, y, w, h);
+
+	temp = h;
+	while (h--) {
+		src += srcOffset;
+		int cW = w;
+
+		switch (plotFunc) {
+		case 0:
+			memcpy(dst, src, cW);
+			dst += cW; src += cW;
+			break;
+
+		case 1:
+			while (cW--) {
+				uint8 d = *src++;
+				uint8 t = unkPtr1[d];
+				if (t != 0xFF)
+					d = unkPtr2[*dst + (t << 8)];
+				*dst++ = d;
+			}
+			break;
+
+		case 4:
+			while (cW--) {
+				uint8 d = *src++;
+				if (d)
+					*dst = d;
+				++dst;
+			}
+			break;
+
+		case 5:
+			while (cW--) {
+				uint8 d = *src++;
+				if (d) {
+					uint8 t = unkPtr1[d];
+					if (t != 0xFF)
+						d = unkPtr2[*dst + (t << 8)];
+					*dst = d;
+				}
+				++dst;
+			}
+			break;
+
+		case 8:
+		case 9:
+			while (cW--) {
+				uint8 d = *src++;
+				uint8 t = _shapePages[0][dst - origDst] & 7;
+				if (unk1 < t)
+					d = _shapePages[1][dst - origDst];
+				*dst++ = d;
+			}
+			break;
+
+		case 12:
+		case 13:
+			while (cW--) {
+				uint8 d = *src++;
+				if (d) {
+					uint8 t = _shapePages[0][dst - origDst] & 7;
+					if (unk1 < t)
+						d = _shapePages[1][dst - origDst];
+					*dst++ = d;
+				} else {
+					d = _shapePages[1][dst - origDst];
+					*dst++ = d;
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		dst = (dstPtr += SCREEN_W);
+		src += srcAdd;
+	}
+}
+
+const uint8 *ScreenEx::getPtrToShape(const uint8 *shpFile, int shape) {
+	debugC(9, kDebugLevelScreen, "ScreenEx::getPtrToShape(%p, %d)", (const void *)shpFile, shape);
+	uint16 shapes = READ_LE_UINT16(shpFile);
+
+	if (shapes <= shape)
+		return 0;
+
+	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
+
+	return shpFile + offset + 2;
+}
+
+uint8 *ScreenEx::getPtrToShape(uint8 *shpFile, int shape) {
+	debugC(9, kDebugLevelScreen, "ScreenEx::getPtrToShape(%p, %d)", (void *)shpFile, shape);
+	uint16 shapes = READ_LE_UINT16(shpFile);
+
+	if (shapes <= shape)
+		return 0;
+
+	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
+
+	return shpFile + offset + 2;
+}
+
+int ScreenEx::getShapeScaledWidth(const uint8 *shpFile, int scale) {
+	int width = READ_LE_UINT16(shpFile+3);
+	return (width * scale) >> 8;
+}
+
+int ScreenEx::getShapeScaledHeight(const uint8 *shpFile, int scale) {
+	int height = shpFile[2];
+	return (height * scale) >> 8;
+}
+
+uint16 ScreenEx::getShapeSize(const uint8 *shp) {
+	debugC(9, kDebugLevelScreen, "ScreenEx::getShapeSize(%p)", (const void *)shp);
+
+	return READ_LE_UINT16(shp+6);
+}
+
+uint8 *ScreenEx::makeShapeCopy(const uint8 *src, int index) {
+	debugC(9, kDebugLevelScreen, "ScreenEx::makeShapeCopy(%p, %d)", (const void *)src, index);
+
+	const uint8 *shape = getPtrToShape(src, index);
+	int size = getShapeSize(shape);
+
+	uint8 *copy = new uint8[size];
+	assert(copy);
+	memcpy(copy, shape, size);
+
+	return copy;
+}
+
+int ScreenEx::getLayer(int x, int y) {
+	if (x < 0)
+		x = 0;
+	else if (x >= 320)
+		x = 319;
+	if (y < 0)
+		y = 0;
+	else if (y >= 144)
+		y = 143;
+
+	uint8 pixel = *(getCPagePtr(5) + y * 320 + x);
+	pixel &= 0x7F;
+	pixel >>= 3;
+
+	if (pixel < 1)
+		pixel = 1;
+	else if (pixel > 15)
+		pixel = 15;
+	return pixel;
+}
+
+int ScreenEx::getRectSize(int w, int h) {
+	if (w > 320 || h > 200)
+		return 0;
+	return w*h;
+}
+
+void ScreenEx::setTextColorMap(const uint8 *cmap) {
+	debugC(9, kDebugLevelScreen, "ScreenEx::setTextColorMap(%p)", (const void *)cmap);
+	setTextColor(cmap, 0, 15);
 }
 
 } // End of namespace Kyra

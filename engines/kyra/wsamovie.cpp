@@ -341,7 +341,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieV2::WSAMovieV2(KyraEngine_v2 *vm) : WSAMovieV1(vm), _vm(vm), _xAdd(0), _yAdd(0), _oldOff(false) {}
+WSAMovieV2::WSAMovieV2(KyraEngine *vm, ScreenEx *screen) : WSAMovieV1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
 
 int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieV2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
@@ -437,7 +437,7 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 	if (_flags & WF_OFFSCREEN_DECODE)
 		dst = _offscreenBuffer;
 	else
-		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
+		dst = _screen->getPageRect(_drawPage, _x, _y, _width, _height);
 
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
@@ -489,32 +489,23 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 	// display
 	_currentFrame = frameNum;
 	if (_flags & WF_OFFSCREEN_DECODE) {
-		if (_oldOff) {
-			// Kyrandia 1 offscreen buffer -> screen copy method of Kyrandia 1, needs to be present
-			// for our Kyrandia 3 menu code
-			_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
-		} else {
-			// This is the offscreen buffer -> screen copy method of Kyrandia 2 as it's implemented
-			// in the original
-			Screen_v2 *screen = _vm->screen_v2();
-			int pageBackUp = screen->_curPage;
-			screen->_curPage = _drawPage;
+		int pageBackUp = _screen->_curPage;
+		_screen->_curPage = _drawPage;
 
-			va_list args;
-			va_start(args, frameNum);
+		va_list args;
+		va_start(args, frameNum);
 
-			int copyParam = va_arg(args, int);
-			int plotFunc = (copyParam & 0xFF00) >> 12;
-			int unk1 = copyParam & 0xFF;
+		int copyParam = va_arg(args, int);
+		int plotFunc = (copyParam & 0xFF00) >> 12;
+		int unk1 = copyParam & 0xFF;
 
-			const uint8 *unkPtr1 = va_arg(args, const uint8*);
-			const uint8 *unkPtr2 = va_arg(args, const uint8*);
-			va_end(args);
+		const uint8 *unkPtr1 = va_arg(args, const uint8*);
+		const uint8 *unkPtr2 = va_arg(args, const uint8*);
+		va_end(args);
+		
+		_screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, unkPtr1, unkPtr2);
 
-			screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, unkPtr1, unkPtr2);
-
-			screen->_curPage = pageBackUp;
-		}
+		_screen->_curPage = pageBackUp;
 	}
 }
 

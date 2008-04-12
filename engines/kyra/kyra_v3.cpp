@@ -25,20 +25,18 @@
 
 #include "kyra/kyra.h"
 #include "kyra/kyra_v3.h"
-#include "kyra/screen.h"
+#include "kyra/screen_v3.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/text.h"
 #include "kyra/vqa.h"
+#include "kyra/gui.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
 
-// TODO: Temporary, to get the mouse cursor mock-up working
-#include "graphics/cursorman.h"
-
 namespace Kyra {
-KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags) {
+KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
@@ -46,10 +44,8 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unkPage1 = _unkPage2 = 0;
 	_interfaceCPS1 = _interfaceCPS2 = 0;
 	memset(_gameShapes, 0, sizeof(_gameShapes));
-	_shapePoolBuffer = 0;
 	_itemBuffer1 = _itemBuffer2 = 0;
 	_mouseSHPBuf = 0;
-	_tableBuffer1 = _tableBuffer2 = 0;
 	_unkBuffer5 = _unkBuffer6 = _unkBuffer7 = _unkBuffer9 = 0;
 	_costpalData = 0;
 	_unkWSAPtr = 0;
@@ -70,8 +66,6 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _itemBuffer1;
 	delete [] _itemBuffer2;
 
-	delete [] _shapePoolBuffer;
-
 	delete [] _mouseSHPBuf;
 
 	delete [] _unkBuffer5;
@@ -88,14 +82,12 @@ KyraEngine_v3::~KyraEngine_v3() {
 }
 
 int KyraEngine_v3::init() {
-	_screen = new Screen_v2(this, _system);
+	_screen = new Screen_v3(this, _system);
 	assert(_screen);
 	if (!_screen->init())
 		error("_screen->init() failed");
 
 	KyraEngine::init();
-
-	gui_initMainMenu();
 
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
@@ -107,12 +99,6 @@ int KyraEngine_v3::init() {
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
-
-	_shapePoolBuffer = new uint8[300000];
-	assert(_shapePoolBuffer);
-	memset(_shapePoolBuffer, 0, 300000);
-
-	initTableBuffer(_shapePoolBuffer, 300000);
 
 	_itemBuffer1 = new uint8[72];
 	_itemBuffer2 = new uint8[144];
@@ -132,47 +118,38 @@ int KyraEngine_v3::init() {
 }
 
 int KyraEngine_v3::go() {
-	uint8 *pal = _screen->getPalette(1);
-	assert(pal);
-
-	_mainMenuLogo = createWSAMovie();
-	assert(_mainMenuLogo);
-	_mainMenuLogo->open("REVENGE.WSA", 1, pal);
-	assert(_mainMenuLogo->opened());
-
 	bool running = true;
+	initMainMenu();
 	while (running && !_quitFlag) {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
-		pal[0] = pal[1] = pal[2] = 0;
-
-		_screen->setScreenPalette(pal);
+		_screen->setScreenPalette(_screen->getPalette(0));
 
 		// XXX
 		playMenuAudioFile();
 
-		_mainMenuLogo->setX(0); _mainMenuLogo->setY(0);
-		_mainMenuLogo->setDrawPage(0);
+		_menuAnim->setX(0); _menuAnim->setY(0);
+		_menuAnim->setDrawPage(0);
 
 		for (int i = 0; i < 64 && !_quitFlag; ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_mainMenuLogo->displayFrame(i);
+			_menuAnim->displayFrame(i, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
 		for (int i = 64; i > 29 && !_quitFlag; --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_mainMenuLogo->displayFrame(i);
+			_menuAnim->displayFrame(i, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
-		switch (gui_handleMainMenu()) {
+		switch (_menu->handle(3)) {
 		case 0:
-			delete _mainMenuLogo;
-			_mainMenuLogo = 0;
+			uninitMainMenu();
+
 			preinit();
 			realInit();
 			// XXX
@@ -184,13 +161,13 @@ int KyraEngine_v3::go() {
 			break;
 
 		case 2:
-			//delete _mainMenuLogo;
-			//_mainMenuLogo = 0;
+			//uninitMainMenu();
 			//show load dialog
 			//running = false;
 			break;
 
 		case 3:
+			uninitMainMenu();
 			_soundDigital->beginFadeOut(_musicSoundChannel);
 			_screen->fadeToBlack();
 			_soundDigital->stopSound(_musicSoundChannel);
@@ -199,12 +176,43 @@ int KyraEngine_v3::go() {
 			break;
 
 		default:
+			uninitMainMenu();
+			quitGame();
+			running = false;
 			break;
 		}
 	}
-	delete _mainMenuLogo;
 
 	return 0;
+}
+
+void KyraEngine_v3::initMainMenu() {
+	_menuAnim = createWSAMovie();
+	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
+	memset(_screen->getPalette(0), 0, 3);
+
+	_menu = new MainMenu(this);
+	MainMenu::StaticData data = {
+		{ _mainMenuStrings[_lang*4+0], _mainMenuStrings[_lang*4+1], _mainMenuStrings[_lang*4+2], _mainMenuStrings[_lang*4+3] },
+		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 },
+		{ 0x16, 0x19, 0x1A, 0x16 },
+		0x80, 0xFF
+	};
+
+	MainMenu::Animation anim;
+	anim.anim = _menuAnim;
+	anim.startFrame = 29;
+	anim.endFrame = 63;
+	anim.delay = 2;
+
+	_menu->init(data, anim);
+}
+
+void KyraEngine_v3::uninitMainMenu() {
+	delete _menuAnim;
+	_menuAnim = 0;
+	delete _menu;
+	_menu = 0;
 }
 
 void KyraEngine_v3::playVQA(const char *name) {
@@ -315,39 +323,6 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 
 #pragma mark -
 
-void KyraEngine_v3::gui_initMainMenu() {
-	KyraEngine_v2::gui_initMainMenu();
-	_mainMenuFrame = 29;
-	_mainMenuFrameAdd = 1;
-}
-
-void KyraEngine_v3::gui_updateMainMenuAnimation() {
-	uint32 nextRun = 0;
-
-	uint32 now = _system->getMillis();
-	if (now < nextRun)
-		return;
-
-	// yes 2 * _tickLength here not 3 * like in the first draw
-	nextRun = now + 2 * _tickLength;
-
-	_mainMenuLogo->displayFrame(_mainMenuFrame);
-	_screen->updateScreen();
-
-	_mainMenuFrame += _mainMenuFrameAdd;
-	if (_mainMenuFrame < 29) {
-		_mainMenuFrame = 29;
-		_mainMenuFrameAdd = 1;
-	} else if (_mainMenuFrame > 63) {
-		_mainMenuFrame = 64;
-		_mainMenuFrameAdd = -1;
-	}
-
-	// XXX
-}
-
-#pragma mark -
-
 void KyraEngine_v3::preinit() {
 	debugC(9, kDebugLevelMain, "KyraEngine::preinit()");
 
@@ -404,216 +379,6 @@ void KyraEngine_v3::realInit() {
 	musicUpdate(0);
 }
 
-#pragma mark -
-
-int KyraEngine_v3::initTableBuffer(uint8 *buf, int size) {
-	debugC(9, kDebugLevelMain, "KyraEngine::initTableBuffer(%p, %d)", (void *)buf, size);
-
-	if (!buf || size < 6320)
-		return 0;
-
-	if (_tableBuffer2 != _tableBuffer1 && _tableBuffer2 && _tableBuffer1) {
-		// no idea if this *should* be called
-		memmove(_tableBuffer2, _tableBuffer1, 6320);
-	}
-
-	_tableBuffer1 = buf;
-	size -= 6320;
-
-	*((uint16*)(_tableBuffer1)) = 0;
-	*((uint16*)(_tableBuffer1 + 2)) = 1;
-	*((uint16*)(_tableBuffer1 + 4)) = 1;
-	*((uint32*)(_tableBuffer1 + 6)) = size >> 4;
-	*((uint16*)(_tableBuffer1 + 10)) = 1;
-	*((uint32*)(_tableBuffer1 + 16)) = 6320;
-	*((uint32*)(_tableBuffer1 + 22)) = size >> 4;
-
-	_tableBuffer2 = buf;
-
-	return 1;
-}
-
-void KyraEngine_v3::updateTableBuffer(uint8 *buf) {
-	debugC(9, kDebugLevelMain, "KyraEngine::updateTableBuffer(%p)", (void *)buf);
-
-	if (_tableBuffer2 == buf)
-		return;
-
-	if (_tableBuffer1 != _tableBuffer2)
-		memmove(_tableBuffer2, _tableBuffer1, 6320);
-
-	_tableBuffer2 = _tableBuffer1 = buf;
-}
-
-int KyraEngine_v3::addShapeToTable(const uint8 *buf, int id, int shapeNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::addShapeToTable(%p, %d, %d)", (const void *)buf, id, shapeNum);
-
-	if (!buf)
-		return 0;
-
-	const uint8 *shapePtr = _screen->getPtrToShape(buf, shapeNum);
-	if (!shapePtr)
-		return 0;
-
-	int shapeSize = _screen->getShapeSize(shapePtr);
-
-	if (getTableSize(_shapePoolBuffer) < shapeSize) {
-		// XXX
-		error("[1] unimplemented table handling");
-	}
-
-	uint8 *ptr = allocTableSpace(_shapePoolBuffer, shapeSize, id);
-
-	if (!ptr) {
-		// XXX
-		error("[2] unimplemented table handling");
-	}
-
-	if (!ptr) {
-		warning("adding shape %d to _shapePoolBuffer not possible, not enough space left\n", id);
-		return shapeSize;
-	}
-
-	memcpy(ptr, shapePtr, shapeSize);
-	return shapeSize;
-}
-
-int KyraEngine_v3::getTableSize(uint8 *buf) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getTableSize(%p)", (void *)buf);
-	updateTableBuffer(buf);
-
-	if (*((uint16*)(_tableBuffer1 + 4)) >= 450)
-		return 0;
-
-	return (*((uint32*)(_tableBuffer1 + 6)) << 4);
-}
-
-uint8 *KyraEngine_v3::allocTableSpace(uint8 *buf, int size, int id) {
-	debugC(9, kDebugLevelMain, "KyraEngine::allocTableSpace(%p, %d, %d)", (void *)buf, size, id);
-
-	if (!buf || !size)
-		return 0;
-
-	updateTableBuffer(buf);
-
-	int entries = *(uint16*)(_tableBuffer1 + 4);
-
-	if (entries >= 450)
-		return 0;
-
-	size += 0xF;
-	size &= 0xFFFFFFF0;
-
-	uint size2 = size >> 4;
-
-	if (*(uint32*)(_tableBuffer1 + 6) < size2)
-		return 0;
-
-	int unk1 = *(uint16*)(_tableBuffer1);
-	int usedEntry = unk1;
-	int ok = 0;
-
-	for (; usedEntry < entries; ++usedEntry) {
-		if (size2 <= *(uint32*)(_tableBuffer1 + usedEntry * 14 + 22)) {
-			ok = 1;
-			break;
-		}
-	}
-
-	if (!ok)
-		return 0;
-
-	ok = 0;
-	int unk3 = unk1 - 1;
-	while (ok <= unk3) {
-		int temp = (ok + unk3) >> 1;
-
-		if (*(uint32*)(_tableBuffer1 + temp * 14 + 12) >= (uint)id) {
-			if (*(uint32*)(_tableBuffer1 + temp * 14 + 12) <= (uint)id) {
-				return 0;
-			} else {
-				unk3 = temp - 1;
-				continue;
-			}
-		}
-
-		ok = temp + 1;
-	}
-
-	uint8 *buf2 = _tableBuffer1 + usedEntry * 14;
-
-	uint unkValue1 = *(uint32*)(buf2 + 16);
-	uint unkValue2 = *(uint32*)(buf2 + 22);
-
-	if (size2 < unkValue2) {
-		*(uint32*)(buf2 + 22) = unkValue2 - size2;
-		*(uint32*)(buf2 + 16) = unkValue1 + size;
-		memcpy(_tableBuffer1 + entries * 14 + 12, _tableBuffer1 + unk1 * 14 + 12, 14);
-	} else {
-		if (usedEntry > unk1)
-			memcpy(buf2 + 12, _tableBuffer1 + unk1 * 14 + 12, 14);
-		int temp = *(uint16*)(_tableBuffer1 + 2) - 1;
-		*(uint16*)(_tableBuffer1 + 2) = temp;
-		temp = *(uint16*)(_tableBuffer1 + 4) - 1;
-		*(uint16*)(_tableBuffer1 + 4) = temp;
-	}
-
-	for (int i = unk1; i > ok; --i)
-		memcpy(_tableBuffer1 + i * 14 + 12, _tableBuffer1 + (i-1) * 14 + 12, 14);
-
-	buf2 = _tableBuffer1 + ok * 14;
-
-	*(uint32*)(buf2 + 12) = id;
-	*(uint32*)(buf2 + 16) = unkValue1;
-	*(uint32*)(buf2 + 20) = (_system->getMillis() / 60) >> 4;
-	*(uint32*)(buf2 + 22) = size2;
-
-	int temp = *(uint16*)(_tableBuffer1) + 1;
-	*(uint16*)(_tableBuffer1) = temp;
-	temp = *(uint16*)(_tableBuffer1 + 4) + 1;
-	*(uint16*)(_tableBuffer1 + 4) = temp;
-
-	if (temp > *(uint16*)(_tableBuffer1 + 10)) {
-		*(uint16*)(_tableBuffer1 + 10) = temp;
-		if (temp > _unkTableValue)
-			_unkTableValue = temp;
-	}
-
-	temp = *(uint32*)(_tableBuffer1 + 6) - size2;
-	*(uint32*)(_tableBuffer1 + 6) = temp;
-
-	return _tableBuffer2 + unkValue1;
-}
-
-namespace {
-int tableIdCompare(const void *l, const void *r) {
-	int lV = *(const uint32*)(l);
-	int rV = *(const uint32*)(r);
-
-	return CLIP(lV - rV, -1, 1);
-}
-}
-
-uint8 *KyraEngine_v3::findIdInTable(uint8 *buf, int id) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findIdInTable(%p, %d)", (void *)buf, id);
-
-	updateTableBuffer(buf);
-
-	uint32 idVal = id;
-	uint8 *ptr = (uint8*)bsearch(&idVal, _tableBuffer1 + 12, *(uint16*)(_tableBuffer1), 14, &tableIdCompare);
-
-	if (!ptr)
-		return 0;
-
-	return _tableBuffer2 + *(uint32*)(ptr + 4);
-}
-
-uint8 *KyraEngine_v3::findShapeInTable(int id) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findShapeInTable(%d)", id);
-
-	return findIdInTable(_shapePoolBuffer, id);
-}
-
 #pragma mark - items
 
 void KyraEngine_v3::initItems() {
@@ -621,13 +386,13 @@ void KyraEngine_v3::initItems() {
 
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
-	for (int i = 248; i <= 319; ++i)
-		addShapeToTable(_screen->getCPagePtr(3), i, i-248);
+	//for (int i = 248; i <= 319; ++i)
+	//	addShapeToTable(_screen->getCPagePtr(3), i, i-248);
 
 	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
 
-	for (int i = 320; i <= 397; ++i)
-		addShapeToTable(_screen->getCPagePtr(3), i, i-320);
+	//for (int i = 320; i <= 397; ++i)
+	//	addShapeToTable(_screen->getCPagePtr(3), i, i-320);
 
 	uint32 size = 0;
 	uint8 *itemsDat = _res->fileData("_ITEMS.DAT", &size);
@@ -689,9 +454,8 @@ bool KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
 }
 
 Movie *KyraEngine_v3::createWSAMovie() {
-	WSAMovieV2 *movie = new WSAMovieV2(this);
+	WSAMovieV2 *movie = new WSAMovieV2(this, _screen);
 	assert(movie);
-	movie->flagOldOff(true);
 	return movie;
 }
 

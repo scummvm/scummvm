@@ -28,12 +28,61 @@
 
 namespace Kyra {
 
+#define BITBLIT_RECTS 10
+
 Screen_v1::Screen_v1(KyraEngine_v1 *vm, OSystem *system)
 	: Screen(vm, system) {
 	_vm = vm;
 }
 
 Screen_v1::~Screen_v1() {
+	delete [] _bitBlitRects;
+
+	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
+		delete [] _saveLoadPage[i];
+		_saveLoadPage[i] = 0;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
+		delete [] _saveLoadPageOvl[i];
+		_saveLoadPageOvl[i] = 0;
+	}
+
+	delete [] _unkPtr1;
+	delete [] _unkPtr2;
+}
+
+bool Screen_v1::init() {
+	if (!Screen::init())
+		return false;
+
+	_bitBlitRects = new Rect[BITBLIT_RECTS];
+	assert(_bitBlitRects);
+	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
+	_bitBlitNum = 0;
+	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
+	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));
+
+	_unkPtr1 = new uint8[getRectSize(1, 144)];
+	assert(_unkPtr1);
+	memset(_unkPtr1, 0, getRectSize(1, 144));
+	_unkPtr2 = new uint8[getRectSize(1, 144)];
+	assert(_unkPtr2);
+	memset(_unkPtr2, 0, getRectSize(1, 144));
+
+	return true;
+}
+
+void Screen_v1::setScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::setScreenDim(%d)", dim);
+	assert(dim < _screenDimTableCount);
+	_curDim = &_screenDimTable[dim];
+}
+
+const ScreenDim *Screen_v1::getScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::getScreenDim(%d)", dim);
+	assert(dim < _screenDimTableCount);
+	return &_screenDimTable[dim];
 }
 
 void Screen_v1::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
@@ -48,6 +97,147 @@ void Screen_v1::fadeSpecialPalette(int palIndex, int startIndex, int size, int f
 	memcpy(&_currentPalette[startIndex*3], &tempPal[startIndex*3], size*3);
 	setScreenPalette(_currentPalette);
 	_system->updateScreen();
+}
+
+void Screen_v1::addBitBlitRect(int x, int y, int w, int h) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
+	if (_bitBlitNum >= BITBLIT_RECTS)
+		error("too many bit blit rects");
+
+	_bitBlitRects[_bitBlitNum].x = x;
+	_bitBlitRects[_bitBlitNum].y = y;
+	_bitBlitRects[_bitBlitNum].x2 = w;
+	_bitBlitRects[_bitBlitNum].y2 = h;
+	++_bitBlitNum;
+}
+
+void Screen_v1::bitBlitRects() {
+	debugC(9, kDebugLevelScreen, "Screen_v1::bitBlitRects()");
+	Rect *cur = _bitBlitRects;
+	while (_bitBlitNum) {
+		_bitBlitNum--;
+		copyRegion(cur->x, cur->y, cur->x, cur->y, cur->x2, cur->y2, 2, 0);
+		++cur;
+	}
+}
+
+void Screen_v1::savePageToDisk(const char *file, int page) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::savePageToDisk('%s', %d)", file, page);
+	if (!_saveLoadPage[page/2]) {
+		_saveLoadPage[page/2] = new uint8[SCREEN_W * SCREEN_H];
+		assert(_saveLoadPage[page/2]);
+	}
+	memcpy(_saveLoadPage[page/2], getPagePtr(page), SCREEN_W * SCREEN_H);
+
+	if (_useOverlays) {
+		if (!_saveLoadPageOvl[page/2]) {
+			_saveLoadPageOvl[page/2] = new uint8[SCREEN_OVL_SJIS_SIZE];
+			assert(_saveLoadPageOvl[page/2]);
+		}
+
+		uint8 *srcPage = getOverlayPtr(page);
+		if (!srcPage) {
+			warning("trying to save unsupported overlay page %d", page);
+			return;
+		}
+
+		memcpy(_saveLoadPageOvl[page/2], srcPage, SCREEN_OVL_SJIS_SIZE);
+	}
+}
+
+void Screen_v1::loadPageFromDisk(const char *file, int page) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::loadPageFromDisk('%s', %d)", file, page);
+	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
+	delete [] _saveLoadPage[page/2];
+
+	if (_saveLoadPageOvl[page/2]) {
+		uint8 *dstPage = getOverlayPtr(page);
+		if (!dstPage) {
+			warning("trying to restore unsupported overlay page %d", page);
+			return;
+		}
+
+		memcpy(dstPage, _saveLoadPageOvl[page/2], SCREEN_OVL_SJIS_SIZE);
+		delete [] _saveLoadPageOvl[page/2];
+		_saveLoadPageOvl[page/2] = 0;
+	}	_saveLoadPage[page/2] = 0;
+}
+
+void Screen_v1::deletePageFromDisk(int page) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::deletePageFromDisk(%d)", page);
+	delete [] _saveLoadPage[page/2];
+	_saveLoadPage[page/2] = 0;
+
+	if (_saveLoadPageOvl[page/2]) {
+		delete [] _saveLoadPageOvl[page/2];
+		_saveLoadPageOvl[page/2] = 0;
+	}
+}
+
+void Screen_v1::copyBackgroundBlock(int x, int page, int flag) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
+
+	if (x < 1)
+		return;
+
+	int height = 128;
+	if (flag)
+		height += 8;
+	if (!(x & 1))
+		++x;
+	if (x == 19)
+		x = 17;
+
+	uint8 *ptr1 = _unkPtr1;
+	uint8 *ptr2 = _unkPtr2;
+	int oldVideoPage = _curPage;
+	_curPage = page;
+
+	int curX = x;
+	hideMouse();
+	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
+	for (int i = 0; i < 19; ++i) {
+		int tempX = curX + 1;
+		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr1);
+		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr2);
+		int newXPos = curX + x;
+		if (newXPos > 37)
+			newXPos = newXPos % 38;
+
+		tempX = newXPos + 1;
+		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr2);
+		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr1);
+		curX += x*2;
+		if (curX > 37) {
+			curX = curX % 38;
+		}
+	}
+	showMouse();
+	_curPage = oldVideoPage;
+}
+
+void Screen_v1::copyBackgroundBlock2(int x) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::copyBackgroundBlock2(%d)", x);
+	copyBackgroundBlock(x, 4, 1);
+}
+
+void Screen_v1::setTextColorMap(const uint8 *cmap) {
+	debugC(9, kDebugLevelScreen, "Screen_v1::setTextColorMap(%p)", (const void *)cmap);
+	setTextColor(cmap, 0, 11);
+}
+
+int Screen_v1::getRectSize(int x, int y) {
+	if (x < 1)
+		x = 1;
+	else if (x > 40)
+		x = 40;
+
+	if (y < 1)
+		y = 1;
+	else if (y > 200)
+		y = 200;
+
+	return ((x*y) << 3);
 }
 
 } // end of namespace Kyra

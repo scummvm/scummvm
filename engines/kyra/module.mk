@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	screen.o \
 	screen_v1.o \
 	screen_v2.o \
+	screen_v3.o \
 	script_v1.o \
 	script_v2.o \
 	script.o \

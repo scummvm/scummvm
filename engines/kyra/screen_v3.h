@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -23,53 +23,25 @@
  *
  */
 
-#ifndef KYRA_SCREEN_V1_H
-#define KYRA_SCREEN_V1_H
+#ifndef KYRA_SCREEN_V3_H
+#define KYRA_SCREEN_V3_H
 
 #include "kyra/screen.h"
 
 namespace Kyra {
 
-class KyraEngine_v1;
+class KyraEngine_v3;
 
-class Screen_v1 : public Screen {
+class Screen_v3 : public ScreenEx {
 public:
-	Screen_v1(KyraEngine_v1 *vm, OSystem *system);
-	virtual ~Screen_v1();
+	Screen_v3(KyraEngine_v3 *vm, OSystem *system);
+	virtual ~Screen_v3();
 
-	bool init();
-
-	int getRectSize(int w, int h);
-	
-	void setScreenDim(int dim);
-	const ScreenDim *getScreenDim(int dim);
-
-	void setTextColorMap(const uint8 *cmap);
-
-	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
-
-	void savePageToDisk(const char *file, int page);
-	void loadPageFromDisk(const char *file, int page);
-	void deletePageFromDisk(int page);
-
-	void copyBackgroundBlock(int x, int page, int flag);
-	void copyBackgroundBlock2(int x);
-
-	void addBitBlitRect(int x, int y, int w, int h);
-	void bitBlitRects();
-
-protected:
-	KyraEngine_v1 *_vm;
-
+	virtual void setScreenDim(int dim);
+	virtual const ScreenDim *getScreenDim(int dim);
+private:
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
-
-	Rect *_bitBlitRects;
-	int _bitBlitNum;
-	uint8 *_unkPtr1, *_unkPtr2;
-
-	uint8 *_saveLoadPage[8];
-	uint8 *_saveLoadPageOvl[8];
 };
 
 } // end of namespace Kyra

@@ -179,7 +179,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 }
 
 Movie *KyraEngine_v2::createWSAMovie() {
-	return new WSAMovieV2(this);
+	return new WSAMovieV2(this, _screen);
 }
 
 int KyraEngine_v2::init() {
@@ -329,10 +329,10 @@ void KyraEngine_v2::startup() {
 
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
-		_sceneAnimMovie[i] = new WSAMovieV2(this);
+		_sceneAnimMovie[i] = new WSAMovieV2(this, _screen);
 	memset(_wsaSlots, 0, sizeof(_wsaSlots));
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
-		_wsaSlots[i] = new WSAMovieV2(this);
+		_wsaSlots[i] = new WSAMovieV2(this, _screen);
 
 	_screen->_curPage = 0;
 
@@ -1855,7 +1855,7 @@ void KyraEngine_v2::loadInvWsa(const char *filename, int run, int delayTime, int
 		wsaFlags |= 2;
 
 	if (!_invWsa.wsa)
-		_invWsa.wsa = new WSAMovieV2(this);
+		_invWsa.wsa = new WSAMovieV2(this, _screen);
 
 	if (!_invWsa.wsa->open(filename, wsaFlags, 0))
 		error("Couldn't open inventory WSA file '%s'", filename);
