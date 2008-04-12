@@ -219,6 +219,12 @@
 			RelativePath="..\..\engines\kyra\screen_v2.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\screen_v3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_v3.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\script.cpp">
 		</File>
 		<File
