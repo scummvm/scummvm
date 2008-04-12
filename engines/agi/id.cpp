@@ -76,7 +76,7 @@ int AgiEngine::setupV2Game(int ver, uint32 crc) {
 	if (getFeatures() & GF_AGDS)
 		agiSetRelease(ver = 0x2440);	/* ALL AGDS games built for 2.440 */
 
-	report("Seting up for version 0x%04X\n", ver);
+	report("Setting up for version 0x%04X\n", ver);
 
 	// 'quit' takes 0 args for 2.089
 	if (ver == 0x2089)
@@ -104,7 +104,7 @@ int AgiEngine::setupV3Game(int ver, uint32 crc) {
 		agiSetRelease(ver = 0x3149);
 	}
 
-	report("Seting up for version 0x%04X\n", ver);
+	report("Setting up for version 0x%04X\n", ver);
 
 	// 'unknown176' takes 1 arg for 3.002.086, not 0 args.
 	// 'unknown173' also takes 1 arg for 3.002.068, not 0 args.
