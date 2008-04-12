@@ -46,8 +46,8 @@ public:
 
 	int getRate() const { return _rate; }
 
-	void beginFadeIn();
-	void beginFadeOut();
+	void beginFadeIn(uint32 millis);
+	void beginFadeOut(uint32 millis);
 private:
 	Common::SeekableReadStream *_stream;
 	bool _loop;
@@ -90,10 +90,7 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(st
 	_totalSize = _stream->readUint32LE();
 	_loop = loop;
 
-	// TODO: Find the correct number of samples for a fade-in/out. Should
-	//       probably take the same amount of time as a palette fade.
-
-	_fadeSamples = 2 * getRate();
+	_fadeSamples = 0;
 	_fading = 0;
 
 	// TODO?: add checks
@@ -102,9 +99,9 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(st
 
 	_loopStart = stream->pos();
 
-	if (type == 1 && !flags) {
+	if (type == 1 && !flags)
 		_endOfData = false;
-	} else
+	else
 		warning("No AUD file (rate: %d, size: %d, flags: 0x%X, type: %d)", _rate, _totalSize, flags, type);
 }
 
@@ -114,13 +111,15 @@ AUDStream::~AUDStream() {
 	delete _stream;
 }
 
-void AUDStream::beginFadeIn() {
+void AUDStream::beginFadeIn(uint32 millis) {
+	_fadeSamples = (millis * getRate()) / 1000;
 	if (_fading == 0)
 		_fadeCount = 0;
 	_fading = 1;
 }
 
-void AUDStream::beginFadeOut() {
+void AUDStream::beginFadeOut(uint32 millis) {
+	_fadeSamples = (millis * getRate()) / 1000;
 	if (_fading == 0)
 		_fadeCount = _fadeSamples;
 	_fading = -1;
@@ -356,8 +355,9 @@ int SoundDigital::playSound(Common::SeekableReadStream *stream, bool loop, bool 
 		return -1;
 	}
 
+	// Just guessed
 	if (fadeIn)
-		use->stream->beginFadeIn();
+		use->stream->beginFadeIn(60 * _vm->tickLength());
 
 	// TODO: set correct sound type from channel id
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &use->handle, use->stream);
@@ -380,9 +380,9 @@ void SoundDigital::stopSound(int channel) {
 	_sounds[channel].stream = 0;
 }
 
-void SoundDigital::beginFadeOut(int channel) {
+void SoundDigital::beginFadeOut(int channel, int ticks) {
 	if (isPlaying(channel))
-		_sounds[channel].stream->beginFadeOut();
+		_sounds[channel].stream->beginFadeOut(ticks * _vm->tickLength());
 }
 
 } // end of namespace Kyra

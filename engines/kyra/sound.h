@@ -541,8 +541,9 @@ public:
 	 * fading out.
 	 *
 	 * @param channel	channel number
+	 * @param ticks		fadeout time
 	 */
-	void beginFadeOut(int channel);
+	void beginFadeOut(int channel, int ticks);
 private:
 	KyraEngine *_vm;
 	Audio::Mixer *_mixer;

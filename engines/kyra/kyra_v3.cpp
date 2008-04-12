@@ -167,11 +167,11 @@ int KyraEngine_v3::go() {
 			break;
 
 		case 3:
-			uninitMainMenu();
-			_soundDigital->beginFadeOut(_musicSoundChannel);
+			_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 			_screen->fadeToBlack();
 			_soundDigital->stopSound(_musicSoundChannel);
 			_musicSoundChannel = -1;
+			uninitMainMenu();
 			running = false;
 			break;
 
@@ -231,7 +231,7 @@ void KyraEngine_v3::playVQA(const char *name) {
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 3);
 
 		_screen->hideMouse();
-		_soundDigital->beginFadeOut(_musicSoundChannel);
+		_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 		_musicSoundChannel = -1;
 		_screen->fadeToBlack();
 		vqa.setDrawPage(0);
