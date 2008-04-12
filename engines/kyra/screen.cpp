@@ -81,6 +81,7 @@ bool Screen::init() {
 	uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE * 8];
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum >> 1) * SCREEN_PAGE_SIZE;
+	memset(pagePtr, 0, SCREEN_PAGE_SIZE * 8);
 
 	memset(_shapePages, 0, sizeof(_shapePages));
 
