@@ -120,6 +120,10 @@ int KyraEngine_v3::init() {
 int KyraEngine_v3::go() {
 	bool running = true;
 	initMainMenu();
+
+	_screen->clearPage(0);
+	_screen->clearPage(2);
+
 	while (running && !_quitFlag) {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
