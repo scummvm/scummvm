@@ -148,6 +148,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(_cauldronStateTables, 0, sizeof(_cauldronStateTables));
 
 	_menuDirectlyToLoad = false;
+	_menu = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {

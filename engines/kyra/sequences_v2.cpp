@@ -2633,7 +2633,6 @@ void KyraEngine_v2::seq_init() {
 			numShp++;
 			_defaultShapeTable[numShp] = _screen->getPtrToShape(_newShapeFiledata, numShp);
 		} while (_defaultShapeTable[numShp]);
-		_menu = 0;
 	} else {	
 		MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98] },
@@ -2667,10 +2666,8 @@ void KyraEngine_v2::seq_uninit() {
 
 	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 
-	if (_menu) {
-		delete _menu;
-		_menu = 0;
-	}
+	delete _menu;
+	_menu = 0;
 }
 
 #pragma mark -
