@@ -2557,12 +2557,10 @@ void KyraEngine_v2::seq_scrollPage() {
 
 	if (dstH > 0) {
 		for (int i = 0; i < 4; i++) {
-			int p = _screen->setCurPage(4);
 			const ItemAnimData_v1 *def = &_demoAnimData[i];
 			ActiveItemAnim *a = &_activeItemAnim[i];
 
-			_screen->drawBox(12, def->y - 8, 28, def->y + 8, 0);
-			_screen->setCurPage(p);
+			_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
 			_screen->drawShape(4, _defaultShapeTable[def->itemIndex + def->frames[a->currentFrame]], 12, def->y - 8, 0, 0);
 			if(_seqFrameCounter % 2 == 0)
 				a->currentFrame = ++a->currentFrame % 20;
@@ -2635,16 +2633,17 @@ void KyraEngine_v2::seq_init() {
 			numShp++;
 			_defaultShapeTable[numShp] = _screen->getPtrToShape(_newShapeFiledata, numShp);
 		} while (_defaultShapeTable[numShp]);
+		_menu = 0;
+	} else {	
+		MainMenu::StaticData data = {
+			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98] },
+			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6, 0x00, 0x01, 0x02, 0x03 },
+			{ 0xd8, 0xda, 0xd9, 0xd8 },
+			0xd7, 0xd6
+		};
+		_menu = new MainMenu(this);
+		_menu->init(data, MainMenu::Animation());
 	}
-
-	MainMenu::StaticData data = {
-		{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98] },
-		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6, 0x00, 0x01, 0x02, 0x03 },
-		{ 0xd8, 0xda, 0xd9, 0xd8 },
-		0xd7, 0xd6
-	};
-	_menu = new MainMenu(this);
-	_menu->init(data, MainMenu::Animation());
 }
 
 void KyraEngine_v2::seq_uninit() {
@@ -2668,8 +2667,10 @@ void KyraEngine_v2::seq_uninit() {
 
 	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 
-	delete _menu;
-	_menu = 0;
+	if (_menu) {
+		delete _menu;
+		_menu = 0;
+	}
 }
 
 #pragma mark -
