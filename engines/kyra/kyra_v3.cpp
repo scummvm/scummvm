@@ -161,7 +161,9 @@ int KyraEngine_v3::go() {
 			break;
 
 		case 1:
+			memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 			playVQA("K3INTRO");
+			memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
 			break;
 
 		case 2:
