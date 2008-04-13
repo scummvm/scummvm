@@ -487,6 +487,62 @@ public:
 	uint32 size() const { return _bufSize; }
 };
 
+/** 
+ * A sort of hybrid between MemoryWriteStream and Array classes. A stream
+ * that grows as it's written to. 
+ */
+class MemoryWriteStreamDynamic : public Common::WriteStream {
+private:
+	uint32 _capacity;
+	uint32 _size;
+	byte *_ptr;
+	byte *_data;
+	uint32 _pos;
+	bool _disposeMemory;
+
+	void ensureCapacity(uint32 new_len) {
+		if (new_len <= _capacity)
+			return;
+
+		byte *old_data = _data;
+
+		_capacity = new_len + 32;
+		_data = new byte[_capacity];
+		_ptr = _data + _pos;
+
+		if (old_data) {
+			// Copy old data
+			memcpy(_data, old_data, _size);
+			delete[] old_data;
+		}
+
+		_size = new_len;
+	}
+public:
+	MemoryWriteStreamDynamic(bool disposeMemory = false) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
+
+	~MemoryWriteStreamDynamic() {
+		if (_disposeMemory)
+			delete[] _data;
+	}
+
+	uint32 write(const void *dataPtr, uint32 dataSize) {
+		ensureCapacity(_pos + dataSize);
+		memcpy(_ptr, dataPtr, dataSize);
+		_ptr += dataSize;
+		_pos += dataSize;
+		if (_pos > _size)
+			_size = _pos;
+		return dataSize;
+	}
+
+	bool eos() const { return false; }
+	uint32 pos() const { return _pos; }
+	uint32 size() const { return _size; }
+
+	byte *getData() { return _data; }
+};
+
 }	// End of namespace Common
 
 #endif
