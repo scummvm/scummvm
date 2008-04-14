@@ -471,7 +471,7 @@ void KyraEngine_v3::startup() {
 	runStartupScript(1, 0);
 	//openMoondomtrWsa();
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
-	delayUntil(_system->getMillis() + 60 * _tickLength);
+	delayWithTicks(60);
 	//XXX enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	musicUpdate(0);
 	_screen->showMouse();
