@@ -73,7 +73,7 @@ int KyraEngine_v3::o3_getRand(ScriptState *script) {
 }
 
 int KyraEngine_v3::o3_defineScene(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d)",
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
 		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	const int scene = stackPos(0);
 	strcpy(_sceneList[scene].filename1, stackPosString(1));
