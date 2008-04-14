@@ -80,7 +80,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"mt32", "MT-32", MD_MT32, MDT_MIDI},
 #endif
 
-	// The flags for the "adlibe" driver indicate that it can do adlib and MIDI.
+	// The flags for the "adlib" driver indicates that it can do adlib and MIDI.
 	{"adlib", "Adlib", MD_ADLIB, MDT_ADLIB},
 	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
