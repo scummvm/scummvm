@@ -140,10 +140,6 @@ public:
 		return _data + _size;
 	}
 
-	bool contains(const T &key) const {
-		return find(begin(), end(), key) != end();
-	}
-
 	void reserve(uint newCapacity) {
 		if (newCapacity <= _capacity)
 			return;

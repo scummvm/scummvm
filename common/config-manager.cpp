@@ -270,7 +270,6 @@ void ConfigManager::flushToDisk() {
 	if (!cfg_file.open(_filename, File::kFileWriteMode)) {
 		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
-
 		// First write the domains in _domainSaveOrder, in that order.
 		// Note: It's possible for _domainSaveOrder to list domains which
 		// are not present anymore.
@@ -285,11 +284,12 @@ void ConfigManager::flushToDisk() {
 
 		DomainMap::const_iterator d;
 
+
 		// Now write the domains which haven't been written yet
-		if (!_domainSaveOrder.contains(kApplicationDomain))
+		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kApplicationDomain) == _domainSaveOrder.end())
 			writeDomain(cfg_file, kApplicationDomain, _appDomain);
 		for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
-			if (!_domainSaveOrder.contains(d->_key))
+			if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), d->_key) == _domainSaveOrder.end())
 				writeDomain(cfg_file, d->_key, d->_value);
 		}
 	}
