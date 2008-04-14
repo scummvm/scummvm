@@ -173,6 +173,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\animator_v3.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\debugger.cpp"
 			>
 		</File>
@@ -214,6 +218,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\items_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\items_v3.cpp"
 			>
 		</File>
 		<File
@@ -326,6 +334,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\script_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\script_v3.cpp"
 			>
 		</File>
 		<File
