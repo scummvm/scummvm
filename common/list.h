@@ -26,6 +26,7 @@
 #define COMMON_LIST_H
 
 #include "common/scummsys.h"
+#include "common/algorithm.h"
 
 namespace Common {
 
@@ -266,6 +267,10 @@ public:
 
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase*>(&_anchor));
+	}
+
+	bool contains(const t_T &key) const {
+		return find(begin(), end(), key) != end();
 	}
 };
 
