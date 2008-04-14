@@ -332,7 +332,6 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 	if (!lock) {
 		lock = 1;
 		if (_musicSoundChannel >= 0) {
-			_soundDigital->stopAllSounds();
 			if (!_soundDigital->isPlaying(_musicSoundChannel)) {
 				if (_curMusicTrack != -1)
 					playMusicTrack(_curMusicTrack, 1);

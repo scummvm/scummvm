@@ -311,7 +311,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 	}
 
 	if (_fading < 0 && _fadeCount == 0)
-		_fading = false;
+		_fading = 0;
 
 	return samplesProcessed;
 }
