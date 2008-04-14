@@ -380,6 +380,13 @@ void SoundDigital::stopSound(int channel) {
 	_sounds[channel].stream = 0;
 }
 
+void SoundDigital::stopAllSounds() {
+	for (int i = 0; i < SOUND_STREAMS; ++i) {
+		if (isPlaying(i))
+			stopSound(i);
+	}
+}
+
 void SoundDigital::beginFadeOut(int channel, int ticks) {
 	if (isPlaying(channel))
 		_sounds[channel].stream->beginFadeOut(ticks * _vm->tickLength());

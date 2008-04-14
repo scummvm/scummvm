@@ -3,6 +3,7 @@ MODULE := engines/kyra
 MODULE_OBJS := \
 	animator_v1.o \
 	animator_v2.o \
+	animator_v3.o \
 	debugger.o \
 	detection.o \
 	gui.o \
@@ -10,6 +11,7 @@ MODULE_OBJS := \
 	gui_v2.o \
 	items_v1.o \
 	items_v2.o \
+	items_v3.o \
 	kyra.o \
 	kyra_v1.o \
 	kyra_v2.o \
@@ -27,6 +29,7 @@ MODULE_OBJS := \
 	screen_v3.o \
 	script_v1.o \
 	script_v2.o \
+	script_v3.o \
 	script.o \
 	seqplayer.o \
 	sequences_tim.o \

@@ -1970,6 +1970,23 @@ const char *KyraEngine_v3::_languageExtension[] = {
 
 const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
 
+const KyraEngine_v3::ShapeDesc KyraEngine_v3::_shapeDescs[] = {
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 82, 96, -43, -86 },
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 69, 91, -31, -82 },
+	{ 57, 91, -31, -82 },
+	{ 57, 91, -31, -82 }
+};
+
+const int KyraEngine_v3::_shapeDescsSize = ARRAYSIZE(KyraEngine_v3::_shapeDescs);
+
 } // End of namespace Kyra
 
 

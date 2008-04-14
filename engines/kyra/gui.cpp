@@ -403,6 +403,9 @@ int MainMenu::handle(int dim) {
 	_screen->_charWidth = -2;
 	_screen->setScreenDim(dim);
 
+	while (!_screen->isMouseVisible())
+		_screen->showMouse();
+
 	int backUpX = _screen->_curDim->sx;
 	int backUpY = _screen->_curDim->sy;
 	int backUpWidth = _screen->_curDim->w;

@@ -41,44 +41,65 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
 	_curMusicTrack = -1;
-	_unkPage1 = _unkPage2 = 0;
-	_interfaceCPS1 = _interfaceCPS2 = 0;
-	memset(_gameShapes, 0, sizeof(_gameShapes));
 	_itemBuffer1 = _itemBuffer2 = 0;
-	_mouseSHPBuf = 0;
-	_unkBuffer5 = _unkBuffer6 = _unkBuffer7 = _unkBuffer9 = 0;
-	_costpalData = 0;
-	_unkWSAPtr = 0;
-	memset(_unkShapeTable, 0, sizeof(_unkShapeTable));
 	_scoreFile = 0;
 	_cCodeFile = 0;
-	_scenesList = 0;
+	_scenesFile = 0;
+	_itemFile = 0;
+	_gamePlayBuffer = 0;
+	_interface = _interfaceCommandLine = 0;
+	_costPalBuffer = 0;
+	_animObjects = 0;
+	_sceneAnims = 0;
+	memset(_sceneShapes, 0, sizeof(_sceneShapes));
+	memset(_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
+	_gfxBackUpRect = 0;
+	_itemList = 0;
+	_malcolmShapes = 0;
+	_paletteOverlay = 0;
+	_sceneList = 0;
+	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
+	_mainCharacter.sceneId = 9;
+	_mainCharacter.dlgIndex = 0;
+	_mainCharacter.unk4 = 0x4C;
+	_mainCharacter.facing = 5;
+	_mainCharacter.walkspeed = 5;
+	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
+	delete _screen;
 	delete _soundDigital;
-
-	delete [] _unkPage1;
-	delete [] _unkPage2;
-	delete [] _interfaceCPS1;
-	delete [] _interfaceCPS2;
 
 	delete [] _itemBuffer1;
 	delete [] _itemBuffer2;
-
-	delete [] _mouseSHPBuf;
-
-	delete [] _unkBuffer5;
-	delete [] _unkBuffer6;
-	delete [] _unkBuffer7;
-	delete [] _unkBuffer9;
-
-	delete [] _costpalData;
-	delete [] _unkWSAPtr;
-
 	delete [] _scoreFile;
 	delete [] _cCodeFile;
-	delete [] _scenesList;
+	delete [] _scenesFile;
+	delete [] _itemFile;
+	delete [] _gamePlayBuffer;
+	delete [] _interface;
+	delete [] _interfaceCommandLine;
+	delete [] _costPalBuffer;
+	delete [] _animObjects;
+	delete [] _sceneAnims;
+
+	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i)
+		delete _sceneShapes[i];
+
+	for (uint i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
+		delete _sceneAnimMovie[i];
+
+	delete [] _gfxBackUpRect;
+	delete [] _itemList;
+	delete [] _paletteOverlay;
+	delete [] _sceneList;
+
+	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
+		delete i->_value;
+		i->_value = 0;
+	}
+	_gameShapes.clear();
 }
 
 int KyraEngine_v3::init() {
@@ -97,28 +118,20 @@ int KyraEngine_v3::init() {
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
+	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
-
-	_itemBuffer1 = new uint8[72];
-	_itemBuffer2 = new uint8[144];
-	assert(_itemBuffer1 && _itemBuffer2);
-
-	_mouseSHPBuf = _res->fileData("MOUSE.SHP", 0);
-	assert(_mouseSHPBuf);
-
-	for (int i = 0; i <= 6; ++i)
-		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
-
-	initItems();
-
-	_screen->setMouseCursor(0, 0, *_gameShapes);
+	
+	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	return 0;
 }
 
 int KyraEngine_v3::go() {
 	bool running = true;
+	preinit();
+	_screen->hideMouse();
 	initMainMenu();
 
 	_screen->clearPage(0);
@@ -154,16 +167,16 @@ int KyraEngine_v3::go() {
 		case 0:
 			uninitMainMenu();
 
-			preinit();
-			realInit();
+			startup();
 			// XXX
 			running = false;
 			break;
 
 		case 1:
-			memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+			_soundDigital->beginFadeOut(_musicSoundChannel, 60);
+			_screen->fadeToBlack(60);
 			playVQA("K3INTRO");
-			memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+			_screen->hideMouse();
 			break;
 
 		case 2:
@@ -222,7 +235,10 @@ void KyraEngine_v3::uninitMainMenu() {
 }
 
 void KyraEngine_v3::playVQA(const char *name) {
-	debugC(9, kDebugLevelMain, "KyraEngine::playVQA('%s')", name);
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playVQA('%s')", name);
+
+	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+
 	VQAMovie vqa(this, _system);
 
 	char filename[20];
@@ -249,12 +265,14 @@ void KyraEngine_v3::playVQA(const char *name) {
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
 		_screen->setScreenPalette(pal);
 	}
+
+	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
 }
 
 #pragma mark -
 
 void KyraEngine_v3::playMenuAudioFile() {
-	debugC(9, kDebugLevelMain, "KyraEngine::playMenuAudioFile()");
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playMenuAudioFile()");
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
@@ -264,9 +282,9 @@ void KyraEngine_v3::playMenuAudioFile() {
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
-	debugC(9, kDebugLevelMain, "KyraEngine::playMusicTrack(%d, %d)", track, force);
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playMusicTrack(%d, %d)", track, force);
 
-	// XXX byte_2C87C compare
+	// XXX byte_3C87C compare
 
 	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel))
 		force = 1;
@@ -290,6 +308,8 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 }
 
 void KyraEngine_v3::stopMusicTrack() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::stopMusicTrack()");
+
 	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel))
 		_soundDigital->stopSound(_musicSoundChannel);
 
@@ -298,23 +318,21 @@ void KyraEngine_v3::stopMusicTrack() {
 }
 
 int KyraEngine_v3::musicUpdate(int forceRestart) {
-	debugC(9, kDebugLevelMain, "KyraEngine::unkUpdate(%d)", forceRestart);
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::musicUpdate(%d)", forceRestart);
 
 	static uint32 mTimer = 0;
 	static uint16 lock = 0;
 
-	if (ABS<int>(_system->getMillis() - mTimer) > (int)(0x0F * _tickLength)) {
+	if (ABS<int>(_system->getMillis() - mTimer) > (int)(0x0F * _tickLength))
 		mTimer = _system->getMillis();
-	}
 
-	if (_system->getMillis() < mTimer && !forceRestart) {
+	if (_system->getMillis() < mTimer && !forceRestart)
 		return 1;
-	}
 
 	if (!lock) {
 		lock = 1;
 		if (_musicSoundChannel >= 0) {
-			// XXX sub_1C262 (sound specific. it seems to close some sound resource files in special cases)
+			_soundDigital->stopAllSounds();
 			if (!_soundDigital->isPlaying(_musicSoundChannel)) {
 				if (_curMusicTrack != -1)
 					playMusicTrack(_curMusicTrack, 1);
@@ -330,75 +348,182 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 #pragma mark -
 
 void KyraEngine_v3::preinit() {
-	debugC(9, kDebugLevelMain, "KyraEngine::preinit()");
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::preinit()");
+	
+	_unkBuffer1040Bytes = new uint8[1040];
+	_itemBuffer1 = new uint8[72];
+	_itemBuffer2 = new uint8[144];
+	initMouseShapes();
+	initItems();
 
-	musicUpdate(0);
-
-	// XXX snd_allocateSoundBuffer?
-	memset(_flagsTable, 0, sizeof(_flagsTable));
-
-	// XXX
-	setGameFlag(0x216);
-
-	_unkPage1 = new uint8[64000];
-	assert(_unkPage1);
-
-	musicUpdate(0);
-	musicUpdate(0);
-
-	_interfaceCPS1 = new uint8[17920];
-	_interfaceCPS2 = new uint8[3840];
-	assert(_interfaceCPS1 && _interfaceCPS2);
-
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setMouseCursor(0, 0, _gameShapes[0]);
 }
 
-void KyraEngine_v3::realInit() {
-	debugC(9, kDebugLevelMain, "KyraEngine::realInit()");
+void KyraEngine_v3::initMouseShapes() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::initMouseShapes()");
+	uint8 *data = _res->fileData("MOUSE.SHP", 0);
+	assert(data);
+	for (int i = 0; i <= 6; ++i)
+		_gameShapes[i] = _screen->makeShapeCopy(data, i);
+	delete [] data;
+}
 
-	// XXX sound specific stuff
+void KyraEngine_v3::startup() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::startup()");
+	musicUpdate(0);
 
-	_unkBuffer5 = new uint8[500];
-	_unkBuffer6 = new uint8[200];
-	_unkBuffer7 = new uint8[600];
-	_costpalData = new uint8[864];
-	_unkBuffer9 = new uint8[3618];
-	_unkWSAPtr = new uint8[624];
+	memset(_flagsTable, 0, sizeof(_flagsTable));
+	setGameFlag(0x216);
+
+	_gamePlayBuffer = new uint8[64000];
+	musicUpdate(0);
+	musicUpdate(0);
+
+	_interface = new uint8[17920];
+	_interfaceCommandLine = new uint8[3840];
+
+	_screen->setFont(Screen::FID_6_FNT);
+
+	//XXX
+	musicUpdate(0);
+	//XXX
+	_costPalBuffer = new uint8[864];
+	//XXX
+	_animObjects = new AnimObj[67];
+	_sceneAnims = new SceneAnim[16];
 
 	musicUpdate(0);
 
-	_unkPage2 = new uint8[64000];
+	memset(_sceneShapes, 0, sizeof(_sceneShapes));
+	_screenBuffer = new uint8[64000];
 
 	musicUpdate(0);
 	musicUpdate(0);
 
-	if (!loadLanguageFile("ITEMS.", _itemList))
+	if (!loadLanguageFile("ITEMS.", _itemFile))
 		error("couldn't load ITEMS");
 	if (!loadLanguageFile("C_CODE.", _cCodeFile))
 		error("couldn't load C_CODE");
-	if (!loadLanguageFile("SCENES.", _scenesList))
+	if (!loadLanguageFile("SCENES.", _scenesFile))
 		error("couldn't load SCENES");
 
-	assert(_unkBuffer5 && _unkBuffer6 && _unkBuffer7 && _costpalData && _unkBuffer9 &&
-			_unkWSAPtr && _unkPage2 && _itemList && _cCodeFile && _scenesList);
+	//XXX
+
+	if ((_actorFileSize = loadLanguageFile("_ACTOR.", _actorFile)) == 0)
+		error("couldn't load _ACTOR");
 
 	musicUpdate(0);
+	//XXX
+	musicUpdate(0);
+	openTalkFile(0);
+	musicUpdate(0);
+	_currentTalkFile = 0;
+	openTalkFile(1);
+	//XXX
+	loadCostPal();
+	musicUpdate(0);
+
+	for (int i = 0; i < 16; ++i) {
+		_sceneAnims[i].flags = 0;
+		_sceneAnimMovie[i] = new WSAMovieV2(this, _screen);
+		assert(_sceneAnimMovie[i]);
+	}
+
+	_screen->_curPage = 0;
+
+	//XXX
+
+	musicUpdate(0);
+	updateMalcolmShapes();
+	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
+	_itemList = new Item[50];
+	resetItemList();
+
+	loadShadowShape();
+	//loadButtonShapes();
+	musicUpdate(0);
+	loadExtrasShapes();
+	musicUpdate(0);
+	loadMalcolmShapes(_malcolmShapes);
+	musicUpdate(0);
+	//initInventoryButtonList(1);
+	loadInterfaceShapes();
+
+	musicUpdate(0);
+	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
+	_paletteOverlay = new uint8[256];
+	_screen->generateOverlay(_screen->getPalette(0), _paletteOverlay, 0xF0, 0x19);
+
+	loadInterface();
+	musicUpdate(0);
+
+	clearAnimObjects();
+
+	//XXX
+
+	musicUpdate(0);
+	memset(_hiddenItems, -1, sizeof(_hiddenItems));
+	
+	//resetNewSceneDlgState();
+
+	_sceneList = new SceneDesc[98];
+	musicUpdate(0);
+	runStartupScript(1, 0);
+	//openMoondomtrWsa();
+	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
+	delayUntil(_system->getMillis() + 60 * _tickLength);
+	//XXX enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
+	musicUpdate(0);
+	_screen->showMouse();
+	//XXX
 }
 
-#pragma mark - items
+void KyraEngine_v3::loadCostPal() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadCostPal()");
+	_costPalBuffer = _res->fileData("_COSTPAL.DAT", 0);
+}
+
+void KyraEngine_v3::loadShadowShape() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadShadowShape()");
+	_screen->loadBitmap("SHADOW.CSH", 3, 3, 0);
+	addShapeToPool(_screen->getCPagePtr(3), 421, 0);
+}
+
+void KyraEngine_v3::loadExtrasShapes() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadExtrasShapes()");
+	_screen->loadBitmap("EXTRAS.CSH", 3, 3, 0);
+	for (int i = 0; i < 20; ++i)
+		addShapeToPool(_screen->getCPagePtr(3), i+433, i);
+	addShapeToPool(_screen->getCPagePtr(3), 453, 20);
+	addShapeToPool(_screen->getCPagePtr(3), 454, 21);
+}
+
+void KyraEngine_v3::loadInterfaceShapes() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadInterfaceShapes()");
+	_screen->loadBitmap("INTRFACE.CSH", 3, 3, 0);
+	for (int i = 422; i <= 432; ++i)
+		addShapeToPool(_screen->getCPagePtr(3), i, i-422);
+}
+
+void KyraEngine_v3::loadInterface() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadInterface()");
+	_screen->loadBitmap("INTRFACE.CPS", 3, 3, 0);
+	memcpy(_interface, _screen->getCPagePtr(3), 17920);
+	memcpy(_interfaceCommandLine, _screen->getCPagePtr(3), 3840);
+}
 
 void KyraEngine_v3::initItems() {
-	debugC(9, kDebugLevelMain, "KyraEngine::initItems()");
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::initItems()");
 
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
-	//for (int i = 248; i <= 319; ++i)
-	//	addShapeToTable(_screen->getCPagePtr(3), i, i-248);
+	for (int i = 248; i <= 319; ++i)
+		addShapeToPool(_screen->getCPagePtr(3), i, i-248);
 
 	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
 
-	//for (int i = 320; i <= 397; ++i)
-	//	addShapeToTable(_screen->getCPagePtr(3), i, i-320);
+	for (int i = 320; i <= 397; ++i)
+		addShapeToPool(_screen->getCPagePtr(3), i, i-320);
 
 	uint32 size = 0;
 	uint8 *itemsDat = _res->fileData("_ITEMS.DAT", &size);
@@ -413,10 +538,114 @@ void KyraEngine_v3::initItems() {
 	_screen->_curPage = 0;
 }
 
+void KyraEngine_v3::runStartupScript(int script, int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runStartupScript(%d, %d)", script, unk1);
+	ScriptState state;
+	ScriptData data;
+	memset(&state, 0, sizeof(state));
+	memset(&data, 0, sizeof(data));
+	char filename[13];
+	strcpy(filename, "_START0X.EMC");
+	filename[7] = (script % 10) + '0';
+
+	_scriptInterpreter->loadScript(filename, &data, &_opcodes);
+	_scriptInterpreter->initScript(&state, &data);
+	_scriptInterpreter->startScript(&state, 0);
+	state.regs[6] = unk1;
+
+	while (_scriptInterpreter->validScript(&state))
+		_scriptInterpreter->runScript(&state);
+}
+
+void KyraEngine_v3::openTalkFile(int file) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::openTalkFile(%d)", file);
+	char talkFilename[16];
+
+	if (file == 0) {
+		strcpy(talkFilename, "ANYTALK.TLK");
+	} else {
+		if (_currentTalkFile > 0)
+			sprintf(talkFilename, "CH%dTALK.TLK", _currentTalkFile);
+		_res->unloadPakFile(talkFilename);
+		sprintf(talkFilename, "CH%dTALK.TLK", file);
+	}
+
+	_currentTalkFile = file;
+	//TODO: support Kyra3 TLK files
+	//_res->loadPakFile(talkFilename);
+}
+
+#pragma mark -
+
+void KyraEngine_v3::addShapeToPool(const uint8 *data, int realIndex, int shape) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::addShapeToPool(%p, %d, %d)", data, realIndex, shape);
+	ShapeMap::iterator iter = _gameShapes.find(realIndex);
+	if (iter != _gameShapes.end()) {
+		delete [] iter->_value;
+		iter->_value = 0;
+	}
+	_gameShapes[realIndex] = _screen->makeShapeCopy(data, shape);
+	assert(_gameShapes[realIndex]);
+}
+
+void KyraEngine_v3::loadMalcolmShapes(int newShapes) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadMalcolmShapes(%d)", newShapes);
+	static const uint8 numberOffset[] = { 3, 3, 4, 4, 3, 3 };
+	static const uint8 startShape[] = { 0x32, 0x58, 0x78, 0x98, 0xB8, 0xD8 };
+	static const uint8 endShape[] = { 0x57, 0x77, 0x97, 0xB7, 0xD7, 0xF7 };
+	static const char * const filenames[] = {
+		"MSW##.SHP",
+		"MTA##.SHP",
+		"MTFL##.SHP",
+		"MTFR##.SHP",
+		"MTL##.SHP",
+		"MTR#.SHP"
+	};
+
+	for (int i = 50; i <= 247; ++i) {
+		if (i == 87)
+			continue;
+
+		ShapeMap::iterator iter = _gameShapes.find(i);
+		if (iter != _gameShapes.end()) {
+			delete iter->_value;
+			iter->_value = 0;
+		}
+	}
+
+	const char lowNum = (newShapes % 10) + '0';
+	const char highNum = (newShapes / 10) + '0';
+
+	for (int i = 0; i < 6; ++i) {
+		char filename[16];
+		strcpy(filename, filenames[i]);
+		filename[numberOffset[i]+0] = highNum;
+		filename[numberOffset[i]+1] = lowNum;
+		_res->loadFileToBuf(filename, _screenBuffer, 64000);
+		for (int j = startShape[i]; j < endShape[i]; ++j) {
+			if (j == 87)
+				continue;
+			addShapeToPool(_screenBuffer, j, j-startShape[i]);
+		}
+	}
+
+	_malcolmShapes = newShapes;
+	updateMalcolmShapes();
+}
+
+void KyraEngine_v3::updateMalcolmShapes() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateMalcolmShapes()");
+	assert(_malcolmShapes >= 0 && _malcolmShapes < _shapeDescsSize);
+	_malcolmShapeXOffset = _shapeDescs[_malcolmShapes].xOffset;
+	_malcolmShapeYOffset = _shapeDescs[_malcolmShapes].yOffset;
+	_animObjects[0].width = _shapeDescs[_malcolmShapes].width;
+	_animObjects[0].height = _shapeDescs[_malcolmShapes].height;
+}
+
 #pragma mark -
 
 int KyraEngine_v3::getMaxFileSize(const char *file) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getMaxFileSize(%s)", file);
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getMaxFileSize(%s)", file);
 	int size = 0;
 
 	char buffer[32];
@@ -430,7 +659,7 @@ int KyraEngine_v3::getMaxFileSize(const char *file) {
 }
 
 char *KyraEngine_v3::appendLanguage(char *buf, int lang, int bufSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine::appendLanguage([%p|'%s'], %d, %d)", (const void*)buf, buf, lang, bufSize);
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::appendLanguage([%p|'%s'], %d, %d)", (const void*)buf, buf, lang, bufSize);
 	assert(lang < _languageExtensionSize);
 
 	int size = strlen(buf) + strlen(_languageExtension[lang]);
@@ -448,15 +677,15 @@ char *KyraEngine_v3::appendLanguage(char *buf, int lang, int bufSize) {
 	return buf;
 }
 
-bool KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
-	debugC(9, kDebugLevelMain, "KyraEngine::loadLanguageFile('%s', %p)", file, (const void*)buffer);
+int KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadLanguageFile('%s', %p)", file, (const void*)buffer);
 
 	uint32 size = 0;
 	char nBuf[32];
 	strncpy(nBuf, file, 32);
 	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
 
-	return size != 0 && buffer != 0;
+	return buffer ? size : 0 ;
 }
 
 Movie *KyraEngine_v3::createWSAMovie() {

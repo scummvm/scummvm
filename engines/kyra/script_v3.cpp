@@ -1,0 +1,347 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "kyra/kyra_v3.h"
+#include "kyra/script.h"
+
+#include "common/endian.h"
+
+namespace Kyra {
+
+int KyraEngine_v3::o3_defineItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineItem(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	int freeItem = findFreeItem();
+	if (freeItem != -1) {
+		_itemList[freeItem].id = stackPos(0);
+		_itemList[freeItem].x = stackPos(1);
+		_itemList[freeItem].y = stackPos(2);
+		_itemList[freeItem].sceneId = stackPos(3);
+	}
+	return freeItem;
+}
+
+int KyraEngine_v3::o3_queryGameFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_queryGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+	return queryGameFlag(stackPos(0));
+}
+
+int KyraEngine_v3::o3_resetGameFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_resetGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+	resetGameFlag(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v3::o3_setGameFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+	setGameFlag(stackPos(0));
+	return 1;
+}
+
+int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSceneFilename(%p) (%d, '%s')", (const void *)script, stackPos(0), stackPosString(1));
+	strcpy(_sceneList[stackPos(0)].filename1, stackPosString(1));
+	_sceneList[stackPos(0)].filename1[9] = 0;
+	return 0;
+}
+
+int KyraEngine_v3::o3_getRand(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	assert(stackPos(0) < stackPos(1));
+	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
+}
+
+int KyraEngine_v3::o3_defineScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d)",
+		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	const int scene = stackPos(0);
+	strcpy(_sceneList[scene].filename1, stackPosString(1));
+	_sceneList[scene].filename1[9] = 0;
+	strcpy(_sceneList[scene].filename2, stackPosString(1));
+	_sceneList[scene].filename2[9] = 0;
+
+	_sceneList[scene].exit1 = stackPos(2);
+	_sceneList[scene].exit2 = stackPos(3);
+	_sceneList[scene].exit3 = stackPos(4);
+	_sceneList[scene].exit4 = stackPos(5);
+	_sceneList[scene].flags = stackPos(6);
+	_sceneList[scene].sound = stackPos(7);
+
+	if (_mainCharacter.sceneId == scene) {
+		_sceneExit1 = _sceneList[scene].exit1;
+		_sceneExit2 = _sceneList[scene].exit2;
+		_sceneExit3 = _sceneList[scene].exit3;
+		_sceneExit4 = _sceneList[scene].exit4;
+	}
+
+	return 0;
+}
+
+int KyraEngine_v3::o3_setHiddenItemsEntry(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return (_hiddenItems[stackPos(0)] = (uint16)stackPos(1));
+}
+
+int KyraEngine_v3::o3_getHiddenItemsEntry(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getHiddenItemsEntry(%p) (%d)", (const void *)script, stackPos(0));
+	return (int16)_hiddenItems[stackPos(0)];
+}
+
+int KyraEngine_v3::o3_dummy(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_dummy(%p) ()", (const void *)script);
+	return 0;
+}
+
+typedef Functor1Mem<ScriptState*, int, KyraEngine_v3> OpcodeV3;
+#define Opcode(x) OpcodeV3(this, &KyraEngine_v3::x)
+#define OpcodeUnImpl() OpcodeV3(this, 0)
+void KyraEngine_v3::setupOpcodeTable() {
+	static const OpcodeV3 opcodeTable[] = {
+		// 0x00
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x04
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x08
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		// 0x0c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x10
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		// 0x14
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		// 0x18
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x1c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x20
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		Opcode(o3_defineItem),
+		// 0x24
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_queryGameFlag),
+		// 0x28
+		Opcode(o3_resetGameFlag),
+		Opcode(o3_setGameFlag),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x2c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x30
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		// 0x34
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		// 0x38
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_setSceneFilename),
+		OpcodeUnImpl(),
+		// 0x3c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x40
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		// 0x44
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		// 0x48
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x4c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x50
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		// 0x54
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x58
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x5c
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x60
+		Opcode(o3_getRand),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x64
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		// 0x68
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x6c
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x70
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		// 0x74
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x78
+		OpcodeUnImpl(),
+		Opcode(o3_defineScene),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x7c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		// 0x80
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		// 0x84
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		// 0x88
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		// 0x8c
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		// 0x90
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		Opcode(o3_setHiddenItemsEntry),
+		// 0x94
+		Opcode(o3_getHiddenItemsEntry),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		// 0x98
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0x9c
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0xa0
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		Opcode(o3_dummy),
+		// 0xa4
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0xa8
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		// 0xac
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+		OpcodeUnImpl(),
+		Opcode(o3_dummy),
+	};
+
+	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
+		_opcodes.push_back(&opcodeTable[i]);
+}
+
+} // end of namespace Kyra

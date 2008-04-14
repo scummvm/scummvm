@@ -537,6 +537,11 @@ public:
 	void stopSound(int channel);
 
 	/**
+	 * Stops playback of all sounds
+	 */
+	void stopAllSounds();
+
+	/**
 	 * Makes the sound in a given channel
 	 * fading out.
 	 *
