@@ -413,7 +413,7 @@ public:
 	void playSampleSound();
 	const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) const;
 	bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo);
-	bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint length);
+	static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint length);
 	Common::SharedPtr<Common::MemoryReadStream> loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo);
 };
 

@@ -111,7 +111,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 		stream.seek(sampleStartPos);
 		_sample = new int8[_header.sampleSize];
 		if (_sample != NULL)
-			_isValid = _manager.convertWave(stream, _sample, _header.sampleSize);
+			_isValid = SoundMgr::convertWave(stream, _sample, _header.sampleSize);
 	}
 
 	if (!_isValid) // Check for errors
@@ -1065,7 +1065,7 @@ bool SoundMgr::loadInstruments() {
 	Common::SharedPtr<Common::MemoryReadStream> uint8Wave = loadWaveFile(waveFsnode->getPath(), *exeInfo);
 	if (uint8Wave && loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo)) {
 		_gsWave.resize(uint8Wave->size()); // Allocate space for the 8-bit signed version of the SIERRASTANDARD-file
-		return convertWave(*uint8Wave, _gsWave.begin(), uint8Wave->size());
+		return SoundMgr::convertWave(*uint8Wave, _gsWave.begin(), uint8Wave->size());
 	} else // Error loading the wave file or the instrument headers
 		return false;
 }
