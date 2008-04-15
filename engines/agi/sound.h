@@ -319,17 +319,24 @@ protected:
 	int8 *_sample;           ///< Sample data (8-bit signed format)
 };
 
+/** Apple IIGS MIDI program change to instrument number mapping. */
+struct MidiProgramChangeMapping {
+	const byte midiProgToInst[44]; ///< Lookup table for the MIDI program number to instrument number mapping
+	const byte undefinedInst; ///< The undefined instrument number
+
+	// Maps the MIDI program number to an instrument number
+	byte map(uint midiProg) const {
+		return midiProg < ARRAYSIZE(midiProgToInst) ? midiProgToInst[midiProg] : undefinedInst;
+	}
+};
+
 /** Apple IIGS AGI instrument set information. */
 struct instrumentSetInfo {
 	uint byteCount;          ///< Length of the whole instrument set in bytes
 	uint instCount;          ///< Amount of instrument in the set
 	const char *md5;         ///< MD5 hex digest of the whole instrument set
 	const char *waveFileMd5; ///< MD5 hex digest of the wave file (i.e. the sample data used by the instruments)
-	const byte midiProgToInst[44]; ///< Lookup table for the MIDI program number to instrument number mapping
-	const byte undefinedInst; ///< The undefined instrument number
-
-	// Maps the MIDI program number to an instrument number
-	byte mapMidiProgToInst(uint midiProg) { return midiProg < ARRAYSIZE(midiProgToInst) ? midiProgToInst[midiProg] : undefinedInst; }
+	const MidiProgramChangeMapping &progToInst; ///< Program change to instrument number mapping
 };
 
 /** Apple IIGS AGI executable file information. */
