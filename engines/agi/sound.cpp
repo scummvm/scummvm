@@ -250,12 +250,12 @@ static const MidiProgramChangeMapping progToInstMappingV2 = {
 };
 
 /** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
-static const instrumentSetInfo instSetV1 = {
+static const InstrumentSetInfo instSetV1 = {
 	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18", progToInstMappingV1
 };
 
 /** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
-static const instrumentSetInfo instSetV2 = {
+static const InstrumentSetInfo instSetV2 = {
 	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07", progToInstMappingV2
 };
 
@@ -282,13 +282,6 @@ static uint g_numInstruments = 0;
 // (i.e. in IIGS_BUFFER_SIZE / getRate() seconds granularity)
 static uint32 g_IIgsBufGranMillis = 0;
 static uint32 g_midiMillis = 0; // Time position (In milliseconds) in currently playing MIDI sound
-
-bool SoundMgr::finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
-	for (uint i = 0; i < g_numInstruments; i++)
-		if (!g_instruments[i].finalize(uint8Wave))
-			return false;
-	return true;
-}
 
 static const int16 waveformRamp[WAVEFORM_SIZE] = {
 	0, 8, 16, 24, 32, 40, 48, 56,

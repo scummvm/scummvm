@@ -331,7 +331,7 @@ struct MidiProgramChangeMapping {
 };
 
 /** Apple IIGS AGI instrument set information. */
-struct instrumentSetInfo {
+struct InstrumentSetInfo {
 	uint byteCount;          ///< Length of the whole instrument set in bytes
 	uint instCount;          ///< Amount of instrument in the set
 	const char *md5;         ///< MD5 hex digest of the whole instrument set
@@ -346,7 +346,7 @@ struct IIgsExeInfo {
 	uint agiVer;                      ///< Apple IIGS AGI version number, not strictly needed
 	uint exeSize;                     ///< Size of the Apple IIGS AGI executable file in bytes
 	uint instSetStart;                ///< Starting offset of the instrument set inside the executable file
-	const instrumentSetInfo &instSet; ///< Information about the used instrument set
+	const InstrumentSetInfo &instSet; ///< Information about the used instrument set
 };
 
 class AgiEngine;
@@ -411,8 +411,6 @@ public:
 	bool loadInstruments();
 	void playMidiSound();
 	void playSampleSound();
-	bool finalizeInstruments(Common::SeekableReadStream &uint8Wave);
-	Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum = -1);
 	const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) const;
 	bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo);
 	bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint length);
