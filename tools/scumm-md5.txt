@@ -421,7 +421,8 @@ arttime	Blue's Art Time Activities
 	6269b8fbf51a353e5b501e4ad98cdc67	-1	en	Windows	-	-	-	killiandor
 
 BluesBirthday	Blue's Birthday Adventure
-	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	-	-	
+	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	-	-	knifethrower
+	1ff5997c78fbd0a841a75ef15a05d9d5	-1	en	Windows	-	-	-	Mathew
 
 	2d4acbdcfd8e374c9da8c2e7303a5cd0	-1	en	All	-	Demo	-	Kirben
 	dbf4d59d70b826733f379f998354d350	-1	en	All	-	Demo	-	Kirben
