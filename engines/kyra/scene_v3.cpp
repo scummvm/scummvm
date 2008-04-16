@@ -620,6 +620,36 @@ void KyraEngine_v3::initSceneScreen(int unk1) {
 	//XXX when loading from main menu
 }
 
+void KyraEngine_v3::updateSpecialSceneScripts() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateSpecialSceneScripts()");
+	uint32 nextTime = _system->getMillis() + _tickLength;
+	const int startScript = _lastProcessedSceneScript;
+
+	while (_system->getMillis() <= nextTime) {
+		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() &&
+			!_specialSceneScriptState[_lastProcessedSceneScript]) {
+			_specialSceneScriptRunFlag = true;
+
+			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
+				if (!_scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]))
+					_specialSceneScriptRunFlag = false;
+			}
+		}
+
+		if (!_scriptInterpreter->validScript(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
+			_scriptInterpreter->startScript(&_sceneSpecialScripts[_lastProcessedSceneScript], 9+_lastProcessedSceneScript);
+			_specialSceneScriptRunFlag = false;
+		}
+
+		++_lastProcessedSceneScript;
+		if (_lastProcessedSceneScript >= 10)
+			_lastProcessedSceneScript = 0;
+
+		if (_lastProcessedSceneScript == startScript)
+			return;
+	}
+}
+
 void KyraEngine_v3::runSceneScript4(int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript4(%d)", unk1);
 	_sceneScriptState.regs[4] = _itemInHand;

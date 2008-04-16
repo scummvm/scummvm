@@ -31,6 +31,7 @@
 #include "kyra/text_v3.h"
 #include "kyra/vqa.h"
 #include "kyra/gui.h"
+#include "kyra/timer.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -92,6 +93,8 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unk4 = 0;
 	_loadingState = false;
 	_noStartupChat = false;
+	_lastProcessedSceneScript = 0;
+	_specialSceneScriptRunFlag = false;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -201,7 +204,7 @@ int KyraEngine_v3::go() {
 			uninitMainMenu();
 
 			startup();
-			// XXX
+			runLoop();
 			running = false;
 			break;
 
@@ -333,7 +336,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 			_musicSoundChannel = _soundDigital->playSound(stream);
 	}
 
-	_musicSoundChannel = track;
+	_curMusicTrack = track;
 }
 
 void KyraEngine_v3::stopMusicTrack() {
@@ -869,11 +872,173 @@ void KyraEngine_v3::updateCharPal(int unk1) {
 
 #pragma mark -
 
+void KyraEngine_v3::runLoop() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runLoop()");
+
+	_runFlag = true;
+	while (_runFlag && !_quitFlag) {
+		//XXX deathHandler
+		//XXX
+		int inputFlag = checkInput(0/*_mainButtonList*/);
+		removeInputTop();
+
+		update();
+		_timer->update();
+
+		if (inputFlag == 198 || inputFlag == 199) {
+			_unk3 = _handItemSet;
+			Common::Point mouse = getMousePos();
+			handleInput(mouse.x, mouse.y);
+		}
+
+		_system->delayMillis(10);
+	}
+}
+
+void KyraEngine_v3::handleInput(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::handleInput(%d, %d)"), x, y;
+}
+
 void KyraEngine_v3::update() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::update()");
+	updateInput();
+
+	musicUpdate(0);
+	refreshAnimObjectsIfNeed();
+	musicUpdate(0);
 	//XXX
+	updateSpecialSceneScripts();
+	//XXX
+	musicUpdate(0);
 
 	_screen->updateScreen();
+}
+
+#pragma mark -
+
+void KyraEngine_v3::updateInput() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateInput()");
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_quitFlag = true;
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				_eventList.push_back(Event(event, true));
+			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+				_quitFlag = true;
+			else
+				_eventList.push_back(event);
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			_eventList.push_back(Event(event, true));
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_MOUSEMOVE:
+			_eventList.push_back(event);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
+	updateInput();
+
+	int keys = 0;
+
+	while (_eventList.size()) {
+		Common::Event event = *_eventList.begin();
+		bool breakLoop = false;
+
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			/*if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
+					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
+				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
+
+				if (event.kbd.flags == Common::KBD_CTRL) {
+					loadGame(saveLoadSlot);
+					_eventList.clear();
+					breakLoop = true;
+				} else {
+					char savegameName[14];
+					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
+					saveGame(saveLoadSlot, savegameName);
+				}
+			} else if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == 'd')
+					_debugger->attach();
+			}*/
+			break;
+
+		case Common::EVENT_MOUSEMOVE: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			_screen->updateScreen();
+			} break;
+
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
+			breakLoop = true;
+			} break;
+
+		default:
+			break;
+		}
+
+		//if (_debugger->isAttached())
+		//	_debugger->onFrame();
+
+		if (breakLoop)
+			break;
+
+		_eventList.erase(_eventList.begin());
+	}
+
+	return /*_gui->processButtonList(buttonList, */keys/* | 0x8000)*/;
+}
+
+void KyraEngine_v3::removeInputTop() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::removeInputTop()");
+	if (!_eventList.empty())
+		_eventList.erase(_eventList.begin());
+}
+
+bool KyraEngine_v3::skipFlag() const {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::skipFlag()");
+	for (Common::List<Event>::const_iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
+		if (i->causedSkip)
+			return true;
+	}
+	return false;
+}
+
+void KyraEngine_v3::resetSkipFlag(bool removeEvent) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::resetSkipFlag(%d)", removeEvent);
+	for (Common::List<Event>::iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
+		if (i->causedSkip) {
+			if (removeEvent)
+				_eventList.erase(i);
+			else
+				i->causedSkip = false;
+			return;
+		}
+	}
 }
 
 #pragma mark -

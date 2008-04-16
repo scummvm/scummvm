@@ -103,6 +103,13 @@ int KyraEngine_v3::o3_defineRoomEntrance(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setSpecialSceneScriptRunTime(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSpecialSceneScriptRunTime(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	assert(stackPos(0) >= 0 && stackPos(0) < 10);
+	_sceneSpecialScriptsTimer[stackPos(0)] = _system->getMillis() + stackPos(1) * _tickLength;
+	return 0;
+}
+
 int KyraEngine_v3::o3_defineSceneAnim(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineSceneAnim(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
 		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7),
@@ -158,6 +165,13 @@ int KyraEngine_v3::o3_defineSceneAnim(ScriptState *script) {
 	musicUpdate(0);
 
 	return 9;
+}
+
+int KyraEngine_v3::o3_updateSceneAnim(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_updateSceneAnim(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	updateSceneAnim(stackPos(0), stackPos(1));
+	_specialSceneScriptRunFlag = false;
+	return 0;
 }
 
 int KyraEngine_v3::o3_defineScene(ScriptState *script) {
@@ -362,11 +376,11 @@ void KyraEngine_v3::setupOpcodeTable() {
 		Opcode(o3_dummy),
 		Opcode(o3_defineRoomEntrance),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_setSpecialSceneScriptRunTime),
 		// 0x70
 		Opcode(o3_defineSceneAnim),
 		Opcode(o3_dummy),
-		OpcodeUnImpl(),
+		Opcode(o3_updateSceneAnim),
 		Opcode(o3_dummy),
 		// 0x74
 		OpcodeUnImpl(),

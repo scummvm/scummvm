@@ -29,7 +29,9 @@
 #include "kyra/kyra.h"
 #include "kyra/screen_v3.h"
 #include "kyra/script.h"
+
 #include "common/hashmap.h"
+#include "common/list.h"
 
 namespace Kyra {
 
@@ -38,6 +40,7 @@ class Screen_v3;
 class MainMenu;
 class WSAMovieV2;
 class TextDisplayer_v3;
+struct Button;
 
 class KyraEngine_v3 : public KyraEngine {
 public:
@@ -53,22 +56,48 @@ public:
 
 	virtual Movie *createWSAMovie();
 private:
+	Screen_v3 *_screen;
+	SoundDigital *_soundDigital;
+
 	int init();
 
 	void preinit();
 	void startup();
-
-	void update();
-
 	void runStartupScript(int script, int unk1);
 
 	void setupOpcodeTable();
 
+	// run
 	bool _runFlag;
 	bool _unkInputFlag;
 
-	Screen_v3 *_screen;
-	SoundDigital *_soundDigital;
+	void runLoop();
+	void handleInput(int x, int y);
+
+	void update();
+
+	// - Input
+	void updateInput();
+	int checkInput(Button *buttonList, bool mainLoop = false);
+	void removeInputTop();
+
+	int _mouseX, _mouseY;
+	int _mouseState;
+
+	struct Event {
+		Common::Event event;
+		bool causedSkip;
+
+		Event() : event(), causedSkip(false) {}
+		Event(Common::Event e) : event(e), causedSkip(false) {}
+		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
+
+		operator Common::Event() const { return event; }
+	};
+	Common::List<Event> _eventList;
+
+	bool skipFlag() const;
+	void resetSkipFlag(bool removeEvent = true);
 
 	// sound specific
 private:
@@ -97,10 +126,6 @@ private:
 
 	WSAMovieV2 *_menuAnim;
 	MainMenu *_menu;
-
-	// game speed
-	bool skipFlag() const { return false; }
-	void resetSkipFlag(bool) {}
 
 	// timer
 	void setupTimers() {}
@@ -237,6 +262,8 @@ private:
 	void freeSceneShapes();
 	void freeSceneAnims();
 
+	void updateSceneAnim(int anim, int newFrame);
+
 	// voice
 	int _currentTalkFile;
 	void openTalkFile(int file);
@@ -286,6 +313,10 @@ private:
 	bool _specialSceneScriptState[10];
 	ScriptState _sceneSpecialScripts[10];
 	uint32 _sceneSpecialScriptsTimer[10];
+	int _lastProcessedSceneScript;
+	bool _specialSceneScriptRunFlag;
+
+	void updateSpecialSceneScripts();
 
 	int8 _sceneDatPalette[45];
 	int8 _sceneDatLayerTable[15];
@@ -372,7 +403,9 @@ private:
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
+	int o3_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o3_defineSceneAnim(ScriptState *script);
+	int o3_updateSceneAnim(ScriptState *script);
 	int o3_defineScene(ScriptState *script);
 	int o3_setSpecialSceneScriptState(ScriptState *script);
 	int o3_clearSpecialSceneScriptState(ScriptState *script);

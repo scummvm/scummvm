@@ -201,8 +201,8 @@ void KyraEngine_v3::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
 			uint16 flags = 0x4000;
 			if (obj->flags & 0x800)
 				flags |= 0x8000;
-			int x = obj->xPos2 - _sceneAnimMovie[obj->animNum]->xAdd();
-			int y = obj->yPos1 - _sceneAnimMovie[obj->animNum]->yAdd();
+			x = obj->xPos2 - _sceneAnimMovie[obj->animNum]->xAdd();
+			y = obj->yPos2 - _sceneAnimMovie[obj->animNum]->yAdd();
 			_sceneAnimMovie[obj->animNum]->setDrawPage(2);
 			_sceneAnimMovie[obj->animNum]->setX(x);
 			_sceneAnimMovie[obj->animNum]->setY(y);
@@ -330,6 +330,44 @@ void KyraEngine_v3::updateCharacterAnim(int charId) {
 
 	if (!_loadingState)
 		updateCharPal(1);
+}
+
+void KyraEngine_v3::updateSceneAnim(int anim, int newFrame) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::updateSceneAnim(%d, %d)", anim, newFrame);
+	AnimObj *animObject = &_animObjects[1+anim];
+	if (!animObject->enabled)
+		return;
+
+	animObject->needRefresh = 1;
+
+	if (_sceneAnims[anim].flags & 2)
+		animObject->flags |= 1;
+	else
+		animObject->flags &= ~1;
+
+	if (_sceneAnims[anim].flags & 4) {
+		animObject->shapePtr = _sceneShapes[newFrame];
+		animObject->shapeIndex2 = 0xFFFF;
+		animObject->shapeIndex3 = 0xFFFF;
+		animObject->animNum = 0xFFFF;
+	} else {
+		animObject->shapePtr = 0;
+		animObject->shapeIndex3 = newFrame;
+		animObject->animNum = anim;
+	}
+
+	animObject->xPos1 = _sceneAnims[anim].x;
+	animObject->yPos1 = _sceneAnims[anim].y;
+	animObject->xPos2 = _sceneAnims[anim].x2;
+	animObject->yPos2 = _sceneAnims[anim].y2;
+
+	if (_sceneAnims[anim].flags & 0x20) {
+		_animList = deleteAnimListEntry(_animList, animObject);
+		if (!_animList)
+			_animList = initAnimList(_animList, animObject);
+		else
+			_animList = addToAnimListSorted(_animList, animObject);
+	}
 }
 
 } // end of namespace Kyra
