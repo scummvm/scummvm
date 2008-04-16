@@ -2579,8 +2579,8 @@ void Screen::shakeScreen(int times) {
 	}
 }
 
-void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::loadBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
+void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
+	debugC(9, kDebugLevelScreen, "KyraEngine::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
@@ -2588,6 +2588,9 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 		warning("couldn't load bitmap: '%s'", filename);
 		return;
 	}
+	
+	if (skip)
+		srcData += 4;
 
 	const char *ext = filename + strlen(filename) - 3;
 	uint8 compType = srcData[2];
@@ -2625,6 +2628,9 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 		else
 			Screen::convertAmigaGfx(dstData, 320, 200, false);
 	}
+
+	if (skip)
+		srcData -= 4;
 
 	delete [] srcData;
 }

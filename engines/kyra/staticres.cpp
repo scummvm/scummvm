@@ -1987,6 +1987,18 @@ const KyraEngine_v3::ShapeDesc KyraEngine_v3::_shapeDescs[] = {
 
 const int KyraEngine_v3::_shapeDescsSize = ARRAYSIZE(KyraEngine_v3::_shapeDescs);
 
+const int8 KyraEngine_v3::_updateCharPosXTable[] = {
+	0, 4, 4, 4, 0, -4, -4, -4
+};
+
+const int8 KyraEngine_v3::_updateCharPosYTable[] = {
+	-2, -2, 0, 2, 2, 2, 0, -2
+};
+
+const uint8 KyraEngine_v3::_characterFrameTable[] = {
+	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34
+};
+
 } // End of namespace Kyra
 
 

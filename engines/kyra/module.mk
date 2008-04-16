@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	scene.o \
 	scene_v1.o \
 	scene_v2.o \
+	scene_v3.o \
 	screen.o \
 	screen_v1.o \
 	screen_v2.o \
@@ -45,6 +46,7 @@ MODULE_OBJS := \
 	text.o \
 	text_v1.o \
 	text_v2.o \
+	text_v3.o \
 	timer.o \
 	timer_v1.o \
 	timer_v2.o \

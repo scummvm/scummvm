@@ -129,6 +129,7 @@ public:
 	Common::RandomSource _rnd;
 
 	// input
+	void setMousePos(int x, int y);
 	Common::Point getMousePos() const;
 
 	// config specific
@@ -224,9 +225,6 @@ protected:
 
 	const int8 *_trackMap;
 	int _trackMapSize;
-
-	// input
-	void setMousePos(int x, int y);
 
 	// pathfinder
 	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);

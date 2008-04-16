@@ -28,7 +28,7 @@
 #include "kyra/screen_v3.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
-#include "kyra/text.h"
+#include "kyra/text_v3.h"
 #include "kyra/vqa.h"
 #include "kyra/gui.h"
 
@@ -65,6 +65,33 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mainCharacter.facing = 5;
 	_mainCharacter.walkspeed = 5;
 	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
+	_text = 0;
+	_commandLineY = 189;
+	_inventoryState = false;
+	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
+	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
+	memset(_wsaSlots, 0, sizeof(_wsaSlots));
+	_updateCharPosNextUpdate = 0;
+	memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
+	_overwriteSceneFacing = false;
+	_maskPageMinY = _maskPageMaxY = 0;
+	_sceneStrings = 0;
+	_enterNewSceneLock = 0;
+	_mainCharX = _mainCharY = -1;
+	_animList = 0;
+	_drawNoShapeFlag = false;
+	_wsaPlayingVQA = false;
+	_lastCharPalLayer = -1;
+	_charPalUpdate = false;
+	_runFlag = false;
+	_unkInputFlag = false;
+	_unkSceneScreenFlag1 = false;
+	_noScriptEnter = true;
+	_itemInHand = _handItemSet = -1;
+	_unk3 = -1;
+	_unk4 = 0;
+	_loadingState = false;
+	_noStartupChat = false;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -100,6 +127,13 @@ KyraEngine_v3::~KyraEngine_v3() {
 		i->_value = 0;
 	}
 	_gameShapes.clear();
+
+	_scriptInterpreter->unloadScript(&_sceneScriptData);
+
+	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
+		delete _wsaSlots[i];
+
+	delete [] _sceneStrings;
 }
 
 int KyraEngine_v3::init() {
@@ -114,6 +148,8 @@ int KyraEngine_v3::init() {
 	assert(_soundDigital);
 	if (!_soundDigital->init())
 		error("_soundDigital->init() failed");
+	KyraEngine::_text = _text = new TextDisplayer_v3(this, _screen);
+	assert(_text);
 
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
@@ -146,9 +182,6 @@ int KyraEngine_v3::go() {
 		// XXX
 		playMenuAudioFile();
 
-		_menuAnim->setX(0); _menuAnim->setY(0);
-		_menuAnim->setDrawPage(0);
-
 		for (int i = 0; i < 64 && !_quitFlag; ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			_menuAnim->displayFrame(i, 0);
@@ -173,9 +206,8 @@ int KyraEngine_v3::go() {
 			break;
 
 		case 1:
-			_soundDigital->beginFadeOut(_musicSoundChannel, 60);
-			_screen->fadeToBlack(60);
 			playVQA("K3INTRO");
+			_wsaPlayingVQA = false;
 			_screen->hideMouse();
 			break;
 
@@ -206,8 +238,11 @@ int KyraEngine_v3::go() {
 }
 
 void KyraEngine_v3::initMainMenu() {
-	_menuAnim = createWSAMovie();
+	_menuAnim = new WSAMovieV2(this, _screen);
 	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
+	_menuAnim->setX(0);
+	_menuAnim->setY(0);
+	_menuAnim->setDrawPage(0);
 	memset(_screen->getPalette(0), 0, 3);
 
 	_menu = new MainMenu(this);
@@ -237,8 +272,6 @@ void KyraEngine_v3::uninitMainMenu() {
 void KyraEngine_v3::playVQA(const char *name) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::playVQA('%s')", name);
 
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
-
 	VQAMovie vqa(this, _system);
 
 	char filename[20];
@@ -247,26 +280,28 @@ void KyraEngine_v3::playVQA(const char *name) {
 	snprintf(filename, sizeof(filename), "%s%d.VQA", name, size);
 
 	if (vqa.open(filename)) {
-		uint8 pal[768];
-		memcpy(pal, _screen->getPalette(0), sizeof(pal));
-		if (_screen->_curPage == 0)
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 3);
+		_soundDigital->stopAllSounds();
 
 		_screen->hideMouse();
-		_soundDigital->beginFadeOut(_musicSoundChannel, 60);
-		_musicSoundChannel = -1;
+		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+		fadeOutMusic(60);
 		_screen->fadeToBlack();
+		_screen->clearPage(0);
+
 		vqa.setDrawPage(0);
 		vqa.play();
 		vqa.close();
+
+		_soundDigital->stopAllSounds();
 		_screen->showMouse();
 
-		if (_screen->_curPage == 0)
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
+		uint8 pal[768];
+		memset(pal, 1, sizeof(pal));
 		_screen->setScreenPalette(pal);
+		_screen->clearPage(0);
+		memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+		_wsaPlayingVQA = true;
 	}
-
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
 }
 
 #pragma mark -
@@ -344,6 +379,15 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 	return 1;
 }
 
+void KyraEngine_v3::fadeOutMusic(int ticks) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::fadeOutMusic(%d)", ticks);
+	if (_musicSoundChannel >= 0) {
+		_fadeOutMusicChannel = _musicSoundChannel;
+		_soundDigital->beginFadeOut(_musicSoundChannel, ticks);
+		_curMusicTrack = -1;
+	}
+}
+
 #pragma mark -
 
 void KyraEngine_v3::preinit() {
@@ -369,6 +413,11 @@ void KyraEngine_v3::initMouseShapes() {
 
 void KyraEngine_v3::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::startup()");
+	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i) {
+		_wsaSlots[i] = new WSAMovieV2(this, _screen);
+		assert(_wsaSlots[i]);
+	}
+
 	musicUpdate(0);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
@@ -471,7 +520,8 @@ void KyraEngine_v3::startup() {
 	//openMoondomtrWsa();
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 	delayWithTicks(60);
-	//XXX enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
+	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
+	_screen->updateScreen();
 	musicUpdate(0);
 	_screen->showMouse();
 	//XXX
@@ -639,6 +689,212 @@ void KyraEngine_v3::updateMalcolmShapes() {
 	_malcolmShapeYOffset = _shapeDescs[_malcolmShapes].yOffset;
 	_animObjects[0].width = _shapeDescs[_malcolmShapes].width;
 	_animObjects[0].height = _shapeDescs[_malcolmShapes].height;
+}
+
+#pragma mark -
+
+void KyraEngine_v3::showMessage(const char *string, uint8 c0, uint8 c1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::showMessage('%s', %d, %d)", string, c0, c1);
+	_shownMessage = string;
+	_screen->hideMouse();
+
+	restoreCommandLine();
+	_restoreCommandLine = false;
+
+	if (string) {
+		int x = _text->getCenterStringX(string, 0, 320);
+		int pageBackUp = _screen->_curPage;
+		_screen->_curPage = 0;
+		_text->printText(string, x, _commandLineY, c0, c1, 0);
+		_screen->_curPage = pageBackUp;
+		_screen->updateScreen();
+		//setCommandLineRestoreTimer(7);
+	}
+
+	_screen->showMouse();
+}
+
+void KyraEngine_v3::restoreCommandLine() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::restoreCommandLine()");
+	int y = _inventoryState ? 144 : 188;
+	_screen->copyBlockToPage(0, 0, y, 320, 12, _interfaceCommandLine);
+}
+
+#pragma mark -
+
+void KyraEngine_v3::moveCharacter(int facing, int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::moveCharacter(%d, %d, %d)", facing, x, y);
+	x &= ~3;
+	y &= ~1;
+	_mainCharacter.facing = facing;
+
+	_screen->hideMouse();
+	switch (facing) {
+	case 0:
+		while (_mainCharacter.y1 > y)
+			updateCharPosWithUpdate();
+		break;
+
+	case 2:
+		while (_mainCharacter.x1 < x)
+			updateCharPosWithUpdate();
+		break;
+
+	case 4:
+		while (_mainCharacter.y1 < y)
+			updateCharPosWithUpdate();
+		break;
+
+	case 6:
+		while (_mainCharacter.x1 > x)
+			updateCharPosWithUpdate();
+		break;
+
+	default:
+		break;
+	}
+	_screen->showMouse();
+}
+
+void KyraEngine_v3::updateCharPosWithUpdate() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPosWithUpdate()");
+	updateCharPos(0, 0);
+	update();
+}
+
+void KyraEngine_v3::updateCharPos(uint8 *table, int force) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPos(%p, %d)", table, force);
+	if (!force || (_updateCharPosNextUpdate > _system->getMillis()))
+		return;
+	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
+	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
+	updateCharAnimFrame(0, table);
+	_updateCharPosNextUpdate = _system->getMillis() + _mainCharacter.walkspeed * _tickLength;
+}
+
+void KyraEngine_v3::updateCharAnimFrame(int character, uint8 *table) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPos(%d, %p)", character, table);
+	++_mainCharacter.animFrame;
+	int facing = _mainCharacter.facing;
+
+	if (table) {
+		if (table[0] != table[-1] && table[1] == table[-1]) {
+			facing = getOppositeFacingDirection(table[-1]);
+			table[0] = table[-1];
+		}
+	}
+
+	if (facing) {
+		if (facing == 7 || facing == 1) {
+			if (_characterAnimTable[0] > 2)
+				facing = 0;
+			memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
+		} else if (facing == 4) {
+			++_characterAnimTable[1];
+		} else if (facing == 5 || facing == 3) {
+			if (_characterAnimTable[1] > 2)
+				facing = 4;
+			memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
+		}
+	} else {
+		++_characterAnimTable[0];
+	}
+
+	switch (facing) {
+	case 0:
+		if (_mainCharacter.animFrame < 79 || _mainCharacter.animFrame > 86)
+			_mainCharacter.animFrame = 79;
+		break;
+
+	case 1: case 2: case 3:
+		if (_mainCharacter.animFrame < 71 || _mainCharacter.animFrame > 78)
+			_mainCharacter.animFrame = 71;
+		break;
+
+	case 4:
+		if (_mainCharacter.animFrame < 55 || _mainCharacter.animFrame > 62)
+			_mainCharacter.animFrame = 55;
+		break;
+
+	case 5: case 6: case 7:
+		if (_mainCharacter.animFrame < 63 || _mainCharacter.animFrame > 70)
+			_mainCharacter.animFrame = 63;
+		break;
+
+	default:
+		break;
+	}
+
+	updateCharacterAnim(0);
+}
+
+void KyraEngine_v3::updateCharPal(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPal(%d)", unk1);
+	int layer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1) - 1;
+	const uint8 *src = _costPalBuffer + _malcolmShapes * 72;
+	uint8 *dst = _screen->getPalette(0) + 432;
+	const int8 *sceneDatPal = &_sceneDatPalette[layer * 3];
+
+	if (layer != _lastCharPalLayer && unk1) {
+		for (int i = 0, j = 0; i < 72; ++i) {
+			uint8 col = *dst;
+			int8 addCol = *src + *sceneDatPal;
+			addCol = MAX<int8>(0, MIN<int8>(addCol, 63));
+			addCol = (col - addCol) >> 1;
+			*dst -= addCol;
+			++dst;
+			++src;
+			++sceneDatPal;
+			++j;
+			if (j > 3) {
+				sceneDatPal = &_sceneDatPalette[layer * 3];
+				j = 0;
+			}
+		}
+		_charPalUpdate = true;
+		_screen->setScreenPalette(_screen->getPalette(0));
+		_lastCharPalLayer = layer;
+	} else if (_charPalUpdate || !unk1) {
+		memcpy(dst, src, 72);
+
+		for (int i = 0, j = 0; i < 72; ++i) {
+			uint8 col = *dst + *sceneDatPal;
+			*dst = MAX<int8>(0, MIN<int8>(col, 63));
+			++dst;
+			++sceneDatPal;
+			++j;
+			if (j > 3) {
+				sceneDatPal = &_sceneDatPalette[layer * 3];
+				j = 0;
+			}
+		}
+
+		_screen->setScreenPalette(_screen->getPalette(0));
+		_charPalUpdate = false;
+	}
+}
+
+#pragma mark -
+
+void KyraEngine_v3::update() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::update()");
+	//XXX
+
+	_screen->updateScreen();
+}
+
+#pragma mark -
+
+int KyraEngine_v3::getDrawLayer(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getDrawLayer(%d, %d)", x, y);
+	int layer = _screen->getLayer(x, y) - 1;
+	layer = _sceneDatLayerTable[layer];
+	return MAX(0, MIN(layer, 6));
+}
+
+int KyraEngine_v3::getScale(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getScale(%d, %d)", x, y);
+	return _scaleTable[_screen->getLayer(x, y) - 1];
 }
 
 #pragma mark -
