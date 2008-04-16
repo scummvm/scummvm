@@ -148,9 +148,9 @@ public:
 	void updateCD();
 
 	// Quit
-	virtual void quit(); // overloaded by CE backend
+	void quit();
 
-	virtual void getTimeAndDate(struct tm &t) const;
+	void getTimeAndDate(struct tm &t) const;
 	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling
@@ -175,17 +175,17 @@ public:
 	void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
+	const GraphicsMode *getSupportedGraphicsModes() const;
+	int getDefaultGraphicsMode() const;
+	bool setGraphicsMode(int mode);
+	int getGraphicsMode() const;
 
-	virtual bool openCD(int drive);
-	virtual int getOutputSampleRate() const;
+	bool openCD(int drive);
+	int getOutputSampleRate() const;
 
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
 
 	void displayMessageOnOSD(const char *msg);
 
@@ -367,6 +367,8 @@ protected:
 	MutexRef _graphicsMutex;
 
 	Common::SaveFileManager *_savefile;
+	FilesystemFactory *getFilesystemFactory();
+
 	Audio::Mixer *_mixer;
 
 	SDL_TimerID _timerID;
@@ -396,7 +398,7 @@ protected:
 
 	void setZoomOnMouse(); // GP2X: On > 240 high games zooms on the mouse + radius.
 
-	virtual bool saveScreenshot(const char *filename);
+	bool saveScreenshot(const char *filename);
 
 	int effectiveScreenHeight() const { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
 

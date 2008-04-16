@@ -32,12 +32,14 @@
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "backends/platform/gp2x/gp2x-mem.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/util.h"
 #include "base/main.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/plugins/posix/posix-provider.h"
+#include "backends/fs/posix/posix-fs-factory.h" // for getFilesystemFactory()
 #include "sound/mixer.h"
 
 #include <stdio.h>
@@ -46,7 +48,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <time.h>
+#include <time.h> // for getTimeAndDate()
 
 // Disable for normal serial logging.
 #define DUMP_STDOUT
@@ -55,7 +57,11 @@
 #include "config.h"
 #endif
 
-#define	SAMPLES_PER_SEC	11025
+#define SAMPLES_PER_SEC 11025
+//#define SAMPLES_PER_SEC 22050
+//#define SAMPLES_PER_SEC 44100
+
+
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
@@ -63,9 +69,15 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 }
 
 int main(int argc, char *argv[]) {
-	extern OSystem *OSystem_GP2X_create();
-	g_system = OSystem_GP2X_create();
+	//extern OSystem *OSystem_GP2X_create();
+	//g_system = OSystem_GP2X_create();
+	g_system = new OSystem_GP2X();
 	assert(g_system);
+
+	// Check if Plugins are enabled (Using the hacked up GP2X provider)
+	#ifdef DYNAMIC_MODULES
+		PluginManager::instance().addPluginProvider(new GP2XPluginProvider());
+	#endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
@@ -82,13 +94,13 @@ void OSystem_GP2X::initBackend() {
 
 	ConfMan.setInt("joystick_num", 0);
 	int joystick_num = ConfMan.getInt("joystick_num");
-	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
+	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_EVENTTHREAD;
 
-	if (ConfMan.hasKey("disable_sdl_parachute"))
-		sdlFlags |= SDL_INIT_NOPARACHUTE;
+	//if (ConfMan.hasKey("disable_sdl_parachute"))
+	//	sdlFlags |= SDL_INIT_NOPARACHUTE;
 
-	if (joystick_num > -1)
-		sdlFlags |= SDL_INIT_JOYSTICK;
+	//if (joystick_num > -1)
+	//	sdlFlags |= SDL_INIT_JOYSTICK;
 
 	if (SDL_Init(sdlFlags) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -119,6 +131,21 @@ void OSystem_GP2X::initBackend() {
 				warning("mkdir for '%s' failed!", savePath);
 
 	ConfMan.registerDefault("savepath", savePath);
+
+	// Setup default extra data path for engine data files to be workingdir/engine-data
+
+	char enginedataPath[PATH_MAX+1];
+
+	strcpy(enginedataPath, workDirName);
+	strcat(enginedataPath, "/engine-data");
+	printf("Current engine-data directory: %s\n", enginedataPath);
+	//struct stat sb;
+	if (stat(enginedataPath, &sb) == -1)
+		if (errno == ENOENT) // Create the dir if it does not exist
+			if (mkdir(enginedataPath, 0755) != 0)
+				warning("mkdir for '%s' failed!", enginedataPath);
+
+	Common::File::addDefaultDirectory(enginedataPath);
 
 	// Note: Review and clean this, it's OTT at the moment.
 
@@ -316,6 +343,10 @@ Common::SaveFileManager *OSystem_GP2X::getSavefileManager() {
 	return _savefile;
 }
 
+FilesystemFactory *OSystem_GP2X::getFilesystemFactory() {
+	return &POSIXFilesystemFactory::instance();
+}
+
 //void OSystem_GP2X::setTimerCallback(TimerProc callback, int timer) {
 //	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 //}
@@ -374,9 +405,23 @@ void OSystem_GP2X::quit() {
 		SDL_JoystickClose(_joystick);
 	//CloseRam();
 	GP2X_device_deinit();
+
+	SDL_RemoveTimer(_timerID);
+	SDL_CloseAudio();
+
+	free(_dirtyChecksums);
+	free(_currentPalette);
+	free(_cursorPalette);
+	free(_mouseData);
+
+	delete _savefile;
+	delete _mixer;
+	delete _timer;
+
 	SDL_Quit();
-	//chdir("/usr/gp2x");
-	//execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
+
+	delete getEventManager();
+
 	exit(0);
 }
 

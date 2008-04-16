@@ -308,33 +308,6 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 		case SDL_KEYDOWN:{
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
-			// Alt-Return and Alt-Enter toggle full screen mode
-			if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
-			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-				setFullscreenMode(!_fullscreen);
-				break;
-			}
-
-			// Alt-S: Create a screenshot
-			if (b == Common::KBD_ALT && ev.key.keysym.sym == 's') {
-				char filename[20];
-
-				for (int n = 0;; n++) {
-					SDL_RWops *file;
-
-					sprintf(filename, "scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename, "r");
-					if (!file)
-						break;
-					SDL_RWclose(file);
-				}
-				if (saveScreenshot(filename))
-					printf("Saved '%s'\n", filename);
-				else
-					printf("Could not save screenshot!\n");
-				break;
-			}
-
 			const bool event_complete = remapKey(ev,event);
 
 			if (event_complete)
@@ -452,9 +425,6 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						event.kbd.keycode = Common::KEYCODE_PERIOD;
 						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						}
-//						event.kbd.keycode = Common::KEYCODE_PERIOD;
-//						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-
 						break;
 					case GP2X_BUTTON_Y:
 						if (GP2X_BUTTON_STATE_L == TRUE) {
@@ -491,27 +461,29 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 					//	}
 					//	break;
 					case GP2X_BUTTON_VOLUP:
-						if (GP2X_BUTTON_STATE_L == TRUE) {
-							displayMessageOnOSD("Setting CPU Speed at 230MHz");
-							GP2X_setCpuspeed(200);
+						//if (GP2X_BUTTON_STATE_L == TRUE) {
+						//	displayMessageOnOSD("Setting CPU Speed at 230MHz");
+						//	GP2X_setCpuspeed(200);
 							//event.kbd.keycode = Common::KEYCODE_PLUS;
 							//event.kbd.ascii = mapKey(SDLK_PLUS, ev.key.keysym.mod, 0);
-						} else {
+						//} else {
 							GP2X_mixer_move_volume(1);
 							displayMessageOnOSD("Increasing Volume");
-						}
+						//}
 						break;
+
 					case GP2X_BUTTON_VOLDOWN:
-						if (GP2X_BUTTON_STATE_L == TRUE) {
-							displayMessageOnOSD("Setting CPU Speed at 60MHz");
-							GP2X_setCpuspeed(60);
+						//if (GP2X_BUTTON_STATE_L == TRUE) {
+						//	displayMessageOnOSD("Setting CPU Speed at 60MHz");
+						//	GP2X_setCpuspeed(60);
 							//event.kbd.keycode = Common::KEYCODE_MINUS;
 							//event.kbd.ascii = mapKey(SDLK_MINUS, ev.key.keysym.mod, 0);
-						} else {
+						//} else {
 							GP2X_mixer_move_volume(0);
 							displayMessageOnOSD("Decreasing Volume");
-						}
+						//}
 						break;
+
 				}
 			}
 			return true;
@@ -541,8 +513,8 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_Y:
-//						event.kbd.keycode = Common::KEYCODE_SPACE;
-//						event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+						event.kbd.keycode = Common::KEYCODE_SPACE;
+						event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_START:
 						event.kbd.keycode = Common::KEYCODE_RETURN;
