@@ -3246,7 +3246,7 @@ void ScreenEx::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFun
 			while (cW--) {
 				uint8 d = *src++;
 				uint8 t = _shapePages[0][dst - origDst] & 7;
-				if (unk1 < t || curY <= _maskMinY || curY >= _maskMaxY)
+				if (unk1 < t && (curY > _maskMinY && curY < _maskMaxY))
 					d = _shapePages[1][dst - origDst];
 				*dst++ = d;
 			}
@@ -3258,7 +3258,7 @@ void ScreenEx::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFun
 				uint8 d = *src++;
 				if (d) {
 					uint8 t = _shapePages[0][dst - origDst] & 7;
-					if (unk1 < t || curY <= _maskMinY || curY >= _maskMaxY)
+					if (unk1 < t && (curY > _maskMinY && curY < _maskMaxY))
 						d = _shapePages[1][dst - origDst];
 					*dst++ = d;
 				} else {
