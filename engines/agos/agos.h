@@ -1272,7 +1272,6 @@ public:
 	void oe1_getUserItem();
 	void oe1_whereTo();
 	void oe1_doorExit();
-	void oe1_saveGame();
 	void oe1_loadGame();
 	void oe1_clearUserItem();
 	void oe1_findMaster();

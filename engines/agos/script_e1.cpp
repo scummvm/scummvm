@@ -286,7 +286,7 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 		OPCODE(o_invalid),
 		/* 200 */
 		OPCODE(o_invalid),
-		OPCODE(oe1_saveGame),
+		OPCODE(o_invalid),
 		OPCODE(oe1_loadGame),
 		OPCODE(o_invalid),
 		/* 204 */
@@ -692,26 +692,10 @@ void AGOSEngine_Elvira1::oe1_doorExit() {
 	writeVariable(f, 255);
 }
 
-void AGOSEngine_Elvira1::oe1_saveGame() {
-	// 201: save game
-	uint16 stringId = getNextStringID();
-
-	debug(0, "oe1_saveGame: stub (%s)", getStringPtrByID(stringId));
-
-	// TODO: Add support for selecting slot
-	saveGame(1, (const char *)getStringPtrByID(stringId));
-}
-
 void AGOSEngine_Elvira1::oe1_loadGame() {
 	// 202: load game
 	uint16 stringId = getNextStringID();
-	debug(0, "oe1_loadGame: stub (%s)", (const char *)getStringPtrByID(stringId));
-
-	if (!scumm_stricmp("START", (const char *)getStringPtrByID(stringId))) {
-		loadGame("START", true);
-	} else {
-		loadGame((const char *)getStringPtrByID(stringId));
-	}
+	loadGame((const char *)getStringPtrByID(stringId), true);
 }
 
 void AGOSEngine_Elvira1::oe1_clearUserItem() {

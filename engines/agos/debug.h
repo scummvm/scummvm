@@ -367,8 +367,8 @@ static const char *const elvira1_opcodeNameTable[300] = {
 	"Www|SET_ADJ_NOUN",
 	"WW|ZONE_DISK",
 	/* 268 */
-	"|SAVE_GAME",
-	"|LOAD_GAME",
+	"|SAVE_USER_GAME",
+	"|LOAD_USER_GAME",
 	"|PRINT_STATS",
 	"|STOP_TUNE",
 	/* 272 */
