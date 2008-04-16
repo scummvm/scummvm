@@ -152,7 +152,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 	//XXX setCommandLineRestoreTimer(-1);
 	_sceneScriptState.regs[3] = 1;
-	//XXX enterNewSceneUnk1();
+	enterNewSceneUnk2(unk3);
 	if (queryGameFlag(0)) {
 		_runFlag = false;
 	} else {
@@ -261,7 +261,7 @@ void KyraEngine_v3::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	_mainCharacter.y1 = _mainCharacter.y2 = y2;
 	initSceneAnims(unk2);
 
-	if (_mainCharacter.sceneId == 9 && _soundDigital->isPlaying(_musicSoundChannel))
+	if (_mainCharacter.sceneId == 9 && !_soundDigital->isPlaying(_musicSoundChannel))
 		playMusicTrack(_sceneList[_mainCharacter.sceneId].sound, 0);
 	if (!unk2)
 		playMusicTrack(_sceneList[_mainCharacter.sceneId].sound, 0);
@@ -421,7 +421,7 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	_screen->loadBitmap(filename, 3, 3, 0);
 	musicUpdate(0);
 
-	Common::set_to(_sceneSpecialScriptState, _sceneSpecialScriptState+ARRAYSIZE(_sceneSpecialScriptState), false);
+	Common::set_to(_specialSceneScriptState, _specialSceneScriptState+ARRAYSIZE(_specialSceneScriptState), false);
 	_sceneEnterX1 = 160;
 	_sceneEnterY1 = 0;
 	_sceneEnterX2 = 296;

@@ -283,7 +283,7 @@ private:
 	ScriptData _sceneScriptData;
 	WSAMovieV2 *_wsaSlots[10];
 
-	bool _sceneSpecialScriptState[10];
+	bool _specialSceneScriptState[10];
 	ScriptState _sceneSpecialScripts[10];
 	uint32 _sceneSpecialScriptsTimer[10];
 
@@ -371,7 +371,12 @@ private:
 	int o3_setGameFlag(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_getRand(ScriptState *script);
+	int o3_defineRoomEntrance(ScriptState *script);
+	int o3_defineSceneAnim(ScriptState *script);
 	int o3_defineScene(ScriptState *script);
+	int o3_setSpecialSceneScriptState(ScriptState *script);
+	int o3_clearSpecialSceneScriptState(ScriptState *script);
+	int o3_querySpecialSceneScriptState(ScriptState *script);
 	int o3_setHiddenItemsEntry(ScriptState *script);
 	int o3_getHiddenItemsEntry(ScriptState *script);
 	int o3_dummy(ScriptState *script);

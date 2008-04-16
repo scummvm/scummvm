@@ -218,15 +218,9 @@ int KyraEngine_v3::go() {
 			break;
 
 		case 3:
-			_soundDigital->beginFadeOut(_musicSoundChannel, 60);
-			_screen->fadeToBlack();
-			_soundDigital->stopSound(_musicSoundChannel);
-			_musicSoundChannel = -1;
-			uninitMainMenu();
-			running = false;
-			break;
-
 		default:
+			fadeOutMusic(60);
+			_screen->fadeToBlack();
 			uninitMainMenu();
 			quitGame();
 			running = false;
@@ -421,7 +415,6 @@ void KyraEngine_v3::startup() {
 	musicUpdate(0);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
-	setGameFlag(0x216);
 
 	_gamePlayBuffer = new uint8[64000];
 	musicUpdate(0);

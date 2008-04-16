@@ -1143,9 +1143,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsScaleH = 0x100;
 	}
 
-	if ((flags & 0x2000) && _vm->gameFlags().gameID == GI_KYRA2) {
+	if ((flags & 0x2000) && _vm->gameFlags().gameID != GI_KYRA1)
 		va_arg(args, int);
-	}
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
 		&Screen::drawShapeMarginNoScaleUpwind,
@@ -1258,7 +1257,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
 
-	int colorTableColors = ((_vm->gameFlags().gameID == GI_KYRA2) && (shapeFlags & 4)) ? *src++ : 16;
+	int colorTableColors = ((_vm->gameFlags().gameID != GI_KYRA2) && (shapeFlags & 4)) ? *src++ : 16;
 	
 	if (!(flags & 0x8000) && (shapeFlags & 1))
 		_dsTable2 = src;

@@ -25,6 +25,8 @@
 
 #include "kyra/kyra_v3.h"
 #include "kyra/script.h"
+#include "kyra/screen_v3.h"
+#include "kyra/wsamovie.h"
 
 #include "common/endian.h"
 
@@ -72,6 +74,92 @@ int KyraEngine_v3::o3_getRand(ScriptState *script) {
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
+int KyraEngine_v3::o3_defineRoomEntrance(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	switch (stackPos(0)) {
+	case 0:
+		_sceneEnterX1 = stackPos(1);
+		_sceneEnterY1 = stackPos(2);
+		break;
+
+	case 1:
+		_sceneEnterX2 = stackPos(1);
+		_sceneEnterY2 = stackPos(2);
+		break;
+
+	case 2:
+		_sceneEnterX3 = stackPos(1);
+		_sceneEnterY3 = stackPos(2);
+		break;
+
+	case 3:
+		_sceneEnterX4 = stackPos(1);
+		_sceneEnterY4 = stackPos(2);
+		break;
+
+	default:
+		break;
+	}
+	return 0;
+}
+
+int KyraEngine_v3::o3_defineSceneAnim(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineSceneAnim(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
+		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7),
+		stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
+	const int animId = stackPos(0);
+	SceneAnim &anim = _sceneAnims[animId];
+
+	musicUpdate(0);
+
+	uint16 flags = anim.flags = stackPos(1);
+	int x = anim.x = stackPos(2);
+	int y = anim.y = stackPos(3);
+	int x2 = anim.x2 = stackPos(4);
+	int y2 = anim.y2 = stackPos(5);
+	int w = anim.width = stackPos(6);
+	int h = anim.height = stackPos(7);
+	anim.unk10 = stackPos(8);
+	anim.specialSize = stackPos(9);
+	anim.unk14 = stackPos(10);
+	anim.shapeIndex = stackPos(11);
+	const char *filename = stackPosString(12);
+
+	if (filename)
+		strcpy(anim.filename, filename);
+
+	if (flags & 8) {
+		_sceneAnimMovie[animId]->open(filename, 1, 0);
+		musicUpdate(0);
+		if (_sceneAnimMovie[animId]->opened()) {
+			anim.wsaFlag = 1;
+			if (x2 == -1)
+				x2 = _sceneAnimMovie[animId]->xAdd();
+			if (y2 == -1)
+				y2 = _sceneAnimMovie[animId]->xAdd();
+			if (w == -1)
+				w = _sceneAnimMovie[animId]->width();
+			if (h == -1)
+				h = _sceneAnimMovie[animId]->height();
+			if (x == -1)
+				x = (w >> 1) + x2;
+			if (y == -1)
+				y = y2 + h - 1;
+
+			anim.x = x;
+			anim.y = y;
+			anim.x2 = x2;
+			anim.y2 = y2;
+			anim.width = w;
+			anim.height = h;
+		}
+	}
+
+	musicUpdate(0);
+
+	return 9;
+}
+
 int KyraEngine_v3::o3_defineScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
 		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
@@ -96,6 +184,23 @@ int KyraEngine_v3::o3_defineScene(ScriptState *script) {
 	}
 
 	return 0;
+}
+
+int KyraEngine_v3::o3_setSpecialSceneScriptState(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
+	_specialSceneScriptState[stackPos(0)] = 1;
+	return 1;
+}
+
+int KyraEngine_v3::o3_clearSpecialSceneScriptState(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_clearSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
+	_specialSceneScriptState[stackPos(0)] = 0;
+	return 0;
+}
+
+int KyraEngine_v3::o3_querySpecialSceneScriptState(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
+	return _specialSceneScriptState[stackPos(0)];
 }
 
 int KyraEngine_v3::o3_setHiddenItemsEntry(ScriptState *script) {
@@ -255,11 +360,11 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x6c
 		Opcode(o3_dummy),
-		OpcodeUnImpl(),
+		Opcode(o3_defineRoomEntrance),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x70
-		OpcodeUnImpl(),
+		Opcode(o3_defineSceneAnim),
 		Opcode(o3_dummy),
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
@@ -297,10 +402,10 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
 		Opcode(o3_dummy),
-		OpcodeUnImpl(),
+		Opcode(o3_setSpecialSceneScriptState),
 		// 0x90
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_clearSpecialSceneScriptState),
+		Opcode(o3_querySpecialSceneScriptState),
 		Opcode(o3_dummy),
 		Opcode(o3_setHiddenItemsEntry),
 		// 0x94

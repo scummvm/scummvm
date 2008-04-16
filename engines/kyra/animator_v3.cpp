@@ -322,7 +322,7 @@ void KyraEngine_v3::updateCharacterAnim(int charId) {
 			_animObjects[i].needRefresh = true;
 	}
 
-	obj = deleteAnimListEntry(_animList, obj);
+	_animList = deleteAnimListEntry(_animList, obj);
 	if (_animList)
 		_animList = addToAnimListSorted(_animList, obj);
 	else
