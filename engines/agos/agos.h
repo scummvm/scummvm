@@ -140,8 +140,8 @@ enum EventType {
 	ANIMATE_INT   = 1 << 1,
 	ANIMATE_EVENT = 1 << 2,
 	SCROLL_EVENT  = 1 << 3,
-	IMAGE_EVENT2  = 1 << 4,
-	IMAGE_EVENT3  = 1 << 5
+	PLAYER_DAMAGE_EVENT = 1 << 4,
+	MONSTER_DAMAGE_EVENT = 1 << 5
 };
 
 struct AGOSGameDescription;
@@ -1113,8 +1113,8 @@ protected:
 	void animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite);
 	void scrollEvent();
 	void drawStuff(const byte *src, uint offs);
-	void imageEvent2(VgaTimerEntry * vte, uint dx);
-	void imageEvent3(VgaTimerEntry * vte, uint dx);
+	void playerDamageEvent(VgaTimerEntry * vte, uint dx);
+	void monsterDamageEvent(VgaTimerEntry * vte, uint dx);
 
 	VgaSprite *findCurSprite();
 
@@ -1353,8 +1353,8 @@ public:
 	void oe2_playEffect();
 	void oe2_getDollar2();
 	void oe2_setSRExit();
-	void oe2_unk177();
-	void oe2_unk178();
+	void oe2_printPlayerDamage();
+	void oe2_printMonsterDamage();
 	void oe2_isAdjNoun();
 	void oe2_b2Set();
 	void oe2_b2Clear();

@@ -257,12 +257,12 @@ void AGOSEngine::processVgaEvents() {
 				scrollEvent();
 				vte = _nextVgaTimerToProcess;
 				break;
-			case IMAGE_EVENT2:
-				imageEvent2(vte, curZoneNum);
+			case PLAYER_DAMAGE_EVENT:
+				playerDamageEvent(vte, curZoneNum);
 				vte = _nextVgaTimerToProcess;
 				break;
-			case IMAGE_EVENT3:
-				imageEvent3(vte, curZoneNum);
+			case MONSTER_DAMAGE_EVENT:
+				monsterDamageEvent(vte, curZoneNum);
 				vte = _nextVgaTimerToProcess;
 				break;
 			default:
@@ -378,7 +378,7 @@ void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 	_system->unlockScreen();
 }
 
-void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
+void AGOSEngine::playerDamageEvent(VgaTimerEntry * vte, uint dx) {
 	// Draws damage indicator gauge when player hit
 	_nextVgaTimerToProcess = vte + 1;
 
@@ -400,7 +400,7 @@ void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
 	}
 }
 
-void AGOSEngine::imageEvent3(VgaTimerEntry * vte, uint dx) {
+void AGOSEngine::monsterDamageEvent(VgaTimerEntry * vte, uint dx) {
 	// Draws damage indicator gauge when monster hit
 	_nextVgaTimerToProcess = vte + 1;
 

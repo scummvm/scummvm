@@ -255,8 +255,8 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(oe2_getDollar2),
 		/* 176 */
 		OPCODE(oe2_setSRExit),
-		OPCODE(oe2_unk177),
-		OPCODE(oe2_unk178),
+		OPCODE(oe2_printPlayerDamage),
+		OPCODE(oe2_printMonsterDamage),
 		OPCODE(oe2_isAdjNoun),
 		/* 180 */
 		OPCODE(oe2_b2Set),
@@ -624,28 +624,24 @@ void AGOSEngine_Elvira2::oe2_setSRExit() {
 	setSRExit(i, n, d, s);
 }
 
-void AGOSEngine_Elvira2::oe2_unk177() {
-	// 177: Set damage indicator event
+void AGOSEngine_Elvira2::oe2_printPlayerDamage() {
+	// 177: set player damage event
 	uint a = getVarOrByte();
 	if (_opcode177Var1 && !_opcode177Var2 && a != 0 && a <= 10) {
-		addVgaEvent(_vgaBaseDelay, IMAGE_EVENT2, NULL, 0, a);
+		addVgaEvent(_vgaBaseDelay, PLAYER_DAMAGE_EVENT, NULL, 0, a);
 		_opcode177Var2 = 0;
 		_opcode177Var1 = 0;
 	}
-
-	debug(0, "oe2_unk177: stub (%d)", a);
 }
 
-void AGOSEngine_Elvira2::oe2_unk178() {
-	// 178: set unknown vga event
+void AGOSEngine_Elvira2::oe2_printMonsterDamage() {
+	// 178: set monster damage event
 	uint a = getVarOrByte();
 	if (_opcode178Var1 && !_opcode178Var2 && a != 0 && a <= 10) {
-		addVgaEvent(_vgaBaseDelay, IMAGE_EVENT3, NULL, 0, a);
+		addVgaEvent(_vgaBaseDelay, MONSTER_DAMAGE_EVENT, NULL, 0, a);
 		_opcode178Var2 = 0;
 		_opcode178Var1 = 0;
 	}
-
-	debug(0, "oe2_unk178: stub (%d)", a);
 }
 
 void AGOSEngine_Elvira2::oe2_isAdjNoun() {
