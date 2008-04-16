@@ -269,6 +269,7 @@ protected:
 	uint8 *_sjisTempPage;
 	uint8 *_sjisTempPage2;
 	uint8 *_sjisSourceChar;
+	uint8 _sjisInvisibleColor;
 
 	uint8 *_screenPalette;
 	uint8 *_palettes[6];

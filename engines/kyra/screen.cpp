@@ -34,7 +34,7 @@
 namespace Kyra {
 
 Screen::Screen(KyraEngine *vm, OSystem *system)
-	: _system(system), _vm(vm) {
+: _system(system), _vm(vm), _sjisInvisibleColor(0) {
 }
 
 Screen::~Screen() {
@@ -156,16 +156,17 @@ void Screen::setResolution() {
 				_system->initSize(640, 400);
 		_system->endGFXTransaction();
 
+		_useOverlays = true;
+		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
+		_sjisInvisibleColor = (_vm->gameFlags().gameID == GI_KYRA1) ? 0x80 : 0xF6;		
+		
 		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
 			if (!_sjisOverlayPtrs[i]) {
 				_sjisOverlayPtrs[i] = new uint8[SCREEN_OVL_SJIS_SIZE];
 				assert(_sjisOverlayPtrs[i]);
-				memset(_sjisOverlayPtrs[i], 0x80, SCREEN_OVL_SJIS_SIZE);
+				memset(_sjisOverlayPtrs[i], _sjisInvisibleColor, SCREEN_OVL_SJIS_SIZE);
 			}
 		}
-		_useOverlays = true;
-		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
-
 		if (_useSJIS) {
 			if (!_sjisFontData) {
 				_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
@@ -281,7 +282,7 @@ void Screen::mergeOverlay(int x, int y, int w, int h) {
 	while (h--) {
 		for (x = 0; x < w; ++x, ++dst) {
 			byte col = *src++;
-			if (col != 0x80)
+			if (col != _sjisInvisibleColor)
 				*dst = col;
 		}
 		dst += add;
@@ -2730,7 +2731,7 @@ void Screen::clearOverlayPage(int page) {
 	byte *dst = getOverlayPtr(page);
 	if (!dst)
 		return;
-	memset(dst, 0x80, SCREEN_OVL_SJIS_SIZE);
+	memset(dst, _sjisInvisibleColor, SCREEN_OVL_SJIS_SIZE);
 }
 
 void Screen::clearOverlayRect(int page, int x, int y, int w, int h) {
@@ -2745,10 +2746,10 @@ void Screen::clearOverlayRect(int page, int x, int y, int w, int h) {
 	dst += y * 640 + x;
 
 	if (w == 640 && h == 400) {
-		memset(dst, 0x80, SCREEN_OVL_SJIS_SIZE);
+		memset(dst, _sjisInvisibleColor, SCREEN_OVL_SJIS_SIZE);
 	} else {
 		while (h--) {
-			memset(dst, 0x80, w);
+			memset(dst, _sjisInvisibleColor, w);
 			dst += 640;
 		}
 	}
@@ -2874,7 +2875,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	int color1 = _textColorsMap[1];
 	int color2 = _textColorsMap[0];
 
-	memset(_sjisTempPage2, 0x80, 324);
+	memset(_sjisTempPage2, _sjisInvisibleColor, 324);
 	memset(_sjisSourceChar, 0, 36);
 	memcpy(_sjisSourceChar, _sjisFontData + 0x20 * SJIStoFMTChunk(c & 0xff, c >> 8), 0x20);
 
@@ -2893,7 +2894,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	destPage += y * 640 + x;
 	uint8 *src = 0, *dst = 0;
 
-	if (color2 != 0x80) {
+	if (color2 != _sjisInvisibleColor) {
 		// draw color2 shadow
 		src = _sjisSourceChar;
 		dst = _sjisTempPage2;
@@ -2951,7 +2952,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 		for (int i = 0; i < 48; i++)
 			*dst++ ^= *src++;
 
-		memset(_sjisTempPage2, 0x80, 324);
+		memset(_sjisTempPage2, _sjisInvisibleColor, 324);
 		src = _sjisTempPage;
 		dst = _sjisTempPage2;
 
@@ -2995,7 +2996,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 
 	src = _sjisTempPage;
 	dst = _sjisTempPage2;
-	if (color2 != 0x80)
+	if (color2 != _sjisInvisibleColor)
 		color1 = (color1 & 0xff) | 0x100;
 
 	uint8 height = SJIS_CHARSIZE * 3;
@@ -3032,7 +3033,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 
 	for (int i = 0; i < SJIS_CHARSIZE; i++) {
 		for (int ii = 0; ii < SJIS_CHARSIZE; ii++) {
-			if (*src != 0x80)
+			if (*src != _sjisInvisibleColor)
 				*dst = *src;
 			src++;
 			dst++;
