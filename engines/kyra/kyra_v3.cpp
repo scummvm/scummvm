@@ -896,7 +896,7 @@ void KyraEngine_v3::runLoop() {
 }
 
 void KyraEngine_v3::handleInput(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::handleInput(%d, %d)"), x, y;
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::handleInput(%d, %d)", x, y);
 }
 
 void KyraEngine_v3::update() {
