@@ -1069,7 +1069,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
-	uint32 curTime = 0;
+	uint32 curTime = getTime();
 	uint32 gsc = _gameStoppedClock;
 
 	_lockWord |= 0x100;
@@ -1084,7 +1084,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 
 	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
-	f->writeUint32BE(0);
+	f->writeUint32BE(curTime);
 	f->writeUint32BE(0);
 
 	i = 0;
