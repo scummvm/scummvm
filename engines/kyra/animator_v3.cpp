@@ -225,7 +225,7 @@ void KyraEngine_v3::drawCharacterAnimObject(AnimObj *obj, int x, int y, int laye
 	_screen->drawShape(2, getShapePtr(421), _mainCharacter.x3, _mainCharacter.y3, 2, obj->flags | 304, _paletteOverlay, 3, layer, _charScale, _charScale);
 	uint8 *shape = getShapePtr(_mainCharacter.animFrame);
 	if (shape)
-		_screen->drawShape(2, shape, x, y, 2, obj->flags | 2, layer, _charScale, _charScale);
+		_screen->drawShape(2, shape, x, y, 2, obj->flags | 4, layer, _charScale, _charScale);
 }
 
 void KyraEngine_v3::refreshAnimObjects(int force) {
