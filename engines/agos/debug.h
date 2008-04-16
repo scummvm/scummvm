@@ -501,7 +501,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	"W|COMMENT",
 	/* 88 */
 	"|STOP_ANIMATION",
-	"T|LOAD_USER_GAME",
+	"T|LOAD_GAME",
 	"IB|GET_PARENT",
 	"IB|GET_NEXT",
 	/* 92 */
@@ -734,7 +734,7 @@ static const char *const waxworks_opcodeNameTable[256] = {
 	"W|COMMENT",
 	/* 88 */
 	"|STOP_ANIMATION",
-	"T|LOAD_USER_GAME",
+	"T|LOAD_GAME",
 	"IB|GET_PARENT",
 	"IB|GET_NEXT",
 	/* 92 */

@@ -145,7 +145,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_comment),
 		/* 88 */
 		OPCODE(o_invalid),
-		OPCODE(oe2_loadGame),
+		OPCODE(oe1_loadGame),
 		OPCODE(o_getParent),
 		OPCODE(o_getNext),
 		/* 92 */
@@ -320,17 +320,6 @@ void AGOSEngine_Elvira2::oe2_isCalled() {
 	Item *i = getNextItemPtr();
 	uint stringId = getNextStringID();
 	setScriptCondition(i->itemName == stringId);
-}
-
-void AGOSEngine_Elvira2::oe2_loadGame() {
-	// 89: load game
-	uint16 stringId = getNextStringID();
-
-	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
-		loadGame(getFileName(GAME_RESTFILE), true);
-	} else {
-		loadGame((const char *)getStringPtrByID(stringId));
-	}
 }
 
 void AGOSEngine_Elvira2::oe2_menu() {

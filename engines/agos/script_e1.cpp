@@ -693,7 +693,7 @@ void AGOSEngine_Elvira1::oe1_doorExit() {
 }
 
 void AGOSEngine_Elvira1::oe1_loadGame() {
-	// 202: load game
+	// 202: load restart state
 	uint16 stringId = getNextStringID();
 	loadGame((const char *)getStringPtrByID(stringId), true);
 }
