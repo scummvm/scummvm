@@ -2372,7 +2372,7 @@ bool Screen::isMouseVisible() const {
 }
 
 void Screen::setShapePages(int page1, int page2, int minY, int maxY) {
-	debugC(9, kDebugLevelScreen, "Screen::setShapePages(%d, %d)", page1, page2, minY, maxY);
+	debugC(9, kDebugLevelScreen, "Screen::setShapePages(%d, %d, %d, %d)", page1, page2, minY, maxY);
 	_shapePages[0] = _pagePtrs[page1];
 	_shapePages[1] = _pagePtrs[page2];
 	_maskMinY = minY;
