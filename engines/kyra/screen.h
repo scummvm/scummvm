@@ -200,7 +200,7 @@ public:
 
 	void setAnimBlockPtr(int size);
 
-	void setShapePages(int page1, int page2);
+	void setShapePages(int page1, int page2, int minY = -1, int maxY = 321);
 
 	byte getShapeFlag1(int x, int y);
 	byte getShapeFlag2(int x, int y);
@@ -216,6 +216,7 @@ public:
 	int _curPage;
 	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
+	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
 	bool _disableScreen;
 

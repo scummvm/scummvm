@@ -1111,7 +1111,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsTable = va_arg(args, uint8*);
 		_dsTableLoopCount = va_arg(args, int);
 		if (!_dsTableLoopCount)
-			flags &= 0xFFFFFEFF;
+			flags &= ~0x100;
 	}
 
 	if (flags & 0x1000) {
@@ -1205,6 +1205,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int ppc = (flags >> 8) & 0x3F;
 	_dsPlot = dsPlotFunc[ppc];
+	DsPlotFunc dsPlot2 = dsPlotFunc[ppc], dsPlot3 = dsPlotFunc[ppc];
+	if (flags & 0x800)
+		dsPlot3 = dsPlotFunc[((flags >> 8) & 0xF7) & 0x3F];
 
 	if (!_dsPlot) {
 		warning("Missing drawShape plotting method type %d", ppc);
@@ -1212,6 +1215,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		return;
 	}
 
+	int curY = y;
 	const uint8 *src = shapeData;
 	uint8 *dst = _dsDstPage = getPagePtr(pageNum);
 
@@ -1257,7 +1261,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
 
-	int colorTableColors = ((_vm->gameFlags().gameID != GI_KYRA2) && (shapeFlags & 4)) ? *src++ : 16;
+	int colorTableColors = ((_vm->gameFlags().gameID != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
 	
 	if (!(flags & 0x8000) && (shapeFlags & 1))
 		_dsTable2 = src;
@@ -1370,6 +1374,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	uint8 *d = dst;
 
 	while (shapeHeight--) {
+		++curY;
+
+		bool normalPlot = true;
+		if (flags & 0x800)
+			normalPlot = (curY > _maskMinY && curY < _maskMaxY);
+
 		while (!(scaleCounterV & 0xff00)) {
 			scaleCounterV += _dsScaleH;
 			if (!(scaleCounterV & 0xff00)) {
@@ -1389,6 +1399,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
+					_dsPlot = normalPlot ? dsPlot2 : dsPlot3;
 					(this->*_dsProcessLine)(d, s, cnt, scaleState);
 				}
 				cnt += _dsOffscreenRight;
@@ -2360,10 +2371,12 @@ bool Screen::isMouseVisible() const {
 	return _mouseLockCount == 0;
 }
 
-void Screen::setShapePages(int page1, int page2) {
-	debugC(9, kDebugLevelScreen, "Screen::setShapePages(%d, %d)", page1, page2);
+void Screen::setShapePages(int page1, int page2, int minY, int maxY) {
+	debugC(9, kDebugLevelScreen, "Screen::setShapePages(%d, %d)", page1, page2, minY, maxY);
 	_shapePages[0] = _pagePtrs[page1];
 	_shapePages[1] = _pagePtrs[page2];
+	_maskMinY = minY;
+	_maskMaxY = maxY;
 }
 
 void Screen::setMouseCursor(int x, int y, byte *shape) {

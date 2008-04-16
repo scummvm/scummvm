@@ -358,7 +358,7 @@ void KyraEngine_v3::loadSceneMsc() {
 	_maskPageMinY = minY;
 	_maskPageMaxY = minY + height - 1;
 
-	_screen->setShapePages(3, 5);
+	_screen->setShapePages(5, 3, _maskPageMinY, _maskPageMaxY);
 
 	musicUpdate(0);
 	_screen->loadBitmap(filename, 5, 5, 0, true);
