@@ -1820,7 +1820,7 @@ void ScummEngine_v72he::o72_deleteFile() {
 	copyScriptString(buffer, sizeof(buffer));
 	const char *filename = (char *)buffer + convertFilePath(buffer);
 
-	debug(1, "stub o72_deleteFile(%s)", filename);
+	debug(1, "o72_deleteFile(%s)", filename);
 
 	_saveFileMan->removeSavefile(filename);
 }
@@ -1836,7 +1836,7 @@ void ScummEngine_v72he::o72_rename() {
 
 	_saveFileMan->renameSavefile(oldFilename, newFilename);
 
-	debug(1, "stub o72_rename(%s to %s)", oldFilename, newFilename);
+	debug(1, "o72_rename(%s to %s)", oldFilename, newFilename);
 }
 
 void ScummEngine_v72he::o72_getPixel() {

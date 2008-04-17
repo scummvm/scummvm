@@ -1571,7 +1571,6 @@ void ScummEngine_v100he::o100_redimArray() {
 
 void ScummEngine_v100he::o100_roomOps() {
 	int a, b, c, d, e;
-	byte filename[100];
 
 	byte subOp = fetchScriptByte();
 
@@ -1635,9 +1634,17 @@ void ScummEngine_v100he::o100_roomOps() {
 		break;
 
 	case 137:
-		copyScriptString(filename, sizeof(filename));
+		byte buffer[256];
+		int r;
+
+		copyScriptString((byte *)buffer, sizeof(buffer));
+
+		r = convertFilePath(buffer);
+		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
+		debug(1, "o100_roomOps: case 137: filename %s", _saveLoadFileName);
+
 		_saveLoadFlag = pop();
-		_saveLoadSlot = 1;
+		_saveLoadSlot = 255;
 		_saveTemporaryState = true;
 		break;
 
