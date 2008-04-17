@@ -685,24 +685,17 @@ bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableRead
 		uint32 filename = stream.readUint32LE();
 		uint32 offset = stream.readUint32LE();
 
-		entry.offset = offset;
-		entry.size = 0;
+		entry.offset = offset+4;
 
 		char realFilename[20];
 		snprintf(realFilename, 20, "%.08u.AUD", filename);
 
+		uint32 curOffset = stream.pos();
+		stream.seek(entry.offset+2, SEEK_SET);
+		entry.size = stream.readUint32LE();
+		stream.seek(curOffset, SEEK_SET);
+
 		files.push_back(FileList::value_type(realFilename, entry));
-	}
-
-	Common::sort(files.begin(), files.end(), ResLoaderTlk::sortTlkFileList);
-
-	for (FileList::iterator iter = files.begin(); iter != files.end(); ++iter) {
-		FileList::const_iterator next = ResLoaderTlk::nextFile(files, iter);
-		uint32 endOffset = (next == files.end() ? stream.size() : next->entry.offset);
-	
-		assert(endOffset >= iter->entry.offset);
-
-		iter->entry.size = endOffset - iter->entry.offset;
 	}
 
 	return true;
@@ -715,20 +708,6 @@ Common::SeekableReadStream *ResLoaderTlk::loadFileFromArchive(const Common::Stri
 	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
 	assert(stream);
 	return stream;
-}
-
-bool ResLoaderTlk::sortTlkFileList(const File &l, const File &r) {
-	return (l.entry.offset < r.entry.offset);
-}
-
-ResLoaderTlk::FileList::const_iterator ResLoaderTlk::nextFile(const FileList &list, FileList::const_iterator iter) {
-	ResArchiveLoader::FileList::const_iterator next = iter;
-	while ((++next) != list.end()) {
-		if (next->entry.offset != iter->entry.offset)
-			return next;
-	}
-
-	return next;
 }
 
 #pragma mark -
