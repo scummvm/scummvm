@@ -319,21 +319,22 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 #pragma mark -
 
 SoundDigital::SoundDigital(KyraEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {
-	memset(_sounds, 0, sizeof(_sounds));
+	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
+		_sounds[i].stream = 0;
 }
 
 SoundDigital::~SoundDigital() {
-	for (int i = 0; i < SOUND_STREAMS; ++i)
+	for (int i = 0; i < ARRAYSIZE(_sounds); ++i)
 		stopSound(i);
 }
 
 int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type, bool loop, bool fadeIn, int channel) {
 	Sound *use = 0;
-	if (channel != -1 && channel < SOUND_STREAMS) {
+	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
 		use = &_sounds[channel];
 	} else {
-		for (channel = 0; channel < SOUND_STREAMS; ++channel) {
+		for (channel = 0; channel < ARRAYSIZE(_sounds); ++channel) {
 			if (!isPlaying(channel)) {
 				stopSound(channel);
 				use = &_sounds[channel];
@@ -374,7 +375,7 @@ bool SoundDigital::isPlaying(int channel) {
 	if (channel == -1)
 		return false;
 
-	assert(channel >= 0 && channel < SOUND_STREAMS);
+	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
 
 	if (!_sounds[channel].stream)
 		return false;
@@ -383,13 +384,13 @@ bool SoundDigital::isPlaying(int channel) {
 }
 
 void SoundDigital::stopSound(int channel) {
-	assert(channel >= 0 && channel < SOUND_STREAMS);
+	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
 	_mixer->stopHandle(_sounds[channel].handle);
 	_sounds[channel].stream = 0;
 }
 
 void SoundDigital::stopAllSounds() {
-	for (int i = 0; i < SOUND_STREAMS; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_sounds); ++i) {
 		if (isPlaying(i))
 			stopSound(i);
 	}

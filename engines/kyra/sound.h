@@ -490,9 +490,6 @@ private:
 };
 
 // Digital Audio
-
-#define SOUND_STREAMS 4
-
 class AUDStream;
 
 /**
@@ -563,7 +560,7 @@ private:
 	struct Sound {
 		Audio::SoundHandle handle;
 		AUDStream *stream;
-	} _sounds[SOUND_STREAMS];
+	} _sounds[4];
 };
 
 } // end of namespace Kyra
