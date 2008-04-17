@@ -682,13 +682,13 @@ bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableRead
 		entry.preload = false;
 		entry.prot = false;
 
-		uint32 filename = stream.readUint32LE();
-		uint32 offset = stream.readUint32LE();
+		uint32 resFilename = stream.readUint32LE();
+		uint32 resOffset = stream.readUint32LE();
 
-		entry.offset = offset+4;
+		entry.offset = resOffset+4;
 
 		char realFilename[20];
-		snprintf(realFilename, 20, "%.08u.AUD", filename);
+		snprintf(realFilename, 20, "%.08u.AUD", resFilename);
 
 		uint32 curOffset = stream.pos();
 		stream.seek(entry.offset+2, SEEK_SET);
