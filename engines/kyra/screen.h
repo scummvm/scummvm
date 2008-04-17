@@ -200,7 +200,7 @@ public:
 
 	void setAnimBlockPtr(int size);
 
-	void setShapePages(int page1, int page2, int minY = -1, int maxY = 321);
+	void setShapePages(int page1, int page2, int minY = -1, int maxY = 201);
 
 	byte getShapeFlag1(int x, int y);
 	byte getShapeFlag2(int x, int y);
