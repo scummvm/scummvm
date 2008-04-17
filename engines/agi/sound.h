@@ -215,7 +215,7 @@ struct IIgsChannelInfo {
 	void rewind(); ///< Rewinds the sound playing on this channel to its start
 	void setChannelVolume(uint8 volume); ///< Sets the channel volume
 	void setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample); ///< Sets the instrument to be used on this channel
-	void noteOn(uint8 note, uint8 velocity); ///< Starts playing a note on this channel
+	void noteOn(uint8 noteParam, uint8 velocity); ///< Starts playing a note on this channel
 	void noteOff(uint8 velocity); ///< Releases the note on this channel
 	void stop(); ///< Stops the note playing on this channel instantly
 	bool playing(); ///< Is there a note playing on this channel?
