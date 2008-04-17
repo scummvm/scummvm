@@ -386,7 +386,7 @@ void KyraEngine_v3::fadeOutMusic(int ticks) {
 	}
 }
 
-void KyraEngine_v3::playSoundEffect(uint32 item, int volume) {
+void KyraEngine_v3::playSoundEffect(int item, int volume) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::playSoundEffect(%d, %d)", item, volume);
 	if (_sfxFileMap[item*2+0] != 0xFF) {
 		char filename[16];
@@ -1211,20 +1211,6 @@ int KyraEngine_v3::getScale(int x, int y) {
 }
 
 #pragma mark -
-
-int KyraEngine_v3::getMaxFileSize(const char *file) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::getMaxFileSize(%s)", file);
-	int size = 0;
-
-	char buffer[32];
-
-	for (int i = 0; i < _languageExtensionSize; ++i) {
-		strncpy(buffer, file, 32);
-		size = MAX<uint32>(size, _res->getFileSize(appendLanguage(buffer, i, sizeof(buffer))));
-	}
-
-	return size + 20;
-}
 
 char *KyraEngine_v3::appendLanguage(char *buf, int lang, int bufSize) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::appendLanguage([%p|'%s'], %d, %d)", (const void*)buf, buf, lang, bufSize);

@@ -120,7 +120,7 @@ private:
 	int musicUpdate(int forceRestart);
 	void fadeOutMusic(int ticks);
 
-	void playSoundEffect(uint32 item, int priority);
+	void playSoundEffect(int item, int volume);
 
 	static const uint8 _sfxFileMap[];
 	static const int _sfxFileMapSize;
@@ -457,7 +457,6 @@ private:
 	static const char *_languageExtension[];
 	static const int _languageExtensionSize;
 
-	int getMaxFileSize(const char *file);
 	char *appendLanguage(char *buf, int lang, int bufSize);
 
 	int loadLanguageFile(const char *file, uint8 *&buffer);
