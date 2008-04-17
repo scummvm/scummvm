@@ -312,7 +312,11 @@ protected:
 	void drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
 
 	void drawShapePlotType0(uint8 *dst, uint8 cmd);
+	void drawShapePlotType1(uint8 *dst, uint8 cmd);
+	void drawShapePlotType3_7(uint8 *dst, uint8 cmd);	
 	void drawShapePlotType4(uint8 *dst, uint8 cmd);
+	void drawShapePlotType5(uint8 *dst, uint8 cmd);
+	void drawShapePlotType6(uint8 *dst, uint8 cmd);
 	void drawShapePlotType8(uint8 *dst, uint8 cmd);
 	void drawShapePlotType9(uint8 *dst, uint8 cmd);
 	void drawShapePlotType11_15(uint8 *dst, uint8 cmd);

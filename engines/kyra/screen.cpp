@@ -1180,18 +1180,22 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	};
 
 	static const DsPlotFunc dsPlotFunc[] = {
-		&Screen::drawShapePlotType0,	// used by Kyra 1 + 2
-		0, 0, 0,
-		&Screen::drawShapePlotType4,	// used by Kyra 1 + 2
-		0, 0, 0,
-		&Screen::drawShapePlotType8,	// used by Kyra 2
-		&Screen::drawShapePlotType9,	// used by Kyra 1
+		&Screen::drawShapePlotType0,		// used by Kyra 1 + 2
+		&Screen::drawShapePlotType1,		// used by Kyra 3
+		0,
+		&Screen::drawShapePlotType3_7,		// used by Kyra 1 (invisibility)
+		&Screen::drawShapePlotType4,		// used by Kyra 1, 2 + 3
+		&Screen::drawShapePlotType5,		// used by Kyra 1
+		&Screen::drawShapePlotType6,		// used by Kyra 1 (invisibility)
+		&Screen::drawShapePlotType3_7,		// used by Kyra 1 (invisibility)
+		&Screen::drawShapePlotType8,		// used by Kyra 2
+		&Screen::drawShapePlotType9,		// used by Kyra 1 + 3
 		0, 
-		&Screen::drawShapePlotType11_15,// used by Kyra 1
-		&Screen::drawShapePlotType12,	// used by Kyra 2
-		&Screen::drawShapePlotType13,	// used by Kyra 1
-		&Screen::drawShapePlotType14,	// used by Kyra 1 (invisibility)
-		&Screen::drawShapePlotType11_15,
+		&Screen::drawShapePlotType11_15,	// used by Kyra 1 /invisibility)
+		&Screen::drawShapePlotType12,		// used by Kyra 2
+		&Screen::drawShapePlotType13,		// used by Kyra 1
+		&Screen::drawShapePlotType14,		// used by Kyra 1 (invisibility)
+		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
@@ -1209,8 +1213,11 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if (flags & 0x800)
 		dsPlot3 = dsPlotFunc[((flags >> 8) & 0xF7) & 0x3F];
 
-	if (!_dsPlot) {
-		warning("Missing drawShape plotting method type %d", ppc);
+	if (!_dsPlot || !dsPlot2 || !dsPlot3) {
+		if (!dsPlot2)
+			warning("Missing drawShape plotting method type %d", ppc);
+		if (dsPlot3 != dsPlot2 && !dsPlot3)
+			warning("Missing drawShape plotting method type %d", (((flags >> 8) & 0xF7) & 0x3F));
 		va_end(args);
 		return;
 	}
@@ -1621,8 +1628,49 @@ void Screen::drawShapePlotType0(uint8 *dst, uint8 cmd) {
 	*dst = cmd;
 }
 
+void Screen::drawShapePlotType1(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	for (int i = 0; i < _dsTableLoopCount; ++i)
+		cmd = _dsTable[cmd];
+
+	if (cmd)
+		*dst = cmd;
+}
+
+void Screen::drawShapePlotType3_7(uint8 *dst, uint8 cmd) {
+	cmd = dst[cmd];
+	for (int i = 0; i < _dsTableLoopCount; ++i)
+		cmd = _dsTable[cmd];
+
+	if (cmd)
+		*dst = cmd;
+}
+
 void Screen::drawShapePlotType4(uint8 *dst, uint8 cmd) {
 	*dst = _dsTable2[cmd];
+}
+
+void Screen::drawShapePlotType5(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	cmd = _dsTable2[cmd];
+	for (int i = 0; i < _dsTableLoopCount; ++i)
+		cmd = _dsTable[cmd];
+
+	if (cmd)
+		*dst = cmd;
+}
+
+void Screen::drawShapePlotType6(uint8 *dst, uint8 cmd) {
+	int t = _drawShapeVar4 + _drawShapeVar5;
+	if (t & 0xff00) {
+		cmd = dst[_drawShapeVar3];
+		t &= 0xff;		
+	} else {
+		cmd = _dsTable2[cmd];
+	}
+
+	_drawShapeVar4 = t;
+	*dst = cmd;
 }
 
 void Screen::drawShapePlotType8(uint8 *dst, uint8 cmd) {
