@@ -1381,8 +1381,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	uint8 *d = dst;
 
 	while (shapeHeight--) {
-		++curY;
-
 		bool normalPlot = true;
 		if (flags & 0x800)
 			normalPlot = (curY > _maskMinY && curY < _maskMaxY);
@@ -1415,6 +1413,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			}
 			dst += dsPitch;
 			d = dst;
+			++curY;
 			scaleCounterV -= 256;
 		} while (scaleCounterV & 0xff00);
 	}
