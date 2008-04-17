@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	timer.o \
 	timer_v1.o \
 	timer_v2.o \
+	timer_v3.o \
 	vqa.o \
 	wsamovie.o
 

@@ -150,14 +150,14 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 	enterNewSceneUnk1(facing, unk2, unk3);
 	musicUpdate(0);
-	//XXX setCommandLineRestoreTimer(-1);
+	setCommandLineRestoreTimer(-1);
 	_sceneScriptState.regs[3] = 1;
 	enterNewSceneUnk2(unk3);
 	if (queryGameFlag(0)) {
 		_runFlag = false;
 	} else {
 		if (!--_enterNewSceneLock)
-			_unkInputFlag = false;
+			_unk5 = 0;
 		//XXX
 		if (_itemInHand <= 0) {
 			_itemInHand = -1;

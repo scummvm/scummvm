@@ -69,7 +69,6 @@ private:
 
 	// run
 	bool _runFlag;
-	bool _unkInputFlag;
 
 	void runLoop();
 	void handleInput(int x, int y);
@@ -130,8 +129,14 @@ private:
 	MainMenu *_menu;
 
 	// timer
-	void setupTimers() {}
-	void setWalkspeed(uint8) {}
+	void setupTimers();
+
+	void setWalkspeed(uint8);
+	void setCommandLineRestoreTimer(int secs);
+
+	void timerRestoreCommandLine(int arg);
+	void timerRunSceneScript7(int arg);
+	void timerFleaDeath(int arg);
 
 	// pathfinder
 	bool lineIsPassable(int, int) { return false; }
@@ -198,6 +203,7 @@ private:
 	void loadInterface();
 
 	void showMessage(const char *string, uint8 c0, uint8 c1);
+	void updateCommandLine();
 	void restoreCommandLine();
 
 	int _commandLineY;
@@ -394,7 +400,7 @@ private:
 	uint8 *_gfxBackUpRect;
 	uint8 *_paletteOverlay;
 
-	int _unk3, _unk4;
+	int _unk3, _unk4, _unk5;
 
 	void loadCostPal();
 	void loadShadowShape();

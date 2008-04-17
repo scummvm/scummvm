@@ -85,7 +85,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_lastCharPalLayer = -1;
 	_charPalUpdate = false;
 	_runFlag = false;
-	_unkInputFlag = false;
+	_unk5 = 0;
 	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
 	_itemInHand = _handItemSet = -1;
@@ -706,10 +706,18 @@ void KyraEngine_v3::showMessage(const char *string, uint8 c0, uint8 c1) {
 		_text->printText(string, x, _commandLineY, c0, c1, 0);
 		_screen->_curPage = pageBackUp;
 		_screen->updateScreen();
-		//setCommandLineRestoreTimer(7);
+		setCommandLineRestoreTimer(7);
 	}
 
 	_screen->showMouse();
+}
+
+void KyraEngine_v3::updateCommandLine() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCommandLine()");
+	if (_restoreCommandLine) {
+		restoreCommandLine();
+		_restoreCommandLine = false;
+	}
 }
 
 void KyraEngine_v3::restoreCommandLine() {
@@ -910,6 +918,7 @@ void KyraEngine_v3::update() {
 	musicUpdate(0);
 	//XXX
 	updateSpecialSceneScripts();
+	updateCommandLine();
 	//XXX
 	musicUpdate(0);
 
