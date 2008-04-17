@@ -583,12 +583,12 @@ void ScummEngine_v60he::o60_roomOps() {
 		_saveLoadSlot = 255;
 		_saveTemporaryState = true;
 		break;
-	case 234:		// HE 7.2
+	case 234:		// HE 7.1
 		b = pop();
 		a = pop();
 		swapObjects(a, b);
 		break;
-	case 236:		// HE 7.2
+	case 236:		// HE 7.1
 		b = pop();
 		a = pop();
 		setRoomPalette(a, b);
@@ -1054,7 +1054,7 @@ void ScummEngine_v60he::o60_deleteFile() {
 
 	filename = (char *)buffer + convertFilePath(buffer);
 
-	debug(1, "o60_deleteFile stub (\"%s\")", filename);
+	debug(1, "o60_deleteFile (\"%s\")", filename);
 
 	_saveFileMan->removeSavefile(filename);
 }
@@ -1075,7 +1075,7 @@ void ScummEngine_v60he::o60_rename() {
 	oldFilename = (char *)buffer1 + convertFilePath(buffer1);
 	newFilename = (char *)buffer2 + convertFilePath(buffer2);
 
-	debug(1, "o60_rename stub (\"%s\" to \"%s\")", newFilename, oldFilename);
+	debug(1, "o60_rename (\"%s\" to \"%s\")", oldFilename, newFilename);
 
 	_saveFileMan->renameSavefile(oldFilename, newFilename);
 }
