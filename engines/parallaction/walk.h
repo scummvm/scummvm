@@ -58,10 +58,10 @@ class PathBuilder {
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
-	uint16 walkFunc1(int16 x, int16 y, WalkNodePtr& Node);
+	uint16 walkFunc1(int16 x, int16 y, WalkNodePtr Node);
 
 public:
-	PathBuilder(AnimationPtr &anim);
+	PathBuilder(AnimationPtr anim);
 	WalkNodeList* buildPath(uint16 x, uint16 y);
 
 };

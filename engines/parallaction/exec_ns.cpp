@@ -496,7 +496,7 @@ void Parallaction::displayComment(ExamineData *data) {
 
 
 
-uint16 Parallaction::runZone(ZonePtr& z) {
+uint16 Parallaction::runZone(ZonePtr z) {
 	debugC(3, kDebugExec, "runZone (%s)", z->_name);
 
 	uint16 subtype = z->_type & 0xFFFF;
@@ -542,7 +542,7 @@ uint16 Parallaction::runZone(ZonePtr& z) {
 //
 //	ZONE TYPE: DOOR
 //
-void Parallaction::updateDoor(ZonePtr& z) {
+void Parallaction::updateDoor(ZonePtr z) {
 
 	if (z->u.door->gfxobj) {
 		uint frame = (z->_flags & kFlagsClosed ? 0 : 1);
@@ -559,7 +559,7 @@ void Parallaction::updateDoor(ZonePtr& z) {
 //	ZONE TYPE: GET
 //
 
-int16 Parallaction::pickupItem(ZonePtr &z) {
+int16 Parallaction::pickupItem(ZonePtr z) {
 	int r = addInventoryItem(z->u.get->_icon);
 	if (r != -1) {
 		_gfx->showGfxObj(z->u.get->gfxobj, false);

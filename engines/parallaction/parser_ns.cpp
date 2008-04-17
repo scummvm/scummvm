@@ -194,7 +194,7 @@ void Parallaction_ns::parseAnimation(Script& script, AnimationList &list, char *
 	pushParserTables(&_locationAnimParsers, _locationAnimStmt);
 }
 
-void Parallaction_ns::parseInstruction(ProgramPtr &program) {
+void Parallaction_ns::parseInstruction(ProgramPtr program) {
 
 	InstructionPtr inst(new Instruction);
 
@@ -219,7 +219,7 @@ void Parallaction_ns::parseInstruction(ProgramPtr &program) {
 	return;
 }
 
-void Parallaction_ns::loadProgram(AnimationPtr &a, const char *filename) {
+void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {
 	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_name, filename);
 
 	Script *script = _disk->loadScript(filename);
@@ -653,7 +653,7 @@ void Parallaction_ns::createCommand(uint id) {
 
 }
 
-void Parallaction_ns::saveCommandForward(const char *name, CommandPtr &cmd) {
+void Parallaction_ns::saveCommandForward(const char *name, CommandPtr cmd) {
 	assert(_numForwardedCommands < MAX_FORWARDS);
 
 	strcpy(_forwardedCommands[_numForwardedCommands].name, name);
@@ -1282,7 +1282,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 
 
 
-void Parallaction_ns::parseGetData(Script &script, ZonePtr &z) {
+void Parallaction_ns::parseGetData(Script &script, ZonePtr z) {
 
 	GetData *data = new GetData;
 
@@ -1313,7 +1313,7 @@ void Parallaction_ns::parseGetData(Script &script, ZonePtr &z) {
 }
 
 
-void Parallaction_ns::parseExamineData(Script &script, ZonePtr &z) {
+void Parallaction_ns::parseExamineData(Script &script, ZonePtr z) {
 
 	ExamineData *data = new ExamineData;
 
@@ -1334,7 +1334,7 @@ void Parallaction_ns::parseExamineData(Script &script, ZonePtr &z) {
 }
 
 
-void Parallaction_ns::parseDoorData(Script &script, ZonePtr &z) {
+void Parallaction_ns::parseDoorData(Script &script, ZonePtr z) {
 
 	DoorData *data = new DoorData;
 
@@ -1378,7 +1378,7 @@ void Parallaction_ns::parseDoorData(Script &script, ZonePtr &z) {
 }
 
 
-void Parallaction_ns::parseMergeData(Script &script, ZonePtr &z) {
+void Parallaction_ns::parseMergeData(Script &script, ZonePtr z) {
 
 	MergeData *data = new MergeData;
 
@@ -1401,7 +1401,7 @@ void Parallaction_ns::parseMergeData(Script &script, ZonePtr &z) {
 
 }
 
-void Parallaction_ns::parseHearData(Script &script, ZonePtr &z) {
+void Parallaction_ns::parseHearData(Script &script, ZonePtr z) {
 
 	HearData *data = new HearData;
 
@@ -1422,7 +1422,7 @@ void Parallaction_ns::parseHearData(Script &script, ZonePtr &z) {
 
 }
 
-void Parallaction_ns::parseSpeakData(Script &script, ZonePtr &z) {
+void Parallaction_ns::parseSpeakData(Script &script, ZonePtr z) {
 
 	SpeakData *data = new SpeakData;
 

@@ -620,7 +620,7 @@ void Parallaction::parseStatement() {
 
 
 
-AnimationPtr& Parallaction::findAnimation(const char *name) {
+AnimationPtr Parallaction::findAnimation(const char *name) {
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
 		if (!scumm_stricmp((*it)->_name, name)) return *it;

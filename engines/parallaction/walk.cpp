@@ -208,7 +208,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr &Node) {
+uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 
 	Common::Point arg(x, y);
 
@@ -259,7 +259,7 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr &Node) {
 	return 1;
 }
 
-void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr& from) {
+void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr from) {
 
 	if ((pos.x < from->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
@@ -280,7 +280,7 @@ void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr& from) {
 	return;
 }
 
-int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr& from) {
+int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr from) {
 
 	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
 
@@ -442,7 +442,7 @@ void WalkNode::getPoint(Common::Point &p) const {
 	p.y = _y;
 }
 
-PathBuilder::PathBuilder(AnimationPtr &anim) : _anim(anim), _list(0) {
+PathBuilder::PathBuilder(AnimationPtr anim) : _anim(anim), _list(0) {
 }
 
 

@@ -36,14 +36,6 @@
 
 namespace Parallaction {
 
-/*
-	game callables data members
-*/
-
-static ZonePtr _moveSarcZone0;
-static int16 _introSarcData1 = 0;
-static ZonePtr _moveSarcZone1;
-
 // part completion messages
 static const char *endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
 static const char *endMsg1[] = {"HAI FINITO QUESTA PARTE", "TU AS COMPLETE' CETTE AVENTURE", "YOU HAVE COMPLETED THIS PART", "DU HAST EIN ABENTEUER ERFOLGREICH"};
@@ -55,15 +47,11 @@ static const char *endMsg5[] = {"HAI FINITO LE TRE PARTI", "TU AS COMPLETE' LES 
 static const char *endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE", "OF THIS ADVENTURE", "ZU ENDE GEFUHRT"};
 static const char *endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
 
-static uint16 num_foglie = 0;
-static ZonePtr _moveSarcZones[5];
-static ZonePtr _moveSarcExaZones[5];
 
 /*
 	intro callables data members
 */
 
-static AnimationPtr _rightHandAnim;
 
 static uint16 _rightHandPositions[684] = {
 	0x0064, 0x0046, 0x006c, 0x0046, 0x0074, 0x0046, 0x007c, 0x0046,

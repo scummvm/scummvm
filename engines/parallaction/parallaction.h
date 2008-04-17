@@ -341,19 +341,19 @@ public:
 	void		resumeJobs();
 
 	void		finalizeWalk(WalkNodeList *list);
-	int16		selectWalkFrame(const Common::Point& pos, const WalkNodePtr& from);
-	void		clipMove(Common::Point& pos, const WalkNodePtr& from);
+	int16		selectWalkFrame(const Common::Point& pos, const WalkNodePtr from);
+	void		clipMove(Common::Point& pos, const WalkNodePtr from);
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
-	uint16		runZone(ZonePtr& z);
+	uint16		runZone(ZonePtr z);
 	void		freeZones();
 
 	void		runDialogue(SpeakData*);
 
 	void		runCommands(CommandList& list, ZonePtr z = nullZonePtr);
 
-	AnimationPtr &findAnimation(const char *name);
+	AnimationPtr findAnimation(const char *name);
 	void		freeAnimations();
 
 	void		setBackground(const char *background, const char *mask, const char *path);
@@ -481,7 +481,7 @@ protected:		// members
 
 	void		freeCharacter();
 
-	int16		pickupItem(ZonePtr &z);
+	int16		pickupItem(ZonePtr z);
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
@@ -491,7 +491,7 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
-	void updateDoor(ZonePtr &z);
+	void updateDoor(ZonePtr z);
 
 	virtual void runScripts() = 0;
 	virtual void walk() = 0;
@@ -621,6 +621,18 @@ private:
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
 
+	/*
+		game callables data members
+	*/
+
+	ZonePtr _moveSarcZone0;
+	int16 _introSarcData1;
+	ZonePtr _moveSarcZone1;
+	uint16 num_foglie;
+	ZonePtr _moveSarcZones[5];
+	ZonePtr _moveSarcExaZones[5];
+	AnimationPtr _rightHandAnim;
+
 	// common callables
 	void _c_play_boogie(void*);
 	void _c_startIntro(void*);
@@ -734,12 +746,12 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
 
-	virtual void parseGetData(Script &script, ZonePtr& z);
-	virtual void parseExamineData(Script &script, ZonePtr& z);
-	virtual void parseDoorData(Script &script, ZonePtr& z);
-	virtual void parseMergeData(Script &script, ZonePtr& z);
-	virtual void parseHearData(Script &script, ZonePtr& z);
-	virtual void parseSpeakData(Script &script, ZonePtr& z);
+	virtual void parseGetData(Script &script, ZonePtr z);
+	virtual void parseExamineData(Script &script, ZonePtr z);
+	virtual void parseDoorData(Script &script, ZonePtr z);
+	virtual void parseMergeData(Script &script, ZonePtr z);
+	virtual void parseHearData(Script &script, ZonePtr z);
+	virtual void parseSpeakData(Script &script, ZonePtr z);
 
 	void		parseLocation(const char *filename);
 	char		*parseComment(Script &script);
@@ -755,7 +767,7 @@ protected:
 	void		parseAnimation(Script &script, AnimationList &list, char *name);
 	void		parseCommands(Script &script, CommandList&);
 	void		parseCommandFlags();
-	void 		saveCommandForward(const char *name, CommandPtr &cmd);
+	void 		saveCommandForward(const char *name, CommandPtr cmd);
 	void 		resolveCommandForwards();
 	void		createCommand(uint id);
 	void		addCommand();
@@ -799,8 +811,8 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
 
-	void		parseInstruction(ProgramPtr &program);
-	void		loadProgram(AnimationPtr &a, const char *filename);
+	void		parseInstruction(ProgramPtr program);
+	void		loadProgram(AnimationPtr a, const char *filename);
 	void		parseLValue(ScriptVar &var, const char *str);
 	virtual void	parseRValue(ScriptVar &var, const char *str);
 	void		wrapLocalVar(LocalVariable *local);
