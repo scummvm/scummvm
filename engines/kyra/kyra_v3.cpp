@@ -95,6 +95,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_noStartupChat = false;
 	_lastProcessedSceneScript = 0;
 	_specialSceneScriptRunFlag = false;
+	_pathfinderFlag = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {

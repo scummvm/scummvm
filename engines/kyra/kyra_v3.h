@@ -140,7 +140,9 @@ private:
 	void timerFleaDeath(int arg);
 
 	// pathfinder
-	bool lineIsPassable(int, int) { return false; }
+	int _pathfinderFlag;
+
+	bool lineIsPassable(int x, int y);
 
 private:
 	// main menu

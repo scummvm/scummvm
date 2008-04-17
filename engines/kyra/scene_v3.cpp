@@ -688,4 +688,39 @@ bool KyraEngine_v3::checkSpecialSceneExit(int index, int x, int y) {
 	return false;
 }
 
+bool KyraEngine_v3::lineIsPassable(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::lineIsPassable(%d, %d)", x, y);
+	static const uint8 widthTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
+
+	if ((_pathfinderFlag & 2) && x >= 320)
+		return false;
+	if ((_pathfinderFlag & 4) && y >= 188)
+		return false;
+	if ((_pathfinderFlag & 8) && x < 0)
+		return false;
+	if (y > 187)
+		return false;
+
+	uint width = widthTable[getScale(x, y) >> 5];
+
+	if (y < 0)
+		y = 0;
+	x -= width >> 1;
+	if (x < 0)
+		x = 0;
+	int x2 = x + width;
+	if (x2 > 320)
+		x2 = 320;
+
+	for (; x < x2; ++x) {
+		if (y < _maskPageMinY || y > _maskPageMinY)
+			return false;
+
+		if (!_screen->getShapeFlag1(x, y))
+			return false;
+	}
+
+	return true;
+}
+
 } // end of namespace Kyra
