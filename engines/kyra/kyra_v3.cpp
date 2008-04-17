@@ -311,7 +311,7 @@ void KyraEngine_v3::playMenuAudioFile() {
 
 	Common::SeekableReadStream *stream = _res->getFileStream(_menuAudioFile);
 	if (stream)
-		_musicSoundChannel = _soundDigital->playSound(stream, true);
+		_musicSoundChannel = _soundDigital->playSound(stream, SoundDigital::kSoundTypeMusic);
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
@@ -334,7 +334,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 
 		Common::SeekableReadStream *stream = _res->getFileStream(_soundList[track]);
 		if (stream)
-			_musicSoundChannel = _soundDigital->playSound(stream);
+			_musicSoundChannel = _soundDigital->playSound(stream, SoundDigital::kSoundTypeMusic);
 	}
 
 	_curMusicTrack = track;
@@ -383,6 +383,18 @@ void KyraEngine_v3::fadeOutMusic(int ticks) {
 		_fadeOutMusicChannel = _musicSoundChannel;
 		_soundDigital->beginFadeOut(_musicSoundChannel, ticks);
 		_curMusicTrack = -1;
+	}
+}
+
+void KyraEngine_v3::playSoundEffect(uint32 item, int priority) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playSoundEffect(%d, %d)", item, priority);
+	if (_sfxFileMap[item*2+0] != 0xFF) {
+		char filename[16];
+		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
+
+		Common::SeekableReadStream *stream = _res->getFileStream(filename);
+		if (stream)
+			_soundDigital->playSound(stream, SoundDigital::kSoundTypeSfx);
 	}
 }
 

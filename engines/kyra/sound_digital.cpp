@@ -327,14 +327,15 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-int SoundDigital::playSound(Common::SeekableReadStream *stream, bool loop, bool fadeIn, int channel) {
+int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type, bool loop, bool fadeIn, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < SOUND_STREAMS) {
 		stopSound(channel);
 		use = &_sounds[channel];
 	} else {
 		for (channel = 0; channel < SOUND_STREAMS; ++channel) {
-			if (!_sounds[channel].stream) {
+			if (!isPlaying(channel)) {
+				stopSound(channel);
 				use = &_sounds[channel];
 				break;
 			}
@@ -359,8 +360,12 @@ int SoundDigital::playSound(Common::SeekableReadStream *stream, bool loop, bool 
 	if (fadeIn)
 		use->stream->beginFadeIn(60 * _vm->tickLength());
 
-	// TODO: set correct sound type from channel id
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &use->handle, use->stream);
+	if (type == kSoundTypeMusic)
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &use->handle, use->stream);
+	else if (type == kSoundTypeSfx)
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &use->handle, use->stream);
+	else if (type == kSoundTypeSpeech)
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &use->handle, use->stream);
 
 	return use - _sounds;
 }
@@ -370,6 +375,9 @@ bool SoundDigital::isPlaying(int channel) {
 		return false;
 
 	assert(channel >= 0 && channel < SOUND_STREAMS);
+
+	if (!_sounds[channel].stream)
+		return false;
 
 	return _mixer->isSoundHandleActive(_sounds[channel].handle);
 }

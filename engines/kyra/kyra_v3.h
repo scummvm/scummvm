@@ -120,6 +120,13 @@ private:
 	int musicUpdate(int forceRestart);
 	void fadeOutMusic(int ticks);
 
+	void playSoundEffect(uint32 item, int priority);
+
+	static const uint8 _sfxFileMap[];
+	static const int _sfxFileMapSize;
+	static const char *_sfxFileList[];
+	static const int _sfxFileListSize;
+
 	void snd_playVoiceFile(int) {}
 
 	// main menu
@@ -426,6 +433,7 @@ private:
 	int o3_showMouse(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
+	int o3_playSoundEffect(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
 	int o3_setSpecialSceneScriptRunTime(ScriptState *script);

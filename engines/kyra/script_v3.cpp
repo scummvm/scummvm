@@ -141,6 +141,12 @@ int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_playSoundEffect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_playSoundEffect(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	playSoundEffect(stackPos(0), stackPos(1));
+	return 0;
+}
+
 int KyraEngine_v3::o3_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
@@ -428,7 +434,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x58
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_playSoundEffect),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x5c
