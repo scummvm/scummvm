@@ -240,8 +240,6 @@ protected:
 	BackgroundInfo	_backgroundTemp;
 
 	Sprites*	createSprites(const char *name);
-	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
-	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(BackgroundInfo& info, const char *name);
 	void loadBackground(BackgroundInfo& info, const char *name);

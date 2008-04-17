@@ -409,49 +409,6 @@ AmigaDisk_br::~AmigaDisk_br() {
 
 }
 
-#define NUM_PLANES		5
-
-/*
-	unpackFrame transforms images from 5-bitplanes format to
-	8-bit color-index mode
-*/
-void AmigaDisk_br::unpackFrame(byte *dst, byte *src, uint16 planeSize) {
-
-	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
-
-	for (uint32 j = 0; j < planeSize; j++) {
-		s0 = src[j];
-		s1 = src[j+planeSize];
-		s2 = src[j+planeSize*2];
-		s3 = src[j+planeSize*3];
-		s4 = src[j+planeSize*4];
-
-		for (uint32 k = 0; k < 8; k++) {
-			mask = 1 << (7 - k);
-			t0 = (s0 & mask ? 1 << 0 : 0);
-			t1 = (s1 & mask ? 1 << 1 : 0);
-			t2 = (s2 & mask ? 1 << 2 : 0);
-			t3 = (s3 & mask ? 1 << 3 : 0);
-			t4 = (s4 & mask ? 1 << 4 : 0);
-			*dst++ = t0 | t1 | t2 | t3 | t4;
-		}
-
-	}
-
-}
-
-// FIXME: no mask is loaded
-void AmigaDisk_br::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height) {
-	uint16 planeSize = bytesPerPlane * height;
-
-	for (uint32 i = 0; i < numFrames; i++) {
-		unpackFrame(dst, src, planeSize);
-		src += planeSize * NUM_PLANES;
-		dst += planeSize * 8;
-	}
-}
-
-#undef NUM_PLANES
 
 /*
 	FIXME: mask values are not computed correctly for level 1 and 2
@@ -552,7 +509,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *name) {
 	info.height = info.bg.h;
 
 	byte *p = pal;
-	for (i = 0; i < 32; i++) {
+	for (i = 0; i < 16; i++) {
 		byte r = *p >> 2;
 		p++;
 		byte g = *p >> 2;
@@ -564,12 +521,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *name) {
 
 	free(pal);
 
-	for (i = 0; i < 6; i++) {
-		info.setPaletteRange(i, ranges[i]);
-	}
-
 	return;
-
 }
 
 void AmigaDisk_br::loadMask(BackgroundInfo& info, const char *name) {
