@@ -754,7 +754,7 @@ void IIgsChannelInfo::setInstrument(const IIgsInstrumentHeader *instrument, cons
 }
 
 // TODO/FIXME: Implement correctly and fully (Take velocity into account etc)
-void IIgsChannelInfo::noteOn(uint8 note, uint8 velocity) {	
+void IIgsChannelInfo::noteOn(uint8 note, uint8 velocity) {
 	this->origNote = note;
 	this->startEnvVol = intToFrac(0);
 	rewind();
@@ -770,13 +770,13 @@ void IIgsChannelInfo::noteOn(uint8 note, uint8 velocity) {
 	this->loop    = (waveInfo->mode == OSC_MODE_LOOP);
 	this->size    = waveInfo->size - waveInfo->addr;
 	this->end     = waveInfo->halt;
-};
+}
 
 // TODO/FIXME: Implement correctly and fully (Take release time and velocity into account etc)
 void IIgsChannelInfo::noteOff(uint8 velocity) {
 	this->loop = false;
 	this->envSeg = ins->relseg;
-};
+}
 
 void IIgsChannelInfo::stop() {
 	this->end = true;
