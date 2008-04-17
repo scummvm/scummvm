@@ -527,6 +527,7 @@ void Gfx::invertBackground(const Common::Rect& r) {
 // this is the maximum size of an unpacked frame in BRA
 byte _unpackedBitmap[640*401];
 
+#if 0
 void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 
 	byte *d = _unpackedBitmap;
@@ -540,6 +541,35 @@ void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surf
 		if (repeat == 0) {
 			repeat = *data++;
 			size--;
+		}
+
+		memset(d, color, repeat);
+		d += repeat;
+	}
+
+	blt(r, _unpackedBitmap, surf, z, transparentColor);
+}
+#endif
+void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
+
+	byte *d = _unpackedBitmap;
+	uint pixelsLeftInLine = r.width();
+
+	while (size > 0) {
+		uint8 p = *data++;
+		size--;
+		uint8 color = p & 0xF;
+		uint8 repeat = (p & 0xF0) >> 4;
+		if (repeat == 0) {
+			repeat = *data++;
+			size--;
+		}
+		if (repeat == 0) {
+			// end of line
+			repeat = pixelsLeftInLine;
+			pixelsLeftInLine = r.width();
+		} else {
+			pixelsLeftInLine -= repeat;
 		}
 
 		memset(d, color, repeat);
