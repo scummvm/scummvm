@@ -96,11 +96,11 @@ void OSystem_GP2X::initBackend() {
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_EVENTTHREAD;
 
-	//if (ConfMan.hasKey("disable_sdl_parachute"))
-	//	sdlFlags |= SDL_INIT_NOPARACHUTE;
+	if (ConfMan.hasKey("disable_sdl_parachute"))
+		sdlFlags |= SDL_INIT_NOPARACHUTE;
 
-	//if (joystick_num > -1)
-	//	sdlFlags |= SDL_INIT_JOYSTICK;
+	if (joystick_num > -1)
+		sdlFlags |= SDL_INIT_JOYSTICK;
 
 	if (SDL_Init(sdlFlags) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
