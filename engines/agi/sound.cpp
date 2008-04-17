@@ -754,18 +754,18 @@ void IIgsChannelInfo::setInstrument(const IIgsInstrumentHeader *instrument, cons
 }
 
 // TODO/FIXME: Implement correctly and fully (Take velocity into account etc)
-void IIgsChannelInfo::noteOn(uint8 note, uint8 velocity) {
-	this->origNote = note;
+void IIgsChannelInfo::noteOn(uint8 noteParam, uint8 velocity) {
+	this->origNote = noteParam;
 	this->startEnvVol = intToFrac(0);
 	rewind();
 	const IIgsWaveInfo *waveInfo = NULL;
 	for (uint i = 0; i < ins->oscList.count; i++)
-		if (ins->oscList(i).waves[0].top >= note)
+		if (ins->oscList(i).waves[0].top >= noteParam)
 			waveInfo = &ins->oscList(i).waves[0];
 	assert(waveInfo != NULL);
 	this->relocatedSample = this->unrelocatedSample + waveInfo->addr;
 	this->posAdd  = intToFrac(0);
-	this->note    = intToFrac(note) + doubleToFrac(waveInfo->relPitch/256.0);
+	this->note    = intToFrac(noteParam) + doubleToFrac(waveInfo->relPitch/256.0);
 	this->vol     = doubleToFrac(fracToDouble(this->envVol) * fracToDouble(this->chanVol) / 127.0);
 	this->loop    = (waveInfo->mode == OSC_MODE_LOOP);
 	this->size    = waveInfo->size - waveInfo->addr;
