@@ -196,11 +196,13 @@ struct AgiNote {
 };
 
 struct IIgsChannelInfo {
-	IIgsInstrumentHeader ins; ///< Instrument info
-	const int8 *sample; ///< Source sample data (8-bit signed format)
+	const IIgsInstrumentHeader *ins; ///< Instrument info
+	const int8 *relocatedSample; ///< Source sample data (8-bit signed format) using relocation
+	const int8 *unrelocatedSample; ///< Source sample data (8-bit signed format) without relocation
 	frac_t pos;     ///< Current sample position
 	frac_t posAdd;  ///< Current sample position adder (Calculated using note, vibrato etc)
-	frac_t note;    ///< Note
+	uint8 origNote; ///< The original note without the added relative pitch
+	frac_t note;    ///< Note (With the added relative pitch)
 	frac_t vol;     ///< Current volume (Takes both channel volume and enveloping into account)
 	frac_t chanVol; ///< Channel volume
 	frac_t startEnvVol; ///< Starting envelope volume
@@ -209,6 +211,14 @@ struct IIgsChannelInfo {
 	uint   size;    ///< Sample size
 	bool   loop;    ///< Should we loop the sample?
 	bool   end;     ///< Has the playing ended?
+
+	void rewind(); ///< Rewinds the sound playing on this channel to its start
+	void setChannelVolume(uint8 volume); ///< Sets the channel volume
+	void setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample); ///< Sets the instrument to be used on this channel
+	void noteOn(uint8 note, uint8 velocity); ///< Starts playing a note on this channel
+	void noteOff(uint8 velocity); ///< Releases the note on this channel
+	void stop(); ///< Stops the note playing on this channel instantly
+	bool playing(); ///< Is there a note playing on this channel?
 };
 
 	/**
@@ -349,6 +359,63 @@ struct IIgsExeInfo {
 	const InstrumentSetInfo &instSet; ///< Information about the used instrument set
 };
 
+class IIgsMidiChannel {
+public:
+	uint activeSounds() const; ///< How many active sounds are playing?
+	void setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample);
+	void setVolume(uint8 volume);
+	void noteOff(uint8 note, uint8 velocity);
+	void noteOn(uint8 note, uint8 velocity);
+	void stopSounds(); ///< Clears the channel of any sounds
+	void removeStoppedSounds(); ///< Removes all stopped sounds from this MIDI channel
+public:
+	typedef Common::Array<IIgsChannelInfo>::const_iterator const_iterator;
+	typedef Common::Array<IIgsChannelInfo>::iterator iterator;
+	Common::Array<IIgsChannelInfo> _gsChannels;	///< Apple IIGS channels playing on this MIDI channel
+protected:
+	const IIgsInstrumentHeader *_instrument;	///< Instrument used on this MIDI channel
+	const int8 *_sample;						///< Sample data used on this MIDI channel
+	uint8 _volume;								///< MIDI controller number 7 (Volume)
+};
+
+/**
+ * Class for managing Apple IIGS sound channels.
+ * TODO: Check what instruments are used by default on the MIDI channels
+ * FIXME: Some instrument choices sound wrong
+ */
+class IIgsSoundMgr {
+public:
+	typedef Common::Array<IIgsMidiChannel>::const_iterator const_iterator;
+	typedef Common::Array<IIgsMidiChannel>::iterator iterator;
+	static const uint kSfxMidiChannel = 0; ///< The MIDI channel used for playing sound effects
+public:
+	// For initializing
+	IIgsSoundMgr();
+	void setProgramChangeMapping(const MidiProgramChangeMapping *mapping);
+	bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo);
+	bool loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo);
+	// Miscellaneous methods
+	uint activeSounds() const; ///< How many active sounds are playing?
+	void stopSounds(); ///< Stops all sounds
+	void removeStoppedSounds(); ///< Removes all stopped sounds from the MIDI channels
+	// For playing Apple IIGS AGI samples (Sound effects etc)
+	bool playSampleSound(const IIgsSampleHeader &sampleHeader, const int8 *sample);
+	// MIDI commands
+	void midiNoteOff(uint8 channel, uint8 note, uint8 velocity);
+	void midiNoteOn(uint8 channel, uint8 note, uint8 velocity);
+	void midiController(uint8 channel, uint8 controller, uint8 value);
+	void midiProgramChange(uint8 channel, uint8 program);
+	void midiPitchWheel(uint8 wheelPos);
+protected:
+	const IIgsInstrumentHeader* getInstrument(uint8 program) const;
+public:
+	Common::Array<IIgsMidiChannel> _midiChannels;		///< Information about each MIDI channel
+protected:
+	Common::Array<int8> _wave;							///< Sample data used by the Apple IIGS MIDI instruments
+	const MidiProgramChangeMapping *_midiProgToInst;	///< MIDI program change to instrument number mapping
+	Common::Array<IIgsInstrumentHeader> _instruments;	///< Instruments used by the Apple IIGS AGI
+};
+
 class AgiEngine;
 class AgiBase;
 
@@ -386,14 +453,13 @@ private:
 
 	bool _playing;
 	ChannelInfo _chn[NUM_CHANNELS];
-	IIgsChannelInfo _IIgsChannel;
+	IIgsSoundMgr _gsSound;
 	int _endflag;
 	int _playingSound;
 	uint8 _env;
 
 	int16 *_sndBuffer;
 	const int16 *_waveform;
-	Common::Array<int8> _gsWave;
 
 	void premixerCall(int16 *buf, uint len);
 
@@ -412,9 +478,7 @@ public:
 	void playMidiSound();
 	void playSampleSound();
 	const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) const;
-	bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo);
 	static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint length);
-	Common::SharedPtr<Common::MemoryReadStream> loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo);
 };
 
 } // End of namespace Agi

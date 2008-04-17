@@ -276,8 +276,6 @@ static const IIgsExeInfo IIgsExeInfos[] = {
 	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, instSetV2}
 };
 
-static IIgsInstrumentHeader g_instruments[MAX_INSTRUMENTS];
-static uint g_numInstruments = 0;
 // Time (In milliseconds) in Apple IIGS mixing buffer time granularity
 // (i.e. in IIGS_BUFFER_SIZE / getRate() seconds granularity)
 static uint32 g_IIgsBufGranMillis = 0;
@@ -365,22 +363,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
 		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[_playingSound];
-		const IIgsWaveInfo &waveInfo = _IIgsChannel.ins.oscList(0).waves[0];
-		const IIgsSampleHeader &header = sampleRes->getHeader();
-
-		_IIgsChannel.ins     = header.instrument;
-		_IIgsChannel.sample  = sampleRes->getSample() + waveInfo.addr;
-		_IIgsChannel.pos     = intToFrac(0);
-		_IIgsChannel.posAdd  = intToFrac(0);
-		_IIgsChannel.note    = intToFrac(header.pitch) + doubleToFrac(waveInfo.relPitch/256.0);
-		_IIgsChannel.startEnvVol = intToFrac(0);
-		_IIgsChannel.chanVol = intToFrac(header.volume);
-		_IIgsChannel.envVol  = _IIgsChannel.startEnvVol;
-		_IIgsChannel.vol     = doubleToFrac(fracToDouble(_IIgsChannel.envVol) * fracToDouble(_IIgsChannel.chanVol) / 127.0);
-		_IIgsChannel.envSeg  = intToFrac(0);
-		_IIgsChannel.loop    = (waveInfo.mode == OSC_MODE_LOOP);
-		_IIgsChannel.size    = waveInfo.size - waveInfo.addr;
-		_IIgsChannel.end     = false;
+		_gsSound.playSampleSound(sampleRes->getHeader(), sampleRes->getSample());
 		break;
 	}
 	case AGI_SOUND_MIDI:
@@ -442,12 +425,33 @@ void SoundMgr::stopSound() {
 		_vm->_game.sounds[_playingSound]->stop();
 
 		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
-			_IIgsChannel.end     = true;
-			_IIgsChannel.chanVol = intToFrac(0);
+			_gsSound.stopSounds();
 		}
 
 		_playingSound = -1;
 	}
+}
+
+void IIgsSoundMgr::stopSounds() {
+	// Stops all sounds on all MIDI channels
+	for (iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
+		iter->stopSounds();
+}
+
+bool IIgsSoundMgr::playSampleSound(const IIgsSampleHeader &sampleHeader, const int8 *sample) {
+	stopSounds();
+	IIgsMidiChannel &channel = _midiChannels[kSfxMidiChannel];
+	channel.setInstrument(&sampleHeader.instrument, sample);
+	channel.setVolume(sampleHeader.volume);
+	channel.noteOn(sampleHeader.pitch, 64); // Use default velocity (i.e. 64)
+	return true;
+}
+
+void IIgsMidiChannel::stopSounds() {
+	// Stops all sounds on this single MIDI channel
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+		iter->stop();
+	_gsChannels.clear();
 }
 
 static int16 *buffer;
@@ -590,62 +594,196 @@ void SoundMgr::playMidiSound() {
 		case MIDI_CMD_NOTE_OFF:
 			parm1 = *p++;
 			parm2 = *p++;
-#if 0
-			if (ch < NUM_CHANNELS)
-				stopNote(ch);
-#endif
-			debugC(3, kDebugLevelSound, "note off, channel %02x, note %02x, velocity %02x", ch, parm1, parm2);
+			_gsSound.midiNoteOff(ch, parm1, parm2);
 			break;
 		case MIDI_CMD_NOTE_ON:
 			parm1 = *p++;
 			parm2 = *p++;
-#if 0
-			if (ch < NUM_CHANNELS)
-				playNote(ch, noteToPeriod(parm1), 127);
-#endif
-			debugC(3, kDebugLevelSound, "note  on, channel %02x, note %02x, velocity %02x", ch, parm1, parm2);
+			_gsSound.midiNoteOn(ch, parm1, parm2);
 			break;
 		case MIDI_CMD_CONTROLLER:
-			// The tested Apple IIGS AGI MIDI resources only used
-			// controllers 0 (Bank select?), 7 (Volume) and 64 (Sustain On/Off).
-			// Controller 0's parameter was in range 94-127,
-			// controller 7's parameter was in range 0-127 and
-			// controller 64's parameter was always 0 (i.e. sustain off).
-			// TODO: Find out what controller 0 does and implement volume changes.
 			parm1 = *p++;
 			parm2 = *p++;
-			debugC(3, kDebugLevelSound, "controller %02x, ch %02x, val %02x", parm1, ch, parm2);
+			_gsSound.midiController(ch, parm1, parm2);
 			break;
 		case MIDI_CMD_PROGRAM_CHANGE:
-			// In all the tested Apple IIGS AGI MIDI resources
-			// program change's parameter was in range 0-43.
-			// This doesn't map directly to instrument numbers as all of
-			// the tested Apple IIGS AGI games only use 26 or 28 instruments.
-			// TODO: Find out the mapping to instruments and implement it.
 			parm1 = *p++;
-			debugC(3, kDebugLevelSound, "program change %02x, channel %02x", parm1, ch);
-#if 0
-			if (ch < NUM_CHANNELS) {
-				chn[ch].ins = (uint16 *)&wave[waveaddr[parm1]];
-				chn[ch].size = wavesize[parm1];
-			}
-			debugC(3, kDebugLevelSound, "set patch %02x (%d,%d), ch %02x",
-					parm1, waveaddr[parm1], wavesize[parm1], ch);
-#endif
+			_gsSound.midiProgramChange(ch, parm1);
 			break;
 		case MIDI_CMD_PITCH_WHEEL:
 			parm1 = *p++;
 			parm2 = *p++;
-			// In all the tested Apple IIGS AGI MIDI resources
-			// pitch wheel commands always had 0x2000 (Center position)
-			// as the combined 14-bit value for the position.
 			uint16 wheelPos = ((parm2 & 0x7F) << 7) | (parm1 & 0x7F); // 14-bit value
-			debugC(3, kDebugLevelSound, "Pitch wheel position %04x (Not implemented yet)", wheelPos);
+			_gsSound.midiPitchWheel(wheelPos);
 			break;
 		}
 	}
 
 	midiObj->setPtr(p);
+}
+
+void IIgsSoundMgr::midiNoteOff(uint8 channel, uint8 note, uint8 velocity) {
+	_midiChannels[channel].noteOff(note, velocity);
+	debugC(3, kDebugLevelSound, "note off, channel %02x, note %02x, velocity %02x", channel, note, velocity);
+}
+
+void IIgsSoundMgr::midiNoteOn(uint8 channel, uint8 note, uint8 velocity) {
+	_midiChannels[channel].noteOn(note, velocity);
+	debugC(3, kDebugLevelSound, "note  on, channel %02x, note %02x, velocity %02x", channel, note, velocity);
+}
+
+// TODO: Check if controllers behave differently on different MIDI channels
+// TODO: Doublecheck what other controllers than the volume controller do
+void IIgsSoundMgr::midiController(uint8 channel, uint8 controller, uint8 value) {
+	IIgsMidiChannel &midiChannel = _midiChannels[channel];
+
+	// The tested Apple IIGS AGI MIDI resources only used
+	// controllers 0 (Bank select?), 7 (Volume) and 64 (Sustain On/Off).
+	// Controller 0's parameter was in range 94-127,
+	// controller 7's parameter was in range 0-127 and
+	// controller 64's parameter was always 0 (i.e. sustain off).
+	bool unimplemented = false;
+	switch (controller) {
+	case 7: // Volume
+		midiChannel.setVolume(value);
+		break;
+	default:
+		unimplemented = true;
+		break;
+	}
+	debugC(3, kDebugLevelSound, "controller %02x, ch %02x, val %02x%s", controller, channel, value, unimplemented ? " (Unimplemented)" : "");
+}
+
+void IIgsSoundMgr::midiProgramChange(uint8 channel, uint8 program) {
+	_midiChannels[channel].setInstrument(getInstrument(program), _wave.begin());
+	debugC(3, kDebugLevelSound, "program change %02x, channel %02x", program, channel);
+}
+
+void IIgsSoundMgr::midiPitchWheel(uint8 wheelPos) {
+	// In all the tested Apple IIGS AGI MIDI resources
+	// pitch wheel commands always used 0x2000 (Center position).
+	// Therefore it should be quite safe to ignore this command.
+	debugC(3, kDebugLevelSound, "pitch wheel position %04x (Unimplemented)", wheelPos);
+}
+
+IIgsSoundMgr::IIgsSoundMgr() {
+	_midiChannels.resize(16); // Set the amount of available MIDI channels
+}
+
+const IIgsInstrumentHeader* IIgsSoundMgr::getInstrument(uint8 program) const {
+	return &_instruments[_midiProgToInst->map(program)];
+}
+
+void IIgsSoundMgr::setProgramChangeMapping(const MidiProgramChangeMapping *mapping) {
+	_midiProgToInst = mapping;
+}
+
+void IIgsSoundMgr::removeStoppedSounds() {
+	for (Common::Array<IIgsMidiChannel>::iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
+		iter->removeStoppedSounds();
+}
+
+void IIgsMidiChannel::removeStoppedSounds() {
+	for (int i = _gsChannels.size() - 1; i >= 0; i--)
+		if (!_gsChannels[i].playing())
+			_gsChannels.remove_at(i);
+}
+
+uint IIgsSoundMgr::activeSounds() const {
+	uint result = 0;
+	for (Common::Array<IIgsMidiChannel>::const_iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
+		result += iter->activeSounds();
+	return result;
+}
+
+uint IIgsMidiChannel::activeSounds() const {
+	uint result = 0;
+	for (const_iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+		if (!iter->end)
+			result++;
+	return result;
+}
+
+void IIgsMidiChannel::setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample) {
+	_instrument = instrument;
+	_sample = sample;
+	// Set program on each Apple IIGS channel playing on this MIDI channel
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+		iter->setInstrument(instrument, sample);
+}
+
+void IIgsMidiChannel::setVolume(uint8 volume) {
+	_volume = volume;
+	// Set volume on each Apple IIGS channel playing on this MIDI channel
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+		iter->setChannelVolume(volume);
+}
+
+void IIgsMidiChannel::noteOff(uint8 note, uint8 velocity) {
+	// Go through all the notes playing on this MIDI channel
+	// and turn off the ones that are playing the given note
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+		if (iter->origNote == note)
+			iter->noteOff(velocity);
+}
+
+void IIgsMidiChannel::noteOn(uint8 note, uint8 velocity) {
+	IIgsChannelInfo channel;
+	// Use the default channel volume and instrument
+	channel.setChannelVolume(_volume);
+	channel.setInstrument(_instrument, _sample);
+	// Set the note on and save the channel
+	channel.noteOn(note, velocity);
+	_gsChannels.push_back(channel);
+}
+
+void IIgsChannelInfo::rewind() {
+	this->envVol = this->startEnvVol;
+	this->envSeg = 0;
+	this->pos = intToFrac(0);
+}
+
+void IIgsChannelInfo::setChannelVolume(uint8 volume) {
+	this->chanVol = intToFrac(volume);
+}
+
+void IIgsChannelInfo::setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample) {
+	assert(instrument != NULL && sample != NULL);
+	this->ins = instrument;
+	this->unrelocatedSample = sample;
+}
+
+// TODO/FIXME: Implement correctly and fully (Take velocity into account etc)
+void IIgsChannelInfo::noteOn(uint8 note, uint8 velocity) {	
+	this->origNote = note;
+	this->startEnvVol = intToFrac(0);
+	rewind();
+	const IIgsWaveInfo *waveInfo = NULL;
+	for (uint i = 0; i < ins->oscList.count; i++)
+		if (ins->oscList(i).waves[0].top >= note)
+			waveInfo = &ins->oscList(i).waves[0];
+	assert(waveInfo != NULL);
+	this->relocatedSample = this->unrelocatedSample + waveInfo->addr;
+	this->posAdd  = intToFrac(0);
+	this->note    = intToFrac(note) + doubleToFrac(waveInfo->relPitch/256.0);
+	this->vol     = doubleToFrac(fracToDouble(this->envVol) * fracToDouble(this->chanVol) / 127.0);
+	this->loop    = (waveInfo->mode == OSC_MODE_LOOP);
+	this->size    = waveInfo->size - waveInfo->addr;
+	this->end     = waveInfo->halt;
+};
+
+// TODO/FIXME: Implement correctly and fully (Take release time and velocity into account etc)
+void IIgsChannelInfo::noteOff(uint8 velocity) {
+	this->loop = false;
+	this->envSeg = ins->relseg;
+};
+
+void IIgsChannelInfo::stop() {
+	this->end = true;
+}
+
+bool IIgsChannelInfo::playing() {
+	return !this->end;
 }
 
 void SoundMgr::playSampleSound() {
@@ -655,7 +793,7 @@ void SoundMgr::playSampleSound() {
 	}
 
 	if (_playingSound != -1)
-		_playing = !_IIgsChannel.end;
+		_playing = _gsSound.activeSounds() > 0;
 }
 
 void SoundMgr::playAgiSound() {
@@ -745,72 +883,66 @@ uint32 SoundMgr::mixSound(void) {
 		return BUFFER_SIZE;
 
 	// Handle Apple IIGS sound mixing here
+	// TODO: Implement playing both waves in an oscillator
+	// TODO: Implement swap-mode in an oscillator
 	if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
-		AgiSoundType type = (AgiSoundType) _vm->_game.sounds[_playingSound]->type();
-		// Currently we only support mixing a single sample in Apple IIGS mixing code.
-		if (type != AGI_SOUND_SAMPLE)
-			return IIGS_BUFFER_SIZE;
-		//IIgsWaveInfo &waveInfo = _IIgsChannel.ins.oscList(0).waves[0];
+		for (uint midiChan = 0; midiChan < _gsSound._midiChannels.size(); midiChan++) {
+			for (uint gsChan = 0; gsChan < _gsSound._midiChannels[midiChan]._gsChannels.size(); gsChan++) {
+				IIgsChannelInfo &channel = _gsSound._midiChannels[midiChan]._gsChannels[gsChan];
+				if (channel.playing()) { // Only mix in actively playing channels
+					// Frequency multiplier was 1076.0 based on tests made with MESS 0.117.
+					// Tests made with KEGS32 averaged the multiplier to around 1045.
+					// So this is a guess but maybe it's 1046.5... i.e. C6's frequency?
+					double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(channel.note));
+					channel.posAdd = doubleToFrac(hertz / getRate());
+					channel.vol = doubleToFrac(fracToDouble(channel.envVol) * fracToDouble(channel.chanVol) / 127.0);
+					double tempVol = fracToDouble(channel.vol)/127.0;
+					for (i = 0; i < IIGS_BUFFER_SIZE; i++) {
+						b = channel.relocatedSample[fracToInt(channel.pos)];
+						// TODO: Find out what volume/amplification setting is loud enough
+						//       but still doesn't clip when playing many channels on it.
+						_sndBuffer[i] += (int16) (b * tempVol * 256/4);
+						channel.pos += channel.posAdd;
 
-		//uint period = noteToPeriod(fracToInt(_IIgsChannel.note + FRAC_HALF));
-		//_IIgsChannel.posAdd = ((frac_t) (118600 * 4 / period)) << (FRAC_BITS - 8);
+						if (channel.pos >= intToFrac(channel.size)) {
+							if (channel.loop) {
+								// Don't divide by zero on zero length samples
+								channel.pos %= intToFrac(channel.size + (channel.size == 0));
+								// Probably we should loop the envelope too
+								channel.envSeg = 0;
+								channel.envVol = channel.startEnvVol;
+							} else {
+								channel.pos = channel.chanVol = 0;
+								channel.end = true;
+								break;
+							}
+						}
+					}
 
-		// Hertz (number of vibrations a second) = 6.875 x 2 ^ ( ( 3 + MIDI_Pitch ) / 12 )
-		// From http://www.musicmasterworks.com/WhereMathMeetsMusic.html
-		//double hertz = 6.875 * pow(SEMITONE, 3 + fracToDouble(_IIgsChannel.note));
-		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(_IIgsChannel.note));
-		// double step = getRate() / hertz;
-		// _IIgsChannel.posAdd = doubleToFrac(step);
-
-		// Frequency multiplier was 1076.0 based on tests made with MESS 0.117.
-		// Tests made with KEGS32 averaged the multiplier to around 1045.
-		// So this is a guess but maybe it's 1046.5... i.e. C6's frequency?
-		double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(_IIgsChannel.note));
-		_IIgsChannel.posAdd = doubleToFrac(hertz / getRate());
-		_IIgsChannel.vol = doubleToFrac(fracToDouble(_IIgsChannel.envVol) * fracToDouble(_IIgsChannel.chanVol) / 127.0);
-		double tempVol = fracToDouble(_IIgsChannel.vol)/127.0;
-
-		for (i = 0; i < IIGS_BUFFER_SIZE; i++) {
-			b = _IIgsChannel.sample[fracToInt(_IIgsChannel.pos)];
-			// DOESN'T DO MIXING YET! ONLY ONE SAMPLE PER PLAYING!
-			_sndBuffer[i] = (int16) (b * tempVol * 256);
-			_IIgsChannel.pos += _IIgsChannel.posAdd;
-
-			if (_IIgsChannel.pos >= intToFrac(_IIgsChannel.size)) {
-				if (_IIgsChannel.loop) {
-					_IIgsChannel.pos %= intToFrac(_IIgsChannel.size);
-					// Probably we should loop the envelope too
-					_IIgsChannel.envSeg = 0;
-					_IIgsChannel.envVol = _IIgsChannel.startEnvVol;
-				} else {
-					_IIgsChannel.pos = _IIgsChannel.chanVol = 0;
-					_IIgsChannel.end = true;
-					break;
+					if (channel.envSeg < ENVELOPE_SEGMENT_COUNT) {
+						const IIgsEnvelopeSegment &seg = channel.ins->env.seg[channel.envSeg];
+						double bufSecLen = IIGS_BUFFER_SIZE / (double) getRate();
+						double ticksPerSec = 60; // Currently a guess, 1000 would be way too much
+						double bufTickLen  = bufSecLen / (1.0/ticksPerSec);
+						frac_t envVolDelta = doubleToFrac((seg.inc/256.0)*bufTickLen);
+						if (intToFrac(seg.bp) >= channel.envVol) {
+							channel.envVol += envVolDelta;
+							if (channel.envVol >= intToFrac(seg.bp)) {
+								channel.envVol = intToFrac(seg.bp);
+								channel.envSeg += 1;
+							}
+						} else {
+							channel.envVol -= envVolDelta;
+							if (channel.envVol <= intToFrac(seg.bp)) {
+								channel.envVol = intToFrac(seg.bp);
+								channel.envSeg += 1;
+							}
+						}
+					}
 				}
 			}
 		}
-
-		if (_IIgsChannel.envSeg <= _IIgsChannel.ins.relseg) {
-			IIgsEnvelopeSegment &seg = _IIgsChannel.ins.env.seg[_IIgsChannel.envSeg];
-			double bufSecLen = IIGS_BUFFER_SIZE / (double) getRate();
-			double ticksPerSec = 100; // 1000 is way too much
-			double bufTickLen  = bufSecLen / (1.0/ticksPerSec);
-			frac_t envVolDelta = doubleToFrac((seg.inc/256.0)*bufTickLen);
-			if (intToFrac(seg.bp) >= _IIgsChannel.envVol) {
-				_IIgsChannel.envVol += envVolDelta;
-				if (_IIgsChannel.envVol >= intToFrac(seg.bp)) {
-					_IIgsChannel.envVol = intToFrac(seg.bp);
-					_IIgsChannel.envSeg += 1;
-				}
-			} else {
-				_IIgsChannel.envVol -= envVolDelta;
-				if (_IIgsChannel.envVol <= intToFrac(seg.bp)) {
-					_IIgsChannel.envVol = intToFrac(seg.bp);
-					_IIgsChannel.envSeg += 1;
-				}
-			}
-		}
-		//_IIgsChannel.envSeg += doubleToFrac(1/100.0);
+		_gsSound.removeStoppedSounds();
 		return IIGS_BUFFER_SIZE;
 	} /* else ... */
 
@@ -896,7 +1028,7 @@ const IIgsExeInfo *SoundMgr::getIIgsExeInfo(enum AgiGameID gameid) const {
 	return NULL;
 }
 
-bool SoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo) {
+bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo) {
 	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
@@ -908,11 +1040,11 @@ bool SoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsEx
 	}
 
 	// Read the whole executable file into memory
-	Common::MemoryReadStream *data = file.readStream(file.size());
+	Common::SharedPtr<Common::MemoryReadStream> data(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
-	if (data != NULL && data->size() >= (exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
+	if (data && data->size() >= (exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
 		// Check instrument set's length (The info's saved in the executable)
 		data->seek(exeInfo.instSetStart - 4);
 		uint16 instSetByteCount = data->readUint16LE();
@@ -932,22 +1064,25 @@ bool SoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsEx
 
 		// Read in the instrument set one instrument at a time
 		data->seek(exeInfo.instSetStart);
-		g_numInstruments = 0; // Zero number of successfully loaded instruments
+
+		// Load the instruments
+		_instruments.clear();
+		_instruments.reserve(exeInfo.instSet.instCount);
+		IIgsInstrumentHeader instrument;
 		for (uint i = 0; i < exeInfo.instSet.instCount; i++) {
-			if (!g_instruments[i].read(*data)) {
+			if (!instrument.read(*data)) {
 				warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
 					i + 1, exeInfo.instSet.instCount, exePath.c_str());
 				break;
 			}
-			g_numInstruments++; // Increase number of successfully loaded instruments
+			_instruments.push_back(instrument); // Add the successfully loaded instrument to the instruments array
 		}
 
 		// Loading was successful only if all instruments were loaded successfully
-		loadedOk = (g_numInstruments == exeInfo.instSet.instCount);
+		loadedOk = (_instruments.size() == exeInfo.instSet.instCount);
 	} else // Couldn't read enough data from the executable file
 		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.c_str());
 
-	delete data; // Free the memory buffer allocated for reading the executable file
 	return loadedOk;
 }
 
@@ -964,7 +1099,7 @@ bool SoundMgr::convertWave(Common::SeekableReadStream &source, int8 *dest, uint 
 	return !source.ioFailed();
 }
 
-Common::SharedPtr<Common::MemoryReadStream> SoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+bool IIgsSoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
 	Common::File file;
 
 	// Open the wave file and read it into memory
@@ -983,10 +1118,12 @@ Common::SharedPtr<Common::MemoryReadStream> SoundMgr::loadWaveFile(const Common:
 				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
 		}
 		uint8Wave->seek(0); // Seek wave to its start
-		return uint8Wave;
+		// Convert the wave file from 8-bit unsigned to 8-bit signed and save the result
+		_wave.resize(uint8Wave->size());
+		return SoundMgr::convertWave(*uint8Wave, _wave.begin(), uint8Wave->size());
 	} else { // Couldn't read the wave file or it had incorrect size
 		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
-		return Common::SharedPtr<Common::MemoryReadStream>(); // Return a NULL shared pointer
+		return false;
 	}
 }
 
@@ -1057,17 +1194,12 @@ bool SoundMgr::loadInstruments() {
 		return false;
 	}
 
-	// First load the wave file and then load the instrument headers.
-	// Finally convert the wave file from 8-bit unsigned to 8-bit signed format.
-	// As none of the tested SIERRASTANDARD-files have zeroes in them there's
-	// no need to check for true sample size (A zero in the sample data would
-	// end the sample prematurely).
-	Common::SharedPtr<Common::MemoryReadStream> uint8Wave = loadWaveFile(waveFsnode->getPath(), *exeInfo);
-	if (uint8Wave && loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo)) {
-		_gsWave.resize(uint8Wave->size()); // Allocate space for the 8-bit signed version of the SIERRASTANDARD-file
-		return SoundMgr::convertWave(*uint8Wave, _gsWave.begin(), uint8Wave->size());
-	} else // Error loading the wave file or the instrument headers
-		return false;
+	// Set the MIDI program change to instrument number mapping and
+	// load the instrument headers and their sample data.
+	// None of the tested SIERRASTANDARD-files have zeroes in them so
+	// there's no need to check for prematurely ending samples here.
+	_gsSound.setProgramChangeMapping(&exeInfo->instSet.progToInst);
+	return _gsSound.loadWaveFile(waveFsnode->getPath(), *exeInfo) && _gsSound.loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo);
 }
 
 static void fillAudio(void *udata, int16 *stream, uint len) {
