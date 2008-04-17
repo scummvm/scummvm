@@ -1629,7 +1629,7 @@ void Screen::drawShapePlotType0(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType1(uint8 *dst, uint8 cmd) {
-	uint32 relOffs = dst - _dsDstPage;
+	// uint32 relOffs = dst - _dsDstPage;
 	for (int i = 0; i < _dsTableLoopCount; ++i)
 		cmd = _dsTable[cmd];
 
@@ -1651,7 +1651,7 @@ void Screen::drawShapePlotType4(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType5(uint8 *dst, uint8 cmd) {
-	uint32 relOffs = dst - _dsDstPage;
+	// uint32 relOffs = dst - _dsDstPage;
 	cmd = _dsTable2[cmd];
 	for (int i = 0; i < _dsTableLoopCount; ++i)
 		cmd = _dsTable[cmd];
