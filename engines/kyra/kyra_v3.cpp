@@ -61,9 +61,9 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_sceneList = 0;
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	_mainCharacter.sceneId = 9;
-	_mainCharacter.dlgIndex = 0;
 	_mainCharacter.unk4 = 0x4C;
 	_mainCharacter.facing = 5;
+	_mainCharacter.animFrame = 0x57;
 	_mainCharacter.walkspeed = 5;
 	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 	_text = 0;
@@ -600,6 +600,8 @@ void KyraEngine_v3::runStartupScript(int script, int unk1) {
 
 	while (_scriptInterpreter->validScript(&state))
 		_scriptInterpreter->runScript(&state);
+
+	_scriptInterpreter->unloadScript(&data);
 }
 
 void KyraEngine_v3::openTalkFile(int file) {

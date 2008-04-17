@@ -212,6 +212,9 @@ bool ScriptHelper::runScript(ScriptState *script) {
 		(this->*(_commands[opcode].proc))(script);
 	}
 
+	if (!_continue)
+		script->ip = 0;
+
 	return _continue;
 }
 
@@ -317,7 +320,6 @@ void ScriptHelper::cmd_pushRetOrPos(ScriptState* script) {
 
 	default:
 		_continue = false;
-		script->ip = 0;
 		break;
 	}
 }
@@ -347,7 +349,6 @@ void ScriptHelper::cmd_popRetOrPos(ScriptState* script) {
 	case 1:
 		if (script->sp >= 60) {
 			_continue = false;
-			script->ip = 0;
 		} else {
 			script->bp = script->stack[script->sp++];
 			script->ip = script->dataPtr->data + script->stack[script->sp++];
@@ -356,7 +357,6 @@ void ScriptHelper::cmd_popRetOrPos(ScriptState* script) {
 
 	default:
 		_continue = false;
-		script->ip = 0;
 		break;
 	}
 }
@@ -421,6 +421,7 @@ void ScriptHelper::cmd_negate(ScriptState* script) {
 		break;
 
 	default:
+		warning("Unknown negation func: %d", _parameter);
 		_continue = false;
 		break;
 	}
@@ -536,18 +537,15 @@ void ScriptHelper::cmd_eval(ScriptState* script) {
 		break;
 	}
 
-	if (error) {
-		script->ip = 0;
+	if (error)
 		_continue = false;
-	} else {
+	else
 		script->stack[--script->sp] = ret;
-	}
 }
 
 void ScriptHelper::cmd_setRetAndJmp(ScriptState* script) {
 	if (script->sp >= 60) {
 		_continue = false;
-		script->ip = 0;
 	} else {
 		script->retValue = script->stack[script->sp++];
 		uint16 temp = script->stack[script->sp++];

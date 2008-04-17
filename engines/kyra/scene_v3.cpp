@@ -273,7 +273,7 @@ void KyraEngine_v3::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 void KyraEngine_v3::enterNewSceneUnk2(int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::enterNewSceneUnk2(%d)", unk1);
 	_unk3 = -1;
-	if (_mainCharX == -1 && _mainCharY == -1) {
+	if (_mainCharX == -1 && _mainCharY == -1 && !unk1) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 		refreshAnimObjectsIfNeed();
