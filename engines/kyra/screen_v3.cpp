@@ -47,4 +47,29 @@ const ScreenDim *Screen_v3::getScreenDim(int dim) {
 	return &_screenDimTable[dim];
 }
 
+int Screen_v3::getLayer(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_v3::getLayer(%d, %d)", x, y);
+	if (x < 0)
+		x = 0;
+	else if (x >= 320)
+		x = 319;
+	if (y < 0)
+		y = 0;
+	else if (y >= 188)
+		y = 187;
+
+	if (y < _maskMinY || y > _maskMaxY)
+		return 15;
+
+	uint8 pixel = *(getCPagePtr(5) + y * 320 + x);
+	pixel &= 0x7F;
+	pixel >>= 3;
+
+	if (pixel < 1)
+		pixel = 1;
+	else if (pixel > 15)
+		pixel = 15;
+	return pixel;
+}
+
 } // end of namespace Kyra

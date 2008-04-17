@@ -366,9 +366,8 @@ void KyraEngine_v3::loadSceneMsc() {
 	// HACK
 	uint8 data[320*200];
 	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, data);
-	_screen->fillRect(0, 0, 319, _maskPageMinY - 1, 0xFF, 5);
+	_screen->clearPage(5);
 	_screen->copyBlockToPage(5, 0, _maskPageMinY, 320, height, data);
-	_screen->fillRect(0, _maskPageMaxY + 1, 319, 199, 0xFF, 5);
 
 	musicUpdate(0);
 }
@@ -617,7 +616,13 @@ void KyraEngine_v3::initSceneScreen(int unk1) {
 
 	updateCharPal(0);
 
-	//XXX when loading from main menu
+	if (1/*!_menuDirectlyToLoad*/) {
+		_scriptInterpreter->startScript(&_sceneScriptState, 3);
+		_sceneScriptState.regs[5] = unk1;
+
+		while (_scriptInterpreter->validScript(&_sceneScriptState))
+			_scriptInterpreter->runScript(&_sceneScriptState);
+	}
 }
 
 void KyraEngine_v3::updateSpecialSceneScripts() {

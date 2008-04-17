@@ -32,6 +32,49 @@
 
 namespace Kyra {
 
+int KyraEngine_v3::o3_setCharacterPos(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setCharacterPos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	int x = stackPos(0);
+	int y = stackPos(1);
+
+	if (x != -1 && y != -1) {
+		x &= ~3;
+		y &= ~1;
+	}
+
+	_mainCharacter.x1 = _mainCharacter.x2 = x;
+	_mainCharacter.y1 = _mainCharacter.y2 = y;
+
+	return 0;
+}
+
+int KyraEngine_v3::o3_refreshCharacter(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_refreshCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	const int frame = stackPos(0);
+	const int facing = stackPos(1);
+	const bool updateNeed = stackPos(2) != 0;
+
+	if (facing >= 0)
+		_mainCharacter.facing = facing;
+
+	if (frame >= 0 && frame != 87)
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+	else
+		_mainCharacter.animFrame = 87;
+
+	updateCharacterAnim(0);
+
+	if (updateNeed)
+		refreshAnimObjectsIfNeed();
+	return 0;
+}
+
+int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showSceneFileMessage(%p) (%d)", (const void *)script, stackPos(0));
+	showMessage((const char*)getTableEntry(_scenesFile, stackPos(0)), 0xFF, 0xF0);
+	return 0;
+}
+
 int KyraEngine_v3::o3_defineItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineItem(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int freeItem = findFreeItem();
@@ -59,6 +102,36 @@ int KyraEngine_v3::o3_setGameFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setGameFlag(%p) (%d)", (const void *)script, stackPos(0));
 	setGameFlag(stackPos(0));
 	return 1;
+}
+
+int KyraEngine_v3::o3_hideMouse(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_hideMouse(%p) ()", (const void *)script);
+	_screen->hideMouse();
+	return 0;
+}
+
+int KyraEngine_v3::o3_setMousePos(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	setMousePos(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v3::o3_showMouse(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showMouse(%p) ()", (const void *)script);
+	_screen->showMouse();
+	return 0;
+}
+
+int KyraEngine_v3::o3_delay(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const uint32 delayTime = stackPos(0) * _tickLength;
+	const int delayFunc = stackPos(1);
+
+	if (delayFunc)
+		warning("STUB o3_delay func 1");
+
+	delay(delayTime, true);
+	return 0;
 }
 
 int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
@@ -143,7 +216,7 @@ int KyraEngine_v3::o3_defineSceneAnim(ScriptState *script) {
 			if (x2 == -1)
 				x2 = _sceneAnimMovie[animId]->xAdd();
 			if (y2 == -1)
-				y2 = _sceneAnimMovie[animId]->xAdd();
+				y2 = _sceneAnimMovie[animId]->yAdd();
 			if (w == -1)
 				w = _sceneAnimMovie[animId]->width();
 			if (h == -1)
@@ -227,6 +300,12 @@ int KyraEngine_v3::o3_getHiddenItemsEntry(ScriptState *script) {
 	return (int16)_hiddenItems[stackPos(0)];
 }
 
+int KyraEngine_v3::o3_removeSceneAnimObject(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_removeSceneAnimObject(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	removeSceneAnimObject(stackPos(0), stackPos(1));
+	return 0;
+}
+
 int KyraEngine_v3::o3_dummy(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_dummy(%p) ()", (const void *)script);
 	return 0;
@@ -239,9 +318,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 	static const OpcodeV3 opcodeTable[] = {
 		// 0x00
 		OpcodeUnImpl(),
+		Opcode(o3_setCharacterPos),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_refreshCharacter),
 		// 0x04
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -259,7 +338,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x10
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_showSceneFileMessage),
 		Opcode(o3_dummy),
 		Opcode(o3_dummy),
 		// 0x14
@@ -294,11 +373,11 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x2c
 		OpcodeUnImpl(),
+		Opcode(o3_hideMouse),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_setMousePos),
 		// 0x30
-		OpcodeUnImpl(),
+		Opcode(o3_showMouse),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
@@ -306,7 +385,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
-		OpcodeUnImpl(),
+		Opcode(o3_delay),
 		// 0x38
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -431,7 +510,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_removeSceneAnimObject),
 		// 0x9c
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),

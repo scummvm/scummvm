@@ -916,6 +916,19 @@ void KyraEngine_v3::update() {
 	_screen->updateScreen();
 }
 
+void KyraEngine_v3::delay(uint32 millis, bool doUpdate, bool isMainLoop) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::delay(%d, %d, %d)", millis, doUpdate, isMainLoop);
+	uint32 endTime = _system->getMillis() + millis;
+	while (endTime > _system->getMillis()) {
+		if (doUpdate) {
+			//XXX
+			update();
+		}
+
+		_system->delayMillis(10);
+	}
+}
+
 #pragma mark -
 
 void KyraEngine_v3::updateInput() {
@@ -1102,6 +1115,23 @@ int KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
 
 	return buffer ? size : 0 ;
 }
+
+uint8 *KyraEngine_v3::getTableEntry(uint8 *buffer, int id) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getTableEntry(%p, %d)", (const void*)buffer, id);
+	uint16 tableEntries = READ_LE_UINT16(buffer);
+	const uint16 *indexTable = (const uint16*)(buffer + 2);
+	const uint16 *offsetTable = indexTable + tableEntries;
+
+	int num = 0;
+	while (id != READ_LE_UINT16(indexTable)) {
+		++indexTable;
+		++num;
+	}
+
+	return buffer + READ_LE_UINT16(offsetTable + num);
+}
+
+#pragma mark -
 
 Movie *KyraEngine_v3::createWSAMovie() {
 	WSAMovieV2 *movie = new WSAMovieV2(this, _screen);

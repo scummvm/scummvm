@@ -76,6 +76,8 @@ private:
 
 	void update();
 
+	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
+
 	// - Input
 	void updateInput();
 	int checkInput(Button *buttonList, bool mainLoop = false);
@@ -185,6 +187,9 @@ private:
 	bool _loadingState;
 	void updateCharacterAnim(int charId);
 
+	void updateSceneAnim(int anim, int newFrame);
+	void removeSceneAnimObject(int anim, int refresh);
+
 	// interface
 	uint8 *_interface;
 	uint8 *_interfaceCommandLine;
@@ -200,7 +205,7 @@ private:
 	bool _restoreCommandLine;
 	bool _inventoryState;
 
-	// translation stuff
+	// localization
 	uint8 *_scoreFile;
 	uint8 *_cCodeFile;
 	uint8 *_scenesFile;
@@ -208,6 +213,8 @@ private:
 	uint8 *_actorFile;
 	uint32 _actorFileSize;
 	uint8 *_sceneStrings;
+
+	uint8 *getTableEntry(uint8 *buffer, int id);
 
 	// items
 	uint8 *_itemBuffer1;
@@ -261,8 +268,6 @@ private:
 
 	void freeSceneShapes();
 	void freeSceneAnims();
-
-	void updateSceneAnim(int anim, int newFrame);
 
 	// voice
 	int _currentTalkFile;
@@ -396,10 +401,17 @@ private:
 	void loadExtrasShapes();
 
 	// opcodes
+	int o3_setCharacterPos(ScriptState *script);
+	int o3_refreshCharacter(ScriptState *script);
+	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
 	int o3_setGameFlag(ScriptState *script);
+	int o3_hideMouse(ScriptState *script);
+	int o3_setMousePos(ScriptState *script);
+	int o3_showMouse(ScriptState *script);
+	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
@@ -412,6 +424,7 @@ private:
 	int o3_querySpecialSceneScriptState(ScriptState *script);
 	int o3_setHiddenItemsEntry(ScriptState *script);
 	int o3_getHiddenItemsEntry(ScriptState *script);
+	int o3_removeSceneAnimObject(ScriptState *script);
 	int o3_dummy(ScriptState *script);
 
 	// misc

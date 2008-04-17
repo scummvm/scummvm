@@ -338,7 +338,7 @@ void KyraEngine_v3::updateSceneAnim(int anim, int newFrame) {
 	if (!animObject->enabled)
 		return;
 
-	animObject->needRefresh = 1;
+	animObject->needRefresh = true;
 
 	if (_sceneAnims[anim].flags & 2)
 		animObject->flags |= 1;
@@ -368,6 +368,22 @@ void KyraEngine_v3::updateSceneAnim(int anim, int newFrame) {
 		else
 			_animList = addToAnimListSorted(_animList, animObject);
 	}
+}
+
+void KyraEngine_v3::removeSceneAnimObject(int anim, int refresh) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::removeSceneAnimObject(%d, %d)", anim, refresh);
+	AnimObj *obj = &_animObjects[anim+1];
+	restorePage3();
+	obj->shapeIndex3 = 0xFFFF;
+	obj->animNum = 0xFFFF;
+	obj->needRefresh = true;
+
+	if (refresh)
+		refreshAnimObjectsIfNeed();
+
+	obj->enabled = false;
+	_animList = deleteAnimListEntry(_animList, obj);
+	_sceneAnimMovie[anim]->close();
 }
 
 } // end of namespace Kyra

@@ -99,7 +99,6 @@ public:
 protected:
 	KyraEngine *_vm;
 	int16 _parameter;
-	bool _continue;
 
 	typedef void (ScriptHelper::*CommandProc)(ScriptState*);
 	struct CommandEntry {
