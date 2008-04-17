@@ -916,13 +916,132 @@ void KyraEngine_v3::update() {
 	musicUpdate(0);
 	refreshAnimObjectsIfNeed();
 	musicUpdate(0);
-	//XXX
+	updateMouse();
 	updateSpecialSceneScripts();
 	updateCommandLine();
 	//XXX
 	musicUpdate(0);
 
 	_screen->updateScreen();
+}
+
+void KyraEngine_v3::updateMouse() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateMouse()");
+	int shape = 0, offsetX = 0, offsetY = 0;
+	Common::Point mouse = getMousePos();
+	bool hasItemCollision = checkItemCollision(mouse.x, mouse.y) != -1;
+
+	if (mouse.y > 187) {
+		bool setItemCursor = false;
+		if (_handItemSet == -6) {
+			if (mouse.x < 311)
+				setItemCursor = true;
+		} else if (_handItemSet == -5) {
+			if (mouse.x < _sceneMinX || mouse.x > _sceneMaxX)
+				setItemCursor = true;
+		} else if (_handItemSet == -4) {
+			if (mouse.x > 8)
+				setItemCursor = true;
+		}
+
+		if (setItemCursor) {
+			setItemMouseCursor();
+			return;
+		}
+	}
+
+	if (_inventoryState) {
+		if (mouse.y >= 144)
+			return;
+		//hideInventory();
+	}
+
+	if (hasItemCollision && _handItemSet < -1 && _itemInHand < 0) {
+		_handItemSet = -1;
+		_itemInHand = -1;
+		_screen->setMouseCursor(0, 0, _gameShapes[0]);
+	}
+
+	int type = 0;
+	if (mouse.y <= 199) {
+		if (mouse.x <= 8) {
+			if (_sceneExit4 != 0xFFFF) {
+				type = -4;
+				shape = 4;
+				offsetX = 0;
+				offsetY = 0;
+			}
+		} else if (mouse.x >= 311) {
+			if (_sceneExit2 != 0xFFFF) {
+				type = -6;
+				shape = 2;
+				offsetX = 13;
+				offsetY = 8;
+			}
+		} else if (mouse.y >= 171) {
+			if (_sceneExit3 != 0xFFFF) {
+				if (mouse.x >= _sceneMinX && mouse.x <= _sceneMaxX) {
+					type = -5;
+					shape = 3;
+					offsetX = 8;
+					offsetY = 13;
+				}
+			}
+		} else if (mouse.y <= 8) {
+			if (_sceneExit1 != 0xFFFF) {
+				type = -7;
+				shape = 1;
+				offsetX = 8;
+				offsetY = 0;
+			}
+		}
+	}
+
+	for (int i = 0; i < _specialExitCount; ++i) {
+		if (checkSpecialSceneExit(i, mouse.x, mouse.y)) {
+			switch (_specialExitTable[20+i]) {
+			case 0:
+				type = -7;
+				shape = 1;
+				offsetX = 8;
+				offsetY = 0;
+				break;
+
+			case 2:
+				type = -6;
+				shape = 2;
+				offsetX = 13;
+				offsetY = 8;
+				break;
+
+			case 4:
+				type = -5;
+				shape = 3;
+				offsetX = 8;
+				offsetY = 13;
+				break;
+
+			case 6:
+				type = -4;
+				shape = 4;
+				offsetX = 0;
+				offsetY = 8;
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	if (type != 0 && type != _handItemSet && !hasItemCollision) {
+		_handItemSet = type;
+		_screen->setMouseCursor(offsetX, offsetY, _gameShapes[shape]);
+	} else if (type == 0 && _handItemSet != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
+		setItemMouseCursor();
+	} else if (mouse.y > 187 && _handItemSet > -4 && type == 0 && !_inventoryState) {
+		//showInventory();
+	}
 }
 
 void KyraEngine_v3::delay(uint32 millis, bool doUpdate, bool isMainLoop) {

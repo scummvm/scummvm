@@ -74,6 +74,7 @@ private:
 	void handleInput(int x, int y);
 
 	void update();
+	void updateMouse();
 
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
 
@@ -225,10 +226,28 @@ private:
 	// items
 	uint8 *_itemBuffer1;
 	uint8 *_itemBuffer2;
+	struct Item {
+		uint16 id;
+		uint16 sceneId;
+		int16 x, y;
+		uint16 unk8;
+	};
+
+	Item *_itemList;
+	uint16 _hiddenItems[100];
+
+	void resetItem(int index);
+	void resetItemList();
+
+	int findFreeItem();
 	
 	void initItems();
 
+	int checkItemCollision(int x, int y);
+
 	// -> hand item
+	void setItemMouseCursor();
+
 	int _itemInHand;
 	int _handItemSet;
 
@@ -293,8 +312,10 @@ private:
 	int _sceneEnterX2, _sceneEnterY2;
 	int _sceneEnterX3, _sceneEnterY3;
 	int _sceneEnterX4, _sceneEnterY4;
+
 	int _specialExitCount;
 	uint16 _specialExitTable[25];
+	bool checkSpecialSceneExit(int index, int x, int y);
 
 	bool _noScriptEnter;
 	void enterNewScene(uint16 scene, int facing, int unk1, int unk2, int unk3);
@@ -314,7 +335,7 @@ private:
 	void runSceneScript4(int unk1);
 	void runSceneScript8();
 
-	int _sceneMinY, _sceneMaxY;
+	int _sceneMinX, _sceneMaxX;
 	int _maskPageMinY, _maskPageMaxY;
 
 	ScriptState _sceneScriptState;
@@ -338,22 +359,6 @@ private:
 	int _scaleTable[15];
 
 	bool _unkSceneScreenFlag1;
-
-	// items
-	struct Item {
-		uint16 id;
-		uint16 sceneId;
-		int16 x, y;
-		uint16 unk8;
-	};
-
-	Item *_itemList;
-	uint16 _hiddenItems[100];
-
-	void resetItem(int index);
-	void resetItemList();
-
-	int findFreeItem();
 
 	// character
 	struct Character {

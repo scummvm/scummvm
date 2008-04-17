@@ -429,8 +429,8 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	_sceneEnterY3 = 171;
 	_sceneEnterX4 = 24;
 	_sceneEnterY4 = 93;
-	_sceneMinY = 0;
-	_sceneMaxY = 319;
+	_sceneMinX = 0;
+	_sceneMaxX = 319;
 
 	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
 	strcpy(filename, scene.filename2);
@@ -677,6 +677,15 @@ void KyraEngine_v3::runSceneScript8() {
 		musicUpdate(0);
 		_scriptInterpreter->runScript(&_sceneScriptState);
 	}
+}
+
+bool KyraEngine_v3::checkSpecialSceneExit(int index, int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkSpecialSceneExit(%d, %d, %d)", index, x, y);
+	if (_specialExitTable[index] < x && _specialExitTable[5+index] < y &&
+		_specialExitTable[10+index] > x && _specialExitTable[15+index] > y)
+		return true;
+
+	return false;
 }
 
 } // end of namespace Kyra

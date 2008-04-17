@@ -51,4 +51,43 @@ int KyraEngine_v3::findFreeItem() {
 	return -1;
 }
 
+int KyraEngine_v3::checkItemCollision(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkItemCollision(%d, %d)", x, y);
+	int itemIndex = -1;
+	int maxItemY = -1;
+
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].id == 0xFFFF || _itemList[i].sceneId != _mainCharacter.sceneId)
+			continue;
+
+		const int x1 = _itemList[i].x - 11;
+		const int x2 = _itemList[i].x + 10;
+
+		if (x < x1 || x > x2)
+			continue;
+
+		const int y1 = _itemList[i].y - _itemBuffer1[_itemList[i].id] - 3;
+		const int y2 = _itemList[i].y + 3;
+
+		if (y < y1 || y > y2)
+			continue;
+
+		if (_itemList[i].y >= maxItemY) {
+			itemIndex = i;
+			maxItemY = _itemList[i].y;
+		}
+	}
+
+	return itemIndex;
+}
+
+void KyraEngine_v3::setItemMouseCursor() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::setItemMouseCursor()");
+	_handItemSet = _itemInHand;
+	if (_itemInHand == -1)
+		_screen->setMouseCursor(0, 0, _gameShapes[0]);
+	else
+		_screen->setMouseCursor(0xC, 0x13, _gameShapes[_itemInHand+248]);
+}
+
 } // end of namespace Kyra
