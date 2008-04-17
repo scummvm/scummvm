@@ -328,7 +328,7 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type, bool loop, bool fadeIn, int channel) {
+int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type, int volume, bool loop, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
@@ -357,16 +357,16 @@ int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type
 		return -1;
 	}
 
-	// Just guessed
-	if (fadeIn)
-		use->stream->beginFadeIn(60 * _vm->tickLength());
+	if (volume > 255)
+		volume = 255;
+	volume = (volume * Audio::Mixer::kMaxChannelVolume) / 255;
 
 	if (type == kSoundTypeMusic)
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &use->handle, use->stream);
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &use->handle, use->stream, -1, volume);
 	else if (type == kSoundTypeSfx)
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &use->handle, use->stream);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &use->handle, use->stream, -1, volume);
 	else if (type == kSoundTypeSpeech)
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &use->handle, use->stream);
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &use->handle, use->stream, -1, volume);
 
 	return use - _sounds;
 }

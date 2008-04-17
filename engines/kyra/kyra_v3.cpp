@@ -386,15 +386,15 @@ void KyraEngine_v3::fadeOutMusic(int ticks) {
 	}
 }
 
-void KyraEngine_v3::playSoundEffect(uint32 item, int priority) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::playSoundEffect(%d, %d)", item, priority);
+void KyraEngine_v3::playSoundEffect(uint32 item, int volume) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playSoundEffect(%d, %d)", item, volume);
 	if (_sfxFileMap[item*2+0] != 0xFF) {
 		char filename[16];
 		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
 
 		Common::SeekableReadStream *stream = _res->getFileStream(filename);
 		if (stream)
-			_soundDigital->playSound(stream, SoundDigital::kSoundTypeSfx);
+			_soundDigital->playSound(stream, SoundDigital::kSoundTypeSfx, volume);
 	}
 }
 

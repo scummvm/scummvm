@@ -516,13 +516,13 @@ public:
 	 * @param stream		Data stream used for playback
 	 *                      It will be deleted when playback is finished
 	 * @param type			type
+	 * @param volume		channel volume
 	 * @param loop			true if the sound should loop (endlessly)
-	 * @param fadeIn		true if the sound should be faded in volume wise
 	 * @param channel		tell the sound player to use a specific channel for playback
 	 *
 	 * @return channel playing the sound
 	 */
-	int playSound(Common::SeekableReadStream *stream, kSoundTypes type, bool loop = false, bool fadeIn = false, int channel = -1);
+	int playSound(Common::SeekableReadStream *stream, kSoundTypes type, int volume = 255, bool loop = false, int channel = -1);
 
 	/**
 	 * Checks if a given channel is playing a sound.
