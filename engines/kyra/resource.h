@@ -53,6 +53,7 @@ struct ResFileEntry {
 		kRaw = 0,
 		kPak = 1,
 		kIns = 2,
+		kTlk = 3,
 		kAutoDetect
 	};
 	kType type;

@@ -619,8 +619,7 @@ void KyraEngine_v3::openTalkFile(int file) {
 	}
 
 	_currentTalkFile = file;
-	//TODO: support Kyra3 TLK files
-	//_res->loadPakFile(talkFilename);
+	_res->loadPakFile(talkFilename);
 }
 
 #pragma mark -
