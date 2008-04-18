@@ -992,10 +992,13 @@ void GUI_v1::setupControls(Menu &menu) {
 		textControl = 4;
 		clickableOffset = 11;
 
-		if (_vm->_configVoice == 0)
-			_menu[5].item[4].enabled = 1;
-		else
-			_menu[5].item[4].enabled = 0;
+		if (_vm->_configVoice == 0) {
+			menu.item[4].enabled = 1;
+			menu.item[4].labelString = _textSpeedString;
+		} else {
+			menu.item[4].enabled = 0;
+			menu.item[4].labelString = 0;
+		}
 
 		switch (_vm->_configVoice) {
 		case 0:
