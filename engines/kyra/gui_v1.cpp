@@ -472,80 +472,6 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 	return 0;
 }
 
-void GUI_v1::initMenuLayout(Menu &menu) {
-	assert(menu.numberOfItems < 7);
-
-	int widthBackup = _screen->_charWidth;
-	_screen->_charWidth = -2;
-
-	menu.x = (320 - menu.width)/2;
-
-	int menu_x2 = menu.width  + menu.x - 1;
-	int maxOffset = 0;
-	int x1, x2, y1, y2;
-
-	for (int i = 0; i < menu.numberOfItems; i++) {
-		if (menu.item[i].x == -1)
-			menu.item[i].x = (menu.width - menu.item[i].width)/2;
-		if (menu.item[i].y == -1)
-			menu.item[i].y = (menu.height - menu.item[i].height)/2;
-
-		if (menu.item[i].labelString) {
-			x1 = menu.x + menu.item[i].x + 25;
-			y1 = (200 - menu.height)/2 + menu.item[i].y;
-
-			x2 = x1 + menu.item[i].width;
-			y2 = y1 + menu.item[i].height;
-
-			int textWidth = _screen->getTextWidth(menu.item[i].labelString) + 25;
-			int textX = menu.item[i].labelX + menu.x;
-
-			if (textWidth + textX > x1) {
-				int offset = ((textWidth + textX) - x1);
-				if (maxOffset < offset)
-					maxOffset = offset;
-			}
-		}
-
-		if (menu.item[i].itemString) {
-			int textWidth = _screen->getTextWidth(menu.item[i].itemString) + 15;
-
-			if (menu.item[i].width < textWidth) {
-				menu.item[i].width = textWidth;
-
-				if ( menu.x + menu.item[i].x + menu.item[i].width > menu_x2)
-					menu.item[i].x -= (menu.x + menu.item[i].x + menu.item[i].width) - menu_x2 + 10;
-			}
-		}
-
-	}
-
-	if (maxOffset > 0) {
-		maxOffset = maxOffset/2;
-		for (int i = 0; i < menu.numberOfItems; i++) {
-			menu.item[i].x += maxOffset + 10;
-			menu.item[i].labelX -= maxOffset;
-		}
-		menu.width += maxOffset;
-	}
-
-	if (menu.menuNameString != 0) {
-		int menuNameStringLength = _screen->getTextWidth(menu.menuNameString);
-		if (menuNameStringLength  > menu.width)
-			menu.width = menuNameStringLength;
-	}
-
-	if (menu.width > 310)
-		menu.width = 310;
-
-	menu.x = (320 - menu.width)/2;
-
-	if (menu.y == -1)
-		menu.y = (200 - menu.height)/2;
-
-	_screen->_charWidth = widthBackup;
-}
-
 void GUI_v1::getInput() {
 	Common::Event event;
 	static uint32 lastScreenUpdate = 0;
@@ -1014,6 +940,9 @@ void GUI_v1::setupControls(Menu &menu) {
 			menu.item[3].itemString = "ERROR";
 			break;
 		}
+	} else {
+		menu.item[4].enabled = 0;
+		menu.item[4].labelString = 0;
 	}
 
 	switch (_vm->_configTextspeed) {

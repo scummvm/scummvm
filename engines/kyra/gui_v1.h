@@ -96,8 +96,6 @@ public:
 	int processButtonList(Button *buttonList, uint16 inputFlags);
 
 	int buttonMenuCallback(Button *caller);
-
-	void initMenuLayout(Menu &menu);
 private:
 	void initStaticResource();
 
