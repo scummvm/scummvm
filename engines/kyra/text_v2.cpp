@@ -430,14 +430,8 @@ void KyraEngine_v2::zanthRandomIdleChat() {
 }
 
 void KyraEngine_v2::updateDlgBuffer() {
-	char filename[13];
-
 	static const char suffixTalkie[] = "EFG";
 	static const char suffixTowns[] = "G  J";
-	const char * suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
-
-	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie)
-		filename[11] = suffix[_lang];
 
 	if (_currentChapter == _npcTalkChpIndex && _mainCharacter.dlgIndex == _npcTalkDlgIndex)
 		return;
@@ -445,7 +439,12 @@ void KyraEngine_v2::updateDlgBuffer() {
 	_npcTalkChpIndex = _currentChapter;
 	_npcTalkDlgIndex = _mainCharacter.dlgIndex;
 
+	char filename[13];
 	snprintf(filename, 13, "CH%.02d-S%.02d.DLG", _currentChapter, _npcTalkDlgIndex);
+
+	const char *suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
+	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie)
+		filename[11] = suffix[_lang];
 
 	if (_dlgBuffer)
 		delete [] _dlgBuffer;
