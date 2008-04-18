@@ -1344,11 +1344,8 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
+	uint32 curTime = getTime();
 	uint32 gsc = _gameStoppedClock;
-
-	uint32 curTime = 0;
-	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2)
-		curTime = getTime();
 
 	_lockWord |= 0x100;
 
