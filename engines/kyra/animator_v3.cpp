@@ -45,6 +45,7 @@ void KyraEngine_v3::clearAnimObjects() {
 	_animObjects[0].height2 = 10;
 
 	for (int i = 1; i < 17; ++i) {
+		_animObjects[i].index = i;
 		_animObjects[i].type = 2;
 		_animObjects[i].flags = 0;
 		_animObjects[i].enabled = false;
@@ -53,6 +54,7 @@ void KyraEngine_v3::clearAnimObjects() {
 	}
 
 	for (int i = 17; i <= 66; ++i) {
+		_animObjects[i].index = i;
 		_animObjects[i].type = 1;
 		_animObjects[i].unk8 = 1;
 		_animObjects[i].flags = 0x800;
