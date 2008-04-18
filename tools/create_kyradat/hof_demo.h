@@ -7,7 +7,26 @@ const ExtractEntry kyra2Demo[] = {
 	{ -1, 0, 0 }
 };
 
+const ExtractEntry kyra2DemoCDE[] = {
+	{ k2IngameTlkDemoStrings, 0x0002F367, 0x0002F432 },
+	{ -1, 0, 0 }
+};
+
+const ExtractEntry kyra2DemoCDF[] = {
+	{ k2IngameTlkDemoStrings, 0x0002F432, 0x0002F4F0 },
+	{ -1, 0, 0 }
+};
+
+const ExtractEntry kyra2DemoCDG[] = {
+	{ k2IngameTlkDemoStrings, 0x0002F4F0, 0x0002F5CC },
+	{ -1, 0, 0 }
+};
+
 const Game kyra2Demos[] = {
 	{ kKyra2, EN_ANY, k2DemoVersion, "a620a37579dd44ab0403482285e3897f", kyra2Demo},
+	{ kKyra2, EN_ANY, k2CDFile2E, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDE},
+	{ kKyra2, FR_FRA, k2CDFile2F, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDF},
+	{ kKyra2, DE_DEU, k2CDFile2G, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDG},
+	
 	GAME_DUMMY_ENTRY
 };

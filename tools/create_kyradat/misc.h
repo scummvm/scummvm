@@ -455,6 +455,11 @@ const int kyra2DemoNeed[] = {
 	-1
 };
 
+const int kyra2TlkDemoNeed[] = {
+	k2IngameTlkDemoStrings,
+	-1
+};
+
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, -1, kyra1FloppyNeed },
 	{ kKyra1, kTalkieVersion, kyra1CDNeed },
@@ -476,6 +481,9 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2TownsFile2E , kyra2TownsFile2EngNeed },
 	{ kKyra2, k2TownsFile2J, kyra2TownsFile2JapNeed },
 	{ kKyra2, k2DemoVersion, kyra2DemoNeed},
+	{ kKyra2, k2DemoVersionTlkE, kyra2TlkDemoNeed},
+	{ kKyra2, k2DemoVersionTlkF, kyra2TlkDemoNeed},
+	{ kKyra2, k2DemoVersionTlkG, kyra2TlkDemoNeed},
 
 	{ -1, -1, 0 }
 };

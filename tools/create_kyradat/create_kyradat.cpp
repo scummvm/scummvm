@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 23,
+	kKyraDatVersion = 24,
 	kIndexSize = 12
 };
 
@@ -224,6 +224,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2IngameTalkObjIndex, kTypeRawData, "I_TALKOBJECTS.MAP" },
 	{ k2IngameTimJpStrings, kTypeStringList, "I_TIMJPSTR.TXT" },
 	{ k2IngameItemAnimData, k2TypeShpDataV2, "I_INVANIM.SHP" },	
+	{ k2IngameTlkDemoStrings, kTypeLanguageList, "I_TLKDEMO.TXT" },	
 	
 	{ -1, 0, 0 }
 };

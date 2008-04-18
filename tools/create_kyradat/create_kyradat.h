@@ -162,6 +162,7 @@ enum kExtractID {
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
 	k2IngameItemAnimData,
+	k2IngameTlkDemoStrings,
 
 	kMaxResIDs
 };
@@ -200,7 +201,11 @@ enum kSpecial {
 	k2FloppyFile1 = 15,
 	k2FloppyFile2 = 16,
 
-	k2DemoVersion = 17
+	k2DemoVersion = 17,
+
+	k2DemoVersionTlkE = 18,
+	k2DemoVersionTlkF = 19,
+	k2DemoVersionTlkG = 20
 };
 
 struct SpecialExtension {
