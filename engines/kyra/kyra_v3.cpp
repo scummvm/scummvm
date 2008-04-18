@@ -624,9 +624,10 @@ void KyraEngine_v3::openTalkFile(int file) {
 	if (file == 0) {
 		strcpy(talkFilename, "ANYTALK.TLK");
 	} else {
-		if (_currentTalkFile > 0)
+		if (_currentTalkFile > 0) {
 			sprintf(talkFilename, "CH%dTALK.TLK", _currentTalkFile);
-		_res->unloadPakFile(talkFilename);
+			_res->unloadPakFile(talkFilename);
+		}
 		sprintf(talkFilename, "CH%dTALK.TLK", file);
 	}
 
