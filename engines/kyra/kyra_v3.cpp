@@ -127,7 +127,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _sceneList;
 
 	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
-		delete i->_value;
+		delete [] i->_value;
 		i->_value = 0;
 	}
 	_gameShapes.clear();
