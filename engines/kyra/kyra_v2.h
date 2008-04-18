@@ -1088,6 +1088,7 @@ protected:
 	int o2_isVoicePlaying(ScriptState *script);
 	int o2_stopVoicePlaying(ScriptState *script);
 	int o2_getGameLanguage(ScriptState *script);
+	int o2_demoFinale(ScriptState *script);
 	int o2_dummy(ScriptState *script);
 
 	// opcodes temporary

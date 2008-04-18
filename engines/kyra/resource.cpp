@@ -306,22 +306,24 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 	if (iter == _map.end())
 		return 0;
 
-	if (!iter->_value.parent.empty()) {
-		Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
-		assert(parent);
-
-		ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
-		const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
-		assert(loader);
-
-		return loader->loadFileFromArchive(file, parent, iter->_value);
+	Common::File *stream = new Common::File();
+	if (stream->open(file)) {
+		return stream;
 	} else {
-		Common::File *stream = new Common::File();
-		if (!stream->open(file)) {
+		delete stream;
+		if (!iter->_value.parent.empty()) {
+			Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
+			assert(parent);
+
+			ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
+			const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
+			assert(loader);
+
+			return loader->loadFileFromArchive(file, parent, iter->_value);
+		} else {
 			warning("Couldn't open file '%s'", file.c_str());
 			return 0;
 		}
-		return stream;
 	}
 
 	return 0;

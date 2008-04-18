@@ -1748,6 +1748,40 @@ int KyraEngine_v2::o2_getGameLanguage(ScriptState *script) {
 	return _lang;
 }
 
+int KyraEngine_v2::o2_demoFinale(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_demoFinale(%p) ()", (const void *)script);
+	if (!_flags.isDemo)
+		return 0;
+
+	int tmpSize;
+	const char *const *strings = _staticres->loadStrings(k2IngameTlkDemoStrings, tmpSize);
+	assert(strings);
+
+	_screen->clearPage(0);
+	_screen->loadPalette("THANKS.COL", _screen->_currentPalette);
+	_screen->loadBitmap("THANKS.CPS", 3, 3, 0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+
+	_screen->_curPage = 0;
+	_screen->setFont(Screen::FID_6_FNT);
+	int y = _lang == 1 ? 70 : 65;
+	for (int i = 0; i < 6; i++)
+		_text->printText(strings[i], _text->getCenterStringX(strings[i], 1, 319), y + i * 10, 255, 207, 0);
+
+	_screen->setScreenPalette(_screen->_currentPalette);
+	_screen->updateScreen();
+
+	_eventList.clear();
+	while (!skipFlag())
+		delay(10);
+
+	_sound->beginFadeOut();
+	_screen->fadeToBlack();
+	
+	_runFlag = 0;
+	return 0;
+}
+
 int KyraEngine_v2::o2_dummy(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_dummy(%p) ()", (const void *)script);
 	return 0;
@@ -2023,7 +2057,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0xac
 		Opcode(o2_stopVoicePlaying),
 		Opcode(o2_getGameLanguage),
-		Opcode(o2_dummy),
+		Opcode(o2_demoFinale),
 		Opcode(o2_dummy),
 	};
 

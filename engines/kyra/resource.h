@@ -226,6 +226,7 @@ enum kKyraResources {
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
 	k2IngameShapeAnimData,
+	k2IngameTlkDemoStrings,
 
 	kMaxResIDs
 };

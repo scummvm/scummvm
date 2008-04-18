@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 23
+#define RESFILE_VERSION 24
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -257,6 +257,7 @@ bool StaticResource::init() {
 		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
 		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
 		{ k2IngameShapeAnimData, k2ShpAnimDataV2, "I_INVANIM.SHP" },
+		{ k2IngameTlkDemoStrings, kLanguageList, "I_TLKDEMO.TXT." },		
 
 		{ 0, 0, 0 }
 	};
