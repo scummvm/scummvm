@@ -532,7 +532,7 @@ void KyraEngine_v3::initSceneAnims(int unk1) {
 		}
 
 		obj->xPos3 = obj->xPos2 = anim.x2;
-		obj->yPos3 = obj->yPos3 = anim.y2;
+		obj->yPos3 = obj->yPos2 = anim.y2;
 		obj->width = anim.width;
 		obj->height = anim.height;
 		obj->width2 = obj->height2 = anim.specialSize;
