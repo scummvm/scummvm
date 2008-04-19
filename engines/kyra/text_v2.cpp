@@ -180,7 +180,11 @@ void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int voc
 	objectChatInit(str, object, vocHigh, vocLow);
 	_chatText = str;
 	_chatObject = object;
-	_chatIsNote = (chatGetType(str) == -1);
+	int chatType = chatGetType(str);
+	if (chatType == -1) {
+		_chatIsNote = true;
+		chatType = 0;
+	}
 
 	if (_mainCharacter.facing > 7)
 		_mainCharacter.facing = 5;
@@ -197,7 +201,7 @@ void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int voc
 	};
 
 	assert(_mainCharacter.facing * 3 + object < ARRAYSIZE(talkScriptTable));
-	int script = talkScriptTable[_mainCharacter.facing * 3 + object];
+	int script = talkScriptTable[_mainCharacter.facing * 3 + chatType];
 
 	static const char *chatScriptFilenames[] = {
 		"_Z1FSTMT.EMC",
