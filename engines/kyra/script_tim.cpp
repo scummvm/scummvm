@@ -35,7 +35,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _syst
 #define COMMAND_UNIMPL() { 0, 0 }
 	static CommandEntry commandProcs[] = {
 		// 0x00
-		COMMAND(cmd_startFunc0Now),
+		COMMAND(cmd_initFunc0Now),
 		COMMAND(cmd_stopCurFunc),
 		COMMAND_UNIMPL(),
 		COMMAND_UNIMPL(),
@@ -199,7 +199,7 @@ int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 	return (this->*_commands[cmd].proc)(param);
 }
 
-int TIMInterpreter::cmd_startFunc0Now(const uint16 *param) {
+int TIMInterpreter::cmd_initFunc0Now(const uint16 *param) {
 	_currentTim->func[0].ip = _currentTim->func[0].avtl;
 	_currentTim->func[0].lastTime = _system->getMillis();
 	return 1;

@@ -86,7 +86,7 @@ private:
 	const CommandEntry *_commands;
 	int _commandsSize;
 
-	int cmd_startFunc0Now(const uint16 *param);
+	int cmd_initFunc0Now(const uint16 *param);
 	int cmd_stopCurFunc(const uint16 *param);
 	int cmd_initFunc(const uint16 *param);
 	int cmd_stopFunc(const uint16 *param);
