@@ -204,6 +204,8 @@ int KyraEngine_v3::go() {
 		case 0:
 			uninitMainMenu();
 
+			fadeOutMusic(60);
+			_screen->fadeToBlack();
 			startup();
 			runLoop();
 			running = false;
