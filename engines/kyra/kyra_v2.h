@@ -31,6 +31,7 @@
 #include "kyra/screen_v2.h"
 #include "kyra/text_v2.h"
 #include "kyra/gui_v2.h"
+#include "kyra/util.h"
 
 #include "common/list.h"
 
@@ -98,7 +99,10 @@ enum kNestedSequencesDemo {
 class WSAMovieV2;
 class KyraEngine_v2;
 class TextDisplayer_v2;
+class TIMInterpreter;
 class Debugger_v2;
+
+struct TIM;
 
 typedef int (KyraEngine_v2::*SeqProc)(WSAMovieV2*, int, int, int);
 
@@ -286,6 +290,7 @@ protected:
 	Screen_v2 *_screen;
 	TextDisplayer_v2 *_text;
 	Debugger_v2 *_debugger;
+	TIMInterpreter *_tim;
 
 	uint8 *_mouseSHPBuf;
 
@@ -809,73 +814,23 @@ protected:
 	TalkObject *_talkObjectList;
 
 	struct TalkSections {
-		uint8 *STATim;
-		uint8 *TLKTim;
-		uint8 *ENDTim;
+		TIM *STATim;
+		TIM *TLKTim;
+		TIM *ENDTim;
 	};
 	TalkSections _currentTalkSections;
 
 	char _TLKFilename[13];
-	bool _objectChatFinished;
 
-	// tim sequence
-	void tim_setupOpcodes();
-	uint8 *tim_loadFile(const char *filename, uint8 *buffer, int32 bufferSize);
-	void tim_releaseBuffer(uint8 *buffer);
-	void tim_processSequence(uint8 *timBuffer, int loop);
-	void tim_playFullSequence(const char *filename);
+	// tim
+	void playTim(const char *filename);
 
-	int tim_o_dummy_r0(uint8 *ptr);
-	int tim_o_dummy_r1(uint8 *ptr);
-	int tim_o_clearCmds2(uint8 *ptr);
-	int tim_o_abort(uint8 *ptr);
-	int tim_o_selectcurrentCommandSet(uint8 *ptr);
-	int tim_o_deleteBuffer(uint8 *ptr);
-	int tim_o_refreshTimers(uint8 *ptr);
-	int tim_o_execSubOpcode(uint8 *ptr);
-	int tim_o_initActiveSub(uint8 *ptr);
-	int tim_o_resetActiveSub(uint8 *ptr);
-	int tim_o_printTalkText(uint8 *ptr);
-	int tim_o_updateSceneAnim(uint8 *ptr);
-	int tim_o_resetChat(uint8 *ptr);
-	int tim_o_playSoundEffect(uint8 *ptr);
+	int t2_initChat(const TIM *tim, const uint16 *param);
+	int t2_updateSceneAnim(const TIM *tim, const uint16 *param);
+	int t2_resetChat(const TIM *tim, const uint16 *param);
+	int t2_playSoundEffect(const TIM *tim, const uint16 *param);
 
-	typedef int (KyraEngine_v2::*TimOpc)(uint8 *ptr);
-	const TimOpc * _timOpcodes;
-
-	struct TIMHeader {
-		uint16 deleteBufferFlag;
-		int16 unkFlag;
-		int16 unkFlag2;
-		int16 cmdsOffset;
-		int16 unkOffset2;
-		int16 AVTLOffset;
-		int16 TEXTOffset;
-	};
-
-	struct Cmds {
-		uint8 *dataPtr;
-		uint32 unk_2;
-		uint32 timer1;
-		uint32 timer2;
-		uint8 *backupPtr;
-		uint8 *AVTLSubChunk;
-	};
-
-	struct TIMBuffers {
-		uint8 *AVTLChunk;
-		uint8 *TEXTChunk;
-		uint8 *offsUnkFlag2;
-		uint8 *offsUnkFlag;
-		int16 currentEntry;
-		int16 unk_12;
-		Cmds *currentCommandSet;
-		uint8 *unkCmds;
-	};
-	TIMBuffers _TIMBuffers;
-
-	const char *_timChatText;
-	int _timChatObject;
+	Common::Array<const TIMOpcode*> _timOpcodes;
 
 	// sound
 	int _oldTalkFile;

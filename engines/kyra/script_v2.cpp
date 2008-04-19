@@ -28,6 +28,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/timer.h"
+#include "kyra/script_tim.h"
 
 #include "common/endian.h"
 
@@ -1426,7 +1427,7 @@ int KyraEngine_v2::o2_deinitObject(ScriptState *script) {
 
 int KyraEngine_v2::o2_playTimSequence(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_playTimSequence(%p) ('%s')", (const void *)script, stackPosString(0));
-	tim_playFullSequence(stackPosString(0));
+	playTim(stackPosString(0));
 	return 0;
 }
 
@@ -1833,9 +1834,52 @@ int KyraEngine_v2::o2t_setShapeFlag(ScriptState *script) {
 
 #pragma mark -
 
+int KyraEngine_v2::t2_initChat(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::t2_initChat(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	_chatText = (const char*)tim->text + READ_LE_UINT16(tim->text + (param[0] << 1));
+	_chatObject = param[1];
+
+	if (_flags.lang == Common::JA_JPN) {
+		for (int i = 0; i < _ingameTimJpStrSize; i += 2) {
+			if (!scumm_stricmp(_chatText, _ingameTimJpStr[i]))
+				_chatText = _ingameTimJpStr[i + 1];
+		}
+	}
+
+	objectChatInit(_chatText, _chatObject);
+	return 0;
+}
+
+int KyraEngine_v2::t2_updateSceneAnim(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::t2_updateSceneAnim(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], param[1]);
+	updateSceneAnim(param[1], param[0]);
+	return 0;
+}
+
+int KyraEngine_v2::t2_resetChat(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::t2_resetChat(%p, %p) ()", (const void*)tim, (const void*)param);
+	_text->restoreScreen();
+	_chatText = 0;
+	_chatObject = -1;
+	return 0;
+}
+
+int KyraEngine_v2::t2_playSoundEffect(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::t2_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	snd_playSoundEffect(*param);
+	return 0;
+}
+
+#pragma mark -
+
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
 #define Opcode(x) OpcodeV2(this, &KyraEngine_v2::x)
 #define OpcodeUnImpl() OpcodeV2(this, 0)
+
+typedef Functor2Mem<const TIM*, const uint16*, int, KyraEngine_v2> TIMOpcodeV2;
+#define OpcodeTim(x) TIMOpcodeV2(this, &KyraEngine_v2::x)
+#define OpcodeTimUnImpl() TIMOpcodeV2(this, 0)
+
 void KyraEngine_v2::setupOpcodeTable() {
 	static const OpcodeV2 opcodeTable[] = {
 		// 0x00
@@ -2075,6 +2119,16 @@ void KyraEngine_v2::setupOpcodeTable() {
 
 	for (int i = 0; i < ARRAYSIZE(opcodeTemporaryTable); ++i)
 		_opcodesTemporary.push_back(&opcodeTemporaryTable[i]);
+
+	static const TIMOpcodeV2 timOpcodeTable[] = {
+		OpcodeTim(t2_initChat),
+		OpcodeTim(t2_updateSceneAnim),
+		OpcodeTim(t2_resetChat),
+		OpcodeTim(t2_playSoundEffect)
+	};
+
+	for (int i = 0; i <  ARRAYSIZE(timOpcodeTable); ++i)
+		_timOpcodes.push_back(&timOpcodeTable[i]);
 }
 
 } // end of namespace Kyra

@@ -25,6 +25,7 @@
 
 #include "kyra/text_v2.h"
 #include "kyra/kyra_v2.h"
+#include "kyra/script_tim.h"
 #include "kyra/resource.h"
 
 #include "common/endian.h"
@@ -574,13 +575,13 @@ void KyraEngine_v2::initTalkObject(int index) {
 	strcpy(_TLKFilename, object.filename);
 	strcpy(ENDFilename, object.filename);
 
-	strcpy(STAFilename + 4, "_STA.TIM");
-	strcpy(_TLKFilename + 4, "_TLK.TIM");
-	strcpy(ENDFilename + 4, "_END.TIM");
+	strcat(STAFilename + 4, "_STA.TIM");
+	strcat(_TLKFilename + 4, "_TLK.TIM");
+	strcat(ENDFilename + 4, "_END.TIM");
 
-	_currentTalkSections.STATim = tim_loadFile(STAFilename, NULL, 0);
-	_currentTalkSections.TLKTim = tim_loadFile(_TLKFilename, NULL, 0);
-	_currentTalkSections.ENDTim = tim_loadFile(ENDFilename, NULL, 0);
+	_currentTalkSections.STATim = _tim->load(STAFilename, &_timOpcodes);
+	_currentTalkSections.TLKTim = _tim->load(_TLKFilename, &_timOpcodes);
+	_currentTalkSections.ENDTim = _tim->load(ENDFilename, &_timOpcodes);
 
 	if (object.scriptId != -1) {
 		_specialSceneScriptStateBackup[object.scriptId] = _specialSceneScriptState[object.scriptId];
@@ -588,13 +589,14 @@ void KyraEngine_v2::initTalkObject(int index) {
 	}
 
 	if (_currentTalkSections.STATim) {
-		_objectChatFinished = false;
-		while (!_objectChatFinished) {
-			tim_processSequence(_currentTalkSections.STATim, 0);
+		_tim->resetFinishedFlag();
+		while (!_quitFlag && !_tim->finished()) {
+			_tim->exec(_currentTalkSections.STATim, false);
 			if (_chatText)
 				updateWithText();
 			else
 				update();
+			delay(10);
 		}
 	}
 }
@@ -603,34 +605,23 @@ void KyraEngine_v2::deinitTalkObject(int index) {
 	TalkObject &object = _talkObjectList[index];
 
 	if (_currentTalkSections.ENDTim) {
-		_objectChatFinished = false;
-		while (!_objectChatFinished) {
-			tim_processSequence(_currentTalkSections.ENDTim, 0);
+		_tim->resetFinishedFlag();
+		while (!_quitFlag && !_tim->finished()) {
+			_tim->exec(_currentTalkSections.ENDTim, false);
 			if (_chatText)
 				updateWithText();
 			else
 				update();
+			delay(10);
 		}
 	}
 
-	if (object.scriptId != -1) {
+	if (object.scriptId != -1)
 		_specialSceneScriptState[object.scriptId] = _specialSceneScriptStateBackup[object.scriptId];
-	}
 
-	if (_currentTalkSections.STATim != NULL) {
-		tim_releaseBuffer(_currentTalkSections.STATim);
-		_currentTalkSections.STATim = NULL;
-	}
-
-	if (_currentTalkSections.TLKTim != NULL) {
-		tim_releaseBuffer(_currentTalkSections.TLKTim);
-		_currentTalkSections.TLKTim = NULL;
-	}
-
-	if (_currentTalkSections.ENDTim != NULL) {
-		tim_releaseBuffer(_currentTalkSections.ENDTim);
-		_currentTalkSections.ENDTim = NULL;
-	}
+	_tim->unload(_currentTalkSections.STATim);
+	_tim->unload(_currentTalkSections.TLKTim);
+	_tim->unload(_currentTalkSections.ENDTim);
 }
 
 void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, int vocLow) {
@@ -639,7 +630,7 @@ void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, 
 	objectChatInit(str, objectId, vocHigh, vocLow);
 
 	if (!_currentTalkSections.TLKTim)
-		_currentTalkSections.TLKTim = tim_loadFile(_TLKFilename, 0, 0);
+		_currentTalkSections.TLKTim = _tim->load(_TLKFilename, &_timOpcodes);
 
 	setNextIdleAnimTimer();
 
@@ -655,29 +646,26 @@ void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, 
 
 	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || skipFlag())) {
 		if (!speechEnabled() && chatAnimEndTime > _system->getMillis() || speechEnabled() && snd_voiceIsPlaying()) {
-			_objectChatFinished = false;
-
-			while (!_objectChatFinished && !skipFlag()) {
+			_tim->resetFinishedFlag();
+			while (!_tim->finished() && !skipFlag() && !_quitFlag) {
 				if (_currentTalkSections.TLKTim)
-					tim_processSequence(_currentTalkSections.TLKTim, 0);
+					_tim->exec(_currentTalkSections.TLKTim, false);
 				else
-					_objectChatFinished = false;
+					_tim->resetFinishedFlag();
 
 				updateWithText();
 				delay(10);
 			}
+
 			if (_currentTalkSections.TLKTim)
-				tim_o_abort(0);
+				_tim->stopCurFunc();
 		}
 		updateWithText();
 	}
 
 	resetSkipFlag();
 
-	if (_currentTalkSections.TLKTim) {
-		tim_releaseBuffer(_currentTalkSections.TLKTim);
-		_currentTalkSections.TLKTim = 0;
-	}
+	_tim->unload(_currentTalkSections.TLKTim);
 
 	_text->restoreScreen();
 	_chatText = 0;

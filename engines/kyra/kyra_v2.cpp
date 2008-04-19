@@ -30,6 +30,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/script.h"
+#include "kyra/script_tim.h"
 #include "kyra/text_v2.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
@@ -87,12 +88,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_chatObject = -1;
 	_lastIdleScript = -1;
 
-	_timChatText = 0;
-	_timChatObject = -1;
-
-	_currentTalkSections.STATim = NULL;
-	_currentTalkSections.TLKTim = NULL;
-	_currentTalkSections.ENDTim = NULL;
+	_currentTalkSections.STATim = 0;
+	_currentTalkSections.TLKTim = 0;
+	_currentTalkSections.ENDTim = 0;
 
 	memset(&_invWsa, 0, sizeof(_invWsa));
 	_itemAnimData = 0;
@@ -159,6 +157,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 	delete _screen;
 	delete _text;
 	delete _gui;
+	delete _tim;
 	_text = 0;
 	delete _debugger;
 	delete _invWsa.wsa;
@@ -196,6 +195,8 @@ int KyraEngine_v2::init() {
 	assert(_text);
 	_gui = new GUI_v2(this);
 	assert(_gui);
+	_tim = new TIMInterpreter(this, _system);
+	assert(_tim);
 
 	if (_flags.isDemo && !_flags.isTalkie) {
 		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
@@ -222,8 +223,6 @@ int KyraEngine_v2::init() {
 	// No mouse display in demo
 	if (_flags.isDemo && !_flags.isTalkie)
 		return 0;
-
-	tim_setupOpcodes();
 
 	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
 	assert(_mouseSHPBuf);
@@ -2248,6 +2247,26 @@ void KyraEngine_v2::dinoRide() {
 	setHandItem(0x61);
 	_screen->showMouse();
 	resetGameFlag(0x159);
+}
+
+#pragma mark -
+
+void KyraEngine_v2::playTim(const char *filename) {
+	TIM *tim = _tim->load(filename, &_timOpcodes);
+	if (!tim)
+		return;
+
+	_tim->resetFinishedFlag();
+	while (!_quitFlag && !_tim->finished()) {
+		_tim->exec(tim, 0);
+		if (_chatText)
+			updateWithText();
+		else
+			update();
+		delay(10);
+	}
+
+	_tim->unload(tim);
 }
 
 #pragma mark -
