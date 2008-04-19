@@ -254,7 +254,12 @@ void Resource::unloadPakFile(const Common::String &filename) {
 }
 
 bool Resource::isInPakList(const Common::String &filename) {
-	return isAccessable(filename);
+	if (!isAccessable(filename))
+		return false;
+	ResFileMap::iterator iter = _map.find(filename);
+	if (iter == _map.end())
+		return false;
+	return iter->_value.parent.empty();
 }
 
 void Resource::unloadAllPakFiles() {
