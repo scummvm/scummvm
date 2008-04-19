@@ -289,6 +289,12 @@ void KyraEngine_v3::refreshAnimObjectsIfNeed() {
 	}
 }
 
+void KyraEngine_v3::flagAnimObjsForRefresh() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::flagAnimObjsForRefresh()");
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
+		curEntry->needRefresh = true;
+}
+
 void KyraEngine_v3::updateCharacterAnim(int charId) {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::updateCharacterAnim(%d)", charId);
 
@@ -388,4 +394,30 @@ void KyraEngine_v3::removeSceneAnimObject(int anim, int refresh) {
 	_sceneAnimMovie[anim]->close();
 }
 
+void KyraEngine_v3::setCharacterAnimDim(int w, int h) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::setCharacterAnimDim(%d, %d)", w, h);
+	restorePage3();
+	_charBackUpWidth = _animObjects[0].width;
+	_charBackUpWidth2 = _animObjects[0].width2;
+	_charBackUpHeight = _animObjects[0].height;
+	_charBackUpHeight2 = _animObjects[0].height2;
+	
+	_animObjects[0].width2 = (w - _charBackUpWidth) / 2;
+	_animObjects[0].height2 = h - _charBackUpHeight;
+	_animObjects[0].width = w;
+	_animObjects[0].height = h;
+}
+
+void KyraEngine_v3::resetCharacterAnimDim() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::resetCharacterAnimDim()");
+	restorePage3();
+	_animObjects[0].width2 = _charBackUpWidth2;
+	_animObjects[0].height2 = _charBackUpHeight2;
+	_animObjects[0].width = _charBackUpWidth;
+	_animObjects[0].height = _charBackUpHeight;
+	_charBackUpWidth2 = _charBackUpHeight2 = -1;
+	_charBackUpWidth = _charBackUpHeight = -1;
+}
+
 } // end of namespace Kyra
+

@@ -33,10 +33,18 @@
 namespace Kyra {
 
 class TextDisplayer_v3 : public TextDisplayer {
+friend class KyraEngine_v3;
 public:
 	TextDisplayer_v3(KyraEngine_v3 *vm, Screen_v3 *screen);
 
+	char *preprocessString(const char *str);
+	int dropCRIntoString(char *str, int minOffs, int maxOffs);
+
 	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
+
+	void restoreScreen();
+
+	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
 protected:
 	KyraEngine_v3 *_vm;
 	Screen_v3 *_screen;

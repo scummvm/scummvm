@@ -43,12 +43,14 @@ class TextDisplayer_v3;
 struct Button;
 
 class KyraEngine_v3 : public KyraEngine {
+friend class TextDisplayer_v3;
 public:
 	KyraEngine_v3(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v3();
 
 	Screen *screen() { return _screen; }
 	SoundDigital *soundDigital() { return _soundDigital; }
+	int language() const { return _lang; }
 
 	int go();
 
@@ -74,6 +76,7 @@ private:
 	void handleInput(int x, int y);
 
 	void update();
+	void updateWithText();
 	void updateMouse();
 
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
@@ -127,7 +130,15 @@ private:
 	static const char *_sfxFileList[];
 	static const int _sfxFileListSize;
 
-	void snd_playVoiceFile(int) {}
+	int _voiceSoundChannel;
+
+	void playVoice(int high, int low);
+	void snd_playVoiceFile(int file);
+	bool snd_voiceIsPlaying();
+	void snd_stopVoice();
+
+	int _curStudioSFX;
+	void playStudioSFX();
 
 	// main menu
 	void initMainMenu();
@@ -199,11 +210,19 @@ private:
 	void refreshAnimObjects(int force);
 	void refreshAnimObjectsIfNeed();
 
+	void flagAnimObjsForRefresh();
+
 	bool _loadingState;
 	void updateCharacterAnim(int charId);
 
 	void updateSceneAnim(int anim, int newFrame);
 	void removeSceneAnimObject(int anim, int refresh);
+
+	int _charBackUpWidth2, _charBackUpHeight2;
+	int _charBackUpWidth, _charBackUpHeight;
+
+	void setCharacterAnimDim(int w, int h);
+	void resetCharacterAnimDim();
 
 	// interface
 	uint8 *_interface;
@@ -373,7 +392,7 @@ private:
 	struct Character {
 		uint16 sceneId;
 		uint16 dlgIndex;
-		uint8 unk4;
+		uint8 height;
 		uint8 facing;
 		uint16 animFrame;
 		//uint8 unk8, unk9;
@@ -407,12 +426,66 @@ private:
 	int _lastCharPalLayer;
 	bool _charPalUpdate;
 
+
+	// talk object
+	struct TalkObject {
+		char filename[13];
+		int8 unkD;
+		int8 unkE;
+		int16 x, y;
+		uint8 color;
+		int8 unk14;
+	};
+
+	TalkObject *_talkObjectList;
+
+	// chat
+	int _vocHigh;
+
+	const char *_chatText;
+	int _chatObject;
+	uint32 _chatEndTime;
+	int _chatVocHigh, _chatVocLow;
+
+	ScriptData _chatScriptData;
+	ScriptState _chatScriptState;
+
+	int chatGetType(const char *text);
+	int chatCalcDuration(const char *text);
+
+	void objectChat(const char *text, int object, int vocHigh, int vocLow);
+	void objectChatInit(const char *text, int object, int vocHigh, int vocLow);
+	void objectChatPrintText(const char *text, int object);
+	void objectChatProcess(const char *script);
+	void objectChatWaitToFinish();
+
+	// special script code
+	bool _temporaryScriptExecBit;
+	bool _useFrameTable;
+	
+	Common::Array<const Opcode *> _opcodesTemporary;
+
+	int o3t_defineNewShapes(ScriptState *script);
+	int o3t_setCurrentFrame(ScriptState *script);
+	int o3t_playSoundEffect(ScriptState *script);
+	int o3t_getMalcolmShapes(ScriptState *script);
+
+	// special shape code
+	char _newShapeFilename[13];
+	int _newShapeLastEntry;
+	int _newShapeWidth, _newShapeHeight;
+	int _newShapeXAdd, _newShapeYAdd;
+
+	int _newShapeAnimFrame;
+	int _newShapeDelay;
+
 	// unk
 	uint8 *_unkBuffer1040Bytes;
 	uint8 *_costPalBuffer;
 	uint8 *_screenBuffer;
 	uint8 *_gfxBackUpRect;
 	uint8 *_paletteOverlay;
+	bool _useActorBuffer;
 
 	int _unk3, _unk4, _unk5;
 
@@ -422,8 +495,10 @@ private:
 
 	// opcodes
 	int o3_setCharacterPos(ScriptState *script);
+	int o3_defineObject(ScriptState *script);
 	int o3_refreshCharacter(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
+	int o3_objectChat(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
@@ -446,6 +521,8 @@ private:
 	int o3_setHiddenItemsEntry(ScriptState *script);
 	int o3_getHiddenItemsEntry(ScriptState *script);
 	int o3_removeSceneAnimObject(ScriptState *script);
+	int o3_setVocHigh(ScriptState *script);
+	int o3_getVocHigh(ScriptState *script);
 	int o3_dummy(ScriptState *script);
 
 	// misc

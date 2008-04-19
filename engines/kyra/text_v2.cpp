@@ -48,7 +48,7 @@ void TextDisplayer_v2::restoreScreen() {
 	_vm->restorePage3();
 	_vm->drawAnimObjects();
 	_screen->hideMouse();
-	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, 2, 0);
+	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->showMouse();
 	_vm->flagAnimObjsForRefresh();
 	_vm->refreshAnimObjects(0);

@@ -68,7 +68,7 @@ protected:
 
 	enum {
 		TALK_SUBSTRING_LEN = 80,
-		TALK_SUBSTRING_NUM = 5
+		TALK_SUBSTRING_NUM = 6
 	};
 
 	char _talkBuffer[1040];

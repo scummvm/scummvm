@@ -48,6 +48,20 @@ int KyraEngine_v3::o3_setCharacterPos(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_defineObject(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineObject(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)", (const void *)script,
+			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	TalkObject &obj = _talkObjectList[stackPos(0)];
+	strcpy(obj.filename, stackPosString(1));
+	obj.unkD = stackPos(2);
+	obj.unkE = stackPos(3);
+	obj.x = stackPos(4);
+	obj.y = stackPos(5);
+	obj.color = stackPos(6);
+	obj.unk14 = stackPos(7);
+	return 0;
+}
+
 int KyraEngine_v3::o3_refreshCharacter(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_refreshCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	const int frame = stackPos(0);
@@ -72,6 +86,17 @@ int KyraEngine_v3::o3_refreshCharacter(ScriptState *script) {
 int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showSceneFileMessage(%p) (%d)", (const void *)script, stackPos(0));
 	showMessage((const char*)getTableEntry(_scenesFile, stackPos(0)), 0xFF, 0xF0);
+	return 0;
+}
+
+int KyraEngine_v3::o3_objectChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_objectChat(%p) (%d)", (const void *)script, stackPos(0));
+	int id = stackPos(0);
+	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
+	if (str) {
+		objectChat(str, 0, _vocHigh, id);
+		playStudioSFX();
+	}
 	return 0;
 }
 
@@ -312,9 +337,60 @@ int KyraEngine_v3::o3_removeSceneAnimObject(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setVocHigh(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
+	_vocHigh = stackPos(0);
+	return 0;
+}
+
+int KyraEngine_v3::o3_getVocHigh(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getVocHigh(%p) ()", (const void *)script);
+	return _vocHigh;
+}
+
 int KyraEngine_v3::o3_dummy(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_dummy(%p) ()", (const void *)script);
 	return 0;
+}
+
+#pragma mark -
+
+int KyraEngine_v3::o3t_defineNewShapes(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3t_defineNewShapes(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script,
+			stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	strcpy(_newShapeFilename, stackPosString(0));
+	_newShapeLastEntry = stackPos(1);
+	_newShapeWidth = stackPos(2);
+	_newShapeHeight = stackPos(3);
+	_newShapeXAdd = stackPos(4);
+	_newShapeYAdd = stackPos(5);
+	return 0;
+}
+
+int KyraEngine_v3::o3t_setCurrentFrame(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3t_setCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	static const uint8 frameTable[] = {
+		0x58, 0xD8, 0xD8, 0x98, 0x78, 0x78, 0xB8, 0xB8
+	};
+
+	_newShapeAnimFrame = stackPos(0);
+	if (_useFrameTable)
+		_newShapeAnimFrame += frameTable[_mainCharacter.facing];
+
+	_newShapeDelay = stackPos(1);
+	_temporaryScriptExecBit = true;
+	return 0;
+}
+
+int KyraEngine_v3::o3t_playSoundEffect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3t_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	playSoundEffect(stackPos(0), 200);	
+	return 0;
+}
+
+int KyraEngine_v3::o3t_getMalcolmShapes(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3t_getMalcolmShapes(%p) ()", (const void *)script);
+	return _malcolmShapes;
 }
 
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v3> OpcodeV3;
@@ -325,7 +401,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		// 0x00
 		OpcodeUnImpl(),
 		Opcode(o3_setCharacterPos),
-		OpcodeUnImpl(),
+		Opcode(o3_defineObject),
 		Opcode(o3_refreshCharacter),
 		// 0x04
 		OpcodeUnImpl(),
@@ -361,7 +437,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_objectChat),
 		// 0x20
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
@@ -531,9 +607,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_setVocHigh),
 		// 0xa8
-		OpcodeUnImpl(),
+		Opcode(o3_getVocHigh),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -546,6 +622,20 @@ void KyraEngine_v3::setupOpcodeTable() {
 
 	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
 		_opcodes.push_back(&opcodeTable[i]);
+	
+	static const OpcodeV3 tempOpcodeTable[] = {
+		Opcode(o3t_defineNewShapes),
+		Opcode(o3t_setCurrentFrame),
+		Opcode(o3t_playSoundEffect),
+		Opcode(o3_dummy),
+		// 0x0a
+		OpcodeUnImpl(),
+		Opcode(o3_getRand),
+		Opcode(o3_dummy)
+	};
+	
+	for (int i = 0; i < ARRAYSIZE(tempOpcodeTable); ++i)
+		_opcodesTemporary.push_back(&tempOpcodeTable[i]);
 }
 
 } // end of namespace Kyra

@@ -61,7 +61,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_sceneList = 0;
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	_mainCharacter.sceneId = 9;
-	_mainCharacter.unk4 = 0x4C;
+	_mainCharacter.height = 0x4C;
 	_mainCharacter.facing = 5;
 	_mainCharacter.animFrame = 0x57;
 	_mainCharacter.walkspeed = 5;
@@ -96,6 +96,16 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_lastProcessedSceneScript = 0;
 	_specialSceneScriptRunFlag = false;
 	_pathfinderFlag = 0;
+	_talkObjectList = 0;
+	_chatText = 0;
+	_chatObject = -1;
+	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
+	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
+	_voiceSoundChannel = -1;
+	_charBackUpWidth2 = _charBackUpHeight2 = -1;
+	_charBackUpWidth = _charBackUpHeight = -1;
+	_useActorBuffer = false;
+	_curStudioSFX = 283;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -138,6 +148,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 		delete _wsaSlots[i];
 
 	delete [] _sceneStrings;
+	delete [] _talkObjectList;
 }
 
 int KyraEngine_v3::init() {
@@ -401,6 +412,42 @@ void KyraEngine_v3::playSoundEffect(int item, int volume) {
 	}
 }
 
+void KyraEngine_v3::playVoice(int high, int low) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playVoice(%d, %d)", high, low);
+	snd_playVoiceFile(high * 1000 + low);
+}
+
+void KyraEngine_v3::snd_playVoiceFile(int file) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::snd_playVoiceFile(%d)", file);
+	char filename[16];
+	snprintf(filename, 16, "%u.AUD", (uint)file);
+
+	Common::SeekableReadStream *stream = _res->getFileStream(filename);
+	if (stream)
+		_voiceSoundChannel = _soundDigital->playSound(stream, SoundDigital::kSoundTypeSpeech, 255);
+}
+
+bool KyraEngine_v3::snd_voiceIsPlaying() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::snd_voiceIsPlaying()");
+	return _soundDigital->isPlaying(_voiceSoundChannel);
+}
+
+void KyraEngine_v3::snd_stopVoice() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::snd_stopVoice()");
+	_soundDigital->stopSound(_voiceSoundChannel);
+}
+
+void KyraEngine_v3::playStudioSFX() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playStudioSFX()");
+	if (_rnd.getRandomNumberRng(1, 2) != 2)
+		return;
+
+	playSoundEffect(_curStudioSFX++, 128);
+
+	if (_curStudioSFX > 291)
+		_curStudioSFX = 283;
+}
+
 #pragma mark -
 
 void KyraEngine_v3::preinit() {
@@ -491,7 +538,10 @@ void KyraEngine_v3::startup() {
 
 	_screen->_curPage = 0;
 
-	//XXX
+	_talkObjectList = new TalkObject[88];
+	memset(_talkObjectList, 0, sizeof(TalkObject)*88);
+	for (int i = 0; i < 88; ++i)
+		_talkObjectList[i].unk14 = -1;
 
 	musicUpdate(0);
 	updateMalcolmShapes();
@@ -937,6 +987,31 @@ void KyraEngine_v3::update() {
 	updateCommandLine();
 	//XXX
 	musicUpdate(0);
+
+	_screen->updateScreen();
+}
+
+void KyraEngine_v3::updateWithText() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::update()");
+	updateInput();
+
+	musicUpdate(0);
+	updateMouse();
+	//XXX
+	updateSpecialSceneScripts();
+	updateCommandLine();
+	//XXX
+	musicUpdate(0);
+
+	restorePage3();
+	drawAnimObjects();
+	if (textEnabled() && _chatText) {
+		int curPage = _screen->_curPage;
+		_screen->_curPage = 2;
+		objectChatPrintText(_chatText, _chatObject);
+		_screen->_curPage = curPage;
+	}
+	refreshAnimObjects(0);
 
 	_screen->updateScreen();
 }
