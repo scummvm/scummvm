@@ -333,11 +333,35 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // Interactive Demo
 		{
 			"kyra2",
-			"Demo",
+			"CD/Demo",
 			AD_ENTRY1("THANKS.CPS", "b1a78d990b120bb2234b7094f74e30a5"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_DEMO
+				Common::EN_ANY,
+				Common::kPlatformPC,
+				Common::ADGF_DROPLANGUAGE | Common::ADGF_CD | Common::ADGF_DEMO
+		},
+		KYRA2_CD_DEMO_FLAGS
+	},
+
+	{ // Interactive Demo
+		{
+			"kyra2",
+			"CD/Demo",
+			AD_ENTRY1("THANKS.CPS", "b1a78d990b120bb2234b7094f74e30a5"),
+				Common::DE_DEU,
+				Common::kPlatformPC,
+				Common::ADGF_DROPLANGUAGE | Common::ADGF_CD | Common::ADGF_DEMO
+		},
+		KYRA2_CD_DEMO_FLAGS
+	},
+
+	{ // Interactive Demo
+		{
+			"kyra2",
+			"CD/Demo",
+			AD_ENTRY1("THANKS.CPS", "b1a78d990b120bb2234b7094f74e30a5"),
+				Common::FR_FRA,
+				Common::kPlatformPC,
+				Common::ADGF_DROPLANGUAGE | Common::ADGF_CD | Common::ADGF_DEMO
 		},
 		KYRA2_CD_DEMO_FLAGS
 	},
