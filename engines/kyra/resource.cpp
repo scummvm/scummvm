@@ -259,7 +259,7 @@ bool Resource::isInPakList(const Common::String &filename) {
 	ResFileMap::iterator iter = _map.find(filename);
 	if (iter == _map.end())
 		return false;
-	return iter->_value.parent.empty();
+	return (iter->_value.type != ResFileEntry::kRaw);
 }
 
 void Resource::unloadAllPakFiles() {
