@@ -296,6 +296,7 @@ void KyraEngine_v3::playVQA(const char *name) {
 		_screen->showMouse();
 
 		uint8 pal[768];
+		// Taken from original, it used '1' here too
 		memset(pal, 1, sizeof(pal));
 		_screen->setScreenPalette(pal);
 		_screen->clearPage(0);
