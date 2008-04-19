@@ -35,7 +35,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _syst
 #define COMMAND_UNIMPL() { 0, 0 }
 	static CommandEntry commandProcs[] = {
 		// 0x00
-		COMMAND(cmd_restartFunc0),
+		COMMAND(cmd_startFunc0Now),
 		COMMAND(cmd_stopCurFunc),
 		COMMAND_UNIMPL(),
 		COMMAND_UNIMPL(),
@@ -199,7 +199,7 @@ int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 	return (this->*_commands[cmd].proc)(param);
 }
 
-int TIMInterpreter::cmd_restartFunc0(const uint16 *param) {
+int TIMInterpreter::cmd_startFunc0Now(const uint16 *param) {
 	_currentTim->func[0].ip = _currentTim->func[0].avtl;
 	_currentTim->func[0].lastTime = _system->getMillis();
 	return 1;
@@ -215,6 +215,7 @@ int TIMInterpreter::cmd_stopCurFunc(const uint16 *param) {
 
 int TIMInterpreter::cmd_initFunc(const uint16 *param) {
 	uint16 func = *param;
+	assert(func < 10);
 	if (_currentTim->func[func].avtl)
 		_currentTim->func[func].ip = _currentTim->func[func].avtl;
 	else
@@ -224,6 +225,7 @@ int TIMInterpreter::cmd_initFunc(const uint16 *param) {
 
 int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 	uint16 func = *param;
+	assert(func < 10);
 	_currentTim->func[func].ip = 0;
 	return 1;
 }
@@ -253,6 +255,7 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 int TIMInterpreter::cmd_initFuncNow(const uint16 *param) {
 	uint16 func = *param;
+	assert(func < 10);
 	_currentTim->func[func].ip = _currentTim->func[func].avtl;
 	_currentTim->func[func].lastTime = _currentTim->func[func].nextTime = _system->getMillis();
 	return 1;
@@ -260,6 +263,7 @@ int TIMInterpreter::cmd_initFuncNow(const uint16 *param) {
 
 int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 	uint16 func = *param;
+	assert(func < 10);
 	_currentTim->func[func].ip = 0;
 	_currentTim->func[func].lastTime = _currentTim->func[func].nextTime = _system->getMillis();
 	return 1;
