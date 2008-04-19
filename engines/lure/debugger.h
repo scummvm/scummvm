@@ -48,6 +48,7 @@ protected:
 	bool cmd_showAnim(int argc, const char **argv);
 	bool cmd_saveStrings(int argc, const char **argv);
 	bool cmd_debug(int argc, const char **argv);
+	bool cmd_script(int argc, const char **argv);
 };
 
 extern const char *directionList[5];

@@ -33,6 +33,7 @@
 #include "lure/res.h"
 #include "lure/res_struct.h"
 #include "lure/room.h"
+#include "lure/scripts.h"
 #include "lure/strings.h"
 
 namespace Lure {
@@ -51,6 +52,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
 	DCmd_Register("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
 	DCmd_Register("debug",				WRAP_METHOD(Debugger, cmd_debug));
+	DCmd_Register("script",				WRAP_METHOD(Debugger, cmd_script));
 }
 
 static int strToInt(const char *s) {
@@ -593,6 +595,31 @@ bool Debugger::cmd_debug(int argc, const char **argv) {
 		DebugPrintf("debug [on | off]]\n");
 	}
 
+	return true;
+}
+
+bool Debugger::cmd_script(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("script <script number> [param 1] [param 2] [param 3] [exit flag]\n");
+		return true;
+	}
+
+	int scriptNumber = strToInt(argv[1]);
+	if ((scriptNumber < 0) || (scriptNumber > 66)) {
+		DebugPrintf("An invalid script number was specified\n");
+		return true;
+	}
+
+	uint16 param1 = 0, param2 = 0, param3 = 0;
+	if (argc >= 3)
+		param1 = strToInt(argv[2]);
+	if (argc >= 4)
+		param2 = strToInt(argv[3]);
+	if (argc >= 5)
+		param3 = strToInt(argv[4]);
+
+	Script::executeMethod(scriptNumber, param1, param2, param3);
+	DebugPrintf("Script executed\n");
 	return true;
 }
 

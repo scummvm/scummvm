@@ -77,6 +77,7 @@ class Script {
 public:
 	static uint16 execute(uint16 startOffset);
 
+	static void executeMethod(int methodIndex, uint16 v1, uint16 v2, uint16 v3);
 	static void activateHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3);
 	static void addSound2(uint16 soundIndex, uint16 v2, uint16 v3);

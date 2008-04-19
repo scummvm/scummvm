@@ -1171,6 +1171,19 @@ uint16 Script::execute(uint16 startOffset) {
 	return result;
 }
 
+void Script::executeMethod(int methodIndex, uint16 v1, uint16 v2, uint16 v3) {
+	const SequenceMethodRecord *rec = &scriptMethods[0];
+	while ((rec->methodIndex != 0xff) && (rec->methodIndex != methodIndex))
+		++rec;
+
+	if (rec->methodIndex == 0xff)
+		warning("Undefined script method %d", methodIndex);
+	else {
+		SequenceMethodPtr ptr = rec->proc;
+		ptr(v1, v2, v3);
+	}
+}
+
 /*------------------------------------------------------------------------*/
 /*-  Hotspot Script Handler                                              -*/
 /*-                                                                      -*/
