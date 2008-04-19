@@ -35,7 +35,7 @@ namespace Kyra {
 
 struct TIM {
 	int16 procFunc;
-	uint16 unkFlag;
+	uint16 procParam;
 
 	struct Function {
 		const uint16 *ip;
@@ -86,11 +86,11 @@ private:
 	const CommandEntry *_commands;
 	int _commandsSize;
 
-	int cmd_initFunc0Now(const uint16 *param);
+	int cmd_initFunc0(const uint16 *param);
 	int cmd_stopCurFunc(const uint16 *param);
 	int cmd_initFunc(const uint16 *param);
 	int cmd_stopFunc(const uint16 *param);
-	int cmd_resetAllNextTime(const uint16 *param);
+	int cmd_resetAllRuntimes(const uint16 *param);
 	int cmd_execOpcode(const uint16 *param);
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);

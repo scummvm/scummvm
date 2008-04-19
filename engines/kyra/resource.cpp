@@ -277,13 +277,29 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 	return buffer;
 }
 
-uint32 Resource::getFileSize(const char *file) {
-	if (!isAccessable(file))
-		return 0;
+bool Resource::exists(const char *file, bool errorOutOnFail) {
+	if (Common::File::exists(file))
+		return true;
+	else if (isAccessable(file))
+		return true;
+	else if (errorOutOnFail)
+		error("File '%s' can't be found", file);
+	return false;
+}
 
-	ResFileMap::const_iterator iter = _map.find(file);
-	if (iter != _map.end())
-		return iter->_value.size;
+uint32 Resource::getFileSize(const char *file) {
+	if (Common::File::exists(file)) {
+		Common::File f;
+		if (f.open(file))
+			return f.size();
+	} else {
+		if (!isAccessable(file))
+			return 0;
+
+		ResFileMap::const_iterator iter = _map.find(file);
+		if (iter != _map.end())
+			return iter->_value.size;
+	}
 	return 0;
 }
 
@@ -299,18 +315,22 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 }
 
 Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
-	if (!isAccessable(file))
-		return 0;
-
-	ResFileMap::const_iterator iter = _map.find(file);
-	if (iter == _map.end())
-		return 0;
-
-	Common::File *stream = new Common::File();
-	if (stream->open(file)) {
+	if (Common::File::exists(file)) {
+		Common::File *stream = new Common::File();
+		if (!stream->open(file)) {
+			delete stream;
+			stream = 0;
+			error("Couldn't open file '%s'", file.c_str());
+		}
 		return stream;
 	} else {
-		delete stream;
+		if (!isAccessable(file))
+			return 0;
+
+		ResFileMap::const_iterator iter = _map.find(file);
+		if (iter == _map.end())
+			return 0;
+
 		if (!iter->_value.parent.empty()) {
 			Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
 			assert(parent);
@@ -321,8 +341,7 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 
 			return loader->loadFileFromArchive(file, parent, iter->_value);
 		} else {
-			warning("Couldn't open file '%s'", file.c_str());
-			return 0;
+			error("Couldn't open file '%s'", file.c_str());
 		}
 	}
 

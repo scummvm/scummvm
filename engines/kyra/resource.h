@@ -102,6 +102,7 @@ public:
 	// This unloads *all* pakfiles, even kyra.dat and protected ones
 	void unloadAllPakFiles();
 
+	bool exists(const char *file, bool errorOutOnFail=false);
 	uint32 getFileSize(const char *file);
 	uint8* fileData(const char *file, uint32 *size);
 	Common::SeekableReadStream *getFileStream(const Common::String &file);

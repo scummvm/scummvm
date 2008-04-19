@@ -400,6 +400,7 @@ void KyraEngine_v1::loadSceneMsc() {
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".MSC");
 	_screen->fillRect(0, 0, 319, 199, 0, 5);
+	_res->exists(fileNameBuffer, true);
 	_screen->loadBitmap(fileNameBuffer, 3, 5, 0);
 }
 
@@ -412,6 +413,7 @@ void KyraEngine_v1::startSceneScript(int brandonAlive) {
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".CPS");
 	_screen->clearPage(3);
+	_res->exists(fileNameBuffer, true);
 	// FIXME: check this hack for amiga version
 	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? _screen->getPalette(0) : 0));
 	_sprites->loadSceneShapes();
@@ -425,6 +427,7 @@ void KyraEngine_v1::startSceneScript(int brandonAlive) {
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".EMC");
+	_res->exists(fileNameBuffer, true);
 	_scriptInterpreter->unloadScript(_scriptClickData);
 	_scriptInterpreter->loadScript(fileNameBuffer, _scriptClickData, &_opcodes);
 	_scriptInterpreter->startScript(_scriptClick, 0);

@@ -347,6 +347,7 @@ void KyraEngine_v3::loadSceneMsc() {
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
 	strcat(filename, ".MSC");
 
+	_res->exists(filename, true);
 	Common::SeekableReadStream *stream = _res->getFileStream(filename);
 	assert(stream);
 	int16 minY = 0, height = 0;
@@ -381,6 +382,7 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	strcpy(filename, scene.filename1);
 	strcat(filename, ".DAT");
 
+	_res->exists(filename, true);
 	Common::SeekableReadStream *stream = _res->getFileStream(filename);
 	assert(stream);
 	stream->seek(2, SEEK_CUR);
@@ -436,6 +438,7 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	strcpy(filename, scene.filename2);
 	strcat(filename, ".EMC");
 	musicUpdate(0);
+	_res->exists(filename, true);
 	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
 
 	strcpy(filename, scene.filename1);

@@ -452,7 +452,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	strcat(filename, ".");
 	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? 0 : _lang]);
 
-	assert(_res->getFileSize(filename));
+	_res->exists(filename, true);
 	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
 	runSceneScript7();
 

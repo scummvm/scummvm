@@ -408,6 +408,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 	delete[] _dat;
 	_spriteDefStart = 0;
 
+	_res->exists(filename, true);
 	_dat = _res->fileData(filename, &fileSize);
 
 	memset(_anims, 0, sizeof(_anims));

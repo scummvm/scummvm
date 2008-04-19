@@ -25,6 +25,7 @@
 
 #include "kyra/script_tim.h"
 #include "kyra/script.h"
+#include "kyra/resource.h"
 
 #include "common/endian.h"
 
@@ -35,7 +36,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _syst
 #define COMMAND_UNIMPL() { 0, 0 }
 	static CommandEntry commandProcs[] = {
 		// 0x00
-		COMMAND(cmd_initFunc0Now),
+		COMMAND(cmd_initFunc0),
 		COMMAND(cmd_stopCurFunc),
 		COMMAND_UNIMPL(),
 		COMMAND_UNIMPL(),
@@ -63,7 +64,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _syst
 		COMMAND_UNIMPL(),
 		COMMAND_UNIMPL(),
 		COMMAND_UNIMPL(),
-		COMMAND(cmd_resetAllNextTime),
+		COMMAND(cmd_resetAllRuntimes),
 		// 0x18
 		COMMAND(cmd_return<1>),
 		COMMAND(cmd_execOpcode),
@@ -80,20 +81,19 @@ TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _syst
 }
 
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes) {
+	if (!_vm->resource()->exists(filename))
+		return 0;
+
 	ScriptFileParser file(filename, _vm->resource());
 	if (!file)
 		error("Couldn't open TIM file '%s'", filename);
 
 	uint32 formBlockSize = file.getFORMBlockSize();
-	if (formBlockSize == 0xFFFFFFFF) {
-		warning("No FORM chunk found in TIM file '%s'", filename);
-		return 0;
-	}
+	if (formBlockSize == 0xFFFFFFFF)
+		error("No FORM chunk found in TIM file '%s'", filename);
 
-	if (formBlockSize < 20) {
-		warning("TIM file '%s' FORM chunk size smaller than 20", filename);
-		return 0;
-	}
+	if (formBlockSize < 20)
+		error("TIM file '%s' FORM chunk size smaller than 20", filename);
 
 	TIM *tim = new TIM;
 	assert(tim);
@@ -149,7 +149,7 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 			TIM::Function &cur = _currentTim->func[_currentFunc];
 
 			if (_currentTim->procFunc != -1)
-				execCommand(28, &_currentTim->unkFlag);
+				execCommand(28, &_currentTim->procParam);
 
 			bool running = true;
 			while (cur.ip && cur.nextTime <= _system->getMillis() && running) {
@@ -199,7 +199,7 @@ int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 	return (this->*_commands[cmd].proc)(param);
 }
 
-int TIMInterpreter::cmd_initFunc0Now(const uint16 *param) {
+int TIMInterpreter::cmd_initFunc0(const uint16 *param) {
 	_currentTim->func[0].ip = _currentTim->func[0].avtl;
 	_currentTim->func[0].lastTime = _system->getMillis();
 	return 1;
@@ -230,7 +230,7 @@ int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 	return 1;
 }
 
-int TIMInterpreter::cmd_resetAllNextTime(const uint16 *param) {
+int TIMInterpreter::cmd_resetAllRuntimes(const uint16 *param) {
 	for (int i = 0; i < 10; ++i) {
 		if (_currentTim->func[i].ip)
 			_currentTim->func[i].nextTime = _system->getMillis();
@@ -246,7 +246,7 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 	uint16 opcode = *param++;
 	if (opcode > _currentTim->opcodes->size()) {
-		warning("calling unimplemented opcode(0x%.02X/%d)", opcode, opcode);
+		warning("Calling unimplemented TIM opcode(0x%.02X/%d)", opcode, opcode);
 		return 0;
 	}
 
