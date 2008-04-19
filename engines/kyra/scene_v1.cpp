@@ -1266,17 +1266,17 @@ void KyraEngine_v1::setupSceneResource(int sceneId) {
 	char file[64];
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".VRM");
-	if (Common::File::exists(file))
+	if (_res->exists(file))
 		_res->loadPakFile(file);
 
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".PAK");
-	if (Common::File::exists(file))
+	if (_res->exists(file))
 		_res->loadPakFile(file);
 
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".APK");
-	if (Common::File::exists(file))
+	if (_res->exists(file))
 		_res->loadPakFile(file);
 }
 
