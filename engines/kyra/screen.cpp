@@ -2242,6 +2242,8 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 				src = _animBlockPtr;
 				memcpy(dst, src, shapeSize2);
 				dst = newShape;
+				if (_vm->gameFlags().useAltShapeHeader)
+					dst += 2;
 				flags = READ_LE_UINT16(dst);
 				flags |= 2;
 				WRITE_LE_UINT16(dst, flags);
@@ -2326,7 +2328,8 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					byte *fromBackUp = from;
 					byte *toBackUp = to;
 					--to;
-					for (int i = 0; i < (fromPtrEnd - from); ++i) {
+					const int checkSize = fromPtrEnd - from;
+					for (int i = 0; i < checkSize; ++i) {
 						if (*from++ != *to++)
 							break;
 					}
