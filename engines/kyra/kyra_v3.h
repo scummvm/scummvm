@@ -216,6 +216,7 @@ private:
 	void updateCharacterAnim(int charId);
 
 	void updateSceneAnim(int anim, int newFrame);
+	void setupSceneAnimObject(int anim, uint16 flags, int x, int y, int x2, int y2, int w, int h, int unk10, int specialSize, int unk14, int shape, const char *filename);
 	void removeSceneAnimObject(int anim, int refresh);
 
 	int _charBackUpWidth2, _charBackUpHeight2;
@@ -459,6 +460,16 @@ private:
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
 
+	// conscience
+	bool _badConscienceShown;
+	int _badConscienceAnim;
+	bool _badConsciencePosition;
+
+	static const uint8 _badConscienceFrameTable[];
+
+	void showBadConscience();
+	void hideBadConscience();
+
 	// special script code
 	bool _temporaryScriptExecBit;
 	bool _useFrameTable;
@@ -486,6 +497,7 @@ private:
 	uint8 *_gfxBackUpRect;
 	uint8 *_paletteOverlay;
 	bool _useActorBuffer;
+	int _curChapter;
 
 	int _unk3, _unk4, _unk5;
 
@@ -498,6 +510,8 @@ private:
 	int o3_defineObject(ScriptState *script);
 	int o3_refreshCharacter(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
+	int o3_showBadConscience(ScriptState *script);
+	int o3_hideBadConscience(ScriptState *script);
 	int o3_objectChat(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);

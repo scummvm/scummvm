@@ -378,6 +378,88 @@ void KyraEngine_v3::updateSceneAnim(int anim, int newFrame) {
 	}
 }
 
+void KyraEngine_v3::setupSceneAnimObject(int animId, uint16 flags, int x, int y, int x2, int y2, int w,
+										int h, int unk10, int specialSize, int unk14, int shape, const char *filename) {
+	restorePage3();
+	SceneAnim &anim = _sceneAnims[animId];
+	anim.flags = flags;
+	anim.x = x;
+	anim.y = y;
+	anim.x2 = x2;
+	anim.y2 = y2;
+	anim.width = w;
+	anim.height = h;
+	anim.unk10 = unk10;
+	anim.specialSize = specialSize;
+	anim.unk14 = unk14;
+	anim.shapeIndex = shape;
+	if (filename)
+		strcpy(anim.filename, filename);
+
+	if (flags & 8) {
+		_sceneAnimMovie[animId]->open(filename, 1, 0);
+		musicUpdate(0);
+		if (_sceneAnimMovie[animId]->opened()) {
+			anim.wsaFlag = 1;
+			if (x2 == -1)
+				x2 = _sceneAnimMovie[animId]->xAdd();
+			if (y2 == -1)
+				y2 = _sceneAnimMovie[animId]->yAdd();
+			if (w == -1)
+				w = _sceneAnimMovie[animId]->width();
+			if (h == -1)
+				h = _sceneAnimMovie[animId]->height();
+			if (x == -1)
+				x = (w >> 1) + x2;
+			if (y == -1)
+				y = y2 + h - 1;
+
+			anim.x = x;
+			anim.y = y;
+			anim.x2 = x2;
+			anim.y2 = y2;
+			anim.width = w;
+			anim.height = h;
+		}
+	}
+
+	AnimObj *obj = &_animObjects[1+animId];
+	obj->enabled = true;
+	obj->needRefresh = true;
+
+	obj->unk8 = (anim.flags & 0x20) ? 1 : 0;
+	obj->flags = (anim.flags & 0x10) ? 0x800 : 0;
+	if (anim.flags & 2)
+		obj->flags |= 1;
+
+	obj->xPos1 = anim.x;
+	obj->yPos1 = anim.y;
+
+	if ((anim.flags & 4) && anim.shapeIndex != 0xFFFF)
+		obj->shapePtr = _sceneShapes[anim.shapeIndex];
+	else
+		obj->shapePtr = 0;
+
+	if (anim.flags & 8) {
+		obj->shapeIndex3 = anim.shapeIndex;
+		obj->animNum = animId;
+	} else {
+		obj->shapeIndex3 = 0xFFFF;
+		obj->animNum = 0xFFFF;
+	}
+
+	obj->xPos3 = obj->xPos2 = anim.x2;
+	obj->yPos3 = obj->yPos2 = anim.y2;
+	obj->width = anim.width;
+	obj->height = anim.height;
+	obj->width2 = obj->height2 = anim.specialSize;
+
+	if (_animList)
+		_animList = addToAnimListSorted(_animList, obj);
+	else
+		_animList = initAnimList(_animList, obj);
+}
+
 void KyraEngine_v3::removeSceneAnimObject(int anim, int refresh) {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::removeSceneAnimObject(%d, %d)", anim, refresh);
 	AnimObj *obj = &_animObjects[anim+1];

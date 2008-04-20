@@ -106,6 +106,8 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_charBackUpWidth = _charBackUpHeight = -1;
 	_useActorBuffer = false;
 	_curStudioSFX = 283;
+	_badConscienceShown = false;
+	_curChapter = 1;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {

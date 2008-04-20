@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	seqplayer.o \
 	sequences_v1.o \
 	sequences_v2.o \
+	sequences_v3.o \
 	sound_adlib.o \
 	sound_digital.o \
 	sound_towns.o \

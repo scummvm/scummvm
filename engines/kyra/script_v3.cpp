@@ -89,6 +89,18 @@ int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_showBadConscience(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showBadConscience(%p) ()", (const void *)script);
+	showBadConscience();
+	return 0;
+}
+
+int KyraEngine_v3::o3_hideBadConscience(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_hideBadConscience(%p) ()", (const void *)script);
+	hideBadConscience();
+	return 0;
+}
+
 int KyraEngine_v3::o3_objectChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_objectChat(%p) (%d)", (const void *)script, stackPos(0));
 	int id = stackPos(0);
@@ -425,9 +437,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 		Opcode(o3_dummy),
 		// 0x14
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_showBadConscience),
 		Opcode(o3_dummy),
-		OpcodeUnImpl(),
+		Opcode(o3_hideBadConscience),
 		// 0x18
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
