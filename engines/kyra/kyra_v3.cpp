@@ -111,6 +111,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_deathHandler = -1;
 	_moveFacingTable = 0;
 	_unkHandleSceneChangeFlag = false;
+	memset(_sceneShapeDescs, 0, sizeof(_sceneShapeDescs));
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -441,7 +442,8 @@ bool KyraEngine_v3::snd_voiceIsPlaying() {
 
 void KyraEngine_v3::snd_stopVoice() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::snd_stopVoice()");
-	_soundDigital->stopSound(_voiceSoundChannel);
+	if (_voiceSoundChannel != -1)
+		_soundDigital->stopSound(_voiceSoundChannel);
 }
 
 void KyraEngine_v3::playStudioSFX(const char *str) {

@@ -51,6 +51,15 @@ int KyraEngine_v3::findFreeItem() {
 	return -1;
 }
 
+int KyraEngine_v3::findItem(uint16 sceneId, uint16 id) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::findItem(%u, %u)", sceneId, id);
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].id == id && _itemList[i].sceneId == sceneId)
+			return i;
+	}
+	return -1;
+}
+
 int KyraEngine_v3::checkItemCollision(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkItemCollision(%d, %d)", x, y);
 	int itemIndex = -1;

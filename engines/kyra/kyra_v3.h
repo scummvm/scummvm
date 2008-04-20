@@ -274,6 +274,7 @@ private:
 	void resetItemList();
 
 	int findFreeItem();
+	int findItem(uint16 item, uint16 scene);
 	
 	void initItems();
 
@@ -391,6 +392,14 @@ private:
 
 	int8 _sceneDatPalette[45];
 	int8 _sceneDatLayerTable[15];
+	struct SceneShapeDesc {
+		// the original saves those variables, we don't, since
+		// they are just needed on scene load
+		/*int x, y;
+		int w, h;*/
+		int drawX, drawY;
+	};
+	SceneShapeDesc _sceneShapeDescs[20];
 
 	int getDrawLayer(int x, int y);
 
@@ -525,22 +534,31 @@ private:
 	int o3_refreshCharacter(ScriptState *script);
 	int o3_getCharacterX(ScriptState *script);
 	int o3_getCharacterY(ScriptState *script);
+	int o3_getCharacterFacing(ScriptState *script);
+	int o3_getCharacterScene(ScriptState *script);
+	int o3_trySceneChange(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
 	int o3_objectChat(ScriptState *script);
+	int o3_checkForItem(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
 	int o3_setGameFlag(ScriptState *script);
 	int o3_getHandItem(ScriptState *script);
 	int o3_hideMouse(ScriptState *script);
+	int o3_addSpecialExit(ScriptState *script);
 	int o3_setMousePos(ScriptState *script);
 	int o3_showMouse(ScriptState *script);
 	int o3_badConscienceChat(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
+	int o3_drawSceneShape(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);
+	int o3_update(ScriptState *script);
+	int o3_enterNewScene(ScriptState *script);
+	int o3_setMalcolmPos(ScriptState *script);
 	int o3_stopMusic(ScriptState *script);
 	int o3_playMusicTrack(ScriptState *script);
 	int o3_playSoundEffect(ScriptState *script);
@@ -555,6 +573,7 @@ private:
 	int o3_querySpecialSceneScriptState(ScriptState *script);
 	int o3_setHiddenItemsEntry(ScriptState *script);
 	int o3_getHiddenItemsEntry(ScriptState *script);
+	int o3_setupSceneAnimObject(ScriptState *script);
 	int o3_removeSceneAnimObject(ScriptState *script);
 	int o3_setVocHigh(ScriptState *script);
 	int o3_getVocHigh(ScriptState *script);
