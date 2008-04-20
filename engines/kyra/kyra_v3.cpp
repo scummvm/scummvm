@@ -464,9 +464,8 @@ void KyraEngine_v3::playStudioSFX(const char *str) {
 void KyraEngine_v3::preinit() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::preinit()");
 	
-	_unkBuffer1040Bytes = new uint8[1040];
-	_itemBuffer1 = new uint8[72];
-	_itemBuffer2 = new uint8[144];
+	_itemBuffer1 = new int8[72];
+	_itemBuffer2 = new int8[144];
 	initMouseShapes();
 	initItems();
 

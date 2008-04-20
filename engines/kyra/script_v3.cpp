@@ -206,6 +206,43 @@ int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_checkInRect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_checkInRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script,
+			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	const int x1 = stackPos(0);
+	const int y1 = stackPos(1);
+	const int x2 = stackPos(2);
+	const int y2 = stackPos(3);
+	int x = stackPos(4), y = stackPos(5);
+	if (_itemInHand >= 0) {
+		const int8 *desc = &_itemBuffer2[_itemInHand*2];
+		x -= 12;
+		x += desc[0];
+		y -= 19;
+		y += desc[1];
+	}
+
+	if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+		//XXX
+		return 1;
+	} else {
+		//XXX
+		return 0;
+	}
+}
+
+int KyraEngine_v3::o3_stopMusic(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_stopMusic(%p) ()", (const void *)script);
+	stopMusicTrack();
+	return 0;
+}
+
+int KyraEngine_v3::o3_playMusicTrack(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_playMusicTrack(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	playMusicTrack(stackPos(0), stackPos(1));
+	return 0;
+}
+
 int KyraEngine_v3::o3_playSoundEffect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_playSoundEffect(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	playSoundEffect(stackPos(0), stackPos(1));
@@ -519,7 +556,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x40
-		OpcodeUnImpl(),
+		Opcode(o3_checkInRect),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
@@ -547,9 +584,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 		Opcode(o3_dummy),
 		Opcode(o3_dummy),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_stopMusic),
 		// 0x58
-		OpcodeUnImpl(),
+		Opcode(o3_playMusicTrack),
 		Opcode(o3_playSoundEffect),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),

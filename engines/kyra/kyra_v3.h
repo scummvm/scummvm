@@ -258,8 +258,8 @@ private:
 	uint8 *getTableEntry(uint8 *buffer, int id);
 
 	// items
-	uint8 *_itemBuffer1;
-	uint8 *_itemBuffer2;
+	int8 *_itemBuffer1;
+	int8 *_itemBuffer2;
 	struct Item {
 		uint16 id;
 		uint16 sceneId;
@@ -505,7 +505,6 @@ private:
 	int _newShapeDelay;
 
 	// unk
-	uint8 *_unkBuffer1040Bytes;
 	uint8 *_costPalBuffer;
 	uint8 *_screenBuffer;
 	uint8 *_gfxBackUpRect;
@@ -541,6 +540,9 @@ private:
 	int o3_badConscienceChat(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
+	int o3_checkInRect(ScriptState *script);
+	int o3_stopMusic(ScriptState *script);
+	int o3_playMusicTrack(ScriptState *script);
 	int o3_playSoundEffect(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
