@@ -581,248 +581,244 @@ int KyraEngine_v3::o3t_getMalcolmShapes(ScriptState *script) {
 }
 
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v3> OpcodeV3;
-#define Opcode(x) OpcodeV3(this, &KyraEngine_v3::x)
-#define OpcodeUnImpl() OpcodeV3(this, 0)
+#define SetOpcodeTable(x) table = &x;
+#define Opcode(x) table->push_back(new OpcodeV3(this, &KyraEngine_v3::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeV3(this, 0))
 void KyraEngine_v3::setupOpcodeTable() {
-	static const OpcodeV3 opcodeTable[] = {
-		// 0x00
-		Opcode(o3_getMalcolmShapes),
-		Opcode(o3_setCharacterPos),
-		Opcode(o3_defineObject),
-		Opcode(o3_refreshCharacter),
-		// 0x04
-		Opcode(o3_getCharacterX),
-		Opcode(o3_getCharacterY),
-		Opcode(o3_getCharacterFacing),
-		Opcode(o3_getCharacterScene),
-		// 0x08
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		// 0x0c
-		OpcodeUnImpl(),
-		Opcode(o3_trySceneChange),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x10
-		OpcodeUnImpl(),
-		Opcode(o3_showSceneFileMessage),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		// 0x14
-		OpcodeUnImpl(),
-		Opcode(o3_showBadConscience),
-		Opcode(o3_dummy),
-		Opcode(o3_hideBadConscience),
-		// 0x18
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x1c
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_objectChat),
-		// 0x20
-		Opcode(o3_checkForItem),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		Opcode(o3_defineItem),
-		// 0x24
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_queryGameFlag),
-		// 0x28
-		Opcode(o3_resetGameFlag),
-		Opcode(o3_setGameFlag),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x2c
-		Opcode(o3_getHandItem),
-		Opcode(o3_hideMouse),
-		Opcode(o3_addSpecialExit),
-		Opcode(o3_setMousePos),
-		// 0x30
-		Opcode(o3_showMouse),
-		Opcode(o3_badConscienceChat),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		// 0x34
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		Opcode(o3_delay),
-		// 0x38
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_setSceneFilename),
-		OpcodeUnImpl(),
-		// 0x3c
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_drawSceneShape),
-		// 0x40
-		Opcode(o3_checkInRect),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		// 0x44
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		// 0x48
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		Opcode(o3_update),
-		// 0x4c
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x50
-		Opcode(o3_enterNewScene),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		// 0x54
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		Opcode(o3_setMalcolmPos),
-		Opcode(o3_stopMusic),
-		// 0x58
-		Opcode(o3_playMusicTrack),
-		Opcode(o3_playSoundEffect),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x5c
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x60
-		Opcode(o3_getRand),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x64
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		// 0x68
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x6c
-		Opcode(o3_dummy),
-		Opcode(o3_defineRoomEntrance),
-		OpcodeUnImpl(),
-		Opcode(o3_setSpecialSceneScriptRunTime),
-		// 0x70
-		Opcode(o3_defineSceneAnim),
-		Opcode(o3_dummy),
-		Opcode(o3_updateSceneAnim),
-		Opcode(o3_dummy),
-		// 0x74
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x78
-		OpcodeUnImpl(),
-		Opcode(o3_defineScene),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0x7c
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		// 0x80
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		// 0x84
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		// 0x88
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		// 0x8c
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		Opcode(o3_setSpecialSceneScriptState),
-		// 0x90
-		Opcode(o3_clearSpecialSceneScriptState),
-		Opcode(o3_querySpecialSceneScriptState),
-		Opcode(o3_dummy),
-		Opcode(o3_setHiddenItemsEntry),
-		// 0x94
-		Opcode(o3_getHiddenItemsEntry),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		// 0x98
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_setupSceneAnimObject),
-		Opcode(o3_removeSceneAnimObject),
-		// 0x9c
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0xa0
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		Opcode(o3_dummy),
-		// 0xa4
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o3_setVocHigh),
-		// 0xa8
-		Opcode(o3_getVocHigh),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		// 0xac
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-		OpcodeUnImpl(),
-		Opcode(o3_dummy),
-	};
+	Common::Array<const Opcode*> *table = 0;
 
-	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
-		_opcodes.push_back(&opcodeTable[i]);
+	SetOpcodeTable(_opcodes);
+	// 0x00
+	Opcode(o3_getMalcolmShapes);
+	Opcode(o3_setCharacterPos);
+	Opcode(o3_defineObject);
+	Opcode(o3_refreshCharacter);
+	// 0x04
+	Opcode(o3_getCharacterX);
+	Opcode(o3_getCharacterY);
+	Opcode(o3_getCharacterFacing);
+	Opcode(o3_getCharacterScene);
+	// 0x08
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	// 0x0c
+	OpcodeUnImpl();
+	Opcode(o3_trySceneChange);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x10
+	OpcodeUnImpl();
+	Opcode(o3_showSceneFileMessage);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	// 0x14
+	OpcodeUnImpl();
+	Opcode(o3_showBadConscience);
+	Opcode(o3_dummy);
+	Opcode(o3_hideBadConscience);
+	// 0x18
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x1c
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_objectChat);
+	// 0x20
+	Opcode(o3_checkForItem);
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	Opcode(o3_defineItem);
+	// 0x24
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_queryGameFlag);
+	// 0x28
+	Opcode(o3_resetGameFlag);
+	Opcode(o3_setGameFlag);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x2c
+	Opcode(o3_getHandItem);
+	Opcode(o3_hideMouse);
+	Opcode(o3_addSpecialExit);
+	Opcode(o3_setMousePos);
+	// 0x30
+	Opcode(o3_showMouse);
+	Opcode(o3_badConscienceChat);
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	// 0x34
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_delay);
+	// 0x38
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_setSceneFilename);
+	OpcodeUnImpl();
+	// 0x3c
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_drawSceneShape);
+	// 0x40
+	Opcode(o3_checkInRect);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	// 0x44
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	// 0x48
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	Opcode(o3_update);
+	// 0x4c
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x50
+	Opcode(o3_enterNewScene);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	// 0x54
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_setMalcolmPos);
+	Opcode(o3_stopMusic);
+	// 0x58
+	Opcode(o3_playMusicTrack);
+	Opcode(o3_playSoundEffect);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x5c
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x60
+	Opcode(o3_getRand);
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x64
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	// 0x68
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x6c
+	Opcode(o3_dummy);
+	Opcode(o3_defineRoomEntrance);
+	OpcodeUnImpl();
+	Opcode(o3_setSpecialSceneScriptRunTime);
+	// 0x70
+	Opcode(o3_defineSceneAnim);
+	Opcode(o3_dummy);
+	Opcode(o3_updateSceneAnim);
+	Opcode(o3_dummy);
+	// 0x74
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x78
+	OpcodeUnImpl();
+	Opcode(o3_defineScene);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0x7c
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	// 0x80
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	// 0x84
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	// 0x88
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	// 0x8c
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_setSpecialSceneScriptState);
+	// 0x90
+	Opcode(o3_clearSpecialSceneScriptState);
+	Opcode(o3_querySpecialSceneScriptState);
+	Opcode(o3_dummy);
+	Opcode(o3_setHiddenItemsEntry);
+	// 0x94
+	Opcode(o3_getHiddenItemsEntry);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	// 0x98
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_setupSceneAnimObject);
+	Opcode(o3_removeSceneAnimObject);
+	// 0x9c
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0xa0
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	// 0xa4
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o3_setVocHigh);
+	// 0xa8
+	Opcode(o3_getVocHigh);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	// 0xac
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	OpcodeUnImpl();
+	Opcode(o3_dummy);
 	
-	static const OpcodeV3 tempOpcodeTable[] = {
-		Opcode(o3t_defineNewShapes),
-		Opcode(o3t_setCurrentFrame),
-		Opcode(o3t_playSoundEffect),
-		Opcode(o3_dummy),
-		// 0x0a
-		OpcodeUnImpl(),
-		Opcode(o3_getRand),
-		Opcode(o3_dummy)
-	};
-	
-	for (int i = 0; i < ARRAYSIZE(tempOpcodeTable); ++i)
-		_opcodesTemporary.push_back(&tempOpcodeTable[i]);
+	SetOpcodeTable(_opcodesTemporary);
+	// 0x00
+	Opcode(o3t_defineNewShapes);
+	Opcode(o3t_setCurrentFrame);
+	Opcode(o3t_playSoundEffect);
+	Opcode(o3_dummy);
+	// 0x0a
+	OpcodeUnImpl();
+	Opcode(o3_getRand);
+	Opcode(o3_dummy);
 }
 
 } // end of namespace Kyra

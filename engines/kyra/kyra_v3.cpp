@@ -156,6 +156,10 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _sceneStrings;
 	delete [] _talkObjectList;
 	delete [] _moveFacingTable;
+
+	for (Common::Array<const Opcode*>::iterator i = _opcodesTemporary.begin(); i != _opcodesTemporary.end(); ++i)
+		delete *i;
+	_opcodesTemporary.clear();
 }
 
 int KyraEngine_v3::init() {

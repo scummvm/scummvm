@@ -176,6 +176,14 @@ KyraEngine_v2::~KyraEngine_v2() {
 	for (int i = 0; i < 19; i++)
 		delete [] _conversationState[i];
 	delete [] _conversationState;
+
+	for (Common::Array<const Opcode*>::iterator i = _opcodesTemporary.begin(); i != _opcodesTemporary.end(); ++i)
+		delete *i;
+	_opcodesTemporary.clear();
+
+	for (Common::Array<const TIMOpcode*>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
+		delete *i;
+	_timOpcodes.clear();
 }
 
 Movie *KyraEngine_v2::createWSAMovie() {

@@ -189,6 +189,10 @@ int KyraEngine::init() {
 }
 
 KyraEngine::~KyraEngine() {
+	for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+		delete *i;
+	_opcodes.clear();
+
 	delete _res;
 	delete _staticres;
 	delete _sound;

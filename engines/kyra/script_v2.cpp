@@ -1873,262 +1873,258 @@ int KyraEngine_v2::t2_playSoundEffect(const TIM *tim, const uint16 *param) {
 #pragma mark -
 
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
-#define Opcode(x) OpcodeV2(this, &KyraEngine_v2::x)
-#define OpcodeUnImpl() OpcodeV2(this, 0)
+#define SetOpcodeTable(x) table = &x;
+#define Opcode(x) table->push_back(new OpcodeV2(this, &KyraEngine_v2::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
 
 typedef Functor2Mem<const TIM*, const uint16*, int, KyraEngine_v2> TIMOpcodeV2;
-#define OpcodeTim(x) TIMOpcodeV2(this, &KyraEngine_v2::x)
-#define OpcodeTimUnImpl() TIMOpcodeV2(this, 0)
+#define OpcodeTim(x) _timOpcodes.push_back(new TIMOpcodeV2(this, &KyraEngine_v2::x))
+#define OpcodeTimUnImpl() _timOpcodes.push_back(TIMOpcodeV2(this, 0))
 
 void KyraEngine_v2::setupOpcodeTable() {
-	static const OpcodeV2 opcodeTable[] = {
-		// 0x00
-		Opcode(o2_setCharacterFacingRefresh),
-		Opcode(o2_setCharacterPos),
-		Opcode(o2_defineObject),
-		Opcode(o2_refreshCharacter),
-		// 0x04
-		Opcode(o2_getCharacterX),
-		Opcode(o2_getCharacterY),
-		Opcode(o2_getCharacterFacing),
-		Opcode(o2_getCharacterScene),
-		// 0x08
-		Opcode(o2_setSceneComment),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o2_setCharacterAnimFrame),
-		// 0x0c
-		Opcode(o2_setCharacterFacing),
-		Opcode(o2_trySceneChange),
-		Opcode(o2_moveCharacter),
-		Opcode(o2_customCharacterChat),
-		// 0x10
-		Opcode(o2_soundFadeOut),
-		Opcode(o2_showChapterMessage),
-		Opcode(o2_restoreTalkTextMessageBkgd),
-		OpcodeUnImpl(),
-		// 0x14
-		Opcode(o2_wsaClose),
-		Opcode(o2_backUpScreen),
-		Opcode(o2_restoreScreen),
-		Opcode(o2_displayWsaFrame),
-		// 0x18
-		Opcode(o2_displayWsaSequentialFramesLooping),
-		Opcode(o2_wsaOpen),
-		Opcode(o2_displayWsaSequentialFrames),
-		Opcode(o2_displayWsaSequence),
-		// 0x1c
-		Opcode(o2_addItemToInventory),
-		Opcode(o2_drawShape),
-		Opcode(o2_addItemToCurScene),
-		Opcode(o2_dummy),	// the original used this opcode to limit the mouse range temporary,
-							// since that is of no use and not really important we just use a dummy here
-		// 0x20
-		Opcode(o2_checkForItem),
-		Opcode(o2_loadSoundFile),
-		Opcode(o2_removeItemSlotFromInventory),
-		Opcode(o2_defineItem),
-		// 0x24
-		Opcode(o2_removeItemFromInventory),
-		Opcode(o2_countItemInInventory),
-		Opcode(o2_countItemsInScene),
-		Opcode(o2_queryGameFlag),
-		// 0x28
-		Opcode(o2_resetGameFlag),
-		Opcode(o2_setGameFlag),
-		Opcode(o2_setHandItem),
-		Opcode(o2_removeHandItem),
-		// 0x2c
-		Opcode(o2_handItemSet),
-		Opcode(o2_hideMouse),
-		Opcode(o2_addSpecialExit),
-		Opcode(o2_setMousePos),
-		// 0x30
-		Opcode(o2_showMouse),
-		OpcodeUnImpl(),
-		Opcode(o2_wipeDownMouseItem),
-		Opcode(o2_getElapsedSecs),
-		// 0x34
-		Opcode(o2_getTimerDelay),
-		Opcode(o2_playSoundEffect),
-		Opcode(o2_delaySecs),
-		Opcode(o2_delay),
-		// 0x38
-		Opcode(o2_dummy),
-		Opcode(o2_setTimerDelay),
-		Opcode(o2_setScaleTableItem),
-		Opcode(o2_setDrawLayerTableItem),
-		// 0x3c
-		Opcode(o2_setCharPalEntry),
-		Opcode(o2_loadZShapes),
-		Opcode(o2_drawSceneShape),
-		Opcode(o2_drawSceneShapeOnPage),
-		// 0x40
-		Opcode(o2_disableAnimObject),
-		Opcode(o2_enableAnimObject),
-		Opcode(o2_dummy),
-		Opcode(o2_loadPalette384),
-		// 0x44
-		Opcode(o2_setPalette384),
-		Opcode(o2_restoreBackBuffer),
-		Opcode(o2_backUpInventoryGfx),
-		Opcode(o2_disableSceneAnim),
-		// 0x48
-		Opcode(o2_enableSceneAnim),
-		Opcode(o2_restoreInventoryGfx),
-		Opcode(o2_setSceneAnimPos2),
-		Opcode(o2_update),
-		// 0x4c
-		OpcodeUnImpl(),
-		Opcode(o2_fadeScenePal),
-		Opcode(o2_dummy),
-		Opcode(o2_dummy),
-		// 0x50
-		Opcode(o2_enterNewSceneEx),
-		Opcode(o2_switchScene),
-		Opcode(o2_getShapeFlag1),
-		Opcode(o2_setPathfinderFlag),
-		// 0x54
-		Opcode(o2_getSceneExitToFacing),
-		Opcode(o2_setLayerFlag),
-		Opcode(o2_setZanthiaPos),
-		Opcode(o2_loadMusicTrack),
-		// 0x58
-		Opcode(o2_playWanderScoreViaMap),
-		Opcode(o2_playSoundEffect),
-		Opcode(o2_setSceneAnimPos),
-		Opcode(o2_blockInRegion),
-		// 0x5c
-		Opcode(o2_blockOutRegion),
-		OpcodeUnImpl(),
-		Opcode(o2_setCauldronState),
-		Opcode(o2_showItemString),
-		// 0x60
-		Opcode(o2_getRand),
-		Opcode(o2_isAnySoundPlaying),
-		Opcode(o2_setDeathHandlerFlag),
-		Opcode(o2_setDrawNoShapeFlag),
-		// 0x64
-		Opcode(o2_setRunFlag),
-		Opcode(o2_showLetter),
-		OpcodeUnImpl(),
-		Opcode(o2_fillRect),
-		// 0x68
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		Opcode(o2_waitForConfirmationClick),
-		// 0x6c
-		Opcode(o2_encodeShape),
-		Opcode(o2_defineRoomEntrance),
-		Opcode(o2_runTemporaryScript),
-		Opcode(o2_setSpecialSceneScriptRunTime),
-		// 0x70
-		Opcode(o2_defineSceneAnim),
-		Opcode(o2_updateSceneAnim),
-		Opcode(o2_updateSceneAnim),
-		Opcode(o2_addToSceneAnimPosAndUpdate),
-		// 0x74
-		Opcode(o2_useItemOnMainChar),
-		Opcode(o2_startDialogue),
-		Opcode(o2_zanthRandomChat),
-		Opcode(o2_setupDialogue),
-		// 0x78
-		Opcode(o2_getDlgIndex),
-		Opcode(o2_defineRoom),
-		Opcode(o2_addCauldronStateTableEntry),
-		Opcode(o2_setCountDown),
-		// 0x7c
-		Opcode(o2_getCountDown),
-		Opcode(o2_dummy),
-		Opcode(o2_dummy),
-		Opcode(o2_pressColorKey),
-		// 0x80
-		Opcode(o2_objectChat),
-		Opcode(o2_chapterChange),
-		Opcode(o2_getColorCodeFlag1),
-		Opcode(o2_setColorCodeFlag1),
-		// 0x84
-		Opcode(o2_getColorCodeFlag2),
-		Opcode(o2_setColorCodeFlag2),
-		Opcode(o2_getColorCodeValue),
-		Opcode(o2_setColorCodeValue),
-		// 0x88
-		Opcode(o2_countItemInstances),
-		Opcode(o2_removeItemFromScene),
-		Opcode(o2_initObject),
-		Opcode(o2_npcChat),
-		// 0x8c
-		Opcode(o2_deinitObject),
-		Opcode(o2_playTimSequence),
-		Opcode(o2_makeBookOrCauldronAppear),
-		Opcode(o2_setSpecialSceneScriptState),
-		// 0x90
-		Opcode(o2_clearSpecialSceneScriptState),
-		Opcode(o2_querySpecialSceneScriptState),
-		Opcode(o2_resetInputColorCode),
-		Opcode(o2_setHiddenItemsEntry),
-		// 0x94
-		Opcode(o2_getHiddenItemsEntry),
-		Opcode(o2_mushroomEffect),
-		Opcode(o2_wsaClose),
-		Opcode(o2_meanWhileScene),
-		// 0x98
-		Opcode(o2_customChat),
-		Opcode(o2_customChatFinish),
-		Opcode(o2_setupSceneAnimation),
-		Opcode(o2_stopSceneAnimation),
-		// 0x9c
-		Opcode(o2_disableTimer),
-		Opcode(o2_enableTimer),
-		Opcode(o2_setTimerCountdown),
-		Opcode(o2_processPaletteIndex),
-		// 0xa0
-		Opcode(o2_updateTwoSceneAnims),
-		Opcode(o2_getRainbowRoomData),
-		Opcode(o2_drawSceneShapeEx),
-		Opcode(o2_getBoolFromStack),
-		// 0xa4
-		Opcode(o2_getSfxDriver),
-		Opcode(o2_getVocSupport),
-		Opcode(o2_getMusicDriver),
-		Opcode(o2_setVocHigh),
-		// 0xa8
-		Opcode(o2_getVocHigh),
-		Opcode(o2_zanthiaChat),
-		Opcode(o2_isVoiceEnabled),
-		Opcode(o2_isVoicePlaying),
-		// 0xac
-		Opcode(o2_stopVoicePlaying),
-		Opcode(o2_getGameLanguage),
-		Opcode(o2_demoFinale),
-		Opcode(o2_dummy),
-	};
+	Common::Array<const Opcode*> *table = 0;
 
-	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
-		_opcodes.push_back(&opcodeTable[i]);
+	SetOpcodeTable(_opcodes);
+	// 0x00
+	Opcode(o2_setCharacterFacingRefresh);
+	Opcode(o2_setCharacterPos);
+	Opcode(o2_defineObject);
+	Opcode(o2_refreshCharacter);
+	// 0x04
+	Opcode(o2_getCharacterX);
+	Opcode(o2_getCharacterY);
+	Opcode(o2_getCharacterFacing);
+	Opcode(o2_getCharacterScene);
+	// 0x08
+	Opcode(o2_setSceneComment);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o2_setCharacterAnimFrame);
+	// 0x0c
+	Opcode(o2_setCharacterFacing);
+	Opcode(o2_trySceneChange);
+	Opcode(o2_moveCharacter);
+	Opcode(o2_customCharacterChat);
+	// 0x10
+	Opcode(o2_soundFadeOut);
+	Opcode(o2_showChapterMessage);
+	Opcode(o2_restoreTalkTextMessageBkgd);
+	OpcodeUnImpl();
+	// 0x14
+	Opcode(o2_wsaClose);
+	Opcode(o2_backUpScreen);
+	Opcode(o2_restoreScreen);
+	Opcode(o2_displayWsaFrame);
+	// 0x18
+	Opcode(o2_displayWsaSequentialFramesLooping);
+	Opcode(o2_wsaOpen);
+	Opcode(o2_displayWsaSequentialFrames);
+	Opcode(o2_displayWsaSequence);
+	// 0x1c
+	Opcode(o2_addItemToInventory);
+	Opcode(o2_drawShape);
+	Opcode(o2_addItemToCurScene);
+	Opcode(o2_dummy);	// the original used this opcode to limit the mouse range temporary,
+						// since that is of no use and not really important we just use a dummy here
+	// 0x20
+	Opcode(o2_checkForItem);
+	Opcode(o2_loadSoundFile);
+	Opcode(o2_removeItemSlotFromInventory);
+	Opcode(o2_defineItem);
+	// 0x24
+	Opcode(o2_removeItemFromInventory);
+	Opcode(o2_countItemInInventory);
+	Opcode(o2_countItemsInScene);
+	Opcode(o2_queryGameFlag);
+	// 0x28
+	Opcode(o2_resetGameFlag);
+	Opcode(o2_setGameFlag);
+	Opcode(o2_setHandItem);
+	Opcode(o2_removeHandItem);
+	// 0x2c
+	Opcode(o2_handItemSet);
+	Opcode(o2_hideMouse);
+	Opcode(o2_addSpecialExit);
+	Opcode(o2_setMousePos);
+	// 0x30
+	Opcode(o2_showMouse);
+	OpcodeUnImpl();
+	Opcode(o2_wipeDownMouseItem);
+	Opcode(o2_getElapsedSecs);
+	// 0x34
+	Opcode(o2_getTimerDelay);
+	Opcode(o2_playSoundEffect);
+	Opcode(o2_delaySecs);
+	Opcode(o2_delay);
+	// 0x38
+	Opcode(o2_dummy);
+	Opcode(o2_setTimerDelay);
+	Opcode(o2_setScaleTableItem);
+	Opcode(o2_setDrawLayerTableItem);
+	// 0x3c
+	Opcode(o2_setCharPalEntry);
+	Opcode(o2_loadZShapes);
+	Opcode(o2_drawSceneShape);
+	Opcode(o2_drawSceneShapeOnPage);
+	// 0x40
+	Opcode(o2_disableAnimObject);
+	Opcode(o2_enableAnimObject);
+	Opcode(o2_dummy);
+	Opcode(o2_loadPalette384);
+	// 0x44
+	Opcode(o2_setPalette384);
+	Opcode(o2_restoreBackBuffer);
+	Opcode(o2_backUpInventoryGfx);
+	Opcode(o2_disableSceneAnim);
+	// 0x48
+	Opcode(o2_enableSceneAnim);
+	Opcode(o2_restoreInventoryGfx);
+	Opcode(o2_setSceneAnimPos2);
+	Opcode(o2_update);
+	// 0x4c
+	OpcodeUnImpl();
+	Opcode(o2_fadeScenePal);
+	Opcode(o2_dummy);
+	Opcode(o2_dummy);
+	// 0x50
+	Opcode(o2_enterNewSceneEx);
+	Opcode(o2_switchScene);
+	Opcode(o2_getShapeFlag1);
+	Opcode(o2_setPathfinderFlag);
+	// 0x54
+	Opcode(o2_getSceneExitToFacing);
+	Opcode(o2_setLayerFlag);
+	Opcode(o2_setZanthiaPos);
+	Opcode(o2_loadMusicTrack);
+	// 0x58
+	Opcode(o2_playWanderScoreViaMap);
+	Opcode(o2_playSoundEffect);
+	Opcode(o2_setSceneAnimPos);
+	Opcode(o2_blockInRegion);
+	// 0x5c
+	Opcode(o2_blockOutRegion);
+	OpcodeUnImpl();
+	Opcode(o2_setCauldronState);
+	Opcode(o2_showItemString);
+	// 0x60
+	Opcode(o2_getRand);
+	Opcode(o2_isAnySoundPlaying);
+	Opcode(o2_setDeathHandlerFlag);
+	Opcode(o2_setDrawNoShapeFlag);
+	// 0x64
+	Opcode(o2_setRunFlag);
+	Opcode(o2_showLetter);
+	OpcodeUnImpl();
+	Opcode(o2_fillRect);
+	// 0x68
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o2_waitForConfirmationClick);
+	// 0x6c
+	Opcode(o2_encodeShape);
+	Opcode(o2_defineRoomEntrance);
+	Opcode(o2_runTemporaryScript);
+	Opcode(o2_setSpecialSceneScriptRunTime);
+	// 0x70
+	Opcode(o2_defineSceneAnim);
+	Opcode(o2_updateSceneAnim);
+	Opcode(o2_updateSceneAnim);
+	Opcode(o2_addToSceneAnimPosAndUpdate);
+	// 0x74
+	Opcode(o2_useItemOnMainChar);
+	Opcode(o2_startDialogue);
+	Opcode(o2_zanthRandomChat);
+	Opcode(o2_setupDialogue);
+	// 0x78
+	Opcode(o2_getDlgIndex);
+	Opcode(o2_defineRoom);
+	Opcode(o2_addCauldronStateTableEntry);
+	Opcode(o2_setCountDown);
+	// 0x7c
+	Opcode(o2_getCountDown);
+	Opcode(o2_dummy);
+	Opcode(o2_dummy);
+	Opcode(o2_pressColorKey);
+	// 0x80
+	Opcode(o2_objectChat);
+	Opcode(o2_chapterChange);
+	Opcode(o2_getColorCodeFlag1);
+	Opcode(o2_setColorCodeFlag1);
+	// 0x84
+	Opcode(o2_getColorCodeFlag2);
+	Opcode(o2_setColorCodeFlag2);
+	Opcode(o2_getColorCodeValue);
+	Opcode(o2_setColorCodeValue);
+	// 0x88
+	Opcode(o2_countItemInstances);
+	Opcode(o2_removeItemFromScene);
+	Opcode(o2_initObject);
+	Opcode(o2_npcChat);
+	// 0x8c
+	Opcode(o2_deinitObject);
+	Opcode(o2_playTimSequence);
+	Opcode(o2_makeBookOrCauldronAppear);
+	Opcode(o2_setSpecialSceneScriptState);
+	// 0x90
+	Opcode(o2_clearSpecialSceneScriptState);
+	Opcode(o2_querySpecialSceneScriptState);
+	Opcode(o2_resetInputColorCode);
+	Opcode(o2_setHiddenItemsEntry);
+	// 0x94
+	Opcode(o2_getHiddenItemsEntry);
+	Opcode(o2_mushroomEffect);
+	Opcode(o2_wsaClose);
+	Opcode(o2_meanWhileScene);
+	// 0x98
+	Opcode(o2_customChat);
+	Opcode(o2_customChatFinish);
+	Opcode(o2_setupSceneAnimation);
+	Opcode(o2_stopSceneAnimation);
+	// 0x9c
+	Opcode(o2_disableTimer);
+	Opcode(o2_enableTimer);
+	Opcode(o2_setTimerCountdown);
+	Opcode(o2_processPaletteIndex);
+	// 0xa0
+	Opcode(o2_updateTwoSceneAnims);
+	Opcode(o2_getRainbowRoomData);
+	Opcode(o2_drawSceneShapeEx);
+	Opcode(o2_getBoolFromStack);
+	// 0xa4
+	Opcode(o2_getSfxDriver);
+	Opcode(o2_getVocSupport);
+	Opcode(o2_getMusicDriver);
+	Opcode(o2_setVocHigh);
+	// 0xa8
+	Opcode(o2_getVocHigh);
+	Opcode(o2_zanthiaChat);
+	Opcode(o2_isVoiceEnabled);
+	Opcode(o2_isVoicePlaying);
+	// 0xac
+	Opcode(o2_stopVoicePlaying);
+	Opcode(o2_getGameLanguage);
+	Opcode(o2_demoFinale);
+	Opcode(o2_dummy);
 
-	static const OpcodeV2 opcodeTemporaryTable[] = {
-		Opcode(o2t_defineNewShapes),
-		Opcode(o2t_setCurrentFrame),
-		Opcode(o2t_playSoundEffect),
-		Opcode(o2t_fadeScenePal),
-		Opcode(o2t_setShapeFlag),
-		Opcode(o2_dummy)
-	};
+	SetOpcodeTable(_opcodesTemporary);
 
-	for (int i = 0; i < ARRAYSIZE(opcodeTemporaryTable); ++i)
-		_opcodesTemporary.push_back(&opcodeTemporaryTable[i]);
+	// 0x00
+	Opcode(o2t_defineNewShapes);
+	Opcode(o2t_setCurrentFrame);
+	Opcode(o2t_playSoundEffect);
+	Opcode(o2t_fadeScenePal);
+	// 0x04
+	Opcode(o2t_setShapeFlag);
+	Opcode(o2_dummy);
 
-	static const TIMOpcodeV2 timOpcodeTable[] = {
-		OpcodeTim(t2_initChat),
-		OpcodeTim(t2_updateSceneAnim),
-		OpcodeTim(t2_resetChat),
-		OpcodeTim(t2_playSoundEffect)
-	};
+	// ---- TIM opcodes
 
-	for (int i = 0; i <  ARRAYSIZE(timOpcodeTable); ++i)
-		_timOpcodes.push_back(&timOpcodeTable[i]);
+	// 0x00
+	OpcodeTim(t2_initChat);
+	OpcodeTim(t2_updateSceneAnim);
+	OpcodeTim(t2_resetChat);
+	OpcodeTim(t2_playSoundEffect);
 }
 
 } // end of namespace Kyra
