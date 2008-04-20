@@ -331,9 +331,7 @@ void KyraEngine_v3::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
-	Common::SeekableReadStream *stream = _res->getFileStream(_menuAudioFile);
-	if (stream)
-		_musicSoundChannel = _soundDigital->playSound(stream, 0xFF, SoundDigital::kSoundTypeMusic);
+	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, SoundDigital::kSoundTypeMusic);
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
@@ -354,9 +352,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		Common::SeekableReadStream *stream = _res->getFileStream(_soundList[track]);
-		if (stream)
-			_musicSoundChannel = _soundDigital->playSound(stream, 0xFF, SoundDigital::kSoundTypeMusic);
+		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, SoundDigital::kSoundTypeMusic);
 	}
 
 	_curMusicTrack = track;
@@ -415,9 +411,7 @@ void KyraEngine_v3::playSoundEffect(int item, int volume) {
 		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
 		uint8 priority = _sfxFileMap[item*2+1];
 
-		Common::SeekableReadStream *stream = _res->getFileStream(filename);
-		if (stream)
-			_soundDigital->playSound(stream, priority, SoundDigital::kSoundTypeSfx, volume);
+		_soundDigital->playSound(filename, priority, SoundDigital::kSoundTypeSfx, volume);
 	}
 }
 
@@ -431,10 +425,7 @@ void KyraEngine_v3::snd_playVoiceFile(int file) {
 	char filename[16];
 	snprintf(filename, 16, "%u.AUD", (uint)file);
 
-	Common::SeekableReadStream *stream = _res->getFileStream(filename);
-	if (stream) {
-		_voiceSoundChannel = _soundDigital->playSound(stream, 0xFE, SoundDigital::kSoundTypeSpeech, 255);
-	}
+	_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, SoundDigital::kSoundTypeSpeech, 255);
 }
 
 bool KyraEngine_v3::snd_voiceIsPlaying() {

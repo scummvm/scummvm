@@ -513,8 +513,7 @@ public:
 	/**
 	 * Plays a sound.
 	 *
-	 * @param stream		Data stream used for playback
-	 *                      It will be deleted when playback is finished
+	 * @param filename		file to be played
 	 * @param priority		priority of the sound
 	 * @param type			type
 	 * @param volume		channel volume
@@ -523,7 +522,7 @@ public:
 	 *
 	 * @return channel playing the sound
 	 */
-	int playSound(Common::SeekableReadStream *stream, uint8 priority, kSoundTypes type, int volume = 255, bool loop = false, int channel = -1);
+	int playSound(const char *filename, uint8 priority, kSoundTypes type, int volume = 255, bool loop = false, int channel = -1);
 
 	/**
 	 * Checks if a given channel is playing a sound.
@@ -560,6 +559,8 @@ private:
 
 	struct Sound {
 		Audio::SoundHandle handle;
+
+		char filename[16];
 		uint8 priority;
 		AUDStream *stream;
 	} _sounds[4];

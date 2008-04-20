@@ -24,6 +24,7 @@
  */
 
 #include "kyra/sound.h"
+#include "kyra/resource.h"
 
 #include "sound/audiostream.h"
 
@@ -328,13 +329,13 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-int SoundDigital::playSound(Common::SeekableReadStream *stream, uint8 priority, kSoundTypes type, int volume, bool loop, int channel) {
+int SoundDigital::playSound(const char *filename, uint8 priority, kSoundTypes type, int volume, bool loop, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
 		use = &_sounds[channel];
 	} else {
-		for (channel = 0; channel < ARRAYSIZE(_sounds); ++channel) {
+		for (channel = 0; !use && channel < ARRAYSIZE(_sounds); ++channel) {
 			if (!isPlaying(channel)) {
 				stopSound(channel);
 				use = &_sounds[channel];
@@ -342,23 +343,33 @@ int SoundDigital::playSound(Common::SeekableReadStream *stream, uint8 priority, 
 			}
 		}
 
-		if (!use) {
-			for (channel = 0; channel < ARRAYSIZE(_sounds); ++channel) {
-				if (_sounds[channel].priority <= priority) {
-					stopSound(channel);
-					use = &_sounds[channel];
-					break;
-				}
+		for (channel = 0; !use && channel < ARRAYSIZE(_sounds); ++channel) {
+			if (strcmp(_sounds[channel].filename, filename) == 0) {
+				stopSound(channel);
+				use = &_sounds[channel];
+				break;
 			}
+		}
 
-			if (!use) {
-				warning("no free sound channel");
-				delete stream;
-				return -1;
+		for (channel = 0; !use && channel < ARRAYSIZE(_sounds); ++channel) {
+			if (_sounds[channel].priority <= priority) {
+				stopSound(channel);
+				use = &_sounds[channel];
+				break;
 			}
+		}
+
+		if (!use) {
+			warning("no free sound channel");
+			return -1;
 		}
 	}
 
+	Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filename);
+	if (!stream)
+		return -1;
+
+	strncpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
 	use->stream = new AUDStream(stream, loop);
 	if (use->stream->endOfData()) {
