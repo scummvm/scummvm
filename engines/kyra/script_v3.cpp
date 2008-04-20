@@ -159,6 +159,14 @@ int KyraEngine_v3::o3_showMouse(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_badConscienceChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_badConscienceChat(%p) (%d)", (const void *)script, stackPos(0));
+	int id = stackPos(0);
+	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
+	badConscienceChat(str, _vocHigh, id);
+	return 0;
+}
+
 int KyraEngine_v3::o3_delay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const uint32 delayTime = stackPos(0) * _tickLength;
@@ -472,7 +480,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		Opcode(o3_setMousePos),
 		// 0x30
 		Opcode(o3_showMouse),
-		OpcodeUnImpl(),
+		Opcode(o3_badConscienceChat),
 		OpcodeUnImpl(),
 		Opcode(o3_dummy),
 		// 0x34

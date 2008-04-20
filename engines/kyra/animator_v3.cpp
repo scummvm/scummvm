@@ -380,6 +380,8 @@ void KyraEngine_v3::updateSceneAnim(int anim, int newFrame) {
 
 void KyraEngine_v3::setupSceneAnimObject(int animId, uint16 flags, int x, int y, int x2, int y2, int w,
 										int h, int unk10, int specialSize, int unk14, int shape, const char *filename) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::setupSceneAnimObject(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
+			animId, flags, x, y, x2, y2, w, h, unk10, specialSize, unk14, shape, filename);
 	restorePage3();
 	SceneAnim &anim = _sceneAnims[animId];
 	anim.flags = flags;

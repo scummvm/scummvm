@@ -460,6 +460,9 @@ private:
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
 
+	void badConscienceChat(const char *str, int vocHigh, int vocLow);
+	void badConscienceChatWaitToFinish();
+
 	// conscience
 	bool _badConscienceShown;
 	int _badConscienceAnim;
@@ -520,6 +523,7 @@ private:
 	int o3_hideMouse(ScriptState *script);
 	int o3_setMousePos(ScriptState *script);
 	int o3_showMouse(ScriptState *script);
+	int o3_badConscienceChat(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_playSoundEffect(ScriptState *script);

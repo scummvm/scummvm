@@ -364,6 +364,7 @@ void KyraEngine_v3::objectChatWaitToFinish() {
 
 			const uint32 curTime = _system->getMillis();
 			if ((textEnabled() && !speechEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {
+				snd_stopVoice();
 				resetSkipFlag();
 				nextFrame = curTime;
 				running = false;
@@ -378,4 +379,63 @@ void KyraEngine_v3::objectChatWaitToFinish() {
 	resetCharacterAnimDim();
 }
 
+void KyraEngine_v3::badConscienceChat(const char *str, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::badConscienceChat('%s', %d, %d)", str, vocHigh, vocLow);
+	if (!_badConscienceShown)
+		return;
+
+	//setNextIdleAnimTimer();
+	_chatVocHigh = _chatVocLow = -1;
+	objectChatInit(str, 1, vocHigh, vocLow);
+	_chatText = str;
+	_chatObject = 1;
+	badConscienceChatWaitToFinish();
+	updateSceneAnim(0x0E, _badConscienceFrameTable[_badConscienceAnim+16]);
+	_text->restoreScreen();
+	update();
+	_chatText = 0;
+	_chatObject = -1;
+}
+
+void KyraEngine_v3::badConscienceChatWaitToFinish() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::badConscienceChatWaitToFinish()");
+	if (_chatVocHigh) {
+		playVoice(_chatVocHigh, _chatVocLow);
+		_chatVocHigh = _chatVocLow = -1;
+	}
+
+	bool running = true;
+	const uint32 endTime = _chatEndTime;
+	resetSkipFlag();
+
+	uint32 nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(4, 8) * _tickLength;
+
+	int frame = _badConscienceFrameTable[_badConscienceAnim+24];
+	while (running && !_quitFlag) {
+		if (nextFrame < _system->getMillis()) {
+			++frame;
+			if (_badConscienceFrameTable[_badConscienceAnim+32] < frame)
+				frame = _badConscienceFrameTable[_badConscienceAnim+24];
+
+			updateSceneAnim(0x0E, frame);
+			updateWithText();
+
+			nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(4, 8) * _tickLength;
+		}
+
+		updateWithText();
+
+		const uint32 curTime = _system->getMillis();
+		if ((textEnabled() && !speechEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {
+			snd_stopVoice();
+			resetSkipFlag();
+			nextFrame = curTime;
+			running = false;
+		}
+
+		delay(10);
+	}
+}
+
 } // end of namespace Kyra
+
