@@ -60,7 +60,7 @@ void PictureResource::load(byte *source, int size) {
 	uint16 pixelOffs = sourceS->readUint16LE();
 	uint16 maskOffs = sourceS->readUint16LE();
 	uint16 lineSize = sourceS->readUint16LE();
-	uint16 u = sourceS->readUint16LE();
+	/*uint16 u = */sourceS->readUint16LE();
 	uint16 width = sourceS->readUint16LE();
 	uint16 height = sourceS->readUint16LE();
 

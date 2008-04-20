@@ -61,7 +61,7 @@ void PmvPlayer::play(const char *filename) {
 		_fd->read(frameData, chunkSize);
 
 		byte *audioData = frameData + READ_LE_UINT32(frameData + 8) - 8;
-		uint16 chunkSize = READ_LE_UINT16(audioData + 4);
+		chunkSize = READ_LE_UINT16(audioData + 4);
 		uint16 chunkCount = READ_LE_UINT16(audioData + 6);
 
 		if (chunkCount > 50) break;	// FIXME: this is a hack
