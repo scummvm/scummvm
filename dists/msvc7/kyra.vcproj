@@ -226,6 +226,12 @@
 			RelativePath="..\..\engines\kyra\script.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\script_tim.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\script_tim.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\script_v1.cpp">
 		</File>
 		<File
@@ -241,13 +247,13 @@
 			RelativePath="..\..\engines\kyra\seqplayer.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_tim.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\kyra\sequences_v1.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sequences_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\sequences_v3.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sound.cpp">
