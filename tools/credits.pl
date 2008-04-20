@@ -549,6 +549,17 @@ begin_credits("Credits");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
+	  begin_section("M4");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Benjamin Haisch", "johndoe", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+	  end_section();
+	  
+	  begin_section("MADE");
+		  add_person("Benjamin Haisch", "johndoe", "");
+	  end_section();
+	  
 	  begin_section("Parallaction");
 		  add_person("", "peres", "");
 	  end_section();
