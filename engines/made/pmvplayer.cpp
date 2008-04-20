@@ -127,8 +127,17 @@ void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
 void PmvPlayer::handleEvents() {
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
-		if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			_abort = true;
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				_abort = true;
+			break;
+		case Common::EVENT_QUIT:
+			// TODO: Exit more gracefully
+			g_system->quit();
+			break;
+		default:
+			break;
 		}
 	}
 }
