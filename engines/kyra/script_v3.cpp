@@ -580,7 +580,7 @@ int KyraEngine_v3::o3t_getMalcolmShapes(ScriptState *script) {
 	return _malcolmShapes;
 }
 
-typedef Functor1Mem<ScriptState*, int, KyraEngine_v3> OpcodeV3;
+typedef Common::Functor1Mem<ScriptState*, int, KyraEngine_v3> OpcodeV3;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV3(this, &KyraEngine_v3::x))
 #define OpcodeUnImpl() table->push_back(new OpcodeV3(this, 0))

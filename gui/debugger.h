@@ -25,6 +25,8 @@
 #ifndef GUI_DEBUGGER_H
 #define GUI_DEBUGGER_H
 
+#include "common/func.h"
+
 namespace GUI {
 
 // Choose between text console or ScummConsole
@@ -47,32 +49,12 @@ public:
 	bool isAttached() const { return _isAttached; }
 
 protected:
-	class Debuglet {
-	public:
-		virtual ~Debuglet() {}
-		virtual bool operator()(int argc, const char **argv) = 0;
-	};
-
-	template <class T>
-	class DelegateDebuglet : public Debuglet {
-		typedef bool (T::*Method)(int argc, const char **argv);
-
-		T *_delegate;
-		const Method _method;
-	public:
-		DelegateDebuglet(T *delegate, Method method)
-			: _delegate(delegate), _method(method) {
-			assert(delegate != 0);
-		}
-		virtual bool operator()(int argc, const char **argv) {
-			return (_delegate->*_method)(argc, argv);
-		};
-	};
+	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
 	// Convenicence macro for registering a method of a debugger class
 	// as the current command.
 	#define WRAP_METHOD(cls, method) \
-		new DelegateDebuglet<cls>(this, &cls::method)
+		new Common::Functor2Mem<int, const char **, bool, cls>(this, &cls::method)
 
 	enum {
 		DVAR_BYTE,

@@ -27,11 +27,13 @@
 #define KYRA_KYRA_H
 
 #include "engines/engine.h"
+
 #include "common/rect.h"
 #include "common/array.h"
 #include "common/events.h"
+#include "common/func.h"
 
-#include "kyra/util.h"
+#include "kyra/script.h"
 
 namespace Common {
 class InSaveFile;
@@ -99,7 +101,6 @@ class Movie;
 class TextDisplayer;
 class StaticResource;
 class TimerManager;
-class ScriptHelper;
 
 class KyraEngine : public Engine {
 friend class Debugger;

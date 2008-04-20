@@ -27,11 +27,14 @@
 #define KYRA_SCRIPT_TIM_H
 
 #include "kyra/kyra.h"
-#include "kyra/util.h"
 
 #include "common/array.h"
+#include "common/func.h"
 
 namespace Kyra {
+
+struct TIM;
+typedef Common::Functor2<const TIM*, const uint16*, int> TIMOpcode;
 
 struct TIM {
 	int16 procFunc;

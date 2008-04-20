@@ -28,12 +28,13 @@
 
 #include "kyra/kyra.h"
 #include "kyra/script.h"
+#include "kyra/script_tim.h"
 #include "kyra/screen_v2.h"
 #include "kyra/text_v2.h"
 #include "kyra/gui_v2.h"
-#include "kyra/util.h"
 
 #include "common/list.h"
+#include "common/func.h"
 
 namespace Kyra {
 
@@ -99,7 +100,6 @@ enum kNestedSequencesDemo {
 class WSAMovieV2;
 class KyraEngine_v2;
 class TextDisplayer_v2;
-class TIMInterpreter;
 class Debugger_v2;
 
 struct TIM;
@@ -329,7 +329,7 @@ protected:
 	void update();
 	void updateWithText();
 
-	Functor0Mem<void, KyraEngine_v2> _updateFunctor;
+	Common::Functor0Mem<void, KyraEngine_v2> _updateFunctor;
 
 	void updateMouse();
 

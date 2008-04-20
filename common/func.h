@@ -247,6 +247,80 @@ FrontInsertIterator<Cont> front_inserter(Cont &c) {
 	return FrontInsertIterator<Cont>(c);
 }
 
+// functor code
+
+template<class Res>
+struct Functor0 {
+	virtual ~Functor0() {}
+
+	virtual bool isValid() const = 0;
+	virtual Res operator()() const = 0;
+};
+
+template<class Res, class T>
+class Functor0Mem : public Functor0<Res> {
+public:
+	typedef Res (T::*FuncType)();
+
+	Functor0Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
+
+	bool isValid() const { return _func != 0; }
+	Res operator()() const {
+		return (_t->*_func)();
+	}
+private:
+	mutable T *_t;
+	const FuncType _func;
+};
+
+template<class Arg, class Res>
+struct Functor1 : public Common::UnaryFunction<Arg, Res> {
+	virtual ~Functor1() {}
+
+	virtual bool isValid() const = 0;
+	virtual Res operator()(Arg) const = 0;
+};
+
+template<class Arg, class Res, class T>
+class Functor1Mem : public Functor1<Arg, Res> {
+public:
+	typedef Res (T::*FuncType)(Arg);
+
+	Functor1Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
+
+	bool isValid() const { return _func != 0; }
+	Res operator()(Arg v1) const {
+		return (_t->*_func)(v1);
+	}
+private:
+	mutable T *_t;
+	const FuncType _func;
+};
+
+template<class Arg1, class Arg2, class Res>
+struct Functor2 : public Common::BinaryFunction<Arg1, Arg2, Res> {
+	virtual ~Functor2() {}
+
+	virtual bool isValid() const = 0;
+	virtual Res operator()(Arg1, Arg2) const = 0;
+};
+
+template<class Arg1, class Arg2, class Res, class T>
+class Functor2Mem : public Functor2<Arg1, Arg2, Res> {
+public:
+	typedef Res (T::*FuncType)(Arg1, Arg2);
+
+	Functor2Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
+
+	bool isValid() const { return _func != 0; }
+	Res operator()(Arg1 v1, Arg2 v2) const {
+		return (_t->*_func)(v1, v2);
+	}
+private:
+	mutable T *_t;
+	const FuncType _func;
+};
+
 /**
  * Base template for hash functor objects, used by HashMap.
  * This needs to be specialized for every type that you need to hash.

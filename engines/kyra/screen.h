@@ -27,14 +27,13 @@
 #define KYRA_SCREEN_H
 
 #include "common/util.h"
-
-#include "kyra/util.h"
+#include "common/func.h"
 
 class OSystem;
 
 namespace Kyra {
 
-typedef Functor0<void> UpdateFunctor;
+typedef Common::Functor0<void> UpdateFunctor;
 
 class KyraEngine;
 struct Rect;

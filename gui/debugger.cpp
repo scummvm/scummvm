@@ -347,6 +347,7 @@ void Debugger::DVar_Register(const char *varname, void *pointer, int type, int o
 
 // Command registration function
 void Debugger::DCmd_Register(const char *cmdname, Debuglet *debuglet) {
+	assert(debuglet->isValid());
 	assert(_dcmd_count < ARRAYSIZE(_dcmds));
 	strcpy(_dcmds[_dcmd_count].name, cmdname);
 	_dcmds[_dcmd_count].debuglet = debuglet;

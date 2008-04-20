@@ -1820,7 +1820,7 @@ int KyraEngine_v1::o1_dummy(ScriptState *script) {
 
 #pragma mark -
 
-typedef Functor1Mem<ScriptState*, int, KyraEngine_v1> OpcodeV1;
+typedef Common::Functor1Mem<ScriptState*, int, KyraEngine_v1> OpcodeV1;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV1(this, &KyraEngine_v1::x))
 void KyraEngine_v1::setupOpcodeTable() {

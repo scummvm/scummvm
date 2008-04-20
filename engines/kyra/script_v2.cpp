@@ -1872,12 +1872,12 @@ int KyraEngine_v2::t2_playSoundEffect(const TIM *tim, const uint16 *param) {
 
 #pragma mark -
 
-typedef Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
+typedef Common::Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV2(this, &KyraEngine_v2::x))
 #define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
 
-typedef Functor2Mem<const TIM*, const uint16*, int, KyraEngine_v2> TIMOpcodeV2;
+typedef Common::Functor2Mem<const TIM*, const uint16*, int, KyraEngine_v2> TIMOpcodeV2;
 #define OpcodeTim(x) _timOpcodes.push_back(new TIMOpcodeV2(this, &KyraEngine_v2::x))
 #define OpcodeTimUnImpl() _timOpcodes.push_back(TIMOpcodeV2(this, 0))
 

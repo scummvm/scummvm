@@ -27,14 +27,14 @@
 #define KYRA_TIMER_H
 
 #include "kyra/kyra.h"
-#include "kyra/util.h"
 
 #include "common/list.h"
 #include "common/stream.h"
+#include "common/func.h"
 
 namespace Kyra {
 
-typedef Functor1<int, void> TimerFunc;
+typedef Common::Functor1<int, void> TimerFunc;
 
 struct TimerEntry {
 	uint8 id;
@@ -89,3 +89,4 @@ private:
 } // end of namespace Kyra
 
 #endif
+

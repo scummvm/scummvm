@@ -26,12 +26,13 @@
 #ifndef KYRA_SCRIPT_H
 #define KYRA_SCRIPT_H
 
-#include "kyra/kyra.h"
-#include "kyra/util.h"
-
 #include "common/stream.h"
+#include "common/func.h"
 
 namespace Kyra {
+
+struct ScriptState;
+typedef Common::Functor1<ScriptState*, int> Opcode;
 
 struct ScriptData {
 	byte *text;
@@ -60,6 +61,9 @@ struct ScriptState {
 #define DATA_CHUNK 0x41544144
 #define ORDR_CHUNK 0x5244524F
 #define AVTL_CHUNK 0x4C545641
+
+class Resource;
+class KyraEngine;
 
 class ScriptFileParser {
 public:

@@ -26,18 +26,18 @@
 #ifndef KYRA_GUI_H
 #define KYRA_GUI_H
 
-#include "kyra/util.h"
 #include "kyra/kyra.h"
 
 #include "common/ptr.h"
 #include "common/array.h"
+#include "common/func.h"
 
 namespace Kyra {
 
-#define BUTTON_FUNCTOR(type, x, y) Button::Callback(new Functor1Mem<Button*, int, type>(x, y))
+#define BUTTON_FUNCTOR(type, x, y) Button::Callback(new Common::Functor1Mem<Button*, int, type>(x, y))
 
 struct Button {
-	typedef Functor1<Button*, int> CallbackFunctor;
+	typedef Common::Functor1<Button*, int> CallbackFunctor;
 	typedef Common::SharedPtr<CallbackFunctor> Callback;
 
 	Button *nextButton;

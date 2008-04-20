@@ -33,7 +33,7 @@
 
 namespace Kyra {
 
-#define TimerV1(x) new Functor1Mem<int, void, KyraEngine_v1>(this, &KyraEngine_v1::x)
+#define TimerV1(x) new Common::Functor1Mem<int, void, KyraEngine_v1>(this, &KyraEngine_v1::x)
 
 void KyraEngine_v1::setupTimers() {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::setupTimers()");
