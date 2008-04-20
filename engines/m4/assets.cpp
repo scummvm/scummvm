@@ -255,7 +255,7 @@ int32 SpriteAsset::parseSprite(bool isBigEndian) {
 				_palette[index].g = ((paletteEntry >> 8) & 0xFF) << 2;
 				_palette[index].b = (paletteEntry & 0xFF) << 2;
 
-				_colorCount = MAX((int) _colorCount, (int) index);
+				_colorCount = MAX<int>(_colorCount, index);
 			}
 
 		/*
@@ -358,8 +358,8 @@ AssetManager::~AssetManager() {
 
 bool AssetManager::clearAssets(AssetType assetType, int32 minHash, int32 maxHash) {
 
-	minHash = MAX(0, (int) minHash);
-	maxHash = MIN((int) maxHash, 255);
+	minHash = MAX<int>(0, minHash);
+	maxHash = MIN<int>(maxHash, 255);
 
 	switch (assetType) {
 	case kAssetTypeMACH:
