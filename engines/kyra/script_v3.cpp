@@ -32,6 +32,11 @@
 
 namespace Kyra {
 
+int KyraEngine_v3::o3_getMalcolmShapes(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getMaloclmShapes(%p) ()", (const void *)script);
+	return _malcolmShapes;
+}
+
 int KyraEngine_v3::o3_setCharacterPos(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setCharacterPos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int x = stackPos(0);
@@ -81,6 +86,16 @@ int KyraEngine_v3::o3_refreshCharacter(ScriptState *script) {
 	if (updateNeed)
 		refreshAnimObjectsIfNeed();
 	return 0;
+}
+
+int KyraEngine_v3::o3_getCharacterX(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getCharacterX(%p) ()", (const void *)script);
+	return _mainCharacter.x1;
+}
+
+int KyraEngine_v3::o3_getCharacterY(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getCharacterY(%p) ()", (const void *)script);
+	return _mainCharacter.y1;
 }
 
 int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
@@ -139,6 +154,11 @@ int KyraEngine_v3::o3_setGameFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setGameFlag(%p) (%d)", (const void *)script, stackPos(0));
 	setGameFlag(stackPos(0));
 	return 1;
+}
+
+int KyraEngine_v3::o3_getHandItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getHandItem(%p) ()", (const void *)script);
+	return _itemInHand;
 }
 
 int KyraEngine_v3::o3_hideMouse(ScriptState *script) {
@@ -419,13 +439,13 @@ typedef Functor1Mem<ScriptState*, int, KyraEngine_v3> OpcodeV3;
 void KyraEngine_v3::setupOpcodeTable() {
 	static const OpcodeV3 opcodeTable[] = {
 		// 0x00
-		OpcodeUnImpl(),
+		Opcode(o3_getMalcolmShapes),
 		Opcode(o3_setCharacterPos),
 		Opcode(o3_defineObject),
 		Opcode(o3_refreshCharacter),
 		// 0x04
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o3_getCharacterX),
+		Opcode(o3_getCharacterY),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x08
@@ -474,7 +494,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x2c
-		OpcodeUnImpl(),
+		Opcode(o3_getHandItem),
 		Opcode(o3_hideMouse),
 		OpcodeUnImpl(),
 		Opcode(o3_setMousePos),

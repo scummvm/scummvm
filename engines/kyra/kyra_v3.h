@@ -520,9 +520,12 @@ private:
 	void loadExtrasShapes();
 
 	// opcodes
+	int o3_getMalcolmShapes(ScriptState *script);
 	int o3_setCharacterPos(ScriptState *script);
 	int o3_defineObject(ScriptState *script);
 	int o3_refreshCharacter(ScriptState *script);
+	int o3_getCharacterX(ScriptState *script);
+	int o3_getCharacterY(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
@@ -531,6 +534,7 @@ private:
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
 	int o3_setGameFlag(ScriptState *script);
+	int o3_getHandItem(ScriptState *script);
 	int o3_hideMouse(ScriptState *script);
 	int o3_setMousePos(ScriptState *script);
 	int o3_showMouse(ScriptState *script);
