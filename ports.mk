@@ -168,19 +168,14 @@ aos4dist: scummvm
 	mkdir -p $(AOS4PATH)
 	strip -R.comment $< -o $(AOS4PATH)/$<_SVN
 	cp icons/scummvm.info $(AOS4PATH)/$<_SVN.info
-	cp gui/themes/modern.ini $(AOS4PATH)/themes/
-	cp gui/themes/modern.zip $(AOS4PATH)/themes/
-	cp dists/engine-data/igor.tbl $(AOS4PATH)/extras/
-	cp dists/engine-data/kyra.dat $(AOS4PATH)/extras/
-	cp dists/engine-data/lure.dat $(AOS4PATH)/extras/
-	cp dists/engine-data/m4.dat $(AOS4PATH)/extras/ 
-	cp dists/engine-data/queen.tbl $(AOS4PATH)/extras/
-	cp dists/engine-data/sky.cpt $(AOS4PATH)/extras/
-	cp AUTHORS $(AOS4PATH)/AUTHORS.txt
-	cp COPYING $(AOS4PATH)/COPYING.txt
-	cp COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt
-	cp NEWS $(AOS4PATH)/NEWS.txt
-	cp README $(AOS4PATH)/README.txt
+	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
+	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
+	cp $(srcdir)/dists/pred.dic $(AOS4PATH)/extras/
+	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
+	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
+	cp $(srcdir)/COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt
+	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
+	cp $(srcdir)/README $(AOS4PATH)/README.txt
 	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
 
 .PHONY: deb bundle osxsnap win32dist install uninstall
