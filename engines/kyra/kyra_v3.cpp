@@ -108,6 +108,9 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_curStudioSFX = 283;
 	_badConscienceShown = false;
 	_curChapter = 1;
+	_deathHandler = -1;
+	_moveFacingTable = 0;
+	_unkHandleSceneChangeFlag = false;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -151,6 +154,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 
 	delete [] _sceneStrings;
 	delete [] _talkObjectList;
+	delete [] _moveFacingTable;
 }
 
 int KyraEngine_v3::init() {
@@ -219,6 +223,7 @@ int KyraEngine_v3::go() {
 
 			fadeOutMusic(60);
 			_screen->fadeToBlack();
+			_musicSoundChannel = -1;
 			startup();
 			runLoop();
 			running = false;
@@ -499,7 +504,7 @@ void KyraEngine_v3::startup() {
 
 	//XXX
 	musicUpdate(0);
-	//XXX
+	_moveFacingTable = new int[600];
 	_costPalBuffer = new uint8[864];
 	//XXX
 	_animObjects = new AnimObj[67];
@@ -840,18 +845,19 @@ void KyraEngine_v3::updateCharPosWithUpdate() {
 	update();
 }
 
-void KyraEngine_v3::updateCharPos(uint8 *table, int force) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPos(%p, %d)", table, force);
-	if (!force || (_updateCharPosNextUpdate > _system->getMillis()))
-		return;
+int KyraEngine_v3::updateCharPos(int *table, int force) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPos(%p, %d)", (const void*)table, force);
+	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
+		return 0;
 	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
 	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
 	updateCharAnimFrame(0, table);
 	_updateCharPosNextUpdate = _system->getMillis() + _mainCharacter.walkspeed * _tickLength;
+	return 1;
 }
 
-void KyraEngine_v3::updateCharAnimFrame(int character, uint8 *table) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPos(%d, %p)", character, table);
+void KyraEngine_v3::updateCharAnimFrame(int character, int *table) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCharPos(%d, %p)", character, (const void*)table);
 	++_mainCharacter.animFrame;
 	int facing = _mainCharacter.facing;
 
@@ -952,6 +958,23 @@ void KyraEngine_v3::updateCharPal(int unk1) {
 	}
 }
 
+bool KyraEngine_v3::checkCharCollision(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkCharCollision(%d, %d)", x, y);
+
+	int scale = getScale(_mainCharacter.x1, _mainCharacter.y1);
+	int width = (scale * 37) >> 8;
+	int height = (scale * 76) >> 8;
+
+	int x1 = _mainCharacter.x1 - width/2;
+	int x2 = _mainCharacter.x2 + width/2;
+	int y1 = _mainCharacter.y1 - height;
+	int y2 = _mainCharacter.y2;
+
+	if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
+		return true;
+	return false;
+}
+
 #pragma mark -
 
 void KyraEngine_v3::runLoop() {
@@ -979,6 +1002,118 @@ void KyraEngine_v3::runLoop() {
 
 void KyraEngine_v3::handleInput(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::handleInput(%d, %d)", x, y);
+	if (_inventoryState)
+		return;
+	//setNextIdleAnimTimer();
+
+	if (_unk5) {
+		_unk5 = 0;
+		return;
+	}
+
+	if (!_screen->isMouseVisible())
+		return;
+
+	if (_unk3 == -3) {
+		playSoundEffect(0x0D, 0x80);
+		return;
+	}
+
+	//setNextIdleAnimTimer();
+	
+	int skip = 0;
+
+	if (checkCharCollision(x, y) && _unk3 >= -1 && runSceneScript2()) {
+		return;
+	} else if (_itemInHand == 27) {
+		return;
+	} else if (checkItemCollision(x, y) == -1) {
+		resetGameFlag(1);
+		skip = runSceneScript1(x, y);
+
+		if (queryGameFlag(1)) {
+			resetGameFlag(1);
+			return;
+		} else if (_unk5) {
+			_unk5 = 0;
+			return;
+		}
+	}
+
+	if (_deathHandler >= 0)
+		skip = 1;
+
+	if (skip)
+		return;
+
+	if (checkCharCollision(x, y)) {
+		if (runSceneScript2())
+			return;
+	} else if (_itemInHand >= 0 && _unk3 >= 0) {
+		//XXX
+		return;
+	} else if (_unk3 != -3) {
+		if (y > 187 && _unk3 > -4)
+			return;
+		if (_unk5) {
+			_unk5 = 0;
+			return;
+		}
+	}
+
+	inputSceneChange(x, y, 1, 1);
+}
+
+int KyraEngine_v3::inputSceneChange(int x, int y, int unk1, int unk2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::inputSceneChange(%d, %d, %d, %d)", x, y, unk1, unk2);
+	uint16 curScene = _mainCharacter.sceneId;
+	_pathfinderFlag = 15;
+
+	if (!_unkHandleSceneChangeFlag) {
+		if (_unk3 == -4) {
+			if (_sceneList[curScene].exit4 != 0xFFFF) {
+				x = 4;
+				y = _sceneEnterY4;
+				_pathfinderFlag = 7;
+			}
+		} else if (_unk3 == -6) {
+			if (_sceneList[curScene].exit2 != 0xFFFF) {
+				x = 316;
+				y = _sceneEnterY2;
+				_pathfinderFlag = 7;
+			}
+		} else if (_unk3 == -7) {
+			if (_sceneList[curScene].exit1 != 0xFFFF) {
+				x = _sceneEnterX1;
+				y = _sceneEnterY1 - 2;
+				_pathfinderFlag = 14;
+			}
+		} else if (_unk3 == -5) {
+			if (_sceneList[curScene].exit3 != 0xFFFF) {
+				x = _sceneEnterX3;
+				y = 191;
+				_pathfinderFlag = 11;
+			}
+		}
+	}
+
+	if (ABS(_mainCharacter.x1 - x) < 4 && ABS(_mainCharacter.y1 - y) < 2) {
+		_pathfinderFlag = 0;
+		return 0;
+	}
+
+	int x1 = _mainCharacter.x1 & (~3);
+	int y1 = _mainCharacter.y1 & (~1);
+	x &= ~3;
+	y &= ~1;
+
+	int size = findWay(x1, y1, x, y, _moveFacingTable, 600);
+	_pathfinderFlag = 0;
+
+	if (!size || size == 0x7D00)
+		return 0;
+
+	return trySceneChange(_moveFacingTable, unk1, unk2);
 }
 
 void KyraEngine_v3::update() {

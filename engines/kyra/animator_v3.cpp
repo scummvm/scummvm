@@ -224,7 +224,7 @@ void KyraEngine_v3::drawCharacterAnimObject(AnimObj *obj, int x, int y, int laye
 	if (obj->shapeIndex == 0xFFFF || _mainCharacter.animFrame == 87)
 		return;
 
-	_screen->drawShape(2, getShapePtr(421), _mainCharacter.x3, _mainCharacter.y3, 2, obj->flags | 304, _paletteOverlay, 3, layer, _charScale, _charScale);
+	_screen->drawShape(2, getShapePtr(421), _mainCharacter.x3, _mainCharacter.y3, 2, obj->flags | 0x304, _paletteOverlay, 3, layer, _charScale, _charScale);
 	uint8 *shape = getShapePtr(_mainCharacter.animFrame);
 	if (shape)
 		_screen->drawShape(2, shape, x, y, 2, obj->flags | 4, layer, _charScale, _charScale);
@@ -307,11 +307,13 @@ void KyraEngine_v3::updateCharacterAnim(int charId) {
 	obj->shapeIndex = obj->shapeIndex2 = _mainCharacter.animFrame;
 
 	int shapeOffsetX = 0, shapeOffsetY = 0;
-	//XXX if (_mainCharacter.animFrame >= 50 && _mainCharacter.animFrame <= 87) {
+	if (_mainCharacter.animFrame >= 50 && _mainCharacter.animFrame <= 87) {
 		shapeOffsetX = _malcolmShapeXOffset;
 		shapeOffsetY = _malcolmShapeYOffset;
-	//} else {
-	//}
+	} else {
+		shapeOffsetX = _newShapeXAdd;
+		shapeOffsetY = _newShapeYAdd;
+	}
 
 	obj->xPos2 = _mainCharacter.x1;
 	obj->yPos2 = _mainCharacter.y1;
@@ -320,10 +322,10 @@ void KyraEngine_v3::updateCharacterAnim(int charId) {
 	obj->yPos2 += (shapeOffsetY * _charScale) >> 8;
 	_mainCharacter.x3 = _mainCharacter.x1 - (_charScale >> 4) - 1;
 	_mainCharacter.y3 = _mainCharacter.y1 - (_charScale >> 6) - 1;
-	//if (_charSpecialWidth2 == -1) {
+	if (_charBackUpWidth2 == -1) {
 		obj->width2 = 4;
 		obj->height2 = 10;
-	//}
+	}
 
 	for (int i = 1; i <= 16; ++i) {
 		if (_animObjects[i].enabled && _animObjects[i].unk8)

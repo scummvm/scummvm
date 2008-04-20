@@ -116,7 +116,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	//XXX resetMaskPage();
 
 	for (int i = 0; i < 4; ++i) {
-		if (i == _musicSoundChannel || i == _fadeOutMusicChannel)
+		if (i != _musicSoundChannel && i != _fadeOutMusicChannel)
 			_soundDigital->stopSound(i);
 	}
 	_fadeOutMusicChannel = -1;
@@ -136,8 +136,10 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	_sceneExit3 = _sceneList[sceneId].exit3;
 	_sceneExit4 = _sceneList[sceneId].exit4;
 
-	while (_system->getMillis() > waitUntilTimer)
+
+	while (_system->getMillis() < waitUntilTimer)
 		_system->delayMillis(10);
+
 
 	musicUpdate(0);
 	initSceneScript(unk3);
@@ -658,6 +660,151 @@ void KyraEngine_v3::updateSpecialSceneScripts() {
 	}
 }
 
+int KyraEngine_v3::trySceneChange(int *moveTable, int unk1, int updateChar) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
+	bool running = true;
+	bool unkFlag = false;
+	int changedScene = 0;
+	const int *moveTableStart = moveTable;
+	_unk4 = 0;
+
+	while (running && !_quitFlag) {
+		if (*moveTable >= 0 && *moveTable <= 7) {
+			_mainCharacter.facing = getOppositeFacingDirection(*moveTable);
+			unkFlag = true;
+		} else {
+			if (*moveTable == 8) {
+				running = false;
+			} else {
+				++moveTable;
+				unkFlag = false;
+			}
+		}
+
+		if (checkSceneChange()) {
+			running = false;
+			changedScene = 1;
+		}
+
+		if (unk1) {
+			if (skipFlag()) {
+				resetSkipFlag(false);
+				running = false;
+				_unk4 = 1;
+			}
+		}
+
+		if (!unkFlag || !running)
+			continue;
+
+		int ret = 0;
+		if (moveTable == moveTableStart || moveTable[1] == 8)
+			ret = updateCharPos(0, 0);
+		else
+			ret = updateCharPos(moveTable, 0);
+
+		if (ret)
+			++moveTable;
+
+		update();
+	}
+
+	if (updateChar)
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+
+	updateCharacterAnim(0);
+	refreshAnimObjectsIfNeed();
+
+	return changedScene;
+}
+
+int KyraEngine_v3::checkSceneChange() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkSceneChange()");
+	const SceneDesc &curScene = _sceneList[_mainCharacter.sceneId];
+	int charX = _mainCharacter.x1, charY = _mainCharacter.y1;
+	int facing = 0;
+	int process = 0;
+
+	if (_screen->getLayer(charX, charY) == 1 && _unk3 == -7) {
+		facing = 0;
+		process = 1;
+	} else if (charX >= 316 && _unk3 == -6) {
+		facing = 2;
+		process = 1;
+	} else if (charY >= 186 && _unk3 == -5) {
+		facing = 4;
+		process = 1;
+	} else if (charX <= 4 && _unk3 == -4) {
+		facing = 6;
+		process = 1;
+	}
+
+	if (!process)
+		return 0;
+
+	uint16 newScene = 0xFFFF;
+	switch (facing) {
+	case 0:
+		newScene = curScene.exit1;
+		break;
+
+	case 2:
+		newScene = curScene.exit2;
+		break;
+
+	case 4:
+		newScene = curScene.exit3;
+		break;
+
+	case 6:
+		newScene = curScene.exit4;
+		break;
+
+	default:
+		newScene = _mainCharacter.sceneId;
+		break;
+	}
+
+	if (newScene == 0xFFFF)
+		return 0;
+
+	enterNewScene(newScene, facing, 1, 1, 0);
+	return 1;
+}
+int KyraEngine_v3::runSceneScript1(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript1(%d, %d)", x, y);
+	if (y > 187 && _unk3 > -4)
+		return 0;
+	if (_deathHandler >= 0)
+		return 0;
+	
+	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_sceneScriptState.regs[1] = x;
+	_sceneScriptState.regs[2] = y;
+	_sceneScriptState.regs[3] = 0;
+	_sceneScriptState.regs[4] = _itemInHand;
+
+	_scriptInterpreter->startScript(&_sceneScriptState, 1);
+	while (_scriptInterpreter->validScript(&_sceneScriptState))
+		_scriptInterpreter->runScript(&_sceneScriptState);
+
+	return _sceneScriptState.regs[3];
+}
+
+int KyraEngine_v3::runSceneScript2() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript2()");
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	_sceneScriptState.regs[3] = 0;
+	_sceneScriptState.regs[4] = _itemInHand;
+
+	_scriptInterpreter->startScript(&_sceneScriptState, 2);
+	while (_scriptInterpreter->validScript(&_sceneScriptState))
+		_scriptInterpreter->runScript(&_sceneScriptState);
+
+	return _sceneScriptState.regs[3];
+}
+
 void KyraEngine_v3::runSceneScript4(int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript4(%d)", unk1);
 	_sceneScriptState.regs[4] = _itemInHand;
@@ -691,6 +838,14 @@ bool KyraEngine_v3::checkSpecialSceneExit(int index, int x, int y) {
 	return false;
 }
 
+int KyraEngine_v3::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
+	int ret = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
+	if (ret == 0x7D00)
+		return 0;
+	return getMoveTableSize(moveTable);
+}
+
 bool KyraEngine_v3::lineIsPassable(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::lineIsPassable(%d, %d)", x, y);
 	static const uint8 widthTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
@@ -716,7 +871,7 @@ bool KyraEngine_v3::lineIsPassable(int x, int y) {
 		x2 = 320;
 
 	for (; x < x2; ++x) {
-		if (y < _maskPageMinY || y > _maskPageMinY)
+		if (y < _maskPageMinY || y > _maskPageMaxY)
 			return false;
 
 		if (!_screen->getShapeFlag1(x, y))

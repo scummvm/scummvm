@@ -71,9 +71,12 @@ private:
 
 	// run
 	bool _runFlag;
+	int _deathHandler;
 
 	void runLoop();
 	void handleInput(int x, int y);
+	bool _unkHandleSceneChangeFlag;
+	int inputSceneChange(int x, int y, int unk1, int unk2);
 
 	void update();
 	void updateWithText();
@@ -158,8 +161,10 @@ private:
 	void timerFleaDeath(int arg);
 
 	// pathfinder
+	int *_moveFacingTable;
 	int _pathfinderFlag;
 
+	int findWay(int x1, int y1, int x2, int y2, int *moveTable, int moveTableSize);
 	bool lineIsPassable(int x, int y);
 
 private:
@@ -360,6 +365,8 @@ private:
 	void initSceneAnims(int unk1);
 	void initSceneScreen(int unk1);
 
+	int runSceneScript1(int x, int y);
+	int runSceneScript2();
 	bool _noStartupChat;
 	void runSceneScript4(int unk1);
 	void runSceneScript8();
@@ -378,6 +385,9 @@ private:
 	bool _specialSceneScriptRunFlag;
 
 	void updateSpecialSceneScripts();
+
+	int trySceneChange(int *moveTable, int unk1, int unk2);
+	int checkSceneChange();
 
 	int8 _sceneDatPalette[45];
 	int8 _sceneDatLayerTable[15];
@@ -411,13 +421,13 @@ private:
 	void moveCharacter(int facing, int x, int y);
 
 	void updateCharPosWithUpdate();
-	void updateCharPos(uint8 *table, int force);
+	int updateCharPos(int *table, int force);
 
 	uint32 _updateCharPosNextUpdate;
 	static const int8 _updateCharPosXTable[];
 	static const int8 _updateCharPosYTable[];
 
-	void updateCharAnimFrame(int character, uint8 *table);
+	void updateCharAnimFrame(int character, int *table);
 	int8 _characterAnimTable[2];
 	static const uint8 _characterFrameTable[];
 
@@ -427,6 +437,7 @@ private:
 	int _lastCharPalLayer;
 	bool _charPalUpdate;
 
+	bool checkCharCollision(int x, int y);
 
 	// talk object
 	struct TalkObject {
