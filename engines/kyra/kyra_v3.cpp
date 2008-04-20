@@ -36,6 +36,8 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
+#include "sound/mixer.h"
+
 namespace Kyra {
 KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
 	_soundDigital = 0;
@@ -335,7 +337,7 @@ void KyraEngine_v3::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
-	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, SoundDigital::kSoundTypeMusic);
+	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, Audio::Mixer::kMusicSoundType);
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
@@ -356,7 +358,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, SoundDigital::kSoundTypeMusic);
+		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, Audio::Mixer::kMusicSoundType);
 	}
 
 	_curMusicTrack = track;
@@ -415,7 +417,7 @@ void KyraEngine_v3::playSoundEffect(int item, int volume) {
 		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
 		uint8 priority = _sfxFileMap[item*2+1];
 
-		_soundDigital->playSound(filename, priority, SoundDigital::kSoundTypeSfx, volume);
+		_soundDigital->playSound(filename, priority, Audio::Mixer::kSFXSoundType, volume);
 	}
 }
 
@@ -429,7 +431,7 @@ void KyraEngine_v3::snd_playVoiceFile(int file) {
 	char filename[16];
 	snprintf(filename, 16, "%u.AUD", (uint)file);
 
-	_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, SoundDigital::kSoundTypeSpeech, 255);
+	_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
 }
 
 bool KyraEngine_v3::snd_voiceIsPlaying() {

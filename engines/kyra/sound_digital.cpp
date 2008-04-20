@@ -329,7 +329,7 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-int SoundDigital::playSound(const char *filename, uint8 priority, kSoundTypes type, int volume, bool loop, int channel) {
+int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume, bool loop, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
@@ -383,12 +383,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, kSoundTypes ty
 		volume = 255;
 	volume = (volume * Audio::Mixer::kMaxChannelVolume) / 255;
 
-	if (type == kSoundTypeMusic)
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &use->handle, use->stream, -1, volume);
-	else if (type == kSoundTypeSfx)
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &use->handle, use->stream, -1, volume);
-	else if (type == kSoundTypeSpeech)
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &use->handle, use->stream, -1, volume);
+	_mixer->playInputStream(type, &use->handle, use->stream, -1, volume);
 
 	return use - _sounds;
 }

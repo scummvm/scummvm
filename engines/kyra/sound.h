@@ -504,12 +504,6 @@ public:
 
 	bool init() { return true; }
 
-	enum kSoundTypes {
-		kSoundTypeMusic,
-		kSoundTypeSfx,
-		kSoundTypeSpeech
-	};
-
 	/**
 	 * Plays a sound.
 	 *
@@ -522,7 +516,7 @@ public:
 	 *
 	 * @return channel playing the sound
 	 */
-	int playSound(const char *filename, uint8 priority, kSoundTypes type, int volume = 255, bool loop = false, int channel = -1);
+	int playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume = 255, bool loop = false, int channel = -1);
 
 	/**
 	 * Checks if a given channel is playing a sound.
