@@ -77,7 +77,7 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 				c = READ_LE_UINT16(str - 1);
 				++str;
 			}
-			i += _screen->getCharWidth(*str++);
+			i += _screen->getCharWidth(c);
 			++charsCount;
 		}
 		_screen->setFont(curFont);
