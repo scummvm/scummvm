@@ -50,6 +50,12 @@ void PmvPlayer::play(const char *filename) {
 
 	//FILE *raw = fopen("track.raw", "wb");
 
+	uint32 frameCount = 0;
+
+	// TODO: Sound can still be a little choppy. A bug in the decoder or -
+	// perhaps more likely - do we have to implement double buffering to
+	// get it to work well?
+
 	while (!_abort && !_fd->eof()) {
 
 		readChunk(chunkType, chunkSize);
@@ -100,7 +106,11 @@ void PmvPlayer::play(const char *filename) {
 
 		delete[] frameData;
 
-		_system->delayMillis(frameDelay);
+		frameCount++;
+
+		while (_mixer->getSoundElapsedTime(_audioStreamHandle) < frameCount * frameDelay) {
+			_system->delayMillis(10);
+		}
 	}
 
 	_audioStream->finish();
