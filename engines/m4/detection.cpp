@@ -159,6 +159,21 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesCD
 	},
+	{
+		{
+			"riddle",
+			"",
+			{
+				{ "ripley.has",	kFileTypeHash, "5ee011cff7178dae3ddf6f9b7d4102ac", 701691},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_Riddle,
+		kFeaturesCD
+	},
 	{	// Demo
 		{
 			"riddle",
