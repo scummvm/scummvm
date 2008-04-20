@@ -1,0 +1,333 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "common/endian.h"
+
+#include "made/resource.h"
+#include "made/graphics.h"
+#include "made/sound.h"
+
+namespace Made {
+
+/* Resource */
+
+Resource::~Resource() {
+}
+
+/* PictureResource */
+
+PictureResource::PictureResource() : _picture(NULL), _palette(NULL) {
+}
+
+PictureResource::~PictureResource() {
+	if (_picture)
+	    delete _picture;
+	if (_palette)
+	    delete[] _palette;
+}
+
+void PictureResource::load(byte *source, int size) {
+
+	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
+	
+	bool hasPalette = sourceS->readByte() == 1;
+	sourceS->readByte();
+	sourceS->readByte();
+	sourceS->readByte();
+	uint16 cmdOffs = sourceS->readUint16LE();
+	uint16 pixelOffs = sourceS->readUint16LE();
+	uint16 maskOffs = sourceS->readUint16LE();
+	uint16 lineSize = sourceS->readUint16LE();
+	uint16 u = sourceS->readUint16LE();
+	uint16 width = sourceS->readUint16LE();
+	uint16 height = sourceS->readUint16LE();
+
+	debug(2, "width = %d; height = %d\n", width, height);
+
+	if (hasPalette) {
+	    _palette = new byte[768];
+	    sourceS->read(_palette, 768);
+	}
+
+	_picture = new Graphics::Surface();
+	_picture->create(width, height, 1);
+
+	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize);
+
+	delete sourceS;
+
+}
+
+/* AnimationResource */
+
+AnimationResource::AnimationResource() {
+}
+
+AnimationResource::~AnimationResource() {
+	// TODO: Free anim frames
+}
+
+void AnimationResource::load(byte *source, int size) {
+
+	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
+
+	sourceS->readUint32LE();
+	sourceS->readUint32LE();
+	sourceS->readUint16LE();
+	
+	_flags = sourceS->readUint16LE();
+	_width = sourceS->readUint16LE();
+	_height = sourceS->readUint16LE();
+	sourceS->readUint32LE();
+	uint16 frameCount = sourceS->readUint16LE();
+	sourceS->readUint16LE();
+	sourceS->readUint16LE();
+
+	for (uint16 i = 0; i < frameCount; i++) {
+
+        sourceS->seek(26 + i * 4);
+
+		uint32 frameOffs = sourceS->readUint32LE();
+
+	    sourceS->seek(frameOffs);
+		sourceS->readUint32LE();
+		sourceS->readUint32LE();
+
+		uint16 frameWidth = sourceS->readUint16LE();
+		uint16 frameHeight = sourceS->readUint16LE();
+		uint16 cmdOffs = sourceS->readUint16LE();
+		sourceS->readUint16LE();
+		uint16 pixelOffs = sourceS->readUint16LE();
+		sourceS->readUint16LE();
+		uint16 maskOffs = sourceS->readUint16LE();
+		sourceS->readUint16LE();
+		uint16 lineSize = sourceS->readUint16LE();
+		
+		Graphics::Surface *frame = new Graphics::Surface();
+		frame->create(frameWidth, frameHeight, 1);
+
+	    decompressImage(source + frameOffs, *frame, cmdOffs, pixelOffs, maskOffs, lineSize, _flags & 1);
+
+	    _frames.push_back(frame);
+
+	}
+
+	delete sourceS;
+	
+}
+
+/* SoundResource */
+
+SoundResource::SoundResource() : _soundSize(0), _soundData(NULL) {
+}
+
+SoundResource::~SoundResource() {
+	if (_soundData)
+	    delete[] _soundData;
+}
+
+void SoundResource::load(byte *source, int size) {
+
+	uint16 chunkCount = READ_LE_UINT16(source + 8);
+	uint16 chunkSize = READ_LE_UINT16(source + 12);
+	
+	_soundSize = chunkCount * chunkSize;
+    _soundData = new byte[_soundSize];
+
+	decompressSound(source + 14, _soundData, chunkSize, chunkCount);
+	
+}
+
+Audio::AudioStream *SoundResource::getAudioStream() {
+	return Audio::makeLinearInputStream(_soundData, _soundSize, 22050, 0, 0, 0);
+}
+
+/* MenuResource */
+
+MenuResource::MenuResource() {
+}
+
+MenuResource::~MenuResource() {
+}
+
+void MenuResource::load(byte *source, int size) {
+    _strings.clear();
+    Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
+    sourceS->skip(4); // skip "MENU"
+    uint16 count = sourceS->readUint16LE();
+    for (uint16 i = 0; i < count; i++) {
+        uint16 offs = sourceS->readUint16LE();
+        const char *string = (const char*)(source + offs);
+        _strings.push_back(string);
+        debug(2, "%02d: %s\n", i, string);
+	}
+	fflush(stdout);
+    delete sourceS;
+}
+
+/* ProjectReader */
+
+ProjectReader::ProjectReader() {
+}
+
+ProjectReader::~ProjectReader() {
+}
+
+void ProjectReader::open(const char *filename) {
+
+    _fd = new Common::File();
+    _fd->open(filename);
+
+    _fd->skip(0x18); // skip header for now
+
+    uint16 indexCount = _fd->readUint16LE();
+
+    for (uint16 i = 0; i < indexCount; i++) {
+
+        uint32 resType = _fd->readUint32BE();
+        uint32 indexOffs = _fd->readUint32LE();
+        _fd->readUint32LE();
+        _fd->readUint32LE();
+        _fd->readUint32LE();
+        _fd->readUint16LE();
+        _fd->readUint16LE();
+
+        // We don't need ARCH, FREE and OMNI resources
+        if (resType == kResARCH || resType == kResFREE || resType == kResOMNI)
+            continue;
+
+        //debug(2, "resType = %08X; indexOffs = %d\n", resType, indexOffs);
+
+        uint32 oldOffs = _fd->pos();
+
+        ResourceSlots *resSlots = new ResourceSlots();
+        _fd->seek(indexOffs);
+        loadIndex(resSlots);
+        _resSlots[resType] = resSlots;
+
+        _fd->seek(oldOffs);
+
+    }
+
+    _cacheCount = 0;
+
+}
+
+PictureResource *ProjectReader::getPicture(int index) {
+    return createResource<PictureResource>(kResFLEX, index);
+}
+
+AnimationResource *ProjectReader::getAnimation(int index) {
+    return createResource<AnimationResource>(kResANIM, index);
+}
+
+SoundResource *ProjectReader::getSound(int index) {
+    return createResource<SoundResource>(kResSNDS, index);
+}
+
+MenuResource *ProjectReader::getMenu(int index) {
+    return createResource<MenuResource>(kResMENU, index);
+}
+
+void ProjectReader::loadIndex(ResourceSlots *slots) {
+    _fd->readUint32LE(); // skip INDX
+    _fd->readUint32LE(); // skip index size
+    _fd->readUint32LE(); // skip unknown
+    _fd->readUint32LE(); // skip res type
+    uint16 count = _fd->readUint16LE();
+    _fd->readUint16LE(); // skip unknown count
+    _fd->readUint16LE(); // skip unknown count
+    for (uint16 i = 0; i < count; i++) {
+        uint32 offs = _fd->readUint32LE();
+        uint32 size = _fd->readUint32LE();
+        slots->push_back(ResourceSlot(offs, size));
+    }
+}
+
+void ProjectReader::freeResource(Resource *resource) {
+    tossResourceFromCache(resource->slot);
+}
+
+bool ProjectReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size) {
+	if (slot && slot->size > 0) {
+	    size = slot->size - 62;
+	    buffer = new byte[size];
+		debug(2, "ProjectReader::loadResource() %08X\n", slot->offs + 62); fflush(stdout);
+	    _fd->seek(slot->offs + 62);
+	    _fd->read(buffer, size);
+    	return true;
+	} else {
+    	return false;
+	}
+}
+
+ResourceSlot *ProjectReader::getResourceSlot(uint32 resType, uint index) {
+    ResourceSlots *slots = _resSlots[resType];
+    if (index >= 1 && index < slots->size()) {
+    	ResourceSlot *slot = &slots->operator[](index);
+    	return slot;
+	} else {
+	    return NULL;
+	}
+}
+
+Resource *ProjectReader::getResourceFromCache(ResourceSlot *slot) {
+    if (slot->res)
+        slot->refCount++;
+    return slot->res;
+}
+
+void ProjectReader::addResourceToCache(ResourceSlot *slot, Resource *res) {
+    if (_cacheCount >= kMaxResourceCacheCount) {
+        purgeCache();
+    }
+    slot->res = res;
+    slot->refCount = 0;
+    _cacheCount++;
+}
+
+void ProjectReader::tossResourceFromCache(ResourceSlot *slot) {
+    if (slot->res) {
+        slot->refCount--;
+    }
+}
+
+void ProjectReader::purgeCache() {
+	printf("ProjectReader::purgeCache()\n");
+    for (ResMap::const_iterator resTypeIter = _resSlots.begin(); resTypeIter != _resSlots.end(); ++resTypeIter) {
+        ResourceSlots *slots = (*resTypeIter)._value;
+        for (ResourceSlots::iterator slotIter = slots->begin(); slotIter != slots->end(); ++slotIter) {
+            ResourceSlot *slot = &(*slotIter);
+            if (slot->refCount <= 0 && slot->res) {
+                delete slot->res;
+                slot->res = NULL;
+                slot->refCount = 0;
+                _cacheCount--;
+            }
+        }
+    }
+}
+
+} // End of namespace Made
