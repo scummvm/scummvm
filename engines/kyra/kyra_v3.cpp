@@ -131,7 +131,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _sceneAnims;
 
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i)
-		delete _sceneShapes[i];
+		delete [] _sceneShapes[i];
 
 	for (uint i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
 		delete _sceneAnimMovie[i];

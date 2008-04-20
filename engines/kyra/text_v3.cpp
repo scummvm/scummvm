@@ -35,7 +35,8 @@ TextDisplayer_v3::TextDisplayer_v3(KyraEngine_v3 *vm, Screen_v3 *screen)
 
 char *TextDisplayer_v3::preprocessString(const char *str) {
 	debugC(9, kDebugLevelMain, "TextDisplayer_v3::preprocessString('%s')", str);
-	strcpy(_talkBuffer, str);
+	if (_talkBuffer != str)
+		strcpy(_talkBuffer, str);
 
 	char *p = _talkBuffer;
 	while (*p) {

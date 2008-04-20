@@ -410,6 +410,7 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 			int16 y = stream->readSint16LE();
 			int16 w = stream->readSint16LE();
 			int16 h = stream->readSint16LE();
+			stream->seek(4, SEEK_CUR);
 			_sceneShapes[i] = _screen->encodeShape(x, y, w, h, 0);
 			assert(_sceneShapes[i]);
 			musicUpdate(0);
