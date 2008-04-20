@@ -328,7 +328,7 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type, int volume, bool loop, int channel) {
+int SoundDigital::playSound(Common::SeekableReadStream *stream, uint8 priority, kSoundTypes type, int volume, bool loop, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
@@ -343,12 +343,23 @@ int SoundDigital::playSound(Common::SeekableReadStream *stream, kSoundTypes type
 		}
 
 		if (!use) {
-			warning("no free sound channel");
-			delete stream;
-			return -1;
+			for (channel = 0; channel < ARRAYSIZE(_sounds); ++channel) {
+				if (_sounds[channel].priority <= priority) {
+					stopSound(channel);
+					use = &_sounds[channel];
+					break;
+				}
+			}
+
+			if (!use) {
+				warning("no free sound channel");
+				delete stream;
+				return -1;
+			}
 		}
 	}
 
+	use->priority = priority;
 	use->stream = new AUDStream(stream, loop);
 	if (use->stream->endOfData()) {
 		delete use->stream;
