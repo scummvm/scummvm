@@ -2300,7 +2300,7 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					to = curToPtr;
 					*to++ = 0xFE;
 					WRITE_LE_UINT16(to, diffSize); to += 2;
-					*to++ = (size >> 8) & 0xFF;
+					*to++ = curPixel;
 					curToPtr = to;
 					to = toBackUp;
 					continue;
@@ -2319,9 +2319,9 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					if (*to++ == curPixel)
 						break;
 				}
-				if (*to == curPixel) {
-					if (*(from+size-1) == *(to+size-2))
-						break;
+				if (*(to-1) == curPixel) {
+					if (*(from+size-1) != *(to+size-2))
+						continue;
 
 					byte *fromBackUp = from;
 					byte *toBackUp = to;
@@ -2355,7 +2355,7 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 			uint16 word = 0;
 			if (size <= 0x0A) {
 				uint16 diffSize = from - tempPtr;
-				if (size <= 0x0FFF) {
+				if (diffSize <= 0x0FFF) {
 					byte highByte = ((diffSize & 0xFF00) >> 8) + (((size & 0xFF) - 3) << 4);
 					word = ((diffSize & 0xFF) << 8) | highByte;
 					WRITE_LE_UINT16(to, word); to += 2;
