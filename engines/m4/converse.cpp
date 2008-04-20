@@ -696,7 +696,6 @@ void Converse::loadConversationMads(const char *convName) {
 	int unk = 0;
 	uint32 stringIndex = 0;
 	uint32 stringCount = 0;
-	int offset = 0;
 	int flags = 0;
 	int count = 0;
 	uint32 i, j;

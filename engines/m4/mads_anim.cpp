@@ -520,7 +520,6 @@ void AnimviewView::updateState() {
 		_previousUpdate = g_system->getMillis();
 		return;
 	}
-	uint32 currTime = g_system->getMillis();
 
 	strncpy(bgFile, _currentFile, 5);
 	bgFile[0] = bgFile[2];
