@@ -67,6 +67,18 @@ else
 MODULES += engines/lure
 endif
 
+ifdef DISABLE_M4
+DEFINES += -DDISABLE_M4
+else
+MODULES += engines/m4
+endif
+
+ifdef DISABLE_MADE
+DEFINES += -DDISABLE_MADE
+else
+MODULES += engines/made
+endif
+
 ifdef DISABLE_PARALLACTION
 DEFINES += -DDISABLE_PARALLACTION
 else
