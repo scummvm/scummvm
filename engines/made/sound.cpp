@@ -39,13 +39,13 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 	while (chunkCount--) {
 
-        byte deltaType = (*source) >> 6;
+		byte deltaType = (*source) >> 6;
 
 		uint16 workChunkSize = chunkSize;
-        if (deltaType == 1)
-            workChunkSize /= 2;
+		if (deltaType == 1)
+			workChunkSize /= 2;
 		else if (deltaType == 2)
-		    workChunkSize /= 4;
+			workChunkSize /= 4;
 
 		byte type = (*source++) & 0x0F;
 		
@@ -54,22 +54,22 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		switch (type) {
 
 		case 0:
-		    memset(soundBuffer, 0x80, workChunkSize);
-		    workSample = 0;
-		    break;
+			memset(soundBuffer, 0x80, workChunkSize);
+			workSample = 0;
+			break;
 
 		case 1:
-		    break;
+			break;
 
 		case 2:
 		case 3:
 		case 4:
 		{
 
-		    const int modeValues[3][4] = {
-		    	{ 2, 8, 0x01, 1},
-		    	{ 4, 4, 0x03, 2},
-		    	{16, 2, 0x0F, 4}
+			const int modeValues[3][4] = {
+				{ 2, 8, 0x01, 1},
+				{ 4, 4, 0x03, 2},
+				{16, 2, 0x0F, 4}
 			};
 
 			uint16 byteCount = modeValues[type - 2][0];
@@ -79,39 +79,39 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 			uint16 ofs = 0;
 
-		    for (uint16 i = 0; i < byteCount; i++)
-		        soundBuffer2[i] = (*source++) * 2 - 128;
+			for (uint16 i = 0; i < byteCount; i++)
+				soundBuffer2[i] = (*source++) * 2 - 128;
 
 			while (ofs < workChunkSize) {
-            	byte val = *source++;
+				byte val = *source++;
 				for (uint i = 0; i < bitCount; i++) {
-			    	workSample = CLIP<int16>(workSample + soundBuffer2[val & bitMask], -127, 127);
-			    	val >>= bitShift;
-			    	soundBuffer[ofs++] = workSample + 128;
+					workSample = CLIP<int16>(workSample + soundBuffer2[val & bitMask], -127, 127);
+					val >>= bitShift;
+					soundBuffer[ofs++] = workSample + 128;
 				}
 			}
 
-		    break;
+			break;
 		}
 
 		case 5:
 		{
-		    for (uint16 i = 0; i < workChunkSize; i++)
-		        soundBuffer[i] = *source++;
-            workSample = soundBuffer[workChunkSize - 1] - 128;
-		    break;
+			for (uint16 i = 0; i < workChunkSize; i++)
+				soundBuffer[i] = *source++;
+			workSample = soundBuffer[workChunkSize - 1] - 128;
+			break;
 		}
 
 		default:
-      		return;
+	  		return;
 
 		}
 
 		if (deltaType == 1) {
-		    for (uint16 i = 0; i < chunkSize - 1; i += 2) {
-		        uint16 l = i / 2;
-		        soundBuffer3[i] = soundBuffer[l];
-		        soundBuffer3[i + 1] = (soundBuffer[l + 1] + soundBuffer[l]) / 2;
+			for (uint16 i = 0; i < chunkSize - 1; i += 2) {
+				uint16 l = i / 2;
+				soundBuffer3[i] = soundBuffer[l];
+				soundBuffer3[i + 1] = (soundBuffer[l + 1] + soundBuffer[l]) / 2;
 			}
 			for (uint16 i = 0; i < chunkSize; i++) {
 				soundBuffer[i] = soundBuffer3[i];
@@ -120,9 +120,9 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			debug(2, "****************************************");
 		}
 
-        prevSample = workSample;
-        memcpy(dest, soundBuffer, chunkSize);
-        dest += chunkSize;
+		prevSample = workSample;
+		memcpy(dest, soundBuffer, chunkSize);
+		dest += chunkSize;
 
 	}
 

@@ -80,11 +80,11 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 		
-    _pmvPlayer = new PmvPlayer(_system, _mixer);
-    _res = new ProjectReader();
-    _screen = new Screen(this);
-    _dat = new GameDatabase();
-    _script = new ScriptInterpreter(this);
+	_pmvPlayer = new PmvPlayer(_system, _mixer);
+	_res = new ProjectReader();
+	_screen = new Screen(this);
+	_dat = new GameDatabase();
+	_script = new ScriptInterpreter(this);
 
 }
 
@@ -112,42 +112,42 @@ int16 MadeEngine::getTimer(int16 timerNum) {
 }
 
 void MadeEngine::setTimer(int16 timerNum, int16 value) {
-    _timers[timerNum] = value * 60;
+	_timers[timerNum] = value * 60;
 }
 
 void MadeEngine::resetTimer(int16 timerNum) {
-    _timers[timerNum] = _system->getMillis();
+	_timers[timerNum] = _system->getMillis();
 }
 
 int16 MadeEngine::allocTimer() {
 	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
-	    if (_timers[i] == -1) {
-         	resetTimer(i);
-	        return i + 1;
+		if (_timers[i] == -1) {
+		 	resetTimer(i);
+			return i + 1;
 		}
 	}
 	return 0;
 }
 
 void MadeEngine::freeTimer(int16 timerNum) {
-    _timers[timerNum] = -1;
+	_timers[timerNum] = -1;
 }
 
 int MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
-	    _timers[i] = -1;
+		_timers[i] = -1;
 
 	_dat->open("rtzcd.dat");
 	_res->open("rtzcd.prj");
 
-    PictureResource *flex1 = _res->getPicture(78);
-    Graphics::Surface *surf = flex1->getPicture();
+	PictureResource *flex1 = _res->getPicture(78);
+	Graphics::Surface *surf = flex1->getPicture();
 	CursorMan.replaceCursor((const byte *)surf->pixels, surf->w, surf->h, 0, 0, 0);
 	CursorMan.showMouse(true);
 	_res->freeResource(flex1);
-    _eventMouseX = _eventMouseY = 0;
-    _script->runScript(_dat->getMainCodeObjectIndex());
+	_eventMouseX = _eventMouseY = 0;
+	_script->runScript(_dat->getMainCodeObjectIndex());
 
 	return 0;
 }

@@ -16,22 +16,22 @@ namespace Made {
 
 class PmvPlayer {
 public:
-    PmvPlayer(OSystem *system, Audio::Mixer *mixer);
-    ~PmvPlayer();
-    void play(const char *filename);
+	PmvPlayer(OSystem *system, Audio::Mixer *mixer);
+	~PmvPlayer();
+	void play(const char *filename);
 protected:
-    OSystem *_system;
-    Audio::Mixer *_mixer;
-    Common::File *_fd;
-    Audio::AppendableAudioStream *_audioStream;
-    Audio::SoundHandle _audioStreamHandle;
-    byte _palette[768];
-    Graphics::Surface *_surface;
-    bool _abort;
-    void readChunk(uint32 &chunkType, uint32 &chunkSize);
-    void handleEvents();
-    void updatePalette();
-    void updateScreen();
+	OSystem *_system;
+	Audio::Mixer *_mixer;
+	Common::File *_fd;
+	Audio::AppendableAudioStream *_audioStream;
+	Audio::SoundHandle _audioStreamHandle;
+	byte _palette[768];
+	Graphics::Surface *_surface;
+	bool _abort;
+	void readChunk(uint32 &chunkType, uint32 &chunkSize);
+	void handleEvents();
+	void updatePalette();
+	void updateScreen();
 };
 
 }

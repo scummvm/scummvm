@@ -40,19 +40,19 @@ const int kScriptStackLimit = kScriptStackSize + 1;
 
 class ScriptStack {
 public:
-    ScriptStack();
-    ~ScriptStack();
-    int16 top();
-    int16 pop();
-    void push(int16 value = 0);
-    void setTop(int16 value);
-    int16 peek(int16 index);
-    void poke(int16 index, int16 value);
-    void alloc(int16 count);
-    void free(int16 count);
-    int16 getStackPos() const { return _stackPos; }
-    void setStackPos(int16 stackPtr);
-    int16 *getStackPtr();
+	ScriptStack();
+	~ScriptStack();
+	int16 top();
+	int16 pop();
+	void push(int16 value = 0);
+	void setTop(int16 value);
+	int16 peek(int16 index);
+	void poke(int16 index, int16 value);
+	void alloc(int16 count);
+	void free(int16 count);
+	int16 getStackPos() const { return _stackPos; }
+	void setStackPos(int16 stackPtr);
+	int16 *getStackPtr();
 protected:
 	int16 _stack[kScriptStackSize];
 	int16 _stackPos;
@@ -60,11 +60,11 @@ protected:
 
 class ScriptInterpreter {
 public:
-    ScriptInterpreter(MadeEngine *vm);
-    ~ScriptInterpreter();
-    void runScript(int16 scriptObjectIndex);
+	ScriptInterpreter(MadeEngine *vm);
+	~ScriptInterpreter();
+	void runScript(int16 scriptObjectIndex);
 protected:
-    MadeEngine *_vm;
+	MadeEngine *_vm;
 
 	ScriptStack _stack;
 	int16 _localStackPos;
@@ -72,7 +72,7 @@ protected:
 	byte *_codeBase, *_codeIp;
 	bool _terminated;
 
-    ScriptFunctions *_functions;
+	ScriptFunctions *_functions;
 
 	byte readByte();
 	int16 readInt16();

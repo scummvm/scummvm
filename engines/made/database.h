@@ -35,28 +35,28 @@ namespace Made {
 
 class Object {
 public:
-    Object();
-    ~Object();
-    void load(Common::SeekableReadStream &source);
-    void load(byte *source);
+	Object();
+	~Object();
+	void load(Common::SeekableReadStream &source);
+	void load(byte *source);
 
-    uint16 getFlags() const;
-    uint16 getClass() const;
-    uint16 getSize() const;
+	uint16 getFlags() const;
+	uint16 getClass() const;
+	uint16 getSize() const;
 
 	byte getCount1() const;
-    byte getCount2() const;
+	byte getCount2() const;
 
 	byte *getData();
-    const char *getString();
+	const char *getString();
 
-    bool isObject();
-    bool isVector();
-    bool isConstant() const { return !(getFlags() & 1); }
-    
-    int16 getVectorSize();
-    int16 getVectorItem(int16 index);
-    void setVectorItem(int16 index, int16 value);
+	bool isObject();
+	bool isVector();
+	bool isConstant() const { return !(getFlags() & 1); }
+	
+	int16 getVectorSize();
+	int16 getVectorItem(int16 index);
+	void setVectorItem(int16 index, int16 value);
 
 	void dump(const char *filename);
 
@@ -70,7 +70,7 @@ class GameDatabase {
 public:
 
 	GameDatabase();
-    ~GameDatabase();
+	~GameDatabase();
 
 	void open(const char *filename);
 

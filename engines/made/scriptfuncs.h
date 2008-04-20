@@ -62,12 +62,12 @@ typedef Functor2<int16, int16*, int16> ExternalFunc;
 
 class ScriptFunctions {
 public:
-    ScriptFunctions(MadeEngine *vm) : _vm(vm) {}
-    virtual ~ScriptFunctions() {}
-    int16 callFunction(uint16 index, int16 argc, int16 *argv);
+	ScriptFunctions(MadeEngine *vm) : _vm(vm) {}
+	virtual ~ScriptFunctions() {}
+	int16 callFunction(uint16 index, int16 argc, int16 *argv);
 	virtual void setupExternalsTable() = 0;
 protected:
-    MadeEngine *_vm;
+	MadeEngine *_vm;
 
 	Common::Array<const ExternalFunc*> _externalFuncs;
 
@@ -75,9 +75,9 @@ protected:
 
 class ScriptFunctionsRtz : public ScriptFunctions {
 public:
-    ScriptFunctionsRtz(MadeEngine *vm) : ScriptFunctions(vm) {}
-    ~ScriptFunctionsRtz() {}
-    void setupExternalsTable();
+	ScriptFunctionsRtz(MadeEngine *vm) : ScriptFunctions(vm) {}
+	~ScriptFunctionsRtz() {}
+	void setupExternalsTable();
 protected:
 
 	int16 o1_SYSTEM(int16 argc, int16 *argv);

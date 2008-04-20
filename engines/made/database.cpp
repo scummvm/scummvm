@@ -42,12 +42,12 @@ Object::Object() {
 
 Object::~Object() {
 	if (_freeData && _objData)
-	    delete[] _objData;
+		delete[] _objData;
 }
 
 void Object::load(Common::SeekableReadStream &source) {
 
-    _freeData = true;
+	_freeData = true;
 
 	source.readUint16LE(); // skip flags
 	uint16 type = source.readUint16LE();
@@ -72,9 +72,9 @@ void Object::load(Common::SeekableReadStream &source) {
 		_objSize = (count1 + count2) * 2;
 	}
 
-    source.seek(-6, SEEK_CUR);
+	source.seek(-6, SEEK_CUR);
 
-    _objSize += 6;
+	_objSize += 6;
 
 	_objData = new byte[_objSize];
 	source.read(_objData, _objSize);
@@ -88,7 +88,7 @@ void Object::load(Common::SeekableReadStream &source) {
 void Object::load(byte *source) {
 
 	_objData = source;
-    _freeData = false;
+	_freeData = false;
 
 	if (getClass() < 0x7FFE) {
 		_objSize = (getCount1() + getCount2()) * 2;
@@ -131,9 +131,9 @@ byte *Object::getData() {
 
 const char *Object::getString() {
 	if (getClass() == 0x7FFF)
-	    return (const char*)getData();
+		return (const char*)getData();
 	else
-	    return NULL;
+		return NULL;
 }
 
 bool Object::isObject() {
@@ -146,16 +146,16 @@ bool Object::isVector() {
 
 int16 Object::getVectorSize() {
 	if (getClass() == 0x7FFF || getClass() == 0x7FFE) {
-	    return getSize();
+		return getSize();
 	} else if (getClass() < 0x7FFE) {
-	    return getCount1() + getCount2();
+		return getCount1() + getCount2();
 	} else {
 		return 0;	// FIXME
 	}
 }
 
 int16 Object::getVectorItem(int16 index) {
-    if (getClass() == 0x7FFF) {
+	if (getClass() == 0x7FFF) {
 		byte *vector = (byte*)getData();
 		return vector[index];
 	} else if (getClass() == 0x7FFE) {
@@ -170,7 +170,7 @@ int16 Object::getVectorItem(int16 index) {
 }
 
 void Object::setVectorItem(int16 index, int16 value) {
-    if (getClass() == 0x7FFF) {
+	if (getClass() == 0x7FFF) {
 		byte *vector = (byte*)getData();
 		vector[index] = value;
 	} else if (getClass() <= 0x7FFE) {
@@ -192,7 +192,7 @@ GameDatabase::GameDatabase() {
 
 GameDatabase::~GameDatabase() {
 	if (_gameState)
-	    delete[] _gameState;
+		delete[] _gameState;
 }
 
 void GameDatabase::open(const char *filename) {
@@ -213,30 +213,30 @@ void GameDatabase::open(const char *filename) {
 	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n",
 		objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
 
-    _gameState = new byte[_gameStateSize];
+	_gameState = new byte[_gameStateSize];
 	_fd.seek(gameStateOffs);
 	_fd.read(_gameState, _gameStateSize);
 
 	Common::Array<uint32> objectOffsets;
 	_fd.seek(objectIndexOffs);
 	for (uint32 i = 0; i < objectCount; i++)
-	    objectOffsets.push_back(_fd.readUint32LE());
+		objectOffsets.push_back(_fd.readUint32LE());
 
 	for (uint32 i = 0; i < objectCount; i++) {
-	    Object *obj = new Object();
-	    // The LSB indicates if it's a constant or variable object
-	    
-	    debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
-	    
+		Object *obj = new Object();
+		// The LSB indicates if it's a constant or variable object
+		
+		debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
+		
 		if (objectOffsets[i] & 1) {
-		    debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
-	    	_fd.seek(objectsOffs + objectOffsets[i] - 1);
-	    	obj->load(_fd);
-	    } else {
-	        debug(2, "-> var\n");
-	    	obj->load(_gameState + objectOffsets[i]);
+			debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
+			_fd.seek(objectsOffs + objectOffsets[i] - 1);
+			obj->load(_fd);
+		} else {
+			debug(2, "-> var\n");
+			obj->load(_gameState + objectOffsets[i]);
 		}
-	    _objects.push_back(obj);
+		_objects.push_back(obj);
 	}
 
 }
@@ -265,15 +265,15 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 
 	// First see if the property exists in the given object
 	while (count2-- > 0) {
-	    if ((*prop & 0x3FFF) == propertyId) {
-	        if (*prop & 0x4000) {
+		if ((*prop & 0x3FFF) == propertyId) {
+			if (*prop & 0x4000) {
 				debug(2, "! L1.1\n");
-	            propertyFlag = 1;
-	            return (int16*)_gameState + *propPtr1;
+				propertyFlag = 1;
+				return (int16*)_gameState + *propPtr1;
 			} else {
 				debug(2, "! L1.2\n");
-			    propertyFlag = obj->getFlags() & 1;
-			    return propPtr1;
+				propertyFlag = obj->getFlags() & 1;
+				return propPtr1;
 			}
 		}
 		prop++;
@@ -283,18 +283,18 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	// Now check in the object hierarchy of the given object
 	int16 parentObjectIndex = obj->getClass();
 	if (parentObjectIndex == 0) {
-	    debug(2, "! NULL(np)\n");
-	    return NULL;
+		debug(2, "! NULL(np)\n");
+		return NULL;
 	}
-	    
+		
 	while (parentObjectIndex != 0) {
 	
-	    debug(2, "parentObjectIndex = %04X\n", parentObjectIndex);
+		debug(2, "parentObjectIndex = %04X\n", parentObjectIndex);
 
 		//dumpObject(parentObjectIndex);
 
-	    obj = getObject(parentObjectIndex);
-	    
+		obj = getObject(parentObjectIndex);
+		
 		prop = (int16*)obj->getData();
 		count1 = obj->getCount1();
 		count2 = obj->getCount2();
@@ -303,30 +303,30 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 		int16 *propertyPtr = prop + count1;
 		
 		while (count2-- > 0) {
-		    if (!(*prop & 0x8000)) {
-		        if ((*prop & 0x3FFF) == propertyId) {
-		            if (*prop & 0x4000) {
+			if (!(*prop & 0x8000)) {
+				if ((*prop & 0x3FFF) == propertyId) {
+					if (*prop & 0x4000) {
 						debug(2, "! L2.1\n");
-	            		propertyFlag = 1;
-	            		return (int16*)_gameState + *propPtr1;
+						propertyFlag = 1;
+						return (int16*)_gameState + *propPtr1;
 					} else {
 						debug(2, "! L2.2\n");
-			    		propertyFlag = obj->getFlags() & 1;
-			    		return propPtr1;
+						propertyFlag = obj->getFlags() & 1;
+						return propPtr1;
 					}
 				} else {
-				    propPtr1++;
+					propPtr1++;
 				}
 			} else {
-		        if ((*prop & 0x3FFF) == propertyId) {
-		            if (*prop & 0x4000) {
-		                debug(2, "! L3.1\n");
-	            		propertyFlag = 1;
-	            		return (int16*)_gameState + *propertyPtr;
+				if ((*prop & 0x3FFF) == propertyId) {
+					if (*prop & 0x4000) {
+						debug(2, "! L3.1\n");
+						propertyFlag = 1;
+						return (int16*)_gameState + *propertyPtr;
 					} else {
-					    debug(2, "! L3.2\n");
-			    		propertyFlag = obj->getFlags() & 1;
-			    		return propertyPtr;
+						debug(2, "! L3.2\n");
+						propertyFlag = obj->getFlags() & 1;
+						return propertyPtr;
 					}
 				}
 			}
@@ -338,7 +338,7 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 		
 	}
 
-    debug(2, "! NULL(nf)\n");
+	debug(2, "! NULL(nf)\n");
 	return NULL;
 	
 	fflush(stdout);
@@ -348,7 +348,7 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 
 	if (objectIndex == 0)
-	    return 0;
+		return 0;
 
 	int16 propertyFlag;
 	int16 *property = getObjectPropertyPtr(objectIndex, propertyId, propertyFlag);
@@ -356,7 +356,7 @@ int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 	if (property) {
 		return *property;
 	} else {
-	    return 0;
+		return 0;
 	}
 
 }
@@ -364,21 +364,21 @@ int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16 value) {
 
 	if (objectIndex == 0)
-	    return 0;
+		return 0;
 
 	int16 propertyFlag;
 	int16 *property = getObjectPropertyPtr(objectIndex, propertyId, propertyFlag);
 	
 	if (property) {
 		if (propertyFlag == 1) {
-		    *property = value;
+			*property = value;
 		} else {
-		    debug(2, "GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property\n",
+			debug(2, "GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property\n",
 				objectIndex, propertyId, value);
 		}
 		return value;
 	} else {
-	    return 0;
+		return 0;
 	}
 	
 }

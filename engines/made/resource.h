@@ -38,31 +38,31 @@ namespace Made {
 const int kMaxResourceCacheCount = 100;
 
 enum ResourceType {
-    kResARCH = MKID_BE('ARCH'),
-    kResFREE = MKID_BE('FREE'),
-    kResOMNI = MKID_BE('OMNI'),
-    kResFLEX = MKID_BE('FLEX'),
-    kResSNDS = MKID_BE('SNDS'),
-    kResANIM = MKID_BE('ANIM'),
-    kResMENU = MKID_BE('MENU')
+	kResARCH = MKID_BE('ARCH'),
+	kResFREE = MKID_BE('FREE'),
+	kResOMNI = MKID_BE('OMNI'),
+	kResFLEX = MKID_BE('FLEX'),
+	kResSNDS = MKID_BE('SNDS'),
+	kResANIM = MKID_BE('ANIM'),
+	kResMENU = MKID_BE('MENU')
 };
 
 struct ResourceSlot;
 
 class Resource {
 public:
-    ResourceSlot *slot;
-    virtual ~Resource();
-    virtual void load(byte *buffer, int size) = 0;
+	ResourceSlot *slot;
+	virtual ~Resource();
+	virtual void load(byte *buffer, int size) = 0;
 };
 
 class PictureResource : public Resource {
 public:
-    PictureResource();
-    ~PictureResource();
-    void load(byte *source, int size);
-    Graphics::Surface *getPicture() const { return _picture; }
-    byte *getPalette() const { return _palette; }
+	PictureResource();
+	~PictureResource();
+	void load(byte *source, int size);
+	Graphics::Surface *getPicture() const { return _picture; }
+	byte *getPalette() const { return _palette; }
 protected:
 	Graphics::Surface *_picture;
 	byte *_palette;
@@ -70,14 +70,14 @@ protected:
 
 class AnimationResource : public Resource {
 public:
-    AnimationResource();
-    ~AnimationResource();
-    void load(byte *source, int size);
-    int getCount() const { return _frames.size(); }
-    Graphics::Surface *getFrame(int index) const { return _frames[index]; }
-    uint16 getFlags() const { return _flags; }
-    int16 getWidth() const { return _width; }
-    int16 getHeight() const { return _height; }
+	AnimationResource();
+	~AnimationResource();
+	void load(byte *source, int size);
+	int getCount() const { return _frames.size(); }
+	Graphics::Surface *getFrame(int index) const { return _frames[index]; }
+	uint16 getFlags() const { return _flags; }
+	int16 getWidth() const { return _width; }
+	int16 getHeight() const { return _height; }
 protected:
 	Common::Array<Graphics::Surface*> _frames;
 	uint16 _flags;
@@ -86,10 +86,10 @@ protected:
 
 class SoundResource : public Resource {
 public:
-    SoundResource();
-    ~SoundResource();
-    void load(byte *source, int size);
-    Audio::AudioStream *getAudioStream();
+	SoundResource();
+	~SoundResource();
+	void load(byte *source, int size);
+	Audio::AudioStream *getAudioStream();
 protected:
 	byte *_soundData;
 	int _soundSize;
@@ -97,79 +97,79 @@ protected:
 
 class MenuResource : public Resource {
 public:
-    MenuResource();
-    ~MenuResource();
-    void load(byte *source, int size);
-    int getCount() const { return _strings.size(); }
-    Common::String getString(int index) const { return _strings[index]; }
+	MenuResource();
+	~MenuResource();
+	void load(byte *source, int size);
+	int getCount() const { return _strings.size(); }
+	Common::String getString(int index) const { return _strings[index]; }
 protected:
 	Common::Array<Common::String> _strings;
 };
 
 struct ResourceSlot {
-    uint32 offs;
-    uint32 size;
-    Resource *res;
-    int refCount;
-    ResourceSlot() : offs(0), size(0), res(NULL), refCount(0) {
-    }
-    ResourceSlot(uint32 roffs, uint32 rsize) : offs(roffs), size(rsize), res(NULL), refCount(0) {
-    }
+	uint32 offs;
+	uint32 size;
+	Resource *res;
+	int refCount;
+	ResourceSlot() : offs(0), size(0), res(NULL), refCount(0) {
+	}
+	ResourceSlot(uint32 roffs, uint32 rsize) : offs(roffs), size(rsize), res(NULL), refCount(0) {
+	}
 };
 
 class ProjectReader {
 public:
 
-    ProjectReader();
-    ~ProjectReader();
+	ProjectReader();
+	~ProjectReader();
 
-    void open(const char *filename);
+	void open(const char *filename);
 
-    PictureResource *getPicture(int index);
-    AnimationResource *getAnimation(int index);
-    SoundResource *getSound(int index);
-    MenuResource *getMenu(int index);
+	PictureResource *getPicture(int index);
+	AnimationResource *getAnimation(int index);
+	SoundResource *getSound(int index);
+	MenuResource *getMenu(int index);
 
-    void freeResource(Resource *resource);
+	void freeResource(Resource *resource);
 
 protected:
 
-    Common::File *_fd;
+	Common::File *_fd;
 
-    typedef Common::Array<ResourceSlot> ResourceSlots;
-    typedef Common::HashMap<uint32, ResourceSlots*> ResMap;
+	typedef Common::Array<ResourceSlot> ResourceSlots;
+	typedef Common::HashMap<uint32, ResourceSlots*> ResMap;
 
-    ResMap _resSlots;
-    int _cacheCount;
+	ResMap _resSlots;
+	int _cacheCount;
 
-    void loadIndex(ResourceSlots *slots);
+	void loadIndex(ResourceSlots *slots);
 
-    template <class T>
-    T *createResource(uint32 resType, int index) {
-        ResourceSlot *slot = getResourceSlot(resType, index);
-        if (!slot)
-            return NULL;
-        T *res = (T*)getResourceFromCache(slot);
-        if (!res) {
-            byte *buffer;
-            uint32 size;
-            if (loadResource(slot, buffer, size)) {
-                res = new T();
-                res->slot = slot;
-                res->load(buffer, size);
-                addResourceToCache(slot, res);
-                delete[] buffer;
-            }
-        }
-        return res;
-    }
+	template <class T>
+	T *createResource(uint32 resType, int index) {
+		ResourceSlot *slot = getResourceSlot(resType, index);
+		if (!slot)
+			return NULL;
+		T *res = (T*)getResourceFromCache(slot);
+		if (!res) {
+			byte *buffer;
+			uint32 size;
+			if (loadResource(slot, buffer, size)) {
+				res = new T();
+				res->slot = slot;
+				res->load(buffer, size);
+				addResourceToCache(slot, res);
+				delete[] buffer;
+			}
+		}
+		return res;
+	}
 
-    bool loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size);
-    ResourceSlot *getResourceSlot(uint32 resType, uint index);
-    Resource *getResourceFromCache(ResourceSlot *slot);
-    void addResourceToCache(ResourceSlot *slot, Resource *res);
-    void tossResourceFromCache(ResourceSlot *slot);
-    void purgeCache();
+	bool loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size);
+	ResourceSlot *getResourceSlot(uint32 resType, uint index);
+	Resource *getResourceFromCache(ResourceSlot *slot);
+	void addResourceToCache(ResourceSlot *slot, Resource *res);
+	void tossResourceFromCache(ResourceSlot *slot);
+	void purgeCache();
 
 };
 

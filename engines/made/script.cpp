@@ -154,13 +154,13 @@ int16 ScriptStack::top() {
 
 int16 ScriptStack::pop() {
 	if (_stackPos == kScriptStackSize)
-	    error("ScriptStack::pop() Stack underflow");
+		error("ScriptStack::pop() Stack underflow");
 	return _stack[_stackPos++];
 }
 
 void ScriptStack::push(int16 value) {
 	if (_stackPos == 0)
-	    error("ScriptStack::push() Stack overflow");
+		error("ScriptStack::push() Stack overflow");
 	_stack[--_stackPos] = value;
 }
 
@@ -173,7 +173,7 @@ int16 ScriptStack::peek(int16 index) {
 }
 
 void ScriptStack::poke(int16 index, int16 value) {
-    _stack[index] = value;
+	_stack[index] = value;
 }
 
 void ScriptStack::alloc(int16 count) {
@@ -197,77 +197,77 @@ int16 *ScriptStack::getStackPtr() {
 ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 #define COMMAND(x) { &ScriptInterpreter::x, #x }
 	static CommandEntry commandProcs[] = {
-	    /* 01 */
+		/* 01 */
 		COMMAND(cmd_branchTrue),
 		COMMAND(cmd_branchFalse),
 		COMMAND(cmd_branch),
 		COMMAND(cmd_true),
-	    /* 05 */
+		/* 05 */
 		COMMAND(cmd_false),
 		COMMAND(cmd_push),
 		COMMAND(cmd_not),
 		COMMAND(cmd_add),
-	    /* 09 */
+		/* 09 */
 		COMMAND(cmd_sub),
 		COMMAND(cmd_mul),
 		COMMAND(cmd_div),
 		COMMAND(cmd_mod),
-	    /* 13 */
+		/* 13 */
 		COMMAND(cmd_band),
 		COMMAND(cmd_bor),
 		COMMAND(cmd_bnot),
 		COMMAND(cmd_lt),
-	    /* 17 */
+		/* 17 */
 		COMMAND(cmd_eq),
 		COMMAND(cmd_gt),
 		COMMAND(cmd_loadConstant),
 		COMMAND(cmd_loadVariable),
-	    /* 21 */
+		/* 21 */
 		COMMAND(cmd_getObjectProperty),
 		COMMAND(cmd_setObjectProperty),
 		COMMAND(cmd_set),
 		COMMAND(cmd_print),
-	    /* 25 */
+		/* 25 */
 		COMMAND(cmd_terpri),
 		COMMAND(cmd_printNumber),
 		COMMAND(cmd_vref),
 		COMMAND(cmd_vset),
-	    /* 29 */
+		/* 29 */
 		COMMAND(cmd_vsize),
 		COMMAND(cmd_exit),
 		COMMAND(cmd_return),
 		COMMAND(cmd_call),
-	    /* 33 */
+		/* 33 */
 		COMMAND(cmd_svar),
 		COMMAND(cmd_sset),
 		COMMAND(cmd_split),
 		COMMAND(cmd_snlit),
-	    /* 37 */
+		/* 37 */
 		COMMAND(cmd_yorn),
 		COMMAND(cmd_save),
 		COMMAND(cmd_restore),
 		COMMAND(cmd_arg),
-	    /* 41 */
+		/* 41 */
 		COMMAND(cmd_aset),
 		COMMAND(cmd_tmp),
 		COMMAND(cmd_tset),
 		COMMAND(cmd_tspace),
-	    /* 45 */
+		/* 45 */
 		COMMAND(cmd_class),
 		COMMAND(cmd_objectp),
 		COMMAND(cmd_vectorp),
 		COMMAND(cmd_restart),
-	    /* 49 */
+		/* 49 */
 		COMMAND(cmd_rand),
 		COMMAND(cmd_randomize),
 		COMMAND(cmd_send),
 		COMMAND(cmd_extend),
-	    /* 53 */
+		/* 53 */
 		COMMAND(cmd_catch),
 		COMMAND(cmd_cdone),
 		COMMAND(cmd_throw),
 		COMMAND(cmd_functionp),
-	    /* 57 */
+		/* 57 */
 		COMMAND(cmd_le),
 		COMMAND(cmd_ge),
 		COMMAND(cmd_varx),
@@ -288,21 +288,21 @@ ScriptInterpreter::~ScriptInterpreter() {
 
 void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
-    _terminated = false;
-    _runningScriptObjectIndex = scriptObjectIndex;
+	_terminated = false;
+	_runningScriptObjectIndex = scriptObjectIndex;
 
-    _localStackPos = _stack.getStackPos();
+	_localStackPos = _stack.getStackPos();
 
-    _codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
+	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
 	
 	while (!_terminated) {
-	    byte opcode = readByte();
-	    if (opcode >= 1 && opcode <= _commandsMax) {
-	        debug(4, "opcode = %s\n", _commands[opcode - 1].desc);
-	        (this->*_commands[opcode - 1].proc)();
+		byte opcode = readByte();
+		if (opcode >= 1 && opcode <= _commandsMax) {
+			debug(4, "opcode = %s\n", _commands[opcode - 1].desc);
+			(this->*_commands[opcode - 1].proc)();
 		} else {
-		    printf("ScriptInterpreter::runScript(%d) Unknown opcode %02X\n", _runningScriptObjectIndex, opcode);
+			printf("ScriptInterpreter::runScript(%d) Unknown opcode %02X\n", _runningScriptObjectIndex, opcode);
 		}
 	}
 
@@ -350,9 +350,9 @@ void ScriptInterpreter::cmd_push() {
 
 void ScriptInterpreter::cmd_not() {
 	if (_stack.top() == 0)
-	    _stack.setTop(-1);
+		_stack.setTop(-1);
 	else
-	    _stack.setTop(0);
+		_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_add() {
@@ -373,7 +373,7 @@ void ScriptInterpreter::cmd_mul() {
 void ScriptInterpreter::cmd_div() {
 	int16 value = _stack.pop();
 	if (value == 0)
-	    _stack.setTop(0);
+		_stack.setTop(0);
 	else
 		_stack.setTop(_stack.top() / value);
 }
@@ -381,7 +381,7 @@ void ScriptInterpreter::cmd_div() {
 void ScriptInterpreter::cmd_mod() {
 	int16 value = _stack.pop();
 	if (value == 0)
-	    _stack.setTop(0);
+		_stack.setTop(0);
 	else
 		_stack.setTop(_stack.top() % value);
 }
@@ -405,7 +405,7 @@ void ScriptInterpreter::cmd_lt() {
 	if (_stack.top() < value)
 		_stack.setTop(-1);
 	else
-	    _stack.setTop(0);
+		_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_eq() {
@@ -413,7 +413,7 @@ void ScriptInterpreter::cmd_eq() {
 	if (_stack.top() == value)
 		_stack.setTop(-1);
 	else
-	    _stack.setTop(0);
+		_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_gt() {
@@ -421,7 +421,7 @@ void ScriptInterpreter::cmd_gt() {
 	if (_stack.top() > value)
 		_stack.setTop(-1);
 	else
-	    _stack.setTop(0);
+		_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_loadConstant() {
@@ -463,7 +463,7 @@ void ScriptInterpreter::cmd_set() {
 
 void ScriptInterpreter::cmd_print() {
 	// TODO: This opcode was used for printing debug messages
-    Object *obj = _vm->_dat->getObject(_stack.top());
+	Object *obj = _vm->_dat->getObject(_stack.top());
 	const char *text = obj->getString();
 	debug(4, "%s", text); fflush(stdout);
 	_stack.setTop(0);
@@ -486,8 +486,8 @@ void ScriptInterpreter::cmd_vref() {
 	int16 value = 0;
 	debug(4, "index = %d; objectIndex = %d\n", index, objectIndex); fflush(stdout);
 	if (objectIndex > 0) {
-	    Object *obj = _vm->_dat->getObject(objectIndex);
-	    value = obj->getVectorItem(index);
+		Object *obj = _vm->_dat->getObject(objectIndex);
+		value = obj->getVectorItem(index);
 	}
 	_stack.setTop(value);
 	debug(4, "--> value = %d\n", value); fflush(stdout);
@@ -499,8 +499,8 @@ void ScriptInterpreter::cmd_vset() {
 	int16 objectIndex = _stack.top();
 	debug(4, "index = %d; objectIndex = %d; value = %d\n", index, objectIndex, value); fflush(stdout);
 	if (objectIndex > 0) {
-	    Object *obj = _vm->_dat->getObject(objectIndex);
-	    obj->setVectorItem(index, value);
+		Object *obj = _vm->_dat->getObject(objectIndex);
+		obj->setVectorItem(index, value);
 	}
 	_stack.setTop(value);
 }
@@ -514,7 +514,7 @@ void ScriptInterpreter::cmd_vsize() {
 }
 
 void ScriptInterpreter::cmd_exit() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_return() {
@@ -524,10 +524,10 @@ void ScriptInterpreter::cmd_return() {
 	_localStackPos = kScriptStackLimit - _stack.pop();
 	//_localStackPos = _stack.pop();
 	_runningScriptObjectIndex = _stack.pop();
-    _codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
+	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase + _stack.pop();
 	byte argc = _stack.pop();
-    _stack.free(argc);
+	_stack.free(argc);
 	_stack.setTop(funcResult);
 	debug(4, "LEAVE: stackPtr = %d; _localStackPos = %d\n\n\n", _stack.getStackPos(), _localStackPos);
 }
@@ -540,41 +540,41 @@ void ScriptInterpreter::cmd_call() {
 	_stack.push(_runningScriptObjectIndex);
 	_stack.push(kScriptStackLimit - _localStackPos);
 	_localStackPos = _stack.getStackPos();
-    _runningScriptObjectIndex = _stack.peek(_localStackPos + argc + 4);
-    debug(4, "argc = %d; _runningScriptObjectIndex = %04X\n", argc, _runningScriptObjectIndex); fflush(stdout);
-    _codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
+	_runningScriptObjectIndex = _stack.peek(_localStackPos + argc + 4);
+	debug(4, "argc = %d; _runningScriptObjectIndex = %04X\n", argc, _runningScriptObjectIndex); fflush(stdout);
+	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
-    //_vm->_dat->dumpObject(_runningScriptObjectIndex);
+	//_vm->_dat->dumpObject(_runningScriptObjectIndex);
 }
 
 void ScriptInterpreter::cmd_svar() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_sset() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_split() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_snlit() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_yorn() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_save() {
-    //fflush(stdout); g_system->delayMillis(5000);
-    // TODO
-    _stack.setTop(0);
+	//fflush(stdout); g_system->delayMillis(5000);
+	// TODO
+	_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_restore() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_arg() {
@@ -608,28 +608,28 @@ void ScriptInterpreter::cmd_tspace() {
 }
 
 void ScriptInterpreter::cmd_class() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_objectp() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_vectorp() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_restart() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_rand() {
-    //fflush(stdout); g_system->delayMillis(5000);
+	//fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_randomize() {
-    // TODO
-    _stack.setTop(0);
+	// TODO
+	_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_send() {
@@ -652,25 +652,25 @@ void ScriptInterpreter::cmd_send() {
 	debug(4, "objectIndex = %d (%04X); propertyId = %d(%04X)\n", objectIndex, objectIndex, propertyId, propertyId); fflush(stdout);
 		
 	if (objectIndex != 0) {
-	    objectIndex = _vm->_dat->getObject(objectIndex)->getClass();
+		objectIndex = _vm->_dat->getObject(objectIndex)->getClass();
 	} else {
 		objectIndex = _stack.peek(_localStackPos + argc + 3);
 	}
 
-    debug(4, "--> objectIndex = %d(%04X)\n", objectIndex, objectIndex); fflush(stdout);
+	debug(4, "--> objectIndex = %d(%04X)\n", objectIndex, objectIndex); fflush(stdout);
 
 	if (objectIndex != 0) {
-    	_runningScriptObjectIndex = _vm->_dat->getObjectProperty(objectIndex, propertyId);
-    	if (_runningScriptObjectIndex != 0) {
-    		_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
+		_runningScriptObjectIndex = _vm->_dat->getObjectProperty(objectIndex, propertyId);
+		if (_runningScriptObjectIndex != 0) {
+			_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 			_codeIp = _codeBase;
 		} else {
-		    _stack.push(0);
-		    cmd_return();
+			_stack.push(0);
+			cmd_return();
 		}
 	} else {
-	    _stack.push(0);
-	    cmd_return();
+		_stack.push(0);
+		cmd_return();
 	}
 
 }
@@ -684,7 +684,7 @@ void ScriptInterpreter::cmd_extend() {
 
 	debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc); fflush(stdout);
 	for (int i = 0; i < argc; i++)
-	    debug(4, "argv[%02d] = %04X (%d)\n", i, argv[i], argv[i]);
+		debug(4, "argv[%02d] = %04X (%d)\n", i, argv[i], argv[i]);
 
 	int16 result = _functions->callFunction(func, argc, argv);
 	debug(4, "result = %04X (%d)\n", result, result);
@@ -696,19 +696,19 @@ void ScriptInterpreter::cmd_extend() {
 }
 
 void ScriptInterpreter::cmd_catch() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_cdone() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_throw() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_functionp() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_le() {
@@ -716,7 +716,7 @@ void ScriptInterpreter::cmd_le() {
 	if (_stack.top() <= value)
 		_stack.setTop(-1);
 	else
-	    _stack.setTop(0);
+		_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_ge() {
@@ -724,15 +724,15 @@ void ScriptInterpreter::cmd_ge() {
 	if (_stack.top() >= value)
 		_stack.setTop(-1);
 	else
-	    _stack.setTop(0);
+		_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_varx() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 void ScriptInterpreter::cmd_setx() {
-    fflush(stdout); g_system->delayMillis(5000);
+	fflush(stdout); g_system->delayMillis(5000);
 }
 
 } // End of namespace Made

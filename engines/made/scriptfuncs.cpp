@@ -41,14 +41,14 @@ namespace Made {
 
 int16 ScriptFunctions::callFunction(uint16 index, int16 argc, int16 *argv) {
 	if (index >= _externalFuncs.size()) {
-	    // TODO: ERROR!
-	    return 0;
+		// TODO: ERROR!
+		return 0;
 	}
 	
 	fflush(stdout);
 	//g_system->delayMillis(2000);
 	
-    return (*_externalFuncs[index])(argc, argv);
+	return (*_externalFuncs[index])(argc, argv);
 }
 
 typedef Functor2Mem<int16, int16*, int16, ScriptFunctionsRtz> ExternalFuncRtz;
@@ -178,9 +178,9 @@ int16 ScriptFunctionsRtz::o1_RESTOREGRAF(int16 argc, int16 *argv) {
 int16 ScriptFunctionsRtz::o1_DRAWPIC(int16 argc, int16 *argv) {
 
 	fflush(stdout);
-    //g_system->delayMillis(5000);
+	//g_system->delayMillis(5000);
 
-    int16 channel = _vm->_screen->drawPic(argv[4], argv[3], argv[2], argv[1], argv[0]);
+	int16 channel = _vm->_screen->drawPic(argv[4], argv[3], argv[2], argv[1], argv[0]);
 	return channel;
 }
 
@@ -191,7 +191,7 @@ int16 ScriptFunctionsRtz::o1_CLS(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_SHOWPAGE(int16 argc, int16 *argv) {
 	//_vm->_system->setPalette(_vm->_screen->_palette, 0, 256);
-    _vm->_screen->show();
+	_vm->_screen->show();
 	return 0;
 }
 
@@ -203,45 +203,45 @@ int16 ScriptFunctionsRtz::o1_EVENT(int16 argc, int16 *argv) {
 	int16 eventNum = 0;
 
 	if (eventMan->pollEvent(event)) {
-	    switch (event.type) {
+		switch (event.type) {
 
-	    case Common::EVENT_MOUSEMOVE:
-	        _vm->_eventMouseX = event.mouse.x;
-	        _vm->_eventMouseY = event.mouse.y;
-	        break;
-	        
+		case Common::EVENT_MOUSEMOVE:
+			_vm->_eventMouseX = event.mouse.x;
+			_vm->_eventMouseY = event.mouse.y;
+			break;
+			
 		case Common::EVENT_LBUTTONDOWN:
-	        eventNum = 1;
-	        break;
+			eventNum = 1;
+			break;
 
 		case Common::EVENT_RBUTTONDOWN:
-	        eventNum = 3;
-	        break;
+			eventNum = 3;
+			break;
 
-	    case Common::EVENT_KEYDOWN:
-	        switch (event.kbd.ascii) {
-	        case '1':
-	            eventNum = 1;
-	            break;
-	        case '2':
-	            eventNum = 2;
-	            break;
-	        case '3':
-	            eventNum = 3;
-	            break;
-	        case '4':
-	            eventNum = 4;
-	            break;
-	        case '5':
-	            eventNum = 5;
-	            break;
-	        default:
-	            break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.ascii) {
+			case '1':
+				eventNum = 1;
+				break;
+			case '2':
+				eventNum = 2;
+				break;
+			case '3':
+				eventNum = 3;
+				break;
+			case '4':
+				eventNum = 4;
+				break;
+			case '5':
+				eventNum = 5;
+				break;
+			default:
+				break;
 			}
-	        break;
+			break;
 
 		default:
-	        break;
+			break;
 
 		}
 	}
@@ -347,7 +347,7 @@ int16 ScriptFunctionsRtz::o1_ERASESPRITES(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_UPDATESPRITES(int16 argc, int16 *argv) {
-    _vm->_screen->updateSprites();
+	_vm->_screen->updateSprites();
 	return 0;
 }
 
@@ -376,7 +376,7 @@ int16 ScriptFunctionsRtz::o1_FREETIMER(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PALETTELOCK(int16 argc, int16 *argv) {
-    //g_system->delayMillis(1000);
+	//g_system->delayMillis(1000);
 	return 0;
 }
 
@@ -559,7 +559,7 @@ int16 ScriptFunctionsRtz::o1_SETSTATE(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETLOCATION(int16 argc, int16 *argv) {
-    g_system->delayMillis(5000);
+	g_system->delayMillis(5000);
 	return 0;
 }
 
@@ -613,7 +613,7 @@ int16 ScriptFunctionsRtz::o1_PICWIDTH(int16 argc, int16 *argv) {
 	int16 width = 0;
 	PictureResource *flex = _vm->_res->getPicture(argv[0]);
 	if (flex) {
-	    width = flex->getPicture()->w;
+		width = flex->getPicture()->w;
 		_vm->_res->freeResource(flex);
 	}
 	return width;
@@ -623,7 +623,7 @@ int16 ScriptFunctionsRtz::o1_PICHEIGHT(int16 argc, int16 *argv) {
 	int16 height = 0;
 	PictureResource *flex = _vm->_res->getPicture(argv[0]);
 	if (flex) {
-	    height = flex->getPicture()->h;
+		height = flex->getPicture()->h;
 		_vm->_res->freeResource(flex);
 	}
 	return height;
@@ -658,7 +658,7 @@ int16 ScriptFunctionsRtz::o1_READMENU(int16 argc, int16 *argv) {
 	if (menu) {
 		const char *text = menu->getString(textIndex).c_str();
 		debug(4, "text = %s\n", text); fflush(stdout);
-        _vm->_res->freeResource(menu);
+		_vm->_res->freeResource(menu);
 	}
 	g_system->delayMillis(5000);
 	*/
@@ -666,7 +666,7 @@ int16 ScriptFunctionsRtz::o1_READMENU(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWMENU(int16 argc, int16 *argv) {
-    g_system->delayMillis(5000);
+	g_system->delayMillis(5000);
 	return 0;
 }
 
