@@ -718,7 +718,8 @@ bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableRead
 
 		uint32 curOffset = stream.pos();
 		stream.seek(entry.offset+2, SEEK_SET);
-		entry.size = stream.readUint32LE();
+		// Size of compressed data, plus 8-byte header
+		entry.size = stream.readUint32LE() + 8;
 		stream.seek(curOffset, SEEK_SET);
 
 		files.push_back(FileList::value_type(realFilename, entry));
