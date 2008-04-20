@@ -97,7 +97,7 @@ public:
 	int add(HotSpot *hotspot, bool head = false);
 	HotSpot *get(int index) { return _hotspots[index]; }
 	void remove(HotSpot *hotspot);
-	void unlink(HotSpot *hotspot);
+	void unlinkItem(HotSpot *hotspot);
 	void clear();
 	HotSpot *findByXY(int x, int y);
 	void setActive(const char *name, bool active);

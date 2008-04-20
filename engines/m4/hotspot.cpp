@@ -125,11 +125,11 @@ int HotSpotList::add(HotSpot *hotspot, bool head) {
 }
 
 void HotSpotList::remove(HotSpot *hotspot) {
-	unlink(hotspot);
+	unlinkItem(hotspot);
 	delete hotspot; //TODO: check this?
 }
 
-void HotSpotList::unlink(HotSpot *hotspot) {
+void HotSpotList::unlinkItem(HotSpot *hotspot) {
 	uint index = 0;
 	while (index < _hotspots.size()) {
 		if (_hotspots[index] == hotspot) {
