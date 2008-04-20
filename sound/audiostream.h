@@ -106,7 +106,7 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
 
 /**
  * An audio stream to which additional data can be appended on-the-fly.
- * Used by SMUSH, iMuseDigital, and the Kyrandia 3 VQA player.
+ * Used by SMUSH, iMuseDigital, the Kyrandia 3 VQA player, etc.
  */
 class AppendableAudioStream : public Audio::AudioStream {
 public:
@@ -123,7 +123,7 @@ public:
 	/**
 	 * Mark the stream as finished, that is, signal that no further data
 	 * will be appended to it. Only after this has been done can the
-	 * AppendableAudioStream ever 'end' (
+	 * AppendableAudioStream ever 'end'
 	 */
 	virtual void finish() = 0;
 };
