@@ -130,6 +130,12 @@ public:
 		#ifndef DISABLE_LURE
 		LINK_PLUGIN(LURE)
 		#endif
+		#ifndef DISABLE_M4
+		LINK_PLUGIN(M4)
+		#endif
+		#ifndef DISABLE_MADE
+		LINK_PLUGIN(MADE)
+		#endif		
 		#ifndef DISABLE_PARALLACTION
 		LINK_PLUGIN(PARALLACTION)
 		#endif
