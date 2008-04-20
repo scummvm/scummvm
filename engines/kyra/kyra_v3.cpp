@@ -439,9 +439,13 @@ void KyraEngine_v3::snd_stopVoice() {
 	_soundDigital->stopSound(_voiceSoundChannel);
 }
 
-void KyraEngine_v3::playStudioSFX() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::playStudioSFX()");
+void KyraEngine_v3::playStudioSFX(const char *str) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::playStudioSFX('%s')", str);
 	if (_rnd.getRandomNumberRng(1, 2) != 2)
+		return;
+
+	const int strSize = strlen(str) - 1;
+	if (str[strSize] != '?' && str[strSize] != '!')
 		return;
 
 	playSoundEffect(_curStudioSFX++, 128);

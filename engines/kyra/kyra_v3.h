@@ -138,7 +138,7 @@ private:
 	void snd_stopVoice();
 
 	int _curStudioSFX;
-	void playStudioSFX();
+	void playStudioSFX(const char *str);
 
 	// main menu
 	void initMainMenu();

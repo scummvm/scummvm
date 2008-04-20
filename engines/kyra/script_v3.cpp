@@ -107,7 +107,7 @@ int KyraEngine_v3::o3_objectChat(ScriptState *script) {
 	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
 	if (str) {
 		objectChat(str, 0, _vocHigh, id);
-		playStudioSFX();
+		playStudioSFX(str);
 	}
 	return 0;
 }
