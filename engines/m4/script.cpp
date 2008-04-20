@@ -1105,8 +1105,8 @@ int ScriptInterpreter::o1_setHotspot() {
 
 int ScriptInterpreter::o1_loadConversation() {
 	const char *name = STRING(0);
-	int trigger = INTEGER(1);
-	int flag = INTEGER(2);
+	//int trigger = INTEGER(1);
+	//int flag = INTEGER(2);
 
 	// TODO; just to show something
 	_vm->_converse->startConversation(name);
@@ -1177,17 +1177,17 @@ int ScriptInterpreter::o1_unloadSeries() {
 }
 
 int ScriptInterpreter::o1_preloadBreakSeries() {
-	const SeriesStreamBreakList& seriesStreamBreakList = DATA(0, SeriesStreamBreakList);
+	//const SeriesStreamBreakList& seriesStreamBreakList = DATA(0, SeriesStreamBreakList);
 	return 1;
 }
 
 int ScriptInterpreter::o1_unloadBreakSeries() {
-	const SeriesStreamBreakList& seriesStreamBreakList = DATA(0, SeriesStreamBreakList);
+	//const SeriesStreamBreakList& seriesStreamBreakList = DATA(0, SeriesStreamBreakList);
 	return 1;
 }
 
 int ScriptInterpreter::o1_startBreakSeries() {
-	const SeriesStreamBreakList& seriesStreamBreakList = DATA(0, SeriesStreamBreakList);
+	//const SeriesStreamBreakList& seriesStreamBreakList = DATA(0, SeriesStreamBreakList);
 	return 1;
 }
 
@@ -1271,7 +1271,7 @@ int ScriptInterpreter::o1_wilburSaid() {
 }
 
 int ScriptInterpreter::o1_wilburParse() {
-	const ParserArray& parserArray = DATA(0, ParserArray);
+	//const ParserArray& parserArray = DATA(0, ParserArray);
 	RETURN(0);
 	return 1;
 }

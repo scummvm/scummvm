@@ -324,6 +324,7 @@ void Rails::disposePath(RailNode *pathStart) {
 	}
 }
 
+/*
 static RailNode* duplicatePath(RailNode *pathStart) {
 	RailNode *newNode = NULL;
 	RailNode *firstNode = NULL;
@@ -349,6 +350,7 @@ static RailNode* duplicatePath(RailNode *pathStart) {
 
 	return firstNode;
 }
+*/
 
 bool Rails::getShortestPath(int32 origID, int32 destID, RailNode **shortPath) {
 	// TODO

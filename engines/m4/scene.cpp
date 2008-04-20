@@ -228,7 +228,6 @@ void Scene::loadSceneHotSpotsMads(int sceneNumber) {
 	int hotspotCount = hotspotStream->readUint16LE();
 	delete hotspotStream;
 
-	HotSpotList *hotspotList = _sceneResources.hotspots;
 	_sceneResources.hotspotCount = hotspotCount;
 
 	hotspotStream = hotSpotData.getItemStream(1);
@@ -483,10 +482,12 @@ bool Scene::onEvent(M4EventType eventType, int param1, int x, int y, bool &captu
 				if (currentHotSpot != NULL && currentHotSpot->getActive()) {
 					update();
 					_vm->_actor->setWalkerDirection(currentHotSpot->getFacing());
+					/*
 					int posX = currentHotSpot->getFeetX();
 					int posY = currentHotSpot->getFeetY() -
 							   scaleValue(_vm->_actor->getWalkerHeight(), _vm->_actor->getWalkerScaling(), 0);
 					//_vm->_actor->placeWalkerSpriteAt(0, posX, posY);
+					*/
 
 					// Player said.... (for scene scripts)
 					printf("Player said: %s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
