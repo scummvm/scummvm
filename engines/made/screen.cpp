@@ -259,6 +259,9 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 
 void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo) {
 
+	if (frameNum < 0)
+		return;
+
 	AnimationResource *anim = _vm->_res->getAnimation(animIndex);
 	Graphics::Surface *sourceSurface = anim->getFrame(frameNum);
 	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
@@ -279,7 +282,7 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2) {
 
-	//DEBUG
+	//HACK (until clipping is impelemented)
 	if (y > 200) y = 0;
 
 	drawFlex(index, x, y, flag1, flag2, _clipInfo1);
