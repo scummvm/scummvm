@@ -36,8 +36,6 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include "sound/mixer.h"
-
 namespace Kyra {
 KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
 	_soundDigital = 0;
