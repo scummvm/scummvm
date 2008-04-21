@@ -51,7 +51,7 @@ int16 ScriptFunctions::callFunction(uint16 index, int16 argc, int16 *argv) {
 	return (*_externalFuncs[index])(argc, argv);
 }
 
-typedef Functor2Mem<int16, int16*, int16, ScriptFunctionsRtz> ExternalFuncRtz;
+typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctionsRtz> ExternalFuncRtz;
 #define External(x) ExternalFuncRtz(this, &ScriptFunctionsRtz::x)
 void ScriptFunctionsRtz::setupExternalsTable() {
 	static const ExternalFuncRtz externalsTable[] = {

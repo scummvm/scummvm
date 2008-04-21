@@ -28,37 +28,14 @@
 
 #include "common/util.h"
 #include "common/file.h"
+#include "common/func.h"
 #include "common/stream.h"
 
 namespace Made {
 
 class MadeEngine;
 
-template<class Arg1, class Arg2, class Res>
-struct Functor2 : public Common::BinaryFunction<Arg1, Arg2, Res> {
-	virtual ~Functor2() {}
-
-	virtual bool isValid() const = 0;
-	virtual Res operator()(Arg1, Arg2) const = 0;
-};
-
-template<class Arg1, class Arg2, class Res, class T>
-class Functor2Mem : public Functor2<Arg1, Arg2, Res> {
-public:
-	typedef Res (T::*FuncType)(Arg1, Arg2);
-
-	Functor2Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
-
-	bool isValid() const { return _func != 0; }
-	Res operator()(Arg1 v1, Arg2 v2) const {
-		return (_t->*_func)(v1, v2);
-	}
-private:
-	mutable T *_t;
-	Res (T::*_func)(Arg1, Arg2);
-};
-
-typedef Functor2<int16, int16*, int16> ExternalFunc;
+typedef Common::Functor2<int16, int16*, int16> ExternalFunc;
 
 class ScriptFunctions {
 public:
