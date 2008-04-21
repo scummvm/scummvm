@@ -138,8 +138,13 @@ int MadeEngine::go() {
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
 		_timers[i] = -1;
 
-	_dat->open("rtzcd.dat");
-	_res->open("rtzcd.prj");
+	if (getFeatures() & GF_DEMO) {
+		_dat->open("demo.dat");
+		_res->open("demo.prj");
+	} else {
+		_dat->open("rtzcd.dat");
+		_res->open("rtzcd.prj");
+	}
 
 	PictureResource *flex1 = _res->getPicture(78);
 	Graphics::Surface *surf = flex1->getPicture();

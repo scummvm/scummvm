@@ -71,7 +71,7 @@ namespace Made {
 static const MadeGameDescription gameDescriptions[] = {
 
 	{
-		// Made English version
+		// Return to Zork - English CD version
 		{
 			"made",
 			"CD",
@@ -83,6 +83,22 @@ static const MadeGameDescription gameDescriptions[] = {
 		0,
 		0,
 		0,
+		0,
+	},
+
+	{
+		// Return to Zork - Demo
+		{
+			"made",
+			"Demo",
+			AD_ENTRY1("demo.dat", "2a6a1354bd5346fad4aee08e5b56caaa"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		0,
+		0,
+		GF_DEMO,
 		0,
 	},
 
