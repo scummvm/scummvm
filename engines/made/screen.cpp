@@ -73,14 +73,18 @@ void Screen::drawSurface(Graphics::Surface *source, int x, int y) {
 
 }
 
-void Screen::setRGBPalette(byte *palRGB, int start, int count) {
+void Screen::loadRGBPalette(byte *palRGB, int count) {
 	for (int i = 0; i < count; i++) {
-		_palette[i * 4 + 0] = palRGB[i * 3 + 0];
-		_palette[i * 4 + 1] = palRGB[i * 3 + 1];
-		_palette[i * 4 + 2] = palRGB[i * 3 + 2];
-		_palette[i * 4 + 3] = 0;
+		_screenPalette[i * 4 + 0] = palRGB[i * 3 + 0];
+		_screenPalette[i * 4 + 1] = palRGB[i * 3 + 1];
+		_screenPalette[i * 4 + 2] = palRGB[i * 3 + 2];
+		_screenPalette[i * 4 + 3] = 0;
 	}
-	_vm->_system->setPalette(_palette, start, count);
+}
+
+void Screen::setRGBPalette(byte *palRGB, int start, int count) {
+	loadRGBPalette(palRGB, count);
+	_vm->_system->setPalette(_screenPalette, start, count);
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {
@@ -226,6 +230,8 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 	if (flexIndex == 0)
 		return 0;
 
+	if (flexIndex == 1279) return 0;	// HACK: fixes the first screen
+
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
 	Graphics::Surface *sourceSurface = flex->getPicture();
 	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
@@ -248,10 +254,12 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 		dest += clipInfo.destSurface->pitch;
 	}
 
-	// TODO: Palette stuff; palette should be set in showPage
-	byte *pal = flex->getPalette();
-	if (pal) {
-		setRGBPalette(pal);
+	// Palette is set in showPage
+	if (flex->hasPalette()) {
+		byte *pal = flex->getPalette();
+		if (pal != 0) {
+			loadRGBPalette(pal);
+		}
 	}
 
 	_vm->_res->freeResource(flex);

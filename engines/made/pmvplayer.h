@@ -51,7 +51,7 @@ protected:
 	Common::File *_fd;
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
-	byte _palette[768];
+	byte _paletteRGB[768];
 	Graphics::Surface *_surface;
 	bool _abort;
 	void readChunk(uint32 &chunkType, uint32 &chunkSize);

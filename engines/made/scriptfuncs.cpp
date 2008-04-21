@@ -185,12 +185,12 @@ int16 ScriptFunctionsRtz::o1_DRAWPIC(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_CLS(int16 argc, int16 *argv) {
- 	//_vm->_screen->clearScreen();
+ 	_vm->_screen->clearScreen();
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_SHOWPAGE(int16 argc, int16 *argv) {
-	//_vm->_system->setPalette(_vm->_screen->_palette, 0, 256);
+	_vm->_system->setPalette(_vm->_screen->_screenPalette, 0, 256);
 	_vm->_screen->show();
 	return 0;
 }

@@ -68,8 +68,8 @@ void PmvPlayer::play(const char *filename) {
 	_mixer->stopAll();
 
 	// Read palette
-	_fd->read(_palette, 768);
-	_vm->_screen->setRGBPalette(_palette);
+	_fd->read(_paletteRGB, 768);
+	_vm->_screen->setRGBPalette(_paletteRGB);
 
 	uint32 frameCount = 0;
 	uint16 chunkCount = 0;
@@ -116,7 +116,7 @@ void PmvPlayer::play(const char *filename) {
 		if (palChunkOfs) {
 			palData = frameData + palChunkOfs - 8;
 			palSize = READ_LE_UINT32(palData + 4);
-			decompressPalette(palData + 8, _palette, palSize);
+			decompressPalette(palData + 8, _paletteRGB, palSize);
 		}
 
 		// Handle video
@@ -145,7 +145,7 @@ void PmvPlayer::play(const char *filename) {
 			firstTime = false;
 		}
 
-		_vm->_screen->setRGBPalette(_palette);
+		_vm->_screen->setRGBPalette(_paletteRGB);
 		handleEvents();
 		updateScreen();
 

@@ -38,21 +38,26 @@ Resource::~Resource() {
 
 /* PictureResource */
 
-PictureResource::PictureResource() : _picture(NULL), _palette(NULL) {
+PictureResource::PictureResource() : _picture(NULL), _picturePalette(NULL) {
+	_hasPalette = false;
 }
 
 PictureResource::~PictureResource() {
-	if (_picture)
+	if (_picture) {
 		delete _picture;
-	if (_palette)
-		delete[] _palette;
+		_picture = 0;
+	}
+	if (_picturePalette) {
+		delete[] _picturePalette;
+		_picturePalette = 0;
+	}
 }
 
 void PictureResource::load(byte *source, int size) {
 
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
 	
-	bool hasPalette = sourceS->readByte() == 1;
+	_hasPalette = (sourceS->readByte() != 0);
 	sourceS->readByte();
 	sourceS->readByte();
 	sourceS->readByte();
@@ -66,9 +71,9 @@ void PictureResource::load(byte *source, int size) {
 
 	debug(2, "width = %d; height = %d\n", width, height);
 
-	if (hasPalette) {
-		_palette = new byte[768];
-		sourceS->read(_palette, 768);
+	if (_hasPalette) {
+		_picturePalette = new byte[768];
+		sourceS->read(_picturePalette, 768);
 	}
 
 	_picture = new Graphics::Surface();

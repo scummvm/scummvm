@@ -62,10 +62,12 @@ public:
 	~PictureResource();
 	void load(byte *source, int size);
 	Graphics::Surface *getPicture() const { return _picture; }
-	byte *getPalette() const { return _palette; }
+	byte *getPalette() const { return _picturePalette; }
+	bool hasPalette() const { return _hasPalette; }
 protected:
 	Graphics::Surface *_picture;
-	byte *_palette;
+	byte *_picturePalette;
+	bool _hasPalette;
 };
 
 class AnimationResource : public Resource {

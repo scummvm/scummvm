@@ -61,6 +61,7 @@ public:
 	void clearScreen();
 	
 	void drawSurface(Graphics::Surface *source, int x, int y);
+	void loadRGBPalette(byte *palRGB, int count = 256);
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 
 	uint16 updateChannel(uint16 channelIndex);
@@ -99,7 +100,7 @@ public:
 	void setExclude(uint16 exclude);
 	void setGround(uint16 ground);
 
-	byte _palette[256 * 4];
+	byte _screenPalette[256 * 4];
 
 protected:
 	MadeEngine *_vm;
