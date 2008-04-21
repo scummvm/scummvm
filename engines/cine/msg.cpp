@@ -31,45 +31,32 @@
 
 namespace Cine {
 
-uint16 messageCount;
+Common::StringList messageTable;
 
 void loadMsg(char *pMsgName) {
-	uint16 i;
+	int i, count, len;
 	byte *ptr, *dataPtr;
+	const char *messagePtr;
 
 	checkDataDisk(-1);
 
-	messageCount = 0;
-
-	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
-		messageTable[i].len = 0;
-		if (messageTable[i].ptr) {
-			free(messageTable[i].ptr);
-			messageTable[i].ptr = NULL;
-		}
-	}
+	messageTable.clear();
 
 	ptr = dataPtr = readBundleFile(findFileInBundle(pMsgName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	messageCount = READ_BE_UINT16(ptr); ptr += 2;
+	count = READ_BE_UINT16(ptr);
+	ptr += 2;
 
-	assert(messageCount <= NUM_MAX_MESSAGE);
+	messagePtr = (const char*)(ptr + 2 * count);
 
-	for (i = 0; i < messageCount; i++) {
-		messageTable[i].len = READ_BE_UINT16(ptr); ptr += 2;
-	}
-
-	for (i = 0; i < messageCount; i++) {
-		if (messageTable[i].len) {
-			messageTable[i].ptr = (byte *) malloc(messageTable[i].len);
-
-			assert(messageTable[i].ptr);
-
-			memcpy(messageTable[i].ptr, ptr, messageTable[i].len);
-			ptr += messageTable[i].len;
-		}
+	for (i = 0; i < count; i++) {
+		len = READ_BE_UINT16(ptr);
+		ptr += 2;
+		
+		messageTable.push_back(messagePtr);
+		messagePtr += len;
 	}
 
 	free(dataPtr);

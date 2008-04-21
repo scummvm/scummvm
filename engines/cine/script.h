@@ -358,6 +358,7 @@ typedef Common::Array<RawObjectScriptPtr> RawObjectScriptArray;
 
 extern RawScriptArray scriptTable;
 extern FWScriptInfo *scriptInfo;
+extern ScriptVars globalVars;
 
 void setupOpcodes();
 

@@ -186,7 +186,6 @@ static const AnimDataEntry transparencyData[] = {
 };
 
 void convertMask(byte *dest, const byte *source, int16 width, int16 height);
-void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 void convert8BBP(byte *dest, const byte *source, int16 width, int16 height);
 void convert8BBP2(byte *dest, byte *source, int16 width, int16 height);
 

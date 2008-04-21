@@ -36,27 +36,7 @@
 namespace Cine {
 
 objectStruct objectTable[NUM_MAX_OBJECT];
-ScriptVars globalVars(NUM_MAX_VAR);
-overlayHeadElement overlayHead;
-
-void unloadAllMasks(void) {
-	overlayHeadElement *current = overlayHead.next;
-
-	while (current) {
-		overlayHeadElement *next = current->next;
-
-		delete current;
-
-		current = next;
-	}
-
-	resetMessageHead();
-}
-
-void resetMessageHead(void) {
-	overlayHead.next = NULL;
-	overlayHead.previous = NULL;
-}
+Common::List<overlay> overlayList;
 
 void loadObject(char *pObjectName) {
 	uint16 numEntry;
@@ -100,92 +80,88 @@ void loadObject(char *pObjectName) {
 	free(dataPtr);
 }
 
-int8 removeOverlayElement(uint16 objIdx, uint16 param) {
-	overlayHeadElement *currentHeadPtr = &overlayHead;
-	overlayHeadElement *tempHead = currentHeadPtr;
-	overlayHeadElement *tempPtr2;
+/*! \brief Remove overlay sprite from the list
+ * \param objIdx Remove overlay associated with this object
+ * \param param Remove overlay of this type
+ */
+int removeOverlay(uint16 objIdx, uint16 param) {
+	Common::List<overlay>::iterator it;
 
-	currentHeadPtr = tempHead->next;
-
-	while (currentHeadPtr && (currentHeadPtr->objIdx != objIdx || currentHeadPtr->type != param)) {
-		tempHead = currentHeadPtr;
-		currentHeadPtr = tempHead->next;
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		if (it->objIdx == objIdx && it->type == param) {
+			overlayList.erase(it);
+			return 1;
+		}
 	}
-
-	if (!currentHeadPtr || currentHeadPtr->objIdx != objIdx || currentHeadPtr->type != param) {
-		return -1;
-	}
-
-	tempHead->next = tempPtr2 = currentHeadPtr->next;
-
-	if (!tempPtr2) {
-		tempPtr2 = &overlayHead;
-	}
-
-	tempPtr2->previous = currentHeadPtr->previous;
-
-	delete currentHeadPtr;
 
 	return 0;
 }
 
-int16 freeOverlay(uint16 objIdx, uint16 param) {
-	overlayHeadElement *currentHeadPtr = overlayHead.next;
-	overlayHeadElement *previousPtr = &overlayHead;
-	overlayHeadElement *tempPtr2;
+/*! \brief Add new overlay sprite to the list
+ * \param objIdx Associate the overlay with this object
+ * \param param Type of new overlay
+ * \todo Why are x, y, width and color left uninitialized?
+ */
+void addOverlay(uint16 objIdx, uint16 param) {
+	Common::List<overlay>::iterator it;
+	overlay tmp;
 
-	while (currentHeadPtr && ((currentHeadPtr->objIdx != objIdx) || (currentHeadPtr->type != param))) {
-		previousPtr = currentHeadPtr;
-		currentHeadPtr = previousPtr->next;
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		if (objectTable[it->objIdx].mask >= objectTable[objIdx].mask) {
+			break;
+		}
 	}
 
-	if (!currentHeadPtr || !((currentHeadPtr->objIdx == objIdx) && (currentHeadPtr->type == param))) {
-		return -1;
-	}
+	tmp.objIdx = objIdx;
+	tmp.type = param;
 
-	previousPtr->next = tempPtr2 = currentHeadPtr->next;
-
-	if (!tempPtr2) {
-		tempPtr2 = &overlayHead;
-	}
-
-	tempPtr2->previous = currentHeadPtr->previous;
-
-	delete currentHeadPtr;
-	return 0;
+	overlayList.insert(it, tmp);
 }
 
-void loadOverlayElement(uint16 objIdx, uint16 param) {
-	overlayHeadElement *currentHeadPtr = &overlayHead;
-	overlayHeadElement *pNewElement;
+/*! \brief Add new background mask overlay
+ * \param objIdx Associate the overlay with this object
+ * \param param source background index
+ */
+void addGfxElementA0(int16 objIdx, int16 param) {
+	Common::List<overlay>::iterator it;
+	overlay tmp;
 
-	uint16 si = objectTable[objIdx].mask;
-
-	overlayHeadElement *tempHead = currentHeadPtr;
-
-	currentHeadPtr = tempHead->next;
-
-	while (currentHeadPtr && (objectTable[currentHeadPtr->objIdx].mask < si)) {
-		tempHead = currentHeadPtr;
-		currentHeadPtr = tempHead->next;
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		// wtf?!
+		if (objectTable[it->objIdx].mask == objectTable[objIdx].mask &&
+			(it->type == 2 || it->type == 3)) {
+			break;
+		}
 	}
 
-	pNewElement = new overlayHeadElement;
-
-	assert(pNewElement);
-
-	pNewElement->next = tempHead->next;
-	tempHead->next = pNewElement;
-
-	pNewElement->objIdx = objIdx;
-	pNewElement->type = param;
-
-	if (!currentHeadPtr) {
-		currentHeadPtr = &overlayHead;
+	if (it != overlayList.end() && it->objIdx == objIdx && it->type == 20 && it->x == param) {
+		return;
 	}
 
-	pNewElement->previous = currentHeadPtr->previous;
-	currentHeadPtr->previous = pNewElement;
+	tmp.objIdx = objIdx;
+	tmp.type = 20;
+	tmp.x = param;
+	tmp.y = 0;
+	tmp.width = 0;
+	tmp.color = 0;
+
+	overlayList.insert(it, tmp);
+}
+
+/*! \brief Remove background mask overlay
+ * \param objIdx Remove overlay associated with this object
+ * \param param Remove overlay using this background
+ * \todo Check that it works
+ */
+void removeGfxElementA0(int16 objIdx, int16 param) {
+	Common::List<overlay>::iterator it;
+
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		if (it->objIdx == objIdx && it->type == 20 && it->x == param) {
+			overlayList.erase(it);
+			return;
+		}
+	}
 }
 
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
@@ -194,8 +170,8 @@ void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint1
 	objectTable[objIdx].mask = param3;
 	objectTable[objIdx].frame = param4;
 
-	if (!removeOverlayElement(objIdx, 0)) {
-		loadOverlayElement(objIdx, 0);
+	if (removeOverlay(objIdx, 0)) {
+		addOverlay(objIdx, 0);
 	}
 }
 
@@ -223,8 +199,8 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	case 2:
 		objectTable[objIdx].mask = newValue;
 
-		if (!removeOverlayElement(objIdx, 0)) {
-			loadOverlayElement(objIdx, 0);
+		if (removeOverlay(objIdx, 0)) {
+			addOverlay(objIdx, 0);
 		}
 		break;
 	case 3:

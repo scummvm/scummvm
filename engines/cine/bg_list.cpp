@@ -77,7 +77,7 @@ void addToBGList(int16 objIdx, bool addList) {
 void addSpriteFilledToBGList(int16 objIdx, bool addList) {
 	int16 x = objectTable[objIdx].x;
 	int16 y = objectTable[objIdx].y;
-	int16 width = animDataTable[objectTable[objIdx].frame]._width;
+	int16 width = animDataTable[objectTable[objIdx].frame]._realWidth;
 	int16 height = animDataTable[objectTable[objIdx].frame]._height;
 	const byte *data = animDataTable[objectTable[objIdx].frame].data();
 
@@ -86,11 +86,11 @@ void addSpriteFilledToBGList(int16 objIdx, bool addList) {
 		if (g_cine->getGameType() == GType_OS) {
 			for (int i = 0; i < 8; i++) {
 				if (additionalBgTable[i]) {
-					gfxFillSprite(data, width / 2, height, additionalBgTable[i], x, y);
+					gfxFillSprite(data, width, height, additionalBgTable[i], x, y);
 				}
 			}
 		} else {
-			gfxFillSprite(data, width / 2, height, page2Raw, x, y);
+			gfxFillSprite(data, width, height, page2Raw, x, y);
 		}
 	}
 

@@ -42,15 +42,6 @@ void makeActionMenu(void);
 extern bool disableSystemMenu;
 extern bool inMenu;
 
-struct Message {
-	byte *ptr;
-	uint16 len;
-};
-
-#define NUM_MAX_MESSAGE 255
-
-extern Message messageTable[NUM_MAX_MESSAGE];
-
 struct SeqListElement {
 	struct SeqListElement *next;
 	int16 var4;
@@ -149,6 +140,8 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 
 extern int16 additionalBgVScroll;
 
+void removeSeq(uint16 param1, uint16 param2, uint16 param3);
+uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
 void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
 void resetSeqList();
 void processSeqList(void);

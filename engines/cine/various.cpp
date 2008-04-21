@@ -44,7 +44,7 @@ int16 commandVar3[4];
 int16 commandVar1;
 int16 commandVar2;
 
-Message messageTable[NUM_MAX_MESSAGE];
+//Message messageTable[NUM_MAX_MESSAGE];
 
 uint16 var2;
 uint16 var3;
@@ -130,32 +130,16 @@ void runObjectScript(int16 entryIdx) {
 	objectScripts.push_back(tmp);
 }
 
+/*! \brief Add action result message to overlay list
+ * \param cmd Message description
+ * \todo Why are x, y, width and color left uninitialized?
+ */
 void addPlayerCommandMessage(int16 cmd) {
-	overlayHeadElement *currentHeadPtr = overlayHead.next;
-	overlayHeadElement *tempHead = &overlayHead;
-	overlayHeadElement *pNewElement;
+	overlay tmp;
+	tmp.objIdx = cmd;
+	tmp.type = 3;
 
-	while (currentHeadPtr) {
-		tempHead = currentHeadPtr;
-		currentHeadPtr = tempHead->next;
-	}
-
-	pNewElement = new overlayHeadElement;
-
-	assert(pNewElement);
-
-	pNewElement->next = tempHead->next;
-	tempHead->next = pNewElement;
-
-	pNewElement->objIdx = cmd;
-	pNewElement->type = 3;
-
-	if (!currentHeadPtr) {
-		currentHeadPtr = &overlayHead;
-	}
-
-	pNewElement->previous = currentHeadPtr->previous;
-	currentHeadPtr->previous = pNewElement;
+	overlayList.push_back(tmp);
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSelectedObject) {
@@ -180,55 +164,64 @@ int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSel
 	return found;
 }
 
+/*! \brief Find index of the object under cursor
+ * \param x Mouse cursor coordinate
+ * \param y Mouse cursor coordinate
+ * \todo Fix displaced type 1 objects
+ */
 int16 getObjectUnderCursor(uint16 x, uint16 y) {
-	overlayHeadElement *currentHead = overlayHead.previous;
+	Common::List<overlay>::iterator it;
 
 	int16 objX, objY, frame, part, threshold, height, xdif, ydif;
 	int width;
 
-	while (currentHead) {
-		if (currentHead->type < 2) {
-			if (objectTable[currentHead->objIdx].name[0]) {
-				objX = objectTable[currentHead->objIdx].x;
-				objY = objectTable[currentHead->objIdx].y;
-
-				frame = ABS((int16)(objectTable[currentHead->objIdx].frame));
-
-				part = objectTable[currentHead->objIdx].part;
-
-				if (currentHead->type == 0) {
-					threshold = animDataTable[frame]._var1;
-				} else {
-					threshold = animDataTable[frame]._width / 2;
-				}
-
-				height = animDataTable[frame]._height;
-				width = animDataTable[frame]._realWidth;
-
-				xdif = x - objX;
-				ydif = y - objY;
-
-				if ((xdif >= 0) && ((threshold << 4) > xdif) && (ydif > 0) && (ydif < height)) {
-					if (animDataTable[frame].data()) {
-						if (g_cine->getGameType() == Cine::GType_OS) {
-							if(xdif < width && (currentHead->type == 1 || animDataTable[frame].getColor(xdif, ydif) != objectTable[currentHead->objIdx].part)) {
-								return currentHead->objIdx;
-							}
-						} else if (currentHead->type == 0)	{ // use generated mask
-							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].mask(), animDataTable[frame]._width)) {
-								return currentHead->objIdx;
-							}
-						} else if (currentHead->type == 1) { // is mask
-							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].data(), animDataTable[frame]._width * 4)) {
-								return currentHead->objIdx;
-							}
-						}
-					}
-				}
-			}
+	// reverse_iterator would be nice
+	for (it = overlayList.reverse_begin(); it != overlayList.end(); --it) {
+		if (it->type >= 2 || !objectTable[it->objIdx].name[0]) {
+			continue;
 		}
 
-		currentHead = currentHead->previous;
+		objX = objectTable[it->objIdx].x;
+		objY = objectTable[it->objIdx].y;
+
+		frame = ABS((int16)(objectTable[it->objIdx].frame));
+		part = objectTable[it->objIdx].part;
+
+		if (it->type == 0) {
+			threshold = animDataTable[frame]._var1;
+		} else {
+			threshold = animDataTable[frame]._width / 2;
+		}
+
+		height = animDataTable[frame]._height;
+		width = animDataTable[frame]._realWidth;
+
+		xdif = x - objX;
+		ydif = y - objY;
+
+		if ((xdif < 0) || ((threshold << 4) <= xdif) || (ydif < 0) || (ydif >= height) || !animDataTable[frame].data()) {
+			continue;
+		}
+
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			if (xdif >= width) {
+				continue;
+			}
+
+			if (it->type == 0 && animDataTable[frame].getColor(xdif, ydif) != part) {
+				return it->objIdx;
+			} else if (it->type == 1 && gfxGetBit(xdif, ydif, animDataTable[frame].data(), animDataTable[frame]._width * 4)) {
+				return it->objIdx;
+			}
+		} else if (it->type == 0)	{ // use generated mask
+			if (gfxGetBit(xdif, ydif, animDataTable[frame].mask(), animDataTable[frame]._width)) {
+				return it->objIdx;
+			}
+		} else if (it->type == 1) { // is mask
+			if (gfxGetBit(xdif, ydif, animDataTable[frame].data(), animDataTable[frame]._width * 4)) {
+				return it->objIdx;
+			}
+		}
 	}
 
 	return -1;
@@ -285,38 +278,23 @@ void loadScriptFromSave(Common::InSaveFile *fHandle, bool isGlobal) {
 	}
 }
 
-void loadOverlayFromSave(Common::InSaveFile *fHandle) {
-	overlayHeadElement *newElement;
-	overlayHeadElement *currentHead = &overlayHead;
-	overlayHeadElement *tempHead = currentHead;
+/*! \brief Restore overlay sprites from savefile
+ * \param fHandle Savefile open for reading
+ */
+void loadOverlayFromSave(Common::InSaveFile &fHandle) {
+	overlay tmp;
 
-	currentHead = tempHead->next;
+	fHandle.readUint32BE();
+	fHandle.readUint32BE();
 
-	while (currentHead) {
-		tempHead = currentHead;
-		currentHead = tempHead->next;
-	}
+	tmp.objIdx = fHandle.readUint16BE();
+	tmp.type = fHandle.readUint16BE();
+	tmp.x = fHandle.readSint16BE();
+	tmp.y = fHandle.readSint16BE();
+	tmp.width = fHandle.readSint16BE();
+	tmp.color = fHandle.readSint16BE();
 
-	newElement = new overlayHeadElement;
-
-	fHandle->readUint32BE();
-	fHandle->readUint32BE();
-
-	newElement->objIdx = fHandle->readUint16BE();
-	newElement->type = fHandle->readUint16BE();
-	newElement->x = fHandle->readSint16BE();
-	newElement->y = fHandle->readSint16BE();
-	newElement->width = fHandle->readSint16BE();
-	newElement->color = fHandle->readSint16BE();
-
-	newElement->next = tempHead->next;
-	tempHead->next = newElement;
-
-	if (!currentHead)
-		currentHead = &overlayHead;
-
-	newElement->previous = currentHead->previous;
-	currentHead->previous = newElement;
+	overlayList.push_back(tmp);
 }
 
 /*! \brief Savefile format tester
@@ -433,7 +411,7 @@ bool CineEngine::makeLoad(char *saveName) {
 
 	g_sound->stopMusic();
 	freeAnimDataTable();
-	unloadAllMasks();
+	overlayList.clear();
 	// if (g_cine->getGameType() == Cine::GType_OS) {
 	//	freeUnkList();
 	// }
@@ -444,15 +422,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	globalScripts.clear();
 	relTable.clear();
 	scriptTable.clear();
-
-	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
-		messageTable[i].len = 0;
-
-		if (messageTable[i].ptr) {
-			free(messageTable[i].ptr);
-			messageTable[i].ptr = NULL;
-		}
-	}
+	messageTable.clear();
 
 	for (i = 0; i < NUM_MAX_OBJECT; i++) {
 		objectTable[i].part = 0;
@@ -599,7 +569,7 @@ bool CineEngine::makeLoad(char *saveName) {
 
 	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadOverlayFromSave(fHandle);
+		loadOverlayFromSave(*fHandle);
 	}
 
 	loadBgIncrustFromSave(*fHandle);
@@ -722,30 +692,19 @@ void makeSave(char *saveFileName) {
 	}
 
 	{
-		int16 numScript = 0;
-		overlayHeadElement *currentHead = overlayHead.next;
+		Common::List<overlay>::iterator it;
 
-		while (currentHead) {
-			numScript++;
-			currentHead = currentHead->next;
-		}
+		fHandle->writeUint16BE(overlayList.size());
 
-		fHandle->writeUint16BE(numScript);
-
-		// actual save
-		currentHead = overlayHead.next;
-
-		while (currentHead) {
+		for (it = overlayList.begin(); it != overlayList.end(); ++it) {
 			fHandle->writeUint32BE(0);
 			fHandle->writeUint32BE(0);
-			fHandle->writeUint16BE(currentHead->objIdx);
-			fHandle->writeUint16BE(currentHead->type);
-			fHandle->writeSint16BE(currentHead->x);
-			fHandle->writeSint16BE(currentHead->y);
-			fHandle->writeSint16BE(currentHead->width);
-			fHandle->writeSint16BE(currentHead->color);
-
-			currentHead = currentHead->next;
+			fHandle->writeUint16BE(it->objIdx);
+			fHandle->writeUint16BE(it->type);
+			fHandle->writeSint16BE(it->x);
+			fHandle->writeSint16BE(it->y);
+			fHandle->writeSint16BE(it->width);
+			fHandle->writeSint16BE(it->color);
 		}
 	}
 
@@ -762,30 +721,6 @@ void makeSave(char *saveFileName) {
 		fHandle->writeUint16BE(it->frame);
 		fHandle->writeUint16BE(it->part);
 	}
-/*
-	int numBgIncrustList = 0;
-	BGIncrustList *bgIncrustPtr = bgIncrustList;
-
-	while (bgIncrustPtr) {
-		numBgIncrustList++;
-		bgIncrustPtr = bgIncrustPtr->next;
-	}
-
-	fHandle->writeUint16BE(numBgIncrustList);
-	bgIncrustPtr = bgIncrustList;
-	while (bgIncrustPtr) {
-		fHandle->writeUint32BE(0); // next
-		fHandle->writeUint32BE(0); // unkPtr
-		fHandle->writeUint16BE(bgIncrustPtr->objIdx);
-		fHandle->writeUint16BE(bgIncrustPtr->param);
-		fHandle->writeUint16BE(bgIncrustPtr->x);
-		fHandle->writeUint16BE(bgIncrustPtr->y);
-		fHandle->writeUint16BE(bgIncrustPtr->frame);
-		fHandle->writeUint16BE(bgIncrustPtr->part);
-
-		bgIncrustPtr = bgIncrustPtr->next;
-	}
-*/
 
 	delete fHandle;
 
@@ -1682,52 +1617,40 @@ uint16 executePlayerInput(void) {
 	return var_5E;
 }
 
-void drawSprite(overlayHeadElement *currentOverlay, const byte *spritePtr,
-				const byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
-	byte *ptr = NULL;
+void drawSprite(Common::List<overlay>::iterator it, const byte *spritePtr, const byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
 	byte *msk = NULL;
-	byte i = 0;
-	uint16 si = 0;
-	overlayHeadElement *pCurrentOverlay = currentOverlay;
 	int16 maskX, maskY, maskWidth, maskHeight;
 	uint16 maskSpriteIdx;
 
+	msk = (byte *)malloc(width * height);
+
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		drawSpriteRaw2(spritePtr, objectTable[currentOverlay->objIdx].part, width, height, page, x, y);
-		return;
+		generateMask(spritePtr, msk, width * height, objectTable[it->objIdx].part);
+	} else {
+		memcpy(msk, maskPtr, width * height);
 	}
 
-	while (pCurrentOverlay) {
-		if (pCurrentOverlay->type == 5) {
-			if (!si) {
-				ptr = (byte *)malloc(width * 8 * height);
-				msk = (byte *)malloc(width * 8 * height);
-				si = 1;
-			}
-
-			maskX = objectTable[pCurrentOverlay->objIdx].x;
-			maskY = objectTable[pCurrentOverlay->objIdx].y;
-
-			maskSpriteIdx = objectTable[pCurrentOverlay->objIdx].frame;
-
-			maskWidth = animDataTable[maskSpriteIdx]._width / 2;
-			maskHeight = animDataTable[maskSpriteIdx]._height;
-			gfxUpdateSpriteMask(spritePtr, maskPtr, width, height, animDataTable[maskSpriteIdx].data(), maskWidth, maskHeight, ptr, msk, x, y, maskX, maskY, i++);
-#ifdef DEBUG_SPRITE_MASK
-			gfxFillSprite(animDataTable[maskSpriteIdx].data(), maskWidth, maskHeight, page, maskX, maskY, 1);
-#endif
+	for (++it; it != overlayList.end(); ++it) {
+		if (it->type != 5) {
+			continue;
 		}
 
-		pCurrentOverlay = pCurrentOverlay->next;
+		maskX = objectTable[it->objIdx].x;
+		maskY = objectTable[it->objIdx].y;
+
+		maskSpriteIdx = ABS((int16)(objectTable[it->objIdx].frame));
+
+		maskWidth = animDataTable[maskSpriteIdx]._realWidth;
+		maskHeight = animDataTable[maskSpriteIdx]._height;
+		gfxUpdateSpriteMask(msk, x, y, width, height, animDataTable[maskSpriteIdx].data(), maskX, maskY, maskWidth, maskHeight);
+
+#ifdef DEBUG_SPRITE_MASK
+		gfxFillSprite(animDataTable[maskSpriteIdx].data(), maskWidth, maskHeight, page, maskX, maskY, 1);
+#endif
 	}
 
-	if (si) {
-		gfxDrawMaskedSprite(ptr, msk, width, height, page, x, y);
-		free(ptr);
-		free(msk);
-	} else {
-		gfxDrawMaskedSprite(spritePtr, maskPtr, width, height, page, x, y);
-	}
+	gfxDrawMaskedSprite(spritePtr, msk, width, height, page, x, y);
+	free(msk);
 }
 
 int16 additionalBgVScroll = 0;
@@ -1824,18 +1747,15 @@ void drawMessage(const char *messagePtr, int16 x, int16 y, int16 width, int16 co
 }
 
 void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
-	const char *messagePtr = (const char *)messageTable[msgIdx].ptr;
-
-	if (!messagePtr) {
-		freeOverlay(msgIdx, 2);
+	if (msgIdx >= messageTable.size()) {
+		removeOverlay(msgIdx, 2);
 		return;
 	}
 
-	_messageLen += strlen(messagePtr);
+	_messageLen += messageTable[msgIdx].size();
+	drawMessage(messageTable[msgIdx].c_str(), x, y, width, color);
 
-	drawMessage(messagePtr, x, y, width, color);
-
-	freeOverlay(msgIdx, 2);
+	removeOverlay(msgIdx, 2);
 }
 
 void drawFailureMessage(byte cmd) {
@@ -1857,161 +1777,129 @@ void drawFailureMessage(byte cmd) {
 
 	drawMessage(messagePtr, x, y, width, color);
 
-	freeOverlay(cmd, 3);
+	removeOverlay(cmd, 3);
 }
 
-/*! \todo Fix Operation Stealth logo in intro (the green text after the plane
- * takes off). Each letter should slowly grow top-down, it has something to
- * do with object 10 (some mask or something)
- */
 void drawOverlays(void) {
-	uint16 partVar1, partVar2;
+	uint16 width, height;
 	AnimData *pPart;
-	overlayHeadElement *currentOverlay, *nextOverlay;
 	int16 x, y;
 	objectStruct *objPtr;
 	byte messageIdx;
-	int16 part;
+	Common::List<overlay>::iterator it;
 
 	backupOverlayPage();
 
 	_messageLen = 0;
 
-	currentOverlay = (&overlayHead)->next;
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		switch (it->type) {
+		case 0: // sprite
+			assert(it->objIdx < NUM_MAX_OBJECT);
 
-	while (currentOverlay) {
-		nextOverlay = currentOverlay->next;
+			objPtr = &objectTable[it->objIdx];
+			x = objPtr->x;
+			y = objPtr->y;
 
-		switch (currentOverlay->type) {
-		case 0:	// sprite
-			{
-				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
-
-				objPtr = &objectTable[currentOverlay->objIdx];
-
-				x = objPtr->x;
-				y = objPtr->y;
-
-				if (objPtr->frame >= 0) {
-					if (g_cine->getGameType() == Cine::GType_OS) {
-						pPart = &animDataTable[objPtr->frame];
-
-						partVar1 = pPart->_var1;
-						partVar2 = pPart->_height;
-
-						if (pPart->data()) {
-							// NOTE: is the mask supposed to be in data()? Shouldn't that be mask(), like below?
-							// OS sprites don't use masks, see drawSprite() -- next_ghost
-							drawSprite(currentOverlay, pPart->data(), pPart->data(), partVar1, partVar2, page1Raw, x, y);
-						}
-					} else {
-						part = objPtr->part;
-
-						assert(part >= 0 && part <= NUM_MAX_ANIMDATA);
-
-						pPart = &animDataTable[objPtr->frame];
-
-						partVar1 = pPart->_var1;
-						partVar2 = pPart->_height;
-
-						if (pPart->data()) {
-							drawSprite(currentOverlay, pPart->data(), pPart->mask(), partVar1, partVar2, page1Raw, x, y);
-						}
-					}
-				}
-				break;
+			if (objPtr->frame < 0) {
+				continue;
 			}
+
+			pPart = &animDataTable[objPtr->frame];
+			width = pPart->_realWidth;
+			height = pPart->_height;
+
+			if (!pPart->data()) {
+				continue;
+			}
+
+			// drawSprite ignores masks of Operation Stealth sprites
+			drawSprite(it, pPart->data(), pPart->mask(), width, height, page1Raw, x, y);
+			break;
+
 		case 2:	// text
-			{
-				// gfxWaitVSync();
-				// hideMouse();
+			// gfxWaitVSync();
+			// hideMouse();
 
-				messageIdx = currentOverlay->objIdx;
-				x = currentOverlay->x;
-				y = currentOverlay->y;
-				partVar1 = currentOverlay->width;
-				partVar2 = currentOverlay->color;
+			messageIdx = it->objIdx;
+			x = it->x;
+			y = it->y;
+			width = it->width;
+			height = it->color;
 
-				blitRawScreen(page1Raw);
+			blitRawScreen(page1Raw);
 
-				drawDialogueMessage(messageIdx, x, y, partVar1, partVar2);
+			drawDialogueMessage(messageIdx, x, y, width, height);
 
-				// blitScreen(page0, NULL);
-				// gfxRedrawMouseCursor();
+			// blitScreen(page0, NULL);
+			// gfxRedrawMouseCursor();
 
-				waitForPlayerClick = 1;
+			waitForPlayerClick = 1;
 
-				break;
-			}
+			break;
+
 		case 3:
-			{
-				// gfxWaitSync()
-				// hideMouse();
+			// gfxWaitSync()
+			// hideMouse();
 
-				blitRawScreen(page1Raw);
+			blitRawScreen(page1Raw);
 
-				drawFailureMessage(currentOverlay->objIdx);
+			drawFailureMessage(it->objIdx);
 
-				// blitScreen(page0, NULL);
-				// gfxRedrawMouseCursor();
+			// blitScreen(page0, NULL);
+			// gfxRedrawMouseCursor();
 
-				waitForPlayerClick = 1;
+			waitForPlayerClick = 1;
 
-				break;
-			}
+			break;
+
 		case 4:
-			{
-				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
+			assert(it->objIdx < NUM_MAX_OBJECT);
 
-				objPtr = &objectTable[currentOverlay->objIdx];
+			objPtr = &objectTable[it->objIdx];
+			x = objPtr->x;
+			y = objPtr->y;
 
-				x = objPtr->x;
-				y = objPtr->y;
-
-
-				if (objPtr->frame >= 0) {
-					part = objPtr->part;
-
-					assert(part >= 0 && part <= NUM_MAX_ANIMDATA);
-
-					pPart = &animDataTable[objPtr->frame];
-
-					partVar1 = pPart->_width / 2;
-					partVar2 = pPart->_height;
-
-					if (pPart->data()) {
-						gfxFillSprite(pPart->data(), partVar1, partVar2, page1Raw, x, y);
-					}
-				}
-				break;
+			if (objPtr->frame < 0) {
+				continue;
 			}
+
+			assert(objPtr->frame < NUM_MAX_ANIMDATA);
+
+			pPart = &animDataTable[objPtr->frame];
+
+			width = pPart->_realWidth;
+			height = pPart->_height;
+
+			if (!pPart->data()) {
+				continue;
+			}
+
+			gfxFillSprite(pPart->data(), width, height, page1Raw, x, y);
+			break;
+
 		case 20:
-			{
-				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
+			assert(it->objIdx < NUM_MAX_OBJECT);
 
-				objPtr = &objectTable[currentOverlay->objIdx];
+			objPtr = &objectTable[it->objIdx];
+			x = objPtr->x;
+			y = objPtr->y;
+			var5 = it->x;
 
-				x = objPtr->x;
-				y = objPtr->y;
-
-				var5 = currentOverlay->x;
-
-				if (objPtr->frame >= 0 && var5 <= 8 && additionalBgTable[var5] && animDataTable[objPtr->frame]._bpp == 1) {
-					int16 x2;
-					int16 y2;
-
-					x2 = animDataTable[objPtr->frame]._width / 2;
-					y2 = animDataTable[objPtr->frame]._height;
-
-					if (animDataTable[objPtr->frame].data()) {
-						maskBgOverlay(additionalBgTable[var5], animDataTable[objPtr->frame].data(), x2, y2, page1Raw, x, y);
-					}
-				}
-				break;
+			if (objPtr->frame < 0 || var5 > 8 || !additionalBgTable[var5] || animDataTable[objPtr->frame]._bpp != 1) {
+				continue;
 			}
-		}
 
-		currentOverlay = nextOverlay;
+			width = animDataTable[objPtr->frame]._realWidth;
+			height = animDataTable[objPtr->frame]._height;
+
+			if (!animDataTable[objPtr->frame].data()) {
+				continue;
+			}
+
+			maskBgOverlay(additionalBgTable[var5], animDataTable[objPtr->frame].data(), width, height, page1Raw, x, y);
+			break;
+		}
 	}
 }
 
@@ -2040,8 +1928,7 @@ void checkForPendingDataLoad(void) {
 	}
 
 	if (newObjectName[0] != 0) {
-		unloadAllMasks();
-		resetMessageHead();
+		overlayList.clear();
 
 		loadObject(newObjectName);
 
@@ -2071,39 +1958,49 @@ void removeExtention(char *dest, const char *source) {
 }
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5) {
-	overlayHeadElement *currentHead = &overlayHead;
-	overlayHeadElement *tempHead = currentHead;
-	overlayHeadElement *newElement;
+	overlay tmp;
 
-	currentHead = tempHead->next;
+	tmp.objIdx = param1;
+	tmp.type = 2;
+	tmp.x = param2;
+	tmp.y = param3;
+	tmp.width = param4;
+	tmp.color = param5;
 
-	while (currentHead) {
+	overlayList.push_back(tmp);
+}
+
+SeqListElement seqList;
+
+void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
+	SeqListElement *currentHead = &seqList;
+	SeqListElement *tempHead = currentHead;
+
+	while (currentHead && (currentHead->var6 != param1 || currentHead->var4 != param2 || currentHead->varE != param3)) {
 		tempHead = currentHead;
 		currentHead = tempHead->next;
 	}
 
-	newElement = new overlayHeadElement;
-
-	newElement->next = tempHead->next;
-	tempHead->next = newElement;
-
-	newElement->objIdx = param1;
-	newElement->type = 2;
-
-	newElement->x = param2;
-	newElement->y = param3;
-	newElement->width = param4;
-	newElement->color = param5;
-
-	if (!currentHead)
-		currentHead = &overlayHead;
-
-	newElement->previous = currentHead->previous;
-
-	currentHead->previous = newElement;
+	if (currentHead && currentHead->var6 == param1 && currentHead->var4 == param2 && currentHead->varE == param3) {
+		currentHead->var4 = -1;
+	}
 }
 
-SeqListElement seqList;
+uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
+	SeqListElement *currentHead = &seqList;
+	SeqListElement *tempHead = currentHead;
+
+	while (currentHead && (currentHead->var6 != param1 || currentHead->var4 != param2 || currentHead->varE != param3)) {
+		tempHead = currentHead;
+		currentHead = tempHead->next;
+	}
+
+	if (currentHead && currentHead->var6 == param1 && currentHead->var4 == param2 && currentHead->varE == param3) {
+		return 1;
+	}
+
+	return 0;
+}
 
 void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
 	SeqListElement *currentHead = &seqList;

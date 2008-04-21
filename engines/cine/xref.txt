@@ -144,3 +144,10 @@ bg_list.cpp
 reincrustAllBg() - removed (obsoleted by new loadResourcesFromSave() and
 	loadBgIncrustFromSave() implementation)
 freeBgIncrustList() - removed (obsoleted by Common::List::clear())
+
+object.cpp
+unloadAllMasks() - removed (obsoleted by Common::List::clear())
+resetMessageHead() - removed (obsoleted by Common::List)
+freeOverlay() - removed (duplicate of removeOverlay)
+removeOverlayElement() - renamed to removeOverlay
+loadOverlayElement() - renamed to addOverlay

@@ -129,14 +129,12 @@ void CineEngine::initialize() {
 	globalScripts.clear();
 	bgIncrustList.clear();
 	freeAnimDataTable();
+	overlayList.clear();
+	messageTable.clear();
 
 	memset(objectTable, 0, sizeof(objectTable));
-	memset(messageTable, 0, sizeof(messageTable));
-
-	overlayHead.next = overlayHead.previous = NULL;
 
 	var8 = 0;
-//	bgIncrustList = NULL;
 
 	var2 = var3 = var4 = var5 = 0;
 

@@ -53,8 +53,7 @@ void gfxFlipPage(void);
 void gfxDrawMaskedSprite(const byte *ptr, const byte *msk, uint16 width, uint16 height, byte *page, int16 x, int16 y);
 void gfxFillSprite(const byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy, uint8 fillColor = 0);
 
-void gfxUpdateSpriteMask(const byte *spritePtr, const byte *spriteMskPtr, int16 width, int16 height, const byte *maskPtr,
-    int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx);
+void gfxUpdateSpriteMask(byte *destMask, int16 x, int16 y, int16 width, int16 height, const byte *maskPtr, int16 xm, int16 ym, int16 maskWidth, int16 maskHeight);
 
 void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
 void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);

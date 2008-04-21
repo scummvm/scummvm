@@ -189,7 +189,6 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	quitFlag = 0;
 
 	if (_preLoad == false) {
-		resetMessageHead();
 		resetSeqList();
 		resetBgIncrustList();
 
@@ -315,7 +314,6 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 	hideMouse();
 	g_sound->stopMusic();
-	unloadAllMasks();
 	// if (g_cine->getGameType() == Cine::GType_OS) {
 	//	freeUnkList();
 	// }

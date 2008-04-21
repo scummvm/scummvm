@@ -50,7 +50,7 @@ byte loadCt(const char *ctName) {
 		uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 		if (bpp == 8) {
 			ctColorMode = 1;
-			memcpy(newPalette, ptr, 256*3);
+			memcpy(newPalette, ptr, 256 * 3);
 			ptr += 3 * 256;
 			memcpy(page3Raw, ptr, 320 * 200);
 		} else {
@@ -134,13 +134,11 @@ void addBackground(const char *bgName, uint16 bgIdx) {
 
 	additionalBgTable[bgIdx] = (byte *) malloc(320 * 200);
 
-	debug("addBackground %d", bgIdx);
-
 	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 
 	if (bpp == 8) {
 		bgColorMode = 1;
-		memcpy(newPalette, ptr, 256*3);
+		memcpy(newPalette, ptr, 256 * 3);
 		ptr += 3 * 256;
 		memcpy(additionalBgTable[bgIdx], ptr, 320 * 200);
 	} else {

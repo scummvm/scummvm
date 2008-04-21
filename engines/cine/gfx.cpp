@@ -25,6 +25,7 @@
 
 #include "cine/cine.h"
 #include "cine/bg.h"
+#include "cine/bg_list.h"
 #include "cine/various.h"
 
 #include "common/endian.h"
@@ -168,7 +169,7 @@ void gfxFillSprite(const byte *spritePtr, uint16 width, uint16 height, byte *pag
 		byte *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
-		for (j = 0; j < width * 8; j++) {
+		for (j = 0; j < width; j++) {
 			if (x + j >= 0 && x + j < 320 && i + y >= 0
 			    && i + y < 200) {
 				if (!*(spritePtr++)) {
@@ -191,7 +192,7 @@ void gfxDrawMaskedSprite(const byte *spritePtr, const byte *maskPtr, uint16 widt
 		byte *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
-		for (j = 0; j < width * 8; j++) {
+		for (j = 0; j < width; j++) {
 			if (x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200 && *maskPtr == 0) {
 				*destPtr = *spritePtr;
 			}
@@ -202,61 +203,82 @@ void gfxDrawMaskedSprite(const byte *spritePtr, const byte *maskPtr, uint16 widt
 	}
 }
 
-void gfxUpdateSpriteMask(const byte *spritePtr, const byte *spriteMskPtr, int16 width, int16 height, const byte *maskPtr,
-	int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx) {
+void gfxUpdateSpriteMask(byte *destMask, int16 x, int16 y, int16 width, int16 height, const byte *srcMask, int16 xm, int16 ym, int16 maskWidth, int16 maskHeight) {
 	int16 i, j, d, spritePitch, maskPitch;
-
-	width *= 8;
-	maskWidth *= 8;
 
 	spritePitch = width;
 	maskPitch = maskWidth;
 
-	if (maskIdx == 0) {
-		memcpy(bufferSprPtr, spritePtr, spritePitch * height);
-		memcpy(bufferMskPtr, spriteMskPtr, spritePitch * height);
-	}
-
-	if (ys > ym) {
-		d = ys - ym;
-		maskPtr += d * maskPitch;
+	// crop update area to overlapping parts of masks
+	if (y > ym) {
+		d = y - ym;
+		srcMask += d * maskPitch;
 		maskHeight -= d;
-	}
-	if (maskHeight <= 0) {
-		return;
-	}
-	if (xs > xm) {
-		d = xs - xm;
-		maskPtr += d;
-		maskWidth -= d;
-	}
-	if (maskWidth <= 0) {
-		return;
-	}
-	if (ys < ym) {
-		d = ym - ys;
-		spriteMskPtr += d * spritePitch;
-		bufferMskPtr += d * spritePitch;
+	} else if (y < ym) {
+		d = ym - y;
+		destMask += d * spritePitch;
 		height -= d;
 	}
-	if (height <= 0) {
-		return;
-	}
-	if (xs < xm) {
-		d = xm - xs;
-		spriteMskPtr += d;
-		bufferMskPtr += d;
+
+	if (x > xm) {
+		d = x - xm;
+		srcMask += d;
+		maskWidth -= d;
+	} else if (x < xm) {
+		d = xm - x;
+		destMask += d;
 		width -= d;
 	}
-	if (width <= 0) {
-		return;
-	}
+
+	// update mask
 	for (j = 0; j < MIN(maskHeight, height); ++j) {
 		for (i = 0; i < MIN(maskWidth, width); ++i) {
-			bufferMskPtr[i] |= maskPtr[i] ^ 1;
+			destMask[i] |= srcMask[i] ^ 1;
 		}
-		bufferMskPtr += spritePitch;
-		maskPtr += maskPitch;
+		destMask += spritePitch;
+		srcMask += maskPitch;
+	}
+}
+
+void gfxUpdateIncrustMask(byte *destMask, int16 x, int16 y, int16 width, int16 height, const byte *srcMask, int16 xm, int16 ym, int16 maskWidth, int16 maskHeight) {
+	int16 i, j, d, spritePitch, maskPitch;
+
+	spritePitch = width;
+	maskPitch = maskWidth;
+
+	// crop update area to overlapping parts of masks
+	if (y > ym) {
+		d = y - ym;
+		srcMask += d * maskPitch;
+		maskHeight -= d;
+	} else if (y < ym) {
+		d = ym - y > height ? height : ym - y;
+		memset(destMask, 1, d * spritePitch);
+		destMask += d * spritePitch;
+		height -= d;
+	}
+
+	if (x > xm) {
+		d = x - xm;
+		xm = x;
+		srcMask += d;
+		maskWidth -= d;
+	}
+
+	d = xm - x;
+	maskWidth += d;
+
+	// update mask
+	for (j = 0; j < MIN(maskHeight, height); ++j) {
+		for (i = 0; i < width; ++i) {
+			destMask[i] |= i < d || i >= maskWidth ? 1 : srcMask[i - d];
+		}
+		destMask += spritePitch;
+		srcMask += maskPitch;
+	}
+
+	if (j < height) {
+		memset(destMask, 1, (height - j) * spritePitch);
 	}
 }
 
@@ -431,15 +453,19 @@ void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 h
 
 void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 height,
 				   byte *page, int16 x, int16 y) {
-	int16 i, j;
+	int16 i, j, tmpWidth, tmpHeight;
+	Common::List<BGIncrust>::iterator it;
+	byte *mask;
+	const byte *backup = maskPtr;
 
+	// background pass
 	for (i = 0; i < height; i++) {
 		byte *destPtr = page + x + y * 320;
 		const byte *srcPtr = bgPtr + x + y * 320;
 		destPtr += i * 320;
 		srcPtr += i * 320;
 
-		for (j = 0; j < width * 8; j++) {
+		for (j = 0; j < width; j++) {
 			if ((!maskPtr || !(*maskPtr)) && (x + j >= 0
 					&& x + j < 320 && i + y >= 0 && i + y < 200)) {
 				*destPtr = *srcPtr;
@@ -449,6 +475,27 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 			srcPtr++;
 			maskPtr++;
 		}
+	}
+
+	maskPtr = backup;
+
+	// incrust pass
+	for (it = bgIncrustList.begin(); it != bgIncrustList.end(); ++it) {
+		tmpWidth = animDataTable[it->frame]._realWidth;
+		tmpHeight = animDataTable[it->frame]._height;
+		mask = (byte*)malloc(tmpWidth * tmpHeight);
+
+		if (it->param == 0) {
+			generateMask(animDataTable[it->frame].data(), mask, tmpWidth * tmpHeight, it->part);
+			gfxUpdateIncrustMask(mask, it->x, it->y, tmpWidth, tmpHeight, maskPtr, x, y, width, height);
+			gfxDrawMaskedSprite(animDataTable[it->frame].data(), mask, tmpWidth, tmpHeight, page, it->x, it->y);
+		} else {
+			memcpy(mask, animDataTable[it->frame].data(), tmpWidth * tmpHeight);
+			gfxUpdateIncrustMask(mask, it->x, it->y, tmpWidth, tmpHeight, maskPtr, x, y, width, height);
+			gfxFillSprite(mask, tmpWidth, tmpHeight, page, it->x, it->y);
+		}
+
+		free(mask);
 	}
 }
 

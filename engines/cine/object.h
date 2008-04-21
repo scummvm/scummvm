@@ -40,9 +40,7 @@ struct objectStruct {
 	uint16 part;
 };
 
-struct overlayHeadElement {
-	struct overlayHeadElement *next;
-	struct overlayHeadElement *previous;
+struct overlay {
 	uint16 objIdx;
 	uint16 type;
 	int16 x;
@@ -55,22 +53,19 @@ struct overlayHeadElement {
 #define NUM_MAX_VAR 256
 
 extern objectStruct objectTable[NUM_MAX_OBJECT];
-extern ScriptVars globalVars;
 
-extern overlayHeadElement overlayHead;
-
-void unloadAllMasks(void);
-void resetMessageHead(void);
+extern Common::List<overlay> overlayList;
 
 void loadObject(char *pObjectName);
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 
-void loadOverlayElement(uint16 objIdx, uint16 param);
-int8 removeOverlayElement(uint16 objIdx, uint16 param);
+void addOverlay(uint16 objIdx, uint16 param);
+int removeOverlay(uint16 objIdx, uint16 param);
+void addGfxElementA0(int16 objIdx, int16 param);
+void removeGfxElementA0(int16 objIdx, int16 param);
 
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx);
-int16 freeOverlay(uint16 objIdx, uint16 param);
 
 void addObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 void subObjectParam(byte objIdx, byte paramIdx, int16 newValue);

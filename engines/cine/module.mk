@@ -14,7 +14,8 @@ MODULE_OBJS = \
 	part.o \
 	prc.o \
 	rel.o \
-	script.o \
+	script_fw.o \
+	script_os.o \
 	sound.o \
 	texte.o \
 	unpack.o \

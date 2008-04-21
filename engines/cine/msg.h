@@ -26,7 +26,13 @@
 #ifndef CINE_MSG_H
 #define CINE_MSG_H
 
+#include "common/str.h"
+
 namespace Cine {
+
+#define NUM_MAX_MESSAGE 255
+
+extern Common::StringList messageTable;
 
 void loadMsg(char *pMsgName);
 
