@@ -73,15 +73,14 @@ void Screen::drawSurface(Graphics::Surface *source, int x, int y) {
 
 }
 
-void Screen::setRGBPalette(byte *palette, int start, int count) {
-	byte colors[1024];
+void Screen::setRGBPalette(byte *palRGB, int start, int count) {
 	for (int i = 0; i < count; i++) {
-		colors[i * 4 + 0] = palette[i * 3 + 0];
-		colors[i * 4 + 1] = palette[i * 3 + 1];
-		colors[i * 4 + 2] = palette[i * 3 + 2];
-		colors[i * 4 + 3] = 0;
+		_palette[i * 4 + 0] = palRGB[i * 3 + 0];
+		_palette[i * 4 + 1] = palRGB[i * 3 + 1];
+		_palette[i * 4 + 2] = palRGB[i * 3 + 2];
+		_palette[i * 4 + 3] = 0;
 	}
-	_vm->_system->setPalette(colors, start, count);
+	_vm->_system->setPalette(_palette, start, count);
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {
@@ -251,13 +250,8 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 
 	// TODO: Palette stuff; palette should be set in showPage
 	byte *pal = flex->getPalette();
-	if (pal) {		
-		for (int i = 0; i < 256; i++) {
-			_palette[i * 4 + 0] = pal[i * 3 + 0];
-			_palette[i * 4 + 1] = pal[i * 3 + 1];
-			_palette[i * 4 + 2] = pal[i * 3 + 2];
-		}
-		_vm->_system->setPalette(_palette, 0, 256);
+	if (pal) {
+		setRGBPalette(pal);
 	}
 
 	_vm->_res->freeResource(flex);

@@ -61,7 +61,7 @@ public:
 	void clearScreen();
 	
 	void drawSurface(Graphics::Surface *source, int x, int y);
-	void setRGBPalette(byte *palette, int start = 0, int count = 256);
+	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
