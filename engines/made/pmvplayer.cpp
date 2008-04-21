@@ -41,18 +41,25 @@ void PmvPlayer::play(const char *filename) {
 
 	_mixer->stopAll();
 
-	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
-
 	// Read palette
 	_fd->read(_palette, 768);
 	updatePalette();
 
 	uint32 frameCount = 0;
+	uint16 chunkCount = 0;
+	uint32 soundSize = 0;
+	uint32 palChunkOfs = 0;
+	uint32 palSize = 0;
+	byte *frameData, *audioData, *soundData, *palData, *imageData;
+	bool firstTime = true;
+
+	uint32 frameNum;
+	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
 
 	// TODO: Sound can still be a little choppy. A bug in the decoder or -
 	// perhaps more likely - do we have to implement double buffering to
 	// get it to work well?
+	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
 
 	while (!_abort && !_fd->eof()) {
 
@@ -61,42 +68,41 @@ void PmvPlayer::play(const char *filename) {
 		if (_fd->eof())
 			break;
 
-		byte *frameData = new byte[chunkSize];
+		frameData = new byte[chunkSize];
 		_fd->read(frameData, chunkSize);
 
 		// Handle audio
-		byte *audioData = frameData + READ_LE_UINT32(frameData + 8) - 8;
+		audioData = frameData + READ_LE_UINT32(frameData + 8) - 8;
 		chunkSize = READ_LE_UINT16(audioData + 4);
-		uint16 chunkCount = READ_LE_UINT16(audioData + 6);
+		chunkCount = READ_LE_UINT16(audioData + 6);
 
 		if (chunkCount > 50) break;	// FIXME: this is a hack
 
 		debug(2, "chunkCount = %d; chunkSize = %d\n", chunkCount, chunkSize);
 
-		uint32 soundSize = chunkCount * chunkSize;
-		byte *soundData = new byte[soundSize];
+		soundSize = chunkCount * chunkSize;
+		soundData = new byte[soundSize];
 		decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
 		_audioStream->queueBuffer(soundData, soundSize);
 
 		// Handle palette
-		uint32 palChunkOfs = READ_LE_UINT32(frameData + 16);
+		palChunkOfs = READ_LE_UINT32(frameData + 16);
 		if (palChunkOfs) {
-			byte *palData = frameData + palChunkOfs - 8;
-			uint32 palSize = READ_LE_UINT32(palData + 4);
+			palData = frameData + palChunkOfs - 8;
+			palSize = READ_LE_UINT32(palData + 4);
 			decompressPalette(palData + 8, _palette, palSize);
-			updatePalette();
 		}
 
 		// Handle video
-		byte *imageData = frameData + READ_LE_UINT32(frameData + 12) - 8;
+		imageData = frameData + READ_LE_UINT32(frameData + 12) - 8;
 
-		uint32 frameNum = READ_LE_UINT32(frameData);
-		uint16 width = READ_LE_UINT16(imageData + 8);
-		uint16 height = READ_LE_UINT16(imageData + 10);
-		uint16 cmdOffs = READ_LE_UINT16(imageData + 12);
-		uint16 pixelOffs = READ_LE_UINT16(imageData + 16);
-		uint16 maskOffs = READ_LE_UINT16(imageData + 20);
-		uint16 lineSize = READ_LE_UINT16(imageData + 24);
+		frameNum = READ_LE_UINT32(frameData);
+		width = READ_LE_UINT16(imageData + 8);
+		height = READ_LE_UINT16(imageData + 10);
+		cmdOffs = READ_LE_UINT16(imageData + 12);
+		pixelOffs = READ_LE_UINT16(imageData + 16);
+		maskOffs = READ_LE_UINT16(imageData + 20);
+		lineSize = READ_LE_UINT16(imageData + 24);
 
 		debug(2, "width = %d; height = %d; cmdOffs = %04X; pixelOffs = %04X; maskOffs = %04X; lineSize = %d\n",
 			width, height, cmdOffs, pixelOffs, maskOffs, lineSize);
@@ -107,13 +113,19 @@ void PmvPlayer::play(const char *filename) {
 		}
 
 		decompressImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize, frameNum > 0);
+	
+		if (firstTime) {
+			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+			firstTime = false;
+		}
 
-		delete[] frameData;
-			
+		updatePalette();
 		handleEvents();
 		updateScreen();
 
 		frameCount++;
+
+		delete[] frameData;
 
 		while (_mixer->getSoundElapsedTime(_audioStreamHandle) < frameCount * frameDelay) {
 			_system->delayMillis(10);
