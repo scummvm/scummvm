@@ -190,6 +190,9 @@ endif
 ifndef DISABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
 endif
+ifndef DISABLE_M4
+DIST_FILES_ENGINEDATA+=m4.dat
+endif
 ifndef DISABLE_QUEEN
 DIST_FILES_ENGINEDATA+=queen.tbl
 endif
