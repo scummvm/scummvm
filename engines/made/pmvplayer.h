@@ -32,6 +32,7 @@ protected:
 	void handleEvents();
 	void updatePalette();
 	void updateScreen();
+	void decompressPalette(byte *palData, byte *outPal, uint32 palDataSize);
 };
 
 }

@@ -48,8 +48,6 @@ void PmvPlayer::play(const char *filename) {
 	_fd->read(_palette, 768);
 	updatePalette();
 
-	//FILE *raw = fopen("track.raw", "wb");
-
 	uint32 frameCount = 0;
 
 	// TODO: Sound can still be a little choppy. A bug in the decoder or -
@@ -66,6 +64,7 @@ void PmvPlayer::play(const char *filename) {
 		byte *frameData = new byte[chunkSize];
 		_fd->read(frameData, chunkSize);
 
+		// Handle audio
 		byte *audioData = frameData + READ_LE_UINT32(frameData + 8) - 8;
 		chunkSize = READ_LE_UINT16(audioData + 4);
 		uint16 chunkCount = READ_LE_UINT16(audioData + 6);
@@ -78,9 +77,17 @@ void PmvPlayer::play(const char *filename) {
 		byte *soundData = new byte[soundSize];
 		decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
 		_audioStream->queueBuffer(soundData, soundSize);
-		
-		//fwrite(soundData, soundSize, 1, raw);
 
+		// Handle palette
+		uint32 palChunkOfs = READ_LE_UINT32(frameData + 16);
+		if (palChunkOfs) {
+			byte *palData = frameData + palChunkOfs - 8;
+			uint32 palSize = READ_LE_UINT32(palData + 4);
+			decompressPalette(palData + 8, _palette, palSize);
+			updatePalette();
+		}
+
+		// Handle video
 		byte *imageData = frameData + READ_LE_UINT32(frameData + 12) - 8;
 
 		uint32 frameNum = READ_LE_UINT32(frameData);
@@ -101,16 +108,17 @@ void PmvPlayer::play(const char *filename) {
 
 		decompressImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize, frameNum > 0);
 
+		delete[] frameData;
+			
 		handleEvents();
 		updateScreen();
-
-		delete[] frameData;
 
 		frameCount++;
 
 		while (_mixer->getSoundElapsedTime(_audioStreamHandle) < frameCount * frameDelay) {
 			_system->delayMillis(10);
 		}
+
 	}
 
 	_audioStream->finish();
@@ -120,15 +128,14 @@ void PmvPlayer::play(const char *filename) {
 	delete _fd;
 	delete _surface;
 
-	//fclose(raw);
-
 }
 
 void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
 	chunkType = _fd->readUint32BE();
 	chunkSize = _fd->readUint32LE();
 
-	debug(2, "chunkType = %c%c%c%c; chunkSize = %d\n",
+	debug(2, "ofs = %08X; chunkType = %c%c%c%c; chunkSize = %d\n",
+		_fd->pos(),
 		(chunkType >> 24) & 0xFF, (chunkType >> 16) & 0xFF, (chunkType >> 8) & 0xFF, chunkType & 0xFF,
 		chunkSize);
 
@@ -166,6 +173,18 @@ void PmvPlayer::updatePalette() {
 void PmvPlayer::updateScreen() {
 	_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch, 0, 0, _surface->w, _surface->h);
 	_system->updateScreen();
+}
+
+void PmvPlayer::decompressPalette(byte *palData, byte *outPal, uint32 palDataSize) {
+	byte *palDataEnd = palData + palDataSize;
+	while (palData < palDataEnd) {
+		byte count = *palData++;
+		byte entry = *palData++;
+		if (count == 255 && entry == 255)
+			break;
+		memcpy(&outPal[entry * 3], palData, (count + 1) * 3);
+		palData += (count + 1) * 3;
+	}
 }
 
 }
