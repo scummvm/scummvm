@@ -24,10 +24,11 @@
  */
 
 #include "made/pmvplayer.h"
+#include "made/screen.h"
 
 namespace Made {
 
-PmvPlayer::PmvPlayer(OSystem *system, Audio::Mixer *mixer) : _fd(NULL), _system(system), _mixer(mixer) {
+PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(NULL), _vm(vm), _mixer(mixer) {
 }
 
 PmvPlayer::~PmvPlayer() {
@@ -68,7 +69,7 @@ void PmvPlayer::play(const char *filename) {
 
 	// Read palette
 	_fd->read(_palette, 768);
-	updatePalette();
+	_vm->_screen->setRGBPalette(_palette);
 
 	uint32 frameCount = 0;
 	uint16 chunkCount = 0;
@@ -144,7 +145,7 @@ void PmvPlayer::play(const char *filename) {
 			firstTime = false;
 		}
 
-		updatePalette();
+		_vm->_screen->setRGBPalette(_palette);
 		handleEvents();
 		updateScreen();
 
@@ -153,7 +154,7 @@ void PmvPlayer::play(const char *filename) {
 		delete[] frameData;
 
 		while (_mixer->getSoundElapsedTime(_audioStreamHandle) < frameCount * frameDelay) {
-			_system->delayMillis(10);
+			_vm->_system->delayMillis(10);
 		}
 
 	}
@@ -180,7 +181,7 @@ void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
 
 void PmvPlayer::handleEvents() {
 	Common::Event event;
-	while (_system->getEventManager()->pollEvent(event)) {
+	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
@@ -196,20 +197,9 @@ void PmvPlayer::handleEvents() {
 	}
 }
 
-void PmvPlayer::updatePalette() {
-	byte colors[1024];
-	for (int i = 0; i < 256; i++) {
-		colors[i * 4 + 0] = _palette[i * 3 + 0];
-		colors[i * 4 + 1] = _palette[i * 3 + 1];
-		colors[i * 4 + 2] = _palette[i * 3 + 2];
-		colors[i * 4 + 3] = 0;
-	}
-	_system->setPalette(colors, 0, 256);
-}
-
 void PmvPlayer::updateScreen() {
-	_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch, 0, 0, _surface->w, _surface->h);
-	_system->updateScreen();
+	_vm->_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch, 0, 0, _surface->w, _surface->h);
+	_vm->_system->updateScreen();
 }
 
 void PmvPlayer::decompressPalette(byte *palData, byte *outPal, uint32 palDataSize) {

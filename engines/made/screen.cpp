@@ -73,7 +73,15 @@ void Screen::drawSurface(Graphics::Surface *source, int x, int y) {
 
 }
 
-void Screen::setPalette(byte *palette, int start, int count) {
+void Screen::setRGBPalette(byte *palette, int start, int count) {
+	byte colors[1024];
+	for (int i = 0; i < count; i++) {
+		colors[i * 4 + 0] = palette[i * 3 + 0];
+		colors[i * 4 + 1] = palette[i * 3 + 1];
+		colors[i * 4 + 2] = palette[i * 3 + 2];
+		colors[i * 4 + 3] = 0;
+	}
+	_vm->_system->setPalette(colors, start, count);
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {

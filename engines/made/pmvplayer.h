@@ -36,16 +36,17 @@
 
 #include "made/graphics.h"
 #include "made/sound.h"
+#include "made/made.h"
 
 namespace Made {
 
 class PmvPlayer {
 public:
-	PmvPlayer(OSystem *system, Audio::Mixer *mixer);
+	PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer);
 	~PmvPlayer();
 	void play(const char *filename);
 protected:
-	OSystem *_system;
+	MadeEngine *_vm;
 	Audio::Mixer *_mixer;
 	Common::File *_fd;
 	Audio::AppendableAudioStream *_audioStream;
@@ -55,7 +56,6 @@ protected:
 	bool _abort;
 	void readChunk(uint32 &chunkType, uint32 &chunkSize);
 	void handleEvents();
-	void updatePalette();
 	void updateScreen();
 	void decompressPalette(byte *palData, byte *outPal, uint32 palDataSize);
 };

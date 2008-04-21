@@ -80,7 +80,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 		
-	_pmvPlayer = new PmvPlayer(_system, _mixer);
+	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ProjectReader();
 	_screen = new Screen(this);
 	_dat = new GameDatabase();
