@@ -101,6 +101,36 @@ static const M4GameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"burger",
+			"Demo",
+			{
+				{ "burger.has",	kFileTypeHash, "fc3f363b6153240a448bd3b7be9318da", 62159},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GType_Burger,
+		kFeaturesDemo
+	},
+	{
+		{
+			"burger",
+			"Demo",
+			{
+				{ "overview.has",	kFileTypeHash, "57aa43a3ef88a934a43e9b1890ef5e17", 10519},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GType_Burger,
+		kFeaturesDemo
+	},
+	{
+		{
 			"riddle",
 			"",
 			{
