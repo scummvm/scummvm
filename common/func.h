@@ -201,52 +201,6 @@ inline ConstMemFunc1<Result, Arg, T> mem_fun(Result (T::*f)(Arg) const) {
 	return ConstMemFunc1<Result, Arg, T>(f);
 }
 
-template<class Cont>
-class BackInsertIterator {
-private:
-	Cont *_container;
-
-public:
-	BackInsertIterator(Cont &c) : _container(&c) {}
-
-	BackInsertIterator &operator =(const typename Cont::value_type &v) {
-		_container->push_back(v);
-		return *this;
-	}
-
-	BackInsertIterator &operator *() { return *this; }
-	BackInsertIterator &operator ++() { return *this; }
-	BackInsertIterator operator ++(int) { return *this; }
-};
-
-template<class Cont>
-BackInsertIterator<Cont> back_inserter(Cont &c) {
-	return BackInsertIterator<Cont>(c);
-}
-
-template<class Cont>
-class FrontInsertIterator {
-private:
-	Cont *_container;
-
-public:
-	FrontInsertIterator(Cont &c) : _container(&c) {}
-
-	FrontInsertIterator &operator =(const typename Cont::value_type &v) {
-		_container->push_front(v);
-		return *this;
-	}
-
-	FrontInsertIterator &operator *() { return *this; }
-	FrontInsertIterator &operator ++() { return *this; }
-	FrontInsertIterator operator ++(int) { return *this; }
-};
-
-template<class Cont>
-FrontInsertIterator<Cont> front_inserter(Cont &c) {
-	return FrontInsertIterator<Cont>(c);
-}
-
 // functor code
 
 template<class Res>
