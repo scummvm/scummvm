@@ -172,10 +172,13 @@
 			RelativePath="..\..\engines\cine\rel.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\script.cpp">
+			RelativePath="..\..\engines\cine\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\script.h">
+			RelativePath="..\..\engines\cine\script_fw.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\cine\script_os.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\cine\sound.cpp">
