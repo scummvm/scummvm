@@ -61,6 +61,7 @@ IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : Agi
 	_ptr = _data + 2; // Set current position to just after the header
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
+	_midiTicks = _soundBufTicks = 0;
 	_isValid = (_type == AGI_SOUND_MIDI) && (_data != NULL) && (_len >= 2);
 
 	if (!_isValid) // Check for errors
@@ -276,11 +277,6 @@ static const IIgsExeInfo IIgsExeInfos[] = {
 	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, instSetV2}
 };
 
-// Time (In milliseconds) in Apple IIGS mixing buffer time granularity
-// (i.e. in IIGS_BUFFER_SIZE / getRate() seconds granularity)
-static uint32 g_IIgsBufGranMillis = 0;
-static uint32 g_midiMillis = 0; // Time position (In milliseconds) in currently playing MIDI sound
-
 static const int16 waveformRamp[WAVEFORM_SIZE] = {
 	0, 8, 16, 24, 32, 40, 48, 56,
 	64, 72, 80, 88, 96, 104, 112, 120,
@@ -367,22 +363,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 		break;
 	}
 	case AGI_SOUND_MIDI:
-		g_IIgsBufGranMillis = g_midiMillis = 0;
-#if 0
-		debugC(3, kDebugLevelSound, "IIGS MIDI sequence");
-
-		for (i = 0; i < NUM_CHANNELS; i++) {
-			_chn[i].type = type;
-			_chn[i].flags = AGI_SOUND_LOOP | AGI_SOUND_ENVELOPE;
-			_chn[i].ins = _waveform;
-			_chn[i].size = WAVEFORM_SIZE;
-			_chn[i].vol = 0;
-			_chn[i].end = 0;
-		}
-
-		_chn[0].timer = *(song + 2);
-		_chn[0].ptr = (struct AgiNote *)(song + 3);
-#endif
+		((IIgsMidi *) _vm->_game.sounds[_playingSound])->rewind();
 		break;
 	case AGI_SOUND_4CHN:
 		PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
@@ -552,31 +533,33 @@ void SoundMgr::playMidiSound() {
 	_playing = true;
 	p = midiObj->getPtr();
 
-	g_IIgsBufGranMillis += (IIGS_BUFFER_SIZE * 1000) / getRate();
+	midiObj->_soundBufTicks++;
 
-	while (g_midiMillis < g_IIgsBufGranMillis) {
-		uint8 readByte = *p++;
+	while (true) {
+		uint8 readByte = *p;
 
 		// Check for end of MIDI sequence marker (Can also be here before delta-time)
 		if (readByte == MIDI_BYTE_STOP_SEQUENCE) {
 			debugC(3, kDebugLevelSound, "End of MIDI sequence (Before reading delta-time)");
-			g_IIgsBufGranMillis = g_midiMillis = 0;
 			_playing = false;
 			midiObj->rewind();
 			return;
 		} else if (readByte == MIDI_BYTE_TIMER_SYNC) {
 			debugC(3, kDebugLevelSound, "Timer sync");
+			p++; // Jump over the timer sync byte as it's not needed
 			continue;
 		}
 
 		uint8 deltaTime = readByte;
-		uint32 ticksPerSec = 60; // Approximation based on tests with Apple IIGS KQ1 and SQ1 under MESS 0.124a
-		g_midiMillis += (deltaTime * 1000) / ticksPerSec;
+		if (midiObj->_midiTicks + deltaTime > midiObj->_soundBufTicks) {
+			break;
+		}
+		midiObj->_midiTicks += deltaTime;
+		p++; // Jump over the delta-time byte as it was already taken care of
 
 		// Check for end of MIDI sequence marker (This time it after reading delta-time)
 		if (*p == MIDI_BYTE_STOP_SEQUENCE) {
 			debugC(3, kDebugLevelSound, "End of MIDI sequence (After reading delta-time)");
-			g_IIgsBufGranMillis = g_midiMillis = 0;
 			_playing = false;
 			midiObj->rewind();
 			return;
@@ -921,10 +904,10 @@ uint32 SoundMgr::mixSound(void) {
 
 					if (channel.envSeg < ENVELOPE_SEGMENT_COUNT) {
 						const IIgsEnvelopeSegment &seg = channel.ins->env.seg[channel.envSeg];
-						double bufSecLen = IIGS_BUFFER_SIZE / (double) getRate();
-						double ticksPerSec = 60; // Currently a guess, 1000 would be way too much
-						double bufTickLen  = bufSecLen / (1.0/ticksPerSec);
-						frac_t envVolDelta = doubleToFrac((seg.inc/256.0)*bufTickLen);
+						// I currently assume enveloping works with the same speed as the MIDI
+						// (i.e. with 1/60ths of a second ticks).
+						// TODO: Check if enveloping really works with the same speed as MIDI
+						frac_t envVolDelta = doubleToFrac(seg.inc/256.0);
 						if (intToFrac(seg.bp) >= channel.envVol) {
 							channel.envVol += envVolDelta;
 							if (channel.envVol >= intToFrac(seg.bp)) {

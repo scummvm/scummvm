@@ -36,7 +36,14 @@
 namespace Agi {
 
 #define BUFFER_SIZE	410
-#define IIGS_BUFFER_SIZE 200
+
+// Apple IIGS MIDI uses 60 ticks per second (Based on tests with Apple IIGS
+// KQ1 and SQ1 under MESS 0.124a). So we make the audio buffer size to be a
+// 1/60th of a second in length. That should be getSampleRate() / 60 samples
+// in length but as getSampleRate() is always 22050 at the moment we just use
+// the hardcoded value of 368 (22050/60 = 367.5 which rounds up to 368).
+// FIXME: Use getSampleRate() / 60 rather than a hardcoded value
+#define IIGS_BUFFER_SIZE 368
 
 #define SOUND_EMU_NONE	0
 #define SOUND_EMU_PC	1
@@ -309,12 +316,15 @@ public:
 	virtual uint16 type() { return _type; }
 	virtual const uint8 *getPtr() { return _ptr; }
 	virtual void setPtr(const uint8 *ptr) { _ptr = ptr; }
-	virtual void rewind() { _ptr = _data + 2; }
+	virtual void rewind() { _ptr = _data + 2; _midiTicks = _soundBufTicks = 0; }
 protected:
 	uint8 *_data; ///< Raw sound resource data
 	const uint8 *_ptr; ///< Pointer to the current position in the MIDI data
 	uint32 _len; ///< Length of the raw sound resource
 	uint16 _type; ///< Sound resource type
+public:
+	uint _midiTicks; ///< MIDI song position in ticks (1/60ths of a second)
+	uint _soundBufTicks; ///< Sound buffer position in ticks (1/60ths of a second)
 };
 
 class IIgsSample : public AgiSound {
