@@ -52,16 +52,6 @@ void Object::load(Common::SeekableReadStream &source) {
 	source.readUint16LE(); // skip flags
 	uint16 type = source.readUint16LE();
 
-	/*
-	if (type < 0x7FFE) {
-		byte count1 = source.readByte();
-		byte count2 = source.readByte();
-		_objSize = (count1 + count2) * 2;
-	} else {
-		_objSize = source.readUint16LE();
-	}
-	*/
-
 	if (type == 0x7FFF) {
 		_objSize = source.readUint16LE();
 	} else if (type == 0x7FFE) {
@@ -79,10 +69,6 @@ void Object::load(Common::SeekableReadStream &source) {
 	_objData = new byte[_objSize];
 	source.read(_objData, _objSize);
 
-	/*
-	debug(2, "Object::load(con): flags = %04X; type = %04X; _objSize = %04X\n", getFlags(), getClass(), _objSize);
-	fflush(stdout);
-	*/
 }
 
 void Object::load(byte *source) {
@@ -97,11 +83,6 @@ void Object::load(byte *source) {
 	}
 	
 	_objSize += 6;
-
-	/*
-	debug(2, "Object::load(var): flags = %04X; type = %04X; _objSize = %04X\n", getFlags(), getClass(), _objSize);
-	fflush(stdout);
-	*/
 
 }
 
@@ -160,10 +141,10 @@ int16 Object::getVectorItem(int16 index) {
 		return vector[index];
 	} else if (getClass() == 0x7FFE) {
 		int16 *vector = (int16*)getData();
-		return vector[index];
+		return READ_LE_UINT16(&vector[index]);
 	} else if (getClass() < 0x7FFE) {
 		int16 *vector = (int16*)getData();
-		return vector[index];
+		return READ_LE_UINT16(&vector[index]);
 	} else {
 		return 0;	// FIXME
 	}
@@ -175,7 +156,7 @@ void Object::setVectorItem(int16 index, int16 value) {
 		vector[index] = value;
 	} else if (getClass() <= 0x7FFE) {
 		int16 *vector = (int16*)getData();
-		vector[index] = value;
+		WRITE_LE_UINT16(&vector[index], value);
 	}
 }
 
@@ -224,7 +205,10 @@ void GameDatabase::open(const char *filename) {
 
 	for (uint32 i = 0; i < objectCount; i++) {
 		Object *obj = new Object();
-		// The LSB indicates if it's a constant or variable object
+
+		// The LSB indicates if it's a constant or variable object.
+		// Constant objects are loaded from disk, while variable objects exist
+		// in the _gameState buffer.
 		
 		debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
 		
@@ -252,8 +236,6 @@ void GameDatabase::setVar(int16 index, int16 value) {
 int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
 	Object *obj = getObject(objectIndex);
 
-	//dumpObject(objectIndex);
-
 	int16 *prop = (int16*)obj->getData();
 	byte count1 = obj->getCount1();
 	byte count2 = obj->getCount2();
@@ -265,11 +247,11 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 
 	// First see if the property exists in the given object
 	while (count2-- > 0) {
-		if ((*prop & 0x3FFF) == propertyId) {
-			if (*prop & 0x4000) {
+		if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
+			if (READ_LE_UINT16(prop) & 0x4000) {
 				debug(2, "! L1.1\n");
 				propertyFlag = 1;
-				return (int16*)_gameState + *propPtr1;
+				return (int16*)_gameState + READ_LE_UINT16(propPtr1);
 			} else {
 				debug(2, "! L1.2\n");
 				propertyFlag = obj->getFlags() & 1;
@@ -291,8 +273,6 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	
 		debug(2, "parentObjectIndex = %04X\n", parentObjectIndex);
 
-		//dumpObject(parentObjectIndex);
-
 		obj = getObject(parentObjectIndex);
 		
 		prop = (int16*)obj->getData();
@@ -303,12 +283,12 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 		int16 *propertyPtr = prop + count1;
 		
 		while (count2-- > 0) {
-			if (!(*prop & 0x8000)) {
-				if ((*prop & 0x3FFF) == propertyId) {
+			if (!(READ_LE_UINT16(prop) & 0x8000)) {
+				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 					if (*prop & 0x4000) {
 						debug(2, "! L2.1\n");
 						propertyFlag = 1;
-						return (int16*)_gameState + *propPtr1;
+						return (int16*)_gameState + READ_LE_UINT16(propPtr1);
 					} else {
 						debug(2, "! L2.2\n");
 						propertyFlag = obj->getFlags() & 1;
@@ -318,11 +298,11 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 					propPtr1++;
 				}
 			} else {
-				if ((*prop & 0x3FFF) == propertyId) {
+				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 					if (*prop & 0x4000) {
 						debug(2, "! L3.1\n");
 						propertyFlag = 1;
-						return (int16*)_gameState + *propertyPtr;
+						return (int16*)_gameState + READ_LE_UINT16(propertyPtr);
 					} else {
 						debug(2, "! L3.2\n");
 						propertyFlag = obj->getFlags() & 1;
@@ -341,8 +321,6 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	debug(2, "! NULL(nf)\n");
 	return NULL;
 	
-	fflush(stdout);
-
 }
 
 int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
@@ -354,7 +332,7 @@ int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 	int16 *property = getObjectPropertyPtr(objectIndex, propertyId, propertyFlag);
 
 	if (property) {
-		return *property;
+		return (int16)READ_LE_UINT16(property);
 	} else {
 		return 0;
 	}
@@ -371,7 +349,7 @@ int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16
 	
 	if (property) {
 		if (propertyFlag == 1) {
-			*property = value;
+			WRITE_LE_UINT16(property, value);
 		} else {
 			debug(2, "GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property\n",
 				objectIndex, propertyId, value);
