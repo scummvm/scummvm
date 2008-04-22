@@ -112,6 +112,14 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_moveFacingTable = 0;
 	_unkHandleSceneChangeFlag = false;
 	memset(_sceneShapeDescs, 0, sizeof(_sceneShapeDescs));
+	_cnvFile = _dlgBuffer = 0;
+	_curDlgChapter = _curDlgIndex = _curDlgLang = -1;
+	_isStartupDialog = 0;
+	_stringBuffer = 0;
+	_dialogSceneAnim = _dialogSceneScript = -1;
+	memset(&_dialogScriptData, 0, sizeof(_dialogScriptData));
+	memset(&_dialogScriptState, 0, sizeof(_dialogScriptState));
+	_dialogScriptFuncStart = _dialogScriptFuncProc = _dialogScriptFuncEnd = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -160,6 +168,14 @@ KyraEngine_v3::~KyraEngine_v3() {
 	for (Common::Array<const Opcode*>::iterator i = _opcodesTemporary.begin(); i != _opcodesTemporary.end(); ++i)
 		delete *i;
 	_opcodesTemporary.clear();
+
+	for (Common::Array<const Opcode*>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
+		delete *i;
+	_opcodesDialog.clear();
+
+	delete _cnvFile;
+	delete _dlgBuffer;
+	delete [] _stringBuffer;
 }
 
 int KyraEngine_v3::init() {
@@ -500,6 +516,7 @@ void KyraEngine_v3::startup() {
 
 	_screen->setFont(Screen::FID_6_FNT);
 
+	_stringBuffer = new char[500];	
 	//XXX
 	musicUpdate(0);
 	_moveFacingTable = new int[600];
@@ -1050,7 +1067,9 @@ void KyraEngine_v3::handleInput(int x, int y) {
 	} else if (_itemInHand >= 0 && _unk3 >= 0) {
 		//XXX
 		return;
-	} else if (_unk3 != -3) {
+	} else if (_unk3 == -3) {
+		return;
+	} else {
 		if (y > 187 && _unk3 > -4)
 			return;
 		if (_unk5) {
@@ -1485,6 +1504,23 @@ uint8 *KyraEngine_v3::getTableEntry(uint8 *buffer, int id) {
 	}
 
 	return buffer + READ_LE_UINT16(offsetTable + num);
+}
+
+void KyraEngine_v3::getTableEntry(Common::SeekableReadStream *stream, int id, char *dst) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getTableEntry(%p, %d, %p)", (const void*)stream, id, (const void*)dst);
+	stream->seek(0, SEEK_SET);
+	uint16 tableEntries = stream->readUint16LE();
+
+	int num = 0;
+	while (id != stream->readUint16LE())
+		++num;
+
+	stream->seek(2+tableEntries*2+num*2, SEEK_SET);
+	stream->seek(stream->readUint16LE(), SEEK_SET);
+	char c = 0;
+	while ((c = stream->readByte()) != 0)
+		*dst++ = c;
+	*dst = 0;
 }
 
 #pragma mark -

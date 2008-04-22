@@ -283,7 +283,7 @@ void KyraEngine_v3::enterNewSceneUnk2(int unk1) {
 
 	if (!unk1) {
 		runSceneScript4(0);
-		//malcolmSceneStartupChat();
+		malcolmSceneStartupChat();
 	}
 
 	_unk4 = 0;

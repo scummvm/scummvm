@@ -24,8 +24,8 @@
  */
 
 #include "kyra/text_v3.h"
-
 #include "kyra/screen_v3.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
@@ -436,6 +436,216 @@ void KyraEngine_v3::badConscienceChatWaitToFinish() {
 
 		delay(10);
 	}
+}
+
+void KyraEngine_v3::malcolmSceneStartupChat() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::malcolmSceneStartupChat()");
+
+	if (_noStartupChat)
+		return;
+
+	int index = _mainCharacter.sceneId - _chapterLowestScene[_curChapter];
+	if (_newSceneDlgState[index])
+		return;
+
+	updateDlgBuffer();
+	int vocHighBase = 0, vocHighIndex = 0, index1 = 0, index2 = 0;
+	loadDlgHeader(vocHighBase, vocHighIndex, index1, index2);
+
+	_cnvFile->seek(index1*6, SEEK_CUR);
+	_cnvFile->seek(index2*4, SEEK_CUR);
+	_cnvFile->seek(index*2, SEEK_CUR);
+	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
+
+	_isStartupDialog = true;
+	processDialog(vocHighIndex, vocHighBase, 0);
+	_isStartupDialog = false;
+	_newSceneDlgState[index] = true;
+}
+
+void KyraEngine_v3::updateDlgBuffer() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateDlgBuffer()");
+	char dlgFile[16];
+	char cnvFile[16];
+
+	if (_cnvFile)
+		_cnvFile->seek(0, SEEK_SET);
+
+	if (_curDlgIndex == _mainCharacter.dlgIndex && _curDlgChapter == _curChapter && _curDlgLang == _lang)
+		return;
+
+	snprintf(dlgFile, 16, "CH%.02d-S%.02d.", _curChapter, _mainCharacter.dlgIndex);
+	appendLanguage(dlgFile, _lang, 16);
+	snprintf(cnvFile, 16, "CH%.02d-S%.02d.CNV", _curChapter, _mainCharacter.dlgIndex);
+	
+	delete _cnvFile;
+	delete _dlgBuffer;
+
+	_res->exists(cnvFile, true);
+	_res->exists(dlgFile, true);
+	_cnvFile = _res->getFileStream(cnvFile);
+	_dlgBuffer = _res->getFileStream(dlgFile);
+	assert(_cnvFile);
+	assert(_dlgBuffer);
+}
+
+void KyraEngine_v3::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &index1, int &index2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadDlgHeader(-, -, -, -)");
+	assert(_cnvFile);
+	vocHighIndex = _cnvFile->readSint16LE();
+	vocHighBase = _cnvFile->readSint16LE();
+	index1 = _cnvFile->readSint16LE();
+	index2 = _cnvFile->readSint16LE();
+}
+
+void KyraEngine_v3::setDlgIndex(uint16 index) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::setDlgIndex(%d)", index);
+	if (_mainCharacter.dlgIndex != index) {
+		Common::set_to(_newSceneDlgState, _newSceneDlgState+ARRAYSIZE(_newSceneDlgState), false);
+		memset(_conversationState, -1, sizeof(_conversationState));
+		_chatAltFlag = false;
+		_mainCharacter.dlgIndex = index;
+	}
+}
+
+void KyraEngine_v3::processDialog(int vocHighIndex, int vocHighBase, int funcNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::processDialog(%d, %d, %d)", vocHighIndex, vocHighBase, funcNum);
+	bool running = true;
+	int script = -1;
+	int vocHigh = -1, vocLow = -1;
+
+	while (running) {
+		uint16 cmd = _cnvFile->readUint16LE();
+		int object = cmd - 14;
+		
+		if (cmd == 10) {
+			break;
+		} else if (cmd == 4) {
+			vocHighBase = _cnvFile->readUint16LE();
+			setDlgIndex(vocHighBase);
+		} else if (cmd == 11) {
+			int strSize = _cnvFile->readUint16LE();
+			vocLow = _cnvFile->readUint16LE();
+			_cnvFile->read(_stringBuffer, strSize);
+			_stringBuffer[strSize] = 0;
+		} else {
+			vocHigh = _vocHighTable[vocHighIndex-1] + vocHighBase;
+			vocLow = _cnvFile->readUint16LE();
+			getTableEntry(_dlgBuffer, vocLow, _stringBuffer);
+
+			if (_isStartupDialog) {
+				delay(60*_tickLength, true);
+				_isStartupDialog = false;
+			}
+
+			if (*_stringBuffer == 0)
+				continue;
+
+			if (cmd != 12) {
+				if (object != script) {
+					if (script >= 0) {
+						dialogEndScript(script);
+						script = -1;
+					} else {
+						dialogStartScript(object, funcNum);
+						script = object;
+					}
+				}
+
+				npcChatSequence(_stringBuffer, object, vocHigh, vocLow);
+			} else {
+				if (script >= 0) {
+					dialogEndScript(script);
+					script = -1;
+				}
+
+				objectChat(_stringBuffer, 0, vocHigh, vocLow);
+				playStudioSFX(_stringBuffer);
+			}
+		}
+	}
+
+	if (script != -1)
+		dialogEndScript(script);
+}
+
+void KyraEngine_v3::dialogStartScript(int object, int funcNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::dialogStartScript(%d, %d)", object, funcNum);
+	_dialogSceneAnim = _talkObjectList[object].sceneAnim;
+	_dialogSceneScript = _talkObjectList[object].sceneScript;
+	if (_dialogSceneAnim >= 0 && _dialogSceneScript >= 0) {
+		_specialSceneScriptStateBackup[_dialogSceneScript] = _specialSceneScriptState[_dialogSceneScript];
+		_specialSceneScriptState[_dialogSceneScript] = true;
+	}
+
+	_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
+	_scriptInterpreter->loadScript(_talkObjectList[object].filename, &_dialogScriptData, &_opcodesDialog);
+
+	_dialogScriptFuncStart = funcNum * 3 + 0;
+	_dialogScriptFuncProc = funcNum * 3 + 1;
+	_dialogScriptFuncEnd = funcNum * 3 + 2;
+
+	_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncStart);
+	while (_scriptInterpreter->validScript(&_dialogScriptState))
+		_scriptInterpreter->runScript(&_dialogScriptState);
+}
+
+void KyraEngine_v3::dialogEndScript(int object) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::dialogEndScript(%d)", object);
+
+	_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
+	_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncEnd);
+
+	while (_scriptInterpreter->validScript(&_dialogScriptState))
+		_scriptInterpreter->runScript(&_dialogScriptState);
+
+	if (_dialogSceneAnim >= 0 && _dialogSceneScript >= 0) {
+		_specialSceneScriptState[_dialogSceneScript] = _specialSceneScriptStateBackup[_dialogSceneScript];
+		_dialogSceneScript = _dialogSceneAnim = -1;
+	}
+
+	_scriptInterpreter->unloadScript(&_dialogScriptData);
+}
+
+void KyraEngine_v3::npcChatSequence(const char *str, int object, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::npcChatSequence('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
+
+	_chatText = str;
+	_chatObject = object;
+	_chatVocHigh = _chatVocLow = -1;
+
+	objectChatInit(str, object, vocHigh, vocLow);
+
+	if (_chatVocHigh >= 0 && _chatVocLow >= 0) {
+		playVoice(_chatVocHigh, _chatVocLow);
+		_chatVocHigh = _chatVocLow = -1;
+	}
+
+	_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
+	_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncProc);
+
+	resetSkipFlag();
+
+	uint32 endTime = _chatEndTime;
+	bool running = true;
+	while (running) {
+		if (!_scriptInterpreter->runScript(&_dialogScriptState)) {
+			_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
+			_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncProc);
+		}
+
+		const uint32 curTime = _system->getMillis();
+		if ((textEnabled() && !speechEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {
+			snd_stopVoice();
+			resetSkipFlag();
+			running = false;
+		}
+
+		delay(10);
+	}
+	_text->restoreScreen();
+	_chatText = 0;
+	_chatObject= - 1;
 }
 
 } // end of namespace Kyra

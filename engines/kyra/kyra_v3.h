@@ -256,6 +256,7 @@ private:
 	uint8 *_sceneStrings;
 
 	uint8 *getTableEntry(uint8 *buffer, int id);
+	void getTableEntry(Common::SeekableReadStream *stream, int id, char *dst);
 
 	// items
 	int8 *_itemBuffer1;
@@ -384,6 +385,7 @@ private:
 	WSAMovieV2 *_wsaSlots[10];
 
 	bool _specialSceneScriptState[10];
+	bool _specialSceneScriptStateBackup[10];
 	ScriptState _sceneSpecialScripts[10];
 	uint32 _sceneSpecialScriptsTimer[10];
 	int _lastProcessedSceneScript;
@@ -455,8 +457,8 @@ private:
 	// talk object
 	struct TalkObject {
 		char filename[13];
-		int8 unkD;
-		int8 unkE;
+		int8 sceneAnim;
+		int8 sceneScript;
 		int16 x, y;
 		uint8 color;
 		int8 unk14;
@@ -487,6 +489,39 @@ private:
 	void badConscienceChat(const char *str, int vocHigh, int vocLow);
 	void badConscienceChatWaitToFinish();
 
+	void malcolmSceneStartupChat();
+
+	bool _newSceneDlgState[40];
+	int8 _conversationState[30][30];
+	bool _chatAltFlag;
+	void setDlgIndex(uint16 index);
+
+	Common::SeekableReadStream *_cnvFile;
+	Common::SeekableReadStream *_dlgBuffer;
+	int _curDlgChapter, _curDlgIndex, _curDlgLang;
+	void updateDlgBuffer();
+	void loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &index1, int &index2);
+
+	static const uint8 _vocHighTable[];
+	bool _isStartupDialog;
+	void processDialog(int vocHighIndex, int vocHighBase, int funcNum);
+
+	ScriptData _dialogScriptData;
+	ScriptState _dialogScriptState;
+	int _dialogSceneAnim;
+	int _dialogSceneScript;
+	int _dialogScriptFuncStart, _dialogScriptFuncProc, _dialogScriptFuncEnd;
+
+	void dialogStartScript(int object, int funcNum);
+	void dialogEndScript(int object);
+
+	void npcChatSequence(const char *str, int object, int vocHigh, int vocLow);
+
+	Common::Array<const Opcode *> _opcodesDialog;
+
+	int o3d_updateAnim(ScriptState *script);
+	int o3d_delay(ScriptState *script);
+
 	// conscience
 	bool _badConscienceShown;
 	int _badConscienceAnim;
@@ -505,8 +540,6 @@ private:
 
 	int o3t_defineNewShapes(ScriptState *script);
 	int o3t_setCurrentFrame(ScriptState *script);
-	int o3t_playSoundEffect(ScriptState *script);
-	int o3t_getMalcolmShapes(ScriptState *script);
 
 	// special shape code
 	char _newShapeFilename[13];
@@ -524,6 +557,8 @@ private:
 	bool _useActorBuffer;
 	int _curChapter;
 
+	static const uint8 _chapterLowestScene[];
+
 	int _unk3, _unk4, _unk5;
 
 	void loadCostPal();
@@ -533,6 +568,8 @@ private:
 	uint8 *_gfxBackUpRect;
 	void backUpGfxRect32x32(int x, int y);
 	void restoreGfxRect32x32(int x, int y);
+
+	char *_stringBuffer;
 
 	// opcodes
 	int o3_getMalcolmShapes(ScriptState *script);
@@ -550,6 +587,7 @@ private:
 	int o3_objectChat(ScriptState *script);
 	int o3_checkForItem(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
+	int o3_npcChatSequence(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
 	int o3_setGameFlag(ScriptState *script);
@@ -566,6 +604,7 @@ private:
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_drawSceneShape(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);
+	int o3_setSceneDim(ScriptState *script);
 	int o3_update(ScriptState *script);
 	int o3_enterNewScene(ScriptState *script);
 	int o3_setMalcolmPos(ScriptState *script);
@@ -578,8 +617,12 @@ private:
 	int o3_defineSceneAnim(ScriptState *script);
 	int o3_updateSceneAnim(ScriptState *script);
 	int o3_runActorScript(ScriptState *script);
+	int o3_setDlgIndex(ScriptState *script);
+	int o3_getDlgIndex(ScriptState *script);
 	int o3_defineScene(ScriptState *script);
 	int o3_countItemInstances(ScriptState *script);
+	int o3_dialogStartScript(ScriptState *script);
+	int o3_dialogEndScript(ScriptState *script);
 	int o3_setSpecialSceneScriptState(ScriptState *script);
 	int o3_clearSpecialSceneScriptState(ScriptState *script);
 	int o3_querySpecialSceneScriptState(ScriptState *script);
