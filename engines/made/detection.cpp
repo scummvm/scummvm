@@ -61,7 +61,8 @@ uint16 MadeEngine::getVersion() const {
 }
 
 static const PlainGameDescriptor madeGames[] = {
-	{"made", "Return to Zork"},
+	{"made", "MADE engine game"}, 
+	{"rtz", "Return to Zork"},
 	{0, 0}
 };
 
@@ -73,7 +74,7 @@ static const MadeGameDescription gameDescriptions[] = {
 	{
 		// Return to Zork - English CD version
 		{
-			"made",
+			"rtz",
 			"CD",
 			AD_ENTRY1("rtzcd.dat", "a1db8c97a78dae10f91d356f16ad07b8"),
 			Common::EN_ANY,
@@ -89,7 +90,7 @@ static const MadeGameDescription gameDescriptions[] = {
 	{
 		// Return to Zork - Demo
 		{
-			"made",
+			"rtz",
 			"Demo",
 			AD_ENTRY1("demo.dat", "2a6a1354bd5346fad4aee08e5b56caaa"),
 			Common::EN_ANY,
