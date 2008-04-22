@@ -220,7 +220,8 @@ int16 ScriptFunctionsRtz::o1_EVENT(int16 argc, int16 *argv) {
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.ascii) {
+			_vm->_eventKey = event.kbd.ascii;
+			switch (_vm->_eventKey) {
 			case '1':
 				eventNum = 1;
 				break;
@@ -267,7 +268,7 @@ int16 ScriptFunctionsRtz::o1_EVENTY(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_EVENTKEY(int16 argc, int16 *argv) {
-	return 0;
+	return _vm->_eventKey;
 }
 
 int16 ScriptFunctionsRtz::o1_VISUALFX(int16 argc, int16 *argv) {
@@ -368,7 +369,7 @@ int16 ScriptFunctionsRtz::o1_GETTIMER(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETTIMER(int16 argc, int16 *argv) {
-	g_system->delayMillis(5000);
+	//g_system->delayMillis(5000);
 	return 0;
 }
 
@@ -397,7 +398,7 @@ int16 ScriptFunctionsRtz::o1_FONT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWTEXT(int16 argc, int16 *argv) {
-	g_system->delayMillis(5000);
+	//g_system->delayMillis(5000);
 	return 0;
 }
 

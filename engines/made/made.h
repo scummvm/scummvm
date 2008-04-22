@@ -92,6 +92,7 @@ public:
 	ScriptInterpreter *_script;
 
 	int _eventMouseX, _eventMouseY;
+	uint16 _eventKey;
 
 	int32 _timers[50];
 	int16 getTimer(int16 timerNum);
