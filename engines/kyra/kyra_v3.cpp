@@ -1430,6 +1430,18 @@ int KyraEngine_v3::getScale(int x, int y) {
 
 #pragma mark -
 
+void KyraEngine_v3::backUpGfxRect32x32(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::backUpGfxRect32x32(%d, %d)", x, y);
+	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
+}
+
+void KyraEngine_v3::restoreGfxRect32x32(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::restoreGfxRect32x32(%d, %d)", x, y);
+	_screen->copyBlockToPage(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
+}
+
+#pragma mark -
+
 char *KyraEngine_v3::appendLanguage(char *buf, int lang, int bufSize) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::appendLanguage([%p|'%s'], %d, %d)", (const void*)buf, buf, lang, bufSize);
 	assert(lang < _languageExtensionSize);

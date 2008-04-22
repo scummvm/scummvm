@@ -280,7 +280,11 @@ private:
 
 	int checkItemCollision(int x, int y);
 
+	void setMouseCursor(uint16 item);
+
 	// -> hand item
+	void setHandItem(uint16 item);
+	void removeHandItem();
 	void setItemMouseCursor();
 
 	int _itemInHand;
@@ -516,7 +520,6 @@ private:
 	// unk
 	uint8 *_costPalBuffer;
 	uint8 *_screenBuffer;
-	uint8 *_gfxBackUpRect;
 	uint8 *_paletteOverlay;
 	bool _useActorBuffer;
 	int _curChapter;
@@ -526,6 +529,10 @@ private:
 	void loadCostPal();
 	void loadShadowShape();
 	void loadExtrasShapes();
+
+	uint8 *_gfxBackUpRect;
+	void backUpGfxRect32x32(int x, int y);
+	void restoreGfxRect32x32(int x, int y);
 
 	// opcodes
 	int o3_getMalcolmShapes(ScriptState *script);
@@ -546,12 +553,15 @@ private:
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
 	int o3_setGameFlag(ScriptState *script);
+	int o3_setHandItem(ScriptState *script);
+	int o3_removeHandItem(ScriptState *script);
 	int o3_getHandItem(ScriptState *script);
 	int o3_hideMouse(ScriptState *script);
 	int o3_addSpecialExit(ScriptState *script);
 	int o3_setMousePos(ScriptState *script);
 	int o3_showMouse(ScriptState *script);
 	int o3_badConscienceChat(ScriptState *script);
+	int o3_wipeDownMouseItem(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_drawSceneShape(ScriptState *script);
@@ -567,7 +577,9 @@ private:
 	int o3_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o3_defineSceneAnim(ScriptState *script);
 	int o3_updateSceneAnim(ScriptState *script);
+	int o3_runActorScript(ScriptState *script);
 	int o3_defineScene(ScriptState *script);
+	int o3_countItemInstances(ScriptState *script);
 	int o3_setSpecialSceneScriptState(ScriptState *script);
 	int o3_clearSpecialSceneScriptState(ScriptState *script);
 	int o3_querySpecialSceneScriptState(ScriptState *script);

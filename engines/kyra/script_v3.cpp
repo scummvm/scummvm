@@ -190,6 +190,18 @@ int KyraEngine_v3::o3_setGameFlag(ScriptState *script) {
 	return 1;
 }
 
+int KyraEngine_v3::o3_setHandItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setHandItem(%p) (%d)", (const void *)script, stackPos(0));
+	setHandItem(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v3::o3_removeHandItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_removeHandItem(%p) ()", (const void *)script);
+	removeHandItem();
+	return 0;
+}
+
 int KyraEngine_v3::o3_getHandItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getHandItem(%p) ()", (const void *)script);
 	return _itemInHand;
@@ -232,6 +244,33 @@ int KyraEngine_v3::o3_badConscienceChat(ScriptState *script) {
 	int id = stackPos(0);
 	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
 	badConscienceChat(str, _vocHigh, id);
+	return 0;
+}
+
+int KyraEngine_v3::o3_wipeDownMouseItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o3_wipeDownMouseItem(%p) (-, %d, %d)", (const void *)script, stackPos(1), stackPos(2));
+	_screen->hideMouse();
+	const int x = stackPos(1) - 12;
+	const int y = stackPos(2) - 19;
+
+	if (_itemInHand >= 0) {
+		backUpGfxRect32x32(x, y);
+		uint8 *shape = getShapePtr(_itemInHand+248);
+		for (int curY = y, height = 20; height > 0; height -= 2, curY += 2) {
+			restoreGfxRect32x32(x, y);
+			_screen->setNewShapeHeight(shape, height);
+			uint32 waitTime = _system->getMillis() + _tickLength;
+			_screen->drawShape(0, shape, x, curY, 0, 0);
+			_screen->updateScreen();
+			delayUntil(waitTime);
+		}
+		restoreGfxRect32x32(x, y);
+		_screen->resetShapeHeight(shape);
+	}
+
+	_screen->showMouse();
+	removeHandItem();
+
 	return 0;
 }
 
@@ -455,6 +494,40 @@ int KyraEngine_v3::o3_updateSceneAnim(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_runActorScript(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_runActorScript(%p) ()", (const void *)script);
+	ScriptData data;
+	ScriptState state;
+	memset(&data, 0, sizeof(data));
+	memset(&state, 0, sizeof(state));
+
+	_res->exists("_ACTOR.EMC", true);
+	_scriptInterpreter->loadScript("_ACTOR.EMC", &data, &_opcodes);
+	_scriptInterpreter->initScript(&state, &data);
+	_scriptInterpreter->startScript(&state, 0);
+
+	state.regs[4] = _itemInHand;
+	state.regs[0] = _mainCharacter.sceneId;
+
+	int vocHigh = _vocHigh;
+	_vocHigh = 200;
+	_useActorBuffer = true;
+
+	while (_scriptInterpreter->validScript(&state))
+		_scriptInterpreter->runScript(&state);
+
+	_useActorBuffer = false;
+	_vocHigh = vocHigh;
+	_scriptInterpreter->unloadScript(&data);
+
+	if (queryGameFlag(0x218)) {
+		resetGameFlag(0x218);
+		enterNewScene(78, -1, 0, 0, 0);
+	}
+
+	return 0;
+}
+
 int KyraEngine_v3::o3_defineScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
 		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
@@ -479,6 +552,27 @@ int KyraEngine_v3::o3_defineScene(ScriptState *script) {
 	}
 
 	return 0;
+}
+
+int KyraEngine_v3::o3_countItemInstances(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_countItemInstances(%p) (%d)", (const void *)script, stackPos(0));
+	int count = 0;
+	const int16 item = stackPos(0);
+
+	for (int i = 0; i < 10; ++i) {
+		if (_mainCharacter.inventory[i] == item)
+			++count;
+	}
+
+	if (_itemInHand == item)
+		++count;
+
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].id == item)
+			++count;
+	}
+
+	return count;
 }
 
 int KyraEngine_v3::o3_setSpecialSceneScriptState(ScriptState *script) {
@@ -641,8 +735,8 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x28
 	Opcode(o3_resetGameFlag);
 	Opcode(o3_setGameFlag);
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_setHandItem);
+	Opcode(o3_removeHandItem);
 	// 0x2c
 	Opcode(o3_getHandItem);
 	Opcode(o3_hideMouse);
@@ -651,7 +745,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x30
 	Opcode(o3_showMouse);
 	Opcode(o3_badConscienceChat);
-	OpcodeUnImpl();
+	Opcode(o3_wipeDownMouseItem);
 	Opcode(o3_dummy);
 	// 0x34
 	OpcodeUnImpl();
@@ -734,7 +828,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_updateSceneAnim);
 	Opcode(o3_dummy);
 	// 0x74
-	OpcodeUnImpl();
+	Opcode(o3_runActorScript);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -759,7 +853,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	// 0x88
-	OpcodeUnImpl();
+	Opcode(o3_countItemInstances);
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
 	Opcode(o3_dummy);

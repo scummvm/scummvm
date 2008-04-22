@@ -193,7 +193,7 @@ void KyraEngine_v3::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
 		if (obj->shapeIndex == 0xFFFF)
 			return;
 		int scale = getScale(obj->xPos1, obj->yPos1);
-		_screen->drawShape(2, getShapePtr(obj->shapeIndex), x, y, 2, obj->flags | 104, _paletteOverlay, obj->palette, layer, scale, scale);
+		_screen->drawShape(2, getShapePtr(obj->shapeIndex), x, y, 2, obj->flags | 0x104, _paletteOverlay, obj->palette, layer, scale, scale);
 	} else {
 		if (obj->shapePtr) {
 			_screen->drawShape(2, obj->shapePtr, x, y, 2, obj->flags, 7);

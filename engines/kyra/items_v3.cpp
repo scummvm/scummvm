@@ -90,13 +90,53 @@ int KyraEngine_v3::checkItemCollision(int x, int y) {
 	return itemIndex;
 }
 
+void KyraEngine_v3::setMouseCursor(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::setMouseCursor(%u)", item);
+	int shape = 0;
+	int hotX = 1;
+	int hotY = 1;
+
+	if (item != 0xFFFF) {
+		hotX = 12;
+		hotY = 19;
+		shape = item+248;
+	}
+
+	if ((int16)item != _itemInHand)
+		_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));
+}
+
 void KyraEngine_v3::setItemMouseCursor() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::setItemMouseCursor()");
 	_handItemSet = _itemInHand;
 	if (_itemInHand == -1)
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	else
-		_screen->setMouseCursor(0xC, 0x13, _gameShapes[_itemInHand+248]);
+		_screen->setMouseCursor(12, 19, _gameShapes[_itemInHand+248]);
+}
+
+void KyraEngine_v3::setHandItem(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::setHandItem(%u)", item);
+	_screen->hideMouse();
+
+	if (item == 0xFFFF) {
+		removeHandItem();
+	} else {
+		setMouseCursor(item);
+		_itemInHand = item;
+	}
+
+	_screen->showMouse();
+}
+
+void KyraEngine_v3::removeHandItem() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::removeHandItem()");
+	_screen->hideMouse();
+	_screen->setMouseCursor(0, 0, _gameShapes[0]);
+	_itemInHand = -1;
+	_handItemSet = -1;
+	_screen->showMouse();
 }
 
 } // end of namespace Kyra
+
