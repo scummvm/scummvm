@@ -195,7 +195,8 @@ if (1) # all regular combo's
 		//MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 		//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		//MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib
-		//MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib	
+		//MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib
+	
 		//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		//MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		//MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
