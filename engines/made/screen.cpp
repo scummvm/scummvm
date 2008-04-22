@@ -33,29 +33,25 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 
 	_screen1 = new Graphics::Surface();
 	_screen1->create(320, 200, 1);
-	_clipInfo1.x = 0;
-	_clipInfo1.y = 0;
-	_clipInfo1.w = 320;
-	_clipInfo1.h = 200;
-	_clipInfo1.destSurface = _screen1;
-
 	_screen2 = new Graphics::Surface();
 	_screen2->create(320, 200, 1);
-	_clipInfo2.x = 0;
-	_clipInfo2.y = 0;
-	_clipInfo2.w = 320;
-	_clipInfo2.h = 200;
-	_clipInfo2.destSurface = _screen2;
 
+	_clipInfo1.x = _clipInfo2.x = 0;
+	_clipInfo1.y = _clipInfo2.y = 0;
+	_clipInfo1.w = _clipInfo2.w = 320;
+	_clipInfo1.h = _clipInfo2.h = 200;
+
+	_clipInfo1.destSurface = _screen1;
+	_clipInfo2.destSurface = _screen2;
 	_clipArea.destSurface = _screen2;
 	
-	_excludeClipAreaEnabled[0] = false;
-	_excludeClipAreaEnabled[1] = false;
-	_excludeClipAreaEnabled[2] = false;
-	_excludeClipAreaEnabled[3] = false;
+	for (int i = 0; i <= 3; i++)
+		_excludeClipAreaEnabled[i] = false;
+
+	_screenLock = false;
+	_paletteLock = false;
 
 	clearChannels();
-	
 }
 
 Screen::~Screen() {
@@ -135,19 +131,16 @@ uint16 Screen::setChannelContent(uint16 channelIndex, uint16 index) {
 
 void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask) {
 
-	_excludeClipArea[0].destSurface = clipInfo.destSurface;
-	_excludeClipArea[1].destSurface = clipInfo.destSurface;
-	_excludeClipArea[2].destSurface = clipInfo.destSurface;
-	_excludeClipArea[3].destSurface = clipInfo.destSurface;
+	for (int i = 0; i <= 3; i++)
+		_excludeClipArea[i].destSurface = clipInfo.destSurface;
+
 	_clipArea.destSurface = clipInfo.destSurface;
 	
 	for (uint16 i = 0; i < _channelsUsedCount; i++) {
 	
 		debug(2, "drawSpriteChannels() i = %d\n", i);
 	
-		if (((_channels[i].state & includeStateMask) == includeStateMask) && (_channels[i].state & excludeStateMask) == 0)
-		{
-
+		if (((_channels[i].state & includeStateMask) == includeStateMask) && (_channels[i].state & excludeStateMask) == 0) {
 			uint16 flag1 = _channels[i].state & 0x10;
 			uint16 flag2 = _channels[i].state & 0x20;
 			
@@ -203,18 +196,15 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 }
 
 void Screen::updateSprites() {
-
-	// TODO: This needs some more work, I don't use dirty rectangles for now
+	// TODO: This needs some more work, dirty rectangles are currently not used
 
 	memcpy(_screen2->pixels, _screen1->pixels, 64000);
 
 	//drawSpriteChannels(_clipInfo1, 3, 0x40);//CHECKME
-
 	drawSpriteChannels(_clipInfo1, 3, 0);//CHECKME
 	drawSpriteChannels(_clipInfo2, 1, 2);//CHECKME
 
 	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
-
 }
 
 void Screen::clearChannels() {
@@ -287,7 +277,6 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 	}
 
 	_vm->_res->freeResource(anim);
-	
 }
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2) {
@@ -304,11 +293,10 @@ uint16 Screen::drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 	return 0;
 }
 
-uint16 Screen::addSprite(uint16 spriteIndex) {
+void Screen::addSprite(uint16 spriteIndex) {
 	bool oldScreenLock = _screenLock;
 	drawFlex(spriteIndex, 0, 0, 0, 0, _clipInfo1);
 	_screenLock = oldScreenLock;
-	return 0;
 }
 
 uint16 Screen::drawSprite(uint16 flexIndex, int16 x, int16 y) {

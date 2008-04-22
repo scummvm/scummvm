@@ -63,6 +63,8 @@ public:
 	void drawSurface(Graphics::Surface *source, int x, int y);
 	void loadRGBPalette(byte *palRGB, int count = 256);
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
+	bool isPaletteLocked() { return _paletteLock; }
+	void setPaletteLock(bool lock) { _paletteLock = lock; }
 
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
@@ -81,7 +83,7 @@ public:
 	uint16 drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2);
 	uint16 drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2);
 	
-	uint16 addSprite(uint16 spriteIndex);
+	void addSprite(uint16 spriteIndex);
 	
 	uint16 drawSprite(uint16 flexIndex, int16 x, int16 y);
 	uint16 placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16 y);
@@ -106,7 +108,8 @@ protected:
 	MadeEngine *_vm;
 	
 	bool _screenLock;
-	
+	bool _paletteLock;
+
 	uint16 _clip, _exclude, _ground;
 	
 	Graphics::Surface *_screen1, *_screen2;

@@ -190,7 +190,8 @@ int16 ScriptFunctionsRtz::o1_CLS(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SHOWPAGE(int16 argc, int16 *argv) {
-	_vm->_system->setPalette(_vm->_screen->_screenPalette, 0, 256);
+	if (!_vm->_screen->isPaletteLocked())
+		_vm->_system->setPalette(_vm->_screen->_screenPalette, 0, 256);
 	_vm->_screen->show();
 	return 0;
 }
@@ -274,6 +275,11 @@ int16 ScriptFunctionsRtz::o1_VISUALFX(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYSND(int16 argc, int16 *argv) {
+	/*
+	Audio::SoundHandle audioStreamHandle;
+	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &audioStreamHandle, 
+								 _vm->_res->getSound(argv[0])->getAudioStream());
+	*/
 	return 0;
 }
 
@@ -332,6 +338,7 @@ int16 ScriptFunctionsRtz::o1_SCREENLOCK(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_ADDSPRITE(int16 argc, int16 *argv) {
+	//_vm->_screen->addSprite(argv[0]);
 	g_system->delayMillis(5000);
 	return 0;
 }
@@ -381,7 +388,7 @@ int16 ScriptFunctionsRtz::o1_FREETIMER(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PALETTELOCK(int16 argc, int16 *argv) {
-	//g_system->delayMillis(1000);
+	_vm->_screen->setPaletteLock(argv[0] != 0);
 	return 0;
 }
 
