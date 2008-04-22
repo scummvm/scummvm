@@ -686,8 +686,7 @@ void AgiEngine::initialize() {
 
 	// If used platform is Apple IIGS then we must use Apple IIGS sound emulation
 	// because Apple IIGS AGI games use only Apple IIGS specific sound resources.
-	if (ConfMan.hasKey("platform") &&
-		Common::parsePlatform(ConfMan.get("platform")) == Common::kPlatformApple2GS) {
+	if (getPlatform() == Common::kPlatformApple2GS) {
 		_soundemu = SOUND_EMU_APPLE2GS;
 	} else {
 		switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
