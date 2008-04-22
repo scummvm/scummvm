@@ -131,7 +131,9 @@ int16 Object::getVectorSize() {
 	} else if (getClass() < 0x7FFE) {
 		return getCount1() + getCount2();
 	} else {
-		return 0;	// FIXME
+		// should never reach here
+		error("Unknown object class");
+		return 0;
 	}
 }
 
@@ -146,7 +148,9 @@ int16 Object::getVectorItem(int16 index) {
 		int16 *vector = (int16*)getData();
 		return READ_LE_UINT16(&vector[index]);
 	} else {
-		return 0;	// FIXME
+		// should never reach here
+		error("Unknown object class");
+		return 0;
 	}
 }
 
