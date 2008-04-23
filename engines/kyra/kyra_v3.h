@@ -246,11 +246,26 @@ private:
 	void showMessage(const char *string, uint8 c0, uint8 c1);
 	void updateCommandLine();
 	void restoreCommandLine();
+	void updateCLState();
 
 	int _commandLineY;
 	const char *_shownMessage;
 	bool _restoreCommandLine;
 	bool _inventoryState;
+	int _inventoryScrollSpeed;
+
+	void showInventory();
+	void hideInventory();
+
+	void updateMalcolmSpiritText();
+	//void updateMalcolmSpiritPtr();
+	void drawJestersStaff(int type, int page);
+
+	static const uint8 _inventoryX[];
+	static const uint8 _inventoryY[];
+	void redrawInventory(int page);
+	void clearInventorySlot(int slot, int page);
+	void drawInventorySlot(int page, int item, int slot);
 
 	// localization
 	uint8 *_scoreFile;

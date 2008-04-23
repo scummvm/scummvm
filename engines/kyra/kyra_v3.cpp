@@ -125,6 +125,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_nextIdleType = false;
 	_newShapeFlag = -1;
 	_newShapeFiledata = 0;
+	_inventoryScrollSpeed = -1;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -798,43 +799,6 @@ void KyraEngine_v3::updateMalcolmShapes() {
 
 #pragma mark -
 
-void KyraEngine_v3::showMessage(const char *string, uint8 c0, uint8 c1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::showMessage('%s', %d, %d)", string, c0, c1);
-	_shownMessage = string;
-	_screen->hideMouse();
-
-	restoreCommandLine();
-	_restoreCommandLine = false;
-
-	if (string) {
-		int x = _text->getCenterStringX(string, 0, 320);
-		int pageBackUp = _screen->_curPage;
-		_screen->_curPage = 0;
-		_text->printText(string, x, _commandLineY, c0, c1, 0);
-		_screen->_curPage = pageBackUp;
-		_screen->updateScreen();
-		setCommandLineRestoreTimer(7);
-	}
-
-	_screen->showMouse();
-}
-
-void KyraEngine_v3::updateCommandLine() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCommandLine()");
-	if (_restoreCommandLine) {
-		restoreCommandLine();
-		_restoreCommandLine = false;
-	}
-}
-
-void KyraEngine_v3::restoreCommandLine() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::restoreCommandLine()");
-	int y = _inventoryState ? 144 : 188;
-	_screen->copyBlockToPage(0, 0, y, 320, 12, _interfaceCommandLine);
-}
-
-#pragma mark -
-
 void KyraEngine_v3::moveCharacter(int facing, int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::moveCharacter(%d, %d, %d)", facing, x, y);
 	x &= ~3;
@@ -1220,7 +1184,7 @@ void KyraEngine_v3::updateMouse() {
 	if (_inventoryState) {
 		if (mouse.y >= 144)
 			return;
-		//hideInventory();
+		hideInventory();
 	}
 
 	if (hasItemCollision && _handItemSet < -1 && _itemInHand < 0) {
@@ -1307,7 +1271,7 @@ void KyraEngine_v3::updateMouse() {
 	} else if (type == 0 && _handItemSet != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
 		setItemMouseCursor();
 	} else if (mouse.y > 187 && _handItemSet > -4 && type == 0 && !_inventoryState) {
-		//showInventory();
+		showInventory();
 	}
 }
 

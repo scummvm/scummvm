@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	gui.o \
 	gui_v1.o \
 	gui_v2.o \
+	gui_v3.o \
 	items_v1.o \
 	items_v2.o \
 	items_v3.o \

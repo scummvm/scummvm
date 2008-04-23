@@ -37,7 +37,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 	showMessage(0, 0xF0, 0xF0);
 	if (_inventoryState) {
-		//XXX hideInventory();
+		hideInventory();
 		musicUpdate(0);
 	}
 
