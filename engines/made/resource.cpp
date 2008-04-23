@@ -69,12 +69,14 @@ void PictureResource::load(byte *source, int size) {
 	/*uint16 u = */sourceS->readUint16LE();
 	uint16 width = sourceS->readUint16LE();
 	uint16 height = sourceS->readUint16LE();
+	
+	_paletteColorCount = (cmdOffs - 18) / 3; // 18 = sizeof header
 
 	debug(2, "width = %d; height = %d\n", width, height);
 
 	if (_hasPalette) {
-		_picturePalette = new byte[768];
-		sourceS->read(_picturePalette, 768);
+		_picturePalette = new byte[_paletteColorCount * 3];
+		sourceS->read(_picturePalette, _paletteColorCount * 3);
 	}
 
 	_picture = new Graphics::Surface();
@@ -194,6 +196,13 @@ void MenuResource::load(byte *source, int size) {
 	}
 	fflush(stdout);
 	delete sourceS;
+}
+
+const char *MenuResource::getString(int index) const {
+	if (index < _strings.size())
+		return _strings[index].c_str();
+	else
+		return NULL;
 }
 
 /* ProjectReader */

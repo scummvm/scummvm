@@ -51,6 +51,19 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_screenLock = false;
 	_paletteLock = false;
 
+	_paletteInitialized = false;
+	_needPalette = false;
+	_oldPaletteColorCount = 256;
+	_paletteColorCount = 256;
+	memset(_newPalette, 0, 768);
+	memset(_palette, 0, 768);
+
+	_ground = 1;
+	_clip = 0;
+	_exclude = 0;
+	
+	_visualEffectNum = 0;
+
 	clearChannels();
 }
 
@@ -62,10 +75,30 @@ Screen::~Screen() {
 void Screen::clearScreen() {
 	_screen1->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_screen2->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_needPalette = true;
 	//_vm->_system->clearScreen();
 }
 
-void Screen::drawSurface(Graphics::Surface *source, int x, int y) {
+void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, const ClipInfo &clipInfo) {
+
+	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
+	byte *dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
+
+	// FIXME: Implement actual clipping
+	if (x + sourceSurface->w > clipInfo.destSurface->w || y + sourceSurface->h > clipInfo.destSurface->h) {
+		debug(2, "CLIPPING PROBLEM: x = %d; y = %d; w = %d; h = %d; x+w = %d; y+h = %d\n",
+			x, y, sourceSurface->w, sourceSurface->h, x + sourceSurface->w, y + sourceSurface->h);
+		return;
+	}
+
+	for (int16 yc = 0; yc < sourceSurface->h; yc++) {
+		for (int16 xc = 0; xc < sourceSurface->w; xc++) {
+			if (source[xc])
+				dest[xc] = source[xc];
+		}
+		source += sourceSurface->pitch;
+		dest += clipInfo.destSurface->pitch;
+	}
 
 }
 
@@ -200,11 +233,11 @@ void Screen::updateSprites() {
 
 	memcpy(_screen2->pixels, _screen1->pixels, 64000);
 
-	//drawSpriteChannels(_clipInfo1, 3, 0x40);//CHECKME
-	drawSpriteChannels(_clipInfo1, 3, 0);//CHECKME
-	drawSpriteChannels(_clipInfo2, 1, 2);//CHECKME
+	drawSpriteChannels(_clipInfo1, 3, 0);
+	drawSpriteChannels(_clipInfo2, 1, 2);
 
 	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
+	
 }
 
 void Screen::clearChannels() {
@@ -220,36 +253,19 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 	if (flexIndex == 0)
 		return 0;
 
-	if (flexIndex == 1279) return 0;	// HACK: fixes the first screen
-
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
 	Graphics::Surface *sourceSurface = flex->getPicture();
-	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
-	byte *dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
 
-
-	if (x + sourceSurface->w > clipInfo.destSurface->w || y + sourceSurface->h > clipInfo.destSurface->h) {
-		debug(2, "CLIPPING PROBLEM: x = %d; y = %d; w = %d; h = %d; x+w = %d; y+h = %d\n",
-			x, y, sourceSurface->w, sourceSurface->h, x + sourceSurface->w, y + sourceSurface->h);
-		//fflush(stdout); g_system->delayMillis(5000);
-		return 0;
-	}
-
-	for (int16 yc = 0; yc < sourceSurface->h; yc++) {
-		for (int16 xc = 0; xc < sourceSurface->w; xc++) {
-			if (source[xc])
-				dest[xc] = source[xc];
-		}
-		source += sourceSurface->pitch;
-		dest += clipInfo.destSurface->pitch;
-	}
+	drawSurface(sourceSurface, x, y, clipInfo);
 
 	// Palette is set in showPage
-	if (flex->hasPalette()) {
-		byte *pal = flex->getPalette();
-		if (pal != 0) {
-			loadRGBPalette(pal);
-		}
+	if (flex->hasPalette() && !_paletteLock && _needPalette) {
+		byte *flexPalette = flex->getPalette();
+		_oldPaletteColorCount = _paletteColorCount;
+		_paletteColorCount = flex->getPaletteColorCount();
+		memcpy(_newPalette, _palette, _oldPaletteColorCount * 3);
+		memcpy(_palette, flexPalette, _paletteColorCount * 3);
+		_needPalette = false;
 	}
 
 	_vm->_res->freeResource(flex);
@@ -264,24 +280,15 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 
 	AnimationResource *anim = _vm->_res->getAnimation(animIndex);
 	Graphics::Surface *sourceSurface = anim->getFrame(frameNum);
-	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
-	byte *dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
 
-	for (int16 yc = 0; yc < sourceSurface->h; yc++) {
-		for (int16 xc = 0; xc < sourceSurface->w; xc++) {
-			if (source[xc])
-				dest[xc] = source[xc];
-		}
-		source += sourceSurface->pitch;
-		dest += clipInfo.destSurface->pitch;
-	}
+	drawSurface(sourceSurface, x, y, clipInfo);
 
 	_vm->_res->freeResource(anim);
 }
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2) {
 
-	//HACK (until clipping is impelemented)
+	//HACK (until clipping is implemented)
 	if (y > 200) y = 0;
 
 	drawFlex(index, x, y, flag1, flag2, _clipInfo1);
@@ -306,7 +313,6 @@ uint16 Screen::drawSprite(uint16 flexIndex, int16 x, int16 y) {
 uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16 y) {
 
 	debug(2, "placeSprite(%d, %04X, %d, %d)\n", channelIndex, flexIndex, x, y); fflush(stdout);
-	//g_system->delayMillis(5000);
 
 	if (channelIndex < 1 || channelIndex >= 100)
 		return 0;
@@ -445,15 +451,24 @@ void Screen::show() {
 
 	// TODO
 	
-	memcpy(_screen2->pixels, _screen1->pixels, 64000);
-	
-	drawSpriteChannels(_clipInfo2, 0, 0);
-	
-	//drawSpriteChannels(_clipInfo2, 3, 0);//CHECKME
-	//drawSpriteChannels(_clipInfo2, 1, 2);//CHECKME
+	if (_screenLock)
+		return;
 
-	//_vm->_system->copyRectToScreen((const byte*)_screen1->pixels, _screen1->pitch, 0, 0, _screen1->w, _screen1->h);
+	drawSpriteChannels(_clipInfo1, 3, 0);
+	memcpy(_screen2->pixels, _screen1->pixels, 64000);
+	drawSpriteChannels(_clipInfo2, 1, 2);
+
+	// TODO: Implement visual effects (palette fading etc.)
+	if (!_paletteLock)
+		setRGBPalette(_palette, 0, _paletteColorCount);
 	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
+	_vm->_system->updateScreen();
+
+	if (!_paletteInitialized) {
+		memcpy(_newPalette, _palette, _paletteColorCount * 3);
+		_oldPaletteColorCount = _paletteColorCount;
+		_paletteInitialized = true;
+	}
 
 }
 

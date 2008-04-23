@@ -60,11 +60,16 @@ public:
 
 	void clearScreen();
 	
-	void drawSurface(Graphics::Surface *source, int x, int y);
+	void drawSurface(Graphics::Surface *sourceSurface, int x, int y, const ClipInfo &clipInfo);
 	void loadRGBPalette(byte *palRGB, int count = 256);
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 	bool isPaletteLocked() { return _paletteLock; }
+	void setScreenLock(bool lock) { _screenLock = lock; }
 	void setPaletteLock(bool lock) { _paletteLock = lock; }
+	void setVisualEffectNum(int visualEffectNum) { _visualEffectNum = visualEffectNum; }
+	void setClip(uint16 clip) { _clip = clip; }
+	void setExclude(uint16 exclude) { _exclude = exclude; }
+	void setGround(uint16 ground) { _ground = ground; }
 
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
@@ -76,7 +81,7 @@ public:
 	void drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask);
 	void updateSprites();
 	void clearChannels();
-
+	
 	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo);
 	void drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo);
 
@@ -98,10 +103,6 @@ public:
 	
 	void show();
 	
-	void setClip(uint16 clip);
-	void setExclude(uint16 exclude);
-	void setGround(uint16 ground);
-
 	byte _screenPalette[256 * 4];
 
 protected:
@@ -110,7 +111,12 @@ protected:
 	bool _screenLock;
 	bool _paletteLock;
 
+	byte _palette[768], _newPalette[768];
+	int _paletteColorCount, _oldPaletteColorCount;
+	bool _paletteInitialized, _needPalette;
+
 	uint16 _clip, _exclude, _ground;
+	int _visualEffectNum;
 	
 	Graphics::Surface *_screen1, *_screen2;
 	ClipInfo _clipArea, _clipInfo1, _clipInfo2;

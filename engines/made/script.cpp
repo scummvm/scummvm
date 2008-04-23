@@ -682,7 +682,7 @@ void ScriptInterpreter::cmd_extend() {
 	byte argc = readByte();
 	int16 *argv = _stack.getStackPtr();
 
-	debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc); fflush(stdout);
+	debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc);
 	for (int i = 0; i < argc; i++)
 		debug(4, "argv[%02d] = %04X (%d)\n", i, argv[i], argv[i]);
 

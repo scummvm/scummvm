@@ -176,10 +176,6 @@ int16 ScriptFunctionsRtz::o1_RESTOREGRAF(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWPIC(int16 argc, int16 *argv) {
-
-	fflush(stdout);
-	//g_system->delayMillis(5000);
-
 	int16 channel = _vm->_screen->drawPic(argv[4], argv[3], argv[2], argv[1], argv[0]);
 	return channel;
 }
@@ -190,8 +186,6 @@ int16 ScriptFunctionsRtz::o1_CLS(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SHOWPAGE(int16 argc, int16 *argv) {
-	if (!_vm->_screen->isPaletteLocked())
-		_vm->_system->setPalette(_vm->_screen->_screenPalette, 0, 256);
 	_vm->_screen->show();
 	return 0;
 }
@@ -272,6 +266,7 @@ int16 ScriptFunctionsRtz::o1_EVENTKEY(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_VISUALFX(int16 argc, int16 *argv) {
+	_vm->_screen->setVisualEffectNum(argv[0]);
 	return 0;
 }
 
@@ -343,6 +338,7 @@ int16 ScriptFunctionsRtz::o1_MUSICBEAT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SCREENLOCK(int16 argc, int16 *argv) {
+	_vm->_screen->setScreenLock(argv[0] != 0);
 	return 0;
 }
 
@@ -377,7 +373,7 @@ int16 ScriptFunctionsRtz::o1_GETTIMER(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETTIMER(int16 argc, int16 *argv) {
-	//g_system->delayMillis(5000);
+	_vm->setTimer(argv[1], argv[0]);
 	return 0;
 }
 
@@ -444,6 +440,7 @@ int16 ScriptFunctionsRtz::o1_LOADCURSOR(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETGROUND(int16 argc, int16 *argv) {
+	_vm->_screen->setGround(argv[0]);
 	return 0;
 }
 
@@ -456,6 +453,7 @@ int16 ScriptFunctionsRtz::o1_CLIPAREA(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETCLIP(int16 argc, int16 *argv) {
+	_vm->_screen->setClip(argv[0]);
 	return 0;
 }
 
@@ -568,10 +566,8 @@ int16 ScriptFunctionsRtz::o1_PLACESPRITE(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_PLACETEXT(int16 argc, int16 *argv) {
 	Object *obj = _vm->_dat->getObject(argv[5]);
-	_vm->_dat->dumpObject(argv[5]);
 	const char *text = obj->getString();
 	debug(4, "text = %s\n", text); fflush(stdout);
-	//!! g_system->delayMillis(5000);
 	return 0;
 }
 
@@ -605,12 +601,11 @@ int16 ScriptFunctionsRtz::o1_EXCLUDEAREA(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETEXCLUDE(int16 argc, int16 *argv) {
-	g_system->delayMillis(5000);
+	_vm->_screen->setExclude(argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_GETSTATE(int16 argc, int16 *argv) {
-	//!! g_system->delayMillis(5000);
 	int16 state = _vm->_screen->getChannelState(argv[0]);
 	return state;
 }
@@ -635,8 +630,6 @@ int16 ScriptFunctionsRtz::o1_GETFRAMECOUNT(int16 argc, int16 *argv) {
 	debug(4, "anim = %04X\n", argv[0]);
 	int16 frameCount = _vm->_screen->getAnimFrameCount(argv[0]);
 	debug(4, "frameCount = %04X\n", frameCount);
-	//fflush(stdout);
-	//g_system->delayMillis(5000);
 	return frameCount;
 }
 
@@ -681,18 +674,19 @@ int16 ScriptFunctionsRtz::o1_READTEXT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_READMENU(int16 argc, int16 *argv) {
-	/*
+
 	int16 objectIndex = argv[2];
 	int16 menuIndex = argv[1];
 	int16 textIndex = argv[0];
 	MenuResource *menu = _vm->_res->getMenu(menuIndex);
 	if (menu) {
-		const char *text = menu->getString(textIndex).c_str();
+		const char *text = menu->getString(textIndex);
 		debug(4, "text = %s\n", text); fflush(stdout);
+		Object *obj = _vm->_dat->getObject(objectIndex);
+		obj->setString(text);
 		_vm->_res->freeResource(menu);
 	}
-	g_system->delayMillis(5000);
-	*/
+
 	return 0;
 }
 

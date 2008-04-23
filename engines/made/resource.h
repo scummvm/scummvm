@@ -64,9 +64,11 @@ public:
 	Graphics::Surface *getPicture() const { return _picture; }
 	byte *getPalette() const { return _picturePalette; }
 	bool hasPalette() const { return _hasPalette; }
+	int getPaletteColorCount() const { return _paletteColorCount; }
 protected:
 	Graphics::Surface *_picture;
 	byte *_picturePalette;
+	int _paletteColorCount;
 	bool _hasPalette;
 };
 
@@ -103,7 +105,7 @@ public:
 	~MenuResource();
 	void load(byte *source, int size);
 	int getCount() const { return _strings.size(); }
-	Common::String getString(int index) const { return _strings[index]; }
+	const char *getString(int index) const;
 protected:
 	Common::Array<Common::String> _strings;
 };
