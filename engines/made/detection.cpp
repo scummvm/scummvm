@@ -85,7 +85,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		0,
 		0,
-		GF_CD_COMPRESSED,
+		GF_CD,
 		0,
 	},
 
@@ -101,7 +101,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		0,
 		0,
-		GF_CD,
+		GF_CD_COMPRESSED,
 		0,
 	},
 
