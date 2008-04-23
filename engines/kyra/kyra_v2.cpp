@@ -1255,7 +1255,7 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
 
 	if (!_scriptInterpreter->loadScript(filename, &_temporaryScriptData, &_opcodesTemporary))
-		error("couldn't load temporary script '%s'", filename);
+		error("Couldn't load temporary script '%s'", filename);
 
 	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
 	_scriptInterpreter->startScript(&_temporaryScriptState, 0);
@@ -1274,8 +1274,10 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 
 	fileData = _newShapeFiledata;
 
-	if (!fileData)
+	if (!fileData) {
+		_scriptInterpreter->unloadScript(&_temporaryScriptData);
 		return;
+	}
 
 	if (newShapes)
 		_newShapeCount = initNewShapes(fileData);
@@ -1658,9 +1660,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
 
-		while (!skipFlag() && _system->getMillis() < delayEnd) {
-			// XXX skipFlag handling, unk1 seems to make a scene not skipable
-
+		while ((!skipFlag() || unk1) && _system->getMillis() < delayEnd) {
 			if (_chatText)
 				updateWithText();
 			else
@@ -1668,6 +1668,9 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 			delay(10);
 		}
+
+		if (skipFlag())
+			resetSkipFlag();
 	}
 
 	if (unk2) {
