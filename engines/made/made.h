@@ -48,7 +48,10 @@
 namespace Made {
 
 enum MadeGameFeatures {
-	GF_DEMO = 1 << 0
+	GF_DEMO = 1 << 0,
+	GF_CD = 1 << 1,
+	GF_CD_COMPRESSED = 1 << 2,
+	GF_FLOPPY = 1 << 3
 };
 
 struct MadeGameDescription;

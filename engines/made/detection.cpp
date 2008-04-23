@@ -85,7 +85,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		0,
 		0,
-		0,
+		GF_CD_COMPRESSED,
 		0,
 	},
 
@@ -101,7 +101,23 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		0,
 		0,
+		GF_CD,
 		0,
+	},
+
+	{
+		// Return to Zork - English floppy version
+		{
+			"rtz",
+			"Floppy",
+			AD_ENTRY1("rtz.prj", "764d02f52ce1c219f2c0066677fba4ce"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		0,
+		0,
+		GF_FLOPPY,
 		0,
 	},
 

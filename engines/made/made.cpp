@@ -143,12 +143,17 @@ int MadeEngine::go() {
 	if (getFeatures() & GF_DEMO) {
 		_dat->open("demo.dat");
 		_res->open("demo.prj");
-	} else {
-		if (Common::File::exists("rtzcd.dat"))
-			_dat->open("rtzcd.dat");
-		else
-			_dat->openFromRed("rtzcd.red", "rtzcd.dat");
+	} else if (getFeatures() & GF_CD) {
+		_dat->open("rtzcd.dat");
 		_res->open("rtzcd.prj");
+	} else if (getFeatures() & GF_CD_COMPRESSED) {
+		_dat->openFromRed("rtzcd.red", "rtzcd.dat");
+		_res->open("rtzcd.prj");
+	} else if (getFeatures() & GF_FLOPPY) {
+		_dat->open("rtz.dat");
+		_res->open("rtz.prj");
+	} else {
+		error("Unknown game features");
 	}
 
 	_eventMouseX = _eventMouseY = 0;
