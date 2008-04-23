@@ -505,5 +505,105 @@ void KyraEngine_v3::resetCharacterAnimDim() {
 	_charBackUpWidth = _charBackUpHeight = -1;
 }
 
+void KyraEngine_v3::showIdleAnim() {
+	debugC(9, kDebugLevelMain | kDebugLevelAnimator, "KyraEngine_v3::showIdleAnim()");
+
+	if (_mainCharacter.sceneId == 20 || _mainCharacter.sceneId == 21
+			|| _mainCharacter.sceneId == 12 || _mainCharacter.sceneId == 11)
+		return;
+
+	if (_mainCharacter.animFrame == 87)
+		return;
+
+	if (!_nextIdleType && !talkObjectsInCurScene()) {
+		malcolmRandomChat();
+	} else {
+		static const char *facingTable[] = {
+			"A", "R", "R", "FR", "FX", "FL", "L", "L"
+		};
+
+		char filename[14];
+		snprintf(filename, 14, "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _malcolmShapes);
+
+		if (_res->exists(filename))
+			runTemporaryScript(filename, 1, 1, 1, 1);
+	}
+
+	_nextIdleType = !_nextIdleType;
+}
+
+int KyraEngine_v3::initNewShapes(uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::initNewShapes(%p)", (const void*)filedata);
+	const int lastEntry = MIN(_newShapeLastEntry, 41);
+	for (int i = 0; i < lastEntry; ++i)
+		_gameShapes[9+i] = _screen->getPtrToShape(filedata, i);
+	return lastEntry;
+}
+
+void KyraEngine_v3::processNewShapes(int allowSkip, int resetChar) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::processNewShapes(%d, %d)", allowSkip, resetChar);
+	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
+
+	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
+	_scriptInterpreter->startScript(&_temporaryScriptState, 1);
+
+	resetSkipFlag();
+
+	while (_scriptInterpreter->validScript(&_temporaryScriptState)) {
+		_temporaryScriptExecBit = false;
+		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
+			_scriptInterpreter->runScript(&_temporaryScriptState);
+
+		if (_newShapeAnimFrame < 0)
+			continue;
+
+		_mainCharacter.animFrame = _newShapeAnimFrame + 9;
+		updateCharacterAnim(0);
+		if (_chatText)
+			updateWithText();
+		else
+			update();
+
+		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
+
+		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd) {
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+
+			delay(10);
+		}
+
+		if (skipFlag())
+			resetSkipFlag();
+	}
+
+	if (resetChar) {
+		if (_newShapeFlag >= 0) {
+			_mainCharacter.animFrame = _newShapeFlag + 9;
+			updateCharacterAnim(0);
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		}
+
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		updateCharacterAnim(0);
+	}
+
+	_newShapeFlag = -1;
+	resetCharacterAnimDim();
+}
+
+void KyraEngine_v3::resetNewShapes(int count, uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::resetNewShapes(%d, %p)", count, (const void*)filedata);
+	for (int i = 0; i < count; ++i)
+		_gameShapes[9+i] = 0;
+	delete [] filedata;
+	setNextIdleAnimTimer();
+}
+
 } // end of namespace Kyra
 

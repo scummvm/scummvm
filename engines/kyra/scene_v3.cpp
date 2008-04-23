@@ -158,7 +158,9 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	} else {
 		if (!--_enterNewSceneLock)
 			_unk5 = 0;
-		//XXX
+
+		setNextIdleAnimTimer();
+
 		if (_itemInHand <= 0) {
 			_itemInHand = -1;
 			_handItemSet = -1;

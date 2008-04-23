@@ -84,4 +84,9 @@ void KyraEngine_v3::setCommandLineRestoreTimer(int secs) {
 	_timer->setCountdown(0, secs*60);
 }
 
+void KyraEngine_v3::setNextIdleAnimTimer() {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::setNextIdleAnimTimer()");
+	_nextIdleAnim = _system->getMillis() + _rnd.getRandomNumberRng(10, 15) * 1000;
+}
+
 } // end of namespace Kyra

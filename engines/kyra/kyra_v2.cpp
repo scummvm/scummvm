@@ -1268,8 +1268,12 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 	uint8 *fileData = 0;
 
 	if (newShapes) {
+		if (_newShapeFiledata) {
+			resetNewShapes(_newShapeCount, _newShapeFiledata);
+			_newShapeFiledata = 0;
+			_newShapeCount = 0;
+		}
 		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
-		assert(_newShapeFiledata);
 	}
 
 	fileData = _newShapeFiledata;
@@ -1660,7 +1664,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
 
-		while ((!skipFlag() || unk1) && _system->getMillis() < delayEnd) {
+		while ((!skipFlag() || !unk1) && _system->getMillis() < delayEnd) {
 			if (_chatText)
 				updateWithText();
 			else
@@ -1686,8 +1690,6 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 	}
-
-	resetSkipFlag();
 
 	_newShapeFlag = -1;
 	resetCharacterAnimDim();

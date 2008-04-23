@@ -236,7 +236,7 @@ void KyraEngine_v3::objectChat(const char *str, int object, int vocHigh, int voc
 	updateCharacterAnim(0);
 	_chatText = 0;
 	_chatObject = -1;
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 }
 
 void KyraEngine_v3::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
@@ -385,7 +385,7 @@ void KyraEngine_v3::badConscienceChat(const char *str, int vocHigh, int vocLow) 
 	if (!_badConscienceShown)
 		return;
 
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 	_chatVocHigh = _chatVocLow = -1;
 	objectChatInit(str, 1, vocHigh, vocLow);
 	_chatText = str;

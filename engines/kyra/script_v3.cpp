@@ -63,7 +63,7 @@ int KyraEngine_v3::o3_defineObject(ScriptState *script) {
 	obj.x = stackPos(4);
 	obj.y = stackPos(5);
 	obj.color = stackPos(6);
-	obj.unk14 = stackPos(7);
+	obj.sceneId = stackPos(7);
 	return 0;
 }
 
@@ -675,6 +675,16 @@ int KyraEngine_v3::o3_defineRoomEntrance(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_runTemporaryScript(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_runTemporaryScript(%p) ('%s', %d, %d, %d)", (const void *)script,
+			stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
+	const int newShapes = stackPos(1);
+	const int unloadShapes = stackPos(2);
+	const int allowSkip = stackPos(3);
+	runTemporaryScript(stackPosString(0), allowSkip, (unloadShapes != 0) ? 1 : 0, newShapes, unloadShapes);
+	return 0;
+}
+
 int KyraEngine_v3::o3_setSpecialSceneScriptRunTime(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSpecialSceneScriptRunTime(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) >= 0 && stackPos(0) < 10);
@@ -1120,7 +1130,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x6c
 	Opcode(o3_dummy);
 	Opcode(o3_defineRoomEntrance);
-	OpcodeUnImpl();
+	Opcode(o3_runTemporaryScript);
 	Opcode(o3_setSpecialSceneScriptRunTime);
 	// 0x70
 	Opcode(o3_defineSceneAnim);

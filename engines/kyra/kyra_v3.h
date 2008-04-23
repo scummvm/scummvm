@@ -160,6 +160,9 @@ private:
 	void timerRunSceneScript7(int arg);
 	void timerFleaDeath(int arg);
 
+	uint32 _nextIdleAnim;
+	void setNextIdleAnimTimer();
+
 	// pathfinder
 	int *_moveFacingTable;
 	int _pathfinderFlag;
@@ -229,6 +232,9 @@ private:
 
 	void setCharacterAnimDim(int w, int h);
 	void resetCharacterAnimDim();
+
+	bool _nextIdleType;
+	void showIdleAnim();
 
 	// interface
 	uint8 *_interface;
@@ -463,10 +469,12 @@ private:
 		int8 sceneScript;
 		int16 x, y;
 		uint8 color;
-		int8 unk14;
+		uint8 sceneId;
 	};
 
 	TalkObject *_talkObjectList;
+
+	bool talkObjectsInCurScene();
 
 	// chat
 	int _vocHigh;
@@ -546,6 +554,11 @@ private:
 	int o3t_defineNewShapes(ScriptState *script);
 	int o3t_setCurrentFrame(ScriptState *script);
 
+	ScriptData _temporaryScriptData;
+	ScriptState _temporaryScriptState;
+
+	void runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
+
 	// special shape code
 	char _newShapeFilename[13];
 	int _newShapeLastEntry;
@@ -554,6 +567,14 @@ private:
 
 	int _newShapeAnimFrame;
 	int _newShapeDelay;
+
+	int _newShapeFlag;
+	uint8 *_newShapeFiledata;
+	int _newShapeCount;
+
+	int initNewShapes(uint8 *filedata);
+	void processNewShapes(int allowSkip, int resetChar);
+	void resetNewShapes(int count, uint8 *filedata);
 
 	// unk
 	uint8 *_costPalBuffer;
@@ -623,6 +644,7 @@ private:
 	int o3_blockOutRegion(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
+	int o3_runTemporaryScript(ScriptState *script);
 	int o3_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o3_defineSceneAnim(ScriptState *script);
 	int o3_updateSceneAnim(ScriptState *script);

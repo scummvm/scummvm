@@ -121,6 +121,10 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_dialogScriptState, 0, sizeof(_dialogScriptState));
 	_dialogScriptFuncStart = _dialogScriptFuncProc = _dialogScriptFuncEnd = 0;
 	_malcolmsSpirit = 1;
+	_nextIdleAnim = 0;
+	_nextIdleType = false;
+	_newShapeFlag = -1;
+	_newShapeFiledata = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -177,6 +181,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete _cnvFile;
 	delete _dlgBuffer;
 	delete [] _stringBuffer;
+	delete [] _newShapeFiledata;
 }
 
 int KyraEngine_v3::init() {
@@ -568,7 +573,7 @@ void KyraEngine_v3::startup() {
 	_talkObjectList = new TalkObject[88];
 	memset(_talkObjectList, 0, sizeof(TalkObject)*88);
 	for (int i = 0; i < 88; ++i)
-		_talkObjectList[i].unk14 = -1;
+		_talkObjectList[i].sceneId = 0xFF;
 
 	musicUpdate(0);
 	updateMalcolmShapes();
@@ -1008,7 +1013,10 @@ void KyraEngine_v3::runLoop() {
 	_runFlag = true;
 	while (_runFlag && !_quitFlag) {
 		//XXX deathHandler
-		//XXX
+		
+		if (_system->getMillis() >= _nextIdleAnim)
+			showIdleAnim();
+
 		int inputFlag = checkInput(0/*_mainButtonList*/);
 		removeInputTop();
 
@@ -1029,7 +1037,7 @@ void KyraEngine_v3::handleInput(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::handleInput(%d, %d)", x, y);
 	if (_inventoryState)
 		return;
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 
 	if (_unk5) {
 		_unk5 = 0;
@@ -1044,7 +1052,7 @@ void KyraEngine_v3::handleInput(int x, int y) {
 		return;
 	}
 
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 	
 	int skip = 0;
 
@@ -1531,6 +1539,69 @@ void KyraEngine_v3::getTableEntry(Common::SeekableReadStream *stream, int id, ch
 	while ((c = stream->readByte()) != 0)
 		*dst++ = c;
 	*dst = 0;
+}
+
+#pragma mark -
+
+bool KyraEngine_v3::talkObjectsInCurScene() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::talkObjectsInCurScene()");
+
+	for (int i = 0; i < 88; ++i) {
+		if (_talkObjectList[i].sceneId == _mainCharacter.sceneId)
+			return true;
+	}
+
+	return false;
+}
+
+#pragma mark -
+
+void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runTemporaryScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
+	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
+	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
+
+	if (!_scriptInterpreter->loadScript(filename, &_temporaryScriptData, &_opcodesTemporary))
+		error("Couldn't load temporary script '%s'", filename);
+
+	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
+	_scriptInterpreter->startScript(&_temporaryScriptState, 0);
+
+	_newShapeFlag = -1;
+
+	while (_scriptInterpreter->validScript(&_temporaryScriptState))
+		_scriptInterpreter->runScript(&_temporaryScriptState);
+
+	uint8 *fileData = 0;
+
+	if (newShapes) {
+		if (_newShapeFiledata) {
+			resetNewShapes(_newShapeCount, _newShapeFiledata);
+			_newShapeFiledata = 0;
+			_newShapeCount = 0;
+		}
+		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
+	}
+
+	fileData = _newShapeFiledata;
+
+	if (!fileData) {
+		_scriptInterpreter->unloadScript(&_temporaryScriptData);
+		return;
+	}
+
+	if (newShapes)
+		_newShapeCount = initNewShapes(fileData);
+
+	processNewShapes(allowSkip, resetChar);
+
+	if (shapeUnload) {
+		resetNewShapes(_newShapeCount, fileData);
+		_newShapeCount = 0;
+		_newShapeFiledata = 0;
+	}
+
+	_scriptInterpreter->unloadScript(&_temporaryScriptData);
 }
 
 #pragma mark -
