@@ -136,10 +136,8 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	_sceneExit3 = _sceneList[sceneId].exit3;
 	_sceneExit4 = _sceneList[sceneId].exit4;
 
-
 	while (_system->getMillis() < waitUntilTimer)
 		_system->delayMillis(10);
-
 
 	musicUpdate(0);
 	initSceneScript(unk3);

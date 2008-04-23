@@ -132,6 +132,12 @@ int KyraEngine_v3::o3_trySceneChange(ScriptState *script) {
 	}
 }
 
+int KyraEngine_v3::o3_moveCharacter(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_moveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	moveCharacter(stackPos(0), stackPos(1), stackPos(2));
+	return 0;
+}
+
 int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showSceneFileMessage(%p) (%d)", (const void *)script, stackPos(0));
 	showMessage((const char*)getTableEntry(_scenesFile, stackPos(0)), 0xFF, 0xF0);
@@ -216,9 +222,9 @@ int KyraEngine_v3::o3_removeHandItem(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine_v3::o3_getHandItem(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getHandItem(%p) ()", (const void *)script);
-	return _itemInHand;
+int KyraEngine_v3::o3_handItemSet(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_handItemSet(%p) ()", (const void *)script);
+	return _handItemSet;
 }
 
 int KyraEngine_v3::o3_hideMouse(ScriptState *script) {
@@ -618,6 +624,22 @@ int KyraEngine_v3::o3_playSoundEffect(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_blockOutRegion(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	const int x1 = stackPos(0);
+	int y1 = stackPos(1);
+	const int x2 = stackPos(2);
+	int y2 = stackPos(3);
+
+	if (y1 < _maskPageMinY)
+		y1 = _maskPageMinY;
+	if (y2 > _maskPageMaxY)
+		y2 = _maskPageMaxY;
+
+	_screen->blockOutRegion(x1, y1, x2-x1+1, y2-y1+1);
+	return 0;
+}
+
 int KyraEngine_v3::o3_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
@@ -978,7 +1000,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x0c
 	OpcodeUnImpl();
 	Opcode(o3_trySceneChange);
-	OpcodeUnImpl();
+	Opcode(o3_moveCharacter);
 	OpcodeUnImpl();
 	// 0x10
 	OpcodeUnImpl();
@@ -1016,7 +1038,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_setHandItem);
 	Opcode(o3_removeHandItem);
 	// 0x2c
-	Opcode(o3_getHandItem);
+	Opcode(o3_handItemSet);
 	Opcode(o3_hideMouse);
 	Opcode(o3_addSpecialExit);
 	Opcode(o3_setMousePos);
@@ -1076,7 +1098,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	// 0x5c
-	OpcodeUnImpl();
+	Opcode(o3_blockOutRegion);
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
 	OpcodeUnImpl();

@@ -587,6 +587,7 @@ private:
 	int o3_getCharacterScene(ScriptState *script);
 	int o3_getMalcolmsSpirit(ScriptState *script);
 	int o3_trySceneChange(ScriptState *script);
+	int o3_moveCharacter(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
@@ -599,7 +600,7 @@ private:
 	int o3_setGameFlag(ScriptState *script);
 	int o3_setHandItem(ScriptState *script);
 	int o3_removeHandItem(ScriptState *script);
-	int o3_getHandItem(ScriptState *script);
+	int o3_handItemSet(ScriptState *script);
 	int o3_hideMouse(ScriptState *script);
 	int o3_addSpecialExit(ScriptState *script);
 	int o3_setMousePos(ScriptState *script);
@@ -619,6 +620,7 @@ private:
 	int o3_stopMusic(ScriptState *script);
 	int o3_playMusicTrack(ScriptState *script);
 	int o3_playSoundEffect(ScriptState *script);
+	int o3_blockOutRegion(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
 	int o3_setSpecialSceneScriptRunTime(ScriptState *script);
