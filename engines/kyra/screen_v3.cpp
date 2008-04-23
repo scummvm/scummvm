@@ -72,4 +72,67 @@ int Screen_v3::getLayer(int x, int y) {
 	return pixel;
 }
 
+byte Screen_v3::getShapeFlag1(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_v3::getShapeFlag1(%d, %d)", x, y);
+	if (y < _maskMinY || y > _maskMaxY)
+		return 0;
+
+	uint8 color = _shapePages[0][y * SCREEN_W + x];
+	color &= 0x80;
+	color ^= 0x80;
+
+	if (color & 0x80)
+		return 1;
+	return 0;
+}
+
+byte Screen_v3::getShapeFlag2(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_v3::getShapeFlag2(%d, %d)", x, y);
+	if (y < _maskMinY || y > _maskMaxY)
+		return 0;
+
+	uint8 color = _shapePages[0][y * SCREEN_W + x];
+	color &= 0x7F;
+	color &= 0x87;
+	return color;
+}
+
+int Screen_v3::getDrawLayer(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_v3::getDrawLayer(%d, %d)", x, y);
+	int xpos = x - 8;
+	int ypos = y;
+	int layer = 1;
+
+	for (int curX = xpos; curX < xpos + 24; ++curX) {
+		int tempLayer = getShapeFlag2(curX, ypos);
+
+		if (layer < tempLayer)
+			layer = tempLayer;
+
+		if (layer >= 7)
+			return 7;
+	}
+	return layer;
+}
+
+int Screen_v3::getDrawLayer2(int x, int y, int height) {
+	debugC(9, kDebugLevelScreen, "Screen_v3::getDrawLayer2(%d, %d, %d)", x, y, height);
+	int xpos = x - 8;
+	int ypos = y;
+	int layer = 1;
+
+	for (int useX = xpos; useX < xpos + 24; ++useX) {
+		for (int useY = ypos - height; useY < ypos; ++useY) {
+			int tempLayer = getShapeFlag2(useX, useY);
+
+			if (tempLayer > layer)
+				layer = tempLayer;
+
+			if (tempLayer >= 7)
+				return 7;
+		}
+	}
+	return layer;
+}
+
 } // end of namespace Kyra

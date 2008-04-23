@@ -236,6 +236,8 @@ private:
 	bool _nextIdleType;
 	void showIdleAnim();
 
+	void addItemToAnimList(int item);
+
 	// interface
 	uint8 *_interface;
 	uint8 *_interfaceCommandLine;
@@ -297,17 +299,30 @@ private:
 
 	void resetItem(int index);
 	void resetItemList();
+	static const uint8 _trashItemList[];
+	void removeTrashItems();
 
 	int findFreeItem();
 	int findItem(uint16 item, uint16 scene);
+	int findItem(uint16 item);
+
+	int countAllItems();
 	
 	void initItems();
 
 	int checkItemCollision(int x, int y);
 
-	void setMouseCursor(uint16 item);
+	bool dropItem(int unk1, uint16 item, int x, int y, int unk2);
+	bool processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2);
+	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item, int remove);
+	void exchangeMouseItem(int itemPos, int runScript);
+	bool pickUpItem(int x, int y);
+
+	bool isDropable(int x, int y);
 
 	// -> hand item
+	void setMouseCursor(uint16 item);
+
 	void setHandItem(uint16 item);
 	void removeHandItem();
 	void setItemMouseCursor();
@@ -479,6 +494,8 @@ private:
 	bool checkCharCollision(int x, int y);
 
 	int _malcolmsMood;
+
+	void makeCharFacingMouse();
 
 	// talk object
 	struct TalkObject {

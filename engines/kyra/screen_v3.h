@@ -41,6 +41,12 @@ public:
 	virtual const ScreenDim *getScreenDim(int dim);
 
 	int getLayer(int x, int y);
+
+	byte getShapeFlag1(int x, int y);
+	byte getShapeFlag2(int x, int y);
+
+	int getDrawLayer(int x, int y);
+	int getDrawLayer2(int x, int y, int height);
 private:
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;

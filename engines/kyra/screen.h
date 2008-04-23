@@ -201,11 +201,11 @@ public:
 
 	void setShapePages(int page1, int page2, int minY = -1, int maxY = 201);
 
-	byte getShapeFlag1(int x, int y);
-	byte getShapeFlag2(int x, int y);
+	virtual byte getShapeFlag1(int x, int y);
+	virtual byte getShapeFlag2(int x, int y);
 
-	int getDrawLayer(int x, int y);
-	int getDrawLayer2(int x, int y, int height);
+	virtual int getDrawLayer(int x, int y);
+	virtual int getDrawLayer2(int x, int y, int height);
 
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);

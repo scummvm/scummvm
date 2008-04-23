@@ -1054,7 +1054,14 @@ void KyraEngine_v3::handleInput(int x, int y) {
 		if (runSceneScript2())
 			return;
 	} else if (_itemInHand >= 0 && _unk3 >= 0) {
-		//XXX
+		if (_itemInHand == 27) {
+			makeCharFacingMouse();
+		} else if (y <= 187) {
+			if (_itemInHand == 43)
+				removeHandItem();
+			else
+				dropItem(0, _itemInHand, x, y, 1);
+		}
 		return;
 	} else if (_unk3 == -3) {
 		return;
@@ -1420,6 +1427,17 @@ void KyraEngine_v3::resetSkipFlag(bool removeEvent) {
 			return;
 		}
 	}
+}
+
+void KyraEngine_v3::makeCharFacingMouse() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::makeCharFacingMouse()");
+	if (_mainCharacter.x1 > _mouseX)
+		_mainCharacter.facing = 5;
+	else
+		_mainCharacter.facing = 3;
+	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+	updateCharacterAnim(0);
+	refreshAnimObjectsIfNeed();
 }
 
 #pragma mark -

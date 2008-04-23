@@ -42,6 +42,18 @@ void KyraEngine_v3::resetItemList() {
 		resetItem(i);
 }
 
+void KyraEngine_v3::removeTrashItems() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::removeTrashItems()");
+	for (int i = 0; _trashItemList[i] != 0xFF; ++i) {
+		for (int item = findItem(_trashItemList[i]); item != -1; item = findItem(_trashItemList[i])) {
+			if (_itemList[item].sceneId != _mainCharacter.sceneId)
+				resetItem(item);
+			else
+				break;
+		}
+	}
+}
+
 int KyraEngine_v3::findFreeItem() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::findFreeItem()");
 	for (int i = 0; i < 50; ++i) {
@@ -58,6 +70,27 @@ int KyraEngine_v3::findItem(uint16 sceneId, uint16 id) {
 			return i;
 	}
 	return -1;
+}
+
+int KyraEngine_v3::findItem(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::findItem(%u)", item);
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].id == item)
+			return i;
+	}
+	return -1;
+}
+
+int KyraEngine_v3::countAllItems() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::countAllItems()");
+	int count = 0;
+
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].id != 0xFFFF)
+			++count;
+	}
+
+	return count;
 }
 
 int KyraEngine_v3::checkItemCollision(int x, int y) {
@@ -136,6 +169,243 @@ void KyraEngine_v3::removeHandItem() {
 	_itemInHand = -1;
 	_handItemSet = -1;
 	_screen->showMouse();
+}
+
+bool KyraEngine_v3::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::dropItem(%d, %d, %d, %d, %d)", unk1, item, x, y, unk2);
+
+	if (_handItemSet <= -1)
+		return false;
+
+	if (processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2))
+		return true;
+
+	playSoundEffect(13, 200);
+
+	if (countAllItems() >= 50) {
+		removeTrashItems();
+		if (processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2))
+			return true;
+
+		//if (countAllItems() >= 50)
+			//showMessageFromCCode(14, 0xB3, 0);
+	}
+
+	if (!_chatText)
+		playSoundEffect(13, 200);
+	return false;
+}
+
+bool KyraEngine_v3::processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::processItemDrop(%d, %d, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
+
+	int itemPos = checkItemCollision(x, y);
+
+	if (unk1)
+		itemPos = -1;
+
+	if (itemPos >= 0) {
+		exchangeMouseItem(itemPos, 1);	
+		return true;
+	}
+
+	int freeItemSlot = -1;
+
+	if (unk2 != 3) {
+		for (int i = 0; i < 50; ++i) {
+			if (_itemList[i].id == 0xFFFF) {
+				freeItemSlot = i;
+				break;
+			}
+		}
+	}
+
+	if (freeItemSlot < 0)
+		return false;
+
+	if (_mainCharacter.sceneId != sceneId) {
+		_itemList[freeItemSlot].x = x;
+		_itemList[freeItemSlot].y = y;
+		_itemList[freeItemSlot].id = item;
+		_itemList[freeItemSlot].unk8 = 1;
+		_itemList[freeItemSlot].sceneId = sceneId;
+		return true;
+	}
+
+	int itemHeight = _itemBuffer1[item];
+
+	// no idea why it's '&&' here and not single checks for x and y
+	if (x == -1 && y == -1) {
+		x = _rnd.getRandomNumberRng(0x18, 0x128);
+		y = _rnd.getRandomNumberRng(0x14, 0x87);
+	}
+
+	int posX = x, posY = y;
+	int itemX = -1, itemY = -1;
+	bool needRepositioning = true;
+
+	while (needRepositioning) {
+		if ((_screen->getDrawLayer(posX, posY) <= 1 && _screen->getDrawLayer2(posX, posY, itemHeight) <= 1 && isDropable(posX, posY)) || posY == 187) {
+			int posX2 = posX, posX3 = posX;
+			bool repositioning = true;
+
+			while (repositioning) {
+				if (isDropable(posX3, posY) && _screen->getDrawLayer2(posX3, posY, itemHeight) < 7 && checkItemCollision(posX3, posY) == -1) {
+					itemX = posX3;
+					itemY = posY;
+					needRepositioning = false;
+					repositioning = false;
+				}
+
+				if (isDropable(posX2, posY) && _screen->getDrawLayer2(posX2, posY, itemHeight) < 7 && checkItemCollision(posX2, posY) == -1) {
+					itemX = posX2;
+					itemY = posY;
+					needRepositioning = false;
+					repositioning = false;
+				}
+
+				if (repositioning) {
+					posX3 = MAX(posX3 - 2, 24);
+					posX2 = MIN(posX2 + 2, 296);
+
+					if (posX3 <= 24 && posX2 >= 296)
+						repositioning = false;
+				}
+			}
+		}
+
+		if (posY == 187)
+			needRepositioning = false;
+		else
+			posY = MIN(posY + 2, 187);
+	}
+
+	if (itemX == -1 || itemY == -1)
+		return false;
+
+	if (unk1 == 3) {
+		_itemList[freeItemSlot].x = itemX;
+		_itemList[freeItemSlot].y = itemY;
+		return true;
+	} else if (unk1 == 2) {
+		itemDropDown(x, y, itemX, itemY, freeItemSlot, item, 0);
+	}
+
+	itemDropDown(x, y, itemX, itemY, freeItemSlot, item, (unk1 == 0) ? 1 : 0);
+
+	if (!unk1 && unk2) {
+		//int itemStr = 1;
+		//if (_lang == 1)
+		//	itemStr = getItemCommandStringDrop(item);
+		//updateCommandLineEx(item+54, itemStr, 0xD6);
+	}
+
+	return true;
+}
+
+void KyraEngine_v3::itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item, int remove) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::itemDropDown(%d, %d, %d, %d, %d, %u, %d)", startX, startY, dstX, dstY, itemSlot, item, remove);
+	if (startX == dstX && startY == dstY) {
+		_itemList[itemSlot].x = dstX;
+		_itemList[itemSlot].y = dstY;
+		_itemList[itemSlot].id = item;
+		_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
+		playSoundEffect(0x0C, 0xC8);
+		addItemToAnimList(itemSlot);
+	} else {
+		uint8 *itemShape = getShapePtr(item + 248);
+		_screen->hideMouse();
+
+		if (startY <= dstY) {
+			int speed = 2;
+			int curY = startY;
+			int curX = startX - 12;
+
+			backUpGfxRect32x32(curX, curY-16);
+			while (curY < dstY) {
+				restoreGfxRect32x32(curX, curY-16);
+
+				curY = MIN(curY + speed, dstY);
+				++speed;
+
+				backUpGfxRect32x32(curX, curY-16);
+				uint32 endDelay = _system->getMillis() + _tickLength;
+
+				_screen->drawShape(0, itemShape, curX, curY-16, 0, 0);
+				_screen->updateScreen();
+
+				delayUntil(endDelay);
+			}
+			restoreGfxRect32x32(curX, curY-16);
+
+			if (dstX != dstY || (dstY - startY > 16)) {
+				playSoundEffect(0x11, 0xC8);
+				speed = MAX(speed, 6);
+				int speedX = ((dstX - startX) << 4) / speed;
+				int origSpeed = speed;
+				speed >>= 1;
+
+				if (dstY - startY <= 8)
+					speed >>= 1;
+
+				speed = -speed;
+
+				curX = startX << 4;
+
+				int x = 0, y = 0;
+				while (--origSpeed) {
+					curY = MIN(curY + speed, dstY);
+					curX += speedX;
+					++speed;
+
+					x = (curX >> 4) - 8;
+					y = curY - 16;
+					backUpGfxRect32x32(x, y);
+
+					uint16 endDelay = _system->getMillis() + _tickLength;
+					_screen->drawShape(0, itemShape, x, y, 0, 0);
+					_screen->updateScreen();
+
+					restoreGfxRect32x32(x, y);
+
+					delayUntil(endDelay);
+				}
+
+				restoreGfxRect32x32(x, y);
+			} 
+		}
+
+		_itemList[itemSlot].x = dstX;
+		_itemList[itemSlot].y = dstY;
+		_itemList[itemSlot].id = item;
+		_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
+		playSoundEffect(0x0C, 0xC8);
+		addItemToAnimList(itemSlot);
+		_screen->showMouse();
+	}
+
+	if (remove)
+		removeHandItem();
+}
+
+void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::exchangeMouseItem(%d, %d)", itemPos, runScript);
+	//XXX
+}
+
+bool KyraEngine_v3::isDropable(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::isDropable(%d, %d)", x, y);
+	if (y < 14 || y > 187)
+		return false;
+
+	x -= 12;
+
+	for (int xpos = x; xpos < x + 24; ++xpos) {
+		if (_screen->getShapeFlag1(xpos, y) == 0)
+			return false;
+	}
+
+	return true;
 }
 
 } // end of namespace Kyra

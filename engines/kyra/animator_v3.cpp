@@ -605,5 +605,36 @@ void KyraEngine_v3::resetNewShapes(int count, uint8 *filedata) {
 	setNextIdleAnimTimer();
 }
 
+void KyraEngine_v3::addItemToAnimList(int item) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::addItemToAnimList(%d)", item);
+	restorePage3();
+
+	AnimObj *animObj = &_animObjects[17+item];
+
+	animObj->enabled = 1;
+	animObj->needRefresh = 1;
+
+	int itemId = _itemList[item].id;
+
+	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
+	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
+
+	animObj->shapePtr = getShapePtr(248+itemId);
+	animSetupPaletteEntry(animObj);
+	animObj->shapeIndex2 = animObj->shapeIndex = 248+itemId;
+
+	int scaleY, scaleX;
+	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
+
+	uint8 *shapePtr = getShapePtr(248+itemId);
+	animObj->xPos3 = (animObj->xPos2 -= (_screen->getShapeScaledWidth(shapePtr, scaleX) >> 1));
+	animObj->yPos3 = (animObj->yPos2 -= _screen->getShapeScaledHeight(shapePtr, scaleY));
+
+	animObj->width2 = animObj->height2 = 0;
+
+	_animList = addToAnimListSorted(_animList, animObj);
+	animObj->needRefresh = 1;
+}
+
 } // end of namespace Kyra
 
