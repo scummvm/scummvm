@@ -472,4 +472,20 @@ void Screen::show() {
 
 }
 
+void Screen::flash(int flashCount) {
+	int palSize = _paletteColorCount * 3;
+	if (flashCount < 1)
+		flashCount = 1;
+	for (int i = 0; i < palSize; i++)
+		_fxPalette[i] = CLIP<byte>(255 - _palette[i], 0, 255);
+	while (flashCount--) {
+		setRGBPalette(_fxPalette, 0, _paletteColorCount);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(30);
+		setRGBPalette(_palette, 0, _paletteColorCount);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(30);
+	}
+}
+
 } // End of namespace Made

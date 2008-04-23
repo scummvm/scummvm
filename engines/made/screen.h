@@ -102,6 +102,7 @@ public:
 	uint16 placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, int16 y, uint16 fontNum, int16 textColor, int16 outlineColor);
 	
 	void show();
+	void flash(int count);
 	
 	byte _screenPalette[256 * 4];
 
@@ -111,7 +112,7 @@ protected:
 	bool _screenLock;
 	bool _paletteLock;
 
-	byte _palette[768], _newPalette[768];
+	byte _palette[768], _newPalette[768], _fxPalette[768];
 	int _paletteColorCount, _oldPaletteColorCount;
 	bool _paletteInitialized, _needPalette;
 

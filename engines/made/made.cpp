@@ -44,6 +44,7 @@
 #include "made/screen.h"
 #include "made/script.h"
 #include "made/sound.h"
+#include "made/music.h"
 #include "made/redreader.h"
 
 namespace Made {
@@ -88,6 +89,24 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_dat = new GameDatabase();
 	_script = new ScriptInterpreter(this);
 
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	bool adlib = (midiDriver == MD_ADLIB);
+
+	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	if (native_mt32)
+		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	_music = new Music(driver, _musicVolume);
+	_music->setNativeMT32(native_mt32);
+	_music->setAdlib(adlib);
+
+	_musicVolume = ConfMan.getInt("music_volume");
+
+	if (!_musicVolume) {
+		debug(1, "Music disabled.");
+	}
+
 }
 
 MadeEngine::~MadeEngine() {
@@ -97,6 +116,7 @@ MadeEngine::~MadeEngine() {
 	delete _screen;
 	delete _dat;
 	delete _script;
+	delete _music;
 }
 
 int MadeEngine::init() {

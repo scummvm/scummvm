@@ -61,6 +61,7 @@ class PmvPlayer;
 class Screen;
 class ScriptInterpreter;
 class GameDatabase;
+class Music;
 
 class MadeEngine : public ::Engine {
 	int _gameId;
@@ -93,10 +94,12 @@ public:
 	Screen *_screen;
 	GameDatabase *_dat;
 	ScriptInterpreter *_script;
+	Music *_music;
 
 	int _eventMouseX, _eventMouseY;
-	int _soundRate;
 	uint16 _eventKey;
+	int _soundRate;
+	int _musicVolume;
 
 	int32 _timers[50];
 	int16 getTimer(int16 timerNum);

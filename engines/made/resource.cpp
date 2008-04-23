@@ -205,6 +205,22 @@ const char *MenuResource::getString(uint index) const {
 		return NULL;
 }
 
+/* XmidiResource */
+
+XmidiResource::XmidiResource() : _data(NULL), _size(0) {
+}
+
+XmidiResource::~XmidiResource() {
+	if (_data)
+		delete[] _data;
+}
+
+void XmidiResource::load(byte *source, int size) {
+	_data = new byte[size];
+	_size = size;
+	memcpy(_data, source, size);
+}
+
 /* ProjectReader */
 
 ProjectReader::ProjectReader() {
@@ -267,6 +283,10 @@ SoundResource *ProjectReader::getSound(int index) {
 
 MenuResource *ProjectReader::getMenu(int index) {
 	return createResource<MenuResource>(kResMENU, index);
+}
+
+XmidiResource *ProjectReader::getXmidi(int index) {
+	return createResource<XmidiResource>(kResXMID, index);
 }
 
 void ProjectReader::loadIndex(ResourceSlots *slots) {

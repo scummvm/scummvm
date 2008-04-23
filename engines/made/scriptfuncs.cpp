@@ -36,6 +36,7 @@
 #include "made/script.h"
 #include "made/pmvplayer.h"
 #include "made/scriptfuncs.h"
+#include "made/music.h"
 
 namespace Made {
 
@@ -288,15 +289,25 @@ int16 ScriptFunctionsRtz::o1_PLAYSND(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYMUS(int16 argc, int16 *argv) {
+	int16 musicId = argv[0];
+	if (musicId > 0) {
+		XmidiResource *xmidi = _vm->_res->getXmidi(musicId);
+		_vm->_music->play(xmidi);
+		_vm->_res->freeResource(xmidi);
+	}
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_STOPMUS(int16 argc, int16 *argv) {
+	_vm->_music->stop();
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_ISMUS(int16 argc, int16 *argv) {
-	return 0;
+	if (_vm->_music->isPlaying())
+		return 1;
+	else
+		return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTPOS(int16 argc, int16 *argv) {
@@ -304,6 +315,7 @@ int16 ScriptFunctionsRtz::o1_TEXTPOS(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_FLASH(int16 argc, int16 *argv) {
+	_vm->_screen->flash(argv[0]);
 	return 0;
 }
 
@@ -536,10 +548,20 @@ int16 ScriptFunctionsRtz::o1_PLAYMOVIE(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_LOADSND(int16 argc, int16 *argv) {
+	SoundResource *sound = _vm->_res->getSound(argv[0]);
+	if (sound) {
+		_vm->_res->freeResource(sound);
+		return 1;
+	}
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_LOADMUS(int16 argc, int16 *argv) {
+	XmidiResource *xmidi = _vm->_res->getXmidi(argv[0]);
+	if (xmidi) {
+		_vm->_res->freeResource(xmidi);
+		return 1;
+	}
 	return 0;
 }
 

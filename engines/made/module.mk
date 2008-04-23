@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	detection.o \
 	graphics.o \
 	made.o \
+	music.o \
 	pmvplayer.o \
 	redreader.o \
 	resource.o \

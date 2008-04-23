@@ -44,7 +44,8 @@ enum ResourceType {
 	kResFLEX = MKID_BE('FLEX'),
 	kResSNDS = MKID_BE('SNDS'),
 	kResANIM = MKID_BE('ANIM'),
-	kResMENU = MKID_BE('MENU')
+	kResMENU = MKID_BE('MENU'),
+	kResXMID = MKID_BE('XMID')
 };
 
 struct ResourceSlot;
@@ -110,6 +111,18 @@ protected:
 	Common::Array<Common::String> _strings;
 };
 
+class XmidiResource : public Resource {
+public:
+	XmidiResource();
+	~XmidiResource();
+	void load(byte *source, int size);
+	byte *getData() const { return _data; }
+	int getSize() const { return _size; }
+protected:
+	byte *_data;
+	int _size;
+};
+
 struct ResourceSlot {
 	uint32 offs;
 	uint32 size;
@@ -133,6 +146,7 @@ public:
 	AnimationResource *getAnimation(int index);
 	SoundResource *getSound(int index);
 	MenuResource *getMenu(int index);
+	XmidiResource *getXmidi(int index);
 
 	void freeResource(Resource *resource);
 
