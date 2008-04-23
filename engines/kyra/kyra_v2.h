@@ -446,7 +446,7 @@ protected:
 	int _newShapeDelay;
 
 	int initNewShapes(uint8 *filedata);
-	void processNewShapes(int unk1, int unk2);
+	void processNewShapes(int allowSkip, int resetChar);
 	void resetNewShapes(int count, uint8 *filedata);
 
 	// animator
@@ -1070,7 +1070,7 @@ protected:
 	bool _temporaryScriptExecBit;
 	Common::Array<const Opcode*> _opcodesTemporary;
 
-	void runTemporaryScript(const char *filename, int unk1, int unk2, int newShapes, int shapeUnload);
+	void runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
 
 	// pathfinder
 	int _pathfinderFlag;

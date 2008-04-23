@@ -1569,19 +1569,19 @@ void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int 
 
 	_newShapeFlag = -1;
 
+	if (_newShapeFiledata && newShapes) {
+		resetNewShapes(_newShapeCount, _newShapeFiledata);
+		_newShapeFiledata = 0;
+		_newShapeCount = 0;
+	}
+
 	while (_scriptInterpreter->validScript(&_temporaryScriptState))
 		_scriptInterpreter->runScript(&_temporaryScriptState);
 
 	uint8 *fileData = 0;
 
-	if (newShapes) {
-		if (_newShapeFiledata) {
-			resetNewShapes(_newShapeCount, _newShapeFiledata);
-			_newShapeFiledata = 0;
-			_newShapeCount = 0;
-		}
+	if (newShapes)
 		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
-	}
 
 	fileData = _newShapeFiledata;
 

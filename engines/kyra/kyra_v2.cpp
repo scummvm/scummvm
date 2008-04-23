@@ -1250,7 +1250,7 @@ void KyraEngine_v2::loadNPCScript() {
 	_scriptInterpreter->loadScript(filename, &_npcScriptData, &_opcodes);
 }
 
-void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2, int newShapes, int shapeUnload) {
+void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
 	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
 	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
 
@@ -1262,19 +1262,19 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 
 	_newShapeFlag = -1;
 
+	if (_newShapeFiledata && newShapes) {
+		resetNewShapes(_newShapeCount, _newShapeFiledata);
+		_newShapeFiledata = 0;
+		_newShapeCount = 0;
+	}
+
 	while (_scriptInterpreter->validScript(&_temporaryScriptState))
 		_scriptInterpreter->runScript(&_temporaryScriptState);
 
 	uint8 *fileData = 0;
 
-	if (newShapes) {
-		if (_newShapeFiledata) {
-			resetNewShapes(_newShapeCount, _newShapeFiledata);
-			_newShapeFiledata = 0;
-			_newShapeCount = 0;
-		}
+	if (newShapes)
 		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
-	}
 
 	fileData = _newShapeFiledata;
 
@@ -1286,7 +1286,7 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 	if (newShapes)
 		_newShapeCount = initNewShapes(fileData);
 
-	processNewShapes(unk1, unk2);
+	processNewShapes(allowSkip, resetChar);
 
 	if (shapeUnload) {
 		resetNewShapes(_newShapeCount, fileData);
@@ -1639,7 +1639,7 @@ int KyraEngine_v2::initNewShapes(uint8 *filedata) {
 	return lastEntry;
 }
 
-void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
+void KyraEngine_v2::processNewShapes(int allowSkip, int resetChar) {
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
 	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
@@ -1664,7 +1664,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
 
-		while ((!skipFlag() || !unk1) && _system->getMillis() < delayEnd) {
+		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd) {
 			if (_chatText)
 				updateWithText();
 			else
@@ -1677,7 +1677,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 			resetSkipFlag();
 	}
 
-	if (unk2) {
+	if (resetChar) {
 		if (_newShapeFlag >= 0) {
 			_mainCharacter.animFrame = _newShapeFlag + 33;
 			updateCharacterAnim(0);
