@@ -257,8 +257,8 @@ private:
 	void showInventory();
 	void hideInventory();
 
-	void updateMalcolmSpiritText();
-	//void updateMalcolmSpiritPtr();
+	void drawMalcolmsMoodText();
+	void drawMalcolmsMoodPointer(int frame, int page);
 	void drawJestersStaff(int type, int page);
 
 	static const uint8 _inventoryX[];
@@ -266,6 +266,9 @@ private:
 	void redrawInventory(int page);
 	void clearInventorySlot(int slot, int page);
 	void drawInventorySlot(int page, int item, int slot);
+
+	WSAMovieV2 *_invWsa;
+	int _invWsaFrame;
 
 	// localization
 	uint8 *_scoreFile;
@@ -475,7 +478,7 @@ private:
 
 	bool checkCharCollision(int x, int y);
 
-	int _malcolmsSpirit;
+	int _malcolmsMood;
 
 	// talk object
 	struct TalkObject {
@@ -621,7 +624,7 @@ private:
 	int o3_getCharacterY(ScriptState *script);
 	int o3_getCharacterFacing(ScriptState *script);
 	int o3_getCharacterScene(ScriptState *script);
-	int o3_getMalcolmsSpirit(ScriptState *script);
+	int o3_getMalcolmsMood(ScriptState *script);
 	int o3_trySceneChange(ScriptState *script);
 	int o3_moveCharacter(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
@@ -643,7 +646,7 @@ private:
 	int o3_showMouse(ScriptState *script);
 	int o3_badConscienceChat(ScriptState *script);
 	int o3_wipeDownMouseItem(ScriptState *script);
-	int o3_setMalcolmsSpirit(ScriptState *script);
+	int o3_setMalcolmsMood(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_drawSceneShape(ScriptState *script);

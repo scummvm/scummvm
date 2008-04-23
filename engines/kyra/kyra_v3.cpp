@@ -120,12 +120,14 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_dialogScriptData, 0, sizeof(_dialogScriptData));
 	memset(&_dialogScriptState, 0, sizeof(_dialogScriptState));
 	_dialogScriptFuncStart = _dialogScriptFuncProc = _dialogScriptFuncEnd = 0;
-	_malcolmsSpirit = 1;
+	_malcolmsMood = 1;
 	_nextIdleAnim = 0;
 	_nextIdleType = false;
 	_newShapeFlag = -1;
 	_newShapeFiledata = 0;
 	_inventoryScrollSpeed = -1;
+	_invWsa = 0;
+	_invWsaFrame = -1;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -183,6 +185,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete _dlgBuffer;
 	delete [] _stringBuffer;
 	delete [] _newShapeFiledata;
+	delete _invWsa;
 }
 
 int KyraEngine_v3::init() {
@@ -613,7 +616,11 @@ void KyraEngine_v3::startup() {
 	_sceneList = new SceneDesc[98];
 	musicUpdate(0);
 	runStartupScript(1, 0);
-	//openMoondomtrWsa();
+	_res->exists("MOODOMTR.WSA", true);
+	_invWsa = new WSAMovieV2(this, _screen);
+	assert(_invWsa);
+	_invWsa->open("MOODOMTR.WSA", 1, 0);
+	_invWsaFrame = 6;
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 	delayWithTicks(60);
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);

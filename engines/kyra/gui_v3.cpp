@@ -25,6 +25,7 @@
 
 #include "kyra/kyra_v3.h"
 #include "kyra/text_v3.h"
+#include "kyra/wsamovie.h"
 
 namespace Kyra {
 
@@ -79,13 +80,13 @@ void KyraEngine_v3::showInventory() {
 		return;
 
 	_screen->copyBlockToPage(3, 0, 0, 320, 56, _interface);
-	updateMalcolmSpiritText();
+	drawMalcolmsMoodText();
 
 	_inventoryState = true;
 	updateCLState();
 
 	redrawInventory(30);
-
+	drawMalcolmsMoodPointer(-1, 30);
 	//XXX
 	
 	if (queryGameFlag(0x97))
@@ -214,14 +215,14 @@ void KyraEngine_v3::hideInventory() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v3::updateMalcolmSpiritText() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateMalcolmSpiritText()");
+void KyraEngine_v3::drawMalcolmsMoodText() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawMalcolmsMoodText()");
 	static const int stringId[] = { 0x32, 0x37, 0x3C };
 
 	if (queryGameFlag(0x219))
 		return;
 
-	const char *string = (const char*)getTableEntry(_cCodeFile, stringId[_malcolmsSpirit]);
+	const char *string = (const char*)getTableEntry(_cCodeFile, stringId[_malcolmsMood]);
 
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
@@ -247,6 +248,33 @@ void KyraEngine_v3::updateMalcolmSpiritText() {
 	_text->printText(string, x, y+1, 0xFF, 0xF0, 0x00);
 	_screen->showMouse();
 	_screen->_curPage = pageBackUp;
+}
+
+void KyraEngine_v3::drawMalcolmsMoodPointer(int frame, int page) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawMalcolmsMoodPointer(%d, %d)", frame, page);
+	static const int stateTable[] = {
+		1, 6, 11
+	};
+
+	if (frame == -1)
+		frame = stateTable[_malcolmsMood];
+	if (queryGameFlag(0x219))
+		frame = 13;
+
+	if (page == 0) {
+		_invWsa->setX(0);
+		_invWsa->setY(0);
+		_invWsa->setDrawPage(0);
+		_invWsa->displayFrame(frame, 0);
+		_screen->updateScreen();
+	} else if (page == 30) {
+		_invWsa->setX(0);
+		_invWsa->setY(-144);
+		_invWsa->setDrawPage(2);
+		_invWsa->displayFrame(frame, 0);
+	}
+
+	_invWsaFrame = frame;
 }
 
 void KyraEngine_v3::drawJestersStaff(int type, int page) {

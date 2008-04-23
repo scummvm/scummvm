@@ -108,9 +108,9 @@ int KyraEngine_v3::o3_getCharacterScene(ScriptState *script) {
 	return _mainCharacter.sceneId;
 }
 
-int KyraEngine_v3::o3_getMalcolmsSpirit(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getMalcolmsSpirit(%p) ()", (const void *)script);
-	return _malcolmsSpirit;
+int KyraEngine_v3::o3_getMalcolmsMood(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getMalcolmsMood(%p) ()", (const void *)script);
+	return _malcolmsMood;
 }
 
 int KyraEngine_v3::o3_trySceneChange(ScriptState *script) {
@@ -294,9 +294,9 @@ int KyraEngine_v3::o3_wipeDownMouseItem(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine_v3::o3_setMalcolmsSpirit(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setMalcolmsSpirit(%p) (%d)", (const void *)script, stackPos(0));
-	return (_malcolmsSpirit = stackPos(0));
+int KyraEngine_v3::o3_setMalcolmsMood(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setMalcolmsMood(%p) (%d)", (const void *)script, stackPos(0));
+	return (_malcolmsMood = stackPos(0));
 }
 
 int KyraEngine_v3::o3_delay(ScriptState *script) {
@@ -537,13 +537,13 @@ int KyraEngine_v3::o3_updateConversations(ScriptState *script) {
 			break;
 		}
 	} else if (_curChapter == 4) {
-		if (_malcolmsSpirit == 0) {
+		if (_malcolmsMood == 0) {
 			convs[0] = _mainCharacter.dlgIndex - 10;
 			convs[1] = _mainCharacter.dlgIndex - 5;
-		} else if (_malcolmsSpirit == 1) {
+		} else if (_malcolmsMood == 1) {
 			convs[0] = _mainCharacter.dlgIndex + 5;
 			convs[1] = _mainCharacter.dlgIndex + 10;
-		} else if (_malcolmsSpirit == 2) {
+		} else if (_malcolmsMood == 2) {
 			convs[0] = _mainCharacter.dlgIndex - 5;
 			convs[1] = _mainCharacter.dlgIndex + 5;
 		}
@@ -1003,7 +1003,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_getCharacterFacing);
 	Opcode(o3_getCharacterScene);
 	// 0x08
-	Opcode(o3_getMalcolmsSpirit);
+	Opcode(o3_getMalcolmsMood);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
@@ -1058,7 +1058,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_wipeDownMouseItem);
 	Opcode(o3_dummy);
 	// 0x34
-	Opcode(o3_setMalcolmsSpirit);
+	Opcode(o3_setMalcolmsMood);
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 	Opcode(o3_delay);
