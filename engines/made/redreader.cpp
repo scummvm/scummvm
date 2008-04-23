@@ -39,7 +39,7 @@ Common::MemoryReadStream *RedReader::load(const char *redFilename, const char *f
 	if (!seekFile(fd, fileEntry, filename))
 		error("RedReader::RedReader() Could not find %s in archive %s", filename, redFilename);
 
-	byte *fileBuf = new byte[fileEntry.origSize];
+	byte *fileBuf = (byte *)malloc(fileEntry.origSize);
 	
 	LzhDecompressor lzhDec;
 	lzhDec.decompress(fd, fileBuf, fileEntry.compSize, fileEntry.origSize);
