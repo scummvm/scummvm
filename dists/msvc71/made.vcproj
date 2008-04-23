@@ -138,6 +138,12 @@
 			RelativePath="..\..\engines\made\pmvplayer.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\made\redreader.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\made\redreader.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\made\resource.cpp">
 		</File>
 		<File
