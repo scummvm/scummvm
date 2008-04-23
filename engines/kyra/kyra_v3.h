@@ -296,7 +296,7 @@ private:
 	ShapeMap _gameShapes;
 
 	void addShapeToPool(const uint8 *data, int realIndex, int shape);
-	uint8 *getShapePtr(int shape) const { return _gameShapes[shape]; }
+	uint8 *getShapePtr(int shape) const;
 
 	void initMouseShapes();
 

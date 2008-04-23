@@ -151,9 +151,8 @@ int TextDisplayer::buildMessageSubstrings(const char *str) {
 		} else {
 			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = *str;
 			++pos;
-			if (pos > TALK_SUBSTRING_LEN - 2) {
+			if (pos >= TALK_SUBSTRING_LEN - 2)
 				pos = TALK_SUBSTRING_LEN - 2;
-			}
 		}
 		++str;
 	}

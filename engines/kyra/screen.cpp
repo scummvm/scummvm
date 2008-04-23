@@ -1127,13 +1127,11 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_drawShapeVar5 = 256;
 	}
 
-	if (flags & 0x4000) {
+	if (flags & 0x4000)
 		_drawShapeVar5 = va_arg(args, int);
-	}
 
-	if (flags & 0x800) {
+	if (flags & 0x800)
 		_dsDrawLayer = va_arg(args, int);
-	}
 
 	if (flags & DSF_SCALE) {
 		_dsScaleW = va_arg(args, int);

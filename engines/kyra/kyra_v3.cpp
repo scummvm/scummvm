@@ -600,8 +600,9 @@ void KyraEngine_v3::startup() {
 
 	musicUpdate(0);
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
-	
-	//resetNewSceneDlgState();
+
+	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
+	memset(_conversationState, -1, sizeof(_conversationState));
 
 	_sceneList = new SceneDesc[98];
 	musicUpdate(0);
@@ -726,6 +727,14 @@ void KyraEngine_v3::addShapeToPool(const uint8 *data, int realIndex, int shape) 
 	}
 	_gameShapes[realIndex] = _screen->makeShapeCopy(data, shape);
 	assert(_gameShapes[realIndex]);
+}
+
+uint8 *KyraEngine_v3::getShapePtr(int shape) const {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getShapePtr(%d)", shape);
+	ShapeMap::iterator iter = _gameShapes.find(shape);
+	if (iter == _gameShapes.end())
+		return 0;
+	return iter->_value;
 }
 
 void KyraEngine_v3::loadMalcolmShapes(int newShapes) {

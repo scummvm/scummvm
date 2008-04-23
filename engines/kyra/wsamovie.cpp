@@ -237,7 +237,7 @@ void WSAMovieAmiga::close() {
 
 void WSAMovieAmiga::displayFrame(int frameNum, ...) {
 	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::displayFrame(%d)", frameNum);
-	if (frameNum >= _numFrames || !_opened)
+	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 
 	uint8 *dst;
@@ -430,7 +430,7 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 
 void WSAMovieV2::displayFrame(int frameNum, ...) {
 	debugC(9, kDebugLevelMovie, "WSAMovieV2::displayFrame(%d, ...)", frameNum);
-	if (frameNum >= _numFrames || !_opened)
+	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 
 	uint8 *dst = 0;
