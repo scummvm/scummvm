@@ -544,6 +544,12 @@ int KyraEngine_v3::o3_runActorScript(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_malcolmRandomChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_malcolmRandomChat(%p) ()", (const void *)script);
+	malcolmRandomChat();
+	return 0;
+}
+
 int KyraEngine_v3::o3_setDlgIndex(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setDlgIndex(%p) (%d)", (const void *)script, stackPos(0));
 	setDlgIndex(stackPos(0));
@@ -882,7 +888,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x74
 	Opcode(o3_runActorScript);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_malcolmRandomChat);
 	Opcode(o3_setDlgIndex);
 	// 0x78
 	Opcode(o3_getDlgIndex);

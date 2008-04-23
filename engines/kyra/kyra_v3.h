@@ -522,6 +522,8 @@ private:
 	int o3d_updateAnim(ScriptState *script);
 	int o3d_delay(ScriptState *script);
 
+	void malcolmRandomChat();
+
 	// conscience
 	bool _badConscienceShown;
 	int _badConscienceAnim;
@@ -617,6 +619,7 @@ private:
 	int o3_defineSceneAnim(ScriptState *script);
 	int o3_updateSceneAnim(ScriptState *script);
 	int o3_runActorScript(ScriptState *script);
+	int o3_malcolmRandomChat(ScriptState *script);
 	int o3_setDlgIndex(ScriptState *script);
 	int o3_getDlgIndex(ScriptState *script);
 	int o3_defineScene(ScriptState *script);

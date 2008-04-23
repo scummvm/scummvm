@@ -648,5 +648,25 @@ void KyraEngine_v3::npcChatSequence(const char *str, int object, int vocHigh, in
 	_chatObject= - 1;
 }
 
+void KyraEngine_v3::malcolmRandomChat() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::malcolmRandomChat()");
+	updateDlgBuffer();
+
+	int index = (_mainCharacter.sceneId - _chapterLowestScene[_curChapter]) * 2;
+
+	int vocHighBase = 0, vocHighIndex = 0, index1 = 0, index2 = 0;
+	loadDlgHeader(vocHighBase, vocHighIndex, index1, index2);
+
+	if (_chatAltFlag)
+		index++;
+	_chatAltFlag = !_chatAltFlag;
+
+	_cnvFile->seek(index1*6, SEEK_CUR);
+	_cnvFile->seek(index*2, SEEK_CUR);
+	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
+
+	processDialog(vocHighIndex, vocHighBase, 0);
+}
+
 } // end of namespace Kyra
 
