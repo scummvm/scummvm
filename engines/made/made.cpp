@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/stream.h"
 
 #include "graphics/cursorman.h"
 
@@ -43,6 +44,7 @@
 #include "made/screen.h"
 #include "made/script.h"
 #include "made/sound.h"
+#include "made/redreader.h"
 
 namespace Made {
 
@@ -142,15 +144,13 @@ int MadeEngine::go() {
 		_dat->open("demo.dat");
 		_res->open("demo.prj");
 	} else {
-		_dat->open("rtzcd.dat");
+		if (Common::File::exists("rtzcd.dat"))
+			_dat->open("rtzcd.dat");
+		else
+			_dat->openFromRed("rtzcd.red", "rtzcd.dat");
 		_res->open("rtzcd.prj");
 	}
 
-	PictureResource *flex1 = _res->getPicture(78);
-	Graphics::Surface *surf = flex1->getPicture();
-	CursorMan.replaceCursor((const byte *)surf->pixels, surf->w, surf->h, 0, 0, 0);
-	CursorMan.showMouse(true);
-	_res->freeResource(flex1);
 	_eventMouseX = _eventMouseY = 0;
 	_script->runScript(_dat->getMainCodeObjectIndex());
 
