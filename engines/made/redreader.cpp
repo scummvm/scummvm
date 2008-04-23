@@ -288,7 +288,9 @@ void LzhDecompressor::make_table(uint nchar, byte bitlen[], uint tablebits, uint
 		start[i] >>= jutbits;
 		weight[i] = 1U << (tablebits - i);
 	}
-	while (i <= 16) weight[i++] = 1U << (16 - i);
+	for (; i <= 16; i++) {
+		weight[i] = 1U << (16 - i);
+	}
 	i = start[tablebits + 1] >> jutbits;
 	if (i != (uint16)(1U << 16)) {
 		k = 1U << tablebits;
