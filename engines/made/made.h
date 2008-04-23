@@ -92,6 +92,7 @@ public:
 	ScriptInterpreter *_script;
 
 	int _eventMouseX, _eventMouseY;
+	int _soundRate;
 	uint16 _eventKey;
 
 	int32 _timers[50];

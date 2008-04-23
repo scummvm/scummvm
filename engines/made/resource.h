@@ -91,7 +91,7 @@ public:
 	SoundResource();
 	~SoundResource();
 	void load(byte *source, int size);
-	Audio::AudioStream *getAudioStream();
+	Audio::AudioStream *getAudioStream(int soundRate, bool loop = false);
 protected:
 	byte *_soundData;
 	int _soundSize;

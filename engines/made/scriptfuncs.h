@@ -45,6 +45,8 @@ public:
 	virtual void setupExternalsTable() = 0;
 protected:
 	MadeEngine *_vm;
+	Audio::SoundHandle _audioStreamHandle;
+	Audio::SoundHandle _voiceStreamHandle;
 
 	Common::Array<const ExternalFunc*> _externalFuncs;
 

@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "sound/mixer.h"
 
 #include "made/resource.h"
 #include "made/graphics.h"
@@ -161,12 +162,15 @@ void SoundResource::load(byte *source, int size) {
 	_soundSize = chunkCount * chunkSize;
 	_soundData = new byte[_soundSize];
 
-	decompressSound(source + 14, _soundData, chunkSize, chunkCount);
-	
+	decompressSound(source + 14, _soundData, chunkSize, chunkCount);	
 }
 
-Audio::AudioStream *SoundResource::getAudioStream() {
-	return Audio::makeLinearInputStream(_soundData, _soundSize, 22050, 0, 0, 0);
+Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
+	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+	if (loop) 
+		flags |= Audio::Mixer::FLAG_LOOP;
+
+	return Audio::makeLinearInputStream(_soundData, _soundSize, soundRate, flags, 0, 0);
 }
 
 /* MenuResource */

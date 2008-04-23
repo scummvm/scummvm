@@ -276,11 +276,19 @@ int16 ScriptFunctionsRtz::o1_VISUALFX(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYSND(int16 argc, int16 *argv) {
-	/*
-	Audio::SoundHandle audioStreamHandle;
-	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &audioStreamHandle, 
-								 _vm->_res->getSound(argv[0])->getAudioStream());
-	*/
+	int soundId = (argc == 1) ? argv[0] : argv[1];
+	bool loop = false;
+	if (argc > 1) {
+		loop = (argv[0] == 1);
+	}
+
+	if (argv[0] > 0) {
+		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
+			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
+										 _vm->_res->getSound(soundId)->getAudioStream(_vm->_soundRate, loop));
+		}
+	}
+
 	return 0;
 }
 
@@ -452,14 +460,24 @@ int16 ScriptFunctionsRtz::o1_SETCLIP(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_ISSND(int16 argc, int16 *argv) {
-	return 0;
+	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
+		return 1;
+	else
+		return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_STOPSND(int16 argc, int16 *argv) {
+	_vm->_mixer->stopHandle(_audioStreamHandle);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYVOICE(int16 argc, int16 *argv) {
+	if (argv[0] > 0) {
+		if (!_vm->_mixer->isSoundHandleActive(_voiceStreamHandle)) {
+			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_voiceStreamHandle, 
+										 _vm->_res->getSound(argv[0])->getAudioStream(_vm->_soundRate, false));
+		}
+	}
 	return 0;
 }
 
@@ -643,7 +661,7 @@ int16 ScriptFunctionsRtz::o1_PICHEIGHT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SOUNDRATE(int16 argc, int16 *argv) {
-	//g_system->delayMillis(5000);
+	_vm->_soundRate = argv[0];
 	return 1;
 }
 
@@ -714,7 +732,8 @@ int16 ScriptFunctionsRtz::o1_PLACEMENU(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SETVOLUME(int16 argc, int16 *argv) {
-	//!! g_system->delayMillis(5000);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, argv[0] * 25);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[0] * 25);
 	return 0;
 }
 
