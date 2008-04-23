@@ -73,10 +73,28 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - English CD version
+		// NOTE: This detects the game via the rtzcd.dat which is inside rtzcd.red.
+		// The entry below detects via rtzcd.red directly, which is the "official" way.
 		{
 			"rtz",
 			"CD",
 			AD_ENTRY1("rtzcd.dat", "a1db8c97a78dae10f91d356f16ad07b8"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Return to Zork - English CD version
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.red", "c4e2430e6b6c6ff1562a80fb4a9df24c"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS

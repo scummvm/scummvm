@@ -117,6 +117,16 @@ const char *Object::getString() {
 		return NULL;
 }
 
+void Object::setString(const char *str) {
+	if (getClass() == 0x7FFF) {
+		char *objStr = (char*)getData();
+		if (str)
+			strncpy(objStr, str, getSize());
+		else
+			objStr[0] = '\0';
+	}
+}
+
 bool Object::isObject() {
 	return getClass() < 0x7FFE;
 }
@@ -181,31 +191,48 @@ GameDatabase::~GameDatabase() {
 }
 
 void GameDatabase::open(const char *filename) {
-	_fd.open(filename);
+	debug(1, "GameDatabase::open() Loading from %s", filename);
+	Common::File fd;
+	if (!fd.open(filename))
+		error("GameDatabase::open() Could not open %s", filename);
+	load(fd);
+	fd.close();
+}
+
+void GameDatabase::openFromRed(const char *redFilename, const char *filename) {
+	debug(1, "GameDatabase::openFromRed() Loading from %s->%s", redFilename, filename);
+	Common::MemoryReadStream *fileS = RedReader::loadFromRed(redFilename, filename);
+	if (!fileS)
+		error("GameDatabase::openFromRed() Could not load %s from %s", filename, redFilename);
+	load(*fileS);
+	delete fileS;
+}
+
+void GameDatabase::load(Common::SeekableReadStream &sourceS) {
 	
 	// TODO: Read/verifiy header
 	
-	_fd.seek(0x1E);
+	sourceS.seek(0x1E);
 	
-	uint32 objectIndexOffs = _fd.readUint32LE();
-	uint16 objectCount = _fd.readUint16LE();
-	uint32 gameStateOffs = _fd.readUint32LE();
-	_gameStateSize = _fd.readUint32LE();
-	uint32 objectsOffs = _fd.readUint32LE();
-	uint32 objectsSize = _fd.readUint32LE();
-	_mainCodeObjectIndex = _fd.readUint16LE();
+	uint32 objectIndexOffs = sourceS.readUint32LE();
+	uint16 objectCount = sourceS.readUint16LE();
+	uint32 gameStateOffs = sourceS.readUint32LE();
+	_gameStateSize = sourceS.readUint32LE();
+	uint32 objectsOffs = sourceS.readUint32LE();
+	uint32 objectsSize = sourceS.readUint32LE();
+	_mainCodeObjectIndex = sourceS.readUint16LE();
 	
 	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n",
 		objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
 
 	_gameState = new byte[_gameStateSize];
-	_fd.seek(gameStateOffs);
-	_fd.read(_gameState, _gameStateSize);
+	sourceS.seek(gameStateOffs);
+	sourceS.read(_gameState, _gameStateSize);
 
 	Common::Array<uint32> objectOffsets;
-	_fd.seek(objectIndexOffs);
+	sourceS.seek(objectIndexOffs);
 	for (uint32 i = 0; i < objectCount; i++)
-		objectOffsets.push_back(_fd.readUint32LE());
+		objectOffsets.push_back(sourceS.readUint32LE());
 
 	for (uint32 i = 0; i < objectCount; i++) {
 		Object *obj = new Object();
@@ -218,8 +245,8 @@ void GameDatabase::open(const char *filename) {
 		
 		if (objectOffsets[i] & 1) {
 			debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
-			_fd.seek(objectsOffs + objectOffsets[i] - 1);
-			obj->load(_fd);
+			sourceS.seek(objectsOffs + objectOffsets[i] - 1);
+			obj->load(sourceS);
 		} else {
 			debug(2, "-> var\n");
 			obj->load(_gameState + objectOffsets[i]);
@@ -253,11 +280,11 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	while (count2-- > 0) {
 		if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 			if (READ_LE_UINT16(prop) & 0x4000) {
-				debug(2, "! L1.1\n");
+				//debug(2, "! L1.1\n");
 				propertyFlag = 1;
 				return (int16*)_gameState + READ_LE_UINT16(propPtr1);
 			} else {
-				debug(2, "! L1.2\n");
+				//debug(2, "! L1.2\n");
 				propertyFlag = obj->getFlags() & 1;
 				return propPtr1;
 			}
@@ -269,13 +296,13 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	// Now check in the object hierarchy of the given object
 	int16 parentObjectIndex = obj->getClass();
 	if (parentObjectIndex == 0) {
-		debug(2, "! NULL(np)\n");
+		//debug(2, "! NULL(np)\n");
 		return NULL;
 	}
 		
 	while (parentObjectIndex != 0) {
 	
-		debug(2, "parentObjectIndex = %04X\n", parentObjectIndex);
+		//debug(2, "parentObjectIndex = %04X\n", parentObjectIndex);
 
 		obj = getObject(parentObjectIndex);
 		
@@ -290,11 +317,11 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 			if (!(READ_LE_UINT16(prop) & 0x8000)) {
 				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 					if (*prop & 0x4000) {
-						debug(2, "! L2.1\n");
+						//debug(2, "! L2.1\n");
 						propertyFlag = 1;
 						return (int16*)_gameState + READ_LE_UINT16(propPtr1);
 					} else {
-						debug(2, "! L2.2\n");
+						//debug(2, "! L2.2\n");
 						propertyFlag = obj->getFlags() & 1;
 						return propPtr1;
 					}
@@ -304,11 +331,11 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 			} else {
 				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 					if (*prop & 0x4000) {
-						debug(2, "! L3.1\n");
+						//debug(2, "! L3.1\n");
 						propertyFlag = 1;
 						return (int16*)_gameState + READ_LE_UINT16(propertyPtr);
 					} else {
-						debug(2, "! L3.2\n");
+						//debug(2, "! L3.2\n");
 						propertyFlag = obj->getFlags() & 1;
 						return propertyPtr;
 					}
@@ -322,7 +349,7 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 		
 	}
 
-	debug(2, "! NULL(nf)\n");
+	//debug(2, "! NULL(nf)\n");
 	return NULL;
 	
 }

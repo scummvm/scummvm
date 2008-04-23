@@ -31,6 +31,8 @@
 #include "common/file.h"
 #include "common/stream.h"
 
+#include "made/redreader.h"
+
 namespace Made {
 
 class Object {
@@ -49,6 +51,7 @@ public:
 
 	byte *getData();
 	const char *getString();
+	void setString(const char *str);
 
 	bool isObject();
 	bool isVector();
@@ -73,6 +76,7 @@ public:
 	~GameDatabase();
 
 	void open(const char *filename);
+	void openFromRed(const char *redFilename, const char *filename);
 
 	Object *getObject(int16 index) const { 
 		if (index >= 1)
@@ -93,11 +97,11 @@ public:
 	void dumpObject(int16 index);
 	
 protected:
-	Common::File _fd;
 	Common::Array<Object*> _objects;
 	byte *_gameState;
 	uint32 _gameStateSize;
 	int16 _mainCodeObjectIndex;
+	void load(Common::SeekableReadStream &sourceS);
 };
 
 } // End of namespace Made

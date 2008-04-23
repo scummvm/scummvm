@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	graphics.o \
 	made.o \
 	pmvplayer.o \
+	redreader.o \
 	resource.o \
 	screen.o \
 	script.o \
