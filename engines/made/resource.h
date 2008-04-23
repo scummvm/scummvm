@@ -105,7 +105,7 @@ public:
 	~MenuResource();
 	void load(byte *source, int size);
 	int getCount() const { return _strings.size(); }
-	const char *getString(int index) const;
+	const char *getString(uint index) const;
 protected:
 	Common::Array<Common::String> _strings;
 };

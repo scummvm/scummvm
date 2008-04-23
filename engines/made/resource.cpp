@@ -198,7 +198,7 @@ void MenuResource::load(byte *source, int size) {
 	delete sourceS;
 }
 
-const char *MenuResource::getString(int index) const {
+const char *MenuResource::getString(uint index) const {
 	if (index < _strings.size())
 		return _strings[index].c_str();
 	else
