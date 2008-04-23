@@ -221,6 +221,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 void ScriptFileParser::setFile(const char *filename, Resource *res) {
 	destroy();
 
+	res->exists(filename, true);
 	_stream = res->getFileStream(filename);
 	assert(_stream);
 	_startOffset = 0;

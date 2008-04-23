@@ -120,6 +120,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_dialogScriptData, 0, sizeof(_dialogScriptData));
 	memset(&_dialogScriptState, 0, sizeof(_dialogScriptState));
 	_dialogScriptFuncStart = _dialogScriptFuncProc = _dialogScriptFuncEnd = 0;
+	_malcolmsSpirit = 1;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {

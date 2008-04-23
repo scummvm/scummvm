@@ -108,6 +108,11 @@ int KyraEngine_v3::o3_getCharacterScene(ScriptState *script) {
 	return _mainCharacter.sceneId;
 }
 
+int KyraEngine_v3::o3_getMalcolmsSpirit(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getMalcolmsSpirit(%p) ()", (const void *)script);
+	return _malcolmsSpirit;
+}
+
 int KyraEngine_v3::o3_trySceneChange(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -283,6 +288,11 @@ int KyraEngine_v3::o3_wipeDownMouseItem(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setMalcolmsSpirit(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setMalcolmsSpirit(%p) (%d)", (const void *)script, stackPos(0));
+	return (_malcolmsSpirit = stackPos(0));
+}
+
 int KyraEngine_v3::o3_delay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const uint32 delayTime = stackPos(0) * _tickLength;
@@ -335,6 +345,210 @@ int KyraEngine_v3::o3_checkInRect(ScriptState *script) {
 		//XXX
 		return 0;
 	}
+}
+
+int KyraEngine_v3::o3_updateConversations(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_updateConversations(%p) (%d)", (const void *)script, stackPos(0));
+	int dlgIndex = stackPos(0);
+	switch (_curChapter-2) {
+	case 0:
+		dlgIndex -= 34;
+		break;
+	
+	case 1:
+		dlgIndex -= 54;
+		break;
+
+	case 2:
+		dlgIndex -= 55;
+		break;
+
+	case 3:
+		dlgIndex -= 70;
+		break;
+
+	default:
+		break;
+	}
+
+	int convs[4];
+	Common::set_to(convs, convs+4, -1);
+
+	if (_curChapter == 1) {
+		switch (_mainCharacter.dlgIndex) {
+		case 0:
+			convs[0] = 6;
+			convs[1] = 12;
+			break;
+
+		case 2:
+			convs[0] = 8;
+			convs[1] = 14;
+			break;
+
+		case 3:
+			convs[0] = 9;
+			convs[1] = 15;
+			break;
+
+		case 4:
+			convs[0] = 10;
+			convs[1] = 16;
+			break;
+
+		case 5:
+			convs[0] = 11;
+			convs[1] = 17;
+			break;
+
+		case 6:
+			convs[0] = 0;
+			convs[1] = 12;
+			break;
+
+		case 8:
+			convs[0] = 2;
+			convs[1] = 14;
+			break;
+
+		case 9:
+			convs[0] = 3;
+			convs[1] = 15;
+			break;
+
+		case 10:
+			convs[0] = 4;
+			convs[1] = 16;
+			break;
+
+		case 11:
+			convs[0] = 5;
+			convs[1] = 17;
+			break;
+
+		case 12:
+			convs[0] = 0;
+			convs[1] = 6;
+			break;
+
+		case 14:
+			convs[0] = 2;
+			convs[1] = 8;
+			break;
+
+		case 15:
+			convs[0] = 3;
+			convs[1] = 9;
+			break;
+
+		case 16:
+			convs[0] = 4;
+			convs[1] = 10;
+			break;
+
+		case 17:
+			convs[0] = 5;
+			convs[1] = 11;
+			break;
+
+		default:
+			break;
+		}
+	} else if (_curChapter == 2) {
+		switch (_mainCharacter.dlgIndex) {
+		case 0:
+			convs[0] = 4;
+			convs[1] = 8;
+			convs[2] = 5;
+			convs[3] = 9;
+			break;
+
+		case 1:
+			convs[0] = 4;
+			convs[1] = 8;
+			convs[2] = 0;
+			convs[3] = 5;
+			break;
+
+		case 2:
+			convs[0] = 6;
+			convs[2] = 11;
+			break;
+
+		case 3:
+			convs[0] = 7;
+			convs[2] = 12;
+			break;
+
+		case 4:
+			convs[0] = 0;
+			convs[1] = 8;
+			convs[2] = 1;
+			convs[3] = 9;
+			break;
+
+		case 5:
+			convs[0] = 0;
+			convs[1] = 8;
+			convs[2] = 4;
+			convs[3] = 1;
+			break;
+
+		case 6:
+			convs[0] = 2;
+			convs[1] = 10;
+			break;
+
+		case 7:
+			convs[0] = 3;
+			convs[1] = 11;
+			break;
+
+		case 8:
+			convs[0] = 0;
+			convs[1] = 4;
+			convs[2] = 1;
+			break;
+
+		case 9:
+			convs[0] = 0;
+			convs[1] = 4;
+			convs[2] = 0;
+			convs[4] = 1;
+			break;
+
+		case 10:
+			convs[0] = 2;
+			convs[1] = 6;
+			break;
+
+		case 11:
+			convs[0] = 3;
+			convs[1] = 7;
+			break;
+
+		default:
+			break;
+		}
+	} else if (_curChapter == 4) {
+		if (_malcolmsSpirit == 0) {
+			convs[0] = _mainCharacter.dlgIndex - 10;
+			convs[1] = _mainCharacter.dlgIndex - 5;
+		} else if (_malcolmsSpirit == 1) {
+			convs[0] = _mainCharacter.dlgIndex + 5;
+			convs[1] = _mainCharacter.dlgIndex + 10;
+		} else if (_malcolmsSpirit == 2) {
+			convs[0] = _mainCharacter.dlgIndex - 5;
+			convs[1] = _mainCharacter.dlgIndex + 5;
+		}
+	}
+
+	for (int i = 0; i < 4; ++i) {
+		if (convs[i] != -1)
+			_conversationState[dlgIndex][convs[i]] = 0;
+	}
+
+	return 1;
 }
 
 int KyraEngine_v3::o3_setSceneDim(ScriptState *script) {
@@ -541,6 +755,12 @@ int KyraEngine_v3::o3_runActorScript(ScriptState *script) {
 		enterNewScene(78, -1, 0, 0, 0);
 	}
 
+	return 0;
+}
+
+int KyraEngine_v3::o3_runDialog(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_runDialog(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	runDialog(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -751,7 +971,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_getCharacterFacing);
 	Opcode(o3_getCharacterScene);
 	// 0x08
-	OpcodeUnImpl();
+	Opcode(o3_getMalcolmsSpirit);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
@@ -806,7 +1026,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_wipeDownMouseItem);
 	Opcode(o3_dummy);
 	// 0x34
-	OpcodeUnImpl();
+	Opcode(o3_setMalcolmsSpirit);
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 	Opcode(o3_delay);
@@ -822,7 +1042,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_drawSceneShape);
 	// 0x40
 	Opcode(o3_checkInRect);
-	OpcodeUnImpl();
+	Opcode(o3_updateConversations);
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 	// 0x44
@@ -887,7 +1107,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	// 0x74
 	Opcode(o3_runActorScript);
-	OpcodeUnImpl();
+	Opcode(o3_runDialog);
 	Opcode(o3_malcolmRandomChat);
 	Opcode(o3_setDlgIndex);
 	// 0x78

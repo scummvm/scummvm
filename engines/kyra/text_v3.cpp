@@ -516,7 +516,7 @@ void KyraEngine_v3::processDialog(int vocHighIndex, int vocHighBase, int funcNum
 
 	while (running) {
 		uint16 cmd = _cnvFile->readUint16LE();
-		int object = cmd - 14;
+		int object = cmd - 12;
 		
 		if (cmd == 10) {
 			break;
@@ -666,6 +666,53 @@ void KyraEngine_v3::malcolmRandomChat() {
 	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
 
 	processDialog(vocHighIndex, vocHighBase, 0);
+}
+
+void KyraEngine_v3::runDialog(int dlgIndex, int funcNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runDialog(%d, %d)", dlgIndex, funcNum);
+	
+	switch (_curChapter-2) {
+	case 0:
+		dlgIndex -= 34;
+		break;
+	
+	case 1:
+		dlgIndex -= 54;
+		break;
+
+	case 2:
+		dlgIndex -= 55;
+		break;
+
+	case 3:
+		dlgIndex -= 70;
+		break;
+
+	default:
+		break;
+	}
+
+	updateDlgBuffer();
+
+	int vocHighBase = 0, vocHighIndex = 0, index1 = 0, index2 = 0;
+	loadDlgHeader(vocHighBase, vocHighIndex, index1, index2);
+
+	int convState = _conversationState[dlgIndex][vocHighBase];
+	uint32 offset = ((vocHighIndex == 1) ? dlgIndex - 1 : dlgIndex) * 6;
+	if (convState == -1) {
+		_cnvFile->seek(offset, SEEK_CUR);
+		_conversationState[dlgIndex][vocHighBase] = 0;
+	} else if (convState == 0 || convState == 2) {
+		_cnvFile->seek(offset+2, SEEK_CUR);
+		_conversationState[dlgIndex][vocHighBase] = 1;
+	} else {
+		_cnvFile->seek(offset+4, SEEK_CUR);
+		_conversationState[dlgIndex][vocHighBase] = 2;
+	}
+
+	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
+
+	processDialog(vocHighIndex, vocHighBase, funcNum);
 }
 
 } // end of namespace Kyra

@@ -454,6 +454,8 @@ private:
 
 	bool checkCharCollision(int x, int y);
 
+	int _malcolmsSpirit;
+
 	// talk object
 	struct TalkObject {
 		char filename[13];
@@ -523,6 +525,7 @@ private:
 	int o3d_delay(ScriptState *script);
 
 	void malcolmRandomChat();
+	void runDialog(int dlgIndex, int funcNum);
 
 	// conscience
 	bool _badConscienceShown;
@@ -582,6 +585,7 @@ private:
 	int o3_getCharacterY(ScriptState *script);
 	int o3_getCharacterFacing(ScriptState *script);
 	int o3_getCharacterScene(ScriptState *script);
+	int o3_getMalcolmsSpirit(ScriptState *script);
 	int o3_trySceneChange(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
@@ -602,10 +606,12 @@ private:
 	int o3_showMouse(ScriptState *script);
 	int o3_badConscienceChat(ScriptState *script);
 	int o3_wipeDownMouseItem(ScriptState *script);
+	int o3_setMalcolmsSpirit(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_drawSceneShape(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);
+	int o3_updateConversations(ScriptState *script);
 	int o3_setSceneDim(ScriptState *script);
 	int o3_update(ScriptState *script);
 	int o3_enterNewScene(ScriptState *script);
@@ -619,6 +625,7 @@ private:
 	int o3_defineSceneAnim(ScriptState *script);
 	int o3_updateSceneAnim(ScriptState *script);
 	int o3_runActorScript(ScriptState *script);
+	int o3_runDialog(ScriptState *script);
 	int o3_malcolmRandomChat(ScriptState *script);
 	int o3_setDlgIndex(ScriptState *script);
 	int o3_getDlgIndex(ScriptState *script);
