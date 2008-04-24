@@ -514,7 +514,7 @@ void ScriptInterpreter::cmd_vsize() {
 }
 
 void ScriptInterpreter::cmd_exit() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_exit");
 }
 
 void ScriptInterpreter::cmd_return() {
@@ -548,33 +548,32 @@ void ScriptInterpreter::cmd_call() {
 }
 
 void ScriptInterpreter::cmd_svar() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_svar");
 }
 
 void ScriptInterpreter::cmd_sset() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_sset");
 }
 
 void ScriptInterpreter::cmd_split() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_split");
 }
 
 void ScriptInterpreter::cmd_snlit() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_snlit");
 }
 
 void ScriptInterpreter::cmd_yorn() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_yorn");
 }
 
 void ScriptInterpreter::cmd_save() {
-	//fflush(stdout); g_system->delayMillis(5000);
-	// TODO
+	warning("Unimplemented command: cmd_save");
 	_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_restore() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_restore");
 }
 
 void ScriptInterpreter::cmd_arg() {
@@ -608,26 +607,27 @@ void ScriptInterpreter::cmd_tspace() {
 }
 
 void ScriptInterpreter::cmd_class() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_class");
 }
 
 void ScriptInterpreter::cmd_objectp() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_objectp");
 }
 
 void ScriptInterpreter::cmd_vectorp() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_vectorp");
 }
 
 void ScriptInterpreter::cmd_restart() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_restart");
 }
 
 void ScriptInterpreter::cmd_rand() {
-	//fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_rand");
 }
 
 void ScriptInterpreter::cmd_randomize() {
+	warning("Unimplemented command: cmd_randomize");
 	// TODO
 	_stack.setTop(0);
 }
@@ -696,19 +696,19 @@ void ScriptInterpreter::cmd_extend() {
 }
 
 void ScriptInterpreter::cmd_catch() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_catch");
 }
 
 void ScriptInterpreter::cmd_cdone() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_cdone");
 }
 
 void ScriptInterpreter::cmd_throw() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_throw");
 }
 
 void ScriptInterpreter::cmd_functionp() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_functionp");
 }
 
 void ScriptInterpreter::cmd_le() {
@@ -728,11 +728,11 @@ void ScriptInterpreter::cmd_ge() {
 }
 
 void ScriptInterpreter::cmd_varx() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_varx");
 }
 
 void ScriptInterpreter::cmd_setx() {
-	fflush(stdout); g_system->delayMillis(5000);
+	warning("Unimplemented command: cmd_setx");
 }
 
 } // End of namespace Made
