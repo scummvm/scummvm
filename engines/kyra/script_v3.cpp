@@ -1114,7 +1114,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	// 0x34
 	Opcode(o3_setMalcolmsMood);
-	OpcodeUnImpl();
+	Opcode(o3_playSoundEffect);
 	Opcode(o3_dummy);
 	Opcode(o3_delay);
 	// 0x38
