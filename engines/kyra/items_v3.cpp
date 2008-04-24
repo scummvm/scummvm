@@ -438,12 +438,12 @@ bool KyraEngine_v3::pickUpItem(int x, int y, int runScript) {
 		_itemList[itemPos].id = 0xFFFF;
 		playSoundEffect(0x0B, 0xC8);
 		setMouseCursor(itemId);
-		int str2 = 7;
+		int itemString = 0;
 
 		//if (_lang == 1)
-		//	str2 = getItemCommandStringPickUp(itemId);
+		//	itemString = getItemCommandStringPickUp(itemId);
 
-		updateItemCommand(itemId, str2, 0xFF);
+		updateItemCommand(itemId, itemString, 0xFF);
 		_itemInHand = itemId;
 		_screen->showMouse();
 
