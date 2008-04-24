@@ -761,7 +761,7 @@ void KyraEngine_v3::loadMalcolmShapes(int newShapes) {
 		"MTFL##.SHP",
 		"MTFR##.SHP",
 		"MTL##.SHP",
-		"MTR#.SHP"
+		"MTR##.SHP"
 	};
 
 	for (int i = 50; i <= 247; ++i) {
@@ -783,6 +783,7 @@ void KyraEngine_v3::loadMalcolmShapes(int newShapes) {
 		strcpy(filename, filenames[i]);
 		filename[numberOffset[i]+0] = highNum;
 		filename[numberOffset[i]+1] = lowNum;
+		_res->exists(filename, true);
 		_res->loadFileToBuf(filename, _screenBuffer, 64000);
 		for (int j = startShape[i]; j < endShape[i]; ++j) {
 			if (j == 87)
