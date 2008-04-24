@@ -161,7 +161,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 		setNextIdleAnimTimer();
 
-		if (_itemInHand <= 0) {
+		if (_itemInHand < 0) {
 			_itemInHand = -1;
 			_handItemSet = -1;
 			_screen->setMouseCursor(0, 0, _gameShapes[0]);
