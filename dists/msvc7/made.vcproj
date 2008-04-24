@@ -118,6 +118,12 @@
 			RelativePath="..\..\engines\made\made.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\made\music.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\made\music.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\made\pmvplayer.cpp">
 		</File>
 		<File
