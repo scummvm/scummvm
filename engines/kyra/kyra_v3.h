@@ -237,6 +237,7 @@ private:
 	void showIdleAnim();
 
 	void addItemToAnimList(int item);
+	void deleteItemAnimEntry(int item);
 
 	// interface
 	uint8 *_interface;
@@ -246,6 +247,9 @@ private:
 	void loadInterface();
 
 	void showMessage(const char *string, uint8 c0, uint8 c1);
+	void showMessageFromCCode(int string, uint8 c0, int);
+	void updateItemCommand(int item, int str, uint8 c0);
+
 	void updateCommandLine();
 	void restoreCommandLine();
 	void updateCLState();
@@ -319,6 +323,9 @@ private:
 	bool pickUpItem(int x, int y);
 
 	bool isDropable(int x, int y);
+
+	static const uint8 _itemMagicTable[];
+	bool itemListMagic(int handItem, int itemSlot);
 
 	// -> hand item
 	void setMouseCursor(uint16 item);
@@ -414,6 +421,7 @@ private:
 	int runSceneScript2();
 	bool _noStartupChat;
 	void runSceneScript4(int unk1);
+	void runSceneScript6();
 	void runSceneScript8();
 
 	int _sceneMinX, _sceneMaxX;

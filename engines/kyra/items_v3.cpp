@@ -24,6 +24,7 @@
  */
 
 #include "kyra/kyra_v3.h"
+#include "kyra/timer.h"
 
 namespace Kyra {
 
@@ -187,8 +188,8 @@ bool KyraEngine_v3::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 		if (processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2))
 			return true;
 
-		//if (countAllItems() >= 50)
-			//showMessageFromCCode(14, 0xB3, 0);
+		if (countAllItems() >= 50)
+			showMessageFromCCode(14, 0xB3, 0);
 	}
 
 	if (!_chatText)
@@ -294,10 +295,10 @@ bool KyraEngine_v3::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 	itemDropDown(x, y, itemX, itemY, freeItemSlot, item, (unk1 == 0) ? 1 : 0);
 
 	if (!unk1 && unk2) {
-		//int itemStr = 1;
+		int itemStr = 1;
 		//if (_lang == 1)
 		//	itemStr = getItemCommandStringDrop(item);
-		//updateCommandLineEx(item+54, itemStr, 0xD6);
+		updateItemCommand(item, itemStr, 0xFF);
 	}
 
 	return true;
@@ -390,7 +391,35 @@ void KyraEngine_v3::itemDropDown(int startX, int startY, int dstX, int dstY, int
 
 void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::exchangeMouseItem(%d, %d)", itemPos, runScript);
-	//XXX
+	_screen->hideMouse();
+
+	if (itemListMagic(_itemInHand, itemPos))
+		return;
+
+	if (_itemInHand == 43) {
+		removeHandItem();
+		return;
+	}
+
+	deleteItemAnimEntry(itemPos);
+
+	int itemId = _itemList[itemPos].id;
+	_itemList[itemPos].id = _itemInHand;
+	_itemInHand = itemId;
+
+	addItemToAnimList(itemPos);
+	playSoundEffect(0x0B, 0xC8);
+	setMouseCursor(_itemInHand);
+	int str2 = 0;
+
+	//if (_lang == 1)
+	//	str2 = getItemCommandStringPickUp(itemId);
+
+	updateItemCommand(itemId, str2, 0xFF);
+	_screen->showMouse();
+
+	if (runScript)
+		runSceneScript6();
 }
 
 bool KyraEngine_v3::isDropable(int x, int y) {
@@ -406,6 +435,80 @@ bool KyraEngine_v3::isDropable(int x, int y) {
 	}
 
 	return true;
+}
+
+bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::itemListMagic(%d, %d)", handItem, itemSlot);
+
+	uint16 item = _itemList[itemSlot].id;
+	if (_curChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
+		//eelScript();
+		return true;
+	} else if ((handItem == 6 || handItem == 7) && item == 2) {
+		int animObjIndex = -1;
+		for (int i = 17; i <= 66; ++i) {
+			if (_animObjects[i].shapeIndex2 == 250)
+				animObjIndex = i;
+		}
+
+		assert(animObjIndex != -1);
+
+		_screen->hideMouse();
+		playSoundEffect(0x93, 0xC8);
+		for (int i = 109; i <= 141; ++i) {
+			_animObjects[animObjIndex].shapeIndex = i+248;
+			_animObjects[animObjIndex].needRefresh = true;
+			delay(1, true);
+		}
+
+		deleteItemAnimEntry(itemSlot);
+		_itemList[itemSlot].id = 0xFFFF;
+		_screen->showMouse();
+		return true;
+	}
+
+	if (_mainCharacter.sceneId == 51 && queryGameFlag(0x19B) && !queryGameFlag(0x19C)
+		&& ((item == 63 && handItem == 56) || (item == 56 && handItem == 63))) {
+
+		if (queryGameFlag(0x1AC)) {
+			setGameFlag(0x19C);
+			setGameFlag(0x1AD);
+		} else {
+			setGameFlag(0x1AE);
+		}
+		
+		_timer->setCountdown(12, 1);
+		_timer->enable(12);
+	}
+
+	for (int i = 0; _itemMagicTable[i] != 0xFF; i += 4) {
+		if (_itemMagicTable[i+0] != handItem || _itemMagicTable[i+1] != item)
+			continue;
+
+		uint8 resItem = _itemMagicTable[i+2];
+		uint8 newItem = _itemMagicTable[i+3];
+
+		playSoundEffect(0x0F, 0xC8);
+
+		_itemList[itemSlot].id = resItem;
+
+		_screen->hideMouse();
+		deleteItemAnimEntry(itemSlot);
+		addItemToAnimList(itemSlot);
+		
+		if (newItem == 0xFE)
+			removeHandItem();
+		else if (newItem != 0xFF)
+			setHandItem(newItem);
+		_screen->showMouse();
+
+		if (_lang != 1)
+			updateItemCommand(resItem, 3, 0xFF);
+
+		return true;
+	}
+
+	return false;
 }
 
 } // end of namespace Kyra

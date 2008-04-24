@@ -822,6 +822,20 @@ void KyraEngine_v3::runSceneScript4(int unk1) {
 		_noStartupChat = true;
 }
 
+void KyraEngine_v3::runSceneScript6() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript6()");
+	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+
+	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	_sceneScriptState.regs[3] = _itemInHand;
+
+	_scriptInterpreter->startScript(&_sceneScriptState, 6);
+	while (_scriptInterpreter->validScript(&_sceneScriptState))
+		_scriptInterpreter->runScript(&_sceneScriptState);
+}
+
 void KyraEngine_v3::runSceneScript8() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript8()");
 	_scriptInterpreter->startScript(&_sceneScriptState, 8);

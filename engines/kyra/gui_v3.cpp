@@ -50,6 +50,29 @@ void KyraEngine_v3::showMessage(const char *string, uint8 c0, uint8 c1) {
 	_screen->showMouse();
 }
 
+void KyraEngine_v3::showMessageFromCCode(int string, uint8 c0, int) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::showMessageFromCCode(%d, %d, -)", string, c0);
+	showMessage((const char*)getTableEntry(_cCodeFile, string), c0, 0xF0);
+}
+
+void KyraEngine_v3::updateItemCommand(int item, int str, uint8 c0) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateItemCommand(%d, %d, %d)", item, str, c0);
+	char buffer[100];
+	char *src = (char*)getTableEntry(_itemFile, item);
+
+	while (*src != ' ')
+		++src;
+	++src;
+
+	*src = toupper(*src);
+
+	strcpy(buffer, src);
+	strcat(buffer, " ");
+	strcat(buffer, (const char*)getTableEntry(_cCodeFile, str));
+
+	showMessage(buffer, c0, 0xF0);
+}
+
 void KyraEngine_v3::updateCommandLine() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCommandLine()");
 	if (_restoreCommandLine) {

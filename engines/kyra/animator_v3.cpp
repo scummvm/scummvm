@@ -636,5 +636,22 @@ void KyraEngine_v3::addItemToAnimList(int item) {
 	animObj->needRefresh = 1;
 }
 
+void KyraEngine_v3::deleteItemAnimEntry(int item) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::deleteItemAnimEntry(%d)", item);
+	AnimObj *animObj = &_animObjects[17+item];
+
+	restorePage3();
+
+	animObj->shapePtr = 0;
+	animObj->shapeIndex = 0xFFFF;
+	animObj->shapeIndex2 = 0xFFFF;
+	animObj->needRefresh = 1;
+
+	refreshAnimObjectsIfNeed();
+
+	animObj->enabled = 0;
+	_animList = deleteAnimListEntry(_animList, animObj);
+}
+
 } // end of namespace Kyra
 
