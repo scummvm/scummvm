@@ -1748,14 +1748,15 @@ void drawMessage(const char *messagePtr, int16 x, int16 y, int16 width, int16 co
 
 void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
 	if (msgIdx >= messageTable.size()) {
-		removeOverlay(msgIdx, 2);
+//		removeOverlay(msgIdx, 2);
 		return;
 	}
 
 	_messageLen += messageTable[msgIdx].size();
 	drawMessage(messageTable[msgIdx].c_str(), x, y, width, color);
 
-	removeOverlay(msgIdx, 2);
+	// this invalidates the iterator in drawOverlays()
+//	removeOverlay(msgIdx, 2);
 }
 
 void drawFailureMessage(byte cmd) {
@@ -1777,7 +1778,8 @@ void drawFailureMessage(byte cmd) {
 
 	drawMessage(messagePtr, x, y, width, color);
 
-	removeOverlay(cmd, 3);
+	// this invalidates the iterator in drawOverlays()
+//	removeOverlay(cmd, 3);
 }
 
 void drawOverlays(void) {
@@ -1899,6 +1901,14 @@ void drawOverlays(void) {
 
 			maskBgOverlay(additionalBgTable[var5], animDataTable[objPtr->frame].data(), width, height, page1Raw, x, y);
 			break;
+		}
+	}
+
+	for (it = overlayList.begin(); it != overlayList.end(); ) {
+		if (it->type == 2 || it->type == 3) {
+			it = overlayList.erase(it);
+		} else {
+			++it;
 		}
 	}
 }
