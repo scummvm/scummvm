@@ -71,7 +71,7 @@ private:
 	int _size; ///< _data/_mask size, internal only
 
 public:
-	uint16 _width; ///< Image width (ussually twice the real size)
+	uint16 _width; ///< Image width (usually twice the real size)
 	uint16 _height; ///< Image height
 	uint16 _bpp; ///< Bit depth/type information
 	uint16 _var1; ///< Something related to width
@@ -99,7 +99,7 @@ extern AnimData animDataTable[NUM_MAX_ANIMDATA];
 
 void freeAnimDataTable(void);
 void freeAnimDataRange(byte startIdx, byte numIdx);
-void loadResource(const char *animName);
+void loadResource(const char *resourceName);
 void loadAbs(const char *resourceName, uint16 idx);
 void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken);
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);

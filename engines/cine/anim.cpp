@@ -192,7 +192,7 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height);
 AnimData::AnimData() : _width(0), _height(0), _bpp(0), _var1(0), _data(NULL),
 	_mask(NULL), _fileIdx(-1), _frameIdx(-1), _realWidth(0), _size(0) {
 
-	memset(_name, 0, 10);
+	memset(_name, 0, sizeof(_name));
 }
 
 /*! \brief Copy constructor
@@ -214,7 +214,7 @@ AnimData::AnimData(const AnimData &src) : _width(src._width),
 		memcpy(_mask, src._mask, _size*sizeof(byte));
 	}
 
-	memset(_name, 0, 10);
+	memset(_name, 0, sizeof(_name));
 	strcpy(_name, src._name);
 }
 
@@ -245,7 +245,7 @@ AnimData &AnimData::operator=(const AnimData &src) {
 
 	_fileIdx = tmp._fileIdx;
 	_frameIdx = tmp._frameIdx;
-	memset(_name, 0, 10);
+	memset(_name, 0, sizeof(_name));
 	strcpy(_name, tmp._name);
 	_realWidth = tmp._realWidth;
 	_size = tmp._size;
@@ -287,7 +287,7 @@ void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
 	_mask = NULL;
 	_fileIdx = file;
 	_frameIdx = frame;
-	memset(_name, 0, 10);
+	memset(_name, 0, sizeof(_name));
 	strcpy(_name, n);
 	_realWidth = w;
 
@@ -358,7 +358,7 @@ void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
  */
 void AnimData::clear() {
 	delete[] _data;
-	delete [] _mask;
+	delete[] _mask;
 
 	_width = 0;
 	_height = 0;
@@ -368,7 +368,7 @@ void AnimData::clear() {
 	_mask = NULL;
 	_fileIdx = -1;
 	_frameIdx = -1;
-	memset(_name, 0, 10);
+	memset(_name, 0, sizeof(_name));
 	_size = 0;
 }
 
@@ -384,7 +384,7 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
 	fHandle.writeUint32BE(0); // _mask
 	fHandle.writeUint16BE(_fileIdx);
 	fHandle.writeUint16BE(_frameIdx);
-	fHandle.write(_name, 10);
+	fHandle.write(_name, sizeof(_name));
 }
 
 /*! \brief Clear part of animDataTable
