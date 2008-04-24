@@ -422,6 +422,38 @@ void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
 		runSceneScript6();
 }
 
+bool KyraEngine_v3::pickUpItem(int x, int y, int runScript) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::pickUpItem(%d, %d, %d)", x, y, runScript);
+	int itemPos = checkItemCollision(x, y);
+
+	if (itemPos <= -1)
+		return false;
+
+	if (_itemInHand >= 0) {
+		exchangeMouseItem(itemPos, runScript);
+	} else {
+		_screen->hideMouse();
+		deleteItemAnimEntry(itemPos);
+		int itemId = _itemList[itemPos].id;
+		_itemList[itemPos].id = 0xFFFF;
+		playSoundEffect(0x0B, 0xC8);
+		setMouseCursor(itemId);
+		int str2 = 7;
+
+		//if (_lang == 1)
+		//	str2 = getItemCommandStringPickUp(itemId);
+
+		updateItemCommand(itemId, str2, 0xFF);
+		_itemInHand = itemId;
+		_screen->showMouse();
+
+		if (runScript)
+			runSceneScript6();
+	}
+
+	return true;
+}
+
 bool KyraEngine_v3::isDropable(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::isDropable(%d, %d)", x, y);
 	if (y < 14 || y > 187)

@@ -320,7 +320,7 @@ private:
 	bool processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2);
 	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item, int remove);
 	void exchangeMouseItem(int itemPos, int runScript);
-	bool pickUpItem(int x, int y);
+	bool pickUpItem(int x, int y, int runScript);
 
 	bool isDropable(int x, int y);
 

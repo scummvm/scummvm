@@ -967,9 +967,9 @@ bool KyraEngine_v3::checkCharCollision(int x, int y) {
 	int height = (scale * 76) >> 8;
 
 	int x1 = _mainCharacter.x1 - width/2;
-	int x2 = _mainCharacter.x2 + width/2;
+	int x2 = _mainCharacter.x1 + width/2;
 	int y1 = _mainCharacter.y1 - height;
-	int y2 = _mainCharacter.y2;
+	int y2 = _mainCharacter.y1;
 
 	if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
 		return true;
@@ -1029,7 +1029,7 @@ void KyraEngine_v3::handleInput(int x, int y) {
 
 	if (checkCharCollision(x, y) && _unk3 >= -1 && runSceneScript2()) {
 		return;
-	} else if (_itemInHand == 27) {
+	} else if (_itemInHand != 27 && pickUpItem(x, y, 1)) {
 		return;
 	} else if (checkItemCollision(x, y) == -1) {
 		resetGameFlag(1);
