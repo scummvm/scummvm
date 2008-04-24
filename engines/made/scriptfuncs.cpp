@@ -272,13 +272,15 @@ int16 ScriptFunctionsRtz::o1_VISUALFX(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYSND(int16 argc, int16 *argv) {
-	int soundId = (argc == 1) ? argv[0] : argv[1];
+	int soundId = argv[0];
 	bool loop = false;
+
 	if (argc > 1) {
+		soundId = argv[1];
 		loop = (argv[0] == 1);
 	}
 
-	if (argv[0] > 0) {
+	if (soundId > 0) {
 		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
 			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
 										 _vm->_res->getSound(soundId)->getAudioStream(_vm->_soundRate, loop));
