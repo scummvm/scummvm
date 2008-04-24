@@ -610,6 +610,7 @@ private:
 
 	int o3t_defineNewShapes(ScriptState *script);
 	int o3t_setCurrentFrame(ScriptState *script);
+	int o3t_setNewShapeFlag(ScriptState *script);
 
 	ScriptData _temporaryScriptData;
 	ScriptState _temporaryScriptState;

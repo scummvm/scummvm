@@ -1015,6 +1015,12 @@ int KyraEngine_v3::o3t_setCurrentFrame(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3t_setNewShapeFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3t_setNewShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
+	_newShapeFlag = stackPos(0);
+	return 0;
+}
+
 #pragma mark -
 
 int KyraEngine_v3::o3d_updateAnim(ScriptState *script) {
@@ -1275,7 +1281,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_dummy);
 	// 0x0a
-	OpcodeUnImpl();
+	Opcode(o3t_setNewShapeFlag);
 	Opcode(o3_getRand);
 	Opcode(o3_getMalcolmShapes);
 	Opcode(o3_dummy);
