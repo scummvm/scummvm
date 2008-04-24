@@ -655,6 +655,11 @@ int KyraEngine_v3::o3_playSoundEffect(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_getScore(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getScore(%p) ()", (const void *)script);
+	return _score;
+}
+
 int KyraEngine_v3::o3_blockOutRegion(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	const int x1 = stackPos(0);
@@ -1166,7 +1171,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x58
 	Opcode(o3_playMusicTrack);
 	Opcode(o3_playSoundEffect);
-	OpcodeUnImpl();
+	Opcode(o3_getScore);
 	OpcodeUnImpl();
 	// 0x5c
 	Opcode(o3_blockOutRegion);
@@ -1182,7 +1187,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_dummy);
 	// 0x68
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);

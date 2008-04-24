@@ -711,6 +711,7 @@ private:
 	int o3_stopMusic(ScriptState *script);
 	int o3_playMusicTrack(ScriptState *script);
 	int o3_playSoundEffect(ScriptState *script);
+	int o3_getScore(ScriptState *script);
 	int o3_blockOutRegion(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_waitForConfirmationClick(ScriptState *script);
