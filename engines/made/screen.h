@@ -70,6 +70,7 @@ public:
 	void setClip(uint16 clip) { _clip = clip; }
 	void setExclude(uint16 exclude) { _exclude = exclude; }
 	void setGround(uint16 ground) { _ground = ground; }
+	void setFont(uint16 font) { _currentFont = font; }
 
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
@@ -115,6 +116,7 @@ protected:
 	byte _palette[768], _newPalette[768], _fxPalette[768];
 	int _paletteColorCount, _oldPaletteColorCount;
 	bool _paletteInitialized, _needPalette;
+	uint16 _currentFont;
 
 	uint16 _clip, _exclude, _ground;
 	int _visualEffectNum;

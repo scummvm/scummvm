@@ -221,6 +221,22 @@ void XmidiResource::load(byte *source, int size) {
 	memcpy(_data, source, size);
 }
 
+/* FontResource */
+
+FontResource::FontResource() : _data(NULL), _size(0) {
+}
+
+FontResource::~FontResource() {
+	if (_data)
+		delete[] _data;
+}
+
+void FontResource::load(byte *source, int size) {
+	_data = new byte[size];
+	_size = size;
+	memcpy(_data, source, size);
+}
+
 /* ProjectReader */
 
 ProjectReader::ProjectReader() {
@@ -287,6 +303,10 @@ MenuResource *ProjectReader::getMenu(int index) {
 
 XmidiResource *ProjectReader::getXmidi(int index) {
 	return createResource<XmidiResource>(kResXMID, index);
+}
+
+FontResource *ProjectReader::getFont(int index) {
+	return createResource<FontResource>(kResFONT, index);
 }
 
 void ProjectReader::loadIndex(ResourceSlots *slots) {

@@ -45,7 +45,8 @@ enum ResourceType {
 	kResSNDS = MKID_BE('SNDS'),
 	kResANIM = MKID_BE('ANIM'),
 	kResMENU = MKID_BE('MENU'),
-	kResXMID = MKID_BE('XMID')
+	kResXMID = MKID_BE('XMID'),
+	kResFONT = MKID_BE('FONT')
 };
 
 struct ResourceSlot;
@@ -123,6 +124,19 @@ protected:
 	int _size;
 };
 
+// TODO
+class FontResource : public Resource {
+public:
+	FontResource();
+	~FontResource();
+	void load(byte *source, int size);
+	byte *getData() const { return _data; }
+	int getSize() const { return _size; }
+protected:
+	byte *_data;
+	int _size;
+};
+
 struct ResourceSlot {
 	uint32 offs;
 	uint32 size;
@@ -147,6 +161,7 @@ public:
 	SoundResource *getSound(int index);
 	MenuResource *getMenu(int index);
 	XmidiResource *getXmidi(int index);
+	FontResource *getFont(int index);
 
 	void freeResource(Resource *resource);
 

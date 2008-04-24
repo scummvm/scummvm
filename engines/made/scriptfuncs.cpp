@@ -422,6 +422,10 @@ int16 ScriptFunctionsRtz::o1_PALETTELOCK(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_FONT(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_FONT");
+
+	uint16 fontID = argv[0];
+	printf("Set font to %i\n", fontID);
+	_vm->_screen->setFont(fontID);
 	return 0;
 }
 
@@ -442,6 +446,11 @@ int16 ScriptFunctionsRtz::o1_TEXTRECT(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_TEXTXY(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_TEXTXY");
+
+	int16 x = CLIP<int16>(argv[0], 1, 318);
+	int16 y = CLIP<int16>(argv[1], 1, 198);
+
+	printf("Text: x = %i, y = %i\n", x, y);
 	return 0;
 }
 
@@ -717,7 +726,11 @@ int16 ScriptFunctionsRtz::o1_DRAWANIMPIC(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_LOADANIM(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_LOADANIM");
+	AnimationResource *anim = _vm->_res->getAnimation(argv[0]);
+	if (anim) {
+		_vm->_res->freeResource(anim);
+		return 1;
+	}
 	return 0;
 }
 
