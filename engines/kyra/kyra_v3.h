@@ -327,6 +327,16 @@ private:
 	static const uint8 _itemMagicTable[];
 	bool itemListMagic(int handItem, int itemSlot);
 
+	static const uint8 _itemStringMap[];
+	static const uint _itemStringMapSize;
+	static const uint8 _itemStringPickUp[];
+	static const uint8 _itemStringDrop[];
+	static const uint8 _itemStringInv[];
+
+	int getItemCommandStringPickUp(uint16 item);
+	int getItemCommandStringDrop(uint16 item);
+	int getItemCommandStringInv(uint16 item);
+
 	// -> hand item
 	void setMouseCursor(uint16 item);
 

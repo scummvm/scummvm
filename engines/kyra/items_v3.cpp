@@ -296,8 +296,8 @@ bool KyraEngine_v3::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 
 	if (!unk1 && unk2) {
 		int itemStr = 1;
-		//if (_lang == 1)
-		//	itemStr = getItemCommandStringDrop(item);
+		if (_lang == 1)
+			itemStr = getItemCommandStringDrop(item);
 		updateItemCommand(item, itemStr, 0xFF);
 	}
 
@@ -412,8 +412,8 @@ void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
 	setMouseCursor(_itemInHand);
 	int str2 = 0;
 
-	//if (_lang == 1)
-	//	str2 = getItemCommandStringPickUp(itemId);
+	if (_lang == 1)
+		str2 = getItemCommandStringPickUp(itemId);
 
 	updateItemCommand(itemId, str2, 0xFF);
 	_screen->showMouse();
@@ -440,8 +440,8 @@ bool KyraEngine_v3::pickUpItem(int x, int y, int runScript) {
 		setMouseCursor(itemId);
 		int itemString = 0;
 
-		//if (_lang == 1)
-		//	itemString = getItemCommandStringPickUp(itemId);
+		if (_lang == 1)
+			itemString = getItemCommandStringPickUp(itemId);
 
 		updateItemCommand(itemId, itemString, 0xFF);
 		_itemInHand = itemId;
@@ -541,6 +541,27 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 	}
 
 	return false;
+}
+
+int KyraEngine_v3::getItemCommandStringDrop(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getItemCommandStringDrop(%u)", item);
+	assert(item < _itemStringMapSize);
+	int stringId = _itemStringMap[item];
+	return _itemStringDrop[stringId];
+}
+
+int KyraEngine_v3::getItemCommandStringPickUp(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getItemCommandStringPickUp(%u)", item);
+	assert(item < _itemStringMapSize);
+	int stringId = _itemStringMap[item];
+	return _itemStringPickUp[stringId];
+}
+
+int KyraEngine_v3::getItemCommandStringInv(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getItemCommandStringInv(%u)", item);
+	assert(item < _itemStringMapSize);
+	int stringId = _itemStringMap[item];
+	return _itemStringInv[stringId];
 }
 
 } // end of namespace Kyra

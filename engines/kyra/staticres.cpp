@@ -2350,7 +2350,31 @@ const uint8 KyraEngine_v3::_itemMagicTable[] = {
 	0xFF, 0xFF, 0xFF, 0xFF
 };
 
+const uint8 KyraEngine_v3::_itemStringMap[] = {
+	1, 0, 2, 0, 2, 2, 0, 0,
+	2, 2, 2, 2, 2, 2, 2, 0,
+	0, 0, 0, 0, 0, 0, 3, 1,
+	2, 0, 2, 2, 0, 0, 0, 0,
+	0, 0, 1, 2, 0, 2, 0, 2,
+	0, 0, 2, 0, 0, 0, 0, 1,
+	1, 0, 2, 2, 0, 0, 2, 0,
+	0, 2, 0, 2, 2, 0, 0, 2,
+	0, 0, 0, 0, 2, 0, 0, 2
+};
+
+const uint KyraEngine_v3::_itemStringMapSize = ARRAYSIZE(KyraEngine_v3::_itemStringMap);
+
+const uint8 KyraEngine_v3::_itemStringPickUp[] = {
+	0x4, 0x7, 0x0, 0xA
+};
+
+const uint8 KyraEngine_v3::_itemStringDrop[] = {
+	0x5, 0x8, 0x1, 0xB
+};
+
+const uint8 KyraEngine_v3::_itemStringInv[] = {
+	0x6, 0x9, 0x2, 0xC
+};
+
 } // End of namespace Kyra
-
-
 
