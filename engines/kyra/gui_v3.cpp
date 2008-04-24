@@ -358,6 +358,8 @@ void KyraEngine_v3::drawScoreCounting(int oldScore, int newScore, int drawOld, c
 
 	_screen->drawShape(0, getShapePtr(old001+443), x + 16, y, 0, 0);
 
+	_screen->updateScreen();
+
 	_screen->drawShape(0, getShapePtr(new100+433), x +  0, y, 0, 0);
 	_screen->drawShape(0, getShapePtr(new010+433), x +  8, y, 0, 0);
 	_screen->drawShape(0, getShapePtr(new001+433), x + 16, y, 0, 0);
