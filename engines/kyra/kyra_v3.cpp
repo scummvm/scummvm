@@ -128,6 +128,8 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_inventoryScrollSpeed = -1;
 	_invWsa = 0;
 	_invWsaFrame = -1;
+	_score = 0;
+	memset(_scoreFlagTable, 0, sizeof(_scoreFlagTable));
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -544,11 +546,13 @@ void KyraEngine_v3::startup() {
 	musicUpdate(0);
 
 	if (!loadLanguageFile("ITEMS.", _itemFile))
-		error("couldn't load ITEMS");
+		error("Couldn't load ITEMS");
+	if (!loadLanguageFile("SCORE.", _scoreFile))
+		error("Couldn't load SCORE");
 	if (!loadLanguageFile("C_CODE.", _cCodeFile))
-		error("couldn't load C_CODE");
+		error("Couldn't load C_CODE");
 	if (!loadLanguageFile("SCENES.", _scenesFile))
-		error("couldn't load SCENES");
+		error("Couldn't load SCENES");
 
 	//XXX
 
@@ -605,7 +609,11 @@ void KyraEngine_v3::startup() {
 
 	clearAnimObjects();
 
-	//XXX
+	_scoreMax = 0;
+	for (int i = 0; i < _scoreTableSize; ++i) {
+		if (_scoreTable[i] > 0)
+			_scoreMax += _scoreTable[i];
+	}
 
 	musicUpdate(0);
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
@@ -1592,6 +1600,64 @@ void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int 
 	}
 
 	_scriptInterpreter->unloadScript(&_temporaryScriptData);
+}
+
+#pragma mark - 
+
+bool KyraEngine_v3::updateScore(int scoreId, int strId) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateScore(%d, %d)", scoreId, strId);
+
+	int scoreIndex = (scoreId >> 3);
+	int scoreBit = scoreId & 7;
+	if ((_scoreFlagTable[scoreIndex] & (1 << scoreBit)) != 0)
+		return false;
+
+	setNextIdleAnimTimer();
+	_scoreFlagTable[scoreIndex] |= (1 << scoreBit);
+
+	_screen->hideMouse();
+	strcpy(_stringBuffer, (const char*)getTableEntry(_scoreFile, strId));
+	strcat(_stringBuffer, ":        ");
+
+	assert(scoreId < _scoreTableSize);
+
+	int count = _scoreTable[scoreId];
+	if (count > 0)
+		scoreIncrease(count, _stringBuffer);
+
+	_screen->showMouse();
+	setNextIdleAnimTimer();
+	return true;
+}
+
+void KyraEngine_v3::scoreIncrease(int count, const char *str) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::scoreIncrease(%d, '%s')", count, str);
+	int drawOld = 1;
+	_screen->hideMouse();
+
+	showMessage(str, 0xFF, 0xF0);
+	const int x = getScoreX(str);
+
+	for (int i = 0; i < count; ++i) {
+		int oldScore = _score;
+		int newScore = ++_score;
+
+		if (newScore > _scoreMax) {
+			_score = _scoreMax;
+			break;
+		}
+
+		drawScoreCounting(oldScore, newScore, drawOld, x);
+		if (_inventoryState)
+			drawScore(0, 215, 191);
+		_screen->updateScreen();
+		delay(20, true);
+		
+		playSoundEffect(0x0E, 0xC8);
+		drawOld = 0;
+	}
+
+	_screen->showMouse();
 }
 
 #pragma mark -

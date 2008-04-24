@@ -266,6 +266,10 @@ private:
 	void drawMalcolmsMoodText();
 	void drawMalcolmsMoodPointer(int frame, int page);
 	void drawJestersStaff(int type, int page);
+	
+	void drawScore(int page, int x, int y);
+	void drawScoreCounting(int oldScore, int newScore, int drawOld, const int x);
+	int getScoreX(const char *str);
 
 	static const uint8 _inventoryX[];
 	static const uint8 _inventoryY[];
@@ -650,6 +654,15 @@ private:
 
 	char *_stringBuffer;
 
+	int _score;
+	int _scoreMax;
+	
+	static const int8 _scoreTable[];
+	static const int _scoreTableSize;
+	int8 _scoreFlagTable[26];
+	bool updateScore(int scoreId, int strId);
+	void scoreIncrease(int count, const char *str);
+
 	// opcodes
 	int o3_getMalcolmShapes(ScriptState *script);
 	int o3_setCharacterPos(ScriptState *script);
@@ -684,6 +697,7 @@ private:
 	int o3_wipeDownMouseItem(ScriptState *script);
 	int o3_setMalcolmsMood(ScriptState *script);
 	int o3_delay(ScriptState *script);
+	int o3_updateScore(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_drawSceneShape(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);

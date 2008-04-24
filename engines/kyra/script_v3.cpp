@@ -317,6 +317,11 @@ int KyraEngine_v3::o3_delay(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_updateScore(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_updateScore(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return updateScore(stackPos(0), stackPos(1)) ? 1 : 0;
+}
+
 int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSceneFilename(%p) (%d, '%s')", (const void *)script, stackPos(0), stackPosString(1));
 	strcpy(_sceneList[stackPos(0)].filename1, stackPosString(1));
@@ -1093,7 +1098,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_delay);
 	// 0x38
-	OpcodeUnImpl();
+	Opcode(o3_updateScore);
 	OpcodeUnImpl();
 	Opcode(o3_setSceneFilename);
 	OpcodeUnImpl();

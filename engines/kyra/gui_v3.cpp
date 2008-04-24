@@ -110,7 +110,7 @@ void KyraEngine_v3::showInventory() {
 
 	redrawInventory(30);
 	drawMalcolmsMoodPointer(-1, 30);
-	//XXX
+	drawScore(30, 215, 191);
 	
 	if (queryGameFlag(0x97))
 		drawJestersStaff(1, 30);
@@ -310,6 +310,70 @@ void KyraEngine_v3::drawJestersStaff(int type, int page) {
 
 	int shape = (type != 0) ? 454 : 453;
 	_screen->drawShape(page, getShapePtr(shape), 217, y, 0, 0);
+}
+
+void KyraEngine_v3::drawScore(int page, int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawScore(%d, %d, %d)", page, x, y);
+	if (page == 30) {
+		page = 2;
+		y -= 144;
+	}
+
+	int shape1 = _score / 100;
+	int shape2 = (_score - shape1*100) / 10;
+	int shape3 = _score % 10;
+
+	_screen->drawShape(page, getShapePtr(shape1+433), x, y, 0, 0);
+	x += 8;
+	_screen->drawShape(page, getShapePtr(shape2+433), x, y, 0, 0);
+	x += 8;
+	_screen->drawShape(page, getShapePtr(shape3+433), x, y, 0, 0);
+}
+
+void KyraEngine_v3::drawScoreCounting(int oldScore, int newScore, int drawOld, const int x) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawScoreCounting(%d, %d, %d, %d)", oldScore, newScore, drawOld, x);
+	int y = 189;
+	if (_inventoryState)
+		y -= 44;
+
+	int old100 = oldScore / 100;
+	int old010 = (oldScore - old100*100) / 10;
+	int old001 = oldScore % 10;
+
+	int new100 = newScore / 100;
+	int new010 = (newScore - new100*100) / 10;
+	int new001 = newScore % 10;
+
+	if (drawOld) {
+		_screen->drawShape(0, getShapePtr(old100+433), x +  0, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old010+433), x +  8, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old001+433), x + 16, y, 0, 0);
+	}
+
+	if (old100 != new100)
+		_screen->drawShape(0, getShapePtr(old100+443), x +  0, y, 0, 0);
+
+	if (old010 != new010)
+		_screen->drawShape(0, getShapePtr(old010+443), x +  8, y, 0, 0);
+
+	_screen->drawShape(0, getShapePtr(old001+443), x + 16, y, 0, 0);
+
+	_screen->drawShape(0, getShapePtr(new100+433), x +  0, y, 0, 0);
+	_screen->drawShape(0, getShapePtr(new010+433), x +  8, y, 0, 0);
+	_screen->drawShape(0, getShapePtr(new001+433), x + 16, y, 0, 0);
+}
+
+int KyraEngine_v3::getScoreX(const char *str) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::getScoreX('%s')", str);
+	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+
+	int width = _screen->getTextWidth(str);
+	int x = 160 + (width / 2) - 32;
+
+	_screen->setFont(oldFont);
+	_screen->_charWidth = 0;
+	return x;
 }
 
 void KyraEngine_v3::redrawInventory(int page) {
