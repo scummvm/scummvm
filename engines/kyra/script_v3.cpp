@@ -329,6 +329,26 @@ int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_removeItemsFromScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_removeItemsFromScene(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	const uint16 itemId = stackPos(0);
+	const uint16 sceneId = stackPos(1);
+	const bool allItems = (stackPos(2) != 0);
+
+	int retValue = 0;
+
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].sceneId == sceneId && _itemList[i].id == itemId) {
+			resetItem(i);
+			retValue = 1;
+			if (!allItems)
+				return 1;
+		}
+	}
+
+	return retValue;
+}
+
 int KyraEngine_v3::o3_drawSceneShape(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_drawSceneShape(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	const int shape = stackPos(0);
@@ -1103,7 +1123,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_setSceneFilename);
 	OpcodeUnImpl();
 	// 0x3c
-	OpcodeUnImpl();
+	Opcode(o3_removeItemsFromScene);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(o3_drawSceneShape);
