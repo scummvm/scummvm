@@ -138,6 +138,12 @@ int KyraEngine_v3::o3_moveCharacter(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setCharacterFacing(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setCharacterFacing(%p) (%d)", (const void *)script, stackPos(0));
+	_mainCharacter.facing = stackPos(0);
+	return 0;
+}
+
 int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showSceneFileMessage(%p) (%d)", (const void *)script, stackPos(0));
 	showMessage((const char*)getTableEntry(_scenesFile, stackPos(0)), 0xFF, 0xF0);
@@ -646,6 +652,30 @@ int KyraEngine_v3::o3_getRand(ScriptState *script) {
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
+int KyraEngine_v3::o3_waitForConfirmationClick(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
+	resetSkipFlag();
+	uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
+
+	while (_system->getMillis() < maxWaitTime) {
+		int inputFlag = checkInput(0);
+		removeInputTop();
+
+		if (inputFlag == 198 || inputFlag == 199) {
+			_sceneScriptState.regs[1] = _mouseX;
+			_sceneScriptState.regs[2] = _mouseY;
+			return 0;
+		}
+
+		update();
+		_system->delayMillis(10);
+	}
+
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	return 1;
+}
+
 int KyraEngine_v3::o3_defineRoomEntrance(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	switch (stackPos(0)) {
@@ -1011,7 +1041,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(o3_trySceneChange);
 	Opcode(o3_moveCharacter);
-	OpcodeUnImpl();
+	Opcode(o3_setCharacterFacing);
 	// 0x10
 	OpcodeUnImpl();
 	Opcode(o3_showSceneFileMessage);
@@ -1123,10 +1153,10 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
 	// 0x68
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_dummy);
+	Opcode(o3_waitForConfirmationClick);
 	// 0x6c
 	Opcode(o3_dummy);
 	Opcode(o3_defineRoomEntrance);

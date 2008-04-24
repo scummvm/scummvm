@@ -662,6 +662,7 @@ private:
 	int o3_getMalcolmsMood(ScriptState *script);
 	int o3_trySceneChange(ScriptState *script);
 	int o3_moveCharacter(ScriptState *script);
+	int o3_setCharacterFacing(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
@@ -696,6 +697,7 @@ private:
 	int o3_playSoundEffect(ScriptState *script);
 	int o3_blockOutRegion(ScriptState *script);
 	int o3_getRand(ScriptState *script);
+	int o3_waitForConfirmationClick(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
 	int o3_runTemporaryScript(ScriptState *script);
 	int o3_setSpecialSceneScriptRunTime(ScriptState *script);
