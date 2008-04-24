@@ -121,7 +121,7 @@ public:
 	void resume(void);
 	void stop(void);
 
-	void setVolume(int volume, int time = 1);
+	void setVolume(int volume);
 	int getVolume() { return _currentVolume; }
 
 	int32 *_songTable;
@@ -135,9 +135,7 @@ private:
 	int _enabled;
 	bool _adlib;
 
-	int _targetVolume;
 	int _currentVolume;
-	int _currentVolumePercent;
 
 	MidiParser *xmidiParser;
 

@@ -173,19 +173,12 @@ Music::~Music() {
 		delete[] _midiMusicData;
 }
 
-void Music::setVolume(int volume, int time) {
-	_targetVolume = volume * 2; // ScummVM has different volume scale
-	_currentVolumePercent = 0;
-
+void Music::setVolume(int volume) {
 	if (volume == -1) // Set Full volume
 		volume = 255;
 
-	if (time == 1) {
-		_player->setVolume(volume);
-		_currentVolume = volume;
-		return;
-	}
-
+	_player->setVolume(volume);
+	_currentVolume = volume;
 }
 
 bool Music::isPlaying() {
@@ -193,17 +186,13 @@ bool Music::isPlaying() {
 }
 
 void Music::play(XmidiResource *midiResource, MusicFlags flags) {
-	MidiParser *parser;
+	MidiParser *parser = 0;
 	byte *resourceData;
 	size_t resourceSize;
 
 	debug(2, "Music::play %d", flags);
 
-	if (!_enabled) {
-		return;
-	}
-
-	if (isPlaying()) {
+	if (!_enabled || isPlaying()) {
 		return;
 	}
 
