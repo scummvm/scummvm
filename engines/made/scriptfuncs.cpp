@@ -441,6 +441,16 @@ int16 ScriptFunctionsRtz::o1_HOMETEXT(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_TEXTRECT(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_TEXTRECT");
+
+	int16 x1 = CLIP<int16>(argv[0], 1, 318);
+	int16 y1 = CLIP<int16>(argv[1], 1, 198);
+	int16 x2 = CLIP<int16>(argv[2], 1, 318);
+	int16 y2 = CLIP<int16>(argv[3], 1, 198);
+	int16 textValue = argv[4];
+
+	printf("Text rect: %i, %i, %i, %i - text value: %i\n", x1, y1, x2, y2, textValue);
+	// TODO: set text rect
+
 	return 0;
 }
 
@@ -455,17 +465,21 @@ int16 ScriptFunctionsRtz::o1_TEXTXY(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_DROPSHADOW(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_DROPSHADOW");
+	// if the drop shadow color is -1, then text drop shadow is disabled
+	// when font drop shadow is enabled, outline is disabled
+	_vm->_screen->setDropShadowColor(argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTCOLOR(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_TEXTCOLOR");
+	_vm->_screen->setTextColor(argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_OUTLINE(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_OUTLINE");
+	// if the outline color is -1, then text outline is disabled
+	// when font outline is enabled, drop shadow is disabled
+	_vm->_screen->setOutlineColor(argv[0]);
 	return 0;
 }
 

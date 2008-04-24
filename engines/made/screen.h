@@ -71,6 +71,17 @@ public:
 	void setExclude(uint16 exclude) { _exclude = exclude; }
 	void setGround(uint16 ground) { _ground = ground; }
 	void setFont(uint16 font) { _currentFont = font; }
+	void setTextColor(int16 color) { _textColor = color; }
+
+	void setOutlineColor(int16 color) { 
+		_outlineColor = color;
+		_dropshadowColor = -1;
+	}
+
+	void setDropShadowColor(int16 color) { 
+		_outlineColor = -1;
+		_dropshadowColor = color;
+	}
 
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
@@ -117,6 +128,9 @@ protected:
 	int _paletteColorCount, _oldPaletteColorCount;
 	bool _paletteInitialized, _needPalette;
 	uint16 _currentFont;
+	int16 _textColor;
+	int16 _outlineColor;
+	int16 _dropShadowColor;
 
 	uint16 _clip, _exclude, _ground;
 	int _visualEffectNum;
