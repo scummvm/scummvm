@@ -78,5 +78,16 @@
 #ifndef DISABLE_CRUISE
 	"Cruise "
 #endif
+#ifndef DISABLE_MADE
+	"MADE "
+#endif
+
+#ifndef DISABLE_M4
+	"M4 "
+#endif
+
+
+
+
 
 
