@@ -37,6 +37,8 @@
 #include "kyra/resource.h"
 #include "kyra/gui_v1.h"
 
+#include "gui/message.h"
+
 namespace Kyra {
 
 #define RESFILE_VERSION 24
@@ -277,13 +279,15 @@ bool StaticResource::init() {
 	int tempSize = 0;
 	uint8 *temp = getFile("INDEX", tempSize);
 	if (!temp) {
-		warning("no matching INDEX file found ('%s')", getFilename("INDEX"));
+		warning("No matching INDEX file found ('%s')", getFilename("INDEX"));
+		outputError();
 		return false;
 	}
 
 	if (tempSize != 3*4) {
 		delete [] temp;
 		warning("'%s' has illegal filesize %d", getFilename("INDEX"), tempSize);
+		outputError();
 		return false;
 	}
 
@@ -294,23 +298,43 @@ bool StaticResource::init() {
 	delete [] temp;
 	temp = 0;
 
-	if (version != RESFILE_VERSION)
-		error("invalid KYRA.DAT file version (%u, required %d)", version, RESFILE_VERSION);
-	if (gameID != _vm->game())
-		error("invalid game id (%u)", gameID);
+	if (version != RESFILE_VERSION) {
+		warning("Invalid KYRA.DAT file version (%u, required %d)", version, RESFILE_VERSION);
+		outputError();
+		return false;
+	}
+
+	if (gameID != _vm->game()) {
+		warning("Invalid game id (%u)", gameID);
+		outputError();
+		return false;
+	}
 
 	uint32 gameFeatures = createFeatures(_vm->gameFlags());
-	if ((featuresValue & GAME_FLAGS) != gameFeatures)
-		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
+	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
+		warning("Your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
+		outputError();
+		return false;
+	}
 
 	// load all tables for now
-	if (!prefetchId(-1))
-		error("couldn't load all needed resources from 'KYRA.DAT'");
+	if (!prefetchId(-1)) {
+		warning("Couldn't load all needed resources from 'KYRA.DAT'");
+		outputError();
+		return false;
+	}
 	return true;
 }
 
 void StaticResource::deinit() {
 	unloadId(-1);
+}
+
+void StaticResource::outputError() {
+	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file is outdated, reget it from the ScummVM website";
+	::GUI::MessageDialog errorMsg(errorMessage);
+	errorMsg.runModal();
+	error(errorMessage.c_str());
 }
 
 const char * const*StaticResource::loadStrings(int id, int &strings) {

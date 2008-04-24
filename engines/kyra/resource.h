@@ -263,6 +263,8 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
+	void outputError();
+
 	KyraEngine *_vm;
 
 	struct FilenameTable;
