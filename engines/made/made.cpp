@@ -97,9 +97,9 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(driver, _musicVolume);
+	_music = new MusicPlayer(driver);
 	_music->setNativeMT32(native_mt32);
-	_music->setAdlib(adlib);
+	//_music->setAdlib(adlib);
 
 	_musicVolume = ConfMan.getInt("music_volume");
 

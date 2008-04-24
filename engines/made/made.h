@@ -61,7 +61,7 @@ class PmvPlayer;
 class Screen;
 class ScriptInterpreter;
 class GameDatabase;
-class Music;
+class MusicPlayer;
 
 class MadeEngine : public ::Engine {
 	int _gameId;
@@ -94,7 +94,7 @@ public:
 	Screen *_screen;
 	GameDatabase *_dat;
 	ScriptInterpreter *_script;
-	Music *_music;
+	MusicPlayer *_music;
 
 	int _eventMouseX, _eventMouseY;
 	uint16 _eventKey;

@@ -28,12 +28,8 @@
 #ifndef MADE_MUSIC_H
 #define MADE_MUSIC_H
 
-#include "sound/audiocd.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/flac.h"
 #include "common/mutex.h"
 
 #include "made/resource.h"
@@ -42,8 +38,7 @@ namespace Made {
 
 enum MusicFlags {
 	MUSIC_NORMAL = 0,
-	MUSIC_LOOP = 0x0001,
-	MUSIC_DEFAULT = 0xffff
+	MUSIC_LOOP = 1
 };
 
 class MusicPlayer : public MidiDriver {
@@ -59,8 +54,10 @@ public:
 
 	void setNativeMT32(bool b) { _nativeMT32 = b; }
 	bool hasNativeMT32() { return _nativeMT32; }
-	void playMusic();
-	void stopMusic();
+	void play(XmidiResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
+	void stop();
+	void pause();
+	void resume();
 	void setLoop(bool loop) { _looping = loop; }
 	void setPassThrough(bool b) { _passThrough = b; }
 
@@ -89,6 +86,7 @@ protected:
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;
+	MidiParser *_xmidiParser;
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _isGM;
@@ -96,51 +94,7 @@ protected:
 
 	bool _isPlaying;
 	bool _looping;
-	bool _randomLoop;
 	byte _masterVolume;
-
-	byte *_musicData;
-	uint16 *_buf;
-	size_t _musicDataSize;
-};
-
-class Music {
-public:
-
-	Music(MidiDriver *driver, int enabled);
-	~Music(void);
-	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
-	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
-	void setAdlib(bool b)		{ _adlib = b; }
-	bool hasAdlib()			{ return _adlib; }
-	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
-	bool isPlaying(void);
-
-	void play(XmidiResource *midiResource, MusicFlags flags = MUSIC_DEFAULT);
-	void pause(void);
-	void resume(void);
-	void stop(void);
-
-	void setVolume(int volume);
-	int getVolume() { return _currentVolume; }
-
-	int32 *_songTable;
-	int _songTableLen;
-
-private:
-
-	MusicPlayer *_player;
-	uint32 _trackNumber;
-
-	int _enabled;
-	bool _adlib;
-
-	int _currentVolume;
-
-	MidiParser *xmidiParser;
-
-	byte *_midiMusicData;
-
 };
 
 } // End of namespace Made

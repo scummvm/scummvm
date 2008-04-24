@@ -41,12 +41,15 @@ MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _loo
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	this->open();
+	_xmidiParser = MidiParser::createParser_XMIDI();
 }
 
 MusicPlayer::~MusicPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
-	stopMusic();
+	stop();
 	this->close();
+	_xmidiParser->setMidiDriver(NULL);
+	delete _xmidiParser;
 }
 
 void MusicPlayer::setVolume(int volume) {
@@ -78,7 +81,7 @@ int MusicPlayer::open() {
 }
 
 void MusicPlayer::close() {
-	stopMusic();
+	stop();
 	if (_driver)
 		_driver->close();
 	_driver = 0;
@@ -121,7 +124,7 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 		if (_looping)
 			_parser->jumpToTick(0);
 		else
-			stopMusic();
+			stop();
 		break;
 	default:
 		//warning("Unhandled meta event: %02x", type);
@@ -137,11 +140,40 @@ void MusicPlayer::onTimer(void *refCon) {
 		music->_parser->onTimer();
 }
 
-void MusicPlayer::playMusic() {
-	_isPlaying = true;
+void MusicPlayer::play(XmidiResource *midiResource, MusicFlags flags) {
+	byte *resourceData;
+	size_t resourceSize;
+
+	if (_isPlaying)
+		return;
+
+	stop();
+
+	// Load MIDI/XMI resource data
+
+	_isGM = true;
+
+	resourceSize = midiResource->getSize();
+	resourceData = new byte[resourceSize];
+	memcpy(resourceData, midiResource->getData(), resourceSize);
+
+	if (_xmidiParser->loadMusic(resourceData, resourceSize)) {
+		MidiParser *parser = _xmidiParser;
+		parser->setTrack(0);
+		parser->setMidiDriver(this);
+		parser->setTimerRate(getBaseTempo());
+		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+
+		_parser = parser;
+
+		setVolume(255);
+
+		_looping = flags & MUSIC_LOOP;
+		_isPlaying = true;
+	}
 }
 
-void MusicPlayer::stopMusic() {
+void MusicPlayer::stop() {
 	Common::StackLock lock(_mutex);
 
 	_isPlaying = false;
@@ -151,113 +183,14 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-Music::Music(MidiDriver *driver, int enabled) : _enabled(enabled), _adlib(false) {
-	_player = new MusicPlayer(driver);
-	_currentVolume = 0;
-
-	xmidiParser = MidiParser::createParser_XMIDI();
-
-	_songTableLen = 0;
-	_songTable = 0;
-
-	_midiMusicData = NULL;
+void MusicPlayer::pause() {
+	setVolume(-1);
+	_isPlaying = false;
 }
 
-Music::~Music() {
-	delete _player;
-	xmidiParser->setMidiDriver(NULL);
-	delete xmidiParser;
-
-	free(_songTable);
-	if (_midiMusicData)
-		delete[] _midiMusicData;
-}
-
-void Music::setVolume(int volume) {
-	if (volume == -1) // Set Full volume
-		volume = 255;
-
-	_player->setVolume(volume);
-	_currentVolume = volume;
-}
-
-bool Music::isPlaying() {
-	return _player->isPlaying();
-}
-
-void Music::play(XmidiResource *midiResource, MusicFlags flags) {
-	MidiParser *parser = 0;
-	byte *resourceData;
-	size_t resourceSize;
-
-	debug(2, "Music::play %d", flags);
-
-	if (!_enabled || isPlaying()) {
-		return;
-	}
-
-	_player->stopMusic();
-
-	/*
-	if (!_vm->_musicVolume) {
-		return;
-	}
-	*/
-
-	if (flags == MUSIC_DEFAULT) {
-		flags = MUSIC_NORMAL;
-	}
-
-	// Load MIDI/XMI resource data
-
-	_player->setGM(true);
-
-	resourceSize = midiResource->getSize();
-	resourceData = new byte[resourceSize];
-	memcpy(resourceData, midiResource->getData(), resourceSize);
-
-	if (resourceSize < 4) {
-		error("Music::play() wrong music resource size");
-	}
-
-	if (xmidiParser->loadMusic(resourceData, resourceSize)) {
-		//_player->setGM(false);
-		parser = xmidiParser;
-	}
-
-	parser->setTrack(0);
-	parser->setMidiDriver(_player);
-	parser->setTimerRate(_player->getBaseTempo());
-	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-
-	_player->_parser = parser;
-	//setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+void MusicPlayer::resume() {
 	setVolume(255);
-
-	if (flags & MUSIC_LOOP)
-		_player->setLoop(true);
-	else
-		_player->setLoop(false);
-
-	_player->playMusic();
-	if (_midiMusicData)
-		delete[] _midiMusicData;
-	_midiMusicData = resourceData;
-}
-
-void Music::pause(void) {
-	_player->setVolume(-1);
-	_player->setPlaying(false);
-}
-
-void Music::resume(void) {
-	//_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
-	setVolume(255);
-	_player->setPlaying(true);
-}
-
-void Music::stop(void) {
-	_player->stopMusic();
+	_isPlaying = true;
 }
 
 } // End of namespace Made
