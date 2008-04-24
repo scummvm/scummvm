@@ -1080,6 +1080,9 @@ int ScummEngine::init() {
 			defaultTo1XScaler = true;
 		} else if (_useCJKMode) {
 			_system->initSize(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier);
+
+			// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
+			// there is no text surface for them. This takes that into account
 			defaultTo1XScaler = (_screenWidth * _textSurfaceMultiplier > 320);
 		} else {
 			_system->initSize(_screenWidth, _screenHeight);
