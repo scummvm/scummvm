@@ -75,12 +75,12 @@ public:
 
 	void setOutlineColor(int16 color) { 
 		_outlineColor = color;
-		_dropshadowColor = -1;
+		_dropShadowColor = -1;
 	}
 
 	void setDropShadowColor(int16 color) { 
 		_outlineColor = -1;
-		_dropshadowColor = color;
+		_dropShadowColor = color;
 	}
 
 	uint16 updateChannel(uint16 channelIndex);
