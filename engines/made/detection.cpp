@@ -90,7 +90,7 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Return to Zork - English CD version
+		// Return to Zork - English CD version 1.1 12/7/93
 		{
 			"rtz",
 			"CD",
@@ -104,6 +104,23 @@ static const MadeGameDescription gameDescriptions[] = {
 		GF_CD_COMPRESSED,
 		0,
 	},
+
+	{
+		// Return to Zork - English CD version 1.2 9/29/94
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		0,
+		0,
+		GF_CD_COMPRESSED,
+		0,
+	},
+
 
 	{
 		// Return to Zork - English floppy version
