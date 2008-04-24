@@ -141,9 +141,6 @@ void MusicPlayer::onTimer(void *refCon) {
 }
 
 void MusicPlayer::play(XmidiResource *midiResource, MusicFlags flags) {
-	byte *resourceData;
-	size_t resourceSize;
-
 	if (_isPlaying)
 		return;
 
@@ -153,11 +150,7 @@ void MusicPlayer::play(XmidiResource *midiResource, MusicFlags flags) {
 
 	_isGM = true;
 
-	resourceSize = midiResource->getSize();
-	resourceData = new byte[resourceSize];
-	memcpy(resourceData, midiResource->getData(), resourceSize);
-
-	if (_xmidiParser->loadMusic(resourceData, resourceSize)) {
+	if (_xmidiParser->loadMusic(midiResource->getData(), midiResource->getSize())) {
 		MidiParser *parser = _xmidiParser;
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
