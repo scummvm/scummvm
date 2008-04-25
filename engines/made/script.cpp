@@ -442,7 +442,6 @@ void ScriptInterpreter::cmd_getObjectProperty() {
 	int16 objectIndex = _stack.top();
 	int16 value = _vm->_dat->getObjectProperty(objectIndex, propertyId);
 	debug(4, "value = %04X(%d)\n", value, value);
-	//fflush(stdout); g_system->delayMillis(5000);
 	_stack.setTop(value);
 }
 
@@ -451,7 +450,6 @@ void ScriptInterpreter::cmd_setObjectProperty() {
 	int16 propertyId = _stack.pop();
 	int16 objectIndex = _stack.top();
 	value = _vm->_dat->setObjectProperty(objectIndex, propertyId, value);
-	//fflush(stdout); g_system->delayMillis(5000);
 	_stack.setTop(value);
 }
 
@@ -481,9 +479,9 @@ void ScriptInterpreter::cmd_printNumber() {
 }
 
 void ScriptInterpreter::cmd_vref() {
+	int16 value = 0;
 	int16 index = _stack.pop();
 	int16 objectIndex = _stack.top();
-	int16 value = 0;
 	debug(4, "index = %d; objectIndex = %d\n", index, objectIndex); fflush(stdout);
 	if (objectIndex > 0) {
 		Object *obj = _vm->_dat->getObject(objectIndex);
@@ -507,9 +505,11 @@ void ScriptInterpreter::cmd_vset() {
 
 void ScriptInterpreter::cmd_vsize() {
 	int16 objectIndex = _stack.top();
-	if (objectIndex < 1) objectIndex = 1;	// HACK
-	Object *obj = _vm->_dat->getObject(objectIndex);
-	int16 size = obj->getVectorSize();
+	int16 size = 0;
+	if (objectIndex > 0) {
+		Object *obj = _vm->_dat->getObject(objectIndex);
+		size = obj->getVectorSize();
+	}
 	_stack.setTop(size);
 }
 
@@ -522,7 +522,6 @@ void ScriptInterpreter::cmd_return() {
 	int16 funcResult = _stack.top();
 	_stack.setStackPos(_localStackPos);
 	_localStackPos = kScriptStackLimit - _stack.pop();
-	//_localStackPos = _stack.pop();
 	_runningScriptObjectIndex = _stack.pop();
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase + _stack.pop();
@@ -544,7 +543,6 @@ void ScriptInterpreter::cmd_call() {
 	debug(4, "argc = %d; _runningScriptObjectIndex = %04X\n", argc, _runningScriptObjectIndex); fflush(stdout);
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
-	//_vm->_dat->dumpObject(_runningScriptObjectIndex);
 }
 
 void ScriptInterpreter::cmd_svar() {
@@ -623,11 +621,12 @@ void ScriptInterpreter::cmd_restart() {
 }
 
 void ScriptInterpreter::cmd_rand() {
-	_stack.setTop(_vm->_rnd->getRandomNumber(3));
+	_stack.setTop(_vm->_rnd->getRandomNumber(_stack.top() - 1));
 }
 
 void ScriptInterpreter::cmd_randomize() {
-	_stack.setTop(_vm->_rnd->getSeed());
+	_vm->_rnd->setSeed(g_system->getMillis());
+	_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_send() {
