@@ -701,7 +701,7 @@ private:
 	int o3_updateScore(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_removeItemsFromScene(ScriptState *script);
-	int o3_drawSceneShape(ScriptState *script);
+	int o3_drawSceneShapeOnPage(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);
 	int o3_updateConversations(ScriptState *script);
 	int o3_setSceneDim(ScriptState *script);

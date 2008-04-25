@@ -349,8 +349,8 @@ int KyraEngine_v3::o3_removeItemsFromScene(ScriptState *script) {
 	return retValue;
 }
 
-int KyraEngine_v3::o3_drawSceneShape(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_drawSceneShape(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int KyraEngine_v3::o3_drawSceneShapeOnPage(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_drawSceneShapeOnPage(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	const int shape = stackPos(0);
 	
 	int x = _sceneShapeDescs[shape].drawX;
@@ -1137,7 +1137,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_removeItemsFromScene);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	Opcode(o3_drawSceneShape);
+	Opcode(o3_drawSceneShapeOnPage);
 	// 0x40
 	Opcode(o3_checkInRect);
 	Opcode(o3_updateConversations);
