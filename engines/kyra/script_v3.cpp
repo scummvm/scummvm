@@ -26,6 +26,7 @@
 #include "kyra/kyra_v3.h"
 #include "kyra/script.h"
 #include "kyra/screen_v3.h"
+#include "kyra/text_v3.h"
 #include "kyra/wsamovie.h"
 #include "kyra/timer.h"
 
@@ -1025,6 +1026,32 @@ int KyraEngine_v3::o3_getHiddenItemsEntry(ScriptState *script) {
 	return (int16)_hiddenItems[stackPos(0)];
 }
 
+int KyraEngine_v3::o3_customChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_customChat(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int id = stackPos(0);
+	const int object = stackPos(1);
+	const char *str = (const char *)getTableEntry(_sceneStrings, id);
+
+	if (!str)
+		return 0;
+
+	strcpy(_stringBuffer, str);
+	_chatText = _stringBuffer;
+	_chatObject = object;
+	_chatVocHigh = _chatVocLow = -1;
+	objectChatInit(_stringBuffer, object, _vocHigh, id);
+	playVoice(_vocHigh, id);
+	return 0;
+}
+
+int KyraEngine_v3::o3_customChatFinish(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_customChatFinish(%p) ()", (const void *)script);
+	_text->restoreScreen();
+	_chatText = 0;
+	_chatObject = -1;
+	return 0;
+}
+
 int KyraEngine_v3::o3_setupSceneAnimObject(ScriptState *script) {
 	debugC(9, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setupSceneAnimObject(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9),
@@ -1333,8 +1360,8 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
 	// 0x98
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_customChat);
+	Opcode(o3_customChatFinish);
 	Opcode(o3_setupSceneAnimObject);
 	Opcode(o3_removeSceneAnimObject);
 	// 0x9c

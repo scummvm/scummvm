@@ -741,6 +741,8 @@ private:
 	int o3_querySpecialSceneScriptState(ScriptState *script);
 	int o3_setHiddenItemsEntry(ScriptState *script);
 	int o3_getHiddenItemsEntry(ScriptState *script);
+	int o3_customChat(ScriptState *script);
+	int o3_customChatFinish(ScriptState *script);
 	int o3_setupSceneAnimObject(ScriptState *script);
 	int o3_removeSceneAnimObject(ScriptState *script);
 	int o3_disableTimer(ScriptState *script);
