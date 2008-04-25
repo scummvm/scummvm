@@ -162,6 +162,35 @@ int KyraEngine_v3::o3_hideBadConscience(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_addItemToCurScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_addItemToCurScene(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	const uint16 item = stackPos(0);
+	int x = stackPos(1);
+	int y = stackPos(2);
+	int itemSlot = findFreeItem();
+
+	if (x < 20)
+		x = 20;
+	else if (x > 299)
+		x = 299;
+
+	if (y < 18)
+		y = 18;
+	else if (y > 187)
+		y = 187;
+
+	if (itemSlot >= 0) {
+		_itemList[itemSlot].x = x;
+		_itemList[itemSlot].y = y;
+		_itemList[itemSlot].id = item;
+		_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
+		addItemToAnimList(itemSlot);
+		refreshAnimObjectsIfNeed();
+	}
+
+	return itemSlot;
+}
+
 int KyraEngine_v3::o3_objectChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_objectChat(%p) (%d)", (const void *)script, stackPos(0));
 	int id = stackPos(0);
@@ -347,6 +376,30 @@ int KyraEngine_v3::o3_removeItemsFromScene(ScriptState *script) {
 	}
 
 	return retValue;
+}
+
+int KyraEngine_v3::o3_drawSceneShape(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o3_drawSceneShape(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+
+	int shape = stackPos(0);
+	int flag = (stackPos(1) != 0) ? 1 : 0;
+
+	_screen->hideMouse();
+	restorePage3();
+
+	const int x = _sceneShapeDescs[shape].drawX;
+	const int y = _sceneShapeDescs[shape].drawY;
+
+	_screen->drawShape(2, _sceneShapes[shape], x, y, 2, flag);
+
+	_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _gamePlayBuffer);
+
+	_screen->drawShape(0, _sceneShapes[shape], x, y, 2, flag);
+
+	flagAnimObjsForRefresh();
+	refreshAnimObjectsIfNeed();
+	_screen->showMouse();
+	return 0;
 }
 
 int KyraEngine_v3::o3_drawSceneShapeOnPage(ScriptState *script) {
@@ -1096,7 +1149,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x1c
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_addItemToCurScene);
 	Opcode(o3_objectChat);
 	// 0x20
 	Opcode(o3_checkForItem);
@@ -1136,7 +1189,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x3c
 	Opcode(o3_removeItemsFromScene);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_drawSceneShape);
 	Opcode(o3_drawSceneShapeOnPage);
 	// 0x40
 	Opcode(o3_checkInRect);

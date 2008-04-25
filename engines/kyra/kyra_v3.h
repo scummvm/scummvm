@@ -680,6 +680,7 @@ private:
 	int o3_showSceneFileMessage(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
+	int o3_addItemToCurScene(ScriptState *script);
 	int o3_objectChat(ScriptState *script);
 	int o3_checkForItem(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
@@ -701,6 +702,7 @@ private:
 	int o3_updateScore(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_removeItemsFromScene(ScriptState *script);
+	int o3_drawSceneShape(ScriptState *script);
 	int o3_drawSceneShapeOnPage(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);
 	int o3_updateConversations(ScriptState *script);

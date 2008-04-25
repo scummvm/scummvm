@@ -391,7 +391,6 @@ void KyraEngine_v3::itemDropDown(int startX, int startY, int dstX, int dstY, int
 
 void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::exchangeMouseItem(%d, %d)", itemPos, runScript);
-	_screen->hideMouse();
 
 	if (itemListMagic(_itemInHand, itemPos))
 		return;
@@ -401,6 +400,7 @@ void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
 		return;
 	}
 
+	_screen->hideMouse();
 	deleteItemAnimEntry(itemPos);
 
 	int itemId = _itemList[itemPos].id;
