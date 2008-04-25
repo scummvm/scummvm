@@ -198,7 +198,8 @@ void PmvPlayer::handleEvents() {
 }
 
 void PmvPlayer::updateScreen() {
-	_vm->_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch, 0, 0, _surface->w, _surface->h);
+	_vm->_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch, 
+									(320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
 	_vm->_system->updateScreen();
 }
 
