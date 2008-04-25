@@ -33,6 +33,7 @@ namespace Kyra {
 class KyraEngine;
 class KyraEngine_v1;
 class KyraEngine_v2;
+class KyraEngine_v3;
 
 class Debugger : public ::GUI::Debugger {
 public:
@@ -86,6 +87,22 @@ protected:
 	bool cmd_giveItem(int argc, const char **argv);
 	bool cmd_passcodes(int argc, const char **argv);
 };
+
+class Debugger_v3 : public Debugger {
+public:
+	Debugger_v3(KyraEngine_v3 *vm);
+	virtual ~Debugger_v3() {}
+
+protected:
+	KyraEngine_v3 *_vm;
+	
+	bool cmd_giveItem(int argc, const char **argv);	
+	bool cmd_enterScene(int argc, const char **argv);
+	bool cmd_listScenes(int argc, const char **argv);
+	bool cmd_sceneInfo(int argc, const char **argv);
+	bool cmd_sceneToFacing(int argc, const char **argv);
+};
+
 
 } // End of namespace Kyra
 

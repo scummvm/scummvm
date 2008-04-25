@@ -32,6 +32,7 @@
 #include "kyra/vqa.h"
 #include "kyra/gui.h"
 #include "kyra/timer.h"
+#include "kyra/debugger.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -130,6 +131,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_invWsaFrame = -1;
 	_score = 0;
 	memset(_scoreFlagTable, 0, sizeof(_scoreFlagTable));
+	_debugger = 0;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -188,6 +190,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _stringBuffer;
 	delete [] _newShapeFiledata;
 	delete _invWsa;
+	delete _debugger;
 }
 
 int KyraEngine_v3::init() {
@@ -197,6 +200,9 @@ int KyraEngine_v3::init() {
 		error("_screen->init() failed");
 
 	KyraEngine::init();
+	
+	_debugger = new Debugger_v3(this);
+	assert(_debugger);
 
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
@@ -622,6 +628,8 @@ void KyraEngine_v3::startup() {
 	memset(_conversationState, -1, sizeof(_conversationState));
 
 	_sceneList = new SceneDesc[98];
+	_sceneListSize = 98;
+	
 	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
@@ -1359,9 +1367,9 @@ int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			/*if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
+			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
 					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
-				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
+				/*const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
 
 				if (event.kbd.flags == Common::KBD_CTRL) {
 					loadGame(saveLoadSlot);
@@ -1371,11 +1379,11 @@ int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
 					saveGame(saveLoadSlot, savegameName);
-				}
+				}*/
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
-			}*/
+			}
 			break;
 
 		case Common::EVENT_MOUSEMOVE: {
@@ -1398,8 +1406,8 @@ int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
 			break;
 		}
 
-		//if (_debugger->isAttached())
-		//	_debugger->onFrame();
+		if (_debugger->isAttached())
+			_debugger->onFrame();
 
 		if (breakLoop)
 			break;

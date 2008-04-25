@@ -40,9 +40,11 @@ class Screen_v3;
 class MainMenu;
 class WSAMovieV2;
 class TextDisplayer_v3;
+class Debugger_v3;
 struct Button;
 
 class KyraEngine_v3 : public KyraEngine {
+friend class Debugger_v3;
 friend class TextDisplayer_v3;
 public:
 	KyraEngine_v3(OSystem *system, const GameFlags &flags);
@@ -407,6 +409,7 @@ private:
 	};
 
 	SceneDesc *_sceneList;
+	int _sceneListSize;
 	uint16 _sceneExit1, _sceneExit2, _sceneExit3, _sceneExit4;
 	int _sceneEnterX1, _sceneEnterY1;
 	int _sceneEnterX2, _sceneEnterY2;
@@ -746,6 +749,7 @@ private:
 
 	// misc
 	TextDisplayer_v3 *_text;
+	Debugger_v3 *_debugger;	
 	bool _wsaPlayingVQA;
 
 	// resource specific
