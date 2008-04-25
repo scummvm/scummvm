@@ -31,6 +31,8 @@
 
 #include "graphics/surface.h"
 
+#include "made/resource.h"
+
 namespace Made {
 
 struct SpriteChannel {
@@ -70,7 +72,6 @@ public:
 	void setClip(uint16 clip) { _clip = clip; }
 	void setExclude(uint16 exclude) { _exclude = exclude; }
 	void setGround(uint16 ground) { _ground = ground; }
-	void setFont(uint16 font) { _currentFont = font; }
 	void setTextColor(int16 color) { _textColor = color; }
 
 	void setOutlineColor(int16 color) { 
@@ -116,7 +117,9 @@ public:
 	void show();
 	void flash(int count);
 	
-	byte _screenPalette[256 * 4];
+	void setFont(int16 fontIndex);
+	void printChar(char c, int16 x, int16 y, byte color);
+	
 
 protected:
 	MadeEngine *_vm;
@@ -124,6 +127,7 @@ protected:
 	bool _screenLock;
 	bool _paletteLock;
 
+	byte _screenPalette[256 * 4];
 	byte _palette[768], _newPalette[768], _fxPalette[768];
 	int _paletteColorCount, _oldPaletteColorCount;
 	bool _paletteInitialized, _needPalette;
@@ -131,6 +135,11 @@ protected:
 	int16 _textColor;
 	int16 _outlineColor;
 	int16 _dropShadowColor;
+
+	int16 _textX, _textY;
+	int16 _currentFontIndex;
+	FontResource *_font;
+	ClipInfo _fontDrawCtx;
 
 	uint16 _clip, _exclude, _ground;
 	int _visualEffectNum;

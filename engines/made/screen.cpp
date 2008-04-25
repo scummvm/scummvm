@@ -63,6 +63,16 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_exclude = 0;
 	
 	_visualEffectNum = 0;
+	
+	_textX = 0;
+	_textY = 0;
+	_font = NULL;
+	_currentFontIndex = 0;
+	_fontDrawCtx.x = 0;
+	_fontDrawCtx.y = 0;
+	_fontDrawCtx.w = 320;
+	_fontDrawCtx.h = 200;
+	_fontDrawCtx.destSurface = _screen1;
 
 	clearChannels();
 }
@@ -455,6 +465,7 @@ void Screen::show() {
 		return;
 
 	drawSpriteChannels(_clipInfo1, 3, 0);
+	
 	memcpy(_screen2->pixels, _screen1->pixels, 64000);
 	drawSpriteChannels(_clipInfo2, 1, 2);
 
@@ -486,6 +497,41 @@ void Screen::flash(int flashCount) {
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(30);
 	}
+}
+
+void Screen::setFont(int16 fontIndex) {
+	if (fontIndex == _currentFontIndex)
+		return;
+	if (_font)
+		_vm->_res->freeResource(_font);
+	_font = _vm->_res->getFont(fontIndex);
+	_currentFontIndex = fontIndex;
+}
+
+void Screen::printChar(char c, int16 x, int16 y, byte color) {
+
+	if (!_font)
+		return;
+
+	int height = _font->getHeight();
+	byte *charData = _font->getChar(c);
+	
+	if (!charData)
+		return;
+
+	byte p;
+	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
+	
+	for (int16 yc = 0; yc < height; yc++) {
+		p = charData[yc];
+		for (int16 xc = 0; xc < 8; xc++) {
+			if (p & 0x80)
+				dest[xc] = color;
+			p <<= 1;
+		}
+		dest += _fontDrawCtx.destSurface->pitch;
+	}
+
 }
 
 } // End of namespace Made
