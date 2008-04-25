@@ -27,6 +27,7 @@
 #include "kyra/script.h"
 #include "kyra/screen_v3.h"
 #include "kyra/wsamovie.h"
+#include "kyra/timer.h"
 
 #include "common/endian.h"
 
@@ -1040,6 +1041,24 @@ int KyraEngine_v3::o3_removeSceneAnimObject(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_disableTimer(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_disableTimer(%p) (%d)", (const void *)script, stackPos(0));
+	_timer->disable(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v3::o3_enableTimer(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_enableTimer(%p) (%d)", (const void *)script, stackPos(0));
+	_timer->enable(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v3::o3_setTimerCountdown(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setTimerCountdown(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_timer->setCountdown(stackPos(0), stackPos(1));
+	return 0;
+}
+
 int KyraEngine_v3::o3_setVocHigh(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
 	_vocHigh = stackPos(0);
@@ -1319,9 +1338,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_setupSceneAnimObject);
 	Opcode(o3_removeSceneAnimObject);
 	// 0x9c
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_disableTimer);
+	Opcode(o3_enableTimer);
+	Opcode(o3_setTimerCountdown);
 	OpcodeUnImpl();
 	// 0xa0
 	Opcode(o3_dummy);

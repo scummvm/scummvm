@@ -743,6 +743,9 @@ private:
 	int o3_getHiddenItemsEntry(ScriptState *script);
 	int o3_setupSceneAnimObject(ScriptState *script);
 	int o3_removeSceneAnimObject(ScriptState *script);
+	int o3_disableTimer(ScriptState *script);
+	int o3_enableTimer(ScriptState *script);
+	int o3_setTimerCountdown(ScriptState *script);
 	int o3_setVocHigh(ScriptState *script);
 	int o3_getVocHigh(ScriptState *script);
 	int o3_dummy(ScriptState *script);
