@@ -458,7 +458,6 @@ Debugger_v3::Debugger_v3(KyraEngine_v3 *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v3, cmd_listScenes));	// for consistency with kyra_v1
 	DCmd_Register("scenes",				WRAP_METHOD(Debugger_v3, cmd_listScenes));
 	DCmd_Register("scene_info",			WRAP_METHOD(Debugger_v3, cmd_sceneInfo));
-	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v3, cmd_sceneToFacing));
 }
 
 bool Debugger_v3::cmd_giveItem(int argc, const char **argv) {
