@@ -565,6 +565,7 @@ private:
 	int8 _conversationState[30][30];
 	bool _chatAltFlag;
 	void setDlgIndex(uint16 index);
+	void updateDlgIndex();
 
 	Common::SeekableReadStream *_cnvFile;
 	Common::SeekableReadStream *_dlgBuffer;
@@ -683,6 +684,7 @@ private:
 	int o3_moveCharacter(ScriptState *script);
 	int o3_setCharacterFacing(ScriptState *script);
 	int o3_showSceneFileMessage(ScriptState *script);
+	int o3_setCharacterAnimFrameFromFacing(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
 	int o3_addItemToCurScene(ScriptState *script);
@@ -707,6 +709,7 @@ private:
 	int o3_updateScore(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_removeItemsFromScene(ScriptState *script);
+	int o3_disguiseMalcolm(ScriptState *script);
 	int o3_drawSceneShape(ScriptState *script);
 	int o3_drawSceneShapeOnPage(ScriptState *script);
 	int o3_checkInRect(ScriptState *script);

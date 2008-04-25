@@ -164,6 +164,15 @@ int KyraEngine_v3::o3_showSceneFileMessage(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setCharacterAnimFrameFromFacing(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setCharacterAnimFrameFromFacing(%p) ()", (const void *)script);
+	updateCharPal(0);
+	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+	updateCharacterAnim(0);
+	refreshAnimObjectsIfNeed();
+	return 0;
+}
+
 int KyraEngine_v3::o3_showBadConscience(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showBadConscience(%p) ()", (const void *)script);
 	showBadConscience();
@@ -390,6 +399,13 @@ int KyraEngine_v3::o3_removeItemsFromScene(ScriptState *script) {
 	}
 
 	return retValue;
+}
+
+int KyraEngine_v3::o3_disguiseMalcolm(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o3_disguiseMalcolm(%p) (%d)", (const void *)script, stackPos(0));
+	loadMalcolmShapes(stackPos(0));
+	updateDlgIndex();
+	return 0;
 }
 
 int KyraEngine_v3::o3_drawSceneShape(ScriptState *script) {
@@ -1195,7 +1211,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	// 0x14
-	OpcodeUnImpl();
+	Opcode(o3_setCharacterAnimFrameFromFacing);
 	Opcode(o3_showBadConscience);
 	Opcode(o3_dummy);
 	Opcode(o3_hideBadConscience);
@@ -1246,7 +1262,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	OpcodeUnImpl();
 	// 0x3c
 	Opcode(o3_removeItemsFromScene);
-	OpcodeUnImpl();
+	Opcode(o3_disguiseMalcolm);
 	Opcode(o3_drawSceneShape);
 	Opcode(o3_drawSceneShapeOnPage);
 	// 0x40

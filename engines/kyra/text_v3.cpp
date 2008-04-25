@@ -508,6 +508,46 @@ void KyraEngine_v3::setDlgIndex(uint16 index) {
 	}
 }
 
+void KyraEngine_v3::updateDlgIndex() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateDlgIndex()");
+	uint16 dlgIndex = _mainCharacter.dlgIndex;
+
+	if (_curChapter == 1) {
+		static const uint8 dlgIndexMoodNice[] = { 0x0C, 0x0E, 0x10, 0x0F, 0x11 };
+		static const uint8 dlgIndexMoodNormal[] = { 0x00, 0x02, 0x04, 0x03, 0x05 };
+		static const uint8 dlgIndexMoodEvil[] = { 0x06, 0x08, 0x0A, 0x09, 0x0B };
+
+		if (_malcolmsMood == 0)
+			dlgIndex = dlgIndexMoodNice[_malcolmShapes];
+		else if (_malcolmsMood == 1)
+			dlgIndex = dlgIndexMoodNormal[_malcolmShapes];
+		else if (_malcolmsMood == 2)
+			dlgIndex = dlgIndexMoodEvil[_malcolmShapes];
+	} else if (_curChapter == 2) {
+		if (dlgIndex >= 8)
+			dlgIndex -= 4;
+		if (dlgIndex >= 4)
+			dlgIndex -= 4;
+
+		if (_malcolmsMood == 0)
+			dlgIndex += 8;
+		else if (_malcolmsMood == 2)
+			dlgIndex += 4;
+	} else if (_curChapter == 4) {
+		if (dlgIndex >= 10)
+			dlgIndex -= 5;
+		if (dlgIndex >= 5)
+			dlgIndex -= 5;
+
+		if (_malcolmsMood == 0)
+			dlgIndex += 10;
+		else if (_malcolmsMood == 2)
+			dlgIndex += 5;
+	}
+
+	_mainCharacter.dlgIndex = dlgIndex;
+}
+
 void KyraEngine_v3::processDialog(int vocHighIndex, int vocHighBase, int funcNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::processDialog(%d, %d, %d)", vocHighIndex, vocHighBase, funcNum);
 	bool running = true;
