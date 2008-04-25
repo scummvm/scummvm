@@ -674,6 +674,8 @@ private:
 	int o3_getCharacterFacing(ScriptState *script);
 	int o3_getCharacterScene(ScriptState *script);
 	int o3_getMalcolmsMood(ScriptState *script);
+	int o3_getCharacterFrameFromFacing(ScriptState *script);
+	int o3_setCharacterFacingOverwrite(ScriptState *script);
 	int o3_trySceneChange(ScriptState *script);
 	int o3_moveCharacter(ScriptState *script);
 	int o3_setCharacterFacing(ScriptState *script);

@@ -113,6 +113,18 @@ int KyraEngine_v3::o3_getMalcolmsMood(ScriptState *script) {
 	return _malcolmsMood;
 }
 
+int KyraEngine_v3::o3_getCharacterFrameFromFacing(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getCharacterFrameFromFacing(%p) ()", (const void *)script);
+	return _characterFrameTable[_mainCharacter.facing];
+}
+
+int KyraEngine_v3::o3_setCharacterFacingOverwrite(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setCharacterFacingOverwrite(%p) (%d)", (const void *)script, stackPos(0));
+	_mainCharacter.facing = stackPos(0);
+	_overwriteSceneFacing = true;
+	return 0;
+}
+
 int KyraEngine_v3::o3_trySceneChange(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -1125,9 +1137,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_getMalcolmsMood);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_getCharacterFrameFromFacing);
 	// 0x0c
-	OpcodeUnImpl();
+	Opcode(o3_setCharacterFacingOverwrite);
 	Opcode(o3_trySceneChange);
 	Opcode(o3_moveCharacter);
 	Opcode(o3_setCharacterFacing);
