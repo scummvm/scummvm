@@ -45,8 +45,8 @@ enum ResourceType {
 	kResSNDS = MKID_BE('SNDS'),
 	kResANIM = MKID_BE('ANIM'),
 	kResMENU = MKID_BE('MENU'),
-	kResXMID = MKID_BE('XMID'),
-	kResFONT = MKID_BE('FONT')
+	kResFONT = MKID_BE('FONT'),
+	kResXMID = MKID_BE('XMID')
 };
 
 struct ResourceSlot;
@@ -112,23 +112,24 @@ protected:
 	Common::Array<Common::String> _strings;
 };
 
-class XmidiResource : public Resource {
-public:
-	XmidiResource();
-	~XmidiResource();
-	void load(byte *source, int size);
-	byte *getData() const { return _data; }
-	int getSize() const { return _size; }
-protected:
-	byte *_data;
-	int _size;
-};
-
-// TODO
 class FontResource : public Resource {
 public:
 	FontResource();
 	~FontResource();
+	void load(byte *source, int size);
+	int getHeight() const;
+	int getCharWidth(char c) const;
+	byte *getChar(char c) const;
+protected:
+	byte *_data;
+	int _size;
+	byte *getCharData(char c) const;
+};
+
+class XmidiResource : public Resource {
+public:
+	XmidiResource();
+	~XmidiResource();
 	void load(byte *source, int size);
 	byte *getData() const { return _data; }
 	int getSize() const { return _size; }
@@ -160,8 +161,8 @@ public:
 	AnimationResource *getAnimation(int index);
 	SoundResource *getSound(int index);
 	MenuResource *getMenu(int index);
-	XmidiResource *getXmidi(int index);
 	FontResource *getFont(int index);
+	XmidiResource *getXmidi(int index);
 
 	void freeResource(Resource *resource);
 

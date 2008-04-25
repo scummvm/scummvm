@@ -205,22 +205,6 @@ const char *MenuResource::getString(uint index) const {
 		return NULL;
 }
 
-/* XmidiResource */
-
-XmidiResource::XmidiResource() : _data(NULL), _size(0) {
-}
-
-XmidiResource::~XmidiResource() {
-	if (_data)
-		delete[] _data;
-}
-
-void XmidiResource::load(byte *source, int size) {
-	_data = new byte[size];
-	_size = size;
-	memcpy(_data, source, size);
-}
-
 /* FontResource */
 
 FontResource::FontResource() : _data(NULL), _size(0) {
@@ -232,6 +216,48 @@ FontResource::~FontResource() {
 }
 
 void FontResource::load(byte *source, int size) {
+	_data = new byte[size];
+	_size = size;
+	memcpy(_data, source, size);
+}
+
+int FontResource::getHeight() const {
+	return _data[0];
+}
+
+int FontResource::getCharWidth(char c) const {
+	byte *charData = getCharData(c);
+	if (charData)
+		return charData[0];
+	else
+		return 0;
+}
+
+byte *FontResource::getChar(char c) const {
+	byte *charData = getCharData(c);
+	if (charData)
+		return charData + 1;
+	else
+		return NULL;
+}
+
+byte *FontResource::getCharData(char c) const {
+	if (c < 28 || c > 255)
+		return NULL;
+	return _data + 1 + (c - 28) * (getHeight() + 1);
+}
+
+/* XmidiResource */
+
+XmidiResource::XmidiResource() : _data(NULL), _size(0) {
+}
+
+XmidiResource::~XmidiResource() {
+	if (_data)
+		delete[] _data;
+}
+
+void XmidiResource::load(byte *source, int size) {
 	_data = new byte[size];
 	_size = size;
 	memcpy(_data, source, size);
@@ -301,12 +327,12 @@ MenuResource *ProjectReader::getMenu(int index) {
 	return createResource<MenuResource>(kResMENU, index);
 }
 
-XmidiResource *ProjectReader::getXmidi(int index) {
-	return createResource<XmidiResource>(kResXMID, index);
-}
-
 FontResource *ProjectReader::getFont(int index) {
 	return createResource<FontResource>(kResFONT, index);
+}
+
+XmidiResource *ProjectReader::getXmidi(int index) {
+	return createResource<XmidiResource>(kResXMID, index);
 }
 
 void ProjectReader::loadIndex(ResourceSlots *slots) {
