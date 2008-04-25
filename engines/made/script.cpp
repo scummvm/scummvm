@@ -623,13 +623,11 @@ void ScriptInterpreter::cmd_restart() {
 }
 
 void ScriptInterpreter::cmd_rand() {
-	warning("Unimplemented command: cmd_rand");
+	_stack.setTop(_vm->_rnd->getRandomNumber(3));
 }
 
 void ScriptInterpreter::cmd_randomize() {
-	warning("Unimplemented command: cmd_randomize");
-	// TODO
-	_stack.setTop(0);
+	_stack.setTop(_vm->_rnd->getSeed());
 }
 
 void ScriptInterpreter::cmd_send() {
