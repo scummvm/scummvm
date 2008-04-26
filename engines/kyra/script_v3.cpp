@@ -742,6 +742,18 @@ int KyraEngine_v3::o3_removeItemInstances(ScriptState *script) {
 	return deleted;
 }
 
+int KyraEngine_v3::o3_disableInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_disableInventory(%p) ()", (const void *)script);
+	_enableInventory = false;
+	return 0;
+}
+
+int KyraEngine_v3::o3_enableInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_enableInventory(%p) ()", (const void *)script);
+	_enableInventory = true;
+	return 1;
+}
+
 int KyraEngine_v3::o3_enterNewScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_enterNewScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
 		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
@@ -1347,9 +1359,9 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_update);
 	// 0x4c
 	Opcode(o3_removeItemInstances);
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_dummy);
+	Opcode(o3_disableInventory);
+	Opcode(o3_enableInventory);
 	// 0x50
 	Opcode(o3_enterNewScene);
 	OpcodeUnImpl();

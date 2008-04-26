@@ -741,6 +741,8 @@ private:
 	int o3_setSceneDim(ScriptState *script);
 	int o3_update(ScriptState *script);
 	int o3_removeItemInstances(ScriptState *script);
+	int o3_disableInventory(ScriptState *script);
+	int o3_enableInventory(ScriptState *script);
 	int o3_enterNewScene(ScriptState *script);
 	int o3_setMalcolmPos(ScriptState *script);
 	int o3_stopMusic(ScriptState *script);
