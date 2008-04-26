@@ -384,13 +384,24 @@ int KyraEngine_v3::o3_setMalcolmsMood(ScriptState *script) {
 
 int KyraEngine_v3::o3_delay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	const uint32 delayTime = stackPos(0) * _tickLength;
-	const int delayFunc = stackPos(1);
+	if (stackPos(1)) {
+		uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
+		while (_system->getMillis() < maxWaitTime) {
+			int inputFlag = checkInput(0);
+			removeInputTop();
 
-	if (delayFunc)
-		warning("STUB o3_delay func 1");
+			if (inputFlag == 198 || inputFlag == 199)
+				return 1;
 
-	delay(delayTime, true);
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+			_system->delayMillis(10);
+		}
+	} else {
+		delay(stackPos(0) * _tickLength, true);
+	}
 	return 0;
 }
 
