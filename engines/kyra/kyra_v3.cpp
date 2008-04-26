@@ -73,7 +73,6 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_inventoryState = false;
 	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
-	memset(_wsaSlots, 0, sizeof(_wsaSlots));
 	_updateCharPosNextUpdate = 0;
 	memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
 	_overwriteSceneFacing = false;
@@ -174,9 +173,6 @@ KyraEngine_v3::~KyraEngine_v3() {
 	_gameShapes.clear();
 
 	_scriptInterpreter->unloadScript(&_sceneScriptData);
-
-	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
-		delete _wsaSlots[i];
 
 	delete [] _sceneStrings;
 	delete [] _talkObjectList;
@@ -524,11 +520,6 @@ void KyraEngine_v3::initMouseShapes() {
 
 void KyraEngine_v3::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::startup()");
-	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i) {
-		_wsaSlots[i] = new WSAMovieV2(this, _screen);
-		assert(_wsaSlots[i]);
-	}
-
 	musicUpdate(0);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));

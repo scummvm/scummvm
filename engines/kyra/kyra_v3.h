@@ -463,7 +463,6 @@ private:
 
 	ScriptState _sceneScriptState;
 	ScriptData _sceneScriptData;
-	WSAMovieV2 *_wsaSlots[10];
 
 	bool _specialSceneScriptState[10];
 	bool _specialSceneScriptStateBackup[10];

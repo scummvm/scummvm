@@ -101,11 +101,6 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 	musicUpdate(0);
 
-	for (int i = 0; i < 10; ++i)
-		_wsaSlots[i]->close();
-
-	musicUpdate(0);
-
 	_specialExitCount = 0;
 	Common::set_to(_specialExitTable, _specialExitTable+ARRAYSIZE(_specialExitTable), 0xFFFF);
 
