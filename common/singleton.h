@@ -57,6 +57,11 @@ public:
 		return new T();
 	}
 
+	static void destroyInstance() {
+		delete _singleton;
+		_singleton = 0;
+	}
+
 
 public:
 	static T& instance() {
@@ -71,9 +76,9 @@ public:
 			_singleton = T::makeInstance();
 		return *_singleton;
 	}
-	virtual void destroy() {
-		delete _singleton;
-		_singleton = 0;
+
+	static void destroy() {
+		T::destroyInstance();
 	}
 protected:
 	Singleton<T>()		{ }
