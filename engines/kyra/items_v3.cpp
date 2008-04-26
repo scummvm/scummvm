@@ -522,7 +522,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 
 		playSoundEffect(0x0F, 0xC8);
 
-		_itemList[itemSlot].id = resItem;
+		_itemList[itemSlot].id = (resItem == 0xFF) ? 0xFFFF : resItem;
 
 		_screen->hideMouse();
 		deleteItemAnimEntry(itemSlot);
@@ -536,6 +536,79 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 
 		if (_lang != 1)
 			updateItemCommand(resItem, 3, 0xFF);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::itemInventoryMagic(%d, %d)", handItem, invSlot);
+
+	uint16 item = _mainCharacter.inventory[invSlot];
+	if (_curChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
+		//eelScript();
+		return true;
+	} else if ((handItem == 6 || handItem == 7) && item == 2) {
+		_screen->hideMouse();
+		playSoundEffect(0x93, 0xC8);
+		for (int i = 109; i <= 141; ++i) {
+			_mainCharacter.inventory[invSlot] = i;
+			_screen->drawShape(2, getShapePtr(invSlot+422), 0, 144, 0, 0);
+			_screen->drawShape(2, getShapePtr(i+248), 0, 144, 0, 0);
+			_screen->copyRegion(0, 144, _inventoryX[invSlot], _inventoryY[invSlot], 24, 20, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+			delay(1, true);
+		}
+
+		_mainCharacter.inventory[invSlot] = 0xFFFF;
+		clearInventorySlot(invSlot, 0);
+		_screen->showMouse();
+		return true;
+	}
+
+	if (_mainCharacter.sceneId == 51 && queryGameFlag(0x19B) && !queryGameFlag(0x19C)
+		&& ((item == 63 && handItem == 56) || (item == 56 && handItem == 63))) {
+		if (queryGameFlag(0x1AC)) {
+			setGameFlag(0x19C);
+			setGameFlag(0x1AD);
+		} else {
+			setGameFlag(0x1AE);
+		}
+		
+		_timer->setCountdown(12, 1);
+		_timer->enable(12);
+	}
+
+	for (int i = 0; _itemMagicTable[i] != 0xFF; i += 4) {
+		if (_itemMagicTable[i+0] != handItem || _itemMagicTable[i+1] != item)
+			continue;
+
+		uint8 resItem = _itemMagicTable[i+2];
+		uint8 newItem = _itemMagicTable[i+3];
+
+		playSoundEffect(0x0F, 0xC8);
+
+		_mainCharacter.inventory[invSlot] = (resItem == 0xFF) ? 0xFFFF : resItem;
+
+		_screen->hideMouse();
+		clearInventorySlot(invSlot, 0);
+		drawInventorySlot(0, resItem, invSlot);
+		
+		if (newItem == 0xFE)
+			removeHandItem();
+		else if (newItem != 0xFF)
+			setHandItem(newItem);
+		_screen->showMouse();
+
+		if (_lang != 1) {
+			if (resItem == 7) {
+				updateScore(35, 100);
+				delay(60, true);
+			}
+			updateItemCommand(resItem, 3, 0xFF);
+		}
 
 		return true;
 	}

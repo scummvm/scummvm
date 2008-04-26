@@ -33,6 +33,7 @@
 #include "kyra/gui.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
+#include "kyra/gui_v3.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -132,6 +133,10 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_score = 0;
 	memset(_scoreFlagTable, 0, sizeof(_scoreFlagTable));
 	_debugger = 0;
+	_mainButtonData = 0;
+	_mainButtonList = 0;
+	_mainButtonListInitialized = false;
+	_enableInventory = true;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -191,6 +196,8 @@ KyraEngine_v3::~KyraEngine_v3() {
 	delete [] _newShapeFiledata;
 	delete _invWsa;
 	delete _debugger;
+	delete [] _mainButtonData;
+	delete _gui;
 }
 
 int KyraEngine_v3::init() {
@@ -209,6 +216,8 @@ int KyraEngine_v3::init() {
 		error("_soundDigital->init() failed");
 	KyraEngine::_text = _text = new TextDisplayer_v3(this, _screen);
 	assert(_text);
+	_gui = new GUI_v3(this);
+	assert(_gui);
 
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
@@ -601,7 +610,7 @@ void KyraEngine_v3::startup() {
 	musicUpdate(0);
 	loadMalcolmShapes(_malcolmShapes);
 	musicUpdate(0);
-	//initInventoryButtonList(1);
+	initMainButtonList(true);
 	loadInterfaceShapes();
 
 	musicUpdate(0);
@@ -1004,7 +1013,7 @@ void KyraEngine_v3::runLoop() {
 		if (_system->getMillis() >= _nextIdleAnim)
 			showIdleAnim();
 
-		int inputFlag = checkInput(0/*_mainButtonList*/);
+		int inputFlag = checkInput(_mainButtonList);
 		removeInputTop();
 
 		update();
@@ -1414,7 +1423,7 @@ int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
 		_eventList.erase(_eventList.begin());
 	}
 
-	return /*_gui->processButtonList(buttonList, */keys/* | 0x8000)*/;
+	return _gui->processButtonList(buttonList, keys | 0x8000);
 }
 
 void KyraEngine_v3::removeInputTop() {

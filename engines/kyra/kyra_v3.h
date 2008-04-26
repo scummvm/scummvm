@@ -41,11 +41,13 @@ class MainMenu;
 class WSAMovieV2;
 class TextDisplayer_v3;
 class Debugger_v3;
+class GUI_v3;
 struct Button;
 
 class KyraEngine_v3 : public KyraEngine {
 friend class Debugger_v3;
 friend class TextDisplayer_v3;
+friend class GUI_v3;
 public:
 	KyraEngine_v3(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v3();
@@ -145,7 +147,18 @@ private:
 	int _curStudioSFX;
 	void playStudioSFX(const char *str);
 
-	// main menu
+	// gui
+	GUI_v3 *_gui;
+
+	Button *_mainButtonData;
+	Button *_mainButtonList;
+	bool _mainButtonListInitialized;
+	void initMainButtonList(bool disable);
+
+	bool _enableInventory;
+	int buttonInventory(Button *button);
+
+	// -> main menu
 	void initMainMenu();
 	void uninitMainMenu();
 
@@ -332,6 +345,7 @@ private:
 
 	static const uint8 _itemMagicTable[];
 	bool itemListMagic(int handItem, int itemSlot);
+	bool itemInventoryMagic(int handItem, int invSlot);
 
 	static const uint8 _itemStringMap[];
 	static const uint _itemStringMapSize;
