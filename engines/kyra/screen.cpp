@@ -75,7 +75,34 @@ bool Screen::init() {
 	_useSJIS = false;
 	_sjisTempPage = _sjisFontData = 0;
 
-	setResolution();
+	if (_vm->gameFlags().useHiResOverlay) {
+		_useOverlays = true;
+		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
+		_sjisInvisibleColor = (_vm->gameFlags().gameID == GI_KYRA1) ? 0x80 : 0xF6;		
+		
+		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
+			if (!_sjisOverlayPtrs[i]) {
+				_sjisOverlayPtrs[i] = new uint8[SCREEN_OVL_SJIS_SIZE];
+				assert(_sjisOverlayPtrs[i]);
+				memset(_sjisOverlayPtrs[i], _sjisInvisibleColor, SCREEN_OVL_SJIS_SIZE);
+			}
+		}
+
+		if (_useSJIS) {
+			if (!_sjisFontData) {
+				_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
+				if (!_sjisFontData)
+					error("missing font rom ('FMT_FNT.ROM') required for this version");
+			}
+
+			if (!_sjisTempPage) {
+				_sjisTempPage = new uint8[420];
+				assert(_sjisTempPage);
+				_sjisTempPage2 = _sjisTempPage + 60;
+				_sjisSourceChar = _sjisTempPage + 384;
+			}
+		}
+	}
 
 	_curPage = 0;
 	uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE * 8];
@@ -155,32 +182,6 @@ void Screen::setResolution() {
 			else
 				_system->initSize(640, 400);
 		_system->endGFXTransaction();
-
-		_useOverlays = true;
-		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
-		_sjisInvisibleColor = (_vm->gameFlags().gameID == GI_KYRA1) ? 0x80 : 0xF6;		
-		
-		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
-			if (!_sjisOverlayPtrs[i]) {
-				_sjisOverlayPtrs[i] = new uint8[SCREEN_OVL_SJIS_SIZE];
-				assert(_sjisOverlayPtrs[i]);
-				memset(_sjisOverlayPtrs[i], _sjisInvisibleColor, SCREEN_OVL_SJIS_SIZE);
-			}
-		}
-		if (_useSJIS) {
-			if (!_sjisFontData) {
-				_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
-				if (!_sjisFontData)
-					error("missing font rom ('FMT_FNT.ROM') required for this version");
-			}
-
-			if (!_sjisTempPage) {
-				_sjisTempPage = new uint8[420];
-				assert(_sjisTempPage);
-				_sjisTempPage2 = _sjisTempPage + 60;
-				_sjisSourceChar = _sjisTempPage + 384;
-			}
-		}
 	} else {
 		_system->beginGFXTransaction();
 			_vm->initCommonGFX(false);

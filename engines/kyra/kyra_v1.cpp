@@ -168,8 +168,8 @@ KyraEngine_v1::~KyraEngine_v1() {
 int KyraEngine_v1::init() {
 	_screen = new Screen_v1(this, _system);
 	assert(_screen);
-	if (!_screen->init())
-		error("_screen->init() failed");
+	_screen->setResolution();
+
 	KyraEngine::init();
 
 	_sprites = new Sprites(this, _system);

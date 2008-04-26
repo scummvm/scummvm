@@ -59,9 +59,7 @@ struct Font {
 };
 
 class Screen {
-	friend class Debugger_v1;
 public:
-
 	enum {
 		SCREEN_W = 320,
 		SCREEN_H = 200,
@@ -97,7 +95,10 @@ public:
 	Screen(KyraEngine *vm, OSystem *system);
 	virtual ~Screen();
 
+	// init
 	virtual bool init();
+	virtual void setResolution();
+
 
 	void updateScreen();
 
@@ -348,9 +349,6 @@ protected:
 	int _drawShapeVar3;
 	int _drawShapeVar4;
 	int _drawShapeVar5;
-
-	// init
-	virtual void setResolution();
 
 	// debug
 	bool _debugEnabled;

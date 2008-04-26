@@ -196,8 +196,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 int KyraEngine_v3::init() {
 	_screen = new Screen_v3(this, _system);
 	assert(_screen);
-	if (!_screen->init())
-		error("_screen->init() failed");
+	_screen->setResolution();
 
 	KyraEngine::init();
 	
