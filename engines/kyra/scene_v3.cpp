@@ -42,7 +42,10 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	}
 
 	musicUpdate(0);
-	//XXX
+	if (_curChapter != _currentTalkFile) {
+		_currentTalkFile = _curChapter;
+		openTalkFile(_currentTalkFile);
+	}
 	musicUpdate(0);
 
 	if (!unk3) {
@@ -445,7 +448,7 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	_res->exists(filename, true);
 	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
 
-	strcpy(filename, scene.filename1);
+	strcpy(filename, scene.filename2);
 	strcat(filename, ".");
 	loadLanguageFile(filename, _sceneStrings);
 	musicUpdate(0);
