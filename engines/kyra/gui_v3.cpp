@@ -276,7 +276,7 @@ void KyraEngine_v3::drawMalcolmsMoodText() {
 
 void KyraEngine_v3::drawMalcolmsMoodPointer(int frame, int page) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawMalcolmsMoodPointer(%d, %d)", frame, page);
-	static const int stateTable[] = {
+	static const uint8 stateTable[] = {
 		1, 6, 11
 	};
 
@@ -452,7 +452,7 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 	} else if (_itemInHand == 27) {
 		if (_chatText)
 			return 0;
-		//XXX
+		return buttonJesterStaff(&_mainButtonData[3]);
 	} else {
 		if (slotItem >= 0) {
 			if (itemInventoryMagic(_itemInHand, slot))
@@ -480,6 +480,127 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 		}
 	}
 
+	return 0;
+}
+
+int KyraEngine_v3::buttonMoodChange(Button *button) {
+	if (queryGameFlag(0x219)) {
+		playSoundEffect(0x0D, 0xC8);
+		return 0;
+	}
+
+	static const uint8 frameTable[] = { 1, 6, 11 };
+
+	if (_mouseX >= 245 && _mouseX <= 267 && _mouseY >= 159 && _mouseY <= 198)
+		_malcolmsMood = 0;
+	else if (_mouseX >= 268 && _mouseX <= 289 && _mouseY >= 159 && _mouseY <= 198)
+		_malcolmsMood = 1;
+	else if (_mouseX >= 290 && _mouseX <= 312 && _mouseY >= 159 && _mouseY <= 198)
+		_malcolmsMood = 2;
+
+	int direction = (_invWsaFrame > frameTable[_malcolmsMood]) ? -1 : 1;
+
+	if (_invWsaFrame != frameTable[_malcolmsMood]) {
+		_screen->hideMouse();
+		setGameFlag(3);
+
+		playSoundEffect(0x2E, 0xC8);
+
+		while (_invWsaFrame != frameTable[_malcolmsMood]) {
+			uint32 endTime = _system->getMillis() + 2 * _tickLength;
+			_invWsaFrame += direction;
+
+			drawMalcolmsMoodPointer(_invWsaFrame, 0);
+			_screen->updateScreen();
+
+			while (endTime > _system->getMillis()) {
+				update();
+				_system->delayMillis(10);
+			}
+		}
+
+		resetGameFlag(3);
+		_screen->showMouse();
+
+		drawMalcolmsMoodText();
+		updateDlgIndex();
+		
+		ScriptData data;
+		ScriptState state;
+		memset(&data, 0, sizeof(data));
+		memset(&state, 0, sizeof(state));
+
+		_res->exists("_ACTOR.EMC", true);
+		_scriptInterpreter->loadScript("_ACTOR.EMC", &data, &_opcodes);
+		_scriptInterpreter->initScript(&state, &data);
+		_scriptInterpreter->startScript(&state, 1);
+
+		int vocHigh = _vocHigh;
+		_vocHigh = 200;
+		_useActorBuffer = true;
+
+		while (_scriptInterpreter->validScript(&state))
+			_scriptInterpreter->runScript(&state);
+
+		_useActorBuffer = false;
+		_vocHigh = vocHigh;
+		_scriptInterpreter->unloadScript(&data);
+	}
+
+	return 0;
+}
+
+int KyraEngine_v3::buttonShowScore(Button *button) {
+	strcpy(_stringBuffer, (const char*)getTableEntry(_cCodeFile, 18));
+
+	char *buffer = _stringBuffer;
+
+	while (*buffer != '%')
+		++buffer;
+
+	buffer[0] = (_score / 100) + '0';
+	buffer[1] = ((_score % 100) / 10) + '0';
+	buffer[2] = (_score % 10) + '0';
+
+	while (*buffer != '%')
+		++buffer;
+
+	buffer[0] = (_scoreMax / 100) + '0';
+	buffer[1] = ((_scoreMax % 100) / 10) + '0';
+	buffer[2] = (_scoreMax % 10) + '0';
+
+	showMessage(_stringBuffer, 0xFF, 0xF0);
+	return 0;
+}
+
+int KyraEngine_v3::buttonJesterStaff(Button *button) {
+	makeCharFacingMouse();
+	if (_itemInHand == 27) {
+		_screen->hideMouse();
+		removeHandItem();
+		playSoundEffect(0x0C, 0xC8);
+		drawJestersStaff(1, 0);
+		updateItemCommand(27, 2, 0xFF);
+		setGameFlag(0x97);
+		_screen->showMouse();
+	} else if (_itemInHand == -1) {
+		if (queryGameFlag(0x97)) {
+			_screen->hideMouse();
+			playSoundEffect(0x0B, 0xC8);
+			setHandItem(27);
+			drawJestersStaff(0, 0);
+			updateItemCommand(27, 0, 0xFF);
+			resetGameFlag(0x97);
+			_screen->showMouse();
+		} else {
+			if (queryGameFlag(0x2F))
+				objectChat((const char*)getTableEntry(_cCodeFile, 20), 0, 204, 20);
+			else
+				objectChat((const char*)getTableEntry(_cCodeFile, 25), 0, 204, 25);
+		}
+	} else {
+		objectChat((const char*)getTableEntry(_cCodeFile, 30), 0, 204, 30);
+	}
 	return 0;
 }
 

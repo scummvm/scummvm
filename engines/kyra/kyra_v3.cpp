@@ -809,7 +809,7 @@ void KyraEngine_v3::loadMalcolmShapes(int newShapes) {
 		filename[numberOffset[i]+1] = lowNum;
 		_res->exists(filename, true);
 		_res->loadFileToBuf(filename, _screenBuffer, 64000);
-		for (int j = startShape[i]; j < endShape[i]; ++j) {
+		for (int j = startShape[i]; j <= endShape[i]; ++j) {
 			if (j == 87)
 				continue;
 			addShapeToPool(_screenBuffer, j, j-startShape[i]);

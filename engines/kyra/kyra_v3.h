@@ -157,6 +157,9 @@ private:
 
 	bool _enableInventory;
 	int buttonInventory(Button *button);
+	int buttonMoodChange(Button *button);
+	int buttonShowScore(Button *button);
+	int buttonJesterStaff(Button *button);
 
 	// -> main menu
 	void initMainMenu();

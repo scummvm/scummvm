@@ -2439,8 +2439,11 @@ void KyraEngine_v3::initMainButtonList(bool disable) {
 
 		GUI_V3_BUTTON(_mainButtonData[0], 1, 0, 0, 4, 4, 4, 0x4487, 0,   5, 162, 50, 25, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 		GUI_V3_BUTTON(_mainButtonData[1], 2, 0, 0, 1, 1, 1, 0x4487, 0, 245, 156, 69, 33, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonMoodChange);
 		GUI_V3_BUTTON(_mainButtonData[2], 3, 0, 0, 1, 1, 1, 0x4487, 0, 215, 191, 24,  9, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonShowScore);
 		GUI_V3_BUTTON(_mainButtonData[3], 4, 0, 0, 1, 1, 1, 0x4487, 0, 215, 155, 25, 36, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonJesterStaff);
 
 		Button::Callback buttonInventoryFunctor = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonInventory);
 		for (int i = 0; i < 5; ++i) {
