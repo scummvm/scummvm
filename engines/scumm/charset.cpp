@@ -74,7 +74,7 @@ void ScummEngine::loadCJKFont() {
 			break;
 		case Common::JA_JPN:
 			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
-			numChar = 1024;
+			numChar = 8192;
 			break;
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
@@ -217,7 +217,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 			int high = 0;
 
 			if (low >= 0x20 && low <= 0x7e) {
-				base = (low + low * 2 + 81012) * 5;
+				base = (3 * low + 81012) * 5;
 			} else {
 				if (low >= 0xa1 && low <= 0xa3) {
 					base = 392820;
