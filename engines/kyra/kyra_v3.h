@@ -716,6 +716,7 @@ private:
 	int o3_updateConversations(ScriptState *script);
 	int o3_setSceneDim(ScriptState *script);
 	int o3_update(ScriptState *script);
+	int o3_removeItemInstances(ScriptState *script);
 	int o3_enterNewScene(ScriptState *script);
 	int o3_setMalcolmPos(ScriptState *script);
 	int o3_stopMusic(ScriptState *script);
@@ -723,6 +724,7 @@ private:
 	int o3_playSoundEffect(ScriptState *script);
 	int o3_getScore(ScriptState *script);
 	int o3_blockOutRegion(ScriptState *script);
+	int o3_showSceneStringsMessage(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_waitForConfirmationClick(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);

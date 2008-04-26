@@ -689,6 +689,34 @@ int KyraEngine_v3::o3_update(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_removeItemInstances(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_removeItemInstances(%p) (%d)", (const void *)script, stackPos(0));
+	const int16 item = stackPos(0);
+
+	int deleted = 0;
+
+	for (int i = 0; i < 10; ++i) {
+		if (_mainCharacter.inventory[i] == item) {
+			_mainCharacter.inventory[i] = 0xFFFF;
+			++deleted;
+		}
+	}
+
+	if (_itemInHand == item) {
+		removeHandItem();
+		++deleted;
+	}
+
+	for (int i = 0; i < 50; ++i) {
+		if (_itemList[i].id == item) {
+			_itemList[i].id = 0xFFFF;
+			++deleted;
+		}
+	}
+
+	return deleted;
+}
+
 int KyraEngine_v3::o3_enterNewScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_enterNewScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
 		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
@@ -756,6 +784,12 @@ int KyraEngine_v3::o3_blockOutRegion(ScriptState *script) {
 		y2 = _maskPageMaxY;
 
 	_screen->blockOutRegion(x1, y1, x2-x1+1, y2-y1+1);
+	return 0;
+}
+
+int KyraEngine_v3::o3_showSceneStringsMessage(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showSceneStringsMessage(%p) (%d)", (const void *)script, stackPos(0));
+	showMessage((const char*)getTableEntry(_sceneStrings, stackPos(0)), 0xFF, 0xF0);
 	return 0;
 }
 
@@ -1281,7 +1315,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(o3_update);
 	// 0x4c
-	OpcodeUnImpl();
+	Opcode(o3_removeItemInstances);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1303,7 +1337,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x5c
 	Opcode(o3_blockOutRegion);
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_showSceneStringsMessage);
 	OpcodeUnImpl();
 	// 0x60
 	Opcode(o3_getRand);
