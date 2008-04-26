@@ -1041,6 +1041,12 @@ int KyraEngine_v3::o3_defineScene(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_changeChapter(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_changeChapter(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	changeChapter(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	return 0;
+}
+
 int KyraEngine_v3::o3_countItemInstances(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_countItemInstances(%p) (%d)", (const void *)script, stackPos(0));
 	int count = 0;
@@ -1406,7 +1412,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	// 0x80
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_changeChapter);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	// 0x84

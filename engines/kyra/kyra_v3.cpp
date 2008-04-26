@@ -1678,6 +1678,25 @@ void KyraEngine_v3::scoreIncrease(int count, const char *str) {
 
 #pragma mark -
 
+void KyraEngine_v3::changeChapter(int newChapter, int sceneId, int malcolmShapes, int facing) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::changeChapter(%d, %d, %d, %d)", newChapter, sceneId, malcolmShapes, facing);	
+	resetItemList();
+
+	_curChapter = newChapter;
+	runStartupScript(newChapter, 0);
+	_mainCharacter.dlgIndex = 0;
+
+	_malcolmsMood = 1;
+	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
+
+	if (malcolmShapes >= 0)
+		loadMalcolmShapes(malcolmShapes);
+
+	enterNewScene(sceneId, facing, 0, 0, 0);
+}
+
+#pragma mark -
+
 Movie *KyraEngine_v3::createWSAMovie() {
 	WSAMovieV2 *movie = new WSAMovieV2(this, _screen);
 	assert(movie);

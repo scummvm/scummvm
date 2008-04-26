@@ -662,7 +662,9 @@ private:
 	uint8 *_screenBuffer;
 	uint8 *_paletteOverlay;
 	bool _useActorBuffer;
+
 	int _curChapter;
+	void changeChapter(int newChapter, int sceneId, int malcolmShapes, int facing);
 
 	static const uint8 _chapterLowestScene[];
 
@@ -760,6 +762,7 @@ private:
 	int o3_setDlgIndex(ScriptState *script);
 	int o3_getDlgIndex(ScriptState *script);
 	int o3_defineScene(ScriptState *script);
+	int o3_changeChapter(ScriptState *script);
 	int o3_countItemInstances(ScriptState *script);
 	int o3_dialogStartScript(ScriptState *script);
 	int o3_dialogEndScript(ScriptState *script);
