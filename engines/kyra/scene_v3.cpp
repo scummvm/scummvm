@@ -116,7 +116,6 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 	unloadScene();
 	musicUpdate(0);
-	//XXX resetMaskPage();
 
 	for (int i = 0; i < 4; ++i) {
 		if (i != _musicSoundChannel && i != _fadeOutMusicChannel)
@@ -128,7 +127,27 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 
 	if (queryGameFlag(0x1D9)) {
-		//XXX VQA code here
+		char filename[20];
+		if (queryGameFlag(0x20D)) {
+			resetGameFlag(0x20D);
+			strcpy(filename, "COW1_");
+		} else if (queryGameFlag(0x20E)) {
+			resetGameFlag(0x20E);
+			strcpy(filename, "COW2_");
+		} else if (queryGameFlag(0x20F)) {
+			resetGameFlag(0x20F);
+			strcpy(filename, "COW3_");
+		} else if (queryGameFlag(0x20C)) {
+			resetGameFlag(0x20C);
+			strcpy(filename, "BOAT");
+		} else if (queryGameFlag(0x210)) {
+			resetGameFlag(0x210);
+			strcpy(filename, "JUNG");
+		}
+
+		playVQA(filename);
+
+		resetGameFlag(0x1D9);
 	}
 
 	musicUpdate(0);
