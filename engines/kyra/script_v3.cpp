@@ -273,6 +273,32 @@ int KyraEngine_v3::o3_defineItem(ScriptState *script) {
 	return freeItem;
 }
 
+int KyraEngine_v3::o3_removeInventoryItemInstances(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_removeInventoryItemInstances(%p) (%d)", (const void *)script, stackPos(0));
+	const int item = stackPos(0);
+	for (int i = 0; i < 10; ++i) {
+		if (_mainCharacter.inventory[i] == item)
+			_mainCharacter.inventory[i] = 0xFFFF;
+	}
+	return 0;
+}
+
+int KyraEngine_v3::o3_countInventoryItemInstances(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_countInventoryItemInstances(%p) (%d)", (const void *)script, stackPos(0));
+	const int item = stackPos(0);
+	int count = 0;
+
+	for (int i = 0; i < 10; ++i) {
+		if (_mainCharacter.inventory[i] == item)
+			++count;
+	}
+
+	if (_itemInHand == item)
+		++count;
+
+	return count;
+}
+
 int KyraEngine_v3::o3_npcChatSequence(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_npcChatSequence(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int id = stackPos(0);
@@ -720,6 +746,35 @@ int KyraEngine_v3::o3_setSceneDim(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setSceneAnimPosAndFrame(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSceneAnimPosAndFrame(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script,
+			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	SceneAnim &anim = _sceneAnims[stackPos(0)];
+	const int newX2 = stackPos(1);
+	const int newY2 = stackPos(2);
+	const int newX = stackPos(3);
+	const int newY = stackPos(4);
+	
+	if (newX2 >= 0)
+		anim.x2 = newX2;
+	if (newY2 >= 0)
+		anim.y2 = newY2;
+
+	if (newX >= 0)
+		anim.x = newX;
+	else
+		anim.x = anim.x2 + (anim.width >> 1);
+
+	if (newY >= 0)
+		anim.y = newY;
+	else
+		anim.y = anim.y2 + anim.height - 1;
+
+	updateSceneAnim(stackPos(0), stackPos(5));
+	_specialSceneScriptRunFlag = false;
+	return 0;
+}
+
 int KyraEngine_v3::o3_update(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_update(%p) (%d)", (const void *)script, stackPos(0));
 	for (int times = stackPos(0); times != 0; --times) {
@@ -786,6 +841,17 @@ int KyraEngine_v3::o3_enterNewScene(ScriptState *script) {
 	}
 	_screen->showMouse();
 
+	return 0;
+}
+
+int KyraEngine_v3::o3_switchScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_switchScene(%p) (%d)", (const void *)script, stackPos(0));
+	setGameFlag(1);
+	_mainCharX = _mainCharacter.x1;
+	_mainCharY = _mainCharacter.y1;
+	_noScriptEnter = false;
+	enterNewScene(stackPos(0), _mainCharacter.facing, 0, 0, 0);
+	_noScriptEnter = true;
 	return 0;
 }
 
@@ -1325,8 +1391,8 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_resetInventory);
 	Opcode(o3_defineItem);
 	// 0x24
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_removeInventoryItemInstances);
+	Opcode(o3_countInventoryItemInstances);
 	Opcode(o3_npcChatSequence);
 	Opcode(o3_queryGameFlag);
 	// 0x28
@@ -1372,7 +1438,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x48
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_setSceneAnimPosAndFrame);
 	Opcode(o3_update);
 	// 0x4c
 	Opcode(o3_removeItemInstances);
@@ -1381,7 +1447,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_enableInventory);
 	// 0x50
 	Opcode(o3_enterNewScene);
-	OpcodeUnImpl();
+	Opcode(o3_switchScene);
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 	// 0x54

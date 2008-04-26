@@ -716,6 +716,8 @@ private:
 	int o3_checkForItem(ScriptState *script);
 	int o3_resetInventory(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
+	int o3_removeInventoryItemInstances(ScriptState *script);
+	int o3_countInventoryItemInstances(ScriptState *script);
 	int o3_npcChatSequence(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);
 	int o3_resetGameFlag(ScriptState *script);
@@ -741,10 +743,12 @@ private:
 	int o3_updateConversations(ScriptState *script);
 	int o3_setSceneDim(ScriptState *script);
 	int o3_update(ScriptState *script);
+	int o3_setSceneAnimPosAndFrame(ScriptState *script);
 	int o3_removeItemInstances(ScriptState *script);
 	int o3_disableInventory(ScriptState *script);
 	int o3_enableInventory(ScriptState *script);
 	int o3_enterNewScene(ScriptState *script);
+	int o3_switchScene(ScriptState *script);
 	int o3_setMalcolmPos(ScriptState *script);
 	int o3_stopMusic(ScriptState *script);
 	int o3_playMusicTrack(ScriptState *script);
