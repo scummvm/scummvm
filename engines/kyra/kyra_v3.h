@@ -714,6 +714,7 @@ private:
 	int o3_addItemToCurScene(ScriptState *script);
 	int o3_objectChat(ScriptState *script);
 	int o3_checkForItem(ScriptState *script);
+	int o3_resetInventory(ScriptState *script);
 	int o3_defineItem(ScriptState *script);
 	int o3_npcChatSequence(ScriptState *script);
 	int o3_queryGameFlag(ScriptState *script);

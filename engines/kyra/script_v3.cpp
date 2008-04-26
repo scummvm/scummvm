@@ -255,6 +255,12 @@ int KyraEngine_v3::o3_checkForItem(ScriptState *script) {
 	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
 }
 
+int KyraEngine_v3::o3_resetInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_resetInventory(%p) ()", (const void *)script);
+	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
+	return 0;
+}
+
 int KyraEngine_v3::o3_defineItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_defineItem(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int freeItem = findFreeItem();
@@ -1316,7 +1322,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x20
 	Opcode(o3_checkForItem);
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_resetInventory);
 	Opcode(o3_defineItem);
 	// 0x24
 	OpcodeUnImpl();
