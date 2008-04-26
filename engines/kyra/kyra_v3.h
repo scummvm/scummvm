@@ -539,6 +539,8 @@ private:
 
 	void makeCharFacingMouse();
 
+	int findFreeInventorySlot();
+
 	// talk object
 	struct TalkObject {
 		char filename[13];
@@ -704,6 +706,9 @@ private:
 	int o3_setCharacterAnimFrameFromFacing(ScriptState *script);
 	int o3_showBadConscience(ScriptState *script);
 	int o3_hideBadConscience(ScriptState *script);
+	int o3_setInventorySlot(ScriptState *script);
+	int o3_getInventorySlot(ScriptState *script);
+	int o3_addItemToInventory(ScriptState *script);
 	int o3_addItemToCurScene(ScriptState *script);
 	int o3_objectChat(ScriptState *script);
 	int o3_checkForItem(ScriptState *script);

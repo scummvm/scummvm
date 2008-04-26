@@ -185,6 +185,31 @@ int KyraEngine_v3::o3_hideBadConscience(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_setInventorySlot(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setInventorySlot(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int slot = MAX<int16>(0, MIN<int16>(10, stackPos(0)));
+	return (_mainCharacter.inventory[slot] = stackPos(1));
+}
+
+int KyraEngine_v3::o3_getInventorySlot(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getInventorySlot(%p) (%d)", (const void *)script, stackPos(0));
+	return _mainCharacter.inventory[stackPos(0)];
+}
+
+int KyraEngine_v3::o3_addItemToInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_addItemToInventory(%p) (%d)", (const void *)script, stackPos(0));
+	int slot = findFreeInventorySlot();
+	if (slot >= 0) {
+		_mainCharacter.inventory[slot] = stackPos(0);
+		if (_inventoryState) {
+			_screen->hideMouse();
+			redrawInventory(0);
+			_screen->showMouse();
+		}
+	}
+	return slot;
+}
+
 int KyraEngine_v3::o3_addItemToCurScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_addItemToCurScene(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	const uint16 item = stackPos(0);
@@ -1252,10 +1277,10 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x18
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_setInventorySlot);
+	Opcode(o3_getInventorySlot);
 	// 0x1c
-	OpcodeUnImpl();
+	Opcode(o3_addItemToInventory);
 	OpcodeUnImpl();
 	Opcode(o3_addItemToCurScene);
 	Opcode(o3_objectChat);

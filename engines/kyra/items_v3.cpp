@@ -64,6 +64,15 @@ int KyraEngine_v3::findFreeItem() {
 	return -1;
 }
 
+int KyraEngine_v3::findFreeInventorySlot() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::findFreeInventorySlot()");
+	for (int i = 0; i < 10; ++i) {
+		if (_mainCharacter.inventory[i] == 0xFFFF)
+			return i;
+	}
+	return -1;
+}
+
 int KyraEngine_v3::findItem(uint16 sceneId, uint16 id) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::findItem(%u, %u)", sceneId, id);
 	for (int i = 0; i < 50; ++i) {
