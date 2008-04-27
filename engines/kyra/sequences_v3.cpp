@@ -24,6 +24,7 @@
  */
 
 #include "kyra/kyra_v3.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
@@ -105,7 +106,98 @@ void KyraEngine_v3::hideBadConscience() {
 	updateSceneAnim(0x0E, -1);
 	update();
 	removeSceneAnimObject(0x0E, 1);
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
+}
+
+void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::runTemporaryScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
+	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
+	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
+
+	if (!_scriptInterpreter->loadScript(filename, &_temporaryScriptData, &_opcodesTemporary))
+		error("Couldn't load temporary script '%s'", filename);
+
+	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
+	_scriptInterpreter->startScript(&_temporaryScriptState, 0);
+
+	_newShapeFlag = -1;
+
+	if (_newShapeFiledata && newShapes) {
+		resetNewShapes(_newShapeCount, _newShapeFiledata);
+		_newShapeFiledata = 0;
+		_newShapeCount = 0;
+	}
+
+	while (_scriptInterpreter->validScript(&_temporaryScriptState))
+		_scriptInterpreter->runScript(&_temporaryScriptState);
+
+	uint8 *fileData = 0;
+
+	if (newShapes)
+		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
+
+	fileData = _newShapeFiledata;
+
+	if (!fileData) {
+		_scriptInterpreter->unloadScript(&_temporaryScriptData);
+		return;
+	}
+
+	if (newShapes)
+		_newShapeCount = initNewShapes(fileData);
+
+	processNewShapes(allowSkip, resetChar);
+
+	if (shapeUnload) {
+		resetNewShapes(_newShapeCount, fileData);
+		_newShapeCount = 0;
+		_newShapeFiledata = 0;
+	}
+
+	_scriptInterpreter->unloadScript(&_temporaryScriptData);
+}
+
+void KyraEngine_v3::eelScript() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::eelScript()");
+	if (_chatText)
+		return;
+	_screen->hideMouse();
+
+	if (_inventoryState)
+		hideInventory();
+	removeHandItem();
+
+	objectChat((const char*)getTableEntry(_cCodeFile, 35), 0, 204, 35);
+	objectChat((const char*)getTableEntry(_cCodeFile, 40), 0, 204, 40);
+	playSoundEffect(0x2A, 0xC8);
+
+	setGameFlag(0x171);
+
+	switch (_malcolmShapes-1) {
+	case 0:
+		runTemporaryScript("EELS01.EMC", 0, 0, 1, 1);
+		break;
+
+	case 1:
+		runTemporaryScript("EELS02.EMC", 0, 0, 1, 1);
+		break;
+
+	case 2:
+		runTemporaryScript("EELS03.EMC", 0, 0, 1, 1);
+		break;
+	
+	case 3:
+		runTemporaryScript("EELS04.EMC", 0, 0, 1, 1);
+		break;
+
+	default:
+		resetGameFlag(0x171);
+		runTemporaryScript("EELS00.EMC", 0, 0, 1, 1);
+		break;
+	}
+
+	changeChapter(2, 29, 0, 4);
+	_screen->showMouse();
 }
 
 } // end of namespace Kyra

@@ -1564,56 +1564,6 @@ bool KyraEngine_v3::talkObjectsInCurScene() {
 
 #pragma mark -
 
-void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runTemporaryScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
-	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
-	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
-
-	if (!_scriptInterpreter->loadScript(filename, &_temporaryScriptData, &_opcodesTemporary))
-		error("Couldn't load temporary script '%s'", filename);
-
-	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
-	_scriptInterpreter->startScript(&_temporaryScriptState, 0);
-
-	_newShapeFlag = -1;
-
-	if (_newShapeFiledata && newShapes) {
-		resetNewShapes(_newShapeCount, _newShapeFiledata);
-		_newShapeFiledata = 0;
-		_newShapeCount = 0;
-	}
-
-	while (_scriptInterpreter->validScript(&_temporaryScriptState))
-		_scriptInterpreter->runScript(&_temporaryScriptState);
-
-	uint8 *fileData = 0;
-
-	if (newShapes)
-		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
-
-	fileData = _newShapeFiledata;
-
-	if (!fileData) {
-		_scriptInterpreter->unloadScript(&_temporaryScriptData);
-		return;
-	}
-
-	if (newShapes)
-		_newShapeCount = initNewShapes(fileData);
-
-	processNewShapes(allowSkip, resetChar);
-
-	if (shapeUnload) {
-		resetNewShapes(_newShapeCount, fileData);
-		_newShapeCount = 0;
-		_newShapeFiledata = 0;
-	}
-
-	_scriptInterpreter->unloadScript(&_temporaryScriptData);
-}
-
-#pragma mark - 
-
 bool KyraEngine_v3::updateScore(int scoreId, int strId) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateScore(%d, %d)", scoreId, strId);
 

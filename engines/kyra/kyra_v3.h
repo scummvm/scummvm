@@ -686,6 +686,8 @@ private:
 	bool updateScore(int scoreId, int strId);
 	void scoreIncrease(int count, const char *str);
 
+	void eelScript();
+
 	// save/load
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);

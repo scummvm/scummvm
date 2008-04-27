@@ -483,7 +483,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 
 	uint16 item = _itemList[itemSlot].id;
 	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
-		//eelScript();
+		eelScript();
 		return true;
 	} else if ((handItem == 6 || handItem == 7) && item == 2) {
 		int animObjIndex = -1;
@@ -557,7 +557,7 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 
 	uint16 item = _mainCharacter.inventory[invSlot];
 	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
-		//eelScript();
+		eelScript();
 		return true;
 	} else if ((handItem == 6 || handItem == 7) && item == 2) {
 		_screen->hideMouse();
