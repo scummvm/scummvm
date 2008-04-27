@@ -169,6 +169,9 @@ void KyraEngine_v3::eelScript() {
 
 	objectChat((const char*)getTableEntry(_cCodeFile, 35), 0, 204, 35);
 	objectChat((const char*)getTableEntry(_cCodeFile, 40), 0, 204, 40);
+
+	setGameFlag(0xD1);
+
 	playSoundEffect(0x2A, 0xC8);
 
 	setGameFlag(0x171);
@@ -198,6 +201,79 @@ void KyraEngine_v3::eelScript() {
 
 	changeChapter(2, 29, 0, 4);
 	_screen->showMouse();
+}
+
+int KyraEngine_v3::initNewShapes(uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::initNewShapes(%p)", (const void*)filedata);
+	const int lastEntry = MIN(_newShapeLastEntry, 41);
+	for (int i = 0; i < lastEntry; ++i)
+		_gameShapes[9+i] = _screen->getPtrToShape(filedata, i);
+	return lastEntry;
+}
+
+void KyraEngine_v3::processNewShapes(int allowSkip, int resetChar) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::processNewShapes(%d, %d)", allowSkip, resetChar);
+	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
+
+	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
+	_scriptInterpreter->startScript(&_temporaryScriptState, 1);
+
+	resetSkipFlag();
+
+	while (_scriptInterpreter->validScript(&_temporaryScriptState)) {
+		_temporaryScriptExecBit = false;
+		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
+			_scriptInterpreter->runScript(&_temporaryScriptState);
+
+		if (_newShapeAnimFrame < 0)
+			continue;
+
+		_mainCharacter.animFrame = _newShapeAnimFrame + 9;
+		updateCharacterAnim(0);
+		if (_chatText)
+			updateWithText();
+		else
+			update();
+
+		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
+
+		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd) {
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+
+			delay(10);
+		}
+
+		if (skipFlag())
+			resetSkipFlag();
+	}
+
+	if (resetChar) {
+		if (_newShapeFlag >= 0) {
+			_mainCharacter.animFrame = _newShapeFlag + 9;
+			updateCharacterAnim(0);
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		}
+
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		updateCharacterAnim(0);
+	}
+
+	_newShapeFlag = -1;
+	resetCharacterAnimDim();
+}
+
+void KyraEngine_v3::resetNewShapes(int count, uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::resetNewShapes(%d, %p)", count, (const void*)filedata);
+	for (int i = 0; i < count; ++i)
+		_gameShapes[9+i] = 0;
+	delete [] filedata;
+	setNextIdleAnimTimer();
 }
 
 } // end of namespace Kyra
