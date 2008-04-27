@@ -1004,7 +1004,7 @@ void KyraEngine_v3::runLoop() {
 		if (_system->getMillis() >= _nextIdleAnim)
 			showIdleAnim();
 
-		int inputFlag = checkInput(_mainButtonList);
+		int inputFlag = checkInput(_mainButtonList, true);
 		removeInputTop();
 
 		update();
@@ -1368,7 +1368,7 @@ int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
 					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
-				/*const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
+				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
 
 				if (event.kbd.flags == Common::KBD_CTRL) {
 					loadGame(saveLoadSlot);
@@ -1378,7 +1378,7 @@ int KyraEngine_v3::checkInput(Button *buttonList, bool mainLoop) {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
 					saveGame(saveLoadSlot, savegameName);
-				}*/
+				}
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();

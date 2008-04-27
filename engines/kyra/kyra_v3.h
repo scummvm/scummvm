@@ -502,7 +502,7 @@ private:
 		uint8 facing;
 		uint16 animFrame;
 		//uint8 unk8, unk9;
-		uint32 walkspeed;
+		byte walkspeed;
 		uint16 inventory[10];
 		int16 x1, y1;
 		int16 x2, y2;
@@ -579,7 +579,7 @@ private:
 
 	void malcolmSceneStartupChat();
 
-	bool _newSceneDlgState[40];
+	byte _newSceneDlgState[40];
 	int8 _conversationState[30][30];
 	bool _chatAltFlag;
 	void setDlgIndex(uint16 index);
@@ -687,6 +687,10 @@ private:
 	int8 _scoreFlagTable[26];
 	bool updateScore(int scoreId, int strId);
 	void scoreIncrease(int count, const char *str);
+
+	// save/load
+	void saveGame(const char *fileName, const char *saveName);
+	void loadGame(const char *fileName);
 
 	// opcodes
 	int o3_getMalcolmShapes(ScriptState *script);
