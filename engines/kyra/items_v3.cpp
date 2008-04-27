@@ -546,6 +546,12 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 		if (_lang != 1)
 			updateItemCommand(resItem, 3, 0xFF);
 
+		// Unlike the original we give points for when combining with scene items 
+		if (resItem == 7) {
+			updateScore(35, 100);
+			delay(60, true);
+		}
+
 		return true;
 	}
 
@@ -577,19 +583,6 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 		return true;
 	}
 
-	if (_mainCharacter.sceneId == 51 && queryGameFlag(0x19B) && !queryGameFlag(0x19C)
-		&& ((item == 63 && handItem == 56) || (item == 56 && handItem == 63))) {
-		if (queryGameFlag(0x1AC)) {
-			setGameFlag(0x19C);
-			setGameFlag(0x1AD);
-		} else {
-			setGameFlag(0x1AE);
-		}
-		
-		_timer->setCountdown(12, 1);
-		_timer->enable(12);
-	}
-
 	for (int i = 0; _itemMagicTable[i] != 0xFF; i += 4) {
 		if (_itemMagicTable[i+0] != handItem || _itemMagicTable[i+1] != item)
 			continue;
@@ -611,12 +604,13 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 			setHandItem(newItem);
 		_screen->showMouse();
 
-		if (_lang != 1) {
-			if (resItem == 7) {
-				updateScore(35, 100);
-				delay(60, true);
-			}
+		if (_lang != 1)
 			updateItemCommand(resItem, 3, 0xFF);
+
+		// Unlike the original we give points for every language
+		if (resItem == 7) {
+			updateScore(35, 100);
+			delay(60, true);
 		}
 
 		return true;
