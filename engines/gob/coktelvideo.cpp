@@ -333,41 +333,44 @@ void Imd::waitEndFrame() {
 		g_system->delayMillis(_frameLength);
 }
 
-void Imd::copyCurrentFrame(byte *dest, uint16 x, uint16 y, uint16 width, int16 transp) {
+void Imd::copyCurrentFrame(byte *dest,
+		uint16 left, uint16 top, uint16 width, uint16 height,
+		uint16 x, uint16 y, uint16 pitch, int16 transp) {
+
 	if (!_vidMem)
 		return;
 
-	dest += width * y;
+	if (((left + width) > _width) || ((top + height) > _height))
+		return;
 
-	uint16 copyWidth = MIN<int16>(width - x, _width);
-	uint16 destPitch = width - x;
-	byte *vidMem = _vidMem;
+	dest += pitch * y;
+	byte *vidMem = _vidMem + _width * top;
 
 	if (transp < 0) {
 		// No transparency
-		if ((x > 0) || (_width != width)) {
+		if ((x > 0) || (left > 0) || (pitch != _width) || (width != _width)) {
 			// Copy row-by-row
-			for (int i = 0; i < _height; i++) {
-				dest += x;
-				memcpy(dest, vidMem, copyWidth);
-				dest += destPitch;
+			for (int i = 0; i < height; i++) {
+				byte *d = dest + x;
+				byte *s = vidMem + left;
+
+				memcpy(d, s, width);
+
+				dest += pitch;
 				vidMem += _width;
 			}
-
 		} else
 			// Dimensions fit, copy everything at once
-			memcpy(dest, _vidMem, _width * _height);
+			memcpy(dest, vidMem, width * height);
 
 		return;
 	}
 
-	// Transparency, copy per pixel
-	for (int i = 0; i < _height; i++) {
-		byte *s = vidMem;
-		byte *d = dest;
+	for (int i = 0; i < height; i++) {
+		byte *d = dest + x;
+		byte *s = vidMem + left;
 
-		d += x;
-		for (int j = 0; j < _width; j++) {
+		for (int j = 0; j < width; j++) {
 			if (*s != transp)
 				*d = *s;
 
@@ -375,9 +378,10 @@ void Imd::copyCurrentFrame(byte *dest, uint16 x, uint16 y, uint16 width, int16 t
 			d++;
 		}
 
-		dest += width;
+		dest += pitch;
 		vidMem += _width;
 	}
+
 }
 
 void Imd::deleteVidMem(bool del) {
@@ -938,9 +942,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	} else
 		_frameLength = 1000 / _frameRate;
 
-	uint32 frameInfoOffset = _stream->readUint32LE();
+	_frameInfoOffset = _stream->readUint32LE();
 
-	_stream->seek(frameInfoOffset);
+	_stream->seek(_frameInfoOffset);
 	_frames = new Frame[_framesCount];
 	for (uint16 i = 0; i < _framesCount; i++) {
 		_frames[i].parts = new Part[_partsPerFrame];
@@ -1348,6 +1352,45 @@ void Vmd::deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n) {
 		s = CLIP<int32>(s, -32768, 32767);
 		*out++ = TO_BE_16(s);
 	}
+}
+
+bool Vmd::getAnchor(int16 frame, uint16 partType,
+		int16 &x, int16 &y, int16 &width, int16 &height) {
+
+	uint32 pos = _stream->pos();
+
+	_stream->seek(_frameInfoOffset);
+	// Offsets to frames
+	_stream->skip(_framesCount * 6);
+	// Jump to the specified frame
+	_stream->skip(_partsPerFrame * frame * 16);
+
+	// Find the anchor part
+	uint16 i;
+	for (i = 0; i < _partsPerFrame; i++) {
+		byte type = _stream->readByte();
+
+		if ((type == 0) || (type == partType))
+			break;
+
+		_stream->skip(15);
+	}
+
+	if (i == _partsPerFrame) {
+		// No anchor
+
+		_stream->seek(pos);
+		return false;
+	}
+
+	_stream->skip(5);
+	x = _stream->readSint16LE();
+	y = _stream->readSint16LE();
+	width = _stream->readSint16LE() - x + 1;
+	height = _stream->readSint16LE() - y + 1;
+
+	_stream->seek(pos);
+	return true;
 }
 
 } // End of namespace Gob

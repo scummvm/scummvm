@@ -92,6 +92,7 @@ public:
 		AnimLayer *layers;
 		PieceDesc **pieces;
 		bool *piecesFromExt;
+		uint16 *sizes;
 		Animation() : layersCount(0), layers(0), pieces(0),
 			              piecesFromExt(0) {}
 	};

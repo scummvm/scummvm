@@ -463,8 +463,7 @@ void Mult_v2::multSub(uint16 multIndex) {
 			int obj = _multData->animObjs[index][i];
 
 			if ((obj != -1) && (obj != 1024))
-				_objects[obj].pAnimData->animTypeBak =
-					_objects[obj].pAnimData->animType;
+				_objects[obj].pAnimData->animTypeBak = _objects[obj].pAnimData->animType;
 		}
 	}
 
@@ -472,8 +471,10 @@ void Mult_v2::multSub(uint16 multIndex) {
 		_multData->animKeysIndices[index][i] = 0;
 
 		for (int j = 0; j < _multData->animKeysCount[i]; j++)
-			if (_multData->animKeys[i][j].frame == startFrame)
+			if (_multData->animKeys[i][j].frame >= startFrame) {
 				_multData->animKeysIndices[index][i] = j;
+				break;
+			}
 	}
 
 	if (_multData->animDirection == -1) {
@@ -487,6 +488,7 @@ void Mult_v2::multSub(uint16 multIndex) {
 	firstFrame = (_multData->animDirection == 1) ? startFrame : stopFrame;
 	for (int i = 0; i < 4; i++) {
 		_multData->imdKeysIndices[index][i] = 0;
+
 		for (int j = 0; j < _multData->imdKeysCount[i]; j++)
 			if (_multData->imdKeys[i][j].frame >= firstFrame) {
 				_multData->imdKeysIndices[index][i] = j;
@@ -675,27 +677,53 @@ void Mult_v2::drawAnims(bool &stop) { // loc_50D5
 
 void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	Mult_AnimData &animData = *(animObj.pAnimData);
-	int nAnim = animData.animation;
-	int nLayer = animData.layer;
+	Scenery::AnimLayer *animLayer = 0;
 
-	if (_vm->_scenery->getAnimLayersCount(nAnim) <= nLayer)
-		return;
+	if (animData.animation >= 0) {
+		int nAnim = animData.animation, nLayer = animData.layer;
 
-	Scenery::AnimLayer *animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
+		if (_vm->_scenery->getAnimLayersCount(nAnim) <= nLayer)
+			return;
+
+		animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
+	}
 
 	if (animData.animType == 4) {
+		// loc_1E091
 		animData.frame = 0;
 		animData.isPaused = 1;
+		if (animData.animation < 0)
+			warning("TODO: AnimType 4, animation: %d", animData.animation);
+		return;
+	}
+
+	if (animData.animType == 12)
+		animData.animType = 11;
+
+	if (animData.animType == 11) {
+		if (animData.isBusy != 0) {
+			warning("TODO: AnimType 11");
+		}
 		return;
 	}
 
 	if (animData.animType != 8)
 		animData.frame++;
 
-	if (animData.frame < animLayer->framesCount) {
-		animData.newCycle = 0;
-		return;
+	if (animData.animation < 0) {
+		if ((animObj.videoSlot > 0) &&
+		    (_vm->_vidPlayer->getCurrentFrame(animObj.videoSlot - 1) <
+		      _vm->_vidPlayer->getFramesCount(animObj.videoSlot - 1))) {
+			animData.newCycle = 0;
+			return;
+		}
+	} else {
+		if (animData.frame < animLayer->framesCount) {
+			animData.newCycle = 0;
+			return;
+		}
 	}
+
 
 	switch (animData.animType) {
 	case 0:
@@ -728,6 +756,12 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	case 7:
 		animData.frame--;
 		animData.isPaused = 1;
+		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
+			if (_vm->_vidPlayer->getFlags(animObj.videoSlot - 1) & 0x1000) {
+				_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
+				animObj.videoSlot = 0;
+			}
+		}
 		break;
 	}
 	animData.newCycle = 1;
@@ -897,6 +931,9 @@ void Mult_v2::animate() {
 			Mult_Object &animObj1 = *_renderObjs[orderArray[i]];
 			Mult_AnimData &animData1 = *(animObj1.pAnimData);
 
+			if (!animObj1.goblinStates)
+				continue;
+
 			for (int j = i+1; j < orderArrayPos; j++) {
 				Mult_Object &animObj2 = *_renderObjs[orderArray[j]];
 				Mult_AnimData &animData2 = *(animObj2.pAnimData);
@@ -1043,7 +1080,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		x = y = -1;
 
 	if (key.imdFile == -1) {
-		_vm->_vidPlayer->closeVideo();
+		_vm->_vidPlayer->primaryClose();
 		_vm->_game->_preventScroll = false;
 		return;
 	}
@@ -1061,11 +1098,11 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		if ((lastFrame - palFrame) < startFrame)
 			if (!(key.flags & 0x4000)) {
 				_vm->_game->_preventScroll = false;
-				_vm->_vidPlayer->closeVideo();
+				_vm->_vidPlayer->primaryClose();
 				return;
 			}
 
-	if (!_vm->_vidPlayer->openVideo(imdFile, x, y, flags)) {
+	if (!_vm->_vidPlayer->primaryOpen(imdFile, x, y, flags)) {
 		_vm->_game->_preventScroll = false;
 		return;
 	}
@@ -1077,7 +1114,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		lastFrame = _vm->_vidPlayer->getFramesCount() - 1;
 
 	baseFrame = startFrame % (lastFrame - palFrame + 1);
-	_vm->_vidPlayer->play(baseFrame + palFrame, baseFrame + palFrame, 0,
+	_vm->_vidPlayer->primaryPlay(baseFrame + palFrame, baseFrame + palFrame, 0,
 			flags & 0x7F, palStart, palEnd, palFrame, lastFrame);
 }
 

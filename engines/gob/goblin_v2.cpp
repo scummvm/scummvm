@@ -266,7 +266,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
 				animData->nextState = 41;
-			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY + 2) != 10)
+			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY) != 10)
 				animData->nextState = 7;
 		}
 		break;

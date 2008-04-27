@@ -315,6 +315,20 @@ protected:
 	virtual void advMovement(Mult::Mult_Object *obj, int8 state);
 };
 
+class Goblin_v4 : public Goblin_v3 {
+public:
+	virtual void movePathFind(Mult::Mult_Object *obj,
+			Gob_Object *gobDesc, int16 nextAct);
+	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
+			int16 nextAct, int16 framesCount);
+
+	Goblin_v4(GobEngine *vm);
+	virtual ~Goblin_v4() {}
+
+private:
+	int16 sub_20430(int16 state, uint16 dir);
+};
+
 } // End of namespace Gob
 
 #endif // GOB_GOBLIN_H

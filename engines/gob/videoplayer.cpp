@@ -32,29 +32,105 @@
 #include "gob/game.h"
 #include "gob/palanim.h"
 #include "gob/inter.h"
+#include "gob/map.h"
 
 namespace Gob {
 
 const char *VideoPlayer::_extensions[] = { "IMD", "VMD" };
 
-VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm) {
-	_curFile[0] = 0;
-	_stream = 0;
+VideoPlayer::Video::Video(GobEngine *vm) : _vm(vm), _fileName(0), _stream(0), _video(0) {
+}
+
+VideoPlayer::Video::~Video() {
+	close();
+}
+
+bool VideoPlayer::Video::open(const char *fileName, Type which) {
+	close();
+
+	int16 handle = _vm->_dataIO->openData(fileName);
+
+	if (handle < 0) {
+		warning("Couldn't open video \"%s\": No such file", fileName);
+		return false;
+	}
+
+	_stream = _vm->_dataIO->openAsStream(handle, true);
+
+	if (which == kVideoTypeIMD) {
+		_video = new Imd();
+	} else if (which == kVideoTypeVMD) {
+		_video = new Vmd();
+	} else {
+		warning("Couldn't open video \"%s\": Invalid video Type", fileName);
+		close();
+		return false;
+	}
+
+	if (!_video->load(*_stream)) {
+		warning("While loading video \"%s\"", fileName);
+		close();
+		return false;
+	}
+
+	_fileName = new char[strlen(fileName) + 1];
+	strcpy(_fileName, fileName);
+
+	return true;
+}
+
+void VideoPlayer::Video::close() {
+	delete _video;
+	delete _stream;
+	delete[] _fileName;
+
 	_video = 0;
+	_stream = 0;
+	_fileName = 0;
+	memset(&_state, 0, sizeof(CoktelVideo::State));
+}
+
+bool VideoPlayer::Video::isOpen() const {
+	return (_video != 0);
+}
+
+const char *VideoPlayer::Video::getFileName() const {
+	return _fileName ? _fileName : "";
+}
+
+CoktelVideo *VideoPlayer::Video::getVideo() {
+	return _video;
+}
+
+const CoktelVideo *VideoPlayer::Video::getVideo() const {
+	return _video;
+}
+
+CoktelVideo::State VideoPlayer::Video::getState() const {
+	return _state;
+}
+
+CoktelVideo::State VideoPlayer::Video::nextFrame() {
+	if (_video)
+		_state = _video->nextFrame();
+
+	return _state;
+}
+
+VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm) {
+	_primaryVideo = new Video(vm);
 	_backSurf = false;
 	_needBlit = false;
 	_noCursorSwitch = false;
 }
 
 VideoPlayer::~VideoPlayer() {
-	closeVideo();
+	delete _primaryVideo;
+	for (uint i = 0; i < _videoSlots.size(); i++)
+		delete _videoSlots[i];
 }
 
-bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Type which) {
-	char fileName[256];
-
-	strncpy0(fileName, video, 250);
-
+bool VideoPlayer::findFile(char *fileName, Type &which) {
 	char *extStart = strrchr(fileName, '.');
 	// There's no empty extension
 	if (extStart == (fileName + strlen(fileName) - 1)) {
@@ -112,33 +188,22 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 
 	}
 
-	if (scumm_strnicmp(_curFile, fileName, strlen(fileName))) {
-		closeVideo();
+	return true;
+}
 
-		int16 handle = _vm->_dataIO->openData(fileName);
+bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
+		int16 flags, Type which) {
 
-		if (handle < 0) {
-			warning("Couldn't open video \"%s\": No such file", fileName);
+	char fileName[256];
+
+	strncpy0(fileName, videoFile, 250);
+
+	if (!findFile(fileName, which))
+		return false;
+
+	if (scumm_strnicmp(_primaryVideo->getFileName(), fileName, strlen(fileName))) {
+		if (!_primaryVideo->open(fileName, which))
 			return false;
-		}
-
-		_stream = _vm->_dataIO->openAsStream(handle, true);
-
-		if (which == kVideoTypeIMD) {
-			_video = new Imd();
-		} else if (which == kVideoTypeVMD) {
-			_video = new Vmd();
-		} else {
-			warning("Couldn't open video \"%s\": Invalid video Type", fileName);
-			closeVideo();
-			return false;
-		}
-
-		if (!_video->load(*_stream)) {
-			warning("While loading video \"%s\"", fileName);
-			closeVideo();
-			return false;
-		}
 
 		// WORKAROUND: In some rare cases, the cursor should still be
 		// displayed while a video is playing.
@@ -153,53 +218,54 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 				_noCursorSwitch = true;
 		}
 
-		strcpy(_curFile, fileName);
-
 		if (!(flags & kFlagNoVideo)) {
 			_backSurf = ((flags & kFlagFrontSurface) == 0);
 			SurfaceDesc::Ptr surf = _vm->_draw->_spritesArray[_backSurf ? 21 : 20];
-			_video->setVideoMemory(surf->getVidMem(), surf->getWidth(), surf->getHeight());
+			_primaryVideo->getVideo()->setVideoMemory(surf->getVidMem(),
+					surf->getWidth(), surf->getHeight());
 		} else
-			_video->setVideoMemory();
+			_primaryVideo->getVideo()->setVideoMemory();
 
 		_needBlit = ((flags & kFlagUseBackSurfaceContent) != 0) && ((flags & kFlagFrontSurface) != 0);
 
-		_video->enableSound(*_vm->_mixer);
+		_primaryVideo->getVideo()->enableSound(*_vm->_mixer);
 	}
 
-	if (!_video)
+	if (!_primaryVideo->isOpen())
 		return false;
 
-	_video->setFrameRate(_vm->_util->getFrameRate());
-	_video->setXY(x, y);
-	WRITE_VAR(7, _video->getFramesCount());
+	_primaryVideo->getVideo()->setFrameRate(_vm->_util->getFrameRate());
+	_primaryVideo->getVideo()->setXY(x, y);
+	WRITE_VAR(7, _primaryVideo->getVideo()->getFramesCount());
 
 	return true;
 }
 
-void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
+void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
 		int16 palFrame, int16 endFrame, bool fade, int16 reverseTo) {
 
-	if (!_video)
+	if (!_primaryVideo->isOpen())
 		return;
+
+	CoktelVideo &video = *(_primaryVideo->getVideo());
 
 	breakKey = 27;
 	if (startFrame < 0)
-		startFrame = _video->getCurrentFrame();
+		startFrame = video.getCurrentFrame();
 	if (lastFrame < 0)
-		lastFrame = _video->getFramesCount() - 1;
+		lastFrame = video.getFramesCount() - 1;
 	if (palFrame < 0)
 		palFrame = startFrame;
 	if (endFrame < 0)
 		endFrame = lastFrame;
 	palCmd &= 0x3F;
 
-	if (_video->getCurrentFrame() != startFrame) {
-		if (_video->getFeatures() & CoktelVideo::kFeaturesSound)
-			startFrame = _video->getCurrentFrame();
+	if (video.getCurrentFrame() != startFrame) {
+		if (video.getFeatures() & CoktelVideo::kFeaturesSound)
+			startFrame = video.getCurrentFrame();
 		else
-			_video->seekFrame(startFrame);
+			video.seekFrame(startFrame);
 	}
 
 	_vm->_draw->_showCursor = _noCursorSwitch ? 3 : 0;
@@ -217,36 +283,156 @@ void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
 		}
 
 		if (!_noCursorSwitch)
-			_video->waitEndFrame();
+			video.waitEndFrame();
 		startFrame++;
 	}
 
 	if (reverseTo >= 0) {
-		int16 toFrame = _video->getFramesCount() - reverseTo;
-		for (int i = _video->getCurrentFrame(); i >= toFrame; i--) {
-			_video->seekFrame(i, SEEK_SET, true);
+		int16 toFrame = video.getFramesCount() - reverseTo;
+		for (int i = video.getCurrentFrame(); i >= toFrame; i--) {
+			video.seekFrame(i, SEEK_SET, true);
 			if (doPlay(i, breakKey, 0, 0, 0, 0, 0)) {
 				_vm->_palAnim->fade(0, -2, 0);
 				memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			}
 			if (!_noCursorSwitch)
-				_video->waitEndFrame();
+				video.waitEndFrame();
 		}
 	}
 }
 
-int16 VideoPlayer::getFramesCount() const {
-	if (!_video)
-		return 0;
-
-	return _video->getFramesCount();
+void VideoPlayer::primaryClose() {
+	_primaryVideo->close();
 }
 
-int16 VideoPlayer::getCurrentFrame() const {
-	if (!_video)
-		return 0;
+int VideoPlayer::slotOpen(const char *videoFile, Type which) {
+	Video *video = new Video(_vm);
+	char fileName[256];
 
-	return _video->getCurrentFrame();
+	strncpy0(fileName, videoFile, 250);
+
+	if (!findFile(fileName, which)) {
+		delete video;
+		return -1;
+	}
+
+	if (!video->open(fileName, which)) {
+		delete video;
+		return -1;
+	}
+
+	video->getVideo()->setVideoMemory();
+	video->getVideo()->disableSound();
+
+	_videoSlots.push_back(video);
+
+	WRITE_VAR(7, video->getVideo()->getFramesCount());
+
+	return _videoSlots.size() - 1;
+}
+
+void VideoPlayer::slotPlay(int slot, int16 frame) {
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+		return;
+
+	CoktelVideo &video = *(_videoSlots[slot]->getVideo());
+
+	if (frame < 0)
+		frame = video.getCurrentFrame();
+
+	if (video.getCurrentFrame() != frame)
+		video.seekFrame(frame);
+
+	_videoSlots[slot]->nextFrame();
+	WRITE_VAR(11, frame);
+}
+
+void VideoPlayer::slotClose(int slot) {
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+		return;
+
+	delete _videoSlots[slot];
+	_videoSlots.remove_at(slot);
+}
+
+void VideoPlayer::slotCopyFrame(int slot, byte *dest,
+		uint16 left, uint16 top, uint16 width, uint16 height,
+		uint16 x, uint16 y, uint16 pitch, int16 transp) {
+
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+		return;
+
+	_videoSlots[slot]->getVideo()->copyCurrentFrame(dest,
+			left, top, width, height, x, y, pitch, transp);
+}
+
+void VideoPlayer::slotCopyPalette(int slot, int16 palStart, int16 palEnd) {
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+		return;
+
+	copyPalette(*(_videoSlots[slot]->getVideo()), palStart, palEnd);
+}
+
+bool VideoPlayer::slotIsOpen(int slot) const {
+	if ((slot >= 0) && (((uint) slot) < _videoSlots.size()))
+		return true;
+
+	return false;
+}
+
+const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
+	if (slot < 0) {
+		if (_primaryVideo->isOpen())
+			return _primaryVideo;
+	} else if (((uint) slot) < _videoSlots.size())
+		return _videoSlots[slot];
+
+	return 0;
+}
+
+uint16 VideoPlayer::getFlags(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getVideo()->getFlags();
+
+	return 0;
+}
+
+int16 VideoPlayer::getFramesCount(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getVideo()->getFramesCount();
+
+	return 0;
+}
+
+int16 VideoPlayer::getCurrentFrame(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getVideo()->getCurrentFrame();
+
+	return 0;
+}
+
+int16 VideoPlayer::getWidth(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getVideo()->getWidth();
+
+	return 0;
+}
+
+int16 VideoPlayer::getHeight(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getVideo()->getHeight();
+
+	return 0;
 }
 
 bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
@@ -260,7 +446,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_draw->_applyPal = true;
 
 		if (palCmd >= 4)
-			copyPalette(palStart, palEnd);
+			copyPalette(*(_primaryVideo->getVideo()), palStart, palEnd);
 	}
 
 	if (modifiedPal && (palCmd == 8) && !_backSurf)
@@ -270,7 +456,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 	if (_needBlit)
 		_vm->_draw->forceBlit();
 
-	CoktelVideo::State state = _video->nextFrame();
+	CoktelVideo::State state = _primaryVideo->nextFrame();
 	WRITE_VAR(11, frame);
 
 	if (_needBlit)
@@ -285,7 +471,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 	}
 
 	if (state.flags & CoktelVideo::kStatePalette) {
-		copyPalette(palStart, palEnd);
+		copyPalette(*(_primaryVideo->getVideo()), palStart, palEnd);
 
 		if (!_backSurf)
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
@@ -311,7 +497,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 	_vm->_util->processInput();
 
 	if (_vm->_quitRequested) {
-		_video->disableSound();
+		_primaryVideo->getVideo()->disableSound();
 		return true;
 	}
 
@@ -321,7 +507,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 
 		_vm->_inter->storeKey(_vm->_util->checkKey());
 		if (VAR(0) == (unsigned) breakKey) {
-			_video->disableSound();
+			_primaryVideo->getVideo()->disableSound();
 			return true;
 		}
 	}
@@ -329,26 +515,37 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 	return false;
 }
 
-void VideoPlayer::copyPalette(int16 palStart, int16 palEnd) {
-	if ((palStart == -1) || (palEnd == -1))
-		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal,
-				_video->getPalette(), 768);
-	else
-		memcpy(((char *) (_vm->_global->_pPaletteDesc->vgaPal)) +
-				palStart * 3, _video->getPalette() + palStart * 3,
+void VideoPlayer::copyPalette(CoktelVideo &video, int16 palStart, int16 palEnd) {
+	if ((palStart != -1) && (palEnd != -1))
+		memcpy(((char *) (_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
+				video.getPalette() + palStart * 3,
 				(palEnd - palStart + 1) * 3);
+	else
+		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal, video.getPalette(), 768);
 }
 
-void VideoPlayer::writeVideoInfo(const char *video, int16 varX, int16 varY,
+void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 		int16 varFrames, int16 varWidth, int16 varHeight) {
 
-	if (openVideo(video)) {
-		WRITE_VAR_OFFSET(varX, _video->getX());
-		WRITE_VAR_OFFSET(varY, _video->getY());
-		WRITE_VAR_OFFSET(varFrames, _video->getFramesCount());
-		WRITE_VAR_OFFSET(varWidth, _video->getWidth());
-		WRITE_VAR_OFFSET(varHeight, _video->getHeight());
-		closeVideo();
+	if (primaryOpen(videoFile)) {
+		int16 x, y, width, height;
+
+		if ((VAR_OFFSET(varX) != 0xFFFFFFFF) ||
+		    !_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height)) {
+
+			x = _primaryVideo->getVideo()->getX();
+			y = _primaryVideo->getVideo()->getY();
+			width = _primaryVideo->getVideo()->getWidth();
+			height = _primaryVideo->getVideo()->getHeight();
+		}
+
+		WRITE_VAR_OFFSET(varX, x);
+		WRITE_VAR_OFFSET(varY, y);
+		WRITE_VAR_OFFSET(varFrames, _primaryVideo->getVideo()->getFramesCount());
+		WRITE_VAR_OFFSET(varWidth, width);
+		WRITE_VAR_OFFSET(varHeight, height);
+
+		primaryClose();
 	} else {
 		WRITE_VAR_OFFSET(varX, -1);
 		WRITE_VAR_OFFSET(varY, -1);
@@ -356,15 +553,6 @@ void VideoPlayer::writeVideoInfo(const char *video, int16 varX, int16 varY,
 		WRITE_VAR_OFFSET(varWidth, -1);
 		WRITE_VAR_OFFSET(varHeight, -1);
 	}
-}
-
-void VideoPlayer::closeVideo() {
-	delete _video;
-	delete _stream;
-
-	_video = 0;
-	_stream = 0;
-	*_curFile = 0;
 }
 
 } // End of namespace Gob

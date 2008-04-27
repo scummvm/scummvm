@@ -36,7 +36,7 @@ public:
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct Mult_AnimData {
-		uint8 animation;
+		int8 animation;
 		uint8 layer;
 		uint8 frame;
 		int8 animType;
@@ -104,6 +104,7 @@ public:
 		int16 newTop;
 		int16 newRight;
 		int16 newBottom;
+		uint32 videoSlot;
 	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {

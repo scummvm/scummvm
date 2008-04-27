@@ -988,12 +988,10 @@ void Inter_v2::o2_loadMultObject() {
 			_vm->_global->_inter_execPtr++;
 	}
 
-	if (_vm->_goblin->_gobsCount <= objIndex)
-		return;
-
 	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
 	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
-	if (objAnim.animType == 100) {
+
+	if ((objAnim.animType == 100) && (objIndex < _vm->_goblin->_gobsCount)) {
 
 		val = *(obj.pPosX) % 256;
 		obj.destX = val;
@@ -1029,7 +1027,7 @@ void Inter_v2::o2_loadMultObject() {
 				((obj.goblinY + 1) / 2);
 		*(obj.pPosX) = obj.goblinX * _vm->_map->_tilesWidth;
 
-	} else if (objAnim.animType == 101) {
+	} else if ((objAnim.animType == 101) && (objIndex < _vm->_goblin->_gobsCount)) {
 
 		layer = objAnim.layer;
 		animation = obj.goblinStates[layer][0].animation;
@@ -1048,6 +1046,21 @@ void Inter_v2::o2_loadMultObject() {
 		}
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
 				*(obj.pPosX), *(obj.pPosY), 0);
+
+	} else if ((objAnim.animType != 100) && (objAnim.animType != 101)) {
+
+		if ((*(obj.pPosX) == -1234) && (*(obj.pPosY) == -4321)) {
+
+			if (obj.videoSlot > 0)
+				_vm->_vidPlayer->slotClose(obj.videoSlot - 1);
+
+			obj.videoSlot = 0;
+			obj.lastLeft = -1;
+			obj.lastTop = -1;
+			obj.lastBottom = -1;
+			obj.lastRight = -1;
+		}
+
 	}
 }
 
@@ -1519,7 +1532,7 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
-	if ((imd[0] != 0) && !_vm->_vidPlayer->openVideo(imd, x, y, flags)) {
+	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
 	}
@@ -1532,12 +1545,12 @@ void Inter_v2::o2_playImd() {
 
 	if (startFrame >= 0) {
 		_vm->_game->_preventScroll = true;
-		_vm->_vidPlayer->play(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
 		_vm->_game->_preventScroll = false;
 	}
 
 	if (close)
-		_vm->_vidPlayer->closeVideo();
+		_vm->_vidPlayer->primaryClose();
 }
 
 void Inter_v2::o2_getImdInfo() {
