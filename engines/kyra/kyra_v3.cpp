@@ -999,7 +999,10 @@ void KyraEngine_v3::runLoop() {
 
 	_runFlag = true;
 	while (_runFlag && !_quitFlag) {
-		//XXX deathHandler
+		if (_deathHandler >= 0) {
+			// TODO: add menu etc.
+			loadGame(getSavegameFilename(999));
+		}
 		
 		if (_system->getMillis() >= _nextIdleAnim)
 			showIdleAnim();

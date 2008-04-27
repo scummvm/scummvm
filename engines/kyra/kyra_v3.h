@@ -735,6 +735,7 @@ private:
 	int o3_setMalcolmsMood(ScriptState *script);
 	int o3_delay(ScriptState *script);
 	int o3_updateScore(ScriptState *script);
+	int o3_makeSecondChanceSave(ScriptState *script);
 	int o3_setSceneFilename(ScriptState *script);
 	int o3_removeItemsFromScene(ScriptState *script);
 	int o3_disguiseMalcolm(ScriptState *script);
@@ -758,6 +759,7 @@ private:
 	int o3_blockOutRegion(ScriptState *script);
 	int o3_showSceneStringsMessage(ScriptState *script);
 	int o3_getRand(ScriptState *script);
+	int o3_setDeathHandler(ScriptState *script);
 	int o3_waitForConfirmationClick(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
 	int o3_runTemporaryScript(ScriptState *script);

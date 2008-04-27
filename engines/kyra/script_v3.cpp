@@ -442,6 +442,12 @@ int KyraEngine_v3::o3_updateScore(ScriptState *script) {
 	return updateScore(stackPos(0), stackPos(1)) ? 1 : 0;
 }
 
+int KyraEngine_v3::o3_makeSecondChanceSave(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_makeSecondChanceSave(%p) ()", (const void *)script);
+	saveGame(getSavegameFilename(999), "SECOND CHANCE SAVE GAME");
+	return 0;
+}
+
 int KyraEngine_v3::o3_setSceneFilename(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setSceneFilename(%p) (%d, '%s')", (const void *)script, stackPos(0), stackPosString(1));
 	strcpy(_sceneList[stackPos(0)].filename1, stackPosString(1));
@@ -917,6 +923,12 @@ int KyraEngine_v3::o3_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
+}
+
+int KyraEngine_v3::o3_setDeathHandler(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setDeathHandler(%p) (%d)", (const void *)script, stackPos(0));
+	_deathHandler = stackPos(0);
+	return 0;
 }
 
 int KyraEngine_v3::o3_waitForConfirmationClick(ScriptState *script) {
@@ -1417,7 +1429,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_delay);
 	// 0x38
 	Opcode(o3_updateScore);
-	OpcodeUnImpl();
+	Opcode(o3_makeSecondChanceSave);
 	Opcode(o3_setSceneFilename);
 	OpcodeUnImpl();
 	// 0x3c
@@ -1468,7 +1480,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x60
 	Opcode(o3_getRand);
 	Opcode(o3_dummy);
-	OpcodeUnImpl();
+	Opcode(o3_setDeathHandler);
 	OpcodeUnImpl();
 	// 0x64
 	OpcodeUnImpl();
