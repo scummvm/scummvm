@@ -201,7 +201,7 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 		_talkObjectList[i].color = in.readByte();
 	}
 
-	for (int i = 0; i < 86; ++i) {
+	for (int i = 0; i < 98; ++i) {
 		in.read(_sceneList[i].filename1, 10);
 		in.read(_sceneList[i].filename2, 10);
 		_sceneList[i].exit1 = in.readUint16();
