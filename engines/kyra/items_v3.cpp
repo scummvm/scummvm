@@ -482,7 +482,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::itemListMagic(%d, %d)", handItem, itemSlot);
 
 	uint16 item = _itemList[itemSlot].id;
-	if (_curChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
+	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
 		//eelScript();
 		return true;
 	} else if ((handItem == 6 || handItem == 7) && item == 2) {
@@ -556,7 +556,7 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::itemInventoryMagic(%d, %d)", handItem, invSlot);
 
 	uint16 item = _mainCharacter.inventory[invSlot];
-	if (_curChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
+	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
 		//eelScript();
 		return true;
 	} else if ((handItem == 6 || handItem == 7) && item == 2) {

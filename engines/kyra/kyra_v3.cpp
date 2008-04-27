@@ -43,7 +43,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
-	_curMusicTrack = -1;
+	_lastMusicCommand = -1;
 	_itemBuffer1 = _itemBuffer2 = 0;
 	_scoreFile = 0;
 	_cCodeFile = 0;
@@ -108,7 +108,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_useActorBuffer = false;
 	_curStudioSFX = 283;
 	_badConscienceShown = false;
-	_curChapter = 1;
+	_currentChapter = 1;
 	_deathHandler = -1;
 	_moveFacingTable = 0;
 	_unkHandleSceneChangeFlag = false;
@@ -386,7 +386,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 	else if (_musicSoundChannel == -1)
 		force = 1;
 
-	if (track == _curMusicTrack && !force)
+	if (track == _lastMusicCommand && !force)
 		return;
 
 	stopMusicTrack();
@@ -397,7 +397,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, Audio::Mixer::kMusicSoundType);
 	}
 
-	_curMusicTrack = track;
+	_lastMusicCommand = track;
 }
 
 void KyraEngine_v3::stopMusicTrack() {
@@ -406,7 +406,7 @@ void KyraEngine_v3::stopMusicTrack() {
 	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel))
 		_soundDigital->stopSound(_musicSoundChannel);
 
-	_curMusicTrack = -1;
+	_lastMusicCommand = -1;
 	_musicSoundChannel = -1;
 }
 
@@ -426,8 +426,8 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 		lock = 1;
 		if (_musicSoundChannel >= 0) {
 			if (!_soundDigital->isPlaying(_musicSoundChannel)) {
-				if (_curMusicTrack != -1)
-					playMusicTrack(_curMusicTrack, 1);
+				if (_lastMusicCommand != -1)
+					playMusicTrack(_lastMusicCommand, 1);
 			}
 		}
 		lock = 0;
@@ -442,7 +442,7 @@ void KyraEngine_v3::fadeOutMusic(int ticks) {
 	if (_musicSoundChannel >= 0) {
 		_fadeOutMusicChannel = _musicSoundChannel;
 		_soundDigital->beginFadeOut(_musicSoundChannel, ticks);
-		_curMusicTrack = -1;
+		_lastMusicCommand = -1;
 	}
 }
 
@@ -1673,7 +1673,7 @@ void KyraEngine_v3::changeChapter(int newChapter, int sceneId, int malcolmShapes
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::changeChapter(%d, %d, %d, %d)", newChapter, sceneId, malcolmShapes, facing);	
 	resetItemList();
 
-	_curChapter = newChapter;
+	_currentChapter = newChapter;
 	runStartupScript(newChapter, 0);
 	_mainCharacter.dlgIndex = 0;
 

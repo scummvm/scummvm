@@ -444,7 +444,7 @@ void KyraEngine_v3::malcolmSceneStartupChat() {
 	if (_noStartupChat)
 		return;
 
-	int index = _mainCharacter.sceneId - _chapterLowestScene[_curChapter];
+	int index = _mainCharacter.sceneId - _chapterLowestScene[_currentChapter];
 	if (_newSceneDlgState[index])
 		return;
 
@@ -471,12 +471,12 @@ void KyraEngine_v3::updateDlgBuffer() {
 	if (_cnvFile)
 		_cnvFile->seek(0, SEEK_SET);
 
-	if (_curDlgIndex == _mainCharacter.dlgIndex && _curDlgChapter == _curChapter && _curDlgLang == _lang)
+	if (_curDlgIndex == _mainCharacter.dlgIndex && _curDlgChapter == _currentChapter && _curDlgLang == _lang)
 		return;
 
-	snprintf(dlgFile, 16, "CH%.02d-S%.02d.", _curChapter, _mainCharacter.dlgIndex);
+	snprintf(dlgFile, 16, "CH%.02d-S%.02d.", _currentChapter, _mainCharacter.dlgIndex);
 	appendLanguage(dlgFile, _lang, 16);
-	snprintf(cnvFile, 16, "CH%.02d-S%.02d.CNV", _curChapter, _mainCharacter.dlgIndex);
+	snprintf(cnvFile, 16, "CH%.02d-S%.02d.CNV", _currentChapter, _mainCharacter.dlgIndex);
 	
 	delete _cnvFile;
 	delete _dlgBuffer;
@@ -512,7 +512,7 @@ void KyraEngine_v3::updateDlgIndex() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateDlgIndex()");
 	uint16 dlgIndex = _mainCharacter.dlgIndex;
 
-	if (_curChapter == 1) {
+	if (_currentChapter == 1) {
 		static const uint8 dlgIndexMoodNice[] = { 0x0C, 0x0E, 0x10, 0x0F, 0x11 };
 		static const uint8 dlgIndexMoodNormal[] = { 0x00, 0x02, 0x04, 0x03, 0x05 };
 		static const uint8 dlgIndexMoodEvil[] = { 0x06, 0x08, 0x0A, 0x09, 0x0B };
@@ -523,7 +523,7 @@ void KyraEngine_v3::updateDlgIndex() {
 			dlgIndex = dlgIndexMoodNormal[_malcolmShapes];
 		else if (_malcolmsMood == 2)
 			dlgIndex = dlgIndexMoodEvil[_malcolmShapes];
-	} else if (_curChapter == 2) {
+	} else if (_currentChapter == 2) {
 		if (dlgIndex >= 8)
 			dlgIndex -= 4;
 		if (dlgIndex >= 4)
@@ -533,7 +533,7 @@ void KyraEngine_v3::updateDlgIndex() {
 			dlgIndex += 8;
 		else if (_malcolmsMood == 2)
 			dlgIndex += 4;
-	} else if (_curChapter == 4) {
+	} else if (_currentChapter == 4) {
 		if (dlgIndex >= 10)
 			dlgIndex -= 5;
 		if (dlgIndex >= 5)
@@ -692,7 +692,7 @@ void KyraEngine_v3::malcolmRandomChat() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::malcolmRandomChat()");
 	updateDlgBuffer();
 
-	int index = (_mainCharacter.sceneId - _chapterLowestScene[_curChapter]) * 2;
+	int index = (_mainCharacter.sceneId - _chapterLowestScene[_currentChapter]) * 2;
 
 	int vocHighBase = 0, vocHighIndex = 0, index1 = 0, index2 = 0;
 	loadDlgHeader(vocHighBase, vocHighIndex, index1, index2);
@@ -711,7 +711,7 @@ void KyraEngine_v3::malcolmRandomChat() {
 void KyraEngine_v3::runDialog(int dlgIndex, int funcNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runDialog(%d, %d)", dlgIndex, funcNum);
 	
-	switch (_curChapter-2) {
+	switch (_currentChapter-2) {
 	case 0:
 		dlgIndex -= 34;
 		break;

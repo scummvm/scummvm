@@ -42,8 +42,8 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	}
 
 	musicUpdate(0);
-	if (_curChapter != _currentTalkFile) {
-		_currentTalkFile = _curChapter;
+	if (_currentChapter != _currentTalkFile) {
+		_currentTalkFile = _currentChapter;
 		openTalkFile(_currentTalkFile);
 	}
 	musicUpdate(0);
@@ -82,7 +82,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 	uint32 waitUntilTimer = 0;
 	bool newSoundFile = false;
-	if (_curMusicTrack != _sceneList[sceneId].sound) {
+	if (_lastMusicCommand != _sceneList[sceneId].sound) {
 		fadeOutMusic(60);
 		waitUntilTimer = _system->getMillis() + 60 * _tickLength;
 		newSoundFile = true;

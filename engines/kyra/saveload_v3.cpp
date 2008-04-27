@@ -46,8 +46,8 @@ void KyraEngine_v3::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint32BE(sizeof(_flagsTable));
 	out->write(_flagsTable, sizeof(_flagsTable));
 
-	out->writeSint16BE(_curMusicTrack);
-	out->writeByte(_curChapter);
+	out->writeSint16BE(_lastMusicCommand);
+	out->writeByte(_currentChapter);
 	out->writeByte(_malcolmShapes);
 	//XXX
 	out->writeSint16BE(_score);
@@ -141,7 +141,7 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 
 	_deathHandler = -1;
 	if (!_unkSceneScreenFlag1)
-		_curMusicTrack = -1;
+		_lastMusicCommand = -1;
 
 	int curShapes = _malcolmShapes;
 
@@ -156,8 +156,8 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 	in.read(_flagsTable, flagsSize);
 
 	// usually we have to save the flag set by opcode 10 here
-	_curMusicTrack = in.readSint16();
-	_curChapter = in.readByte();
+	_lastMusicCommand = in.readSint16();
+	_currentChapter = in.readByte();
 	_malcolmShapes = in.readByte();
 	//XXX
 	_score = in.readSint16();
@@ -241,9 +241,9 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);
 
-	if (_curMusicTrack >= 0 && !_unkSceneScreenFlag1)
-		playMusicTrack(_curMusicTrack, 1);
-	else if (_curMusicTrack == -1)
+	if (_lastMusicCommand >= 0 && !_unkSceneScreenFlag1)
+		playMusicTrack(_lastMusicCommand, 1);
+	else if (_lastMusicCommand == -1)
 		playMusicTrack(28, 1);
 
 	while (!_screen->isMouseVisible())

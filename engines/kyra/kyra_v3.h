@@ -122,8 +122,6 @@ private:
 	static const char *_soundList[];
 	static const int _soundListSize;
 
-	int _curMusicTrack;
-
 	void playMusicTrack(int track, int force);
 	void stopMusicTrack();
 
@@ -662,7 +660,7 @@ private:
 	uint8 *_paletteOverlay;
 	bool _useActorBuffer;
 
-	int _curChapter;
+	int _currentChapter;
 	void changeChapter(int newChapter, int sceneId, int malcolmShapes, int facing);
 
 	static const uint8 _chapterLowestScene[];

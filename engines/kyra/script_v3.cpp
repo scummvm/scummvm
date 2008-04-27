@@ -538,7 +538,7 @@ int KyraEngine_v3::o3_checkInRect(ScriptState *script) {
 int KyraEngine_v3::o3_updateConversations(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_updateConversations(%p) (%d)", (const void *)script, stackPos(0));
 	int dlgIndex = stackPos(0);
-	switch (_curChapter-2) {
+	switch (_currentChapter-2) {
 	case 0:
 		dlgIndex -= 34;
 		break;
@@ -562,7 +562,7 @@ int KyraEngine_v3::o3_updateConversations(ScriptState *script) {
 	int convs[4];
 	Common::set_to(convs, convs+4, -1);
 
-	if (_curChapter == 1) {
+	if (_currentChapter == 1) {
 		switch (_mainCharacter.dlgIndex) {
 		case 0:
 			convs[0] = 6;
@@ -642,7 +642,7 @@ int KyraEngine_v3::o3_updateConversations(ScriptState *script) {
 		default:
 			break;
 		}
-	} else if (_curChapter == 2) {
+	} else if (_currentChapter == 2) {
 		switch (_mainCharacter.dlgIndex) {
 		case 0:
 			convs[0] = 4;
@@ -718,7 +718,7 @@ int KyraEngine_v3::o3_updateConversations(ScriptState *script) {
 		default:
 			break;
 		}
-	} else if (_curChapter == 4) {
+	} else if (_currentChapter == 4) {
 		if (_malcolmsMood == 0) {
 			convs[0] = _mainCharacter.dlgIndex - 10;
 			convs[1] = _mainCharacter.dlgIndex - 5;

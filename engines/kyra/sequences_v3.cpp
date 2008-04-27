@@ -34,13 +34,13 @@ void KyraEngine_v3::showBadConscience() {
 
 	_badConscienceShown = true;
 	_badConscienceAnim = _rnd.getRandomNumberRng(0, 2);
-	if (_curChapter == 2)
+	if (_currentChapter == 2)
 		_badConscienceAnim = 5;
-	else if (_curChapter == 3)
+	else if (_currentChapter == 3)
 		_badConscienceAnim = 3;
-	else if (_curChapter == 4 && _rnd.getRandomNumberRng(1, 100) <= 25)
+	else if (_currentChapter == 4 && _rnd.getRandomNumberRng(1, 100) <= 25)
 		_badConscienceAnim = 6;
-	else if (_curChapter == 5 && _rnd.getRandomNumberRng(1, 100) <= 25)
+	else if (_currentChapter == 5 && _rnd.getRandomNumberRng(1, 100) <= 25)
 		_badConscienceAnim = 7;
 	else if (_malcolmShapes == 9)
 		_badConscienceAnim = 4;
