@@ -136,6 +136,9 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mainButtonList = 0;
 	_mainButtonListInitialized = false;
 	_enableInventory = true;
+	_goodConscienceShown = false;
+	_goodConscienceAnim = -1;
+	_goodConsciencePosition = false;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {

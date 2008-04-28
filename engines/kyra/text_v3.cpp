@@ -438,6 +438,64 @@ void KyraEngine_v3::badConscienceChatWaitToFinish() {
 	}
 }
 
+void KyraEngine_v3::goodConscienceChat(const char *str, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::goodConscienceChat('%s', %d, %d)", str, vocHigh, vocLow);
+	if (!_goodConscienceShown)
+		return;
+
+	setNextIdleAnimTimer();
+	_chatVocHigh = _chatVocLow = -1;
+	objectChatInit(str, 87, vocHigh, vocLow);
+	_chatText = str;
+	_chatObject = 87;
+	goodConscienceChatWaitToFinish();
+	updateSceneAnim(0x0F, _goodConscienceFrameTable[_goodConscienceAnim+10]);
+	_text->restoreScreen();
+	update();
+	_chatText = 0;
+	_chatObject = -1;
+}
+
+void KyraEngine_v3::goodConscienceChatWaitToFinish() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::goodConscienceChatWaitToFinish()");
+	if (_chatVocHigh) {
+		playVoice(_chatVocHigh, _chatVocLow);
+		_chatVocHigh = _chatVocLow = -1;
+	}
+
+	bool running = true;
+	const uint32 endTime = _chatEndTime;
+	resetSkipFlag();
+
+	uint32 nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(3, 6) * _tickLength;
+
+	int frame = _goodConscienceFrameTable[_goodConscienceAnim+15];
+	while (running && !_quitFlag) {
+		if (nextFrame < _system->getMillis()) {
+			++frame;
+			if (_goodConscienceFrameTable[_goodConscienceAnim+20] < frame)
+				frame = _goodConscienceFrameTable[_goodConscienceAnim+15];
+
+			updateSceneAnim(0x0F, frame);
+			updateWithText();
+
+			nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(3, 6) * _tickLength;
+		}
+
+		updateWithText();
+
+		const uint32 curTime = _system->getMillis();
+		if ((textEnabled() && !speechEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {
+			snd_stopVoice();
+			resetSkipFlag();
+			nextFrame = curTime;
+			running = false;
+		}
+
+		delay(10);
+	}
+}
+
 void KyraEngine_v3::malcolmSceneStartupChat() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::malcolmSceneStartupChat()");
 

@@ -936,6 +936,26 @@ int KyraEngine_v3::o3_setDeathHandler(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_showGoodConscience(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_showGoodConscience(%p) ()", (const void *)script);
+	showGoodConscience();
+	return 0;
+}
+
+int KyraEngine_v3::o3_goodConscienceChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_goodConscienceChat(%p) (%d)", (const void *)script, stackPos(0));
+	int id = stackPos(0);
+	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
+	goodConscienceChat(str, _vocHigh, id);
+	return 0;
+}
+
+int KyraEngine_v3::o3_hideGoodConscience(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_hideGoodConscience(%p) ()", (const void *)script);
+	hideGoodConscience();
+	return 0;
+}
+
 int KyraEngine_v3::o3_waitForConfirmationClick(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
 	resetSkipFlag();
@@ -1545,10 +1565,10 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_getRand);
 	Opcode(o3_dummy);
 	Opcode(o3_setDeathHandler);
-	OpcodeUnImpl();
+	Opcode(o3_showGoodConscience);
 	// 0x64
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_goodConscienceChat);
+	Opcode(o3_hideGoodConscience);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	// 0x68

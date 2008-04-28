@@ -575,6 +575,9 @@ private:
 	void badConscienceChat(const char *str, int vocHigh, int vocLow);
 	void badConscienceChatWaitToFinish();
 
+	void goodConscienceChat(const char *str, int vocHigh, int vocLow);
+	void goodConscienceChatWaitToFinish();
+
 	void malcolmSceneStartupChat();
 
 	byte _newSceneDlgState[40];
@@ -621,6 +624,15 @@ private:
 
 	void showBadConscience();
 	void hideBadConscience();
+
+	bool _goodConscienceShown;
+	int _goodConscienceAnim;
+	bool _goodConsciencePosition;
+
+	static const uint8 _goodConscienceFrameTable[];
+
+	void showGoodConscience();
+	void hideGoodConscience();
 
 	// special script code
 	bool _temporaryScriptExecBit;
@@ -763,6 +775,9 @@ private:
 	int o3_showSceneStringsMessage(ScriptState *script);
 	int o3_getRand(ScriptState *script);
 	int o3_setDeathHandler(ScriptState *script);
+	int o3_showGoodConscience(ScriptState *script);
+	int o3_goodConscienceChat(ScriptState *script);
+	int o3_hideGoodConscience(ScriptState *script);
 	int o3_waitForConfirmationClick(ScriptState *script);
 	int o3_defineRoomEntrance(ScriptState *script);
 	int o3_runTemporaryScript(ScriptState *script);

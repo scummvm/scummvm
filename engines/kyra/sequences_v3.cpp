@@ -48,8 +48,8 @@ void KyraEngine_v3::showBadConscience() {
 
 	_badConsciencePosition = (_mainCharacter.x1 <= 160);
 
-	//if (_goodConscienceShown)
-	//	_badConsciencePosition = !_goodConsciencePosition;
+	if (_goodConscienceShown)
+		_badConsciencePosition = !_goodConsciencePosition;
 	
 	int anim = _badConscienceAnim + (_badConsciencePosition ? 0 : 8);
 	TalkObject &talkObject = _talkObjectList[1];
@@ -106,6 +106,80 @@ void KyraEngine_v3::hideBadConscience() {
 	updateSceneAnim(0x0E, -1);
 	update();
 	removeSceneAnimObject(0x0E, 1);
+	setNextIdleAnimTimer();
+}
+
+void KyraEngine_v3::showGoodConscience() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::showGoodConscience()");
+
+	if (_goodConscienceShown)
+		return;
+
+	_goodConscienceShown = true;
+	++_goodConscienceAnim;
+	_goodConscienceAnim %= 5;
+	
+	setNextIdleAnimTimer();
+	_goodConsciencePosition = (_mainCharacter.x1 <= 160);
+
+	if (_badConscienceShown)
+		_goodConsciencePosition = !_badConsciencePosition;
+
+	int anim = _goodConscienceAnim + (_goodConsciencePosition ? 0 : 5);
+	TalkObject &talkObject = _talkObjectList[87];
+
+	if (_goodConsciencePosition)
+		talkObject.x = 290;
+	else
+		talkObject.x = 30;
+	talkObject.y = 30;
+
+	static const char *animFilenames[] = {
+		"STUFL00.WSA", "STUFL02.WSA", "STUFL04.WSA", "STUFL03.WSA", "STUFL01.WSA",
+		"STUFR00.WSA", "STUFR02.WSA", "STUFR04.WSA", "STUFR03.WSA", "STUFR01.WSA"
+	};
+
+	setupSceneAnimObject(0x0F, 9, 0, 187, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
+	for (uint i = 0; i <= _goodConscienceFrameTable[_goodConscienceAnim]; ++i) {
+		if (i == 10)
+			playSoundEffect(0x7F, 0xC8);
+		updateSceneAnim(0x0F, i);
+		delay(2*_tickLength, true);
+	}
+
+	if (_mainCharacter.animFrame < 50 || _mainCharacter.animFrame > 87)
+		return;
+
+	if (_mainCharacter.y1 == -1 || (_mainCharacter.x1 != -1 && _mainCharacter.animFrame == 87) || _mainCharacter.animFrame == 87) {
+		_mainCharacter.animFrame = 87;
+	} else {
+		if (_goodConsciencePosition)
+			_mainCharacter.facing = 3;
+		else
+			_mainCharacter.facing = 5;
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+	}
+
+	updateCharacterAnim(0);
+	refreshAnimObjectsIfNeed();
+}
+
+void KyraEngine_v3::hideGoodConscience() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::hideGoodConscience()");
+	if (!_goodConscienceShown)
+		return;
+
+	_goodConscienceShown = false;
+	for (int frame = _goodConscienceFrameTable[_goodConscienceAnim+5]; frame >= 0; --frame) {
+		if (frame == 17)
+			playSoundEffect(0x31, 0xC8);
+		updateSceneAnim(0x0F, frame);
+		delay(1*_tickLength, true);
+	}
+
+	updateSceneAnim(0x0F, -1);
+	update();
+	removeSceneAnimObject(0x0F, 1);
 	setNextIdleAnimTimer();
 }
 

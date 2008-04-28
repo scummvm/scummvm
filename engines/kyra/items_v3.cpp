@@ -499,7 +499,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 		for (int i = 109; i <= 141; ++i) {
 			_animObjects[animObjIndex].shapeIndex = i+248;
 			_animObjects[animObjIndex].needRefresh = true;
-			delay(1, true);
+			delay(1*_tickLength, true);
 		}
 
 		deleteItemAnimEntry(itemSlot);
@@ -549,7 +549,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 		// Unlike the original we give points for when combining with scene items 
 		if (resItem == 7) {
 			updateScore(35, 100);
-			delay(60, true);
+			delay(60*_tickLength, true);
 		}
 
 		return true;
@@ -574,7 +574,7 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 			_screen->drawShape(2, getShapePtr(i+248), 0, 144, 0, 0);
 			_screen->copyRegion(0, 144, _inventoryX[invSlot], _inventoryY[invSlot], 24, 20, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
-			delay(1, true);
+			delay(1*_tickLength, true);
 		}
 
 		_mainCharacter.inventory[invSlot] = 0xFFFF;
@@ -610,7 +610,7 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 		// Unlike the original we give points for every language
 		if (resItem == 7) {
 			updateScore(35, 100);
-			delay(60, true);
+			delay(60*_tickLength, true);
 		}
 
 		return true;
