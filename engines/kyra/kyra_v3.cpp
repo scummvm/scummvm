@@ -964,7 +964,7 @@ void KyraEngine_v3::updateCharPal(int unk1) {
 			++dst;
 			++sceneDatPal;
 			++j;
-			if (j > 3) {
+			if (j >= 3) {
 				sceneDatPal = &_sceneDatPalette[layer * 3];
 				j = 0;
 			}
