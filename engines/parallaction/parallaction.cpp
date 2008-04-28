@@ -49,15 +49,12 @@ uint16	_mouseButtons = 0;
 
 char		_saveData1[30] = { '\0' };
 uint16		_language = 0;
-char		_slideText[2][MAX_TOKEN_LEN];
 uint32		_engineFlags = 0;
 
 uint16		_score = 1;
 char		_password[8];
 
 uint32		_commandFlags = 0;
-uint16		_introSarcData3 = 200;
-uint16		_introSarcData2 = 1;
 
 // private stuff
 

@@ -138,6 +138,9 @@ int Parallaction_ns::init() {
 	initParsers();
 
 	_introSarcData1 = 0;
+	_introSarcData2 = 1;
+	_introSarcData3 = 200;
+
 	num_foglie = 0;
 
 	_animations.push_front(_char._ani);

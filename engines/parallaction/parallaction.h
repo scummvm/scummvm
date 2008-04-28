@@ -145,15 +145,13 @@ struct PARALLACTIONGameDescription;
 
 
 
+
 extern uint16		_mouseButtons;
 extern char			_password[8];
 extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
 #define MAX_FORWARDS	50
-extern char			_slideText[][MAX_TOKEN_LEN];
-extern uint16		_introSarcData3;		 // sarcophagus stuff to be saved
-extern uint16		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char			_saveData1[];
 extern uint32		_commandFlags;
 extern const char	*_dinoName;
@@ -626,9 +624,13 @@ private:
 	*/
 
 	ZonePtr _moveSarcZone0;
-	int16 _introSarcData1;
 	ZonePtr _moveSarcZone1;
 	uint16 num_foglie;
+	char _slideText[][MAX_TOKEN_LEN];
+	int16 _introSarcData1;
+	uint16	_introSarcData2;		 // sarcophagus stuff to be saved
+	uint16	_introSarcData3;		 // sarcophagus stuff to be saved
+
 	ZonePtr _moveSarcZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
