@@ -586,10 +586,10 @@ void KyraEngine_v3::processDialog(int vocHighIndex, int vocHighBase, int funcNum
 					if (script >= 0) {
 						dialogEndScript(script);
 						script = -1;
-					} else {
-						dialogStartScript(object, funcNum);
-						script = object;
 					}
+
+					dialogStartScript(object, funcNum);
+					script = object;
 				}
 
 				npcChatSequence(_stringBuffer, object, vocHigh, vocLow);
