@@ -225,7 +225,7 @@ int FontResource::getHeight() const {
 	return _data[0];
 }
 
-int FontResource::getCharWidth(char c) const {
+int FontResource::getCharWidth(uint c) const {
 	byte *charData = getCharData(c);
 	if (charData)
 		return charData[0];
@@ -233,7 +233,7 @@ int FontResource::getCharWidth(char c) const {
 		return 0;
 }
 
-byte *FontResource::getChar(char c) const {
+byte *FontResource::getChar(uint c) const {
 	byte *charData = getCharData(c);
 	if (charData)
 		return charData + 1;
@@ -241,7 +241,17 @@ byte *FontResource::getChar(char c) const {
 		return NULL;
 }
 
-byte *FontResource::getCharData(char c) const {
+int FontResource::getTextWidth(const char *text) {
+	int width = 0;
+	if (text) {
+		int len = strlen(text);
+		for (int pos = 0; pos < len; pos++)
+			width += getCharWidth(text[pos]);
+	}
+	return width;
+}
+
+byte *FontResource::getCharData(uint c) const {
 	if (c < 28 || c > 255)
 		return NULL;
 	return _data + 1 + (c - 28) * (getHeight() + 1);

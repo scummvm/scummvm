@@ -118,12 +118,13 @@ public:
 	~FontResource();
 	void load(byte *source, int size);
 	int getHeight() const;
-	int getCharWidth(char c) const;
-	byte *getChar(char c) const;
+	int getCharWidth(uint c) const;
+	int getTextWidth(const char *text);
+	byte *getChar(uint c) const;
 protected:
 	byte *_data;
 	int _size;
-	byte *getCharData(char c) const;
+	byte *getCharData(uint c) const;
 };
 
 class XmidiResource : public Resource {
