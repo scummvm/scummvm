@@ -753,6 +753,7 @@ private:
 	int o3_enableInventory(ScriptState *script);
 	int o3_enterNewScene(ScriptState *script);
 	int o3_switchScene(ScriptState *script);
+	int o3_getShapeFlag1(ScriptState *script);
 	int o3_setMalcolmPos(ScriptState *script);
 	int o3_stopMusic(ScriptState *script);
 	int o3_playMusicTrack(ScriptState *script);
@@ -774,6 +775,8 @@ private:
 	int o3_setDlgIndex(ScriptState *script);
 	int o3_getDlgIndex(ScriptState *script);
 	int o3_defineScene(ScriptState *script);
+	int o3_setConversationState(ScriptState *script);
+	int o3_getConversationState(ScriptState *script);
 	int o3_changeChapter(ScriptState *script);
 	int o3_countItemInstances(ScriptState *script);
 	int o3_dialogStartScript(ScriptState *script);

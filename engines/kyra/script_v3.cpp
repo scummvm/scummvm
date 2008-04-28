@@ -861,6 +861,11 @@ int KyraEngine_v3::o3_switchScene(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v3::o3_getShapeFlag1(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getShapeFlag1(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return _screen->getShapeFlag1(stackPos(0), stackPos(1));
+}
+
 int KyraEngine_v3::o3_setMalcolmPos(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setMalcolmPos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_mainCharX = stackPos(0);
@@ -1146,6 +1151,65 @@ int KyraEngine_v3::o3_defineScene(ScriptState *script) {
 	}
 
 	return 0;
+}
+
+int KyraEngine_v3::o3_setConversationState(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_setConversationState(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	int id = stackPos(0);
+	const int dlgIndex = stackPos(1);
+	const int value = stackPos(2);
+
+	switch (_currentChapter-2) {
+	case 0:
+		id -= 34;
+		break;
+
+	case 1:
+		id -= 54;
+		break;
+
+	case 2:
+		id -= 55;
+		break;
+
+	case 3:
+		id -= 70;
+		break;
+
+	default:
+		break;
+	}
+
+	return (_conversationState[id][dlgIndex] = value);
+}
+
+int KyraEngine_v3::o3_getConversationState(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_getConversationState(%p) (%d)", (const void *)script, stackPos(0));
+	int id = stackPos(0);
+	const int dlgIndex = _mainCharacter.dlgIndex;
+
+	switch (_currentChapter-2) {
+	case 0:
+		id -= 34;
+		break;
+
+	case 1:
+		id -= 54;
+		break;
+
+	case 2:
+		id -= 55;
+		break;
+
+	case 3:
+		id -= 70;
+		break;
+
+	default:
+		break;
+	}
+
+	return _conversationState[id][dlgIndex];
 }
 
 int KyraEngine_v3::o3_changeChapter(ScriptState *script) {
@@ -1460,7 +1524,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x50
 	Opcode(o3_enterNewScene);
 	Opcode(o3_switchScene);
-	OpcodeUnImpl();
+	Opcode(o3_getShapeFlag1);
 	Opcode(o3_dummy);
 	// 0x54
 	Opcode(o3_dummy);
@@ -1510,11 +1574,11 @@ void KyraEngine_v3::setupOpcodeTable() {
 	// 0x78
 	Opcode(o3_getDlgIndex);
 	Opcode(o3_defineScene);
-	OpcodeUnImpl();
+	Opcode(o3_setConversationState);
 	OpcodeUnImpl();
 	// 0x7c
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_getConversationState);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	// 0x80
