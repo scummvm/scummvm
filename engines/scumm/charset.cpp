@@ -49,6 +49,7 @@ void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
+	_newLineCharacter = 0xfe;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
@@ -95,15 +96,17 @@ void ScummEngine::loadCJKFont() {
 				fp.seek(2, SEEK_CUR);
 				_2byteWidth = fp.readByte();
 				_2byteHeight = fp.readByte();
+				_newLineCharacter = 0xff;
 				break;
 			case Common::JA_JPN:
 				_2byteWidth = 16;
 				_2byteHeight = 16;
+				_newLineCharacter = 0xfe;
 				break;
 			case Common::ZH_TWN:
 				_2byteWidth = 16;
 				_2byteHeight = 15;
-				// 0xFE -> 0x21. also compared with 0x0d. perhaps a newline
+				_newLineCharacter = 0x21;
 				break;
 			default:
 				break;
@@ -352,7 +355,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
-		if (chr == '\n' || chr == '\r')
+		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
@@ -477,6 +480,9 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			}
 		}
 		if (chr == ' ')
+			lastspace = pos - 1;
+
+		if (chr == _vm->_newLineCharacter)
 			lastspace = pos - 1;
 
 		if ((chr & 0x80) && _vm->_useCJKMode) {

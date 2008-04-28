@@ -279,6 +279,12 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			break;
 		}
 		c = *buffer++;
+
+		if (c == _newLineCharacter) {
+			c = 13;
+			break;
+		}
+
 		switch (c) {
 		case 1:
 			c = 13; // new line
@@ -479,13 +485,14 @@ void ScummEngine::CHARSET_1() {
 				_string[0].ypos = _screenHeight - 40;
 		}
 
-		if (_string[0].ypos < 1)
-			_string[0].ypos = 1;
+		if (_string[0].ypos < 10)
+			_string[0].ypos = 10;
 
-		if (_string[0].xpos < 80)
-			_string[0].xpos = 80;
-		if (_string[0].xpos > _screenWidth - 80)
-			_string[0].xpos = _screenWidth - 80;
+		if (_string[0].xpos < 5)
+			_string[0].xpos = 5;
+		if (_string[0].xpos > _screenWidth - 10)
+			_string[0].xpos = _screenWidth - 10;
+
 	}
 
 	_charset->_top = _string[0].ypos + _screenTop;
@@ -551,7 +558,7 @@ void ScummEngine::CHARSET_1() {
 	if (_charset->_center) {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
-			_nextLeft = 0;
+			_nextLeft = _string[0].xpos;
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
@@ -576,6 +583,8 @@ void ScummEngine::CHARSET_1() {
 #endif
 			if (_charset->_center) {
 				_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+				if (_nextLeft < 0)
+					_nextLeft = _string[0].xpos;
 			}
 
 			if (_game.version == 0) {
