@@ -51,6 +51,7 @@ void KyraEngine_v3::timerRestoreCommandLine(int arg) {
 
 void KyraEngine_v3::timerRunSceneScript7(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::timerRunSceneScript7(%d)", arg);
+	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
 	_sceneScriptState.regs[3] = 0;

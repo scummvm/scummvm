@@ -99,17 +99,23 @@ void TimerManager::update() {
 	_nextRun += 99999;
 
 	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
-		if (pos->enabled && pos->countdown >= 0 && pos->nextRun <= _system->getMillis()) {
-			if (pos->func && pos->func->isValid())
-				(*pos->func)(pos->id);
+		if (pos->enabled)
 
-			uint32 curTime = _system->getMillis();
-			pos->lastUpdate = curTime;
-			pos->nextRun = curTime + pos->countdown * _vm->tickLength();
+		if (pos->enabled && pos->countdown >= 0) {
+			if (pos->nextRun <= _system->getMillis()) {
+				if (pos->func && pos->func->isValid()) {
+					(*pos->func)(pos->id);
+				}
+
+				uint32 curTime = _system->getMillis();
+				pos->lastUpdate = curTime;
+				pos->nextRun = curTime + pos->countdown * _vm->tickLength();
+			}
 
 			_nextRun = MIN(_nextRun, pos->nextRun);
 		}
 	}
+
 }
 
 void TimerManager::resync() {

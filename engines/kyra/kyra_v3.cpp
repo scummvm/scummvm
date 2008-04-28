@@ -1173,7 +1173,6 @@ void KyraEngine_v3::updateWithText() {
 	//XXX
 	updateSpecialSceneScripts();
 	updateCommandLine();
-	//XXX
 	musicUpdate(0);
 
 	restorePage3();
