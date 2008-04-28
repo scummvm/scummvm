@@ -139,6 +139,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 	_goodConscienceShown = false;
 	_goodConscienceAnim = -1;
 	_goodConsciencePosition = false;
+	_showOutro = false;
 }
 
 KyraEngine_v3::~KyraEngine_v3() {
@@ -297,6 +298,9 @@ int KyraEngine_v3::go() {
 			break;
 		}
 	}
+
+	if (_showOutro)
+		playVQA("CREDITS");
 
 	return 0;
 }

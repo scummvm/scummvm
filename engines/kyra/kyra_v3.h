@@ -74,6 +74,7 @@ private:
 	void setupOpcodeTable();
 
 	// run
+	bool _showOutro;
 	bool _runFlag;
 	int _deathHandler;
 

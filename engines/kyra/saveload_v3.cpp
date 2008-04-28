@@ -235,8 +235,8 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 	_mainCharacter.facing = 4;
 	_badConscienceShown = false;
 	_badConsciencePosition = false;
-	//_goodConscienceShown = false;
-	//_goodConsciencePosition = false;
+	_goodConscienceShown = false;
+	_goodConsciencePosition = false;
 	
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);

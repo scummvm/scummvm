@@ -171,6 +171,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	_sceneScriptState.regs[3] = 1;
 	enterNewSceneUnk2(unk3);
 	if (queryGameFlag(0)) {
+		_showOutro = true;
 		_runFlag = false;
 	} else {
 		if (!--_enterNewSceneLock)
