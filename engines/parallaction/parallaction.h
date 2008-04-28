@@ -626,7 +626,7 @@ private:
 	ZonePtr _moveSarcZone0;
 	ZonePtr _moveSarcZone1;
 	uint16 num_foglie;
-	char _slideText[][MAX_TOKEN_LEN];
+	char _slideText[2][MAX_TOKEN_LEN];
 	int16 _introSarcData1;
 	uint16	_introSarcData2;		 // sarcophagus stuff to be saved
 	uint16	_introSarcData3;		 // sarcophagus stuff to be saved
