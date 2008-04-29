@@ -559,7 +559,7 @@ void KyraEngine_v3::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &inde
 void KyraEngine_v3::setDlgIndex(uint16 index) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::setDlgIndex(%d)", index);
 	if (_mainCharacter.dlgIndex != index) {
-		Common::set_to(_newSceneDlgState, _newSceneDlgState+ARRAYSIZE(_newSceneDlgState), false);
+		Common::set_to(_newSceneDlgState, _newSceneDlgState+ARRAYSIZE(_newSceneDlgState), 0);
 		memset(_conversationState, -1, sizeof(_conversationState));
 		_chatAltFlag = false;
 		_mainCharacter.dlgIndex = index;
