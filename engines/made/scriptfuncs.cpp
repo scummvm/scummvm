@@ -218,25 +218,7 @@ int16 ScriptFunctionsRtz::o1_EVENT(int16 argc, int16 *argv) {
 
 		case Common::EVENT_KEYDOWN:
 			_vm->_eventKey = event.kbd.ascii;
-			switch (_vm->_eventKey) {
-			case '1':
-				eventNum = 1;
-				break;
-			case '2':
-				eventNum = 2;
-				break;
-			case '3':
-				eventNum = 3;
-				break;
-			case '4':
-				eventNum = 4;
-				break;
-			case '5':
-				eventNum = 5;
-				break;
-			default:
-				break;
-			}
+			eventNum = 5;
 			break;
 
 		case Common::EVENT_QUIT:
@@ -749,16 +731,18 @@ int16 ScriptFunctionsRtz::o1_READMENU(int16 argc, int16 *argv) {
 	int16 objectIndex = argv[2];
 	int16 menuIndex = argv[1];
 	int16 textIndex = argv[0];
+	int16 length = 0;
 	MenuResource *menu = _vm->_res->getMenu(menuIndex);
 	if (menu) {
 		const char *text = menu->getString(textIndex);
-		debug(4, "text = %s\n", text); fflush(stdout);
+		debug(4, "objectIndex = %04X; text = %s\n", objectIndex, text);
 		Object *obj = _vm->_dat->getObject(objectIndex);
 		obj->setString(text);
 		_vm->_res->freeResource(menu);
+		if (text)
+			length = strlen(text);
 	}
-
-	return 0;
+	return length;
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWMENU(int16 argc, int16 *argv) {
@@ -783,6 +767,11 @@ int16 ScriptFunctionsRtz::o1_LOADGAME(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_GAMENAME(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_GAMENAME");
+	
+	warning("GAMENAME: 1) %d\n", argv[2]);
+	warning("GAMENAME: 2) %d\n", argv[1]);
+	warning("GAMENAME: 3) %d\n", argv[0]);
+
 	return 0;
 }
 
@@ -803,6 +792,11 @@ int16 ScriptFunctionsRtz::o1_SETVOLUME(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_WHATSYNTH(int16 argc, int16 *argv) {
+	// 0 = Default
+	// 1 = PCSPKR
+	// 2 = SBFM/ADLIB
+	// 3 = ADLIBG
+	// 4 = MT32MPU
 	warning("Unimplemented opcode: o1_WHATSYNTH");
 	return 0;
 }
