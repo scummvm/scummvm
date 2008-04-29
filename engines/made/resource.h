@@ -35,7 +35,7 @@
 
 namespace Made {
 
-const int kMaxResourceCacheCount = 100;
+const int kMaxResourceCacheCount = 200;
 
 enum ResourceType {
 	kResARCH = MKID_BE('ARCH'),
