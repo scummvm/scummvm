@@ -160,7 +160,7 @@ void PmvPlayer::play(const char *filename) {
 	}
 
 	_audioStream->finish();
-	_mixer->stopAll();
+	_mixer->stopHandle(_audioStreamHandle);
 	
 	//delete _audioStream;
 	delete _fd;
