@@ -81,10 +81,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_sprites = 0;
 	_animator = 0;
 	_seq = 0;
-	_npcScriptData = 0;
-	_scriptMain = 0;
-	_scriptClickData = 0;
-	_scriptClick = 0;
 	_characterList = 0;
 	_movFacingTable = 0;
 	_buttonData = 0;
@@ -94,7 +90,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_finalA = _finalB = _finalC = 0;
 	_endSequenceBackUpRect = 0;
 	memset(_panPagesTable, 0, sizeof(_panPagesTable));
-	_npcScriptData = _scriptClickData = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_currHeadShape = 0;
 
@@ -110,9 +105,9 @@ KyraEngine_v1::~KyraEngine_v1() {
 	}
 
 	closeFinalWsa();
-	if (_scriptInterpreter) {
-		_scriptInterpreter->unloadScript(_npcScriptData);
-		_scriptInterpreter->unloadScript(_scriptClickData);
+	if (_emc) {
+		_emc->unload(&_npcScriptData);
+		_emc->unload(&_scriptClickData);
 	}
 
 	Common::clearAllSpecialDebugLevels();
@@ -122,12 +117,6 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _sprites;
 	delete _animator;
 	delete _seq;
-
-	delete _npcScriptData;
-	delete _scriptMain;
-
-	delete _scriptClickData;
-	delete _scriptClick;
 
 	delete [] _characterList;
 
@@ -212,23 +201,12 @@ int KyraEngine_v1::init() {
 	_characterList[0].facing = 3;
 	_characterList[0].currentAnimFrame = 7;
 
-	_npcScriptData = new ScriptData;
-	memset(_npcScriptData, 0, sizeof(ScriptData));
-	assert(_npcScriptData);
-	_npcScript = new ScriptState;
-	assert(_npcScript);
-	memset(_npcScript, 0, sizeof(ScriptState));
+	memset(&_npcScriptData, 0, sizeof(EMCData));
+	memset(&_scriptClickData, 0, sizeof(EMCData));
 
-	_scriptMain = new ScriptState;
-	assert(_scriptMain);
-	memset(_scriptMain, 0, sizeof(ScriptState));
-
-	_scriptClickData = new ScriptData;
-	assert(_scriptClickData);
-	memset(_scriptClickData, 0, sizeof(ScriptData));
-	_scriptClick = new ScriptState;
-	assert(_scriptClick);
-	memset(_scriptClick, 0, sizeof(ScriptState));
+	memset(&_npcScript, 0, sizeof(EMCState));
+	memset(&_scriptMain, 0, sizeof(EMCState));
+	memset(&_scriptClick, 0, sizeof(EMCState));
 
 	_debugger = new Debugger_v1(this);
 	assert(_debugger);
@@ -387,19 +365,19 @@ void KyraEngine_v1::startup() {
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
 
-	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, &_opcodes))
+	if (!_emc->load("_STARTUP.EMC", &_npcScriptData, &_opcodes))
 		error("Could not load \"_STARTUP.EMC\" script");
-	_scriptInterpreter->initScript(_scriptMain, _npcScriptData);
+	_emc->init(&_scriptMain, &_npcScriptData);
 
-	if (!_scriptInterpreter->startScript(_scriptMain, 0))
+	if (!_emc->start(&_scriptMain, 0))
 		error("Could not start script function 0 of script \"_STARTUP.EMC\"");
 
-	while (_scriptInterpreter->validScript(_scriptMain))
-		_scriptInterpreter->runScript(_scriptMain);
+	while (_emc->isValid(&_scriptMain))
+		_emc->run(&_scriptMain);
 
-	_scriptInterpreter->unloadScript(_npcScriptData);
+	_emc->unload(&_npcScriptData);
 
-	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, &_opcodes))
+	if (!_emc->load("_NPC.EMC", &_npcScriptData, &_opcodes))
 		error("Could not load \"_NPC.EMC\" script");
 
 	snd_playTheme(1, -1);
@@ -785,17 +763,17 @@ int KyraEngine_v1::processInputHelper(int xpos, int ypos) {
 
 int KyraEngine_v1::clickEventHandler(int xpos, int ypos) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::clickEventHandler(%d, %d)", xpos, ypos);
-	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-	_scriptClick->regs[1] = xpos;
-	_scriptClick->regs[2] = ypos;
-	_scriptClick->regs[3] = 0;
-	_scriptClick->regs[4] = _itemInHand;
-	_scriptInterpreter->startScript(_scriptClick, 1);
+	_emc->init(&_scriptClick, &_scriptClickData);
+	_scriptClick.regs[1] = xpos;
+	_scriptClick.regs[2] = ypos;
+	_scriptClick.regs[3] = 0;
+	_scriptClick.regs[4] = _itemInHand;
+	_emc->start(&_scriptClick, 1);
 
-	while (_scriptInterpreter->validScript(_scriptClick))
-		_scriptInterpreter->runScript(_scriptClick);
+	while (_emc->isValid(&_scriptClick))
+		_emc->run(&_scriptClick);
 
-	return _scriptClick->regs[3];
+	return _scriptClick.regs[3];
 }
 
 void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
@@ -929,15 +907,15 @@ void KyraEngine_v1::clickEventHandler2() {
 
 	Common::Point mouse = getMousePos();
 
-	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-	_scriptClick->regs[0] = _currentCharacter->sceneId;
-	_scriptClick->regs[1] = mouse.x;
-	_scriptClick->regs[2] = mouse.y;
-	_scriptClick->regs[4] = _itemInHand;
-	_scriptInterpreter->startScript(_scriptClick, 6);
+	_emc->init(&_scriptClick, &_scriptClickData);
+	_scriptClick.regs[0] = _currentCharacter->sceneId;
+	_scriptClick.regs[1] = mouse.x;
+	_scriptClick.regs[2] = mouse.y;
+	_scriptClick.regs[4] = _itemInHand;
+	_emc->start(&_scriptClick, 6);
 
-	while (_scriptInterpreter->validScript(_scriptClick))
-		_scriptInterpreter->runScript(_scriptClick);
+	while (_emc->isValid(&_scriptClick))
+		_emc->run(&_scriptClick);
 }
 
 int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
@@ -991,14 +969,14 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 
 void KyraEngine_v1::runNpcScript(int func) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::runNpcScript(%d)", func);
-	_scriptInterpreter->initScript(_npcScript, _npcScriptData);
-	_scriptInterpreter->startScript(_npcScript, func);
-	_npcScript->regs[0] = _currentCharacter->sceneId;
-	_npcScript->regs[4] = _itemInHand;
-	_npcScript->regs[5] = func;
+	_emc->init(&_npcScript, &_npcScriptData);
+	_emc->start(&_npcScript, func);
+	_npcScript.regs[0] = _currentCharacter->sceneId;
+	_npcScript.regs[4] = _itemInHand;
+	_npcScript.regs[5] = func;
 
-	while (_scriptInterpreter->validScript(_npcScript))
-		_scriptInterpreter->runScript(_npcScript);
+	while (_emc->isValid(&_npcScript))
+		_emc->run(&_npcScript);
 }
 
 void KyraEngine_v1::checkAmuletAnimFlags() {

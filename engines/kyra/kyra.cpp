@@ -45,7 +45,7 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_text = 0;
 	_staticres = 0;
 	_timer = 0;
-	_scriptInterpreter = 0;
+	_emc = 0;
 
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
@@ -145,8 +145,8 @@ int KyraEngine::init() {
 	_timer = new TimerManager(this, _system);
 	assert(_timer);
 	setupTimers();
-	_scriptInterpreter = new ScriptHelper(this);
-	assert(_scriptInterpreter);
+	_emc = new EMCInterpreter(this);
+	assert(_emc);
 
 	setupOpcodeTable();
 	readSettings();
@@ -200,7 +200,7 @@ KyraEngine::~KyraEngine() {
 	delete _sound;
 	delete _text;
 	delete _timer;
-	delete _scriptInterpreter;
+	delete _emc;
 }
 
 void KyraEngine::quitGame() {
@@ -273,8 +273,10 @@ void KyraEngine::readSettings() {
 	}
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
-	_sound->enableMusic(_configMusic);
-	_sound->enableSFX(_configSounds);
+	if (_sound) {
+		_sound->enableMusic(_configMusic);
+		_sound->enableSFX(_configSounds);
+	}
 
 	bool speechMute = ConfMan.getBool("speech_mute");
 	bool subtitles = ConfMan.getBool("subtitles");
@@ -313,11 +315,12 @@ void KyraEngine::writeSettings() {
 		break;
 	}
 
-	if (!_configMusic)
-		_sound->beginFadeOut();
-
-	_sound->enableMusic(_configMusic);
-	_sound->enableSFX(_configSounds);
+	if (_sound) {
+		if (!_configMusic)
+			_sound->beginFadeOut();
+		_sound->enableMusic(_configMusic);
+		_sound->enableSFX(_configSounds);
+	}
 
 	ConfMan.setBool("speech_mute", speechMute);
 	ConfMan.setBool("subtitles", subtitles);

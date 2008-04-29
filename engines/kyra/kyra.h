@@ -72,7 +72,7 @@ struct AudioDataStruct {
 // in the future we maybe merge some flags  and/or create new ones
 enum kDebugLevels {
 	kDebugLevelScriptFuncs = 1 << 0,		// prints debug output of o#_* functions
-	kDebugLevelScript = 1 << 1,				// prints debug output of "ScriptHelper" functions
+	kDebugLevelScript = 1 << 1,				// prints debug output of "EMCInterpreter" functions
 	kDebugLevelSprites = 1 << 2,			// prints debug output of "Sprites" functions
 	kDebugLevelScreen = 1 << 3,				// prints debug output of "Screen" functions
 	kDebugLevelSound = 1 << 4,				// prints debug output of "Sound" functions
@@ -175,7 +175,7 @@ protected:
 	TextDisplayer *_text;
 	StaticResource *_staticres;
 	TimerManager *_timer;
-	ScriptHelper *_scriptInterpreter;
+	EMCInterpreter *_emc;
 
 	// config specific
 	virtual void registerDefaultSettings();

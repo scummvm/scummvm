@@ -299,11 +299,11 @@ void KyraEngine_v2::objectChatProcess(const char *script) {
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 
-	_scriptInterpreter->loadScript(script, &_chatScriptData, &_opcodesTemporary);
-	_scriptInterpreter->initScript(&_chatScriptState, &_chatScriptData);
-	_scriptInterpreter->startScript(&_chatScriptState, 0);
-	while (_scriptInterpreter->validScript(&_chatScriptState))
-		_scriptInterpreter->runScript(&_chatScriptState);
+	_emc->load(script, &_chatScriptData, &_opcodesTemporary);
+	_emc->init(&_chatScriptState, &_chatScriptData);
+	_emc->start(&_chatScriptState, 0);
+	while (_emc->isValid(&_chatScriptState))
+		_emc->run(&_chatScriptState);
 
 	_newShapeFilename[2] = _loadedZTable + '0';
 	uint8 *shapeBuffer = _res->fileData(_newShapeFilename, 0);
@@ -322,27 +322,27 @@ void KyraEngine_v2::objectChatProcess(const char *script) {
 		warning("couldn't load file '%s'", _newShapeFilename);
 	}
 
-	_scriptInterpreter->unloadScript(&_chatScriptData);
+	_emc->unload(&_chatScriptData);
 }
 
 void KyraEngine_v2::objectChatWaitToFinish() {
 	int charAnimFrame = _mainCharacter.animFrame;
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
-	_scriptInterpreter->initScript(&_chatScriptState, &_chatScriptData);
-	_scriptInterpreter->startScript(&_chatScriptState, 1);
+	_emc->init(&_chatScriptState, &_chatScriptData);
+	_emc->start(&_chatScriptState, 1);
 
 	bool running = true;
 	const uint32 endTime = _chatEndTime;
 	resetSkipFlag();
 
 	while (running && !_quitFlag) {
-		if (!_scriptInterpreter->validScript(&_chatScriptState))
-			_scriptInterpreter->startScript(&_chatScriptState, 1);
+		if (!_emc->isValid(&_chatScriptState))
+			_emc->start(&_chatScriptState, 1);
 
 		_temporaryScriptExecBit = false;
-		while (!_temporaryScriptExecBit && _scriptInterpreter->validScript(&_chatScriptState))
-			_scriptInterpreter->runScript(&_chatScriptState);
+		while (!_temporaryScriptExecBit && _emc->isValid(&_chatScriptState))
+			_emc->run(&_chatScriptState);
 
 		int curFrame = _newShapeAnimFrame;
 		uint32 delayTime = _newShapeDelay;

@@ -91,10 +91,10 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	//XXX
 
 	if (!unk3) {
-		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
-		_scriptInterpreter->startScript(&_sceneScriptState, 5);
-		while (_scriptInterpreter->validScript(&_sceneScriptState)) {
-			_scriptInterpreter->runScript(&_sceneScriptState);
+		_emc->init(&_sceneScriptState, &_sceneScriptData);
+		_emc->start(&_sceneScriptState, 5);
+		while (_emc->isValid(&_sceneScriptState)) {
+			_emc->run(&_sceneScriptState);
 			musicUpdate(0);
 		}
 	}
@@ -313,7 +313,7 @@ void KyraEngine_v3::unloadScene() {
 	delete [] _sceneStrings;
 	_sceneStrings = 0;
 	musicUpdate(0);
-	_scriptInterpreter->unloadScript(&_sceneScriptData);
+	_emc->unload(&_sceneScriptData);
 	musicUpdate(0);
 	freeSceneShapes();
 	musicUpdate(0);
@@ -456,12 +456,12 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	_sceneMinX = 0;
 	_sceneMaxX = 319;
 
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	strcpy(filename, scene.filename2);
 	strcat(filename, ".EMC");
 	musicUpdate(0);
 	_res->exists(filename, true);
-	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
+	_emc->load(filename, &_sceneScriptData, &_opcodes);
 
 	strcpy(filename, scene.filename2);
 	strcat(filename, ".");
@@ -469,18 +469,18 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	musicUpdate(0);
 
 	runSceneScript8();
-	_scriptInterpreter->startScript(&_sceneScriptState, 0);
+	_emc->start(&_sceneScriptState, 0);
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
 	_sceneScriptState.regs[5] = unk1;
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _gamePlayBuffer);
 	musicUpdate(0);
 
 	for (int i = 0; i < 10; ++i) {
-		_scriptInterpreter->initScript(&_sceneSpecialScripts[i], &_sceneScriptData);
-		_scriptInterpreter->startScript(&_sceneSpecialScripts[i], i+9);
+		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
+		_emc->start(&_sceneSpecialScripts[i], i+9);
 		musicUpdate(0);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
@@ -642,11 +642,11 @@ void KyraEngine_v3::initSceneScreen(int unk1) {
 	updateCharPal(0);
 
 	if (1/*!_menuDirectlyToLoad*/) {
-		_scriptInterpreter->startScript(&_sceneScriptState, 3);
+		_emc->start(&_sceneScriptState, 3);
 		_sceneScriptState.regs[5] = unk1;
 
-		while (_scriptInterpreter->validScript(&_sceneScriptState))
-			_scriptInterpreter->runScript(&_sceneScriptState);
+		while (_emc->isValid(&_sceneScriptState))
+			_emc->run(&_sceneScriptState);
 	}
 }
 
@@ -661,13 +661,13 @@ void KyraEngine_v3::updateSpecialSceneScripts() {
 			_specialSceneScriptRunFlag = true;
 
 			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
-				if (!_scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]))
+				if (!_emc->run(&_sceneSpecialScripts[_lastProcessedSceneScript]))
 					_specialSceneScriptRunFlag = false;
 			}
 		}
 
-		if (!_scriptInterpreter->validScript(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
-			_scriptInterpreter->startScript(&_sceneSpecialScripts[_lastProcessedSceneScript], 9+_lastProcessedSceneScript);
+		if (!_emc->isValid(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
+			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], 9+_lastProcessedSceneScript);
 			_specialSceneScriptRunFlag = false;
 		}
 
@@ -798,15 +798,15 @@ int KyraEngine_v3::runSceneScript1(int x, int y) {
 	if (_deathHandler >= 0)
 		return 0;
 	
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[1] = x;
 	_sceneScriptState.regs[2] = y;
 	_sceneScriptState.regs[3] = 0;
 	_sceneScriptState.regs[4] = _itemInHand;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 1);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 1);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	return _sceneScriptState.regs[3];
 }
@@ -818,9 +818,9 @@ int KyraEngine_v3::runSceneScript2() {
 	_sceneScriptState.regs[3] = 0;
 	_sceneScriptState.regs[4] = _itemInHand;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 2);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 2);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	return _sceneScriptState.regs[3];
 }
@@ -832,9 +832,9 @@ void KyraEngine_v3::runSceneScript4(int unk1) {
 	_sceneScriptState.regs[3] = 0;
 	_noStartupChat = false;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 4);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 4);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	if (_sceneScriptState.regs[3])
 		_noStartupChat = true;
@@ -842,24 +842,24 @@ void KyraEngine_v3::runSceneScript4(int unk1) {
 
 void KyraEngine_v3::runSceneScript6() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript6()");
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
 	_sceneScriptState.regs[3] = _itemInHand;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 6);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 6);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 }
 
 void KyraEngine_v3::runSceneScript8() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript8()");
-	_scriptInterpreter->startScript(&_sceneScriptState, 8);
-	while (_scriptInterpreter->validScript(&_sceneScriptState)) {
+	_emc->start(&_sceneScriptState, 8);
+	while (_emc->isValid(&_sceneScriptState)) {
 		musicUpdate(0);
-		_scriptInterpreter->runScript(&_sceneScriptState);
+		_emc->run(&_sceneScriptState);
 	}
 }
 

@@ -584,17 +584,17 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 		objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
 		return true;
 	} else {
-		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+		_emc->init(&_sceneScriptState, &_sceneScriptData);
 
 		_sceneScriptState.regs[1] = x;
 		_sceneScriptState.regs[2] = y;
 		_sceneScriptState.regs[3] = 0;
 		_sceneScriptState.regs[4] = _itemInHand;
 
-		_scriptInterpreter->startScript(&_sceneScriptState, 1);
+		_emc->start(&_sceneScriptState, 1);
 
-		while (_scriptInterpreter->validScript(&_sceneScriptState))
-			_scriptInterpreter->runScript(&_sceneScriptState);
+		while (_emc->isValid(&_sceneScriptState))
+			_emc->run(&_sceneScriptState);
 
 		//XXXsys_unkKeyboad (flush? wait? whatever...)
 
@@ -1205,16 +1205,18 @@ void KyraEngine_v2::runStartScript(int script, int unk1) {
 	strcpy(filename, "_START0X.EMC");
 	filename[7] = script + '0';
 
-	ScriptData scriptData;
-	ScriptState scriptState;
+	EMCData scriptData;
+	EMCState scriptState;
+	memset(&scriptData, 0, sizeof(EMCData));
+	memset(&scriptState, 0, sizeof(EMCState));
 
-	_scriptInterpreter->loadScript(filename, &scriptData, &_opcodes);
-	_scriptInterpreter->initScript(&scriptState, &scriptData);
+	_emc->load(filename, &scriptData, &_opcodes);
+	_emc->init(&scriptState, &scriptData);
 	scriptState.regs[6] = unk1;
-	_scriptInterpreter->startScript(&scriptState, 0);
-	while (_scriptInterpreter->validScript(&scriptState))
-		_scriptInterpreter->runScript(&scriptState);
-	_scriptInterpreter->unloadScript(&scriptData);
+	_emc->start(&scriptState, 0);
+	while (_emc->isValid(&scriptState))
+		_emc->run(&scriptState);
+	_emc->unload(&scriptData);
 }
 
 void KyraEngine_v2::loadNPCScript() {
@@ -1244,18 +1246,18 @@ void KyraEngine_v2::loadNPCScript() {
 		};
 	}
 
-	_scriptInterpreter->loadScript(filename, &_npcScriptData, &_opcodes);
+	_emc->load(filename, &_npcScriptData, &_opcodes);
 }
 
 void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
 	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
 	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
 
-	if (!_scriptInterpreter->loadScript(filename, &_temporaryScriptData, &_opcodesTemporary))
+	if (!_emc->load(filename, &_temporaryScriptData, &_opcodesTemporary))
 		error("Couldn't load temporary script '%s'", filename);
 
-	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
-	_scriptInterpreter->startScript(&_temporaryScriptState, 0);
+	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
+	_emc->start(&_temporaryScriptState, 0);
 
 	_newShapeFlag = -1;
 
@@ -1265,8 +1267,8 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int 
 		_newShapeCount = 0;
 	}
 
-	while (_scriptInterpreter->validScript(&_temporaryScriptState))
-		_scriptInterpreter->runScript(&_temporaryScriptState);
+	while (_emc->isValid(&_temporaryScriptState))
+		_emc->run(&_temporaryScriptState);
 
 	uint8 *fileData = 0;
 
@@ -1276,7 +1278,7 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int 
 	fileData = _newShapeFiledata;
 
 	if (!fileData) {
-		_scriptInterpreter->unloadScript(&_temporaryScriptData);
+		_emc->unload(&_temporaryScriptData);
 		return;
 	}
 
@@ -1291,7 +1293,7 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int 
 		_newShapeFiledata = 0;
 	}
 
-	_scriptInterpreter->unloadScript(&_temporaryScriptData);
+	_emc->unload(&_temporaryScriptData);
 }
 
 #pragma mark -
@@ -1639,15 +1641,15 @@ int KyraEngine_v2::initNewShapes(uint8 *filedata) {
 void KyraEngine_v2::processNewShapes(int allowSkip, int resetChar) {
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
-	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
-	_scriptInterpreter->startScript(&_temporaryScriptState, 1);
+	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
+	_emc->start(&_temporaryScriptState, 1);
 
 	resetSkipFlag();
 
-	while (_scriptInterpreter->validScript(&_temporaryScriptState)) {
+	while (_emc->isValid(&_temporaryScriptState)) {
 		_temporaryScriptExecBit = false;
-		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
-			_scriptInterpreter->runScript(&_temporaryScriptState);
+		while (_emc->isValid(&_temporaryScriptState) && !_temporaryScriptExecBit)
+			_emc->run(&_temporaryScriptState);
 
 		if (_newShapeAnimFrame < 0)
 			continue;

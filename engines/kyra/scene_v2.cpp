@@ -91,10 +91,10 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	_chatAltFlag = false;
 
 	if (!unk3) {
-		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
-		_scriptInterpreter->startScript(&_sceneScriptState, 5);
-		while (_scriptInterpreter->validScript(&_sceneScriptState))
-			_scriptInterpreter->runScript(&_sceneScriptState);
+		_emc->init(&_sceneScriptState, &_sceneScriptData);
+		_emc->start(&_sceneScriptState, 5);
+		while (_emc->isValid(&_sceneScriptState))
+			_emc->run(&_sceneScriptState);
 	}
 
 	Common::for_each(_wsaSlots, _wsaSlots+ARRAYSIZE(_wsaSlots), Common::mem_fun(&WSAMovieV2::close));
@@ -391,7 +391,7 @@ int KyraEngine_v2::checkSceneChange() {
 
 void KyraEngine_v2::unloadScene() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::unloadScene()");
-	_scriptInterpreter->unloadScript(&_sceneScriptData);
+	_emc->unload(&_sceneScriptData);
 	freeSceneShapePtrs();
 	freeSceneAnims();
 }
@@ -446,27 +446,27 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	_sceneEnterY4 = 72;
 
 	_sceneCommentString = "Undefined scene comment string!";
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
 	strcpy(filename, _sceneList[sceneId].filename);
 	strcat(filename, ".");
 	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? 0 : _lang]);
 
 	_res->exists(filename, true);
-	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
+	_emc->load(filename, &_sceneScriptData, &_opcodes);
 	runSceneScript7();
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 0);
+	_emc->start(&_sceneScriptState, 0);
 	_sceneScriptState.regs[0] = sceneId;
 	_sceneScriptState.regs[5] = unk1;
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
 
 	for (int i = 0; i < 10; ++i) {
-		_scriptInterpreter->initScript(&_sceneSpecialScripts[i], &_sceneScriptData);
-		_scriptInterpreter->startScript(&_sceneSpecialScripts[i], i+8);
+		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
+		_emc->start(&_sceneSpecialScripts[i], i+8);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
 
@@ -482,12 +482,12 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 
 void KyraEngine_v2::runSceneScript2() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript2()");
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[4] = _itemInHand;
-	_scriptInterpreter->startScript(&_sceneScriptState, 2);
+	_emc->start(&_sceneScriptState, 2);
 
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 }
 
 void KyraEngine_v2::runSceneScript4(int unk1) {
@@ -495,23 +495,23 @@ void KyraEngine_v2::runSceneScript4(int unk1) {
 	_sceneScriptState.regs[4] = _itemInHand;
 	_sceneScriptState.regs[5] = unk1;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 4);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 4);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 }
 
 void KyraEngine_v2::runSceneScript6() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript6()");
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
 	_sceneScriptState.regs[4] = _itemInHand;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 6);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 6);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 }
 
 void KyraEngine_v2::runSceneScript7() {
@@ -519,9 +519,9 @@ void KyraEngine_v2::runSceneScript7() {
 	int oldPage = _screen->_curPage;
 	_screen->_curPage = 2;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 7);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 7);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	_screen->_curPage = oldPage;
 }
@@ -706,10 +706,10 @@ void KyraEngine_v2::initSceneScreen(int unk1) {
 
 	updateCharPal(0);
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 3);
+	_emc->start(&_sceneScriptState, 3);
 	_sceneScriptState.regs[5] = unk1;
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 }
 
 void KyraEngine_v2::updateSpecialSceneScripts() {
@@ -723,13 +723,13 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 			_specialSceneScriptRunFlag = true;
 
 			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
-				if (!_scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]))
+				if (!_emc->run(&_sceneSpecialScripts[_lastProcessedSceneScript]))
 					_specialSceneScriptRunFlag = false;
 			}
 		}
 
-		if (!_scriptInterpreter->validScript(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
-			_scriptInterpreter->startScript(&_sceneSpecialScripts[_lastProcessedSceneScript], 8+_lastProcessedSceneScript);
+		if (!_emc->isValid(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
+			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], 8+_lastProcessedSceneScript);
 			_specialSceneScriptRunFlag = false;
 		}
 

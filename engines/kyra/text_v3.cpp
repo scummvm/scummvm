@@ -312,11 +312,11 @@ void KyraEngine_v3::objectChatProcess(const char *script) {
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 
-	_scriptInterpreter->loadScript(script, &_chatScriptData, &_opcodesTemporary);
-	_scriptInterpreter->initScript(&_chatScriptState, &_chatScriptData);
-	_scriptInterpreter->startScript(&_chatScriptState, 0);
-	while (_scriptInterpreter->validScript(&_chatScriptState))
-		_scriptInterpreter->runScript(&_chatScriptState);
+	_emc->load(script, &_chatScriptData, &_opcodesTemporary);
+	_emc->init(&_chatScriptState, &_chatScriptData);
+	_emc->start(&_chatScriptState, 0);
+	while (_emc->isValid(&_chatScriptState))
+		_emc->run(&_chatScriptState);
 
 	if (_chatVocHigh >= 0) {
 		playVoice(_chatVocHigh, _chatVocLow);
@@ -327,7 +327,7 @@ void KyraEngine_v3::objectChatProcess(const char *script) {
 	objectChatWaitToFinish();
 	_useFrameTable = false;
 
-	_scriptInterpreter->unloadScript(&_chatScriptData);
+	_emc->unload(&_chatScriptData);
 }
 
 void KyraEngine_v3::objectChatWaitToFinish() {
@@ -335,21 +335,21 @@ void KyraEngine_v3::objectChatWaitToFinish() {
 	int charAnimFrame = _mainCharacter.animFrame;
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
-	_scriptInterpreter->initScript(&_chatScriptState, &_chatScriptData);
-	_scriptInterpreter->startScript(&_chatScriptState, 1);
+	_emc->init(&_chatScriptState, &_chatScriptData);
+	_emc->start(&_chatScriptState, 1);
 
 	bool running = true;
 	const uint32 endTime = _chatEndTime;
 	resetSkipFlag();
 
 	while (running && !_quitFlag) {
-		if (!_scriptInterpreter->validScript(&_chatScriptState))
-			_scriptInterpreter->startScript(&_chatScriptState, 1);
+		if (!_emc->isValid(&_chatScriptState))
+			_emc->start(&_chatScriptState, 1);
 
 		_temporaryScriptExecBit = false;
-		while (!_temporaryScriptExecBit && _scriptInterpreter->validScript(&_chatScriptState)) {
+		while (!_temporaryScriptExecBit && _emc->isValid(&_chatScriptState)) {
 			musicUpdate(0);
-			_scriptInterpreter->runScript(&_chatScriptState);
+			_emc->run(&_chatScriptState);
 		}
 
 		int curFrame = _newShapeAnimFrame;
@@ -676,33 +676,33 @@ void KyraEngine_v3::dialogStartScript(int object, int funcNum) {
 		_specialSceneScriptState[_dialogSceneScript] = true;
 	}
 
-	_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
-	_scriptInterpreter->loadScript(_talkObjectList[object].filename, &_dialogScriptData, &_opcodesDialog);
+	_emc->init(&_dialogScriptState, &_dialogScriptData);
+	_emc->load(_talkObjectList[object].filename, &_dialogScriptData, &_opcodesDialog);
 
 	_dialogScriptFuncStart = funcNum * 3 + 0;
 	_dialogScriptFuncProc = funcNum * 3 + 1;
 	_dialogScriptFuncEnd = funcNum * 3 + 2;
 
-	_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncStart);
-	while (_scriptInterpreter->validScript(&_dialogScriptState))
-		_scriptInterpreter->runScript(&_dialogScriptState);
+	_emc->start(&_dialogScriptState, _dialogScriptFuncStart);
+	while (_emc->isValid(&_dialogScriptState))
+		_emc->run(&_dialogScriptState);
 }
 
 void KyraEngine_v3::dialogEndScript(int object) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::dialogEndScript(%d)", object);
 
-	_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
-	_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncEnd);
+	_emc->init(&_dialogScriptState, &_dialogScriptData);
+	_emc->start(&_dialogScriptState, _dialogScriptFuncEnd);
 
-	while (_scriptInterpreter->validScript(&_dialogScriptState))
-		_scriptInterpreter->runScript(&_dialogScriptState);
+	while (_emc->isValid(&_dialogScriptState))
+		_emc->run(&_dialogScriptState);
 
 	if (_dialogSceneAnim >= 0 && _dialogSceneScript >= 0) {
 		_specialSceneScriptState[_dialogSceneScript] = _specialSceneScriptStateBackup[_dialogSceneScript];
 		_dialogSceneScript = _dialogSceneAnim = -1;
 	}
 
-	_scriptInterpreter->unloadScript(&_dialogScriptData);
+	_emc->unload(&_dialogScriptData);
 }
 
 void KyraEngine_v3::npcChatSequence(const char *str, int object, int vocHigh, int vocLow) {
@@ -719,17 +719,17 @@ void KyraEngine_v3::npcChatSequence(const char *str, int object, int vocHigh, in
 		_chatVocHigh = _chatVocLow = -1;
 	}
 
-	_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
-	_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncProc);
+	_emc->init(&_dialogScriptState, &_dialogScriptData);
+	_emc->start(&_dialogScriptState, _dialogScriptFuncProc);
 
 	resetSkipFlag();
 
 	uint32 endTime = _chatEndTime;
 	bool running = true;
 	while (running) {
-		if (!_scriptInterpreter->runScript(&_dialogScriptState)) {
-			_scriptInterpreter->initScript(&_dialogScriptState, &_dialogScriptData);
-			_scriptInterpreter->startScript(&_dialogScriptState, _dialogScriptFuncProc);
+		if (!_emc->run(&_dialogScriptState)) {
+			_emc->init(&_dialogScriptState, &_dialogScriptData);
+			_emc->start(&_dialogScriptState, _dialogScriptFuncProc);
 		}
 
 		const uint32 curTime = _system->getMillis();

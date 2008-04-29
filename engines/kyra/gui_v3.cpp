@@ -525,26 +525,26 @@ int KyraEngine_v3::buttonMoodChange(Button *button) {
 		drawMalcolmsMoodText();
 		updateDlgIndex();
 		
-		ScriptData data;
-		ScriptState state;
+		EMCData data;
+		EMCState state;
 		memset(&data, 0, sizeof(data));
 		memset(&state, 0, sizeof(state));
 
 		_res->exists("_ACTOR.EMC", true);
-		_scriptInterpreter->loadScript("_ACTOR.EMC", &data, &_opcodes);
-		_scriptInterpreter->initScript(&state, &data);
-		_scriptInterpreter->startScript(&state, 1);
+		_emc->load("_ACTOR.EMC", &data, &_opcodes);
+		_emc->init(&state, &data);
+		_emc->start(&state, 1);
 
 		int vocHigh = _vocHigh;
 		_vocHigh = 200;
 		_useActorBuffer = true;
 
-		while (_scriptInterpreter->validScript(&state))
-			_scriptInterpreter->runScript(&state);
+		while (_emc->isValid(&state))
+			_emc->run(&state);
 
 		_useActorBuffer = false;
 		_vocHigh = vocHigh;
-		_scriptInterpreter->unloadScript(&data);
+		_emc->unload(&data);
 	}
 
 	return 0;

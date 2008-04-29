@@ -176,7 +176,7 @@ KyraEngine_v3::~KyraEngine_v3() {
 	}
 	_gameShapes.clear();
 
-	_scriptInterpreter->unloadScript(&_sceneScriptData);
+	_emc->unload(&_sceneScriptData);
 
 	delete [] _sceneStrings;
 	delete [] _talkObjectList;
@@ -714,23 +714,23 @@ void KyraEngine_v3::initItems() {
 
 void KyraEngine_v3::runStartupScript(int script, int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v3::runStartupScript(%d, %d)", script, unk1);
-	ScriptState state;
-	ScriptData data;
+	EMCState state;
+	EMCData data;
 	memset(&state, 0, sizeof(state));
 	memset(&data, 0, sizeof(data));
 	char filename[13];
 	strcpy(filename, "_START0X.EMC");
 	filename[7] = (script % 10) + '0';
 
-	_scriptInterpreter->loadScript(filename, &data, &_opcodes);
-	_scriptInterpreter->initScript(&state, &data);
-	_scriptInterpreter->startScript(&state, 0);
+	_emc->load(filename, &data, &_opcodes);
+	_emc->init(&state, &data);
+	_emc->start(&state, 0);
 	state.regs[6] = unk1;
 
-	while (_scriptInterpreter->validScript(&state))
-		_scriptInterpreter->runScript(&state);
+	while (_emc->isValid(&state))
+		_emc->run(&state);
 
-	_scriptInterpreter->unloadScript(&data);
+	_emc->unload(&data);
 }
 
 void KyraEngine_v3::openTalkFile(int file) {

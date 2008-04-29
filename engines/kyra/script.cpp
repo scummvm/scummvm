@@ -33,8 +33,8 @@
 #include "kyra/script.h"
 
 namespace Kyra {
-ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
-#define COMMAND(x) { &ScriptHelper::x, #x }
+EMCInterpreter::EMCInterpreter(KyraEngine *vm) : _vm(vm) {
+#define COMMAND(x) { &EMCInterpreter::x, #x }
 	static CommandEntry commandProcs[] = {
 		// 0x00
 		COMMAND(cmd_jmpTo),
@@ -65,14 +65,14 @@ ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 #undef COMMAND
 }
 
-bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, const Common::Array<const Opcode*> *opcodes) {
+bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
 	ScriptFileParser file(filename, _vm->resource());
 	if (!file) {
 		error("Couldn't open script file '%s'", filename);
 		return false;
 	}
 
-	memset(scriptData, 0, sizeof(ScriptData));
+	memset(scriptData, 0, sizeof(EMCData));
 
 	uint32 formBlockSize = file.getFORMBlockSize();
 	if (formBlockSize == (uint32)-1) {
@@ -85,7 +85,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 		scriptData->text = new byte[chunkSize];
 
 		if (!file.loadIFFBlock(TEXT_CHUNK, scriptData->text, chunkSize)) {
-			unloadScript(scriptData);
+			unload(scriptData);
 			error("Couldn't load TEXT chunk from file: '%s'", filename);
 			return false;
 		}
@@ -93,7 +93,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 
 	chunkSize = file.getIFFBlockSize(ORDR_CHUNK);
 	if (chunkSize == (uint32)-1) {
-		unloadScript(scriptData);
+		unload(scriptData);
 		error("No ORDR chunk found in file: '%s'", filename);
 		return false;
 	}
@@ -102,7 +102,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 	scriptData->ordr = new uint16[chunkSize];
 
 	if (!file.loadIFFBlock(ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
-		unloadScript(scriptData);
+		unload(scriptData);
 		error("Couldn't load ORDR chunk from file: '%s'", filename);
 		return false;
 	}
@@ -112,7 +112,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 
 	chunkSize = file.getIFFBlockSize(DATA_CHUNK);
 	if (chunkSize == (uint32)-1) {
-		unloadScript(scriptData);
+		unload(scriptData);
 		error("No DATA chunk found in file: '%s'", filename);
 		return false;
 	}
@@ -121,7 +121,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 	scriptData->data = new uint16[chunkSize];
 
 	if (!file.loadIFFBlock(DATA_CHUNK, scriptData->data, chunkSize << 1)) {
-		unloadScript(scriptData);
+		unload(scriptData);
 		error("Couldn't load DATA chunk from file: '%s'", filename);
 		return false;
 	}
@@ -135,7 +135,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 	return true;
 }
 
-void ScriptHelper::unloadScript(ScriptData *data) {
+void EMCInterpreter::unload(EMCData *data) {
 	if (!data)
 		return;
 
@@ -147,7 +147,7 @@ void ScriptHelper::unloadScript(ScriptData *data) {
 	data->ordr = data->data = 0;
 }
 
-void ScriptHelper::initScript(ScriptState *scriptStat, const ScriptData *data) {
+void EMCInterpreter::init(EMCState *scriptStat, const EMCData *data) {
 	scriptStat->dataPtr = data;
 	scriptStat->ip = 0;
 	scriptStat->stack[60] = 0;
@@ -155,7 +155,7 @@ void ScriptHelper::initScript(ScriptState *scriptStat, const ScriptData *data) {
 	scriptStat->sp = 60;
 }
 
-bool ScriptHelper::startScript(ScriptState *script, int function) {
+bool EMCInterpreter::start(EMCState *script, int function) {
 	if (!script->dataPtr)
 		return false;
 
@@ -175,13 +175,13 @@ bool ScriptHelper::startScript(ScriptState *script, int function) {
 	return true;
 }
 
-bool ScriptHelper::validScript(ScriptState *script) {
+bool EMCInterpreter::isValid(EMCState *script) {
 	if (!script->ip || !script->dataPtr || _vm->quit())
 		return false;
 	return true;
 }
 
-bool ScriptHelper::runScript(ScriptState *script) {
+bool EMCInterpreter::run(EMCState *script) {
 	_parameter = 0;
 
 	if (!script->ip)
@@ -207,7 +207,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	if (opcode > 18) {
 		error("Script unknown command: %d", opcode);
 	} else {
-		debugC(5, kDebugLevelScript, "[0x%.08X] ScriptHelper::%s([%d/%u])", instOffset, _commands[opcode].desc, _parameter, (uint)_parameter);
+		debugC(5, kDebugLevelScript, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset, _commands[opcode].desc, _parameter, (uint)_parameter);
 		(this->*(_commands[opcode].proc))(script);
 	}
 
@@ -295,15 +295,15 @@ bool ScriptFileParser::loadIFFBlock(const uint32 chunkName, void *loadTo, uint32
 #pragma mark - Command implementations
 #pragma mark -
 
-void ScriptHelper::cmd_jmpTo(ScriptState* script) {
+void EMCInterpreter::cmd_jmpTo(EMCState* script) {
 	script->ip = script->dataPtr->data + _parameter;
 }
 
-void ScriptHelper::cmd_setRetValue(ScriptState* script) {
+void EMCInterpreter::cmd_setRetValue(EMCState* script) {
 	script->retValue = _parameter;
 }
 
-void ScriptHelper::cmd_pushRetOrPos(ScriptState* script) {
+void EMCInterpreter::cmd_pushRetOrPos(EMCState* script) {
 	switch (_parameter) {
 	case 0:
 		script->stack[--script->sp] = script->retValue;
@@ -321,23 +321,23 @@ void ScriptHelper::cmd_pushRetOrPos(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::cmd_push(ScriptState* script) {
+void EMCInterpreter::cmd_push(EMCState* script) {
 	script->stack[--script->sp] = _parameter;
 }
 
-void ScriptHelper::cmd_pushReg(ScriptState* script) {
+void EMCInterpreter::cmd_pushReg(EMCState* script) {
 	script->stack[--script->sp] = script->regs[_parameter];
 }
 
-void ScriptHelper::cmd_pushBPNeg(ScriptState* script) {
+void EMCInterpreter::cmd_pushBPNeg(EMCState* script) {
 	script->stack[--script->sp] = script->stack[(-(int32)(_parameter + 2)) + script->bp];
 }
 
-void ScriptHelper::cmd_pushBPAdd(ScriptState* script) {
+void EMCInterpreter::cmd_pushBPAdd(EMCState* script) {
 	script->stack[--script->sp] = script->stack[(_parameter - 1) + script->bp];
 }
 
-void ScriptHelper::cmd_popRetOrPos(ScriptState* script) {
+void EMCInterpreter::cmd_popRetOrPos(EMCState* script) {
 	switch (_parameter) {
 	case 0:
 		script->retValue = script->stack[script->sp++];
@@ -358,27 +358,27 @@ void ScriptHelper::cmd_popRetOrPos(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::cmd_popReg(ScriptState* script) {
+void EMCInterpreter::cmd_popReg(EMCState* script) {
 	script->regs[_parameter] = script->stack[script->sp++];
 }
 
-void ScriptHelper::cmd_popBPNeg(ScriptState* script) {
+void EMCInterpreter::cmd_popBPNeg(EMCState* script) {
 	script->stack[(-(int32)(_parameter + 2)) + script->bp] = script->stack[script->sp++];
 }
 
-void ScriptHelper::cmd_popBPAdd(ScriptState* script) {
+void EMCInterpreter::cmd_popBPAdd(EMCState* script) {
 	script->stack[(_parameter - 1) + script->bp] = script->stack[script->sp++];
 }
 
-void ScriptHelper::cmd_addSP(ScriptState* script) {
+void EMCInterpreter::cmd_addSP(EMCState* script) {
 	script->sp += _parameter;
 }
 
-void ScriptHelper::cmd_subSP(ScriptState* script) {
+void EMCInterpreter::cmd_subSP(EMCState* script) {
 	script->sp -= _parameter;
 }
 
-void ScriptHelper::cmd_execOpcode(ScriptState* script) {
+void EMCInterpreter::cmd_execOpcode(EMCState* script) {
 	uint8 opcode = _parameter;
 
 	assert(script->dataPtr->opcodes);
@@ -392,14 +392,14 @@ void ScriptHelper::cmd_execOpcode(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::cmd_ifNotJmp(ScriptState* script) {
+void EMCInterpreter::cmd_ifNotJmp(EMCState* script) {
 	if (!script->stack[script->sp++]) {
 		_parameter &= 0x7FFF;
 		script->ip = script->dataPtr->data + _parameter;
 	}
 }
 
-void ScriptHelper::cmd_negate(ScriptState* script) {
+void EMCInterpreter::cmd_negate(EMCState* script) {
 	int16 value = script->stack[script->sp];
 	switch (_parameter) {
 	case 0:
@@ -424,7 +424,7 @@ void ScriptHelper::cmd_negate(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::cmd_eval(ScriptState* script) {
+void EMCInterpreter::cmd_eval(EMCState* script) {
 	int16 ret = 0;
 	bool error = false;
 
@@ -540,7 +540,7 @@ void ScriptHelper::cmd_eval(ScriptState* script) {
 		script->stack[--script->sp] = ret;
 }
 
-void ScriptHelper::cmd_setRetAndJmp(ScriptState* script) {
+void EMCInterpreter::cmd_setRetAndJmp(EMCState* script) {
 	if (script->sp >= 60) {
 		script->ip = 0;
 	} else {
