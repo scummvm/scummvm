@@ -188,6 +188,9 @@ Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const 
 
 const char *KyraEngine::getSavegameFilename(int num) {
 	static Common::String filename;
+
+	assert(num >= 0 && num <= 999);
+
 	char extension[5];
 	sprintf(extension, "%.3d", num);
 

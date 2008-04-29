@@ -36,7 +36,11 @@ namespace Kyra {
 typedef Common::Functor0<void> UpdateFunctor;
 
 class KyraEngine;
-struct Rect;
+
+struct Rect {
+	int x, y;
+	int x2, y2;
+};
 
 struct ScreenDim {
 	uint16 sx;

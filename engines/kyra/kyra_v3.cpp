@@ -1645,13 +1645,5 @@ void KyraEngine_v3::changeChapter(int newChapter, int sceneId, int malcolmShapes
 	enterNewScene(sceneId, facing, 0, 0, 0);
 }
 
-#pragma mark -
-
-Movie *KyraEngine_v3::createWSAMovie() {
-	WSAMovieV2 *movie = new WSAMovieV2(this, _screen);
-	assert(movie);
-	return movie;
-}
-
 } // end of namespace Kyra
 

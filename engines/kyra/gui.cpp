@@ -309,7 +309,7 @@ void GUI::updateSaveList() {
 		s1 = (*i)[i->size()-3] - '0';
 		s2 = (*i)[i->size()-2] - '0';
 		s3 = (*i)[i->size()-1] - '0';
-		if (s1 < 0 || s2 < 0 || s3 < 0 || s1 > 9 || s2 > 9 || s3 > 9)
+		if (!isdigit(s1) || !isdigit(s2) || !isdigit(s3))
 			continue;
 		_saveSlots.push_back(s1*100+s2*10+s3);
 	}

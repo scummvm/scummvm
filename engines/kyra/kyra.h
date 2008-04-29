@@ -28,10 +28,8 @@
 
 #include "engines/engine.h"
 
-#include "common/rect.h"
 #include "common/array.h"
 #include "common/events.h"
-#include "common/func.h"
 
 #include "kyra/script.h"
 
@@ -55,11 +53,6 @@ struct GameFlags {
 	bool useDigSound		: 1;
 
 	byte gameID;
-};
-
-struct Rect {
-	int x, y;
-	int x2, y2;
 };
 
 enum {

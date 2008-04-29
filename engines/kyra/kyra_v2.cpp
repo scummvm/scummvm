@@ -186,10 +186,6 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_timOpcodes.clear();
 }
 
-Movie *KyraEngine_v2::createWSAMovie() {
-	return new WSAMovieV2(this, _screen);
-}
-
 int KyraEngine_v2::init() {
 	_screen = new Screen_v2(this, _system);
 	assert(_screen);

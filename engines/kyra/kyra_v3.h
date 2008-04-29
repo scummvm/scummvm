@@ -60,7 +60,6 @@ public:
 
 	void playVQA(const char *name);
 
-	virtual Movie *createWSAMovie();
 private:
 	Screen_v3 *_screen;
 	SoundDigital *_soundDigital;

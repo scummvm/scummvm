@@ -203,8 +203,6 @@ public:
 	Screen_v2 *screen_v2() { return _screen; }
 	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
-
-	virtual Movie *createWSAMovie();
 protected:
 	// intro/outro
 	void seq_playSequences(int startSeq, int endSeq = -1);

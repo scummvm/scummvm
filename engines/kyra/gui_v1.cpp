@@ -624,6 +624,8 @@ int GUI_v1::loadGameMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
+	_vm->_gameToLoad = -1;
+
 	while (_displaySubMenu && !_vm->_quitFlag) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
@@ -639,7 +641,8 @@ int GUI_v1::loadGameMenu(Button *button) {
 		updateAllMenuButtons();
 	} else {
 		restorePalette();
-		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+		if (_vm->_gameToLoad != -1)
+			_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
 		_displayMenu = false;
 		_menuRestoreScreen = false;
 	}
