@@ -302,7 +302,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			debug(4, "opcode = %s\n", _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
 		} else {
-			printf("ScriptInterpreter::runScript(%d) Unknown opcode %02X\n", _runningScriptObjectIndex, opcode);
+			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X\n", _runningScriptObjectIndex, opcode);
 		}
 	}
 
