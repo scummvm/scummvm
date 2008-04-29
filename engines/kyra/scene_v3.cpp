@@ -282,9 +282,9 @@ void KyraEngine_v3::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	initSceneAnims(unk2);
 
 	if (_mainCharacter.sceneId == 9 && !_soundDigital->isPlaying(_musicSoundChannel))
-		playMusicTrack(_sceneList[_mainCharacter.sceneId].sound, 0);
+		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
 	if (!unk2)
-		playMusicTrack(_sceneList[_mainCharacter.sceneId].sound, 0);
+		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
 
 	if (unk1 && !unk2 && _mainCharacter.animFrame != 87)
 		moveCharacter(facing, x, y);

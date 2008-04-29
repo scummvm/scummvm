@@ -125,8 +125,6 @@ public:
 
 	uint32 tickLength() const { return _tickLength; }
 
-	virtual Movie *createWSAMovie() = 0;
-
 	Common::RandomSource _rnd;
 
 	// input
@@ -157,7 +155,7 @@ public:
 
 	// sound
 	virtual void snd_playTheme(int file, int track);
-	virtual void snd_playSoundEffect(int id);
+	virtual void snd_playSoundEffect(int id, int volume=0xFF);
 	virtual void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id) = 0;
 	virtual bool snd_voiceIsPlaying();

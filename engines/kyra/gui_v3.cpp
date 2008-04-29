@@ -443,7 +443,7 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 
 		_screen->hideMouse();
 		clearInventorySlot(slot, 0);
-		playSoundEffect(0x0B, 0xC8);
+		snd_playSoundEffect(0x0B, 0xC8);
 		setMouseCursor(slotItem);
 		updateItemCommand(slotItem, (_lang == 1) ? getItemCommandStringPickUp(slotItem) : 0, 0xFF);
 		_itemInHand = slotItem;
@@ -458,7 +458,7 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 			if (itemInventoryMagic(_itemInHand, slot))
 				return 0;
 
-			playSoundEffect(0x0B, 0xC8);
+			snd_playSoundEffect(0x0B, 0xC8);
 
 			_screen->hideMouse();
 			clearInventorySlot(slot, 0);
@@ -469,7 +469,7 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 			_itemInHand = slotItem;
 			_screen->showMouse();
 		} else {
-			playSoundEffect(0x0C, 0xC8);
+			snd_playSoundEffect(0x0C, 0xC8);
 			_screen->hideMouse();
 			drawInventorySlot(0, _itemInHand, slot);
 			_screen->setMouseCursor(0, 0, getShapePtr(0));
@@ -485,7 +485,7 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 
 int KyraEngine_v3::buttonMoodChange(Button *button) {
 	if (queryGameFlag(0x219)) {
-		playSoundEffect(0x0D, 0xC8);
+		snd_playSoundEffect(0x0D, 0xC8);
 		return 0;
 	}
 
@@ -504,7 +504,7 @@ int KyraEngine_v3::buttonMoodChange(Button *button) {
 		_screen->hideMouse();
 		setGameFlag(3);
 
-		playSoundEffect(0x2E, 0xC8);
+		snd_playSoundEffect(0x2E, 0xC8);
 
 		while (_invWsaFrame != frameTable[_malcolmsMood]) {
 			uint32 endTime = _system->getMillis() + 2 * _tickLength;
@@ -578,7 +578,7 @@ int KyraEngine_v3::buttonJesterStaff(Button *button) {
 	if (_itemInHand == 27) {
 		_screen->hideMouse();
 		removeHandItem();
-		playSoundEffect(0x0C, 0xC8);
+		snd_playSoundEffect(0x0C, 0xC8);
 		drawJestersStaff(1, 0);
 		updateItemCommand(27, 2, 0xFF);
 		setGameFlag(0x97);
@@ -586,7 +586,7 @@ int KyraEngine_v3::buttonJesterStaff(Button *button) {
 	} else if (_itemInHand == -1) {
 		if (queryGameFlag(0x97)) {
 			_screen->hideMouse();
-			playSoundEffect(0x0B, 0xC8);
+			snd_playSoundEffect(0x0B, 0xC8);
 			setHandItem(27);
 			drawJestersStaff(0, 0);
 			updateItemCommand(27, 0, 0xFF);

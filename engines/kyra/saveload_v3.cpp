@@ -126,7 +126,7 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
 	if (!saveFile) {
 		showMessageFromCCode(17, 0xB3, 0);
-		playSoundEffect(0x0D, 0xC8);
+		snd_playSoundEffect(0x0D, 0xC8);
 		return;
 	}
 
@@ -242,9 +242,9 @@ void KyraEngine_v3::loadGame(const char *fileName) {
 	setHandItem(_itemInHand);
 
 	if (_lastMusicCommand >= 0 && !_unkSceneScreenFlag1)
-		playMusicTrack(_lastMusicCommand, 1);
+		snd_playWanderScoreViaMap(_lastMusicCommand, 1);
 	else if (_lastMusicCommand == -1)
-		playMusicTrack(28, 1);
+		snd_playWanderScoreViaMap(28, 1);
 
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();

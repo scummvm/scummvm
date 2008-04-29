@@ -383,8 +383,8 @@ void KyraEngine_v3::playMenuAudioFile() {
 	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, Audio::Mixer::kMusicSoundType);
 }
 
-void KyraEngine_v3::playMusicTrack(int track, int force) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::playMusicTrack(%d, %d)", track, force);
+void KyraEngine_v3::snd_playWanderScoreViaMap(int track, int force) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::snd_playWanderScoreViaMap(%d, %d)", track, force);
 
 	// XXX byte_3C87C compare
 
@@ -434,7 +434,7 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 		if (_musicSoundChannel >= 0) {
 			if (!_soundDigital->isPlaying(_musicSoundChannel)) {
 				if (_lastMusicCommand != -1)
-					playMusicTrack(_lastMusicCommand, 1);
+					snd_playWanderScoreViaMap(_lastMusicCommand, 1);
 			}
 		}
 		lock = 0;
@@ -453,8 +453,8 @@ void KyraEngine_v3::fadeOutMusic(int ticks) {
 	}
 }
 
-void KyraEngine_v3::playSoundEffect(int item, int volume) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::playSoundEffect(%d, %d)", item, volume);
+void KyraEngine_v3::snd_playSoundEffect(int item, int volume) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v3::snd_playSoundEffect(%d, %d)", item, volume);
 	if (_sfxFileMap[item*2+0] != 0xFF) {
 		char filename[16];
 		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
@@ -497,7 +497,7 @@ void KyraEngine_v3::playStudioSFX(const char *str) {
 	if (str[strSize] != '?' && str[strSize] != '!')
 		return;
 
-	playSoundEffect(_curStudioSFX++, 128);
+	snd_playSoundEffect(_curStudioSFX++, 128);
 
 	if (_curStudioSFX > 291)
 		_curStudioSFX = 283;
@@ -1045,7 +1045,7 @@ void KyraEngine_v3::handleInput(int x, int y) {
 		return;
 
 	if (_unk3 == -3) {
-		playSoundEffect(0x0D, 0x80);
+		snd_playSoundEffect(0x0D, 0x80);
 		return;
 	}
 
@@ -1619,7 +1619,7 @@ void KyraEngine_v3::scoreIncrease(int count, const char *str) {
 		_screen->updateScreen();
 		delay(20, true);
 		
-		playSoundEffect(0x0E, 0xC8);
+		snd_playSoundEffect(0x0E, 0xC8);
 		drawOld = 0;
 	}
 

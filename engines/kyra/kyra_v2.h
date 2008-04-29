@@ -842,7 +842,7 @@ protected:
 	void snd_loadSoundFile(int id);
 
 	void playVoice(int high, int low);
-	void snd_playSoundEffect(int track);
+	void snd_playSoundEffect(int track, int volume=0xFF);
 
 	// timer
 	void timerFadeOutMessage(int);

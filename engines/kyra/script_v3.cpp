@@ -885,15 +885,15 @@ int KyraEngine_v3::o3_stopMusic(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine_v3::o3_playMusicTrack(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_playMusicTrack(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	playMusicTrack(stackPos(0), stackPos(1));
+int KyraEngine_v3::o3_playWanderScoreViaMap(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
 	return 0;
 }
 
 int KyraEngine_v3::o3_playSoundEffect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v3::o3_playSoundEffect(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	playSoundEffect(stackPos(0), stackPos(1));
+	snd_playSoundEffect(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -1552,7 +1552,7 @@ void KyraEngine_v3::setupOpcodeTable() {
 	Opcode(o3_setMalcolmPos);
 	Opcode(o3_stopMusic);
 	// 0x58
-	Opcode(o3_playMusicTrack);
+	Opcode(o3_playWanderScoreViaMap);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_getScore);
 	OpcodeUnImpl();

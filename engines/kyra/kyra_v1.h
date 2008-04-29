@@ -202,7 +202,7 @@ public:
 	void readSettings();
 	void writeSettings();
 
-	void snd_playSoundEffect(int track);
+	void snd_playSoundEffect(int track, int volume=0xFF);
 	void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);

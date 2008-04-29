@@ -123,13 +123,13 @@ private:
 	static const char *_soundList[];
 	static const int _soundListSize;
 
-	void playMusicTrack(int track, int force);
+	void snd_playWanderScoreViaMap(int track, int force);
 	void stopMusicTrack();
 
 	int musicUpdate(int forceRestart);
 	void fadeOutMusic(int ticks);
 
-	void playSoundEffect(int item, int volume);
+	void snd_playSoundEffect(int item, int volume);
 
 	static const uint8 _sfxFileMap[];
 	static const int _sfxFileMapSize;
@@ -769,7 +769,7 @@ private:
 	int o3_getShapeFlag1(ScriptState *script);
 	int o3_setMalcolmPos(ScriptState *script);
 	int o3_stopMusic(ScriptState *script);
-	int o3_playMusicTrack(ScriptState *script);
+	int o3_playWanderScoreViaMap(ScriptState *script);
 	int o3_playSoundEffect(ScriptState *script);
 	int o3_getScore(ScriptState *script);
 	int o3_blockOutRegion(ScriptState *script);

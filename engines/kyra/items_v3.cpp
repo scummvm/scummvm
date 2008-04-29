@@ -190,7 +190,7 @@ bool KyraEngine_v3::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 	if (processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2))
 		return true;
 
-	playSoundEffect(13, 200);
+	snd_playSoundEffect(13, 200);
 
 	if (countAllItems() >= 50) {
 		removeTrashItems();
@@ -202,7 +202,7 @@ bool KyraEngine_v3::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 	}
 
 	if (!_chatText)
-		playSoundEffect(13, 200);
+		snd_playSoundEffect(13, 200);
 	return false;
 }
 
@@ -320,7 +320,7 @@ void KyraEngine_v3::itemDropDown(int startX, int startY, int dstX, int dstY, int
 		_itemList[itemSlot].y = dstY;
 		_itemList[itemSlot].id = item;
 		_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
-		playSoundEffect(0x0C, 0xC8);
+		snd_playSoundEffect(0x0C, 0xC8);
 		addItemToAnimList(itemSlot);
 	} else {
 		uint8 *itemShape = getShapePtr(item + 248);
@@ -349,7 +349,7 @@ void KyraEngine_v3::itemDropDown(int startX, int startY, int dstX, int dstY, int
 			restoreGfxRect32x32(curX, curY-16);
 
 			if (dstX != dstY || (dstY - startY > 16)) {
-				playSoundEffect(0x11, 0xC8);
+				snd_playSoundEffect(0x11, 0xC8);
 				speed = MAX(speed, 6);
 				int speedX = ((dstX - startX) << 4) / speed;
 				int origSpeed = speed;
@@ -389,7 +389,7 @@ void KyraEngine_v3::itemDropDown(int startX, int startY, int dstX, int dstY, int
 		_itemList[itemSlot].y = dstY;
 		_itemList[itemSlot].id = item;
 		_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
-		playSoundEffect(0x0C, 0xC8);
+		snd_playSoundEffect(0x0C, 0xC8);
 		addItemToAnimList(itemSlot);
 		_screen->showMouse();
 	}
@@ -417,7 +417,7 @@ void KyraEngine_v3::exchangeMouseItem(int itemPos, int runScript) {
 	_itemInHand = itemId;
 
 	addItemToAnimList(itemPos);
-	playSoundEffect(0x0B, 0xC8);
+	snd_playSoundEffect(0x0B, 0xC8);
 	setMouseCursor(_itemInHand);
 	int str2 = 0;
 
@@ -445,7 +445,7 @@ bool KyraEngine_v3::pickUpItem(int x, int y, int runScript) {
 		deleteItemAnimEntry(itemPos);
 		int itemId = _itemList[itemPos].id;
 		_itemList[itemPos].id = 0xFFFF;
-		playSoundEffect(0x0B, 0xC8);
+		snd_playSoundEffect(0x0B, 0xC8);
 		setMouseCursor(itemId);
 		int itemString = 0;
 
@@ -495,7 +495,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 		assert(animObjIndex != -1);
 
 		_screen->hideMouse();
-		playSoundEffect(0x93, 0xC8);
+		snd_playSoundEffect(0x93, 0xC8);
 		for (int i = 109; i <= 141; ++i) {
 			_animObjects[animObjIndex].shapeIndex = i+248;
 			_animObjects[animObjIndex].needRefresh = true;
@@ -529,7 +529,7 @@ bool KyraEngine_v3::itemListMagic(int handItem, int itemSlot) {
 		uint8 resItem = _itemMagicTable[i+2];
 		uint8 newItem = _itemMagicTable[i+3];
 
-		playSoundEffect(0x0F, 0xC8);
+		snd_playSoundEffect(0x0F, 0xC8);
 
 		_itemList[itemSlot].id = (resItem == 0xFF) ? 0xFFFF : resItem;
 
@@ -567,7 +567,7 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 		return true;
 	} else if ((handItem == 6 || handItem == 7) && item == 2) {
 		_screen->hideMouse();
-		playSoundEffect(0x93, 0xC8);
+		snd_playSoundEffect(0x93, 0xC8);
 		for (int i = 109; i <= 141; ++i) {
 			_mainCharacter.inventory[invSlot] = i;
 			_screen->drawShape(2, getShapePtr(invSlot+422), 0, 144, 0, 0);
@@ -590,7 +590,7 @@ bool KyraEngine_v3::itemInventoryMagic(int handItem, int invSlot) {
 		uint8 resItem = _itemMagicTable[i+2];
 		uint8 newItem = _itemMagicTable[i+3];
 
-		playSoundEffect(0x0F, 0xC8);
+		snd_playSoundEffect(0x0F, 0xC8);
 
 		_mainCharacter.inventory[invSlot] = (resItem == 0xFF) ? 0xFFFF : resItem;
 

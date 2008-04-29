@@ -1838,8 +1838,8 @@ void KyraEngine_v2::playVoice(int high, int low) {
 	snd_playVoiceFile(vocFile);
 }
 
-void KyraEngine_v2::snd_playSoundEffect(int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playSoundEffect(%d)", track);
+void KyraEngine_v2::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playSoundEffect(%d, %d)", track, volume);
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (track == 10)
@@ -1857,7 +1857,6 @@ void KyraEngine_v2::snd_playSoundEffect(int track) {
 	else if (_flags.platform == Common::kPlatformPC)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		// For now this is used as a fallback only (if no voc file exists).
 		KyraEngine::snd_playSoundEffect(track);
 }
 

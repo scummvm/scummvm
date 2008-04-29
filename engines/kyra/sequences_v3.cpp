@@ -68,7 +68,7 @@ void KyraEngine_v3::showBadConscience() {
 	setupSceneAnimObject(0x0E, 9, 0, 187, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
 	for (uint i = 0; i <= _badConscienceFrameTable[_badConscienceAnim]; ++i) {
 		if (i == 8)
-			playSoundEffect(0x1B, 0xC8);
+			snd_playSoundEffect(0x1B, 0xC8);
 		updateSceneAnim(0x0E, i);
 		delay(3*_tickLength, true);
 	}
@@ -98,7 +98,7 @@ void KyraEngine_v3::hideBadConscience() {
 	_badConscienceShown = false;
 	for (int frame = _badConscienceFrameTable[_badConscienceAnim+8]; frame >= 0; --frame) {
 		if (frame == 15)
-			playSoundEffect(0x31, 0xC8);
+			snd_playSoundEffect(0x31, 0xC8);
 		updateSceneAnim(0x0E, frame);
 		delay(1*_tickLength, true);
 	}
@@ -142,7 +142,7 @@ void KyraEngine_v3::showGoodConscience() {
 	setupSceneAnimObject(0x0F, 9, 0, 187, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
 	for (uint i = 0; i <= _goodConscienceFrameTable[_goodConscienceAnim]; ++i) {
 		if (i == 10)
-			playSoundEffect(0x7F, 0xC8);
+			snd_playSoundEffect(0x7F, 0xC8);
 		updateSceneAnim(0x0F, i);
 		delay(2*_tickLength, true);
 	}
@@ -172,7 +172,7 @@ void KyraEngine_v3::hideGoodConscience() {
 	_goodConscienceShown = false;
 	for (int frame = _goodConscienceFrameTable[_goodConscienceAnim+5]; frame >= 0; --frame) {
 		if (frame == 17)
-			playSoundEffect(0x31, 0xC8);
+			snd_playSoundEffect(0x31, 0xC8);
 		updateSceneAnim(0x0F, frame);
 		delay(1*_tickLength, true);
 	}
@@ -246,7 +246,7 @@ void KyraEngine_v3::eelScript() {
 
 	setGameFlag(0xD1);
 
-	playSoundEffect(0x2A, 0xC8);
+	snd_playSoundEffect(0x2A, 0xC8);
 
 	setGameFlag(0x171);
 
