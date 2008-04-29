@@ -443,7 +443,7 @@ int16 ScriptFunctionsRtz::o1_TEXTRECT(int16 argc, int16 *argv) {
 	int16 y1 = CLIP<int16>(argv[3], 1, 198);
 	int16 x2 = CLIP<int16>(argv[2], 1, 318);
 	int16 y2 = CLIP<int16>(argv[1], 1, 198);
-	int16 textValue = argv[0];
+	//int16 textValue = argv[0];
 	// TODO: textValue
 	_vm->_screen->setTextRect(Common::Rect(x1, y1, x2, y2));
 	return 0;
