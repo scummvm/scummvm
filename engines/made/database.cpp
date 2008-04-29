@@ -280,11 +280,9 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	while (count2-- > 0) {
 		if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 			if (READ_LE_UINT16(prop) & 0x4000) {
-				//debug(2, "! L1.1\n");
 				propertyFlag = 1;
 				return (int16*)_gameState + READ_LE_UINT16(propPtr1);
 			} else {
-				//debug(2, "! L1.2\n");
 				propertyFlag = obj->getFlags() & 1;
 				return propPtr1;
 			}
@@ -316,12 +314,10 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 		while (count2-- > 0) {
 			if (!(READ_LE_UINT16(prop) & 0x8000)) {
 				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
-					if (*prop & 0x4000) {
-						//debug(2, "! L2.1\n");
+					if (READ_LE_UINT16(prop) & 0x4000) {
 						propertyFlag = 1;
 						return (int16*)_gameState + READ_LE_UINT16(propPtr1);
 					} else {
-						//debug(2, "! L2.2\n");
 						propertyFlag = obj->getFlags() & 1;
 						return propPtr1;
 					}
@@ -330,12 +326,10 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 				}
 			} else {
 				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
-					if (*prop & 0x4000) {
-						//debug(2, "! L3.1\n");
+					if (READ_LE_UINT16(prop) & 0x4000) {
 						propertyFlag = 1;
 						return (int16*)_gameState + READ_LE_UINT16(propertyPtr);
 					} else {
-						//debug(2, "! L3.2\n");
 						propertyFlag = obj->getFlags() & 1;
 						return propertyPtr;
 					}
