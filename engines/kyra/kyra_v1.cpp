@@ -49,7 +49,6 @@ namespace Kyra {
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	: KyraEngine(system, flags) {
 	_skipFlag = false;
-	_flags = flags;
 
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
 	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 =

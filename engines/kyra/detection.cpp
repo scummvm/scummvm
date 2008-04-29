@@ -41,22 +41,22 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define FLAGS(x, y, z, a, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, id }
+#define FLAGS(x, y, z, a, b, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, Kyra::GI_KYRA2)
-#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, Kyra::GI_KYRA2)
+#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
 	{
@@ -435,7 +435,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FLAGS
 	},
 
-	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

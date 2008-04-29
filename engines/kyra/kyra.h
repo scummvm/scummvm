@@ -47,10 +47,13 @@ namespace Kyra {
 struct GameFlags {
 	Common::Language lang;
 	Common::Platform platform;
-	bool isDemo;
-	bool useAltShapeHeader;	// alternative shape header (uses 2 bytes more, those are unused though)
-	bool isTalkie;
-	bool useHiResOverlay;
+
+	bool isDemo				: 1;
+	bool useAltShapeHeader	: 1;	// alternative shape header (uses 2 bytes more, those are unused though)
+	bool isTalkie			: 1;
+	bool useHiResOverlay	: 1;
+	bool useDigSound		: 1;
+
 	byte gameID;
 };
 

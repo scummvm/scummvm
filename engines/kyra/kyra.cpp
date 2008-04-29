@@ -39,7 +39,7 @@
 namespace Kyra {
 
 KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
-	: Engine(system) {
+	: Engine(system), _flags(flags) {
 	_res = 0;
 	_sound = 0;
 	_text = 0;
@@ -47,7 +47,6 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_timer = 0;
 	_scriptInterpreter = 0;
 
-	_flags = flags;
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
@@ -87,50 +86,53 @@ int KyraEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
-	// We prefer AdLib over native MIDI, since our AdLib playback code is much
-	// more mature than our MIDI player. For example we are missing MT-32 support
-	// and it seems our MIDI playback code has threading issues (see bug #1506583
-	// "KYRA1: Crash on exceeded polyphony" for more information).
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
+	if (!_flags.useDigSound) {
+		// We prefer AdLib over native MIDI, since our AdLib playback code is much
+		// more mature than our MIDI player. For example we are missing MT-32 support
+		// and it seems our MIDI playback code has threading issues (see bug #1506583
+		// "KYRA1: Crash on exceeded polyphony" for more information).
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-		// TODO: currently we don't support the PC98 sound data,
-		// but since it has the FM-Towns data files, we just use the
-		// FM-Towns driver
-		if (_flags.gameID == GI_KYRA1)
-			_sound = new SoundTowns(this, _mixer);
-		else
-			_sound = new SoundTowns_v2(this, _mixer);
-	} else if (midiDriver == MD_ADLIB) {
-		_sound = new SoundAdlibPC(this, _mixer);
-		assert(_sound);
-	} else {
-		bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-		assert(driver);
-		if (native_mt32)
-			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-		SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver);
-		_sound = soundMidiPc;
-		assert(_sound);
-		soundMidiPc->hasNativeMT32(native_mt32);
-
-		// Unlike some SCUMM games, it's not that the MIDI sounds are
-		// missing. It's just that at least at the time of writing they
-		// are decidedly inferior to the Adlib ones.
-		if (ConfMan.getBool("multi_midi")) {
-			SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
-			assert(adlib);
-
-			_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+			// TODO: currently we don't support the PC98 sound data,
+			// but since it has the FM-Towns data files, we just use the
+			// FM-Towns driver
+			if (_flags.gameID == GI_KYRA1)
+				_sound = new SoundTowns(this, _mixer);
+			else
+				_sound = new SoundTowns_v2(this, _mixer);
+		} else if (midiDriver == MD_ADLIB) {
+			_sound = new SoundAdlibPC(this, _mixer);
 			assert(_sound);
+		} else {
+			bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+
+			MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+			assert(driver);
+			if (native_mt32)
+				driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+			SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver);
+			_sound = soundMidiPc;
+			assert(_sound);
+			soundMidiPc->hasNativeMT32(native_mt32);
+
+			// Unlike some SCUMM games, it's not that the MIDI sounds are
+			// missing. It's just that at least at the time of writing they
+			// are decidedly inferior to the Adlib ones.
+			if (ConfMan.getBool("multi_midi")) {
+				SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
+				assert(adlib);
+
+				_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
+				assert(_sound);
+			}
 		}
 	}
 
 	if (_sound)
 		_sound->updateVolumeSettings();
+
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
