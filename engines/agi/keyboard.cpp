@@ -378,6 +378,10 @@ int AgiEngine::waitKey() {
 		key = doPollKeyboard();
 		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
 			break;
+
+		_gfx->pollTimer();
+		updateTimer();
+
 		_gfx->doUpdate();
 	}
 	return key;
