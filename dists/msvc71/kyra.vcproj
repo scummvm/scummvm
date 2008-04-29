@@ -153,6 +153,9 @@
 			RelativePath="..\..\engines\kyra\gui_v3.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_v3.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\items_v1.cpp">
 		</File>
 		<File
@@ -199,6 +202,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\saveload_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\saveload_v3.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\scene.cpp">
