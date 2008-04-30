@@ -485,24 +485,13 @@ void ScummEngine::CHARSET_1() {
 				_string[0].ypos = _screenHeight - 40;
 		}
 
-		if (_game.version >= 6) {
-			if (_string[0].ypos < 10)
-				_string[0].ypos = 10;
+		if (_string[0].ypos < 1)
+			_string[0].ypos = 1;
 
-			if (_string[0].xpos < 5)
-				_string[0].xpos = 5;
-			if (_string[0].xpos > _screenWidth - 10)
-				_string[0].xpos = _screenWidth - 10;
-		} else {
-			if (_string[0].ypos < 1)
-				_string[0].ypos = 1;
-
-			if (_string[0].xpos < 80)
-				_string[0].xpos = 80;
-			if (_string[0].xpos > _screenWidth - 80)
-				_string[0].xpos = _screenWidth - 80;
-		}
-
+		if (_string[0].xpos < 80)
+			_string[0].xpos = 80;
+		if (_string[0].xpos > _screenWidth - 80)
+			_string[0].xpos = _screenWidth - 80;
 	}
 
 	_charset->_top = _string[0].ypos + _screenTop;
