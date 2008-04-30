@@ -40,12 +40,12 @@ public:
 		uint8 layer;
 		uint8 frame;
 		int8 animType;
-		int8 order;
+		uint8 order;
 		int8 isPaused;
 		int8 isStatic;
 		int8 maxTick;
 		int8 maxFrame;
-		int8 newLayer;
+		uint8 newLayer;
 		int8 newAnimation;
 		byte intersected;
 		uint8 newCycle;
@@ -61,7 +61,7 @@ public:
 		int8 stateType;
 		int8 animTypeBak;
 		int8 redrawAnimation;
-		int8 redrawLayer;
+		uint8 redrawLayer;
 		uint8 redrawFrame;
 	} PACKED_STRUCT;
 
@@ -86,10 +86,10 @@ public:
 		int16 lastTop;
 		int16 lastBottom;
 		Mult_GobState **goblinStates;
-		int8 goblinX;
-		int8 goblinY;
-		int8 destX;
-		int8 destY;
+		uint8 goblinX;
+		uint8 goblinY;
+		uint8 destX;
+		uint8 destY;
 		int8 gobDestX;
 		int8 gobDestY;
 		uint8 nearestWayPoint;
@@ -229,7 +229,7 @@ public:
 	int16 *_renderData;
 	Mult_Object **_renderObjs;
 
-	int8 *_orderArray;
+	uint8 *_orderArray;
 
 	SurfaceDesc::Ptr _animSurf;
 	int16 _animLeft;
