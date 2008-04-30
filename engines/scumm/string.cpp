@@ -679,7 +679,12 @@ void ScummEngine::CHARSET_1() {
 }
 
 #ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v8::CHARSET_1() {
+void ScummEngine_v7::CHARSET_1() {
+	if (_game.id == GID_FT) {
+		ScummEngine::CHARSET_1();
+		return;
+	}
+
 	byte subtitleBuffer[2048];
 	byte *subtitleLine = subtitleBuffer;
 	Common::Point subtitlePos;
@@ -830,7 +835,7 @@ void ScummEngine_v8::CHARSET_1() {
 			}
 		}
 	}
-	_haveMsg = 2;
+	_haveMsg = (_game.version == 8) ? 2 : 1;
 	_keepText = false;
 	_string[0] = saveStr;
 }

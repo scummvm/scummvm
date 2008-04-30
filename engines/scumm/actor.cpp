@@ -1884,13 +1884,16 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	if (_game.version == 7)
 		VAR(VAR_HAVE_MSG) = 0xFF;
 	_haveActorSpeechMsg = true;
-	if (_game.version == 8) {
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
 		stringWrap = _string[0].wrapping;
 		_string[0].wrapping = true;
 	}
 	CHARSET_1();
-	if (_game.version == 8) {
-		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+		if (_game.version == 8)
+			VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
+		else
+			VAR(VAR_HAVE_MSG) = 1;
 		_string[0].wrapping = stringWrap;
 	}
 }

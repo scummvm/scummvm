@@ -909,6 +909,7 @@ public:
 	void processSubtitleQueue();
 	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
 	void clearSubtitleQueue();
+	virtual void CHARSET_1();
 
 protected:
 	virtual int runDialog(Dialog &dialog);
@@ -977,7 +978,6 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void printString(int m, const byte *msg);
-	virtual void CHARSET_1();
 
 	virtual void scummLoop_handleSaveLoad();
 
