@@ -1863,8 +1863,12 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
-	if ((_game.version == 7 && !_keepText) || (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
-		stopTalk();
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+		if (VAR(VAR_HAVE_MSG))
+			stopTalk();
+	} else {
+		if (!_keepText)
+			stopTalk();
 	}
 	if (_actorToPrintStrFor == 0xFF) {
 		setTalkingActor(0xFF);
@@ -1968,6 +1972,12 @@ void Actor::runActorTalkScript(int f) {
 	if (_vm->_game.version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2)
 		return;
 
+	if (_vm->_game.id == GID_FT && _vm->_string[0].no_talk_anim)
+		return;
+
+	if (!_vm->getTalkingActor() || _room != _vm->_currentRoom || _frame == f)
+		return;
+
 	if (_talkScript) {
 		int script = _talkScript;
 		int args[16];
@@ -1977,8 +1987,7 @@ void Actor::runActorTalkScript(int f) {
 
 		_vm->runScript(script, 1, 0, args);
 	} else {
-		if (_frame != f)
-			startAnimActor(f);
+		startAnimActor(f);
 	}
 }
 
@@ -2002,10 +2011,14 @@ void ScummEngine::stopTalk() {
 			setTalkingActor(0xFF);
 		a->_heTalking = false;
 	}
-	if (_game.version == 8 || _game.heversion >= 60)
+
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
 		setTalkingActor(0);
-	if (_game.version == 8)
 		VAR(VAR_HAVE_MSG) = 0;
+	} else if (_game.heversion >= 60) {
+		setTalkingActor(0);
+	}
+
 	_keepText = false;
 	if (_game.version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
