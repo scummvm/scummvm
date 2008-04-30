@@ -1469,7 +1469,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	_lastStringTag[0] = 0;
 
 	// WORKAROUND for bug #1172655.
-	if (_game.id == GID_DIG && text[0] != '/') {
+	if (_game.id == GID_DIG) {
 		if (!strcmp((const char *)text, "faint light"))
 			text = (const byte *)"/NEW.007/faint light";
 		else if (!strcmp((const char *)text, "glowing crystal"))
@@ -1494,6 +1494,18 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			text = (const byte *)"/NEW.013/unattached lens";
 		else if (!strcmp((const char *)text, "lens slot"))
 			text = (const byte *)"/NEW.014/lens slot";
+
+		// Added in second release of The Dig
+		else if (!strcmp((const char *)text, "/NEWTON.032/"))
+			text = (const byte *)"/NEW.11/You wish.";
+		else if (!strcmp((const char *)text, "/NEWTON.034/"))
+			text = (const byte *)"/NEW.12/In your dreams";
+		else if (!strcmp((const char *)text, "Jonathon Jackson"))
+			text = (const byte *)"Aram Gutowski";
+		else if (!strcmp((const char *)text, "Brink"))
+			text = (const byte *)"/CREVICE.049/Brink";
+		else if (!strcmp((const char *)text, "Robbins"))
+			text = (const byte *)"/NEST.061/Robbins";
 	}
 
 
