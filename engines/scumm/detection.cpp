@@ -260,6 +260,8 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 				return Common::PT_BRA;
 			case 229884:	// d890074bc15c6135868403e73c5f4f36
 				return Common::ES_ESP;
+			case 223107:	// 64f3fe479d45b52902cf88145c41d172
+				return Common::JA_JPN;
 			}
 		}
 	}
