@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/str.h"
 
 #include "made/redreader.h"
 
@@ -77,6 +78,10 @@ public:
 
 	void open(const char *filename);
 	void openFromRed(const char *redFilename, const char *filename);
+
+	bool getSavegameDescription(const char *filename, Common::String &description);
+	int16 savegame(const char *filename, const char *description, int16 version);
+	int16 loadgame(const char *filename, int16 version);
 
 	Object *getObject(int16 index) const { 
 		if (index >= 1)

@@ -23,8 +23,10 @@
  *
  */
 
+#include "common/system.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/savefile.h"
 
 #include "made/database.h"
 
@@ -222,8 +224,7 @@ void GameDatabase::load(Common::SeekableReadStream &sourceS) {
 	uint32 objectsSize = sourceS.readUint32LE();
 	_mainCodeObjectIndex = sourceS.readUint16LE();
 	
-	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n",
-		objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
+	//debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
 
 	_gameState = new byte[_gameStateSize];
 	sourceS.seek(gameStateOffs);
@@ -241,18 +242,91 @@ void GameDatabase::load(Common::SeekableReadStream &sourceS) {
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
 		
-		debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
+		//debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
 		
 		if (objectOffsets[i] & 1) {
-			debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
+			//debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
 			sourceS.seek(objectsOffs + objectOffsets[i] - 1);
 			obj->load(sourceS);
 		} else {
-			debug(2, "-> var\n");
+			//debug(2, "-> var\n");
 			obj->load(_gameState + objectOffsets[i]);
 		}
 		_objects.push_back(obj);
 	}
+
+}
+
+bool GameDatabase::getSavegameDescription(const char *filename, Common::String &description) {
+
+	Common::InSaveFile *in;
+
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+		return false;
+	}
+
+	char desc[64];
+
+	in->skip(4); // TODO: Verify marker 'SGAM'
+	in->skip(4); // TODO: Verify size
+	in->skip(2); // TODO: Verify version
+	in->read(desc, 64);
+	description = desc;
+
+	printf("description = %s\n", description.c_str()); fflush(stdout);
+
+	delete in;
+	
+	return true;
+	
+}
+
+int16 GameDatabase::savegame(const char *filename, const char *description, int16 version) {
+
+	Common::OutSaveFile *out;
+
+	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
+		warning("Can't create file '%s', game not saved", filename);
+		return 6;
+	}
+	
+	uint32 size = 4 + 4 + 2 + _gameStateSize;
+	char desc[64];
+	
+	strncpy(desc, description, 64);
+	
+	out->writeUint32BE(MKID_BE('SGAM'));
+	out->writeUint32LE(size);
+	out->writeUint16LE(version);
+	out->write(desc, 64);
+	out->write(_gameState, _gameStateSize);
+
+	delete out;
+
+	return 0;
+
+}
+
+int16 GameDatabase::loadgame(const char *filename, int16 version) {
+
+	Common::InSaveFile *in;
+
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+		warning("Can't open file '%s', game not loaded", filename);
+		return 1;
+	}
+
+	//uint32 expectedSize = 4 + 4 + 2 + _gameStateSize;
+
+	in->skip(4); // TODO: Verify marker 'SGAM'
+	in->skip(4); // TODO: Verify size
+	in->skip(2); // TODO: Verify version
+	in->skip(64); // skip savegame description
+	in->read(_gameState, _gameStateSize);
+
+	delete in;
+
+	return 0;
 
 }
 

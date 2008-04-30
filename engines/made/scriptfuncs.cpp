@@ -408,9 +408,9 @@ int16 ScriptFunctionsRtz::o1_FONT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWTEXT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_DRAWTEXT");
 	Object *obj = _vm->_dat->getObject(argv[argc - 1]);
-	warning("argc = %d; drawText = %s", argc, obj->getString());
+	const char *text = obj->getString();
+	_vm->_screen->printText(text);
 	return 0;
 }
 
@@ -420,7 +420,6 @@ int16 ScriptFunctionsRtz::o1_HOMETEXT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTRECT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_TEXTRECT");
 	int16 x1 = CLIP<int16>(argv[4], 1, 318);
 	int16 y1 = CLIP<int16>(argv[3], 1, 198);
 	int16 x2 = CLIP<int16>(argv[2], 1, 318);
@@ -536,7 +535,9 @@ int16 ScriptFunctionsRtz::o1_CDPLAYSEG(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PRINTF(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_PRINTF");
+	Object *obj = _vm->_dat->getObject(argv[argc - 1]);
+	const char *text = obj->getString();
+	debug(4, "--> text = %s", text);
 	return 0;
 }
 
@@ -556,7 +557,7 @@ int16 ScriptFunctionsRtz::o1_SNDENERGY(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_CLEARTEXT(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_CLEARTEXT");
-	return 0;
+	return 1;
 }
 
 int16 ScriptFunctionsRtz::o1_ANIMTEXT(int16 argc, int16 *argv) {
@@ -746,33 +747,89 @@ int16 ScriptFunctionsRtz::o1_READMENU(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWMENU(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_DRAWMENU");
+	int16 menuIndex = argv[1];
+	int16 textIndex = argv[0];
+	MenuResource *menu = _vm->_res->getMenu(menuIndex);
+	if (menu) {
+		const char *text = menu->getString(textIndex);
+		if (text)
+			_vm->_screen->printText(text);
+		_vm->_res->freeResource(menu);
+	}
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_MENUCOUNT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_MENUCOUNT");
-	return 0;
+	int16 menuIndex = argv[0];
+	int16 count = 0;
+	MenuResource *menu = _vm->_res->getMenu(menuIndex);
+	if (menu) {
+		count = menu->getCount();
+		_vm->_res->freeResource(menu);
+	}
+	return count;
 }
 
 int16 ScriptFunctionsRtz::o1_SAVEGAME(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_SAVEGAME");
-	return 0;
+	
+	int16 saveNum = argv[2];
+	int16 descObjectIndex = argv[1];
+	int16 version = argv[0];
+	
+	if (saveNum > 999)
+		return 6;
+
+	Object *obj = _vm->_dat->getObject(descObjectIndex);
+	const char *description = obj->getString();
+
+	// TODO: Use better filename
+	char filename[256];
+	snprintf(filename, 256, "rtz.%03d", saveNum);
+	
+	return _vm->_dat->savegame(filename, description, version);
+	
 }
 
 int16 ScriptFunctionsRtz::o1_LOADGAME(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_LOADGAME");
-	return 0;
+
+	int16 saveNum = argv[1];
+	int16 version = argv[0];
+
+	if (saveNum > 999)
+		return 1;
+
+	// TODO: Use better filename
+	char filename[256];
+	snprintf(filename, 256, "rtz.%03d", saveNum);
+
+	return _vm->_dat->loadgame(filename, version);
+	
 }
 
 int16 ScriptFunctionsRtz::o1_GAMENAME(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_GAMENAME");
 	
-	warning("GAMENAME: 1) %d\n", argv[2]);
-	warning("GAMENAME: 2) %d\n", argv[1]);
-	warning("GAMENAME: 3) %d\n", argv[0]);
+	int16 descObjectIndex = argv[2];
+	int16 saveNum = argv[1];
+	int16 version = argv[0];
+	Common::String description;
 
-	return 0;
+	if (saveNum > 999)
+		return 1;
+
+	// TODO: Use better filename
+	char filename[256];
+	snprintf(filename, 256, "rtz.%03d", saveNum);
+
+	Object *obj = _vm->_dat->getObject(descObjectIndex);
+
+	if (_vm->_dat->getSavegameDescription(filename, description)) {
+		obj->setString(description.c_str());
+		return 0;
+	} else {
+		obj->setString("");
+		return 1;
+	}
+
 }
 
 int16 ScriptFunctionsRtz::o1_SHAKESCREEN(int16 argc, int16 *argv) {
