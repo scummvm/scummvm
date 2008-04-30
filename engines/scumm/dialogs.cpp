@@ -928,6 +928,7 @@ void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
 void SubtitleSettingsDialog::open() {
 	cycleValue();
 	InfoDialog::open();
+	setResult(_value);
 }
 
 void SubtitleSettingsDialog::cycleValue() {
@@ -937,11 +938,12 @@ void SubtitleSettingsDialog::cycleValue() {
 		"Subtitles Only"
 	};
 
-	_value = (_value + 1) % 3;
+	_value += 1;
+	if (_value > 2)
+		_value = 0;
 
 	setInfoText(subtitleDesc[_value]);
 
-	setResult(_value);
 	_timer = getMillis() + 1500;
 }
 
