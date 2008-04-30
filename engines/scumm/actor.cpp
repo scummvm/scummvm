@@ -1881,7 +1881,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
-	if (_game.version == 7)
+	if (_game.id == GID_FT)
 		VAR(VAR_HAVE_MSG) = 0xFF;
 	_haveActorSpeechMsg = true;
 	if (_game.id == GID_DIG || _game.id == GID_CMI) {
