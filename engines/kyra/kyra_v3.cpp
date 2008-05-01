@@ -634,6 +634,8 @@ void KyraEngine_v3::startup() {
 	memset(_conversationState, -1, sizeof(_conversationState));
 
 	_sceneList = new SceneDesc[98];
+	assert(_sceneList);
+	memset(_sceneList, 0, sizeof(SceneDesc)*98);
 	_sceneListSize = 98;
 	
 	musicUpdate(0);
