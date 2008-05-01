@@ -352,6 +352,9 @@ void VideoPlayer::slotPlay(int slot, int16 frame) {
 	if (frame < 0)
 		frame = video.getCurrentFrame();
 
+	if (frame >= video.getFramesCount())
+		return;
+
 	if (video.getCurrentFrame() != frame)
 		video.seekFrame(frame);
 
