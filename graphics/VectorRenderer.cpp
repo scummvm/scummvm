@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * $URL$
+ * $Id$
+ *
  */
 
 #include "common/util.h"
@@ -27,23 +30,20 @@
 
 namespace Graphics {
 
-VectorRenderer *createRenderer()
-{
+VectorRenderer *createRenderer() {
 	return new VectorRendererAA<uint16,ColorMasks<565>>;
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
-{
+drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy ) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
 	int xdir = ( x2 > x1 ) ? 1 : -1;
 
 	*ptr = (PixelType)_color;
 
-	if ( dx > dy )
-	{
+	if ( dx > dy ) {
 		int ddy = dy * 2;
 		int dysub = ddy - ( dx * 2 );
 		int error_term = ddy - dx;
@@ -59,9 +59,7 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
 			ptr += xdir;
 			*ptr = (PixelType)_color;
 		}
-	}
-	else
-	{
+	} else {
 		int ddx = dx * 2;
 		int dxsub = ddx - ( dy * 2 );
 		int error_term = ddx - dy;
@@ -104,8 +102,7 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
 	// first pixel, should be perfectly accurate so no fading out
 	*ptr = (PixelType)_color; 
 
-#define __WULINE_PUTPIXEL( pixel_ptr ) \
-	{ \
+#define __WULINE_PUTPIXEL( pixel_ptr ) { \
 		colorToRGB<PixelFormat>( (PixelType)*(pixel_ptr), bg_r, bg_g, bg_b ); \
 		bg_lum = (bg_r >> 2) + (bg_g >> 1) + (bg_b >> 3); \
 		weight = ( line_lum < bg_lum ) ? error_total >> 8 : (error_total >> 8)^0xFF; \
@@ -154,8 +151,7 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLine( int x1, int x2, int y1, int y2 )
-{
+drawLine( int x1, int x2, int y1, int y2 ) {
 	// we draw from top to bottom
 	if ( y2 < y1 ) {
 		SWAP( x1, x2 );
