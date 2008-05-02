@@ -57,7 +57,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"lostintime", "Lost in Time"},
 	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
-//	{"dynasty", "The Last Dynasty"},
+	{"dynasty", "The Last Dynasty"},
 	{0, 0}
 };
 
@@ -1685,7 +1685,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
-	/*{
+	{
 		{
 			"dynasty",
 			"",
@@ -1697,7 +1697,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeWoodruff,
 		kFeatures640,
 		"intro"
-	},*/
+	},
+	{
+		{
+			"dynasty",
+			"",
+			AD_ENTRY1s("intro.stk", "61e4069c16e27775a6cc6d20f529fb36", 2511300),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
 
