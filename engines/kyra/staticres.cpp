@@ -1508,22 +1508,14 @@ const int8 KyraEngine_v1::_dosTrackMap[] = {
 
 const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMap);
 
-// Kyra 2 and 3 main menu
+// kyra engine v2 static data
 
-const char *KyraEngine_MR::_mainMenuStrings[] = {
-	"Start a new game",
-	"Introduction",
-	"Load a game",
-	"Exit the game",
-	"Nouvelle Partie",
-	"Introduction",
-	"Charger une partie",
-	"Quitter le jeu",
-	"Neues Spiel starten",
-	"Intro",
-	"Spielstand laden",
-	"Spiel beenden",
-	0
+const int8 KyraEngine_v2::_updateCharPosXTable[] = {
+	0, 4, 4, 4, 0, -4, -4, -4
+};
+
+const int8 KyraEngine_v2::_updateCharPosYTable[] = {
+	-2, -2, 0, 2, 2, 2, 0, -2
 };
 
 // kyra 2 static res
@@ -1940,6 +1932,22 @@ const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 
 // kyra 3 static res
 
+const char *KyraEngine_MR::_mainMenuStrings[] = {
+	"Start a new game",
+	"Introduction",
+	"Load a game",
+	"Exit the game",
+	"Nouvelle Partie",
+	"Introduction",
+	"Charger une partie",
+	"Quitter le jeu",
+	"Neues Spiel starten",
+	"Intro",
+	"Spielstand laden",
+	"Spiel beenden",
+	0
+};
+
 const char *KyraEngine_MR::_soundList[] = {
 	"ARREST1.AUD",
 	"BATH1.AUD",
@@ -2013,14 +2021,6 @@ const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 };
 
 const int KyraEngine_MR::_shapeDescsSize = ARRAYSIZE(KyraEngine_MR::_shapeDescs);
-
-const int8 KyraEngine_MR::_updateCharPosXTable[] = {
-	0, 4, 4, 4, 0, -4, -4, -4
-};
-
-const int8 KyraEngine_MR::_updateCharPosYTable[] = {
-	-2, -2, 0, 2, 2, 2, 0, -2
-};
 
 const uint8 KyraEngine_MR::_characterFrameTable[] = {
 	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34

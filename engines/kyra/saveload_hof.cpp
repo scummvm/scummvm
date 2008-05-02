@@ -77,9 +77,6 @@ void KyraEngine_HoF::saveGame(const char *fileName, const char *saveName) {
 	out->writeByte(_mainCharacter.height);
 	out->writeByte(_mainCharacter.facing);
 	out->writeUint16BE(_mainCharacter.animFrame);
-	out->writeByte(_mainCharacter.unk8);
-	out->writeByte(_mainCharacter.unk9);
-	out->writeByte(_mainCharacter.unkA);
 	for (int i = 0; i < 20; ++i)
 		out->writeUint16BE(_mainCharacter.inventory[i]);
 	out->writeSint16BE(_mainCharacter.x1);
@@ -212,9 +209,10 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 	_mainCharacter.height = in.readByte();
 	_mainCharacter.facing = in.readByte();
 	_mainCharacter.animFrame = in.readUint16();
-	_mainCharacter.unk8 = in.readByte();
-	_mainCharacter.unk9 = in.readByte();
-	_mainCharacter.unkA = in.readByte();
+
+	if (header.version <= 10 || header.originalSave)
+		in.seek(3, SEEK_CUR);
+
 	for (int i = 0; i < 20; ++i)
 		_mainCharacter.inventory[i] = in.readUint16();
 	_mainCharacter.x1 = in.readSint16();
@@ -227,7 +225,7 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 		_itemList[i].sceneId = in.readUint16();
 		_itemList[i].x = in.readSint16();
 		_itemList[i].y = in.readByte();
-		if (header.version <= 9)
+		if (header.version <= 9 || header.originalSave)
 			in.readUint16();
 	}
 

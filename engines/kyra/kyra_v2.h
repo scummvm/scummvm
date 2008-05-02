@@ -238,6 +238,35 @@ protected:
 
 	void setHandItem(uint16 item);
 	void removeHandItem();
+
+	// character
+	struct Character {
+		uint16 sceneId;
+		uint16 dlgIndex;
+		uint8 height;
+		uint8 facing;
+		uint16 animFrame;
+		byte walkspeed;
+		uint16 inventory[20];
+		int16 x1, y1;
+		int16 x2, y2;
+		int16 x3, y3;
+	};
+
+	Character _mainCharacter;
+	int _mainCharX, _mainCharY;
+	int _charScale;
+
+	void moveCharacter(int facing, int x, int y);
+	int updateCharPos(int *table, int force = 0);
+	void updateCharPosWithUpdate();
+
+	uint32 _updateCharPosNextUpdate;
+	static const int8 _updateCharPosXTable[];
+	static const int8 _updateCharPosYTable[];
+
+	virtual int getCharacterWalkspeed() const = 0;
+	virtual void updateCharAnimFrame(int num, int *table) = 0;
 };
 
 } // end of namespace Kyra

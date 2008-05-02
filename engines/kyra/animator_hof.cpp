@@ -216,10 +216,10 @@ void KyraEngine_HoF::updateCharacterAnim(int) {
 	int xAdd = _shapeDescTable[c->animFrame-9].xAdd;
 	int yAdd = _shapeDescTable[c->animFrame-9].yAdd;
 
-	_charScaleX = _charScaleY = getScale(c->x1, c->y1);
+	_charScale = getScale(c->x1, c->y1);
 
-	animState->xPos2 += (xAdd * _charScaleX) >> 8;
-	animState->yPos2 += (yAdd * _charScaleY) >> 8;
+	animState->xPos2 += (xAdd * _charScale) >> 8;
+	animState->yPos2 += (yAdd * _charScale) >> 8;
 	animState->width2 = 8;
 	animState->height2 = 10;
 
@@ -315,7 +315,7 @@ void KyraEngine_HoF::drawCharacterAnimObject(AnimObj *obj, int x, int y, int lay
 	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::drawCharacterAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
 	if (_drawNoShapeFlag || obj->shapeIndex1 == 0xFFFF)
 		return;
-	_screen->drawShape(2, getShapePtr(obj->shapeIndex1), x, y, 2, obj->flags | 4, layer, _charScaleX, _charScaleY);
+	_screen->drawShape(2, getShapePtr(obj->shapeIndex1), x, y, 2, obj->flags | 4, layer, _charScale, _charScale);
 }
 
 void KyraEngine_HoF::addItemToAnimList(int item) {

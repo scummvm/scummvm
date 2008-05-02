@@ -552,10 +552,10 @@ void KyraEngine_HoF::initSceneAnims(int unk1) {
 	animState->xPos2 = _mainCharacter.x1;
 	animState->yPos2 = _mainCharacter.y1;
 
-	_charScaleX = _charScaleY = getScale(_mainCharacter.x1, _mainCharacter.y1);
+	_charScale = getScale(_mainCharacter.x1, _mainCharacter.y1);
 
-	int shapeXScaled = (shapeX * _charScaleX) >> 8;
-	int shapeYScaled = (shapeY * _charScaleY) >> 8;
+	int shapeXScaled = (shapeX * _charScale) >> 8;
+	int shapeYScaled = (shapeY * _charScale) >> 8;
 
 	animState->xPos2 += shapeXScaled;
 	animState->yPos2 += shapeYScaled;

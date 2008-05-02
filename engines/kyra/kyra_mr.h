@@ -370,38 +370,10 @@ private:
 	bool _unkSceneScreenFlag1;
 
 	// character
-	struct Character {
-		uint16 sceneId;
-		uint16 dlgIndex;
-		uint8 height;
-		uint8 facing;
-		uint16 animFrame;
-		//uint8 unk8, unk9;
-		byte walkspeed;
-		uint16 inventory[10];
-		int16 x1, y1;
-		int16 x2, y2;
-		int16 x3, y3;
-	};
-
-	Character _mainCharacter;
-	int _mainCharX, _mainCharY;
-	int _charScale;
-
-	void moveCharacter(int facing, int x, int y);
-
-	void updateCharPosWithUpdate();
-	int updateCharPos(int *table, int force);
-
-	uint32 _updateCharPosNextUpdate;
-	static const int8 _updateCharPosXTable[];
-	static const int8 _updateCharPosYTable[];
-
+	int getCharacterWalkspeed() const;
 	void updateCharAnimFrame(int character, int *table);
 	int8 _characterAnimTable[2];
 	static const uint8 _characterFrameTable[];
-
-	bool _overwriteSceneFacing;
 
 	void updateCharPal(int unk1);
 	int _lastCharPalLayer;

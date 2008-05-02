@@ -71,7 +71,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_inventoryState = false;
 	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
-	_updateCharPosNextUpdate = 0;
 	memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
 	_overwriteSceneFacing = false;
 	_maskPageMinY = _maskPageMaxY = 0;
@@ -586,7 +585,6 @@ void KyraEngine_MR::startup() {
 		_talkObjectList[i].sceneId = 0xFF;
 
 	musicUpdate(0);
-	updateMalcolmShapes();
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
 	initItemList(50);
 	resetItemList();
@@ -598,6 +596,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	_characterShapeFile = 0;
 	loadCharacterShapes(_characterShapeFile);
+	updateMalcolmShapes();
 	musicUpdate(0);
 	initMainButtonList(true);
 	loadInterfaceShapes();
@@ -803,55 +802,8 @@ void KyraEngine_MR::updateMalcolmShapes() {
 
 #pragma mark -
 
-void KyraEngine_MR::moveCharacter(int facing, int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::moveCharacter(%d, %d, %d)", facing, x, y);
-	x &= ~3;
-	y &= ~1;
-	_mainCharacter.facing = facing;
-
-	_screen->hideMouse();
-	switch (facing) {
-	case 0:
-		while (_mainCharacter.y1 > y)
-			updateCharPosWithUpdate();
-		break;
-
-	case 2:
-		while (_mainCharacter.x1 < x)
-			updateCharPosWithUpdate();
-		break;
-
-	case 4:
-		while (_mainCharacter.y1 < y)
-			updateCharPosWithUpdate();
-		break;
-
-	case 6:
-		while (_mainCharacter.x1 > x)
-			updateCharPosWithUpdate();
-		break;
-
-	default:
-		break;
-	}
-	_screen->showMouse();
-}
-
-void KyraEngine_MR::updateCharPosWithUpdate() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateCharPosWithUpdate()");
-	updateCharPos(0, 0);
-	update();
-}
-
-int KyraEngine_MR::updateCharPos(int *table, int force) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateCharPos(%p, %d)", (const void*)table, force);
-	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
-		return 0;
-	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
-	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
-	updateCharAnimFrame(0, table);
-	_updateCharPosNextUpdate = _system->getMillis() + _mainCharacter.walkspeed * _tickLength;
-	return 1;
+int KyraEngine_MR::getCharacterWalkspeed() const {
+	return _mainCharacter.walkspeed;
 }
 
 void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {

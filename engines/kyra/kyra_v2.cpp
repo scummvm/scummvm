@@ -39,6 +39,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_itemListSize = 0;
 	
 	_characterShapeFile = -1;
+
+	_updateCharPosNextUpdate = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -144,6 +146,58 @@ uint8 *KyraEngine_v2::getShapePtr(int shape) const {
 	if (iter == _gameShapes.end())
 		return 0;
 	return iter->_value;
+}
+
+void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::moveCharacter(%d, %d, %d)", facing, x, y);
+	x &= ~3;
+	y &= ~1;
+	_mainCharacter.facing = facing;
+
+	Screen *scr = screen();
+	scr->hideMouse();
+	switch (facing) {
+	case 0:
+		while (_mainCharacter.y1 > y)
+			updateCharPosWithUpdate();
+		break;
+
+	case 2:
+		while (_mainCharacter.x1 < x)
+			updateCharPosWithUpdate();
+		break;
+
+	case 4:
+		while (_mainCharacter.y1 < y)
+			updateCharPosWithUpdate();
+		break;
+
+	case 6:
+		while (_mainCharacter.x1 > x)
+			updateCharPosWithUpdate();
+		break;
+
+	default:
+		break;
+	}
+	scr->showMouse();
+}
+
+void KyraEngine_v2::updateCharPosWithUpdate() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPosWithUpdate()");
+	updateCharPos(0, 0);
+	update();
+}
+
+int KyraEngine_v2::updateCharPos(int *table, int force) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPos(%p, %d)", (const void*)table, force);
+	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
+		return 0;
+	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
+	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
+	updateCharAnimFrame(0, table);
+	_updateCharPosNextUpdate = _system->getMillis() + getCharacterWalkspeed() * _tickLength;
+	return 1;
 }
 
 } // end of namespace Kyra

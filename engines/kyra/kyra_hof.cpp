@@ -514,7 +514,7 @@ void KyraEngine_HoF::handleInput(int x, int y) {
 		}
 	}
 
-	if (checkCharCollision(x, y) >= 0 && _unk3 >= -1) {
+	if (checkCharCollision(x, y) && _unk3 >= -1) {
 		runSceneScript2();
 		return;
 	} else if (pickUpItem(x, y)) {
@@ -543,7 +543,7 @@ void KyraEngine_HoF::handleInput(int x, int y) {
 		if (skipHandling)
 			return;
 
-		if (checkCharCollision(x, y) >= 0) {
+		if (checkCharCollision(x, y)) {
 			runSceneScript2();
 			return;
 		}
@@ -1397,59 +1397,8 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 	return refreshNPC;
 }
 
-void KyraEngine_HoF::moveCharacter(int facing, int x, int y) {
-	_mainCharacter.facing = facing;
-	x &= ~3;
-	y &= ~1;
-
-	_screen->hideMouse();
-	switch (facing) {
-	case 0:
-		while (y < _mainCharacter.y1)
-			updateCharPosWithUpdate();
-		break;
-
-	case 2:
-		while (_mainCharacter.x1 < x)
-			updateCharPosWithUpdate();
-		break;
-
-	case 4:
-		while (y > _mainCharacter.y1)
-			updateCharPosWithUpdate();
-		break;
-
-	case 6:
-		while (_mainCharacter.x1 > x)
-			updateCharPosWithUpdate();
-		break;
-
-	default:
-		break;
-	}
-
-	_screen->showMouse();
-}
-
-int KyraEngine_HoF::updateCharPos(int *table) {
-	static uint32 nextUpdate = 0;
-	static const int updateX[] = { 0, 4, 4, 4, 0, -4, -4, -4 };
-	static const int updateY[] = { -2, -2, 0, 2, 2, 2, 0, -2 };
-
-	if (_system->getMillis() < nextUpdate)
-		return 0;
-
-	int facing = _mainCharacter.facing;
-	_mainCharacter.x1 += updateX[facing];
-	_mainCharacter.y1 += updateY[facing];
-	updateCharAnimFrame(0, table);
-	nextUpdate = _system->getMillis() + _timer->getDelay(0) * _tickLength;
-	return 1;
-}
-
-void KyraEngine_HoF::updateCharPosWithUpdate() {
-	updateCharPos(0);
-	update();
+int KyraEngine_HoF::getCharacterWalkspeed() const {
+	return _timer->getDelay(0);
 }
 
 void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
@@ -1517,7 +1466,7 @@ void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
 	updateCharacterAnim(charId);
 }
 
-int KyraEngine_HoF::checkCharCollision(int x, int y) {
+bool KyraEngine_HoF::checkCharCollision(int x, int y) {
 	int scale1 = 0, scale2 = 0, scale3 = 0;
 	int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 	scale1 = getScale(_mainCharacter.x1, _mainCharacter.y1);
@@ -1530,9 +1479,9 @@ int KyraEngine_HoF::checkCharCollision(int x, int y) {
 	y2 = _mainCharacter.y1;
 
 	if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
-		return 0;
+		return true;
 
-	return -1;
+	return false;
 }
 
 int KyraEngine_HoF::initNewShapes(uint8 *filedata) {
