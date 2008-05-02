@@ -89,26 +89,6 @@ int KyraEngine_HoF::o2_refreshCharacter(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_getCharacterX(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getCharacterX(%p) ()", (const void *)script);
-	return _mainCharacter.x1;
-}
-
-int KyraEngine_HoF::o2_getCharacterY(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getCharacterY(%p) ()", (const void *)script);
-	return _mainCharacter.y1;
-}
-
-int KyraEngine_HoF::o2_getCharacterFacing(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getCharacterFacing(%p) ()", (const void *)script);
-	return _mainCharacter.facing;
-}
-
-int KyraEngine_HoF::o2_getCharacterScene(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getCharacterScene(%p) ()", (const void *)script);
-	return _mainCharacter.sceneId;
-}
-
 int KyraEngine_HoF::o2_setSceneComment(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setSceneComment(%p) ('%s')", (const void *)script, stackPosString(0));
 	_sceneCommentString = stackPosString(0);
@@ -131,31 +111,6 @@ int KyraEngine_HoF::o2_setCharacterFacing(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setCharacterFacing(%p) (%d)", (const void *)script, stackPos(0));
 	_mainCharacter.facing = stackPos(0);
 	_overwriteSceneFacing = 1;
-	return 0;
-}
-
-int KyraEngine_HoF::o2_trySceneChange(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-
-	_unkHandleSceneChangeFlag = 1;
-	int success = inputSceneChange(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_unkHandleSceneChangeFlag = 0;
-
-	if (success) {
-		_emc->init(script, script->dataPtr);
-		_unk4 = 0;
-		_unk3 = -1;
-		_unk5 = 1;
-		return 0;
-	} else {
-		return (_unk4 != 0) ? 1 : 0;
-	}
-}
-
-int KyraEngine_HoF::o2_moveCharacter(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_moveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	moveCharacter(stackPos(0), stackPos(1), stackPos(2));
 	return 0;
 }
 

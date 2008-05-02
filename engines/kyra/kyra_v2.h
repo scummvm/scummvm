@@ -54,6 +54,7 @@ protected:
 
 	// Input
 	virtual int checkInput(Button *buttonList, bool mainLoop = false) = 0;
+	virtual int inputSceneChange(int x, int y, int unk1, int unk2) = 0;
 
 	void updateInput();
 	void removeInputTop();
@@ -274,6 +275,19 @@ protected:
 
 	virtual int getCharacterWalkspeed() const = 0;
 	virtual void updateCharAnimFrame(int num, int *table) = 0;
+
+	// unknown
+	int _unk3, _unk4, _unk5;
+	bool _unkSceneScreenFlag1;
+	bool _unkHandleSceneChangeFlag;
+
+	// opcodes
+	int o2_getCharacterX(EMCState *script);
+	int o2_getCharacterY(EMCState *script);
+	int o2_getCharacterFacing(EMCState *script);
+	int o2_getCharacterScene(EMCState *script);
+	int o2_trySceneChange(EMCState *script);
+	int o2_moveCharacter(EMCState *script);
 };
 
 } // end of namespace Kyra

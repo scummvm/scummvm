@@ -84,7 +84,6 @@ protected:
 
 	void runLoop();
 	void handleInput(int x, int y);
-	bool _unkHandleSceneChangeFlag;
 	int inputSceneChange(int x, int y, int unk1, int unk2);
 
 	void update();
@@ -363,8 +362,6 @@ private:
 	int getScale(int x, int y);
 	int _scaleTable[15];
 
-	bool _unkSceneScreenFlag1;
-
 	// character
 	int getCharacterWalkspeed() const;
 	void updateCharAnimFrame(int character, int *table);
@@ -522,8 +519,6 @@ private:
 
 	static const uint8 _chapterLowestScene[];
 
-	int _unk3, _unk4, _unk5;
-
 	void loadCostPal();
 	void loadShadowShape();
 	void loadExtrasShapes();
@@ -554,15 +549,9 @@ private:
 	int o3_setCharacterPos(EMCState *script);
 	int o3_defineObject(EMCState *script);
 	int o3_refreshCharacter(EMCState *script);
-	int o3_getCharacterX(EMCState *script);
-	int o3_getCharacterY(EMCState *script);
-	int o3_getCharacterFacing(EMCState *script);
-	int o3_getCharacterScene(EMCState *script);
 	int o3_getMalcolmsMood(EMCState *script);
 	int o3_getCharacterFrameFromFacing(EMCState *script);
 	int o3_setCharacterFacingOverwrite(EMCState *script);
-	int o3_trySceneChange(EMCState *script);
-	int o3_moveCharacter(EMCState *script);
 	int o3_setCharacterFacing(EMCState *script);
 	int o3_showSceneFileMessage(EMCState *script);
 	int o3_setCharacterAnimFrameFromFacing(EMCState *script);
