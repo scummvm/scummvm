@@ -1,6 +1,7 @@
 MODULE := engines/drascula
 
 MODULE_OBJS = \
+	animation.o \
 	detection.o \
 	drascula.o
 
