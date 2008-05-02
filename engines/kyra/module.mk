@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	gui_v2.o \
 	gui_v3.o \
 	items_v1.o \
+	items_v2.o \
 	items_hof.o \
 	items_mr.o \
 	kyra.o \

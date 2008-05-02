@@ -57,7 +57,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	memset(_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 	_gfxBackUpRect = 0;
-	_itemList = 0;
 	_malcolmShapes = 0;
 	_paletteOverlay = 0;
 	_sceneList = 0;
@@ -162,7 +161,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 		delete _sceneAnimMovie[i];
 
 	delete [] _gfxBackUpRect;
-	delete [] _itemList;
 	delete [] _paletteOverlay;
 	delete [] _sceneList;
 
@@ -591,7 +589,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	updateMalcolmShapes();
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
-	_itemList = new Item[50];
+	initItemList(50);
 	resetItemList();
 
 	loadShadowShape();

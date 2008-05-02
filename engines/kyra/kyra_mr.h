@@ -261,27 +261,11 @@ private:
 	// items
 	int8 *_itemBuffer1;
 	int8 *_itemBuffer2;
-	struct Item {
-		uint16 id;
-		uint16 sceneId;
-		int16 x, y;
-		uint16 unk8;
-	};
-
-	Item *_itemList;
 	uint16 _hiddenItems[100];
 
-	void resetItem(int index);
-	void resetItemList();
 	static const uint8 _trashItemList[];
 	void removeTrashItems();
 
-	int findFreeItem();
-	int findItem(uint16 item, uint16 scene);
-	int findItem(uint16 item);
-
-	int countAllItems();
-	
 	void initItems();
 
 	int checkItemCollision(int x, int y);
@@ -309,14 +293,8 @@ private:
 	int getItemCommandStringInv(uint16 item);
 
 	// -> hand item
-	void setMouseCursor(uint16 item);
-
-	void setHandItem(uint16 item);
-	void removeHandItem();
 	void setItemMouseCursor();
-
-	int _itemInHand;
-	int _handItemSet;
+	void setMouseCursor(uint16 item);
 
 	// shapes
 	void initMouseShapes();

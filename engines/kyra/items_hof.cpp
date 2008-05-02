@@ -27,34 +27,6 @@
 
 namespace Kyra {
 
-int KyraEngine_HoF::findFreeItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::findFreeItem()");
-	for (int i = 0; i < 30; ++i) {
-		if (_itemList[i].id == 0xFFFF)
-			return i;
-	}
-	return -1;
-}
-
-int KyraEngine_HoF::countAllItems() {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::countAllItems()");
-	int num = 0;
-	for (int i = 0; i < 30; ++i) {
-		if (_itemList[i].id != 0xFFFF)
-			++num;
-	}
-	return num;
-}
-
-int KyraEngine_HoF::findItem(uint16 sceneId, uint16 id) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::findItem(%u, %u)", sceneId, id);
-	for (int i = 0; i < 30; ++i) {
-		if (_itemList[i].id == id && _itemList[i].sceneId == sceneId)
-			return i;
-	}
-	return -1;
-}
-
 int KyraEngine_HoF::checkItemCollision(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::checkItemCollision(%d, %d)", x, y);
 	int itemPos = -1, yPos = -1;
@@ -84,17 +56,6 @@ int KyraEngine_HoF::checkItemCollision(int x, int y) {
 	}
 
 	return itemPos;
-}
-
-void KyraEngine_HoF::resetItemList() {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::resetItemList()");
-	for (int i = 0; i < 30; ++i) {
-		_itemList[i].id = 0xFFFF;
-		_itemList[i].sceneId = 0xFFFF;
-		_itemList[i].x = 0;
-		_itemList[i].y = 0;
-		_itemList[i].unk7 = 0;
-	}
 }
 
 void KyraEngine_HoF::updateWaterFlasks() {
@@ -165,7 +126,6 @@ bool KyraEngine_HoF::processItemDrop(uint16 sceneId, uint16 item, int x, int y, 
 		_itemList[freeItemSlot].x = x;
 		_itemList[freeItemSlot].y = y;
 		_itemList[freeItemSlot].id = item;
-		_itemList[freeItemSlot].unk7 = 1;
 		_itemList[freeItemSlot].sceneId = sceneId;
 		return true;
 	}
@@ -459,6 +419,16 @@ int KyraEngine_HoF::getItemCommandStringInv(uint16 item) {
 	return pickUpStringIds[stringId];
 }
 
+bool KyraEngine_HoF::itemIsFlask(int item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::itemIsFlask(%d)", item);
+	for (int i = 0; _flaskTable[i] != -1; ++i) {
+		if (_flaskTable[i] == item)
+			return true;
+	}
+
+	return false;
+}
+
 void KyraEngine_HoF::setMouseCursor(uint16 item) {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::setMouseCursor(%u)", item);
 	int shape = 0;
@@ -472,39 +442,6 @@ void KyraEngine_HoF::setMouseCursor(uint16 item) {
 	}
 
 	_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));
-}
-
-void KyraEngine_HoF::setHandItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::setHandItem(%u)", item);
-	_screen->hideMouse();
-
-	if (item == 0xFFFF) {
-		removeHandItem();
-	} else {
-		setMouseCursor(item);
-		_itemInHand = item;
-	}
-
-	_screen->showMouse();
-}
-
-void KyraEngine_HoF::removeHandItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::removeHandItem()");
-	_screen->hideMouse();
-	_screen->setMouseCursor(0, 0, getShapePtr(0));
-	_itemInHand = -1;
-	_handItemSet = -1;
-	_screen->showMouse();
-}
-
-bool KyraEngine_HoF::itemIsFlask(int item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::itemIsFlask(%d)", item);
-	for (int i = 0; _flaskTable[i] != -1; ++i) {
-		if (_flaskTable[i] == item)
-			return true;
-	}
-
-	return false;
 }
 
 } // end of namespace Kyra

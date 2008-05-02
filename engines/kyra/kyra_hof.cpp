@@ -352,8 +352,7 @@ void KyraEngine_HoF::startup() {
 	}
 
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
-	_itemList = new Item[30];
-	memset(_itemList, 0, sizeof(Item)*30);
+	initItemList(30);
 	loadButtonShapes();
 	resetItemList();
 	_loadedZTable = 1;

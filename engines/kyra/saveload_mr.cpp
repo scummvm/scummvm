@@ -79,7 +79,6 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 		out->writeUint16BE(_itemList[i].sceneId);
 		out->writeSint16BE(_itemList[i].x);
 		out->writeSint16BE(_itemList[i].y);
-		out->writeUint16BE(_itemList[i].unk8);
 	}
 
 	for (int i = 0; i < 88; ++i) {
@@ -189,7 +188,8 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 		_itemList[i].sceneId = in.readUint16();
 		_itemList[i].x = in.readSint16();
 		_itemList[i].y = in.readSint16();
-		_itemList[i].unk8 = in.readUint16();
+		if (header.version <= 9)
+			in.readUint16();
 	}
 
 	for (int i = 0; i < 88; ++i) {

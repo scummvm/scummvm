@@ -28,21 +28,6 @@
 
 namespace Kyra {
 
-void KyraEngine_MR::resetItem(int index) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::resetItem(%d)", index);
-	_itemList[index].id = 0xFFFF;
-	_itemList[index].sceneId = 0xFFFF;
-	_itemList[index].x = 0;
-	_itemList[index].y = 0;
-	_itemList[index].unk8 = 0;
-}
-
-void KyraEngine_MR::resetItemList() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::resetItemList()");
-	for (int i = 0; i < 50; ++i)
-		resetItem(i);
-}
-
 void KyraEngine_MR::removeTrashItems() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::removeTrashItems()");
 	for (int i = 0; _trashItemList[i] != 0xFF; ++i) {
@@ -55,15 +40,6 @@ void KyraEngine_MR::removeTrashItems() {
 	}
 }
 
-int KyraEngine_MR::findFreeItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::findFreeItem()");
-	for (int i = 0; i < 50; ++i) {
-		if (_itemList[i].id == 0xFFFF)
-			return i;
-	}
-	return -1;
-}
-
 int KyraEngine_MR::findFreeInventorySlot() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::findFreeInventorySlot()");
 	for (int i = 0; i < 10; ++i) {
@@ -71,36 +47,6 @@ int KyraEngine_MR::findFreeInventorySlot() {
 			return i;
 	}
 	return -1;
-}
-
-int KyraEngine_MR::findItem(uint16 sceneId, uint16 id) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::findItem(%u, %u)", sceneId, id);
-	for (int i = 0; i < 50; ++i) {
-		if (_itemList[i].id == id && _itemList[i].sceneId == sceneId)
-			return i;
-	}
-	return -1;
-}
-
-int KyraEngine_MR::findItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::findItem(%u)", item);
-	for (int i = 0; i < 50; ++i) {
-		if (_itemList[i].id == item)
-			return i;
-	}
-	return -1;
-}
-
-int KyraEngine_MR::countAllItems() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::countAllItems()");
-	int count = 0;
-
-	for (int i = 0; i < 50; ++i) {
-		if (_itemList[i].id != 0xFFFF)
-			++count;
-	}
-
-	return count;
 }
 
 int KyraEngine_MR::checkItemCollision(int x, int y) {
@@ -156,29 +102,6 @@ void KyraEngine_MR::setItemMouseCursor() {
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	else
 		_screen->setMouseCursor(12, 19, _gameShapes[_itemInHand+248]);
-}
-
-void KyraEngine_MR::setHandItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::setHandItem(%u)", item);
-	_screen->hideMouse();
-
-	if (item == 0xFFFF) {
-		removeHandItem();
-	} else {
-		setMouseCursor(item);
-		_itemInHand = item;
-	}
-
-	_screen->showMouse();
-}
-
-void KyraEngine_MR::removeHandItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::removeHandItem()");
-	_screen->hideMouse();
-	_screen->setMouseCursor(0, 0, _gameShapes[0]);
-	_itemInHand = -1;
-	_handItemSet = -1;
-	_screen->showMouse();
 }
 
 bool KyraEngine_MR::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
@@ -237,7 +160,6 @@ bool KyraEngine_MR::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 		_itemList[freeItemSlot].x = x;
 		_itemList[freeItemSlot].y = y;
 		_itemList[freeItemSlot].id = item;
-		_itemList[freeItemSlot].unk8 = 1;
 		_itemList[freeItemSlot].sceneId = sceneId;
 		return true;
 	}

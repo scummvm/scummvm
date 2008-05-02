@@ -92,7 +92,6 @@ void KyraEngine_HoF::saveGame(const char *fileName, const char *saveName) {
 		out->writeUint16BE(_itemList[i].sceneId);
 		out->writeSint16BE(_itemList[i].x);
 		out->writeByte(_itemList[i].y);
-		out->writeUint16BE(_itemList[i].unk7);
 	}
 
 	for (int i = 0; i < 72; ++i) {
@@ -228,7 +227,8 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 		_itemList[i].sceneId = in.readUint16();
 		_itemList[i].x = in.readSint16();
 		_itemList[i].y = in.readByte();
-		_itemList[i].unk7 = in.readUint16();
+		if (header.version <= 9)
+			in.readUint16();
 	}
 
 	for (int i = 0; i < 72; ++i) {

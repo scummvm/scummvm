@@ -205,6 +205,36 @@ protected:
 
 	int _pathfinderPositionTable[400];
 	int _pathfinderPositionIndexTable[200];
+
+	// items
+	struct Item {
+		uint16 id;
+		uint16 sceneId;
+		int16 x;
+		uint8 y;
+	};
+
+	void initItemList(int size);
+
+	Item *_itemList;
+	int _itemListSize;
+
+	int _itemInHand;
+	int _handItemSet;
+
+	int findFreeItem();
+	int countAllItems();
+
+	int findItem(uint16 sceneId, uint16 id);
+	int findItem(uint16 item);
+
+	void resetItemList();
+	void resetItem(int index);
+
+	virtual void setMouseCursor(uint16 item) = 0;
+
+	void setHandItem(uint16 item);
+	void removeHandItem();
 };
 
 } // end of namespace Kyra

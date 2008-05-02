@@ -34,6 +34,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_lastProcessedSceneScript = 0;
 	_specialSceneScriptRunFlag = false;
+
+	_itemList = 0;
+	_itemListSize = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -42,6 +45,8 @@ KyraEngine_v2::~KyraEngine_v2() {
 		i->_value = 0;
 	}
 	_gameShapes.clear();
+
+	delete [] _itemList;
 }
 
 void KyraEngine_v2::updateInput() {
