@@ -199,7 +199,7 @@ int DrasculaEngine::go() {
 			lee_dibujos("96.alg");
 			descomprime_dibujo(dir_hare_frente, COMPLETA);
 			if (hay_que_load == 0)
-				animacion_rayo();
+				animation_rayo();
 			lee_dibujos("96.alg");
 			descomprime_dibujo(dir_hare_frente, 1);
 			borra_pantalla();
@@ -402,7 +402,7 @@ void DrasculaEngine::setvgapalette256(byte *PalBuf) {
 	_system->updateScreen();
 }
 
-void DrasculaEngine::DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int Ancho,
+void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int Ancho,
 								  int Alto, byte *Origen, byte *Destino) {
 	int x;
 	Destino += xdes + ydes * 320;
@@ -414,7 +414,7 @@ void DrasculaEngine::DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int An
 	}
 }
 
-void DrasculaEngine::DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int Ancho,
+void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int Ancho,
 								   int Alto, byte *Origen, byte *Destino) {
 	int y, x;
 
@@ -427,7 +427,7 @@ void DrasculaEngine::DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int A
 				Destino[x + y * 320] = Origen[x + y * 320];
 }
 
-void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, byte *Origen, byte *Destino) {
+void DrasculaEngine::copyRectClip(int *Array, byte *Origen, byte *Destino) {
 	int y, x;
 	int xorg = Array[0];
 	int yorg = Array[1];
@@ -460,7 +460,7 @@ void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, byte *Origen, byte *Destino) 
 				Destino[x + y * 320] = Origen[x + y * 320];
 }
 
-void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer) {
+void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer) {
 	int x;
 	byte *ptr = VGA;
 
@@ -511,7 +511,7 @@ bool DrasculaEngine::escoba() {
 		buffer_teclado();
 
 		if (hay_que_load == 0)
-			animacion_1_1();
+			animation_1_1();
 
 		sin_verbo();
 		lee_dibujos("2aux62.alg");
@@ -605,7 +605,7 @@ bool DrasculaEngine::escoba() {
 		obj_saliendo = 104;
 		if (hay_que_load == 0) {
 			carga_escoba("58.ald");
-			animacion_1_6();
+			animation_1_6();
 		} else {
 			if (!para_cargar(nom_partida)) {
 				return true;
@@ -627,7 +627,7 @@ bucles:
 
 	if (num_ejec == 2) {
 		if ((!strcmp(num_room, "3.alg")) && (hare_x == 279) && (hare_y + alto_hare == 101))
-			animacion_1_2();
+			animation_1_2();
 		else if ((!strcmp(num_room, "14.alg")) && (hare_x == 214) && (hare_y + alto_hare == 121))
 			lleva_al_hare(190, 130);
 		else if ((!strcmp(num_room, "14.alg")) && (hare_x == 246) && (hare_y + alto_hare == 112))
@@ -635,7 +635,7 @@ bucles:
 	}
 
 	mueve_cursor();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (num_ejec == 2) {
 		if (music_status() == 0 && musica_room != 0)
@@ -747,14 +747,14 @@ bucles:
 	} else if (key == Common::KEYCODE_v) {
 		con_voces = 1;
 		print_abc(SYS2, 96, 86);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		delay(1410);
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (key == Common::KEYCODE_t) {
 		con_voces = 0;
 		print_abc(SYS3, 94, 86);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		delay(1460);
 		if (num_ejec != 3)
 			cont_sv = 0;
@@ -803,7 +803,7 @@ void DrasculaEngine::elige_objeto(int objeto) {
 		if (lleva_objeto == 1 && menu_scr == 0)
 			suma_objeto(objeto_que_lleva);
 	}
-	DIBUJA_FONDO(x1d_menu[objeto], y1d_menu[objeto], 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
 	lleva_objeto = 1;
 	objeto_que_lleva = objeto;
 }
@@ -825,7 +825,7 @@ int DrasculaEngine::resta_objeto(int osj) {
 		return 1;
 }
 
-void DrasculaEngine::animacion_1_1() {
+void DrasculaEngine::animation_1_1() {
 	int l, l2, p;
 	int pos_pixel[6];
 
@@ -852,7 +852,7 @@ void DrasculaEngine::animacion_1_1() {
 		lee_dibujos("cielo.alg");
 		descomprime_dibujo(dir_zona_pantalla, 256);
 		Negro();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		FundeDelNegro(2);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -861,7 +861,7 @@ void DrasculaEngine::animacion_1_1() {
 			break;
 		color_abc(ROJO);
 		centra_texto("Transilvanya, 1993 d.c.", 160, 100);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(1000);
@@ -888,7 +888,7 @@ void DrasculaEngine::animacion_1_1() {
 			break;
 		lee_dibujos("cielo2.alg");
 		descomprime_dibujo(dir_zona_pantalla, 256);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		FundeAlNegro(1);
@@ -914,9 +914,9 @@ void DrasculaEngine::animacion_1_1() {
 
 		for (l2 = 0; l2 < 3; l2++)
 			for (l = 0; l < 7; l++) {
-				DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-				DIBUJA_FONDO(interf_x[l], interf_y[l], 156, 45, 63, 31, dir_dibujo2, dir_zona_pantalla);
-				VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+				copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+				copyBackground(interf_x[l], interf_y[l], 156, 45, 63, 31, dir_dibujo2, dir_zona_pantalla);
+				updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 				if (getscan() == Common::KEYCODE_ESCAPE) {
 					term_int = 1;
 					break;
@@ -932,15 +932,15 @@ void DrasculaEngine::animacion_1_1() {
 		pos_pixel[5] = 31;
 
 		for (l = 0; l < 180; l++) {
-			DIBUJA_FONDO(0, 0, 320 - l, 0, l, 200, dir_dibujo3, dir_zona_pantalla);
-			DIBUJA_FONDO(l, 0, 0, 0, 320 - l, 200, dir_dibujo1, dir_zona_pantalla);
+			copyBackground(0, 0, 320 - l, 0, l, 200, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(l, 0, 0, 0, 320 - l, 200, dir_dibujo1, dir_zona_pantalla);
 
 			pos_pixel[0] = interf_x[l2];
 			pos_pixel[1] = interf_y[l2];
 			pos_pixel[2] = 156 - l;
 
-			DIBUJA_BLOQUE_CUT(pos_pixel, dir_dibujo2, dir_zona_pantalla);
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			copyRectClip(pos_pixel, dir_dibujo2, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			p++;
 			if (p == 6) {
 				p = 0;
@@ -955,7 +955,7 @@ void DrasculaEngine::animacion_1_1() {
 		}
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 
 		habla_dr_grande(TEXTD1, "D1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -976,17 +976,17 @@ void DrasculaEngine::animacion_1_1() {
 		x_igor = 66;
 		y_igor = 97;
 
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_igor_dch(TEXTI8, "I8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_dr_izq(TEXTD2, "d2.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1003,14 +1003,14 @@ void DrasculaEngine::animacion_1_1() {
 		color_solo = ROJO;
 		lee_dibujos("plan1.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(10);
 		habla_solo(TEXTD4,"d4.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lee_dibujos("plan1.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_solo(TEXTD5, "d5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1020,7 +1020,7 @@ void DrasculaEngine::animacion_1_1() {
 		borra_pantalla();
 		lee_dibujos("plan2.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(20);
 		habla_solo(TEXTD6, "d6.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -1031,7 +1031,7 @@ void DrasculaEngine::animacion_1_1() {
 		borra_pantalla();
 		lee_dibujos("plan3.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(20);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1040,7 +1040,7 @@ void DrasculaEngine::animacion_1_1() {
 			break;
 		lee_dibujos("plan3.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_solo(TEXTD8, "d8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1095,30 +1095,30 @@ void DrasculaEngine::animacion_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(1);
 		sentido_dr = 0;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_dr_izq(TEXTD12, "d12.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(1);
 		sentido_dr = 1;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_igor_dch(TEXTI2, "I2.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1127,16 +1127,16 @@ void DrasculaEngine::animacion_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(1);
 		sentido_dr = 0;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_dr_izq(TEXTD14, "d14.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1182,7 +1182,7 @@ void DrasculaEngine::animacion_1_1() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::animacion_2_1() {
+void DrasculaEngine::animation_2_1() {
 	int l;
 
 	lleva_al_hare(231, 91);
@@ -1237,7 +1237,7 @@ void DrasculaEngine::animacion_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		Negro();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		FundeDelNegro(1);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1317,7 +1317,7 @@ void DrasculaEngine::animacion_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(120);
@@ -1330,7 +1330,7 @@ void DrasculaEngine::animacion_2_1() {
 		refresca_pantalla();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(110);
 		habla_solo(TEXTBJ11, "BJ11.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -1338,7 +1338,7 @@ void DrasculaEngine::animacion_2_1() {
 		refresca_pantalla();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(118);
@@ -1366,19 +1366,19 @@ void DrasculaEngine::animacion_2_1() {
 			break;
 		pausa(8);
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		hablar(TEXT225, "225.als");
 		pausa(76);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		hablar(TEXT226, "226.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(30);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1399,7 +1399,7 @@ void DrasculaEngine::sin_verbo() {
 		if (lleva_objeto == 1)
 			suma_objeto(objeto_que_lleva);
 	}
-	DIBUJA_FONDO(0, c, 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(0, c, 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
 	lleva_objeto = 0;
 	hay_nombre = 0;
@@ -1609,7 +1609,7 @@ martini:
 	lee_dibujos(num_room);
 	descomprime_dibujo(dir_dibujo1, MEDIA);
 
-	DIBUJA_FONDO(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
 	color_hare();
 	if (nivel_osc != 0)
@@ -1711,13 +1711,13 @@ martini:
 	}
 
 	if (num_ejec == 4 && !strcmp(num_room, "24.alg") && flags[29] == 1)
-		animacion_7_4();
+		animation_7_4();
 
 	if (num_ejec == 5) {
 		if (!strcmp(num_room, "45.alg"))
 			hare_se_ve = 0;
 		if (!strcmp(num_room, "49.alg") && flags[7] == 0)
-			animacion_4_5();
+			animation_4_5();
 	}
 
 	refresca_pantalla();
@@ -1743,7 +1743,7 @@ void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
 
 	for (;;) {
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if (hare_se_mueve == 0)
 			break;
 	}
@@ -1754,13 +1754,13 @@ void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
 	}
 fin:
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::mueve_cursor() {
 	int pos_cursor[8];
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 	pon_hare();
@@ -1784,7 +1784,7 @@ void DrasculaEngine::mueve_cursor() {
 	pos_cursor[3] = y_raton - 17;
 	pos_cursor[4] = ANCHOBJ;
 	pos_cursor[5] = ALTOBJ;
-	DIBUJA_BLOQUE_CUT(pos_cursor, dir_dibujo3, dir_zona_pantalla);
+	copyRectClip(pos_cursor, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::comprueba_objetos() {
@@ -1983,7 +1983,7 @@ void DrasculaEngine::elige_verbo(int verbo) {
 			suma_objeto(objeto_que_lleva);
 	}
 
-	DIBUJA_FONDO(ANCHOBJ * verbo, c, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(ANCHOBJ * verbo, c, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
 	lleva_objeto = 1;
 	objeto_que_lleva = verbo;
@@ -1992,8 +1992,8 @@ void DrasculaEngine::elige_verbo(int verbo) {
 void DrasculaEngine::mesa() {
 	int nivel_master, nivel_voc, nivel_cd;
 
-	DIBUJA_BLOQUE(1, 56, 73, 63, 177, 97, dir_mesa, dir_zona_pantalla);
-	VUELCA_PANTALLA(73, 63, 73, 63, 177, 97, dir_zona_pantalla);
+	copyRect(1, 56, 73, 63, 177, 97, dir_mesa, dir_zona_pantalla);
+	updateScreen(73, 63, 73, 63, 177, 97, dir_zona_pantalla);
 
 	for (;;) {
 		nivel_master = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
@@ -2002,15 +2002,15 @@ void DrasculaEngine::mesa() {
 
 		refresca_pantalla();
 
-		DIBUJA_BLOQUE(1, 56, 73, 63, 177, 97, dir_mesa, dir_zona_pantalla);
+		copyRect(1, 56, 73, 63, 177, 97, dir_mesa, dir_zona_pantalla);
 
-		DIBUJA_FONDO(183, 56, 82, nivel_master, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
-		DIBUJA_FONDO(183, 56, 138, nivel_voc, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
-		DIBUJA_FONDO(183, 56, 194, nivel_cd, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
+		copyBackground(183, 56, 82, nivel_master, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
+		copyBackground(183, 56, 138, nivel_voc, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
+		copyBackground(183, 56, 194, nivel_cd, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
 
 		cursor_mesa();
 
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 		MirarRaton();
 
@@ -2084,14 +2084,14 @@ bool DrasculaEngine::saves() {
 
 	for (;;) {
 		y = 27;
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		for (n = 0; n < NUM_SAVES; n++) {
 			print_abc(nombres[n], 116, y);
 			y = y + 9;
 		}
 		print_abc(select, 117, 15);
 		cursor_mesa();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		y = 27;
 
 		MirarRaton();
@@ -2168,7 +2168,7 @@ bool DrasculaEngine::saves() {
 			else if (hay_seleccion == 0) {
 				print_abc("elige una partida", 117, 15);
 			}
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			delay(400);
 		}
 		y = 26;
@@ -2318,7 +2318,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 		pos_texto[4] = ANCHO_LETRAS;
 		pos_texto[5] = ALTO_LETRAS;
 
-		DIBUJA_BLOQUE_CUT(pos_texto, dir_texto, dir_zona_pantalla);
+		copyRectClip(pos_texto, dir_texto, dir_zona_pantalla);
 
 		x_pantalla = x_pantalla + ANCHO_LETRAS;
 		if (x_pantalla > 317) {
@@ -2338,7 +2338,7 @@ bool DrasculaEngine::confirma_salir() {
 	color_abc(ROJO);
 	refresca_pantalla();
 	centra_texto(SYS1, 160, 87);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	delay(100);
 	for (;;) {
@@ -2549,7 +2549,7 @@ void DrasculaEngine::comienza_sound(const char *fichero) {
 	ctvd_output(sku);
 }
 
-void DrasculaEngine::anima(const char *animacion, int FPS) {
+void DrasculaEngine::anima(const char *animation, int FPS) {
 	Common::File FileIn;
 	unsigned j;
 	int NFrames = 1;
@@ -2558,10 +2558,10 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 	AuxBuffLast = (byte *)malloc(65000);
 	AuxBuffDes = (byte *)malloc(65000);
 
-	FileIn.open(animacion);
+	FileIn.open(animation);
 
 	if (!FileIn.isOpen()) {
-		error("No encuentro un fichero de animacion.");
+		error("No encuentro un fichero de animation.");
 	}
 
 	FileIn.read(&NFrames, sizeof(NFrames));
@@ -2665,9 +2665,9 @@ void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
 bucless:
 
 	cara = _rnd->getRandomNumber(3);
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_FONDO(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, dir_dibujo2, dir_zona_pantalla);
-	DIBUJA_FONDO(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, dir_dibujo2, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
 	l++;
 	if (l == 7)
 		l = 0;
@@ -2675,7 +2675,7 @@ bucless:
 	if (con_voces == 0)
 		centra_texto(dicho, 191, 69);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -2716,7 +2716,7 @@ void DrasculaEngine::pon_igor() {
 	pos_igor[4] = 54;
 	pos_igor[5] = 61;
 
-	DIBUJA_BLOQUE_CUT(pos_igor, dir_hare_frente, dir_zona_pantalla);
+	copyRectClip(pos_igor, dir_hare_frente, dir_zona_pantalla);
 }
 
 void DrasculaEngine::pon_dr() {
@@ -2735,9 +2735,9 @@ void DrasculaEngine::pon_dr() {
 	pos_dr[5] = 77;
 
 	if (num_ejec == 6)
-		DIBUJA_BLOQUE_CUT(pos_dr, dir_dibujo2, dir_zona_pantalla);
+		copyRectClip(pos_dr, dir_dibujo2, dir_zona_pantalla);
 	else
-		DIBUJA_BLOQUE_CUT(pos_dr, dir_hare_fondo, dir_zona_pantalla);
+		copyRectClip(pos_dr, dir_hare_fondo, dir_zona_pantalla);
 }
 
 void DrasculaEngine::pon_bj() {
@@ -2753,7 +2753,7 @@ void DrasculaEngine::pon_bj() {
 	pos_bj[4] = 26;
 	pos_bj[5] = 76;
 
-	DIBUJA_BLOQUE_CUT(pos_bj, dir_dibujo3, dir_zona_pantalla);
+	copyRectClip(pos_bj, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
@@ -2789,22 +2789,22 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
 	pon_igor();
 	pon_dr();
-	DIBUJA_FONDO(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, dir_dibujo1, dir_zona_pantalla);
 
-	DIBUJA_BLOQUE(x_habla[cara], 148, x_igor + 17, y_igor, 25, 24, dir_hare_frente, dir_zona_pantalla);
+	copyRect(x_habla[cara], 148, x_igor + 17, y_igor, 25, 24, dir_hare_frente, dir_zona_pantalla);
 
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, x_igor + 26, y_igor);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -2825,10 +2825,10 @@ bucless:
 		if (longitud > 0)
 			goto bucless;
 	}
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pon_igor();
 	pon_dr();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
@@ -2864,7 +2864,7 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
@@ -2873,18 +2873,18 @@ bucless:
 	if (num_ejec == 6)
 		pon_hare();
 
-	DIBUJA_FONDO(x_dr, y_dr, x_dr, y_dr, 38, 31, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(x_dr, y_dr, x_dr, y_dr, 38, 31, dir_dibujo1, dir_zona_pantalla);
 	if (num_ejec == 6)
-		DIBUJA_BLOQUE(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+		copyRect(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
 	else
-		DIBUJA_BLOQUE(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
 
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, x_dr + 19, y_dr);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -2906,10 +2906,10 @@ bucless:
 			goto bucless;
 	}
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pon_igor();
 	pon_dr();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_dr_dch(const char *dicho, const char *filename) {
@@ -2945,7 +2945,7 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
 
 	pon_igor();
@@ -2953,18 +2953,18 @@ bucless:
 	if (num_ejec == 6)
 		pon_hare();
 
-	DIBUJA_FONDO(x_dr, y_dr, x_dr, y_dr, 45, 31, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(x_dr, y_dr, x_dr, y_dr, 45, 31, dir_dibujo1, dir_zona_pantalla);
 	if (num_ejec != 6)
-		DIBUJA_BLOQUE(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
 	else
-		DIBUJA_BLOQUE(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+		copyRect(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
 
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, x_dr + 19, y_dr);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -2993,7 +2993,7 @@ bucless:
 	pon_dr();
 	if (num_ejec == 6)
 		pon_hare();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
@@ -3024,7 +3024,7 @@ void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 	}
 
 	if (num_ejec == 6)
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 bucless:
 
@@ -3036,7 +3036,7 @@ bucless:
 		else if (num_ejec == 5)
 			centra_texto(dicho, 173, 92);
 	}
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	byte key = getscan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
@@ -3056,8 +3056,8 @@ bucless:
 			goto bucless;
 	}
 	if (num_ejec == 6) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 }
 
@@ -3094,7 +3094,7 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
@@ -3103,15 +3103,15 @@ bucless:
 	if (num_ejec == 1)
 		pon_dr();
 	if (num_ejec == 1 || num_ejec == 6)
-		DIBUJA_FONDO(x_igor, y_igor, x_igor, y_igor, 29, 25, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_BLOQUE(x_habla[cara], 173, x_igor, y_igor, 29, 25, dir_hare_frente, dir_zona_pantalla);
+		copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, dir_dibujo1, dir_zona_pantalla);
+	copyRect(x_habla[cara], 173, x_igor, y_igor, 29, 25, dir_hare_frente, dir_zona_pantalla);
 
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, x_igor + 26, y_igor);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -3138,11 +3138,11 @@ bucless:
 	}
 
 	if (num_ejec == 1) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 	}
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_tabernero(const char *dicho, const char *filename) {
@@ -3186,18 +3186,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(8);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 2, 121, 44, 21, 24, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 2, 121, 44, 21, 24, dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 132, 45);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -3217,7 +3217,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::hipo(int contador) {
@@ -3230,9 +3230,9 @@ comienza:
 
 	refresca_pantalla();
 	if (num_ejec == 3)
-		VUELCA_PANTALLA(0, 0, 0, y, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, y, 320, 200, dir_zona_pantalla);
 	else
-		VUELCA_PANTALLA(0, 1, 0, y, 320, 198, dir_zona_pantalla);
+		updateScreen(0, 1, 0, y, 320, 198, dir_zona_pantalla);
 
 	if (sentido == 0)
 		y++;
@@ -3254,7 +3254,7 @@ comienza:
 		goto comienza;
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::fin_sound() {
@@ -3300,14 +3300,14 @@ bucless:
 	if (num_ejec != 5) {
 		cara = _rnd->getRandomNumber(4);
 
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 		actualiza_refresco_antes();
 
-		DIBUJA_FONDO(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
+		copyBackground(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
 					dir_dibujo1, dir_zona_pantalla);
 
-		DIBUJA_BLOQUE(x_habla[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
+		copyRect(x_habla[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
 					dir_dibujo3, dir_zona_pantalla);
 		pon_hare();
 		actualiza_refresco();
@@ -3315,7 +3315,7 @@ bucless:
 		if (con_voces == 0)
 			centra_texto(dicho, x_bj + 7, y_bj);
 
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 		pausa(3);
 	} else {
@@ -3324,7 +3324,7 @@ bucless:
 		if (con_voces == 0)
 			centra_texto(dicho, 93, 80);
 
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
 	byte key = getscan();
@@ -3346,7 +3346,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::hablar(const char *dicho, const char *filename) {
@@ -3410,13 +3410,13 @@ bucless:
 
 	cara = _rnd->getRandomNumber(5);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 	if (num_ejec == 2)
-		DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_habla - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_habla - 1, dir_zona_pantalla, dir_dibujo3);
 	else
-		DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]),
 				dir_zona_pantalla, dir_dibujo3);
 
@@ -3424,16 +3424,16 @@ bucless:
 
 	if (num_ejec == 2) {
 		if (!strcmp(fondo_y_menu, "99.alg") || !strcmp(fondo_y_menu, "994.alg"))
-			DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_habla - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_habla - 1, dir_dibujo3, dir_zona_pantalla);
 	} else {
-		DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]),
 				dir_dibujo3, dir_zona_pantalla);
 	}
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_izq[cara], y_mask_habla, hare_x + 8, hare_y - 1, ancho_habla, alto_habla,
+			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 8, hare_y - 1, ancho_habla, alto_habla,
 						dir_hare_dch, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_izq[cara], y_mask_habla, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
@@ -3443,7 +3443,7 @@ bucless:
 		actualiza_refresco();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_dch[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
+			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
 					dir_hare_dch, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_dch[cara], y_mask_habla, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
@@ -3451,7 +3451,7 @@ bucless:
 		actualiza_refresco();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
+			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
 					dir_hare_frente, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
@@ -3461,7 +3461,7 @@ bucless:
 		actualiza_refresco();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla,
+			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla,
 					dir_hare_frente, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
@@ -3474,7 +3474,7 @@ bucless:
 	if (con_voces == 0)
 		centra_texto(dicho, hare_x, hare_y);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -3497,7 +3497,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (num_ejec == 1) {
 		if (music_status() == 0 && flags[11] == 0 && corta_musica == 0)
@@ -3519,13 +3519,13 @@ int DrasculaEngine::music_status() {
 }
 
 void DrasculaEngine::refresca_pantalla() {
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
 	if (num_ejec == 3) {
 		if (flags[0] == 0)
 			pon_hare();
 		else
-			DIBUJA_BLOQUE(113, 54, hare_x - 20, hare_y - 1, 77, 89, dir_dibujo3, dir_zona_pantalla);
+			copyRect(113, 54, hare_x - 20, hare_y - 1, 77, 89, dir_dibujo3, dir_zona_pantalla);
 	} else {
 		pon_hare();
 	}
@@ -3947,25 +3947,25 @@ void DrasculaEngine::pon_hare() {
 		if (sentido_hare == 0) {
 			pos_hare[1] = 0;
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_dch, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_dch, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		} else if (sentido_hare == 1) {
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_dch, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_dch, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		} else if (sentido_hare == 2) {
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_fondo, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_fondo, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_fondo, dir_zona_pantalla);
 		} else {
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_frente, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_frente, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
@@ -3985,25 +3985,25 @@ void DrasculaEngine::pon_hare() {
 		if (sentido_hare == 0) {
 			pos_hare[1] = 0;
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_dch, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_dch, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		} else if (sentido_hare == 1) {
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_dch, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_dch, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		} else if (sentido_hare == 2) {
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_fondo, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_fondo, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_fondo, dir_zona_pantalla);
 		} else {
 			if (num_ejec == 2)
-				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_frente, dir_zona_pantalla);
+				copyRectClip(pos_hare, dir_hare_frente, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
@@ -4026,13 +4026,13 @@ void DrasculaEngine::menu_sin_volcar() {
 
 		if (h != 0) {
 			if (num_ejec == 6)
-				DIBUJA_FONDO(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
+				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
 						ANCHOBJ, ALTOBJ, dir_mesa, dir_zona_pantalla);
 			else
-				DIBUJA_FONDO(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
+				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
 						ANCHOBJ, ALTOBJ, dir_hare_frente, dir_zona_pantalla);
 		}
-		DIBUJA_BLOQUE(x1d_menu[h], y1d_menu[h], x_obj[n], y_obj[n],
+		copyRect(x1d_menu[h], y1d_menu[h], x_obj[n], y_obj[n],
 				ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_zona_pantalla);
 	}
 
@@ -4046,7 +4046,7 @@ void DrasculaEngine::barra_menu() {
 	for (n = 0; n < 7; n++) {
 		if (x_raton > x_barra[n] && x_raton < x_barra[n + 1])
 			sobre_verbo = 0;
-		DIBUJA_BLOQUE(ANCHOBJ * n, ALTOBJ * sobre_verbo, x_barra[n], 2,
+		copyRect(ANCHOBJ * n, ALTOBJ * sobre_verbo, x_barra[n], 2,
 						ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_zona_pantalla);
 		sobre_verbo = 1;
 	}
@@ -4084,7 +4084,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 				lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 				sentido_hare = sentidobj[l];
 				refresca_pantalla();
-				VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+				updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 				hare_se_mueve = 0;
 				sentido_hare = sentido_alkeva[l];
 				obj_saliendo = alapuertakeva[l];
@@ -4092,7 +4092,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 				musica_antes = musica_room;
 
 				if (num_obj[l] == 105) {
-					animacion_2_1();
+					animation_2_1();
 					return true;
 				}
 				borra_pantalla();
@@ -4112,11 +4112,11 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			rompo = 1;
 			musica_antes = musica_room;
 			if (num_obj[l] == 136)
-				animacion_2_2();
+				animation_2_2();
 			if (num_obj[l] == 124)
-				animacion_3_2();
+				animation_3_2();
 			if (num_obj[l] == 173) {
-				animacion_35_2();
+				animation_35_2();
 				return true;
 			} if (num_obj[l] == 146 && flags[39] == 1) {
 				flags[5] = 1;
@@ -4141,7 +4141,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			obj_saliendo = alapuertakeva[l];
@@ -4159,7 +4159,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			obj_saliendo = alapuertakeva[l];
@@ -4180,7 +4180,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			obj_saliendo = alapuertakeva[l];
@@ -4199,7 +4199,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			obj_saliendo = alapuertakeva[l];
@@ -4212,7 +4212,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			carga_escoba(salgo);
 
 			if (obj_saliendo == 105)
-				animacion_19_6();
+				animation_19_6();
 		}
 	}
 
@@ -4226,7 +4226,7 @@ bool DrasculaEngine::coge_objeto() {
 
 	refresca_pantalla();
 	menu_sin_volcar();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (objeto_que_lleva < 7)
 		goto usando_verbos;
@@ -4255,7 +4255,7 @@ usando_verbos:
 bool DrasculaEngine::banderas(int fl) {
 	hare_se_mueve = 0;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	hay_respuesta = 1;
 
@@ -4666,7 +4666,7 @@ void DrasculaEngine::cursor_mesa() {
 	pos_cursor[4] = 40;
 	pos_cursor[5] = 25;
 
-	DIBUJA_BLOQUE_CUT(pos_cursor, dir_mesa, dir_zona_pantalla);
+	copyRectClip(pos_cursor, dir_mesa, dir_zona_pantalla);
 }
 
 void DrasculaEngine::introduce_nombre() {
@@ -4677,9 +4677,9 @@ void DrasculaEngine::introduce_nombre() {
 	for (;;) {
 		buffer_teclado();
 		select2[v] = '-';
-		DIBUJA_FONDO(115, 14, 115, 14, 176, 9, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(115, 14, 115, 14, 176, 9, dir_dibujo1, dir_zona_pantalla);
 		print_abc(select2, 117, 15);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		key = getscan();
 		delay(70);
 		if (key != 0) {
@@ -5038,7 +5038,7 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int a
 			pos_pixel[4] = 1;
 			pos_pixel[5] = 1;
 
-			DIBUJA_BLOQUE_CUT(pos_pixel, dir_inicio, dir_fin);
+			copyRectClip(pos_pixel, dir_inicio, dir_fin);
 
 			pixel_x = pixel_x + suma_x;
 		}
@@ -5138,16 +5138,16 @@ void DrasculaEngine::cuadrante_4() {
 void DrasculaEngine::refresca_62() {
 	int borracho_x[] = { 1, 42, 83, 124, 165, 206, 247, 1 };
 
-	DIBUJA_BLOQUE(1, 1, 0, 0, 62, 142, dir_dibujo2, dir_zona_pantalla);
+	copyRect(1, 1, 0, 0, 62, 142, dir_dibujo2, dir_zona_pantalla);
 
 	if (hare_y + alto_hare < 89) {
-		DIBUJA_BLOQUE(205, 1, 180, 9, 82, 80, dir_dibujo3, dir_zona_pantalla);
-		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
+		copyRect(205, 1, 180, 9, 82, 80, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
 	}
 }
 
 void DrasculaEngine::refresca_63() {
-	DIBUJA_BLOQUE(1, 154, 83, 122, 131, 44, dir_dibujo3, dir_zona_pantalla);
+	copyRect(1, 154, 83, 122, 131, 44, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_62_antes() {
@@ -5157,24 +5157,24 @@ void DrasculaEngine::refresca_62_antes() {
 	int borracho_x[] = {1, 42, 83, 124, 165, 206, 247, 1 };
 	int diferencia;
 
-	DIBUJA_FONDO(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_FONDO(cirio_x[frame_velas], 146, 311, 80, 4, 8, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(cirio_x[frame_velas], 146, 311, 80, 4, 8, dir_dibujo3, dir_zona_pantalla);
 
 	if (parpadeo == 5)
-		DIBUJA_FONDO(1, 149, 127, 52, 9, 5, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 149, 127, 52, 9, 5, dir_dibujo3, dir_zona_pantalla);
 
 	if (hare_x > 101 && hare_x < 155)
-		DIBUJA_FONDO(31, 138, 178, 51, 18, 16, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(31, 138, 178, 51, 18, 16, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[11] == 0)
-		DIBUJA_FONDO(pianista_x[frame_piano], 157, 245, 130, 29, 42, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(pianista_x[frame_piano], 157, 245, 130, 29, 42, dir_dibujo3, dir_zona_pantalla);
 	else if (flags[5] == 0)
-		DIBUJA_FONDO(145, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+		copyBackground(145, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
 	else
-		DIBUJA_FONDO(165, 140, 229, 117, 43, 59, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(165, 140, 229, 117, 43, 59, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[12] == 1)
-		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
 
 	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 6) {
@@ -5440,11 +5440,11 @@ void DrasculaEngine::pantalla_62(int fl) {
 	if (objeto_que_lleva == HABLAR && fl == 53)
 		conversa("op_13.cal");
 	else if (objeto_que_lleva == HABLAR && fl == 52 && flags[0] == 0)
-		animacion_3_1();
+		animation_3_1();
 	else if (objeto_que_lleva == HABLAR && fl == 52 && flags[0] == 1)
 		hablar(TEXT109, "109.als");
 	else if (objeto_que_lleva == HABLAR && fl == 54)
-		animacion_4_1();
+		animation_4_1();
 	else if (objeto_que_lleva == MIRAR && fl == 100)
 		hablar(TEXT168, "168.als");
 	else if (objeto_que_lleva == HABLAR && fl == 100)
@@ -5629,7 +5629,7 @@ bucle_opc:
 	print_abc_opc(frase3, 1, 18, juego3);
 	print_abc_opc(frase4, 1, 26, juego4);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if ((boton_izq == 1) && (juego1 == 2)) {
 		delay(100);
@@ -5693,7 +5693,7 @@ bucle_opc:
 		sin_verbo();
 }
 
-void DrasculaEngine::animacion_3_1() {
+void DrasculaEngine::animation_3_1() {
 	lee_dibujos("an11y13.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
@@ -5724,7 +5724,7 @@ void DrasculaEngine::animacion_3_1() {
 	descomprime_dibujo(dir_hare_dch, 1);
 }
 
-void DrasculaEngine::animacion_4_1() {
+void DrasculaEngine::animation_4_1() {
 	lee_dibujos("an12.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
@@ -5732,17 +5732,17 @@ void DrasculaEngine::animacion_4_1() {
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
-	VUELCA_PANTALLA(228,112, 228,112, 47,60, dir_zona_pantalla);
+	copyBackground(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	updateScreen(228,112, 228,112, 47,60, dir_zona_pantalla);
 
 	pausa(3);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 	stopmusic();
@@ -5907,7 +5907,7 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 		pos_texto[4] = ANCHO_LETRAS_OPC;
 		pos_texto[5] = ALTO_LETRAS_OPC;
 
-		DIBUJA_BLOQUE_CUT(pos_texto, dir_hare_fondo, dir_zona_pantalla);
+		copyRectClip(pos_texto, dir_hare_fondo, dir_zona_pantalla);
 
 		x_pantalla = x_pantalla + ANCHO_LETRAS_OPC;
 	}
@@ -5923,74 +5923,74 @@ void DrasculaEngine::responde(int funcion) {
 			habla_borracho(TEXTB3, "B3.als");
 	} else if (num_ejec == 2) {
 		if (funcion == 8)
-			animacion_8_2();
+			animation_8_2();
 		else if (funcion == 9)
-			animacion_9_2();
+			animation_9_2();
 		else if (funcion == 10)
-			animacion_10_2();
+			animation_10_2();
 		else if (funcion == 15)
-			animacion_15_2();
+			animation_15_2();
 		else if (funcion == 16)
-			animacion_16_2();
+			animation_16_2();
 		else if (funcion == 17)
-			animacion_17_2();
+			animation_17_2();
 		else if (funcion == 19)
-			animacion_19_2();
+			animation_19_2();
 		else if (funcion == 20)
-			animacion_20_2();
+			animation_20_2();
 		else if (funcion == 21)
-			animacion_21_2();
+			animation_21_2();
 		else if (funcion == 23)
-			animacion_23_2();
+			animation_23_2();
 		else if (funcion == 28)
-			animacion_28_2();
+			animation_28_2();
 		else if (funcion == 29)
-			animacion_29_2();
+			animation_29_2();
 		else if (funcion == 30)
-			animacion_30_2();
+			animation_30_2();
 		else if (funcion == 31)
-			animacion_31_2();
+			animation_31_2();
 	} else if (num_ejec == 4) {
 		if (funcion == 2)
-			animacion_2_4();
+			animation_2_4();
 		else if (funcion == 3)
-			animacion_3_4();
+			animation_3_4();
 		else if (funcion == 4)
-			animacion_4_4();
+			animation_4_4();
 	} else if (num_ejec == 5) {
 		if (funcion == 2)
-			animacion_2_5();
+			animation_2_5();
 		else if (funcion == 3)
-			animacion_3_5();
+			animation_3_5();
 		else if (funcion == 6)
-			animacion_6_5();
+			animation_6_5();
 		else if (funcion == 7)
-			animacion_7_5();
+			animation_7_5();
 		else if (funcion == 8)
-			animacion_8_5();
+			animation_8_5();
 		else if (funcion == 15)
-			animacion_15_5();
+			animation_15_5();
 		else if (funcion == 16)
-			animacion_16_5();
+			animation_16_5();
 		else if (funcion == 17)
-			animacion_17_5();
+			animation_17_5();
 	} else if (num_ejec == 6) {
 		if (funcion == 2)
-			animacion_2_6();
+			animation_2_6();
 		else if (funcion == 3)
-			animacion_3_6();
+			animation_3_6();
 		else if (funcion == 4)
-			animacion_4_6();
+			animation_4_6();
 		else if (funcion == 11)
-			animacion_11_6();
+			animation_11_6();
 		else if (funcion == 12)
-			animacion_12_6();
+			animation_12_6();
 		else if (funcion == 13)
-			animacion_13_6();
+			animation_13_6();
 		else if (funcion == 14)
-			animacion_14_6();
+			animation_14_6();
 		else if (funcion == 15)
-			animacion_15_6();
+			animation_15_6();
 	}
 }
 
@@ -6025,11 +6025,11 @@ bucless:
 
 	cara = _rnd->getRandomNumber(3);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 139, 228, 112, 47, 60,
+	copyBackground(x_habla[cara], 139, 228, 112, 47, 60,
 				dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
@@ -6037,7 +6037,7 @@ bucless:
 	if (con_voces == 0)
 		centra_texto(dicho, 221, 128);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -6058,7 +6058,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_borracho(const char *dicho, const char *filename) {
@@ -6085,7 +6085,7 @@ bebiendo:
 
 	if (flags[12] == 1) {
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		goto bebiendo;
 	}
 
@@ -6108,18 +6108,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 29, 177, 50, 19, 19, dir_hare_frente, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 29, 177, 50, 19, 19, dir_hare_frente, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 181, 54);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -6140,7 +6140,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	flags[13] = 0;
 	if (num_ejec == 1) {
@@ -6307,31 +6307,31 @@ void DrasculaEngine::actualiza_datos() {
 	}
 }
 
-void DrasculaEngine::animacion_1_2() {
+void DrasculaEngine::animation_1_2() {
 	lleva_al_hare(178, 121);
 	lleva_al_hare(169, 135);
 }
 
-void DrasculaEngine::animacion_2_2() {
+void DrasculaEngine::animation_2_2() {
 	int n, x=0;
 
 	sentido_hare = 0;
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	lee_dibujos("an2_1.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 	lee_dibujos("an2_2.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_FONDO(1, 1, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(1, 1, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(201,87, 201,87, 50,52, dir_zona_pantalla);
+		copyBackground(x, 1, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(201,87, 201,87, 50,52, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -6340,8 +6340,8 @@ void DrasculaEngine::animacion_2_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 55, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 55, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -6350,8 +6350,8 @@ void DrasculaEngine::animacion_2_2() {
 
 	for (n = 0; n < 6; n++){
 		x++;
-		DIBUJA_FONDO(x, 109, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 109, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -6361,8 +6361,8 @@ void DrasculaEngine::animacion_2_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(201,87, 201,87, 50,52, dir_zona_pantalla);
+		copyBackground(x, 1, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(201,87, 201,87, 50,52, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -6371,8 +6371,8 @@ void DrasculaEngine::animacion_2_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 55, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 55, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -6380,14 +6380,14 @@ void DrasculaEngine::animacion_2_2() {
 
 	for (n = 0; n < 2; n++) {
 		x++;
-		DIBUJA_FONDO(x, 109, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 109, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	fin_sound();
 
@@ -6398,13 +6398,13 @@ void DrasculaEngine::animacion_2_2() {
 	fin_sound();
 }
 
-void DrasculaEngine::animacion_3_2() {
+void DrasculaEngine::animation_3_2() {
 	lleva_al_hare(163, 106);
 	lleva_al_hare(287, 101);
 	sentido_hare = 0;
 }
 
-void DrasculaEngine::animacion_4_2() {
+void DrasculaEngine::animation_4_2() {
 	stopmusic();
 	flags[9] = 1;
 
@@ -6424,8 +6424,8 @@ void DrasculaEngine::animacion_4_2() {
 	lee_dibujos("ciego5.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(10);
 
@@ -6448,14 +6448,14 @@ void DrasculaEngine::animacion_4_2() {
 	habla_ciego(TEXTD74,"d74.als", "55033022755644444472244472225500022227555544444662550002222755444446666055522275550005550022200222000222666");
 	habla_hacker(TEXTD63,"d63.als");
 	habla_ciego(TEXTD75,"d75.als", "44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555");
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	_system->delayMillis(1);
 	habla_hacker(TEXTD64, "d64.als");
 	habla_ciego(TEXTD76, "d76.als", "5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444");
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(14);
 
@@ -6478,20 +6478,20 @@ void DrasculaEngine::animacion_4_2() {
 	flags[4] = 1;
 }
 
-void DrasculaEngine::animacion_8_2() {
+void DrasculaEngine::animation_8_2() {
 	habla_pianista(TEXTP6, "P6.als");
 	hablar(TEXT358, "358.als");
 	habla_pianista(TEXTP7, "P7.als");
 	habla_pianista(TEXTP8, "P8.als");
 }
 
-void DrasculaEngine::animacion_9_2() {
+void DrasculaEngine::animation_9_2() {
 	habla_pianista(TEXTP9, "P9.als");
 	habla_pianista(TEXTP10, "P10.als");
 	habla_pianista(TEXTP11, "P11.als");
 }
 
-void DrasculaEngine::animacion_10_2() {
+void DrasculaEngine::animation_10_2() {
 	habla_pianista(TEXTP12, "P12.als");
 	hablar(TEXT361, "361.als");
 	pausa(40);
@@ -6504,7 +6504,7 @@ void DrasculaEngine::animacion_10_2() {
 	habla_pianista(TEXTP16, "P16.als");
 }
 
-void DrasculaEngine::animacion_14_2() {
+void DrasculaEngine::animation_14_2() {
 	int n, pos_cabina[6];
 	int l = 0;
 
@@ -6520,14 +6520,14 @@ void DrasculaEngine::animacion_14_2() {
 	pos_cabina[5] = 161;
 
 	for (n = -160; n <= 0; n = n + 5 + l) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
 		pon_hare();
 		pon_vb();
 		pos_cabina[3] = n;
-		DIBUJA_BLOQUE_CUT(pos_cabina, dir_hare_fondo, dir_zona_pantalla);
+		copyRectClip(pos_cabina, dir_hare_fondo, dir_zona_pantalla);
 		actualiza_refresco();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		l = l + 1;
 	}
 
@@ -6544,7 +6544,7 @@ void DrasculaEngine::animacion_14_2() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::animacion_15_2() {
+void DrasculaEngine::animation_15_2() {
 	habla_borracho(TEXTB8, "B8.als");
 	pausa(7);
 	habla_borracho(TEXTB9, "B9.als");
@@ -6552,7 +6552,7 @@ void DrasculaEngine::animacion_15_2() {
 	habla_borracho(TEXTB11, "B11.als");
 }
 
-void DrasculaEngine::animacion_16_2() {
+void DrasculaEngine::animation_16_2() {
 	int l;
 
 	habla_borracho(TEXTB12, "B12.als");
@@ -6569,9 +6569,9 @@ void DrasculaEngine::animacion_16_2() {
 
 	lee_dibujos("his1.alg");
 	descomprime_dibujo(dir_dibujo1, MEDIA);
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	centra_texto(HIS1, 180, 180);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -6589,9 +6589,9 @@ void DrasculaEngine::animacion_16_2() {
 	borra_pantalla();
 	lee_dibujos("his2.alg");
 	descomprime_dibujo(dir_dibujo1, MEDIA);
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	centra_texto(HIS2, 180, 180);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -6609,9 +6609,9 @@ void DrasculaEngine::animacion_16_2() {
 	borra_pantalla();
 	lee_dibujos("his3.alg");
 	descomprime_dibujo(dir_dibujo1, MEDIA);
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	centra_texto(HIS3, 180, 180);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -6629,9 +6629,9 @@ void DrasculaEngine::animacion_16_2() {
 	lee_dibujos("his4_2.alg");
 	descomprime_dibujo(dir_dibujo3, 1);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo3, dir_zona_pantalla);
 	centra_texto(HIS1, 180, 180);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -6642,9 +6642,9 @@ void DrasculaEngine::animacion_16_2() {
 		goto asco;
 
 	for (l = 1; l < 200; l++) {
-		DIBUJA_FONDO(0, 0, 0, l, 320, 200 - l, dir_dibujo3, dir_zona_pantalla);
-		DIBUJA_FONDO(0, 200 - l, 0, 0, 320, l, dir_dibujo1, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyBackground(0, 0, 0, l, 320, 200 - l, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(0, 200 - l, 0, 0, 320, l, dir_dibujo1, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		key = getscan();
 		if (key != 0)
 			goto asco;
@@ -6661,7 +6661,7 @@ asco:
 	descomprime_dibujo(dir_dibujo1, MEDIA);
 	Negro();
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(0);
 	if (musica_room != 0)
 		playmusic(musica_room);
@@ -6669,17 +6669,17 @@ asco:
 		stopmusic();
 }
 
-void DrasculaEngine::animacion_17_2() {
+void DrasculaEngine::animation_17_2() {
 	habla_borracho(TEXTB13, "B13.als");
 	habla_borracho(TEXTB14, "B14.als");
 	flags[40] = 1;
 }
 
-void DrasculaEngine::animacion_19_2() {
+void DrasculaEngine::animation_19_2() {
 	habla_vbpuerta(TEXTVB5, "VB5.als");
 }
 
-void DrasculaEngine::animacion_20_2() {
+void DrasculaEngine::animation_20_2() {
 	habla_vbpuerta(TEXTVB7, "VB7.als");
 	habla_vbpuerta(TEXTVB8, "VB8.als");
 	hablar(TEXT383, "383.als");
@@ -6698,7 +6698,7 @@ void DrasculaEngine::animacion_20_2() {
 		flags[14] = 1;
 		abre_puerta(15, 1);
 		sal_de_la_habitacion(1);
-		animacion_23_2();
+		animation_23_2();
 		sal_de_la_habitacion(0);
 		flags[21] = 0;
 		flags[24] = 0;
@@ -6709,11 +6709,11 @@ void DrasculaEngine::animacion_20_2() {
 	}
 }
 
-void DrasculaEngine::animacion_21_2() {
+void DrasculaEngine::animation_21_2() {
 	habla_vbpuerta(TEXTVB6, "VB6.als");
 }
 
-void DrasculaEngine::animacion_23_2() {
+void DrasculaEngine::animation_23_2() {
 	lee_dibujos("an24.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
@@ -6734,7 +6734,7 @@ void DrasculaEngine::animacion_23_2() {
 	lleva_al_hare(157, 147);
 	lleva_al_hare(131, 149);
 	sentido_hare = 0;
-	animacion_14_2();
+	animation_14_2();
 	if (flags[25] == 0)
 		habla_vb(TEXTVB17, "VB17.als");
 	pausa(8);
@@ -6742,12 +6742,12 @@ void DrasculaEngine::animacion_23_2() {
 	habla_vb(TEXTVB18, "VB18.als");
 
 	if (flags[29] == 0)
-		animacion_23_anexo();
+		animation_23_anexo();
 	else
-		animacion_23_anexo2();
+		animation_23_anexo2();
 
 	sentido_vb = 2;
-	animacion_25_2();
+	animation_25_2();
 	lleva_vb(99);
 
 	if (flags[29] == 0) {
@@ -6763,13 +6763,13 @@ void DrasculaEngine::animacion_23_2() {
 		}
 		habla_vb(TEXTVB21, "VB21.als");
 	} else
-		animacion_27_2();
+		animation_27_2();
 
 	flags[25] = 1;
 	rompo_y_salgo = 1;
 }
 
-void DrasculaEngine::animacion_23_anexo() {
+void DrasculaEngine::animation_23_anexo() {
 	int n, p_x = hare_x + 2, p_y = hare_y - 3;
 	int x[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
 				1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
@@ -6780,10 +6780,10 @@ void DrasculaEngine::animacion_23_anexo() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 
 	for (n = 0; n < 34; n++) {
-		DIBUJA_BLOQUE(p_x, p_y, p_x, p_y, 36, 74, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x[n], y[n], p_x, p_y, 36, 74, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(p_x, p_y, p_x, p_y, 36, 74, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x[n], y[n], p_x, p_y, 36, 74, dir_hare_fondo, dir_zona_pantalla);
 		actualiza_refresco();
-		VUELCA_PANTALLA(p_x, p_y, p_x, p_y, 36, 74, dir_zona_pantalla);
+		updateScreen(p_x, p_y, p_x, p_y, 36, 74, dir_zona_pantalla);
 		pausa(5);
 	}
 
@@ -6791,7 +6791,7 @@ void DrasculaEngine::animacion_23_anexo() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::animacion_23_anexo2() {
+void DrasculaEngine::animation_23_anexo2() {
 	int n, p_x = hare_x + 4, p_y = hare_y;
 	int x[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
 	int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
@@ -6802,10 +6802,10 @@ void DrasculaEngine::animacion_23_anexo2() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 
 	for (n = 0; n < 14; n++) {
-		DIBUJA_BLOQUE(p_x, p_y, p_x, p_y, 33, 71, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x[n], y[n], p_x, p_y, 33, 71, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(p_x, p_y, p_x, p_y, 33, 71, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x[n], y[n], p_x, p_y, 33, 71, dir_hare_fondo, dir_zona_pantalla);
 		actualiza_refresco();
-		VUELCA_PANTALLA(p_x,p_y, p_x,p_y, 33,71, dir_zona_pantalla);
+		updateScreen(p_x,p_y, p_x,p_y, 33,71, dir_zona_pantalla);
 		pausa(5);
 	}
 
@@ -6813,7 +6813,7 @@ void DrasculaEngine::animacion_23_anexo2() {
 	descomprime_dibujo(dir_hare_fondo,1);
 }
 
-void DrasculaEngine::animacion_25_2() {
+void DrasculaEngine::animation_25_2() {
 	int n, pos_cabina[6];
 
 	lee_dibujos("an14_2.alg");
@@ -6833,7 +6833,7 @@ void DrasculaEngine::animacion_25_2() {
 	comienza_sound("s6.als");
 
 	for (n = 0; n >= -160; n = n - 8) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 		actualiza_refresco_antes();
 		pon_hare();
@@ -6841,10 +6841,10 @@ void DrasculaEngine::animacion_25_2() {
 
 		pos_cabina[3] = n;
 
-		DIBUJA_BLOQUE_CUT(pos_cabina, dir_hare_fondo, dir_zona_pantalla);
+		copyRectClip(pos_cabina, dir_hare_fondo, dir_zona_pantalla);
 
 		actualiza_refresco();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
 	fin_sound();
@@ -6853,7 +6853,7 @@ void DrasculaEngine::animacion_25_2() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::animacion_27_2() {
+void DrasculaEngine::animation_27_2() {
 	flags[22] = 1;
 
 	sin_verbo();
@@ -6872,14 +6872,14 @@ void DrasculaEngine::animacion_27_2() {
 	habla_vb(TEXTVB26,"VB26.als");
 }
 
-void DrasculaEngine::animacion_28_2() {
+void DrasculaEngine::animation_28_2() {
 	habla_vb(TEXTVB27, "VB27.als");
 	habla_vb(TEXTVB28, "VB28.als");
 	habla_vb(TEXTVB29, "VB29.als");
 	habla_vb(TEXTVB30, "VB30.als");
 }
 
-void DrasculaEngine::animacion_29_2() {
+void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
 		habla_vb(TEXTVB32, "VB32.als");
 		hablar(TEXT398, "398.als");
@@ -6910,12 +6910,12 @@ void DrasculaEngine::animacion_29_2() {
 		hablar(TEXT386, "386.als");
 }
 
-void DrasculaEngine::animacion_30_2() {
+void DrasculaEngine::animation_30_2() {
 	habla_vb(TEXTVB31, "VB31.als");
 	hablar(TEXT396, "396.als");
 }
 
-void DrasculaEngine::animacion_31_2() {
+void DrasculaEngine::animation_31_2() {
 	habla_vb(TEXTVB44, "VB44.als");
 	lleva_vb(-50);
 	pausa(15);
@@ -6924,11 +6924,11 @@ void DrasculaEngine::animacion_31_2() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 	sentido_hare = 2;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(78);
 	sentido_hare = 0;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(22);
 	hablar(TEXT406, "406.als");
 	lleva_vb(98);
@@ -6963,14 +6963,14 @@ void DrasculaEngine::animacion_31_2() {
 	suma_objeto(20);
 }
 
-void DrasculaEngine::animacion_35_2() {
+void DrasculaEngine::animation_35_2() {
 	int n, x = 0;
 
 	lleva_al_hare(96, 165);
 	lleva_al_hare(79, 165);
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	lee_dibujos("an35_1.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
@@ -6979,8 +6979,8 @@ void DrasculaEngine::animacion_35_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 70, 90, 46, 80, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(70,90, 70,90, 46,80,dir_zona_pantalla);
+		copyBackground(x, 1, 70, 90, 46, 80, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(70,90, 70,90, 46,80,dir_zona_pantalla);
 		x = x + 46;
 		pausa(3);
 	}
@@ -6988,8 +6988,8 @@ void DrasculaEngine::animacion_35_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 82, 70, 90, 46, 80, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(70, 90, 70, 90, 46, 80, dir_zona_pantalla);
+		copyBackground(x, 82, 70, 90, 46, 80, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(70, 90, 70, 90, 46, 80, dir_zona_pantalla);
 		x = x + 46;
 		pausa(3);
 	}
@@ -6997,8 +6997,8 @@ void DrasculaEngine::animacion_35_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 70, 90, 46, 80, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(70, 90, 70, 90, 46, 80, dir_zona_pantalla);
+		copyBackground(x, 1, 70, 90, 46, 80, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(70, 90, 70, 90, 46, 80, dir_zona_pantalla);
 
 		x = x + 46;
 
@@ -7008,15 +7008,15 @@ void DrasculaEngine::animacion_35_2() {
 	x = 0;
 	for (n = 0; n < 2; n++) {
 		x++;
-		DIBUJA_FONDO(x, 82, 70, 90, 46, 80, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(70, 90, 70,90, 46, 80,dir_zona_pantalla);
+		copyBackground(x, 82, 70, 90, 46, 80, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(70, 90, 70,90, 46, 80,dir_zona_pantalla);
 		x = x + 46;
 		pausa(3);
 	}
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(19);
 
@@ -7058,26 +7058,26 @@ void DrasculaEngine::habla_vb(const char *dicho, const char *filename) {
 		ctvd_output(sku);
 	}
 
-	DIBUJA_FONDO(vb_x + 5, 64, ANCHOBJ + 1, 0, 25, 27, dir_dibujo1, dir_dibujo3);
+	copyBackground(vb_x + 5, 64, ANCHOBJ + 1, 0, 25, 27, dir_dibujo1, dir_dibujo3);
 
 bucless:
 
 	if (sentido_vb == 1) {
 		cara = _rnd->getRandomNumber(5);
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 		pon_hare();
 		pon_vb();
 
-		DIBUJA_FONDO(ANCHOBJ + 1, 0, vb_x + 5, 64, 25, 27, dir_dibujo3, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x_habla[cara], 34, vb_x + 5, 64, 25, 27, dir_hare_frente, dir_zona_pantalla);
+		copyBackground(ANCHOBJ + 1, 0, vb_x + 5, 64, 25, 27, dir_dibujo3, dir_zona_pantalla);
+		copyRect(x_habla[cara], 34, vb_x + 5, 64, 25, 27, dir_hare_frente, dir_zona_pantalla);
 		actualiza_refresco();
 	}
 
 	if (con_voces == 0)
 		centra_texto(dicho, vb_x, 66);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -7098,7 +7098,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
 		playmusic(musica_room);
 }
@@ -7134,7 +7134,7 @@ bucless:
 	refresca_pantalla();
 	if (con_voces == 0)
 		centra_texto(dicho, 150, 80);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	int key = getscan();
 	if (key != 0)
@@ -7153,7 +7153,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
 		playmusic(musica_room);
 }
@@ -7171,8 +7171,8 @@ void DrasculaEngine::habla_ciego(const char *dicho, const char *filename, const 
 
 	color_abc(VON_BRAUN);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -7192,7 +7192,7 @@ void DrasculaEngine::habla_ciego(const char *dicho, const char *filename, const 
 	pos_ciego[5] = 149;
 
 bucless:
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pos_ciego[5] = 149;
 	char c = toupper(sincronia[p]);
 	if (c == '0')
@@ -7234,12 +7234,12 @@ bucless:
 		pos_ciego[5] = 146;
 	}
 
-	DIBUJA_BLOQUE_CUT( pos_ciego, num_cara, dir_zona_pantalla);
+	copyRectClip( pos_ciego, num_cara, dir_zona_pantalla);
 
 	if (con_voces == 0)
 		centra_texto(dicho, 310, 71);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(2);
 	p++;
 
@@ -7273,8 +7273,8 @@ void DrasculaEngine::habla_hacker(const char *dicho, const char *filename) {
 
 	buffer_teclado();
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	color_abc(AMARILLO);
 
@@ -7292,7 +7292,7 @@ void DrasculaEngine::habla_hacker(const char *dicho, const char *filename) {
 bucless:
 	if (con_voces == 0)
 		centra_texto(dicho, 156, 170);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	int key = getscan();
 	if (key != 0)
@@ -7357,7 +7357,7 @@ void DrasculaEngine::pon_vb() {
 			frame_vb = 1;
 	}
 
-	DIBUJA_BLOQUE_CUT(pos_vb, dir_hare_frente, dir_zona_pantalla);
+	copyRectClip(pos_vb, dir_hare_frente, dir_zona_pantalla);
 }
 
 void DrasculaEngine::lleva_vb(int punto_x) {
@@ -7370,7 +7370,7 @@ void DrasculaEngine::lleva_vb(int punto_x) {
 
 	for (;;) {
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if (sentido_vb == 0) {
 			vb_x = vb_x - 5;
 			if (vb_x <= punto_x)
@@ -7394,11 +7394,11 @@ void DrasculaEngine::hipo_sin_nadie(int contador){
 comienza:
 	contador--;
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	if (num_ejec == 3)
-		VUELCA_PANTALLA(0, 0, 0, y, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, y, 320, 200, dir_zona_pantalla);
 	else
-		VUELCA_PANTALLA(0, 1, 0, y, 320, 198, dir_zona_pantalla);
+		updateScreen(0, 1, 0, y, 320, 198, dir_zona_pantalla);
 
 	if (sentido == 0)
 		y++;
@@ -7419,8 +7419,8 @@ comienza:
 	if (contador > 0)
 		goto comienza;
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::abre_puerta(int nflag, int n_puerta) {
@@ -7438,7 +7438,7 @@ void DrasculaEngine::abre_puerta(int nflag, int n_puerta) {
 		if (n_puerta != NO_PUERTA)
 			puertas_cerradas(n_puerta);
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
 		sin_verbo();
 	}
@@ -7475,7 +7475,7 @@ void DrasculaEngine::refresca_1_antes() {
 		hare_claro();
 
 	if (flags[8] == 0)
-		DIBUJA_FONDO(2, 158, 208, 67, 27, 40, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(2, 158, 208, 67, 27, 40, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_2(){
@@ -7517,26 +7517,26 @@ void DrasculaEngine::refresca_2(){
 	pos_murci[2] = 239;
 	pos_murci[3] = 19;
 
-	DIBUJA_BLOQUE_CUT(pos_murci, dir_dibujo3, dir_zona_pantalla);
+	copyRectClip(pos_murci, dir_dibujo3, dir_zona_pantalla);
 	diferencia = vez() - conta_ciego_vez;
 	if (diferencia >= 6) {
 		frame_murcielago++;
 		conta_ciego_vez = vez();
 	}
 
-	DIBUJA_BLOQUE(29, 37, 58, 114, 57, 39, dir_dibujo3, dir_zona_pantalla);
+	copyRect(29, 37, 58, 114, 57, 39, dir_dibujo3, dir_zona_pantalla);
 	mapa();
 }
 
 void DrasculaEngine::refresca_3_antes() {
 	if (flags[3] == 1)
-		DIBUJA_FONDO(258, 110, 85, 44, 23, 53, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(258, 110, 85, 44, 23, 53, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_3() {
 	if (hare_y + alto_hare < 118)
-		DIBUJA_BLOQUE(129, 110, 194, 36, 126, 88, dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_BLOQUE(47, 57, 277, 143, 43, 50, dir_dibujo3, dir_zona_pantalla);
+		copyRect(129, 110, 194, 36, 126, 88, dir_dibujo3, dir_zona_pantalla);
+	copyRect(47, 57, 277, 143, 43, 50, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_4() {
@@ -7553,26 +7553,26 @@ void DrasculaEngine::refresca_4() {
 }
 
 void DrasculaEngine::refresca_5() {
-	DIBUJA_BLOQUE(114, 130, 211, 87, 109, 69, dir_dibujo3, dir_zona_pantalla);
+	copyRect(114, 130, 211, 87, 109, 69, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_15() {
-	DIBUJA_BLOQUE(1, 154, 83, 122, 131, 44, dir_dibujo3, dir_zona_pantalla);
+	copyRect(1, 154, 83, 122, 131, 44, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_17() {
-	DIBUJA_BLOQUE(48, 135, 78, 139, 80, 30, dir_dibujo3, dir_zona_pantalla);
+	copyRect(48, 135, 78, 139, 80, 30, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_18() {
 	if (flags[24] == 1)
-		DIBUJA_BLOQUE(177, 1, 69, 29, 142, 130, dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_BLOQUE(105, 132, 109, 108, 196, 65, dir_dibujo3, dir_zona_pantalla);
+		copyRect(177, 1, 69, 29, 142, 130, dir_dibujo3, dir_zona_pantalla);
+	copyRect(105, 132, 109, 108, 196, 65, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_5_antes(){
 	if (flags[8] == 0)
-		DIBUJA_FONDO(256, 152, 208, 67, 27, 40, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(256, 152, 208, 67, 27, 40, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_6_antes() {
@@ -7590,16 +7590,16 @@ void DrasculaEngine::refresca_6_antes() {
 		hare_claro();
 
 	if (flags[1] == 0)
-		DIBUJA_FONDO(97, 117, 34, 148, 36, 31, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(97, 117, 34, 148, 36, 31, dir_dibujo3, dir_zona_pantalla);
 	if (flags[0] == 0)
-		DIBUJA_FONDO(3, 103, 185, 69, 23, 76, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(3, 103, 185, 69, 23, 76, dir_dibujo3, dir_zona_pantalla);
 	if (flags[2] == 0)
-		DIBUJA_FONDO(28, 100, 219, 72, 64, 97, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(28, 100, 219, 72, 64, 97, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_7_antes() {
 	if (flags[35] == 0)
-		DIBUJA_FONDO(1, 72, 158, 162, 19, 12, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 72, 158, 162, 19, 12, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_9_antes() {
@@ -7607,7 +7607,7 @@ void DrasculaEngine::refresca_9_antes() {
 	int ciego_y[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
 	int diferencia;
 
-	DIBUJA_BLOQUE(ciego_x[frame_ciego], ciego_y[frame_ciego], 122, 57, 41, 72, dir_dibujo3, dir_zona_pantalla);
+	copyRect(ciego_x[frame_ciego], ciego_y[frame_ciego], 122, 57, 41, 72, dir_dibujo3, dir_zona_pantalla);
 	if (flags[9] == 0) {
 		diferencia = vez() - conta_ciego_vez;
 		if (diferencia >= 11) {
@@ -7622,7 +7622,7 @@ void DrasculaEngine::refresca_9_antes() {
 
 void DrasculaEngine::refresca_12_antes() {
 	if (flags[16] == 0)
-		DIBUJA_FONDO(1, 131, 106, 117, 55, 68, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 131, 106, 117, 55, 68, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_14_antes() {
@@ -7632,22 +7632,22 @@ void DrasculaEngine::refresca_14_antes() {
 	int borracho_x[] = {1, 42, 83, 124, 165, 206, 247, 1};
 	int diferencia;
 
-	DIBUJA_FONDO(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_FONDO(cirio_x[frame_velas], 146, 311, 80, 4, 8, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(cirio_x[frame_velas], 146, 311, 80, 4, 8, dir_dibujo3, dir_zona_pantalla);
 
 	if (parpadeo == 5)
-		DIBUJA_FONDO(1, 149, 127, 52, 9, 5, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 149, 127, 52, 9, 5, dir_dibujo3, dir_zona_pantalla);
 	if (hare_x > 101 && hare_x < 155)
-		DIBUJA_FONDO(31, 138, 178, 51, 18, 16, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(31, 138, 178, 51, 18, 16, dir_dibujo3, dir_zona_pantalla);
 	if (flags[11] == 0)
-		DIBUJA_FONDO(pianista_x[frame_piano], 157, 245, 130, 29, 42, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(pianista_x[frame_piano], 157, 245, 130, 29, 42, dir_dibujo3, dir_zona_pantalla);
 	else if (flags[5] == 0)
-		DIBUJA_FONDO(145, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+		copyBackground(145, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
 	else
-		DIBUJA_FONDO(165, 140, 229, 117, 43, 59, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(165, 140, 229, 117, 43, 59, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[12] == 1)
-		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
 	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 6) {
 		if (flags[12] == 1) {
@@ -7672,14 +7672,14 @@ void DrasculaEngine::refresca_14_antes() {
 
 void DrasculaEngine::refresca_16_antes() {
 	if (flags[17] == 0)
-		DIBUJA_FONDO(1, 103, 24, 72, 33, 95, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 103, 24, 72, 33, 95, dir_dibujo3, dir_zona_pantalla);
 	if (flags[19] == 1)
-		DIBUJA_FONDO(37, 151, 224, 115, 56, 47, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(37, 151, 224, 115, 56, 47, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_17_antes() {
 	if (flags[15] == 1)
-		DIBUJA_FONDO(1, 135, 108, 65, 44, 63, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 135, 108, 65, 44, 63, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_18_antes() {
@@ -7688,8 +7688,8 @@ void DrasculaEngine::refresca_18_antes() {
 	int ronquido_y[] = {18, 18, 56, 56, 94, 94, 94, 94, 94, 18, 18, 18, 18, 18, 18, 18};
 
 	if (flags[21] == 0) {
-		DIBUJA_FONDO(1, 69, 120, 58, 56, 61, dir_dibujo3, dir_zona_pantalla);
-		DIBUJA_FONDO(ronquido_x[frame_ronquido], ronquido_y[frame_ronquido], 124, 59, 40, 37, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 69, 120, 58, 56, 61, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(ronquido_x[frame_ronquido], ronquido_y[frame_ronquido], 124, 59, 40, 37, dir_dibujo3, dir_zona_pantalla);
 	} else
 		pon_vb();
 
@@ -7722,12 +7722,12 @@ void DrasculaEngine::grr() {
 	}
 
 	refresca_pantalla();
-	DIBUJA_FONDO(253, 110, 150, 65, 20, 30, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(253, 110, 150, 65, 20, 30, dir_dibujo3, dir_zona_pantalla);
 
 	if (con_voces == 0)
 		centra_texto(".groaaarrrrgghhh!", 153, 65);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 bucless:
 	int key = getscan();
@@ -7747,7 +7747,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 bool DrasculaEngine::pantalla_13(int fl) {
@@ -7759,9 +7759,9 @@ bool DrasculaEngine::pantalla_13(int fl) {
 	} else if (objeto_que_lleva == HABLAR && fl == 51)
 		conversa("op_7.cal");
 	else if (objeto_que_lleva == 19 && fl == 51)
-		animacion_1_3();
+		animation_1_3();
 	else if (objeto_que_lleva == 9 && fl == 51) {
-		animacion_2_3();
+		animation_2_3();
 		return true;
 	} else
 		hay_respuesta = 0;
@@ -7770,35 +7770,35 @@ bool DrasculaEngine::pantalla_13(int fl) {
 
 void DrasculaEngine::refresca_13() {
 	if (hare_x > 55 && flags[3] == 0)
-		animacion_6_3();
+		animation_6_3();
 	if (flags[1] == 0)
-		DIBUJA_BLOQUE(185, 110, 121, 65, 67, 88, dir_dibujo3, dir_zona_pantalla);
+		copyRect(185, 110, 121, 65, 67, 88, dir_dibujo3, dir_zona_pantalla);
 	if (flags[2] == 0)
-		DIBUJA_BLOQUE(185, 21, 121, 63, 67, 88, dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_BLOQUE(3, 127, 99, 102, 181, 71, dir_dibujo3, dir_zona_pantalla);
+		copyRect(185, 21, 121, 63, 67, 88, dir_dibujo3, dir_zona_pantalla);
+	copyRect(3, 127, 99, 102, 181, 71, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_20() {
-	DIBUJA_BLOQUE(1, 137, 106, 121, 213, 61, dir_dibujo3, dir_zona_pantalla);
+	copyRect(1, 137, 106, 121, 213, 61, dir_dibujo3, dir_zona_pantalla);
 }
 
-void DrasculaEngine::animacion_1_3() {
+void DrasculaEngine::animation_1_3() {
 	hablar(TEXT413, "413.als");
 	grr();
 	pausa(50);
 	hablar(TEXT414, "414.als");
 }
 
-void DrasculaEngine::animacion_2_3() {
+void DrasculaEngine::animation_2_3() {
 	flags[0] = 1;
 	playmusic(13);
-	animacion_3_3();
+	animation_3_3();
 	playmusic(13);
-	animacion_4_3();
+	animation_4_3();
 	flags[1] = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(120, 0, 120, 0, 200, 200, dir_zona_pantalla);
-	animacion_5_3();
+	updateScreen(120, 0, 120, 0, 200, 200, dir_zona_pantalla);
+	animation_5_3();
 	flags[0] = 0;
 	flags[1] = 1;
 
@@ -7812,7 +7812,7 @@ void DrasculaEngine::animacion_2_3() {
 	lleva_al_hare(332, 127);
 }
 
-void DrasculaEngine::animacion_3_3() {
+void DrasculaEngine::animation_3_3() {
 	int n, x = 0;
 	int px = hare_x - 20, py = hare_y - 1;
 
@@ -7825,9 +7825,9 @@ void DrasculaEngine::animacion_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 2, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 2, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7836,9 +7836,9 @@ void DrasculaEngine::animacion_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7847,9 +7847,9 @@ void DrasculaEngine::animacion_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 2, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 2, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7858,9 +7858,9 @@ void DrasculaEngine::animacion_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7869,9 +7869,9 @@ void DrasculaEngine::animacion_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 2, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 2, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7880,15 +7880,15 @@ void DrasculaEngine::animacion_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
 }
 
-void DrasculaEngine::animacion_4_3() {
+void DrasculaEngine::animation_4_3() {
 	int n, x = 0;
 	int px = 120, py = 63;
 
@@ -7901,9 +7901,9 @@ void DrasculaEngine::animacion_4_3() {
 
 	for (n = 0; n < 4; n++){
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, px, py, 77, 89, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, px, py, 77, 89, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
 		x = x + 77;
 		pausa(3);
 	}
@@ -7912,9 +7912,9 @@ void DrasculaEngine::animacion_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 91, px, py, 77, 89, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 91, px, py, 77, 89, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
 		x = x + 77;
 		pausa(3);
 	}
@@ -7923,9 +7923,9 @@ void DrasculaEngine::animacion_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, px, py, 77, 89, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, px, py, 77, 89, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
 		x = x + 77;
 		pausa(3);
 	}
@@ -7934,9 +7934,9 @@ void DrasculaEngine::animacion_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 91, px, py, 77, 89, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 91, px, py, 77, 89, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
 		x = x + 77;
 		pausa(3);
 	}
@@ -7945,9 +7945,9 @@ void DrasculaEngine::animacion_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, px, py, 77, 89, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, px, py, 77, 89, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
 		x = x + 77;
 		pausa(3);
 	}
@@ -7956,15 +7956,15 @@ void DrasculaEngine::animacion_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 91, px, py, 77, 89, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 91, px, py, 77, 89, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
 		x = x + 77;
 		pausa(3);
 	}
 }
 
-void DrasculaEngine::animacion_5_3() {
+void DrasculaEngine::animation_5_3() {
 	int n, x = 0;
 	int px = hare_x - 20, py = hare_y - 1;
 
@@ -7977,9 +7977,9 @@ void DrasculaEngine::animacion_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 2, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 2, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7988,9 +7988,9 @@ void DrasculaEngine::animacion_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -7999,9 +7999,9 @@ void DrasculaEngine::animacion_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 2, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 2, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -8010,9 +8010,9 @@ void DrasculaEngine::animacion_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(px,py, px,py, 71,72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(px,py, px,py, 71,72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -8021,9 +8021,9 @@ void DrasculaEngine::animacion_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 2, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 2, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
@@ -8032,15 +8032,15 @@ void DrasculaEngine::animacion_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
 		x = x + 71;
 		pausa(3);
 	}
 }
 
-void DrasculaEngine::animacion_6_3() {
+void DrasculaEngine::animation_6_3() {
 	int frame = 0, px = 112, py = 62;
 	int yoda_x[] = { 3 ,82, 161, 240, 3, 82 };
 	int yoda_y[] = { 3, 3, 3, 3, 94, 94 };
@@ -8048,7 +8048,7 @@ void DrasculaEngine::animacion_6_3() {
 	hare_se_mueve = 0;
 	flags[3] = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	flags[1] = 0;
 
@@ -8057,9 +8057,9 @@ void DrasculaEngine::animacion_6_3() {
 
 	for (frame = 0; frame < 6; frame++) {
 		pausa(3);
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(yoda_x[frame], yoda_y[frame], px, py,	78, 90,	dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(px, py, px, py, 78, 90, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyRect(yoda_x[frame], yoda_y[frame], px, py,	78, 90,	dir_hare_frente, dir_zona_pantalla);
+		updateScreen(px, py, px, py, 78, 90, dir_zona_pantalla);
 	}
 
 	flags[2] = 1;
@@ -8068,10 +8068,10 @@ void DrasculaEngine::animacion_6_3() {
 	descomprime_dibujo(dir_hare_frente, 1);
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::animacion_rayo() {
+void DrasculaEngine::animation_rayo() {
 	lee_dibujos("anr_1.alg");
 	descomprime_dibujo(dir_hare_frente, MEDIA);
 	lee_dibujos("anr_2.alg");
@@ -8083,27 +8083,27 @@ void DrasculaEngine::animacion_rayo() {
 	lee_dibujos("anr_5.alg");
 	descomprime_dibujo(dir_dibujo3, 1);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_hare_frente);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_frente);
 
 	pausa(50);
 
 	comienza_sound("s5.als");
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_hare_dch);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_dch);
 	pausa(3);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_hare_fondo);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_fondo);
 	pausa(3);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
 	pausa(3);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_hare_fondo);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_fondo);
 	pausa(3);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_dibujo3);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo3);
 	pausa(3);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_hare_frente);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_frente);
 	fin_sound();
 }
 
-void DrasculaEngine::animacion_2_4() {
+void DrasculaEngine::animation_2_4() {
 	habla_igor_sentado(TEXTI16, "I16.als");
 	hablar(TEXT278, "278.als");
 	habla_igor_sentado(TEXTI17, "I17.als");
@@ -8111,13 +8111,13 @@ void DrasculaEngine::animacion_2_4() {
 	habla_igor_sentado(TEXTI18, "I18.als");
 }
 
-void DrasculaEngine::animacion_3_4() {
+void DrasculaEngine::animation_3_4() {
 	habla_igor_sentado(TEXTI19, "I19.als");
 	habla_igor_sentado(TEXTI20, "I20.als");
 	hablar(TEXT281, "281.als");
 }
 
-void DrasculaEngine::animacion_4_4() {
+void DrasculaEngine::animation_4_4() {
 	hablar(TEXT287, "287.als");
 	habla_igor_sentado(TEXTI21, "I21.als");
 	hablar(TEXT284, "284.als");
@@ -8159,18 +8159,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(3);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 109, 207, 92, 21, 23, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 109, 207, 92, 21, 23, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 221, 102);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -8191,10 +8191,10 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::animacion_7_4() {
+void DrasculaEngine::animation_7_4() {
 	Negro();
 	hablar(TEXT427, "427.als");
 	FundeDelNegro(1);
@@ -8207,7 +8207,7 @@ void DrasculaEngine::animacion_7_4() {
 	flags[29] = 0;
 }
 
-void DrasculaEngine::animacion_1_5() {
+void DrasculaEngine::animation_1_5() {
 	if (flags[0] == 0) {
 		hablar(TEXT430, "430.als");
 		habla_bj(TEXTBJ16, "BJ16.als");
@@ -8235,7 +8235,7 @@ void DrasculaEngine::animacion_1_5() {
 			if (hare_se_mueve == 0)
 				break;
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		}
 
 		sentido_hare = 1;
@@ -8247,20 +8247,20 @@ void DrasculaEngine::animacion_1_5() {
 	conversa("op_8.cal");
 }
 
-void DrasculaEngine::animacion_2_5() {
+void DrasculaEngine::animation_2_5() {
 	habla_bj(TEXTBJ22, "BJ22.als");
 }
 
-void DrasculaEngine::animacion_3_5() {
+void DrasculaEngine::animation_3_5() {
 	habla_bj(TEXTBJ23, "BJ23.als");
 	agarra_objeto(10);
 	rompo_y_salgo = 1;
 }
 
-void DrasculaEngine::animacion_4_5() {
+void DrasculaEngine::animation_4_5() {
 	flags[7] = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	hablar(TEXT228, "228.als");
 	habla_lobo(TEXTL1, "L1.als");
 	habla_lobo(TEXTL2, "L2.als");
@@ -8278,7 +8278,7 @@ void DrasculaEngine::animacion_4_5() {
 	habla_lobo(TEXTL8, "L8.als");
 }
 
-void DrasculaEngine::animacion_5_5(){
+void DrasculaEngine::animation_5_5(){
 	int h;
 	int frame = 0;
 	int hueso_x[] = {1, 99, 197, 1, 99, 197, 1, 99, 197};
@@ -8292,7 +8292,7 @@ void DrasculaEngine::animacion_5_5(){
 	lleva_al_hare(hare_x - 19, hare_y + alto_hare);
 	sentido_hare = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	lee_dibujos("3an5_1.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
@@ -8301,19 +8301,19 @@ void DrasculaEngine::animacion_5_5(){
 
 	for (frame = 0; frame < 9; frame++) {
 		pausa(3);
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(pixel_x, pixel_y, pixel_x,pixel_y, 97,64, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97,64, dir_zona_pantalla);
 	}
 
-	DIBUJA_FONDO(52, 161, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
-	VUELCA_PANTALLA(198, 81, 198, 81, 26, 24, dir_zona_pantalla);
+	copyBackground(52, 161, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
+	updateScreen(198, 81, 198, 81, 26, 24, dir_zona_pantalla);
 
 	for (frame = 0; frame < 9; frame++) {
 		pausa(3);
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(pixel_x, pixel_y, pixel_x,pixel_y, 97, 64, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97, 64, dir_zona_pantalla);
 	}
 
 	flags[6] = 1;
@@ -8323,9 +8323,9 @@ void DrasculaEngine::animacion_5_5(){
 	lee_dibujos("96.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 	for (h = 0; h < (200 - 18); h++)
-		DIBUJA_FONDO(0, 53, 0, h, 320, 19, dir_hare_frente, dir_zona_pantalla);
+		copyBackground(0, 53, 0, h, 320, 19, dir_hare_frente, dir_zona_pantalla);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	lee_dibujos("101.alg");
 	descomprime_dibujo(dir_dibujo1, MEDIA);
@@ -8334,19 +8334,19 @@ void DrasculaEngine::animacion_5_5(){
 	lee_dibujos("3an5_4.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
 	pausa(9);
 	for (frame = 0; frame < 5; frame++) {
 		pausa(3);
-		DIBUJA_FONDO(vuela_x[frame], 1, 174, 79, 61, 109, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(174, 79, 174, 79, 61, 109, dir_zona_pantalla);
+		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(174, 79, 174, 79, 61, 109, dir_zona_pantalla);
 	}
 	for (frame = 0; frame < 5; frame++) {
 		pausa(3);
-		DIBUJA_FONDO(vuela_x[frame], 1, 174, 79, 61, 109, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(174, 79, 174, 79, 61, 109, dir_zona_pantalla);
+		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(174, 79, 174, 79, 61, 109, dir_zona_pantalla);
 	}
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
 
 	comienza_sound("s1.als");
 	fin_sound();
@@ -8362,12 +8362,12 @@ void DrasculaEngine::animacion_5_5(){
 	descomprime_dibujo(dir_dibujo1, MEDIA);
 }
 
-void DrasculaEngine::animacion_6_5() {
+void DrasculaEngine::animation_6_5() {
 	habla_lobo(TEXTL9, "L9.als");
 	hablar(TEXT234, "234.als");
 }
 
-void DrasculaEngine::animacion_7_5() {
+void DrasculaEngine::animation_7_5() {
 	habla_lobo(TEXTL10, "L10.als");
 	hablar(TEXT236, "236.als");
 	habla_lobo(TEXTL11, "L11.als");
@@ -8377,37 +8377,37 @@ void DrasculaEngine::animacion_7_5() {
 	habla_lobo(TEXTL14, "L14.als");
 }
 
-void DrasculaEngine::animacion_8_5() {
+void DrasculaEngine::animation_8_5() {
 	habla_lobo(TEXTL15, "L15.als");
 	hablar(TEXT238, "238.als");
 	habla_lobo(TEXTL16, "L16.als");
 }
 
-void DrasculaEngine::animacion_9_5() {
+void DrasculaEngine::animation_9_5() {
 	flags[4] = 1;
 	hablar(TEXT401, "401.als");
 	sin_verbo();
 	resta_objeto(15);
 }
 
-void DrasculaEngine::animacion_10_5() {
+void DrasculaEngine::animation_10_5() {
 	flags[3] = 1;
 	hablar(TEXT401, "401.als");
 	sin_verbo();
 	resta_objeto(12);
 }
 
-void DrasculaEngine::animacion_11_5() {
+void DrasculaEngine::animation_11_5() {
 	flags[9] = 1;
 	if (flags[2] == 1 && flags[3] == 1 && flags[4] == 1)
-		animacion_12_5();
+		animation_12_5();
 	else {
 		flags[9] = 0;
 		hablar(TEXT33, "33.als");
 	}
 }
 
-void DrasculaEngine::animacion_12_5() {
+void DrasculaEngine::animation_12_5() {
 	DacPalette256 palFondo1;
 	DacPalette256 palFondo2;
 	DacPalette256 palFondo3;
@@ -8422,14 +8422,14 @@ void DrasculaEngine::animacion_12_5() {
 
 	playmusic(26);
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(27);
 	anima("rayo1.bin", 23);
 	comienza_sound("s5.als");
 	anima("rayo2.bin", 17);
 	sentido_hare = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	hare_oscuro();
 
@@ -8471,9 +8471,9 @@ void DrasculaEngine::animacion_12_5() {
 
 		pausa(4);
 		refresca_pantalla();
-		DIBUJA_BLOQUE(rayo_x[frame], 1, 41, 0, 44, 44, dir_hare_fondo, dir_zona_pantalla);
-		DIBUJA_BLOQUE(frusky_x[frame], 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(rayo_x[frame], 1, 41, 0, 44, 44, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(frusky_x[frame], 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
 	fin_sound_corte();
@@ -8488,8 +8488,8 @@ void DrasculaEngine::animacion_12_5() {
 
 		pausa(4);
 		refresca_pantalla();
-		DIBUJA_BLOQUE(elfrusky_x[frame], 47, 192, 39, 66, 106, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(elfrusky_x[frame], 47, 192, 39, 66, 106, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
 	anima("frel.bin", 16);
@@ -8499,7 +8499,7 @@ void DrasculaEngine::animacion_12_5() {
 
 	flags[1] = 1;
 
-	animacion_13_5();
+	animation_13_5();
 	comienza_sound("s1.als");
 	hipo(12);
 	fin_sound();
@@ -8522,7 +8522,7 @@ void DrasculaEngine::animacion_12_5() {
 	carga_escoba("57.ald");
 }
 
-void DrasculaEngine::animacion_13_5() {
+void DrasculaEngine::animation_13_5() {
 	int frank_x = 199;
 	int frame = 0;
 	int frus_x[] = {1, 46, 91, 136, 181, 226, 271};
@@ -8539,8 +8539,8 @@ void DrasculaEngine::animacion_13_5() {
 	pos_frusky[1] = 1;
 	pos_frusky[2] = frank_x;
 	refresca_pantalla();
-	DIBUJA_BLOQUE_CUT(pos_frusky, dir_hare_fondo, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyRectClip(pos_frusky, dir_hare_fondo, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(15);
 
 	playmusic(18);
@@ -8550,8 +8550,8 @@ void DrasculaEngine::animacion_13_5() {
 		pos_frusky[0] = frus_x[frame];
 		pos_frusky[1] = frus_y[frame];
 		pos_frusky[2] = frank_x;
-		DIBUJA_BLOQUE_CUT( pos_frusky, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRectClip( pos_frusky, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		frank_x = frank_x - 5;
 		frame++;
 		if (frank_x <= -45)
@@ -8564,11 +8564,11 @@ void DrasculaEngine::animacion_13_5() {
 	}
 }
 
-void DrasculaEngine::animacion_14_5() {
+void DrasculaEngine::animation_14_5() {
 	flags[11] = 1;
 	comienza_sound("s3.als");
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0,0 , 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0,0 , 320, 200, dir_zona_pantalla);
 	fin_sound();
 	pausa(17);
 	sentido_hare = 3;
@@ -8577,17 +8577,17 @@ void DrasculaEngine::animacion_14_5() {
 	flags[10] = 1;
 	comienza_sound("s7.als");
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	fin_sound();
 	pausa(14);
 	sentido_hare = 3;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	habla_solo(TEXTD18, "d18.als");
 	FundeAlNegro(1);
 }
 
-void DrasculaEngine::animacion_15_5() {
+void DrasculaEngine::animation_15_5() {
 	habla_mus(TEXTE4, "E4.als");
 	habla_mus(TEXTE5, "E5.als");
 	habla_mus(TEXTE6, "E6.als");
@@ -8595,48 +8595,48 @@ void DrasculaEngine::animacion_15_5() {
 	habla_mus(TEXTE7, "E7.als");
 }
 
-void DrasculaEngine::animacion_16_5() {
+void DrasculaEngine::animation_16_5() {
 	habla_mus(TEXTE8, "E8.als");
 }
 
-void DrasculaEngine::animacion_17_5() {
+void DrasculaEngine::animation_17_5() {
 	habla_mus(TEXTE9, "E9.als");
 }
 
 void DrasculaEngine::refresca_49_antes() {
 	if (flags[6] == 0)
-		DIBUJA_FONDO(2, 136, 176, 81, 49, 62, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(2, 136, 176, 81, 49, 62, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_53_antes() {
 	if (flags[1] == 0)
-		DIBUJA_BLOQUE(2, 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
+		copyRect(2, 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
 	if (flags[2] == 0)
-		DIBUJA_FONDO(41, 159, 27, 117, 25, 40, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(41, 159, 27, 117, 25, 40, dir_dibujo3, dir_zona_pantalla);
 	if (flags[9] == 1)
-		DIBUJA_FONDO(67, 184, 56, 93, 32, 15, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(67, 184, 56, 93, 32, 15, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_54_antes() {
 	if (flags[5] == 1)
-		DIBUJA_FONDO(168, 156, 187, 111, 7, 11, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(168, 156, 187, 111, 7, 11, dir_dibujo3, dir_zona_pantalla);
 	if (flags[12] == 1)
-		DIBUJA_FONDO(16, 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(16, 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_56_antes() {
 	if (flags[10] == 0)
-		DIBUJA_FONDO(2, 126, 42, 67, 57, 67, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(2, 126, 42, 67, 57, 67, dir_dibujo3, dir_zona_pantalla);
 	if (flags[11] == 1)
-		DIBUJA_FONDO(60, 160, 128, 97, 103, 38, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(60, 160, 128, 97, 103, 38, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_50() {
-	DIBUJA_BLOQUE(4, 153, 118, 95, 67, 44, dir_dibujo3, dir_zona_pantalla);
+	copyRect(4, 153, 118, 95, 67, 44, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_57() {
-	DIBUJA_BLOQUE(7, 113, 166, 61, 62, 82, dir_dibujo3, dir_zona_pantalla);
+	copyRect(7, 113, 166, 61, 62, 82, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::pantalla_49(int fl){
@@ -8645,7 +8645,7 @@ void DrasculaEngine::pantalla_49(int fl){
 	else if (objeto_que_lleva == MIRAR && fl == 51)
 		hablar(TEXT132, "132.als");
 	else if ((objeto_que_lleva == 8 && fl == 51) || (objeto_que_lleva == 8 && fl == 203))
-		animacion_5_5();
+		animation_5_5();
 	else if (objeto_que_lleva == MIRAR && fl == 200)
 		hablar(TEXT133, "133.als");
 	else if (objeto_que_lleva == HABLAR && fl == 200)
@@ -8667,15 +8667,15 @@ void DrasculaEngine::pantalla_53(int fl) {
 	else if (objeto_que_lleva == MIRAR && fl == 209)
 		hablar(TEXT129, "129.als");
 	else if (objeto_que_lleva == MOVER && fl == 123)
-		animacion_11_5();
+		animation_11_5();
 	else if (objeto_que_lleva == MIRAR && fl == 52)
 		hablar(TEXT447, "447.als");
 	else if (objeto_que_lleva == HABLAR && fl == 52)
 		hablar(TEXT131, "131.als");
 	else if (objeto_que_lleva == 12 && fl == 52)
-		animacion_10_5();
+		animation_10_5();
 	else if (objeto_que_lleva == 15 && fl == 52)
-		animacion_9_5();
+		animation_9_5();
 	else if (objeto_que_lleva == 16 && fl == 121) {
 		flags[2] = 1;
 		sin_verbo();
@@ -8690,7 +8690,7 @@ void DrasculaEngine::pantalla_53(int fl) {
 
 void DrasculaEngine::pantalla_54(int fl) {
 	if ((objeto_que_lleva == HABLAR && fl == 118) || (objeto_que_lleva == MIRAR && fl == 118 && flags[0] == 0))
-		animacion_1_5();
+		animation_1_5();
 	else if (objeto_que_lleva == MIRAR && fl == 118 && flags[0]==1)
 		hablar(TEXT124, "124.als");
 	else if (objeto_que_lleva == MIRAR && fl == 53)
@@ -8748,7 +8748,7 @@ void DrasculaEngine::pantalla_55(int fl) {
 
 bool DrasculaEngine::pantalla_56(int fl) {
 	if (objeto_que_lleva == ABRIR && fl == 124) {
-		animacion_14_5();
+		animation_14_5();
 		return true;
 	} else if (objeto_que_lleva == MIRAR && fl == 124)
 		hablar(TEXT450, "450.als");
@@ -8793,18 +8793,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(8);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 136, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 136, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 203, 78);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -8825,7 +8825,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_mus(const char *dicho, const char *filename) {
@@ -8861,18 +8861,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 197, 64);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -8893,10 +8893,10 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::animacion_1_6() {
+void DrasculaEngine::animation_1_6() {
 	int l;
 
 	sentido_hare = 0;
@@ -8934,14 +8934,14 @@ void DrasculaEngine::animacion_1_6() {
 	borra_pantalla();
 	lee_dibujos("time1.alg");
 	descomprime_dibujo(dir_zona_pantalla, 1);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	delay(930);
 	borra_pantalla();
 	Negro();
 	hare_se_ve = 0;
 	flags[0] = 0;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
 	hablar(TEXT256, "256.als");
 	habla_dr_dch(TEXTD30, "d30.als");
@@ -8950,16 +8950,16 @@ void DrasculaEngine::animacion_1_6() {
 	borra_pantalla();
 	lee_dibujos("time1.alg");
 	descomprime_dibujo(dir_zona_pantalla,1);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	delay(900);
 	borra_pantalla();
 	Negro();
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
 	hablar(TEXT258, "258.als");
 	habla_dr_dch(TEXTD31, "d31.als");
-	animacion_5_6();
+	animation_5_6();
 	habla_dr_dch(TEXTD32, "d32.als");
 	habla_igor_dch(TEXTI11, "I11.als");
 	sentido_igor = 3;
@@ -8973,19 +8973,19 @@ void DrasculaEngine::animacion_1_6() {
 	activa_pendulo();
 }
 
-void DrasculaEngine::animacion_2_6() {
+void DrasculaEngine::animation_2_6() {
 	habla_dr_dch(TEXTD24, "d24.als");
 }
 
-void DrasculaEngine::animacion_3_6() {
+void DrasculaEngine::animation_3_6() {
 	habla_dr_dch(TEXTD24, "d24.als");
 }
 
-void DrasculaEngine::animacion_4_6() {
+void DrasculaEngine::animation_4_6() {
 	habla_dr_dch(TEXTD25, "d25.als");
 }
 
-void DrasculaEngine::animacion_5_6() {
+void DrasculaEngine::animation_5_6() {
 	int n, pos_pen[6];
 
 	pos_pen[0] = 1;
@@ -8998,21 +8998,21 @@ void DrasculaEngine::animacion_5_6() {
 	anima("man.bin", 14);
 
 	for (n = -125; n <= 0; n = n + 2) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
 		pos_pen[3] = n;
-		DIBUJA_BLOQUE_CUT(pos_pen, dir_dibujo3, dir_zona_pantalla);
+		copyRectClip(pos_pen, dir_dibujo3, dir_zona_pantalla);
 
 		actualiza_refresco();
 
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(2);
 	}
 
 	flags[3] = 1;
 }
 
-void DrasculaEngine::animacion_6_6() {
+void DrasculaEngine::animation_6_6() {
 	anima("rct.bin", 11);
 	borra_pantalla();
 	sin_verbo();
@@ -9040,12 +9040,12 @@ void DrasculaEngine::animacion_6_6() {
 	flags[2] = 1;
 }
 
-void DrasculaEngine::animacion_7_6() {
+void DrasculaEngine::animation_7_6() {
 	flags[8] = 1;
 	actualiza_datos();
 }
 
-void DrasculaEngine::animacion_9_6() {
+void DrasculaEngine::animation_9_6() {
 	int v_cd;
 
 	anima("fin.bin", 14);
@@ -9064,13 +9064,13 @@ void DrasculaEngine::animacion_9_6() {
 	sentido_hare = 1;
 	hare_x -= 21;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(0);
 	pausa(96);
 	lleva_al_hare(116, 178);
 	sentido_hare = 2;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	playmusic(9);
 	borra_pantalla();
 	lee_dibujos("nota.alg");
@@ -9094,15 +9094,15 @@ void DrasculaEngine::animacion_9_6() {
 	hablar(TEXT299, "299.als");
 	hablar(TEXT300, "300.als");
 	refresca_pantalla();
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	color_abc(VERDE_CLARO);
 	habla_solo("GOOOOOOOOOOOOOOOL", "s15.als");
 	lee_dibujos("nota2.alg");
 	descomprime_dibujo(dir_dibujo1, 1);
 	sentido_hare = 0;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	hablar(TEXT301, "301.als");
 	v_cd = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
 	v_cd = v_cd + 4;
@@ -9119,62 +9119,62 @@ void DrasculaEngine::animacion_9_6() {
 	stopmusic();
 }
 
-void DrasculaEngine::animacion_10_6() {
+void DrasculaEngine::animation_10_6() {
 	comienza_sound ("s14.als");
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
-	DIBUJA_FONDO(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	fin_sound();
 	habla_taber2(TEXTT23, "t23.als");
 	flags[7] = 1;
 }
 
-void DrasculaEngine::animacion_11_6() {
+void DrasculaEngine::animation_11_6() {
 	habla_taber2(TEXTT10, "t10.als");
 	hablar(TEXT268, "268.als");
 	habla_taber2(TEXTT11, "t11.als");
 }
 
-void DrasculaEngine::animacion_12_6() {
+void DrasculaEngine::animation_12_6() {
 	habla_taber2(TEXTT12, "t12.als");
 	hablar(TEXT270, "270.als");
 	habla_taber2(TEXTT13, "t13.als");
 	habla_taber2(TEXTT14, "t14.als");
 }
 
-void DrasculaEngine::animacion_13_6() {
+void DrasculaEngine::animation_13_6() {
 	habla_taber2(TEXTT15, "t15.als");
 }
 
-void DrasculaEngine::animacion_14_6() {
+void DrasculaEngine::animation_14_6() {
 	habla_taber2(TEXTT24, "t24.als");
 	suma_objeto(21);
 	flags[10] = 1;
 	rompo_y_salgo = 1;
 }
 
-void DrasculaEngine::animacion_15_6() {
+void DrasculaEngine::animation_15_6() {
 	habla_taber2(TEXTT16, "t16.als");
 }
 
-void DrasculaEngine::animacion_18_6() {
+void DrasculaEngine::animation_18_6() {
 	flags[6] = 1;
 	sin_verbo();
 	resta_objeto(21);
 	anima("beb.bin", 10);
 }
 
-void DrasculaEngine::animacion_19_6() {
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_FONDO(140, 23, 161, 69, 35, 80, dir_dibujo3, dir_zona_pantalla);
+void DrasculaEngine::animation_19_6() {
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(140, 23, 161, 69, 35, 80, dir_dibujo3, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 	pon_hare();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(6);
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	comienza_sound("s4.als");
 	pausa(6);
 	fin_sound();
@@ -9193,7 +9193,7 @@ void DrasculaEngine::activa_pendulo() {
 	lee_dibujos("an_p3.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
-	DIBUJA_FONDO(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
 	conta_ciego_vez = vez();
 }
@@ -9211,8 +9211,8 @@ void DrasculaEngine::habla_pen(const char *dicho, const char *filename) {
 	flags[1] = 1;
 
 	refresca_pantalla();
-	DIBUJA_BLOQUE(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyRect(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -9237,18 +9237,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_BLOQUE(x_habla[cara], 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
+	copyRect(x_habla[cara], 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 160, 105);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -9269,9 +9269,9 @@ bucless:
 	}
 
 	flags[1] = 0;
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_pen2(const char *dicho, const char *filename) {
@@ -9309,18 +9309,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(4);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
 
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 195, 107);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -9341,9 +9341,9 @@ bucless:
 	}
 
 	flags[1] = 0;
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_taber2(const char *dicho, const char *filename) {
@@ -9379,18 +9379,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(5);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 130, 151, 43, 21, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 130, 151, 43, 21, 24, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 132, 45);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -9411,12 +9411,12 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_58() {
 	if (hare_se_ve == 1)
-		DIBUJA_BLOQUE(67, 139, 140, 147, 12, 16, dir_dibujo3, dir_zona_pantalla);
+		copyRect(67, 139, 140, 147, 12, 16, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_60() {
@@ -9425,32 +9425,32 @@ void DrasculaEngine::refresca_60() {
 }
 
 void DrasculaEngine::refresca_61() {
-	DIBUJA_BLOQUE(1, 154, 83, 122, 131, 44, dir_dibujo3, dir_zona_pantalla);
+	copyRect(1, 154, 83, 122, 131, 44, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_58_antes() {
 	if (flags[0] == 0)
-		DIBUJA_FONDO(1, 156, 143, 120, 120, 43, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 156, 143, 120, 120, 43, dir_dibujo3, dir_zona_pantalla);
 	if (flags[1] == 2)
-		DIBUJA_BLOQUE(252, 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
+		copyRect(252, 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
 	if (flags[1] == 0 && flags[0] == 0)
-		DIBUJA_BLOQUE(278, 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
+		copyRect(278, 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
 	if (flags[2] == 0) {
 		pon_igor();
 		pon_dr();
 	}
 	if (flags[3] == 1)
-		DIBUJA_BLOQUE(1, 29, 204, 0, 18, 125, dir_dibujo3, dir_zona_pantalla);
+		copyRect(1, 29, 204, 0, 18, 125, dir_dibujo3, dir_zona_pantalla);
 	if (flags[8] == 1)
-		DIBUJA_FONDO(20, 60, 30, 64, 46, 95, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(20, 60, 30, 64, 46, 95, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_59_antes() {
 	if (flags[4] == 0)
-		DIBUJA_BLOQUE(1, 146, 65, 106, 83, 40, dir_dibujo3, dir_zona_pantalla);
+		copyRect(1, 146, 65, 106, 83, 40, dir_dibujo3, dir_zona_pantalla);
 	if (flags[9] == 1) {
-		DIBUJA_FONDO(65, 103, 65, 103, 49, 38, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(1, 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(65, 103, 65, 103, 49, 38, dir_dibujo1, dir_zona_pantalla);
+		copyRect(1, 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
 	}
 }
 
@@ -9461,10 +9461,10 @@ void DrasculaEngine::refresca_60_antes() {
 	if (flags[5] == 0)
 		pon_dr();
 
-	DIBUJA_FONDO(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
 
 	if (flag_tv == 1)
-		DIBUJA_FONDO(114, 158, 8, 30, 8, 23, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(114, 158, 8, 30, 8, 23, dir_dibujo3, dir_zona_pantalla);
 
 	diferencia = vez() - conta_ciego_vez;
 	parpadeo = _rnd->getRandomNumber(7);
@@ -9482,7 +9482,7 @@ void DrasculaEngine::refresca_60_antes() {
 
 void DrasculaEngine::pantalla_58(int fl) {
 	if (objeto_que_lleva == MOVER && fl == 103)
-		animacion_7_6();
+		animation_7_6();
 	else if (objeto_que_lleva == MIRAR && fl == 104)
 		hablar(TEXT454, "454.als");
 	else
@@ -9509,16 +9509,16 @@ void DrasculaEngine::pantalla_59(int fl) {
 			lleva_al_hare(174, 168);
 			sentido_hare = 2;
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			pausa(40);
 			comienza_sound("s12.als");
 			pausa(19);
 			fin_sound_corte();
 			hare_se_ve = 0;
 			refresca_pantalla();
-			DIBUJA_BLOQUE(101, 34, hare_x - 4, hare_y - 1, 37, 70, dir_dibujo3, dir_zona_pantalla);
-			DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			copyRect(101, 34, hare_x - 4, hare_y - 1, 37, 70, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_ve = 1;
 			borra_pantalla();
 			lee_dibujos("tlef0.alg");
@@ -9565,7 +9565,7 @@ void DrasculaEngine::pantalla_59(int fl) {
 
 bool DrasculaEngine::pantalla_60(int fl) {
 	if (objeto_que_lleva == MOVER && fl == 112)
-		animacion_10_6();
+		animation_10_6();
 	else if (objeto_que_lleva == MIRAR && fl == 112)
 		hablar(TEXT440, "440.als");
 	else if (objeto_que_lleva == HABLAR && fl == 52) {
@@ -9589,9 +9589,9 @@ bool DrasculaEngine::pantalla_60(int fl) {
 	else if (objeto_que_lleva == HABLAR && fl == 113)
 		hablar(TEXT169, "169.als");
 	else if (objeto_que_lleva == 21 && fl == 56)
-		animacion_18_6();
+		animation_18_6();
 	else if (objeto_que_lleva == 9 && fl == 56 && flags[6] == 1) {
-		animacion_9_6();
+		animation_9_6();
 		return true;
 	} else if (objeto_que_lleva == 9 && fl == 56 && flags[6] == 0) {
 		anima("cnf.bin", 14);
@@ -9648,19 +9648,19 @@ bucless:
 
 	cara = _rnd->getRandomNumber(4);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(65, 103, 65, 103, 49, 38, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_BLOQUE(x_habla[cara], 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(65, 103, 65, 103, 49, 38, dir_dibujo1, dir_zona_pantalla);
+	copyRect(x_habla[cara], 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 104, 102);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -9680,7 +9680,7 @@ bucless:
 			goto bucless;
 	}
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_htel(const char *dicho, const char *filename) {
@@ -9725,14 +9725,14 @@ bucless:
 	else
 		num_cara = (char *)dir_hare_fondo;
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
-	DIBUJA_FONDO(x_habla[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
 
 	if (con_voces == 0)
 		centra_texto(dicho, 90, 50);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(3);
 
 	int key = getscan();
@@ -9751,8 +9751,8 @@ bucless:
 			goto bucless;
 	}
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_pendulo() {
@@ -9766,13 +9766,13 @@ void DrasculaEngine::refresca_pendulo() {
 	else
 		dir_pendulo = dir_hare_frente;
 
-	DIBUJA_FONDO(pendulo_x[frame_pen], 19, 152, 0, 55, 125, dir_pendulo, dir_zona_pantalla);
+	copyBackground(pendulo_x[frame_pen], 19, 152, 0, 55, 125, dir_pendulo, dir_zona_pantalla);
 
 	if (flags[1] == 2)
-		DIBUJA_BLOQUE(18, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
+		copyRect(18, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[1] == 0)
-		DIBUJA_BLOQUE(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
+		copyRect(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 
 	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 8) {
@@ -9791,7 +9791,7 @@ void DrasculaEngine::pantalla_pendulo(int fl) {
 	else if (objeto_que_lleva == COGER && fl == 101)
 		agarra_objeto(20);
 	else if (objeto_que_lleva == 20 && fl == 100)
-		animacion_6_6();
+		animation_6_6();
 	else if (objeto_que_lleva == COGER || objeto_que_lleva == ABRIR)
 		hablar(TEXT453, "453.als");
 	else
@@ -9800,58 +9800,58 @@ void DrasculaEngine::pantalla_pendulo(int fl) {
 
 void DrasculaEngine::refresca_21_antes() {
 	if (flags[0] == 1)
-		DIBUJA_FONDO(2, 171, 84, 126, 17, 26, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(2, 171, 84, 126, 17, 26, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[10] == 1)
-		DIBUJA_FONDO(20, 163, 257, 149, 14, 34, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(20, 163, 257, 149, 14, 34, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_22_antes() {
 	if (flags[24] == 1)
-		DIBUJA_FONDO(2, 187, 107, 106, 62, 12, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(2, 187, 107, 106, 62, 12, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[27] == 0)
-		DIBUJA_FONDO(32, 181, 203, 88, 13, 5, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(32, 181, 203, 88, 13, 5, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[26] == 0)
-		DIBUJA_FONDO(2, 133, 137, 83, 29, 53, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(2, 133, 137, 83, 29, 53, dir_dibujo3, dir_zona_pantalla);
 	else
-		DIBUJA_FONDO(65, 174, 109, 145, 55, 25, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(65, 174, 109, 145, 55, 25, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_23_antes() {
 	if (flags[11] == 1 && flags[0] == 0)
-		DIBUJA_FONDO(87, 171, 237, 110, 20, 28, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(87, 171, 237, 110, 20, 28, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[0] == 1)
-		DIBUJA_FONDO(29, 126, 239, 94, 57, 73, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(29, 126, 239, 94, 57, 73, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[1] == 1)
-		DIBUJA_BLOQUE(1, 135, 7, 94, 27, 64, dir_dibujo3, dir_zona_pantalla);
+		copyRect(1, 135, 7, 94, 27, 64, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_24_antes() {
 	if (flags[1] == 1)
-		DIBUJA_FONDO(1, 163, 225, 124, 12, 36, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 163, 225, 124, 12, 36, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[2] == 1)
-		DIBUJA_FONDO(14, 153, 30, 107, 23, 46, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(14, 153, 30, 107, 23, 46, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_26_antes() {
 	int diferencia;
 
 	if (flags[2] == 1)
-		DIBUJA_FONDO(1, 130, 87, 44, 50, 69, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 130, 87, 44, 50, 69, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[12] == 1)
-		DIBUJA_FONDO(52, 177, 272, 103, 27, 22, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(52, 177, 272, 103, 27, 22, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[18] == 0)
-		DIBUJA_FONDO(80, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(80, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
 
 	if (parpadeo == 5 && flags[18] == 0)
-		DIBUJA_FONDO(52, 172, 226, 106, 3, 4, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(52, 172, 226, 106, 3, 4, dir_dibujo3, dir_zona_pantalla);
 
 	diferencia = vez() - conta_ciego_vez;
 	if (diferencia >= 10) {
@@ -9860,83 +9860,83 @@ void DrasculaEngine::refresca_26_antes() {
 	}
 
 	if (flags[20] == 1)
-		DIBUJA_FONDO(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_27_antes() {
 	if (flags[5] == 1)
-		DIBUJA_BLOQUE(1, 175, 59, 109, 17, 24, dir_dibujo3, dir_zona_pantalla);
+		copyRect(1, 175, 59, 109, 17, 24, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[6] == 1)
-		DIBUJA_BLOQUE(19, 177, 161, 103, 18, 22, dir_dibujo3, dir_zona_pantalla);
+		copyRect(19, 177, 161, 103, 18, 22, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_29_antes() {
 	if (flags[4] == 1)
-		DIBUJA_FONDO(12, 113, 247, 49, 41, 84, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(12, 113, 247, 49, 41, 84, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_30_antes() {
 	if (flags[4] == 1)
-		DIBUJA_FONDO(1, 148, 148, 66, 35, 51, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 148, 148, 66, 35, 51, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[16] == 1)
-		DIBUJA_FONDO(37, 173, 109, 84, 20, 26, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(37, 173, 109, 84, 20, 26, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_31_antes() {
 	if (flags[13] == 1)
-		DIBUJA_FONDO(1, 163, 116, 41, 61, 36, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 163, 116, 41, 61, 36, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[5] == 1)
-		DIBUJA_FONDO(1, 78, 245, 63, 30, 84, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 78, 245, 63, 30, 84, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_34_antes() {
 	if (flags[7] == 1)
-		DIBUJA_FONDO(99, 127, 73, 41, 79, 72, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(99, 127, 73, 41, 79, 72, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[8] == 1)
-		DIBUJA_FONDO(36, 129, 153, 41, 62, 65, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(36, 129, 153, 41, 62, 65, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_35_antes() {
 	if (flags[14] == 1)
-		DIBUJA_FONDO(1, 86, 246, 65, 68, 87, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(1, 86, 246, 65, 68, 87, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[17] == 0 && flags[15] == 1)
-		DIBUJA_FONDO(111, 150, 118, 52, 40, 23, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(111, 150, 118, 52, 40, 23, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[17] == 1)
-		DIBUJA_FONDO(70, 150, 118, 52, 40, 23, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(70, 150, 118, 52, 40, 23, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_26() {
 	if (flags[29] == 1)
-		DIBUJA_BLOQUE(93, 1, hare_x, hare_y, 45, 78, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(93, 1, hare_x, hare_y, 45, 78, dir_hare_fondo, dir_zona_pantalla);
 
-	DIBUJA_BLOQUE(233, 107, 17, 102, 66, 92, dir_dibujo3, dir_zona_pantalla);
+	copyRect(233, 107, 17, 102, 66, 92, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_27() {
-	DIBUJA_BLOQUE(38, 177, 103, 171, 21, 22, dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_BLOQUE(60, 162, 228, 156, 18, 37, dir_dibujo3, dir_zona_pantalla);
+	copyRect(38, 177, 103, 171, 21, 22, dir_dibujo3, dir_zona_pantalla);
+	copyRect(60, 162, 228, 156, 18, 37, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_29() {
-	DIBUJA_BLOQUE(1, 180, 150, 126, 10, 17, dir_dibujo3, dir_zona_pantalla);
+	copyRect(1, 180, 150, 126, 10, 17, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_31() {
-	DIBUJA_BLOQUE(63, 190, 223, 157, 17, 9, dir_dibujo3, dir_zona_pantalla);
+	copyRect(63, 190, 223, 157, 17, 9, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_34() {
-	DIBUJA_BLOQUE(5, 171, 234, 126, 29, 23, dir_dibujo3, dir_zona_pantalla);
+	copyRect(5, 171, 234, 126, 29, 23, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::refresca_35() {
-	DIBUJA_BLOQUE(1, 174, 54, 152, 195, 25, dir_dibujo3, dir_zona_pantalla);
+	copyRect(1, 174, 54, 152, 195, 25, dir_dibujo3, dir_zona_pantalla);
 }
 
 void DrasculaEngine::pantalla_1(int fl) {
@@ -10024,18 +10024,18 @@ void DrasculaEngine::pantalla_3(int fl) {
 	else if (objeto_que_lleva == HABLAR && fl == 133) {
 		hablar_sinc(TEXT322, "322.als", "13333334125433333333");
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(25);
 		hablar(TEXT33, "33.als");
 	} else if (objeto_que_lleva == MIRAR && fl == 165) {
 		hablar(TEXT149, "149.als");
 		hablar(TEXT150, "150.als");
 	} else if (objeto_que_lleva == COGER && fl == 165) {
-		DIBUJA_FONDO(0, 0, 0,0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0,0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
-		DIBUJA_BLOQUE(44, 1, hare_x, hare_y, 41, 70, dir_dibujo2, dir_zona_pantalla);
+		copyRect(44, 1, hare_x, hare_y, 41, 70, dir_dibujo2, dir_zona_pantalla);
 		actualiza_refresco();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(4);
 		agarra_objeto(10);
 		flags[3] = 1;
@@ -10045,7 +10045,7 @@ void DrasculaEngine::pantalla_3(int fl) {
 	else if (objeto_que_lleva == COGER && fl == 166)
 		hablar(TEXT7, "7.als");
 	else if (objeto_que_lleva == 14 && fl == 166 && flags[37] == 0) {
-		animacion_7_2();
+		animation_7_2();
 		agarra_objeto(8);
 	} else if (objeto_que_lleva == 14 && fl == 166 && flags[37] == 1)
 		hablar(TEXT323, "323.als");
@@ -10092,7 +10092,7 @@ void DrasculaEngine::pantalla_5(int fl) {
 	else if (objeto_que_lleva == HABLAR && fl == 136)
 		hablar(TEXT15, "15.als");
 	else if (objeto_que_lleva == 10 && fl == 136) {
-		animacion_5_2();
+		animation_5_2();
 		resta_objeto(10);
 	} else if (objeto_que_lleva == MIRAR && fl == 212)
 		hablar(TEXT187, "187.als");
@@ -10127,51 +10127,51 @@ void DrasculaEngine::pantalla_6(int fl){
 	else if (objeto_que_lleva == MOVER && fl == 143)
 		hablar(TEXT7, "7.als");
 	else if (objeto_que_lleva == ABRIR && fl == 143 && flags[2] == 0) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
-	DIBUJA_BLOQUE(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(10);
 	comienza_sound("s3.als");
 	flags[2] = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	fin_sound();
 	} else if (objeto_que_lleva == CERRAR && fl == 143 && flags[2] == 1) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		flags[2] = 0;
 		actualiza_refresco_antes();
-		DIBUJA_BLOQUE(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(5);
 		comienza_sound("s4.als");
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
 	} else if (objeto_que_lleva == HABLAR && fl == 143)
 		hablar(TEXT38, "38.als");
 	else if (objeto_que_lleva == MIRAR && fl == 139)
 		hablar(TEXT36, "36.als");
 	else if (objeto_que_lleva == ABRIR && fl == 139 && flags[1] == 0) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
-		DIBUJA_BLOQUE(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(19);
 		comienza_sound("s3.als");
 		flags[1] = 1;
 		visible[4] = 1;
 		visible[2] = 0;
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
 	} else if (objeto_que_lleva == MIRAR && fl == 140)
 		hablar(TEXT147, "147.als");
 	else if (objeto_que_lleva == COGER && fl == 140) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
-		DIBUJA_BLOQUE(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(19);
 		agarra_objeto(9);
 		visible[4] = 0;
@@ -10218,11 +10218,11 @@ void DrasculaEngine::pantalla_9(int fl){
 	else if (objeto_que_lleva == MIRAR && fl == 51)
 		hablar(TEXT60, "60.als");
 	else if (objeto_que_lleva == HABLAR && fl == 51 && flags[4] == 0)
-		animacion_4_2();
+		animation_4_2();
 	else if (objeto_que_lleva == HABLAR && fl == 51 && flags[4] == 1)
-		animacion_33_2();
+		animation_33_2();
 	else if (objeto_que_lleva == 7 && fl == 51) {
-		animacion_6_2();
+		animation_6_2();
 		resta_objeto(7);
 		agarra_objeto(14);}
 	else
@@ -10254,17 +10254,17 @@ void DrasculaEngine::pantalla_12(int fl){
 
 void DrasculaEngine::pantalla_14(int fl) {
 	if (objeto_que_lleva == HABLAR && fl == 54 && flags[39] == 0)
-		animacion_12_2();
+		animation_12_2();
 	else if (objeto_que_lleva == HABLAR && fl == 54 && flags[39] == 1)
 		hablar(TEXT109, "109.als");
 	else if (objeto_que_lleva == 12 && fl == 54)
-		animacion_26_2();
+		animation_26_2();
 	else if (objeto_que_lleva == HABLAR && fl == 52 && flags[5] == 0)
-		animacion_11_2();
+		animation_11_2();
 	else if (objeto_que_lleva == HABLAR && fl == 52 && flags[5] == 1)
-		animacion_36_2();
+		animation_36_2();
 	else if (objeto_que_lleva == HABLAR && fl == 53)
-		animacion_13_2();
+		animation_13_2();
 	else if (objeto_que_lleva == MIRAR && fl == 200)
 		hablar(TEXT165, "165.als");
 	else if (objeto_que_lleva == MIRAR && fl == 201)
@@ -10299,9 +10299,9 @@ void DrasculaEngine::pantalla_15(int fl) {
 		hablar_sinc(TEXT46, "46.als", "4442444244244");
 		sentido_hare = 1;
 	} else if (objeto_que_lleva == 18 && fl == 188 && flags[26] == 0) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(133, 135, hare_x + 6, hare_y, 39, 63, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyRect(133, 135, hare_x + 6, hare_y, 39, 63, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		comienza_sound("s8.als");
 		fin_sound();
 		hablar(TEXT338, "338.als");
@@ -10309,7 +10309,7 @@ void DrasculaEngine::pantalla_15(int fl) {
 		agarra_objeto(19);
 		resta_objeto(18);
 	} else if (objeto_que_lleva == MOVER && fl == 188 && flags[27] == 0) {
-		animacion_34_2();
+		animation_34_2();
 		hablar(TEXT339, "339.als");
 		agarra_objeto(16);
 		flags[26] = 1;
@@ -10349,7 +10349,7 @@ void DrasculaEngine::pantalla_16(int fl) {
 			flags[20] = 1;
 			sentido_hare = 3;
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hablar(TEXT342, "342.als");
 			agarra_objeto(22);
 		}
@@ -10367,7 +10367,7 @@ void DrasculaEngine::pantalla_16(int fl) {
 		hablar(TEXT343, "343.als");
 		sentido_hare = 3;
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		hablar(TEXT344, "344.als");
 	} else if (objeto_que_lleva == HABLAR && fl == 187)
 		hablar(TEXT345, "345.als");
@@ -10381,11 +10381,11 @@ void DrasculaEngine::pantalla_17(int fl) {
 	else if (objeto_que_lleva == HABLAR && fl == 177 && flags[18] == 0)
 		hablar(TEXT6, "6.als");
 	else if (objeto_que_lleva == HABLAR && fl == 177 && flags[18] == 1)
-		animacion_18_2();
+		animation_18_2();
 	else if (objeto_que_lleva == ABRIR && fl == 177 && flags[18] == 1)
 		hablar(TEXT346, "346.als");
 	else if (objeto_que_lleva == ABRIR && fl == 177 && flags[14] == 0 && flags[18] == 0)
-		animacion_22_2();
+		animation_22_2();
 	else if (objeto_que_lleva == ABRIR && fl == 177 && flags[14] == 1)
 		abre_puerta(15, 1);
 	else if (objeto_que_lleva == CERRAR && fl == 177 && flags[14] == 1)
@@ -10401,17 +10401,17 @@ void DrasculaEngine::pantalla_17(int fl) {
 
 void DrasculaEngine::pantalla_18(int fl) {
 	if (objeto_que_lleva == HABLAR && fl == 55 && flags[36] == 0)
-		animacion_24_2();
+		animation_24_2();
 	else if (objeto_que_lleva == HABLAR && fl == 55 && flags[36] == 1)
 		hablar(TEXT109, "109.als");
 	else if (objeto_que_lleva == MIRAR && fl == 181)
 		hablar(TEXT348, "348.als");
 	else if (objeto_que_lleva == COGER && fl == 182) {
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
-		DIBUJA_BLOQUE(44, 1, hare_x, hare_y, 41, 70, dir_dibujo2, dir_zona_pantalla);
+		copyRect(44, 1, hare_x, hare_y, 41, 70, dir_dibujo2, dir_zona_pantalla);
 		actualiza_refresco();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(4);
 		agarra_objeto(12);
 		visible[2] = 0;
@@ -10429,24 +10429,24 @@ void DrasculaEngine::pantalla_18(int fl) {
 	else if (objeto_que_lleva == 17 && fl == 55 && flags[38] == 0 && flags[33] == 1)
 		hablar(TEXT349, "349.als");
 	else if (objeto_que_lleva == 8 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animacion_24_2();
+		animation_24_2();
 	else if (objeto_que_lleva == 13 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animacion_24_2();
+		animation_24_2();
 	else if (objeto_que_lleva == 15 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animacion_24_2();
+		animation_24_2();
 	else if (objeto_que_lleva == 16 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animacion_24_2();
+		animation_24_2();
 	else if (objeto_que_lleva == 17 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animacion_24_2();
+		animation_24_2();
 	else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0) {
 		sentido_hare = 3;
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
-		DIBUJA_BLOQUE(1, 1, hare_x - 1, hare_y + 3, 42, 67, dir_dibujo2, dir_zona_pantalla);
+		copyRect(1, 1, hare_x - 1, hare_y + 3, 42, 67, dir_dibujo2, dir_zona_pantalla);
 		actualiza_refresco();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(6);
 		hablar(TEXT347, "347.als");
 		flags[29] = 1;
@@ -10514,39 +10514,39 @@ bucless:
 	if (sincronia[p] == '7')
 		cara = 7;
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 	if (num_ejec == 2)
-		DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_habla - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_habla - 1, dir_zona_pantalla, dir_dibujo3);
 	else
-		DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]), dir_zona_pantalla, dir_dibujo3);
 	pon_hare();
 	if (num_ejec == 2) {
 		if (alto_hare != 56)
-			DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_habla - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_habla - 1, dir_dibujo3, dir_zona_pantalla);
 	} else
-		DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]), dir_dibujo3, dir_zona_pantalla);
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_izq[cara], y_mask_habla, hare_x + 8, hare_y - 1, ancho_habla, alto_habla, dir_hare_dch, dir_zona_pantalla);
+			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 8, hare_y - 1, ancho_habla, alto_habla, dir_hare_dch, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_izq[cara], y_mask_habla, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_dch[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla, dir_hare_dch, dir_zona_pantalla);
+			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla, dir_hare_dch, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_dch[cara], y_mask_habla, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla, dir_hare_frente, dir_zona_pantalla);
+			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla, dir_hare_frente, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
 						(int)(suma_1_pixel + hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
@@ -10554,7 +10554,7 @@ bucless:
 		actualiza_refresco();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			DIBUJA_BLOQUE(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla, dir_hare_frente, dir_zona_pantalla);
+			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla, dir_hare_frente, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
 						(int)(suma_1_pixel + hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
@@ -10565,7 +10565,7 @@ bucless:
 	if (con_voces == 0)
 		centra_texto(dicho, hare_x, hare_y);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	p++;
 	pausa(3);
@@ -10634,7 +10634,7 @@ bucless:
 	if (con_voces == 0)
 		centra_texto(dicho, 263, 69);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(4);
 
@@ -10656,7 +10656,7 @@ bucless:
 
 	flags[19] = cara_antes;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::cierra_puerta(int nflag, int n_puerta) {
@@ -10666,13 +10666,13 @@ void DrasculaEngine::cierra_puerta(int nflag, int n_puerta) {
 		if (n_puerta != NO_PUERTA)
 			puertas_cerradas(n_puerta);
 		refresca_pantalla();
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
 		sin_verbo();
 	}
 }
 
-void DrasculaEngine::animacion_12_2() {
+void DrasculaEngine::animation_12_2() {
 	lee_dibujos("an12.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
@@ -10680,17 +10680,17 @@ void DrasculaEngine::animacion_12_2() {
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
-	VUELCA_PANTALLA(228, 112, 228, 112, 47, 60, dir_zona_pantalla);
+	copyBackground(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	updateScreen(228, 112, 228, 112, 47, 60, dir_zona_pantalla);
 
 	pausa(3);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 	stopmusic();
@@ -10704,7 +10704,7 @@ void DrasculaEngine::animacion_12_2() {
 	descomprime_dibujo(dir_hare_dch, 1);
 }
 
-void DrasculaEngine::animacion_26_2() {
+void DrasculaEngine::animation_26_2() {
 	int n, x = 0;
 
 	lee_dibujos("an12.alg");
@@ -10714,17 +10714,17 @@ void DrasculaEngine::animacion_26_2() {
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
-	VUELCA_PANTALLA(228, 112, 228, 112, 47, 60, dir_zona_pantalla);
+	copyBackground(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	updateScreen(228, 112, 228, 112, 47, 60, dir_zona_pantalla);
 
 	pausa(3);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 	stopmusic();
@@ -10740,8 +10740,8 @@ void DrasculaEngine::animacion_26_2() {
 	descomprime_dibujo(dir_hare_dch, 1);
 	for (n = 0; n < 6; n++){
 		x++;
-		DIBUJA_FONDO(x, 1, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(225,113, 225,113, 50,59, dir_zona_pantalla);
+		copyBackground(x, 1, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(225,113, 225,113, 50,59, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -10749,8 +10749,8 @@ void DrasculaEngine::animacion_26_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 61, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
+		copyBackground(x, 61, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
 		x = x + 50;
 		if (n == 2)
 			comienza_sound("s9.als");
@@ -10761,8 +10761,8 @@ void DrasculaEngine::animacion_26_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 121, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
+		copyBackground(x, 121, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
 		x = x + 50;
 		pausa(3);
 	}
@@ -10777,7 +10777,7 @@ void DrasculaEngine::animacion_26_2() {
 	musica_room = 16;
 }
 
-void DrasculaEngine::animacion_11_2() {
+void DrasculaEngine::animation_11_2() {
 	lee_dibujos("an11y13.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
@@ -10795,7 +10795,7 @@ void DrasculaEngine::animacion_11_2() {
 	descomprime_dibujo(dir_hare_dch, 1);
 }
 
-void DrasculaEngine::animacion_13_2() {
+void DrasculaEngine::animation_13_2() {
 	lee_dibujos("an11y13.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
@@ -10817,18 +10817,18 @@ void DrasculaEngine::animacion_13_2() {
 	descomprime_dibujo(dir_hare_frente, 1);
 }
 
-void DrasculaEngine::animacion_18_2() {
+void DrasculaEngine::animation_18_2() {
 	hablar(TEXT378, "378.als");
 	habla_vbpuerta(TEXTVB4, "VB4.als");
 	conversa("op_3.cal");
 }
 
-void DrasculaEngine::animacion_22_2() {
+void DrasculaEngine::animation_22_2() {
 	hablar(TEXT374,"374.als");
 
 	sentido_hare=2;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	comienza_sound("s13.als");
 	fin_sound();
 	sentido_hare = 1;
@@ -10842,7 +10842,7 @@ void DrasculaEngine::animacion_22_2() {
 	flags[18] = 1;
 }
 
-void DrasculaEngine::animacion_24_2() {
+void DrasculaEngine::animation_24_2() {
 	if (hare_x < 178)
 		lleva_al_hare(208, 136);
 	sentido_hare = 3;
@@ -10855,7 +10855,7 @@ void DrasculaEngine::animacion_24_2() {
 	lee_dibujos("an24.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
-	animacion_32_2();
+	animation_32_2();
 
 	flags[21] = 1;
 
@@ -10873,7 +10873,7 @@ void DrasculaEngine::animacion_24_2() {
 	vb_x = 120;
 }
 
-void DrasculaEngine::animacion_32_2() {
+void DrasculaEngine::animation_32_2() {
 	int n, x = 0;
 
 	lee_dibujos("an32_1.alg");
@@ -10883,8 +10883,8 @@ void DrasculaEngine::animacion_32_2() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 113, 53, 65, 81, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 1, 113, 53, 65, 81, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
 		x = x + 65;
 		pausa(4);
 	}
@@ -10892,8 +10892,8 @@ void DrasculaEngine::animacion_32_2() {
 	x = 0;
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(x, 83, 113, 53, 65, 81, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 83, 113, 53, 65, 81, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
 		x = x + 65;
 		pausa(4);
 	}
@@ -10901,8 +10901,8 @@ void DrasculaEngine::animacion_32_2() {
 	x = 0;
 	for (n = 0; n < 4; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 113, 53, 65, 81, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 1, 113, 53, 65, 81, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
 		x = x + 65;
 		pausa(4);
 	}
@@ -10910,8 +10910,8 @@ void DrasculaEngine::animacion_32_2() {
 	x = 0;
 	for (n = 0; n < 3; n++) {
 		x++;
-		DIBUJA_FONDO(x, 83, 113, 53, 65, 81, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 83, 113, 53, 65, 81, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
 		x = x + 65;
 		if (n < 2)
 			pausa(4);
@@ -10921,12 +10921,12 @@ void DrasculaEngine::animacion_32_2() {
 	descomprime_dibujo(dir_dibujo3, 1);
 }
 
-void DrasculaEngine::animacion_34_2() {
+void DrasculaEngine::animation_34_2() {
 	int n, x = 0;
 
 	sentido_hare = 1;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	lee_dibujos("an34_1.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
@@ -10935,8 +10935,8 @@ void DrasculaEngine::animacion_34_2() {
 
 	for (n = 0; n < 3; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 218, 79, 83, 75, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
+		copyBackground(x, 1, 218, 79, 83, 75, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
 		x = x + 83;
 		pausa(3);
 	}
@@ -10945,8 +10945,8 @@ void DrasculaEngine::animacion_34_2() {
 
 	for (n = 0; n < 3; n++) {
 		x++;
-		DIBUJA_FONDO(x, 77, 218, 79, 83, 75, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
+		copyBackground(x, 77, 218, 79, 83, 75, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
 		x = x + 83;
 		pausa(3);
 	}
@@ -10956,8 +10956,8 @@ void DrasculaEngine::animacion_34_2() {
 
 	for (n = 0; n < 3; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 218, 79, 83, 75,	dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(218, 79, 218, 79, 83,75, dir_zona_pantalla);
+		copyBackground(x, 1, 218, 79, 83, 75,	dir_hare_dch, dir_zona_pantalla);
+		updateScreen(218, 79, 218, 79, 83,75, dir_zona_pantalla);
 		x = x + 83;
 		pausa(3);
 	}
@@ -10965,8 +10965,8 @@ void DrasculaEngine::animacion_34_2() {
 
 	pausa(30);
 
-	DIBUJA_FONDO(1, 77, 218, 79, 83, 75, dir_hare_dch, dir_zona_pantalla);
-	VUELCA_PANTALLA(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
+	copyBackground(1, 77, 218, 79, 83, 75, dir_hare_dch, dir_zona_pantalla);
+	updateScreen(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
 	pausa(3);
 
 	lee_dibujos("994.alg");
@@ -10975,7 +10975,7 @@ void DrasculaEngine::animacion_34_2() {
 	descomprime_dibujo(dir_hare_dch, 1);
 }
 
-void DrasculaEngine::animacion_36_2() {
+void DrasculaEngine::animation_36_2() {
 	lee_dibujos("an11y13.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 
@@ -10991,7 +10991,7 @@ void DrasculaEngine::animacion_36_2() {
 	descomprime_dibujo(dir_hare_dch, 1);
 }
 
-void DrasculaEngine::animacion_7_2() {
+void DrasculaEngine::animation_7_2() {
 	int n, x = 0;
 
 	lee_dibujos("an7_1.alg");
@@ -11002,17 +11002,17 @@ void DrasculaEngine::animacion_7_2() {
 	descomprime_dibujo(dir_hare_frente, 1);
 
 	if (flags[3] == 1)
-		DIBUJA_FONDO(258, 110, 85, 44, 23, 53, dir_dibujo3, dir_dibujo1);
+		copyBackground(258, 110, 85, 44, 23, 53, dir_dibujo3, dir_dibujo1);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11021,9 +11021,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11032,9 +11032,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64,	51, 73, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64,	51, 73, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11043,9 +11043,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11054,9 +11054,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11073,9 +11073,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1,	80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1,	80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11084,9 +11084,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11095,9 +11095,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1,	80, 64, 51,73, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1,	80, 64, 51,73, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11106,9 +11106,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11117,9 +11117,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11128,9 +11128,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11139,9 +11139,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64,	51, 73, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64,	51, 73, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11150,9 +11150,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11161,9 +11161,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64, 51, 73, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64, 51, 73, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11172,9 +11172,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 2; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11187,9 +11187,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64,	51, 73, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64,	51, 73, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11198,9 +11198,9 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
@@ -11209,17 +11209,17 @@ void DrasculaEngine::animacion_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		DIBUJA_BLOQUE(x, 1, 80, 64, 51, 73,	dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+		copyRect(x, 1, 80, 64, 51, 73,	dir_hare_dch, dir_zona_pantalla);
+		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 		x = x + 51;
 		pausa(3);
 	}
 
 
-	DIBUJA_FONDO(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_BLOQUE(1, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-	VUELCA_PANTALLA(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+	copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
+	copyRect(1, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
+	updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
 
 	flags[37] = 1;
 
@@ -11236,12 +11236,12 @@ void DrasculaEngine::animacion_7_2() {
 	descomprime_dibujo(dir_dibujo3, 1);
 }
 
-void DrasculaEngine::animacion_5_2() {
+void DrasculaEngine::animation_5_2() {
 	int n, x = 0;
 
 	sentido_hare = 0;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	lee_dibujos("an5_1.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
@@ -11252,13 +11252,13 @@ void DrasculaEngine::animacion_5_2() {
 	lee_dibujos("an5_4.alg");
 	descomprime_dibujo(dir_dibujo3, 1);
 
-	DIBUJA_FONDO(1, 1, 213, 66,	53,84, dir_hare_fondo, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(1, 1, 213, 66,	53,84, dir_hare_fondo, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 213, 66, 53, 84, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84,dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66, 53, 84, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84,dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11267,8 +11267,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 86, 213, 66, 53, 84, dir_hare_fondo, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 86, 213, 66, 53, 84, dir_hare_fondo, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11277,8 +11277,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 213, 66, 53, 84, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66, 53, 84, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11287,8 +11287,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 213, 66,	53, 84, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66,	53, 84, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11297,8 +11297,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 86, 213, 66, 53, 84, dir_hare_dch, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 86, 213, 66, 53, 84, dir_hare_dch, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11307,8 +11307,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 213, 66,	53, 84, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66,	53, 84, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11319,8 +11319,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 86, 213, 66, 53, 84, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 86, 213, 66, 53, 84, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11330,8 +11330,8 @@ void DrasculaEngine::animacion_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		DIBUJA_FONDO(x, 1, 213, 66, 53, 84,	dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66, 53, 84,	dir_dibujo3, dir_zona_pantalla);
+		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
 		x = x + 52;
 		pausa(3);
 	}
@@ -11350,7 +11350,7 @@ void DrasculaEngine::animacion_5_2() {
 	sin_verbo();
 }
 
-void DrasculaEngine::animacion_6_2() {
+void DrasculaEngine::animation_6_2() {
 	stopmusic();
 	flags[9] = 1;
 
@@ -11366,8 +11366,8 @@ void DrasculaEngine::animacion_6_2() {
 	lee_dibujos("ciego5.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(1);
 
@@ -11379,8 +11379,8 @@ void DrasculaEngine::animacion_6_2() {
 	pausa(4);
 	habla_hacker(TEXTD67, "d67.als");
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(10);
 
@@ -11402,7 +11402,7 @@ void DrasculaEngine::animacion_6_2() {
 	flags[9] = 0;
 }
 
-void DrasculaEngine::animacion_33_2() {
+void DrasculaEngine::animation_33_2() {
 	stopmusic();
 	flags[9] = 1;
 
@@ -11422,8 +11422,8 @@ void DrasculaEngine::animacion_33_2() {
 	lee_dibujos("ciego5.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(10);
 
@@ -11435,8 +11435,8 @@ void DrasculaEngine::animacion_33_2() {
 	habla_ciego(TEXTD77, "d77.als", "56665004444447222550002222755554444466555033022755555000444444444444444444444444444444");
 	habla_hacker(TEXTD65, "d65.als");
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(14);
 
@@ -11475,7 +11475,7 @@ bool DrasculaEngine::pantalla_21(int fl) {
 		abre_puerta(0, 1);
 		sin_verbo();
 	} else if (objeto_que_lleva == 21 && fl == 179) {
-		animacion_9_4();
+		animation_9_4();
 		return true;
 	} else
 		hay_respuesta = 0;
@@ -11534,7 +11534,7 @@ void DrasculaEngine::pantalla_23(int fl) {
 		if (flags[22] == 1 && flags[14] == 1)
 			flags[18] = 1;
 		if (flags[18] == 1)
-			animacion_6_4();
+			animation_6_4();
 	} else
 		hay_respuesta = 0;
 }
@@ -11562,13 +11562,13 @@ void DrasculaEngine::pantalla_26(int fl) {
 	else if (objeto_que_lleva == CERRAR && fl == 107)
 		cierra_puerta(2, 0);
 	else if (objeto_que_lleva == 10 && fl == 50 && flags[18] == 1 && flags[12] == 1)
-		animacion_5_4();
+		animation_5_4();
 	else if (objeto_que_lleva == 8 && fl == 50 && flags[18] == 1 && flags[12] == 1)
-		animacion_5_4();
+		animation_5_4();
 	else if (objeto_que_lleva == 12 && fl == 50 && flags[18] == 1 && flags[12] == 1)
-		animacion_5_4();
+		animation_5_4();
 	else if (objeto_que_lleva == 16 && fl == 50 && flags[18] == 1 && flags[12] == 1)
-		animacion_5_4();
+		animation_5_4();
 	else if (objeto_que_lleva == COGER && fl == 143 && flags[18] == 1) {
 		lleva_al_hare(260, 180);
 		agarra_objeto(10);
@@ -11582,13 +11582,13 @@ void DrasculaEngine::pantalla_26(int fl) {
 		lleva_al_hare(153, 180);
 	} else if (objeto_que_lleva == COGER && fl == 143 && flags[18] == 0) {
 		lleva_al_hare(260, 180);
-		DIBUJA_FONDO(80, 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(199, 94, 199, 94, 38, 27, dir_zona_pantalla);
+		copyBackground(80, 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(199, 94, 199, 94, 38, 27, dir_zona_pantalla);
 		pausa(3);
 		habla_igor_peluca(TEXTI25, "I25.als");
 		lleva_al_hare(153, 180);
 	} else if (objeto_que_lleva == HABLAR && fl == 51)
-		animacion_1_4();
+		animation_1_4();
 	else if (objeto_que_lleva == ABRIR && fl == 167)
 		hablar(TEXT467, "467.als");
 	else if (objeto_que_lleva == MIRAR && fl == 164)
@@ -11666,7 +11666,7 @@ void DrasculaEngine::pantalla_30(int fl) {
 		if (flags[11] == 1 && flags[14] == 1)
 			flags[18] = 1;
 		if (flags[18] == 1)
-			animacion_6_4();
+			animation_6_4();
 	} else if (objeto_que_lleva == CERRAR && fl == 144)
 		cierra_puerta(16, 1);
 	else if (objeto_que_lleva == 13 && fl == 144) {
@@ -11699,7 +11699,7 @@ void DrasculaEngine::pantalla_31(int fl) {
 
 void DrasculaEngine::pantalla_34(int fl) {
 	if (objeto_que_lleva == MOVER && fl == 146)
-		animacion_8_4();
+		animation_8_4();
 	else if (objeto_que_lleva == MIRAR && fl == 146)
 		hablar(TEXT458, "458.als");
 	else if (objeto_que_lleva == COGER && fl == 146)
@@ -11726,7 +11726,7 @@ void DrasculaEngine::pantalla_35(int fl) {
 	if (flags[11] == 1 && flags[22] == 1)
 		flags[18] = 1;
 	if (flags[18] == 1)
-		animacion_6_4();
+		animation_6_4();
 	} else if (objeto_que_lleva == COGER && fl == 147) {
 		hablar(TEXT426, "426.als");
 		agarra_objeto(15);
@@ -11780,7 +11780,7 @@ bucless:
 	refresca_pantalla();
 	if (con_voces == 0)
 		centra_texto(dicho, 87, 66);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	int key = getscan();
 	if (key != 0)
@@ -11799,7 +11799,7 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
 void DrasculaEngine::habla_igor_peluca(const char *dicho, const char *filename) {
@@ -11835,18 +11835,18 @@ bucless:
 
 	_rnd->getRandomNumber(3);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
 
-	DIBUJA_FONDO(x_habla[cara], 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_habla[cara], 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
 	if (con_voces == 0)
 		centra_texto(dicho, 221, 102);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
 
@@ -11867,27 +11867,27 @@ bucless:
 	}
 
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::animacion_1_4() {
+void DrasculaEngine::animation_1_4() {
 	if (flags[21] == 0) {
 		strcpy(nombre_obj[2], "igor");
 		hablar(TEXT275, "275.als");
 
 		actualiza_refresco_antes();
 
-		DIBUJA_FONDO(131, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(199, 95, 199, 95, 50, 66, dir_zona_pantalla);
+		copyBackground(131, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(199, 95, 199, 95, 50, 66, dir_zona_pantalla);
 
 		pausa(3);
 
 		actualiza_refresco_antes();
 
-		DIBUJA_FONDO(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
 		pon_hare();
 
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 		pausa(3);
 		flags[18] = 1;
@@ -11902,16 +11902,16 @@ void DrasculaEngine::animacion_1_4() {
 
 		actualiza_refresco_antes();
 
-		DIBUJA_FONDO(131, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
-		VUELCA_PANTALLA(199, 95, 199, 95, 50, 66, dir_zona_pantalla);
+		copyBackground(131, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(199, 95, 199, 95, 50, 66, dir_zona_pantalla);
 		pausa(2);
 
 		actualiza_refresco_antes();
 
-		DIBUJA_FONDO(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
 		pon_hare();
 
-		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 		flags[18] = 1;
 		flags[20] = 1;
@@ -11926,7 +11926,7 @@ void DrasculaEngine::animacion_1_4() {
 	flags[18] = 0;
 }
 
-void DrasculaEngine::animacion_5_4(){
+void DrasculaEngine::animation_5_4(){
 	sentido_hare = 3;
 	lee_dibujos("anh_dr.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
@@ -11934,14 +11934,14 @@ void DrasculaEngine::animacion_5_4(){
 	lleva_al_hare(38, 177);
 	hare_se_ve = 0;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	delay(800);
 	anima("bio.bin", 14);
 	flags[29] = 1;
 	hare_x = 95;
 	hare_y = 82;
 	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	abre_puerta(2, 0);
 	lee_dibujos("auxigor.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
@@ -11958,7 +11958,7 @@ void DrasculaEngine::animacion_5_4(){
 	sal_de_la_habitacion(0);
 }
 
-void DrasculaEngine::animacion_6_4() {
+void DrasculaEngine::animation_6_4() {
 	char room[13];
 
 	strcpy(room, num_room);
@@ -11970,12 +11970,12 @@ void DrasculaEngine::animacion_6_4() {
 	descomprime_dibujo(dir_dibujo3, 1);
 	lee_dibujos("auxigor.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	refresca_26_antes();
 	x_igor = 104;
 	y_igor = 71;
 	pon_igor();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pausa(40);
 	habla_igor_frente(TEXTI26, "I26.als");
 	strcpy(num_room, room);
@@ -11990,7 +11990,7 @@ void DrasculaEngine::animacion_6_4() {
 	refresca_pantalla();
 }
 
-void DrasculaEngine::animacion_8_4() {
+void DrasculaEngine::animation_8_4() {
 	int frame;
 	int estanteria_x[] = {1, 75, 149, 223, 1, 75, 149, 223, 149, 223, 149, 223, 149, 223};
 	int estanteria_y[] = {1, 1, 1, 1, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74};
@@ -12000,8 +12000,8 @@ void DrasculaEngine::animacion_8_4() {
 
 	for (frame = 0; frame < 14; frame++) {
 		pausa(2);
-		DIBUJA_FONDO(estanteria_x[frame], estanteria_y[frame], 77, 45, 73, 72, dir_hare_frente, dir_zona_pantalla);
-		VUELCA_PANTALLA(77, 45, 77, 45, 73, 72, dir_zona_pantalla);
+		copyBackground(estanteria_x[frame], estanteria_y[frame], 77, 45, 73, 72, dir_hare_frente, dir_zona_pantalla);
+		updateScreen(77, 45, 77, 45, 73, 72, dir_zona_pantalla);
 	}
 
 	lee_dibujos("96.alg");
@@ -12009,7 +12009,7 @@ void DrasculaEngine::animacion_8_4() {
 	abre_puerta(7, 2);
 }
 
-void DrasculaEngine::animacion_9_4() {
+void DrasculaEngine::animation_9_4() {
 	anima("st.bin", 14);
 	FundeAlNegro(1);
 }
