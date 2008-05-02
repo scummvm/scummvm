@@ -24,9 +24,9 @@
  */
 
 #include "drascula/drascula.h"
-#include "drascula/texts.h"
 
 namespace Drascula {
+
 void DrasculaEngine::talk_igor_dch(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
