@@ -188,6 +188,9 @@ protected:
 	void addShapeToPool(const uint8 *data, int realIndex, int shape);
 	void addShapeToPool(uint8 *shpData, int index);
 	void remShapeFromPool(int idx);
+
+	int _characterShapeFile;
+	virtual void loadCharacterShapes(int shapes) = 0;
 	
 	// pathfinder
 	int _movFacingTable[600];

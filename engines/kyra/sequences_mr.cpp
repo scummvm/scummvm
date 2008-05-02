@@ -43,7 +43,7 @@ void KyraEngine_MR::showBadConscience() {
 		_badConscienceAnim = 6;
 	else if (_currentChapter == 5 && _rnd.getRandomNumberRng(1, 100) <= 25)
 		_badConscienceAnim = 7;
-	else if (_malcolmShapes == 9)
+	else if (_characterShapeFile == 9)
 		_badConscienceAnim = 4;
 
 	_badConsciencePosition = (_mainCharacter.x1 <= 160);
@@ -250,7 +250,7 @@ void KyraEngine_MR::eelScript() {
 
 	setGameFlag(0x171);
 
-	switch (_malcolmShapes-1) {
+	switch (_characterShapeFile-1) {
 	case 0:
 		runTemporaryScript("EELS01.EMC", 0, 0, 1, 1);
 		break;

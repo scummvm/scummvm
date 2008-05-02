@@ -48,7 +48,7 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 
 	out->writeSint16BE(_lastMusicCommand);
 	out->writeByte(_currentChapter);
-	out->writeByte(_malcolmShapes);
+	out->writeByte(_characterShapeFile);
 	//XXX
 	out->writeSint16BE(_score);
 	out->writeSint16BE(_scoreMax);
@@ -142,7 +142,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	if (!_unkSceneScreenFlag1)
 		_lastMusicCommand = -1;
 
-	int curShapes = _malcolmShapes;
+	int curShapes = _characterShapeFile;
 
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, true);
 
@@ -157,7 +157,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	// usually we have to save the flag set by opcode 10 here
 	_lastMusicCommand = in.readSint16();
 	_currentChapter = in.readByte();
-	_malcolmShapes = in.readByte();
+	_characterShapeFile = in.readByte();
 	//XXX
 	_score = in.readSint16();
 	_scoreMax = in.readSint16();
@@ -227,8 +227,8 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	updateCharacterAnim(0);
 	_loadingState = false;
 
-	if (curShapes != _malcolmShapes)
-		loadMalcolmShapes(_malcolmShapes);
+	if (curShapes != _characterShapeFile)
+		loadCharacterShapes(_characterShapeFile);
 
 	_mainCharX = _mainCharacter.x2 = _mainCharacter.x1;
 	_mainCharY = _mainCharacter.y2 = _mainCharacter.y1;

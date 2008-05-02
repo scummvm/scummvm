@@ -53,7 +53,7 @@ void KyraEngine_HoF::saveGame(const char *fileName, const char *saveName) {
 	//out->writeUint16BE(word_2AB05);
 	out->writeSint16BE(_lastMusicCommand);
 	out->writeByte(_newChapterFile);
-	out->writeByte(_loadedZTable);
+	out->writeByte(_characterShapeFile);
 	out->writeByte(_cauldronState);
 	out->writeByte(_colorCodeFlag1);
 	out->writeByte(_colorCodeFlag2);
@@ -152,7 +152,7 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 		_lastMusicCommand = -1;
 	}
 
-	int loadedZTable = _loadedZTable;
+	int loadedZTable = _characterShapeFile;
 
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, true);
 
@@ -172,7 +172,7 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 		in.readUint16();
 	_lastMusicCommand = in.readSint16();
 	_newChapterFile = in.readByte();
-	_loadedZTable = in.readByte();
+	_characterShapeFile = in.readByte();
 	_cauldronState = in.readByte();
 	_colorCodeFlag1 = in.readByte();
 	_colorCodeFlag2 = in.readByte();
@@ -286,8 +286,8 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
 
-	if (loadedZTable != _loadedZTable)
-		loadZShapes(_loadedZTable);
+	if (loadedZTable != _characterShapeFile)
+		loadCharacterShapes(_characterShapeFile);
 
 	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
 	if (!queryGameFlag(1))

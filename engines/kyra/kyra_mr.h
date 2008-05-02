@@ -299,8 +299,7 @@ private:
 	// shapes
 	void initMouseShapes();
 
-	int _malcolmShapes;
-	void loadMalcolmShapes(int newShapes);
+	void loadCharacterShapes(int newShapes);
 	void updateMalcolmShapes();
 
 	int _malcolmShapeXOffset, _malcolmShapeYOffset;

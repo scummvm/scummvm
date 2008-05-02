@@ -422,7 +422,7 @@ void KyraEngine_MR::showIdleAnim() {
 		};
 
 		char filename[14];
-		snprintf(filename, 14, "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _malcolmShapes);
+		snprintf(filename, 14, "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _characterShapeFile);
 
 		if (_res->exists(filename))
 			runTemporaryScript(filename, 1, 1, 1, 1);

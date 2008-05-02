@@ -37,7 +37,7 @@ namespace Kyra {
 
 int KyraEngine_MR::o3_getMalcolmShapes(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getMaloclmShapes(%p) ()", (const void *)script);
-	return _malcolmShapes;
+	return _characterShapeFile;
 }
 
 int KyraEngine_MR::o3_setCharacterPos(EMCState *script) {
@@ -478,7 +478,7 @@ int KyraEngine_MR::o3_removeItemsFromScene(EMCState *script) {
 
 int KyraEngine_MR::o3_disguiseMalcolm(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o3_disguiseMalcolm(%p) (%d)", (const void *)script, stackPos(0));
-	loadMalcolmShapes(stackPos(0));
+	loadCharacterShapes(stackPos(0));
 	updateDlgIndex();
 	return 0;
 }

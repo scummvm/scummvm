@@ -33,10 +33,10 @@ namespace Kyra {
 class Screen_v2;
 class KyraEngine_HoF;
 
-class TextDisplayer_v2 : public TextDisplayer {
+class TextDisplayer_HoF : public TextDisplayer {
 friend class KyraEngine_HoF;
 public:
-	TextDisplayer_v2(KyraEngine_HoF *vm, Screen_v2 *screen);
+	TextDisplayer_HoF(KyraEngine_HoF *vm, Screen_v2 *screen);
 
 	void backupTalkTextMessageBkgd(int srcPage, int dstPage);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);

@@ -57,7 +57,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	memset(_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 	_gfxBackUpRect = 0;
-	_malcolmShapes = 0;
 	_paletteOverlay = 0;
 	_sceneList = 0;
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
@@ -597,7 +596,8 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	loadExtrasShapes();
 	musicUpdate(0);
-	loadMalcolmShapes(_malcolmShapes);
+	_characterShapeFile = 0;
+	loadCharacterShapes(_characterShapeFile);
 	musicUpdate(0);
 	initMainButtonList(true);
 	loadInterfaceShapes();
@@ -746,8 +746,8 @@ void KyraEngine_MR::openTalkFile(int file) {
 
 #pragma mark -
 
-void KyraEngine_MR::loadMalcolmShapes(int newShapes) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadMalcolmShapes(%d)", newShapes);
+void KyraEngine_MR::loadCharacterShapes(int newShapes) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadCharacterShapes(%d)", newShapes);
 	static const uint8 numberOffset[] = { 3, 3, 4, 4, 3, 3 };
 	static const uint8 startShape[] = { 0x32, 0x58, 0x78, 0x98, 0xB8, 0xD8 };
 	static const uint8 endShape[] = { 0x57, 0x77, 0x97, 0xB7, 0xD7, 0xF7 };
@@ -788,17 +788,17 @@ void KyraEngine_MR::loadMalcolmShapes(int newShapes) {
 		}
 	}
 
-	_malcolmShapes = newShapes;
+	_characterShapeFile = newShapes;
 	updateMalcolmShapes();
 }
 
 void KyraEngine_MR::updateMalcolmShapes() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateMalcolmShapes()");
-	assert(_malcolmShapes >= 0 && _malcolmShapes < _shapeDescsSize);
-	_malcolmShapeXOffset = _shapeDescs[_malcolmShapes].xOffset;
-	_malcolmShapeYOffset = _shapeDescs[_malcolmShapes].yOffset;
-	_animObjects[0].width = _shapeDescs[_malcolmShapes].width;
-	_animObjects[0].height = _shapeDescs[_malcolmShapes].height;
+	assert(_characterShapeFile >= 0 && _characterShapeFile < _shapeDescsSize);
+	_malcolmShapeXOffset = _shapeDescs[_characterShapeFile].xOffset;
+	_malcolmShapeYOffset = _shapeDescs[_characterShapeFile].yOffset;
+	_animObjects[0].width = _shapeDescs[_characterShapeFile].width;
+	_animObjects[0].height = _shapeDescs[_characterShapeFile].height;
 }
 
 #pragma mark -
@@ -913,7 +913,7 @@ void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {
 void KyraEngine_MR::updateCharPal(int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateCharPal(%d)", unk1);
 	int layer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1) - 1;
-	const uint8 *src = _costPalBuffer + _malcolmShapes * 72;
+	const uint8 *src = _costPalBuffer + _characterShapeFile * 72;
 	uint8 *dst = _screen->getPalette(0) + 432;
 	const int8 *sceneDatPal = &_sceneDatPalette[layer * 3];
 
@@ -1552,7 +1552,7 @@ void KyraEngine_MR::changeChapter(int newChapter, int sceneId, int malcolmShapes
 	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
 
 	if (malcolmShapes >= 0)
-		loadMalcolmShapes(malcolmShapes);
+		loadCharacterShapes(malcolmShapes);
 
 	enterNewScene(sceneId, facing, 0, 0, 0);
 }

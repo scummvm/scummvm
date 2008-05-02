@@ -192,7 +192,7 @@ int KyraEngine_HoF::init() {
 
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
-	_text = new TextDisplayer_v2(this, _screen);
+	_text = new TextDisplayer_HoF(this, _screen);
 	assert(_text);
 	_gui = new GUI_v2(this);
 	assert(_gui);
@@ -355,8 +355,8 @@ void KyraEngine_HoF::startup() {
 	initItemList(30);
 	loadButtonShapes();
 	resetItemList();
-	_loadedZTable = 1;
-	loadZShapes(_loadedZTable);
+	_characterShapeFile = 1;
+	loadCharacterShapes(_characterShapeFile);
 	initInventoryButtonList();
 	setupLangButtonShapes();
 	loadInventoryShapes();
@@ -1094,11 +1094,11 @@ void KyraEngine_HoF::loadItemShapes() {
 	_screen->_curPage = 0;
 }
 
-void KyraEngine_HoF::loadZShapes(int shapes) {
+void KyraEngine_HoF::loadCharacterShapes(int shapes) {
 	char file[10];
 	strcpy(file, "_ZX.SHP");
 
-	_loadedZTable = shapes;
+	_characterShapeFile = shapes;
 	file[2] = '0' + shapes;
 
 	uint8 *data = _res->fileData(file, 0);
@@ -1106,7 +1106,7 @@ void KyraEngine_HoF::loadZShapes(int shapes) {
 		addShapeToPool(data, i, i-9);
 	delete [] data;
 
-	_loadedZTable = shapes;
+	_characterShapeFile = shapes;
 }
 
 void KyraEngine_HoF::loadInventoryShapes() {
@@ -1633,11 +1633,11 @@ void KyraEngine_HoF::showIdleAnim() {
 		zanthRandomIdleChat();
 	} else {
 		scriptAnimation = false;
-		if (_loadedZTable > 8)
+		if (_characterShapeFile > 8)
 			return;
 
-		int scriptMin = scriptMinTable[_loadedZTable-1];
-		int scriptMax = scriptMaxTable[_loadedZTable-1];
+		int scriptMin = scriptMinTable[_characterShapeFile-1];
+		int scriptMax = scriptMaxTable[_characterShapeFile-1];
 		int script = 0;
 
 		if (scriptMin < scriptMax) {

@@ -677,7 +677,7 @@ int KyraEngine_HoF::o2_setCharPalEntry(EMCState *script) {
 
 int KyraEngine_HoF::o2_loadZShapes(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_loadZShapes(%p) (%d)", (const void *)script, stackPos(0));
-	loadZShapes(stackPos(0));
+	loadCharacterShapes(stackPos(0));
 	return 0;
 }
 
@@ -1318,7 +1318,7 @@ int KyraEngine_HoF::o2_chapterChange(EMCState *script) {
 
 	static const int zShapeList[] = { 1, 2, 2, 2, 4 };
 	assert(chapter > 1 && chapter <= ARRAYSIZE(zShapeList));
-	loadZShapes(zShapeList[chapter-1]);
+	loadCharacterShapes(zShapeList[chapter-1]);
 
 	enterNewScene(scene, (chapter == 2) ? 2 : 0, 0, 0, 0);
 

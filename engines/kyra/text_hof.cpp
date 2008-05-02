@@ -32,19 +32,19 @@
 
 namespace Kyra {
 
-TextDisplayer_v2::TextDisplayer_v2(KyraEngine_HoF *vm, Screen_v2 *screen)
+TextDisplayer_HoF::TextDisplayer_HoF(KyraEngine_HoF *vm, Screen_v2 *screen)
 	: TextDisplayer(vm, screen), _vm(vm) {
 }
 
-void TextDisplayer_v2::backupTalkTextMessageBkgd(int srcPage, int dstPage) {
+void TextDisplayer_HoF::backupTalkTextMessageBkgd(int srcPage, int dstPage) {
 	_screen->copyRegion(_talkCoords.x, _talkMessageY, 0, 144, _talkCoords.w, _talkMessageH, srcPage, dstPage);
 }
 
-void TextDisplayer_v2::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
+void TextDisplayer_HoF::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
 	_screen->copyRegion(0, 144, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
 }
 
-void TextDisplayer_v2::restoreScreen() {
+void TextDisplayer_HoF::restoreScreen() {
 	_vm->restorePage3();
 	_vm->drawAnimObjects();
 	_screen->hideMouse();
@@ -54,7 +54,7 @@ void TextDisplayer_v2::restoreScreen() {
 	_vm->refreshAnimObjects(0);
 }
 
-void TextDisplayer_v2::printCustomCharacterText(const char *text, int x, int y, uint8 c1, int srcPage, int dstPage) {
+void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y, uint8 c1, int srcPage, int dstPage) {
 	text = preprocessString(text);
 	int lineCount = buildMessageSubstrings(text);
 	int w = getWidestLineWidth(lineCount);
@@ -86,8 +86,8 @@ void TextDisplayer_v2::printCustomCharacterText(const char *text, int x, int y, 
 	_screen->showMouse();
 }
 
-char *TextDisplayer_v2::preprocessString(const char *str) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v2::preprocessString('%s')", str);
+char *TextDisplayer_HoF::preprocessString(const char *str) {
+	debugC(9, kDebugLevelMain, "TextDisplayer_HoF::preprocessString('%s')", str);
 
 	if (str != _talkBuffer) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
@@ -129,8 +129,8 @@ char *TextDisplayer_v2::preprocessString(const char *str) {
 	return _talkBuffer;
 }
 
-void TextDisplayer_v2::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v2::calcWidestLineBounds(%d, %d)", w, x);
+void TextDisplayer_HoF::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
+	debugC(9, kDebugLevelMain, "TextDisplayer_HoF::calcWidestLineBounds(%d, %d)", w, x);
 	x1 = x;
 	x1 -= (w >> 1);
 	x2 = x1 + w + 1;
@@ -305,7 +305,7 @@ void KyraEngine_HoF::objectChatProcess(const char *script) {
 	while (_emc->isValid(&_chatScriptState))
 		_emc->run(&_chatScriptState);
 
-	_newShapeFilename[2] = _loadedZTable + '0';
+	_newShapeFilename[2] = _characterShapeFile + '0';
 	uint8 *shapeBuffer = _res->fileData(_newShapeFilename, 0);
 	if (shapeBuffer) {
 		int shapeCount = initNewShapes(shapeBuffer);

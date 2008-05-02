@@ -350,7 +350,7 @@ void KyraEngine_MR::loadScenePal() {
 	_screen->generateOverlay(_screen->getPalette(2), _paletteOverlay, 0xF0, 0x19);
 
 	uint8 *palette = _screen->getPalette(2) + 432;
-	const uint8 *costPal = _costPalBuffer + _malcolmShapes * 72;
+	const uint8 *costPal = _costPalBuffer + _characterShapeFile * 72;
 	memcpy(palette, costPal, 24*3);
 }
 

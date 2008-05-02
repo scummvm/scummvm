@@ -576,11 +576,11 @@ void KyraEngine_MR::updateDlgIndex() {
 		static const uint8 dlgIndexMoodEvil[] = { 0x06, 0x08, 0x0A, 0x09, 0x0B };
 
 		if (_malcolmsMood == 0)
-			dlgIndex = dlgIndexMoodNice[_malcolmShapes];
+			dlgIndex = dlgIndexMoodNice[_characterShapeFile];
 		else if (_malcolmsMood == 1)
-			dlgIndex = dlgIndexMoodNormal[_malcolmShapes];
+			dlgIndex = dlgIndexMoodNormal[_characterShapeFile];
 		else if (_malcolmsMood == 2)
-			dlgIndex = dlgIndexMoodEvil[_malcolmShapes];
+			dlgIndex = dlgIndexMoodEvil[_characterShapeFile];
 	} else if (_currentChapter == 2) {
 		if (dlgIndex >= 8)
 			dlgIndex -= 4;
