@@ -260,7 +260,7 @@ void GameDatabase::loadVersion3(Common::SeekableReadStream &sourceS) {
 	uint32 gameStateOffs = sourceS.readUint32LE();
 	_gameStateSize = sourceS.readUint32LE();
 	uint32 objectsOffs = sourceS.readUint32LE();
-	uint32 objectsSize = sourceS.readUint32LE();
+	/*uint32 objectsSize =*/ sourceS.readUint32LE();
 	_mainCodeObjectIndex = sourceS.readUint16LE();
 
 	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);

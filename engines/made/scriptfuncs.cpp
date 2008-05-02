@@ -810,7 +810,7 @@ int16 ScriptFunctionsRtz::o1_GAMENAME(int16 argc, int16 *argv) {
 	
 	int16 descObjectIndex = argv[2];
 	int16 saveNum = argv[1];
-	int16 version = argv[0];
+	/*int16 version = argv[0];*/
 	Common::String description;
 
 	if (saveNum > 999)
