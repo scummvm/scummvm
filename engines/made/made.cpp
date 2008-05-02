@@ -86,7 +86,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ProjectReader();
 	_screen = new Screen(this);
-	_dat = new GameDatabase();
+	_dat = new GameDatabase(this);
 	_script = new ScriptInterpreter(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -159,21 +159,31 @@ int MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
 		_timers[i] = -1;
-
-	if (getFeatures() & GF_DEMO) {
-		_dat->open("demo.dat");
-		_res->open("demo.prj");
-	} else if (getFeatures() & GF_CD) {
-		_dat->open("rtzcd.dat");
-		_res->open("rtzcd.prj");
-	} else if (getFeatures() & GF_CD_COMPRESSED) {
-		_dat->openFromRed("rtzcd.red", "rtzcd.dat");
-		_res->open("rtzcd.prj");
-	} else if (getFeatures() & GF_FLOPPY) {
-		_dat->open("rtz.dat");
-		_res->open("rtz.prj");
+	
+	if (getGameID() == GID_RTZ) {
+		if (getFeatures() & GF_DEMO) {
+			_dat->open("demo.dat");
+			_res->open("demo.prj");
+		} else if (getFeatures() & GF_CD) {
+			_dat->open("rtzcd.dat");
+			_res->open("rtzcd.prj");
+		} else if (getFeatures() & GF_CD_COMPRESSED) {
+			_dat->openFromRed("rtzcd.red", "rtzcd.dat");
+			_res->open("rtzcd.prj");
+		} else if (getFeatures() & GF_FLOPPY) {
+			_dat->open("rtz.dat");
+			_res->open("rtz.prj");
+		} else {
+			error("Unknown RTZ game features");
+		}
+	} else if (getGameID() == GID_MANHOLE) {
+		_dat->open("manhole.dat");
+		_res->open("manhole.prj");
+	} else if (getGameID() == GID_LGOP2) {
+		_dat->open("lgop2.dat");
+		_res->open("lgop2.prj");
 	} else {
-		error("Unknown game features");
+		error ("Unknown MADE game");
 	}
 
 	_eventMouseX = _eventMouseY = 0;

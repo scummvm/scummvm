@@ -47,13 +47,9 @@ Object::~Object() {
 		delete[] _objData;
 }
 
-void Object::load(Common::SeekableReadStream &source) {
-
+int Object::load(Common::SeekableReadStream &source) {
 	_freeData = true;
-
-	source.readUint16LE(); // skip flags
 	uint16 type = source.readUint16LE();
-
 	if (type == 0x7FFF) {
 		_objSize = source.readUint16LE();
 	} else if (type == 0x7FFE) {
@@ -63,29 +59,23 @@ void Object::load(Common::SeekableReadStream &source) {
 		byte count2 = source.readByte();
 		_objSize = (count1 + count2) * 2;
 	}
-
 	source.seek(-6, SEEK_CUR);
-
 	_objSize += 6;
-
 	_objData = new byte[_objSize];
 	source.read(_objData, _objSize);
-
+	return _objSize;
 }
 
-void Object::load(byte *source) {
-
+int Object::load(byte *source) {
 	_objData = source;
 	_freeData = false;
-
 	if (getClass() < 0x7FFE) {
 		_objSize = (getCount1() + getCount2()) * 2;
 	} else {
 		_objSize = getSize();
 	}
-	
 	_objSize += 6;
-
+	return _objSize;
 }
 
 uint16 Object::getFlags() const {
@@ -184,7 +174,7 @@ void Object::dump(const char *filename) {
 	*/
 }
 
-GameDatabase::GameDatabase() {
+GameDatabase::GameDatabase(MadeEngine *vm) : _vm(vm) {
 }
 
 GameDatabase::~GameDatabase() {
@@ -211,11 +201,60 @@ void GameDatabase::openFromRed(const char *redFilename, const char *filename) {
 }
 
 void GameDatabase::load(Common::SeekableReadStream &sourceS) {
+
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2) {
+		debug(2, "loading version 2 dat");
+		loadVersion2(sourceS);
+	} else if (_vm->getGameID() == GID_RTZ) {
+		debug(2, "loading version 3 dat");
+		loadVersion3(sourceS);
+	}
+
+}
+
+void GameDatabase::loadVersion2(Common::SeekableReadStream &sourceS) {
 	
 	// TODO: Read/verifiy header
 	
-	sourceS.seek(0x1E);
+	sourceS.seek(0x1C);
 	
+	uint32 textStartOffs = sourceS.readUint16LE() * 512;
+	uint16 objectCount = sourceS.readUint16LE();
+	uint16 varObjectCount = sourceS.readUint16LE();
+	_gameStateSize = sourceS.readUint16LE() * 2;
+	sourceS.readUint16LE(); // unknown
+	uint32 objectsOffs = sourceS.readUint16LE() * 512;
+	sourceS.readUint16LE(); // unknown
+	_mainCodeObjectIndex = sourceS.readUint16LE();
+	sourceS.readUint16LE(); // unknown
+	uint32 objectsSize = sourceS.readUint32LE() * 2;
+
+	debug(2, "textStartOffs = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", textStartOffs, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize);
+
+	_gameState = new byte[_gameStateSize];
+	memset(_gameState, 0, _gameStateSize);
+
+	sourceS.seek(objectsOffs);
+
+	for (uint32 i = 0; i < objectCount; i++) {
+		Object *obj = new Object();
+		int objSize = obj->load(sourceS);
+		objSize = objSize % 2;
+		// objects are aligned on 2-byte-boundaries, skip unused bytes
+		sourceS.skip(objSize);
+		_objects.push_back(obj);
+	}
+	
+	printf("ok!\n"); fflush(stdout);
+
+}
+
+void GameDatabase::loadVersion3(Common::SeekableReadStream &sourceS) {
+
+	// TODO: Read/verifiy header
+
+	sourceS.seek(0x1E);
+
 	uint32 objectIndexOffs = sourceS.readUint32LE();
 	uint16 objectCount = sourceS.readUint16LE();
 	uint32 gameStateOffs = sourceS.readUint32LE();
@@ -223,8 +262,8 @@ void GameDatabase::load(Common::SeekableReadStream &sourceS) {
 	uint32 objectsOffs = sourceS.readUint32LE();
 	uint32 objectsSize = sourceS.readUint32LE();
 	_mainCodeObjectIndex = sourceS.readUint16LE();
-	
-	//debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
+
+	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
 
 	_gameState = new byte[_gameStateSize];
 	sourceS.seek(gameStateOffs);
@@ -241,15 +280,16 @@ void GameDatabase::load(Common::SeekableReadStream &sourceS) {
 		// The LSB indicates if it's a constant or variable object.
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
-		
-		//debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
-		
+
+		debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
+
 		if (objectOffsets[i] & 1) {
-			//debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
+			debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
 			sourceS.seek(objectsOffs + objectOffsets[i] - 1);
+			sourceS.readUint16LE(); // skip flags
 			obj->load(sourceS);
 		} else {
-			//debug(2, "-> var\n");
+			debug(2, "-> var\n");
 			obj->load(_gameState + objectOffsets[i]);
 		}
 		_objects.push_back(obj);
@@ -347,8 +387,6 @@ int16 *GameDatabase::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, i
 	
 	int16 *propPtr1 = prop + count1;
 	int16 *propPtr2 = prop + count2;
-
-	debug(2, "# propertyId = %04X\n", propertyId);
 
 	// First see if the property exists in the given object
 	while (count2-- > 0) {

@@ -32,6 +32,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 
+#include "made/made.h"
 #include "made/redreader.h"
 
 namespace Made {
@@ -40,8 +41,8 @@ class Object {
 public:
 	Object();
 	~Object();
-	void load(Common::SeekableReadStream &source);
-	void load(byte *source);
+	int load(Common::SeekableReadStream &source);
+	int load(byte *source);
 
 	uint16 getFlags() const;
 	uint16 getClass() const;
@@ -73,7 +74,7 @@ protected:
 class GameDatabase {
 public:
 
-	GameDatabase();
+	GameDatabase(MadeEngine *vm);
 	~GameDatabase();
 
 	void open(const char *filename);
@@ -102,11 +103,14 @@ public:
 	void dumpObject(int16 index);
 	
 protected:
+	MadeEngine *_vm;
 	Common::Array<Object*> _objects;
 	byte *_gameState;
 	uint32 _gameStateSize;
 	int16 _mainCodeObjectIndex;
 	void load(Common::SeekableReadStream &sourceS);
+	void loadVersion2(Common::SeekableReadStream &sourceS);
+	void loadVersion3(Common::SeekableReadStream &sourceS);
 };
 
 } // End of namespace Made
