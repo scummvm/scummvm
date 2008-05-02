@@ -71,7 +71,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_currentTalkFile = 0;
 	_lastSfxTrack = -1;
 	_handItemSet = -1;
-	memset(_animObjects, 0, sizeof(_animObjects));
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
@@ -282,10 +281,13 @@ void KyraEngine_HoF::startup() {
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;
 
+	allocAnimObjects(1, 10, 30);
+
 	_screen->_curPage = 0;
 	delete [] _mouseSHPBuf;
 	_mouseSHPBuf = 0;
 
+	_gameShapes.clear();
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	_gamePlayBuffer = new uint8[46080];
 	_unkBuf500Bytes = new uint8[500];

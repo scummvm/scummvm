@@ -80,7 +80,7 @@ protected:
 	struct AnimObj {
 		uint16 index;
 		uint16 type;
-		uint16 enabled;
+		bool enabled;
 		uint16 needRefresh;
 		uint16 specialRefresh;
 		uint16 animFlags;
@@ -98,6 +98,13 @@ protected:
 		uint16 palette;
 		AnimObj *nextObject;
 	};
+
+	void allocAnimObjects(int actors, int anims, int items);
+	AnimObj *_animObjects;
+
+	AnimObj *_animActor;
+	AnimObj *_animAnims;
+	AnimObj *_animItems;
 
 	bool _drawNoShapeFlag;
 	AnimObj *_animList;
@@ -121,11 +128,15 @@ protected:
 	virtual void updateCharacterAnim(int) = 0;
 	virtual void updateSceneAnim(int anim, int newFrame) = 0;
 
-	virtual void addItemToAnimList(int item) = 0;
-	virtual void deleteItemAnimEntry(int item) = 0;
+	void addItemToAnimList(int item);
+	void deleteItemAnimEntry(int item);
+
+	virtual void animSetupPaletteEntry(AnimObj *) {}
 
 	virtual void setCharacterAnimDim(int w, int h) = 0;
 	virtual void resetCharacterAnimDim() = 0;
+
+	virtual int getScale(int x, int y) = 0;
 
 	// Scene
 	struct SceneDesc {
@@ -196,6 +207,8 @@ protected:
 	void addShapeToPool(const uint8 *data, int realIndex, int shape);
 	void addShapeToPool(uint8 *shpData, int index);
 	void remShapeFromPool(int idx);
+
+	virtual int getItemShape(int item) const = 0;
 
 	int _characterShapeFile;
 	virtual void loadCharacterShapes(int shapes) = 0;

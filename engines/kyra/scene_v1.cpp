@@ -615,7 +615,7 @@ void KyraEngine_v1::initSceneObjectList(int brandonAlive) {
 
 	int startAnimFrame = 0;
 
-	AnimObject *curAnimState = _animator->actors();
+	Animator_v1::AnimObject *curAnimState = _animator->actors();
 	curAnimState->active = 1;
 	curAnimState->drawY = _currentCharacter->y1;
 	curAnimState->sceneAnimPtr = _shapes[_currentCharacter->currentAnimFrame];

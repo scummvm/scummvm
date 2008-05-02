@@ -164,7 +164,7 @@ int KyraEngine_v1::init() {
 	assert(_sprites);
 	_seq = new SeqPlayer(this, _system);
 	assert(_seq);
-	_animator = new ScreenAnimator(this, _system);
+	_animator = new Animator_v1(this, _system);
 	assert(_animator);
 	_animator->init(5, 11, 12);
 	assert(*_animator);

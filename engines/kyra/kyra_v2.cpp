@@ -44,6 +44,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
+
+	_animObjects = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -56,6 +58,8 @@ KyraEngine_v2::~KyraEngine_v2() {
 	delete [] _itemList;
 
 	_emc->unload(&_sceneScriptData);
+
+	delete [] _animObjects;
 }
 
 void KyraEngine_v2::updateInput() {

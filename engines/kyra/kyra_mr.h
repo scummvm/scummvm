@@ -173,8 +173,6 @@ private:
 	uint8 *_gamePlayBuffer;
 	void restorePage3();
 
-	AnimObj *_animObjects;
-
 	void clearAnimObjects();
 
 	void animSetupPaletteEntry(AnimObj *anim);
@@ -200,9 +198,6 @@ private:
 
 	bool _nextIdleType;
 	void showIdleAnim();
-
-	void addItemToAnimList(int item);
-	void deleteItemAnimEntry(int item);
 
 	// interface
 	uint8 *_interface;
@@ -296,6 +291,8 @@ private:
 	void setMouseCursor(uint16 item);
 
 	// shapes
+	int getItemShape(int item) const { return 248+item; }
+
 	void initMouseShapes();
 
 	void loadCharacterShapes(int newShapes);

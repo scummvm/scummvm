@@ -369,6 +369,8 @@ protected:
 
 	ShapeDesc *_shapeDescTable;
 
+	int getItemShape(int item) const { return 64+item; }
+
 	void loadCharacterShapes(int shapes);
 	void loadInventoryShapes();
 
@@ -401,7 +403,6 @@ protected:
 	uint8 *_gamePlayBuffer;
 	void restorePage3();
 
-	AnimObj _animObjects[42];
 	void clearAnimObjects();
 
 	void refreshAnimObjects(int force);
@@ -415,9 +416,6 @@ protected:
 	void updateCharFacing();
 	void updateCharacterAnim(int);
 	void updateSceneAnim(int anim, int newFrame);
-
-	void addItemToAnimList(int item);
-	void deleteItemAnimEntry(int item);
 
 	int _animObj0Width, _animObj0Height;
 	void setCharacterAnimDim(int w, int h);

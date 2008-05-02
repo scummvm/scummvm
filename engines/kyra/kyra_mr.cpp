@@ -53,7 +53,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_gamePlayBuffer = 0;
 	_interface = _interfaceCommandLine = 0;
 	_costPalBuffer = 0;
-	_animObjects = 0;
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	memset(_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 	_gfxBackUpRect = 0;
@@ -148,7 +147,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete [] _interface;
 	delete [] _interfaceCommandLine;
 	delete [] _costPalBuffer;
-	delete [] _animObjects;
 
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i)
 		delete [] _sceneShapes[i];
@@ -532,7 +530,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	_costPalBuffer = new uint8[864];
 	//XXX
-	_animObjects = new AnimObj[67];
+	allocAnimObjects(1, 16, 50);
 
 	musicUpdate(0);
 

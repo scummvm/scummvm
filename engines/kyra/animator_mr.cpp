@@ -431,53 +431,5 @@ void KyraEngine_MR::showIdleAnim() {
 	_nextIdleType = !_nextIdleType;
 }
 
-void KyraEngine_MR::addItemToAnimList(int item) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::addItemToAnimList(%d)", item);
-	restorePage3();
-
-	AnimObj *animObj = &_animObjects[17+item];
-
-	animObj->enabled = 1;
-	animObj->needRefresh = 1;
-
-	int itemId = _itemList[item].id;
-
-	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
-	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
-
-	animObj->shapePtr = getShapePtr(248+itemId);
-	animSetupPaletteEntry(animObj);
-	animObj->shapeIndex2 = animObj->shapeIndex1 = 248+itemId;
-
-	int scaleY, scaleX;
-	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
-
-	uint8 *shapePtr = getShapePtr(248+itemId);
-	animObj->xPos3 = (animObj->xPos2 -= (_screen->getShapeScaledWidth(shapePtr, scaleX) >> 1));
-	animObj->yPos3 = (animObj->yPos2 -= _screen->getShapeScaledHeight(shapePtr, scaleY));
-
-	animObj->width2 = animObj->height2 = 0;
-
-	_animList = addToAnimListSorted(_animList, animObj);
-	animObj->needRefresh = 1;
-}
-
-void KyraEngine_MR::deleteItemAnimEntry(int item) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::deleteItemAnimEntry(%d)", item);
-	AnimObj *animObj = &_animObjects[17+item];
-
-	restorePage3();
-
-	animObj->shapePtr = 0;
-	animObj->shapeIndex1 = 0xFFFF;
-	animObj->shapeIndex2 = 0xFFFF;
-	animObj->needRefresh = 1;
-
-	refreshAnimObjectsIfNeed();
-
-	animObj->enabled = 0;
-	_animList = deleteAnimListEntry(_animList, animObj);
-}
-
 } // end of namespace Kyra
 

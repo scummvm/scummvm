@@ -38,7 +38,7 @@ class SoundDigital;
 class SeqPlayer;
 class Sprites;
 class Debugger;
-class ScreenAnimator;
+class Animator_v1;
 class TextDisplayer;
 class KyraEngine_v1;
 
@@ -108,14 +108,14 @@ struct BeadState {
 class KyraEngine_v1 : public KyraEngine {
 	friend class MusicPlayer;
 	friend class Debugger_v1;
-	friend class ScreenAnimator;
+	friend class Animator_v1;
 	friend class GUI_v1;
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v1();
 
 	Screen *screen() { return _screen; }
-	ScreenAnimator *animator() { return _animator; }
+	Animator_v1 *animator() { return _animator; }
 	virtual Movie *createWSAMovie();
 
 	uint8 **shapes() { return _shapes; }
@@ -476,7 +476,7 @@ protected:
 
 	uint8 _configTextspeed;
 
-	ScreenAnimator *_animator;
+	Animator_v1 *_animator;
 	SeqPlayer *_seq;
 	Sprites *_sprites;
 	Screen_v1 *_screen;

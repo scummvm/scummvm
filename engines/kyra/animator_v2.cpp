@@ -24,12 +24,22 @@
  */
 
 #include "kyra/kyra_v2.h"
-#include "kyra/screen.h"
+#include "kyra/screen_v2.h"
 #include "kyra/wsamovie.h"
 
 #include "common/endian.h"
 
 namespace Kyra {
+
+void KyraEngine_v2::allocAnimObjects(int actors, int anims, int items) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::allocAnimObjects(%d, %d, %d)", actors, anims, items);
+	_animObjects = new AnimObj[actors+anims+items];
+	assert(_animObjects);
+
+	_animActor = _animObjects;
+	_animAnims = _animObjects + actors;
+	_animItems = _animObjects + actors + anims;
+}
 
 KyraEngine_v2::AnimObj *KyraEngine_v2::initAnimList(AnimObj *list, AnimObj *entry) {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::initAnimList(%p, %p)", (const void*)list, (const void*)entry);
@@ -133,6 +143,58 @@ void KyraEngine_v2::flagAnimObjsSpecialRefresh() {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsSpecialRefresh()");
 	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
 		curEntry->specialRefresh = 1;
+}
+
+void KyraEngine_v2::addItemToAnimList(int item) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addItemToAnimList(%d)", item);
+	assert(item < _itemListSize);
+
+	restorePage3();
+
+	AnimObj *animObj = _animItems + item;
+
+	animObj->enabled = 1;
+	animObj->needRefresh = 1;
+
+	int itemId = _itemList[item].id;
+
+	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
+	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
+
+	animObj->shapePtr = getShapePtr(getItemShape(itemId));
+	animSetupPaletteEntry(animObj);
+	animObj->shapeIndex2 = animObj->shapeIndex1 = getItemShape(itemId);
+
+	int scaleY, scaleX;
+	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
+
+	uint8 *shapePtr = getShapePtr(getItemShape(itemId));
+	animObj->xPos3 = (animObj->xPos2 -= (screen_v2()->getShapeScaledWidth(shapePtr, scaleX) >> 1));
+	animObj->yPos3 = (animObj->yPos2 -= screen_v2()->getShapeScaledHeight(shapePtr, scaleY));
+
+	animObj->width2 = animObj->height2 = 0;
+
+	_animList = addToAnimListSorted(_animList, animObj);
+	animObj->needRefresh = 1;
+}
+
+void KyraEngine_v2::deleteItemAnimEntry(int item) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::deleteItemAnimEntry(%d)", item);
+	assert(item < _itemListSize);
+
+	AnimObj *animObj = _animItems + item;
+
+	restorePage3();
+
+	animObj->shapePtr = 0;
+	animObj->shapeIndex1 = 0xFFFF;
+	animObj->shapeIndex2 = 0xFFFF;
+	animObj->needRefresh = 1;
+
+	refreshAnimObjectsIfNeed();
+
+	animObj->enabled = 0;
+	_animList = deleteAnimListEntry(_animList, animObj);
 }
 
 } // end of namespace Kyra

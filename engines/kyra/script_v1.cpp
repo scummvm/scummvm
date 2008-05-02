@@ -576,7 +576,7 @@ int KyraEngine_v1::o1_popBrandonIntoScene(EMCState *script) {
 	int yOffset = _defaultShapeTable[0].yOffset;
 	int width = _defaultShapeTable[0].w << 3;
 	int height = _defaultShapeTable[0].h;
-	AnimObject *curAnim = _animator->actors();
+	Animator_v1::AnimObject *curAnim = _animator->actors();
 
 	if (changeScaleMode) {
 		curAnim->x1 = _currentCharacter->x1;
@@ -994,7 +994,7 @@ int KyraEngine_v1::o1_unhideMobileCharacter(EMCState *script) {
 int KyraEngine_v1::o1_setCharactersLocation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_setCharactersLocation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	Character *ch = &_characterList[stackPos(0)];
-	AnimObject *animObj = &_animator->actors()[stackPos(0)];
+	Animator_v1::AnimObject *animObj = &_animator->actors()[stackPos(0)];
 	int newScene = stackPos(1);
 	if (_currentCharacter->sceneId == ch->sceneId) {
 		if (_currentCharacter->sceneId != newScene)
