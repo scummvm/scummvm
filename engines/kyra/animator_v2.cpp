@@ -1,0 +1,139 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "kyra/kyra_v2.h"
+#include "kyra/screen.h"
+#include "kyra/wsamovie.h"
+
+#include "common/endian.h"
+
+namespace Kyra {
+
+KyraEngine_v2::AnimObj *KyraEngine_v2::initAnimList(AnimObj *list, AnimObj *entry) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::initAnimList(%p, %p)", (const void*)list, (const void*)entry);
+	entry->nextObject = list;
+	return entry;
+}
+
+KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimObj *add) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)add);
+	add->nextObject = 0;
+
+	if (!list)
+		return add;
+
+	if (add->yPos1 <= list->yPos1) {
+		add->nextObject = list;
+		return add;
+	}
+
+	AnimObj *cur = list;
+	AnimObj *prev = list;
+	while (add->yPos1 > cur->yPos1) {
+		AnimObj *temp = cur->nextObject;
+		if (!temp)
+			break;
+		prev = cur;
+		cur = temp;
+	}
+
+	if (add->yPos1 <= cur->yPos1) {
+		prev->nextObject = add;
+		add->nextObject = cur;
+	} else {
+		cur->nextObject = add;
+		add->nextObject = 0;
+	}
+	return list;
+}
+
+KyraEngine_v2::AnimObj *KyraEngine_v2::deleteAnimListEntry(AnimObj *list, AnimObj *entry) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)entry);
+	if (!list)
+		return 0;
+
+	AnimObj *old = 0;
+	AnimObj *cur = list;
+
+	while (true) {
+		if (cur == entry)
+			break;
+		if (!cur->nextObject)
+			break;
+		old = cur;
+		cur = cur->nextObject;
+	}
+
+	if (cur != entry)
+		return list;
+
+	if (cur == list) {
+		if (!cur->nextObject)
+			return 0;
+		cur = cur->nextObject;
+		return cur;
+	}
+
+	if (!cur->nextObject) {
+		if (!old)
+			return 0;
+		old->nextObject = 0;
+		return list;
+	}
+
+	if (cur != entry)
+		return list;
+
+	old->nextObject = entry->nextObject;
+	return list;
+}
+
+void KyraEngine_v2::refreshAnimObjectsIfNeed() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::refreshAnimObjectsIfNeed()");
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject) {
+		if (curEntry->enabled && curEntry->needRefresh) {
+			restorePage3();
+			drawAnimObjects();
+			refreshAnimObjects(0);
+			screen()->updateScreen();
+			return;
+		}
+	}
+}
+
+void KyraEngine_v2::flagAnimObjsForRefresh() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsForRefresh()");
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
+		curEntry->needRefresh = 1;
+}
+
+void KyraEngine_v2::flagAnimObjsSpecialRefresh() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsSpecialRefresh()");
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
+		curEntry->specialRefresh = 1;
+}
+
+} // end of namespace Kyra
+
