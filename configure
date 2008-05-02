@@ -541,6 +541,7 @@ Installation directories:
   --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
   --mandir=DIR           directory to install the manpage in [PREFIX/share/man]
   --datadir=DIR          directory to install the data files in [PREFIX/share]
+  --libdir=DIR           directory to install the plugins in [PREFIX/lib]
 
 Special configuration feature:
   --host=HOST            cross-compile to target HOST (arm-linux, ...)
@@ -713,6 +714,9 @@ for ac_option in $@; do
 		;;
 	--datadir=*)
 		_datadir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--libdir=*)
+		_libdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-*)
 		engine_enable `echo $ac_option | cut -d '-' -f 4-`
@@ -1521,8 +1525,10 @@ add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
 test -z "$_bindir" && _bindir="$_prefix/bin"
 test -z "$_mandir" && _mandir="$_prefix/share/man"
 test -z "$_datadir" && _datadir="$_prefix/share"
+test -z "$_libdir" && _libdir="$_prefix/lib"
 
 DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
+DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/scummvm\\\""
 
 
 #
@@ -1673,6 +1679,7 @@ PREFIX := $_prefix
 BINDIR := $_bindir
 MANDIR := $_mandir
 DATADIR := $_datadir
+LIBDIR := $_libdir
 
 $_config_mk_data
 

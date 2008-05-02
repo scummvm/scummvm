@@ -27,10 +27,8 @@
 
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
 
 #include <dlfcn.h>
-#define PLUGIN_DIRECTORY	"plugins/"
 
 
 class POSIXPlugin : public DynamicPlugin {
@@ -68,6 +66,7 @@ public:
 
 		return DynamicPlugin::loadPlugin();
 	}
+
 	void unloadPlugin() {
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
@@ -79,42 +78,8 @@ public:
 };
 
 
-PluginList POSIXPluginProvider::getPlugins() {
-	PluginList pl;
-
-
-	// Load dynamic plugins
-	// TODO... this is right now just a nasty hack.
-	// This should search one or multiple directories for all plugins it can
-	// find (to this end, we maybe should use a special prefix/suffix; e.g.
-	// instead of libscumm.so, use scumm.engine or scumm.plugin etc.).
-	//
-	// The list of directories to search could be e.g.:
-	// User specified (via config file), ".", "./plugins", "$(prefix)/lib".
-	//
-	// We also need to add code which ensures what we are looking at is
-	// a) a ScummVM engine and b) matches the version of the executable.
-	// Hence one more symbol should be exported by plugins which returns
-	// the "ABI" version the plugin was built for, and we can compare that
-	// to the ABI version of the executable.
-
-	// Load all plugins.
-	// Scan for all plugins in this directory
-	FilesystemNode dir(PLUGIN_DIRECTORY);
-	FSList files;
-	if (!dir.getChildren(files, FilesystemNode::kListFilesOnly)) {
-		error("Couldn't open plugin directory '%s'", PLUGIN_DIRECTORY);
-	}
-
-	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-		Common::String name(i->getName());
-		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
-			pl.push_back(new POSIXPlugin(i->getPath()));
-		}
-	}
-
-
-	return pl;
+Plugin* POSIXPluginProvider::createPlugin(const Common::String &filename) const {
+	return new POSIXPlugin(filename);
 }
 
 

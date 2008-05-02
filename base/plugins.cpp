@@ -162,6 +162,65 @@ public:
 	}
 };
 
+#else
+
+PluginList FilePluginProvider::getPlugins() {
+	PluginList pl;
+
+	// Prepare the list of directories to search
+	Common::StringList pluginDirs;
+	// TODO: Add the user specified directory (via config file)
+	pluginDirs.push_back(".");
+	pluginDirs.push_back("plugins");
+
+	// Add the provider's custom directories
+	addCustomDirectories(pluginDirs);
+
+	Common::StringList::const_iterator d;
+	for (d = pluginDirs.begin(); d != pluginDirs.end(); d++) {
+		// Load all plugins.
+		// Scan for all plugins in this directory
+		FilesystemNode dir(*d);
+		FSList files;
+		if (!dir.getChildren(files, FilesystemNode::kListFilesOnly)) {
+			debug(1, "Couldn't open plugin directory '%s'", d->c_str());
+			continue;
+		} else {
+			debug(1, "Reading plugins from plugin directory '%s'", d->c_str());
+		}
+
+		for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
+			Common::String name(i->getName());
+			if (name.hasPrefix(getPrefix()) && name.hasSuffix(getSuffix())) {
+				pl.push_back(createPlugin(i->getPath()));
+			}
+		}
+	}
+
+	return pl;
+}
+
+const char* FilePluginProvider::getPrefix() const {
+#ifdef PLUGIN_PREFIX
+	return PLUGIN_PREFIX;
+#else
+	return "";
+#endif
+}
+
+const char* FilePluginProvider::getSuffix() const {
+#ifdef PLUGIN_SUFFIX
+	return PLUGIN_SUFFIX;
+#else
+	return "";
+#endif
+}
+
+void FilePluginProvider::addCustomDirectories(Common::StringList &dirs) const {
+#ifdef PLUGIN_DIRECTORY
+	dirs.push_back(PLUGIN_DIRECTORY);
+#endif
+}
 
 #endif
 

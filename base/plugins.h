@@ -147,6 +147,19 @@ public:
 	virtual PluginList getPlugins() = 0;
 };
 
+class FilePluginProvider : public PluginProvider {
+public:
+	virtual PluginList getPlugins();
+
+protected:
+	virtual Plugin* createPlugin(const Common::String &filename) const = 0;
+
+	virtual const char* getPrefix() const;
+	virtual const char* getSuffix() const;
+
+	virtual void addCustomDirectories(Common::StringList &dirs) const;
+};
+
 /**
  * Instances of this class manage all plugins, including loading them,
  * making wrapper objects of class Plugin available, and unloading them.
