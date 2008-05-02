@@ -43,7 +43,11 @@
 #include "gui/newgui.h"
 #include "gui/message.h"
 
-#if defined(_WIN32_WCE)
+#define _VECTOR_RENDERER_DBG 1
+
+#if defined(_VECTOR_RENDERER_DBG)
+#include "graphics/VectorRenderer.h"
+#elif defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
 #elif defined(__DC__)
 #include "backends/platform/dc/DCLauncherDialog.h"
@@ -67,6 +71,13 @@ static bool launcherDialog(OSystem &system) {
 	// Clear the main screen
 	system.clearScreen();
 
+#if defined(_VECTOR_RENDERER_DBG)
+
+	Graphics::vector_renderer_test( &system );
+	return true;
+
+#else
+
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;
 #elif defined(__DC__)
@@ -75,6 +86,8 @@ static bool launcherDialog(OSystem &system) {
 	GUI::LauncherDialog dlg;
 #endif
 	return (dlg.runModal() != -1);
+
+#endif // vector renderer debug
 }
 
 static const Plugin *detectPlugin() {

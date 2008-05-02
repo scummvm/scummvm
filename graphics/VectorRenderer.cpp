@@ -27,12 +27,42 @@
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/colormasks.h"
+#include "common/system.h"
 
 namespace Graphics {
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererAA<uint16,ColorMasks<565>>;
+	return new VectorRendererSpec<uint16,ColorMasks<565>>;
 }
+
+
+void vector_renderer_test( OSystem *_system ) {
+	VectorRenderer *vr = createRenderer();
+
+	Surface _screen;
+	_screen.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
+
+	if (!_screen.pixels)
+		return;
+
+	_system->clearOverlay();
+	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
+
+	vr->setSurface( &_screen );
+	vr->setColor( 255, 255, 255 );
+
+	_system->showOverlay();
+
+	while( true ) { // draw!!
+		vr->drawLine( 25, 100, 25, 150 );
+		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
+		_system->updateScreen();
+		_system->delayMillis(100);
+	}
+
+	_system->hideOverlay();
+}
+
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
@@ -83,8 +113,7 @@ drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
-drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy)
-{
+drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;

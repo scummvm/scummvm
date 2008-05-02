@@ -28,8 +28,11 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
+#include "common/system.h"
 
 namespace Graphics {
+
+void vector_renderer_test( OSystem *_system );
 
 /**
  * VectorRenderer: The core Vector Renderer Class
@@ -103,6 +106,10 @@ public:
 	 * @param a value of the alpha byte
 	 */
 	virtual void setColor(uint8 r, uint8 g, uint8 b, uint8 a) = 0;
+
+	virtual void setSurface( Surface *surface ){
+		_activeSurface = surface;
+	}
 
 protected:
 
