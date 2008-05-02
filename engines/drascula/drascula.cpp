@@ -3497,102 +3497,102 @@ bool DrasculaEngine::banderas(int fl) {
 
 	if (menu_scr == 1) {
 		if (num_ejec == 1) {
-			if (objeto_que_lleva == MIRAR && fl == 28)
+			if (objeto_que_lleva == LOOK && fl == 28)
 				hablar(TEXT328, "328.als");
 		} else if (num_ejec == 2) {
-			if ((objeto_que_lleva == MIRAR && fl == 22 && flags[23] == 0)
-					|| (objeto_que_lleva == ABRIR && fl == 22 && flags[23] == 0)) {
+			if ((objeto_que_lleva == LOOK && fl == 22 && flags[23] == 0)
+					|| (objeto_que_lleva == OPEN && fl == 22 && flags[23] == 0)) {
 				hablar(TEXT164, "164.als");
 				flags[23] = 1;
 				sin_verbo();
 				suma_objeto(7);
 				suma_objeto(18);
-			} else if (objeto_que_lleva == MIRAR && fl == 22 && flags[23] == 1)
+			} else if (objeto_que_lleva == LOOK && fl == 22 && flags[23] == 1)
 				hablar(TEXT307, "307.als");
-			else if (objeto_que_lleva == MIRAR && fl == 28)
+			else if (objeto_que_lleva == LOOK && fl == 28)
 				hablar(TEXT328, "328.als");
-			else if (objeto_que_lleva == MIRAR && fl == 7)
+			else if (objeto_que_lleva == LOOK && fl == 7)
 				hablar(TEXT143, "143.als");
-			else if (objeto_que_lleva == HABLAR && fl == 7)
+			else if (objeto_que_lleva == TALK && fl == 7)
 				hablar(TEXT144, "144.als");
-			else if (objeto_que_lleva == MIRAR && fl == 8)
+			else if (objeto_que_lleva == LOOK && fl == 8)
 				hablar(TEXT145, "145.als");
-			else if (objeto_que_lleva == HABLAR && fl == 8)
+			else if (objeto_que_lleva == TALK && fl == 8)
 				hablar(TEXT146, "146.als");
-			else if (objeto_que_lleva == MIRAR && fl == 9)
+			else if (objeto_que_lleva == LOOK && fl == 9)
 				hablar(TEXT147, "147.als");
-			else if (objeto_que_lleva == HABLAR && fl == 9)
+			else if (objeto_que_lleva == TALK && fl == 9)
 				hablar(TEXT148, "148.als");
-			else if (objeto_que_lleva == MIRAR && fl == 10)
+			else if (objeto_que_lleva == LOOK && fl == 10)
 				hablar(TEXT151, "151.als");
-			else if (objeto_que_lleva == MIRAR && fl == 11)
+			else if (objeto_que_lleva == LOOK && fl == 11)
 				hablar(TEXT152, "152.als");
-			else if (objeto_que_lleva == HABLAR && fl == 11)
+			else if (objeto_que_lleva == TALK && fl == 11)
 				hablar(TEXT153, "153.als");
-			else if (objeto_que_lleva == MIRAR && fl == 12)
+			else if (objeto_que_lleva == LOOK && fl == 12)
 				hablar(TEXT154, "154.als");
-			else if (objeto_que_lleva == MIRAR && fl == 13)
+			else if (objeto_que_lleva == LOOK && fl == 13)
 				hablar(TEXT155, "155.als");
-			else if (objeto_que_lleva == MIRAR && fl == 14)
+			else if (objeto_que_lleva == LOOK && fl == 14)
 				hablar(TEXT157, "157.als");
-			else if (objeto_que_lleva == MIRAR && fl == 15)
+			else if (objeto_que_lleva == LOOK && fl == 15)
 				hablar(TEXT58, "58.als");
-			else if (objeto_que_lleva == MIRAR && fl == 16)
+			else if (objeto_que_lleva == LOOK && fl == 16)
 				hablar(TEXT158, "158.als");
-			else if (objeto_que_lleva == MIRAR && fl == 17)
+			else if (objeto_que_lleva == LOOK && fl == 17)
 				hablar(TEXT159, "159.als");
-			else if (objeto_que_lleva == MIRAR && fl == 18)
+			else if (objeto_que_lleva == LOOK && fl == 18)
 				hablar(TEXT160, "160.als");
-			else if (objeto_que_lleva == MIRAR && fl == 19)
+			else if (objeto_que_lleva == LOOK && fl == 19)
 				hablar(TEXT161, "161.als");
-			else if (objeto_que_lleva == MIRAR && fl == 20)
+			else if (objeto_que_lleva == LOOK && fl == 20)
 				hablar(TEXT162, "162.als");
-			else if (objeto_que_lleva == MIRAR && fl == 23)
+			else if (objeto_que_lleva == LOOK && fl == 23)
 				hablar(TEXT152, "152.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 3) {
-			if (objeto_que_lleva == MIRAR && fl == 22)
+			if (objeto_que_lleva == LOOK && fl == 22)
 				hablar(TEXT307, "307.als");
-			else if (objeto_que_lleva == MIRAR && fl == 28)
+			else if (objeto_que_lleva == LOOK && fl == 28)
 				hablar(TEXT328, "328.als");
-			else if (objeto_que_lleva == MIRAR && fl == 7)
+			else if (objeto_que_lleva == LOOK && fl == 7)
 				hablar(TEXT143, "143.als");
-			else if (objeto_que_lleva == HABLAR && fl == 7)
+			else if (objeto_que_lleva == TALK && fl == 7)
 				hablar(TEXT144, "144.als");
-			else if (objeto_que_lleva == MIRAR && fl == 8)
+			else if (objeto_que_lleva == LOOK && fl == 8)
 				hablar(TEXT145, "145.als");
-			else if (objeto_que_lleva == HABLAR && fl == 8)
+			else if (objeto_que_lleva == TALK && fl == 8)
 				hablar(TEXT146, "146.als");
-			else if (objeto_que_lleva == MIRAR && fl == 9)
+			else if (objeto_que_lleva == LOOK && fl == 9)
 				hablar(TEXT147, "147.als");
-			else if (objeto_que_lleva == HABLAR && fl == 9)
+			else if (objeto_que_lleva == TALK && fl == 9)
 				hablar(TEXT148, "148.als");
-			else if (objeto_que_lleva == MIRAR && fl == 10)
+			else if (objeto_que_lleva == LOOK && fl == 10)
 				hablar(TEXT151, "151.als");
-			else if (objeto_que_lleva == MIRAR && fl == 11)
+			else if (objeto_que_lleva == LOOK && fl == 11)
 				hablar(TEXT152, "152.als");
-			else if (objeto_que_lleva == HABLAR && fl == 11)
+			else if (objeto_que_lleva == TALK && fl == 11)
 				hablar(TEXT153, "153.als");
-			else if (objeto_que_lleva == MIRAR && fl == 12)
+			else if (objeto_que_lleva == LOOK && fl == 12)
 				hablar(TEXT154, "154.als");
-			else if (objeto_que_lleva == MIRAR && fl == 13)
+			else if (objeto_que_lleva == LOOK && fl == 13)
 				hablar(TEXT155, "155.als");
-			else if (objeto_que_lleva == MIRAR && fl == 14)
+			else if (objeto_que_lleva == LOOK && fl == 14)
 				hablar(TEXT157, "157.als");
-			else if (objeto_que_lleva == MIRAR && fl == 15)
+			else if (objeto_que_lleva == LOOK && fl == 15)
 				hablar(TEXT58, "58.als");
-			else if (objeto_que_lleva == MIRAR && fl == 16)
+			else if (objeto_que_lleva == LOOK && fl == 16)
 				hablar(TEXT158, "158.als");
-			else if (objeto_que_lleva == MIRAR && fl == 17)
+			else if (objeto_que_lleva == LOOK && fl == 17)
 				hablar(TEXT159, "159.als");
-			else if (objeto_que_lleva == MIRAR && fl == 18)
+			else if (objeto_que_lleva == LOOK && fl == 18)
 				hablar(TEXT160, "160.als");
-			else if (objeto_que_lleva == MIRAR && fl == 19)
+			else if (objeto_que_lleva == LOOK && fl == 19)
 				hablar(TEXT161, "161.als");
-			else if (objeto_que_lleva == MIRAR && fl == 20)
+			else if (objeto_que_lleva == LOOK && fl == 20)
 				hablar(TEXT162, "162.als");
-			else if (objeto_que_lleva == MIRAR && fl == 23)
+			else if (objeto_que_lleva == LOOK && fl == 23)
 				hablar(TEXT152, "152.als");
 			else
 				hay_respuesta = 0;
@@ -3604,102 +3604,102 @@ bool DrasculaEngine::banderas(int fl) {
 				resta_objeto(19);
 			} else if ((objeto_que_lleva == 14 && fl == 19) || (objeto_que_lleva == 19 && fl == 14))
 				hablar(TEXT484, "484.als");
-			else if (objeto_que_lleva == MIRAR && fl == 28)
+			else if (objeto_que_lleva == LOOK && fl == 28)
 				hablar(TEXT328, "328.als");
-			else if (objeto_que_lleva == MIRAR && fl == 7)
+			else if (objeto_que_lleva == LOOK && fl == 7)
 				hablar(TEXT478, "478.als");
-			else if (objeto_que_lleva == MIRAR && fl == 8)
+			else if (objeto_que_lleva == LOOK && fl == 8)
 				hablar(TEXT480, "480.als");
-			else if (objeto_que_lleva == MIRAR && fl == 9) {
+			else if (objeto_que_lleva == LOOK && fl == 9) {
 				hablar(TEXT482, "482.als");
 				hablar(TEXT483, "483.als");
-			} else if (objeto_que_lleva == MIRAR && fl == 10)
+			} else if (objeto_que_lleva == LOOK && fl == 10)
 				hablar(TEXT485, "485.als");
-			else if (objeto_que_lleva == MIRAR && fl == 11)
+			else if (objeto_que_lleva == LOOK && fl == 11)
 				hablar(TEXT488, "488.als");
-			else if (objeto_que_lleva == MIRAR && fl == 12)
+			else if (objeto_que_lleva == LOOK && fl == 12)
 				hablar(TEXT486, "486.als");
-			else if (objeto_que_lleva == MIRAR && fl == 13)
+			else if (objeto_que_lleva == LOOK && fl == 13)
 				hablar(TEXT490, "490.als");
-			else if (objeto_que_lleva == MIRAR && fl == 14)
+			else if (objeto_que_lleva == LOOK && fl == 14)
 				hablar(TEXT122, "122.als");
-			else if (objeto_que_lleva == MIRAR && fl == 15)
+			else if (objeto_que_lleva == LOOK && fl == 15)
 				hablar(TEXT117, "117.als");
-			else if (objeto_que_lleva == HABLAR && fl == 15)
+			else if (objeto_que_lleva == TALK && fl == 15)
 				hablar(TEXT118, "118.als");
-			else if (objeto_que_lleva == ABRIR && fl == 15)
+			else if (objeto_que_lleva == OPEN && fl == 15)
 				hablar(TEXT119, "119.als");
-			else if (objeto_que_lleva == MIRAR && fl == 16)
+			else if (objeto_que_lleva == LOOK && fl == 16)
 				hablar(TEXT491, "491.als");
-			else if (objeto_que_lleva == MIRAR && fl == 17)
+			else if (objeto_que_lleva == LOOK && fl == 17)
 				hablar(TEXT478, "478.als");
-			else if (objeto_que_lleva == MIRAR && fl == 18)
+			else if (objeto_que_lleva == LOOK && fl == 18)
 				hablar(TEXT493, "493.als");
-			else if (objeto_que_lleva == MIRAR && fl == 19) {
+			else if (objeto_que_lleva == LOOK && fl == 19) {
 				hablar(TEXT494, "494.als");
 				hablar(TEXT495, "495.als");
-			} else if (objeto_que_lleva == MIRAR && fl == 20)
+			} else if (objeto_que_lleva == LOOK && fl == 20)
 				hablar(TEXT162, "162.als");
-			else if (objeto_que_lleva == MIRAR && fl == 21)
+			else if (objeto_que_lleva == LOOK && fl == 21)
 				hablar(TEXT496, "496.als");
-			else if (objeto_que_lleva == MIRAR && fl == 22)
+			else if (objeto_que_lleva == LOOK && fl == 22)
 				hablar(TEXT161, "161.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 5) {
-			if (objeto_que_lleva == MIRAR && fl == 28)
+			if (objeto_que_lleva == LOOK && fl == 28)
 				hablar(TEXT328, "328.als");
-			else if (objeto_que_lleva == MIRAR && fl == 7)
+			else if (objeto_que_lleva == LOOK && fl == 7)
 				hablar(TEXT478,"478.als");
-			else if (objeto_que_lleva == MIRAR && fl == 8)
+			else if (objeto_que_lleva == LOOK && fl == 8)
 				hablar(TEXT120, "120.als");
-			else if (objeto_que_lleva == MIRAR && fl == 9) {
+			else if (objeto_que_lleva == LOOK && fl == 9) {
 				hablar(TEXT482, "482.als");
 				hablar(TEXT483, "483.als");
-			} else if (objeto_que_lleva == MIRAR && fl == 11)
+			} else if (objeto_que_lleva == LOOK && fl == 11)
 				hablar(TEXT488, "488.als");
-			else if (objeto_que_lleva == MIRAR && fl == 13)
+			else if (objeto_que_lleva == LOOK && fl == 13)
 				hablar(TEXT490, "490.als");
-			else if (objeto_que_lleva == MIRAR && fl == 14)
+			else if (objeto_que_lleva == LOOK && fl == 14)
 				hablar(TEXT121, "121.als");
-			else if (objeto_que_lleva == MIRAR && fl == 15)
+			else if (objeto_que_lleva == LOOK && fl == 15)
 				hablar(TEXT117, "117.als");
-			else if (objeto_que_lleva == HABLAR && fl == 15)
+			else if (objeto_que_lleva == TALK && fl == 15)
 				hablar(TEXT118, "118.als");
-			else if (objeto_que_lleva == ABRIR && fl == 15)
+			else if (objeto_que_lleva == OPEN && fl == 15)
 				hablar(TEXT119, "119.als");
-			else if (objeto_que_lleva == MIRAR && fl == 17)
+			else if (objeto_que_lleva == LOOK && fl == 17)
 				hablar(TEXT478, "478.als");
-			else if (objeto_que_lleva == MIRAR && fl == 20)
+			else if (objeto_que_lleva == LOOK && fl == 20)
 				hablar(TEXT162, "162.als"); 
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == MIRAR && fl == 28)
+			if (objeto_que_lleva == LOOK && fl == 28)
 				hablar(TEXT328, "328.als");
-			else if (objeto_que_lleva == MIRAR && fl == 9) {
+			else if (objeto_que_lleva == LOOK && fl == 9) {
 				hablar(TEXT482, "482.als");
 				hablar(TEXT483, "483.als");
-			} else if (objeto_que_lleva == MIRAR && fl == 20)
+			} else if (objeto_que_lleva == LOOK && fl == 20)
 				hablar(TEXT123, "123.als");
-			else if (objeto_que_lleva == MIRAR && fl == 21)
+			else if (objeto_que_lleva == LOOK && fl == 21)
 				hablar(TEXT441, "441.als");
 			else
 				hay_respuesta = 0;
 		}
 	} else {
 		if (num_ejec == 1) {
-			if (objeto_que_lleva == MIRAR && fl == 50)
+			if (objeto_que_lleva == LOOK && fl == 50)
 				hablar(TEXT308, "308.als");
-			else if (objeto_que_lleva == ABRIR && fl == 50)
+			else if (objeto_que_lleva == OPEN && fl == 50)
 				hablar(TEXT310, "310.als");
-			else if (objeto_que_lleva == CERRAR && fl == 50)
+			else if (objeto_que_lleva == CLOSE && fl == 50)
 				hablar(TEXT311, "311.als");
-			else if (objeto_que_lleva == MOVER && fl == 50)
+			else if (objeto_que_lleva == MOVE && fl == 50)
 				hablar(TEXT312, "312.als");
-			else if (objeto_que_lleva == COGER && fl == 50)
+			else if (objeto_que_lleva == PICK && fl == 50)
 				hablar(TEXT313, "313.als");
-			else if (objeto_que_lleva == HABLAR && fl == 50)
+			else if (objeto_que_lleva == TALK && fl == 50)
 				hablar(TEXT314, "314.als");
 			else if (!strcmp(num_room, "62.alg"))
 				room_62(fl);
@@ -3708,17 +3708,17 @@ bool DrasculaEngine::banderas(int fl) {
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 2) {
-			if (objeto_que_lleva == MIRAR && fl == 50)
+			if (objeto_que_lleva == LOOK && fl == 50)
 				hablar(TEXT308, "308.als");
-			else if (objeto_que_lleva == ABRIR && fl == 50)
+			else if (objeto_que_lleva == OPEN && fl == 50)
 				hablar(TEXT310, "310.als");
-			else if (objeto_que_lleva == CERRAR && fl == 50)
+			else if (objeto_que_lleva == CLOSE && fl == 50)
 				hablar(TEXT311, "311.als");
-			else if (objeto_que_lleva == MOVER && fl == 50)
+			else if (objeto_que_lleva == MOVE && fl == 50)
 				hablar(TEXT312, "312.als");
-			else if (objeto_que_lleva == COGER && fl == 50)
+			else if (objeto_que_lleva == PICK && fl == 50)
 				hablar(TEXT313, "313.als");
-			else if (objeto_que_lleva == HABLAR && fl == 50)
+			else if (objeto_que_lleva == TALK && fl == 50)
 				hablar(TEXT314, "314.als");
 			else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0 && strcmp(num_room, "18.alg"))
 				hablar(TEXT315, "315.als");
@@ -3759,17 +3759,17 @@ bool DrasculaEngine::banderas(int fl) {
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 3) {
-			if (objeto_que_lleva == MIRAR && fl == 50)
+			if (objeto_que_lleva == LOOK && fl == 50)
 				hablar(TEXT309, "309.als");
-			else if (objeto_que_lleva == ABRIR && fl == 50)
+			else if (objeto_que_lleva == OPEN && fl == 50)
 				hablar(TEXT310, "310.als");
-			else if (objeto_que_lleva == CERRAR && fl == 50)
+			else if (objeto_que_lleva == CLOSE && fl == 50)
 				hablar(TEXT311, "311.als");
-			else if (objeto_que_lleva == MOVER && fl == 50)
+			else if (objeto_que_lleva == MOVE && fl == 50)
 				hablar(TEXT312, "312.als");
-			else if (objeto_que_lleva == COGER && fl == 50)
+			else if (objeto_que_lleva == PICK && fl == 50)
 				hablar(TEXT313, "313.als");
-			else if (objeto_que_lleva == HABLAR && fl == 50)
+			else if (objeto_que_lleva == TALK && fl == 50)
 				hablar(TEXT314, "314.als");
 			else if (!strcmp(num_room, "13.alg")) {
 				if (room_13(fl))
@@ -3779,17 +3779,17 @@ bool DrasculaEngine::banderas(int fl) {
 		} else if (num_ejec == 4) {
 			if (!strcmp(num_room, "28.alg"))
 				hablar(TEXT178, "178.als");
-			else if (objeto_que_lleva == MIRAR && fl == 50)
+			else if (objeto_que_lleva == LOOK && fl == 50)
 				hablar(TEXT309, "309.als");
-			else if (objeto_que_lleva == ABRIR && fl == 50)
+			else if (objeto_que_lleva == OPEN && fl == 50)
 				hablar(TEXT310, "310.als");
-			else if (objeto_que_lleva == CERRAR && fl == 50)
+			else if (objeto_que_lleva == CLOSE && fl == 50)
 				hablar(TEXT311, "311.als");
-			else if (objeto_que_lleva == MOVER && fl == 50)
+			else if (objeto_que_lleva == MOVE && fl == 50)
 				hablar(TEXT312, "312.als");
-			else if (objeto_que_lleva == COGER && fl == 50)
+			else if (objeto_que_lleva == PICK && fl == 50)
 				hablar(TEXT313, "313.als");
-			else if (objeto_que_lleva == HABLAR && fl == 50)
+			else if (objeto_que_lleva == TALK && fl == 50)
 				hablar(TEXT314, "314.als");
 			else if (objeto_que_lleva == 8 && fl == 50 && flags[18] == 0)
 				hablar(TEXT481, "481.als");
@@ -3827,17 +3827,17 @@ bool DrasculaEngine::banderas(int fl) {
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 5) {
-			if (objeto_que_lleva == MIRAR && fl == 50)
+			if (objeto_que_lleva == LOOK && fl == 50)
 				hablar("Cuanto mas me miro, mas me gusto", "54.als");
-			else if (objeto_que_lleva == ABRIR && fl == 50)
+			else if (objeto_que_lleva == OPEN && fl == 50)
 				hablar("y luego como me cierro", "19.als");
-			else if (objeto_que_lleva == CERRAR && fl == 50)
+			else if (objeto_que_lleva == CLOSE && fl == 50)
 				hablar("Tendre que abrirme primero no", "19.als");
-			else if (objeto_que_lleva == MOVER && fl == 50)
+			else if (objeto_que_lleva == MOVE && fl == 50)
 				hablar("Estoy bien donde estoy", "19.als");
-			else if (objeto_que_lleva == COGER && fl == 50)
+			else if (objeto_que_lleva == PICK && fl == 50)
 				hablar("Ya me tengo", "11.als");
-			else if (objeto_que_lleva == HABLAR && fl == 50)
+			else if (objeto_que_lleva == TALK && fl == 50)
 				hablar("hola yo", "16.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
 				hablar(TEXT487, "487.als");
@@ -3855,19 +3855,19 @@ bool DrasculaEngine::banderas(int fl) {
 			} else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == MIRAR && fl == 50 && flags[0] == 1)
+			if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 1)
 				hablar(TEXT308, "308.als");
-			else if (objeto_que_lleva == MIRAR && fl == 50 && flags[0] == 0)
+			else if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 0)
 				hablar(TEXT310, "250.als" );
-			else if (objeto_que_lleva == ABRIR && fl == 50)
+			else if (objeto_que_lleva == OPEN && fl == 50)
 				hablar(TEXT310, "310.als" );
-			else if (objeto_que_lleva == CERRAR && fl == 50)
+			else if (objeto_que_lleva == CLOSE && fl == 50)
 				hablar(TEXT311, "311.als" );
-			else if (objeto_que_lleva == MOVER && fl == 50)
+			else if (objeto_que_lleva == MOVE && fl == 50)
 				hablar(TEXT312, "312.als" );
-			else if (objeto_que_lleva == COGER && fl == 50)
+			else if (objeto_que_lleva == PICK && fl == 50)
 				hablar(TEXT313, "313.als" );
-			else if (objeto_que_lleva == HABLAR && fl == 50)
+			else if (objeto_que_lleva == TALK && fl == 50)
 				hablar(TEXT314, "314.als" );
 			else if (!strcmp(num_room, "102.alg"))
 				room_pendulo(fl);

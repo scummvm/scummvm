@@ -62,12 +62,12 @@ struct DrasculaGameDescription;
 #define F8           0x42
 #define F9           0x43
 #define F10          0x44
-#define MIRAR           1
-#define COGER           2
-#define ABRIR           3
-#define CERRAR          4
-#define HABLAR          5
-#define MOVER           6
+#define LOOK            1
+#define PICK            2
+#define OPEN            3
+#define CLOSE           4
+#define TALK            5
+#define MOVE            6
 #define INICISOUND      6
 #define FINALSOUND      8
 #define FINDRV          9
@@ -332,7 +332,6 @@ class DrasculaEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
 protected:
-
 	int init();
 	int go();
 //	void shutdown();
@@ -820,10 +819,6 @@ public:
 	void habla_taber2(const char *, const char *);
 	void habla_bj_cama(const char *dicho, const char * filename);
 	void habla_htel(const char *dicho, const char *filename);
-
-private:
-
-public:
 
 };
 
