@@ -137,7 +137,7 @@ int DrasculaEngine::go() {
 		anda_a_objeto = 0;
 		paso_x = PASO_HARE_X; paso_y = PASO_HARE_Y;
 		alto_hare = ALTO_PERSONAJE; ancho_hare = ANCHO_PERSONAJE; alto_pies = PIES_HARE;
-		alto_habla = ALTO_HABLA_HARE; ancho_habla = ANCHO_HABLA_HARE;
+		alto_talk = ALTO_TALK_HARE; ancho_talk = ANCHO_TALK_HARE;
 		hay_respuesta = 0;
 		conta_ciego_vez = 0;
 		cambio_de_color = 0;
@@ -2125,11 +2125,11 @@ void DrasculaEngine::pon_bj() {
 	copyRectClip(pos_bj, dir_dibujo3, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_dch(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
+	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
 	int cara;
 
 	int longitud;
@@ -2166,7 +2166,7 @@ bucless:
 	pon_dr();
 	copyBackground(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, dir_dibujo1, dir_zona_pantalla);
 
-	copyRect(x_habla[cara], 148, x_igor + 17, y_igor, 25, 24, dir_hare_frente, dir_zona_pantalla);
+	copyRect(x_talk[cara], 148, x_igor + 17, y_igor, 25, 24, dir_hare_frente, dir_zona_pantalla);
 
 	updateRefresh();
 
@@ -2200,11 +2200,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_dr_izq(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
+	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
 
 	int longitud;
@@ -2244,9 +2244,9 @@ bucless:
 
 	copyBackground(x_dr, y_dr, x_dr, y_dr, 38, 31, dir_dibujo1, dir_zona_pantalla);
 	if (num_ejec == 6)
-		copyRect(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
 	else
-		copyRect(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
 
 	updateRefresh();
 
@@ -2281,11 +2281,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_dr_dch(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_dr_dch(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
+	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
 
 	int longitud;
@@ -2324,9 +2324,9 @@ bucless:
 
 	copyBackground(x_dr, y_dr, x_dr, y_dr, 45, 31, dir_dibujo1, dir_zona_pantalla);
 	if (num_ejec != 6)
-		copyRect(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
 	else
-		copyRect(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
 
 	updateRefresh();
 
@@ -2365,7 +2365,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_solo(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2430,11 +2430,11 @@ bucless:
 	}
 }
 
-void DrasculaEngine::habla_igor_frente(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_frente(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
+	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
 	int cara;
 
 	int longitud;
@@ -2473,7 +2473,7 @@ bucless:
 		pon_dr();
 	if (num_ejec == 1 || num_ejec == 6)
 		copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, dir_dibujo1, dir_zona_pantalla);
-	copyRect(x_habla[cara], 173, x_igor, y_igor, 29, 25, dir_hare_frente, dir_zona_pantalla);
+	copyRect(x_talk[cara], 173, x_igor, y_igor, 29, 25, dir_hare_frente, dir_zona_pantalla);
 
 	updateRefresh();
 
@@ -2514,11 +2514,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_tabernero(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_tabernero(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
+	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int cara;
 
 	int longitud;
@@ -2559,7 +2559,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 2, 121, 44, 21, 24, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 2, 121, 44, 21, 24, dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -2636,11 +2636,11 @@ void DrasculaEngine::fin_sound() {
 	}
 }
 
-void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_bj(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[5] = { 64, 92, 120, 148, 176 };
+	int x_talk[5] = { 64, 92, 120, 148, 176 };
 	int cara;
 
 	int longitud;
@@ -2676,7 +2676,7 @@ bucless:
 		copyBackground(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
 					dir_dibujo1, dir_zona_pantalla);
 
-		copyRect(x_habla[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
+		copyRect(x_talk[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
 					dir_dibujo3, dir_zona_pantalla);
 		pon_hare();
 		updateRefresh();
@@ -2718,7 +2718,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::hablar(const char *dicho, const char *filename) {
+void DrasculaEngine::talk(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2726,9 +2726,9 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	if (num_ejec != 2)
 		suma_1_pixel = 1;
 
-	int y_mask_habla = 170;
-	int x_habla_dch[6] = { 1, 25, 49, 73, 97, 121 };
-	int x_habla_izq[6] = { 145, 169, 193, 217, 241, 265 };
+	int y_mask_talk = 170;
+	int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
+	int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
 	int cara;
 
 	int longitud;
@@ -2736,11 +2736,11 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 
 	if (num_ejec == 6) {
 		if (flags[0] == 0 && (!strcmp(num_room, "102.alg"))) {
-			habla_pen(dicho, filename);
+			talk_pen(dicho, filename);
 			return;
 		}
 		if (flags[0] == 0 && (!strcmp(num_room, "58.alg"))) {
-			habla_pen2(dicho, filename);
+			talk_pen2(dicho, filename);
 			return;
 		}
 	}
@@ -2783,59 +2783,59 @@ bucless:
 
 	updateRefresh_pre();
 	if (num_ejec == 2)
-		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_habla - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
 	else
 		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]),
+				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]),
 				dir_zona_pantalla, dir_dibujo3);
 
 	pon_hare();
 
 	if (num_ejec == 2) {
 		if (!strcmp(fondo_y_menu, "99.alg") || !strcmp(fondo_y_menu, "994.alg"))
-			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_habla - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
 	} else {
 		copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]),
+				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]),
 				dir_dibujo3, dir_zona_pantalla);
 	}
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 8, hare_y - 1, ancho_habla, alto_habla,
+			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk,
 						dir_hare_dch, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_izq[cara], y_mask_habla, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare],
+			reduce_hare_chico(x_talk_izq[cara], y_mask_talk, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
+						hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare],
 						dir_hare_dch, dir_zona_pantalla);
 
 		updateRefresh();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
+			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
 					dir_hare_dch, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_dch[cara], y_mask_habla, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-					hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
+			reduce_hare_chico(x_talk_dch[cara], y_mask_talk, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
+					hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		updateRefresh();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
+			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
 					dir_hare_frente, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
+			reduce_hare_chico(x_talk_izq[cara], y_mask_talk,
 						suma_1_pixel + hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare],
+						hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare],
 						dir_hare_frente, dir_zona_pantalla);
 		updateRefresh();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla,
+			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk,
 					dir_hare_frente, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
+			reduce_hare_chico(x_talk_dch[cara], y_mask_talk,
 						suma_1_pixel + hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, ancho_habla,alto_habla, factor_red[hare_y + alto_hare],
+						hare_y, ancho_talk,alto_talk, factor_red[hare_y + alto_hare],
 						dir_hare_frente, dir_zona_pantalla);
 		updateRefresh();
 	}
@@ -3313,7 +3313,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 
 	if (num_ejec == 1) {
 		if (num_obj[l] == 105 && flags[0] == 0)
-			hablar(TEXT442, "442.als");
+			talk(TEXT442, "442.als");
 		else {
 			puertas_cerradas(l);
 			if (espuerta[l] != 0) {
@@ -3498,102 +3498,102 @@ bool DrasculaEngine::banderas(int fl) {
 	if (menu_scr == 1) {
 		if (num_ejec == 1) {
 			if (objeto_que_lleva == LOOK && fl == 28)
-				hablar(TEXT328, "328.als");
+				talk(TEXT328, "328.als");
 		} else if (num_ejec == 2) {
 			if ((objeto_que_lleva == LOOK && fl == 22 && flags[23] == 0)
 					|| (objeto_que_lleva == OPEN && fl == 22 && flags[23] == 0)) {
-				hablar(TEXT164, "164.als");
+				talk(TEXT164, "164.als");
 				flags[23] = 1;
 				sin_verbo();
 				suma_objeto(7);
 				suma_objeto(18);
 			} else if (objeto_que_lleva == LOOK && fl == 22 && flags[23] == 1)
-				hablar(TEXT307, "307.als");
+				talk(TEXT307, "307.als");
 			else if (objeto_que_lleva == LOOK && fl == 28)
-				hablar(TEXT328, "328.als");
+				talk(TEXT328, "328.als");
 			else if (objeto_que_lleva == LOOK && fl == 7)
-				hablar(TEXT143, "143.als");
+				talk(TEXT143, "143.als");
 			else if (objeto_que_lleva == TALK && fl == 7)
-				hablar(TEXT144, "144.als");
+				talk(TEXT144, "144.als");
 			else if (objeto_que_lleva == LOOK && fl == 8)
-				hablar(TEXT145, "145.als");
+				talk(TEXT145, "145.als");
 			else if (objeto_que_lleva == TALK && fl == 8)
-				hablar(TEXT146, "146.als");
+				talk(TEXT146, "146.als");
 			else if (objeto_que_lleva == LOOK && fl == 9)
-				hablar(TEXT147, "147.als");
+				talk(TEXT147, "147.als");
 			else if (objeto_que_lleva == TALK && fl == 9)
-				hablar(TEXT148, "148.als");
+				talk(TEXT148, "148.als");
 			else if (objeto_que_lleva == LOOK && fl == 10)
-				hablar(TEXT151, "151.als");
+				talk(TEXT151, "151.als");
 			else if (objeto_que_lleva == LOOK && fl == 11)
-				hablar(TEXT152, "152.als");
+				talk(TEXT152, "152.als");
 			else if (objeto_que_lleva == TALK && fl == 11)
-				hablar(TEXT153, "153.als");
+				talk(TEXT153, "153.als");
 			else if (objeto_que_lleva == LOOK && fl == 12)
-				hablar(TEXT154, "154.als");
+				talk(TEXT154, "154.als");
 			else if (objeto_que_lleva == LOOK && fl == 13)
-				hablar(TEXT155, "155.als");
+				talk(TEXT155, "155.als");
 			else if (objeto_que_lleva == LOOK && fl == 14)
-				hablar(TEXT157, "157.als");
+				talk(TEXT157, "157.als");
 			else if (objeto_que_lleva == LOOK && fl == 15)
-				hablar(TEXT58, "58.als");
+				talk(TEXT58, "58.als");
 			else if (objeto_que_lleva == LOOK && fl == 16)
-				hablar(TEXT158, "158.als");
+				talk(TEXT158, "158.als");
 			else if (objeto_que_lleva == LOOK && fl == 17)
-				hablar(TEXT159, "159.als");
+				talk(TEXT159, "159.als");
 			else if (objeto_que_lleva == LOOK && fl == 18)
-				hablar(TEXT160, "160.als");
+				talk(TEXT160, "160.als");
 			else if (objeto_que_lleva == LOOK && fl == 19)
-				hablar(TEXT161, "161.als");
+				talk(TEXT161, "161.als");
 			else if (objeto_que_lleva == LOOK && fl == 20)
-				hablar(TEXT162, "162.als");
+				talk(TEXT162, "162.als");
 			else if (objeto_que_lleva == LOOK && fl == 23)
-				hablar(TEXT152, "152.als");
+				talk(TEXT152, "152.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 3) {
 			if (objeto_que_lleva == LOOK && fl == 22)
-				hablar(TEXT307, "307.als");
+				talk(TEXT307, "307.als");
 			else if (objeto_que_lleva == LOOK && fl == 28)
-				hablar(TEXT328, "328.als");
+				talk(TEXT328, "328.als");
 			else if (objeto_que_lleva == LOOK && fl == 7)
-				hablar(TEXT143, "143.als");
+				talk(TEXT143, "143.als");
 			else if (objeto_que_lleva == TALK && fl == 7)
-				hablar(TEXT144, "144.als");
+				talk(TEXT144, "144.als");
 			else if (objeto_que_lleva == LOOK && fl == 8)
-				hablar(TEXT145, "145.als");
+				talk(TEXT145, "145.als");
 			else if (objeto_que_lleva == TALK && fl == 8)
-				hablar(TEXT146, "146.als");
+				talk(TEXT146, "146.als");
 			else if (objeto_que_lleva == LOOK && fl == 9)
-				hablar(TEXT147, "147.als");
+				talk(TEXT147, "147.als");
 			else if (objeto_que_lleva == TALK && fl == 9)
-				hablar(TEXT148, "148.als");
+				talk(TEXT148, "148.als");
 			else if (objeto_que_lleva == LOOK && fl == 10)
-				hablar(TEXT151, "151.als");
+				talk(TEXT151, "151.als");
 			else if (objeto_que_lleva == LOOK && fl == 11)
-				hablar(TEXT152, "152.als");
+				talk(TEXT152, "152.als");
 			else if (objeto_que_lleva == TALK && fl == 11)
-				hablar(TEXT153, "153.als");
+				talk(TEXT153, "153.als");
 			else if (objeto_que_lleva == LOOK && fl == 12)
-				hablar(TEXT154, "154.als");
+				talk(TEXT154, "154.als");
 			else if (objeto_que_lleva == LOOK && fl == 13)
-				hablar(TEXT155, "155.als");
+				talk(TEXT155, "155.als");
 			else if (objeto_que_lleva == LOOK && fl == 14)
-				hablar(TEXT157, "157.als");
+				talk(TEXT157, "157.als");
 			else if (objeto_que_lleva == LOOK && fl == 15)
-				hablar(TEXT58, "58.als");
+				talk(TEXT58, "58.als");
 			else if (objeto_que_lleva == LOOK && fl == 16)
-				hablar(TEXT158, "158.als");
+				talk(TEXT158, "158.als");
 			else if (objeto_que_lleva == LOOK && fl == 17)
-				hablar(TEXT159, "159.als");
+				talk(TEXT159, "159.als");
 			else if (objeto_que_lleva == LOOK && fl == 18)
-				hablar(TEXT160, "160.als");
+				talk(TEXT160, "160.als");
 			else if (objeto_que_lleva == LOOK && fl == 19)
-				hablar(TEXT161, "161.als");
+				talk(TEXT161, "161.als");
 			else if (objeto_que_lleva == LOOK && fl == 20)
-				hablar(TEXT162, "162.als");
+				talk(TEXT162, "162.als");
 			else if (objeto_que_lleva == LOOK && fl == 23)
-				hablar(TEXT152, "152.als");
+				talk(TEXT152, "152.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 4) {
@@ -3603,104 +3603,104 @@ bool DrasculaEngine::banderas(int fl) {
 				resta_objeto(18);
 				resta_objeto(19);
 			} else if ((objeto_que_lleva == 14 && fl == 19) || (objeto_que_lleva == 19 && fl == 14))
-				hablar(TEXT484, "484.als");
+				talk(TEXT484, "484.als");
 			else if (objeto_que_lleva == LOOK && fl == 28)
-				hablar(TEXT328, "328.als");
+				talk(TEXT328, "328.als");
 			else if (objeto_que_lleva == LOOK && fl == 7)
-				hablar(TEXT478, "478.als");
+				talk(TEXT478, "478.als");
 			else if (objeto_que_lleva == LOOK && fl == 8)
-				hablar(TEXT480, "480.als");
+				talk(TEXT480, "480.als");
 			else if (objeto_que_lleva == LOOK && fl == 9) {
-				hablar(TEXT482, "482.als");
-				hablar(TEXT483, "483.als");
+				talk(TEXT482, "482.als");
+				talk(TEXT483, "483.als");
 			} else if (objeto_que_lleva == LOOK && fl == 10)
-				hablar(TEXT485, "485.als");
+				talk(TEXT485, "485.als");
 			else if (objeto_que_lleva == LOOK && fl == 11)
-				hablar(TEXT488, "488.als");
+				talk(TEXT488, "488.als");
 			else if (objeto_que_lleva == LOOK && fl == 12)
-				hablar(TEXT486, "486.als");
+				talk(TEXT486, "486.als");
 			else if (objeto_que_lleva == LOOK && fl == 13)
-				hablar(TEXT490, "490.als");
+				talk(TEXT490, "490.als");
 			else if (objeto_que_lleva == LOOK && fl == 14)
-				hablar(TEXT122, "122.als");
+				talk(TEXT122, "122.als");
 			else if (objeto_que_lleva == LOOK && fl == 15)
-				hablar(TEXT117, "117.als");
+				talk(TEXT117, "117.als");
 			else if (objeto_que_lleva == TALK && fl == 15)
-				hablar(TEXT118, "118.als");
+				talk(TEXT118, "118.als");
 			else if (objeto_que_lleva == OPEN && fl == 15)
-				hablar(TEXT119, "119.als");
+				talk(TEXT119, "119.als");
 			else if (objeto_que_lleva == LOOK && fl == 16)
-				hablar(TEXT491, "491.als");
+				talk(TEXT491, "491.als");
 			else if (objeto_que_lleva == LOOK && fl == 17)
-				hablar(TEXT478, "478.als");
+				talk(TEXT478, "478.als");
 			else if (objeto_que_lleva == LOOK && fl == 18)
-				hablar(TEXT493, "493.als");
+				talk(TEXT493, "493.als");
 			else if (objeto_que_lleva == LOOK && fl == 19) {
-				hablar(TEXT494, "494.als");
-				hablar(TEXT495, "495.als");
+				talk(TEXT494, "494.als");
+				talk(TEXT495, "495.als");
 			} else if (objeto_que_lleva == LOOK && fl == 20)
-				hablar(TEXT162, "162.als");
+				talk(TEXT162, "162.als");
 			else if (objeto_que_lleva == LOOK && fl == 21)
-				hablar(TEXT496, "496.als");
+				talk(TEXT496, "496.als");
 			else if (objeto_que_lleva == LOOK && fl == 22)
-				hablar(TEXT161, "161.als");
+				talk(TEXT161, "161.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 5) {
 			if (objeto_que_lleva == LOOK && fl == 28)
-				hablar(TEXT328, "328.als");
+				talk(TEXT328, "328.als");
 			else if (objeto_que_lleva == LOOK && fl == 7)
-				hablar(TEXT478,"478.als");
+				talk(TEXT478,"478.als");
 			else if (objeto_que_lleva == LOOK && fl == 8)
-				hablar(TEXT120, "120.als");
+				talk(TEXT120, "120.als");
 			else if (objeto_que_lleva == LOOK && fl == 9) {
-				hablar(TEXT482, "482.als");
-				hablar(TEXT483, "483.als");
+				talk(TEXT482, "482.als");
+				talk(TEXT483, "483.als");
 			} else if (objeto_que_lleva == LOOK && fl == 11)
-				hablar(TEXT488, "488.als");
+				talk(TEXT488, "488.als");
 			else if (objeto_que_lleva == LOOK && fl == 13)
-				hablar(TEXT490, "490.als");
+				talk(TEXT490, "490.als");
 			else if (objeto_que_lleva == LOOK && fl == 14)
-				hablar(TEXT121, "121.als");
+				talk(TEXT121, "121.als");
 			else if (objeto_que_lleva == LOOK && fl == 15)
-				hablar(TEXT117, "117.als");
+				talk(TEXT117, "117.als");
 			else if (objeto_que_lleva == TALK && fl == 15)
-				hablar(TEXT118, "118.als");
+				talk(TEXT118, "118.als");
 			else if (objeto_que_lleva == OPEN && fl == 15)
-				hablar(TEXT119, "119.als");
+				talk(TEXT119, "119.als");
 			else if (objeto_que_lleva == LOOK && fl == 17)
-				hablar(TEXT478, "478.als");
+				talk(TEXT478, "478.als");
 			else if (objeto_que_lleva == LOOK && fl == 20)
-				hablar(TEXT162, "162.als"); 
+				talk(TEXT162, "162.als"); 
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
 			if (objeto_que_lleva == LOOK && fl == 28)
-				hablar(TEXT328, "328.als");
+				talk(TEXT328, "328.als");
 			else if (objeto_que_lleva == LOOK && fl == 9) {
-				hablar(TEXT482, "482.als");
-				hablar(TEXT483, "483.als");
+				talk(TEXT482, "482.als");
+				talk(TEXT483, "483.als");
 			} else if (objeto_que_lleva == LOOK && fl == 20)
-				hablar(TEXT123, "123.als");
+				talk(TEXT123, "123.als");
 			else if (objeto_que_lleva == LOOK && fl == 21)
-				hablar(TEXT441, "441.als");
+				talk(TEXT441, "441.als");
 			else
 				hay_respuesta = 0;
 		}
 	} else {
 		if (num_ejec == 1) {
 			if (objeto_que_lleva == LOOK && fl == 50)
-				hablar(TEXT308, "308.als");
+				talk(TEXT308, "308.als");
 			else if (objeto_que_lleva == OPEN && fl == 50)
-				hablar(TEXT310, "310.als");
+				talk(TEXT310, "310.als");
 			else if (objeto_que_lleva == CLOSE && fl == 50)
-				hablar(TEXT311, "311.als");
+				talk(TEXT311, "311.als");
 			else if (objeto_que_lleva == MOVE && fl == 50)
-				hablar(TEXT312, "312.als");
+				talk(TEXT312, "312.als");
 			else if (objeto_que_lleva == PICK && fl == 50)
-				hablar(TEXT313, "313.als");
+				talk(TEXT313, "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
-				hablar(TEXT314, "314.als");
+				talk(TEXT314, "314.als");
 			else if (!strcmp(num_room, "62.alg"))
 				room_62(fl);
 			else if (!strcmp(num_room, "63.alg"))
@@ -3709,23 +3709,23 @@ bool DrasculaEngine::banderas(int fl) {
 				hay_respuesta = 0;
 		} else if (num_ejec == 2) {
 			if (objeto_que_lleva == LOOK && fl == 50)
-				hablar(TEXT308, "308.als");
+				talk(TEXT308, "308.als");
 			else if (objeto_que_lleva == OPEN && fl == 50)
-				hablar(TEXT310, "310.als");
+				talk(TEXT310, "310.als");
 			else if (objeto_que_lleva == CLOSE && fl == 50)
-				hablar(TEXT311, "311.als");
+				talk(TEXT311, "311.als");
 			else if (objeto_que_lleva == MOVE && fl == 50)
-				hablar(TEXT312, "312.als");
+				talk(TEXT312, "312.als");
 			else if (objeto_que_lleva == PICK && fl == 50)
-				hablar(TEXT313, "313.als");
+				talk(TEXT313, "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
-				hablar(TEXT314, "314.als");
+				talk(TEXT314, "314.als");
 			else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0 && strcmp(num_room, "18.alg"))
-				hablar(TEXT315, "315.als");
+				talk(TEXT315, "315.als");
 			else if (objeto_que_lleva == 13 && fl == 50)
-				hablar(TEXT156, "156.als");
+				talk(TEXT156, "156.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
-				hablar(TEXT163, "163.als");
+				talk(TEXT163, "163.als");
 			else if (!strcmp(num_room, "1.alg"))
 				room_1(fl);
 			else if (!strcmp(num_room, "3.alg"))
@@ -3760,17 +3760,17 @@ bool DrasculaEngine::banderas(int fl) {
 				hay_respuesta = 0;
 		} else if (num_ejec == 3) {
 			if (objeto_que_lleva == LOOK && fl == 50)
-				hablar(TEXT309, "309.als");
+				talk(TEXT309, "309.als");
 			else if (objeto_que_lleva == OPEN && fl == 50)
-				hablar(TEXT310, "310.als");
+				talk(TEXT310, "310.als");
 			else if (objeto_que_lleva == CLOSE && fl == 50)
-				hablar(TEXT311, "311.als");
+				talk(TEXT311, "311.als");
 			else if (objeto_que_lleva == MOVE && fl == 50)
-				hablar(TEXT312, "312.als");
+				talk(TEXT312, "312.als");
 			else if (objeto_que_lleva == PICK && fl == 50)
-				hablar(TEXT313, "313.als");
+				talk(TEXT313, "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
-				hablar(TEXT314, "314.als");
+				talk(TEXT314, "314.als");
 			else if (!strcmp(num_room, "13.alg")) {
 				if (room_13(fl))
 					return true;
@@ -3778,27 +3778,27 @@ bool DrasculaEngine::banderas(int fl) {
 				hay_respuesta = 0;
 		} else if (num_ejec == 4) {
 			if (!strcmp(num_room, "28.alg"))
-				hablar(TEXT178, "178.als");
+				talk(TEXT178, "178.als");
 			else if (objeto_que_lleva == LOOK && fl == 50)
-				hablar(TEXT309, "309.als");
+				talk(TEXT309, "309.als");
 			else if (objeto_que_lleva == OPEN && fl == 50)
-				hablar(TEXT310, "310.als");
+				talk(TEXT310, "310.als");
 			else if (objeto_que_lleva == CLOSE && fl == 50)
-				hablar(TEXT311, "311.als");
+				talk(TEXT311, "311.als");
 			else if (objeto_que_lleva == MOVE && fl == 50)
-				hablar(TEXT312, "312.als");
+				talk(TEXT312, "312.als");
 			else if (objeto_que_lleva == PICK && fl == 50)
-				hablar(TEXT313, "313.als");
+				talk(TEXT313, "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
-				hablar(TEXT314, "314.als");
+				talk(TEXT314, "314.als");
 			else if (objeto_que_lleva == 8 && fl == 50 && flags[18] == 0)
-				hablar(TEXT481, "481.als");
+				talk(TEXT481, "481.als");
 			else if (objeto_que_lleva == 9 && fl == 50)
-				hablar(TEXT484, "484.als");
+				talk(TEXT484, "484.als");
 			else if (objeto_que_lleva == 12 && fl == 50 && flags[18] == 0)
-				hablar(TEXT487, "487.als");
+				talk(TEXT487, "487.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
-				hablar(TEXT487, "487.als");
+				talk(TEXT487, "487.als");
 			else if (!strcmp(num_room, "21.alg")) {
 				if (room_21(fl))
 					return true;
@@ -3828,19 +3828,19 @@ bool DrasculaEngine::banderas(int fl) {
 				hay_respuesta = 0;
 		} else if (num_ejec == 5) {
 			if (objeto_que_lleva == LOOK && fl == 50)
-				hablar("Cuanto mas me miro, mas me gusto", "54.als");
+				talk("Cuanto mas me miro, mas me gusto", "54.als");
 			else if (objeto_que_lleva == OPEN && fl == 50)
-				hablar("y luego como me cierro", "19.als");
+				talk("y luego como me cierro", "19.als");
 			else if (objeto_que_lleva == CLOSE && fl == 50)
-				hablar("Tendre que abrirme primero no", "19.als");
+				talk("Tendre que abrirme primero no", "19.als");
 			else if (objeto_que_lleva == MOVE && fl == 50)
-				hablar("Estoy bien donde estoy", "19.als");
+				talk("Estoy bien donde estoy", "19.als");
 			else if (objeto_que_lleva == PICK && fl == 50)
-				hablar("Ya me tengo", "11.als");
+				talk("Ya me tengo", "11.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
-				hablar("hola yo", "16.als");
+				talk("hola yo", "16.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
-				hablar(TEXT487, "487.als");
+				talk(TEXT487, "487.als");
 			else if (!strcmp(num_room, "49.alg"))
 				room_49(fl);
 			else if (!strcmp(num_room, "53.alg"))
@@ -3856,19 +3856,19 @@ bool DrasculaEngine::banderas(int fl) {
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
 			if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 1)
-				hablar(TEXT308, "308.als");
+				talk(TEXT308, "308.als");
 			else if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 0)
-				hablar(TEXT310, "250.als" );
+				talk(TEXT310, "250.als" );
 			else if (objeto_que_lleva == OPEN && fl == 50)
-				hablar(TEXT310, "310.als" );
+				talk(TEXT310, "310.als" );
 			else if (objeto_que_lleva == CLOSE && fl == 50)
-				hablar(TEXT311, "311.als" );
+				talk(TEXT311, "311.als" );
 			else if (objeto_que_lleva == MOVE && fl == 50)
-				hablar(TEXT312, "312.als" );
+				talk(TEXT312, "312.als" );
 			else if (objeto_que_lleva == PICK && fl == 50)
-				hablar(TEXT313, "313.als" );
+				talk(TEXT313, "313.als" );
 			else if (objeto_que_lleva == TALK && fl == 50)
-				hablar(TEXT314, "314.als" );
+				talk(TEXT314, "314.als" );
 			else if (!strcmp(num_room, "102.alg"))
 				room_pendulo(fl);
 			else if (!strcmp(num_room, "58.alg"))
@@ -4634,7 +4634,7 @@ bucle_opc:
 	if ((boton_izq == 1) && (juego1 == 2)) {
 		delay(100);
 		usado1 = 1;
-		hablar(frase1, suena1);
+		talk(frase1, suena1);
 		if (num_ejec == 3)
 			grr();
 		else
@@ -4642,7 +4642,7 @@ bucle_opc:
 	} else if ((boton_izq == 1) && (juego2 == 2)) {
 		delay(100);
 		usado2 = 1;
-		hablar(frase2, suena2);
+		talk(frase2, suena2);
 		if (num_ejec == 3)
 			grr();
 		else
@@ -4650,14 +4650,14 @@ bucle_opc:
 	} else if ((boton_izq == 1) && (juego3 == 2)) {
 		delay(100);
 		usado3 = 1;
-		hablar(frase3, suena3);
+		talk(frase3, suena3);
 		if (num_ejec == 3)
 			grr();
 		else
 			responde(respuesta3);
 	} else if ((boton_izq == 1) && (juego4 == 2)) {
 		delay(100);
-		hablar(frase4, suena4);
+		talk(frase4, suena4);
 		rompo_y_salgo = 1;
 	}
 
@@ -4847,11 +4847,11 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 void DrasculaEngine::responde(int funcion) {
 	if (num_ejec == 1) {
 		if (funcion == 10)
-			habla_borracho(TEXTB1, "B1.als");
+			talk_borracho(TEXTB1, "B1.als");
 		else if (funcion == 11)
-			habla_borracho(TEXTB2, "B2.als");
+			talk_borracho(TEXTB2, "B2.als");
 		else if (funcion == 12)
-			habla_borracho(TEXTB3, "B3.als");
+			talk_borracho(TEXTB3, "B3.als");
 	} else if (num_ejec == 2) {
 		if (funcion == 8)
 			animation_8_2();
@@ -4925,10 +4925,10 @@ void DrasculaEngine::responde(int funcion) {
 	}
 }
 
-void DrasculaEngine::habla_pianista(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_pianista(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
-	int x_habla[4] = { 97, 145, 193, 241 };
+	int x_talk[4] = { 97, 145, 193, 241 };
 	int cara;
 	int longitud;
 	longitud = strlen(dicho);
@@ -4960,7 +4960,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 139, 228, 112, 47, 60,
+	copyBackground(x_talk[cara], 139, 228, 112, 47, 60,
 				dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
@@ -4992,11 +4992,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_borracho(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_borracho(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
+	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
 	int cara;
 	int longitud;
 	longitud = strlen(dicho);
@@ -5043,7 +5043,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 29, 177, 50, 19, 19, dir_hare_frente, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 29, 177, 50, 19, 19, dir_hare_frente, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -5238,11 +5238,11 @@ void DrasculaEngine::actualiza_datos() {
 	}
 }
 
-void DrasculaEngine::habla_vb(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_vb(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[6] = {1, 27, 53, 79, 105, 131};
+	int x_talk[6] = {1, 27, 53, 79, 105, 131};
 	int cara;
 
 	int longitud;
@@ -5279,7 +5279,7 @@ bucless:
 		pon_vb();
 
 		copyBackground(ANCHOBJ + 1, 0, vb_x + 5, 64, 25, 27, dir_dibujo3, dir_zona_pantalla);
-		copyRect(x_habla[cara], 34, vb_x + 5, 64, 25, 27, dir_hare_frente, dir_zona_pantalla);
+		copyRect(x_talk[cara], 34, vb_x + 5, 64, 25, 27, dir_hare_frente, dir_zona_pantalla);
 		updateRefresh();
 	}
 
@@ -5312,7 +5312,7 @@ bucless:
 		playmusic(musica_room);
 }
 
-void DrasculaEngine::habla_vbpuerta(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_vbpuerta(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -5367,7 +5367,7 @@ bucless:
 		playmusic(musica_room);
 }
 
-void DrasculaEngine::habla_ciego(const char *dicho, const char *filename, const char *sincronia) {
+void DrasculaEngine::talk_ciego(const char *dicho, const char *filename, const char *sincronia) {
 	byte *num_cara;
 	int p = 0;
 	int pos_ciego[6];
@@ -5469,7 +5469,7 @@ bucless:
 	}
 }
 
-void DrasculaEngine::habla_hacker(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_hacker(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -5718,11 +5718,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_lobo(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_lobo(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
+	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
 	int cara;
 
 	int longitud;
@@ -5753,7 +5753,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 136, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 136, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -5784,11 +5784,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_mus(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_mus(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = { 16, 35, 54, 73, 92, 111, 130, 149};
+	int x_talk[8] = { 16, 35, 54, 73, 92, 111, 130, 149};
 	int cara;
 
 	int longitud;
@@ -5821,7 +5821,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -5870,11 +5870,11 @@ void DrasculaEngine::activa_pendulo() {
 	conta_ciego_vez = vez();
 }
 
-void DrasculaEngine::habla_pen(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_pen(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[8] = {112, 138, 164, 190, 216, 242, 268, 294};
+	int x_talk[8] = {112, 138, 164, 190, 216, 242, 268, 294};
 	int cara;
 
 	int longitud;
@@ -5913,7 +5913,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyRect(x_habla[cara], 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
+	copyRect(x_talk[cara], 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 
 	updateRefresh();
 
@@ -5946,11 +5946,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_pen2(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_pen2(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[5]={122, 148, 174, 200, 226};
+	int x_talk[5]={122, 148, 174, 200, 226};
 	int cara;
 
 	int longitud;
@@ -5985,7 +5985,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
 
 	updateRefresh();
 
@@ -6018,11 +6018,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_taber2(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_taber2(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[6] = {1, 23, 45, 67, 89, 111};
+	int x_talk[6] = {1, 23, 45, 67, 89, 111};
 	int cara;
 
 	int longitud;
@@ -6055,7 +6055,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 130, 151, 43, 21, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 130, 151, 43, 21, 24, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -6086,11 +6086,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_bj_cama(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_bj_cama(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[5] = {51, 101, 151, 201, 251};
+	int x_talk[5] = {51, 101, 151, 201, 251};
 	int cara;
 
 	int longitud;
@@ -6124,7 +6124,7 @@ bucless:
 	updateRefresh_pre();
 
 	copyBackground(65, 103, 65, 103, 49, 38, dir_dibujo1, dir_zona_pantalla);
-	copyRect(x_habla[cara], 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
+	copyRect(x_talk[cara], 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -6154,12 +6154,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_htel(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_htel(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 	char *num_cara;
 
-	int x_habla[3] = {1, 94, 187};
+	int x_talk[3] = {1, 94, 187};
 	int cara, pantalla;
 
 	int longitud;
@@ -6198,7 +6198,7 @@ bucless:
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
-	copyBackground(x_habla[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
 
 	if (con_voces == 0)
 		centra_texto(dicho, 90, 50);
@@ -6226,11 +6226,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::hablar_sinc(const char *dicho, const char *filename, const char *sincronia) {
+void DrasculaEngine::talk_sinc(const char *dicho, const char *filename, const char *sincronia) {
 	int suma_1_pixel = 1;
-	int y_mask_habla = 170;
-	int x_habla_dch[6] = {1, 25, 49, 73, 97, 121};
-	int x_habla_izq[6] = {145, 169, 193, 217, 241, 265};
+	int y_mask_talk = 170;
+	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
+	int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 	int p, cara = 0;
 
 	int longitud;
@@ -6281,47 +6281,47 @@ bucless:
 
 	updateRefresh_pre();
 	if (num_ejec == 2)
-		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_habla - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
 	else
 		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]), dir_zona_pantalla, dir_dibujo3);
+				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), dir_zona_pantalla, dir_dibujo3);
 	pon_hare();
 	if (num_ejec == 2) {
 		if (alto_hare != 56)
-			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_habla - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
 	} else
 		copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]), dir_dibujo3, dir_zona_pantalla);
+				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), dir_dibujo3, dir_zona_pantalla);
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 8, hare_y - 1, ancho_habla, alto_habla, dir_hare_dch, dir_zona_pantalla);
+			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk, dir_hare_dch, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_izq[cara], y_mask_habla, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
+			reduce_hare_chico(x_talk_izq[cara], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
+							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		updateRefresh();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla, dir_hare_dch, dir_zona_pantalla);
+			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, dir_hare_dch, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_dch[cara], y_mask_habla, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
+			reduce_hare_chico(x_talk_dch[cara], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
+							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		updateRefresh();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			copyRect(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla, dir_hare_frente, dir_zona_pantalla);
+			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, dir_hare_frente, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
+			reduce_hare_chico(x_talk_izq[cara], y_mask_talk,
 						(int)(suma_1_pixel + hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
+						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
 		updateRefresh();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			copyRect(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla, dir_hare_frente, dir_zona_pantalla);
+			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk, dir_hare_frente, dir_zona_pantalla);
 		else
-			reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
+			reduce_hare_chico(x_talk_dch[cara], y_mask_talk,
 						(int)(suma_1_pixel + hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
+						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
 		updateRefresh();
 	}
 
@@ -6355,7 +6355,7 @@ bucless:
 		playmusic(musica_room);
 }
 
-void DrasculaEngine::habla_baul(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_baul(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 	int cara = 0, cara_antes;
@@ -6435,7 +6435,7 @@ void DrasculaEngine::cierra_puerta(int nflag, int n_puerta) {
 	}
 }
 
-void DrasculaEngine::habla_igorpuerta(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igorpuerta(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -6488,11 +6488,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_igor_sentado(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_sentado(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[4] = { 80, 102, 124, 146 };
+	int x_talk[4] = { 80, 102, 124, 146 };
 	int cara;
 
 	int longitud;
@@ -6525,7 +6525,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 109, 207, 92, 21, 23, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 109, 207, 92, 21, 23, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 
@@ -6556,11 +6556,11 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_igor_peluca(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_peluca(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
-	int x_habla[4] = {119, 158, 197, 236};
+	int x_talk[4] = {119, 158, 197, 236};
 	int cara = 0;
 
 	int longitud;
@@ -6593,7 +6593,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_habla[cara], 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
 	pon_hare();
 	updateRefresh();
 

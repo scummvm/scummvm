@@ -163,7 +163,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 
-		habla_dr_grande(TEXTD1, "D1.als");
+		talk_dr_grande(TEXTD1, "D1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -186,17 +186,17 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_igor_dch(TEXTI8, "I8.als");
+		talk_igor_dch(TEXTI8, "I8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_dr_izq(TEXTD2, "d2.als");
+		talk_dr_izq(TEXTD2, "d2.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_dr_izq(TEXTD3, "d3.als");
+		talk_dr_izq(TEXTD3, "d3.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib.bin", 16);
@@ -211,13 +211,13 @@ void DrasculaEngine::animation_1_1() {
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(10);
-		habla_solo(TEXTD4,"d4.als");
+		talk_solo(TEXTD4,"d4.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan1.alg");
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_solo(TEXTD5, "d5.als");
+		talk_solo(TEXTD5, "d5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
@@ -228,7 +228,7 @@ void DrasculaEngine::animation_1_1() {
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(20);
-		habla_solo(TEXTD6, "d6.als");
+		talk_solo(TEXTD6, "d6.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
@@ -241,13 +241,13 @@ void DrasculaEngine::animation_1_1() {
 		pause(20);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_solo(TEXTD7, "d7.als");
+		talk_solo(TEXTD7, "d7.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan3.alg");
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_solo(TEXTD8, "d8.als");
+		talk_solo(TEXTD8, "d8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -257,17 +257,17 @@ void DrasculaEngine::animation_1_1() {
 		stopmusic();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_igor_dch(TEXTI9, "I9.als");
+		talk_igor_dch(TEXTI9, "I9.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_dr_izq(TEXTD9, "d9.als");
+		talk_dr_izq(TEXTD9, "d9.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_igor_dch(TEXTI10, "I10.als");
+		talk_igor_dch(TEXTI10, "I10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		playmusic(11);
-		habla_dr_izq(TEXTD10, "d10.als");
+		talk_dr_izq(TEXTD10, "d10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("rayo1.bin", 16);
@@ -294,10 +294,10 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 1;
-		habla_igor_dch(TEXTI1, "I1.als");
+		talk_igor_dch(TEXTI1, "I1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_dr_dch(TEXTD11, "d11.als");
+		talk_dr_dch(TEXTD11, "d11.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -311,7 +311,7 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_dr_izq(TEXTD12, "d12.als");
+		talk_dr_izq(TEXTD12, "d12.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -325,11 +325,11 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_igor_dch(TEXTI2, "I2.als");
+		talk_igor_dch(TEXTI2, "I2.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(13);
-		habla_dr_dch(TEXTD13,"d13.als");
+		talk_dr_dch(TEXTD13,"d13.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -343,32 +343,32 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		habla_dr_izq(TEXTD14, "d14.als");
+		talk_dr_izq(TEXTD14, "d14.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_igor_dch(TEXTI3, "I3.als");
+		talk_igor_dch(TEXTI3, "I3.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_dr_izq(TEXTD15, "d15.als");
+		talk_dr_izq(TEXTD15, "d15.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_igor_dch(TEXTI4, "I4.als");
+		talk_igor_dch(TEXTI4, "I4.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_dr_izq(TEXTD16, "d16.als");
+		talk_dr_izq(TEXTD16, "d16.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_igor_dch(TEXTI5, "I5.als");
+		talk_igor_dch(TEXTI5, "I5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_igor = 3;
-		habla_dr_izq(TEXTD17, "d17.als");
+		talk_dr_izq(TEXTD17, "d17.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(18);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_igor_frente(TEXTI6, "I6.als");
+		talk_igor_frente(TEXTI6, "I6.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		FundeAlNegro(0);
@@ -388,10 +388,10 @@ void DrasculaEngine::animation_1_1() {
 	decompressPic(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_dr_grande(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
-	int x_habla[4] = {47, 93, 139, 185};
+	int x_talk[4] = {47, 93, 139, 185};
 	int cara;
 	int l = 0;
 
@@ -422,7 +422,7 @@ bucless:
 	cara = _rnd->getRandomNumber(3);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, dir_dibujo2, dir_zona_pantalla);
-	copyBackground(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
 	l++;
 	if (l == 7)
 		l = 0;
@@ -475,7 +475,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		habla_tabernero(TEXTT22, "T22.als");
+		talk_tabernero(TEXTT22, "T22.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -500,7 +500,7 @@ void DrasculaEngine::animation_2_1() {
 
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_solo(TEXTBJ1, "BJ1.als");
+		talk_solo(TEXTBJ1, "BJ1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -514,7 +514,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = AMARILLO;
-		habla_solo(TEXT214, "214.als");
+		talk_solo(TEXT214, "214.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -560,23 +560,23 @@ void DrasculaEngine::animation_2_1() {
 		hare_x = 100;
 		hare_y = 95;
 
-		habla_bj(TEXTBJ2, "BJ2.als");
-		hablar(TEXT215, "215.als");
-		habla_bj(TEXTBJ3, "BJ3.als");
-		hablar(TEXT216, "216.als");
-		habla_bj(TEXTBJ4, "BJ4.als");
-		habla_bj(TEXTBJ5, "BJ5.als");
-		habla_bj(TEXTBJ6, "BJ6.als");
-		hablar(TEXT217, "217.als");
-		habla_bj(TEXTBJ7, "BJ7.als");
-		hablar(TEXT218, "218.als");
-		habla_bj(TEXTBJ8, "BJ8.als");
-		hablar(TEXT219, "219.als");
-		habla_bj(TEXTBJ9, "BJ9.als");
-		hablar(TEXT220, "220.als");
-		hablar(TEXT221, "221.als");
-		habla_bj(TEXTBJ10, "BJ10.als");
-		hablar(TEXT222, "222.als");
+		talk_bj(TEXTBJ2, "BJ2.als");
+		talk(TEXT215, "215.als");
+		talk_bj(TEXTBJ3, "BJ3.als");
+		talk(TEXT216, "216.als");
+		talk_bj(TEXTBJ4, "BJ4.als");
+		talk_bj(TEXTBJ5, "BJ5.als");
+		talk_bj(TEXTBJ6, "BJ6.als");
+		talk(TEXT217, "217.als");
+		talk_bj(TEXTBJ7, "BJ7.als");
+		talk(TEXT218, "218.als");
+		talk_bj(TEXTBJ8, "BJ8.als");
+		talk(TEXT219, "219.als");
+		talk_bj(TEXTBJ9, "BJ9.als");
+		talk(TEXT220, "220.als");
+		talk(TEXT221, "221.als");
+		talk_bj(TEXTBJ10, "BJ10.als");
+		talk(TEXT222, "222.als");
 		anima("gaf.bin", 15);
 		anima("bjb.bin", 14);
 		playmusic(9);
@@ -595,7 +595,7 @@ void DrasculaEngine::animation_2_1() {
 		pause(120);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_solo(TEXT223, "223.als");
+		talk_solo(TEXT223, "223.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = BLANCO;
@@ -604,7 +604,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(110);
-		habla_solo(TEXTBJ11, "BJ11.als");
+		talk_solo(TEXTBJ11, "BJ11.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
@@ -620,10 +620,10 @@ void DrasculaEngine::animation_2_1() {
 		pause(60);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		hablar(TEXT224, "224.als");
+		talk(TEXT224, "224.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		habla_bj(TEXTBJ12, "BJ12.als");
+		talk_bj(TEXTBJ12, "BJ12.als");
 		lleva_al_hare(157, 98 + alto_hare);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -639,14 +639,14 @@ void DrasculaEngine::animation_2_1() {
 		pause(8);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		hablar(TEXT225, "225.als");
+		talk(TEXT225, "225.als");
 		pause(76);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		hablar(TEXT226, "226.als");
+		talk(TEXT226, "226.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
@@ -654,7 +654,7 @@ void DrasculaEngine::animation_2_1() {
 		pause(30);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		hablar(TEXT227,"227.als");
+		talk(TEXT227,"227.als");
 		FundeAlNegro(0);
 		break;
 	}
@@ -664,26 +664,26 @@ void DrasculaEngine::animation_3_1() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	hablar(TEXT192, "192.als");
-	habla_tabernero(TEXTT1, "t1.als");
-	hablar(TEXT193, "193.als");
-	habla_tabernero(TEXTT2, "t2.als");
-	hablar(TEXT194, "194.als");
-	habla_tabernero(TEXTT3, "t3.als");
-	hablar(TEXT195, "195.als");
-	habla_tabernero(TEXTT4, "t4.als");
-	hablar(TEXT196, "196.als");
-	habla_tabernero(TEXTT5, "t5.als");
-	habla_tabernero(TEXTT6, "t6.als");
-	hablar(TEXT197, "197.als");
-	habla_tabernero(TEXTT7, "t7.als");
-	hablar(TEXT198, "198.als");
-	habla_tabernero(TEXTT8, "t8.als");
-	hablar(TEXT199, "199.als");
-	habla_tabernero(TEXTT9, "t9.als");
-	hablar(TEXT200, "200.als");
-	hablar(TEXT201, "201.als");
-	hablar(TEXT202, "202.als");
+	talk(TEXT192, "192.als");
+	talk_tabernero(TEXTT1, "t1.als");
+	talk(TEXT193, "193.als");
+	talk_tabernero(TEXTT2, "t2.als");
+	talk(TEXT194, "194.als");
+	talk_tabernero(TEXTT3, "t3.als");
+	talk(TEXT195, "195.als");
+	talk_tabernero(TEXTT4, "t4.als");
+	talk(TEXT196, "196.als");
+	talk_tabernero(TEXTT5, "t5.als");
+	talk_tabernero(TEXTT6, "t6.als");
+	talk(TEXT197, "197.als");
+	talk_tabernero(TEXTT7, "t7.als");
+	talk(TEXT198, "198.als");
+	talk_tabernero(TEXTT8, "t8.als");
+	talk(TEXT199, "199.als");
+	talk_tabernero(TEXTT9, "t9.als");
+	talk(TEXT200, "200.als");
+	talk(TEXT201, "201.als");
+	talk(TEXT202, "202.als");
 
 	flags[0] = 1;
 
@@ -695,7 +695,7 @@ void DrasculaEngine::animation_4_1() {
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	hablar(TEXT205,"205.als");
+	talk(TEXT205,"205.als");
 
 	updateRefresh_pre();
 
@@ -715,14 +715,14 @@ void DrasculaEngine::animation_4_1() {
 	stopmusic();
 	flags[11] = 1;
 
-	habla_pianista(TEXTP1, "p1.als");
-	hablar(TEXT206, "206.als");
-	habla_pianista(TEXTP2, "p2.als");
-	hablar(TEXT207, "207.als");
-	habla_pianista(TEXTP3, "p3.als");
-	hablar(TEXT208, "208.als");
-	habla_pianista(TEXTP4, "p4.als");
-	hablar(TEXT209, "209.als");
+	talk_pianista(TEXTP1, "p1.als");
+	talk(TEXT206, "206.als");
+	talk_pianista(TEXTP2, "p2.als");
+	talk(TEXT207, "207.als");
+	talk_pianista(TEXTP3, "p3.als");
+	talk(TEXT208, "208.als");
+	talk_pianista(TEXTP4, "p4.als");
+	talk(TEXT209, "209.als");
 
 	flags[11] = 0;
 	loadPic("97.alg");
@@ -831,7 +831,7 @@ void DrasculaEngine::animation_4_2() {
 	flags[9] = 1;
 
 	pause(12);
-	hablar(TEXTD56, "d56.als");
+	talk(TEXTD56, "d56.als");
 	pause(8);
 
 	clearRoom();
@@ -851,30 +851,30 @@ void DrasculaEngine::animation_4_2() {
 
 	pause(10);
 
-	habla_ciego(TEXTD68, "d68.als", "44472225500022227555544444664447222550002222755554444466");
+	talk_ciego(TEXTD68, "d68.als", "44472225500022227555544444664447222550002222755554444466");
 	pause(5);
-	habla_hacker(TEXTD57, "d57.als");
+	talk_hacker(TEXTD57, "d57.als");
 	pause(6);
-	habla_ciego(TEXTD69,"d69.als","444722255000222275555444446655033336666664464402256555005504450005446");
+	talk_ciego(TEXTD69,"d69.als","444722255000222275555444446655033336666664464402256555005504450005446");
 	pause(4);
-	habla_hacker(TEXTD58,"d58.als");
-	habla_ciego(TEXTD70,"d70.als", "4447222550002222755554444466550333226220044644550044755665500440006655556666655044744656550446470046");
+	talk_hacker(TEXTD58,"d58.als");
+	talk_ciego(TEXTD70,"d70.als", "4447222550002222755554444466550333226220044644550044755665500440006655556666655044744656550446470046");
 	delay(14);
-	habla_hacker(TEXTD59,"d59.als");
-	habla_ciego(TEXTD71,"d71.als", "550330227556444744446660004446655544444722255000222275555444446644444");
-	habla_hacker(TEXTD60,"d60.als");
-	habla_ciego(TEXTD72,"d72.als", "55033022755644455550444744400044504447222550002222755554444466000");
-	habla_hacker(TEXTD61,"d61.als");
-	habla_ciego(TEXTD73,"d73.als", "55033022755644444447227444466644444722255000222275555444446664404446554440055655022227500544446044444446");
-	habla_hacker(TEXTD62,"d62.als");
-	habla_ciego(TEXTD74,"d74.als", "55033022755644444472244472225500022227555544444662550002222755444446666055522275550005550022200222000222666");
-	habla_hacker(TEXTD63,"d63.als");
-	habla_ciego(TEXTD75,"d75.als", "44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555");
+	talk_hacker(TEXTD59,"d59.als");
+	talk_ciego(TEXTD71,"d71.als", "550330227556444744446660004446655544444722255000222275555444446644444");
+	talk_hacker(TEXTD60,"d60.als");
+	talk_ciego(TEXTD72,"d72.als", "55033022755644455550444744400044504447222550002222755554444466000");
+	talk_hacker(TEXTD61,"d61.als");
+	talk_ciego(TEXTD73,"d73.als", "55033022755644444447227444466644444722255000222275555444446664404446554440055655022227500544446044444446");
+	talk_hacker(TEXTD62,"d62.als");
+	talk_ciego(TEXTD74,"d74.als", "55033022755644444472244472225500022227555544444662550002222755444446666055522275550005550022200222000222666");
+	talk_hacker(TEXTD63,"d63.als");
+	talk_ciego(TEXTD75,"d75.als", "44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555");
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	_system->delayMillis(1);
-	habla_hacker(TEXTD64, "d64.als");
-	habla_ciego(TEXTD76, "d76.als", "5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444");
+	talk_hacker(TEXTD64, "d64.als");
+	talk_ciego(TEXTD76, "d76.als", "5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -901,29 +901,29 @@ void DrasculaEngine::animation_4_2() {
 }
 
 void DrasculaEngine::animation_8_2() {
-	habla_pianista(TEXTP6, "P6.als");
-	hablar(TEXT358, "358.als");
-	habla_pianista(TEXTP7, "P7.als");
-	habla_pianista(TEXTP8, "P8.als");
+	talk_pianista(TEXTP6, "P6.als");
+	talk(TEXT358, "358.als");
+	talk_pianista(TEXTP7, "P7.als");
+	talk_pianista(TEXTP8, "P8.als");
 }
 
 void DrasculaEngine::animation_9_2() {
-	habla_pianista(TEXTP9, "P9.als");
-	habla_pianista(TEXTP10, "P10.als");
-	habla_pianista(TEXTP11, "P11.als");
+	talk_pianista(TEXTP9, "P9.als");
+	talk_pianista(TEXTP10, "P10.als");
+	talk_pianista(TEXTP11, "P11.als");
 }
 
 void DrasculaEngine::animation_10_2() {
-	habla_pianista(TEXTP12, "P12.als");
-	hablar(TEXT361, "361.als");
+	talk_pianista(TEXTP12, "P12.als");
+	talk(TEXT361, "361.als");
 	pause(40);
-	habla_pianista(TEXTP13, "P13.als");
-	hablar(TEXT362, "362.als");
-	habla_pianista(TEXTP14, "P14.als");
-	hablar(TEXT363, "363.als");
-	habla_pianista(TEXTP15, "P15.als");
-	hablar(TEXT364, "364.als");
-	habla_pianista(TEXTP16, "P16.als");
+	talk_pianista(TEXTP13, "P13.als");
+	talk(TEXT362, "362.als");
+	talk_pianista(TEXTP14, "P14.als");
+	talk(TEXT363, "363.als");
+	talk_pianista(TEXTP15, "P15.als");
+	talk(TEXT364, "364.als");
+	talk_pianista(TEXTP16, "P16.als");
 }
 
 void DrasculaEngine::animation_14_2() {
@@ -967,18 +967,18 @@ void DrasculaEngine::animation_14_2() {
 }
 
 void DrasculaEngine::animation_15_2() {
-	habla_borracho(TEXTB8, "B8.als");
+	talk_borracho(TEXTB8, "B8.als");
 	pause(7);
-	habla_borracho(TEXTB9, "B9.als");
-	habla_borracho(TEXTB10, "B10.als");
-	habla_borracho(TEXTB11, "B11.als");
+	talk_borracho(TEXTB9, "B9.als");
+	talk_borracho(TEXTB10, "B10.als");
+	talk_borracho(TEXTB11, "B11.als");
 }
 
 void DrasculaEngine::animation_16_2() {
 	int l;
 
-	habla_borracho(TEXTB12, "B12.als");
-	hablar(TEXT371, "371.als");
+	talk_borracho(TEXTB12, "B12.als");
+	talk(TEXT371, "371.als");
 
 	clearRoom();
 
@@ -1092,30 +1092,30 @@ asco:
 }
 
 void DrasculaEngine::animation_17_2() {
-	habla_borracho(TEXTB13, "B13.als");
-	habla_borracho(TEXTB14, "B14.als");
+	talk_borracho(TEXTB13, "B13.als");
+	talk_borracho(TEXTB14, "B14.als");
 	flags[40] = 1;
 }
 
 void DrasculaEngine::animation_19_2() {
-	habla_vbpuerta(TEXTVB5, "VB5.als");
+	talk_vbpuerta(TEXTVB5, "VB5.als");
 }
 
 void DrasculaEngine::animation_20_2() {
-	habla_vbpuerta(TEXTVB7, "VB7.als");
-	habla_vbpuerta(TEXTVB8, "VB8.als");
-	hablar(TEXT383, "383.als");
-	habla_vbpuerta(TEXTVB9, "VB9.als");
-	hablar(TEXT384, "384.als");
-	habla_vbpuerta(TEXTVB10, "VB10.als");
-	hablar(TEXT385, "385.als");
-	habla_vbpuerta(TEXTVB11, "VB11.als");
+	talk_vbpuerta(TEXTVB7, "VB7.als");
+	talk_vbpuerta(TEXTVB8, "VB8.als");
+	talk(TEXT383, "383.als");
+	talk_vbpuerta(TEXTVB9, "VB9.als");
+	talk(TEXT384, "384.als");
+	talk_vbpuerta(TEXTVB10, "VB10.als");
+	talk(TEXT385, "385.als");
+	talk_vbpuerta(TEXTVB11, "VB11.als");
 	if (flags[23] == 0) {
-		hablar(TEXT350, "350.als");
-		habla_vbpuerta(TEXTVB57, "VB57.als");
+		talk(TEXT350, "350.als");
+		talk_vbpuerta(TEXTVB57, "VB57.als");
 	} else {
-		hablar(TEXT386, "386.als");
-		habla_vbpuerta(TEXTVB12, "VB12.als");
+		talk(TEXT386, "386.als");
+		talk_vbpuerta(TEXTVB12, "VB12.als");
 		flags[18] = 0;
 		flags[14] = 1;
 		abre_puerta(15, 1);
@@ -1132,7 +1132,7 @@ void DrasculaEngine::animation_20_2() {
 }
 
 void DrasculaEngine::animation_21_2() {
-	habla_vbpuerta(TEXTVB6, "VB6.als");
+	talk_vbpuerta(TEXTVB6, "VB6.als");
 }
 
 void DrasculaEngine::animation_23_2() {
@@ -1142,26 +1142,26 @@ void DrasculaEngine::animation_23_2() {
 	flags[21] = 1;
 
 	if (flags[25] == 0) {
-		habla_vb(TEXTVB13, "VB13.als");
-		habla_vb(TEXTVB14, "VB14.als");
+		talk_vb(TEXTVB13, "VB13.als");
+		talk_vb(TEXTVB14, "VB14.als");
 		pause(10);
-		hablar(TEXT387, "387.als");
+		talk(TEXT387, "387.als");
 	}
 
-	habla_vb(TEXTVB15, "VB15.als");
+	talk_vb(TEXTVB15, "VB15.als");
 	lleva_vb(42);
 	sentido_vb = 1;
-	habla_vb(TEXTVB16, "VB16.als");
+	talk_vb(TEXTVB16, "VB16.als");
 	sentido_vb = 2;
 	lleva_al_hare(157, 147);
 	lleva_al_hare(131, 149);
 	sentido_hare = 0;
 	animation_14_2();
 	if (flags[25] == 0)
-		habla_vb(TEXTVB17, "VB17.als");
+		talk_vb(TEXTVB17, "VB17.als");
 	pause(8);
 	sentido_vb = 1;
-	habla_vb(TEXTVB18, "VB18.als");
+	talk_vb(TEXTVB18, "VB18.als");
 
 	if (flags[29] == 0)
 		animation_23_anexo();
@@ -1173,9 +1173,9 @@ void DrasculaEngine::animation_23_2() {
 	lleva_vb(99);
 
 	if (flags[29] == 0) {
-		habla_vb(TEXTVB19, "VB19.als");
+		talk_vb(TEXTVB19, "VB19.als");
 		if (flags[25] == 0) {
-			habla_vb(TEXTVB20,"VB20.als");
+			talk_vb(TEXTVB20,"VB20.als");
 			if (resta_objeto(7) == 0)
 				flags[30] = 1;
 			if (resta_objeto(18) == 0)
@@ -1183,7 +1183,7 @@ void DrasculaEngine::animation_23_2() {
 			if (resta_objeto(19) == 0)
 				flags[32] = 1;
 		}
-		habla_vb(TEXTVB21, "VB21.als");
+		talk_vb(TEXTVB21, "VB21.als");
 	} else
 		animation_27_2();
 
@@ -1282,63 +1282,63 @@ void DrasculaEngine::animation_27_2() {
 	resta_objeto(23);
 	suma_objeto(11);
 
-	habla_vb(TEXTVB23, "VB23.als");
-	habla_vb(TEXTVB24, "VB24.als");
+	talk_vb(TEXTVB23, "VB23.als");
+	talk_vb(TEXTVB24, "VB24.als");
 	if (flags[30] == 1)
 		suma_objeto(7);
 	if (flags[31] == 1)
 		suma_objeto(18);
 	if (flags[32] == 1)
 		suma_objeto(19);
-	habla_vb(TEXTVB25,"VB25.als");
-	habla_vb(TEXTVB26,"VB26.als");
+	talk_vb(TEXTVB25,"VB25.als");
+	talk_vb(TEXTVB26,"VB26.als");
 }
 
 void DrasculaEngine::animation_28_2() {
-	habla_vb(TEXTVB27, "VB27.als");
-	habla_vb(TEXTVB28, "VB28.als");
-	habla_vb(TEXTVB29, "VB29.als");
-	habla_vb(TEXTVB30, "VB30.als");
+	talk_vb(TEXTVB27, "VB27.als");
+	talk_vb(TEXTVB28, "VB28.als");
+	talk_vb(TEXTVB29, "VB29.als");
+	talk_vb(TEXTVB30, "VB30.als");
 }
 
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
-		habla_vb(TEXTVB32, "VB32.als");
-		hablar(TEXT398, "398.als");
-		habla_vb(TEXTVB33, "VB33.als");
-		hablar(TEXT399, "399.als");
-		habla_vb(TEXTVB34, "VB34.als");
-		habla_vb(TEXTVB35, "VB35.als");
-		hablar(TEXT400, "400.als");
-		habla_vb(TEXTVB36, "VB36.als");
-		habla_vb(TEXTVB37, "VB37.als");
-		hablar(TEXT386, "386.als");
-		habla_vb(TEXTVB38, "VB38.als");
-		habla_vb(TEXTVB39, "VB39.als");
-		hablar(TEXT401, "401.als");
-		habla_vb(TEXTVB40, "VB40.als");
-		habla_vb(TEXTVB41, "VB41.als");
+		talk_vb(TEXTVB32, "VB32.als");
+		talk(TEXT398, "398.als");
+		talk_vb(TEXTVB33, "VB33.als");
+		talk(TEXT399, "399.als");
+		talk_vb(TEXTVB34, "VB34.als");
+		talk_vb(TEXTVB35, "VB35.als");
+		talk(TEXT400, "400.als");
+		talk_vb(TEXTVB36, "VB36.als");
+		talk_vb(TEXTVB37, "VB37.als");
+		talk(TEXT386, "386.als");
+		talk_vb(TEXTVB38, "VB38.als");
+		talk_vb(TEXTVB39, "VB39.als");
+		talk(TEXT401, "401.als");
+		talk_vb(TEXTVB40, "VB40.als");
+		talk_vb(TEXTVB41, "VB41.als");
 		flags[33] = 1;
 	} else
-		habla_vb(TEXTVB43, "VB43.als");
+		talk_vb(TEXTVB43, "VB43.als");
 
-	hablar(TEXT402, "402.als");
-	habla_vb(TEXTVB42, "VB42.als");
+	talk(TEXT402, "402.als");
+	talk_vb(TEXTVB42, "VB42.als");
 
 	if (flags[38] == 0) {
-		hablar(TEXT403, "403.als");
+		talk(TEXT403, "403.als");
 		rompo_y_salgo = 1;
 	} else
-		hablar(TEXT386, "386.als");
+		talk(TEXT386, "386.als");
 }
 
 void DrasculaEngine::animation_30_2() {
-	habla_vb(TEXTVB31, "VB31.als");
-	hablar(TEXT396, "396.als");
+	talk_vb(TEXTVB31, "VB31.als");
+	talk(TEXT396, "396.als");
 }
 
 void DrasculaEngine::animation_31_2() {
-	habla_vb(TEXTVB44, "VB44.als");
+	talk_vb(TEXTVB44, "VB44.als");
 	lleva_vb(-50);
 	pause(15);
 	lleva_al_hare(159, 140);
@@ -1352,25 +1352,25 @@ void DrasculaEngine::animation_31_2() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(22);
-	hablar(TEXT406, "406.als");
+	talk(TEXT406, "406.als");
 	lleva_vb(98);
-	habla_vb(TEXTVB45, "VB45.als");
-	habla_vb(TEXTVB46, "VB46.als");
-	habla_vb(TEXTVB47, "VB47.als");
-	hablar(TEXT407, "407.als");
-	habla_vb(TEXTVB48, "VB48.als");
-	habla_vb(TEXTVB49, "VB49.als");
-	hablar(TEXT408, "408.als");
-	habla_vb(TEXTVB50, "VB50.als");
-	habla_vb(TEXTVB51, "VB51.als");
-	hablar(TEXT409, "409.als");
-	habla_vb(TEXTVB52, "VB52.als");
-	habla_vb(TEXTVB53, "VB53.als");
+	talk_vb(TEXTVB45, "VB45.als");
+	talk_vb(TEXTVB46, "VB46.als");
+	talk_vb(TEXTVB47, "VB47.als");
+	talk(TEXT407, "407.als");
+	talk_vb(TEXTVB48, "VB48.als");
+	talk_vb(TEXTVB49, "VB49.als");
+	talk(TEXT408, "408.als");
+	talk_vb(TEXTVB50, "VB50.als");
+	talk_vb(TEXTVB51, "VB51.als");
+	talk(TEXT409, "409.als");
+	talk_vb(TEXTVB52, "VB52.als");
+	talk_vb(TEXTVB53, "VB53.als");
 	pause(12);
-	habla_vb(TEXTVB54, "VB54.als");
-	habla_vb(TEXTVB55, "VB55.als");
-	hablar(TEXT410, "410.als");
-	habla_vb(TEXTVB56, "VB56.als");
+	talk_vb(TEXTVB54, "VB54.als");
+	talk_vb(TEXTVB55, "VB55.als");
+	talk(TEXT410, "410.als");
+	talk_vb(TEXTVB56, "VB56.als");
 
 	rompo_y_salgo = 1;
 
@@ -1452,10 +1452,10 @@ void DrasculaEngine::animation_35_2() {
 }
 
 void DrasculaEngine::animation_1_3() {
-	hablar(TEXT413, "413.als");
+	talk(TEXT413, "413.als");
 	grr();
 	pause(50);
-	hablar(TEXT414, "414.als");
+	talk(TEXT414, "414.als");
 }
 
 void DrasculaEngine::animation_2_3() {
@@ -1773,31 +1773,31 @@ void DrasculaEngine::animation_rayo() {
 }
 
 void DrasculaEngine::animation_2_4() {
-	habla_igor_sentado(TEXTI16, "I16.als");
-	hablar(TEXT278, "278.als");
-	habla_igor_sentado(TEXTI17, "I17.als");
-	hablar(TEXT279, "279.als");
-	habla_igor_sentado(TEXTI18, "I18.als");
+	talk_igor_sentado(TEXTI16, "I16.als");
+	talk(TEXT278, "278.als");
+	talk_igor_sentado(TEXTI17, "I17.als");
+	talk(TEXT279, "279.als");
+	talk_igor_sentado(TEXTI18, "I18.als");
 }
 
 void DrasculaEngine::animation_3_4() {
-	habla_igor_sentado(TEXTI19, "I19.als");
-	habla_igor_sentado(TEXTI20, "I20.als");
-	hablar(TEXT281, "281.als");
+	talk_igor_sentado(TEXTI19, "I19.als");
+	talk_igor_sentado(TEXTI20, "I20.als");
+	talk(TEXT281, "281.als");
 }
 
 void DrasculaEngine::animation_4_4() {
-	hablar(TEXT287, "287.als");
-	habla_igor_sentado(TEXTI21, "I21.als");
-	hablar(TEXT284, "284.als");
-	habla_igor_sentado(TEXTI22, "I22.als");
-	hablar(TEXT285, "285.als");
-	habla_igor_sentado(TEXTI23, "I23.als");
+	talk(TEXT287, "287.als");
+	talk_igor_sentado(TEXTI21, "I21.als");
+	talk(TEXT284, "284.als");
+	talk_igor_sentado(TEXTI22, "I22.als");
+	talk(TEXT285, "285.als");
+	talk_igor_sentado(TEXTI23, "I23.als");
 }
 
 void DrasculaEngine::animation_7_4() {
 	Negro();
-	hablar(TEXT427, "427.als");
+	talk(TEXT427, "427.als");
 	FundeDelNegro(1);
 	resta_objeto(8);
 	resta_objeto(10);
@@ -1810,27 +1810,27 @@ void DrasculaEngine::animation_7_4() {
 
 void DrasculaEngine::animation_1_5() {
 	if (flags[0] == 0) {
-		hablar(TEXT430, "430.als");
-		habla_bj(TEXTBJ16, "BJ16.als");
-		habla_bj(TEXTBJ17, "BJ17.als");
-		habla_bj(TEXTBJ18, "BJ18.als");
-		hablar(TEXT217, "217.als");
-		habla_bj(TEXTBJ19, "BJ19.als");
-		hablar(TEXT229, "229.als");
+		talk(TEXT430, "430.als");
+		talk_bj(TEXTBJ16, "BJ16.als");
+		talk_bj(TEXTBJ17, "BJ17.als");
+		talk_bj(TEXTBJ18, "BJ18.als");
+		talk(TEXT217, "217.als");
+		talk_bj(TEXTBJ19, "BJ19.als");
+		talk(TEXT229, "229.als");
 		pause(5);
 		lleva_al_hare(114, 170);
 		sentido_hare = 3;
-		hablar(TEXT431, "431.als");
-		habla_bj(TEXTBJ20, "BJ20.als");
+		talk(TEXT431, "431.als");
+		talk_bj(TEXTBJ20, "BJ20.als");
 		sentido_hare = 2;
 		pause(4);
-		hablar(TEXT438, "438.als");
+		talk(TEXT438, "438.als");
 		sitio_x = 120;
 		sitio_y = 157;
 		anda_a_objeto = 1;
 		sentido_final = 1;
 		empieza_andar();
-		habla_bj(TEXTBJ21, "BJ21.als");
+		talk_bj(TEXTBJ21, "BJ21.als");
 
 		for (;;) {
 			if (hare_se_mueve == 0)
@@ -1840,7 +1840,7 @@ void DrasculaEngine::animation_1_5() {
 		}
 
 		sentido_hare = 1;
-		hablar(TEXT229, "229.als");
+		talk(TEXT229, "229.als");
 		flags[0] = 1;
 	}
 
@@ -1849,11 +1849,11 @@ void DrasculaEngine::animation_1_5() {
 }
 
 void DrasculaEngine::animation_2_5() {
-	habla_bj(TEXTBJ22, "BJ22.als");
+	talk_bj(TEXTBJ22, "BJ22.als");
 }
 
 void DrasculaEngine::animation_3_5() {
-	habla_bj(TEXTBJ23, "BJ23.als");
+	talk_bj(TEXTBJ23, "BJ23.als");
 	agarra_objeto(10);
 	rompo_y_salgo = 1;
 }
@@ -1862,21 +1862,21 @@ void DrasculaEngine::animation_4_5() {
 	flags[7] = 1;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	hablar(TEXT228, "228.als");
-	habla_lobo(TEXTL1, "L1.als");
-	habla_lobo(TEXTL2, "L2.als");
+	talk(TEXT228, "228.als");
+	talk_lobo(TEXTL1, "L1.als");
+	talk_lobo(TEXTL2, "L2.als");
 	pause(23);
-	hablar(TEXT229, "229.als");
-	habla_lobo(TEXTL3, "L3.als");
-	habla_lobo(TEXTL4, "L4.als");
-	hablar(TEXT230, "230.als");
-	habla_lobo(TEXTL5, "L5.als");
-	hablar(TEXT231, "231.als");
-	habla_lobo(TEXTL6, "L6.als");
-	habla_lobo(TEXTL7, "L7.als");
+	talk(TEXT229, "229.als");
+	talk_lobo(TEXTL3, "L3.als");
+	talk_lobo(TEXTL4, "L4.als");
+	talk(TEXT230, "230.als");
+	talk_lobo(TEXTL5, "L5.als");
+	talk(TEXT231, "231.als");
+	talk_lobo(TEXTL6, "L6.als");
+	talk_lobo(TEXTL7, "L7.als");
 	pause(33);
-	hablar(TEXT232, "232.als");
-	habla_lobo(TEXTL8, "L8.als");
+	talk(TEXT232, "232.als");
+	talk_lobo(TEXTL8, "L8.als");
 }
 
 void DrasculaEngine::animation_5_5(){
@@ -1964,36 +1964,36 @@ void DrasculaEngine::animation_5_5(){
 }
 
 void DrasculaEngine::animation_6_5() {
-	habla_lobo(TEXTL9, "L9.als");
-	hablar(TEXT234, "234.als");
+	talk_lobo(TEXTL9, "L9.als");
+	talk(TEXT234, "234.als");
 }
 
 void DrasculaEngine::animation_7_5() {
-	habla_lobo(TEXTL10, "L10.als");
-	hablar(TEXT236, "236.als");
-	habla_lobo(TEXTL11, "L11.als");
-	habla_lobo(TEXTL12, "L12.als");
-	habla_lobo(TEXTL13, "L13.als");
+	talk_lobo(TEXTL10, "L10.als");
+	talk(TEXT236, "236.als");
+	talk_lobo(TEXTL11, "L11.als");
+	talk_lobo(TEXTL12, "L12.als");
+	talk_lobo(TEXTL13, "L13.als");
 	pause(34);
-	habla_lobo(TEXTL14, "L14.als");
+	talk_lobo(TEXTL14, "L14.als");
 }
 
 void DrasculaEngine::animation_8_5() {
-	habla_lobo(TEXTL15, "L15.als");
-	hablar(TEXT238, "238.als");
-	habla_lobo(TEXTL16, "L16.als");
+	talk_lobo(TEXTL15, "L15.als");
+	talk(TEXT238, "238.als");
+	talk_lobo(TEXTL16, "L16.als");
 }
 
 void DrasculaEngine::animation_9_5() {
 	flags[4] = 1;
-	hablar(TEXT401, "401.als");
+	talk(TEXT401, "401.als");
 	sin_verbo();
 	resta_objeto(15);
 }
 
 void DrasculaEngine::animation_10_5() {
 	flags[3] = 1;
-	hablar(TEXT401, "401.als");
+	talk(TEXT401, "401.als");
 	sin_verbo();
 	resta_objeto(12);
 }
@@ -2004,7 +2004,7 @@ void DrasculaEngine::animation_11_5() {
 		animation_12_5();
 	else {
 		flags[9] = 0;
-		hablar(TEXT33, "33.als");
+		talk(TEXT33, "33.als");
 	}
 }
 
@@ -2173,7 +2173,7 @@ void DrasculaEngine::animation_14_5() {
 	fin_sound();
 	pause(17);
 	sentido_hare = 3;
-	hablar(TEXT246,"246.als");
+	talk(TEXT246,"246.als");
 	lleva_al_hare(89, 160);
 	flags[10] = 1;
 	comienza_sound("s7.als");
@@ -2184,24 +2184,24 @@ void DrasculaEngine::animation_14_5() {
 	sentido_hare = 3;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	habla_solo(TEXTD18, "d18.als");
+	talk_solo(TEXTD18, "d18.als");
 	FundeAlNegro(1);
 }
 
 void DrasculaEngine::animation_15_5() {
-	habla_mus(TEXTE4, "E4.als");
-	habla_mus(TEXTE5, "E5.als");
-	habla_mus(TEXTE6, "E6.als");
-	hablar(TEXT291, "291.als");
-	habla_mus(TEXTE7, "E7.als");
+	talk_mus(TEXTE4, "E4.als");
+	talk_mus(TEXTE5, "E5.als");
+	talk_mus(TEXTE6, "E6.als");
+	talk(TEXT291, "291.als");
+	talk_mus(TEXTE7, "E7.als");
 }
 
 void DrasculaEngine::animation_16_5() {
-	habla_mus(TEXTE8, "E8.als");
+	talk_mus(TEXTE8, "E8.als");
 }
 
 void DrasculaEngine::animation_17_5() {
-	habla_mus(TEXTE9, "E9.als");
+	talk_mus(TEXTE9, "E9.als");
 }
 
 void DrasculaEngine::animation_1_6() {
@@ -2220,24 +2220,24 @@ void DrasculaEngine::animation_1_6() {
 	decompressPic(dir_dibujo2, 1);
 	loadPic("car.alg");
 	decompressPic(dir_hare_fondo, 1);
-	habla_dr_dch(TEXTD19, "D19.als");
-	hablar(TEXT247, "247.als");
-	habla_dr_dch(TEXTD20, "d20.als");
-	habla_dr_dch(TEXTD21, "d21.als");
-	hablar(TEXT248, "248.als");
-	habla_dr_dch(TEXTD22, "d22.als");
-	hablar(TEXT249, "249.als");
-	habla_dr_dch(TEXTD23, "d23.als");
+	talk_dr_dch(TEXTD19, "D19.als");
+	talk(TEXT247, "247.als");
+	talk_dr_dch(TEXTD20, "d20.als");
+	talk_dr_dch(TEXTD21, "d21.als");
+	talk(TEXT248, "248.als");
+	talk_dr_dch(TEXTD22, "d22.als");
+	talk(TEXT249, "249.als");
+	talk_dr_dch(TEXTD23, "d23.als");
 	conversa("op_11.cal");
-	habla_dr_dch(TEXTD26, "d26.als");
+	talk_dr_dch(TEXTD26, "d26.als");
 
 	anima("fum.bin", 15);
 
-	habla_dr_dch(TEXTD27, "d27.als");
-	hablar(TEXT254, "254.als");
-	habla_dr_dch(TEXTD28, "d28.als");
-	hablar(TEXT255, "255.als");
-	habla_dr_dch(TEXTD29, "d29.als");
+	talk_dr_dch(TEXTD27, "d27.als");
+	talk(TEXT254, "254.als");
+	talk_dr_dch(TEXTD28, "d28.als");
+	talk(TEXT255, "255.als");
+	talk_dr_dch(TEXTD29, "d29.als");
 	FundeAlNegro(1);
 	clearRoom();
 	loadPic("time1.alg");
@@ -2251,9 +2251,9 @@ void DrasculaEngine::animation_1_6() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
-	hablar(TEXT256, "256.als");
-	habla_dr_dch(TEXTD30, "d30.als");
-	hablar(TEXT257, "257.als");
+	talk(TEXT256, "256.als");
+	talk_dr_dch(TEXTD30, "d30.als");
+	talk(TEXT257, "257.als");
 	FundeAlNegro(0);
 	clearRoom();
 	loadPic("time1.alg");
@@ -2265,32 +2265,32 @@ void DrasculaEngine::animation_1_6() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
-	hablar(TEXT258, "258.als");
-	habla_dr_dch(TEXTD31, "d31.als");
+	talk(TEXT258, "258.als");
+	talk_dr_dch(TEXTD31, "d31.als");
 	animation_5_6();
-	habla_dr_dch(TEXTD32, "d32.als");
-	habla_igor_dch(TEXTI11, "I11.als");
+	talk_dr_dch(TEXTD32, "d32.als");
+	talk_igor_dch(TEXTI11, "I11.als");
 	sentido_igor = 3;
-	habla_dr_dch(TEXTD33, "d33.als");
-	habla_igor_frente(TEXTI12, "I12.als");
-	habla_dr_dch(TEXTD34, "d34.als");
+	talk_dr_dch(TEXTD33, "d33.als");
+	talk_igor_frente(TEXTI12, "I12.als");
+	talk_dr_dch(TEXTD34, "d34.als");
 	sentido_dr = 0;
-	habla_dr_izq(TEXTD35, "d35.als");
+	talk_dr_izq(TEXTD35, "d35.als");
 	clearRoom();
 	carga_escoba("102.ald");
 	activa_pendulo();
 }
 
 void DrasculaEngine::animation_2_6() {
-	habla_dr_dch(TEXTD24, "d24.als");
+	talk_dr_dch(TEXTD24, "d24.als");
 }
 
 void DrasculaEngine::animation_3_6() {
-	habla_dr_dch(TEXTD24, "d24.als");
+	talk_dr_dch(TEXTD24, "d24.als");
 }
 
 void DrasculaEngine::animation_4_6() {
-	habla_dr_dch(TEXTD25, "d25.als");
+	talk_dr_dch(TEXTD25, "d25.als");
 }
 
 void DrasculaEngine::animation_5_6() {
@@ -2384,34 +2384,34 @@ void DrasculaEngine::animation_9_6() {
 	loadPic("nota.alg");
 	decompressPic(dir_dibujo1, COMPLETA);
 	color_abc(BLANCO);
-	habla_solo(TEXTBJ24, "bj24.als");
-	habla_solo(TEXTBJ25, "bj25.als");
-	habla_solo(TEXTBJ26, "bj26.als");
-	habla_solo(TEXTBJ27, "bj27.als");
-	habla_solo(TEXTBJ28, "bj28.als");
+	talk_solo(TEXTBJ24, "bj24.als");
+	talk_solo(TEXTBJ25, "bj25.als");
+	talk_solo(TEXTBJ26, "bj26.als");
+	talk_solo(TEXTBJ27, "bj27.als");
+	talk_solo(TEXTBJ28, "bj28.als");
 	sentido_hare = 3;
 	clearRoom();
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, COMPLETA);
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, MEDIA);
-	hablar(TEXT296, "296.als");
-	hablar(TEXT297, "297.als");
-	hablar(TEXT298, "298.als");
+	talk(TEXT296, "296.als");
+	talk(TEXT297, "297.als");
+	talk(TEXT298, "298.als");
 	sentido_hare = 1;
-	hablar(TEXT299, "299.als");
-	hablar(TEXT300, "300.als");
+	talk(TEXT299, "299.als");
+	talk(TEXT300, "300.als");
 	updateRoom();
 	copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	color_abc(VERDE_CLARO);
-	habla_solo("GOOOOOOOOOOOOOOOL", "s15.als");
+	talk_solo("GOOOOOOOOOOOOOOOL", "s15.als");
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, 1);
 	sentido_hare = 0;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	hablar(TEXT301, "301.als");
+	talk(TEXT301, "301.als");
 	v_cd = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
 	v_cd = v_cd + 4;
 	playmusic(17);
@@ -2434,36 +2434,36 @@ void DrasculaEngine::animation_10_6() {
 	copyBackground(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	fin_sound();
-	habla_taber2(TEXTT23, "t23.als");
+	talk_taber2(TEXTT23, "t23.als");
 	flags[7] = 1;
 }
 
 void DrasculaEngine::animation_11_6() {
-	habla_taber2(TEXTT10, "t10.als");
-	hablar(TEXT268, "268.als");
-	habla_taber2(TEXTT11, "t11.als");
+	talk_taber2(TEXTT10, "t10.als");
+	talk(TEXT268, "268.als");
+	talk_taber2(TEXTT11, "t11.als");
 }
 
 void DrasculaEngine::animation_12_6() {
-	habla_taber2(TEXTT12, "t12.als");
-	hablar(TEXT270, "270.als");
-	habla_taber2(TEXTT13, "t13.als");
-	habla_taber2(TEXTT14, "t14.als");
+	talk_taber2(TEXTT12, "t12.als");
+	talk(TEXT270, "270.als");
+	talk_taber2(TEXTT13, "t13.als");
+	talk_taber2(TEXTT14, "t14.als");
 }
 
 void DrasculaEngine::animation_13_6() {
-	habla_taber2(TEXTT15, "t15.als");
+	talk_taber2(TEXTT15, "t15.als");
 }
 
 void DrasculaEngine::animation_14_6() {
-	habla_taber2(TEXTT24, "t24.als");
+	talk_taber2(TEXTT24, "t24.als");
 	suma_objeto(21);
 	flags[10] = 1;
 	rompo_y_salgo = 1;
 }
 
 void DrasculaEngine::animation_15_6() {
-	habla_taber2(TEXTT16, "t16.als");
+	talk_taber2(TEXTT16, "t16.als");
 }
 
 void DrasculaEngine::animation_18_6() {
@@ -2492,7 +2492,7 @@ void DrasculaEngine::animation_12_2() {
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	hablar(TEXT356, "356.als");
+	talk(TEXT356, "356.als");
 
 	updateRefresh_pre();
 
@@ -2512,7 +2512,7 @@ void DrasculaEngine::animation_12_2() {
 	stopmusic();
 	flags[11] = 1;
 
-	habla_pianista(TEXTP5, "P5.als");
+	talk_pianista(TEXTP5, "P5.als");
 	conversa("op_1.cal");
 
 	flags[11] = 0;
@@ -2526,7 +2526,7 @@ void DrasculaEngine::animation_26_2() {
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	hablar(TEXT392, "392.als");
+	talk(TEXT392, "392.als");
 
 	updateRefresh_pre();
 
@@ -2546,11 +2546,11 @@ void DrasculaEngine::animation_26_2() {
 	stopmusic();
 	flags[11] = 1;
 
-	habla_pianista(TEXTP5, "P5.als");
-	hablar(TEXT393, "393.als");
-	habla_pianista(TEXTP17, "P17.als");
-	habla_pianista(TEXTP18, "P18.als");
-	habla_pianista(TEXTP19, "P19.als");
+	talk_pianista(TEXTP5, "P5.als");
+	talk(TEXT393, "393.als");
+	talk_pianista(TEXTP17, "P17.als");
+	talk_pianista(TEXTP18, "P18.als");
+	talk_pianista(TEXTP19, "P19.als");
 
 	loadPic("an26.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -2597,15 +2597,15 @@ void DrasculaEngine::animation_11_2() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	hablar(TEXT352, "352.als");
-	habla_tabernero(TEXTT1, "T1.als");
-	hablar(TEXT353, "353.als");
-	habla_tabernero(TEXTT17, "T17.als");
-	hablar(TEXT354, "354.als");
-	habla_tabernero(TEXTT18, "T18.als");
-	hablar(TEXT355, "355.als");
+	talk(TEXT352, "352.als");
+	talk_tabernero(TEXTT1, "T1.als");
+	talk(TEXT353, "353.als");
+	talk_tabernero(TEXTT17, "T17.als");
+	talk(TEXT354, "354.als");
+	talk_tabernero(TEXTT18, "T18.als");
+	talk(TEXT355, "355.als");
 	pause(40);
-	habla_tabernero("No, nada", "d82.als");
+	talk_tabernero("No, nada", "d82.als");
 
 	loadPic("974.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -2616,15 +2616,15 @@ void DrasculaEngine::animation_13_2() {
 	decompressPic(dir_hare_frente, 1);
 
 	if (flags[41] == 0) {
-		hablar(TEXT103, "103.als");
-		habla_borracho(TEXTB4, "B4.als");
+		talk(TEXT103, "103.als");
+		talk_borracho(TEXTB4, "B4.als");
 		flags[12] = 1;
-		hablar(TEXT367, "367.als");
-		habla_borracho(TEXTB5, "B5.als");
+		talk(TEXT367, "367.als");
+		talk_borracho(TEXTB5, "B5.als");
 		flags[12] = 1;
-		hablar(TEXT368, "368.als");
-		habla_borracho(TEXTB6, "B6.als");
-		habla_borracho(TEXTB7, "B7.als");
+		talk(TEXT368, "368.als");
+		talk_borracho(TEXTB6, "B6.als");
+		talk_borracho(TEXTB7, "B7.als");
 		flags[41] = 1;
 	}
 	conversa("op_2.cal");
@@ -2634,13 +2634,13 @@ void DrasculaEngine::animation_13_2() {
 }
 
 void DrasculaEngine::animation_18_2() {
-	hablar(TEXT378, "378.als");
-	habla_vbpuerta(TEXTVB4, "VB4.als");
+	talk(TEXT378, "378.als");
+	talk_vbpuerta(TEXTVB4, "VB4.als");
 	conversa("op_3.cal");
 }
 
 void DrasculaEngine::animation_22_2() {
-	hablar(TEXT374,"374.als");
+	talk(TEXT374,"374.als");
 
 	sentido_hare=2;
 	updateRoom();
@@ -2649,11 +2649,11 @@ void DrasculaEngine::animation_22_2() {
 	fin_sound();
 	sentido_hare = 1;
 
-	habla_vbpuerta(TEXTVB1, "VB1.als");
-	hablar(TEXT375, "375.als");
-	habla_vbpuerta(TEXTVB2, "VB2.als");
-	hablar(TEXT376, "376.als");
-	habla_vbpuerta(TEXTVB3, "VB3.als");
+	talk_vbpuerta(TEXTVB1, "VB1.als");
+	talk(TEXT375, "375.als");
+	talk_vbpuerta(TEXTVB2, "VB2.als");
+	talk(TEXT376, "376.als");
+	talk_vbpuerta(TEXTVB3, "VB3.als");
 
 	flags[18] = 1;
 }
@@ -2666,7 +2666,7 @@ void DrasculaEngine::animation_24_2() {
 	pause(3);
 	sentido_hare = 0;
 
-	hablar(TEXT356, "356.als");
+	talk(TEXT356, "356.als");
 
 	loadPic("an24.alg");
 	decompressPic(dir_hare_frente, 1);
@@ -2675,7 +2675,7 @@ void DrasculaEngine::animation_24_2() {
 
 	flags[21] = 1;
 
-	habla_vb(TEXTVB22, "VB22.als");
+	talk_vb(TEXTVB22, "VB22.als");
 
 	if (flags[22] == 0)
 		conversa("op_4.cal");
@@ -2795,13 +2795,13 @@ void DrasculaEngine::animation_36_2() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	hablar(TEXT404, "404.als");
-	habla_tabernero(TEXTT19, "T19.als");
-	habla_tabernero(TEXTT20, "T20.als");
-	habla_tabernero(TEXTT21, "T21.als");
-	hablar(TEXT355, "355.als");
+	talk(TEXT404, "404.als");
+	talk_tabernero(TEXTT19, "T19.als");
+	talk_tabernero(TEXTT20, "T20.als");
+	talk_tabernero(TEXTT21, "T21.als");
+	talk(TEXT355, "355.als");
 	pause(40);
-	habla_tabernero("No, nada", "d82.als");
+	talk_tabernero("No, nada", "d82.als");
 
 	loadPic("974.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -3162,7 +3162,7 @@ void DrasculaEngine::animation_5_2() {
 	decompressPic(dir_dibujo3, 1);
 	flags[8] = 1;
 	hare_x = hare_x - 4;
-	hablar_sinc(TEXT46, "46.als", "4442444244244");
+	talk_sinc(TEXT46, "46.als", "4442444244244");
 	sin_verbo();
 }
 
@@ -3188,12 +3188,12 @@ void DrasculaEngine::animation_6_2() {
 	pause(1);
 
 	if (flags[4] == 1)
-		habla_hacker(TEXTD66, "d66.als");
+		talk_hacker(TEXTD66, "d66.als");
 	pause(6);
-	habla_ciego(TEXTD78, "d78.als",
+	talk_ciego(TEXTD78, "d78.als",
 				"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777");
 	pause(4);
-	habla_hacker(TEXTD67, "d67.als");
+	talk_hacker(TEXTD67, "d67.als");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -3223,7 +3223,7 @@ void DrasculaEngine::animation_33_2() {
 	flags[9] = 1;
 
 	pause(12);
-	hablar(TEXTD56, "d56.als" );
+	talk(TEXTD56, "d56.als" );
 	pause(8);
 
 	clearRoom();
@@ -3243,13 +3243,13 @@ void DrasculaEngine::animation_33_2() {
 
 	pause(10);
 
-	habla_ciego(TEXTD68, "d68.als", "44472225500022227555544444472225500022227555544444664466");
+	talk_ciego(TEXTD68, "d68.als", "44472225500022227555544444472225500022227555544444664466");
 	pause(5);
-	habla_hacker(TEXTD57, "d57.als");
+	talk_hacker(TEXTD57, "d57.als");
 	pause(6);
 	_system->delayMillis(1000);
-	habla_ciego(TEXTD77, "d77.als", "56665004444447222550002222755554444466555033022755555000444444444444444444444444444444");
-	habla_hacker(TEXTD65, "d65.als");
+	talk_ciego(TEXTD77, "d77.als", "56665004444447222550002222755554444466555033022755555000444444444444444444444444444444");
+	talk_hacker(TEXTD65, "d65.als");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -3278,7 +3278,7 @@ void DrasculaEngine::animation_33_2() {
 void DrasculaEngine::animation_1_4() {
 	if (flags[21] == 0) {
 		strcpy(nombre_obj[2], "igor");
-		hablar(TEXT275, "275.als");
+		talk(TEXT275, "275.als");
 
 		updateRefresh_pre();
 
@@ -3298,12 +3298,12 @@ void DrasculaEngine::animation_1_4() {
 		flags[18] = 1;
 		flags[20] = 1;
 
-		habla_igor_sentado(TEXTI13, "I13.als");
-		habla_igor_sentado(TEXTI14, "I14.als");
-		habla_igor_sentado(TEXTI15, "I15.als");
+		talk_igor_sentado(TEXTI13, "I13.als");
+		talk_igor_sentado(TEXTI14, "I14.als");
+		talk_igor_sentado(TEXTI15, "I15.als");
 		flags[21] = 1;
 	} else {
-		hablar(TEXT356, "356.als");
+		talk(TEXT356, "356.als");
 
 		updateRefresh_pre();
 
@@ -3321,9 +3321,9 @@ void DrasculaEngine::animation_1_4() {
 		flags[18] = 1;
 		flags[20] = 1;
 
-		hablar(TEXT276, "276.als");
+		talk(TEXT276, "276.als");
 		pause(14);
-		habla_igor_sentado(TEXTI6, "I6.als");
+		talk_igor_sentado(TEXTI6, "I6.als");
 	}
 
 	conversa("op_6.cal");
@@ -3352,8 +3352,8 @@ void DrasculaEngine::animation_5_4(){
 	decompressPic(dir_hare_frente, 1);
 	x_igor = 100;
 	y_igor = 65;
-	habla_igor_frente(TEXTI29, "I29.ALS");
-	habla_igor_frente(TEXTI30, "I30.als");
+	talk_igor_frente(TEXTI29, "I29.ALS");
+	talk_igor_frente(TEXTI30, "I30.als");
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, 1);
 	loadPic("99.alg");
@@ -3382,7 +3382,7 @@ void DrasculaEngine::animation_6_4() {
 	pon_igor();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(40);
-	habla_igor_frente(TEXTI26, "I26.als");
+	talk_igor_frente(TEXTI26, "I26.als");
 	strcpy(num_room, room);
 	clearRoom();
 	loadPic("96.alg");

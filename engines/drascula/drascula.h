@@ -229,8 +229,8 @@ struct DrasculaGameDescription;
 #define X_N9            258
 #define X_N0            267
 #define ESPACIO         250
-#define ALTO_HABLA_HARE  25
-#define ANCHO_HABLA_HARE 23
+#define ALTO_TALK_HARE  25
+#define ANCHO_TALK_HARE 23
 #define VON_BRAUN        1
 #define AZUL_OSCURO       2
 #define VERDE_CLARO       3
@@ -432,7 +432,7 @@ public:
 	int rompo, rompo2;
 	int paso_x, paso_y;
 	int alto_hare, ancho_hare, alto_pies;
-	int alto_habla, ancho_habla;
+	int alto_talk, ancho_talk;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
 	int cerca, lejos;
 	int sentido_final, anda_a_objeto;
@@ -471,10 +471,10 @@ public:
 
 	bool escoba();
 	void Negro();
-	void habla_vb(const char *, const char *);
-	void habla_vbpuerta(const char *dicho, const char *filename);
-	void habla_ciego(const char *, const char *, const char *);
-	void habla_hacker(const char *, const char *);
+	void talk_vb(const char *, const char *);
+	void talk_vbpuerta(const char *dicho, const char *filename);
+	void talk_ciego(const char *, const char *, const char *);
+	void talk_hacker(const char *, const char *);
 	void agarra_objeto(int);
 	void anda_parriba();
 	void anda_pabajo();
@@ -598,24 +598,24 @@ public:
 	void fin_sound_corte();
 	void FundeAlNegro(int VelocidadDeFundido);
 	void pause(int);
-	void habla_dr_grande(const char *dicho, const char *filename);
+	void talk_dr_grande(const char *dicho, const char *filename);
 	void pon_igor();
 	void pon_bj();
 	void pon_dr();
-	void habla_igor_dch(const char *dicho, const char *filename);
-	void habla_dr_dch(const char *dicho, const char *filename);
-	void habla_dr_izq(const char *dicho, const char *filename);
-	void habla_solo(const char *, const char *);
-	void habla_igor_frente(const char *, const char *);
-	void habla_tabernero(const char *dicho, const char *filename);
-	void habla_igorpuerta(const char *dicho, const char *filename);
-	void habla_igor_peluca(const char *dicho, const char *filename);
+	void talk_igor_dch(const char *dicho, const char *filename);
+	void talk_dr_dch(const char *dicho, const char *filename);
+	void talk_dr_izq(const char *dicho, const char *filename);
+	void talk_solo(const char *, const char *);
+	void talk_igor_frente(const char *, const char *);
+	void talk_tabernero(const char *dicho, const char *filename);
+	void talk_igorpuerta(const char *dicho, const char *filename);
+	void talk_igor_peluca(const char *dicho, const char *filename);
 	void hipo(int);
 	void fin_sound();
-	void habla_bj(const char *, const char *);
-	void habla_baul(const char *dicho, const char *filename);
-	void hablar(const char *, const char *);
-	void hablar_sinc(const char *, const char *, const char *);
+	void talk_bj(const char *, const char *);
+	void talk_baul(const char *dicho, const char *filename);
+	void talk(const char *, const char *);
+	void talk_sinc(const char *, const char *, const char *);
 	void cierra_puerta(int nflag, int n_puerta);
 	void playmusic(int p);
 	void stopmusic();
@@ -724,8 +724,8 @@ public:
 	void conversa(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void responde(int);
-	void habla_borracho(const char *dicho, const char *filename);
-	void habla_pianista(const char *dicho, const char *filename);
+	void talk_borracho(const char *dicho, const char *filename);
+	void talk_pianista(const char *dicho, const char *filename);
 
 	void MusicFadeout();
 	void ctvd_end();
@@ -782,9 +782,9 @@ public:
 	void update_56_pre();
 	void update_50();
 	void update_57();
-	void habla_igor_sentado(const char *, const char *);
-	void habla_lobo(const char *dicho, const char *filename);
-	void habla_mus(const char *dicho, const char *filename);
+	void talk_igor_sentado(const char *, const char *);
+	void talk_lobo(const char *dicho, const char *filename);
+	void talk_mus(const char *dicho, const char *filename);
 	void room_58(int);
 	void room_59(int);
 	bool room_60(int);
@@ -814,11 +814,11 @@ public:
 	void animation_18_6();
 	void animation_19_6();
 	void activa_pendulo();
-	void habla_pen(const char *, const char *);
-	void habla_pen2(const char *, const char *);
-	void habla_taber2(const char *, const char *);
-	void habla_bj_cama(const char *dicho, const char * filename);
-	void habla_htel(const char *dicho, const char *filename);
+	void talk_pen(const char *, const char *);
+	void talk_pen2(const char *, const char *);
+	void talk_taber2(const char *, const char *);
+	void talk_bj_cama(const char *dicho, const char * filename);
+	void talk_htel(const char *dicho, const char *filename);
 
 };
 
