@@ -87,7 +87,7 @@ add_engine agi "AGI" yes
 add_engine agos "AGOS" yes
 add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" no
-add_engine drascula "Drascula: The Vampire Strikes Back" no
+add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
 add_engine igor "Igor: Objective Uikokahonia" no
 add_engine kyra "Legend of Kyrandia" yes
