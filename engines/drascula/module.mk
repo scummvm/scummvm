@@ -3,7 +3,8 @@ MODULE := engines/drascula
 MODULE_OBJS = \
 	animation.o \
 	detection.o \
-	drascula.o
+	drascula.o \
+	rooms.o
 
 
 # This module can be built as a plugin
