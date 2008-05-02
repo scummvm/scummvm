@@ -501,20 +501,6 @@ void KyraEngine_HoF::runSceneScript4(int unk1) {
 		_emc->run(&_sceneScriptState);
 }
 
-void KyraEngine_HoF::runSceneScript6() {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::runSceneScript6()");
-	_emc->init(&_sceneScriptState, &_sceneScriptData);
-
-	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
-	_sceneScriptState.regs[1] = _mouseX;
-	_sceneScriptState.regs[2] = _mouseY;
-	_sceneScriptState.regs[4] = _itemInHand;
-
-	_emc->start(&_sceneScriptState, 6);
-	while (_emc->isValid(&_sceneScriptState))
-		_emc->run(&_sceneScriptState);
-}
-
 void KyraEngine_HoF::runSceneScript7() {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::runSceneScript7()");
 	int oldPage = _screen->_curPage;

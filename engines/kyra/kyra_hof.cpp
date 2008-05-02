@@ -108,7 +108,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_inventorySaved = false;
 	_unkBuf200kByte = 0;
 	memset(&_sceneShapeTable, 0, sizeof(_sceneShapeTable));
-	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
 	_talkObjectList = 0;
 	_shapeDescTable = 0;

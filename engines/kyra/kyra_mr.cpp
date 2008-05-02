@@ -69,8 +69,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_text = 0;
 	_commandLineY = 189;
 	_inventoryState = false;
-	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
-	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 	memset(_characterAnimTable, 0, sizeof(_characterAnimTable));
 	_overwriteSceneFacing = false;
 	_maskPageMinY = _maskPageMaxY = 0;
@@ -167,8 +165,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 		i->_value = 0;
 	}
 	_gameShapes.clear();
-
-	_emc->unload(&_sceneScriptData);
 
 	delete [] _sceneStrings;
 	delete [] _talkObjectList;

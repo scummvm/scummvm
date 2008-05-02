@@ -339,14 +339,10 @@ private:
 	int runSceneScript2();
 	bool _noStartupChat;
 	void runSceneScript4(int unk1);
-	void runSceneScript6();
 	void runSceneScript8();
 
 	int _sceneMinX, _sceneMaxX;
 	int _maskPageMinY, _maskPageMaxY;
-
-	EMCState _sceneScriptState;
-	EMCData _sceneScriptData;
 
 	int trySceneChange(int *moveTable, int unk1, int unk2);
 	int checkSceneChange();

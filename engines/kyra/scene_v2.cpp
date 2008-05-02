@@ -70,6 +70,22 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 	}
 }
 
+void KyraEngine_v2::runSceneScript6() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript6()");
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
+
+	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	_sceneScriptState.regs[3] = _itemInHand;
+
+	_emc->start(&_sceneScriptState, 6);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
+}
+
+#pragma mark - pathfinder
+
 int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= ~3; toX &= ~3;

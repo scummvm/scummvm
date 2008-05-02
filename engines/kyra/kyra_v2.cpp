@@ -41,6 +41,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_characterShapeFile = -1;
 
 	_updateCharPosNextUpdate = 0;
+
+	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
+	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -51,6 +54,8 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_gameShapes.clear();
 
 	delete [] _itemList;
+
+	_emc->unload(&_sceneScriptData);
 }
 
 void KyraEngine_v2::updateInput() {

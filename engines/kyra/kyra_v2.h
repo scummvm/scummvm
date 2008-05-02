@@ -151,6 +151,13 @@ protected:
 
 	virtual void enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) = 0;
 
+	void runSceneScript6();
+
+	EMCData _sceneScriptData;
+	EMCState _sceneScriptState;
+
+	virtual int trySceneChange(int *moveTable, int unk1, int unk2) = 0;
+
 	// Animation
 	virtual void restorePage3() = 0;
 
