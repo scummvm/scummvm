@@ -825,7 +825,7 @@ private:
 };
 
 extern const char *_text[][501];
-extern const char *_textd[][84];
+extern const char *_textd[][79];
 extern const char *_textb[][15];
 extern const char *_textbj[][29];
 extern const char *_texte[][24];
