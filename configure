@@ -539,7 +539,7 @@ Configuration:
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
   --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
-  --mandir=DIR           directory to install the manpage in [PREFIX/man]
+  --mandir=DIR           directory to install the manpage in [PREFIX/share/man]
   --datadir=DIR          directory to install the data files in [PREFIX/share]
 
 Special configuration feature:
