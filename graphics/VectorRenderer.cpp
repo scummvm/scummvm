@@ -36,20 +36,20 @@ VectorRenderer *createRenderer() {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy ) {
+drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
-	int xdir = ( x2 > x1 ) ? 1 : -1;
+	int xdir = (x2 > x1) ? 1 : -1;
 
 	*ptr = (PixelType)_color;
 
-	if ( dx > dy ) {
+	if (dx > dy) {
 		int ddy = dy * 2;
-		int dysub = ddy - ( dx * 2 );
+		int dysub = ddy - (dx * 2);
 		int error_term = ddy - dx;
 
-		while ( dx-- ) {
-			if ( error_term >= 0 ) {
+		while (dx--) {
+			if (error_term >= 0) {
 				ptr += pitch;
 				error_term += dysub;
 			} else {
@@ -61,11 +61,11 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy ) {
 		}
 	} else {
 		int ddx = dx * 2;
-		int dxsub = ddx - ( dy * 2 );
+		int dxsub = ddx - (dy * 2);
 		int error_term = ddx - dy;
 
-		while ( dy-- ) {
-			if ( error_term >= 0 ) {
+		while (dy--) {
+			if (error_term >= 0) {
 				ptr += xdir;
 				error_term += dxsub;
 			} else {
@@ -83,18 +83,18 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy ) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
-drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
+drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy)
 {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
-	int xdir = ( x2 > x1 ) ? 1 : -1;
+	int xdir = (x2 > x1) ? 1 : -1;
 
 	int error_line, error_tmp, weight;
 	int error_total = 0;
 	uint8 line_r, line_g, line_b;
 	uint8 bg_r, bg_g, bg_b;
 
-	colorToRGB<PixelFormat>( _color, line_r, line_g, line_b );
+	colorToRGB<PixelFormat>(_color, line_r, line_g, line_b);
 
 	uint line_lum = (line_r >> 2) + (line_g >> 1) + (line_b >> 3);
 	uint bg_lum;
@@ -103,44 +103,44 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
 	*ptr = (PixelType)_color; 
 
 #define __WULINE_PUTPIXEL( pixel_ptr ) { \
-		colorToRGB<PixelFormat>( (PixelType)*(pixel_ptr), bg_r, bg_g, bg_b ); \
+		colorToRGB<PixelFormat>((PixelType)*(pixel_ptr), bg_r, bg_g, bg_b); \
 		bg_lum = (bg_r >> 2) + (bg_g >> 1) + (bg_b >> 3); \
-		weight = ( line_lum < bg_lum ) ? error_total >> 8 : (error_total >> 8)^0xFF; \
+		weight = (line_lum < bg_lum) ? error_total >> 8 : (error_total >> 8)^0xFF; \
 		*(pixel_ptr) = RGBToColor<PixelFormat>( \
-			antialiasingBlendWeight( line_r, bg_r, weight ), \
-			antialiasingBlendWeight( line_g, bg_g, weight ), \
-			antialiasingBlendWeight( line_b, bg_b, weight ) ); \
+			antialiasingBlendWeight(line_r, bg_r, weight), \
+			antialiasingBlendWeight(line_g, bg_g, weight), \
+			antialiasingBlendWeight(line_b, bg_b, weight)); \
 	}
 
 	// draw from top to bottom while fading out.
 	// optimized for mostly vertical lines
-	if ( dy > dx ) {
-		error_line = (dx << 16)/dy;
-		while ( --dy ) {
+	if (dy > dx) {
+		error_line = (dx << 16) / dy;
+		while (--dy) {
 			error_tmp = error_total;
 			error_total += error_line;
 
-			if ( error_total <= error_tmp )
+			if (error_total <= error_tmp)
 				ptr += xdir; // move right or left
 
 			ptr += pitch; // move down			
 
-			__WULINE_PUTPIXEL( ptr );
-			__WULINE_PUTPIXEL( ptr+xdir );
+			__WULINE_PUTPIXEL(ptr);
+			__WULINE_PUTPIXEL(ptr + xdir);
 		}
 	} else { // optimized for mostly horizontal lines
-		error_line = (dy << 16)/dx;
-		while ( --dx ) {
+		error_line = (dy << 16) / dx;
+		while (--dx) {
 			error_tmp = error_total;
 			error_total += error_line;
 
-			if ( error_total <= error_tmp )
+			if (error_total <= error_tmp)
 				ptr += pitch; // move down
 
 			ptr += xdir; // move left or right	
 
-			__WULINE_PUTPIXEL( ptr );
-			__WULINE_PUTPIXEL( ptr + pitch );
+			__WULINE_PUTPIXEL(ptr);
+			__WULINE_PUTPIXEL(ptr + pitch);
 		}	
 	} // end of line direction cases
 
@@ -151,46 +151,46 @@ drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy )
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLine( int x1, int x2, int y1, int y2 ) {
+drawLine(int x1, int x2, int y1, int y2) {
 	// we draw from top to bottom
-	if ( y2 < y1 ) {
-		SWAP( x1, x2 );
-		SWAP( y1, y2 );
+	if (y2 < y1) {
+		SWAP(x1, x2);
+		SWAP(y1, y2);
 	}
 
 	int dx = ABS(x2 - x1);
 	int dy = ABS(y2 - y1);
 
 	// this is a point, not a line. stoopid.
-	if ( dy == 0 && dx == 0 ) 
+	if (dy == 0 && dx == 0) 
 		return;
 
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
 
-	if ( dy == 0 ) { // horizontal lines
+	if (dy == 0) { // horizontal lines
 		// these can be filled really fast with a single memset.
 		// TODO: Platform specific ASM in set_to, would make this thing fly 
 		Common::set_to(ptr, ptr + dx + 1, (PixelType)_color);
 
-	} else if ( dx == 0 ) { // vertical lines
+	} else if (dx == 0) { // vertical lines
 		// these ones use a static pitch increase.
 		while (y1++ <= y2) {
 			*ptr = (PixelType)_color;
 			ptr += pitch;
 		}
 
-	} else if ( ABS(dx) == ABS(dy) ) { // diagonal lines
+	} else if (ABS(dx) == ABS(dy)) { // diagonal lines
 		// these ones also use a fixed pitch increase
-		pitch += ( x2 > x1 ) ? 1 : -1;
+		pitch += (x2 > x1) ? 1 : -1;
 
-		while ( dy-- ) {
+		while (dy--) {
 			*ptr = (PixelType)_color;
 			ptr += pitch;
 		}
 
 	} else { // generic lines, use the standard algorithm...
-		drawLineAlg( x1, x2, y1, y2, dx, dy );
+		drawLineAlg(x1, x2, y1, y2, dx, dy);
 	}
 }
 

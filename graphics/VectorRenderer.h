@@ -57,7 +57,7 @@ public:
 	 * @param y1 Vertical (Y) coordinate for the line start
 	 * @param y2 Vertical (Y) coordinate for the line end
 	 */
-	virtual void drawLine( int x1, int x2, int y1, int y2 ) = 0;
+	virtual void drawLine(int x1, int x2, int y1, int y2) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -68,7 +68,7 @@ public:
 	 * @return integer with the active bytes per pixel
 	 */
 	virtual uint16 surfacePitch() {
-		return _activeSurface->pitch/_activeSurface->bytesPerPixel;
+		return _activeSurface->pitch / _activeSurface->bytesPerPixel;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public:
 	 * @param g	value of the green color byte
 	 * @param b	value of the blue color byte
 	 */
-	virtual void setColor( uint8 r, uint8 g, uint8 b ) = 0;
+	virtual void setColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
 	 * Set the active painting color for the renderer, including alpha
@@ -102,7 +102,7 @@ public:
 	 * @param b	value of the blue color byte
 	 * @param a value of the alpha byte
 	 */
-	virtual void setColor( uint8 r, uint8 g, uint8 b, uint8 a ) = 0;
+	virtual void setColor(uint8 r, uint8 g, uint8 b, uint8 a) = 0;
 
 protected:
 
@@ -118,9 +118,9 @@ protected:
 	 * @param dx Horizontal (X) increasement.
 	 * @param dy Vertical (Y) increasement.
 	 */
-	virtual void drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy ) = 0;
+	virtual void drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) = 0;
 
-	virtual void drawCircleAlg( int x, int y, int r ) = 0;
+	virtual void drawCircleAlg(int x, int y, int r) = 0;
 
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
 };
@@ -152,19 +152,19 @@ class VectorRendererSpec : public VectorRenderer {
 	/**
 	 * @see VectorRenderer::drawLine()
 	 */
-	void drawLine( int x1, int x2, int y1, int y2 );
+	void drawLine(int x1, int x2, int y1, int y2);
 
 	/**
 	 * @see VectorRenderer::setColor()
 	 */
-	void setColor( uint8 r, uint8 g, uint8 b, uint8 a ) {
+	void setColor(uint8 r, uint8 g, uint8 b, uint8 a) {
 		_color = ARGBToColor<PixelFormat>(r, g, b, a);
 	}
 
 	/**
 	 * @see VectorRenderer::setColor()
 	 */
-	void setColor( uint8 r, uint8 g, uint8 b ) {
+	void setColor(uint8 r, uint8 g, uint8 b) {
 		_color = RGBToColor<PixelFormat>(r, g, b);
 	}
 
@@ -179,9 +179,9 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	virtual void drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy );
+	virtual void drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy);
 
-	virtual void drawCircleAlg( int x, int y, int r ) {}
+	virtual void drawCircleAlg(int x, int y, int r) {}
 
 	PixelType _color; /** Color currently being used to draw on the renderer */
 };
@@ -211,7 +211,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	void drawLineAlg( int x1, int x2, int y1, int y2, int dx, int dy );
+	void drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy);
 
 	/**
 	 * Calculates the blending weight (relative luminosity) value for
@@ -223,12 +223,12 @@ protected:
 	 * @param weight Weight of the pixel as calculated by Wu's algorithm.
 	 * @return The new color value for the given component.
 	 */
-	inline uint8 antialiasingBlendWeight( uint8 line_color, uint8 bg_color, uint weight ) {
+	inline uint8 antialiasingBlendWeight(uint8 line_color, uint8 bg_color, uint weight) {
 		uint8 value;
-		if ( bg_color > line_color ) {
-			value = weight / 255 * ( bg_color - line_color ) + bg_color;  
+		if (bg_color > line_color) {
+			value = weight / 255 * (bg_color - line_color) + bg_color;  
 		} else {
-			value = weight / 255 * ( line_color - bg_color ) + line_color;
+			value = weight / 255 * (line_color - bg_color) + line_color;
 		}
 		return value;
 	}
