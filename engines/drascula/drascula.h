@@ -820,7 +820,22 @@ public:
 	void talk_bj_cama(const char *dicho, const char * filename);
 	void talk_htel(const char *dicho, const char *filename);
 
+private:
+	int _lang;
 };
+
+extern const char *_text[][501];
+extern const char *_textd[][84];
+extern const char *_textb[][15];
+extern const char *_textbj[][29];
+extern const char *_texte[][24];
+extern const char *_texti[][33];
+extern const char *_textl[][32];
+extern const char *_textp[][20];
+extern const char *_textt[][25];
+extern const char *_textvb[][63];
+extern const char *_textsys[][4];
+extern const char *_texthis[][5];
 
 } // End of namespace Drascula
 

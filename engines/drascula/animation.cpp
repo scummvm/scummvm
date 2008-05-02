@@ -24,7 +24,6 @@
  */
 
 #include "drascula/drascula.h"
-#include "drascula/texts.h"
 
 namespace Drascula {
 
@@ -163,7 +162,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 
-		talk_dr_grande(TEXTD1, "D1.als");
+		talk_dr_grande(_textd[_lang][1], "D1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -186,17 +185,17 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_igor_dch(TEXTI8, "I8.als");
+		talk_igor_dch(_texti[_lang][8], "I8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_dr_izq(TEXTD2, "d2.als");
+		talk_dr_izq(_textd[_lang][2], "d2.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(TEXTD3, "d3.als");
+		talk_dr_izq(_textd[_lang][3], "d3.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib.bin", 16);
@@ -211,13 +210,13 @@ void DrasculaEngine::animation_1_1() {
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(10);
-		talk_solo(TEXTD4,"d4.als");
+		talk_solo(_textd[_lang][4],"d4.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan1.alg");
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_solo(TEXTD5, "d5.als");
+		talk_solo(_textd[_lang][5], "d5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
@@ -228,7 +227,7 @@ void DrasculaEngine::animation_1_1() {
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(20);
-		talk_solo(TEXTD6, "d6.als");
+		talk_solo(_textd[_lang][6], "d6.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
@@ -241,13 +240,13 @@ void DrasculaEngine::animation_1_1() {
 		pause(20);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_solo(TEXTD7, "d7.als");
+		talk_solo(_textd[_lang][7], "d7.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan3.alg");
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_solo(TEXTD8, "d8.als");
+		talk_solo(_textd[_lang][8], "d8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -257,17 +256,17 @@ void DrasculaEngine::animation_1_1() {
 		stopmusic();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_dch(TEXTI9, "I9.als");
+		talk_igor_dch(_texti[_lang][9], "I9.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(TEXTD9, "d9.als");
+		talk_dr_izq(_textd[_lang][9], "d9.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_dch(TEXTI10, "I10.als");
+		talk_igor_dch(_texti[_lang][10], "I10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		playmusic(11);
-		talk_dr_izq(TEXTD10, "d10.als");
+		talk_dr_izq(_textd[_lang][10], "d10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("rayo1.bin", 16);
@@ -294,10 +293,10 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 1;
-		talk_igor_dch(TEXTI1, "I1.als");
+		talk_igor_dch(_texti[_lang][1], "I1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_dch(TEXTD11, "d11.als");
+		talk_dr_dch(_textd[_lang][11], "d11.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -311,7 +310,7 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_dr_izq(TEXTD12, "d12.als");
+		talk_dr_izq(_textd[_lang][12], "d12.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -325,11 +324,11 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_igor_dch(TEXTI2, "I2.als");
+		talk_igor_dch(_texti[_lang][2], "I2.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(13);
-		talk_dr_dch(TEXTD13,"d13.als");
+		talk_dr_dch(_textd[_lang][13],"d13.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -343,32 +342,32 @@ void DrasculaEngine::animation_1_1() {
 		pon_igor();
 		pon_dr();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk_dr_izq(TEXTD14, "d14.als");
+		talk_dr_izq(_textd[_lang][14], "d14.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_dch(TEXTI3, "I3.als");
+		talk_igor_dch(_texti[_lang][3], "I3.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(TEXTD15, "d15.als");
+		talk_dr_izq(_textd[_lang][15], "d15.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_dch(TEXTI4, "I4.als");
+		talk_igor_dch(_texti[_lang][4], "I4.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(TEXTD16, "d16.als");
+		talk_dr_izq(_textd[_lang][16], "d16.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_dch(TEXTI5, "I5.als");
+		talk_igor_dch(_texti[_lang][5], "I5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_igor = 3;
-		talk_dr_izq(TEXTD17, "d17.als");
+		talk_dr_izq(_textd[_lang][17], "d17.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(18);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_frente(TEXTI6, "I6.als");
+		talk_igor_frente(_texti[_lang][6], "I6.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		FundeAlNegro(0);
@@ -475,7 +474,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		talk_tabernero(TEXTT22, "T22.als");
+		talk_tabernero(_textt[_lang][22], "T22.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -500,7 +499,7 @@ void DrasculaEngine::animation_2_1() {
 
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_solo(TEXTBJ1, "BJ1.als");
+		talk_solo(_textbj[_lang][1], "BJ1.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -514,7 +513,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = AMARILLO;
-		talk_solo(TEXT214, "214.als");
+		talk_solo(_text[_lang][214], "214.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -560,23 +559,23 @@ void DrasculaEngine::animation_2_1() {
 		hare_x = 100;
 		hare_y = 95;
 
-		talk_bj(TEXTBJ2, "BJ2.als");
-		talk(TEXT215, "215.als");
-		talk_bj(TEXTBJ3, "BJ3.als");
-		talk(TEXT216, "216.als");
-		talk_bj(TEXTBJ4, "BJ4.als");
-		talk_bj(TEXTBJ5, "BJ5.als");
-		talk_bj(TEXTBJ6, "BJ6.als");
-		talk(TEXT217, "217.als");
-		talk_bj(TEXTBJ7, "BJ7.als");
-		talk(TEXT218, "218.als");
-		talk_bj(TEXTBJ8, "BJ8.als");
-		talk(TEXT219, "219.als");
-		talk_bj(TEXTBJ9, "BJ9.als");
-		talk(TEXT220, "220.als");
-		talk(TEXT221, "221.als");
-		talk_bj(TEXTBJ10, "BJ10.als");
-		talk(TEXT222, "222.als");
+		talk_bj(_textbj[_lang][2], "BJ2.als");
+		talk(_text[_lang][215], "215.als");
+		talk_bj(_textbj[_lang][3], "BJ3.als");
+		talk(_text[_lang][216], "216.als");
+		talk_bj(_textbj[_lang][4], "BJ4.als");
+		talk_bj(_textbj[_lang][5], "BJ5.als");
+		talk_bj(_textbj[_lang][6], "BJ6.als");
+		talk(_text[_lang][217], "217.als");
+		talk_bj(_textbj[_lang][7], "BJ7.als");
+		talk(_text[_lang][218], "218.als");
+		talk_bj(_textbj[_lang][8], "BJ8.als");
+		talk(_text[_lang][219], "219.als");
+		talk_bj(_textbj[_lang][9], "BJ9.als");
+		talk(_text[_lang][220], "220.als");
+		talk(_text[_lang][221], "221.als");
+		talk_bj(_textbj[_lang][10], "BJ10.als");
+		talk(_text[_lang][222], "222.als");
 		anima("gaf.bin", 15);
 		anima("bjb.bin", 14);
 		playmusic(9);
@@ -595,7 +594,7 @@ void DrasculaEngine::animation_2_1() {
 		pause(120);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_solo(TEXT223, "223.als");
+		talk_solo(_text[_lang][223], "223.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = BLANCO;
@@ -604,7 +603,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(110);
-		talk_solo(TEXTBJ11, "BJ11.als");
+		talk_solo(_textbj[_lang][11], "BJ11.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
@@ -620,10 +619,10 @@ void DrasculaEngine::animation_2_1() {
 		pause(60);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk(TEXT224, "224.als");
+		talk(_text[_lang][224], "224.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_bj(TEXTBJ12, "BJ12.als");
+		talk_bj(_textbj[_lang][12], "BJ12.als");
 		lleva_al_hare(157, 98 + alto_hare);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -639,14 +638,14 @@ void DrasculaEngine::animation_2_1() {
 		pause(8);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk(TEXT225, "225.als");
+		talk(_text[_lang][225], "225.als");
 		pause(76);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk(TEXT226, "226.als");
+		talk(_text[_lang][226], "226.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
@@ -654,7 +653,7 @@ void DrasculaEngine::animation_2_1() {
 		pause(30);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk(TEXT227,"227.als");
+		talk(_text[_lang][227],"227.als");
 		FundeAlNegro(0);
 		break;
 	}
@@ -664,26 +663,26 @@ void DrasculaEngine::animation_3_1() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(TEXT192, "192.als");
-	talk_tabernero(TEXTT1, "t1.als");
-	talk(TEXT193, "193.als");
-	talk_tabernero(TEXTT2, "t2.als");
-	talk(TEXT194, "194.als");
-	talk_tabernero(TEXTT3, "t3.als");
-	talk(TEXT195, "195.als");
-	talk_tabernero(TEXTT4, "t4.als");
-	talk(TEXT196, "196.als");
-	talk_tabernero(TEXTT5, "t5.als");
-	talk_tabernero(TEXTT6, "t6.als");
-	talk(TEXT197, "197.als");
-	talk_tabernero(TEXTT7, "t7.als");
-	talk(TEXT198, "198.als");
-	talk_tabernero(TEXTT8, "t8.als");
-	talk(TEXT199, "199.als");
-	talk_tabernero(TEXTT9, "t9.als");
-	talk(TEXT200, "200.als");
-	talk(TEXT201, "201.als");
-	talk(TEXT202, "202.als");
+	talk(_text[_lang][192], "192.als");
+	talk_tabernero(_textt[_lang][1], "t1.als");
+	talk(_text[_lang][193], "193.als");
+	talk_tabernero(_textt[_lang][2], "t2.als");
+	talk(_text[_lang][194], "194.als");
+	talk_tabernero(_textt[_lang][3], "t3.als");
+	talk(_text[_lang][195], "195.als");
+	talk_tabernero(_textt[_lang][4], "t4.als");
+	talk(_text[_lang][196], "196.als");
+	talk_tabernero(_textt[_lang][5], "t5.als");
+	talk_tabernero(_textt[_lang][6], "t6.als");
+	talk(_text[_lang][197], "197.als");
+	talk_tabernero(_textt[_lang][7], "t7.als");
+	talk(_text[_lang][198], "198.als");
+	talk_tabernero(_textt[_lang][8], "t8.als");
+	talk(_text[_lang][199], "199.als");
+	talk_tabernero(_textt[_lang][9], "t9.als");
+	talk(_text[_lang][200], "200.als");
+	talk(_text[_lang][201], "201.als");
+	talk(_text[_lang][202], "202.als");
 
 	flags[0] = 1;
 
@@ -695,7 +694,7 @@ void DrasculaEngine::animation_4_1() {
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(TEXT205,"205.als");
+	talk(_text[_lang][205],"205.als");
 
 	updateRefresh_pre();
 
@@ -715,14 +714,14 @@ void DrasculaEngine::animation_4_1() {
 	stopmusic();
 	flags[11] = 1;
 
-	talk_pianista(TEXTP1, "p1.als");
-	talk(TEXT206, "206.als");
-	talk_pianista(TEXTP2, "p2.als");
-	talk(TEXT207, "207.als");
-	talk_pianista(TEXTP3, "p3.als");
-	talk(TEXT208, "208.als");
-	talk_pianista(TEXTP4, "p4.als");
-	talk(TEXT209, "209.als");
+	talk_pianista(_textp[_lang][1], "p1.als");
+	talk(_text[_lang][206], "206.als");
+	talk_pianista(_textp[_lang][2], "p2.als");
+	talk(_text[_lang][207], "207.als");
+	talk_pianista(_textp[_lang][3], "p3.als");
+	talk(_text[_lang][208], "208.als");
+	talk_pianista(_textp[_lang][4], "p4.als");
+	talk(_text[_lang][209], "209.als");
 
 	flags[11] = 0;
 	loadPic("97.alg");
@@ -831,7 +830,7 @@ void DrasculaEngine::animation_4_2() {
 	flags[9] = 1;
 
 	pause(12);
-	talk(TEXTD56, "d56.als");
+	talk(_textd[_lang][56], "d56.als");
 	pause(8);
 
 	clearRoom();
@@ -851,30 +850,30 @@ void DrasculaEngine::animation_4_2() {
 
 	pause(10);
 
-	talk_ciego(TEXTD68, "d68.als", "44472225500022227555544444664447222550002222755554444466");
+	talk_ciego(_textd[_lang][68], "d68.als", "44472225500022227555544444664447222550002222755554444466");
 	pause(5);
-	talk_hacker(TEXTD57, "d57.als");
+	talk_hacker(_textd[_lang][57], "d57.als");
 	pause(6);
-	talk_ciego(TEXTD69,"d69.als","444722255000222275555444446655033336666664464402256555005504450005446");
+	talk_ciego(_textd[_lang][69],"d69.als","444722255000222275555444446655033336666664464402256555005504450005446");
 	pause(4);
-	talk_hacker(TEXTD58,"d58.als");
-	talk_ciego(TEXTD70,"d70.als", "4447222550002222755554444466550333226220044644550044755665500440006655556666655044744656550446470046");
+	talk_hacker(_textd[_lang][58],"d58.als");
+	talk_ciego(_textd[_lang][70],"d70.als", "4447222550002222755554444466550333226220044644550044755665500440006655556666655044744656550446470046");
 	delay(14);
-	talk_hacker(TEXTD59,"d59.als");
-	talk_ciego(TEXTD71,"d71.als", "550330227556444744446660004446655544444722255000222275555444446644444");
-	talk_hacker(TEXTD60,"d60.als");
-	talk_ciego(TEXTD72,"d72.als", "55033022755644455550444744400044504447222550002222755554444466000");
-	talk_hacker(TEXTD61,"d61.als");
-	talk_ciego(TEXTD73,"d73.als", "55033022755644444447227444466644444722255000222275555444446664404446554440055655022227500544446044444446");
-	talk_hacker(TEXTD62,"d62.als");
-	talk_ciego(TEXTD74,"d74.als", "55033022755644444472244472225500022227555544444662550002222755444446666055522275550005550022200222000222666");
-	talk_hacker(TEXTD63,"d63.als");
-	talk_ciego(TEXTD75,"d75.als", "44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555");
+	talk_hacker(_textd[_lang][59],"d59.als");
+	talk_ciego(_textd[_lang][71],"d71.als", "550330227556444744446660004446655544444722255000222275555444446644444");
+	talk_hacker(_textd[_lang][60],"d60.als");
+	talk_ciego(_textd[_lang][72],"d72.als", "55033022755644455550444744400044504447222550002222755554444466000");
+	talk_hacker(_textd[_lang][61],"d61.als");
+	talk_ciego(_textd[_lang][73],"d73.als", "55033022755644444447227444466644444722255000222275555444446664404446554440055655022227500544446044444446");
+	talk_hacker(_textd[_lang][62],"d62.als");
+	talk_ciego(_textd[_lang][74],"d74.als", "55033022755644444472244472225500022227555544444662550002222755444446666055522275550005550022200222000222666");
+	talk_hacker(_textd[_lang][63],"d63.als");
+	talk_ciego(_textd[_lang][75],"d75.als", "44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555");
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	_system->delayMillis(1);
-	talk_hacker(TEXTD64, "d64.als");
-	talk_ciego(TEXTD76, "d76.als", "5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444");
+	talk_hacker(_textd[_lang][64], "d64.als");
+	talk_ciego(_textd[_lang][76], "d76.als", "5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -901,29 +900,29 @@ void DrasculaEngine::animation_4_2() {
 }
 
 void DrasculaEngine::animation_8_2() {
-	talk_pianista(TEXTP6, "P6.als");
-	talk(TEXT358, "358.als");
-	talk_pianista(TEXTP7, "P7.als");
-	talk_pianista(TEXTP8, "P8.als");
+	talk_pianista(_textp[_lang][6], "P6.als");
+	talk(_text[_lang][358], "358.als");
+	talk_pianista(_textp[_lang][7], "P7.als");
+	talk_pianista(_textp[_lang][8], "P8.als");
 }
 
 void DrasculaEngine::animation_9_2() {
-	talk_pianista(TEXTP9, "P9.als");
-	talk_pianista(TEXTP10, "P10.als");
-	talk_pianista(TEXTP11, "P11.als");
+	talk_pianista(_textp[_lang][9], "P9.als");
+	talk_pianista(_textp[_lang][10], "P10.als");
+	talk_pianista(_textp[_lang][11], "P11.als");
 }
 
 void DrasculaEngine::animation_10_2() {
-	talk_pianista(TEXTP12, "P12.als");
-	talk(TEXT361, "361.als");
+	talk_pianista(_textp[_lang][12], "P12.als");
+	talk(_text[_lang][361], "361.als");
 	pause(40);
-	talk_pianista(TEXTP13, "P13.als");
-	talk(TEXT362, "362.als");
-	talk_pianista(TEXTP14, "P14.als");
-	talk(TEXT363, "363.als");
-	talk_pianista(TEXTP15, "P15.als");
-	talk(TEXT364, "364.als");
-	talk_pianista(TEXTP16, "P16.als");
+	talk_pianista(_textp[_lang][13], "P13.als");
+	talk(_text[_lang][362], "362.als");
+	talk_pianista(_textp[_lang][14], "P14.als");
+	talk(_text[_lang][363], "363.als");
+	talk_pianista(_textp[_lang][15], "P15.als");
+	talk(_text[_lang][364], "364.als");
+	talk_pianista(_textp[_lang][16], "P16.als");
 }
 
 void DrasculaEngine::animation_14_2() {
@@ -967,18 +966,18 @@ void DrasculaEngine::animation_14_2() {
 }
 
 void DrasculaEngine::animation_15_2() {
-	talk_borracho(TEXTB8, "B8.als");
+	talk_borracho(_textb[_lang][8], "B8.als");
 	pause(7);
-	talk_borracho(TEXTB9, "B9.als");
-	talk_borracho(TEXTB10, "B10.als");
-	talk_borracho(TEXTB11, "B11.als");
+	talk_borracho(_textb[_lang][9], "B9.als");
+	talk_borracho(_textb[_lang][10], "B10.als");
+	talk_borracho(_textb[_lang][11], "B11.als");
 }
 
 void DrasculaEngine::animation_16_2() {
 	int l;
 
-	talk_borracho(TEXTB12, "B12.als");
-	talk(TEXT371, "371.als");
+	talk_borracho(_textb[_lang][12], "B12.als");
+	talk(_text[_lang][371], "371.als");
 
 	clearRoom();
 
@@ -992,7 +991,7 @@ void DrasculaEngine::animation_16_2() {
 	loadPic("his1.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	centra_texto(HIS1, 180, 180);
+	centra_texto(_texthis[_lang][1], 180, 180);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
@@ -1012,7 +1011,7 @@ void DrasculaEngine::animation_16_2() {
 	loadPic("his2.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	centra_texto(HIS2, 180, 180);
+	centra_texto(_texthis[_lang][2], 180, 180);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
@@ -1032,7 +1031,7 @@ void DrasculaEngine::animation_16_2() {
 	loadPic("his3.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	centra_texto(HIS3, 180, 180);
+	centra_texto(_texthis[_lang][3], 180, 180);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
@@ -1052,7 +1051,7 @@ void DrasculaEngine::animation_16_2() {
 	decompressPic(dir_dibujo3, 1);
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo3, dir_zona_pantalla);
-	centra_texto(HIS1, 180, 180);
+	centra_texto(_texthis[_lang][1], 180, 180);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
@@ -1092,30 +1091,30 @@ asco:
 }
 
 void DrasculaEngine::animation_17_2() {
-	talk_borracho(TEXTB13, "B13.als");
-	talk_borracho(TEXTB14, "B14.als");
+	talk_borracho(_textb[_lang][13], "B13.als");
+	talk_borracho(_textb[_lang][14], "B14.als");
 	flags[40] = 1;
 }
 
 void DrasculaEngine::animation_19_2() {
-	talk_vbpuerta(TEXTVB5, "VB5.als");
+	talk_vbpuerta(_textvb[_lang][5], "VB5.als");
 }
 
 void DrasculaEngine::animation_20_2() {
-	talk_vbpuerta(TEXTVB7, "VB7.als");
-	talk_vbpuerta(TEXTVB8, "VB8.als");
-	talk(TEXT383, "383.als");
-	talk_vbpuerta(TEXTVB9, "VB9.als");
-	talk(TEXT384, "384.als");
-	talk_vbpuerta(TEXTVB10, "VB10.als");
-	talk(TEXT385, "385.als");
-	talk_vbpuerta(TEXTVB11, "VB11.als");
+	talk_vbpuerta(_textvb[_lang][7], "VB7.als");
+	talk_vbpuerta(_textvb[_lang][8], "VB8.als");
+	talk(_text[_lang][383], "383.als");
+	talk_vbpuerta(_textvb[_lang][9], "VB9.als");
+	talk(_text[_lang][384], "384.als");
+	talk_vbpuerta(_textvb[_lang][10], "VB10.als");
+	talk(_text[_lang][385], "385.als");
+	talk_vbpuerta(_textvb[_lang][11], "VB11.als");
 	if (flags[23] == 0) {
-		talk(TEXT350, "350.als");
-		talk_vbpuerta(TEXTVB57, "VB57.als");
+		talk(_text[_lang][350], "350.als");
+		talk_vbpuerta(_textvb[_lang][57], "VB57.als");
 	} else {
-		talk(TEXT386, "386.als");
-		talk_vbpuerta(TEXTVB12, "VB12.als");
+		talk(_text[_lang][386], "386.als");
+		talk_vbpuerta(_textvb[_lang][12], "VB12.als");
 		flags[18] = 0;
 		flags[14] = 1;
 		abre_puerta(15, 1);
@@ -1132,7 +1131,7 @@ void DrasculaEngine::animation_20_2() {
 }
 
 void DrasculaEngine::animation_21_2() {
-	talk_vbpuerta(TEXTVB6, "VB6.als");
+	talk_vbpuerta(_textvb[_lang][6], "VB6.als");
 }
 
 void DrasculaEngine::animation_23_2() {
@@ -1142,26 +1141,26 @@ void DrasculaEngine::animation_23_2() {
 	flags[21] = 1;
 
 	if (flags[25] == 0) {
-		talk_vb(TEXTVB13, "VB13.als");
-		talk_vb(TEXTVB14, "VB14.als");
+		talk_vb(_textvb[_lang][13], "VB13.als");
+		talk_vb(_textvb[_lang][14], "VB14.als");
 		pause(10);
-		talk(TEXT387, "387.als");
+		talk(_text[_lang][387], "387.als");
 	}
 
-	talk_vb(TEXTVB15, "VB15.als");
+	talk_vb(_textvb[_lang][15], "VB15.als");
 	lleva_vb(42);
 	sentido_vb = 1;
-	talk_vb(TEXTVB16, "VB16.als");
+	talk_vb(_textvb[_lang][16], "VB16.als");
 	sentido_vb = 2;
 	lleva_al_hare(157, 147);
 	lleva_al_hare(131, 149);
 	sentido_hare = 0;
 	animation_14_2();
 	if (flags[25] == 0)
-		talk_vb(TEXTVB17, "VB17.als");
+		talk_vb(_textvb[_lang][17], "VB17.als");
 	pause(8);
 	sentido_vb = 1;
-	talk_vb(TEXTVB18, "VB18.als");
+	talk_vb(_textvb[_lang][18], "VB18.als");
 
 	if (flags[29] == 0)
 		animation_23_anexo();
@@ -1173,9 +1172,9 @@ void DrasculaEngine::animation_23_2() {
 	lleva_vb(99);
 
 	if (flags[29] == 0) {
-		talk_vb(TEXTVB19, "VB19.als");
+		talk_vb(_textvb[_lang][19], "VB19.als");
 		if (flags[25] == 0) {
-			talk_vb(TEXTVB20,"VB20.als");
+			talk_vb(_textvb[_lang][20],"VB20.als");
 			if (resta_objeto(7) == 0)
 				flags[30] = 1;
 			if (resta_objeto(18) == 0)
@@ -1183,7 +1182,7 @@ void DrasculaEngine::animation_23_2() {
 			if (resta_objeto(19) == 0)
 				flags[32] = 1;
 		}
-		talk_vb(TEXTVB21, "VB21.als");
+		talk_vb(_textvb[_lang][21], "VB21.als");
 	} else
 		animation_27_2();
 
@@ -1282,63 +1281,63 @@ void DrasculaEngine::animation_27_2() {
 	resta_objeto(23);
 	suma_objeto(11);
 
-	talk_vb(TEXTVB23, "VB23.als");
-	talk_vb(TEXTVB24, "VB24.als");
+	talk_vb(_textvb[_lang][23], "VB23.als");
+	talk_vb(_textvb[_lang][24], "VB24.als");
 	if (flags[30] == 1)
 		suma_objeto(7);
 	if (flags[31] == 1)
 		suma_objeto(18);
 	if (flags[32] == 1)
 		suma_objeto(19);
-	talk_vb(TEXTVB25,"VB25.als");
-	talk_vb(TEXTVB26,"VB26.als");
+	talk_vb(_textvb[_lang][25],"VB25.als");
+	talk_vb(_textvb[_lang][26],"VB26.als");
 }
 
 void DrasculaEngine::animation_28_2() {
-	talk_vb(TEXTVB27, "VB27.als");
-	talk_vb(TEXTVB28, "VB28.als");
-	talk_vb(TEXTVB29, "VB29.als");
-	talk_vb(TEXTVB30, "VB30.als");
+	talk_vb(_textvb[_lang][27], "VB27.als");
+	talk_vb(_textvb[_lang][28], "VB28.als");
+	talk_vb(_textvb[_lang][29], "VB29.als");
+	talk_vb(_textvb[_lang][30], "VB30.als");
 }
 
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
-		talk_vb(TEXTVB32, "VB32.als");
-		talk(TEXT398, "398.als");
-		talk_vb(TEXTVB33, "VB33.als");
-		talk(TEXT399, "399.als");
-		talk_vb(TEXTVB34, "VB34.als");
-		talk_vb(TEXTVB35, "VB35.als");
-		talk(TEXT400, "400.als");
-		talk_vb(TEXTVB36, "VB36.als");
-		talk_vb(TEXTVB37, "VB37.als");
-		talk(TEXT386, "386.als");
-		talk_vb(TEXTVB38, "VB38.als");
-		talk_vb(TEXTVB39, "VB39.als");
-		talk(TEXT401, "401.als");
-		talk_vb(TEXTVB40, "VB40.als");
-		talk_vb(TEXTVB41, "VB41.als");
+		talk_vb(_textvb[_lang][32], "VB32.als");
+		talk(_text[_lang][398], "398.als");
+		talk_vb(_textvb[_lang][33], "VB33.als");
+		talk(_text[_lang][399], "399.als");
+		talk_vb(_textvb[_lang][34], "VB34.als");
+		talk_vb(_textvb[_lang][35], "VB35.als");
+		talk(_text[_lang][400], "400.als");
+		talk_vb(_textvb[_lang][36], "VB36.als");
+		talk_vb(_textvb[_lang][37], "VB37.als");
+		talk(_text[_lang][386], "386.als");
+		talk_vb(_textvb[_lang][38], "VB38.als");
+		talk_vb(_textvb[_lang][39], "VB39.als");
+		talk(_text[_lang][401], "401.als");
+		talk_vb(_textvb[_lang][40], "VB40.als");
+		talk_vb(_textvb[_lang][41], "VB41.als");
 		flags[33] = 1;
 	} else
-		talk_vb(TEXTVB43, "VB43.als");
+		talk_vb(_textvb[_lang][43], "VB43.als");
 
-	talk(TEXT402, "402.als");
-	talk_vb(TEXTVB42, "VB42.als");
+	talk(_text[_lang][402], "402.als");
+	talk_vb(_textvb[_lang][42], "VB42.als");
 
 	if (flags[38] == 0) {
-		talk(TEXT403, "403.als");
+		talk(_text[_lang][403], "403.als");
 		rompo_y_salgo = 1;
 	} else
-		talk(TEXT386, "386.als");
+		talk(_text[_lang][386], "386.als");
 }
 
 void DrasculaEngine::animation_30_2() {
-	talk_vb(TEXTVB31, "VB31.als");
-	talk(TEXT396, "396.als");
+	talk_vb(_textvb[_lang][31], "VB31.als");
+	talk(_text[_lang][396], "396.als");
 }
 
 void DrasculaEngine::animation_31_2() {
-	talk_vb(TEXTVB44, "VB44.als");
+	talk_vb(_textvb[_lang][44], "VB44.als");
 	lleva_vb(-50);
 	pause(15);
 	lleva_al_hare(159, 140);
@@ -1352,25 +1351,25 @@ void DrasculaEngine::animation_31_2() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(22);
-	talk(TEXT406, "406.als");
+	talk(_text[_lang][406], "406.als");
 	lleva_vb(98);
-	talk_vb(TEXTVB45, "VB45.als");
-	talk_vb(TEXTVB46, "VB46.als");
-	talk_vb(TEXTVB47, "VB47.als");
-	talk(TEXT407, "407.als");
-	talk_vb(TEXTVB48, "VB48.als");
-	talk_vb(TEXTVB49, "VB49.als");
-	talk(TEXT408, "408.als");
-	talk_vb(TEXTVB50, "VB50.als");
-	talk_vb(TEXTVB51, "VB51.als");
-	talk(TEXT409, "409.als");
-	talk_vb(TEXTVB52, "VB52.als");
-	talk_vb(TEXTVB53, "VB53.als");
+	talk_vb(_textvb[_lang][45], "VB45.als");
+	talk_vb(_textvb[_lang][46], "VB46.als");
+	talk_vb(_textvb[_lang][47], "VB47.als");
+	talk(_text[_lang][407], "407.als");
+	talk_vb(_textvb[_lang][48], "VB48.als");
+	talk_vb(_textvb[_lang][49], "VB49.als");
+	talk(_text[_lang][408], "408.als");
+	talk_vb(_textvb[_lang][50], "VB50.als");
+	talk_vb(_textvb[_lang][51], "VB51.als");
+	talk(_text[_lang][409], "409.als");
+	talk_vb(_textvb[_lang][52], "VB52.als");
+	talk_vb(_textvb[_lang][53], "VB53.als");
 	pause(12);
-	talk_vb(TEXTVB54, "VB54.als");
-	talk_vb(TEXTVB55, "VB55.als");
-	talk(TEXT410, "410.als");
-	talk_vb(TEXTVB56, "VB56.als");
+	talk_vb(_textvb[_lang][54], "VB54.als");
+	talk_vb(_textvb[_lang][55], "VB55.als");
+	talk(_text[_lang][410], "410.als");
+	talk_vb(_textvb[_lang][56], "VB56.als");
 
 	rompo_y_salgo = 1;
 
@@ -1452,10 +1451,10 @@ void DrasculaEngine::animation_35_2() {
 }
 
 void DrasculaEngine::animation_1_3() {
-	talk(TEXT413, "413.als");
+	talk(_text[_lang][413], "413.als");
 	grr();
 	pause(50);
-	talk(TEXT414, "414.als");
+	talk(_text[_lang][414], "414.als");
 }
 
 void DrasculaEngine::animation_2_3() {
@@ -1773,31 +1772,31 @@ void DrasculaEngine::animation_rayo() {
 }
 
 void DrasculaEngine::animation_2_4() {
-	talk_igor_sentado(TEXTI16, "I16.als");
-	talk(TEXT278, "278.als");
-	talk_igor_sentado(TEXTI17, "I17.als");
-	talk(TEXT279, "279.als");
-	talk_igor_sentado(TEXTI18, "I18.als");
+	talk_igor_sentado(_texti[_lang][16], "I16.als");
+	talk(_text[_lang][278], "278.als");
+	talk_igor_sentado(_texti[_lang][17], "I17.als");
+	talk(_text[_lang][279], "279.als");
+	talk_igor_sentado(_texti[_lang][18], "I18.als");
 }
 
 void DrasculaEngine::animation_3_4() {
-	talk_igor_sentado(TEXTI19, "I19.als");
-	talk_igor_sentado(TEXTI20, "I20.als");
-	talk(TEXT281, "281.als");
+	talk_igor_sentado(_texti[_lang][19], "I19.als");
+	talk_igor_sentado(_texti[_lang][20], "I20.als");
+	talk(_text[_lang][281], "281.als");
 }
 
 void DrasculaEngine::animation_4_4() {
-	talk(TEXT287, "287.als");
-	talk_igor_sentado(TEXTI21, "I21.als");
-	talk(TEXT284, "284.als");
-	talk_igor_sentado(TEXTI22, "I22.als");
-	talk(TEXT285, "285.als");
-	talk_igor_sentado(TEXTI23, "I23.als");
+	talk(_text[_lang][287], "287.als");
+	talk_igor_sentado(_texti[_lang][21], "I21.als");
+	talk(_text[_lang][284], "284.als");
+	talk_igor_sentado(_texti[_lang][22], "I22.als");
+	talk(_text[_lang][285], "285.als");
+	talk_igor_sentado(_texti[_lang][23], "I23.als");
 }
 
 void DrasculaEngine::animation_7_4() {
 	Negro();
-	talk(TEXT427, "427.als");
+	talk(_text[_lang][427], "427.als");
 	FundeDelNegro(1);
 	resta_objeto(8);
 	resta_objeto(10);
@@ -1810,27 +1809,27 @@ void DrasculaEngine::animation_7_4() {
 
 void DrasculaEngine::animation_1_5() {
 	if (flags[0] == 0) {
-		talk(TEXT430, "430.als");
-		talk_bj(TEXTBJ16, "BJ16.als");
-		talk_bj(TEXTBJ17, "BJ17.als");
-		talk_bj(TEXTBJ18, "BJ18.als");
-		talk(TEXT217, "217.als");
-		talk_bj(TEXTBJ19, "BJ19.als");
-		talk(TEXT229, "229.als");
+		talk(_text[_lang][430], "430.als");
+		talk_bj(_textbj[_lang][16], "BJ16.als");
+		talk_bj(_textbj[_lang][17], "BJ17.als");
+		talk_bj(_textbj[_lang][18], "BJ18.als");
+		talk(_text[_lang][217], "217.als");
+		talk_bj(_textbj[_lang][19], "BJ19.als");
+		talk(_text[_lang][229], "229.als");
 		pause(5);
 		lleva_al_hare(114, 170);
 		sentido_hare = 3;
-		talk(TEXT431, "431.als");
-		talk_bj(TEXTBJ20, "BJ20.als");
+		talk(_text[_lang][431], "431.als");
+		talk_bj(_textbj[_lang][20], "BJ20.als");
 		sentido_hare = 2;
 		pause(4);
-		talk(TEXT438, "438.als");
+		talk(_text[_lang][438], "438.als");
 		sitio_x = 120;
 		sitio_y = 157;
 		anda_a_objeto = 1;
 		sentido_final = 1;
 		empieza_andar();
-		talk_bj(TEXTBJ21, "BJ21.als");
+		talk_bj(_textbj[_lang][21], "BJ21.als");
 
 		for (;;) {
 			if (hare_se_mueve == 0)
@@ -1840,7 +1839,7 @@ void DrasculaEngine::animation_1_5() {
 		}
 
 		sentido_hare = 1;
-		talk(TEXT229, "229.als");
+		talk(_text[_lang][229], "229.als");
 		flags[0] = 1;
 	}
 
@@ -1849,11 +1848,11 @@ void DrasculaEngine::animation_1_5() {
 }
 
 void DrasculaEngine::animation_2_5() {
-	talk_bj(TEXTBJ22, "BJ22.als");
+	talk_bj(_textbj[_lang][22], "BJ22.als");
 }
 
 void DrasculaEngine::animation_3_5() {
-	talk_bj(TEXTBJ23, "BJ23.als");
+	talk_bj(_textbj[_lang][23], "BJ23.als");
 	agarra_objeto(10);
 	rompo_y_salgo = 1;
 }
@@ -1862,21 +1861,21 @@ void DrasculaEngine::animation_4_5() {
 	flags[7] = 1;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	talk(TEXT228, "228.als");
-	talk_lobo(TEXTL1, "L1.als");
-	talk_lobo(TEXTL2, "L2.als");
+	talk(_text[_lang][228], "228.als");
+	talk_lobo(_textl[_lang][1], "L1.als");
+	talk_lobo(_textl[_lang][2], "L2.als");
 	pause(23);
-	talk(TEXT229, "229.als");
-	talk_lobo(TEXTL3, "L3.als");
-	talk_lobo(TEXTL4, "L4.als");
-	talk(TEXT230, "230.als");
-	talk_lobo(TEXTL5, "L5.als");
-	talk(TEXT231, "231.als");
-	talk_lobo(TEXTL6, "L6.als");
-	talk_lobo(TEXTL7, "L7.als");
+	talk(_text[_lang][229], "229.als");
+	talk_lobo(_textl[_lang][3], "L3.als");
+	talk_lobo(_textl[_lang][4], "L4.als");
+	talk(_text[_lang][230], "230.als");
+	talk_lobo(_textl[_lang][5], "L5.als");
+	talk(_text[_lang][231], "231.als");
+	talk_lobo(_textl[_lang][6], "L6.als");
+	talk_lobo(_textl[_lang][7], "L7.als");
 	pause(33);
-	talk(TEXT232, "232.als");
-	talk_lobo(TEXTL8, "L8.als");
+	talk(_text[_lang][232], "232.als");
+	talk_lobo(_textl[_lang][8], "L8.als");
 }
 
 void DrasculaEngine::animation_5_5(){
@@ -1964,36 +1963,36 @@ void DrasculaEngine::animation_5_5(){
 }
 
 void DrasculaEngine::animation_6_5() {
-	talk_lobo(TEXTL9, "L9.als");
-	talk(TEXT234, "234.als");
+	talk_lobo(_textl[_lang][9], "L9.als");
+	talk(_text[_lang][234], "234.als");
 }
 
 void DrasculaEngine::animation_7_5() {
-	talk_lobo(TEXTL10, "L10.als");
-	talk(TEXT236, "236.als");
-	talk_lobo(TEXTL11, "L11.als");
-	talk_lobo(TEXTL12, "L12.als");
-	talk_lobo(TEXTL13, "L13.als");
+	talk_lobo(_textl[_lang][10], "L10.als");
+	talk(_text[_lang][236], "236.als");
+	talk_lobo(_textl[_lang][11], "L11.als");
+	talk_lobo(_textl[_lang][12], "L12.als");
+	talk_lobo(_textl[_lang][13], "L13.als");
 	pause(34);
-	talk_lobo(TEXTL14, "L14.als");
+	talk_lobo(_textl[_lang][14], "L14.als");
 }
 
 void DrasculaEngine::animation_8_5() {
-	talk_lobo(TEXTL15, "L15.als");
-	talk(TEXT238, "238.als");
-	talk_lobo(TEXTL16, "L16.als");
+	talk_lobo(_textl[_lang][15], "L15.als");
+	talk(_text[_lang][238], "238.als");
+	talk_lobo(_textl[_lang][16], "L16.als");
 }
 
 void DrasculaEngine::animation_9_5() {
 	flags[4] = 1;
-	talk(TEXT401, "401.als");
+	talk(_text[_lang][401], "401.als");
 	sin_verbo();
 	resta_objeto(15);
 }
 
 void DrasculaEngine::animation_10_5() {
 	flags[3] = 1;
-	talk(TEXT401, "401.als");
+	talk(_text[_lang][401], "401.als");
 	sin_verbo();
 	resta_objeto(12);
 }
@@ -2004,7 +2003,7 @@ void DrasculaEngine::animation_11_5() {
 		animation_12_5();
 	else {
 		flags[9] = 0;
-		talk(TEXT33, "33.als");
+		talk(_text[_lang][33], "33.als");
 	}
 }
 
@@ -2173,7 +2172,7 @@ void DrasculaEngine::animation_14_5() {
 	fin_sound();
 	pause(17);
 	sentido_hare = 3;
-	talk(TEXT246,"246.als");
+	talk(_text[_lang][246],"246.als");
 	lleva_al_hare(89, 160);
 	flags[10] = 1;
 	comienza_sound("s7.als");
@@ -2184,24 +2183,24 @@ void DrasculaEngine::animation_14_5() {
 	sentido_hare = 3;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	talk_solo(TEXTD18, "d18.als");
+	talk_solo(_textd[_lang][18], "d18.als");
 	FundeAlNegro(1);
 }
 
 void DrasculaEngine::animation_15_5() {
-	talk_mus(TEXTE4, "E4.als");
-	talk_mus(TEXTE5, "E5.als");
-	talk_mus(TEXTE6, "E6.als");
-	talk(TEXT291, "291.als");
-	talk_mus(TEXTE7, "E7.als");
+	talk_mus(_texte[_lang][4], "E4.als");
+	talk_mus(_texte[_lang][5], "E5.als");
+	talk_mus(_texte[_lang][6], "E6.als");
+	talk(_text[_lang][291], "291.als");
+	talk_mus(_texte[_lang][7], "E7.als");
 }
 
 void DrasculaEngine::animation_16_5() {
-	talk_mus(TEXTE8, "E8.als");
+	talk_mus(_texte[_lang][8], "E8.als");
 }
 
 void DrasculaEngine::animation_17_5() {
-	talk_mus(TEXTE9, "E9.als");
+	talk_mus(_texte[_lang][9], "E9.als");
 }
 
 void DrasculaEngine::animation_1_6() {
@@ -2220,24 +2219,24 @@ void DrasculaEngine::animation_1_6() {
 	decompressPic(dir_dibujo2, 1);
 	loadPic("car.alg");
 	decompressPic(dir_hare_fondo, 1);
-	talk_dr_dch(TEXTD19, "D19.als");
-	talk(TEXT247, "247.als");
-	talk_dr_dch(TEXTD20, "d20.als");
-	talk_dr_dch(TEXTD21, "d21.als");
-	talk(TEXT248, "248.als");
-	talk_dr_dch(TEXTD22, "d22.als");
-	talk(TEXT249, "249.als");
-	talk_dr_dch(TEXTD23, "d23.als");
+	talk_dr_dch(_textd[_lang][19], "D19.als");
+	talk(_text[_lang][247], "247.als");
+	talk_dr_dch(_textd[_lang][20], "d20.als");
+	talk_dr_dch(_textd[_lang][21], "d21.als");
+	talk(_text[_lang][248], "248.als");
+	talk_dr_dch(_textd[_lang][22], "d22.als");
+	talk(_text[_lang][249], "249.als");
+	talk_dr_dch(_textd[_lang][23], "d23.als");
 	conversa("op_11.cal");
-	talk_dr_dch(TEXTD26, "d26.als");
+	talk_dr_dch(_textd[_lang][26], "d26.als");
 
 	anima("fum.bin", 15);
 
-	talk_dr_dch(TEXTD27, "d27.als");
-	talk(TEXT254, "254.als");
-	talk_dr_dch(TEXTD28, "d28.als");
-	talk(TEXT255, "255.als");
-	talk_dr_dch(TEXTD29, "d29.als");
+	talk_dr_dch(_textd[_lang][27], "d27.als");
+	talk(_text[_lang][254], "254.als");
+	talk_dr_dch(_textd[_lang][28], "d28.als");
+	talk(_text[_lang][255], "255.als");
+	talk_dr_dch(_textd[_lang][29], "d29.als");
 	FundeAlNegro(1);
 	clearRoom();
 	loadPic("time1.alg");
@@ -2251,9 +2250,9 @@ void DrasculaEngine::animation_1_6() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
-	talk(TEXT256, "256.als");
-	talk_dr_dch(TEXTD30, "d30.als");
-	talk(TEXT257, "257.als");
+	talk(_text[_lang][256], "256.als");
+	talk_dr_dch(_textd[_lang][30], "d30.als");
+	talk(_text[_lang][257], "257.als");
 	FundeAlNegro(0);
 	clearRoom();
 	loadPic("time1.alg");
@@ -2265,32 +2264,32 @@ void DrasculaEngine::animation_1_6() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
-	talk(TEXT258, "258.als");
-	talk_dr_dch(TEXTD31, "d31.als");
+	talk(_text[_lang][258], "258.als");
+	talk_dr_dch(_textd[_lang][31], "d31.als");
 	animation_5_6();
-	talk_dr_dch(TEXTD32, "d32.als");
-	talk_igor_dch(TEXTI11, "I11.als");
+	talk_dr_dch(_textd[_lang][32], "d32.als");
+	talk_igor_dch(_texti[_lang][11], "I11.als");
 	sentido_igor = 3;
-	talk_dr_dch(TEXTD33, "d33.als");
-	talk_igor_frente(TEXTI12, "I12.als");
-	talk_dr_dch(TEXTD34, "d34.als");
+	talk_dr_dch(_textd[_lang][33], "d33.als");
+	talk_igor_frente(_texti[_lang][12], "I12.als");
+	talk_dr_dch(_textd[_lang][34], "d34.als");
 	sentido_dr = 0;
-	talk_dr_izq(TEXTD35, "d35.als");
+	talk_dr_izq(_textd[_lang][35], "d35.als");
 	clearRoom();
 	carga_escoba("102.ald");
 	activa_pendulo();
 }
 
 void DrasculaEngine::animation_2_6() {
-	talk_dr_dch(TEXTD24, "d24.als");
+	talk_dr_dch(_textd[_lang][24], "d24.als");
 }
 
 void DrasculaEngine::animation_3_6() {
-	talk_dr_dch(TEXTD24, "d24.als");
+	talk_dr_dch(_textd[_lang][24], "d24.als");
 }
 
 void DrasculaEngine::animation_4_6() {
-	talk_dr_dch(TEXTD25, "d25.als");
+	talk_dr_dch(_textd[_lang][25], "d25.als");
 }
 
 void DrasculaEngine::animation_5_6() {
@@ -2384,23 +2383,23 @@ void DrasculaEngine::animation_9_6() {
 	loadPic("nota.alg");
 	decompressPic(dir_dibujo1, COMPLETA);
 	color_abc(BLANCO);
-	talk_solo(TEXTBJ24, "bj24.als");
-	talk_solo(TEXTBJ25, "bj25.als");
-	talk_solo(TEXTBJ26, "bj26.als");
-	talk_solo(TEXTBJ27, "bj27.als");
-	talk_solo(TEXTBJ28, "bj28.als");
+	talk_solo(_textbj[_lang][24], "bj24.als");
+	talk_solo(_textbj[_lang][25], "bj25.als");
+	talk_solo(_textbj[_lang][26], "bj26.als");
+	talk_solo(_textbj[_lang][27], "bj27.als");
+	talk_solo(_textbj[_lang][28], "bj28.als");
 	sentido_hare = 3;
 	clearRoom();
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, COMPLETA);
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, MEDIA);
-	talk(TEXT296, "296.als");
-	talk(TEXT297, "297.als");
-	talk(TEXT298, "298.als");
+	talk(_text[_lang][296], "296.als");
+	talk(_text[_lang][297], "297.als");
+	talk(_text[_lang][298], "298.als");
 	sentido_hare = 1;
-	talk(TEXT299, "299.als");
-	talk(TEXT300, "300.als");
+	talk(_text[_lang][299], "299.als");
+	talk(_text[_lang][300], "300.als");
 	updateRoom();
 	copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -2411,7 +2410,7 @@ void DrasculaEngine::animation_9_6() {
 	sentido_hare = 0;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	talk(TEXT301, "301.als");
+	talk(_text[_lang][301], "301.als");
 	v_cd = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
 	v_cd = v_cd + 4;
 	playmusic(17);
@@ -2434,36 +2433,36 @@ void DrasculaEngine::animation_10_6() {
 	copyBackground(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	fin_sound();
-	talk_taber2(TEXTT23, "t23.als");
+	talk_taber2(_textt[_lang][23], "t23.als");
 	flags[7] = 1;
 }
 
 void DrasculaEngine::animation_11_6() {
-	talk_taber2(TEXTT10, "t10.als");
-	talk(TEXT268, "268.als");
-	talk_taber2(TEXTT11, "t11.als");
+	talk_taber2(_textt[_lang][10], "t10.als");
+	talk(_text[_lang][268], "268.als");
+	talk_taber2(_textt[_lang][11], "t11.als");
 }
 
 void DrasculaEngine::animation_12_6() {
-	talk_taber2(TEXTT12, "t12.als");
-	talk(TEXT270, "270.als");
-	talk_taber2(TEXTT13, "t13.als");
-	talk_taber2(TEXTT14, "t14.als");
+	talk_taber2(_textt[_lang][12], "t12.als");
+	talk(_text[_lang][270], "270.als");
+	talk_taber2(_textt[_lang][13], "t13.als");
+	talk_taber2(_textt[_lang][14], "t14.als");
 }
 
 void DrasculaEngine::animation_13_6() {
-	talk_taber2(TEXTT15, "t15.als");
+	talk_taber2(_textt[_lang][15], "t15.als");
 }
 
 void DrasculaEngine::animation_14_6() {
-	talk_taber2(TEXTT24, "t24.als");
+	talk_taber2(_textt[_lang][24], "t24.als");
 	suma_objeto(21);
 	flags[10] = 1;
 	rompo_y_salgo = 1;
 }
 
 void DrasculaEngine::animation_15_6() {
-	talk_taber2(TEXTT16, "t16.als");
+	talk_taber2(_textt[_lang][16], "t16.als");
 }
 
 void DrasculaEngine::animation_18_6() {
@@ -2492,7 +2491,7 @@ void DrasculaEngine::animation_12_2() {
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(TEXT356, "356.als");
+	talk(_text[_lang][356], "356.als");
 
 	updateRefresh_pre();
 
@@ -2512,7 +2511,7 @@ void DrasculaEngine::animation_12_2() {
 	stopmusic();
 	flags[11] = 1;
 
-	talk_pianista(TEXTP5, "P5.als");
+	talk_pianista(_textp[_lang][5], "P5.als");
 	conversa("op_1.cal");
 
 	flags[11] = 0;
@@ -2526,7 +2525,7 @@ void DrasculaEngine::animation_26_2() {
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(TEXT392, "392.als");
+	talk(_text[_lang][392], "392.als");
 
 	updateRefresh_pre();
 
@@ -2546,11 +2545,11 @@ void DrasculaEngine::animation_26_2() {
 	stopmusic();
 	flags[11] = 1;
 
-	talk_pianista(TEXTP5, "P5.als");
-	talk(TEXT393, "393.als");
-	talk_pianista(TEXTP17, "P17.als");
-	talk_pianista(TEXTP18, "P18.als");
-	talk_pianista(TEXTP19, "P19.als");
+	talk_pianista(_textp[_lang][5], "P5.als");
+	talk(_text[_lang][393], "393.als");
+	talk_pianista(_textp[_lang][17], "P17.als");
+	talk_pianista(_textp[_lang][18], "P18.als");
+	talk_pianista(_textp[_lang][19], "P19.als");
 
 	loadPic("an26.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -2597,13 +2596,13 @@ void DrasculaEngine::animation_11_2() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(TEXT352, "352.als");
-	talk_tabernero(TEXTT1, "T1.als");
-	talk(TEXT353, "353.als");
-	talk_tabernero(TEXTT17, "T17.als");
-	talk(TEXT354, "354.als");
-	talk_tabernero(TEXTT18, "T18.als");
-	talk(TEXT355, "355.als");
+	talk(_text[_lang][352], "352.als");
+	talk_tabernero(_textt[_lang][1], "T1.als");
+	talk(_text[_lang][353], "353.als");
+	talk_tabernero(_textt[_lang][17], "T17.als");
+	talk(_text[_lang][354], "354.als");
+	talk_tabernero(_textt[_lang][18], "T18.als");
+	talk(_text[_lang][355], "355.als");
 	pause(40);
 	talk_tabernero("No, nada", "d82.als");
 
@@ -2616,15 +2615,15 @@ void DrasculaEngine::animation_13_2() {
 	decompressPic(dir_hare_frente, 1);
 
 	if (flags[41] == 0) {
-		talk(TEXT103, "103.als");
-		talk_borracho(TEXTB4, "B4.als");
+		talk(_text[_lang][103], "103.als");
+		talk_borracho(_textb[_lang][4], "B4.als");
 		flags[12] = 1;
-		talk(TEXT367, "367.als");
-		talk_borracho(TEXTB5, "B5.als");
+		talk(_text[_lang][367], "367.als");
+		talk_borracho(_textb[_lang][5], "B5.als");
 		flags[12] = 1;
-		talk(TEXT368, "368.als");
-		talk_borracho(TEXTB6, "B6.als");
-		talk_borracho(TEXTB7, "B7.als");
+		talk(_text[_lang][368], "368.als");
+		talk_borracho(_textb[_lang][6], "B6.als");
+		talk_borracho(_textb[_lang][7], "B7.als");
 		flags[41] = 1;
 	}
 	conversa("op_2.cal");
@@ -2634,13 +2633,13 @@ void DrasculaEngine::animation_13_2() {
 }
 
 void DrasculaEngine::animation_18_2() {
-	talk(TEXT378, "378.als");
-	talk_vbpuerta(TEXTVB4, "VB4.als");
+	talk(_text[_lang][378], "378.als");
+	talk_vbpuerta(_textvb[_lang][4], "VB4.als");
 	conversa("op_3.cal");
 }
 
 void DrasculaEngine::animation_22_2() {
-	talk(TEXT374,"374.als");
+	talk(_text[_lang][374],"374.als");
 
 	sentido_hare=2;
 	updateRoom();
@@ -2649,11 +2648,11 @@ void DrasculaEngine::animation_22_2() {
 	fin_sound();
 	sentido_hare = 1;
 
-	talk_vbpuerta(TEXTVB1, "VB1.als");
-	talk(TEXT375, "375.als");
-	talk_vbpuerta(TEXTVB2, "VB2.als");
-	talk(TEXT376, "376.als");
-	talk_vbpuerta(TEXTVB3, "VB3.als");
+	talk_vbpuerta(_textvb[_lang][1], "VB1.als");
+	talk(_text[_lang][375], "375.als");
+	talk_vbpuerta(_textvb[_lang][2], "VB2.als");
+	talk(_text[_lang][376], "376.als");
+	talk_vbpuerta(_textvb[_lang][3], "VB3.als");
 
 	flags[18] = 1;
 }
@@ -2666,7 +2665,7 @@ void DrasculaEngine::animation_24_2() {
 	pause(3);
 	sentido_hare = 0;
 
-	talk(TEXT356, "356.als");
+	talk(_text[_lang][356], "356.als");
 
 	loadPic("an24.alg");
 	decompressPic(dir_hare_frente, 1);
@@ -2675,7 +2674,7 @@ void DrasculaEngine::animation_24_2() {
 
 	flags[21] = 1;
 
-	talk_vb(TEXTVB22, "VB22.als");
+	talk_vb(_textvb[_lang][22], "VB22.als");
 
 	if (flags[22] == 0)
 		conversa("op_4.cal");
@@ -2795,11 +2794,11 @@ void DrasculaEngine::animation_36_2() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(TEXT404, "404.als");
-	talk_tabernero(TEXTT19, "T19.als");
-	talk_tabernero(TEXTT20, "T20.als");
-	talk_tabernero(TEXTT21, "T21.als");
-	talk(TEXT355, "355.als");
+	talk(_text[_lang][404], "404.als");
+	talk_tabernero(_textt[_lang][19], "T19.als");
+	talk_tabernero(_textt[_lang][20], "T20.als");
+	talk_tabernero(_textt[_lang][21], "T21.als");
+	talk(_text[_lang][355], "355.als");
 	pause(40);
 	talk_tabernero("No, nada", "d82.als");
 
@@ -3162,7 +3161,7 @@ void DrasculaEngine::animation_5_2() {
 	decompressPic(dir_dibujo3, 1);
 	flags[8] = 1;
 	hare_x = hare_x - 4;
-	talk_sinc(TEXT46, "46.als", "4442444244244");
+	talk_sinc(_text[_lang][46], "46.als", "4442444244244");
 	sin_verbo();
 }
 
@@ -3188,12 +3187,12 @@ void DrasculaEngine::animation_6_2() {
 	pause(1);
 
 	if (flags[4] == 1)
-		talk_hacker(TEXTD66, "d66.als");
+		talk_hacker(_textd[_lang][66], "d66.als");
 	pause(6);
-	talk_ciego(TEXTD78, "d78.als",
+	talk_ciego(_textd[_lang][78], "d78.als",
 				"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777");
 	pause(4);
-	talk_hacker(TEXTD67, "d67.als");
+	talk_hacker(_textd[_lang][67], "d67.als");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -3223,7 +3222,7 @@ void DrasculaEngine::animation_33_2() {
 	flags[9] = 1;
 
 	pause(12);
-	talk(TEXTD56, "d56.als" );
+	talk(_textd[_lang][56], "d56.als" );
 	pause(8);
 
 	clearRoom();
@@ -3243,13 +3242,13 @@ void DrasculaEngine::animation_33_2() {
 
 	pause(10);
 
-	talk_ciego(TEXTD68, "d68.als", "44472225500022227555544444472225500022227555544444664466");
+	talk_ciego(_textd[_lang][68], "d68.als", "44472225500022227555544444472225500022227555544444664466");
 	pause(5);
-	talk_hacker(TEXTD57, "d57.als");
+	talk_hacker(_textd[_lang][57], "d57.als");
 	pause(6);
 	_system->delayMillis(1000);
-	talk_ciego(TEXTD77, "d77.als", "56665004444447222550002222755554444466555033022755555000444444444444444444444444444444");
-	talk_hacker(TEXTD65, "d65.als");
+	talk_ciego(_textd[_lang][77], "d77.als", "56665004444447222550002222755554444466555033022755555000444444444444444444444444444444");
+	talk_hacker(_textd[_lang][65], "d65.als");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -3278,7 +3277,7 @@ void DrasculaEngine::animation_33_2() {
 void DrasculaEngine::animation_1_4() {
 	if (flags[21] == 0) {
 		strcpy(nombre_obj[2], "igor");
-		talk(TEXT275, "275.als");
+		talk(_text[_lang][275], "275.als");
 
 		updateRefresh_pre();
 
@@ -3298,12 +3297,12 @@ void DrasculaEngine::animation_1_4() {
 		flags[18] = 1;
 		flags[20] = 1;
 
-		talk_igor_sentado(TEXTI13, "I13.als");
-		talk_igor_sentado(TEXTI14, "I14.als");
-		talk_igor_sentado(TEXTI15, "I15.als");
+		talk_igor_sentado(_texti[_lang][13], "I13.als");
+		talk_igor_sentado(_texti[_lang][14], "I14.als");
+		talk_igor_sentado(_texti[_lang][15], "I15.als");
 		flags[21] = 1;
 	} else {
-		talk(TEXT356, "356.als");
+		talk(_text[_lang][356], "356.als");
 
 		updateRefresh_pre();
 
@@ -3321,9 +3320,9 @@ void DrasculaEngine::animation_1_4() {
 		flags[18] = 1;
 		flags[20] = 1;
 
-		talk(TEXT276, "276.als");
+		talk(_text[_lang][276], "276.als");
 		pause(14);
-		talk_igor_sentado(TEXTI6, "I6.als");
+		talk_igor_sentado(_texti[_lang][6], "I6.als");
 	}
 
 	conversa("op_6.cal");
@@ -3352,8 +3351,8 @@ void DrasculaEngine::animation_5_4(){
 	decompressPic(dir_hare_frente, 1);
 	x_igor = 100;
 	y_igor = 65;
-	talk_igor_frente(TEXTI29, "I29.ALS");
-	talk_igor_frente(TEXTI30, "I30.als");
+	talk_igor_frente(_texti[_lang][29], "I29.ALS");
+	talk_igor_frente(_texti[_lang][30], "I30.als");
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, 1);
 	loadPic("99.alg");
@@ -3382,7 +3381,7 @@ void DrasculaEngine::animation_6_4() {
 	pon_igor();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(40);
-	talk_igor_frente(TEXTI26, "I26.als");
+	talk_igor_frente(_texti[_lang][26], "I26.als");
 	strcpy(num_room, room);
 	clearRoom();
 	loadPic("96.alg");

@@ -24,142 +24,141 @@
  */
 
 #include "drascula/drascula.h"
-#include "drascula/texts.h"
 
 namespace Drascula {
 
-static const char mirar_t[3][88] = {TEXT100, TEXT101, TEXT54};
+static const int mirar_t[3] = {100, 101, 54};
 static const char mirar_v[3][14] = {"100.als", "101.als", "54.als"};
-static const char poder_t[6][88] = {TEXT11, TEXT109, TEXT111, TEXT110, TEXT115, TEXT116};
+static const int poder_t[6] = {11, 109, 111, 110, 115, 116};
 static const char poder_v[6][14] = {"11.als", "109.als", "111.als", "110.als", "115.als", "116.als"};
 
 void DrasculaEngine::room_0() {
 	if (num_ejec == 1) {
 		if (objeto_que_lleva == LOOK)
-			talk(TEXT54, "54.als");
+			talk(_text[_lang][54], "54.als");
 		else if (objeto_que_lleva == MOVE)
-			talk(TEXT19, "19.als");
+			talk(_text[_lang][19], "19.als");
 		else if (objeto_que_lleva == PICK)
-			talk(TEXT11, "11.als");
+			talk(_text[_lang][11], "11.als");
 		else if (objeto_que_lleva == OPEN)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == CLOSE)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == TALK)
-			talk(TEXT16, "16.als");
+			talk(_text[_lang][16], "16.als");
 		else
-			talk(TEXT11,"11.als");
+			talk(_text[_lang][11],"11.als");
 	} else if (num_ejec == 2) {
 		if (objeto_que_lleva == LOOK) {
-			talk(mirar_t[c_mirar], mirar_v[c_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (objeto_que_lleva == MOVE) {
-			talk(TEXT19, "19.als");
+			talk(_text[_lang][19], "19.als");
 		} else if (objeto_que_lleva == PICK) {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else if (objeto_que_lleva == OPEN)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == CLOSE)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == TALK)
-			talk(TEXT16, "16.als");
+			talk(_text[_lang][16], "16.als");
 		else {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
 	} else if (num_ejec == 3) {
 		if (objeto_que_lleva == LOOK)
-			talk(TEXT316, "316.als");
+			talk(_text[_lang][316], "316.als");
 		else if (objeto_que_lleva == MOVE)
-			talk(TEXT317, "317.als");
+			talk(_text[_lang][317], "317.als");
 		else if (objeto_que_lleva == PICK)
-			talk(TEXT318, "318.als");
+			talk(_text[_lang][318], "318.als");
 		else if (objeto_que_lleva == OPEN)
-			talk(TEXT319, "319.als");
+			talk(_text[_lang][319], "319.als");
 		else if (objeto_que_lleva == CLOSE)
-			talk(TEXT319, "319.als");
+			talk(_text[_lang][319], "319.als");
 		else if (objeto_que_lleva == TALK)
-			talk(TEXT320, "320.als");
+			talk(_text[_lang][320], "320.als");
 		else
-			talk(TEXT318, "318.als");
+			talk(_text[_lang][318], "318.als");
 	} else if (num_ejec == 4) {
 		if (objeto_que_lleva == LOOK) {
-			talk(mirar_t[c_mirar], mirar_v[c_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (objeto_que_lleva == MOVE)
-			talk(TEXT19, "19.als");
+			talk(_text[_lang][19], "19.als");
 		else if (objeto_que_lleva == PICK) {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else if (objeto_que_lleva == OPEN)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == CLOSE)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == TALK)
-			talk(TEXT16, "16.als");
+			talk(_text[_lang][16], "16.als");
 		else {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
 	} else if (num_ejec == 5) {
 		if (objeto_que_lleva == LOOK) {
-			talk(mirar_t[c_mirar], mirar_v[c_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (objeto_que_lleva == MOVE)
-			talk(TEXT19, "19.als");
+			talk(_text[_lang][19], "19.als");
 		else if (objeto_que_lleva == PICK) {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else if (objeto_que_lleva == OPEN)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == CLOSE)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == TALK)
-			talk(TEXT16, "16.als");
+			talk(_text[_lang][16], "16.als");
 		else {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
 	} else if (num_ejec == 6) {
 		if (objeto_que_lleva == LOOK) {
-			talk(mirar_t[c_mirar], mirar_v[c_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (objeto_que_lleva == MOVE)
-			talk(TEXT19, "19.als");
+			talk(_text[_lang][19], "19.als");
 		else if (objeto_que_lleva == PICK) {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else if (objeto_que_lleva == OPEN)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == CLOSE)
-			talk(TEXT9, "9.als");
+			talk(_text[_lang][9], "9.als");
 		else if (objeto_que_lleva == TALK)
-			talk(TEXT16, "16.als");
+			talk(_text[_lang][16], "16.als");
 		else {
-			talk(poder_t[c_poder], poder_v[c_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
@@ -169,95 +168,95 @@ void DrasculaEngine::room_0() {
 
 void DrasculaEngine::room_1(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 118) {
-		talk(TEXT1, "1.als");
+		talk(_text[_lang][1], "1.als");
 		pause(10);
-		talk(TEXT2, "2.als");
+		talk(_text[_lang][2], "2.als");
 	} else if (objeto_que_lleva == PICK && fl == 118)
-		talk(TEXT5, "5.als");
+		talk(_text[_lang][5], "5.als");
 	else if (objeto_que_lleva == OPEN && fl == 118)
-		talk(TEXT3, "3.als");
+		talk(_text[_lang][3], "3.als");
 	else if (objeto_que_lleva == CLOSE && fl == 118)
-		talk(TEXT4, "4.als");
+		talk(_text[_lang][4], "4.als");
 	else if (objeto_que_lleva == TALK && fl == 118)
-		talk(TEXT6, "6.als");
+		talk(_text[_lang][6], "6.als");
 	else if (objeto_que_lleva == LOOK && fl == 119)
-		talk(TEXT8, "8.als");
+		talk(_text[_lang][8], "8.als");
 	else if (objeto_que_lleva == MOVE && fl == 119)
-		talk(TEXT13, "13.als");
+		talk(_text[_lang][13], "13.als");
 	else if (objeto_que_lleva == CLOSE && fl == 119)
-		talk(TEXT10, "10.als");
+		talk(_text[_lang][10], "10.als");
 	else if (objeto_que_lleva == TALK && fl == 119)
-		talk(TEXT12, "12.als");
+		talk(_text[_lang][12], "12.als");
 	else if (objeto_que_lleva == LOOK && fl == 120 && flags[8] == 0)
-		talk(TEXT14, "14.als");
+		talk(_text[_lang][14], "14.als");
 	else if (objeto_que_lleva == MOVE && fl == 120)
-		talk(TEXT13, "13.als");
+		talk(_text[_lang][13], "13.als");
 	else if (objeto_que_lleva == OPEN && fl == 120)
-		talk(TEXT18, "18.als");
+		talk(_text[_lang][18], "18.als");
 	else if (objeto_que_lleva == TALK && fl == 120)
-		talk(TEXT15, "15.als");
+		talk(_text[_lang][15], "15.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_3(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 129)
-		talk(TEXT21, "21.als");
+		talk(_text[_lang][21], "21.als");
 	else if (objeto_que_lleva == PICK && fl == 129)
-		talk(TEXT5, "5.als");
+		talk(_text[_lang][5], "5.als");
 	else if (objeto_que_lleva == MOVE && fl == 129)
-		talk(TEXT24, "24.als");
+		talk(_text[_lang][24], "24.als");
 	else if (objeto_que_lleva == OPEN && fl == 129)
-		talk(TEXT22, "22.als");
+		talk(_text[_lang][22], "22.als");
 	else if (objeto_que_lleva == CLOSE && fl == 129)
-		talk(TEXT10, "10.als");
+		talk(_text[_lang][10], "10.als");
 	else if (objeto_que_lleva == TALK && fl == 129) {
-		talk(TEXT23, "23.als");
+		talk(_text[_lang][23], "23.als");
 		pause(6);
-		talk_sinc(TEXT50, "50.als", "11111111111144432554433");
+		talk_sinc(_text[_lang][50], "50.als", "11111111111144432554433");
 	} else if (objeto_que_lleva == LOOK && fl == 131)
-		talk(TEXT27, "27.als");
+		talk(_text[_lang][27], "27.als");
 	else if (objeto_que_lleva == PICK && fl == 131)
-		talk(TEXT5, "5.als");
+		talk(_text[_lang][5], "5.als");
 	else if (objeto_que_lleva == MOVE && fl == 131)
-		talk(TEXT24, "24.als");
+		talk(_text[_lang][24], "24.als");
 	else if (objeto_que_lleva == OPEN && fl == 131)
-		talk(TEXT22, "22.als");
+		talk(_text[_lang][22], "22.als");
 	else if (objeto_que_lleva == CLOSE && fl == 131)
-		talk(TEXT10, "10.als");
+		talk(_text[_lang][10], "10.als");
 	else if (objeto_que_lleva == TALK && fl == 131)
-		talk(TEXT23, "23.als");
+		talk(_text[_lang][23], "23.als");
 	else if (objeto_que_lleva == LOOK && fl == 132)
-		talk(TEXT28, "28.als");
+		talk(_text[_lang][28], "28.als");
 	else if (objeto_que_lleva == PICK && fl == 132)
-		talk(TEXT5, "5.als");
+		talk(_text[_lang][5], "5.als");
 	else if (objeto_que_lleva == MOVE && fl == 132)
-		talk(TEXT24, "24.als");
+		talk(_text[_lang][24], "24.als");
 	else if (objeto_que_lleva == OPEN && fl == 132)
-		talk(TEXT22, "22.als");
+		talk(_text[_lang][22], "22.als");
 	else if (objeto_que_lleva == CLOSE && fl == 132)
-		talk(TEXT10, "10.als");
+		talk(_text[_lang][10], "10.als");
 	else if (objeto_que_lleva == TALK && fl == 132)
-		talk(TEXT23, "23.als");
+		talk(_text[_lang][23], "23.als");
 	else if (objeto_que_lleva == LOOK && fl == 133)
-		talk(TEXT321, "321.als");
+		talk(_text[_lang][321], "321.als");
 	else if (objeto_que_lleva == PICK && fl == 133)
-		talk(TEXT31, "31.als");
+		talk(_text[_lang][31], "31.als");
 	else if (objeto_que_lleva == MOVE && fl == 133)
-		talk(TEXT34, "34.als");
+		talk(_text[_lang][34], "34.als");
 	else if (objeto_que_lleva == OPEN && fl == 133)
-		talk(TEXT30, "30.als");
+		talk(_text[_lang][30], "30.als");
 	else if (objeto_que_lleva == CLOSE && fl == 133)
-		talk(TEXT10, "10.als");
+		talk(_text[_lang][10], "10.als");
 	else if (objeto_que_lleva == TALK && fl == 133) {
-		talk_sinc(TEXT322, "322.als", "13333334125433333333");
+		talk_sinc(_text[_lang][322], "322.als", "13333334125433333333");
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(25);
-		talk(TEXT33, "33.als");
+		talk(_text[_lang][33], "33.als");
 	} else if (objeto_que_lleva == LOOK && fl == 165) {
-		talk(TEXT149, "149.als");
-		talk(TEXT150, "150.als");
+		talk(_text[_lang][149], "149.als");
+		talk(_text[_lang][150], "150.als");
 	} else if (objeto_que_lleva == PICK && fl == 165) {
 		copyBackground(0, 0, 0,0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		updateRefresh_pre();
@@ -269,91 +268,91 @@ void DrasculaEngine::room_3(int fl) {
 		flags[3] = 1;
 		visible[8] = 0;
 	} else if (objeto_que_lleva == LOOK && fl == 166)
-		talk(TEXT55, "55.als");
+		talk(_text[_lang][55], "55.als");
 	else if (objeto_que_lleva == PICK && fl == 166)
-		talk(TEXT7, "7.als");
+		talk(_text[_lang][7], "7.als");
 	else if (objeto_que_lleva == 14 && fl == 166 && flags[37] == 0) {
 		animation_7_2();
 		agarra_objeto(8);
 	} else if (objeto_que_lleva == 14 && fl == 166 && flags[37] == 1)
-		talk(TEXT323, "323.als");
+		talk(_text[_lang][323], "323.als");
 	else if (objeto_que_lleva == LOOK && fl == 211)
-		talk(TEXT184, "184.als");
+		talk(_text[_lang][184], "184.als");
 	else if (objeto_que_lleva == TALK && fl == 211) {
-		talk(TEXT185, "185.als");
-		talk(TEXT186, "186.als");
+		talk(_text[_lang][185], "185.als");
+		talk(_text[_lang][186], "186.als");
 	} else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_4(int fl) {
 	if (objeto_que_lleva == MOVE && fl == 189 && flags[34] == 0) {
-		talk(TEXT327, "327.als");
+		talk(_text[_lang][327], "327.als");
 		agarra_objeto(13);
 		flags[34] = 1;
 		if (flags[7] == 1 && flags[26] == 1 && flags[34] == 1 && flags[35] == 1 && flags[37] == 1)
 			flags[38] = 1;
 	} else if (objeto_que_lleva == LOOK && fl == 189)
-		talk(TEXT182, "182.als");
+		talk(_text[_lang][182], "182.als");
 	else if (objeto_que_lleva == LOOK && fl == 207)
-		talk(TEXT175, "175.als");
+		talk(_text[_lang][175], "175.als");
 	else if (objeto_que_lleva == TALK && fl == 207)
-		talk(TEXT176, "176.als");
+		talk(_text[_lang][176], "176.als");
 	else if (objeto_que_lleva == LOOK && fl == 208)
-		talk(TEXT177, "177.als");
+		talk(_text[_lang][177], "177.als");
 	else if (objeto_que_lleva == LOOK && fl == 209)
-		talk(TEXT179, "179.als");
+		talk(_text[_lang][179], "179.als");
 	else if (objeto_que_lleva == LOOK && fl == 210)
-		talk(TEXT180, "180.als");
+		talk(_text[_lang][180], "180.als");
 	else if (objeto_que_lleva == OPEN && fl == 210)
-		talk(TEXT181, "181.als");
+		talk(_text[_lang][181], "181.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_5(int fl) {
-	if (objeto_que_lleva == LOOK && fl == 136 && flags[8]==0) talk(TEXT14, "14.als");
+	if (objeto_que_lleva == LOOK && fl == 136 && flags[8]==0) talk(_text[_lang][14], "14.als");
 	else if (objeto_que_lleva == MOVE && fl == 136)
-		talk(TEXT13, "13.als");
+		talk(_text[_lang][13], "13.als");
 	else if (objeto_que_lleva == OPEN && fl == 136)
-		talk(TEXT18, "18.als");
+		talk(_text[_lang][18], "18.als");
 	else if (objeto_que_lleva == TALK && fl == 136)
-		talk(TEXT15, "15.als");
+		talk(_text[_lang][15], "15.als");
 	else if (objeto_que_lleva == 10 && fl == 136) {
 		animation_5_2();
 		resta_objeto(10);
 	} else if (objeto_que_lleva == LOOK && fl == 212)
-		talk(TEXT187, "187.als");
+		talk(_text[_lang][187], "187.als");
 	else if (objeto_que_lleva == TALK && fl == 212)
-		talk(TEXT188, "188.als");
+		talk(_text[_lang][188], "188.als");
 	else if (objeto_que_lleva == LOOK && fl == 213)
-		talk(TEXT189, "189.als");
+		talk(_text[_lang][189], "189.als");
 	else if (objeto_que_lleva == OPEN && fl == 213)
-		talk(TEXT190, "190.als");
+		talk(_text[_lang][190], "190.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_6(int fl){
 	if (objeto_que_lleva == LOOK && fl==144) {
-		talk(TEXT41, "41.als");
-		talk(TEXT42, "42.als");
+		talk(_text[_lang][41], "41.als");
+		talk(_text[_lang][42], "42.als");
 	} else if (objeto_que_lleva == PICK && fl == 144)
-		talk(TEXT43, "43.als");
+		talk(_text[_lang][43], "43.als");
 	else if (objeto_que_lleva == LOOK && fl == 138)
-		talk(TEXT35, "35.als");
+		talk(_text[_lang][35], "35.als");
 	else if (objeto_que_lleva == OPEN && fl == 138)
 		abre_puerta(0, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 138)
 		cierra_puerta(0, 1);
 	else if (objeto_que_lleva == TALK && fl == 138)
-		talk(TEXT6, "6.als");
+		talk(_text[_lang][6], "6.als");
 	else if (objeto_que_lleva == LOOK && fl == 143)
-		talk(TEXT37, "37.als");
+		talk(_text[_lang][37], "37.als");
 	else if (objeto_que_lleva == PICK && fl == 143)
-		talk(TEXT7, "7.als");
+		talk(_text[_lang][7], "7.als");
 	else if (objeto_que_lleva == MOVE && fl == 143)
-		talk(TEXT7, "7.als");
+		talk(_text[_lang][7], "7.als");
 	else if (objeto_que_lleva == OPEN && fl == 143 && flags[2] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateRefresh_pre();
@@ -377,9 +376,9 @@ void DrasculaEngine::room_6(int fl){
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
 	} else if (objeto_que_lleva == TALK && fl == 143)
-		talk(TEXT38, "38.als");
+		talk(_text[_lang][38], "38.als");
 	else if (objeto_que_lleva == LOOK && fl == 139)
-		talk(TEXT36, "36.als");
+		talk(_text[_lang][36], "36.als");
 	else if (objeto_que_lleva == OPEN && fl == 139 && flags[1] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		updateRefresh_pre();
@@ -394,7 +393,7 @@ void DrasculaEngine::room_6(int fl){
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
 	} else if (objeto_que_lleva == LOOK && fl == 140)
-		talk(TEXT147, "147.als");
+		talk(_text[_lang][147], "147.als");
 	else if (objeto_que_lleva == PICK && fl == 140) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		updateRefresh_pre();
@@ -412,9 +411,9 @@ void DrasculaEngine::room_6(int fl){
 
 void DrasculaEngine::room_7(int fl){
 	if (objeto_que_lleva == LOOK && fl == 169)
-		talk(TEXT44, "44.als");
+		talk(_text[_lang][44], "44.als");
 	else if (objeto_que_lleva == LOOK && fl == 164)
-		talk(TEXT35, "35.als" );
+		talk(_text[_lang][35], "35.als" );
 	else if (objeto_que_lleva == PICK && fl == 190) {
 		agarra_objeto(17);
 		flags[35] = 1;
@@ -427,24 +426,24 @@ void DrasculaEngine::room_7(int fl){
 
 void DrasculaEngine::room_8(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 147 && flags[7] == 0) {
-		talk(TEXT58, "58.als");
+		talk(_text[_lang][58], "58.als");
 		agarra_objeto(15);
 		flags[7] = 1;
 		if (flags[7] == 1 && flags[26] == 1 && flags[34] == 1 && flags[35] == 1 && flags[37] == 1)
 			flags[38] = 1;
 	} else if (objeto_que_lleva == LOOK && fl == 147)
-		talk(TEXT59, "59.als");
+		talk(_text[_lang][59], "59.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_9(int fl){
 	if (objeto_que_lleva == LOOK && fl == 150)
-		talk(TEXT35, "35.als");
+		talk(_text[_lang][35], "35.als");
 	else if (objeto_que_lleva == TALK && fl == 150)
-		talk(TEXT6, "6.als");
+		talk(_text[_lang][6], "6.als");
 	else if (objeto_que_lleva == LOOK && fl == 51)
-		talk(TEXT60, "60.als");
+		talk(_text[_lang][60], "60.als");
 	else if (objeto_que_lleva == TALK && fl == 51 && flags[4] == 0)
 		animation_4_2();
 	else if (objeto_que_lleva == TALK && fl == 51 && flags[4] == 1)
@@ -459,19 +458,19 @@ void DrasculaEngine::room_9(int fl){
 
 void DrasculaEngine::room_12(int fl){
 	if (objeto_que_lleva == LOOK && fl == 154)
-		talk(TEXT329, "329.als");
+		talk(_text[_lang][329], "329.als");
 	else if (objeto_que_lleva == TALK && fl == 154)
-		talk(TEXT330, "330.als");
+		talk(_text[_lang][330], "330.als");
 	else if (objeto_que_lleva == MOVE && fl == 155)
-		talk(TEXT48, "48.als");
+		talk(_text[_lang][48], "48.als");
 	else if (objeto_que_lleva == TALK && fl == 155)
-		talk(TEXT331, "331.als");
+		talk(_text[_lang][331], "331.als");
 	else if (objeto_que_lleva == LOOK && fl == 156)
-		talk(TEXT35, "35.als");
+		talk(_text[_lang][35], "35.als");
 	else if (objeto_que_lleva == MOVE && fl == 156)
-		talk(TEXT48, "48.als");
+		talk(_text[_lang][48], "48.als");
 	else if (objeto_que_lleva == TALK && fl == 156)
-		talk(TEXT50, "50.als");
+		talk(_text[_lang][50], "50.als");
 	else if (objeto_que_lleva == OPEN && fl == 156)
 		abre_puerta(16, 4);
 	else if (objeto_que_lleva == CLOSE && fl == 156)
@@ -482,9 +481,9 @@ void DrasculaEngine::room_12(int fl){
 
 bool DrasculaEngine::room_13(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 51) {
-		talk(TEXT411, "411.als");
+		talk(_text[_lang][411], "411.als");
 		sentido_hare = 3;
-		talk(TEXT412, "412.als");
+		talk(_text[_lang][412], "412.als");
 		strcpy(nombre_obj[1], "yoda");
 	} else if (objeto_que_lleva == TALK && fl == 51)
 		conversa("op_7.cal");
@@ -502,7 +501,7 @@ void DrasculaEngine::room_14(int fl) {
 	if (objeto_que_lleva == TALK && fl == 54 && flags[39] == 0)
 		animation_12_2();
 	else if (objeto_que_lleva == TALK && fl == 54 && flags[39] == 1)
-		talk(TEXT109, "109.als");
+		talk(_text[_lang][109], "109.als");
 	else if (objeto_que_lleva == 12 && fl == 54)
 		animation_26_2();
 	else if (objeto_que_lleva == TALK && fl == 52 && flags[5] == 0)
@@ -512,37 +511,37 @@ void DrasculaEngine::room_14(int fl) {
 	else if (objeto_que_lleva == TALK && fl == 53)
 		animation_13_2();
 	else if (objeto_que_lleva == LOOK && fl == 200)
-		talk(TEXT165, "165.als");
+		talk(_text[_lang][165], "165.als");
 	else if (objeto_que_lleva == LOOK && fl == 201)
-		talk(TEXT166, "166.als");
+		talk(_text[_lang][166], "166.als");
 	else if (objeto_que_lleva == LOOK && fl == 202)
-		talk(TEXT167, "167.als");
+		talk(_text[_lang][167], "167.als");
 	else if (objeto_que_lleva == LOOK && fl == 203)
-		talk(TEXT168, "168.als");
+		talk(_text[_lang][168], "168.als");
 	else if (objeto_que_lleva == PICK && fl == 203)
-		talk(TEXT170, "170.als");
+		talk(_text[_lang][170], "170.als");
 	else if (objeto_que_lleva == MOVE && fl == 203)
-		talk(TEXT170, "170.als");
+		talk(_text[_lang][170], "170.als");
 	else if (objeto_que_lleva == TALK && fl == 203)
-		talk(TEXT169, "169.als");
+		talk(_text[_lang][169], "169.als");
 	else if (objeto_que_lleva == LOOK && fl == 204)
-		talk(TEXT171, "171.als");
+		talk(_text[_lang][171], "171.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_15(int fl) {
 	if (objeto_que_lleva == TALK && fl == 188)
-		talk(TEXT333, "333.als");
+		talk(_text[_lang][333], "333.als");
 	else if (objeto_que_lleva == LOOK && fl == 188)
-		talk(TEXT334, "334.als");
+		talk(_text[_lang][334], "334.als");
 	else if (objeto_que_lleva == 19 && fl == 188 && flags[27] == 0)
-		talk(TEXT335, "335.als");
+		talk(_text[_lang][335], "335.als");
 	else if (objeto_que_lleva == 19 && fl == 188 && flags[27] == 1) {
-		talk(TEXT336, "336.als");
+		talk(_text[_lang][336], "336.als");
 		sentido_hare = 3;
-		talk(TEXT337, "337.als");
-		talk_sinc(TEXT46, "46.als", "4442444244244");
+		talk(_text[_lang][337], "337.als");
+		talk_sinc(_text[_lang][46], "46.als", "4442444244244");
 		sentido_hare = 1;
 	} else if (objeto_que_lleva == 18 && fl == 188 && flags[26] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -550,43 +549,43 @@ void DrasculaEngine::room_15(int fl) {
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		comienza_sound("s8.als");
 		fin_sound();
-		talk(TEXT338, "338.als");
+		talk(_text[_lang][338], "338.als");
 		flags[27] = 0;
 		agarra_objeto(19);
 		resta_objeto(18);
 	} else if (objeto_que_lleva == MOVE && fl == 188 && flags[27] == 0) {
 		animation_34_2();
-		talk(TEXT339, "339.als");
+		talk(_text[_lang][339], "339.als");
 		agarra_objeto(16);
 		flags[26] = 1;
 		flags[27] = 1;
 		if (flags[7] == 1 && flags[26] == 1 && flags[34] == 1 && flags[35] == 1 && flags[37] == 1)
 			flags[38] = 1;
 	} else if (objeto_que_lleva == LOOK && fl == 205)
-		talk(TEXT172, "172.als");
+		talk(_text[_lang][172], "172.als");
 	else if (objeto_que_lleva == LOOK && fl == 206)
-		talk(TEXT173, "173.als");
+		talk(_text[_lang][173], "173.als");
 	else if (objeto_que_lleva == MOVE && fl == 206)
-		talk(TEXT174, "174.als");
+		talk(_text[_lang][174], "174.als");
 	else if (objeto_que_lleva == OPEN && fl == 206)
-		talk(TEXT174, "174.als");
+		talk(_text[_lang][174], "174.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_16(int fl) {
 	if (objeto_que_lleva == TALK && fl == 163)
-		talk(TEXT6, "6.als");
+		talk(_text[_lang][6], "6.als");
 	else if (objeto_que_lleva == OPEN && fl == 163)
 		abre_puerta(17, 0);
 	else if (objeto_que_lleva == CLOSE && fl == 163)
 		cierra_puerta(17, 0);
 	else if (objeto_que_lleva == LOOK && fl == 183)
-		talk(TEXT340, "340.als");
+		talk(_text[_lang][340], "340.als");
 	else if (objeto_que_lleva == TALK && fl == 183) {
-		talk(TEXT341, "341.als");
+		talk(_text[_lang][341], "341.als");
 		pause(10);
-		talk_sinc(TEXT50, "50.als", "11111111111144432554433");
+		talk_sinc(_text[_lang][50], "50.als", "11111111111144432554433");
 		pause(3);
 		talk_baul("bla, bla, bla.", "d83.als");
 	} else if (objeto_que_lleva == OPEN && fl == 183) {
@@ -596,40 +595,40 @@ void DrasculaEngine::room_16(int fl) {
 			sentido_hare = 3;
 			updateRoom();
 			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-			talk(TEXT342, "342.als");
+			talk(_text[_lang][342], "342.als");
 			agarra_objeto(22);
 		}
 	} else if (objeto_que_lleva == CLOSE && fl == 183)
 		cierra_puerta(19, NO_PUERTA);
 	else if (objeto_que_lleva == LOOK && fl == 185)
-		talk(TEXT37, "37.als");
+		talk(_text[_lang][37], "37.als");
 	else if (objeto_que_lleva == PICK && fl == 185)
-		talk(TEXT7, "7.als");
+		talk(_text[_lang][7], "7.als");
 	else if (objeto_que_lleva == MOVE && fl == 185)
-		talk(TEXT7, "7.als");
+		talk(_text[_lang][7], "7.als");
 	else if (objeto_que_lleva == TALK && fl == 185)
-		talk(TEXT38, "38.als");
+		talk(_text[_lang][38], "38.als");
 	else if (objeto_que_lleva == LOOK && fl == 187) {
-		talk(TEXT343, "343.als");
+		talk(_text[_lang][343], "343.als");
 		sentido_hare = 3;
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk(TEXT344, "344.als");
+		talk(_text[_lang][344], "344.als");
 	} else if (objeto_que_lleva == TALK && fl == 187)
-		talk(TEXT345, "345.als");
+		talk(_text[_lang][345], "345.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_17(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 177)
-		talk(TEXT35, "35.als");
+		talk(_text[_lang][35], "35.als");
 	else if (objeto_que_lleva == TALK && fl == 177 && flags[18] == 0)
-		talk(TEXT6, "6.als");
+		talk(_text[_lang][6], "6.als");
 	else if (objeto_que_lleva == TALK && fl == 177 && flags[18] == 1)
 		animation_18_2();
 	else if (objeto_que_lleva == OPEN && fl == 177 && flags[18] == 1)
-		talk(TEXT346, "346.als");
+		talk(_text[_lang][346], "346.als");
 	else if (objeto_que_lleva == OPEN && fl == 177 && flags[14] == 0 && flags[18] == 0)
 		animation_22_2();
 	else if (objeto_que_lleva == OPEN && fl == 177 && flags[14] == 1)
@@ -637,7 +636,7 @@ void DrasculaEngine::room_17(int fl) {
 	else if (objeto_que_lleva == CLOSE && fl == 177 && flags[14] == 1)
 		cierra_puerta(15, 1);
 	else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0) {
-		talk(TEXT347, "347.als");
+		talk(_text[_lang][347], "347.als");
 		flags[29] = 1;
 		agarra_objeto(23);
 		resta_objeto(11);
@@ -649,9 +648,9 @@ void DrasculaEngine::room_18(int fl) {
 	if (objeto_que_lleva == TALK && fl == 55 && flags[36] == 0)
 		animation_24_2();
 	else if (objeto_que_lleva == TALK && fl == 55 && flags[36] == 1)
-		talk(TEXT109, "109.als");
+		talk(_text[_lang][109], "109.als");
 	else if (objeto_que_lleva == LOOK && fl == 181)
-		talk(TEXT348, "348.als");
+		talk(_text[_lang][348], "348.als");
 	else if (objeto_que_lleva == PICK && fl == 182) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		updateRefresh_pre();
@@ -663,17 +662,17 @@ void DrasculaEngine::room_18(int fl) {
 		visible[2] = 0;
 		flags[28] = 1;
 	} else if (objeto_que_lleva == LOOK && fl == 182)
-		talk(TEXT154, "154.als");
+		talk(_text[_lang][154], "154.als");
 	else if (objeto_que_lleva == 8 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(TEXT349, "349.als");
+		talk(_text[_lang][349], "349.als");
 	else if (objeto_que_lleva == 13 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(TEXT349, "349.als");
+		talk(_text[_lang][349], "349.als");
 	else if (objeto_que_lleva == 15 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(TEXT349, "349.als");
+		talk(_text[_lang][349], "349.als");
 	else if (objeto_que_lleva == 16 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(TEXT349, "349.als");
+		talk(_text[_lang][349], "349.als");
 	else if (objeto_que_lleva == 17 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(TEXT349, "349.als");
+		talk(_text[_lang][349], "349.als");
 	else if (objeto_que_lleva == 8 && fl == 55 && flags[38] == 1 && flags[33] == 1)
 		animation_24_2();
 	else if (objeto_que_lleva == 13 && fl == 55 && flags[38] == 1 && flags[33] == 1)
@@ -694,7 +693,7 @@ void DrasculaEngine::room_18(int fl) {
 		updateRefresh();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(6);
-		talk(TEXT347, "347.als");
+		talk(_text[_lang][347], "347.als");
 		flags[29] = 1;
 		agarra_objeto(23);
 		resta_objeto(11);
@@ -704,14 +703,14 @@ void DrasculaEngine::room_18(int fl) {
 
 void DrasculaEngine::room_19(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 214)
-		talk(TEXT191, "191.als");
+		talk(_text[_lang][191], "191.als");
 	else
 		hay_respuesta = 0;
 }
 
 bool DrasculaEngine::room_21(int fl) {
 	if (objeto_que_lleva == OPEN && fl == 101 && flags[28] == 0)
-		talk(TEXT419, "419.als");
+		talk(_text[_lang][419], "419.als");
 	else if (objeto_que_lleva == OPEN && fl == 101 && flags[28] == 1)
 		abre_puerta(0, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 101)
@@ -735,7 +734,7 @@ bool DrasculaEngine::room_21(int fl) {
 
 void DrasculaEngine::room_22(int fl) {
 	if (objeto_que_lleva == PICK && fl == 140)
-		talk(TEXT7, "7.als");
+		talk(_text[_lang][7], "7.als");
 	else if (objeto_que_lleva == 11 && fl == 140) {
 		agarra_objeto(18);
 		visible[1] = 0;
@@ -750,14 +749,14 @@ void DrasculaEngine::room_22(int fl) {
 		resta_objeto(22);
 		actualiza_datos();
 		sentido_hare = 3;
-		talk(TEXT499, "499.als");
-		talk(TEXT500, "500.als");
+		talk(_text[_lang][499], "499.als");
+		talk(_text[_lang][500], "500.als");
 	} else if (objeto_que_lleva == LOOK && fl == 52)
-		talk(TEXT497, "497.als");
+		talk(_text[_lang][497], "497.als");
 	else if (objeto_que_lleva == TALK && fl == 52)
-		talk(TEXT498, "498.als");
+		talk(_text[_lang][498], "498.als");
 	else if (objeto_que_lleva == PICK && fl == 180 && flags[26] == 0)
-		talk(TEXT420, "420.als");
+		talk(_text[_lang][420], "420.als");
 	else if (objeto_que_lleva == PICK && fl == 180 && flags[26] == 1) {
 		agarra_objeto(7);
 		visible[3] = 0;
@@ -799,7 +798,7 @@ void DrasculaEngine::room_24(int fl) {
 	else if (objeto_que_lleva == CLOSE && fl == 106)
 		cierra_puerta(2, 1);
 	else if (objeto_que_lleva == LOOK && fl == 151)
-		talk(TEXT461, "461.als");
+		talk(_text[_lang][461], "461.als");
 	else
 		hay_respuesta = 0;
 }
@@ -808,7 +807,7 @@ void DrasculaEngine::room_26(int fl) {
 	if (objeto_que_lleva == OPEN && fl == 107 && flags[30] == 0)
 		abre_puerta(2, 0);
 	else if (objeto_que_lleva == OPEN && fl == 107 && flags[30] == 1)
-		talk(TEXT421, "421.als");
+		talk(_text[_lang][421], "421.als");
 	else if (objeto_que_lleva == CLOSE && fl == 107)
 		cierra_puerta(2, 0);
 	else if (objeto_que_lleva == 10 && fl == 50 && flags[18] == 1 && flags[12] == 1)
@@ -826,35 +825,35 @@ void DrasculaEngine::room_26(int fl) {
 		flags[12] = 1;
 		cierra_puerta(2, 0);
 		sentido_hare = 2;
-		talk_igorpuerta(TEXTI27, "I27.als");
+		talk_igorpuerta(_texti[_lang][27], "I27.als");
 		flags[30] = 1;
-		talk_igorpuerta(TEXTI28, "I28.als");
+		talk_igorpuerta(_texti[_lang][28], "I28.als");
 		lleva_al_hare(153, 180);
 	} else if (objeto_que_lleva == PICK && fl == 143 && flags[18] == 0) {
 		lleva_al_hare(260, 180);
 		copyBackground(80, 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
 		updateScreen(199, 94, 199, 94, 38, 27, dir_zona_pantalla);
 		pause(3);
-		talk_igor_peluca(TEXTI25, "I25.als");
+		talk_igor_peluca(_texti[_lang][25], "I25.als");
 		lleva_al_hare(153, 180);
 	} else if (objeto_que_lleva == TALK && fl == 51)
 		animation_1_4();
 	else if (objeto_que_lleva == OPEN && fl == 167)
-		talk(TEXT467, "467.als");
+		talk(_text[_lang][467], "467.als");
 	else if (objeto_que_lleva == LOOK && fl == 164)
-		talk(TEXT470, "470.als");
+		talk(_text[_lang][470], "470.als");
 	else if (objeto_que_lleva == OPEN && fl == 164)
-		talk(TEXT471, "471.als");
+		talk(_text[_lang][471], "471.als");
 	else if (objeto_que_lleva == LOOK && fl == 163)
-		talk(TEXT472, "472.als");
+		talk(_text[_lang][472], "472.als");
 	else if (objeto_que_lleva == PICK && fl == 163)
-		talk(TEXT473, "473.als");
+		talk(_text[_lang][473], "473.als");
 	else if (objeto_que_lleva == LOOK && fl == 165)
-		talk(TEXT474, "474.als");
+		talk(_text[_lang][474], "474.als");
 	else if (objeto_que_lleva == LOOK && fl == 168)
-		talk(TEXT476, "476.als");
+		talk(_text[_lang][476], "476.als");
 	else if (objeto_que_lleva == PICK && fl == 168)
-		talk(TEXT477, "477.als");
+		talk(_text[_lang][477], "477.als");
 	else
 		hay_respuesta = 0;
 }
@@ -865,7 +864,7 @@ void DrasculaEngine::room_27(int fl) {
 	else if (objeto_que_lleva == CLOSE && fl == 110)
 		cierra_puerta(6, 1);
 	else if (objeto_que_lleva == OPEN && fl == 116 && flags[23] == 0)
-		talk(TEXT419, "419.als");
+		talk(_text[_lang][419], "419.als");
 	else if (objeto_que_lleva == OPEN && fl == 116 && flags[23] == 1)
 		abre_puerta(5, 3);
 	else if (objeto_que_lleva == 17 && fl == 116) {
@@ -873,9 +872,9 @@ void DrasculaEngine::room_27(int fl) {
 		abre_puerta(5,3);
 		sin_verbo();
 	} else if (objeto_que_lleva == LOOK && fl == 175)
-		talk(TEXT429, "429.als");
+		talk(_text[_lang][429], "429.als");
 	else if (fl == 150)
-		talk(TEXT460, "460.als");
+		talk(_text[_lang][460], "460.als");
 	else
 		hay_respuesta = 0;
 }
@@ -886,15 +885,15 @@ void DrasculaEngine::room_29(int fl) {
 	else if (objeto_que_lleva == CLOSE && fl == 114)
 		cierra_puerta(4, 1);
 	else if (objeto_que_lleva == LOOK && fl == 152)
-		talk(TEXT463, "463.als");
+		talk(_text[_lang][463], "463.als");
 	else if (objeto_que_lleva == OPEN && fl == 152)
-		talk(TEXT464, "464.als");
+		talk(_text[_lang][464], "464.als");
 	else if (objeto_que_lleva == LOOK && fl == 153)
-		talk(TEXT465, "465.als");
+		talk(_text[_lang][465], "465.als");
 	else if (objeto_que_lleva == PICK && fl == 154)
-		talk(TEXT466, "466.als");
+		talk(_text[_lang][466], "466.als");
 	else if (objeto_que_lleva == OPEN && fl == 156)
-		talk(TEXT467, "467.als");
+		talk(_text[_lang][467], "467.als");
 	else
 		hay_respuesta = 0;
 }
@@ -905,12 +904,12 @@ void DrasculaEngine::room_30(int fl) {
 	else if (objeto_que_lleva == CLOSE && fl == 115)
 		cierra_puerta(4, 0);
 	else if (objeto_que_lleva == OPEN && fl == 144 && flags[19] == 0)
-		talk(TEXT422, "422.als");
+		talk(_text[_lang][422], "422.als");
 	else if (objeto_que_lleva == OPEN && fl == 144 && flags[19] == 1 && flags[22] == 1)
 		abre_puerta(16, 1);
 	else if (objeto_que_lleva == OPEN && fl == 144 && flags[19] == 1 && flags[22] == 0) {
 		abre_puerta(16, 1);
-		talk(TEXT423, "423.als");
+		talk(_text[_lang][423], "423.als");
 		flags[22] = 1;
 		agarra_objeto(12);
 		if (flags[11] == 1 && flags[14] == 1)
@@ -920,12 +919,12 @@ void DrasculaEngine::room_30(int fl) {
 	} else if (objeto_que_lleva == CLOSE && fl == 144)
 		cierra_puerta(16, 1);
 	else if (objeto_que_lleva == 13 && fl == 144) {
-		talk(TEXT424, "424.als");
+		talk(_text[_lang][424], "424.als");
 		flags[19] = 1;
 	} else if (objeto_que_lleva == OPEN && fl == 157)
-		talk(TEXT468, "468.als");
+		talk(_text[_lang][468], "468.als");
 	else if (objeto_que_lleva == LOOK && fl == 158)
-		talk(TEXT469, "469.als");
+		talk(_text[_lang][469], "469.als");
 	else
 		hay_respuesta = 0;
 }
@@ -940,9 +939,9 @@ void DrasculaEngine::room_31(int fl) {
 	else if (objeto_que_lleva == CLOSE && fl == 117)
 		cierra_puerta(5, 0);
 	else if (objeto_que_lleva == LOOK && fl == 161)
-		talk(TEXT470, "470.als");
+		talk(_text[_lang][470], "470.als");
 	else if (objeto_que_lleva == OPEN && fl == 161)
-		talk(TEXT471, "471.als");
+		talk(_text[_lang][471], "471.als");
 	else
 		hay_respuesta = 0;
 }
@@ -951,15 +950,15 @@ void DrasculaEngine::room_34(int fl) {
 	if (objeto_que_lleva == MOVE && fl == 146)
 		animation_8_4();
 	else if (objeto_que_lleva == LOOK && fl == 146)
-		talk(TEXT458, "458.als");
+		talk(_text[_lang][458], "458.als");
 	else if (objeto_que_lleva == PICK && fl == 146)
-		talk(TEXT459, "459.als");
+		talk(_text[_lang][459], "459.als");
 	else if (objeto_que_lleva == OPEN && fl == 120 && flags[25] == 1)
 		abre_puerta(8, 2);
 	else if (objeto_que_lleva == OPEN && fl == 120 && flags[25] == 0) {
 		abre_puerta(8, 2);
 		sentido_hare = 3;
-		talk(TEXT425, "425.als");
+		talk(_text[_lang][425], "425.als");
 		agarra_objeto(14);
 		flags[25] = 1;
 	} else if (objeto_que_lleva == CLOSE && fl == 120)
@@ -978,7 +977,7 @@ void DrasculaEngine::room_35(int fl) {
 	if (flags[18] == 1)
 		animation_6_4();
 	} else if (objeto_que_lleva == PICK && fl == 147) {
-		talk(TEXT426, "426.als");
+		talk(_text[_lang][426], "426.als");
 		agarra_objeto(15);
 		visible[1] = 0;
 		flags[15] = 1;
@@ -994,7 +993,7 @@ void DrasculaEngine::room_35(int fl) {
 
 void DrasculaEngine::room_44(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 172)
-		talk(TEXT428, "428.als");
+		talk(_text[_lang][428], "428.als");
 	else
 		hay_respuesta = 0;
 }
@@ -1003,17 +1002,17 @@ void DrasculaEngine::room_49(int fl){
 	if (objeto_que_lleva == TALK && fl ==51)
 		conversa("op_9.cal");
 	else if (objeto_que_lleva == LOOK && fl == 51)
-		talk(TEXT132, "132.als");
+		talk(_text[_lang][132], "132.als");
 	else if ((objeto_que_lleva == 8 && fl == 51) || (objeto_que_lleva == 8 && fl == 203))
 		animation_5_5();
 	else if (objeto_que_lleva == LOOK && fl == 200)
-		talk(TEXT133, "133.als");
+		talk(_text[_lang][133], "133.als");
 	else if (objeto_que_lleva == TALK && fl == 200)
-		talk(TEXT134, "134.als");
+		talk(_text[_lang][134], "134.als");
 	else if (objeto_que_lleva == LOOK && fl == 201)
-		talk(TEXT135, "135.als");
+		talk(_text[_lang][135], "135.als");
 	else if (objeto_que_lleva == LOOK && fl == 203)
-		talk(TEXT137, "137.als");
+		talk(_text[_lang][137], "137.als");
 	else
 		hay_respuesta = 0;
 }
@@ -1023,15 +1022,15 @@ void DrasculaEngine::room_53(int fl) {
 		agarra_objeto(16);
 		visible[3] = 0;
 	} else if (objeto_que_lleva == LOOK && fl == 121)
-		talk(TEXT128, "128.als");
+		talk(_text[_lang][128], "128.als");
 	else if (objeto_que_lleva == LOOK && fl == 209)
-		talk(TEXT129, "129.als");
+		talk(_text[_lang][129], "129.als");
 	else if (objeto_que_lleva == MOVE && fl == 123)
 		animation_11_5();
 	else if (objeto_que_lleva == LOOK && fl == 52)
-		talk(TEXT447, "447.als");
+		talk(_text[_lang][447], "447.als");
 	else if (objeto_que_lleva == TALK && fl == 52)
-		talk(TEXT131, "131.als");
+		talk(_text[_lang][131], "131.als");
 	else if (objeto_que_lleva == 12 && fl == 52)
 		animation_10_5();
 	else if (objeto_que_lleva == 15 && fl == 52)
@@ -1041,7 +1040,7 @@ void DrasculaEngine::room_53(int fl) {
 		sin_verbo();
 		actualiza_datos();
 	} else if (objeto_que_lleva == 16) {
-		talk(TEXT439, "439.als");
+		talk(_text[_lang][439], "439.als");
 		sin_verbo();
 		visible[3] = 1;
 	} else
@@ -1052,34 +1051,34 @@ void DrasculaEngine::room_54(int fl) {
 	if ((objeto_que_lleva == TALK && fl == 118) || (objeto_que_lleva == LOOK && fl == 118 && flags[0] == 0))
 		animation_1_5();
 	else if (objeto_que_lleva == LOOK && fl == 118 && flags[0]==1)
-		talk(TEXT124, "124.als");
+		talk(_text[_lang][124], "124.als");
 	else if (objeto_que_lleva == LOOK && fl == 53)
-		talk(TEXT127, "127.als");
+		talk(_text[_lang][127], "127.als");
 	else if (objeto_que_lleva == TALK && fl == 53 && flags[14] == 0) {
-		talk(TEXT288, "288.als");
+		talk(_text[_lang][288], "288.als");
 		flags[12] = 1;
 		pause(10);
-		talk_mus(TEXTE1, "E1.als");
-		talk(TEXT289, "289.als");
-		talk_mus(TEXTE2, "E2.als");
-		talk_mus(TEXTE3, "E3.als");
+		talk_mus(_texte[_lang][1], "E1.als");
+		talk(_text[_lang][289], "289.als");
+		talk_mus(_texte[_lang][2], "E2.als");
+		talk_mus(_texte[_lang][3], "E3.als");
 		conversa("op_10.cal");
 		flags[12] = 0;
 		flags[14] = 1;
 	} else if (objeto_que_lleva == TALK && fl == 53 && flags[14] == 1)
-		talk(TEXT109, "109.als");
+		talk(_text[_lang][109], "109.als");
 	else if (objeto_que_lleva == PICK && fl == 9999 && flags[13] == 0) {
 		agarra_objeto(8);
 		flags[13] = 1;
-		talk_mus(TEXTE10, "e10.als");
+		talk_mus(_texte[_lang][10], "e10.als");
 		actualiza_datos();
 	} else if (objeto_que_lleva == OPEN && fl == 119)
-		talk(TEXT125, "125.als");
+		talk(_text[_lang][125], "125.als");
 	else if (objeto_que_lleva == LOOK && fl == 119)
-		talk(TEXT126, "126.als");
+		talk(_text[_lang][126], "126.als");
 	else if (objeto_que_lleva == 10 && fl == 119) {
 		pause(4);
-		talk(TEXT436, "436.als");
+		talk(_text[_lang][436], "436.als");
 		sin_verbo();
 		resta_objeto(10);
 	} else
@@ -1092,11 +1091,11 @@ void DrasculaEngine::room_55(int fl) {
 		flags[8] = 1;
 		actualiza_datos();
 	} else if (objeto_que_lleva == LOOK && fl == 122)
-		talk(TEXT138, "138.als");
+		talk(_text[_lang][138], "138.als");
 	else if (objeto_que_lleva == LOOK && fl == 204)
-		talk(TEXT139, "139.als");
+		talk(_text[_lang][139], "139.als");
 	else if (objeto_que_lleva == LOOK && fl == 205)
-		talk(TEXT140, "140.als");
+		talk(_text[_lang][140], "140.als");
 	else if (fl == 206) {
 		comienza_sound("s11.als");
 		anima("det.bin", 17);
@@ -1111,11 +1110,11 @@ bool DrasculaEngine::room_56(int fl) {
 		animation_14_5();
 		return true;
 	} else if (objeto_que_lleva == LOOK && fl == 124)
-		talk(TEXT450, "450.als");
+		talk(_text[_lang][450], "450.als");
 	else if (objeto_que_lleva == OPEN && fl == 207)
-		talk(TEXT141, "141.als");
+		talk(_text[_lang][141], "141.als");
 	else if (objeto_que_lleva == LOOK && fl == 208)
-		talk(TEXT142, "142.als");
+		talk(_text[_lang][142], "142.als");
 	else
 		hay_respuesta = 0;
 
@@ -1126,7 +1125,7 @@ void DrasculaEngine::room_58(int fl) {
 	if (objeto_que_lleva == MOVE && fl == 103)
 		animation_7_6();
 	else if (objeto_que_lleva == LOOK && fl == 104)
-		talk(TEXT454, "454.als");
+		talk(_text[_lang][454], "454.als");
 	else
 		hay_respuesta = 0;
 }
@@ -1134,14 +1133,14 @@ void DrasculaEngine::room_58(int fl) {
 void DrasculaEngine::room_59(int fl) {
 	if ((objeto_que_lleva == TALK && fl == 51) || (objeto_que_lleva == LOOK && fl == 51)) {
 		flags[9] = 1;
-		talk(TEXT259, "259.als");
-		talk_bj_cama(TEXTBJ13, "bj13.als");
-		talk(TEXT263, "263.als");
-		talk_bj_cama(TEXTBJ14, "bj14.als");
+		talk(_text[_lang][259], "259.als");
+		talk_bj_cama(_textbj[_lang][13], "bj13.als");
+		talk(_text[_lang][263], "263.als");
+		talk_bj_cama(_textbj[_lang][14], "bj14.als");
 		pause(40);
-		talk(TEXT264, "264.als");
-		talk_bj_cama(TEXTBJ15, "BJ15.als");
-		talk(TEXT265, "265.als");
+		talk(_text[_lang][264], "264.als");
+		talk_bj_cama(_textbj[_lang][15], "BJ15.als");
+		talk(_text[_lang][265], "265.als");
 		flags[9] = 0;
 		if (flags[11] == 0) {
 			comienza_sound("s12.als");
@@ -1171,22 +1170,22 @@ void DrasculaEngine::room_59(int fl) {
 			decompressPic(dir_hare_frente, 1);
 			loadPic("tlef3.alg");
 			decompressPic(dir_hare_fondo, 1);
-			talk_htel(TEXT240, "240.als");
+			talk_htel(_text[_lang][240], "240.als");
 
 			color_abc(VON_BRAUN);
-			talk_solo(TEXTVB58, "VB58.als");
-			talk_htel(TEXT241, "241.als");
+			talk_solo(_textvb[_lang][58], "VB58.als");
+			talk_htel(_text[_lang][241], "241.als");
 			color_abc(VON_BRAUN);
-			talk_solo(TEXTVB59, "VB59.als");
-			talk_htel(TEXT242, "242.als");
+			talk_solo(_textvb[_lang][59], "VB59.als");
+			talk_htel(_text[_lang][242], "242.als");
 			color_abc(VON_BRAUN);
-			talk_solo(TEXTVB60, "VB60.als");
-			talk_htel(TEXT196, "196.als");
+			talk_solo(_textvb[_lang][60], "VB60.als");
+			talk_htel(_text[_lang][196], "196.als");
 			color_abc(VON_BRAUN);
-			talk_solo(TEXTVB61,"VB61.als");
-			talk_htel(TEXT244, "244.als");
+			talk_solo(_textvb[_lang][61],"VB61.als");
+			talk_htel(_text[_lang][244], "244.als");
 			color_abc(VON_BRAUN);
-			talk_solo(TEXTVB62, "VB62.als");
+			talk_solo(_textvb[_lang][62], "VB62.als");
 			clearRoom();
 			loadPic("aux59.alg");
 			decompressPic(dir_dibujo3, 1);
@@ -1197,7 +1196,7 @@ void DrasculaEngine::room_59(int fl) {
 			loadPic("59.alg");
 			decompressPic(dir_dibujo1, MEDIA);
 			sentido_hare = 3;
-			talk(TEXT245, "245.als");
+			talk(_text[_lang][245], "245.als");
 			sin_verbo();
 			flags[11] = 1;
 		}
@@ -1209,27 +1208,27 @@ bool DrasculaEngine::room_60(int fl) {
 	if (objeto_que_lleva == MOVE && fl == 112)
 		animation_10_6();
 	else if (objeto_que_lleva == LOOK && fl == 112)
-		talk(TEXT440, "440.als");
+		talk(_text[_lang][440], "440.als");
 	else if (objeto_que_lleva == TALK && fl == 52) {
-		talk(TEXT266, "266.als");
-		talk_taber2(TEXTT1, "t1.als");
+		talk(_text[_lang][266], "266.als");
+		talk_taber2(_textt[_lang][1], "t1.als");
 		conversa("op_12.cal");
 		sin_verbo();
 		objeto_que_lleva = 0;
 	} else if (objeto_que_lleva == TALK && fl == 115)
-		talk(TEXT455, "455.als");
+		talk(_text[_lang][455], "455.als");
 	else if (objeto_que_lleva == TALK && fl == 56)
-		talk(TEXT455, "455.als");
+		talk(_text[_lang][455], "455.als");
 	else if (objeto_que_lleva == LOOK && fl == 114)
-		talk(TEXT167, "167.als");
+		talk(_text[_lang][167], "167.als");
 	else if (objeto_que_lleva == LOOK && fl == 113)
-		talk(TEXT168, "168.als");
+		talk(_text[_lang][168], "168.als");
 	else if (objeto_que_lleva == PICK && fl == 113)
-		talk(TEXT170, "170.als");
+		talk(_text[_lang][170], "170.als");
 	else if (objeto_que_lleva == MOVE && fl == 113)
-		talk(TEXT170, "170.als");
+		talk(_text[_lang][170], "170.als");
 	else if (objeto_que_lleva == TALK && fl == 113)
-		talk(TEXT169, "169.als");
+		talk(_text[_lang][169], "169.als");
 	else if (objeto_que_lleva == 21 && fl == 56)
 		animation_18_6();
 	else if (objeto_que_lleva == 9 && fl == 56 && flags[6] == 1) {
@@ -1237,7 +1236,7 @@ bool DrasculaEngine::room_60(int fl) {
 		return true;
 	} else if (objeto_que_lleva == 9 && fl == 56 && flags[6] == 0) {
 		anima("cnf.bin", 14);
-		talk(TEXT455, "455.als");
+		talk(_text[_lang][455], "455.als");
 	} else
 		hay_respuesta = 0;
 
@@ -1246,13 +1245,13 @@ bool DrasculaEngine::room_60(int fl) {
 
 void DrasculaEngine::room_61(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 116)
-		talk(TEXT172, "172.als");
+		talk(_text[_lang][172], "172.als");
 	else if (objeto_que_lleva == LOOK && fl == 117)
-		talk(TEXT173, "173.als");
+		talk(_text[_lang][173], "173.als");
 	else if (objeto_que_lleva == MOVE && fl == 117)
-		talk(TEXT174, "174.als");
+		talk(_text[_lang][174], "174.als");
 	else if (objeto_que_lleva == OPEN && fl == 117)
-		talk(TEXT174, "174.als");
+		talk(_text[_lang][174], "174.als");
 	else
 		hay_respuesta = 0;
 }
@@ -1263,50 +1262,50 @@ void DrasculaEngine::room_62(int fl) {
 	else if (objeto_que_lleva == TALK && fl == 52 && flags[0] == 0)
 		animation_3_1();
 	else if (objeto_que_lleva == TALK && fl == 52 && flags[0] == 1)
-		talk(TEXT109, "109.als");
+		talk(_text[_lang][109], "109.als");
 	else if (objeto_que_lleva == TALK && fl == 54)
 		animation_4_1();
 	else if (objeto_que_lleva == LOOK && fl == 100)
-		talk(TEXT168, "168.als");
+		talk(_text[_lang][168], "168.als");
 	else if (objeto_que_lleva == TALK && fl == 100)
-		talk(TEXT169, "169.als");
+		talk(_text[_lang][169], "169.als");
 	else if (objeto_que_lleva == PICK && fl == 100)
-		talk(TEXT170, "170.als");
+		talk(_text[_lang][170], "170.als");
 	else if (objeto_que_lleva == LOOK && fl == 101)
-		talk(TEXT171, "171.als");
+		talk(_text[_lang][171], "171.als");
 	else if (objeto_que_lleva == LOOK && fl == 102)
-		talk(TEXT167, "167.als");
+		talk(_text[_lang][167], "167.als");
 	else if (objeto_que_lleva == LOOK && fl == 103)
-		talk(TEXT166, "166.als");
+		talk(_text[_lang][166], "166.als");
 	else hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_63(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 110)
-		talk(TEXT172, "172.als");
+		talk(_text[_lang][172], "172.als");
 	else if (objeto_que_lleva == LOOK && fl == 109)
-		talk(TEXT173, "173.als");
+		talk(_text[_lang][173], "173.als");
 	else if (objeto_que_lleva == MOVE && fl == 109)
-		talk(TEXT174, "174.als");
+		talk(_text[_lang][174], "174.als");
 	else if (objeto_que_lleva == LOOK && fl == 108)
-		talk(TEXT334, "334.als");
+		talk(_text[_lang][334], "334.als");
 	else if (objeto_que_lleva == TALK && fl == 108)
-		talk(TEXT333, "333.als");
+		talk(_text[_lang][333], "333.als");
 	else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_pendulo(int fl) {
 	if (objeto_que_lleva == LOOK && fl == 100)
-		talk(TEXT452, "452.als");
+		talk(_text[_lang][452], "452.als");
 	else if (objeto_que_lleva == LOOK && fl == 101)
-		talk (TEXT123, "123.als");
+		talk (_text[_lang][123], "123.als");
 	else if (objeto_que_lleva == PICK && fl == 101)
 		agarra_objeto(20);
 	else if (objeto_que_lleva == 20 && fl == 100)
 		animation_6_6();
 	else if (objeto_que_lleva == PICK || objeto_que_lleva == OPEN)
-		talk(TEXT453, "453.als");
+		talk(_text[_lang][453], "453.als");
 	else
 		hay_respuesta = 0;
 }

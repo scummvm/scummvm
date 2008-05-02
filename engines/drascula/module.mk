@@ -5,7 +5,8 @@ MODULE_OBJS = \
 	detection.o \
 	drascula.o \
 	rooms.o \
-	talk.o
+	talk.o \
+	texts.o
 
 
 # This module can be built as a plugin
