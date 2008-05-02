@@ -177,6 +177,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\drascula\rooms.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\drascula\texts.h"
 			>
 		</File>
