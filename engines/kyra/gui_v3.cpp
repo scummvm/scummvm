@@ -24,14 +24,15 @@
  */
 
 #include "kyra/gui_v3.h"
-#include "kyra/kyra_v3.h"
-#include "kyra/text_v3.h"
+#include "kyra/kyra_mr.h"
+#include "kyra/text_mr.h"
 #include "kyra/wsamovie.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
-void KyraEngine_v3::showMessage(const char *string, uint8 c0, uint8 c1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::showMessage('%s', %d, %d)", string, c0, c1);
+void KyraEngine_MR::showMessage(const char *string, uint8 c0, uint8 c1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::showMessage('%s', %d, %d)", string, c0, c1);
 	_shownMessage = string;
 	_screen->hideMouse();
 
@@ -51,13 +52,13 @@ void KyraEngine_v3::showMessage(const char *string, uint8 c0, uint8 c1) {
 	_screen->showMouse();
 }
 
-void KyraEngine_v3::showMessageFromCCode(int string, uint8 c0, int) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::showMessageFromCCode(%d, %d, -)", string, c0);
+void KyraEngine_MR::showMessageFromCCode(int string, uint8 c0, int) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::showMessageFromCCode(%d, %d, -)", string, c0);
 	showMessage((const char*)getTableEntry(_cCodeFile, string), c0, 0xF0);
 }
 
-void KyraEngine_v3::updateItemCommand(int item, int str, uint8 c0) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateItemCommand(%d, %d, %d)", item, str, c0);
+void KyraEngine_MR::updateItemCommand(int item, int str, uint8 c0) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateItemCommand(%d, %d, %d)", item, str, c0);
 	char buffer[100];
 	char *src = (char*)getTableEntry(_itemFile, item);
 
@@ -74,30 +75,30 @@ void KyraEngine_v3::updateItemCommand(int item, int str, uint8 c0) {
 	showMessage(buffer, c0, 0xF0);
 }
 
-void KyraEngine_v3::updateCommandLine() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCommandLine()");
+void KyraEngine_MR::updateCommandLine() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateCommandLine()");
 	if (_restoreCommandLine) {
 		restoreCommandLine();
 		_restoreCommandLine = false;
 	}
 }
 
-void KyraEngine_v3::restoreCommandLine() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::restoreCommandLine()");
+void KyraEngine_MR::restoreCommandLine() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::restoreCommandLine()");
 	int y = _inventoryState ? 144 : 188;
 	_screen->copyBlockToPage(0, 0, y, 320, 12, _interfaceCommandLine);
 }
 
-void KyraEngine_v3::updateCLState() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateCLState()");
+void KyraEngine_MR::updateCLState() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateCLState()");
 	if (_inventoryState)
 		_commandLineY = 145;
 	else
 		_commandLineY = 189;
 }
 
-void KyraEngine_v3::showInventory() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::showInventory()");
+void KyraEngine_MR::showInventory() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::showInventory()");
 	if (!_screen->isMouseVisible())
 		return;
 	if (queryGameFlag(3))
@@ -175,8 +176,8 @@ void KyraEngine_v3::showInventory() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v3::hideInventory() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::hideInventory()");
+void KyraEngine_MR::hideInventory() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::hideInventory()");
 	if (queryGameFlag(3))
 		return;
 
@@ -239,8 +240,8 @@ void KyraEngine_v3::hideInventory() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v3::drawMalcolmsMoodText() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawMalcolmsMoodText()");
+void KyraEngine_MR::drawMalcolmsMoodText() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::drawMalcolmsMoodText()");
 	static const int stringId[] = { 0x32, 0x37, 0x3C };
 
 	if (queryGameFlag(0x219))
@@ -274,8 +275,8 @@ void KyraEngine_v3::drawMalcolmsMoodText() {
 	_screen->_curPage = pageBackUp;
 }
 
-void KyraEngine_v3::drawMalcolmsMoodPointer(int frame, int page) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawMalcolmsMoodPointer(%d, %d)", frame, page);
+void KyraEngine_MR::drawMalcolmsMoodPointer(int frame, int page) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::drawMalcolmsMoodPointer(%d, %d)", frame, page);
 	static const uint8 stateTable[] = {
 		1, 6, 11
 	};
@@ -301,8 +302,8 @@ void KyraEngine_v3::drawMalcolmsMoodPointer(int frame, int page) {
 	_invWsaFrame = frame;
 }
 
-void KyraEngine_v3::drawJestersStaff(int type, int page) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawJestersStaff(%d, %d)", type, page);
+void KyraEngine_MR::drawJestersStaff(int type, int page) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::drawJestersStaff(%d, %d)", type, page);
 	int y = 155;
 	if (page == 30) {
 		page = 2;
@@ -313,8 +314,8 @@ void KyraEngine_v3::drawJestersStaff(int type, int page) {
 	_screen->drawShape(page, getShapePtr(shape), 217, y, 0, 0);
 }
 
-void KyraEngine_v3::drawScore(int page, int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawScore(%d, %d, %d)", page, x, y);
+void KyraEngine_MR::drawScore(int page, int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::drawScore(%d, %d, %d)", page, x, y);
 	if (page == 30) {
 		page = 2;
 		y -= 144;
@@ -331,8 +332,8 @@ void KyraEngine_v3::drawScore(int page, int x, int y) {
 	_screen->drawShape(page, getShapePtr(shape3+433), x, y, 0, 0);
 }
 
-void KyraEngine_v3::drawScoreCounting(int oldScore, int newScore, int drawOld, const int x) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawScoreCounting(%d, %d, %d, %d)", oldScore, newScore, drawOld, x);
+void KyraEngine_MR::drawScoreCounting(int oldScore, int newScore, int drawOld, const int x) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::drawScoreCounting(%d, %d, %d, %d)", oldScore, newScore, drawOld, x);
 	int y = 189;
 	if (_inventoryState)
 		y -= 44;
@@ -366,8 +367,8 @@ void KyraEngine_v3::drawScoreCounting(int oldScore, int newScore, int drawOld, c
 	_screen->drawShape(0, getShapePtr(new001+433), x + 16, y, 0, 0);
 }
 
-int KyraEngine_v3::getScoreX(const char *str) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::getScoreX('%s')", str);
+int KyraEngine_MR::getScoreX(const char *str) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::getScoreX('%s')", str);
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
 
@@ -379,8 +380,8 @@ int KyraEngine_v3::getScoreX(const char *str) {
 	return x;
 }
 
-void KyraEngine_v3::redrawInventory(int page) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::redrawInventory(%d)", page);
+void KyraEngine_MR::redrawInventory(int page) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::redrawInventory(%d)", page);
 	int yOffset = 0;
 
 	if (page == 30) {
@@ -407,8 +408,8 @@ void KyraEngine_v3::redrawInventory(int page) {
 		_screen->updateScreen();	
 }
 
-void KyraEngine_v3::clearInventorySlot(int slot, int page) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::clearInventorySlot(%d, %d)", slot, page);
+void KyraEngine_MR::clearInventorySlot(int slot, int page) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::clearInventorySlot(%d, %d)", slot, page);
 	int yOffset = 0;
 	if (page == 30) {
 		page = 2;
@@ -418,8 +419,8 @@ void KyraEngine_v3::clearInventorySlot(int slot, int page) {
 	_screen->drawShape(page, getShapePtr(slot+422), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
 }
 
-void KyraEngine_v3::drawInventorySlot(int page, int item, int slot) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::drawInventorySlot(%d, %d, %d)", page, item, slot);
+void KyraEngine_MR::drawInventorySlot(int page, int item, int slot) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::drawInventorySlot(%d, %d, %d)", page, item, slot);
 	int yOffset = 0;
 	if (page == 30) {
 		page = 2;
@@ -429,8 +430,8 @@ void KyraEngine_v3::drawInventorySlot(int page, int item, int slot) {
 	_screen->drawShape(page, getShapePtr(item+248), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
 }
 
-int KyraEngine_v3::buttonInventory(Button *button) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::buttonInventory(%p)", (const void*)button);
+int KyraEngine_MR::buttonInventory(Button *button) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::buttonInventory(%p)", (const void*)button);
 	setNextIdleAnimTimer();
 	if (!_enableInventory || !_inventoryState || !_screen->isMouseVisible())
 		return 0;
@@ -483,7 +484,7 @@ int KyraEngine_v3::buttonInventory(Button *button) {
 	return 0;
 }
 
-int KyraEngine_v3::buttonMoodChange(Button *button) {
+int KyraEngine_MR::buttonMoodChange(Button *button) {
 	if (queryGameFlag(0x219)) {
 		snd_playSoundEffect(0x0D, 0xC8);
 		return 0;
@@ -550,7 +551,7 @@ int KyraEngine_v3::buttonMoodChange(Button *button) {
 	return 0;
 }
 
-int KyraEngine_v3::buttonShowScore(Button *button) {
+int KyraEngine_MR::buttonShowScore(Button *button) {
 	strcpy(_stringBuffer, (const char*)getTableEntry(_cCodeFile, 18));
 
 	char *buffer = _stringBuffer;
@@ -573,7 +574,7 @@ int KyraEngine_v3::buttonShowScore(Button *button) {
 	return 0;
 }
 
-int KyraEngine_v3::buttonJesterStaff(Button *button) {
+int KyraEngine_MR::buttonJesterStaff(Button *button) {
 	makeCharFacingMouse();
 	if (_itemInHand == 27) {
 		_screen->hideMouse();
@@ -606,7 +607,7 @@ int KyraEngine_v3::buttonJesterStaff(Button *button) {
 
 #pragma mark -
 
-GUI_v3::GUI_v3(KyraEngine_v3 *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
+GUI_v3::GUI_v3(KyraEngine_MR *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_backUpButtonList = _unknownButtonList = 0;
 	_buttonListChanged = false;
 }

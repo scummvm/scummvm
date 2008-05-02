@@ -53,13 +53,13 @@ namespace Kyra {
 	button.data2Val3 = s; \
 	button.flags2 = t;
 
-class KyraEngine_v3;
-class Screen_v3;
+class KyraEngine_MR;
+class Screen_MR;
 
 class GUI_v3 : public GUI {
-friend class KyraEngine_v3;
+friend class KyraEngine_MR;
 public:
-	GUI_v3(KyraEngine_v3 *engine);
+	GUI_v3(KyraEngine_MR *engine);
 
 	Button *addButtonToList(Button *list, Button *newButton);
 
@@ -84,8 +84,8 @@ private:
 	uint8 defaultColor1() const { return 0xCF; }
 	uint8 defaultColor2() const { return 0xF8; }
 
-	KyraEngine_v3 *_vm;
-	Screen_v3 *_screen;
+	KyraEngine_MR *_vm;
+	Screen_MR *_screen;
 
 	bool _buttonListChanged;
 	Button *_backUpButtonList;

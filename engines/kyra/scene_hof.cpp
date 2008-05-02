@@ -23,17 +23,18 @@
  *
  */
 
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra_hof.h"
 #include "kyra/screen_v2.h"
 #include "kyra/sound.h"
 #include "kyra/wsamovie.h"
+#include "kyra/resource.h"
 
 #include "common/func.h"
 
 namespace Kyra {
 
-void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::enterNewScene(%d, %d, %d, %d, %d)", newScene, facing, unk1, unk2, unk3);
+void KyraEngine_HoF::enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::enterNewScene(%d, %d, %d, %d, %d)", newScene, facing, unk1, unk2, unk3);
 	if (_newChapterFile != _currentTalkFile) {
 		_currentTalkFile = _newChapterFile;
 		if (_flags.isTalkie) {
@@ -143,8 +144,8 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	_currentScene = newScene;
 }
 
-void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::enterNewSceneUnk1(%d, %d, %d)", facing, unk1, unk2);
+void KyraEngine_HoF::enterNewSceneUnk1(int facing, int unk1, int unk2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::enterNewSceneUnk1(%d, %d, %d)", facing, unk1, unk2);
 	int x = 0, y = 0;
 	int x2 = 0, y2 = 0;
 	bool needProc = true;
@@ -239,8 +240,8 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 		moveCharacter(facing, x, y);
 }
 
-void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::enterNewSceneUnk2(%d)", unk1);
+void KyraEngine_HoF::enterNewSceneUnk2(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::enterNewSceneUnk2(%d)", unk1);
 	_unk3 = -1;
 
 	if (_flags.isTalkie) {
@@ -268,8 +269,8 @@ void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
 	_unk3 = -1;
 }
 
-int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
+int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
 	bool running = true;
 	bool unkFlag = false;
 	int8 updateType = -1;
@@ -335,8 +336,8 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	return changedScene;
 }
 
-int KyraEngine_v2::checkSceneChange() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::checkSceneChange()");
+int KyraEngine_HoF::checkSceneChange() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::checkSceneChange()");
 	SceneDesc &curScene = _sceneList[_mainCharacter.sceneId];
 	int charX = _mainCharacter.x1, charY = _mainCharacter.y1;
 	int facing = 0;
@@ -389,20 +390,20 @@ int KyraEngine_v2::checkSceneChange() {
 	return 1;
 }
 
-void KyraEngine_v2::unloadScene() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::unloadScene()");
+void KyraEngine_HoF::unloadScene() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::unloadScene()");
 	_emc->unload(&_sceneScriptData);
 	freeSceneShapePtrs();
 	freeSceneAnims();
 }
 
-void KyraEngine_v2::loadScenePal() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::loadScenePal()");
+void KyraEngine_HoF::loadScenePal() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::loadScenePal()");
 	uint16 sceneId = _mainCharacter.sceneId;
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 
 	char filename[14];
-	strcpy(filename, _sceneList[sceneId].filename);
+	strcpy(filename, _sceneList[sceneId].filename1);
 	strcat(filename, ".COL");
 	_screen->loadBitmap(filename, 3, 3, 0);
 	memcpy(_screen->getPalette(1), _screen->getCPagePtr(3), 384);
@@ -410,21 +411,21 @@ void KyraEngine_v2::loadScenePal() {
 	memcpy(_scenePal, _screen->getCPagePtr(3)+336, 432);
 }
 
-void KyraEngine_v2::loadSceneMsc() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::loadSceneMsc()");
+void KyraEngine_HoF::loadSceneMsc() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::loadSceneMsc()");
 	uint16 sceneId = _mainCharacter.sceneId;
 	char filename[14];
-	strcpy(filename, _sceneList[sceneId].filename);
+	strcpy(filename, _sceneList[sceneId].filename1);
 	strcat(filename, ".MSC");
 	_screen->loadBitmap(filename, 3, 5, 0);
 }
 
-void KyraEngine_v2::startSceneScript(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::startSceneScript(%d)", unk1);
+void KyraEngine_HoF::startSceneScript(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::startSceneScript(%d)", unk1);
 	uint16 sceneId = _mainCharacter.sceneId;
 	char filename[14];
 
-	strcpy(filename, _sceneList[sceneId].filename);
+	strcpy(filename, _sceneList[sceneId].filename1);
 	if (sceneId == 68 && (queryGameFlag(0x1BC) || queryGameFlag(0x1BD)))
 		strcpy(filename, "DOORX");
 	strcat(filename, ".CPS");
@@ -448,7 +449,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	_sceneCommentString = "Undefined scene comment string!";
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
-	strcpy(filename, _sceneList[sceneId].filename);
+	strcpy(filename, _sceneList[sceneId].filename1);
 	strcat(filename, ".");
 	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? 0 : _lang]);
 
@@ -480,8 +481,8 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	_sceneEnterY4 &= ~1;
 }
 
-void KyraEngine_v2::runSceneScript2() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript2()");
+void KyraEngine_HoF::runSceneScript2() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::runSceneScript2()");
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_emc->start(&_sceneScriptState, 2);
@@ -490,8 +491,8 @@ void KyraEngine_v2::runSceneScript2() {
 		_emc->run(&_sceneScriptState);
 }
 
-void KyraEngine_v2::runSceneScript4(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript4(%d)", unk1);
+void KyraEngine_HoF::runSceneScript4(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::runSceneScript4(%d)", unk1);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_sceneScriptState.regs[5] = unk1;
 
@@ -500,8 +501,8 @@ void KyraEngine_v2::runSceneScript4(int unk1) {
 		_emc->run(&_sceneScriptState);
 }
 
-void KyraEngine_v2::runSceneScript6() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript6()");
+void KyraEngine_HoF::runSceneScript6() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::runSceneScript6()");
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
@@ -514,8 +515,8 @@ void KyraEngine_v2::runSceneScript6() {
 		_emc->run(&_sceneScriptState);
 }
 
-void KyraEngine_v2::runSceneScript7() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript7()");
+void KyraEngine_HoF::runSceneScript7() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::runSceneScript7()");
 	int oldPage = _screen->_curPage;
 	_screen->_curPage = 2;
 
@@ -526,8 +527,8 @@ void KyraEngine_v2::runSceneScript7() {
 	_screen->_curPage = oldPage;
 }
 
-void KyraEngine_v2::initSceneAnims(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::initSceneAnims(%d)", unk1);
+void KyraEngine_HoF::initSceneAnims(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::initSceneAnims(%d)", unk1);
 	for (int i = 0; i < ARRAYSIZE(_animObjects); ++i)
 		_animObjects[i].enabled = 0;
 
@@ -541,7 +542,7 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 	animState->enabled = 1;
 	animState->xPos1 = _mainCharacter.x1;
 	animState->yPos1 = _mainCharacter.y1;
-	animState->shapePtr = _defaultShapeTable[_mainCharacter.animFrame];
+	animState->shapePtr = getShapePtr(_mainCharacter.animFrame);
 	animState->shapeIndex1 = animState->shapeIndex2 = _mainCharacter.animFrame;
 
 	int frame = _mainCharacter.animFrame - 9;
@@ -561,7 +562,7 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 	animState->xPos3 = animState->xPos2;
 	animState->yPos3 = animState->yPos2;
 	animState->needRefresh = 1;
-	animState->unk8 = 1;
+	animState->specialRefresh = 1;
 
 	_animList = 0;
 
@@ -571,12 +572,12 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 		animState = &_animObjects[i+1];
 		animState->enabled = 0;
 		animState->needRefresh = 0;
-		animState->unk8 = 0;
+		animState->specialRefresh = 0;
 
 		if (_sceneAnims[i].flags & 1) {
 			animState->enabled = 1;
 			animState->needRefresh = 1;
-			animState->unk8 = 1;
+			animState->specialRefresh = 1;
 		}
 
 		animState->animFlags = _sceneAnims[i].flags & 8;
@@ -637,11 +638,11 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 		if (shapeIndex == 0xFFFF || _itemList[i].sceneId != _mainCharacter.sceneId) {
 			animState->enabled = 0;
 			animState->needRefresh = 0;
-			animState->unk8 = 0;
+			animState->specialRefresh = 0;
 		} else {
 			animState->xPos1 = _itemList[i].x;
 			animState->yPos1 = _itemList[i].y;
-			animState->shapePtr = _defaultShapeTable[64+shapeIndex];
+			animState->shapePtr = getShapePtr(64+shapeIndex);
 			animState->shapeIndex1 = animState->shapeIndex2 = shapeIndex+64;
 
 			animState->xPos2 = _itemList[i].x;
@@ -656,7 +657,7 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 
 			animState->enabled = 1;
 			animState->needRefresh = 1;
-			animState->unk8 = 1;
+			animState->specialRefresh = 1;
 
 			if (animInit) {
 				_animList = addToAnimListSorted(_animList, animState);
@@ -667,13 +668,13 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 		}
 	}
 
-	_animObjects[0].unk8 = 1;
+	_animObjects[0].specialRefresh = 1;
 	_animObjects[0].needRefresh = 1;
 
 	for (int i = 1; i < 41; ++i) {
 		if (_animObjects[i].enabled) {
 			_animObjects[i].needRefresh = 1;
-			_animObjects[i].unk8 = 1;
+			_animObjects[i].specialRefresh = 1;
 		}
 	}
 
@@ -685,8 +686,8 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 	refreshAnimObjects(0);
 }
 
-void KyraEngine_v2::initSceneScreen(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::initSceneScreen(%d)", unk1);
+void KyraEngine_HoF::initSceneScreen(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::initSceneScreen(%d)", unk1);
 	if (_unkSceneScreenFlag1) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 144, 2, 0, Screen::CR_NO_P_CHECK);
 		return;
@@ -712,52 +713,15 @@ void KyraEngine_v2::initSceneScreen(int unk1) {
 		_emc->run(&_sceneScriptState);
 }
 
-void KyraEngine_v2::updateSpecialSceneScripts() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateSpecialSceneScripts()");
-	uint32 nextTime = _system->getMillis() + _tickLength;
-	const int startScript = _lastProcessedSceneScript;
-
-	while (_system->getMillis() <= nextTime) {
-		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() &&
-			!_specialSceneScriptState[_lastProcessedSceneScript]) {
-			_specialSceneScriptRunFlag = true;
-
-			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
-				if (!_emc->run(&_sceneSpecialScripts[_lastProcessedSceneScript]))
-					_specialSceneScriptRunFlag = false;
-			}
-		}
-
-		if (!_emc->isValid(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
-			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], 8+_lastProcessedSceneScript);
-			_specialSceneScriptRunFlag = false;
-		}
-
-		++_lastProcessedSceneScript;
-		if (_lastProcessedSceneScript >= 10)
-			_lastProcessedSceneScript = 0;
-
-		if (_lastProcessedSceneScript == startScript)
-			return;
-	}
-}
-
-void KyraEngine_v2::freeSceneShapePtrs() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::freeSceneShapePtrs()");
+void KyraEngine_HoF::freeSceneShapePtrs() {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::freeSceneShapePtrs()");
 	for (int i = 0; i < ARRAYSIZE(_sceneShapeTable); ++i)
 		delete [] _sceneShapeTable[i];
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 }
 
-void KyraEngine_v2::freeSceneAnims() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::freeSceneAnims()");
-	for (int i = 0; i < ARRAYSIZE(_sceneAnims); ++i)
-		_sceneAnims[i].flags = 0;
-	Common::for_each(_sceneAnimMovie, _sceneAnimMovie+ARRAYSIZE(_sceneAnimMovie), Common::mem_fun(&WSAMovieV2::close));
-}
-
-void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::fadeScenePal(%d, %d)", srcIndex, delayTime);
+void KyraEngine_HoF::fadeScenePal(int srcIndex, int delayTime) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::fadeScenePal(%d, %d)", srcIndex, delayTime);
 	uint8 *dst = _screen->getPalette(0) + 336;
 	const uint8 *src = _scenePal + (srcIndex << 4)*3;
 	memcpy(dst, src, 48);
@@ -769,24 +733,8 @@ void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
 #pragma mark - Pathfinder
 #pragma mark -
 
-int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
-	x &= ~3; toX &= ~3;
-	y &= ~1; toY &= ~1;
-	int size = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
-	static bool usePostProcess = false;
-	if (size && !usePostProcess) {
-		usePostProcess = true;
-		int temp = pathfinderInitPositionTable(moveTable);
-		temp = pathfinderInitPositionIndexTable(temp, x, y);
-		pathfinderFinializePath(moveTable, temp, x, y, moveTableSize);
-		usePostProcess = false;
-	} 
-	return usePostProcess ? size : getMoveTableSize(moveTable);
-}
-
-bool KyraEngine_v2::lineIsPassable(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::lineIsPassable(%d, %d)", x, y);
+bool KyraEngine_HoF::lineIsPassable(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::lineIsPassable(%d, %d)", x, y);
 	static int unkTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
 
 	if (_pathfinderFlag & 2) {
@@ -825,135 +773,5 @@ bool KyraEngine_v2::lineIsPassable(int x, int y) {
 	return true;
 }
 
-bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::directLinePassable(%d, %d, %d, %d)", x, y, toX, toY);
-	while (x != toX && y != toY) {
-		int facing = getFacingFromPointToPoint(x, y, toX, toY);
-		x += _addXPosTable[facing];
-		y += _addYPosTable[facing];
-		if (!_screen->getShapeFlag1(x, y))
-			return false;
-	}
-	return true;
-}
-
-int KyraEngine_v2::pathfinderInitPositionTable(int *moveTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderInitPositionTable(%p)", (const void*)moveTable);
-	bool breakLoop = false;
-	int *moveTableCur = moveTable;
-	int oldEntry = *moveTableCur, curEntry = *moveTableCur;
-	int oldX = 0, newX = 0, oldY = 0, newY = 0;
-	int lastEntry = 0;
-	lastEntry = pathfinderAddToPositionTable(lastEntry, 0, 0);
-
-	while (*moveTableCur != 8) {
-		oldEntry = curEntry;
-
-		while (true) {
-			curEntry = *moveTableCur;
-			if (curEntry >= 0 && curEntry <= 7)
-				break;
-
-			if (curEntry == 8) {
-				breakLoop = true;
-				break;
-			} else {
-				++moveTableCur;
-			}
-		}
-
-		if (breakLoop)
-			break;
-
-		oldX = newX;
-		oldY = newY;
-
-		newX += _addXPosTable[curEntry];
-		newY += _addYPosTable[curEntry];
-
-		int temp = ABS(curEntry - oldEntry);
-		if (temp > 4) {
-			temp = 8 - temp;
-		}
-
-		if (temp > 1 || oldEntry != curEntry)
-			lastEntry = pathfinderAddToPositionTable(lastEntry, oldX, oldY);
-
-		++moveTableCur;
-	}
-
-	lastEntry = pathfinderAddToPositionTable(lastEntry, newX, newY);
-	_pathfinderPositionTable[lastEntry*2+0] = -1;
-	_pathfinderPositionTable[lastEntry*2+1] = -1;
-	return lastEntry;
-}
-
-int KyraEngine_v2::pathfinderAddToPositionTable(int index, int v1, int v2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderAddToPositionTable(%d, %d, %d)", index, v1, v2);
-	_pathfinderPositionTable[index<<1] = v1;
-	_pathfinderPositionTable[(index<<1)+1] = v2;
-	++index;
-	if (index >= 199)
-		--index;
-	return index;
-}
-
-int KyraEngine_v2::pathfinderInitPositionIndexTable(int tableLen, int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderInitPositionIndexTable(%d, %d, %d)", tableLen, x, y);
-	int x1 = 0, y1 = 0;
-	int x2 = 0, y2 = 0;
-	int lastEntry = 0;
-	int index2 = tableLen-1, index1 = 0;
-	while (index2 > index1) {
-		x1 = _pathfinderPositionTable[index1*2+0] + x;
-		y1 = _pathfinderPositionTable[index1*2+1] + y;
-		x2 = _pathfinderPositionTable[index2*2+0] + x;
-		y2 = _pathfinderPositionTable[index2*2+1] + y;
-
-		if (directLinePassable(x1, y1, x2, y2)) {
-			lastEntry = pathfinderAddToPositionIndexTable(lastEntry, index2);
-			if (tableLen-1 == index2)
-				break;
-			index1 = index2;
-			index2 = tableLen-1;
-		} else if (index1+1 == index2) {
-			lastEntry = pathfinderAddToPositionIndexTable(lastEntry, index2);
-			index1 = index2;
-			index2 = tableLen-1;
-		} else {
-			--index2;
-		}
-	}
-	return lastEntry;
-}
-
-int KyraEngine_v2::pathfinderAddToPositionIndexTable(int index, int v) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderAddToPositionIndexTable(%d, %d)", index, v);
-	_pathfinderPositionIndexTable[index] = v;
-	++index;
-	if (index >= 199)
-		--index;
-	return index;
-}
-
-void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x, int y, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderFinializePath(%p, %d, %d, %d, %d)", (void *)moveTable, tableLen, x, y, moveTableSize);
-	int x1 = 0, y1 = 0;
-	int x2 = 0, y2 = 0;
-	int index1 = 0, index2 = 0;
-	int sizeLeft = moveTableSize;
-	for (int i = 0; i < tableLen; ++i) {
-		index2 = _pathfinderPositionIndexTable[i];
-		x1 = _pathfinderPositionTable[index1*2+0] + x;
-		y1 = _pathfinderPositionTable[index1*2+1] + y;
-		x2 = _pathfinderPositionTable[index2*2+0] + x;
-		y2 = _pathfinderPositionTable[index2*2+1] + y;
-
-		int wayLen = findWay(x1, y1, x2, y2, moveTable, sizeLeft);
-		moveTable += wayLen;
-		sizeLeft -= wayLen;	// unlike the original we want to be sure that the size left is correct
-		index1 = index2;
-	}
-}
-
 } // end of namespace Kyra
+

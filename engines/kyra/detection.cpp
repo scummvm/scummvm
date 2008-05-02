@@ -24,8 +24,8 @@
 
 #include "kyra/kyra.h"
 #include "kyra/kyra_v1.h"
-#include "kyra/kyra_v2.h"
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/kyra_mr.h"
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
@@ -509,10 +509,10 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		*engine = new Kyra::KyraEngine_v1(syst, flags);
 		break;
 	case Kyra::GI_KYRA2:
-		*engine = new Kyra::KyraEngine_v2(syst, flags);
+		*engine = new Kyra::KyraEngine_HoF(syst, flags);
 		break;
 	case Kyra::GI_KYRA3:
-		*engine = new Kyra::KyraEngine_v3(syst, flags);
+		*engine = new Kyra::KyraEngine_MR(syst, flags);
 		break;
 	default:
 		res = false;

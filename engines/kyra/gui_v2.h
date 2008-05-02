@@ -91,13 +91,13 @@
 
 namespace Kyra {
 
-class KyraEngine_v2;
+class KyraEngine_HoF;
 class Screen_v2;
 
 class GUI_v2 : public GUI {
-friend class KyraEngine_v2;
+friend class KyraEngine_HoF;
 public:
-	GUI_v2(KyraEngine_v2 *engine);
+	GUI_v2(KyraEngine_HoF *engine);
 
 	Button *addButtonToList(Button *list, Button *newButton);
 
@@ -145,7 +145,7 @@ private:
 
 	void resetState(int item);
 
-	KyraEngine_v2 *_vm;
+	KyraEngine_HoF *_vm;
 	Screen_v2 *_screen;
 
 	bool _buttonListChanged;

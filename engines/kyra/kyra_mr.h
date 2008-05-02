@@ -26,8 +26,8 @@
 #ifndef KYRA_KYRA_V3_H
 #define KYRA_KYRA_V3_H
 
-#include "kyra/kyra.h"
-#include "kyra/screen_v3.h"
+#include "kyra/kyra_v2.h"
+#include "kyra/screen_mr.h"
 #include "kyra/script.h"
 
 #include "common/hashmap.h"
@@ -36,23 +36,24 @@
 namespace Kyra {
 
 class SoundDigital;
-class Screen_v3;
+class Screen_MR;
 class MainMenu;
 class WSAMovieV2;
-class TextDisplayer_v3;
+class TextDisplayer_MR;
 class Debugger_v3;
 class GUI_v3;
 struct Button;
 
-class KyraEngine_v3 : public KyraEngine {
+class KyraEngine_MR : public KyraEngine_v2 {
 friend class Debugger_v3;
-friend class TextDisplayer_v3;
+friend class TextDisplayer_MR;
 friend class GUI_v3;
 public:
-	KyraEngine_v3(OSystem *system, const GameFlags &flags);
-	~KyraEngine_v3();
+	KyraEngine_MR(OSystem *system, const GameFlags &flags);
+	~KyraEngine_MR();
 
 	Screen *screen() { return _screen; }
+	Screen_v2 *screen_v2() const { return _screen; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
 
@@ -60,8 +61,12 @@ public:
 
 	void playVQA(const char *name);
 
-private:
-	Screen_v3 *_screen;
+protected:
+	// KyraEngine_v2 API
+	int getFirstSpecialSceneScript() const { return 9; }
+
+	// --
+	Screen_MR *_screen;
 	SoundDigital *_soundDigital;
 
 	int init();
@@ -89,27 +94,7 @@ private:
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
 
 	// - Input
-	void updateInput();
 	int checkInput(Button *buttonList, bool mainLoop = false);
-	void removeInputTop();
-
-	int _mouseX, _mouseY;
-	int _mouseState;
-
-	struct Event {
-		Common::Event event;
-		bool causedSkip;
-
-		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
-
-		operator Common::Event() const { return event; }
-	};
-	Common::List<Event> _eventList;
-
-	bool skipFlag() const;
-	void resetSkipFlag(bool removeEvent = true);
 
 	// sound specific
 private:
@@ -164,7 +149,6 @@ private:
 	void uninitMainMenu();
 
 	WSAMovieV2 *_menuAnim;
-	MainMenu *_menu;
 
 	// timer
 	void setupTimers();
@@ -180,10 +164,6 @@ private:
 	void setNextIdleAnimTimer();
 
 	// pathfinder
-	int *_moveFacingTable;
-	int _pathfinderFlag;
-
-	int findWay(int x1, int y1, int x2, int y2, int *moveTable, int moveTableSize);
 	bool lineIsPassable(int x, int y);
 
 private:
@@ -191,50 +171,20 @@ private:
 	static const char *_mainMenuStrings[];
 
 	// animator
-	struct AnimObj {
-		uint16 index;
-		uint16 type;
-		bool enabled;
-		bool needRefresh;
-		uint16 unk8;
-		uint16 flags;
-		int16 xPos1, yPos1;
-		uint8 *shapePtr;
-		uint16 shapeIndex;
-		uint16 animNum;
-		uint16 shapeIndex3;
-		uint16 shapeIndex2;
-		int16 xPos2, yPos2;
-		int16 xPos3, yPos3;
-		int16 width, height;
-		int16 width2, height2;
-		uint16 palette;
-		AnimObj *nextObject;
-	};
+	uint8 *_gamePlayBuffer;
+	void restorePage3();
 
 	AnimObj *_animObjects;
-	uint8 *_gamePlayBuffer;
 
 	void clearAnimObjects();
 
-	AnimObj *_animList;
-	bool _drawNoShapeFlag;
-	AnimObj *initAnimList(AnimObj *list, AnimObj *entry);
-	AnimObj *addToAnimListSorted(AnimObj *list, AnimObj *entry);
-	AnimObj *deleteAnimListEntry(AnimObj *list, AnimObj *entry);
-
 	void animSetupPaletteEntry(AnimObj *anim);
-
-	void restorePage3();
 
 	void drawAnimObjects();
 	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer);
 	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer);
 
 	void refreshAnimObjects(int force);
-	void refreshAnimObjectsIfNeed();
-
-	void flagAnimObjsForRefresh();
 
 	bool _loadingState;
 	void updateCharacterAnim(int charId);
@@ -369,12 +319,6 @@ private:
 	int _handItemSet;
 
 	// shapes
-	typedef Common::HashMap<int, uint8*> ShapeMap;
-	ShapeMap _gameShapes;
-
-	void addShapeToPool(const uint8 *data, int realIndex, int shape);
-	uint8 *getShapePtr(int shape) const;
-
 	void initMouseShapes();
 
 	int _malcolmShapes;
@@ -391,50 +335,15 @@ private:
 	static const int _shapeDescsSize;
 
 	// scene animation
-	struct SceneAnim {
-		uint16 flags;
-		int16 x, y;
-		int16 x2, y2;
-		int16 width, height;
-		uint16 unk10;
-		uint16 specialSize;
-		uint16 unk14;
-		uint16 shapeIndex;
-		uint16 wsaFlag;
-		char filename[13];
-	};
-
-	SceneAnim *_sceneAnims;
-	WSAMovieV2 *_sceneAnimMovie[16];
 	uint8 *_sceneShapes[20];
 
 	void freeSceneShapes();
-	void freeSceneAnims();
 
 	// voice
 	int _currentTalkFile;
 	void openTalkFile(int file);
 
 	// scene
-	struct SceneDesc {
-		char filename1[10];
-		char filename2[10];
-		uint16 exit1, exit2, exit3, exit4;
-		uint8 flags, sound;
-	};
-
-	SceneDesc *_sceneList;
-	int _sceneListSize;
-	uint16 _sceneExit1, _sceneExit2, _sceneExit3, _sceneExit4;
-	int _sceneEnterX1, _sceneEnterY1;
-	int _sceneEnterX2, _sceneEnterY2;
-	int _sceneEnterX3, _sceneEnterY3;
-	int _sceneEnterX4, _sceneEnterY4;
-
-	int _specialExitCount;
-	uint16 _specialExitTable[25];
-	bool checkSpecialSceneExit(int index, int x, int y);
-
 	bool _noScriptEnter;
 	void enterNewScene(uint16 scene, int facing, int unk1, int unk2, int unk3);
 	void enterNewSceneUnk1(int facing, int unk1, int unk2);
@@ -461,15 +370,6 @@ private:
 
 	EMCState _sceneScriptState;
 	EMCData _sceneScriptData;
-
-	bool _specialSceneScriptState[10];
-	bool _specialSceneScriptStateBackup[10];
-	EMCState _sceneSpecialScripts[10];
-	uint32 _sceneSpecialScriptsTimer[10];
-	int _lastProcessedSceneScript;
-	bool _specialSceneScriptRunFlag;
-
-	void updateSpecialSceneScripts();
 
 	int trySceneChange(int *moveTable, int unk1, int unk2);
 	int checkSceneChange();
@@ -813,7 +713,7 @@ private:
 	int o3_dummy(EMCState *script);
 
 	// misc
-	TextDisplayer_v3 *_text;
+	TextDisplayer_MR *_text;
 	Debugger_v3 *_debugger;	
 	bool _wsaPlayingVQA;
 

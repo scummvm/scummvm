@@ -23,15 +23,15 @@
  *
  */
 
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra_hof.h"
 #include "kyra/timer.h"
 
 namespace Kyra {
 
-#define TimerV2(x) new Common::Functor1Mem<int, void, KyraEngine_v2>(this, &KyraEngine_v2::x)
+#define TimerV2(x) new Common::Functor1Mem<int, void, KyraEngine_HoF>(this, &KyraEngine_HoF::x)
 
-void KyraEngine_v2::setupTimers() {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::setupTimers()");
+void KyraEngine_HoF::setupTimers() {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::setupTimers()");
 
 	_timer->addTimer(0, 0, 5, 1);
 	_timer->addTimer(1, TimerV2(timerFadeOutMessage), -1, 1);
@@ -41,14 +41,14 @@ void KyraEngine_v2::setupTimers() {
 	_timer->addTimer(5, TimerV2(timerBurnZanthia), 1, 0);
 }
 
-void KyraEngine_v2::timerFadeOutMessage(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFadeOutMessage(%d)", arg);
+void KyraEngine_HoF::timerFadeOutMessage(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::timerFadeOutMessage(%d)", arg);
 	if (_shownMessage)
 		_fadeMessagePalette = 1;
 }
 
-void KyraEngine_v2::timerCauldronAnimation(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerCauldronAnimation(%d)", arg);
+void KyraEngine_HoF::timerCauldronAnimation(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::timerCauldronAnimation(%d)", arg);
 	int animation = -1;
 
 	// HACK: We don't allow inventory animations while the inventory is backed off, which means not shown usually.
@@ -68,14 +68,14 @@ void KyraEngine_v2::timerCauldronAnimation(int arg) {
 	}
 }
 
-void KyraEngine_v2::timerFunc4(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc4(%d)", arg);
+void KyraEngine_HoF::timerFunc4(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::timerFunc4(%d)", arg);
 	_timer->disable(3);
 	setGameFlag(0xD8);
 }
 
-void KyraEngine_v2::timerFunc5(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc5(%d)", arg);
+void KyraEngine_HoF::timerFunc5(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::timerFunc5(%d)", arg);
 	_timer->disable(4);
 	_screen->hideMouse();
 	_specialSceneScriptState[5] = 1;
@@ -86,8 +86,8 @@ void KyraEngine_v2::timerFunc5(int arg) {
 	_deathHandler = 4;
 }
 
-void KyraEngine_v2::timerBurnZanthia(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerBurnZanthia(%d)", arg);
+void KyraEngine_HoF::timerBurnZanthia(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::timerBurnZanthia(%d)", arg);
 	_timer->disable(5);
 	_screen->hideMouse();
 	snd_playSoundEffect(0x2D);
@@ -96,8 +96,8 @@ void KyraEngine_v2::timerBurnZanthia(int arg) {
 	snd_playWanderScoreViaMap(0x53, 1);
 }
 
-void KyraEngine_v2::setTimer1DelaySecs(int secs) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::setTimer1DelaySecs(%d)", secs);
+void KyraEngine_HoF::setTimer1DelaySecs(int secs) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::setTimer1DelaySecs(%d)", secs);
 
 	if (secs == -1)
 		secs = 32000;
@@ -105,8 +105,8 @@ void KyraEngine_v2::setTimer1DelaySecs(int secs) {
 	_timer->setCountdown(1, secs * 60);
 }
 
-void KyraEngine_v2::setWalkspeed(uint8 newSpeed) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::setWalkspeed(%i)", newSpeed);
+void KyraEngine_HoF::setWalkspeed(uint8 newSpeed) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_HoF::setWalkspeed(%i)", newSpeed);
 
 	if (newSpeed < 5)
 		newSpeed = 3;

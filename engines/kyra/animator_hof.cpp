@@ -23,15 +23,20 @@
  *
  */
 
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra_hof.h"
 #include "kyra/wsamovie.h"
 
 #include "common/endian.h"
 
 namespace Kyra {
 
-void KyraEngine_v2::clearAnimObjects() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::clearAnimObjects()");
+void KyraEngine_HoF::restorePage3() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::restorePage3()");
+	screen()->copyBlockToPage(2, 0, 0, 320, 144, _gamePlayBuffer);
+}
+
+void KyraEngine_HoF::clearAnimObjects() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::clearAnimObjects()");
 	memset(_animObjects, 0, sizeof(_animObjects));
 
 	_animObjects[0].index = 0;
@@ -57,87 +62,8 @@ void KyraEngine_v2::clearAnimObjects() {
 	}
 }
 
-KyraEngine_v2::AnimObj *KyraEngine_v2::initAnimList(AnimObj *list, AnimObj *entry) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::initAnimList(%p, %p)", (const void*)list, (const void*)entry);
-	entry->nextObject = list;
-	return entry;
-}
-
-KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimObj *add) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)add);
-	add->nextObject = 0;
-
-	if (!list)
-		return add;
-
-	if (add->yPos1 <= list->yPos1) {
-		add->nextObject = list;
-		return add;
-	}
-
-	AnimObj *cur = list;
-	AnimObj *prev = list;
-	while (add->yPos1 > cur->yPos1) {
-		AnimObj *temp = cur->nextObject;
-		if (!temp)
-			break;
-		prev = cur;
-		cur = temp;
-	}
-
-	if (add->yPos1 <= cur->yPos1) {
-		prev->nextObject = add;
-		add->nextObject = cur;
-	} else {
-		cur->nextObject = add;
-		add->nextObject = 0;
-	}
-	return list;
-}
-
-KyraEngine_v2::AnimObj *KyraEngine_v2::deleteAnimListEntry(AnimObj *list, AnimObj *entry) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)entry);
-	if (!list)
-		return 0;
-
-	AnimObj *old = 0;
-	AnimObj *cur = list;
-
-	while (true) {
-		if (cur == entry)
-			break;
-		if (!cur->nextObject)
-			break;
-		old = cur;
-		cur = cur->nextObject;
-	}
-
-	if (cur != entry)
-		return list;
-
-	if (cur == list) {
-		if (!cur->nextObject)
-			return 0;
-		cur = cur->nextObject;
-		return cur;
-	}
-
-	if (!cur->nextObject) {
-		if (!old)
-			return 0;
-		old->nextObject = 0;
-		return list;
-	}
-
-	if (cur != entry)
-		return list;
-
-	old->nextObject = entry->nextObject;
-	return list;
-}
-
-void KyraEngine_v2::drawAnimObjects() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawAnimObjects()");
+void KyraEngine_HoF::drawAnimObjects() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::drawAnimObjects()");
 	for (AnimObj *curObject = _animList; curObject; curObject = curObject->nextObject) {
 		if (!curObject->enabled)
 			continue;
@@ -161,8 +87,8 @@ void KyraEngine_v2::drawAnimObjects() {
 	}
 }
 
-void KyraEngine_v2::refreshAnimObjects(int force) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::refreshAnimObjects(%d)", force);
+void KyraEngine_HoF::refreshAnimObjects(int force) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::refreshAnimObjects(%d)", force);
 	for (AnimObj *curObject = _animList; curObject; curObject = curObject->nextObject) {
 		if (!curObject->enabled)
 			continue;
@@ -195,21 +121,8 @@ void KyraEngine_v2::refreshAnimObjects(int force) {
 	}
 }
 
-void KyraEngine_v2::refreshAnimObjectsIfNeed() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::refreshAnimObjectsIfNeed()");
-	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject) {
-		if (curEntry->enabled && curEntry->needRefresh) {
-			restorePage3();
-			drawAnimObjects();
-			refreshAnimObjects(0);
-			_screen->updateScreen();
-			return;
-		}
-	}
-}
-
-void KyraEngine_v2::updateItemAnimations() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::updateItemAnimations()");
+void KyraEngine_HoF::updateItemAnimations() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::updateItemAnimations()");
 	bool nextFrame = false;
 
 	if (_itemAnimData[0].itemIndex == -1 || _inventorySaved)
@@ -236,7 +149,7 @@ void KyraEngine_v2::updateItemAnimations() {
 	for (int i = 0; i < 10; i++) {
 		if (s->itemIndex == _mainCharacter.inventory[i]) {
 			nextFrame = true;
-			_screen->drawShape(2, _defaultShapeTable[240 + i], 304, 184, 0, 0);
+			_screen->drawShape(2, getShapePtr(240 + i), 304, 184, 0, 0);
 			_screen->drawShape(2, getShapePtr(shpIdx), 304, 184, 0, 0);
 			_screen->copyRegion(304, 184, _inventoryX[i], _inventoryY[i], 16, 16, 2, 0);
 		}
@@ -257,7 +170,7 @@ void KyraEngine_v2::updateItemAnimations() {
 					}
 				}
 			}
-			animObject->shapePtr = _defaultShapeTable[shpIdx];
+			animObject->shapePtr = getShapePtr(shpIdx);
 			animObject->shapeIndex1 = shpIdx;
 			animObject->needRefresh = 1;
 			nextFrame = true;
@@ -270,20 +183,8 @@ void KyraEngine_v2::updateItemAnimations() {
 	}
 }
 
-void KyraEngine_v2::flagAnimObjsForRefresh() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsForRefresh()");
-	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
-		curEntry->needRefresh = 1;
-}
-
-void KyraEngine_v2::flagAnimObjsUnk8() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsUnk8()");
-	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
-		curEntry->unk8 = 1;
-}
-
-void KyraEngine_v2::updateCharFacing() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::updateCharFacing()");
+void KyraEngine_HoF::updateCharFacing() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::updateCharFacing()");
 	if (_mainCharacter.x1 > _mouseX)
 		_mainCharacter.facing = 5;
 	else
@@ -294,13 +195,13 @@ void KyraEngine_v2::updateCharFacing() {
 	refreshAnimObjectsIfNeed();
 }
 
-void KyraEngine_v2::updateCharacterAnim(int) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::updateCharacterAnim(-)");
+void KyraEngine_HoF::updateCharacterAnim(int) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::updateCharacterAnim(-)");
 	Character *c = &_mainCharacter;
 	AnimObj *animState = _animObjects;
 
 	animState->needRefresh = 1;
-	animState->unk8 = 1;
+	animState->specialRefresh = 1;
 
 	if (c->facing >= 1 && c->facing <= 3)
 		animState->flags |= 1;
@@ -309,7 +210,7 @@ void KyraEngine_v2::updateCharacterAnim(int) {
 
 	animState->xPos2 = animState->xPos1 = c->x1;
 	animState->yPos2 = animState->yPos1 = c->y1;
-	animState->shapePtr = _defaultShapeTable[c->animFrame];
+	animState->shapePtr = getShapePtr(c->animFrame);
 	animState->shapeIndex1 = animState->shapeIndex2 = c->animFrame;
 
 	int xAdd = _shapeDescTable[c->animFrame-9].xAdd;
@@ -331,14 +232,14 @@ void KyraEngine_v2::updateCharacterAnim(int) {
 	updateCharPal(1);
 }
 
-void KyraEngine_v2::updateSceneAnim(int anim, int newFrame) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::updateSceneAnim(%d, %d)", anim, newFrame);
+void KyraEngine_HoF::updateSceneAnim(int anim, int newFrame) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::updateSceneAnim(%d, %d)", anim, newFrame);
 	AnimObj *animObject = &_animObjects[1+anim];
 	if (!animObject->enabled)
 		return;
 
 	animObject->needRefresh = 1;
-	animObject->unk8 = 1;
+	animObject->specialRefresh = 1;
 	animObject->flags = 0;
 
 	if (_sceneAnims[anim].flags & 2)
@@ -376,8 +277,8 @@ void KyraEngine_v2::updateSceneAnim(int anim, int newFrame) {
 	}
 }
 
-void KyraEngine_v2::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawSceneAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
+void KyraEngine_HoF::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::drawSceneAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
 	if (obj->type == 1) {
 		if (obj->shapeIndex1 == 0xFFFF)
 			return;
@@ -410,29 +311,29 @@ void KyraEngine_v2::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
 	}
 }
 
-void KyraEngine_v2::drawCharacterAnimObject(AnimObj *obj, int x, int y, int layer) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawCharacterAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
+void KyraEngine_HoF::drawCharacterAnimObject(AnimObj *obj, int x, int y, int layer) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::drawCharacterAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
 	if (_drawNoShapeFlag || obj->shapeIndex1 == 0xFFFF)
 		return;
 	_screen->drawShape(2, getShapePtr(obj->shapeIndex1), x, y, 2, obj->flags | 4, layer, _charScaleX, _charScaleY);
 }
 
-void KyraEngine_v2::addItemToAnimList(int item) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addItemToAnimList(%d)", item);
+void KyraEngine_HoF::addItemToAnimList(int item) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::addItemToAnimList(%d)", item);
 	restorePage3();
 
 	AnimObj *animObj = &_animObjects[11+item];
 
 	animObj->enabled = 1;
 	animObj->needRefresh = 1;
-	animObj->unk8 = 1;
+	animObj->specialRefresh = 1;
 
 	int itemId = _itemList[item].id;
 
 	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
 	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
 
-	animObj->shapePtr = _defaultShapeTable[64+itemId];
+	animObj->shapePtr = getShapePtr(64+itemId);
 	animObj->shapeIndex2 = animObj->shapeIndex1 = 64+itemId;
 
 	int scaleY, scaleX;
@@ -446,11 +347,11 @@ void KyraEngine_v2::addItemToAnimList(int item) {
 
 	_animList = addToAnimListSorted(_animList, animObj);
 	animObj->needRefresh = 1;
-	animObj->unk8 = 1;
+	animObj->specialRefresh = 1;
 }
 
-void KyraEngine_v2::deleteItemAnimEntry(int item) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::deleteItemAnimEntry(%d)", item);
+void KyraEngine_HoF::deleteItemAnimEntry(int item) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::deleteItemAnimEntry(%d)", item);
 	AnimObj *animObj = &_animObjects[11+item];
 
 	restorePage3();
@@ -459,7 +360,7 @@ void KyraEngine_v2::deleteItemAnimEntry(int item) {
 	animObj->shapeIndex1 = 0xFFFF;
 	animObj->shapeIndex2 = 0xFFFF;
 	animObj->needRefresh = 1;
-	animObj->unk8 = 1;
+	animObj->specialRefresh = 1;
 
 	refreshAnimObjectsIfNeed();
 
@@ -467,8 +368,8 @@ void KyraEngine_v2::deleteItemAnimEntry(int item) {
 	_animList = deleteAnimListEntry(_animList, animObj);
 }
 
-void KyraEngine_v2::setCharacterAnimDim(int w, int h) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::setCharacterAnimDim(%d, %d)", w, h);
+void KyraEngine_HoF::setCharacterAnimDim(int w, int h) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::setCharacterAnimDim(%d, %d)", w, h);
 	restorePage3();
 
 	_animObj0Width = _animObjects[0].width;
@@ -478,8 +379,8 @@ void KyraEngine_v2::setCharacterAnimDim(int w, int h) {
 	_animObjects[0].height = h;
 }
 
-void KyraEngine_v2::resetCharacterAnimDim() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::resetCharacterAnimDim()");
+void KyraEngine_HoF::resetCharacterAnimDim() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::resetCharacterAnimDim()");
 	restorePage3();
 
 	_animObjects[0].width = _animObj0Width;

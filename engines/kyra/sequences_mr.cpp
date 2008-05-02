@@ -23,13 +23,13 @@
  *
  */
 
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_mr.h"
 #include "kyra/resource.h"
 
 namespace Kyra {
 
-void KyraEngine_v3::showBadConscience() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::showBadConscience()");
+void KyraEngine_MR::showBadConscience() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::showBadConscience()");
 	if (_badConscienceShown)
 		return;
 
@@ -90,8 +90,8 @@ void KyraEngine_v3::showBadConscience() {
 	refreshAnimObjectsIfNeed();
 }
 
-void KyraEngine_v3::hideBadConscience() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::hideBadConscience()");
+void KyraEngine_MR::hideBadConscience() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::hideBadConscience()");
 	if (!_badConscienceShown)
 		return;
 
@@ -109,8 +109,8 @@ void KyraEngine_v3::hideBadConscience() {
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v3::showGoodConscience() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::showGoodConscience()");
+void KyraEngine_MR::showGoodConscience() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::showGoodConscience()");
 
 	if (_goodConscienceShown)
 		return;
@@ -164,8 +164,8 @@ void KyraEngine_v3::showGoodConscience() {
 	refreshAnimObjectsIfNeed();
 }
 
-void KyraEngine_v3::hideGoodConscience() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::hideGoodConscience()");
+void KyraEngine_MR::hideGoodConscience() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::hideGoodConscience()");
 	if (!_goodConscienceShown)
 		return;
 
@@ -183,8 +183,8 @@ void KyraEngine_v3::hideGoodConscience() {
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runTemporaryScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
+void KyraEngine_MR::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::runTemporaryScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
 	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
 	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
 
@@ -231,8 +231,8 @@ void KyraEngine_v3::runTemporaryScript(const char *filename, int allowSkip, int 
 	_emc->unload(&_temporaryScriptData);
 }
 
-void KyraEngine_v3::eelScript() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::eelScript()");
+void KyraEngine_MR::eelScript() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::eelScript()");
 	if (_chatText)
 		return;
 	_screen->hideMouse();
@@ -277,16 +277,16 @@ void KyraEngine_v3::eelScript() {
 	_screen->showMouse();
 }
 
-int KyraEngine_v3::initNewShapes(uint8 *filedata) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::initNewShapes(%p)", (const void*)filedata);
+int KyraEngine_MR::initNewShapes(uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::initNewShapes(%p)", (const void*)filedata);
 	const int lastEntry = MIN(_newShapeLastEntry, 41);
 	for (int i = 0; i < lastEntry; ++i)
 		_gameShapes[9+i] = _screen->getPtrToShape(filedata, i);
 	return lastEntry;
 }
 
-void KyraEngine_v3::processNewShapes(int allowSkip, int resetChar) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::processNewShapes(%d, %d)", allowSkip, resetChar);
+void KyraEngine_MR::processNewShapes(int allowSkip, int resetChar) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::processNewShapes(%d, %d)", allowSkip, resetChar);
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
 	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
@@ -342,8 +342,8 @@ void KyraEngine_v3::processNewShapes(int allowSkip, int resetChar) {
 	resetCharacterAnimDim();
 }
 
-void KyraEngine_v3::resetNewShapes(int count, uint8 *filedata) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v3::resetNewShapes(%d, %p)", count, (const void*)filedata);
+void KyraEngine_MR::resetNewShapes(int count, uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::resetNewShapes(%d, %p)", count, (const void*)filedata);
 	for (int i = 0; i < count; ++i)
 		_gameShapes[9+i] = 0;
 	delete [] filedata;

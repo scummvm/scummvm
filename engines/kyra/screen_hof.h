@@ -23,23 +23,23 @@
  *
  */
 
-#ifndef KYRA_SCREEN_V2_H
-#define KYRA_SCREEN_V2_H
+#ifndef KYRA_SCREEN_HOF_H
+#define KYRA_SCREEN_HOF_H
 
-#include "kyra/screen.h"
+#include "kyra/screen_v2.h"
 
 namespace Kyra {
 
-class KyraEngine_v2;
+class KyraEngine_HoF;
 
-class Screen_v2 : public ScreenEx {
+class Screen_HoF : public Screen_v2 {
 friend class Debugger_v2;
 public:
-	Screen_v2(KyraEngine_v2 *vm, OSystem *system);
-	virtual ~Screen_v2();
+	Screen_HoF(KyraEngine_HoF *vm, OSystem *system);
+	~Screen_HoF();
 
-	virtual void setScreenDim(int dim);
-	virtual const ScreenDim *getScreenDim(int dim);
+	void setScreenDim(int dim);
+	const ScreenDim *getScreenDim(int dim);
 
 	// sequence player
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
@@ -49,7 +49,7 @@ public:
 	void copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes);
 	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
 private:
-	KyraEngine_v2 *_vm;
+	KyraEngine_HoF *_vm;
 
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
@@ -60,3 +60,4 @@ private:
 } // End of namespace Kyra
 
 #endif
+

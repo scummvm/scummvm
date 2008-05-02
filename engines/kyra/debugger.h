@@ -32,8 +32,8 @@ namespace Kyra {
 
 class KyraEngine;
 class KyraEngine_v1;
-class KyraEngine_v2;
-class KyraEngine_v3;
+class KyraEngine_HoF;
+class KyraEngine_MR;
 
 class Debugger : public ::GUI::Debugger {
 public:
@@ -73,11 +73,11 @@ protected:
 
 class Debugger_v2 : public Debugger {
 public:
-	Debugger_v2(KyraEngine_v2 *vm);
+	Debugger_v2(KyraEngine_HoF *vm);
 	virtual ~Debugger_v2() {}
 
 protected:
-	KyraEngine_v2 *_vm;
+	KyraEngine_HoF *_vm;
 
 	bool cmd_enterScene(int argc, const char **argv);
 	bool cmd_listScenes(int argc, const char **argv);
@@ -90,11 +90,11 @@ protected:
 
 class Debugger_v3 : public Debugger {
 public:
-	Debugger_v3(KyraEngine_v3 *vm);
+	Debugger_v3(KyraEngine_MR *vm);
 	virtual ~Debugger_v3() {}
 
 protected:
-	KyraEngine_v3 *_vm;
+	KyraEngine_MR *_vm;
 	
 	bool cmd_giveItem(int argc, const char **argv);	
 	bool cmd_enterScene(int argc, const char **argv);

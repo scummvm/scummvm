@@ -23,18 +23,18 @@
  *
  */
 
-#include "kyra/text_v3.h"
-#include "kyra/screen_v3.h"
+#include "kyra/text_mr.h"
+#include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 
 namespace Kyra {
 
-TextDisplayer_v3::TextDisplayer_v3(KyraEngine_v3 *vm, Screen_v3 *screen)
+TextDisplayer_MR::TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen)
 	: TextDisplayer(vm, screen), _vm(vm), _screen(screen) {
 }
 
-char *TextDisplayer_v3::preprocessString(const char *str) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v3::preprocessString('%s')", str);
+char *TextDisplayer_MR::preprocessString(const char *str) {
+	debugC(9, kDebugLevelMain, "TextDisplayer_MR::preprocessString('%s')", str);
 	if (_talkBuffer != str)
 		strncpy(_talkBuffer, str, sizeof(_talkBuffer));
 
@@ -81,8 +81,8 @@ char *TextDisplayer_v3::preprocessString(const char *str) {
 	return _talkBuffer;
 }
 
-int TextDisplayer_v3::dropCRIntoString(char *str, int minOffs, int maxOffs) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v3::dropCRIntoString('%s', %d, %d)", str, maxOffs, minOffs);
+int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
+	debugC(9, kDebugLevelMain, "TextDisplayer_MR::dropCRIntoString('%s', %d, %d)", str, maxOffs, minOffs);
 
 	int offset = 0;
 	char *proc = str + minOffs;
@@ -129,8 +129,8 @@ int TextDisplayer_v3::dropCRIntoString(char *str, int minOffs, int maxOffs) {
 	return 0;
 }
 
-void TextDisplayer_v3::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v3::printText('%s', %d, %d, %d, %d, %d)", str, x, y, c0, c1, c2);
+void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
+	debugC(9, kDebugLevelMain, "TextDisplayer_MR::printText('%s', %d, %d, %d, %d, %d)", str, x, y, c0, c1, c2);
 	uint8 colorMap[] = { 0, 255, 240, 240 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
@@ -141,8 +141,8 @@ void TextDisplayer_v3::printText(const char *str, int x, int y, uint8 c0, uint8 
 	_screen->setFont(curFont);
 }
 
-void TextDisplayer_v3::restoreScreen() {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v3::restoreScreen()");
+void TextDisplayer_MR::restoreScreen() {
+	debugC(9, kDebugLevelMain, "TextDisplayer_MR::restoreScreen()");
 	_vm->restorePage3();
 	_vm->drawAnimObjects();
 	_screen->hideMouse();
@@ -152,8 +152,8 @@ void TextDisplayer_v3::restoreScreen() {
 	_vm->refreshAnimObjects(0);
 }
 
-void TextDisplayer_v3::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_v3::calcWidestLineBounds(%d, %d)", w, x);
+void TextDisplayer_MR::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
+	debugC(9, kDebugLevelMain, "TextDisplayer_MR::calcWidestLineBounds(%d, %d)", w, x);
 	x1 = x;
 	x1 -= (w >> 1);
 	x2 = x1 + w + 1;
@@ -169,8 +169,8 @@ void TextDisplayer_v3::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
 
 #pragma mark -
 
-int KyraEngine_v3::chatGetType(const char *str) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::chatGetType('%s')", str);
+int KyraEngine_MR::chatGetType(const char *str) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::chatGetType('%s')", str);
 	while (*str)
 		++str;
 	--str;
@@ -190,13 +190,13 @@ int KyraEngine_v3::chatGetType(const char *str) {
 	}
 }
 
-int KyraEngine_v3::chatCalcDuration(const char *str) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::chatCalcDuration('%s')", str);
+int KyraEngine_MR::chatCalcDuration(const char *str) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::chatCalcDuration('%s')", str);
 	return MAX<int>(120, strlen(str)*6);
 }
 
-void KyraEngine_v3::objectChat(const char *str, int object, int vocHigh, int vocLow) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::objectChat('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
+void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChat('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
 
 	if (_mainCharacter.animFrame == 87 || _mainCharacter.animFrame == 0xFFFF || _mainCharacter.x1 <= 0 || _mainCharacter.y1 <= 0)
 		return;
@@ -239,8 +239,8 @@ void KyraEngine_v3::objectChat(const char *str, int object, int vocHigh, int voc
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v3::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::objectChatInit('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
+void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChatInit('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
 	
@@ -286,8 +286,8 @@ void KyraEngine_v3::objectChatInit(const char *str, int object, int vocHigh, int
 	_screen->showMouse();
 }
 
-void KyraEngine_v3::objectChatPrintText(const char *str, int object) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::objectChatPrintText('%s', %d)", str, object);
+void KyraEngine_MR::objectChatPrintText(const char *str, int object) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChatPrintText('%s', %d)", str, object);
 	int c1 = _talkObjectList[object].color;
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
@@ -306,8 +306,8 @@ void KyraEngine_v3::objectChatPrintText(const char *str, int object) {
 	}
 }
 
-void KyraEngine_v3::objectChatProcess(const char *script) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::objectChatProcess('%s')", script);
+void KyraEngine_MR::objectChatProcess(const char *script) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChatProcess('%s')", script);
 
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
@@ -330,8 +330,8 @@ void KyraEngine_v3::objectChatProcess(const char *script) {
 	_emc->unload(&_chatScriptData);
 }
 
-void KyraEngine_v3::objectChatWaitToFinish() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::objectChatWaitToFinish()");
+void KyraEngine_MR::objectChatWaitToFinish() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChatWaitToFinish()");
 	int charAnimFrame = _mainCharacter.animFrame;
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
@@ -380,8 +380,8 @@ void KyraEngine_v3::objectChatWaitToFinish() {
 	resetCharacterAnimDim();
 }
 
-void KyraEngine_v3::badConscienceChat(const char *str, int vocHigh, int vocLow) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::badConscienceChat('%s', %d, %d)", str, vocHigh, vocLow);
+void KyraEngine_MR::badConscienceChat(const char *str, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::badConscienceChat('%s', %d, %d)", str, vocHigh, vocLow);
 	if (!_badConscienceShown)
 		return;
 
@@ -398,8 +398,8 @@ void KyraEngine_v3::badConscienceChat(const char *str, int vocHigh, int vocLow) 
 	_chatObject = -1;
 }
 
-void KyraEngine_v3::badConscienceChatWaitToFinish() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::badConscienceChatWaitToFinish()");
+void KyraEngine_MR::badConscienceChatWaitToFinish() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::badConscienceChatWaitToFinish()");
 	if (_chatVocHigh) {
 		playVoice(_chatVocHigh, _chatVocLow);
 		_chatVocHigh = _chatVocLow = -1;
@@ -438,8 +438,8 @@ void KyraEngine_v3::badConscienceChatWaitToFinish() {
 	}
 }
 
-void KyraEngine_v3::goodConscienceChat(const char *str, int vocHigh, int vocLow) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::goodConscienceChat('%s', %d, %d)", str, vocHigh, vocLow);
+void KyraEngine_MR::goodConscienceChat(const char *str, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::goodConscienceChat('%s', %d, %d)", str, vocHigh, vocLow);
 	if (!_goodConscienceShown)
 		return;
 
@@ -456,8 +456,8 @@ void KyraEngine_v3::goodConscienceChat(const char *str, int vocHigh, int vocLow)
 	_chatObject = -1;
 }
 
-void KyraEngine_v3::goodConscienceChatWaitToFinish() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::goodConscienceChatWaitToFinish()");
+void KyraEngine_MR::goodConscienceChatWaitToFinish() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::goodConscienceChatWaitToFinish()");
 	if (_chatVocHigh) {
 		playVoice(_chatVocHigh, _chatVocLow);
 		_chatVocHigh = _chatVocLow = -1;
@@ -496,8 +496,8 @@ void KyraEngine_v3::goodConscienceChatWaitToFinish() {
 	}
 }
 
-void KyraEngine_v3::malcolmSceneStartupChat() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::malcolmSceneStartupChat()");
+void KyraEngine_MR::malcolmSceneStartupChat() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::malcolmSceneStartupChat()");
 
 	if (_noStartupChat)
 		return;
@@ -521,8 +521,8 @@ void KyraEngine_v3::malcolmSceneStartupChat() {
 	_newSceneDlgState[index] = true;
 }
 
-void KyraEngine_v3::updateDlgBuffer() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateDlgBuffer()");
+void KyraEngine_MR::updateDlgBuffer() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateDlgBuffer()");
 	char dlgFile[16];
 	char cnvFile[16];
 
@@ -547,8 +547,8 @@ void KyraEngine_v3::updateDlgBuffer() {
 	assert(_dlgBuffer);
 }
 
-void KyraEngine_v3::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &index1, int &index2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadDlgHeader(-, -, -, -)");
+void KyraEngine_MR::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &index1, int &index2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadDlgHeader(-, -, -, -)");
 	assert(_cnvFile);
 	vocHighIndex = _cnvFile->readSint16LE();
 	vocHighBase = _cnvFile->readSint16LE();
@@ -556,8 +556,8 @@ void KyraEngine_v3::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &inde
 	index2 = _cnvFile->readSint16LE();
 }
 
-void KyraEngine_v3::setDlgIndex(uint16 index) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::setDlgIndex(%d)", index);
+void KyraEngine_MR::setDlgIndex(uint16 index) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::setDlgIndex(%d)", index);
 	if (_mainCharacter.dlgIndex != index) {
 		Common::set_to(_newSceneDlgState, _newSceneDlgState+ARRAYSIZE(_newSceneDlgState), 0);
 		memset(_conversationState, -1, sizeof(_conversationState));
@@ -566,8 +566,8 @@ void KyraEngine_v3::setDlgIndex(uint16 index) {
 	}
 }
 
-void KyraEngine_v3::updateDlgIndex() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateDlgIndex()");
+void KyraEngine_MR::updateDlgIndex() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::updateDlgIndex()");
 	uint16 dlgIndex = _mainCharacter.dlgIndex;
 
 	if (_currentChapter == 1) {
@@ -606,8 +606,8 @@ void KyraEngine_v3::updateDlgIndex() {
 	_mainCharacter.dlgIndex = dlgIndex;
 }
 
-void KyraEngine_v3::processDialog(int vocHighIndex, int vocHighBase, int funcNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::processDialog(%d, %d, %d)", vocHighIndex, vocHighBase, funcNum);
+void KyraEngine_MR::processDialog(int vocHighIndex, int vocHighBase, int funcNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::processDialog(%d, %d, %d)", vocHighIndex, vocHighBase, funcNum);
 	bool running = true;
 	int script = -1;
 	int vocHigh = -1, vocLow = -1;
@@ -667,8 +667,8 @@ void KyraEngine_v3::processDialog(int vocHighIndex, int vocHighBase, int funcNum
 		dialogEndScript(script);
 }
 
-void KyraEngine_v3::dialogStartScript(int object, int funcNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::dialogStartScript(%d, %d)", object, funcNum);
+void KyraEngine_MR::dialogStartScript(int object, int funcNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::dialogStartScript(%d, %d)", object, funcNum);
 	_dialogSceneAnim = _talkObjectList[object].sceneAnim;
 	_dialogSceneScript = _talkObjectList[object].sceneScript;
 	if (_dialogSceneAnim >= 0 && _dialogSceneScript >= 0) {
@@ -688,8 +688,8 @@ void KyraEngine_v3::dialogStartScript(int object, int funcNum) {
 		_emc->run(&_dialogScriptState);
 }
 
-void KyraEngine_v3::dialogEndScript(int object) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::dialogEndScript(%d)", object);
+void KyraEngine_MR::dialogEndScript(int object) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::dialogEndScript(%d)", object);
 
 	_emc->init(&_dialogScriptState, &_dialogScriptData);
 	_emc->start(&_dialogScriptState, _dialogScriptFuncEnd);
@@ -705,8 +705,8 @@ void KyraEngine_v3::dialogEndScript(int object) {
 	_emc->unload(&_dialogScriptData);
 }
 
-void KyraEngine_v3::npcChatSequence(const char *str, int object, int vocHigh, int vocLow) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::npcChatSequence('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
+void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::npcChatSequence('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
 
 	_chatText = str;
 	_chatObject = object;
@@ -746,8 +746,8 @@ void KyraEngine_v3::npcChatSequence(const char *str, int object, int vocHigh, in
 	_chatObject= - 1;
 }
 
-void KyraEngine_v3::malcolmRandomChat() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::malcolmRandomChat()");
+void KyraEngine_MR::malcolmRandomChat() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::malcolmRandomChat()");
 	updateDlgBuffer();
 
 	int index = (_mainCharacter.sceneId - _chapterLowestScene[_currentChapter]) * 2;
@@ -766,8 +766,8 @@ void KyraEngine_v3::malcolmRandomChat() {
 	processDialog(vocHighIndex, vocHighBase, 0);
 }
 
-void KyraEngine_v3::runDialog(int dlgIndex, int funcNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runDialog(%d, %d)", dlgIndex, funcNum);
+void KyraEngine_MR::runDialog(int dlgIndex, int funcNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::runDialog(%d, %d)", dlgIndex, funcNum);
 	
 	switch (_currentChapter-2) {
 	case 0:

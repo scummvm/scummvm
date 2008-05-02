@@ -24,14 +24,14 @@
  */
 
 #include "kyra/kyra.h"
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/script.h"
 #include "kyra/script_tim.h"
-#include "kyra/text_v2.h"
+#include "kyra/text_hof.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 
@@ -40,8 +40,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags), _updateFunctor(this, &KyraEngine_v2::update) {
-	memset(_defaultShapeTable, 0, sizeof(_defaultShapeTable));
+KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags), _updateFunctor(this, &KyraEngine_HoF::update) {
 	_mouseSHPBuf = 0;
 	_debugger = 0;
 	_screen = 0;
@@ -72,8 +71,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_currentTalkFile = 0;
 	_lastSfxTrack = -1;
 	_handItemSet = -1;
-	_lastProcessedSceneScript = 0;
-	_specialSceneScriptRunFlag = false;
 	memset(_animObjects, 0, sizeof(_animObjects));
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
@@ -110,7 +107,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_screenBuffer = 0;
 	_inventorySaved = false;
 	_unkBuf200kByte = 0;
-	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 	memset(&_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
@@ -149,7 +145,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_menu = 0;
 }
 
-KyraEngine_v2::~KyraEngine_v2() {
+KyraEngine_HoF::~KyraEngine_HoF() {
 	cleanup();
 	seq_uninit();
 
@@ -186,8 +182,8 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_timOpcodes.clear();
 }
 
-int KyraEngine_v2::init() {
-	_screen = new Screen_v2(this, _system);
+int KyraEngine_HoF::init() {
+	_screen = new Screen_HoF(this, _system);
 	assert(_screen);
 	_screen->setResolution();
 
@@ -232,16 +228,14 @@ int KyraEngine_v2::init() {
 	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
 	assert(_mouseSHPBuf);
 
-	for (int i = 0; i < 2; i++) {
-		_defaultShapeTable[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
-		assert(_defaultShapeTable[i]);
-	}
+	for (int i = 0; i < 2; i++)
+		addShapeToPool(_screen->getPtrToShape(_mouseSHPBuf, i), i);
 
-	_screen->setMouseCursor(0, 0, _defaultShapeTable[0]);
+	_screen->setMouseCursor(0, 0, getShapePtr(0));
 	return 0;
 }
 
-int KyraEngine_v2::go() {
+int KyraEngine_HoF::go() {
 	if (_gameToLoad == -1) {
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			seq_showStarcraftLogo();
@@ -282,7 +276,7 @@ int KyraEngine_v2::go() {
 	return 0;
 }
 
-void KyraEngine_v2::startup() {
+void KyraEngine_HoF::startup() {
 	_sound->setSoundList(&_soundData[kMusicIngame]);
 	// The track map is exactly the same
 	// for FM-TOWNS and DOS
@@ -293,7 +287,6 @@ void KyraEngine_v2::startup() {
 	delete [] _mouseSHPBuf;
 	_mouseSHPBuf = 0;
 
-	memset(_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	_gamePlayBuffer = new uint8[46080];
 	_unkBuf500Bytes = new uint8[500];
@@ -410,7 +403,7 @@ void KyraEngine_v2::startup() {
 	setWalkspeed(_configWalkspeed);
 }
 
-void KyraEngine_v2::runLoop() {
+void KyraEngine_HoF::runLoop() {
 	_screen->updateScreen();
 
 	_quitFlag = false;
@@ -471,7 +464,7 @@ void KyraEngine_v2::runLoop() {
 	}
 }
 
-void KyraEngine_v2::handleInput(int x, int y) {
+void KyraEngine_HoF::handleInput(int x, int y) {
 	setNextIdleAnimTimer();
 	if (_unk5) {
 		_unk5 = 0;
@@ -575,7 +568,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 	}
 }
 
-bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
+bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 	if (y > 143 || _deathHandler > -1 || queryGameFlag(0x164))
 		return false;
 
@@ -609,7 +602,7 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 	}
 }
 
-void KyraEngine_v2::update() {
+void KyraEngine_HoF::update() {
 	updateInput();
 
 	refreshAnimObjectsIfNeed();
@@ -622,7 +615,7 @@ void KyraEngine_v2::update() {
 	_screen->updateScreen();
 }
 
-void KyraEngine_v2::updateWithText() {
+void KyraEngine_HoF::updateWithText() {
 	updateInput();
 
 	updateMouse();
@@ -645,7 +638,7 @@ void KyraEngine_v2::updateWithText() {
 	_screen->updateScreen();
 }
 
-void KyraEngine_v2::updateMouse() {
+void KyraEngine_HoF::updateMouse() {
 	int shapeIndex = 0;
 	int type = 0;
 	int xOffset = 0, yOffset = 0;
@@ -755,40 +748,7 @@ void KyraEngine_v2::updateMouse() {
 	}
 }
 
-void KyraEngine_v2::updateInput() {
-	Common::Event event;
-
-	while (_eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quitFlag = true;
-			break;
-
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				_eventList.push_back(Event(event, true));
-			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				_quitFlag = true;
-			else
-				_eventList.push_back(event);
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-			_eventList.push_back(Event(event, true));
-			break;
-
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_MOUSEMOVE:
-			_eventList.push_back(event);
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
+int KyraEngine_HoF::checkInput(Button *buttonList, bool mainLoop) {
 	updateInput();
 
 	int keys = 0;
@@ -850,32 +810,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 	return _gui->processButtonList(buttonList, keys | 0x8000);
 }
 
-void KyraEngine_v2::removeInputTop() {
-	if (!_eventList.empty())
-		_eventList.erase(_eventList.begin());
-}
-
-bool KyraEngine_v2::skipFlag() const {
-	for (Common::List<Event>::const_iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
-		if (i->causedSkip)
-			return true;
-	}
-	return false;
-}
-
-void KyraEngine_v2::resetSkipFlag(bool removeEvent) {
-	for (Common::List<Event>::iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
-		if (i->causedSkip) {
-			if (removeEvent)
-				_eventList.erase(i);
-			else
-				i->causedSkip = false;
-			return;
-		}
-	}
-}
-
-void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
+void KyraEngine_HoF::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 	uint32 start = _system->getMillis();
 	do {
 		if (updateGame) {
@@ -892,7 +827,7 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
 }
 
-void KyraEngine_v2::cleanup() {
+void KyraEngine_HoF::cleanup() {
 	delete [] _inventoryButtons; _inventoryButtons = 0;
 
 	delete [] _gamePlayBuffer; _gamePlayBuffer = 0;
@@ -904,10 +839,6 @@ void KyraEngine_v2::cleanup() {
 	_newShapeFiledata = 0;
 	_newShapeCount = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_defaultShapeTable); ++i) {
-		delete [] _defaultShapeTable[i];
-		_defaultShapeTable[i] = 0;
-	}
 	freeSceneShapePtrs();
 
 	if (_optionsBuffer != _cCodeBuffer)
@@ -939,7 +870,7 @@ void KyraEngine_v2::cleanup() {
 
 #pragma mark - Localization
 
-void KyraEngine_v2::loadCCodeBuffer(const char *file) {
+void KyraEngine_HoF::loadCCodeBuffer(const char *file) {
 	char tempString[13];
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
@@ -948,7 +879,7 @@ void KyraEngine_v2::loadCCodeBuffer(const char *file) {
 	_cCodeBuffer = _res->fileData(tempString, 0);
 }
 
-void KyraEngine_v2::loadOptionsBuffer(const char *file) {
+void KyraEngine_HoF::loadOptionsBuffer(const char *file) {
 	char tempString[13];
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
@@ -957,7 +888,7 @@ void KyraEngine_v2::loadOptionsBuffer(const char *file) {
 	_optionsBuffer = _res->fileData(tempString, 0);
 }
 
-void KyraEngine_v2::loadChapterBuffer(int chapter) {
+void KyraEngine_HoF::loadChapterBuffer(int chapter) {
 	char tempString[14];
 
 	static const char *chapterFilenames[] = {
@@ -973,7 +904,7 @@ void KyraEngine_v2::loadChapterBuffer(int chapter) {
 	_currentChapter = chapter;
 }
 
-void KyraEngine_v2::changeFileExtension(char *buffer) {
+void KyraEngine_HoF::changeFileExtension(char *buffer) {
 	while (*buffer != '.')
 		++buffer;
 
@@ -981,11 +912,11 @@ void KyraEngine_v2::changeFileExtension(char *buffer) {
 	strcpy(buffer, _languageExtension[_lang]);
 }
 
-uint8 *KyraEngine_v2::getTableEntry(uint8 *buffer, int id) {
+uint8 *KyraEngine_HoF::getTableEntry(uint8 *buffer, int id) {
 	return buffer + READ_LE_UINT16(buffer + (id<<1));
 }
 
-char *KyraEngine_v2::getTableString(int id, uint8 *buffer, int decode) {
+char *KyraEngine_HoF::getTableString(int id, uint8 *buffer, int decode) {
 	char *string = (char*)getTableEntry(buffer, id);
 
 	if (decode && _flags.lang != Common::JA_JPN) {
@@ -997,14 +928,14 @@ char *KyraEngine_v2::getTableString(int id, uint8 *buffer, int decode) {
 	return string;
 }
 
-const char *KyraEngine_v2::getChapterString(int id) {
+const char *KyraEngine_HoF::getChapterString(int id) {
 	if (_currentChapter != _newChapterFile)
 		loadChapterBuffer(_newChapterFile);
 
 	return getTableString(id, _chapterBuffer, 1);
 }
 
-int KyraEngine_v2::decodeString1(const char *src, char *dst) {
+int KyraEngine_HoF::decodeString1(const char *src, char *dst) {
 	static const uint8 decodeTable1[] = {
 		0x20, 0x65, 0x74, 0x61, 0x69, 0x6E, 0x6F, 0x73, 0x72, 0x6C, 0x68,
 		0x63, 0x64, 0x75, 0x70, 0x6D
@@ -1045,7 +976,7 @@ int KyraEngine_v2::decodeString1(const char *src, char *dst) {
 	return size;
 }
 
-void KyraEngine_v2::decodeString2(const char *src, char *dst) {
+void KyraEngine_HoF::decodeString2(const char *src, char *dst) {
 	if (!src || !dst)
 		return;
 
@@ -1064,12 +995,12 @@ void KyraEngine_v2::decodeString2(const char *src, char *dst) {
 
 #pragma mark -
 
-void KyraEngine_v2::showMessageFromCCode(int id, int16 palIndex, int) {
+void KyraEngine_HoF::showMessageFromCCode(int id, int16 palIndex, int) {
 	const char *string = getTableString(id, _cCodeBuffer, 1);
 	showMessage(string, palIndex);
 }
 
-void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
+void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 	_shownMessage = string;
 	_screen->hideMouse();
 	_screen->fillRect(0, 190, 319, 199, 0xCF);
@@ -1092,11 +1023,11 @@ void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
 	_screen->showMouse();
 }
 
-void KyraEngine_v2::showChapterMessage(int id, int16 palIndex) {
+void KyraEngine_HoF::showChapterMessage(int id, int16 palIndex) {
 	showMessage(getChapterString(id), palIndex);
 }
 
-void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
+void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	char buffer[0x51];
 	char *src = buffer;
 
@@ -1120,7 +1051,7 @@ void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	showMessage((char*)_unkBuf500Bytes, palIndex);
 }
 
-void KyraEngine_v2::fadeMessagePalette() {
+void KyraEngine_HoF::fadeMessagePalette() {
 	if (!_fadeMessagePalette)
 		return;
 
@@ -1145,22 +1076,18 @@ void KyraEngine_v2::fadeMessagePalette() {
 
 #pragma mark -
 
-void KyraEngine_v2::loadMouseShapes() {
+void KyraEngine_HoF::loadMouseShapes() {
 	_screen->loadBitmap("_MOUSE.CSH", 3, 3, 0);
 
-	for (int i = 0; i <= 8; ++i) {
-		_defaultShapeTable[i] = _screen->makeShapeCopy(_screen->getCPagePtr(3), i);
-		assert(_defaultShapeTable[i]);
-	}
+	for (int i = 0; i <= 8; ++i)
+		addShapeToPool(_screen->makeShapeCopy(_screen->getCPagePtr(3), i), i);
 }
 
-void KyraEngine_v2::loadItemShapes() {
+void KyraEngine_HoF::loadItemShapes() {
 	_screen->loadBitmap("_ITEMS.CSH", 3, 3, 0);
 
-	for (int i = 64; i <= 239; ++i) {
-		_defaultShapeTable[i] = _screen->makeShapeCopy(_screen->getCPagePtr(3), i-64);
-		assert(_defaultShapeTable[i]);
-	}
+	for (int i = 64; i <= 239; ++i)
+		addShapeToPool(_screen->getCPagePtr(3), i, i-64);
 
 	_res->loadFileToBuf("_ITEMHT.DAT", _itemHtDat, sizeof(_itemHtDat));
 	assert(_res->getFileSize("_ITEMHT.DAT") == sizeof(_itemHtDat));
@@ -1168,7 +1095,7 @@ void KyraEngine_v2::loadItemShapes() {
 	_screen->_curPage = 0;
 }
 
-void KyraEngine_v2::loadZShapes(int shapes) {
+void KyraEngine_HoF::loadZShapes(int shapes) {
 	char file[10];
 	strcpy(file, "_ZX.SHP");
 
@@ -1176,31 +1103,26 @@ void KyraEngine_v2::loadZShapes(int shapes) {
 	file[2] = '0' + shapes;
 
 	uint8 *data = _res->fileData(file, 0);
-	for (int i = 9; i <= 32; ++i) {
-		delete [] _defaultShapeTable[i];
-		_defaultShapeTable[i] = _screen->makeShapeCopy(data, i-9);
-		assert(_defaultShapeTable[i]);
-	}
+	for (int i = 9; i <= 32; ++i)
+		addShapeToPool(data, i, i-9);
 	delete [] data;
 
 	_loadedZTable = shapes;
 }
 
-void KyraEngine_v2::loadInventoryShapes() {
+void KyraEngine_HoF::loadInventoryShapes() {
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = 2;
 
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
 
-	for (int i = 0; i < 10; ++i) {
-		_defaultShapeTable[240+i] = _screen->encodeShape(_inventoryX[i], _inventoryY[i], 16, 16, 0);
-		assert(_defaultShapeTable[240+i]);
-	}
+	for (int i = 0; i < 10; ++i)
+		addShapeToPool(_screen->encodeShape(_inventoryX[i], _inventoryY[i], 16, 16, 0), 240+i);
 
 	_screen->_curPage = curPageBackUp;
 }
 
-void KyraEngine_v2::runStartScript(int script, int unk1) {
+void KyraEngine_HoF::runStartScript(int script, int unk1) {
 	char filename[14];
 	strcpy(filename, "_START0X.EMC");
 	filename[7] = script + '0';
@@ -1219,7 +1141,7 @@ void KyraEngine_v2::runStartScript(int script, int unk1) {
 	_emc->unload(&scriptData);
 }
 
-void KyraEngine_v2::loadNPCScript() {
+void KyraEngine_HoF::loadNPCScript() {
 	char filename[12];
 	strcpy(filename, "_NPC.EMC");
 
@@ -1249,7 +1171,7 @@ void KyraEngine_v2::loadNPCScript() {
 	_emc->load(filename, &_npcScriptData, &_opcodes);
 }
 
-void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
+void KyraEngine_HoF::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
 	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
 	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
 
@@ -1298,25 +1220,25 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int allowSkip, int 
 
 #pragma mark -
 
-void KyraEngine_v2::resetScaleTable() {
+void KyraEngine_HoF::resetScaleTable() {
 	Common::set_to(_scaleTable, _scaleTable + ARRAYSIZE(_scaleTable), 0x100);
 }
 
-void KyraEngine_v2::setScaleTableItem(int item, int data) {
+void KyraEngine_HoF::setScaleTableItem(int item, int data) {
 	if (item >= 1 || item <= 15)
 		_scaleTable[item-1] = (data << 8) / 100;
 }
 
-int KyraEngine_v2::getScale(int x, int y) {
+int KyraEngine_HoF::getScale(int x, int y) {
 	return _scaleTable[_screen->getLayer(x, y) - 1];
 }
 
-void KyraEngine_v2::setDrawLayerTableEntry(int entry, int data) {
+void KyraEngine_HoF::setDrawLayerTableEntry(int entry, int data) {
 	if (entry >= 1 || entry <= 15)
 		_drawLayerTable[entry-1] = data;
 }
 
-int KyraEngine_v2::getDrawLayer(int x, int y) {
+int KyraEngine_HoF::getDrawLayer(int x, int y) {
 	int layer = _screen->getLayer(x, y);
 	layer = _drawLayerTable[layer-1];
 	if (layer < 0)
@@ -1326,11 +1248,7 @@ int KyraEngine_v2::getDrawLayer(int x, int y) {
 	return layer;
 }
 
-void KyraEngine_v2::restorePage3() {
-	_screen->copyBlockToPage(2, 0, 0, 320, 144, _gamePlayBuffer);
-}
-
-void KyraEngine_v2::backUpPage0() {
+void KyraEngine_HoF::backUpPage0() {
 	if (_screenBuffer) {
 		_screen->hideMouse();
 		memcpy(_screenBuffer, _screen->getCPagePtr(0), 64000);
@@ -1338,13 +1256,13 @@ void KyraEngine_v2::backUpPage0() {
 	}
 }
 
-void KyraEngine_v2::restorePage0() {
+void KyraEngine_HoF::restorePage0() {
 	restorePage3();
 	if (_screenBuffer)
 		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 }
 
-void KyraEngine_v2::updateCharPal(int unk1) {
+void KyraEngine_HoF::updateCharPal(int unk1) {
 	static bool unkVar1 = false;
 
 	if (!_useCharPal)
@@ -1371,7 +1289,7 @@ void KyraEngine_v2::updateCharPal(int unk1) {
 	}
 }
 
-void KyraEngine_v2::setCharPalEntry(int entry, int value) {
+void KyraEngine_HoF::setCharPalEntry(int entry, int value) {
 	if (entry > 15 || entry < 1)
 		entry = 1;
 	if (value > 8 || value < 0)
@@ -1381,7 +1299,7 @@ void KyraEngine_v2::setCharPalEntry(int entry, int value) {
 	_charPalEntry = 0;
 }
 
-int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
+int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 	bool refreshNPC = false;
 	uint16 curScene = _mainCharacter.sceneId;
 	_pathfinderFlag = 15;
@@ -1480,14 +1398,7 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 	return refreshNPC;
 }
 
-bool KyraEngine_v2::checkSpecialSceneExit(int num, int x, int y) {
-	if (_specialExitTable[0+num] > x || _specialExitTable[5+num] > y ||
-		_specialExitTable[10+num] < x || _specialExitTable[15+num] < y)
-		return 0;
-	return 1;
-}
-
-void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
+void KyraEngine_HoF::moveCharacter(int facing, int x, int y) {
 	_mainCharacter.facing = facing;
 	x &= ~3;
 	y &= ~1;
@@ -1521,7 +1432,7 @@ void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
 	_screen->showMouse();
 }
 
-int KyraEngine_v2::updateCharPos(int *table) {
+int KyraEngine_HoF::updateCharPos(int *table) {
 	static uint32 nextUpdate = 0;
 	static const int updateX[] = { 0, 4, 4, 4, 0, -4, -4, -4 };
 	static const int updateY[] = { -2, -2, 0, 2, 2, 2, 0, -2 };
@@ -1537,12 +1448,12 @@ int KyraEngine_v2::updateCharPos(int *table) {
 	return 1;
 }
 
-void KyraEngine_v2::updateCharPosWithUpdate() {
+void KyraEngine_HoF::updateCharPosWithUpdate() {
 	updateCharPos(0);
 	update();
 }
 
-void KyraEngine_v2::updateCharAnimFrame(int charId, int *table) {
+void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
 	static int unkTable1[] = { 0, 0 };
 	static const int unkTable2[] = { 17, 0 };
 	static const int unkTable3[] = { 10, 0 };
@@ -1607,7 +1518,7 @@ void KyraEngine_v2::updateCharAnimFrame(int charId, int *table) {
 	updateCharacterAnim(charId);
 }
 
-int KyraEngine_v2::checkCharCollision(int x, int y) {
+int KyraEngine_HoF::checkCharCollision(int x, int y) {
 	int scale1 = 0, scale2 = 0, scale3 = 0;
 	int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 	scale1 = getScale(_mainCharacter.x1, _mainCharacter.y1);
@@ -1625,10 +1536,10 @@ int KyraEngine_v2::checkCharCollision(int x, int y) {
 	return -1;
 }
 
-int KyraEngine_v2::initNewShapes(uint8 *filedata) {
+int KyraEngine_HoF::initNewShapes(uint8 *filedata) {
 	const int lastEntry = MIN(_newShapeLastEntry, 31);
 	for (int i = 0; i < lastEntry; ++i) {
-		_defaultShapeTable[33+i] = _screen->getPtrToShape(filedata, i);
+		addShapeToPool(filedata, i+33, i);
 		ShapeDesc *desc = &_shapeDescTable[24+i];
 		desc->xAdd = _newShapeXAdd;
 		desc->yAdd = _newShapeYAdd;
@@ -1638,7 +1549,7 @@ int KyraEngine_v2::initNewShapes(uint8 *filedata) {
 	return lastEntry;
 }
 
-void KyraEngine_v2::processNewShapes(int allowSkip, int resetChar) {
+void KyraEngine_HoF::processNewShapes(int allowSkip, int resetChar) {
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
 	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
@@ -1694,17 +1605,18 @@ void KyraEngine_v2::processNewShapes(int allowSkip, int resetChar) {
 	resetCharacterAnimDim();
 }
 
-void KyraEngine_v2::resetNewShapes(int count, uint8 *filedata) {
-	Common::set_to(_defaultShapeTable+33, _defaultShapeTable+33+count, (uint8*)0);
+void KyraEngine_HoF::resetNewShapes(int count, uint8 *filedata) {
+	for (int i = 0; i < count; ++i)
+		remShapeFromPool(i+33);
 	delete [] filedata;
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v2::setNextIdleAnimTimer() {
+void KyraEngine_HoF::setNextIdleAnimTimer() {
 	_nextIdleAnim = _system->getMillis() + _rnd.getRandomNumberRng(10, 15) * 60 * _tickLength;
 }
 
-void KyraEngine_v2::showIdleAnim() {
+void KyraEngine_HoF::showIdleAnim() {
 	static const uint8 scriptMinTable[] = {
 		0x00, 0x05, 0x07, 0x08, 0x00, 0x09, 0x0A, 0x0B, 0xFF, 0x00
 	};
@@ -1742,7 +1654,7 @@ void KyraEngine_v2::showIdleAnim() {
 	}
 }
 
-void KyraEngine_v2::runIdleScript(int script) {
+void KyraEngine_HoF::runIdleScript(int script) {
 	if (script < 0 || script >= 12)
 		script = 0;
 
@@ -1761,26 +1673,26 @@ void KyraEngine_v2::runIdleScript(int script) {
 
 #pragma mark -
 
-void KyraEngine_v2::backUpGfxRect24x24(int x, int y) {
+void KyraEngine_HoF::backUpGfxRect24x24(int x, int y) {
 	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
 }
 
-void KyraEngine_v2::restoreGfxRect24x24(int x, int y) {
+void KyraEngine_HoF::restoreGfxRect24x24(int x, int y) {
 	_screen->copyBlockToPage(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
 }
 
-void KyraEngine_v2::backUpGfxRect32x32(int x, int y) {
+void KyraEngine_HoF::backUpGfxRect32x32(int x, int y) {
 	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
 }
 
-void KyraEngine_v2::restoreGfxRect32x32(int x, int y) {
+void KyraEngine_HoF::restoreGfxRect32x32(int x, int y) {
 	_screen->copyBlockToPage(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
 }
 
 #pragma mark -
 
-void KyraEngine_v2::openTalkFile(int newFile) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::openTalkFile(%d)", newFile);
+void KyraEngine_HoF::openTalkFile(int newFile) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::openTalkFile(%d)", newFile);
 	char talkFilename[16];
 
 	if (_oldTalkFile > 0) {
@@ -1800,8 +1712,8 @@ void KyraEngine_v2::openTalkFile(int newFile) {
 	_oldTalkFile = newFile;
 }
 
-void KyraEngine_v2::snd_playVoiceFile(int id) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playVoiceFile(%d)", id);
+void KyraEngine_HoF::snd_playVoiceFile(int id) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
@@ -1817,8 +1729,8 @@ void KyraEngine_v2::snd_playVoiceFile(int id) {
 	}
 }
 
-void KyraEngine_v2::snd_loadSoundFile(int id) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_loadSoundFile(%d)", id);
+void KyraEngine_HoF::snd_loadSoundFile(int id) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::snd_loadSoundFile(%d)", id);
 	if (id < 0 || !_trackMap)
 		return;
 
@@ -1828,16 +1740,16 @@ void KyraEngine_v2::snd_loadSoundFile(int id) {
 	_sound->loadSoundFile(file);
 }
 
-void KyraEngine_v2::playVoice(int high, int low) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::playVoice(%d, %d)", high, low);
+void KyraEngine_HoF::playVoice(int high, int low) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::playVoice(%d, %d)", high, low);
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;
 	snd_playVoiceFile(vocFile);
 }
 
-void KyraEngine_v2::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playSoundEffect(%d, %d)", track, volume);
+void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::snd_playSoundEffect(%d, %d)", track, volume);
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (track == 10)
@@ -1860,7 +1772,7 @@ void KyraEngine_v2::snd_playSoundEffect(int track, int volume) {
 
 #pragma mark -
 
-void KyraEngine_v2::loadInvWsa(const char *filename, int run, int delayTime, int page, int sfx, int sFrame, int flags) {
+void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, int page, int sfx, int sFrame, int flags) {
 	int wsaFlags = 1;
 	if (flags)
 		wsaFlags |= 2;
@@ -1906,14 +1818,14 @@ void KyraEngine_v2::loadInvWsa(const char *filename, int run, int delayTime, int
 	}
 }
 
-void KyraEngine_v2::closeInvWsa() {
+void KyraEngine_HoF::closeInvWsa() {
 	_invWsa.wsa->close();
 	delete _invWsa.wsa;
 	_invWsa.wsa = 0;
 	_invWsa.running = false;
 }
 
-void KyraEngine_v2::updateInvWsa() {
+void KyraEngine_HoF::updateInvWsa() {
 	if (!_invWsa.running || !_invWsa.wsa)
 		return;
 
@@ -1957,7 +1869,7 @@ void KyraEngine_v2::updateInvWsa() {
 	}
 }
 
-void KyraEngine_v2::displayInvWsaLastFrame() {
+void KyraEngine_HoF::displayInvWsaLastFrame() {
 	if (!_invWsa.wsa)
 		return;
 
@@ -1977,7 +1889,7 @@ void KyraEngine_v2::displayInvWsaLastFrame() {
 
 #pragma mark -
 
-void KyraEngine_v2::setCauldronState(uint8 state, bool paletteFade) {
+void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
 	Common::SeekableReadStream *file = _res->getFileStream("_POTIONS.PAL");
 	if (!file)
@@ -2002,17 +1914,17 @@ void KyraEngine_v2::setCauldronState(uint8 state, bool paletteFade) {
 	// sub_27149();
 }
 
-void KyraEngine_v2::clearCauldronTable() {
+void KyraEngine_HoF::clearCauldronTable() {
 	Common::set_to(_cauldronTable, _cauldronTable+ARRAYSIZE(_cauldronTable), -1);
 }
 
-void KyraEngine_v2::addFrontCauldronTable(int item) {
+void KyraEngine_HoF::addFrontCauldronTable(int item) {
 	for (int i = 23; i >= 0; --i)
 		_cauldronTable[i+1] = _cauldronTable[i];
 	_cauldronTable[0] = item;
 }
 
-void KyraEngine_v2::cauldronItemAnim(int item) {
+void KyraEngine_HoF::cauldronItemAnim(int item) {
 	const int x = 282;
 	const int y = 135;
 	const int mouseDstX = (x + 7) & (~1);
@@ -2078,7 +1990,7 @@ void KyraEngine_v2::cauldronItemAnim(int item) {
 	}
 }
 
-bool KyraEngine_v2::updateCauldron() {
+bool KyraEngine_HoF::updateCauldron() {
 	for (int i = 0; i < 23; ++i) {
 		const int16 *curStateTable = _cauldronStateTables[i];
 		if (*curStateTable == -2)
@@ -2148,7 +2060,7 @@ bool KyraEngine_v2::updateCauldron() {
 	return false;
 }
 
-void KyraEngine_v2::cauldronRndPaletteFade() {
+void KyraEngine_HoF::cauldronRndPaletteFade() {
 	showMessage(0, 0xCF);
 	int index = _rnd.getRandomNumberRng(0x0F, 0x16);
 	Common::SeekableReadStream *file = _res->getFileStream("_POTIONS.PAL");
@@ -2164,12 +2076,12 @@ void KyraEngine_v2::cauldronRndPaletteFade() {
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 }
 
-void KyraEngine_v2::resetCauldronStateTable(int idx) {
+void KyraEngine_HoF::resetCauldronStateTable(int idx) {
 	for (int i = 0; i < 7; ++i)
 		_cauldronStateTables[idx][i] = -2;
 }
 
-bool KyraEngine_v2::addToCauldronStateTable(int data, int idx) {
+bool KyraEngine_HoF::addToCauldronStateTable(int data, int idx) {
 	for (int i = 0; i < 7; ++i) {
 		if (_cauldronStateTables[idx][i] == -2) {
 			_cauldronStateTables[idx][i] = data;
@@ -2179,7 +2091,7 @@ bool KyraEngine_v2::addToCauldronStateTable(int data, int idx) {
 	return false;
 }
 
-void KyraEngine_v2::listItemsInCauldron() {
+void KyraEngine_HoF::listItemsInCauldron() {
 	int itemsInCauldron = 0;
 	for (int i = 0; i < 25; ++i) {
 		if (_cauldronTable[i] != -1)
@@ -2225,7 +2137,7 @@ void KyraEngine_v2::listItemsInCauldron() {
 
 #pragma mark -
 
-void KyraEngine_v2::dinoRide() {
+void KyraEngine_HoF::dinoRide() {
 	_mainCharX = _mainCharY = -1;
 
 	setGameFlag(0x15A);
@@ -2262,7 +2174,7 @@ void KyraEngine_v2::dinoRide() {
 
 #pragma mark -
 
-void KyraEngine_v2::playTim(const char *filename) {
+void KyraEngine_HoF::playTim(const char *filename) {
 	TIM *tim = _tim->load(filename, &_timOpcodes);
 	if (!tim)
 		return;
@@ -2282,7 +2194,7 @@ void KyraEngine_v2::playTim(const char *filename) {
 
 #pragma mark -
 
-void KyraEngine_v2::registerDefaultSettings() {
+void KyraEngine_HoF::registerDefaultSettings() {
 	KyraEngine::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
@@ -2290,7 +2202,7 @@ void KyraEngine_v2::registerDefaultSettings() {
 	ConfMan.registerDefault("walkspeed", 5);
 }
 
-void KyraEngine_v2::writeSettings() {
+void KyraEngine_HoF::writeSettings() {
 	ConfMan.setInt("talkspeed", ((_configTextspeed-2) * 255) / 95);
 
 	switch (_lang) {
@@ -2317,7 +2229,7 @@ void KyraEngine_v2::writeSettings() {
 	KyraEngine::writeSettings();
 }
 
-void KyraEngine_v2::readSettings() {
+void KyraEngine_HoF::readSettings() {
 	int talkspeed = ConfMan.getInt("talkspeed");
 	_configTextspeed = (talkspeed*95)/255 + 2;
 	KyraEngine::readSettings();

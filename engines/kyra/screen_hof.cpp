@@ -25,34 +25,34 @@
 
 #include "common/endian.h"
 
-#include "kyra/kyra_v2.h"
-#include "kyra/screen_v2.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/screen_hof.h"
 
 namespace Kyra {
 
-Screen_v2::Screen_v2(KyraEngine_v2 *vm, OSystem *system)
-	: ScreenEx(vm, system) {
+Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
+	: Screen_v2(vm, system) {
 	_vm = vm;
 	_wsaFrameAnimBuffer = new uint8[1024];
 }
 
-Screen_v2::~Screen_v2() {
+Screen_HoF::~Screen_HoF() {
 	delete [] _wsaFrameAnimBuffer;
 }
 
-void Screen_v2::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::setScreenDim(%d)", dim);
+void Screen_HoF::setScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_HoF::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
 }
 
-const ScreenDim *Screen_v2::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getScreenDim(%d)", dim);
+const ScreenDim *Screen_HoF::getScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_HoF::getScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	return &_screenDimTable[dim];
 }
 
-void Screen_v2::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {
+void Screen_HoF::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {
 	uint8 tmpPal[768];
 
 	for (int i = 0; i != lastColor; i++) {
@@ -74,7 +74,7 @@ void Screen_v2::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int
 		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor);
 }
 
-void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
+void Screen_HoF::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 	int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
 
 	if (!(w1 || h1 || w2 || h2))
@@ -144,7 +144,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 	} while (++nb < h2);
 }
 
-void Screen_v2::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
+void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
 	int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage) {
 
 	if (!(cmpW || cmpH ))
@@ -186,14 +186,14 @@ void Screen_v2::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int 
 	}
 }
 
-void Screen_v2::copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes) {
+void Screen_HoF::copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes) {
 	const uint8 *src = getPagePtr(srcPage) + srcPos;
 	uint8 *dst = getPagePtr(dstPage) + dstPos;
 	memcpy(dst, src, numBytes);
 }
 
 
-void Screen_v2::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
+void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
 	int x0 = dim->sx << 3;
 	int y0 = dim->sy;
 	int w0 = dim->w << 3;
@@ -229,7 +229,7 @@ void Screen_v2::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int d
 	}
 }
 
-bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2) {
+bool Screen_HoF::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2) {
 	x2 = 0;
 	y2 = 0;
 	w2 = w1;

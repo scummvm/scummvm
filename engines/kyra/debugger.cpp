@@ -28,8 +28,8 @@
 #include "common/system.h"
 #include "kyra/debugger.h"
 #include "kyra/kyra_v1.h"
-#include "kyra/kyra_v2.h"
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/timer.h"
 #include "kyra/resource.h"
@@ -283,7 +283,7 @@ bool Debugger_v1::cmd_listBirthstones(int argc, const char **argv) {
 
 #pragma mark -
 
-Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
+Debugger_v2::Debugger_v2(KyraEngine_HoF *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("character_info",		WRAP_METHOD(Debugger_v2, cmd_characterInfo));
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_v2, cmd_enterScene));
 	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v2, cmd_listScenes));	// for consistency with kyra_v1
@@ -322,7 +322,8 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 		_vm->_mainCharacter.facing = direction;
 
 		_vm->enterNewScene(scene, _vm->_mainCharacter.facing, 0, 0, 1);
-		_vm->_screen->_mouseLockCount = 0;
+		while (!_vm->_screen->isMouseVisible())
+			_vm->_screen->showMouse();
 
 		_detach_now = true;
 		return false;
@@ -335,8 +336,8 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 bool Debugger_v2::cmd_listScenes(int argc, const char **argv) {
 	int shown = 1;
 	for (int i = 0; i < _vm->_sceneListSize; ++i) {
-		if (_vm->_sceneList[i].filename[0]) {
-			DebugPrintf("%-2i: %-10s", i, _vm->_sceneList[i].filename);
+		if (_vm->_sceneList[i].filename1[0]) {
+			DebugPrintf("%-2i: %-10s", i, _vm->_sceneList[i].filename1);
 			if (!(shown % 5))
 				DebugPrintf("\n");
 			++shown;
@@ -348,7 +349,7 @@ bool Debugger_v2::cmd_listScenes(int argc, const char **argv) {
 }
 
 bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
-	DebugPrintf("Current scene: %d '%s'\n", _vm->_currentScene, _vm->_sceneList[_vm->_currentScene].filename);
+	DebugPrintf("Current scene: %d '%s'\n", _vm->_currentScene, _vm->_sceneList[_vm->_currentScene].filename1);
 	DebugPrintf("\n");
 	DebugPrintf("Exit information:\n");
 	DebugPrintf("Exit1: leads to %d, position %dx%d\n", int16(_vm->_sceneExit1), _vm->_sceneEnterX1, _vm->_sceneEnterY1);
@@ -371,7 +372,7 @@ bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
 }
 
 bool Debugger_v2::cmd_characterInfo(int argc, const char **argv) {
-	DebugPrintf("Main character is in scene: %d '%s'\n", _vm->_mainCharacter.sceneId, _vm->_sceneList[_vm->_mainCharacter.sceneId].filename);
+	DebugPrintf("Main character is in scene: %d '%s'\n", _vm->_mainCharacter.sceneId, _vm->_sceneList[_vm->_mainCharacter.sceneId].filename1);
 	DebugPrintf("Position: %dx%d\n", _vm->_mainCharacter.x1, _vm->_mainCharacter.y1);
 	DebugPrintf("Facing: %d\n", _vm->_mainCharacter.facing);
 	DebugPrintf("Inventory:\n");
@@ -452,7 +453,7 @@ bool Debugger_v2::cmd_passcodes(int argc, const char **argv) {
 	return true;
 }
 
-Debugger_v3::Debugger_v3(KyraEngine_v3 *vm) : Debugger(vm), _vm(vm) {
+Debugger_v3::Debugger_v3(KyraEngine_MR *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("give",				WRAP_METHOD(Debugger_v3, cmd_giveItem));
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_v3, cmd_enterScene));
 	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v3, cmd_listScenes));	// for consistency with kyra_v1

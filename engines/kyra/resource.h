@@ -37,7 +37,7 @@
 #include "common/ptr.h"
 
 #include "kyra/kyra.h"
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra_hof.h"
 
 namespace Kyra {
 

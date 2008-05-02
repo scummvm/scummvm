@@ -23,22 +23,22 @@
  *
  */
 
-#ifndef KYRA_SCREEN_V3_H
-#define KYRA_SCREEN_V3_H
+#ifndef KYRA_SCREEN_MR_H
+#define KYRA_SCREEN_MR_H
 
-#include "kyra/screen.h"
+#include "kyra/screen_v2.h"
 
 namespace Kyra {
 
-class KyraEngine_v3;
+class KyraEngine_MR;
 
-class Screen_v3 : public ScreenEx {
+class Screen_MR : public Screen_v2 {
 public:
-	Screen_v3(KyraEngine_v3 *vm, OSystem *system);
-	virtual ~Screen_v3();
+	Screen_MR(KyraEngine_MR *vm, OSystem *system);
+	~Screen_MR();
 
-	virtual void setScreenDim(int dim);
-	virtual const ScreenDim *getScreenDim(int dim);
+	void setScreenDim(int dim);
+	const ScreenDim *getScreenDim(int dim);
 
 	int getLayer(int x, int y);
 

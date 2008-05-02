@@ -23,8 +23,8 @@
  *
  */
 
-#include "kyra/text_v2.h"
-#include "kyra/kyra_v2.h"
+#include "kyra/text_hof.h"
+#include "kyra/kyra_hof.h"
 #include "kyra/script_tim.h"
 #include "kyra/resource.h"
 
@@ -32,7 +32,7 @@
 
 namespace Kyra {
 
-TextDisplayer_v2::TextDisplayer_v2(KyraEngine_v2 *vm, Screen_v2 *screen)
+TextDisplayer_v2::TextDisplayer_v2(KyraEngine_HoF *vm, Screen_v2 *screen)
 	: TextDisplayer(vm, screen), _vm(vm) {
 }
 
@@ -146,7 +146,7 @@ void TextDisplayer_v2::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
 
 #pragma mark -
 
-int KyraEngine_v2::chatGetType(const char *str) {
+int KyraEngine_HoF::chatGetType(const char *str) {
 	str += strlen(str);
 	--str;
 	switch (*str) {
@@ -164,7 +164,7 @@ int KyraEngine_v2::chatGetType(const char *str) {
 	}
 }
 
-int KyraEngine_v2::chatCalcDuration(const char *str) {
+int KyraEngine_HoF::chatCalcDuration(const char *str) {
 	static const uint8 durationMultiplicator[] = { 16, 14, 12, 10, 8, 8, 7, 6, 5, 4 };
 
 	int duration = strlen(str);
@@ -172,7 +172,7 @@ int KyraEngine_v2::chatCalcDuration(const char *str) {
 	return MAX<int>(duration, 120);
 }
 
-void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int vocLow) {
+void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vocLow) {
 	setNextIdleAnimTimer();
 
 	_chatVocHigh = _chatVocLow = -1;
@@ -229,7 +229,7 @@ void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int voc
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
+void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
 
@@ -276,7 +276,7 @@ void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int
 	_screen->showMouse();
 }
 
-void KyraEngine_v2::objectChatPrintText(const char *str, int object) {
+void KyraEngine_HoF::objectChatPrintText(const char *str, int object) {
 	int c1 = _talkObjectList[object].color;
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
@@ -295,7 +295,7 @@ void KyraEngine_v2::objectChatPrintText(const char *str, int object) {
 	}
 }
 
-void KyraEngine_v2::objectChatProcess(const char *script) {
+void KyraEngine_HoF::objectChatProcess(const char *script) {
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 
@@ -325,7 +325,7 @@ void KyraEngine_v2::objectChatProcess(const char *script) {
 	_emc->unload(&_chatScriptData);
 }
 
-void KyraEngine_v2::objectChatWaitToFinish() {
+void KyraEngine_HoF::objectChatWaitToFinish() {
 	int charAnimFrame = _mainCharacter.animFrame;
 	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
 
@@ -373,7 +373,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 	resetCharacterAnimDim();
 }
 
-void KyraEngine_v2::startDialogue(int dlgIndex) {
+void KyraEngine_HoF::startDialogue(int dlgIndex) {
 	updateDlgBuffer();
 	int csEntry, vocH, unused1, unused2;
 	loadDlgHeader(csEntry, vocH, unused1, unused2);
@@ -395,7 +395,7 @@ void KyraEngine_v2::startDialogue(int dlgIndex) {
 	processDialogue(offs, vocH, csEntry);
 }
 
-void KyraEngine_v2::zanthSceneStartupChat() {
+void KyraEngine_HoF::zanthSceneStartupChat() {
 	int lowest = _flags.isTalkie ? 6 : 5;
 	int tableIndex = _mainCharacter.sceneId - READ_LE_UINT16(&_ingameTalkObjIndex[lowest + _newChapterFile]);
 	if (queryGameFlag(0x159) || _newSceneDlgState[tableIndex])
@@ -412,7 +412,7 @@ void KyraEngine_v2::zanthSceneStartupChat() {
 	_newSceneDlgState[tableIndex] = 1;
 }
 
-void KyraEngine_v2::zanthRandomIdleChat() {
+void KyraEngine_HoF::zanthRandomIdleChat() {
 	int lowest = _flags.isTalkie ? 6 : 5;
 	int tableIndex = (_mainCharacter.sceneId - READ_LE_UINT16(&_ingameTalkObjIndex[lowest + _newChapterFile])) << 2;
 	if (queryGameFlag(0x164))
@@ -434,7 +434,7 @@ void KyraEngine_v2::zanthRandomIdleChat() {
 	processDialogue(offs, vocH, csEntry);
 }
 
-void KyraEngine_v2::updateDlgBuffer() {
+void KyraEngine_HoF::updateDlgBuffer() {
 	static const char suffixTalkie[] = "EFG";
 	static const char suffixTowns[] = "G  J";
 
@@ -457,14 +457,14 @@ void KyraEngine_v2::updateDlgBuffer() {
 	_dlgBuffer = _res->fileData(filename, 0);
 }
 
-void KyraEngine_v2::loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2) {
+void KyraEngine_HoF::loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2) {
 	csEntry = READ_LE_UINT16(_dlgBuffer);
 	vocH = READ_LE_UINT16(_dlgBuffer + 2);
 	scIndex1 = READ_LE_UINT16(_dlgBuffer + 4);
 	scIndex2 = READ_LE_UINT16(_dlgBuffer + 6);
 }
 
-void KyraEngine_v2::processDialogue(int dlgOffset, int vocH, int csEntry) {
+void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 	int activeTimSequence = -1;
 	int nextTimSequence = -1;
 	int cmd = 0;
@@ -569,7 +569,7 @@ void KyraEngine_v2::processDialogue(int dlgOffset, int vocH, int csEntry) {
 	_screen->showMouse();
 }
 
-void KyraEngine_v2::initTalkObject(int index) {
+void KyraEngine_HoF::initTalkObject(int index) {
 	TalkObject &object = _talkObjectList[index];
 
 	char STAFilename[13];
@@ -605,7 +605,7 @@ void KyraEngine_v2::initTalkObject(int index) {
 	}
 }
 
-void KyraEngine_v2::deinitTalkObject(int index) {
+void KyraEngine_HoF::deinitTalkObject(int index) {
 	TalkObject &object = _talkObjectList[index];
 
 	if (_currentTalkSections.ENDTim) {
@@ -628,7 +628,7 @@ void KyraEngine_v2::deinitTalkObject(int index) {
 	_tim->unload(_currentTalkSections.ENDTim);
 }
 
-void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, int vocLow) {
+void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh, int vocLow) {
 	_chatText = str;
 	_chatObject = objectId;
 	objectChatInit(str, objectId, vocHigh, vocLow);
@@ -677,7 +677,7 @@ void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, 
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v2::setNewDlgIndex(int dlgIndex) {
+void KyraEngine_HoF::setNewDlgIndex(int dlgIndex) {
 	if (dlgIndex == _mainCharacter.dlgIndex)
 		return;
 	memset(_newSceneDlgState, 0, 32);

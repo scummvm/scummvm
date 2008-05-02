@@ -24,17 +24,18 @@
  */
 
 #include "kyra/kyra.h"
-#include "kyra/kyra_v2.h"
+#include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 #include "kyra/timer.h"
 #include "kyra/sound.h"
+#include "kyra/resource.h"
 
 #include "common/savefile.h"
 
 namespace Kyra {
 
-void KyraEngine_v2::loadButtonShapes() {
+void KyraEngine_HoF::loadButtonShapes() {
 	const uint8 *src = _screen->getCPagePtr(3);
 	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, 0);
 
@@ -55,7 +56,7 @@ void KyraEngine_v2::loadButtonShapes() {
 	_buttonShapes[18] = _screen->makeShapeCopy(src, 18);
 }
 
-void KyraEngine_v2::setupLangButtonShapes() {
+void KyraEngine_HoF::setupLangButtonShapes() {
 	switch (_lang) {
 	case 0:
 		_inventoryButtons[0].data0ShapePtr = _buttonShapes[6];
@@ -79,7 +80,7 @@ void KyraEngine_v2::setupLangButtonShapes() {
 	}
 }
 
-GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
+GUI_v2::GUI_v2(KyraEngine_HoF *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _unknownButtonList = 0;
 	initStaticData();
 	_currentMenu = 0;
@@ -443,7 +444,7 @@ const char *GUI_v2::getMenuItemLabel(const MenuItem &menuItem) {
 #pragma mark -
 
 
-int KyraEngine_v2::buttonInventory(Button *button) {
+int KyraEngine_HoF::buttonInventory(Button *button) {
 	if (!_screen->isMouseVisible())
 		return 0;
 
@@ -494,7 +495,7 @@ int KyraEngine_v2::buttonInventory(Button *button) {
 	return 0;
 }
 
-int KyraEngine_v2::scrollInventory(Button *button) {
+int KyraEngine_HoF::scrollInventory(Button *button) {
 	uint16 *src = _mainCharacter.inventory;
 	uint16 *dst = &_mainCharacter.inventory[10];
 	uint16 temp[5];
@@ -512,7 +513,7 @@ int KyraEngine_v2::scrollInventory(Button *button) {
 	return 0;
 }
 
-int KyraEngine_v2::getInventoryItemSlot(uint16 item) {
+int KyraEngine_HoF::getInventoryItemSlot(uint16 item) {
 	for (int i = 0; i < 20; ++i) {
 		if (_mainCharacter.inventory[i] == item)
 			return i;
@@ -520,7 +521,7 @@ int KyraEngine_v2::getInventoryItemSlot(uint16 item) {
 	return -1;
 }
 
-int KyraEngine_v2::findFreeVisibleInventorySlot() {
+int KyraEngine_HoF::findFreeVisibleInventorySlot() {
 	for (int i = 0; i < 10; ++i) {
 		if (_mainCharacter.inventory[i] == 0xFFFF)
 			return i;
@@ -528,7 +529,7 @@ int KyraEngine_v2::findFreeVisibleInventorySlot() {
 	return -1;
 }
 
-void KyraEngine_v2::removeItemFromInventory(int slot) {
+void KyraEngine_HoF::removeItemFromInventory(int slot) {
 	_mainCharacter.inventory[slot] = 0xFFFF;
 	if (slot < 10) {
 		_screen->hideMouse();
@@ -537,7 +538,7 @@ void KyraEngine_v2::removeItemFromInventory(int slot) {
 	}
 }
 
-bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
+bool KyraEngine_HoF::checkInventoryItemExchange(uint16 handItem, int slot) {
 	bool removeItem = false;
 	uint16 newItem = 0xFFFF;
 
@@ -573,17 +574,17 @@ bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
 	return false;
 }
 
-void KyraEngine_v2::drawInventoryShape(int page, uint16 item, int slot) {
+void KyraEngine_HoF::drawInventoryShape(int page, uint16 item, int slot) {
 	_screen->drawShape(page, getShapePtr(item+64), _inventoryX[slot], _inventoryY[slot], 0, 0);
 	_screen->updateScreen();
 }
 
-void KyraEngine_v2::clearInventorySlot(int slot, int page) {
-	_screen->drawShape(page, _defaultShapeTable[240+slot], _inventoryX[slot], _inventoryY[slot], 0, 0);
+void KyraEngine_HoF::clearInventorySlot(int slot, int page) {
+	_screen->drawShape(page, getShapePtr(240+slot), _inventoryX[slot], _inventoryY[slot], 0, 0);
 	_screen->updateScreen();
 }
 
-void KyraEngine_v2::redrawInventory(int page) {
+void KyraEngine_HoF::redrawInventory(int page) {
 	int pageBackUp = _screen->_curPage;
 	_screen->_curPage = page;
 
@@ -602,7 +603,7 @@ void KyraEngine_v2::redrawInventory(int page) {
 	_screen->_curPage = pageBackUp;
 }
 
-void KyraEngine_v2::scrollInventoryWheel() {
+void KyraEngine_HoF::scrollInventoryWheel() {
 	WSAMovieV2 movie(this, _screen);
 	movie.open("INVWHEEL.WSA", 0, 0);
 	int frames = movie.opened() ? movie.frames() : 6;
@@ -648,7 +649,7 @@ void KyraEngine_v2::scrollInventoryWheel() {
 
 // spellbook specific code
 
-int KyraEngine_v2::bookButton(Button *button) {
+int KyraEngine_HoF::bookButton(Button *button) {
 	if (!queryGameFlag(1)) {
 		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB); 
 		return 0;
@@ -739,7 +740,7 @@ int KyraEngine_v2::bookButton(Button *button) {
 	return 0;
 }
 
-void KyraEngine_v2::loadBookBkgd() {
+void KyraEngine_HoF::loadBookBkgd() {
 	char filename[16];
 
 	if (_flags.isTalkie)
@@ -783,7 +784,7 @@ void KyraEngine_v2::loadBookBkgd() {
 	_screen->loadBitmap(filename, 3, 3, 0);
 }
 
-void KyraEngine_v2::showBookPage() {
+void KyraEngine_HoF::showBookPage() {
 	char filename[16];
 
 	sprintf(filename, "PAGE%.01X.", _bookCurPage);
@@ -811,19 +812,19 @@ void KyraEngine_v2::showBookPage() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v2::bookLoop() {
+void KyraEngine_HoF::bookLoop() {
 	Button bookButtons[5];
 
 	GUI_V2_BUTTON(bookButtons[0], 0x24, 0, 0, 1, 1, 1, 0x4487, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[0].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookPrevPage);
+	bookButtons[0].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookPrevPage);
 	GUI_V2_BUTTON(bookButtons[1], 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookNextPage);
+	bookButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookNextPage);
 	GUI_V2_BUTTON(bookButtons[2], 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookClose);
+	bookButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookClose);
 	GUI_V2_BUTTON(bookButtons[3], 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookPrevPage);
+	bookButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookPrevPage);
 	GUI_V2_BUTTON(bookButtons[4], 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookNextPage);
+	bookButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookNextPage);
 
 	Button *buttonList = 0;
 	
@@ -851,7 +852,7 @@ void KyraEngine_v2::bookLoop() {
 	_screen->clearPage(2);
 }
 
-void KyraEngine_v2::bookDecodeText(uint8 *str) {
+void KyraEngine_HoF::bookDecodeText(uint8 *str) {
 	uint8 *dst = str, *op = str;
 	while (*op != 0x1A) {
 		while (*op != 0x1A && *op != 0x0D)
@@ -866,7 +867,7 @@ void KyraEngine_v2::bookDecodeText(uint8 *str) {
 	*dst = 0;
 }
 
-void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *str, int x, int y, uint8 color) {
+void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, uint8 color) {
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = dstPage;
 
@@ -883,24 +884,24 @@ void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *str, int x, int y, u
 	_screen->_curPage = curPageBackUp;
 }
 
-int KyraEngine_v2::bookPrevPage(Button *button) {
+int KyraEngine_HoF::bookPrevPage(Button *button) {
 	_bookNewPage = MAX<int>(_bookCurPage-2, 0);
 	return 0;
 }
 
-int KyraEngine_v2::bookNextPage(Button *button) {
+int KyraEngine_HoF::bookNextPage(Button *button) {
 	_bookNewPage = MIN<int>(_bookCurPage+2, _bookMaxPage);
 	return 0;
 }
 
-int KyraEngine_v2::bookClose(Button *button) {
+int KyraEngine_HoF::bookClose(Button *button) {
 	_bookShown = false;
 	return 0;
 }
 
 // cauldron specific code
 
-int KyraEngine_v2::cauldronClearButton(Button *button) {
+int KyraEngine_HoF::cauldronClearButton(Button *button) {
 	if (!queryGameFlag(2)) {
 		updateCharFacing();
 		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
@@ -926,7 +927,7 @@ int KyraEngine_v2::cauldronClearButton(Button *button) {
 	return 0;
 }
 
-int KyraEngine_v2::cauldronButton(Button *button) {
+int KyraEngine_HoF::cauldronButton(Button *button) {
 	if (!queryGameFlag(2)) {
 		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
 		return 0;

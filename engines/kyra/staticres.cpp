@@ -28,12 +28,12 @@
 #include "common/md5.h"
 #include "kyra/kyra.h"
 #include "kyra/kyra_v1.h"
-#include "kyra/kyra_v2.h"
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_v1.h"
-#include "kyra/screen_v2.h"
-#include "kyra/screen_v3.h"
+#include "kyra/screen_hof.h"
+#include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 #include "kyra/gui_v1.h"
 #include "kyra/gui_v2.h"
@@ -1179,7 +1179,7 @@ void KyraEngine_v1::loadMainScreen(int page) {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }
 
-void KyraEngine_v2::initStaticResource() {
+void KyraEngine_HoF::initStaticResource() {
 	int tmpSize = 0;
 
 	_sequencePakList = _staticres->loadStrings(k2SeqplayPakFiles, _sequencePakListSize);
@@ -1252,37 +1252,37 @@ void KyraEngine_v2::initStaticResource() {
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
 
 	static const SeqProc hofSequenceCallbacks[] = { 0,
-		&KyraEngine_v2::seq_introWestwood,
-		&KyraEngine_v2::seq_introTitle, &KyraEngine_v2::seq_introOverview,
-		&KyraEngine_v2::seq_introLibrary, &KyraEngine_v2::seq_introHand,
-		&KyraEngine_v2::seq_introPoint, &KyraEngine_v2::seq_introZanfaun,
-		&KyraEngine_v2::seq_finaleFunters, &KyraEngine_v2::seq_finaleFerb,
-		&KyraEngine_v2::seq_finaleFish, &KyraEngine_v2::seq_finaleFheep,
-		&KyraEngine_v2::seq_finaleFarmer, &KyraEngine_v2::seq_finaleFuards,
-		&KyraEngine_v2::seq_finaleFirates, &KyraEngine_v2::seq_finaleFrash
+		&KyraEngine_HoF::seq_introWestwood,
+		&KyraEngine_HoF::seq_introTitle, &KyraEngine_HoF::seq_introOverview,
+		&KyraEngine_HoF::seq_introLibrary, &KyraEngine_HoF::seq_introHand,
+		&KyraEngine_HoF::seq_introPoint, &KyraEngine_HoF::seq_introZanfaun,
+		&KyraEngine_HoF::seq_finaleFunters, &KyraEngine_HoF::seq_finaleFerb,
+		&KyraEngine_HoF::seq_finaleFish, &KyraEngine_HoF::seq_finaleFheep,
+		&KyraEngine_HoF::seq_finaleFarmer, &KyraEngine_HoF::seq_finaleFuards,
+		&KyraEngine_HoF::seq_finaleFirates, &KyraEngine_HoF::seq_finaleFrash
 	};
 
 	static const SeqProc hofNestedSequenceCallbacks[] = {
-		&KyraEngine_v2::seq_finaleFiggle, &KyraEngine_v2::seq_introOver1,
-		&KyraEngine_v2::seq_introOver2, &KyraEngine_v2::seq_introForest,
-		&KyraEngine_v2::seq_introDragon, &KyraEngine_v2::seq_introDarm,
-		&KyraEngine_v2::seq_introLibrary2, &KyraEngine_v2::seq_introLibrary2,
-		&KyraEngine_v2::seq_introMarco, &KyraEngine_v2::seq_introHand1a,
-		&KyraEngine_v2::seq_introHand1b, &KyraEngine_v2::seq_introHand1c,
-		&KyraEngine_v2::seq_introHand2,	&KyraEngine_v2::seq_introHand3, 0
+		&KyraEngine_HoF::seq_finaleFiggle, &KyraEngine_HoF::seq_introOver1,
+		&KyraEngine_HoF::seq_introOver2, &KyraEngine_HoF::seq_introForest,
+		&KyraEngine_HoF::seq_introDragon, &KyraEngine_HoF::seq_introDarm,
+		&KyraEngine_HoF::seq_introLibrary2, &KyraEngine_HoF::seq_introLibrary2,
+		&KyraEngine_HoF::seq_introMarco, &KyraEngine_HoF::seq_introHand1a,
+		&KyraEngine_HoF::seq_introHand1b, &KyraEngine_HoF::seq_introHand1c,
+		&KyraEngine_HoF::seq_introHand2,	&KyraEngine_HoF::seq_introHand3, 0
 	};
 
 	static const SeqProc hofDemoSequenceCallbacks[] = {
-		&KyraEngine_v2::seq_demoVirgin, &KyraEngine_v2::seq_demoWestwood,
-		&KyraEngine_v2::seq_demoTitle, &KyraEngine_v2::seq_demoHill,
-		&KyraEngine_v2::seq_demoOuthome, &KyraEngine_v2::seq_demoWharf,
-		&KyraEngine_v2::seq_demoDinob, &KyraEngine_v2::seq_demoFisher, 0
+		&KyraEngine_HoF::seq_demoVirgin, &KyraEngine_HoF::seq_demoWestwood,
+		&KyraEngine_HoF::seq_demoTitle, &KyraEngine_HoF::seq_demoHill,
+		&KyraEngine_HoF::seq_demoOuthome, &KyraEngine_HoF::seq_demoWharf,
+		&KyraEngine_HoF::seq_demoDinob, &KyraEngine_HoF::seq_demoFisher, 0
 	};
 
 	static const SeqProc hofDemoNestedSequenceCallbacks[] = {
-		&KyraEngine_v2::seq_demoWharf2, &KyraEngine_v2::seq_demoDinob2,
-		&KyraEngine_v2::seq_demoWater, &KyraEngine_v2::seq_demoBail,
-		&KyraEngine_v2::seq_demoDig, 0
+		&KyraEngine_HoF::seq_demoWharf2, &KyraEngine_HoF::seq_demoDinob2,
+		&KyraEngine_HoF::seq_demoWater, &KyraEngine_HoF::seq_demoBail,
+		&KyraEngine_HoF::seq_demoDig, 0
 	};
 
 	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
@@ -1305,7 +1305,7 @@ const ScreenDim Screen_v1::_screenDimTable[] = {
 
 const int Screen_v1::_screenDimTableCount = ARRAYSIZE(Screen_v1::_screenDimTable);
 
-const ScreenDim Screen_v2::_screenDimTable[] = {
+const ScreenDim Screen_HoF::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xC7, 0xCF, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0x90, 0xC7, 0xCF, 0x00, 0x00 },
@@ -1320,16 +1320,16 @@ const ScreenDim Screen_v2::_screenDimTable[] = {
 	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }	// menu, just present for current menu code
 };
 
-const int Screen_v2::_screenDimTableCount = ARRAYSIZE(Screen_v2::_screenDimTable);
+const int Screen_HoF::_screenDimTableCount = ARRAYSIZE(Screen_HoF::_screenDimTable);
 
-const ScreenDim Screen_v3::_screenDimTable[] = {
+const ScreenDim Screen_MR::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
 };
 
-const int Screen_v3::_screenDimTableCount = ARRAYSIZE(Screen_v3::_screenDimTable);
+const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
 
 const int8 KyraEngine::_addXPosTable[] = {
 	 4,  4,  0, -4, -4, -4,  0,  4
@@ -1510,7 +1510,7 @@ const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMa
 
 // Kyra 2 and 3 main menu
 
-const char *KyraEngine_v3::_mainMenuStrings[] = {
+const char *KyraEngine_MR::_mainMenuStrings[] = {
 	"Start a new game",
 	"Introduction",
 	"Load a game",
@@ -1528,9 +1528,9 @@ const char *KyraEngine_v3::_mainMenuStrings[] = {
 
 // kyra 2 static res
 
-const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
+const uint8 KyraEngine_HoF::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
-const char *KyraEngine_v2::_languageExtension[] = {
+const char *KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
@@ -1539,7 +1539,7 @@ const char *KyraEngine_v2::_languageExtension[] = {
 	"JPN"
 };
 
-const char *KyraEngine_v2::_scriptLangExt[] = {
+const char *KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
@@ -1548,19 +1548,19 @@ const char *KyraEngine_v2::_scriptLangExt[] = {
 	"JMC"
 };
 
-const int KyraEngine_v2::_characterFrameTable[] = {
+const int KyraEngine_HoF::_characterFrameTable[] = {
 	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
 };
 
-const int KyraEngine_v2::_inventoryX[] = {
+const int KyraEngine_HoF::_inventoryX[] = {
 	0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F
 };
 
-const int KyraEngine_v2::_inventoryY[] = {
+const int KyraEngine_HoF::_inventoryY[] = {
 	0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA
 };
 
-const byte KyraEngine_v2::_itemStringMap[] = {
+const byte KyraEngine_HoF::_itemStringMap[] = {
 	2,    2,    0,    0,    2,    2,    2,    0,
 	2,    2,    0,    0,    0,    2,    0,    0,
 	0,    0,    0,    0,    2,    0,    0,    0,
@@ -1585,9 +1585,9 @@ const byte KyraEngine_v2::_itemStringMap[] = {
 	0,    2,    0,    0,    0,    0,    0,    0
 };
 
-const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);
+const int KyraEngine_HoF::_itemStringMapSize = ARRAYSIZE(KyraEngine_HoF::_itemStringMap);
 
-const int8 KyraEngine_v2::_dosTrackMap[] = {
+const int8 KyraEngine_HoF::_dosTrackMap[] = {
 	-1,    0,   -1,    1,    9,    6,    5,    4,
 	 8,    3,   -2,    0,   -2,    0,    2,    3,
 	-2,    0,   -2,    0,   -2,    0,   -2,    0,
@@ -1612,9 +1612,9 @@ const int8 KyraEngine_v2::_dosTrackMap[] = {
 	 4,    3,    4,    4,    4,    5,    4,    6
 };
 
-const int KyraEngine_v2::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v2::_dosTrackMap);
+const int KyraEngine_HoF::_dosTrackMapSize = ARRAYSIZE(KyraEngine_HoF::_dosTrackMap);
 
-void KyraEngine_v2::initInventoryButtonList() {
+void KyraEngine_HoF::initInventoryButtonList() {
 	delete [] _inventoryButtons;
 
 	_inventoryButtons = new Button[15];
@@ -1624,18 +1624,18 @@ void KyraEngine_v2::initInventoryButtonList() {
 	_inventoryButtons[0].buttonCallback = BUTTON_FUNCTOR(GUI_v2, _gui, &GUI_v2::optionsButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[1], 0x2, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x104, 0x90, 0x3C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::cauldronButton);
+	_inventoryButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[2],	0x5, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0FA, 0x90, 0x0A, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::cauldronClearButton);
+	_inventoryButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronClearButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[3], 0x3, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0CE, 0x90, 0x2C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookButton);
+	_inventoryButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[4], 0x4, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0B6, 0x9D, 0x18, 0x1E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::scrollInventory);
+	_inventoryButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::scrollInventory);
 
-	Button::Callback inventoryCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::buttonInventory);
+	Button::Callback inventoryCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::buttonInventory);
 	GUI_V2_BUTTON(_inventoryButtons[5], 0x6, 0x00, 0, 0, 0, 0, 0x1100, 0, 0x04D, 0x92, 0x13, 0x15, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_inventoryButtons[6], 0x7, 0x00, 0, 0, 0, 0, 0x1100, 0, 0x061, 0x92, 0x13, 0x15, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_inventoryButtons[7], 0x8, 0x00, 0, 0, 0, 0, 0x1100, 0, 0x075, 0x92, 0x13, 0x15, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
@@ -1831,7 +1831,7 @@ const int GUI_v2::_sliderBarsPosition[] = {
 	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
 };
 
-const uint16 KyraEngine_v2::_itemMagicTable[] = {
+const uint16 KyraEngine_HoF::_itemMagicTable[] = {
 	0x0D,  0x0A,  0x0B,    0,
 	0x0D,  0x0B,  0x0A,    0,
 	0x0D,  0x38,  0x37,    0,
@@ -1863,17 +1863,17 @@ const uint16 KyraEngine_v2::_itemMagicTable[] = {
 	0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
 };
 
-const int KyraEngine_v2::_bookPageYOffset[] = {
+const int KyraEngine_HoF::_bookPageYOffset[] = {
 	0, 0, 2, 2,
 	0, 0, 2, 2,
 	0, 0, 2, 2
 };
 
-const byte KyraEngine_v2::_bookTextColorMap[] = {
+const byte KyraEngine_HoF::_bookTextColorMap[] = {
 	0x00, 0xC7, 0xCF, 0x00
 };
 
-const int16 KyraEngine_v2::_cauldronProtectedItems[] = {
+const int16 KyraEngine_HoF::_cauldronProtectedItems[] = {
 	0x07, 0x0D, 0x47, 0x48,
 	0x29, 0x1A, 0x1C, 0x6D,
 	0x4D, 0x3A, 0x0E, 0x0F,
@@ -1884,7 +1884,7 @@ const int16 KyraEngine_v2::_cauldronProtectedItems[] = {
 	0x8A, 0x79, 0x61, -1
 };
 
-const int16 KyraEngine_v2::_cauldronBowlTable[] = {
+const int16 KyraEngine_HoF::_cauldronBowlTable[] = {
 	0x0027, 0x0029,
 	0x0028, 0x0029,
 	0x0033, 0x0029,
@@ -1897,7 +1897,7 @@ const int16 KyraEngine_v2::_cauldronBowlTable[] = {
 	-1, -1
 };
 
-const int16 KyraEngine_v2::_cauldronMagicTable[] = {
+const int16 KyraEngine_HoF::_cauldronMagicTable[] = {
 	0x0, 0x16, 0x2, 0x1A,
 	0x7, 0xA4, 0x5, 0x4D,
 	0x1, 0xA5, 0x3, 0xA6,
@@ -1906,7 +1906,7 @@ const int16 KyraEngine_v2::_cauldronMagicTable[] = {
 	0x9, 0xAC, -1, -1
 };
 
-const int16 KyraEngine_v2::_cauldronMagicTableScene77[] = {
+const int16 KyraEngine_HoF::_cauldronMagicTableScene77[] = {
 	0x0, 0x16, 0x2, 0x1A,
 	0x7, 0xAB, 0x5, 0x4D,
 	0x1, 0xAE, 0x3, 0xAF,
@@ -1915,18 +1915,18 @@ const int16 KyraEngine_v2::_cauldronMagicTableScene77[] = {
 	0x9, 0xAC, -1, -1
 };
 
-const uint8 KyraEngine_v2::_cauldronStateTable[] = {
+const uint8 KyraEngine_HoF::_cauldronStateTable[] = {
 	3, 1, 3, 1, 1, 4, 4, 2,
 	3, 1, 1, 3, 1, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3
 };
 
-const int16 KyraEngine_v2::_flaskTable[] = {
+const int16 KyraEngine_HoF::_flaskTable[] = {
 	0x19, 0x14, 0x15, 0x16, 0x17, 0x18, 0x34,
 	0x1B, 0x39, 0x1A, 0x3A, 0x4D, 0x72, -1
 };
 
-const uint8 KyraEngine_v2::_rainbowRoomData[] = {
+const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 	0x02, 0xA9, 0x9E, 0x75, 0x73, 0x17, 0x00, 0xA0,
 	0x08, 0x01, 0x19, 0x9F, 0x66, 0x05, 0x22, 0x7D,
 	0x20, 0x25, 0x1D, 0x64, 0xA0, 0x78, 0x85, 0x3B,
@@ -1940,7 +1940,7 @@ const uint8 KyraEngine_v2::_rainbowRoomData[] = {
 
 // kyra 3 static res
 
-const char *KyraEngine_v3::_soundList[] = {
+const char *KyraEngine_MR::_soundList[] = {
 	"ARREST1.AUD",
 	"BATH1.AUD",
 	"OCEAN1.AUD",
@@ -1985,9 +1985,9 @@ const char *KyraEngine_v3::_soundList[] = {
 	"SQUIRL1.AUD"
 };
 
-const int KyraEngine_v3::_soundListSize = ARRAYSIZE(KyraEngine_v3::_soundList);
+const int KyraEngine_MR::_soundListSize = ARRAYSIZE(KyraEngine_MR::_soundList);
 
-const char *KyraEngine_v3::_languageExtension[] = {
+const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
@@ -1995,9 +1995,9 @@ const char *KyraEngine_v3::_languageExtension[] = {
 	"TRS"*/
 };
 
-const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
+const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
 
-const KyraEngine_v3::ShapeDesc KyraEngine_v3::_shapeDescs[] = {
+const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 	{ 57, 91, -31, -82 },
 	{ 57, 91, -31, -82 },
 	{ 57, 91, -31, -82 },
@@ -2012,21 +2012,21 @@ const KyraEngine_v3::ShapeDesc KyraEngine_v3::_shapeDescs[] = {
 	{ 57, 91, -31, -82 }
 };
 
-const int KyraEngine_v3::_shapeDescsSize = ARRAYSIZE(KyraEngine_v3::_shapeDescs);
+const int KyraEngine_MR::_shapeDescsSize = ARRAYSIZE(KyraEngine_MR::_shapeDescs);
 
-const int8 KyraEngine_v3::_updateCharPosXTable[] = {
+const int8 KyraEngine_MR::_updateCharPosXTable[] = {
 	0, 4, 4, 4, 0, -4, -4, -4
 };
 
-const int8 KyraEngine_v3::_updateCharPosYTable[] = {
+const int8 KyraEngine_MR::_updateCharPosYTable[] = {
 	-2, -2, 0, 2, 2, 2, 0, -2
 };
 
-const uint8 KyraEngine_v3::_characterFrameTable[] = {
+const uint8 KyraEngine_MR::_characterFrameTable[] = {
 	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34
 };
 
-const uint8 KyraEngine_v3::_sfxFileMap[] = {
+const uint8 KyraEngine_MR::_sfxFileMap[] = {
 	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
 	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
 	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x99, 0x00,
@@ -2105,9 +2105,9 @@ const uint8 KyraEngine_v3::_sfxFileMap[] = {
 	0x23, 0x00, 0x97, 0x00, 0x73, 0x00
 };
 
-const int KyraEngine_v3::_sfxFileMapSize = ARRAYSIZE(KyraEngine_v3::_sfxFileMap);
+const int KyraEngine_MR::_sfxFileMapSize = ARRAYSIZE(KyraEngine_MR::_sfxFileMap);
 
-const char *KyraEngine_v3::_sfxFileList[] = {
+const char *KyraEngine_MR::_sfxFileList[] = {
 	"ALARM1",
 	"ARMOIRE1",
 	"ARROW1",
@@ -2334,9 +2334,9 @@ const char *KyraEngine_v3::_sfxFileList[] = {
 	"ZIPPER1"
 };
 
-const int KyraEngine_v3::_sfxFileListSize = ARRAYSIZE(KyraEngine_v3::_sfxFileList);
+const int KyraEngine_MR::_sfxFileListSize = ARRAYSIZE(KyraEngine_MR::_sfxFileList);
 
-const uint8 KyraEngine_v3::_badConscienceFrameTable[] = {
+const uint8 KyraEngine_MR::_badConscienceFrameTable[] = {
 	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
 	0x13, 0x13, 0x13, 0x10, 0x13, 0x13, 0x13, 0x13,
 	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
@@ -2344,7 +2344,7 @@ const uint8 KyraEngine_v3::_badConscienceFrameTable[] = {
 	0x24, 0x24, 0x24, 0x24, 0x24, 0x1D, 0x1D, 0x1D
 };
 
-const uint8 KyraEngine_v3::_goodConscienceFrameTable[] = {
+const uint8 KyraEngine_MR::_goodConscienceFrameTable[] = {
 	0x13, 0x13, 0x13, 0x13, 0x13,
 	0x13, 0x13, 0x13, 0x13, 0x13,
 	0x13, 0x13, 0x13, 0x13, 0x13,
@@ -2352,31 +2352,31 @@ const uint8 KyraEngine_v3::_goodConscienceFrameTable[] = {
 	0x1E, 0x1E, 0x1E, 0x1E, 0x1E
 };
 
-const uint8 KyraEngine_v3::_chapterLowestScene[] = {
+const uint8 KyraEngine_MR::_chapterLowestScene[] = {
 	0x00, 0x00, 0x19, 0x2B, 0x33, 0x3B
 };
 
-const uint8 KyraEngine_v3::_vocHighTable[] = {
+const uint8 KyraEngine_MR::_vocHighTable[] = {
 	0x64, 0x76, 0x82, 0x83, 0x92
 };
 
-const uint8 KyraEngine_v3::_inventoryX[] = {
+const uint8 KyraEngine_MR::_inventoryX[] = {
 	0x45, 0x61, 0x7D, 0x99, 0xB5,
 	0x45, 0x61, 0x7D, 0x99, 0xB5
 };
 
-const uint8 KyraEngine_v3::_inventoryY[] = {
+const uint8 KyraEngine_MR::_inventoryY[] = {
 	0x9C, 0x9C, 0x9C, 0x9C, 0x9C,
 	0xB2, 0xB2, 0xB2, 0xB2, 0xB2
 };
 
-const uint8 KyraEngine_v3::_trashItemList[] = {
+const uint8 KyraEngine_MR::_trashItemList[] = {
 	0x1E, 0x1D, 0x1C, 0x1F, 0x0F, 0x05, 0x04, 0x00,
 	0x03, 0x22, 0x0B, 0x20, 0x21, 0x10, 0x11, 0x3A,
 	0x39, 0x40, 0x3E, 0x3D, 0x3C, 0x3F, 0xFF
 };
 
-const uint8 KyraEngine_v3::_itemMagicTable[] = {
+const uint8 KyraEngine_MR::_itemMagicTable[] = {
 	0x06, 0x05, 0x07, 0xFE, 0x05, 0x06, 0x07, 0xFE,
 	0x03, 0x00, 0x22, 0xFE, 0x00, 0x03, 0x22, 0xFE,
 	0x10, 0x00, 0x20, 0x0F, 0x00, 0x10, 0x0F, 0x20,
@@ -2384,7 +2384,7 @@ const uint8 KyraEngine_v3::_itemMagicTable[] = {
 	0xFF, 0xFF, 0xFF, 0xFF
 };
 
-const uint8 KyraEngine_v3::_itemStringMap[] = {
+const uint8 KyraEngine_MR::_itemStringMap[] = {
 	1, 0, 2, 0, 2, 2, 0, 0,
 	2, 2, 2, 2, 2, 2, 2, 0,
 	0, 0, 0, 0, 0, 0, 3, 1,
@@ -2396,21 +2396,21 @@ const uint8 KyraEngine_v3::_itemStringMap[] = {
 	0, 0, 0, 0, 2, 0, 0, 2
 };
 
-const uint KyraEngine_v3::_itemStringMapSize = ARRAYSIZE(KyraEngine_v3::_itemStringMap);
+const uint KyraEngine_MR::_itemStringMapSize = ARRAYSIZE(KyraEngine_MR::_itemStringMap);
 
-const uint8 KyraEngine_v3::_itemStringPickUp[] = {
+const uint8 KyraEngine_MR::_itemStringPickUp[] = {
 	0x4, 0x7, 0x0, 0xA
 };
 
-const uint8 KyraEngine_v3::_itemStringDrop[] = {
+const uint8 KyraEngine_MR::_itemStringDrop[] = {
 	0x5, 0x8, 0x1, 0xB
 };
 
-const uint8 KyraEngine_v3::_itemStringInv[] = {
+const uint8 KyraEngine_MR::_itemStringInv[] = {
 	0x6, 0x9, 0x2, 0xC
 };
 
-const int8 KyraEngine_v3::_scoreTable[] = {
+const int8 KyraEngine_MR::_scoreTable[] = {
 	10,  8,  5,  9, 10, 10,  7,  8,
 	 9,  9,  8,  8,  7,  8,  5,  9,
 	 6, 10,  7,  8,  5,  9,  6,  6,
@@ -2438,22 +2438,22 @@ const int8 KyraEngine_v3::_scoreTable[] = {
 	 0,  0,  0,  0,  0,  0,  0,  0 
 }; 
 
-const int KyraEngine_v3::_scoreTableSize = ARRAYSIZE(KyraEngine_v3::_scoreTable);
+const int KyraEngine_MR::_scoreTableSize = ARRAYSIZE(KyraEngine_MR::_scoreTable);
 
-void KyraEngine_v3::initMainButtonList(bool disable) {
+void KyraEngine_MR::initMainButtonList(bool disable) {
 	if (!_mainButtonListInitialized) {
 		_mainButtonData = new Button[14];
 		assert(_mainButtonData);
 
 		GUI_V3_BUTTON(_mainButtonData[0], 1, 0, 0, 4, 4, 4, 0x4487, 0,   5, 162, 50, 25, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 		GUI_V3_BUTTON(_mainButtonData[1], 2, 0, 0, 1, 1, 1, 0x4487, 0, 245, 156, 69, 33, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-		_mainButtonData[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonMoodChange);
+		_mainButtonData[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonMoodChange);
 		GUI_V3_BUTTON(_mainButtonData[2], 3, 0, 0, 1, 1, 1, 0x4487, 0, 215, 191, 24,  9, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-		_mainButtonData[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonShowScore);
+		_mainButtonData[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonShowScore);
 		GUI_V3_BUTTON(_mainButtonData[3], 4, 0, 0, 1, 1, 1, 0x4487, 0, 215, 155, 25, 36, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-		_mainButtonData[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonJesterStaff);
+		_mainButtonData[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonJesterStaff);
 
-		Button::Callback buttonInventoryFunctor = BUTTON_FUNCTOR(KyraEngine_v3, this, &KyraEngine_v3::buttonInventory);
+		Button::Callback buttonInventoryFunctor = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonInventory);
 		for (int i = 0; i < 5; ++i) {
 			GUI_V3_BUTTON(_mainButtonData[i+4], i+5, 0, 0, 0, 0, 0, 0x1100, 0, 67+i*28, 155, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 			_mainButtonData[i+4].buttonCallback = buttonInventoryFunctor;
