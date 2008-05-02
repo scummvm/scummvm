@@ -568,16 +568,6 @@ private:
 	int o3_removeInventoryItemInstances(EMCState *script);
 	int o3_countInventoryItemInstances(EMCState *script);
 	int o3_npcChatSequence(EMCState *script);
-	int o3_queryGameFlag(EMCState *script);
-	int o3_resetGameFlag(EMCState *script);
-	int o3_setGameFlag(EMCState *script);
-	int o3_setHandItem(EMCState *script);
-	int o3_removeHandItem(EMCState *script);
-	int o3_handItemSet(EMCState *script);
-	int o3_hideMouse(EMCState *script);
-	int o3_addSpecialExit(EMCState *script);
-	int o3_setMousePos(EMCState *script);
-	int o3_showMouse(EMCState *script);
 	int o3_badConscienceChat(EMCState *script);
 	int o3_wipeDownMouseItem(EMCState *script);
 	int o3_setMalcolmsMood(EMCState *script);

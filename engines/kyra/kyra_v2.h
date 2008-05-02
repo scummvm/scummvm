@@ -288,6 +288,16 @@ protected:
 	int o2_getCharacterScene(EMCState *script);
 	int o2_trySceneChange(EMCState *script);
 	int o2_moveCharacter(EMCState *script);
+	int o2_queryGameFlag(EMCState *script);
+	int o2_resetGameFlag(EMCState *script);
+	int o2_setGameFlag(EMCState *script);
+	int o2_setHandItem(EMCState *script);
+	int o2_removeHandItem(EMCState *script);
+	int o2_handItemSet(EMCState *script);
+	int o2_hideMouse(EMCState *script);
+	int o2_addSpecialExit(EMCState *script);
+	int o2_setMousePos(EMCState *script);
+	int o2_showMouse(EMCState *script);
 };
 
 } // end of namespace Kyra

@@ -24,6 +24,7 @@
  */
 
 #include "kyra/kyra_v2.h"
+#include "kyra/screen_v2.h"
 
 namespace Kyra {
 
@@ -69,6 +70,70 @@ int KyraEngine_v2::o2_trySceneChange(EMCState *script) {
 int KyraEngine_v2::o2_moveCharacter(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_moveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	moveCharacter(stackPos(0), stackPos(1), stackPos(2));
+	return 0;
+}
+
+int KyraEngine_v2::o2_queryGameFlag(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_queryGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+	return queryGameFlag(stackPos(0));
+}
+
+int KyraEngine_v2::o2_resetGameFlag(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_resetGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+	return resetGameFlag(stackPos(0));
+}
+
+int KyraEngine_v2::o2_setGameFlag(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+	return setGameFlag(stackPos(0));
+}
+
+int KyraEngine_v2::o2_setHandItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setHandItem(%p) (%d)", (const void *)script, stackPos(0));
+	setHandItem(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_removeHandItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_removeHandItem(%p) ()", (const void *)script);
+	removeHandItem();
+	return 0;
+}
+
+int KyraEngine_v2::o2_handItemSet(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_handItemSet(%p) ()", (const void *)script);
+	return _handItemSet;
+}
+
+int KyraEngine_v2::o2_hideMouse(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_hideMouse(%p) ()", (const void *)script);
+	screen()->hideMouse();
+	return 0;
+}
+
+int KyraEngine_v2::o2_addSpecialExit(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_addSpecialExit(%p) (%d, %d, %d, %d, %d)", (const void *)script,
+		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	if (_specialExitCount < 5) {
+		_specialExitTable[_specialExitCount+0] = stackPos(0);
+		_specialExitTable[_specialExitCount+5] = stackPos(1);
+		_specialExitTable[_specialExitCount+10] = stackPos(2) + stackPos(0) - 1;
+		_specialExitTable[_specialExitCount+15] = stackPos(3) + stackPos(1) - 1;
+		_specialExitTable[_specialExitCount+20] = stackPos(4);
+		++_specialExitCount;
+	}
+	return 0;
+}
+
+int KyraEngine_v2::o2_setMousePos(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	setMousePos(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_showMouse(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showMouse(%p) ()", (const void *)script);
+	screen()->showMouse();
 	return 0;
 }
 

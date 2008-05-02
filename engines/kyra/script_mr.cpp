@@ -264,72 +264,6 @@ int KyraEngine_MR::o3_npcChatSequence(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_queryGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_queryGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	return queryGameFlag(stackPos(0));
-}
-
-int KyraEngine_MR::o3_resetGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_resetGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	resetGameFlag(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_MR::o3_setGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	setGameFlag(stackPos(0));
-	return 1;
-}
-
-int KyraEngine_MR::o3_setHandItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setHandItem(%p) (%d)", (const void *)script, stackPos(0));
-	setHandItem(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_MR::o3_removeHandItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeHandItem(%p) ()", (const void *)script);
-	removeHandItem();
-	return 0;
-}
-
-int KyraEngine_MR::o3_handItemSet(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_handItemSet(%p) ()", (const void *)script);
-	return _handItemSet;
-}
-
-int KyraEngine_MR::o3_hideMouse(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_hideMouse(%p) ()", (const void *)script);
-	_screen->hideMouse();
-	return 0;
-}
-
-int KyraEngine_MR::o3_addSpecialExit(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_addSpecialExit(%p) (%d, %d, %d, %d, %d)", (const void *)script,
-		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	if (_specialExitCount < 5) {
-		_specialExitTable[_specialExitCount+0] = stackPos(0);
-		_specialExitTable[_specialExitCount+5] = stackPos(1);
-		_specialExitTable[_specialExitCount+10] = stackPos(2) + stackPos(0) - 1;
-		_specialExitTable[_specialExitCount+15] = stackPos(3) + stackPos(1) - 1;
-		_specialExitTable[_specialExitCount+20] = stackPos(4);
-		++_specialExitCount;
-	}
-	return 0;
-}
-
-int KyraEngine_MR::o3_setMousePos(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	setMousePos(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_MR::o3_showMouse(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_showMouse(%p) ()", (const void *)script);
-	_screen->showMouse();
-	return 0;
-}
-
 int KyraEngine_MR::o3_badConscienceChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_badConscienceChat(%p) (%d)", (const void *)script, stackPos(0));
 	int id = stackPos(0);
@@ -1444,19 +1378,19 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_removeInventoryItemInstances);
 	Opcode(o3_countInventoryItemInstances);
 	Opcode(o3_npcChatSequence);
-	Opcode(o3_queryGameFlag);
+	Opcode(o2_queryGameFlag);
 	// 0x28
-	Opcode(o3_resetGameFlag);
-	Opcode(o3_setGameFlag);
-	Opcode(o3_setHandItem);
-	Opcode(o3_removeHandItem);
+	Opcode(o2_resetGameFlag);
+	Opcode(o2_setGameFlag);
+	Opcode(o2_setHandItem);
+	Opcode(o2_removeHandItem);
 	// 0x2c
-	Opcode(o3_handItemSet);
-	Opcode(o3_hideMouse);
-	Opcode(o3_addSpecialExit);
-	Opcode(o3_setMousePos);
+	Opcode(o2_handItemSet);
+	Opcode(o2_hideMouse);
+	Opcode(o2_addSpecialExit);
+	Opcode(o2_setMousePos);
 	// 0x30
-	Opcode(o3_showMouse);
+	Opcode(o2_showMouse);
 	Opcode(o3_badConscienceChat);
 	Opcode(o3_wipeDownMouseItem);
 	Opcode(o3_dummy);
@@ -1633,7 +1567,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3d_updateAnim);
 	Opcode(o3d_delay);
 	Opcode(o3_getRand);
-	Opcode(o3_queryGameFlag);
+	Opcode(o2_queryGameFlag);
 	// 0x04
 	Opcode(o3_dummy);
 }
