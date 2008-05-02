@@ -161,6 +161,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\drascula\animation.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\drascula\detection.cpp"
 			>
 		</File>
