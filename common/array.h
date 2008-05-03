@@ -30,7 +30,7 @@
 
 namespace Common {
 
-template <class T>
+template<class T>
 class Array {
 protected:
 	uint _capacity;
@@ -45,7 +45,7 @@ public:
 
 public:
 	Array() : _capacity(0), _size(0), _data(0) {}
-	Array(const Array<T>& array) : _capacity(0), _size(0), _data(0) {
+	Array(const Array<T> &array) : _capacity(0), _size(0), _data(0) {
 		_size = array._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
@@ -53,21 +53,21 @@ public:
 	}
 
 	~Array() {
-		delete [] _data;
+		delete[] _data;
 	}
 
-	void push_back(const T& element) {
+	void push_back(const T &element) {
 		ensureCapacity(_size + 1);
 		_data[_size++] = element;
 	}
 
-	void push_back(const Array<T>& array) {
+	void push_back(const Array<T> &array) {
 		ensureCapacity(_size + array._size);
 		copy(array._data, array._data + array._size, _data + _size);
 		_size += array._size;
 	}
 
-	void insert_at(int idx, const T& element) {
+	void insert_at(int idx, const T &element) {
 		assert(idx >= 0 && (uint)idx <= _size);
 		ensureCapacity(_size + 1);
 		copy_backward(_data + idx, _data + _size, _data + _size + 1);
@@ -85,17 +85,17 @@ public:
 
 	// TODO: insert, remove, ...
 
-	T& operator [](int idx) {
+	T& operator[](int idx) {
 		assert(idx >= 0 && (uint)idx < _size);
 		return _data[idx];
 	}
 
-	const T& operator [](int idx) const {
+	const T& operator[](int idx) const {
 		assert(idx >= 0 && (uint)idx < _size);
 		return _data[idx];
 	}
 
-	Array<T>& operator  =(const Array<T>& array) {
+	Array<T>& operator=(const Array<T> &array) {
 		if (this == &array)
 			return *this;
 

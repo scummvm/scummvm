@@ -94,7 +94,7 @@ uint nextTableSize(uint x);
  * triggered instead. Hence if you are not sure whether a key is contained in
  * the map, use contains() first to check for its presence.
  */
-template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
+template<class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
 private:
 #if defined (PALMOS_MODE)
@@ -113,17 +113,17 @@ public:
 #ifdef USE_HASHMAP_MEMORY_POOL
 	MemoryPool _nodePool;
 
-	Node *allocNode(const Key& key) {
+	Node *allocNode(const Key &key) {
 		void* mem = _nodePool.malloc();
 		return new (mem) Node(key);
 	} 
 
-	void freeNode(Node* node) {
+	void freeNode(Node *node) {
 		node->~Node();
 		_nodePool.free(node);
 	}
 #else
-	Node* allocNode(const Key& key) {
+	Node* allocNode(const Key &key) {
 		return new Node(key);
 	} 
 
@@ -145,7 +145,7 @@ public:
 	mutable int _collisions, _lookups;
 #endif
 
-	void assign(const HM_t& map);
+	void assign(const HM_t &map);
 	int lookup(const Key &key) const;
 	int lookupAndCreateIfMissing(const Key &key);
 	void expand_array(uint newsize);
@@ -181,13 +181,13 @@ public:
 		template<class T>
 		IteratorImpl(const IteratorImpl<T> &c) : _idx(c._idx), _hashmap(c._hashmap) {}
 
-		NodeType &operator *() const { return *deref(); }
+		NodeType &operator*() const { return *deref(); }
 		NodeType *operator->() const { return deref(); }
 
-		bool operator ==(const IteratorImpl &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
-		bool operator !=(const IteratorImpl &iter) const { return !(*this == iter); }
+		bool operator==(const IteratorImpl &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
+		bool operator!=(const IteratorImpl &iter) const { return !(*this == iter); }
 
-		IteratorImpl &operator ++() {
+		IteratorImpl &operator++() {
 			assert(_hashmap);
 			do {
 				_idx++;
@@ -198,7 +198,7 @@ public:
 			return *this;
 		}
 
-		IteratorImpl operator ++(int) {
+		IteratorImpl operator++(int) {
 			IteratorImpl old = *this;
 			operator ++();
 			return old;
@@ -210,10 +210,10 @@ public:
 	typedef IteratorImpl<const Node> const_iterator;
 
 	HashMap();
-	HashMap(const HM_t& map);
+	HashMap(const HM_t &map);
 	~HashMap();
 
-	HM_t &operator =(const HM_t &map) {
+	HM_t &operator=(const HM_t &map) {
 		if (this == &map)
 			return *this;
 
@@ -227,8 +227,8 @@ public:
 
 	bool contains(const Key &key) const;
 
-	Val &operator [](const Key &key);
-	const Val &operator [](const Key &key) const;
+	Val &operator[](const Key &key);
+	const Val &operator[](const Key &key) const;
 
 	Val &getVal(const Key &key);
 	const Val &getVal(const Key &key) const;
@@ -291,7 +291,7 @@ public:
 /**
  * Base constructor, creates an empty hashmap.
  */
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
 #ifdef USE_HASHMAP_MEMORY_POOL
 	_nodePool(sizeof(Node)),
@@ -315,8 +315,8 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
  * We must provide a custom copy constructor as we use pointers
  * to heap buffers for the internal storage.
  */
-template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map) : 
+template<class Key, class Val, class HashFunc, class EqualFunc>
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) : 
 #ifdef USE_HASHMAP_MEMORY_POOL
 	_nodePool(sizeof(Node)),
 #endif
@@ -327,7 +327,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map) :
 /**
  * Destructor, frees all used memory.
  */
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 	for (uint ctr = 0; ctr < _arrsize; ++ctr)
 		if (_arr[ctr] != NULL)
@@ -343,8 +343,8 @@ HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
  * @note We do *not* deallocate the previous storage here -- the caller is
  *       responsible for doing that!
  */
-template <class Key, class Val, class HashFunc, class EqualFunc>
-void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t& map) {
+template<class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
 	_arrsize = map._arrsize;
 	_arr = new Node *[_arrsize];
 	assert(_arr != NULL);
@@ -364,7 +364,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t& map) {
 }
 
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
 		if (_arr[ctr] != NULL) {
@@ -385,7 +385,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 	_nele = 0;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	assert(newsize > _arrsize);
 	uint ctr, dex;
@@ -428,7 +428,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	return;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	uint ctr = _hash(key) % _arrsize;
 
@@ -450,7 +450,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	return ctr;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
 	uint ctr = lookup(key);
 
@@ -469,30 +469,30 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 }
 
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
 	uint ctr = lookup(key);
 	return (_arr[ctr] != NULL);
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
+template<class Key, class Val, class HashFunc, class EqualFunc>
+Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator[](const Key &key) {
 	return getVal(key);
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
-const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) const {
+template<class Key, class Val, class HashFunc, class EqualFunc>
+const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator[](const Key &key) const {
 	return getVal(key);
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
 	uint ctr = lookupAndCreateIfMissing(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->_value;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const {
 	uint ctr = lookup(key);
 	if (_arr[ctr] != NULL)
@@ -501,14 +501,14 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const 
 		return _defaultVal;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &val) {
 	uint ctr = lookupAndCreateIfMissing(key);
 	assert(_arr[ctr] != NULL);
 	_arr[ctr]->_value = val;
 }
 
-template <class Key, class Val, class HashFunc, class EqualFunc>
+template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 	// This is based on code in the Wikipedia article on Hash tables.
 	uint i = lookup(key);
