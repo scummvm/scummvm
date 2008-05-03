@@ -299,16 +299,16 @@ void KyraEngine_HoF::objectChatProcess(const char *script) {
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 
-	_emc->load(script, &_chatScriptData, &_opcodesTemporary);
+	_emc->load(script, &_chatScriptData, &_opcodesAnimation);
 	_emc->init(&_chatScriptState, &_chatScriptData);
 	_emc->start(&_chatScriptState, 0);
 	while (_emc->isValid(&_chatScriptState))
 		_emc->run(&_chatScriptState);
 
-	_newShapeFilename[2] = _characterShapeFile + '0';
-	uint8 *shapeBuffer = _res->fileData(_newShapeFilename, 0);
+	_animShapeFilename[2] = _characterShapeFile + '0';
+	uint8 *shapeBuffer = _res->fileData(_animShapeFilename, 0);
 	if (shapeBuffer) {
-		int shapeCount = initNewShapes(shapeBuffer);
+		int shapeCount = initAnimationShapes(shapeBuffer);
 
 		if (_chatVocHigh >= 0) {
 			playVoice(_chatVocHigh, _chatVocLow);
@@ -317,9 +317,9 @@ void KyraEngine_HoF::objectChatProcess(const char *script) {
 
 		objectChatWaitToFinish();
 
-		resetNewShapes(shapeCount, shapeBuffer);
+		uninitAnimationShapes(shapeCount, shapeBuffer);
 	} else {
-		warning("couldn't load file '%s'", _newShapeFilename);
+		warning("couldn't load file '%s'", _animShapeFilename);
 	}
 
 	_emc->unload(&_chatScriptData);
@@ -327,7 +327,7 @@ void KyraEngine_HoF::objectChatProcess(const char *script) {
 
 void KyraEngine_HoF::objectChatWaitToFinish() {
 	int charAnimFrame = _mainCharacter.animFrame;
-	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
+	setCharacterAnimDim(_animShapeWidth, _animShapeHeight);
 
 	_emc->init(&_chatScriptState, &_chatScriptData);
 	_emc->start(&_chatScriptState, 1);
@@ -340,12 +340,12 @@ void KyraEngine_HoF::objectChatWaitToFinish() {
 		if (!_emc->isValid(&_chatScriptState))
 			_emc->start(&_chatScriptState, 1);
 
-		_temporaryScriptExecBit = false;
-		while (!_temporaryScriptExecBit && _emc->isValid(&_chatScriptState))
+		_animNeedUpdate = false;
+		while (!_animNeedUpdate && _emc->isValid(&_chatScriptState))
 			_emc->run(&_chatScriptState);
 
-		int curFrame = _newShapeAnimFrame;
-		uint32 delayTime = _newShapeDelay;
+		int curFrame = _animNewFrame;
+		uint32 delayTime = _animDelayTime;
 
 		if (!_chatIsNote)
 			_mainCharacter.animFrame = 33 + curFrame;

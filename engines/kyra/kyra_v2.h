@@ -40,12 +40,31 @@ class Screen_v2;
 class KyraEngine_v2 : public KyraEngine {
 friend class Debugger_v2;
 public:
-	KyraEngine_v2(OSystem *system, const GameFlags &flags);
+	struct EngineDesc {
+		// Generic shape related
+		const int itemShapeStart;
+
+		// Scene script
+		const int firstAnimSceneScript;
+
+		// Animation script specific
+		const int animScriptFrameAdd;
+	};
+
+	KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc);
 	~KyraEngine_v2();
 
 	virtual Screen_v2 *screen_v2() const = 0;
+
+	const EngineDesc &engineDesc() const { return _desc; }
 protected:
+	EngineDesc _desc;
+
 	// run
+	bool _runFlag;
+	bool _showOutro;
+	int8 _deathHandler;
+
 	virtual void update() = 0;
 	virtual void updateWithText() = 0;
 
@@ -138,6 +157,8 @@ protected:
 
 	virtual int getScale(int x, int y) = 0;
 
+	const uint8 *_characterFrameTable;
+
 	// Scene
 	struct SceneDesc {
 		char filename1[10];
@@ -197,7 +218,36 @@ protected:
 	bool _specialSceneScriptRunFlag;
 
 	void updateSpecialSceneScripts();
-	virtual int getFirstSpecialSceneScript() const = 0;
+
+	// Sequences
+	EMCData _animationScriptData;
+	EMCState _animationScriptState;
+	Common::Array<const Opcode*> _opcodesAnimation;
+
+	void runAnimationScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
+
+	int o2a_setAnimationShapes(EMCState *script);
+	int o2a_setResetFrame(EMCState *script);
+
+	char _animShapeFilename[14];
+
+	uint8 *_animShapeFiledata;
+	int _animShapeCount;
+	int _animShapeLastEntry;
+
+	int _animNewFrame;
+	int _animDelayTime;
+
+	int _animResetFrame;
+
+	int _animShapeWidth, _animShapeHeight;
+	int _animShapeXAdd, _animShapeYAdd;
+
+	bool _animNeedUpdate;
+
+	virtual int initAnimationShapes(uint8 *filedata) = 0;
+	void processAnimationScript(int allowSkip, int resetChar);
+	virtual void uninitAnimationShapes(int count, uint8 *filedata) = 0;
 
 	// Shapes
 	typedef Common::HashMap<int, uint8*> ShapeMap;
@@ -207,8 +257,6 @@ protected:
 	void addShapeToPool(const uint8 *data, int realIndex, int shape);
 	void addShapeToPool(uint8 *shpData, int index);
 	void remShapeFromPool(int idx);
-
-	virtual int getItemShape(int item) const = 0;
 
 	int _characterShapeFile;
 	virtual void loadCharacterShapes(int shapes) = 0;
@@ -288,6 +336,17 @@ protected:
 
 	virtual int getCharacterWalkspeed() const = 0;
 	virtual void updateCharAnimFrame(int num, int *table) = 0;
+
+	// chat
+	int _vocHigh;
+
+	const char *_chatText;
+	int _chatObject;
+	uint32 _chatEndTime;
+	int _chatVocHigh, _chatVocLow;
+
+	EMCData _chatScriptData;
+	EMCState _chatScriptState;
 
 	// unknown
 	int _unk3, _unk4, _unk5;

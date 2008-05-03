@@ -40,7 +40,20 @@
 #include "common/config-manager.h"
 
 namespace Kyra {
-KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags) {
+
+namespace {
+const KyraEngine_v2::EngineDesc mrEngineDesc = {
+	248,
+
+	9,
+
+	9
+};
+} // end of anonymous namespace
+
+KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, mrEngineDesc) {
+	KyraEngine_v2::_characterFrameTable = _characterFrameTable;
+
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
@@ -90,8 +103,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_noStartupChat = false;
 	_pathfinderFlag = 0;
 	_talkObjectList = 0;
-	_chatText = 0;
-	_chatObject = -1;
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	_voiceSoundChannel = -1;
@@ -101,7 +112,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_curStudioSFX = 283;
 	_badConscienceShown = false;
 	_currentChapter = 1;
-	_deathHandler = -1;
 	_unkHandleSceneChangeFlag = false;
 	memset(_sceneShapeDescs, 0, sizeof(_sceneShapeDescs));
 	_cnvFile = _dlgBuffer = 0;
@@ -115,8 +125,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_malcolmsMood = 1;
 	_nextIdleAnim = 0;
 	_nextIdleType = false;
-	_newShapeFlag = -1;
-	_newShapeFiledata = 0;
 	_inventoryScrollSpeed = -1;
 	_invWsa = 0;
 	_invWsaFrame = -1;
@@ -130,7 +138,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_goodConscienceShown = false;
 	_goodConscienceAnim = -1;
 	_goodConsciencePosition = false;
-	_showOutro = false;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -167,10 +174,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete [] _sceneStrings;
 	delete [] _talkObjectList;
 
-	for (Common::Array<const Opcode*>::iterator i = _opcodesTemporary.begin(); i != _opcodesTemporary.end(); ++i)
-		delete *i;
-	_opcodesTemporary.clear();
-
 	for (Common::Array<const Opcode*>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
 		delete *i;
 	_opcodesDialog.clear();
@@ -178,7 +181,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete _cnvFile;
 	delete _dlgBuffer;
 	delete [] _stringBuffer;
-	delete [] _newShapeFiledata;
 	delete _invWsa;
 	delete _debugger;
 	delete [] _mainButtonData;

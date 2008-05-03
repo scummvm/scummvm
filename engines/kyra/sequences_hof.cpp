@@ -2626,13 +2626,13 @@ void KyraEngine_HoF::seq_init() {
 		_demoAnimData = _staticres->loadHofShapeAnimDataV1(k2SeqplayShapeAnimData, _itemAnimDataSize);
 		uint8 *shp = _res->fileData("icons.shp", 0);
 		uint32 outsize = READ_LE_UINT16(shp + 4);
-		_newShapeFiledata = new uint8[outsize];
-		Screen::decodeFrame4(shp + 10, _newShapeFiledata, outsize);
+		_animShapeFiledata = new uint8[outsize];
+		Screen::decodeFrame4(shp + 10, _animShapeFiledata, outsize);
 		delete [] shp;
 
 		do {
 			numShp++;
-			addShapeToPool(_screen->getPtrToShape(_newShapeFiledata, numShp), numShp);
+			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, numShp), numShp);
 		} while (getShapePtr(numShp));
 	} else {	
 		MainMenu::StaticData data = {
@@ -2659,8 +2659,8 @@ void KyraEngine_HoF::seq_uninit() {
 	delete _seqWsa;
 	_seqWsa = NULL;
 
-	delete [] _newShapeFiledata;
-	_newShapeFiledata = 0;
+	delete [] _animShapeFiledata;
+	_animShapeFiledata = 0;
 
 	if (_flags.isDemo && !_flags.isTalkie)
 		_staticres->unloadId(k2SeqplayShapeAnimData);

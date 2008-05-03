@@ -163,14 +163,14 @@ void KyraEngine_v2::addItemToAnimList(int item) {
 	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
 	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
 
-	animObj->shapePtr = getShapePtr(getItemShape(itemId));
+	animObj->shapePtr = getShapePtr(itemId + _desc.itemShapeStart);
 	animSetupPaletteEntry(animObj);
-	animObj->shapeIndex2 = animObj->shapeIndex1 = getItemShape(itemId);
+	animObj->shapeIndex2 = animObj->shapeIndex1 = itemId + _desc.itemShapeStart;
 
 	int scaleY, scaleX;
 	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
 
-	uint8 *shapePtr = getShapePtr(getItemShape(itemId));
+	uint8 *shapePtr = getShapePtr(itemId + _desc.itemShapeStart);
 	animObj->xPos3 = (animObj->xPos2 -= (screen_v2()->getShapeScaledWidth(shapePtr, scaleX) >> 1));
 	animObj->yPos3 = (animObj->yPos2 -= screen_v2()->getShapeScaledHeight(shapePtr, scaleY));
 

@@ -204,9 +204,6 @@ public:
 	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
 protected:
-	// KyraEngine_v2 API
-	int getFirstSpecialSceneScript() const { return 8; }
-
 	// intro/outro
 	void seq_playSequences(int startSeq, int endSeq = -1);
 
@@ -322,9 +319,6 @@ protected:
 	void loadItemShapes();
 
 	// run
-	bool _runFlag;
-	bool _showCredits;
-
 	void update();
 	void updateWithText();
 
@@ -369,8 +363,6 @@ protected:
 
 	ShapeDesc *_shapeDescTable;
 
-	int getItemShape(int item) const { return 64+item; }
-
 	void loadCharacterShapes(int shapes);
 	void loadInventoryShapes();
 
@@ -385,19 +377,8 @@ protected:
 
 	int _layerFlagTable[16]; // seems to indicate layers where items get destroyed when dropped to (TODO: check this!)
 
-	char _newShapeFilename[13];
-	int _newShapeLastEntry;
-	int _newShapeWidth, _newShapeHeight;
-	int _newShapeXAdd, _newShapeYAdd;
-	int _newShapeFlag;
-	uint8 *_newShapeFiledata;
-	int _newShapeCount;
-	int _newShapeAnimFrame;
-	int _newShapeDelay;
-
-	int initNewShapes(uint8 *filedata);
-	void processNewShapes(int allowSkip, int resetChar);
-	void resetNewShapes(int count, uint8 *filedata);
+	int initAnimationShapes(uint8 *filedata);
+	void uninitAnimationShapes(int count, uint8 *filedata);
 
 	// animator
 	uint8 *_gamePlayBuffer;
@@ -581,7 +562,6 @@ protected:
 	static const char *_scriptLangExt[];
 
 	// character
-	int8 _deathHandler;
 	bool _useCharPal;
 	int _charPalEntry;
 	uint8 _charPalTable[16];
@@ -593,7 +573,7 @@ protected:
 
 	bool checkCharCollision(int x, int y);
 
-	static const int _characterFrameTable[];
+	static const uint8 _characterFrameTable[];
 
 	// text
 	void showMessageFromCCode(int id, int16 palIndex, int);
@@ -609,16 +589,7 @@ protected:
 	void fadeMessagePalette();
 
 	// chat
-	int _vocHigh;
-
-	const char *_chatText;
-	int _chatObject;
 	bool _chatIsNote;
-	uint32 _chatEndTime;
-	int _chatVocHigh, _chatVocLow;
-
-	EMCData _chatScriptData;
-	EMCState _chatScriptState;
 
 	int chatGetType(const char *text);
 	int chatCalcDuration(const char *text);
@@ -874,13 +845,8 @@ protected:
 	int o2_demoFinale(EMCState *script);
 	int o2_dummy(EMCState *script);
 
-	// opcodes temporary
-	// TODO: rename it from temporary to something more appropriate
-	int o2t_defineNewShapes(EMCState *script);
-	int o2t_setCurrentFrame(EMCState *script);
-	int o2t_playSoundEffect(EMCState *script);
-	int o2t_fadeScenePal(EMCState *script);
-	int o2t_setShapeFlag(EMCState *script);
+	// animation opcodes
+	int o2a_setCharacterFrame(EMCState *script);
 
 	// script
 	void runStartScript(int script, int unk1);
@@ -889,13 +855,6 @@ protected:
 	bool _noScriptEnter;
 
 	EMCData _npcScriptData;
-
-	EMCData _temporaryScriptData;
-	EMCState _temporaryScriptState;
-	bool _temporaryScriptExecBit;
-	Common::Array<const Opcode*> _opcodesTemporary;
-
-	void runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
 
 	// pathfinder
 	uint8 *_unkBuf500Bytes;

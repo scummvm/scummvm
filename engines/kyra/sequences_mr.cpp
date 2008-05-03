@@ -183,54 +183,6 @@ void KyraEngine_MR::hideGoodConscience() {
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_MR::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::runTemporaryScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
-	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
-	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
-
-	if (!_emc->load(filename, &_temporaryScriptData, &_opcodesTemporary))
-		error("Couldn't load temporary script '%s'", filename);
-
-	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
-	_emc->start(&_temporaryScriptState, 0);
-
-	_newShapeFlag = -1;
-
-	if (_newShapeFiledata && newShapes) {
-		resetNewShapes(_newShapeCount, _newShapeFiledata);
-		_newShapeFiledata = 0;
-		_newShapeCount = 0;
-	}
-
-	while (_emc->isValid(&_temporaryScriptState))
-		_emc->run(&_temporaryScriptState);
-
-	uint8 *fileData = 0;
-
-	if (newShapes)
-		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
-
-	fileData = _newShapeFiledata;
-
-	if (!fileData) {
-		_emc->unload(&_temporaryScriptData);
-		return;
-	}
-
-	if (newShapes)
-		_newShapeCount = initNewShapes(fileData);
-
-	processNewShapes(allowSkip, resetChar);
-
-	if (shapeUnload) {
-		resetNewShapes(_newShapeCount, fileData);
-		_newShapeCount = 0;
-		_newShapeFiledata = 0;
-	}
-
-	_emc->unload(&_temporaryScriptData);
-}
-
 void KyraEngine_MR::eelScript() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::eelScript()");
 	if (_chatText)
@@ -252,24 +204,24 @@ void KyraEngine_MR::eelScript() {
 
 	switch (_characterShapeFile-1) {
 	case 0:
-		runTemporaryScript("EELS01.EMC", 0, 0, 1, 1);
+		runAnimationScript("EELS01.EMC", 0, 0, 1, 1);
 		break;
 
 	case 1:
-		runTemporaryScript("EELS02.EMC", 0, 0, 1, 1);
+		runAnimationScript("EELS02.EMC", 0, 0, 1, 1);
 		break;
 
 	case 2:
-		runTemporaryScript("EELS03.EMC", 0, 0, 1, 1);
+		runAnimationScript("EELS03.EMC", 0, 0, 1, 1);
 		break;
 	
 	case 3:
-		runTemporaryScript("EELS04.EMC", 0, 0, 1, 1);
+		runAnimationScript("EELS04.EMC", 0, 0, 1, 1);
 		break;
 
 	default:
 		resetGameFlag(0x171);
-		runTemporaryScript("EELS00.EMC", 0, 0, 1, 1);
+		runAnimationScript("EELS00.EMC", 0, 0, 1, 1);
 		break;
 	}
 
@@ -277,73 +229,16 @@ void KyraEngine_MR::eelScript() {
 	_screen->showMouse();
 }
 
-int KyraEngine_MR::initNewShapes(uint8 *filedata) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::initNewShapes(%p)", (const void*)filedata);
-	const int lastEntry = MIN(_newShapeLastEntry, 41);
+int KyraEngine_MR::initAnimationShapes(uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::initAnimationShapes(%p)", (const void*)filedata);
+	const int lastEntry = MIN(_animShapeLastEntry, 41);
 	for (int i = 0; i < lastEntry; ++i)
 		_gameShapes[9+i] = _screen->getPtrToShape(filedata, i);
 	return lastEntry;
 }
 
-void KyraEngine_MR::processNewShapes(int allowSkip, int resetChar) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::processNewShapes(%d, %d)", allowSkip, resetChar);
-	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
-
-	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
-	_emc->start(&_temporaryScriptState, 1);
-
-	resetSkipFlag();
-
-	while (_emc->isValid(&_temporaryScriptState)) {
-		_temporaryScriptExecBit = false;
-		while (_emc->isValid(&_temporaryScriptState) && !_temporaryScriptExecBit)
-			_emc->run(&_temporaryScriptState);
-
-		if (_newShapeAnimFrame < 0)
-			continue;
-
-		_mainCharacter.animFrame = _newShapeAnimFrame + 9;
-		updateCharacterAnim(0);
-		if (_chatText)
-			updateWithText();
-		else
-			update();
-
-		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
-
-		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd) {
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-
-			delay(10);
-		}
-
-		if (skipFlag())
-			resetSkipFlag();
-	}
-
-	if (resetChar) {
-		if (_newShapeFlag >= 0) {
-			_mainCharacter.animFrame = _newShapeFlag + 9;
-			updateCharacterAnim(0);
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-		}
-
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
-		updateCharacterAnim(0);
-	}
-
-	_newShapeFlag = -1;
-	resetCharacterAnimDim();
-}
-
-void KyraEngine_MR::resetNewShapes(int count, uint8 *filedata) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::resetNewShapes(%d, %p)", count, (const void*)filedata);
+void KyraEngine_MR::uninitAnimationShapes(int count, uint8 *filedata) {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::uninitAnimationShapes(%d, %p)", count, (const void*)filedata);
 	for (int i = 0; i < count; ++i)
 		_gameShapes[9+i] = 0;
 	delete [] filedata;

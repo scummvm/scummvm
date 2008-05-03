@@ -905,7 +905,7 @@ int KyraEngine_MR::o3_runTemporaryScript(EMCState *script) {
 	const int newShapes = stackPos(1);
 	const int unloadShapes = stackPos(2);
 	const int allowSkip = stackPos(3);
-	runTemporaryScript(stackPosString(0), allowSkip, (unloadShapes != 0) ? 1 : 0, newShapes, unloadShapes);
+	runAnimationScript(stackPosString(0), allowSkip, (unloadShapes != 0) ? 1 : 0, newShapes, unloadShapes);
 	return 0;
 }
 
@@ -1264,36 +1264,18 @@ int KyraEngine_MR::o3_dummy(EMCState *script) {
 
 #pragma mark -
 
-int KyraEngine_MR::o3t_defineNewShapes(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3t_defineNewShapes(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script,
-			stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	strcpy(_newShapeFilename, stackPosString(0));
-	_newShapeLastEntry = stackPos(1);
-	_newShapeWidth = stackPos(2);
-	_newShapeHeight = stackPos(3);
-	_newShapeXAdd = stackPos(4);
-	_newShapeYAdd = stackPos(5);
-	return 0;
-}
-
-int KyraEngine_MR::o3t_setCurrentFrame(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3t_setCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_MR::o3a_setCharacterFrame(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3a_setCharacterFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	static const uint8 frameTable[] = {
 		0x58, 0xD8, 0xD8, 0x98, 0x78, 0x78, 0xB8, 0xB8
 	};
 
-	_newShapeAnimFrame = stackPos(0);
+	_animNewFrame = stackPos(0);
 	if (_useFrameTable)
-		_newShapeAnimFrame += frameTable[_mainCharacter.facing];
+		_animNewFrame += frameTable[_mainCharacter.facing];
 
-	_newShapeDelay = stackPos(1);
-	_temporaryScriptExecBit = true;
-	return 0;
-}
-
-int KyraEngine_MR::o3t_setNewShapeFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3t_setNewShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
-	_newShapeFlag = stackPos(0);
+	_animDelayTime = stackPos(1);
+	_animNeedUpdate = true;
 	return 0;
 }
 
@@ -1550,14 +1532,14 @@ void KyraEngine_MR::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 	
-	SetOpcodeTable(_opcodesTemporary);
+	SetOpcodeTable(_opcodesAnimation);
 	// 0x00
-	Opcode(o3t_defineNewShapes);
-	Opcode(o3t_setCurrentFrame);
+	Opcode(o2a_setAnimationShapes);
+	Opcode(o3a_setCharacterFrame);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_dummy);
 	// 0x0a
-	Opcode(o3t_setNewShapeFlag);
+	Opcode(o2a_setResetFrame);
 	Opcode(o3_getRand);
 	Opcode(o3_getMalcolmShapes);
 	Opcode(o3_dummy);

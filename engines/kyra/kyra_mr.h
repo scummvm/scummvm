@@ -62,9 +62,6 @@ public:
 	void playVQA(const char *name);
 
 protected:
-	// KyraEngine_v2 API
-	int getFirstSpecialSceneScript() const { return 9; }
-
 	// --
 	Screen_MR *_screen;
 	SoundDigital *_soundDigital;
@@ -78,10 +75,6 @@ protected:
 	void setupOpcodeTable();
 
 	// run
-	bool _showOutro;
-	bool _runFlag;
-	int _deathHandler;
-
 	void runLoop();
 	void handleInput(int x, int y);
 	int inputSceneChange(int x, int y, int unk1, int unk2);
@@ -291,8 +284,6 @@ private:
 	void setMouseCursor(uint16 item);
 
 	// shapes
-	int getItemShape(int item) const { return 248+item; }
-
 	void initMouseShapes();
 
 	void loadCharacterShapes(int newShapes);
@@ -392,16 +383,6 @@ private:
 	bool talkObjectsInCurScene();
 
 	// chat
-	int _vocHigh;
-
-	const char *_chatText;
-	int _chatObject;
-	uint32 _chatEndTime;
-	int _chatVocHigh, _chatVocLow;
-
-	EMCData _chatScriptData;
-	EMCState _chatScriptState;
-
 	int chatGetType(const char *text);
 	int chatCalcDuration(const char *text);
 
@@ -474,36 +455,13 @@ private:
 	void hideGoodConscience();
 
 	// special script code
-	bool _temporaryScriptExecBit;
 	bool _useFrameTable;
 	
-	Common::Array<const Opcode *> _opcodesTemporary;
-
-	int o3t_defineNewShapes(EMCState *script);
-	int o3t_setCurrentFrame(EMCState *script);
-	int o3t_setNewShapeFlag(EMCState *script);
-
-	EMCData _temporaryScriptData;
-	EMCState _temporaryScriptState;
-
-	void runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
+	int o3a_setCharacterFrame(EMCState *script);
 
 	// special shape code
-	char _newShapeFilename[13];
-	int _newShapeLastEntry;
-	int _newShapeWidth, _newShapeHeight;
-	int _newShapeXAdd, _newShapeYAdd;
-
-	int _newShapeAnimFrame;
-	int _newShapeDelay;
-
-	int _newShapeFlag;
-	uint8 *_newShapeFiledata;
-	int _newShapeCount;
-
-	int initNewShapes(uint8 *filedata);
-	void processNewShapes(int allowSkip, int resetChar);
-	void resetNewShapes(int count, uint8 *filedata);
+	int initAnimationShapes(uint8 *filedata);
+	void uninitAnimationShapes(int count, uint8 *filedata);
 
 	// unk
 	uint8 *_costPalBuffer;

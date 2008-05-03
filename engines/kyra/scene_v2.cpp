@@ -57,7 +57,7 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 		}
 
 		if (!_emc->isValid(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
-			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], getFirstSpecialSceneScript()+_lastProcessedSceneScript);
+			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], _desc.firstAnimSceneScript+_lastProcessedSceneScript);
 			_specialSceneScriptRunFlag = false;
 		}
 

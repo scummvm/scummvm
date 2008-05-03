@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine(system, flags), _desc(desc) {
 	memset(&_sceneAnims, 0, sizeof(_sceneAnims));
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 
@@ -46,6 +46,20 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
 	_animObjects = 0;
+
+	_runFlag = true;
+	_showOutro = false;
+	_deathHandler = -1;
+	_animNeedUpdate = false;
+
+	_animShapeCount = 0;
+	_animShapeFiledata = 0;
+
+	_vocHigh = -1;
+	_chatVocHigh = -1;
+	_chatVocLow = -1;
+	_chatText = 0;
+	_chatObject = -1;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -60,6 +74,11 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_emc->unload(&_sceneScriptData);
 
 	delete [] _animObjects;
+
+	for (Common::Array<const Opcode*>::iterator i = _opcodesAnimation.begin(); i != _opcodesAnimation.end(); ++i)
+		delete *i;
+	_opcodesAnimation.clear();
+
 }
 
 void KyraEngine_v2::updateInput() {

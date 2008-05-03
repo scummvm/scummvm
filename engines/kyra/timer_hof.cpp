@@ -91,7 +91,7 @@ void KyraEngine_HoF::timerBurnZanthia(int arg) {
 	_timer->disable(5);
 	_screen->hideMouse();
 	snd_playSoundEffect(0x2D);
-	runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
+	runAnimationScript("_ZANBURN.EMC", 0, 1, 1, 0);
 	_deathHandler = 7;
 	snd_playWanderScoreViaMap(0x53, 1);
 }

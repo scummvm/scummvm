@@ -878,7 +878,7 @@ int KyraEngine_HoF::o2_setRunFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setRunFlag(%p) (%d)", (const void *)script, stackPos(0));
 	// this is usually just _runFlag, but since this is just used when the game should play the credits
 	// we handle it a bit different :-)
-	_showCredits = true;
+	_showOutro = true;
 	_runFlag = false;
 	return 0;
 }
@@ -1013,7 +1013,7 @@ int KyraEngine_HoF::o2_runTemporaryScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_runTemporaryScript(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1),
 			stackPos(2), stackPos(3));
 
-	runTemporaryScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
+	runAnimationScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
 	return 0;
 }
 
@@ -1678,45 +1678,11 @@ int KyraEngine_HoF::o2_dummy(EMCState *script) {
 
 #pragma mark -
 
-int KyraEngine_HoF::o2t_defineNewShapes(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2t_defineNewShapes(%p) ('%s', %d, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0),
-			stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
-
-	strcpy(_newShapeFilename, stackPosString(0));
-	_newShapeLastEntry = stackPos(1);
-	_newShapeWidth = stackPos(2);
-	_newShapeHeight = stackPos(3);
-	_newShapeXAdd = stackPos(4);
-	_newShapeYAdd = stackPos(5);
-	//word_324EB = stackPos(6); <- never used
-
-	return 0;
-}
-
-int KyraEngine_HoF::o2t_setCurrentFrame(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2t_setCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_newShapeAnimFrame = stackPos(0);
-	_newShapeDelay = stackPos(1);
-	_temporaryScriptExecBit = true;
-	return 0;
-}
-
-int KyraEngine_HoF::o2t_playSoundEffect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2t_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
-	snd_playSoundEffect(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_HoF::o2t_fadeScenePal(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2t_fadeScenePal(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	fadeScenePal(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_HoF::o2t_setShapeFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2t_setShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
-	if (_flags.isTalkie)
-		_newShapeFlag = stackPos(0);
+int KyraEngine_HoF::o2a_setCharacterFrame(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2a_setCharacterFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_animNewFrame = stackPos(0);
+	_animDelayTime = stackPos(1);
+	_animNeedUpdate = true;
 	return 0;
 }
 
@@ -1995,15 +1961,15 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_demoFinale);
 	Opcode(o2_dummy);
 
-	SetOpcodeTable(_opcodesTemporary);
+	SetOpcodeTable(_opcodesAnimation);
 
 	// 0x00
-	Opcode(o2t_defineNewShapes);
-	Opcode(o2t_setCurrentFrame);
-	Opcode(o2t_playSoundEffect);
-	Opcode(o2t_fadeScenePal);
+	Opcode(o2a_setAnimationShapes);
+	Opcode(o2a_setCharacterFrame);
+	Opcode(o2_playSoundEffect);
+	Opcode(o2_fadeScenePal);
 	// 0x04
-	Opcode(o2t_setShapeFlag);
+	_flags.isTalkie ? Opcode(o2a_setResetFrame) : Opcode(o2_dummy);
 	Opcode(o2_dummy);
 
 	// ---- TIM opcodes

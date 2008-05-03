@@ -26,6 +26,8 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
 
+#include "common/endian.h"
+
 namespace Kyra {
 
 int KyraEngine_v2::o2_getCharacterX(EMCState *script) {
@@ -134,6 +136,26 @@ int KyraEngine_v2::o2_setMousePos(EMCState *script) {
 int KyraEngine_v2::o2_showMouse(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showMouse(%p) ()", (const void *)script);
 	screen()->showMouse();
+	return 0;
+}
+
+#pragma mark -
+
+int KyraEngine_v2::o2a_setAnimationShapes(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2a_setAnimationShapes(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script,
+			stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	strcpy(_animShapeFilename, stackPosString(0));
+	_animShapeLastEntry = stackPos(1);
+	_animShapeWidth = stackPos(2);
+	_animShapeHeight = stackPos(3);
+	_animShapeXAdd = stackPos(4);
+	_animShapeYAdd = stackPos(5);
+	return 0;
+}
+
+int KyraEngine_v2::o2a_setResetFrame(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3t_setResetFrame(%p) (%d)", (const void *)script, stackPos(0));
+	_animResetFrame = stackPos(0);
 	return 0;
 }
 

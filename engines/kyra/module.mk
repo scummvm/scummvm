@@ -43,6 +43,7 @@ MODULE_OBJS := \
 	script_tim.o \
 	seqplayer.o \
 	sequences_v1.o \
+	sequences_v2.o \
 	sequences_hof.o \
 	sequences_mr.o \
 	sound_adlib.o \

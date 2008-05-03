@@ -312,7 +312,7 @@ void KyraEngine_MR::objectChatProcess(const char *script) {
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 
-	_emc->load(script, &_chatScriptData, &_opcodesTemporary);
+	_emc->load(script, &_chatScriptData, &_opcodesAnimation);
 	_emc->init(&_chatScriptState, &_chatScriptData);
 	_emc->start(&_chatScriptState, 0);
 	while (_emc->isValid(&_chatScriptState))
@@ -333,7 +333,7 @@ void KyraEngine_MR::objectChatProcess(const char *script) {
 void KyraEngine_MR::objectChatWaitToFinish() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChatWaitToFinish()");
 	int charAnimFrame = _mainCharacter.animFrame;
-	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
+	setCharacterAnimDim(_animShapeWidth, _animShapeHeight);
 
 	_emc->init(&_chatScriptState, &_chatScriptData);
 	_emc->start(&_chatScriptState, 1);
@@ -346,14 +346,14 @@ void KyraEngine_MR::objectChatWaitToFinish() {
 		if (!_emc->isValid(&_chatScriptState))
 			_emc->start(&_chatScriptState, 1);
 
-		_temporaryScriptExecBit = false;
-		while (!_temporaryScriptExecBit && _emc->isValid(&_chatScriptState)) {
+		_animNeedUpdate = false;
+		while (!_animNeedUpdate && _emc->isValid(&_chatScriptState)) {
 			musicUpdate(0);
 			_emc->run(&_chatScriptState);
 		}
 
-		int curFrame = _newShapeAnimFrame;
-		uint32 delayTime = _newShapeDelay;
+		int curFrame = _animNewFrame;
+		uint32 delayTime = _animDelayTime;
 
 		_mainCharacter.animFrame = curFrame;
 		updateCharacterAnim(0);

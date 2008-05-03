@@ -1540,7 +1540,7 @@ const char *KyraEngine_HoF::_scriptLangExt[] = {
 	"JMC"
 };
 
-const int KyraEngine_HoF::_characterFrameTable[] = {
+const uint8 KyraEngine_HoF::_characterFrameTable[] = {
 	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
 };
 

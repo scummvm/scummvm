@@ -212,8 +212,8 @@ void KyraEngine_MR::updateCharacterAnim(int charId) {
 		shapeOffsetX = _malcolmShapeXOffset;
 		shapeOffsetY = _malcolmShapeYOffset;
 	} else {
-		shapeOffsetX = _newShapeXAdd;
-		shapeOffsetY = _newShapeYAdd;
+		shapeOffsetX = _animShapeXAdd;
+		shapeOffsetY = _animShapeYAdd;
 	}
 
 	obj->xPos2 = _mainCharacter.x1;
@@ -425,7 +425,7 @@ void KyraEngine_MR::showIdleAnim() {
 		snprintf(filename, 14, "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _characterShapeFile);
 
 		if (_res->exists(filename))
-			runTemporaryScript(filename, 1, 1, 1, 1);
+			runAnimationScript(filename, 1, 1, 1, 1);
 	}
 
 	_nextIdleType = !_nextIdleType;

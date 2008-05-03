@@ -40,7 +40,19 @@
 
 namespace Kyra {
 
-KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags), _updateFunctor(this, &KyraEngine_HoF::update) {
+namespace {
+const KyraEngine_v2::EngineDesc hofEngineDesc = {
+	64,
+
+	8,
+
+	33
+};
+} // end of anonymous namespace
+
+KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
+	KyraEngine_v2::_characterFrameTable = _characterFrameTable;
+
 	_mouseSHPBuf = 0;
 	_debugger = 0;
 	_screen = 0;
@@ -52,8 +64,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_seqWsa = 0;
 	_sequences = 0;
 	_sequenceSoundList = 0;
-
-	_showCredits = false;
 
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
@@ -74,14 +84,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
-	_newShapeCount = 0;
-	_newShapeFiledata = 0;
 
-	_vocHigh = -1;
-	_chatVocHigh = -1;
-	_chatVocLow = -1;
-	_chatText = 0;
-	_chatObject = -1;
 	_lastIdleScript = -1;
 
 	_currentTalkSections.STATim = 0;
@@ -128,8 +131,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_mainCharacter.dlgIndex = 0;
 	setNewDlgIndex(-1);
 
-	_deathHandler = -1;
-
 	_bookMaxPage = 6;
 	_bookCurPage = 0;
 	_bookNewPage = 0;
@@ -170,10 +171,6 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	for (int i = 0; i < 19; i++)
 		delete [] _conversationState[i];
 	delete [] _conversationState;
-
-	for (Common::Array<const Opcode*>::iterator i = _opcodesTemporary.begin(); i != _opcodesTemporary.end(); ++i)
-		delete *i;
-	_opcodesTemporary.clear();
 
 	for (Common::Array<const TIMOpcode*>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
 		delete *i;
@@ -267,7 +264,7 @@ int KyraEngine_HoF::go() {
 			runLoop();
 		cleanup();
 		
-		if (_showCredits)
+		if (_showOutro)
 			seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
 
@@ -594,7 +591,7 @@ bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 		if (queryGameFlag(0x1ED)) {
 			_sound->beginFadeOut();
 			_screen->fadeToBlack();
-			_showCredits = true;
+			_showOutro = true;
 			_runFlag = false;
 		}
 
@@ -834,10 +831,6 @@ void KyraEngine_HoF::cleanup() {
 	delete [] _unkBuf500Bytes; _unkBuf500Bytes = 0;
 	delete [] _screenBuffer; _screenBuffer = 0;
 	delete [] _unkBuf200kByte; _unkBuf200kByte = 0;
-
-	resetNewShapes(_newShapeCount, _newShapeFiledata);
-	_newShapeFiledata = 0;
-	_newShapeCount = 0;
 
 	freeSceneShapePtrs();
 
@@ -1171,53 +1164,6 @@ void KyraEngine_HoF::loadNPCScript() {
 	_emc->load(filename, &_npcScriptData, &_opcodes);
 }
 
-void KyraEngine_HoF::runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
-	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
-	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
-
-	if (!_emc->load(filename, &_temporaryScriptData, &_opcodesTemporary))
-		error("Couldn't load temporary script '%s'", filename);
-
-	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
-	_emc->start(&_temporaryScriptState, 0);
-
-	_newShapeFlag = -1;
-
-	if (_newShapeFiledata && newShapes) {
-		resetNewShapes(_newShapeCount, _newShapeFiledata);
-		_newShapeFiledata = 0;
-		_newShapeCount = 0;
-	}
-
-	while (_emc->isValid(&_temporaryScriptState))
-		_emc->run(&_temporaryScriptState);
-
-	uint8 *fileData = 0;
-
-	if (newShapes)
-		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
-
-	fileData = _newShapeFiledata;
-
-	if (!fileData) {
-		_emc->unload(&_temporaryScriptData);
-		return;
-	}
-
-	if (newShapes)
-		_newShapeCount = initNewShapes(fileData);
-
-	processNewShapes(allowSkip, resetChar);
-
-	if (shapeUnload) {
-		resetNewShapes(_newShapeCount, fileData);
-		_newShapeCount = 0;
-		_newShapeFiledata = 0;
-	}
-
-	_emc->unload(&_temporaryScriptData);
-}
-
 #pragma mark -
 
 void KyraEngine_HoF::resetScaleTable() {
@@ -1376,7 +1322,7 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 		if (queryGameFlag(0x164)) {
 			_screen->hideMouse();
 			_timer->disable(5);
-			runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
+			runAnimationScript("_ZANBURN.EMC", 0, 1, 1, 0);
 			_deathHandler = 7;
 			snd_playWanderScoreViaMap(0x53, 1);
 		} else {
@@ -1485,76 +1431,20 @@ bool KyraEngine_HoF::checkCharCollision(int x, int y) {
 	return false;
 }
 
-int KyraEngine_HoF::initNewShapes(uint8 *filedata) {
-	const int lastEntry = MIN(_newShapeLastEntry, 31);
+int KyraEngine_HoF::initAnimationShapes(uint8 *filedata) {
+	const int lastEntry = MIN(_animShapeLastEntry, 31);
 	for (int i = 0; i < lastEntry; ++i) {
 		addShapeToPool(filedata, i+33, i);
 		ShapeDesc *desc = &_shapeDescTable[24+i];
-		desc->xAdd = _newShapeXAdd;
-		desc->yAdd = _newShapeYAdd;
-		desc->width = _newShapeWidth;
-		desc->height = _newShapeHeight;
+		desc->xAdd = _animShapeXAdd;
+		desc->yAdd = _animShapeYAdd;
+		desc->width = _animShapeWidth;
+		desc->height = _animShapeHeight;
 	}
 	return lastEntry;
 }
 
-void KyraEngine_HoF::processNewShapes(int allowSkip, int resetChar) {
-	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
-
-	_emc->init(&_temporaryScriptState, &_temporaryScriptData);
-	_emc->start(&_temporaryScriptState, 1);
-
-	resetSkipFlag();
-
-	while (_emc->isValid(&_temporaryScriptState)) {
-		_temporaryScriptExecBit = false;
-		while (_emc->isValid(&_temporaryScriptState) && !_temporaryScriptExecBit)
-			_emc->run(&_temporaryScriptState);
-
-		if (_newShapeAnimFrame < 0)
-			continue;
-
-		_mainCharacter.animFrame = _newShapeAnimFrame + 33;
-		updateCharacterAnim(0);
-		if (_chatText)
-			updateWithText();
-		else
-			update();
-
-		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
-
-		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd) {
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-
-			delay(10);
-		}
-
-		if (skipFlag())
-			resetSkipFlag();
-	}
-
-	if (resetChar) {
-		if (_newShapeFlag >= 0) {
-			_mainCharacter.animFrame = _newShapeFlag + 33;
-			updateCharacterAnim(0);
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-		}
-
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
-		updateCharacterAnim(0);
-	}
-
-	_newShapeFlag = -1;
-	resetCharacterAnimDim();
-}
-
-void KyraEngine_HoF::resetNewShapes(int count, uint8 *filedata) {
+void KyraEngine_HoF::uninitAnimationShapes(int count, uint8 *filedata) {
 	for (int i = 0; i < count; ++i)
 		remShapeFromPool(i+33);
 	delete [] filedata;
@@ -1616,7 +1506,7 @@ void KyraEngine_HoF::runIdleScript(int script) {
 			"_IDLBRSH.EMC", "_Z3IDLE.EMC", "_Z4IDLE.EMC", "_Z6IDLE.EMC", "_Z7IDLE.EMC", "_Z8IDLE.EMC"
 		};
 
-		runTemporaryScript(idleScriptFiles[script], 1, 1, 1, 1);
+		runAnimationScript(idleScriptFiles[script], 1, 1, 1, 1);
 	}
 }
 
