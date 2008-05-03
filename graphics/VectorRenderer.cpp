@@ -34,7 +34,7 @@ namespace Graphics {
 inline uint32 fp_sqroot(uint32 x);
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererSpec<uint16,ColorMasks<565>>;
+	return new VectorRendererSpec<uint16, ColorMasks<565> >;
 }
 
 
@@ -74,7 +74,7 @@ void vector_renderer_test(OSystem *_system) {
 }
 
 template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType,PixelFormat>::
+void VectorRendererSpec<PixelType, PixelFormat>::
 drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
@@ -122,7 +122,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 
 
 template<typename PixelType, typename PixelFormat>
-void VectorRendererAA<PixelType,PixelFormat>::
+void VectorRendererAA<PixelType, PixelFormat>::
 blendPixelPtr(PixelType *ptr, uint8 alpha) {
 	register int idst = *ptr;
 	register int isrc = Base::_color;
@@ -141,7 +141,7 @@ blendPixelPtr(PixelType *ptr, uint8 alpha) {
 
 
 template<typename PixelType, typename PixelFormat>
-void VectorRendererAA<PixelType,PixelFormat>::
+void VectorRendererAA<PixelType, PixelFormat>::
 drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
@@ -189,7 +189,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 }
 
 template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType,PixelFormat>::
+void VectorRendererSpec<PixelType, PixelFormat>::
 drawLine(int x1, int y1, int x2, int y2) {
 	// we draw from top to bottom
 	if (y2 < y1) {
@@ -257,7 +257,7 @@ inline uint32 fp_sqroot(uint32 x) {
 }
 
 template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType,PixelFormat>::
+void VectorRendererSpec<PixelType, PixelFormat>::
 drawCircleAlg(int x1, int y1, int r) {
 
 #define __CIRCLE_SIM(x,y) { \
@@ -294,7 +294,7 @@ drawCircleAlg(int x1, int y1, int r) {
 }
 
 template<typename PixelType, typename PixelFormat>
-void VectorRendererAA<PixelType,PixelFormat>::
+void VectorRendererAA<PixelType, PixelFormat>::
 drawCircleAlg(int x1, int y1, int r) {
 
 #define __WU_CIRCLE_SIM(x,y,a) { \
