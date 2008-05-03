@@ -519,29 +519,6 @@ int KyraEngine_HoF::o2_delaySecs(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_delay(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	if (stackPos(1)) {
-		uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
-		while (_system->getMillis() < maxWaitTime) {
-			int inputFlag = checkInput(0);
-			removeInputTop();
-
-			if (inputFlag == 198 || inputFlag == 199)
-				return 1;
-
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-			_system->delayMillis(10);
-		}
-	} else {
-		delay(stackPos(0) * _tickLength, true);
-	}
-	return 0;
-}
-
 int KyraEngine_HoF::o2_setTimerDelay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setTimerDelay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_timer->setDelay(stackPos(0), stackPos(1));
@@ -684,20 +661,6 @@ int KyraEngine_HoF::o2_setSceneAnimPos2(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setSceneAnimPos2(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	_sceneAnims[stackPos(0)].x2 = stackPos(1);
 	_sceneAnims[stackPos(0)].y2 = stackPos(2);
-	return 0;
-}
-
-int KyraEngine_HoF::o2_update(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_update(%p) (%d)", (const void *)script, stackPos(0));
-
-	int times = stackPos(0);
-	while (times--) {
-		if (_chatText)
-			updateWithText();
-		else
-			update();
-	}
-
 	return 0;
 }
 
@@ -851,21 +814,9 @@ int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_getRand(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) < stackPos(1));
-	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
-}
-
 int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_isAnySoundPlaying(%p) ()", (const void *)script);
 	return _sound->voiceIsPlaying();
-}
-
-int KyraEngine_HoF::o2_setDeathHandlerFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setDeathHandlerFlag(%p) (%d)", (const void *)script, stackPos(0));
-	_deathHandler = stackPos(0);
-	return 0;
 }
 
 int KyraEngine_HoF::o2_setDrawNoShapeFlag(EMCState *script) {
@@ -947,30 +898,6 @@ int	KyraEngine_HoF::o2_fillRect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
 	return 0;
-}
-
-int KyraEngine_HoF::o2_waitForConfirmationClick(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
-	resetSkipFlag();
-	uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
-
-	while (_system->getMillis() < maxWaitTime) {
-		int inputFlag = checkInput(0);
-		removeInputTop();
-
-		if (inputFlag == 198 || inputFlag == 199) {
-			_sceneScriptState.regs[1] = _mouseX;
-			_sceneScriptState.regs[2] = _mouseY;
-			return 0;
-		}
-
-		update();
-		_system->delayMillis(10);
-	}
-
-	_sceneScriptState.regs[1] = _mouseX;
-	_sceneScriptState.regs[2] = _mouseY;
-	return 1;
 }
 
 int KyraEngine_HoF::o2_encodeShape(EMCState *script) {
@@ -1088,28 +1015,6 @@ int KyraEngine_HoF::o2_setupDialogue(EMCState *script) {
 int KyraEngine_HoF::o2_getDlgIndex(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setNewDlgIndex(%p) (%d)", (const void *)script, stackPos(0));
 	return _mainCharacter.dlgIndex;
-}
-
-int KyraEngine_HoF::o2_defineRoom(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineRoom(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
-	SceneDesc *scene = &_sceneList[stackPos(0)];
-	strcpy(scene->filename1, stackPosString(1));
-	scene->exit1 = stackPos(2);
-	scene->exit2 = stackPos(3);
-	scene->exit3 = stackPos(4);
-	scene->exit4 = stackPos(5);
-	scene->flags = stackPos(6);
-	scene->sound = stackPos(7);
-
-	if (_mainCharacter.sceneId == stackPos(0)) {
-		_sceneExit1 = scene->exit1;
-		_sceneExit2 = scene->exit2;
-		_sceneExit3 = scene->exit3;
-		_sceneExit4 = scene->exit4;
-	}
-
-	return 0;
 }
 
 int KyraEngine_HoF::o2_addCauldronStateTableEntry(EMCState *script) {
@@ -1773,7 +1678,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x60
 	Opcode(o2_getRand);
 	Opcode(o2_isAnySoundPlaying);
-	Opcode(o2_setDeathHandlerFlag);
+	Opcode(o2_setDeathHandler);
 	Opcode(o2_setDrawNoShapeFlag);
 	// 0x64
 	Opcode(o2_setRunFlag);
@@ -1802,7 +1707,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setupDialogue);
 	// 0x78
 	Opcode(o2_getDlgIndex);
-	Opcode(o2_defineRoom);
+	Opcode(o2_defineScene);
 	Opcode(o2_addCauldronStateTableEntry);
 	Opcode(o2_setCountDown);
 	// 0x7c

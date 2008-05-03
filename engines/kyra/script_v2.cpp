@@ -140,6 +140,76 @@ int KyraEngine_v2::o2_showMouse(EMCState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_delay(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	if (stackPos(1)) {
+		uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
+		while (_system->getMillis() < maxWaitTime) {
+			int inputFlag = checkInput(0);
+			removeInputTop();
+
+			if (inputFlag == 198 || inputFlag == 199)
+				return 1;
+
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+			_system->delayMillis(10);
+		}
+	} else {
+		delay(stackPos(0) * _tickLength, true);
+	}
+	return 0;
+}
+
+int KyraEngine_v2::o2_update(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_update(%p) (%d)", (const void *)script, stackPos(0));
+	for (int times = stackPos(0); times != 0; --times) {
+		if (_chatText)
+			updateWithText();
+		else
+			update();
+	}
+	return 0;
+}
+
+int KyraEngine_v2::o2_getRand(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	assert(stackPos(0) < stackPos(1));
+	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
+}
+
+int KyraEngine_v2::o2_setDeathHandler(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setDeathHandler(%p) (%d)", (const void *)script, stackPos(0));
+	_deathHandler = stackPos(0);
+	return 0;
+}
+
+int KyraEngine_v2::o2_waitForConfirmationClick(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
+	resetSkipFlag();
+	uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
+
+	while (_system->getMillis() < maxWaitTime) {
+		int inputFlag = checkInput(0);
+		removeInputTop();
+
+		if (inputFlag == 198 || inputFlag == 199) {
+			_sceneScriptState.regs[1] = _mouseX;
+			_sceneScriptState.regs[2] = _mouseY;
+			return 0;
+		}
+
+		update();
+		_system->delayMillis(10);
+	}
+
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	return 1;
+}
+
 int KyraEngine_v2::o2_defineRoomEntrance(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	switch (stackPos(0)) {
@@ -181,6 +251,30 @@ int KyraEngine_v2::o2_setSpecialSceneScriptRunTime(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setSpecialSceneScriptRunTime(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) >= 0 && stackPos(0) < 10);
 	_sceneSpecialScriptsTimer[stackPos(0)] = _system->getMillis() + stackPos(1) * _tickLength;
+	return 0;
+}
+
+int KyraEngine_v2::o2_defineScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
+		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	const int scene = stackPos(0);
+	strcpy(_sceneList[scene].filename1, stackPosString(1));
+	strcpy(_sceneList[scene].filename2, stackPosString(1));
+
+	_sceneList[scene].exit1 = stackPos(2);
+	_sceneList[scene].exit2 = stackPos(3);
+	_sceneList[scene].exit3 = stackPos(4);
+	_sceneList[scene].exit4 = stackPos(5);
+	_sceneList[scene].flags = stackPos(6);
+	_sceneList[scene].sound = stackPos(7);
+
+	if (_mainCharacter.sceneId == scene) {
+		_sceneExit1 = _sceneList[scene].exit1;
+		_sceneExit2 = _sceneList[scene].exit2;
+		_sceneExit3 = _sceneList[scene].exit3;
+		_sceneExit4 = _sceneList[scene].exit4;
+	}
+
 	return 0;
 }
 

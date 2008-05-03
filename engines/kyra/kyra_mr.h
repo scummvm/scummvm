@@ -528,7 +528,6 @@ private:
 	int o3_badConscienceChat(EMCState *script);
 	int o3_wipeDownMouseItem(EMCState *script);
 	int o3_setMalcolmsMood(EMCState *script);
-	int o3_delay(EMCState *script);
 	int o3_updateScore(EMCState *script);
 	int o3_makeSecondChanceSave(EMCState *script);
 	int o3_setSceneFilename(EMCState *script);
@@ -539,7 +538,6 @@ private:
 	int o3_checkInRect(EMCState *script);
 	int o3_updateConversations(EMCState *script);
 	int o3_setSceneDim(EMCState *script);
-	int o3_update(EMCState *script);
 	int o3_setSceneAnimPosAndFrame(EMCState *script);
 	int o3_removeItemInstances(EMCState *script);
 	int o3_disableInventory(EMCState *script);
@@ -554,12 +552,9 @@ private:
 	int o3_getScore(EMCState *script);
 	int o3_blockOutRegion(EMCState *script);
 	int o3_showSceneStringsMessage(EMCState *script);
-	int o3_getRand(EMCState *script);
-	int o3_setDeathHandler(EMCState *script);
 	int o3_showGoodConscience(EMCState *script);
 	int o3_goodConscienceChat(EMCState *script);
 	int o3_hideGoodConscience(EMCState *script);
-	int o3_waitForConfirmationClick(EMCState *script);
 	int o3_defineSceneAnim(EMCState *script);
 	int o3_updateSceneAnim(EMCState *script);
 	int o3_runActorScript(EMCState *script);
@@ -567,7 +562,6 @@ private:
 	int o3_malcolmRandomChat(EMCState *script);
 	int o3_setDlgIndex(EMCState *script);
 	int o3_getDlgIndex(EMCState *script);
-	int o3_defineScene(EMCState *script);
 	int o3_setConversationState(EMCState *script);
 	int o3_getConversationState(EMCState *script);
 	int o3_changeChapter(EMCState *script);

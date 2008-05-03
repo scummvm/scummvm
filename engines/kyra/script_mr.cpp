@@ -304,29 +304,6 @@ int KyraEngine_MR::o3_setMalcolmsMood(EMCState *script) {
 	return (_malcolmsMood = stackPos(0));
 }
 
-int KyraEngine_MR::o3_delay(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	if (stackPos(1)) {
-		uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
-		while (_system->getMillis() < maxWaitTime) {
-			int inputFlag = checkInput(0);
-			removeInputTop();
-
-			if (inputFlag == 198 || inputFlag == 199)
-				return 1;
-
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-			_system->delayMillis(10);
-		}
-	} else {
-		delay(stackPos(0) * _tickLength, true);
-	}
-	return 0;
-}
-
 int KyraEngine_MR::o3_updateScore(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_updateScore(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return updateScore(stackPos(0), stackPos(1)) ? 1 : 0;
@@ -671,17 +648,6 @@ int KyraEngine_MR::o3_setSceneAnimPosAndFrame(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_update(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_update(%p) (%d)", (const void *)script, stackPos(0));
-	for (int times = stackPos(0); times != 0; --times) {
-		if (_chatText)
-			updateWithText();
-		else
-			update();
-	}
-	return 0;
-}
-
 int KyraEngine_MR::o3_removeItemInstances(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeItemInstances(%p) (%d)", (const void *)script, stackPos(0));
 	const int16 item = stackPos(0);
@@ -814,18 +780,6 @@ int KyraEngine_MR::o3_showSceneStringsMessage(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_getRand(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) < stackPos(1));
-	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
-}
-
-int KyraEngine_MR::o3_setDeathHandler(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setDeathHandler(%p) (%d)", (const void *)script, stackPos(0));
-	_deathHandler = stackPos(0);
-	return 0;
-}
-
 int KyraEngine_MR::o3_showGoodConscience(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_showGoodConscience(%p) ()", (const void *)script);
 	showGoodConscience();
@@ -844,30 +798,6 @@ int KyraEngine_MR::o3_hideGoodConscience(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_hideGoodConscience(%p) ()", (const void *)script);
 	hideGoodConscience();
 	return 0;
-}
-
-int KyraEngine_MR::o3_waitForConfirmationClick(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
-	resetSkipFlag();
-	uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
-
-	while (_system->getMillis() < maxWaitTime) {
-		int inputFlag = checkInput(0);
-		removeInputTop();
-
-		if (inputFlag == 198 || inputFlag == 199) {
-			_sceneScriptState.regs[1] = _mouseX;
-			_sceneScriptState.regs[2] = _mouseY;
-			return 0;
-		}
-
-		update();
-		_system->delayMillis(10);
-	}
-
-	_sceneScriptState.regs[1] = _mouseX;
-	_sceneScriptState.regs[2] = _mouseY;
-	return 1;
 }
 
 int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
@@ -987,32 +917,6 @@ int KyraEngine_MR::o3_setDlgIndex(EMCState *script) {
 int KyraEngine_MR::o3_getDlgIndex(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getDlgIndex(%p) ()", (const void *)script);
 	return _mainCharacter.dlgIndex;
-}
-
-int KyraEngine_MR::o3_defineScene(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
-		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
-	const int scene = stackPos(0);
-	strcpy(_sceneList[scene].filename1, stackPosString(1));
-	_sceneList[scene].filename1[9] = 0;
-	strcpy(_sceneList[scene].filename2, stackPosString(1));
-	_sceneList[scene].filename2[9] = 0;
-
-	_sceneList[scene].exit1 = stackPos(2);
-	_sceneList[scene].exit2 = stackPos(3);
-	_sceneList[scene].exit3 = stackPos(4);
-	_sceneList[scene].exit4 = stackPos(5);
-	_sceneList[scene].flags = stackPos(6);
-	_sceneList[scene].sound = stackPos(7);
-
-	if (_mainCharacter.sceneId == scene) {
-		_sceneExit1 = _sceneList[scene].exit1;
-		_sceneExit2 = _sceneList[scene].exit2;
-		_sceneExit3 = _sceneList[scene].exit3;
-		_sceneExit4 = _sceneList[scene].exit4;
-	}
-
-	return 0;
 }
 
 int KyraEngine_MR::o3_setConversationState(EMCState *script) {
@@ -1288,7 +1192,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_setMalcolmsMood);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_dummy);
-	Opcode(o3_delay);
+	Opcode(o2_delay);
 	// 0x38
 	Opcode(o3_updateScore);
 	Opcode(o3_makeSecondChanceSave);
@@ -1313,7 +1217,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	Opcode(o3_setSceneAnimPosAndFrame);
-	Opcode(o3_update);
+	Opcode(o2_update);
 	// 0x4c
 	Opcode(o3_removeItemInstances);
 	Opcode(o3_dummy);
@@ -1340,9 +1244,9 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_showSceneStringsMessage);
 	OpcodeUnImpl();
 	// 0x60
-	Opcode(o3_getRand);
+	Opcode(o2_getRand);
 	Opcode(o3_dummy);
-	Opcode(o3_setDeathHandler);
+	Opcode(o2_setDeathHandler);
 	Opcode(o3_showGoodConscience);
 	// 0x64
 	Opcode(o3_goodConscienceChat);
@@ -1353,7 +1257,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
-	Opcode(o3_waitForConfirmationClick);
+	Opcode(o2_waitForConfirmationClick);
 	// 0x6c
 	Opcode(o3_dummy);
 	Opcode(o2_defineRoomEntrance);
@@ -1371,7 +1275,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_setDlgIndex);
 	// 0x78
 	Opcode(o3_getDlgIndex);
-	Opcode(o3_defineScene);
+	Opcode(o2_defineScene);
 	Opcode(o3_setConversationState);
 	OpcodeUnImpl();
 	// 0x7c
@@ -1448,7 +1352,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	// 0x0a
 	Opcode(o2a_setResetFrame);
-	Opcode(o3_getRand);
+	Opcode(o2_getRand);
 	Opcode(o3_getMalcolmShapes);
 	Opcode(o3_dummy);
 
@@ -1456,7 +1360,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x00
 	Opcode(o3d_updateAnim);
 	Opcode(o3d_delay);
-	Opcode(o3_getRand);
+	Opcode(o2_getRand);
 	Opcode(o2_queryGameFlag);
 	// 0x04
 	Opcode(o3_dummy);

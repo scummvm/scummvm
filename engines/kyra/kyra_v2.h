@@ -369,9 +369,15 @@ protected:
 	int o2_addSpecialExit(EMCState *script);
 	int o2_setMousePos(EMCState *script);
 	int o2_showMouse(EMCState *script);
+	int o2_delay(EMCState *script);
+	int o2_update(EMCState *script);
+	int o2_getRand(EMCState *script);
+	int o2_setDeathHandler(EMCState *script);
+	int o2_waitForConfirmationClick(EMCState *script);
 	int o2_defineRoomEntrance(EMCState *script);
 	int o2_runAnimationScript(EMCState *script);
 	int o2_setSpecialSceneScriptRunTime(EMCState *script);
+	int o2_defineScene(EMCState *script);
 	int o2_setSpecialSceneScriptState(EMCState *script);
 	int o2_clearSpecialSceneScriptState(EMCState *script);
 	int o2_querySpecialSceneScriptState(EMCState *script);

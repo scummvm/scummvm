@@ -740,7 +740,6 @@ protected:
 	int o2_getTimerDelay(EMCState *script);
 	//int o2_playSoundEffect(EMCState *script);
 	int o2_delaySecs(EMCState *script);
-	int o2_delay(EMCState *script);
 	int o2_setTimerDelay(EMCState *script);
 	int o2_setScaleTableItem(EMCState *script);
 	int o2_setDrawLayerTableItem(EMCState *script);
@@ -758,7 +757,6 @@ protected:
 	int o2_enableSceneAnim(EMCState *script);
 	int o2_restoreInventoryGfx(EMCState *script);
 	int o2_setSceneAnimPos2(EMCState *script);
-	int o2_update(EMCState *script);
 	int o2_fadeScenePal(EMCState *script);
 	int o2_enterNewSceneEx(EMCState *script);
 	int o2_switchScene(EMCState *script);
@@ -775,14 +773,11 @@ protected:
 	int o2_blockOutRegion(EMCState *script);
 	int o2_setCauldronState(EMCState *script);
 	int o2_showItemString(EMCState *script);
-	int o2_getRand(EMCState *script);
 	int o2_isAnySoundPlaying(EMCState *script);
-	int o2_setDeathHandlerFlag(EMCState *script);
 	int o2_setDrawNoShapeFlag(EMCState *script);
 	int o2_setRunFlag(EMCState *script);
 	int o2_showLetter(EMCState *script);
 	int o2_fillRect(EMCState *script);
-	int o2_waitForConfirmationClick(EMCState *script);
 	int o2_encodeShape(EMCState *script);
 	int o2_defineSceneAnim(EMCState *script);
 	int o2_updateSceneAnim(EMCState *script);
@@ -792,7 +787,6 @@ protected:
 	int o2_zanthRandomChat(EMCState *script);
 	int o2_setupDialogue(EMCState *script);
 	int o2_getDlgIndex(EMCState *script);
-	int o2_defineRoom(EMCState *script);
 	int o2_addCauldronStateTableEntry(EMCState *script);
 	int o2_setCountDown(EMCState *script);
 	int o2_getCountDown(EMCState *script);
