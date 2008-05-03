@@ -34,11 +34,11 @@ namespace Graphics {
 inline uint32 fp_sqroot(uint32 x);
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererSpec<uint16,ColorMasks<565> >;
+	return new VectorRendererSpec<uint16,ColorMasks<565>>;
 }
 
 
-void vector_renderer_test( OSystem *_system ) {
+void vector_renderer_test(OSystem *_system) {
 	VectorRenderer *vr = createRenderer();
 
 	Surface _screen;
@@ -123,7 +123,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
-blendPixelPtr( PixelType *ptr, uint8 alpha ) {
+blendPixelPtr(PixelType *ptr, uint8 alpha) {
 	register int idst = *ptr;
 	register int isrc = Base::_color;
 

@@ -33,7 +33,7 @@
 
 namespace Graphics {
 
-void vector_renderer_test( OSystem *_system );
+void vector_renderer_test(OSystem *_system);
 
 /**
  * VectorRenderer: The core Vector Renderer Class
@@ -113,7 +113,7 @@ public:
 	 *
 	 * @param surface Pointer to a Surface object.
 	 */
-	virtual void setSurface(Surface *surface){
+	virtual void setSurface(Surface *surface) {
 		_activeSurface = surface;
 	}
 
@@ -248,7 +248,7 @@ public:
 	 *
 	 * @see VectorRenderer::blendPixel()
 	 */
-	virtual inline void blendPixel( int x, int y, uint8 alpha ) {
+	virtual inline void blendPixel(int x, int y, uint8 alpha) {
 			putPixel(x, y);
 	}
 
@@ -319,7 +319,7 @@ protected:
 	 * The AA renderer does support alpha blending. Special cases are
 	 * handled separately.
 	 */
-	inline void blendPixel( int x, int y, uint8 alpha ) {
+	inline void blendPixel(int x, int y, uint8 alpha) {
 		if (alpha == 0)
 			return;
 		else if (alpha < 255)
