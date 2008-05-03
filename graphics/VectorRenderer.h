@@ -127,7 +127,7 @@ public:
 	 */
 	virtual void clearSurface() {
 		byte *src = (byte *)_activeSurface->pixels;
-		memset( src, 0, _activeSurface->w * _activeSurface->h * _activeSurface->bytesPerPixel );
+		memset(src, 0, _activeSurface->w * _activeSurface->h * _activeSurface->bytesPerPixel);
 	}
 
 	/**
@@ -208,7 +208,7 @@ public:
 	 */
 	void drawLine(int x1, int x2, int y1, int y2);
 
-	void drawCircle( int x, int y, int r ) {
+	void drawCircle(int x, int y, int r) {
 		drawCircleAlg(x, y, r);
 	}
 

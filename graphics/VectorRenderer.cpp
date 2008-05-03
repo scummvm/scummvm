@@ -31,7 +31,7 @@
 
 namespace Graphics {
 
-inline uint32 fp_sqroot( uint32 x );
+inline uint32 fp_sqroot(uint32 x);
 
 VectorRenderer *createRenderer() {
 	return new VectorRendererSpec<uint16,ColorMasks<565> >;
@@ -57,7 +57,7 @@ void vector_renderer_test( OSystem *_system ) {
 
 	_system->showOverlay();
 
-	while(true) { // draw!!
+	while (true) { // draw!!
 
 		vr->setColor(255, 255, 255);
 		vr->fillSurface();
@@ -155,7 +155,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 		gradient = (uint32)(dy << 16) / (uint32)dx;
 		error_acc = 0;
 
-		while(--dx) {
+		while (--dx) {
 			error_tmp = error_acc;
 			error_acc += gradient;
 
@@ -171,7 +171,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 		gradient = (uint32)(dx << 16) / (uint32)dy;
 		error_acc = 0;
 
-		while(--dy) {
+		while (--dy) {
 			error_tmp = error_acc;
 			error_acc += gradient;
 
@@ -251,7 +251,7 @@ inline uint32 fp_sqroot(uint32 x) {
 			remHI -= testDIV;
 			root++;
 		}
-	} while(count--);
+	} while (count--);
 
 	return root;
 }
@@ -279,8 +279,8 @@ drawCircleAlg(int x1, int y1, int r) {
 
 	__CIRCLE_SIM(x,y);
 
-	while(x++ < y) {
-		if(f >= 0) {
+	while (x++ < y) {
+		if (f >= 0) {
 			y--;
 			ddF_y += 2;
 			f += ddF_y;
@@ -314,7 +314,7 @@ drawCircleAlg(int x1, int y1, int r) {
 	
 	__WU_CIRCLE_SIM(x, y, 255);
 
-	while(x > y++)
+	while (x > y++)
 	{
 		oldT = T;
 		T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF;
