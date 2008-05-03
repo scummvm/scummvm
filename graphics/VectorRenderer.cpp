@@ -31,8 +31,10 @@
 
 namespace Graphics {
 
+inline uint32 fp_sqroot( uint32 x );
+
 VectorRenderer *createRenderer() {
-	return new VectorRendererSpec<uint16,ColorMasks<565>>;
+	return new VectorRendererAA<uint16,ColorMasks<565>>;
 }
 
 
@@ -49,12 +51,20 @@ void vector_renderer_test( OSystem *_system ) {
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
 
 	vr->setSurface( &_screen );
-	vr->setColor( 255, 255, 255 );
+	vr->setColor( 255, 0, 0 );
+	vr->fillSurface();
+	vr->setColor( 255, 255, 0 );
 
 	_system->showOverlay();
 
 	while( true ) { // draw!!
-		vr->drawLine( 25, 100, 25, 150 );
+
+		vr->setColor( 255, 255, 255 );
+		vr->fillSurface();
+		vr->setColor( 255, 0, 0 );
+		vr->drawLine( 25, 25, 125, 300 );
+		vr->drawCircle( 250, 250, 100 );
+
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
 		_system->delayMillis(100);
@@ -63,10 +73,9 @@ void vector_renderer_test( OSystem *_system ) {
 	_system->hideOverlay();
 }
 
-
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) {
+drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;
@@ -111,76 +120,77 @@ drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) {
 	*ptr = (PixelType)_color;
 }
 
+
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
-drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) {
+blendPixelPtr( PixelType *ptr, uint8 alpha ) {
+	register int idst = *ptr;
+	register int isrc = _color;
+
+	*ptr = (PixelType)(
+		(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
+		((int)(((int)(isrc & PixelFormat::kRedMask) -
+		(int)(idst & PixelFormat::kRedMask)) * alpha) >>8))) |
+		(PixelFormat::kGreenMask & ((idst & PixelFormat::kGreenMask) +
+		((int)(((int)(isrc & PixelFormat::kGreenMask) -
+		(int)(idst & PixelFormat::kGreenMask)) * alpha) >>8))) |
+		(PixelFormat::kBlueMask & ((idst & PixelFormat::kBlueMask) +
+		((int)(((int)(isrc & PixelFormat::kBlueMask) -
+		(int)(idst & PixelFormat::kBlueMask)) * alpha) >>8))) );
+}
+
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererAA<PixelType,PixelFormat>::
+drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
+
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;
+	uint16 error_tmp, error_acc, gradient;
 
-	int error_line, error_tmp, weight;
-	int error_total = 0;
-	uint8 line_r, line_g, line_b;
-	uint8 bg_r, bg_g, bg_b;
+	*ptr = (PixelType)_color;
 
-	colorToRGB<PixelFormat>(_color, line_r, line_g, line_b);
+	if ( dx > dy ) {
+		gradient = (uint32)(dy<<16)/(uint32)dx;
+		error_acc = 0;
 
-	uint line_lum = (line_r >> 2) + (line_g >> 1) + (line_b >> 3);
-	uint bg_lum;
+		while( --dx ) {
+			error_tmp = error_acc;
+			error_acc += gradient;
 
-	// first pixel, should be perfectly accurate so no fading out
-	*ptr = (PixelType)_color; 
+			if ( error_acc <= error_tmp )
+				ptr += pitch;
 
-#define __WULINE_PUTPIXEL( pixel_ptr ) { \
-		colorToRGB<PixelFormat>((PixelType)*(pixel_ptr), bg_r, bg_g, bg_b); \
-		bg_lum = (bg_r >> 2) + (bg_g >> 1) + (bg_b >> 3); \
-		weight = (line_lum < bg_lum) ? error_total >> 8 : (error_total >> 8)^0xFF; \
-		*(pixel_ptr) = RGBToColor<PixelFormat>( \
-			antialiasingBlendWeight(line_r, bg_r, weight), \
-			antialiasingBlendWeight(line_g, bg_g, weight), \
-			antialiasingBlendWeight(line_b, bg_b, weight)); \
+			ptr += xdir;
+
+			blendPixelPtr( ptr, (error_acc >> 8) ^ 0xFF );
+			blendPixelPtr( ptr + pitch, (error_acc >> 8) & 0xFF );
+		}
+	} else {
+		gradient = (uint32)(dx<<16)/(uint32)dy;
+		error_acc = 0;
+
+		while( --dy ) {
+			error_tmp = error_acc;
+			error_acc += gradient;
+
+			if ( error_acc <= error_tmp )
+				ptr += xdir;
+
+			ptr += pitch;
+
+			blendPixelPtr( ptr, (error_acc >> 8) ^ 0xFF );
+			blendPixelPtr( ptr + xdir, (error_acc >> 8) & 0xFF );
+		}
 	}
 
-	// draw from top to bottom while fading out.
-	// optimized for mostly vertical lines
-	if (dy > dx) {
-		error_line = (dx << 16) / dy;
-		while (--dy) {
-			error_tmp = error_total;
-			error_total += error_line;
-
-			if (error_total <= error_tmp)
-				ptr += xdir; // move right or left
-
-			ptr += pitch; // move down			
-
-			__WULINE_PUTPIXEL(ptr);
-			__WULINE_PUTPIXEL(ptr + xdir);
-		}
-	} else { // optimized for mostly horizontal lines
-		error_line = (dy << 16) / dx;
-		while (--dx) {
-			error_tmp = error_total;
-			error_total += error_line;
-
-			if (error_total <= error_tmp)
-				ptr += pitch; // move down
-
-			ptr += xdir; // move left or right	
-
-			__WULINE_PUTPIXEL(ptr);
-			__WULINE_PUTPIXEL(ptr + pitch);
-		}	
-	} // end of line direction cases
-
-	// last pixel, also perfectly accurate.
-	ptr = (PixelType *)_activeSurface->getBasePtr(x2, y2);
-	*ptr = (PixelType)_color;
+	putPixel( x2, y2 );
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLine(int x1, int x2, int y1, int y2) {
+drawLine(int x1, int y1, int x2, int y2) {
 	// we draw from top to bottom
 	if (y2 < y1) {
 		SWAP(x1, x2);
@@ -219,7 +229,71 @@ drawLine(int x1, int x2, int y1, int y2) {
 		}
 
 	} else { // generic lines, use the standard algorithm...
-		drawLineAlg(x1, x2, y1, y2, dx, dy);
+		drawLineAlg(x1, y1, x2, y2, dx, dy);
+	}
+}
+
+inline uint32 fp_sqroot( uint32 x ) {
+	register uint32 root, remHI, remLO, testDIV, count;
+
+	root = 0;
+	remHI = 0;
+	remLO = x;
+	count = 23;
+
+	do {
+		remHI = (remHI<<2) | (remLO>>30);
+		remLO <<= 2;
+		root <<= 1;
+		testDIV = (root<<1) + 1;
+
+		if ( remHI >= testDIV ) {
+			remHI -= testDIV;
+			root++;
+		}
+	} while( count-- );
+
+	return root;
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererAA<PixelType,PixelFormat>::
+drawCircleAlg(int x1, int y1, int r) {
+
+#define __CIRCLE_SIM(x,y,a) { \
+	blendPixel( x1 + (x), y1 + (y), a ); \
+	blendPixel( x1 + (x), y1 - (y), a ); \
+	blendPixel( x1 - (y), y1 + (x), a ); \
+	blendPixel( x1 + (y), y1 + (x), a ); \
+	blendPixel( x1 - (x), y1 + (y), a ); \
+	blendPixel( x1 - (x), y1 - (y), a ); \
+	blendPixel( x1 + (y), y1 - (x), a ); \
+	blendPixel( x1 - (y), y1 - (x), a ); \
+}
+
+	// first quadrant
+/*#define __CIRCLE_SIM(x,y,a) { \
+	blendPixel( x1 + (x), y1 - (y), a ); \
+	blendPixel( x1 + (y), y1 - (x), a ); \
+}*/
+
+	int x = r;
+	int y = 0;
+	uint32 rsq = (r*r)<<16;
+	uint32 T = 0, oldT;
+	
+	__CIRCLE_SIM( x, y, 255 );
+
+	while( x > y++ )
+	{
+		oldT = T;
+		T = fp_sqroot( rsq - ((y*y)<<16) ) ^ 0xFFFF;
+
+		if ( T < oldT )
+			x--;
+
+		__CIRCLE_SIM( x,   y, (T>>8) ^ 0xFF );
+		__CIRCLE_SIM( x-1, y, (T>>8) & 0xFF );
 	}
 }
 

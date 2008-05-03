@@ -37,7 +37,7 @@ void vector_renderer_test( OSystem *_system );
 /**
  * VectorRenderer: The core Vector Renderer Class
  *
- * This virtual class which exposes the API with all the vectorial
+ * This virtual class exposes the API with all the vectorial
  * rendering functions that may be used to draw on a given Surface.
  *
  * This class must be instantiated as one of its children, which implement
@@ -60,7 +60,16 @@ public:
 	 * @param y1 Vertical (Y) coordinate for the line start
 	 * @param y2 Vertical (Y) coordinate for the line end
 	 */
-	virtual void drawLine(int x1, int x2, int y1, int y2) = 0;
+	virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
+
+	/**
+	 * Draws a circle centered at (x,y) with radius r.
+	 *
+	 * @param x Horizontal (X) coordinate for the center of the circle
+	 * @param y Vertical (Y) coordinate for the center of the circle
+	 * @param r Radius of the circle.
+	 */
+	virtual void drawCircle( int x, int y, int r ) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -96,20 +105,46 @@ public:
 	virtual void setColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
-	 * Set the active painting color for the renderer, including alpha
-	 * intensity. All the drawing from then on will be done with that color, 
-	 * unless specified otherwise.
+	 * Sets the active drawing surface. All drawing from this
+	 * point on will be done on that surface.
 	 *
-	 * @param r	value of the red color byte
-	 * @param g	value of the green color byte
-	 * @param b	value of the blue color byte
-	 * @param a value of the alpha byte
+	 * @param surface Pointer to a Surface object.
 	 */
-	virtual void setColor(uint8 r, uint8 g, uint8 b, uint8 a) = 0;
-
 	virtual void setSurface( Surface *surface ){
 		_activeSurface = surface;
 	}
+
+	/**
+	 * Fills the active surface with the currently active drawing color.
+	 */
+	virtual void fillSurface() = 0;
+
+	/**
+	 * Clears the active surface.
+	 */
+	virtual void clearSurface() {
+		byte *src = (byte *)_activeSurface->pixels;
+		memset( src, 0, _activeSurface->w * _activeSurface->h * _activeSurface->bytesPerPixel );
+	}
+
+	/**
+	 * Draws a single pixel on the surface with the given coordinates and
+	 * the currently active drawing color.
+	 *
+	 * @param x Horizontal coordinate of the pixel.
+	 * @param y Vertical coordinate of the pixel.
+	 */
+	inline virtual void putPixel( int x, int y ) = 0;
+
+	/**
+	 * Blends a single pixel on the surface with the given coordinates, with
+	 * the currently active drawing color and with the given Alpha intensity.
+	 *
+	 * @param x Horizontal coordinate of the pixel.
+	 * @param y Vertical coordinate of the pixel.
+	 * @param alpha Alpha intensity of the pixel (0-255)
+	 */
+	inline virtual void blendPixel( int x, int y, uint8 alpha ) = 0;
 
 protected:
 
@@ -125,8 +160,16 @@ protected:
 	 * @param dx Horizontal (X) increasement.
 	 * @param dy Vertical (Y) increasement.
 	 */
-	virtual void drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy) = 0;
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) = 0;
 
+	/**
+	 * Specific circle drawing algorithm with symmetry. Must be implemented
+	 * on each renderer.
+	 *
+	 * @param x Horizontal (X) coordinate for the center of the circle
+	 * @param y Vertical (Y) coordinate for the center of the circle
+	 * @param r Radius of the circle.
+	 */
 	virtual void drawCircleAlg(int x, int y, int r) = 0;
 
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -156,10 +199,15 @@ protected:
 template<typename PixelType, typename PixelFormat>
 class VectorRendererSpec : public VectorRenderer {
 
+public:
 	/**
 	 * @see VectorRenderer::drawLine()
 	 */
 	void drawLine(int x1, int x2, int y1, int y2);
+
+	void drawCircle( int x, int y, int r ) {
+		drawCircleAlg( x, y, r );
+	}
 
 	/**
 	 * @see VectorRenderer::setColor()
@@ -175,6 +223,33 @@ class VectorRendererSpec : public VectorRenderer {
 		_color = RGBToColor<PixelFormat>(r, g, b);
 	}
 
+	/**
+	 * @see VectorRenderer::fillSurface()
+	 */
+	void fillSurface() {
+		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
+		int s = _activeSurface->w * _activeSurface->h;
+		Common::set_to(ptr, ptr + s, (PixelType)_color);
+	}
+
+	/**
+	 * @see VectorRenderer::putPixel()
+	 */
+	inline void putPixel( int x, int y ) {
+		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
+		*ptr = _color;
+	}
+
+	/**
+	 * On the Specialized Renderer, alpha blending is not supported. 
+	 *
+	 * @see VectorRenderer::blendPixel()
+	 */
+	virtual inline void blendPixel( int x, int y, uint8 alpha ) {
+		if ( alpha > 0 )
+			putPixel( x, y );
+	}
+
 protected:
 
 	/*
@@ -186,8 +261,11 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	virtual void drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy);
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy);
 
+	/**
+	 * @see VectorRenderer::drawCircleAlg()
+	 */
 	virtual void drawCircleAlg(int x, int y, int r) {}
 
 	PixelType _color; /** Color currently being used to draw on the renderer */
@@ -218,27 +296,46 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	void drawLineAlg(int x1, int x2, int y1, int y2, int dx, int dy);
+	void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy);
 
 	/**
-	 * Calculates the blending weight (relative luminosity) value for
-	 * a given pixel, based on the distance to the ideal line.
-	 * Used for blending pixels in the Wu AA algorithm.
+	 * Perform alpha blending on top of a given pixel, not on a given
+	 * coordinate (just so we don't have to recalculate the surface
+	 * pointer while we are blending consecutive pixels).
 	 *
-	 * @param line_color Byte value of a color component (R/G/B) of the color used to draw the line.
-	 * @param line_color Byte value of a color component (R/G/B) of the color used to draw the BG.
-	 * @param weight Weight of the pixel as calculated by Wu's algorithm.
-	 * @return The new color value for the given component.
+	 * Everything from blendPixel() applies here.
+	 *
+	 * @see VectorRenderer::blendPixel()
+	 * @param ptr Pointer to the pixel where we must draw
+	 * @param alpha Intensity of the pixel (0-255).
 	 */
-	inline uint8 antialiasingBlendWeight(uint8 line_color, uint8 bg_color, uint weight) {
-		uint8 value;
-		if (bg_color > line_color) {
-			value = weight / 255 * (bg_color - line_color) + bg_color;  
-		} else {
-			value = weight / 255 * (line_color - bg_color) + line_color;
-		}
-		return value;
+	inline void blendPixelPtr( PixelType *ptr, uint8 alpha );
+
+	/**
+	 * @see VectorRenderer::blendPixel()
+	 *
+	 * The AA renderer does support alpha blending. Special cases are
+	 * handled separately.
+	 */
+	inline void blendPixel( int x, int y, uint8 alpha ) {
+		if ( alpha == 0 )
+			return;
+		else if ( alpha < 255 )
+			blendPixelPtr( (PixelType*)_activeSurface->getBasePtr(x, y), alpha );
+		else
+			putPixel( x, y );
 	}
+
+	/**
+	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991
+	 * Based on the theoretical concept of the algorithm.
+	 *
+	 * Implementation of Wu's algorithm for circles using fixed point arithmetics.
+	 * Could be quite fast.
+	 *
+	 * @see VectorRenderer::drawCircleAlg()
+	 */
+	virtual void drawCircleAlg(int x, int y, int r);
 };
 
 } // end of namespace Graphics
