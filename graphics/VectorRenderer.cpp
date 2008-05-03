@@ -64,7 +64,7 @@ void vector_renderer_test(OSystem *_system) {
 		vr->setColor(255, 0, 0 );
 		vr->drawLine(25, 25, 125, 300);
 		vr->drawCircle(250, 250, 100);
-
+		vr->drawSquare(150, 150, 100, 100, false);
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
 		_system->delayMillis(100);
@@ -75,6 +75,25 @@ void vector_renderer_test(OSystem *_system) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
+drawSquare(int x, int y, int w, int h, bool fill) {
+	if ( fill ) {
+		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
+		int pitch = surfacePitch();
+
+		while (h--) {
+			Common::set_to(ptr, ptr + w, (PixelType)_color);
+			ptr += pitch;
+		}
+	} else {
+		drawLine( x, y, x + w, y );
+		drawLine( x + w, y, x + w, y + w );
+		drawLine( x, y + w, x + w, y + w );
+		drawLine( x, y, x, y + w );
+	}
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType,PixelFormat>::
 drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = surfacePitch();

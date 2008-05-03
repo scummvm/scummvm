@@ -74,6 +74,9 @@ public:
 	 */
 	virtual void drawCircle(int x, int y, int r) = 0;
 
+
+	virtual void drawSquare(int x, int y, int w, int h, bool fill) = 0;
+
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
 	 * Note: This is a real pixel-pitch, not a byte-pitch.
@@ -206,11 +209,13 @@ public:
 	/**
 	 * @see VectorRenderer::drawLine()
 	 */
-	void drawLine(int x1, int x2, int y1, int y2);
+	void drawLine(int x1, int y1, int x2, int y2);
 
 	void drawCircle(int x, int y, int r) {
 		drawCircleAlg(x, y, r);
 	}
+
+	void drawSquare(int x, int y, int w, int h, bool fill);
 
 	/**
 	 * @see VectorRenderer::setColor()
