@@ -980,50 +980,6 @@ int KyraEngine_HoF::o2_encodeShape(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_defineRoomEntrance(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	switch (stackPos(0)) {
-	case 0:
-		_sceneEnterX1 = stackPos(1);
-		_sceneEnterY1 = stackPos(2);
-		break;
-
-	case 1:
-		_sceneEnterX2 = stackPos(1);
-		_sceneEnterY2 = stackPos(2);
-		break;
-
-	case 2:
-		_sceneEnterX3 = stackPos(1);
-		_sceneEnterY3 = stackPos(2);
-		break;
-
-	case 3:
-		_sceneEnterX4 = stackPos(1);
-		_sceneEnterY4 = stackPos(2);
-		break;
-
-	default:
-		break;
-	}
-	return 0;
-}
-
-int KyraEngine_HoF::o2_runTemporaryScript(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_runTemporaryScript(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1),
-			stackPos(2), stackPos(3));
-
-	runAnimationScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
-	return 0;
-}
-
-int KyraEngine_HoF::o2_setSpecialSceneScriptRunTime(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setSpecialSceneScriptRunTime(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) >= 0 && stackPos(0) < 10);
-	_sceneSpecialScriptsTimer[stackPos(0)] = _system->getMillis() + stackPos(1) * _tickLength;
-	return 0;
-}
-
 int KyraEngine_HoF::o2_defineSceneAnim(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineSceneAnim(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8),
@@ -1327,23 +1283,6 @@ int KyraEngine_HoF::o2_makeBookOrCauldronAppear(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_setSpecialSceneScriptState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
-	_specialSceneScriptState[stackPos(0)] = 1;
-	return 1;
-}
-
-int KyraEngine_HoF::o2_clearSpecialSceneScriptState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_clearSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
-	_specialSceneScriptState[stackPos(0)] = 0;
-	return 0;
-}
-
-int KyraEngine_HoF::o2_querySpecialSceneScriptState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
-	return _specialSceneScriptState[stackPos(0)];
-}
-
 int KyraEngine_HoF::o2_resetInputColorCode(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_resetInputColorCode(%p)", (const void *)script);
 	memset(_inputColorCode, 255, 7);
@@ -1497,24 +1436,6 @@ int KyraEngine_HoF::o2_stopSceneAnimation(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_disableTimer(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_disableTimer(%p) (%d)", (const void *)script, stackPos(0));
-	_timer->disable(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_HoF::o2_enableTimer(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_enableTimer(%p) (%d)", (const void *)script, stackPos(0));
-	_timer->enable(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_HoF::o2_setTimerCountdown(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setTimerCountdown(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_timer->setCountdown(stackPos(0), stackPos(1));
-	return 0;
-}
-
 int KyraEngine_HoF::o2_processPaletteIndex(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_processPaletteIndex(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	uint8 *palette = _screen->getPalette(0);
@@ -1597,17 +1518,6 @@ int KyraEngine_HoF::o2_getMusicDriver(EMCState *script) {
 		return 7;
 	// TODO: find nice default value
 	return 0;
-}
-
-int KyraEngine_HoF::o2_setVocHigh(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
-	_vocHigh = stackPos(0);
-	return _vocHigh;
-}
-
-int KyraEngine_HoF::o2_getVocHigh(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getVocHigh(%p) ()", (const void *)script);
-	return _vocHigh;
 }
 
 int KyraEngine_HoF::o2_zanthiaChat(EMCState *script) {
@@ -1878,7 +1788,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x6c
 	Opcode(o2_encodeShape);
 	Opcode(o2_defineRoomEntrance);
-	Opcode(o2_runTemporaryScript);
+	Opcode(o2_runAnimationScript);
 	Opcode(o2_setSpecialSceneScriptRunTime);
 	// 0x70
 	Opcode(o2_defineSceneAnim);

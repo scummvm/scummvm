@@ -870,52 +870,6 @@ int KyraEngine_MR::o3_waitForConfirmationClick(EMCState *script) {
 	return 1;
 }
 
-int KyraEngine_MR::o3_defineRoomEntrance(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	switch (stackPos(0)) {
-	case 0:
-		_sceneEnterX1 = stackPos(1);
-		_sceneEnterY1 = stackPos(2);
-		break;
-
-	case 1:
-		_sceneEnterX2 = stackPos(1);
-		_sceneEnterY2 = stackPos(2);
-		break;
-
-	case 2:
-		_sceneEnterX3 = stackPos(1);
-		_sceneEnterY3 = stackPos(2);
-		break;
-
-	case 3:
-		_sceneEnterX4 = stackPos(1);
-		_sceneEnterY4 = stackPos(2);
-		break;
-
-	default:
-		break;
-	}
-	return 0;
-}
-
-int KyraEngine_MR::o3_runTemporaryScript(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_runTemporaryScript(%p) ('%s', %d, %d, %d)", (const void *)script,
-			stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
-	const int newShapes = stackPos(1);
-	const int unloadShapes = stackPos(2);
-	const int allowSkip = stackPos(3);
-	runAnimationScript(stackPosString(0), allowSkip, (unloadShapes != 0) ? 1 : 0, newShapes, unloadShapes);
-	return 0;
-}
-
-int KyraEngine_MR::o3_setSpecialSceneScriptRunTime(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setSpecialSceneScriptRunTime(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) >= 0 && stackPos(0) < 10);
-	_sceneSpecialScriptsTimer[stackPos(0)] = _system->getMillis() + stackPos(1) * _tickLength;
-	return 0;
-}
-
 int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineSceneAnim(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
 		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7),
@@ -1159,23 +1113,6 @@ int KyraEngine_MR::o3_dialogEndScript(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_setSpecialSceneScriptState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
-	_specialSceneScriptState[stackPos(0)] = 1;
-	return 1;
-}
-
-int KyraEngine_MR::o3_clearSpecialSceneScriptState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_clearSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
-	_specialSceneScriptState[stackPos(0)] = 0;
-	return 0;
-}
-
-int KyraEngine_MR::o3_querySpecialSceneScriptState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
-	return _specialSceneScriptState[stackPos(0)];
-}
-
 int KyraEngine_MR::o3_setHiddenItemsEntry(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return (_hiddenItems[stackPos(0)] = (uint16)stackPos(1));
@@ -1226,35 +1163,6 @@ int KyraEngine_MR::o3_removeSceneAnimObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeSceneAnimObject(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	removeSceneAnimObject(stackPos(0), stackPos(1));
 	return 0;
-}
-
-int KyraEngine_MR::o3_disableTimer(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_disableTimer(%p) (%d)", (const void *)script, stackPos(0));
-	_timer->disable(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_MR::o3_enableTimer(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_enableTimer(%p) (%d)", (const void *)script, stackPos(0));
-	_timer->enable(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_MR::o3_setTimerCountdown(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setTimerCountdown(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_timer->setCountdown(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_MR::o3_setVocHigh(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
-	_vocHigh = stackPos(0);
-	return 0;
-}
-
-int KyraEngine_MR::o3_getVocHigh(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getVocHigh(%p) ()", (const void *)script);
-	return _vocHigh;
 }
 
 int KyraEngine_MR::o3_dummy(EMCState *script) {
@@ -1448,9 +1356,9 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_waitForConfirmationClick);
 	// 0x6c
 	Opcode(o3_dummy);
-	Opcode(o3_defineRoomEntrance);
-	Opcode(o3_runTemporaryScript);
-	Opcode(o3_setSpecialSceneScriptRunTime);
+	Opcode(o2_defineRoomEntrance);
+	Opcode(o2_runAnimationScript);
+	Opcode(o2_setSpecialSceneScriptRunTime);
 	// 0x70
 	Opcode(o3_defineSceneAnim);
 	Opcode(o3_dummy);
@@ -1490,10 +1398,10 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dialogEndScript);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
-	Opcode(o3_setSpecialSceneScriptState);
+	Opcode(o2_setSpecialSceneScriptState);
 	// 0x90
-	Opcode(o3_clearSpecialSceneScriptState);
-	Opcode(o3_querySpecialSceneScriptState);
+	Opcode(o2_clearSpecialSceneScriptState);
+	Opcode(o2_querySpecialSceneScriptState);
 	Opcode(o3_dummy);
 	Opcode(o3_setHiddenItemsEntry);
 	// 0x94
@@ -1507,9 +1415,9 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_setupSceneAnimObject);
 	Opcode(o3_removeSceneAnimObject);
 	// 0x9c
-	Opcode(o3_disableTimer);
-	Opcode(o3_enableTimer);
-	Opcode(o3_setTimerCountdown);
+	Opcode(o2_disableTimer);
+	Opcode(o2_enableTimer);
+	Opcode(o2_setTimerCountdown);
 	OpcodeUnImpl();
 	// 0xa0
 	Opcode(o3_dummy);
@@ -1520,9 +1428,9 @@ void KyraEngine_MR::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	Opcode(o3_setVocHigh);
+	Opcode(o2_setVocHigh);
 	// 0xa8
-	Opcode(o3_getVocHigh);
+	Opcode(o2_getVocHigh);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();

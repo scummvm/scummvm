@@ -25,6 +25,7 @@
 
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
+#include "kyra/timer.h"
 
 #include "common/endian.h"
 
@@ -137,6 +138,96 @@ int KyraEngine_v2::o2_showMouse(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showMouse(%p) ()", (const void *)script);
 	screen()->showMouse();
 	return 0;
+}
+
+int KyraEngine_v2::o2_defineRoomEntrance(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	switch (stackPos(0)) {
+	case 0:
+		_sceneEnterX1 = stackPos(1);
+		_sceneEnterY1 = stackPos(2);
+		break;
+
+	case 1:
+		_sceneEnterX2 = stackPos(1);
+		_sceneEnterY2 = stackPos(2);
+		break;
+
+	case 2:
+		_sceneEnterX3 = stackPos(1);
+		_sceneEnterY3 = stackPos(2);
+		break;
+
+	case 3:
+		_sceneEnterX4 = stackPos(1);
+		_sceneEnterY4 = stackPos(2);
+		break;
+
+	default:
+		break;
+	}
+	return 0;
+}
+
+int KyraEngine_v2::o2_runAnimationScript(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_runAnimationScript(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1),
+			stackPos(2), stackPos(3));
+
+	runAnimationScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setSpecialSceneScriptRunTime(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setSpecialSceneScriptRunTime(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	assert(stackPos(0) >= 0 && stackPos(0) < 10);
+	_sceneSpecialScriptsTimer[stackPos(0)] = _system->getMillis() + stackPos(1) * _tickLength;
+	return 0;
+}
+
+int KyraEngine_v2::o2_setSpecialSceneScriptState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
+	_specialSceneScriptState[stackPos(0)] = 1;
+	return 1;
+}
+
+int KyraEngine_v2::o2_clearSpecialSceneScriptState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_clearSpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
+	_specialSceneScriptState[stackPos(0)] = 0;
+	return 0;
+}
+
+int KyraEngine_v2::o2_querySpecialSceneScriptState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
+	return _specialSceneScriptState[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_disableTimer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_disableTimer(%p) (%d)", (const void *)script, stackPos(0));
+	_timer->disable(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_enableTimer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_enableTimer(%p) (%d)", (const void *)script, stackPos(0));
+	_timer->enable(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setTimerCountdown(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setTimerCountdown(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_timer->setCountdown(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setVocHigh(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
+	_vocHigh = stackPos(0);
+	return _vocHigh;
+}
+
+int KyraEngine_v2::o2_getVocHigh(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getVocHigh(%p) ()", (const void *)script);
+	return _vocHigh;
 }
 
 #pragma mark -

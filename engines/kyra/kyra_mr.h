@@ -560,9 +560,6 @@ private:
 	int o3_goodConscienceChat(EMCState *script);
 	int o3_hideGoodConscience(EMCState *script);
 	int o3_waitForConfirmationClick(EMCState *script);
-	int o3_defineRoomEntrance(EMCState *script);
-	int o3_runTemporaryScript(EMCState *script);
-	int o3_setSpecialSceneScriptRunTime(EMCState *script);
 	int o3_defineSceneAnim(EMCState *script);
 	int o3_updateSceneAnim(EMCState *script);
 	int o3_runActorScript(EMCState *script);
@@ -577,20 +574,12 @@ private:
 	int o3_countItemInstances(EMCState *script);
 	int o3_dialogStartScript(EMCState *script);
 	int o3_dialogEndScript(EMCState *script);
-	int o3_setSpecialSceneScriptState(EMCState *script);
-	int o3_clearSpecialSceneScriptState(EMCState *script);
-	int o3_querySpecialSceneScriptState(EMCState *script);
 	int o3_setHiddenItemsEntry(EMCState *script);
 	int o3_getHiddenItemsEntry(EMCState *script);
 	int o3_customChat(EMCState *script);
 	int o3_customChatFinish(EMCState *script);
 	int o3_setupSceneAnimObject(EMCState *script);
 	int o3_removeSceneAnimObject(EMCState *script);
-	int o3_disableTimer(EMCState *script);
-	int o3_enableTimer(EMCState *script);
-	int o3_setTimerCountdown(EMCState *script);
-	int o3_setVocHigh(EMCState *script);
-	int o3_getVocHigh(EMCState *script);
 	int o3_dummy(EMCState *script);
 
 	// misc

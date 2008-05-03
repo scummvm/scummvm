@@ -369,6 +369,17 @@ protected:
 	int o2_addSpecialExit(EMCState *script);
 	int o2_setMousePos(EMCState *script);
 	int o2_showMouse(EMCState *script);
+	int o2_defineRoomEntrance(EMCState *script);
+	int o2_runAnimationScript(EMCState *script);
+	int o2_setSpecialSceneScriptRunTime(EMCState *script);
+	int o2_setSpecialSceneScriptState(EMCState *script);
+	int o2_clearSpecialSceneScriptState(EMCState *script);
+	int o2_querySpecialSceneScriptState(EMCState *script);
+	int o2_disableTimer(EMCState *script);
+	int o2_enableTimer(EMCState *script);
+	int o2_setTimerCountdown(EMCState *script);
+	int o2_setVocHigh(EMCState *script);
+	int o2_getVocHigh(EMCState *script);
 };
 
 } // end of namespace Kyra

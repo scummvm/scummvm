@@ -784,9 +784,6 @@ protected:
 	int o2_fillRect(EMCState *script);
 	int o2_waitForConfirmationClick(EMCState *script);
 	int o2_encodeShape(EMCState *script);
-	int o2_defineRoomEntrance(EMCState *script);
-	int o2_runTemporaryScript(EMCState *script);
-	int o2_setSpecialSceneScriptRunTime(EMCState *script);
 	int o2_defineSceneAnim(EMCState *script);
 	int o2_updateSceneAnim(EMCState *script);
 	int o2_addToSceneAnimPosAndUpdate(EMCState *script);
@@ -815,9 +812,6 @@ protected:
 	int o2_deinitObject(EMCState *script);
 	int o2_playTimSequence(EMCState *script);
 	int o2_makeBookOrCauldronAppear(EMCState *script);
-	int o2_setSpecialSceneScriptState(EMCState *script);
-	int o2_clearSpecialSceneScriptState(EMCState *script);
-	int o2_querySpecialSceneScriptState(EMCState *script);
 	int o2_resetInputColorCode(EMCState *script);
 	int o2_setHiddenItemsEntry(EMCState *script);
 	int o2_getHiddenItemsEntry(EMCState *script);
@@ -826,9 +820,6 @@ protected:
 	int o2_customChatFinish(EMCState *script);
 	int o2_setupSceneAnimation(EMCState *script);
 	int o2_stopSceneAnimation(EMCState *script);
-	int o2_disableTimer(EMCState *script);
-	int o2_enableTimer(EMCState *script);
-	int o2_setTimerCountdown(EMCState *script);
 	int o2_processPaletteIndex(EMCState *script);
 	int o2_updateTwoSceneAnims(EMCState *script);
 	int o2_getRainbowRoomData(EMCState *script);
@@ -837,8 +828,6 @@ protected:
 	int o2_getSfxDriver(EMCState *script);
 	int o2_getVocSupport(EMCState *script);
 	int o2_getMusicDriver(EMCState *script);
-	int o2_setVocHigh(EMCState *script);
-	int o2_getVocHigh(EMCState *script);
 	int o2_zanthiaChat(EMCState *script);
 	int o2_isVoiceEnabled(EMCState *script);
 	int o2_isVoicePlaying(EMCState *script);
