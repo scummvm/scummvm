@@ -33,7 +33,11 @@ void KyraEngine_v2::initItemList(int size) {
 	delete [] _itemList;
 
 	_itemList = new Item[size];
+	assert(_itemList);
+	memset(_itemList, 0, sizeof(Item)*size);
 	_itemListSize = size;
+
+	resetItemList();
 }
 
 int KyraEngine_v2::findFreeItem() {

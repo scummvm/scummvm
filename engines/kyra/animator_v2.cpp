@@ -36,6 +36,8 @@ void KyraEngine_v2::allocAnimObjects(int actors, int anims, int items) {
 	_animObjects = new AnimObj[actors+anims+items];
 	assert(_animObjects);
 
+	memset(_animObjects, 0, sizeof(AnimObj)*(actors+anims+items));
+
 	_animActor = _animObjects;
 	_animAnims = _animObjects + actors;
 	_animItems = _animObjects + actors + anims;

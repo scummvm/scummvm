@@ -37,8 +37,6 @@ void KyraEngine_HoF::restorePage3() {
 
 void KyraEngine_HoF::clearAnimObjects() {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_HoF::clearAnimObjects()");
-	memset(_animObjects, 0, sizeof(AnimObj) * 41);
-
 	_animObjects[0].index = 0;
 	_animObjects[0].type = 0;
 	_animObjects[0].enabled = 1;
