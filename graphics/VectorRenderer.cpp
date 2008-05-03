@@ -34,7 +34,7 @@ namespace Graphics {
 inline uint32 fp_sqroot( uint32 x );
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererAA<uint16,ColorMasks<565> >;
+	return new VectorRendererSpec<uint16,ColorMasks<565> >;
 }
 
 
@@ -50,20 +50,20 @@ void vector_renderer_test( OSystem *_system ) {
 	_system->clearOverlay();
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
 
-	vr->setSurface( &_screen );
-	vr->setColor( 255, 0, 0 );
+	vr->setSurface(&_screen);
+	vr->setColor(255, 0, 0);
 	vr->fillSurface();
-	vr->setColor( 255, 255, 0 );
+	vr->setColor(255, 255, 0);
 
 	_system->showOverlay();
 
-	while( true ) { // draw!!
+	while(true) { // draw!!
 
-		vr->setColor( 255, 255, 255 );
+		vr->setColor(255, 255, 255);
 		vr->fillSurface();
-		vr->setColor( 255, 0, 0 );
-		vr->drawLine( 25, 25, 125, 300 );
-		vr->drawCircle( 250, 250, 100 );
+		vr->setColor(255, 0, 0 );
+		vr->drawLine(25, 25, 125, 300);
+		vr->drawCircle(250, 250, 100);
 
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
@@ -130,13 +130,13 @@ blendPixelPtr( PixelType *ptr, uint8 alpha ) {
 	*ptr = (PixelType)(
 		(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
 		((int)(((int)(isrc & PixelFormat::kRedMask) -
-		(int)(idst & PixelFormat::kRedMask)) * alpha) >>8))) |
+		(int)(idst & PixelFormat::kRedMask)) * alpha) >> 8))) |
 		(PixelFormat::kGreenMask & ((idst & PixelFormat::kGreenMask) +
 		((int)(((int)(isrc & PixelFormat::kGreenMask) -
-		(int)(idst & PixelFormat::kGreenMask)) * alpha) >>8))) |
+		(int)(idst & PixelFormat::kGreenMask)) * alpha) >> 8))) |
 		(PixelFormat::kBlueMask & ((idst & PixelFormat::kBlueMask) +
 		((int)(((int)(isrc & PixelFormat::kBlueMask) -
-		(int)(idst & PixelFormat::kBlueMask)) * alpha) >>8))) );
+		(int)(idst & PixelFormat::kBlueMask)) * alpha) >> 8))) );
 }
 
 
@@ -151,41 +151,41 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 
 	*ptr = (PixelType)Base::_color;
 
-	if ( dx > dy ) {
-		gradient = (uint32)(dy<<16)/(uint32)dx;
+	if (dx > dy) {
+		gradient = (uint32)(dy << 16) / (uint32)dx;
 		error_acc = 0;
 
-		while( --dx ) {
+		while(--dx) {
 			error_tmp = error_acc;
 			error_acc += gradient;
 
-			if ( error_acc <= error_tmp )
+			if (error_acc <= error_tmp)
 				ptr += pitch;
 
 			ptr += xdir;
 
-			blendPixelPtr( ptr, (error_acc >> 8) ^ 0xFF );
-			blendPixelPtr( ptr + pitch, (error_acc >> 8) & 0xFF );
+			blendPixelPtr(ptr, (error_acc >> 8) ^ 0xFF);
+			blendPixelPtr(ptr + pitch, (error_acc >> 8) & 0xFF);
 		}
 	} else {
-		gradient = (uint32)(dx<<16)/(uint32)dy;
+		gradient = (uint32)(dx << 16) / (uint32)dy;
 		error_acc = 0;
 
-		while( --dy ) {
+		while(--dy) {
 			error_tmp = error_acc;
 			error_acc += gradient;
 
-			if ( error_acc <= error_tmp )
+			if (error_acc <= error_tmp)
 				ptr += xdir;
 
 			ptr += pitch;
 
-			blendPixelPtr( ptr, (error_acc >> 8) ^ 0xFF );
-			blendPixelPtr( ptr + xdir, (error_acc >> 8) & 0xFF );
+			blendPixelPtr(ptr, (error_acc >> 8) ^ 0xFF);
+			blendPixelPtr(ptr + xdir, (error_acc >> 8) & 0xFF);
 		}
 	}
 
-	Base::putPixel( x2, y2 );
+	Base::putPixel(x2, y2);
 }
 
 template<typename PixelType, typename PixelFormat>
@@ -233,7 +233,7 @@ drawLine(int x1, int y1, int x2, int y2) {
 	}
 }
 
-inline uint32 fp_sqroot( uint32 x ) {
+inline uint32 fp_sqroot(uint32 x) {
 	register uint32 root, remHI, remLO, testDIV, count;
 
 	root = 0;
@@ -242,58 +242,88 @@ inline uint32 fp_sqroot( uint32 x ) {
 	count = 23;
 
 	do {
-		remHI = (remHI<<2) | (remLO>>30);
+		remHI = (remHI << 2) | (remLO >> 30);
 		remLO <<= 2;
 		root <<= 1;
-		testDIV = (root<<1) + 1;
+		testDIV = (root <<1 ) + 1;
 
-		if ( remHI >= testDIV ) {
+		if (remHI >= testDIV) {
 			remHI -= testDIV;
 			root++;
 		}
-	} while( count-- );
+	} while(count--);
 
 	return root;
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType,PixelFormat>::
+drawCircleAlg(int x1, int y1, int r) {
+
+#define __CIRCLE_SIM(x,y) { \
+	putPixel(x1 + (x), y1 + (y)); /* 1st quad */ \
+	putPixel(x1 + (y), y1 - (x)); \
+	putPixel(x1 - (x), y1 - (y)); /* 2nd quad */ \
+	putPixel(x1 - (y), y1 - (x)); \
+	putPixel(x1 - (y), y1 + (x)); /* 3rd quad */ \
+	putPixel(x1 - (x), y1 + (y)); \
+	putPixel(x1 + (y), y1 + (x)); /* 4th quad */ \
+	putPixel(x1 + (x), y1 - (y)); \
+}
+
+	int f = 1 - r;
+	int ddF_x = 0;
+	int ddF_y = -2 * r;
+	int x = 0;
+	int y = r;
+
+	__CIRCLE_SIM(x,y);
+
+	while(x++ < y) {
+		if(f >= 0) {
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+
+		ddF_x += 2;
+		f += ddF_x + 1;    
+	
+		__CIRCLE_SIM(x,y);
+	}
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
 drawCircleAlg(int x1, int y1, int r) {
 
-#define __CIRCLE_SIM(x,y,a) { \
-	blendPixel( x1 + (x), y1 + (y), a ); \
-	blendPixel( x1 + (x), y1 - (y), a ); \
-	blendPixel( x1 - (y), y1 + (x), a ); \
-	blendPixel( x1 + (y), y1 + (x), a ); \
-	blendPixel( x1 - (x), y1 + (y), a ); \
-	blendPixel( x1 - (x), y1 - (y), a ); \
-	blendPixel( x1 + (y), y1 - (x), a ); \
-	blendPixel( x1 - (y), y1 - (x), a ); \
+#define __WU_CIRCLE_SIM(x,y,a) { \
+	blendPixel(x1 + (x), y1 + (y), a); /* 1st quad */ \
+	blendPixel(x1 + (y), y1 - (x), a); \
+	blendPixel(x1 - (x), y1 - (y), a); /* 2nd quad */ \
+	blendPixel(x1 - (y), y1 - (x), a); \
+	blendPixel(x1 - (y), y1 + (x), a); /* 3rd quad */ \
+	blendPixel(x1 - (x), y1 + (y), a); \
+	blendPixel(x1 + (y), y1 + (x), a); /* 4th quad */ \
+	blendPixel(x1 + (x), y1 - (y), a); \
 }
-
-	// first quadrant
-/*#define __CIRCLE_SIM(x,y,a) { \
-	blendPixel( x1 + (x), y1 - (y), a ); \
-	blendPixel( x1 + (y), y1 - (x), a ); \
-}*/
-
 	int x = r;
 	int y = 0;
-	uint32 rsq = (r*r)<<16;
+	uint32 rsq = (r * r) << 16;
 	uint32 T = 0, oldT;
 	
-	__CIRCLE_SIM( x, y, 255 );
+	__WU_CIRCLE_SIM(x, y, 255);
 
-	while( x > y++ )
+	while(x > y++)
 	{
 		oldT = T;
-		T = fp_sqroot( rsq - ((y*y)<<16) ) ^ 0xFFFF;
+		T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF;
 
-		if ( T < oldT )
+		if (T < oldT)
 			x--;
 
-		__CIRCLE_SIM( x,   y, (T>>8) ^ 0xFF );
-		__CIRCLE_SIM( x-1, y, (T>>8) & 0xFF );
+		__WU_CIRCLE_SIM(x,   y, (T >> 8) ^ 0xFF);
+		__WU_CIRCLE_SIM(x-1, y, (T >> 8) & 0xFF);
 	}
 }
 

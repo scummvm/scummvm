@@ -72,7 +72,7 @@ public:
 	 * @param y Vertical (Y) coordinate for the center of the circle
 	 * @param r Radius of the circle.
 	 */
-	virtual void drawCircle( int x, int y, int r ) = 0;
+	virtual void drawCircle(int x, int y, int r) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -113,7 +113,7 @@ public:
 	 *
 	 * @param surface Pointer to a Surface object.
 	 */
-	virtual void setSurface( Surface *surface ){
+	virtual void setSurface(Surface *surface){
 		_activeSurface = surface;
 	}
 
@@ -137,7 +137,7 @@ public:
 	 * @param x Horizontal coordinate of the pixel.
 	 * @param y Vertical coordinate of the pixel.
 	 */
-	inline virtual void putPixel( int x, int y ) = 0;
+	inline virtual void putPixel(int x, int y) = 0;
 
 	/**
 	 * Blends a single pixel on the surface with the given coordinates, with
@@ -147,7 +147,7 @@ public:
 	 * @param y Vertical coordinate of the pixel.
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
-	inline virtual void blendPixel( int x, int y, uint8 alpha ) = 0;
+	inline virtual void blendPixel(int x, int y, uint8 alpha) = 0;
 
 protected:
 
@@ -209,7 +209,7 @@ public:
 	void drawLine(int x1, int x2, int y1, int y2);
 
 	void drawCircle( int x, int y, int r ) {
-		drawCircleAlg( x, y, r );
+		drawCircleAlg(x, y, r);
 	}
 
 	/**
@@ -249,8 +249,7 @@ public:
 	 * @see VectorRenderer::blendPixel()
 	 */
 	virtual inline void blendPixel( int x, int y, uint8 alpha ) {
-		if ( alpha > 0 )
-			putPixel( x, y );
+			putPixel(x, y);
 	}
 
 protected:
@@ -269,7 +268,7 @@ protected:
 	/**
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r) {}
+	virtual void drawCircleAlg(int x, int y, int r);
 
 	PixelType _color; /** Color currently being used to draw on the renderer */
 };
@@ -312,7 +311,7 @@ protected:
 	 * @param ptr Pointer to the pixel where we must draw
 	 * @param alpha Intensity of the pixel (0-255).
 	 */
-	inline void blendPixelPtr( PixelType *ptr, uint8 alpha );
+	inline void blendPixelPtr(PixelType *ptr, uint8 alpha);
 
 	/**
 	 * @see VectorRenderer::blendPixel()
@@ -321,12 +320,12 @@ protected:
 	 * handled separately.
 	 */
 	inline void blendPixel( int x, int y, uint8 alpha ) {
-		if ( alpha == 0 )
+		if (alpha == 0)
 			return;
-		else if ( alpha < 255 )
-			blendPixelPtr( (PixelType*)Base::_activeSurface->getBasePtr(x, y), alpha );
+		else if (alpha < 255)
+			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), alpha);
 		else
-			Base::putPixel( x, y );
+			Base::putPixel(x, y);
 	}
 
 	/**
