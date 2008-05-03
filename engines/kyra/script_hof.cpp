@@ -649,7 +649,7 @@ int KyraEngine_HoF::o2_restoreBackBuffer(EMCState *script) {
 	restorePage3();
 
 	if (disable)
-		_animObjects[0].enabled = oldState;
+		_animObjects[0].enabled = (oldState != 0);
 
 	return 0;
 }

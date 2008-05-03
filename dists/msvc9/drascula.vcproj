@@ -182,7 +182,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\drascula\texts.h"
+			RelativePath="..\..\engines\drascula\talk.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\texts.cpp"
 			>
 		</File>
 	</Files>
