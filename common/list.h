@@ -163,7 +163,7 @@ public:
 		newNode->_next->_prev = newNode;
 	}
 
-    template <typename iterator2>
+	template <typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
