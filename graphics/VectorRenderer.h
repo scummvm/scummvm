@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
+#include "graphics/colormasks.h"
 #include "common/system.h"
 
 namespace Graphics {
@@ -52,6 +53,8 @@ void vector_renderer_test( OSystem *_system );
 class VectorRenderer {
 
 public:
+	virtual ~VectorRenderer() {}
+
 	/**
 	 * Draws a line by considering the special cases for optimization.
 	 *
@@ -284,8 +287,8 @@ protected:
  * @see VectorRendererSpec
  */
 template<typename PixelType, typename PixelFormat>
-class VectorRendererAA : public VectorRendererSpec<PixelType,PixelFormat> {
-
+class VectorRendererAA : public VectorRendererSpec<PixelType, PixelFormat> {
+	typedef VectorRendererSpec<PixelType, PixelFormat> Base;
 protected:
 	/**
 	 * "Wu's Line Antialiasing Algorithm" as published by Xiaolin Wu, July 1991
@@ -321,9 +324,9 @@ protected:
 		if ( alpha == 0 )
 			return;
 		else if ( alpha < 255 )
-			blendPixelPtr( (PixelType*)_activeSurface->getBasePtr(x, y), alpha );
+			blendPixelPtr( (PixelType*)Base::_activeSurface->getBasePtr(x, y), alpha );
 		else
-			putPixel( x, y );
+			Base::putPixel( x, y );
 	}
 
 	/**

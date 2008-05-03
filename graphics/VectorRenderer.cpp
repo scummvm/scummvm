@@ -34,7 +34,7 @@ namespace Graphics {
 inline uint32 fp_sqroot( uint32 x );
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererAA<uint16,ColorMasks<565>>;
+	return new VectorRendererAA<uint16,ColorMasks<565> >;
 }
 
 
@@ -125,7 +125,7 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
 blendPixelPtr( PixelType *ptr, uint8 alpha ) {
 	register int idst = *ptr;
-	register int isrc = _color;
+	register int isrc = Base::_color;
 
 	*ptr = (PixelType)(
 		(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
@@ -144,12 +144,12 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType,PixelFormat>::
 drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
-	int pitch = surfacePitch();
+	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+	int pitch = Base::surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;
 	uint16 error_tmp, error_acc, gradient;
 
-	*ptr = (PixelType)_color;
+	*ptr = (PixelType)Base::_color;
 
 	if ( dx > dy ) {
 		gradient = (uint32)(dy<<16)/(uint32)dx;
@@ -185,7 +185,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 		}
 	}
 
-	putPixel( x2, y2 );
+	Base::putPixel( x2, y2 );
 }
 
 template<typename PixelType, typename PixelFormat>
