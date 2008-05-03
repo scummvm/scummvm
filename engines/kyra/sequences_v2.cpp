@@ -125,7 +125,7 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 				update();
 		}
 
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		_mainCharacter.animFrame = _desc.characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 	}
 

@@ -43,6 +43,7 @@ public:
 	struct EngineDesc {
 		// Generic shape related
 		const int itemShapeStart;
+		const uint8 *characterFrameTable;
 
 		// Scene script
 		const int firstAnimSceneScript;
@@ -156,8 +157,6 @@ protected:
 	virtual void resetCharacterAnimDim() = 0;
 
 	virtual int getScale(int x, int y) = 0;
-
-	const uint8 *_characterFrameTable;
 
 	// Scene
 	struct SceneDesc {

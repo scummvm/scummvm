@@ -40,19 +40,19 @@
 
 namespace Kyra {
 
-namespace {
-const KyraEngine_v2::EngineDesc hofEngineDesc = {
+const KyraEngine_v2::EngineDesc KyraEngine_HoF::_hofEngineDesc = {
+	// Generic shape related
 	64,
+	KyraEngine_HoF::_characterFrameTable,
 
+	// Scene script
 	8,
 
+	// Animation script specific
 	33
 };
-} // end of anonymous namespace
 
-KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
-	KyraEngine_v2::_characterFrameTable = _characterFrameTable;
-
+KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
 	_mouseSHPBuf = 0;
 	_debugger = 0;
 	_screen = 0;

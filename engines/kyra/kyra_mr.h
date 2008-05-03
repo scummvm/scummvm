@@ -62,6 +62,8 @@ public:
 	void playVQA(const char *name);
 
 protected:
+	static const EngineDesc _mrEngineDesc;
+
 	// --
 	Screen_MR *_screen;
 	SoundDigital *_soundDigital;

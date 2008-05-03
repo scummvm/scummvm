@@ -204,6 +204,8 @@ public:
 	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
 protected:
+	static const EngineDesc _hofEngineDesc;
+
 	// intro/outro
 	void seq_playSequences(int startSeq, int endSeq = -1);
 

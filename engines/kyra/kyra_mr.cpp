@@ -41,19 +41,19 @@
 
 namespace Kyra {
 
-namespace {
-const KyraEngine_v2::EngineDesc mrEngineDesc = {
+const KyraEngine_v2::EngineDesc KyraEngine_MR::_mrEngineDesc = {
+	// Generic shape related
 	248,
+	KyraEngine_MR::_characterFrameTable,
 
+	// Scene script
 	9,
 
+	// Animation script specific
 	9
 };
-} // end of anonymous namespace
 
-KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, mrEngineDesc) {
-	KyraEngine_v2::_characterFrameTable = _characterFrameTable;
-
+KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _mrEngineDesc) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1.AUD";
