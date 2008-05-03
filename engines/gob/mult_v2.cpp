@@ -533,7 +533,7 @@ void Mult_v2::playMultInit() {
 		_animArrayData = new Mult_AnimData[_objCount];
 
 		memset(_objects, 0, _objCount * sizeof(Mult_Object));
-		memset(_orderArray, 0, _objCount * sizeof(int8));
+		memset(_orderArray, 0, _objCount * sizeof(uint8));
 		memset(_renderObjs, 0, _objCount * sizeof(Mult_Object *));
 		memset(_animArrayX, 0, _objCount * sizeof(int32));
 		memset(_animArrayY, 0, _objCount * sizeof(int32));

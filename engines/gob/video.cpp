@@ -95,6 +95,9 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_splitHeight2 = 0;
 	_splitStart = 0;
 
+	_screenDeltaX = 0;
+	_screenDeltaY = 0;
+
 	_curSparse = 0;
 	_lastSparse = 0xFFFFFFFF;
 }
@@ -142,9 +145,7 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 
 	if (flags & PRIMARY_SURFACE) {
 		_vm->_global->_primaryWidth = width;
-		_vm->_global->_mouseMaxCol = width;
 		_vm->_global->_primaryHeight = height;
-		_vm->_global->_mouseMaxRow = height;
 
 		descPtr = _vm->_global->_primarySurfDesc;
 		descPtr->resize(width, height);
@@ -160,17 +161,41 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 	return descPtr;
 }
 
+void Video::clearScreen() {
+	g_system->clearScreen();
+}
+
+void Video::setSize(bool defaultTo1XScaler) {
+	_vm->_system->beginGFXTransaction();
+		_vm->_system->initSize(_vm->_width, _vm->_height);
+		_vm->initCommonGFX(defaultTo1XScaler);
+	_vm->_system->endGFXTransaction();
+}
+
 void Video::retrace(bool mouse) {
 	if (mouse)
 		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_global->_primarySurfDesc) {
-		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
-				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
-				0, 0, _vm->_width, _splitHeight1);
-		if (_splitHeight2 > 0)
-			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
-					_splitStart * _surfWidth, _surfWidth, 0,
-					_vm->_height - _splitHeight2, _vm->_width, _splitHeight2);
+		int screenOffset = _scrollOffsetY * _surfWidth + _scrollOffsetX;
+		int screenX = _screenDeltaX;
+		int screenY = _screenDeltaY;
+		int screenWidth = _vm->_width;
+		int screenHeight = _splitHeight1;
+
+		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
+				_surfWidth, screenX, screenY, screenWidth, screenHeight);
+
+		if (_splitHeight2 > 0) {
+			screenOffset = _splitStart * _surfWidth;
+			screenX = 0;
+			screenY = _vm->_height - _splitHeight2;
+			screenWidth = _vm->_width;
+			screenHeight = _splitHeight2;
+
+			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
+					_surfWidth, screenX, screenY, screenWidth, screenHeight);
+		}
+
 		g_system->updateScreen();
 	}
 }
