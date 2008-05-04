@@ -39,6 +39,7 @@ class Screen_v2;
 
 class KyraEngine_v2 : public KyraEngine {
 friend class Debugger_v2;
+friend class GUI_v2;
 public:
 	struct EngineDesc {
 		// Generic shape related

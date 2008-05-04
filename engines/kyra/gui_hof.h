@@ -23,86 +23,20 @@
  *
  */
 
-#ifndef KYRA_GUI_V2_H
-#define KYRA_GUI_V2_H
+#ifndef KYRA_GUI_HOF_H
+#define KYRA_GUI_HOF_H
 
-#include "kyra/gui.h"
-
-#define GUI_V2_BUTTON(button, a, b, c, d, e, f, h, i, j, k, l, m, n, o, p, q, r, s, t) \
-	button.nextButton = 0; \
-	button.index = a; \
-	button.unk6 = b; \
-	button.unk8 = c; \
-	button.data0Val1 = d; \
-	button.data1Val1 = e; \
-	button.data2Val1 = f; \
-	button.flags = h; \
-	button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
-	button.dimTableIndex = i; \
-	button.x = j; \
-	button.y = k; \
-	button.width = l; \
-	button.height = m; \
-	button.data0Val2 = n; \
-	button.data0Val3 = o; \
-	button.data1Val2 = p; \
-	button.data1Val3 = q; \
-	button.data2Val2 = r; \
-	button.data2Val3 = s; \
-	button.flags2 = t;
-
-#define GUI_V2_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
-	menu.x = a; \
-	menu.y = b; \
-	menu.width = c; \
-	menu.height = d; \
-	menu.bkgdColor = e; \
-	menu.color1 = f; \
-	menu.color2 = g; \
-	menu.menuNameId = h; \
-	menu.textColor = i; \
-	menu.titleX = j; \
-	menu.titleY = k; \
-	menu.highlightedItem = l; \
-	menu.numberOfItems = m; \
-	menu.scrollUpButtonX = n; \
-	menu.scrollUpButtonY = o; \
-	menu.scrollDownButtonX = p; \
-	menu.scrollDownButtonY = q
-
-#define GUI_V2_MENU_ITEM(item, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
-	item.enabled = a; \
-	item.itemId = b; \
-	item.x = c; \
-	item.y = d; \
-	item.width = e; \
-	item.height = f; \
-	item.textColor = g; \
-	item.highlightColor = h; \
-	item.titleX = i; \
-	item.bkgdColor = j; \
-	item.color1 = k; \
-	item.color2 = l; \
-	item.saveSlot = m; \
-	item.labelId = n; \
-	item.labelX = o; \
-	item.labelY = p; \
-	item.unk1F = q
+#include "kyra/gui_v2.h"
 
 namespace Kyra {
 
 class KyraEngine_HoF;
-class Screen_v2;
+class Screen_HoF;
 
-class GUI_HoF : public GUI {
+class GUI_HoF : public GUI_v2 {
 friend class KyraEngine_HoF;
 public:
 	GUI_HoF(KyraEngine_HoF *engine);
-
-	Button *addButtonToList(Button *list, Button *newButton);
-
-	void processButton(Button *button);
-	int processButtonList(Button *button, uint16 inputFlag);
 
 	int optionsButton(Button *button);
 private:
@@ -146,11 +80,7 @@ private:
 	void resetState(int item);
 
 	KyraEngine_HoF *_vm;
-	Screen_v2 *_screen;
-
-	bool _buttonListChanged;
-	Button *_backUpButtonList;
-	Button *_unknownButtonList;
+	Screen_HoF *_screen;
 
 	Menu *_currentMenu;
 	bool _isLoadMenu;

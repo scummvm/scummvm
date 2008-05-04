@@ -23,48 +23,20 @@
  *
  */
 
-#ifndef KYRA_GUI_V3_H
-#define KYRA_GUI_V3_H
+#ifndef KYRA_GUI_MR_H
+#define KYRA_GUI_MR_H
 
-#include "kyra/gui.h"
+#include "kyra/gui_v2.h"
 
 namespace Kyra {
-
-#define GUI_V3_BUTTON(button, a, b, c, d, e, f, h, i, j, k, l, m, n, o, p, q, r, s, t) \
-	button.nextButton = 0; \
-	button.index = a; \
-	button.unk6 = b; \
-	button.unk8 = c; \
-	button.data0Val1 = d; \
-	button.data1Val1 = e; \
-	button.data2Val1 = f; \
-	button.flags = h; \
-	button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
-	button.dimTableIndex = i; \
-	button.x = j; \
-	button.y = k; \
-	button.width = l; \
-	button.height = m; \
-	button.data0Val2 = n; \
-	button.data0Val3 = o; \
-	button.data1Val2 = p; \
-	button.data1Val3 = q; \
-	button.data2Val2 = r; \
-	button.data2Val3 = s; \
-	button.flags2 = t;
 
 class KyraEngine_MR;
 class Screen_MR;
 
-class GUI_MR : public GUI {
+class GUI_MR : public GUI_v2 {
 friend class KyraEngine_MR;
 public:
 	GUI_MR(KyraEngine_MR *engine);
-
-	Button *addButtonToList(Button *list, Button *newButton);
-
-	void processButton(Button *button);
-	int processButtonList(Button *button, uint16 inputFlag);
 
 	void flagButtonEnable(Button *button);
 	void flagButtonDisable(Button *button);
@@ -81,15 +53,11 @@ private:
 	Button::Callback getScrollUpButtonHandler() const { return Button::Callback(); }
 	Button::Callback getScrollDownButtonHandler() const { return Button::Callback(); }
 
-	uint8 defaultColor1() const { return 0xCF; }
-	uint8 defaultColor2() const { return 0xF8; }
+	uint8 defaultColor1() const { return 0xF0; }
+	uint8 defaultColor2() const { return 0xD0; }
 
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;
-
-	bool _buttonListChanged;
-	Button *_backUpButtonList;
-	Button *_unknownButtonList;
 };
 
 } // end of namespace Kyra
