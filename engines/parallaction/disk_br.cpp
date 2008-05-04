@@ -437,56 +437,6 @@ void buildMask2(byte* buf) {
 	}
 }
 
-class BackgroundDecoder : public Graphics::ILBMDecoder {
-
-	PaletteFxRange *_range;
-	uint32			_i;
-
-protected:
-	void readCRNG(Common::IFFChunk &chunk) {
-		_range[_i]._timer = chunk.readUint16BE();
-		_range[_i]._step = chunk.readUint16BE();
-		_range[_i]._flags = chunk.readUint16BE();
-		_range[_i]._first = chunk.readByte();
-		_range[_i]._last = chunk.readByte();
-
-		_i++;
-	}
-
-public:
-	BackgroundDecoder(Common::ReadStream &input, Graphics::Surface &surface, byte *&colors, PaletteFxRange *range) :
-		Graphics::ILBMDecoder(input, surface, colors), _range(range), _i(0) {
-	}
-
-	void decode() {
-		Common::IFFChunk *chunk;
-		while ((chunk = nextChunk()) != 0) {
-			switch (chunk->id) {
-			case ID_BMHD:
-				readBMHD(*chunk);
-				break;
-
-			case ID_CMAP:
-				readCMAP(*chunk);
-				break;
-
-			case ID_BODY:
-				readBODY(*chunk);
-				break;
-
-			case ID_CRNG:
-				readCRNG(*chunk);
-				break;
-			}
-		}
-	}
-
-	uint32	getNumRanges() {
-		return _i;
-	}
-};
-
-
 void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *name) {
 
 	char path[PATH_LEN];
@@ -498,9 +448,8 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *name) {
 		errorFileNotFound(path);
 
 	byte *pal;
-	PaletteFxRange ranges[6];
 
-	BackgroundDecoder decoder(s, info.bg, pal, ranges);
+	Graphics::ILBMDecoder decoder(s, info.bg, pal);
 	decoder.decode();
 
 	uint i;
@@ -606,8 +555,15 @@ Frames* AmigaDisk_br::loadStatic(const char* name) {
 		errorFileNotFound(path);
 	}
 
-	loadBackground(_backgroundTemp, path);
-	return new SurfaceToFrames(&_backgroundTemp.bg);
+	byte *pal = 0;
+	Graphics::Surface* surf = new Graphics::Surface;
+
+	Graphics::ILBMDecoder decoder(stream, *surf, pal);
+	decoder.decode();
+
+	free(pal);
+
+	return new SurfaceToFrames(surf);
 }
 
 Sprites* AmigaDisk_br::createSprites(const char *path) {
