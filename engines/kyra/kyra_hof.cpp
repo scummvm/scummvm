@@ -189,7 +189,7 @@ int KyraEngine_HoF::init() {
 	assert(_debugger);
 	_text = new TextDisplayer_HoF(this, _screen);
 	assert(_text);
-	_gui = new GUI_v2(this);
+	_gui = new GUI_HoF(this);
 	assert(_gui);
 	_tim = new TIMInterpreter(this, _system);
 	assert(_tim);

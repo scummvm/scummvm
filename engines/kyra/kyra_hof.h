@@ -31,7 +31,7 @@
 #include "kyra/script_tim.h"
 #include "kyra/screen_hof.h"
 #include "kyra/text_hof.h"
-#include "kyra/gui_v2.h"
+#include "kyra/gui_hof.h"
 
 #include "common/list.h"
 #include "common/func.h"
@@ -194,7 +194,7 @@ struct ActiveItemAnim {
 class KyraEngine_HoF : public KyraEngine_v2 {
 friend class Debugger_v2;
 friend class TextDisplayer_HoF;
-friend class GUI_v2;
+friend class GUI_HoF;
 public:
 	KyraEngine_HoF(OSystem *system, const GameFlags &flags);
 	~KyraEngine_HoF();
@@ -473,7 +473,7 @@ protected:
 
 	// gui
 	bool _menuDirectlyToLoad;
-	GUI_v2 *_gui;
+	GUI_HoF *_gui;
 
 	void loadButtonShapes();
 	void setupLangButtonShapes();

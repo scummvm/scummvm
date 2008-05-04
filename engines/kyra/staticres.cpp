@@ -36,8 +36,8 @@
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 #include "kyra/gui_v1.h"
-#include "kyra/gui_v2.h"
-#include "kyra/gui_v3.h"
+#include "kyra/gui_hof.h"
+#include "kyra/gui_mr.h"
 
 #include "gui/message.h"
 
@@ -1613,7 +1613,7 @@ void KyraEngine_HoF::initInventoryButtonList() {
 	assert(_inventoryButtons);
 
 	GUI_V2_BUTTON(_inventoryButtons[0], 0x1, 0x4F, 0, 1, 1, 1, 0x4487, 0, 0x00A, 0x95, 0x39, 0x1D, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[0].buttonCallback = BUTTON_FUNCTOR(GUI_v2, _gui, &GUI_v2::optionsButton);
+	_inventoryButtons[0].buttonCallback = BUTTON_FUNCTOR(GUI_HoF, _gui, &GUI_HoF::optionsButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[1], 0x2, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x104, 0x90, 0x3C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	_inventoryButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronButton);
@@ -1647,7 +1647,7 @@ void KyraEngine_HoF::initInventoryButtonList() {
 		_buttonList = _gui->addButtonToList(_buttonList, &_inventoryButtons[i]);
 }
 
-void GUI_v2::initStaticData() {
+void GUI_HoF::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 0x17, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
@@ -1665,11 +1665,11 @@ void GUI_v2::initStaticData() {
 		GUI_V2_BUTTON(_menuButtons[i], 0x10+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
 
-	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::clickLoadSlot);
-	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::clickSaveSlot);
-	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::loadMenu);
-	Button::Callback clickQuitGameFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitGame);
-	Button::Callback clickQuitOptionsFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitOptionsMenu);
+	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickLoadSlot);
+	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickSaveSlot);
+	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::loadMenu);
+	Button::Callback clickQuitGameFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::quitGame);
+	Button::Callback clickQuitOptionsFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::quitOptionsMenu);
 
 	const uint16 *menuStr = _vm->gameFlags().isTalkie ? _menuStringsTalkie : _menuStringsOther;
 
@@ -1677,17 +1677,17 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU_ITEM(_mainMenu.item[0], 1, 0x02, -1, 0x1E, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[0].callback = clickLoadMenuFunctor;
 	GUI_V2_MENU_ITEM(_mainMenu.item[1], 1, 0x03, -1, 0x2F, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::saveMenu);
+	_mainMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::saveMenu);
 	GUI_V2_MENU_ITEM(_mainMenu.item[2], 1, 0x23, -1, 0x40, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::deleteMenu);
+	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::deleteMenu);
 	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 0x04, -1, 0x51, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptionsTalkie);
+	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::gameOptionsTalkie);
 	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 0x25, -1, 0x62, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::audioOptions);
+	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::audioOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 0x05, -1, 0x73, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[5].callback = clickQuitGameFunctor;
 	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 0x06, -1, 0x90, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[6].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::resumeGame);
+	_mainMenu.item[6].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::resumeGame);
 	for (int i = 0; i < 7; ++i)
 		_mainMenu.item[i].itemId = menuStr[0 * 8 + i + 1];
 
@@ -1697,7 +1697,7 @@ void GUI_v2::initStaticData() {
 		_mainMenu.item[6].enabled = false;
 		for (int i = 4; i < 6; ++i)
 			_mainMenu.item[i].callback = _mainMenu.item[i+1].callback;
-		_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptions);
+		_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::gameOptions);
 		_mainMenu.item[6].callback = Button::Callback();
 		_mainMenu.item[5].y = 0x7F;
 	}
@@ -1705,11 +1705,11 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU(_gameOptions, -1, -1, 0x120, 0x88, 0xF8, 0xF9, 0xFA, menuStr[1 * 8], 0xFB, -1, 8, 4, 4, -1, -1, -1, -1);
 	if (_vm->gameFlags().isTalkie) {
 		GUI_V2_MENU_ITEM(_gameOptions.item[0], 1, 0, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x15, 8, 0x20, 0);
-		_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleWalkspeed);
+		_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::toggleWalkspeed);
 		GUI_V2_MENU_ITEM(_gameOptions.item[1], 1, 0, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x26, 8, 0x31, 0);
-		_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::changeLanguage);
+		_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::changeLanguage);
 		GUI_V2_MENU_ITEM(_gameOptions.item[2], 1, 0, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x16, 8, 0x42, 0);
-		_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleText);
+		_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::toggleText);
 		GUI_V2_MENU_ITEM(_gameOptions.item[3], 1, 0x10, -1, 0x6E, 0x6C, 0x0F, 0xFD, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 		_gameOptions.item[3].callback = clickQuitOptionsFunctor;
 	} else {
@@ -1740,9 +1740,9 @@ void GUI_v2::initStaticData() {
 
 	GUI_V2_MENU(_choiceMenu, -1, -1, 0x140, 0x38, 0xF8, 0xF9, 0xFA, 0, 0xFE, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V2_MENU_ITEM(_choiceMenu.item[0], 1, 0x14, 0x18, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_choiceMenu.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::choiceYes);
+	_choiceMenu.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::choiceYes);
 	GUI_V2_MENU_ITEM(_choiceMenu.item[1], 1, 0x13, 0xD8, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_choiceMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::choiceNo);
+	_choiceMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::choiceNo);
 	for (int i = 2; i <= 6; ++i)
 		_choiceMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
@@ -1757,7 +1757,7 @@ void GUI_v2::initStaticData() {
 	for (int i = 0; i <= 4; ++i)
 		_loadMenu.item[i].callback = clickLoadSlotFunctor;
 	GUI_V2_MENU_ITEM(_loadMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_loadMenu.item[5].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::cancelLoadMenu);
+	_loadMenu.item[5].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelLoadMenu);
 	_loadMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_loadMenu.item[i].itemId = menuStr[4 * 8 + i + 1];
@@ -1771,16 +1771,16 @@ void GUI_v2::initStaticData() {
 	for (int i = 0; i <= 4; ++i)
 		_saveMenu.item[i].callback = clickSaveSlotFunctor;
 	GUI_V2_MENU_ITEM(_saveMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_saveMenu.item[5].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::cancelSaveMenu);
+	_saveMenu.item[5].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelSaveMenu);
 	_saveMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_saveMenu.item[i].itemId = menuStr[5 * 8 + i + 1];
 
 	GUI_V2_MENU(_savenameMenu, -1, -1, 0x140, 0x43, 0xF8, 0xF9, 0xFA, menuStr[6 * 8], 0xFB, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V2_MENU_ITEM(_savenameMenu.item[0], 1, 0xD, 0x18, 0x2C, 0x58, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_savenameMenu.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::finishSavename);
+	_savenameMenu.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::finishSavename);
 	GUI_V2_MENU_ITEM(_savenameMenu.item[1], 1, 0xB, 0xD0, 0x2C, 0x58, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_savenameMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::cancelSavename);
+	_savenameMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelSavename);
 	for (int i = 2; i <= 6; ++i)
 		_savenameMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
@@ -1797,7 +1797,7 @@ void GUI_v2::initStaticData() {
 		_deathMenu.item[i].itemId = menuStr[7 * 8 + i + 1];
 }
 
-const uint16 GUI_v2::_menuStringsTalkie[] = {
+const uint16 GUI_HoF::_menuStringsTalkie[] = {
 	0x001, 0x002, 0x003, 0x023, 0x004, 0x025, 0x005, 0x006,	// Main Menu String IDs
 	0x025, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000,	// Options Menu String IDs
 	0x007, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000,	// Audio Menu String IDs
@@ -1808,7 +1808,7 @@ const uint16 GUI_v2::_menuStringsTalkie[] = {
 	0x00E, 0x002, 0x005, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
 };
 
-const uint16 GUI_v2::_menuStringsOther[] = {
+const uint16 GUI_HoF::_menuStringsOther[] = {
 	0x009, 0x00A, 0x00B, 0x001, 0x00C, 0x00D, 0x00E, 0x000,	// Main Menu String IDs
 	0x00F, 0x02B, 0x02C, 0x02D, 0x02E, 0x018, 0x000, 0x000,	// Options Menu String IDs
 	0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000,	// Dummy
@@ -1819,7 +1819,7 @@ const uint16 GUI_v2::_menuStringsOther[] = {
 	0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
 };
 
-const int GUI_v2::_sliderBarsPosition[] = {
+const int GUI_HoF::_sliderBarsPosition[] = {
 	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
 };
 

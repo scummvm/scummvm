@@ -80,25 +80,25 @@ void KyraEngine_HoF::setupLangButtonShapes() {
 	}
 }
 
-GUI_v2::GUI_v2(KyraEngine_HoF *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
+GUI_HoF::GUI_HoF(KyraEngine_HoF *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _unknownButtonList = 0;
 	initStaticData();
 	_currentMenu = 0;
 	_isDeathMenu = false;
 	_isSaveMenu = false;
 	_isLoadMenu = false;
-	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollUpButton);
-	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollDownButton);
-	_sliderHandlerFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::sliderHandler);
+	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::scrollUpButton);
+	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::scrollDownButton);
+	_sliderHandlerFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::sliderHandler);
 }
 
-Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
+Button *GUI_HoF::addButtonToList(Button *list, Button *newButton) {
 	list = GUI::addButtonToList(list, newButton);
 	_buttonListChanged = true;
 	return list;
 }
 
-void GUI_v2::processButton(Button *button) {
+void GUI_HoF::processButton(Button *button) {
 	if (!button)
 		return;
 
@@ -185,7 +185,7 @@ void GUI_v2::processButton(Button *button) {
 	_screen->updateScreen();
 }
 
-int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
+int GUI_HoF::processButtonList(Button *buttonList, uint16 inputFlag) {
 	static uint16 flagsModifier = 0;
 
 	if (!buttonList)
@@ -420,21 +420,21 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 	return returnValue;
 }
 
-const char *GUI_v2::getMenuTitle(const Menu &menu) {
+const char *GUI_HoF::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
 		return 0;
 
 	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, 1);
 }
 
-const char *GUI_v2::getMenuItemTitle(const MenuItem &menuItem) {
+const char *GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
 	if (!menuItem.itemId)
 		return 0;
 
 	return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
 }
 
-const char *GUI_v2::getMenuItemLabel(const MenuItem &menuItem) {
+const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
 	if (!menuItem.labelId)
 		return 0;
 
@@ -998,7 +998,7 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 
 #pragma mark -
 
-void GUI_v2::getInput() {
+void GUI_HoF::getInput() {
 	if (!_displayMenu)
 		return;
 
@@ -1013,7 +1013,7 @@ void GUI_v2::getInput() {
 	}
 }
 
-int GUI_v2::optionsButton(Button *button) {
+int GUI_HoF::optionsButton(Button *button) {
 	_restartGame = false;
 	_reloadTemporarySave = false;
 
@@ -1126,7 +1126,7 @@ int GUI_v2::optionsButton(Button *button) {
 
 #pragma mark -
 
-void GUI_v2::renewHighlight(Menu &menu) {
+void GUI_HoF::renewHighlight(Menu &menu) {
 	if (!_displayMenu)
 		return;
 
@@ -1139,7 +1139,7 @@ void GUI_v2::renewHighlight(Menu &menu) {
 	_screen->updateScreen();
 }
 
-void GUI_v2::setupPalette() {
+void GUI_HoF::setupPalette() {
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 
 	uint8 *palette = _screen->getPalette(0);
@@ -1157,20 +1157,20 @@ void GUI_v2::setupPalette() {
 		_screen->setScreenPalette(_screen->getPalette(0));
 }
 
-void GUI_v2::restorePalette() {
+void GUI_HoF::restorePalette() {
 	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
 	_screen->setScreenPalette(_screen->getPalette(0));
 }
 
-void GUI_v2::backUpPage1(uint8 *buffer) {
+void GUI_HoF::backUpPage1(uint8 *buffer) {
 	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, buffer);
 }
 
-void GUI_v2::restorePage1(const uint8 *buffer) {
+void GUI_HoF::restorePage1(const uint8 *buffer) {
 	_screen->copyBlockToPage(1, 0, 0, 320, 200, buffer);
 }
 
-void GUI_v2::resetState(int item) {
+void GUI_HoF::resetState(int item) {
 	_vm->_timer->resetNextRun();
 	_vm->setNextIdleAnimTimer();
 	_isDeathMenu = false;
@@ -1185,7 +1185,7 @@ void GUI_v2::resetState(int item) {
 	_buttonListChanged = true;
 }
 
-void GUI_v2::setupSavegameNames(Menu &menu, int num) {
+void GUI_HoF::setupSavegameNames(Menu &menu, int num) {
 	for (int i = 0; i < num; ++i) {
 		strcpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), "");
 		menu.item[i].saveSlot = -1;
@@ -1222,7 +1222,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	}
 }
 
-int GUI_v2::scrollUpButton(Button *button) {
+int GUI_HoF::scrollUpButton(Button *button) {
 	updateMenuButton(button);
 
 	if (_savegameOffset == (_isDeleteMenu ? 1 : 0))
@@ -1242,7 +1242,7 @@ int GUI_v2::scrollUpButton(Button *button) {
 	return 0;
 }
 
-int GUI_v2::scrollDownButton(Button *button) {
+int GUI_HoF::scrollDownButton(Button *button) {
 	updateMenuButton(button);
 	++_savegameOffset;
 
@@ -1264,7 +1264,7 @@ int GUI_v2::scrollDownButton(Button *button) {
 
 #pragma mark -
 
-int GUI_v2::quitGame(Button *caller) {
+int GUI_HoF::quitGame(Button *caller) {
 	updateMenuButton(caller);
 	if (choiceDialog(_vm->gameFlags().isTalkie ? 0xF : 0x17, 1)) {
 		_displayMenu = false;
@@ -1282,13 +1282,13 @@ int GUI_v2::quitGame(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::resumeGame(Button *caller) {
+int GUI_HoF::resumeGame(Button *caller) {
 	updateMenuButton(caller);
 	_displayMenu = false;
 	return 0;
 }
 
-int GUI_v2::gameOptions(Button *caller) {
+int GUI_HoF::gameOptions(Button *caller) {
 	updateMenuButton(caller);
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
@@ -1333,7 +1333,7 @@ int GUI_v2::gameOptions(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::gameOptionsTalkie(Button *caller) {
+int GUI_HoF::gameOptionsTalkie(Button *caller) {
 	updateMenuButton(caller);
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
@@ -1377,13 +1377,13 @@ int GUI_v2::gameOptionsTalkie(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::quitOptionsMenu(Button *caller) {
+int GUI_HoF::quitOptionsMenu(Button *caller) {
 	updateMenuButton(caller);
 	_isOptionsMenu = false;
 	return 0;
 }
 
-int GUI_v2::toggleWalkspeed(Button *caller) {
+int GUI_HoF::toggleWalkspeed(Button *caller) {
 	updateMenuButton(caller);
 	if (_vm->_configWalkspeed == 5)
 		_vm->_configWalkspeed = 3;
@@ -1395,7 +1395,7 @@ int GUI_v2::toggleWalkspeed(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::changeLanguage(Button *caller) {
+int GUI_HoF::changeLanguage(Button *caller) {
 	updateMenuButton(caller);
 	++_vm->_lang;
 	_vm->_lang %= 3;
@@ -1404,7 +1404,7 @@ int GUI_v2::changeLanguage(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::toggleText(Button *caller) {
+int GUI_HoF::toggleText(Button *caller) {
 	updateMenuButton(caller);
 	
 	if (_vm->textEnabled()) {
@@ -1424,7 +1424,7 @@ int GUI_v2::toggleText(Button *caller) {
 	return 0;
 }
 
-void GUI_v2::setupOptionsButtons() {
+void GUI_HoF::setupOptionsButtons() {
 	if (_vm->_configWalkspeed == 3)
 		_gameOptions.item[0].itemId = 28;
 	else
@@ -1453,7 +1453,7 @@ void GUI_v2::setupOptionsButtons() {
 	}
 }
 
-int GUI_v2::audioOptions(Button *caller) {
+int GUI_HoF::audioOptions(Button *caller) {
 	updateMenuButton(caller);
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
@@ -1504,7 +1504,7 @@ int GUI_v2::audioOptions(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::sliderHandler(Button *caller) {
+int GUI_HoF::sliderHandler(Button *caller) {
 	int button = 0;
 	if (caller->index >= 24 && caller->index <= 27)
 		button = caller->index - 24;
@@ -1599,7 +1599,7 @@ int GUI_v2::sliderHandler(Button *caller) {
 	return 0;
 }
 
-void GUI_v2::drawSliderBar(int slider, const uint8 *shape) {
+void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
 	const int menuX = _audioOptions.x;
 	const int menuY = _audioOptions.y;
 	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
@@ -1622,7 +1622,7 @@ void GUI_v2::drawSliderBar(int slider, const uint8 *shape) {
 	_screen->drawShape(0, shape, x+position, y, 0, 0);
 }
 
-int GUI_v2::loadMenu(Button *caller) {
+int GUI_HoF::loadMenu(Button *caller) {
 	updateSaveList();
 
 	if (!_vm->_menuDirectlyToLoad) {
@@ -1669,7 +1669,7 @@ int GUI_v2::loadMenu(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::clickLoadSlot(Button *caller) {
+int GUI_HoF::clickLoadSlot(Button *caller) {
 	updateMenuButton(caller);
 	
 	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
@@ -1683,14 +1683,14 @@ int GUI_v2::clickLoadSlot(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::cancelLoadMenu(Button *caller) {
+int GUI_HoF::cancelLoadMenu(Button *caller) {
 	updateMenuButton(caller);
 	_isLoadMenu = false;
 	_noLoadProcess = true;
 	return 0;
 }
 
-int GUI_v2::saveMenu(Button *caller) {
+int GUI_HoF::saveMenu(Button *caller) {
 	updateSaveList();
 
 	updateMenuButton(caller);
@@ -1731,7 +1731,7 @@ int GUI_v2::saveMenu(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::clickSaveSlot(Button *caller) {
+int GUI_HoF::clickSaveSlot(Button *caller) {
 	updateMenuButton(caller);
 
 	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
@@ -1769,7 +1769,7 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::cancelSaveMenu(Button *caller) {
+int GUI_HoF::cancelSaveMenu(Button *caller) {
 	updateMenuButton(caller);
 	_isSaveMenu = false;
 	_isDeleteMenu = false;
@@ -1777,7 +1777,7 @@ int GUI_v2::cancelSaveMenu(Button *caller) {
 	return 0;
 }
 
-int GUI_v2::deleteMenu(Button *caller) {
+int GUI_HoF::deleteMenu(Button *caller) {
 	updateSaveList();
 
 	updateMenuButton(caller);
@@ -1834,7 +1834,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 	return 0;
 }
 
-const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize) {
+const char *GUI_HoF::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize) {
 	bool running = true;
 	int curPos = strlen(buffer);
 
@@ -1885,19 +1885,19 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 	return buffer;
 }
 
-int GUI_v2::finishSavename(Button *caller) {
+int GUI_HoF::finishSavename(Button *caller) {
 	updateMenuButton(caller);
 	_finishNameInput = true;
 	return 0;
 }
 
-int GUI_v2::cancelSavename(Button *caller) {
+int GUI_HoF::cancelSavename(Button *caller) {
 	updateMenuButton(caller);
 	_cancelNameInput = true;
 	return 0;
 }
 
-bool GUI_v2::checkSavegameDescription(const char *buffer, int size) {
+bool GUI_HoF::checkSavegameDescription(const char *buffer, int size) {
 	if (!buffer || !size)
 		return false;
 	if (buffer[0] == 0)
@@ -1911,7 +1911,7 @@ bool GUI_v2::checkSavegameDescription(const char *buffer, int size) {
 	return false;
 }
 
-int GUI_v2::getCharWidth(uint8 c) {
+int GUI_HoF::getCharWidth(uint8 c) {
 	Screen::FontId old = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
 	int width = _screen->getCharWidth(c);
@@ -1920,7 +1920,7 @@ int GUI_v2::getCharWidth(uint8 c) {
 	return width;
 }
 
-void GUI_v2::checkTextfieldInput() {
+void GUI_HoF::checkTextfieldInput() {
 	Common::Event event;
 
 	bool running = true;
@@ -1963,11 +1963,11 @@ void GUI_v2::checkTextfieldInput() {
 	processButtonList(_menuButtonList, keys | 0x8000);
 }
 
-void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {
+void GUI_HoF::drawTextfieldBlock(int x, int y, uint8 c) {
 	_screen->fillRect(x+1, y+1, x+7, y+8, c);
 }
 
-bool GUI_v2::choiceDialog(int name, bool type) {
+bool GUI_HoF::choiceDialog(int name, bool type) {
 	_choiceMenu.highlightedItem = 0;
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
@@ -1991,14 +1991,14 @@ bool GUI_v2::choiceDialog(int name, bool type) {
 	return _choice;
 }
 
-int GUI_v2::choiceYes(Button *caller) {
+int GUI_HoF::choiceYes(Button *caller) {
 	updateMenuButton(caller);
 	_choice = true;
 	_isChoiceMenu = false;
 	return 0;
 }
 
-int GUI_v2::choiceNo(Button *caller) {
+int GUI_HoF::choiceNo(Button *caller) {
 	updateMenuButton(caller);
 	_choice = false;
 	_isChoiceMenu = false;

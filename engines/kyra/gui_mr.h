@@ -56,10 +56,10 @@ namespace Kyra {
 class KyraEngine_MR;
 class Screen_MR;
 
-class GUI_v3 : public GUI {
+class GUI_MR : public GUI {
 friend class KyraEngine_MR;
 public:
-	GUI_v3(KyraEngine_MR *engine);
+	GUI_MR(KyraEngine_MR *engine);
 
 	Button *addButtonToList(Button *list, Button *newButton);
 

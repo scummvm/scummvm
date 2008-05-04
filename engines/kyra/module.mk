@@ -9,8 +9,8 @@ MODULE_OBJS := \
 	detection.o \
 	gui.o \
 	gui_v1.o \
-	gui_v2.o \
-	gui_v3.o \
+	gui_hof.o \
+	gui_mr.o \
 	items_v1.o \
 	items_v2.o \
 	items_hof.o \

@@ -41,13 +41,13 @@ class MainMenu;
 class WSAMovieV2;
 class TextDisplayer_MR;
 class Debugger_v3;
-class GUI_v3;
+class GUI_MR;
 struct Button;
 
 class KyraEngine_MR : public KyraEngine_v2 {
 friend class Debugger_v3;
 friend class TextDisplayer_MR;
-friend class GUI_v3;
+friend class GUI_MR;
 public:
 	KyraEngine_MR(OSystem *system, const GameFlags &flags);
 	~KyraEngine_MR();
@@ -125,7 +125,7 @@ private:
 	void playStudioSFX(const char *str);
 
 	// gui
-	GUI_v3 *_gui;
+	GUI_MR *_gui;
 
 	Button *_mainButtonData;
 	Button *_mainButtonList;

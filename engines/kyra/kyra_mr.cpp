@@ -33,7 +33,7 @@
 #include "kyra/gui.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
-#include "kyra/gui_v3.h"
+#include "kyra/gui_mr.h"
 #include "kyra/resource.h"
 
 #include "common/system.h"
@@ -203,7 +203,7 @@ int KyraEngine_MR::init() {
 		error("_soundDigital->init() failed");
 	KyraEngine::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);
-	_gui = new GUI_v3(this);
+	_gui = new GUI_MR(this);
 	assert(_gui);
 
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");

@@ -94,10 +94,10 @@ namespace Kyra {
 class KyraEngine_HoF;
 class Screen_v2;
 
-class GUI_v2 : public GUI {
+class GUI_HoF : public GUI {
 friend class KyraEngine_HoF;
 public:
-	GUI_v2(KyraEngine_HoF *engine);
+	GUI_HoF(KyraEngine_HoF *engine);
 
 	Button *addButtonToList(Button *list, Button *newButton);
 

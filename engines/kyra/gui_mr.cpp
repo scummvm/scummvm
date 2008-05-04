@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/gui_v3.h"
+#include "kyra/gui_mr.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/text_mr.h"
 #include "kyra/wsamovie.h"
@@ -607,18 +607,18 @@ int KyraEngine_MR::buttonJesterStaff(Button *button) {
 
 #pragma mark -
 
-GUI_v3::GUI_v3(KyraEngine_MR *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
+GUI_MR::GUI_MR(KyraEngine_MR *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_backUpButtonList = _unknownButtonList = 0;
 	_buttonListChanged = false;
 }
 
-Button *GUI_v3::addButtonToList(Button *list, Button *newButton) {
+Button *GUI_MR::addButtonToList(Button *list, Button *newButton) {
 	list = GUI::addButtonToList(list, newButton);
 	_buttonListChanged = true;
 	return list;
 }
 
-void GUI_v3::processButton(Button *button) {
+void GUI_MR::processButton(Button *button) {
 	if (!button)
 		return;
 
@@ -705,7 +705,7 @@ void GUI_v3::processButton(Button *button) {
 	_screen->updateScreen();
 }
 
-int GUI_v3::processButtonList(Button *buttonList, uint16 inputFlag) {
+int GUI_MR::processButtonList(Button *buttonList, uint16 inputFlag) {
 	static uint16 flagsModifier = 0;
 
 	if (!buttonList)
@@ -940,7 +940,7 @@ int GUI_v3::processButtonList(Button *buttonList, uint16 inputFlag) {
 	return returnValue;
 }
 
-void GUI_v3::flagButtonEnable(Button *button) {
+void GUI_MR::flagButtonEnable(Button *button) {
 	if (!button)
 		return;
 
@@ -950,7 +950,7 @@ void GUI_v3::flagButtonEnable(Button *button) {
 	}
 }
 
-void GUI_v3::flagButtonDisable(Button *button) {
+void GUI_MR::flagButtonDisable(Button *button) {
 	if (!button)
 		return;
 
