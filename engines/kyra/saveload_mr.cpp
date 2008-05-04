@@ -60,7 +60,7 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 	out->write(_scoreFlagTable, sizeof(_scoreFlagTable));
 
 	out->writeUint16BE(_mainCharacter.sceneId);
-	out->writeUint16BE(_mainCharacter.dlgIndex);
+	out->writeSint16BE(_mainCharacter.dlgIndex);
 	out->writeByte(_mainCharacter.height);
 	out->writeByte(_mainCharacter.facing);
 	out->writeUint16BE(_mainCharacter.animFrame);
@@ -169,7 +169,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	in.read(_scoreFlagTable, sizeof(_scoreFlagTable));
 
 	_mainCharacter.sceneId = in.readUint16();
-	_mainCharacter.dlgIndex = in.readUint16();
+	_mainCharacter.dlgIndex = in.readSint16();
 	_mainCharacter.height = in.readByte();
 	_mainCharacter.facing = in.readByte();
 	_mainCharacter.animFrame = in.readUint16();

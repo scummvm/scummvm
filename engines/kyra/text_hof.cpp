@@ -412,7 +412,7 @@ void KyraEngine_HoF::zanthSceneStartupChat() {
 	_newSceneDlgState[tableIndex] = 1;
 }
 
-void KyraEngine_HoF::zanthRandomIdleChat() {
+void KyraEngine_HoF::randomSceneChat() {
 	int lowest = _flags.isTalkie ? 6 : 5;
 	int tableIndex = (_mainCharacter.sceneId - READ_LE_UINT16(&_ingameTalkObjIndex[lowest + _newChapterFile])) << 2;
 	if (queryGameFlag(0x164))
@@ -512,7 +512,7 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 
 		} else if (cmd == 4) {
 			csEntry = READ_LE_UINT16(_dlgBuffer + offs);
-			setNewDlgIndex(csEntry);
+			setDlgIndex(csEntry);
 			offs += 2;
 
 		} else {
@@ -677,7 +677,7 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_HoF::setNewDlgIndex(int dlgIndex) {
+void KyraEngine_HoF::setDlgIndex(int dlgIndex) {
 	if (dlgIndex == _mainCharacter.dlgIndex)
 		return;
 	memset(_newSceneDlgState, 0, 32);

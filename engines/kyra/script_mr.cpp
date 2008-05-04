@@ -217,18 +217,6 @@ int KyraEngine_MR::o3_resetInventory(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_defineItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineItem(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	int freeItem = findFreeItem();
-	if (freeItem != -1) {
-		_itemList[freeItem].id = stackPos(0);
-		_itemList[freeItem].x = stackPos(1);
-		_itemList[freeItem].y = stackPos(2);
-		_itemList[freeItem].sceneId = stackPos(3);
-	}
-	return freeItem;
-}
-
 int KyraEngine_MR::o3_removeInventoryItemInstances(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeInventoryItemInstances(%p) (%d)", (const void *)script, stackPos(0));
 	const int item = stackPos(0);
@@ -717,11 +705,6 @@ int KyraEngine_MR::o3_switchScene(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_getShapeFlag1(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getShapeFlag1(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return _screen->getShapeFlag1(stackPos(0), stackPos(1));
-}
-
 int KyraEngine_MR::o3_setMalcolmPos(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setMalcolmPos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_mainCharX = stackPos(0);
@@ -738,12 +721,6 @@ int KyraEngine_MR::o3_setMalcolmPos(EMCState *script) {
 int KyraEngine_MR::o3_stopMusic(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_stopMusic(%p) ()", (const void *)script);
 	stopMusicTrack();
-	return 0;
-}
-
-int KyraEngine_MR::o3_playWanderScoreViaMap(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -900,23 +877,6 @@ int KyraEngine_MR::o3_runDialog(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_runDialog(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	runDialog(stackPos(0), stackPos(1));
 	return 0;
-}
-
-int KyraEngine_MR::o3_malcolmRandomChat(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_malcolmRandomChat(%p) ()", (const void *)script);
-	malcolmRandomChat();
-	return 0;
-}
-
-int KyraEngine_MR::o3_setDlgIndex(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setDlgIndex(%p) (%d)", (const void *)script, stackPos(0));
-	setDlgIndex(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_MR::o3_getDlgIndex(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getDlgIndex(%p) ()", (const void *)script);
-	return _mainCharacter.dlgIndex;
 }
 
 int KyraEngine_MR::o3_setConversationState(EMCState *script) {
@@ -1167,7 +1127,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_checkForItem);
 	Opcode(o3_dummy);
 	Opcode(o3_resetInventory);
-	Opcode(o3_defineItem);
+	Opcode(o2_defineItem);
 	// 0x24
 	Opcode(o3_removeInventoryItemInstances);
 	Opcode(o3_countInventoryItemInstances);
@@ -1226,7 +1186,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x50
 	Opcode(o3_enterNewScene);
 	Opcode(o3_switchScene);
-	Opcode(o3_getShapeFlag1);
+	Opcode(o2_getShapeFlag1);
 	Opcode(o3_dummy);
 	// 0x54
 	Opcode(o3_dummy);
@@ -1234,7 +1194,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_setMalcolmPos);
 	Opcode(o3_stopMusic);
 	// 0x58
-	Opcode(o3_playWanderScoreViaMap);
+	Opcode(o2_playWanderScoreViaMap);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_getScore);
 	OpcodeUnImpl();
@@ -1271,10 +1231,10 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x74
 	Opcode(o3_runActorScript);
 	Opcode(o3_runDialog);
-	Opcode(o3_malcolmRandomChat);
-	Opcode(o3_setDlgIndex);
+	Opcode(o2_randomSceneChat);
+	Opcode(o2_setDlgIndex);
 	// 0x78
-	Opcode(o3_getDlgIndex);
+	Opcode(o2_getDlgIndex);
 	Opcode(o2_defineScene);
 	Opcode(o3_setConversationState);
 	OpcodeUnImpl();

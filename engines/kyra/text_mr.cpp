@@ -556,10 +556,10 @@ void KyraEngine_MR::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &inde
 	index2 = _cnvFile->readSint16LE();
 }
 
-void KyraEngine_MR::setDlgIndex(uint16 index) {
+void KyraEngine_MR::setDlgIndex(int index) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::setDlgIndex(%d)", index);
 	if (_mainCharacter.dlgIndex != index) {
-		Common::set_to(_newSceneDlgState, _newSceneDlgState+ARRAYSIZE(_newSceneDlgState), 0);
+		memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
 		memset(_conversationState, -1, sizeof(_conversationState));
 		_chatAltFlag = false;
 		_mainCharacter.dlgIndex = index;
@@ -746,8 +746,8 @@ void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, in
 	_chatObject= - 1;
 }
 
-void KyraEngine_MR::malcolmRandomChat() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::malcolmRandomChat()");
+void KyraEngine_MR::randomSceneChat() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::randomSceneChat()");
 	updateDlgBuffer();
 
 	int index = (_mainCharacter.sceneId - _chapterLowestScene[_currentChapter]) * 2;

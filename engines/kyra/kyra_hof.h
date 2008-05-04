@@ -605,12 +605,12 @@ protected:
 	void startDialogue(int dlgIndex);
 
 	void zanthSceneStartupChat();
-	void zanthRandomIdleChat();
+	void randomSceneChat();
 	void updateDlgBuffer();
 	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
 	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);
 	void npcChatSequence(const char *str, int objectId, int vocHigh = -1, int vocLow = -1);
-	void setNewDlgIndex(int dlgIndex);
+	void setDlgIndex(int dlgIndex);
 
 	int _npcTalkChpIndex;
 	int _npcTalkDlgIndex;
@@ -731,7 +731,6 @@ protected:
 	int o2_checkForItem(EMCState *script);
 	int o2_loadSoundFile(EMCState *script);
 	int o2_removeItemSlotFromInventory(EMCState *script);
-	int o2_defineItem(EMCState *script);
 	int o2_removeItemFromInventory(EMCState *script);
 	int o2_countItemInInventory(EMCState *script);
 	int o2_countItemsInScene(EMCState *script);
@@ -758,15 +757,13 @@ protected:
 	int o2_restoreInventoryGfx(EMCState *script);
 	int o2_setSceneAnimPos2(EMCState *script);
 	int o2_fadeScenePal(EMCState *script);
-	int o2_enterNewSceneEx(EMCState *script);
+	int o2_enterNewScene(EMCState *script);
 	int o2_switchScene(EMCState *script);
-	int o2_getShapeFlag1(EMCState *script);
 	int o2_setPathfinderFlag(EMCState *script);
 	int o2_getSceneExitToFacing(EMCState *script);
 	int o2_setLayerFlag(EMCState *script);
 	int o2_setZanthiaPos(EMCState *script);
 	int o2_loadMusicTrack(EMCState *script);
-	int o2_playWanderScoreViaMap(EMCState *script);
 	int o2_playSoundEffect(EMCState *script);
 	int o2_setSceneAnimPos(EMCState *script);
 	int o2_blockInRegion(EMCState *script);
@@ -784,9 +781,6 @@ protected:
 	int o2_addToSceneAnimPosAndUpdate(EMCState *script);
 	int o2_useItemOnMainChar(EMCState *script);
 	int o2_startDialogue(EMCState *script);
-	int o2_zanthRandomChat(EMCState *script);
-	int o2_setupDialogue(EMCState *script);
-	int o2_getDlgIndex(EMCState *script);
 	int o2_addCauldronStateTableEntry(EMCState *script);
 	int o2_setCountDown(EMCState *script);
 	int o2_getCountDown(EMCState *script);

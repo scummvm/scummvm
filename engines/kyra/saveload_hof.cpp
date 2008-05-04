@@ -73,7 +73,7 @@ void KyraEngine_HoF::saveGame(const char *fileName, const char *saveName) {
 	out->writeSint16BE(_cauldronUseCount);
 
 	out->writeUint16BE(_mainCharacter.sceneId);
-	out->writeUint16BE(_mainCharacter.dlgIndex);
+	out->writeSint16BE(_mainCharacter.dlgIndex);
 	out->writeByte(_mainCharacter.height);
 	out->writeByte(_mainCharacter.facing);
 	out->writeUint16BE(_mainCharacter.animFrame);
@@ -205,7 +205,7 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 		in.seek(6, SEEK_CUR);
 
 	_mainCharacter.sceneId = in.readUint16();
-	_mainCharacter.dlgIndex = in.readUint16();
+	_mainCharacter.dlgIndex = in.readSint16();
 	_mainCharacter.height = in.readByte();
 	_mainCharacter.facing = in.readByte();
 	_mainCharacter.animFrame = in.readUint16();

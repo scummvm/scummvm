@@ -426,21 +426,6 @@ int KyraEngine_HoF::o2_removeItemSlotFromInventory(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_defineItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineItem(%p) (%d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	int freeItem = findFreeItem();
-
-	if (freeItem >= 0) {
-		_itemList[freeItem].id = stackPos(0);
-		_itemList[freeItem].x = stackPos(1);
-		_itemList[freeItem].y = stackPos(2);
-		_itemList[freeItem].sceneId = stackPos(3);
-	}
-
-	return freeItem;
-}
-
 int KyraEngine_HoF::o2_removeItemFromInventory(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_removeItemFromInventory(%p) (%d)", (const void *)script, stackPos(0));
 	uint16 item = stackPos(0);
@@ -670,8 +655,8 @@ int KyraEngine_HoF::o2_fadeScenePal(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_enterNewSceneEx(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_enterNewSceneEx(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
+int KyraEngine_HoF::o2_enterNewScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_enterNewScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
 		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 
 	int skipNpcScript = stackPos(3);
@@ -699,11 +684,6 @@ int KyraEngine_HoF::o2_switchScene(EMCState *script) {
 	enterNewScene(stackPos(0), _mainCharacter.facing, 0, 0, 0);
 	_noScriptEnter = 1;
 	return 0;
-}
-
-int KyraEngine_HoF::o2_getShapeFlag1(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getShapeFlag1(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return _screen->getShapeFlag1(stackPos(0), stackPos(1));
 }
 
 int KyraEngine_HoF::o2_setPathfinderFlag(EMCState *script) {
@@ -752,12 +732,6 @@ int KyraEngine_HoF::o2_setZanthiaPos(EMCState *script) {
 int KyraEngine_HoF::o2_loadMusicTrack(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_loadMusicTrack(%p) (%d)", (const void *)script, stackPos(0));
 	snd_loadSoundFile(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_HoF::o2_playWanderScoreViaMap(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -998,23 +972,6 @@ int KyraEngine_HoF::o2_startDialogue(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_startDialogue(%p) (%d)", (const void *)script, stackPos(0));
 	startDialogue(stackPos(0));
 	return 0;
-}
-
-int KyraEngine_HoF::o2_zanthRandomChat(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_zanthRandomChat(%p)", (const void *)script);
-	zanthRandomIdleChat();
-	return 0;
-}
-
-int KyraEngine_HoF::o2_setupDialogue(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setupDialogue(%p) (%d)", (const void *)script, stackPos(0));
-	setNewDlgIndex(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_HoF::o2_getDlgIndex(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setNewDlgIndex(%p) (%d)", (const void *)script, stackPos(0));
-	return _mainCharacter.dlgIndex;
 }
 
 int KyraEngine_HoF::o2_addCauldronStateTableEntry(EMCState *script) {
@@ -1656,7 +1613,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_dummy);
 	Opcode(o2_dummy);
 	// 0x50
-	Opcode(o2_enterNewSceneEx);
+	Opcode(o2_enterNewScene);
 	Opcode(o2_switchScene);
 	Opcode(o2_getShapeFlag1);
 	Opcode(o2_setPathfinderFlag);
@@ -1703,8 +1660,8 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x74
 	Opcode(o2_useItemOnMainChar);
 	Opcode(o2_startDialogue);
-	Opcode(o2_zanthRandomChat);
-	Opcode(o2_setupDialogue);
+	Opcode(o2_randomSceneChat);
+	Opcode(o2_setDlgIndex);
 	// 0x78
 	Opcode(o2_getDlgIndex);
 	Opcode(o2_defineScene);

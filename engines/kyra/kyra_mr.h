@@ -405,7 +405,7 @@ private:
 	byte _newSceneDlgState[40];
 	int8 _conversationState[30][30];
 	bool _chatAltFlag;
-	void setDlgIndex(uint16 index);
+	void setDlgIndex(int index);
 	void updateDlgIndex();
 
 	Common::SeekableReadStream *_cnvFile;
@@ -434,7 +434,7 @@ private:
 	int o3d_updateAnim(EMCState *script);
 	int o3d_delay(EMCState *script);
 
-	void malcolmRandomChat();
+	void randomSceneChat();
 	void runDialog(int dlgIndex, int funcNum);
 
 	// conscience
@@ -521,7 +521,6 @@ private:
 	int o3_objectChat(EMCState *script);
 	int o3_checkForItem(EMCState *script);
 	int o3_resetInventory(EMCState *script);
-	int o3_defineItem(EMCState *script);
 	int o3_removeInventoryItemInstances(EMCState *script);
 	int o3_countInventoryItemInstances(EMCState *script);
 	int o3_npcChatSequence(EMCState *script);
@@ -544,10 +543,8 @@ private:
 	int o3_enableInventory(EMCState *script);
 	int o3_enterNewScene(EMCState *script);
 	int o3_switchScene(EMCState *script);
-	int o3_getShapeFlag1(EMCState *script);
 	int o3_setMalcolmPos(EMCState *script);
 	int o3_stopMusic(EMCState *script);
-	int o3_playWanderScoreViaMap(EMCState *script);
 	int o3_playSoundEffect(EMCState *script);
 	int o3_getScore(EMCState *script);
 	int o3_blockOutRegion(EMCState *script);
@@ -559,9 +556,6 @@ private:
 	int o3_updateSceneAnim(EMCState *script);
 	int o3_runActorScript(EMCState *script);
 	int o3_runDialog(EMCState *script);
-	int o3_malcolmRandomChat(EMCState *script);
-	int o3_setDlgIndex(EMCState *script);
-	int o3_getDlgIndex(EMCState *script);
 	int o3_setConversationState(EMCState *script);
 	int o3_getConversationState(EMCState *script);
 	int o3_changeChapter(EMCState *script);

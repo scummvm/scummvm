@@ -310,7 +310,7 @@ protected:
 	// character
 	struct Character {
 		uint16 sceneId;
-		uint16 dlgIndex;
+		int16 dlgIndex;
 		uint8 height;
 		uint8 facing;
 		uint16 animFrame;
@@ -347,6 +347,10 @@ protected:
 	EMCData _chatScriptData;
 	EMCState _chatScriptState;
 
+	virtual void setDlgIndex(int dlgIndex) = 0;
+
+	virtual void randomSceneChat() = 0;
+
 	// unknown
 	int _unk3, _unk4, _unk5;
 	bool _unkSceneScreenFlag1;
@@ -359,6 +363,7 @@ protected:
 	int o2_getCharacterScene(EMCState *script);
 	int o2_trySceneChange(EMCState *script);
 	int o2_moveCharacter(EMCState *script);
+	int o2_defineItem(EMCState *script);
 	int o2_queryGameFlag(EMCState *script);
 	int o2_resetGameFlag(EMCState *script);
 	int o2_setGameFlag(EMCState *script);
@@ -371,9 +376,14 @@ protected:
 	int o2_showMouse(EMCState *script);
 	int o2_delay(EMCState *script);
 	int o2_update(EMCState *script);
+	int o2_getShapeFlag1(EMCState *script);
+	int o2_playWanderScoreViaMap(EMCState *script);
 	int o2_getRand(EMCState *script);
 	int o2_setDeathHandler(EMCState *script);
 	int o2_waitForConfirmationClick(EMCState *script);
+	int o2_randomSceneChat(EMCState *script);
+	int o2_setDlgIndex(EMCState *script);
+	int o2_getDlgIndex(EMCState *script);
 	int o2_defineRoomEntrance(EMCState *script);
 	int o2_runAnimationScript(EMCState *script);
 	int o2_setSpecialSceneScriptRunTime(EMCState *script);

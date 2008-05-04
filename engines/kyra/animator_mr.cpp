@@ -415,7 +415,7 @@ void KyraEngine_MR::showIdleAnim() {
 		return;
 
 	if (!_nextIdleType && !talkObjectsInCurScene()) {
-		malcolmRandomChat();
+		randomSceneChat();
 	} else {
 		static const char *facingTable[] = {
 			"A", "R", "R", "FR", "FX", "FL", "L", "L"

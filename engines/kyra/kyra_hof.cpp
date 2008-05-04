@@ -129,7 +129,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 		_conversationState[i] = new int8[14];
 	_npcTalkChpIndex = _npcTalkDlgIndex = -1;
 	_mainCharacter.dlgIndex = 0;
-	setNewDlgIndex(-1);
+	setDlgIndex(-1);
 
 	_bookMaxPage = 6;
 	_bookCurPage = 0;
@@ -1470,7 +1470,7 @@ void KyraEngine_HoF::showIdleAnim() {
 	static bool scriptAnimation = false;
 	if (!scriptAnimation && _flags.isTalkie) {
 		scriptAnimation = true;
-		zanthRandomIdleChat();
+		randomSceneChat();
 	} else {
 		scriptAnimation = false;
 		if (_characterShapeFile > 8)
