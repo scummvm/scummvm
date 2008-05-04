@@ -100,7 +100,6 @@ enum kNestedSequencesDemo {
 class WSAMovieV2;
 class KyraEngine_HoF;
 class TextDisplayer_HoF;
-class Debugger_v2;
 
 struct TIM;
 
@@ -192,7 +191,7 @@ struct ActiveItemAnim {
 };
 
 class KyraEngine_HoF : public KyraEngine_v2 {
-friend class Debugger_v2;
+friend class Debugger_HoF;
 friend class TextDisplayer_HoF;
 friend class GUI_HoF;
 public:
@@ -201,6 +200,7 @@ public:
 
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
+	GUI_v2 *gui_v2() const { return _gui; }
 	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
 protected:
@@ -289,7 +289,6 @@ protected:
 
 	Screen_HoF *_screen;
 	TextDisplayer_HoF *_text;
-	Debugger_v2 *_debugger;
 	TIMInterpreter *_tim;
 
 	uint8 *_mouseSHPBuf;
@@ -332,7 +331,6 @@ protected:
 
 	int _mouseState;
 
-	int checkInput(Button *buttonList, bool mainLoop = false);
 	void handleInput(int x, int y);
 	bool handleInputUnkSub(int x, int y);
 

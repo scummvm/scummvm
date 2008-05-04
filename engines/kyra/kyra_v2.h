@@ -36,6 +36,7 @@
 namespace Kyra {
 
 class Screen_v2;
+class Debugger_v2;
 
 class KyraEngine_v2 : public KyraEngine {
 friend class Debugger_v2;
@@ -57,10 +58,12 @@ public:
 	~KyraEngine_v2();
 
 	virtual Screen_v2 *screen_v2() const = 0;
+	virtual GUI *gui_v2() const = 0;
 
 	const EngineDesc &engineDesc() const { return _desc; }
 protected:
 	EngineDesc _desc;
+	Debugger_v2 *_debugger;
 
 	// run
 	bool _runFlag;
@@ -74,10 +77,10 @@ protected:
 	MainMenu *_menu;
 
 	// Input
-	virtual int checkInput(Button *buttonList, bool mainLoop = false) = 0;
 	virtual int inputSceneChange(int x, int y, int unk1, int unk2) = 0;
 
 	void updateInput();
+	int checkInput(Button *buttonList, bool mainLoop = false);
 	void removeInputTop();
 
 	int _mouseX, _mouseY;
@@ -403,6 +406,10 @@ protected:
 	int o2_setTimerCountdown(EMCState *script);
 	int o2_setVocHigh(EMCState *script);
 	int o2_getVocHigh(EMCState *script);
+
+	// save/load specific
+	virtual void saveGame(const char *fileName, const char *saveName) = 0;
+	virtual void loadGame(const char *fileName) = 0;
 };
 
 } // end of namespace Kyra

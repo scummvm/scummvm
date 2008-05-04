@@ -54,7 +54,6 @@ const KyraEngine_v2::EngineDesc KyraEngine_HoF::_hofEngineDesc = {
 
 KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
 	_mouseSHPBuf = 0;
-	_debugger = 0;
 	_screen = 0;
 	_text = 0;
 
@@ -154,7 +153,6 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	delete _gui;
 	delete _tim;
 	_text = 0;
-	delete _debugger;
 	delete _invWsa.wsa;
 
 	if (_sequenceSoundList) {
@@ -185,7 +183,7 @@ int KyraEngine_HoF::init() {
 	KyraEngine::init();
 	initStaticResource();
 
-	_debugger = new Debugger_v2(this);
+	_debugger = new Debugger_HoF(this);
 	assert(_debugger);
 	_text = new TextDisplayer_HoF(this, _screen);
 	assert(_text);
@@ -742,68 +740,6 @@ void KyraEngine_HoF::updateMouse() {
 			_screen->showMouse();
 		}
 	}
-}
-
-int KyraEngine_HoF::checkInput(Button *buttonList, bool mainLoop) {
-	updateInput();
-
-	int keys = 0;
-
-	while (_eventList.size()) {
-		Common::Event event = *_eventList.begin();
-		bool breakLoop = false;
-
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
-					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
-				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
-
-				if (event.kbd.flags == Common::KBD_CTRL) {
-					loadGame(saveLoadSlot);
-					_eventList.clear();
-					breakLoop = true;
-				} else {
-					char savegameName[14];
-					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-					saveGame(saveLoadSlot, savegameName);
-				}
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd')
-					_debugger->attach();
-			}
-			break;
-
-		case Common::EVENT_MOUSEMOVE: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			_screen->updateScreen();
-			} break;
-
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_LBUTTONUP: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
-			breakLoop = true;
-			} break;
-
-		default:
-			break;
-		}
-
-		if (_debugger->isAttached())
-			_debugger->onFrame();
-
-		if (breakLoop)
-			break;
-
-		_eventList.erase(_eventList.begin());
-	}
-
-	return _gui->processButtonList(buttonList, keys | 0x8000);
 }
 
 void KyraEngine_HoF::delay(uint32 amount, bool updateGame, bool isMainLoop) {

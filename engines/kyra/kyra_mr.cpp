@@ -130,7 +130,6 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_invWsaFrame = -1;
 	_score = 0;
 	memset(_scoreFlagTable, 0, sizeof(_scoreFlagTable));
-	_debugger = 0;
 	_mainButtonData = 0;
 	_mainButtonList = 0;
 	_mainButtonListInitialized = false;
@@ -182,7 +181,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete _dlgBuffer;
 	delete [] _stringBuffer;
 	delete _invWsa;
-	delete _debugger;
 	delete [] _mainButtonData;
 	delete _gui;
 }
@@ -194,7 +192,7 @@ int KyraEngine_MR::init() {
 
 	KyraEngine::init();
 	
-	_debugger = new Debugger_v3(this);
+	_debugger = new Debugger_v2(this);
 	assert(_debugger);
 
 	_soundDigital = new SoundDigital(this, _mixer);
@@ -1249,69 +1247,6 @@ void KyraEngine_MR::delay(uint32 millis, bool doUpdate, bool isMainLoop) {
 }
 
 #pragma mark -
-
-int KyraEngine_MR::checkInput(Button *buttonList, bool mainLoop) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
-	updateInput();
-
-	int keys = 0;
-
-	while (_eventList.size()) {
-		Common::Event event = *_eventList.begin();
-		bool breakLoop = false;
-
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
-					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
-				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
-
-				if (event.kbd.flags == Common::KBD_CTRL) {
-					loadGame(saveLoadSlot);
-					_eventList.clear();
-					breakLoop = true;
-				} else {
-					char savegameName[14];
-					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-					saveGame(saveLoadSlot, savegameName);
-				}
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd')
-					_debugger->attach();
-			}
-			break;
-
-		case Common::EVENT_MOUSEMOVE: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			_screen->updateScreen();
-			} break;
-
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_LBUTTONUP: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
-			breakLoop = true;
-			} break;
-
-		default:
-			break;
-		}
-
-		if (_debugger->isAttached())
-			_debugger->onFrame();
-
-		if (breakLoop)
-			break;
-
-		_eventList.erase(_eventList.begin());
-	}
-
-	return _gui->processButtonList(buttonList, keys | 0x8000);
-}
 
 void KyraEngine_MR::makeCharFacingMouse() {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::makeCharFacingMouse()");

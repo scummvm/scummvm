@@ -29,6 +29,7 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_mr.h"
 #include "kyra/script.h"
+#include "kyra/gui_mr.h"
 
 #include "common/hashmap.h"
 #include "common/list.h"
@@ -40,12 +41,9 @@ class Screen_MR;
 class MainMenu;
 class WSAMovieV2;
 class TextDisplayer_MR;
-class Debugger_v3;
-class GUI_MR;
 struct Button;
 
 class KyraEngine_MR : public KyraEngine_v2 {
-friend class Debugger_v3;
 friend class TextDisplayer_MR;
 friend class GUI_MR;
 public:
@@ -54,6 +52,7 @@ public:
 
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
+	GUI_v2 *gui_v2() const { return _gui; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
 
@@ -86,9 +85,6 @@ protected:
 	void updateMouse();
 
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
-
-	// - Input
-	int checkInput(Button *buttonList, bool mainLoop = false);
 
 	// sound specific
 private:
@@ -567,7 +563,6 @@ private:
 
 	// misc
 	TextDisplayer_MR *_text;
-	Debugger_v3 *_debugger;	
 	bool _wsaPlayingVQA;
 
 	// resource specific

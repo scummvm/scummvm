@@ -25,6 +25,7 @@
 
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
+#include "kyra/debugger.h"
 
 namespace Kyra {
 
@@ -62,6 +63,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	_chatObject = -1;
 
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
+
+	_debugger = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -81,6 +84,70 @@ KyraEngine_v2::~KyraEngine_v2() {
 		delete *i;
 	_opcodesAnimation.clear();
 
+	delete _debugger;
+}
+
+int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
+	updateInput();
+
+	int keys = 0;
+
+	while (_eventList.size()) {
+		Common::Event event = *_eventList.begin();
+		bool breakLoop = false;
+
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
+					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
+				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
+
+				if (event.kbd.flags == Common::KBD_CTRL) {
+					loadGame(saveLoadSlot);
+					_eventList.clear();
+					breakLoop = true;
+				} else {
+					char savegameName[14];
+					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
+					saveGame(saveLoadSlot, savegameName);
+				}
+			} else if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == 'd')
+					_debugger->attach();
+			}
+			break;
+
+		case Common::EVENT_MOUSEMOVE: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			screen()->updateScreen();
+			} break;
+
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
+			breakLoop = true;
+			} break;
+
+		default:
+			break;
+		}
+
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
+		if (breakLoop)
+			break;
+
+		_eventList.erase(_eventList.begin());
+	}
+
+	return gui_v2()->processButtonList(buttonList, keys | 0x8000);
 }
 
 void KyraEngine_v2::updateInput() {
