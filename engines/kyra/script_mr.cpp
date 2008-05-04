@@ -101,13 +101,6 @@ int KyraEngine_MR::o3_getCharacterFrameFromFacing(EMCState *script) {
 	return _characterFrameTable[_mainCharacter.facing];
 }
 
-int KyraEngine_MR::o3_setCharacterFacingOverwrite(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setCharacterFacingOverwrite(%p) (%d)", (const void *)script, stackPos(0));
-	_mainCharacter.facing = stackPos(0);
-	_overwriteSceneFacing = true;
-	return 0;
-}
-
 int KyraEngine_MR::o3_setCharacterFacing(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setCharacterFacing(%p) (%d)", (const void *)script, stackPos(0));
 	_mainCharacter.facing = stackPos(0);
@@ -204,11 +197,6 @@ int KyraEngine_MR::o3_objectChat(EMCState *script) {
 		playStudioSFX(str);
 	}
 	return 0;
-}
-
-int KyraEngine_MR::o3_checkForItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_checkForItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
 }
 
 int KyraEngine_MR::o3_resetInventory(EMCState *script) {
@@ -977,16 +965,6 @@ int KyraEngine_MR::o3_dialogEndScript(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_setHiddenItemsEntry(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return (_hiddenItems[stackPos(0)] = (uint16)stackPos(1));
-}
-
-int KyraEngine_MR::o3_getHiddenItemsEntry(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getHiddenItemsEntry(%p) (%d)", (const void *)script, stackPos(0));
-	return (int16)_hiddenItems[stackPos(0)];
-}
-
 int KyraEngine_MR::o3_customChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_customChat(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int id = stackPos(0);
@@ -1099,7 +1077,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_getCharacterFrameFromFacing);
 	// 0x0c
-	Opcode(o3_setCharacterFacingOverwrite);
+	Opcode(o2_setCharacterFacingOverwrite);
 	Opcode(o2_trySceneChange);
 	Opcode(o2_moveCharacter);
 	Opcode(o3_setCharacterFacing);
@@ -1124,7 +1102,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_addItemToCurScene);
 	Opcode(o3_objectChat);
 	// 0x20
-	Opcode(o3_checkForItem);
+	Opcode(o2_checkForItem);
 	Opcode(o3_dummy);
 	Opcode(o3_resetInventory);
 	Opcode(o2_defineItem);
@@ -1267,9 +1245,9 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o2_clearSpecialSceneScriptState);
 	Opcode(o2_querySpecialSceneScriptState);
 	Opcode(o3_dummy);
-	Opcode(o3_setHiddenItemsEntry);
+	Opcode(o2_setHiddenItemsEntry);
 	// 0x94
-	Opcode(o3_getHiddenItemsEntry);
+	Opcode(o2_getHiddenItemsEntry);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	OpcodeUnImpl();

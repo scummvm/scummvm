@@ -436,7 +436,6 @@ protected:
 	void setMouseCursor(uint16 item);
 
 	uint8 _itemHtDat[176];
-	uint16 _hiddenItems[20];
 
 	int checkItemCollision(int x, int y);
 	void updateWaterFlasks();
@@ -728,7 +727,6 @@ protected:
 	int o2_addItemToInventory(EMCState *script);
 	int o2_drawShape(EMCState *script);	
 	int o2_addItemToCurScene(EMCState *script);
-	int o2_checkForItem(EMCState *script);
 	int o2_loadSoundFile(EMCState *script);
 	int o2_removeSlotFromInventory(EMCState *script);
 	int o2_removeItemFromInventory(EMCState *script);
@@ -801,8 +799,6 @@ protected:
 	int o2_playTimSequence(EMCState *script);
 	int o2_makeBookOrCauldronAppear(EMCState *script);
 	int o2_resetInputColorCode(EMCState *script);
-	int o2_setHiddenItemsEntry(EMCState *script);
-	int o2_getHiddenItemsEntry(EMCState *script);
 	int o2_mushroomEffect(EMCState *script);
 	int o2_customChat(EMCState *script);
 	int o2_customChatFinish(EMCState *script);

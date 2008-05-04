@@ -250,7 +250,6 @@ private:
 	// items
 	int8 *_itemBuffer1;
 	int8 *_itemBuffer2;
-	uint16 _hiddenItems[100];
 
 	static const uint8 _trashItemList[];
 	void removeTrashItems();
@@ -508,7 +507,6 @@ private:
 	int o3_refreshCharacter(EMCState *script);
 	int o3_getMalcolmsMood(EMCState *script);
 	int o3_getCharacterFrameFromFacing(EMCState *script);
-	int o3_setCharacterFacingOverwrite(EMCState *script);
 	int o3_setCharacterFacing(EMCState *script);
 	int o3_showSceneFileMessage(EMCState *script);
 	int o3_setCharacterAnimFrameFromFacing(EMCState *script);
@@ -519,7 +517,6 @@ private:
 	int o3_addItemToInventory(EMCState *script);
 	int o3_addItemToCurScene(EMCState *script);
 	int o3_objectChat(EMCState *script);
-	int o3_checkForItem(EMCState *script);
 	int o3_resetInventory(EMCState *script);
 	int o3_removeInventoryItemInstances(EMCState *script);
 	int o3_countInventoryItemInstances(EMCState *script);
@@ -562,8 +559,6 @@ private:
 	int o3_countItemInstances(EMCState *script);
 	int o3_dialogStartScript(EMCState *script);
 	int o3_dialogEndScript(EMCState *script);
-	int o3_setHiddenItemsEntry(EMCState *script);
-	int o3_getHiddenItemsEntry(EMCState *script);
 	int o3_customChat(EMCState *script);
 	int o3_customChatFinish(EMCState *script);
 	int o3_setupSceneAnimObject(EMCState *script);

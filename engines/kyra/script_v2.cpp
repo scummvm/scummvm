@@ -51,6 +51,13 @@ int KyraEngine_v2::o2_getCharacterScene(EMCState *script) {
 	return _mainCharacter.sceneId;
 }
 
+int KyraEngine_v2::o2_setCharacterFacingOverwrite(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setCharacterFacingOverwrite(%p) (%d)", (const void *)script, stackPos(0));
+	_mainCharacter.facing = stackPos(0);
+	_overwriteSceneFacing = true;
+	return 0;
+}
+
 int KyraEngine_v2::o2_trySceneChange(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -74,6 +81,11 @@ int KyraEngine_v2::o2_moveCharacter(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_moveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	moveCharacter(stackPos(0), stackPos(1), stackPos(2));
 	return 0;
+}
+
+int KyraEngine_v2::o2_checkForItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_checkForItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
 }
 
 int KyraEngine_v2::o2_defineItem(EMCState *script) {
@@ -337,6 +349,16 @@ int KyraEngine_v2::o2_clearSpecialSceneScriptState(EMCState *script) {
 int KyraEngine_v2::o2_querySpecialSceneScriptState(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
 	return _specialSceneScriptState[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_setHiddenItemsEntry(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return (_hiddenItems[stackPos(0)] = stackPos(1));
+}
+
+int KyraEngine_v2::o2_getHiddenItemsEntry(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getHiddenItemsEntry(%p) (%d)", (const void *)script, stackPos(0));
+	return (int16)_hiddenItems[stackPos(0)];
 }
 
 int KyraEngine_v2::o2_disableTimer(EMCState *script) {

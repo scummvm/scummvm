@@ -372,7 +372,6 @@ void KyraEngine_HoF::startup() {
 	clearCauldronTable();
 	memset(_inputColorCode, -1, sizeof(_inputColorCode));
 	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
-	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 	for (int i = 0; i < 23; ++i)
 		resetCauldronStateTable(i);
 

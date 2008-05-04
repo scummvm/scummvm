@@ -107,13 +107,6 @@ int KyraEngine_HoF::o2_setCharacterAnimFrame(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_setCharacterFacing(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setCharacterFacing(%p) (%d)", (const void *)script, stackPos(0));
-	_mainCharacter.facing = stackPos(0);
-	_overwriteSceneFacing = 1;
-	return 0;
-}
-
 int KyraEngine_HoF::o2_customCharacterChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_customCharacterChat(%p) ('%s', %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	playVoice(_vocHigh, stackPos(4));
@@ -406,11 +399,6 @@ int KyraEngine_HoF::o2_addItemToCurScene(EMCState *script) {
 		refreshAnimObjectsIfNeed();
 	}
 	return 0;
-}
-
-int KyraEngine_HoF::o2_checkForItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_checkForItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
 }
 
 int KyraEngine_HoF::o2_loadSoundFile(EMCState *script) {
@@ -1151,16 +1139,6 @@ int KyraEngine_HoF::o2_resetInputColorCode(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_setHiddenItemsEntry(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return (_hiddenItems[stackPos(0)] = stackPos(1));
-}
-
-int KyraEngine_HoF::o2_getHiddenItemsEntry(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getHiddenItemsEntry(%p) (%d)", (const void *)script, stackPos(0));
-	return _hiddenItems[stackPos(0)];
-}
-
 int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_mushroomEffect(%p)", (const void *)script);
 	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
@@ -1527,7 +1505,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(o2_setCharacterAnimFrame);
 	// 0x0c
-	Opcode(o2_setCharacterFacing);
+	Opcode(o2_setCharacterFacingOverwrite);
 	Opcode(o2_trySceneChange);
 	Opcode(o2_moveCharacter);
 	Opcode(o2_customCharacterChat);

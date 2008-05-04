@@ -287,6 +287,8 @@ protected:
 
 	void initItemList(int size);
 
+	uint16 _hiddenItems[100];
+
 	Item *_itemList;
 	int _itemListSize;
 
@@ -361,8 +363,10 @@ protected:
 	int o2_getCharacterY(EMCState *script);
 	int o2_getCharacterFacing(EMCState *script);
 	int o2_getCharacterScene(EMCState *script);
+	int o2_setCharacterFacingOverwrite(EMCState *script);
 	int o2_trySceneChange(EMCState *script);
 	int o2_moveCharacter(EMCState *script);
+	int o2_checkForItem(EMCState *script);
 	int o2_defineItem(EMCState *script);
 	int o2_queryGameFlag(EMCState *script);
 	int o2_resetGameFlag(EMCState *script);
@@ -391,6 +395,8 @@ protected:
 	int o2_setSpecialSceneScriptState(EMCState *script);
 	int o2_clearSpecialSceneScriptState(EMCState *script);
 	int o2_querySpecialSceneScriptState(EMCState *script);
+	int o2_setHiddenItemsEntry(EMCState *script);
+	int o2_getHiddenItemsEntry(EMCState *script);
 	int o2_disableTimer(EMCState *script);
 	int o2_enableTimer(EMCState *script);
 	int o2_setTimerCountdown(EMCState *script);

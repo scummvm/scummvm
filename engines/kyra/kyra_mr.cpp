@@ -614,7 +614,6 @@ void KyraEngine_MR::startup() {
 	}
 
 	musicUpdate(0);
-	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 
 	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
 	memset(_conversationState, -1, sizeof(_conversationState));
