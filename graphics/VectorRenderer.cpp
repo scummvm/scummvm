@@ -34,7 +34,7 @@ namespace Graphics {
 inline uint32 fp_sqroot(uint32 x);
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererSpec<uint16, ColorMasks<565> >;
+	return new VectorRendererAA<uint16, ColorMasks<565> >;
 }
 
 
@@ -58,13 +58,12 @@ void vector_renderer_test(OSystem *_system) {
 	_system->showOverlay();
 
 	while (true) { // draw!!
-
 		vr->setColor(255, 255, 255);
 		vr->fillSurface();
 		vr->setColor(255, 0, 0 );
 		vr->drawLine(25, 25, 125, 300);
 		vr->drawCircle(250, 250, 100);
-		vr->drawSquare(150, 150, 100, 100, false);
+		vr->drawSquare(150, 25, 100, 100, true);
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
 		_system->delayMillis(100);
@@ -167,6 +166,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 	int pitch = Base::surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;
 	uint16 error_tmp, error_acc, gradient;
+	uint8 alpha;
 
 	*ptr = (PixelType)Base::_color;
 
@@ -182,9 +182,10 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 				ptr += pitch;
 
 			ptr += xdir;
+			alpha = (error_acc >> 8);
 
-			blendPixelPtr(ptr, (error_acc >> 8) ^ 0xFF);
-			blendPixelPtr(ptr + pitch, (error_acc >> 8) & 0xFF);
+			blendPixelPtr(ptr, ~alpha);
+			blendPixelPtr(ptr + pitch, alpha);
 		}
 	} else {
 		gradient = (uint32)(dx << 16) / (uint32)dy;
@@ -198,9 +199,10 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 				ptr += xdir;
 
 			ptr += pitch;
+			alpha = (error_acc >> 8);
 
-			blendPixelPtr(ptr, (error_acc >> 8) ^ 0xFF);
-			blendPixelPtr(ptr + xdir, (error_acc >> 8) & 0xFF);
+			blendPixelPtr(ptr, ~alpha);
+			blendPixelPtr(ptr + xdir, alpha);
 		}
 	}
 
@@ -264,7 +266,7 @@ inline uint32 fp_sqroot(uint32 x) {
 		remHI = (remHI << 2) | (remLO >> 30);
 		remLO <<= 2;
 		root <<= 1;
-		testDIV = (root <<1 ) + 1;
+		testDIV = (root << 1 ) + 1;
 
 		if (remHI >= testDIV) {
 			remHI -= testDIV;
@@ -330,6 +332,7 @@ drawCircleAlg(int x1, int y1, int r) {
 	int y = 0;
 	uint32 rsq = (r * r) << 16;
 	uint32 T = 0, oldT;
+	uint8 a1, a2;
 	
 	__WU_CIRCLE_SIM(x, y, 255);
 
@@ -341,8 +344,11 @@ drawCircleAlg(int x1, int y1, int r) {
 		if (T < oldT)
 			x--;
 
-		__WU_CIRCLE_SIM(x,   y, (T >> 8) ^ 0xFF);
-		__WU_CIRCLE_SIM(x-1, y, (T >> 8) & 0xFF);
+		a2 = (T >> 8);
+		a1 = ~a2;
+
+		__WU_CIRCLE_SIM(x,   y, a1);
+		__WU_CIRCLE_SIM(x-1, y, a2);
 	}
 }
 
