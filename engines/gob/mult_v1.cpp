@@ -215,6 +215,8 @@ void Mult_v1::freeMultKeys() {
 	delete[] _multData->sndKeys;
 
 	if (_animDataAllocated) {
+		clearObjectVideos();
+
 		delete[] _objects;
 		delete[] _renderData;
 		delete[] _animArrayX;

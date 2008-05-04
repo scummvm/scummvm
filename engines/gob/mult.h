@@ -245,6 +245,8 @@ public:
 	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			char handleMouse);
 
+	void clearObjectVideos();
+
 	virtual void loadMult(int16 resId) = 0;
 	virtual void freeMultKeys() = 0;
 	virtual bool hasMultData(uint16 multIndex) = 0;

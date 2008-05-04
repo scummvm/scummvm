@@ -36,6 +36,7 @@
 #include "gob/scenery.h"
 #include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -120,6 +121,8 @@ void Mult::freeAll(void) {
 }
 
 void Mult::freeMult() {
+	clearObjectVideos();
+
 	delete[] _objects;
 	delete[] _renderData;
 	delete[] _renderObjs;
@@ -198,6 +201,8 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 	if (!stopNoClear) {
 		if (_animDataAllocated) {
+			clearObjectVideos();
+
 			delete[] _objects;
 			delete[] _renderData;
 			delete[] _renderObjs;
@@ -422,6 +427,12 @@ void Mult::doSoundAnim(bool &stop, int16 frame) {
 				_vm->_snd->stopSound(sndKey->fadeLength);
 		}
 	}
+}
+
+void Mult::clearObjectVideos() {
+	for (int i = 0; i < _objCount; i++)
+		if (_objects[i].videoSlot > 0)
+			_vm->_vidPlayer->slotClose(_objects[i].videoSlot - 1);
 }
 
 } // End of namespace Gob

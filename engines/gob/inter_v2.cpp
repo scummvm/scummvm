@@ -880,6 +880,9 @@ void Inter_v2::o2_initMult() {
 	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
 		warning("Initializing new objects without having "
 				"cleaned up the old ones at first");
+
+		_vm->_mult->clearObjectVideos();
+
 		delete[] _vm->_mult->_objects;
 		delete[] _vm->_mult->_renderObjs;
 		delete[] _vm->_mult->_orderArray;
