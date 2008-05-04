@@ -209,4 +209,47 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 	return fillTokens(line);
 }
 
+
+void Parser::reset() {
+	_currentOpcodes = 0;
+	_currentStatements = 0;
+	_script = 0;
+}
+
+void Parser::pushTables(OpcodeSet *opcodes, Table *statements) {
+	_opcodes.push(_currentOpcodes);
+	_statements.push(_currentStatements);
+
+	_currentOpcodes = opcodes;
+	_currentStatements = statements;
+}
+
+void Parser::popTables() {
+	assert(_opcodes.size() > 0);
+
+	_currentOpcodes = _opcodes.pop();
+	_currentStatements = _statements.pop();
+}
+
+void Parser::parseStatement() {
+	assert(_currentOpcodes != 0);
+
+	_script->readLineToken(true);
+	_lookup = _currentStatements->lookup(_tokens[0]);
+
+	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
+
+	(*(*_currentOpcodes)[_lookup])();
+}
+
+void Parser::bind(Script *script) {
+	reset();
+	_script = script;
+}
+
+void Parser::unbind() {
+	reset();
+}
+
+
 } // namespace Parallaction

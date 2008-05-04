@@ -89,6 +89,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 Parallaction::~Parallaction() {
 	delete _debugger;
 
+	delete _locationParser;
 	delete _globalTable;
 
 	delete _callableNames;
@@ -587,35 +588,6 @@ void Parallaction::resumeJobs() {
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
 }
-
-
-void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {
-	_opcodes.push(_currentOpcodes);
-	_statements.push(_currentStatements);
-
-	_currentOpcodes = opcodes;
-	_currentStatements = statements;
-}
-
-void Parallaction::popParserTables() {
-	assert(_opcodes.size() > 0);
-
-	_currentOpcodes = _opcodes.pop();
-	_currentStatements = _statements.pop();
-}
-
-void Parallaction::parseStatement() {
-	assert(_currentOpcodes != 0);
-
-	_lookup = _currentStatements->lookup(_tokens[0]);
-
-	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
-
-	(*(*_currentOpcodes)[_lookup])();
-}
-
-
-
 
 AnimationPtr Parallaction::findAnimation(const char *name) {
 

@@ -237,35 +237,6 @@ public:
 
 
 
-
-class Opcode {
-
-public:
-	virtual void operator()() const = 0;
-	virtual ~Opcode() { }
-};
-
-template <class T>
-class OpcodeImpl : public Opcode {
-
-	typedef void (T::*Fn)();
-
-	T*	_instance;
-	Fn	_fn;
-
-public:
-	OpcodeImpl(T* instance, const Fn &fn) : _instance(instance), _fn(fn) { }
-
-	void operator()() const {
-		(_instance->*_fn)();
-	}
-
-};
-
-typedef Common::Array<const Opcode*>	OpcodeSet;
-
-
-
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
 #define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
 #define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
@@ -305,15 +276,6 @@ public:
 
 	void updateGameInput();
 	void updateCommentInput();
-
-	uint	_lookup;
-	Common::Stack<OpcodeSet*>	_opcodes;
-	Common::Stack<Table*>		_statements;
-	OpcodeSet	*_currentOpcodes;
-	Table		*_currentStatements;
-	void	pushParserTables(OpcodeSet *opcodes, Table* statements);
-	void	popParserTables();
-	void	parseStatement();
 
 	OpcodeSet	_commandOpcodes;
 
@@ -363,6 +325,8 @@ public:
 	Table		*_zoneFlagNames;
 	Table		*_callableNames;
 	Table		*_localFlagNames;
+
+	Parser		*_locationParser;
 
 public:
 	int getGameType() const;

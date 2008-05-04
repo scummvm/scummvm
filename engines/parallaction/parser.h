@@ -27,6 +27,7 @@
 #define PARALLACTION_PARSER_H
 
 #include "common/stream.h"
+#include "parallaction/objects.h"
 
 namespace Parallaction {
 
@@ -55,6 +56,63 @@ public:
 
 	uint	getLine() { return _line; }
 };
+
+
+
+class Opcode {
+
+public:
+	virtual void operator()() const = 0;
+	virtual ~Opcode() { }
+};
+
+template <class T>
+class OpcodeImpl : public Opcode {
+
+	typedef void (T::*Fn)();
+
+	T*	_instance;
+	Fn	_fn;
+
+public:
+	OpcodeImpl(T* instance, const Fn &fn) : _instance(instance), _fn(fn) { }
+
+	void operator()() const {
+		(_instance->*_fn)();
+	}
+
+};
+
+typedef Common::Array<const Opcode*>	OpcodeSet;
+
+
+class Parser {
+
+public:
+	Parser() { reset(); }
+	~Parser() {}
+
+	uint	_lookup;
+
+	Common::Stack<OpcodeSet*>	_opcodes;
+	Common::Stack<Table*>		_statements;
+
+	OpcodeSet	*_currentOpcodes;
+	Table		*_currentStatements;
+
+	void	bind(Script *script);
+	void	unbind();
+	void	pushTables(OpcodeSet *opcodes, Table* statements);
+	void	popTables();
+	void	parseStatement();
+
+protected:
+	void	reset();
+
+	Script	*_script;
+};
+
+
 
 
 
