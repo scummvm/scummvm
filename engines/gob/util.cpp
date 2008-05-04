@@ -132,7 +132,10 @@ void Util::processInput(bool scroll) {
 		x = CLIP(x, _vm->_global->_mouseMinX, _vm->_global->_mouseMaxX);
 		y = CLIP(y, _vm->_global->_mouseMinY, _vm->_global->_mouseMaxY);
 
-		_vm->_util->setMousePos(x - _vm->_video->_screenDeltaX, y - _vm->_video->_screenDeltaY);
+		x -= _vm->_video->_screenDeltaX;
+		y -= _vm->_video->_screenDeltaY;
+
+		_vm->_util->setMousePos(x, y);
 		_vm->_game->evaluateScroll(x, y);
 	}
 }

@@ -311,7 +311,8 @@ void Game::evaluateScroll(int16 x, int16 y) {
 	if (_preventScroll || !_scrollHandleMouse || (_menuLevel > 0))
 		return;
 
-	if (_noScroll || (_vm->_global->_videoMode != 0x14))
+	if (_noScroll ||
+	   ((_vm->_global->_videoMode != 0x14) && (_vm->_global->_videoMode != 0x18)))
 		return;
 
 	if ((x == 0) && (_vm->_draw->_scrollOffsetX > 0)) {
