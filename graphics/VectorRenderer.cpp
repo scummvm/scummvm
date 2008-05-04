@@ -62,7 +62,7 @@ void vector_renderer_test(OSystem *_system) {
 		vr->fillSurface();
 		vr->setColor(255, 0, 0 );
 		vr->drawLine(25, 25, 125, 300);
-		vr->drawCircle(250, 250, 100);
+		vr->drawCircle(250, 250, 10);
 		vr->drawSquare(150, 25, 100, 100, true);
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
@@ -317,38 +317,64 @@ drawCircleAlg(int x1, int y1, int r) {
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
 drawCircleAlg(int x1, int y1, int r) {
-
-#define __WU_CIRCLE_SIM(x,y,a) { \
-	blendPixel(x1 + (x), y1 + (y), a); /* 1st quad */ \
-	blendPixel(x1 + (y), y1 - (x), a); \
-	blendPixel(x1 - (x), y1 - (y), a); /* 2nd quad */ \
-	blendPixel(x1 - (y), y1 - (x), a); \
-	blendPixel(x1 - (y), y1 + (x), a); /* 3rd quad */ \
-	blendPixel(x1 - (x), y1 + (y), a); \
-	blendPixel(x1 + (y), y1 + (x), a); /* 4th quad */ \
-	blendPixel(x1 + (x), y1 - (y), a); \
-}
 	int x = r;
 	int y = 0;
+	int p = surfacePitch(), px = 0, py = 0;
 	uint32 rsq = (r * r) << 16;
 	uint32 T = 0, oldT;
 	uint8 a1, a2;
+	bool fill = false;
+
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	px = p*x;
+	py = p*y;
+
+	*(ptr + x) = (PixelType)_color;
+	*(ptr - x) = (PixelType)_color;
+	*(ptr + px) = (PixelType)_color;
+	*(ptr - px) = (PixelType)_color;
 	
-	__WU_CIRCLE_SIM(x, y, 255);
+	if (fill) Common::set_to( ptr - x, ptr + x, _color );
 
 	while (x > y++)
 	{
 		oldT = T;
 		T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF;
 
-		if (T < oldT)
+		py += p;
+
+		if (T < oldT) {
 			x--;
+			px -= p;
+		}
 
 		a2 = (T >> 8);
 		a1 = ~a2;
 
-		__WU_CIRCLE_SIM(x,   y, a1);
-		__WU_CIRCLE_SIM(x-1, y, a2);
+		if (fill) {
+			Common::set_to( ptr - x + py, ptr + x + py, _color );
+			Common::set_to( ptr - x - py, ptr + x - py, _color );
+			Common::set_to( ptr - y + px, ptr + y + px, _color );
+			Common::set_to( ptr - y - px, ptr + y - px, _color );
+		} else {
+			blendPixelPtr(ptr + x - 1 + py, a2);
+			blendPixelPtr(ptr + y - (px-p), a2);
+			blendPixelPtr(ptr - x + 1 - py, a2);
+			blendPixelPtr(ptr - y - (px-p), a2);
+			blendPixelPtr(ptr - y + (px-p), a2);
+			blendPixelPtr(ptr - x + 1 + py, a2);
+			blendPixelPtr(ptr + y + (px-p), a2);
+			blendPixelPtr(ptr + x - 1 - py, a2);
+		}
+
+		blendPixelPtr(ptr + x + py, a1);
+		blendPixelPtr(ptr + y - px, a1);
+		blendPixelPtr(ptr - x - py, a1); 
+		blendPixelPtr(ptr - y - px, a1);
+		blendPixelPtr(ptr - y + px, a1);
+		blendPixelPtr(ptr - x + py, a1);
+		blendPixelPtr(ptr + y + px, a1);
+		blendPixelPtr(ptr + x - py, a1);
 	}
 }
 
