@@ -141,6 +141,18 @@
 			RelativePath="..\..\engines\kyra\gui.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_hof.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\gui_hof.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\gui_mr.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\gui_mr.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui_v1.cpp">
 		</File>
 		<File
@@ -151,12 +163,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\gui_v2.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\gui_v3.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\gui_v3.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\items_hof.cpp">
@@ -301,6 +307,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sequences_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\sequences_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sound.cpp">
