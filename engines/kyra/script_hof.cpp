@@ -420,9 +420,9 @@ int KyraEngine_HoF::o2_loadSoundFile(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_removeItemSlotFromInventory(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_removeItemSlotFromInventory(%p) (%d)", (const void *)script, stackPos(0));
-	removeItemFromInventory(stackPos(0));
+int KyraEngine_HoF::o2_removeSlotFromInventory(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_removeSlotFromInventory(%p) (%d)", (const void *)script, stackPos(0));
+	removeSlotFromInventory(stackPos(0));
 	return 0;
 }
 
@@ -431,7 +431,7 @@ int KyraEngine_HoF::o2_removeItemFromInventory(EMCState *script) {
 	uint16 item = stackPos(0);
 	int slot = -1;
 	while ((slot = getInventoryItemSlot(item)) != -1)
-		removeItemFromInventory(slot);
+		removeSlotFromInventory(slot);
 	return 0;
 }
 
@@ -680,9 +680,9 @@ int KyraEngine_HoF::o2_switchScene(EMCState *script) {
 	setGameFlag(0x1EF);
 	_mainCharX = _mainCharacter.x1;
 	_mainCharY = _mainCharacter.y1;
-	_noScriptEnter = 0;
+	_noScriptEnter = false;
 	enterNewScene(stackPos(0), _mainCharacter.facing, 0, 0, 0);
-	_noScriptEnter = 1;
+	_noScriptEnter = true;
 	return 0;
 }
 
@@ -1012,8 +1012,8 @@ int KyraEngine_HoF::o2_objectChat(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_chapterChange(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_chapterChange(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_HoF::o2_changeChapter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_changeChapter(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int chapter = stackPos(0);
 	const int scene = stackPos(1);
 
@@ -1555,7 +1555,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x20
 	Opcode(o2_checkForItem);
 	Opcode(o2_loadSoundFile);
-	Opcode(o2_removeItemSlotFromInventory);
+	Opcode(o2_removeSlotFromInventory);
 	Opcode(o2_defineItem);
 	// 0x24
 	Opcode(o2_removeItemFromInventory);
@@ -1674,7 +1674,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_pressColorKey);
 	// 0x80
 	Opcode(o2_objectChat);
-	Opcode(o2_chapterChange);
+	Opcode(o2_changeChapter);
 	Opcode(o2_getColorCodeFlag1);
 	Opcode(o2_setColorCodeFlag1);
 	// 0x84
@@ -1754,7 +1754,4 @@ void KyraEngine_HoF::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
-
-
-
 

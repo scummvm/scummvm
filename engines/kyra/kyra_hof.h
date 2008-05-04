@@ -461,7 +461,7 @@ protected:
 	static const uint16 _itemMagicTable[];
 
 	int getInventoryItemSlot(uint16 item);
-	void removeItemFromInventory(int slot);
+	void removeSlotFromInventory(int slot);
 	bool checkInventoryItemExchange(uint16 item, int slot);
 	void drawInventoryShape(int page, uint16 item, int slot);
 	void clearInventorySlot(int slot, int page);
@@ -730,7 +730,7 @@ protected:
 	int o2_addItemToCurScene(EMCState *script);
 	int o2_checkForItem(EMCState *script);
 	int o2_loadSoundFile(EMCState *script);
-	int o2_removeItemSlotFromInventory(EMCState *script);
+	int o2_removeSlotFromInventory(EMCState *script);
 	int o2_removeItemFromInventory(EMCState *script);
 	int o2_countItemInInventory(EMCState *script);
 	int o2_countItemsInScene(EMCState *script);
@@ -786,7 +786,7 @@ protected:
 	int o2_getCountDown(EMCState *script);
 	int o2_pressColorKey(EMCState *script);
 	int o2_objectChat(EMCState *script);
-	int o2_chapterChange(EMCState *script);
+	int o2_changeChapter(EMCState *script);
 	int o2_getColorCodeFlag1(EMCState *script);
 	int o2_setColorCodeFlag1(EMCState *script);
 	int o2_getColorCodeFlag2(EMCState *script);

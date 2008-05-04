@@ -529,7 +529,7 @@ int KyraEngine_HoF::findFreeVisibleInventorySlot() {
 	return -1;
 }
 
-void KyraEngine_HoF::removeItemFromInventory(int slot) {
+void KyraEngine_HoF::removeSlotFromInventory(int slot) {
 	_mainCharacter.inventory[slot] = 0xFFFF;
 	if (slot < 10) {
 		_screen->hideMouse();
