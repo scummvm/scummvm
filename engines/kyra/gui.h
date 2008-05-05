@@ -142,8 +142,8 @@ public:
 	virtual void processButton(Button *button) = 0;
 	virtual int processButtonList(Button *buttonList, uint16 inputFlags) = 0;
 
-	int redrawShadedButtonCallback(Button *button);
-	int redrawButtonCallback(Button *button);
+	virtual int redrawShadedButtonCallback(Button *button);
+	virtual int redrawButtonCallback(Button *button);
 
 	// menu specific
 	virtual void initMenuLayout(Menu &menu);

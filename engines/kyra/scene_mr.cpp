@@ -634,7 +634,7 @@ void KyraEngine_MR::initSceneScreen(int unk1) {
 
 	updateCharPal(0);
 
-	if (1/*!_menuDirectlyToLoad*/) {
+	if (!_menuDirectlyToLoad) {
 		_emc->start(&_sceneScriptState, 3);
 		_sceneScriptState.regs[5] = unk1;
 

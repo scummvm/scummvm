@@ -81,13 +81,6 @@ void KyraEngine_HoF::setupLangButtonShapes() {
 }
 
 GUI_HoF::GUI_HoF(KyraEngine_HoF *vm) : GUI_v2(vm), _vm(vm), _screen(_vm->_screen) {
-	initStaticData();
-	_currentMenu = 0;
-	_isDeathMenu = false;
-	_isSaveMenu = false;
-	_isLoadMenu = false;
-	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::scrollUpButton);
-	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::scrollDownButton);
 	_sliderHandlerFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::sliderHandler);
 }
 
@@ -110,6 +103,10 @@ const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
 		return 0;
 
 	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
+}
+
+char *GUI_HoF::getTableString(int id) {
+	return _vm->getTableString(id, _vm->_optionsBuffer, 0);
 }
 
 #pragma mark -
@@ -669,21 +666,6 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 
 #pragma mark -
 
-void GUI_HoF::getInput() {
-	if (!_displayMenu)
-		return;
-
-	_vm->checkInput(_menuButtonList);
-	_vm->removeInputTop();
-	if (_vm->quit()) {
-		_displayMenu = false;
-		_isLoadMenu = false;
-		_isSaveMenu = false;
-		_isOptionsMenu = false;
-		_isDeleteMenu = false;
-	}
-}
-
 int GUI_HoF::optionsButton(Button *button) {
 	_restartGame = false;
 	_reloadTemporarySave = false;
@@ -797,19 +779,6 @@ int GUI_HoF::optionsButton(Button *button) {
 
 #pragma mark -
 
-void GUI_HoF::renewHighlight(Menu &menu) {
-	if (!_displayMenu)
-		return;
-
-	MenuItem &item = menu.item[menu.highlightedItem];
-	int x = item.x + menu.x; int y = item.y + menu.y;
-	int x2 = x + item.width - 1; int y2 = y + item.height - 1;
-	redrawText(menu);
-	_screen->fillRect(x+2, y+2, x2-2, y2-2, item.bkgdColor);
-	redrawHighlight(menu);
-	_screen->updateScreen();
-}
-
 void GUI_HoF::setupPalette() {
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 
@@ -833,14 +802,6 @@ void GUI_HoF::restorePalette() {
 	_screen->setScreenPalette(_screen->getPalette(0));
 }
 
-void GUI_HoF::backUpPage1(uint8 *buffer) {
-	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, buffer);
-}
-
-void GUI_HoF::restorePage1(const uint8 *buffer) {
-	_screen->copyBlockToPage(1, 0, 0, 320, 200, buffer);
-}
-
 void GUI_HoF::resetState(int item) {
 	_vm->_timer->resetNextRun();
 	_vm->setNextIdleAnimTimer();
@@ -856,81 +817,27 @@ void GUI_HoF::resetState(int item) {
 	_buttonListChanged = true;
 }
 
-void GUI_HoF::setupSavegameNames(Menu &menu, int num) {
-	for (int i = 0; i < num; ++i) {
-		strcpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), "");
-		menu.item[i].saveSlot = -1;
-		menu.item[i].enabled = false;
+void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
+	const int menuX = _audioOptions.x;
+	const int menuY = _audioOptions.y;
+	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
+	int y = menuY + _sliderBarsPosition[slider*2+1];
+
+	int position = 0;
+	if (_vm->gameFlags().isTalkie) {
+		position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+	} else {
+		if (slider < 2)
+			position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+		else if (slider == 2)
+			position = (_vm->_configWalkspeed == 3) ? 97 : 2;
+		else if (slider == 3)
+			position = _vm->_configTextspeed;
 	}
 
-	int startSlot = 0;
-	if (_isSaveMenu && _savegameOffset == 0)
-		startSlot = 1;
-
-	KyraEngine::SaveHeader header;
-	Common::InSaveFile *in;
-	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
-		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
-			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), header.description.c_str(), 80);
-			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
-			menu.item[i].enabled = true;
-			delete in;
-		}
-	}
-
-	if (_savegameOffset == 0) {
-		if (_isSaveMenu) {
-			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
-			const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 10 : 18, _vm->_optionsBuffer, 0);
-			strcpy(dst, src);
-			menu.item[0].saveSlot = -2;
-			menu.item[0].enabled = true;
-		} else {
-			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
-			const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->_optionsBuffer, 0);
-			strcpy(dst, src);
-		}
-	}
-}
-
-int GUI_HoF::scrollUpButton(Button *button) {
-	updateMenuButton(button);
-
-	if (_savegameOffset == (_isDeleteMenu ? 1 : 0))
-		return 0;
-
-	--_savegameOffset;
-	if (_isLoadMenu) {
-		setupSavegameNames(_loadMenu, 5);
-		// original calls something different here...
-		initMenu(_loadMenu);
-	} else if (_isSaveMenu || _isDeleteMenu) {
-		setupSavegameNames(_saveMenu, 5);
-		// original calls something different here...
-		initMenu(_saveMenu);
-	}
-
-	return 0;
-}
-
-int GUI_HoF::scrollDownButton(Button *button) {
-	updateMenuButton(button);
-	++_savegameOffset;
-
-	if (uint(_savegameOffset + 5) >= _saveSlots.size())
-		_savegameOffset = MAX<int>(_saveSlots.size() - 5, _isDeleteMenu ? 1 : 0);
-
-	if (_isLoadMenu) {
-		setupSavegameNames(_loadMenu, 5);
-		// original calls something different here...
-		initMenu(_loadMenu);
-	} else if (_isSaveMenu || _isDeleteMenu) {
-		setupSavegameNames(_saveMenu, 5);
-		// original calls something different here...
-		initMenu(_saveMenu);
-	}
-
-	return 0;
+	position = MAX(2, position);
+	position = MIN(97, position);
+	_screen->drawShape(0, shape, x+position, y, 0, 0);
 }
 
 #pragma mark -
@@ -953,9 +860,54 @@ int GUI_HoF::quitGame(Button *caller) {
 	return 0;
 }
 
-int GUI_HoF::resumeGame(Button *caller) {
+int GUI_HoF::audioOptions(Button *caller) {
 	updateMenuButton(caller);
-	_displayMenu = false;
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	initMenu(_audioOptions);
+	const int menuX = _audioOptions.x;
+	const int menuY = _audioOptions.y;
+	const int maxButton = 3;	// 2 if voc is disabled
+
+	for (int i = 0; i < maxButton; ++i) {
+		int x = menuX + _sliderBarsPosition[i*2+0];
+		int y = menuY + _sliderBarsPosition[i*2+1];
+		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
+		drawSliderBar(i, _vm->_buttonShapes[17]);
+		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[0][i].x = x;
+		_sliderButtons[0][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[0][i]);
+		_sliderButtons[2][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[2][i].x = x + 10;
+		_sliderButtons[2][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[2][i]);
+		_sliderButtons[1][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[1][i].x = x + 120;
+		_sliderButtons[1][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[1][i]);
+	}
+
+	_isOptionsMenu = true;
+	updateAllMenuButtons();
+	bool speechEnabled = _vm->speechEnabled();
+	while (_isOptionsMenu) {
+		processHighlights(_audioOptions, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
+		_vm->_configVoice = 0;
+		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
+		choiceDialog(0x1D, 0);
+	}
+
+	_vm->writeSettings();
+
+	initMenu(*_currentMenu);
+	updateAllMenuButtons();
 	return 0;
 }
 
@@ -1048,12 +1000,6 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 	return 0;
 }
 
-int GUI_HoF::quitOptionsMenu(Button *caller) {
-	updateMenuButton(caller);
-	_isOptionsMenu = false;
-	return 0;
-}
-
 int GUI_HoF::toggleWalkspeed(Button *caller) {
 	updateMenuButton(caller);
 	if (_vm->_configWalkspeed == 5)
@@ -1122,57 +1068,6 @@ void GUI_HoF::setupOptionsButtons() {
 	default:
 		break;
 	}
-}
-
-int GUI_HoF::audioOptions(Button *caller) {
-	updateMenuButton(caller);
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	initMenu(_audioOptions);
-	const int menuX = _audioOptions.x;
-	const int menuY = _audioOptions.y;
-	const int maxButton = 3;	// 2 if voc is disabled
-
-	for (int i = 0; i < maxButton; ++i) {
-		int x = menuX + _sliderBarsPosition[i*2+0];
-		int y = menuY + _sliderBarsPosition[i*2+1];
-		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
-		drawSliderBar(i, _vm->_buttonShapes[17]);
-		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[0][i].x = x;
-		_sliderButtons[0][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[0][i]);
-		_sliderButtons[2][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[2][i].x = x + 10;
-		_sliderButtons[2][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[2][i]);
-		_sliderButtons[1][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[1][i].x = x + 120;
-		_sliderButtons[1][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[1][i]);
-	}
-
-	_isOptionsMenu = true;
-	updateAllMenuButtons();
-	bool speechEnabled = _vm->speechEnabled();
-	while (_isOptionsMenu) {
-		processHighlights(_audioOptions, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
-		_vm->_configVoice = 0;
-		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
-		choiceDialog(0x1D, 0);
-	}
-
-	_vm->writeSettings();
-
-	initMenu(*_currentMenu);
-	updateAllMenuButtons();
-	return 0;
 }
 
 int GUI_HoF::sliderHandler(Button *caller) {
@@ -1270,29 +1165,6 @@ int GUI_HoF::sliderHandler(Button *caller) {
 	return 0;
 }
 
-void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
-	const int menuX = _audioOptions.x;
-	const int menuY = _audioOptions.y;
-	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
-	int y = menuY + _sliderBarsPosition[slider*2+1];
-
-	int position = 0;
-	if (_vm->gameFlags().isTalkie) {
-		position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
-	} else {
-		if (slider < 2)
-			position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
-		else if (slider == 2)
-			position = (_vm->_configWalkspeed == 3) ? 97 : 2;
-		else if (slider == 3)
-			position = _vm->_configTextspeed;
-	}
-
-	position = MAX(2, position);
-	position = MIN(97, position);
-	_screen->drawShape(0, shape, x+position, y, 0, 0);
-}
-
 int GUI_HoF::loadMenu(Button *caller) {
 	updateSaveList();
 
@@ -1337,342 +1209,6 @@ int GUI_HoF::loadMenu(Button *caller) {
 		_loadedSave = true;
 	}
 
-	return 0;
-}
-
-int GUI_HoF::clickLoadSlot(Button *caller) {
-	updateMenuButton(caller);
-	
-	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
-	MenuItem &item = _loadMenu.item[caller->index-0x10];
-
-	if (item.saveSlot >= 0) {
-		_vm->_gameToLoad = item.saveSlot;
-		_isLoadMenu = false;
-	}
-
-	return 0;
-}
-
-int GUI_HoF::cancelLoadMenu(Button *caller) {
-	updateMenuButton(caller);
-	_isLoadMenu = false;
-	_noLoadProcess = true;
-	return 0;
-}
-
-int GUI_HoF::saveMenu(Button *caller) {
-	updateSaveList();
-
-	updateMenuButton(caller);
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-
-	_isSaveMenu = true;
-	_noSaveProcess = false;
-	_saveSlot = -1;
-	_savegameOffset = 0;
-	setupSavegameNames(_saveMenu, 5);
-	initMenu(_saveMenu);
-
-	updateAllMenuButtons();
-
-	while (_isSaveMenu) {
-		processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	if (_noSaveProcess) {
-		restorePage1(_vm->_screenBuffer);
-		backUpPage1(_vm->_screenBuffer);
-		initMenu(*_currentMenu);
-		updateAllMenuButtons();
-		return 0;
-	} else if(_saveSlot <= -1) {
-		return 0;
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	restorePalette();
-	_vm->saveGame(_vm->getSavegameFilename(_saveSlot), _saveDescription);
-	_displayMenu = false;
-	_madeSave = true;
-
-	return 0;
-}
-
-int GUI_HoF::clickSaveSlot(Button *caller) {
-	updateMenuButton(caller);
-
-	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
-	MenuItem &item = _saveMenu.item[caller->index-0x10];
-	
-	if (item.saveSlot >= 0) {
-		if (_isDeleteMenu) {
-			_slotToDelete = item.saveSlot;
-			_isDeleteMenu = false;
-			return 0;
-		} else {
-			_saveSlot = item.saveSlot;
-			strcpy(_saveDescription, _vm->getTableString(item.itemId, _vm->_optionsBuffer, 0));
-		}
-	} else if (item.saveSlot == -2) {
-		_saveSlot = getNextSavegameSlot();
-		memset(_saveDescription, 0, sizeof(_saveDescription));
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-
-	initMenu(_savenameMenu);
-	_screen->fillRect(0x26, 0x5B, 0x11F, 0x66, 0xFA);
-	const char *desc = nameInputProcess(_saveDescription, 0x27, 0x5C, 0xFD, 0xFA, 0xFE, 0x50);
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	if (desc) {
-		_isSaveMenu = false;
-		_isDeleteMenu = false;
-	} else {
-		initMenu(_saveMenu);
-	}
-
-	return 0;
-}
-
-int GUI_HoF::cancelSaveMenu(Button *caller) {
-	updateMenuButton(caller);
-	_isSaveMenu = false;
-	_isDeleteMenu = false;
-	_noSaveProcess = true;
-	return 0;
-}
-
-int GUI_HoF::deleteMenu(Button *caller) {
-	updateSaveList();
-
-	updateMenuButton(caller);
-	if (_saveSlots.size() < 2) {
-		_vm->snd_playSoundEffect(0x0D);
-		return 0;
-	}
-
-	do {
-		restorePage1(_vm->_screenBuffer);
-		backUpPage1(_vm->_screenBuffer);
-		_savegameOffset = 1;
-		_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 35 : 1;
-		setupSavegameNames(_saveMenu, 5);
-		initMenu(_saveMenu);
-		_isDeleteMenu = true;
-		_slotToDelete = -1;
-		updateAllMenuButtons();
-
-		while (_isDeleteMenu) {
-			processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
-			getInput();
-		}
-		
-		if (_slotToDelete < 1) {
-			restorePage1(_vm->_screenBuffer);
-			backUpPage1(_vm->_screenBuffer);
-			initMenu(*_currentMenu);
-			updateAllMenuButtons();
-			_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
-			return 0;
-		}
-	} while (choiceDialog(_vm->gameFlags().isTalkie ? 0x24 : 2, 1) == 0);
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	initMenu(*_currentMenu);
-	updateAllMenuButtons();
-	_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_slotToDelete));
-	Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _slotToDelete);
-	while (i != _saveSlots.end()) {
-		++i;
-		if (i == _saveSlots.end())
-			break;
-		// We are only renaming all savefiles until we get some slots missing
-		// Also not rename quicksave slot filenames
-		if (*(i-1) != *i || *i >= 990)
-			break;
-		Common::String oldName = _vm->getSavegameFilename(*i);
-		Common::String newName = _vm->getSavegameFilename(*i-1);
-		_vm->_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str());
-	}	
-	_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
-	return 0;
-}
-
-const char *GUI_HoF::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize) {
-	bool running = true;
-	int curPos = strlen(buffer);
-
-	int x2 = x, y2 = y;
-	_text->printText(buffer, x, y, c1, c2, c2);
-
-	for (int i = 0; i < curPos; ++i)
-		x2 += getCharWidth(buffer[i]);
-
-	drawTextfieldBlock(x2, y2, c3);
-
-	_keyPressed.reset();
-	_cancelNameInput = _finishNameInput = false;
-	while (running && !_vm->quit()) {
-		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
-		checkTextfieldInput();
-		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
-			if (checkSavegameDescription(buffer, curPos)) {
-				buffer[curPos] = 0;
-				running = false;
-			} else {
-				_finishNameInput = false;
-			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_ESCAPE || _cancelNameInput) {
-			running = false;
-			return 0;
-		} else if ((_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) && curPos > 0) {
-			drawTextfieldBlock(x2, y2, c2);
-			--curPos;
-			x2 -= getCharWidth(buffer[curPos]);
-			drawTextfieldBlock(x2, y2, c3);
-			_screen->updateScreen();
-		} else if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127 && curPos < bufferSize) {
-			if (x2 + getCharWidth(_keyPressed.ascii) + 7 < 0x11F) {
-				buffer[curPos] = _keyPressed.ascii;
-				const char text[2] = { buffer[curPos], 0 };
-				_text->printText(text, x2, y2, c1, c2, c2);
-				x2 += getCharWidth(_keyPressed.ascii);
-				drawTextfieldBlock(x2, y2, c3);
-				++curPos;
-				_screen->updateScreen();
-			}
-		}
-
-		_keyPressed.reset();
-	}
-
-	return buffer;
-}
-
-int GUI_HoF::finishSavename(Button *caller) {
-	updateMenuButton(caller);
-	_finishNameInput = true;
-	return 0;
-}
-
-int GUI_HoF::cancelSavename(Button *caller) {
-	updateMenuButton(caller);
-	_cancelNameInput = true;
-	return 0;
-}
-
-bool GUI_HoF::checkSavegameDescription(const char *buffer, int size) {
-	if (!buffer || !size)
-		return false;
-	if (buffer[0] == 0)
-		return false;
-	for (int i = 0; i < size; ++i) {
-		if (buffer[i] != 0x20)
-			return true;
-		else if (buffer[i] == 0x00)
-			return false;
-	}
-	return false;
-}
-
-int GUI_HoF::getCharWidth(uint8 c) {
-	Screen::FontId old = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
-	int width = _screen->getCharWidth(c);
-	_screen->_charWidth = 0;
-	_screen->setFont(old);
-	return width;
-}
-
-void GUI_HoF::checkTextfieldInput() {
-	Common::Event event;
-
-	bool running = true;
-	int keys = 0;
-	while (_vm->_eventMan->pollEvent(event) && running) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_vm->_quitFlag = true;
-			break;
-
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				_vm->_quitFlag = true;
-			else
-				_keyPressed = event.kbd; 
-			running = false;
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_LBUTTONUP: {
-			Common::Point pos = _vm->getMousePos();
-			_vm->_mouseX = pos.x;
-			_vm->_mouseY = pos.y;
-			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
-			running = false;
-			} break;
-
-		case Common::EVENT_MOUSEMOVE: {
-			Common::Point pos = _vm->getMousePos();
-			_vm->_mouseX = pos.x;
-			_vm->_mouseY = pos.y;
-			_screen->updateScreen();
-			} break;
-
-		default:
-			break;
-		}
-	}
-
-	processButtonList(_menuButtonList, keys | 0x8000);
-}
-
-void GUI_HoF::drawTextfieldBlock(int x, int y, uint8 c) {
-	_screen->fillRect(x+1, y+1, x+7, y+8, c);
-}
-
-bool GUI_HoF::choiceDialog(int name, bool type) {
-	_choiceMenu.highlightedItem = 0;
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	if (type)
-		_choiceMenu.numberOfItems = 2;
-	else
-		_choiceMenu.numberOfItems = 1;
-	_choiceMenu.menuNameId = name;
-
-	initMenu(_choiceMenu);
-	_isChoiceMenu = true;
-	_choice = false;
-
-	while (_isChoiceMenu) {
-		processHighlights(_choiceMenu, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	return _choice;
-}
-
-int GUI_HoF::choiceYes(Button *caller) {
-	updateMenuButton(caller);
-	_choice = true;
-	_isChoiceMenu = false;
-	return 0;
-}
-
-int GUI_HoF::choiceNo(Button *caller) {
-	updateMenuButton(caller);
-	_choice = false;
-	_isChoiceMenu = false;
 	return 0;
 }
 

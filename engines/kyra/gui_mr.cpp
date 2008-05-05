@@ -28,8 +28,82 @@
 #include "kyra/text_mr.h"
 #include "kyra/wsamovie.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
+#include "kyra/timer.h"
+
+#include "common/savefile.h"
 
 namespace Kyra {
+
+void KyraEngine_MR::loadButtonShapes() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadButtonShapes()");
+	_res->exists("BUTTONS.SHP", true);
+	uint8 *data = _res->fileData("BUTTONS.SHP", 0);
+	assert(data);
+	for (int i = 0; i <= 10; ++i)
+		addShapeToPool(data, 0x1C7+i, i);
+	delete[] data;
+
+	Button::Callback callback1 = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::callbackButton1);
+	Button::Callback callback2 = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::callbackButton2);
+	Button::Callback callback3 = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::callbackButton3);
+
+	_gui->getScrollUpButton()->data0Callback = callback1;
+	_gui->getScrollUpButton()->data1Callback = callback2;
+	_gui->getScrollUpButton()->data2Callback = callback3;
+	_gui->getScrollDownButton()->data0Callback = callback1;
+	_gui->getScrollDownButton()->data1Callback = callback2;
+	_gui->getScrollDownButton()->data2Callback = callback3;
+
+	_mainButtonData[0].data0Callback = callback1;
+	_mainButtonData[0].data1Callback = callback2;
+	_mainButtonData[0].data2Callback = callback3;
+}
+
+int KyraEngine_MR::callbackButton1(Button *button) {
+	const uint8 *shapePtr = 0;
+	if (button->index == 1)
+		shapePtr = getShapePtr(0x1CD);
+	else if (button->index == 22)
+		shapePtr = getShapePtr(0x1C7);
+	else if (button->index == 23)
+		shapePtr = getShapePtr(0x1CA);
+
+	if (shapePtr)
+		_screen->drawShape(0, shapePtr, button->x, button->y, 0, 0, 0);
+
+	return 0;
+}
+
+int KyraEngine_MR::callbackButton2(Button *button) {
+	const uint8 *shapePtr = 0;
+	if (button->index == 1)
+		shapePtr = getShapePtr(0x1CE);
+	else if (button->index == 22)
+		shapePtr = getShapePtr(0x1C9);
+	else if (button->index == 23)
+		shapePtr = getShapePtr(0x1CC);
+
+	if (shapePtr)
+		_screen->drawShape(0, shapePtr, button->x, button->y, 0, 0, 0);
+
+	return 0;
+}
+
+int KyraEngine_MR::callbackButton3(Button *button) {
+	const uint8 *shapePtr = 0;
+	if (button->index == 1)
+		shapePtr = getShapePtr(0x1CE);
+	else if (button->index == 22)
+		shapePtr = getShapePtr(0x1C8);
+	else if (button->index == 23)
+		shapePtr = getShapePtr(0x1CB);
+
+	if (shapePtr)
+		_screen->drawShape(0, shapePtr, button->x, button->y, 0, 0, 0);
+
+	return 0;
+}
 
 void KyraEngine_MR::showMessage(const char *string, uint8 c0, uint8 c1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::showMessage('%s', %d, %d)", string, c0, c1);
@@ -628,6 +702,263 @@ void GUI_MR::flagButtonDisable(Button *button) {
 		button->flags |= 8;
 		processButton(button);
 	}
+}
+
+const char *GUI_MR::getMenuTitle(const Menu &menu) {
+	if (!menu.menuNameId)
+		return 0;
+
+	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menu.menuNameId);
+}
+
+const char *GUI_MR::getMenuItemTitle(const MenuItem &menuItem) {
+	if (!menuItem.itemId)
+		return 0;
+
+	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menuItem.itemId);
+}
+
+const char *GUI_MR::getMenuItemLabel(const MenuItem &menuItem) {
+	if (!menuItem.labelId)
+		return 0;
+
+	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menuItem.labelId);
+}
+
+char *GUI_MR::getTableString(int id) {
+	return (char *)_vm->getTableEntry(_vm->_optionsFile, id);
+}
+
+int GUI_MR::redrawButtonCallback(Button *button) {
+	if (!_displayMenu)
+		return 0;
+
+	_screen->hideMouse();
+	_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 0xD0);
+	_screen->showMouse();
+
+	return 0;
+}
+
+int GUI_MR::redrawShadedButtonCallback(Button *button) {
+	if (!_displayMenu)
+		return 0;
+
+	_screen->hideMouse();
+	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xD1, 0xCF);
+	_screen->showMouse();
+
+	return 0;
+}
+void GUI_MR::resetState(int item) {
+	_vm->_timer->resetNextRun();
+	_vm->setNextIdleAnimTimer();
+	_isDeathMenu = false;
+	if (!_loadedSave) {
+		_vm->setHandItem(item);
+	} else {
+		_vm->setHandItem(_vm->_itemInHand);
+		_vm->setCommandLineRestoreTimer(7);
+		_vm->_shownMessage = " ";
+		_vm->_restoreCommandLine = false;
+	}
+	_buttonListChanged = true;
+}
+
+int GUI_MR::quitGame(Button *caller) {
+	updateMenuButton(caller);
+	if (choiceDialog(0x0F, 1)) {
+		_displayMenu = false;
+		_vm->_runFlag = false;
+		_vm->fadeOutMusic(60);
+		_screen->fadeToBlack();
+		_screen->clearCurPage();
+	}
+
+	if (_vm->_runFlag) {
+		initMenu(*_currentMenu);
+		updateAllMenuButtons();
+	}
+
+	return 0;
+}
+
+int GUI_MR::optionsButton(Button *button) {
+	_vm->musicUpdate(0);
+
+	_screen->hideMouse();
+	updateButton(&_vm->_mainButtonData[0]);
+	_screen->showMouse();
+
+	if (!_vm->_inventoryState && button && !_vm->_menuDirectlyToLoad)
+		return 0;
+
+	_restartGame = false;
+	_reloadTemporarySave = false;
+
+	if (!_screen->isMouseVisible() && button && !_vm->_menuDirectlyToLoad)
+		return 0;
+
+	_vm->showMessage(0, 0xF0, 0xF0);
+
+	if (_vm->_handItemSet < -1) {
+		_vm->_handItemSet = -1;
+		_screen->hideMouse();
+		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
+		_screen->showMouse();
+		return 0;
+	}
+
+	int oldHandItem = _vm->_itemInHand;
+	_screen->setMouseCursor(0, 0, _vm->getShapePtr(0));
+	_vm->musicUpdate(0);
+
+	_displayMenu = true;
+	for (int i = 0; i < 4; ++i) {
+		if (_vm->_musicSoundChannel != i)
+			_vm->_soundDigital->stopSound(i);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+		_menuButtons[i].data0Val1 = _menuButtons[i].data1Val1 = _menuButtons[i].data2Val1 = 4;
+		_menuButtons[i].data0Callback = _redrawShadedButtonFunctor;
+		_menuButtons[i].data1Callback = _menuButtons[i].data2Callback = _redrawButtonFunctor;
+	}
+
+	initMenuLayout(_mainMenu);
+	initMenuLayout(_gameOptions);
+	initMenuLayout(_audioOptions);
+	initMenuLayout(_choiceMenu);
+	_loadMenu.numberOfItems = 6;
+	initMenuLayout(_loadMenu);
+	initMenuLayout(_saveMenu);
+	initMenuLayout(_savenameMenu);
+	initMenuLayout(_deathMenu);
+	
+	_currentMenu = &_mainMenu;
+
+	_vm->musicUpdate(0);
+
+	if (_vm->_menuDirectlyToLoad) {
+		backUpPage1(_vm->_screenBuffer);
+
+		_loadedSave = false;
+		
+		--_loadMenu.numberOfItems;
+		loadMenu(0);
+		++_loadMenu.numberOfItems;
+
+		if (_loadedSave) {
+			if (_restartGame)
+				_vm->_itemInHand = -1;
+		} else {
+			restorePage1(_vm->_screenBuffer);
+		}
+
+		resetState(-1);
+		_vm->_menuDirectlyToLoad = false;
+		return 0;
+	}
+
+	if (!button) {
+		_currentMenu = &_deathMenu;
+		_isDeathMenu = true;
+	} else {
+		_isDeathMenu = false;
+	}
+
+	_vm->musicUpdate(0);
+	backUpPage1(_vm->_screenBuffer);
+	initMenu(*_currentMenu);
+	_madeSave = false;
+	_loadedSave = false;
+	_vm->_itemInHand = -1;
+	updateAllMenuButtons();
+
+	if (_isDeathMenu) {
+		while (!_screen->isMouseVisible())
+			_screen->showMouse();
+	}
+
+	while (_displayMenu) {
+		processHighlights(*_currentMenu, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	if (_vm->_runFlag && !_loadedSave && !_madeSave) {
+		restorePalette();
+		restorePage1(_vm->_screenBuffer);
+	}
+
+	if (_vm->_runFlag)
+		updateMenuButton(&_vm->_mainButtonData[0]);
+
+	resetState(oldHandItem);
+
+	if (!_loadedSave && _reloadTemporarySave) {
+		_vm->_unkSceneScreenFlag1 = true;
+		_vm->loadGame(_vm->getSavegameFilename(999));
+		_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
+		_vm->_unkSceneScreenFlag1 = false;
+	}
+
+	return 0;
+}
+
+int GUI_MR::loadMenu(Button *caller) {
+	updateSaveList();
+
+	if (!_vm->_menuDirectlyToLoad) {
+		updateMenuButton(caller);
+		restorePage1(_vm->_screenBuffer);
+		backUpPage1(_vm->_screenBuffer);
+	}
+
+	_savegameOffset = 0;
+	setupSavegameNames(_loadMenu, 5);
+	initMenu(_loadMenu);
+	_isLoadMenu = true;
+	_noLoadProcess = false;
+	_vm->_gameToLoad = -1;
+	updateAllMenuButtons();
+
+	_screen->updateScreen();
+	while (_isLoadMenu) {
+		processHighlights(_loadMenu, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	if (_noLoadProcess) {
+		if (!_vm->_menuDirectlyToLoad) {
+			restorePage1(_vm->_screenBuffer);
+			backUpPage1(_vm->_screenBuffer);
+			initMenu(*_currentMenu);
+			updateAllMenuButtons();
+		}
+	} else if (_vm->_gameToLoad >= 0) {
+		restorePage1(_vm->_screenBuffer);
+		restorePalette();
+		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+		if (_vm->_gameToLoad == 0) {
+			_restartGame = true;
+			_vm->runStartupScript(1, 1);
+		}
+		_displayMenu = false;
+		_loadedSave = true;
+	}
+
+	return 0;
+}
+
+int GUI_MR::loadSecondChance(Button *button) {
+	updateMenuButton(button);
+
+	_vm->_gameToLoad = 999;
+	restorePage1(_vm->_screenBuffer);
+	_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+	_displayMenu = false;
+	_loadedSave = true;
+	return 0;
 }
 
 } // end of namespace Kyra

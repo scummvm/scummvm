@@ -137,41 +137,43 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_goodConscienceShown = false;
 	_goodConscienceAnim = -1;
 	_goodConsciencePosition = false;
+	_menuDirectlyToLoad = false;
+	_optionsFile = 0;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
 	delete _screen;
 	delete _soundDigital;
 
-	delete [] _itemBuffer1;
-	delete [] _itemBuffer2;
-	delete [] _scoreFile;
-	delete [] _cCodeFile;
-	delete [] _scenesFile;
-	delete [] _itemFile;
-	delete [] _gamePlayBuffer;
-	delete [] _interface;
-	delete [] _interfaceCommandLine;
-	delete [] _costPalBuffer;
+	delete[] _itemBuffer1;
+	delete[] _itemBuffer2;
+	delete[] _scoreFile;
+	delete[] _cCodeFile;
+	delete[] _scenesFile;
+	delete[] _itemFile;
+	delete[] _gamePlayBuffer;
+	delete[] _interface;
+	delete[] _interfaceCommandLine;
+	delete[] _costPalBuffer;
 
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i)
-		delete [] _sceneShapes[i];
+		delete[] _sceneShapes[i];
 
 	for (uint i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
 		delete _sceneAnimMovie[i];
 
-	delete [] _gfxBackUpRect;
-	delete [] _paletteOverlay;
-	delete [] _sceneList;
+	delete[] _gfxBackUpRect;
+	delete[] _paletteOverlay;
+	delete[] _sceneList;
 
 	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
-		delete [] i->_value;
+		delete[] i->_value;
 		i->_value = 0;
 	}
 	_gameShapes.clear();
 
-	delete [] _sceneStrings;
-	delete [] _talkObjectList;
+	delete[] _sceneStrings;
+	delete[] _talkObjectList;
 
 	for (Common::Array<const Opcode*>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
 		delete *i;
@@ -179,10 +181,11 @@ KyraEngine_MR::~KyraEngine_MR() {
 
 	delete _cnvFile;
 	delete _dlgBuffer;
-	delete [] _stringBuffer;
+	delete[] _stringBuffer;
 	delete _invWsa;
-	delete [] _mainButtonData;
+	delete[] _mainButtonData;
 	delete _gui;
+	delete[] _optionsFile;
 }
 
 int KyraEngine_MR::init() {
@@ -203,6 +206,7 @@ int KyraEngine_MR::init() {
 	assert(_text);
 	_gui = new GUI_MR(this);
 	assert(_gui);
+	_gui->initStaticData();
 
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
@@ -225,6 +229,14 @@ int KyraEngine_MR::go() {
 
 	_screen->clearPage(0);
 	_screen->clearPage(2);
+
+	if (_gameToLoad != -1) {
+		uninitMainMenu();
+		_musicSoundChannel = -1;
+		startup();
+		runLoop();
+		running = false;
+	}
 
 	while (running && !_quitFlag) {
 		_screen->_curPage = 0;
@@ -250,6 +262,12 @@ int KyraEngine_MR::go() {
 		}
 
 		switch (_menu->handle(3)) {
+		case 2:
+			if (saveFileLoadable(0))
+				_menuDirectlyToLoad = true;
+			else
+				break;
+
 		case 0:
 			uninitMainMenu();
 
@@ -265,12 +283,6 @@ int KyraEngine_MR::go() {
 			playVQA("K3INTRO");
 			_wsaPlayingVQA = false;
 			_screen->hideMouse();
-			break;
-
-		case 2:
-			//uninitMainMenu();
-			//show load dialog
-			//running = false;
 			break;
 
 		case 3:
@@ -548,9 +560,8 @@ void KyraEngine_MR::startup() {
 		error("Couldn't load C_CODE");
 	if (!loadLanguageFile("SCENES.", _scenesFile))
 		error("Couldn't load SCENES");
-
-	//XXX
-
+	if (!loadLanguageFile("OPTIONS.", _optionsFile))
+		error("Couldn't load OPTIONS");
 	if ((_actorFileSize = loadLanguageFile("_ACTOR.", _actorFile)) == 0)
 		error("couldn't load _ACTOR");
 
@@ -584,7 +595,6 @@ void KyraEngine_MR::startup() {
 	resetItemList();
 
 	loadShadowShape();
-	//loadButtonShapes();
 	musicUpdate(0);
 	loadExtrasShapes();
 	musicUpdate(0);
@@ -593,6 +603,7 @@ void KyraEngine_MR::startup() {
 	updateMalcolmShapes();
 	musicUpdate(0);
 	initMainButtonList(true);
+	loadButtonShapes();
 	loadInterfaceShapes();
 
 	musicUpdate(0);
@@ -628,13 +639,23 @@ void KyraEngine_MR::startup() {
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;
+	saveGame(getSavegameFilename(0), (const char*)getTableEntry(_optionsFile, 33));
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 	delayWithTicks(60);
-	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
+	if (_gameToLoad == -1)
+		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
+	else
+		loadGame(getSavegameFilename(_gameToLoad));
+
+	if (_menuDirectlyToLoad)
+		(*_mainButtonData[0].buttonCallback)(&_mainButtonData[0]);
+
 	_screen->updateScreen();
 	musicUpdate(0);
 	_screen->showMouse();
-	//XXX
+
+	setNextIdleAnimTimer();
+	setWalkspeed(_configWalkspeed);
 }
 
 void KyraEngine_MR::loadCostPal() {
@@ -926,8 +947,11 @@ void KyraEngine_MR::runLoop() {
 	_runFlag = true;
 	while (_runFlag && !_quitFlag) {
 		if (_deathHandler >= 0) {
-			// TODO: add menu etc.
-			loadGame(getSavegameFilename(999));
+			removeHandItem();
+			delay(5);
+			_drawNoShapeFlag = 0;
+			_gui->optionsButton(0);
+			_deathHandler = -1;
 		}
 		
 		if (_system->getMillis() >= _nextIdleAnim)

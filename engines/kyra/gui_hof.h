@@ -38,74 +38,36 @@ friend class KyraEngine_HoF;
 public:
 	GUI_HoF(KyraEngine_HoF *engine);
 
-	int optionsButton(Button *button);
-private:
-	void getInput();
-
-	Button _menuButtons[7];
-	Button _scrollUpButton;
-	Button _scrollDownButton;
-	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
 	void initStaticData();
 
+	int optionsButton(Button *button);
+private:
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);
 	const char *getMenuItemLabel(const MenuItem &menuItem);
 
-	Button *getButtonListData() { return _menuButtons; }
-
-	Button *getScrollUpButton() { return &_scrollUpButton; }
-	Button *getScrollDownButton() { return &_scrollDownButton; }
-
-	int scrollUpButton(Button *button);
-	int scrollDownButton(Button *button);
-	Button::Callback _scrollUpFunctor;
-	Button::Callback _scrollDownFunctor;
-	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
-	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
-
-	Button _sliderButtons[3][4];
-
 	uint8 defaultColor1() const { return 0xCF; }
 	uint8 defaultColor2() const { return 0xF8; }
 
-	void renewHighlight(Menu &menu);
+	uint8 textFieldColor1() const { return 0xFD; }
+	uint8 textFieldColor2() const { return 0xFA; }
+	uint8 textFieldColor3() const { return 0xFE; }
 
 	void setupPalette();
 	void restorePalette();
 
-	void backUpPage1(uint8 *buffer);
-	void restorePage1(const uint8 *buffer);
-
 	void resetState(int item);
+
+	char *getTableString(int id);
 
 	KyraEngine_HoF *_vm;
 	Screen_HoF *_screen;
 
-	Menu *_currentMenu;
-	bool _isLoadMenu;
-	bool _isDeathMenu;
-	bool _isSaveMenu;
-	bool _isDeleteMenu;
-	bool _isChoiceMenu;
-	bool _isOptionsMenu;
-	bool _madeSave;
-	bool _loadedSave;
-	bool _restartGame;
-	bool _reloadTemporarySave;
-
-	int _savegameOffset;
-
-	void setupSavegameNames(Menu &menu, int num);
-
-	// main menu
 	int quitGame(Button *caller);
-	int resumeGame(Button *caller);
-
-	// options menu
+	int loadMenu(Button *caller);
+	int audioOptions(Button *caller);
 	int gameOptions(Button *caller);
 	int gameOptionsTalkie(Button *caller);
-	int quitOptionsMenu(Button *caller);
 
 	int toggleWalkspeed(Button *caller);
 	int changeLanguage(Button *caller);
@@ -113,54 +75,9 @@ private:
 
 	void setupOptionsButtons();
 
-	// audio menu
-	int audioOptions(Button *caller);
-
 	Button::Callback _sliderHandlerFunctor;
 	int sliderHandler(Button *caller);
-
 	void drawSliderBar(int slider, const uint8 *shape);
-
-	static const int _sliderBarsPosition[];
-
-	// load menu
-	bool _noLoadProcess;
-	int loadMenu(Button *caller);
-	int clickLoadSlot(Button *caller);
-	int cancelLoadMenu(Button *caller);
-
-	// save menu
-	bool _noSaveProcess;
-	int _saveSlot;
-	char _saveDescription[0x50];
-
-	int saveMenu(Button *caller);
-	int clickSaveSlot(Button *caller);
-	int cancelSaveMenu(Button *caller);
-
-	// delete menu
-	int _slotToDelete;
-	int deleteMenu(Button *caller);
-
-	// savename menu
-	bool _finishNameInput, _cancelNameInput;
-	Common::KeyState _keyPressed;
-
-	const char *nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize);
-	int finishSavename(Button *caller);
-	int cancelSavename(Button *caller);
-
-	bool checkSavegameDescription(const char *buffer, int size);
-	int getCharWidth(uint8 c);
-	void checkTextfieldInput();
-	void drawTextfieldBlock(int x, int y, uint8 c);
-
-	// choice menu
-	bool _choice;
-
-	bool choiceDialog(int name, bool type);
-	int choiceYes(Button *caller);
-	int choiceNo(Button *caller);
 
 	static const uint16 _menuStringsTalkie[];
 	static const uint16 _menuStringsOther[];

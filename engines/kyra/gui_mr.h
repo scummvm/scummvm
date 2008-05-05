@@ -38,23 +38,33 @@ friend class KyraEngine_MR;
 public:
 	GUI_MR(KyraEngine_MR *engine);
 
+	void initStaticData();
+
 	void flagButtonEnable(Button *button);
 	void flagButtonDisable(Button *button);
+
+	int redrawShadedButtonCallback(Button *button);
+	int redrawButtonCallback(Button *button);
+
+	int optionsButton(Button *button);
 private:
-	const char *getMenuTitle(const Menu &menu) { return 0; }
-	const char *getMenuItemTitle(const MenuItem &menuItem) { return 0; }
-	const char *getMenuItemLabel(const MenuItem &menuItem) { return 0; }
+	const char *getMenuTitle(const Menu &menu);
+	const char *getMenuItemTitle(const MenuItem &menuItem);
+	const char *getMenuItemLabel(const MenuItem &menuItem);
+	char *getTableString(int id);
 
-	Button *getButtonListData() { return 0; }
-
-	Button *getScrollUpButton() { return 0; }
-	Button *getScrollDownButton() { return 0; }
-
-	Button::Callback getScrollUpButtonHandler() const { return Button::Callback(); }
-	Button::Callback getScrollDownButtonHandler() const { return Button::Callback(); }
+	uint8 textFieldColor1() const { return 0xFF; }
+	uint8 textFieldColor2() const { return 0xCF; }
+	uint8 textFieldColor3() const { return 0xBA; }
 
 	uint8 defaultColor1() const { return 0xF0; }
 	uint8 defaultColor2() const { return 0xD0; }
+
+	void resetState(int item);
+
+	int quitGame(Button *button);
+	int loadMenu(Button *button);
+	int loadSecondChance(Button *button);
 
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;

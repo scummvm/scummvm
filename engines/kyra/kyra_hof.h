@@ -337,7 +337,6 @@ protected:
 	int inputSceneChange(int x, int y, int unk1, int unk2);
 
 	// gfx/animation specific
-	uint8 *_screenBuffer;
 	bool _inventorySaved;
 	void backUpPage0();
 	void restorePage0();

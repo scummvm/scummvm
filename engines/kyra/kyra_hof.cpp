@@ -105,7 +105,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 
 	_gamePlayBuffer = 0;
 	_unkBuf500Bytes = 0;
-	_screenBuffer = 0;
 	_inventorySaved = false;
 	_unkBuf200kByte = 0;
 	memset(&_sceneShapeTable, 0, sizeof(_sceneShapeTable));
@@ -189,6 +188,7 @@ int KyraEngine_HoF::init() {
 	assert(_text);
 	_gui = new GUI_HoF(this);
 	assert(_gui);
+	_gui->initStaticData();
 	_tim = new TIMInterpreter(this, _system);
 	assert(_tim);
 
@@ -255,6 +255,7 @@ int KyraEngine_HoF::go() {
 	}
 
 	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
+	_menuDirectlyToLoad &= saveFileLoadable(0);
 
 	if (_menuChoice & 1) {
 		startup();
@@ -764,7 +765,6 @@ void KyraEngine_HoF::cleanup() {
 
 	delete [] _gamePlayBuffer; _gamePlayBuffer = 0;
 	delete [] _unkBuf500Bytes; _unkBuf500Bytes = 0;
-	delete [] _screenBuffer; _screenBuffer = 0;
 	delete [] _unkBuf200kByte; _unkBuf200kByte = 0;
 
 	freeSceneShapePtrs();

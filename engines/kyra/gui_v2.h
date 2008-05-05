@@ -98,6 +98,8 @@ class GUI_v2 : public GUI {
 public:
 	GUI_v2(KyraEngine_v2 *vm);
 
+	virtual void initStaticData() = 0;
+
 	Button *addButtonToList(Button *list, Button *newButton);
 
 	void processButton(Button *button);
@@ -112,6 +114,106 @@ protected:
 	bool _buttonListChanged;
 	Button *_backUpButtonList;
 	Button *_unknownButtonList;
+
+protected:
+	virtual void setupPalette() {}
+	virtual void restorePalette() {}
+
+	virtual char *getTableString(int id) = 0;
+	
+	virtual uint8 textFieldColor1() const = 0;
+	virtual uint8 textFieldColor2() const = 0;
+	virtual uint8 textFieldColor3() const = 0;
+protected:
+	void getInput();
+
+	Button _menuButtons[7];
+	Button _scrollUpButton;
+	Button _scrollDownButton;
+	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
+
+	Button *getButtonListData() { return _menuButtons; }
+
+	Button *getScrollUpButton() { return &_scrollUpButton; }
+	Button *getScrollDownButton() { return &_scrollDownButton; }
+
+	int scrollUpButton(Button *button);
+	int scrollDownButton(Button *button);
+	Button::Callback _scrollUpFunctor;
+	Button::Callback _scrollDownFunctor;
+	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
+	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
+
+	Button _sliderButtons[3][4];
+
+	void renewHighlight(Menu &menu);
+
+	void backUpPage1(uint8 *buffer);
+	void restorePage1(const uint8 *buffer);
+
+	Menu *_currentMenu;
+	bool _isLoadMenu;
+	bool _isDeathMenu;
+	bool _isSaveMenu;
+	bool _isDeleteMenu;
+	bool _isChoiceMenu;
+	bool _isOptionsMenu;
+	bool _madeSave;
+	bool _loadedSave;
+	bool _restartGame;
+	bool _reloadTemporarySave;
+
+	int _savegameOffset;
+
+	void setupSavegameNames(Menu &menu, int num);
+
+	// main menu
+	int resumeGame(Button *caller);
+
+	// audio menu
+	static const int _sliderBarsPosition[];
+
+	// load menu
+	bool _noLoadProcess;
+	int clickLoadSlot(Button *caller);
+	int cancelLoadMenu(Button *caller);
+
+	// save menu
+	bool _noSaveProcess;
+	int _saveSlot;
+	char _saveDescription[0x50];
+
+	int saveMenu(Button *caller);
+	int clickSaveSlot(Button *caller);
+	int cancelSaveMenu(Button *caller);
+
+	// delete menu
+	int _slotToDelete;
+	int deleteMenu(Button *caller);
+
+	// options menu
+	int quitOptionsMenu(Button *caller);
+
+	// savename menu
+	bool _finishNameInput, _cancelNameInput;
+	Common::KeyState _keyPressed;
+
+	const char *nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize);
+	int finishSavename(Button *caller);
+	int cancelSavename(Button *caller);
+
+	bool checkSavegameDescription(const char *buffer, int size);
+	int getCharWidth(uint8 c);
+	void checkTextfieldInput();
+	void drawTextfieldBlock(int x, int y, uint8 c);
+
+	// choice menu
+	bool _choice;
+
+	bool choiceDialog(int name, bool type);
+	int choiceYes(Button *caller);
+	int choiceNo(Button *caller);
+
 };
 
 } // end of namespace Kyra

@@ -162,6 +162,8 @@ protected:
 
 	virtual int getScale(int x, int y) = 0;
 
+	uint8 *_screenBuffer;
+
 	// Scene
 	struct SceneDesc {
 		char filename1[10];

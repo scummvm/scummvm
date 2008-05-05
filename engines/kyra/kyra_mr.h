@@ -76,6 +76,8 @@ protected:
 	void setupOpcodeTable();
 
 	// run
+	bool _menuDirectlyToLoad;
+
 	void runLoop();
 	void handleInput(int x, int y);
 	int inputSceneChange(int x, int y, int unk1, int unk2);
@@ -133,6 +135,11 @@ private:
 	int buttonMoodChange(Button *button);
 	int buttonShowScore(Button *button);
 	int buttonJesterStaff(Button *button);
+
+	void loadButtonShapes();
+	int callbackButton1(Button *button);
+	int callbackButton2(Button *button);
+	int callbackButton3(Button *button);
 
 	// -> main menu
 	void initMainMenu();
@@ -236,6 +243,7 @@ private:
 	uint8 *_cCodeFile;
 	uint8 *_scenesFile;
 	uint8 *_itemFile;
+	uint8 *_optionsFile;
 	uint8 *_actorFile;
 	uint32 _actorFileSize;
 	uint8 *_sceneStrings;
@@ -462,7 +470,6 @@ private:
 
 	// unk
 	uint8 *_costPalBuffer;
-	uint8 *_screenBuffer;
 	uint8 *_paletteOverlay;
 	bool _useActorBuffer;
 

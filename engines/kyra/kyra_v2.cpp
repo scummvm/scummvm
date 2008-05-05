@@ -65,26 +65,28 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 
 	_debugger = 0;
+	_screenBuffer = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
 	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
-		delete [] i->_value;
+		delete[] i->_value;
 		i->_value = 0;
 	}
 	_gameShapes.clear();
 
-	delete [] _itemList;
+	delete[] _itemList;
 
 	_emc->unload(&_sceneScriptData);
 
-	delete [] _animObjects;
+	delete[] _animObjects;
 
 	for (Common::Array<const Opcode*>::iterator i = _opcodesAnimation.begin(); i != _opcodesAnimation.end(); ++i)
 		delete *i;
 	_opcodesAnimation.clear();
 
 	delete _debugger;
+	delete[] _screenBuffer;
 }
 
 int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
