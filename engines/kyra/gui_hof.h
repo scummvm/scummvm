@@ -69,9 +69,7 @@ private:
 	int gameOptions(Button *caller);
 	int gameOptionsTalkie(Button *caller);
 
-	int toggleWalkspeed(Button *caller);
 	int changeLanguage(Button *caller);
-	int toggleText(Button *caller);
 
 	void setupOptionsButtons();
 

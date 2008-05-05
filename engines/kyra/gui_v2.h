@@ -194,6 +194,11 @@ protected:
 	// options menu
 	int quitOptionsMenu(Button *caller);
 
+	int toggleWalkspeed(Button *caller);
+	int toggleText(Button *caller);
+
+	virtual void setupOptionsButtons() = 0;
+
 	// savename menu
 	bool _finishNameInput, _cancelNameInput;
 	Common::KeyState _keyPressed;

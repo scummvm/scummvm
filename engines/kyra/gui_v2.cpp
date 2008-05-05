@@ -518,6 +518,38 @@ int GUI_v2::quitOptionsMenu(Button *caller) {
 	return 0;
 }
 
+int GUI_v2::toggleWalkspeed(Button *caller) {
+	updateMenuButton(caller);
+	if (_vm->_configWalkspeed == 5)
+		_vm->_configWalkspeed = 3;
+	else
+		_vm->_configWalkspeed = 5;
+	_vm->setWalkspeed(_vm->_configWalkspeed);
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+int GUI_v2::toggleText(Button *caller) {
+	updateMenuButton(caller);
+	
+	if (_vm->textEnabled()) {
+		if (_vm->speechEnabled())
+			_vm->_configVoice = 1;
+		else
+			_vm->_configVoice = 3;
+	} else {
+		if (_vm->speechEnabled())
+			_vm->_configVoice = 2;
+		else
+			_vm->_configVoice = 0;
+	}
+
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
 int GUI_v2::clickLoadSlot(Button *caller) {
 	updateMenuButton(caller);
 

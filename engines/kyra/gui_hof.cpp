@@ -1001,42 +1001,10 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 	return 0;
 }
 
-int GUI_HoF::toggleWalkspeed(Button *caller) {
-	updateMenuButton(caller);
-	if (_vm->_configWalkspeed == 5)
-		_vm->_configWalkspeed = 3;
-	else
-		_vm->_configWalkspeed = 5;
-	_vm->_timer->setDelay(0, _vm->_configWalkspeed); 
-	setupOptionsButtons();
-	renewHighlight(_gameOptions);
-	return 0;
-}
-
 int GUI_HoF::changeLanguage(Button *caller) {
 	updateMenuButton(caller);
 	++_vm->_lang;
 	_vm->_lang %= 3;
-	setupOptionsButtons();
-	renewHighlight(_gameOptions);
-	return 0;
-}
-
-int GUI_HoF::toggleText(Button *caller) {
-	updateMenuButton(caller);
-	
-	if (_vm->textEnabled()) {
-		if (_vm->speechEnabled())
-			_vm->_configVoice = 1;
-		else
-			_vm->_configVoice = 3;
-	} else {
-		if (_vm->speechEnabled())
-			_vm->_configVoice = 2;
-		else
-			_vm->_configVoice = 0;
-	}
-
 	setupOptionsButtons();
 	renewHighlight(_gameOptions);
 	return 0;

@@ -1050,18 +1050,6 @@ void GUI_MR::setupOptionsButtons() {
 		_gameOptions.item[3].itemId = 17;
 }
 
-int GUI_MR::toggleWalkspeed(Button *caller) {
-	updateMenuButton(caller);
-	if (_vm->_configWalkspeed == 5)
-		_vm->_configWalkspeed = 3;
-	else
-		_vm->_configWalkspeed = 5;
-	_vm->_mainCharacter.walkspeed = _vm->_configWalkspeed;
-	setupOptionsButtons();
-	renewHighlight(_gameOptions);
-	return 0;
-}
-
 int GUI_MR::changeLanguage(Button *caller) {
 	updateMenuButton(caller);
 	if (!_vm->queryGameFlag(0x1B2)) {
@@ -1084,26 +1072,6 @@ int GUI_MR::toggleStudioSFX(Button *caller) {
 int GUI_MR::toggleSkipSupport(Button *caller) {
 	updateMenuButton(caller);
 	_vm->_configSkip ^= 1;
-	setupOptionsButtons();
-	renewHighlight(_gameOptions);
-	return 0;
-}
-
-int GUI_MR::toggleText(Button *caller) {
-	updateMenuButton(caller);
-	
-	if (_vm->textEnabled()) {
-		if (_vm->speechEnabled())
-			_vm->_configVoice = 1;
-		else
-			_vm->_configVoice = 3;
-	} else {
-		if (_vm->speechEnabled())
-			_vm->_configVoice = 2;
-		else
-			_vm->_configVoice = 0;
-	}
-
 	setupOptionsButtons();
 	renewHighlight(_gameOptions);
 	return 0;

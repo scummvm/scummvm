@@ -69,11 +69,9 @@ private:
 	int gameOptions(Button *button);
 	void setupOptionsButtons();
 
-	int toggleWalkspeed(Button *caller);
 	int changeLanguage(Button *caller);
 	int toggleStudioSFX(Button *caller);
 	int toggleSkipSupport(Button *caller);
-	int toggleText(Button *caller);
 
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;
