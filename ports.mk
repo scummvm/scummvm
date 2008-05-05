@@ -147,8 +147,8 @@ osxsnap: bundle credits
 # Windows specific
 #
 
-scummvmico.o: icons/scummvm.ico
-	$(WINDRES) dists/scummvm.rc scummvmico.o
+scummvmico.o: $(srcdir)/icons/scummvm.ico
+	$(WINDRES) -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmico.o
 
 # Special target to create a win32 snapshot binary
 win32dist: scummvm$(EXEEXT)
