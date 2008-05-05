@@ -117,7 +117,7 @@ bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
 
 bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
 
-	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
+	uint32 flags = _vm->getLocationFlags();
 
 	DebugPrintf("+------------------------------+---------+\n"
 				"| flag name                    |  value  |\n"
@@ -149,8 +149,8 @@ bool Debugger::Cmd_Give(int argc, const char **argv) {
 
 bool Debugger::Cmd_Zones(int argc, const char **argv) {
 
-	ZoneList::iterator b = _vm->_zones.begin();
-	ZoneList::iterator e = _vm->_zones.end();
+	ZoneList::iterator b = _vm->_location._zones.begin();
+	ZoneList::iterator e = _vm->_location._zones.end();
 
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
 				"| name               | l | t | r | b |  type  |  flag  |\n"
@@ -167,8 +167,8 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 
 bool Debugger::Cmd_Animations(int argc, const char **argv) {
 
-	AnimationList::iterator b = _vm->_animations.begin();
-	AnimationList::iterator e = _vm->_animations.end();
+	AnimationList::iterator b = _vm->_location._animations.begin();
+	AnimationList::iterator e = _vm->_location._animations.end();
 
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
 				"| name               | x | y | z | f |  type  |  flag  | \n"
@@ -219,8 +219,8 @@ bool Debugger::Cmd_Set(int argc, const char** argv) {
 
 bool Debugger::Cmd_Programs(int argc, const char** argv) {
 
-	ProgramList::iterator b = _vm->_programs.begin();
-	ProgramList::iterator e = _vm->_programs.end();
+	ProgramList::iterator b = _vm->_location._programs.begin();
+	ProgramList::iterator e = _vm->_location._programs.end();
 
 	const char *status[] = { "idle", "running", "completed" };
 

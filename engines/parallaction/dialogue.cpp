@@ -155,7 +155,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 
 	Answer *a = _q->_answers[i];
 
-	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
+	uint32 flags = _vm->getLocationFlags();
 	if (a->_yesFlags & kFlagsGlobal)
 		flags = _commandFlags | kFlagsGlobal;
 

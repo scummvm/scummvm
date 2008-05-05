@@ -215,25 +215,25 @@ DECLARE_COMMAND_OPCODE(dec) {
 
 DECLARE_COMMAND_OPCODE(ifeq) {
 	if (_counters[_cmdRunCtxt.cmd->u._lvalue] == _cmdRunCtxt.cmd->u._rvalue) {
-		_localFlags[_currentLocationIndex] |= kFlagsTestTrue;
+		setLocationFlags(kFlagsTestTrue);
 	} else {
-		_localFlags[_currentLocationIndex] &= ~kFlagsTestTrue;
+		clearLocationFlags(kFlagsTestTrue);
 	}
 }
 
 DECLARE_COMMAND_OPCODE(iflt) {
 	if (_counters[_cmdRunCtxt.cmd->u._lvalue] < _cmdRunCtxt.cmd->u._rvalue) {
-		_localFlags[_currentLocationIndex] |= kFlagsTestTrue;
+		setLocationFlags(kFlagsTestTrue);
 	} else {
-		_localFlags[_currentLocationIndex] &= ~kFlagsTestTrue;
+		clearLocationFlags(kFlagsTestTrue);
 	}
 }
 
 DECLARE_COMMAND_OPCODE(ifgt) {
 	if (_counters[_cmdRunCtxt.cmd->u._lvalue] > _cmdRunCtxt.cmd->u._rvalue) {
-		_localFlags[_currentLocationIndex] |= kFlagsTestTrue;
+		setLocationFlags(kFlagsTestTrue);
 	} else {
-		_localFlags[_currentLocationIndex] &= ~kFlagsTestTrue;
+		clearLocationFlags(kFlagsTestTrue);
 	}
 }
 
@@ -259,9 +259,9 @@ DECLARE_COMMAND_OPCODE(unfix) {
 
 
 DECLARE_COMMAND_OPCODE(zeta) {
-	_zeta0 = _cmdRunCtxt.cmd->u._zeta0;
-	_zeta1 = _cmdRunCtxt.cmd->u._zeta1;
-	_zeta2 = _cmdRunCtxt.cmd->u._zeta2;
+	_location._zeta0 = _cmdRunCtxt.cmd->u._zeta0;
+	_location._zeta1 = _cmdRunCtxt.cmd->u._zeta1;
+	_location._zeta2 = _cmdRunCtxt.cmd->u._zeta2;
 }
 
 
@@ -294,7 +294,7 @@ DECLARE_COMMAND_OPCODE(part) {
 
 DECLARE_COMMAND_OPCODE(testsfx) {
 	warning("Parallaction_br::cmdOp_testsfx not completely implemented");
-	_localFlags[_currentLocationIndex] &= ~kFlagsTestTrue;	// should test if sfx are enabled
+	clearLocationFlags(kFlagsTestTrue);	// should test if sfx are enabled
 }
 
 

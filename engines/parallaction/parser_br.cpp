@@ -146,11 +146,11 @@ DECLARE_LOCATION_PARSER(location)  {
 DECLARE_LOCATION_PARSER(zone)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zone) ");
 
-	parseZone(*_locParseCtxt.script, _zones, _tokens[1]);
+	parseZone(*_locParseCtxt.script, _location._zones, _tokens[1]);
 
 	_locParseCtxt.z->_index = _locParseCtxt.numZones++;
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+	if (getLocationFlags() & kFlagsVisited) {
 		_locParseCtxt.z->_flags = _zoneFlags[_currentLocationIndex][_locParseCtxt.z->_index];
 	} else {
 		_zoneFlags[_currentLocationIndex][_locParseCtxt.z->_index] = _locParseCtxt.z->_flags;
@@ -162,11 +162,11 @@ DECLARE_LOCATION_PARSER(zone)  {
 DECLARE_LOCATION_PARSER(animation)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(animation) ");
 
-	parseAnimation(*_locParseCtxt.script, _animations, _tokens[1]);
+	parseAnimation(*_locParseCtxt.script, _location._animations, _tokens[1]);
 
 	_locParseCtxt.a->_index = _locParseCtxt.numZones++;
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+	if (getLocationFlags() & kFlagsVisited) {
 		_locParseCtxt.a->_flags = _zoneFlags[_currentLocationIndex][_locParseCtxt.a->_index];
 	} else {
 		_zoneFlags[_currentLocationIndex][_locParseCtxt.a->_index] = _locParseCtxt.a->_flags;
@@ -189,14 +189,14 @@ DECLARE_LOCATION_PARSER(localflags)  {
 DECLARE_LOCATION_PARSER(flags)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(flags) ");
 
-	if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
+	if ((getLocationFlags() & kFlagsVisited) == 0) {
 		// only for 1st visit
-		_localFlags[_currentLocationIndex] = 0;
+		clearLocationFlags(kFlagsAll);
 		int _si = 1;
 
 		do {
 			byte _al = _localFlagNames->lookup(_tokens[_si]);
-			_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
+			setLocationFlags(1 << (_al - 1));
 
 			_si++;
 			if (scumm_stricmp(_tokens[_si], "|")) break;
@@ -288,13 +288,13 @@ DECLARE_LOCATION_PARSER(escape)  {
 DECLARE_LOCATION_PARSER(zeta)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zeta) ");
 
-	_zeta0 = atoi(_tokens[1]);
-	_zeta1 = atoi(_tokens[2]);
+	_location._zeta0 = atoi(_tokens[1]);
+	_location._zeta1 = atoi(_tokens[2]);
 
 	if (_tokens[3][0] != '\0') {
-		_zeta2 = atoi(_tokens[1]);
+		_location._zeta2 = atoi(_tokens[1]);
 	} else {
-		_zeta2 = 50;
+		_location._zeta2 = 50;
 	}
 }
 

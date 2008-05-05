@@ -185,10 +185,20 @@ struct Location {
 	char	   *_comment;
 	char	   *_endComment;
 
+	ZoneList		_zones;
+	AnimationList	_animations;
+	ProgramList		_programs;
+
+	bool		_hasSound;
+	char		_soundFile[50];
+
 	// NS specific
 	WalkNodeList	_walkNodes;
 
 	// BRA specific
+	int			_zeta0;
+	int			_zeta1;
+	int			_zeta2;
 	CommandList		_escapeCommands;
 };
 
@@ -352,6 +362,11 @@ public:
 
 	Character		_char;
 
+	void			setLocationFlags(uint32 flags);
+	void			clearLocationFlags(uint32 flags);
+	void			toggleLocationFlags(uint32 flags);
+	uint32			getLocationFlags();
+
 	uint32			_localFlags[NUM_LOCATIONS];
 	char			_locationNames[NUM_LOCATIONS][32];
 	int16			_currentLocationIndex;
@@ -367,9 +382,6 @@ public:
 
 	ZonePtr			_activeZone;
 
-	ZoneList		_zones;
-	AnimationList	_animations;
-	ProgramList		_programs;
 
 	Font		*_labelFont;
 	Font		*_menuFont;
@@ -406,8 +418,6 @@ protected:		// data
 
 	Common::String	_saveFileName;
 
-	bool		_hasLocationSound;
-	char		_locationSound[50];
 
 	ZonePtr		_hoverZone;
 
@@ -858,10 +868,6 @@ public:
 
 	int			_part;
 	int			_progress;
-
-	int			_zeta0;
-	int			_zeta1;
-	int			_zeta2;
 
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;
