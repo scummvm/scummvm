@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
@@ -238,11 +238,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\made\scriptfuncs.cpp"
+			RelativePath="..\..\engines\made\scriptfuncs.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\made\scriptfuncs.h"
+			RelativePath="..\..\engines\made\scriptfuncs_lgop2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\made\scriptfuncs_mhne.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\made\scriptfuncs_rtz.cpp"
 			>
 		</File>
 		<File
