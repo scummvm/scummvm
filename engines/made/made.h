@@ -106,6 +106,10 @@ public:
 	uint16 _eventKey;
 	int _soundRate;
 	int _musicVolume;
+	
+	// 2 = LGOP2, Manhole N&E
+	// 3 = Return to Zork
+	int _engineVersion;
 
 	int32 _timers[50];
 	int16 getTimer(int16 timerNum);

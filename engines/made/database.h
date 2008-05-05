@@ -41,8 +41,9 @@ class Object {
 public:
 	Object();
 	~Object();
-	int load(Common::SeekableReadStream &source);
-	int load(byte *source);
+	int loadVersion2(Common::SeekableReadStream &source);
+	int loadVersion3(Common::SeekableReadStream &source);
+	int loadVersion3(byte *source);
 
 	uint16 getFlags() const;
 	uint16 getClass() const;
@@ -96,9 +97,14 @@ public:
 	int16 getVar(int16 index);
 	void setVar(int16 index, int16 value);
 	
+	int16 *getObjectPropertyPtrV2(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
+	int16 *getObjectPropertyPtrV3(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
 	int16 *getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
+	
 	int16 getObjectProperty(int16 objectIndex, int16 propertyId);
 	int16 setObjectProperty(int16 objectIndex, int16 propertyId, int16 value);
+	
+	const char *getString(uint16 offset);
 
 	void dumpObject(int16 index);
 	
@@ -107,6 +113,7 @@ protected:
 	Common::Array<Object*> _objects;
 	byte *_gameState;
 	uint32 _gameStateSize;
+	char *_gameText;
 	int16 _mainCodeObjectIndex;
 	void load(Common::SeekableReadStream &sourceS);
 	void loadVersion2(Common::SeekableReadStream &sourceS);

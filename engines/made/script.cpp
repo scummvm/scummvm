@@ -33,110 +33,6 @@
 
 namespace Made {
 
-
-const char *extendFuncNames[] = {
-	"SYSTEM",
-	"INITGRAF",
-	"RESTOREGRAF",
-	"DRAWPIC",
-	"CLS",
-	"SHOWPAGE",
-	"EVENT",
-	"EVENTX",
-	"EVENTY",
-	"EVENTKEY",
-	"VISUALFX",
-	"PLAYSND",
-	"PLAYMUS",
-	"STOPMUS",
-	"ISMUS",
-	"TEXTPOS",
-	"FLASH",
-	"PLAYNOTE",
-	"STOPNOTE",
-	"PLAYTELE",
-	"STOPTELE",
-	"HIDECURS",
-	"SHOWCURS",
-	"MUSICBEAT",
-	"SCREENLOCK",
-	"ADDSPRITE",
-	"FREEANIM",
-	"DRAWSPRITE",
-	"ERASESPRITES",
-	"UPDATESPRITES",
-	"GETTIMER",
-	"SETTIMER",
-	"RESETTIMER",
-	"ALLOCTIMER",
-	"FREETIMER",
-	"PALETTELOCK",
-	"FONT",
-	"DRAWTEXT",
-	"HOMETEXT",
-	"TEXTRECT",
-	"TEXTXY",
-	"DROPSHADOW",
-	"TEXTCOLOR",
-	"OUTLINE",
-	"LOADCURSOR",
-	"SETGROUND",
-	"RESTEXT",
-	"CLIPAREA",
-	"SETCLIP",
-	"ISSND",
-	"STOPSND",
-	"PLAYVOICE",
-	"CDPLAY",
-	"STOPCD",
-	"CDSTATUS",
-	"CDTIME",
-	"CDPLAYSEG",
-	"PRINTF",
-	"MONOCLS",
-	"SNDENERGY",
-	"CLEARTEXT",
-	"ANIMTEXT",
-	"TEXTWIDTH",
-	"PLAYMOVIE",
-	"LOADSND",
-	"LOADMUS",
-	"LOADPIC",
-	"MUSICVOL",
-	"RESTARTEVENTS",
-	"PLACESPRITE",
-	"PLACETEXT",
-	"DELETECHANNEL",
-	"CHANNELTYPE",
-	"SETSTATE",
-	"SETLOCATION",
-	"SETCONTENT",
-	"EXCLUDEAREA",
-	"SETEXCLUDE",
-	"GETSTATE",
-	"PLACEANIM",
-	"SETFRAME",
-	"GETFRAME",
-	"GETFRAMECOUNT",
-	"PICWIDTH",
-	"PICHEIGHT",
-	"SOUNDRATE",
-	"DRAWANIMPIC",
-	"LOADANIM",
-	"READTEXT",
-	"READMENU",
-	"DRAWMENU",
-	"MENUCOUNT",
-	"SAVEGAME",
-	"LOADGAME",
-	"GAMENAME",
-	"SHAKESCREEN",
-	"PLACEMENU",
-	"SETVOLUME",
-	"WHATSYNTH",
-	"SLOWSYSTEM"
-};
-
 /* ScriptStack */
 
 ScriptStack::ScriptStack() {
@@ -275,8 +171,16 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	};
 	_commands = commandProcs;
 	_commandsMax = ARRAYSIZE(commandProcs) + 1;
-	
-	_functions = new ScriptFunctionsRtz(_vm);
+
+	if (_vm->getGameID() == GID_RTZ)
+		_functions = new ScriptFunctionsRtz(_vm);
+	else if (_vm->getGameID() == GID_LGOP2)
+		_functions = new ScriptFunctionsLgop2(_vm);
+	else if (_vm->getGameID() == GID_MANHOLE)
+		_functions = new ScriptFunctionsMhne(_vm);
+	else
+		error("Unsupported GameID");
+		
 	_functions->setupExternalsTable();
 	
 #undef COMMAND
@@ -679,7 +583,8 @@ void ScriptInterpreter::cmd_extend() {
 	byte argc = readByte();
 	int16 *argv = _stack.getStackPtr();
 
-	debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc);
+	//debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc);
+	debug(4, "func = %d; argc = %d\n", func, argc);
 	for (int i = 0; i < argc; i++)
 		debug(4, "argv[%02d] = %04X (%d)\n", i, argv[i], argv[i]);
 

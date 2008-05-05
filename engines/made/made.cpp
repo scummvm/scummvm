@@ -106,6 +106,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	if (!_musicVolume) {
 		debug(1, "Music disabled.");
 	}
+	
+	_soundRate = 8000;
 
 }
 
@@ -161,6 +163,7 @@ int MadeEngine::go() {
 		_timers[i] = -1;
 	
 	if (getGameID() == GID_RTZ) {
+		_engineVersion = 3;
 		if (getFeatures() & GF_DEMO) {
 			_dat->open("demo.dat");
 			_res->open("demo.prj");
@@ -177,9 +180,11 @@ int MadeEngine::go() {
 			error("Unknown RTZ game features");
 		}
 	} else if (getGameID() == GID_MANHOLE) {
+		_engineVersion = 2;
 		_dat->open("manhole.dat");
 		_res->open("manhole.prj");
 	} else if (getGameID() == GID_LGOP2) {
+		_engineVersion = 2;
 		_dat->open("lgop2.dat");
 		_res->open("lgop2.prj");
 	} else {

@@ -11,7 +11,9 @@ MODULE_OBJS = \
 	resource.o \
 	screen.o \
 	script.o \
-	scriptfuncs.o \
+	scriptfuncs_lgop2.o \
+	scriptfuncs_mhne.o \
+	scriptfuncs_rtz.o \
 	sound.o
 
 
