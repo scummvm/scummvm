@@ -54,7 +54,8 @@ public:
 
 	void setNativeMT32(bool b) { _nativeMT32 = b; }
 	bool hasNativeMT32() { return _nativeMT32; }
-	void play(XmidiResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
+	void playXMIDI(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
+	void playSMF(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
 	void stop();
 	void pause();
 	void resume();
@@ -86,7 +87,7 @@ protected:
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;
-	MidiParser *_xmidiParser;
+	MidiParser *_xmidiParser, *_smfParser;
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _isGM;
