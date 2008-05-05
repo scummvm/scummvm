@@ -238,6 +238,9 @@ int KyraEngine_MR::go() {
 	}
 
 	if (_gameToLoad != -1 || firstTimeGame) {
+		while (!_screen->isMouseVisible())
+			_screen->showMouse();
+
 		uninitMainMenu();
 		_musicSoundChannel = -1;
 		startup();
@@ -270,8 +273,7 @@ int KyraEngine_MR::go() {
 
 		switch (_menu->handle(3)) {
 		case 2:
-			if (saveFileLoadable(0))
-				_menuDirectlyToLoad = true;
+			_menuDirectlyToLoad = true;
 			// fall through
 
 		case 0:
@@ -949,6 +951,8 @@ bool KyraEngine_MR::checkCharCollision(int x, int y) {
 
 void KyraEngine_MR::runLoop() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::runLoop()");
+
+	_eventList.clear();
 
 	_runFlag = true;
 	while (_runFlag && !_quitFlag) {
