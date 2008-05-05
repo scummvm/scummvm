@@ -728,7 +728,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	int selection = 1;
 
 	_screen->hideMouse();
-	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, _screenBuffer);
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = 2;
 
@@ -1121,6 +1121,7 @@ int KyraEngine_MR::o3d_delay(EMCState *script) {
 			updateWithText();
 		else
 			update();
+
 		_system->delayMillis(10);
 	}
 	return 0;

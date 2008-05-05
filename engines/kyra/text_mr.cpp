@@ -738,8 +738,6 @@ void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, in
 			resetSkipFlag();
 			running = false;
 		}
-
-		delay(10);
 	}
 	_text->restoreScreen();
 	_chatText = 0;
