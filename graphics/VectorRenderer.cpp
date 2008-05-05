@@ -77,7 +77,7 @@ void VectorRendererSpec<PixelType, PixelFormat>::
 drawSquare(int x, int y, int w, int h, bool fill) {
 	if ( fill ) {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-		int pitch = surfacePitch();
+		int pitch = Base::surfacePitch();
 
 		while (h--) {
 			Common::set_to(ptr, ptr + w, (PixelType)_color);
@@ -95,7 +95,7 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
 drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
-	int pitch = surfacePitch();
+	int pitch = Base::surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;
 
 	*ptr = (PixelType)_color;
@@ -226,7 +226,7 @@ drawLine(int x1, int y1, int x2, int y2) {
 		return;
 
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
-	int pitch = surfacePitch();
+	int pitch = Base::surfacePitch();
 
 	if (dy == 0) { // horizontal lines
 		// these can be filled really fast with a single memset.
@@ -319,22 +319,22 @@ void VectorRendererAA<PixelType, PixelFormat>::
 drawCircleAlg(int x1, int y1, int r) {
 	int x = r;
 	int y = 0;
-	int p = surfacePitch(), px = 0, py = 0;
+	int p = Base::surfacePitch(), px = 0, py = 0;
 	uint32 rsq = (r * r) << 16;
 	uint32 T = 0, oldT;
 	uint8 a1, a2;
 	bool fill = false;
 
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 	px = p*x;
 	py = p*y;
 
-	*(ptr + x) = (PixelType)_color;
-	*(ptr - x) = (PixelType)_color;
-	*(ptr + px) = (PixelType)_color;
-	*(ptr - px) = (PixelType)_color;
+	*(ptr + x) = (PixelType)Base::_color;
+	*(ptr - x) = (PixelType)Base::_color;
+	*(ptr + px) = (PixelType)Base::_color;
+	*(ptr - px) = (PixelType)Base::_color;
 	
-	if (fill) Common::set_to( ptr - x, ptr + x, _color );
+	if (fill) Common::set_to(ptr - x, ptr + x, Base::_color);
 
 	while (x > y++)
 	{
@@ -352,10 +352,10 @@ drawCircleAlg(int x1, int y1, int r) {
 		a1 = ~a2;
 
 		if (fill) {
-			Common::set_to( ptr - x + py, ptr + x + py, _color );
-			Common::set_to( ptr - x - py, ptr + x - py, _color );
-			Common::set_to( ptr - y + px, ptr + y + px, _color );
-			Common::set_to( ptr - y - px, ptr + y - px, _color );
+			Common::set_to(ptr - x + py, ptr + x + py, Base::_color);
+			Common::set_to(ptr - x - py, ptr + x - py, Base::_color);
+			Common::set_to(ptr - y + px, ptr + y + px, Base::_color);
+			Common::set_to(ptr - y - px, ptr + y - px, Base::_color);
 		} else {
 			blendPixelPtr(ptr + x - 1 + py, a2);
 			blendPixelPtr(ptr + y - (px-p), a2);

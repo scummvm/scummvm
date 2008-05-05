@@ -204,6 +204,7 @@ protected:
  */
 template<typename PixelType, typename PixelFormat>
 class VectorRendererSpec : public VectorRenderer {
+	typedef VectorRenderer Base;
 
 public:
 	/**
@@ -217,18 +218,11 @@ public:
 
 	void drawSquare(int x, int y, int w, int h, bool fill);
 
-	/**
-	 * @see VectorRenderer::setColor()
-	 */
-	void setColor(uint8 r, uint8 g, uint8 b, uint8 a) {
-		_color = ARGBToColor<PixelFormat>(r, g, b, a);
-	}
-
-	/**
+/**
 	 * @see VectorRenderer::setColor()
 	 */
 	void setColor(uint8 r, uint8 g, uint8 b) {
-		_color = RGBToColor<PixelFormat>(r, g, b);
+        this->_color = RGBToColor<PixelFormat>(r, g, b);
 	}
 
 	/**
