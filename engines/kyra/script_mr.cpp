@@ -723,6 +723,81 @@ int KyraEngine_MR::o3_getScore(EMCState *script) {
 	return _score;
 }
 
+int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_daggerWarning(%p) ()", (const void *)script);
+	int selection = 1;
+
+	_screen->hideMouse();
+	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenBuffer);
+	int curPageBackUp = _screen->_curPage;
+	_screen->_curPage = 2;
+
+	_screen->drawFilledBox(0, 0, 0x13F, 0xC7, 0xB4, 0xB3, 0xB6);
+	_screen->drawFilledBox(0xF, 0xAA, 0x68, 0xBA, 0xB4, 0xB3, 0xB6);
+	_screen->drawFilledBox(0x73, 0xAA, 0xCC, 0xBA, 0xB4, 0xB3, 0xB6);
+	_screen->drawFilledBox(0xD6, 0xAA, 0x12F, 0xBA, 0xB4, 0xB3, 0xB6);
+
+	int y = 15;
+	for (int i = 100; i <= 107; ++i) {
+		const char *str = (const char *)getTableEntry(_cCodeFile, i);
+		int x = _text->getCenterStringX(str, 0, 0x13F);
+		_text->printText(str, x, y, 0xFF, 0xF0, 0x00);
+		y += 10;
+	}
+	y += 15;
+	for (int i = 110; i <= 113; ++i) {
+		const char *str = (const char *)getTableEntry(_cCodeFile, i);
+		int x = _text->getCenterStringX(str, 0, 0x13F);
+		_text->printText(str, x, y, 0xFF, 0xF0, 0x00);
+		y += 10;
+	}
+
+	const char *str = 0;
+	int x = 0;
+	
+	str = (const char *)getTableEntry(_cCodeFile, 120);
+	x = _text->getCenterStringX(str, 0xF, 0x68);
+	_text->printText(str, x, 174, 0xFF, 0xF0, 0x00);
+
+	str = (const char *)getTableEntry(_cCodeFile, 121);
+	x = _text->getCenterStringX(str, 0x73, 0xCC);
+	_text->printText(str, x, 174, 0xFF, 0xF0, 0x00);
+
+	str = (const char *)getTableEntry(_cCodeFile, 122);
+	x = _text->getCenterStringX(str, 0xD6, 0x12F);
+	_text->printText(str, x, 174, 0xFF, 0xF0, 0x00);
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+	_screen->updateScreen();
+
+	_screen->_curPage = curPageBackUp;
+	_screen->showMouse();
+
+	while (!_quitFlag) {
+		int keys = checkInput(0);
+		removeInputTop();
+
+		if (keys == 198 || keys == 199) {
+			if (_mouseX >= 15 && _mouseX <= 104 && _mouseY >= 170 && _mouseY <= 186) {
+				selection = 1;
+				break;
+			} else if (_mouseX >= 115 && _mouseX <= 204 && _mouseY >= 170 && _mouseY <= 186) {
+				selection = 2;
+				break;
+			} else if (_mouseX >= 214 && _mouseX <= 303 && _mouseY >= 170 && _mouseY <= 186) {
+				selection = 3;
+				break;
+			}
+		}
+
+		delay(10);
+	}
+
+	restorePage3();
+	_screen->copyBlockToPage(1, 0, 0, 320, 200, _screenBuffer);
+	return selection;
+}
+
 int KyraEngine_MR::o3_blockOutRegion(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	const int x1 = stackPos(0);
@@ -1175,7 +1250,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o2_playWanderScoreViaMap);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_getScore);
-	OpcodeUnImpl();
+	Opcode(o3_daggerWarning);
 	// 0x5c
 	Opcode(o3_blockOutRegion);
 	Opcode(o3_dummy);

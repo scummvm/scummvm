@@ -47,6 +47,8 @@ public:
 
 	int getDrawLayer(int x, int y);
 	int getDrawLayer2(int x, int y, int height);
+
+	void drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2, uint8 c3);
 private:
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;

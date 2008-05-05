@@ -559,6 +559,7 @@ private:
 	int o3_stopMusic(EMCState *script);
 	int o3_playSoundEffect(EMCState *script);
 	int o3_getScore(EMCState *script);
+	int o3_daggerWarning(EMCState *script);
 	int o3_blockOutRegion(EMCState *script);
 	int o3_showSceneStringsMessage(EMCState *script);
 	int o3_showGoodConscience(EMCState *script);
