@@ -73,7 +73,6 @@ private:
 
 	void setupOptionsButtons();
 
-	Button::Callback _sliderHandlerFunctor;
 	int sliderHandler(Button *caller);
 	void drawSliderBar(int slider, const uint8 *shape);
 

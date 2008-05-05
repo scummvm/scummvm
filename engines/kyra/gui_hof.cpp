@@ -81,7 +81,6 @@ void KyraEngine_HoF::setupLangButtonShapes() {
 }
 
 GUI_HoF::GUI_HoF(KyraEngine_HoF *vm) : GUI_v2(vm), _vm(vm), _screen(_vm->_screen) {
-	_sliderHandlerFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::sliderHandler);
 }
 
 const char *GUI_HoF::getMenuTitle(const Menu &menu) {
@@ -900,7 +899,6 @@ int GUI_HoF::audioOptions(Button *caller) {
 	backUpPage1(_vm->_screenBuffer);
 	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
 		_vm->_configVoice = 0;
-		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
 		choiceDialog(0x1D, 0);
 	}
 

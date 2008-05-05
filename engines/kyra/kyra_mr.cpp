@@ -139,6 +139,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_goodConsciencePosition = false;
 	_menuDirectlyToLoad = false;
 	_optionsFile = 0;
+	_actorFile = 0;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {

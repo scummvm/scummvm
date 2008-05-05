@@ -199,6 +199,10 @@ protected:
 
 	virtual void setupOptionsButtons() = 0;
 
+	// audio options
+	Button::Callback _sliderHandlerFunctor;
+	virtual int sliderHandler(Button *caller) = 0;
+
 	// savename menu
 	bool _finishNameInput, _cancelNameInput;
 	Common::KeyState _keyPressed;

@@ -2512,6 +2512,7 @@ void GUI_MR::initStaticData() {
 	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 4, -1, 81, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
 	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::gameOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 37, -1, 98, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::audioOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 5, -1, 115, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
 	_mainMenu.item[5].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::quitGame);
 	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 6, -1, 144, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
