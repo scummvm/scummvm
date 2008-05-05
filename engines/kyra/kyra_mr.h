@@ -60,8 +60,16 @@ public:
 
 	void playVQA(const char *name);
 
-protected:
+private:
 	static const EngineDesc _mrEngineDesc;
+
+	// config
+	bool _configStudio;
+	bool _configSkip;
+
+	void registerDefaultSettings();
+	void writeSettings();
+	void readSettings();
 
 	// --
 	Screen_MR *_screen;
@@ -74,6 +82,10 @@ protected:
 	void runStartupScript(int script, int unk1);
 
 	void setupOpcodeTable();
+
+	// input
+	bool skipFlag() const;
+	void resetSkipFlag(bool removeEvent = true);
 
 	// run
 	bool _menuDirectlyToLoad;

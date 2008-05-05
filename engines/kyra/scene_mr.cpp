@@ -670,7 +670,9 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		}
 
 		if (unk1) {
-			if (skipFlag()) {
+			// Notice that we can't use KyraEngine_MR's skipFlag handling
+			// here, since Kyra3 allows disabling of skipFlag support
+			if (KyraEngine_v2::skipFlag()) {
 				resetSkipFlag(false);
 				running = false;
 				_unk4 = 1;

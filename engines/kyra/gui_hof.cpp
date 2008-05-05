@@ -977,6 +977,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
 		_vm->_configVoice = 1;
+		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
 		choiceDialog(0x1E, 0);
 	}
 

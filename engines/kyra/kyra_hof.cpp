@@ -2011,6 +2011,3 @@ void KyraEngine_HoF::readSettings() {
 
 } // end of namespace Kyra
 
-
-
-

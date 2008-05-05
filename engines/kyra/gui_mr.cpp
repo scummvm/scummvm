@@ -961,5 +961,153 @@ int GUI_MR::loadSecondChance(Button *button) {
 	return 0;
 }
 
+int GUI_MR::gameOptions(Button *caller) {
+	updateMenuButton(caller);
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	bool textEnabled = _vm->textEnabled();
+	int lang = _vm->_lang;
+
+	setupOptionsButtons();
+	initMenu(_gameOptions);
+	_isOptionsMenu = true;
+
+	while (_isOptionsMenu) {
+		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+
+	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
+		_vm->_configVoice = 1;
+		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
+		choiceDialog(0x1E, 0);
+	}
+
+	if (_vm->_lang != lang) {
+		_reloadTemporarySave = true;
+		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 3 Savegame");
+		if (!_vm->loadLanguageFile("ITEMS.", _vm->_itemFile))
+			error("Couldn't load ITEMS");
+		if (!_vm->loadLanguageFile("SCORE.", _vm->_scoreFile))
+			error("Couldn't load SCORE");
+		if (!_vm->loadLanguageFile("C_CODE.", _vm->_cCodeFile))
+			error("Couldn't load C_CODE");
+		if (!_vm->loadLanguageFile("SCENES.", _vm->_scenesFile))
+			error("Couldn't load SCENES");
+		if (!_vm->loadLanguageFile("OPTIONS.", _vm->_optionsFile))
+			error("Couldn't load OPTIONS");
+		if (!_vm->loadLanguageFile("_ACTOR.", _vm->_actorFile))
+			error("couldn't load _ACTOR");
+	}
+
+	_vm->writeSettings();
+
+	initMenu(*_currentMenu);
+	updateAllMenuButtons();
+	return 0;
+}
+
+void GUI_MR::setupOptionsButtons() {
+	_vm->musicUpdate(0);
+	if (_vm->_configWalkspeed == 3)
+		_gameOptions.item[0].itemId = 28;
+	else
+		_gameOptions.item[0].itemId = 27;
+
+	if (_vm->textEnabled())
+		_gameOptions.item[4].itemId = 18;
+	else
+		_gameOptions.item[4].itemId = 17;
+
+	switch (_vm->_lang) {
+	case 0:
+		_gameOptions.item[1].itemId = 31;
+		break;
+	
+	case 1:
+		_gameOptions.item[1].itemId = 32;
+		break;
+
+	case 2:
+		_gameOptions.item[1].itemId = 33;
+		break;
+
+	default:
+		break;
+	}
+
+	if (_vm->_configStudio)
+		_gameOptions.item[2].itemId = 18;
+	else
+		_gameOptions.item[2].itemId = 17;
+
+	if (_vm->_configSkip)
+		_gameOptions.item[3].itemId = 18;
+	else
+		_gameOptions.item[3].itemId = 17;
+}
+
+int GUI_MR::toggleWalkspeed(Button *caller) {
+	updateMenuButton(caller);
+	if (_vm->_configWalkspeed == 5)
+		_vm->_configWalkspeed = 3;
+	else
+		_vm->_configWalkspeed = 5;
+	_vm->_mainCharacter.walkspeed = _vm->_configWalkspeed;
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+int GUI_MR::changeLanguage(Button *caller) {
+	updateMenuButton(caller);
+	if (!_vm->queryGameFlag(0x1B2)) {
+		++_vm->_lang;
+		_vm->_lang %= 3;
+		setupOptionsButtons();
+		renewHighlight(_gameOptions);
+	}
+	return 0;
+}
+
+int GUI_MR::toggleStudioSFX(Button *caller) {
+	updateMenuButton(caller);
+	_vm->_configStudio ^= 1;
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+int GUI_MR::toggleSkipSupport(Button *caller) {
+	updateMenuButton(caller);
+	_vm->_configSkip ^= 1;
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+int GUI_MR::toggleText(Button *caller) {
+	updateMenuButton(caller);
+	
+	if (_vm->textEnabled()) {
+		if (_vm->speechEnabled())
+			_vm->_configVoice = 1;
+		else
+			_vm->_configVoice = 3;
+	} else {
+		if (_vm->speechEnabled())
+			_vm->_configVoice = 2;
+		else
+			_vm->_configVoice = 0;
+	}
+
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
 } // end of namespace Kyra
 

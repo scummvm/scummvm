@@ -495,6 +495,9 @@ void KyraEngine_MR::snd_stopVoice() {
 
 void KyraEngine_MR::playStudioSFX(const char *str) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::playStudioSFX('%s')", str);
+	if (!_configStudio)
+		return;
+
 	if (_rnd.getRandomNumberRng(1, 2) != 2)
 		return;
 
@@ -570,7 +573,7 @@ void KyraEngine_MR::startup() {
 		error("Couldn't load SCENES");
 	if (!loadLanguageFile("OPTIONS.", _optionsFile))
 		error("Couldn't load OPTIONS");
-	if ((_actorFileSize = loadLanguageFile("_ACTOR.", _actorFile)) == 0)
+	if (!loadLanguageFile("_ACTOR.", _actorFile))
 		error("couldn't load _ACTOR");
 
 	musicUpdate(0);
@@ -1343,6 +1346,9 @@ char *KyraEngine_MR::appendLanguage(char *buf, int lang, int bufSize) {
 int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadLanguageFile('%s', %p)", file, (const void*)buffer);
 
+	delete[] buffer; 
+	buffer = 0;
+
 	uint32 size = 0;
 	char nBuf[32];
 	strncpy(nBuf, file, 32);
@@ -1471,6 +1477,69 @@ void KyraEngine_MR::changeChapter(int newChapter, int sceneId, int malcolmShapes
 		loadCharacterShapes(malcolmShapes);
 
 	enterNewScene(sceneId, facing, 0, 0, 0);
+}
+
+#pragma mark -
+
+bool KyraEngine_MR::skipFlag() const {
+	if (!_configSkip)
+		return false;
+	return KyraEngine_v2::skipFlag();
+}
+
+void KyraEngine_MR::resetSkipFlag(bool removeEvent) {
+	if (!_configSkip) {
+		if (removeEvent)
+			_eventList.clear();
+		return;
+	}
+	KyraEngine_v2::resetSkipFlag(removeEvent);
+}
+
+#pragma mark -
+
+void KyraEngine_MR::registerDefaultSettings() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::registerDefaultSettings()");
+	KyraEngine::registerDefaultSettings();
+
+	// Most settings already have sensible defaults. This one, however, is
+	// specific to the Kyra engine.
+	ConfMan.registerDefault("walkspeed", 5);
+	ConfMan.registerDefault("studio_audience", true);
+	ConfMan.registerDefault("skip_support", true);
+}
+
+void KyraEngine_MR::writeSettings() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::writeSettings()");
+	switch (_lang) {
+	case 1:
+		_flags.lang = Common::FR_FRA;
+		break;
+
+	case 2:
+		_flags.lang = Common::DE_DEU;
+		break;
+
+	case 0:
+	default:
+		_flags.lang = Common::EN_ANY;
+		break;
+	}
+
+	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
+
+	ConfMan.setBool("studio_audience", _configStudio);
+	ConfMan.setBool("skip_support", _configSkip);
+
+	KyraEngine::writeSettings();
+}
+
+void KyraEngine_MR::readSettings() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::readSettings()");
+	KyraEngine::readSettings();
+
+	_configStudio = ConfMan.getBool("studio_audience");
+	_configSkip = ConfMan.getBool("skip_support");
 }
 
 } // end of namespace Kyra

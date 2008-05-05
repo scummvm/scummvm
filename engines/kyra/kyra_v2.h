@@ -97,8 +97,8 @@ protected:
 	};
 	Common::List<Event> _eventList;
 
-	bool skipFlag() const;
-	void resetSkipFlag(bool removeEvent = true);
+	virtual bool skipFlag() const;
+	virtual void resetSkipFlag(bool removeEvent = true);
 
 	// Animator
 	struct AnimObj {
