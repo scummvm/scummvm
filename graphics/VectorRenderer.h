@@ -218,11 +218,11 @@ public:
 
 	void drawSquare(int x, int y, int w, int h, bool fill);
 
-/**
+	/**
 	 * @see VectorRenderer::setColor()
 	 */
 	void setColor(uint8 r, uint8 g, uint8 b) {
-        this->_color = RGBToColor<PixelFormat>(r, g, b);
+		this->_color = RGBToColor<PixelFormat>(r, g, b);
 	}
 
 	/**
@@ -248,7 +248,7 @@ public:
 	 * @see VectorRenderer::blendPixel()
 	 */
 	virtual inline void blendPixel(int x, int y, uint8 alpha) {
-			putPixel(x, y);
+		putPixel(x, y);
 	}
 
 protected:
