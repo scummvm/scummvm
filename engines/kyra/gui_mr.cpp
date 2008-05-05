@@ -771,7 +771,7 @@ int GUI_MR::quitGame(Button *caller) {
 		_displayMenu = false;
 		_vm->_runFlag = false;
 		_vm->fadeOutMusic(60);
-		_screen->fadeToBlack();
+		_screen->fadeToBlack(60);
 		_screen->clearCurPage();
 	}
 

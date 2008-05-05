@@ -89,7 +89,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mainCharX = _mainCharY = -1;
 	_animList = 0;
 	_drawNoShapeFlag = false;
-	_wsaPlayingVQA = false;
+	_wasPlayingVQA = false;
 	_lastCharPalLayer = -1;
 	_charPalUpdate = false;
 	_runFlag = false;
@@ -230,7 +230,14 @@ int KyraEngine_MR::go() {
 	_screen->clearPage(0);
 	_screen->clearPage(2);
 
-	if (_gameToLoad != -1) {
+	const bool firstTimeGame = !saveFileLoadable(0);
+
+	if (firstTimeGame) {
+		playVQA("K3INTRO");
+		_wasPlayingVQA = false;
+	}
+
+	if (_gameToLoad != -1 || firstTimeGame) {
 		uninitMainMenu();
 		_musicSoundChannel = -1;
 		startup();
@@ -265,14 +272,13 @@ int KyraEngine_MR::go() {
 		case 2:
 			if (saveFileLoadable(0))
 				_menuDirectlyToLoad = true;
-			else
-				break;
+			// fall through
 
 		case 0:
 			uninitMainMenu();
 
 			fadeOutMusic(60);
-			_screen->fadeToBlack();
+			_screen->fadeToBlack(60);
 			_musicSoundChannel = -1;
 			startup();
 			runLoop();
@@ -281,14 +287,14 @@ int KyraEngine_MR::go() {
 
 		case 1:
 			playVQA("K3INTRO");
-			_wsaPlayingVQA = false;
+			_wasPlayingVQA = false;
 			_screen->hideMouse();
 			break;
 
 		case 3:
 		default:
 			fadeOutMusic(60);
-			_screen->fadeToBlack();
+			_screen->fadeToBlack(60);
 			uninitMainMenu();
 			quitGame();
 			running = false;
@@ -350,7 +356,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_screen->hideMouse();
 		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 		fadeOutMusic(60);
-		_screen->fadeToBlack();
+		_screen->fadeToBlack(60);
 		_screen->clearPage(0);
 
 		vqa.setDrawPage(0);
@@ -366,7 +372,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_screen->setScreenPalette(pal);
 		_screen->clearPage(0);
 		memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-		_wsaPlayingVQA = true;
+		_wasPlayingVQA = true;
 	}
 }
 

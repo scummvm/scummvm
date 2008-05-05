@@ -570,7 +570,7 @@ private:
 
 	// misc
 	TextDisplayer_MR *_text;
-	bool _wsaPlayingVQA;
+	bool _wasPlayingVQA;
 
 	// resource specific
 private:
