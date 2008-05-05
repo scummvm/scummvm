@@ -263,7 +263,7 @@ void GameDatabase::loadVersion2(Common::SeekableReadStream &sourceS) {
 	_gameText = new char[textSize];
 	sourceS.read(_gameText, textSize);
 	// "Decrypt" the text data
-	for (int i = 0; i < textSize; i++)
+	for (uint32 i = 0; i < textSize; i++)
 		_gameText[i] += 0x1E;
 
 	sourceS.seek(objectsOffs);
