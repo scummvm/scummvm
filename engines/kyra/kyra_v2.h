@@ -51,6 +51,9 @@ public:
 
 		// Animation script specific
 		const int animScriptFrameAdd;
+
+		// Item specific
+		const int maxItemId;
 	};
 
 	KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc);

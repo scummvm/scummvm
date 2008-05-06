@@ -421,9 +421,8 @@ bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
-		// Kyrandia 2 has only 178 items (-1 to 176), otherwise it will crash
-		if (item < -1 || item > 176) {
-			DebugPrintf("itemid must be any value between (including) -1 and 176\n");
+		if (item < -1 || item > _vm->engineDesc().maxItemId) {
+			DebugPrintf("itemid must be any value between (including) -1 and %d\n", _vm->engineDesc().maxItemId);
 			return true;
 		}
 

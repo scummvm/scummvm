@@ -49,7 +49,10 @@ const KyraEngine_v2::EngineDesc KyraEngine_HoF::_hofEngineDesc = {
 	8,
 
 	// Animation script specific
-	33
+	33,
+
+	// Item specific
+	175
 };
 
 KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {

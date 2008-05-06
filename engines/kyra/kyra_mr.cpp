@@ -50,7 +50,10 @@ const KyraEngine_v2::EngineDesc KyraEngine_MR::_mrEngineDesc = {
 	9,
 
 	// Animation script specific
-	9
+	9,
+
+	// Item specific
+	71
 };
 
 KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _mrEngineDesc) {
