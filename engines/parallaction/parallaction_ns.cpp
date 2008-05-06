@@ -143,7 +143,7 @@ int Parallaction_ns::init() {
 
 	num_foglie = 0;
 
-	_animations.push_front(_char._ani);
+	_location._animations.push_front(_char._ani);
 
 	Parallaction::init();
 
@@ -159,7 +159,7 @@ Parallaction_ns::~Parallaction_ns() {
 	delete _instructionNames;
 	delete _locationStmt;
 
-	_animations.remove(_char._ani);
+	_location._animations.remove(_char._ani);
 
 }
 
@@ -306,7 +306,7 @@ void Parallaction_ns::changeLocation(char *location) {
 		setArrowCursor();
 	}
 
-	_animations.remove(_char._ani);
+	_location._animations.remove(_char._ani);
 
 	freeLocation();
 
@@ -326,7 +326,7 @@ void Parallaction_ns::changeLocation(char *location) {
 		changeCharacter(locname.character());
 	}
 
-	_animations.push_front(_char._ani);
+	_location._animations.push_front(_char._ani);
 
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
@@ -357,8 +357,8 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	runCommands(_location._aCommands);
 
-	if (_hasLocationSound)
-		_soundMan->playSfx(_locationSound, 0, true);
+	if (_location._hasSound)
+		_soundMan->playSfx(_location._soundFile, 0, true);
 
 	debugC(1, kDebugExec, "changeLocation() done");
 
@@ -420,7 +420,7 @@ void Parallaction_ns::cleanupGame() {
 	_engineFlags &= ~kEngineTransformedDonna;
 
 	// this code saves main character animation from being removed from the following code
-	_animations.remove(_char._ani);
+	_location._animations.remove(_char._ani);
 	_numLocations = 0;
 	_commandFlags = 0;
 
@@ -437,7 +437,7 @@ void Parallaction_ns::cleanupGame() {
 	_engineFlags &= ~kEngineQuit;
 
 	// main character animation is restored
-	_animations.push_front(_char._ani);
+	_location._animations.push_front(_char._ani);
 	_score = 0;
 
 	return;

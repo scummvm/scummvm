@@ -424,6 +424,8 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 13:
 	case 16:
 	case 23:
+	case 40:
+	case 41:
 		animData->curLookDir = 0;
 		break;
 
@@ -431,6 +433,8 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 15:
 	case 18:
 	case 21:
+	case 26:
+	case 38:
 		animData->curLookDir = 2;
 		break;
 
@@ -440,6 +444,8 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 12:
 	case 19:
 	case 22:
+	case 42:
+	case 43:
 		animData->curLookDir = 4;
 		break;
 
@@ -447,13 +453,19 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 14:
 	case 17:
 	case 20:
+	case 27:
+	case 39:
 		animData->curLookDir = 6;
 		break;
 
 	case 8:
 	case 9:
+	case 10:
+	case 11:
 	case 28:
 	case 29:
+	case 30:
+	case 31:
 		if (animData->pathExistence == 4)
 			animData->pathExistence = 5;
 		break;
@@ -530,14 +542,14 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 int16 Goblin_v4::sub_20430(int16 state, uint16 dir) {
 	static const int16 word_3F25E[8][8] = {
-		{0, 1, 10, 10, 10, 31, 31, 7},
-		{0, 1, 2, 29, 29, 29, 8, 8},
-		{10, 1, 2, 3, 11, 11, 11, 10},
-		{29, 29, 2, 3, 4, 9, 9, 9},
-		{30, 11, 11, 3, 4, 5, 30, 30},
-		{28, 28, 9, 9, 4, 5, 6, 28},
-		{31, 31, 31, 30, 30, 5, 6, 7},
-		{0, 8, 8, 8, 28, 28, 6, 7}
+		{ 0,  1, 10, 10, 10, 31, 31,  7},
+		{ 0,  1,  2, 29, 29, 29,  8,  8},
+		{10,  1,  2,  3, 11, 11, 11, 10},
+		{29, 29,  2,  3,  4,  9,  9,  9},
+		{30, 11, 11,  3,  4,  5, 30, 30},
+		{28, 28,  9,  9,  4,  5,  6, 28},
+		{31, 31, 31, 30, 30,  5,  6,  7},
+		{ 0,  8,  8,  8, 28, 28,  6,  7}
 	};
 	int16 dx = state, cx = 0;
 
@@ -593,7 +605,6 @@ int16 Goblin_v4::sub_20430(int16 state, uint16 dir) {
 	}
 
 	// loc_2046C
-
 
 	switch (dir) {
 	case Map::kDirNW:

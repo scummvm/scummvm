@@ -128,11 +128,14 @@ void Util::processInput(bool scroll) {
 	}
 
 	_vm->_global->_speedFactor = MIN(_fastMode + 1, 3);
-	if (scroll && hasMove) {
-		if (y >= (_vm->_height - _vm->_video->_splitHeight2)) {
-			y = _vm->_height - _vm->_video->_splitHeight2 - 1;
-			_vm->_util->setMousePos(x, y);
-		}
+	if (hasMove && scroll) {
+		x = CLIP(x, _vm->_global->_mouseMinX, _vm->_global->_mouseMaxX);
+		y = CLIP(y, _vm->_global->_mouseMinY, _vm->_global->_mouseMaxY);
+
+		x -= _vm->_video->_screenDeltaX;
+		y -= _vm->_video->_screenDeltaY;
+
+		_vm->_util->setMousePos(x, y);
 		_vm->_game->evaluateScroll(x, y);
 	}
 }
@@ -228,15 +231,15 @@ int16 Util::checkKey(void) {
 
 void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	*pX = mouse.x + _vm->_video->_scrollOffsetX;
-	*pY = mouse.y + _vm->_video->_scrollOffsetY;
+	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;
+	*pY = mouse.y + _vm->_video->_scrollOffsetY - _vm->_video->_screenDeltaY;
 
 	if (pButtons != 0)
 		*pButtons = _mouseButtons;
 }
 
 void Util::setMousePos(int16 x, int16 y) {
-	g_system->warpMouse(x, y);
+	g_system->warpMouse(x + _vm->_video->_screenDeltaX, y + _vm->_video->_screenDeltaY);
 }
 
 void Util::waitMouseUp(void) {

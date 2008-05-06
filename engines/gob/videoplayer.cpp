@@ -76,6 +76,9 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 	_fileName = new char[strlen(fileName) + 1];
 	strcpy(_fileName, fileName);
 
+	_defaultX = _video->getX();
+	_defaultY = _video->getY();
+
 	return true;
 }
 
@@ -88,6 +91,7 @@ void VideoPlayer::Video::close() {
 	_stream = 0;
 	_fileName = 0;
 	memset(&_state, 0, sizeof(CoktelVideo::State));
+	_defaultX = _defaultY = 0;
 }
 
 bool VideoPlayer::Video::isOpen() const {
@@ -108,6 +112,14 @@ const CoktelVideo *VideoPlayer::Video::getVideo() const {
 
 CoktelVideo::State VideoPlayer::Video::getState() const {
 	return _state;
+}
+
+int16 VideoPlayer::Video::getDefaultX() const {
+	return _defaultX;
+}
+
+int16 VideoPlayer::Video::getDefaultY() const {
+	return _defaultY;
 }
 
 CoktelVideo::State VideoPlayer::Video::nextFrame() {
@@ -340,6 +352,9 @@ void VideoPlayer::slotPlay(int slot, int16 frame) {
 	if (frame < 0)
 		frame = video.getCurrentFrame();
 
+	if (frame >= video.getFramesCount())
+		return;
+
 	if (video.getCurrentFrame() != frame)
 		video.seekFrame(frame);
 
@@ -431,6 +446,24 @@ int16 VideoPlayer::getHeight(int slot) const {
 
 	if (video)
 		return video->getVideo()->getHeight();
+
+	return 0;
+}
+
+int16 VideoPlayer::getDefaultX(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getDefaultX();
+
+	return 0;
+}
+
+int16 VideoPlayer::getDefaultY(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getDefaultY();
 
 	return 0;
 }

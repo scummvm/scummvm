@@ -30,9 +30,16 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__DC__)
 
-class DCPluginProvider : public PluginProvider {
-public:
-	virtual PluginList getPlugins();
+class DCPluginProvider : public FilePluginProvider {
+protected:
+	Plugin* createPlugin(const Common::String &filename) const;
+
+	virtual const char* getPrefix() const { return ""; }
+	virtual const char* getSuffix() const { return ".PLG"; }
+
+	virtual void addCustomDirectories(Common::StringList &dirs) const {
+		dirs.push_back("/");
+	}
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(__DC__)

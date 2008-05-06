@@ -47,7 +47,7 @@ MODULE_OBJS := \
 	zones.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_AGOS), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

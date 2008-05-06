@@ -153,26 +153,26 @@ HAVE_GCC3 = 1
 DISABLE_SCALERS = 1
 DISABLE_HQ_SCALERS = 1
 
-#DISABLE_SCUMM = 1
+ENABLE_SCUMM = STATIC_PLUGIN
 
 # We can play The Dig with GP32 -- without any movies/musics/voices. But who would do that?
-DISABLE_SCUMM_7_8 = 1
-DISABLE_HE = 1
+#ENABLE_SCUMM_7_8 = 1
+#ENABLE_HE = 1
 
-#DISABLE_AGOS = 1
-#DISABLE_SKY = 1
-#DISABLE_QUEEN = 1
-#DISABLE_GOB = 1
-#DISABLE_LURE = 1
-#DISABLE_CINE = 1
-#DISABLE_SAGA = 1
-#DISABLE_KYRA = 1
-#DISABLE_AGI = 1
+ENABLE_AGOS = STATIC_PLUGIN
+ENABLE_SKY = STATIC_PLUGIN
+ENABLE_QUEEN = STATIC_PLUGIN
+ENABLE_GOB = STATIC_PLUGIN
+ENABLE_LURE = STATIC_PLUGIN
+ENABLE_CINE = STATIC_PLUGIN
+ENABLE_SAGA = STATIC_PLUGIN
+ENABLE_KYRA = STATIC_PLUGIN
+ENABLE_AGI = STATIC_PLUGIN
 
 # The engines below are not supported on the GP32 port so there is
 # no point compiling support into the binary.
-DISABLE_SWORD1 = 1
-DISABLE_SWORD2 = 1
+#ENABLE_SWORD1 = STATIC_PLUGIN
+#ENABLE_SWORD2 = STATIC_PLUGIN
 
 #######################################################################
 # Misc stuff - you should normally never have to edit this            #

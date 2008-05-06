@@ -21,6 +21,6 @@ Edit the Makefile to contain the path to libronin if you installed it
 somewhere other than /usr/local/ronin, then run `make dist', and you
 should get a scrambled binary SCUMMVM.BIN and some plugins *.PLG.
 
-For serial/IP upload, remove the "BUILD_PLUGINS" line and just run `make',
+For serial/IP upload, remove the "DYNAMIC_MODULES" line and just run `make',
 to get a static binary with the name `scummvm.elf'.
 

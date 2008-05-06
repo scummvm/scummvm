@@ -403,6 +403,9 @@ bool SoundDigital::isPlaying(int channel) {
 }
 
 void SoundDigital::stopSound(int channel) {
+	if (channel == -1)
+		return;
+
 	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
 	_mixer->stopHandle(_sounds[channel].handle);
 	_sounds[channel].stream = 0;

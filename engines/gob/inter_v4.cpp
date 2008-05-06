@@ -739,15 +739,21 @@ void Inter_v4::o4_playVmdOrMusic() {
 	if (lastFrame == -1) {
 		close = true;
 	} else if (lastFrame == -3) {
-		warning("Woodruff Stub: Video/Music command -3: Play background video %s, %d, %d", fileName, x, y);
+		warning("Woodruff Stub: Video/Music command -3: Play background video %s, %d, %d, %d, %d", fileName, startFrame, x, y, VAR_OFFSET(7872));
 
 		_vm->_mult->_objects[startFrame].pAnimData->animation = -startFrame - 1;
 
 		if (_vm->_mult->_objects[startFrame].videoSlot > 0)
 			_vm->_vidPlayer->slotClose(_vm->_mult->_objects[startFrame].videoSlot - 1);
-		_vm->_mult->_objects[startFrame].videoSlot = _vm->_vidPlayer->slotOpen(fileName) + 1;
 
-		if (x != -1) {
+		int slot = _vm->_vidPlayer->slotOpen(fileName);
+
+		_vm->_mult->_objects[startFrame].videoSlot = slot + 1;
+
+		if (x == -1) {
+			*_vm->_mult->_objects[startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
+			*_vm->_mult->_objects[startFrame].pPosY = _vm->_vidPlayer->getDefaultY(slot);
+		} else {
 			*_vm->_mult->_objects[startFrame].pPosX = x;
 			*_vm->_mult->_objects[startFrame].pPosY = y;
 		}

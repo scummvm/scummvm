@@ -2,7 +2,7 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_AGI
+#define ENABLE_AGI STATIC_PLUGIN
 
 #undef USE_MAD
 #undef USE_VORBIS

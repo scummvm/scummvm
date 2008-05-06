@@ -28,6 +28,8 @@
 
 #include "kyra/gui.h"
 
+namespace Kyra {
+
 #define GUI_V2_BUTTON(button, a, b, c, d, e, f, h, i, j, k, l, m, n, o, p, q, r, s, t) \
 	button.nextButton = 0; \
 	button.index = a; \
@@ -89,34 +91,46 @@
 	item.labelY = p; \
 	item.unk1F = q
 
-namespace Kyra {
-
 class KyraEngine_v2;
 class Screen_v2;
 
 class GUI_v2 : public GUI {
-friend class KyraEngine_v2;
 public:
-	GUI_v2(KyraEngine_v2 *engine);
+	GUI_v2(KyraEngine_v2 *vm);
+
+	virtual void initStaticData() = 0;
 
 	Button *addButtonToList(Button *list, Button *newButton);
 
 	void processButton(Button *button);
 	int processButtonList(Button *button, uint16 inputFlag);
 
-	int optionsButton(Button *button);
-private:
+protected:
+	void updateButton(Button *button);
+
+	KyraEngine_v2 *_vm;
+	Screen_v2 *_screen;
+
+	bool _buttonListChanged;
+	Button *_backUpButtonList;
+	Button *_unknownButtonList;
+
+protected:
+	virtual void setupPalette() {}
+	virtual void restorePalette() {}
+
+	virtual char *getTableString(int id) = 0;
+	
+	virtual uint8 textFieldColor1() const = 0;
+	virtual uint8 textFieldColor2() const = 0;
+	virtual uint8 textFieldColor3() const = 0;
+protected:
 	void getInput();
 
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
 	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
-	void initStaticData();
-
-	const char *getMenuTitle(const Menu &menu);
-	const char *getMenuItemTitle(const MenuItem &menuItem);
-	const char *getMenuItemLabel(const MenuItem &menuItem);
 
 	Button *getButtonListData() { return _menuButtons; }
 
@@ -132,25 +146,10 @@ private:
 
 	Button _sliderButtons[3][4];
 
-	uint8 defaultColor1() const { return 0xCF; }
-	uint8 defaultColor2() const { return 0xF8; }
-
 	void renewHighlight(Menu &menu);
-
-	void setupPalette();
-	void restorePalette();
 
 	void backUpPage1(uint8 *buffer);
 	void restorePage1(const uint8 *buffer);
-
-	void resetState(int item);
-
-	KyraEngine_v2 *_vm;
-	Screen_v2 *_screen;
-
-	bool _buttonListChanged;
-	Button *_backUpButtonList;
-	Button *_unknownButtonList;
 
 	Menu *_currentMenu;
 	bool _isLoadMenu;
@@ -169,33 +168,13 @@ private:
 	void setupSavegameNames(Menu &menu, int num);
 
 	// main menu
-	int quitGame(Button *caller);
 	int resumeGame(Button *caller);
 
-	// options menu
-	int gameOptions(Button *caller);
-	int gameOptionsTalkie(Button *caller);
-	int quitOptionsMenu(Button *caller);
-
-	int toggleWalkspeed(Button *caller);
-	int changeLanguage(Button *caller);
-	int toggleText(Button *caller);
-
-	void setupOptionsButtons();
-
 	// audio menu
-	int audioOptions(Button *caller);
-
-	Button::Callback _sliderHandlerFunctor;
-	int sliderHandler(Button *caller);
-
-	void drawSliderBar(int slider, const uint8 *shape);
-
 	static const int _sliderBarsPosition[];
 
 	// load menu
 	bool _noLoadProcess;
-	int loadMenu(Button *caller);
 	int clickLoadSlot(Button *caller);
 	int cancelLoadMenu(Button *caller);
 
@@ -211,6 +190,18 @@ private:
 	// delete menu
 	int _slotToDelete;
 	int deleteMenu(Button *caller);
+
+	// options menu
+	int quitOptionsMenu(Button *caller);
+
+	int toggleWalkspeed(Button *caller);
+	int toggleText(Button *caller);
+
+	virtual void setupOptionsButtons() = 0;
+
+	// audio options
+	Button::Callback _sliderHandlerFunctor;
+	virtual int sliderHandler(Button *caller) = 0;
 
 	// savename menu
 	bool _finishNameInput, _cancelNameInput;
@@ -232,8 +223,6 @@ private:
 	int choiceYes(Button *caller);
 	int choiceNo(Button *caller);
 
-	static const uint16 _menuStringsTalkie[];
-	static const uint16 _menuStringsOther[];
 };
 
 } // end of namespace Kyra

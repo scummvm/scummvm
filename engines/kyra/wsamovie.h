@@ -26,8 +26,6 @@
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
-#include "kyra/resource.h"
-
 namespace Audio {
 class AppendableAudioStream;
 class SoundHandle;
@@ -35,7 +33,7 @@ class SoundHandle;
 
 namespace Kyra {
 class KyraEngine;
-class ScreenEx;
+class Screen_v2;
 
 class Movie {
 public:
@@ -111,7 +109,7 @@ private:
 
 class WSAMovieV2 : public WSAMovieV1 {
 public:
-	WSAMovieV2(KyraEngine *vm, ScreenEx *scren);
+	WSAMovieV2(KyraEngine *vm, Screen_v2 *scren);
 
 	int open(const char *filename, int unk1, uint8 *palette);
 
@@ -129,7 +127,7 @@ public:
 	void setWidth(int w) { _width = w; }
 	void setHeight(int h) { _height = h; }
 protected:
-	ScreenEx *_screen;
+	Screen_v2 *_screen;
 
 	int16 _xAdd;
 	int16 _yAdd;

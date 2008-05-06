@@ -902,7 +902,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 			}
 			adjustActorPos();
 		} else {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 			if (_vm->_game.heversion >= 71)
 				((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
@@ -1379,7 +1379,7 @@ void ScummEngine_v6::processActors() {
 		akos_processQueue();
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::processActors() {
 	preProcessAuxQueue();
 
@@ -1543,7 +1543,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 bool Actor::actorHitTest(int x, int y) {
 	AkosRenderer *ar = (AkosRenderer *)_vm->_costumeRenderer;
 
@@ -1681,7 +1681,7 @@ void Actor::animateCostume() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void Actor::animateLimb(int limb, int f) {
 	// This methods is very similiar to animateCostume().
 	// However, instead of animating *all* the limbs, it only animates
@@ -1853,7 +1853,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
 	bool stringWrap = false;
@@ -1863,8 +1863,12 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
-	if ((_game.version == 7 && !_keepText) || (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
-		stopTalk();
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+		if (VAR(VAR_HAVE_MSG))
+			stopTalk();
+	} else {
+		if (!_keepText)
+			stopTalk();
 	}
 	if (_actorToPrintStrFor == 0xFF) {
 		setTalkingActor(0xFF);
@@ -1881,16 +1885,19 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
-	if (_game.version == 7)
+	if (_game.id == GID_FT)
 		VAR(VAR_HAVE_MSG) = 0xFF;
 	_haveActorSpeechMsg = true;
-	if (_game.version == 8) {
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
 		stringWrap = _string[0].wrapping;
 		_string[0].wrapping = true;
 	}
 	CHARSET_1();
-	if (_game.version == 8) {
-		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+		if (_game.version == 8)
+			VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
+		else
+			VAR(VAR_HAVE_MSG) = 1;
 		_string[0].wrapping = stringWrap;
 	}
 }
@@ -1965,6 +1972,12 @@ void Actor::runActorTalkScript(int f) {
 	if (_vm->_game.version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2)
 		return;
 
+	if (_vm->_game.id == GID_FT && _vm->_string[0].no_talk_anim)
+		return;
+
+	if (!_vm->getTalkingActor() || _room != _vm->_currentRoom || _frame == f)
+		return;
+
 	if (_talkScript) {
 		int script = _talkScript;
 		int args[16];
@@ -1974,8 +1987,7 @@ void Actor::runActorTalkScript(int f) {
 
 		_vm->runScript(script, 1, 0, args);
 	} else {
-		if (_frame != f)
-			startAnimActor(f);
+		startAnimActor(f);
 	}
 }
 
@@ -1999,13 +2011,17 @@ void ScummEngine::stopTalk() {
 			setTalkingActor(0xFF);
 		a->_heTalking = false;
 	}
-	if (_game.version == 8 || _game.heversion >= 60)
+
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
 		setTalkingActor(0);
-	if (_game.version == 8)
 		VAR(VAR_HAVE_MSG) = 0;
+	} else if (_game.heversion >= 60) {
+		setTalkingActor(0);
+	}
+
 	_keepText = false;
 	if (_game.version >= 7) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
 	} else {
@@ -2038,7 +2054,7 @@ void Actor::setActorCostume(int c) {
 	if (_vm->_game.features & GF_NEW_COSTUMES) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 		if (_vm->_game.heversion >= 71)
 			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
@@ -2277,7 +2293,7 @@ bool Actor::isTalkConditionSet(int slot) const {
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {

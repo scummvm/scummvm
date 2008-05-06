@@ -64,7 +64,7 @@ MODULE_OBJS += \
 	proc3ARM.o
 endif
 
-ifndef DISABLE_SCUMM_7_8
+ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
 	script_v8.o \
@@ -104,7 +104,7 @@ MODULE_OBJS += \
 	gfxARM.o
 endif
 
-ifndef DISABLE_HE
+ifdef ENABLE_HE
 MODULE_OBJS += \
 	he/animation_he.o \
 	he/cup_player_he.o \
@@ -121,7 +121,7 @@ MODULE_OBJS += \
 endif
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_SCUMM), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

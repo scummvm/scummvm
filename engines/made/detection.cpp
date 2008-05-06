@@ -61,8 +61,10 @@ uint16 MadeEngine::getVersion() const {
 }
 
 static const PlainGameDescriptor madeGames[] = {
-	{"made", "MADE engine game"}, 
+	{"made", "MADE engine game"},
+	{"manhole", "The Manhole"},
 	{"rtz", "Return to Zork"},
+	{"lgop2", "Leather Goddesses of Phobos 2"},
 	{0, 0}
 };
 
@@ -83,7 +85,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
+		GID_RTZ,
 		0,
 		GF_CD,
 		0,
@@ -99,7 +101,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
+		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
 		0,
@@ -115,7 +117,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
+		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
 		0,
@@ -132,7 +134,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
+		GID_RTZ,
 		0,
 		GF_FLOPPY,
 		0,
@@ -148,9 +150,41 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		0,
+		GID_RTZ,
 		0,
 		GF_DEMO,
+		0,
+	},
+	
+	{
+		// The Manhole: New and Enhanced
+		{
+			"manhole",
+			"",
+			AD_ENTRY1("manhole.dat", "cb21e31ed35c963208343bc995225b73"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_MANHOLE,
+		0,
+		GF_CD,
+		0,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1("lgop2.dat", "8137996db200ff67e8f172ff106f2e48"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_LGOP2,
+		0,
+		GF_FLOPPY,
 		0,
 	},
 
@@ -237,4 +271,8 @@ const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const FSList *fs
 	return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
 }
 
-REGISTER_PLUGIN(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(MADE)
+	REGISTER_PLUGIN_DYNAMIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
+#endif

@@ -92,23 +92,41 @@ void Screen::clearScreen() {
 	_screen1->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_screen2->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_needPalette = true;
-	//_vm->_system->clearScreen();
 }
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, const ClipInfo &clipInfo) {
 
-	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
-	byte *dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
-
-	// FIXME: Implement actual clipping
-	if (x + sourceSurface->w > clipInfo.destSurface->w || y + sourceSurface->h > clipInfo.destSurface->h) {
-		debug(2, "CLIPPING PROBLEM: x = %d; y = %d; w = %d; h = %d; x+w = %d; y+h = %d\n",
-			x, y, sourceSurface->w, sourceSurface->h, x + sourceSurface->w, y + sourceSurface->h);
-		return;
+	byte *source, *dest;
+	int startX = 0;
+	int startY = 0;
+	int clipWidth = sourceSurface->w;
+	int clipHeight = sourceSurface->h;
+	
+	if (x < 0) {
+		startX = -x;
+		clipWidth -= startX;
+		x = 0;
 	}
 
-	for (int16 yc = 0; yc < sourceSurface->h; yc++) {
-		for (int16 xc = 0; xc < sourceSurface->w; xc++) {
+	if (y < 0) {
+		startY = -y;
+		clipHeight -= startY;
+		y = 0;
+	}
+
+	if (x + clipWidth > clipInfo.x + clipInfo.w) {
+		clipWidth = clipInfo.x + clipInfo.w - x;
+	}
+
+	if (y + clipHeight > clipInfo.y + clipInfo.h) {
+		clipHeight = clipInfo.y + clipInfo.h - y;
+	}
+
+	source = (byte*)sourceSurface->getBasePtr(startX, startY);
+	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
+
+	for (int16 yc = 0; yc < clipHeight; yc++) {
+		for (int16 xc = 0; xc < clipWidth; xc++) {
 			if (source[xc])
 				dest[xc] = source[xc];
 		}
@@ -133,7 +151,7 @@ void Screen::setRGBPalette(byte *palRGB, int start, int count) {
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {
-	return 0;
+	return channelIndex;
 }
 
 void Screen::deleteChannel(uint16 channelIndex) {
@@ -303,10 +321,6 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 }
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2) {
-
-	//HACK (until clipping is implemented)
-	if (y > 200) y = 0;
-
 	drawFlex(index, x, y, flag1, flag2, _clipInfo1);
 	return 0;
 }
@@ -624,7 +638,6 @@ void Screen::printText(const char *text) {
 			linePos = 1;
 			x = _textRect.left;
 		} else if (c == 32) {
-			// TODO: Word-wrap
 			int wrapPos = textPos + 1;
 			int wrapX = x + charWidth;
 			while (wrapPos < textLen && text[wrapPos] != 0 && text[wrapPos] != 32 && text[wrapPos] >= 28) {
@@ -682,6 +695,7 @@ void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int1
 
 	int16 oldFontNum = _currentFontNum;
 	Common::Rect oldTextRect;
+	ClipInfo oldFontDrawCtx = _fontDrawCtx;
 
 	_fontDrawCtx = clipInfo;
 	
@@ -693,6 +707,7 @@ void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int1
 	printText(text);
 	setTextRect(oldTextRect);
 	setFont(oldFontNum);
+	_fontDrawCtx = oldFontDrawCtx;
 	
 }
 

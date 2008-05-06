@@ -28,8 +28,8 @@
 
 namespace Kyra {
 
-void KyraEngine_v1::snd_playSoundEffect(int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d)", track);
+void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d, %d)", track, volume);
 	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;

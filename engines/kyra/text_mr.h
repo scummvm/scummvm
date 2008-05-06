@@ -23,19 +23,19 @@
  *
  */
 
-#ifndef KYRA_TEXT_V3_H
-#define KYRA_TEXT_V3_H
+#ifndef KYRA_TEXT_MR_H
+#define KYRA_TEXT_MR_H
 
 #include "kyra/text.h"
 
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_mr.h"
 
 namespace Kyra {
 
-class TextDisplayer_v3 : public TextDisplayer {
-friend class KyraEngine_v3;
+class TextDisplayer_MR : public TextDisplayer {
+friend class KyraEngine_MR;
 public:
-	TextDisplayer_v3(KyraEngine_v3 *vm, Screen_v3 *screen);
+	TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen);
 
 	char *preprocessString(const char *str);
 	int dropCRIntoString(char *str, int minOffs, int maxOffs);
@@ -46,8 +46,8 @@ public:
 
 	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
 protected:
-	KyraEngine_v3 *_vm;
-	Screen_v3 *_screen;
+	KyraEngine_MR *_vm;
+	Screen_MR *_screen;
 };
 
 } // end of namespace Kyra

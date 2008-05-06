@@ -144,4 +144,8 @@ bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(CRUISE)
+	REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+#endif

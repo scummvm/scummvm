@@ -74,6 +74,16 @@ cmd(decrement) {
 
 cmd(assignn) {
 	_v[p0] = p1;
+
+	// WORKAROUND for a bug in fan game "Get outta SQ"
+	// Total number of points is stored in variable 7, which
+	// is then incorrectly assigned to 0. Thus, when the game
+	// is restarted, "Points 0 of 0" is shown. We set the
+	// variable to the correct value here
+	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
+	// is lost on restart"
+	if (g_agi->getGameID() == GID_GETOUTTASQ && p0 == 7)
+		_v[p0] = 8;
 }
 
 cmd(addn) {

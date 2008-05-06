@@ -28,7 +28,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/resource.h"
@@ -907,7 +907,7 @@ void ScummEngine::redrawBGAreas() {
 	_bgNeedsRedraw = false;
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::redrawBGAreas() {
 	if (camera._cur.x != camera._last.x && _charset->_hasMask)
 		stopTalk();
@@ -1834,7 +1834,7 @@ void GdiV2::decodeMask(int x, int y, const int width, const int height,
 	// Do nothing here for V2 games - zplane was already handled.
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * used throughout HE71+ versions.

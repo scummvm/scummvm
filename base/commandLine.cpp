@@ -116,14 +116,14 @@ static const char HELP_STRING[] =
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
 	"                           hercAmber, amiga)\n"
 	"\n"
-#if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
+#if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
 	"                           Steel Sky and Flight of the Amazon Queen\n"
 #endif
 	"  --copy-protection        Enable copy protection in SCUMM games, when\n"
 	"                           ScummVM disables it by default.\n"
 	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
-#ifndef DISABLE_SCUMM
+#ifdef ENABLE_SCUMM
 	"  --demo-mode              Start demo mode of Maniac Mansion\n"
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
@@ -190,19 +190,19 @@ void registerDefaults() {
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
-#if !defined(DISABLE_SCUMM) || !defined(DISABLE_SWORD2)
+#if defined(ENABLE_SCUMM) || defined(ENABLE_SWORD2)
 	ConfMan.registerDefault("object_labels", true);
 #endif
 
 	ConfMan.registerDefault("copy_protection", false);
 	ConfMan.registerDefault("talkspeed", 60);
 
-#ifndef DISABLE_SCUMM
+#ifdef ENABLE_SCUMM
 	ConfMan.registerDefault("demo_mode", false);
 	ConfMan.registerDefault("tempo", 0);
 #endif
 
-#if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
+#if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 	ConfMan.registerDefault("alt_intro", false);
 #endif
 
@@ -513,7 +513,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_LONG_OPTION("target-md5")
 			END_OPTION
 
-#ifndef DISABLE_SCUMM
+#ifdef ENABLE_SCUMM
 			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
 
@@ -521,7 +521,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 #endif
 
-#if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
+#if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
 			END_OPTION
 #endif

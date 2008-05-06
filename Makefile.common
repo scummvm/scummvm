@@ -15,17 +15,18 @@ all: $(EXECUTABLE) plugins
 # Module settings
 ######################################################################
 
+PLUGINS :=
 MODULES := test tools base $(MODULES)
 
 -include $(srcdir)/engines/engines.mk
 
 # After the game specific modules follow the shared modules
 MODULES += \
-	engines \
 	gui \
 	graphics \
 	sound \
 	common \
+	engines \
 	backends
 
 ifdef USE_MT32EMU
@@ -177,28 +178,31 @@ dist-src: \
 
 
 # Themes files
-DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.ini modern.zip)
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.ini modern.zip classic080.ini)
 
 # Engine data files
 DIST_FILES_ENGINEDATA=
-ifndef DISABLE_IGOR
+ifdef ENABLE_IGOR
 DIST_FILES_ENGINEDATA+=igor.tbl
 endif
-ifndef DISABLE_KYRA
+ifdef ENABLE_KYRA
 DIST_FILES_ENGINEDATA+=kyra.dat
 endif
-ifndef DISABLE_LURE
+ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
 endif
-ifndef DISABLE_M4
+ifdef ENABLE_M4
 DIST_FILES_ENGINEDATA+=m4.dat
 endif
-ifndef DISABLE_QUEEN
+ifdef ENABLE_QUEEN
 DIST_FILES_ENGINEDATA+=queen.tbl
 endif
-ifndef DISABLE_SKY
+ifdef ENABLE_SKY
 DIST_FILES_ENGINEDATA+=sky.cpt
 endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
+
+# Plugin files
+DIST_FILES_PLUGINS:=$(addprefix $(srcdir)/,$(PLUGINS))
 
 .PHONY: all clean distclean plugins dist-src

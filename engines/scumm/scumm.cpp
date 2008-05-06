@@ -495,7 +495,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderAmiga:
-		if (!(_game.features & GF_16COLOR))
+		if ((_game.version >= 4 && !(_game.features & GF_16COLOR)) || (_game.features & GF_OLD256))
 			_renderMode = Common::kRenderDefault;
 		break;
 
@@ -736,7 +736,7 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_storedFlObjects);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v70he(syst, dr) {
 	_auxBlocksNum = 0;
@@ -858,7 +858,7 @@ void ScummEngine_vCUPhe::parseEvents() {
 
 #endif
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
 	_verbLineSpacing = 10;
@@ -927,7 +927,7 @@ int ScummEngine::init() {
 		File::addDefaultDirectory(_gameDataPath + "Rooms 3/");
 	}
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 #ifdef MACOSX
 	if (_game.version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
@@ -1212,7 +1212,7 @@ void ScummEngine::setupScumm() {
 	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm() {
 
 	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, 10);
@@ -1238,7 +1238,7 @@ void ScummEngine::setupCharsetRenderer() {
 		_charset = new CharsetRendererV2(this, _language);
 	else if (_game.version == 3)
 		_charset = new CharsetRendererV3(this);
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	else if (_game.version == 8)
 		_charset = new CharsetRendererNut(this);
 #endif
@@ -1479,7 +1479,7 @@ void ScummEngine_v60he::resetScumm() {
 		setCursorHotspot(16, 16);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v72he::resetScumm() {
 	ScummEngine_v60he::resetScumm();
 
@@ -1954,7 +1954,7 @@ load_game:
 	CursorMan.showMouse(_cursor.state > 0);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v90he::scummLoop(int delta) {
 	_moviePlay->handleNextFrame();
 	if (_game.heversion >= 98) {
@@ -2051,7 +2051,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::scummLoop_handleSaveLoad() {
 	ScummEngine::scummLoop_handleSaveLoad();
 
@@ -2067,7 +2067,7 @@ void ScummEngine::scummLoop_handleDrawing() {
 	processDrawQue();
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::scummLoop_handleDrawing() {
 	ScummEngine_v6::scummLoop_handleDrawing();
 
@@ -2077,7 +2077,7 @@ void ScummEngine_v7::scummLoop_handleDrawing() {
 }
 #endif
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v90he::scummLoop_handleDrawing() {
 	ScummEngine_v80he::scummLoop_handleDrawing();
 
@@ -2125,7 +2125,7 @@ void ScummEngine::scummLoop_handleSound() {
 	_sound->processSound();
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::scummLoop_handleSound() {
 	ScummEngine_v6::scummLoop_handleSound();
 	if (_imuseDigital) {
@@ -2226,7 +2226,7 @@ void ScummEngine::runBootscript() {
 		runScript(1, 0, 0, args);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v90he::runBootscript() {
 	if (_game.heversion >= 98) {
 		_logicHE->initOnce();
@@ -2284,7 +2284,7 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	return result;
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 int ScummEngine_v7::runDialog(Dialog &dialog) {
 	_splayer->pause();
 	int result = ScummEngine::runDialog(dialog);

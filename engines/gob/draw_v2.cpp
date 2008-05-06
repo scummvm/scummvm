@@ -246,11 +246,11 @@ void Draw_v2::printTotText(int16 id) {
 	}
 
 	if (_renderFlags & RENDERFLAG_FROMSPLIT) {
-		destY = _vm->_video->_splitHeight1;
+		destY = _vm->_video->_splitStart;
 		spriteBottom = READ_LE_UINT16(ptr + 6) - READ_LE_UINT16(ptr + 2);
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS)
 			spriteBottom *= 3;
-		spriteBottom += _vm->_video->_splitHeight1;
+		spriteBottom += _vm->_video->_splitStart;
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
 			spriteBottom += _backDeltaX;
 			destY += _backDeltaX;

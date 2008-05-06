@@ -247,7 +247,11 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-REGISTER_PLUGIN(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(SKY)
+	REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
+#endif
 
 namespace Sky {
 

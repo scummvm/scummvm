@@ -36,7 +36,11 @@ namespace Kyra {
 typedef Common::Functor0<void> UpdateFunctor;
 
 class KyraEngine;
-struct Rect;
+
+struct Rect {
+	int x, y;
+	int x2, y2;
+};
 
 struct ScreenDim {
 	uint16 sx;
@@ -352,41 +356,6 @@ protected:
 
 	// debug
 	bool _debugEnabled;
-};
-
-class ScreenEx : public Screen {
-public:
-	ScreenEx(KyraEngine *vm, OSystem *system) : Screen(vm, system) {}
-
-	// screen page handling
-	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
-					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
-
-	// palette handling
-	uint8 *generateOverlay(const uint8 *palette, uint8 *buffer, int color, uint16 factor);
-	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
-	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors);
-
-	// shape handling
-	uint8 *getPtrToShape(uint8 *shpFile, int shape);
-	const uint8 *getPtrToShape(const uint8 *shpFile, int shape);
-
-	int getShapeScaledWidth(const uint8 *shpFile, int scale);
-	int getShapeScaledHeight(const uint8 *shpFile, int scale);
-
-	uint16 getShapeSize(const uint8 *shp);
-
-	uint8 *makeShapeCopy(const uint8 *src, int index);
-
-	// rect handling
-	int getRectSize(int w, int h);
-
-	// text display
-	void setTextColorMap(const uint8 *cmap);
-
-	// layer handling
-	virtual int getLayer(int x, int y);
-protected:
 };
 
 } // End of namespace Kyra

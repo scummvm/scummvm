@@ -514,7 +514,7 @@ void ScummEngine_v0::handleMouseOver(bool updateInventory) {
 	drawSentence();
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v72he::checkExecVerbs() {
 	VAR(VAR_MOUSE_STATE) = 0;
 
@@ -797,7 +797,7 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 	return 0;
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 

@@ -76,6 +76,8 @@ public:
 	int16 getCurrentFrame(int slot = -1) const;
 	int16 getWidth(int slot = -1) const;
 	int16 getHeight(int slot = -1) const;
+	int16 getDefaultX(int slot = -1) const;
+	int16 getDefaultY(int slot = -1) const;
 
 	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
@@ -96,6 +98,9 @@ private:
 			const CoktelVideo *getVideo() const;
 			CoktelVideo::State getState() const;
 
+			int16 getDefaultX() const;
+			int16 getDefaultY() const;
+
 			CoktelVideo::State nextFrame();
 
 		private:
@@ -105,6 +110,7 @@ private:
 			DataStream *_stream;
 			CoktelVideo *_video;
 			CoktelVideo::State _state;
+			int16 _defaultX, _defaultY;
 	};
 
 	static const char *_extensions[];

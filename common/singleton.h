@@ -33,13 +33,13 @@ namespace Common {
 /**
  * Generic template base class for implementing the singleton design pattern.
  */
-template <class T>
+template<class T>
 class Singleton : NonCopyable {
 private:
-	Singleton<T>(const Singleton<T>&);
-	Singleton<T>& operator= (const Singleton<T>&);
+	Singleton<T>(const Singleton<T> &);
+	Singleton<T> &operator=(const Singleton<T> &);
 
-	static T* _singleton;
+	static T *_singleton;
 
 	/**
 	 * The default object factory used by the template class Singleton.
@@ -53,7 +53,7 @@ private:
 //FIXME evc4 and msvc7 doesn't like it as private member
 public:
 #endif
-	static T* makeInstance() {
+	static T *makeInstance() {
 		return new T();
 	}
 
@@ -91,7 +91,7 @@ protected:
 	typedef T	SingletonBaseType;
 };
 
-#define DECLARE_SINGLETON(T) template<> T* Common::Singleton<T>::_singleton=0
+#define DECLARE_SINGLETON(T) template<> T *Common::Singleton<T>::_singleton = 0
 
 }	// End of namespace Common
 

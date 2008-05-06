@@ -257,17 +257,17 @@ byte *FontResource::getCharData(uint c) const {
 	return _data + 1 + (c - 28) * (getHeight() + 1);
 }
 
-/* XmidiResource */
+/* GenericResource */
 
-XmidiResource::XmidiResource() : _data(NULL), _size(0) {
+GenericResource::GenericResource() : _data(NULL), _size(0) {
 }
 
-XmidiResource::~XmidiResource() {
+GenericResource::~GenericResource() {
 	if (_data)
 		delete[] _data;
 }
 
-void XmidiResource::load(byte *source, int size) {
+void GenericResource::load(byte *source, int size) {
 	_data = new byte[size];
 	_size = size;
 	memcpy(_data, source, size);
@@ -341,8 +341,12 @@ FontResource *ProjectReader::getFont(int index) {
 	return createResource<FontResource>(kResFONT, index);
 }
 
-XmidiResource *ProjectReader::getXmidi(int index) {
-	return createResource<XmidiResource>(kResXMID, index);
+GenericResource *ProjectReader::getXmidi(int index) {
+	return createResource<GenericResource>(kResXMID, index);
+}
+
+GenericResource *ProjectReader::getMidi(int index) {
+	return createResource<GenericResource>(kResMIDI, index);
 }
 
 void ProjectReader::loadIndex(ResourceSlots *slots) {

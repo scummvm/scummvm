@@ -24,8 +24,8 @@
 
 #include "kyra/kyra.h"
 #include "kyra/kyra_v1.h"
-#include "kyra/kyra_v2.h"
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/kyra_mr.h"
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
@@ -41,22 +41,22 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define FLAGS(x, y, z, a, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, id }
+#define FLAGS(x, y, z, a, b, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, Kyra::GI_KYRA2)
-#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, Kyra::GI_KYRA2)
+#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
 	{
@@ -435,7 +435,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FLAGS
 	},
 
-	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {
@@ -509,10 +509,10 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		*engine = new Kyra::KyraEngine_v1(syst, flags);
 		break;
 	case Kyra::GI_KYRA2:
-		*engine = new Kyra::KyraEngine_v2(syst, flags);
+		*engine = new Kyra::KyraEngine_HoF(syst, flags);
 		break;
 	case Kyra::GI_KYRA3:
-		*engine = new Kyra::KyraEngine_v3(syst, flags);
+		*engine = new Kyra::KyraEngine_MR(syst, flags);
 		break;
 	default:
 		res = false;
@@ -550,4 +550,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-REGISTER_PLUGIN(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(KYRA)
+	REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+#endif

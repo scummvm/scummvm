@@ -554,7 +554,7 @@ void Sprites::loadSceneShapes() {
 
 void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag) {
 	debugC(9, kDebugLevelSprites,  "Sprites::refreshSceneAnimObject(%i, %i, %i, %i, %i, %i", animNum, shapeNum, x, y, flipX, unkFlag);
-	AnimObject &anim = _vm->animator()->sprites()[animNum];
+	Animator_v1::AnimObject &anim = _vm->animator()->sprites()[animNum];
 	anim.refreshFlag = 1;
 	anim.bkgdChangeFlag = 1;
 

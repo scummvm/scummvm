@@ -478,8 +478,8 @@ void KyraEngine::snd_playTheme(int file, int track) {
 		_sound->playTrack(track);
 }
 
-void KyraEngine::snd_playSoundEffect(int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
+void KyraEngine::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d, %d)", track, volume);
 	_sound->playSoundEffect(track);
 }
 

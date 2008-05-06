@@ -221,7 +221,7 @@ void ScummEngine::actorFollowCamera(int act) {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
 	Common::Point old;
 

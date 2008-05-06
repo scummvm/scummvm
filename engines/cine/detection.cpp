@@ -509,4 +509,8 @@ bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(CINE)
+	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+#endif

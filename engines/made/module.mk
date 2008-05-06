@@ -11,12 +11,14 @@ MODULE_OBJS = \
 	resource.o \
 	screen.o \
 	script.o \
-	scriptfuncs.o \
+	scriptfuncs_lgop2.o \
+	scriptfuncs_mhne.o \
+	scriptfuncs_rtz.o \
 	sound.o
 
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_MADE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

@@ -33,7 +33,7 @@ namespace Common {
  * Simple double linked list, modeled after the list template of the standard
  * C++ library.
  */
-template <class t_T>
+template<class t_T>
 class List {
 protected:
 #if defined (_WIN32_WCE) || defined (_MSC_VER)
@@ -52,7 +52,7 @@ public:
 		Node(const t_T2 &x) : _data(x) {}
 	};
 
-	template <class t_T2>
+	template<class t_T2>
 	class Iterator {
 		template<class T> friend class Iterator;
 		friend class List<t_T>;
@@ -70,7 +70,7 @@ public:
 		Iterator(const Iterator<T> &c) : _node(c._node) {}
 
 		template<class T>
-		Iterator<t_T2> &operator =(const Iterator<T> &c) {
+		Iterator<t_T2> &operator=(const Iterator<T> &c) {
 			_node = c._node;
 			return *this;
 		}
@@ -104,7 +104,7 @@ public:
 #if (__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)
 			return static_cast<List<t_T>::Node<t_T2> *>(_node)->_data;
 #else
-			return static_cast<Node<t_T2>*>(_node)->_data;
+			return static_cast<Node<t_T2> *>(_node)->_data;
 #endif
 		}
 		t_T2 *operator->() const {
@@ -135,7 +135,7 @@ public:
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
 	}
-	List(const List<t_T>& list) {
+	List(const List<t_T> &list) {
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
 
@@ -146,15 +146,15 @@ public:
 		clear();
 	}
 
-	void push_front(const t_T& element) {
+	void push_front(const t_T &element) {
 		insert(begin(), element);
 	}
 
-	void push_back(const t_T& element) {
+	void push_back(const t_T &element) {
 		insert(end(), element);
 	}
 
-	void insert(iterator pos, const t_T& element) {
+	void insert(iterator pos, const t_T &element) {
 		NodeBase *newNode = new Node<t_T>(element);
 
 		newNode->_next = pos._node;
@@ -163,7 +163,7 @@ public:
 		newNode->_next->_prev = newNode;
 	}
 
-    template <typename iterator2>
+	template<typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
@@ -210,7 +210,7 @@ public:
 	}
 
 
-	List<t_T>& operator  =(const List<t_T>& list) {
+	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
 			iterator i;
 			const_iterator j;

@@ -23,32 +23,32 @@
  *
  */
 
-#include "kyra/screen_v3.h"
+#include "kyra/screen_mr.h"
 
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_mr.h"
 
 namespace Kyra {
 
-Screen_v3::Screen_v3(KyraEngine_v3 *vm, OSystem *system) : ScreenEx(vm, system) {
+Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system) : Screen_v2(vm, system) {
 }
 
-Screen_v3::~Screen_v3() {
+Screen_MR::~Screen_MR() {
 }
 
-void Screen_v3::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::setScreenDim(%d)", dim);
+void Screen_MR::setScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
 }
 
-const ScreenDim *Screen_v3::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::getScreenDim(%d)", dim);
+const ScreenDim *Screen_MR::getScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::getScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	return &_screenDimTable[dim];
 }
 
-int Screen_v3::getLayer(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::getLayer(%d, %d)", x, y);
+int Screen_MR::getLayer(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::getLayer(%d, %d)", x, y);
 	if (x < 0)
 		x = 0;
 	else if (x >= 320)
@@ -72,8 +72,8 @@ int Screen_v3::getLayer(int x, int y) {
 	return pixel;
 }
 
-byte Screen_v3::getShapeFlag1(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::getShapeFlag1(%d, %d)", x, y);
+byte Screen_MR::getShapeFlag1(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::getShapeFlag1(%d, %d)", x, y);
 	if (y < _maskMinY || y > _maskMaxY)
 		return 0;
 
@@ -86,8 +86,8 @@ byte Screen_v3::getShapeFlag1(int x, int y) {
 	return 0;
 }
 
-byte Screen_v3::getShapeFlag2(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::getShapeFlag2(%d, %d)", x, y);
+byte Screen_MR::getShapeFlag2(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::getShapeFlag2(%d, %d)", x, y);
 	if (y < _maskMinY || y > _maskMaxY)
 		return 0;
 
@@ -97,8 +97,8 @@ byte Screen_v3::getShapeFlag2(int x, int y) {
 	return color;
 }
 
-int Screen_v3::getDrawLayer(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::getDrawLayer(%d, %d)", x, y);
+int Screen_MR::getDrawLayer(int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::getDrawLayer(%d, %d)", x, y);
 	int xpos = x - 8;
 	int ypos = y;
 	int layer = 1;
@@ -115,8 +115,8 @@ int Screen_v3::getDrawLayer(int x, int y) {
 	return layer;
 }
 
-int Screen_v3::getDrawLayer2(int x, int y, int height) {
-	debugC(9, kDebugLevelScreen, "Screen_v3::getDrawLayer2(%d, %d, %d)", x, y, height);
+int Screen_MR::getDrawLayer2(int x, int y, int height) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::getDrawLayer2(%d, %d, %d)", x, y, height);
 	int xpos = x - 8;
 	int ypos = y;
 	int layer = 1;
@@ -133,6 +133,20 @@ int Screen_v3::getDrawLayer2(int x, int y, int height) {
 		}
 	}
 	return layer;
+}
+
+void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2, uint8 c3) {
+	debugC(9, kDebugLevelScreen, "Screen_MR::drawFilledBox(%d, %d, %d, %d, %d, %d, %d,)", x1, y1, x2, y2, c1, c2, c3);
+
+	fillRect(x1, y1, x2, y2, c1);
+
+	fillRect(x1, y1, x2, y1+1, c2);
+	fillRect(x2-1, y1, x2, y2, c2);
+
+	drawClippedLine(x1, y1, x1, y2, c3);
+	drawClippedLine(x1+1, y1+1, x1+1, y2-2, c3);
+	drawClippedLine(x1, y2, x2, y2, c3);
+	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
 }
 
 } // end of namespace Kyra

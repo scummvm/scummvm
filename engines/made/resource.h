@@ -35,7 +35,7 @@
 
 namespace Made {
 
-const int kMaxResourceCacheCount = 100;
+const int kMaxResourceCacheCount = 200;
 
 enum ResourceType {
 	kResARCH = MKID_BE('ARCH'),
@@ -46,7 +46,8 @@ enum ResourceType {
 	kResANIM = MKID_BE('ANIM'),
 	kResMENU = MKID_BE('MENU'),
 	kResFONT = MKID_BE('FONT'),
-	kResXMID = MKID_BE('XMID')
+	kResXMID = MKID_BE('XMID'),
+	kResMIDI = MKID_BE('MIDI')
 };
 
 struct ResourceSlot;
@@ -127,10 +128,10 @@ protected:
 	byte *getCharData(uint c) const;
 };
 
-class XmidiResource : public Resource {
+class GenericResource : public Resource {
 public:
-	XmidiResource();
-	~XmidiResource();
+	GenericResource();
+	~GenericResource();
 	void load(byte *source, int size);
 	byte *getData() const { return _data; }
 	int getSize() const { return _size; }
@@ -163,7 +164,8 @@ public:
 	SoundResource *getSound(int index);
 	MenuResource *getMenu(int index);
 	FontResource *getFont(int index);
-	XmidiResource *getXmidi(int index);
+	GenericResource *getXmidi(int index);
+	GenericResource *getMidi(int index);
 
 	void freeResource(Resource *resource);
 

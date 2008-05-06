@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -23,65 +23,19 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/gui_v2.h"
 #include "kyra/kyra_v2.h"
-#include "kyra/screen.h"
-#include "kyra/wsamovie.h"
-#include "kyra/timer.h"
-#include "kyra/sound.h"
+#include "kyra/screen_v2.h"
+#include "kyra/text.h"
 
 #include "common/savefile.h"
 
 namespace Kyra {
 
-void KyraEngine_v2::loadButtonShapes() {
-	const uint8 *src = _screen->getCPagePtr(3);
-	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, 0);
-
-	_gui->_scrollUpButton.data0ShapePtr = _buttonShapes[0] = _screen->makeShapeCopy(src, 0);
-	_gui->_scrollUpButton.data2ShapePtr = _buttonShapes[1] = _screen->makeShapeCopy(src, 1);
-	_gui->_scrollUpButton.data1ShapePtr = _buttonShapes[2] = _screen->makeShapeCopy(src, 2);
-	_gui->_scrollDownButton.data0ShapePtr = _buttonShapes[3] = _screen->makeShapeCopy(src, 3);
-	_gui->_scrollDownButton.data2ShapePtr = _buttonShapes[4] = _screen->makeShapeCopy(src, 4);
-	_gui->_scrollDownButton.data1ShapePtr = _buttonShapes[5] = _screen->makeShapeCopy(src, 5);
-	_buttonShapes[6] = _screen->makeShapeCopy(src, 6);
-	_buttonShapes[7] = _screen->makeShapeCopy(src, 7);
-	_buttonShapes[8] = _screen->makeShapeCopy(src, 6);
-	_buttonShapes[9] = _screen->makeShapeCopy(src, 7);
-	_buttonShapes[10] = _screen->makeShapeCopy(src, 10);
-	_buttonShapes[11] = _screen->makeShapeCopy(src, 11);
-	_buttonShapes[16] = _screen->makeShapeCopy(src, 16);
-	_buttonShapes[17] = _screen->makeShapeCopy(src, 17);
-	_buttonShapes[18] = _screen->makeShapeCopy(src, 18);
-}
-
-void KyraEngine_v2::setupLangButtonShapes() {
-	switch (_lang) {
-	case 0:
-		_inventoryButtons[0].data0ShapePtr = _buttonShapes[6];
-		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[7];
-		break;
-
-	case 1:
-		_inventoryButtons[0].data0ShapePtr = _buttonShapes[8];
-		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[9];
-		break;
-
-	case 2:
-		_inventoryButtons[0].data0ShapePtr = _buttonShapes[10];
-		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[11];
-		break;
-
-	default:
-		_inventoryButtons[0].data0ShapePtr = _buttonShapes[6];
-		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[7];
-		break;
-	}
-}
-
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _unknownButtonList = 0;
-	initStaticData();
+	_buttonListChanged = false;
+
 	_currentMenu = 0;
 	_isDeathMenu = false;
 	_isSaveMenu = false;
@@ -419,583 +373,26 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 	return returnValue;
 }
 
-const char *GUI_v2::getMenuTitle(const Menu &menu) {
-	if (!menu.menuNameId)
-		return 0;
+void GUI_v2::updateButton(Button *button) {
+	if (!button || (button->flags & 8))
+		return;
 
-	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, 1);
-}
-
-const char *GUI_v2::getMenuItemTitle(const MenuItem &menuItem) {
-	if (!menuItem.itemId)
-		return 0;
-
-	return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
-}
-
-const char *GUI_v2::getMenuItemLabel(const MenuItem &menuItem) {
-	if (!menuItem.labelId)
-		return 0;
-
-	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
-}
-
-#pragma mark -
-
-
-int KyraEngine_v2::buttonInventory(Button *button) {
-	if (!_screen->isMouseVisible())
-		return 0;
-
-	int inventorySlot = button->index - 6;
-
-	uint16 item = _mainCharacter.inventory[inventorySlot];
-	if (_itemInHand == -1) {
-		if (item == 0xFFFF)
-			return 0;
-		_screen->hideMouse();
-		clearInventorySlot(inventorySlot, 0);
-		snd_playSoundEffect(0x0B);
-		setMouseCursor(item);
-		int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
-		updateCommandLineEx(item+54, string, 0xD6);
-		_itemInHand = (int16)item;
-		_screen->showMouse();
-		_mainCharacter.inventory[inventorySlot] = 0xFFFF;
-	} else {
-		if (_mainCharacter.inventory[inventorySlot] != 0xFFFF) {
-			if (checkInventoryItemExchange(_itemInHand, inventorySlot))
-				return 0;
-
-			item = _mainCharacter.inventory[inventorySlot];
-			snd_playSoundEffect(0x0B);
-			_screen->hideMouse();
-			clearInventorySlot(inventorySlot, 0);
-			drawInventoryShape(0, _itemInHand, inventorySlot);
-			setMouseCursor(item);
-			int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
-			updateCommandLineEx(item+54, string, 0xD6);
-			_screen->showMouse();
-			_mainCharacter.inventory[inventorySlot] = _itemInHand;
-			setHandItem(item);
-		} else {
-			snd_playSoundEffect(0x0C);
-			_screen->hideMouse();
-			drawInventoryShape(0, _itemInHand, inventorySlot);
-			_screen->setMouseCursor(0, 0, getShapePtr(0));
-			int string = (_lang == 1) ? getItemCommandStringInv(_itemInHand) : 8;
-			updateCommandLineEx(_itemInHand+54, string, 0xD6);
-			_screen->showMouse();
-			_mainCharacter.inventory[inventorySlot] = _itemInHand;
-			_itemInHand = -1;
-		}
-	}
-
-	return 0;
-}
-
-int KyraEngine_v2::scrollInventory(Button *button) {
-	uint16 *src = _mainCharacter.inventory;
-	uint16 *dst = &_mainCharacter.inventory[10];
-	uint16 temp[5];
-
-	memcpy(temp, src, sizeof(uint16)*5);
-	memcpy(src, src+5, sizeof(uint16)*5);
-	memcpy(src+5, dst, sizeof(uint16)*5);
-	memcpy(dst, dst+5, sizeof(uint16)*5);
-	memcpy(dst+5, temp, sizeof(uint16)*5);
-	_screen->hideMouse();
-	_screen->copyRegion(0x46, 0x90, 0x46, 0x90, 0x71, 0x2E, 0, 2);
-	_screen->showMouse();
-	redrawInventory(2);
-	scrollInventoryWheel();
-	return 0;
-}
-
-int KyraEngine_v2::getInventoryItemSlot(uint16 item) {
-	for (int i = 0; i < 20; ++i) {
-		if (_mainCharacter.inventory[i] == item)
-			return i;
-	}
-	return -1;
-}
-
-int KyraEngine_v2::findFreeVisibleInventorySlot() {
-	for (int i = 0; i < 10; ++i) {
-		if (_mainCharacter.inventory[i] == 0xFFFF)
-			return i;
-	}
-	return -1;
-}
-
-void KyraEngine_v2::removeItemFromInventory(int slot) {
-	_mainCharacter.inventory[slot] = 0xFFFF;
-	if (slot < 10) {
-		_screen->hideMouse();
-		clearInventorySlot(slot, 0);
-		_screen->showMouse();
-	}
-}
-
-bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
-	bool removeItem = false;
-	uint16 newItem = 0xFFFF;
-
-	uint16 invItem = _mainCharacter.inventory[slot];
-
-	for (const uint16 *table = _itemMagicTable; *table != 0xFFFF; table += 4) {
-		if (table[0] != handItem || table[1] != invItem)
-			continue;
-
-		if (table[3] == 0xFFFF)
-			continue;
-
-		removeItem = (table[3] == 1);
-		newItem = table[2];
-
-		snd_playSoundEffect(0x68);
-		_mainCharacter.inventory[slot] = newItem;
-		_screen->hideMouse();
-		clearInventorySlot(slot, 0);
-		drawInventoryShape(0, newItem, slot);
-
-		if (removeItem)
-			removeHandItem();
-
-		_screen->showMouse();
-
-		if (_lang != 1)
-			updateCommandLineEx(newItem+54, 0x2E, 0xD6);
-
-		return true;
-	}
-
-	return false;
-}
-
-void KyraEngine_v2::drawInventoryShape(int page, uint16 item, int slot) {
-	_screen->drawShape(page, getShapePtr(item+64), _inventoryX[slot], _inventoryY[slot], 0, 0);
-	_screen->updateScreen();
-}
-
-void KyraEngine_v2::clearInventorySlot(int slot, int page) {
-	_screen->drawShape(page, _defaultShapeTable[240+slot], _inventoryX[slot], _inventoryY[slot], 0, 0);
-	_screen->updateScreen();
-}
-
-void KyraEngine_v2::redrawInventory(int page) {
-	int pageBackUp = _screen->_curPage;
-	_screen->_curPage = page;
-
-	const uint16 *inventory = _mainCharacter.inventory;
-	_screen->hideMouse();
-	for (int i = 0; i < 10; ++i) {
-		clearInventorySlot(i, page);
-		if (inventory[i] != 0xFFFF) {
-			_screen->drawShape(page, getShapePtr(inventory[i]+64), _inventoryX[i], _inventoryY[i], 0, 0);
-			drawInventoryShape(page, inventory[i], i);
-		}
-	}
-	_screen->showMouse();
-	_screen->updateScreen();
-
-	_screen->_curPage = pageBackUp;
-}
-
-void KyraEngine_v2::scrollInventoryWheel() {
-	WSAMovieV2 movie(this, _screen);
-	movie.open("INVWHEEL.WSA", 0, 0);
-	int frames = movie.opened() ? movie.frames() : 6;
-	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
-	uint8 overlay[0x100];
-	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 50);
-	_screen->hideMouse();
-	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2, Screen::CR_NO_P_CHECK);
-	_screen->showMouse();
-	snd_playSoundEffect(0x25);
-
-	movie.setDrawPage(0);
-	movie.setX(0);
-	movie.setY(0);
-
-	bool breakFlag = false;
-	for (int i = 0; i <= 6 && !breakFlag; ++i) {
-		if (movie.opened()) {
-			_screen->hideMouse();
-			movie.displayFrame(i % frames, 0, 0);
-			_screen->showMouse();
-			_screen->updateScreen();
-		}
-
-		uint32 endTime = _system->getMillis() + _tickLength;
-
-		int y = (i * 981) >> 8;
-		if (y >= 23 || i == 6) {
-			y = 23;
-			breakFlag = true;
-		}
-
-		_screen->applyOverlay(0x46, 0x79, 0x71, 0x17, 2, overlay);
-		_screen->copyRegion(0x46, y+0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->updateScreen();
-
-		delayUntil(endTime);
-	}
-
-	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);
-	movie.close();
-}
-
-// spellbook specific code
-
-int KyraEngine_v2::bookButton(Button *button) {
-	if (!queryGameFlag(1)) {
-		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB); 
-		return 0;
-	}
-
-	if (!_screen->isMouseVisible())
-		return 0;
-
-	if (queryGameFlag(0xE5)) {
-		snd_playSoundEffect(0x0D);
-		return 0;
-	}
-
-	if (_itemInHand == 72) {
-		if (!queryGameFlag(0xE2)) {
-			_bookMaxPage += 2;
-			removeHandItem();
-			snd_playSoundEffect(0x6C);
-			setGameFlag(0xE2);
-		}
-
-		if (!queryGameFlag(0x18A) && queryGameFlag(0x170)) {
-			_bookMaxPage += 2;
-			removeHandItem();
-			snd_playSoundEffect(0x6C);
-			setGameFlag(0x18A);
-		}
-
-		return 0;
-	}
-
-	if (_handItemSet != -1) {
-		snd_playSoundEffect(0x0D);
-		return 0;
-	}
-
-	_screen->hideMouse();
-	showMessage(0, 0xCF);
-	displayInvWsaLastFrame();
-	_bookNewPage = _bookCurPage;
-
-	if (_screenBuffer) {
-		_screen->hideMouse();
-		memcpy(_screenBuffer, _screen->getCPagePtr(0), 64000);
-		_screen->showMouse();
-	}
-
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
-	_screen->fadeToBlack(7, &_updateFunctor);
-	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0), 768);
-	loadBookBkgd();
-	showBookPage();
-	_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
-
-	int oldItemInHand = _itemInHand;
-	removeHandItem();
-	_screen->fadePalette(_screen->getPalette(0), 7);
-	_screen->showMouse();
-
-	bookLoop();
-
-	_screen->fadeToBlack(7);
-	_screen->hideMouse();
-	setHandItem(oldItemInHand);
-	updateMouse();
-	restorePage3();
-
-	if (_screenBuffer) {
-		_screen->hideMouse();
-		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
-		_screen->showMouse();
-	}
-
-	setHandItem(_itemInHand);
-	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->getPalette(0), 7, &_updateFunctor);
-	_screen->showMouse();
-
-	if (!queryGameFlag(4) && !queryGameFlag(0xB8)) {
-		objectChat(getTableString(0xEC, _cCodeBuffer, 1), 0, 0x83, 0xEC);
-		objectChat(getTableString(0xED, _cCodeBuffer, 1), 0, 0x83, 0xED);
-		objectChat(getTableString(0xEE, _cCodeBuffer, 1), 0, 0x83, 0xEE);
-		objectChat(getTableString(0xEF, _cCodeBuffer, 1), 0, 0x83, 0xEF);
-		setGameFlag(4);
-	}
-
-	return 0;
-}
-
-void KyraEngine_v2::loadBookBkgd() {
-	char filename[16];
-
-	if (_flags.isTalkie)
-		strcpy(filename, (_bookBkgd == 0) ? "_XBOOKD.CPS" : "_XBOOKC.CPS");
+	if (button->flags2 & 1)
+		button->flags2 |= 8;
 	else
-		strcpy(filename, (_bookBkgd == 0) ? "_BOOKD.CPS" : "_BOOKC.CPS");
+		button->flags2 |= ~8;
 
-	_bookBkgd ^= 1;
-	
-	if (_flags.isTalkie) {
-		if (!_bookCurPage)
-			strcpy(filename, "_XBOOKB.CPS");
-		if (_bookCurPage == _bookMaxPage)
-			strcpy(filename, "_XBOOKA.CPS");
+	button->flags2 &= ~1;
 
-		switch (_lang) {
-		case 0:
-			filename[1] = 'E';
-			break;
+	if (button->flags2 & 4)
+		button->flags2 |= 0x10;
+	else
+		button->flags2 &= ~0x10;
 
-		case 1:
-			filename[1] = 'F';
-			break;
+	button->flags2 &= ~4;
 
-		case 2:
-			filename[1] = 'G';
-			break;
-
-		default:
-			warning("loadBookBkgd unsupported language");
-			filename[1] = 'E';
-			break;
-		}
-	} else {
-		if (!_bookCurPage)
-			strcpy(filename, "_BOOKB.CPS");
-		if (_bookCurPage == _bookMaxPage)
-			strcpy(filename, "_BOOKA.CPS");
-	}
-
-	_screen->loadBitmap(filename, 3, 3, 0);
+	processButton(button);
 }
-
-void KyraEngine_v2::showBookPage() {
-	char filename[16];
-
-	sprintf(filename, "PAGE%.01X.", _bookCurPage);
-	strcat(filename, _languageExtension[_lang]);
-	uint8 *leftPage = _res->fileData(filename, 0);
-	int leftPageY = _bookPageYOffset[_bookCurPage];
-
-	sprintf(filename, "PAGE%.01X.", _bookCurPage+1);
-	strcat(filename, _languageExtension[_lang]);
-	uint8 *rightPage = (_bookCurPage != _bookMaxPage) ? _res->fileData(filename, 0) : 0;
-	int rightPageY = _bookPageYOffset[_bookCurPage+1];
-
-	_screen->hideMouse();
-	if (leftPage) {
-		bookDecodeText(leftPage);
-		bookPrintText(2, leftPage, 20, leftPageY+20, 0x31);
-		delete [] leftPage;
-	}
-
-	if (rightPage) {
-		bookDecodeText(rightPage);
-		bookPrintText(2, rightPage, 176, rightPageY+20, 0x31);
-		delete [] rightPage;
-	}
-	_screen->showMouse();
-}
-
-void KyraEngine_v2::bookLoop() {
-	Button bookButtons[5];
-
-	GUI_V2_BUTTON(bookButtons[0], 0x24, 0, 0, 1, 1, 1, 0x4487, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[0].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookPrevPage);
-	GUI_V2_BUTTON(bookButtons[1], 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookNextPage);
-	GUI_V2_BUTTON(bookButtons[2], 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookClose);
-	GUI_V2_BUTTON(bookButtons[3], 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookPrevPage);
-	GUI_V2_BUTTON(bookButtons[4], 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	bookButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookNextPage);
-
-	Button *buttonList = 0;
-	
-	for (uint i = 0; i < ARRAYSIZE(bookButtons); ++i)
-		buttonList = _gui->addButtonToList(buttonList, &bookButtons[i]);
-
-	showBookPage();
-	_bookShown = true;
-	while (_bookShown && !_quitFlag) {
-		checkInput(buttonList);
-		removeInputTop();
-
-		if (_bookCurPage != _bookNewPage) {
-			_bookCurPage = _bookNewPage;
-			_screen->clearPage(2);
-			loadBookBkgd();
-			showBookPage();
-			snd_playSoundEffect(0x64);
-			_screen->hideMouse();
-			_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);
-			_screen->updateScreen();
-			_screen->showMouse();
-		}
-	}
-	_screen->clearPage(2);
-}
-
-void KyraEngine_v2::bookDecodeText(uint8 *str) {
-	uint8 *dst = str, *op = str;
-	while (*op != 0x1A) {
-		while (*op != 0x1A && *op != 0x0D)
-			*dst++ = *op++;
-		
-		if (*op == 0x1A)
-			break;
-
-		op += 2;
-		*dst++ = 0x0D;
-	}
-	*dst = 0;
-}
-
-void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *str, int x, int y, uint8 color) {
-	int curPageBackUp = _screen->_curPage;
-	_screen->_curPage = dstPage;
-
-	_screen->setTextColor(_bookTextColorMap, 0, 3);
-	Screen::FontId oldFont = _screen->setFont(Screen::FID_BOOKFONT_FNT);
-	_screen->_charWidth = -2;
-
-	_screen->hideMouse();
-	_screen->printText((const char*)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xf6 : 0);
-	_screen->showMouse();
-
-	_screen->_charWidth = 0;
-	_screen->setFont(oldFont);
-	_screen->_curPage = curPageBackUp;
-}
-
-int KyraEngine_v2::bookPrevPage(Button *button) {
-	_bookNewPage = MAX<int>(_bookCurPage-2, 0);
-	return 0;
-}
-
-int KyraEngine_v2::bookNextPage(Button *button) {
-	_bookNewPage = MIN<int>(_bookCurPage+2, _bookMaxPage);
-	return 0;
-}
-
-int KyraEngine_v2::bookClose(Button *button) {
-	_bookShown = false;
-	return 0;
-}
-
-// cauldron specific code
-
-int KyraEngine_v2::cauldronClearButton(Button *button) {
-	if (!queryGameFlag(2)) {
-		updateCharFacing();
-		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
-		return 0;
-	}
-
-	if (queryGameFlag(0xE4)) {
-		snd_playSoundEffect(0x0D);
-		return 0;
-	}
-
-	_screen->hideMouse();
-	displayInvWsaLastFrame();
-	snd_playSoundEffect(0x25);
-	loadInvWsa("PULL.WSA", 1, 6, 0, -1, -1, 1);
-	loadInvWsa("CAULD00.WSA", 1, 7, 0, 0xD4, 0x0F, 1);
-	showMessage(0, 0xCF);
-	setCauldronState(0, 0);
-	clearCauldronTable();
-	snd_playSoundEffect(0x57);
-	loadInvWsa("CAULDFIL.WSA", 1, 7, 0, -1, -1, 1);
-	_screen->showMouse();
-	return 0;
-}
-
-int KyraEngine_v2::cauldronButton(Button *button) {
-	if (!queryGameFlag(2)) {
-		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
-		return 0;
-	}
-
-	if (!_screen->isMouseVisible() || _handItemSet < -1)
-		return 0;
-
-	if (queryGameFlag(0xE4)) {
-		snd_playSoundEffect(0x0D);	
-		return 0;
-	}
-
-	updateCharFacing();
-
-	for (int i = 0; _cauldronProtectedItems[i] != -1; ++i) {
-		if (_itemInHand == _cauldronProtectedItems[i]) {
-			objectChat(getTableString(0xF1, _cCodeBuffer, 1), 0, 0x83, 0xF1);
-			return 0;
-		}
-	}
-
-	if (_itemInHand == -1) {
-		listItemsInCauldron();
-		return 0;
-	}
-
-	for (int i = 0; _cauldronBowlTable[i] != -1; i += 2) {
-		if (_itemInHand == _cauldronBowlTable[i]) {
-			addFrontCauldronTable(_itemInHand);
-			setHandItem(_cauldronBowlTable[i+1]);
-			if (!updateCauldron()) {
-				_cauldronState = 0;
-				cauldronRndPaletteFade();
-			}
-			return 0;
-		}
-	}
-
-	if (_itemInHand == 18) {
-		const int16 *magicTable = (_mainCharacter.sceneId == 77) ? _cauldronMagicTableScene77 : _cauldronMagicTable;
-		while (magicTable[0] != -1) {
-			if (_cauldronState == magicTable[0]) {
-				setHandItem(magicTable[1]);
-				snd_playSoundEffect(0x6C);
-				++_cauldronUseCount;
-				if (_cauldronStateTable[_cauldronState] <= _cauldronUseCount && _cauldronUseCount) {
-					showMessage(0, 0xCF);
-					setCauldronState(0, true);
-					clearCauldronTable();
-				}
-				return 0;
-			}
-			magicTable += 2;
-		}
-	} else if (_itemInHand >= 0) {
-		int item = _itemInHand;
-		cauldronItemAnim(item);
-		addFrontCauldronTable(item);
-		if (!updateCauldron()) {
-			_cauldronState = 0;
-			cauldronRndPaletteFade();
-		}
-	}
-
-	return 0;
-}
-
-#pragma mark -
 
 void GUI_v2::getInput() {
 	if (!_displayMenu)
@@ -1012,119 +409,6 @@ void GUI_v2::getInput() {
 	}
 }
 
-int GUI_v2::optionsButton(Button *button) {
-	_restartGame = false;
-	_reloadTemporarySave = false;
-
-	_screen->hideMouse();
-	updateButton(&_vm->_inventoryButtons[0]);
-	_screen->showMouse();
-
-	if (!_screen->isMouseVisible() && button)
-		return 0;
-
-	_vm->showMessage(0, 0xCF);
-
-	if (_vm->_handItemSet < -1) {
-		_vm->_handItemSet = -1;
-		_screen->hideMouse();
-		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
-		_screen->showMouse();
-		return 0;
-	}
-
-	int oldHandItem = _vm->_itemInHand;
-	_screen->setMouseCursor(0, 0, _vm->getShapePtr(0));
-	_vm->displayInvWsaLastFrame();
-	//XXX
-	_displayMenu = true;
-
-	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
-		_menuButtons[i].data0Val1 = _menuButtons[i].data1Val1 = _menuButtons[i].data2Val1 = 4;
-		_menuButtons[i].data0Callback = _redrawShadedButtonFunctor;
-		_menuButtons[i].data1Callback = _menuButtons[i].data2Callback = _redrawButtonFunctor;
-	}
-
-	initMenuLayout(_mainMenu);
-	initMenuLayout(_gameOptions);
-	initMenuLayout(_audioOptions);
-	initMenuLayout(_choiceMenu);
-	_loadMenu.numberOfItems = 6;
-	initMenuLayout(_loadMenu);
-	initMenuLayout(_saveMenu);
-	initMenuLayout(_savenameMenu);
-	initMenuLayout(_deathMenu);
-	
-	_currentMenu = &_mainMenu;
-
-	if (_vm->_menuDirectlyToLoad) {
-		backUpPage1(_vm->_screenBuffer);
-		setupPalette();
-
-		_loadedSave = false;
-		
-		loadMenu(0);
-
-		if (_loadedSave) {
-			if (_restartGame)
-				_vm->_itemInHand = -1;
-		} else {
-			restorePage1(_vm->_screenBuffer);
-			restorePalette();
-		}
-
-		resetState(-1);
-		_vm->_menuDirectlyToLoad = false;
-		return 0;
-	}
-
-	if (!button) {
-		_currentMenu = &_deathMenu;
-		_isDeathMenu = true;
-	} else {
-		_isDeathMenu = false;
-	}
-
-	backUpPage1(_vm->_screenBuffer);
-	setupPalette();
-	initMenu(*_currentMenu);
-	_madeSave = false;
-	_loadedSave = false;
-	_vm->_itemInHand = -1;
-	updateAllMenuButtons();
-
-	if (_isDeathMenu) {
-		while (!_screen->isMouseVisible())
-			_screen->showMouse();
-	}
-
-	while (_displayMenu) {
-		processHighlights(*_currentMenu, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	if (_vm->_runFlag && !_loadedSave && !_madeSave) {
-		restorePalette();
-		restorePage1(_vm->_screenBuffer);
-	}
-
-	if (_vm->_runFlag)
-		updateMenuButton(&_vm->_inventoryButtons[0]);
-
-	resetState(oldHandItem);
-
-	if (!_loadedSave && _reloadTemporarySave) {
-		_vm->_unkSceneScreenFlag1 = true;
-		_vm->loadGame(_vm->getSavegameFilename(999));
-		_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
-		_vm->_unkSceneScreenFlag1 = false;
-	}
-
-	return 0;
-}
-
-#pragma mark -
-
 void GUI_v2::renewHighlight(Menu &menu) {
 	if (!_displayMenu)
 		return;
@@ -1138,29 +422,6 @@ void GUI_v2::renewHighlight(Menu &menu) {
 	_screen->updateScreen();
 }
 
-void GUI_v2::setupPalette() {
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
-
-	uint8 *palette = _screen->getPalette(0);
-	for (int i = 0; i < 768; ++i)
-		palette[i] >>= 1;
-
-	static const uint8 guiPal[] = { 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFc, 0xFD, 0xFE };
-
-	for (uint i = 0; i < ARRAYSIZE(guiPal); ++i)
-		memcpy(_screen->getPalette(0)+guiPal[i]*3, _screen->getPalette(1)+guiPal[i]*3, 3);
-
-	if (_isDeathMenu)
-		_screen->fadePalette(_screen->getPalette(0), 0x64);
-	else
-		_screen->setScreenPalette(_screen->getPalette(0));
-}
-
-void GUI_v2::restorePalette() {
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-	_screen->setScreenPalette(_screen->getPalette(0));
-}
-
 void GUI_v2::backUpPage1(uint8 *buffer) {
 	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, buffer);
 }
@@ -1169,24 +430,9 @@ void GUI_v2::restorePage1(const uint8 *buffer) {
 	_screen->copyBlockToPage(1, 0, 0, 320, 200, buffer);
 }
 
-void GUI_v2::resetState(int item) {
-	_vm->_timer->resetNextRun();
-	_vm->setNextIdleAnimTimer();
-	_isDeathMenu = false;
-	if (!_loadedSave) {
-		_vm->setHandItem(item);
-	} else {
-		_vm->setHandItem(_vm->_itemInHand);
-		_vm->setTimer1DelaySecs(7);
-		_vm->_shownMessage = " ";
-		_vm->_fadeMessagePalette = false;
-	}
-	_buttonListChanged = true;
-}
-
 void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	for (int i = 0; i < num; ++i) {
-		strcpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), "");
+		strcpy(getTableString(menu.item[i].itemId), "");
 		menu.item[i].saveSlot = -1;
 		menu.item[i].enabled = false;
 	}
@@ -1199,7 +445,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
-			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), header.description.c_str(), 80);
+			strncpy(getTableString(menu.item[i].itemId), header.description.c_str(), 80);
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
 			delete in;
@@ -1208,14 +454,14 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 
 	if (_savegameOffset == 0) {
 		if (_isSaveMenu) {
-			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
-			const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 10 : 18, _vm->_optionsBuffer, 0);
+			char *dst = getTableString(menu.item[0].itemId);
+			const char *src = getTableString(_vm->gameFlags().isTalkie ? 10 : 18);
 			strcpy(dst, src);
 			menu.item[0].saveSlot = -2;
 			menu.item[0].enabled = true;
 		} else {
-			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
-			const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->_optionsBuffer, 0);
+			char *dst = getTableString(menu.item[0].itemId);
+			const char *src = getTableString(_vm->gameFlags().isTalkie ? 34 : 42);
 			strcpy(dst, src);
 		}
 	}
@@ -1261,118 +507,9 @@ int GUI_v2::scrollDownButton(Button *button) {
 	return 0;
 }
 
-#pragma mark -
-
-int GUI_v2::quitGame(Button *caller) {
-	updateMenuButton(caller);
-	if (choiceDialog(_vm->gameFlags().isTalkie ? 0xF : 0x17, 1)) {
-		_displayMenu = false;
-		_vm->_runFlag = false;
-		_vm->_sound->beginFadeOut();
-		_screen->fadeToBlack();
-		_screen->clearCurPage();
-	}
-
-	if (_vm->_runFlag) {
-		initMenu(*_currentMenu);
-		updateAllMenuButtons();
-	}
-
-	return 0;
-}
-
 int GUI_v2::resumeGame(Button *caller) {
 	updateMenuButton(caller);
 	_displayMenu = false;
-	return 0;
-}
-
-int GUI_v2::gameOptions(Button *caller) {
-	updateMenuButton(caller);
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	initMenu(_gameOptions);
-	_isOptionsMenu = true;
-
-	const int menuX = _gameOptions.x;
-	const int menuY = _gameOptions.y;
-
-	for (int i = 0; i < 4; ++i) {
-		int x = menuX + _sliderBarsPosition[i*2+0];
-		int y = menuY + _sliderBarsPosition[i*2+1];
-		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
-		drawSliderBar(i, _vm->_buttonShapes[17]);
-		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[0][i].x = x;
-		_sliderButtons[0][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[0][i]);
-		_sliderButtons[2][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[2][i].x = x + 10;
-		_sliderButtons[2][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[2][i]);
-		_sliderButtons[1][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[1][i].x = x + 120;
-		_sliderButtons[1][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[1][i]);
-	}
-
-	while (_isOptionsMenu) {
-		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-
-	_vm->writeSettings();
-
-	initMenu(*_currentMenu);
-	updateAllMenuButtons();
-
-	return 0;
-}
-
-int GUI_v2::gameOptionsTalkie(Button *caller) {
-	updateMenuButton(caller);
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	bool textEnabled = _vm->textEnabled();
-	int lang = _vm->_lang;
-
-	setupOptionsButtons();
-	initMenu(_gameOptions);
-	_isOptionsMenu = true;
-
-	while (_isOptionsMenu) {
-		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-
-	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
-		_vm->_configVoice = 1;
-		choiceDialog(0x1E, 0);
-	}
-
-	if (_vm->_lang != lang) {
-		_reloadTemporarySave = true;
-		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 2 Savegame");
-		_vm->loadCCodeBuffer("C_CODE.XXX");
-		if (_vm->_flags.isTalkie)
-			_vm->loadOptionsBuffer("OPTIONS.XXX");
-		else
-			_vm->_optionsBuffer = _vm->_cCodeBuffer;
-		_vm->loadChapterBuffer(_vm->_newChapterFile);
-		_vm->loadNPCScript();
-		_vm->setupLangButtonShapes();
-	}
-
-	_vm->writeSettings();
-
-	initMenu(*_currentMenu);
-	updateAllMenuButtons();
 	return 0;
 }
 
@@ -1388,16 +525,7 @@ int GUI_v2::toggleWalkspeed(Button *caller) {
 		_vm->_configWalkspeed = 3;
 	else
 		_vm->_configWalkspeed = 5;
-	_vm->_timer->setDelay(0, _vm->_configWalkspeed); 
-	setupOptionsButtons();
-	renewHighlight(_gameOptions);
-	return 0;
-}
-
-int GUI_v2::changeLanguage(Button *caller) {
-	updateMenuButton(caller);
-	++_vm->_lang;
-	_vm->_lang %= 3;
+	_vm->setWalkspeed(_vm->_configWalkspeed);
 	setupOptionsButtons();
 	renewHighlight(_gameOptions);
 	return 0;
@@ -1423,256 +551,12 @@ int GUI_v2::toggleText(Button *caller) {
 	return 0;
 }
 
-void GUI_v2::setupOptionsButtons() {
-	if (_vm->_configWalkspeed == 3)
-		_gameOptions.item[0].itemId = 28;
-	else
-		_gameOptions.item[0].itemId = 27;
-
-	if (_vm->textEnabled())
-		_gameOptions.item[2].itemId = 18;
-	else
-		_gameOptions.item[2].itemId = 17;
-
-	switch (_vm->_lang) {
-	case 0:
-		_gameOptions.item[1].itemId = 31;
-		break;
-	
-	case 1:
-		_gameOptions.item[1].itemId = 32;
-		break;
-
-	case 2:
-		_gameOptions.item[1].itemId = 33;
-		break;
-
-	default:
-		break;
-	}
-}
-
-int GUI_v2::audioOptions(Button *caller) {
-	updateMenuButton(caller);
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	initMenu(_audioOptions);
-	const int menuX = _audioOptions.x;
-	const int menuY = _audioOptions.y;
-	const int maxButton = 3;	// 2 if voc is disabled
-
-	for (int i = 0; i < maxButton; ++i) {
-		int x = menuX + _sliderBarsPosition[i*2+0];
-		int y = menuY + _sliderBarsPosition[i*2+1];
-		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
-		drawSliderBar(i, _vm->_buttonShapes[17]);
-		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[0][i].x = x;
-		_sliderButtons[0][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[0][i]);
-		_sliderButtons[2][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[2][i].x = x + 10;
-		_sliderButtons[2][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[2][i]);
-		_sliderButtons[1][i].buttonCallback = _sliderHandlerFunctor;
-		_sliderButtons[1][i].x = x + 120;
-		_sliderButtons[1][i].y = y;
-		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[1][i]);
-	}
-
-	_isOptionsMenu = true;
-	updateAllMenuButtons();
-	bool speechEnabled = _vm->speechEnabled();
-	while (_isOptionsMenu) {
-		processHighlights(_audioOptions, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	restorePage1(_vm->_screenBuffer);
-	backUpPage1(_vm->_screenBuffer);
-	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
-		_vm->_configVoice = 0;
-		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
-		choiceDialog(0x1D, 0);
-	}
-
-	_vm->writeSettings();
-
-	initMenu(*_currentMenu);
-	updateAllMenuButtons();
-	return 0;
-}
-
-int GUI_v2::sliderHandler(Button *caller) {
-	int button = 0;
-	if (caller->index >= 24 && caller->index <= 27)
-		button = caller->index - 24;
-	else if (caller->index >= 28 && caller->index <= 31)
-		button = caller->index - 28;
-	else
-		button = caller->index - 32;
-
-	assert(button >= 0 && button <= 3);
-
-	int oldVolume = 0;
-	
-	if (_vm->gameFlags().isTalkie) {
-		oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
-	} else {
-		if (button < 2)
-			oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
-		else if (button == 2)
-			oldVolume = (_vm->_configWalkspeed == 3) ? 97 : 2;
-		else if (button == 3)
-			oldVolume = _vm->_configTextspeed;
-	}
-
-	int newVolume = oldVolume;
-
-	if (caller->index >= 24 && caller->index <= 27)
-		newVolume -= 10;
-	else if (caller->index >= 28 && caller->index <= 31)
-		newVolume += 10;
-	else
-		newVolume = _vm->_mouseX - caller->x - 7;
-
-	newVolume = MAX(2, newVolume);
-	newVolume = MIN(97, newVolume);
-
-	if (newVolume == oldVolume)
-		return 0;
-
-	int lastMusicCommand = -1;
-	bool playSoundEffect = false;
-
-	drawSliderBar(button, _vm->_buttonShapes[18]);
-
-	if (_vm->gameFlags().isTalkie) {
-		if (button == 2) {
-			if (_vm->textEnabled())
-				_vm->_configVoice = 2;
-			else
-				_vm->_configVoice = 1;
-		}
-
-		_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
-
-		switch (button) {
-		case 0:
-			lastMusicCommand = _vm->_lastMusicCommand;
-			break;
-
-		case 1:
-			playSoundEffect = true;
-			break;
-
-		case 2:
-			_vm->playVoice(90, 28);
-			break;
-
-		default:
-			return 0;
-		}
-	} else {
-		if (button < 2) {
-			_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
-			if (button == 0)
-				lastMusicCommand = _vm->_lastMusicCommand;
-			else
-				playSoundEffect = true;
-		} else if (button == 2) {
-			_vm->_configWalkspeed = (newVolume > 48) ? 3 : 5;
-			_vm->setWalkspeed(_vm->_configWalkspeed);
-		} else if (button == 3) {
-			_vm->_configTextspeed = newVolume;
-		}
-	}
-	
-	drawSliderBar(button, _vm->_buttonShapes[17]);
-	if (playSoundEffect)
-		_vm->snd_playSoundEffect(0x18);
-	else if (lastMusicCommand >= 0)
-		_vm->snd_playWanderScoreViaMap(lastMusicCommand, 1);
-
-	_screen->updateScreen();
-	return 0;
-}
-
-void GUI_v2::drawSliderBar(int slider, const uint8 *shape) {
-	const int menuX = _audioOptions.x;
-	const int menuY = _audioOptions.y;
-	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
-	int y = menuY + _sliderBarsPosition[slider*2+1];
-
-	int position = 0;
-	if (_vm->gameFlags().isTalkie) {
-		position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
-	} else {
-		if (slider < 2)
-			position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
-		else if (slider == 2)
-			position = (_vm->_configWalkspeed == 3) ? 97 : 2;
-		else if (slider == 3)
-			position = _vm->_configTextspeed;
-	}
-
-	position = MAX(2, position);
-	position = MIN(97, position);
-	_screen->drawShape(0, shape, x+position, y, 0, 0);
-}
-
-int GUI_v2::loadMenu(Button *caller) {
-	updateSaveList();
-
-	if (!_vm->_menuDirectlyToLoad) {
-		updateMenuButton(caller);
-		restorePage1(_vm->_screenBuffer);
-		backUpPage1(_vm->_screenBuffer);
-	}
-
-	_savegameOffset = 0;
-	setupSavegameNames(_loadMenu, 5);
-	initMenu(_loadMenu);
-	_isLoadMenu = true;
-	_noLoadProcess = false;
-	_vm->_gameToLoad = -1;
-	updateAllMenuButtons();
-
-	_screen->updateScreen();
-	while (_isLoadMenu) {
-		processHighlights(_loadMenu, _vm->_mouseX, _vm->_mouseY);
-		getInput();
-	}
-
-	if (_noLoadProcess) {
-		if (!_vm->_menuDirectlyToLoad) {
-			restorePage1(_vm->_screenBuffer);
-			backUpPage1(_vm->_screenBuffer);
-			initMenu(*_currentMenu);
-			updateAllMenuButtons();
-		}
-	} else if (_vm->_gameToLoad >= 0) {
-		restorePage1(_vm->_screenBuffer);
-		restorePalette();
-		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
-		if (_vm->_gameToLoad == 0) {
-			_restartGame = true;
-			for (int i = 0; i < 23; ++i)
-				_vm->resetCauldronStateTable(i);
-			_vm->runStartScript(1, 1);
-		}
-		_displayMenu = false;
-		_loadedSave = true;
-	}
-
-	return 0;
-}
-
 int GUI_v2::clickLoadSlot(Button *caller) {
 	updateMenuButton(caller);
-	
-	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
-	MenuItem &item = _loadMenu.item[caller->index-0x10];
+
+	int index = caller->index - _menuButtons[0].index;
+	assert(index >= 0 && index <= 6);
+	MenuItem &item = _loadMenu.item[index];
 
 	if (item.saveSlot >= 0) {
 		_vm->_gameToLoad = item.saveSlot;
@@ -1733,8 +617,9 @@ int GUI_v2::saveMenu(Button *caller) {
 int GUI_v2::clickSaveSlot(Button *caller) {
 	updateMenuButton(caller);
 
-	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
-	MenuItem &item = _saveMenu.item[caller->index-0x10];
+	int index = caller->index - _menuButtons[0].index;
+	assert(index >= 0 && index <= 6);
+	MenuItem &item = _saveMenu.item[index];
 	
 	if (item.saveSlot >= 0) {
 		if (_isDeleteMenu) {
@@ -1743,7 +628,7 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 			return 0;
 		} else {
 			_saveSlot = item.saveSlot;
-			strcpy(_saveDescription, _vm->getTableString(item.itemId, _vm->_optionsBuffer, 0));
+			strcpy(_saveDescription, getTableString(item.itemId));
 		}
 	} else if (item.saveSlot == -2) {
 		_saveSlot = getNextSavegameSlot();
@@ -1754,8 +639,8 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 	backUpPage1(_vm->_screenBuffer);
 
 	initMenu(_savenameMenu);
-	_screen->fillRect(0x26, 0x5B, 0x11F, 0x66, 0xFA);
-	const char *desc = nameInputProcess(_saveDescription, 0x27, 0x5C, 0xFD, 0xFA, 0xFE, 0x50);
+	_screen->fillRect(0x26, 0x5B, 0x11F, 0x66, textFieldColor2());
+	const char *desc = nameInputProcess(_saveDescription, 0x27, 0x5C, textFieldColor1(), textFieldColor2(), textFieldColor3(), 0x50);
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
 	if (desc) {

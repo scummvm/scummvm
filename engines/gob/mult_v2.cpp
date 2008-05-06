@@ -526,14 +526,14 @@ void Mult_v2::playMultInit() {
 		delete[] _animArrayData;
 
 		_objects = new Mult_Object[_objCount];
-		_orderArray = new int8[_objCount];
+		_orderArray = new uint8[_objCount];
 		_renderObjs = new Mult_Object*[_objCount];
 		_animArrayX = new int32[_objCount];
 		_animArrayY = new int32[_objCount];
 		_animArrayData = new Mult_AnimData[_objCount];
 
 		memset(_objects, 0, _objCount * sizeof(Mult_Object));
-		memset(_orderArray, 0, _objCount * sizeof(int8));
+		memset(_orderArray, 0, _objCount * sizeof(uint8));
 		memset(_renderObjs, 0, _objCount * sizeof(Mult_Object *));
 		memset(_animArrayX, 0, _objCount * sizeof(int32));
 		memset(_animArrayY, 0, _objCount * sizeof(int32));
@@ -768,9 +768,9 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 }
 
 void Mult_v2::animate() {
-	int8 minOrder = 100;
-	int8 maxOrder = 0;
-	int8 *orderArray;
+	uint8 minOrder = 100;
+	uint8 maxOrder = 0;
+	uint8 *orderArray;
 	int orderArrayPos = 0;
 	int8 animIndices[150];
 	int numAnims = 0;

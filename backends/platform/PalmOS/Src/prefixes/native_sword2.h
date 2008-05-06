@@ -2,7 +2,7 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_SWORD2
+#define ENABLE_SWORD2 STATIC_PLUGIN
 #undef _DEBUG
 #define USE_MPEG2
 #define USE_VORBIS

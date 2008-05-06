@@ -89,6 +89,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 Parallaction::~Parallaction() {
 	delete _debugger;
 
+	delete _locationParser;
 	delete _globalTable;
 
 	delete _callableNames;
@@ -112,7 +113,7 @@ int Parallaction::init() {
 	_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalTable = NULL;
-	_hasLocationSound = false;
+	_location._hasSound = false;
 	_transCurrentHoverItem = 0;
 	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
 	_activeItem._index = 0;
@@ -588,45 +589,16 @@ void Parallaction::resumeJobs() {
 	return;
 }
 
-
-void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {
-	_opcodes.push(_currentOpcodes);
-	_statements.push(_currentStatements);
-
-	_currentOpcodes = opcodes;
-	_currentStatements = statements;
-}
-
-void Parallaction::popParserTables() {
-	assert(_opcodes.size() > 0);
-
-	_currentOpcodes = _opcodes.pop();
-	_currentStatements = _statements.pop();
-}
-
-void Parallaction::parseStatement() {
-	assert(_currentOpcodes != 0);
-
-	_lookup = _currentStatements->lookup(_tokens[0]);
-
-	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
-
-	(*(*_currentOpcodes)[_lookup])();
-}
-
-
-
-
 AnimationPtr Parallaction::findAnimation(const char *name) {
 
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
+	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++)
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 
 	return nullAnimationPtr;
 }
 
 void Parallaction::freeAnimations() {
-	_animations.clear();
+	_location._animations.clear();
 	return;
 }
 
@@ -658,7 +630,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 		_locationNames[_numLocations][0] = '\0';
 		_localFlags[_numLocations] = 0;
 	} else {
-		_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
+		setLocationFlags(kFlagsVisited);	// 'visited'
 	}
 }
 
@@ -679,7 +651,7 @@ void Parallaction::freeLocation() {
 	_gfx->clearGfxObjects();
 	freeBackground();
 
-	_programs.clear();
+	_location._programs.clear();
 	freeZones();
 	freeAnimations();
 
@@ -732,7 +704,7 @@ void Parallaction::doLocationEnterTransition() {
 		return;
 	}
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+	if (getLocationFlags() & kFlagsVisited) {
 		debugC(2, kDebugExec, "skipping location transition");
 		return; // visited
 	}
@@ -765,11 +737,28 @@ void Parallaction::doLocationEnterTransition() {
 	return;
 }
 
+void Parallaction::setLocationFlags(uint32 flags) {
+	_localFlags[_currentLocationIndex] |= flags;
+}
+
+void Parallaction::clearLocationFlags(uint32 flags) {
+	_localFlags[_currentLocationIndex] &= ~flags;
+}
+
+void Parallaction::toggleLocationFlags(uint32 flags) {
+	_localFlags[_currentLocationIndex] ^= flags;
+}
+
+uint32 Parallaction::getLocationFlags() {
+	return _localFlags[_currentLocationIndex];
+}
+
+
 
 
 ZonePtr Parallaction::findZone(const char *name) {
 
-	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
+	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); it++) {
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 	}
 
@@ -780,9 +769,9 @@ ZonePtr Parallaction::findZone(const char *name) {
 void Parallaction::freeZones() {
 	debugC(2, kDebugExec, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
-	ZoneList::iterator it = _zones.begin();
+	ZoneList::iterator it = _location._zones.begin();
 
-	while ( it != _zones.end() ) {
+	while ( it != _location._zones.end() ) {
 
 		// NOTE : this condition has been relaxed compared to the original, to allow the engine
 		// to retain special - needed - zones that were lost across location switches.
@@ -791,7 +780,7 @@ void Parallaction::freeZones() {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
-			it = _zones.erase(it);
+			it = _location._zones.erase(it);
 		}
 	}
 

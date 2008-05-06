@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_DRASCULA
+#define ENABLE_DRASCULA STATIC_PLUGIN
 
 #endif

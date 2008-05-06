@@ -387,4 +387,8 @@ bool M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(M4, PLUGIN_TYPE_ENGINE, M4MetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(M4)
+	REGISTER_PLUGIN_DYNAMIC(M4, PLUGIN_TYPE_ENGINE, M4MetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(M4, PLUGIN_TYPE_ENGINE, M4MetaEngine);
+#endif

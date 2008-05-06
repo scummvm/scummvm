@@ -24,7 +24,7 @@ MODULE_OBJS := \
 	walk.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_QUEEN), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

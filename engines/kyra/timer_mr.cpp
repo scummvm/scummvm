@@ -23,15 +23,15 @@
  *
  */
 
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_mr.h"
 #include "kyra/timer.h"
 
 namespace Kyra {
 
-#define TimerV3(x) new Common::Functor1Mem<int, void, KyraEngine_v3>(this, &KyraEngine_v3::x)
+#define TimerV3(x) new Common::Functor1Mem<int, void, KyraEngine_MR>(this, &KyraEngine_MR::x)
 
-void KyraEngine_v3::setupTimers() {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::setupTimers()");
+void KyraEngine_MR::setupTimers() {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setupTimers()");
 
 	_timer->addTimer(0, TimerV3(timerRestoreCommandLine), -1, 1);
 	for (int i = 1; i <= 3; ++i)
@@ -43,32 +43,32 @@ void KyraEngine_v3::setupTimers() {
 		_timer->addTimer(i, TimerV3(timerRunSceneScript7), 0, 0);
 }
 
-void KyraEngine_v3::timerRestoreCommandLine(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::timerRestoreCommandLine(%d)", arg);
+void KyraEngine_MR::timerRestoreCommandLine(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerRestoreCommandLine(%d)", arg);
 	if (_shownMessage)
 		_restoreCommandLine = true;
 }
 
-void KyraEngine_v3::timerRunSceneScript7(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::timerRunSceneScript7(%d)", arg);
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+void KyraEngine_MR::timerRunSceneScript7(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerRunSceneScript7(%d)", arg);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
 	_sceneScriptState.regs[3] = 0;
 	_sceneScriptState.regs[4] = _itemInHand;
-	_scriptInterpreter->startScript(&_sceneScriptState, 7);
+	_emc->start(&_sceneScriptState, 7);
 
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 }
 
-void KyraEngine_v3::timerFleaDeath(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::timerFleaDeath(%d)", arg);
+void KyraEngine_MR::timerFleaDeath(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerFleaDeath(%d)", arg);
 	warning("STUB timerFleaDeath");
 }
 
-void KyraEngine_v3::setWalkspeed(uint8 speed) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::setWalkspeed(%d)", speed);
+void KyraEngine_MR::setWalkspeed(uint8 speed) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setWalkspeed(%d)", speed);
 
 	if (speed < 5)
 		speed = 3;
@@ -78,15 +78,15 @@ void KyraEngine_v3::setWalkspeed(uint8 speed) {
 	_mainCharacter.walkspeed = speed;
 }
 
-void KyraEngine_v3::setCommandLineRestoreTimer(int secs) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::setCommandLineRestoreTimer(%d)", secs);
+void KyraEngine_MR::setCommandLineRestoreTimer(int secs) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setCommandLineRestoreTimer(%d)", secs);
 	if (secs == -1)
 		secs = 32000;
 	_timer->setCountdown(0, secs*60);
 }
 
-void KyraEngine_v3::setNextIdleAnimTimer() {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v3::setNextIdleAnimTimer()");
+void KyraEngine_MR::setNextIdleAnimTimer() {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setNextIdleAnimTimer()");
 	_nextIdleAnim = _system->getMillis() + _rnd.getRandomNumberRng(10, 15) * 1000;
 }
 

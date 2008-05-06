@@ -34,7 +34,7 @@
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/verbs.h"
@@ -66,7 +66,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::printString(int m, const byte *msg) {
 	if (m == 4) {
 		const StringTab &st = _string[m];
@@ -220,7 +220,7 @@ void ScummEngine_v6::removeBlastTexts() {
 #pragma mark -
 
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::processSubtitleQueue() {
 	for (int i = 0; i < _subtitleQueuePos; ++i) {
 		SubtitleText *st = &_subtitleQueue[i];
@@ -353,7 +353,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	return (c != 2 && c != 3);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	const int charsetCode = (_game.heversion >= 80) ? 127 : 64;
 	uint32 talk_sound_a = 0;
@@ -431,7 +431,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 
 void ScummEngine::CHARSET_1() {
 	Actor *a;
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	byte subtitleBuffer[200];
 	byte *subtitleLine = subtitleBuffer;
 	Common::Point subtitlePos;
@@ -485,24 +485,13 @@ void ScummEngine::CHARSET_1() {
 				_string[0].ypos = _screenHeight - 40;
 		}
 
-		if (_game.version >= 6) {
-			if (_string[0].ypos < 10)
-				_string[0].ypos = 10;
+		if (_string[0].ypos < 1)
+			_string[0].ypos = 1;
 
-			if (_string[0].xpos < 5)
-				_string[0].xpos = 5;
-			if (_string[0].xpos > _screenWidth - 10)
-				_string[0].xpos = _screenWidth - 10;
-		} else {
-			if (_string[0].ypos < 1)
-				_string[0].ypos = 1;
-
-			if (_string[0].xpos < 80)
-				_string[0].xpos = 80;
-			if (_string[0].xpos > _screenWidth - 80)
-				_string[0].xpos = _screenWidth - 80;
-		}
-
+		if (_string[0].xpos < 80)
+			_string[0].xpos = 80;
+		if (_string[0].xpos > _screenWidth - 80)
+			_string[0].xpos = _screenWidth - 80;
 	}
 
 	_charset->_top = _string[0].ypos + _screenTop;
@@ -544,7 +533,7 @@ void ScummEngine::CHARSET_1() {
 
 	if (!_keepText) {
 		if (_game.version >= 7) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 			((ScummEngine_v7 *)this)->clearSubtitleQueue();
 			_nextLeft = _string[0].xpos;
 			_nextTop = _string[0].ypos + _screenTop;
@@ -585,7 +574,7 @@ void ScummEngine::CHARSET_1() {
 		if (c == 13) {
 		newLine:;
 			_nextLeft = _string[0].xpos;
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 				subtitleLine = subtitleBuffer;
@@ -624,7 +613,7 @@ void ScummEngine::CHARSET_1() {
 		_charset->_top = _nextTop;
 
 		if (_game.version >= 7) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 			if (subtitleLine == subtitleBuffer) {
 				subtitlePos.x = _charset->_left;
 				// BlastText position is relative to the top of the screen, adjust y-coordinate
@@ -671,15 +660,20 @@ void ScummEngine::CHARSET_1() {
 		}
 	}
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 		((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 	}
 #endif
 }
 
-#ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v8::CHARSET_1() {
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::CHARSET_1() {
+	if (_game.id == GID_FT) {
+		ScummEngine::CHARSET_1();
+		return;
+	}
+
 	byte subtitleBuffer[2048];
 	byte *subtitleLine = subtitleBuffer;
 	Common::Point subtitlePos;
@@ -830,7 +824,7 @@ void ScummEngine_v8::CHARSET_1() {
 			}
 		}
 	}
-	_haveMsg = 2;
+	_haveMsg = (_game.version == 8) ? 2 : 1;
 	_keepText = false;
 	_string[0] = saveStr;
 }
@@ -1134,7 +1128,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	return dstSize - (end - dst);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 int ScummEngine_v72he::convertMessageToString(const byte *msg, byte *dst, int dstSize) {
 	uint num = 0;
 	byte chr;
@@ -1251,7 +1245,7 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 #pragma mark -
 
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v80he::initCharset(int charsetno) {
 	ScummEngine::initCharset(charsetno);
 	VAR(VAR_CURRENT_CHARSET) = charsetno;
@@ -1279,7 +1273,7 @@ void ScummEngine::initCharset(int charsetno) {
 #pragma mark -
 
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 static int indexCompare(const void *p1, const void *p2) {
 	const ScummEngine_v7::LangIndexNode *i1 = (const ScummEngine_v7::LangIndexNode *) p1;
 	const ScummEngine_v7::LangIndexNode *i2 = (const ScummEngine_v7::LangIndexNode *) p2;
@@ -1469,7 +1463,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	_lastStringTag[0] = 0;
 
 	// WORKAROUND for bug #1172655.
-	if (_game.id == GID_DIG && text[0] != '/') {
+	if (_game.id == GID_DIG) {
 		if (!strcmp((const char *)text, "faint light"))
 			text = (const byte *)"/NEW.007/faint light";
 		else if (!strcmp((const char *)text, "glowing crystal"))
@@ -1494,6 +1488,18 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			text = (const byte *)"/NEW.013/unattached lens";
 		else if (!strcmp((const char *)text, "lens slot"))
 			text = (const byte *)"/NEW.014/lens slot";
+
+		// Added in second release of The Dig
+		else if (!strcmp((const char *)text, "/NEWTON.032/"))
+			text = (const byte *)"/NEW.11/You wish.";
+		else if (!strcmp((const char *)text, "/NEWTON.034/"))
+			text = (const byte *)"/NEW.12/In your dreams";
+		else if (!strcmp((const char *)text, "Jonathon Jackson"))
+			text = (const byte *)"Aram Gutowski";
+		else if (!strcmp((const char *)text, "Brink"))
+			text = (const byte *)"/CREVICE.049/Brink";
+		else if (!strcmp((const char *)text, "Robbins"))
+			text = (const byte *)"/NEST.061/Robbins";
 	}
 
 

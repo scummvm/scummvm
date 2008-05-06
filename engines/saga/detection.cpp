@@ -162,7 +162,11 @@ bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(SAGA)
+	REGISTER_PLUGIN_DYNAMIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
+#endif
 
 namespace Saga {
 

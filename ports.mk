@@ -18,7 +18,11 @@ install: all
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/COPYRIGHT" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/scummvm/"
-	$(INSTALL) -c -m 644 "$(srcdir)/gui/themes/modern.ini" "$(srcdir)/gui/themes/modern.zip" "$(srcdir)/gui/themes/classic080.ini" "$(DESTDIR)$(DATADIR)/scummvm/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/scummvm/"
+ifdef DYNAMIC_MODULES
+	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/scummvm/"
+	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/scummvm/"
+endif
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
@@ -26,6 +30,9 @@ uninstall:
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	rm -rf "$(DESTDIR)$(DATADIR)/scummvm/"
+ifdef DYNAMIC_MODULES
+	rm -rf "$(DESTDIR)$(LIBDIR)/scummvm/"
+endif
 
 deb:
 	ln -sf dists/debian;
@@ -140,8 +147,8 @@ osxsnap: bundle credits
 # Windows specific
 #
 
-scummvmico.o: icons/scummvm.ico
-	$(WINDRES) dists/scummvm.rc scummvmico.o
+scummvmico.o: $(srcdir)/icons/scummvm.ico
+	$(WINDRES) -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmico.o
 
 # Special target to create a win32 snapshot binary
 win32dist: scummvm$(EXEEXT)
