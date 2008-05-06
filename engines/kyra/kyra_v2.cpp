@@ -66,6 +66,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	_debugger = 0;
 	_screenBuffer = 0;
+
+	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
+	memset(&_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 }
 
 KyraEngine_v2::~KyraEngine_v2() {

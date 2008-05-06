@@ -318,11 +318,9 @@ void KyraEngine_HoF::startup() {
 
 	_screen->setShapePages(5, 3);
 
-	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	_mainCharacter.height = 0x30;
 	_mainCharacter.facing = 4;
 	_mainCharacter.animFrame = 0x12;
-	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)

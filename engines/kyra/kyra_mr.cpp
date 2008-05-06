@@ -71,13 +71,11 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_gfxBackUpRect = 0;
 	_paletteOverlay = 0;
 	_sceneList = 0;
-	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	_mainCharacter.sceneId = 9;
 	_mainCharacter.height = 0x4C;
 	_mainCharacter.facing = 5;
 	_mainCharacter.animFrame = 0x57;
 	_mainCharacter.walkspeed = 5;
-	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 	_text = 0;
 	_commandLineY = 189;
 	_inventoryState = false;
@@ -538,8 +536,6 @@ void KyraEngine_MR::initMouseShapes() {
 void KyraEngine_MR::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::startup()");
 	musicUpdate(0);
-
-	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_gamePlayBuffer = new uint8[64000];
 	musicUpdate(0);
