@@ -291,8 +291,6 @@ protected:
 	TextDisplayer_HoF *_text;
 	TIMInterpreter *_tim;
 
-	uint8 *_mouseSHPBuf;
-
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
 

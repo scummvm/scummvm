@@ -56,7 +56,6 @@ const KyraEngine_v2::EngineDesc KyraEngine_HoF::_hofEngineDesc = {
 };
 
 KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
-	_mouseSHPBuf = 0;
 	_screen = 0;
 	_text = 0;
 
@@ -151,7 +150,6 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	cleanup();
 	seq_uninit();
 
-	delete [] _mouseSHPBuf;
 	delete _screen;
 	delete _text;
 	delete _gui;
@@ -223,11 +221,14 @@ int KyraEngine_HoF::init() {
 	if (_flags.isDemo && !_flags.isTalkie)
 		return 0;
 
-	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
-	assert(_mouseSHPBuf);
+	_res->exists("PWGMOUSE.SHP", true);
+	uint8 *shapes = _res->fileData("PWGMOUSE.SHP", 0);
+	assert(shapes);
 
 	for (int i = 0; i < 2; i++)
-		addShapeToPool(_screen->getPtrToShape(_mouseSHPBuf, i), i);
+		addShapeToPool(shapes, i, i);
+	
+	delete[] shapes;
 
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
 	return 0;
@@ -285,10 +286,7 @@ void KyraEngine_HoF::startup() {
 	allocAnimObjects(1, 10, 30);
 
 	_screen->_curPage = 0;
-	delete [] _mouseSHPBuf;
-	_mouseSHPBuf = 0;
 
-	_gameShapes.clear();
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	_gamePlayBuffer = new uint8[46080];
 	_unkBuf500Bytes = new uint8[500];
