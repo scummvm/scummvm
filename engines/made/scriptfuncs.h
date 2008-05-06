@@ -40,12 +40,16 @@ typedef Common::Functor2<int16, int16*, int16> ExternalFunc;
 class ScriptFunctions {
 public:
 	ScriptFunctions(MadeEngine *vm) : _vm(vm) {}
-	virtual ~ScriptFunctions() {}
+	virtual ~ScriptFunctions() {
+		for (int i = 0; i < _externalFuncs.size(); ++i)
+			delete _externalFuncs[i];
+	}
 	int16 callFunction(uint16 index, int16 argc, int16 *argv)  {
 		if (index >= _externalFuncs.size()) {
 			// TODO: ERROR!
 			return 0;
 		}
+		debug(4, "%s", _externalFuncNames[index]);
 		return (*_externalFuncs[index])(argc, argv);
 	}
 	virtual void setupExternalsTable() = 0;
@@ -55,13 +59,13 @@ protected:
 	Audio::SoundHandle _voiceStreamHandle;
 
 	Common::Array<const ExternalFunc*> _externalFuncs;
+	Common::Array<const char *> _externalFuncNames;
 
 };
 
 class ScriptFunctionsLgop2 : public ScriptFunctions {
 public:
 	ScriptFunctionsLgop2(MadeEngine *vm) : ScriptFunctions(vm) {}
-	~ScriptFunctionsLgop2() {}
 	void setupExternalsTable();
 protected:
 
@@ -122,7 +126,6 @@ protected:
 class ScriptFunctionsRtz : public ScriptFunctions {
 public:
 	ScriptFunctionsRtz(MadeEngine *vm) : ScriptFunctions(vm) {}
-	~ScriptFunctionsRtz() {}
 	void setupExternalsTable();
 protected:
 
@@ -231,7 +234,6 @@ protected:
 class ScriptFunctionsMhne : public ScriptFunctions {
 public:
 	ScriptFunctionsMhne(MadeEngine *vm) : ScriptFunctions(vm) {}
-	~ScriptFunctionsMhne() {}
 	void setupExternalsTable();
 protected:
 

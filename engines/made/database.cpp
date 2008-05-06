@@ -256,8 +256,9 @@ void GameDatabase::loadVersion2(Common::SeekableReadStream &sourceS) {
 
 	debug(2, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", textOffs, textSize, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize);
 
-	_gameState = new byte[_gameStateSize];
+	_gameState = new byte[_gameStateSize + 2];
 	memset(_gameState, 0, _gameStateSize);
+	setVar(1, objectCount);
 
 	sourceS.seek(textOffs);
 	_gameText = new char[textSize];
@@ -271,8 +272,8 @@ void GameDatabase::loadVersion2(Common::SeekableReadStream &sourceS) {
 	for (uint32 i = 0; i < objectCount; i++) {
 		Object *obj = new Object();
 		int objSize = obj->loadVersion2(sourceS);
-		objSize = objSize % 2;
 		// objects are aligned on 2-byte-boundaries, skip unused bytes
+		objSize = objSize % 2;
 		sourceS.skip(objSize);
 		_objects.push_back(obj);
 	}

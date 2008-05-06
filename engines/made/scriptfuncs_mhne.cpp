@@ -43,70 +43,68 @@ namespace Made {
 /* ScriptFunctionsMhne */
 
 typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctionsMhne> ExternalFuncMhne;
-#define External(x) ExternalFuncMhne(this, &ScriptFunctionsMhne::x)
+#define External(x) \
+	_externalFuncs.push_back(new ExternalFuncMhne(this, &ScriptFunctionsMhne::x));  \
+	_externalFuncNames.push_back(#x);
 void ScriptFunctionsMhne::setupExternalsTable() {
-	static const ExternalFuncMhne externalsTable[] = {
-		External(o1_SYSTEM),
-		External(o1_INITGRAF),
-		External(o1_RESTOREGRAF),
-		External(o1_DRAWPIC),
-		External(o1_CLS),
-		External(o1_SHOWPAGE),
-		External(o1_EVENT),
-		External(o1_EVENTX),
-		External(o1_EVENTY),
-		External(o1_EVENTKEY),
-		External(o1_VISUALFX),
-		External(o1_PLAYSND),
-		External(o1_PLAYMUS),
-		External(o1_STOPMUS),
-		External(o1_ISMUS),
-		External(o1_TEXTPOS),
-		External(o1_FLASH),
-		External(o1_PLAYNOTE),
-		External(o1_STOPNOTE),
-		External(o1_PLAYTELE),
-		External(o1_STOPTELE),
-		External(o1_HIDECURS),
-		External(o1_SHOWCURS),
-		External(o1_MUSICBEAT),
-		External(o1_SCREENLOCK),
-		External(o1_ADDSPRITE),
-		External(o1_FREEANIM),
-		External(o1_DRAWSPRITE),
-		External(o1_ERASESPRITES),
-		External(o1_UPDATESPRITES),
-		External(o1_GETTIMER),
-		External(o1_SETTIMER),
-		External(o1_RESETTIMER),
-		External(o1_ALLOCTIMER),
-		External(o1_FREETIMER),
-		External(o1_PALETTELOCK),
-		External(o1_FONT),
-		External(o1_DRAWTEXT),
-		External(o1_HOMETEXT),
-		External(o1_TEXTRECT),
-		External(o1_TEXTXY),
-		External(o1_DROPSHADOW),
-		External(o1_TEXTCOLOR),
-		External(o1_OUTLINE),
-		External(o1_LOADCURSOR),
-		External(o1_SETGROUND),
-		External(o1_RESTEXT),
-		External(o1_ADDMASK),
-		External(o1_SETMASK),
-		External(o1_ISSND),
-		External(o1_STOPSND),
-		External(o1_PLAYVOICE),
-		External(o1_CDPLAY),
-		External(o1_STOPCD),
-		External(o1_CDSTATUS),
-		External(o1_CDTIME),
-		External(o1_CDPLAYSEG),
-	};
 
-	for (int i = 0; i < ARRAYSIZE(externalsTable); ++i)
-		_externalFuncs.push_back(&externalsTable[i]);
+	External(o1_SYSTEM);
+	External(o1_INITGRAF);
+	External(o1_RESTOREGRAF);
+	External(o1_DRAWPIC);
+	External(o1_CLS);
+	External(o1_SHOWPAGE);
+	External(o1_EVENT);
+	External(o1_EVENTX);
+	External(o1_EVENTY);
+	External(o1_EVENTKEY);
+	External(o1_VISUALFX);
+	External(o1_PLAYSND);
+	External(o1_PLAYMUS);
+	External(o1_STOPMUS);
+	External(o1_ISMUS);
+	External(o1_TEXTPOS);
+	External(o1_FLASH);
+	External(o1_PLAYNOTE);
+	External(o1_STOPNOTE);
+	External(o1_PLAYTELE);
+	External(o1_STOPTELE);
+	External(o1_HIDECURS);
+	External(o1_SHOWCURS);
+	External(o1_MUSICBEAT);
+	External(o1_SCREENLOCK);
+	External(o1_ADDSPRITE);
+	External(o1_FREEANIM);
+	External(o1_DRAWSPRITE);
+	External(o1_ERASESPRITES);
+	External(o1_UPDATESPRITES);
+	External(o1_GETTIMER);
+	External(o1_SETTIMER);
+	External(o1_RESETTIMER);
+	External(o1_ALLOCTIMER);
+	External(o1_FREETIMER);
+	External(o1_PALETTELOCK);
+	External(o1_FONT);
+	External(o1_DRAWTEXT);
+	External(o1_HOMETEXT);
+	External(o1_TEXTRECT);
+	External(o1_TEXTXY);
+	External(o1_DROPSHADOW);
+	External(o1_TEXTCOLOR);
+	External(o1_OUTLINE);
+	External(o1_LOADCURSOR);
+	External(o1_SETGROUND);
+	External(o1_RESTEXT);
+	External(o1_ADDMASK);
+	External(o1_SETMASK);
+	External(o1_ISSND);
+	External(o1_STOPSND);
+	External(o1_PLAYVOICE);
+	External(o1_CDPLAY);
+	External(o1_STOPCD);
+	External(o1_CDSTATUS);
+	External(o1_CDTIME);
+	External(o1_CDPLAYSEG);
 
 }
 #undef External
