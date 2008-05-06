@@ -373,7 +373,7 @@ engine_enable() {
 		opt=yes
 	fi
 	engine=`echo $eng | sed 's/-/_/g'`
-	if test "$opt" == "static" -o "$opt" == "dynamic" -o "$opt" == "yes" ; then
+	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
 		if test "`get_engine_build ${engine}`" != "$opt" ; then
 			eval _engine_${engine}_build=$opt
 		else
