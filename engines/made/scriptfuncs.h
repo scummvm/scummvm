@@ -41,7 +41,7 @@ class ScriptFunctions {
 public:
 	ScriptFunctions(MadeEngine *vm) : _vm(vm) {}
 	virtual ~ScriptFunctions() {
-		for (int i = 0; i < _externalFuncs.size(); ++i)
+		for (uint i = 0; i < _externalFuncs.size(); ++i)
 			delete _externalFuncs[i];
 	}
 	int16 callFunction(uint16 index, int16 argc, int16 *argv)  {
