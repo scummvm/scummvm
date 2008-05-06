@@ -106,6 +106,12 @@ public:
 #define PLUGIN_ENABLED_STATIC(ID) \
 	(defined(ENABLE_##ID) && !PLUGIN_ENABLED_DYNAMIC(ID))
 
+// HACK for MSVC
+#if defined(_MSC_VER)
+	#undef PLUGIN_ENABLED_STATIC
+	#define PLUGIN_ENABLED_STATIC(ID) 1
+#endif
+
 #define PLUGIN_ENABLED_DYNAMIC(ID) \
 	(defined(ENABLE_##ID) && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
 
