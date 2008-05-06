@@ -178,13 +178,13 @@ void Draw_v2::animateCursor(int16 cursor) {
 					_vm->_util->delay(5);
 			}
 		}
-	} else
+	} else {
 		blitCursor();
+		_cursorX = newX;
+		_cursorY = newY;
+	}
 
 	_showCursor &= ~1;
-
-	_cursorX = newX;
-	_cursorY = newY;
 }
 
 void Draw_v2::printTotText(int16 id) {
