@@ -28,6 +28,7 @@
 #include "graphics/VectorRenderer.h"
 #include "graphics/colormasks.h"
 #include "common/system.h"
+#include "common/events.h"
 
 namespace Graphics {
 
@@ -39,6 +40,8 @@ VectorRenderer *createRenderer() {
 
 
 void vector_renderer_test(OSystem *_system) {
+	Common::EventManager *eventMan = _system->getEventManager();
+
 	VectorRenderer *vr = createRenderer();
 
 	Surface _screen;
@@ -66,7 +69,12 @@ void vector_renderer_test(OSystem *_system) {
 		vr->drawSquare(150, 25, 100, 100, true);
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
+
+		Common::Event event;
 		_system->delayMillis(100);
+		if (eventMan->pollEvent(event) && event.type == Common::EVENT_QUIT) {
+			break;
+		}
 	}
 
 	_system->hideOverlay();
