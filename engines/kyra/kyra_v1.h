@@ -37,7 +37,6 @@ class Movie;
 class SoundDigital;
 class SeqPlayer;
 class Sprites;
-class Debugger;
 class Animator_v1;
 class TextDisplayer;
 class KyraEngine_v1;
@@ -480,7 +479,6 @@ protected:
 	SeqPlayer *_seq;
 	Sprites *_sprites;
 	Screen_v1 *_screen;
-	Debugger *_debugger;
 
 	EMCState _scriptMain;
 

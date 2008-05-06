@@ -97,6 +97,7 @@ class Movie;
 class TextDisplayer;
 class StaticResource;
 class TimerManager;
+class Debugger;
 
 class KyraEngine : public Engine {
 friend class Debugger;
@@ -105,6 +106,8 @@ friend class GUI;
 public:
 	KyraEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine();
+
+	::GUI::Debugger *getDebugger();
 
 	bool quit() const { return _quitFlag; }
 
@@ -176,6 +179,7 @@ protected:
 	StaticResource *_staticres;
 	TimerManager *_timer;
 	EMCInterpreter *_emc;
+	Debugger *_debugger;
 
 	// config specific
 	virtual void registerDefaultSettings();

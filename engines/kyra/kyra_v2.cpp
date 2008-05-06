@@ -64,7 +64,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 
-	_debugger = 0;
 	_screenBuffer = 0;
 
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
@@ -89,7 +88,6 @@ KyraEngine_v2::~KyraEngine_v2() {
 		delete *i;
 	_opcodesAnimation.clear();
 
-	delete _debugger;
 	delete[] _screenBuffer;
 }
 

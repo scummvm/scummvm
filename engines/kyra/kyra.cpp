@@ -35,6 +35,7 @@
 #include "kyra/text.h"
 #include "kyra/timer.h"
 #include "kyra/script.h"
+#include "kyra/debugger.h"
 
 namespace Kyra {
 
@@ -46,6 +47,7 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_staticres = 0;
 	_timer = 0;
 	_emc = 0;
+	_debugger = 0;
 
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
@@ -76,6 +78,10 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	Common::addSpecialDebugLevel(kDebugLevelTimer, "Timer", "Timer debug level");
 
 	system->getEventManager()->registerRandomSource(_rnd, "kyra");
+}
+
+::GUI::Debugger *KyraEngine::getDebugger() {
+	return _debugger;
 }
 
 int KyraEngine::init() {
@@ -201,6 +207,7 @@ KyraEngine::~KyraEngine() {
 	delete _text;
 	delete _timer;
 	delete _emc;
+	delete _debugger;
 }
 
 void KyraEngine::quitGame() {

@@ -77,7 +77,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_drinkAnimationTable = _brandonToWispTable = _magicAnimationTable = _brandonStoneTable = 0;
 	_drinkAnimationTableSize = _brandonToWispTableSize = _magicAnimationTableSize = _brandonStoneTableSize = 0;
 	memset(&_specialPalettes, 0, sizeof(_specialPalettes));
-	_debugger = 0;
 	_sprites = 0;
 	_animator = 0;
 	_seq = 0;
@@ -113,7 +112,6 @@ KyraEngine_v1::~KyraEngine_v1() {
 	Common::clearAllSpecialDebugLevels();
 
 	delete _screen;
-	delete _debugger;
 	delete _sprites;
 	delete _animator;
 	delete _seq;
