@@ -831,7 +831,8 @@ void StaticResource::freeRawData(void *&ptr, int &size) {
 void StaticResource::freeStringTable(void *&ptr, int &size) {
 	char **data = (char**)ptr;
 	while (size--)
-		delete [] data[size];
+		delete[] data[size];
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }

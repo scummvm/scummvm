@@ -2665,8 +2665,6 @@ void KyraEngine_HoF::seq_uninit() {
 	if (_flags.isDemo && !_flags.isTalkie)
 		_staticres->unloadId(k2SeqplayShapeAnimData);
 
-	_gameShapes.clear();
-
 	delete _menu;
 	_menu = 0;
 }

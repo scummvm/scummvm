@@ -140,6 +140,8 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 
 	_menuDirectlyToLoad = false;
 	_menu = 0;
+	_chatIsNote = false;
+	memset(&_npcScriptData, 0, sizeof(_npcScriptData));
 }
 
 KyraEngine_HoF::~KyraEngine_HoF() {
@@ -792,6 +794,8 @@ void KyraEngine_HoF::cleanup() {
 		delete [] _buttonShapes[i];
 		_buttonShapes[i] = 0;
 	}
+
+	_emc->unload(&_npcScriptData);
 }
 
 #pragma mark - Localization
@@ -1006,7 +1010,7 @@ void KyraEngine_HoF::loadMouseShapes() {
 	_screen->loadBitmap("_MOUSE.CSH", 3, 3, 0);
 
 	for (int i = 0; i <= 8; ++i)
-		addShapeToPool(_screen->makeShapeCopy(_screen->getCPagePtr(3), i), i);
+		addShapeToPool(_screen->getCPagePtr(3), i, i);
 }
 
 void KyraEngine_HoF::loadItemShapes() {
@@ -1068,6 +1072,8 @@ void KyraEngine_HoF::runStartScript(int script, int unk1) {
 }
 
 void KyraEngine_HoF::loadNPCScript() {
+	_emc->unload(&_npcScriptData);
+
 	char filename[12];
 	strcpy(filename, "_NPC.EMC");
 
