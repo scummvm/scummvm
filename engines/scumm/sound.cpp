@@ -675,7 +675,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 
 		if (_vm->_imuseDigital) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 			//_vm->_imuseDigital->stopSound(kTalkSoundID);
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 #endif
@@ -688,7 +688,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
 		if (_vm->_imuseDigital) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 			_vm->_imuseDigital->stopSound(kTalkSoundID);
 #endif
 		} else if (_vm->_game.heversion >= 60) {
@@ -718,7 +718,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 }
 
 int Sound::isSoundRunning(int sound) const {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
 #endif
@@ -754,7 +754,7 @@ int Sound::isSoundRunning(int sound) const {
  */
 bool Sound::isSoundInUse(int sound) const {
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
 #endif
@@ -848,7 +848,7 @@ void Sound::stopAllSounds() {
 void Sound::soundKludge(int *list, int num) {
 	int i;
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_vm->_imuseDigital) {
 		_vm->_imuseDigital->parseScriptCmds(list[0], list[1], list[2], list[3], list[4],
 												list[5], list[6], list[7]);
@@ -912,7 +912,7 @@ void Sound::pauseSounds(bool pause) {
 
 	_soundsPaused = pause;
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_vm->_imuseDigital) {
 		_vm->_imuseDigital->pause(pause);
 	}

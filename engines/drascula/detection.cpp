@@ -185,4 +185,8 @@ const Common::ADGameDescription *DrasculaMetaEngine::fallbackDetect(const FSList
 	return (const Common::ADGameDescription *)&Drascula::g_fallbackDesc;
 }
 
-REGISTER_PLUGIN(DRASCULA, PLUGIN_TYPE_ENGINE, DrasculaMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(DRASCULA)
+	REGISTER_PLUGIN_DYNAMIC(DRASCULA, PLUGIN_TYPE_ENGINE, DrasculaMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(DRASCULA, PLUGIN_TYPE_ENGINE, DrasculaMetaEngine);
+#endif

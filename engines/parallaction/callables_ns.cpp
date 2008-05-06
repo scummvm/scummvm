@@ -268,7 +268,7 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 		a = findAnimation("finito");
 
 		a->_flags |= (kFlagsActive | kFlagsActing);
-		_localFlags[_currentLocationIndex] |= 0x20;		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
+		setLocationFlags(0x20);		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
 	}
 
 	return;

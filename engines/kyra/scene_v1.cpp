@@ -135,10 +135,10 @@ void KyraEngine_v1::enterNewScene(int sceneId, int facing, int unk1, int unk2, i
 		_movieObjects[i]->close();
 
 	if (!brandonAlive) {
-		_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-		_scriptInterpreter->startScript(_scriptClick, 5);
-		while (_scriptInterpreter->validScript(_scriptClick))
-			_scriptInterpreter->runScript(_scriptClick);
+		_emc->init(&_scriptClick, &_scriptClickData);
+		_emc->start(&_scriptClick, 5);
+		while (_emc->isValid(&_scriptClick))
+			_emc->run(&_scriptClick);
 	}
 
 	memset(_entranceMouseCursorTracks, 0xFFFF, sizeof(uint16)*4);
@@ -159,7 +159,7 @@ void KyraEngine_v1::enterNewScene(int sceneId, int facing, int unk1, int unk2, i
 	strcat(fileNameBuffer, ".DAT");
 	_sprites->loadDat(fileNameBuffer, _sceneExits);
 	_sprites->setupSceneAnims();
-	_scriptInterpreter->unloadScript(_scriptClickData);
+	_emc->unload(&_scriptClickData);
 	loadSceneMsc();
 
 	_walkBlockNorth = currentRoom->northExit;
@@ -424,18 +424,18 @@ void KyraEngine_v1::startSceneScript(int brandonAlive) {
 		_scaleTable[i] = 256;
 
 	clearNoDropRects();
-	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
+	_emc->init(&_scriptClick, &_scriptClickData);
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".EMC");
 	_res->exists(fileNameBuffer, true);
-	_scriptInterpreter->unloadScript(_scriptClickData);
-	_scriptInterpreter->loadScript(fileNameBuffer, _scriptClickData, &_opcodes);
-	_scriptInterpreter->startScript(_scriptClick, 0);
-	_scriptClick->regs[0] = _currentCharacter->sceneId;
-	_scriptClick->regs[7] = brandonAlive;
+	_emc->unload(&_scriptClickData);
+	_emc->load(fileNameBuffer, &_scriptClickData, &_opcodes);
+	_emc->start(&_scriptClick, 0);
+	_scriptClick.regs[0] = _currentCharacter->sceneId;
+	_scriptClick.regs[7] = brandonAlive;
 
-	while (_scriptInterpreter->validScript(_scriptClick))
-		_scriptInterpreter->runScript(_scriptClick);
+	while (_emc->isValid(&_scriptClick))
+		_emc->run(&_scriptClick);
 }
 
 void KyraEngine_v1::initSceneData(int facing, int unk1, int brandonAlive) {
@@ -601,11 +601,11 @@ void KyraEngine_v1::initSceneData(int facing, int unk1, int brandonAlive) {
 	if (unk1 && brandonAlive == 0)
 		moveCharacterToPos(0, facing, xpos2, ypos2);
 
-	_scriptClick->regs[4] = _itemInHand;
-	_scriptClick->regs[7] = brandonAlive;
-	_scriptInterpreter->startScript(_scriptClick, 3);
-	while (_scriptInterpreter->validScript(_scriptClick))
-		_scriptInterpreter->runScript(_scriptClick);
+	_scriptClick.regs[4] = _itemInHand;
+	_scriptClick.regs[7] = brandonAlive;
+	_emc->start(&_scriptClick, 3);
+	while (_emc->isValid(&_scriptClick))
+		_emc->run(&_scriptClick);
 }
 
 void KyraEngine_v1::initSceneObjectList(int brandonAlive) {
@@ -615,7 +615,7 @@ void KyraEngine_v1::initSceneObjectList(int brandonAlive) {
 
 	int startAnimFrame = 0;
 
-	AnimObject *curAnimState = _animator->actors();
+	Animator_v1::AnimObject *curAnimState = _animator->actors();
 	curAnimState->active = 1;
 	curAnimState->drawY = _currentCharacter->y1;
 	curAnimState->sceneAnimPtr = _shapes[_currentCharacter->currentAnimFrame];
@@ -827,13 +827,13 @@ void KyraEngine_v1::initSceneScreen(int brandonAlive) {
 		}
 	}
 
-	if (!_scriptInterpreter->startScript(_scriptClick, 2))
+	if (!_emc->start(&_scriptClick, 2))
 		error("Could not start script function 2 of scene script");
 
-	_scriptClick->regs[7] = brandonAlive;
+	_scriptClick.regs[7] = brandonAlive;
 
-	while (_scriptInterpreter->validScript(_scriptClick))
-		_scriptInterpreter->runScript(_scriptClick);
+	while (_emc->isValid(&_scriptClick))
+		_emc->run(&_scriptClick);
 
 	setTextFadeTimerCountdown(-1);
 	if (_currentCharacter->sceneId == 210) {

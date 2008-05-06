@@ -172,7 +172,7 @@ public:
 	int getCharWidth(byte chr) { return 8; }
 };
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 class CharsetRendererNut : public CharsetRenderer {
 protected:
 	NutRenderer *_fr[5];

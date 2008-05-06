@@ -49,6 +49,7 @@ void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
+	_newLineCharacter = 0xfe;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
@@ -74,7 +75,7 @@ void ScummEngine::loadCJKFont() {
 			break;
 		case Common::JA_JPN:
 			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
-			numChar = 1024;
+			numChar = 8192;
 			break;
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
@@ -95,15 +96,17 @@ void ScummEngine::loadCJKFont() {
 				fp.seek(2, SEEK_CUR);
 				_2byteWidth = fp.readByte();
 				_2byteHeight = fp.readByte();
+				_newLineCharacter = 0xff;
 				break;
 			case Common::JA_JPN:
 				_2byteWidth = 16;
 				_2byteHeight = 16;
+				_newLineCharacter = 0xfe;
 				break;
 			case Common::ZH_TWN:
 				_2byteWidth = 16;
 				_2byteHeight = 15;
-				// 0xFE -> 0x21. also compared with 0x0d. perhaps a newline
+				_newLineCharacter = 0x21;
 				break;
 			default:
 				break;
@@ -217,7 +220,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 			int high = 0;
 
 			if (low >= 0x20 && low <= 0x7e) {
-				base = (low + low * 2 + 81012) * 5;
+				base = (3 * low + 81012) * 5;
 			} else {
 				if (low >= 0xa1 && low <= 0xa3) {
 					base = 392820;
@@ -352,7 +355,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
-		if (chr == '\n' || chr == '\r')
+		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
@@ -477,6 +480,9 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			}
 		}
 		if (chr == ' ')
+			lastspace = pos - 1;
+
+		if (chr == _vm->_newLineCharacter)
 			lastspace = pos - 1;
 
 		if ((chr & 0x80) && _vm->_useCJKMode) {
@@ -789,7 +795,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	int drawTop = _top - vs->topline;
 
 	if ((_vm->_game.heversion >= 71 && _bitDepth >= 8) || (_vm->_game.heversion >= 90 && _bitDepth == 0)) {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
@@ -965,7 +971,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 	 : CharsetRenderer(vm) {
 	_current = 0;

@@ -29,7 +29,7 @@
 
 #include "kyra/kyra.h"
 
-#define CURRENT_SAVE_VERSION 9
+#define CURRENT_SAVE_VERSION 11
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -188,6 +188,9 @@ Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const 
 
 const char *KyraEngine::getSavegameFilename(int num) {
 	static Common::String filename;
+
+	assert(num >= 0 && num <= 999);
+
 	char extension[5];
 	sprintf(extension, "%.3d", num);
 

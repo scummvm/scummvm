@@ -90,8 +90,11 @@ public:
 	int16 _mousePresent;
 	int16 _mouseXShift;
 	int16 _mouseYShift;
-	int16 _mouseMaxCol;
-	int16 _mouseMaxRow;
+
+	int16 _mouseMinX;
+	int16 _mouseMinY;
+	int16 _mouseMaxX;
+	int16 _mouseMaxY;
 
 	char _useJoystick;
 

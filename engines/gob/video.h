@@ -104,11 +104,17 @@ public:
 	int16 _splitHeight1;
 	int16 _splitHeight2;
 	int16 _splitStart;
+	int16 _screenDeltaX;
+	int16 _screenDeltaY;
 
 	void freeDriver();
 	void initPrimary(int16 mode);
 	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width,
 			int16 height, int16 flags);
+
+	void setSize(bool defaultTo1XScaler);
+
+	void clearScreen();
 	void retrace(bool mouse = true);
 	void waitRetrace(bool mouse = true);
 	void sparseRetrace(int max);

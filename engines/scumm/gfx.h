@@ -246,7 +246,7 @@ public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
 #endif

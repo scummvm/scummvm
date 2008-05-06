@@ -272,7 +272,7 @@ void Game_v2::playTot(int16 skipPlay) {
 						_vm->_snd->freeSample(_soundSamples[i]);
 			}
 
-			_vm->_vidPlayer->closeVideo();
+			_vm->_vidPlayer->primaryClose();
 			if (_totToLoad[0] == 0)
 				break;
 

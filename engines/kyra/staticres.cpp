@@ -28,14 +28,16 @@
 #include "common/md5.h"
 #include "kyra/kyra.h"
 #include "kyra/kyra_v1.h"
-#include "kyra/kyra_v2.h"
-#include "kyra/kyra_v3.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_v1.h"
-#include "kyra/screen_v2.h"
-#include "kyra/screen_v3.h"
+#include "kyra/screen_hof.h"
+#include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 #include "kyra/gui_v1.h"
+#include "kyra/gui_hof.h"
+#include "kyra/gui_mr.h"
 
 #include "gui/message.h"
 
@@ -1177,7 +1179,7 @@ void KyraEngine_v1::loadMainScreen(int page) {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }
 
-void KyraEngine_v2::initStaticResource() {
+void KyraEngine_HoF::initStaticResource() {
 	int tmpSize = 0;
 
 	_sequencePakList = _staticres->loadStrings(k2SeqplayPakFiles, _sequencePakListSize);
@@ -1250,37 +1252,37 @@ void KyraEngine_v2::initStaticResource() {
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
 
 	static const SeqProc hofSequenceCallbacks[] = { 0,
-		&KyraEngine_v2::seq_introWestwood,
-		&KyraEngine_v2::seq_introTitle, &KyraEngine_v2::seq_introOverview,
-		&KyraEngine_v2::seq_introLibrary, &KyraEngine_v2::seq_introHand,
-		&KyraEngine_v2::seq_introPoint, &KyraEngine_v2::seq_introZanfaun,
-		&KyraEngine_v2::seq_finaleFunters, &KyraEngine_v2::seq_finaleFerb,
-		&KyraEngine_v2::seq_finaleFish, &KyraEngine_v2::seq_finaleFheep,
-		&KyraEngine_v2::seq_finaleFarmer, &KyraEngine_v2::seq_finaleFuards,
-		&KyraEngine_v2::seq_finaleFirates, &KyraEngine_v2::seq_finaleFrash
+		&KyraEngine_HoF::seq_introWestwood,
+		&KyraEngine_HoF::seq_introTitle, &KyraEngine_HoF::seq_introOverview,
+		&KyraEngine_HoF::seq_introLibrary, &KyraEngine_HoF::seq_introHand,
+		&KyraEngine_HoF::seq_introPoint, &KyraEngine_HoF::seq_introZanfaun,
+		&KyraEngine_HoF::seq_finaleFunters, &KyraEngine_HoF::seq_finaleFerb,
+		&KyraEngine_HoF::seq_finaleFish, &KyraEngine_HoF::seq_finaleFheep,
+		&KyraEngine_HoF::seq_finaleFarmer, &KyraEngine_HoF::seq_finaleFuards,
+		&KyraEngine_HoF::seq_finaleFirates, &KyraEngine_HoF::seq_finaleFrash
 	};
 
 	static const SeqProc hofNestedSequenceCallbacks[] = {
-		&KyraEngine_v2::seq_finaleFiggle, &KyraEngine_v2::seq_introOver1,
-		&KyraEngine_v2::seq_introOver2, &KyraEngine_v2::seq_introForest,
-		&KyraEngine_v2::seq_introDragon, &KyraEngine_v2::seq_introDarm,
-		&KyraEngine_v2::seq_introLibrary2, &KyraEngine_v2::seq_introLibrary2,
-		&KyraEngine_v2::seq_introMarco, &KyraEngine_v2::seq_introHand1a,
-		&KyraEngine_v2::seq_introHand1b, &KyraEngine_v2::seq_introHand1c,
-		&KyraEngine_v2::seq_introHand2,	&KyraEngine_v2::seq_introHand3, 0
+		&KyraEngine_HoF::seq_finaleFiggle, &KyraEngine_HoF::seq_introOver1,
+		&KyraEngine_HoF::seq_introOver2, &KyraEngine_HoF::seq_introForest,
+		&KyraEngine_HoF::seq_introDragon, &KyraEngine_HoF::seq_introDarm,
+		&KyraEngine_HoF::seq_introLibrary2, &KyraEngine_HoF::seq_introLibrary2,
+		&KyraEngine_HoF::seq_introMarco, &KyraEngine_HoF::seq_introHand1a,
+		&KyraEngine_HoF::seq_introHand1b, &KyraEngine_HoF::seq_introHand1c,
+		&KyraEngine_HoF::seq_introHand2,	&KyraEngine_HoF::seq_introHand3, 0
 	};
 
 	static const SeqProc hofDemoSequenceCallbacks[] = {
-		&KyraEngine_v2::seq_demoVirgin, &KyraEngine_v2::seq_demoWestwood,
-		&KyraEngine_v2::seq_demoTitle, &KyraEngine_v2::seq_demoHill,
-		&KyraEngine_v2::seq_demoOuthome, &KyraEngine_v2::seq_demoWharf,
-		&KyraEngine_v2::seq_demoDinob, &KyraEngine_v2::seq_demoFisher, 0
+		&KyraEngine_HoF::seq_demoVirgin, &KyraEngine_HoF::seq_demoWestwood,
+		&KyraEngine_HoF::seq_demoTitle, &KyraEngine_HoF::seq_demoHill,
+		&KyraEngine_HoF::seq_demoOuthome, &KyraEngine_HoF::seq_demoWharf,
+		&KyraEngine_HoF::seq_demoDinob, &KyraEngine_HoF::seq_demoFisher, 0
 	};
 
 	static const SeqProc hofDemoNestedSequenceCallbacks[] = {
-		&KyraEngine_v2::seq_demoWharf2, &KyraEngine_v2::seq_demoDinob2,
-		&KyraEngine_v2::seq_demoWater, &KyraEngine_v2::seq_demoBail,
-		&KyraEngine_v2::seq_demoDig, 0
+		&KyraEngine_HoF::seq_demoWharf2, &KyraEngine_HoF::seq_demoDinob2,
+		&KyraEngine_HoF::seq_demoWater, &KyraEngine_HoF::seq_demoBail,
+		&KyraEngine_HoF::seq_demoDig, 0
 	};
 
 	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
@@ -1303,7 +1305,7 @@ const ScreenDim Screen_v1::_screenDimTable[] = {
 
 const int Screen_v1::_screenDimTableCount = ARRAYSIZE(Screen_v1::_screenDimTable);
 
-const ScreenDim Screen_v2::_screenDimTable[] = {
+const ScreenDim Screen_HoF::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xC7, 0xCF, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0x90, 0xC7, 0xCF, 0x00, 0x00 },
@@ -1318,16 +1320,16 @@ const ScreenDim Screen_v2::_screenDimTable[] = {
 	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }	// menu, just present for current menu code
 };
 
-const int Screen_v2::_screenDimTableCount = ARRAYSIZE(Screen_v2::_screenDimTable);
+const int Screen_HoF::_screenDimTableCount = ARRAYSIZE(Screen_HoF::_screenDimTable);
 
-const ScreenDim Screen_v3::_screenDimTable[] = {
+const ScreenDim Screen_MR::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
 };
 
-const int Screen_v3::_screenDimTableCount = ARRAYSIZE(Screen_v3::_screenDimTable);
+const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
 
 const int8 KyraEngine::_addXPosTable[] = {
 	 4,  4,  0, -4, -4, -4,  0,  4
@@ -1506,29 +1508,25 @@ const int8 KyraEngine_v1::_dosTrackMap[] = {
 
 const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMap);
 
-// Kyra 2 and 3 main menu
+// kyra engine v2 static data
 
-const char *KyraEngine_v3::_mainMenuStrings[] = {
-	"Start a new game",
-	"Introduction",
-	"Load a game",
-	"Exit the game",
-	"Nouvelle Partie",
-	"Introduction",
-	"Charger une partie",
-	"Quitter le jeu",
-	"Neues Spiel starten",
-	"Intro",
-	"Spielstand laden",
-	"Spiel beenden",
-	0
+const int8 KyraEngine_v2::_updateCharPosXTable[] = {
+	0, 4, 4, 4, 0, -4, -4, -4
+};
+
+const int8 KyraEngine_v2::_updateCharPosYTable[] = {
+	-2, -2, 0, 2, 2, 2, 0, -2
+};
+
+const int GUI_v2::_sliderBarsPosition[] = {
+	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
 };
 
 // kyra 2 static res
 
-const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
+const uint8 KyraEngine_HoF::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
-const char *KyraEngine_v2::_languageExtension[] = {
+const char *KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
@@ -1537,7 +1535,7 @@ const char *KyraEngine_v2::_languageExtension[] = {
 	"JPN"
 };
 
-const char *KyraEngine_v2::_scriptLangExt[] = {
+const char *KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
@@ -1546,19 +1544,19 @@ const char *KyraEngine_v2::_scriptLangExt[] = {
 	"JMC"
 };
 
-const int KyraEngine_v2::_characterFrameTable[] = {
+const uint8 KyraEngine_HoF::_characterFrameTable[] = {
 	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
 };
 
-const int KyraEngine_v2::_inventoryX[] = {
+const int KyraEngine_HoF::_inventoryX[] = {
 	0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F
 };
 
-const int KyraEngine_v2::_inventoryY[] = {
+const int KyraEngine_HoF::_inventoryY[] = {
 	0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA
 };
 
-const byte KyraEngine_v2::_itemStringMap[] = {
+const byte KyraEngine_HoF::_itemStringMap[] = {
 	2,    2,    0,    0,    2,    2,    2,    0,
 	2,    2,    0,    0,    0,    2,    0,    0,
 	0,    0,    0,    0,    2,    0,    0,    0,
@@ -1583,9 +1581,9 @@ const byte KyraEngine_v2::_itemStringMap[] = {
 	0,    2,    0,    0,    0,    0,    0,    0
 };
 
-const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);
+const int KyraEngine_HoF::_itemStringMapSize = ARRAYSIZE(KyraEngine_HoF::_itemStringMap);
 
-const int8 KyraEngine_v2::_dosTrackMap[] = {
+const int8 KyraEngine_HoF::_dosTrackMap[] = {
 	-1,    0,   -1,    1,    9,    6,    5,    4,
 	 8,    3,   -2,    0,   -2,    0,    2,    3,
 	-2,    0,   -2,    0,   -2,    0,   -2,    0,
@@ -1610,30 +1608,30 @@ const int8 KyraEngine_v2::_dosTrackMap[] = {
 	 4,    3,    4,    4,    4,    5,    4,    6
 };
 
-const int KyraEngine_v2::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v2::_dosTrackMap);
+const int KyraEngine_HoF::_dosTrackMapSize = ARRAYSIZE(KyraEngine_HoF::_dosTrackMap);
 
-void KyraEngine_v2::initInventoryButtonList() {
+void KyraEngine_HoF::initInventoryButtonList() {
 	delete [] _inventoryButtons;
 
 	_inventoryButtons = new Button[15];
 	assert(_inventoryButtons);
 
 	GUI_V2_BUTTON(_inventoryButtons[0], 0x1, 0x4F, 0, 1, 1, 1, 0x4487, 0, 0x00A, 0x95, 0x39, 0x1D, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[0].buttonCallback = BUTTON_FUNCTOR(GUI_v2, _gui, &GUI_v2::optionsButton);
+	_inventoryButtons[0].buttonCallback = BUTTON_FUNCTOR(GUI_HoF, _gui, &GUI_HoF::optionsButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[1], 0x2, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x104, 0x90, 0x3C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::cauldronButton);
+	_inventoryButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[2],	0x5, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0FA, 0x90, 0x0A, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::cauldronClearButton);
+	_inventoryButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronClearButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[3], 0x3, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0CE, 0x90, 0x2C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookButton);
+	_inventoryButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[4], 0x4, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0B6, 0x9D, 0x18, 0x1E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	_inventoryButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::scrollInventory);
+	_inventoryButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::scrollInventory);
 
-	Button::Callback inventoryCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::buttonInventory);
+	Button::Callback inventoryCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::buttonInventory);
 	GUI_V2_BUTTON(_inventoryButtons[5], 0x6, 0x00, 0, 0, 0, 0, 0x1100, 0, 0x04D, 0x92, 0x13, 0x15, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_inventoryButtons[6], 0x7, 0x00, 0, 0, 0, 0, 0x1100, 0, 0x061, 0x92, 0x13, 0x15, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_inventoryButtons[7], 0x8, 0x00, 0, 0, 0, 0, 0x1100, 0, 0x075, 0x92, 0x13, 0x15, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
@@ -1653,7 +1651,7 @@ void KyraEngine_v2::initInventoryButtonList() {
 		_buttonList = _gui->addButtonToList(_buttonList, &_inventoryButtons[i]);
 }
 
-void GUI_v2::initStaticData() {
+void GUI_HoF::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 0x17, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
@@ -1671,11 +1669,11 @@ void GUI_v2::initStaticData() {
 		GUI_V2_BUTTON(_menuButtons[i], 0x10+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
 
-	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::clickLoadSlot);
-	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::clickSaveSlot);
-	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::loadMenu);
-	Button::Callback clickQuitGameFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitGame);
-	Button::Callback clickQuitOptionsFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitOptionsMenu);
+	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickLoadSlot);
+	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickSaveSlot);
+	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::loadMenu);
+	Button::Callback clickQuitGameFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::quitGame);
+	Button::Callback clickQuitOptionsFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::quitOptionsMenu);
 
 	const uint16 *menuStr = _vm->gameFlags().isTalkie ? _menuStringsTalkie : _menuStringsOther;
 
@@ -1683,17 +1681,17 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU_ITEM(_mainMenu.item[0], 1, 0x02, -1, 0x1E, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[0].callback = clickLoadMenuFunctor;
 	GUI_V2_MENU_ITEM(_mainMenu.item[1], 1, 0x03, -1, 0x2F, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::saveMenu);
+	_mainMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::saveMenu);
 	GUI_V2_MENU_ITEM(_mainMenu.item[2], 1, 0x23, -1, 0x40, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::deleteMenu);
+	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::deleteMenu);
 	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 0x04, -1, 0x51, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptionsTalkie);
+	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::gameOptionsTalkie);
 	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 0x25, -1, 0x62, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::audioOptions);
+	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::audioOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 0x05, -1, 0x73, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[5].callback = clickQuitGameFunctor;
 	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 0x06, -1, 0x90, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[6].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::resumeGame);
+	_mainMenu.item[6].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::resumeGame);
 	for (int i = 0; i < 7; ++i)
 		_mainMenu.item[i].itemId = menuStr[0 * 8 + i + 1];
 
@@ -1703,7 +1701,7 @@ void GUI_v2::initStaticData() {
 		_mainMenu.item[6].enabled = false;
 		for (int i = 4; i < 6; ++i)
 			_mainMenu.item[i].callback = _mainMenu.item[i+1].callback;
-		_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptions);
+		_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::gameOptions);
 		_mainMenu.item[6].callback = Button::Callback();
 		_mainMenu.item[5].y = 0x7F;
 	}
@@ -1711,11 +1709,11 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU(_gameOptions, -1, -1, 0x120, 0x88, 0xF8, 0xF9, 0xFA, menuStr[1 * 8], 0xFB, -1, 8, 4, 4, -1, -1, -1, -1);
 	if (_vm->gameFlags().isTalkie) {
 		GUI_V2_MENU_ITEM(_gameOptions.item[0], 1, 0, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x15, 8, 0x20, 0);
-		_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleWalkspeed);
+		_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::toggleWalkspeed);
 		GUI_V2_MENU_ITEM(_gameOptions.item[1], 1, 0, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x26, 8, 0x31, 0);
-		_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::changeLanguage);
+		_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::changeLanguage);
 		GUI_V2_MENU_ITEM(_gameOptions.item[2], 1, 0, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x16, 8, 0x42, 0);
-		_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleText);
+		_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::toggleText);
 		GUI_V2_MENU_ITEM(_gameOptions.item[3], 1, 0x10, -1, 0x6E, 0x6C, 0x0F, 0xFD, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 		_gameOptions.item[3].callback = clickQuitOptionsFunctor;
 	} else {
@@ -1746,9 +1744,9 @@ void GUI_v2::initStaticData() {
 
 	GUI_V2_MENU(_choiceMenu, -1, -1, 0x140, 0x38, 0xF8, 0xF9, 0xFA, 0, 0xFE, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V2_MENU_ITEM(_choiceMenu.item[0], 1, 0x14, 0x18, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_choiceMenu.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::choiceYes);
+	_choiceMenu.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::choiceYes);
 	GUI_V2_MENU_ITEM(_choiceMenu.item[1], 1, 0x13, 0xD8, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_choiceMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::choiceNo);
+	_choiceMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::choiceNo);
 	for (int i = 2; i <= 6; ++i)
 		_choiceMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
@@ -1763,7 +1761,7 @@ void GUI_v2::initStaticData() {
 	for (int i = 0; i <= 4; ++i)
 		_loadMenu.item[i].callback = clickLoadSlotFunctor;
 	GUI_V2_MENU_ITEM(_loadMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_loadMenu.item[5].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::cancelLoadMenu);
+	_loadMenu.item[5].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelLoadMenu);
 	_loadMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_loadMenu.item[i].itemId = menuStr[4 * 8 + i + 1];
@@ -1777,16 +1775,16 @@ void GUI_v2::initStaticData() {
 	for (int i = 0; i <= 4; ++i)
 		_saveMenu.item[i].callback = clickSaveSlotFunctor;
 	GUI_V2_MENU_ITEM(_saveMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_saveMenu.item[5].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::cancelSaveMenu);
+	_saveMenu.item[5].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelSaveMenu);
 	_saveMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_saveMenu.item[i].itemId = menuStr[5 * 8 + i + 1];
 
 	GUI_V2_MENU(_savenameMenu, -1, -1, 0x140, 0x43, 0xF8, 0xF9, 0xFA, menuStr[6 * 8], 0xFB, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V2_MENU_ITEM(_savenameMenu.item[0], 1, 0xD, 0x18, 0x2C, 0x58, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_savenameMenu.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::finishSavename);
+	_savenameMenu.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::finishSavename);
 	GUI_V2_MENU_ITEM(_savenameMenu.item[1], 1, 0xB, 0xD0, 0x2C, 0x58, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_savenameMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::cancelSavename);
+	_savenameMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelSavename);
 	for (int i = 2; i <= 6; ++i)
 		_savenameMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
@@ -1803,7 +1801,7 @@ void GUI_v2::initStaticData() {
 		_deathMenu.item[i].itemId = menuStr[7 * 8 + i + 1];
 }
 
-const uint16 GUI_v2::_menuStringsTalkie[] = {
+const uint16 GUI_HoF::_menuStringsTalkie[] = {
 	0x001, 0x002, 0x003, 0x023, 0x004, 0x025, 0x005, 0x006,	// Main Menu String IDs
 	0x025, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000,	// Options Menu String IDs
 	0x007, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000,	// Audio Menu String IDs
@@ -1814,7 +1812,7 @@ const uint16 GUI_v2::_menuStringsTalkie[] = {
 	0x00E, 0x002, 0x005, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
 };
 
-const uint16 GUI_v2::_menuStringsOther[] = {
+const uint16 GUI_HoF::_menuStringsOther[] = {
 	0x009, 0x00A, 0x00B, 0x001, 0x00C, 0x00D, 0x00E, 0x000,	// Main Menu String IDs
 	0x00F, 0x02B, 0x02C, 0x02D, 0x02E, 0x018, 0x000, 0x000,	// Options Menu String IDs
 	0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000,	// Dummy
@@ -1825,11 +1823,7 @@ const uint16 GUI_v2::_menuStringsOther[] = {
 	0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
 };
 
-const int GUI_v2::_sliderBarsPosition[] = {
-	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
-};
-
-const uint16 KyraEngine_v2::_itemMagicTable[] = {
+const uint16 KyraEngine_HoF::_itemMagicTable[] = {
 	0x0D,  0x0A,  0x0B,    0,
 	0x0D,  0x0B,  0x0A,    0,
 	0x0D,  0x38,  0x37,    0,
@@ -1861,17 +1855,17 @@ const uint16 KyraEngine_v2::_itemMagicTable[] = {
 	0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
 };
 
-const int KyraEngine_v2::_bookPageYOffset[] = {
+const int KyraEngine_HoF::_bookPageYOffset[] = {
 	0, 0, 2, 2,
 	0, 0, 2, 2,
 	0, 0, 2, 2
 };
 
-const byte KyraEngine_v2::_bookTextColorMap[] = {
+const byte KyraEngine_HoF::_bookTextColorMap[] = {
 	0x00, 0xC7, 0xCF, 0x00
 };
 
-const int16 KyraEngine_v2::_cauldronProtectedItems[] = {
+const int16 KyraEngine_HoF::_cauldronProtectedItems[] = {
 	0x07, 0x0D, 0x47, 0x48,
 	0x29, 0x1A, 0x1C, 0x6D,
 	0x4D, 0x3A, 0x0E, 0x0F,
@@ -1882,7 +1876,7 @@ const int16 KyraEngine_v2::_cauldronProtectedItems[] = {
 	0x8A, 0x79, 0x61, -1
 };
 
-const int16 KyraEngine_v2::_cauldronBowlTable[] = {
+const int16 KyraEngine_HoF::_cauldronBowlTable[] = {
 	0x0027, 0x0029,
 	0x0028, 0x0029,
 	0x0033, 0x0029,
@@ -1895,7 +1889,7 @@ const int16 KyraEngine_v2::_cauldronBowlTable[] = {
 	-1, -1
 };
 
-const int16 KyraEngine_v2::_cauldronMagicTable[] = {
+const int16 KyraEngine_HoF::_cauldronMagicTable[] = {
 	0x0, 0x16, 0x2, 0x1A,
 	0x7, 0xA4, 0x5, 0x4D,
 	0x1, 0xA5, 0x3, 0xA6,
@@ -1904,7 +1898,7 @@ const int16 KyraEngine_v2::_cauldronMagicTable[] = {
 	0x9, 0xAC, -1, -1
 };
 
-const int16 KyraEngine_v2::_cauldronMagicTableScene77[] = {
+const int16 KyraEngine_HoF::_cauldronMagicTableScene77[] = {
 	0x0, 0x16, 0x2, 0x1A,
 	0x7, 0xAB, 0x5, 0x4D,
 	0x1, 0xAE, 0x3, 0xAF,
@@ -1913,18 +1907,18 @@ const int16 KyraEngine_v2::_cauldronMagicTableScene77[] = {
 	0x9, 0xAC, -1, -1
 };
 
-const uint8 KyraEngine_v2::_cauldronStateTable[] = {
+const uint8 KyraEngine_HoF::_cauldronStateTable[] = {
 	3, 1, 3, 1, 1, 4, 4, 2,
 	3, 1, 1, 3, 1, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3
 };
 
-const int16 KyraEngine_v2::_flaskTable[] = {
+const int16 KyraEngine_HoF::_flaskTable[] = {
 	0x19, 0x14, 0x15, 0x16, 0x17, 0x18, 0x34,
 	0x1B, 0x39, 0x1A, 0x3A, 0x4D, 0x72, -1
 };
 
-const uint8 KyraEngine_v2::_rainbowRoomData[] = {
+const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 	0x02, 0xA9, 0x9E, 0x75, 0x73, 0x17, 0x00, 0xA0,
 	0x08, 0x01, 0x19, 0x9F, 0x66, 0x05, 0x22, 0x7D,
 	0x20, 0x25, 0x1D, 0x64, 0xA0, 0x78, 0x85, 0x3B,
@@ -1938,7 +1932,23 @@ const uint8 KyraEngine_v2::_rainbowRoomData[] = {
 
 // kyra 3 static res
 
-const char *KyraEngine_v3::_soundList[] = {
+const char *KyraEngine_MR::_mainMenuStrings[] = {
+	"Start a new game",
+	"Introduction",
+	"Load a game",
+	"Exit the game",
+	"Nouvelle Partie",
+	"Introduction",
+	"Charger une partie",
+	"Quitter le jeu",
+	"Neues Spiel starten",
+	"Intro",
+	"Spielstand laden",
+	"Spiel beenden",
+	0
+};
+
+const char *KyraEngine_MR::_soundList[] = {
 	"ARREST1.AUD",
 	"BATH1.AUD",
 	"OCEAN1.AUD",
@@ -1983,9 +1993,9 @@ const char *KyraEngine_v3::_soundList[] = {
 	"SQUIRL1.AUD"
 };
 
-const int KyraEngine_v3::_soundListSize = ARRAYSIZE(KyraEngine_v3::_soundList);
+const int KyraEngine_MR::_soundListSize = ARRAYSIZE(KyraEngine_MR::_soundList);
 
-const char *KyraEngine_v3::_languageExtension[] = {
+const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
@@ -1993,9 +2003,9 @@ const char *KyraEngine_v3::_languageExtension[] = {
 	"TRS"*/
 };
 
-const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
+const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
 
-const KyraEngine_v3::ShapeDesc KyraEngine_v3::_shapeDescs[] = {
+const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 	{ 57, 91, -31, -82 },
 	{ 57, 91, -31, -82 },
 	{ 57, 91, -31, -82 },
@@ -2010,21 +2020,13 @@ const KyraEngine_v3::ShapeDesc KyraEngine_v3::_shapeDescs[] = {
 	{ 57, 91, -31, -82 }
 };
 
-const int KyraEngine_v3::_shapeDescsSize = ARRAYSIZE(KyraEngine_v3::_shapeDescs);
+const int KyraEngine_MR::_shapeDescsSize = ARRAYSIZE(KyraEngine_MR::_shapeDescs);
 
-const int8 KyraEngine_v3::_updateCharPosXTable[] = {
-	0, 4, 4, 4, 0, -4, -4, -4
-};
-
-const int8 KyraEngine_v3::_updateCharPosYTable[] = {
-	-2, -2, 0, 2, 2, 2, 0, -2
-};
-
-const uint8 KyraEngine_v3::_characterFrameTable[] = {
+const uint8 KyraEngine_MR::_characterFrameTable[] = {
 	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34
 };
 
-const uint8 KyraEngine_v3::_sfxFileMap[] = {
+const uint8 KyraEngine_MR::_sfxFileMap[] = {
 	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
 	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
 	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x99, 0x00,
@@ -2103,9 +2105,9 @@ const uint8 KyraEngine_v3::_sfxFileMap[] = {
 	0x23, 0x00, 0x97, 0x00, 0x73, 0x00
 };
 
-const int KyraEngine_v3::_sfxFileMapSize = ARRAYSIZE(KyraEngine_v3::_sfxFileMap);
+const int KyraEngine_MR::_sfxFileMapSize = ARRAYSIZE(KyraEngine_MR::_sfxFileMap);
 
-const char *KyraEngine_v3::_sfxFileList[] = {
+const char *KyraEngine_MR::_sfxFileList[] = {
 	"ALARM1",
 	"ARMOIRE1",
 	"ARROW1",
@@ -2332,9 +2334,9 @@ const char *KyraEngine_v3::_sfxFileList[] = {
 	"ZIPPER1"
 };
 
-const int KyraEngine_v3::_sfxFileListSize = ARRAYSIZE(KyraEngine_v3::_sfxFileList);
+const int KyraEngine_MR::_sfxFileListSize = ARRAYSIZE(KyraEngine_MR::_sfxFileList);
 
-const uint8 KyraEngine_v3::_badConscienceFrameTable[] = {
+const uint8 KyraEngine_MR::_badConscienceFrameTable[] = {
 	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
 	0x13, 0x13, 0x13, 0x10, 0x13, 0x13, 0x13, 0x13,
 	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
@@ -2342,31 +2344,39 @@ const uint8 KyraEngine_v3::_badConscienceFrameTable[] = {
 	0x24, 0x24, 0x24, 0x24, 0x24, 0x1D, 0x1D, 0x1D
 };
 
-const uint8 KyraEngine_v3::_chapterLowestScene[] = {
+const uint8 KyraEngine_MR::_goodConscienceFrameTable[] = {
+	0x13, 0x13, 0x13, 0x13, 0x13,
+	0x13, 0x13, 0x13, 0x13, 0x13,
+	0x13, 0x13, 0x13, 0x13, 0x13,
+	0x15, 0x15, 0x15, 0x15, 0x15,
+	0x1E, 0x1E, 0x1E, 0x1E, 0x1E
+};
+
+const uint8 KyraEngine_MR::_chapterLowestScene[] = {
 	0x00, 0x00, 0x19, 0x2B, 0x33, 0x3B
 };
 
-const uint8 KyraEngine_v3::_vocHighTable[] = {
+const uint8 KyraEngine_MR::_vocHighTable[] = {
 	0x64, 0x76, 0x82, 0x83, 0x92
 };
 
-const uint8 KyraEngine_v3::_inventoryX[] = {
+const uint8 KyraEngine_MR::_inventoryX[] = {
 	0x45, 0x61, 0x7D, 0x99, 0xB5,
 	0x45, 0x61, 0x7D, 0x99, 0xB5
 };
 
-const uint8 KyraEngine_v3::_inventoryY[] = {
+const uint8 KyraEngine_MR::_inventoryY[] = {
 	0x9C, 0x9C, 0x9C, 0x9C, 0x9C,
 	0xB2, 0xB2, 0xB2, 0xB2, 0xB2
 };
 
-const uint8 KyraEngine_v3::_trashItemList[] = {
+const uint8 KyraEngine_MR::_trashItemList[] = {
 	0x1E, 0x1D, 0x1C, 0x1F, 0x0F, 0x05, 0x04, 0x00,
 	0x03, 0x22, 0x0B, 0x20, 0x21, 0x10, 0x11, 0x3A,
 	0x39, 0x40, 0x3E, 0x3D, 0x3C, 0x3F, 0xFF
 };
 
-const uint8 KyraEngine_v3::_itemMagicTable[] = {
+const uint8 KyraEngine_MR::_itemMagicTable[] = {
 	0x06, 0x05, 0x07, 0xFE, 0x05, 0x06, 0x07, 0xFE,
 	0x03, 0x00, 0x22, 0xFE, 0x00, 0x03, 0x22, 0xFE,
 	0x10, 0x00, 0x20, 0x0F, 0x00, 0x10, 0x0F, 0x20,
@@ -2374,7 +2384,7 @@ const uint8 KyraEngine_v3::_itemMagicTable[] = {
 	0xFF, 0xFF, 0xFF, 0xFF
 };
 
-const uint8 KyraEngine_v3::_itemStringMap[] = {
+const uint8 KyraEngine_MR::_itemStringMap[] = {
 	1, 0, 2, 0, 2, 2, 0, 0,
 	2, 2, 2, 2, 2, 2, 2, 0,
 	0, 0, 0, 0, 0, 0, 3, 1,
@@ -2386,19 +2396,201 @@ const uint8 KyraEngine_v3::_itemStringMap[] = {
 	0, 0, 0, 0, 2, 0, 0, 2
 };
 
-const uint KyraEngine_v3::_itemStringMapSize = ARRAYSIZE(KyraEngine_v3::_itemStringMap);
+const uint KyraEngine_MR::_itemStringMapSize = ARRAYSIZE(KyraEngine_MR::_itemStringMap);
 
-const uint8 KyraEngine_v3::_itemStringPickUp[] = {
+const uint8 KyraEngine_MR::_itemStringPickUp[] = {
 	0x4, 0x7, 0x0, 0xA
 };
 
-const uint8 KyraEngine_v3::_itemStringDrop[] = {
+const uint8 KyraEngine_MR::_itemStringDrop[] = {
 	0x5, 0x8, 0x1, 0xB
 };
 
-const uint8 KyraEngine_v3::_itemStringInv[] = {
+const uint8 KyraEngine_MR::_itemStringInv[] = {
 	0x6, 0x9, 0x2, 0xC
 };
+
+const int8 KyraEngine_MR::_scoreTable[] = {
+	10,  8,  5,  9, 10, 10,  7,  8,
+	 9,  9,  8,  8,  7,  8,  5,  9,
+	 6, 10,  7,  8,  5,  9,  6,  6,
+	 7,  8,  5,  9,  6,  8,  7,  8,
+	 5,  9,  6, 10,  7,  8,  5,  5,
+	 5,  7,  5,  7, 10,  5, 10,  5,
+	 5,  8,  6,  8,  7,  5,  5,  8,
+	 6,  9,  5,  7,  6,  5,  5,  7,
+	 7,  7,  6,  5,  8,  6, 10,  5,
+	 7,  5, 10,  5,  5,  5,  5,  7,
+	 5,  8,  9,  7,  7,  6, 10,  6,
+	 5, 10,  8,  5,  8,  6, 10,  5,
+	 5,  8,  8,  5,  7,  7,  7,  6,
+	 8,  9,  8,  8,  6,  5,  7,  6,
+	 5,  8, 15,  7,  9,  6,  6,  8,
+	 5,  8, 15, 15,  5, 15,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,	 0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0 
+}; 
+
+const int KyraEngine_MR::_scoreTableSize = ARRAYSIZE(KyraEngine_MR::_scoreTable);
+
+void KyraEngine_MR::initMainButtonList(bool disable) {
+	if (!_mainButtonListInitialized) {
+		_mainButtonData = new Button[14];
+		assert(_mainButtonData);
+
+		GUI_V2_BUTTON(_mainButtonData[0], 1, 0, 0, 4, 4, 4, 0x4487, 0,   5, 162, 50, 25, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[0].buttonCallback = BUTTON_FUNCTOR(GUI_MR, _gui, &GUI_MR::optionsButton);
+		GUI_V2_BUTTON(_mainButtonData[1], 2, 0, 0, 1, 1, 1, 0x4487, 0, 245, 156, 69, 33, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonMoodChange);
+		GUI_V2_BUTTON(_mainButtonData[2], 3, 0, 0, 1, 1, 1, 0x4487, 0, 215, 191, 24,  9, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonShowScore);
+		GUI_V2_BUTTON(_mainButtonData[3], 4, 0, 0, 1, 1, 1, 0x4487, 0, 215, 155, 25, 36, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		_mainButtonData[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonJesterStaff);
+
+		Button::Callback buttonInventoryFunctor = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonInventory);
+		for (int i = 0; i < 5; ++i) {
+			GUI_V2_BUTTON(_mainButtonData[i+4], i+5, 0, 0, 0, 0, 0, 0x1100, 0, 67+i*28, 155, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+			_mainButtonData[i+4].buttonCallback = buttonInventoryFunctor;
+		}
+
+		for (int i = 0; i < 5; ++i) {
+			GUI_V2_BUTTON(_mainButtonData[i+9], i+10, 0, 0, 0, 0, 0, 0x1100, 0, 67+i*28, 177, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+			_mainButtonData[i+9].buttonCallback = buttonInventoryFunctor;
+		}
+
+		for (int i = 0; i < 14; ++i)
+			_mainButtonList = _gui->addButtonToList(_mainButtonList, &_mainButtonData[i]);
+
+		_mainButtonListInitialized = true;
+	}
+
+	for (int i = 0; i < 14; ++i) {
+		if (disable)
+			_gui->flagButtonDisable(&_mainButtonData[i]);
+		else
+			_gui->flagButtonEnable(&_mainButtonData[i]);
+	}
+}
+
+void GUI_MR::initStaticData() {
+	GUI_V2_BUTTON(_scrollUpButton, 22, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	GUI_V2_BUTTON(_scrollDownButton, 23, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+
+	for (int i = 0; i < 4; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	}
+	for (int i = 0; i < 4; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	}
+	for (int i = 0; i < 4; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+		GUI_V2_BUTTON(_menuButtons[i], 0x0F+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	}
+
+	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickLoadSlot);
+	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickSaveSlot);
+	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::loadMenu);
+	Button::Callback clickQuitOptionsFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::quitOptionsMenu);
+
+	GUI_V2_MENU(_mainMenu, -1, -1, 256, 172, 0xD0, 0xD1, 0xCF, 1, 0xBD, -1, 8, 0, 7, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_mainMenu.item[0], 1, 2, -1, 30, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[0].callback = clickLoadMenuFunctor;
+	GUI_V2_MENU_ITEM(_mainMenu.item[1], 1, 3, -1, 47, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[1].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::saveMenu);
+	GUI_V2_MENU_ITEM(_mainMenu.item[2], 1, 35, -1, 64, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::deleteMenu);
+	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 4, -1, 81, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::gameOptions);
+	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 37, -1, 98, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::audioOptions);
+	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 5, -1, 115, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[5].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::quitGame);
+	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 6, -1, 144, 220, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_mainMenu.item[6].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::resumeGame);
+
+	GUI_V2_MENU(_audioOptions, -1, -1, 288, 136, 0xD0, 0xD1, 0xCF, 37, 0xBD, -1, 8, 4, 5, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_audioOptions.item[0], 0, 0, 160, 30, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 23, 8, 32, 0x0000);
+	GUI_V2_MENU_ITEM(_audioOptions.item[1], 0, 0, 160, 47, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 24, 8, 49, 0x0000);
+	GUI_V2_MENU_ITEM(_audioOptions.item[2], 0, 0, 160, 64, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 39, 8, 66, 0x0000);
+	GUI_V2_MENU_ITEM(_audioOptions.item[3], 1, 0, 152, 81, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 47, 8, 83, 0x0000);
+	GUI_V2_MENU_ITEM(_audioOptions.item[4], 1, 16, -1, 110, 92, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_audioOptions.item[4].callback = clickQuitOptionsFunctor;
+	for (int i = 5; i < 7; ++i)
+		_audioOptions.item[i].enabled = false;
+
+	GUI_V2_MENU(_gameOptions, -1, -1, 288, 154, 0xD0, 0xD1, 0xCF, 7, 0xBD, -1, 8, 0, 6, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_gameOptions.item[0], 1, 0, 160, 30, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 21, 8, 32, 0x0000);
+	_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::toggleWalkspeed);
+	GUI_V2_MENU_ITEM(_gameOptions.item[1], 1, 0, 160, 47, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 26, 8, 49, 0x0000);
+	_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::changeLanguage);
+	GUI_V2_MENU_ITEM(_gameOptions.item[2], 1, 0, 160, 64, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 40, 8, 66, 0x0000);
+	_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::toggleStudioSFX);
+	GUI_V2_MENU_ITEM(_gameOptions.item[3], 1, 0, 160, 81, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 46, 8, 83, 0x0000);
+	_gameOptions.item[3].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::toggleSkipSupport);
+	GUI_V2_MENU_ITEM(_gameOptions.item[4], 1, 0, 160, 98, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 22, 8, 100, 0x0000);
+	_gameOptions.item[4].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::toggleText);
+	GUI_V2_MENU_ITEM(_gameOptions.item[5], 1, 16, -1, 127, 125, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_gameOptions.item[5].callback = clickQuitOptionsFunctor;
+	_gameOptions.item[6].enabled = false;
+
+	GUI_V2_MENU(_choiceMenu, -1, -1, 320, 56, 0xD0, 0xD1, 0xCF, 0, 0xBA, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_choiceMenu.item[0], 1, 20, 24, 30, 72, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_choiceMenu.item[0].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::choiceYes);
+	GUI_V2_MENU_ITEM(_choiceMenu.item[1], 1, 19, 216, 30, 72, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_choiceMenu.item[1].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::choiceNo);
+	for (int i = 2; i < 7; ++i)
+		_choiceMenu.item[i].enabled = false;
+
+	GUI_V2_MENU(_loadMenu, -1, -1, 288, 160, 0xD0, 0xD1, 0xCF, 8, 0xBD, -1, 8, 0, 6, 132, 22, 132, 124);
+	GUI_V2_MENU_ITEM(_loadMenu.item[0], 1, 41, -1, 39, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_loadMenu.item[1], 1, 42, -1, 56, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_loadMenu.item[2], 1, 43, -1, 73, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_loadMenu.item[3], 1, 44, -1, 90, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_loadMenu.item[4], 1, 45, -1, 107, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	for (int i = 0; i <= 4; ++i)
+		_loadMenu.item[i].callback = clickLoadSlotFunctor;
+	GUI_V2_MENU_ITEM(_loadMenu.item[5], 1, 11, 184, 134, 88, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_loadMenu.item[5].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::cancelLoadMenu);
+	_loadMenu.item[6].enabled = false;
+
+	GUI_V2_MENU(_saveMenu, -1, -1, 288, 160, 0xD0, 0xD1, 0xCF, 9, 0xBD, -1, 8, 0, 6, 132, 22, 132, 124);
+	GUI_V2_MENU_ITEM(_saveMenu.item[0], 1, 41, -1, 39, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_saveMenu.item[1], 1, 42, -1, 56, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_saveMenu.item[2], 1, 43, -1, 73, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_saveMenu.item[3], 1, 44, -1, 90, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	GUI_V2_MENU_ITEM(_saveMenu.item[4], 1, 45, -1, 107, 256, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	for (int i = 0; i <= 4; ++i)
+		_saveMenu.item[i].callback = clickSaveSlotFunctor;
+	GUI_V2_MENU_ITEM(_saveMenu.item[5], 1, 11, 184, 134, 88, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_saveMenu.item[5].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::cancelSaveMenu);
+	_saveMenu.item[6].enabled = false;
+
+	GUI_V2_MENU(_savenameMenu, -1, -1, 320, 67, 0xD0, 0xD1, 0xCF, 12, 0xBD, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_savenameMenu.item[0], 1, 13, 24, 44, 88, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_savenameMenu.item[0].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::finishSavename);
+	GUI_V2_MENU_ITEM(_savenameMenu.item[1], 1, 11, 208, 44, 88, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_savenameMenu.item[1].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::cancelSavename);
+	for (int i = 2; i < 7; ++i)
+		_savenameMenu.item[i].enabled = false;
+
+	GUI_V2_MENU(_deathMenu, -1, -1, 208, 76, 0xD0, 0xD1, 0xCF, 14, 0xBD, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_deathMenu.item[0], 1, 2, -1, 30, 180, 15, 0xFA, 0xFF, 8, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_deathMenu.item[0].callback = clickLoadMenuFunctor;
+	GUI_V2_MENU_ITEM(_deathMenu.item[1], 1, 38, -1, 47, 180, 15, 0xFA, 0xFF, 8, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
+	_deathMenu.item[1].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::loadSecondChance);
+	for (int i = 2; i < 7; ++i)
+		_deathMenu.item[i].enabled = false;
+}
 
 } // End of namespace Kyra
 

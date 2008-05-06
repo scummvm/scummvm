@@ -53,8 +53,11 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_mousePresent = UNDEF;
 	_mouseXShift = 3;
 	_mouseYShift = 3;
-	_mouseMaxCol = 320;
-	_mouseMaxRow = 200;
+
+	_mouseMinX = 0;
+	_mouseMinY = 0;
+	_mouseMaxX = 320;
+	_mouseMaxY = 200;
 
 	_useJoystick = 1;
 

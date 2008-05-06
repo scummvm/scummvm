@@ -279,13 +279,13 @@ private:
  * Base template for hash functor objects, used by HashMap.
  * This needs to be specialized for every type that you need to hash.
  */
-template <typename T> struct Hash;
+template<typename T> struct Hash;
 
 
 #define GENERATE_TRIVIAL_HASH_FUNCTOR(T) \
-    template <> struct Hash<T> : public UnaryFunction<T, uint> { \
-      uint operator()(T val) const { return (uint)val; } \
-    }
+	template<> struct Hash<T> : public UnaryFunction<T, uint> { \
+		uint operator()(T val) const { return (uint)val; } \
+	}
 
 GENERATE_TRIVIAL_HASH_FUNCTOR(bool);
 GENERATE_TRIVIAL_HASH_FUNCTOR(char);

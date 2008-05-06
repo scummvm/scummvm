@@ -216,7 +216,7 @@ void ScummEngine_v70he::setupScummVars() {
 	VAR_SOUND_CHANNEL = 14;
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v72he::setupScummVars() {
 	VAR_KEYPRESS = 0;
 	VAR_DEBUGMODE = 1;
@@ -333,7 +333,7 @@ void ScummEngine_v90he::setupScummVars() {
 }
 #endif
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;
@@ -568,7 +568,7 @@ void ScummEngine_v5::resetScummVars() {
 		_scummVars[74] = 1225;
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::resetScummVars() {
 	ScummEngine::resetScummVars();
 
@@ -633,7 +633,7 @@ void ScummEngine_v70he::resetScummVars() {
 	VAR(VAR_TALK_CHANNEL) = 2;
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v72he::resetScummVars() {
 	ScummEngine_v70he::resetScummVars();
 

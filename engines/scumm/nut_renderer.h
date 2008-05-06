@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#if !defined(SCUMM_NUT_RENDERER_H) && !defined(DISABLE_SCUMM_7_8)
+#if !defined(SCUMM_NUT_RENDERER_H) && defined(ENABLE_SCUMM_7_8)
 #define SCUMM_NUT_RENDERER_H
 
 #include "common/file.h"

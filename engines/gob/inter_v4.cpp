@@ -544,9 +544,9 @@ void Inter_v4::setupOpcodes() {
 
 	static const OpcodeGoblinEntryV4 opcodesGoblin[71] = {
 		/* 00 */
-		OPCODE(o2_loadInfogramesIns),
-		OPCODE(o2_startInfogrames),
-		OPCODE(o2_stopInfogrames),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},
@@ -555,7 +555,7 @@ void Inter_v4::setupOpcodes() {
 		{NULL, ""},
 		/* 08 */
 		{NULL, ""},
-		OPCODE(o2_playInfogrames),
+		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
 		/* 0C */
@@ -592,7 +592,7 @@ void Inter_v4::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
-		OPCODE(o2_handleGoblins),
+		{NULL, ""},
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -723,7 +723,6 @@ void Inter_v4::o4_playVmdOrMusic() {
 	bool close;
 
 	evalExpr(0);
-	_vm->_global->_inter_resStr[8] = 0;
 	strncpy0(fileName, _vm->_global->_inter_resStr, 127);
 
 	x = _vm->_parse->parseValExpr();
@@ -740,8 +739,26 @@ void Inter_v4::o4_playVmdOrMusic() {
 	if (lastFrame == -1) {
 		close = true;
 	} else if (lastFrame == -3) {
-		warning("Woodruff Stub: Video/Music command -3: Play background video %s", fileName);
-//		return;
+		warning("Woodruff Stub: Video/Music command -3: Play background video %s, %d, %d, %d, %d", fileName, startFrame, x, y, VAR_OFFSET(7872));
+
+		_vm->_mult->_objects[startFrame].pAnimData->animation = -startFrame - 1;
+
+		if (_vm->_mult->_objects[startFrame].videoSlot > 0)
+			_vm->_vidPlayer->slotClose(_vm->_mult->_objects[startFrame].videoSlot - 1);
+
+		int slot = _vm->_vidPlayer->slotOpen(fileName);
+
+		_vm->_mult->_objects[startFrame].videoSlot = slot + 1;
+
+		if (x == -1) {
+			*_vm->_mult->_objects[startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
+			*_vm->_mult->_objects[startFrame].pPosY = _vm->_vidPlayer->getDefaultY(slot);
+		} else {
+			*_vm->_mult->_objects[startFrame].pPosX = x;
+			*_vm->_mult->_objects[startFrame].pPosY = y;
+		}
+
+		return;
 	} else if (lastFrame == -4) {
 		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
 		return;
@@ -767,19 +784,19 @@ void Inter_v4::o4_playVmdOrMusic() {
 		close = false;
 	}
 
-	if ((fileName[0] != 0) && !_vm->_vidPlayer->openVideo(fileName, x, y, flags)) {
+	if ((fileName[0] != 0) && !_vm->_vidPlayer->primaryOpen(fileName, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
 	}
 
 	if (startFrame >= 0) {
 		_vm->_game->_preventScroll = true;
-		_vm->_vidPlayer->play(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
 		_vm->_game->_preventScroll = false;
 	}
 
 	if (close)
-		_vm->_vidPlayer->closeVideo();
+		_vm->_vidPlayer->primaryClose();
 }
 
 } // End of namespace Gob

@@ -34,7 +34,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 	int16 prevSample = 0, workSample = 0;
 	byte soundBuffer[1025];
-	byte soundBuffer3[1024];
+	byte deltaSoundBuffer[1024];
 	int16 soundBuffer2[16];
 	byte deltaType, type;
 	uint16 workChunkSize, byteCount, bitCount;
@@ -106,17 +106,24 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 		}
 
-		if (deltaType == 1) {
-			for (i = 0; i < chunkSize - 1; i += 2) {
-				l = i / 2;
-				soundBuffer3[i] = soundBuffer[l];
-				soundBuffer3[i + 1] = (soundBuffer[l + 1] + soundBuffer[l]) / 2;
+		if (deltaType > 0) {
+			if (deltaType == 1) {
+				for (i = 0; i < chunkSize - 1; i += 2) {
+					l = i / 2;
+					deltaSoundBuffer[i] = soundBuffer[l];
+					deltaSoundBuffer[i + 1] = (soundBuffer[l] + soundBuffer[l + 1]) / 2;
+				}
+			} else if (deltaType == 2) {
+				for (i = 0; i < chunkSize - 1; i += 4) {
+					l = i / 4;
+					deltaSoundBuffer[i] = soundBuffer[l];
+					deltaSoundBuffer[i + 2] = (soundBuffer[l] + soundBuffer[l + 1]) / 2;
+					deltaSoundBuffer[i + 1] = (deltaSoundBuffer[i + 2] + soundBuffer[l]) / 2;
+					deltaSoundBuffer[i + 3] = (deltaSoundBuffer[i + 2] + soundBuffer[l + 1]) / 2;
+				}
 			}
-			for (i = 0; i < chunkSize; i++) {
-				soundBuffer[i] = soundBuffer3[i];
-			}
-		} else if (deltaType == 2) {
-			debug(2, "****************************************");
+			for (i = 0; i < chunkSize; i++)
+				soundBuffer[i] = deltaSoundBuffer[i];
 		}
 
 		prevSample = workSample;

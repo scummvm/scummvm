@@ -1272,7 +1272,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 }
 
 byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 	Common::Rect src, dst;
 
 	if (!_mirror) {
@@ -1767,7 +1767,7 @@ void ScummEngine_v6::akos_processQueue() {
 			a->_offsY = param_2;
 			break;
 		case 7:
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 			assert(_game.heversion >= 71);
 			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param_1);
 #endif
@@ -1793,7 +1793,7 @@ void ScummEngine_v6::akos_processQueue() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::akos_processQueue() {
 	byte cmd;
 	int actor, param_1, param_2;

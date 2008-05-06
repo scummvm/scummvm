@@ -343,9 +343,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		launcherDialog(system);
 	}
 	PluginManager::instance().unloadPluginsExcept(NULL);
-	PluginManager::instance().destroy();
-	ConfMan.destroy();
-	g_gui.destroy();
+	PluginManager::destroy();
+	Common::ConfigManager::destroy();
+	GUI::NewGui::destroy();
 
 	return 0;
 }

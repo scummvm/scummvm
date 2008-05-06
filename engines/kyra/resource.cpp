@@ -716,7 +716,6 @@ bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableRead
 		char realFilename[20];
 		snprintf(realFilename, 20, "%u.AUD", resFilename);
 
-
 		uint32 curOffset = stream.pos();
 		stream.seek(resOffset, SEEK_SET);
 		entry.size = stream.readUint32LE();

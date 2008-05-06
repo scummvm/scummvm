@@ -146,11 +146,11 @@ DECLARE_LOCATION_PARSER(location)  {
 DECLARE_LOCATION_PARSER(zone)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zone) ");
 
-	parseZone(*_locParseCtxt.script, _zones, _tokens[1]);
+	parseZone(*_locParseCtxt.script, _location._zones, _tokens[1]);
 
 	_locParseCtxt.z->_index = _locParseCtxt.numZones++;
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+	if (getLocationFlags() & kFlagsVisited) {
 		_locParseCtxt.z->_flags = _zoneFlags[_currentLocationIndex][_locParseCtxt.z->_index];
 	} else {
 		_zoneFlags[_currentLocationIndex][_locParseCtxt.z->_index] = _locParseCtxt.z->_flags;
@@ -162,11 +162,11 @@ DECLARE_LOCATION_PARSER(zone)  {
 DECLARE_LOCATION_PARSER(animation)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(animation) ");
 
-	parseAnimation(*_locParseCtxt.script, _animations, _tokens[1]);
+	parseAnimation(*_locParseCtxt.script, _location._animations, _tokens[1]);
 
 	_locParseCtxt.a->_index = _locParseCtxt.numZones++;
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+	if (getLocationFlags() & kFlagsVisited) {
 		_locParseCtxt.a->_flags = _zoneFlags[_currentLocationIndex][_locParseCtxt.a->_index];
 	} else {
 		_zoneFlags[_currentLocationIndex][_locParseCtxt.a->_index] = _locParseCtxt.a->_flags;
@@ -189,14 +189,14 @@ DECLARE_LOCATION_PARSER(localflags)  {
 DECLARE_LOCATION_PARSER(flags)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(flags) ");
 
-	if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
+	if ((getLocationFlags() & kFlagsVisited) == 0) {
 		// only for 1st visit
-		_localFlags[_currentLocationIndex] = 0;
+		clearLocationFlags(kFlagsAll);
 		int _si = 1;
 
 		do {
 			byte _al = _localFlagNames->lookup(_tokens[_si]);
-			_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
+			setLocationFlags(1 << (_al - 1));
 
 			_si++;
 			if (scumm_stricmp(_tokens[_si], "|")) break;
@@ -288,13 +288,13 @@ DECLARE_LOCATION_PARSER(escape)  {
 DECLARE_LOCATION_PARSER(zeta)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zeta) ");
 
-	_zeta0 = atoi(_tokens[1]);
-	_zeta1 = atoi(_tokens[2]);
+	_location._zeta0 = atoi(_tokens[1]);
+	_location._zeta1 = atoi(_tokens[2]);
 
 	if (_tokens[3][0] != '\0') {
-		_zeta2 = atoi(_tokens[1]);
+		_location._zeta2 = atoi(_tokens[1]);
 	} else {
-		_zeta2 = 50;
+		_location._zeta2 = 50;
 	}
 }
 
@@ -316,7 +316,7 @@ DECLARE_COMMAND_PARSER(endif)  {
 DECLARE_COMMAND_PARSER(location)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(location) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._string = strdup(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -345,7 +345,7 @@ DECLARE_COMMAND_PARSER(location)  {
 DECLARE_COMMAND_PARSER(string)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(string) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._string = strdup(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -357,7 +357,7 @@ DECLARE_COMMAND_PARSER(string)  {
 DECLARE_COMMAND_PARSER(math)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(math) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._lvalue = _countersNames->lookup(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -372,7 +372,7 @@ DECLARE_COMMAND_PARSER(math)  {
 DECLARE_COMMAND_PARSER(test)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(test) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	uint counter = _countersNames->lookup(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -405,7 +405,7 @@ DECLARE_COMMAND_PARSER(test)  {
 DECLARE_COMMAND_PARSER(music)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(music) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._musicCommand = _audioCommandsNames->lookup(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -423,7 +423,7 @@ DECLARE_COMMAND_PARSER(music)  {
 DECLARE_COMMAND_PARSER(zeta)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zeta) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._zeta0 = atoi(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -445,7 +445,7 @@ DECLARE_COMMAND_PARSER(zeta)  {
 DECLARE_COMMAND_PARSER(give)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(give) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._object = 4 + atoi(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -471,7 +471,7 @@ DECLARE_COMMAND_PARSER(give)  {
 DECLARE_COMMAND_PARSER(text)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(text) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	if (isdigit(_tokens[1][1])) {
 		_locParseCtxt.cmd->u._zeta0 = atoi(_tokens[1]);
@@ -497,7 +497,7 @@ DECLARE_COMMAND_PARSER(text)  {
 DECLARE_COMMAND_PARSER(unary)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(unary) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._rvalue = atoi(_tokens[1]);
 	_locParseCtxt.nextToken++;
@@ -548,7 +548,7 @@ DECLARE_ZONE_PARSER(type)  {
 //		}
 	}
 
-	popParserTables();
+	_locationParser->popTables();
 }
 
 
@@ -592,7 +592,7 @@ DECLARE_ANIM_PARSER(endanimation)  {
 
 	_locParseCtxt.a->_flags |= 0x1000000;
 
-	popParserTables();
+	_locationParser->popTables();
 }
 
 
@@ -760,6 +760,8 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 
 void Parallaction_br::initParsers() {
 
+	_locationParser = new Parser;
+
 	static const OpcodeV2 op0[] = {
 		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition
 		INSTRUCTION_PARSER(zone),		// on
@@ -908,10 +910,6 @@ void Parallaction_br::initParsers() {
 
 	for (i = 0; i < ARRAYSIZE(op6); i++)
 		_locationAnimParsers.push_back(&op6[i]);
-
-	_currentOpcodes = 0;
-	_currentStatements = 0;
-
 }
 
 void Parallaction_br::parseLocation(const char* filename) {

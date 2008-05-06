@@ -30,9 +30,14 @@
 
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
-class Win32PluginProvider : public PluginProvider {
-public:
-	virtual PluginList getPlugins();
+class Win32PluginProvider : public FilePluginProvider {
+protected:
+	Plugin* createPlugin(const Common::String &filename) const;
+
+	virtual const char* getPrefix() const { return ""; }
+	virtual const char* getSuffix() const { return ".dll"; }
+
+	virtual void addCustomDirectories(Common::StringList &dirs) const {}
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(_WIN32)

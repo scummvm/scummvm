@@ -41,7 +41,13 @@ class ScriptFunctions {
 public:
 	ScriptFunctions(MadeEngine *vm) : _vm(vm) {}
 	virtual ~ScriptFunctions() {}
-	int16 callFunction(uint16 index, int16 argc, int16 *argv);
+	int16 callFunction(uint16 index, int16 argc, int16 *argv)  {
+		if (index >= _externalFuncs.size()) {
+			// TODO: ERROR!
+			return 0;
+		}
+		return (*_externalFuncs[index])(argc, argv);
+	}
 	virtual void setupExternalsTable() = 0;
 protected:
 	MadeEngine *_vm;
@@ -50,6 +56,67 @@ protected:
 
 	Common::Array<const ExternalFunc*> _externalFuncs;
 
+};
+
+class ScriptFunctionsLgop2 : public ScriptFunctions {
+public:
+	ScriptFunctionsLgop2(MadeEngine *vm) : ScriptFunctions(vm) {}
+	~ScriptFunctionsLgop2() {}
+	void setupExternalsTable();
+protected:
+
+	int16 o1_SYSTEM(int16 argc, int16 *argv);
+	int16 o1_INITGRAF(int16 argc, int16 *argv);
+	int16 o1_RESTOREGRAF(int16 argc, int16 *argv);
+	int16 o1_DRAWPIC(int16 argc, int16 *argv);
+	int16 o1_CLS(int16 argc, int16 *argv);
+	int16 o1_SHOWPAGE(int16 argc, int16 *argv);
+	int16 o1_EVENT(int16 argc, int16 *argv);
+	int16 o1_EVENTX(int16 argc, int16 *argv);
+	int16 o1_EVENTY(int16 argc, int16 *argv);
+	int16 o1_EVENTKEY(int16 argc, int16 *argv);
+	int16 o1_VISUALFX(int16 argc, int16 *argv);
+	int16 o1_PLAYSND(int16 argc, int16 *argv);
+	int16 o1_PLAYMUS(int16 argc, int16 *argv);
+	int16 o1_STOPMUS(int16 argc, int16 *argv);
+	int16 o1_ISMUS(int16 argc, int16 *argv);
+	int16 o1_TEXTPOS(int16 argc, int16 *argv);
+	int16 o1_FLASH(int16 argc, int16 *argv);
+	int16 o1_PLAYNOTE(int16 argc, int16 *argv);
+	int16 o1_STOPNOTE(int16 argc, int16 *argv);
+	int16 o1_PLAYTELE(int16 argc, int16 *argv);
+	int16 o1_STOPTELE(int16 argc, int16 *argv);
+	int16 o1_HIDECURS(int16 argc, int16 *argv);
+	int16 o1_SHOWCURS(int16 argc, int16 *argv);
+	int16 o1_MUSICBEAT(int16 argc, int16 *argv);
+	int16 o1_SCREENLOCK(int16 argc, int16 *argv);
+	int16 o1_ADDSPRITE(int16 argc, int16 *argv);
+	int16 o1_FREEANIM(int16 argc, int16 *argv);
+	int16 o1_DRAWSPRITE(int16 argc, int16 *argv);
+	int16 o1_ERASESPRITES(int16 argc, int16 *argv);
+	int16 o1_UPDATESPRITES(int16 argc, int16 *argv);
+	int16 o1_GETTIMER(int16 argc, int16 *argv);
+	int16 o1_SETTIMER(int16 argc, int16 *argv);
+	int16 o1_RESETTIMER(int16 argc, int16 *argv);
+	int16 o1_ALLOCTIMER(int16 argc, int16 *argv);
+	int16 o1_FREETIMER(int16 argc, int16 *argv);
+	int16 o1_PALETTELOCK(int16 argc, int16 *argv);
+	int16 o1_FONT(int16 argc, int16 *argv);
+	int16 o1_DRAWTEXT(int16 argc, int16 *argv);
+	int16 o1_HOMETEXT(int16 argc, int16 *argv);
+	int16 o1_TEXTRECT(int16 argc, int16 *argv);
+	int16 o1_TEXTXY(int16 argc, int16 *argv);
+	int16 o1_DROPSHADOW(int16 argc, int16 *argv);
+	int16 o1_TEXTCOLOR(int16 argc, int16 *argv);
+	int16 o1_OUTLINE(int16 argc, int16 *argv);
+	int16 o1_LOADCURSOR(int16 argc, int16 *argv);
+	int16 o1_SETGROUND(int16 argc, int16 *argv);
+	int16 o1_RESTEXT(int16 argc, int16 *argv);
+	int16 o1_ADDMASK(int16 argc, int16 *argv);
+	int16 o1_SETMASK(int16 argc, int16 *argv);
+	int16 o1_ISSND(int16 argc, int16 *argv);
+	int16 o1_STOPSND(int16 argc, int16 *argv);
+	int16 o1_PLAYVOICE(int16 argc, int16 *argv);
 };
 
 class ScriptFunctionsRtz : public ScriptFunctions {
@@ -159,7 +226,72 @@ protected:
 	int16 o1_SETVOLUME(int16 argc, int16 *argv);
 	int16 o1_WHATSYNTH(int16 argc, int16 *argv);
 	int16 o1_SLOWSYSTEM(int16 argc, int16 *argv);
+};
 
+class ScriptFunctionsMhne : public ScriptFunctions {
+public:
+	ScriptFunctionsMhne(MadeEngine *vm) : ScriptFunctions(vm) {}
+	~ScriptFunctionsMhne() {}
+	void setupExternalsTable();
+protected:
+
+	int16 o1_SYSTEM(int16 argc, int16 *argv);
+	int16 o1_INITGRAF(int16 argc, int16 *argv);
+	int16 o1_RESTOREGRAF(int16 argc, int16 *argv);
+	int16 o1_DRAWPIC(int16 argc, int16 *argv);
+	int16 o1_CLS(int16 argc, int16 *argv);
+	int16 o1_SHOWPAGE(int16 argc, int16 *argv);
+	int16 o1_EVENT(int16 argc, int16 *argv);
+	int16 o1_EVENTX(int16 argc, int16 *argv);
+	int16 o1_EVENTY(int16 argc, int16 *argv);
+	int16 o1_EVENTKEY(int16 argc, int16 *argv);
+	int16 o1_VISUALFX(int16 argc, int16 *argv);
+	int16 o1_PLAYSND(int16 argc, int16 *argv);
+	int16 o1_PLAYMUS(int16 argc, int16 *argv);
+	int16 o1_STOPMUS(int16 argc, int16 *argv);
+	int16 o1_ISMUS(int16 argc, int16 *argv);
+	int16 o1_TEXTPOS(int16 argc, int16 *argv);
+	int16 o1_FLASH(int16 argc, int16 *argv);
+	int16 o1_PLAYNOTE(int16 argc, int16 *argv);
+	int16 o1_STOPNOTE(int16 argc, int16 *argv);
+	int16 o1_PLAYTELE(int16 argc, int16 *argv);
+	int16 o1_STOPTELE(int16 argc, int16 *argv);
+	int16 o1_HIDECURS(int16 argc, int16 *argv);
+	int16 o1_SHOWCURS(int16 argc, int16 *argv);
+	int16 o1_MUSICBEAT(int16 argc, int16 *argv);
+	int16 o1_SCREENLOCK(int16 argc, int16 *argv);
+	int16 o1_ADDSPRITE(int16 argc, int16 *argv);
+	int16 o1_FREEANIM(int16 argc, int16 *argv);
+	int16 o1_DRAWSPRITE(int16 argc, int16 *argv);
+	int16 o1_ERASESPRITES(int16 argc, int16 *argv);
+	int16 o1_UPDATESPRITES(int16 argc, int16 *argv);
+	int16 o1_GETTIMER(int16 argc, int16 *argv);
+	int16 o1_SETTIMER(int16 argc, int16 *argv);
+	int16 o1_RESETTIMER(int16 argc, int16 *argv);
+	int16 o1_ALLOCTIMER(int16 argc, int16 *argv);
+	int16 o1_FREETIMER(int16 argc, int16 *argv);
+	int16 o1_PALETTELOCK(int16 argc, int16 *argv);
+	int16 o1_FONT(int16 argc, int16 *argv);
+	int16 o1_DRAWTEXT(int16 argc, int16 *argv);
+	int16 o1_HOMETEXT(int16 argc, int16 *argv);
+	int16 o1_TEXTRECT(int16 argc, int16 *argv);
+	int16 o1_TEXTXY(int16 argc, int16 *argv);
+	int16 o1_DROPSHADOW(int16 argc, int16 *argv);
+	int16 o1_TEXTCOLOR(int16 argc, int16 *argv);
+	int16 o1_OUTLINE(int16 argc, int16 *argv);
+	int16 o1_LOADCURSOR(int16 argc, int16 *argv);
+	int16 o1_SETGROUND(int16 argc, int16 *argv);
+	int16 o1_RESTEXT(int16 argc, int16 *argv);
+	int16 o1_ADDMASK(int16 argc, int16 *argv);
+	int16 o1_SETMASK(int16 argc, int16 *argv);
+	int16 o1_ISSND(int16 argc, int16 *argv);
+	int16 o1_STOPSND(int16 argc, int16 *argv);
+	int16 o1_PLAYVOICE(int16 argc, int16 *argv);
+	int16 o1_CDPLAY(int16 argc, int16 *argv);
+	int16 o1_STOPCD(int16 argc, int16 *argv);
+	int16 o1_CDSTATUS(int16 argc, int16 *argv);
+	int16 o1_CDTIME(int16 argc, int16 *argv);
+	int16 o1_CDPLAYSEG(int16 argc, int16 *argv);
 };
 
 } // End of namespace Made

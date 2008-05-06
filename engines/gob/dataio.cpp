@@ -84,12 +84,10 @@ uint32 DataStream::size() const {
 void DataStream::seek(int32 offset, int whence) {
 	if (_stream)
 		_stream->seek(offset, whence);
-
-	int32 resPos = _io->seekChunk(_handle, offset, whence);
-	if (resPos != -1)
-		return;
-
-	_io->file_getHandle(_handle)->seek(offset, whence);
+	else if ((_handle < 50) || (_handle >= 128))
+		_io->file_getHandle(_handle)->seek(offset, whence);
+	else
+	_io->seekChunk(_handle, offset, whence);
 }
 
 bool DataStream::eos() const {

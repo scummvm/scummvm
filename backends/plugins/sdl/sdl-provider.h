@@ -30,9 +30,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
 
-class SDLPluginProvider : public PluginProvider {
-public:
-	virtual PluginList getPlugins();
+class SDLPluginProvider : public FilePluginProvider {
+protected:
+	Plugin* createPlugin(const Common::String &filename) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(UNIX)

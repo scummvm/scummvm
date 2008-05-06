@@ -30,7 +30,9 @@
 #include "common/util.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/str.h"
 
+#include "made/made.h"
 #include "made/redreader.h"
 
 namespace Made {
@@ -39,8 +41,9 @@ class Object {
 public:
 	Object();
 	~Object();
-	void load(Common::SeekableReadStream &source);
-	void load(byte *source);
+	int loadVersion2(Common::SeekableReadStream &source);
+	int loadVersion3(Common::SeekableReadStream &source);
+	int loadVersion3(byte *source);
 
 	uint16 getFlags() const;
 	uint16 getClass() const;
@@ -72,11 +75,15 @@ protected:
 class GameDatabase {
 public:
 
-	GameDatabase();
+	GameDatabase(MadeEngine *vm);
 	~GameDatabase();
 
 	void open(const char *filename);
 	void openFromRed(const char *redFilename, const char *filename);
+
+	bool getSavegameDescription(const char *filename, Common::String &description);
+	int16 savegame(const char *filename, const char *description, int16 version);
+	int16 loadgame(const char *filename, int16 version);
 
 	Object *getObject(int16 index) const { 
 		if (index >= 1)
@@ -90,18 +97,27 @@ public:
 	int16 getVar(int16 index);
 	void setVar(int16 index, int16 value);
 	
+	int16 *getObjectPropertyPtrV2(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
+	int16 *getObjectPropertyPtrV3(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
 	int16 *getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
+	
 	int16 getObjectProperty(int16 objectIndex, int16 propertyId);
 	int16 setObjectProperty(int16 objectIndex, int16 propertyId, int16 value);
+	
+	const char *getString(uint16 offset);
 
 	void dumpObject(int16 index);
 	
 protected:
+	MadeEngine *_vm;
 	Common::Array<Object*> _objects;
 	byte *_gameState;
 	uint32 _gameStateSize;
+	char *_gameText;
 	int16 _mainCodeObjectIndex;
 	void load(Common::SeekableReadStream &sourceS);
+	void loadVersion2(Common::SeekableReadStream &sourceS);
+	void loadVersion3(Common::SeekableReadStream &sourceS);
 };
 
 } // End of namespace Made

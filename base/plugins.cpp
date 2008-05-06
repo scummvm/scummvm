@@ -63,7 +63,6 @@ SaveStateList Plugin::listSaves(const char *target) const {
 }
 
 
-#ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
 public:
 	StaticPlugin(PluginObject *pluginobject, PluginType type) {
@@ -100,61 +99,61 @@ public:
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.
 
-		#ifndef DISABLE_SCUMM
+		#if PLUGIN_ENABLED_STATIC(SCUMM)
 		LINK_PLUGIN(SCUMM)
 		#endif
-		#ifndef DISABLE_AGI
+		#if PLUGIN_ENABLED_STATIC(AGI)
 		LINK_PLUGIN(AGI)
 		#endif
-		#ifndef DISABLE_AGOS
+		#if PLUGIN_ENABLED_STATIC(AGOS)
 		LINK_PLUGIN(AGOS)
 		#endif
-		#ifndef DISABLE_CINE
+		#if PLUGIN_ENABLED_STATIC(CINE)
 		LINK_PLUGIN(CINE)
 		#endif
-		#ifndef DISABLE_CRUISE
+		#if PLUGIN_ENABLED_STATIC(CRUISE)
 		LINK_PLUGIN(CRUISE)
 		#endif
-		#ifndef DISABLE_DRASCULA
+		#if PLUGIN_ENABLED_STATIC(DRASCULA)
 		LINK_PLUGIN(DRASCULA)
 		#endif
-		#ifndef DISABLE_GOB
+		#if PLUGIN_ENABLED_STATIC(GOB)
 		LINK_PLUGIN(GOB)
 		#endif
-		#ifndef DISABLE_IGOR
+		#if PLUGIN_ENABLED_STATIC(IGOR)
 		LINK_PLUGIN(IGOR)
 		#endif
-		#ifndef DISABLE_KYRA
+		#if PLUGIN_ENABLED_STATIC(KYRA)
 		LINK_PLUGIN(KYRA)
 		#endif
-		#ifndef DISABLE_LURE
+		#if PLUGIN_ENABLED_STATIC(LURE)
 		LINK_PLUGIN(LURE)
 		#endif
-		#ifndef DISABLE_M4
+		#if PLUGIN_ENABLED_STATIC(M4)
 		LINK_PLUGIN(M4)
 		#endif
-		#ifndef DISABLE_MADE
+		#if PLUGIN_ENABLED_STATIC(MADE)
 		LINK_PLUGIN(MADE)
 		#endif		
-		#ifndef DISABLE_PARALLACTION
+		#if PLUGIN_ENABLED_STATIC(PARALLACTION)
 		LINK_PLUGIN(PARALLACTION)
 		#endif
-		#ifndef DISABLE_QUEEN
+		#if PLUGIN_ENABLED_STATIC(QUEEN)
 		LINK_PLUGIN(QUEEN)
 		#endif
-		#ifndef DISABLE_SAGA
+		#if PLUGIN_ENABLED_STATIC(SAGA)
 		LINK_PLUGIN(SAGA)
 		#endif
-		#ifndef DISABLE_SKY
+		#if PLUGIN_ENABLED_STATIC(SKY)
 		LINK_PLUGIN(SKY)
 		#endif
-		#ifndef DISABLE_SWORD1
+		#if PLUGIN_ENABLED_STATIC(SWORD1)
 		LINK_PLUGIN(SWORD1)
 		#endif
-		#ifndef DISABLE_SWORD2
+		#if PLUGIN_ENABLED_STATIC(SWORD2)
 		LINK_PLUGIN(SWORD2)
 		#endif
-		#ifndef DISABLE_TOUCHE
+		#if PLUGIN_ENABLED_STATIC(TOUCHE)
 		LINK_PLUGIN(TOUCHE)
 		#endif
 
@@ -162,19 +161,75 @@ public:
 	}
 };
 
+#ifdef DYNAMIC_MODULES
 
+PluginList FilePluginProvider::getPlugins() {
+	PluginList pl;
+
+	// Prepare the list of directories to search
+	Common::StringList pluginDirs;
+	// TODO: Add the user specified directory (via config file)
+	pluginDirs.push_back(".");
+	pluginDirs.push_back("plugins");
+
+	// Add the provider's custom directories
+	addCustomDirectories(pluginDirs);
+
+	Common::StringList::const_iterator d;
+	for (d = pluginDirs.begin(); d != pluginDirs.end(); d++) {
+		// Load all plugins.
+		// Scan for all plugins in this directory
+		FilesystemNode dir(*d);
+		FSList files;
+		if (!dir.getChildren(files, FilesystemNode::kListFilesOnly)) {
+			debug(1, "Couldn't open plugin directory '%s'", d->c_str());
+			continue;
+		} else {
+			debug(1, "Reading plugins from plugin directory '%s'", d->c_str());
+		}
+
+		for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
+			Common::String name(i->getName());
+			if (name.hasPrefix(getPrefix()) && name.hasSuffix(getSuffix())) {
+				pl.push_back(createPlugin(i->getPath()));
+			}
+		}
+	}
+
+	return pl;
+}
+
+const char* FilePluginProvider::getPrefix() const {
+#ifdef PLUGIN_PREFIX
+	return PLUGIN_PREFIX;
+#else
+	return "";
 #endif
+}
+
+const char* FilePluginProvider::getSuffix() const {
+#ifdef PLUGIN_SUFFIX
+	return PLUGIN_SUFFIX;
+#else
+	return "";
+#endif
+}
+
+void FilePluginProvider::addCustomDirectories(Common::StringList &dirs) const {
+#ifdef PLUGIN_DIRECTORY
+	dirs.push_back(PLUGIN_DIRECTORY);
+#endif
+}
+
+#endif // DYNAMIC_MODULES
 
 #pragma mark -
 
 DECLARE_SINGLETON(PluginManager);
 
 PluginManager::PluginManager() {
-#ifndef DYNAMIC_MODULES
-	// Add the static plugin provider if we do not build with dynamic
-	// plugins.
+	// Always add the static plugin provider.
 	addPluginProvider(new StaticPluginProvider());
-#endif
 }
 
 PluginManager::~PluginManager() {

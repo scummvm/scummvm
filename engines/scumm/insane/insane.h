@@ -23,7 +23,7 @@
  *
  */
 
-#if !defined(SCUMM_INSANE_H) && !defined(DISABLE_SCUMM_7_8)
+#if !defined(SCUMM_INSANE_H) && defined(ENABLE_SCUMM_7_8)
 #define SCUMM_INSANE_H
 
 #include "engines/engine.h"

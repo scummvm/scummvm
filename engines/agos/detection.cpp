@@ -149,7 +149,11 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return res;
 }
 
-REGISTER_PLUGIN(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(AGOS)
+	REGISTER_PLUGIN_DYNAMIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
+#endif
 
 namespace AGOS {
 

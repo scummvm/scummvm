@@ -23,15 +23,16 @@
  *
  */
 
-#include "kyra/kyra_v3.h"
-#include "kyra/screen_v3.h"
+#include "kyra/kyra_mr.h"
+#include "kyra/screen_mr.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
-void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2, int unk3) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::enterNewScene('%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, unk3);
+void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2, int unk3) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::enterNewScene('%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, unk3);
 	++_enterNewSceneLock;
 	_screen->hideMouse();
 
@@ -42,7 +43,10 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	}
 
 	musicUpdate(0);
-	//XXX
+	if (_currentChapter != _currentTalkFile) {
+		_currentTalkFile = _currentChapter;
+		openTalkFile(_currentTalkFile);
+	}
 	musicUpdate(0);
 
 	if (!unk3) {
@@ -79,7 +83,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 	uint32 waitUntilTimer = 0;
 	bool newSoundFile = false;
-	if (_curMusicTrack != _sceneList[sceneId].sound) {
+	if (_lastMusicCommand != _sceneList[sceneId].sound) {
 		fadeOutMusic(60);
 		waitUntilTimer = _system->getMillis() + 60 * _tickLength;
 		newSoundFile = true;
@@ -88,18 +92,13 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	//XXX
 
 	if (!unk3) {
-		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
-		_scriptInterpreter->startScript(&_sceneScriptState, 5);
-		while (_scriptInterpreter->validScript(&_sceneScriptState)) {
-			_scriptInterpreter->runScript(&_sceneScriptState);
+		_emc->init(&_sceneScriptState, &_sceneScriptData);
+		_emc->start(&_sceneScriptState, 5);
+		while (_emc->isValid(&_sceneScriptState)) {
+			_emc->run(&_sceneScriptState);
 			musicUpdate(0);
 		}
 	}
-
-	musicUpdate(0);
-
-	for (int i = 0; i < 10; ++i)
-		_wsaSlots[i]->close();
 
 	musicUpdate(0);
 
@@ -113,7 +112,6 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 	unloadScene();
 	musicUpdate(0);
-	//XXX resetMaskPage();
 
 	for (int i = 0; i < 4; ++i) {
 		if (i != _musicSoundChannel && i != _fadeOutMusicChannel)
@@ -125,7 +123,27 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	musicUpdate(0);
 
 	if (queryGameFlag(0x1D9)) {
-		//XXX VQA code here
+		char filename[20];
+		if (queryGameFlag(0x20D)) {
+			resetGameFlag(0x20D);
+			strcpy(filename, "COW1_");
+		} else if (queryGameFlag(0x20E)) {
+			resetGameFlag(0x20E);
+			strcpy(filename, "COW2_");
+		} else if (queryGameFlag(0x20F)) {
+			resetGameFlag(0x20F);
+			strcpy(filename, "COW3_");
+		} else if (queryGameFlag(0x20C)) {
+			resetGameFlag(0x20C);
+			strcpy(filename, "BOAT");
+		} else if (queryGameFlag(0x210)) {
+			resetGameFlag(0x210);
+			strcpy(filename, "JUNG");
+		}
+
+		playVQA(filename);
+
+		resetGameFlag(0x1D9);
 	}
 
 	musicUpdate(0);
@@ -154,6 +172,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	_sceneScriptState.regs[3] = 1;
 	enterNewSceneUnk2(unk3);
 	if (queryGameFlag(0)) {
+		_showOutro = true;
 		_runFlag = false;
 	} else {
 		if (!--_enterNewSceneLock)
@@ -161,7 +180,7 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 		setNextIdleAnimTimer();
 
-		if (_itemInHand <= 0) {
+		if (_itemInHand < 0) {
 			_itemInHand = -1;
 			_handItemSet = -1;
 			_screen->setMouseCursor(0, 0, _gameShapes[0]);
@@ -174,8 +193,8 @@ void KyraEngine_v3::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	_screen->showMouse();
 }
 
-void KyraEngine_v3::enterNewSceneUnk1(int facing, int unk1, int unk2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::enterNewSceneUnk1(%d, %d, %d)", facing, unk1, unk2);
+void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::enterNewSceneUnk1(%d, %d, %d)", facing, unk1, unk2);
 	int x = 0, y = 0;
 	int x2 = 0, y2 = 0;
 	bool needProc = true;
@@ -264,16 +283,16 @@ void KyraEngine_v3::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	initSceneAnims(unk2);
 
 	if (_mainCharacter.sceneId == 9 && !_soundDigital->isPlaying(_musicSoundChannel))
-		playMusicTrack(_sceneList[_mainCharacter.sceneId].sound, 0);
+		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
 	if (!unk2)
-		playMusicTrack(_sceneList[_mainCharacter.sceneId].sound, 0);
+		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
 
 	if (unk1 && !unk2 && _mainCharacter.animFrame != 87)
 		moveCharacter(facing, x, y);
 }
 
-void KyraEngine_v3::enterNewSceneUnk2(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::enterNewSceneUnk2(%d)", unk1);
+void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::enterNewSceneUnk2(%d)", unk1);
 	_unk3 = -1;
 	if (_mainCharX == -1 && _mainCharY == -1 && !unk1) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
@@ -290,12 +309,12 @@ void KyraEngine_v3::enterNewSceneUnk2(int unk1) {
 	_unk3 = -1;
 }
 
-void KyraEngine_v3::unloadScene() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::unloadScene()");
+void KyraEngine_MR::unloadScene() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::unloadScene()");
 	delete [] _sceneStrings;
 	_sceneStrings = 0;
 	musicUpdate(0);
-	_scriptInterpreter->unloadScript(&_sceneScriptData);
+	_emc->unload(&_sceneScriptData);
 	musicUpdate(0);
 	freeSceneShapes();
 	musicUpdate(0);
@@ -303,24 +322,16 @@ void KyraEngine_v3::unloadScene() {
 	musicUpdate(0);
 }
 
-void KyraEngine_v3::freeSceneShapes() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::freeSceneShapes()");
+void KyraEngine_MR::freeSceneShapes() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::freeSceneShapes()");
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i) {
 		delete [] _sceneShapes[i];
 		_sceneShapes[i] = 0;
 	}
 }
 
-void KyraEngine_v3::freeSceneAnims() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::freeSceneAnims()");
-	for (int i = 0; i < 16; ++i) {
-		_sceneAnims[i].flags = 0;
-		_sceneAnimMovie[i]->close();
-	}
-}
-
-void KyraEngine_v3::loadScenePal() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadScenePal()");
+void KyraEngine_MR::loadScenePal() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadScenePal()");
 	char filename[16];
 	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
@@ -339,12 +350,12 @@ void KyraEngine_v3::loadScenePal() {
 	_screen->generateOverlay(_screen->getPalette(2), _paletteOverlay, 0xF0, 0x19);
 
 	uint8 *palette = _screen->getPalette(2) + 432;
-	const uint8 *costPal = _costPalBuffer + _malcolmShapes * 72;
+	const uint8 *costPal = _costPalBuffer + _characterShapeFile * 72;
 	memcpy(palette, costPal, 24*3);
 }
 
-void KyraEngine_v3::loadSceneMsc() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::loadSceneMsc()");
+void KyraEngine_MR::loadSceneMsc() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadSceneMsc()");
 	char filename[16];
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
 	strcat(filename, ".MSC");
@@ -375,8 +386,8 @@ void KyraEngine_v3::loadSceneMsc() {
 	musicUpdate(0);
 }
 
-void KyraEngine_v3::initSceneScript(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::initSceneScript(%d)", unk1);
+void KyraEngine_MR::initSceneScript(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::initSceneScript(%d)", unk1);
 	const SceneDesc &scene = _sceneList[_mainCharacter.sceneId];
 	musicUpdate(0);
 
@@ -438,31 +449,31 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	_sceneMinX = 0;
 	_sceneMaxX = 319;
 
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	strcpy(filename, scene.filename2);
 	strcat(filename, ".EMC");
 	musicUpdate(0);
 	_res->exists(filename, true);
-	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
+	_emc->load(filename, &_sceneScriptData, &_opcodes);
 
-	strcpy(filename, scene.filename1);
+	strcpy(filename, scene.filename2);
 	strcat(filename, ".");
 	loadLanguageFile(filename, _sceneStrings);
 	musicUpdate(0);
 
 	runSceneScript8();
-	_scriptInterpreter->startScript(&_sceneScriptState, 0);
+	_emc->start(&_sceneScriptState, 0);
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
 	_sceneScriptState.regs[5] = unk1;
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _gamePlayBuffer);
 	musicUpdate(0);
 
 	for (int i = 0; i < 10; ++i) {
-		_scriptInterpreter->initScript(&_sceneSpecialScripts[i], &_sceneScriptData);
-		_scriptInterpreter->startScript(&_sceneSpecialScripts[i], i+9);
+		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
+		_emc->start(&_sceneSpecialScripts[i], i+9);
 		musicUpdate(0);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
@@ -478,8 +489,8 @@ void KyraEngine_v3::initSceneScript(int unk1) {
 	musicUpdate(0);
 }
 
-void KyraEngine_v3::initSceneAnims(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::initSceneAnims(%d)", unk1);
+void KyraEngine_MR::initSceneAnims(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::initSceneAnims(%d)", unk1);
 	for (int i = 0; i < 67; ++i)
 		_animObjects[i].enabled = false;
 
@@ -492,7 +503,7 @@ void KyraEngine_v3::initSceneAnims(int unk1) {
 	obj->xPos1 = _mainCharacter.x1;
 	obj->yPos1 = _mainCharacter.y1;
 	obj->shapePtr = getShapePtr(_mainCharacter.animFrame);
-	obj->shapeIndex2 = obj->shapeIndex = _mainCharacter.animFrame;
+	obj->shapeIndex2 = obj->shapeIndex1 = _mainCharacter.animFrame;
 	obj->xPos2 = _mainCharacter.x1;
 	obj->yPos2 = _mainCharacter.y1;
 	_charScale = getScale(_mainCharacter.x1, _mainCharacter.y1);
@@ -514,7 +525,7 @@ void KyraEngine_v3::initSceneAnims(int unk1) {
 			obj->needRefresh = true;
 		}
 
-		obj->unk8 = (anim.flags & 0x20) ? 1 : 0;
+		obj->specialRefresh = (anim.flags & 0x20) ? 1 : 0;
 		obj->flags = (anim.flags & 0x10) ? 0x800 : 0;
 		if (anim.flags & 2)
 			obj->flags |= 1;
@@ -522,7 +533,7 @@ void KyraEngine_v3::initSceneAnims(int unk1) {
 		obj->xPos1 = anim.x;
 		obj->yPos1 = anim.y;
 
-		if ((anim.flags & 4) && anim.shapeIndex != 0xFFFF)
+		if ((anim.flags & 4) && anim.shapeIndex != -1)
 			obj->shapePtr = _sceneShapes[anim.shapeIndex];
 		else
 			obj->shapePtr = 0;
@@ -562,12 +573,12 @@ void KyraEngine_v3::initSceneAnims(int unk1) {
 			obj->yPos1 = item.y;
 			animSetupPaletteEntry(obj);
 			obj->shapePtr = 0;
-			obj->shapeIndex = obj->shapeIndex2 = item.id + 248;
+			obj->shapeIndex1 = obj->shapeIndex2 = item.id + 248;
 			obj->xPos2 = item.x;
 			obj->yPos2 = item.y;
 
 			int scale = getScale(obj->xPos1, obj->yPos1);
-			const uint8 *shape = getShapePtr(obj->shapeIndex);
+			const uint8 *shape = getShapePtr(obj->shapeIndex1);
 			obj->xPos3 = obj->xPos2 -= (_screen->getShapeScaledWidth(shape, scale) >> 1);
 			obj->yPos3 = obj->yPos2 -= _screen->getShapeScaledHeight(shape, scale) - 1;
 			obj->enabled = true;
@@ -594,8 +605,8 @@ void KyraEngine_v3::initSceneAnims(int unk1) {
 	refreshAnimObjects(0);
 }
 
-void KyraEngine_v3::initSceneScreen(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::initSceneScreen(%d)", unk1);
+void KyraEngine_MR::initSceneScreen(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::initSceneScreen(%d)", unk1);
 	_screen->copyBlockToPage(2, 0, 188, 320, 12, _interfaceCommandLine);
 
 	if (_unkSceneScreenFlag1) {
@@ -605,65 +616,35 @@ void KyraEngine_v3::initSceneScreen(int unk1) {
 
 	if (_noScriptEnter) {
 		memset(_screen->getPalette(0), 0, 432);
-		if (!_wsaPlayingVQA)
+		if (!_wasPlayingVQA)
 			_screen->setScreenPalette(_screen->getPalette(0));
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 	if (_noScriptEnter) {
-		if (!_wsaPlayingVQA)
+		if (!_wasPlayingVQA)
 			_screen->setScreenPalette(_screen->getPalette(2));
 		memcpy(_screen->getPalette(0), _screen->getPalette(2), 432);
-		if (_wsaPlayingVQA) {
+		if (_wasPlayingVQA) {
 			_screen->fadeFromBlack(0x3C);
-			_wsaPlayingVQA = false;
+			_wasPlayingVQA = false;
 		}
 	}
 
 	updateCharPal(0);
 
-	if (1/*!_menuDirectlyToLoad*/) {
-		_scriptInterpreter->startScript(&_sceneScriptState, 3);
+	if (!_menuDirectlyToLoad) {
+		_emc->start(&_sceneScriptState, 3);
 		_sceneScriptState.regs[5] = unk1;
 
-		while (_scriptInterpreter->validScript(&_sceneScriptState))
-			_scriptInterpreter->runScript(&_sceneScriptState);
+		while (_emc->isValid(&_sceneScriptState))
+			_emc->run(&_sceneScriptState);
 	}
 }
 
-void KyraEngine_v3::updateSpecialSceneScripts() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::updateSpecialSceneScripts()");
-	uint32 nextTime = _system->getMillis() + _tickLength;
-	const int startScript = _lastProcessedSceneScript;
-
-	while (_system->getMillis() <= nextTime) {
-		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() &&
-			!_specialSceneScriptState[_lastProcessedSceneScript]) {
-			_specialSceneScriptRunFlag = true;
-
-			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
-				if (!_scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]))
-					_specialSceneScriptRunFlag = false;
-			}
-		}
-
-		if (!_scriptInterpreter->validScript(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
-			_scriptInterpreter->startScript(&_sceneSpecialScripts[_lastProcessedSceneScript], 9+_lastProcessedSceneScript);
-			_specialSceneScriptRunFlag = false;
-		}
-
-		++_lastProcessedSceneScript;
-		if (_lastProcessedSceneScript >= 10)
-			_lastProcessedSceneScript = 0;
-
-		if (_lastProcessedSceneScript == startScript)
-			return;
-	}
-}
-
-int KyraEngine_v3::trySceneChange(int *moveTable, int unk1, int updateChar) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
+int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
 	bool running = true;
 	bool unkFlag = false;
 	int changedScene = 0;
@@ -689,7 +670,9 @@ int KyraEngine_v3::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		}
 
 		if (unk1) {
-			if (skipFlag()) {
+			// Notice that we can't use KyraEngine_MR's skipFlag handling
+			// here, since Kyra3 allows disabling of skipFlag support
+			if (KyraEngine_v2::skipFlag()) {
 				resetSkipFlag(false);
 				running = false;
 				_unk4 = 1;
@@ -720,8 +703,8 @@ int KyraEngine_v3::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	return changedScene;
 }
 
-int KyraEngine_v3::checkSceneChange() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkSceneChange()");
+int KyraEngine_MR::checkSceneChange() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::checkSceneChange()");
 	const SceneDesc &curScene = _sceneList[_mainCharacter.sceneId];
 	int charX = _mainCharacter.x1, charY = _mainCharacter.y1;
 	int facing = 0;
@@ -773,97 +756,66 @@ int KyraEngine_v3::checkSceneChange() {
 	enterNewScene(newScene, facing, 1, 1, 0);
 	return 1;
 }
-int KyraEngine_v3::runSceneScript1(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript1(%d, %d)", x, y);
+int KyraEngine_MR::runSceneScript1(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript1(%d, %d)", x, y);
 	if (y > 187 && _unk3 > -4)
 		return 0;
 	if (_deathHandler >= 0)
 		return 0;
 	
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[1] = x;
 	_sceneScriptState.regs[2] = y;
 	_sceneScriptState.regs[3] = 0;
 	_sceneScriptState.regs[4] = _itemInHand;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 1);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 1);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	return _sceneScriptState.regs[3];
 }
 
-int KyraEngine_v3::runSceneScript2() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript2()");
+int KyraEngine_MR::runSceneScript2() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript2()");
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
 	_sceneScriptState.regs[3] = 0;
 	_sceneScriptState.regs[4] = _itemInHand;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 2);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 2);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	return _sceneScriptState.regs[3];
 }
 
-void KyraEngine_v3::runSceneScript4(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript4(%d)", unk1);
+void KyraEngine_MR::runSceneScript4(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript4(%d)", unk1);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_sceneScriptState.regs[5] = unk1;
 	_sceneScriptState.regs[3] = 0;
 	_noStartupChat = false;
 
-	_scriptInterpreter->startScript(&_sceneScriptState, 4);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
+	_emc->start(&_sceneScriptState, 4);
+	while (_emc->isValid(&_sceneScriptState))
+		_emc->run(&_sceneScriptState);
 
 	if (_sceneScriptState.regs[3])
 		_noStartupChat = true;
 }
 
-void KyraEngine_v3::runSceneScript6() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript6()");
-	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
-
-	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
-	_sceneScriptState.regs[1] = _mouseX;
-	_sceneScriptState.regs[2] = _mouseY;
-	_sceneScriptState.regs[3] = _itemInHand;
-
-	_scriptInterpreter->startScript(&_sceneScriptState, 6);
-	while (_scriptInterpreter->validScript(&_sceneScriptState))
-		_scriptInterpreter->runScript(&_sceneScriptState);
-}
-
-void KyraEngine_v3::runSceneScript8() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::runSceneScript8()");
-	_scriptInterpreter->startScript(&_sceneScriptState, 8);
-	while (_scriptInterpreter->validScript(&_sceneScriptState)) {
+void KyraEngine_MR::runSceneScript8() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript8()");
+	_emc->start(&_sceneScriptState, 8);
+	while (_emc->isValid(&_sceneScriptState)) {
 		musicUpdate(0);
-		_scriptInterpreter->runScript(&_sceneScriptState);
+		_emc->run(&_sceneScriptState);
 	}
 }
 
-bool KyraEngine_v3::checkSpecialSceneExit(int index, int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::checkSpecialSceneExit(%d, %d, %d)", index, x, y);
-	if (_specialExitTable[index] < x && _specialExitTable[5+index] < y &&
-		_specialExitTable[10+index] > x && _specialExitTable[15+index] > y)
-		return true;
-
-	return false;
-}
-
-int KyraEngine_v3::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
-	int ret = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
-	if (ret == 0x7D00)
-		return 0;
-	return getMoveTableSize(moveTable);
-}
-
-bool KyraEngine_v3::lineIsPassable(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v3::lineIsPassable(%d, %d)", x, y);
+bool KyraEngine_MR::lineIsPassable(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::lineIsPassable(%d, %d)", x, y);
 	static const uint8 widthTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
 
 	if ((_pathfinderFlag & 2) && x >= 320)

@@ -28,10 +28,8 @@
 
 #include "engines/engine.h"
 
-#include "common/rect.h"
 #include "common/array.h"
 #include "common/events.h"
-#include "common/func.h"
 
 #include "kyra/script.h"
 
@@ -47,16 +45,14 @@ namespace Kyra {
 struct GameFlags {
 	Common::Language lang;
 	Common::Platform platform;
-	bool isDemo;
-	bool useAltShapeHeader;	// alternative shape header (uses 2 bytes more, those are unused though)
-	bool isTalkie;
-	bool useHiResOverlay;
-	byte gameID;
-};
 
-struct Rect {
-	int x, y;
-	int x2, y2;
+	bool isDemo				: 1;
+	bool useAltShapeHeader	: 1;	// alternative shape header (uses 2 bytes more, those are unused though)
+	bool isTalkie			: 1;
+	bool useHiResOverlay	: 1;
+	bool useDigSound		: 1;
+
+	byte gameID;
 };
 
 enum {
@@ -76,7 +72,7 @@ struct AudioDataStruct {
 // in the future we maybe merge some flags  and/or create new ones
 enum kDebugLevels {
 	kDebugLevelScriptFuncs = 1 << 0,		// prints debug output of o#_* functions
-	kDebugLevelScript = 1 << 1,				// prints debug output of "ScriptHelper" functions
+	kDebugLevelScript = 1 << 1,				// prints debug output of "EMCInterpreter" functions
 	kDebugLevelSprites = 1 << 2,			// prints debug output of "Sprites" functions
 	kDebugLevelScreen = 1 << 3,				// prints debug output of "Screen" functions
 	kDebugLevelSound = 1 << 4,				// prints debug output of "Sound" functions
@@ -125,8 +121,6 @@ public:
 
 	uint32 tickLength() const { return _tickLength; }
 
-	virtual Movie *createWSAMovie() = 0;
-
 	Common::RandomSource _rnd;
 
 	// input
@@ -157,7 +151,7 @@ public:
 
 	// sound
 	virtual void snd_playTheme(int file, int track);
-	virtual void snd_playSoundEffect(int id);
+	virtual void snd_playSoundEffect(int id, int volume=0xFF);
 	virtual void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id) = 0;
 	virtual bool snd_voiceIsPlaying();
@@ -181,7 +175,7 @@ protected:
 	TextDisplayer *_text;
 	StaticResource *_staticres;
 	TimerManager *_timer;
-	ScriptHelper *_scriptInterpreter;
+	EMCInterpreter *_emc;
 
 	// config specific
 	virtual void registerDefaultSettings();

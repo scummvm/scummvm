@@ -355,15 +355,15 @@ uint16 Parallaction::checkDoor() {
 	z = hitZone(kZoneTrap, foot.x, foot.y);
 
 	if (z) {
-		_localFlags[_currentLocationIndex] |= kFlagsEnter;
+		setLocationFlags(kFlagsEnter);
 		runCommands(z->_commands, z);
-		_localFlags[_currentLocationIndex] &= ~kFlagsEnter;
+		clearLocationFlags(kFlagsEnter);
 		_zoneTrap = z;
 	} else
 	if (_zoneTrap) {
-		_localFlags[_currentLocationIndex] |= kFlagsExit;
+		setLocationFlags(kFlagsExit);
 		runCommands(_zoneTrap->_commands, _zoneTrap);
-		_localFlags[_currentLocationIndex] &= ~kFlagsExit;
+		clearLocationFlags(kFlagsExit);
 		_zoneTrap = nullZonePtr;
 	}
 

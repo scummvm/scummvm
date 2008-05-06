@@ -1102,7 +1102,7 @@ void ScummEngine_v6::o6_startSound() {
 	if (_game.heversion >= 60 && (_game.id != GID_PUTTDEMO))
 		offset = pop();
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_game.version >= 7)
 		_imuseDigital->startSfx(pop(), 64);
 	else
@@ -2545,7 +2545,7 @@ void ScummEngine_v6::o6_setBlastObjectWindow() {
 	// So, we just handle this as no-op opcode.
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::o6_kernelSetFunctions() {
 	int args[30];
 	int num;

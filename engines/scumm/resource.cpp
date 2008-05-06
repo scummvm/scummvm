@@ -218,7 +218,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 	char buf[128];
 
 	if (_game.version == 8) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 		char result;
 
 		_imuseDigital->stopAllSounds();
@@ -347,7 +347,7 @@ bool checkTryMedia(BaseScummFile *handle) {
 }
 
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int num;
 	char *ptr;
@@ -1081,7 +1081,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
 	debug(9, "ScummEngine_v8 readMAXS: MAXS has blocksize %d", blockSize);
 
@@ -1204,7 +1204,7 @@ void ScummEngine::readGlobalObjects() {
 #endif
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readGlobalObjects() {
 	int i;
 	int num = _fileHandle->readUint32LE();

@@ -233,4 +233,8 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 	return res;
 }
 
-REGISTER_PLUGIN(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)
+	REGISTER_PLUGIN_DYNAMIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
+#endif

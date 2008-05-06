@@ -27,7 +27,7 @@
 #define SCUMM_HE_INTERN_HE_H
 
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"
 #endif
@@ -40,7 +40,7 @@ class WriteStream;
 namespace Scumm {
 
 class ResExtractor;
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 class LogicHE;
 class MoviePlayer;
 class Sprite;
@@ -178,7 +178,7 @@ protected:
 	byte VAR_NUM_SOUND_CHANNELS;
 };
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
 

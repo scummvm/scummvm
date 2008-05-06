@@ -209,7 +209,7 @@ DECLARE_COMMAND_OPCODE(set) {
 		_cmdRunCtxt.cmd->u._flags &= ~kFlagsGlobal;
 		_commandFlags |= _cmdRunCtxt.cmd->u._flags;
 	} else {
-		_localFlags[_currentLocationIndex] |= _cmdRunCtxt.cmd->u._flags;
+		setLocationFlags(_cmdRunCtxt.cmd->u._flags);
 	}
 }
 
@@ -219,7 +219,7 @@ DECLARE_COMMAND_OPCODE(clear) {
 		_cmdRunCtxt.cmd->u._flags &= ~kFlagsGlobal;
 		_commandFlags &= ~_cmdRunCtxt.cmd->u._flags;
 	} else {
-		_localFlags[_currentLocationIndex] &= ~_cmdRunCtxt.cmd->u._flags;
+		clearLocationFlags(_cmdRunCtxt.cmd->u._flags);
 	}
 }
 
@@ -294,7 +294,7 @@ DECLARE_COMMAND_OPCODE(toggle) {
 		_cmdRunCtxt.cmd->u._flags &= ~kFlagsGlobal;
 		_commandFlags ^= _cmdRunCtxt.cmd->u._flags;
 	} else {
-		_localFlags[_currentLocationIndex] ^= _cmdRunCtxt.cmd->u._flags;
+		toggleLocationFlags(_cmdRunCtxt.cmd->u._flags);
 	}
 }
 
@@ -323,7 +323,7 @@ void Parallaction_ns::drawAnimations() {
 
 	uint16 layer = 0;
 
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
+	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
 
 		AnimationPtr v18 = *it;
 		GfxObj *obj = v18->gfxobj;
@@ -374,7 +374,7 @@ void Parallaction_ns::runScripts() {
 
 	static uint16 modCounter = 0;
 
-	for (ProgramList::iterator it = _programs.begin(); it != _programs.end(); it++) {
+	for (ProgramList::iterator it = _location._programs.begin(); it != _location._programs.end(); it++) {
 
 		AnimationPtr a = (*it)->_anim;
 
@@ -434,7 +434,7 @@ void Parallaction::runCommands(CommandList& list, ZonePtr z) {
 	for ( ; it != list.end(); it++) {
 
 		CommandPtr cmd = *it;
-		uint32 v8 = _localFlags[_currentLocationIndex];
+		uint32 v8 = getLocationFlags();
 
 		if (_engineFlags & kEngineQuit)
 			break;
@@ -576,7 +576,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	uint16 _di = y;
 	uint16 _si = x;
 
-	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
+	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); it++) {
 //		printf("Zone name: %s", z->_name);
 
 		ZonePtr z = *it;
@@ -637,7 +637,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 
 	int16 _a, _b, _c, _d, _e, _f;
-	for (AnimationList::iterator ait = _animations.begin(); ait != _animations.end(); ait++) {
+	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ait++) {
 
 		AnimationPtr a = *ait;
 

@@ -119,15 +119,15 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 	drawJewelsFadeOutStart();
 	drawJewelsFadeOutEnd(jewel);
 
-	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-	_scriptClick->regs[3] = 0;
-	_scriptClick->regs[6] = jewel;
-	_scriptInterpreter->startScript(_scriptClick, 4);
+	_emc->init(&_scriptClick, &_scriptClickData);
+	_scriptClick.regs[3] = 0;
+	_scriptClick.regs[6] = jewel;
+	_emc->start(&_scriptClick, 4);
 
-	while (_scriptInterpreter->validScript(_scriptClick))
-		_scriptInterpreter->runScript(_scriptClick);
+	while (_emc->isValid(&_scriptClick))
+		_emc->run(&_scriptClick);
 
-	if (_scriptClick->regs[3])
+	if (_scriptClick.regs[3])
 		return 1;
 
 	_unkAmuletVar = 1;
@@ -624,6 +624,8 @@ int GUI_v1::loadGameMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
+	_vm->_gameToLoad = -1;
+
 	while (_displaySubMenu && !_vm->_quitFlag) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
@@ -639,7 +641,8 @@ int GUI_v1::loadGameMenu(Button *button) {
 		updateAllMenuButtons();
 	} else {
 		restorePalette();
-		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+		if (_vm->_gameToLoad != -1)
+			_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
 		_displayMenu = false;
 		_menuRestoreScreen = false;
 	}

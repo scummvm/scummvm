@@ -33,110 +33,6 @@
 
 namespace Made {
 
-
-const char *extendFuncNames[] = {
-	"SYSTEM",
-	"INITGRAF",
-	"RESTOREGRAF",
-	"DRAWPIC",
-	"CLS",
-	"SHOWPAGE",
-	"EVENT",
-	"EVENTX",
-	"EVENTY",
-	"EVENTKEY",
-	"VISUALFX",
-	"PLAYSND",
-	"PLAYMUS",
-	"STOPMUS",
-	"ISMUS",
-	"TEXTPOS",
-	"FLASH",
-	"PLAYNOTE",
-	"STOPNOTE",
-	"PLAYTELE",
-	"STOPTELE",
-	"HIDECURS",
-	"SHOWCURS",
-	"MUSICBEAT",
-	"SCREENLOCK",
-	"ADDSPRITE",
-	"FREEANIM",
-	"DRAWSPRITE",
-	"ERASESPRITES",
-	"UPDATESPRITES",
-	"GETTIMER",
-	"SETTIMER",
-	"RESETTIMER",
-	"ALLOCTIMER",
-	"FREETIMER",
-	"PALETTELOCK",
-	"FONT",
-	"DRAWTEXT",
-	"HOMETEXT",
-	"TEXTRECT",
-	"TEXTXY",
-	"DROPSHADOW",
-	"TEXTCOLOR",
-	"OUTLINE",
-	"LOADCURSOR",
-	"SETGROUND",
-	"RESTEXT",
-	"CLIPAREA",
-	"SETCLIP",
-	"ISSND",
-	"STOPSND",
-	"PLAYVOICE",
-	"CDPLAY",
-	"STOPCD",
-	"CDSTATUS",
-	"CDTIME",
-	"CDPLAYSEG",
-	"PRINTF",
-	"MONOCLS",
-	"SNDENERGY",
-	"CLEARTEXT",
-	"ANIMTEXT",
-	"TEXTWIDTH",
-	"PLAYMOVIE",
-	"LOADSND",
-	"LOADMUS",
-	"LOADPIC",
-	"MUSICVOL",
-	"RESTARTEVENTS",
-	"PLACESPRITE",
-	"PLACETEXT",
-	"DELETECHANNEL",
-	"CHANNELTYPE",
-	"SETSTATE",
-	"SETLOCATION",
-	"SETCONTENT",
-	"EXCLUDEAREA",
-	"SETEXCLUDE",
-	"GETSTATE",
-	"PLACEANIM",
-	"SETFRAME",
-	"GETFRAME",
-	"GETFRAMECOUNT",
-	"PICWIDTH",
-	"PICHEIGHT",
-	"SOUNDRATE",
-	"DRAWANIMPIC",
-	"LOADANIM",
-	"READTEXT",
-	"READMENU",
-	"DRAWMENU",
-	"MENUCOUNT",
-	"SAVEGAME",
-	"LOADGAME",
-	"GAMENAME",
-	"SHAKESCREEN",
-	"PLACEMENU",
-	"SETVOLUME",
-	"WHATSYNTH",
-	"SLOWSYSTEM"
-};
-
 /* ScriptStack */
 
 ScriptStack::ScriptStack() {
@@ -275,8 +171,16 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	};
 	_commands = commandProcs;
 	_commandsMax = ARRAYSIZE(commandProcs) + 1;
-	
-	_functions = new ScriptFunctionsRtz(_vm);
+
+	if (_vm->getGameID() == GID_RTZ)
+		_functions = new ScriptFunctionsRtz(_vm);
+	else if (_vm->getGameID() == GID_LGOP2)
+		_functions = new ScriptFunctionsLgop2(_vm);
+	else if (_vm->getGameID() == GID_MANHOLE)
+		_functions = new ScriptFunctionsMhne(_vm);
+	else
+		error("Unsupported GameID");
+		
 	_functions->setupExternalsTable();
 	
 #undef COMMAND
@@ -302,7 +206,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			debug(4, "opcode = %s\n", _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
 		} else {
-			printf("ScriptInterpreter::runScript(%d) Unknown opcode %02X\n", _runningScriptObjectIndex, opcode);
+			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X\n", _runningScriptObjectIndex, opcode);
 		}
 	}
 
@@ -442,7 +346,6 @@ void ScriptInterpreter::cmd_getObjectProperty() {
 	int16 objectIndex = _stack.top();
 	int16 value = _vm->_dat->getObjectProperty(objectIndex, propertyId);
 	debug(4, "value = %04X(%d)\n", value, value);
-	//fflush(stdout); g_system->delayMillis(5000);
 	_stack.setTop(value);
 }
 
@@ -451,7 +354,6 @@ void ScriptInterpreter::cmd_setObjectProperty() {
 	int16 propertyId = _stack.pop();
 	int16 objectIndex = _stack.top();
 	value = _vm->_dat->setObjectProperty(objectIndex, propertyId, value);
-	//fflush(stdout); g_system->delayMillis(5000);
 	_stack.setTop(value);
 }
 
@@ -481,9 +383,9 @@ void ScriptInterpreter::cmd_printNumber() {
 }
 
 void ScriptInterpreter::cmd_vref() {
+	int16 value = 0;
 	int16 index = _stack.pop();
 	int16 objectIndex = _stack.top();
-	int16 value = 0;
 	debug(4, "index = %d; objectIndex = %d\n", index, objectIndex); fflush(stdout);
 	if (objectIndex > 0) {
 		Object *obj = _vm->_dat->getObject(objectIndex);
@@ -507,9 +409,11 @@ void ScriptInterpreter::cmd_vset() {
 
 void ScriptInterpreter::cmd_vsize() {
 	int16 objectIndex = _stack.top();
-	if (objectIndex < 1) objectIndex = 1;	// HACK
-	Object *obj = _vm->_dat->getObject(objectIndex);
-	int16 size = obj->getVectorSize();
+	int16 size = 0;
+	if (objectIndex > 0) {
+		Object *obj = _vm->_dat->getObject(objectIndex);
+		size = obj->getVectorSize();
+	}
 	_stack.setTop(size);
 }
 
@@ -522,7 +426,6 @@ void ScriptInterpreter::cmd_return() {
 	int16 funcResult = _stack.top();
 	_stack.setStackPos(_localStackPos);
 	_localStackPos = kScriptStackLimit - _stack.pop();
-	//_localStackPos = _stack.pop();
 	_runningScriptObjectIndex = _stack.pop();
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase + _stack.pop();
@@ -544,7 +447,6 @@ void ScriptInterpreter::cmd_call() {
 	debug(4, "argc = %d; _runningScriptObjectIndex = %04X\n", argc, _runningScriptObjectIndex); fflush(stdout);
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
-	//_vm->_dat->dumpObject(_runningScriptObjectIndex);
 }
 
 void ScriptInterpreter::cmd_svar() {
@@ -623,12 +525,11 @@ void ScriptInterpreter::cmd_restart() {
 }
 
 void ScriptInterpreter::cmd_rand() {
-	warning("Unimplemented command: cmd_rand");
+	_stack.setTop(_vm->_rnd->getRandomNumber(_stack.top() - 1));
 }
 
 void ScriptInterpreter::cmd_randomize() {
-	warning("Unimplemented command: cmd_randomize");
-	// TODO
+	_vm->_rnd->setSeed(g_system->getMillis());
 	_stack.setTop(0);
 }
 
@@ -682,7 +583,8 @@ void ScriptInterpreter::cmd_extend() {
 	byte argc = readByte();
 	int16 *argv = _stack.getStackPtr();
 
-	debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc);
+	//debug(4, "func = %d (%s); argc = %d\n", func, extendFuncNames[func], argc);
+	debug(4, "func = %d; argc = %d\n", func, argc);
 	for (int i = 0; i < argc; i++)
 		debug(4, "argv[%02d] = %04X (%d)\n", i, argv[i], argv[i]);
 

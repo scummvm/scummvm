@@ -33,7 +33,7 @@ namespace Common {
 /**
  * Extremly simple fixed size stack class.
  */
-template <class T, int MAX_SIZE = 10>
+template<class T, int MAX_SIZE = 10>
 class FixedStack {
 protected:
 	T	_stack[MAX_SIZE];
@@ -47,15 +47,15 @@ public:
 	void clear() {
 		_size = 0;
 	}
-	void push(const T& x) {
+	void push(const T &x) {
 		assert(_size < MAX_SIZE);
 		_stack[_size++] = x;
 	}
-	const T& top() const {
+	const T &top() const {
 		assert(_size > 0);
 		return _stack[_size - 1];
 	}
-	T& top() {
+	T &top() {
 		assert(_size > 0);
 		return _stack[_size - 1];
 	}
@@ -67,11 +67,11 @@ public:
 	int size() const {
 		return _size;
 	}
-	T& operator [](int i) {
+	T &operator[](int i) {
 		assert(0 <= i && i < MAX_SIZE);
 		return _stack[i];
 	}
-	const T& operator [](int i) const {
+	const T &operator[](int i) const {
 		assert(0 <= i && i < MAX_SIZE);
 		return _stack[i];
 	}
@@ -81,7 +81,7 @@ public:
 /**
  * Variable size stack class, implemented using our Array class.
  */
-template <class T>
+template<class T>
 class Stack {
 protected:
 	Array<T>	_stack;
@@ -95,7 +95,7 @@ public:
 	void clear() {
 		_stack.clear();
 	}
-	void push(const T& x) {
+	void push(const T &x) {
 		_stack.push_back(x);
 	}
 	T top() const {
@@ -110,7 +110,7 @@ public:
 	int size() const {
 		return _stack.size();
 	}
-	T operator [](int i) {
+	T operator[](int i) {
 		return _stack[i];
 	}
 };

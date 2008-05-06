@@ -2,7 +2,7 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_CINE
+#define ENABLE_CINE STATIC_PLUGIN
 #define _DEBUG
 
 #undef USE_MAD

@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -27,36 +27,46 @@
 #define KYRA_SCREEN_V2_H
 
 #include "kyra/screen.h"
+#include "kyra/kyra_v2.h"
 
 namespace Kyra {
 
-class KyraEngine_v2;
-
-class Screen_v2 : public ScreenEx {
-friend class Debugger_v2;
+class Screen_v2 : public Screen {
 public:
-	Screen_v2(KyraEngine_v2 *vm, OSystem *system);
-	virtual ~Screen_v2();
+	Screen_v2(KyraEngine *vm, OSystem *system) : Screen(vm, system) {}
 
-	virtual void setScreenDim(int dim);
-	virtual const ScreenDim *getScreenDim(int dim);
+	// screen page handling
+	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
+					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
 
-	// sequence player
-	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
-	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
-	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
-	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,	int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
-	void copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes);
-	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
-private:
-	KyraEngine_v2 *_vm;
+	// palette handling
+	uint8 *generateOverlay(const uint8 *palette, uint8 *buffer, int color, uint16 factor);
+	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
+	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors);
 
-	static const ScreenDim _screenDimTable[];
-	static const int _screenDimTableCount;
+	// shape handling
+	uint8 *getPtrToShape(uint8 *shpFile, int shape);
+	const uint8 *getPtrToShape(const uint8 *shpFile, int shape);
 
-	uint8 *_wsaFrameAnimBuffer;
+	int getShapeScaledWidth(const uint8 *shpFile, int scale);
+	int getShapeScaledHeight(const uint8 *shpFile, int scale);
+
+	uint16 getShapeSize(const uint8 *shp);
+
+	uint8 *makeShapeCopy(const uint8 *src, int index);
+
+	// rect handling
+	int getRectSize(int w, int h);
+
+	// text display
+	void setTextColorMap(const uint8 *cmap);
+
+	// layer handling
+	virtual int getLayer(int x, int y);
+protected:
 };
 
-} // End of namespace Kyra
+} // end of namespace Kyra
 
-#endif
+#endif 
+

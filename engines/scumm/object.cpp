@@ -491,7 +491,7 @@ int ScummEngine::findObject(int x, int y) {
 			a = _objs[b].parentstate;
 			b = _objs[b].parent;
 			if (b == 0) {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 				if (_game.heversion >= 71) {
 					if (((ScummEngine_v71he *)this)->_wiz->polygonHit(_objs[i].obj_nr, x, y))
 						return _objs[i].obj_nr;
@@ -614,7 +614,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		    (_game.id == GID_FT && getClass(od.obj_nr, kObjectClassPlayer)))
 			flags |= Gdi::dbDrawMaskOnAll;
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 		if (_game.heversion >= 70 && findResource(MKID_BE('SMAP'), ptr) == NULL)
 			_gdi->drawBMAPObject(ptr, &_virtscr[kMainVirtScreen], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
@@ -1071,7 +1071,7 @@ void ScummEngine_v6::clearDrawQueues() {
 	_blastObjectQueuePos = 0;
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::clearDrawQueues() {
 	ScummEngine_v6::clearDrawQueues();
 
@@ -1304,7 +1304,7 @@ int ScummEngine::getObjectImageCount(int object) {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
 	// In V8, IMHD has no obj_id, but rather a name string. We map the name
 	// back to an object id using a table derived from the DOBJ resource.

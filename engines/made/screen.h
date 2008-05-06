@@ -31,6 +31,8 @@
 
 #include "graphics/surface.h"
 
+#include "made/resource.h"
+
 namespace Made {
 
 struct SpriteChannel {
@@ -70,8 +72,33 @@ public:
 	void setClip(uint16 clip) { _clip = clip; }
 	void setExclude(uint16 exclude) { _exclude = exclude; }
 	void setGround(uint16 ground) { _ground = ground; }
-	void setFont(uint16 font) { _currentFont = font; }
+	void setTextColor(int16 color) { _textColor = color; }
 
+	void setTextRect(const Common::Rect &textRect) {
+		_textRect = textRect;
+		_textX = _textRect.left;
+		_textY = _textRect.top;
+	}
+
+	void getTextRect(Common::Rect &textRect) {
+		textRect = _textRect;
+	}
+
+	void setOutlineColor(int16 color) {
+		_outlineColor = color;
+		_dropShadowColor = -1;
+	}
+
+	void setDropShadowColor(int16 color) { 
+		_outlineColor = -1;
+		_dropShadowColor = color;
+	}
+	
+	void setTextXY(int16 x, int16 y) {
+		_textX = x;
+		_textY = y;
+	}
+	
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
 	int16 getChannelType(uint16 channelIndex);
@@ -105,7 +132,13 @@ public:
 	void show();
 	void flash(int count);
 	
-	byte _screenPalette[256 * 4];
+	void setFont(int16 fontNum);
+	void printChar(uint c, int16 x, int16 y, byte color);
+	void printText(const char *text);
+	void printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo);
+	void printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo);
+	int16 getTextWidth(int16 fontNum, const char *text);
+
 
 protected:
 	MadeEngine *_vm;
@@ -113,10 +146,19 @@ protected:
 	bool _screenLock;
 	bool _paletteLock;
 
+	byte _screenPalette[256 * 4];
 	byte _palette[768], _newPalette[768], _fxPalette[768];
 	int _paletteColorCount, _oldPaletteColorCount;
 	bool _paletteInitialized, _needPalette;
-	uint16 _currentFont;
+	int16 _textColor;
+	int16 _outlineColor;
+	int16 _dropShadowColor;
+
+	int16 _textX, _textY;
+	Common::Rect _textRect;
+	int16 _currentFontNum;
+	FontResource *_font;
+	ClipInfo _fontDrawCtx;
 
 	uint16 _clip, _exclude, _ground;
 	int _visualEffectNum;

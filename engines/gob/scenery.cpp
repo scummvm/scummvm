@@ -33,6 +33,8 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/inter.h"
+#include "gob/map.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -454,6 +456,7 @@ int16 Scenery::loadAnim(char search) {
 	ptr->layers = new AnimLayer[ptr->layersCount];
 	ptr->pieces = new PieceDesc*[picsCount];
 	ptr->piecesFromExt = new bool[picsCount];
+	ptr->sizes = new uint16[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		int16 offset = READ_LE_UINT16(dataPtr + i * 2);
@@ -492,13 +495,19 @@ int16 Scenery::loadAnim(char search) {
 	for (i = 0; i < picsCount; i++) {
 		pictDescId = _vm->_inter->load16();
 		if (pictDescId >= 30000) {
+			uint32 size;
+
 			ptr->pieces[i] =
-				(PieceDesc *) _vm->_game->loadExtData(pictDescId, 0, 0);
+				(PieceDesc *) _vm->_game->loadExtData(pictDescId, 0, 0, &size);
 			ptr->piecesFromExt[i] = true;
+			ptr->sizes[i] = size / 8;
 		} else {
+			int16 size;
+
 			ptr->pieces[i] =
-				(PieceDesc *) _vm->_game->loadTotResource(pictDescId);
+				(PieceDesc *) _vm->_game->loadTotResource(pictDescId, &size);
 			ptr->piecesFromExt[i] = false;
+			ptr->sizes[i] = size / 8;
 		}
 
 		width = _vm->_inter->load16();
@@ -561,6 +570,7 @@ void Scenery::freeAnim(int16 index) {
 	delete[] _animations[index].layers;
 	delete[] _animations[index].pieces;
 	delete[] _animations[index].piecesFromExt;
+	delete[] _animations[index].sizes;
 
 	_animPictCount[index] = 0;
 }
@@ -591,6 +601,138 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 	int16 destX;
 	int16 destY;
+
+	if (animation < 0) {
+		// Object video
+
+		if (flags & 1) { // Do capture
+			updateAnim(layer, frame, animation, 0, drawDeltaX, drawDeltaY, 0);
+
+			if (_toRedrawLeft == -12345)
+				return;
+
+			_vm->_game->capturePush(_toRedrawLeft, _toRedrawTop,
+					_toRedrawRight - _toRedrawLeft + 1,
+					_toRedrawBottom - _toRedrawTop + 1);
+
+			*_pCaptureCounter = *_pCaptureCounter + 1;
+		}
+
+		Mult::Mult_Object &obj = _vm->_mult->_objects[-animation - 1];
+
+		if (!_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
+			_toRedrawLeft = -1234;
+			return;
+		}
+
+		if (frame >= _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1))
+			frame = _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1) - 1;
+
+		// Seek to frame
+		while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) <= frame)
+			_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+
+		destX = 0;
+		destY = 0;
+		left = *(obj.pPosX);
+		top = *(obj.pPosY);
+		right = left + _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - 1;
+		bottom = top + _vm->_vidPlayer->getHeight(obj.videoSlot - 1) - 1;
+
+		if (flags & 2) {
+			if (left < _vm->_mult->_animLeft) {
+				destX += _vm->_mult->_animLeft - left;
+				left = _vm->_mult->_animLeft;
+			}
+
+			if ((_vm->_mult->_animLeft + _vm->_mult->_animWidth) <= right)
+				right = _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1;
+
+			if (top < _vm->_mult->_animTop) {
+				destY += _vm->_mult->_animTop - top;
+				top = _vm->_mult->_animTop;
+			}
+
+			if ((_vm->_mult->_animTop + _vm->_mult->_animHeight) <= bottom)
+				bottom = _vm->_mult->_animTop + _vm->_mult->_animHeight - 1;
+
+		} else if (flags & 4) {
+			if (left < _toRedrawLeft) {
+				destX += _toRedrawLeft - left;
+				left = _toRedrawLeft;
+			}
+
+			if (right > _toRedrawRight)
+				right = _toRedrawRight;
+
+			if (top < _toRedrawTop) {
+				destY += _toRedrawTop - top;
+				top = _toRedrawTop;
+			}
+
+			if (bottom > _toRedrawBottom)
+				bottom = _toRedrawBottom;
+
+		} else {
+			_toRedrawTop = top;
+			_toRedrawLeft = left;
+			_toRedrawRight = right;
+			_toRedrawBottom = bottom;
+		}
+
+		if (doDraw) {
+			if ((left > right) || (top > bottom))
+				return;
+
+			if (left < _vm->_mult->_animLeft) {
+				destX += _vm->_mult->_animLeft - left;
+				left = _vm->_mult->_animLeft;
+			}
+
+			if ((_vm->_mult->_animLeft + _vm->_mult->_animWidth) <= right)
+				right = _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1;
+
+			if (top < _vm->_mult->_animTop) {
+				destY += _vm->_mult->_animTop - top;
+				top = _vm->_mult->_animTop;
+			}
+
+			if ((_vm->_mult->_animTop + _vm->_mult->_animHeight) <= bottom)
+				bottom = _vm->_mult->_animTop + _vm->_mult->_animHeight - 1;
+
+			_vm->_draw->_spriteLeft = destX;
+			_vm->_draw->_spriteTop = destY;
+			_vm->_draw->_spriteRight = right - left + 1;
+			_vm->_draw->_spriteBottom = bottom - top + 1;
+			_vm->_draw->_destSpriteX = left;
+			_vm->_draw->_destSpriteY = top;
+			_vm->_draw->_transparency = layer;
+			if (layer & 0x80)
+				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
+					(destX + _vm->_draw->_spriteRight);
+
+			_vm->_vidPlayer->slotCopyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
+					_vm->_draw->_spriteLeft, _vm->_draw->_spriteTop,
+					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
+					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
+					_vm->_draw->_backSurface->getWidth(),
+					(_vm->_draw->_transparency != 0) ? 0 : -1);
+
+			_vm->_draw->invalidateRect(_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
+					_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1,
+					_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
+
+		}
+
+		if (flags & 4) {
+			_animLeft = _toRedrawLeft = left;
+			_animTop = _toRedrawTop = top;
+			_animRight = _toRedrawRight = right;
+			_animBottom = _toRedrawBottom = bottom;
+		}
+
+		return;
+	}
 
 	if ((_animPictCount[animation] == 0) || (layer < 0))
 		return;
@@ -669,6 +811,16 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			destY += drawDeltaY;
 
 		pictIndex = (pictIndex & 15) - 1;
+
+		if ((pictIndex == 0xFFFF) || (_animPictCount[animation] <= pictIndex)) {
+			warning("Scenery::updateAnim: pictIndex out of range");
+			return;
+		}
+
+		if (_animations[animation].sizes[pictIndex] <= pieceIndex) {
+			warning("Scenery::updateAnim: pieceIndex out of range");
+			continue;
+		}
 
 		left = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].left);
 		right = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].right);

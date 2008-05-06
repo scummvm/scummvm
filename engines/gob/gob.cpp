@@ -146,10 +146,7 @@ int GobEngine::init() {
 		return -1;
 	}
 
-	_system->beginGFXTransaction();
-		_system->initSize(_width, _height);
-		initCommonGFX(is640());
-	_system->endGFXTransaction();
+	_video->setSize(is640());
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (isCD())
@@ -328,7 +325,7 @@ bool GobEngine::initGameParts() {
 			_draw = new Draw_v2(this);
 			_game = new Game_v2(this);
 			_map = new Map_v4(this);
-			_goblin = new Goblin_v3(this);
+			_goblin = new Goblin_v4(this);
 			_scenery = new Scenery_v2(this);
 			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
 			break;
@@ -346,15 +343,15 @@ bool GobEngine::initGameParts() {
 	if (is640()) {
 		_video->_surfWidth = _width = 640;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 480;
-		_global->_mouseMaxCol = 640;
-		_global->_mouseMaxRow = 480;
+		_global->_mouseMaxX = 640;
+		_global->_mouseMaxY = 480;
 		_mode = 0x18;
 		_global->_primarySurfDesc = new SurfaceDesc(0x18, 640, 480);
 	} else {
 		_video->_surfWidth = _width = 320;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 200;
-		_global->_mouseMaxCol = 320;
-		_global->_mouseMaxRow = 200;
+		_global->_mouseMaxX = 320;
+		_global->_mouseMaxY = 200;
 		_mode = 0x14;
 		_global->_primarySurfDesc = new SurfaceDesc(0x14, 320, 200);
 	}

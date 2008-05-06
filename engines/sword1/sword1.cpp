@@ -187,7 +187,11 @@ PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(SWORD1)
+	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
+#endif
 
 namespace Sword1 {
 

@@ -51,6 +51,9 @@ PLUGIN:=
 # Add to "plugins" target
 plugins: $(PLUGIN-$(MODULE))
 
+# Add to the PLUGINS variable
+PLUGINS += $(PLUGIN-$(MODULE))
+
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(PLUGIN-$(MODULE))
 clean-plugins: clean-$(MODULE)

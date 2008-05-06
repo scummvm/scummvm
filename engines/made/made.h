@@ -47,6 +47,12 @@
 
 namespace Made {
 
+enum MadeGameID {
+	GID_RTZ = 0,
+	GID_MANHOLE = 1,
+	GID_LGOP2 = 2
+};
+
 enum MadeGameFeatures {
 	GF_DEMO = 1 << 0,
 	GF_CD = 1 << 1,
@@ -100,6 +106,10 @@ public:
 	uint16 _eventKey;
 	int _soundRate;
 	int _musicVolume;
+	
+	// 2 = LGOP2, Manhole N&E
+	// 3 = Return to Zork
+	int _engineVersion;
 
 	int32 _timers[50];
 	int16 getTimer(int16 timerNum);

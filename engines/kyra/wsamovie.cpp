@@ -32,6 +32,7 @@
 #include "kyra/screen.h"
 #include "kyra/screen_v2.h"
 #include "kyra/wsamovie.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 WSAMovieV1::WSAMovieV1(KyraEngine *vm) : Movie(vm) {}
@@ -341,7 +342,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieV2::WSAMovieV2(KyraEngine *vm, ScreenEx *screen) : WSAMovieV1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
+WSAMovieV2::WSAMovieV2(KyraEngine *vm, Screen_v2 *screen) : WSAMovieV1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
 
 int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieV2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);

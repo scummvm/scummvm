@@ -165,23 +165,22 @@ void ScriptFunctionsRtz::setupExternalsTable() {
 #undef External
 
 int16 ScriptFunctionsRtz::o1_SYSTEM(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_SYSTEM");
+	// This opcode is empty.
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_INITGRAF(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_INITGRAF");
+	// This opcode is empty.
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_RESTOREGRAF(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_RESTOREGRAF");
+	// This opcode is empty.
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWPIC(int16 argc, int16 *argv) {
-	int16 channel = _vm->_screen->drawPic(argv[4], argv[3], argv[2], argv[1], argv[0]);
-	return channel;
+	return _vm->_screen->drawPic(argv[4], argv[3], argv[2], argv[1], argv[0]);
 }
 
 int16 ScriptFunctionsRtz::o1_CLS(int16 argc, int16 *argv) {
@@ -219,25 +218,7 @@ int16 ScriptFunctionsRtz::o1_EVENT(int16 argc, int16 *argv) {
 
 		case Common::EVENT_KEYDOWN:
 			_vm->_eventKey = event.kbd.ascii;
-			switch (_vm->_eventKey) {
-			case '1':
-				eventNum = 1;
-				break;
-			case '2':
-				eventNum = 2;
-				break;
-			case '3':
-				eventNum = 3;
-				break;
-			case '4':
-				eventNum = 4;
-				break;
-			case '5':
-				eventNum = 5;
-				break;
-			default:
-				break;
-			}
+			eventNum = 5;
 			break;
 
 		case Common::EVENT_QUIT:
@@ -252,7 +233,6 @@ int16 ScriptFunctionsRtz::o1_EVENT(int16 argc, int16 *argv) {
 	}
 
 	_vm->_system->updateScreen();
-	//g_system->delayMillis(10);
 
 	return eventNum;
 }
@@ -275,18 +255,18 @@ int16 ScriptFunctionsRtz::o1_VISUALFX(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYSND(int16 argc, int16 *argv) {
-	int soundId = argv[0];
+	int soundNum = argv[0];
 	bool loop = false;
 
 	if (argc > 1) {
-		soundId = argv[1];
+		soundNum = argv[1];
 		loop = (argv[0] == 1);
 	}
 
-	if (soundId > 0) {
+	if (soundNum > 0) {
 		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
 			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
-										 _vm->_res->getSound(soundId)->getAudioStream(_vm->_soundRate, loop));
+										 _vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, loop));
 		}
 	}
 
@@ -294,9 +274,9 @@ int16 ScriptFunctionsRtz::o1_PLAYSND(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYMUS(int16 argc, int16 *argv) {
-	int16 musicId = argv[0];
-	if (musicId > 0) {
-		XmidiResource *xmidi = _vm->_res->getXmidi(musicId);
+	int16 musicNum = argv[0];
+	if (musicNum > 0) {
+		XmidiResource *xmidi = _vm->_res->getXmidi(musicNum);
 		_vm->_music->play(xmidi);
 		_vm->_res->freeResource(xmidi);
 	}
@@ -317,6 +297,8 @@ int16 ScriptFunctionsRtz::o1_ISMUS(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_TEXTPOS(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_TEXTPOS");
+	// This seems to be some kind of low-level opcode.
+	// The original engine calls int 10h to set the VGA cursor position.
 	return 0;
 }
 
@@ -421,16 +403,14 @@ int16 ScriptFunctionsRtz::o1_PALETTELOCK(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_FONT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_FONT");
-
-	uint16 fontID = argv[0];
-	printf("Set font to %i\n", fontID);
-	_vm->_screen->setFont(fontID);
+	_vm->_screen->setFont(argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWTEXT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_DRAWTEXT");
+	Object *obj = _vm->_dat->getObject(argv[argc - 1]);
+	const char *text = obj->getString();
+	_vm->_screen->printText(text);
 	return 0;
 }
 
@@ -440,32 +420,39 @@ int16 ScriptFunctionsRtz::o1_HOMETEXT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTRECT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_TEXTRECT");
+	int16 x1 = CLIP<int16>(argv[4], 1, 318);
+	int16 y1 = CLIP<int16>(argv[3], 1, 198);
+	int16 x2 = CLIP<int16>(argv[2], 1, 318);
+	int16 y2 = CLIP<int16>(argv[1], 1, 198);
+	//int16 textValue = argv[0];
+	// TODO: textValue
+	_vm->_screen->setTextRect(Common::Rect(x1, y1, x2, y2));
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTXY(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_TEXTXY");
-
-	int16 x = CLIP<int16>(argv[0], 1, 318);
-	int16 y = CLIP<int16>(argv[1], 1, 198);
-
-	printf("Text: x = %i, y = %i\n", x, y);
+	int16 x = CLIP<int16>(argv[1], 1, 318);
+	int16 y = CLIP<int16>(argv[0], 1, 198);
+	_vm->_screen->setTextXY(x, y);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_DROPSHADOW(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_DROPSHADOW");
+	// if the drop shadow color is -1, then text drop shadow is disabled
+	// when font drop shadow is enabled, outline is disabled
+	_vm->_screen->setDropShadowColor(argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTCOLOR(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_TEXTCOLOR");
+	_vm->_screen->setTextColor(argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_OUTLINE(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_OUTLINE");
+	// if the outline color is -1, then text outline is disabled
+	// when font outline is enabled, drop shadow is disabled
+	_vm->_screen->setOutlineColor(argv[0]);
 	return 0;
 }
 
@@ -548,7 +535,9 @@ int16 ScriptFunctionsRtz::o1_CDPLAYSEG(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PRINTF(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_PRINTF");
+	Object *obj = _vm->_dat->getObject(argv[argc - 1]);
+	const char *text = obj->getString();
+	debug(4, "--> text = %s", text);
 	return 0;
 }
 
@@ -560,6 +549,7 @@ int16 ScriptFunctionsRtz::o1_MONOCLS(int16 argc, int16 *argv) {
 int16 ScriptFunctionsRtz::o1_SNDENERGY(int16 argc, int16 *argv) {
 	// This is called while in-game voices are played
 	// Not sure what it's used for
+	// -> It's used to animate mouths when NPCs are talking
 	// Commented out to reduce spam
 	//warning("Unimplemented opcode: o1_SNDENERGY");
 	return 0;
@@ -567,7 +557,7 @@ int16 ScriptFunctionsRtz::o1_SNDENERGY(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_CLEARTEXT(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_CLEARTEXT");
-	return 0;
+	return 1;
 }
 
 int16 ScriptFunctionsRtz::o1_ANIMTEXT(int16 argc, int16 *argv) {
@@ -576,11 +566,13 @@ int16 ScriptFunctionsRtz::o1_ANIMTEXT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_TEXTWIDTH(int16 argc, int16 *argv) {
-	Object *obj = _vm->_dat->getObject(argv[1]);
-	const char *text = obj->getString();
-	debug(4, "text = %s\n", text);
-	// TODO
-	return 0;
+	int16 width = 0;
+	if (argv[1] > 0) {
+		Object *obj = _vm->_dat->getObject(argv[1]);
+		const char *text = obj->getString();
+		width = _vm->_screen->getTextWidth(argv[0], text);
+	}
+	return width;
 }
 
 int16 ScriptFunctionsRtz::o1_PLAYMOVIE(int16 argc, int16 *argv) {
@@ -631,10 +623,7 @@ int16 ScriptFunctionsRtz::o1_PLACESPRITE(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_PLACETEXT(int16 argc, int16 *argv) {
-	Object *obj = _vm->_dat->getObject(argv[5]);
-	const char *text = obj->getString();
-	debug(4, "text = %s\n", text); fflush(stdout);
-	return 0;
+	return _vm->_screen->placeText(argv[6], argv[5], argv[4], argv[3], argv[2], argv[1], argv[0]);
 }
 
 int16 ScriptFunctionsRtz::o1_DELETECHANNEL(int16 argc, int16 *argv) {
@@ -743,41 +732,104 @@ int16 ScriptFunctionsRtz::o1_READMENU(int16 argc, int16 *argv) {
 	int16 objectIndex = argv[2];
 	int16 menuIndex = argv[1];
 	int16 textIndex = argv[0];
+	int16 length = 0;
 	MenuResource *menu = _vm->_res->getMenu(menuIndex);
 	if (menu) {
 		const char *text = menu->getString(textIndex);
-		debug(4, "text = %s\n", text); fflush(stdout);
+		debug(4, "objectIndex = %04X; text = %s\n", objectIndex, text);
 		Object *obj = _vm->_dat->getObject(objectIndex);
 		obj->setString(text);
 		_vm->_res->freeResource(menu);
+		if (text)
+			length = strlen(text);
 	}
-
-	return 0;
+	return length;
 }
 
 int16 ScriptFunctionsRtz::o1_DRAWMENU(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_DRAWMENU");
+	int16 menuIndex = argv[1];
+	int16 textIndex = argv[0];
+	MenuResource *menu = _vm->_res->getMenu(menuIndex);
+	if (menu) {
+		const char *text = menu->getString(textIndex);
+		if (text)
+			_vm->_screen->printText(text);
+		_vm->_res->freeResource(menu);
+	}
 	return 0;
 }
 
 int16 ScriptFunctionsRtz::o1_MENUCOUNT(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_MENUCOUNT");
-	return 0;
+	int16 menuIndex = argv[0];
+	int16 count = 0;
+	MenuResource *menu = _vm->_res->getMenu(menuIndex);
+	if (menu) {
+		count = menu->getCount();
+		_vm->_res->freeResource(menu);
+	}
+	return count;
 }
 
 int16 ScriptFunctionsRtz::o1_SAVEGAME(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_SAVEGAME");
-	return 0;
+	
+	int16 saveNum = argv[2];
+	int16 descObjectIndex = argv[1];
+	int16 version = argv[0];
+	
+	if (saveNum > 999)
+		return 6;
+
+	Object *obj = _vm->_dat->getObject(descObjectIndex);
+	const char *description = obj->getString();
+
+	// TODO: Use better filename
+	char filename[256];
+	snprintf(filename, 256, "rtz.%03d", saveNum);
+	
+	return _vm->_dat->savegame(filename, description, version);
+	
 }
 
 int16 ScriptFunctionsRtz::o1_LOADGAME(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_LOADGAME");
-	return 0;
+
+	int16 saveNum = argv[1];
+	int16 version = argv[0];
+
+	if (saveNum > 999)
+		return 1;
+
+	// TODO: Use better filename
+	char filename[256];
+	snprintf(filename, 256, "rtz.%03d", saveNum);
+
+	return _vm->_dat->loadgame(filename, version);
+	
 }
 
 int16 ScriptFunctionsRtz::o1_GAMENAME(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_GAMENAME");
-	return 0;
+	
+	int16 descObjectIndex = argv[2];
+	int16 saveNum = argv[1];
+	/*int16 version = argv[0];*/
+	Common::String description;
+
+	if (saveNum > 999)
+		return 1;
+
+	// TODO: Use better filename
+	char filename[256];
+	snprintf(filename, 256, "rtz.%03d", saveNum);
+
+	Object *obj = _vm->_dat->getObject(descObjectIndex);
+
+	if (_vm->_dat->getSavegameDescription(filename, description)) {
+		obj->setString(description.c_str());
+		return 0;
+	} else {
+		obj->setString("");
+		return 1;
+	}
+
 }
 
 int16 ScriptFunctionsRtz::o1_SHAKESCREEN(int16 argc, int16 *argv) {
@@ -797,6 +849,11 @@ int16 ScriptFunctionsRtz::o1_SETVOLUME(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_WHATSYNTH(int16 argc, int16 *argv) {
+	// 0 = Default
+	// 1 = PCSPKR
+	// 2 = SBFM/ADLIB
+	// 3 = ADLIBG
+	// 4 = MT32MPU
 	warning("Unimplemented opcode: o1_WHATSYNTH");
 	return 0;
 }

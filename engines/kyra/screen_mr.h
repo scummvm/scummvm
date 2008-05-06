@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -23,34 +23,37 @@
  *
  */
 
-#ifndef KYRA_TEXT_V2_H
-#define KYRA_TEXT_V2_H
+#ifndef KYRA_SCREEN_MR_H
+#define KYRA_SCREEN_MR_H
 
-#include "kyra/text.h"
+#include "kyra/screen_v2.h"
 
 namespace Kyra {
 
-class Screen_v2;
-class KyraEngine_v2;
+class KyraEngine_MR;
 
-class TextDisplayer_v2 : public TextDisplayer {
-friend class KyraEngine_v2;
+class Screen_MR : public Screen_v2 {
 public:
-	TextDisplayer_v2(KyraEngine_v2 *vm, Screen_v2 *screen);
+	Screen_MR(KyraEngine_MR *vm, OSystem *system);
+	~Screen_MR();
 
-	void backupTalkTextMessageBkgd(int srcPage, int dstPage);
-	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
-	void restoreScreen();
+	void setScreenDim(int dim);
+	const ScreenDim *getScreenDim(int dim);
 
-	void printCustomCharacterText(const char *src, int x, int y, uint8 c1, int srcPage, int dstPage);
+	int getLayer(int x, int y);
 
-	char *preprocessString(const char *str);
-	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
+	byte getShapeFlag1(int x, int y);
+	byte getShapeFlag2(int x, int y);
+
+	int getDrawLayer(int x, int y);
+	int getDrawLayer2(int x, int y, int height);
+
+	void drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2, uint8 c3);
 private:
-	KyraEngine_v2 *_vm;
+	static const ScreenDim _screenDimTable[];
+	static const int _screenDimTableCount;
 };
 
 } // end of namespace Kyra
 
 #endif
-

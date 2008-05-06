@@ -215,7 +215,7 @@ void Parallaction_br::changeLocation(char *location) {
 	clearSubtitles();
 	freeBackground();
 	_gfx->clearGfxObjects();
-	_programs.clear();
+	_location._programs.clear();
 	freeZones();
 	freeAnimations();
 //	free(_location._comment);

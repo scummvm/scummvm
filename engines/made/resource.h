@@ -35,7 +35,7 @@
 
 namespace Made {
 
-const int kMaxResourceCacheCount = 100;
+const int kMaxResourceCacheCount = 200;
 
 enum ResourceType {
 	kResARCH = MKID_BE('ARCH'),
@@ -45,8 +45,9 @@ enum ResourceType {
 	kResSNDS = MKID_BE('SNDS'),
 	kResANIM = MKID_BE('ANIM'),
 	kResMENU = MKID_BE('MENU'),
+	kResFONT = MKID_BE('FONT'),
 	kResXMID = MKID_BE('XMID'),
-	kResFONT = MKID_BE('FONT')
+	kResMIDI = MKID_BE('MIDI')
 };
 
 struct ResourceSlot;
@@ -112,23 +113,25 @@ protected:
 	Common::Array<Common::String> _strings;
 };
 
-class XmidiResource : public Resource {
-public:
-	XmidiResource();
-	~XmidiResource();
-	void load(byte *source, int size);
-	byte *getData() const { return _data; }
-	int getSize() const { return _size; }
-protected:
-	byte *_data;
-	int _size;
-};
-
-// TODO
 class FontResource : public Resource {
 public:
 	FontResource();
 	~FontResource();
+	void load(byte *source, int size);
+	int getHeight() const;
+	int getCharWidth(uint c) const;
+	int getTextWidth(const char *text);
+	byte *getChar(uint c) const;
+protected:
+	byte *_data;
+	int _size;
+	byte *getCharData(uint c) const;
+};
+
+class GenericResource : public Resource {
+public:
+	GenericResource();
+	~GenericResource();
 	void load(byte *source, int size);
 	byte *getData() const { return _data; }
 	int getSize() const { return _size; }
@@ -160,8 +163,9 @@ public:
 	AnimationResource *getAnimation(int index);
 	SoundResource *getSound(int index);
 	MenuResource *getMenu(int index);
-	XmidiResource *getXmidi(int index);
 	FontResource *getFont(int index);
+	GenericResource *getXmidi(int index);
+	GenericResource *getMidi(int index);
 
 	void freeResource(Resource *resource);
 

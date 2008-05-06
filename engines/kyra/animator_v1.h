@@ -23,38 +23,38 @@
  *
  */
 
-#ifndef KYRA_ANIMATOR_H
-#define KYRA_ANIMATOR_H
+#ifndef KYRA_ANIMATOR_V1_H
+#define KYRA_ANIMATOR_V1_H
 
 namespace Kyra {
 class KyraEngine_v1;
 class Screen;
 
-struct AnimObject {
-	uint8 index;
-	uint32 active;
-	uint32 refreshFlag;
-	uint32 bkgdChangeFlag;
-	bool disable;
-	uint32 flags;
-	int16 drawY;
-	uint8 *sceneAnimPtr;
-	int16 animFrameNumber;
-	uint8 *background;
-	uint16 rectSize;
-	int16 x1, y1;
-	int16 x2, y2;
-	uint16 width;
-	uint16 height;
-	uint16 width2;
-	uint16 height2;
-	AnimObject *nextAnimObject;
-};
-
-class ScreenAnimator {
+class Animator_v1 {
 public:
-	ScreenAnimator(KyraEngine_v1 *vm, OSystem *system);
-	virtual ~ScreenAnimator();
+	struct AnimObject {
+		uint8 index;
+		uint32 active;
+		uint32 refreshFlag;
+		uint32 bkgdChangeFlag;
+		bool disable;
+		uint32 flags;
+		int16 drawY;
+		uint8 *sceneAnimPtr;
+		int16 animFrameNumber;
+		uint8 *background;
+		uint16 rectSize;
+		int16 x1, y1;
+		int16 x2, y2;
+		uint16 width;
+		uint16 height;
+		uint16 width2;
+		uint16 height2;
+		AnimObject *nextAnimObject;
+	};
+
+	Animator_v1(KyraEngine_v1 *vm, OSystem *system);
+	virtual ~Animator_v1();
 
 	operator bool() const { return _initOk; }
 

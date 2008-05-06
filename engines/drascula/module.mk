@@ -1,12 +1,16 @@
 MODULE := engines/drascula
 
 MODULE_OBJS = \
+	animation.o \
 	detection.o \
-	drascula.o
+	drascula.o \
+	rooms.o \
+	talk.o \
+	texts.o
 
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_DRASCULA), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

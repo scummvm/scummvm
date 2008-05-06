@@ -30,9 +30,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(UNIX)
 
-class POSIXPluginProvider : public PluginProvider {
-public:
-	virtual PluginList getPlugins();
+class POSIXPluginProvider : public FilePluginProvider {
+protected:
+	Plugin* createPlugin(const Common::String &filename) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(UNIX)

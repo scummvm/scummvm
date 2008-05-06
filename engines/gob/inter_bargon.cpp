@@ -717,16 +717,16 @@ const char *Inter_Bargon::getOpcodeGoblinDesc(int i) {
 }
 
 void Inter_Bargon::oBargon_intro0(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scaa", 0, 160)) {
-		_vm->_vidPlayer->play(0, 92, 27, 0, 0, 0);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scaa", 0, 160)) {
+		_vm->_vidPlayer->primaryPlay(0, 92, 27, 0, 0, 0);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
 void Inter_Bargon::oBargon_intro1(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scaa", 0, 160)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0, 0, 0, true, 23);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scaa", 0, 160)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0, 0, 0, true, 23);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
@@ -819,44 +819,44 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 }
 
 void Inter_Bargon::oBargon_intro4(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scba", 191, 54)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0, 0, 0, true);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scba", 191, 54)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0, 0, 0, true);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
 void Inter_Bargon::oBargon_intro5(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scbb", 191, 54)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scbb", 191, 54)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
 void Inter_Bargon::oBargon_intro6(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scbc", 191, 54)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scbc", 191, 54)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
 void Inter_Bargon::oBargon_intro7(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scbf", 191, 54)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scbf", 191, 54)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
 void Inter_Bargon::oBargon_intro8(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scbc", 191, 54)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scbc", 191, 54)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 
 void Inter_Bargon::oBargon_intro9(OpGobParams &params) {
-	if (_vm->_vidPlayer->openVideo("scbd", 191, 54)) {
-		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->closeVideo();
+	if (_vm->_vidPlayer->primaryOpen("scbd", 191, 54)) {
+		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->primaryClose();
 	}
 }
 

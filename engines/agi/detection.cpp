@@ -1891,7 +1891,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Fu$k Quest 2 - Romancing the Bone (Teaser)", "d288355d71d9bb1639260ccaa3b2fbfe"),
 	FANMADE("Fu$k Quest 2 - Romancing the Bone", "294beeb7765c7ea6b05ed7b9bf7bff4f"),
 	FANMADE("Gennadi Tahab Autot - Mission Pack 1 - Kuressaare", "bfa5fe71978e6ccf3d4eedd430124015"),
-	FANMADE("Get Outta Space Quest", "aaea5b4a348acb669d13b0e6f22d4dc9"),
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
 
@@ -1908,6 +1907,22 @@ static const AGIGameDescription gameDescriptions[] = {
 		GID_FANMADE,
 		GType_V2,
 		GF_AGDS,
+		0x2440,
+	},
+
+	{
+		// Get Outta SQ
+		{
+			"agi-fanmade",
+			"Get Outta Space Quest",
+			AD_ENTRY1("logdir", "aaea5b4a348acb669d13b0e6f22d4dc9"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_GETOUTTASQ,
+		GType_V2,
+		0,
 		0x2440,
 	},
 
@@ -2309,4 +2324,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 	return 0;
 }
 
-REGISTER_PLUGIN(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(AGI)
+	REGISTER_PLUGIN_DYNAMIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+#endif

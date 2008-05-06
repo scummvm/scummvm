@@ -62,12 +62,12 @@ struct DrasculaGameDescription;
 #define F8           0x42
 #define F9           0x43
 #define F10          0x44
-#define MIRAR           1
-#define COGER           2
-#define ABRIR           3
-#define CERRAR          4
-#define HABLAR          5
-#define MOVER           6
+#define LOOK            1
+#define PICK            2
+#define OPEN            3
+#define CLOSE           4
+#define TALK            5
+#define MOVE            6
 #define INICISOUND      6
 #define FINALSOUND      8
 #define FINDRV          9
@@ -229,8 +229,8 @@ struct DrasculaGameDescription;
 #define X_N9            258
 #define X_N0            267
 #define ESPACIO         250
-#define ALTO_HABLA_HARE  25
-#define ANCHO_HABLA_HARE 23
+#define ALTO_TALK_HARE  25
+#define ANCHO_TALK_HARE 23
 #define VON_BRAUN        1
 #define AZUL_OSCURO       2
 #define VERDE_CLARO       3
@@ -332,7 +332,6 @@ class DrasculaEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
 protected:
-
 	int init();
 	int go();
 //	void shutdown();
@@ -358,8 +357,8 @@ public:
 	void libera_memoria();
 	void salir_al_dos(int r);
 
-	void lee_dibujos(const char *);
-	void descomprime_dibujo(byte *dir_escritura, int plt);
+	void loadPic(const char *);
+	void decompressPic(byte *dir_escritura, int plt);
 
 	typedef char DacPalette256[256][3];
 
@@ -368,12 +367,12 @@ public:
 	void paleta_hare();
 	void ActualizaPaleta();
 	void setvgapalette256(byte *PalBuf);
-	void DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int Ancho,
+	void copyBackground(int xorg, int yorg, int xdes, int ydes, int Ancho,
 				int Alto, byte *Origen, byte *Destino);
-	void DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int Ancho,
+	void copyRect(int xorg, int yorg, int xdes, int ydes, int Ancho,
 				int Alto, byte *Origen, byte *Destino);
-	void DIBUJA_BLOQUE_CUT(int *Array, byte *Origen, byte *Destino);
-	void VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer);
+	void copyRectClip(int *Array, byte *Origen, byte *Destino);
+	void updateScreen(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer);
 
 	DacPalette256 palJuego;
 	DacPalette256 palHare;
@@ -401,7 +400,7 @@ public:
 
 	int hay_sb;
 	int nivel_osc, musica_antes, musica_room;
-	char num_room[20], pantalla_disco[20];
+	char num_room[20], roomDisk[20];
 	char datos_actuales[20];
 	int objs_room;
 	char fondo_y_menu[20];
@@ -433,7 +432,7 @@ public:
 	int rompo, rompo2;
 	int paso_x, paso_y;
 	int alto_hare, ancho_hare, alto_pies;
-	int alto_habla, ancho_habla;
+	int alto_talk, ancho_talk;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
 	int cerca, lejos;
 	int sentido_final, anda_a_objeto;
@@ -472,10 +471,10 @@ public:
 
 	bool escoba();
 	void Negro();
-	void habla_vb(const char *, const char *);
-	void habla_vbpuerta(const char *dicho, const char *filename);
-	void habla_ciego(const char *, const char *, const char *);
-	void habla_hacker(const char *, const char *);
+	void talk_vb(const char *, const char *);
+	void talk_vbpuerta(const char *dicho, const char *filename);
+	void talk_ciego(const char *, const char *, const char *);
+	void talk_hacker(const char *, const char *);
 	void agarra_objeto(int);
 	void anda_parriba();
 	void anda_pabajo();
@@ -485,91 +484,91 @@ public:
 	void abre_puerta(int nflag, int n_puerta);
 	void mapa();
 	void buffer_teclado() { }
-	void animacion_1_1();
-	void animacion_2_1();
-	void animacion_1_2();
-	void animacion_2_2();
-	void animacion_3_1();
-	void animacion_4_1();
-	void animacion_3_2();
-	void animacion_4_2();
-	void animacion_5_2();
-	void animacion_6_2();
-	void animacion_7_2();
-	void animacion_8_2();
-	void animacion_9_2();
-	void animacion_10_2();
-	void animacion_11_2();
-	void animacion_12_2();
-	void animacion_13_2();
-	void animacion_14_2();
-	void animacion_15_2();
-	void animacion_16_2();
-	void animacion_17_2();
-	void animacion_18_2();
-	void animacion_19_2();
-	void animacion_20_2();
-	void animacion_21_2();
-	void animacion_22_2();
-	void animacion_23_2();
-	void animacion_23_anexo();
-	void animacion_23_anexo2();
-	void animacion_24_2();
-	void animacion_25_2();
-	void animacion_26_2();
-	void animacion_27_2();
-	void animacion_28_2();
-	void animacion_29_2();
-	void animacion_30_2();
-	void animacion_31_2();
-	void animacion_32_2();
-	void animacion_33_2();
-	void animacion_34_2();
-	void animacion_35_2();
-	void animacion_36_2();
+	void animation_1_1();
+	void animation_2_1();
+	void animation_1_2();
+	void animation_2_2();
+	void animation_3_1();
+	void animation_4_1();
+	void animation_3_2();
+	void animation_4_2();
+	void animation_5_2();
+	void animation_6_2();
+	void animation_7_2();
+	void animation_8_2();
+	void animation_9_2();
+	void animation_10_2();
+	void animation_11_2();
+	void animation_12_2();
+	void animation_13_2();
+	void animation_14_2();
+	void animation_15_2();
+	void animation_16_2();
+	void animation_17_2();
+	void animation_18_2();
+	void animation_19_2();
+	void animation_20_2();
+	void animation_21_2();
+	void animation_22_2();
+	void animation_23_2();
+	void animation_23_anexo();
+	void animation_23_anexo2();
+	void animation_24_2();
+	void animation_25_2();
+	void animation_26_2();
+	void animation_27_2();
+	void animation_28_2();
+	void animation_29_2();
+	void animation_30_2();
+	void animation_31_2();
+	void animation_32_2();
+	void animation_33_2();
+	void animation_34_2();
+	void animation_35_2();
+	void animation_36_2();
 
-	void refresca_1_antes();
-	void refresca_2();
-	void refresca_3();
-	void refresca_3_antes();
-	void refresca_4();
-	void refresca_5();
-	void refresca_5_antes();
-	void refresca_6_antes();
-	void refresca_7_antes();
-	void refresca_9_antes();
-	void refresca_12_antes();
-	void refresca_14_antes();
-	void refresca_15();
-	void refresca_16_antes();
-	void refresca_17_antes();
-	void refresca_17();
-	void refresca_18_antes();
-	void refresca_18();
-	void refresca_21_antes();
-	void refresca_22_antes();
-	void refresca_23_antes();
-	void refresca_24_antes();
-	void refresca_26_antes();
-	void refresca_26();
-	void refresca_27();
-	void refresca_27_antes();
-	void refresca_29();
-	void refresca_29_antes();
-	void refresca_30_antes();
-	void refresca_31_antes();
-	void refresca_34_antes();
-	void refresca_35_antes();
-	void refresca_31();
-	void refresca_34();
-	void refresca_35();
+	void update_1_pre();
+	void update_2();
+	void update_3();
+	void update_3_pre();
+	void update_4();
+	void update_5();
+	void update_5_pre();
+	void update_6_pre();
+	void update_7_pre();
+	void update_9_pre();
+	void update_12_pre();
+	void update_14_pre();
+	void update_15();
+	void update_16_pre();
+	void update_17_pre();
+	void update_17();
+	void update_18_pre();
+	void update_18();
+	void update_21_pre();
+	void update_22_pre();
+	void update_23_pre();
+	void update_24_pre();
+	void update_26_pre();
+	void update_26();
+	void update_27();
+	void update_27_pre();
+	void update_29();
+	void update_29_pre();
+	void update_30_pre();
+	void update_31_pre();
+	void update_34_pre();
+	void update_35_pre();
+	void update_31();
+	void update_34();
+	void update_35();
 	void hare_oscuro();
 
 
 	void sin_verbo();
 	bool para_cargar(char[]);
 	void carga_escoba(const char *);
-	void borra_pantalla();
+	void clearRoom();
 	void lleva_al_hare(int, int);
 	void mueve_cursor();
 	void comprueba_objetos();
@@ -595,33 +594,33 @@ public:
 	void color_abc(int cl);
 	void centra_texto(const char *,int,int);
 	void comienza_sound(const char *);
-	void anima(const char *animacion, int FPS);
+	void anima(const char *animation, int FPS);
 	void fin_sound_corte();
 	void FundeAlNegro(int VelocidadDeFundido);
-	void pausa(int);
-	void habla_dr_grande(const char *dicho, const char *filename);
+	void pause(int);
+	void talk_dr_grande(const char *dicho, const char *filename);
 	void pon_igor();
 	void pon_bj();
 	void pon_dr();
-	void habla_igor_dch(const char *dicho, const char *filename);
-	void habla_dr_dch(const char *dicho, const char *filename);
-	void habla_dr_izq(const char *dicho, const char *filename);
-	void habla_solo(const char *, const char *);
-	void habla_igor_frente(const char *, const char *);
-	void habla_tabernero(const char *dicho, const char *filename);
-	void habla_igorpuerta(const char *dicho, const char *filename);
-	void habla_igor_peluca(const char *dicho, const char *filename);
+	void talk_igor_dch(const char *dicho, const char *filename);
+	void talk_dr_dch(const char *dicho, const char *filename);
+	void talk_dr_izq(const char *dicho, const char *filename);
+	void talk_solo(const char *, const char *);
+	void talk_igor_frente(const char *, const char *);
+	void talk_tabernero(const char *dicho, const char *filename);
+	void talk_igorpuerta(const char *dicho, const char *filename);
+	void talk_igor_peluca(const char *dicho, const char *filename);
 	void hipo(int);
 	void fin_sound();
-	void habla_bj(const char *, const char *);
-	void habla_baul(const char *dicho, const char *filename);
-	void hablar(const char *, const char *);
-	void hablar_sinc(const char *, const char *, const char *);
+	void talk_bj(const char *, const char *);
+	void talk_baul(const char *dicho, const char *filename);
+	void talk(const char *, const char *);
+	void talk_sinc(const char *, const char *, const char *);
 	void cierra_puerta(int nflag, int n_puerta);
 	void playmusic(int p);
 	void stopmusic();
 	int music_status();
-	void refresca_pantalla();
+	void updateRoom();
 	bool carga_partida(const char *);
 	void puertas_cerradas(int);
 	void animafin_sound_corte();
@@ -632,8 +631,8 @@ public:
 	void hare_claro();
 	void actualiza_datos();
 	void empieza_andar();
-	void actualiza_refresco();
-	void actualiza_refresco_antes();
+	void updateRefresh();
+	void updateRefresh_pre();
 	void pon_hare();
 	void menu_sin_volcar();
 	void barra_menu();
@@ -684,49 +683,49 @@ public:
 	void cuadrante_2();
 	void cuadrante_3();
 	void cuadrante_4();
-	void refresca_62();
-	void refresca_62_antes();
-	void refresca_63();
+	void update_62();
+	void update_62_pre();
+	void update_63();
 	void graba_partida(char[]);
 	void aumenta_num_frame();
 	int sobre_que_objeto();
 	bool comprueba_banderas_menu();
-	void pantalla_0();
-	void pantalla_1(int);
-	void pantalla_2(int);
-	void pantalla_3(int);
-	void pantalla_4(int);
-	void pantalla_5(int);
-	void pantalla_6(int);
-	void pantalla_7(int);
-	void pantalla_8(int);
-	void pantalla_9(int);
-	void pantalla_12(int);
-	void pantalla_14(int);
-	void pantalla_15(int);
-	void pantalla_16(int);
-	void pantalla_17(int);
-	void pantalla_18(int);
-	void pantalla_19(int);
-	bool pantalla_21(int);
-	void pantalla_22(int);
-	void pantalla_23(int);
-	void pantalla_24(int);
-	void pantalla_26(int);
-	void pantalla_27(int);
-	void pantalla_29(int);
-	void pantalla_30(int);
-	void pantalla_31(int);
-	void pantalla_34(int);
-	void pantalla_35(int);
-	void pantalla_44(int);
-	void pantalla_62(int);
-	void pantalla_63(int);
+	void room_0();
+	void room_1(int);
+	void room_2(int);
+	void room_3(int);
+	void room_4(int);
+	void room_5(int);
+	void room_6(int);
+	void room_7(int);
+	void room_8(int);
+	void room_9(int);
+	void room_12(int);
+	void room_14(int);
+	void room_15(int);
+	void room_16(int);
+	void room_17(int);
+	void room_18(int);
+	void room_19(int);
+	bool room_21(int);
+	void room_22(int);
+	void room_23(int);
+	void room_24(int);
+	void room_26(int);
+	void room_27(int);
+	void room_29(int);
+	void room_30(int);
+	void room_31(int);
+	void room_34(int);
+	void room_35(int);
+	void room_44(int);
+	void room_62(int);
+	void room_63(int);
 	void conversa(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void responde(int);
-	void habla_borracho(const char *dicho, const char *filename);
-	void habla_pianista(const char *dicho, const char *filename);
+	void talk_borracho(const char *dicho, const char *filename);
+	void talk_pianista(const char *dicho, const char *filename);
 
 	void MusicFadeout();
 	void ctvd_end();
@@ -736,96 +735,107 @@ public:
 	void ctvd_output(Common::File *file_handle);
 	void ctvd_init(int b);
 	void grr();
-	bool pantalla_13(int fl);
-	void refresca_13();
-	void refresca_20();
-	void animacion_1_3();
-	void animacion_2_3();
-	void animacion_3_3();
-	void animacion_4_3();
-	void animacion_5_3();
-	void animacion_6_3();
-	void animacion_rayo();
-	void animacion_1_4();
-	void animacion_2_4();
-	void animacion_3_4();
-	void animacion_4_4();
-	void animacion_5_4();
-	void animacion_6_4();
-	void animacion_7_4();
-	void animacion_8_4();
-	void animacion_9_4();
-	void animacion_1_5();
-	void animacion_2_5();
-	void animacion_3_5();
-	void animacion_4_5();
-	void animacion_5_5();
-	void animacion_6_5();
-	void animacion_7_5();
-	void animacion_8_5();
-	void animacion_9_5();
-	void animacion_10_5();
-	void animacion_11_5();
-	void animacion_12_5();
-	void animacion_13_5();
-	void animacion_14_5();
-	void animacion_15_5();
-	void animacion_16_5();
-	void animacion_17_5();
-	void pantalla_49(int);
-	void pantalla_53(int);
-	void pantalla_54(int);
-	void pantalla_55(int);
-	bool pantalla_56(int);
-	void refresca_53_antes();
-	void refresca_54_antes();
-	void refresca_49_antes();
-	void refresca_56_antes();
-	void refresca_50();
-	void refresca_57();
-	void habla_igor_sentado(const char *, const char *);
-	void habla_lobo(const char *dicho, const char *filename);
-	void habla_mus(const char *dicho, const char *filename);
-	void pantalla_58(int);
-	void pantalla_59(int);
-	bool pantalla_60(int);
-	void pantalla_61(int);
-	void pantalla_pendulo(int);
-	void refresca_pendulo();
-	void refresca_58();
-	void refresca_58_antes();
-	void refresca_59_antes();
-	void refresca_60_antes();
-	void refresca_60();
-	void refresca_61();
-	void animacion_1_6();
-	void animacion_2_6();
-	void animacion_3_6();
-	void animacion_4_6();
-	void animacion_5_6();
-	void animacion_6_6();
-	void animacion_7_6();
-	void animacion_9_6();
-	void animacion_10_6();
-	void animacion_11_6();
-	void animacion_12_6();
-	void animacion_13_6();
-	void animacion_14_6();
-	void animacion_15_6();
-	void animacion_18_6();
-	void animacion_19_6();
+	bool room_13(int fl);
+	void update_13();
+	void update_20();
+	void animation_1_3();
+	void animation_2_3();
+	void animation_3_3();
+	void animation_4_3();
+	void animation_5_3();
+	void animation_6_3();
+	void animation_rayo();
+	void animation_1_4();
+	void animation_2_4();
+	void animation_3_4();
+	void animation_4_4();
+	void animation_5_4();
+	void animation_6_4();
+	void animation_7_4();
+	void animation_8_4();
+	void animation_9_4();
+	void animation_1_5();
+	void animation_2_5();
+	void animation_3_5();
+	void animation_4_5();
+	void animation_5_5();
+	void animation_6_5();
+	void animation_7_5();
+	void animation_8_5();
+	void animation_9_5();
+	void animation_10_5();
+	void animation_11_5();
+	void animation_12_5();
+	void animation_13_5();
+	void animation_14_5();
+	void animation_15_5();
+	void animation_16_5();
+	void animation_17_5();
+	void room_49(int);
+	void room_53(int);
+	void room_54(int);
+	void room_55(int);
+	bool room_56(int);
+	void update_53_pre();
+	void update_54_pre();
+	void update_49_pre();
+	void update_56_pre();
+	void update_50();
+	void update_57();
+	void talk_igor_sentado(const char *, const char *);
+	void talk_lobo(const char *dicho, const char *filename);
+	void talk_mus(const char *dicho, const char *filename);
+	void room_58(int);
+	void room_59(int);
+	bool room_60(int);
+	void room_61(int);
+	void room_pendulo(int);
+	void update_pendulo();
+	void update_58();
+	void update_58_pre();
+	void update_59_pre();
+	void update_60_pre();
+	void update_60();
+	void update_61();
+	void animation_1_6();
+	void animation_2_6();
+	void animation_3_6();
+	void animation_4_6();
+	void animation_5_6();
+	void animation_6_6();
+	void animation_7_6();
+	void animation_9_6();
+	void animation_10_6();
+	void animation_11_6();
+	void animation_12_6();
+	void animation_13_6();
+	void animation_14_6();
+	void animation_15_6();
+	void animation_18_6();
+	void animation_19_6();
 	void activa_pendulo();
-	void habla_pen(const char *, const char *);
-	void habla_pen2(const char *, const char *);
-	void habla_taber2(const char *, const char *);
-	void habla_bj_cama(const char *dicho, const char * filename);
-	void habla_htel(const char *dicho, const char *filename);
+	void talk_pen(const char *, const char *);
+	void talk_pen2(const char *, const char *);
+	void talk_taber2(const char *, const char *);
+	void talk_bj_cama(const char *dicho, const char * filename);
+	void talk_htel(const char *dicho, const char *filename);
 
 private:
-
-public:
-
+	int _lang;
 };
+
+extern const char *_text[][501];
+extern const char *_textd[][79];
+extern const char *_textb[][15];
+extern const char *_textbj[][29];
+extern const char *_texte[][24];
+extern const char *_texti[][33];
+extern const char *_textl[][32];
+extern const char *_textp[][20];
+extern const char *_textt[][25];
+extern const char *_textvb[][63];
+extern const char *_textsys[][4];
+extern const char *_texthis[][5];
 
 } // End of namespace Drascula
 

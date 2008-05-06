@@ -880,6 +880,9 @@ void Inter_v2::o2_initMult() {
 	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
 		warning("Initializing new objects without having "
 				"cleaned up the old ones at first");
+
+		_vm->_mult->clearObjectVideos();
+
 		delete[] _vm->_mult->_objects;
 		delete[] _vm->_mult->_renderObjs;
 		delete[] _vm->_mult->_orderArray;
@@ -896,7 +899,7 @@ void Inter_v2::o2_initMult() {
 		if (_terminate)
 			return;
 
-		_vm->_mult->_orderArray = new int8[_vm->_mult->_objCount];
+		_vm->_mult->_orderArray = new uint8[_vm->_mult->_objCount];
 		memset(_vm->_mult->_orderArray, 0, _vm->_mult->_objCount * sizeof(int8));
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
 		memset(_vm->_mult->_objects, 0,
@@ -988,12 +991,10 @@ void Inter_v2::o2_loadMultObject() {
 			_vm->_global->_inter_execPtr++;
 	}
 
-	if (_vm->_goblin->_gobsCount <= objIndex)
-		return;
-
 	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
 	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
-	if (objAnim.animType == 100) {
+
+	if ((objAnim.animType == 100) && (objIndex < _vm->_goblin->_gobsCount)) {
 
 		val = *(obj.pPosX) % 256;
 		obj.destX = val;
@@ -1029,7 +1030,7 @@ void Inter_v2::o2_loadMultObject() {
 				((obj.goblinY + 1) / 2);
 		*(obj.pPosX) = obj.goblinX * _vm->_map->_tilesWidth;
 
-	} else if (objAnim.animType == 101) {
+	} else if ((objAnim.animType == 101) && (objIndex < _vm->_goblin->_gobsCount)) {
 
 		layer = objAnim.layer;
 		animation = obj.goblinStates[layer][0].animation;
@@ -1048,6 +1049,21 @@ void Inter_v2::o2_loadMultObject() {
 		}
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
 				*(obj.pPosX), *(obj.pPosY), 0);
+
+	} else if ((objAnim.animType != 100) && (objAnim.animType != 101)) {
+
+		if ((*(obj.pPosX) == -1234) && (*(obj.pPosY) == -4321)) {
+
+			if (obj.videoSlot > 0)
+				_vm->_vidPlayer->slotClose(obj.videoSlot - 1);
+
+			obj.videoSlot = 0;
+			obj.lastLeft = -1;
+			obj.lastTop = -1;
+			obj.lastBottom = -1;
+			obj.lastRight = -1;
+		}
+
 	}
 }
 
@@ -1375,17 +1391,21 @@ void Inter_v2::o2_initScreen() {
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
 
+	_vm->_video->clearScreen();
+
 	// Lost in Time switches to 640x400x16 when showing the title screen
 	if (_vm->getGameType() == kGameTypeLostInTime) {
+
 		if (videoMode == 0x10) {
+
 			width = _vm->_width = 640;
 			height = _vm->_height = 400;
 			_vm->_global->_colorCount = 16;
-			_vm->_system->beginGFXTransaction();
-				_vm->_system->initSize(_vm->_width, _vm->_height);
-				_vm->initCommonGFX(true);
-			_vm->_system->endGFXTransaction();
+
+			_vm->_video->setSize(true);
+
 		} else if (_vm->_global->_videoMode == 0x10) {
+
 			if (width == -1)
 				width = 320;
 			if (height == -1)
@@ -1394,10 +1414,9 @@ void Inter_v2::o2_initScreen() {
 			_vm->_width = 320;
 			_vm->_height = 200;
 			_vm->_global->_colorCount = 256;
-			_vm->_system->beginGFXTransaction();
-				_vm->_system->initSize(_vm->_width, _vm->_height);
-				_vm->initCommonGFX(false);
-			_vm->_system->endGFXTransaction();
+
+			_vm->_video->setSize(false);
+
 		}
 	}
 
@@ -1415,10 +1434,46 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 
-	_vm->_video->_splitHeight1 =
-		MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
-	_vm->_video->_splitHeight2 = offY;
-	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
+	if (videoMode == 0x18) {
+
+		if (_vm->_video->_surfWidth < _vm->_width)
+			_vm->_video->_screenDeltaX = (_vm->_width - _vm->_video->_surfWidth) / 2;
+		else
+			_vm->_video->_screenDeltaX = 0;
+
+		_vm->_global->_mouseMinX = _vm->_video->_screenDeltaX;
+		_vm->_global->_mouseMaxX = _vm->_video->_screenDeltaX + _vm->_video->_surfWidth - 1;
+
+
+		int16 screenHeight = _vm->_video->_surfHeight;
+
+		_vm->_video->_surfHeight += offY;
+
+		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
+		_vm->_video->_splitHeight2 = offY;
+		_vm->_video->_splitStart = screenHeight;
+
+		if ((_vm->_video->_surfHeight + offY) < _vm->_height)
+			_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
+		else
+			_vm->_video->_screenDeltaY = 0;
+
+		_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
+		_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
+
+	} else {
+		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
+		_vm->_video->_splitHeight2 = offY;
+		_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
+
+		_vm->_video->_screenDeltaX = 0;
+		_vm->_video->_screenDeltaY = 0;
+
+		_vm->_global->_mouseMinX = 0;
+		_vm->_global->_mouseMinY = 0;
+		_vm->_global->_mouseMaxX = _vm->_width;
+		_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
+	}
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
@@ -1519,7 +1574,7 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
-	if ((imd[0] != 0) && !_vm->_vidPlayer->openVideo(imd, x, y, flags)) {
+	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
 	}
@@ -1532,12 +1587,12 @@ void Inter_v2::o2_playImd() {
 
 	if (startFrame >= 0) {
 		_vm->_game->_preventScroll = true;
-		_vm->_vidPlayer->play(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
 		_vm->_game->_preventScroll = false;
 	}
 
 	if (close)
-		_vm->_vidPlayer->closeVideo();
+		_vm->_vidPlayer->primaryClose();
 }
 
 void Inter_v2::o2_getImdInfo() {

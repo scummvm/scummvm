@@ -366,8 +366,10 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	}
 
 	Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filename);
-	if (!stream)
+	if (!stream) {
+		warning("Couldn't find soundfile '%s'", filename);
 		return -1;
+	}
 
 	strncpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
@@ -401,6 +403,9 @@ bool SoundDigital::isPlaying(int channel) {
 }
 
 void SoundDigital::stopSound(int channel) {
+	if (channel == -1)
+		return;
+
 	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
 	_mixer->stopHandle(_sounds[channel].handle);
 	_sounds[channel].stream = 0;

@@ -26,9 +26,10 @@
 #ifndef KYRA_KYRA_V3_H
 #define KYRA_KYRA_V3_H
 
-#include "kyra/kyra.h"
-#include "kyra/screen_v3.h"
+#include "kyra/kyra_v2.h"
+#include "kyra/screen_mr.h"
 #include "kyra/script.h"
+#include "kyra/gui_mr.h"
 
 #include "common/hashmap.h"
 #include "common/list.h"
@@ -36,19 +37,22 @@
 namespace Kyra {
 
 class SoundDigital;
-class Screen_v3;
+class Screen_MR;
 class MainMenu;
 class WSAMovieV2;
-class TextDisplayer_v3;
+class TextDisplayer_MR;
 struct Button;
 
-class KyraEngine_v3 : public KyraEngine {
-friend class TextDisplayer_v3;
+class KyraEngine_MR : public KyraEngine_v2 {
+friend class TextDisplayer_MR;
+friend class GUI_MR;
 public:
-	KyraEngine_v3(OSystem *system, const GameFlags &flags);
-	~KyraEngine_v3();
+	KyraEngine_MR(OSystem *system, const GameFlags &flags);
+	~KyraEngine_MR();
 
 	Screen *screen() { return _screen; }
+	Screen_v2 *screen_v2() const { return _screen; }
+	GUI_v2 *gui_v2() const { return _gui; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
 
@@ -56,9 +60,19 @@ public:
 
 	void playVQA(const char *name);
 
-	virtual Movie *createWSAMovie();
 private:
-	Screen_v3 *_screen;
+	static const EngineDesc _mrEngineDesc;
+
+	// config
+	bool _configStudio;
+	bool _configSkip;
+
+	void registerDefaultSettings();
+	void writeSettings();
+	void readSettings();
+
+	// --
+	Screen_MR *_screen;
 	SoundDigital *_soundDigital;
 
 	int init();
@@ -69,13 +83,15 @@ private:
 
 	void setupOpcodeTable();
 
+	// input
+	bool skipFlag() const;
+	void resetSkipFlag(bool removeEvent = true);
+
 	// run
-	bool _runFlag;
-	int _deathHandler;
+	bool _menuDirectlyToLoad;
 
 	void runLoop();
 	void handleInput(int x, int y);
-	bool _unkHandleSceneChangeFlag;
 	int inputSceneChange(int x, int y, int unk1, int unk2);
 
 	void update();
@@ -83,29 +99,6 @@ private:
 	void updateMouse();
 
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
-
-	// - Input
-	void updateInput();
-	int checkInput(Button *buttonList, bool mainLoop = false);
-	void removeInputTop();
-
-	int _mouseX, _mouseY;
-	int _mouseState;
-
-	struct Event {
-		Common::Event event;
-		bool causedSkip;
-
-		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
-
-		operator Common::Event() const { return event; }
-	};
-	Common::List<Event> _eventList;
-
-	bool skipFlag() const;
-	void resetSkipFlag(bool removeEvent = true);
 
 	// sound specific
 private:
@@ -118,15 +111,13 @@ private:
 	static const char *_soundList[];
 	static const int _soundListSize;
 
-	int _curMusicTrack;
-
-	void playMusicTrack(int track, int force);
+	void snd_playWanderScoreViaMap(int track, int force);
 	void stopMusicTrack();
 
 	int musicUpdate(int forceRestart);
 	void fadeOutMusic(int ticks);
 
-	void playSoundEffect(int item, int volume);
+	void snd_playSoundEffect(int item, int volume);
 
 	static const uint8 _sfxFileMap[];
 	static const int _sfxFileMapSize;
@@ -143,12 +134,30 @@ private:
 	int _curStudioSFX;
 	void playStudioSFX(const char *str);
 
-	// main menu
+	// gui
+	GUI_MR *_gui;
+
+	Button *_mainButtonData;
+	Button *_mainButtonList;
+	bool _mainButtonListInitialized;
+	void initMainButtonList(bool disable);
+
+	bool _enableInventory;
+	int buttonInventory(Button *button);
+	int buttonMoodChange(Button *button);
+	int buttonShowScore(Button *button);
+	int buttonJesterStaff(Button *button);
+
+	void loadButtonShapes();
+	int callbackButton1(Button *button);
+	int callbackButton2(Button *button);
+	int callbackButton3(Button *button);
+
+	// -> main menu
 	void initMainMenu();
 	void uninitMainMenu();
 
 	WSAMovieV2 *_menuAnim;
-	MainMenu *_menu;
 
 	// timer
 	void setupTimers();
@@ -164,10 +173,6 @@ private:
 	void setNextIdleAnimTimer();
 
 	// pathfinder
-	int *_moveFacingTable;
-	int _pathfinderFlag;
-
-	int findWay(int x1, int y1, int x2, int y2, int *moveTable, int moveTableSize);
 	bool lineIsPassable(int x, int y);
 
 private:
@@ -175,50 +180,18 @@ private:
 	static const char *_mainMenuStrings[];
 
 	// animator
-	struct AnimObj {
-		uint16 index;
-		uint16 type;
-		bool enabled;
-		bool needRefresh;
-		uint16 unk8;
-		uint16 flags;
-		int16 xPos1, yPos1;
-		uint8 *shapePtr;
-		uint16 shapeIndex;
-		uint16 animNum;
-		uint16 shapeIndex3;
-		uint16 shapeIndex2;
-		int16 xPos2, yPos2;
-		int16 xPos3, yPos3;
-		int16 width, height;
-		int16 width2, height2;
-		uint16 palette;
-		AnimObj *nextObject;
-	};
-
-	AnimObj *_animObjects;
 	uint8 *_gamePlayBuffer;
+	void restorePage3();
 
 	void clearAnimObjects();
 
-	AnimObj *_animList;
-	bool _drawNoShapeFlag;
-	AnimObj *initAnimList(AnimObj *list, AnimObj *entry);
-	AnimObj *addToAnimListSorted(AnimObj *list, AnimObj *entry);
-	AnimObj *deleteAnimListEntry(AnimObj *list, AnimObj *entry);
-
 	void animSetupPaletteEntry(AnimObj *anim);
-
-	void restorePage3();
 
 	void drawAnimObjects();
 	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer);
 	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer);
 
 	void refreshAnimObjects(int force);
-	void refreshAnimObjectsIfNeed();
-
-	void flagAnimObjsForRefresh();
 
 	bool _loadingState;
 	void updateCharacterAnim(int charId);
@@ -235,9 +208,6 @@ private:
 
 	bool _nextIdleType;
 	void showIdleAnim();
-
-	void addItemToAnimList(int item);
-	void deleteItemAnimEntry(int item);
 
 	// interface
 	uint8 *_interface;
@@ -266,6 +236,10 @@ private:
 	void drawMalcolmsMoodText();
 	void drawMalcolmsMoodPointer(int frame, int page);
 	void drawJestersStaff(int type, int page);
+	
+	void drawScore(int page, int x, int y);
+	void drawScoreCounting(int oldScore, int newScore, int drawOld, const int x);
+	int getScoreX(const char *str);
 
 	static const uint8 _inventoryX[];
 	static const uint8 _inventoryY[];
@@ -281,6 +255,7 @@ private:
 	uint8 *_cCodeFile;
 	uint8 *_scenesFile;
 	uint8 *_itemFile;
+	uint8 *_optionsFile;
 	uint8 *_actorFile;
 	uint32 _actorFileSize;
 	uint8 *_sceneStrings;
@@ -291,27 +266,10 @@ private:
 	// items
 	int8 *_itemBuffer1;
 	int8 *_itemBuffer2;
-	struct Item {
-		uint16 id;
-		uint16 sceneId;
-		int16 x, y;
-		uint16 unk8;
-	};
 
-	Item *_itemList;
-	uint16 _hiddenItems[100];
-
-	void resetItem(int index);
-	void resetItemList();
 	static const uint8 _trashItemList[];
 	void removeTrashItems();
 
-	int findFreeItem();
-	int findItem(uint16 item, uint16 scene);
-	int findItem(uint16 item);
-
-	int countAllItems();
-	
 	void initItems();
 
 	int checkItemCollision(int x, int y);
@@ -326,6 +284,7 @@ private:
 
 	static const uint8 _itemMagicTable[];
 	bool itemListMagic(int handItem, int itemSlot);
+	bool itemInventoryMagic(int handItem, int invSlot);
 
 	static const uint8 _itemStringMap[];
 	static const uint _itemStringMapSize;
@@ -338,26 +297,13 @@ private:
 	int getItemCommandStringInv(uint16 item);
 
 	// -> hand item
+	void setItemMouseCursor();
 	void setMouseCursor(uint16 item);
 
-	void setHandItem(uint16 item);
-	void removeHandItem();
-	void setItemMouseCursor();
-
-	int _itemInHand;
-	int _handItemSet;
-
 	// shapes
-	typedef Common::HashMap<int, uint8*> ShapeMap;
-	ShapeMap _gameShapes;
-
-	void addShapeToPool(const uint8 *data, int realIndex, int shape);
-	uint8 *getShapePtr(int shape) const;
-
 	void initMouseShapes();
 
-	int _malcolmShapes;
-	void loadMalcolmShapes(int newShapes);
+	void loadCharacterShapes(int newShapes);
 	void updateMalcolmShapes();
 
 	int _malcolmShapeXOffset, _malcolmShapeYOffset;
@@ -370,49 +316,15 @@ private:
 	static const int _shapeDescsSize;
 
 	// scene animation
-	struct SceneAnim {
-		uint16 flags;
-		int16 x, y;
-		int16 x2, y2;
-		int16 width, height;
-		uint16 unk10;
-		uint16 specialSize;
-		uint16 unk14;
-		uint16 shapeIndex;
-		uint16 wsaFlag;
-		char filename[13];
-	};
-
-	SceneAnim *_sceneAnims;
-	WSAMovieV2 *_sceneAnimMovie[16];
 	uint8 *_sceneShapes[20];
 
 	void freeSceneShapes();
-	void freeSceneAnims();
 
 	// voice
 	int _currentTalkFile;
 	void openTalkFile(int file);
 
 	// scene
-	struct SceneDesc {
-		char filename1[10];
-		char filename2[10];
-		uint16 exit1, exit2, exit3, exit4;
-		uint8 flags, sound;
-	};
-
-	SceneDesc *_sceneList;
-	uint16 _sceneExit1, _sceneExit2, _sceneExit3, _sceneExit4;
-	int _sceneEnterX1, _sceneEnterY1;
-	int _sceneEnterX2, _sceneEnterY2;
-	int _sceneEnterX3, _sceneEnterY3;
-	int _sceneEnterX4, _sceneEnterY4;
-
-	int _specialExitCount;
-	uint16 _specialExitTable[25];
-	bool checkSpecialSceneExit(int index, int x, int y);
-
 	bool _noScriptEnter;
 	void enterNewScene(uint16 scene, int facing, int unk1, int unk2, int unk3);
 	void enterNewSceneUnk1(int facing, int unk1, int unk2);
@@ -431,24 +343,10 @@ private:
 	int runSceneScript2();
 	bool _noStartupChat;
 	void runSceneScript4(int unk1);
-	void runSceneScript6();
 	void runSceneScript8();
 
 	int _sceneMinX, _sceneMaxX;
 	int _maskPageMinY, _maskPageMaxY;
-
-	ScriptState _sceneScriptState;
-	ScriptData _sceneScriptData;
-	WSAMovieV2 *_wsaSlots[10];
-
-	bool _specialSceneScriptState[10];
-	bool _specialSceneScriptStateBackup[10];
-	ScriptState _sceneSpecialScripts[10];
-	uint32 _sceneSpecialScriptsTimer[10];
-	int _lastProcessedSceneScript;
-	bool _specialSceneScriptRunFlag;
-
-	void updateSpecialSceneScripts();
 
 	int trySceneChange(int *moveTable, int unk1, int unk2);
 	int checkSceneChange();
@@ -469,41 +367,11 @@ private:
 	int getScale(int x, int y);
 	int _scaleTable[15];
 
-	bool _unkSceneScreenFlag1;
-
 	// character
-	struct Character {
-		uint16 sceneId;
-		uint16 dlgIndex;
-		uint8 height;
-		uint8 facing;
-		uint16 animFrame;
-		//uint8 unk8, unk9;
-		uint32 walkspeed;
-		uint16 inventory[10];
-		int16 x1, y1;
-		int16 x2, y2;
-		int16 x3, y3;
-	};
-
-	Character _mainCharacter;
-	int _mainCharX, _mainCharY;
-	int _charScale;
-
-	void moveCharacter(int facing, int x, int y);
-
-	void updateCharPosWithUpdate();
-	int updateCharPos(int *table, int force);
-
-	uint32 _updateCharPosNextUpdate;
-	static const int8 _updateCharPosXTable[];
-	static const int8 _updateCharPosYTable[];
-
+	int getCharacterWalkspeed() const;
 	void updateCharAnimFrame(int character, int *table);
 	int8 _characterAnimTable[2];
 	static const uint8 _characterFrameTable[];
-
-	bool _overwriteSceneFacing;
 
 	void updateCharPal(int unk1);
 	int _lastCharPalLayer;
@@ -514,6 +382,8 @@ private:
 	int _malcolmsMood;
 
 	void makeCharFacingMouse();
+
+	int findFreeInventorySlot();
 
 	// talk object
 	struct TalkObject {
@@ -530,16 +400,6 @@ private:
 	bool talkObjectsInCurScene();
 
 	// chat
-	int _vocHigh;
-
-	const char *_chatText;
-	int _chatObject;
-	uint32 _chatEndTime;
-	int _chatVocHigh, _chatVocLow;
-
-	ScriptData _chatScriptData;
-	ScriptState _chatScriptState;
-
 	int chatGetType(const char *text);
 	int chatCalcDuration(const char *text);
 
@@ -552,12 +412,16 @@ private:
 	void badConscienceChat(const char *str, int vocHigh, int vocLow);
 	void badConscienceChatWaitToFinish();
 
+	void goodConscienceChat(const char *str, int vocHigh, int vocLow);
+	void goodConscienceChatWaitToFinish();
+
 	void malcolmSceneStartupChat();
 
-	bool _newSceneDlgState[40];
+	byte _newSceneDlgState[40];
 	int8 _conversationState[30][30];
 	bool _chatAltFlag;
-	void setDlgIndex(uint16 index);
+	void setDlgIndex(int index);
+	void updateDlgIndex();
 
 	Common::SeekableReadStream *_cnvFile;
 	Common::SeekableReadStream *_dlgBuffer;
@@ -569,8 +433,8 @@ private:
 	bool _isStartupDialog;
 	void processDialog(int vocHighIndex, int vocHighBase, int funcNum);
 
-	ScriptData _dialogScriptData;
-	ScriptState _dialogScriptState;
+	EMCData _dialogScriptData;
+	EMCState _dialogScriptState;
 	int _dialogSceneAnim;
 	int _dialogSceneScript;
 	int _dialogScriptFuncStart, _dialogScriptFuncProc, _dialogScriptFuncEnd;
@@ -582,10 +446,10 @@ private:
 
 	Common::Array<const Opcode *> _opcodesDialog;
 
-	int o3d_updateAnim(ScriptState *script);
-	int o3d_delay(ScriptState *script);
+	int o3d_updateAnim(EMCState *script);
+	int o3d_delay(EMCState *script);
 
-	void malcolmRandomChat();
+	void randomSceneChat();
 	void runDialog(int dlgIndex, int funcNum);
 
 	// conscience
@@ -598,47 +462,33 @@ private:
 	void showBadConscience();
 	void hideBadConscience();
 
+	bool _goodConscienceShown;
+	int _goodConscienceAnim;
+	bool _goodConsciencePosition;
+
+	static const uint8 _goodConscienceFrameTable[];
+
+	void showGoodConscience();
+	void hideGoodConscience();
+
 	// special script code
-	bool _temporaryScriptExecBit;
 	bool _useFrameTable;
 	
-	Common::Array<const Opcode *> _opcodesTemporary;
-
-	int o3t_defineNewShapes(ScriptState *script);
-	int o3t_setCurrentFrame(ScriptState *script);
-
-	ScriptData _temporaryScriptData;
-	ScriptState _temporaryScriptState;
-
-	void runTemporaryScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
+	int o3a_setCharacterFrame(EMCState *script);
 
 	// special shape code
-	char _newShapeFilename[13];
-	int _newShapeLastEntry;
-	int _newShapeWidth, _newShapeHeight;
-	int _newShapeXAdd, _newShapeYAdd;
-
-	int _newShapeAnimFrame;
-	int _newShapeDelay;
-
-	int _newShapeFlag;
-	uint8 *_newShapeFiledata;
-	int _newShapeCount;
-
-	int initNewShapes(uint8 *filedata);
-	void processNewShapes(int allowSkip, int resetChar);
-	void resetNewShapes(int count, uint8 *filedata);
+	int initAnimationShapes(uint8 *filedata);
+	void uninitAnimationShapes(int count, uint8 *filedata);
 
 	// unk
 	uint8 *_costPalBuffer;
-	uint8 *_screenBuffer;
 	uint8 *_paletteOverlay;
 	bool _useActorBuffer;
-	int _curChapter;
+
+	int _currentChapter;
+	void changeChapter(int newChapter, int sceneId, int malcolmShapes, int facing);
 
 	static const uint8 _chapterLowestScene[];
-
-	int _unk3, _unk4, _unk5;
 
 	void loadCostPal();
 	void loadShadowShape();
@@ -650,82 +500,90 @@ private:
 
 	char *_stringBuffer;
 
+	int _score;
+	int _scoreMax;
+	
+	static const int8 _scoreTable[];
+	static const int _scoreTableSize;
+	int8 _scoreFlagTable[26];
+	bool updateScore(int scoreId, int strId);
+	void scoreIncrease(int count, const char *str);
+
+	void eelScript();
+
+	// save/load
+	void saveGame(const char *fileName, const char *saveName);
+	void loadGame(const char *fileName);
+
 	// opcodes
-	int o3_getMalcolmShapes(ScriptState *script);
-	int o3_setCharacterPos(ScriptState *script);
-	int o3_defineObject(ScriptState *script);
-	int o3_refreshCharacter(ScriptState *script);
-	int o3_getCharacterX(ScriptState *script);
-	int o3_getCharacterY(ScriptState *script);
-	int o3_getCharacterFacing(ScriptState *script);
-	int o3_getCharacterScene(ScriptState *script);
-	int o3_getMalcolmsMood(ScriptState *script);
-	int o3_trySceneChange(ScriptState *script);
-	int o3_moveCharacter(ScriptState *script);
-	int o3_setCharacterFacing(ScriptState *script);
-	int o3_showSceneFileMessage(ScriptState *script);
-	int o3_showBadConscience(ScriptState *script);
-	int o3_hideBadConscience(ScriptState *script);
-	int o3_objectChat(ScriptState *script);
-	int o3_checkForItem(ScriptState *script);
-	int o3_defineItem(ScriptState *script);
-	int o3_npcChatSequence(ScriptState *script);
-	int o3_queryGameFlag(ScriptState *script);
-	int o3_resetGameFlag(ScriptState *script);
-	int o3_setGameFlag(ScriptState *script);
-	int o3_setHandItem(ScriptState *script);
-	int o3_removeHandItem(ScriptState *script);
-	int o3_handItemSet(ScriptState *script);
-	int o3_hideMouse(ScriptState *script);
-	int o3_addSpecialExit(ScriptState *script);
-	int o3_setMousePos(ScriptState *script);
-	int o3_showMouse(ScriptState *script);
-	int o3_badConscienceChat(ScriptState *script);
-	int o3_wipeDownMouseItem(ScriptState *script);
-	int o3_setMalcolmsMood(ScriptState *script);
-	int o3_delay(ScriptState *script);
-	int o3_setSceneFilename(ScriptState *script);
-	int o3_drawSceneShape(ScriptState *script);
-	int o3_checkInRect(ScriptState *script);
-	int o3_updateConversations(ScriptState *script);
-	int o3_setSceneDim(ScriptState *script);
-	int o3_update(ScriptState *script);
-	int o3_enterNewScene(ScriptState *script);
-	int o3_setMalcolmPos(ScriptState *script);
-	int o3_stopMusic(ScriptState *script);
-	int o3_playMusicTrack(ScriptState *script);
-	int o3_playSoundEffect(ScriptState *script);
-	int o3_blockOutRegion(ScriptState *script);
-	int o3_getRand(ScriptState *script);
-	int o3_waitForConfirmationClick(ScriptState *script);
-	int o3_defineRoomEntrance(ScriptState *script);
-	int o3_runTemporaryScript(ScriptState *script);
-	int o3_setSpecialSceneScriptRunTime(ScriptState *script);
-	int o3_defineSceneAnim(ScriptState *script);
-	int o3_updateSceneAnim(ScriptState *script);
-	int o3_runActorScript(ScriptState *script);
-	int o3_runDialog(ScriptState *script);
-	int o3_malcolmRandomChat(ScriptState *script);
-	int o3_setDlgIndex(ScriptState *script);
-	int o3_getDlgIndex(ScriptState *script);
-	int o3_defineScene(ScriptState *script);
-	int o3_countItemInstances(ScriptState *script);
-	int o3_dialogStartScript(ScriptState *script);
-	int o3_dialogEndScript(ScriptState *script);
-	int o3_setSpecialSceneScriptState(ScriptState *script);
-	int o3_clearSpecialSceneScriptState(ScriptState *script);
-	int o3_querySpecialSceneScriptState(ScriptState *script);
-	int o3_setHiddenItemsEntry(ScriptState *script);
-	int o3_getHiddenItemsEntry(ScriptState *script);
-	int o3_setupSceneAnimObject(ScriptState *script);
-	int o3_removeSceneAnimObject(ScriptState *script);
-	int o3_setVocHigh(ScriptState *script);
-	int o3_getVocHigh(ScriptState *script);
-	int o3_dummy(ScriptState *script);
+	int o3_getMalcolmShapes(EMCState *script);
+	int o3_setCharacterPos(EMCState *script);
+	int o3_defineObject(EMCState *script);
+	int o3_refreshCharacter(EMCState *script);
+	int o3_getMalcolmsMood(EMCState *script);
+	int o3_getCharacterFrameFromFacing(EMCState *script);
+	int o3_setCharacterFacing(EMCState *script);
+	int o3_showSceneFileMessage(EMCState *script);
+	int o3_setCharacterAnimFrameFromFacing(EMCState *script);
+	int o3_showBadConscience(EMCState *script);
+	int o3_hideBadConscience(EMCState *script);
+	int o3_setInventorySlot(EMCState *script);
+	int o3_getInventorySlot(EMCState *script);
+	int o3_addItemToInventory(EMCState *script);
+	int o3_addItemToCurScene(EMCState *script);
+	int o3_objectChat(EMCState *script);
+	int o3_resetInventory(EMCState *script);
+	int o3_removeInventoryItemInstances(EMCState *script);
+	int o3_countInventoryItemInstances(EMCState *script);
+	int o3_npcChatSequence(EMCState *script);
+	int o3_badConscienceChat(EMCState *script);
+	int o3_wipeDownMouseItem(EMCState *script);
+	int o3_setMalcolmsMood(EMCState *script);
+	int o3_updateScore(EMCState *script);
+	int o3_makeSecondChanceSave(EMCState *script);
+	int o3_setSceneFilename(EMCState *script);
+	int o3_removeItemsFromScene(EMCState *script);
+	int o3_disguiseMalcolm(EMCState *script);
+	int o3_drawSceneShape(EMCState *script);
+	int o3_drawSceneShapeOnPage(EMCState *script);
+	int o3_checkInRect(EMCState *script);
+	int o3_updateConversations(EMCState *script);
+	int o3_setSceneDim(EMCState *script);
+	int o3_setSceneAnimPosAndFrame(EMCState *script);
+	int o3_removeItemInstances(EMCState *script);
+	int o3_disableInventory(EMCState *script);
+	int o3_enableInventory(EMCState *script);
+	int o3_enterNewScene(EMCState *script);
+	int o3_switchScene(EMCState *script);
+	int o3_setMalcolmPos(EMCState *script);
+	int o3_stopMusic(EMCState *script);
+	int o3_playSoundEffect(EMCState *script);
+	int o3_getScore(EMCState *script);
+	int o3_daggerWarning(EMCState *script);
+	int o3_blockOutRegion(EMCState *script);
+	int o3_showSceneStringsMessage(EMCState *script);
+	int o3_showGoodConscience(EMCState *script);
+	int o3_goodConscienceChat(EMCState *script);
+	int o3_hideGoodConscience(EMCState *script);
+	int o3_defineSceneAnim(EMCState *script);
+	int o3_updateSceneAnim(EMCState *script);
+	int o3_runActorScript(EMCState *script);
+	int o3_runDialog(EMCState *script);
+	int o3_setConversationState(EMCState *script);
+	int o3_getConversationState(EMCState *script);
+	int o3_changeChapter(EMCState *script);
+	int o3_countItemInstances(EMCState *script);
+	int o3_dialogStartScript(EMCState *script);
+	int o3_dialogEndScript(EMCState *script);
+	int o3_customChat(EMCState *script);
+	int o3_customChatFinish(EMCState *script);
+	int o3_setupSceneAnimObject(EMCState *script);
+	int o3_removeSceneAnimObject(EMCState *script);
+	int o3_dummy(EMCState *script);
 
 	// misc
-	TextDisplayer_v3 *_text;
-	bool _wsaPlayingVQA;
+	TextDisplayer_MR *_text;
+	bool _wasPlayingVQA;
 
 	// resource specific
 private:

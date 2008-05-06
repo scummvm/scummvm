@@ -170,7 +170,7 @@ void KyraEngine_v1::timerRedrawAmulet(int timerNum) {
 
 void KyraEngine_v1::setWalkspeed(uint8 newSpeed) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::setWalkspeed(%i)", newSpeed);
-	static const uint8 speeds[] = {11, 9, 6, 5, 3};
+	static const uint8 speeds[] = { 11, 9, 6, 5, 3 };
 
 	assert(newSpeed < ARRAYSIZE(speeds));
 	_timer->setDelay(5, speeds[newSpeed]);

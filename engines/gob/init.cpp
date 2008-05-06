@@ -181,9 +181,9 @@ void Init::initGame(const char *totName) {
 
 			_vm->_util->longDelay(200); // Letting everything settle
 
-			if (_vm->_vidPlayer->openVideo("coktel.imd")) {
-				_vm->_vidPlayer->play();
-				_vm->_vidPlayer->closeVideo();
+			if (_vm->_vidPlayer->primaryOpen("coktel.imd")) {
+				_vm->_vidPlayer->primaryPlay();
+				_vm->_vidPlayer->primaryClose();
 			}
 
 			_vm->_draw->closeScreen();

@@ -22,7 +22,7 @@ MODULE_OBJS = \
 	various.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_CINE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

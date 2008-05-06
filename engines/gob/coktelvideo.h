@@ -90,6 +90,8 @@ public:
 
 	/** Returns the features the loaded video possesses. */
 	virtual uint16 getFeatures() const = 0;
+	/** Returns the flags the loaded video possesses. */
+	virtual uint16 getFlags() const = 0;
 	/** Returns the x coordinate of the video. */
 	virtual int16 getX() const = 0;
 	/** Returns the y coordinate of the video. */
@@ -112,6 +114,10 @@ public:
 	virtual uint32 getSyncLag() const = 0;
 	/** Returns the current frame's palette. */
 	virtual const byte *getPalette() const = 0;
+
+	/** Reads the video's anchor pointer */
+	virtual bool getAnchor(int16 frame, uint16 partType,
+			int16 &x, int16 &y, int16 &width, int16 &height) = 0;
 
 	/** Load a video out of a stream. */
 	virtual bool load(Common::SeekableReadStream &stream) = 0;
@@ -148,13 +154,19 @@ public:
 
 	/** Copy the current frame.
 	 *
-	 *  @param dest The memory to which to copy the current frame
+	 *  @param dest The memory to which to copy the current frame.
+	 *  @param left The x position within the frame.
+	 *  @param top The y position within the frame.
+	 *  @param width The width of the area to copy.
+	 *  @param height The height of the area to copy.
 	 *  @param x The x position to where to copy.
 	 *  @param y The y position to where to copy.
 	 *  @param pitch The buffer's width.
 	 *  @param transp Which color should be seen as transparent?
 	 */
-	virtual void copyCurrentFrame(byte *dest, uint16 x, uint16 y, uint16 width, int16 transp = -1) = 0;
+	virtual void copyCurrentFrame(byte *dest,
+			uint16 left, uint16 top, uint16 width, uint16 height,
+			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) = 0;
 };
 
 /** Coktel Vision's IMD files.
@@ -165,6 +177,7 @@ public:
 	~Imd();
 
 	uint16 getFeatures() const { return _features; }
+	uint16 getFlags() const { return _flags; }
 	int16 getX() const { return _x; }
 	int16 getY() const { return _y; }
 	int16 getWidth() const { return _width; }
@@ -174,6 +187,9 @@ public:
 	int16 getFrameRate() const { if (_hasSound) return 1000 / _soundSliceLength; return _frameRate; }
 	uint32 getSyncLag() const { return _skipFrames; }
 	const byte *getPalette() const { return _palette; }
+
+	bool getAnchor(int16 frame, uint16 partType,
+			int16 &x, int16 &y, int16 &width, int16 &height) { return false; }
 
 	void setFrameRate(int16 frameRate);
 
@@ -192,7 +208,9 @@ public:
 	State nextFrame();
 	void waitEndFrame();
 
-	void copyCurrentFrame(byte *dest, uint16 x, uint16 y, uint16 width, int16 transp = -1);
+	void copyCurrentFrame(byte *dest,
+			uint16 left, uint16 top, uint16 width, uint16 height,
+			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
 
 protected:
 	struct Coord {
@@ -260,6 +278,9 @@ public:
 	Vmd();
 	~Vmd();
 
+	bool getAnchor(int16 frame, uint16 partType,
+			int16 &x, int16 &y, int16 &width, int16 &height);
+
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
 
@@ -295,6 +316,7 @@ protected:
 
 	bool _hasVideo;
 
+	uint32 _frameInfoOffset;
 	uint16 _partsPerFrame;
 	Frame *_frames;
 

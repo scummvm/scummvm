@@ -26,6 +26,7 @@
 #include "made/made.h"
 #include "made/screen.h"
 #include "made/resource.h"
+#include "made/database.h"
 
 namespace Made {
 
@@ -63,6 +64,21 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_exclude = 0;
 	
 	_visualEffectNum = 0;
+	
+	_textX = 0;
+	_textY = 0;
+	_textColor = 0;
+	_textRect.left = 0;
+	_textRect.top = 0;
+	_textRect.right = 320;
+	_textRect.bottom = 200;
+	_font = NULL;
+	_currentFontNum = 0;
+	_fontDrawCtx.x = 0;
+	_fontDrawCtx.y = 0;
+	_fontDrawCtx.w = 320;
+	_fontDrawCtx.h = 200;
+	_fontDrawCtx.destSurface = _screen1;
 
 	clearChannels();
 }
@@ -76,23 +92,41 @@ void Screen::clearScreen() {
 	_screen1->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_screen2->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_needPalette = true;
-	//_vm->_system->clearScreen();
 }
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, const ClipInfo &clipInfo) {
 
-	byte *source = (byte*)sourceSurface->getBasePtr(0, 0);
-	byte *dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
-
-	// FIXME: Implement actual clipping
-	if (x + sourceSurface->w > clipInfo.destSurface->w || y + sourceSurface->h > clipInfo.destSurface->h) {
-		debug(2, "CLIPPING PROBLEM: x = %d; y = %d; w = %d; h = %d; x+w = %d; y+h = %d\n",
-			x, y, sourceSurface->w, sourceSurface->h, x + sourceSurface->w, y + sourceSurface->h);
-		return;
+	byte *source, *dest;
+	int startX = 0;
+	int startY = 0;
+	int clipWidth = sourceSurface->w;
+	int clipHeight = sourceSurface->h;
+	
+	if (x < 0) {
+		startX = -x;
+		clipWidth -= startX;
+		x = 0;
 	}
 
-	for (int16 yc = 0; yc < sourceSurface->h; yc++) {
-		for (int16 xc = 0; xc < sourceSurface->w; xc++) {
+	if (y < 0) {
+		startY = -y;
+		clipHeight -= startY;
+		y = 0;
+	}
+
+	if (x + clipWidth > clipInfo.x + clipInfo.w) {
+		clipWidth = clipInfo.x + clipInfo.w - x;
+	}
+
+	if (y + clipHeight > clipInfo.y + clipInfo.h) {
+		clipHeight = clipInfo.y + clipInfo.h - y;
+	}
+
+	source = (byte*)sourceSurface->getBasePtr(startX, startY);
+	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
+
+	for (int16 yc = 0; yc < clipHeight; yc++) {
+		for (int16 xc = 0; xc < clipWidth; xc++) {
 			if (source[xc])
 				dest[xc] = source[xc];
 		}
@@ -117,7 +151,7 @@ void Screen::setRGBPalette(byte *palRGB, int start, int count) {
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {
-	return 0;
+	return channelIndex;
 }
 
 void Screen::deleteChannel(uint16 channelIndex) {
@@ -196,7 +230,7 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 				break;
 
 			case 2: // drawObjectText
-				// TODO
+				printObjectText(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].fontNum, _channels[i].textColor, _channels[i].outlineColor, clipInfo);
 				break;
 
 			case 3: // drawAnimFrame
@@ -287,10 +321,6 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 }
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2) {
-
-	//HACK (until clipping is implemented)
-	if (y > 200) y = 0;
-
 	drawFlex(index, x, y, flag1, flag2, _clipInfo1);
 	return 0;
 }
@@ -444,7 +474,63 @@ int16 Screen::getAnimFrameCount(uint16 animIndex) {
 
 
 uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, int16 y, uint16 fontNum, int16 textColor, int16 outlineColor) {
-	return 0;
+
+	if (channelIndex < 1 || channelIndex >= 100 || textObjectIndex == 0 || fontNum == 0)
+		return 0;
+
+	channelIndex--;
+
+	Object *obj = _vm->_dat->getObject(textObjectIndex);
+	const char *text = obj->getString();
+
+	int16 x1, y1, x2, y2;
+
+	setFont(fontNum);
+
+	int textWidth = _font->getTextWidth(text);
+	int textHeight = _font->getHeight();
+	
+	if (outlineColor != -1) {
+		textWidth += 2;
+		textHeight += 2;
+		x--;
+		y--;
+	}
+
+	x1 = x;
+	y1 = y;
+	x2 = x + textWidth;
+	y2 = y + textHeight;
+	//TODO: clipRect(x1, y1, x2, y2);
+
+	if (textWidth > 0 && outlineColor != -1) {
+		x++;
+		y++;
+	}
+	
+	int16 state = 1;
+	
+	if (_ground == 0)
+		state |= 2;
+
+	_channels[channelIndex].state = state;
+	_channels[channelIndex].type = 2;
+	_channels[channelIndex].index = textObjectIndex;
+	_channels[channelIndex].x = x;
+	_channels[channelIndex].y = y;
+	_channels[channelIndex].textColor = textColor;
+	_channels[channelIndex].fontNum = fontNum;
+	_channels[channelIndex].outlineColor = outlineColor;
+	_channels[channelIndex].x1 = x1;
+	_channels[channelIndex].y1 = y1;
+	_channels[channelIndex].x2 = x2;
+	_channels[channelIndex].y2 = y2;
+	_channels[channelIndex].area = (x2 - x2) * (y2 - y1);
+
+	if (_channelsUsedCount <= channelIndex)
+		_channelsUsedCount = channelIndex + 1;
+
+	return channelIndex + 1;
 }
 
 void Screen::show() {
@@ -487,5 +573,160 @@ void Screen::flash(int flashCount) {
 		_vm->_system->delayMillis(30);
 	}
 }
+
+void Screen::setFont(int16 fontNum) {
+	if (fontNum == _currentFontNum)
+		return;
+	if (_font)
+		_vm->_res->freeResource(_font);
+	_font = _vm->_res->getFont(fontNum);
+	_currentFontNum = fontNum;
+}
+
+void Screen::printChar(uint c, int16 x, int16 y, byte color) {
+
+	if (!_font)
+		return;
+
+	int height = _font->getHeight();
+	byte *charData = _font->getChar(c);
+	
+	if (!charData)
+		return;
+
+	byte p;
+	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
+	
+	for (int16 yc = 0; yc < height; yc++) {
+		p = charData[yc];
+		for (int16 xc = 0; xc < 8; xc++) {
+			if (p & 0x80)
+				dest[xc] = color;
+			p <<= 1;
+		}
+		dest += _fontDrawCtx.destSurface->pitch;
+	}
+
+}
+
+void Screen::printText(const char *text) {
+
+	const int tabWidth = 5;
+
+	if (!_font)
+		return;
+
+	int textLen = strlen(text);
+	int textHeight = _font->getHeight();
+	int linePos = 1;
+	int16 x = _textX;
+	int16 y = _textY;
+	
+	for (int textPos = 0; textPos < textLen; textPos++) {
+	
+		uint c = text[textPos];
+		int charWidth = _font->getCharWidth(c);
+
+		if (c == 9) {
+			linePos = ((linePos / tabWidth) + 1) * tabWidth;
+			x = _textRect.left + linePos * _font->getCharWidth(32);
+		} else if (c == 10) {
+			linePos = 1;
+			x = _textRect.left;
+			y += textHeight;
+		} else if (c == 13) {
+			linePos = 1;
+			x = _textRect.left;
+		} else if (c == 32) {
+			int wrapPos = textPos + 1;
+			int wrapX = x + charWidth;
+			while (wrapPos < textLen && text[wrapPos] != 0 && text[wrapPos] != 32 && text[wrapPos] >= 28) {
+				wrapX += _font->getCharWidth(text[wrapPos]);
+				wrapPos++;
+			}
+			if (wrapX >= _textRect.right) {
+				linePos = 1;
+				x = _textRect.left;
+				y += textHeight;
+				charWidth = 0;
+				// TODO: text[textPos] = '\x01';
+			}
+		}
+		
+		if (x + charWidth > _textRect.right) {
+			linePos = 1;
+			x = _textRect.left;
+			y += textHeight;
+		}
+		
+		if (y + textHeight > _textRect.bottom) {
+			// TODO
+		}
+		
+		if (c >= 28 && c <= 255) {
+			if (_dropShadowColor != -1) {
+				printChar(c, x + 1, y + 1, _dropShadowColor);
+			}
+			if (_outlineColor != -1) {
+				printChar(c, x, y - 1, _outlineColor);
+				printChar(c, x, y + 1, _outlineColor);
+				printChar(c, x - 1, y, _outlineColor);
+				printChar(c, x + 1, y, _outlineColor);
+				printChar(c, x - 1, y - 1, _outlineColor);
+				printChar(c, x - 1, y + 1, _outlineColor);
+				printChar(c, x + 1, y - 1, _outlineColor);
+				printChar(c, x + 1, y + 1, _outlineColor);
+			}
+			printChar(c, x, y, _textColor);
+			x += charWidth;
+			linePos++;
+		}
+	
+	}
+
+	_textX = x;
+	_textY = y;
+
+}
+
+void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
+	if (*text == 0 || x == 0 || y == 0)
+		return;
+
+	int16 oldFontNum = _currentFontNum;
+	Common::Rect oldTextRect;
+	ClipInfo oldFontDrawCtx = _fontDrawCtx;
+
+	_fontDrawCtx = clipInfo;
+	
+	getTextRect(oldTextRect);
+	setFont(fontNum);
+	setTextColor(textColor);
+	setOutlineColor(outlineColor);
+	setTextXY(x, y);
+	printText(text);
+	setTextRect(oldTextRect);
+	setFont(oldFontNum);
+	_fontDrawCtx = oldFontDrawCtx;
+	
+}
+
+void Screen::printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
+
+	if (objectIndex == 0)
+		return;
+
+	Object *obj = _vm->_dat->getObject(objectIndex);
+	const char *text = obj->getString();
+	
+	printTextEx(text, x, y, fontNum, textColor, outlineColor, clipInfo);
+
+}
+
+int16 Screen::getTextWidth(int16 fontNum, const char *text) {
+	setFont(fontNum);
+	return _font->getTextWidth(text);
+}
+
 
 } // End of namespace Made

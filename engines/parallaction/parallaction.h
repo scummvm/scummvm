@@ -145,15 +145,13 @@ struct PARALLACTIONGameDescription;
 
 
 
+
 extern uint16		_mouseButtons;
 extern char			_password[8];
 extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
 #define MAX_FORWARDS	50
-extern char			_slideText[][MAX_TOKEN_LEN];
-extern uint16		_introSarcData3;		 // sarcophagus stuff to be saved
-extern uint16		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char			_saveData1[];
 extern uint32		_commandFlags;
 extern const char	*_dinoName;
@@ -187,10 +185,20 @@ struct Location {
 	char	   *_comment;
 	char	   *_endComment;
 
+	ZoneList		_zones;
+	AnimationList	_animations;
+	ProgramList		_programs;
+
+	bool		_hasSound;
+	char		_soundFile[50];
+
 	// NS specific
 	WalkNodeList	_walkNodes;
 
 	// BRA specific
+	int			_zeta0;
+	int			_zeta1;
+	int			_zeta2;
 	CommandList		_escapeCommands;
 };
 
@@ -239,35 +247,6 @@ public:
 
 
 
-
-class Opcode {
-
-public:
-	virtual void operator()() const = 0;
-	virtual ~Opcode() { }
-};
-
-template <class T>
-class OpcodeImpl : public Opcode {
-
-	typedef void (T::*Fn)();
-
-	T*	_instance;
-	Fn	_fn;
-
-public:
-	OpcodeImpl(T* instance, const Fn &fn) : _instance(instance), _fn(fn) { }
-
-	void operator()() const {
-		(_instance->*_fn)();
-	}
-
-};
-
-typedef Common::Array<const Opcode*>	OpcodeSet;
-
-
-
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
 #define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
 #define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
@@ -307,15 +286,6 @@ public:
 
 	void updateGameInput();
 	void updateCommentInput();
-
-	uint	_lookup;
-	Common::Stack<OpcodeSet*>	_opcodes;
-	Common::Stack<Table*>		_statements;
-	OpcodeSet	*_currentOpcodes;
-	Table		*_currentStatements;
-	void	pushParserTables(OpcodeSet *opcodes, Table* statements);
-	void	popParserTables();
-	void	parseStatement();
 
 	OpcodeSet	_commandOpcodes;
 
@@ -366,6 +336,8 @@ public:
 	Table		*_callableNames;
 	Table		*_localFlagNames;
 
+	Parser		*_locationParser;
+
 public:
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -390,6 +362,11 @@ public:
 
 	Character		_char;
 
+	void			setLocationFlags(uint32 flags);
+	void			clearLocationFlags(uint32 flags);
+	void			toggleLocationFlags(uint32 flags);
+	uint32			getLocationFlags();
+
 	uint32			_localFlags[NUM_LOCATIONS];
 	char			_locationNames[NUM_LOCATIONS][32];
 	int16			_currentLocationIndex;
@@ -405,9 +382,6 @@ public:
 
 	ZonePtr			_activeZone;
 
-	ZoneList		_zones;
-	AnimationList	_animations;
-	ProgramList		_programs;
 
 	Font		*_labelFont;
 	Font		*_menuFont;
@@ -444,8 +418,6 @@ protected:		// data
 
 	Common::String	_saveFileName;
 
-	bool		_hasLocationSound;
-	char		_locationSound[50];
 
 	ZonePtr		_hoverZone;
 
@@ -626,9 +598,13 @@ private:
 	*/
 
 	ZonePtr _moveSarcZone0;
-	int16 _introSarcData1;
 	ZonePtr _moveSarcZone1;
 	uint16 num_foglie;
+	char _slideText[2][MAX_TOKEN_LEN];
+	int16 _introSarcData1;
+	uint16	_introSarcData2;		 // sarcophagus stuff to be saved
+	uint16	_introSarcData3;		 // sarcophagus stuff to be saved
+
 	ZonePtr _moveSarcZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
@@ -892,10 +868,6 @@ public:
 
 	int			_part;
 	int			_progress;
-
-	int			_zeta0;
-	int			_zeta1;
-	int			_zeta2;
 
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;

@@ -28,7 +28,7 @@
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/object.h"
@@ -560,7 +560,7 @@ void ScummEngine::resetRoomSubBlocks() {
 		}
 	}
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 	// Polygons in HE 80+ games
 	if (_game.heversion >= 80) {
 		ptr = findResourceData(MKID_BE('POLD'), roomptr);

@@ -14,6 +14,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Revived the PS2 port (was already in 0.11.1 but was forgotten in the
      release notes).
 
+ AGOS:
+   - Fixed palette issues in Amiga versions of Simon the Sorcerer 1.
+
  SCUMM:
    - Rewrote parts of Digital iMUSE, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.

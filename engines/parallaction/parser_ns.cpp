@@ -112,7 +112,7 @@ DECLARE_ANIM_PARSER(type)  {
 
 	_locParseCtxt.a->_flags |= 0x1000000;
 
-	popParserTables();
+	_locationParser->popTables();
 }
 
 
@@ -176,7 +176,7 @@ DECLARE_ANIM_PARSER(endanimation)  {
 
 	_locParseCtxt.a->_flags |= 0x1000000;
 
-	popParserTables();
+	_locationParser->popTables();
 }
 
 void Parallaction_ns::parseAnimation(Script& script, AnimationList &list, char *name) {
@@ -191,7 +191,7 @@ void Parallaction_ns::parseAnimation(Script& script, AnimationList &list, char *
 	_locParseCtxt.a = a;
 	_locParseCtxt.script = &script;
 
-	pushParserTables(&_locationAnimParsers, _locationAnimStmt);
+	_locationParser->pushTables(&_locationAnimParsers, _locationAnimStmt);
 }
 
 void Parallaction_ns::parseInstruction(ProgramPtr program) {
@@ -239,7 +239,7 @@ void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {
 
 	delete script;
 
-	_programs.push_back(program);
+	_location._programs.push_back(program);
 
 	debugC(1, kDebugParser, "loadProgram() done");
 
@@ -469,7 +469,7 @@ void Parallaction_ns::parseLValue(ScriptVar &v, const char *str) {
 DECLARE_COMMAND_PARSER(flags)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(flags) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	if (_globalTable->lookup(_tokens[1]) == Table::notFound) {
 		do {
@@ -496,7 +496,7 @@ DECLARE_COMMAND_PARSER(flags)  {
 DECLARE_COMMAND_PARSER(zone)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zone) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._zone = findZone(_tokens[_locParseCtxt.nextToken]);
 	if (!_locParseCtxt.cmd->u._zone) {
@@ -512,7 +512,7 @@ DECLARE_COMMAND_PARSER(zone)  {
 DECLARE_COMMAND_PARSER(location)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(location) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._string = strdup(_tokens[_locParseCtxt.nextToken]);
 	_locParseCtxt.nextToken++;
@@ -525,7 +525,7 @@ DECLARE_COMMAND_PARSER(location)  {
 DECLARE_COMMAND_PARSER(drop)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(drop) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._object = 4 + _objectsNames->lookup(_tokens[_locParseCtxt.nextToken]);
 	_locParseCtxt.nextToken++;
@@ -538,7 +538,7 @@ DECLARE_COMMAND_PARSER(drop)  {
 DECLARE_COMMAND_PARSER(call)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(call) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._callable = _callableNames->lookup(_tokens[_locParseCtxt.nextToken]) - 1;
 	_locParseCtxt.nextToken++;
@@ -551,7 +551,7 @@ DECLARE_COMMAND_PARSER(call)  {
 DECLARE_COMMAND_PARSER(simple)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(simple) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 	addCommand();
 }
 
@@ -559,7 +559,7 @@ DECLARE_COMMAND_PARSER(simple)  {
 DECLARE_COMMAND_PARSER(move)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(move) ");
 
-	createCommand(_lookup);
+	createCommand(_locationParser->_lookup);
 
 	_locParseCtxt.cmd->u._move.x = atoi(_tokens[_locParseCtxt.nextToken]);
 	_locParseCtxt.nextToken++;
@@ -573,7 +573,7 @@ DECLARE_COMMAND_PARSER(move)  {
 DECLARE_COMMAND_PARSER(endcommands)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(endcommands) ");
 
-	popParserTables();
+	_locationParser->popTables();
 
 	// temporary trick to handle dialogue commands
 	_locParseCtxt.endcommands = true;
@@ -679,7 +679,7 @@ void Parallaction_ns::parseCommands(Script &script, CommandList& list) {
 	_locParseCtxt.endcommands = false;
 	_locParseCtxt.script = &script;
 
-	pushParserTables(&_commandParsers, _commandsNames);
+	_locationParser->pushTables(&_commandParsers, _commandsNames);
 }
 
 Dialogue *Parallaction_ns::parseDialogue(Script &script) {
@@ -779,8 +779,7 @@ Answer *Parallaction_ns::parseAnswer(Script &script) {
 		parseCommands(script, answer->_commands);
 		_locParseCtxt.endcommands = false;
 		do {
-			script.readLineToken(true);
-			parseStatement();
+			_locationParser->parseStatement();
 		} while (!_locParseCtxt.endcommands);
 
 		script.readLineToken(true);
@@ -883,14 +882,14 @@ DECLARE_LOCATION_PARSER(nodes)  {
 DECLARE_LOCATION_PARSER(zone)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zone) ");
 
-	parseZone(*_locParseCtxt.script, _zones, _tokens[1]);
+	parseZone(*_locParseCtxt.script, _location._zones, _tokens[1]);
 }
 
 
 DECLARE_LOCATION_PARSER(animation)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(animation) ");
 
-	parseAnimation(*_locParseCtxt.script, _animations, _tokens[1]);
+	parseAnimation(*_locParseCtxt.script, _location._animations, _tokens[1]);
 }
 
 
@@ -922,14 +921,14 @@ DECLARE_LOCATION_PARSER(acommands)  {
 DECLARE_LOCATION_PARSER(flags)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(flags) ");
 
-	if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
+	if ((getLocationFlags() & kFlagsVisited) == 0) {
 		// only for 1st visit
-		_localFlags[_currentLocationIndex] = 0;
+		clearLocationFlags(kFlagsAll);
 		int _si = 1;
 
 		do {
 			byte _al = _localFlagNames->lookup(_tokens[_si]);
-			_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
+			setLocationFlags(1 << (_al - 1));
 
 			_si++;
 			if (scumm_stricmp(_tokens[_si], "|")) break;
@@ -957,8 +956,8 @@ DECLARE_LOCATION_PARSER(sound)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(sound) ");
 
 	if (getPlatform() == Common::kPlatformAmiga) {
-		strcpy(_locationSound, _tokens[1]);
-		_hasLocationSound = true;
+		strcpy(_location._soundFile, _tokens[1]);
+		_location._hasSound = true;
 	}
 }
 
@@ -980,29 +979,30 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	_numForwardedCommands = 0;
 
 	Script *script = _disk->loadLocation(filename);
+	_locationParser->bind(script);
 
 	// TODO: the following two lines are specific to Nippon Safes
 	// and should be moved into something like 'initializeParsing()'
-	_hasLocationSound = false;
+	_location._hasSound = false;
 
 	_locParseCtxt.end = false;
 	_locParseCtxt.script = script;
 	_locParseCtxt.filename = filename;
 
-	pushParserTables(&_locationParsers, _locationStmt);
+	_locationParser->pushTables(&_locationParsers, _locationStmt);
 	do {
-		script->readLineToken(true);
-		parseStatement();
+		_locationParser->parseStatement();
 	} while (!_locParseCtxt.end);
-	popParserTables();
+	_locationParser->popTables();
+	_locationParser->unbind();
 
 	delete script;
 
 	resolveCommandForwards();
 
 	// this loads animation scripts
-	AnimationList::iterator it = _animations.begin();
-	for ( ; it != _animations.end(); it++) {
+	AnimationList::iterator it = _location._animations.begin();
+	for ( ; it != _location._animations.end(); it++) {
 		if ((*it)->_scriptName) {
 			loadProgram(*it, (*it)->_scriptName);
 		}
@@ -1047,6 +1047,8 @@ typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
 #define WARNING_PARSER(sig)		OpcodeV1(this, &Parallaction_br::warning_##sig)
 
 void Parallaction_ns::initParsers() {
+
+	_locationParser = new Parser;
 
 	static const OpcodeV1 op0[] = {
 		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition
@@ -1153,9 +1155,6 @@ void Parallaction_ns::initParsers() {
 	for (i = 0; i < ARRAYSIZE(op6); i++)
 		_locationAnimParsers.push_back(&op6[i]);
 
-	_currentOpcodes = 0;
-	_currentStatements = 0;
-
 }
 
 //
@@ -1193,7 +1192,7 @@ DECLARE_ZONE_PARSER(null) {
 DECLARE_ZONE_PARSER(endzone)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(endzone) ");
 
-	popParserTables();
+	_locationParser->popTables();
 }
 
 DECLARE_ZONE_PARSER(limits)  {
@@ -1226,7 +1225,7 @@ DECLARE_ZONE_PARSER(type)  {
 		parseZoneTypeBlock(*_locParseCtxt.script, _locParseCtxt.z);
 	}
 
-	popParserTables();
+	_locationParser->popTables();
 }
 
 
@@ -1274,7 +1273,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 
 	list.push_front(z);
 
-	pushParserTables(&_locationZoneParsers, _locationZoneStmt);
+	_locationParser->pushTables(&_locationZoneParsers, _locationZoneStmt);
 
 	return;
 }

@@ -23,7 +23,7 @@
  *
  */
 
-#if !defined(SCUMM_SMUSH_PLAYER_H) && !defined(DISABLE_SCUMM_7_8)
+#if !defined(SCUMM_SMUSH_PLAYER_H) && defined(ENABLE_SCUMM_7_8)
 #define SCUMM_SMUSH_PLAYER_H
 
 #include "common/util.h"

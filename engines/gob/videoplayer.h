@@ -26,6 +26,8 @@
 #ifndef GOB_VIDEOPLAYER_H
 #define GOB_VIDEOPLAYER_H
 
+#include "common/array.h"
+
 #include "gob/coktelvideo.h"
 #include "gob/dataio.h"
 
@@ -51,34 +53,81 @@ public:
 	VideoPlayer(GobEngine *vm);
 	~VideoPlayer();
 
-	bool openVideo(const char *video, int16 x = -1, int16 y = -1,
+	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
 			int16 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
-
-	void play(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
+	void primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,
 			int16 reverseTo = -1);
+	void primaryClose();
 
-	int16 getFramesCount() const;
-	int16 getCurrentFrame() const;
-	void writeVideoInfo(const char *video, int16 varX, int16 varY,
+	int slotOpen(const char *videoFile, Type which = kVideoTypeTry);
+	void slotPlay(int slot, int16 frame = -1);
+	void slotClose(int slot);
+	void slotCopyFrame(int slot, byte *dest,
+			uint16 left, uint16 top, uint16 width, uint16 height,
+			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
+	void slotCopyPalette(int slot, int16 palStart = -1, int16 palEnd = -1);
+
+	bool slotIsOpen(int slot) const;
+
+	uint16 getFlags(int slot = -1) const;
+	int16 getFramesCount(int slot = -1) const;
+	int16 getCurrentFrame(int slot = -1) const;
+	int16 getWidth(int slot = -1) const;
+	int16 getHeight(int slot = -1) const;
+	int16 getDefaultX(int slot = -1) const;
+	int16 getDefaultY(int slot = -1) const;
+
+	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
 
-	void closeVideo();
-
 private:
+	class Video {
+		public:
+			Video(GobEngine *vm);
+			~Video();
+
+			bool open(const char *fileName, Type which);
+			void close();
+
+			bool isOpen() const;
+
+			const char *getFileName() const;
+			CoktelVideo *getVideo();
+			const CoktelVideo *getVideo() const;
+			CoktelVideo::State getState() const;
+
+			int16 getDefaultX() const;
+			int16 getDefaultY() const;
+
+			CoktelVideo::State nextFrame();
+
+		private:
+			GobEngine *_vm;
+
+			char *_fileName;
+			DataStream *_stream;
+			CoktelVideo *_video;
+			CoktelVideo::State _state;
+			int16 _defaultX, _defaultY;
+	};
+
 	static const char *_extensions[];
 
 	GobEngine *_vm;
 
-	char _curFile[256];
-	DataStream *_stream;
-	CoktelVideo *_video;
+	Common::Array<Video *> _videoSlots;
+	Video *_primaryVideo;
 	bool _backSurf;
 	bool _needBlit;
 	bool _noCursorSwitch;
 
-	void copyPalette(int16 palStart = -1, int16 palEnd = -1);
+	bool findFile(char *fileName, Type &which);
+
+	const Video *getVideoBySlot(int slot = -1) const;
+
+	void copyPalette(CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
 			int16 palFrame, int16 endFrame);

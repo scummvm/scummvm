@@ -31,10 +31,10 @@
 
 namespace Kyra {
 
-struct ScriptState;
-typedef Common::Functor1<ScriptState*, int> Opcode;
+struct EMCState;
+typedef Common::Functor1<EMCState*, int> Opcode;
 
-struct ScriptData {
+struct EMCData {
 	byte *text;
 	uint16 *data;
 	uint16 *ordr;
@@ -43,9 +43,9 @@ struct ScriptData {
 	const Common::Array<const Opcode*> *opcodes;
 };
 
-struct ScriptState {
+struct EMCState {
 	uint16 *ip;
-	const ScriptData *dataPtr;
+	const EMCData *dataPtr;
 	int16 retValue;
 	uint16 bp;
 	uint16 sp;
@@ -87,24 +87,24 @@ private:
 	uint32 _endOffset;
 };
 
-class ScriptHelper {
+class EMCInterpreter {
 public:
-	ScriptHelper(KyraEngine *vm);
+	EMCInterpreter(KyraEngine *vm);
 
-	bool loadScript(const char *filename, ScriptData *data, const Common::Array<const Opcode*> *opcodes);
-	void unloadScript(ScriptData *data);
+	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode*> *opcodes);
+	void unload(EMCData *data);
 
-	void initScript(ScriptState *scriptState, const ScriptData *data);
-	bool startScript(ScriptState *script, int function);
+	void init(EMCState *scriptState, const EMCData *data);
+	bool start(EMCState *script, int function);
 
-	bool validScript(ScriptState *script);
+	bool isValid(EMCState *script);
 
-	bool runScript(ScriptState *script);
+	bool run(EMCState *script);
 protected:
 	KyraEngine *_vm;
 	int16 _parameter;
 
-	typedef void (ScriptHelper::*CommandProc)(ScriptState*);
+	typedef void (EMCInterpreter::*CommandProc)(EMCState*);
 	struct CommandEntry {
 		CommandProc proc;
 		const char *desc;
@@ -112,24 +112,24 @@ protected:
 
 	const CommandEntry *_commands;
 private:
-	void cmd_jmpTo(ScriptState*);
-	void cmd_setRetValue(ScriptState*);
-	void cmd_pushRetOrPos(ScriptState*);
-	void cmd_push(ScriptState*);
-	void cmd_pushReg(ScriptState*);
-	void cmd_pushBPNeg(ScriptState*);
-	void cmd_pushBPAdd(ScriptState*);
-	void cmd_popRetOrPos(ScriptState*);
-	void cmd_popReg(ScriptState*);
-	void cmd_popBPNeg(ScriptState*);
-	void cmd_popBPAdd(ScriptState*);
-	void cmd_addSP(ScriptState*);
-	void cmd_subSP(ScriptState*);
-	void cmd_execOpcode(ScriptState*);
-	void cmd_ifNotJmp(ScriptState*);
-	void cmd_negate(ScriptState*);
-	void cmd_eval(ScriptState*);
-	void cmd_setRetAndJmp(ScriptState*);
+	void cmd_jmpTo(EMCState*);
+	void cmd_setRetValue(EMCState*);
+	void cmd_pushRetOrPos(EMCState*);
+	void cmd_push(EMCState*);
+	void cmd_pushReg(EMCState*);
+	void cmd_pushBPNeg(EMCState*);
+	void cmd_pushBPAdd(EMCState*);
+	void cmd_popRetOrPos(EMCState*);
+	void cmd_popReg(EMCState*);
+	void cmd_popBPNeg(EMCState*);
+	void cmd_popBPAdd(EMCState*);
+	void cmd_addSP(EMCState*);
+	void cmd_subSP(EMCState*);
+	void cmd_execOpcode(EMCState*);
+	void cmd_ifNotJmp(EMCState*);
+	void cmd_negate(EMCState*);
+	void cmd_eval(EMCState*);
+	void cmd_setRetAndJmp(EMCState*);
 };
 } // end of namespace Kyra
 

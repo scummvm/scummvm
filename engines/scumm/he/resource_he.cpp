@@ -1524,7 +1524,7 @@ void ScummEngine_v70he::readGlobalObjects() {
 #endif
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v99he::readMAXS(int blockSize) {
 	if (blockSize == 52) {
 		debug(0, "ScummEngine_v99he readMAXS: MAXS has blocksize %d", blockSize);
