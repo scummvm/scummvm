@@ -12,7 +12,7 @@
 ########################################################################
 ## Do you want a build using plugins?
 
-#BUILD_PLUGINS = 1
+#DYNAMIC_MODULES = 1
 # TODO: You'll need to change STATIC_PLUGIN to DYNAMIC_PLUGIN below
 
 ########################################################################
@@ -175,11 +175,11 @@ OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o
 OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o
 OBJS += missing/missing.o
 OBJS += ARMscaler.o
-ifndef BUILD_PLUGINS
+ifndef DYNAMIC_MODULES
 OBJS += PocketSCUMM.o
 endif
 
-ifdef BUILD_PLUGINS
+ifdef DYNAMIC_MODULES
 EXECUTABLE		 = scummvm.dll
 PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .dll
@@ -195,7 +195,7 @@ include $(srcdir)/Makefile.common
 ########################################################################
 ## Our top level target, and what we deploy depends on whether we are
 ## building the plugin version or not...
-ifdef BUILD_PLUGINS
+ifdef DYNAMIC_MODULES
 
 all: dist-plugins
 

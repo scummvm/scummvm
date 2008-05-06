@@ -19,7 +19,7 @@ install: all
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/COPYRIGHT" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/scummvm/"
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/scummvm/"
-ifdef BUILD_PLUGINS
+ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/scummvm/"
 	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/scummvm/"
 endif
@@ -30,7 +30,7 @@ uninstall:
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	rm -rf "$(DESTDIR)$(DATADIR)/scummvm/"
-ifdef BUILD_PLUGINS
+ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(LIBDIR)/scummvm/"
 endif
 

@@ -105,7 +105,7 @@ add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 _endian=unknown
 _need_memalign=no
 _have_x86=no
-_build_plugins=no
+_dynamic_modules=no
 _plugins_default=static
 _nasm=auto
 
@@ -654,7 +654,7 @@ for ac_option in $@; do
 	--disable-nasm)           _nasm=no        ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
-	--enable-plugins)         _build_plugins=yes ;;
+	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
 	--disable-mt32emu)        _mt32emu=no     ;;
@@ -1217,11 +1217,11 @@ add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
 # Check whether plugin support is requested and possible
 #
 echo_n "Checking whether building plugins was requested... "
-echo "$_build_plugins"
+echo "$_dynamic_modules"
 _mak_plugins=
 _def_plugin="/* -> plugins disabled */"
 
-if test "$_build_plugins" = yes ; then
+if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
 	linux*)
@@ -1230,7 +1230,7 @@ _def_plugin='
 #define PLUGIN_SUFFIX	".so"
 '
 _mak_plugins='
-BUILD_PLUGINS := 1
+DYNAMIC_MODULES := 1
 PLUGIN_PREFIX := lib
 PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS =
@@ -1248,7 +1248,7 @@ _def_plugin='
 #define PLUGIN_SUFFIX	".so"
 '
 _mak_plugins='
-BUILD_PLUGINS := 1
+DYNAMIC_MODULES := 1
 PLUGIN_PREFIX := lib
 PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS =
@@ -1265,7 +1265,7 @@ _def_plugin='
 #define PLUGIN_SUFFIX	".plugin"
 '
 _mak_plugins='
-BUILD_PLUGINS := 1
+DYNAMIC_MODULES := 1
 PLUGIN_PREFIX :=
 PLUGIN_SUFFIX := .plugin
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
@@ -1282,7 +1282,7 @@ _def_plugin='
 #define PLUGIN_SUFFIX	".dll"
 '
 _mak_plugins='
-BUILD_PLUGINS		:= 1
+DYNAMIC_MODULES		:= 1
 PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .dll
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
@@ -1293,12 +1293,12 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 '
 		;;
 	*)
-		_build_plugins=no
+		_dynamic_modules=no
 		_mak_plugins=
 		_def_plugin=
 		;;
 	esac
-	echo "$_build_plugins"
+	echo "$_dynamic_modules"
 fi
 
 
@@ -1566,7 +1566,7 @@ for engine in $_engines; do
 		else
 			# If dynamic plugins aren't supported, mark
 			# all the engines as static
-			if test $_build_plugins = no ; then
+			if test $_dynamic_modules = no ; then
 				eval _engine_${engine}_build=static
 			else
 				# If it wasn't explicitly marked as static or

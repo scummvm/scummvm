@@ -1,4 +1,4 @@
-#BUILD_PLUGINS = 1
+#DYNAMIC_MODULES = 1
 #libndsdir = $(DEVKITPRO)/libnds
 libndsdir = /home/neil/devkitpror21/libnds
 
@@ -211,7 +211,7 @@ AS = arm-eabi-as
 HAVE_GCC3 = true
 DISABLE_SCALERS = true
 
-ifdef BUILD_PLUGINS
+ifdef DYNAMIC_MODULES
 DEFINES += -DDYNAMIC_MODULES
 PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
