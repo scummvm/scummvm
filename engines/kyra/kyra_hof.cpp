@@ -780,8 +780,6 @@ void KyraEngine_HoF::cleanup() {
 
 	delete [] _gfxBackUpRect; _gfxBackUpRect = 0;
 
-	delete [] _sceneList; _sceneList = 0;
-
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
 		delete _sceneAnimMovie[i];
 		_sceneAnimMovie[i] = 0;

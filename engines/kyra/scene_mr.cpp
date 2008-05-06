@@ -430,6 +430,8 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 		_screen->_curPage = pageBackUp;
 		musicUpdate(0);
 	}
+	delete stream;
+	stream = 0;
 	musicUpdate(0);
 
 	strcpy(filename, scene.filename1);

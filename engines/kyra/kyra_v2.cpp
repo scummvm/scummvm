@@ -76,6 +76,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_gameShapes.clear();
 
 	delete[] _itemList;
+	delete[] _sceneList;
 
 	_emc->unload(&_sceneScriptData);
 

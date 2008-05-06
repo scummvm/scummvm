@@ -140,6 +140,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_menuDirectlyToLoad = false;
 	_optionsFile = 0;
 	_actorFile = 0;
+	_chatAltFlag = false;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -152,6 +153,7 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete[] _cCodeFile;
 	delete[] _scenesFile;
 	delete[] _itemFile;
+	delete[] _actorFile;
 	delete[] _gamePlayBuffer;
 	delete[] _interface;
 	delete[] _interfaceCommandLine;
@@ -165,7 +167,6 @@ KyraEngine_MR::~KyraEngine_MR() {
 
 	delete[] _gfxBackUpRect;
 	delete[] _paletteOverlay;
-	delete[] _sceneList;
 
 	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
 		delete[] i->_value;
@@ -552,7 +553,6 @@ void KyraEngine_MR::startup() {
 	_stringBuffer = new char[500];	
 	//XXX
 	musicUpdate(0);
-	_costPalBuffer = new uint8[864];
 	//XXX
 	allocAnimObjects(1, 16, 50);
 
@@ -672,7 +672,11 @@ void KyraEngine_MR::startup() {
 
 void KyraEngine_MR::loadCostPal() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadCostPal()");
-	_costPalBuffer = _res->fileData("_COSTPAL.DAT", 0);
+	_res->exists("_COSTPAL.DAT", true);
+	uint32 size = 0;
+	_costPalBuffer = _res->fileData("_COSTPAL.DAT", &size);
+	assert(_costPalBuffer);
+	assert(size == 864);
 }
 
 void KyraEngine_MR::loadShadowShape() {
