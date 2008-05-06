@@ -848,7 +848,7 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class SmushPlayer;
 	friend class Insane;

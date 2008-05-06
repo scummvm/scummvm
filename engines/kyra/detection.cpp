@@ -550,4 +550,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-REGISTER_PLUGIN(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(KYRA)
+	REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+#endif

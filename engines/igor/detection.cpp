@@ -133,4 +133,8 @@ bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(IGOR, PLUGIN_TYPE_ENGINE, IgorMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(IGOR)
+	REGISTER_PLUGIN_DYNAMIC(IGOR, PLUGIN_TYPE_ENGINE, IgorMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(IGOR, PLUGIN_TYPE_ENGINE, IgorMetaEngine);
+#endif

@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_QUEEN
+#define ENABLE_QUEEN STATIC_PLUGIN
 
 #endif

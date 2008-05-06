@@ -56,7 +56,7 @@ MODULE_OBJS := \
 	video_v2.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_GOB), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

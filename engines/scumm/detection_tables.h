@@ -67,7 +67,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "tentacle", "Day of the Tentacle" },
 	{ "zak", "Zak McKracken and the Alien Mindbenders" },
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	{ "ft", "Full Throttle" },
 	{ "dig", "The Dig" },
 	{ "comi", "The Curse of Monkey Island" },
@@ -81,7 +81,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "puttmoon", "Putt-Putt Goes to the Moon" },
 	{ "puttputt", "Putt-Putt Joins the Parade" },
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 	{ "airport", "Let's Explore the Airport with Buzzy" },
 	{ "arttime", "Blue's Art Time Activities" },
 	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
@@ -231,7 +231,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"samnmax",  0, 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	{"ft",       0, 0, GID_FT,  7, 0, MDT_NONE, 0, UNK},
 
 	{"dig",      0, 0, GID_DIG, 7, 0, MDT_NONE, 0, UNK},
@@ -259,7 +259,7 @@ static const GameSettings gameVariantsTable[] = {
 	// they'll override more specific entries that follow later on.
 	{"", "HE 70",   0, GID_HEGAME, 6,  70, MDT_NONE, GF_USE_KEY, UNK},
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 	// HE CUP demos
 	{"", "HE CUP",  0, GID_HECUP,  6, 200, MDT_NONE, 0, UNK},
 
@@ -443,7 +443,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "samnmax", "snmidemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "sdemo.sm%d", kGenDiskNum, Common::DE_DEU, UNK, 0 },
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "dig", "The Dig Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
@@ -482,7 +482,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttputt", "Putt-Putt's Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttputt", "Putt-Putt Parade", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },

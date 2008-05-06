@@ -38,7 +38,7 @@ MODULE_OBJS := \
 	parts/part_main.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_IGOR), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

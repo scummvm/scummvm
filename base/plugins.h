@@ -100,6 +100,15 @@ public:
 };
 
 
+#define STATIC_PLUGIN 1
+#define DYNAMIC_PLUGIN 2
+
+#define PLUGIN_ENABLED_STATIC(ID) \
+	(defined(ENABLE_##ID) && !PLUGIN_ENABLED_DYNAMIC(ID))
+
+#define PLUGIN_ENABLED_DYNAMIC(ID) \
+	(defined(ENABLE_##ID) && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
+
 /**
  * REGISTER_PLUGIN is a convenience macro meant to ease writing
  * the plugin interface for our modules. In particular, using it
@@ -109,15 +118,16 @@ public:
  * @todo	add some means to query the plugin API version etc.
  */
 
-#ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
+#define REGISTER_PLUGIN_STATIC(ID,TYPE,PLUGINCLASS) \
 	PluginType g_##ID##_type = TYPE; \
 	PluginObject *g_##ID##_getObject() { \
 		return new PLUGINCLASS(); \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
-#else
-#define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
+
+#ifdef DYNAMIC_MODULES
+
+#define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
@@ -127,7 +137,8 @@ public:
 		} \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
-#endif
+
+#endif // DYNAMIC_MODULES
 
 
 /** List of plugins. */

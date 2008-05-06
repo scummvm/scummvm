@@ -2,7 +2,7 @@
 #include "engines/agi/agi.h"
 #include "osystem_ds.h"
 
-#ifndef DISABLE_AGI
+#ifdef ENABLE_AGI
 
 namespace DS {
 // Default dictionary is about 64Kb, so 128Kb should be enough for future expansion

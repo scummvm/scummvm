@@ -146,4 +146,8 @@ bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(TOUCHE)
+	REGISTER_PLUGIN_DYNAMIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
+#endif

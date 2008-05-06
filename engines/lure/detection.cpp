@@ -195,4 +195,8 @@ bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(LURE)
+	REGISTER_PLUGIN_DYNAMIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
+#endif

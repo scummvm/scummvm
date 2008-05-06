@@ -36,7 +36,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #endif
@@ -202,7 +202,7 @@ void ScummEngine::parseEvents() {
 	}
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v90he::clearClickedStatus() {
 	ScummEngine::clearClickedStatus();
 	if (_game.heversion >= 98) {
@@ -328,7 +328,7 @@ void ScummEngine::processInput() {
 	processKeyboard(lastKeyHit);
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 
 	if (!(_game.features & GF_DEMO)) {

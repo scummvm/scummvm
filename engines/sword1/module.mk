@@ -21,7 +21,7 @@ MODULE_OBJS := \
 	text.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_SWORD1), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

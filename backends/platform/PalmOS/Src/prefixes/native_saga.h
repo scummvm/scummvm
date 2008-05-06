@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_SAGA
+#define ENABLE_SAGA STATIC_PLUGIN
 
 #endif

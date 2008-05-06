@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_SKY
+#define ENABLE_SKY STATIC_PLUGIN
 
 #endif

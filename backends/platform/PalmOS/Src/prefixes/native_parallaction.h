@@ -2,7 +2,7 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_PARALLACTION
+#define ENABLE_PARALLACTION STATIC_PLUGIN
 
 #undef USE_MAD
 #undef USE_VORBIS

@@ -127,7 +127,11 @@ PluginError QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	return kNoError;
 }
 
-REGISTER_PLUGIN(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(QUEEN)
+	REGISTER_PLUGIN_DYNAMIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
+#endif
 
 namespace Queen {
 

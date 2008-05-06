@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#undef DISABLE_IGOR
+#define ENABLE_IGOR STATIC_PLUGIN
 
 #endif

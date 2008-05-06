@@ -66,7 +66,7 @@ MODULE_OBJS := \
 	wsamovie.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_KYRA), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

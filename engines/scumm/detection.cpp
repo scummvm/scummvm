@@ -873,7 +873,7 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 		break;
 	case 6:
 		switch (res.game.heversion) {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 		case 200:
 			*engine = new ScummEngine_vCUPhe(syst, res);
 			break;
@@ -910,7 +910,7 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 			*engine = new ScummEngine_v6(syst, res);
 		}
 		break;
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	case 7:
 		*engine = new ScummEngine_v7(syst, res);
 		break;
@@ -966,4 +966,8 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-REGISTER_PLUGIN(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(SCUMM)
+	REGISTER_PLUGIN_DYNAMIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
+#endif

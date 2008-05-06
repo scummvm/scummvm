@@ -24,7 +24,7 @@ MODULE_OBJS := \
 	music/musicbase.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_SKY), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

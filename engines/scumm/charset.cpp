@@ -795,7 +795,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	int drawTop = _top - vs->topline;
 
 	if ((_vm->_game.heversion >= 71 && _bitDepth >= 8) || (_vm->_game.heversion >= 90 && _bitDepth == 0)) {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
@@ -971,7 +971,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 	 : CharsetRenderer(vm) {
 	_current = 0;

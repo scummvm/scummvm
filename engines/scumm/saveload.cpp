@@ -235,7 +235,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (!_imuse || _saveSound || !_saveTemporaryState)
 		_sound->stopAllSounds();
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 	if (_imuseDigital) {
 		_imuseDigital->stopAllSounds();
 		_imuseDigital->resetState();
@@ -1239,7 +1239,7 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 	s->saveLoadEntries(this, cursorEntries);
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
@@ -1292,7 +1292,7 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s) {
 	s->saveLoadEntries(this, HE70Entries);
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::saveOrLoad(Serializer *s) {
 	ScummEngine_v70he::saveOrLoad(s);
 

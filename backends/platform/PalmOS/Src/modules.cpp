@@ -87,9 +87,9 @@ static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 #ifdef PALMOS_NATIVE
 			result = GET_MODEARM;
 #else
-#	if	!defined(DISABLE_SCUMM) || \
-		!defined(DISABLE_AGOS) || \
-		!defined(DISABLE_SWORD1)
+#	if	defined(ENABLE_SCUMM) || \
+		defined(ENABLE_AGOS) || \
+		defined(ENABLE_SWORD1)
 			result = GET_DATACOMMON|GET_DATAENGINE|GET_MODE68K;
 #	else
 			result = GET_DATACOMMON|GET_MODE68K;

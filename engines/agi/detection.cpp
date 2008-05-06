@@ -2324,4 +2324,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 	return 0;
 }
 
-REGISTER_PLUGIN(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(AGI)
+	REGISTER_PLUGIN_DYNAMIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+#endif

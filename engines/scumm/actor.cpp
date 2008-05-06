@@ -902,7 +902,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 			}
 			adjustActorPos();
 		} else {
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 			if (_vm->_game.heversion >= 71)
 				((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
@@ -1379,7 +1379,7 @@ void ScummEngine_v6::processActors() {
 		akos_processQueue();
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::processActors() {
 	preProcessAuxQueue();
 
@@ -1543,7 +1543,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 bool Actor::actorHitTest(int x, int y) {
 	AkosRenderer *ar = (AkosRenderer *)_vm->_costumeRenderer;
 
@@ -1681,7 +1681,7 @@ void Actor::animateCostume() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void Actor::animateLimb(int limb, int f) {
 	// This methods is very similiar to animateCostume().
 	// However, instead of animating *all* the limbs, it only animates
@@ -1853,7 +1853,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 	}
 }
 
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
 	bool stringWrap = false;
@@ -2021,7 +2021,7 @@ void ScummEngine::stopTalk() {
 
 	_keepText = false;
 	if (_game.version >= 7) {
-#ifndef DISABLE_SCUMM_7_8
+#ifdef ENABLE_SCUMM_7_8
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
 	} else {
@@ -2054,7 +2054,7 @@ void Actor::setActorCostume(int c) {
 	if (_vm->_game.features & GF_NEW_COSTUMES) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 		if (_vm->_game.heversion >= 71)
 			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
@@ -2293,7 +2293,7 @@ bool Actor::isTalkConditionSet(int slot) const {
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 
-#ifndef DISABLE_HE
+#ifdef ENABLE_HE
 void ScummEngine_v71he::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {

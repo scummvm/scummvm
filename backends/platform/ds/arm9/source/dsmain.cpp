@@ -359,7 +359,7 @@ void initSprites() {
 
 
 void saveGameBackBuffer() {
-#ifdef DISABLE_SCUMM
+#ifndef ENABLE_SCUMM
     if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
     for (int r = 0; r < gameHeight; r++) {
 
@@ -375,7 +375,7 @@ void saveGameBackBuffer() {
 }
 
 void restoreGameBackBuffer() {
-#ifdef DISABLE_SCUMM
+#ifndef ENABLE_SCUMM
 	if (savedBuffer) {
 		for (int r = 0; r < gameHeight; r++) {
 
