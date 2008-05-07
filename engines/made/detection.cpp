@@ -103,7 +103,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		GID_RTZ,
 		0,
-		GF_CD,
+		GF_CD_COMPRESSED,
 		0,
 	},
 
@@ -274,7 +274,7 @@ public:
 	}
 
 	virtual const char *getCopyright() const {
-		return "MADE Engine";
+		return "MADE Engine (C) Activision";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
