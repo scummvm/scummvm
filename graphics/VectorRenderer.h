@@ -77,6 +77,8 @@ public:
 
 	virtual void drawSquare(int x, int y, int w, int h, bool fill) = 0;
 
+	virtual void drawRoundedSquare(int x1, int y1, int r, int w, int h) = 0;
+
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
 	 * Note: This is a real pixel-pitch, not a byte-pitch.
@@ -178,6 +180,8 @@ protected:
 	 */
 	virtual void drawCircleAlg(int x, int y, int r) = 0;
 
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) = 0;
+
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
 };
 
@@ -217,6 +221,10 @@ public:
 	}
 
 	void drawSquare(int x, int y, int w, int h, bool fill);
+
+	void drawRoundedSquare(int x1, int y1, int r, int w, int h) {
+		drawRoundedSquareAlg( x1, y1, r, w, h );
+	}
 
 	/**
 	 * @see VectorRenderer::setColor()
@@ -268,6 +276,9 @@ protected:
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
 	virtual void drawCircleAlg(int x, int y, int r);
+
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
+	}
 
 	PixelType _color; /** Color currently being used to draw on the renderer */
 };
@@ -337,6 +348,8 @@ protected:
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
 	virtual void drawCircleAlg(int x, int y, int r);
+
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h);
 };
 
 } // end of namespace Graphics
