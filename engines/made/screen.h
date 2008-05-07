@@ -62,7 +62,7 @@ public:
 
 	void clearScreen();
 	
-	void drawSurface(Graphics::Surface *sourceSurface, int x, int y, const ClipInfo &clipInfo);
+	void drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
 	void loadRGBPalette(byte *palRGB, int count = 256);
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 	bool isPaletteLocked() { return _paletteLock; }
@@ -110,11 +110,11 @@ public:
 	void updateSprites();
 	void clearChannels();
 	
-	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo);
-	void drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo);
+	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
+	void drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
 
-	uint16 drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2);
-	uint16 drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2);
+	uint16 drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY);
+	uint16 drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY);
 	
 	void addSprite(uint16 spriteIndex);
 	

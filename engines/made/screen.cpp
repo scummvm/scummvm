@@ -94,7 +94,7 @@ void Screen::clearScreen() {
 	_needPalette = true;
 }
 
-void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, const ClipInfo &clipInfo) {
+void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
 
 	byte *source, *dest;
 	int startX = 0;
@@ -125,12 +125,34 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, const C
 	source = (byte*)sourceSurface->getBasePtr(startX, startY);
 	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
 
+	int32 sourcePitch, linePtrAdd;
+	byte *linePtr;
+
+	if (flipX) {
+		linePtrAdd = -1;
+	} else {
+		linePtrAdd = 1;
+	}
+
+	if (flipY) {
+		sourcePitch = -sourceSurface->pitch;
+		source += (clipHeight - 1) * sourceSurface->pitch;
+	} else {
+		sourcePitch = sourceSurface->pitch;
+	}
+
 	for (int16 yc = 0; yc < clipHeight; yc++) {
-		for (int16 xc = 0; xc < clipWidth; xc++) {
-			if (source[xc])
-				dest[xc] = source[xc];
+		if (flipX) {
+			linePtr = source + sourceSurface->w;
+		} else {
+			linePtr = source;
 		}
-		source += sourceSurface->pitch;
+		for (int16 xc = 0; xc < clipWidth; xc++) {
+			if (*linePtr)
+				dest[xc] = *linePtr;
+			linePtr += linePtrAdd;
+		}
+		source += sourcePitch;
 		dest += clipInfo.destSurface->pitch;
 	}
 
@@ -208,8 +230,8 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 		debug(2, "drawSpriteChannels() i = %d\n", i);
 	
 		if (((_channels[i].state & includeStateMask) == includeStateMask) && (_channels[i].state & excludeStateMask) == 0) {
-			uint16 flag1 = _channels[i].state & 0x10;
-			uint16 flag2 = _channels[i].state & 0x20;
+			int16 flipX = _channels[i].state & 0x10;
+			int16 flipY = _channels[i].state & 0x20;
 			
 			debug(2, "drawSpriteChannels() type = %d; index = %04X\n", _channels[i].type, _channels[i].index);
 			
@@ -217,15 +239,15 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 
 			case 1: // drawFlex
 				if (_channels[i].state & 4) {
-					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flag1, flag2, _clipArea);
+					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _clipArea);
 				} else if (_channels[i].state & 8) {
 					for (int excludeIndex = 0; excludeIndex < 4; excludeIndex++) {
 						if (_excludeClipAreaEnabled[excludeIndex]) {
-							drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flag1, flag2, _excludeClipArea[excludeIndex]);
+							drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _excludeClipArea[excludeIndex]);
 						}
 					}
 				} else {
-					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flag1, flag2, clipInfo);
+					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, clipInfo);
 				}
 				break;
 
@@ -235,15 +257,15 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 
 			case 3: // drawAnimFrame
 				if (_channels[i].state & 4) {
-					drawAnimFrame(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].frameNum, flag1, flag2, _clipArea);
+					drawAnimFrame(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].frameNum, flipX, flipY, _clipArea);
 				} else if (_channels[i].state & 8) {
 					for (int excludeIndex = 0; excludeIndex < 4; excludeIndex++) {
 						if (_excludeClipAreaEnabled[excludeIndex]) {
-							drawAnimFrame(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].frameNum, flag1, flag2, _excludeClipArea[excludeIndex]);
+							drawAnimFrame(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].frameNum, flipX, flipY, _excludeClipArea[excludeIndex]);
 						}
 					}
 				} else {
-					drawAnimFrame(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].frameNum, flag1, flag2, clipInfo);
+					drawAnimFrame(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].frameNum, flipX, flipY, clipInfo);
 				}
 				break;
 
@@ -282,7 +304,7 @@ void Screen::clearChannels() {
 	_channelsUsedCount = 0;
 }
 
-uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo) {
+uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
 
 	if (flexIndex == 0)
 		return 0;
@@ -290,7 +312,7 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
 	Graphics::Surface *sourceSurface = flex->getPicture();
 
-	drawSurface(sourceSurface, x, y, clipInfo);
+	drawSurface(sourceSurface, x, y, flipX, flipY, clipInfo);
 
 	// Palette is set in showPage
 	if (flex->hasPalette() && !_paletteLock && _needPalette) {
@@ -307,7 +329,7 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, uint16 flag1, uint16
 	return 0;
 }
 
-void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2, const ClipInfo &clipInfo) {
+void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
 
 	if (frameNum < 0)
 		return;
@@ -315,18 +337,18 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, u
 	AnimationResource *anim = _vm->_res->getAnimation(animIndex);
 	Graphics::Surface *sourceSurface = anim->getFrame(frameNum);
 
-	drawSurface(sourceSurface, x, y, clipInfo);
+	drawSurface(sourceSurface, x, y, flipX, flipY, clipInfo);
 
 	_vm->_res->freeResource(anim);
 }
 
-uint16 Screen::drawPic(uint16 index, int16 x, int16 y, uint16 flag1, uint16 flag2) {
-	drawFlex(index, x, y, flag1, flag2, _clipInfo1);
+uint16 Screen::drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY) {
+	drawFlex(index, x, y, flipX, flipY, _clipInfo1);
 	return 0;
 }
 
-uint16 Screen::drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, uint16 flag1, uint16 flag2) {
-	drawAnimFrame(animIndex, x, y, frameNum, flag1, flag2, _clipInfo1);
+uint16 Screen::drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY) {
+	drawAnimFrame(animIndex, x, y, frameNum, flipX, flipY, _clipInfo1);
 	return 0;
 }
 
