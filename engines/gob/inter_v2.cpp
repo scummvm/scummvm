@@ -899,7 +899,7 @@ void Inter_v2::o2_initMult() {
 		if (_terminate)
 			return;
 
-		_vm->_mult->_orderArray = new uint8[_vm->_mult->_objCount];
+		_vm->_mult->_orderArray = new int8[_vm->_mult->_objCount];
 		memset(_vm->_mult->_orderArray, 0, _vm->_mult->_objCount * sizeof(int8));
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
 		memset(_vm->_mult->_objects, 0,
