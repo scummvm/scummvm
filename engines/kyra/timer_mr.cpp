@@ -64,7 +64,25 @@ void KyraEngine_MR::timerRunSceneScript7(int arg) {
 
 void KyraEngine_MR::timerFleaDeath(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerFleaDeath(%d)", arg);
-	warning("STUB timerFleaDeath");
+	_timer->setCountdown(4, 5400);
+	saveGame(getSavegameFilename(999), "SECOND CHANCE SAVE GAME");
+	_screen->hideMouse();
+	_timer->disable(4);
+	runAnimationScript("FLEADTH1.EMC", 0, 0, 1, 1);
+	runAnimationScript("FLEADTH2.EMC", 0, 0, 1, 0);
+	showBadConscience();
+	delay(60, true);
+	const char *str1 = (const char *)getTableEntry(_cCodeFile, 130);
+	const char *str2 = (const char *)getTableEntry(_cCodeFile, 131);
+	if (str1 && str2) {
+		badConscienceChat(str1, 204, 130);
+		badConscienceChat(str2, 204, 131);
+	}
+	delay(60, true);
+	hideBadConscience();
+	runAnimationScript("FLEADTH3.EMC", 0, 0, 0, 1);
+	_deathHandler = 9;
+	_screen->showMouse();
 }
 
 void KyraEngine_MR::setWalkspeed(uint8 speed) {
