@@ -728,6 +728,11 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		if (ctrlOffs) {
 			int num_c = *(filePtr + ctrlOffs);
 			const uint16 *in_c = (uint16*) (filePtr + ctrlOffs + 1);
+			// safety check for library sequence which is supposed to have
+			// one frame more than control entries (seems to be a bug in
+			// the original code). This caused invalid memory access .
+			if (tmp_n[i].endFrame > num_c)
+				tmp_n[i].endFrame = num_c;
 			FrameControl *tmp_f = new FrameControl[num_c];
 
 			for (int ii = 0; ii < num_c; ii++) {
