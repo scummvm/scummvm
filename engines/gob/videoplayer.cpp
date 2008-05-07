@@ -334,7 +334,7 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which) {
 	}
 
 	video->getVideo()->setVideoMemory();
-	video->getVideo()->disableSound();
+	video->getVideo()->enableSound(*_vm->_mixer);
 
 	_videoSlots.push_back(video);
 
@@ -386,6 +386,16 @@ void VideoPlayer::slotCopyPalette(int slot, int16 palStart, int16 palEnd) {
 		return;
 
 	copyPalette(*(_videoSlots[slot]->getVideo()), palStart, palEnd);
+}
+
+void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+		return;
+
+	CoktelVideo &video = *(_videoSlots[slot]->getVideo());
+
+	if (!onlySound || (video.getFeatures() & CoktelVideo::kFeaturesSound))
+		video.waitEndFrame();
 }
 
 bool VideoPlayer::slotIsOpen(int slot) const {

@@ -686,6 +686,11 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			return;
 
 		animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
+	} else {
+		if (animObj.videoSlot > 0) {
+			_vm->_video->retrace();
+			_vm->_vidPlayer->slotWaitEndFrame(animObj.videoSlot - 1, true);
+		}
 	}
 
 	if (animData.animType == 4) {
