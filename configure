@@ -453,33 +453,38 @@ prepare_engine_build_strings() {
 get_engine_build_string() {
 	engine_string=""
 	engine_build=`get_engine_build $1`
-	if test $engine_build = no ; then
-		# The engine is disabled
-		if test $2 = no ; then
-			engine_string=`get_engine_name $1`
-		else
-			engine_string=""
-		fi
+	show=no
+
+	# Check if the current engine should be shown for the current status
+	if test $engine_build = $2 ; then
+		show=yes
 	else
-		# The engine is enabled, get the custom string
+		# Test for disabled sub-engines
+		if test $2 = no ; then
+			for subeng in `get_engine_subengines $1` ; do
+				if test `get_engine_build $subeng` = no ; then
+					engine_build=no
+					show=yes
+				fi
+			done
+		fi
+	fi
+
+	# Convert static/dynamic to yes to ease the check of subengines
+	if test $engine_build != no ; then
+		engine_build=yes
+	fi
+
+	# The engine should be shown, build the string
+	if test $show = yes ; then
 		build_string_func=get_${1}_build_string
 		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
-			engine_string=`$build_string_func $1 $2`
+			engine_string=`$build_string_func $1 $engine_build`
 		else
-			engine_string=`get_subengines_build_string $1 $2`
+			engine_string=`get_subengines_build_string $1 $engine_build`
 		fi
 
-		if test $2 = no ; then
-			if test -n "$engine_string" ; then
-				engine_string="`get_engine_name $1` $engine_string"
-			fi
-		else
-			if test $2 = $engine_build ; then
-				engine_string="`get_engine_name $1` $engine_string"
-			else
-				engine_string=""
-			fi
-		fi
+		engine_string="`get_engine_name $1` $engine_string"
 	fi
 
 	echo $engine_string
@@ -523,10 +528,12 @@ get_sword2_build_string() {
 }
 
 get_scumm_build_string() {
-	if test $2 != no ; then
-		base="[v0-v6 games]"
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no ; then
+			base="[v0-v6 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base"
 	fi
-	get_subengines_build_string $1 $2 "$base"
 }
 
 #
