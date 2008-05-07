@@ -22,7 +22,7 @@ public:
     
     void tearDown()
     {
-        delete [] _buffer;
+        delete[] _buffer;
     }
 
     void test_strcpy()

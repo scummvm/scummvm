@@ -99,7 +99,7 @@ public:
 		if (this == &array)
 			return *this;
 
-		delete [] _data;
+		delete[] _data;
 		_size = array._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
@@ -113,7 +113,7 @@ public:
 	}
 
 	void clear() {
-		delete [] _data;
+		delete[] _data;
 		_data = 0;
 		_size = 0;
 		_capacity = 0;
@@ -151,7 +151,7 @@ public:
 		if (old_data) {
 			// Copy old data
 			copy(old_data, old_data + _size, _data);
-			delete [] old_data;
+			delete[] old_data;
 		}
 	}
 
@@ -166,7 +166,7 @@ public:
 			// Copy old data
 			int cnt = (_size < newSize ? _size : newSize);
 			copy(old_data, old_data + cnt, _data);
-			delete [] old_data;
+			delete[] old_data;
 		}
 		_size = newSize;
 	}
