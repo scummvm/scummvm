@@ -737,7 +737,7 @@ void Parallaction::doLocationEnterTransition() {
 	return;
 }
 
-void Parallaction::setLocationFlags(int32 flags) {
+void Parallaction::setLocationFlags(uint32 flags) {
 	_localFlags[_currentLocationIndex] |= flags;
 }
 
@@ -745,11 +745,11 @@ void Parallaction::clearLocationFlags(uint32 flags) {
 	_localFlags[_currentLocationIndex] &= ~flags;
 }
 
-void Parallaction::toggleLocationFlags(int32 flags) {
+void Parallaction::toggleLocationFlags(uint32 flags) {
 	_localFlags[_currentLocationIndex] ^= flags;
 }
 
-int32 Parallaction::getLocationFlags() {
+uint32 Parallaction::getLocationFlags() {
 	return _localFlags[_currentLocationIndex];
 }
 

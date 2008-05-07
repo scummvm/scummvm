@@ -362,10 +362,10 @@ public:
 
 	Character		_char;
 
-	void			setLocationFlags(int32 flags);
+	void			setLocationFlags(uint32 flags);
 	void			clearLocationFlags(uint32 flags);
-	void			toggleLocationFlags(int32 flags);
-	int32			getLocationFlags();
+	void			toggleLocationFlags(uint32 flags);
+	uint32			getLocationFlags();
 
 	uint32			_localFlags[NUM_LOCATIONS];
 	char			_locationNames[NUM_LOCATIONS][32];
