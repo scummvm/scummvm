@@ -938,6 +938,7 @@ int GUI_MR::loadMenu(Button *caller) {
 	} else if (_vm->_gameToLoad >= 0) {
 		restorePage1(_vm->_screenBuffer);
 		restorePalette();
+		_vm->_menuDirectlyToLoad = false;
 		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
 		if (_vm->_gameToLoad == 0) {
 			_restartGame = true;
