@@ -741,7 +741,7 @@ void Parallaction::setLocationFlags(int32 flags) {
 	_localFlags[_currentLocationIndex] |= flags;
 }
 
-void Parallaction::clearLocationFlags(int32 flags) {
+void Parallaction::clearLocationFlags(uint32 flags) {
 	_localFlags[_currentLocationIndex] &= ~flags;
 }
 

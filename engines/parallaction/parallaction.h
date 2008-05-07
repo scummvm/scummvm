@@ -363,7 +363,7 @@ public:
 	Character		_char;
 
 	void			setLocationFlags(int32 flags);
-	void			clearLocationFlags(int32 flags);
+	void			clearLocationFlags(uint32 flags);
 	void			toggleLocationFlags(int32 flags);
 	int32			getLocationFlags();
 
