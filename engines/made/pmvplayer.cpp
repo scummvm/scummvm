@@ -188,8 +188,8 @@ void PmvPlayer::handleEvents() {
 				_abort = true;
 			break;
 		case Common::EVENT_QUIT:
-			// TODO: Exit more gracefully
-			g_system->quit();
+			_vm->_quit = true;
+			_abort = true;
 			break;
 		default:
 			break;

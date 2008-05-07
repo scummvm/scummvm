@@ -192,7 +192,7 @@ ScriptInterpreter::~ScriptInterpreter() {
 
 void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
-	_terminated = false;
+	_vm->_quit = false;
 	_runningScriptObjectIndex = scriptObjectIndex;
 
 	_localStackPos = _stack.getStackPos();
@@ -200,7 +200,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
 	
-	while (!_terminated) {
+	while (!_vm->_quit) {
 		byte opcode = readByte();
 		if (opcode >= 1 && opcode <= _commandsMax) {
 			debug(4, "[%04X:%04X] opcode = %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
@@ -418,11 +418,17 @@ void ScriptInterpreter::cmd_vsize() {
 }
 
 void ScriptInterpreter::cmd_exit() {
-	warning("Unimplemented command: cmd_exit");
+	_vm->_quit = true;
 }
 
 void ScriptInterpreter::cmd_return() {
-	// TODO: Check if returning from main function
+
+	// Check if returning from main function
+	if (_localStackPos == kScriptStackSize) {
+		_vm->_quit = true;
+		return;
+	}
+
 	int16 funcResult = _stack.top();
 	_stack.setStackPos(_localStackPos);
 	_localStackPos = kScriptStackLimit - _stack.pop();
