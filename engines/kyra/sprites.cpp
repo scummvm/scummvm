@@ -52,11 +52,11 @@ Sprites::Sprites(KyraEngine_v1 *vm, OSystem *system) {
 }
 
 Sprites::~Sprites() {
-	delete [] _dat;
+	delete[] _dat;
 	freeSceneShapes();
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].background)
-			delete [] _anims[i].background;
+			delete[] _anims[i].background;
 	}
 }
 
@@ -66,7 +66,7 @@ void Sprites::setupSceneAnims() {
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].background) {
-			delete [] _anims[i].background;
+			delete[] _anims[i].background;
 			_anims[i].background = 0;
 		}
 
@@ -515,7 +515,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 void Sprites::freeSceneShapes() {
 	debugC(9, kDebugLevelSprites,  "Sprites::freeSceneShapes()");
 	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++ ) {
-		delete [] _sceneShapes[i];
+		delete[] _sceneShapes[i];
 		_sceneShapes[i] = 0;
 	}
 }

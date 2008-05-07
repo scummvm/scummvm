@@ -107,8 +107,8 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(st
 }
 
 AUDStream::~AUDStream() {
-	delete [] _outBuffer;
-	delete [] _inBuffer;
+	delete[] _outBuffer;
+	delete[] _inBuffer;
 	delete _stream;
 }
 
@@ -174,7 +174,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 		if (size == outSize) {
 			if (outSize > _outBufferSize) {
 				_outBufferSize = outSize;
-				delete [] _outBuffer;
+				delete[] _outBuffer;
 				_outBuffer = new uint8[_outBufferSize];
 				assert(_outBuffer);
 			}
@@ -187,14 +187,14 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 			if (outSize > _outBufferSize) {
 				_outBufferSize = outSize;
-				delete [] _outBuffer;
+				delete[] _outBuffer;
 				_outBuffer = new uint8[_outBufferSize];
 				assert(_outBuffer);
 			}
 
 			if (size > _inBufferSize) {
 				_inBufferSize = size;
-				delete [] _inBuffer;
+				delete[] _inBuffer;
 				_inBuffer = new uint8[_inBufferSize];
 				assert(_inBuffer);
 			}

@@ -50,8 +50,8 @@ Animator_v1::Animator_v1(KyraEngine_v1 *vm, OSystem *system) {
 
 Animator_v1::~Animator_v1() {
 	close();
-	delete [] _actorBkgBackUp[0];
-	delete [] _actorBkgBackUp[1];
+	delete[] _actorBkgBackUp[0];
+	delete[] _actorBkgBackUp[1];
 }
 
 void Animator_v1::init(int actors_, int items_, int sprites_) {
@@ -71,7 +71,7 @@ void Animator_v1::close() {
 	debugC(9, kDebugLevelAnimator, "Animator_v1::close()");
 	if (_initOk) {
 		_initOk = false;
-		delete [] _screenObjects;
+		delete[] _screenObjects;
 		_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
 	}
 }

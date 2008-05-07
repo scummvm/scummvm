@@ -116,28 +116,28 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _animator;
 	delete _seq;
 
-	delete [] _characterList;
+	delete[] _characterList;
 
-	delete [] _movFacingTable;
+	delete[] _movFacingTable;
 
-	delete [] _gui->_scrollUpButton.data0ShapePtr;
-	delete [] _gui->_scrollUpButton.data1ShapePtr;
-	delete [] _gui->_scrollUpButton.data2ShapePtr;
-	delete [] _gui->_scrollDownButton.data0ShapePtr;
-	delete [] _gui->_scrollDownButton.data1ShapePtr;
-	delete [] _gui->_scrollDownButton.data2ShapePtr;
+	delete[] _gui->_scrollUpButton.data0ShapePtr;
+	delete[] _gui->_scrollUpButton.data1ShapePtr;
+	delete[] _gui->_scrollUpButton.data2ShapePtr;
+	delete[] _gui->_scrollDownButton.data0ShapePtr;
+	delete[] _gui->_scrollDownButton.data1ShapePtr;
+	delete[] _gui->_scrollDownButton.data2ShapePtr;
 
-	delete [] _buttonData;
-	delete [] _buttonDataListPtr;
+	delete[] _buttonData;
+	delete[] _buttonDataListPtr;
 
 	delete _gui;
 
-	delete [] _itemBkgBackUp[0];
-	delete [] _itemBkgBackUp[1];
+	delete[] _itemBkgBackUp[0];
+	delete[] _itemBkgBackUp[1];
 
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
-			delete [] _shapes[i];
+			delete[] _shapes[i];
 			for (int i2 = 0; i2 < ARRAYSIZE(_shapes); i2++) {
 				if (_shapes[i2] == _shapes[i] && i2 != i) {
 					_shapes[i2] = 0;
@@ -148,7 +148,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 	}
 
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i)
-		delete [] _sceneAnimTable[i];
+		delete[] _sceneAnimTable[i];
 }
 
 int KyraEngine_v1::init() {
@@ -623,7 +623,7 @@ void KyraEngine_v1::freeShapes123() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::freeShapes123()");
 
 	for (int i = 123; i <= 172; ++i) {
-		delete [] _shapes[i];
+		delete[] _shapes[i];
 		_shapes[i] = 0;
 	}
 }

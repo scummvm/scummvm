@@ -30,7 +30,7 @@ namespace Kyra {
 
 void KyraEngine_v2::initItemList(int size) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::initItemList(%d)", size);
-	delete [] _itemList;
+	delete[] _itemList;
 
 	_itemList = new Item[size];
 	assert(_itemList);

@@ -194,7 +194,7 @@ GUI_v1::GUI_v1(KyraEngine_v1 *vm, Screen_v1 *screen) : GUI(vm), _vm(vm), _screen
 }
 
 GUI_v1::~GUI_v1() {
-	delete [] _menu;
+	delete[] _menu;
 }
 
 int GUI_v1::processButtonList(Button *list, uint16 inputFlag) {

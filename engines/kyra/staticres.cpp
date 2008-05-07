@@ -287,7 +287,7 @@ bool StaticResource::init() {
 	}
 
 	if (tempSize != 3*4) {
-		delete [] temp;
+		delete[] temp;
 		warning("'%s' has illegal filesize %d", getFilename("INDEX"), tempSize);
 		outputError();
 		return false;
@@ -297,7 +297,7 @@ bool StaticResource::init() {
 	uint32 gameID = READ_BE_UINT32((temp+4));
 	uint32 featuresValue = READ_BE_UINT32((temp+8));
 
-	delete [] temp;
+	delete[] temp;
 	temp = 0;
 
 	if (version != RESFILE_VERSION) {
@@ -545,7 +545,7 @@ bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size
 		curPos += strLen+1;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = output;
 
 	return true;
@@ -579,7 +579,7 @@ bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size)
 		loadTo[i].yOffset = *src++;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -609,7 +609,7 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -642,7 +642,7 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 		snprintf(name, 64, "%s%d.PAL", file, i);
 		table[(start != 0) ? (i-start) : i] = (char*)getFile(name, size);
 		if (!table[(start != 0) ? (i-start) : i]) {
-			delete [] table;
+			delete[] table;
 			return false;
 		}
 	}
@@ -743,7 +743,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		}
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 
 	HofSeqData *loadTo = new HofSeqData;
 	assert(loadTo);
@@ -783,7 +783,7 @@ bool StaticResource::loadHofShapeAnimDataV1(const char *filename, void *&ptr, in
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -815,7 +815,7 @@ bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, in
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -823,7 +823,7 @@ bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, in
 
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8*)ptr;
-	delete [] data;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
@@ -839,14 +839,14 @@ void StaticResource::freeStringTable(void *&ptr, int &size) {
 
 void StaticResource::freeShapeTable(void *&ptr, int &size) {
 	Shape *data = (Shape*)ptr;
-	delete [] data;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
 
 void StaticResource::freeRoomTable(void *&ptr, int &size) {
 	Room *data = (Room*)ptr;
-	delete [] data;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
@@ -855,16 +855,16 @@ void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
 	HofSeqData *h = (HofSeqData*) ptr;
 
 	for (int i = 0; i < h->numSeq; i++) {
-		delete [] h->seq[i].wsaFile;
-		delete [] h->seq[i].cpsFile;
+		delete[] h->seq[i].wsaFile;
+		delete[] h->seq[i].cpsFile;
 	}
-	delete [] h->seq;
+	delete[] h->seq;
 
 	for (int i = 0; i < h->numSeqn; i++) {
-		delete [] h->seqn[i].wsaFile;
-		delete [] h->seqn[i].wsaControl;
+		delete[] h->seqn[i].wsaFile;
+		delete[] h->seqn[i].wsaControl;
 	}
-	delete [] h->seqn;
+	delete[] h->seqn;
 
 	delete h;
 	ptr = 0;
@@ -874,8 +874,8 @@ void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
 void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
 	ItemAnimData_v1 *d= (ItemAnimData_v1*) ptr;
 	for (int i = 0; i < size; i++)
-		delete [] d[i].frames;
-	delete [] d;
+		delete[] d[i].frames;
+	delete[] d;
 	ptr = 0;
 	size = 0;
 }
@@ -883,8 +883,8 @@ void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
 void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
 	ItemAnimData_v2 *d= (ItemAnimData_v2*) ptr;
 	for (int i = 0; i < size; i++)
-		delete [] d[i].frames;
-	delete [] d;
+		delete[] d[i].frames;
+	delete[] d;
 	ptr = 0;
 	size = 0;
 }
@@ -892,7 +892,7 @@ void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
 void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
 	while (size--)
-		delete [] data[size];
+		delete[] data[size];
 	ptr = 0;
 	size = 0;
 }
@@ -1367,7 +1367,7 @@ void GUI_v1::initStaticResource() {
 	GUI_V1_BUTTON(_menuButtonData[4], 0x10, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 	GUI_V1_BUTTON(_menuButtonData[5], 0x11, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 
-	delete [] _menu;
+	delete[] _menu;
 	_menu = new Menu[6];
 	assert(_menu);
 
@@ -1429,8 +1429,8 @@ void GUI_v1::initStaticResource() {
 }
 
 void KyraEngine_v1::setupButtonData() {
-	delete [] _buttonData;
-	delete [] _buttonDataListPtr;
+	delete[] _buttonData;
+	delete[] _buttonDataListPtr;
 
 	_buttonData = new Button[15];
 	assert(_buttonData);
@@ -1612,7 +1612,7 @@ const int8 KyraEngine_HoF::_dosTrackMap[] = {
 const int KyraEngine_HoF::_dosTrackMapSize = ARRAYSIZE(KyraEngine_HoF::_dosTrackMap);
 
 void KyraEngine_HoF::initInventoryButtonList() {
-	delete [] _inventoryButtons;
+	delete[] _inventoryButtons;
 
 	_inventoryButtons = new Button[15];
 	assert(_inventoryButtons);

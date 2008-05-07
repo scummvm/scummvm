@@ -702,7 +702,7 @@ void KyraEngine_HoF::initSceneScreen(int unk1) {
 void KyraEngine_HoF::freeSceneShapePtrs() {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::freeSceneShapePtrs()");
 	for (int i = 0; i < ARRAYSIZE(_sceneShapeTable); ++i)
-		delete [] _sceneShapeTable[i];
+		delete[] _sceneShapeTable[i];
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 }
 

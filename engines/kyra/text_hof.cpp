@@ -452,7 +452,7 @@ void KyraEngine_HoF::updateDlgBuffer() {
 		filename[11] = suffix[_lang];
 
 	if (_dlgBuffer)
-		delete [] _dlgBuffer;
+		delete[] _dlgBuffer;
 
 	_dlgBuffer = _res->fileData(filename, 0);
 }

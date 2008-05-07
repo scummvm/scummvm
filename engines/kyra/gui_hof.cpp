@@ -468,13 +468,13 @@ void KyraEngine_HoF::showBookPage() {
 	if (leftPage) {
 		bookDecodeText(leftPage);
 		bookPrintText(2, leftPage, 20, leftPageY+20, 0x31);
-		delete [] leftPage;
+		delete[] leftPage;
 	}
 
 	if (rightPage) {
 		bookDecodeText(rightPage);
 		bookPrintText(2, rightPage, 176, rightPageY+20, 0x31);
-		delete [] rightPage;
+		delete[] rightPage;
 	}
 	_screen->showMouse();
 }

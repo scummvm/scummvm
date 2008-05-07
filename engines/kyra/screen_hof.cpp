@@ -37,7 +37,7 @@ Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
 }
 
 Screen_HoF::~Screen_HoF() {
-	delete [] _wsaFrameAnimBuffer;
+	delete[] _wsaFrameAnimBuffer;
 }
 
 void Screen_HoF::setScreenDim(int dim) {

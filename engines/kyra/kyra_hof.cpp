@@ -160,17 +160,17 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	if (_sequenceSoundList) {
 		for (int i = 0; i < _sequenceSoundListSize; i++) {
 			if (_sequenceSoundList[i])
-				delete [] _sequenceSoundList[i];
+				delete[] _sequenceSoundList[i];
 		}
-		delete [] _sequenceSoundList;
+		delete[] _sequenceSoundList;
 		_sequenceSoundList = NULL;
 	}
 
 	if (_dlgBuffer)
-		delete [] _dlgBuffer;
+		delete[] _dlgBuffer;
 	for (int i = 0; i < 19; i++)
-		delete [] _conversationState[i];
-	delete [] _conversationState;
+		delete[] _conversationState[i];
+	delete[] _conversationState;
 
 	for (Common::Array<const TIMOpcode*>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
 		delete *i;
@@ -762,24 +762,24 @@ void KyraEngine_HoF::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 }
 
 void KyraEngine_HoF::cleanup() {
-	delete [] _inventoryButtons; _inventoryButtons = 0;
+	delete[] _inventoryButtons; _inventoryButtons = 0;
 
-	delete [] _gamePlayBuffer; _gamePlayBuffer = 0;
-	delete [] _unkBuf500Bytes; _unkBuf500Bytes = 0;
-	delete [] _unkBuf200kByte; _unkBuf200kByte = 0;
+	delete[] _gamePlayBuffer; _gamePlayBuffer = 0;
+	delete[] _unkBuf500Bytes; _unkBuf500Bytes = 0;
+	delete[] _unkBuf200kByte; _unkBuf200kByte = 0;
 
 	freeSceneShapePtrs();
 
 	if (_optionsBuffer != _cCodeBuffer)
-		delete [] _optionsBuffer;
+		delete[] _optionsBuffer;
 	_optionsBuffer = 0;
-	delete [] _cCodeBuffer; _cCodeBuffer = 0;
-	delete [] _chapterBuffer; _chapterBuffer = 0;
+	delete[] _cCodeBuffer; _cCodeBuffer = 0;
+	delete[] _chapterBuffer; _chapterBuffer = 0;
 
-	delete [] _talkObjectList; _talkObjectList = 0;
-	delete [] _shapeDescTable; _shapeDescTable = 0;
+	delete[] _talkObjectList; _talkObjectList = 0;
+	delete[] _shapeDescTable; _shapeDescTable = 0;
 
-	delete [] _gfxBackUpRect; _gfxBackUpRect = 0;
+	delete[] _gfxBackUpRect; _gfxBackUpRect = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
 		delete _sceneAnimMovie[i];
@@ -790,7 +790,7 @@ void KyraEngine_HoF::cleanup() {
 		_wsaSlots[i] = 0;
 	}
 	for (int i = 0; i < ARRAYSIZE(_buttonShapes); ++i) {
-		delete [] _buttonShapes[i];
+		delete[] _buttonShapes[i];
 		_buttonShapes[i] = 0;
 	}
 
@@ -804,7 +804,7 @@ void KyraEngine_HoF::loadCCodeBuffer(const char *file) {
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
 
-	delete [] _cCodeBuffer;
+	delete[] _cCodeBuffer;
 	_cCodeBuffer = _res->fileData(tempString, 0);
 }
 
@@ -813,7 +813,7 @@ void KyraEngine_HoF::loadOptionsBuffer(const char *file) {
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
 
-	delete [] _optionsBuffer;
+	delete[] _optionsBuffer;
 	_optionsBuffer = _res->fileData(tempString, 0);
 }
 
@@ -828,7 +828,7 @@ void KyraEngine_HoF::loadChapterBuffer(int chapter) {
 	strcpy(tempString, chapterFilenames[chapter-1]);
 	changeFileExtension(tempString);
 
-	delete [] _chapterBuffer;
+	delete[] _chapterBuffer;
 	_chapterBuffer = _res->fileData(tempString, 0);
 	_currentChapter = chapter;
 }
@@ -1034,7 +1034,7 @@ void KyraEngine_HoF::loadCharacterShapes(int shapes) {
 	uint8 *data = _res->fileData(file, 0);
 	for (int i = 9; i <= 32; ++i)
 		addShapeToPool(data, i, i-9);
-	delete [] data;
+	delete[] data;
 
 	_characterShapeFile = shapes;
 }
@@ -1385,7 +1385,7 @@ int KyraEngine_HoF::initAnimationShapes(uint8 *filedata) {
 void KyraEngine_HoF::uninitAnimationShapes(int count, uint8 *filedata) {
 	for (int i = 0; i < count; ++i)
 		remShapeFromPool(i+33);
-	delete [] filedata;
+	delete[] filedata;
 	setNextIdleAnimTimer();
 }
 

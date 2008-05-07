@@ -139,9 +139,9 @@ void EMCInterpreter::unload(EMCData *data) {
 	if (!data)
 		return;
 
-	delete [] data->text;
-	delete [] data->ordr;
-	delete [] data->data;
+	delete[] data->text;
+	delete[] data->ordr;
+	delete[] data->data;
 
 	data->text = 0;
 	data->ordr = data->data = 0;

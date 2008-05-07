@@ -238,7 +238,7 @@ void KyraEngine_v2::addShapeToPool(uint8 *shpData, int index) {
 void KyraEngine_v2::remShapeFromPool(int idx) {
 	ShapeMap::iterator iter = _gameShapes.find(idx);
 	if (iter != _gameShapes.end()) {
-		delete [] iter->_value;
+		delete[] iter->_value;
 		iter->_value = 0;
 	}
 }

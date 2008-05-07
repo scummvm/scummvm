@@ -1535,7 +1535,7 @@ void KyraEngine_HoF::seq_finaleActorScreen() {
 	seq_displayScrollText(dataPtr, &d, 2, 6, 5, 1, Screen::FID_GOLDFONT_FNT, Screen::FID_GOLDFONT_FNT, 0, talkieCreditsSpecial);
 	delay(120);
 
-	delete [] dataPtr;
+	delete[] dataPtr;
 	_staticres->unloadId(k2SeqplayCreditsSpecial);
 	_sound->setSoundList(&_soundData[kMusicFinale]);
 	_sound->loadSoundFile(0);
@@ -2537,8 +2537,8 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 	_abortIntroFlag= false;
 	resetSkipFlag();
 
-	delete [] tmp;
-	delete [] tmpStringTable;
+	delete[] tmp;
+	delete[] tmpStringTable;
 }
 
 void KyraEngine_HoF::seq_scrollPage() {
@@ -2628,7 +2628,7 @@ void KyraEngine_HoF::seq_init() {
 		uint32 outsize = READ_LE_UINT16(shp + 4);
 		_animShapeFiledata = new uint8[outsize];
 		Screen::decodeFrame4(shp + 10, _animShapeFiledata, outsize);
-		delete [] shp;
+		delete[] shp;
 
 		do {
 			numShp++;
@@ -2647,19 +2647,19 @@ void KyraEngine_HoF::seq_init() {
 }
 
 void KyraEngine_HoF::seq_uninit() {
-	delete [] _seqProcessedString;
+	delete[] _seqProcessedString;
 	_seqProcessedString = NULL;
 
-	delete [] _activeWSA;
+	delete[] _activeWSA;
 	_activeWSA = NULL;
 
-	delete [] _activeText;
+	delete[] _activeText;
 	_activeText = NULL;
 
 	delete _seqWsa;
 	_seqWsa = NULL;
 
-	delete [] _animShapeFiledata;
+	delete[] _animShapeFiledata;
 	_animShapeFiledata = 0;
 
 	if (_flags.isDemo && !_flags.isTalkie)
@@ -2770,7 +2770,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 	}
 
 	closeInvWsa();
-	delete [] rect;
+	delete[] rect;
 	_invWsa.running = false;
 
 	_screen->showMouse();

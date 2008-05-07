@@ -128,8 +128,8 @@ void TIMInterpreter::unload(TIM *&tim) const {
 	if (!tim)
 		return;
 
-	delete [] tim->text;
-	delete [] tim->avtl;
+	delete[] tim->text;
+	delete[] tim->avtl;
 	delete tim;
 	tim = 0;
 }

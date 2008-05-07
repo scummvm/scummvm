@@ -1202,7 +1202,7 @@ void KyraEngine_v1::seq_playCredits() {
 			_system->delayMillis(nextLoop - now);
 	}
 
-	delete [] buffer;
+	delete[] buffer;
 
 	_screen->fadeToBlack();
 	_screen->clearCurPage();
@@ -1682,13 +1682,13 @@ void KyraEngine_v1::setupPanPages() {
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 
-		delete [] _panPagesTable[19];
+		delete[] _panPagesTable[19];
 		_panPagesTable[19] = _screen->encodeShape(0, 0, 16, 9, 0);
 		assert(_panPagesTable[19]);
 
 		int curX = 16;
 		for (int i = 0; i < 19; ++i) {
-			delete [] _panPagesTable[i];
+			delete[] _panPagesTable[i];
 			_panPagesTable[i] = _screen->encodeShape(curX, 0, 8, 5, 0);
 			assert(_panPagesTable[i]);
 			curX += 8;
@@ -1697,7 +1697,7 @@ void KyraEngine_v1::setupPanPages() {
 		_screen->_curPage = pageBackUp;
 	} else {
 		for (int i = 0; i <= 19; ++i) {
-			delete [] _panPagesTable[i];
+			delete[] _panPagesTable[i];
 			_panPagesTable[i] = _seq->setPanPages(3, i);
 			assert(_panPagesTable[i]);
 		}
@@ -1710,7 +1710,7 @@ void KyraEngine_v1::freePanPages() {
 	delete _endSequenceBackUpRect;
 	_endSequenceBackUpRect = 0;
 	for (int i = 0; i <= 19; ++i) {
-		delete [] _panPagesTable[i];
+		delete[] _panPagesTable[i];
 		_panPagesTable[i] = 0;
 	}
 }

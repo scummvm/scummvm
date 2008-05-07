@@ -507,7 +507,7 @@ int AdlibDriver::snd_deinitDriver(va_list &list) {
 
 int AdlibDriver::snd_setSoundData(va_list &list) {
 	if (_soundData) {
-		delete [] _soundData;
+		delete[] _soundData;
 		_soundData = 0;
 	}
 	_soundData = va_arg(list, uint8*);
@@ -2232,7 +2232,7 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
 
 SoundAdlibPC::~SoundAdlibPC() {
 	delete _driver;
-	delete [] _soundDataPtr;
+	delete[] _soundDataPtr;
 }
 
 bool SoundAdlibPC::init() {
@@ -2382,7 +2382,7 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 
 	memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8));
 
-	delete [] file_data;
+	delete[] file_data;
 	file_data = p = 0;
 	file_size = 0;
 

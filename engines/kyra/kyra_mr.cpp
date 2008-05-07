@@ -533,7 +533,7 @@ void KyraEngine_MR::initMouseShapes() {
 	assert(data);
 	for (int i = 0; i <= 6; ++i)
 		_gameShapes[i] = _screen->makeShapeCopy(data, i);
-	delete [] data;
+	delete[] data;
 }
 
 void KyraEngine_MR::startup() {
@@ -728,7 +728,7 @@ void KyraEngine_MR::initItems() {
 	memcpy(_itemBuffer1, itemsDat   ,  72);
 	memcpy(_itemBuffer2, itemsDat+72, 144);
 
-	delete [] itemsDat;
+	delete[] itemsDat;
 
 	_screen->_curPage = 0;
 }

@@ -40,28 +40,28 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 
 Screen::~Screen() {
 	for (int i = 0; i < SCREEN_OVLS_NUM; ++i)
-		delete [] _sjisOverlayPtrs[i];
+		delete[] _sjisOverlayPtrs[i];
 
-	delete [] _pagePtrs[0];
+	delete[] _pagePtrs[0];
 
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
 		delete[] _fonts[f].fontData;
 		_fonts[f].fontData = NULL;
 	}
 
-	delete [] _sjisFontData;
-	delete [] _sjisTempPage;
-	delete [] _currentPalette;
-	delete [] _screenPalette;
-	delete [] _decodeShapeBuffer;
-	delete [] _animBlockPtr;
+	delete[] _sjisFontData;
+	delete[] _sjisTempPage;
+	delete[] _currentPalette;
+	delete[] _screenPalette;
+	delete[] _decodeShapeBuffer;
+	delete[] _animBlockPtr;
 
 	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
 		for (int i = 0; i < ARRAYSIZE(_palettes); ++i)
-			delete [] _palettes[i];
+			delete[] _palettes[i];
 	}
 
-	delete [] _dirtyRects;
+	delete[] _dirtyRects;
 }
 
 bool Screen::init() {
@@ -843,7 +843,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 
 void Screen::setAnimBlockPtr(int size) {
 	debugC(9, kDebugLevelScreen, "Screen::setAnimBlockPtr(%d)", size);
-	delete [] _animBlockPtr;
+	delete[] _animBlockPtr;
 	_animBlockPtr = new uint8[size];
 	assert(_animBlockPtr);
 	memset(_animBlockPtr, 0, size);
@@ -867,7 +867,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 		error("fontId %d is invalid", fontId);
 
 	if (fnt->fontData)
-		delete [] fnt->fontData;
+		delete[] fnt->fontData;
 
 	uint32 sz = 0;
 	uint8 *fontData = fnt->fontData = _vm->resource()->fileData(filename, &sz);
@@ -2235,7 +2235,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 				uint8 *newShape2 = new uint8[shapeSize];
 				assert(newShape2);
 				memcpy(newShape2, newShape, shapeSize);
-				delete [] newShape;
+				delete[] newShape;
 				newShape = newShape2;
 			} else {
 				dst = shapePtrBackUp;
@@ -2469,7 +2469,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
 	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
 	CursorMan.showMouse(true);
-	delete [] cursor;
+	delete[] cursor;
 
 	// makes sure that the cursor is drawn
 	// we do not use Screen::updateScreen here
@@ -2694,7 +2694,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	if (skip)
 		srcData -= 4;
 
-	delete [] srcData;
+	delete[] srcData;
 }
 
 bool Screen::loadPalette(const char *filename, uint8 *palData) {
@@ -2722,7 +2722,7 @@ bool Screen::loadPalette(const char *filename, uint8 *palData) {
 			memcpy(palData, srcData, fileSize);
 		}
 	}
-	delete [] srcData;
+	delete[] srcData;
 	return true;
 }
 

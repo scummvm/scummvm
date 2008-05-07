@@ -60,8 +60,8 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 
 		if (lineIsPassable(curX, curY)) {
 			if (lastUsedEntry == moveTableSize) {
-				delete [] pathTable1;
-				delete [] pathTable2;
+				delete[] pathTable1;
+				delete[] pathTable2;
 				return 0x7D00;
 			}
 			// debug drawing
@@ -104,8 +104,8 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 			tempValue = findSubPath(x, y, curX, curY, pathTable2, 0, 0x7D0);
 			if (curX == toX && curY == toY) {
 				if (temp == 0x7D00 && tempValue == 0x7D00) {
-					delete [] pathTable1;
-					delete [] pathTable2;
+					delete[] pathTable1;
+					delete[] pathTable2;
 					return 0x7D00;
 				}
 			}
@@ -116,16 +116,16 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 
 		if (temp < tempValue) {
 			if (lastUsedEntry + temp > moveTableSize) {
-				delete [] pathTable1;
-				delete [] pathTable2;
+				delete[] pathTable1;
+				delete[] pathTable2;
 				return 0x7D00;
 			}
 			memcpy(&moveTable[lastUsedEntry], pathTable1, temp*sizeof(int));
 			lastUsedEntry += temp;
 		} else {
 			if (lastUsedEntry + tempValue > moveTableSize) {
-				delete [] pathTable1;
-				delete [] pathTable2;
+				delete[] pathTable1;
+				delete[] pathTable2;
 				return 0x7D00;
 			}
 			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue*sizeof(int));
@@ -137,8 +137,8 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 			break;
 	}
 
-	delete [] pathTable1;
-	delete [] pathTable2;
+	delete[] pathTable1;
+	delete[] pathTable2;
 	moveTable[lastUsedEntry] = 8;
 	return lastUsedEntry;
 }

@@ -36,20 +36,20 @@ Screen_v1::Screen_v1(KyraEngine_v1 *vm, OSystem *system)
 }
 
 Screen_v1::~Screen_v1() {
-	delete [] _bitBlitRects;
+	delete[] _bitBlitRects;
 
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
-		delete [] _saveLoadPage[i];
+		delete[] _saveLoadPage[i];
 		_saveLoadPage[i] = 0;
 	}
 
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
-		delete [] _saveLoadPageOvl[i];
+		delete[] _saveLoadPageOvl[i];
 		_saveLoadPageOvl[i] = 0;
 	}
 
-	delete [] _unkPtr1;
-	delete [] _unkPtr2;
+	delete[] _unkPtr1;
+	delete[] _unkPtr2;
 }
 
 bool Screen_v1::init() {
@@ -148,7 +148,7 @@ void Screen_v1::savePageToDisk(const char *file, int page) {
 void Screen_v1::loadPageFromDisk(const char *file, int page) {
 	debugC(9, kDebugLevelScreen, "Screen_v1::loadPageFromDisk('%s', %d)", file, page);
 	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
-	delete [] _saveLoadPage[page/2];
+	delete[] _saveLoadPage[page/2];
 
 	if (_saveLoadPageOvl[page/2]) {
 		uint8 *dstPage = getOverlayPtr(page);
@@ -158,18 +158,18 @@ void Screen_v1::loadPageFromDisk(const char *file, int page) {
 		}
 
 		memcpy(dstPage, _saveLoadPageOvl[page/2], SCREEN_OVL_SJIS_SIZE);
-		delete [] _saveLoadPageOvl[page/2];
+		delete[] _saveLoadPageOvl[page/2];
 		_saveLoadPageOvl[page/2] = 0;
 	}	_saveLoadPage[page/2] = 0;
 }
 
 void Screen_v1::deletePageFromDisk(int page) {
 	debugC(9, kDebugLevelScreen, "Screen_v1::deletePageFromDisk(%d)", page);
-	delete [] _saveLoadPage[page/2];
+	delete[] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
 
 	if (_saveLoadPageOvl[page/2]) {
-		delete [] _saveLoadPageOvl[page/2];
+		delete[] _saveLoadPageOvl[page/2];
 		_saveLoadPageOvl[page/2] = 0;
 	}
 }

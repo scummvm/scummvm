@@ -117,7 +117,7 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	if (firstFrame)
 		Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
 
-	delete [] p;
+	delete[] p;
 	_opened = true;
 
 	return _numFrames;
@@ -126,10 +126,10 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 void WSAMovieV1::close() {
 	debugC(9, kDebugLevelMovie, "WSAMovieV1::close()");
 	if (_opened) {
-		delete [] _deltaBuffer;
-		delete [] _offscreenBuffer;
-		delete [] _frameOffsTable;
-		delete [] _frameData;
+		delete[] _deltaBuffer;
+		delete[] _offscreenBuffer;
+		delete[] _frameOffsTable;
+		delete[] _frameData;
 		_opened = false;
 	}
 }
@@ -230,7 +230,7 @@ int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf
 void WSAMovieAmiga::close() {
 	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::close()");
 	if (_opened) {
-		delete [] _buffer;
+		delete[] _buffer;
 		_buffer = 0;
 	}
 	WSAMovieV1::close();
@@ -423,7 +423,7 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	if (firstFrame)
 		Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
 
-	delete [] p;
+	delete[] p;
 	_opened = true;
 
 	return _numFrames;

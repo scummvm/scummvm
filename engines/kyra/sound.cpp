@@ -107,7 +107,7 @@ bool Sound::voicePlay(const char *file, bool isSfx) {
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
 
-	delete [] fileData;
+	delete[] fileData;
 	fileSize = 0;
 
 	return true;
@@ -320,7 +320,7 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 
 struct DeleterArray {
 	void operator ()(byte *ptr) {
-		delete [] ptr;
+		delete[] ptr;
 	}
 };
 
