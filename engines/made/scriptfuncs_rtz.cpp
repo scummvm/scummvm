@@ -778,11 +778,9 @@ int16 ScriptFunctionsRtz::o1_SAVEGAME(int16 argc, int16 *argv) {
 	Object *obj = _vm->_dat->getObject(descObjectIndex);
 	const char *description = obj->getString();
 
-	// TODO: Use better filename
-	char filename[256];
-	snprintf(filename, 256, "rtz.%03d", saveNum);
-	
-	return _vm->_dat->savegame(filename, description, version);
+	Common::String filename = _vm->getSavegameFilename(saveNum);
+
+	return _vm->_dat->savegame(filename.c_str(), description, version);
 	
 }
 
@@ -794,11 +792,9 @@ int16 ScriptFunctionsRtz::o1_LOADGAME(int16 argc, int16 *argv) {
 	if (saveNum > 999)
 		return 1;
 
-	// TODO: Use better filename
-	char filename[256];
-	snprintf(filename, 256, "rtz.%03d", saveNum);
+	Common::String filename = _vm->getSavegameFilename(saveNum);
 
-	return _vm->_dat->loadgame(filename, version);
+	return _vm->_dat->loadgame(filename.c_str(), version);
 	
 }
 
@@ -812,13 +808,11 @@ int16 ScriptFunctionsRtz::o1_GAMENAME(int16 argc, int16 *argv) {
 	if (saveNum > 999)
 		return 1;
 
-	// TODO: Use better filename
-	char filename[256];
-	snprintf(filename, 256, "rtz.%03d", saveNum);
+	Common::String filename = _vm->getSavegameFilename(saveNum);
 
 	Object *obj = _vm->_dat->getObject(descObjectIndex);
 
-	if (_vm->_dat->getSavegameDescription(filename, description)) {
+	if (_vm->_dat->getSavegameDescription(filename.c_str(), description)) {
 		obj->setString(description.c_str());
 		return 0;
 	} else {

@@ -107,6 +107,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		debug(1, "Music disabled.");
 	}
 	
+	_quit = false;
+
 	_soundRate = 8000;
 
 }
@@ -157,6 +159,12 @@ void MadeEngine::freeTimer(int16 timerNum) {
 	_timers[timerNum] = -1;
 }
 
+Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
+	char filename[256];
+	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
+	return filename;
+}
+
 int MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
@@ -191,7 +199,7 @@ int MadeEngine::go() {
 		error ("Unknown MADE game");
 	}
 
-	_eventMouseX = _eventMouseY = 0;
+	_eventKey = _eventMouseX = _eventMouseY = 0;
 	_script->runScript(_dat->getMainCodeObjectIndex());
 
 	return 0;
