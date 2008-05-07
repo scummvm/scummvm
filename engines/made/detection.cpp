@@ -74,7 +74,41 @@ namespace Made {
 static const MadeGameDescription gameDescriptions[] = {
 
 	{
-		// Return to Zork - English CD version
+		// Return to Zork - English CD version 1.0 9/15/93
+		// Patch #1953654 submitted by spookypeanut
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.dat", "e95c38ded389e39cfbf87a8cb250b12e"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		0,
+	},
+
+	{
+		// Return to Zork - English CD version 1.0 9/15/93
+		// Patch #1953654 submitted by spookypeanut
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.red", "cd8b62ece4677c438688c1de3f5379b9"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		0,
+	},
+
+	{
+		// Return to Zork - English CD version 1.1 12/7/93
 		// NOTE: This detects the game via the rtzcd.dat which is inside rtzcd.red.
 		// The entry below detects via rtzcd.red directly, which is the "official" way.
 		{
