@@ -742,12 +742,12 @@ void MidiDriver_YM2612::createLookupTables() {
 }
 
 void MidiDriver_YM2612::removeLookupTables() {
-	delete [] sintbl;
-	delete [] powtbl;
-	delete [] frequencyTable;
-	delete [] keycodeTable;
-	delete [] keyscaleTable;
-	delete [] attackOut;
+	delete[] sintbl;
+	delete[] powtbl;
+	delete[] frequencyTable;
+	delete[] keycodeTable;
+	delete[] keyscaleTable;
+	delete[] attackOut;
 	sintbl = powtbl = frequencyTable = keycodeTable = keyscaleTable = attackOut = 0;
 }
 

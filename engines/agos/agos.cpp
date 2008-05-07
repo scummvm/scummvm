@@ -879,7 +879,7 @@ AGOSEngine::~AGOSEngine() {
 	_midi.close();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
-		delete [] _itemHeap[i];
+		delete[] _itemHeap[i];
 	}
 	_itemHeap.clear();
 
@@ -908,7 +908,7 @@ AGOSEngine::~AGOSEngine() {
 	delete _dummyItem3;
 
 	delete _dummyWindow;
-	delete [] _windowList;
+	delete[] _windowList;
 
 	delete _debugger;
 	delete _moviePlay;
@@ -1017,7 +1017,7 @@ void AGOSEngine::shutdown() {
 	_midi.close();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
-		delete [] _itemHeap[i];
+		delete[] _itemHeap[i];
 	}
 	_itemHeap.clear();
 
@@ -1046,7 +1046,7 @@ void AGOSEngine::shutdown() {
 	delete _dummyItem3;
 
 	delete _dummyWindow;
-	delete [] _windowList;
+	delete[] _windowList;
 
 	delete _debugger;
 	delete _moviePlay;

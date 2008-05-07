@@ -555,8 +555,8 @@ ScummEngine::~ScummEngine() {
 
 	for (int i = 0; i < _numActors; ++i)
 		delete _actors[i];
-	delete [] _actors;
-	delete [] _sortedActors;
+	delete[] _actors;
+	delete[] _sortedActors;
 
 	delete _2byteFontPtr;
 	delete _charset;
@@ -903,7 +903,7 @@ ScummEngine_v8::ScummEngine_v8(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v8::~ScummEngine_v8() {
-	delete [] _objectIDMap;
+	delete[] _objectIDMap;
 }
 #endif
 

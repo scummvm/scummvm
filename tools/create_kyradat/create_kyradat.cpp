@@ -586,7 +586,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 		while (ptr < endOffs) {
 			if (ptr[1]) {
 				error("invalid sequence data encountered");
-				delete [] buffer;
+				delete[] buffer;
 				return false;
 			}
 
@@ -743,7 +743,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 	WRITE_BE_UINT16(finHeader, numSequences);
 	WRITE_BE_UINT16(&finHeader[numSequences + 1], numNestedSequences);
 	memcpy (finBuffer + finHeaderSize, buffer + headerSize, finBufferSize - finHeaderSize);
-	delete [] buffer;
+	delete[] buffer;
 
 	finHeader = (uint16*) (finBuffer + ((numSequences + 2) * sizeof(uint16)));
 	for (int i = 0; i < numNestedSequences; i++) {
@@ -988,14 +988,14 @@ bool updateIndex(PAKFile &out, const Game *g) {
 		memcpy(index, data, size);
 
 	if (!updateIndex(index, kIndexSize, g)) {
-		delete [] index;
+		delete[] index;
 		return false;
 	}
 
 	out.removeFile(filename);
 	if (!out.addFile(filename, index, kIndexSize)) {
 		fprintf(stderr, "ERROR: couldn't update %s file", filename);
-		delete [] index;
+		delete[] index;
 		return false;
 	}
 
@@ -1049,7 +1049,7 @@ int main(int argc, char *argv[]) {
 
 		if (fread(buffer, 1, size, input) != size) {
 			warning("couldn't read from file '%s', skipping it", argv[i]);
-			delete [] buffer;
+			delete[] buffer;
 			fclose(input);
 			continue;
 		}
@@ -1058,13 +1058,13 @@ int main(int argc, char *argv[]) {
 		const Game *g = findGame(buffer, size);
 		if (!g) {
 			warning("skipping unknown file '%s'", argv[i]);
-			delete [] buffer;
+			delete[] buffer;
 			continue;
 		}
 
 		if (!hasNeededEntries(g, &out)) {
 			warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
-			delete [] buffer;
+			delete[] buffer;
 			continue;
 		}
 
@@ -1078,7 +1078,7 @@ int main(int argc, char *argv[]) {
 			// We switch to the second language and continue extraction.
 			if (!hasNeededEntries(++g, &out)) {
 				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
-				delete [] buffer;
+				delete[] buffer;
 				continue;
 			}
 			if (!process(out, g, buffer, size))
@@ -1090,14 +1090,14 @@ int main(int argc, char *argv[]) {
 			// We switch to the third language and continue extraction.
 			if (!hasNeededEntries(++g, &out)) {
 				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
-				delete [] buffer;
+				delete[] buffer;
 				continue;
 			}
 			if (!process(out, g, buffer, size))
 				fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
 		}
 
-		delete [] buffer;
+		delete[] buffer;
 	}
 
 	if (!out.saveFile(argv[1]))

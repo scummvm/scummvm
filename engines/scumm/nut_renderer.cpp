@@ -41,8 +41,8 @@ NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 }
 
 NutRenderer::~NutRenderer() {
-	delete [] _charBuffer;
-	delete [] _decodedData;
+	delete[] _charBuffer;
+	delete[] _decodedData;
 }
 
 void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
@@ -254,14 +254,14 @@ void NutRenderer::loadFont(const char *filename) {
 			offset += (dstPitch * _chars[l].height);
 		}
 
-		delete [] _decodedData;
+		delete[] _decodedData;
 		_decodedData = compressedData;
 
 		_charBuffer = new byte[_maxCharSize];
 	}
 
-	delete [] dataSrc;
-	delete [] _paletteMap;
+	delete[] dataSrc;
+	delete[] _paletteMap;
 }
 
 int NutRenderer::getCharWidth(byte c) const {

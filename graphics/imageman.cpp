@@ -110,7 +110,7 @@ bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
 			unzCloseCurrentFile(file->file);
 			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size);
 			surf = ImageDecoder::loadFile(stream);
-			delete [] buffer;
+			delete[] buffer;
 
 			if (!surf)
 				return false;
