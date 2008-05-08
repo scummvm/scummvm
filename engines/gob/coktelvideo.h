@@ -139,6 +139,9 @@ public:
 	/** Don't play sound or stop currently playing sound. */
 	virtual void disableSound() = 0;
 
+	/** Is sound currently playing? */
+	virtual bool isSoundPlaying() const = 0;
+
 	/** Seek to a specific frame.
 	 *
 	 *  @param frame The frame to which to seek.
@@ -202,6 +205,8 @@ public:
 
 	void enableSound(Audio::Mixer &mixer);
 	void disableSound();
+
+	bool isSoundPlaying() const;
 
 	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
 

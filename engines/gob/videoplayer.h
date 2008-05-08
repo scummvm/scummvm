@@ -132,6 +132,7 @@ private:
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
 			int16 palFrame, int16 endFrame);
+	void evalBgShading(CoktelVideo &video);
 };
 
 } // End of namespace Gob

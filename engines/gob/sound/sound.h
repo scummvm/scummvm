@@ -32,6 +32,7 @@
 #include "gob/sound/adlib.h"
 #include "gob/sound/infogrames.h"
 #include "gob/sound/cdrom.h"
+#include "gob/sound/bgatmosphere.h"
 
 namespace Gob {
 
@@ -49,7 +50,7 @@ public:
 	const SoundDesc *sampleGetBySlot(int slot) const;
 	int sampleGetNextFreeSlot() const;
 
-	bool sampleLoad(SoundDesc *sndDesc, const char *fileName);
+	bool sampleLoad(SoundDesc *sndDesc, const char *fileName, bool tryExist = true);
 	void sampleFree(SoundDesc *sndDesc, bool noteAdlib = false, int index = -1);
 
 
@@ -118,6 +119,16 @@ public:
 
 	void cdTest(int trySubst, const char *label);
 
+
+	// Background Atmosphere
+	void bgPlay(const char *base, int count);
+	void bgStop();
+
+	void bgSetPlayMode(BackgroundAtmosphere::PlayMode mode);
+
+	void bgShade();
+	void bgUnshade();
+
 private:
 	GobEngine *_vm;
 
@@ -128,6 +139,7 @@ private:
 	AdLib *_adlib;
 	Infogrames *_infogrames;
 	CDROM *_cdrom;
+	BackgroundAtmosphere *_bgatmos;
 };
 
 } // End of namespace Gob

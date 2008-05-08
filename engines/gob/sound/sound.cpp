@@ -39,6 +39,7 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 	_adlib = 0;
 	_infogrames = 0;
 	_cdrom = 0;
+	_bgatmos = 0;
 
 	if (!_vm->_noMusic && _vm->hasAdlib())
 		_adlib = new AdLib(*_vm->_mixer);
@@ -46,6 +47,8 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 		_infogrames = new Infogrames(*_vm->_mixer);
 	if (_vm->isCD())
 		_cdrom = new CDROM;
+	if (_vm->getGameType() == kGameTypeWoodruff)
+		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
 }
 
 Sound::~Sound() {
@@ -85,9 +88,17 @@ int Sound::sampleGetNextFreeSlot() const {
 	return -1;
 }
 
-bool Sound::sampleLoad(SoundDesc *sndDesc, const char *fileName) {
+bool Sound::sampleLoad(SoundDesc *sndDesc, const char *fileName, bool tryExist) {
 	if (!sndDesc)
 		return false;
+
+	int16 handle = _vm->_dataIO->openData(fileName);
+	if (handle < 0) {
+		warning("Can't open sample file \"%s\"", fileName);
+		return false;
+	}
+
+	_vm->_dataIO->closeData(handle);
 
 	byte *data;
 	uint32 size;
@@ -456,6 +467,57 @@ void Sound::cdTest(int trySubst, const char *label) {
 		return;
 
 	_cdrom->testCD(trySubst, label);
+}
+
+void Sound::bgPlay(const char *base, int count) {
+	if (!_bgatmos)
+		return;
+
+	_bgatmos->stop();
+	_bgatmos->queueClear();
+
+	int length = strlen(base) + 7;
+	char *fileName = new char[length];
+	SoundDesc *sndDesc;
+
+	for (int i = 1; i <= count; i++) {
+		snprintf(fileName, length, "%s%02d.SND", base, i);
+
+		sndDesc = new SoundDesc;
+		if (sampleLoad(sndDesc, fileName))
+			_bgatmos->queueSample(*sndDesc);
+	}
+
+	_bgatmos->play();
+}
+
+void Sound::bgStop() {
+	if (!_bgatmos)
+		return;
+
+	_bgatmos->stop();
+	_bgatmos->queueClear();
+}
+
+void Sound::bgSetPlayMode(BackgroundAtmosphere::PlayMode mode) {
+	if (!_bgatmos)
+		return;
+
+	_bgatmos->setPlayMode(mode);
+}
+
+void Sound::bgShade() {
+	if (!_bgatmos)
+		return;
+
+	_bgatmos->shade();
+}
+
+void Sound::bgUnshade() {
+	if (!_bgatmos)
+		return;
+
+	_bgatmos->unshade();
 }
 
 } // End of namespace Gob

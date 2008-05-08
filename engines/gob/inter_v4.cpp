@@ -32,6 +32,7 @@
 #include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -742,7 +743,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	if (lastFrame == -1) {
 		close = true;
 	} else if (lastFrame == -3) {
-		warning("Woodruff Stub: Video/Music command -3: Play background video %s, %d, %d, %d, %d", fileName, startFrame, x, y, VAR_OFFSET(7872));
+//		warning("Woodruff Stub: Video/Music command -3: Play background video %s, %d, %d, %d, %d", fileName, startFrame, x, y, VAR_OFFSET(7872));
 
 		_vm->_mult->_objects[startFrame].pAnimData->animation = -startFrame - 1;
 
@@ -766,16 +767,20 @@ void Inter_v4::o4_playVmdOrMusic() {
 		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
 		return;
 	} else if (lastFrame == -5) {
-		warning("Woodruff Stub: Video/Music command -5: Stop background music");
+//		warning("Woodruff Stub: Video/Music command -5: Stop background music");
+		_vm->_sound->bgStop();
 		return;
 	} else if (lastFrame == -6) {
-		warning("Woodruff Stub: Video/Music command -6: Load background video %s", fileName);
+//		warning("Woodruff Stub: Video/Music command -6: Load background video %s", fileName);
 		return;
 	} else if (lastFrame == -8) {
 		warning("Woodruff Stub: Video/Music command -8: Play background video %s", fileName);
 		return;
 	} else if (lastFrame == -9) {
-		warning("Woodruff Stub: Video/Music command -9: Play background music %s (%d-%d)", fileName, palEnd, palStart);
+//		warning("Woodruff Stub: Video/Music command -9: Play background music %s (%d-%d)", fileName, palEnd, palStart);
+		_vm->_sound->bgStop();
+		_vm->_sound->bgSetPlayMode(BackgroundAtmosphere::kPlayModeRandom);
+		_vm->_sound->bgPlay(fileName, palStart);
 		return;
 	} else if (lastFrame < 0) {
 		warning("Unknown Video/Music command: %d, %s", lastFrame, fileName);

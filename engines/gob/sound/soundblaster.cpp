@@ -23,7 +23,7 @@
  *
  */
 
-#include "gob/sound/sound.h"
+#include "gob/sound/soundblaster.h"
 
 namespace Gob {
 

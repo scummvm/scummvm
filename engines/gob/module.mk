@@ -58,7 +58,8 @@ MODULE_OBJS := \
 	sound/infogrames.o \
 	sound/soundmixer.o \
 	sound/soundblaster.o \
-	sound/cdrom.o
+	sound/cdrom.o \
+	sound/bgatmosphere.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOB), DYNAMIC_PLUGIN)

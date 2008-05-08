@@ -33,6 +33,7 @@
 #include "gob/palanim.h"
 #include "gob/inter.h"
 #include "gob/map.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -289,6 +290,8 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame))
 			break;
 
+		evalBgShading(video);
+
 		if (fade) {
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 			fade = false;
@@ -299,18 +302,27 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		startFrame++;
 	}
 
+	evalBgShading(video);
+
 	if (reverseTo >= 0) {
 		int16 toFrame = video.getFramesCount() - reverseTo;
 		for (int i = video.getCurrentFrame(); i >= toFrame; i--) {
 			video.seekFrame(i, SEEK_SET, true);
-			if (doPlay(i, breakKey, 0, 0, 0, 0, 0)) {
+
+			bool b = doPlay(i, breakKey, 0, 0, 0, 0, 0);
+			evalBgShading(video);
+
+			if (b) {
 				_vm->_palAnim->fade(0, -2, 0);
 				memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			}
+
 			if (!_noCursorSwitch)
 				video.waitEndFrame();
 		}
 	}
+
+	evalBgShading(video);
 }
 
 void VideoPlayer::primaryClose() {
@@ -360,6 +372,8 @@ void VideoPlayer::slotPlay(int slot, int16 frame) {
 
 	_videoSlots[slot]->nextFrame();
 	WRITE_VAR(11, frame);
+
+	evalBgShading(video);
 }
 
 void VideoPlayer::slotClose(int slot) {
@@ -596,6 +610,13 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 		WRITE_VAR_OFFSET(varWidth, -1);
 		WRITE_VAR_OFFSET(varHeight, -1);
 	}
+}
+
+void VideoPlayer::evalBgShading(CoktelVideo &video) {
+	if (video.isSoundPlaying())
+		_vm->_sound->bgShade();
+	else
+		_vm->_sound->bgUnshade();
 }
 
 } // End of namespace Gob
