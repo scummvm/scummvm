@@ -79,7 +79,7 @@ void PmvPlayer::play(const char *filename) {
 	byte *frameData, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
 	
-	uint32 soundStartTime, skipFrames;
+	uint32 soundStartTime = 0, skipFrames = 0;
 
 	uint32 frameNum;
 	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
