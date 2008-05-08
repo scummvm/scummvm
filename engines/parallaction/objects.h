@@ -94,6 +94,8 @@ enum ZoneFlags {
 
 
 enum CommandFlags {
+	kFlagsAll			= 0xFFFFFFFFU,
+
 	kFlagsVisited		= 1,
 	kFlagsExit			= 0x10000000,
 	kFlagsEnter			= 0x20000000,
@@ -102,13 +104,6 @@ enum CommandFlags {
 	// BRA specific
 	kFlagsTestTrue		= 2
 };
-// This was moved here from inside the enum CommandFlags above because at
-// least MSVC8 uses a signed int for representing enumerations and kFlagsAll
-// uses an unsigned int value that can't be represented directly with a signed
-// int (It's represented as -1 instead of 0xFFFFFFFF). Casting the enum values
-// to unsigned ints when needed would've been another way to fix this.
-const uint32 kFlagsAll = 0xFFFFFFFF;
-
 
 
 struct CommandData {
