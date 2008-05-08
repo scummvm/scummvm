@@ -382,12 +382,12 @@ bool GobEngine::initGameParts() {
 }
 
 void GobEngine::deinitGameParts() {
+	delete _saveLoad;  _saveLoad = 0;
 	delete _mult;      _mult = 0;
+	delete _vidPlayer; _vidPlayer = 0;
 	delete _game;      _game = 0;
 	delete _global;    _global = 0;
-	delete _dataIO;    _dataIO = 0;
 	delete _goblin;    _goblin = 0;
-	delete _vidPlayer; _vidPlayer = 0;
 	delete _init;      _init = 0;
 	delete _inter;     _inter = 0;
 	delete _map;       _map = 0;
@@ -397,8 +397,8 @@ void GobEngine::deinitGameParts() {
 	delete _draw;      _draw = 0;
 	delete _util;      _util = 0;
 	delete _video;     _video = 0;
-	delete _saveLoad;  _saveLoad = 0;
 	delete _sound;     _sound = 0;
+	delete _dataIO;    _dataIO = 0;
 }
 
 } // End of namespace Gob
