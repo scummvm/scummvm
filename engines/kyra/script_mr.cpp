@@ -551,7 +551,7 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 			convs[0] = 0;
 			convs[1] = 4;
 			convs[2] = 0;
-			convs[4] = 1;
+			convs[3] = 1;
 			break;
 
 		case 10:
