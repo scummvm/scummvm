@@ -1933,7 +1933,7 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			int bytePos = x/8+y*40;
-			int bitPos = 7-x&7;
+			int bitPos = 7-(x&7);
 
 			byte colorIndex = 0;
 			colorIndex |= (((tmp[bytePos + 8000 * 0] & (1 << bitPos)) >> bitPos) & 0x1) << 0;

@@ -140,7 +140,7 @@ void Sprites::updateSceneAnims() {
 	uint16 sound;
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
-		if (_anims[i].script == 0 || !_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
+		if (_anims[i].script == 0 || !_anims[i].play || (_anims[i].nextRun != 0 && _anims[i].nextRun > currTime))
 			continue;
 
 		data = _anims[i].curPos;

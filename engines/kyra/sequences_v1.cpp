@@ -176,7 +176,7 @@ void KyraEngine_v1::seq_introLogos() {
 		_screen->setScreenPalette(_screen->_currentPalette);
 	}
 
-	if (_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence() || _quitFlag) {
+	if ((_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence()) || _quitFlag) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;

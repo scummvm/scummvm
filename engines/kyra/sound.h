@@ -192,7 +192,7 @@ public:
 protected:
 	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->_fileListLen) ? _soundDataList->_fileList[file] : ""; }
 	const void *cdaData() const { return _soundDataList != 0 ? _soundDataList->_cdaTracks : 0; }
-	const int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->_cdaNumTracks : 0; }
+	int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->_cdaNumTracks : 0; }
 
 	enum {
 		kNumChannelHandles = 4

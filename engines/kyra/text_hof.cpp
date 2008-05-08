@@ -649,7 +649,7 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 	}
 
 	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || skipFlag())) {
-		if (!speechEnabled() && chatAnimEndTime > _system->getMillis() || speechEnabled() && snd_voiceIsPlaying()) {
+		if ((!speechEnabled() && chatAnimEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) {
 			_tim->resetFinishedFlag();
 			while (!_tim->finished() && !skipFlag() && !_quitFlag) {
 				if (_currentTalkSections.TLKTim)
