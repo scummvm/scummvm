@@ -23,49 +23,73 @@
  *
  */
 
-#ifndef GOB_SOUND_SOUNDBLASTER_H
-#define GOB_SOUND_SOUNDBLASTER_H
+#ifndef GOB_SOUND_SOUNDMIXER_H
+#define GOB_SOUND_SOUNDMIXER_H
 
 #include "common/mutex.h"
+#include "common/frac.h"
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 #include "gob/sound/sounddesc.h"
-#include "gob/sound/soundmixer.h"
 
 namespace Gob {
 
-class SoundBlaster : public SoundMixer {
+class SoundMixer : public Audio::AudioStream {
 public:
-	SoundBlaster(Audio::Mixer &mixer);
-	~SoundBlaster();
+	SoundMixer(Audio::Mixer &mixer);
+	~SoundMixer();
 
-	void playSample(SoundDesc &sndDesc, int16 repCount,
+	virtual void play(SoundDesc &sndDesc, int16 repCount,
 			int16 frequency, int16 fadeLength = 0);
-	void stopSound(int16 fadeLength, SoundDesc *sndDesc = 0);
+	virtual void stop(int16 fadeLength);
 
-	void playComposition(int16 *composition, int16 freqVal,
-			SoundDesc *sndDescs = 0, int8 sndCount = 60);
-	void stopComposition();
-	void endComposition();
+	bool isPlaying() const;
+	char getPlayingSound() const;
+
+	void setRepeating(int32 repCount);
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return false; }
+	bool endOfData() const { return _end; }
+	bool endOfStream() const { return false; }
+	int getRate() const { return _rate; }
 
 protected:
+	Audio::Mixer *_mixer;
+
+	Audio::SoundHandle _handle;
 	Common::Mutex _mutex;
 
-	SoundDesc *_compositionSamples;
-	int8 _compositionSampleCount;
-	int16 _composition[50];
-	int8 _compositionPos;
+	bool _end;
+	int8 *_data;
+	uint32 _length;
+	uint32 _rate;
+	int32 _freq;
+	int32 _repCount;
 
-	SoundDesc *_curSoundDesc;
+	uint32 _offset;
+	frac_t _offsetFrac;
+	frac_t _offsetInc;
 
-	void setSample(SoundDesc &sndDesc, int16 repCount,
+	int16 _cur;
+	int16 _last;
+
+	bool _fade;
+	int32 _fadeVol;
+	int32 _fadeVolStep;
+	uint8 _fadeLength;
+	uint32 _fadeSamples;
+	uint32 _curFadeSamples;
+
+	char _playingSound;
+
+	virtual void setSample(SoundDesc &sndDesc, int16 repCount,
 			int16 frequency, int16 fadeLength);
-	void checkEndSample();
-	void endFade();
-
-	void nextCompositionPos();
+	virtual void checkEndSample();
+	virtual void endFade();
 };
 
 } // End of namespace Gob
 
-#endif // GOB_SOUND_SOUNDBLASTER_H
+#endif // GOB_SOUND_SOUNDMIXER_H
