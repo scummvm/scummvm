@@ -588,6 +588,13 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 	return 1;
 }
 
+int KyraEngine_MR::o3_removeItemSlot(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeItemSlot(%p) (%d)", (const void *)script, stackPos(0));
+	deleteItemAnimEntry(stackPos(0));
+	_itemList[stackPos(0)].id = 0xFFFF;
+	return 1;
+}
+
 int KyraEngine_MR::o3_setSceneDim(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setSceneDim(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_sceneMinX = stackPos(0);
@@ -1220,7 +1227,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x40
 	Opcode(o3_checkInRect);
 	Opcode(o3_updateConversations);
-	OpcodeUnImpl();
+	Opcode(o3_removeItemSlot);
 	Opcode(o3_dummy);
 	// 0x44
 	Opcode(o3_dummy);

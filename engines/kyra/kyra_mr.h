@@ -548,6 +548,7 @@ private:
 	int o3_drawSceneShapeOnPage(EMCState *script);
 	int o3_checkInRect(EMCState *script);
 	int o3_updateConversations(EMCState *script);
+	int o3_removeItemSlot(EMCState *script);
 	int o3_setSceneDim(EMCState *script);
 	int o3_setSceneAnimPosAndFrame(EMCState *script);
 	int o3_removeItemInstances(EMCState *script);
