@@ -26,10 +26,6 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
-#include "sound/mods/infogrames.h"
-
-#include "gob/sound.h"
-
 namespace Gob {
 
 class Game {
@@ -118,12 +114,6 @@ public:
 	byte *_totFileData;
 
 	int16 _extHandle;
-
-	SoundDesc _soundSamples[60];
-
-	Audio::Infogrames::Instruments *_infIns;
-	Audio::Infogrames *_infogrames;
-	Audio::SoundHandle _infHandle;
 
 	char _totToLoad[20];
 

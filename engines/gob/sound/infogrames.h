@@ -23,18 +23,38 @@
  *
  */
 
-#include "common/endian.h"
+#ifndef GOB_SOUND_INFOGRAMES_H
+#define GOB_SOUND_INFOGRAMES_H
 
-#include "gob/gob.h"
-#include "gob/scenery.h"
+#include "sound/mixer.h"
+#include "sound/mods/infogrames.h"
 
 namespace Gob {
 
-Scenery_v2::Scenery_v2(GobEngine *vm) : Scenery_v1(vm) {
-}
+class Infogrames {
+public:
+	Infogrames(Audio::Mixer &mixer);
+	~Infogrames();
 
-int16 Scenery_v2::loadAnim(char search) {
-	return Scenery::loadAnim(search);
-}
+	bool loadInstruments(const char *fileName);
+	bool loadSong(const char *fileName);
+
+	void play();
+	void stop();
+
+private:
+	Audio::Mixer *_mixer;
+
+	Audio::Infogrames::Instruments *_instruments;
+	Audio::Infogrames *_song;
+	Audio::SoundHandle _handle;
+
+	void clearInstruments();
+	void clearSong();
+
+	bool loadInst(const char *fileName);
+};
 
 } // End of namespace Gob
+
+#endif // GOB_SOUND_INFOGRAMES_H

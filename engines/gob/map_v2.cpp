@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/stream.h"
 
 #include "gob/gob.h"

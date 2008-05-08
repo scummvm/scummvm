@@ -23,81 +23,15 @@
  *
  */
 
-
-#include "common/endian.h"
-
-#include "gob/gob.h"
-#include "gob/sound.h"
-#include "gob/global.h"
-#include "gob/util.h"
-#include "gob/dataio.h"
-#include "gob/game.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
-void SoundDesc::set(SoundType type, SoundSource src,
-		byte *data, uint32 dSize) {
-
-	free();
-
-	_type = type;
-	_source = src;
-	_data = _dataPtr = data;
-	_size = dSize;
-}
-
-void SoundDesc::load(SoundType type, SoundSource src,
-		byte *data, uint32 dSize) {
-
-	free();
-
-	_source = src;
-	switch (type) {
-	case SOUND_ADL:
-		loadADL(data, dSize);
-		break;
-	case SOUND_SND:
-		loadSND(data, dSize);
-		break;
-	}
-}
-
-void SoundDesc::free() {
-	if (_source != SOUND_TOT)
-		delete[] _data;
-	_data = _dataPtr = 0;
-	_id = 0;
-}
-
-void SoundDesc::convToSigned() {
-	if ((_type == SOUND_SND) && _data && _dataPtr)
-		for (uint32 i = 0; i < _size; i++)
-			_dataPtr[i] ^= 0x80;
-}
-
-void SoundDesc::loadSND(byte *data, uint32 dSize) {
-	assert(dSize > 6);
-
-	_type = SOUND_SND;
-	_data = data;
-	_dataPtr = data + 6;
-	_frequency = MAX((int16) READ_BE_UINT16(data + 4), (int16) 4700);
-	_flag = data[0] ? (data[0] & 0x7F) : 8;
-	data[0] = 0;
-	_size = MIN(READ_BE_UINT32(data), dSize - 6);
-}
-
-void SoundDesc::loadADL(byte *data, uint32 dSize) {
-	_type = SOUND_ADL;
-	_data = _dataPtr = data;
-	_size = dSize;
-}
-
-Snd::Snd(GobEngine *vm) : _vm(vm) {
+SoundBlaster::SoundBlaster(Audio::Mixer &mixer) : _mixer(&mixer) {
 	_playingSound = 0;
 	_curSoundDesc = 0;
 
-	_rate = _vm->_mixer->getOutputRate();
+	_rate = _mixer->getOutputRate();
 	_end = true;
 	_data = 0;
 	_length = 0;
@@ -121,39 +55,23 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_compositionSampleCount = 0;
 	_compositionPos = -1;
 
-	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
-
-	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
 			this, -1, 255, 0, false, true);
-	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-			_speakerStream, -1, 50, 0, false, true);
 }
 
-Snd::~Snd() {
-	// stop permanent streams manually:
-
-	// First the speaker stream
-	_vm->_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;
-
-	// Next, this stream (class Snd is an AudioStream, too)
-	_vm->_mixer->stopHandle(_handle);
+SoundBlaster::~SoundBlaster() {
+	_mixer->stopHandle(_handle);
 }
 
-void Snd::speakerOn(int16 frequency, int32 length) {
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
+bool SoundBlaster::isPlaying() const {
+	return !_end;
 }
 
-void Snd::speakerOff() {
-	_speakerStream->stop();
+char SoundBlaster::getPlayingSound() const {
+	return _playingSound;
 }
 
-void Snd::speakerOnUpdate(uint32 milis) {
-	if (_speakerStream->isPlaying())
-		_speakerStream->stop(milis);
-}
-
-void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
+void SoundBlaster::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	Common::StackLock slock(_mutex);
 
 	if (sndDesc && (sndDesc != _curSoundDesc))
@@ -174,33 +92,24 @@ void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	_curFadeSamples = 0;
 }
 
-void Snd::setRepeating(int32 repCount) {
+void SoundBlaster::setRepeating(int32 repCount) {
 	Common::StackLock slock(_mutex);
 
 	_repCount = repCount;
 }
 
-void Snd::waitEndPlay(bool interruptible, bool stopComp) {
-	if (stopComp)
-		_compositionPos = -1;
-	while (!_end && !_vm->_quitRequested) {
-		if (interruptible && (_vm->_util->checkKey() == 0x11B)) {
-			WRITE_VAR(57, -1);
-			return;
-		}
-		_vm->_util->longDelay(200);
-	}
-	stopSound(0);
-}
-
-void Snd::stopComposition() {
+void SoundBlaster::stopComposition() {
 	if (_compositionPos != -1) {
 		stopSound(0);
 		_compositionPos = -1;
 	}
 }
 
-void Snd::nextCompositionPos() {
+void SoundBlaster::endComposition() {
+	_compositionPos = -1;
+}
+
+void SoundBlaster::nextCompositionPos() {
 	int8 slot;
 
 	while ((++_compositionPos < 50) &&
@@ -218,17 +127,13 @@ void Snd::nextCompositionPos() {
 	_compositionPos = -1;
 }
 
-void Snd::playComposition(int16 *composition, int16 freqVal,
+void SoundBlaster::playComposition(int16 *composition, int16 freqVal,
 		SoundDesc *sndDescs, int8 sndCount) {
-	int i;
 
-	waitEndPlay();
-	stopComposition();
+	_compositionSamples = sndDescs;
+	_compositionSampleCount = sndCount; 
 
-	_compositionSamples = sndDescs ? sndDescs : _vm->_game->_soundSamples;
-	_compositionSampleCount = sndCount;
-
-	i = -1;
+	int i = -1;
 	do {
 		i++;
 		_composition[i] = composition[i];
@@ -238,7 +143,7 @@ void Snd::playComposition(int16 *composition, int16 freqVal,
 	nextCompositionPos();
 }
 
-void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
+void SoundBlaster::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 		int16 fadeLength) {
 
 	if (frequency <= 0)
@@ -277,26 +182,7 @@ void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	}
 }
 
-bool Snd::loadSample(SoundDesc &sndDesc, const char *fileName) {
-	byte *data;
-	uint32 size;
-
-	data = (byte *) _vm->_dataIO->getData(fileName);
-	if (!data)
-		return false;
-
-	size = _vm->_dataIO->getDataSize(fileName);
-	sndDesc.load(SOUND_SND, SOUND_FILE, data, size);
-
-	return true;
-}
-
-void Snd::freeSample(SoundDesc &sndDesc) {
-	stopSound(0, &sndDesc);
-	sndDesc.free();
-}
-
-void Snd::playSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
+void SoundBlaster::playSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 		int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
@@ -306,7 +192,7 @@ void Snd::playSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	setSample(sndDesc, repCount, frequency, fadeLength);
 }
 
-void Snd::checkEndSample() {
+void SoundBlaster::checkEndSample() {
 	if (_compositionPos != -1)
 		nextCompositionPos();
 	else if ((_repCount == -1) || (--_repCount > 0)) {
@@ -320,7 +206,7 @@ void Snd::checkEndSample() {
 	}
 }
 
-int Snd::readBuffer(int16 *buffer, const int numSamples) {
+int SoundBlaster::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
 
 	for (int i = 0; i < numSamples; i++) {

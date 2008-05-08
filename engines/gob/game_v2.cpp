@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -38,9 +37,9 @@
 #include "gob/mult.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -265,11 +264,14 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (skipPlay != -1) {
 				_vm->_goblin->freeObjects();
 
-				_vm->_snd->stopSound(0);
+				_vm->_sound->blasterStop(0);
 
-				for (int i = 0; i < 60; i++)
-					if (_soundSamples[i].getType() == SOUND_SND)
-						_vm->_snd->freeSample(_soundSamples[i]);
+				for (int i = 0; i < Sound::kSoundsCount; i++) {
+					SoundDesc *sound = _vm->_sound->sampleGetBySlot(i);
+
+					if (sound && (sound->getType() == SOUND_SND))
+						_vm->_sound->sampleFree(sound);
+				}
 			}
 
 			_vm->_vidPlayer->primaryClose();

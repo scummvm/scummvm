@@ -24,91 +24,55 @@
  */
 
 #include "common/file.h"
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/music.h"
-#include "gob/game.h"
-#include "gob/util.h"
+#include "gob/sound/adlib.h"
 
 namespace Gob {
 
-const char *Adlib::_tracks[][2] = {
-	{"avt00.tot",  "mine"},
-	{"avt001.tot", "nuit"},
-	{"avt002.tot", "campagne"},
-	{"avt003.tot", "extsor1"},
-	{"avt004.tot", "interieure"},
-	{"avt005.tot", "zombie"},
-	{"avt006.tot", "zombie"},
-	{"avt007.tot", "campagne"},
-	{"avt008.tot", "campagne"},
-	{"avt009.tot", "extsor1"},
-	{"avt010.tot", "extsor1"},
-	{"avt011.tot", "interieure"},
-	{"avt012.tot", "zombie"},
-	{"avt014.tot", "nuit"},
-	{"avt015.tot", "interieure"},
-	{"avt016.tot", "statue"},
-	{"avt017.tot", "zombie"},
-	{"avt018.tot", "statue"},
-	{"avt019.tot", "mine"},
-	{"avt020.tot", "statue"},
-	{"avt021.tot", "mine"},
-	{"avt022.tot", "zombie"}
-};
-
-const char *Adlib::_trackFiles[] = {
-//	"musmac1.adl", // TODO: This track isn't played correctly at all yet
-	"musmac2.adl",
-	"musmac3.adl",
-	"musmac4.adl",
-	"musmac5.adl",
-	"musmac6.adl"
-};
-
-const unsigned char Adlib::_operators[] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
-const unsigned char Adlib::_volRegNums[] = {
+const unsigned char AdLib::_operators[] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
+const unsigned char AdLib::_volRegNums[] = {
 	3,  4,  5,
 	11, 12, 13,
 	19, 20, 21
 };
 
-Adlib::Adlib(GobEngine *vm) : _vm(vm) {
-	int i;
-
+AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer) {
 	_index = -1;
 	_data = 0;
 	_playPos = 0;
 	_dataSize = 0;
-	_rate = _vm->_mixer->getOutputRate();
+
+	_rate = _mixer->getOutputRate();
 	_opl = makeAdlibOPL(_rate);
+
 	_first = true;
 	_ended = false;
 	_playing = false;
 	_needFree = false;
+
 	_repCount = -1;
 	_samplesTillPoll = 0;
 
-	for (i = 0; i < 16; i ++)
+	for (int i = 0; i < 16; i ++)
 		_pollNotes[i] = 0;
 	setFreqs();
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
 			this, -1, 255, 0, false, true);
 }
 
-Adlib::~Adlib() {
+AdLib::~AdLib() {
 	Common::StackLock slock(_mutex);
 
-	_vm->_mixer->stopHandle(_handle);
+	_mixer->stopHandle(_handle);
 	OPLDestroy(_opl);
 	if (_data && _needFree)
 		delete[] _data;
 }
 
-int Adlib::readBuffer(int16 *buffer, const int numSamples) {
+int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
 	int samples;
 	int render;
@@ -160,12 +124,12 @@ int Adlib::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
-void Adlib::writeOPL(byte reg, byte val) {
+void AdLib::writeOPL(byte reg, byte val) {
 	debugC(6, kDebugMusic, "writeOPL(%02X, %02X)", reg, val);
 	OPLWriteReg(_opl, reg, val);
 }
 
-void Adlib::setFreqs() {
+void AdLib::setFreqs() {
 	byte lin;
 	byte col;
 	long val = 0;
@@ -191,7 +155,7 @@ void Adlib::setFreqs() {
 	}
 }
 
-void Adlib::reset() {
+void AdLib::reset() {
 	_first = true;
 	OPLResetChip(_opl);
 	_samplesTillPoll = 0;
@@ -209,13 +173,13 @@ void Adlib::reset() {
 	writeOPL(0x01, 0x20);
 }
 
-void Adlib::setVoices() {
+void AdLib::setVoices() {
 	// Definitions of the 9 instruments
 	for (int i = 0; i < 9; i++)
 		setVoice(i, i, true);
 }
 
-void Adlib::setVoice(byte voice, byte instr, bool set) {
+void AdLib::setVoice(byte voice, byte instr, bool set) {
 	int i;
 	int j;
 	uint16 strct[27];
@@ -251,7 +215,7 @@ void Adlib::setVoice(byte voice, byte instr, bool set) {
 	}
 }
 
-void Adlib::setKey(byte voice, byte note, bool on, bool spec) {
+void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 	short freq = 0;
 	short octa = 0;
 
@@ -317,12 +281,12 @@ void Adlib::setKey(byte voice, byte note, bool on, bool spec) {
 		warning("Voice %d, note %02X unknown\n", voice, note);
 }
 
-void Adlib::setVolume(byte voice, byte volume) {
+void AdLib::setVolume(byte voice, byte volume) {
 	volume = 0x3F - (volume * 0x7E + 0x7F) / 0xFE;
 	writeOPL(0x40 + _volRegNums[voice], volume);
 }
 
-void Adlib::pollMusic() {
+void AdLib::pollMusic() {
 	unsigned char instr;
 	byte channel;
 	byte note;
@@ -419,24 +383,7 @@ void Adlib::pollMusic() {
 	_samplesTillPoll = tempo * (_rate / 1000);
 }
 
-void Adlib::playBgMusic() {
-	for (int i = 0; i < ARRAYSIZE(_tracks); i++)
-		if (!scumm_stricmp(_vm->_game->_curTotFile, _tracks[i][0])) {
-			playTrack(_tracks[i][1]);
-			break;
-		}
-}
-
-void Adlib::playTrack(const char *trackname) {
-	if (_playing) return;
-
-	debugC(1, kDebugMusic, "Adlib::playTrack(%s)", trackname);
-	unload();
-	load(_trackFiles[_vm->_util->getRandom(ARRAYSIZE(_trackFiles))]);
-	startPlay();
-}
-
-bool Adlib::load(const char *fileName) {
+bool AdLib::load(const char *fileName) {
 	Common::File song;
 
 	unload();
@@ -457,7 +404,7 @@ bool Adlib::load(const char *fileName) {
 	return true;
 }
 
-void Adlib::load(byte *data, uint32 size, int index) {
+bool AdLib::load(byte *data, uint32 size, int index) {
 	unload();
 	_repCount = 0;
 
@@ -468,9 +415,11 @@ void Adlib::load(byte *data, uint32 size, int index) {
 	reset();
 	setVoices();
 	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+
+	return true;
 }
 
-void Adlib::unload() {
+void AdLib::unload() {
 	_playing = false;
 	_index = -1;
 
@@ -478,6 +427,31 @@ void Adlib::unload() {
 		delete[] _data;
 
 	_needFree = false;
+}
+
+bool AdLib::isPlaying() const {
+	return _playing;
+}
+
+bool AdLib::getRepeating() const {
+	return _repCount != 0;
+}
+
+void AdLib::setRepeating(int32 repCount) {
+	_repCount = repCount;
+}
+
+int AdLib::getIndex() const {
+	return _index;
+}
+
+void AdLib::startPlay() {
+	if (_data) _playing = true;
+}
+
+void AdLib::stopPlay() {
+	Common::StackLock slock(_mutex);
+	_playing = false;
 }
 
 } // End of namespace Gob

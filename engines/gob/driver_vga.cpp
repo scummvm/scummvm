@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "graphics/primitives.h"
 

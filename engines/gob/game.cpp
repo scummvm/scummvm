@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -35,7 +34,7 @@
 #include "gob/parse.h"
 #include "gob/draw.h"
 #include "gob/mult.h"
-#include "gob/music.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -59,9 +58,6 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 		_collStack[i] = 0;
 		_collStackElemSizes[i] = 0;
 	}
-
-	_infIns = 0;
-	_infogrames = 0;
 
 	_curTotFile[0] = 0;
 	_curExtFile[0] = 0;
@@ -105,10 +101,6 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 }
 
 Game::~Game() {
-	delete _infIns;
-
-	for (int i = 0; i < 60; i++)
-		_soundSamples[i].free();
 }
 
 byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
@@ -295,16 +287,7 @@ void Game::freeSoundSlot(int16 slot) {
 	if (slot == -1)
 		slot = _vm->_parse->parseValExpr();
 
-	if ((slot < 0) || (slot >= 60) || _soundSamples[slot].empty())
-		return;
-
-	SoundDesc &sample = _soundSamples[slot];
-
-	if (sample.getType() == SOUND_ADL)
-		if (_vm->_adlib && (_vm->_adlib->getIndex() == slot))
-			_vm->_adlib->stopPlay();
-
-	_vm->_snd->freeSample(sample);
+	_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(slot));
 }
 
 void Game::evaluateScroll(int16 x, int16 y) {
@@ -380,7 +363,7 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 
 	if ((_vm->_inter->_soundEndTimeKey != 0) &&
 	    (_vm->_util->getTimeKey() >= _vm->_inter->_soundEndTimeKey)) {
-		_vm->_snd->stopSound(_vm->_inter->_soundStopVal);
+		_vm->_sound->blasterStop(_vm->_inter->_soundStopVal);
 		_vm->_inter->_soundEndTimeKey = 0;
 	}
 

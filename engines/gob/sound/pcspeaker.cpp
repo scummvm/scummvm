@@ -23,42 +23,33 @@
  *
  */
 
-#ifndef GOB_CDROM_H
-#define GOB_CDROM_H
+#include "gob/sound/pcspeaker.h"
 
 namespace Gob {
 
-class CDROM {
-public:
-	bool _cdPlaying;
+PCSpeaker::PCSpeaker(Audio::Mixer &mixer) : _mixer(&mixer) {
 
-	void readLIC(const char *fname);
-	void freeLICbuffer();
+	_stream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType,
+			&_handle, _stream, -1, 50, 0, false, true);
+}
 
-	void startTrack(const char *trackName);
-	void playBgMusic();
-	void playMultMusic();
-	void play(uint32 from, uint32 to);
-	int32 getTrackPos(const char *keyTrack = 0);
-	const char *getCurTrack();
-	void stopPlaying();
-	void stop();
-	void testCD(int trySubst, const char *label);
+PCSpeaker::~PCSpeaker() {
+	_mixer->stopHandle(_handle);
+	delete _stream;
+}
 
-	CDROM(GobEngine *vm);
+void PCSpeaker::speakerOn(int16 frequency, int32 length) {
+	_stream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
+}
 
-protected:
-	byte *_LICbuffer;
-	byte *_curTrackBuffer;
-	char _curTrack[16];
-	uint16 _numTracks;
-	uint32 _trackStop;
-	uint32 _startTime;
-	GobEngine *_vm;
+void PCSpeaker::speakerOff() {
+	_stream->stop();
+}
 
-	byte *getTrackBuffer(const char *trackName);
-};
+void PCSpeaker::onUpdate(uint32 millis) {
+	if (_stream->isPlaying())
+		_stream->stop(millis);
+}
 
 } // End of namespace Gob
-
-#endif // GOB_CDROM_H

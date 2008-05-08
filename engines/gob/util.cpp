@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/events.h"
 
 #include "gob/gob.h"
@@ -32,8 +31,8 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -60,7 +59,7 @@ void Util::beep(int16 freq) {
 	if (_vm->_global->_soundFlags == 0)
 		return;
 
-	_vm->_snd->speakerOn(freq, 50);
+	_vm->_sound->speakerOn(freq, 50);
 }
 
 void Util::delay(uint16 msecs) {

@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -32,15 +31,13 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
-#include "gob/music.h"
-#include "gob/cdrom.h"
 #include "gob/draw.h"
 #include "gob/inter.h"
 #include "gob/mult.h"
 #include "gob/video.h"
 #include "gob/parse.h"
-#include "gob/sound.h"
 #include "gob/scenery.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -74,11 +71,11 @@ void Game_v1::playTot(int16 skipPlay) {
 				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
-			if (_vm->_platform == Common::kPlatformMacintosh) {
-				if (_vm->_adlib)
-					_vm->_adlib->stopPlay();
-			} else
-				_vm->_cdrom->stopPlaying();
+			if (_vm->getPlatform() == Common::kPlatformMacintosh)
+				_vm->_sound->adlibStop();
+			else
+				_vm->_sound->cdStop();
+
 			_vm->_draw->animateCursor(4);
 			_vm->_inter->initControlVars(1);
 			_vm->_mult->initAll();
@@ -229,7 +226,7 @@ void Game_v1::playTot(int16 skipPlay) {
 
 			for (int i = 0; i < SPRITES_COUNT; i++)
 				_vm->_draw->freeSprite(i);
-			_vm->_snd->stopSound(0);
+			_vm->_sound->blasterStop(0);
 
 			for (int i = 0; i < 20; i++)
 				freeSoundSlot(i);

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GOB_MUSIC_H
-#define GOB_MUSIC_H
+#ifndef GOB_SOUND_ADLIB_H
+#define GOB_SOUND_ADLIB_H
 
 #include "common/mutex.h"
 #include "sound/audiostream.h"
@@ -35,61 +35,63 @@ namespace Gob {
 
 class GobEngine;
 
-class Adlib : public Audio::AudioStream {
+class AdLib : public Audio::AudioStream {
 public:
-	Adlib(GobEngine *vm);
-	~Adlib();
+	AdLib(Audio::Mixer &mixer);
+	~AdLib();
 
-	void lock() { _mutex.lock(); }
-	void unlock() { _mutex.unlock(); }
-	bool playing() const { return _playing; }
-	bool getRepeating() const { return _repCount != 0; }
-	void setRepeating (int32 repCount) { _repCount = repCount; }
-	int getIndex() const { return _index; }
-	void startPlay() { if (_data) _playing = true; }
-	void stopPlay() {
-		Common::StackLock slock(_mutex);
-		_playing = false;
-	}
-	void playTrack(const char *trackname);
-	void playBgMusic();
+	bool isPlaying() const;
+	int getIndex() const;
+	bool getRepeating() const;
+
+	void setRepeating(int32 repCount);
+
+	void startPlay();
+	void stopPlay();
+
 	bool load(const char *fileName);
-	void load(byte *data, uint32 size, int index = -1);
+	bool load(byte *data, uint32 size, int index = -1);
 	void unload();
 
 // AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return !_playing; }
-	bool endOfStream() const { return false; }
-	int getRate() const { return _rate; }
+	int  readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo()    const { return false;     }
+	bool endOfData()   const { return !_playing; }
+	bool endOfStream() const { return false;     }
+	int  getRate()     const { return _rate;     }
 
 protected:
-	static const char *_tracks[][2];
-	static const char *_trackFiles[];
 	static const unsigned char _operators[];
 	static const unsigned char _volRegNums [];
+
+	Audio::Mixer *_mixer;
 	Audio::SoundHandle _handle;
 	FM_OPL *_opl;
-	int _index;
+
+	Common::Mutex _mutex;
+
+	uint32 _rate;
+
 	byte *_data;
 	byte *_playPos;
 	uint32 _dataSize;
-	uint32 _rate;
+
 	short _freqs[25][12];
 	byte _notes[11];
 	byte _notCol[11];
 	byte _notLin[11];
 	bool _notOn[11];
 	byte _pollNotes[16];
+
 	int _samplesTillPoll;
 	int32 _repCount;
+
 	bool _playing;
 	bool _first;
 	bool _ended;
 	bool _needFree;
-	Common::Mutex _mutex;
-	GobEngine *_vm;
+
+	int _index;
 
 	void writeOPL(byte reg, byte val);
 	void setFreqs();
@@ -103,4 +105,4 @@ protected:
 
 } // End of namespace Gob
 
-#endif // GOB_MUSIC_H
+#endif // GOB_SOUND_ADLIB_H

@@ -23,18 +23,46 @@
  *
  */
 
-#include "common/endian.h"
+#ifndef GOB_SOUND_CDROM_H
+#define GOB_SOUND_CDROM_H
 
-#include "gob/gob.h"
-#include "gob/scenery.h"
+#include "gob/dataio.h"
 
 namespace Gob {
 
-Scenery_v2::Scenery_v2(GobEngine *vm) : Scenery_v1(vm) {
-}
+class CDROM {
+public:
+	CDROM();
+	~CDROM();
 
-int16 Scenery_v2::loadAnim(char search) {
-	return Scenery::loadAnim(search);
-}
+	void readLIC(DataStream &stream);
+	void freeLICBuffer();
+
+	void startTrack(const char *trackName);
+	void stopPlaying();
+
+	bool isPlaying() const;
+
+	int32 getTrackPos(const char *keyTrack = 0) const;
+	const char *getCurTrack() const;
+
+	void testCD(int trySubst, const char *label);
+
+protected:
+	byte *_LICbuffer;
+	byte *_curTrackBuffer;
+	char _curTrack[16];
+	uint16 _numTracks;
+	uint32 _trackStop;
+	uint32 _startTime;
+	bool _cdPlaying;
+
+	void play(uint32 from, uint32 to);
+	void stop();
+
+	byte *getTrackBuffer(const char *trackName) const;
+};
 
 } // End of namespace Gob
+
+#endif // GOB_SOUND_CDROM_H

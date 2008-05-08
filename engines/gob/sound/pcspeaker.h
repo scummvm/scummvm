@@ -23,18 +23,30 @@
  *
  */
 
-#include "common/endian.h"
+#ifndef GOB_SOUND_PCSPEAKER_H
+#define GOB_SOUND_PCSPEAKER_H
 
-#include "gob/gob.h"
-#include "gob/scenery.h"
+#include "sound/mixer.h"
+#include "sound/softsynth/pcspk.h"
 
 namespace Gob {
 
-Scenery_v2::Scenery_v2(GobEngine *vm) : Scenery_v1(vm) {
-}
+class PCSpeaker {
+public:
+	PCSpeaker(Audio::Mixer &mixer);
+	~PCSpeaker();
 
-int16 Scenery_v2::loadAnim(char search) {
-	return Scenery::loadAnim(search);
-}
+	void speakerOn(int16 frequency, int32 length = -1);
+	void speakerOff();
+	void onUpdate(uint32 millis);
+
+private:
+	Audio::Mixer *_mixer;
+
+	Audio::PCSpeaker *_stream;
+	Audio::SoundHandle _handle;
+};
 
 } // End of namespace Gob
+
+#endif // GOB_SOUND_PCSPEAKER_H
