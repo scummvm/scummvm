@@ -642,7 +642,7 @@ void Inter_v4::setupOpcodes() {
 void Inter_v4::executeDrawOpcode(byte i) {
 	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s) - %s, %d",
 		i, i, getOpcodeDrawDesc(i),
-		_vm->_game->_curTotFile, _vm->_global->_inter_execPtr - _vm->_game->_totFileData);
+		_vm->_game->_curTotFile, uint(_vm->_global->_inter_execPtr - _vm->_game->_totFileData));
 
 	OpcodeDrawProcV4 op = _opcodesDrawV4[i].proc;
 
@@ -655,7 +655,7 @@ void Inter_v4::executeDrawOpcode(byte i) {
 bool Inter_v4::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
 	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s) - %s, %d",
 		i, j, i, j, getOpcodeFuncDesc(i, j),
-		_vm->_game->_curTotFile, _vm->_global->_inter_execPtr - _vm->_game->_totFileData);
+		_vm->_game->_curTotFile, uint(_vm->_global->_inter_execPtr - _vm->_game->_totFileData));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -675,7 +675,7 @@ bool Inter_v4::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
 void Inter_v4::executeGoblinOpcode(int i, OpGobParams &params) {
 	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s) - %s, %d",
 		i, i, getOpcodeGoblinDesc(i),
-		_vm->_game->_curTotFile, _vm->_global->_inter_execPtr - _vm->_game->_totFileData);
+		_vm->_game->_curTotFile, uint(_vm->_global->_inter_execPtr - _vm->_game->_totFileData));
 
 	OpcodeGoblinProcV4 op = NULL;
 
