@@ -30,7 +30,9 @@
 
 namespace Gob {
 
-BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) : SoundMixer(mixer) {
+BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) :
+	SoundMixer(mixer, Audio::Mixer::kMusicSoundType) {
+
 	_playMode = kPlayModeLinear;
 	_queuePos = -1;
 	_shaded = false;

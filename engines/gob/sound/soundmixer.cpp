@@ -27,7 +27,7 @@
 
 namespace Gob {
 
-SoundMixer::SoundMixer(Audio::Mixer &mixer) : _mixer(&mixer) {
+SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type) : _mixer(&mixer) {
 	_playingSound = 0;
 
 	_rate = _mixer->getOutputRate();
@@ -50,8 +50,7 @@ SoundMixer::SoundMixer(Audio::Mixer &mixer) : _mixer(&mixer) {
 	_fadeSamples = 0;
 	_curFadeSamples = 0;
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
-			this, -1, 255, 0, false, true);
+	_mixer->playInputStream(type, &_handle, this, -1, 255, 0, false, true);
 }
 
 SoundMixer::~SoundMixer() {

@@ -27,7 +27,7 @@
 
 namespace Gob {
 
-SoundBlaster::SoundBlaster(Audio::Mixer &mixer) : SoundMixer(mixer) {
+SoundBlaster::SoundBlaster(Audio::Mixer &mixer) : SoundMixer(mixer, Audio::Mixer::kSFXSoundType) {
 	_curSoundDesc = 0;
 
 	_compositionSamples = 0;
