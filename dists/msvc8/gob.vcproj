@@ -161,11 +161,19 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\gob\cdrom.cpp"
+			RelativePath="..\..\engines\gob\sound\adlib.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\cdrom.h"
+			RelativePath="..\..\engines\gob\sound\adlib.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\cdrom.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\cdrom.h"
 			>
 		</File>
 		<File
@@ -273,6 +281,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\sound\infogrames.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\infogrames.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp"
 			>
 		</File>
@@ -357,14 +373,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\music.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\music.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\palanim.cpp"
 			>
 		</File>
@@ -386,6 +394,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\parse_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\pcspeaker.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\pcspeaker.h"
 			>
 		</File>
 		<File
@@ -421,11 +437,35 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\sound.cpp"
+			RelativePath="..\..\engines\gob\sound\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\sound.h"
+			RelativePath="..\..\engines\gob\sound\sound.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\soundblaster.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\soundblaster.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\sounddesc.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\sounddesc.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\soundmixer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\sound\soundmixer.h"
 			>
 		</File>
 		<File
