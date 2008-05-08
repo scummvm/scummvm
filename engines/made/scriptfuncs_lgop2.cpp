@@ -233,16 +233,18 @@ int16 ScriptFunctionsLgop2::o1_PLAYMUS(int16 argc, int16 *argv) {
 	
 	int16 musicNum = argv[0];
 	if (musicNum > 0) {
-		GenericResource *midi = _vm->_res->getMidi(musicNum);
-		_vm->_music->playSMF(midi);
-		_vm->_res->freeResource(midi);
+		_xmidiRes = _vm->_res->getXmidi(musicNum);
+		_vm->_music->playXMIDI(_xmidiRes);
 	}
 	*/
 	return 0;
 }
 
 int16 ScriptFunctionsLgop2::o1_STOPMUS(int16 argc, int16 *argv) {
-	_vm->_music->stop();
+	if (_vm->_music->isPlaying()) {
+		_vm->_music->stop();
+		_vm->_res->freeResource(_xmidiRes);
+	}
 	return 0;
 }
 

@@ -599,8 +599,10 @@ void Screen::flash(int flashCount) {
 void Screen::setFont(int16 fontNum) {
 	if (fontNum == _currentFontNum)
 		return;
-	if (_font)
-		_vm->_res->freeResource(_font);
+	// FIXME: this causes crashes when
+	// ProjectReader::purgeCache() is called
+	//if (_font)
+	//	_vm->_res->freeResource(_font);
 	_font = _vm->_res->getFont(fontNum);
 	_currentFontNum = fontNum;
 }

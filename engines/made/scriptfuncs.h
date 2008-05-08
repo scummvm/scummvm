@@ -31,6 +31,8 @@
 #include "common/func.h"
 #include "common/stream.h"
 
+#include "made/resource.h"
+
 namespace Made {
 
 class MadeEngine;
@@ -60,7 +62,7 @@ protected:
 
 	Common::Array<const ExternalFunc*> _externalFuncs;
 	Common::Array<const char *> _externalFuncNames;
-
+	GenericResource *_xmidiRes;
 };
 
 class ScriptFunctionsLgop2 : public ScriptFunctions {
