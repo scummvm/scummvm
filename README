@@ -1793,7 +1793,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * To get a version you can run from Finder, type 'make bundle' which
           will create ScummVM.app (this only works out of the box if you
           installed SDL into /sw (as happens if you are using Fink). If you
-          have installed SDL in another way, you will have to edit the Makefile).
+          have installed SDL in another way, you will have to edit ports.mk).
         * For more information refer to:
           http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 
