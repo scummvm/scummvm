@@ -107,7 +107,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	if (inst->_opA._flags & kParaLocal) {
-		wrapLocalVar(inst->_opA._local);
+		inst->_opA._local->wrap();
 	}
 
 }
@@ -188,16 +188,6 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 }
 
 
-
-void Parallaction_ns::wrapLocalVar(LocalVariable *local) {
-
-	if (local->_value >= local->_max)
-		local->_value = local->_min;
-	if (local->_value < local->_min)
-		local->_value = local->_max - 1;
-
-	return;
-}
 
 
 DECLARE_COMMAND_OPCODE(invalid) {

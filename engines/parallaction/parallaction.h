@@ -683,7 +683,6 @@ protected:
 	void		loadProgram(AnimationPtr a, const char *filename);
 	void		parseLValue(ScriptVar &var, const char *str);
 	virtual void	parseRValue(ScriptVar &var, const char *str);
-	void		wrapLocalVar(LocalVariable *local);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);

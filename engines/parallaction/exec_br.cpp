@@ -399,7 +399,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	if (inst->_opA._flags & kParaLocal) {
-		wrapLocalVar(inst->_opA._local);
+		inst->_opA._local->wrap();
 	}
 
 }
