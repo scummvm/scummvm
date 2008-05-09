@@ -158,6 +158,9 @@ protected:
 	StaticTextWidget *_savePath;
 	StaticTextWidget *_themePath;
 	StaticTextWidget *_extraPath;
+#ifdef DYNAMIC_MODULES
+	StaticTextWidget *_pluginsPath;
+#endif
 
 	//
 	// Misc controls

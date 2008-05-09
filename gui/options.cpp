@@ -55,6 +55,7 @@ enum {
 	kChooseSaveDirCmd		= 'chos',
 	kChooseThemeDirCmd		= 'chth',
 	kChooseExtraDirCmd		= 'chex',
+	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf'
 };
 
@@ -706,6 +707,11 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	new ButtonWidget(tab, "globaloptions_extrabutton", "Extra Path:", kChooseExtraDirCmd, 0);
 	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None");
+
+#ifdef DYNAMIC_MODULES
+	new ButtonWidget(tab, "globaloptions_pluginsbutton", "Plugins Path:", kChoosePluginsDirCmd, 0);
+	_pluginsPath = new StaticTextWidget(tab, "globaloptions_pluginspath", "None");
+#endif
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
@@ -772,6 +778,15 @@ void GlobalOptionsDialog::open() {
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
+
+#ifdef DYNAMIC_MODULES
+	Common::String pluginsPath(ConfMan.get("pluginspath", _domain));
+	if (pluginsPath.empty() || !ConfMan.hasKey("pluginspath", _domain)) {
+		_pluginsPath->setLabel("None");
+	} else {
+		_pluginsPath->setLabel(pluginsPath);
+	}
+#endif
 #endif
 
 	// Misc Tab
@@ -800,6 +815,14 @@ void GlobalOptionsDialog::close() {
 			ConfMan.set("extrapath", extraPath, _domain);
 		else
 			ConfMan.removeKey("extrapath", _domain);
+
+#ifdef DYNAMIC_MODULES
+		String pluginsPath(_pluginsPath->getLabel());
+		if (!pluginsPath.empty() && (pluginsPath != "None"))
+			ConfMan.set("pluginspath", pluginsPath, _domain);
+		else
+			ConfMan.removeKey("pluginspath", _domain);
+#endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 	}
@@ -844,6 +867,18 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+#ifdef DYNAMIC_MODULES
+	case kChoosePluginsDirCmd: {
+		BrowserDialog browser("Select directory for plugins", true);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			FilesystemNode dir(browser.getResult());
+			_pluginsPath->setLabel(dir.getPath());
+			draw();
+		}
+		break;
+	}
+#endif
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser("Select SoundFont", false);
 		if (browser.runModal() > 0) {

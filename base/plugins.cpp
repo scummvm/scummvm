@@ -26,6 +26,10 @@
 #include "base/plugins.h"
 #include "common/util.h"
 
+#ifdef DYNAMIC_MODULES
+#include "common/config-manager.h"
+#endif
+
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
 };
@@ -168,12 +172,20 @@ PluginList FilePluginProvider::getPlugins() {
 
 	// Prepare the list of directories to search
 	Common::StringList pluginDirs;
-	// TODO: Add the user specified directory (via config file)
+
+	// Add the default directories
 	pluginDirs.push_back(".");
 	pluginDirs.push_back("plugins");
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
+
+	// Add the user specified directory
+	Common::String pluginsPath(ConfMan.get("pluginspath"));
+	if (!pluginsPath.empty()) {
+		FilesystemNode dir(pluginsPath);
+		pluginDirs.push_back(dir.getPath());
+	}
 
 	Common::StringList::const_iterator d;
 	for (d = pluginDirs.begin(); d != pluginDirs.end(); d++) {
