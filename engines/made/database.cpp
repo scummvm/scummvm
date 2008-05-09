@@ -343,7 +343,7 @@ bool GameDatabase::getSavegameDescription(const char *filename, Common::String &
 	in->read(desc, 64);
 	description = desc;
 
-	printf("description = %s\n", description.c_str()); fflush(stdout);
+	//printf("description = %s\n", description.c_str()); fflush(stdout);
 
 	delete in;
 	
