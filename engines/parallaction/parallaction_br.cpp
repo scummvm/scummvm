@@ -233,6 +233,30 @@ void Parallaction_br::changeLocation(char *location) {
 	_engineFlags &= ~kEngineChangeLocation;
 }
 
+
+// FIXME: Parallaction_br::parseLocation() is now a verbatim copy of the same routine from Parallaction_ns.
+void Parallaction_br::parseLocation(const char *filename) {
+	debugC(1, kDebugParser, "parseLocation('%s')", filename);
+
+	allocateLocationSlot(filename);
+	Script *script = _disk->loadLocation(filename);
+
+	_locationParser->parse(script);
+	delete script;
+
+	// this loads animation scripts
+	AnimationList::iterator it = _vm->_location._animations.begin();
+	for ( ; it != _vm->_location._animations.end(); it++) {
+		if ((*it)->_scriptName) {
+			loadProgram(*it, (*it)->_scriptName);
+		}
+	}
+
+	debugC(1, kDebugParser, "parseLocation('%s') done", filename);
+	return;
+}
+
+
 void Parallaction_br::changeCharacter(const char *name) {
 
 }

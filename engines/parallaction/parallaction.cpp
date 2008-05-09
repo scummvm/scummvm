@@ -89,13 +89,10 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 Parallaction::~Parallaction() {
 	delete _debugger;
 
-	delete _locationParser;
 	delete _globalTable;
 
 	delete _callableNames;
 	delete _localFlagNames;
-	delete _zoneTypeNames;
-	delete _zoneFlagNames;
 
 	freeLocation();
 

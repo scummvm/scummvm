@@ -155,9 +155,7 @@ Parallaction_ns::~Parallaction_ns() {
 
 	delete _mouseComposedArrow;
 
-	delete _commandsNames;
 	delete _instructionNames;
-	delete _locationStmt;
 
 	_location._animations.remove(_char._ani);
 
@@ -315,7 +313,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	if (locname.hasSlide()) {
 		showSlide(locname.slide());
-		uint id = _gfx->createLabel(_menuFont, _slideText[0], 1);
+		uint id = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
 		waitUntilLeftClick();
 		_gfx->freeLabels();
@@ -365,6 +363,34 @@ void Parallaction_ns::changeLocation(char *location) {
 	return;
 
 }
+
+
+void Parallaction_ns::parseLocation(const char *filename) {
+	debugC(1, kDebugParser, "parseLocation('%s')", filename);
+
+	allocateLocationSlot(filename);
+	Script *script = _disk->loadLocation(filename);
+
+	// TODO: the following two lines are specific to Nippon Safes
+	// and should be moved into something like 'initializeParsing()'
+	_vm->_location._hasSound = false;
+
+	_locationParser->parse(script);
+
+	delete script;
+
+	// this loads animation scripts
+	AnimationList::iterator it = _vm->_location._animations.begin();
+	for ( ; it != _vm->_location._animations.end(); it++) {
+		if ((*it)->_scriptName) {
+			loadProgram(*it, (*it)->_scriptName);
+		}
+	}
+
+	debugC(1, kDebugParser, "parseLocation('%s') done", filename);
+	return;
+}
+
 
 
 void Parallaction_ns::changeCharacter(const char *name) {

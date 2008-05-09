@@ -422,8 +422,8 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	parseLocation("common");
 
 	uint id[2];
-	id[0] = _gfx->createLabel(_menuFont, _slideText[0], 1);
-	id[1] = _gfx->createLabel(_menuFont, _slideText[1], 1);
+	id[0] = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
+	id[1] = _gfx->createLabel(_menuFont, _location._slideText[1], 1);
 
 	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 38);
 	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 58);
