@@ -223,7 +223,7 @@ public:
 	void drawSquare(int x, int y, int w, int h, bool fill);
 
 	void drawRoundedSquare(int x1, int y1, int r, int w, int h) {
-		drawRoundedSquareAlg( x1, y1, r, w, h );
+		drawRoundedSquareAlg(x1, y1, r, w, h);
 	}
 
 	/**

@@ -67,7 +67,7 @@ void vector_renderer_test(OSystem *_system) {
 		vr->drawLine(25, 25, 125, 300);
 		vr->drawCircle(250, 250, 100);
 //		vr->drawSquare(150, 25, 100, 100, true);
-		vr->drawRoundedSquare( 150, 25, 8, 100, 75 );
+		vr->drawRoundedSquare(150, 25, 8, 100, 75);
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
 
@@ -93,10 +93,10 @@ drawSquare(int x, int y, int w, int h, bool fill) {
 			ptr += pitch;
 		}
 	} else {
-		drawLine( x, y, x + w, y );
-		drawLine( x + w, y, x + w, y + w );
-		drawLine( x, y + w, x + w, y + w );
-		drawLine( x, y, x, y + w );
+		drawLine(x, y, x + w, y);
+		drawLine(x + w, y, x + w, y + w);
+		drawLine(x, y + w, x + w, y + w);
+		drawLine(x, y, x, y + w);
 	}
 }
 
@@ -297,7 +297,7 @@ drawCircleAlg(int x1, int y1, int r) {
 	bool fill = true;
 
 	px = 0;
-	py = pitch*y;
+	py = pitch * y;
 
 	*(ptr + y) = _color;
 	*(ptr - y) = _color;
@@ -372,7 +372,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
 		}
 	}
 
-	px = p*x;
+	px = p * x;
 	py = 0;
 
 	while (x > y++)
@@ -391,11 +391,11 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
 		a1 = ~a2;
 
 		if (fill) {
-			Common::set_to( ptr_tl - x - py, ptr_tr + x - py, Base::_color );
-			Common::set_to( ptr_tl - y - px, ptr_tr + y - px, Base::_color );
+			Common::set_to(ptr_tl - x - py, ptr_tr + x - py, Base::_color);
+			Common::set_to(ptr_tl - y - px, ptr_tr + y - px, Base::_color);
 
-			Common::set_to( ptr_bl - x + py, ptr_br + x + py, Base::_color );
-			Common::set_to( ptr_bl - y + px, ptr_br + y + px, Base::_color );
+			Common::set_to(ptr_bl - x + py, ptr_br + x + py, Base::_color);
+			Common::set_to(ptr_bl - y + px, ptr_br + y + px, Base::_color);
 		} else {
 			blendPixelPtr(ptr_tr + y - (px-p), a2);
 			blendPixelPtr(ptr_tr + x - 1 - py, a2);
@@ -436,8 +436,8 @@ drawCircleAlg(int x1, int y1, int r) {
 	bool fill = false;
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
-	px = p*x;
-	py = p*y;
+	px = p * x;
+	py = p * y;
 
 	*(ptr + x) = (PixelType)Base::_color;
 	*(ptr - x) = (PixelType)Base::_color;
