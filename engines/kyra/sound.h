@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * LPGL License
+ * LGPL License
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ namespace Kyra {
 
 /**
  * Analog audio output device API for Kyrandia games.
- * It countains functionallity to play music tracks,
+ * It contains functionality to play music tracks,
  * sound effects and voices.
  */
 class Sound {
@@ -92,7 +92,7 @@ public:
 	virtual void process() {}
 
 	/**
-	 * Updates internal volume settings according to ConfigManager
+	 * Updates internal volume settings according to ConfigManager.
 	 */
 	virtual void updateVolumeSettings() {}
 
@@ -105,7 +105,7 @@ public:
 	virtual void setSoundList(const AudioDataStruct *list) { _soundDataList = list; }
 
 	/**
-	 * Checks if a given sound file is present
+	 * Checks if a given sound file is present.
 	 *
 	 * @param track	track number
 	 * @return true if available, false otherwise
@@ -126,19 +126,19 @@ public:
 	virtual void playTrack(uint8 track) = 0;
 
 	/**
-	 * Stop playback of the current track
+	 * Stop playback of the current track.
 	 */
 	virtual void haltTrack() = 0;
 
 	/**
-	 * Plays the specified sound effect
+	 * Plays the specified sound effect.
 	 *
 	 * @param track	sound effect id
 	 */
 	virtual void playSoundEffect(uint8 track) = 0;
 
 	/**
-	 * Checks if the sound driver plays any sound
+	 * Checks if the sound driver plays any sound.
 	 *
 	 * @return true if playing, false otherwise
 	 */
@@ -535,7 +535,7 @@ public:
 	void stopSound(int channel);
 
 	/**
-	 * Stops playback of all sounds
+	 * Stops playback of all sounds.
 	 */
 	void stopAllSounds();
 
