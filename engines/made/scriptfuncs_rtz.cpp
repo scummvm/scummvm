@@ -552,9 +552,9 @@ int16 ScriptFunctionsRtz::o1_SNDENERGY(int16 argc, int16 *argv) {
 	// This is called while in-game voices are played
 	// Not sure what it's used for
 	// -> It's used to animate mouths when NPCs are talking
-	// Commented out to reduce spam
-	//warning("Unimplemented opcode: o1_SNDENERGY");
-	return 0;
+	// FIXME: This is a workaround for the "sound energy" problem
+	// At least the characters move their lips when talking now
+	return _vm->_rnd->getRandomNumber(5);
 }
 
 int16 ScriptFunctionsRtz::o1_CLEARTEXT(int16 argc, int16 *argv) {
