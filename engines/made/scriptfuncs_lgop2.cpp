@@ -174,8 +174,7 @@ int16 ScriptFunctionsLgop2::o1_EVENT(int16 argc, int16 *argv) {
 			break;
 
 		case Common::EVENT_QUIT:
-			// TODO: Exit more gracefully.
-			g_system->quit();
+			_vm->_quit = true;
 			break;
 
 		default:
