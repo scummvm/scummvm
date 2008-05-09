@@ -477,7 +477,7 @@ int16 ScriptFunctionsRtz::o1_RESTEXT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_CLIPAREA(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_CLIPAREA");
+	_vm->_screen->setClipArea(argv[3], argv[2], argv[1], argv[0]);
 	return 0;
 }
 

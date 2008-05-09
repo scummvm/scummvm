@@ -70,6 +70,14 @@ public:
 	void setPaletteLock(bool lock) { _paletteLock = lock; }
 	void setVisualEffectNum(int visualEffectNum) { _visualEffectNum = visualEffectNum; }
 	void setClip(uint16 clip) { _clip = clip; }
+
+	void setClipArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) { 
+		_clipArea.x = x1;
+		_clipArea.y = y1;
+		_clipArea.w = ABS(x2 - x1);
+		_clipArea.h = ABS(y2 - y1);
+	}
+
 	void setExclude(uint16 exclude) { _exclude = exclude; }
 	void setGround(uint16 ground) { _ground = ground; }
 	void setTextColor(int16 color) { _textColor = color; }
