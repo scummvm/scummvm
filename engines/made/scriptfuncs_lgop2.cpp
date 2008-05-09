@@ -170,6 +170,10 @@ int16 ScriptFunctionsLgop2::o1_EVENT(int16 argc, int16 *argv) {
 
 		case Common::EVENT_KEYDOWN:
 			_vm->_eventKey = event.kbd.ascii;
+			// For unknown reasons, the game accepts ASCII code
+			// 9 as backspace
+			if (_vm->_eventKey == Common::KEYCODE_BACKSPACE)
+				_vm->_eventKey = 9;
 			eventNum = 5;
 			break;
 
