@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -526,14 +525,14 @@ void Mult_v2::playMultInit() {
 		delete[] _animArrayData;
 
 		_objects = new Mult_Object[_objCount];
-		_orderArray = new uint8[_objCount];
+		_orderArray = new int8[_objCount];
 		_renderObjs = new Mult_Object*[_objCount];
 		_animArrayX = new int32[_objCount];
 		_animArrayY = new int32[_objCount];
 		_animArrayData = new Mult_AnimData[_objCount];
 
 		memset(_objects, 0, _objCount * sizeof(Mult_Object));
-		memset(_orderArray, 0, _objCount * sizeof(uint8));
+		memset(_orderArray, 0, _objCount * sizeof(int8));
 		memset(_renderObjs, 0, _objCount * sizeof(Mult_Object *));
 		memset(_animArrayX, 0, _objCount * sizeof(int32));
 		memset(_animArrayY, 0, _objCount * sizeof(int32));
@@ -686,6 +685,11 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			return;
 
 		animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
+	} else {
+		if (animObj.videoSlot > 0) {
+			_vm->_video->retrace();
+			_vm->_vidPlayer->slotWaitEndFrame(animObj.videoSlot - 1, true);
+		}
 	}
 
 	if (animData.animType == 4) {
@@ -768,9 +772,9 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 }
 
 void Mult_v2::animate() {
-	uint8 minOrder = 100;
-	uint8 maxOrder = 0;
-	uint8 *orderArray;
+	int8 minOrder = 100;
+	int8 maxOrder = 0;
+	int8 *orderArray;
 	int orderArrayPos = 0;
 	int8 animIndices[150];
 	int numAnims = 0;
@@ -952,60 +956,58 @@ void Mult_v2::animate() {
 		Mult_Object &animObj1 = *_renderObjs[orderArray[i]];
 		Mult_AnimData &animData1 = *(animObj1.pAnimData);
 
-		if (!animObj1.needRedraw && !animData1.isStatic) {
-			for (int j = 0; j < orderArrayPos; j++) {
-				Mult_Object &animObj2 = *_renderObjs[orderArray[j]];
+		if (!animObj1.needRedraw) {
 
-				if (!animObj2.needRedraw)
-					continue;
+			if (!animData1.isStatic) {
+				for (int j = 0; j < orderArrayPos; j++) {
+					Mult_Object &animObj2 = *_renderObjs[orderArray[j]];
 
-				if ((animObj1.newRight >= animObj2.newLeft) &&
-						(animObj2.newRight >= animObj1.newLeft) &&
-						(animObj1.newBottom >= animObj2.newTop) &&
-						(animObj2.newBottom >= animObj1.newTop)) {
+					if (!animObj2.needRedraw)
+						continue;
 
-					_vm->_scenery->_toRedrawLeft = animObj2.newLeft;
-					_vm->_scenery->_toRedrawRight = animObj2.newRight;
-					_vm->_scenery->_toRedrawTop = animObj2.newTop;
-					_vm->_scenery->_toRedrawBottom = animObj2.newBottom;
+					if ((animObj1.newRight >= animObj2.newLeft) &&
+							(animObj2.newRight >= animObj1.newLeft) &&
+							(animObj1.newBottom >= animObj2.newTop) &&
+							(animObj2.newBottom >= animObj1.newTop)) {
 
-					_vm->_scenery->updateAnim(animData1.layer, animData1.frame,
-							animData1.animation, 12, *animObj1.pPosX, *animObj1.pPosY, 1);
-					_vm->_scenery->updateStatic(animData1.order + 1);
+						_vm->_scenery->_toRedrawLeft = animObj2.newLeft;
+						_vm->_scenery->_toRedrawRight = animObj2.newRight;
+						_vm->_scenery->_toRedrawTop = animObj2.newTop;
+						_vm->_scenery->_toRedrawBottom = animObj2.newBottom;
+
+						_vm->_scenery->updateAnim(animData1.layer, animData1.frame,
+								animData1.animation, 12, *animObj1.pPosX, *animObj1.pPosY, 1);
+						_vm->_scenery->updateStatic(animData1.order + 1);
+					}
 				}
 			}
-		} else if (!animData1.isStatic) {
-			_vm->_scenery->updateAnim(animData1.layer, animData1.frame,
-					animData1.animation, 10, *animObj1.pPosX, *animObj1.pPosY, 1);
 
-			if (_vm->_scenery->_toRedrawLeft != -12345) {
-				if (_vm->_global->_pressedKeys[0x36]) {
-					_vm->_video->drawLine(_vm->_draw->_frontSurface,
-							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
-							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop, 15);
-					_vm->_video->drawLine(_vm->_draw->_frontSurface,
-							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom,
-							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
-					_vm->_video->drawLine(_vm->_draw->_frontSurface,
-							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawTop,
-							_vm->_scenery->_toRedrawLeft, _vm->_scenery->_toRedrawBottom, 15);
-					_vm->_video->drawLine(_vm->_draw->_frontSurface,
-							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawTop,
-							_vm->_scenery->_toRedrawRight, _vm->_scenery->_toRedrawBottom, 15);
-				}
-				animObj1.lastLeft = _vm->_scenery->_toRedrawLeft;
-				animObj1.lastRight = _vm->_scenery->_toRedrawRight;
-				animObj1.lastTop = _vm->_scenery->_toRedrawTop;
-				animObj1.lastBottom = _vm->_scenery->_toRedrawBottom;
-			} else
-				animObj1.lastLeft = -1;
 		} else {
-			_vm->_scenery->_toRedrawLeft = animObj1.newLeft;
-			_vm->_scenery->_toRedrawRight = animObj1.newRight;
-			_vm->_scenery->_toRedrawTop = animObj1.newTop;
-			_vm->_scenery->_toRedrawBottom = animObj1.newBottom;
+
+			if (animData1.isStatic != 0) {
+				_vm->_scenery->_toRedrawLeft = animObj1.newLeft;
+				_vm->_scenery->_toRedrawRight = animObj1.newRight;
+				_vm->_scenery->_toRedrawTop = animObj1.newTop;
+				_vm->_scenery->_toRedrawBottom = animObj1.newBottom;
+			} else {
+				_vm->_scenery->updateAnim(animData1.layer, animData1.frame,
+						animData1.animation, 10, *animObj1.pPosX, *animObj1.pPosY, 1);
+
+				if (_vm->_scenery->_toRedrawLeft != -12345) {
+					animObj1.lastLeft = _vm->_scenery->_toRedrawLeft;
+					animObj1.lastRight = _vm->_scenery->_toRedrawRight;
+					animObj1.lastTop = _vm->_scenery->_toRedrawTop;
+					animObj1.lastBottom = _vm->_scenery->_toRedrawBottom;
+				} else {
+					animObj1.lastLeft = -1;
+				}
+
+			}
+
+			_vm->_scenery->updateStatic(animData1.order + 1);
+
 		}
-		_vm->_scenery->updateStatic(animData1.order + 1);
+
 	}
 
 	// Advance animations

@@ -23,15 +23,14 @@
  *
  */
 
-
 #include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/map.h"
 #include "gob/dataio.h"
 #include "gob/goblin.h"
-#include "gob/sound.h"
 #include "gob/mult.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -160,7 +159,7 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 		strcpy(sndNames[i], buf);
 	}
 
-	_vm->_snd->loadSample(_vm->_goblin->_soundData[14], "diamant1.snd");
+	_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[14], "diamant1.snd");
 
 	for (int i = 0; i < count; i++) {
 		handle = _vm->_dataIO->openData(sndNames[i]);
@@ -168,7 +167,7 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 			continue;
 
 		_vm->_dataIO->closeData(handle);
-		_vm->_snd->loadSample(_vm->_goblin->_soundData[i], sndNames[i]);
+		_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[i], sndNames[i]);
 	}
 }
 

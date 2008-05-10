@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -34,7 +33,7 @@
 #include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
+#include "gob/sound/sound.h"
 
 #include <time.h>	// FIXME: for Inter::renewTimeInVars()
 
@@ -154,7 +153,7 @@ void Inter::storeKey(int16 key) {
 	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
 
 	storeMouse();
-	WRITE_VAR(1, _vm->_snd->_playingSound);
+	WRITE_VAR(1, _vm->_sound->blasterPlayingSound());
 
 	if (key == 0x4800)
 		key = 0x0B;

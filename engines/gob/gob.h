@@ -35,11 +35,10 @@
 namespace Gob {
 
 class Game;
-class Snd;
+class Sound;
 class Video;
 class Global;
 class Draw;
-class CDROM;
 class DataIO;
 class Goblin;
 class VideoPlayer;
@@ -52,7 +51,6 @@ class Parse;
 class Scenery;
 class Util;
 class SaveLoad;
-class Adlib;
 
 #define VARP(offs)			(_vm->_global->_inter_variables + (offs))
 #define WRITE_VARO_UINT32(offs, val)	_vm->_global->writeVar(offs, (uint32) (val))
@@ -171,8 +169,12 @@ private:
 struct GOBGameDescription;
 
 class GobEngine : public Engine {
-protected:
+private:
 	GobEngine *_vm;
+
+	GameType _gameType;
+	int32 _features;
+	Common::Platform _platform;
 
 	int go();
 	int init();
@@ -185,11 +187,7 @@ public:
 
 	Common::RandomSource _rnd;
 
-	GameType _gameType;
-	int32 _features;
 	Common::Language _language;
-	Common::Platform _platform;
-
 	uint16 _width;
 	uint16 _height;
 	uint8 _mode;
@@ -204,10 +202,9 @@ public:
 	Util *_util;
 	DataIO *_dataIO;
 	Game *_game;
-	Snd *_snd;
+	Sound *_sound;
 	Video *_video;
 	Draw *_draw;
-	CDROM *_cdrom;
 	Goblin *_goblin;
 	Init *_init;
 	Map *_map;
@@ -217,24 +214,20 @@ public:
 	Scenery *_scenery;
 	Inter *_inter;
 	SaveLoad *_saveLoad;
-	Adlib *_adlib;
 	VideoPlayer *_vidPlayer;
 
 	void shutdown();
 
-	const char *getLangDesc(int16 language) {
-		if ((language < 0) || (language > 8))
-			language = 2;
-		return Common::getLanguageDescription(_gobToScummVMLang[language]);
-	}
+	const char *getLangDesc(int16 language) const;
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);
 
-	GameType getGameType() { return _gameType; }
-	bool isCD() { return (_features & kFeaturesCD) != 0; }
-	bool isEGA() { return (_features & kFeaturesEGA) != 0; }
-	bool is640() { return (_features & kFeatures640) != 0; }
-	bool hasAdlib() { return (_features & kFeaturesAdlib) != 0; }
+	Common::Platform getPlatform() const;
+	GameType getGameType() const;
+	bool isCD() const;
+	bool isEGA() const;
+	bool is640() const;
+	bool hasAdlib() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();

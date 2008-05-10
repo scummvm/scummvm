@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -155,9 +154,9 @@ int16 Scenery::loadStatic(char search) {
 
 		ptr->layers[i].planes = new StaticPlane[ptr->layers[i].planeCount];
 		for (int j = 0; j < ptr->layers[i].planeCount; ++j) {
-			ptr->layers[i].planes[j].pictIndex = layerData.readSByte();
-			ptr->layers[i].planes[j].pieceIndex = layerData.readSByte();
-			ptr->layers[i].planes[j].drawOrder = layerData.readSByte();
+			ptr->layers[i].planes[j].pictIndex = layerData.readByte();
+			ptr->layers[i].planes[j].pieceIndex = layerData.readByte();
+			ptr->layers[i].planes[j].drawOrder = layerData.readByte();
 			ptr->layers[i].planes[j].destX = layerData.readSint16LE();
 			ptr->layers[i].planes[j].destY = layerData.readSint16LE();
 			ptr->layers[i].planes[j].transp = layerData.readSByte();
@@ -278,7 +277,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	}
 
 	planeCount = layerPtr->planeCount;
-	for (order = 0; order < 40; order++) {
+	for (order = 0; order < 100; order++) {
 		for (plane = 0, planePtr = layerPtr->planes;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
@@ -330,7 +329,7 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 	planeCount = layerPtr->planeCount;
 
-	for (order = orderFrom; order < 40; order++) {
+	for (order = orderFrom; order < 100; order++) {
 		for (planePtr = layerPtr->planes, plane = 0;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
@@ -338,6 +337,10 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 			pieceIndex = planePtr->pieceIndex;
 			pictIndex = planePtr->pictIndex - 1;
+
+			if ((pictIndex >= _staticPictCount[index]) || (!pictPtr[pictIndex]))
+				continue;
+
 			_vm->_draw->_destSpriteX = planePtr->destX;
 			_vm->_draw->_destSpriteY = planePtr->destY;
 

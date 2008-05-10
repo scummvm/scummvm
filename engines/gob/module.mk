@@ -1,7 +1,6 @@
 MODULE := engines/gob
 
 MODULE_OBJS := \
-	cdrom.o \
 	dataio.o \
 	detection.o \
 	draw.o \
@@ -38,7 +37,6 @@ MODULE_OBJS := \
 	mult.o \
 	mult_v1.o \
 	mult_v2.o \
-	music.o \
 	palanim.o \
 	parse.o \
 	parse_v1.o \
@@ -49,11 +47,19 @@ MODULE_OBJS := \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \
-	sound.o \
 	util.o \
 	video.o \
 	video_v1.o \
-	video_v2.o
+	video_v2.o \
+	sound/sound.o \
+	sound/sounddesc.o \
+	sound/pcspeaker.o \
+	sound/adlib.o \
+	sound/infogrames.o \
+	sound/soundmixer.o \
+	sound/soundblaster.o \
+	sound/cdrom.o \
+	sound/bgatmosphere.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GOB), DYNAMIC_PLUGIN)

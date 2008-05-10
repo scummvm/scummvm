@@ -270,6 +270,13 @@ void Imd::disableSound() {
 	_mixer = 0;
 }
 
+bool Imd::isSoundPlaying() const {
+	if (_audioStream && _mixer->isSoundHandleActive(_audioHandle))
+		return true;
+
+	return false;
+}
+
 void Imd::seekFrame(int32 frame, int16 whence, bool restart) {
 	if (!_stream)
 		// Nothing to do

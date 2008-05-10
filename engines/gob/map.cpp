@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "gob/gob.h"
 #include "gob/map.h"
 #include "gob/goblin.h"

@@ -40,7 +40,7 @@ public:
 		uint8 layer;
 		uint8 frame;
 		int8 animType;
-		uint8 order;
+		int8 order;
 		int8 isPaused;
 		int8 isStatic;
 		int8 maxTick;
@@ -229,7 +229,7 @@ public:
 	int16 *_renderData;
 	Mult_Object **_renderObjs;
 
-	uint8 *_orderArray;
+	int8 *_orderArray;
 
 	SurfaceDesc::Ptr _animSurf;
 	int16 _animLeft;

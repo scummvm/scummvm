@@ -41,9 +41,9 @@ public:
 	} PACKED_STRUCT;
 
 	struct StaticPlane {
-		int8 pictIndex;
-		int8 pieceIndex;
-		int8 drawOrder;
+		uint8 pictIndex;
+		uint8 pieceIndex;
+		uint8 drawOrder;
 		int16 destX;
 		int16 destY;
 		int8 transp;

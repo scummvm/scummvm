@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -32,7 +31,7 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -48,7 +47,7 @@ void Goblin_v1::freeObjects(void) {
 	int16 col;
 
 	for (int i = 0; i < 16; i++)
-		_vm->_snd->freeSample(_soundData[i]);
+		_vm->_sound->sampleFree(&_soundData[i]);
 
 	for (int i = 0; i < 4; i++) {
 		if (_goblins[i] == 0)
@@ -488,19 +487,19 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	if ((gobDesc->state >= 0) && (gobDesc->state < 10) &&
 	    (gobDesc->stateMach == gobDesc->realStateMach) &&
 	    ((gobDesc->curFrame == 3) || (gobDesc->curFrame == 6))) {
-		_vm->_snd->speakerOn(10 * _vm->_util->getRandom(3) + 50, 5);
+		_vm->_sound->speakerOn(10 * _vm->_util->getRandom(3) + 50, 5);
 	}
 
 	if ((_currentGoblin == 0) &&
 			(gobDesc->stateMach == gobDesc->realStateMach) &&
 			((gobDesc->state == 10) || (gobDesc->state == 11)) &&
 			(gobDesc->curFrame == 9)) {
-		_vm->_snd->stopSound(0);
+		_vm->_sound->blasterStop(0);
 
 		if (_itemIndInPocket != -1)
-			_vm->_snd->playSample(_soundData[14], 1, 9000);
+			_vm->_sound->blasterPlay(&_soundData[14], 1, 9000);
 		else
-			_vm->_snd->playSample(_soundData[14], 1, 5000);
+			_vm->_sound->blasterPlay(&_soundData[14], 1, 5000);
 	}
 
 	if (_boreCounter++ == 120) {
