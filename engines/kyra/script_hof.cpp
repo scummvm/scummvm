@@ -862,6 +862,16 @@ int	KyraEngine_HoF::o2_fillRect(EMCState *script) {
 	return 0;
 }
 
+int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playFireflyScore(%p) ()", (const void *)script);
+	if (_sound->getSfxType() == Sound::kAdlib || _sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
+		snd_playWanderScoreViaMap(86, 1);
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 int KyraEngine_HoF::o2_encodeShape(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_encodeShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1),
 		stackPos(2), stackPos(3), stackPos(4));
@@ -1623,7 +1633,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x68
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o2_playFireflyScore);
 	Opcode(o2_waitForConfirmationClick);
 	// 0x6c
 	Opcode(o2_encodeShape);

@@ -750,6 +750,7 @@ protected:
 	int o2_setRunFlag(EMCState *script);
 	int o2_showLetter(EMCState *script);
 	int o2_fillRect(EMCState *script);
+	int o2_playFireflyScore(EMCState *script);
 	int o2_encodeShape(EMCState *script);
 	int o2_defineSceneAnim(EMCState *script);
 	int o2_updateSceneAnim(EMCState *script);
