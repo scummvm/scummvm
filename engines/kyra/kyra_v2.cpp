@@ -225,14 +225,12 @@ void KyraEngine_v2::addShapeToPool(const uint8 *data, int realIndex, int shape) 
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::addShapeToPool(%p, %d, %d)", data, realIndex, shape);
 	remShapeFromPool(realIndex);
 	_gameShapes[realIndex] = screen_v2()->makeShapeCopy(data, shape);
-	assert(_gameShapes[realIndex]);
 }
 
 void KyraEngine_v2::addShapeToPool(uint8 *shpData, int index) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::addShapeToPool(%p, %d)", shpData, index);
 	remShapeFromPool(index);
 	_gameShapes[index] = shpData;
-	assert(_gameShapes[index]);
 }
 
 void KyraEngine_v2::remShapeFromPool(int idx) {

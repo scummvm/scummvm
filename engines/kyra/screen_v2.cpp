@@ -290,6 +290,9 @@ uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
 	debugC(9, kDebugLevelScreen, "Screen_v2::makeShapeCopy(%p, %d)", (const void *)src, index);
 
 	const uint8 *shape = getPtrToShape(src, index);
+	if (!shape)
+		return 0;
+
 	int size = getShapeSize(shape);
 
 	uint8 *copy = new uint8[size];
