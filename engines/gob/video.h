@@ -37,10 +37,11 @@ class SurfaceDesc : public ReferenceCounter<SurfaceDesc> {
 public:
 	int16 _vidMode;
 
-	int16 getWidth() { return _width; }
-	int16 getHeight() { return _height; }
+	int16 getWidth() const { return _width; }
+	int16 getHeight() const { return _height; }
 	byte *getVidMem() { return _vidMem; }
-	bool hasOwnVidMem() { return _ownVidMem; }
+	const byte *getVidMem() const { return _vidMem; }
+	bool hasOwnVidMem() const { return _ownVidMem; }
 
 	void setVidMem(byte *vidMem);
 	void resize(int16 width, int16 height);

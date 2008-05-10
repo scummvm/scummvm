@@ -89,6 +89,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugParser, "Parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
+	Common::addSpecialDebugLevel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
 
@@ -353,7 +354,7 @@ bool GobEngine::initGameParts() {
 			_map = new Map_v4(this);
 			_goblin = new Goblin_v4(this);
 			_scenery = new Scenery_v2(this);
-			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
+			_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
 			break;
 
 		default:
