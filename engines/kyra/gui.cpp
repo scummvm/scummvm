@@ -467,8 +467,10 @@ int MainMenu::handle(int dim) {
 		_system->delayMillis(10);
 	}
 
-	if (_quitFlag)
+	if (_quitFlag) {
+		_vm->quitGame();
 		command = -1;
+	}
 
 	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
 	_screen->_charWidth = charWidthBackUp;
