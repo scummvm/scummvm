@@ -361,7 +361,6 @@ void Parallaction_ns::runScripts() {
 
 	debugC(9, kDebugExec, "runScripts");
 
-
 	static uint16 modCounter = 0;
 
 	for (ProgramList::iterator it = _location._programs.begin(); it != _location._programs.end(); it++) {
@@ -379,7 +378,7 @@ void Parallaction_ns::runScripts() {
 
 			(*it)->_status = kProgramRunning;
 
-			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "Animation: %s, instruction: %i", a->_name, (*inst)->_index); //_instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
 			_instRunCtxt.anim = AnimationPtr(a);

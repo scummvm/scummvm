@@ -216,28 +216,6 @@ byte _amigaTopazFont[2600] = {
 };
 
 
-const char *_instructionNamesRes_ns[] = {
-	"on",
-	"off",
-	"x",
-	"y",
-	"z",
-	"f",
-	"loop",
-	"endloop",
-	"show",
-	"inc",
-	"dec",
-	"set",
-	"put",
-	"call",
-	"wait",
-	"start",
-	"sound",
-	"move",
-	"endscript"
-};
-
 const char *_callableNamesRes_ns[] = {
 	"Projector",
 	"HBOff",
@@ -264,40 +242,6 @@ const char *_callableNamesRes_ns[] = {
 	"Finito",
 	"Ridux",
 	"TestResult"
-};
-
-const char *_instructionNamesRes_br[] = {
-	"on",
-	"off",
-	"x",
-	"y",
-	"z",
-	"f",
-	"loop",
-	"endloop",
-	"show",
-	"inc",
-	"dec",
-	"set",
-	"put",
-	"call",
-	"wait",
-	"start",
-	"process",
-	"move",
-	"color",
-	"sound",
-	"mask",
-	"print",
-	"text",
-	"mul",
-	"div",
-	"if",
-	"dummy",
-	"dummy",
-	"endif",
-	"stop",
-	"endscript"
 };
 
 
@@ -395,10 +339,9 @@ void Parallaction_ns::initResources() {
 //	_zoneTypeNamesRes = _zoneTypeNamesRes_ns;
 //	_commandsNamesRes = _commandsNamesRes_ns;
 	_callableNamesRes = _callableNamesRes_ns;
-	_instructionNamesRes = _instructionNamesRes_ns;
+//	_instructionNamesRes = _instructionNamesRes_ns;
 
 	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_ns), _callableNamesRes_ns);
-	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_ns), _instructionNamesRes_ns);
 
 	_localFlagNames = new FixedTable(NUM_LOCATIONS, 1);
 	_localFlagNames->addData("visited");
@@ -417,11 +360,10 @@ void Parallaction_br::initResources() {
 //	_zoneTypeNamesRes = _zoneTypeNamesRes_br;
 //	_commandsNamesRes = _commandsNamesRes_br;
 	_callableNamesRes = _callableNamesRes_br;
-	_instructionNamesRes = _instructionNamesRes_br;
+//	_instructionNamesRes = _instructionNamesRes_br;
 //	_audioCommandsNamesRes = _audioCommandsNamesRes_br;
 
 	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_br), _callableNamesRes_br);
-	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 
 	_localFlagNames = new FixedTable(NUM_LOCATIONS, 2);
 	_localFlagNames->addData("visited");

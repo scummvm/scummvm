@@ -253,12 +253,47 @@ const char *_locationAnimStmtRes_br[] = {
 	"moveto"
 };
 
+const char *_instructionNamesRes_br[] = {
+	"on",
+	"off",
+	"x",
+	"y",
+	"z",
+	"f",
+	"loop",
+	"endloop",
+	"show",
+	"inc",
+	"dec",
+	"set",
+	"put",
+	"call",
+	"wait",
+	"start",
+	"process",
+	"move",
+	"color",
+	"sound",
+	"mask",
+	"print",
+	"text",
+	"mul",
+	"div",
+	"if",
+	"dummy",
+	"dummy",
+	"endif",
+	"stop",
+	"endscript"
+};
+
 
 #define DECLARE_ZONE_PARSER(sig) void LocationParser_br::locZoneParse_##sig()
 #define DECLARE_ANIM_PARSER(sig) void LocationParser_br::locAnimParse_##sig()
 #define DECLARE_COMMAND_PARSER(sig) void LocationParser_br::cmdParse_##sig()
-#define DECLARE_INSTRUCTION_PARSER(sig) void Parallaction_br::instParse_##sig()
 #define DECLARE_LOCATION_PARSER(sig) void LocationParser_br::locParse_##sig()
+
+#define DECLARE_INSTRUCTION_PARSER(sig) void ProgramParser_br::instParse_##sig()
 
 
 DECLARE_LOCATION_PARSER(location)  {
@@ -757,7 +792,8 @@ DECLARE_ANIM_PARSER(endanimation)  {
 DECLARE_INSTRUCTION_PARSER(zone)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(zone) ");
 
-	_instParseCtxt.inst->_z = findZone(_tokens[1]);
+	_instParseCtxt.inst->_z = _vm->findZone(_tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -771,6 +807,7 @@ DECLARE_INSTRUCTION_PARSER(color)  {
 	_instParseCtxt.inst->_colors[0] = atoi(_tokens[2]);
 	_instParseCtxt.inst->_colors[1] = atoi(_tokens[3]);
 	_instParseCtxt.inst->_colors[2] = atoi(_tokens[4]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 
 }
 
@@ -782,6 +819,7 @@ DECLARE_INSTRUCTION_PARSER(mask)  {
 	parseRValue(_instParseCtxt.inst->_opA, _tokens[1]);
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[2]);
 	parseRValue(_instParseCtxt.inst->_opC, _tokens[3]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 
 }
 
@@ -790,6 +828,7 @@ DECLARE_INSTRUCTION_PARSER(print)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(print) ");
 
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -812,6 +851,7 @@ DECLARE_INSTRUCTION_PARSER(text)  {
 	if (_tokens[_si][0] != '\0' && scumm_stricmp("flags", _tokens[_si])) {
 		_instParseCtxt.inst->_text2 = strdup(_tokens[_si]);
 	}
+	_instParseCtxt.inst->_index = parser->_lookup;
 
 }
 
@@ -850,10 +890,11 @@ DECLARE_INSTRUCTION_PARSER(endif)  {
 
 //	_instParseCtxt.openIf->_endif = _instParseCtxt.inst;
 	_instParseCtxt.openIf = nullInstructionPtr;
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
-void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
+void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 
 	if (isdigit(str[0]) || str[0] == '-') {
 		v.setImmediate(atoi(str));
@@ -868,7 +909,7 @@ void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = findAnimation(&str[2]);
+		a = _vm->findAnimation(&str[2]);
 		if (!a) {
 			error("unknown animation '%s' in script", &str[2]);
 		}
@@ -894,7 +935,7 @@ void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
 		v.setRandom(atoi(&str[1]));
 	} else
 	if (str[0] == 'L') {
-		v.setField(&_lipSyncVal);
+		v.setField(&_vm->_lipSyncVal);
 	}
 
 }
@@ -906,8 +947,8 @@ typedef OpcodeImpl<LocationParser_br> OpcodeV2;
 #define COMMAND_PARSER(sig)		OpcodeV2(this, &LocationParser_br::cmdParse_##sig)
 #define WARNING_PARSER(sig)		OpcodeV2(this, &LocationParser_br::warning_##sig)
 
-typedef OpcodeImpl<Parallaction_br> OpcodeV3;
-#define INSTRUCTION_PARSER(sig) OpcodeV3(this, &Parallaction_br::instParse_##sig)
+typedef OpcodeImpl<ProgramParser_br> OpcodeV3;
+#define INSTRUCTION_PARSER(sig) OpcodeV3(this, &ProgramParser_br::instParse_##sig)
 
 
 void LocationParser_br::init() {
@@ -1036,9 +1077,11 @@ void LocationParser_br::init() {
 
 }
 
-void Parallaction_br::initParsers() {
+void ProgramParser_br::init() {
 
-	_locationParser = new LocationParser_br(this);
+	parser = new Parser;
+
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 
 	static const OpcodeV3 op0[] = {
 		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition

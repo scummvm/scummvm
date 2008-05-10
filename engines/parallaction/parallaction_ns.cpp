@@ -135,7 +135,8 @@ int Parallaction_ns::init() {
 	initFonts();
 	initCursors();
 	initOpcodes();
-	initParsers();
+	_locationParser = new LocationParser_ns(this);
+	_programParser = new ProgramParser_ns(this);
 
 	_introSarcData1 = 0;
 	_introSarcData2 = 1;
@@ -154,8 +155,6 @@ Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
 
 	delete _mouseComposedArrow;
-
-	delete _instructionNames;
 
 	_location._animations.remove(_char._ani);
 

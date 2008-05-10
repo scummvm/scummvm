@@ -157,13 +157,35 @@ const char *_locationAnimStmtRes_ns[] = {
 	"endanimation"
 };
 
+const char *_instructionNamesRes_ns[] = {
+	"on",
+	"off",
+	"x",
+	"y",
+	"z",
+	"f",
+	"loop",
+	"endloop",
+	"show",
+	"inc",
+	"dec",
+	"set",
+	"put",
+	"call",
+	"wait",
+	"start",
+	"sound",
+	"move",
+	"endscript"
+};
+
 
 #define DECLARE_ZONE_PARSER(sig) void LocationParser_ns::locZoneParse_##sig()
 #define DECLARE_ANIM_PARSER(sig) void LocationParser_ns::locAnimParse_##sig()
 #define DECLARE_COMMAND_PARSER(sig) void LocationParser_ns::cmdParse_##sig()
 #define DECLARE_LOCATION_PARSER(sig) void LocationParser_ns::locParse_##sig()
 
-#define DECLARE_INSTRUCTION_PARSER(sig) void Parallaction_ns::instParse_##sig()
+#define DECLARE_INSTRUCTION_PARSER(sig) void ProgramParser_ns::instParse_##sig()
 
 
 void LocationParser_ns::warning_unexpected() {
@@ -286,29 +308,51 @@ void LocationParser_ns::parseAnimation(Script& script, AnimationList &list, char
 	parser->pushTables(&_locationAnimParsers, _locationAnimStmt);
 }
 
-void Parallaction_ns::parseInstruction(ProgramPtr program) {
+void ProgramParser_ns::parseInstruction() {
 
 	InstructionPtr inst(new Instruction);
 
+	script->readLineToken(true);
+
 	if (_tokens[0][1] == '.') {
 		_tokens[0][1] = '\0';
-		_instParseCtxt.a = findAnimation(&_tokens[0][2]);
+		_instParseCtxt.a = _vm->findAnimation(&_tokens[0][2]);
 	} else
 	if (_tokens[1][1] == '.') {
 		_tokens[1][1] = '\0';
-		_instParseCtxt.a = findAnimation(&_tokens[1][2]);
+		_instParseCtxt.a = _vm->findAnimation(&_tokens[1][2]);
 	} else
 		_instParseCtxt.a = program->_anim;
 
-	inst->_index = _instructionNames->lookup(_tokens[0]);
 	_instParseCtxt.inst = inst;
-	_instParseCtxt.locals = program->_locals;
 
-	(*(_instructionParsers[inst->_index]))();
+	parser->parseStatement();
 
 	program->_instructions.push_back(inst);
 
 	return;
+}
+
+void ProgramParser_ns::parse(Script *script, ProgramPtr program) {
+
+	this->script = script;
+	this->program = program;
+
+	_instParseCtxt.openIf = nullInstructionPtr;
+	_instParseCtxt.end = false;
+	_instParseCtxt.program = program;
+	_instParseCtxt.locals = program->_locals;
+
+	parser->bind(script);
+	parser->pushTables(&_instructionParsers, _instructionNames);
+	do {
+		parseInstruction();
+	} while (!_instParseCtxt.end);
+	parser->popTables();
+	parser->unbind();
+
+	program->_ip = program->_instructions.begin();
+
 }
 
 void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {
@@ -318,16 +362,7 @@ void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {
 	ProgramPtr program(new Program);
 	program->_anim = a;
 
-	_instParseCtxt.openIf = nullInstructionPtr;
-	_instParseCtxt.end = false;
-	_instParseCtxt.program = program;
-
-	do {
-		script->readLineToken();
-		parseInstruction(program);
-	} while (!_instParseCtxt.end);
-
-	program->_ip = program->_instructions.begin();
+	_programParser->parse(script, program);
 
 	delete script;
 
@@ -344,8 +379,10 @@ DECLARE_INSTRUCTION_PARSER(animation)  {
 	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_name)) {
 		_instParseCtxt.inst->_a = _instParseCtxt.a;
 	} else {
-		_instParseCtxt.inst->_a = findAnimation(_tokens[1]);
+		_instParseCtxt.inst->_a = _vm->findAnimation(_tokens[1]);
 	}
+
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -353,6 +390,7 @@ DECLARE_INSTRUCTION_PARSER(loop)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(loop) ");
 
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -361,6 +399,7 @@ DECLARE_INSTRUCTION_PARSER(x)  {
 
 	parseLValue(_instParseCtxt.inst->_opA, "X");
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -369,6 +408,7 @@ DECLARE_INSTRUCTION_PARSER(y)  {
 
 	parseLValue(_instParseCtxt.inst->_opA, "Y");
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -377,6 +417,7 @@ DECLARE_INSTRUCTION_PARSER(z)  {
 
 	parseLValue(_instParseCtxt.inst->_opA, "Z");
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -385,6 +426,7 @@ DECLARE_INSTRUCTION_PARSER(f)  {
 
 	parseLValue(_instParseCtxt.inst->_opA, "F");
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -397,6 +439,7 @@ DECLARE_INSTRUCTION_PARSER(inc)  {
 	if (!scumm_stricmp(_tokens[3], "mod")) {
 		_instParseCtxt.inst->_flags |= kInstMod;
 	}
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -414,6 +457,7 @@ DECLARE_INSTRUCTION_PARSER(set)  {
 
 	parseLValue(_instParseCtxt.inst->_opA, _tokens[1]);
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[2]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -422,6 +466,7 @@ DECLARE_INSTRUCTION_PARSER(move)  {
 
 	parseRValue(_instParseCtxt.inst->_opA, _tokens[1]);
 	parseRValue(_instParseCtxt.inst->_opB, _tokens[2]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -431,7 +476,7 @@ DECLARE_INSTRUCTION_PARSER(put)  {
 	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_name)) {
 		_instParseCtxt.inst->_a = _instParseCtxt.a;
 	} else {
-		_instParseCtxt.inst->_a = findAnimation(_tokens[1]);
+		_instParseCtxt.inst->_a = _vm->findAnimation(_tokens[1]);
 	}
 
 	parseRValue(_instParseCtxt.inst->_opA, _tokens[2]);
@@ -439,30 +484,32 @@ DECLARE_INSTRUCTION_PARSER(put)  {
 	if (!scumm_stricmp(_tokens[4], "masked")) {
 		_instParseCtxt.inst->_flags |= kInstMaskedPut;
 	}
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
 DECLARE_INSTRUCTION_PARSER(call)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(call) ");
 
-	int index = _callableNames->lookup(_tokens[1]);
+	int index = _vm->_callableNames->lookup(_tokens[1]);
 	if (index == Table::notFound)
 		error("unknown callable '%s'", _tokens[1]);
 	_instParseCtxt.inst->_immediate = index - 1;
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
 DECLARE_INSTRUCTION_PARSER(sound)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(sound) ");
 
-	_instParseCtxt.inst->_z = findZone(_tokens[1]);
+	_instParseCtxt.inst->_z = _vm->findZone(_tokens[1]);
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
 DECLARE_INSTRUCTION_PARSER(null)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(null) ");
-
-
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
@@ -488,11 +535,12 @@ DECLARE_INSTRUCTION_PARSER(endscript)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(endscript) ");
 
 	_instParseCtxt.end = true;
+	_instParseCtxt.inst->_index = parser->_lookup;
 }
 
 
 
-void Parallaction_ns::parseRValue(ScriptVar &v, const char *str) {
+void ProgramParser_ns::parseRValue(ScriptVar &v, const char *str) {
 
 	if (isdigit(str[0]) || str[0] == '-') {
 		v.setImmediate(atoi(str));
@@ -507,7 +555,7 @@ void Parallaction_ns::parseRValue(ScriptVar &v, const char *str) {
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = findAnimation(&str[2]);
+		a = _vm->findAnimation(&str[2]);
 	} else {
 		a = _instParseCtxt.a;
 	}
@@ -527,7 +575,7 @@ void Parallaction_ns::parseRValue(ScriptVar &v, const char *str) {
 
 }
 
-void Parallaction_ns::parseLValue(ScriptVar &v, const char *str) {
+void ProgramParser_ns::parseLValue(ScriptVar &v, const char *str) {
 
 	int index = _instParseCtxt.program->findLocal(str);
 	if (index != -1) {
@@ -537,7 +585,7 @@ void Parallaction_ns::parseLValue(ScriptVar &v, const char *str) {
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = findAnimation(&str[2]);
+		a = _vm->findAnimation(&str[2]);
 	} else {
 		a = _instParseCtxt.a;
 	}
@@ -871,6 +919,7 @@ Answer *LocationParser_ns::parseAnswer(Script &script) {
 		parseCommands(script, answer->_commands);
 		_locParseCtxt.endcommands = false;
 		do {
+			script.readLineToken(true);
 			parser->parseStatement();
 		} while (!_locParseCtxt.endcommands);
 
@@ -1072,6 +1121,7 @@ void LocationParser_ns::parse(Script *script) {
 	parser->bind(script);
 	parser->pushTables(&_locationParsers, _locationStmt);
 	do {
+		script->readLineToken(true);
 		parser->parseStatement();
 	} while (!_locParseCtxt.end);
 	parser->popTables();
@@ -1104,8 +1154,8 @@ void LocationParser_ns::parseWalkNodes(Script& script, WalkNodeList &list) {
 	return;
 }
 
-typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
-#define INSTRUCTION_PARSER(sig) OpcodeV1(this, &Parallaction_ns::instParse_##sig)
+typedef OpcodeImpl<ProgramParser_ns> OpcodeV1;
+#define INSTRUCTION_PARSER(sig) OpcodeV1(this, &ProgramParser_ns::instParse_##sig)
 
 typedef OpcodeImpl<LocationParser_ns> OpcodeV2;
 #define ZONE_PARSER(sig)		OpcodeV2(this, &LocationParser_ns::locZoneParse_##sig)
@@ -1208,9 +1258,11 @@ void LocationParser_ns::init() {
 
 }
 
-void Parallaction_ns::initParsers() {
+void ProgramParser_ns::init() {
 
-	_locationParser = new LocationParser_ns(this);
+	parser = new Parser;
+
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_ns), _instructionNamesRes_ns);
 
 	static const OpcodeV1 op0[] = {
 		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition

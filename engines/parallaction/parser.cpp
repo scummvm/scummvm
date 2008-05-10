@@ -234,7 +234,6 @@ void Parser::popTables() {
 void Parser::parseStatement() {
 	assert(_currentOpcodes != 0);
 
-	_script->readLineToken(true);
 	_lookup = _currentStatements->lookup(_tokens[0]);
 
 	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);

@@ -247,8 +247,6 @@ public:
 
 
 
-#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
-
 #define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
 
@@ -554,6 +552,7 @@ public:
 
 private:
 	LocationParser_ns		*_locationParser;
+	ProgramParser_ns		*_programParser;
 
 	void initFonts();
 	void freeFonts();
@@ -645,44 +644,9 @@ protected:
 	void drawAnimations();
 
 	void		parseLocation(const char *filename);
-	void		initOpcodes();
-
-
-	// program parser
-	OpcodeSet	_instructionParsers;
-	Table		*_instructionNames;
-
-	struct {
-		bool		end;
-		AnimationPtr	a;
-		InstructionPtr inst;
-		LocalVariable *locals;
-		ProgramPtr	program;
-
-		// BRA specific
-		InstructionPtr openIf;
-	} _instParseCtxt;
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
-
-	void		parseInstruction(ProgramPtr program);
 	void		loadProgram(AnimationPtr a, const char *filename);
-	void		parseLValue(ScriptVar &var, const char *str);
-	virtual void	parseRValue(ScriptVar &var, const char *str);
+
+	void		initOpcodes();
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
@@ -771,6 +735,7 @@ public:
 
 private:
 	LocationParser_br		*_locationParser;
+	ProgramParser_br		*_programParser;
 
 	void		initResources();
 	void		initFonts();
@@ -817,16 +782,6 @@ private:
 	const Callable *_callables;
 
 	void parseLocation(const char* name);
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(zone);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(color);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(mask);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(print);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(text);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
-
-	virtual void parseRValue(ScriptVar &var, const char *str);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);

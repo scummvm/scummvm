@@ -117,6 +117,7 @@ protected:
 #define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
 #define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
 #define DECLARE_UNQUALIFIED_LOCATION_PARSER(sig) void locParse_##sig()
+#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
 
 #define MAX_FORWARDS	50
 
@@ -228,7 +229,6 @@ protected:
 	void 		resolveCommandForwards();
 	void		createCommand(uint id);
 	void		addCommand();
-	void		initParsers();
 
 	struct CommandForwardReference {
 		char		name[20];
@@ -316,9 +316,99 @@ public:
 };
 
 
+
+class ProgramParser_ns {
+
+protected:
+	Parser	*parser;
+	Parallaction_ns *_vm;
+
+	Script	*script;
+	ProgramPtr	program;
+
+	// program parser
+	OpcodeSet	_instructionParsers;
+	Table		*_instructionNames;
+
+	struct {
+		bool		end;
+		AnimationPtr	a;
+		InstructionPtr inst;
+		LocalVariable *locals;
+		ProgramPtr	program;
+
+		// BRA specific
+		InstructionPtr openIf;
+	} _instParseCtxt;
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
+
+	void		parseInstruction();
+	void		parseLValue(ScriptVar &var, const char *str);
+	virtual void	parseRValue(ScriptVar &var, const char *str);
+
+	void init();
+
+public:
+	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm) {
+		init();
+	}
+
+	virtual ~ProgramParser_ns() {
+		delete _instructionNames;
+	}
+
+	void parse(Script *script, ProgramPtr program);
+
+};
+
+
+class ProgramParser_br : public ProgramParser_ns {
+
+protected:
+	Parallaction_br *_vm;
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(zone);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(color);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(mask);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(print);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(text);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
+
+	virtual void parseRValue(ScriptVar &var, const char *str);
+
+	void init();
+
+public:
+	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm) {
+		init();
+	}
+
+	virtual ~ProgramParser_br() {
+		delete _instructionNames;
+	}
+
+};
+
 } // namespace Parallaction
 
 #endif
+
 
 
 
