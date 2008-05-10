@@ -53,7 +53,7 @@ void vector_renderer_test(OSystem *_system);
 class VectorRenderer {
 
 public:
-	VectorRenderer() : _shadows(false), _fillMode(kNoFill), _activeSurface(NULL) {}
+	VectorRenderer() : _shadows(false), _fillMode(kNoFill), _activeSurface(NULL), _strokeWidth(1) {}
 	virtual ~VectorRenderer() {}
 
 	enum FillMode {
@@ -87,10 +87,27 @@ public:
 	 */
 	virtual void drawCircle(int x, int y, int r) = 0;
 
-
+	/**
+	 * Draws a square starting at (x,y) with the given width and height.
+	 *
+	 * @param x Horizontal (X) coordinate for the center of the square
+	 * @param y Vertical (Y) coordinate for the center of the square
+	 * @param w Width of the square.
+	 * @param h Height of the square
+	 */
 	virtual void drawSquare(int x, int y, int w, int h) = 0;
 
-	virtual void drawRoundedSquare(int x1, int y1, int r, int w, int h) = 0;
+	/**
+	 * Draws a rounded square starting at (x,y) with the given width and height.
+	 * The corners of the square are rounded with the given radius.
+	 *
+	 * @param x Horizontal (X) coordinate for the center of the square
+	 * @param y Vertical (Y) coordinate for the center of the square
+	 * @param w Width of the square.
+	 * @param h Height of the square
+	 * @param r Radius of the corners.
+	 */
+	virtual void drawRoundedSquare(int x, int y, int r, int w, int h) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -115,15 +132,29 @@ public:
 	}
 
 	/**
-	 * Set the active painting color for the renderer.
-	 * All the drawing from then on will be done with that color, unless
+	 * Set the active foreground painting color for the renderer.
+	 * All the foreground drawing from then on will be done with that color, unless
 	 * specified otherwise.
+	 *
+	 * Foreground drawing means all outlines and basic shapes.
 	 *
 	 * @param r	value of the red color byte
 	 * @param g	value of the green color byte
 	 * @param b	value of the blue color byte
 	 */
 	virtual void setFgColor(uint8 r, uint8 g, uint8 b) = 0;
+
+	/**
+	 * Set the active background painting color for the renderer.
+	 * All the background drawing from then on will be done with that color, unless
+	 * specified otherwise.
+	 *
+	 * Background drawing means all the shape filling.
+	 *
+	 * @param r	value of the red color byte
+	 * @param g	value of the green color byte
+	 * @param b	value of the blue color byte
+	 */
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
@@ -137,7 +168,10 @@ public:
 	}
 
 	/**
-	 * Fills the active surface with the currently active drawing color.
+	 * Fills the active surface with the specified fg/bg color.
+	 * Defaults to using the active Foreground color for filling.
+	 *
+	 * @param mode Color mode (bg or fg color) used to fill.
 	 */
 	virtual void fillSurface(ColorMode mode = kForegroundColor) = 0;
 
@@ -149,16 +183,46 @@ public:
 		memset(src, 0, _activeSurface->w * _activeSurface->h * _activeSurface->bytesPerPixel);
 	}
 
+	/**
+	 * Sets the active fill mode for all shapes.
+	 *
+	 * @see VectorRenderer::FillMode
+	 * @param mode Specified fill mode.
+	 */
 	virtual void setFillMode(VectorRenderer::FillMode mode) {
 		_fillMode = mode;
 	}
 
+	/**
+	 * Sets the stroke width. All shapes drawn with a stroke will
+	 * have that width.
+	 *
+	 * @param width Witdh of the stroke in pixels.
+	 */
+	virtual void setStrokeWidth(int width) {
+		if (width > 0) _strokeWidth = width;
+	}
+
+	/**
+	 * Enables adding shadows to all drawn primitives.
+	 * Shadows are drawn automatically under the shapes, at the
+	 * given x/y offsets.
+	 *
+	 * @param x_offset Horizontal offset for the shadows.
+	 * @param y_offset Vertical offset for the shadows.
+	 * @see shadowDisable()
+	 */
 	virtual void shadowEnable(int x_offset, int y_offset) {
 		_shadows = true;
 		_shadowXOffset = x_offset;
 		_shadowYOffset = y_offset;
 	}
 
+	/**
+	 * Disables adding shadows to all drawn primitives.
+	 *
+	 * @see shadowEnable()
+	 */
 	virtual void shadowDisable() {
 		_shadows = false;
 	}
@@ -166,13 +230,14 @@ public:
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
 
-	FillMode _fillMode;
+	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
-	bool _shadows;
-	int _shadowXOffset;
-	int _shadowYOffset;
-};
+	bool _shadows; /** Defines if shadows are automatically added to drawn shapes */
+	int _shadowXOffset; /** Horizontal offset for drawn shadows */
+	int _shadowYOffset; /** Vertical offset for drawn shadows */
 
+	int _strokeWidth; /** Width of the stroke of all drawn shapes */
+};
 
 
 /**
@@ -204,86 +269,31 @@ public:
 	 */
 	void drawLine(int x1, int y1, int x2, int y2);
 
-	void drawCircle(int x, int y, int r) {
-		if (Base::_fillMode != kNoFill && Base::_shadows) {
-			drawCircleAlg(x + Base::_shadowXOffset, y + Base::_shadowYOffset, r, 0, true);
-		}
-
-		switch(Base::_fillMode) {
-		case kNoFill:
-			drawCircleAlg(x, y, r, _fgColor, false);
-			break;
-
-		case kForegroundFill:
-			drawCircleAlg(x, y, r, _fgColor, true);
-			break;
-
-		case kBackgroundFill:
-			drawCircleAlg(x, y, r - 1, _bgColor, true);
-			drawCircleAlg(x, y, r, _fgColor, false);
-			break;
-
-		case kGradientFill:
-			break;
-		}
-	}
-
-	void drawSquare(int x, int y, int w, int h) {
-		if (Base::_fillMode != kNoFill && Base::_shadows) {
-			drawSquareAlg(x + Base::_shadowXOffset , y + h, w, Base::_shadowYOffset, 0, true);
-			drawSquareAlg(x + w, y + Base::_shadowYOffset, Base::_shadowXOffset, h, 0, true);
-		}
-
-		switch(Base::_fillMode) {
-		case kNoFill:
-			drawSquareAlg(x, y, w, h, _fgColor, false);
-			break;
-
-		case kForegroundFill:
-			drawSquareAlg(x, y, w, h, _fgColor, true);
-			break;
-
-		case kBackgroundFill:
-			drawSquareAlg(x, y, w, h, _bgColor, true);
-			drawSquareAlg(x, y, w, h, _fgColor, false);
-			break;
-
-		case kGradientFill:
-			break;
-		}
-	}
-
-	void drawRoundedSquare(int x, int y, int r, int w, int h) {
-		if (Base::_fillMode != kNoFill && Base::_shadows) {
-			drawRoundedSquareAlg(x + Base::_shadowXOffset, y + Base::_shadowYOffset, r, w, h, 0, true);
-		}
-
-		switch(Base::_fillMode) {
-		case kNoFill:
-			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
-			break;
-
-		case kForegroundFill:
-			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, true);
-			break;
-
-		case kBackgroundFill:
-			drawRoundedSquareAlg(x, y, r + 1, w, h, _bgColor, true);
-			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
-			break;
-
-		case kGradientFill:
-			break;
-		}
-	}
+	/**
+	 * @see VectorRenderer::drawCircle()
+	 */
+	void drawCircle(int x, int y, int r);
 
 	/**
-	 * @see VectorRenderer::setColor()
+	 * @see VectorRenderer::drawSquare()
+	 */
+	void drawSquare(int x, int y, int w, int h);
+
+	/**
+	 * @see VectorRenderer::drawRoundedSquare()
+	 */
+	void drawRoundedSquare(int x, int y, int r, int w, int h);
+
+	/**
+	 * @see VectorRenderer::setFgColor()
 	 */
 	void setFgColor(uint8 r, uint8 g, uint8 b) {
 		this->_fgColor = RGBToColor<PixelFormat>(r, g, b);
 	}
 
+	/**
+	 * @see VectorRenderer::setBgColor()
+	 */
 	void setBgColor(uint8 r, uint8 g, uint8 b) {
 		this->_bgColor = RGBToColor<PixelFormat>(r, g, b);
 	}
@@ -311,7 +321,7 @@ protected:
 	 * @param y Vertical coordinate of the pixel.
 	 * @param color Color of the pixel
 	 */
-	virtual inline void putPixel( int x, int y, PixelType color ) {
+	virtual inline void putPixel(int x, int y, PixelType color) {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
 		*ptr = color;
 	}
@@ -344,8 +354,8 @@ protected:
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false) {}
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill = false);
 
-	PixelType _fgColor; /** Color currently being used to draw on the renderer */
-	PixelType _bgColor;
+	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
+	PixelType _bgColor; /** Background color currently being used to draw on the renderer */
 };
 
 /**
@@ -397,7 +407,7 @@ protected:
 	inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
 		if (alpha == 255)
 			putPixel(x, y, color);
-		else if (alpha > 0 )
+		else if (alpha > 0)
 			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
