@@ -789,6 +789,8 @@ int GUI_MR::quitGame(Button *caller) {
 }
 
 int GUI_MR::optionsButton(Button *button) {
+	PauseTimer pause(*_vm->_timer);
+
 	_vm->musicUpdate(0);
 
 	_screen->hideMouse();

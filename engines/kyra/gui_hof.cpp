@@ -666,6 +666,8 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 #pragma mark -
 
 int GUI_HoF::optionsButton(Button *button) {
+	PauseTimer pause(*_vm->_timer);
+
 	_restartGame = false;
 	_reloadTemporarySave = false;
 

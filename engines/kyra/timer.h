@@ -49,8 +49,10 @@ struct TimerEntry {
 
 class TimerManager {
 public:
-	TimerManager(KyraEngine *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0) {}
+	TimerManager(KyraEngine *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0), _isPaused(0), _pauseStart(0) {}
 	~TimerManager() { reset(); }
+
+	void pause(bool pause);
 
 	void reset();
 
@@ -82,8 +84,19 @@ private:
 	Common::List<TimerEntry> _timers;
 	uint32 _nextRun;
 
+	uint _isPaused;
+	uint32 _pauseStart;
+
 	typedef Common::List<TimerEntry>::iterator Iterator;
 	typedef Common::List<TimerEntry>::const_iterator CIterator;
+};
+
+class PauseTimer {
+public:
+	PauseTimer(TimerManager &timer) : _timer(timer) { _timer.pause(true); }
+	~PauseTimer() { _timer.pause(false); }
+private:
+	TimerManager &_timer;
 };
 
 } // end of namespace Kyra

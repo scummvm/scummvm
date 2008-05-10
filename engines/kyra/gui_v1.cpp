@@ -30,6 +30,7 @@
 #include "kyra/animator_v1.h"
 #include "kyra/sound.h"
 #include "kyra/gui_v1.h"
+#include "kyra/timer.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -406,6 +407,8 @@ void GUI_v1::setGUILabels() {
 }
 
 int GUI_v1::buttonMenuCallback(Button *caller) {
+	PauseTimer pause(*_vm->_timer);
+
 	_displayMenu = true;
 
 	assert(_vm->_guiStrings);
