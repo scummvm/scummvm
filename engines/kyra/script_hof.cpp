@@ -1335,9 +1335,20 @@ int KyraEngine_HoF::o2_drawSceneShapeEx(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_getBoolFromStack(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getBoolFromStack(%p) ()", (const void *)script);
-	return stackPos(0) ? 1 : 0;
+int KyraEngine_HoF::o2_midiSoundFadeout(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_midiSoundFadeout(%p) ()", (const void *)script);
+	if (!stackPos(0)) {
+		if ((_sound->getMusicType() == Sound::kMidiMT32 || _sound->getMusicType() == Sound::kMidiGM) &&
+			(_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM)) {
+			_sound->beginFadeOut();
+			delay(2000, true);
+			_lastMusicCommand = -1;
+		} else {
+			return 0;
+		}
+	}
+
+	return 1;
 }
 
 int KyraEngine_HoF::o2_getSfxDriver(EMCState *script) {
@@ -1704,7 +1715,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_updateTwoSceneAnims);
 	Opcode(o2_getRainbowRoomData);
 	Opcode(o2_drawSceneShapeEx);
-	Opcode(o2_getBoolFromStack);
+	Opcode(o2_midiSoundFadeout);
 	// 0xa4
 	Opcode(o2_getSfxDriver);
 	Opcode(o2_getVocSupport);

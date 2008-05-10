@@ -786,7 +786,7 @@ protected:
 	int o2_updateTwoSceneAnims(EMCState *script);
 	int o2_getRainbowRoomData(EMCState *script);
 	int o2_drawSceneShapeEx(EMCState *script);
-	int o2_getBoolFromStack(EMCState *script);
+	int o2_midiSoundFadeout(EMCState *script);
 	int o2_getSfxDriver(EMCState *script);
 	int o2_getVocSupport(EMCState *script);
 	int o2_getMusicDriver(EMCState *script);
