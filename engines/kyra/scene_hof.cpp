@@ -322,6 +322,8 @@ int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
 			refreshAnimObjectsIfNeed();
 			updateType = -1;
 		}
+
+		delay(10);
 	}
 
 	if (updateChar)

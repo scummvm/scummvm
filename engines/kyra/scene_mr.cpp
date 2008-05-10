@@ -693,7 +693,7 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		if (ret)
 			++moveTable;
 
-		update();
+		delay(10, true);
 	}
 
 	if (updateChar)
