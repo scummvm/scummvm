@@ -704,6 +704,11 @@ void GUI_MR::flagButtonDisable(Button *button) {
 	}
 }
 
+void GUI_MR::getInput() {
+	_vm->musicUpdate(0);
+	GUI_v2::getInput();
+}
+
 const char *GUI_MR::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
 		return 0;

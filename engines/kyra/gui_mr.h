@@ -48,6 +48,8 @@ public:
 
 	int optionsButton(Button *button);
 private:
+	void getInput();
+
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);
 	const char *getMenuItemLabel(const MenuItem &menuItem);

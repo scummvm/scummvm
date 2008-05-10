@@ -125,7 +125,7 @@ protected:
 	virtual uint8 textFieldColor2() const = 0;
 	virtual uint8 textFieldColor3() const = 0;
 protected:
-	void getInput();
+	virtual void getInput();
 
 	Button _menuButtons[7];
 	Button _scrollUpButton;

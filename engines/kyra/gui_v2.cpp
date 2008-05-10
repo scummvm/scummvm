@@ -409,6 +409,8 @@ void GUI_v2::getInput() {
 		_isOptionsMenu = false;
 		_isDeleteMenu = false;
 	}
+
+	delay(10);
 }
 
 void GUI_v2::renewHighlight(Menu &menu) {
