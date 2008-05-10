@@ -139,7 +139,7 @@ void KyraEngine_HoF::updateItemAnimations() {
 		return;
 
 	uint16 shpIdx = s->frames[a->currentFrame].index + 64;
-	if ((s->itemIndex == _handItemSet || s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
+	if (s->itemIndex == _handItemSet && s->itemIndex == _itemInHand && _screen->isMouseVisible()) {
 		nextFrame = true;
 		_screen->setMouseCursor(8, 15, getShapePtr(shpIdx));
 	}

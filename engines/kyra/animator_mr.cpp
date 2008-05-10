@@ -197,6 +197,7 @@ void KyraEngine_MR::refreshAnimObjects(int force) {
 }
 
 void KyraEngine_MR::updateItemAnimations() {
+	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::updateItemAnimations()");
 	bool nextFrame = false;
 
 	if (_itemAnimData[0].itemIndex == -1)
@@ -215,7 +216,7 @@ void KyraEngine_MR::updateItemAnimations() {
 		return;
 
 	uint16 shpIdx = s->frames[a->currentFrame].index + 248;
-	if ((/*s->itemIndex == _handItemSet || */s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
+	if (s->itemIndex == _handItemSet && s->itemIndex == _itemInHand && _screen->isMouseVisible()) {
 		nextFrame = true;
 		_screen->setMouseCursor(12, 19, getShapePtr(shpIdx));
 	}
@@ -240,7 +241,7 @@ void KyraEngine_MR::updateItemAnimations() {
 		if (animObject->shapeIndex2 == s->itemIndex + 248) {
 			animObject->shapePtr = getShapePtr(shpIdx);
 			animObject->shapeIndex1 = shpIdx;
-			animObject->needRefresh = 1;
+			animObject->needRefresh = true;
 			nextFrame = true;
 		}
 	}

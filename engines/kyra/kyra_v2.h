@@ -101,7 +101,6 @@ protected:
 	void removeInputTop();
 
 	int _mouseX, _mouseY;
-	int _mouseState;
 
 	struct Event {
 		Common::Event event;

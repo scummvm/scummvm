@@ -1267,11 +1267,9 @@ void KyraEngine_MR::updateMouse() {
 	}
 
 	if (type != 0 && type != _handItemSet && !hasItemCollision) {
-		_mouseState = _handItemSet = type;
 		_handItemSet = type;
 		_screen->setMouseCursor(offsetX, offsetY, _gameShapes[shape]);
 	} else if (type == 0 && _handItemSet != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
-		_mouseState = 0;
 		setItemMouseCursor();
 	} else if (mouse.y > 187 && _handItemSet > -4 && type == 0 && !_inventoryState) {
 		showInventory();

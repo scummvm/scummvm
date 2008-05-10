@@ -724,7 +724,7 @@ void KyraEngine_HoF::updateMouse() {
 	}
 
 	if (type != 0 && _handItemSet != type && _screen->isMouseVisible()) {
-		_mouseState = _handItemSet = type;
+		_handItemSet = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
@@ -732,7 +732,6 @@ void KyraEngine_HoF::updateMouse() {
 
 	if (type == 0 && _handItemSet != _itemInHand && _screen->isMouseVisible()) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
-			_mouseState = 0;
 			_handItemSet = _itemInHand;
 			_screen->hideMouse();
 			if (_itemInHand == -1)
