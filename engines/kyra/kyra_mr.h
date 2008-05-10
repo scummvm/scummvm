@@ -98,8 +98,6 @@ private:
 	void updateWithText();
 	void updateMouse();
 
-	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
-
 	// sound specific
 private:
 	void playMenuAudioFile();

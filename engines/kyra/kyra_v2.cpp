@@ -91,6 +91,25 @@ KyraEngine_v2::~KyraEngine_v2() {
 	delete[] _screenBuffer;
 }
 
+void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::delay(%u, %d, %d)", amount, updateGame, isMainLoop);
+
+	uint32 start = _system->getMillis();
+	do {
+		if (updateGame) {
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		} else {
+			updateInput();
+		}
+
+		if (amount > 0)
+			_system->delayMillis(amount > 10 ? 10 : amount);
+	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
+}
+
 int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
 	updateInput();

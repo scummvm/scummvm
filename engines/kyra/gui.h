@@ -222,8 +222,6 @@ private:
 	Screen *_screen;
 	OSystem *_system;
 
-	bool _quitFlag;
-
 	StaticData _static;
 	struct AnimIntern {
 		int curFrame;

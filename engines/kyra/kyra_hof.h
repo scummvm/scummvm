@@ -655,9 +655,6 @@ protected:
 
 	void setWalkspeed(uint8 speed);
 
-	// delay
-	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);
-
 	// ingame static sequence handling
 	void seq_makeBookOrCauldronAppear(int type);
 	void seq_makeBookAppear();

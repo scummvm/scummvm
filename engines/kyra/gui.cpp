@@ -382,7 +382,7 @@ bool MainMenu::getInput() {
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_quitFlag = true;
+			_vm->quitGame();
 			break;
 		case Common::EVENT_LBUTTONUP:
 			return true;
@@ -396,7 +396,6 @@ bool MainMenu::getInput() {
 int MainMenu::handle(int dim) {
 	debugC(9, kDebugLevelMain, "MainMenu::handle(%d)", dim);
 	int command = -1;
-	_quitFlag = false;
 
 	uint8 colorMap[16];
 	memset(colorMap, 0, sizeof(colorMap));
@@ -436,7 +435,7 @@ int MainMenu::handle(int dim) {
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
 
-	while (!_quitFlag) {
+	while (!_vm->quit()) {
 		updateAnimation();
 		bool mousePressed = getInput();
 
@@ -467,10 +466,8 @@ int MainMenu::handle(int dim) {
 		_system->delayMillis(10);
 	}
 
-	if (_quitFlag) {
-		_vm->quitGame();
+	if (_vm->quit())
 		command = -1;
-	}
 
 	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
 	_screen->_charWidth = charWidthBackUp;

@@ -276,6 +276,8 @@ int KyraEngine_MR::go() {
 			delayUntil(nextRun);
 		}
 
+		_eventList.clear();
+
 		switch (_menu->handle(3)) {
 		case 2:
 			_menuDirectlyToLoad = true;
@@ -1273,19 +1275,6 @@ void KyraEngine_MR::updateMouse() {
 		setItemMouseCursor();
 	} else if (mouse.y > 187 && _handItemSet > -4 && type == 0 && !_inventoryState) {
 		showInventory();
-	}
-}
-
-void KyraEngine_MR::delay(uint32 millis, bool doUpdate, bool isMainLoop) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::delay(%d, %d, %d)", millis, doUpdate, isMainLoop);
-	uint32 endTime = _system->getMillis() + millis;
-	while (endTime > _system->getMillis()) {
-		if (doUpdate) {
-			//XXX
-			update();
-		}
-
-		_system->delayMillis(10);
 	}
 }
 

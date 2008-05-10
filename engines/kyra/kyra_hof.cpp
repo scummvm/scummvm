@@ -743,23 +743,6 @@ void KyraEngine_HoF::updateMouse() {
 	}
 }
 
-void KyraEngine_HoF::delay(uint32 amount, bool updateGame, bool isMainLoop) {
-	uint32 start = _system->getMillis();
-	do {
-		if (updateGame) {
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-		} else {
-			updateInput();
-		}
-
-		if (amount > 0)
-			_system->delayMillis(amount > 10 ? 10 : amount);
-	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
-}
-
 void KyraEngine_HoF::cleanup() {
 	delete[] _inventoryButtons; _inventoryButtons = 0;
 

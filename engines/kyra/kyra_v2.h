@@ -78,6 +78,8 @@ public:
 	virtual Screen_v2 *screen_v2() const = 0;
 	virtual GUI *gui_v2() const = 0;
 
+	void delay(uint32 time, bool update = false, bool isMainLoop = false);
+
 	const EngineDesc &engineDesc() const { return _desc; }
 protected:
 	EngineDesc _desc;
