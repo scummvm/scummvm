@@ -177,17 +177,17 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill) {
 			ptr += pitch;
 		}
 	} else {
-		int sw = _strokeWidth, sp = 0, hp = pitch * (h - 1);
+		int sw = Base::_strokeWidth, sp = 0, hp = pitch * (h - 1);
 
-		while(sw--) {
+		while (sw--) {
 			Common::set_to(ptr + sp, ptr + w + sp, color);
 			Common::set_to(ptr + hp - sp, ptr + w + hp - sp, color);
 			sp += pitch;
 		}
 
 		while (h--) {
-			Common::set_to(ptr, ptr + _strokeWidth, color);
-			Common::set_to(ptr + w - _strokeWidth, ptr + w, color);
+			Common::set_to(ptr, ptr + Base::_strokeWidth, color);
+			Common::set_to(ptr + w - Base::_strokeWidth, ptr + w, color);
 			ptr += pitch;
 		}
 	}
@@ -496,7 +496,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 
 		ptr_fill += p * r;
 		while (short_h-- >= 0) {
-			Common::set_to(ptr_fill, ptr_fill + _strokeWidth, color);
+			Common::set_to(ptr_fill, ptr_fill + Base::_strokeWidth, color);
 			Common::set_to(ptr_fill + w - _strokeWidth + 1, ptr_fill + w + 1, color);
 			ptr_fill += p;
 		}
