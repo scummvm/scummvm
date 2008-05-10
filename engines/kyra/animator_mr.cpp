@@ -196,6 +196,61 @@ void KyraEngine_MR::refreshAnimObjects(int force) {
 	}
 }
 
+void KyraEngine_MR::updateItemAnimations() {
+	bool nextFrame = false;
+
+	if (_itemAnimData[0].itemIndex == -1)
+		return;	
+
+	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
+	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
+
+	if (++_nextAnimItem == 10) {
+		_nextAnimItem = 0;
+		return;
+	}
+
+	uint32 ctime = _system->getMillis();
+	if (ctime < a->nextFrame)
+		return;
+
+	uint16 shpIdx = s->frames[a->currentFrame].index + 248;
+	if ((s->itemIndex == _handItemSet || s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
+		nextFrame = true;
+		_screen->setMouseCursor(12, 19, getShapePtr(shpIdx));
+	}
+
+	if (_inventoryState) {
+		for (int i = 0; i < 10; i++) {
+			if (s->itemIndex == _mainCharacter.inventory[i]) {
+				nextFrame = true;
+				_screen->drawShape(2, getShapePtr(422 + i), 9, 0, 0, 0);
+				_screen->drawShape(2, getShapePtr(shpIdx), 9, 0, 0, 0);
+				_screen->hideMouse();
+				_screen->copyRegion(9, 0, _inventoryX[i], _inventoryY[i], 24, 20, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->showMouse();
+			}
+		}
+	}
+
+	_screen->updateScreen();
+
+	for (int i = 17; i < 66; i++) {
+		AnimObj *animObject = &_animObjects[i];
+		if (animObject->shapeIndex2 == s->itemIndex + 248) {
+			animObject->shapePtr = getShapePtr(shpIdx);
+			animObject->shapeIndex1 = shpIdx;
+			animObject->needRefresh = 1;
+			nextFrame = true;
+		}
+	}
+
+	if (nextFrame) {
+		a->nextFrame = _system->getMillis() + (s->frames[a->currentFrame].delay * _tickLength);
+		a->currentFrame = ++a->currentFrame % s->numFrames;
+	}
+}
+
 void KyraEngine_MR::updateCharacterAnim(int charId) {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::updateCharacterAnim(%d)", charId);
 

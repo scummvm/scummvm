@@ -105,11 +105,6 @@ struct TIM;
 
 typedef int (KyraEngine_HoF::*SeqProc)(WSAMovieV2*, int, int, int);
 
-struct FrameControl {
-	uint16 index;
-	uint16 delay;
-};
-
 struct ActiveWSA {
 	int16 flags;
 	WSAMovieV2 *movie;
@@ -177,17 +172,6 @@ struct ItemAnimData_v1 {
 	int16 itemIndex;
 	uint16 y;
 	const uint16 *frames;
-};
-
-struct ItemAnimData_v2 {
-	int16 itemIndex;
-	uint8 numFrames;
-	const FrameControl *frames;
-};
-
-struct ActiveItemAnim {
-	uint16 currentFrame;
-	uint32 nextFrame;
 };
 
 class KyraEngine_HoF : public KyraEngine_v2 {
@@ -326,8 +310,6 @@ protected:
 	void updateMouse();
 
 	void dinoRide();
-
-	int _mouseState;
 
 	void handleInput(int x, int y);
 	bool handleInputUnkSub(int x, int y);

@@ -35,6 +35,22 @@
 
 namespace Kyra {
 
+struct FrameControl {
+	uint16 index;
+	uint16 delay;
+};
+
+struct ItemAnimData_v2 {
+	int16 itemIndex;
+	uint8 numFrames;
+	const FrameControl *frames;
+};
+
+struct ActiveItemAnim {
+	uint16 currentFrame;
+	uint32 nextFrame;
+};
+
 class Screen_v2;
 
 class KyraEngine_v2 : public KyraEngine {
@@ -85,6 +101,7 @@ protected:
 	void removeInputTop();
 
 	int _mouseX, _mouseY;
+	int _mouseState;
 
 	struct Event {
 		Common::Event event;

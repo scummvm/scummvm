@@ -194,6 +194,7 @@ private:
 	void refreshAnimObjects(int force);
 
 	bool _loadingState;
+	void updateItemAnimations();
 	void updateCharacterAnim(int charId);
 
 	void updateSceneAnim(int anim, int newFrame);
@@ -208,6 +209,20 @@ private:
 
 	bool _nextIdleType;
 	void showIdleAnim();
+
+	static const FrameControl _itemAnimFrames0[];
+	static const FrameControl _itemAnimFrames1[];
+	static const FrameControl _itemAnimFrames2[];
+	static const FrameControl _itemAnimFrames3[];
+	static const FrameControl _itemAnimFrames4[];
+	static const FrameControl _itemAnimFrames5[];
+	static const FrameControl _itemAnimFrames6[];
+	static const FrameControl _itemAnimFrames7[];
+	static const FrameControl _itemAnimFrames8[];
+	static const FrameControl _itemAnimFrames9[];
+	static const ItemAnimData_v2 _itemAnimData[10];
+	ActiveItemAnim _activeItemAnim[10];
+	int _nextAnimItem;
 
 	// interface
 	uint8 *_interface;
