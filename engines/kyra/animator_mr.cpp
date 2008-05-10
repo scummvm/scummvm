@@ -215,7 +215,7 @@ void KyraEngine_MR::updateItemAnimations() {
 		return;
 
 	uint16 shpIdx = s->frames[a->currentFrame].index + 248;
-	if ((s->itemIndex == _handItemSet || s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
+	if ((/*s->itemIndex == _handItemSet || */s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
 		nextFrame = true;
 		_screen->setMouseCursor(12, 19, getShapePtr(shpIdx));
 	}
