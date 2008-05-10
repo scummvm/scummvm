@@ -54,20 +54,24 @@ void vector_renderer_test(OSystem *_system) {
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
 
 	vr->setSurface(&_screen);
-	vr->setColor(255, 0, 0);
-	vr->fillSurface();
-	vr->setColor(255, 255, 0);
+	vr->clearSurface();
 
 	_system->showOverlay();
 
 	while (true) { // draw!!
-		vr->setColor(255, 255, 255);
+		vr->setFgColor(255, 255, 255);
 		vr->fillSurface();
-		vr->setColor(255, 0, 0 );
+
+		vr->setFgColor(255, 0, 0 );
+		vr->setBgColor(25, 25, 175 );
+		vr->setFillMode( VectorRenderer::kBackgroundFill );
+		vr->shadowEnable( 5, 5 );
+
 		vr->drawLine(25, 25, 125, 300);
 		vr->drawCircle(250, 250, 100);
-//		vr->drawSquare(150, 25, 100, 100, true);
-		vr->drawRoundedSquare(150, 25, 8, 100, 75);
+		vr->drawSquare(150, 25, 100, 75);
+		vr->drawRoundedSquare(275, 25, 8, 100, 75);
+
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
 
@@ -83,31 +87,35 @@ void vector_renderer_test(OSystem *_system) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawSquare(int x, int y, int w, int h, bool fill) {
-	if ( fill ) {
-		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-		int pitch = Base::surfacePitch();
-
+drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill) {
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
+	int pitch = Base::surfacePitch();
+	
+	if (fill) {
 		while (h--) {
-			Common::set_to(ptr, ptr + w, (PixelType)_color);
+			Common::set_to(ptr, ptr + w, color);
 			ptr += pitch;
 		}
 	} else {
-		drawLine(x, y, x + w, y);
-		drawLine(x + w, y, x + w, y + w);
-		drawLine(x, y + w, x + w, y + w);
-		drawLine(x, y, x, y + w);
+		Common::set_to(ptr, ptr + w, color);
+		Common::set_to(ptr + pitch * h, ptr + w + pitch * h, color);
+
+		while (h--) {
+			*ptr = color;
+			*(ptr + w) = color;
+			ptr += pitch;
+		}
 	}
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
+drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = Base::surfacePitch();
 	int xdir = (x2 > x1) ? 1 : -1;
 
-	*ptr = (PixelType)_color;
+	*ptr = (PixelType)color;
 
 	if (dx > dy) {
 		int ddy = dy * 2;
@@ -123,7 +131,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 			}
 
 			ptr += xdir;
-			*ptr = (PixelType)_color;
+			*ptr = (PixelType)color;
 		}
 	} else {
 		int ddx = dx * 2;
@@ -139,20 +147,20 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 			}
 
 			ptr += pitch;
-			*ptr = (PixelType)_color;
+			*ptr = (PixelType)color;
 		}
 	}
 
 	ptr = (PixelType *)_activeSurface->getBasePtr(x2, y2);
-	*ptr = (PixelType)_color;
+	*ptr = (PixelType)color;
 }
 
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-blendPixelPtr(PixelType *ptr, uint8 alpha) {
+blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 	register int idst = *ptr;
-	register int isrc = Base::_color;
+	register int isrc = color;
 
 	*ptr = (PixelType)(
 		(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
@@ -169,7 +177,7 @@ blendPixelPtr(PixelType *ptr, uint8 alpha) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
+drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 	int pitch = Base::surfacePitch();
@@ -177,7 +185,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 	uint16 error_tmp, error_acc, gradient;
 	uint8 alpha;
 
-	*ptr = (PixelType)Base::_color;
+	*ptr = (PixelType)color;
 
 	if (dx > dy) {
 		gradient = (uint32)(dy << 16) / (uint32)dx;
@@ -193,8 +201,8 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 			ptr += xdir;
 			alpha = (error_acc >> 8);
 
-			blendPixelPtr(ptr, ~alpha);
-			blendPixelPtr(ptr + pitch, alpha);
+			blendPixelPtr(ptr, color, ~alpha);
+			blendPixelPtr(ptr + pitch, color, alpha);
 		}
 	} else {
 		gradient = (uint32)(dx << 16) / (uint32)dy;
@@ -210,12 +218,12 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) {
 			ptr += pitch;
 			alpha = (error_acc >> 8);
 
-			blendPixelPtr(ptr, ~alpha);
-			blendPixelPtr(ptr + xdir, alpha);
+			blendPixelPtr(ptr, color, ~alpha);
+			blendPixelPtr(ptr + xdir, color, alpha);
 		}
 	}
 
-	Base::putPixel(x2, y2);
+	Base::putPixel(x2, y2, color);
 }
 
 template<typename PixelType, typename PixelFormat>
@@ -240,12 +248,12 @@ drawLine(int x1, int y1, int x2, int y2) {
 	if (dy == 0) { // horizontal lines
 		// these can be filled really fast with a single memset.
 		// TODO: Platform specific ASM in set_to, would make this thing fly 
-		Common::set_to(ptr, ptr + dx + 1, (PixelType)_color);
+		Common::set_to(ptr, ptr + dx + 1, (PixelType)_fgColor);
 
 	} else if (dx == 0) { // vertical lines
 		// these ones use a static pitch increase.
 		while (y1++ <= y2) {
-			*ptr = (PixelType)_color;
+			*ptr = (PixelType)_fgColor;
 			ptr += pitch;
 		}
 
@@ -254,12 +262,12 @@ drawLine(int x1, int y1, int x2, int y2) {
 		pitch += (x2 > x1) ? 1 : -1;
 
 		while (dy--) {
-			*ptr = (PixelType)_color;
+			*ptr = (PixelType)_fgColor;
 			ptr += pitch;
 		}
 
 	} else { // generic lines, use the standard algorithm...
-		drawLineAlg(x1, y1, x2, y2, dx, dy);
+		drawLineAlg(x1, y1, x2, y2, dx, dy, (PixelType)_fgColor);
 	}
 }
 
@@ -288,23 +296,22 @@ inline uint32 fp_sqroot(uint32 x) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawCircleAlg(int x1, int y1, int r) {
+drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
 	int f = 1 - r;
 	int ddF_x = 0, ddF_y = -2 * r;
 	int x = 0, y = r, px, py;
 	int pitch = Base::surfacePitch();
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
-	bool fill = true;
 
 	px = 0;
 	py = pitch * y;
 
-	*(ptr + y) = _color;
-	*(ptr - y) = _color;
-	*(ptr + py) = _color;
-	*(ptr - py) = _color;
+	*(ptr + y) = color;
+	*(ptr - y) = color;
+	*(ptr + py) = color;
+	*(ptr - py) = color;
 
-	if (fill) Common::set_to(ptr - r, ptr + r, _color);
+	if (fill) Common::set_to(ptr - r, ptr + r, color);
 
 	while (x++ < y) {
 		if (f >= 0) {
@@ -319,33 +326,32 @@ drawCircleAlg(int x1, int y1, int r) {
 		f += ddF_x + 1;
 
 		if (fill) {
-			Common::set_to(ptr - x + py, ptr + x + py, _color);
-			Common::set_to(ptr - x - py, ptr + x - py, _color);
-			Common::set_to(ptr - y + px, ptr + y + px, _color);
-			Common::set_to(ptr - y - px, ptr + y - px, _color);
+			Common::set_to(ptr - x + py, ptr + x + py, color);
+			Common::set_to(ptr - x - py, ptr + x - py, color);
+			Common::set_to(ptr - y + px, ptr + y + px, color);
+			Common::set_to(ptr - y - px, ptr + y - px, color);
 		}
 
-		*(ptr + x + py) = _color;
-		*(ptr + y - px) = _color;
-		*(ptr - x - py) = _color; 
-		*(ptr - y - px) = _color;
-		*(ptr - y + px) = _color;
-		*(ptr - x + py) = _color;
-		*(ptr + y + px) = _color;
-		*(ptr + x - py) = _color;
+		*(ptr + x + py) = color;
+		*(ptr + y - px) = color;
+		*(ptr - x - py) = color; 
+		*(ptr - y - px) = color;
+		*(ptr - y + px) = color;
+		*(ptr - x + py) = color;
+		*(ptr + y + px) = color;
+		*(ptr + x - py) = color;
 	}
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill) {
 	int x = r;
 	int y = 0;
 	int p = Base::surfacePitch(), px, py;
 	uint32 rsq = (r * r) << 16;
 	uint32 T = 0, oldT;
 	uint8 a1, a2;
-	bool fill = true;
 
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
@@ -353,21 +359,21 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
 	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
 	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	Common::set_to(ptr_fill + r, ptr_fill + w - r + 1, Base::_color);
-	Common::set_to(ptr_fill + r + h*p, ptr_fill + w - r + 1 + h*p, Base::_color);
+	Common::set_to(ptr_fill + r, ptr_fill + w - r + 1, color);
+	Common::set_to(ptr_fill + r + h*p, ptr_fill + w - r + 1 + h*p, color);
 
 	h -= 2*r;
 	ptr_fill += p*r;
 
 	if (!fill) {
 		while (h-- >= 0) {
-			*(ptr_fill) = (PixelType)Base::_color;
-			*(ptr_fill + w) = (PixelType)Base::_color;
+			*(ptr_fill) = (PixelType)color;
+			*(ptr_fill + w) = (PixelType)color;
 			ptr_fill += p;
 		}
 	} else {
 		while (h-- >= 0) {
-			Common::set_to(ptr_fill, ptr_fill + w + 1, Base::_color);
+			Common::set_to(ptr_fill, ptr_fill + w + 1, color);
 			ptr_fill += p;
 		}
 	}
@@ -391,60 +397,59 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
 		a1 = ~a2;
 
 		if (fill) {
-			Common::set_to(ptr_tl - x - py, ptr_tr + x - py, Base::_color);
-			Common::set_to(ptr_tl - y - px, ptr_tr + y - px, Base::_color);
+			Common::set_to(ptr_tl - x - py, ptr_tr + x - py, color);
+			Common::set_to(ptr_tl - y - px, ptr_tr + y - px, color);
 
-			Common::set_to(ptr_bl - x + py, ptr_br + x + py, Base::_color);
-			Common::set_to(ptr_bl - y + px, ptr_br + y + px, Base::_color);
+			Common::set_to(ptr_bl - x + py, ptr_br + x + py, color);
+			Common::set_to(ptr_bl - y + px, ptr_br + y + px, color);
 		} else {
-			blendPixelPtr(ptr_tr + y - (px-p), a2);
-			blendPixelPtr(ptr_tr + x - 1 - py, a2);
+			blendPixelPtr(ptr_tr + y - (px-p), color, a2);
+			blendPixelPtr(ptr_tr + x - 1 - py, color, a2);
 
-			blendPixelPtr(ptr_tl - x + 1 - py, a2);
-			blendPixelPtr(ptr_tl - y - (px-p), a2);
+			blendPixelPtr(ptr_tl - x + 1 - py, color, a2);
+			blendPixelPtr(ptr_tl - y - (px-p), color, a2);
 
-			blendPixelPtr(ptr_bl - y + (px-p), a2);
-			blendPixelPtr(ptr_bl - x + 1 + py, a2);
+			blendPixelPtr(ptr_bl - y + (px-p), color, a2);
+			blendPixelPtr(ptr_bl - x + 1 + py, color, a2);
 
-			blendPixelPtr(ptr_br + x - 1 + py, a2);
-			blendPixelPtr(ptr_br + y + (px-p), a2);
+			blendPixelPtr(ptr_br + x - 1 + py, color, a2);
+			blendPixelPtr(ptr_br + y + (px-p), color, a2);
 		} 
 
-		blendPixelPtr(ptr_tr + y - px, a1);
-		blendPixelPtr(ptr_tr + x - py, a1);
+		blendPixelPtr(ptr_tr + y - px, color, a1);
+		blendPixelPtr(ptr_tr + x - py, color, a1);
 
-		blendPixelPtr(ptr_tl - x - py, a1);
-		blendPixelPtr(ptr_tl - y - px, a1);
+		blendPixelPtr(ptr_tl - x - py, color, a1);
+		blendPixelPtr(ptr_tl - y - px, color, a1);
 
-		blendPixelPtr(ptr_bl - y + px, a1);
-		blendPixelPtr(ptr_bl - x + py, a1);
+		blendPixelPtr(ptr_bl - y + px, color, a1);
+		blendPixelPtr(ptr_bl - x + py, color, a1);
 
-		blendPixelPtr(ptr_br + x + py, a1);
-		blendPixelPtr(ptr_br + y + px, a1);
+		blendPixelPtr(ptr_br + x + py, color, a1);
+		blendPixelPtr(ptr_br + y + px, color, a1);
 	}
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawCircleAlg(int x1, int y1, int r) {
+drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
 	int x = r;
 	int y = 0;
 	int p = Base::surfacePitch(), px = 0, py = 0;
 	uint32 rsq = (r * r) << 16;
 	uint32 T = 0, oldT;
 	uint8 a1, a2;
-	bool fill = false;
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 	px = p * x;
 	py = p * y;
 
-	*(ptr + x) = (PixelType)Base::_color;
-	*(ptr - x) = (PixelType)Base::_color;
-	*(ptr + px) = (PixelType)Base::_color;
-	*(ptr - px) = (PixelType)Base::_color;
+	*(ptr + x) = (PixelType)color;
+	*(ptr - x) = (PixelType)color;
+	*(ptr + px) = (PixelType)color;
+	*(ptr - px) = (PixelType)color;
 	
-	if (fill) Common::set_to(ptr - x, ptr + x, Base::_color);
+	if (fill) Common::set_to(ptr - x, ptr + x, color);
 
 	while (x > y++)
 	{
@@ -462,29 +467,29 @@ drawCircleAlg(int x1, int y1, int r) {
 		a1 = ~a2;
 
 		if (fill) {
-			Common::set_to(ptr - x + py, ptr + x + py, Base::_color);
-			Common::set_to(ptr - x - py, ptr + x - py, Base::_color);
-			Common::set_to(ptr - y + px, ptr + y + px, Base::_color);
-			Common::set_to(ptr - y - px, ptr + y - px, Base::_color);
+			Common::set_to(ptr - x + py, ptr + x + py, color);
+			Common::set_to(ptr - x - py, ptr + x - py, color);
+			Common::set_to(ptr - y + px, ptr + y + px, color);
+			Common::set_to(ptr - y - px, ptr + y - px, color);
 		} else {
-			blendPixelPtr(ptr + x - 1 + py, a2);
-			blendPixelPtr(ptr + y - (px-p), a2);
-			blendPixelPtr(ptr - x + 1 - py, a2);
-			blendPixelPtr(ptr - y - (px-p), a2);
-			blendPixelPtr(ptr - y + (px-p), a2);
-			blendPixelPtr(ptr - x + 1 + py, a2);
-			blendPixelPtr(ptr + y + (px-p), a2);
-			blendPixelPtr(ptr + x - 1 - py, a2);
+			blendPixelPtr(ptr + x - 1 + py, color, a2);
+			blendPixelPtr(ptr + y - (px-p), color, a2);
+			blendPixelPtr(ptr - x + 1 - py, color, a2);
+			blendPixelPtr(ptr - y - (px-p), color, a2);
+			blendPixelPtr(ptr - y + (px-p), color, a2);
+			blendPixelPtr(ptr - x + 1 + py, color, a2);
+			blendPixelPtr(ptr + y + (px-p), color, a2);
+			blendPixelPtr(ptr + x - 1 - py, color, a2);
 		}
 
-		blendPixelPtr(ptr + x + py, a1);
-		blendPixelPtr(ptr + y - px, a1);
-		blendPixelPtr(ptr - x - py, a1); 
-		blendPixelPtr(ptr - y - px, a1);
-		blendPixelPtr(ptr - y + px, a1);
-		blendPixelPtr(ptr - x + py, a1);
-		blendPixelPtr(ptr + y + px, a1);
-		blendPixelPtr(ptr + x - py, a1);
+		blendPixelPtr(ptr + x + py, color, a1);
+		blendPixelPtr(ptr + y - px, color, a1);
+		blendPixelPtr(ptr - x - py, color, a1); 
+		blendPixelPtr(ptr - y - px, color, a1);
+		blendPixelPtr(ptr - y + px, color, a1);
+		blendPixelPtr(ptr - x + py, color, a1);
+		blendPixelPtr(ptr + y + px, color, a1);
+		blendPixelPtr(ptr + x - py, color, a1);
 	}
 }
 

@@ -53,7 +53,20 @@ void vector_renderer_test(OSystem *_system);
 class VectorRenderer {
 
 public:
+	VectorRenderer() : _shadows(false), _fillMode(kNoFill), _activeSurface(NULL) {}
 	virtual ~VectorRenderer() {}
+
+	enum FillMode {
+		kNoFill = 0,
+		kForegroundFill = 1,
+		kBackgroundFill = 2,
+		kGradientFill = 3
+	};
+
+	enum ColorMode {
+		kForegroundColor,
+		kBackgroundColor
+	};
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -75,7 +88,7 @@ public:
 	virtual void drawCircle(int x, int y, int r) = 0;
 
 
-	virtual void drawSquare(int x, int y, int w, int h, bool fill) = 0;
+	virtual void drawSquare(int x, int y, int w, int h) = 0;
 
 	virtual void drawRoundedSquare(int x1, int y1, int r, int w, int h) = 0;
 
@@ -110,7 +123,8 @@ public:
 	 * @param g	value of the green color byte
 	 * @param b	value of the blue color byte
 	 */
-	virtual void setColor(uint8 r, uint8 g, uint8 b) = 0;
+	virtual void setFgColor(uint8 r, uint8 g, uint8 b) = 0;
+	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
 	 * Sets the active drawing surface. All drawing from this
@@ -125,7 +139,7 @@ public:
 	/**
 	 * Fills the active surface with the currently active drawing color.
 	 */
-	virtual void fillSurface() = 0;
+	virtual void fillSurface(ColorMode mode = kForegroundColor) = 0;
 
 	/**
 	 * Clears the active surface.
@@ -135,54 +149,28 @@ public:
 		memset(src, 0, _activeSurface->w * _activeSurface->h * _activeSurface->bytesPerPixel);
 	}
 
-	/**
-	 * Draws a single pixel on the surface with the given coordinates and
-	 * the currently active drawing color.
-	 *
-	 * @param x Horizontal coordinate of the pixel.
-	 * @param y Vertical coordinate of the pixel.
-	 */
-	inline virtual void putPixel(int x, int y) = 0;
+	virtual void setFillMode(VectorRenderer::FillMode mode) {
+		_fillMode = mode;
+	}
 
-	/**
-	 * Blends a single pixel on the surface with the given coordinates, with
-	 * the currently active drawing color and with the given Alpha intensity.
-	 *
-	 * @param x Horizontal coordinate of the pixel.
-	 * @param y Vertical coordinate of the pixel.
-	 * @param alpha Alpha intensity of the pixel (0-255)
-	 */
-	inline virtual void blendPixel(int x, int y, uint8 alpha) = 0;
+	virtual void shadowEnable(int x_offset, int y_offset) {
+		_shadows = true;
+		_shadowXOffset = x_offset;
+		_shadowYOffset = y_offset;
+	}
+
+	virtual void shadowDisable() {
+		_shadows = false;
+	}
 
 protected:
-
-	/**
-	 * Generic line drawing algorithm. May be implemented by each
-	 * inheriting class, i.e. with platform specific code.
-	 *
-	 * @see VectorRenderer::drawLine()
-	 * @param x1 Horizontal (X) coordinate for the line start
-	 * @param x2 Horizontal (X) coordinate for the line end
-	 * @param y1 Vertical (Y) coordinate for the line start
-	 * @param y2 Vertical (Y) coordinate for the line end
-	 * @param dx Horizontal (X) increasement.
-	 * @param dy Vertical (Y) increasement.
-	 */
-	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy) = 0;
-
-	/**
-	 * Specific circle drawing algorithm with symmetry. Must be implemented
-	 * on each renderer.
-	 *
-	 * @param x Horizontal (X) coordinate for the center of the circle
-	 * @param y Vertical (Y) coordinate for the center of the circle
-	 * @param r Radius of the circle.
-	 */
-	virtual void drawCircleAlg(int x, int y, int r) = 0;
-
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) = 0;
-
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
+
+	FillMode _fillMode;
+	
+	bool _shadows;
+	int _shadowXOffset;
+	int _shadowYOffset;
 };
 
 
@@ -217,49 +205,132 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2);
 
 	void drawCircle(int x, int y, int r) {
-		drawCircleAlg(x, y, r);
+		if (Base::_fillMode != kNoFill && Base::_shadows) {
+			drawCircleAlg(x + Base::_shadowXOffset, y + Base::_shadowYOffset, r, 0, true);
+		}
+
+		switch(Base::_fillMode) {
+		case kNoFill:
+			drawCircleAlg(x, y, r, _fgColor, false);
+			break;
+
+		case kForegroundFill:
+			drawCircleAlg(x, y, r, _fgColor, true);
+			break;
+
+		case kBackgroundFill:
+			drawCircleAlg(x, y, r - 1, _bgColor, true);
+			drawCircleAlg(x, y, r, _fgColor, false);
+			break;
+
+		case kGradientFill:
+			break;
+		}
 	}
 
-	void drawSquare(int x, int y, int w, int h, bool fill);
+	void drawSquare(int x, int y, int w, int h) {
+		if (Base::_fillMode != kNoFill && Base::_shadows) {
+			drawSquareAlg(x + Base::_shadowXOffset , y + h, w, Base::_shadowYOffset, 0, true);
+			drawSquareAlg(x + w, y + Base::_shadowYOffset, Base::_shadowXOffset, h, 0, true);
+		}
 
-	void drawRoundedSquare(int x1, int y1, int r, int w, int h) {
-		drawRoundedSquareAlg(x1, y1, r, w, h);
+		switch(Base::_fillMode) {
+		case kNoFill:
+			drawSquareAlg(x, y, w, h, _fgColor, false);
+			break;
+
+		case kForegroundFill:
+			drawSquareAlg(x, y, w, h, _fgColor, true);
+			break;
+
+		case kBackgroundFill:
+			drawSquareAlg(x, y, w, h, _bgColor, true);
+			drawSquareAlg(x, y, w, h, _fgColor, false);
+			break;
+
+		case kGradientFill:
+			break;
+		}
+	}
+
+	void drawRoundedSquare(int x, int y, int r, int w, int h) {
+		if (Base::_fillMode != kNoFill && Base::_shadows) {
+			drawRoundedSquareAlg(x + Base::_shadowXOffset, y + Base::_shadowYOffset, r, w, h, 0, true);
+		}
+
+		switch(Base::_fillMode) {
+		case kNoFill:
+			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
+			break;
+
+		case kForegroundFill:
+			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, true);
+			break;
+
+		case kBackgroundFill:
+			drawRoundedSquareAlg(x, y, r + 1, w, h, _bgColor, true);
+			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
+			break;
+
+		case kGradientFill:
+			break;
+		}
 	}
 
 	/**
 	 * @see VectorRenderer::setColor()
 	 */
-	void setColor(uint8 r, uint8 g, uint8 b) {
-		this->_color = RGBToColor<PixelFormat>(r, g, b);
+	void setFgColor(uint8 r, uint8 g, uint8 b) {
+		this->_fgColor = RGBToColor<PixelFormat>(r, g, b);
+	}
+
+	void setBgColor(uint8 r, uint8 g, uint8 b) {
+		this->_bgColor = RGBToColor<PixelFormat>(r, g, b);
 	}
 
 	/**
 	 * @see VectorRenderer::fillSurface()
 	 */
-	void fillSurface() {
+	void fillSurface(ColorMode mode = kForegroundColor) {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
 		int s = _activeSurface->w * _activeSurface->h;
-		Common::set_to(ptr, ptr + s, (PixelType)_color);
-	}
 
-	/**
-	 * @see VectorRenderer::putPixel()
-	 */
-	inline void putPixel( int x, int y ) {
-		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-		*ptr = _color;
-	}
-
-	/**
-	 * On the Specialized Renderer, alpha blending is not supported. 
-	 *
-	 * @see VectorRenderer::blendPixel()
-	 */
-	virtual inline void blendPixel(int x, int y, uint8 alpha) {
-		putPixel(x, y);
+		if (mode == kBackgroundColor)
+			Common::set_to(ptr, ptr + s, _bgColor);
+		else if (mode == kForegroundColor)
+			Common::set_to(ptr, ptr + s, _fgColor);
 	}
 
 protected:
+
+	/**
+	 * Draws a single pixel on the surface with the given coordinates and
+	 * the given color.
+	 *
+	 * @param x Horizontal coordinate of the pixel.
+	 * @param y Vertical coordinate of the pixel.
+	 * @param color Color of the pixel
+	 */
+	virtual inline void putPixel( int x, int y, PixelType color ) {
+		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
+		*ptr = color;
+	}
+
+	/**
+	 * Blends a single pixel on the surface with the given coordinates, color
+	 * and Alpha intensity.
+	 *
+	 * Note: Pixel blending is currently disabled on the Specialized Renderer
+	 * because of performance issues.
+	 *
+	 * @param x Horizontal coordinate of the pixel.
+	 * @param y Vertical coordinate of the pixel.
+	 * @param color Color of the pixel
+	 * @param alpha Alpha intensity of the pixel (0-255)
+	 */
+	virtual inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
+		putPixel(x, y, color);
+	}
 
 	/*
 	 * "Bresenham's Line Algorithm", as described in Wikipedia.
@@ -267,20 +338,14 @@ protected:
 	 *
 	 * Generic line drawing algorithm for the aliased renderer. Optimized with no
 	 * floating point operations and direct access to pixel buffer, assumes no special cases.
-	 *
-	 * @see VectorRenderer::drawLineAlg()
 	 */
-	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy);
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, bool fill = false);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false) {}
+	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill = false);
 
-	/**
-	 * @see VectorRenderer::drawCircleAlg()
-	 */
-	virtual void drawCircleAlg(int x, int y, int r);
-
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h) {
-	}
-
-	PixelType _color; /** Color currently being used to draw on the renderer */
+	PixelType _fgColor; /** Color currently being used to draw on the renderer */
+	PixelType _bgColor;
 };
 
 /**
@@ -308,7 +373,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy);
+	void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
 
 	/**
 	 * Perform alpha blending on top of a given pixel, not on a given
@@ -321,7 +386,7 @@ protected:
 	 * @param ptr Pointer to the pixel where we must draw
 	 * @param alpha Intensity of the pixel (0-255).
 	 */
-	inline void blendPixelPtr(PixelType *ptr, uint8 alpha);
+	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
 	/**
 	 * @see VectorRenderer::blendPixel()
@@ -329,13 +394,11 @@ protected:
 	 * The AA renderer does support alpha blending. Special cases are
 	 * handled separately.
 	 */
-	inline void blendPixel(int x, int y, uint8 alpha) {
-		if (alpha == 0)
-			return;
-		else if (alpha < 255)
-			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), alpha);
-		else
-			Base::putPixel(x, y);
+	inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
+		if (alpha == 255)
+			putPixel(x, y, color);
+		else if (alpha > 0 )
+			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
 	/**
@@ -347,9 +410,9 @@ protected:
 	 *
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, bool fill = false);
 
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false);
 };
 
 } // end of namespace Graphics
