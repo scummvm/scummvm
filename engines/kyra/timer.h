@@ -52,7 +52,7 @@ public:
 	TimerManager(KyraEngine *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0), _isPaused(0), _pauseStart(0) {}
 	~TimerManager() { reset(); }
 
-	void pause(bool pause);
+	void pause(bool p);
 
 	void reset();
 

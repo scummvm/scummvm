@@ -62,15 +62,15 @@ struct TimerEqual : public Common::UnaryFunction<const TimerEntry&, bool> {
 };
 } // end of anonymous namespace
 
-void TimerManager::pause(bool pause) {
-	if (pause) {
+void TimerManager::pause(bool p) {
+	if (p) {
 		++_isPaused;
 
 		if (_isPaused == 1) {
 			_isPaused = true;
 			_pauseStart = _system->getMillis();
 		}
-	} else if (!pause && _isPaused > 0) {
+	} else if (!p && _isPaused > 0) {
 		--_isPaused;
 
 		if (_isPaused == 0) {
