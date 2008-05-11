@@ -64,9 +64,6 @@ enum MidiDriverType {
 	MD_YPA1,
 	MD_ZODIAC,
 
-	// MorphOS
-	MD_ETUDE,
-
 	// IRIX
 	MD_DMEDIA,
 
@@ -279,7 +276,6 @@ extern MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_CORE_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_CoreMIDI_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_CAMD_create(Audio::Mixer *mixer);
