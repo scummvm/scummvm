@@ -589,7 +589,7 @@ void DrasculaEngine::room_16(int fl) {
 		pause(3);
 		talk_baul(_text[_lang][83], "d83.als");
 	} else if (objeto_que_lleva == OPEN && fl == 183) {
-		abre_puerta(19, NO_PUERTA);
+		abre_puerta(19, NO_DOOR);
 		if (flags[20] == 0) {
 			flags[20] = 1;
 			sentido_hare = 3;
@@ -599,7 +599,7 @@ void DrasculaEngine::room_16(int fl) {
 			agarra_objeto(22);
 		}
 	} else if (objeto_que_lleva == CLOSE && fl == 183)
-		cierra_puerta(19, NO_PUERTA);
+		cierra_puerta(19, NO_DOOR);
 	else if (objeto_que_lleva == LOOK && fl == 185)
 		talk(_text[_lang][37], "37.als");
 	else if (objeto_que_lleva == PICK && fl == 185)

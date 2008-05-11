@@ -41,7 +41,7 @@ void DrasculaEngine::talk_igor_dch(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -113,7 +113,7 @@ void DrasculaEngine::talk_dr_izq(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(ROJO);
+	color_abc(RED);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -191,7 +191,7 @@ void DrasculaEngine::talk_dr_dch(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(ROJO);
+	color_abc(RED);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -272,7 +272,7 @@ void DrasculaEngine::talk_solo(const char *dicho, const char *filename) {
 	if (num_ejec == 1)
 		color_abc(color_solo);
 	else if (num_ejec == 4)
-		color_abc(ROJO);
+		color_abc(RED);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -336,7 +336,7 @@ void DrasculaEngine::talk_igor_frente(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -417,7 +417,7 @@ void DrasculaEngine::talk_tabernero(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(MARRON);
+	color_abc(MAROON);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -489,7 +489,7 @@ void DrasculaEngine::talk_bj(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -592,10 +592,10 @@ void DrasculaEngine::talk(const char *dicho, const char *filename) {
 
 	if (num_ejec == 4) {
 		if (strcmp(num_room, "24.alg") || flags[29] == 0) {
-			color_abc(AMARILLO);
+			color_abc(YELLOW);
 		}
 	} else {
-		color_abc(AMARILLO);
+		color_abc(YELLOW);
 	}
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -718,7 +718,7 @@ void DrasculaEngine::talk_pianista(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -798,7 +798,7 @@ bebiendo:
 		goto bebiendo;
 	}
 
-	color_abc(VERDE_OSCURO);
+	color_abc(DARK_GREEN);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1099,7 +1099,7 @@ void DrasculaEngine::talk_hacker(const char *dicho, const char *filename) {
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	color_abc(AMARILLO);
+	color_abc(YELLOW);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1149,7 +1149,7 @@ void DrasculaEngine::talk_lobo(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(ROJO);
+	color_abc(RED);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1214,7 +1214,7 @@ void DrasculaEngine::talk_mus(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1285,7 +1285,7 @@ void DrasculaEngine::talk_pen(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(AMARILLO);
+	color_abc(YELLOW);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1354,7 +1354,7 @@ void DrasculaEngine::talk_pen2(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(AMARILLO);
+	color_abc(YELLOW);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1421,7 +1421,7 @@ void DrasculaEngine::talk_taber2(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(MARRON);
+	color_abc(MAROON);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1486,7 +1486,7 @@ void DrasculaEngine::talk_bj_cama(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1552,7 +1552,7 @@ void DrasculaEngine::talk_htel(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(AMARILLO);
+	color_abc(YELLOW);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1616,7 +1616,7 @@ void DrasculaEngine::talk_sinc(const char *dicho, const char *filename, const ch
 	int longitud;
 	longitud = strlen(dicho);
 
-	color_abc(AMARILLO);
+	color_abc(YELLOW);
 
 	if (num_ejec == 1) {
 		if (factor_red[hare_y + alto_hare] == 100)
@@ -1746,7 +1746,7 @@ void DrasculaEngine::talk_baul(const char *dicho, const char *filename) {
 
 	cara_antes = flags[19];
 
-	color_abc(MARRON);
+	color_abc(MAROON);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1807,7 +1807,7 @@ void DrasculaEngine::talk_igorpuerta(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1){
 		sku = new Common::File;
@@ -1860,7 +1860,7 @@ void DrasculaEngine::talk_igor_sentado(const char *dicho, const char *filename) 
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -1925,7 +1925,7 @@ void DrasculaEngine::talk_igor_peluca(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(BLANCO);
+	color_abc(WHITE);
 
 	if (hay_sb == 1){
 		sku = new Common::File;

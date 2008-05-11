@@ -228,24 +228,24 @@ struct DrasculaGameDescription;
 #define X_N8            249
 #define X_N9            258
 #define X_N0            267
-#define ESPACIO         250
+#define SPACE           250
 #define ALTO_TALK_HARE  25
 #define ANCHO_TALK_HARE 23
 #define VON_BRAUN        1
-#define AZUL_OSCURO       2
-#define VERDE_CLARO       3
-#define VERDE_OSCURO      4
-#define AMARILLO          5
-#define NARANJA           6
-#define ROJO              7
-#define MARRON            8
-#define MORADO            9
-#define BLANCO           10
-#define ROSA             11
+#define DARK_BLUE         2
+#define LIGHT_GREEN       3
+#define DARK_GREEN        4
+#define YELLOW            5
+#define ORANGE            6
+#define RED               7
+#define MAROON            8
+#define PURPLE            9
+#define WHITE            10
+#define PINK             11
 #define PASO_HARE_X       8
 #define PASO_HARE_Y       3
-#define ALTO_PERSONAJE   70
-#define ANCHO_PERSONAJE  43
+#define CHARACTER_HEIGHT   70
+#define CHARACTER_WIDTH  43
 #define PIES_HARE        12
 
 #define CHAR_WIDTH_OPC     6
@@ -283,7 +283,7 @@ struct DrasculaGameDescription;
 #define X_X_OPC             178
 #define X_Y_OPC             185
 #define X_Z_OPC             192
-#define ESPACIO_OPC         199
+#define SPACE_OPC           199
 #define X_DOT_OPC            10
 #define X_COMA_OPC           17
 #define X_HYPHEN_OPC          24
@@ -314,7 +314,7 @@ struct DrasculaGameDescription;
 #define X_N8_OPC            199
 #define X_N9_OPC            206
 #define X_N0_OPC            213
-#define NO_PUERTA            99
+#define NO_DOOR              99
 
 #define INIT_FRAME  0
 #define CMP_RLE     1

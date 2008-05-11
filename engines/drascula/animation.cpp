@@ -64,7 +64,7 @@ void DrasculaEngine::animation_1_1() {
 		delay(900);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		color_abc(ROJO);
+		color_abc(RED);
 		centra_texto("Transilvanya, 1993 d.c.", 160, 100);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -205,7 +205,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
-		color_solo = ROJO;
+		color_solo = RED;
 		loadPic("plan1.alg");
 		decompressPic(dir_zona_pantalla, MEDIA);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -401,7 +401,7 @@ void DrasculaEngine::talk_dr_grande(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(ROJO);
+	color_abc(RED);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -491,7 +491,7 @@ void DrasculaEngine::animation_2_1() {
 		stopMusic();
 		corta_musica = 1;
 		memset(dir_zona_pantalla, 0, 64000);
-		color_solo = BLANCO;
+		color_solo = WHITE;
 		pause(80);
 
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -509,7 +509,7 @@ void DrasculaEngine::animation_2_1() {
 		FundeDelNegro(1);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		color_solo = AMARILLO;
+		color_solo = YELLOW;
 		talk_solo(_text[_lang][214], "214.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -594,7 +594,7 @@ void DrasculaEngine::animation_2_1() {
 		talk_solo(_text[_lang][223], "223.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		color_solo = BLANCO;
+		color_solo = WHITE;
 		updateRoom();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -983,7 +983,7 @@ void DrasculaEngine::animation_16_2() {
 	if (key != 0)
 		goto asco;
 
-	color_abc(VERDE_OSCURO);
+	color_abc(DARK_GREEN);
 
 	loadPic("his1.alg");
 	decompressPic(dir_dibujo1, MEDIA);
@@ -2379,7 +2379,7 @@ void DrasculaEngine::animation_9_6() {
 	clearRoom();
 	loadPic("nota.alg");
 	decompressPic(dir_dibujo1, COMPLETA);
-	color_abc(BLANCO);
+	color_abc(WHITE);
 	talk_solo(_textbj[_lang][24], "bj24.als");
 	talk_solo(_textbj[_lang][25], "bj25.als");
 	talk_solo(_textbj[_lang][26], "bj26.als");
@@ -2400,7 +2400,7 @@ void DrasculaEngine::animation_9_6() {
 	updateRoom();
 	copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	color_abc(VERDE_CLARO);
+	color_abc(LIGHT_GREEN);
 	talk_solo("GOOOOOOOOOOOOOOOL", "s15.als");
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, 1);
