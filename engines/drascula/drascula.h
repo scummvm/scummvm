@@ -824,7 +824,7 @@ private:
 };
 
 extern const char *_text[][501];
-extern const char *_textd[][79];
+extern const char *_textd[][84];
 extern const char *_textb[][15];
 extern const char *_textbj[][29];
 extern const char *_texte[][24];
@@ -835,6 +835,7 @@ extern const char *_textt[][25];
 extern const char *_textvb[][63];
 extern const char *_textsys[][4];
 extern const char *_texthis[][5];
+extern const char *_textverbs[][6];
 
 } // End of namespace Drascula
 

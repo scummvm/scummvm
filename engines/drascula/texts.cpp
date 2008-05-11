@@ -5174,12 +5174,12 @@ const char *_texthis[][5] = {
 	"Nobody knows exactly what happened there. Although Von Braun lost, Drascula could not kill him.",
 	"Von Braun felt humiliated by his defect, run away from the castle and has never dared to face Drascula ever again.",
 },
+{
 	"",
 	"",
 	"",
 	"",
 	""
-{
 },
 {
 	"",
