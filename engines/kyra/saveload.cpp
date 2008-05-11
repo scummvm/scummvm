@@ -29,7 +29,7 @@
 
 #include "kyra/kyra.h"
 
-#define CURRENT_SAVE_VERSION 12
+#define CURRENT_SAVE_VERSION 13
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -69,6 +69,11 @@ KyraEngine::kReadSaveHeaderError KyraEngine::readSaveHeader(Common::InSaveFile *
 				saveOk = true;
 				header.description = descriptionBuffer;
 				header.gameID = GI_KYRA2;
+				break;
+			} else if (type == MKID_BE('MBL4') && header.version == 102) {
+				saveOk = true;
+				header.description = descriptionBuffer;
+				header.gameID = GI_KYRA3;
 				break;
 			}
 		}
