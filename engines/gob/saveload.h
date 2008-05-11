@@ -335,8 +335,11 @@ class SaveLoad_v4 : public SaveLoad {
 public:
 	enum SaveType {
 		kSaveNone,
+		kSaveGame,
 		kSaveTempBuffer
 	};
+
+	bool _firstSizeGame;
 
 	SaveLoad_v4(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v4();
@@ -356,6 +359,11 @@ protected:
 	int32 _varSize;
 
 	PagedBuffer _tmpBuffer;
+	StagedSave _save;
+
+	byte _propBuffer[1000];
+	byte _indexBuffer[1200];
+	bool _hasIndex;
 
 	virtual int getSaveType(const char *fileName);
 
@@ -363,10 +371,16 @@ protected:
 	virtual bool loadVersioned(int type, int16 dataVar, int32 size, int32 offset);
 	virtual bool saveVersioned(int type, int16 dataVar, int32 size, int32 offset);
 
+	int getSlot(int32 offset) const;
+	int getSlotRemainder(int32 offset) const;
+
+	int32 getSizeGame(SaveFile &saveFile);
 	int32 getSizeTempBuffer(SaveFile &saveFile);
 
+	bool loadGame(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 	bool loadTempBuffer(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 
+	bool saveGame(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 	bool saveTempBuffer(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 
 	void assertInited();
