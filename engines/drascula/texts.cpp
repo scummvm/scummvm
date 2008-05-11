@@ -5239,12 +5239,12 @@ const char *_textverbs[][6] = {
 	"push",
 },
 {
-	"look", // TODO Translate it
-	"take",
-	"open",
-	"close",
-	"talk",
-	"push",
+	"esamina",
+	"prendi",
+	"apri",
+	"chiudi",
+	"parla",
+	"premi",
 },
 };
 
