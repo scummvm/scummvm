@@ -606,6 +606,7 @@ void KyraEngine_MR::albumChatWaitToFinish() {
 			_album.wsa->setY(90);
 			_album.wsa->setDrawPage(2);
 
+			albumRestoreRect();
 			_album.wsa->displayFrame(frame, 0x4000);
 			albumUpdateRect();
 

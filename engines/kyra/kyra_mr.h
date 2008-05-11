@@ -572,7 +572,7 @@ private:
 	void albumRestoreRect();
 	void albumUpdateRect();
 
-	void albumSwitchPages(int oldPage, int newPage, int unk);
+	void albumSwitchPages(int oldPage, int newPage, int srcPage);
 
 	int albumNextPage(Button *caller);
 	int albumPrevPage(Button *caller);

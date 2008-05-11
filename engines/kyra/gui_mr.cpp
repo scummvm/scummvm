@@ -742,11 +742,14 @@ void KyraEngine_MR::showAlbum() {
 	restorePage3();
 	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyBlockToPage(4, 0, 0, 320, 200, _album.backUpPage);
-	delete[] _album.backUpPage;
-	_album.backUpPage = 0;
 
 	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
 	_screen->fadePalette(_screen->getPalette(0), 9);
+
+	delete[] _album.backUpRect;
+	_album.backUpRect = 0;
+	delete[] _album.backUpPage;
+	_album.backUpPage = 0;
 	delete[] _album.file;
 	_album.file = 0;
 
@@ -1045,16 +1048,16 @@ void KyraEngine_MR::albumUpdateRect() {
 	_screen->updateScreen();
 }
 
-void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int unk) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::albumSwitchPages()");
+void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int srcPage) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::albumSwitchPages(%d, %d, %d)", oldPage, newPage, srcPage);
 	if (newPage > oldPage) {
-		//XXX
+		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x64, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(260, 7, 260, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayWithTicks(1);
 
-		//XXX
+		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x32, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(210, 7, 210, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -1064,22 +1067,24 @@ void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int unk) {
 		_screen->updateScreen();
 		delayWithTicks(1);
 
-		//XXX
+		_screen->wsaFrameAnimationStep(0x10, 0x07, 0x6E, 0x07, 0x96, 0xBA, 0x32, 0xBA, 2, 0, 2);
+		_screen->updateScreen();
 		delayWithTicks(1);
 
-		//XXX
+		_screen->wsaFrameAnimationStep(0x10, 0x07, 0x3C, 0x07, 0x96, 0xBA, 0x64, 0xBA, 2, 0, 2);
+		_screen->updateScreen();
 		delayWithTicks(1);
 
 		_screen->copyRegion(10, 7, 10, 7, 150, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 	} else {
-		//XXX
+		_screen->wsaFrameAnimationStep(0x0A, 0x07, 0x3C, 0x07, 0x96, 0xBA, 0x64, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(10, 7, 10, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayWithTicks(1);
 
-		//XXX
+		_screen->wsaFrameAnimationStep(0x0A, 0x07, 0x6E, 0x07, 0x96, 0xBA, 0x32, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(60, 7, 60, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -1089,10 +1094,12 @@ void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int unk) {
 		_screen->updateScreen();
 		delayWithTicks(1);
 
-		//XXX
+		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x32, 0xBA, 2, 0, 2);
+		_screen->updateScreen();
 		delayWithTicks(1);
 
-		//XXX
+		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x64, 0xBA, 2, 0, 2);
+		_screen->updateScreen();
 		delayWithTicks(1);
 
 		_screen->copyRegion(160, 7, 160, 7, 150, 186, 2, 0, Screen::CR_NO_P_CHECK);
