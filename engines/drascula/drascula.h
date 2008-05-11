@@ -51,7 +51,7 @@ enum DrasculaGameFeatures {
 struct DrasculaGameDescription;
 
 #define NUM_SAVES     10
-#define NUM_BANDERAS  50
+#define NUM_FLAGS     50
 #define ESC          0x01
 #define F1           0x3B
 #define F2           0x3C
@@ -72,8 +72,8 @@ struct DrasculaGameDescription;
 #define FINALSOUND      8
 #define FINDRV          9
 #define DIF_MASK       55
-#define ANCHOBJ        40
-#define ALTOBJ         25
+#define OBJWIDTH        40
+#define OBJHEIGHT         25
 
 #define X_OBJ1         5
 #define Y_OBJ1         10
@@ -164,8 +164,8 @@ struct DrasculaGameDescription;
 
 #define DIF_MASK_HARE   72
 #define DIF_MASK_ABC    22
-#define ANCHO_LETRAS     8
-#define ALTO_LETRAS      6
+#define CHAR_WIDTH     8
+#define CHAR_HEIGHT      6
 
 #define Y_ABC            158
 #define Y_SIGNOS         169
@@ -200,7 +200,7 @@ struct DrasculaGameDescription;
 #define X_Z             240
 #define X_PUNTO          6
 #define X_COMA           15
-#define X_GUION          24
+#define X_HYPHEN          24
 #define X_CIERRA_INTERROGACION        33
 #define X_ABRE_INTERROGACION          42
 #define X_COMILLAS       51
@@ -214,8 +214,8 @@ struct DrasculaGameDescription;
 #define X_DOS_PUNTOS             123
 #define X_AND            132
 #define X_BARRA             141
-#define X_ABRE_PARENTESIS             150
-#define X_CIERRA_PARENTESIS             159
+#define X_BRACKET_OPEN             150
+#define X_BRACKET_CLOSE             159
 #define X_ASTERISCO             168
 #define X_MAS             177
 #define X_N1             186
@@ -248,8 +248,8 @@ struct DrasculaGameDescription;
 #define ANCHO_PERSONAJE  43
 #define PIES_HARE        12
 
-#define ANCHO_LETRAS_OPC     6
-#define ALTO_LETRAS_OPC      5
+#define CHAR_WIDTH_OPC     6
+#define CHAR_HEIGHT_OPC      5
 #define Y_ABC_OPC_1          6
 #define Y_SIGNOS_OPC_1       15
 #define Y_ABC_OPC_2          31
@@ -286,7 +286,7 @@ struct DrasculaGameDescription;
 #define ESPACIO_OPC         199
 #define X_PUNTO_OPC          10
 #define X_COMA_OPC           17
-#define X_GUION_OPC          24
+#define X_HYPHEN_OPC          24
 #define X_CIERRA_INTERROGACION_OPC        31
 #define X_ABRE_INTERROGACION_OPC          38
 #define X_COMILLAS_OPC       45
@@ -300,8 +300,8 @@ struct DrasculaGameDescription;
 #define X_DOS_PUNTOS_OPC             101
 #define X_AND_OPC            108
 #define X_BARRA_OPC             115
-#define X_ABRE_PARENTESIS_OPC             122
-#define X_CIERRA_PARENTESIS_OPC             129
+#define X_BRACKET_OPEN_OPC             122
+#define X_BRACKET_CLOSE_OPC             129
 #define X_ASTERISCO_OPC             136
 #define X_MAS_OPC             143
 #define X_N1_OPC             150
@@ -424,7 +424,7 @@ public:
 	int c_mirar;
 	int c_poder;
 
-	int flags[NUM_BANDERAS];
+	int flags[NUM_FLAGS];
 
 	int frame_y;
 	int hare_x, hare_y, hare_se_mueve, direccion_hare, sentido_hare, num_frame, hare_se_ve;

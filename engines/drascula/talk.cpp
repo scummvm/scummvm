@@ -616,9 +616,9 @@ bucless:
 
 	updateRefresh_pre();
 	if (num_ejec == 2)
-		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
 	else
-		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]),
 				dir_zona_pantalla, dir_dibujo3);
 
@@ -626,9 +626,9 @@ bucless:
 
 	if (num_ejec == 2) {
 		if (!strcmp(fondo_y_menu, "99.alg") || !strcmp(fondo_y_menu, "994.alg"))
-			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
 	} else {
-		copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]),
 				dir_dibujo3, dir_zona_pantalla);
 	}
@@ -890,7 +890,7 @@ void DrasculaEngine::talk_vb(const char *dicho, const char *filename) {
 		ctvd_output(sku);
 	}
 
-	copyBackground(vb_x + 5, 64, ANCHOBJ + 1, 0, 25, 27, dir_dibujo1, dir_dibujo3);
+	copyBackground(vb_x + 5, 64, OBJWIDTH + 1, 0, 25, 27, dir_dibujo1, dir_dibujo3);
 
 bucless:
 
@@ -901,7 +901,7 @@ bucless:
 		pon_hare();
 		pon_vb();
 
-		copyBackground(ANCHOBJ + 1, 0, vb_x + 5, 64, 25, 27, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(OBJWIDTH + 1, 0, vb_x + 5, 64, 25, 27, dir_dibujo3, dir_zona_pantalla);
 		copyRect(x_talk[cara], 34, vb_x + 5, 64, 25, 27, dir_hare_frente, dir_zona_pantalla);
 		updateRefresh();
 	}
@@ -1659,16 +1659,16 @@ bucless:
 
 	updateRefresh_pre();
 	if (num_ejec == 2)
-		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
 	else
-		copyBackground(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), dir_zona_pantalla, dir_dibujo3);
 	pon_hare();
 	if (num_ejec == 2) {
 		if (alto_hare != 56)
-			copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
 	} else
-		copyBackground(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+		copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), dir_dibujo3, dir_zona_pantalla);
 
 	if (sentido_hare == 0) {

@@ -488,7 +488,7 @@ bool DrasculaEngine::escoba() {
 	for (n = 1; n < 43; n++)
 		objetos_que_tengo[n] = 0;
 
-	for (n = 0; n < NUM_BANDERAS; n++)
+	for (n = 0; n < NUM_FLAGS; n++)
 		flags[n] = 0;
 
 	if (num_ejec == 2) {
@@ -791,7 +791,7 @@ void DrasculaEngine::elige_objeto(int objeto) {
 		if (lleva_objeto == 1 && menu_scr == 0)
 			suma_objeto(objeto_que_lleva);
 	}
-	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 	lleva_objeto = 1;
 	objeto_que_lleva = objeto;
 }
@@ -824,7 +824,7 @@ void DrasculaEngine::sin_verbo() {
 		if (lleva_objeto == 1)
 			suma_objeto(objeto_que_lleva);
 	}
-	copyBackground(0, c, 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(0, c, 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
 	lleva_objeto = 0;
 	hay_nombre = 0;
@@ -1032,7 +1032,7 @@ martini:
 	loadPic(num_room);
 	decompressPic(dir_dibujo1, MEDIA);
 
-	copyBackground(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
 	color_hare();
 	if (nivel_osc != 0)
@@ -1205,8 +1205,8 @@ void DrasculaEngine::mueve_cursor() {
 	pos_cursor[1] = 0;
 	pos_cursor[2] = x_raton - 20;
 	pos_cursor[3] = y_raton - 17;
-	pos_cursor[4] = ANCHOBJ;
-	pos_cursor[5] = ALTOBJ;
+	pos_cursor[4] = OBJWIDTH;
+	pos_cursor[5] = OBJHEIGHT;
 	copyRectClip(pos_cursor, dir_dibujo3, dir_zona_pantalla);
 }
 
@@ -1406,7 +1406,7 @@ void DrasculaEngine::elige_verbo(int verbo) {
 			suma_objeto(objeto_que_lleva);
 	}
 
-	copyBackground(ANCHOBJ * verbo, c, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(OBJWIDTH * verbo, c, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
 	lleva_objeto = 1;
 	objeto_que_lleva = verbo;
@@ -1674,7 +1674,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			else if (c == ',')
 				x_de_letra = X_COMA;
 			else if (c == '-')
-				x_de_letra = X_GUION;
+				x_de_letra = X_HYPHEN;
 			else if (c == '?')
 				x_de_letra = X_CIERRA_INTERROGACION;
 			else if (c == 0xa8)
@@ -1704,9 +1704,9 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			else if (c == '/')
 				x_de_letra = X_BARRA;
 			else if (c == '(')
-				x_de_letra = X_ABRE_PARENTESIS;
+				x_de_letra = X_BRACKET_OPEN;
 			else if (c == ')')
-				x_de_letra = X_CIERRA_PARENTESIS;
+				x_de_letra = X_BRACKET_CLOSE;
 			else if (c == '*')
 				x_de_letra = X_ASTERISCO;
 			else if (c == '+')
@@ -1737,15 +1737,15 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 		pos_texto[1] = y_de_letra;
 		pos_texto[2] = x_pantalla;
 		pos_texto[3] = y_pantalla;
-		pos_texto[4] = ANCHO_LETRAS;
-		pos_texto[5] = ALTO_LETRAS;
+		pos_texto[4] = CHAR_WIDTH;
+		pos_texto[5] = CHAR_HEIGHT;
 
 		copyRectClip(pos_texto, dir_texto, dir_zona_pantalla);
 
-		x_pantalla = x_pantalla + ANCHO_LETRAS;
+		x_pantalla = x_pantalla + CHAR_WIDTH;
 		if (x_pantalla > 317) {
 			x_pantalla = 0;
-			y_pantalla = y_pantalla + ALTO_LETRAS + 2;
+			y_pantalla = y_pantalla + CHAR_HEIGHT + 2;
 		}
 	}
 }
@@ -1916,7 +1916,7 @@ void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto)
 	if (ya == 1)
 		x_texto1 = 315 - x_texto;
 
-	x_texto2 = (strlen(m1) / 2) * ANCHO_LETRAS;
+	x_texto2 = (strlen(m1) / 2) * CHAR_WIDTH;
 
 tut:
 	strcpy(bb, m1);
@@ -1931,7 +1931,7 @@ tut:
 		strcpy(m2, m3);
 	};
 
-	x_texto2 = (strlen(m1) / 2) * ANCHO_LETRAS;
+	x_texto2 = (strlen(m1) / 2) * CHAR_WIDTH;
 	if (x_texto1 < x_texto2)
 		goto tut;
 	strcpy(mb[conta_f], m1);
@@ -1949,12 +1949,12 @@ tut:
 
 imprimir:
 
-	fil = y_texto - (((conta_f + 3) * ALTO_LETRAS));
+	fil = y_texto - (((conta_f + 3) * CHAR_HEIGHT));
 
 	for (h = 0; h < conta_f + 1; h++) {
 		x_texto3 = strlen(mb[h]) / 2;
-		print_abc(mb[h], ((x_texto) - x_texto3 * ANCHO_LETRAS) - 1, fil);
-		fil = fil + ALTO_LETRAS + 2;
+		print_abc(mb[h], ((x_texto) - x_texto3 * CHAR_WIDTH) - 1, fil);
+		fil = fil + CHAR_HEIGHT + 2;
 	}
 }
 
@@ -2210,7 +2210,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 		objetos_que_tengo[l] = sav->readSint32LE();
 	}
 
-	for (l = 0; l < NUM_BANDERAS; l++) {
+	for (l = 0; l < NUM_FLAGS; l++) {
 		flags[l] = sav->readSint32LE();
 	}
 
@@ -2548,13 +2548,13 @@ void DrasculaEngine::menu_sin_volcar() {
 		if (h != 0) {
 			if (num_ejec == 6)
 				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
-						ANCHOBJ, ALTOBJ, dir_mesa, dir_zona_pantalla);
+						OBJWIDTH, OBJHEIGHT, dir_mesa, dir_zona_pantalla);
 			else
 				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
-						ANCHOBJ, ALTOBJ, dir_hare_frente, dir_zona_pantalla);
+						OBJWIDTH, OBJHEIGHT, dir_hare_frente, dir_zona_pantalla);
 		}
 		copyRect(x1d_menu[h], y1d_menu[h], x_obj[n], y_obj[n],
-				ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_zona_pantalla);
+				OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_zona_pantalla);
 	}
 
 	if (x < 7)
@@ -2567,8 +2567,8 @@ void DrasculaEngine::barra_menu() {
 	for (n = 0; n < 7; n++) {
 		if (x_raton > x_barra[n] && x_raton < x_barra[n + 1])
 			sobre_verbo = 0;
-		copyRect(ANCHOBJ * n, ALTOBJ * sobre_verbo, x_barra[n], 2,
-						ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(OBJWIDTH * n, OBJHEIGHT * sobre_verbo, x_barra[n], 2,
+						OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_zona_pantalla);
 		sobre_verbo = 1;
 	}
 }
@@ -3672,7 +3672,7 @@ void DrasculaEngine::graba_partida(char nom_game[]) {
 		out->writeSint32LE(objetos_que_tengo[l]);
 	}
 
-	for (l = 0; l < NUM_BANDERAS; l++) {
+	for (l = 0; l < NUM_FLAGS; l++) {
 		out->writeSint32LE(flags[l]);
 	}
 
@@ -3737,7 +3737,7 @@ int DrasculaEngine::sobre_que_objeto() {
 
 	for (n = 1; n < 43; n++) {
 		if (x_raton > x_obj[n] && y_raton > y_obj[n]
-				&& x_raton < x_obj[n] + ANCHOBJ && y_raton < y_obj[n] + ALTOBJ)
+				&& x_raton < x_obj[n] + OBJWIDTH && y_raton < y_obj[n] + OBJHEIGHT)
 			break;
 	}
 
@@ -4056,7 +4056,7 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			else if (c == ',')
 				x_de_letra = X_COMA_OPC;
 			else if (c == '-')
-				x_de_letra = X_GUION_OPC;
+				x_de_letra = X_HYPHEN_OPC;
 			else if (c == '?')
 				x_de_letra = X_CIERRA_INTERROGACION_OPC;
 			else if (c == 0xa8)
@@ -4086,9 +4086,9 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			else if (c == '/')
 				x_de_letra = X_BARRA_OPC;
 			else if (c == '(')
-				x_de_letra = X_ABRE_PARENTESIS_OPC;
+				x_de_letra = X_BRACKET_OPEN_OPC;
 			else if (c == ')')
-				x_de_letra = X_CIERRA_PARENTESIS_OPC;
+				x_de_letra = X_BRACKET_CLOSE_OPC;
 			else if (c == '*')
 				x_de_letra = X_ASTERISCO_OPC;
 			else if (c == '+')
@@ -4119,12 +4119,12 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 		pos_texto[1] = y_de_letra;
 		pos_texto[2] = x_pantalla;
 		pos_texto[3] = y_pantalla;
-		pos_texto[4] = ANCHO_LETRAS_OPC;
-		pos_texto[5] = ALTO_LETRAS_OPC;
+		pos_texto[4] = CHAR_WIDTH_OPC;
+		pos_texto[5] = CHAR_HEIGHT_OPC;
 
 		copyRectClip(pos_texto, dir_hare_fondo, dir_zona_pantalla);
 
-		x_pantalla = x_pantalla + ANCHO_LETRAS_OPC;
+		x_pantalla = x_pantalla + CHAR_WIDTH_OPC;
 	}
 }
 
@@ -4566,7 +4566,7 @@ void DrasculaEngine::activa_pendulo() {
 	loadPic("an_p3.alg");
 	decompressPic(dir_hare_frente, 1);
 
-	copyBackground(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
+	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
 	conta_ciego_vez = vez();
 }
