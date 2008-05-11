@@ -101,16 +101,11 @@ public:
 	OpcodeSet	*_currentOpcodes;
 	Table		*_currentStatements;
 
-	void	bind(Script *script);
-	void	unbind();
+	void	reset();
 	void	pushTables(OpcodeSet *opcodes, Table* statements);
 	void	popTables();
 	void	parseStatement();
 
-protected:
-	void	reset();
-
-	Script	*_script;
 };
 
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
@@ -128,6 +123,7 @@ class LocationParser_ns {
 
 protected:
 	Parallaction_ns*	_vm;
+	Script	*script;
 	Parser	*parser;
 
 	Table		*_zoneTypeNames;
@@ -143,11 +139,10 @@ protected:
 	Table		*_locationZoneStmt;
 	Table		*_locationAnimStmt;
 
-	struct LocationParserContext {
+	struct ParserContext {
 		bool		end;
 
 		const char	*filename;
-		Script		*script;
 		ZonePtr		z;
 		AnimationPtr	a;
 		int			nextToken;
@@ -160,7 +155,7 @@ protected:
 		char *bgName;
 		char *maskName;
 		char *pathName;
-	} _locParseCtxt;
+	} ctxt;
 
 	void warning_unexpected();
 
@@ -205,25 +200,25 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
 
-	virtual void parseGetData(Script &script, ZonePtr z);
-	virtual void parseExamineData(Script &script, ZonePtr z);
-	virtual void parseDoorData(Script &script, ZonePtr z);
-	virtual void parseMergeData(Script &script, ZonePtr z);
-	virtual void parseHearData(Script &script, ZonePtr z);
-	virtual void parseSpeakData(Script &script, ZonePtr z);
+	virtual void parseGetData(ZonePtr z);
+	virtual void parseExamineData(ZonePtr z);
+	virtual void parseDoorData(ZonePtr z);
+	virtual void parseMergeData(ZonePtr z);
+	virtual void parseHearData(ZonePtr z);
+	virtual void parseSpeakData(ZonePtr z);
 
-	char		*parseComment(Script &script);
-	char		*parseDialogueString(Script &script);
-	Dialogue	*parseDialogue(Script &script);
+	char		*parseComment();
+	char		*parseDialogueString();
+	Dialogue	*parseDialogue();
 	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
-	Answer		*parseAnswer(Script &script);
-	Question	*parseQuestion(Script &script);
+	Answer		*parseAnswer();
+	Question	*parseQuestion();
 
-	void		parseZone(Script &script, ZoneList &list, char *name);
-	void		parseZoneTypeBlock(Script &script, ZonePtr z);
-	void		parseWalkNodes(Script& script, WalkNodeList &list);
-	void		parseAnimation(Script &script, AnimationList &list, char *name);
-	void		parseCommands(Script &script, CommandList&);
+	void		parseZone(ZoneList &list, char *name);
+	void		parseZoneTypeBlock(ZonePtr z);
+	void		parseWalkNodes(WalkNodeList &list);
+	void		parseAnimation(AnimationList &list, char *name);
+	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
 	void 		saveCommandForward(const char *name, CommandPtr cmd);
 	void 		resolveCommandForwards();
@@ -330,16 +325,15 @@ protected:
 	OpcodeSet	_instructionParsers;
 	Table		*_instructionNames;
 
-	struct {
+	struct ParserContext {
 		bool		end;
 		AnimationPtr	a;
 		InstructionPtr inst;
 		LocalVariable *locals;
-		ProgramPtr	program;
 
 		// BRA specific
 		InstructionPtr openIf;
-	} _instParseCtxt;
+	} ctxt;
 
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
