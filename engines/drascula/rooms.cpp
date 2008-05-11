@@ -1163,7 +1163,7 @@ void DrasculaEngine::room_59(int fl) {
 			hare_se_ve = 1;
 			clearRoom();
 			loadPic("tlef0.alg");
-			decompressPic(dir_dibujo1, COMPLETA);
+			decompressPic(dir_dibujo1, COMPLETE_PAL);
 			loadPic("tlef1.alg");
 			decompressPic(dir_dibujo3, 1);
 			loadPic("tlef2.alg");
@@ -1190,11 +1190,11 @@ void DrasculaEngine::room_59(int fl) {
 			loadPic("aux59.alg");
 			decompressPic(dir_dibujo3, 1);
 			loadPic("96.alg");
-			decompressPic(dir_hare_frente, COMPLETA);
+			decompressPic(dir_hare_frente, COMPLETE_PAL);
 			loadPic("99.alg");
 			decompressPic(dir_hare_fondo, 1);
 			loadPic("59.alg");
-			decompressPic(dir_dibujo1, MEDIA);
+			decompressPic(dir_dibujo1, HALF_PAL);
 			sentido_hare = 3;
 			talk(_text[_lang][245], "245.als");
 			withoutVerb();

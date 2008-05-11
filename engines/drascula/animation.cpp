@@ -102,9 +102,9 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 
 		loadPic("96.alg");
-		decompressPic(dir_hare_frente, COMPLETA);
+		decompressPic(dir_hare_frente, COMPLETE_PAL);
 		loadPic("103.alg");
-		decompressPic(dir_dibujo1, MEDIA);
+		decompressPic(dir_dibujo1, HALF_PAL);
 		loadPic("104.alg");
 		decompressPic(dir_dibujo3, 1);
 		loadPic("aux104.alg");
@@ -169,7 +169,7 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 
 		loadPic("100.alg");
-		decompressPic(dir_dibujo1, MEDIA);
+		decompressPic(dir_dibujo1, HALF_PAL);
 		loadPic("auxigor.alg");
 		decompressPic(dir_hare_frente, 1);
 		loadPic("auxdr.alg");
@@ -207,14 +207,14 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 		color_solo = RED;
 		loadPic("plan1.alg");
-		decompressPic(dir_zona_pantalla, MEDIA);
+		decompressPic(dir_zona_pantalla, HALF_PAL);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(10);
 		talk_solo(_textd[_lang][4],"d4.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan1.alg");
-		decompressPic(dir_zona_pantalla, MEDIA);
+		decompressPic(dir_zona_pantalla, HALF_PAL);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		talk_solo(_textd[_lang][5], "d5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -224,7 +224,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 		loadPic("plan2.alg");
-		decompressPic(dir_zona_pantalla, MEDIA);
+		decompressPic(dir_zona_pantalla, HALF_PAL);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(20);
 		talk_solo(_textd[_lang][6], "d6.als");
@@ -235,7 +235,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 		loadPic("plan3.alg");
-		decompressPic(dir_zona_pantalla, MEDIA);
+		decompressPic(dir_zona_pantalla, HALF_PAL);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(20);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -244,14 +244,14 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan3.alg");
-		decompressPic(dir_zona_pantalla, MEDIA);
+		decompressPic(dir_zona_pantalla, HALF_PAL);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		talk_solo(_textd[_lang][8], "d8.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
 		loadPic("100.alg");
-		decompressPic(dir_dibujo1, MEDIA);
+		decompressPic(dir_dibujo1, HALF_PAL);
 		MusicFadeout();
 		stopMusic();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -382,7 +382,7 @@ void DrasculaEngine::animation_1_1() {
 	}
 	clearRoom();
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, COMPLETA);
+	decompressPic(dir_hare_frente, COMPLETE_PAL);
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
 }
@@ -501,7 +501,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		clearRoom();
 		loadPic("bj.alg");
-		decompressPic(dir_zona_pantalla, MEDIA);
+		decompressPic(dir_zona_pantalla, HALF_PAL);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		black();
@@ -516,7 +516,7 @@ void DrasculaEngine::animation_2_1() {
 		clearRoom();
 
 		loadPic("16.alg");
-		decompressPic(dir_dibujo1, MEDIA);
+		decompressPic(dir_dibujo1, HALF_PAL);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("auxbj.alg");
@@ -832,7 +832,7 @@ void DrasculaEngine::animation_4_2() {
 
 	clearRoom();
 	loadPic("ciego1.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("ciego2.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("ciego3.alg");
@@ -881,7 +881,7 @@ void DrasculaEngine::animation_4_2() {
 
 	playMusic(roomMusic);
 	loadPic("9.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("aux9.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("96.alg");
@@ -991,7 +991,7 @@ void DrasculaEngine::animation_16_2() {
 		color_abc(DARK_GREEN);
 
 	loadPic("his1.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 
 	if (_lang == kSpanish)
 		black();
@@ -1026,7 +1026,7 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 	loadPic("his2.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	if (_lang != kSpanish)
@@ -1053,7 +1053,7 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 	loadPic("his3.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	if (_lang != kSpanish)
@@ -1077,7 +1077,7 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 	loadPic("his4_1.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("his4_2.alg");
 	decompressPic(dir_dibujo3, 1);
 
@@ -1117,7 +1117,7 @@ asco:
 	loadPic(roomDisk);
 	decompressPic(dir_dibujo3, 1);
 	loadPic(num_room);
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	black();
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1779,7 +1779,7 @@ void DrasculaEngine::animation_6_3() {
 
 void DrasculaEngine::animation_rayo() {
 	loadPic("anr_1.alg");
-	decompressPic(dir_hare_frente, MEDIA);
+	decompressPic(dir_hare_frente, HALF_PAL);
 	loadPic("anr_2.alg");
 	decompressPic(dir_hare_dch, 1);
 	loadPic("anr_3.alg");
@@ -1966,7 +1966,7 @@ void DrasculaEngine::animation_5_5(){
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	loadPic("101.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("3an5_3.alg");
 	decompressPic(dir_hare_fondo, 1);
 	loadPic("3an5_4.alg");
@@ -1997,7 +1997,7 @@ void DrasculaEngine::animation_5_5(){
 	clearRoom();
 
 	loadPic("49.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 }
 
 void DrasculaEngine::animation_6_5() {
@@ -2101,11 +2101,11 @@ void DrasculaEngine::animation_12_5() {
 
 	for (frame = 0; frame < 8; frame++) {
 		if (frame == 2 || frame == 4 || frame == 8 || frame==10)
-			setvgapalette256((byte *)&palFondo1);
+			setPalette((byte *)&palFondo1);
 		else if (frame == 1 || frame == 5 || frame == 7 || frame == 9)
-			setvgapalette256((byte *)&palFondo2);
+			setPalette((byte *)&palFondo2);
 		else
-			setvgapalette256((byte *)&palFondo3);
+			setPalette((byte *)&palFondo3);
 
 		pause(4);
 		updateRoom();
@@ -2118,11 +2118,11 @@ void DrasculaEngine::animation_12_5() {
 
 	for (frame = 0; frame < 15; frame++) {
 		if (frame == 2 || frame == 4 || frame == 7 || frame == 9)
-			setvgapalette256((byte *)&palFondo1);
+			setPalette((byte *)&palFondo1);
 		else if (frame == 1 || frame == 5)
-			setvgapalette256((byte *)&palJuego);
+			setPalette((byte *)&palJuego);
 		else
-			setvgapalette256((byte *)&palFondo2);
+			setPalette((byte *)&palFondo2);
 
 		pause(4);
 		updateRoom();
@@ -2404,7 +2404,7 @@ void DrasculaEngine::animation_9_6() {
 	carga_escoba("59.ald");
 	strcpy(num_room, "nada.alg");
 	loadPic("nota2.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	black();
 	sentido_hare = 1;
 	hare_x -= 21;
@@ -2419,7 +2419,7 @@ void DrasculaEngine::animation_9_6() {
 	playMusic(9);
 	clearRoom();
 	loadPic("nota.alg");
-	decompressPic(dir_dibujo1, COMPLETA);
+	decompressPic(dir_dibujo1, COMPLETE_PAL);
 	color_abc(WHITE);
 	talk_solo(_textbj[_lang][24], "bj24.als");
 	talk_solo(_textbj[_lang][25], "bj25.als");
@@ -2429,9 +2429,9 @@ void DrasculaEngine::animation_9_6() {
 	sentido_hare = 3;
 	clearRoom();
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, COMPLETA);
+	decompressPic(dir_hare_frente, COMPLETE_PAL);
 	loadPic("nota2.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	talk(_text[_lang][296], "296.als");
 	talk(_text[_lang][297], "297.als");
 	talk(_text[_lang][298], "298.als");
@@ -3209,7 +3209,7 @@ void DrasculaEngine::animation_6_2() {
 
 	clearRoom();
 	loadPic("ciego1.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("ciego2.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("ciego3.alg");
@@ -3240,7 +3240,7 @@ void DrasculaEngine::animation_6_2() {
 
 	playMusic(roomMusic);
 	loadPic("9.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("aux9.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("96.alg");
@@ -3264,7 +3264,7 @@ void DrasculaEngine::animation_33_2() {
 
 	clearRoom();
 	loadPic("ciego1.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("ciego2.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("ciego3.alg");
@@ -3296,7 +3296,7 @@ void DrasculaEngine::animation_33_2() {
 
 	playMusic(roomMusic);
 	loadPic("9.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("aux9.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("96.alg");
@@ -3406,7 +3406,7 @@ void DrasculaEngine::animation_6_4() {
 	strcpy(num_room, "26.alg");
 	clearRoom();
 	loadPic("26.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("aux26.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("auxigor.alg");
@@ -3426,7 +3426,7 @@ void DrasculaEngine::animation_6_4() {
 	loadPic(roomDisk);
 	decompressPic(dir_dibujo3, 1);
 	loadPic(num_room);
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	withoutVerb();
 	updateRoom();
 }

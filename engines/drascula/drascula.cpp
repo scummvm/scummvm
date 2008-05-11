@@ -173,19 +173,19 @@ int DrasculaEngine::go() {
 
 		if (num_ejec == 1) {
 			loadPic("96.alg");
-			decompressPic(dir_hare_frente, COMPLETA);
+			decompressPic(dir_hare_frente, COMPLETE_PAL);
 			loadPic("99.alg");
 			decompressPic(dir_hare_fondo, 1);
 			loadPic("97.alg");
 			decompressPic(dir_hare_dch, 1);
 		} else if (num_ejec == 2) {
 			loadPic("96.alg");
-			decompressPic(dir_hare_frente, COMPLETA);
+			decompressPic(dir_hare_frente, COMPLETE_PAL);
 			loadPic("pts.alg");
 			decompressPic(dir_dibujo2, 1);
 		} else if (num_ejec == 3) {
 			loadPic("aux13.alg");
-			decompressPic(dir_dibujo1, COMPLETA);
+			decompressPic(dir_dibujo1, COMPLETE_PAL);
 			loadPic("96.alg");
 			decompressPic(dir_hare_frente, 1);
 			loadPic("97.alg");
@@ -194,7 +194,7 @@ int DrasculaEngine::go() {
 			decompressPic(dir_hare_fondo, 1);
 		} else if (num_ejec == 4) {
 			loadPic("96.alg");
-			decompressPic(dir_hare_frente, COMPLETA);
+			decompressPic(dir_hare_frente, COMPLETE_PAL);
 			if (hay_que_load == 0)
 				animation_rayo();
 			loadPic("96.alg");
@@ -206,7 +206,7 @@ int DrasculaEngine::go() {
 			decompressPic(dir_hare_dch, 1);
 		} else if (num_ejec == 5) {
 			loadPic("96.alg");
-			decompressPic(dir_hare_frente, COMPLETA);
+			decompressPic(dir_hare_frente, COMPLETE_PAL);
 			loadPic("97.alg");
 			decompressPic(dir_hare_dch, 1);
 			loadPic("99.alg");
@@ -220,7 +220,7 @@ int DrasculaEngine::go() {
 			dir_pendulo = dir_dibujo3;
 
 			loadPic("96.alg");
-			decompressPic(dir_hare_frente, COMPLETA);
+			decompressPic(dir_hare_frente, COMPLETE_PAL);
 			loadPic("99.alg");
 			decompressPic(dir_hare_fondo, 1);
 			loadPic("97.alg");
@@ -370,14 +370,14 @@ void DrasculaEngine::black() {
 	palNegra[254][1] = 0x3F;
 	palNegra[254][2] = 0x15;
 
-	setvgapalette256((byte *)&palNegra);
+	setPalette((byte *)&palNegra);
 }
 
 void DrasculaEngine::updatePalette() {
-	setvgapalette256((byte *)&palJuego);
+	setPalette((byte *)&palJuego);
 }
 
-void DrasculaEngine::setvgapalette256(byte *PalBuf) {
+void DrasculaEngine::setPalette(byte *PalBuf) {
 	byte pal[256 * 4];
 	int i;
 
@@ -640,7 +640,7 @@ bucles:
 		else
 			loadPic("99.alg");
 		decompressPic(dir_hare_fondo, 1);
-		setvgapalette256((byte *)&palJuego);
+		setPalette((byte *)&palJuego);
 		menu_scr = 0;
 		espera_soltar();
 		if (num_ejec != 3)
@@ -933,9 +933,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 martini:
 
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &objs_room);
+	sscanf(buffer, "%d", &numRoomObjs);
 
-	for (l = 0; l < objs_room; l++) {
+	for (l = 0; l < numRoomObjs; l++) {
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &num_obj[l]);
 		getLine(ald, buffer, size);
@@ -1009,7 +1009,7 @@ martini:
 		}
 	}
 
-	for (l = 0; l < objs_room; l++) {
+	for (l = 0; l < numRoomObjs; l++) {
 		if (num_obj[l] == obj_saliendo)
 			obj_salir = l;
 	}
@@ -1025,7 +1025,7 @@ martini:
 	decompressPic(dir_dibujo3, 1);
 
 	loadPic(num_room);
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
@@ -1208,7 +1208,7 @@ void DrasculaEngine::mueve_cursor() {
 void DrasculaEngine::comprueba_objetos() {
 	int l, veo = 0;
 
-	for (l = 0; l < objs_room; l++) {
+	for (l = 0; l < numRoomObjs; l++) {
 		if (x_raton > x1[l] && y_raton > y1[l]
 				&& x_raton < x2[l] && y_raton < y2[l]
 				&& visible[l] == 1 && isDoor[l] == 0) {
@@ -1265,7 +1265,7 @@ bool DrasculaEngine::comprueba1() {
 	if (menu_scr == 1)
 		saca_objeto();
 	else {
-		for (l = 0; l < objs_room; l++) {
+		for (l = 0; l < numRoomObjs; l++) {
 			if (x_raton >= x1[l] && y_raton >= y1[l]
 					&& x_raton <= x2[l] && y_raton <= y2[l] && rompo == 0) {
 				if (sal_de_la_habitacion(l))
@@ -1279,7 +1279,7 @@ bool DrasculaEngine::comprueba1() {
 				&& x_raton < hare_x + ancho_hare && y_raton < hare_y + alto_hare)
 			rompo = 1;
 
-		for (l = 0; l < objs_room; l++) {
+		for (l = 0; l < numRoomObjs; l++) {
 			if (x_raton > x1[l] && y_raton > y1[l]
 					&& x_raton < x2[l] && y_raton < y2[l] && rompo == 0) {
 				sitio_x = sitiobj_x[l];
@@ -1323,7 +1323,7 @@ bool DrasculaEngine::comprueba2() {
 			if (banderas(50))
 				return true;
 		} else {
-			for (l = 0; l < objs_room; l++) {
+			for (l = 0; l < numRoomObjs; l++) {
 				if (x_raton > x1[l] && y_raton > y1[l]
 						&& x_raton < x2[l] && y_raton < y2[l] && visible[l] == 1) {
 					sentido_final = sentidobj[l];
@@ -1496,7 +1496,7 @@ bool DrasculaEngine::saves() {
 	delete sav;
 
 	loadPic("savescr.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 
 	color_abc(LIGHT_GREEN);
 
@@ -1594,7 +1594,7 @@ bool DrasculaEngine::saves() {
 
 	clearRoom();
 	loadPic(num_room);
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	hay_seleccion = 0;
 
 	return true;
@@ -1782,7 +1782,7 @@ void DrasculaEngine::salva_pantallas() {
 	clearRoom();
 
 	loadPic("sv.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	//TODO inicio_ghost();
 	//TODO carga_ghost();
 
@@ -1802,7 +1802,7 @@ void DrasculaEngine::salva_pantallas() {
 	}
 	//TODO fin_ghost();
 	loadPic(num_room);
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 }
 
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
@@ -1828,7 +1828,7 @@ void DrasculaEngine::FundeDelNegro(int VelocidadDeFundido) {
 		}
 		pause(VelocidadDeFundido);
 
-		setvgapalette256((byte *)&palFundido);
+		setPalette((byte *)&palFundido);
 	}
 }
 
@@ -1877,7 +1877,7 @@ void DrasculaEngine::color_abc(int cl) {
 		palJuego[254][2] = 100;
 	};
 
-	setvgapalette256((byte *)&palJuego);
+	setPalette((byte *)&palJuego);
 }
 
 char DrasculaEngine::LimitaVGA(char valor) {
@@ -2042,7 +2042,7 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 		}
 		pause(VelocidadDeFundido);
 
-		setvgapalette256((byte *)&palFundido);
+		setPalette((byte *)&palFundido);
 	}
 }
 
@@ -3332,7 +3332,7 @@ int DrasculaEngine::PlayFrameSSN() {
 		mSesion += 1;
 	}
 	switch (CHUNK) {
-	case SET_PALET:
+	case SET_PAL:
 		if (!UsingMem)
 			_Sesion->read(dacSSN, 768);
 		else {
@@ -3440,7 +3440,7 @@ byte *DrasculaEngine::TryInMem(Common::File *Sesion) {
 }
 
 void DrasculaEngine::set_dacSSN(byte *PalBuf) {
-	setvgapalette256((byte *)PalBuf);
+	setPalette((byte *)PalBuf);
 }
 
 void DrasculaEngine::Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght) {
@@ -3518,7 +3518,7 @@ byte *DrasculaEngine::loadPCX(byte *NamePcc) {
 }
 
 void DrasculaEngine::set_dac(byte *dac) {
-	setvgapalette256((byte *)dac);
+	setPalette((byte *)dac);
 }
 
 void DrasculaEngine::WaitForNext(int FPS) {
@@ -4489,7 +4489,7 @@ void DrasculaEngine::openDoor(int nflag, int n_puerta) {
 void DrasculaEngine::mapa() {
 	int l, veo = 0;
 
-	for (l = 0; l < objs_room; l++) {
+	for (l = 0; l < numRoomObjs; l++) {
 		if (x_raton > x1[l] && y_raton > y1[l]
 				&& x_raton < x2[l] && y_raton < y2[l]
 				&& visible[l] == 1) {
@@ -4553,7 +4553,7 @@ void DrasculaEngine::activa_pendulo() {
 	hare_se_ve = 0;
 	strcpy(num_room, "102.alg");
 	loadPic("102.alg");
-	decompressPic(dir_dibujo1, MEDIA);
+	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("an_p1.alg");
 	decompressPic(dir_dibujo3, 1);
 	loadPic("an_p2.alg");

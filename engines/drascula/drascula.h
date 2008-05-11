@@ -78,9 +78,6 @@ struct DrasculaGameDescription;
 #define CLOSE           4
 #define TALK            5
 #define MOVE            6
-#define INICISOUND      6
-#define FINALSOUND      8
-#define FINDRV          9
 #define DIF_MASK       55
 #define OBJWIDTH        40
 #define OBJHEIGHT         25
@@ -330,12 +327,12 @@ struct DrasculaGameDescription;
 #define CMP_RLE     1
 #define CMP_OFF     2
 #define END_ANIM    3
-#define SET_PALET   4
+#define SET_PAL     4
 #define MOUSE_KEY   5
 #define EMPTY_FRAME 6
 
-#define COMPLETA    256
-#define MEDIA       128
+#define COMPLETE_PAL   256
+#define HALF_PAL       128
 
 class DrasculaEngine : public ::Engine {
 	int _gameId;
@@ -375,7 +372,7 @@ public:
 	void setRGB(byte *dir_lectura, int plt);
 	void paleta_hare();
 	void updatePalette();
-	void setvgapalette256(byte *PalBuf);
+	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
 	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
@@ -411,7 +408,7 @@ public:
 	int nivel_osc, previousMusic, roomMusic;
 	char num_room[20], roomDisk[20];
 	char currentData[20];
-	int objs_room;
+	int numRoomObjs;
 	char fondo_y_menu[20];
 
 	char objName[30][20];
