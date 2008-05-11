@@ -483,7 +483,6 @@ public:
 	void hipo_sin_nadie(int contador);
 	void abre_puerta(int nflag, int n_puerta);
 	void mapa();
-	void buffer_teclado() { }
 	void animation_1_1();
 	void animation_2_1();
 	void animation_1_2();

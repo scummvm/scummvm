@@ -502,7 +502,6 @@ bool DrasculaEngine::escoba() {
 
 	if (num_ejec == 1) {
 		agarra_objeto(28);
-		buffer_teclado();
 
 		if (hay_que_load == 0)
 			animation_1_1();
@@ -524,7 +523,6 @@ bool DrasculaEngine::escoba() {
 		}
 	} else if (num_ejec == 2) {
 		suma_objeto(28);
-		buffer_teclado();
 		sentido_hare = 3;
 		obj_saliendo = 162;
 		if (hay_que_load == 0)
@@ -543,7 +541,6 @@ bool DrasculaEngine::escoba() {
 		suma_objeto(20);
 		suma_objeto(19);
 		flags[1] = 1;
-		buffer_teclado();
 		sentido_hare = 1;
 		obj_saliendo = 99;
 		if (hay_que_load == 0)
@@ -558,7 +555,6 @@ bool DrasculaEngine::escoba() {
 		suma_objeto(9);
 		suma_objeto(20);
 		suma_objeto(22);
-		buffer_teclado();
 		obj_saliendo = 100;
 		if (hay_que_load == 0) {
 			carga_escoba("21.ald");
@@ -580,7 +576,6 @@ bool DrasculaEngine::escoba() {
 		suma_objeto(15);
 		suma_objeto(17);
 		suma_objeto(20);
-		buffer_teclado();
 		sentido_hare = 1;
 		obj_saliendo = 100;
 		if (hay_que_load == 0) {
@@ -594,7 +589,6 @@ bool DrasculaEngine::escoba() {
 		suma_objeto(28);
 		suma_objeto(9);
 
-		buffer_teclado();
 		sentido_hare = 1;
 		obj_saliendo = 104;
 		if (hay_que_load == 0) {
@@ -889,8 +883,6 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	strcpy(para_codificar, nom_fich);
 	strcpy(datos_actuales, nom_fich);
-
-	buffer_teclado();
 
 	ald = new Common::File;
 	ald->open(nom_fich);
@@ -1608,7 +1600,6 @@ bool DrasculaEngine::saves() {
 	clearRoom();
 	loadPic(num_room);
 	decompressPic(dir_dibujo1, MEDIA);
-	buffer_teclado();
 	hay_seleccion = 0;
 
 	return true;
@@ -3205,7 +3196,6 @@ void DrasculaEngine::introduce_nombre() {
 	char select2[23];
 	strcpy(select2, "                      ");
 	for (;;) {
-		buffer_teclado();
 		select2[v] = '-';
 		copyBackground(115, 14, 115, 14, 176, 9, dir_dibujo1, dir_zona_pantalla);
 		print_abc(select2, 117, 15);
@@ -4522,8 +4512,6 @@ void DrasculaEngine::grr() {
 	int longitud;
 	longitud = 30;
 
-	buffer_teclado();
-
 	color_abc(VERDE_OSCURO);
 
 	if (hay_sb == 1) {
@@ -4549,7 +4537,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;

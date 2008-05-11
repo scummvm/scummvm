@@ -41,8 +41,6 @@ void DrasculaEngine::talk_igor_dch(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	buffer_teclado();
-
 	color_abc(BLANCO);
 
 	if (hay_sb == 1) {
@@ -84,7 +82,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -115,8 +112,6 @@ void DrasculaEngine::talk_dr_izq(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(ROJO);
 
@@ -164,7 +159,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -196,8 +190,6 @@ void DrasculaEngine::talk_dr_dch(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(ROJO);
 
@@ -244,7 +236,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -314,7 +305,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -345,8 +335,6 @@ void DrasculaEngine::talk_igor_frente(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -391,7 +379,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -429,8 +416,6 @@ void DrasculaEngine::talk_tabernero(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(MARRON);
 
@@ -475,7 +460,6 @@ bucless:
 	byte key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -504,8 +488,6 @@ void DrasculaEngine::talk_bj(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -556,7 +538,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -608,9 +589,6 @@ void DrasculaEngine::talk(const char *dicho, const char *filename) {
 		if (factor_red[hare_y + alto_hare] == 100)
 			suma_1_pixel = 0;
 	}
-
-	if (num_ejec == 2)
-		buffer_teclado();
 
 	if (num_ejec == 4) {
 		if (strcmp(num_room, "24.alg") || flags[29] == 0) {
@@ -707,7 +685,6 @@ bucless:
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -740,8 +717,6 @@ void DrasculaEngine::talk_pianista(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -779,7 +754,6 @@ bucless:
 	byte key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -824,8 +798,6 @@ bebiendo:
 		goto bebiendo;
 	}
 
-	buffer_teclado();
-
 	color_abc(VERDE_OSCURO);
 
 	if (hay_sb == 1) {
@@ -861,7 +833,6 @@ bucless:
 	byte key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -906,8 +877,6 @@ void DrasculaEngine::talk_vb(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	buffer_teclado();
-
 	color_abc(VON_BRAUN);
 
 	if (hay_sb == 1) {
@@ -947,7 +916,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -977,8 +945,6 @@ void DrasculaEngine::talk_vbpuerta(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	buffer_teclado();
-
 	color_abc(VON_BRAUN);
 
 	if (hay_sb == 1) {
@@ -1002,7 +968,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1029,8 +994,6 @@ void DrasculaEngine::talk_ciego(const char *dicho, const char *filename, const c
 
 	int longitud;
 	longitud = strlen(dicho);
-
-	buffer_teclado();
 
 	color_abc(VON_BRAUN);
 
@@ -1109,7 +1072,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1133,8 +1095,6 @@ void DrasculaEngine::talk_hacker(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1224,7 +1184,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1254,8 +1213,6 @@ void DrasculaEngine::talk_mus(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -1292,7 +1249,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1329,8 +1285,6 @@ void DrasculaEngine::talk_pen(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	buffer_teclado();
-
 	color_abc(AMARILLO);
 
 	if (hay_sb == 1) {
@@ -1366,7 +1320,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1400,8 +1353,6 @@ void DrasculaEngine::talk_pen2(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(AMARILLO);
 
@@ -1438,7 +1389,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1470,8 +1420,6 @@ void DrasculaEngine::talk_taber2(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(MARRON);
 
@@ -1508,7 +1456,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1538,8 +1485,6 @@ void DrasculaEngine::talk_bj_cama(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -1577,7 +1522,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1607,8 +1551,6 @@ void DrasculaEngine::talk_htel(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(AMARILLO);
 
@@ -1648,7 +1590,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1674,8 +1615,6 @@ void DrasculaEngine::talk_sinc(const char *dicho, const char *filename, const ch
 
 	int longitud;
 	longitud = strlen(dicho);
-
-	buffer_teclado();
 
 	color_abc(AMARILLO);
 
@@ -1775,7 +1714,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1805,8 +1743,6 @@ void DrasculaEngine::talk_baul(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	cara_antes = flags[19];
 
@@ -1843,7 +1779,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1872,8 +1807,6 @@ void DrasculaEngine::talk_igorpuerta(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	buffer_teclado();
-
 	color_abc(BLANCO);
 
 	if (hay_sb == 1){
@@ -1897,7 +1830,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1927,8 +1859,6 @@ void DrasculaEngine::talk_igor_sentado(const char *dicho, const char *filename) 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -1965,7 +1895,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
@@ -1995,8 +1924,6 @@ void DrasculaEngine::talk_igor_peluca(const char *dicho, const char *filename) {
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
-
-	buffer_teclado();
 
 	color_abc(BLANCO);
 
@@ -2033,7 +1960,6 @@ bucless:
 	int key = getscan();
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1){
 		if (LookForFree() != 0)
 			goto bucless;

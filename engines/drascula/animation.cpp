@@ -401,8 +401,6 @@ void DrasculaEngine::talk_dr_grande(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	buffer_teclado();
-
 	color_abc(ROJO);
 
 	if (hay_sb == 1) {
@@ -439,7 +437,6 @@ bucless:
 
 	if (key != 0)
 		ctvd_stop();
-	buffer_teclado();
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
