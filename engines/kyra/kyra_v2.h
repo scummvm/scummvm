@@ -26,7 +26,7 @@
 #ifndef KYRA_KYRA_V2_H
 #define KYRA_KYRA_V2_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/gui.h"
 #include "kyra/wsamovie.h"
 
@@ -53,7 +53,7 @@ struct ActiveItemAnim {
 
 class Screen_v2;
 
-class KyraEngine_v2 : public KyraEngine {
+class KyraEngine_v2 : public KyraEngine_v1 {
 friend class Debugger_v2;
 friend class GUI_v2;
 public:

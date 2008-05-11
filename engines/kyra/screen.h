@@ -35,7 +35,7 @@ namespace Kyra {
 
 typedef Common::Functor0<void> UpdateFunctor;
 
-class KyraEngine;
+class KyraEngine_v1;
 
 struct Rect {
 	int x, y;
@@ -96,7 +96,7 @@ public:
 		FID_NUM
 	};
 
-	Screen(KyraEngine *vm, OSystem *system);
+	Screen(KyraEngine_v1 *vm, OSystem *system);
 	virtual ~Screen();
 
 	// init
@@ -301,7 +301,7 @@ protected:
 	void addDirtyRect(int x, int y, int w, int h);
 
 	OSystem *_system;
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	// shape
 	int drawShapeMarginNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);

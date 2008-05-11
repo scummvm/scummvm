@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/timer.h"
 
 #include "common/func.h"
@@ -34,7 +34,7 @@ namespace Kyra {
 namespace {
 struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
 	uint32 _tickLength, _curTime;
-	TimerResync(KyraEngine *vm, uint32 curTime) : _tickLength(vm->tickLength()), _curTime(curTime) {}
+	TimerResync(KyraEngine_v1 *vm, uint32 curTime) : _tickLength(vm->tickLength()), _curTime(curTime) {}
 
 	void operator()(TimerEntry &entry) const {
 		if (entry.lastUpdate < 0) {

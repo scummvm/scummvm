@@ -30,18 +30,18 @@
 
 namespace Kyra {
 
-class KyraEngine;
+class KyraEngine_v1;
 class KyraEngine_LoK;
 class KyraEngine_v2;
 class KyraEngine_HoF;
 
 class Debugger : public ::GUI::Debugger {
 public:
-	Debugger(KyraEngine *vm);
+	Debugger(KyraEngine_v1 *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	bool cmd_setScreenDebug(int argc, const char **argv);
 	bool cmd_loadPalette(int argc, const char **argv);

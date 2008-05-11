@@ -33,7 +33,7 @@ namespace Kyra {
 
 class Screen_v2 : public Screen {
 public:
-	Screen_v2(KyraEngine *vm, OSystem *system);
+	Screen_v2(KyraEngine_v1 *vm, OSystem *system);
 	~Screen_v2();
 
 	// screen page handling

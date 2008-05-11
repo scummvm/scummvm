@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
@@ -524,7 +524,7 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 
 SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Kyra::KyraEngine::SaveHeader header;
+	Kyra::KyraEngine_v1::SaveHeader header;
 	Common::String pattern = target;
 	pattern += ".???";
 
@@ -540,7 +540,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Kyra::KyraEngine::readSaveHeader(in, header) == Kyra::KyraEngine::kRSHENoError)
+				if (Kyra::KyraEngine_v1::readSaveHeader(in, header) == Kyra::KyraEngine_v1::kRSHENoError)
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description, *file));
 				delete in;
 			}

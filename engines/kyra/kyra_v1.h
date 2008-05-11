@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KYRA_KYRA_H
-#define KYRA_KYRA_H
+#ifndef KYRA_KYRA_V1_H
+#define KYRA_KYRA_V1_H
 
 #include "engines/engine.h"
 
@@ -99,13 +99,13 @@ class StaticResource;
 class TimerManager;
 class Debugger;
 
-class KyraEngine : public Engine {
+class KyraEngine_v1 : public Engine {
 friend class Debugger;
 friend class ::KyraMetaEngine;
 friend class GUI;
 public:
-	KyraEngine(OSystem *system, const GameFlags &flags);
-	virtual ~KyraEngine();
+	KyraEngine_v1(OSystem *system, const GameFlags &flags);
+	virtual ~KyraEngine_v1();
 
 	::GUI::Debugger *getDebugger();
 

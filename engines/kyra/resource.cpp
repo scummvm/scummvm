@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-Resource::Resource(KyraEngine *vm) : _loaders(), _map(), _vm(vm) {
+Resource::Resource(KyraEngine_v1 *vm) : _loaders(), _map(), _vm(vm) {
 	initializeLoaders();
 }
 

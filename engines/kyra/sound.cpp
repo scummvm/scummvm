@@ -40,7 +40,7 @@
 
 namespace Kyra {
 
-Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
+Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
 	_sfxEnabled(true), _soundDataList(0) {
 }
@@ -145,7 +145,7 @@ bool Sound::voiceIsPlaying(const char *file) {
 
 #pragma mark -
 
-SoundMidiPC::SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
+SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
 	_driver = driver;
 	_passThrough = false;
 
@@ -467,8 +467,8 @@ void SoundMidiPC::beginFadeOut() {
 
 #pragma mark -
 
-void KyraEngine::snd_playTheme(int file, int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d, %d)", file, track);
+void KyraEngine_v1::snd_playTheme(int file, int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playTheme(%d, %d)", file, track);
 	if (_curMusicTheme == file)
 		return;
 
@@ -478,13 +478,13 @@ void KyraEngine::snd_playTheme(int file, int track) {
 		_sound->playTrack(track);
 }
 
-void KyraEngine::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d, %d)", track, volume);
+void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d, %d)", track, volume);
 	_sound->playSoundEffect(track);
 }
 
-void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playWanderScoreViaMap(%d, %d)", command, restart);
 	if (restart)
 		_lastMusicCommand = -1;
 
@@ -527,13 +527,13 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	_lastMusicCommand = command;
 }
 
-void KyraEngine::snd_stopVoice() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_stopVoice()");
+void KyraEngine_v1::snd_stopVoice() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_stopVoice()");
 	_sound->voiceStop(_speechFile.empty() ? 0 : _speechFile.c_str());
 }
 
-bool KyraEngine::snd_voiceIsPlaying() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceIsPlaying()");
+bool KyraEngine_v1::snd_voiceIsPlaying() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_voiceIsPlaying()");
 	return _sound->voiceIsPlaying(_speechFile.empty() ? 0 : _speechFile.c_str());
 }
 

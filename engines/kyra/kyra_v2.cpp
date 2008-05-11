@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine(system, flags), _desc(desc) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc) {
 	memset(&_sceneAnims, 0, sizeof(_sceneAnims));
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 

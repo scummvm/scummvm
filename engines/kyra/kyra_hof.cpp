@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
@@ -182,7 +182,7 @@ int KyraEngine_HoF::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	KyraEngine::init();
+	KyraEngine_v1::init();
 	initStaticResource();
 
 	_debugger = new Debugger_HoF(this);
@@ -1526,7 +1526,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	else if (_flags.platform == Common::kPlatformPC)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		KyraEngine::snd_playSoundEffect(track);
+		KyraEngine_v1::snd_playSoundEffect(track);
 }
 
 #pragma mark -
@@ -1954,7 +1954,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 #pragma mark -
 
 void KyraEngine_HoF::registerDefaultSettings() {
-	KyraEngine::registerDefaultSettings();
+	KyraEngine_v1::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
@@ -1985,13 +1985,13 @@ void KyraEngine_HoF::writeSettings() {
 
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
-	KyraEngine::writeSettings();
+	KyraEngine_v1::writeSettings();
 }
 
 void KyraEngine_HoF::readSettings() {
 	int talkspeed = ConfMan.getInt("talkspeed");
 	_configTextspeed = (talkspeed*95)/255 + 2;
-	KyraEngine::readSettings();
+	KyraEngine_v1::readSettings();
 }
 
 } // end of namespace Kyra

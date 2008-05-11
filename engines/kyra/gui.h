@@ -26,7 +26,7 @@
 #ifndef KYRA_GUI_H
 #define KYRA_GUI_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/ptr.h"
 #include "common/array.h"
@@ -135,7 +135,7 @@ class TextDisplayer;
 
 class GUI {
 public:
-	GUI(KyraEngine *vm);
+	GUI(KyraEngine_v1 *vm);
 	virtual ~GUI() {}
 
 	// button specific
@@ -154,7 +154,7 @@ public:
 	void processHighlights(Menu &menu, int mouseX, int mouseY);
 
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Screen *_screen;
 	TextDisplayer *_text;
 
@@ -196,7 +196,7 @@ class Movie;
 
 class MainMenu {
 public:
-	MainMenu(KyraEngine *vm);
+	MainMenu(KyraEngine_v1 *vm);
 	virtual ~MainMenu() {}
 
 	struct Animation {
@@ -219,7 +219,7 @@ public:
 	void init(StaticData data, Animation anim);
 	int handle(int dim);
 private:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Screen *_screen;
 	OSystem *_system;
 

@@ -25,7 +25,7 @@
 
 
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
 #include "kyra/text.h"
 
@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-TextDisplayer::TextDisplayer(KyraEngine *vm, Screen *screen) {
+TextDisplayer::TextDisplayer(KyraEngine_v1 *vm, Screen *screen) {
 	_screen = screen;
 	_vm = vm;
 

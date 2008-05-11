@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen_mr.h"
 #include "kyra/wsamovie.h"
@@ -205,7 +205,7 @@ int KyraEngine_MR::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	KyraEngine::init();
+	KyraEngine_v1::init();
 	
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
@@ -214,7 +214,7 @@ int KyraEngine_MR::init() {
 	assert(_soundDigital);
 	if (!_soundDigital->init())
 		error("_soundDigital->init() failed");
-	KyraEngine::_text = _text = new TextDisplayer_MR(this, _screen);
+	KyraEngine_v1::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);
 	_gui = new GUI_MR(this);
 	assert(_gui);
@@ -1509,7 +1509,7 @@ void KyraEngine_MR::resetSkipFlag(bool removeEvent) {
 
 void KyraEngine_MR::registerDefaultSettings() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::registerDefaultSettings()");
-	KyraEngine::registerDefaultSettings();
+	KyraEngine_v1::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
@@ -1542,12 +1542,12 @@ void KyraEngine_MR::writeSettings() {
 	ConfMan.setBool("skip_support", _configSkip);
 	ConfMan.setBool("helium_mode", _configHelium);
 
-	KyraEngine::writeSettings();
+	KyraEngine_v1::writeSettings();
 }
 
 void KyraEngine_MR::readSettings() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::readSettings()");
-	KyraEngine::readSettings();
+	KyraEngine_v1::readSettings();
 
 	_configStudio = ConfMan.getBool("studio_audience");
 	_configSkip = ConfMan.getBool("skip_support");

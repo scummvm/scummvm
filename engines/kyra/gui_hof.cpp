@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
@@ -827,10 +827,10 @@ void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
 
 	int position = 0;
 	if (_vm->gameFlags().isTalkie) {
-		position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+		position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 	} else {
 		if (slider < 2)
-			position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+			position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 		else if (slider == 2)
 			position = (_vm->_configWalkspeed == 3) ? 97 : 2;
 		else if (slider == 3)
@@ -900,7 +900,7 @@ int GUI_HoF::audioOptions(Button *caller) {
 
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
-	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
+	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine_v1::kVolumeSpeech) == 2)) {
 		_vm->_configVoice = 0;
 		choiceDialog(0x1D, 0);
 	}
@@ -978,7 +978,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
 		_vm->_configVoice = 1;
-		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
+		_vm->setVolume(KyraEngine_v1::kVolumeSpeech, 75);
 		choiceDialog(0x1E, 0);
 	}
 
@@ -1054,10 +1054,10 @@ int GUI_HoF::sliderHandler(Button *caller) {
 	int oldVolume = 0;
 	
 	if (_vm->gameFlags().isTalkie) {
-		oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+		oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 	} else {
 		if (button < 2)
-			oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+			oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 		else if (button == 2)
 			oldVolume = (_vm->_configWalkspeed == 3) ? 97 : 2;
 		else if (button == 3)
@@ -1092,7 +1092,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 				_vm->_configVoice = 1;
 		}
 
-		_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+		_vm->setVolume(KyraEngine_v1::kVolumeEntry(button), newVolume);
 
 		switch (button) {
 		case 0:
@@ -1112,7 +1112,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 		}
 	} else {
 		if (button < 2) {
-			_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+			_vm->setVolume(KyraEngine_v1::kVolumeEntry(button), newVolume);
 			if (button == 0)
 				lastMusicCommand = _vm->_lastMusicCommand;
 			else

@@ -26,7 +26,7 @@
 
 #include "common/endian.h"
 #include "common/md5.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
@@ -1338,11 +1338,11 @@ const ScreenDim Screen_MR::_screenDimTable[] = {
 
 const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
 
-const int8 KyraEngine::_addXPosTable[] = {
+const int8 KyraEngine_v1::_addXPosTable[] = {
 	 4,  4,  0, -4, -4, -4,  0,  4
 };
 
-const int8 KyraEngine::_addYPosTable[] = {
+const int8 KyraEngine_v1::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 

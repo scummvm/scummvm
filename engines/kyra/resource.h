@@ -36,7 +36,7 @@
 #include "common/stream.h"
 #include "common/ptr.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 
 namespace Kyra {
@@ -88,7 +88,7 @@ protected:
 
 class Resource {
 public:
-	Resource(KyraEngine *vm);
+	Resource(KyraEngine_v1 *vm);
 	~Resource();
 
 	bool reset();
@@ -122,7 +122,7 @@ protected:
 	LoaderList _loaders;
 	ResFileMap _map;
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 };
 
 // TODO?: maybe prefix all things here with 'kKyra1' instead of 'k'
@@ -239,7 +239,7 @@ class StaticResource {
 public:
 	static const Common::String staticDataFilename() { return "kyra.dat"; }
 
-	StaticResource(KyraEngine *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
+	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 
 	static bool checkKyraDat();
@@ -265,7 +265,7 @@ public:
 private:
 	void outputError();
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	struct FilenameTable;
 	struct ResData;

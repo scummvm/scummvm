@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-Debugger::Debugger(KyraEngine *vm)
+Debugger::Debugger(KyraEngine_v1 *vm)
 	: ::GUI::Debugger() {
 	_vm = vm;
 

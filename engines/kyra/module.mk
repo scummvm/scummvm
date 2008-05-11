@@ -16,7 +16,7 @@ MODULE_OBJS := \
 	items_v2.o \
 	items_hof.o \
 	items_mr.o \
-	kyra.o \
+	kyra_v1.o \
 	kyra_lok.o \
 	kyra_v2.o \
 	kyra_hof.o \
@@ -26,7 +26,7 @@ MODULE_OBJS := \
 	saveload_lok.o \
 	saveload_hof.o \
 	saveload_mr.o \
-	scene.o \
+	scene_v1.o \
 	scene_lok.o \
 	scene_v2.o \
 	scene_hof.o \

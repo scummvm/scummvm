@@ -28,12 +28,12 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "kyra/screen.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/resource.h"
 
 namespace Kyra {
 
-Screen::Screen(KyraEngine *vm, OSystem *system)
+Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0) {
 	_debugEnabled = false;
 }
@@ -2644,7 +2644,7 @@ void Screen::shakeScreen(int times) {
 }
 
 void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
+	debugC(9, kDebugLevelScreen, "KyraEngine_v1::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 

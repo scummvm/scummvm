@@ -27,7 +27,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
 #include "kyra/screen_v2.h"
@@ -35,7 +35,7 @@
 #include "kyra/resource.h"
 
 namespace Kyra {
-WSAMovie_v1::WSAMovie_v1(KyraEngine *vm) : Movie(vm) {}
+WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm) {}
 WSAMovie_v1::~WSAMovie_v1() { close(); }
 
 int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
@@ -213,7 +213,7 @@ void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieAmiga::WSAMovieAmiga(KyraEngine *vm) : WSAMovie_v1(vm), _buffer(0) {}
+WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
 
 int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
@@ -342,7 +342,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovie_v2::WSAMovie_v2(KyraEngine *vm, Screen_v2 *screen) : WSAMovie_v1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
+WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *screen) : WSAMovie_v1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
 
 int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovie_v2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);

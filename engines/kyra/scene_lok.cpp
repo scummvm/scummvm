@@ -1166,7 +1166,7 @@ void KyraEngine_LoK::setCharactersPositions(int character) {
 
 int KyraEngine_LoK::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
-	int ret = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
+	int ret = KyraEngine_v1::findWay(x, y, toX, toY, moveTable, moveTableSize);
 	if (ret == 0x7D00)
 		return 0;
 	return getMoveTableSize(moveTable);

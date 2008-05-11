@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef KYRA_KYRA_V1_H
-#define KYRA_KYRA_V1_H
+#ifndef KYRA_KYRA_LOK_H
+#define KYRA_KYRA_LOK_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/script.h"
 #include "kyra/screen_lok.h"
 #include "kyra/gui_lok.h"
@@ -104,7 +104,7 @@ struct BeadState {
 	int16 tableIndex;
 };
 
-class KyraEngine_LoK : public KyraEngine {
+class KyraEngine_LoK : public KyraEngine_v1 {
 	friend class MusicPlayer;
 	friend class Debugger_LoK;
 	friend class Animator_LoK;

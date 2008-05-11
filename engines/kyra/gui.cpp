@@ -33,7 +33,7 @@
 
 namespace Kyra {
 
-GUI::GUI(KyraEngine *kyra)
+GUI::GUI(KyraEngine_v1 *kyra)
 	: _vm(kyra), _screen(kyra->screen()), _text(kyra->text()) {
 	_menuButtonList = 0;
 
@@ -339,7 +339,7 @@ int GUI::getNextSavegameSlot() {
 
 #pragma mark -
 
-MainMenu::MainMenu(KyraEngine *vm) : _vm(vm), _screen(0) {
+MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(0) {
 	_screen = _vm->screen();
 	_nextUpdate = 0;
 	_system = g_system;

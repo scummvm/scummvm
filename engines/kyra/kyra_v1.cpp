@@ -28,7 +28,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/sound.h"
 #include "kyra/resource.h"
 #include "kyra/screen.h"
@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
+KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	: Engine(system), _flags(flags) {
 	_res = 0;
 	_sound = 0;
@@ -80,11 +80,11 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	system->getEventManager()->registerRandomSource(_rnd, "kyra");
 }
 
-::GUI::Debugger *KyraEngine::getDebugger() {
+::GUI::Debugger *KyraEngine_v1::getDebugger() {
 	return _debugger;
 }
 
-int KyraEngine::init() {
+int KyraEngine_v1::init() {
 	registerDefaultSettings();
 
 	// Setup mixer
@@ -196,7 +196,7 @@ int KyraEngine::init() {
 	return 0;
 }
 
-KyraEngine::~KyraEngine() {
+KyraEngine_v1::~KyraEngine_v1() {
 	for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete *i;
 	_opcodes.clear();
@@ -210,13 +210,13 @@ KyraEngine::~KyraEngine() {
 	delete _debugger;
 }
 
-void KyraEngine::quitGame() {
-	debugC(9, kDebugLevelMain, "KyraEngine::quitGame()");
+void KyraEngine_v1::quitGame() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::quitGame()");
 	_quitFlag = true;
 	// Nothing to do here
 }
 
-Common::Point KyraEngine::getMousePos() const {
+Common::Point KyraEngine_v1::getMousePos() const {
 	Common::Point mouse = _eventMan->getMousePos();
 
 	if (_flags.useHiResOverlay) {
@@ -227,7 +227,7 @@ Common::Point KyraEngine::getMousePos() const {
 	return mouse;
 }
 
-void KyraEngine::setMousePos(int x, int y) {
+void KyraEngine_v1::setMousePos(int x, int y) {
 	if (_flags.useHiResOverlay) {
 		x <<= 1;
 		y <<= 1;
@@ -235,41 +235,41 @@ void KyraEngine::setMousePos(int x, int y) {
 	_system->warpMouse(x, y);
 }
 
-int KyraEngine::setGameFlag(int flag) {
+int KyraEngine_v1::setGameFlag(int flag) {
 	_flagsTable[flag >> 3] |= (1 << (flag & 7));
 	return 1;
 }
 
-int KyraEngine::queryGameFlag(int flag) const {
+int KyraEngine_v1::queryGameFlag(int flag) const {
 	return ((_flagsTable[flag >> 3] >> (flag & 7)) & 1);
 }
 
-int KyraEngine::resetGameFlag(int flag) {
+int KyraEngine_v1::resetGameFlag(int flag) {
 	_flagsTable[flag >> 3] &= ~(1 << (flag & 7));
 	return 0;
 }
 
-void KyraEngine::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
+void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
 	while (_system->getMillis() < timestamp && !_quitFlag) {
 		if (timestamp - _system->getMillis() >= 10)
 			delay(10, update, isMainLoop);
 	}
 }
 
-void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
+void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 	_system->delayMillis(amount);
 }
 
-void KyraEngine::delayWithTicks(int ticks) {
+void KyraEngine_v1::delayWithTicks(int ticks) {
 	delay(ticks * _tickLength);
 }
 
-void KyraEngine::registerDefaultSettings() {
+void KyraEngine_v1::registerDefaultSettings() {
 	if (_flags.gameID != GI_KYRA3)
 		ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
 }
 
-void KyraEngine::readSettings() {
+void KyraEngine_v1::readSettings() {
 	_configWalkspeed = ConfMan.getInt("walkspeed");
 	_configMusic = 0;
 	
@@ -298,7 +298,7 @@ void KyraEngine::readSettings() {
 	setWalkspeed(_configWalkspeed);
 }
 
-void KyraEngine::writeSettings() {
+void KyraEngine_v1::writeSettings() {
 	bool speechMute, subtitles;
 
 	ConfMan.setInt("walkspeed", _configWalkspeed);
@@ -335,11 +335,11 @@ void KyraEngine::writeSettings() {
 	ConfMan.flushToDisk();
 }
 
-bool KyraEngine::speechEnabled() {
+bool KyraEngine_v1::speechEnabled() {
 	return _flags.isTalkie && (_configVoice == 1 || _configVoice == 2);
 }
 
-bool KyraEngine::textEnabled() {
+bool KyraEngine_v1::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
@@ -352,7 +352,7 @@ inline int convertValueFromMixer(int value) {
 	return (value * 95) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 
-void KyraEngine::setVolume(kVolumeEntry vol, uint8 value) {
+void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	switch (vol) {
 	case kVolumeMusic:
 		ConfMan.setInt("music_volume", convertValueToMixer(value));
@@ -375,7 +375,7 @@ void KyraEngine::setVolume(kVolumeEntry vol, uint8 value) {
 		_sound->updateVolumeSettings();
 }
 
-uint8 KyraEngine::getVolume(kVolumeEntry vol) {
+uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 	switch (vol) {
 	case kVolumeMusic:
 		return convertValueFromMixer(ConfMan.getInt("music_volume"));

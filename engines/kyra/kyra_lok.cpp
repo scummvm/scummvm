@@ -47,7 +47,7 @@
 namespace Kyra {
 
 KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
-	: KyraEngine(system, flags) {
+	: KyraEngine_v1(system, flags) {
 	_skipFlag = false;
 
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
@@ -156,7 +156,7 @@ int KyraEngine_LoK::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	KyraEngine::init();
+	KyraEngine_v1::init();
 
 	_sprites = new Sprites(this, _system);
 	assert(_sprites);
@@ -994,7 +994,7 @@ void KyraEngine_LoK::checkAmuletAnimFlags() {
 #pragma mark -
 
 void KyraEngine_LoK::registerDefaultSettings() {
-	KyraEngine::registerDefaultSettings();
+	KyraEngine_v1::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
@@ -1015,7 +1015,7 @@ void KyraEngine_LoK::readSettings() {
 	else
 		_configTextspeed = 2;	// Fast
 
-	KyraEngine::readSettings();
+	KyraEngine_v1::readSettings();
 }
 
 void KyraEngine_LoK::writeSettings() {
@@ -1038,7 +1038,7 @@ void KyraEngine_LoK::writeSettings() {
 
 	ConfMan.setInt("talkspeed", talkspeed);
 
-	KyraEngine::writeSettings();
+	KyraEngine_v1::writeSettings();
 }
 
 } // end of namespace Kyra

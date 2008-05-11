@@ -1084,7 +1084,7 @@ void SoundTowns_EuphonyTrackQueue::initDriver() {
 	_driver->send(0x79B0);
 }
 
-SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer)
+SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), _sfxFileData(0),
 	_sfxFileIndex((uint)-1), _sfxWDTable(0), _sfxBTTable(0), _parser(0) {
 
@@ -1357,7 +1357,7 @@ float SoundTowns::semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiTo
 
 //	KYRA 2
 
-SoundTowns_v2::SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer)
+SoundTowns_v2::SoundTowns_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), /*_driver(0),*/
 	 _twnTrackData(0) {
 }

@@ -1444,7 +1444,7 @@ int GUI_MR::gameOptions(Button *caller) {
 
 	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
 		_vm->_configVoice = 1;
-		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
+		_vm->setVolume(KyraEngine_v1::kVolumeSpeech, 75);
 		choiceDialog(0x1E, 0);
 	}
 
@@ -1597,7 +1597,7 @@ int GUI_MR::audioOptions(Button *caller) {
 
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
-	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
+	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine_v1::kVolumeSpeech) == 2)) {
 		_vm->_configVoice = 0;
 		choiceDialog(0x1D, 0);
 	}
@@ -1620,7 +1620,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 
 	assert(button >= 0 && button <= 3);
 
-	int oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+	int oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 	int newVolume = oldVolume;
 
 	if (caller->index >= 24 && caller->index <= 27)
@@ -1648,7 +1648,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 			_vm->_configVoice = 1;
 	}
 
-	_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+	_vm->setVolume(KyraEngine_v1::kVolumeEntry(button), newVolume);
 
 	switch (button) {
 	case 0:
@@ -1685,7 +1685,7 @@ void GUI_MR::drawSliderBar(int slider, const uint8 *shape) {
 	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
 	int y = menuY + _sliderBarsPosition[slider*2+1];
 
-	int position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+	int position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 
 	position = MAX(2, position);
 	position = MIN(97, position);

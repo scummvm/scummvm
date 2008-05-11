@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-Screen_v2::Screen_v2(KyraEngine *vm, OSystem *system) : Screen(vm, system), _wsaFrameAnimBuffer(0) {
+Screen_v2::Screen_v2(KyraEngine_v1 *vm, OSystem *system) : Screen(vm, system), _wsaFrameAnimBuffer(0) {
 	_wsaFrameAnimBuffer = new uint8[1024];
 	assert(_wsaFrameAnimBuffer);
 }

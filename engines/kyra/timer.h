@@ -26,7 +26,7 @@
 #ifndef KYRA_TIMER_H
 #define KYRA_TIMER_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/list.h"
 #include "common/stream.h"
@@ -49,7 +49,7 @@ struct TimerEntry {
 
 class TimerManager {
 public:
-	TimerManager(KyraEngine *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0), _isPaused(0), _pauseStart(0) {}
+	TimerManager(KyraEngine_v1 *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0), _isPaused(0), _pauseStart(0) {}
 	~TimerManager() { reset(); }
 
 	void pause(bool p);
@@ -79,7 +79,7 @@ public:
 private:
 	void resync();
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	OSystem *_system;
 	Common::List<TimerEntry> _timers;
 	uint32 _nextRun;

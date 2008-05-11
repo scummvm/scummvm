@@ -35,7 +35,7 @@ void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
 		return;
 	}
 
-	KyraEngine::snd_playSoundEffect(track);
+	KyraEngine_v1::snd_playSoundEffect(track);
 }
 
 void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
@@ -57,7 +57,7 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 			_sound->haltTrack();
 		}
 	} else {
-		KyraEngine::snd_playWanderScoreViaMap(command, restart);
+		KyraEngine_v1::snd_playWanderScoreViaMap(command, restart);
 	}
 }
 
