@@ -587,7 +587,7 @@ void DrasculaEngine::room_16(int fl) {
 		pause(10);
 		talk_sinc(_text[_lang][50], "50.als", "11111111111144432554433");
 		pause(3);
-		talk_baul("bla, bla, bla.", "d83.als");
+		talk_baul(_text[_lang][83], "d83.als");
 	} else if (objeto_que_lleva == OPEN && fl == 183) {
 		abre_puerta(19, NO_PUERTA);
 		if (flags[20] == 0) {

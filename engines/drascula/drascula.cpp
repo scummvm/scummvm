@@ -122,6 +122,8 @@ int DrasculaEngine::go() {
 	hay_que_load = 0;
 
 	for (;;) {
+		int i;
+
 		VGA = (byte *)malloc(320 * 200);
 		memset(VGA, 0, 64000);
 
@@ -228,12 +230,9 @@ int DrasculaEngine::go() {
 			decompressPic(dir_mesa, 1);
 		}
 		memset(nombre_icono, 0, sizeof(nombre_icono));
-		strcpy(nombre_icono[1], "look");
-		strcpy(nombre_icono[2], "take");
-		strcpy(nombre_icono[3], "open");
-		strcpy(nombre_icono[4], "close");
-		strcpy(nombre_icono[5], "talk");
-		strcpy(nombre_icono[6], "push");
+
+		for (i = 0; i < 6; i++)
+			strcpy(nombre_icono[i + 1], _textverbs[_lang][i]);
 
 		paleta_hare();
 		if (!escoba()) {
