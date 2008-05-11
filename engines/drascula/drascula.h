@@ -349,12 +349,12 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	void update_events();
+	void updateEvents();
 
 	Audio::SoundHandle _soundHandle;
 
 	void allocMemory();
-	void libera_memoria();
+	void freeMemory();
 	void salir_al_dos(int r);
 
 	void loadPic(const char *);

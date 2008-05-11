@@ -256,7 +256,7 @@ void DrasculaEngine::salir_al_dos(int r) {
 	Negro();
 	MusicFadeout();
 	stopmusic();
-	libera_memoria();
+	freeMemory();
 	free(VGA);
 }
 
@@ -279,7 +279,7 @@ void DrasculaEngine::allocMemory() {
 	assert(dir_hare_frente);
 }
 
-void DrasculaEngine::libera_memoria() {
+void DrasculaEngine::freeMemory() {
 	free(dir_zona_pantalla);
 	free(dir_dibujo1);
 	free(dir_hare_fondo);
@@ -1244,11 +1244,11 @@ void DrasculaEngine::comprueba_objetos() {
 }
 
 void DrasculaEngine::espera_soltar() {
-	update_events();
+	updateEvents();
 }
 
 void DrasculaEngine::MirarRaton() {
-	update_events();
+	updateEvents();
 }
 
 void DrasculaEngine::elige_en_barra() {
@@ -1347,12 +1347,12 @@ bool DrasculaEngine::comprueba2() {
 }
 
 Common::KeyCode DrasculaEngine::getscan() {
-	update_events();
+	updateEvents();
 
 	return _keyPressed.keycode;
 }
 
-void DrasculaEngine::update_events() {
+void DrasculaEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 
@@ -4247,7 +4247,7 @@ void DrasculaEngine::MusicFadeout() {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 		if (vol == 0)
 			break;
-		update_events();
+		updateEvents();
 		_system->updateScreen();
 		_system->delayMillis(50);
 	}
