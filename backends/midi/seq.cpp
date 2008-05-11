@@ -30,8 +30,9 @@
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
 
-#include "sound/mpu401.h"
+#include "backends/midi/midiplugin.h"
 #include "common/util.h"
+#include "sound/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -169,8 +170,31 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 	write (device, buf, position);
 }
 
-MidiDriver *MidiDriver_SEQ_create() {
-	return new MidiDriver_SEQ();
+
+// Plugin interface
+
+class SeqMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "SEQ";
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError SeqMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_SEQ();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	SeqMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif

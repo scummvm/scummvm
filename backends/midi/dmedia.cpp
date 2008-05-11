@@ -29,9 +29,10 @@
 
 #if defined(IRIX)
 
+#include "backends/midi/midiplugin.h"
 #include "common/scummsys.h"
-#include "sound/mpu401.h"
 #include "common/util.h"
+#include "sound/mpu401.h"
 
 #include <dmedia/midi.h>
 #include <sys/types.h>
@@ -174,8 +175,31 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 	}
 }
 
-MidiDriver *MidiDriver_DMEDIA_create() {
-	return new MidiDriver_DMEDIA();
+
+// Plugin interface
+
+class DMediaMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "DMedia";
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError DMediaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_DMEDIA();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	DMediaMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif

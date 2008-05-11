@@ -36,8 +36,9 @@
 
 #if defined (UNIX)
 
-#include "sound/mpu401.h"
+#include "backends/midi/midiplugin.h"
 #include "common/util.h"
+#include "sound/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -510,8 +511,31 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 	timidity_write_data(buf, position);
 }
 
-MidiDriver *MidiDriver_TIMIDITY_create() {
-	return new MidiDriver_TIMIDITY();
+
+// Plugin interface
+
+class TimidityMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "TiMidity";
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError TimidityMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_TIMIDITY();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	TimidityMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif // defined (UNIX)

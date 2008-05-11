@@ -24,10 +24,10 @@
 
 #if defined(MACOSX) || defined(macintosh)
 
-
-#include "sound/mpu401.h"
+#include "backends/midi/midiplugin.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "sound/mpu401.h"
 
 #if defined(MACOSX)
 #include <QuickTime/QuickTimeComponents.h>
@@ -250,8 +250,31 @@ void MidiDriver_QT::dispose()
 	}
 }
 
-MidiDriver *MidiDriver_QT_create() {
-	return new MidiDriver_QT();
+
+// Plugin interface
+
+class QuickTimeMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "QuickTime";
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError QuicktimeMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_QT();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	QuickTimeMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif // MACOSX || macintosh

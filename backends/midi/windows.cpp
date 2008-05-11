@@ -24,11 +24,11 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
+#include "backends/midi/midiplugin.h"
+#include "sound/mpu401.h"
 
 #include <windows.h>
 #include <mmsystem.h>
-#include "sound/mpu401.h"
-#include "common/util.h"
 
 ////////////////////////////////////////
 //
@@ -141,8 +141,31 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 	}
 }
 
-MidiDriver *MidiDriver_WIN_create() {
-	return new MidiDriver_WIN();
+
+// Plugin interface
+
+class WindowsMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "Windows MIDI";
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError WindowsMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_WIN();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	WindowsMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif

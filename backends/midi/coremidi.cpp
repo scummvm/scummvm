@@ -24,6 +24,7 @@
 
 #ifdef MACOSX
 
+#include "backends/midi/midiplugin.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "sound/mpu401.h"
@@ -175,8 +176,31 @@ void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
 	MIDISend(mOutPort, mDest, packetList);
 }
 
-MidiDriver *MidiDriver_CoreMIDI_create() {
-	return new MidiDriver_CoreMIDI();
+
+// Plugin interface
+
+class CoreMIDIMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "CoreMIDI";
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError CoreMIDIMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_CoreMIDI();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_CoreMIDI_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	CoreMIDIMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif // MACOSX

@@ -26,10 +26,10 @@
 
 #if defined(UNIX) && defined(USE_ALSA)
 
-#include "sound/mpu401.h"
-
-#include "common/util.h"
+#include "backends/midi/midiplugin.h"
 #include "common/config-manager.h"
+#include "common/util.h"
+#include "sound/mpu401.h"
 
 #include <alsa/asoundlib.h>
 
@@ -238,8 +238,75 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 		snd_seq_flush_output(seq_handle);
 }
 
-MidiDriver *MidiDriver_ALSA_create() {
-	return new MidiDriver_ALSA();
+
+// Plugin interface
+
+class AlsaMidiPlugin : public MidiPlugin {
+public:
+	virtual const char *getName() const {
+		return "ALSA";
+	}
+
+	virtual Common::StringList getDevices() const;
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+#define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
+
+static int check_permission(snd_seq_port_info_t *pinfo)
+{
+	if (perm_ok(pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE)) {
+		if (!(snd_seq_port_info_get_capability(pinfo) & SND_SEQ_PORT_CAP_NO_EXPORT))
+			return 1;
+	}
+	return 0;
+}
+
+Common::StringList AlsaMidiPlugin::getDevices() const {
+	Common::StringList devices;
+
+	snd_seq_t *seq;
+	if (snd_seq_open(&seq, "default", SND_SEQ_OPEN_DUPLEX, 0) < 0)
+		return devices; // can't open sequencer
+
+	snd_seq_client_info_t *cinfo;
+	snd_seq_client_info_alloca(&cinfo);
+	snd_seq_port_info_t *pinfo;
+	snd_seq_port_info_alloca(&pinfo);
+	snd_seq_client_info_set_client(cinfo, -1);
+	while (snd_seq_query_next_client(seq, cinfo) >= 0) {
+		bool found_valid_port = false;
+
+		/* reset query info */
+		snd_seq_port_info_set_client(pinfo, snd_seq_client_info_get_client(cinfo));
+		snd_seq_port_info_set_port(pinfo, -1);
+		while (!found_valid_port && snd_seq_query_next_port(seq, pinfo) >= 0) {
+			if (check_permission(pinfo)) {
+				found_valid_port = true;
+				devices.push_back(snd_seq_client_info_get_name(cinfo));
+				//snd_seq_client_info_get_client(cinfo) : snd_seq_port_info_get_port(pinfo)
+			}
+		}
+	}
+	snd_seq_close(seq);
+
+	return devices;
+}
+
+PluginError AlsaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_ALSA();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	AlsaMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #endif
