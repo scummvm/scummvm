@@ -435,7 +435,7 @@ DECLARE_LOCATION_PARSER(character)  {
 DECLARE_LOCATION_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(ifchar) ");
 
-	script->skip("ENDIF");
+	_script->skip("ENDIF");
 }
 
 
@@ -487,7 +487,7 @@ DECLARE_COMMAND_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(ifchar) ");
 
 	if (!scumm_stricmp(_vm->_char.getName(), _tokens[1]))
-		script->skip("endif");
+		_script->skip("endif");
 }
 
 
@@ -501,7 +501,7 @@ DECLARE_COMMAND_PARSER(endif)  {
 DECLARE_COMMAND_PARSER(location)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(location) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._string = strdup(_tokens[1]);
 	ctxt.nextToken++;
@@ -530,7 +530,7 @@ DECLARE_COMMAND_PARSER(location)  {
 DECLARE_COMMAND_PARSER(string)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(string) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._string = strdup(_tokens[1]);
 	ctxt.nextToken++;
@@ -542,7 +542,7 @@ DECLARE_COMMAND_PARSER(string)  {
 DECLARE_COMMAND_PARSER(math)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(math) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._lvalue = _vm->_countersNames->lookup(_tokens[1]);
 	ctxt.nextToken++;
@@ -557,7 +557,7 @@ DECLARE_COMMAND_PARSER(math)  {
 DECLARE_COMMAND_PARSER(test)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(test) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	uint counter = _vm->_countersNames->lookup(_tokens[1]);
 	ctxt.nextToken++;
@@ -590,7 +590,7 @@ DECLARE_COMMAND_PARSER(test)  {
 DECLARE_COMMAND_PARSER(music)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(music) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._musicCommand = _audioCommandsNames->lookup(_tokens[1]);
 	ctxt.nextToken++;
@@ -608,7 +608,7 @@ DECLARE_COMMAND_PARSER(music)  {
 DECLARE_COMMAND_PARSER(zeta)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zeta) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._zeta0 = atoi(_tokens[1]);
 	ctxt.nextToken++;
@@ -630,7 +630,7 @@ DECLARE_COMMAND_PARSER(zeta)  {
 DECLARE_COMMAND_PARSER(give)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(give) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._object = 4 + atoi(_tokens[1]);
 	ctxt.nextToken++;
@@ -656,7 +656,7 @@ DECLARE_COMMAND_PARSER(give)  {
 DECLARE_COMMAND_PARSER(text)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(text) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	if (isdigit(_tokens[1][1])) {
 		ctxt.cmd->u._zeta0 = atoi(_tokens[1]);
@@ -682,7 +682,7 @@ DECLARE_COMMAND_PARSER(text)  {
 DECLARE_COMMAND_PARSER(unary)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(unary) ");
 
-	createCommand(parser->_lookup);
+	createCommand(_parser->_lookup);
 
 	ctxt.cmd->u._rvalue = atoi(_tokens[1]);
 	ctxt.nextToken++;
@@ -733,7 +733,7 @@ DECLARE_ZONE_PARSER(type)  {
 //		}
 	}
 
-	parser->popTables();
+	_parser->popTables();
 }
 
 
@@ -777,7 +777,7 @@ DECLARE_ANIM_PARSER(endanimation)  {
 
 	ctxt.a->_flags |= 0x1000000;
 
-	parser->popTables();
+	_parser->popTables();
 }
 
 
@@ -793,7 +793,7 @@ DECLARE_INSTRUCTION_PARSER(zone)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(zone) ");
 
 	ctxt.inst->_z = _vm->findZone(_tokens[1]);
-	ctxt.inst->_index = parser->_lookup;
+	ctxt.inst->_index = _parser->_lookup;
 }
 
 
@@ -807,7 +807,7 @@ DECLARE_INSTRUCTION_PARSER(color)  {
 	ctxt.inst->_colors[0] = atoi(_tokens[2]);
 	ctxt.inst->_colors[1] = atoi(_tokens[3]);
 	ctxt.inst->_colors[2] = atoi(_tokens[4]);
-	ctxt.inst->_index = parser->_lookup;
+	ctxt.inst->_index = _parser->_lookup;
 
 }
 
@@ -819,7 +819,7 @@ DECLARE_INSTRUCTION_PARSER(mask)  {
 	parseRValue(ctxt.inst->_opA, _tokens[1]);
 	parseRValue(ctxt.inst->_opB, _tokens[2]);
 	parseRValue(ctxt.inst->_opC, _tokens[3]);
-	ctxt.inst->_index = parser->_lookup;
+	ctxt.inst->_index = _parser->_lookup;
 
 }
 
@@ -828,7 +828,7 @@ DECLARE_INSTRUCTION_PARSER(print)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(print) ");
 
 	parseRValue(ctxt.inst->_opB, _tokens[1]);
-	ctxt.inst->_index = parser->_lookup;
+	ctxt.inst->_index = _parser->_lookup;
 }
 
 
@@ -851,7 +851,7 @@ DECLARE_INSTRUCTION_PARSER(text)  {
 	if (_tokens[_si][0] != '\0' && scumm_stricmp("flags", _tokens[_si])) {
 		ctxt.inst->_text2 = strdup(_tokens[_si]);
 	}
-	ctxt.inst->_index = parser->_lookup;
+	ctxt.inst->_index = _parser->_lookup;
 
 }
 
@@ -890,7 +890,7 @@ DECLARE_INSTRUCTION_PARSER(endif)  {
 
 //	ctxt.openIf->_endif = ctxt.inst;
 	ctxt.openIf = nullInstructionPtr;
-	ctxt.inst->_index = parser->_lookup;
+	ctxt.inst->_index = _parser->_lookup;
 }
 
 
@@ -901,7 +901,7 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 		return;
 	}
 
-	int index = program->findLocal(str);
+	int index = _program->findLocal(str);
 	if (index != -1) {
 		v.setLocal(&ctxt.locals[index]);
 		return;
@@ -953,7 +953,7 @@ typedef OpcodeImpl<ProgramParser_br> OpcodeV3;
 
 void LocationParser_br::init() {
 
-	parser = new Parser;
+	_parser = new Parser;
 
 	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_br), _zoneFlagNamesRes_br);
 	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_br), _zoneTypeNamesRes_br);
@@ -1079,7 +1079,7 @@ void LocationParser_br::init() {
 
 void ProgramParser_br::init() {
 
-	parser = new Parser;
+	_parser = new Parser;
 
 	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 

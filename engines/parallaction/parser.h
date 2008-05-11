@@ -123,8 +123,8 @@ class LocationParser_ns {
 
 protected:
 	Parallaction_ns*	_vm;
-	Script	*script;
-	Parser	*parser;
+	Script	*_script;
+	Parser	*_parser;
 
 	Table		*_zoneTypeNames;
 	Table		*_zoneFlagNames;
@@ -315,11 +315,11 @@ public:
 class ProgramParser_ns {
 
 protected:
-	Parser	*parser;
+	Parser	*_parser;
 	Parallaction_ns *_vm;
 
-	Script	*script;
-	ProgramPtr	program;
+	Script	*_script;
+	ProgramPtr	_program;
 
 	// program parser
 	OpcodeSet	_instructionParsers;
