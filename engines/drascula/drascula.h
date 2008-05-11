@@ -355,7 +355,7 @@ public:
 
 	void allocMemory();
 	void freeMemory();
-	void salir_al_dos(int r);
+	void releaseGame();
 
 	void loadPic(const char *);
 	void decompressPic(byte *dir_escritura, int plt);
@@ -616,9 +616,9 @@ public:
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
 	void cierra_puerta(int nflag, int n_puerta);
-	void playmusic(int p);
-	void stopmusic();
-	int music_status();
+	void playMusic(int p);
+	void stopMusic();
+	int musicStatus();
 	void updateRoom();
 	bool carga_partida(const char *);
 	void puertas_cerradas(int);

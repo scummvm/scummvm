@@ -433,11 +433,11 @@ void DrasculaEngine::talk_tabernero(const char *dicho, const char *filename) {
 bucless:
 
 	if (num_ejec == 1) {
-		if (music_status() == 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0)
+			playMusic(musica_room);
 	} else if (num_ejec == 2) {
-		if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
+			playMusic(musica_room);
 	}
 
 	cara = _rnd->getRandomNumber(8);
@@ -701,8 +701,8 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (num_ejec == 1) {
-		if (music_status() == 0 && flags[11] == 0 && corta_musica == 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0 && corta_musica == 0)
+			playMusic(musica_room);
 	}
 }
 
@@ -855,11 +855,11 @@ bucless:
 	}
 
 	if (num_ejec == 1) {
-		if (music_status() == 0 && flags[11] == 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0)
+			playMusic(musica_room);
 	} else if (num_ejec == 2) {
-		if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
+			playMusic(musica_room);
 	}
 }
 
@@ -930,8 +930,8 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
-		playmusic(musica_room);
+	if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
+		playMusic(musica_room);
 }
 
 void DrasculaEngine::talk_vbpuerta(const char *dicho, const char *filename) {
@@ -982,8 +982,8 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
-		playmusic(musica_room);
+	if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
+		playMusic(musica_room);
 }
 
 void DrasculaEngine::talk_ciego(const char *dicho, const char *filename, const char *sincronia) {
@@ -1726,10 +1726,10 @@ bucless:
 			goto bucless;
 	}
 
-	if (num_ejec == 1 && music_status() == 0 && flags[11] == 0)
-		playmusic(musica_room);
-	if (num_ejec == 2 && music_status() == 0 && flags[11] == 0 && musica_room != 0)
-		playmusic(musica_room);
+	if (num_ejec == 1 && musicStatus() == 0 && flags[11] == 0)
+		playMusic(musica_room);
+	if (num_ejec == 2 && musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
+		playMusic(musica_room);
 }
 
 void DrasculaEngine::talk_baul(const char *dicho, const char *filename) {

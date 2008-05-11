@@ -236,10 +236,10 @@ int DrasculaEngine::go() {
 
 		paleta_hare();
 		if (!escoba()) {
-			salir_al_dos(0);
+			releaseGame();
 			break;
 		}
-		salir_al_dos(0);
+		releaseGame();
 		if (num_ejec == 6)
 			break;
 
@@ -249,13 +249,13 @@ int DrasculaEngine::go() {
 	return 0;
 }
 
-void DrasculaEngine::salir_al_dos(int r) {
+void DrasculaEngine::releaseGame() {
 	if (hay_sb == 1)
 		ctvd_end();
 	clearRoom();
 	Negro();
 	MusicFadeout();
-	stopmusic();
+	stopMusic();
 	freeMemory();
 	free(VGA);
 }
@@ -626,11 +626,11 @@ bucles:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (num_ejec == 2) {
-		if (music_status() == 0 && musica_room != 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && musica_room != 0)
+			playMusic(musica_room);
 	} else {
-		if (music_status() == 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0)
+			playMusic(musica_room);
 	}
 
 	MirarRaton();
@@ -1116,12 +1116,12 @@ martini:
 			musica_room = 0;
 
 		if (musica_antes != musica_room && musica_room != 0)
-			playmusic(musica_room);
+			playMusic(musica_room);
 		if (musica_room == 0)
-			stopmusic();
+			stopMusic();
 	} else {
 		if (musica_antes != musica_room && musica_room != 0)
-			playmusic(musica_room);
+			playMusic(musica_room);
 	}
 
 	if (num_ejec == 2) {
@@ -1384,7 +1384,7 @@ void DrasculaEngine::updateEvents() {
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
-			salir_al_dos(0);
+			releaseGame();
 			exit(0);
 			break;
 		default:
@@ -1770,7 +1770,7 @@ bool DrasculaEngine::confirma_salir() {
 	}
 
 	if (key == Common::KEYCODE_ESCAPE) {
-		stopmusic();
+		stopMusic();
 		return false;
 	}
 
@@ -2159,16 +2159,16 @@ void DrasculaEngine::fin_sound() {
 	}
 }
 
-void DrasculaEngine::playmusic(int p) {
+void DrasculaEngine::playMusic(int p) {
 	AudioCD.stop();
 	AudioCD.play(p - 1, 1, 0, 0);
 }
 
-void DrasculaEngine::stopmusic() {
+void DrasculaEngine::stopMusic() {
 	AudioCD.stop();
 }
 
-int DrasculaEngine::music_status() {
+int DrasculaEngine::musicStatus() {
 	return AudioCD.isPlaying();
 }
 
@@ -3869,14 +3869,14 @@ bucle_opc:
 	updateRoom();
 
 	if (num_ejec == 1 || num_ejec == 4 || num_ejec == 6) {
-		if (music_status() == 0 && flags[11] == 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0)
+			playMusic(musica_room);
 	} else if (num_ejec == 2) {
-		if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
+			playMusic(musica_room);
 	} else if (num_ejec == 3 || num_ejec == 5) {
-		if (music_status() == 0)
-			playmusic(musica_room);
+		if (musicStatus() == 0)
+			playMusic(musica_room);
 	}
 
 	MirarRaton();

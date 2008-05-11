@@ -35,7 +35,7 @@ void DrasculaEngine::animation_1_1() {
 	int pos_pixel[6];
 
 	while (term_int == 0) {
-		playmusic(29);
+		playMusic(29);
 		fliplay("logoddm.bin", 9);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -46,7 +46,7 @@ void DrasculaEngine::animation_1_1() {
 		delay(340);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		playmusic(26);
+		playMusic(26);
 		delay(500);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -110,7 +110,7 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("aux104.alg");
 		decompressPic(dir_dibujo2, 1);
 
-		playmusic(4);
+		playMusic(4);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(400);
@@ -253,7 +253,7 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("100.alg");
 		decompressPic(dir_dibujo1, MEDIA);
 		MusicFadeout();
-		stopmusic();
+		stopMusic();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_igor_dch(_texti[_lang][9], "I9.als");
@@ -265,7 +265,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_igor_dch(_texti[_lang][10], "I10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		playmusic(11);
+		playMusic(11);
 		talk_dr_izq(_textd[_lang][10], "d10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -288,7 +288,7 @@ void DrasculaEngine::animation_1_1() {
 		fin_sound_corte();
 		clearRoom();
 		Negro();
-		playmusic(23);
+		playMusic(23);
 		FundeDelNegro(0);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -375,7 +375,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 
-		playmusic(2);
+		playMusic(2);
 		pause(5);
 		fliplay("intro.bin", 12);
 		term_int = 1;
@@ -488,7 +488,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		clearRoom();
-		stopmusic();
+		stopMusic();
 		corta_musica = 1;
 		memset(dir_zona_pantalla, 0, 64000);
 		color_solo = BLANCO;
@@ -575,7 +575,7 @@ void DrasculaEngine::animation_2_1() {
 		talk(_text[_lang][222], "222.als");
 		anima("gaf.bin", 15);
 		anima("bjb.bin", 14);
-		playmusic(9);
+		playMusic(9);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("97.alg");
@@ -624,7 +624,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("bes.bin", 16);
-		playmusic(11);
+		playMusic(11);
 		anima("rap.bin", 16);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -708,7 +708,7 @@ void DrasculaEngine::animation_4_1() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
-	stopmusic();
+	stopMusic();
 	flags[11] = 1;
 
 	talk_pianista(_textp[_lang][1], "p1.als");
@@ -823,7 +823,7 @@ void DrasculaEngine::animation_3_2() {
 }
 
 void DrasculaEngine::animation_4_2() {
-	stopmusic();
+	stopMusic();
 	flags[9] = 1;
 
 	pause(12);
@@ -879,7 +879,7 @@ void DrasculaEngine::animation_4_2() {
 
 	clearRoom();
 
-	playmusic(musica_room);
+	playMusic(musica_room);
 	loadPic("9.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	loadPic("aux9.alg");
@@ -978,7 +978,7 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 
-	playmusic(32);
+	playMusic(32);
 	int key = getscan();
 	if (key != 0)
 		goto asco;
@@ -1082,9 +1082,9 @@ asco:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(0);
 	if (musica_room != 0)
-		playmusic(musica_room);
+		playMusic(musica_room);
 	else
-		stopmusic();
+		stopMusic();
 }
 
 void DrasculaEngine::animation_17_2() {
@@ -1456,9 +1456,9 @@ void DrasculaEngine::animation_1_3() {
 
 void DrasculaEngine::animation_2_3() {
 	flags[0] = 1;
-	playmusic(13);
+	playMusic(13);
 	animation_3_3();
-	playmusic(13);
+	playMusic(13);
 	animation_4_3();
 	flags[1] = 1;
 	updateRoom();
@@ -2017,7 +2017,7 @@ void DrasculaEngine::animation_12_5() {
 	int color, componente;
 	char fundido;
 
-	playmusic(26);
+	playMusic(26);
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(27);
@@ -2140,7 +2140,7 @@ void DrasculaEngine::animation_13_5() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(15);
 
-	playmusic(18);
+	playMusic(18);
 
 	for (;;) {
 		updateRoom();
@@ -2353,7 +2353,7 @@ void DrasculaEngine::animation_9_6() {
 	int v_cd;
 
 	anima("fin.bin", 14);
-	playmusic(13);
+	playMusic(13);
 	flags[5] = 1;
 	anima("drf.bin", 16);
 	FundeAlNegro(0);
@@ -2375,7 +2375,7 @@ void DrasculaEngine::animation_9_6() {
 	sentido_hare = 2;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	playmusic(9);
+	playMusic(9);
 	clearRoom();
 	loadPic("nota.alg");
 	decompressPic(dir_dibujo1, COMPLETA);
@@ -2410,17 +2410,17 @@ void DrasculaEngine::animation_9_6() {
 	talk(_text[_lang][301], "301.als");
 	v_cd = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
 	v_cd = v_cd + 4;
-	playmusic(17);
+	playMusic(17);
 	FundeAlNegro(1);
 	clearRoom();
 	fliplay("qpc.bin", 1);
 	MusicFadeout();
-	stopmusic();
+	stopMusic();
 	clearRoom();
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, v_cd * 16);
-	playmusic(3);
+	playMusic(3);
 	fliplay("crd.bin", 1);
-	stopmusic();
+	stopMusic();
 }
 
 void DrasculaEngine::animation_10_6() {
@@ -2505,7 +2505,7 @@ void DrasculaEngine::animation_12_2() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
-	stopmusic();
+	stopMusic();
 	flags[11] = 1;
 
 	talk_pianista(_textp[_lang][5], "P5.als");
@@ -2539,7 +2539,7 @@ void DrasculaEngine::animation_26_2() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
-	stopmusic();
+	stopMusic();
 	flags[11] = 1;
 
 	talk_pianista(_textp[_lang][5], "P5.als");
@@ -3163,7 +3163,7 @@ void DrasculaEngine::animation_5_2() {
 }
 
 void DrasculaEngine::animation_6_2() {
-	stopmusic();
+	stopMusic();
 	flags[9] = 1;
 
 	clearRoom();
@@ -3198,7 +3198,7 @@ void DrasculaEngine::animation_6_2() {
 
 	clearRoom();
 
-	playmusic(musica_room);
+	playMusic(musica_room);
 	loadPic("9.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	loadPic("aux9.alg");
@@ -3215,7 +3215,7 @@ void DrasculaEngine::animation_6_2() {
 }
 
 void DrasculaEngine::animation_33_2() {
-	stopmusic();
+	stopMusic();
 	flags[9] = 1;
 
 	pause(12);
@@ -3254,7 +3254,7 @@ void DrasculaEngine::animation_33_2() {
 
 	clearRoom();
 
-	playmusic(musica_room);
+	playMusic(musica_room);
 	loadPic("9.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	loadPic("aux9.alg");
