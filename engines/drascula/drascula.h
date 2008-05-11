@@ -376,12 +376,12 @@ public:
 	void paleta_hare();
 	void updatePalette();
 	void setvgapalette256(byte *PalBuf);
-	void copyBackground(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, byte *Origen, byte *Destino);
-	void copyRect(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, byte *Origen, byte *Destino);
-	void copyRectClip(int *Array, byte *Origen, byte *Destino);
-	void updateScreen(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer);
+	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
+				int height, byte *src, byte *dest);
+	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
+				int height, byte *src, byte *dest);
+	void copyRectClip(int *Array, byte *src, byte *dest);
+	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
 
 	DacPalette256 palJuego;
 	DacPalette256 palHare;
@@ -408,7 +408,7 @@ public:
 	Common::File *ald, *sku;
 
 	int hay_sb;
-	int nivel_osc, musica_antes, musica_room;
+	int nivel_osc, previousMusic, roomMusic;
 	char num_room[20], roomDisk[20];
 	char currentData[20];
 	int objs_room;
@@ -417,7 +417,7 @@ public:
 	char objName[30][20];
 	char iconName[44][13];
 
-	int num_obj[40], visible[40], espuerta[40];
+	int num_obj[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
 	int objetos_que_tengo[43];
 	char alapantallakeva[40][20];
@@ -439,11 +439,11 @@ public:
 	int hare_x, hare_y, hare_se_mueve, direccion_hare, sentido_hare, num_frame, hare_se_ve;
 	int sitio_x, sitio_y, comprueba_flags;
 	int rompo, rompo2;
-	int paso_x, paso_y;
+	int step_x, step_y;
 	int alto_hare, ancho_hare, alto_pies;
 	int alto_talk, ancho_talk;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
-	int cerca, lejos;
+	int near, far;
 	int sentido_final, anda_a_objeto;
 	int obj_saliendo;
 	int diff_vez, conta_vez;
@@ -479,9 +479,9 @@ public:
 	int boton_dch;
 
 	bool escoba();
-	void Negro();
+	void black();
 	void talk_vb(const char *, const char *);
-	void talk_vbpuerta(const char *dicho, const char *filename);
+	void talk_vbpuerta(const char *said, const char *filename);
 	void talk_ciego(const char *, const char *, const char *);
 	void talk_hacker(const char *, const char *);
 	void pickObject(int);
@@ -489,7 +489,7 @@ public:
 	void anda_pabajo();
 	void pon_vb();
 	void lleva_vb(int punto_x);
-	void hipo_sin_nadie(int contador);
+	void hipo_sin_nadie(int counter);
 	void openDoor(int nflag, int n_puerta);
 	void mapa();
 	void animation_1_1();
@@ -606,22 +606,22 @@ public:
 	void fin_sound_corte();
 	void FundeAlNegro(int VelocidadDeFundido);
 	void pause(int);
-	void talk_dr_grande(const char *dicho, const char *filename);
+	void talk_dr_grande(const char *said, const char *filename);
 	void pon_igor();
 	void pon_bj();
 	void pon_dr();
-	void talk_igor_dch(const char *dicho, const char *filename);
-	void talk_dr_dch(const char *dicho, const char *filename);
-	void talk_dr_izq(const char *dicho, const char *filename);
+	void talk_igor_dch(const char *said, const char *filename);
+	void talk_dr_dch(const char *said, const char *filename);
+	void talk_dr_izq(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
 	void talk_igor_frente(const char *, const char *);
-	void talk_tabernero(const char *dicho, const char *filename);
-	void talk_igorpuerta(const char *dicho, const char *filename);
-	void talk_igor_peluca(const char *dicho, const char *filename);
+	void talk_tabernero(const char *said, const char *filename);
+	void talk_igorpuerta(const char *said, const char *filename);
+	void talk_igor_peluca(const char *said, const char *filename);
 	void hipo(int);
 	void fin_sound();
 	void talk_bj(const char *, const char *);
-	void talk_baul(const char *dicho, const char *filename);
+	void talk_baul(const char *said, const char *filename);
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
 	void cierra_puerta(int nflag, int n_puerta);
@@ -732,8 +732,8 @@ public:
 	void conversa(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void responde(int);
-	void talk_borracho(const char *dicho, const char *filename);
-	void talk_pianista(const char *dicho, const char *filename);
+	void talk_borracho(const char *said, const char *filename);
+	void talk_pianista(const char *said, const char *filename);
 
 	void MusicFadeout();
 	void ctvd_end();
@@ -791,8 +791,8 @@ public:
 	void update_50();
 	void update_57();
 	void talk_igor_sentado(const char *, const char *);
-	void talk_lobo(const char *dicho, const char *filename);
-	void talk_mus(const char *dicho, const char *filename);
+	void talk_lobo(const char *said, const char *filename);
+	void talk_mus(const char *said, const char *filename);
 	void room_58(int);
 	void room_59(int);
 	bool room_60(int);
@@ -825,8 +825,8 @@ public:
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
 	void talk_taber2(const char *, const char *);
-	void talk_bj_cama(const char *dicho, const char * filename);
-	void talk_htel(const char *dicho, const char *filename);
+	void talk_bj_cama(const char *said, const char * filename);
+	void talk_htel(const char *said, const char *filename);
 
 private:
 	int _lang;

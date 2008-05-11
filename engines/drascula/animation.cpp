@@ -56,7 +56,7 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 		loadPic("cielo.alg");
 		decompressPic(dir_zona_pantalla, 256);
-		Negro();
+		black();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		FundeDelNegro(2);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -287,7 +287,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		fin_sound_corte();
 		clearRoom();
-		Negro();
+		black();
 		playMusic(23);
 		FundeDelNegro(0);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -387,7 +387,7 @@ void DrasculaEngine::animation_1_1() {
 	decompressPic(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::talk_dr_grande(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 	int x_talk[4] = {47, 93, 139, 185};
@@ -395,7 +395,7 @@ void DrasculaEngine::talk_dr_grande(const char *dicho, const char *filename) {
 	int l = 0;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -425,7 +425,7 @@ bucless:
 		l = 0;
 
 	if (withVoices == 0)
-		centra_texto(dicho, 191, 69);
+		centra_texto(said, 191, 69);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -504,7 +504,7 @@ void DrasculaEngine::animation_2_1() {
 		decompressPic(dir_zona_pantalla, MEDIA);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		Negro();
+		black();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		FundeDelNegro(1);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -879,7 +879,7 @@ void DrasculaEngine::animation_4_2() {
 
 	clearRoom();
 
-	playMusic(musica_room);
+	playMusic(roomMusic);
 	loadPic("9.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	loadPic("aux9.alg");
@@ -994,7 +994,7 @@ void DrasculaEngine::animation_16_2() {
 	decompressPic(dir_dibujo1, MEDIA);
 
 	if (_lang == kSpanish)
-		Negro();
+		black();
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -1118,12 +1118,12 @@ asco:
 	decompressPic(dir_dibujo3, 1);
 	loadPic(num_room);
 	decompressPic(dir_dibujo1, MEDIA);
-	Negro();
+	black();
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(0);
-	if (musica_room != 0)
-		playMusic(musica_room);
+	if (roomMusic != 0)
+		playMusic(roomMusic);
 	else
 		stopMusic();
 }
@@ -1833,7 +1833,7 @@ void DrasculaEngine::animation_4_4() {
 }
 
 void DrasculaEngine::animation_7_4() {
-	Negro();
+	black();
 	talk(_text[_lang][427], "427.als");
 	FundeDelNegro(1);
 	resta_objeto(8);
@@ -2149,7 +2149,7 @@ void DrasculaEngine::animation_12_5() {
 	lleva_al_hare(-14, 175);
 
 	rompo = 1;
-	musica_antes = musica_room;
+	previousMusic = roomMusic;
 	hare_se_ve = 1;
 	clearRoom();
 	sentido_hare = 1;
@@ -2282,7 +2282,7 @@ void DrasculaEngine::animation_1_6() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	delay(930);
 	clearRoom();
-	Negro();
+	black();
 	hare_se_ve = 0;
 	flags[0] = 0;
 	updateRoom();
@@ -2298,7 +2298,7 @@ void DrasculaEngine::animation_1_6() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	delay(900);
 	clearRoom();
-	Negro();
+	black();
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(1);
@@ -2405,7 +2405,7 @@ void DrasculaEngine::animation_9_6() {
 	strcpy(num_room, "nada.alg");
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, MEDIA);
-	Negro();
+	black();
 	sentido_hare = 1;
 	hare_x -= 21;
 	updateRoom();
@@ -2627,7 +2627,7 @@ void DrasculaEngine::animation_26_2() {
 	flags[39] = 1;
 	loadPic("974.alg");
 	decompressPic(dir_hare_dch, 1);
-	musica_room = 16;
+	roomMusic = 16;
 }
 
 void DrasculaEngine::animation_11_2() {
@@ -3238,7 +3238,7 @@ void DrasculaEngine::animation_6_2() {
 
 	clearRoom();
 
-	playMusic(musica_room);
+	playMusic(roomMusic);
 	loadPic("9.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	loadPic("aux9.alg");
@@ -3294,7 +3294,7 @@ void DrasculaEngine::animation_33_2() {
 
 	clearRoom();
 
-	playMusic(musica_room);
+	playMusic(roomMusic);
 	loadPic("9.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	loadPic("aux9.alg");

@@ -27,7 +27,7 @@
 
 namespace Drascula {
 
-void DrasculaEngine::talk_igor_dch(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -35,7 +35,7 @@ void DrasculaEngine::talk_igor_dch(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -71,7 +71,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, x_igor + 26, y_igor);
+		centra_texto(said, x_igor + 26, y_igor);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -99,7 +99,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_dr_izq(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -107,7 +107,7 @@ void DrasculaEngine::talk_dr_izq(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -148,7 +148,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, x_dr + 19, y_dr);
+		centra_texto(said, x_dr + 19, y_dr);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -177,7 +177,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_dr_dch(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -185,7 +185,7 @@ void DrasculaEngine::talk_dr_dch(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -225,7 +225,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, x_dr + 19, y_dr);
+		centra_texto(said, x_dr + 19, y_dr);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -258,12 +258,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_solo(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -292,11 +292,11 @@ bucless:
 
 	if (withVoices == 0) {
 		if (num_ejec == 1)
-			centra_texto(dicho, 156, 90);
+			centra_texto(said, 156, 90);
 		else if (num_ejec == 6)
-			centra_texto(dicho, 213, 72);
+			centra_texto(said, 213, 72);
 		else if (num_ejec == 5)
-			centra_texto(dicho, 173, 92);
+			centra_texto(said, 173, 92);
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -322,7 +322,7 @@ bucless:
 	}
 }
 
-void DrasculaEngine::talk_igor_frente(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -330,7 +330,7 @@ void DrasculaEngine::talk_igor_frente(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -368,7 +368,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, x_igor + 26, y_igor);
+		centra_texto(said, x_igor + 26, y_igor);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -403,7 +403,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_tabernero(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -411,7 +411,7 @@ void DrasculaEngine::talk_tabernero(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -434,10 +434,10 @@ bucless:
 
 	if (num_ejec == 1) {
 		if (musicStatus() == 0)
-			playMusic(musica_room);
+			playMusic(roomMusic);
 	} else if (num_ejec == 2) {
-		if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
-			playMusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+			playMusic(roomMusic);
 	}
 
 	cara = _rnd->getRandomNumber(8);
@@ -451,7 +451,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 132, 45);
+		centra_texto(said, 132, 45);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -475,7 +475,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_bj(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -483,7 +483,7 @@ void DrasculaEngine::talk_bj(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -519,7 +519,7 @@ bucless:
 		updateRefresh();
 
 		if (withVoices == 0)
-			centra_texto(dicho, x_bj + 7, y_bj);
+			centra_texto(said, x_bj + 7, y_bj);
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -528,7 +528,7 @@ bucless:
 		updateRoom();
 
 		if (withVoices == 0)
-			centra_texto(dicho, 93, 80);
+			centra_texto(said, 93, 80);
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
@@ -554,7 +554,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk(const char *dicho, const char *filename) {
+void DrasculaEngine::talk(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -568,15 +568,15 @@ void DrasculaEngine::talk(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	if (num_ejec == 6) {
 		if (flags[0] == 0 && (!strcmp(num_room, "102.alg"))) {
-			talk_pen(dicho, filename);
+			talk_pen(said, filename);
 			return;
 		}
 		if (flags[0] == 0 && (!strcmp(num_room, "58.alg"))) {
-			talk_pen2(dicho, filename);
+			talk_pen2(said, filename);
 			return;
 		}
 	}
@@ -674,7 +674,7 @@ bucless:
 	}
 
 	if (withVoices == 0)
-		centra_texto(dicho, hare_x, hare_y);
+		centra_texto(said, hare_x, hare_y);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -702,17 +702,17 @@ bucless:
 
 	if (num_ejec == 1) {
 		if (musicStatus() == 0 && flags[11] == 0 && corta_musica == 0)
-			playMusic(musica_room);
+			playMusic(roomMusic);
 	}
 }
 
-void DrasculaEngine::talk_pianista(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 	int x_talk[4] = { 97, 145, 193, 241 };
 	int cara;
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -745,7 +745,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 221, 128);
+		centra_texto(said, 221, 128);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -770,14 +770,14 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_borracho(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_borracho(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
 	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
 	int cara;
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -824,7 +824,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 181, 54);
+		centra_texto(said, 181, 54);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -856,14 +856,14 @@ bucless:
 
 	if (num_ejec == 1) {
 		if (musicStatus() == 0 && flags[11] == 0)
-			playMusic(musica_room);
+			playMusic(roomMusic);
 	} else if (num_ejec == 2) {
-		if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
-			playMusic(musica_room);
+		if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+			playMusic(roomMusic);
 	}
 }
 
-void DrasculaEngine::talk_vb(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -871,7 +871,7 @@ void DrasculaEngine::talk_vb(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -907,7 +907,7 @@ bucless:
 	}
 
 	if (withVoices == 0)
-		centra_texto(dicho, vb_x, 66);
+		centra_texto(said, vb_x, 66);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -930,16 +930,16 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
-		playMusic(musica_room);
+	if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_vbpuerta(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_vbpuerta(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -962,7 +962,7 @@ bucless:
 
 	updateRoom();
 	if (withVoices == 0)
-		centra_texto(dicho, 150, 80);
+		centra_texto(said, 150, 80);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	int key = getscan();
@@ -982,18 +982,18 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	if (musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
-		playMusic(musica_room);
+	if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_ciego(const char *dicho, const char *filename, const char *sincronia) {
+void DrasculaEngine::talk_ciego(const char *said, const char *filename, const char *sincronia) {
 	byte *num_cara;
 	int p = 0;
 	int pos_ciego[6];
 	int cara = 0;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	color_abc(VON_BRAUN);
 
@@ -1063,7 +1063,7 @@ bucless:
 	copyRectClip( pos_ciego, num_cara, dir_zona_pantalla);
 
 	if (withVoices == 0)
-		centra_texto(dicho, 310, 71);
+		centra_texto(said, 310, 71);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(2);
@@ -1085,12 +1085,12 @@ bucless:
 	}
 }
 
-void DrasculaEngine::talk_hacker(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1114,7 +1114,7 @@ void DrasculaEngine::talk_hacker(const char *dicho, const char *filename) {
 
 bucless:
 	if (withVoices == 0)
-		centra_texto(dicho, 156, 170);
+		centra_texto(said, 156, 170);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	int key = getscan();
@@ -1135,7 +1135,7 @@ bucless:
 	key = 0;
 }
 
-void DrasculaEngine::talk_lobo(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_lobo(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1143,7 +1143,7 @@ void DrasculaEngine::talk_lobo(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1175,7 +1175,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 203, 78);
+		centra_texto(said, 203, 78);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1200,7 +1200,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_mus(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_mus(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1208,7 +1208,7 @@ void DrasculaEngine::talk_mus(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1240,7 +1240,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 197, 64);
+		centra_texto(said, 197, 64);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1265,7 +1265,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_pen(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1273,7 +1273,7 @@ void DrasculaEngine::talk_pen(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	flags[1] = 1;
 
@@ -1311,7 +1311,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 160, 105);
+		centra_texto(said, 160, 105);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1338,7 +1338,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_pen2(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1346,7 +1346,7 @@ void DrasculaEngine::talk_pen2(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	flags[1] = 1;
 
@@ -1380,7 +1380,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 195, 107);
+		centra_texto(said, 195, 107);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1407,7 +1407,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_taber2(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1415,7 +1415,7 @@ void DrasculaEngine::talk_taber2(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1447,7 +1447,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 132, 45);
+		centra_texto(said, 132, 45);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1472,7 +1472,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_bj_cama(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_bj_cama(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1480,7 +1480,7 @@ void DrasculaEngine::talk_bj_cama(const char *dicho, const char *filename) {
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1513,7 +1513,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 104, 102);
+		centra_texto(said, 104, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1537,7 +1537,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_htel(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_htel(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 	char *num_cara;
@@ -1546,7 +1546,7 @@ void DrasculaEngine::talk_htel(const char *dicho, const char *filename) {
 	int cara, pantalla;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1582,7 +1582,7 @@ bucless:
 	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
 
 	if (withVoices == 0)
-		centra_texto(dicho, 90, 50);
+		centra_texto(said, 90, 50);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(3);
@@ -1606,7 +1606,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_sinc(const char *dicho, const char *filename, const char *sincronia) {
+void DrasculaEngine::talk_sinc(const char *said, const char *filename, const char *sincronia) {
 	int suma_1_pixel = 1;
 	int y_mask_talk = 170;
 	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
@@ -1614,7 +1614,7 @@ void DrasculaEngine::talk_sinc(const char *dicho, const char *filename, const ch
 	int p, cara = 0;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	color_abc(YELLOW);
 
@@ -1704,7 +1704,7 @@ bucless:
 	}
 
 	if (withVoices == 0)
-		centra_texto(dicho, hare_x, hare_y);
+		centra_texto(said, hare_x, hare_y);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1727,18 +1727,18 @@ bucless:
 	}
 
 	if (num_ejec == 1 && musicStatus() == 0 && flags[11] == 0)
-		playMusic(musica_room);
-	if (num_ejec == 2 && musicStatus() == 0 && flags[11] == 0 && musica_room != 0)
-		playMusic(musica_room);
+		playMusic(roomMusic);
+	if (num_ejec == 2 && musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_baul(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_baul(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 	int cara = 0, cara_antes;
 	int longitud;
 
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1770,7 +1770,7 @@ bucless:
 	updateRoom();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 263, 69);
+		centra_texto(said, 263, 69);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1796,12 +1796,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_igorpuerta(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1824,7 +1824,7 @@ bucless:
 
 	updateRoom();
 	if (withVoices == 0)
-		centra_texto(dicho, 87, 66);
+		centra_texto(said, 87, 66);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	int key = getscan();
@@ -1846,7 +1846,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_igor_sentado(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_sentado(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1854,7 +1854,7 @@ void DrasculaEngine::talk_igor_sentado(const char *dicho, const char *filename) 
 	int cara;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1886,7 +1886,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 221, 102);
+		centra_texto(said, 221, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1911,7 +1911,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_igor_peluca(const char *dicho, const char *filename) {
+void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -1919,7 +1919,7 @@ void DrasculaEngine::talk_igor_peluca(const char *dicho, const char *filename) {
 	int cara = 0;
 
 	int longitud;
-	longitud = strlen(dicho);
+	longitud = strlen(said);
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
@@ -1951,7 +1951,7 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(dicho, 221, 102);
+		centra_texto(said, 221, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
