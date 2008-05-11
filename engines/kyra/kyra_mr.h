@@ -55,6 +55,7 @@ public:
 	GUI_v2 *gui_v2() const { return _gui; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
+	bool heliumMode() const { return _configHelium; }
 
 	int go();
 
@@ -66,6 +67,7 @@ private:
 	// config
 	bool _configStudio;
 	bool _configSkip;
+	bool _configHelium;
 
 	void registerDefaultSettings();
 	void writeSettings();

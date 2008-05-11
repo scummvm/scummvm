@@ -146,6 +146,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_chatAltFlag = false;
 	_albumChatActive = false;
 	memset(&_album, 0, sizeof(_album));
+	_configHelium = false;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -1515,6 +1516,7 @@ void KyraEngine_MR::registerDefaultSettings() {
 	ConfMan.registerDefault("walkspeed", 5);
 	ConfMan.registerDefault("studio_audience", true);
 	ConfMan.registerDefault("skip_support", true);
+	ConfMan.registerDefault("helium_mode", false);
 }
 
 void KyraEngine_MR::writeSettings() {
@@ -1538,6 +1540,7 @@ void KyraEngine_MR::writeSettings() {
 
 	ConfMan.setBool("studio_audience", _configStudio);
 	ConfMan.setBool("skip_support", _configSkip);
+	ConfMan.setBool("helium_mode", _configHelium);
 
 	KyraEngine::writeSettings();
 }
@@ -1548,6 +1551,7 @@ void KyraEngine_MR::readSettings() {
 
 	_configStudio = ConfMan.getBool("studio_audience");
 	_configSkip = ConfMan.getBool("skip_support");
+	_configHelium = ConfMan.getBool("helium_mode");
 }
 
 } // end of namespace Kyra

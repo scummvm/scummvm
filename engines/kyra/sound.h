@@ -491,6 +491,7 @@ private:
 
 // Digital Audio
 class AUDStream;
+class KyraEngine_MR;
 
 /**
  * Digital audio output device.
@@ -499,7 +500,7 @@ class AUDStream;
  */
 class SoundDigital {
 public:
-	SoundDigital(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer);
 	~SoundDigital();
 
 	bool init() { return true; }
@@ -548,7 +549,7 @@ public:
 	 */
 	void beginFadeOut(int channel, int ticks);
 private:
-	KyraEngine *_vm;
+	KyraEngine_MR *_vm;
 	Audio::Mixer *_mixer;
 
 	struct Sound {

@@ -25,6 +25,7 @@
 
 #include "kyra/sound.h"
 #include "kyra/resource.h"
+#include "kyra/kyra_mr.h"
 
 #include "sound/audiostream.h"
 
@@ -45,6 +46,7 @@ public:
 	bool isStereo() const { return false; }
 	bool endOfData() const { return _endOfData; }
 
+	void setRate(int newRate) { _rate = newRate; }
 	int getRate() const { return _rate; }
 
 	void beginFadeIn(uint32 millis);
@@ -319,7 +321,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 #pragma mark -
 
-SoundDigital::SoundDigital(KyraEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {
+SoundDigital::SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {
 	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
 		_sounds[i].stream = 0;
 }
@@ -384,6 +386,9 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	if (volume > 255)
 		volume = 255;
 	volume = (volume * Audio::Mixer::kMaxChannelVolume) / 255;
+	
+	if (type == Audio::Mixer::kSpeechSoundType && _vm->heliumMode())
+		use->stream->setRate(32765);
 
 	_mixer->playInputStream(type, &use->handle, use->stream, -1, volume);
 

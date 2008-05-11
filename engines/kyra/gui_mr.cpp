@@ -1539,15 +1539,26 @@ int GUI_MR::toggleSkipSupport(Button *caller) {
 	return 0;
 }
 
+int GUI_MR::toggleHeliumMode(Button *caller) {
+	updateMenuButton(caller);
+	_vm->_configHelium ^= 1;
+	if (_vm->_configHelium)
+		_audioOptions.item[3].itemId = 18;
+	else
+		_audioOptions.item[3].itemId = 17;
+	renewHighlight(_audioOptions);
+	return 0;
+}
+
 int GUI_MR::audioOptions(Button *caller) {
 	updateMenuButton(caller);
 
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
 
-	//if (_configHelium)
-	//	_audioOptions.item[3].itemId = 18;
-	//else
+	if (_vm->_configHelium)
+		_audioOptions.item[3].itemId = 18;
+	else
 		_audioOptions.item[3].itemId = 17;
 
 	initMenu(_audioOptions);

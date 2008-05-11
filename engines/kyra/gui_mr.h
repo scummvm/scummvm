@@ -79,6 +79,7 @@ private:
 	int changeLanguage(Button *caller);
 	int toggleStudioSFX(Button *caller);
 	int toggleSkipSupport(Button *caller);
+	int toggleHeliumMode(Button *caller);
 
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;
