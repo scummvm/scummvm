@@ -428,6 +428,11 @@ private:
 	void goodConscienceChat(const char *str, int vocHigh, int vocLow);
 	void goodConscienceChatWaitToFinish();
 
+	bool _albumChatActive;
+	void albumChat(const char *str, int vocHigh, int vocLow);
+	void albumChatInit(const char *str, int object, int vocHigh, int vocLow);
+	void albumChatWaitToFinish();
+
 	void malcolmSceneStartupChat();
 
 	byte _newSceneDlgState[40];
@@ -524,6 +529,55 @@ private:
 
 	void eelScript();
 
+	// Album
+	struct Album {
+		uint8 *backUpPage;
+		uint8 *file;
+		WSAMovieV2 *wsa;
+		uint8 *backUpRect;
+
+		struct PageMovie {
+			WSAMovieV2 *wsa;
+			int curFrame;
+			int maxFrame;
+			uint32 timer;
+		};
+
+		PageMovie leftPage, rightPage;
+
+		int curPage, nextPage;
+		bool running;
+		bool isPage14;
+	} _album;
+
+	static const int8 _albumWSAX[];
+	static const int8 _albumWSAY[];
+
+	void showAlbum();
+
+	void loadAlbumPage();
+	void loadAlbumPageWSA();
+
+	void printAlbumPageText();
+	void printAlbumText(int page, const char *str, int x, int y, uint8 c0);
+	
+	void processAlbum();
+
+	void albumNewPage();
+	void albumUpdateAnims();
+	void albumAnim1();
+	void albumAnim2();
+
+	void albumBackUpRect();
+	void albumRestoreRect();
+	void albumUpdateRect();
+
+	void albumSwitchPages(int oldPage, int newPage, int unk);
+
+	int albumNextPage(Button *caller);
+	int albumPrevPage(Button *caller);
+	int albumClose(Button *caller);
+
 	// save/load
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
@@ -540,6 +594,7 @@ private:
 	int o3_setCharacterAnimFrameFromFacing(EMCState *script);
 	int o3_showBadConscience(EMCState *script);
 	int o3_hideBadConscience(EMCState *script);
+	int o3_showAlbum(EMCState *script);
 	int o3_setInventorySlot(EMCState *script);
 	int o3_getInventorySlot(EMCState *script);
 	int o3_addItemToInventory(EMCState *script);

@@ -134,6 +134,12 @@ int KyraEngine_MR::o3_hideBadConscience(EMCState *script) {
 	return 0;
 }
 
+int KyraEngine_MR::o3_showAlbum(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_showAlbum(%p) ()", (const void *)script);
+	showAlbum();
+	return 0;
+}
+
 int KyraEngine_MR::o3_setInventorySlot(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setInventorySlot(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int slot = MAX<int16>(0, MIN<int16>(10, stackPos(0)));
@@ -1176,7 +1182,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_hideBadConscience);
 	// 0x18
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_showAlbum);
 	Opcode(o3_setInventorySlot);
 	Opcode(o3_getInventorySlot);
 	// 0x1c

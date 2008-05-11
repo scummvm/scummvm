@@ -2665,5 +2665,15 @@ void GUI_MR::initStaticData() {
 		_deathMenu.item[i].enabled = false;
 }
 
+const int8 KyraEngine_MR::_albumWSAX[] = {
+	  0, 77, -50, 99, -61, 82, -58, 85,
+	-64, 80, -63, 88, -63, 88, -64,  0
+};
+
+const int8 KyraEngine_MR::_albumWSAY[] = {
+	 0, -1, 3, 0, -1,  0, -2, 0,
+	-1, -2, 2, 2, -6, -6, -6, 0
+};
+
 } // End of namespace Kyra
 

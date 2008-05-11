@@ -144,6 +144,8 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_optionsFile = 0;
 	_actorFile = 0;
 	_chatAltFlag = false;
+	_albumChatActive = false;
+	memset(&_album, 0, sizeof(_album));
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -191,6 +193,10 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete[] _mainButtonData;
 	delete _gui;
 	delete[] _optionsFile;
+
+	delete _album.wsa;
+	delete _album.leftPage.wsa;
+	delete _album.rightPage.wsa;
 }
 
 int KyraEngine_MR::init() {
@@ -542,6 +548,13 @@ void KyraEngine_MR::initMouseShapes() {
 
 void KyraEngine_MR::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::startup()");
+
+	_album.wsa = new WSAMovieV2(this, _screen);
+	assert(_album.wsa);
+	_album.leftPage.wsa = new WSAMovieV2(this, _screen);
+	assert(_album.leftPage.wsa);
+	_album.rightPage.wsa = new WSAMovieV2(this, _screen);
+	assert(_album.rightPage.wsa);
 	musicUpdate(0);
 
 	_gamePlayBuffer = new uint8[64000];
