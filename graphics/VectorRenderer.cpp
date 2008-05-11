@@ -35,7 +35,7 @@ namespace Graphics {
 inline uint32 fp_sqroot(uint32 x);
 
 VectorRenderer *createRenderer() {
-	return new VectorRendererAA<uint16, ColorMasks<565> >;
+	return new VectorRendererSpec<uint16, ColorMasks<565> >;
 }
 
 
@@ -64,8 +64,8 @@ void vector_renderer_test(OSystem *_system) {
 
 		vr->setFgColor(255, 0, 0);
 		vr->setBgColor(25, 25, 175);
-		vr->setFillMode(VectorRenderer::kBackgroundFill);
-		vr->setStrokeWidth(3);
+		vr->setFillMode(VectorRenderer::kForegroundFill);
+		vr->setStrokeWidth(1);
 		vr->shadowEnable(1, 1);
 
 		vr->drawLine(25, 25, 125, 300);
@@ -103,7 +103,7 @@ drawCircle(int x, int y, int r) {
 		break;
 
 	case kBackgroundFill:
-		VectorRendererSpec::drawCircleAlg(x, y, r - 1, _bgColor, true);
+		VectorRendererSpec::drawCircleAlg(x, y, r, _bgColor, true);
 		drawCircleAlg(x, y, r, _fgColor, false);
 		break;
 
@@ -384,52 +384,75 @@ inline uint32 fp_sqroot(uint32 x) {
 	return root;
 }
 
+#define __BE_ALGORITHM() { \
+	if (f >= 0) { \
+		y--; \
+		ddF_y += 2; \
+		f += ddF_y; \
+		py -= pitch; \
+	} \
+	px += pitch; \
+	ddF_x += 2; \
+	f += ddF_x + 1; \
+}
+
+#define __BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+	*(ptr1 + x + py) = color; \
+	*(ptr1 + y - px) = color; \
+	*(ptr1 - x - py) = color; \
+	*(ptr1 - y - px) = color; \
+	*(ptr1 - y + px) = color; \
+	*(ptr1 - x + py) = color; \
+	*(ptr1 + y + px) = color; \
+	*(ptr1 + x - py) = color; \
+}
+
+#define __BE_RESET() { \
+	f = 1 - r; \
+	ddF_x = 0; ddF_y = -2 * r; \
+	x = 0; y = r; px = 0; py = pitch * r; \
+}
+
+
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
-	int f = 1 - r;
-	int ddF_x = 0, ddF_y = -2 * r;
-	int x = 0, y = r, px, py;
+	int f, ddF_x, ddF_y;
+	int x, y, px, py, sw = 0;
 	int pitch = Base::surfacePitch();
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	px = 0;
-	py = pitch * y;
+	if (fill == false) {
+		while (sw++ < Base::_strokeWidth) {
+			__BE_RESET();
+			r--;
 
-	*(ptr + y) = color;
-	*(ptr - y) = color;
-	*(ptr + py) = color;
-	*(ptr - py) = color;
+			*(ptr + y) = color;
+			*(ptr - y) = color;
+			*(ptr + py) = color;
+			*(ptr - py) = color;
 
-	if (fill) Common::set_to(ptr - r, ptr + r, color);
+			while (x++ < y) {
+				__BE_ALGORITHM();
+				__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py);
 
-	while (x++ < y) {
-		if (f >= 0) {
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-			py -= pitch;
+				if (Base::_strokeWidth > 1) {
+					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x - 1, y, px, py);
+					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px - pitch, py);
+				}
+			}
 		}
+	} else {
+		Common::set_to(ptr - r, ptr + r, color);
+		__BE_RESET();
 
-		px += pitch;
-		ddF_x += 2;
-		f += ddF_x + 1;
-
-		if (fill) {
+		while (x++ < y) {
+			__BE_ALGORITHM();
 			Common::set_to(ptr - x + py, ptr + x + py, color);
 			Common::set_to(ptr - x - py, ptr + x - py, color);
 			Common::set_to(ptr - y + px, ptr + y + px, color);
 			Common::set_to(ptr - y - px, ptr + y - px, color);
 		}
-
-		*(ptr + x + py) = color;
-		*(ptr + y - px) = color;
-		*(ptr - x - py) = color; 
-		*(ptr - y - px) = color;
-		*(ptr - y + px) = color;
-		*(ptr - x + py) = color;
-		*(ptr + y + px) = color;
-		*(ptr + x - py) = color;
 	}
 }
 
