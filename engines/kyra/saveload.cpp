@@ -29,7 +29,7 @@
 
 #include "kyra/kyra.h"
 
-#define CURRENT_SAVE_VERSION 11
+#define CURRENT_SAVE_VERSION 12
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)

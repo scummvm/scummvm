@@ -49,7 +49,7 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 	out->writeSint16BE(_lastMusicCommand);
 	out->writeByte(_currentChapter);
 	out->writeByte(_characterShapeFile);
-	//XXX
+	out->writeByte(_album.curPage);
 	out->writeSint16BE(_score);
 	out->writeSint16BE(_scoreMax);
 	out->writeByte(_malcolmsMood);
@@ -158,7 +158,8 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	_lastMusicCommand = in.readSint16();
 	_currentChapter = in.readByte();
 	_characterShapeFile = in.readByte();
-	//XXX
+	if (header.version >= 12 || header.originalSave)
+		_album.curPage = in.readByte();
 	_score = in.readSint16();
 	_scoreMax = in.readSint16();
 	_malcolmsMood = in.readByte();
