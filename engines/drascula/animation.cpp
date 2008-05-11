@@ -847,30 +847,30 @@ void DrasculaEngine::animation_4_2() {
 
 	pause(10);
 
-	talk_ciego(_textd[_lang][68], "d68.als", "44472225500022227555544444664447222550002222755554444466");
+	talk_ciego(_textd[_lang][68], "d68.als", _textd1[_lang][68 - TEXTD_START]);
 	pause(5);
 	talk_hacker(_textd[_lang][57], "d57.als");
 	pause(6);
-	talk_ciego(_textd[_lang][69],"d69.als","444722255000222275555444446655033336666664464402256555005504450005446");
+	talk_ciego(_textd[_lang][69],"d69.als", _textd1[_lang][69 - TEXTD_START]);
 	pause(4);
 	talk_hacker(_textd[_lang][58],"d58.als");
-	talk_ciego(_textd[_lang][70],"d70.als", "4447222550002222755554444466550333226220044644550044755665500440006655556666655044744656550446470046");
+	talk_ciego(_textd[_lang][70],"d70.als", _textd1[_lang][70 - TEXTD_START]);
 	delay(14);
 	talk_hacker(_textd[_lang][59],"d59.als");
-	talk_ciego(_textd[_lang][71],"d71.als", "550330227556444744446660004446655544444722255000222275555444446644444");
+	talk_ciego(_textd[_lang][71],"d71.als", _textd1[_lang][71 - TEXTD_START]);
 	talk_hacker(_textd[_lang][60],"d60.als");
-	talk_ciego(_textd[_lang][72],"d72.als", "55033022755644455550444744400044504447222550002222755554444466000");
+	talk_ciego(_textd[_lang][72],"d72.als", _textd1[_lang][72 - TEXTD_START]);
 	talk_hacker(_textd[_lang][61],"d61.als");
-	talk_ciego(_textd[_lang][73],"d73.als", "55033022755644444447227444466644444722255000222275555444446664404446554440055655022227500544446044444446");
+	talk_ciego(_textd[_lang][73],"d73.als", _textd1[_lang][73 - TEXTD_START]);
 	talk_hacker(_textd[_lang][62],"d62.als");
-	talk_ciego(_textd[_lang][74],"d74.als", "55033022755644444472244472225500022227555544444662550002222755444446666055522275550005550022200222000222666");
+	talk_ciego(_textd[_lang][74],"d74.als", _textd1[_lang][74 - TEXTD_START]);
 	talk_hacker(_textd[_lang][63],"d63.als");
-	talk_ciego(_textd[_lang][75],"d75.als", "44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555");
+	talk_ciego(_textd[_lang][75],"d75.als", _textd1[_lang][75 - TEXTD_START]);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	_system->delayMillis(1);
 	talk_hacker(_textd[_lang][64], "d64.als");
-	talk_ciego(_textd[_lang][76], "d76.als", "5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444");
+	talk_ciego(_textd[_lang][76], "d76.als", _textd1[_lang][76 - TEXTD_START]);
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -978,23 +978,43 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 
-	playMusic(32);
+	if (_lang == kSpanish)
+		playMusic(30);
+	else
+		playMusic(32);
+
 	int key = getscan();
 	if (key != 0)
 		goto asco;
 
-	color_abc(DARK_GREEN);
+	if (_lang != kSpanish)
+		color_abc(DARK_GREEN);
 
 	loadPic("his1.alg");
 	decompressPic(dir_dibujo1, MEDIA);
+
+	if (_lang == kSpanish)
+		Negro();
+
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	centra_texto(_texthis[_lang][1], 180, 180);
+
+	if (_lang != kSpanish)
+		centra_texto(_texthis[_lang][1], 180, 180);
+
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+
+	if (_lang == kSpanish)
+		FundeDelNegro(1);
+
 	key = getscan();
 	if (key != 0)
 		goto asco;
 
-	_system->delayMillis(4);
+	if (_lang == kSpanish)
+		_system->delayMillis(3);
+	else
+		_system->delayMillis(4);
+
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -1008,13 +1028,20 @@ void DrasculaEngine::animation_16_2() {
 	loadPic("his2.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	centra_texto(_texthis[_lang][2], 180, 180);
+
+	if (_lang != kSpanish)
+		centra_texto(_texthis[_lang][2], 180, 180);
+
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
 
-	_system->delayMillis(4);
+	if (_lang == kSpanish)
+		_system->delayMillis(3);
+	else
+		_system->delayMillis(4);
+
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -1028,13 +1055,20 @@ void DrasculaEngine::animation_16_2() {
 	loadPic("his3.alg");
 	decompressPic(dir_dibujo1, MEDIA);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	centra_texto(_texthis[_lang][3], 180, 180);
+
+	if (_lang != kSpanish)
+		centra_texto(_texthis[_lang][3], 180, 180);
+
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
 
-	_system->delayMillis(4);
+	if (_lang == kSpanish)
+		_system->delayMillis(3);
+	else
+		_system->delayMillis(4);
+
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -1048,13 +1082,20 @@ void DrasculaEngine::animation_16_2() {
 	decompressPic(dir_dibujo3, 1);
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo3, dir_zona_pantalla);
-	centra_texto(_texthis[_lang][1], 180, 180);
+
+	if (_lang != kSpanish)
+		centra_texto(_texthis[_lang][1], 180, 180);
+
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	key = getscan();
 	if (key != 0)
 		goto asco;
 
-	_system->delayMillis(4);
+	if (_lang == kSpanish)
+		_system->delayMillis(2);
+	else
+		_system->delayMillis(4);
+
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -3186,8 +3227,7 @@ void DrasculaEngine::animation_6_2() {
 	if (flags[4] == 1)
 		talk_hacker(_textd[_lang][66], "d66.als");
 	pause(6);
-	talk_ciego(_textd[_lang][78], "d78.als",
-				"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777");
+	talk_ciego(_textd[_lang][78], "d78.als", _textd1[_lang][78 - TEXTD_START]);
 	pause(4);
 	talk_hacker(_textd[_lang][67], "d67.als");
 
@@ -3239,12 +3279,12 @@ void DrasculaEngine::animation_33_2() {
 
 	pause(10);
 
-	talk_ciego(_textd[_lang][68], "d68.als", "44472225500022227555544444472225500022227555544444664466");
+	talk_ciego(_textd[_lang][68], "d68.als", _textd1[_lang][68 - TEXTD_START]);
 	pause(5);
 	talk_hacker(_textd[_lang][57], "d57.als");
 	pause(6);
 	_system->delayMillis(1000);
-	talk_ciego(_textd[_lang][77], "d77.als", "56665004444447222550002222755554444466555033022755555000444444444444444444444444444444");
+	talk_ciego(_textd[_lang][77], "d77.als", _textd1[_lang][77 - TEXTD_START]);
 	talk_hacker(_textd[_lang][65], "d65.als");
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);

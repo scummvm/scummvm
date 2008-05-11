@@ -48,6 +48,16 @@ namespace Drascula {
 enum DrasculaGameFeatures {
 };
 
+enum Languages {
+	kEnglish = 0,
+	kSpanish = 1,
+	kGerman = 2,
+	kFrench = 3,
+	kItalian = 4
+};
+
+#define TEXTD_START 68
+
 struct DrasculaGameDescription;
 
 #define NUM_SAVES     10
@@ -836,6 +846,8 @@ extern const char *_textvb[][63];
 extern const char *_textsys[][4];
 extern const char *_texthis[][5];
 extern const char *_textverbs[][6];
+extern const char *_textmisc[][1];
+extern const char *_textd1[][11];
 
 } // End of namespace Drascula
 

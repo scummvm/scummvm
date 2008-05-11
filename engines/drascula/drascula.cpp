@@ -4318,7 +4318,7 @@ void DrasculaEngine::actualiza_datos() {
 		if (!strcmp(num_room, "22.alg") && flags[27] == 1)
 			visible[3] = 0;
 		if (!strcmp(num_room, "26.alg") && flags[21] == 0)
-			strcpy(nombre_obj[2], "HUNCHBACKED");
+			strcpy(nombre_obj[2], _textmisc[_lang][0]);
 		if (!strcmp(num_room, "26.alg") && flags[18] == 1)
 			visible[2] = 0;
 		if (!strcmp(num_room, "26.alg") && flags[12] == 1)
