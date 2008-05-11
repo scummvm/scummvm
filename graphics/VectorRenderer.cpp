@@ -497,7 +497,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 		ptr_fill += p * r;
 		while (short_h-- >= 0) {
 			Common::set_to(ptr_fill, ptr_fill + Base::_strokeWidth, color);
-			Common::set_to(ptr_fill + w - _strokeWidth + 1, ptr_fill + w + 1, color);
+			Common::set_to(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
 			ptr_fill += p;
 		}
 	} else {
