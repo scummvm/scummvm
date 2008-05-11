@@ -140,7 +140,7 @@ void GUI_v2::processButton(Button *button) {
 	_screen->updateScreen();
 }
 
-int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
+int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {
 	static uint16 flagsModifier = 0;
 
 	if (!buttonList)
@@ -236,6 +236,12 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		}
 
 		bool unk1 = false;
+
+		if (mouseWheel && buttonList->mouseWheel == mouseWheel) {
+			progress = true;
+			unk1 = true;
+		}
+
 		if (!progress)
 			buttonList->flags2 &= ~6;
 
@@ -848,7 +854,7 @@ void GUI_v2::checkTextfieldInput() {
 		}
 	}
 
-	processButtonList(_menuButtonList, keys | 0x8000);
+	processButtonList(_menuButtonList, keys | 0x8000, 0);
 }
 
 void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {

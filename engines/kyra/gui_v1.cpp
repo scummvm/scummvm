@@ -198,17 +198,17 @@ GUI_v1::~GUI_v1() {
 	delete[] _menu;
 }
 
-int GUI_v1::processButtonList(Button *list, uint16 inputFlag) {
-	if (_haveScrollButtons) {
-		if (_mouseWheel < 0)
-			scrollUp(&_scrollUpButton);
-		else if (_mouseWheel > 0)
-			scrollDown(&_scrollDownButton);
-	}
+int GUI_v1::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
 	while (list) {
 		if (list->flags & 8) {
 			list = list->nextButton;
 			continue;
+		}
+
+		if (mouseWheel && list->mouseWheel == mouseWheel && list->buttonCallback) {
+			if ((*list->buttonCallback.get())(list)) {
+				break;
+			}
 		}
 
 		int x = list->x;
@@ -460,7 +460,7 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 	while (_displayMenu && !_vm->_quitFlag) {
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[_toplevelMenu], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0);
+		processButtonList(_menuButtonList, 0, 0);
 		getInput();
 	}
 
@@ -584,7 +584,7 @@ int GUI_v1::saveGameMenu(Button *button) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[2], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0);
+		processButtonList(_menuButtonList, 0, _mouseWheel);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -633,7 +633,7 @@ int GUI_v1::loadGameMenu(Button *button) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[2], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0);
+		processButtonList(_menuButtonList, 0, _mouseWheel);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -722,7 +722,7 @@ int GUI_v1::saveGame(Button *button) {
 		updateSavegameString();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[3], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0);
+		processButtonList(_menuButtonList, 0, 0);
 	}
 
 	if (_cancelSubMenu) {
@@ -797,7 +797,7 @@ bool GUI_v1::quitConfirm(const char *str) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[1], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0);
+		processButtonList(_menuButtonList, 0, 0);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -863,7 +863,7 @@ int GUI_v1::gameControlsMenu(Button *button) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[5], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0);
+		processButtonList(_menuButtonList, 0, 0);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);

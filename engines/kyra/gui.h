@@ -75,6 +75,8 @@ struct Button {
 
 	uint16 flags2;
 
+	int8 mouseWheel;
+
 	Callback buttonCallback;
 };
 
@@ -140,7 +142,7 @@ public:
 	virtual Button *addButtonToList(Button *list, Button *newButton);
 
 	virtual void processButton(Button *button) = 0;
-	virtual int processButtonList(Button *buttonList, uint16 inputFlags) = 0;
+	virtual int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) = 0;
 
 	virtual int redrawShadedButtonCallback(Button *button);
 	virtual int redrawButtonCallback(Button *button);
@@ -157,7 +159,6 @@ protected:
 	TextDisplayer *_text;
 
 	Button *_menuButtonList;
-	bool _haveScrollButtons;
 	bool _displayMenu;
 	bool _displaySubMenu;
 	bool _cancelSubMenu;

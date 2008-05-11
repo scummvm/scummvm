@@ -36,7 +36,6 @@ namespace Kyra {
 GUI::GUI(KyraEngine *kyra)
 	: _vm(kyra), _screen(kyra->screen()), _text(kyra->text()) {
 	_menuButtonList = 0;
-	_haveScrollButtons = false;
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
@@ -148,13 +147,12 @@ void GUI::initMenu(Menu &menu) {
 	}
 
 	if (menu.scrollUpButtonX != -1) {
-		_haveScrollButtons = true;
-
 		Button *scrollUpButton = getScrollUpButton();
 		scrollUpButton->x = menu.scrollUpButtonX + menu.x;
 		scrollUpButton->y = menu.scrollUpButtonY + menu.y;
 		scrollUpButton->buttonCallback = getScrollUpButtonHandler();
 		scrollUpButton->nextButton = 0;
+		scrollUpButton->mouseWheel = -1;
 		
 		_menuButtonList = addButtonToList(_menuButtonList, scrollUpButton);
 		updateMenuButton(scrollUpButton);
@@ -164,11 +162,10 @@ void GUI::initMenu(Menu &menu) {
 		scrollDownButton->y = menu.scrollDownButtonY + menu.y;
 		scrollDownButton->buttonCallback = getScrollDownButtonHandler();
 		scrollDownButton->nextButton = 0;
+		scrollDownButton->mouseWheel = 1;
 
 		_menuButtonList = addButtonToList(_menuButtonList, scrollDownButton);
 		updateMenuButton(scrollDownButton);
-	} else {
-		_haveScrollButtons = false;
 	}
 
 	_screen->showMouse();

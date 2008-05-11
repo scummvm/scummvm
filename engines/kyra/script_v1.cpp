@@ -1378,7 +1378,7 @@ int KyraEngine_v1::o1_waitForConfirmationMouseClick(EMCState *script) {
 		delay(10);
 	}
 	// }
-	_gui->processButtonList(_buttonList, 0);
+	_gui->processButtonList(_buttonList, 0, 0);
 	_skipFlag = false;
 	Common::Point mouse = getMousePos();
 	script->regs[1] = mouse.x;

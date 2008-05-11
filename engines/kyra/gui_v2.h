@@ -51,7 +51,8 @@ namespace Kyra {
 	button.data1Val3 = q; \
 	button.data2Val2 = r; \
 	button.data2Val3 = s; \
-	button.flags2 = t;
+	button.flags2 = t; \
+	button.mouseWheel = 0
 
 #define GUI_V2_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
 	menu.x = a; \
@@ -103,7 +104,7 @@ public:
 	Button *addButtonToList(Button *list, Button *newButton);
 
 	void processButton(Button *button);
-	int processButtonList(Button *button, uint16 inputFlag);
+	int processButtonList(Button *button, uint16 inputFlag, int8 mouseWheel);
 
 protected:
 	void updateButton(Button *button);

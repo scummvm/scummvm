@@ -430,7 +430,7 @@ void KyraEngine_v1::mainLoop() {
 
 		_screen->showMouse();
 
-		_gui->processButtonList(_buttonList, 0);
+		_gui->processButtonList(_buttonList, 0, 0);
 		updateMousePointer();
 		_timer->update();
 		updateTextFade();

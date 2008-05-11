@@ -44,7 +44,8 @@ namespace Kyra {
 	button.y = h; \
 	button.width = i; \
 	button.height = j; \
-	button.flags2 = k
+	button.flags2 = k; \
+	button.mouseWheel = 0
 
 #define GUI_V1_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
 	menu.x = a; \
@@ -93,7 +94,7 @@ public:
 	~GUI_v1();
 
 	void processButton(Button *button);
-	int processButtonList(Button *buttonList, uint16 inputFlags);
+	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
 
 	int buttonMenuCallback(Button *caller);
 private:
