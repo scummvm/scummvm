@@ -70,7 +70,7 @@ bucless:
 
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, x_igor + 26, y_igor);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -147,7 +147,7 @@ bucless:
 
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, x_dr + 19, y_dr);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -224,7 +224,7 @@ bucless:
 
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, x_dr + 19, y_dr);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -290,7 +290,7 @@ void DrasculaEngine::talk_solo(const char *dicho, const char *filename) {
 
 bucless:
 
-	if (con_voces == 0) {
+	if (withVoices == 0) {
 		if (num_ejec == 1)
 			centra_texto(dicho, 156, 90);
 		else if (num_ejec == 6)
@@ -367,7 +367,7 @@ bucless:
 
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, x_igor + 26, y_igor);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -450,7 +450,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 132, 45);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -518,7 +518,7 @@ bucless:
 		pon_hare();
 		updateRefresh();
 
-		if (con_voces == 0)
+		if (withVoices == 0)
 			centra_texto(dicho, x_bj + 7, y_bj);
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -527,7 +527,7 @@ bucless:
 	} else {
 		updateRoom();
 
-		if (con_voces == 0)
+		if (withVoices == 0)
 			centra_texto(dicho, 93, 80);
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -673,7 +673,7 @@ bucless:
 		updateRefresh();
 	}
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, hare_x, hare_y);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -744,7 +744,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 221, 128);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -823,7 +823,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 181, 54);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -906,7 +906,7 @@ bucless:
 		updateRefresh();
 	}
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, vb_x, 66);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -961,7 +961,7 @@ void DrasculaEngine::talk_vbpuerta(const char *dicho, const char *filename) {
 bucless:
 
 	updateRoom();
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 150, 80);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1062,7 +1062,7 @@ bucless:
 
 	copyRectClip( pos_ciego, num_cara, dir_zona_pantalla);
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 310, 71);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1113,7 +1113,7 @@ void DrasculaEngine::talk_hacker(const char *dicho, const char *filename) {
 	}
 
 bucless:
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 156, 170);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1174,7 +1174,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 203, 78);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1239,7 +1239,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 197, 64);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1310,7 +1310,7 @@ bucless:
 
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 160, 105);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1379,7 +1379,7 @@ bucless:
 
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 195, 107);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1446,7 +1446,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 132, 45);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1512,7 +1512,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 104, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1581,7 +1581,7 @@ bucless:
 
 	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 90, 50);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1703,7 +1703,7 @@ bucless:
 		updateRefresh();
 	}
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, hare_x, hare_y);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1769,7 +1769,7 @@ bucless:
 	flags[19] = cara;
 	updateRoom();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 263, 69);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1823,7 +1823,7 @@ void DrasculaEngine::talk_igorpuerta(const char *dicho, const char *filename) {
 bucless:
 
 	updateRoom();
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 87, 66);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1885,7 +1885,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 221, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -1950,7 +1950,7 @@ bucless:
 	pon_hare();
 	updateRefresh();
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 221, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);

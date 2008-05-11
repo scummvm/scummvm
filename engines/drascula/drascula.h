@@ -372,10 +372,9 @@ public:
 
 	typedef char DacPalette256[256][3];
 
-	void asigna_rgb(byte *dir_lectura, int plt);
-	void funde_rgb(int plt);
+	void setRGB(byte *dir_lectura, int plt);
 	void paleta_hare();
-	void ActualizaPaleta();
+	void updatePalette();
 	void setvgapalette256(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int Ancho,
 				int Alto, byte *Origen, byte *Destino);
@@ -411,12 +410,12 @@ public:
 	int hay_sb;
 	int nivel_osc, musica_antes, musica_room;
 	char num_room[20], roomDisk[20];
-	char datos_actuales[20];
+	char currentData[20];
 	int objs_room;
 	char fondo_y_menu[20];
 
-	char nombre_obj[30][20];
-	char nombre_icono[44][13];
+	char objName[30][20];
+	char iconName[44][13];
 
 	int num_obj[40], visible[40], espuerta[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
@@ -425,7 +424,7 @@ public:
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int lleva_objeto, objeto_que_lleva;
-	int con_voces;
+	int withVoices;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[20];
 	int frame_ciego;
@@ -485,13 +484,13 @@ public:
 	void talk_vbpuerta(const char *dicho, const char *filename);
 	void talk_ciego(const char *, const char *, const char *);
 	void talk_hacker(const char *, const char *);
-	void agarra_objeto(int);
+	void pickObject(int);
 	void anda_parriba();
 	void anda_pabajo();
 	void pon_vb();
 	void lleva_vb(int punto_x);
 	void hipo_sin_nadie(int contador);
-	void abre_puerta(int nflag, int n_puerta);
+	void openDoor(int nflag, int n_puerta);
 	void mapa();
 	void animation_1_1();
 	void animation_2_1();
@@ -574,7 +573,7 @@ public:
 	void hare_oscuro();
 
 
-	void sin_verbo();
+	void withoutVerb();
 	bool para_cargar(char[]);
 	void carga_escoba(const char *);
 	void clearRoom();
@@ -594,7 +593,7 @@ public:
 	void delay(int ms);
 	bool confirma_salir();
 	void salva_pantallas();
-	void elige_objeto(int objeto);
+	void chooseObject(int objeto);
 	void suma_objeto(int);
 	int resta_objeto(int osj);
 	void fliplay(const char *filefli, int vel);
@@ -638,7 +637,7 @@ public:
 	void paleta_hare_claro();
 	void paleta_hare_oscuro();
 	void hare_claro();
-	void actualiza_datos();
+	void updateData();
 	void empieza_andar();
 	void updateRefresh();
 	void updateRefresh_pre();
@@ -682,7 +681,7 @@ public:
 	int frame_pen;
 	int flag_tv;
 
-	byte *carga_pcx(byte *NamePcc);
+	byte *loadPCX(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
 	int vez();
@@ -695,7 +694,7 @@ public:
 	void update_62();
 	void update_62_pre();
 	void update_63();
-	void graba_partida(char[]);
+	void saveGame(char[]);
 	void aumenta_num_frame();
 	int sobre_que_objeto();
 	bool comprueba_banderas_menu();

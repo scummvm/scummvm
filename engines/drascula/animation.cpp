@@ -424,7 +424,7 @@ bucless:
 	if (l == 7)
 		l = 0;
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(dicho, 191, 69);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -890,7 +890,7 @@ void DrasculaEngine::animation_4_2() {
 	decompressPic(dir_hare_dch, 1);
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
-	sin_verbo();
+	withoutVerb();
 
 	flags[9] = 0;
 	flags[4] = 1;
@@ -1155,7 +1155,7 @@ void DrasculaEngine::animation_20_2() {
 		talk_vbpuerta(_textvb[_lang][12], "VB12.als");
 		flags[18] = 0;
 		flags[14] = 1;
-		abre_puerta(15, 1);
+		openDoor(15, 1);
 		sal_de_la_habitacion(1);
 		animation_23_2();
 		sal_de_la_habitacion(0);
@@ -1315,7 +1315,7 @@ void DrasculaEngine::animation_25_2() {
 void DrasculaEngine::animation_27_2() {
 	flags[22] = 1;
 
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(23);
 	suma_objeto(11);
 
@@ -1413,7 +1413,7 @@ void DrasculaEngine::animation_31_2() {
 
 	flags[38] = 0;
 	flags[36] = 1;
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(8);
 	resta_objeto(13);
 	resta_objeto(15);
@@ -1891,7 +1891,7 @@ void DrasculaEngine::animation_2_5() {
 
 void DrasculaEngine::animation_3_5() {
 	talk_bj(_textbj[_lang][23], "BJ23.als");
-	agarra_objeto(10);
+	pickObject(10);
 	rompo_y_salgo = 1;
 }
 
@@ -1924,7 +1924,7 @@ void DrasculaEngine::animation_5_5(){
 	int vuela_x[] = {1, 63, 125, 187, 249};
 	int pixel_x = hare_x - 53, pixel_y = hare_y - 9;
 
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(8);
 
 	lleva_al_hare(hare_x - 19, hare_y + alto_hare);
@@ -1955,7 +1955,7 @@ void DrasculaEngine::animation_5_5(){
 	}
 
 	flags[6] = 1;
-	actualiza_datos();
+	updateData();
 	pause(12);
 
 	loadPic("96.alg");
@@ -2024,14 +2024,14 @@ void DrasculaEngine::animation_8_5() {
 void DrasculaEngine::animation_9_5() {
 	flags[4] = 1;
 	talk(_text[_lang][401], "401.als");
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(15);
 }
 
 void DrasculaEngine::animation_10_5() {
 	flags[3] = 1;
 	talk(_text[_lang][401], "401.als");
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(12);
 }
 
@@ -2133,7 +2133,7 @@ void DrasculaEngine::animation_12_5() {
 	anima("frel.bin", 16);
 	clearRoom();
 	hare_claro();
-	ActualizaPaleta();
+	updatePalette();
 
 	flags[1] = 1;
 
@@ -2156,7 +2156,7 @@ void DrasculaEngine::animation_12_5() {
 	hare_se_mueve = 0;
 	hare_x = -1;
 	obj_saliendo = 104;
-	sin_verbo();
+	withoutVerb();
 	carga_escoba("57.ald");
 }
 
@@ -2360,7 +2360,7 @@ void DrasculaEngine::animation_5_6() {
 void DrasculaEngine::animation_6_6() {
 	anima("rct.bin", 11);
 	clearRoom();
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(20);
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, 1);
@@ -2373,7 +2373,7 @@ void DrasculaEngine::animation_6_6() {
 	rompo = 1;
 	obj_saliendo = 104;
 	hare_x = -1;
-	sin_verbo();
+	withoutVerb();
 	carga_escoba("58.ald");
 	hare_se_ve = 1;
 	sentido_hare = 1;
@@ -2387,7 +2387,7 @@ void DrasculaEngine::animation_6_6() {
 
 void DrasculaEngine::animation_7_6() {
 	flags[8] = 1;
-	actualiza_datos();
+	updateData();
 }
 
 void DrasculaEngine::animation_9_6() {
@@ -2505,7 +2505,7 @@ void DrasculaEngine::animation_15_6() {
 
 void DrasculaEngine::animation_18_6() {
 	flags[6] = 1;
-	sin_verbo();
+	withoutVerb();
 	resta_objeto(21);
 	anima("beb.bin", 10);
 }
@@ -2620,7 +2620,7 @@ void DrasculaEngine::animation_26_2() {
 		pause(3);
 	}
 
-	agarra_objeto(11);
+	pickObject(11);
 	resta_objeto(12);
 
 	flags[11] = 0;
@@ -3200,7 +3200,7 @@ void DrasculaEngine::animation_5_2() {
 	flags[8] = 1;
 	hare_x = hare_x - 4;
 	talk_sinc(_text[_lang][46], "46.als", "4442444244244");
-	sin_verbo();
+	withoutVerb();
 }
 
 void DrasculaEngine::animation_6_2() {
@@ -3249,7 +3249,7 @@ void DrasculaEngine::animation_6_2() {
 	decompressPic(dir_hare_dch, 1);
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
-	sin_verbo();
+	withoutVerb();
 
 	flags[9] = 0;
 }
@@ -3305,7 +3305,7 @@ void DrasculaEngine::animation_33_2() {
 	decompressPic(dir_hare_dch, 1);
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
-	sin_verbo();
+	withoutVerb();
 
 	flags[33] = 1;
 	flags[9] = 0;
@@ -3313,7 +3313,7 @@ void DrasculaEngine::animation_33_2() {
 
 void DrasculaEngine::animation_1_4() {
 	if (flags[21] == 0) {
-		strcpy(nombre_obj[2], "igor");
+		strcpy(objName[2], "igor");
 		talk(_text[_lang][275], "275.als");
 
 		updateRefresh_pre();
@@ -3383,7 +3383,7 @@ void DrasculaEngine::animation_5_4(){
 	hare_y = 82;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	abre_puerta(2, 0);
+	openDoor(2, 0);
 	loadPic("auxigor.alg");
 	decompressPic(dir_hare_frente, 1);
 	x_igor = 100;
@@ -3427,7 +3427,7 @@ void DrasculaEngine::animation_6_4() {
 	decompressPic(dir_dibujo3, 1);
 	loadPic(num_room);
 	decompressPic(dir_dibujo1, MEDIA);
-	sin_verbo();
+	withoutVerb();
 	updateRoom();
 }
 
@@ -3447,7 +3447,7 @@ void DrasculaEngine::animation_8_4() {
 
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, 1);
-	abre_puerta(7, 2);
+	openDoor(7, 2);
 }
 
 void DrasculaEngine::animation_9_4() {

@@ -163,7 +163,7 @@ int DrasculaEngine::go() {
 		allocMemory();
 
 		hay_sb = 1;
-		con_voces = 0;
+		withVoices = 0;
 		hay_seleccion = 0;
 
 		if (num_ejec != 6) {
@@ -229,10 +229,10 @@ int DrasculaEngine::go() {
 			loadPic("95.alg");
 			decompressPic(dir_mesa, 1);
 		}
-		memset(nombre_icono, 0, sizeof(nombre_icono));
+		memset(iconName, 0, sizeof(iconName));
 
 		for (i = 0; i < 6; i++)
-			strcpy(nombre_icono[i + 1], _textverbs[_lang][i]);
+			strcpy(iconName[i + 1], _textverbs[_lang][i]);
 
 		paleta_hare();
 		if (!escoba()) {
@@ -326,9 +326,7 @@ void DrasculaEngine::loadPic(const char *NamePcc) {
 void DrasculaEngine::decompressPic(byte *dir_escritura, int plt) {
 	memcpy(dir_escritura, Buffer_pcx, 64000);
 	free(Buffer_pcx);
-	asigna_rgb((byte *)cPal, plt);
-	if (plt > 1)
-		funde_rgb(plt);
+	setRGB((byte *)cPal, plt);
 }
 
 void DrasculaEngine::paleta_hare() {
@@ -337,7 +335,6 @@ void DrasculaEngine::paleta_hare() {
 	for (color = 235; color < 253; color++)
 		for (componente = 0; componente < 3; componente++)
 			palHare[color][componente] = palJuego[color][componente];
-
 }
 
 void DrasculaEngine::hare_oscuro() {
@@ -347,10 +344,10 @@ void DrasculaEngine::hare_oscuro() {
 		for (componente = 0; componente < 3; componente++)
 			palJuego[color][componente] = palHareOscuro[color][componente];
 
-	ActualizaPaleta();
+	updatePalette();
 }
 
-void DrasculaEngine::asigna_rgb(byte *dir_lectura, int plt) {
+void DrasculaEngine::setRGB(byte *dir_lectura, int plt) {
 	int x, cnt = 0;
 
 	for (x = 0; x < plt; x++) {
@@ -358,10 +355,8 @@ void DrasculaEngine::asigna_rgb(byte *dir_lectura, int plt) {
 		palJuego[x][1] = dir_lectura[cnt++] / 4;
 		palJuego[x][2] = dir_lectura[cnt++] / 4;
 	}
-	ActualizaPaleta();
+	updatePalette();
 }
-
-void DrasculaEngine::funde_rgb(int plt) {}
 
 void DrasculaEngine::Negro() {
 	int color, componente;
@@ -378,7 +373,7 @@ void DrasculaEngine::Negro() {
 	setvgapalette256((byte *)&palNegra);
 }
 
-void DrasculaEngine::ActualizaPaleta() {
+void DrasculaEngine::updatePalette() {
 	setvgapalette256((byte *)&palJuego);
 }
 
@@ -501,12 +496,12 @@ bool DrasculaEngine::escoba() {
 		objetos_que_tengo[n] = n;
 
 	if (num_ejec == 1) {
-		agarra_objeto(28);
+		pickObject(28);
 
 		if (hay_que_load == 0)
 			animation_1_1();
 
-		sin_verbo();
+		withoutVerb();
 		loadPic("2aux62.alg");
 		decompressPic(dir_dibujo2, 1);
 		sentido_hare = 1;
@@ -667,7 +662,7 @@ bucles:
 		decompressPic(dir_hare_fondo, 1);
 		menu_scr = 1;
 		espera_soltar();
-		sin_verbo();
+		withoutVerb();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
@@ -729,18 +724,18 @@ bucles:
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (key == Common::KEYCODE_F8) {
-		sin_verbo();
+		withoutVerb();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (key == Common::KEYCODE_v) {
-		con_voces = 1;
+		withVoices = 1;
 		print_abc(_textsys[_lang][2], 96, 86);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		delay(1410);
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (key == Common::KEYCODE_t) {
-		con_voces = 0;
+		withVoices = 0;
 		print_abc(_textsys[_lang][3], 94, 86);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		delay(1460);
@@ -765,7 +760,7 @@ bucles:
 	goto bucles;
 }
 
-void DrasculaEngine::agarra_objeto(int objeto) {
+void DrasculaEngine::pickObject(int objeto) {
 	if (num_ejec == 6)
 		loadPic("iconsp.alg");
 	else if (num_ejec == 4)
@@ -775,7 +770,7 @@ void DrasculaEngine::agarra_objeto(int objeto) {
 	else
 		loadPic("icons.alg");
 	decompressPic(dir_hare_fondo, 1);
-	elige_objeto(objeto);
+	chooseObject(objeto);
 	if (num_ejec == 2)
 		loadPic(fondo_y_menu);
 	else
@@ -783,7 +778,7 @@ void DrasculaEngine::agarra_objeto(int objeto) {
 	decompressPic(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::elige_objeto(int objeto) {
+void DrasculaEngine::chooseObject(int objeto) {
 	if (num_ejec == 5) {
 		if (lleva_objeto == 1 && menu_scr == 0 && objeto_que_lleva != 16)
 			suma_objeto(objeto_que_lleva);
@@ -813,7 +808,7 @@ int DrasculaEngine::resta_objeto(int osj) {
 		return 1;
 }
 
-void DrasculaEngine::sin_verbo() {
+void DrasculaEngine::withoutVerb() {
 	int c = 171;
 	if (menu_scr == 1)
 		c = 0;
@@ -841,8 +836,8 @@ bool DrasculaEngine::para_cargar(char nom_game[]) {
 		delete ald;
 		ald = NULL;
 	}
-	carga_escoba(datos_actuales);
-	sin_verbo();
+	carga_escoba(currentData);
+	withoutVerb();
 
 	return true;
 }
@@ -882,7 +877,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	hay_nombre = 0;
 
 	strcpy(para_codificar, nom_fich);
-	strcpy(datos_actuales, nom_fich);
+	strcpy(currentData, nom_fich);
 
 	ald = new Common::File;
 	ald->open(nom_fich);
@@ -944,7 +939,7 @@ martini:
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &num_obj[l]);
 		getLine(ald, buffer, size);
-		sscanf(buffer, "%s", nombre_obj[l]);
+		sscanf(buffer, "%s", objName[l]);
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &x1[l]);
 		getLine(ald, buffer, size);
@@ -1100,7 +1095,7 @@ martini:
 	if (num_ejec == 5)
 		hare_se_ve = 1;
 
-	actualiza_datos();
+	updateData();
 
 	if (num_ejec == 1)
 		espuerta[7] = 0;
@@ -1217,7 +1212,7 @@ void DrasculaEngine::comprueba_objetos() {
 		if (x_raton > x1[l] && y_raton > y1[l]
 				&& x_raton < x2[l] && y_raton < y2[l]
 				&& visible[l] == 1 && espuerta[l] == 0) {
-			strcpy(texto_nombre, nombre_obj[l]);
+			strcpy(texto_nombre, objName[l]);
 			hay_nombre = 1;
 			veo = 1;
 		}
@@ -1259,7 +1254,7 @@ void DrasculaEngine::elige_en_barra() {
 			num_verbo = n;
 
 	if (num_verbo < 1)
-		sin_verbo();
+		withoutVerb();
 	else
 		elige_verbo(num_verbo);
 }
@@ -1991,7 +1986,7 @@ void DrasculaEngine::anima(const char *animation, int FPS) {
 	AuxBuffOrg = (byte *)malloc(Leng);
 	FileIn.read(AuxBuffOrg, Leng);
 	FileIn.read(cPal, 768);
-	carga_pcx(AuxBuffOrg);
+	loadPCX(AuxBuffOrg);
 	free(AuxBuffOrg);
 	memcpy(VGA, AuxBuffDes, 64000);
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
@@ -2004,7 +1999,7 @@ void DrasculaEngine::anima(const char *animation, int FPS) {
 		AuxBuffOrg = (byte *)malloc(Leng);
 		FileIn.read(AuxBuffOrg, Leng);
 		FileIn.read(cPal, 768);
-		carga_pcx(AuxBuffOrg);
+		loadPCX(AuxBuffOrg);
 		free(AuxBuffOrg);
 		for (j = 0;j < 64000; j++) {
 			VGA[j] = AuxBuffLast[j] = AuxBuffDes[j] ^ AuxBuffLast[j];
@@ -2201,7 +2196,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 		hay_que_load = 1;
 		return false;
 	}
-	sav->read(datos_actuales, 20);
+	sav->read(currentData, 20);
 	hare_x = sav->readSint32LE();
 	hare_y = sav->readSint32LE();
 	sentido_hare = sav->readSint32LE();
@@ -2317,7 +2312,7 @@ void DrasculaEngine::color_hare() {
 			palJuego[color][componente] = palHare[color][componente];
 		}
 	}
-	ActualizaPaleta();
+	updatePalette();
 }
 
 void DrasculaEngine::funde_hare(int oscuridad) {
@@ -2331,7 +2326,7 @@ void DrasculaEngine::funde_hare(int oscuridad) {
 		}
 	}
 
-	ActualizaPaleta();
+	updatePalette();
 }
 
 void DrasculaEngine::paleta_hare_claro() {
@@ -2360,7 +2355,7 @@ void DrasculaEngine::hare_claro() {
 			palJuego[color][componente] = palHareClaro[color][componente];
 	}
 
-	ActualizaPaleta();
+	updatePalette();
 }
 
 void DrasculaEngine::empieza_andar() {
@@ -2540,7 +2535,7 @@ void DrasculaEngine::menu_sin_volcar() {
 	char texto_icono[13];
 
 	x = sobre_que_objeto();
-	strcpy(texto_icono, nombre_icono[x]);
+	strcpy(texto_icono, iconName[x]);
 
 	for (n = 1; n < 43; n++) {
 		h = objetos_que_tengo[n];
@@ -2590,7 +2585,7 @@ void DrasculaEngine::saca_objeto() {
 	espera_soltar();
 
 	if (lleva_objeto == 1)
-		elige_objeto(h);
+		chooseObject(h);
 }
 
 bool DrasculaEngine::sal_de_la_habitacion(int l) {
@@ -2768,7 +2763,7 @@ usando_verbos:
 	}
 	espera_soltar();
 	if (lleva_objeto == 0)
-		sin_verbo();
+		withoutVerb();
 
 	return false;
 }
@@ -2789,7 +2784,7 @@ bool DrasculaEngine::banderas(int fl) {
 					|| (objeto_que_lleva == OPEN && fl == 22 && flags[23] == 0)) {
 				talk(_text[_lang][164], "164.als");
 				flags[23] = 1;
-				sin_verbo();
+				withoutVerb();
 				suma_objeto(7);
 				suma_objeto(18);
 			} else if (objeto_que_lleva == LOOK && fl == 22 && flags[23] == 1)
@@ -2883,8 +2878,8 @@ bool DrasculaEngine::banderas(int fl) {
 				hay_respuesta = 0;
 		} else if (num_ejec == 4) {
 			if ((objeto_que_lleva == 18 && fl == 19) || (objeto_que_lleva == 19 && fl == 18)) {
-				sin_verbo();
-				elige_objeto(21);
+				withoutVerb();
+				chooseObject(21);
 				resta_objeto(18);
 				resta_objeto(19);
 			} else if ((objeto_que_lleva == 14 && fl == 19) || (objeto_que_lleva == 19 && fl == 14))
@@ -3307,7 +3302,7 @@ void DrasculaEngine::introduce_nombre() {
 }
 
 void DrasculaEngine::para_grabar(char nom_game[]) {
-	graba_partida(nom_game);
+	saveGame(nom_game);
 	comienza_sound("99.als");
 	fin_sound();
 }
@@ -3496,7 +3491,7 @@ void DrasculaEngine::WaitFrameSSN() {
 	LastFrame = LastFrame + GlobalSpeed;
 }
 
-byte *DrasculaEngine::carga_pcx(byte *NamePcc) {
+byte *DrasculaEngine::loadPCX(byte *NamePcc) {
 	signed int con = 0;
 	unsigned int X = 0;
 	unsigned int fExit = 0;
@@ -3655,7 +3650,7 @@ void DrasculaEngine::cuadrante_4() {
 	}
 }
 
-void DrasculaEngine::graba_partida(char nom_game[]) {
+void DrasculaEngine::saveGame(char nom_game[]) {
 	Common::OutSaveFile *out;
 	int l;
 
@@ -3663,7 +3658,7 @@ void DrasculaEngine::graba_partida(char nom_game[]) {
 		error("no puedo abrir el archivo");
 	}
 	out->writeSint32LE(num_ejec);
-	out->write(datos_actuales, 20);
+	out->write(currentData, 20);
 	out->writeSint32LE(hare_x);
 	out->writeSint32LE(hare_y);
 	out->writeSint32LE(sentido_hare);
@@ -3785,7 +3780,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	strcpy(para_codificar, nom_fich);
 
 	if (num_ejec == 5)
-		sin_verbo();
+		withoutVerb();
 
 	ald = new Common::File;
 	ald->open(nom_fich);
@@ -3974,7 +3969,7 @@ bucle_opc:
 		loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
 	if (num_ejec != 5)
-		sin_verbo();
+		withoutVerb();
 }
 
 void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pantalla, int juego) {
@@ -4285,7 +4280,7 @@ int DrasculaEngine::LookForFree() {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
-void DrasculaEngine::actualiza_datos() {
+void DrasculaEngine::updateData() {
 	if (num_ejec == 1) {
 		// nothing
 	} else if (num_ejec == 2) {
@@ -4318,7 +4313,7 @@ void DrasculaEngine::actualiza_datos() {
 		if (!strcmp(num_room, "22.alg") && flags[27] == 1)
 			visible[3] = 0;
 		if (!strcmp(num_room, "26.alg") && flags[21] == 0)
-			strcpy(nombre_obj[2], _textmisc[_lang][0]);
+			strcpy(objName[2], _textmisc[_lang][0]);
 		if (!strcmp(num_room, "26.alg") && flags[18] == 1)
 			visible[2] = 0;
 		if (!strcmp(num_room, "26.alg") && flags[12] == 1)
@@ -4470,7 +4465,7 @@ comienza:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::abre_puerta(int nflag, int n_puerta) {
+void DrasculaEngine::openDoor(int nflag, int n_puerta) {
 	if (flags[nflag] == 0) {
 		if (num_ejec == 1 /*|| num_ejec == 4*/) {
 			if (nflag != 7) {
@@ -4487,7 +4482,7 @@ void DrasculaEngine::abre_puerta(int nflag, int n_puerta) {
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
-		sin_verbo();
+		withoutVerb();
 	}
 }
 
@@ -4498,7 +4493,7 @@ void DrasculaEngine::mapa() {
 		if (x_raton > x1[l] && y_raton > y1[l]
 				&& x_raton < x2[l] && y_raton < y2[l]
 				&& visible[l] == 1) {
-			strcpy(texto_nombre, nombre_obj[l]);
+			strcpy(texto_nombre, objName[l]);
 			hay_nombre = 1;
 			veo = 1;
 		}
@@ -4528,7 +4523,7 @@ void DrasculaEngine::grr() {
 	updateRoom();
 	copyBackground(253, 110, 150, 65, 20, 30, dir_dibujo3, dir_zona_pantalla);
 
-	if (con_voces == 0)
+	if (withVoices == 0)
 		centra_texto(".groaaarrrrgghhh!", 153, 65);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -4580,7 +4575,7 @@ void DrasculaEngine::cierra_puerta(int nflag, int n_puerta) {
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
-		sin_verbo();
+		withoutVerb();
 	}
 }
 
