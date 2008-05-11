@@ -68,7 +68,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 			/*if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
 				screen()->setPagePixel(0, curX, curY, 11);
 				screen()->updateScreen();
-				//waitTicks(5);
+				delayWithTicks(5);
 			}*/
 			moveTable[lastUsedEntry++] = newFacing;
 			x = curX;
@@ -84,7 +84,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 			/*if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
 				screen()->setPagePixel(0, curX, curY, 8);
 				screen()->updateScreen();
-				//waitTicks(5);
+				delayWithTicks(5);
 			}*/
 
 			if (!lineIsPassable(curX, curY)) {
@@ -183,7 +183,7 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 		/*if (xpos1 >= 0 && ypos1 >= 0 && xpos1 < 320 && ypos1 < 200) {
 			screen()->setPagePixel(0, xpos1, ypos1, unkTable[start]);
 			screen()->updateScreen();
-			//waitTicks(5);
+			delayWithTicks(5);
 		}*/
 		if (newFacing & 1) {
 			int temp = xpos1 + addPosTableX[newFacing + start * 8];
