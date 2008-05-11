@@ -160,7 +160,7 @@ int DrasculaEngine::go() {
 		ald = NULL;
 		sku = NULL;
 
-		asigna_memoria();
+		allocMemory();
 
 		hay_sb = 1;
 		con_voces = 0;
@@ -260,7 +260,7 @@ void DrasculaEngine::salir_al_dos(int r) {
 	free(VGA);
 }
 
-void DrasculaEngine::asigna_memoria() {
+void DrasculaEngine::allocMemory() {
 	dir_zona_pantalla = (byte *)malloc(64000);
 	assert(dir_zona_pantalla);
 	dir_dibujo1 = (byte *)malloc(64000);

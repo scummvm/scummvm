@@ -353,7 +353,7 @@ public:
 
 	Audio::SoundHandle _soundHandle;
 
-	void asigna_memoria();
+	void allocMemory();
 	void libera_memoria();
 	void salir_al_dos(int r);
 
