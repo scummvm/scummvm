@@ -65,7 +65,7 @@ void vector_renderer_test(OSystem *_system) {
 		vr->setFgColor(255, 0, 0);
 		vr->setBgColor(25, 25, 175);
 		vr->setFillMode(VectorRenderer::kForegroundFill);
-		vr->setStrokeWidth(1);
+		vr->setStrokeWidth(6);
 		vr->shadowEnable(1, 1);
 
 		vr->drawLine(25, 25, 125, 300);
@@ -155,7 +155,7 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		break;
 
 	case kBackgroundFill:
-		VectorRendererSpec::drawRoundedSquareAlg(x + 1, y + 1, r, w - 1, h - 1, _bgColor, true);
+		VectorRendererSpec::drawRoundedSquareAlg(x, y, r, w, h, _bgColor, true);
 		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
 		break;
 
@@ -397,14 +397,14 @@ inline uint32 fp_sqroot(uint32 x) {
 }
 
 #define __BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
-	*(ptr1 + x + py) = color; \
-	*(ptr1 + y - px) = color; \
-	*(ptr1 - x - py) = color; \
-	*(ptr1 - y - px) = color; \
-	*(ptr1 - y + px) = color; \
-	*(ptr1 - x + py) = color; \
-	*(ptr1 + y + px) = color; \
-	*(ptr1 + x - py) = color; \
+	*(ptr1 + (y) - (px)) = color; \
+	*(ptr1 + (x) - (py)) = color; \
+	*(ptr2 - (x) - (py)) = color; \
+	*(ptr2 - (y) - (px)) = color; \
+	*(ptr3 - (y) + (px)) = color; \
+	*(ptr3 - (x) + (py)) = color; \
+	*(ptr4 + (x) + (py)) = color; \
+	*(ptr4 + (y) + (px)) = color; \
 }
 
 #define __BE_RESET() { \
@@ -452,6 +452,71 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
 			Common::set_to(ptr - x - py, ptr + x - py, color);
 			Common::set_to(ptr - y + px, ptr + y + px, color);
 			Common::set_to(ptr - y - px, ptr + y - px, color);
+		}
+	}
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = Base::surfacePitch();
+	int sw = 0, sp = 0, hp = h * pitch;
+	
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	int short_h = h - (2 * r) + 2;
+	int real_radius = r;
+
+	if (fill == false) {
+		while (sw++ < Base::_strokeWidth) {
+			Common::set_to(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
+			Common::set_to(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
+			sp += pitch;
+
+			__BE_RESET();
+			r--;
+			
+			while (x++ < y) {
+				__BE_ALGORITHM();
+				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+
+				if (Base::_strokeWidth > 1) {
+					__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py);
+					__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py);
+				}
+			} 
+		}
+
+		ptr_fill += pitch * real_radius;
+		while (short_h--) {
+			Common::set_to(ptr_fill, ptr_fill + Base::_strokeWidth, color);
+			Common::set_to(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
+			ptr_fill += pitch;
+		}
+	} else {
+		__BE_RESET();
+		while (x++ < y) {
+			__BE_ALGORITHM();
+
+			Common::set_to(ptr_tl - x - py, ptr_tr + x - py, color);
+			Common::set_to(ptr_tl - y - px, ptr_tr + y - px, color);
+
+			Common::set_to(ptr_bl - x + py, ptr_br + x + py, color);
+			Common::set_to(ptr_bl - y + px, ptr_br + y + px, color);
+
+			__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+		}
+
+		ptr_fill += pitch * r;
+		while (short_h--) {
+			Common::set_to(ptr_fill, ptr_fill + w + 1, color);
+			ptr_fill += pitch;
 		}
 	}
 }

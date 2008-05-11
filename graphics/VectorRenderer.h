@@ -351,7 +351,7 @@ protected:
 	 */
 	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
 	virtual void drawCircleAlg(int x, int y, int r, PixelType color, bool fill = false);
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false) {}
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false);
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill = false);
 
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
