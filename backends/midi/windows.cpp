@@ -24,10 +24,13 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+
 #include "backends/midi/midiplugin.h"
 #include "sound/mpu401.h"
 
-#include <windows.h>
 #include <mmsystem.h>
 
 ////////////////////////////////////////
