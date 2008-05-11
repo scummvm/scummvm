@@ -23,14 +23,14 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/seqplayer.h"
-#include "kyra/screen_v1.h"
+#include "kyra/screen_lok.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
-#include "kyra/animator_v1.h"
+#include "kyra/animator_lok.h"
 #include "kyra/text.h"
 #include "kyra/timer.h"
 
@@ -40,8 +40,8 @@
 
 namespace Kyra {
 
-void KyraEngine_v1::seq_demo() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_demo()");
+void KyraEngine_LoK::seq_demo() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_demo()");
 
 	snd_playTheme(0, 2);
 
@@ -90,18 +90,18 @@ void KyraEngine_v1::seq_demo() {
 	_sound->haltTrack();
 }
 
-void KyraEngine_v1::seq_intro() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_intro()");
+void KyraEngine_LoK::seq_intro() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_intro()");
 
 	if (_flags.isTalkie)
 		_res->loadPakFile("INTRO.VRM");
 
 	static const IntroProc introProcTable[] = {
-		&KyraEngine_v1::seq_introLogos,
-		&KyraEngine_v1::seq_introStory,
-		&KyraEngine_v1::seq_introMalcolmTree,
-		&KyraEngine_v1::seq_introKallakWriting,
-		&KyraEngine_v1::seq_introKallakMalcolm
+		&KyraEngine_LoK::seq_introLogos,
+		&KyraEngine_LoK::seq_introStory,
+		&KyraEngine_LoK::seq_introMalcolmTree,
+		&KyraEngine_LoK::seq_introKallakWriting,
+		&KyraEngine_LoK::seq_introKallakMalcolm
 	};
 
 	Common::InSaveFile *in;
@@ -130,8 +130,8 @@ void KyraEngine_v1::seq_intro() {
 		_res->unloadPakFile("INTRO.VRM");
 }
 
-void KyraEngine_v1::seq_introLogos() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_introLogos()");
+void KyraEngine_LoK::seq_introLogos() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_introLogos()");
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		_screen->loadBitmap("LOGO.CPS", 3, 3, _screen->_currentPalette);
@@ -232,8 +232,8 @@ void KyraEngine_v1::seq_introLogos() {
 	_seq->playSequence(_seq_Forest, true);
 }
 
-void KyraEngine_v1::seq_introStory() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_introStory()");
+void KyraEngine_LoK::seq_introStory() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_introStory()");
 	_screen->clearPage(3);
 	_screen->clearPage(0);
 
@@ -279,15 +279,15 @@ void KyraEngine_v1::seq_introStory() {
 	delay(360 * _tickLength);
 }
 
-void KyraEngine_v1::seq_introMalcolmTree() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_introMalcolmTree()");
+void KyraEngine_LoK::seq_introMalcolmTree() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_introMalcolmTree()");
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
 	_seq->playSequence(_seq_MalcolmTree, true);
 }
 
-void KyraEngine_v1::seq_introKallakWriting() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_introKallakWriting()");
+void KyraEngine_LoK::seq_introKallakWriting() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_introKallakWriting()");
 	_seq->makeHandShapes();
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
@@ -295,13 +295,13 @@ void KyraEngine_v1::seq_introKallakWriting() {
 	_seq->playSequence(_seq_KallakWriting, true);
 }
 
-void KyraEngine_v1::seq_introKallakMalcolm() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_introKallakMalcolm()");
+void KyraEngine_LoK::seq_introKallakMalcolm() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_introKallakMalcolm()");
 	_screen->clearPage(3);
 	_seq->playSequence(_seq_KallakMalcolm, true);
 }
 
-void KyraEngine_v1::seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly) {
+void KyraEngine_LoK::seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly) {
 	debugC(9, kDebugLevelMain, "seq_createAmuletJewel(%d, %d, %d, %d)", jewel, page, noSound, drawOnly);
 	static const uint16 specialJewelTable[] = {
 		0x167, 0x162, 0x15D, 0x158, 0x153, 0xFFFF
@@ -361,7 +361,7 @@ void KyraEngine_v1::seq_createAmuletJewel(int jewel, int page, int noSound, int 
 	setGameFlag(0x55+jewel);
 }
 
-void KyraEngine_v1::seq_brandonHealing() {
+void KyraEngine_LoK::seq_brandonHealing() {
 	debugC(9, kDebugLevelMain, "seq_brandonHealing()");
 	if (!(_deathHandler & 8))
 		return;
@@ -392,7 +392,7 @@ void KyraEngine_v1::seq_brandonHealing() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_brandonHealing2() {
+void KyraEngine_LoK::seq_brandonHealing2() {
 	debugC(9, kDebugLevelMain, "seq_brandonHealing2()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -416,7 +416,7 @@ void KyraEngine_v1::seq_brandonHealing2() {
 	characterSays(2011, _poisonGone[1], 0, -2);
 }
 
-void KyraEngine_v1::seq_poisonDeathNow(int now) {
+void KyraEngine_LoK::seq_poisonDeathNow(int now) {
 	debugC(9, kDebugLevelMain, "seq_poisonDeathNow(%d)", now);
 	if (!(_brandonStatusBit & 1))
 		return;
@@ -437,7 +437,7 @@ void KyraEngine_v1::seq_poisonDeathNow(int now) {
 	}
 }
 
-void KyraEngine_v1::seq_poisonDeathNowAnim() {
+void KyraEngine_LoK::seq_poisonDeathNowAnim() {
 	debugC(9, kDebugLevelMain, "seq_poisonDeathNowAnim()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -478,7 +478,7 @@ void KyraEngine_v1::seq_poisonDeathNowAnim() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_playFluteAnimation() {
+void KyraEngine_LoK::seq_playFluteAnimation() {
 	debugC(9, kDebugLevelMain, "seq_playFluteAnimation()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -532,7 +532,7 @@ void KyraEngine_v1::seq_playFluteAnimation() {
 	}
 }
 
-void KyraEngine_v1::seq_winterScroll1() {
+void KyraEngine_LoK::seq_winterScroll1() {
 	debugC(9, kDebugLevelMain, "seq_winterScroll1()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -613,7 +613,7 @@ void KyraEngine_v1::seq_winterScroll1() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_winterScroll2() {
+void KyraEngine_LoK::seq_winterScroll2() {
 	debugC(9, kDebugLevelMain, "seq_winterScroll2()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -642,7 +642,7 @@ void KyraEngine_v1::seq_winterScroll2() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_makeBrandonInv() {
+void KyraEngine_LoK::seq_makeBrandonInv() {
 	debugC(9, kDebugLevelMain, "seq_makeBrandonInv()");
 	if (_deathHandler == 8)
 		return;
@@ -668,7 +668,7 @@ void KyraEngine_v1::seq_makeBrandonInv() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_makeBrandonNormal() {
+void KyraEngine_LoK::seq_makeBrandonNormal() {
 	debugC(9, kDebugLevelMain, "seq_makeBrandonNormal()");
 	_screen->hideMouse();
 	_brandonStatusBit |= 0x40;
@@ -684,7 +684,7 @@ void KyraEngine_v1::seq_makeBrandonNormal() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_makeBrandonNormal2() {
+void KyraEngine_LoK::seq_makeBrandonNormal2() {
 	debugC(9, kDebugLevelMain, "seq_makeBrandonNormal2()");
 	_screen->hideMouse();
 	assert(_brandonToWispTable);
@@ -710,7 +710,7 @@ void KyraEngine_v1::seq_makeBrandonNormal2() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_makeBrandonWisp() {
+void KyraEngine_LoK::seq_makeBrandonWisp() {
 	debugC(9, kDebugLevelMain, "seq_makeBrandonWisp()");
 	if (_deathHandler == 8)
 		return;
@@ -752,7 +752,7 @@ void KyraEngine_v1::seq_makeBrandonWisp() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_dispelMagicAnimation() {
+void KyraEngine_LoK::seq_dispelMagicAnimation() {
 	debugC(9, kDebugLevelMain, "seq_dispelMagicAnimation()");
 	if (_deathHandler == 8)
 		return;
@@ -794,7 +794,7 @@ void KyraEngine_v1::seq_dispelMagicAnimation() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_fillFlaskWithWater(int item, int type) {
+void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	debugC(9, kDebugLevelMain, "seq_fillFlaskWithWater(%d, %d)", item, type);
 	int newItem = -1;
 	static const uint8 flaskTable1[] = { 0x46, 0x48, 0x4A, 0x4C };
@@ -827,8 +827,8 @@ void KyraEngine_v1::seq_fillFlaskWithWater(int item, int type) {
 	characterSays(voiceEntries[type], _fullFlask[type], 0, -2);
 }
 
-void KyraEngine_v1::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_playDrinkPotionAnim(%d, %d, %d)", item, unk2, flags);
+void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_playDrinkPotionAnim(%d, %d, %d)", item, unk2, flags);
 	uint8 red, green, blue;
 
 	switch (item) {
@@ -919,8 +919,8 @@ void KyraEngine_v1::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 	_screen->showMouse();
 }
 
-int KyraEngine_v1::seq_playEnd() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_playEnd()");
+int KyraEngine_LoK::seq_playEnd() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_playEnd()");
 	if (_endSequenceSkipFlag)
 		return 0;
 
@@ -931,13 +931,13 @@ int KyraEngine_v1::seq_playEnd() {
 	if (_endSequenceNeedLoading) {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
-		_finalA = new WSAMovieV1(this);
+		_finalA = new WSAMovie_v1(this);
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);
-		_finalB = new WSAMovieV1(this);
+		_finalB = new WSAMovie_v1(this);
 		assert(_finalB);
 		_finalB->open("finalb.wsa", 1, 0);
-		_finalC = new WSAMovieV1(this);
+		_finalC = new WSAMovie_v1(this);
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
 		_finalC->open("finalc.wsa", 1, 0);
@@ -981,7 +981,7 @@ int KyraEngine_v1::seq_playEnd() {
 			_screen->setScreenPalette(_screen->_currentPalette);
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, 1, 0);
 			uint32 nextTime = _system->getMillis() + 120 * _tickLength;
-			_finalA = new WSAMovieV1(this);
+			_finalA = new WSAMovie_v1(this);
 			assert(_finalA);
 			_finalA->open("finald.wsa", 1, 0);
 			_finalA->setX(8); _finalA->setY(8);
@@ -1012,8 +1012,8 @@ int KyraEngine_v1::seq_playEnd() {
 	return 0;
 }
 
-void KyraEngine_v1::seq_brandonToStone() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_brandonToStone()");
+void KyraEngine_LoK::seq_brandonToStone() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_brandonToStone()");
 	_screen->hideMouse();
 	assert(_brandonStoneTable);
 	setupShapes123(_brandonStoneTable, 14, 0);
@@ -1028,8 +1028,8 @@ void KyraEngine_v1::seq_brandonToStone() {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::seq_playEnding() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_playEnding()");
+void KyraEngine_LoK::seq_playEnding() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_playEnding()");
 	if (_quitFlag)
 		return;
 	_screen->hideMouse();
@@ -1052,8 +1052,8 @@ void KyraEngine_v1::seq_playEnding() {
 	seq_playCredits();
 }
 
-void KyraEngine_v1::seq_playCredits() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_playCredits()");
+void KyraEngine_LoK::seq_playCredits() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_playCredits()");
 	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static const char stringTerms[] = { 0x5, 0xd, 0x0};
 	static const int numStrings = 250;
@@ -1209,13 +1209,13 @@ void KyraEngine_v1::seq_playCredits() {
 	_screen->showMouse();
 }
 
-bool KyraEngine_v1::seq_skipSequence() const {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_skipSequence()");
+bool KyraEngine_LoK::seq_skipSequence() const {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_skipSequence()");
 	return _quitFlag || _abortIntroFlag;
 }
 
-int KyraEngine_v1::handleMalcolmFlag() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::handleMalcolmFlag()");
+int KyraEngine_LoK::handleMalcolmFlag() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::handleMalcolmFlag()");
 	static uint16 frame = 0;
 	static uint32 timer1 = 0;
 	static uint32 timer2 = 0;
@@ -1383,8 +1383,8 @@ int KyraEngine_v1::handleMalcolmFlag() {
 	return 0;
 }
 
-int KyraEngine_v1::handleBeadState() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::handleBeadState()");
+int KyraEngine_LoK::handleBeadState() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::handleBeadState()");
 	static uint32 timer1 = 0;
 	static uint32 timer2 = 0;
 	static BeadState beadState1 = { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1603,8 +1603,8 @@ int KyraEngine_v1::handleBeadState() {
 	return 0;
 }
 
-void KyraEngine_v1::initBeadState(int x, int y, int x2, int y2, int unk, BeadState *ptr) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::initBeadState(%d, %d, %d, %d, %d, %p)", x, y, x2, y2, unk, (const void *)ptr);
+void KyraEngine_LoK::initBeadState(int x, int y, int x2, int y2, int unk, BeadState *ptr) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::initBeadState(%d, %d, %d, %d, %d, %p)", x, y, x2, y2, unk, (const void *)ptr);
 	ptr->unk9 = unk;
 	int xDiff = x2 - x;
 	int yDiff = y2 - y;
@@ -1637,8 +1637,8 @@ void KyraEngine_v1::initBeadState(int x, int y, int x2, int y2, int unk, BeadSta
 	ptr->unk8 = unk2;
 }
 
-int KyraEngine_v1::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::processBead(%d, %d, %p, %p, %p)", x, y, (const void *)&x2, (const void *)&y2, (const void *)ptr);
+int KyraEngine_LoK::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::processBead(%d, %d, %p, %p, %p)", x, y, (const void *)&x2, (const void *)&y2, (const void *)ptr);
 	if (x == ptr->dstX && y == ptr->dstY)
 		return 1;
 
@@ -1674,8 +1674,8 @@ int KyraEngine_v1::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 	return 0;
 }
 
-void KyraEngine_v1::setupPanPages() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::setupPanPages()");
+void KyraEngine_LoK::setupPanPages() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setupPanPages()");
 	_screen->savePageToDisk("BKGD.PG", 2);
 	_screen->loadBitmap("BEAD.CPS", 3, 3, 0);
 	if (_flags.platform == Common::kPlatformMacintosh || _flags.platform == Common::kPlatformAmiga) {
@@ -1705,8 +1705,8 @@ void KyraEngine_v1::setupPanPages() {
 	_screen->loadPageFromDisk("BKGD.PG", 2);
 }
 
-void KyraEngine_v1::freePanPages() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::freePanPages()");
+void KyraEngine_LoK::freePanPages() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::freePanPages()");
 	delete _endSequenceBackUpRect;
 	_endSequenceBackUpRect = 0;
 	for (int i = 0; i <= 19; ++i) {
@@ -1715,8 +1715,8 @@ void KyraEngine_v1::freePanPages() {
 	}
 }
 
-void KyraEngine_v1::closeFinalWsa() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::closeFinalWsa()");
+void KyraEngine_LoK::closeFinalWsa() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::closeFinalWsa()");
 	delete _finalA;
 	_finalA = 0;
 	delete _finalB;
@@ -1727,7 +1727,7 @@ void KyraEngine_v1::closeFinalWsa() {
 	_endSequenceNeedLoading = 1;
 }
 
-void KyraEngine_v1::updateKyragemFading() {
+void KyraEngine_LoK::updateKyragemFading() {
 	static const uint8 kyraGemPalette[0x28] = {
 		0x3F, 0x3B, 0x38, 0x34, 0x32, 0x2F, 0x2C, 0x29, 0x25, 0x22,
 		0x1F, 0x1C, 0x19, 0x16, 0x12, 0x0F, 0x0C, 0x0A, 0x06, 0x03,
@@ -1797,8 +1797,8 @@ void KyraEngine_v1::updateKyragemFading() {
 	_kyragemFadingState.timerCount = _system->getMillis() + 120 * _tickLength;
 }
 
-void KyraEngine_v1::drawJewelPress(int jewel, int drawSpecial) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawJewelPress(%d, %d)", jewel, drawSpecial);
+void KyraEngine_LoK::drawJewelPress(int jewel, int drawSpecial) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::drawJewelPress(%d, %d)", jewel, drawSpecial);
 	_screen->hideMouse();
 	int shape = 0;
 
@@ -1822,8 +1822,8 @@ void KyraEngine_v1::drawJewelPress(int jewel, int drawSpecial) {
 	_screen->showMouse();
 }
 
-void KyraEngine_v1::drawJewelsFadeOutStart() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawJewelsFadeOutStart()");
+void KyraEngine_LoK::drawJewelsFadeOutStart() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::drawJewelsFadeOutStart()");
 	static const uint16 jewelTable1[] = { 0x164, 0x15F, 0x15A, 0x155, 0x150, 0xFFFF };
 	static const uint16 jewelTable2[] = { 0x163, 0x15E, 0x159, 0x154, 0x14F, 0xFFFF };
 	static const uint16 jewelTable3[] = { 0x166, 0x160, 0x15C, 0x157, 0x152, 0xFFFF };
@@ -1842,8 +1842,8 @@ void KyraEngine_v1::drawJewelsFadeOutStart() {
 	}
 }
 
-void KyraEngine_v1::drawJewelsFadeOutEnd(int jewel) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawJewelsFadeOutEnd(%d)", jewel);
+void KyraEngine_LoK::drawJewelsFadeOutEnd(int jewel) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::drawJewelsFadeOutEnd(%d)", jewel);
 	static const uint16 jewelTable[] = { 0x153, 0x158, 0x15D, 0x162, 0x148, 0xFFFF };
 	int newDelay = 0;
 

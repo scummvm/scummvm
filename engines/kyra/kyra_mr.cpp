@@ -325,7 +325,7 @@ int KyraEngine_MR::go() {
 }
 
 void KyraEngine_MR::initMainMenu() {
-	_menuAnim = new WSAMovieV2(this, _screen);
+	_menuAnim = new WSAMovie_v2(this, _screen);
 	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
 	_menuAnim->setX(0);
 	_menuAnim->setY(0);
@@ -550,11 +550,11 @@ void KyraEngine_MR::initMouseShapes() {
 void KyraEngine_MR::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::startup()");
 
-	_album.wsa = new WSAMovieV2(this, _screen);
+	_album.wsa = new WSAMovie_v2(this, _screen);
 	assert(_album.wsa);
-	_album.leftPage.wsa = new WSAMovieV2(this, _screen);
+	_album.leftPage.wsa = new WSAMovie_v2(this, _screen);
 	assert(_album.leftPage.wsa);
-	_album.rightPage.wsa = new WSAMovieV2(this, _screen);
+	_album.rightPage.wsa = new WSAMovie_v2(this, _screen);
 	assert(_album.rightPage.wsa);
 	musicUpdate(0);
 
@@ -607,7 +607,7 @@ void KyraEngine_MR::startup() {
 
 	for (int i = 0; i < 16; ++i) {
 		_sceneAnims[i].flags = 0;
-		_sceneAnimMovie[i] = new WSAMovieV2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
 		assert(_sceneAnimMovie[i]);
 	}
 
@@ -664,7 +664,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
-	_invWsa = new WSAMovieV2(this, _screen);
+	_invWsa = new WSAMovie_v2(this, _screen);
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;

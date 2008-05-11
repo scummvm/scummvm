@@ -23,13 +23,13 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/screen.h"
 #include "kyra/script.h"
 #include "kyra/text.h"
-#include "kyra/animator_v1.h"
+#include "kyra/animator_lok.h"
 #include "kyra/sound.h"
-#include "kyra/gui_v1.h"
+#include "kyra/gui_lok.h"
 #include "kyra/timer.h"
 
 #include "common/config-manager.h"
@@ -39,13 +39,13 @@
 
 namespace Kyra {
 
-void KyraEngine_v1::initMainButtonList() {
+void KyraEngine_LoK::initMainButtonList() {
 	_buttonList = &_buttonData[0];
 	for (int i = 0; _buttonDataListPtr[i]; ++i)
 		_buttonList = _gui->addButtonToList(_buttonList, _buttonDataListPtr[i]);
 }
 
-int KyraEngine_v1::buttonInventoryCallback(Button *caller) {
+int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 	int itemOffset = caller->index - 2;
 	uint8 inventoryItem = _currentCharacter->inventoryItems[itemOffset];
 	if (_itemInHand == -1) {
@@ -89,7 +89,7 @@ int KyraEngine_v1::buttonInventoryCallback(Button *caller) {
 	return 0;
 }
 
-int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
+int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 	if (!(_deathHandler & 8))
 		return 1;
 	int jewel = caller->index - 0x14;
@@ -187,18 +187,18 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 
 #pragma mark -
 
-GUI_v1::GUI_v1(KyraEngine_v1 *vm, Screen_v1 *screen) : GUI(vm), _vm(vm), _screen(screen) {
+GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI(vm), _vm(vm), _screen(screen) {
 	_menu = 0;
 	initStaticResource();
-	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::scrollUp);
-	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::scrollDown);
+	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
+	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollDown);
 }
 
-GUI_v1::~GUI_v1() {
+GUI_LoK::~GUI_LoK() {
 	delete[] _menu;
 }
 
-int GUI_v1::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
+int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
 	while (list) {
 		if (list->flags & 8) {
 			list = list->nextButton;
@@ -272,7 +272,7 @@ int GUI_v1::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
 	return 0;
 }
 
-void GUI_v1::processButton(Button *button) {
+void GUI_LoK::processButton(Button *button) {
 	if (!button)
 		return;
 
@@ -316,7 +316,7 @@ void GUI_v1::processButton(Button *button) {
 		(*callback.get())(button);
 }
 
-void GUI_v1::setGUILabels() {
+void GUI_LoK::setGUILabels() {
 	int offset = 0;
 	int offsetOptions = 0;
 	int offsetMainMenu = 0;
@@ -406,7 +406,7 @@ void GUI_v1::setGUILabels() {
 	_onCDString = _vm->_guiStrings[21];
 }
 
-int GUI_v1::buttonMenuCallback(Button *caller) {
+int GUI_LoK::buttonMenuCallback(Button *caller) {
 	PauseTimer pause(*_vm->_timer);
 
 	_displayMenu = true;
@@ -475,7 +475,7 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 	return 0;
 }
 
-void GUI_v1::getInput() {
+void GUI_LoK::getInput() {
 	Common::Event event;
 	static uint32 lastScreenUpdate = 0;
 	uint32 now = _vm->_system->getMillis();
@@ -518,15 +518,15 @@ void GUI_v1::getInput() {
 	_vm->_system->delayMillis(3);
 }
 
-int GUI_v1::resumeGame(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::resumeGame()");
+int GUI_LoK::resumeGame(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::resumeGame()");
 	updateMenuButton(button);
 	_displayMenu = false;
 
 	return 0;
 }
 
-void GUI_v1::setupSavegames(Menu &menu, int num) {
+void GUI_LoK::setupSavegames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	static char savenames[5][31];
 	uint8 startSlot;
@@ -556,8 +556,8 @@ void GUI_v1::setupSavegames(Menu &menu, int num) {
 	}
 }
 
-int GUI_v1::saveGameMenu(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::saveGameMenu()");
+int GUI_LoK::saveGameMenu(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::saveGameMenu()");
 	updateSaveList();
 
 	updateMenuButton(button);
@@ -569,7 +569,7 @@ int GUI_v1::saveGameMenu(Button *button) {
 	_menu[2].menuNameString = _vm->_guiStrings[8]; // Select a position to save to:
 	_specialSavegameString = _vm->_guiStrings[9]; // [ EMPTY SLOT ]
 	for (int i = 0; i < 5; i++)
-		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::saveGame);
+		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGame);
 
 	_savegameOffset = 0;
 	setupSavegames(_menu[2], 5);
@@ -599,8 +599,8 @@ int GUI_v1::saveGameMenu(Button *button) {
 	return 0;
 }
 
-int GUI_v1::loadGameMenu(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::loadGameMenu()");
+int GUI_LoK::loadGameMenu(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::loadGameMenu()");
 	updateSaveList();
 
 	if (_vm->_menuDirectlyToLoad) {
@@ -616,7 +616,7 @@ int GUI_v1::loadGameMenu(Button *button) {
 	_specialSavegameString = _vm->_newGameString[0]; //[ START A NEW GAME ]
 	_menu[2].menuNameString = _vm->_guiStrings[7]; // Which game would you like to reload?
 	for (int i = 0; i < 5; i++)
-		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::loadGame);
+		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::loadGame);
 
 	_savegameOffset = 0;
 	setupSavegames(_menu[2], 5);
@@ -652,7 +652,7 @@ int GUI_v1::loadGameMenu(Button *button) {
 	return 0;
 }
 
-void GUI_v1::redrawTextfield() {
+void GUI_LoK::redrawTextfield() {
 	_screen->fillRect(38, 91, 287, 102, 250);
 	_text->printText(_savegameName, 38, 92, 253, 0, 0);
 
@@ -664,7 +664,7 @@ void GUI_v1::redrawTextfield() {
 	_screen->updateScreen();
 }
 
-void GUI_v1::updateSavegameString() {
+void GUI_LoK::updateSavegameString() {
 	int length;
 
 	if (_keyPressed.keycode) {
@@ -691,8 +691,8 @@ void GUI_v1::updateSavegameString() {
 	_keyPressed.reset();
 }
 
-int GUI_v1::saveGame(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::saveGame()");
+int GUI_LoK::saveGame(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::saveGame()");
 	updateMenuButton(button);
 	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
 
@@ -740,16 +740,16 @@ int GUI_v1::saveGame(Button *button) {
 	return 0;
 }
 
-int GUI_v1::savegameConfirm(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::savegameConfirm()");
+int GUI_LoK::savegameConfirm(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::savegameConfirm()");
 	updateMenuButton(button);
 	_displaySubMenu = false;
 
 	return 0;
 }
 
-int GUI_v1::loadGame(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::loadGame()");
+int GUI_LoK::loadGame(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::loadGame()");
 	updateMenuButton(button);
 	_displaySubMenu = false;
 	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
@@ -757,8 +757,8 @@ int GUI_v1::loadGame(Button *button) {
 	return 0;
 }
 
-int GUI_v1::cancelSubMenu(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::cancelSubMenu()");
+int GUI_LoK::cancelSubMenu(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::cancelSubMenu()");
 	updateMenuButton(button);
 	_displaySubMenu = false;
 	_cancelSubMenu = true;
@@ -766,8 +766,8 @@ int GUI_v1::cancelSubMenu(Button *button) {
 	return 0;
 }
 
-int GUI_v1::quitPlaying(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::quitPlaying()");
+int GUI_LoK::quitPlaying(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::quitPlaying()");
 	updateMenuButton(button);
 
 	if (quitConfirm(_vm->_guiStrings[14])) { // Are you sure you want to quit playing?
@@ -780,8 +780,8 @@ int GUI_v1::quitPlaying(Button *button) {
 	return 0;
 }
 
-bool GUI_v1::quitConfirm(const char *str) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::quitConfirm()");
+bool GUI_LoK::quitConfirm(const char *str) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::quitConfirm()");
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
@@ -806,8 +806,8 @@ bool GUI_v1::quitConfirm(const char *str) {
 	return !_cancelSubMenu;
 }
 
-int GUI_v1::quitConfirmYes(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::quitConfirmYes()");
+int GUI_LoK::quitConfirmYes(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::quitConfirmYes()");
 	updateMenuButton(button);
 	_displaySubMenu = false;
 	_cancelSubMenu = false;
@@ -815,8 +815,8 @@ int GUI_v1::quitConfirmYes(Button *button) {
 	return 0;
 }
 
-int GUI_v1::quitConfirmNo(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::quitConfirmNo()");
+int GUI_LoK::quitConfirmNo(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::quitConfirmNo()");
 	updateMenuButton(button);
 	_displaySubMenu = false;
 	_cancelSubMenu = true;
@@ -824,8 +824,8 @@ int GUI_v1::quitConfirmNo(Button *button) {
 	return 0;
 }
 
-int GUI_v1::gameControlsMenu(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::gameControlsMenu()");
+int GUI_LoK::gameControlsMenu(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::gameControlsMenu()");
 
 	_vm->readSettings();
 
@@ -842,14 +842,14 @@ int GUI_v1::gameControlsMenu(Button *button) {
 		}
 
 		_menu[5].item[3].labelString = _voiceTextString; //"Voice / Text "
-		_menu[5].item[3].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeVoice);
+		_menu[5].item[3].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeVoice);
 
 	} else {
 		//_menu[5].height = 136;
 		//_menu[5].item[5].y = 110;
 		_menu[5].item[4].enabled = 0;
 		_menu[5].item[3].labelString = _textSpeedString; // "Text speed "
-		_menu[5].item[3].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeText);
+		_menu[5].item[3].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeText);
 	}
 
 	setupControls(_menu[5]);
@@ -876,8 +876,8 @@ int GUI_v1::gameControlsMenu(Button *button) {
 	return 0;
 }
 
-void GUI_v1::setupControls(Menu &menu) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::setupControls()");
+void GUI_LoK::setupControls(Menu &menu) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::setupControls()");
 
 	switch (_vm->_configMusic) {
 		case 0:
@@ -973,8 +973,8 @@ void GUI_v1::setupControls(Menu &menu) {
 	initMenu(menu);
 }
 
-int GUI_v1::controlsChangeMusic(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::controlsChangeMusic()");
+int GUI_LoK::controlsChangeMusic(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsChangeMusic()");
 	updateMenuButton(button);
 
 	_vm->_configMusic = ++_vm->_configMusic % ((_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) ? 3 : 2);
@@ -982,8 +982,8 @@ int GUI_v1::controlsChangeMusic(Button *button) {
 	return 0;
 }
 
-int GUI_v1::controlsChangeSounds(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::controlsChangeSounds()");
+int GUI_LoK::controlsChangeSounds(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsChangeSounds()");
 	updateMenuButton(button);
 
 	_vm->_configSounds = !_vm->_configSounds;
@@ -991,8 +991,8 @@ int GUI_v1::controlsChangeSounds(Button *button) {
 	return 0;
 }
 
-int GUI_v1::controlsChangeWalk(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::controlsChangeWalk()");
+int GUI_LoK::controlsChangeWalk(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsChangeWalk()");
 	updateMenuButton(button);
 
 	_vm->_configWalkspeed = ++_vm->_configWalkspeed % 5;
@@ -1001,8 +1001,8 @@ int GUI_v1::controlsChangeWalk(Button *button) {
 	return 0;
 }
 
-int GUI_v1::controlsChangeText(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::controlsChangeText()");
+int GUI_LoK::controlsChangeText(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsChangeText()");
 	updateMenuButton(button);
 
 	_vm->_configTextspeed = ++_vm->_configTextspeed % 4;
@@ -1010,8 +1010,8 @@ int GUI_v1::controlsChangeText(Button *button) {
 	return 0;
 }
 
-int GUI_v1::controlsChangeVoice(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::controlsChangeVoice()");
+int GUI_LoK::controlsChangeVoice(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsChangeVoice()");
 	updateMenuButton(button);
 
 	_vm->_configVoice = ++_vm->_configVoice % 3;
@@ -1019,14 +1019,14 @@ int GUI_v1::controlsChangeVoice(Button *button) {
 	return 0;
 }
 
-int GUI_v1::controlsApply(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::controlsApply()");
+int GUI_LoK::controlsApply(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsApply()");
 	_vm->writeSettings();
 	return cancelSubMenu(button);
 }
 
-int GUI_v1::scrollUp(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::scrollUp()");
+int GUI_LoK::scrollUp(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::scrollUp()");
 	updateMenuButton(button);
 
 	if (_savegameOffset > 0) {
@@ -1037,8 +1037,8 @@ int GUI_v1::scrollUp(Button *button) {
 	return 0;
 }
 
-int GUI_v1::scrollDown(Button *button) {
-	debugC(9, kDebugLevelGUI, "GUI_v1::scrollDown()");
+int GUI_LoK::scrollDown(Button *button) {
+	debugC(9, kDebugLevelGUI, "GUI_LoK::scrollDown()");
 	updateMenuButton(button);
 
 	_savegameOffset++;
@@ -1050,7 +1050,7 @@ int GUI_v1::scrollDown(Button *button) {
 	return 0;
 }
 
-void GUI_v1::fadePalette() {
+void GUI_LoK::fadePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
@@ -1070,7 +1070,7 @@ void GUI_v1::fadePalette() {
 	_screen->fadePalette(_screen->_currentPalette, 2);
 }
 
-void GUI_v1::restorePalette() {
+void GUI_LoK::restorePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
@@ -1080,8 +1080,8 @@ void GUI_v1::restorePalette() {
 
 #pragma mark -
 
-void KyraEngine_v1::drawAmulet() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawAmulet()");
+void KyraEngine_LoK::drawAmulet() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::drawAmulet()");
 	static const int16 amuletTable1[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x150, 0x155, 0x15A, 0x15F, 0x164, 0x145, -1};
 	static const int16 amuletTable3[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x14F, 0x154, 0x159, 0x15E, 0x163, 0x144, -1};
 	static const int16 amuletTable2[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1};

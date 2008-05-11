@@ -85,13 +85,13 @@ namespace Kyra {
 	item.labelY = t; \
 	item.unk1F = v
 
-class KyraEngine_v1;
+class KyraEngine_LoK;
 
-class GUI_v1 : public GUI {
-	friend class KyraEngine_v1;
+class GUI_LoK : public GUI {
+	friend class KyraEngine_LoK;
 public:
-	GUI_v1(KyraEngine_v1 *vm, Screen_v1 *screen);
-	~GUI_v1();
+	GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen);
+	~GUI_LoK();
 
 	void processButton(Button *button);
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
@@ -148,8 +148,8 @@ private:
 	const char *getMenuItemTitle(const MenuItem &menuItem) { return menuItem.itemString; }
 	const char *getMenuItemLabel(const MenuItem &menuItem) { return menuItem.labelString; }
 
-	KyraEngine_v1 *_vm;
-	Screen_v1 *_screen;
+	KyraEngine_LoK *_vm;
+	Screen_LoK *_screen;
 
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;

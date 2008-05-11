@@ -23,19 +23,19 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
-#include "kyra/screen_v1.h"
+#include "kyra/kyra_lok.h"
+#include "kyra/screen_lok.h"
 
 namespace Kyra {
 
 #define BITBLIT_RECTS 10
 
-Screen_v1::Screen_v1(KyraEngine_v1 *vm, OSystem *system)
+Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	: Screen(vm, system) {
 	_vm = vm;
 }
 
-Screen_v1::~Screen_v1() {
+Screen_LoK::~Screen_LoK() {
 	delete[] _bitBlitRects;
 
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
@@ -52,7 +52,7 @@ Screen_v1::~Screen_v1() {
 	delete[] _unkPtr2;
 }
 
-bool Screen_v1::init() {
+bool Screen_LoK::init() {
 	if (!Screen::init())
 		return false;
 
@@ -73,20 +73,20 @@ bool Screen_v1::init() {
 	return true;
 }
 
-void Screen_v1::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::setScreenDim(%d)", dim);
+void Screen_LoK::setScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
 }
 
-const ScreenDim *Screen_v1::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::getScreenDim(%d)", dim);
+const ScreenDim *Screen_LoK::getScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::getScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	return &_screenDimTable[dim];
 }
 
-void Screen_v1::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::fadeSpecialPalette(%d, %d, %d, %d)", palIndex, startIndex, size, fadeTime);
+void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::fadeSpecialPalette(%d, %d, %d, %d)", palIndex, startIndex, size, fadeTime);
 
 	assert(_vm->palTable1()[palIndex]);
 	assert(_currentPalette);
@@ -99,8 +99,8 @@ void Screen_v1::fadeSpecialPalette(int palIndex, int startIndex, int size, int f
 	_system->updateScreen();
 }
 
-void Screen_v1::addBitBlitRect(int x, int y, int w, int h) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
+void Screen_LoK::addBitBlitRect(int x, int y, int w, int h) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
 	if (_bitBlitNum >= BITBLIT_RECTS)
 		error("too many bit blit rects");
 
@@ -111,8 +111,8 @@ void Screen_v1::addBitBlitRect(int x, int y, int w, int h) {
 	++_bitBlitNum;
 }
 
-void Screen_v1::bitBlitRects() {
-	debugC(9, kDebugLevelScreen, "Screen_v1::bitBlitRects()");
+void Screen_LoK::bitBlitRects() {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::bitBlitRects()");
 	Rect *cur = _bitBlitRects;
 	while (_bitBlitNum) {
 		_bitBlitNum--;
@@ -121,8 +121,8 @@ void Screen_v1::bitBlitRects() {
 	}
 }
 
-void Screen_v1::savePageToDisk(const char *file, int page) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::savePageToDisk('%s', %d)", file, page);
+void Screen_LoK::savePageToDisk(const char *file, int page) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::savePageToDisk('%s', %d)", file, page);
 	if (!_saveLoadPage[page/2]) {
 		_saveLoadPage[page/2] = new uint8[SCREEN_W * SCREEN_H];
 		assert(_saveLoadPage[page/2]);
@@ -145,8 +145,8 @@ void Screen_v1::savePageToDisk(const char *file, int page) {
 	}
 }
 
-void Screen_v1::loadPageFromDisk(const char *file, int page) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::loadPageFromDisk('%s', %d)", file, page);
+void Screen_LoK::loadPageFromDisk(const char *file, int page) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::loadPageFromDisk('%s', %d)", file, page);
 	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
 	delete[] _saveLoadPage[page/2];
 
@@ -163,8 +163,8 @@ void Screen_v1::loadPageFromDisk(const char *file, int page) {
 	}	_saveLoadPage[page/2] = 0;
 }
 
-void Screen_v1::deletePageFromDisk(int page) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::deletePageFromDisk(%d)", page);
+void Screen_LoK::deletePageFromDisk(int page) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::deletePageFromDisk(%d)", page);
 	delete[] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
 
@@ -174,8 +174,8 @@ void Screen_v1::deletePageFromDisk(int page) {
 	}
 }
 
-void Screen_v1::copyBackgroundBlock(int x, int page, int flag) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
+void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
 
 	if (x < 1)
 		return;
@@ -216,17 +216,17 @@ void Screen_v1::copyBackgroundBlock(int x, int page, int flag) {
 	_curPage = oldVideoPage;
 }
 
-void Screen_v1::copyBackgroundBlock2(int x) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::copyBackgroundBlock2(%d)", x);
+void Screen_LoK::copyBackgroundBlock2(int x) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::copyBackgroundBlock2(%d)", x);
 	copyBackgroundBlock(x, 4, 1);
 }
 
-void Screen_v1::setTextColorMap(const uint8 *cmap) {
-	debugC(9, kDebugLevelScreen, "Screen_v1::setTextColorMap(%p)", (const void *)cmap);
+void Screen_LoK::setTextColorMap(const uint8 *cmap) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::setTextColorMap(%p)", (const void *)cmap);
 	setTextColor(cmap, 0, 11);
 }
 
-int Screen_v1::getRectSize(int x, int y) {
+int Screen_LoK::getRectSize(int x, int y) {
 	if (x < 1)
 		x = 1;
 	else if (x > 40)

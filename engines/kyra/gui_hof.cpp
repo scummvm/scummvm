@@ -271,7 +271,7 @@ void KyraEngine_HoF::redrawInventory(int page) {
 }
 
 void KyraEngine_HoF::scrollInventoryWheel() {
-	WSAMovieV2 movie(this, _screen);
+	WSAMovie_v2 movie(this, _screen);
 	movie.open("INVWHEEL.WSA", 0, 0);
 	int frames = movie.opened() ? movie.frames() : 6;
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);

@@ -31,7 +31,7 @@
 namespace Kyra {
 
 class KyraEngine;
-class KyraEngine_v1;
+class KyraEngine_LoK;
 class KyraEngine_v2;
 class KyraEngine_HoF;
 
@@ -54,13 +54,13 @@ protected:
 	bool cmd_setTimerCountdown(int argc, const char **argv);
 };
 
-class Debugger_v1 : public Debugger {
+class Debugger_LoK : public Debugger {
 public:
-	Debugger_v1(KyraEngine_v1 *vm);
-	virtual ~Debugger_v1() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	Debugger_LoK(KyraEngine_LoK *vm);
+	virtual ~Debugger_LoK() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
-	KyraEngine_v1 *_vm;
+	KyraEngine_LoK *_vm;
 
 	virtual void preEnter();
 	virtual void postEnter();

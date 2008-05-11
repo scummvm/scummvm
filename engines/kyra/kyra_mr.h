@@ -39,7 +39,7 @@ namespace Kyra {
 class SoundDigital;
 class Screen_MR;
 class MainMenu;
-class WSAMovieV2;
+class WSAMovie_v2;
 class TextDisplayer_MR;
 struct Button;
 
@@ -157,7 +157,7 @@ private:
 	void initMainMenu();
 	void uninitMainMenu();
 
-	WSAMovieV2 *_menuAnim;
+	WSAMovie_v2 *_menuAnim;
 
 	// timer
 	void setupTimers();
@@ -262,7 +262,7 @@ private:
 	void clearInventorySlot(int slot, int page);
 	void drawInventorySlot(int page, int item, int slot);
 
-	WSAMovieV2 *_invWsa;
+	WSAMovie_v2 *_invWsa;
 	int _invWsaFrame;
 
 	// localization
@@ -535,11 +535,11 @@ private:
 	struct Album {
 		uint8 *backUpPage;
 		uint8 *file;
-		WSAMovieV2 *wsa;
+		WSAMovie_v2 *wsa;
 		uint8 *backUpRect;
 
 		struct PageMovie {
-			WSAMovieV2 *wsa;
+			WSAMovie_v2 *wsa;
 			int curFrame;
 			int maxFrame;
 			uint32 timer;

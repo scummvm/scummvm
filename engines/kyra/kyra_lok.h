@@ -28,8 +28,8 @@
 
 #include "kyra/kyra.h"
 #include "kyra/script.h"
-#include "kyra/screen_v1.h"
-#include "kyra/gui_v1.h"
+#include "kyra/screen_lok.h"
+#include "kyra/gui_lok.h"
 
 namespace Kyra {
 
@@ -37,9 +37,9 @@ class Movie;
 class SoundDigital;
 class SeqPlayer;
 class Sprites;
-class Animator_v1;
+class Animator_LoK;
 class TextDisplayer;
-class KyraEngine_v1;
+class KyraEngine_LoK;
 
 struct Character {
 	uint16 sceneId;
@@ -104,17 +104,17 @@ struct BeadState {
 	int16 tableIndex;
 };
 
-class KyraEngine_v1 : public KyraEngine {
+class KyraEngine_LoK : public KyraEngine {
 	friend class MusicPlayer;
-	friend class Debugger_v1;
-	friend class Animator_v1;
-	friend class GUI_v1;
+	friend class Debugger_LoK;
+	friend class Animator_LoK;
+	friend class GUI_LoK;
 public:
-	KyraEngine_v1(OSystem *system, const GameFlags &flags);
-	~KyraEngine_v1();
+	KyraEngine_LoK(OSystem *system, const GameFlags &flags);
+	~KyraEngine_LoK();
 
 	Screen *screen() { return _screen; }
-	Animator_v1 *animator() { return _animator; }
+	Animator_LoK *animator() { return _animator; }
 	virtual Movie *createWSAMovie();
 
 	uint8 **shapes() { return _shapes; }
@@ -128,7 +128,7 @@ public:
 	int _paletteChanged;
 	int16 _northExitHeight;
 
-	typedef void (KyraEngine_v1::*IntroProc)();
+	typedef void (KyraEngine_LoK::*IntroProc)();
 
 	// static data access
 	const char * const*seqWSATable() { return _seq_WSATable; }
@@ -475,10 +475,10 @@ protected:
 
 	uint8 _configTextspeed;
 
-	Animator_v1 *_animator;
+	Animator_LoK *_animator;
 	SeqPlayer *_seq;
 	Sprites *_sprites;
-	Screen_v1 *_screen;
+	Screen_LoK *_screen;
 
 	EMCState _scriptMain;
 
@@ -492,7 +492,7 @@ protected:
 	Character *_currentCharacter;
 
 	Button *_buttonList;
-	GUI_v1 *_gui;
+	GUI_LoK *_gui;
 
 	struct KyragemState {
 		uint16 nextOperation;

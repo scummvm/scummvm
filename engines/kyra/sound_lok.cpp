@@ -24,12 +24,12 @@
  */
 
 #include "kyra/sound.h"
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 
 namespace Kyra {
 
-void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d, %d)", track, volume);
+void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playSoundEffect(%d, %d)", track, volume);
 	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;
@@ -38,8 +38,8 @@ void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
 	KyraEngine::snd_playSoundEffect(track);
 }
 
-void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playWanderScoreViaMap(%d, %d)", command, restart);
 	if (restart)
 		_lastMusicCommand = -1;
 
@@ -61,8 +61,8 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 	}
 }
 
-void KyraEngine_v1::snd_playVoiceFile(int id) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playVoiceFile(%d)", id);
+void KyraEngine_LoK::snd_playVoiceFile(int id) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d", id);
@@ -70,8 +70,8 @@ void KyraEngine_v1::snd_playVoiceFile(int id) {
 	_sound->voicePlay(vocFile);
 }
 
-void KyraEngine_v1::snd_voiceWaitForFinish(bool ingame) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_voiceWaitForFinish(%d)", ingame);
+void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_voiceWaitForFinish(%d)", ingame);
 	while (_sound->voiceIsPlaying() && !_skipFlag) {
 		if (ingame)
 			delay(10, true);

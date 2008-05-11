@@ -97,17 +97,17 @@ enum kNestedSequencesDemo {
 	kSequenceDemoDig
 };
 
-class WSAMovieV2;
+class WSAMovie_v2;
 class KyraEngine_HoF;
 class TextDisplayer_HoF;
 
 struct TIM;
 
-typedef int (KyraEngine_HoF::*SeqProc)(WSAMovieV2*, int, int, int);
+typedef int (KyraEngine_HoF::*SeqProc)(WSAMovie_v2*, int, int, int);
 
 struct ActiveWSA {
 	int16 flags;
-	WSAMovieV2 *movie;
+	WSAMovie_v2 *movie;
 	uint16 startFrame;
 	uint16 endFrame;
 	uint16 frameDelay;
@@ -193,52 +193,52 @@ protected:
 	// intro/outro
 	void seq_playSequences(int startSeq, int endSeq = -1);
 
-	int seq_introWestwood(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introTitle(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introPoint(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introWestwood(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introTitle(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introLibrary(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introHand(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introPoint(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introZanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
-	int seq_introOver1(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introOver2(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introForest(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introDragon(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introDarm(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introLibrary2(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introMarco(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introHand1a(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introHand1b(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introHand1c(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introHand2(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introHand3(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introOver1(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introOver2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introForest(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introDragon(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introDarm(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introLibrary2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introMarco(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introHand1a(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introHand1b(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introHand1c(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introHand2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_introHand3(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
-	int seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFish(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFheep(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFuards(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFunters(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFerb(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFish(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFheep(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFarmer(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFirates(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFrash(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
-	int seq_finaleFiggle(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFiggle(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
-	int seq_demoVirgin(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoWestwood(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoTitle(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoHill(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoOuthome(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoWharf(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoDinob(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoFisher(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoVirgin(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoWestwood(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoTitle(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoHill(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoOuthome(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoWharf(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoDinob(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoFisher(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
-	int seq_demoWharf2(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoDinob2(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoWater(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoBail(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_demoDig(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoWharf2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoDinob2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoWater(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoBail(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
 	void seq_sequenceCommand(int command);
 	void seq_loadNestedSequence(int wsaNum, int seqNum);
@@ -259,7 +259,7 @@ protected:
 	char *seq_preprocessString(const char *str, int width);
 	void seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor);
 	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
-		WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
+		WSAMovie_v2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
 	void seq_finaleActorScreen();
 	void seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
 	void seq_scrollPage();
@@ -330,7 +330,7 @@ protected:
 
 	uint8 *_sceneShapeTable[50];
 
-	WSAMovieV2 *_wsaSlots[10];
+	WSAMovie_v2 *_wsaSlots[10];
 
 	void freeSceneShapePtrs();
 
@@ -667,7 +667,7 @@ protected:
 		int delay;
 		bool running;
 		uint32 timer;
-		WSAMovieV2 *wsa;
+		WSAMovie_v2 *wsa;
 	} _invWsa;
 
 	// TODO: move inside KyraEngine_HoF::InventoryWsa?
@@ -854,7 +854,7 @@ protected:
 
 	static const uint8 _seqTextColorPresets[];
 	char *_seqProcessedString;
-	WSAMovieV2 *_seqWsa;
+	WSAMovie_v2 *_seqWsa;
 
 	bool _abortIntroFlag;
 	int _menuChoice;

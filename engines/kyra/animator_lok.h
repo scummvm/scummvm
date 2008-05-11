@@ -27,10 +27,10 @@
 #define KYRA_ANIMATOR_V1_H
 
 namespace Kyra {
-class KyraEngine_v1;
+class KyraEngine_LoK;
 class Screen;
 
-class Animator_v1 {
+class Animator_LoK {
 public:
 	struct AnimObject {
 		uint8 index;
@@ -53,8 +53,8 @@ public:
 		AnimObject *nextAnimObject;
 	};
 
-	Animator_v1(KyraEngine_v1 *vm, OSystem *system);
-	virtual ~Animator_v1();
+	Animator_LoK(KyraEngine_LoK *vm, OSystem *system);
+	virtual ~Animator_LoK();
 
 	operator bool() const { return _initOk; }
 
@@ -101,7 +101,7 @@ public:
 	int _brandonScaleY;
 
 protected:
-	KyraEngine_v1 *_vm;
+	KyraEngine_LoK *_vm;
 	Screen *_screen;
 	OSystem *_system;
 	bool _initOk;

@@ -23,7 +23,7 @@
  */
 
 #include "kyra/kyra.h"
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 
@@ -506,7 +506,7 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 
 	switch (flags.gameID) {
 	case Kyra::GI_KYRA1:
-		*engine = new Kyra::KyraEngine_v1(syst, flags);
+		*engine = new Kyra::KyraEngine_LoK(syst, flags);
 		break;
 	case Kyra::GI_KYRA2:
 		*engine = new Kyra::KyraEngine_HoF(syst, flags);

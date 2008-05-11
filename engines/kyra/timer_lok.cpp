@@ -24,19 +24,19 @@
  */
 
 #include "kyra/kyra.h"
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/screen.h"
-#include "kyra/animator_v1.h"
+#include "kyra/animator_lok.h"
 #include "kyra/timer.h"
 
 #include "common/system.h"
 
 namespace Kyra {
 
-#define TimerV1(x) new Common::Functor1Mem<int, void, KyraEngine_v1>(this, &KyraEngine_v1::x)
+#define TimerV1(x) new Common::Functor1Mem<int, void, KyraEngine_LoK>(this, &KyraEngine_LoK::x)
 
-void KyraEngine_v1::setupTimers() {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::setupTimers()");
+void KyraEngine_LoK::setupTimers() {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::setupTimers()");
 
 	for (int i = 0; i <= 4; ++i)
 		_timer->addTimer(i, 0, -1, 1);
@@ -73,8 +73,8 @@ void KyraEngine_v1::setupTimers() {
 	_timer->addTimer(33, TimerV1(updateAnimFlag2), 3, 1);
 }
 
-void KyraEngine_v1::timerUpdateHeadAnims(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerUpdateHeadAnims(%i)", timerNum);
+void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerUpdateHeadAnims(%i)", timerNum);
 	static int8 currentFrame = 0;
 	static const int8 frameTable[] = {4, 5, 4, 5, 4, 5, 0, 1, 4, 5,
 								4, 4, 6, 4, 8, 1, 9, 4, -1};
@@ -92,8 +92,8 @@ void KyraEngine_v1::timerUpdateHeadAnims(int timerNum) {
 	_animator->animRefreshNPC(_talkingCharNum);
 }
 
-void KyraEngine_v1::timerSetFlags1(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerSetFlags(%i)", timerNum);
+void KyraEngine_LoK::timerSetFlags1(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerSetFlags(%i)", timerNum);
 	if (_currentCharacter->sceneId == 0x1C)
 		return;
 
@@ -111,65 +111,65 @@ void KyraEngine_v1::timerSetFlags1(int timerNum) {
 	}
 }
 
-void KyraEngine_v1::timerFadeText(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerFadeText(%i)", timerNum);
+void KyraEngine_LoK::timerFadeText(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerFadeText(%i)", timerNum);
 	_fadeText = true;
 }
 
-void KyraEngine_v1::updateAnimFlag1(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::updateAnimFlag1(%d)", timerNum);
+void KyraEngine_LoK::updateAnimFlag1(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::updateAnimFlag1(%d)", timerNum);
 	if (_brandonStatusBit & 2) {
 		_brandonStatusBit0x02Flag = 1;
 	}
 }
 
-void KyraEngine_v1::updateAnimFlag2(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::updateAnimFlag2(%d)", timerNum);
+void KyraEngine_LoK::updateAnimFlag2(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::updateAnimFlag2(%d)", timerNum);
 	if (_brandonStatusBit & 0x20) {
 		_brandonStatusBit0x20Flag = 1;
 	}
 }
 
-void KyraEngine_v1::setTextFadeTimerCountdown(int16 countdown) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::setTextFadeTimerCountdown(%i)", countdown);
+void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::setTextFadeTimerCountdown(%i)", countdown);
 	if (countdown == -1)
 		countdown = 32000;
 
 	_timer->setCountdown(31, countdown*60);
 }
 
-void KyraEngine_v1::timerSetFlags2(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerSetFlags2(%i)", timerNum);
+void KyraEngine_LoK::timerSetFlags2(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerSetFlags2(%i)", timerNum);
 	if (!((uint32*)(_flagsTable+0x2D))[timerNum])
 		((uint32*)(_flagsTable+0x2D))[timerNum] = 1;
 }
 
-void KyraEngine_v1::timerCheckAnimFlag1(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerCheckAnimFlag1(%i)", timerNum);
+void KyraEngine_LoK::timerCheckAnimFlag1(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerCheckAnimFlag1(%i)", timerNum);
 	if (_brandonStatusBit & 0x20) {
 		checkAmuletAnimFlags();
 		_timer->setCountdown(18, -1);
 	}
 }
 
-void KyraEngine_v1::timerCheckAnimFlag2(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerCheckAnimFlag2(%i)", timerNum);
+void KyraEngine_LoK::timerCheckAnimFlag2(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerCheckAnimFlag2(%i)", timerNum);
 	if (_brandonStatusBit & 0x2) {
 		checkAmuletAnimFlags();
 		_timer->setCountdown(14, -1);
 	}
 }
 
-void KyraEngine_v1::timerRedrawAmulet(int timerNum) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerRedrawAmulet(%i)", timerNum);
+void KyraEngine_LoK::timerRedrawAmulet(int timerNum) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::timerRedrawAmulet(%i)", timerNum);
 	if (queryGameFlag(0xF1)) {
 		drawAmulet();
 		_timer->setCountdown(19, -1);
 	}
 }
 
-void KyraEngine_v1::setWalkspeed(uint8 newSpeed) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::setWalkspeed(%i)", newSpeed);
+void KyraEngine_LoK::setWalkspeed(uint8 newSpeed) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_LoK::setWalkspeed(%i)", newSpeed);
 	static const uint8 speeds[] = { 11, 9, 6, 5, 3 };
 
 	assert(newSpeed < ARRAYSIZE(speeds));

@@ -60,10 +60,10 @@ protected:
 	int _drawPage;
 };
 
-class WSAMovieV1 : public Movie {
+class WSAMovie_v1 : public Movie {
 public:
-	WSAMovieV1(KyraEngine *vm);
-	virtual ~WSAMovieV1();
+	WSAMovie_v1(KyraEngine *vm);
+	virtual ~WSAMovie_v1();
 
 	virtual int open(const char *filename, int offscreen, uint8 *palette);
 	virtual void close();
@@ -94,7 +94,7 @@ protected:
 	uint8 *_frameData;
 };
 
-class WSAMovieAmiga : public WSAMovieV1 {
+class WSAMovieAmiga : public WSAMovie_v1 {
 public:
 	WSAMovieAmiga(KyraEngine *vm);
 	int open(const char *filename, int offscreen, uint8 *palette);
@@ -107,9 +107,9 @@ private:
 	uint8 *_buffer;
 };
 
-class WSAMovieV2 : public WSAMovieV1 {
+class WSAMovie_v2 : public WSAMovie_v1 {
 public:
-	WSAMovieV2(KyraEngine *vm, Screen_v2 *scren);
+	WSAMovie_v2(KyraEngine *vm, Screen_v2 *scren);
 
 	int open(const char *filename, int unk1, uint8 *palette);
 

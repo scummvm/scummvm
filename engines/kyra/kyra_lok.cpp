@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 
 #include "common/file.h"
 #include "common/events.h"
@@ -39,14 +39,14 @@
 #include "kyra/sound.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
-#include "kyra/animator_v1.h"
+#include "kyra/animator_lok.h"
 #include "kyra/text.h"
 #include "kyra/debugger.h"
 #include "kyra/timer.h"
 
 namespace Kyra {
 
-KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
+KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	: KyraEngine(system, flags) {
 	_skipFlag = false;
 
@@ -95,7 +95,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	memset(&_itemBkgBackUp, 0, sizeof(_itemBkgBackUp));
 }
 
-KyraEngine_v1::~KyraEngine_v1() {
+KyraEngine_LoK::~KyraEngine_LoK() {
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
 		if (_movieObjects[i])
 			_movieObjects[i]->close();
@@ -151,8 +151,8 @@ KyraEngine_v1::~KyraEngine_v1() {
 		delete[] _sceneAnimTable[i];
 }
 
-int KyraEngine_v1::init() {
-	_screen = new Screen_v1(this, _system);
+int KyraEngine_LoK::init() {
+	_screen = new Screen_LoK(this, _system);
 	assert(_screen);
 	_screen->setResolution();
 
@@ -162,13 +162,13 @@ int KyraEngine_v1::init() {
 	assert(_sprites);
 	_seq = new SeqPlayer(this, _system);
 	assert(_seq);
-	_animator = new Animator_v1(this, _system);
+	_animator = new Animator_LoK(this, _system);
 	assert(_animator);
 	_animator->init(5, 11, 12);
 	assert(*_animator);
 	_text = new TextDisplayer(this, screen());
 	assert(_text);
-	_gui = new GUI_v1(this, _screen);
+	_gui = new GUI_LoK(this, _screen);
 	assert(_gui);
 
 	initStaticResource();
@@ -206,7 +206,7 @@ int KyraEngine_v1::init() {
 	memset(&_scriptMain, 0, sizeof(EMCState));
 	memset(&_scriptClick, 0, sizeof(EMCState));
 
-	_debugger = new Debugger_v1(this);
+	_debugger = new Debugger_LoK(this);
 	assert(_debugger);
 	memset(_shapes, 0, sizeof(_shapes));
 
@@ -284,7 +284,7 @@ int KyraEngine_v1::init() {
 	return 0;
 }
 
-int KyraEngine_v1::go() {
+int KyraEngine_LoK::go() {
 	if (_res->getFileSize("6.FNT"))
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
@@ -313,8 +313,8 @@ int KyraEngine_v1::go() {
 }
 
 
-void KyraEngine_v1::startup() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::startup()");
+void KyraEngine_LoK::startup() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::startup()");
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
 	_sound->setSoundList(&_soundData[kMusicIngame]);
@@ -396,8 +396,8 @@ void KyraEngine_v1::startup() {
 	}
 }
 
-void KyraEngine_v1::mainLoop() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::mainLoop()");
+void KyraEngine_LoK::mainLoop() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::mainLoop()");
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
@@ -443,7 +443,7 @@ void KyraEngine_v1::mainLoop() {
 	}
 }
 
-void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
+void KyraEngine_LoK::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
 	while (_system->getMillis() < timestamp && !_quitFlag) {
 		if (updateTimers)
 			_timer->update();
@@ -453,7 +453,7 @@ void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update,
 	}
 }
 
-void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
+void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 	Common::Event event;
 
 	uint32 start = _system->getMillis();
@@ -537,7 +537,7 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
 }
 
-void KyraEngine_v1::waitForEvent() {
+void KyraEngine_LoK::waitForEvent() {
 	bool finished = false;
 	Common::Event event;
 
@@ -566,7 +566,7 @@ void KyraEngine_v1::waitForEvent() {
 	}
 }
 
-void KyraEngine_v1::delayWithTicks(int ticks) {
+void KyraEngine_LoK::delayWithTicks(int ticks) {
 	uint32 nextTime = _system->getMillis() + ticks * _tickLength;
 
 	while (_system->getMillis() < nextTime) {
@@ -590,8 +590,8 @@ void KyraEngine_v1::delayWithTicks(int ticks) {
 #pragma mark - Animation/shape specific code
 #pragma mark -
 
-void KyraEngine_v1::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::setupShapes123(%p, %d, %d)", (const void *)shapeTable, endShape, flags);
+void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setupShapes123(%p, %d, %d)", (const void *)shapeTable, endShape, flags);
 
 	for (int i = 123; i <= 172; ++i)
 		_shapes[i] = 0;
@@ -619,8 +619,8 @@ void KyraEngine_v1::setupShapes123(const Shape *shapeTable, int endShape, int fl
 	_screen->_curPage = curPageBackUp;
 }
 
-void KyraEngine_v1::freeShapes123() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::freeShapes123()");
+void KyraEngine_LoK::freeShapes123() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::freeShapes123()");
 
 	for (int i = 123; i <= 172; ++i) {
 		delete[] _shapes[i];
@@ -632,15 +632,15 @@ void KyraEngine_v1::freeShapes123() {
 #pragma mark - Misc stuff
 #pragma mark -
 
-Movie *KyraEngine_v1::createWSAMovie() {
+Movie *KyraEngine_LoK::createWSAMovie() {
 	if (_flags.platform == Common::kPlatformAmiga)
 		return new WSAMovieAmiga(this);
 
-	return new WSAMovieV1(this);
+	return new WSAMovie_v1(this);
 }
 
-void KyraEngine_v1::setBrandonPoisonFlags(int reset) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::setBrandonPoisonFlags(%d)", reset);
+void KyraEngine_LoK::setBrandonPoisonFlags(int reset) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setBrandonPoisonFlags(%d)", reset);
 	_brandonStatusBit |= 1;
 
 	if (reset)
@@ -656,8 +656,8 @@ void KyraEngine_v1::setBrandonPoisonFlags(int reset) {
 	_brandonPoisonFlagsGFX[0x9D] = 0x2B;
 }
 
-void KyraEngine_v1::resetBrandonPoisonFlags() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::resetBrandonPoisonFlags()");
+void KyraEngine_LoK::resetBrandonPoisonFlags() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::resetBrandonPoisonFlags()");
 	_brandonStatusBit = 0;
 
 	for (int i = 0; i < 0x100; ++i)
@@ -668,12 +668,12 @@ void KyraEngine_v1::resetBrandonPoisonFlags() {
 #pragma mark - Input
 #pragma mark -
 
-void KyraEngine_v1::processInput() {
+void KyraEngine_LoK::processInput() {
 	Common::Point mouse = getMousePos();
 	int xpos = mouse.x;
 	int ypos = mouse.y;
 
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::processInput(%d, %d)", xpos, ypos);
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::processInput(%d, %d)", xpos, ypos);
 	_abortWalkFlag2 = false;
 
 	if (processInputHelper(xpos, ypos))
@@ -732,8 +732,8 @@ void KyraEngine_v1::processInput() {
 	}
 }
 
-int KyraEngine_v1::processInputHelper(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::processInputHelper(%d, %d)", xpos, ypos);
+int KyraEngine_LoK::processInputHelper(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::processInputHelper(%d, %d)", xpos, ypos);
 	uint8 item = findItemAtPos(xpos, ypos);
 	if (item != 0xFF) {
 		if (_itemInHand == -1) {
@@ -759,8 +759,8 @@ int KyraEngine_v1::processInputHelper(int xpos, int ypos) {
 	return 0;
 }
 
-int KyraEngine_v1::clickEventHandler(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::clickEventHandler(%d, %d)", xpos, ypos);
+int KyraEngine_LoK::clickEventHandler(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::clickEventHandler(%d, %d)", xpos, ypos);
 	_emc->init(&_scriptClick, &_scriptClickData);
 	_scriptClick.regs[1] = xpos;
 	_scriptClick.regs[2] = ypos;
@@ -774,7 +774,7 @@ int KyraEngine_v1::clickEventHandler(int xpos, int ypos) {
 	return _scriptClick.regs[3];
 }
 
-void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
+void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 	int shape = 0;
 
 	int newMouseState = 0;
@@ -886,8 +886,8 @@ void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
 	}
 }
 
-bool KyraEngine_v1::hasClickedOnExit(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::hasClickedOnExit(%d, %d)", xpos, ypos);
+bool KyraEngine_LoK::hasClickedOnExit(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::hasClickedOnExit(%d, %d)", xpos, ypos);
 	if (xpos < 16 || xpos >= 304)
 		return true;
 
@@ -900,8 +900,8 @@ bool KyraEngine_v1::hasClickedOnExit(int xpos, int ypos) {
 	return true;
 }
 
-void KyraEngine_v1::clickEventHandler2() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::clickEventHandler2()");
+void KyraEngine_LoK::clickEventHandler2() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::clickEventHandler2()");
 
 	Common::Point mouse = getMousePos();
 
@@ -916,8 +916,8 @@ void KyraEngine_v1::clickEventHandler2() {
 		_emc->run(&_scriptClick);
 }
 
-int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::checkForNPCScriptRun(%d, %d)", xpos, ypos);
+int KyraEngine_LoK::checkForNPCScriptRun(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::checkForNPCScriptRun(%d, %d)", xpos, ypos);
 	int returnValue = -1;
 	const Character *currentChar = _currentCharacter;
 	int charLeft = 0, charRight = 0, charTop = 0, charBottom = 0;
@@ -965,8 +965,8 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 	return returnValue;
 }
 
-void KyraEngine_v1::runNpcScript(int func) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::runNpcScript(%d)", func);
+void KyraEngine_LoK::runNpcScript(int func) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::runNpcScript(%d)", func);
 	_emc->init(&_npcScript, &_npcScriptData);
 	_emc->start(&_npcScript, func);
 	_npcScript.regs[0] = _currentCharacter->sceneId;
@@ -977,8 +977,8 @@ void KyraEngine_v1::runNpcScript(int func) {
 		_emc->run(&_npcScript);
 }
 
-void KyraEngine_v1::checkAmuletAnimFlags() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::checkSpecialAnimFlags()");
+void KyraEngine_LoK::checkAmuletAnimFlags() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::checkSpecialAnimFlags()");
 
 	if (_brandonStatusBit & 2) {
 		seq_makeBrandonNormal2();
@@ -993,7 +993,7 @@ void KyraEngine_v1::checkAmuletAnimFlags() {
 
 #pragma mark -
 
-void KyraEngine_v1::registerDefaultSettings() {
+void KyraEngine_LoK::registerDefaultSettings() {
 	KyraEngine::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
@@ -1001,7 +1001,7 @@ void KyraEngine_v1::registerDefaultSettings() {
 	ConfMan.registerDefault("walkspeed", 2);
 }
 
-void KyraEngine_v1::readSettings() {
+void KyraEngine_LoK::readSettings() {
 	int talkspeed = ConfMan.getInt("talkspeed");
 
 	// The default talk speed is 60. This should be mapped to "Normal".
@@ -1018,7 +1018,7 @@ void KyraEngine_v1::readSettings() {
 	KyraEngine::readSettings();
 }
 
-void KyraEngine_v1::writeSettings() {
+void KyraEngine_LoK::writeSettings() {
 	int talkspeed;
 
 	switch (_configTextspeed) {

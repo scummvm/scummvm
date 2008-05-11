@@ -230,7 +230,7 @@ protected:
 	};
 
 	SceneAnim _sceneAnims[16];
-	WSAMovieV2 *_sceneAnimMovie[16];
+	WSAMovie_v2 *_sceneAnimMovie[16];
 
 	void freeSceneAnims();
 
