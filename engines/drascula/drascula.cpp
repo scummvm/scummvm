@@ -1670,7 +1670,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 		else {
 			y_de_letra = Y_SIGNOS;
 			if (c == '.')
-				x_de_letra = X_PUNTO;
+				x_de_letra = X_DOT;
 			else if (c == ',')
 				x_de_letra = X_COMA;
 			else if (c == '-')
@@ -1690,13 +1690,13 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			else if (c == ';')
 				x_de_letra = X_PUNTO_Y_COMA;
 			else if (c == '>')
-				x_de_letra = X_MAYOR_QUE;
+				x_de_letra = X_GREATER_THAN;
 			else if (c == '<')
-				x_de_letra = X_MENOR_QUE;
+				x_de_letra = X_LESSER_THAN;
 			else if (c == '$')
 				x_de_letra = X_DOLAR;
 			else if (c == '%')
-				x_de_letra = X_POR_CIENTO;
+				x_de_letra = X_PERCENT;
 			else if (c == ':')
 				x_de_letra = X_DOS_PUNTOS;
 			else if (c == '&')
@@ -1710,7 +1710,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			else if (c == '*')
 				x_de_letra = X_ASTERISCO;
 			else if (c == '+')
-				x_de_letra = X_MAS;
+				x_de_letra = X_PLUS;
 			else if (c == '1')
 				x_de_letra = X_N1;
 			else if (c == '2')
@@ -4052,7 +4052,7 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 		else {
 			y_de_letra = y_de_signos;
 			if (c == '.')
-				x_de_letra = X_PUNTO_OPC;
+				x_de_letra = X_DOT_OPC;
 			else if (c == ',')
 				x_de_letra = X_COMA_OPC;
 			else if (c == '-')
@@ -4072,13 +4072,13 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			else if (c == ';')
 				x_de_letra = X_PUNTO_Y_COMA_OPC;
 			else if (c == '>')
-				x_de_letra = X_MAYOR_QUE_OPC;
+				x_de_letra = X_GREATER_THAN_OPC;
 			else if (c == '<')
-				x_de_letra = X_MENOR_QUE_OPC;
+				x_de_letra = X_LESSER_THAN_OPC;
 			else if (c == '$')
 				x_de_letra = X_DOLAR_OPC;
 			else if (c == '%')
-				x_de_letra = X_POR_CIENTO_OPC;
+				x_de_letra = X_PERCENT_OPC;
 			else if (c == ':')
 				x_de_letra = X_DOS_PUNTOS_OPC;
 			else if (c == '&')
@@ -4092,7 +4092,7 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			else if (c == '*')
 				x_de_letra = X_ASTERISCO_OPC;
 			else if (c == '+')
-				x_de_letra = X_MAS_OPC;
+				x_de_letra = X_PLUS_OPC;
 			else if (c == '1')
 				x_de_letra = X_N1_OPC;
 			else if (c == '2')
