@@ -75,6 +75,8 @@ SaveLoad_v3::~SaveLoad_v3() {
 }
 
 SaveLoad::SaveMode SaveLoad_v3::getSaveMode(const char *fileName) {
+	fileName = stripPath(fileName);
+
 	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return _saveFiles[i].mode;

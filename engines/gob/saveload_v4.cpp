@@ -27,12 +27,13 @@
 
 #include "gob/gob.h"
 #include "gob/saveload.h"
+#include "gob/global.h"
 #include "gob/game.h"
 
 namespace Gob {
 
 SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
-	{ "", 0, kSaveModeNone, kSaveNone }
+	{ "save.tmp", 0, kSaveModeSave, kSaveTempBuffer }
 };
 
 SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
@@ -45,15 +46,32 @@ SaveLoad_v4::~SaveLoad_v4() {
 }
 
 SaveLoad::SaveMode SaveLoad_v4::getSaveMode(const char *fileName) {
+	fileName = stripPath(fileName);
+
+	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
+			return _saveFiles[i].mode;
+
 	return kSaveModeNone;
 }
 
 int SaveLoad_v4::getSaveType(const char *fileName) {
+	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
+			return i;
+
 	return -1;
 }
 
 int32 SaveLoad_v4::getSizeVersioned(int type) {
 	assertInited();
+
+	switch (_saveFiles[type].type) {
+	case kSaveTempBuffer:
+		return getSizeTempBuffer(_saveFiles[type]);
+	default:
+		break;
+	}
 
 	return -1;
 }
@@ -61,13 +79,59 @@ int32 SaveLoad_v4::getSizeVersioned(int type) {
 bool SaveLoad_v4::loadVersioned(int type, int16 dataVar, int32 size, int32 offset) {
 	assertInited();
 
+	switch (_saveFiles[type].type) {
+	case kSaveTempBuffer:
+		if (loadTempBuffer(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While loading from the tempBuffer");
+		break;
+
+	default:
+		break;
+	}
+
 	return false;
 }
 
 bool SaveLoad_v4::saveVersioned(int type, int16 dataVar, int32 size, int32 offset) {
 	assertInited();
 
+	switch (_saveFiles[type].type) {
+	case kSaveTempBuffer:
+		if (saveTempBuffer(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While saving to the tempBuffer");
+		break;
+
+	default:
+		break;
+	}
+
 	return false;
+}
+
+int32 SaveLoad_v4::getSizeTempBuffer(SaveFile &saveFile) {
+	return _tmpBuffer.getSize();
+}
+
+bool SaveLoad_v4::loadTempBuffer(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(3, kDebugSaveLoad, "Loading from the temporary buffer (%d, %d, %d)",
+			dataVar, size, offset);
+
+	return _tmpBuffer.read(_vm->_global->_inter_variables + dataVar, size, offset);
+}
+
+bool SaveLoad_v4::saveTempBuffer(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(3, kDebugSaveLoad, "Saving to the temporary buffer (%d, %d, %d)",
+			dataVar, size, offset);
+
+	return _tmpBuffer.write(_vm->_global->_inter_variables + dataVar, size, offset);
 }
 
 void SaveLoad_v4::assertInited() {

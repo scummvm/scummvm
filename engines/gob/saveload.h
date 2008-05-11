@@ -121,6 +121,30 @@ private:
 	bool read();
 };
 
+class PagedBuffer {
+public:
+	PagedBuffer(uint32 pageSize = 1024);
+	~PagedBuffer();
+
+	bool empty() const;
+	uint32 getSize() const;
+
+	void clear();
+
+	bool write(const byte *buffer, uint32 size, uint32 offset);
+	bool read(byte *buffer, uint32 size, uint32 offset) const;
+
+	uint32 writeToStream(Common::WriteStream &out) const;
+	uint32 readFromStream(Common::ReadStream &in);
+
+private:
+	uint32 _size;
+	uint32 _pageSize;
+	Common::Array<byte *> _pages;
+
+	void grow(uint32 size, uint32 offset);
+};
+
 class SaveLoad {
 public:
 	enum SaveMode {
@@ -310,7 +334,8 @@ protected:
 class SaveLoad_v4 : public SaveLoad {
 public:
 	enum SaveType {
-		kSaveNone
+		kSaveNone,
+		kSaveTempBuffer
 	};
 
 	SaveLoad_v4(GobEngine *vm, const char *targetName);
@@ -330,11 +355,19 @@ protected:
 
 	int32 _varSize;
 
+	PagedBuffer _tmpBuffer;
+
 	virtual int getSaveType(const char *fileName);
 
 	virtual int32 getSizeVersioned(int type);
 	virtual bool loadVersioned(int type, int16 dataVar, int32 size, int32 offset);
 	virtual bool saveVersioned(int type, int16 dataVar, int32 size, int32 offset);
+
+	int32 getSizeTempBuffer(SaveFile &saveFile);
+
+	bool loadTempBuffer(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
+
+	bool saveTempBuffer(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 
 	void assertInited();
 };

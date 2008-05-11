@@ -433,6 +433,115 @@ bool StagedSave::read() {
 }
 
 
+PagedBuffer::PagedBuffer(uint32 pageSize) {
+
+	_size = 0;
+	_pageSize = pageSize;
+}
+
+PagedBuffer::~PagedBuffer() {
+	clear();
+}
+
+bool PagedBuffer::empty() const {
+	return _pages.empty();
+}
+
+uint32 PagedBuffer::getSize() const {
+	return _size;
+}
+
+void PagedBuffer::clear() {
+	for (uint i = 0; i < _pages.size(); i++)
+		delete[] _pages[i];
+	_pages.clear();
+	_size = 0;
+}
+
+bool PagedBuffer::write(const byte *buffer, uint32 size, uint32 offset) {
+	grow(size, offset);
+
+	uint page = offset / _pageSize;
+	while (size > 0) {
+		if (!_pages[page])
+			_pages[page] = new byte[_pageSize];
+
+		uint32 pStart = offset % _pageSize;
+		uint32 n = MIN(size, _pageSize - pStart);
+
+		memcpy(_pages[page] + pStart, buffer, n);
+
+		buffer += n;
+		offset += n;
+		size -= n;
+		page++;
+	}
+
+	return true;
+}
+
+bool PagedBuffer::read(byte *buffer, uint32 size, uint32 offset) const {
+	uint page = offset / _pageSize;
+
+	while (size > 0) {
+		if (offset >= _size) {
+			memset(buffer, 0, size);
+			break;
+		}
+
+		uint32 pStart = offset % _pageSize;
+		uint32 n = MIN(MIN(size, _pageSize - pStart), _size - offset);
+
+		if (_pages[page])
+			memcpy(buffer, _pages[page] + pStart, n);
+		else
+			memset(buffer, 0, n);
+
+		buffer += n;
+		offset += n;
+		size -= n;
+		page++;
+	}
+
+	return true;
+}
+
+uint32 PagedBuffer::writeToStream(Common::WriteStream &out) const {
+	for (uint i = 0; i < _pages.size(); i++) {
+		if (!_pages[i]) {
+			for (uint32 j = 0; j < _pageSize; j++)
+				out.writeByte(0);
+		} else
+			out.write(_pages[i], _pageSize);
+	}
+
+	return _size;
+}
+
+uint32 PagedBuffer::readFromStream(Common::ReadStream &in) {
+	clear();
+
+	while (!in.eos()) {
+		byte *buffer = new byte[_pageSize];
+
+		_size += in.read(buffer, _pageSize);
+
+		_pages.push_back(buffer);
+	}
+
+	return _size;
+}
+
+void PagedBuffer::grow(uint32 size, uint32 offset) {
+	uint32 eSize = offset + size;
+
+	while (_size < eSize) {
+		_pages.push_back(0);
+		_size += MIN(_pageSize, eSize - _size);
+	}
+}
+
+
 SaveLoad::SaveLoad(GobEngine *vm, const char *targetName) : _vm(vm) {
 
 	_targetName = new char[strlen(targetName) + 1];
