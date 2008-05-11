@@ -515,6 +515,7 @@ void KyraEngine_HoF::bookLoop() {
 			_screen->updateScreen();
 			_screen->showMouse();
 		}
+		_system->delayMillis(10);
 	}
 	_screen->clearPage(2);
 }
