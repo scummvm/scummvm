@@ -5223,28 +5223,28 @@ const char *_textverbs[][6] = {
 	"mover",
 },
 {
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
+	"look", // TODO Translate it
+	"take",
+	"open",
+	"close",
+	"talk",
+	"push",
 },
 {
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
+	"look", // TODO Translate it
+	"take",
+	"open",
+	"close",
+	"talk",
+	"push",
 },
 {
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
+	"look", // TODO Translate it
+	"take",
+	"open",
+	"close",
+	"talk",
+	"push",
 },
 };
 
