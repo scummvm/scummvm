@@ -1673,7 +1673,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 	if (playSoundEffect)
 		_vm->snd_playSoundEffect(0x18, 0xC8);
 	else if (lastMusicCommand >= 0)
-		_vm->snd_playWanderScoreViaMap(lastMusicCommand, 1);
+		_vm->snd_playWanderScoreViaMap(lastMusicCommand, 0);
 
 	_screen->updateScreen();
 	return 0;
