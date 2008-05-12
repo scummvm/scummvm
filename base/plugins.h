@@ -26,27 +26,12 @@
 #ifndef BASE_PLUGINS_H
 #define BASE_PLUGINS_H
 
-#include "common/array.h"
 #include "common/error.h"
 #include "common/list.h"
 #include "common/singleton.h"
-#include "common/util.h"
 #include "base/game.h"
 
-/**
- * Abstract base class for the plugin objects which handle plugins
- * instantiation. Subclasses for this may be used for engine plugins
- * and other types of plugins.
- */
-class PluginObject {
-public:
-	virtual ~PluginObject() {}
-
-	/** Returns the name of the plugin. */
-	virtual const char *getName() const = 0;
-};
-
-#include "engines/metaengine.h"
+// Plugin versioning
 
 // Global Plugin API version
 #define PLUGIN_VERSION 1
@@ -63,42 +48,8 @@ enum PluginType {
 
 extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
-class Engine;
-class FSList;
-class OSystem;
 
-/**
- * Abstract base class for the plugin system.
- * Subclasses for this can be used to wrap both static and dynamic
- * plugins.
- */
-class Plugin {
-protected:
-	PluginObject *_pluginObject;
-	PluginType _type;
-
-public:
-	Plugin() : _pluginObject(0) {}
-	virtual ~Plugin() {
-		//if (isLoaded())
-			//unloadPlugin();
-	}
-
-//	virtual bool isLoaded() const = 0;	// TODO
-	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
-	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
-
-	PluginType getType() const;
-	const char *getName() const;
-	const char *getCopyright() const;
-
-	PluginError createInstance(OSystem *syst, Engine **engine) const;
-	GameList getSupportedGames() const;
-	GameDescriptor findGame(const char *gameid) const;
-	GameList detectGames(const FSList &fslist) const;
-	SaveStateList listSaves(const char *target) const;
-};
-
+// Plugin linking
 
 #define STATIC_PLUGIN 1
 #define DYNAMIC_PLUGIN 2
@@ -147,9 +98,48 @@ public:
 #endif // DYNAMIC_MODULES
 
 
+// Abstract plugins
+
+/**
+ * Abstract base class for the plugin objects which handle plugins
+ * instantiation. Subclasses for this may be used for engine plugins
+ * and other types of plugins.
+ */
+class PluginObject {
+public:
+	virtual ~PluginObject() {}
+
+	/** Returns the name of the plugin. */
+	virtual const char *getName() const = 0;
+};
+
+/**
+ * Abstract base class for the plugin system.
+ * Subclasses for this can be used to wrap both static and dynamic
+ * plugins.
+ */
+class Plugin {
+protected:
+	PluginObject *_pluginObject;
+	PluginType _type;
+
+public:
+	Plugin() : _pluginObject(0) {}
+	virtual ~Plugin() {
+		//if (isLoaded())
+			//unloadPlugin();
+	}
+
+//	virtual bool isLoaded() const = 0;	// TODO
+	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
+	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
+
+	PluginType getType() const;
+	const char *getName() const;
+};
+
 /** List of plugins. */
 typedef Common::Array<Plugin *> PluginList;
-
 
 class PluginProvider {
 public:
@@ -202,8 +192,38 @@ public:
 	void unloadPluginsExcept(const Plugin *plugin);
 
 	const PluginList &getPlugins()	{ return _plugins; }
-
-	GameList detectGames(const FSList &fslist) const;
 };
+
+
+// Engine plugins
+
+class Engine;
+class FSList;
+class OSystem;
+
+class EnginePlugin : public Plugin {
+public:
+	const char *getCopyright() const;
+	PluginError createInstance(OSystem *syst, Engine **engine) const;
+	GameList getSupportedGames() const;
+	GameDescriptor findGame(const char *gameid) const;
+	GameList detectGames(const FSList &fslist) const;
+	SaveStateList listSaves(const char *target) const;
+};
+
+typedef Common::Array<EnginePlugin *> EnginePluginList;
+
+class EngineManager : public Common::Singleton<EngineManager> {
+private:
+	friend class Common::Singleton<SingletonBaseType>;
+
+public:
+	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
+	GameList detectGames(const FSList &fslist) const;
+	const EnginePluginList &getPlugins() const;
+};
+
+/** Shortcut for accessing the engine manager. */
+#define EngineMan EngineManager::instance()
 
 #endif

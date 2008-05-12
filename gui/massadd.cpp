@@ -23,7 +23,6 @@
  */
 
 #include "engines/engine.h"
-#include "base/game.h"
 #include "base/plugins.h"
 #include "common/events.h"
 
@@ -132,7 +131,7 @@ void MassAddDialog::handleTickle() {
 		}
 
 		// Run the detector on the dir
-		GameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(EngineMan.detectGames(files));
 
 		// Just add all detected games / game variants. If we get more than one,
 		// that either means the directory contains multiple games, or the detector

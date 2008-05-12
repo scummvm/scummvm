@@ -24,15 +24,20 @@
  */
 
 #include "base/plugins.h"
-#include "common/util.h"
 
 #ifdef DYNAMIC_MODULES
 #include "common/config-manager.h"
+#include "common/fs.h"
 #endif
+
+// Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
 };
+
+
+// Abstract plugins
 
 PluginType Plugin::getType() const {
 	return _type;
@@ -41,31 +46,6 @@ PluginType Plugin::getType() const {
 const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
-
-const char *Plugin::getCopyright() const {
-	return ((MetaEngine*)_pluginObject)->getCopyright();
-}
-
-PluginError Plugin::createInstance(OSystem *syst, Engine **engine) const {
-	return ((MetaEngine*)_pluginObject)->createInstance(syst, engine);
-}
-
-GameList Plugin::getSupportedGames() const {
-	return ((MetaEngine*)_pluginObject)->getSupportedGames();
-}
-
-GameDescriptor Plugin::findGame(const char *gameid) const {
-	return ((MetaEngine*)_pluginObject)->findGame(gameid);
-}
-
-GameList Plugin::detectGames(const FSList &fslist) const {
-	return ((MetaEngine*)_pluginObject)->detectGames(fslist);
-}
-
-SaveStateList Plugin::listSaves(const char *target) const {
-	return ((MetaEngine*)_pluginObject)->listSaves(target);
-}
-
 
 class StaticPlugin : public Plugin {
 public:
@@ -315,15 +295,72 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	}
 }
 
-GameList PluginManager::detectGames(const FSList &fslist) const {
+
+// Engine plugins
+
+#include "engines/metaengine.h"
+
+const char *EnginePlugin::getCopyright() const {
+	return ((MetaEngine*)_pluginObject)->getCopyright();
+}
+
+PluginError EnginePlugin::createInstance(OSystem *syst, Engine **engine) const {
+	return ((MetaEngine*)_pluginObject)->createInstance(syst, engine);
+}
+
+GameList EnginePlugin::getSupportedGames() const {
+	return ((MetaEngine*)_pluginObject)->getSupportedGames();
+}
+
+GameDescriptor EnginePlugin::findGame(const char *gameid) const {
+	return ((MetaEngine*)_pluginObject)->findGame(gameid);
+}
+
+GameList EnginePlugin::detectGames(const FSList &fslist) const {
+	return ((MetaEngine*)_pluginObject)->detectGames(fslist);
+}
+
+SaveStateList EnginePlugin::listSaves(const char *target) const {
+	return ((MetaEngine*)_pluginObject)->listSaves(target);
+}
+
+DECLARE_SINGLETON(EngineManager);
+
+GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
+	// Find the GameDescriptor for this target
+	const EnginePluginList &plugins = getPlugins();
+	GameDescriptor result;
+
+	if (plugin)
+		*plugin = 0;
+
+	EnginePluginList::const_iterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		result = (*iter)->findGame(gameName.c_str());
+		if (!result.gameid().empty()) {
+			if (plugin)
+				*plugin = *iter;
+			break;
+		}
+	}
+	return result;
+}
+
+GameList EngineManager::detectGames(const FSList &fslist) const {
 	GameList candidates;
+
+	const EnginePluginList &plugins = getPlugins();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	PluginList::const_iterator iter;
-	for (iter = _plugins.begin(); iter != _plugins.end(); ++iter) {
+	EnginePluginList::const_iterator iter;
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		candidates.push_back((*iter)->detectGames(fslist));
 	}
 
 	return candidates;
+}
+
+const EnginePluginList &EngineManager::getPlugins() const {
+	return (const EnginePluginList&)PluginManager::instance().getPlugins();
 }

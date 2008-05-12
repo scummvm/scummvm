@@ -23,7 +23,6 @@
  */
 
 #include "engines/engine.h"
-#include "base/game.h"
 #include "base/plugins.h"
 #include "base/version.h"
 
@@ -582,7 +581,7 @@ void LauncherDialog::updateListing() {
 		if (gameid.empty())
 			gameid = iter->_key;
 		if (description.empty()) {
-			GameDescriptor g = Base::findGame(gameid);
+			GameDescriptor g = EngineMan.findGame(gameid);
 			if (g.contains("description"))
 				description = g.description();
 		}
@@ -659,7 +658,7 @@ void LauncherDialog::addGame() {
 
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.
-		GameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(EngineMan.detectGames(files));
 
 		int idx;
 		if (candidates.empty()) {
@@ -783,7 +782,7 @@ void LauncherDialog::editGame(int item) {
 	String gameId(ConfMan.get("gameid", _domains[item]));
 	if (gameId.empty())
 		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], Base::findGame(gameId).description());
+	EditGameDialog editDialog(_domains[item], EngineMan.findGame(gameId).description());
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 

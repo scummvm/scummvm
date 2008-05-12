@@ -151,8 +151,8 @@ static Game the_game;
 
 static void detectGames(FSList &files, GameList &candidates)
 {
-  const PluginList &plugins = PluginManager::instance().getPlugins();
-  PluginList::const_iterator iter = plugins.begin();
+  const EnginePluginList &plugins = EngineMan.getPlugins();
+  EnginePluginList::const_iterator iter = plugins.begin();
   for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
     candidates.push_back((*iter)->detectGames(files));
   }

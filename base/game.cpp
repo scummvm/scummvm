@@ -75,29 +75,3 @@ void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	}
 	_thumbnail = t;
 }
-
-
-namespace Base {
-
-// TODO: Find a better name & place for this function.
-GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
-	// Find the GameDescriptor for this target
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-	GameDescriptor result;
-
-	if (plugin)
-		*plugin = 0;
-
-	PluginList::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (*iter)->findGame(gameName.c_str());
-		if (!result.gameid().empty()) {
-			if (plugin)
-				*plugin = *iter;
-			break;
-		}
-	}
-	return result;
-}
-
-} // End of namespace Base

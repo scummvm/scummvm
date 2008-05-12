@@ -559,8 +559,8 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-	PluginList::const_iterator iter = plugins.begin();
+	const EnginePluginList &plugins = EngineMan.getPlugins();
+	EnginePluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
@@ -586,7 +586,7 @@ static void listTargets() {
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
 			Common::String gameid(name);
-			GameDescriptor g = Base::findGame(gameid);
+			GameDescriptor g = EngineMan.findGame(gameid);
 			if (g.description().size() > 0)
 				description = g.description();
 		}
@@ -613,8 +613,8 @@ static void listSaves(const char *target) {
 	gameid.toLowercase();	// Normalize it to lower case
 
 	// Find the plugin that will handle the specified gameid
-	const Plugin *plugin = 0;
-	GameDescriptor game = Base::findGame(gameid, &plugin);
+	const EnginePlugin *plugin = 0;
+	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
 		error("Could not find any plugin to handle gameid '%s' (target '%s')", gameid.c_str(), target);
@@ -667,7 +667,7 @@ static void runDetectorTest() {
 			continue;
 		}
 
-		GameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(EngineMan.detectGames(files));
 		bool gameidDiffers = false;
 		GameList::iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
@@ -740,7 +740,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		GameDescriptor gd = Base::findGame(command);
+		GameDescriptor gd = EngineMan.findGame(command);
 		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
 			bool idCameFromCommandLine = false;
 
