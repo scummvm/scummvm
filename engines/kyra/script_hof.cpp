@@ -1560,19 +1560,19 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_removeItemFromInventory);
 	Opcode(o2_countItemInInventory);
 	Opcode(o2_countItemsInScene);
-	Opcode(o2_queryGameFlag);
+	Opcode(o1_queryGameFlag);
 	// 0x28
-	Opcode(o2_resetGameFlag);
-	Opcode(o2_setGameFlag);
-	Opcode(o2_setHandItem);
-	Opcode(o2_removeHandItem);
+	Opcode(o1_resetGameFlag);
+	Opcode(o1_setGameFlag);
+	Opcode(o1_setHandItem);
+	Opcode(o1_removeHandItem);
 	// 0x2c
-	Opcode(o2_handItemSet);
-	Opcode(o2_hideMouse);
+	Opcode(o1_getMouseState);
+	Opcode(o1_hideMouse);
 	Opcode(o2_addSpecialExit);
-	Opcode(o2_setMousePos);
+	Opcode(o1_setMousePos);
 	// 0x30
-	Opcode(o2_showMouse);
+	Opcode(o1_showMouse);
 	OpcodeUnImpl();
 	Opcode(o2_wipeDownMouseItem);
 	Opcode(o2_getElapsedSecs);
@@ -1632,7 +1632,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setCauldronState);
 	Opcode(o2_showItemString);
 	// 0x60
-	Opcode(o2_getRand);
+	Opcode(o1_getRand);
 	Opcode(o2_isAnySoundPlaying);
 	Opcode(o2_setDeathHandler);
 	Opcode(o2_setDrawNoShapeFlag);

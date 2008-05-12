@@ -212,6 +212,23 @@ protected:
 	virtual void setupOpcodeTable() = 0;
 	Common::Array<const Opcode*> _opcodes;
 
+	int o1_queryGameFlag(EMCState *script);
+	int o1_setGameFlag(EMCState *script);
+	int o1_resetGameFlag(EMCState *script);
+	int o1_getRand(EMCState *script);
+	int o1_hideMouse(EMCState *script);
+	int o1_showMouse(EMCState *script);
+	int o1_setMousePos(EMCState *script);
+	int o1_setHandItem(EMCState *script);
+	int o1_removeHandItem(EMCState *script);
+	int o1_getMouseState(EMCState *script);
+
+	// items
+	int _mouseState;
+
+	virtual void setHandItem(uint16 item) = 0;
+	virtual void removeHandItem() = 0;
+
 	// game flags
 	uint8 _flagsTable[100];	// TODO: check this value
 

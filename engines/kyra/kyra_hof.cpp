@@ -81,7 +81,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_oldTalkFile = -1;
 	_currentTalkFile = 0;
 	_lastSfxTrack = -1;
-	_handItemSet = -1;
+	_mouseState = -1;
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
@@ -449,7 +449,7 @@ void KyraEngine_HoF::runLoop() {
 		update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _handItemSet;
+			_unk3 = _mouseState;
 			handleInput(_mouseX, _mouseY);
 		}
 
@@ -568,7 +568,7 @@ bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 	if (y > 143 || _deathHandler > -1 || queryGameFlag(0x164))
 		return false;
 
-	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
+	if (_mouseState <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
 		updateCharFacing();
 		objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
 		return true;
@@ -723,16 +723,16 @@ void KyraEngine_HoF::updateMouse() {
 		yOffset = 9;
 	}
 
-	if (type != 0 && _handItemSet != type && _screen->isMouseVisible()) {
-		_handItemSet = type;
+	if (type != 0 && _mouseState != type && _screen->isMouseVisible()) {
+		_mouseState = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
 	}
 
-	if (type == 0 && _handItemSet != _itemInHand && _screen->isMouseVisible()) {
+	if (type == 0 && _mouseState != _itemInHand && _screen->isMouseVisible()) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
-			_handItemSet = _itemInHand;
+			_mouseState = _itemInHand;
 			_screen->hideMouse();
 			if (_itemInHand == -1)
 				_screen->setMouseCursor(0, 0, getShapePtr(0));

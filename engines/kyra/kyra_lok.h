@@ -282,8 +282,8 @@ protected:
 	void placeItemInGenericMapScene(int item, int index);
 
 	// -> mouse item
-	void createMouseItem(int item);
-	void destroyMouseItem();
+	void setHandItem(uint16 item);
+	void removeHandItem();
 	void setMouseItem(int item);
 
 	// -> graphics effects
@@ -392,7 +392,6 @@ protected:
 	uint8 *_itemBkgBackUp[2];
 	uint8 *_shapes[373];
 	int8 _itemInHand;
-	int _mouseState;
 	bool _handleInput;
 	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
@@ -658,9 +657,6 @@ protected:
 	int o1_characterSays(EMCState *script);
 	int o1_pauseTicks(EMCState *script);
 	int o1_drawSceneAnimShape(EMCState *script);
-	int o1_queryGameFlag(EMCState *script);
-	int o1_setGameFlag(EMCState *script);
-	int o1_resetGameFlag(EMCState *script);
 	int o1_runNPCScript(EMCState *script);
 	int o1_setSpecialExitList(EMCState *script);
 	int o1_blockInWalkableRegion(EMCState *script);
@@ -668,13 +664,11 @@ protected:
 	int o1_walkPlayerToPoint(EMCState *script);
 	int o1_dropItemInScene(EMCState *script);
 	int o1_drawAnimShapeIntoScene(EMCState *script);
-	int o1_createMouseItem(EMCState *script);
 	int o1_savePageToDisk(EMCState *script);
 	int o1_sceneAnimOn(EMCState *script);
 	int o1_sceneAnimOff(EMCState *script);
 	int o1_getElapsedSeconds(EMCState *script);
 	int o1_mouseIsPointer(EMCState *script);
-	int o1_destroyMouseItem(EMCState *script);
 	int o1_runSceneAnimUntilDone(EMCState *script);
 	int o1_fadeSpecialPalette(EMCState *script);
 	int o1_playAdlibSound(EMCState *script);
@@ -708,14 +702,11 @@ protected:
 	int o1_loadPageFromDisk(EMCState *script);
 	int o1_customPrintTalkString(EMCState *script);
 	int o1_restoreCustomPrintBackground(EMCState *script);
-	int o1_hideMouse(EMCState *script);
-	int o1_showMouse(EMCState *script);
 	int o1_getCharacterX(EMCState *script);
 	int o1_getCharacterY(EMCState *script);
 	int o1_changeCharactersFacing(EMCState *script);
 	int o1_copyWSARegion(EMCState *script);
 	int o1_printText(EMCState *script);
-	int o1_random(EMCState *script);
 	int o1_loadSoundFile(EMCState *script);
 	int o1_displayWSAFrameOnHidPage(EMCState *script);
 	int o1_displayWSASequentialFrames(EMCState *script);
@@ -775,8 +766,6 @@ protected:
 	int o1_setIdolGem(EMCState *script);
 	int o1_totalItemsInScene(EMCState *script);
 	int o1_restoreBrandonsMovementDelay(EMCState *script);
-	int o1_setMousePos(EMCState *script);
-	int o1_getMouseState(EMCState *script);
 	int o1_setEntranceMouseCursorTrack(EMCState *script);
 	int o1_itemAppearsOnGround(EMCState *script);
 	int o1_setNoDrawShapesFlag(EMCState *script);

@@ -348,7 +348,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 		return 0;
 	}
 
-	if (_handItemSet != -1) {
+	if (_mouseState != -1) {
 		snd_playSoundEffect(0x0D);
 		return 0;
 	}
@@ -601,7 +601,7 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 		return 0;
 	}
 
-	if (!_screen->isMouseVisible() || _handItemSet < -1)
+	if (!_screen->isMouseVisible() || _mouseState < -1)
 		return 0;
 
 	if (queryGameFlag(0xE4)) {
@@ -681,8 +681,8 @@ int GUI_HoF::optionsButton(Button *button) {
 
 	_vm->showMessage(0, 0xCF);
 
-	if (_vm->_handItemSet < -1) {
-		_vm->_handItemSet = -1;
+	if (_vm->_mouseState < -1) {
+		_vm->_mouseState = -1;
 		_screen->hideMouse();
 		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
 		_screen->showMouse();

@@ -62,6 +62,8 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 
 	_gameToLoad = -1;
 
+	_mouseState = -1;
+
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	// sets up all engine specific debug levels

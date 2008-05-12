@@ -247,7 +247,7 @@ int KyraEngine_LoK::init() {
 
 	_marbleVaseItem = -1;
 	memset(_foyerItemTable, -1, sizeof(_foyerItemTable));
-	_mouseState = _itemInHand = -1;
+	_itemInHand = -1;
 	_handleInput = false;
 
 	_currentRoom = 0xFFFF;
@@ -414,7 +414,7 @@ void KyraEngine_LoK::mainLoop() {
 			snd_playSoundEffect(49);
 			_screen->hideMouse();
 			_screen->setMouseCursor(1, 1, _shapes[0]);
-			destroyMouseItem();
+			removeHandItem();
 			_screen->showMouse();
 			_gui->buttonMenuCallback(0);
 			_deathHandler = 0xFF;

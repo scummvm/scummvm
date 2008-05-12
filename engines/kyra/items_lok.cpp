@@ -175,16 +175,16 @@ void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 	}
 }
 
-void KyraEngine_LoK::createMouseItem(int item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::createMouseItem(%d)", item);
+void KyraEngine_LoK::setHandItem(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setHandItem(%d)", item);
 	_screen->hideMouse();
 	setMouseItem(item);
 	_itemInHand = item;
 	_screen->showMouse();
 }
 
-void KyraEngine_LoK::destroyMouseItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::destroyMouseItem()");
+void KyraEngine_LoK::removeHandItem() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::removeHandItem()");
 	_screen->hideMouse();
 	_screen->setMouseCursor(1, 1, _shapes[0]);
 	_itemInHand = -1;
@@ -222,7 +222,7 @@ void KyraEngine_LoK::wipeDownMouseItem(int xpos, int ypos) {
 	}
 	restoreItemRect1(xpos, ypos);
 	_screen->resetShapeHeight(_shapes[216+_itemInHand]);
-	destroyMouseItem();
+	removeHandItem();
 	_screen->showMouse();
 }
 
@@ -420,7 +420,7 @@ int KyraEngine_LoK::processItemDrop(uint16 sceneId, uint8 item, int x, int y, in
 		itemSpecialFX(x, y, item);
 
 	if (unk1 == 0)
-		destroyMouseItem();
+		removeHandItem();
 
 	itemDropDown(x, y, destX, destY, freeItem, item);
 

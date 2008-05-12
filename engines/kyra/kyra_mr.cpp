@@ -99,7 +99,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unk5 = 0;
 	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
-	_itemInHand = _handItemSet = -1;
+	_itemInHand = _mouseState = -1;
 	_unk3 = -1;
 	_unk4 = 0;
 	_loadingState = false;
@@ -999,7 +999,7 @@ void KyraEngine_MR::runLoop() {
 		_timer->update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _handItemSet;
+			_unk3 = _mouseState;
 			Common::Point mouse = getMousePos();
 			handleInput(mouse.x, mouse.y);
 		}
@@ -1181,13 +1181,13 @@ void KyraEngine_MR::updateMouse() {
 
 	if (mouse.y > 187) {
 		bool setItemCursor = false;
-		if (_handItemSet == -6) {
+		if (_mouseState == -6) {
 			if (mouse.x < 311)
 				setItemCursor = true;
-		} else if (_handItemSet == -5) {
+		} else if (_mouseState == -5) {
 			if (mouse.x < _sceneMinX || mouse.x > _sceneMaxX)
 				setItemCursor = true;
-		} else if (_handItemSet == -4) {
+		} else if (_mouseState == -4) {
 			if (mouse.x > 8)
 				setItemCursor = true;
 		}
@@ -1204,8 +1204,8 @@ void KyraEngine_MR::updateMouse() {
 		hideInventory();
 	}
 
-	if (hasItemCollision && _handItemSet < -1 && _itemInHand < 0) {
-		_handItemSet = -1;
+	if (hasItemCollision && _mouseState < -1 && _itemInHand < 0) {
+		_mouseState = -1;
 		_itemInHand = -1;
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	}
@@ -1282,12 +1282,12 @@ void KyraEngine_MR::updateMouse() {
 		}
 	}
 
-	if (type != 0 && type != _handItemSet && !hasItemCollision) {
-		_handItemSet = type;
+	if (type != 0 && type != _mouseState && !hasItemCollision) {
+		_mouseState = type;
 		_screen->setMouseCursor(offsetX, offsetY, _gameShapes[shape]);
-	} else if (type == 0 && _handItemSet != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
+	} else if (type == 0 && _mouseState != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
 		setItemMouseCursor();
-	} else if (mouse.y > 187 && _handItemSet > -4 && type == 0 && !_inventoryState) {
+	} else if (mouse.y > 187 && _mouseState > -4 && type == 0 && !_inventoryState) {
 		showInventory();
 	}
 }

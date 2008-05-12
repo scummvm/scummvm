@@ -112,7 +112,7 @@ void KyraEngine_v2::removeHandItem() {
 	scr->hideMouse();
 	scr->setMouseCursor(0, 0, getShapePtr(0));
 	_itemInHand = -1;
-	_handItemSet = -1;
+	_mouseState = -1;
 	scr->showMouse();
 }
 

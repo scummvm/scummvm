@@ -83,7 +83,7 @@ void KyraEngine_HoF::updateWaterFlasks() {
 
 bool KyraEngine_HoF::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::dropItem(%d, %u, %d, %d, %d)", unk1, item, x, y, unk2);
-	if (_handItemSet <= -1)
+	if (_mouseState <= -1)
 		return false;
 
 	bool success = processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2);

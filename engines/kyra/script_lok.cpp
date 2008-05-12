@@ -92,21 +92,6 @@ int KyraEngine_LoK::o1_drawSceneAnimShape(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_queryGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_queryGameFlag(%p) (0x%X)", (const void *)script, stackPos(0));
-	return queryGameFlag(stackPos(0));
-}
-
-int KyraEngine_LoK::o1_setGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setGameFlag(%p) (0x%X)", (const void *)script, stackPos(0));
-	return setGameFlag(stackPos(0));
-}
-
-int KyraEngine_LoK::o1_resetGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_resetGameFlag(%p) (0x%X)", (const void *)script, stackPos(0));
-	return resetGameFlag(stackPos(0));
-}
-
 int KyraEngine_LoK::o1_runNPCScript(EMCState *script) {
 	warning("STUB: o1_runNPCScript");
 	return 0;
@@ -205,12 +190,6 @@ int KyraEngine_LoK::o1_drawAnimShapeIntoScene(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_createMouseItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_createMouseItem(%p) (%d)", (const void *)script, stackPos(0));
-	createMouseItem(stackPos(0));
-	return 0;
-}
-
 int KyraEngine_LoK::o1_savePageToDisk(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_savePageToDisk(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	_screen->savePageToDisk(stackPosString(0), stackPos(1));
@@ -238,12 +217,6 @@ int KyraEngine_LoK::o1_mouseIsPointer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_mouseIsPointer(%p) ()", (const void *)script);
 	if (_itemInHand == -1)
 		return 1;
-	return 0;
-}
-
-int KyraEngine_LoK::o1_destroyMouseItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_destroyMouseItem(%p) ()", (const void *)script);
-	destroyMouseItem();
 	return 0;
 }
 
@@ -665,18 +638,6 @@ int KyraEngine_LoK::o1_restoreCustomPrintBackground(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_hideMouse(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_hideMouse(%p) ()", (const void *)script);
-	_screen->hideMouse();
-	return 0;
-}
-
-int KyraEngine_LoK::o1_showMouse(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_showMouse(%p) ()", (const void *)script);
-	_screen->showMouse();
-	return 0;
-}
-
 int KyraEngine_LoK::o1_getCharacterX(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharacterX(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].x1;
@@ -726,12 +687,6 @@ int KyraEngine_LoK::o1_printText(EMCState *script) {
 		_screen->printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_screen->updateScreen();
 	return 0;
-}
-
-int KyraEngine_LoK::o1_random(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_random(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) < stackPos(1));
-	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
 int KyraEngine_LoK::o1_loadSoundFile(EMCState *script) {
@@ -922,7 +877,7 @@ int KyraEngine_LoK::o1_wipeDownMouseItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_wipeDownMouseItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	_screen->hideMouse();
 	wipeDownMouseItem(stackPos(1), stackPos(2));
-	destroyMouseItem();
+	removeHandItem();
 	_screen->showMouse();
 	return 0;
 }
@@ -1512,17 +1467,6 @@ int KyraEngine_LoK::o1_restoreBrandonsMovementDelay(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_setMousePos(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_system->warpMouse(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_LoK::o1_getMouseState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getMouseState(%p) ()", (const void *)script);
-	return _mouseState;
-}
-
 int KyraEngine_LoK::o1_setEntranceMouseCursorTrack(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setEntranceMouseCursorTrack(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_entranceMouseCursorTracks[0] = stackPos(0);
@@ -1845,7 +1789,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	// 0x0c
 	Opcode(o1_dropItemInScene);
 	Opcode(o1_drawAnimShapeIntoScene);
-	Opcode(o1_createMouseItem);
+	Opcode(o1_setHandItem);
 	Opcode(o1_savePageToDisk);
 	// 0x10
 	Opcode(o1_sceneAnimOn);
@@ -1853,7 +1797,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_getElapsedSeconds);
 	Opcode(o1_mouseIsPointer);
 	// 0x14
-	Opcode(o1_destroyMouseItem);
+	Opcode(o1_removeHandItem);
 	Opcode(o1_runSceneAnimUntilDone);
 	Opcode(o1_fadeSpecialPalette);
 	Opcode(o1_playAdlibSound);
@@ -1904,7 +1848,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_copyWSARegion);
 	// 0x3c
 	Opcode(o1_printText);
-	Opcode(o1_random);
+	Opcode(o1_getRand);
 	Opcode(o1_loadSoundFile);
 	Opcode(o1_displayWSAFrameOnHidPage);
 	// 0x40

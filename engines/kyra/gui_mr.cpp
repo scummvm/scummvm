@@ -194,7 +194,7 @@ void KyraEngine_MR::showInventory() {
 	_screen->hideMouse();
 
 	if (_itemInHand < 0) {
-		_handItemSet = -1;
+		_mouseState = -1;
 		_screen->setMouseCursor(0, 0, getShapePtr(0));
 	}
 
@@ -684,7 +684,7 @@ int KyraEngine_MR::buttonJesterStaff(Button *button) {
 
 void KyraEngine_MR::showAlbum() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::showAlbum()");
-	if (!_screen->isMouseVisible() || queryGameFlag(4) || _handItemSet != -1)
+	if (!_screen->isMouseVisible() || queryGameFlag(4) || _mouseState != -1)
 		return;
 
 	if (!loadLanguageFile("ALBUM.", _album.file))
@@ -1262,8 +1262,8 @@ int GUI_MR::optionsButton(Button *button) {
 
 	_vm->showMessage(0, 0xF0, 0xF0);
 
-	if (_vm->_handItemSet < -1) {
-		_vm->_handItemSet = -1;
+	if (_vm->_mouseState < -1) {
+		_vm->_mouseState = -1;
 		_screen->hideMouse();
 		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
 		_screen->showMouse();

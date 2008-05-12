@@ -183,7 +183,7 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 0);
 	}
 
-	createMouseItem(_itemInHand);
+	setHandItem(_itemInHand);
 	_animator->setBrandonAnimSeqSize(3, 48);
 	redrawInventory(0);
 	_animator->_noDrawShapesFlag = 1;
