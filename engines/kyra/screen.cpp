@@ -36,6 +36,7 @@ namespace Kyra {
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0) {
 	_debugEnabled = false;
+	_maskMinY = _maskMaxY = -1;
 }
 
 Screen::~Screen() {

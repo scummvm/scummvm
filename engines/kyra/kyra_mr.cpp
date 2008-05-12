@@ -147,6 +147,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_albumChatActive = false;
 	memset(&_album, 0, sizeof(_album));
 	_configHelium = false;
+	_fadeOutMusicChannel = -1;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -816,7 +817,7 @@ void KyraEngine_MR::loadCharacterShapes(int newShapes) {
 
 		ShapeMap::iterator iter = _gameShapes.find(i);
 		if (iter != _gameShapes.end()) {
-			delete iter->_value;
+			delete[] iter->_value;
 			iter->_value = 0;
 		}
 	}
