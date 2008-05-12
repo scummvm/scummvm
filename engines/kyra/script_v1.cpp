@@ -24,6 +24,7 @@
  */
 
 #include "kyra/kyra_v1.h"
+#include "kyra/screen.h"
 
 namespace Kyra {
 
@@ -50,13 +51,13 @@ int KyraEngine_v1::o1_getRand(EMCState *script) {
 
 int KyraEngine_v1::o1_hideMouse(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_hideMouse(%p) ()", (const void *)script);
-	_screen->hideMouse();
+	screen()->hideMouse();
 	return 0;
 }
 
 int KyraEngine_v1::o1_showMouse(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_showMouse(%p) ()", (const void *)script);
-	_screen->showMouse();
+	screen()->showMouse();
 	return 0;
 }
 

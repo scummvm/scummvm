@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	screen_v2.o \
 	screen_hof.o \
 	screen_mr.o \
+	script_v1.o \
 	script_lok.o \
 	script_v2.o \
 	script_hof.o \
