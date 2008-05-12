@@ -46,6 +46,7 @@ struct SpriteChannel {
 	uint16 fontNum;
 	int16 textColor, outlineColor;
 	int16 frameNum;
+	int16 mask;
 };
 
 struct ClipInfo {
@@ -62,14 +63,14 @@ public:
 
 	void clearScreen();
 	
-	void drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
+	void drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo);
+	
 	void loadRGBPalette(byte *palRGB, int count = 256);
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 	bool isPaletteLocked() { return _paletteLock; }
 	void setScreenLock(bool lock) { _screenLock = lock; }
 	void setPaletteLock(bool lock) { _paletteLock = lock; }
 	void setVisualEffectNum(int visualEffectNum) { _visualEffectNum = visualEffectNum; }
-	void setClip(uint16 clip) { _clip = clip; }
 
 	void setClipArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) { 
 		_clipArea.x = x1;
@@ -78,8 +79,11 @@ public:
 		_clipArea.h = ABS(y2 - y1);
 	}
 
-	void setExclude(uint16 exclude) { _exclude = exclude; }
-	void setGround(uint16 ground) { _ground = ground; }
+	void setClip(int16 clip) { _clip = clip; }
+	void setExclude(int16 exclude) { _exclude = exclude; }
+	void setGround(int16 ground) { _ground = ground; }
+	void setMask(int16 mask) { _mask = mask; }
+
 	void setTextColor(int16 color) { _textColor = color; }
 
 	void setTextRect(const Common::Rect &textRect) {
@@ -114,14 +118,17 @@ public:
 	void setChannelState(uint16 channelIndex, int16 state);
 	uint16 setChannelLocation(uint16 channelIndex, int16 x, int16 y);
 	uint16 setChannelContent(uint16 channelIndex, uint16 index);
+	void setChannelUseMask(uint16 channelIndex);
 	void drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask);
 	void updateSprites();
 	void clearChannels();
 	
-	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
+	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo);
 	void drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
 
 	uint16 drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY);
+	uint16 drawMask(uint16 index, int16 x, int16 y);
+	
 	uint16 drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY);
 	
 	void addSprite(uint16 spriteIndex);
@@ -147,7 +154,6 @@ public:
 	void printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo);
 	int16 getTextWidth(int16 fontNum, const char *text);
 
-
 protected:
 	MadeEngine *_vm;
 	
@@ -168,11 +174,11 @@ protected:
 	FontResource *_font;
 	ClipInfo _fontDrawCtx;
 
-	uint16 _clip, _exclude, _ground;
+	int16 _clip, _exclude, _ground, _mask;
 	int _visualEffectNum;
 	
-	Graphics::Surface *_screen1, *_screen2;
-	ClipInfo _clipArea, _clipInfo1, _clipInfo2;
+	Graphics::Surface *_screen1, *_screen2, *_screenMask;
+	ClipInfo _clipArea, _clipInfo1, _clipInfo2, _maskDrawCtx;
 	
 	ClipInfo _excludeClipArea[4];
 	bool _excludeClipAreaEnabled[4];

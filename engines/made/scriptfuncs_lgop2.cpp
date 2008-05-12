@@ -312,8 +312,6 @@ int16 ScriptFunctionsLgop2::o1_SCREENLOCK(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_ADDSPRITE(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_ADDSPRITE");
-	//_vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
 	return argv[2];
 }
 
@@ -323,7 +321,8 @@ int16 ScriptFunctionsLgop2::o1_FREEANIM(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_DRAWSPRITE(int16 argc, int16 *argv) {
-	_vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
+	int16 channel = _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
+	_vm->_screen->setChannelUseMask(channel);
 	return 0;
 }
 
@@ -439,14 +438,12 @@ int16 ScriptFunctionsLgop2::o1_RESTEXT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_ADDMASK(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_ADDMASK");
-	//PictureResource *flex = _vm->_res->getPicture(flexIndex);
-	//Graphics::Surface *sourceSurface = flex->getPicture();
+	_vm->_screen->drawMask(argv[2], argv[1], argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctionsLgop2::o1_SETMASK(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_SETMASK");
+	_vm->_screen->setMask(argv[0]);
 	return 0;
 }
 

@@ -34,6 +34,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 
 	_screen1 = new Graphics::Surface();
 	_screen1->create(320, 200, 1);
+
 	_screen2 = new Graphics::Surface();
 	_screen2->create(320, 200, 1);
 
@@ -45,7 +46,16 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_clipInfo1.destSurface = _screen1;
 	_clipInfo2.destSurface = _screen2;
 	_clipArea.destSurface = _screen2;
-	
+
+	// FIXME: Screen mask is only needed in v2 games
+	_screenMask = new Graphics::Surface();
+	_screenMask->create(320, 200, 1);
+	_maskDrawCtx.x = 0;
+	_maskDrawCtx.y = 0;
+	_maskDrawCtx.w = 320;
+	_maskDrawCtx.h = 200;
+	_maskDrawCtx.destSurface = _screenMask;
+
 	for (int i = 0; i <= 3; i++)
 		_excludeClipAreaEnabled[i] = false;
 
@@ -62,6 +72,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_ground = 1;
 	_clip = 0;
 	_exclude = 0;
+	_mask = 0;
 	
 	_visualEffectNum = 0;
 	
@@ -86,17 +97,20 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 Screen::~Screen() {
 	delete _screen1;
 	delete _screen2;
+	delete _screenMask;
 }
 
 void Screen::clearScreen() {
 	_screen1->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_screen2->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_screenMask->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_mask = 0;
 	_needPalette = true;
 }
 
-void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
+void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
-	byte *source, *dest;
+	byte *source, *dest, *maskp;
 	int startX = 0;
 	int startY = 0;
 	int clipWidth = sourceSurface->w;
@@ -124,6 +138,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 
 	source = (byte*)sourceSurface->getBasePtr(startX, startY);
 	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
+	maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
 
 	int32 sourcePitch, linePtrAdd;
 	byte *linePtr;
@@ -148,12 +163,15 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 			linePtr = source;
 		}
 		for (int16 xc = 0; xc < clipWidth; xc++) {
-			if (*linePtr)
-				dest[xc] = *linePtr;
+			if (*linePtr && (mask == 0 || maskp[xc] == 0)) {
+				if (*linePtr)
+					dest[xc] = *linePtr;
+			}
 			linePtr += linePtrAdd;
 		}
 		source += sourcePitch;
 		dest += clipInfo.destSurface->pitch;
+		maskp += _maskDrawCtx.destSurface->pitch;
 	}
 
 }
@@ -218,6 +236,12 @@ uint16 Screen::setChannelContent(uint16 channelIndex, uint16 index) {
 	return updateChannel(channelIndex - 1) + 1;
 }
 
+void Screen::setChannelUseMask(uint16 channelIndex) {
+	if (channelIndex < 1 || channelIndex >= 100)
+		return;
+	_channels[channelIndex - 1].mask = _mask;
+}
+
 void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask) {
 
 	for (int i = 0; i <= 3; i++)
@@ -239,15 +263,15 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 
 			case 1: // drawFlex
 				if (_channels[i].state & 4) {
-					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _clipArea);
+					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, _clipArea);
 				} else if (_channels[i].state & 8) {
 					for (int excludeIndex = 0; excludeIndex < 4; excludeIndex++) {
 						if (_excludeClipAreaEnabled[excludeIndex]) {
-							drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _excludeClipArea[excludeIndex]);
+							drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, _excludeClipArea[excludeIndex]);
 						}
 					}
 				} else {
-					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, clipInfo);
+					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, clipInfo);
 				}
 				break;
 
@@ -300,11 +324,12 @@ void Screen::clearChannels() {
 	for (uint16 i = 0; i < ARRAYSIZE(_channels); i++) {
 		_channels[i].type = 0;
 		_channels[i].index = 0;
+		_channels[i].mask = 0;
 	}
 	_channelsUsedCount = 0;
 }
 
-uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
+uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
 	if (flexIndex == 0)
 		return 0;
@@ -312,7 +337,7 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 f
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
 	Graphics::Surface *sourceSurface = flex->getPicture();
 
-	drawSurface(sourceSurface, x, y, flipX, flipY, clipInfo);
+	drawSurface(sourceSurface, x, y, flipX, flipY, mask, clipInfo);
 
 	// Palette is set in showPage
 	if (flex->hasPalette() && !_paletteLock && _needPalette) {
@@ -337,13 +362,18 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, i
 	AnimationResource *anim = _vm->_res->getAnimation(animIndex);
 	Graphics::Surface *sourceSurface = anim->getFrame(frameNum);
 
-	drawSurface(sourceSurface, x, y, flipX, flipY, clipInfo);
+	drawSurface(sourceSurface, x, y, flipX, flipY, 0, clipInfo);
 
 	_vm->_res->freeResource(anim);
 }
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY) {
-	drawFlex(index, x, y, flipX, flipY, _clipInfo1);
+	drawFlex(index, x, y, flipX, flipY, 0, _clipInfo1);
+	return 0;
+}
+
+uint16 Screen::drawMask(uint16 index, int16 x, int16 y) {
+	drawFlex(index, x, y, 0, 0, 0, _maskDrawCtx);
 	return 0;
 }
 
@@ -354,7 +384,7 @@ uint16 Screen::drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, i
 
 void Screen::addSprite(uint16 spriteIndex) {
 	bool oldScreenLock = _screenLock;
-	drawFlex(spriteIndex, 0, 0, 0, 0, _clipInfo1);
+	drawFlex(spriteIndex, 0, 0, 0, 0, 0, _clipInfo1);
 	_screenLock = oldScreenLock;
 }
 
@@ -566,11 +596,20 @@ void Screen::show() {
 	memcpy(_screen2->pixels, _screen1->pixels, 64000);
 	drawSpriteChannels(_clipInfo2, 1, 2);
 
+	if (_visualEffectNum != 0) {
+		warning("Unimplemented visual fx %d", _visualEffectNum);
+	}
+
 	// TODO: Implement visual effects (palette fading etc.)
+	
 	if (!_paletteLock)
 		setRGBPalette(_palette, 0, _paletteColorCount);
 	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
+	
+	
 	_vm->_system->updateScreen();
+	
+	_visualEffectNum = 0;
 
 	if (!_paletteInitialized) {
 		memcpy(_newPalette, _palette, _paletteColorCount * 3);
@@ -589,10 +628,10 @@ void Screen::flash(int flashCount) {
 	while (flashCount--) {
 		setRGBPalette(_fxPalette, 0, _paletteColorCount);
 		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(30);
+		_vm->_system->delayMillis(20);
 		setRGBPalette(_palette, 0, _paletteColorCount);
 		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(30);
+		_vm->_system->delayMillis(20);
 	}
 }
 
