@@ -73,6 +73,8 @@ private:
 	void writeSettings();
 	void readSettings();
 
+	void initStaticResource();
+
 	// --
 	Screen_MR *_screen;
 	SoundDigital *_soundDigital;
@@ -108,8 +110,8 @@ private:
 	int _fadeOutMusicChannel;
 	const char *_menuAudioFile;
 
-	static const char *_soundList[];
-	static const int _soundListSize;
+	const char *const *_soundList;
+	int _soundListSize;
 
 	void snd_playWanderScoreViaMap(int track, int force);
 	void stopMusicTrack();
@@ -119,10 +121,10 @@ private:
 
 	void snd_playSoundEffect(int item, int volume);
 
-	static const uint8 _sfxFileMap[];
-	static const int _sfxFileMapSize;
-	static const char *_sfxFileList[];
-	static const int _sfxFileListSize;
+	const uint8 *_sfxFileMap;
+	int _sfxFileMapSize;
+	const char *const *_sfxFileList;
+	int _sfxFileListSize;
 
 	int _voiceSoundChannel;
 
@@ -177,7 +179,8 @@ private:
 
 private:
 	// main menu
-	static const char *_mainMenuStrings[];
+	const char *const *_mainMenuStrings;
+	int _mainMenuStringsSize;
 
 	// animator
 	uint8 *_gamePlayBuffer;
@@ -210,17 +213,7 @@ private:
 	bool _nextIdleType;
 	void showIdleAnim();
 
-	static const FrameControl _itemAnimFrames0[];
-	static const FrameControl _itemAnimFrames1[];
-	static const FrameControl _itemAnimFrames2[];
-	static const FrameControl _itemAnimFrames3[];
-	static const FrameControl _itemAnimFrames4[];
-	static const FrameControl _itemAnimFrames5[];
-	static const FrameControl _itemAnimFrames6[];
-	static const FrameControl _itemAnimFrames7[];
-	static const FrameControl _itemAnimFrames8[];
-	static const FrameControl _itemAnimFrames9[];
-	static const ItemAnimData_v2 _itemAnimData[10];
+	const ItemAnimData_v2 *_itemAnimData;
 	ActiveItemAnim _activeItemAnim[10];
 	int _nextAnimItem;
 
@@ -297,12 +290,12 @@ private:
 
 	bool isDropable(int x, int y);
 
-	static const uint8 _itemMagicTable[];
+	const uint8 *_itemMagicTable;
 	bool itemListMagic(int handItem, int itemSlot);
 	bool itemInventoryMagic(int handItem, int invSlot);
 
-	static const uint8 _itemStringMap[];
-	static const uint _itemStringMapSize;
+	const uint8 *_itemStringMap;
+	int _itemStringMapSize;
 	static const uint8 _itemStringPickUp[];
 	static const uint8 _itemStringDrop[];
 	static const uint8 _itemStringInv[];
@@ -523,8 +516,9 @@ private:
 	int _score;
 	int _scoreMax;
 	
-	static const int8 _scoreTable[];
-	static const int _scoreTableSize;
+	const uint8 *_scoreTable;
+	int _scoreTableSize;
+
 	int8 _scoreFlagTable[26];
 	bool updateScore(int scoreId, int strId);
 	void scoreIncrease(int count, const char *str);

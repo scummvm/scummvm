@@ -206,6 +206,7 @@ int KyraEngine_MR::init() {
 	_screen->setResolution();
 
 	KyraEngine_v1::init();
+	initStaticResource();
 	
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
@@ -420,7 +421,9 @@ void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, Audio::Mixer::kMusicSoundType);
+		char file[13];
+		sprintf(file, "%s.AUD", _soundList[track]);
+		_musicSoundChannel = _soundDigital->playSound(file, 0xFF, Audio::Mixer::kMusicSoundType);
 	}
 
 	_lastMusicCommand = track;

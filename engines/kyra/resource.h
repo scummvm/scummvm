@@ -229,6 +229,15 @@ enum kKyraResources {
 	k2IngameShapeAnimData,
 	k2IngameTlkDemoStrings,
 
+	k3MainMenuStrings,
+	k3MusicFiles,
+	k3ScoreTable,
+	k3SfxFiles,
+	k3SfxMap,
+	k3ItemAnimData,
+	k3ItemMagicTable,
+	k3ItemStringMap,
+
 	kMaxResIDs
 };
 
@@ -253,8 +262,8 @@ public:
 	const Room *loadRoomTable(int id, int &entries);
 	const uint8 * const*loadPaletteTable(int id, int &entries);
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
-	const ItemAnimData_v1 *loadHofShapeAnimDataV1(int id, int &entries);
-	const ItemAnimData_v2 *loadHofShapeAnimDataV2(int id, int &entries);
+	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
+	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -284,8 +293,8 @@ private:
 	bool loadRoomTable(const char *filename, void *&ptr, int &size);
 	bool loadPaletteTable(const char *filename, void *&ptr, int &size);
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
-	bool loadHofShapeAnimDataV1(const char *filename, void *&ptr, int &size);
-	bool loadHofShapeAnimDataV2(const char *filename, void *&ptr, int &size);
+	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
+	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);

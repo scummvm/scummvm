@@ -2626,7 +2626,7 @@ void KyraEngine_HoF::seq_init() {
 
 	int numShp = -1;
 	if (_flags.isDemo && !_flags.isTalkie) {
-		_demoAnimData = _staticres->loadHofShapeAnimDataV1(k2SeqplayShapeAnimData, _itemAnimDataSize);
+		_demoAnimData = _staticres->loadShapeAnimData_v1(k2SeqplayShapeAnimData, _itemAnimDataSize);
 		uint8 *shp = _res->fileData("icons.shp", 0);
 		uint32 outsize = READ_LE_UINT16(shp + 4);
 		_animShapeFiledata = new uint8[outsize];

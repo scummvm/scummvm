@@ -53,13 +53,11 @@ bool Resource::reset() {
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
-	if (_vm->game() != GI_KYRA3) {
-		if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
-			Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
-			::GUI::MessageDialog errorMsg(errorMessage);
-			errorMsg.runModal();
-			error(errorMessage.c_str());
-		}
+	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
+		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
+		::GUI::MessageDialog errorMsg(errorMessage);
+		errorMsg.runModal();
+		error(errorMessage.c_str());
 	}
 
 	if (_vm->game() == GI_KYRA1) {

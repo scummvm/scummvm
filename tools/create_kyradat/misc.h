@@ -460,6 +460,18 @@ const int kyra2TlkDemoNeed[] = {
 	-1
 };
 
+const int kyra3Need[] = {
+	k3MainMenuStrings,
+	k3MusicFiles,
+	k3ScoreTable,
+	k3SfxFiles,
+	k3SfxMap,
+	k3ItemAnimData,
+	k3ItemMagicTable,
+	k3ItemStringMap,
+	-1
+};
+
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, -1, kyra1FloppyNeed },
 	{ kKyra1, kTalkieVersion, kyra1CDNeed },
@@ -484,6 +496,8 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2DemoVersionTlkE, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkF, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkG, kyra2TlkDemoNeed},
+
+	{ kKyra3, -1, kyra3Need },
 
 	{ -1, -1, 0 }
 };

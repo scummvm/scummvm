@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 24
+#define RESFILE_VERSION 25
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -144,8 +144,8 @@ bool StaticResource::init() {
 		{ kPaletteTable, proc(loadPaletteTable), proc(freePaletteTable) },
 
 		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
-		{ k2ShpAnimDataV1, proc(loadHofShapeAnimDataV1), proc(freeHofShapeAnimDataV1) },
-		{ k2ShpAnimDataV2, proc(loadHofShapeAnimDataV2), proc(freeHofShapeAnimDataV2) },
+		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
+		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
 
 		{ 0, 0, 0 }
 	};
@@ -262,7 +262,20 @@ bool StaticResource::init() {
 		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
 		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
 		{ k2IngameShapeAnimData, k2ShpAnimDataV2, "I_INVANIM.SHP" },
-		{ k2IngameTlkDemoStrings, kLanguageList, "I_TLKDEMO.TXT." },		
+		{ k2IngameTlkDemoStrings, kLanguageList, "I_TLKDEMO.TXT." },
+
+		{ 0, 0, 0 }
+	};
+
+	static const FilenameTable kyra3StaticRes[] = {
+		{ k3MainMenuStrings, kStringList, "MAINMENU.TXT" },
+		{ k3MusicFiles, kStringList, "SCORE.TRA" },
+		{ k3ScoreTable, kRawData, "SCORE.MAP" },
+		{ k3SfxFiles, kStringList, "SFXFILES.TRA" },
+		{ k3SfxMap, kRawData, "SFXINDEX.MAP" },
+		{ k3ItemAnimData, k2ShpAnimDataV2, "INVANIM.SHP" },
+		{ k3ItemMagicTable, kRawData, "ITEMMAGIC.MAP" },
+		{ k3ItemStringMap, kRawData, "ITEMSTRINGS.MAP" },
 
 		{ 0, 0, 0 }
 	};
@@ -274,7 +287,8 @@ bool StaticResource::init() {
 		_builtIn = 0;
 		_filenameTable = kyra2StaticRes;
 	} else if (_vm->game() == GI_KYRA3) {
-		return true;
+		_builtIn = 0;
+		_filenameTable = kyra3StaticRes;
 	} else {
 		error("unknown game ID");
 	}
@@ -367,11 +381,11 @@ const HofSeqData *StaticResource::loadHofSequenceData(int id, int &entries) {
 	return (const HofSeqData*)getData(id, k2SeqData, entries);
 }
 
-const ItemAnimData_v1 *StaticResource::loadHofShapeAnimDataV1(int id, int &entries) {
+const ItemAnimData_v1 *StaticResource::loadShapeAnimData_v1(int id, int &entries) {
 	return (const ItemAnimData_v1*)getData(id, k2ShpAnimDataV1, entries);
 }
 
-const ItemAnimData_v2 *StaticResource::loadHofShapeAnimDataV2(int id, int &entries) {
+const ItemAnimData_v2 *StaticResource::loadShapeAnimData_v2(int id, int &entries) {
 	return (const ItemAnimData_v2*)getData(id, k2ShpAnimDataV2, entries);
 }
 
@@ -729,11 +743,6 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		if (ctrlOffs) {
 			int num_c = *(filePtr + ctrlOffs);
 			const uint16 *in_c = (uint16*) (filePtr + ctrlOffs + 1);
-			// safety check for library sequence which is supposed to have
-			// one frame more than control entries (seems to be a bug in
-			// the original code). This caused invalid memory access .
-			if (tmp_n[i].endFrame > num_c)
-				tmp_n[i].endFrame = num_c;
 			FrameControl *tmp_f = new FrameControl[num_c];
 
 			for (int ii = 0; ii < num_c; ii++) {
@@ -764,7 +773,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 	return true;
 }
 
-bool StaticResource::loadHofShapeAnimDataV1(const char *filename, void *&ptr, int &size) {
+bool StaticResource::loadShapeAnimData_v1(const char *filename, void *&ptr, int &size) {
 	int filesize;
 	uint8 *filePtr = getFile(filename, filesize);
 	uint8 *src = filePtr;
@@ -795,7 +804,7 @@ bool StaticResource::loadHofShapeAnimDataV1(const char *filename, void *&ptr, in
 	return true;
 }
 
-bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, int &size) {
+bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int &size) {
 	int filesize;
 	uint8 *filePtr = getFile(filename, filesize);
 	uint8 *src = filePtr;
@@ -910,8 +919,10 @@ const char *StaticResource::getFilename(const char *name) {
 
 	if (_vm->gameFlags().gameID == GI_KYRA2)
 		filename += ".K2";
+	else if (_vm->gameFlags().gameID == GI_KYRA3)
+		filename += ".K3";
 
-	if (_vm->gameFlags().isTalkie)
+	if (_vm->gameFlags().isTalkie && _vm->gameFlags().gameID != GI_KYRA3)
 		filename += ".CD";
 	else if (_vm->gameFlags().isDemo)
 		filename += ".DEM";
@@ -1202,7 +1213,7 @@ void KyraEngine_HoF::initStaticResource() {
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
 	_ingameTalkObjIndex = (const uint16*) _staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
-	_itemAnimData = _staticres->loadHofShapeAnimDataV2(k2IngameShapeAnimData, _itemAnimDataSize);
+	_itemAnimData = _staticres->loadShapeAnimData_v2(k2IngameShapeAnimData, _itemAnimDataSize);
 
 	// replace sequence talkie files with localized versions and cut off .voc
 	// suffix from voc files so as to allow compression specific file extensions
@@ -1294,6 +1305,18 @@ void KyraEngine_HoF::initStaticResource() {
 
 	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
 	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
+}
+
+void KyraEngine_MR::initStaticResource() {
+	int tmp = 0;
+	_mainMenuStrings = _staticres->loadStrings(k3MainMenuStrings, _mainMenuStringsSize);
+	_soundList = _staticres->loadStrings(k3MusicFiles, _soundListSize);
+	_scoreTable = _staticres->loadRawData(k3ScoreTable, _scoreTableSize);	
+	_sfxFileList = _staticres->loadStrings(k3SfxFiles, _sfxFileListSize);
+	_sfxFileMap = _staticres->loadRawData(k3SfxMap, _sfxFileMapSize);	
+	_itemAnimData = _staticres->loadShapeAnimData_v2(k3ItemAnimData, tmp);
+	_itemMagicTable = _staticres->loadRawData(k3ItemMagicTable, tmp);
+	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
 }
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {
@@ -1939,69 +1962,6 @@ const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 
 // kyra 3 static res
 
-const char *KyraEngine_MR::_mainMenuStrings[] = {
-	"Start a new game",
-	"Introduction",
-	"Load a game",
-	"Exit the game",
-	"Nouvelle Partie",
-	"Introduction",
-	"Charger une partie",
-	"Quitter le jeu",
-	"Neues Spiel starten",
-	"Intro",
-	"Spielstand laden",
-	"Spiel beenden",
-	0
-};
-
-const char *KyraEngine_MR::_soundList[] = {
-	"ARREST1.AUD",
-	"BATH1.AUD",
-	"OCEAN1.AUD",
-	"CLOWN1.AUD",
-	"DARM2.AUD",
-	"FALL1M.AUD",
-	"FALL2.AUD",
-	"FISH1.AUD",
-	"FISHWNDR.AUD",
-	"HERMAN1.AUD",
-	"JAIL1.AUD",
-	"JUNGLE1.AUD",
-	"KATHY1.AUD",
-	"NICESINE.AUD",
-	"PEGASUS1.AUD",
-	"PIRATE1.AUD",
-	"PIRATE2.AUD",
-	"PIRATE3.AUD",
-	"POP3.AUD",
-	"PORT1.AUD",
-	"QUEEN1.AUD",
-	"RUINS1.AUD",
-	"SNAKES1.AUD",
-	"SPRING1.AUD",
-	"STATUE1.AUD",
-	"STATUE2.AUD",
-	"TITLE1.AUD",
-	"UNDER1.AUD",
-	"WALKCHP1.AUD",
-	"YANK1.AUD",
-	"ZAN2.AUD",
-	"GROOVE2.AUD",
-	"GROOVE3.AUD",
-	"KING1.AUD",
-	"KING2.AUD",
-	"GROOVE1.AUD",
-	"JAIL2.AUD",
-	"SPIRIT1.AUD",
-	"SPRING1A.AUD",
-	"POP1.AUD",
-	"POP2.AUD",
-	"SQUIRL1.AUD"
-};
-
-const int KyraEngine_MR::_soundListSize = ARRAYSIZE(KyraEngine_MR::_soundList);
-
 const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
@@ -2029,385 +1989,9 @@ const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 
 const int KyraEngine_MR::_shapeDescsSize = ARRAYSIZE(KyraEngine_MR::_shapeDescs);
 
-const FrameControl KyraEngine_MR::_itemAnimFrames0[] = {
-	{ 0x03, 0x19 }, { 0x48, 0x1E }, { 0x49, 0x1E }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames1[] = {
-	{ 0x3A, 0x0B }, { 0x4B, 0x0B }, { 0x4C, 0x0B },	{ 0x4D, 0x0B },
-	{ 0x4E, 0x0B }, { 0x4F, 0x0B }, { 0x50, 0x0B }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames2[] = {
-	{ 0x14, 0x0F }, { 0x51, 0x0F }, { 0x52, 0x0F }, { 0x53, 0x0F }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames3[] = {
-	{ 0x13, 0x14 }, { 0x54, 0x14 }, { 0x55, 0x14 }, { 0x56, 0x14 }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames4[] = {
-	{ 0x15, 0x10 }, { 0x57, 0x12 }, { 0x58, 0x10 }, { 0x59, 0x11 },
-	{ 0x5A, 0x10 }, { 0x5B, 0x11 }, { 0x5C, 0x10 }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames5[] = { 
-	{ 0x09, 0x1E }, { 0x5D, 0x1E }, { 0x5E, 0x1E }, { 0x5D, 0x1E }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames6[] = {
-	{ 0x39, 0x21 }, { 0x5F, 0x20 }, { 0x60, 0x1E }, { 0x61, 0x20 },
-	{ 0x62, 0x21 }, { 0x63, 0x1E }, { 0x64, 0x22 }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames7[] = { 
-	{ 0x40, 0x0C }, { 0x6C, 0x10 }, { 0x6B, 0x10 }, { 0x6A, 0x0F },
-	{ 0x69, 0x0F },	{ 0x68, 0x0F }, { 0x67, 0x0F }, { 0x66, 0x0F },
-	{ 0x65, 0x0F }, { 0x66, 0x11 },	{ 0x67, 0x12 }, { 0x68, 0x10 },
-	{ 0x69, 0x0F }, { 0x6A, 0x10 }, { 0x6B, 0x0F }, { 0x6C, 0x10 },
-	{ 0x6B, 0x0F }, { 0x6A, 0x10 }, { 0x6B, 0x0F }, { 0x6C, 0x10 },
-	{ 0x6B, 0x0F }, { 0x6A, 0x10 }, { 0x69, 0x0F }, { 0x68, 0x10 },
-	{ 0x67, 0x12 }, { 0x66, 0x11 }, { 0x65, 0xC8 }, { 0x66, 0x11 },
-	{ 0x67, 0x12 }, { 0x68, 0x10 }, { 0x69, 0x0F }, { 0x6A, 0x10 },
-	{ 0x6B, 0x0F }, { 0x6C, 0x10 }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames8[] = {
-	{ 0x2B, 0x19 }, { 0x8E, 0x16 }, { 0x8F, 0x14 },
-	{ 0x90, 0x16 }, { 0x91, 0x50 }
-};
-
-const FrameControl KyraEngine_MR::_itemAnimFrames9[] = {
-	{ 0x3B, 0x258}, { 0x92, 0x0A }, { 0x93, 0x0A }, { 0x94, 0x0A },
-	{ 0x93, 0x0A }, { 0x92, 0x0A }
-};
-
-const ItemAnimData_v2 KyraEngine_MR::_itemAnimData[10] = {
-	{ 0x03, 0x03, _itemAnimFrames0 },
-	{ 0x3a, 0x07, _itemAnimFrames1 },
-	{ 0x14, 0x04, _itemAnimFrames2 },
-	{ 0x13, 0x04, _itemAnimFrames3 },
-	{ 0x15, 0x07, _itemAnimFrames4 },
-	{ 0x09, 0x04, _itemAnimFrames5 },
-	{ 0x39, 0x07, _itemAnimFrames6 },
-	{ 0x40, 0x22, _itemAnimFrames7 },
-	{ 0x2B, 0x05, _itemAnimFrames8 },
-	{ 0x3B, 0x06, _itemAnimFrames9 }
-};
-
 const uint8 KyraEngine_MR::_characterFrameTable[] = {
 	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34
 };
-
-const uint8 KyraEngine_MR::_sfxFileMap[] = {
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x99, 0x00,
-	0x46, 0x00, 0xA9, 0x00, 0x33, 0x00, 0x65, 0x00,
-	0x9B, 0x00, 0x17, 0x00, 0xBB, 0x00, 0x64, 0x00,
-	0x55, 0x00, 0xD5, 0x00, 0x66, 0x00, 0xB9, 0x00,
-	0x9A, 0x00, 0xFF, 0x00, 0xCC, 0x00, 0x67, 0x00,
-	0x2E, 0x00, 0xA1, 0x00, 0xD0, 0x00, 0x63, 0x00,
-	0x89, 0x00, 0xBE, 0x00, 0x80, 0x00, 0x1D, 0x00,
-	0x02, 0x00, 0x28, 0x00, 0x91, 0x00, 0x29, 0x00,
-	0xCE, 0x00, 0x8F, 0x00, 0x49, 0x00, 0x2B, 0x00,
-	0x2D, 0x00, 0x2C, 0x00, 0x3E, 0x00, 0x22, 0x00,
-	0x80, 0x00, 0x9C, 0x00, 0x2E, 0x00, 0x04, 0x00,
-	0x47, 0x00, 0xA8, 0x00, 0x51, 0x00, 0x52, 0x00,
-	0x80, 0x00, 0x48, 0x00, 0x38, 0x0A, 0x0C, 0x00,
-	0xD8, 0x00, 0xD1, 0x00, 0xD2, 0x00, 0xD3, 0x00,
-	0xD1, 0x00, 0x6A, 0x00, 0x8A, 0x00, 0xC0, 0x00,
-	0xC1, 0x00, 0xC2, 0x00, 0x9F, 0x00, 0xA3, 0x00,
-	0x90, 0x00, 0xB6, 0x00, 0x37, 0x00, 0x71, 0x00,
-	0x13, 0x00, 0x50, 0x00, 0x5A, 0x00, 0x6E, 0x00,
-	0x70, 0x00, 0x11, 0x00, 0x16, 0x00, 0x14, 0x00,
-	0x43, 0x00, 0xCD, 0x00, 0xAA, 0x00, 0x15, 0x00,
-	0x83, 0x00, 0x19, 0x00, 0xB3, 0x00, 0x6F, 0x00,
-	0x26, 0x00, 0xC8, 0x00, 0xA7, 0x00, 0x98, 0x00,
-	0x87, 0x00, 0xC7, 0x00, 0xA2, 0x00, 0xB0, 0x00,
-	0x12, 0x00, 0xD7, 0x00, 0x56, 0x00, 0x45, 0x00,
-	0x4B, 0x00, 0xAF, 0x00, 0x3B, 0x00, 0x6C, 0x00,
-	0x8E, 0x00, 0x39, 0x00, 0x38, 0x00, 0x92, 0x00,
-	0x4B, 0x00, 0xD0, 0x00, 0x4A, 0x00, 0x9D, 0x00,
-	0x7F, 0x00, 0x6D, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x3D, 0x00, 0x72, 0x00, 0x40, 0x00, 0x66, 0x00,
-	0x01, 0x00, 0xA5, 0x00, 0x00, 0x00, 0x3C, 0x00,
-	0xAC, 0x00, 0x38, 0x00, 0x8B, 0x00, 0xDF, 0x00,
-	0x0E, 0x00, 0x54, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x94, 0x00, 0xAB, 0x00, 0x76, 0x00, 0x58, 0x00,
-	0x6B, 0x00, 0x27, 0x00, 0xFF, 0x00, 0x77, 0x00,
-	0xA6, 0x00, 0x63, 0x00, 0x9E, 0x00, 0xDE, 0x00,
-	0x84, 0x00, 0x85, 0x00, 0x86, 0x00, 0x3F, 0x00,
-	0xCC, 0x00, 0xCC, 0x00, 0xCC, 0x00, 0x93, 0x00,
-	0x9D, 0x00, 0x75, 0x00, 0x75, 0x00, 0x75, 0x00,
-	0x75, 0x00, 0x3A, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xAE, 0x00, 0x8C, 0x00, 0x20, 0x00,
-	0xFF, 0x00, 0x32, 0x00, 0x32, 0x00, 0xFF, 0x00,
-	0x4D, 0x00, 0xD9, 0x00, 0x88, 0x00, 0x4D, 0x00,
-	0x4D, 0x00, 0x4D, 0x00, 0x4D, 0x00, 0xA0, 0x00,
-	0x4C, 0x00, 0x8C, 0x00, 0x4C, 0x00, 0x4C, 0x00,
-	0x8C, 0x00, 0x8C, 0x00, 0x5C, 0x00, 0x5D, 0x00,
-	0x60, 0x00, 0x5F, 0x00, 0xC5, 0x00, 0xBF, 0x00,
-	0xFF, 0x00, 0x4F, 0x00, 0x16, 0x00, 0x59, 0x00,
-	0xFF, 0x00, 0x24, 0x00, 0xA4, 0x00, 0xCF, 0x00,
-	0xFF, 0x00, 0x47, 0x00, 0x95, 0x00, 0x96, 0x00,
-	0x7B, 0x00, 0xBD, 0x00, 0xFF, 0x00, 0x34, 0x00,
-	0x35, 0x00, 0x36, 0x00, 0xDE, 0x00, 0xFF, 0x00,
-	0x4B, 0x00, 0xD6, 0x00, 0xFF, 0x00, 0x61, 0x00,
-	0x62, 0x00, 0xFF, 0x00, 0x78, 0x00, 0xFF, 0x00,
-	0x44, 0x00, 0xB4, 0x00, 0xB5, 0x00, 0x42, 0x00,
-	0x27, 0x00, 0xA2, 0x00, 0x27, 0x00, 0x5D, 0x00,
-	0x7A, 0x00, 0x89, 0x00, 0x1A, 0x00, 0x0E, 0x00,
-	0x82, 0x00, 0xFF, 0x00, 0x79, 0x00, 0x2A, 0x00,
-	0x81, 0x00, 0xFF, 0x00, 0x74, 0x00, 0x4E, 0x00,
-	0xB1, 0x00, 0x1B, 0x00, 0x2F, 0x00, 0xBA, 0x00,
-	0xBB, 0x00, 0xBC, 0x00, 0xDA, 0x00, 0xDB, 0x00,
-	0x18, 0x00, 0x5E, 0x00, 0x0D, 0x0A, 0x88, 0x00,
-	0x1E, 0x00, 0x1F, 0x00, 0x20, 0x00, 0x21, 0x00,
-	0x69, 0x00, 0x1C, 0x00, 0x7C, 0x00, 0x30, 0x00,
-	0xC3, 0x00, 0xC4, 0x00, 0xAD, 0x00, 0x25, 0x00,
-	0x53, 0x00, 0xB7, 0x00, 0xB8, 0x00, 0xDC, 0x00,
-	0x8D, 0x00, 0xCB, 0x00, 0xD4, 0x00, 0xB2, 0x00,
-	0xDD, 0x00, 0x57, 0x00, 0x41, 0x00, 0x10, 0x00,
-	0x4C, 0x00, 0xC9, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x7D, 0x00, 0x7E, 0x00, 0xCA, 0x00, 0x03, 0x00,
-	0x04, 0x00, 0x05, 0x00, 0x06, 0x00, 0x07, 0x00,
-	0x08, 0x00, 0x09, 0x00, 0x0A, 0x00, 0x0B, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x23, 0x00, 0x97, 0x00, 0x73, 0x00
-};
-
-const int KyraEngine_MR::_sfxFileMapSize = ARRAYSIZE(KyraEngine_MR::_sfxFileMap);
-
-const char *KyraEngine_MR::_sfxFileList[] = {
-	"ALARM1",
-	"ARMOIRE1",
-	"ARROW1",
-	"AUDLAFF1",
-	"AUDLAFF2",
-	"AUDLAFF3",
-	"AUDLAFF4",
-	"AUDLAFF5",
-	"AUDLAFF6",
-	"AUDLAFF7",
-	"AUDLAFF8",
-	"AUDLAFF9",
-	"BARK22A",
-	"BEAM1",
-	"BEDSQK1",
-	"BEDSQK2",
-	"BIGCLOK1",
-	"BIGDOR2",
-	"BIRD4",
-	"BIRD122",
-	"BIRD222",
-	"BIRD322",
-	"BLAST22D",
-	"BLINK1",
-	"BOATMIX1",
-	"BODYFAL1",
-	"BOTLBLOW",
-	"BOUNCE3",
-	"BOUNCE5",
-	"BOW2",
-	"BUBL1",
-	"BUBL2",
-	"BUBL3",
-	"BUBL4",
-	"BUTTON1",
-	"BUTTON2",
-	"CANNON1",
-	"CASHREG1",
-	"CATHY1",
-	"CHAIN1",
-	"CHATTER1",
-	"CHATTER2",
-	"CHEESE1",
-	"CHICHIC2",
-	"CHIPLAF1",
-	"CHIPROR1",
-	"CLANG1",
-	"CLDOOR1",
-	"CLEAT1",
-	"CLOTHES1",
-	"COIN2",
-	"COUNTER1",
-	"CREAK1",
-	"CREAK2",
-	"CREAK3",
-	"CRIKT22A",
-	"CRMAD1",
-	"CRNORM1",
-	"CRUMBLE1",
-	"CRUNCH1",
-	"CRYSTAL1",
-	"DFLY1",
-	"DIAL1",
-	"DIGDIRT1",
-	"DIZZY1",
-	"DODO1",
-	"DOORBELL",
-	"DOORCL1",
-	"DOOROP1",
-	"DRIP1",
-	"DROPITM1",
-	"EAT22A",
-	"EATNUT1",
-	"ELEC1",
-	"EXPLODE2",
-	"FALL1",
-	"FALLM2",
-	"FALLM3",
-	"FESTRE1",
-	"FISHLAF2",
-	"FLAG22A",
-	"FLAG22B",
-	"FLAG22C",
-	"FLPOOF1",
-	"FOLDER1",
-	"FROG1",
-	"FROGJMP1",
-	"FSHBUBL1",
-	"FUNNEL1",
-	"FUSE1",
-	"GATE22A",
-	"GEM1",
-	"GEMFIRE1",
-	"GEMLIT1",
-	"GEMPUT1",
-	"GEMRAIN1",
-	"GEMWND1",
-	"GIRLLAF1",
-	"GIRLLAF2",
-	"GLASBRK1",
-	"GLOWY1",
-	"GOODK33",
-	"GROWTWIG",
-	"GUNTHER3",
-	"H2ODROP2",
-	"H2OFALL1",
-	"HAMMER1",
-	"HAYFALL2",
-	"HERMMAG1",
-	"HIPRES1",
-	"HITHED22",
-	"HOWL1",
-	"HUM1",
-	"HYPNO1",
-	"HYPNO2",
-	"IMPACT1",
-	"JOHAN1",
-	"JUNGAMB2",
-	"KISS1",
-	"KISS2",
-	"KNIFE",
-	"KNIFHIT1",
-	"KNIFSTAB",
-	"KNOCK",
-	"LAND1",
-	"LEVIBAB1",
-	"LEVIMAN1",
-	"LID",
-	"MACHMIX1",
-	"MALCFALL",
-	"MALCYAWN",
-	"MJUMP1",
-	"MOO1",
-	"MOO2",
-	"MOO3",
-	"MORPH1",
-	"MORPH2",
-	"MORPH3",
-	"MORPH4",
-	"MOTHS1",
-	"MSPLASH1",
-	"MTLSLAM1",
-	"MUDBATH1",
-	"NAIL1",
-	"NEIGH1",
-	"NETCATCH",
-	"NETMAL1",
-	"NETRIP1",
-	"OPDOOR1",
-	"OWL1",
-	"OWL2",
-	"PEDAL3",
-	"PEGWING1",
-	"PICKUP1",
-	"PLUCK3",
-	"POLGULP1",
-	"POOF1",
-	"PORTAL1",
-	"POURH2O1",
-	"PRIMOR1",
-	"PUMP1",
-	"PUNCTRE1",
-	"RATTLE1",
-	"REV2",
-	"RING",
-	"ROAR3",
-	"ROWBOAT1",
-	"RUCKUS1",
-	"RUMBLE1",
-	"SCOLD1",
-	"SCRATCH1",
-	"SHOVEL1",
-	"SHOWER2",
-	"SLOTPUL1",
-	"SNAKKILL",
-	"SNAP1",
-	"SNIFF1",
-	"SNIFF2",
-	"SNIFFM1",
-	"SNIP22B",
-	"SNORIN1",
-	"SNOROUT1",
-	"SNORT1",
-	"SPITBAL1",
-	"SPITBAL2",
-	"SPLASH1",
-	"SQUEAK1",
-	"SQUEAK2",
-	"SQUEAK3",
-	"STATUE",
-	"STAMPED1",
-	"STARS1",
-	"STONE1",
-	"STONE2",
-	"STONE3",
-	"STRETCH1",
-	"STRETCH2",
-	"SUNRISE1",
-	"SWALLOW1",
-	"SWALLOW2",
-	"SWAV22B",
-	"TELBEL1",
-	"TELBEL2",
-	"TENNIS1",
-	"THROW1",
-	"THUMP1",
-	"TOILET1",
-	"TRAPDOR1",
-	"TRICKLE",
-	"TROLGRNT",
-	"TROLYEL1",
-	"TROLYEL2",
-	"TUBEDOR1",
-	"TWIGSNAP",
-	"UMBRLA1",
-	"UNLOK22A",
-	"VACUUM",
-	"WAVELT1",
-	"WHIP1",
-	"WHIP2",
-	"WOODHIT1",
-	"YAWN1",
-	"ZING",
-	"ZIPPER1"
-};
-
-const int KyraEngine_MR::_sfxFileListSize = ARRAYSIZE(KyraEngine_MR::_sfxFileList);
 
 const uint8 KyraEngine_MR::_badConscienceFrameTable[] = {
 	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
@@ -2449,28 +2033,6 @@ const uint8 KyraEngine_MR::_trashItemList[] = {
 	0x39, 0x40, 0x3E, 0x3D, 0x3C, 0x3F, 0xFF
 };
 
-const uint8 KyraEngine_MR::_itemMagicTable[] = {
-	0x06, 0x05, 0x07, 0xFE, 0x05, 0x06, 0x07, 0xFE,
-	0x03, 0x00, 0x22, 0xFE, 0x00, 0x03, 0x22, 0xFE,
-	0x10, 0x00, 0x20, 0x0F, 0x00, 0x10, 0x0F, 0x20,
-	0x10, 0x22, 0x21, 0x0F, 0x22, 0x10, 0x0F, 0x21,
-	0xFF, 0xFF, 0xFF, 0xFF
-};
-
-const uint8 KyraEngine_MR::_itemStringMap[] = {
-	1, 0, 2, 0, 2, 2, 0, 0,
-	2, 2, 2, 2, 2, 2, 2, 0,
-	0, 0, 0, 0, 0, 0, 3, 1,
-	2, 0, 2, 2, 0, 0, 0, 0,
-	0, 0, 1, 2, 0, 2, 0, 2,
-	0, 0, 2, 0, 0, 0, 0, 1,
-	1, 0, 2, 2, 0, 0, 2, 0,
-	0, 2, 0, 2, 2, 0, 0, 2,
-	0, 0, 0, 0, 2, 0, 0, 2
-};
-
-const uint KyraEngine_MR::_itemStringMapSize = ARRAYSIZE(KyraEngine_MR::_itemStringMap);
-
 const uint8 KyraEngine_MR::_itemStringPickUp[] = {
 	0x4, 0x7, 0x0, 0xA
 };
@@ -2482,36 +2044,6 @@ const uint8 KyraEngine_MR::_itemStringDrop[] = {
 const uint8 KyraEngine_MR::_itemStringInv[] = {
 	0x6, 0x9, 0x2, 0xC
 };
-
-const int8 KyraEngine_MR::_scoreTable[] = {
-	10,  8,  5,  9, 10, 10,  7,  8,
-	 9,  9,  8,  8,  7,  8,  5,  9,
-	 6, 10,  7,  8,  5,  9,  6,  6,
-	 7,  8,  5,  9,  6,  8,  7,  8,
-	 5,  9,  6, 10,  7,  8,  5,  5,
-	 5,  7,  5,  7, 10,  5, 10,  5,
-	 5,  8,  6,  8,  7,  5,  5,  8,
-	 6,  9,  5,  7,  6,  5,  5,  7,
-	 7,  7,  6,  5,  8,  6, 10,  5,
-	 7,  5, 10,  5,  5,  5,  5,  7,
-	 5,  8,  9,  7,  7,  6, 10,  6,
-	 5, 10,  8,  5,  8,  6, 10,  5,
-	 5,  8,  8,  5,  7,  7,  7,  6,
-	 8,  9,  8,  8,  6,  5,  7,  6,
-	 5,  8, 15,  7,  9,  6,  6,  8,
-	 5,  8, 15, 15,  5, 15,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,	 0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0 
-}; 
-
-const int KyraEngine_MR::_scoreTableSize = ARRAYSIZE(KyraEngine_MR::_scoreTable);
 
 void KyraEngine_MR::initMainButtonList(bool disable) {
 	if (!_mainButtonListInitialized) {
