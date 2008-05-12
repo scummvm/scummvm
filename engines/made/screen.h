@@ -28,6 +28,7 @@
 
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/rect.h"
 
 #include "graphics/surface.h"
 
@@ -50,7 +51,7 @@ struct SpriteChannel {
 };
 
 struct ClipInfo {
-	uint16 x, y, w, h;
+	Common::Rect clipRect;
 	Graphics::Surface *destSurface;
 };
 
@@ -72,11 +73,8 @@ public:
 	void setPaletteLock(bool lock) { _paletteLock = lock; }
 	void setVisualEffectNum(int visualEffectNum) { _visualEffectNum = visualEffectNum; }
 
-	void setClipArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) { 
-		_clipArea.x = x1;
-		_clipArea.y = y1;
-		_clipArea.w = ABS(x2 - x1);
-		_clipArea.h = ABS(y2 - y1);
+	void setClipArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+		_clipArea.clipRect = Common::Rect(x1, y1, x2, y2);
 	}
 
 	void setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2);

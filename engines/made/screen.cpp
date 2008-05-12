@@ -38,10 +38,8 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_screen2 = new Graphics::Surface();
 	_screen2->create(320, 200, 1);
 
-	_clipInfo1.x = _clipInfo2.x = 0;
-	_clipInfo1.y = _clipInfo2.y = 0;
-	_clipInfo1.w = _clipInfo2.w = 320;
-	_clipInfo1.h = _clipInfo2.h = 200;
+	_clipInfo1.clipRect = Common::Rect(320, 200);
+	_clipInfo2.clipRect = Common::Rect(320, 200);
 
 	_clipInfo1.destSurface = _screen1;
 	_clipInfo2.destSurface = _screen2;
@@ -50,10 +48,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	// FIXME: Screen mask is only needed in v2 games
 	_screenMask = new Graphics::Surface();
 	_screenMask->create(320, 200, 1);
-	_maskDrawCtx.x = 0;
-	_maskDrawCtx.y = 0;
-	_maskDrawCtx.w = 320;
-	_maskDrawCtx.h = 200;
+	_maskDrawCtx.clipRect = Common::Rect(320, 200);
 	_maskDrawCtx.destSurface = _screenMask;
 
 	for (int i = 0; i <= 3; i++)
@@ -85,10 +80,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_textRect.bottom = 200;
 	_font = NULL;
 	_currentFontNum = 0;
-	_fontDrawCtx.x = 0;
-	_fontDrawCtx.y = 0;
-	_fontDrawCtx.w = 320;
-	_fontDrawCtx.h = 200;
+	_fontDrawCtx.clipRect = Common::Rect(320, 200);
 	_fontDrawCtx.destSurface = _screen1;
 
 	clearChannels();
@@ -116,43 +108,28 @@ void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	_excludeClipAreaEnabled[3] = false;
 
 	if (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0) {
-		_excludeClipArea[0].x = 0;
-		_excludeClipArea[0].y = 0;
-		_excludeClipArea[0].w = 320;
-		_excludeClipArea[0].h = 200;
+		_excludeClipArea[0].clipRect = Common::Rect(320, 200);
 		_excludeClipAreaEnabled[0] = true;
 		return;
 	}
 
 	if (y1 > 0 && y2 > 0) {
-		_excludeClipArea[0].x = 0;
-		_excludeClipArea[0].y = 0;
-		_excludeClipArea[0].w = 320;
-		_excludeClipArea[0].h = y1;
+		_excludeClipArea[0].clipRect = Common::Rect(320, y1);
 		_excludeClipAreaEnabled[0] = true;
 	}
 
 	if (y1 < 200 && y2 < 200) {
-		_excludeClipArea[1].x = 0;
-		_excludeClipArea[1].y = y2;
-		_excludeClipArea[1].w = 320;
-		_excludeClipArea[1].h = 200 - y2;
+		_excludeClipArea[1].clipRect = Common::Rect(0, y2, 320, 200);
 		_excludeClipAreaEnabled[1] = true;
 	}
 
 	if (x1 > 0 && x2 > 0) {
-		_excludeClipArea[2].x = 0;
-		_excludeClipArea[2].y = y1;
-		_excludeClipArea[2].w = x1;
-		_excludeClipArea[2].h = y2 - y1;
+		_excludeClipArea[2].clipRect = Common::Rect(0, y1, x1, y2);
 		_excludeClipAreaEnabled[2] = true;
 	}
 
 	if (x1 < 320 && x2 < 320) {
-		_excludeClipArea[3].x = x2;
-		_excludeClipArea[3].y = y1;
-		_excludeClipArea[3].w = 320 - x2;
-		_excludeClipArea[3].h = y2 - y1;
+		_excludeClipArea[3].clipRect = Common::Rect(x2, y1, 320, y2);
 		_excludeClipAreaEnabled[3] = true;
 	}
 	
@@ -166,24 +143,24 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	int clipWidth = sourceSurface->w;
 	int clipHeight = sourceSurface->h;
 	
-	if (x < clipInfo.x) {
-		startX = clipInfo.x - x;
+	if (x < clipInfo.clipRect.left) {
+		startX = clipInfo.clipRect.left - x;
 		clipWidth -= startX;
-		x = clipInfo.x;
+		x = clipInfo.clipRect.left;
 	}
 
-	if (y < clipInfo.y) {
-		startY = clipInfo.y - y;
+	if (y < clipInfo.clipRect.top) {
+		startY = clipInfo.clipRect.top - y;
 		clipHeight -= startY;
-		y = clipInfo.y;
+		y = clipInfo.clipRect.top;
 	}
 
-	if (x + clipWidth > clipInfo.x + clipInfo.w) {
-		clipWidth = clipInfo.x + clipInfo.w - x;
+	if (x + clipWidth > clipInfo.clipRect.right) {
+		clipWidth = clipInfo.clipRect.right - x;
 	}
 
-	if (y + clipHeight > clipInfo.y + clipInfo.h) {
-		clipHeight = clipInfo.y + clipInfo.h - y;
+	if (y + clipHeight > clipInfo.clipRect.bottom) {
+		clipHeight = clipInfo.clipRect.bottom - y;
 	}
 
 	source = (byte*)sourceSurface->getBasePtr(startX, startY);
