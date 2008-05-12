@@ -174,7 +174,7 @@ protected:
 class PluginManager : public Common::Singleton<PluginManager> {
 	typedef Common::List<PluginProvider *> ProviderList;
 private:
-	PluginList _plugins;
+	PluginList _plugins[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
 
 	bool tryLoadPlugin(Plugin *plugin);
@@ -189,9 +189,9 @@ public:
 
 	void loadPlugins();
 	void unloadPlugins();
-	void unloadPluginsExcept(const Plugin *plugin);
+	void unloadPluginsExcept(PluginType type, const Plugin *plugin);
 
-	const PluginList &getPlugins()	{ return _plugins; }
+	const PluginList &getPlugins(PluginType t) { return _plugins[t]; }
 };
 
 

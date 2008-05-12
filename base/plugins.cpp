@@ -253,12 +253,13 @@ void PluginManager::loadPlugins() {
 }
 
 void PluginManager::unloadPlugins() {
-	unloadPluginsExcept(NULL);
+	for (int i = 0; i < PLUGIN_TYPE_MAX; i++)
+		unloadPluginsExcept((PluginType)i, NULL);
 }
 
-void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
+void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin) {
 	Plugin *found = NULL;
-	for (PluginList::iterator p = _plugins.begin(); p != _plugins.end(); ++p) {
+	for (PluginList::iterator p = _plugins[type].begin(); p != _plugins[type].end(); ++p) {
 		if (*p == plugin) {
 			found = *p;
 		} else {
@@ -266,9 +267,9 @@ void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
 			delete *p;
 		}
 	}
-	_plugins.clear();
+	_plugins[type].clear();
 	if (found != NULL) {
-		_plugins.push_back(found);
+		_plugins[type].push_back(found);
 	}
 }
 
@@ -277,7 +278,7 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	// Try to load the plugin
 	if (plugin->loadPlugin()) {
 		// If successful, add it to the list of known plugins and return.
-		_plugins.push_back(plugin);
+		_plugins[plugin->getType()].push_back(plugin);
 
 		// TODO/FIXME: We should perform some additional checks here:
 		// * Check for some kind of "API version" (possibly derived from the
@@ -362,5 +363,5 @@ GameList EngineManager::detectGames(const FSList &fslist) const {
 }
 
 const EnginePluginList &EngineManager::getPlugins() const {
-	return (const EnginePluginList&)PluginManager::instance().getPlugins();
+	return (const EnginePluginList&)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }

@@ -302,7 +302,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		if (plugin) {
 			// Unload all plugins not needed for this game,
 			// to save memory
-			PluginManager::instance().unloadPluginsExcept(plugin);
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
 
 			// Try to run the game
 			int result = runGame(plugin, system, specialDebug);
@@ -329,7 +329,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 		launcherDialog(system);
 	}
-	PluginManager::instance().unloadPluginsExcept(NULL);
+	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
 	Common::ConfigManager::destroy();
 	GUI::NewGui::destroy();
