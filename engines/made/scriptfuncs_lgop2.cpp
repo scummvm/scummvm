@@ -129,6 +129,7 @@ int16 ScriptFunctionsLgop2::o1_CLS(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_SHOWPAGE(int16 argc, int16 *argv) {
+	_vm->_mixer->stopHandle(_audioStreamHandle);
 	_vm->_screen->show();
 	return 0;
 }
@@ -322,7 +323,8 @@ int16 ScriptFunctionsLgop2::o1_FREEANIM(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_DRAWSPRITE(int16 argc, int16 *argv) {
-	return _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
+	_vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
+	return 0;
 }
 
 int16 ScriptFunctionsLgop2::o1_ERASESPRITES(int16 argc, int16 *argv) {
@@ -350,8 +352,7 @@ int16 ScriptFunctionsLgop2::o1_RESETTIMER(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_ALLOCTIMER(int16 argc, int16 *argv) {
-	int16 timerNum = _vm->allocTimer();
-	return timerNum;
+	return _vm->allocTimer();
 }
 
 int16 ScriptFunctionsLgop2::o1_FREETIMER(int16 argc, int16 *argv) {
@@ -439,6 +440,8 @@ int16 ScriptFunctionsLgop2::o1_RESTEXT(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsLgop2::o1_ADDMASK(int16 argc, int16 *argv) {
 	warning("Unimplemented opcode: o1_ADDMASK");
+	//PictureResource *flex = _vm->_res->getPicture(flexIndex);
+	//Graphics::Surface *sourceSurface = flex->getPicture();
 	return 0;
 }
 

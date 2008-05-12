@@ -134,21 +134,26 @@ int MadeEngine::init() {
 }
 
 int16 MadeEngine::getTimer(int16 timerNum) {
-	return (_system->getMillis() - _timers[timerNum]) / 60;
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
+		return (_system->getMillis() - _timers[timerNum - 1]) / 60;
+	else
+		return 32000;
 }
 
 void MadeEngine::setTimer(int16 timerNum, int16 value) {
-	_timers[timerNum] = value * 60;
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+		_timers[timerNum - 1] = value * 60;
 }
 
 void MadeEngine::resetTimer(int16 timerNum) {
-	_timers[timerNum] = _system->getMillis();
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+		_timers[timerNum - 1] = _system->getMillis();
 }
 
 int16 MadeEngine::allocTimer() {
 	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
 		if (_timers[i] == -1) {
-		 	resetTimer(i);
+			_timers[i] = _system->getMillis();
 			return i + 1;
 		}
 	}
@@ -156,7 +161,8 @@ int16 MadeEngine::allocTimer() {
 }
 
 void MadeEngine::freeTimer(int16 timerNum) {
-	_timers[timerNum] = -1;
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+		_timers[timerNum - 1] = -1;
 }
 
 Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
