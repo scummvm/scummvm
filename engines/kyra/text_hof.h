@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KYRA_TEXT_V2_H
-#define KYRA_TEXT_V2_H
+#ifndef KYRA_TEXT_HOF_H
+#define KYRA_TEXT_HOF_H
 
 #include "kyra/text.h"
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KYRA_GUI_V1_H
-#define KYRA_GUI_V1_H
+#ifndef KYRA_GUI_LOK_H
+#define KYRA_GUI_LOK_H
 
 #include "kyra/gui.h"
 

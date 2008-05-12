@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KYRA_ANIMATOR_V1_H
-#define KYRA_ANIMATOR_V1_H
+#ifndef KYRA_ANIMATOR_LOK_H
+#define KYRA_ANIMATOR_LOK_H
 
 namespace Kyra {
 class KyraEngine_LoK;

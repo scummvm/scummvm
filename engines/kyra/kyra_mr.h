@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KYRA_KYRA_V3_H
-#define KYRA_KYRA_V3_H
+#ifndef KYRA_KYRA_MR_H
+#define KYRA_KYRA_MR_H
 
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_mr.h"
