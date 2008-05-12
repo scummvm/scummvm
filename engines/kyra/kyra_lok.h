@@ -654,7 +654,7 @@ protected:
 	// Opcodes
 	int o1_magicInMouseItem(EMCState *script);
 	int o1_characterSays(EMCState *script);
-	int o1_pauseTicks(EMCState *script);
+	int o1_delay(EMCState *script);
 	int o1_drawSceneAnimShape(EMCState *script);
 	int o1_runNPCScript(EMCState *script);
 	int o1_setSpecialExitList(EMCState *script);
@@ -676,7 +676,7 @@ protected:
 	int o1_setBirthstoneGem(EMCState *script);
 	int o1_placeItemInGenericMapScene(EMCState *script);
 	int o1_setBrandonStatusBit(EMCState *script);
-	int o1_pauseSeconds(EMCState *script);
+	int o1_delaySecs(EMCState *script);
 	int o1_getCharacterScene(EMCState *script);
 	int o1_runNPCSubscript(EMCState *script);
 	int o1_magicOutMouseItem(EMCState *script);

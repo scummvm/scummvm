@@ -74,10 +74,10 @@ int KyraEngine_LoK::o1_characterSays(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_pauseTicks(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_pauseTicks(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_LoK::o1_delay(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(1)) {
-		warning("STUB: special o1_pauseTicks");
+		warning("STUB: special o1_delay");
 		// delete this after correct implementing
 		delayWithTicks(stackPos(0));
 	} else {
@@ -319,8 +319,8 @@ int KyraEngine_LoK::o1_setBrandonStatusBit(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_pauseSeconds(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_pauseSeconds(%p) (%d)", (const void *)script, stackPos(0));
+int KyraEngine_LoK::o1_delaySecs(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
 	if (stackPos(0) > 0 && !_skipFlag)
 		delay(stackPos(0)*1000, true);
 	_skipFlag = false;
@@ -1691,7 +1691,7 @@ int KyraEngine_LoK::o1_pauseMusicSeconds(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_pauseMusicSeconds(%p) ()", (const void *)script);
 	// if music disabled
 	//     return
-	o1_pauseSeconds(script);
+	o1_delaySecs(script);
 	return 0;
 }
 
@@ -1735,7 +1735,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	// 0x00
 	Opcode(o1_magicInMouseItem);
 	Opcode(o1_characterSays);
-	Opcode(o1_pauseTicks);
+	Opcode(o1_delay);
 	Opcode(o1_drawSceneAnimShape);
 	// 0x04
 	Opcode(o1_queryGameFlag);
@@ -1774,7 +1774,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_placeItemInGenericMapScene);
 	// 0x20
 	Opcode(o1_setBrandonStatusBit);
-	Opcode(o1_pauseSeconds);
+	Opcode(o1_delaySecs);
 	Opcode(o1_getCharacterScene);
 	Opcode(o1_runNPCSubscript);
 	// 0x24
