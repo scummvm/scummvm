@@ -723,28 +723,10 @@ int KyraEngine_HoF::o2_loadMusicTrack(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_playSoundEffect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
-	snd_playSoundEffect(stackPos(0));
-	return 0;
-}
-
 int KyraEngine_HoF::o2_setSceneAnimPos(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setSceneAnimPos(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	_sceneAnims[stackPos(0)].x = stackPos(1);
 	_sceneAnims[stackPos(0)].y = stackPos(2);
-	return 0;
-}
-
-int KyraEngine_HoF::o2_blockInRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_blockInRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
-	return 0;
-}
-
-int KyraEngine_HoF::o2_blockOutRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
@@ -853,12 +835,6 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	setHandItem(_itemInHand);
 	_screen->showMouse();
 
-	return 0;
-}
-
-int	KyraEngine_HoF::o2_fillRect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
 	return 0;
 }
 
@@ -1578,7 +1554,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_getElapsedSecs);
 	// 0x34
 	Opcode(o2_getTimerDelay);
-	Opcode(o2_playSoundEffect);
+	Opcode(o1_playSoundEffect);
 	Opcode(o2_delaySecs);
 	Opcode(o2_delay);
 	// 0x38
@@ -1623,11 +1599,11 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_loadMusicTrack);
 	// 0x58
 	Opcode(o1_playWanderScoreViaMap);
-	Opcode(o2_playSoundEffect);
+	Opcode(o1_playSoundEffect);
 	Opcode(o2_setSceneAnimPos);
-	Opcode(o2_blockInRegion);
+	Opcode(o1_blockInWalkableRegion);
 	// 0x5c
-	Opcode(o2_blockOutRegion);
+	Opcode(o1_blockOutWalkableRegion);
 	OpcodeUnImpl();
 	Opcode(o2_setCauldronState);
 	Opcode(o2_showItemString);
@@ -1640,7 +1616,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setRunFlag);
 	Opcode(o2_showLetter);
 	OpcodeUnImpl();
-	Opcode(o2_fillRect);
+	Opcode(o1_fillRect);
 	// 0x68
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1737,7 +1713,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x00
 	Opcode(o2a_setAnimationShapes);
 	Opcode(o2a_setCharacterFrame);
-	Opcode(o2_playSoundEffect);
+	Opcode(o1_playSoundEffect);
 	Opcode(o2_fadeScenePal);
 	// 0x04
 	_flags.isTalkie ? Opcode(o2a_setResetFrame) : Opcode(o2_dummy);

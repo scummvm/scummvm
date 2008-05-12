@@ -658,8 +658,6 @@ protected:
 	int o1_drawSceneAnimShape(EMCState *script);
 	int o1_runNPCScript(EMCState *script);
 	int o1_setSpecialExitList(EMCState *script);
-	int o1_blockInWalkableRegion(EMCState *script);
-	int o1_blockOutWalkableRegion(EMCState *script);
 	int o1_walkPlayerToPoint(EMCState *script);
 	int o1_dropItemInScene(EMCState *script);
 	int o1_drawAnimShapeIntoScene(EMCState *script);
@@ -670,7 +668,6 @@ protected:
 	int o1_mouseIsPointer(EMCState *script);
 	int o1_runSceneAnimUntilDone(EMCState *script);
 	int o1_fadeSpecialPalette(EMCState *script);
-	int o1_playSoundEffect(EMCState *script);
 	int o1_phaseInSameScene(EMCState *script);
 	int o1_setScenePhasingFlag(EMCState *script);
 	int o1_resetScenePhasingFlag(EMCState *script);
@@ -723,7 +720,7 @@ protected:
 	int o1_mobileCharacterInScene(EMCState *script);
 	int o1_hideMobileCharacter(EMCState *script);
 	int o1_unhideMobileCharacter(EMCState *script);
-	int o1_setCharactersLocation(EMCState *script);
+	int o1_setCharacterLocation(EMCState *script);
 	int o1_walkCharacterToPoint(EMCState *script);
 	int o1_specialEventDisplayBrynnsNote(EMCState *script);
 	int o1_specialEventRemoveBrynnsNote(EMCState *script);
@@ -732,8 +729,8 @@ protected:
 	int o1_preserveAllObjectBackgrounds(EMCState *script);
 	int o1_updateSceneAnimations(EMCState *script);
 	int o1_sceneAnimationActive(EMCState *script);
-	int o1_setCharactersMovementDelay(EMCState *script);
-	int o1_getCharactersFacing(EMCState *script);
+	int o1_setCharacterMovementDelay(EMCState *script);
+	int o1_getCharacterFacing(EMCState *script);
 	int o1_bkgdScrollSceneAndMasksRight(EMCState *script);
 	int o1_dispelMagicAnimation(EMCState *script);
 	int o1_findBrightestFireberry(EMCState *script);
@@ -742,7 +739,7 @@ protected:
 	int o1_drinkPotionAnimation(EMCState *script);
 	int o1_makeAmuletAppear(EMCState *script);
 	int o1_drawItemShapeIntoScene(EMCState *script);
-	int o1_setCharactersCurrentFrame(EMCState *script);
+	int o1_setCharacterCurrentFrame(EMCState *script);
 	int o1_waitForConfirmationMouseClick(EMCState *script);
 	int o1_pageFlip(EMCState *script);
 	int o1_setSceneFile(EMCState *script);
@@ -755,7 +752,7 @@ protected:
 	int o1_setSceneAnimCurrXY(EMCState *script);
 	int o1_poisonBrandonAndRemaps(EMCState *script);
 	int o1_fillFlaskWithWater(EMCState *script);
-	int o1_getCharactersMovementDelay(EMCState *script);
+	int o1_getCharacterMovementDelay(EMCState *script);
 	int o1_getBirthstoneGem(EMCState *script);
 	int o1_queryBrandonStatusBit(EMCState *script);
 	int o1_playFluteAnimation(EMCState *script);
@@ -794,7 +791,6 @@ protected:
 	int o1_pauseMusicSeconds(EMCState *script);
 	int o1_resetMaskRegion(EMCState *script);
 	int o1_setPaletteChangeFlag(EMCState *script);
-	int o1_fillRect(EMCState *script);
 	int o1_dummy(EMCState *script);
 	int o1_vocUnload(EMCState *script);
 	int o1_vocLoad(EMCState *script);

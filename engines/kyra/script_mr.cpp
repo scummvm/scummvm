@@ -811,8 +811,8 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	return selection;
 }
 
-int KyraEngine_MR::o3_blockOutRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+int KyraEngine_MR::o3_blockOutWalkableRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_blockOutWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	const int x1 = stackPos(0);
 	int y1 = stackPos(1);
 	const int x2 = stackPos(2);
@@ -1266,7 +1266,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_getScore);
 	Opcode(o3_daggerWarning);
 	// 0x5c
-	Opcode(o3_blockOutRegion);
+	Opcode(o3_blockOutWalkableRegion);
 	Opcode(o3_dummy);
 	Opcode(o3_showSceneStringsMessage);
 	OpcodeUnImpl();

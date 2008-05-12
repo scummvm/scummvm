@@ -709,7 +709,6 @@ protected:
 	int o2_wipeDownMouseItem(EMCState *script);
 	int o2_getElapsedSecs(EMCState *script);
 	int o2_getTimerDelay(EMCState *script);
-	//int o2_playSoundEffect(EMCState *script);
 	int o2_delaySecs(EMCState *script);
 	int o2_setTimerDelay(EMCState *script);
 	int o2_setScaleTableItem(EMCState *script);
@@ -736,17 +735,13 @@ protected:
 	int o2_setLayerFlag(EMCState *script);
 	int o2_setZanthiaPos(EMCState *script);
 	int o2_loadMusicTrack(EMCState *script);
-	int o2_playSoundEffect(EMCState *script);
 	int o2_setSceneAnimPos(EMCState *script);
-	int o2_blockInRegion(EMCState *script);
-	int o2_blockOutRegion(EMCState *script);
 	int o2_setCauldronState(EMCState *script);
 	int o2_showItemString(EMCState *script);
 	int o2_isAnySoundPlaying(EMCState *script);
 	int o2_setDrawNoShapeFlag(EMCState *script);
 	int o2_setRunFlag(EMCState *script);
 	int o2_showLetter(EMCState *script);
-	int o2_fillRect(EMCState *script);
 	int o2_playFireflyScore(EMCState *script);
 	int o2_encodeShape(EMCState *script);
 	int o2_defineSceneAnim(EMCState *script);

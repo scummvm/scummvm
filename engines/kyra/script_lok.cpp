@@ -107,18 +107,6 @@ int KyraEngine_LoK::o1_setSpecialExitList(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_blockInWalkableRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_blockInWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
-	return 0;
-}
-
-int KyraEngine_LoK::o1_blockOutWalkableRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_blockOutWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
-	return 0;
-}
-
 int KyraEngine_LoK::o1_walkPlayerToPoint(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_walkPlayerToPoint(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
@@ -253,12 +241,6 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 		_screen->fadeSpecialPalette(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	}
-	return 0;
-}
-
-int KyraEngine_LoK::o1_playSoundEffect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
-	snd_playSoundEffect(stackPos(0));
 	return 0;
 }
 
@@ -940,8 +922,8 @@ int KyraEngine_LoK::o1_unhideMobileCharacter(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_setCharactersLocation(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharactersLocation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_LoK::o1_setCharacterLocation(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharacterLocation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	Character *ch = &_characterList[stackPos(0)];
 	Animator_LoK::AnimObject *animObj = &_animator->actors()[stackPos(0)];
 	int newScene = stackPos(1);
@@ -1112,14 +1094,14 @@ int KyraEngine_LoK::o1_sceneAnimationActive(EMCState *script) {
 	return _sprites->_anims[stackPos(0)].play;
 }
 
-int KyraEngine_LoK::o1_setCharactersMovementDelay(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharactersMovementDelay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_LoK::o1_setCharacterMovementDelay(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharacterMovementDelay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_timer->setDelay(stackPos(0)+5, stackPos(1));
 	return 0;
 }
 
-int KyraEngine_LoK::o1_getCharactersFacing(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharactersFacing(%p) (%d)", (const void *)script, stackPos(0));
+int KyraEngine_LoK::o1_getCharacterFacing(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharacterFacing(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].facing;
 }
 
@@ -1298,8 +1280,8 @@ int KyraEngine_LoK::o1_drawItemShapeIntoScene(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_setCharactersCurrentFrame(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharactersCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_LoK::o1_setCharacterCurrentFrame(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharacterCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_characterList[stackPos(0)].currentAnimFrame = stackPos(1);
 	return 0;
 }
@@ -1399,8 +1381,8 @@ int KyraEngine_LoK::o1_fillFlaskWithWater(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_getCharactersMovementDelay(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharactersMovementDelay(%p) (%d)", (const void *)script, stackPos(0));
+int KyraEngine_LoK::o1_getCharacterMovementDelay(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharacterMovementDelay(%p) (%d)", (const void *)script, stackPos(0));
 	return _timer->getDelay(stackPos(0)+5);
 }
 
@@ -1724,15 +1706,6 @@ int KyraEngine_LoK::o1_setPaletteChangeFlag(EMCState *script) {
 	return _paletteChanged;
 }
 
-int KyraEngine_LoK::o1_fillRect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fillRect(%p) (%d, %d, %d, %d, %d, 0x%X)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	int videoPageBackup = _screen->_curPage;
-	_screen->_curPage = stackPos(0);
-	_screen->fillRect(stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	_screen->_curPage = videoPageBackup;
-	return 0;
-}
-
 int KyraEngine_LoK::o1_vocUnload(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_vocUnload(%p) ()", (const void *)script);
 	// this should unload all voc files (not needed)
@@ -1860,7 +1833,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_hideMobileCharacter);
 	Opcode(o1_unhideMobileCharacter);
 	// 0x50
-	Opcode(o1_setCharactersLocation);
+	Opcode(o1_setCharacterLocation);
 	Opcode(o1_walkCharacterToPoint);
 	Opcode(o1_specialEventDisplayBrynnsNote);
 	Opcode(o1_specialEventRemoveBrynnsNote);
@@ -1871,8 +1844,8 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_updateSceneAnimations);
 	// 0x58
 	Opcode(o1_sceneAnimationActive);
-	Opcode(o1_setCharactersMovementDelay);
-	Opcode(o1_getCharactersFacing);
+	Opcode(o1_setCharacterMovementDelay);
+	Opcode(o1_getCharacterFacing);
 	Opcode(o1_bkgdScrollSceneAndMasksRight);
 	// 0x5c
 	Opcode(o1_dispelMagicAnimation);
@@ -1883,7 +1856,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_drinkPotionAnimation);
 	Opcode(o1_makeAmuletAppear);
 	Opcode(o1_drawItemShapeIntoScene);
-	Opcode(o1_setCharactersCurrentFrame);
+	Opcode(o1_setCharacterCurrentFrame);
 	// 0x64
 	Opcode(o1_waitForConfirmationMouseClick);
 	Opcode(o1_pageFlip);
@@ -1900,7 +1873,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_poisonBrandonAndRemaps);
 	Opcode(o1_fillFlaskWithWater);
 	// 0x70
-	Opcode(o1_getCharactersMovementDelay);
+	Opcode(o1_getCharacterMovementDelay);
 	Opcode(o1_getBirthstoneGem);
 	Opcode(o1_queryBrandonStatusBit);
 	Opcode(o1_playFluteAnimation);

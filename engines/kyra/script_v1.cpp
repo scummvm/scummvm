@@ -96,5 +96,29 @@ int KyraEngine_v1::o1_playWanderScoreViaMap(EMCState *script) {
 	return 0;
 }
 
+int	KyraEngine_v1::o1_fillRect(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	screen()->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v1::o1_blockInWalkableRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_blockInWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	screen()->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	return 0;
+}
+
+int KyraEngine_v1::o1_blockOutWalkableRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_blockOutWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	screen()->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	return 0;
+}
+
+int KyraEngine_v1::o1_playSoundEffect(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	snd_playSoundEffect(stackPos(0));
+	return 0;
+}
+
 } // end of namespace Kyra
 
