@@ -135,14 +135,14 @@ int MadeEngine::init() {
 
 int16 MadeEngine::getTimer(int16 timerNum) {
 	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
-		return (_system->getMillis() - _timers[timerNum - 1]) / 60;
+		return (_system->getMillis() - _timers[timerNum - 1]) / kTimerResolution;
 	else
 		return 32000;
 }
 
 void MadeEngine::setTimer(int16 timerNum, int16 value) {
 	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
-		_timers[timerNum - 1] = value * 60;
+		_timers[timerNum - 1] = value * kTimerResolution;
 }
 
 void MadeEngine::resetTimer(int16 timerNum) {
