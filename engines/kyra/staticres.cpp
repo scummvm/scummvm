@@ -1679,19 +1679,15 @@ void GUI_HoF::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 0x17, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
 
-	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
 		GUI_V2_BUTTON(_menuButtons[i], 0x10+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickLoadSlot);
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickSaveSlot);
@@ -2082,19 +2078,15 @@ void GUI_MR::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 22, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 23, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
 
-	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
 		GUI_V2_BUTTON(_menuButtons[i], 0x0F+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickLoadSlot);
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickSaveSlot);
