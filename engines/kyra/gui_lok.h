@@ -31,59 +31,65 @@
 namespace Kyra {
 
 #define GUI_V1_BUTTON(button, a, b, c, d, e, f, g, h, i, j, k) \
-	button.nextButton = 0; \
-	button.index = a; \
-	button.unk6 = button.unk8 = 0; \
-	button.data0Val1 = b; \
-	button.data1Val1 = c; \
-	button.data2Val1 = d; \
-	button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
-	button.flags = e; \
-	button.dimTableIndex = f; \
-	button.x = g; \
-	button.y = h; \
-	button.width = i; \
-	button.height = j; \
-	button.flags2 = k; \
-	button.mouseWheel = 0
+	do { \
+		button.nextButton = 0; \
+		button.index = a; \
+		button.unk6 = button.unk8 = 0; \
+		button.data0Val1 = b; \
+		button.data1Val1 = c; \
+		button.data2Val1 = d; \
+		button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
+		button.flags = e; \
+		button.dimTableIndex = f; \
+		button.x = g; \
+		button.y = h; \
+		button.width = i; \
+		button.height = j; \
+		button.flags2 = k; \
+		button.mouseWheel = 0; \
+	} while (0)
 
 #define GUI_V1_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
-	menu.x = a; \
-	menu.y = b; \
-	menu.width = c; \
-	menu.height = d; \
-	menu.bkgdColor = e; \
-	menu.color1 = f; \
-	menu.color2 = g; \
-	menu.menuNameString = h; \
-	menu.textColor = i; \
-	menu.titleX = j; \
-	menu.titleY = k; \
-	menu.highlightedItem = l; \
-	menu.numberOfItems = m; \
-	menu.scrollUpButtonX = n; \
-	menu.scrollUpButtonY = o; \
-	menu.scrollDownButtonX = p; \
-	menu.scrollDownButtonY = q
+	do { \
+		menu.x = a; \
+		menu.y = b; \
+		menu.width = c; \
+		menu.height = d; \
+		menu.bkgdColor = e; \
+		menu.color1 = f; \
+		menu.color2 = g; \
+		menu.menuNameString = h; \
+		menu.textColor = i; \
+		menu.titleX = j; \
+		menu.titleY = k; \
+		menu.highlightedItem = l; \
+		menu.numberOfItems = m; \
+		menu.scrollUpButtonX = n; \
+		menu.scrollUpButtonY = o; \
+		menu.scrollDownButtonX = p; \
+		menu.scrollDownButtonY = q; \
+	} while (0)
 
 #define GUI_V1_MENU_ITEM(item, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v) \
-	item.enabled = a; \
-	item.itemString = d; \
-	item.x = e; \
-	item.y = g; \
-	item.width = h; \
-	item.height = i; \
-	item.textColor = j; \
-	item.highlightColor = k; \
-	item.titleX = l; \
-	item.bkgdColor = n; \
-	item.color1 = o; \
-	item.color2 = p; \
-	item.saveSlot = q; \
-	item.labelString = r; \
-	item.labelX = s; \
-	item.labelY = t; \
-	item.unk1F = v
+	do { \
+		item.enabled = a; \
+		item.itemString = d; \
+		item.x = e; \
+		item.y = g; \
+		item.width = h; \
+		item.height = i; \
+		item.textColor = j; \
+		item.highlightColor = k; \
+		item.titleX = l; \
+		item.bkgdColor = n; \
+		item.color1 = o; \
+		item.color2 = p; \
+		item.saveSlot = q; \
+		item.labelString = r; \
+		item.labelX = s; \
+		item.labelY = t; \
+		item.unk1F = v; \
+	} while (0)
 
 class KyraEngine_LoK;
 
