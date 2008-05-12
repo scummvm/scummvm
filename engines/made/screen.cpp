@@ -604,6 +604,7 @@ void Screen::show() {
 	
 	if (!_paletteLock)
 		setRGBPalette(_palette, 0, _paletteColorCount);
+
 	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
 	
 	
@@ -649,7 +650,7 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 	if (!_font)
 		return;
 
-	int height = _font->getHeight();
+	uint width = 8, height = _font->getHeight();
 	byte *charData = _font->getChar(c);
 	
 	if (!charData)
@@ -657,10 +658,10 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 
 	byte p;
 	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
-	
+
 	for (int16 yc = 0; yc < height; yc++) {
 		p = charData[yc];
-		for (int16 xc = 0; xc < 8; xc++) {
+		for (int16 xc = 0; xc < width; xc++) {
 			if (p & 0x80)
 				dest[xc] = color;
 			p <<= 1;
@@ -751,7 +752,7 @@ void Screen::printText(const char *text) {
 }
 
 void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
-	if (*text == 0 || x == 0 || y == 0)
+	if (*text == 0 || x < 0 || y < 0)
 		return;
 
 	int16 oldFontNum = _currentFontNum;
