@@ -87,7 +87,6 @@ protected:
 	// run
 	bool _runFlag;
 	bool _showOutro;
-	int8 _deathHandler;
 
 	virtual void update() = 0;
 	virtual void updateWithText() = 0;
@@ -396,8 +395,6 @@ protected:
 	int o2_delay(EMCState *script);
 	int o2_update(EMCState *script);
 	int o2_getShapeFlag1(EMCState *script);
-	int o2_playWanderScoreViaMap(EMCState *script);
-	int o2_setDeathHandler(EMCState *script);
 	int o2_waitForConfirmationClick(EMCState *script);
 	int o2_randomSceneChat(EMCState *script);
 	int o2_setDlgIndex(EMCState *script);

@@ -229,7 +229,6 @@ int KyraEngine_LoK::init() {
 	_brandonStatusBit = 0;
 	_brandonStatusBit0x02Flag = _brandonStatusBit0x20Flag = 10;
 	_brandonPosX = _brandonPosY = -1;
-	_deathHandler = 0xFF;
 	_poisonDeathCounter = 0;
 
 	memset(_itemTable, 0, sizeof(_itemTable));
@@ -409,7 +408,7 @@ void KyraEngine_LoK::mainLoop() {
 				break;
 		}
 
-		if (_deathHandler != 0xFF) {
+		if (_deathHandler != -1) {
 			snd_playWanderScoreViaMap(0, 1);
 			snd_playSoundEffect(49);
 			_screen->hideMouse();
@@ -417,7 +416,7 @@ void KyraEngine_LoK::mainLoop() {
 			removeHandItem();
 			_screen->showMouse();
 			_gui->buttonMenuCallback(0);
-			_deathHandler = 0xFF;
+			_deathHandler = -1;
 		}
 
 		if ((_brandonStatusBit & 2) && _brandonStatusBit0x02Flag)

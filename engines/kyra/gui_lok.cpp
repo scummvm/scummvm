@@ -423,7 +423,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 	*/
 
 	setGUILabels();
-	if (_vm->_currentCharacter->sceneId == 210 && _vm->_deathHandler == 0xFF) {
+	if (_vm->_currentCharacter->sceneId == 210 && _vm->_deathHandler == -1) {
 		_vm->snd_playSoundEffect(0x36);
 		return 0;
 	}

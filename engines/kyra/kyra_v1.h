@@ -199,6 +199,9 @@ protected:
 	uint16 _tickLength;
 	uint16 _gameSpeed;
 
+	// run
+	int8 _deathHandler;
+
 	// timer
 	virtual void setupTimers() = 0;
 
@@ -222,6 +225,8 @@ protected:
 	int o1_setHandItem(EMCState *script);
 	int o1_removeHandItem(EMCState *script);
 	int o1_getMouseState(EMCState *script);
+	int o1_setDeathHandler(EMCState *script);
+	int o1_playWanderScoreViaMap(EMCState *script);
 
 	// items
 	int _mouseState;

@@ -256,15 +256,9 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_playAdlibSound(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_playAdlibSound(%p) (%d)", (const void *)script, stackPos(0));
+int KyraEngine_LoK::o1_playSoundEffect(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
 	snd_playSoundEffect(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_LoK::o1_playAdlibScore(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_playAdlibScore(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -351,8 +345,8 @@ int KyraEngine_LoK::o1_pauseSeconds(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_getCharactersLocation(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharactersLocation(%p) (%d)", (const void *)script, stackPos(0));
+int KyraEngine_LoK::o1_getCharacterScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharacterScene(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].sceneId;
 }
 
@@ -648,8 +642,8 @@ int KyraEngine_LoK::o1_getCharacterY(EMCState *script) {
 	return _characterList[stackPos(0)].y1;
 }
 
-int KyraEngine_LoK::o1_changeCharactersFacing(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_changeCharactersFacing(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int KyraEngine_LoK::o1_setCharacterFacing(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharacterFacing(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	int character = stackPos(0);
 	int facing = stackPos(1);
 	int newAnimFrame = stackPos(2);
@@ -799,8 +793,8 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_LoK::o1_drawCharacterStanding(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_drawCharacterStanding(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+int KyraEngine_LoK::o1_refreshCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_refreshCharacter(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int character = stackPos(0);
 	int animFrame = stackPos(1);
 	int newFacing = stackPos(2);
@@ -1227,12 +1221,6 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 	}
 	const uint8 *palette = _specialPalettes[palIndex];
 	memcpy(_screen->getPalette(1) + 684, palette, 44);
-	return 0;
-}
-
-int KyraEngine_LoK::o1_setDeathHandlerFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setDeathHandlerFlag(%p) (%d)", (const void *)script, stackPos(0));
-	_deathHandler = stackPos(0);
 	return 0;
 }
 
@@ -1800,9 +1788,9 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_removeHandItem);
 	Opcode(o1_runSceneAnimUntilDone);
 	Opcode(o1_fadeSpecialPalette);
-	Opcode(o1_playAdlibSound);
+	Opcode(o1_playSoundEffect);
 	// 0x18
-	Opcode(o1_playAdlibScore);
+	Opcode(o1_playWanderScoreViaMap);
 	Opcode(o1_phaseInSameScene);
 	Opcode(o1_setScenePhasingFlag);
 	Opcode(o1_resetScenePhasingFlag);
@@ -1814,7 +1802,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	// 0x20
 	Opcode(o1_setBrandonStatusBit);
 	Opcode(o1_pauseSeconds);
-	Opcode(o1_getCharactersLocation);
+	Opcode(o1_getCharacterScene);
 	Opcode(o1_runNPCSubscript);
 	// 0x24
 	Opcode(o1_magicOutMouseItem);
@@ -1844,7 +1832,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	// 0x38
 	Opcode(o1_getCharacterX);
 	Opcode(o1_getCharacterY);
-	Opcode(o1_changeCharactersFacing);
+	Opcode(o1_setCharacterFacing);
 	Opcode(o1_copyWSARegion);
 	// 0x3c
 	Opcode(o1_printText);
@@ -1853,7 +1841,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_displayWSAFrameOnHidPage);
 	// 0x40
 	Opcode(o1_displayWSASequentialFrames);
-	Opcode(o1_drawCharacterStanding);
+	Opcode(o1_refreshCharacter);
 	Opcode(o1_internalAnimOff);
 	Opcode(o1_changeCharactersXAndY);
 	// 0x44
@@ -1890,7 +1878,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_dispelMagicAnimation);
 	Opcode(o1_findBrightestFireberry);
 	Opcode(o1_setFireberryGlowPalette);
-	Opcode(o1_setDeathHandlerFlag);
+	Opcode(o1_setDeathHandler);
 	// 0x60
 	Opcode(o1_drinkPotionAnimation);
 	Opcode(o1_makeAmuletAppear);

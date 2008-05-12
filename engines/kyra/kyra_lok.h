@@ -435,7 +435,6 @@ protected:
 	uint8 _brandonStatusBit0x02Flag;
 	uint8 _brandonStatusBit0x20Flag;
 	uint8 _brandonPoisonFlagsGFX[256];
-	uint8 _deathHandler;
 	int16 _brandonInvFlag;
 	uint8 _poisonDeathCounter;
 	int _brandonPosX;
@@ -671,8 +670,7 @@ protected:
 	int o1_mouseIsPointer(EMCState *script);
 	int o1_runSceneAnimUntilDone(EMCState *script);
 	int o1_fadeSpecialPalette(EMCState *script);
-	int o1_playAdlibSound(EMCState *script);
-	int o1_playAdlibScore(EMCState *script);
+	int o1_playSoundEffect(EMCState *script);
 	int o1_phaseInSameScene(EMCState *script);
 	int o1_setScenePhasingFlag(EMCState *script);
 	int o1_resetScenePhasingFlag(EMCState *script);
@@ -682,7 +680,7 @@ protected:
 	int o1_placeItemInGenericMapScene(EMCState *script);
 	int o1_setBrandonStatusBit(EMCState *script);
 	int o1_pauseSeconds(EMCState *script);
-	int o1_getCharactersLocation(EMCState *script);
+	int o1_getCharacterScene(EMCState *script);
 	int o1_runNPCSubscript(EMCState *script);
 	int o1_magicOutMouseItem(EMCState *script);
 	int o1_internalAnimOn(EMCState *script);
@@ -704,13 +702,13 @@ protected:
 	int o1_restoreCustomPrintBackground(EMCState *script);
 	int o1_getCharacterX(EMCState *script);
 	int o1_getCharacterY(EMCState *script);
-	int o1_changeCharactersFacing(EMCState *script);
+	int o1_setCharacterFacing(EMCState *script);
 	int o1_copyWSARegion(EMCState *script);
 	int o1_printText(EMCState *script);
 	int o1_loadSoundFile(EMCState *script);
 	int o1_displayWSAFrameOnHidPage(EMCState *script);
 	int o1_displayWSASequentialFrames(EMCState *script);
-	int o1_drawCharacterStanding(EMCState *script);
+	int o1_refreshCharacter(EMCState *script);
 	int o1_internalAnimOff(EMCState *script);
 	int o1_changeCharactersXAndY(EMCState *script);
 	int o1_clearSceneAnimatorBeacon(EMCState *script);

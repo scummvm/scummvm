@@ -84,5 +84,17 @@ int KyraEngine_v1::o1_getMouseState(EMCState *script) {
 	return _mouseState;
 }
 
+int KyraEngine_v1::o1_setDeathHandler(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_setDeathHandler(%p) (%d)", (const void *)script, stackPos(0));
+	_deathHandler = stackPos(0);
+	return 0;
+}
+
+int KyraEngine_v1::o1_playWanderScoreViaMap(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
+	return 0;
+}
+
 } // end of namespace Kyra
 

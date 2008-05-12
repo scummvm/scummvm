@@ -1622,7 +1622,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setZanthiaPos);
 	Opcode(o2_loadMusicTrack);
 	// 0x58
-	Opcode(o2_playWanderScoreViaMap);
+	Opcode(o1_playWanderScoreViaMap);
 	Opcode(o2_playSoundEffect);
 	Opcode(o2_setSceneAnimPos);
 	Opcode(o2_blockInRegion);
@@ -1634,7 +1634,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x60
 	Opcode(o1_getRand);
 	Opcode(o2_isAnySoundPlaying);
-	Opcode(o2_setDeathHandler);
+	Opcode(o1_setDeathHandler);
 	Opcode(o2_setDrawNoShapeFlag);
 	// 0x64
 	Opcode(o2_setRunFlag);

@@ -156,18 +156,6 @@ int KyraEngine_v2::o2_getShapeFlag1(EMCState *script) {
 	return screen()->getShapeFlag1(stackPos(0), stackPos(1));
 }
 
-int KyraEngine_v2::o2_playWanderScoreViaMap(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_v2::o2_setDeathHandler(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setDeathHandler(%p) (%d)", (const void *)script, stackPos(0));
-	_deathHandler = stackPos(0);
-	return 0;
-}
-
 int KyraEngine_v2::o2_waitForConfirmationClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
 	resetSkipFlag();

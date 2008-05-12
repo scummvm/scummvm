@@ -1261,7 +1261,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_setMalcolmPos);
 	Opcode(o3_stopMusic);
 	// 0x58
-	Opcode(o2_playWanderScoreViaMap);
+	Opcode(o1_playWanderScoreViaMap);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_getScore);
 	Opcode(o3_daggerWarning);
@@ -1273,7 +1273,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x60
 	Opcode(o1_getRand);
 	Opcode(o3_dummy);
-	Opcode(o2_setDeathHandler);
+	Opcode(o1_setDeathHandler);
 	Opcode(o3_showGoodConscience);
 	// 0x64
 	Opcode(o3_goodConscienceChat);
