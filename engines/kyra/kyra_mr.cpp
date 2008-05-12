@@ -148,6 +148,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_album, 0, sizeof(_album));
 	_configHelium = false;
 	_fadeOutMusicChannel = -1;
+	memset(_scaleTable, 0, sizeof(_scaleTable));
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
