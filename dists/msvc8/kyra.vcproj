@@ -249,14 +249,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\kyra.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\kyra\kyra_hof.cpp"
 			>
 		</File>
@@ -278,6 +270,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\kyra_mr.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra_v1.h"
 			>
 		</File>
 		<File
@@ -313,10 +313,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\kyra\scene_hof.cpp"
 			>
 		</File>
@@ -326,6 +322,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\scene_mr.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\scene_v1.cpp"
 			>
 		</File>
 		<File
