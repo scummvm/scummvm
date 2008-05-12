@@ -1226,12 +1226,10 @@ void KyraEngine_HoF::initStaticResource() {
 		tmpSndLst[i] = new char[len + 1];
 		tmpSndLst[i][0] = 0;
 
-		if (tlkfiles && strlen(seqSoundList[i])) {
+		if (tlkfiles && len > 1) {
 			for (int ii = 0; ii < tmpSize; ii++) {
-				if (strlen(seqSoundList[i])) {
-					if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
+				if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
 						strcpy(tmpSndLst[i], tlkfiles[ii]);
-				}
 			}
 		}
 
