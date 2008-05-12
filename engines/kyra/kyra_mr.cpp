@@ -479,6 +479,7 @@ void KyraEngine_MR::snd_playSoundEffect(int item, int volume) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::snd_playSoundEffect(%d, %d)", item, volume);
 	if (_sfxFileMap[item*2+0] != 0xFF) {
 		char filename[16];
+		assert(_sfxFileMap[item*2+0] < _sfxFileListSize);
 		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
 		uint8 priority = _sfxFileMap[item*2+1];
 
