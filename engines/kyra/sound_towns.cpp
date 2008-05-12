@@ -1109,8 +1109,8 @@ SoundTowns::~SoundTowns() {
 bool SoundTowns::init() {
 	_vm->checkCD();
 	int unused = 0;
-	_sfxWDTable = _vm->staticres()->loadRawData(kKyra1TownsSFXwdTable, unused);
-	_sfxBTTable = _vm->staticres()->loadRawData(kKyra1TownsSFXbtTable, unused);
+	_sfxWDTable = _vm->staticres()->loadRawData(k1TownsSFXwdTable, unused);
+	_sfxBTTable = _vm->staticres()->loadRawData(k1TownsSFXbtTable, unused);
 
 	return loadInstruments();
 }

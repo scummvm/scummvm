@@ -155,85 +155,85 @@ bool StaticResource::init() {
 	// Kyrandia 1 Filenames
 	static const FilenameTable kyra1StaticRes[] = {
 		// INTRO / OUTRO sequences
-		{ kForestSeq, kRawData, "FOREST.SEQ" },
-		{ kKallakWritingSeq, kRawData, "KALLAK-WRITING.SEQ" },
-		{ kKyrandiaLogoSeq, kRawData, "KYRANDIA-LOGO.SEQ" },
-		{ kKallakMalcolmSeq, kRawData, "KALLAK-MALCOLM.SEQ" },
-		{ kMalcolmTreeSeq, kRawData, "MALCOLM-TREE.SEQ" },
-		{ kWestwoodLogoSeq, kRawData, "WESTWOOD-LOGO.SEQ" },
-		{ kDemo1Seq, kRawData, "DEMO1.SEQ" },
-		{ kDemo2Seq, kRawData, "DEMO2.SEQ" },
-		{ kDemo3Seq, kRawData, "DEMO3.SEQ" },
-		{ kDemo4Seq, kRawData, "DEMO4.SEQ" },
-		{ kOutroReunionSeq, kRawData, "REUNION.SEQ" },
+		{ k1ForestSeq, kRawData, "FOREST.SEQ" },
+		{ k1KallakWritingSeq, kRawData, "KALLAK-WRITING.SEQ" },
+		{ k1KyrandiaLogoSeq, kRawData, "KYRANDIA-LOGO.SEQ" },
+		{ k1KallakMalcolmSeq, kRawData, "KALLAK-MALCOLM.SEQ" },
+		{ k1MalcolmTreeSeq, kRawData, "MALCOLM-TREE.SEQ" },
+		{ k1WestwoodLogoSeq, kRawData, "WESTWOOD-LOGO.SEQ" },
+		{ k1Demo1Seq, kRawData, "DEMO1.SEQ" },
+		{ k1Demo2Seq, kRawData, "DEMO2.SEQ" },
+		{ k1Demo3Seq, kRawData, "DEMO3.SEQ" },
+		{ k1Demo4Seq, kRawData, "DEMO4.SEQ" },
+		{ k1OutroReunionSeq, kRawData, "REUNION.SEQ" },
 
 		// INTRO / OUTRO strings
-		{ kIntroCPSStrings, kStringList, "INTRO-CPS.TXT" },
-		{ kIntroCOLStrings, kStringList, "INTRO-COL.TXT" },
-		{ kIntroWSAStrings, kStringList, "INTRO-WSA.TXT" },
-		{ kIntroStrings, kLanguageList, "INTRO-STRINGS." },
-		{ kOutroHomeString, kLanguageList, "HOME." },
+		{ k1IntroCPSStrings, kStringList, "INTRO-CPS.TXT" },
+		{ k1IntroCOLStrings, kStringList, "INTRO-COL.TXT" },
+		{ k1IntroWSAStrings, kStringList, "INTRO-WSA.TXT" },
+		{ k1IntroStrings, kLanguageList, "INTRO-STRINGS." },
+		{ k1OutroHomeString, kLanguageList, "HOME." },
 
 		// INGAME strings
-		{ kItemNames, kLanguageList, "ITEMLIST." },
-		{ kTakenStrings, kLanguageList, "TAKEN." },
-		{ kPlacedStrings, kLanguageList, "PLACED." },
-		{ kDroppedStrings, kLanguageList, "DROPPED." },
-		{ kNoDropStrings, kLanguageList, "NODROP." },
-		{ kPutDownString, kLanguageList, "PUTDOWN." },
-		{ kWaitAmuletString, kLanguageList, "WAITAMUL." },
-		{ kBlackJewelString, kLanguageList, "BLACKJEWEL." },
-		{ kPoisonGoneString, kLanguageList, "POISONGONE." },
-		{ kHealingTipString, kLanguageList, "HEALINGTIP." },
-		{ kThePoisonStrings, kLanguageList, "THEPOISON." },
-		{ kFluteStrings, kLanguageList, "FLUTE." },
-		{ kWispJewelStrings, kLanguageList, "WISPJEWEL." },
-		{ kMagicJewelStrings, kLanguageList, "MAGICJEWEL." },
-		{ kFlaskFullString, kLanguageList, "FLASKFULL." },
-		{ kFullFlaskString, kLanguageList, "FULLFLASK." },
-		{ kVeryCleverString, kLanguageList, "VERYCLEVER." },
-		{ kNewGameString, kLanguageList, "NEWGAME." },
+		{ k1ItemNames, kLanguageList, "ITEMLIST." },
+		{ k1TakenStrings, kLanguageList, "TAKEN." },
+		{ k1PlacedStrings, kLanguageList, "PLACED." },
+		{ k1DroppedStrings, kLanguageList, "DROPPED." },
+		{ k1NoDropStrings, kLanguageList, "NODROP." },
+		{ k1PutDownString, kLanguageList, "PUTDOWN." },
+		{ k1WaitAmuletString, kLanguageList, "WAITAMUL." },
+		{ k1BlackJewelString, kLanguageList, "BLACKJEWEL." },
+		{ k1PoisonGoneString, kLanguageList, "POISONGONE." },
+		{ k1HealingTipString, kLanguageList, "HEALINGTIP." },
+		{ k1ThePoisonStrings, kLanguageList, "THEPOISON." },
+		{ k1FluteStrings, kLanguageList, "FLUTE." },
+		{ k1WispJewelStrings, kLanguageList, "WISPJEWEL." },
+		{ k1MagicJewelStrings, kLanguageList, "MAGICJEWEL." },
+		{ k1FlaskFullString, kLanguageList, "FLASKFULL." },
+		{ k1FullFlaskString, kLanguageList, "FULLFLASK." },
+		{ k1VeryCleverString, kLanguageList, "VERYCLEVER." },
+		{ k1NewGameString, kLanguageList, "NEWGAME." },
 
 		// GUI strings table
-		{ kGUIStrings, kLanguageList, "GUISTRINGS." },
-		{ kConfigStrings, kLanguageList, "CONFIGSTRINGS." },
+		{ k1GUIStrings, kLanguageList, "GUISTRINGS." },
+		{ k1ConfigStrings, kLanguageList, "CONFIGSTRINGS." },
 
 		// ROOM table/filenames
-		{ Kyra::kRoomList, StaticResource::kRoomList, "ROOM-TABLE.ROOM" },
-		{ kRoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
+		{ k1RoomList, kRoomList, "ROOM-TABLE.ROOM" },
+		{ k1RoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
 
 		// SHAPE tables
-		{ kDefaultShapes, kShapeList, "SHAPES-DEFAULT.SHP" },
-		{ kHealing1Shapes, kShapeList, "HEALING.SHP" },
-		{ kHealing2Shapes, kShapeList, "HEALING2.SHP" },
-		{ kPoisonDeathShapes, kShapeList, "POISONDEATH.SHP" },
-		{ kFluteShapes, kShapeList, "FLUTE.SHP" },
-		{ kWinter1Shapes, kShapeList, "WINTER1.SHP" },
-		{ kWinter2Shapes, kShapeList, "WINTER2.SHP" },
-		{ kWinter3Shapes, kShapeList, "WINTER3.SHP" },
-		{ kDrinkShapes, kShapeList, "DRINK.SHP" },
-		{ kWispShapes, kShapeList, "WISP.SHP" },
-		{ kMagicAnimShapes, kShapeList, "MAGICANIM.SHP" },
-		{ kBranStoneShapes, kShapeList, "BRANSTONE.SHP" },
+		{ k1DefaultShapes, kShapeList, "SHAPES-DEFAULT.SHP" },
+		{ k1Healing1Shapes, kShapeList, "HEALING.SHP" },
+		{ k1Healing2Shapes, kShapeList, "HEALING2.SHP" },
+		{ k1PoisonDeathShapes, kShapeList, "POISONDEATH.SHP" },
+		{ k1FluteShapes, kShapeList, "FLUTE.SHP" },
+		{ k1Winter1Shapes, kShapeList, "WINTER1.SHP" },
+		{ k1Winter2Shapes, kShapeList, "WINTER2.SHP" },
+		{ k1Winter3Shapes, kShapeList, "WINTER3.SHP" },
+		{ k1DrinkShapes, kShapeList, "DRINK.SHP" },
+		{ k1WispShapes, kShapeList, "WISP.SHP" },
+		{ k1MagicAnimShapes, kShapeList, "MAGICANIM.SHP" },
+		{ k1BranStoneShapes, kShapeList, "BRANSTONE.SHP" },
 
 		// IMAGE filename table
-		{ kCharacterImageFilenames, kStringList, "CHAR-IMAGE.TXT" },
+		{ k1CharacterImageFilenames, kStringList, "CHAR-IMAGE.TXT" },
 
 		// AMULET anim
-		{ kAmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
+		{ k1AmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
 
 		// PALETTE table
-		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
+		{ k1PaletteList, kPaletteTable, "1 33 PALTABLE" },
 
 		// AUDIO files
-		{ kAudioTracks, kStringList, "TRACKS.TXT" },
-		{ kAudioTracksIntro, kStringList, "TRACKSINT.TXT" },
+		{ k1AudioTracks, kStringList, "TRACKS.TXT" },
+		{ k1AudioTracksIntro, kStringList, "TRACKSINT.TXT" },
 
 		// FM-TOWNS specific
-		{ kKyra1TownsSFXwdTable, kRawData, "SFXWDTABLE" },
-		{ kKyra1TownsSFXbtTable, kRawData, "SFXBTTABLE" },
-		{ kKyra1TownsCDATable, kRawData, "CDATABLE" },
-		{ kCreditsStrings, kRawData, "CREDITS" },
+		{ k1TownsSFXwdTable, kRawData, "SFXWDTABLE" },
+		{ k1TownsSFXbtTable, kRawData, "SFXBTTABLE" },
+		{ k1TownsCDATable, kRawData, "CDATABLE" },
+		{ k1CreditsStrings, kRawData, "CREDITS" },
 
 		{ 0, 0, 0 }
 	};
@@ -945,74 +945,74 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 
 void KyraEngine_LoK::initStaticResource() {
 	int temp = 0;
-	_seq_Forest = _staticres->loadRawData(kForestSeq, temp);
-	_seq_KallakWriting = _staticres->loadRawData(kKallakWritingSeq, temp);
-	_seq_KyrandiaLogo = _staticres->loadRawData(kKyrandiaLogoSeq, temp);
-	_seq_KallakMalcolm = _staticres->loadRawData(kKallakMalcolmSeq, temp);
-	_seq_MalcolmTree = _staticres->loadRawData(kMalcolmTreeSeq, temp);
-	_seq_WestwoodLogo = _staticres->loadRawData(kWestwoodLogoSeq, temp);
-	_seq_Demo1 = _staticres->loadRawData(kDemo1Seq, temp);
-	_seq_Demo2 = _staticres->loadRawData(kDemo2Seq, temp);
-	_seq_Demo3 = _staticres->loadRawData(kDemo3Seq, temp);
-	_seq_Demo4 = _staticres->loadRawData(kDemo4Seq, temp);
-	_seq_Reunion = _staticres->loadRawData(kOutroReunionSeq, temp);
+	_seq_Forest = _staticres->loadRawData(k1ForestSeq, temp);
+	_seq_KallakWriting = _staticres->loadRawData(k1KallakWritingSeq, temp);
+	_seq_KyrandiaLogo = _staticres->loadRawData(k1KyrandiaLogoSeq, temp);
+	_seq_KallakMalcolm = _staticres->loadRawData(k1KallakMalcolmSeq, temp);
+	_seq_MalcolmTree = _staticres->loadRawData(k1MalcolmTreeSeq, temp);
+	_seq_WestwoodLogo = _staticres->loadRawData(k1WestwoodLogoSeq, temp);
+	_seq_Demo1 = _staticres->loadRawData(k1Demo1Seq, temp);
+	_seq_Demo2 = _staticres->loadRawData(k1Demo2Seq, temp);
+	_seq_Demo3 = _staticres->loadRawData(k1Demo3Seq, temp);
+	_seq_Demo4 = _staticres->loadRawData(k1Demo4Seq, temp);
+	_seq_Reunion = _staticres->loadRawData(k1OutroReunionSeq, temp);
 
-	_seq_WSATable = _staticres->loadStrings(kIntroWSAStrings, _seq_WSATable_Size);
-	_seq_CPSTable = _staticres->loadStrings(kIntroCPSStrings, _seq_CPSTable_Size);
-	_seq_COLTable = _staticres->loadStrings(kIntroCOLStrings, _seq_COLTable_Size);
-	_seq_textsTable = _staticres->loadStrings(kIntroStrings, _seq_textsTable_Size);
+	_seq_WSATable = _staticres->loadStrings(k1IntroWSAStrings, _seq_WSATable_Size);
+	_seq_CPSTable = _staticres->loadStrings(k1IntroCPSStrings, _seq_CPSTable_Size);
+	_seq_COLTable = _staticres->loadStrings(k1IntroCOLStrings, _seq_COLTable_Size);
+	_seq_textsTable = _staticres->loadStrings(k1IntroStrings, _seq_textsTable_Size);
 
-	_itemList = _staticres->loadStrings(kItemNames, _itemList_Size);
-	_takenList = _staticres->loadStrings(kTakenStrings, _takenList_Size);
-	_placedList = _staticres->loadStrings(kPlacedStrings, _placedList_Size);
-	_droppedList = _staticres->loadStrings(kDroppedStrings, _droppedList_Size);
-	_noDropList = _staticres->loadStrings(kNoDropStrings, _noDropList_Size);
-	_putDownFirst = _staticres->loadStrings(kPutDownString, _putDownFirst_Size);
-	_waitForAmulet = _staticres->loadStrings(kWaitAmuletString, _waitForAmulet_Size);
-	_blackJewel = _staticres->loadStrings(kBlackJewelString, _blackJewel_Size);
-	_poisonGone = _staticres->loadStrings(kPoisonGoneString, _poisonGone_Size);
-	_healingTip = _staticres->loadStrings(kHealingTipString, _healingTip_Size);
-	_thePoison = _staticres->loadStrings(kThePoisonStrings, _thePoison_Size);
-	_fluteString = _staticres->loadStrings(kFluteStrings, _fluteString_Size);
-	_wispJewelStrings = _staticres->loadStrings(kWispJewelStrings, _wispJewelStrings_Size);
-	_magicJewelString = _staticres->loadStrings(kMagicJewelStrings, _magicJewelString_Size);
-	_flaskFull = _staticres->loadStrings(kFlaskFullString, _flaskFull_Size);
-	_fullFlask = _staticres->loadStrings(kFullFlaskString, _fullFlask_Size);
-	_veryClever = _staticres->loadStrings(kVeryCleverString, _veryClever_Size);
-	_homeString = _staticres->loadStrings(kOutroHomeString, _homeString_Size);
-	_newGameString = _staticres->loadStrings(kNewGameString, _newGameString_Size);
+	_itemList = _staticres->loadStrings(k1ItemNames, _itemList_Size);
+	_takenList = _staticres->loadStrings(k1TakenStrings, _takenList_Size);
+	_placedList = _staticres->loadStrings(k1PlacedStrings, _placedList_Size);
+	_droppedList = _staticres->loadStrings(k1DroppedStrings, _droppedList_Size);
+	_noDropList = _staticres->loadStrings(k1NoDropStrings, _noDropList_Size);
+	_putDownFirst = _staticres->loadStrings(k1PutDownString, _putDownFirst_Size);
+	_waitForAmulet = _staticres->loadStrings(k1WaitAmuletString, _waitForAmulet_Size);
+	_blackJewel = _staticres->loadStrings(k1BlackJewelString, _blackJewel_Size);
+	_poisonGone = _staticres->loadStrings(k1PoisonGoneString, _poisonGone_Size);
+	_healingTip = _staticres->loadStrings(k1HealingTipString, _healingTip_Size);
+	_thePoison = _staticres->loadStrings(k1ThePoisonStrings, _thePoison_Size);
+	_fluteString = _staticres->loadStrings(k1FluteStrings, _fluteString_Size);
+	_wispJewelStrings = _staticres->loadStrings(k1WispJewelStrings, _wispJewelStrings_Size);
+	_magicJewelString = _staticres->loadStrings(k1MagicJewelStrings, _magicJewelString_Size);
+	_flaskFull = _staticres->loadStrings(k1FlaskFullString, _flaskFull_Size);
+	_fullFlask = _staticres->loadStrings(k1FullFlaskString, _fullFlask_Size);
+	_veryClever = _staticres->loadStrings(k1VeryCleverString, _veryClever_Size);
+	_homeString = _staticres->loadStrings(k1OutroHomeString, _homeString_Size);
+	_newGameString = _staticres->loadStrings(k1NewGameString, _newGameString_Size);
 
-	_healingShapeTable = _staticres->loadShapeTable(kHealing1Shapes, _healingShapeTableSize);
-	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);
-	_posionDeathShapeTable = _staticres->loadShapeTable(kPoisonDeathShapes, _posionDeathShapeTableSize);
-	_fluteAnimShapeTable = _staticres->loadShapeTable(kFluteShapes, _fluteAnimShapeTableSize);
-	_winterScrollTable = _staticres->loadShapeTable(kWinter1Shapes, _winterScrollTableSize);
-	_winterScroll1Table = _staticres->loadShapeTable(kWinter2Shapes, _winterScroll1TableSize);
-	_winterScroll2Table = _staticres->loadShapeTable(kWinter3Shapes, _winterScroll2TableSize);
-	_drinkAnimationTable = _staticres->loadShapeTable(kDrinkShapes, _drinkAnimationTableSize);
-	_brandonToWispTable = _staticres->loadShapeTable(kWispShapes, _brandonToWispTableSize);
-	_magicAnimationTable = _staticres->loadShapeTable(kMagicAnimShapes, _magicAnimationTableSize);
-	_brandonStoneTable = _staticres->loadShapeTable(kBranStoneShapes, _brandonStoneTableSize);
+	_healingShapeTable = _staticres->loadShapeTable(k1Healing1Shapes, _healingShapeTableSize);
+	_healingShape2Table = _staticres->loadShapeTable(k1Healing2Shapes, _healingShape2TableSize);
+	_posionDeathShapeTable = _staticres->loadShapeTable(k1PoisonDeathShapes, _posionDeathShapeTableSize);
+	_fluteAnimShapeTable = _staticres->loadShapeTable(k1FluteShapes, _fluteAnimShapeTableSize);
+	_winterScrollTable = _staticres->loadShapeTable(k1Winter1Shapes, _winterScrollTableSize);
+	_winterScroll1Table = _staticres->loadShapeTable(k1Winter2Shapes, _winterScroll1TableSize);
+	_winterScroll2Table = _staticres->loadShapeTable(k1Winter3Shapes, _winterScroll2TableSize);
+	_drinkAnimationTable = _staticres->loadShapeTable(k1DrinkShapes, _drinkAnimationTableSize);
+	_brandonToWispTable = _staticres->loadShapeTable(k1WispShapes, _brandonToWispTableSize);
+	_magicAnimationTable = _staticres->loadShapeTable(k1MagicAnimShapes, _magicAnimationTableSize);
+	_brandonStoneTable = _staticres->loadShapeTable(k1BranStoneShapes, _brandonStoneTableSize);
 
-	_characterImageTable = _staticres->loadStrings(kCharacterImageFilenames, _characterImageTableSize);
+	_characterImageTable = _staticres->loadStrings(k1CharacterImageFilenames, _characterImageTableSize);
 
-	_roomFilenameTable = _staticres->loadStrings(kRoomFilenames, _roomFilenameTableSize);
+	_roomFilenameTable = _staticres->loadStrings(k1RoomFilenames, _roomFilenameTableSize);
 
-	_amuleteAnim = _staticres->loadRawData(kAmuleteAnimSeq, temp);
+	_amuleteAnim = _staticres->loadRawData(k1AmuleteAnimSeq, temp);
 
-	_specialPalettes = _staticres->loadPaletteTable(kPaletteList, temp);
+	_specialPalettes = _staticres->loadPaletteTable(k1PaletteList, temp);
 
-	_guiStrings = _staticres->loadStrings(kGUIStrings, _guiStringsSize);
-	_configStrings = _staticres->loadStrings(kConfigStrings, _configStringsSize);
+	_guiStrings = _staticres->loadStrings(k1GUIStrings, _guiStringsSize);
+	_configStrings = _staticres->loadStrings(k1ConfigStrings, _configStringsSize);
 
-	_soundFiles = _staticres->loadStrings(kAudioTracks, _soundFilesSize);
-	_soundFilesIntro = _staticres->loadStrings(kAudioTracksIntro, _soundFilesIntroSize);
-	_cdaTrackTable = (const int32*) _staticres->loadRawData(kKyra1TownsCDATable, _cdaTrackTableSize);
+	_soundFiles = _staticres->loadStrings(k1AudioTracks, _soundFilesSize);
+	_soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, _soundFilesIntroSize);
+	_cdaTrackTable = (const int32*) _staticres->loadRawData(k1TownsCDATable, _cdaTrackTableSize);
 
 	// copied static res
 
 	// room list
-	const Room *tempRoomList = _staticres->loadRoomTable(kRoomList, _roomTableSize);
+	const Room *tempRoomList = _staticres->loadRoomTable(k1RoomList, _roomTableSize);
 
 	if (_roomTableSize > 0) {
 		_roomTable = new Room[_roomTableSize];
@@ -1021,11 +1021,11 @@ void KyraEngine_LoK::initStaticResource() {
 		memcpy(_roomTable, tempRoomList, _roomTableSize*sizeof(Room));
 		tempRoomList = 0;
 
-		_staticres->unloadId(kRoomList);
+		_staticres->unloadId(k1RoomList);
 	}
 
 	// default shape table
-	const Shape *tempShapeTable = _staticres->loadShapeTable(kDefaultShapes, _defaultShapeTableSize);
+	const Shape *tempShapeTable = _staticres->loadShapeTable(k1DefaultShapes, _defaultShapeTableSize);
 
 	if (_defaultShapeTableSize > 0) {
 		_defaultShapeTable = new Shape[_defaultShapeTableSize];
@@ -1034,7 +1034,7 @@ void KyraEngine_LoK::initStaticResource() {
 		memcpy(_defaultShapeTable, tempShapeTable, _defaultShapeTableSize*sizeof(Shape));
 		tempShapeTable = 0;
 
-		_staticres->unloadId(kDefaultShapes);
+		_staticres->unloadId(k1DefaultShapes);
 	}
 
 	// audio data tables

@@ -1091,12 +1091,12 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		int sizeTmp = 0;
-		const uint8 *bufferTmp = _staticres->loadRawData(kCreditsStrings, sizeTmp);
+		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];
 		assert(buffer);
 		memcpy(buffer, bufferTmp, sizeTmp);
 		size = sizeTmp;
-		_staticres->unloadId(kCreditsStrings);
+		_staticres->unloadId(k1CreditsStrings);
 	} else {
 		buffer = _res->fileData("CREDITS.TXT", &size);
 		assert(buffer);
