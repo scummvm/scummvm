@@ -380,8 +380,8 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
 	fHandle.writeUint16BE(_var1);
 	fHandle.writeUint16BE(_bpp);
 	fHandle.writeUint16BE(_height);
-	fHandle.writeUint32BE(0); // _data
-	fHandle.writeUint32BE(0); // _mask
+	fHandle.writeUint32BE(_data != NULL); // _data
+	fHandle.writeUint32BE(_mask != NULL); // _mask
 	fHandle.writeUint16BE(_fileIdx);
 	fHandle.writeUint16BE(_frameIdx);
 	fHandle.write(_name, sizeof(_name));
