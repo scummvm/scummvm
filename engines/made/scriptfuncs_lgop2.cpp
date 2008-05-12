@@ -370,9 +370,32 @@ int16 ScriptFunctionsLgop2::o1_FONT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsLgop2::o1_DRAWTEXT(int16 argc, int16 *argv) {
-	// TODO: Needs vsprintf to get the correct text
+
 	const char *text = _vm->_dat->getString(argv[argc - 1]);
-	_vm->_screen->printText(text);
+	
+	char finalText[1024];
+	switch (argc) {
+	case 1:
+		snprintf(finalText, 1024, "%s", text);
+		break;
+	case 2:
+		snprintf(finalText, 1024, text, argv[0]);
+		break;
+	case 3:
+		snprintf(finalText, 1024, text, argv[1], argv[0]);
+		break;
+	case 4:
+		snprintf(finalText, 1024, text, argv[2], argv[1], argv[0]);
+		break;
+	case 5:
+		snprintf(finalText, 1024, text, argv[3], argv[2], argv[1], argv[0]);
+		break;
+	default:
+		finalText[0] = '\0';
+		break;
+	}
+	
+	_vm->_screen->printText(finalText);
 	return 0;
 }
 
