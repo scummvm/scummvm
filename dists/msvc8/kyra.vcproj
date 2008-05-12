@@ -401,6 +401,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\script_v1.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\script_v2.cpp"
 			>
 		</File>
