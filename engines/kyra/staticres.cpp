@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 25
+#define RESFILE_VERSION 26
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -1215,8 +1215,7 @@ void KyraEngine_HoF::initStaticResource() {
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
 	_itemAnimData = _staticres->loadShapeAnimData_v2(k2IngameShapeAnimData, _itemAnimDataSize);
 
-	// replace sequence talkie files with localized versions and cut off .voc
-	// suffix from voc files so as to allow compression specific file extensions
+	// replace sequence talkie files with localized versions
 	const char* const* seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
 	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
 	char ** tmpSndLst = new char*[_sequenceSoundListSize];
@@ -1227,9 +1226,6 @@ void KyraEngine_HoF::initStaticResource() {
 		tmpSndLst[i] = new char[len + 1];
 		tmpSndLst[i][0] = 0;
 
-		if (_flags.platform == Common::kPlatformPC)
-			len -= 4;
-
 		if (tlkfiles) {
 			for (int ii = 0; ii < tmpSize; ii++) {
 				if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
@@ -1239,8 +1235,6 @@ void KyraEngine_HoF::initStaticResource() {
 
 		if (tmpSndLst[i][0] == 0)
 			strcpy(tmpSndLst[i], seqSoundList[i]);
-
-		tmpSndLst[i][len] = 0;
 	}
 
 	tlkfiles = seqSoundList = 0;

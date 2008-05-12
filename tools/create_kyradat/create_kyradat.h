@@ -257,6 +257,7 @@ enum kExtractType {
 	k2TypeShpDataV1,
 	k2TypeShpDataV2,
 	k2TypeSoundList,
+	k2TypeSfxList,
 
 	k3TypeRaw16to8,
 	k3TypeShpData

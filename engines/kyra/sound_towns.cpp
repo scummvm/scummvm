@@ -1442,7 +1442,13 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 			return false;
 	}
 
-	uint8 * data = _vm->resource()->fileData(file, 0);
+	char filename [13];
+	if (scumm_stricmp(file + strlen(file) - 4, ".PCM"))
+		sprintf(filename, "%s.PCM", file);
+	else
+		strcpy(filename, file);
+
+	uint8 * data = _vm->resource()->fileData(filename, 0);
 	uint8 * src = data;
 
 	uint16 sfxRate = rates[READ_LE_UINT16(src)];

@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 25,
+	kKyraDatVersion = 26,
 	kIndexSize = 12
 };
 
@@ -66,6 +66,7 @@ bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, co
 bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 
 bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 
@@ -88,6 +89,7 @@ const ExtractType extractTypeTable[] = {
 	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
 
 	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
+	{ k2TypeSfxList, extractPaddedStrings, createFilename },
 	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
 
@@ -216,7 +218,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2SeqplayCredits, kTypeRawData, "S_CREDITS.TXT" },
 	{ k2SeqplayCreditsSpecial, kTypeStringList, "S_CREDITS2.TXT" },
 	{ k2SeqplayStrings, kTypeLanguageList, "S_STRINGS" },
-	{ k2SeqplaySfxFiles, kTypeStringList, "S_SFXFILES.TXT" },
+	{ k2SeqplaySfxFiles, k2TypeSoundList, "S_SFXFILES.TXT" },
 	{ k2SeqplayTlkFiles, kTypeLanguageList, "S_TLKFILES" },
 	{ k2SeqplaySeqData, k2TypeSeqData, "S_DATA.SEQ" },
 	{ k2SeqplayIntroTracks, kTypeStringList, "S_INTRO.TRA" },
@@ -241,7 +243,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k3MainMenuStrings, kTypeStringList, "MAINMENU.TXT" },
 	{ k3MusicFiles, k2TypeSoundList, "SCORE.TRA" },
 	{ k3ScoreTable, kTypeRawData, "SCORE.MAP" },
-	{ k3SfxFiles, kTypeStringList, "SFXFILES.TRA" },
+	{ k3SfxFiles, k2TypeSfxList, "SFXFILES.TRA" },
 	{ k3SfxMap, k3TypeRaw16to8, "SFXINDEX.MAP" },
 	{ k3ItemAnimData, k3TypeShpData, "INVANIM.SHP" },
 	{ k3ItemMagicTable, k3TypeRaw16to8, "ITEMMAGIC.MAP" },
@@ -958,6 +960,30 @@ bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const
 			while (*src && src < fin)
 				src++;
 		}
+	}
+
+	WRITE_BE_UINT32(buffer, entries);
+	outsize = dst - buffer;
+
+	return out.addFile(filename, buffer, outsize);
+}
+
+bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	int outsize = size + 4;
+	uint8 *buffer = new uint8[outsize];
+	const uint8 *src = data;
+	uint8 *dst = buffer + 4;
+	const uint8 *fin = src + size;
+	int entries = 0;
+
+	while (src < fin) {
+		while (!*src && src < fin)
+			src++;
+		while (*src && src < fin)
+			*dst++ = *src++;
+
+		*dst++ = '\0';
+		entries++;
 	}
 
 	WRITE_BE_UINT32(buffer, entries);
