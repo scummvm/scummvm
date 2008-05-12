@@ -659,9 +659,9 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 	byte p;
 	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
 
-	for (int16 yc = 0; yc < height; yc++) {
+	for (uint16 yc = 0; yc < height; yc++) {
 		p = charData[yc];
-		for (int16 xc = 0; xc < width; xc++) {
+		for (uint16 xc = 0; xc < width; xc++) {
 			if (p & 0x80)
 				dest[xc] = color;
 			p <<= 1;
