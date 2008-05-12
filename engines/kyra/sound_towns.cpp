@@ -1443,10 +1443,7 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 	}
 
 	char filename [13];
-	if (scumm_stricmp(file + strlen(file) - 4, ".PCM"))
-		sprintf(filename, "%s.PCM", file);
-	else
-		strcpy(filename, file);
+	sprintf(filename, "%s.PCM", file);
 
 	uint8 * data = _vm->resource()->fileData(filename, 0);
 	uint8 * src = data;

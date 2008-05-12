@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 26,
+	kKyraDatVersion = 27,
 	kIndexSize = 12
 };
 
@@ -87,8 +87,8 @@ const ExtractType extractTypeTable[] = {
 	{ k2TypeSeqData, extractHofSeqData, createFilename },
 	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
 	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
-
 	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
+	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },	
 	{ k2TypeSfxList, extractPaddedStrings, createFilename },
 	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
@@ -219,7 +219,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2SeqplayCreditsSpecial, kTypeStringList, "S_CREDITS2.TXT" },
 	{ k2SeqplayStrings, kTypeLanguageList, "S_STRINGS" },
 	{ k2SeqplaySfxFiles, k2TypeSoundList, "S_SFXFILES.TXT" },
-	{ k2SeqplayTlkFiles, kTypeLanguageList, "S_TLKFILES" },
+	{ k2SeqplayTlkFiles, k2TypeLangSoundList, "S_TLKFILES" },
 	{ k2SeqplaySeqData, k2TypeSeqData, "S_DATA.SEQ" },
 	{ k2SeqplayIntroTracks, kTypeStringList, "S_INTRO.TRA" },
 	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },
@@ -230,6 +230,7 @@ const ExtractFilename extractFilenames[] = {
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
 	{ k2IngameSfxFiles, kTypeStringList, "I_SFXFILES.TRA" },
+	{ k2IngameSfxFilesTns, k2TypeSoundList, "I_SFXFILES.TRA" },
 	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.MAP" },
 	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
 	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },

@@ -156,6 +156,7 @@ enum kExtractID {
 
 	k2IngamePakFiles,
 	k2IngameSfxFiles,
+	k2IngameSfxFilesTns,
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
@@ -257,6 +258,7 @@ enum kExtractType {
 	k2TypeShpDataV1,
 	k2TypeShpDataV2,
 	k2TypeSoundList,
+	k2TypeLangSoundList,
 	k2TypeSfxList,
 
 	k3TypeRaw16to8,

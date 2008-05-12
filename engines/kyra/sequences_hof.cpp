@@ -284,8 +284,10 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		seq_sequenceCommand(cseq.finalCommand);
 		seq_resetAllTextEntries();
 
-		if (_abortIntroFlag || skipFlag())
+		if (_abortIntroFlag || skipFlag()) {
 			_sound->haltTrack();
+			_sound->voiceStop();
+		}
 
 		if (_flags.isDemo && !_flags.isTalkie) {
 			if (seqNum == kSequenceDemoFisher) {

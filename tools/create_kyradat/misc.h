@@ -433,7 +433,7 @@ const int kyra2TownsFile1JapNeed[] = {
 
 const int kyra2TownsFile2EngNeed[] = {
 	k2IngamePakFiles,
-	k2IngameSfxFiles,
+	k2IngameSfxFilesTns,
 	k2IngameSfxIndex,
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
