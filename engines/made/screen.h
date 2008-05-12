@@ -79,6 +79,8 @@ public:
 		_clipArea.h = ABS(y2 - y1);
 	}
 
+	void setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+
 	void setClip(int16 clip) { _clip = clip; }
 	void setExclude(int16 exclude) { _exclude = exclude; }
 	void setGround(int16 ground) { _ground = ground; }
@@ -185,6 +187,7 @@ protected:
 	
 	uint16 _channelsUsedCount;
 	SpriteChannel _channels[100];
+	
 };
 
 } // End of namespace Made

@@ -108,6 +108,56 @@ void Screen::clearScreen() {
 	_needPalette = true;
 }
 
+void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+
+	_excludeClipAreaEnabled[0] = false;
+	_excludeClipAreaEnabled[1] = false;
+	_excludeClipAreaEnabled[2] = false;
+	_excludeClipAreaEnabled[3] = false;
+
+	if (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0) {
+		_excludeClipArea[0].x = 0;
+		_excludeClipArea[0].y = 0;
+		_excludeClipArea[0].w = 320;
+		_excludeClipArea[0].h = 200;
+		_excludeClipAreaEnabled[0] = true;
+		return;
+	}
+
+	if (y1 > 0 && y2 > 0) {
+		_excludeClipArea[0].x = 0;
+		_excludeClipArea[0].y = 0;
+		_excludeClipArea[0].w = 320;
+		_excludeClipArea[0].h = y1;
+		_excludeClipAreaEnabled[0] = true;
+	}
+
+	if (y1 < 200 && y2 < 200) {
+		_excludeClipArea[1].x = 0;
+		_excludeClipArea[1].y = y2;
+		_excludeClipArea[1].w = 320;
+		_excludeClipArea[1].h = 200 - y2;
+		_excludeClipAreaEnabled[1] = true;
+	}
+
+	if (x1 > 0 && x2 > 0) {
+		_excludeClipArea[2].x = 0;
+		_excludeClipArea[2].y = y1;
+		_excludeClipArea[2].w = x1;
+		_excludeClipArea[2].h = y2 - y1;
+		_excludeClipAreaEnabled[2] = true;
+	}
+
+	if (x1 < 320 && x2 < 320) {
+		_excludeClipArea[3].x = x2;
+		_excludeClipArea[3].y = y1;
+		_excludeClipArea[3].w = 320 - x2;
+		_excludeClipArea[3].h = y2 - y1;
+		_excludeClipAreaEnabled[3] = true;
+	}
+	
+}
+
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
 	byte *source, *dest, *maskp;
@@ -116,16 +166,16 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	int clipWidth = sourceSurface->w;
 	int clipHeight = sourceSurface->h;
 	
-	if (x < 0) {
-		startX = -x;
+	if (x < clipInfo.x) {
+		startX = clipInfo.x - x;
 		clipWidth -= startX;
-		x = 0;
+		x = clipInfo.x;
 	}
 
-	if (y < 0) {
-		startY = -y;
+	if (y < clipInfo.y) {
+		startY = clipInfo.y - y;
 		clipHeight -= startY;
-		y = 0;
+		y = clipInfo.y;
 	}
 
 	if (x + clipWidth > clipInfo.x + clipInfo.w) {
@@ -659,9 +709,9 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 	byte p;
 	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
 
-	for (uint16 yc = 0; yc < height; yc++) {
+	for (uint yc = 0; yc < height; yc++) {
 		p = charData[yc];
-		for (uint16 xc = 0; xc < width; xc++) {
+		for (uint xc = 0; xc < width; xc++) {
 			if (p & 0x80)
 				dest[xc] = color;
 			p <<= 1;

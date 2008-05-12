@@ -658,7 +658,7 @@ int16 ScriptFunctionsRtz::o1_SETCONTENT(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_EXCLUDEAREA(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_EXCLUDEAREA");
+	_vm->_screen->setExcludeArea(argv[3], argv[2], argv[1], argv[0]);
 	return 0;
 }
 
@@ -857,7 +857,10 @@ int16 ScriptFunctionsRtz::o1_WHATSYNTH(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_SLOWSYSTEM(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: o1_SLOWSYSTEM");
+	//warning("Unimplemented opcode: o1_SLOWSYSTEM");
+	// NOTE: In the original engine this value is set via a command-line parameter
+	// I don't think it's needed here
+	// One could maybe think about returning 1 here on actually slower systems.
 	return 0;
 }
 
