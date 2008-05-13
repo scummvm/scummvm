@@ -83,8 +83,16 @@ public:
 };
 
 
-Plugin* SDLPluginProvider::createPlugin(const Common::String &filename) const {
+Plugin* DCPluginProvider::createPlugin(const Common::String &filename) const {
 	return new DCPlugin(filename);
+}
+
+bool DCPluginProvider::isPluginFilename(const Common::String &filename) const {
+	// Check the plugin suffix
+	if (!filename.hasSuffix(".PLG"))
+		return false;
+
+	return true;
 }
 
 

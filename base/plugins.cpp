@@ -27,7 +27,6 @@
 
 #ifdef DYNAMIC_MODULES
 #include "common/config-manager.h"
-#include "common/fs.h"
 #endif
 
 // Plugin versioning
@@ -151,38 +150,34 @@ PluginList FilePluginProvider::getPlugins() {
 	PluginList pl;
 
 	// Prepare the list of directories to search
-	Common::StringList pluginDirs;
+	FSList pluginDirs;
 
 	// Add the default directories
-	pluginDirs.push_back(".");
-	pluginDirs.push_back("plugins");
+	pluginDirs.push_back(FilesystemNode("."));
+	pluginDirs.push_back(FilesystemNode("plugins"));
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
 
 	// Add the user specified directory
 	Common::String pluginsPath(ConfMan.get("pluginspath"));
-	if (!pluginsPath.empty()) {
-		FilesystemNode dir(pluginsPath);
-		pluginDirs.push_back(dir.getPath());
-	}
+	if (!pluginsPath.empty())
+		pluginDirs.push_back(FilesystemNode(pluginsPath));
 
-	Common::StringList::const_iterator d;
-	for (d = pluginDirs.begin(); d != pluginDirs.end(); d++) {
+	FSList::const_iterator dir;
+	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); dir++) {
 		// Load all plugins.
 		// Scan for all plugins in this directory
-		FilesystemNode dir(*d);
 		FSList files;
-		if (!dir.getChildren(files, FilesystemNode::kListFilesOnly)) {
-			debug(1, "Couldn't open plugin directory '%s'", d->c_str());
+		if (!dir->getChildren(files, FilesystemNode::kListFilesOnly)) {
+			debug(1, "Couldn't open plugin directory '%s'", dir->getPath().c_str());
 			continue;
 		} else {
-			debug(1, "Reading plugins from plugin directory '%s'", d->c_str());
+			debug(1, "Reading plugins from plugin directory '%s'", dir->getPath().c_str());
 		}
 
 		for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-			Common::String name(i->getName());
-			if (name.hasPrefix(getPrefix()) && name.hasSuffix(getSuffix())) {
+			if (isPluginFilename(i->getName())) {
 				pl.push_back(createPlugin(i->getPath()));
 			}
 		}
@@ -191,25 +186,25 @@ PluginList FilePluginProvider::getPlugins() {
 	return pl;
 }
 
-const char* FilePluginProvider::getPrefix() const {
+bool FilePluginProvider::isPluginFilename(const Common::String &filename) const {
 #ifdef PLUGIN_PREFIX
-	return PLUGIN_PREFIX;
-#else
-	return "";
+	// Check the plugin prefix
+	if (!filename.hasPrefix(PLUGIN_PREFIX))
+		return false;
 #endif
-}
 
-const char* FilePluginProvider::getSuffix() const {
 #ifdef PLUGIN_SUFFIX
-	return PLUGIN_SUFFIX;
-#else
-	return "";
+	// Check the plugin suffix
+	if (!filename.hasSuffix(PLUGIN_SUFFIX))
+		return false;
 #endif
+
+	return true;
 }
 
-void FilePluginProvider::addCustomDirectories(Common::StringList &dirs) const {
+void FilePluginProvider::addCustomDirectories(FSList &dirs) const {
 #ifdef PLUGIN_DIRECTORY
-	dirs.push_back(PLUGIN_DIRECTORY);
+	dirs.push_back(FilesystemNode(PLUGIN_DIRECTORY));
 #endif
 }
 

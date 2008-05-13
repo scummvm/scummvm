@@ -31,6 +31,9 @@
 #include "common/singleton.h"
 #include "base/game.h"
 
+#ifdef DYNAMIC_MODULES
+#include "common/fs.h"
+#endif
 
 /**
  * @page pagePlugins An overview of the ScummVM plugin system
@@ -212,6 +215,8 @@ public:
 	virtual PluginList getPlugins() = 0;
 };
 
+#ifdef DYNAMIC_MODULES
+
 /**
  * Abstract base class for Plugin factories which load binary code from files.
  * Subclasses only have to implement the createPlugin() method, and optionally
@@ -238,23 +243,29 @@ protected:
 	 *
 	 * @param filename	the name of the loadable code module
 	 * @return	a pointer to a Plugin instance, or 0 if an error occurred.
-	 *
-	 * FIXME: Instead of using getPrefix & getSuffix, how about adding a
-	 * isPluginFilename() class, so that more flexible checks can be performed?
 	 */
 	virtual Plugin* createPlugin(const Common::String &filename) const = 0;
 
-	virtual const char* getPrefix() const;
-	virtual const char* getSuffix() const;
+	/**
+	 * Check if the supplied filename corresponds to a loadable plugin file in
+	 * the current platform.
+	 *
+	 * @param filename	the name of the file to check
+	 * @return	true if the filename corresponds to a plugin, false otherwise
+	 */
+	virtual bool isPluginFilename(const Common::String &filename) const;
 
 	/**
 	 * Optionally add to the list of directories to be searched for
 	 * plugins by getPlugins().
 	 *
-	 * FIXME: This should be using FSNodes, not strings!
+	 * @param dirs	the reference to the list of directories to be used when
+	 * 		searching for plugins.
 	 */
-	virtual void addCustomDirectories(Common::StringList &dirs) const;
+	virtual void addCustomDirectories(FSList &dirs) const;
 };
+
+#endif // DYNAMIC_MODULES
 
 /**
  * Singleton class which manages all plugins, including loading them,
