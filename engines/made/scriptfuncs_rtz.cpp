@@ -584,7 +584,9 @@ int16 ScriptFunctionsRtz::o1_TEXTWIDTH(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsRtz::o1_PLAYMOVIE(int16 argc, int16 *argv) {
 	const char *movieName = _vm->_dat->getObject(argv[1])->getString();
+	_vm->_system->showMouse(false);
 	_vm->_pmvPlayer->play(movieName);
+	_vm->_system->showMouse(true);
 	return 0;
 }
 
