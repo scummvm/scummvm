@@ -883,7 +883,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	uint16 fontSig = READ_LE_UINT16(fontData + 2);
 
 	if (fontSig != 0x500)
-		error("Invalid font data (file '%s')", filename);
+		error("Invalid font data (file '%s', fontSig: %.04X)", filename, fontSig);
 
 	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
 	fnt->charSizeOffset = READ_LE_UINT16(fontData + 4);
