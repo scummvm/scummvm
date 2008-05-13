@@ -335,8 +335,9 @@ class SaveLoad_v4 : public SaveLoad {
 public:
 	enum SaveType {
 		kSaveNone,
+		kSaveScreenProps,
 		kSaveGame,
-		kSaveTempBuffer
+		kSaveGameScreenProps
 	};
 
 	bool _firstSizeGame;
@@ -358,12 +359,13 @@ protected:
 
 	int32 _varSize;
 
-	PagedBuffer _tmpBuffer;
 	StagedSave _save;
 
 	byte _propBuffer[1000];
 	byte _indexBuffer[1200];
 	bool _hasIndex;
+
+	byte *_screenProps;
 
 	virtual int getSaveType(const char *fileName);
 
@@ -374,14 +376,17 @@ protected:
 	int getSlot(int32 offset) const;
 	int getSlotRemainder(int32 offset) const;
 
+	int32 getSizeScreenProps(SaveFile &saveFile);
 	int32 getSizeGame(SaveFile &saveFile);
-	int32 getSizeTempBuffer(SaveFile &saveFile);
+	int32 getSizeGameScreenProps(SaveFile &saveFile);
 
+	bool loadScreenProps(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 	bool loadGame(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
-	bool loadTempBuffer(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
+	bool loadGameScreenProps(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 
+	bool saveScreenProps(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 	bool saveGame(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
-	bool saveTempBuffer(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
+	bool saveGameScreenProps(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 
 	void assertInited();
 };

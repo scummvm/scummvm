@@ -33,8 +33,18 @@
 namespace Gob {
 
 SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
-	{  "cat.inf", 0, kSaveModeSave, kSaveGame       },
-	{ "save.tmp", 0, kSaveModeSave, kSaveTempBuffer }
+	{  "save.tmp", 0, kSaveModeSave, kSaveScreenProps     },
+	{   "cat.inf", 0, kSaveModeSave, kSaveGame            },
+	{ "save0.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save1.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save2.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save3.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save4.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save5.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save6.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save7.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save8.tmp", 0, kSaveModeSave, kSaveGameScreenProps },
+	{ "save9.tmp", 0, kSaveModeSave, kSaveGameScreenProps }
 };
 
 SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
@@ -42,18 +52,32 @@ SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
 
 	_firstSizeGame = true;
 
-	_saveFiles[0].destName = new char[strlen(targetName) + 5];
-	_saveFiles[1].destName = 0;
+	_saveFiles[0].destName = 0;
+	_saveFiles[1].destName = new char[strlen(targetName) + 5];
+	_saveFiles[2].destName = _saveFiles[1].destName;
+	_saveFiles[3].destName = _saveFiles[1].destName;
+	_saveFiles[4].destName = _saveFiles[1].destName;
+	_saveFiles[5].destName = _saveFiles[1].destName;
+	_saveFiles[6].destName = _saveFiles[1].destName;
+	_saveFiles[7].destName = _saveFiles[1].destName;
+	_saveFiles[8].destName = _saveFiles[1].destName;
+	_saveFiles[9].destName = _saveFiles[1].destName;
+	_saveFiles[10].destName = _saveFiles[1].destName;
+	_saveFiles[11].destName = _saveFiles[1].destName;
 
-	sprintf(_saveFiles[0].destName, "%s.s00", targetName);
+	sprintf(_saveFiles[1].destName, "%s.s00", targetName);
 
 	_varSize = 0;
 	_hasIndex = false;
 	memset(_propBuffer, 0, 1000);
+
+	_screenProps = new byte[512000];
+	memset(_screenProps, 0, 512000);
 }
 
 SaveLoad_v4::~SaveLoad_v4() {
-	delete[] _saveFiles[0].destName;
+	delete[] _screenProps;
+	delete[] _saveFiles[1].destName;
 }
 
 SaveLoad::SaveMode SaveLoad_v4::getSaveMode(const char *fileName) {
@@ -78,10 +102,12 @@ int32 SaveLoad_v4::getSizeVersioned(int type) {
 	assertInited();
 
 	switch (_saveFiles[type].type) {
+	case kSaveScreenProps:
+		return getSizeScreenProps(_saveFiles[type]);
 	case kSaveGame:
 		return getSizeGame(_saveFiles[type]);
-	case kSaveTempBuffer:
-		return getSizeTempBuffer(_saveFiles[type]);
+	case kSaveGameScreenProps:
+		return getSizeGameScreenProps(_saveFiles[type]);
 	default:
 		break;
 	}
@@ -93,6 +119,13 @@ bool SaveLoad_v4::loadVersioned(int type, int16 dataVar, int32 size, int32 offse
 	assertInited();
 
 	switch (_saveFiles[type].type) {
+	case kSaveScreenProps:
+		if (loadScreenProps(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While loading screen properties");
+		break;
+
 	case kSaveGame:
 		if (loadGame(_saveFiles[type], dataVar, size, offset))
 			return true;
@@ -100,11 +133,11 @@ bool SaveLoad_v4::loadVersioned(int type, int16 dataVar, int32 size, int32 offse
 		warning("While loading from slot %d", getSlot(offset));
 		break;
 
-	case kSaveTempBuffer:
-		if (loadTempBuffer(_saveFiles[type], dataVar, size, offset))
+	case kSaveGameScreenProps:
+		if (loadGameScreenProps(_saveFiles[type], dataVar, size, offset))
 			return true;
 
-		warning("While loading from the tempBuffer");
+		warning("While loading screen properties from slot %d", getSlot(offset));
 		break;
 
 	default:
@@ -118,6 +151,13 @@ bool SaveLoad_v4::saveVersioned(int type, int16 dataVar, int32 size, int32 offse
 	assertInited();
 
 	switch (_saveFiles[type].type) {
+	case kSaveScreenProps:
+		if (saveScreenProps(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While saving screen properties");
+		break;
+
 	case kSaveGame:
 		if (saveGame(_saveFiles[type], dataVar, size, offset))
 			return true;
@@ -125,11 +165,11 @@ bool SaveLoad_v4::saveVersioned(int type, int16 dataVar, int32 size, int32 offse
 		warning("While saving to slot %d", getSlot(offset));
 		break;
 
-	case kSaveTempBuffer:
-		if (saveTempBuffer(_saveFiles[type], dataVar, size, offset))
+	case kSaveGameScreenProps:
+		if (saveGameScreenProps(_saveFiles[type], dataVar, size, offset))
 			return true;
 
-		warning("While saving to the tempBuffer");
+		warning("While saving screen properties to slot %d", getSlot(offset));
 		break;
 
 	default:
@@ -145,6 +185,10 @@ int SaveLoad_v4::getSlot(int32 offset) const {
 
 int SaveLoad_v4::getSlotRemainder(int32 offset) const {
 	return ((offset - 1700) % _varSize);
+}
+
+int32 SaveLoad_v4::getSizeScreenProps(SaveFile &saveFile) {
+	return 256000;
 }
 
 int32 SaveLoad_v4::getSizeGame(SaveFile &saveFile) {
@@ -169,8 +213,44 @@ int32 SaveLoad_v4::getSizeGame(SaveFile &saveFile) {
 	return size;
 }
 
-int32 SaveLoad_v4::getSizeTempBuffer(SaveFile &saveFile) {
-	return _tmpBuffer.getSize();
+int32 SaveLoad_v4::getSizeGameScreenProps(SaveFile &saveFile) {
+	return -1;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in;
+
+	setCurrentSlot(saveFile.destName, saveFile.sourceName[4] - '0');
+	in = saveMan->openForLoading(saveFile.destName);
+
+	if (!in)
+		return -1;
+
+	int32 size = in->size();
+
+	delete in;
+
+	return size;
+}
+
+bool SaveLoad_v4::loadScreenProps(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	// Using a sprite as a buffer
+	if (size <= 0)
+		return true;
+
+	if ((offset < 0) || (size + offset) > 256000) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	debugC(3, kDebugSaveLoad, "Loading screen properties (%d, %d, %d)",
+			dataVar, size, offset);
+
+	memcpy(_vm->_global->_inter_variables + dataVar, _screenProps + offset, size);
+	memcpy(_vm->_global->_inter_variablesSizes + dataVar, _screenProps + 256000 + offset, size);
+
+	return true;
 }
 
 bool SaveLoad_v4::loadGame(SaveFile &saveFile,
@@ -228,18 +308,42 @@ bool SaveLoad_v4::loadGame(SaveFile &saveFile,
 	return true;
 }
 
-bool SaveLoad_v4::loadTempBuffer(SaveFile &saveFile,
+bool SaveLoad_v4::loadGameScreenProps(SaveFile &saveFile,
 		int16 dataVar, int32 size, int32 offset) {
 
-	debugC(3, kDebugSaveLoad, "Loading from the temporary buffer (%d, %d, %d)",
-			dataVar, size, offset);
-
-	if (size < 0) {
-		warning("Woodruff stub: Read screenshot");
+	if (size != -5) {
+		warning("Invalid loading procedure (%d, %d, %d)", dataVar, size, offset);
 		return false;
 	}
 
-	return _tmpBuffer.read(_vm->_global->_inter_variables + dataVar, size, offset);
+	setCurrentSlot(saveFile.destName, saveFile.sourceName[4] - '0');
+
+	if (!_save.load(0, 256000, _varSize + 540, saveFile.destName,
+	                _screenProps, _screenProps + 256000))
+		return false;
+
+	return true;
+}
+
+bool SaveLoad_v4::saveScreenProps(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	// Using a sprite as a buffer
+	if (size <= 0)
+		return true;
+
+	if ((offset < 0) || (size + offset) > 256000) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	debugC(3, kDebugSaveLoad, "Saving screen properties (%d, %d, %d)",
+			dataVar, size, offset);
+
+	memcpy(_screenProps + offset, _vm->_global->_inter_variables + dataVar, size);
+	memcpy(_screenProps + 256000 + offset, _vm->_global->_inter_variablesSizes + dataVar, size);
+
+	return true;
 }
 
 bool SaveLoad_v4::saveGame(SaveFile &saveFile,
@@ -310,18 +414,21 @@ bool SaveLoad_v4::saveGame(SaveFile &saveFile,
 	return true;
 }
 
-bool SaveLoad_v4::saveTempBuffer(SaveFile &saveFile,
+bool SaveLoad_v4::saveGameScreenProps(SaveFile &saveFile,
 		int16 dataVar, int32 size, int32 offset) {
 
-	debugC(3, kDebugSaveLoad, "Saving to the temporary buffer (%d, %d, %d)",
-			dataVar, size, offset);
-
-	if (size < 0) {
-		warning("Woodruff stub: Write screenshot");
+	if (size != -5) {
+		warning("Invalid saving procedure (%d, %d, %d)", dataVar, size, offset);
 		return false;
 	}
 
-	return _tmpBuffer.write(_vm->_global->_inter_variables + dataVar, size, offset);
+	setCurrentSlot(saveFile.destName, saveFile.sourceName[4] - '0');
+
+	if (!_save.save(0, 256000, _varSize + 540, saveFile.destName,
+	                _screenProps, _screenProps + 256000))
+		return false;
+
+	return true;
 }
 
 void SaveLoad_v4::assertInited() {
@@ -333,6 +440,7 @@ void SaveLoad_v4::assertInited() {
 	_save.addStage(500);
 	_save.addStage(40, false);
 	_save.addStage(_varSize);
+	_save.addStage(256000);
 }
 
 } // End of namespace Gob
