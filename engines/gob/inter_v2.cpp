@@ -1444,19 +1444,22 @@ void Inter_v2::o2_initScreen() {
 
 		int16 screenHeight = _vm->_video->_surfHeight;
 
-		_vm->_video->_surfHeight += offY;
+		if (screenHeight < _vm->_height) {
+			_vm->_video->_surfHeight += offY;
+			_vm->_video->_splitStart = screenHeight;
+		} else 
+			_vm->_video->_splitStart = screenHeight - offY;
 
-		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
-		_vm->_video->_splitHeight2 = offY;
-		_vm->_video->_splitStart = screenHeight;
+			_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
+			_vm->_video->_splitHeight2 = offY;
 
-		if ((_vm->_video->_surfHeight + offY) < _vm->_height)
-			_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
-		else
-			_vm->_video->_screenDeltaY = 0;
+			if ((_vm->_video->_surfHeight + offY) < _vm->_height)
+				_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
+			else
+				_vm->_video->_screenDeltaY = 0;
 
-		_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
-		_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
+			_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
+			_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
 
 	} else {
 		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
