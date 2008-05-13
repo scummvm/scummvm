@@ -33,7 +33,7 @@
 
 // Plugin versioning
 
-// Global Plugin API version
+/** Global Plugin API version */
 #define PLUGIN_VERSION 1
 
 enum PluginType {
@@ -67,14 +67,14 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 	(defined(ENABLE_##ID) && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
 
 /**
- * REGISTER_PLUGIN is a convenience macro meant to ease writing
- * the plugin interface for our modules. In particular, using it
- * makes it possible to compile the very same code in a module
- * both as a static and a dynamic plugin.
+ * REGISTER_PLUGIN_STATIC is a convenience macro which is used to declare
+ * the plugin interface for static plugins. Code (such as game engines)
+ * which needs to implement a static plugin can simply invoke this macro
+ * with a plugin ID, plugin type and PluginObject subclass, and the correct
+ * wrapper code will be inserted.
  *
- * @todo	add some means to query the plugin API version etc.
+ * @see REGISTER_PLUGIN_DYNAMIC
  */
-
 #define REGISTER_PLUGIN_STATIC(ID,TYPE,PLUGINCLASS) \
 	PluginType g_##ID##_type = TYPE; \
 	PluginObject *g_##ID##_getObject() { \
@@ -84,6 +84,15 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 #ifdef DYNAMIC_MODULES
 
+/**
+ * REGISTER_PLUGIN_DYNAMIC is a convenience macro which is used to declare
+ * the plugin interface for dynamically loadable plugins. Code (such as game engines)
+ * which needs to implement a dynamic plugin can simply invoke this macro
+ * with a plugin ID, plugin type and PluginObject subclass, and the correct
+ * wrapper code will be inserted.
+ *
+ * @see REGISTER_PLUGIN_STATIC
+ */
 #define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
@@ -138,10 +147,14 @@ public:
 	const char *getName() const;
 };
 
-/** List of plugins. */
+/** List of Plugin instances. */
 typedef Common::Array<Plugin *> PluginList;
 
-/** Template to help defining Plugin subclasses */
+/**
+ * Convenience template to make it easier defining normal Plugin
+ * subclasses. Namely, the PluginSubclass will manage PluginObjects
+ * of a type specified via the PO_t template parameter.
+ */
 template<class PO_t>
 class PluginSubclass : public Plugin {
 public:
@@ -152,24 +165,43 @@ public:
 	typedef Common::Array<PluginSubclass *> list;
 };
 
+/**
+ * Abstract base class for Plugin factories. Subclasses of this
+ * are responsible for creating plugin objects, e.g. by loading 
+ * loadable modules from storage media; by creating "fake" plugins
+ * from static code; or whatever other means.
+ */
 class PluginProvider {
 public:
 	virtual ~PluginProvider() {}
 
 	/**
 	 * Return a list of Plugin objects. The caller is responsible for actually
-	 * loading/unloading them (by invoking the appropriate methods).
+	 * loading/unloading them (by invoking the appropriate Plugin methods).
 	 * Furthermore, the caller is responsible for deleting these objects
 	 * eventually.
 	 */
 	virtual PluginList getPlugins() = 0;
 };
 
+/**
+ * Abstract base class for Plugin factories which load binary code from files.
+ * Subclasses only have to implement the createPlugin() method, and optionally
+ * can overload the other protected methods to achieve custom behavior.
+ */
 class FilePluginProvider : public PluginProvider {
 public:
 	virtual PluginList getPlugins();
 
 protected:
+	/**
+	 * Create a Plugin instance from a loadable code module with the specified name.
+	 * Subclasses of FilePluginProvider have to at least overload this method.
+	 * If the file is not found, or does not contain loadable code, 0 is returned instead.
+	 *
+	 * @param filename	the name of the loadable code module
+	 * @return	a pointer to a Plugin instance, or 0 if an error occured.
+	 */
 	virtual Plugin* createPlugin(const Common::String &filename) const = 0;
 
 	virtual const char* getPrefix() const;
@@ -179,8 +211,8 @@ protected:
 };
 
 /**
- * Instances of this class manage all plugins, including loading them,
- * making wrapper objects of class Plugin available, and unloading them.
+ * Singleton class which manages all plugins, including loading them,
+ * managing all Plugin class instances, and unloading them.
  */
 class PluginManager : public Common::Singleton<PluginManager> {
 	typedef Common::List<PluginProvider *> ProviderList;
@@ -204,26 +236,5 @@ public:
 
 	const PluginList &getPlugins(PluginType t) { return _plugins[t]; }
 };
-
-
-// Engine plugins
-
-class FSList;
-class MetaEngine;
-
-typedef PluginSubclass<MetaEngine> EnginePlugin;
-
-class EngineManager : public Common::Singleton<EngineManager> {
-private:
-	friend class Common::Singleton<SingletonBaseType>;
-
-public:
-	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
-	GameList detectGames(const FSList &fslist) const;
-	const EnginePlugin::list &getPlugins() const;
-};
-
-/** Shortcut for accessing the engine manager. */
-#define EngineMan EngineManager::instance()
 
 #endif

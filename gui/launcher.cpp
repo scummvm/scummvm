@@ -22,8 +22,7 @@
  * $Id$
  */
 
-#include "engines/engine.h"
-#include "base/plugins.h"
+#include "engines/metaengine.h"
 #include "base/version.h"
 
 #include "common/config-manager.h"

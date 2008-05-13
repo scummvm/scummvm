@@ -22,8 +22,7 @@
  * $Id$
  */
 
-#include "engines/engine.h"
-#include "base/plugins.h"
+#include "engines/metaengine.h"
 #include "common/events.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
