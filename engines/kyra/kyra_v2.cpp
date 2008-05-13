@@ -71,11 +71,13 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
-	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
-		delete[] i->_value;
-		i->_value = 0;
+	if (!(_flags.isDemo && !_flags.isTalkie)) {
+		for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
+			delete[] i->_value;
+			i->_value = 0;
+		}
+		_gameShapes.clear();
 	}
-	_gameShapes.clear();
 
 	delete[] _itemList;
 	delete[] _sceneList;
