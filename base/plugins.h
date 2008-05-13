@@ -31,6 +31,28 @@
 #include "common/singleton.h"
 #include "base/game.h"
 
+
+/**
+ * @page pagePlugins An overview of the ScummVM plugin system
+ * This is a brief overview of how plugins (dynamically loadable code modules)
+ * work in ScummVM. We will explain how to write plugins, how they work internally,
+ * and sketch how porters can add support for them in their ports.
+ *
+ * \section secPluginImpl Implementing a plugin
+ * TODO
+ *
+ * \section secPluginUse Using plugins
+ * TODO
+ *
+ * \section secPluginInternals How plugins work internally
+ * TODO
+ *
+ * \section secPluginBackend How to add support for dynamic plugins to a port
+ * TODO
+ */
+
+
+
 // Plugin versioning
 
 /** Global Plugin API version */
@@ -113,6 +135,8 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  * Abstract base class for the plugin objects which handle plugins
  * instantiation. Subclasses for this may be used for engine plugins
  * and other types of plugins.
+ *
+ * FIXME: This class needs better documentation, esp. how it differs from class Plugin
  */
 class PluginObject {
 public:
@@ -126,6 +150,8 @@ public:
  * Abstract base class for the plugin system.
  * Subclasses for this can be used to wrap both static and dynamic
  * plugins.
+ *
+ * FIXME: This class needs better documentation, esp. how it differs from class PluginObject
  */
 class Plugin {
 protected:
@@ -180,6 +206,8 @@ public:
 	 * loading/unloading them (by invoking the appropriate Plugin methods).
 	 * Furthermore, the caller is responsible for deleting these objects
 	 * eventually.
+	 *
+	 * @return a list of Plugin instances
 	 */
 	virtual PluginList getPlugins() = 0;
 };
@@ -191,6 +219,15 @@ public:
  */
 class FilePluginProvider : public PluginProvider {
 public:
+	/**
+	 * Return a list of Plugin objects loaded via createPlugin from disk.
+	 * For this, a list of directories is searched for plugin objects:
+	 * The current dir and its "plugins" subdirectory (if present), a list
+	 * of custom search dirs (see addCustomDirectories) and finally the 
+	 * directory specified via the "pluginspath" config variable (if any).
+	 *
+	 * @return a list of Plugin instances
+	 */
 	virtual PluginList getPlugins();
 
 protected:
@@ -200,13 +237,22 @@ protected:
 	 * If the file is not found, or does not contain loadable code, 0 is returned instead.
 	 *
 	 * @param filename	the name of the loadable code module
-	 * @return	a pointer to a Plugin instance, or 0 if an error occured.
+	 * @return	a pointer to a Plugin instance, or 0 if an error occurred.
+	 *
+	 * FIXME: Instead of using getPrefix & getSuffix, how about adding a
+	 * isPluginFilename() class, so that more flexible checks can be performed?
 	 */
 	virtual Plugin* createPlugin(const Common::String &filename) const = 0;
 
 	virtual const char* getPrefix() const;
 	virtual const char* getSuffix() const;
 
+	/**
+	 * Optionally add to the list of directories to be searched for
+	 * plugins by getPlugins().
+	 *
+	 * FIXME: This should be using FSNodes, not strings!
+	 */
 	virtual void addCustomDirectories(Common::StringList &dirs) const;
 };
 
