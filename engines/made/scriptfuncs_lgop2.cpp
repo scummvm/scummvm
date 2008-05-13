@@ -443,6 +443,9 @@ int16 ScriptFunctionsLgop2::o1_OUTLINE(int16 argc, int16 *argv) {
 
 int16 ScriptFunctionsLgop2::o1_LOADCURSOR(int16 argc, int16 *argv) {
 	PictureResource *flex = _vm->_res->getPicture(argv[2]);
+	if (!flex)
+		return 0;
+
 	Graphics::Surface *surf = flex->getPicture();
 	CursorMan.replaceCursor((const byte *)surf->pixels, surf->w, surf->h, argv[1], argv[0], 0);
 	CursorMan.showMouse(true);
