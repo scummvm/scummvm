@@ -39,7 +39,7 @@ namespace Made {
 	< 0x7FFE  object
 */
 
-Object::Object() {
+Object::Object() : _objData(NULL), _freeData(false) {
 }
 
 Object::~Object() {
@@ -48,23 +48,38 @@ Object::~Object() {
 }
 
 int Object::loadVersion2(Common::SeekableReadStream &source) {
+
+	if (_freeData && _objData)
+		delete[] _objData;
+
 	_freeData = true;
-	uint16 type = source.readUint16LE();
+	
+	byte header[4];
+	source.read(header, 4);
+	
+	uint16 type = READ_LE_UINT16(header);
 	if (type == 0x7FFF) {
-		_objSize = source.readUint16LE();
+		_objSize = READ_LE_UINT16(header + 2);
 	} else if (type == 0x7FFE) {
-		_objSize = source.readUint16LE() * 2;
+		_objSize = READ_LE_UINT16(header + 2) * 2;
 	} else if (type < 0x7FFE) {
-		byte count1 = source.readByte();
-		byte count2 = source.readByte();
+		byte count1 = header[2];
+		byte count2 = header[3];
 		_objSize = (count1 + count2) * 2;
 	}
-	source.seek(-4, SEEK_CUR);
 	_objSize += 6;
 	_objData = new byte[_objSize];
 	WRITE_LE_UINT16(_objData, 1);
-	source.read(_objData + 2, _objSize - 2);
+	memcpy(_objData + 2, header, 4);
+	source.read(_objData + 6, _objSize - 6);
+
 	return _objSize - 2;
+
+}
+
+int Object::saveVersion2(Common::WriteStream &dest) {
+	dest.write(_objData + 2, _objSize - 2);
+	return 0;
 }
 
 int Object::loadVersion3(Common::SeekableReadStream &source) {
@@ -273,8 +288,7 @@ void GameDatabase::loadVersion2(Common::SeekableReadStream &sourceS) {
 		Object *obj = new Object();
 		int objSize = obj->loadVersion2(sourceS);
 		// objects are aligned on 2-byte-boundaries, skip unused bytes
-		objSize = objSize % 2;
-		sourceS.skip(objSize);
+		sourceS.skip(objSize % 2);
 		_objects.push_back(obj);
 	}
 	
@@ -312,14 +326,14 @@ void GameDatabase::loadVersion3(Common::SeekableReadStream &sourceS) {
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
 
-		debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
+		//debug(2, "obj(%04X) ofs = %08X\n", i, objectOffsets[i]);
 
 		if (objectOffsets[i] & 1) {
-			debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
+			//debug(2, "-> const %08X\n", objectsOffs + objectOffsets[i] - 1);
 			sourceS.seek(objectsOffs + objectOffsets[i] - 1);
 			obj->loadVersion3(sourceS);
 		} else {
-			debug(2, "-> var\n");
+			//debug(2, "-> var\n");
 			obj->loadVersion3(_gameState + objectOffsets[i]);
 		}
 		_objects.push_back(obj);
@@ -343,8 +357,6 @@ bool GameDatabase::getSavegameDescription(const char *filename, Common::String &
 	in->read(desc, 64);
 	description = desc;
 
-	//printf("description = %s\n", description.c_str()); fflush(stdout);
-
 	delete in;
 	
 	return true;
@@ -354,50 +366,93 @@ bool GameDatabase::getSavegameDescription(const char *filename, Common::String &
 int16 GameDatabase::savegame(const char *filename, const char *description, int16 version) {
 
 	Common::OutSaveFile *out;
+	int16 result = 0;
 
 	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
 		warning("Can't create file '%s', game not saved", filename);
 		return 6;
 	}
 	
-	uint32 size = 4 + 4 + 2 + _gameStateSize;
-	char desc[64];
-	
-	strncpy(desc, description, 64);
-	
-	out->writeUint32BE(MKID_BE('SGAM'));
-	out->writeUint32LE(size);
-	out->writeUint16LE(version);
-	out->write(desc, 64);
-	out->write(_gameState, _gameStateSize);
+	switch (_vm->_engineVersion) {
+	case 2:
+		result = savegameV2(out, description, version);
+		break;
+	case 3:
+		result = savegameV3(out, description, version);
+		break;
+	default:
+		error("GameDatabase::savegame() Unknown engine version");
+	}
 
 	delete out;
 
-	return 0;
+	return result;
 
 }
 
 int16 GameDatabase::loadgame(const char *filename, int16 version) {
 
 	Common::InSaveFile *in;
+	int16 result = 0;
 
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		warning("Can't open file '%s', game not loaded", filename);
 		return 1;
 	}
 
-	//uint32 expectedSize = 4 + 4 + 2 + _gameStateSize;
+	switch (_vm->_engineVersion) {
+	case 2:
+		result = loadgameV2(in, version);
+		break;
+	case 3:
+		result = loadgameV3(in, version);
+		break;
+	default:
+		error("GameDatabase::loadgame() Unknown engine version");
+	}
 
+	delete in;
+
+	return result;
+
+}
+
+int16 GameDatabase::savegameV2(Common::OutSaveFile *out, const char *description, int16 version) {
+	// Variable 0 is not saved
+	out->write(_gameState + 2, _gameStateSize - 2);
+	for (uint i = 0; i < _objects.size(); i++)
+		_objects[i]->saveVersion2(*out);
+	return 0;
+}
+
+int16 GameDatabase::loadgameV2(Common::InSaveFile *in, int16 version) {
+	// Variable 0 is not loaded
+	in->read(_gameState + 2, _gameStateSize - 2);
+	for (uint i = 0; i < _objects.size(); i++)
+		_objects[i]->loadVersion2(*in);
+	return 0;
+}
+
+int16 GameDatabase::savegameV3(Common::OutSaveFile *out, const char *description, int16 version) {
+	uint32 size = 4 + 4 + 2 + _gameStateSize;
+	char desc[64];
+	strncpy(desc, description, 64);
+	out->writeUint32BE(MKID_BE('SGAM'));
+	out->writeUint32LE(size);
+	out->writeUint16LE(version);
+	out->write(desc, 64);
+	out->write(_gameState, _gameStateSize);
+	return 0;
+}
+
+int16 GameDatabase::loadgameV3(Common::InSaveFile *in, int16 version) {
+	//uint32 expectedSize = 4 + 4 + 2 + _gameStateSize;
 	in->skip(4); // TODO: Verify marker 'SGAM'
 	in->skip(4); // TODO: Verify size
 	in->skip(2); // TODO: Verify version
 	in->skip(64); // skip savegame description
 	in->read(_gameState, _gameStateSize);
-
-	delete in;
-
 	return 0;
-
 }
 
 int16 GameDatabase::getVar(int16 index) {
@@ -431,7 +486,7 @@ int16 *GameDatabase::getObjectPropertyPtrV2(int16 objectIndex, int16 propertyId,
 	// Now check in the object hierarchy of the given object
 	int16 parentObjectIndex = obj->getClass();
 	if (parentObjectIndex == 0) {
-		//debug(2, "! NULL(np)\n");
+		debug(2, "GameDatabase::getObjectPropertyPtrV2() NULL(1)");
 		return NULL;
 	}
 
@@ -470,7 +525,7 @@ int16 *GameDatabase::getObjectPropertyPtrV2(int16 objectIndex, int16 propertyId,
 
 	}
 
-	//debug(2, "! NULL(nf)\n");
+ 	debug(2, "GameDatabase::getObjectPropertyPtrV2() NULL(2)");
 	return NULL;
 
 }
@@ -597,7 +652,7 @@ int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16
 		if (propertyFlag == 1) {
 			WRITE_LE_UINT16(property, value);
 		} else {
-			debug(2, "GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property\n",
+			warning("GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property\n",
 				objectIndex, propertyId, value);
 		}
 		return value;
