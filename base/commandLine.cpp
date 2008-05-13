@@ -23,7 +23,7 @@
  *
  */
 
-#include "engines/engine.h"
+#include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -559,10 +559,10 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	const EnginePluginList &plugins = EngineMan.getPlugins();
-	EnginePluginList::const_iterator iter = plugins.begin();
+	const EnginePlugin::list &plugins = EngineMan.getPlugins();
+	EnginePlugin::list::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (*iter)->getSupportedGames();
+		GameList list = (**iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
 		}
@@ -622,7 +622,7 @@ static void listSaves(const char *target) {
 	}
 
 	// Query the plugin for a list of savegames
-	SaveStateList saveList = plugin->listSaves(target);
+	SaveStateList saveList = (*plugin)->listSaves(target);
 
 	// TODO: Include more info about the target (desc, engine name, ...) ???
 	printf("Saves for target '%s':\n", target);

@@ -141,6 +141,17 @@ public:
 /** List of plugins. */
 typedef Common::Array<Plugin *> PluginList;
 
+/** Template to help defining Plugin subclasses */
+template<class PO_t>
+class PluginSubclass : public Plugin {
+public:
+	PO_t *operator->() const {
+		return (PO_t *)_pluginObject;
+	}
+
+	typedef Common::Array<PluginSubclass *> list;
+};
+
 class PluginProvider {
 public:
 	virtual ~PluginProvider() {}
@@ -197,21 +208,10 @@ public:
 
 // Engine plugins
 
-class Engine;
 class FSList;
-class OSystem;
+class MetaEngine;
 
-class EnginePlugin : public Plugin {
-public:
-	const char *getCopyright() const;
-	PluginError createInstance(OSystem *syst, Engine **engine) const;
-	GameList getSupportedGames() const;
-	GameDescriptor findGame(const char *gameid) const;
-	GameList detectGames(const FSList &fslist) const;
-	SaveStateList listSaves(const char *target) const;
-};
-
-typedef Common::Array<EnginePlugin *> EnginePluginList;
+typedef PluginSubclass<MetaEngine> EnginePlugin;
 
 class EngineManager : public Common::Singleton<EngineManager> {
 private:
@@ -220,7 +220,7 @@ private:
 public:
 	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
 	GameList detectGames(const FSList &fslist) const;
-	const EnginePluginList &getPlugins() const;
+	const EnginePlugin::list &getPlugins() const;
 };
 
 /** Shortcut for accessing the engine manager. */

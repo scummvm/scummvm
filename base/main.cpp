@@ -32,6 +32,7 @@
  */
 
 #include "engines/engine.h"
+#include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -138,7 +139,7 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 
 	// Create the game engine
 	Engine *engine = 0;
-	PluginError err = plugin->createInstance(&system, &engine);
+	PluginError err = (*plugin)->createInstance(&system, &engine);
 	if (!engine || err != kNoError) {
 		// TODO: Show an error dialog or so?
 		// TODO: Also take 'err' into consideration...

@@ -301,43 +301,19 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 
 #include "engines/metaengine.h"
 
-const char *EnginePlugin::getCopyright() const {
-	return ((MetaEngine*)_pluginObject)->getCopyright();
-}
-
-PluginError EnginePlugin::createInstance(OSystem *syst, Engine **engine) const {
-	return ((MetaEngine*)_pluginObject)->createInstance(syst, engine);
-}
-
-GameList EnginePlugin::getSupportedGames() const {
-	return ((MetaEngine*)_pluginObject)->getSupportedGames();
-}
-
-GameDescriptor EnginePlugin::findGame(const char *gameid) const {
-	return ((MetaEngine*)_pluginObject)->findGame(gameid);
-}
-
-GameList EnginePlugin::detectGames(const FSList &fslist) const {
-	return ((MetaEngine*)_pluginObject)->detectGames(fslist);
-}
-
-SaveStateList EnginePlugin::listSaves(const char *target) const {
-	return ((MetaEngine*)_pluginObject)->listSaves(target);
-}
-
 DECLARE_SINGLETON(EngineManager);
 
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	// Find the GameDescriptor for this target
-	const EnginePluginList &plugins = getPlugins();
+	const EnginePlugin::list &plugins = getPlugins();
 	GameDescriptor result;
 
 	if (plugin)
 		*plugin = 0;
 
-	EnginePluginList::const_iterator iter = plugins.begin();
+	EnginePlugin::list::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (*iter)->findGame(gameName.c_str());
+		result = (**iter)->findGame(gameName.c_str());
 		if (!result.gameid().empty()) {
 			if (plugin)
 				*plugin = *iter;
@@ -350,18 +326,18 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 GameList EngineManager::detectGames(const FSList &fslist) const {
 	GameList candidates;
 
-	const EnginePluginList &plugins = getPlugins();
+	const EnginePlugin::list &plugins = getPlugins();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	EnginePluginList::const_iterator iter;
+	EnginePlugin::list::const_iterator iter;
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		candidates.push_back((*iter)->detectGames(fslist));
+		candidates.push_back((**iter)->detectGames(fslist));
 	}
 
 	return candidates;
 }
 
-const EnginePluginList &EngineManager::getPlugins() const {
-	return (const EnginePluginList&)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+const EnginePlugin::list &EngineManager::getPlugins() const {
+	return (const EnginePlugin::list&)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
