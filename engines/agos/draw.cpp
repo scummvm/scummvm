@@ -473,7 +473,7 @@ void AGOSEngine::restoreBackGround() {
 		animTable = animTableTmp = _screenAnim1;
 		while (animTable->srcPtr) {
 			if (!(animTable->windowNum & 0x8000)) {
-				memcpy(animTableTmp, animTable, sizeof(AnimTable));
+				memmove(animTableTmp, animTable, sizeof(AnimTable));
 				animTableTmp++;
 			}
 			animTable++;
