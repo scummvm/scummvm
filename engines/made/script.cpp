@@ -172,15 +172,7 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_commands = commandProcs;
 	_commandsMax = ARRAYSIZE(commandProcs) + 1;
 
-	if (_vm->getGameID() == GID_RTZ)
-		_functions = new ScriptFunctionsRtz(_vm);
-	else if (_vm->getGameID() == GID_LGOP2)
-		_functions = new ScriptFunctionsLgop2(_vm);
-	else if (_vm->getGameID() == GID_MANHOLE)
-		_functions = new ScriptFunctionsMhne(_vm);
-	else
-		error("Unsupported GameID");
-		
+	_functions = new ScriptFunctions(_vm);
 	_functions->setupExternalsTable();
 	
 #undef COMMAND
