@@ -229,6 +229,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\made\screenfx.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\made\screenfx.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\made\script.cpp"
 			>
 		</File>
