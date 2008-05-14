@@ -103,7 +103,7 @@ public:
 	void	waitForButtonEvent(uint32 buttonEventMask);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
 
-	void Input::stopHovering() {
+	void stopHovering() {
 		_hoverZone = nullZonePtr;
 	}
 
