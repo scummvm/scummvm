@@ -102,17 +102,13 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 
 		uint32 delayEnd = _system->getMillis() + _animDelayTime * _tickLength;
 
-		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd) {
-			if (_chatText)
-				updateWithText();
-			else
-				update();
+		while ((!skipFlag() || !allowSkip) && _system->getMillis() < delayEnd)
+			delay(10, true);
 
-			delay(10);
-		}
-
-		if (skipFlag())
+		if (skipFlag()) {
 			resetSkipFlag();
+			break;
+		}
 	}
 
 	if (resetChar) {
