@@ -40,7 +40,7 @@
 
 namespace Kyra {
 
-SeqPlayer::SeqPlayer(KyraEngine_v1 *vm, OSystem *system) {
+SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
 	_vm = vm;
 	_system = system;
 

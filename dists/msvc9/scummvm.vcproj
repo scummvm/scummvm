@@ -556,6 +556,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\midiplugin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\mixer.cpp"
 				>
 			</File>

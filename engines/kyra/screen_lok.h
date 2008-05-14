@@ -23,19 +23,19 @@
  *
  */
 
-#ifndef KYRA_SCREEN_V1_H
-#define KYRA_SCREEN_V1_H
+#ifndef KYRA_SCREEN_LOK_H
+#define KYRA_SCREEN_LOK_H
 
 #include "kyra/screen.h"
 
 namespace Kyra {
 
-class KyraEngine_v1;
+class KyraEngine_LoK;
 
-class Screen_v1 : public Screen {
+class Screen_LoK : public Screen {
 public:
-	Screen_v1(KyraEngine_v1 *vm, OSystem *system);
-	virtual ~Screen_v1();
+	Screen_LoK(KyraEngine_LoK *vm, OSystem *system);
+	virtual ~Screen_LoK();
 
 	bool init();
 
@@ -59,7 +59,7 @@ public:
 	void bitBlitRects();
 
 protected:
-	KyraEngine_v1 *_vm;
+	KyraEngine_LoK *_vm;
 
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;

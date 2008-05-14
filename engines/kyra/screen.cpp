@@ -28,14 +28,15 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "kyra/screen.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/resource.h"
 
 namespace Kyra {
 
-Screen::Screen(KyraEngine *vm, OSystem *system)
+Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0) {
 	_debugEnabled = false;
+	_maskMinY = _maskMaxY = -1;
 }
 
 Screen::~Screen() {
@@ -307,14 +308,16 @@ const uint8 *Screen::getCPagePtr(int pageNum) const {
 uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
 	debugC(9, kDebugLevelScreen, "Screen::getPageRect(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
 	assert(pageNum < SCREEN_PAGE_NUM);
-	if (pageNum == 0 || pageNum == 1) addDirtyRect(x, y, w, h);
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x, y, w, h);
 	return _pagePtrs[pageNum] + y * SCREEN_W + x;
 }
 
 void Screen::clearPage(int pageNum) {
 	debugC(9, kDebugLevelScreen, "Screen::clearPage(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
-	if (pageNum == 0 || pageNum == 1) _forceFullUpdate = true;
+	if (pageNum == 0 || pageNum == 1)
+		_forceFullUpdate = true;
 	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE);
 	clearOverlayPage(pageNum);
 }
@@ -329,7 +332,8 @@ int Screen::setCurPage(int pageNum) {
 
 void Screen::clearCurPage() {
 	debugC(9, kDebugLevelScreen, "Screen::clearCurPage()");
-	if (_curPage == 0 || _curPage == 1) _forceFullUpdate = true;
+	if (_curPage == 0 || _curPage == 1)
+		_forceFullUpdate = true;
 	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
 	clearOverlayPage(_curPage);
 }
@@ -478,7 +482,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 	}
 	addDirtyRect(0, y, SCREEN_W, h);
 	// This would remove the text in the end sequence of
-	// the FM-Towns version.
+	// the (Kyrandia 1) FM-Towns version.
 	// Since this method is just used for the Seqplayer
 	// this shouldn't be a problem anywhere else, so it's
 	// safe to disable the call here.
@@ -576,7 +580,8 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	memcpy(dst, src, SCREEN_W * SCREEN_H);
 	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
 
-	if (dstPage == 0 || dstPage == 1) _forceFullUpdate = true;
+	if (dstPage == 0 || dstPage == 1)
+		_forceFullUpdate = true;
 }
 
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
@@ -873,12 +878,12 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	uint8 *fontData = fnt->fontData = _vm->resource()->fileData(filename, &sz);
 
 	if (!fontData || !sz)
-		error("couldn't load font file '%s'", filename);
+		error("Couldn't load font file '%s'", filename);
 
 	uint16 fontSig = READ_LE_UINT16(fontData + 2);
 
 	if (fontSig != 0x500)
-		error("Invalid font data (file '%s')", filename);
+		error("Invalid font data (file '%s', fontSig: %.04X)", filename, fontSig);
 
 	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
 	fnt->charSizeOffset = READ_LE_UINT16(fontData + 4);
@@ -934,15 +939,14 @@ int Screen::getTextWidth(const char *str) const {
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
-			if (curLineLen > maxLineLen) {
+			if (curLineLen > maxLineLen)
 				maxLineLen = curLineLen;
-			} else {
+			else
 				curLineLen = 0;
-			}
 		} else {
-			if (c <= 0x7F || !_useSJIS)
+			if (c <= 0x7F || !_useSJIS) {
 				curLineLen += getCharWidth(c);
-			else {
+			} else {
 				c = READ_LE_UINT16(str - 1);
 				++str;
 				curLineLen += getCharWidth(c);
@@ -1894,11 +1898,10 @@ void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool noXor) {
 	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d, %d)", (const void *)dst, (const void *)src, pitch, noXor);
 
-	if (noXor) {
+	if (noXor)
 		wrapped_decodeFrameDeltaPage<true>(dst, src, pitch);
-	} else {
+	else
 		wrapped_decodeFrameDeltaPage<false>(dst, src, pitch);
-	}
 }
 
 void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
@@ -2642,7 +2645,7 @@ void Screen::shakeScreen(int times) {
 }
 
 void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
+	debugC(9, kDebugLevelScreen, "KyraEngine_v1::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 

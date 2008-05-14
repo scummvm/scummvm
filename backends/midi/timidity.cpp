@@ -36,8 +36,9 @@
 
 #if defined (UNIX)
 
-#include "sound/mpu401.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
+#include "sound/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -510,8 +511,45 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 	timidity_write_data(buf, position);
 }
 
-MidiDriver *MidiDriver_TIMIDITY_create() {
-	return new MidiDriver_TIMIDITY();
+
+// Plugin interface
+
+class TimidityMidiPlugin : public MidiPluginObject {
+public:
+	virtual const char *getName() const {
+		return "TiMidity";
+	}
+
+	virtual const char *getId() const {
+		return "timidity";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError TimidityMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_TIMIDITY();
+
+	return kNoError;
 }
+
+MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	TimidityMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(TIMIDITY)
+	//REGISTER_PLUGIN_DYNAMIC(TIMIDITY, PLUGIN_TYPE_MIDI, TimidityMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(TIMIDITY, PLUGIN_TYPE_MIDI, TimidityMidiPlugin);
+//#endif
 
 #endif // defined (UNIX)

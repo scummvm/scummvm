@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# configue -- custom configure script for ScummVM.
+# configure -- custom configure script for ScummVM.
 #
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT

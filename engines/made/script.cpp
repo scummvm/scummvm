@@ -172,15 +172,7 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_commands = commandProcs;
 	_commandsMax = ARRAYSIZE(commandProcs) + 1;
 
-	if (_vm->getGameID() == GID_RTZ)
-		_functions = new ScriptFunctionsRtz(_vm);
-	else if (_vm->getGameID() == GID_LGOP2)
-		_functions = new ScriptFunctionsLgop2(_vm);
-	else if (_vm->getGameID() == GID_MANHOLE)
-		_functions = new ScriptFunctionsMhne(_vm);
-	else
-		error("Unsupported GameID");
-		
+	_functions = new ScriptFunctions(_vm);
 	_functions->setupExternalsTable();
 	
 #undef COMMAND
@@ -476,12 +468,19 @@ void ScriptInterpreter::cmd_yorn() {
 }
 
 void ScriptInterpreter::cmd_save() {
-	warning("Unimplemented command: cmd_save");
-	_stack.setTop(0);
+	int16 result = 0;
+	int16 stringOfs = _stack.top();
+	const char *filename = _vm->_dat->getString(stringOfs);
+	result = _vm->_dat->savegame(filename, "", 0);
+	_stack.setTop(result);
 }
 
 void ScriptInterpreter::cmd_restore() {
-	warning("Unimplemented command: cmd_restore");
+	int16 result = 0;
+	int16 stringOfs = _stack.top();
+	const char *filename = _vm->_dat->getString(stringOfs);
+	result = _vm->_dat->loadgame(filename, 0);
+	_stack.setTop(result);
 }
 
 void ScriptInterpreter::cmd_arg() {
@@ -594,12 +593,12 @@ void ScriptInterpreter::cmd_extend() {
 	int16 *argv = _stack.getStackPtr();
 
 	//debug(4, "func = %d (%s); argc = %d", func, extendFuncNames[func], argc);
-	debug(4, "func = %d; argc = %d", func, argc);
+	debug(2, "func = %d; argc = %d", func, argc);
 	for (int i = 0; i < argc; i++)
-		debug(4, "argv[%02d] = %04X (%d)", i, argv[i], argv[i]);
+		debug(2, "argv[%02d] = %04X (%d)", i, argv[i], argv[i]);
 
 	int16 result = _functions->callFunction(func, argc, argv);
-	debug(4, "result = %04X (%d)", result, result);
+	debug(2, "result = %04X (%d)", result, result);
 	
 	_stack.free(argc);
 	

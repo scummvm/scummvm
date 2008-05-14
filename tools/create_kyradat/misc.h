@@ -433,7 +433,7 @@ const int kyra2TownsFile1JapNeed[] = {
 
 const int kyra2TownsFile2EngNeed[] = {
 	k2IngamePakFiles,
-	k2IngameSfxFiles,
+	k2IngameSfxFilesTns,
 	k2IngameSfxIndex,
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
@@ -457,6 +457,18 @@ const int kyra2DemoNeed[] = {
 
 const int kyra2TlkDemoNeed[] = {
 	k2IngameTlkDemoStrings,
+	-1
+};
+
+const int kyra3Need[] = {
+	k3MainMenuStrings,
+	k3MusicFiles,
+	k3ScoreTable,
+	k3SfxFiles,
+	k3SfxMap,
+	k3ItemAnimData,
+	k3ItemMagicTable,
+	k3ItemStringMap,
 	-1
 };
 
@@ -484,6 +496,8 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2DemoVersionTlkE, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkF, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkG, kyra2TlkDemoNeed},
+
+	{ kKyra3, -1, kyra3Need },
 
 	{ -1, -1, 0 }
 };

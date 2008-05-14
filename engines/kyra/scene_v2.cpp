@@ -90,7 +90,7 @@ int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= ~3; toX &= ~3;
 	y &= ~1; toY &= ~1;
-	int size = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
+	int size = KyraEngine_v1::findWay(x, y, toX, toY, moveTable, moveTableSize);
 	static bool usePostProcess = false;
 	if (size && !usePostProcess) {
 		usePostProcess = true;

@@ -32,20 +32,25 @@ namespace Made {
 
 Screen::Screen(MadeEngine *vm) : _vm(vm) {
 
-	_screen1 = new Graphics::Surface();
-	_screen1->create(320, 200, 1);
-	_screen2 = new Graphics::Surface();
-	_screen2->create(320, 200, 1);
+	_backgroundScreen = new Graphics::Surface();
+	_backgroundScreen->create(320, 200, 1);
 
-	_clipInfo1.x = _clipInfo2.x = 0;
-	_clipInfo1.y = _clipInfo2.y = 0;
-	_clipInfo1.w = _clipInfo2.w = 320;
-	_clipInfo1.h = _clipInfo2.h = 200;
+	_workScreen = new Graphics::Surface();
+	_workScreen->create(320, 200, 1);
 
-	_clipInfo1.destSurface = _screen1;
-	_clipInfo2.destSurface = _screen2;
-	_clipArea.destSurface = _screen2;
-	
+	_backgroundScreenDrawCtx.clipRect = Common::Rect(320, 200);
+	_workScreenDrawCtx.clipRect = Common::Rect(320, 200);
+
+	_backgroundScreenDrawCtx.destSurface = _backgroundScreen;
+	_workScreenDrawCtx.destSurface = _workScreen;
+	_clipArea.destSurface = _workScreen;
+
+	// FIXME: Screen mask is only needed in v2 games
+	_screenMask = new Graphics::Surface();
+	_screenMask->create(320, 200, 1);
+	_maskDrawCtx.clipRect = Common::Rect(320, 200);
+	_maskDrawCtx.destSurface = _screenMask;
+
 	for (int i = 0; i <= 3; i++)
 		_excludeClipAreaEnabled[i] = false;
 
@@ -62,8 +67,10 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_ground = 1;
 	_clip = 0;
 	_exclude = 0;
+	_mask = 0;
 	
 	_visualEffectNum = 0;
+	_fx = new ScreenEffects(this);
 	
 	_textX = 0;
 	_textY = 0;
@@ -74,56 +81,93 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_textRect.bottom = 200;
 	_font = NULL;
 	_currentFontNum = 0;
-	_fontDrawCtx.x = 0;
-	_fontDrawCtx.y = 0;
-	_fontDrawCtx.w = 320;
-	_fontDrawCtx.h = 200;
-	_fontDrawCtx.destSurface = _screen1;
+	_fontDrawCtx.clipRect = Common::Rect(320, 200);
+	_fontDrawCtx.destSurface = _backgroundScreen;
 
 	clearChannels();
 }
 
 Screen::~Screen() {
-	delete _screen1;
-	delete _screen2;
+	delete _backgroundScreen;
+	delete _workScreen;
+	delete _screenMask;
+	delete _fx;
 }
 
 void Screen::clearScreen() {
-	_screen1->fillRect(Common::Rect(0, 0, 320, 200), 0);
-	_screen2->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_backgroundScreen->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_workScreen->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_screenMask->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	_mask = 0;
 	_needPalette = true;
 }
 
-void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
+void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
-	byte *source, *dest;
+	_excludeClipAreaEnabled[0] = false;
+	_excludeClipAreaEnabled[1] = false;
+	_excludeClipAreaEnabled[2] = false;
+	_excludeClipAreaEnabled[3] = false;
+
+	if (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0) {
+		_excludeClipArea[0].clipRect = Common::Rect(320, 200);
+		_excludeClipAreaEnabled[0] = true;
+		return;
+	}
+
+	if (y1 > 0 && y2 > 0) {
+		_excludeClipArea[0].clipRect = Common::Rect(320, y1);
+		_excludeClipAreaEnabled[0] = true;
+	}
+
+	if (y1 < 200 && y2 < 200) {
+		_excludeClipArea[1].clipRect = Common::Rect(0, y2, 320, 200);
+		_excludeClipAreaEnabled[1] = true;
+	}
+
+	if (x1 > 0 && x2 > 0) {
+		_excludeClipArea[2].clipRect = Common::Rect(0, y1, x1, y2);
+		_excludeClipAreaEnabled[2] = true;
+	}
+
+	if (x1 < 320 && x2 < 320) {
+		_excludeClipArea[3].clipRect = Common::Rect(x2, y1, 320, y2);
+		_excludeClipAreaEnabled[3] = true;
+	}
+	
+}
+
+void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
+
+	byte *source, *dest, *maskp;
 	int startX = 0;
 	int startY = 0;
 	int clipWidth = sourceSurface->w;
 	int clipHeight = sourceSurface->h;
 	
-	if (x < 0) {
-		startX = -x;
+	if (x < clipInfo.clipRect.left) {
+		startX = clipInfo.clipRect.left - x;
 		clipWidth -= startX;
-		x = 0;
+		x = clipInfo.clipRect.left;
 	}
 
-	if (y < 0) {
-		startY = -y;
+	if (y < clipInfo.clipRect.top) {
+		startY = clipInfo.clipRect.top - y;
 		clipHeight -= startY;
-		y = 0;
+		y = clipInfo.clipRect.top;
 	}
 
-	if (x + clipWidth > clipInfo.x + clipInfo.w) {
-		clipWidth = clipInfo.x + clipInfo.w - x;
+	if (x + clipWidth > clipInfo.clipRect.right) {
+		clipWidth = clipInfo.clipRect.right - x;
 	}
 
-	if (y + clipHeight > clipInfo.y + clipInfo.h) {
-		clipHeight = clipInfo.y + clipInfo.h - y;
+	if (y + clipHeight > clipInfo.clipRect.bottom) {
+		clipHeight = clipInfo.clipRect.bottom - y;
 	}
 
 	source = (byte*)sourceSurface->getBasePtr(startX, startY);
 	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
+	maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
 
 	int32 sourcePitch, linePtrAdd;
 	byte *linePtr;
@@ -148,12 +192,15 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 			linePtr = source;
 		}
 		for (int16 xc = 0; xc < clipWidth; xc++) {
-			if (*linePtr)
-				dest[xc] = *linePtr;
+			if (*linePtr && (mask == 0 || maskp[xc] == 0)) {
+				if (*linePtr)
+					dest[xc] = *linePtr;
+			}
 			linePtr += linePtrAdd;
 		}
 		source += sourcePitch;
 		dest += clipInfo.destSurface->pitch;
+		maskp += _maskDrawCtx.destSurface->pitch;
 	}
 
 }
@@ -218,6 +265,26 @@ uint16 Screen::setChannelContent(uint16 channelIndex, uint16 index) {
 	return updateChannel(channelIndex - 1) + 1;
 }
 
+void Screen::setChannelUseMask(uint16 channelIndex) {
+	if (channelIndex < 1 || channelIndex >= 100)
+		return;
+	_channels[channelIndex - 1].mask = _mask;
+}
+
+void Screen::setChannelOffsets(uint16 channelIndex, int16 xofs, int16 yofs) {
+	if (channelIndex < 1 || channelIndex >= 100)
+		return;
+	_channels[channelIndex - 1].xofs = xofs;
+	_channels[channelIndex - 1].yofs = yofs;
+}
+
+void Screen::getChannelOffsets(uint16 channelIndex, int16 &xofs, int16 &yofs) {
+	if (channelIndex < 1 || channelIndex >= 100)
+		return;
+	xofs = _channels[channelIndex - 1].xofs;
+	yofs = _channels[channelIndex - 1].yofs;
+}
+
 void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask) {
 
 	for (int i = 0; i <= 3; i++)
@@ -239,18 +306,18 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 
 			case 1: // drawFlex
 				if (_channels[i].state & 4) {
-					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _clipArea);
+					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, _clipArea);
 				} else if (_channels[i].state & 8) {
 					for (int excludeIndex = 0; excludeIndex < 4; excludeIndex++) {
 						if (_excludeClipAreaEnabled[excludeIndex]) {
-							drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _excludeClipArea[excludeIndex]);
+							drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, _excludeClipArea[excludeIndex]);
 						}
 					}
 				} else {
-					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, clipInfo);
+					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, clipInfo);
 				}
 				break;
-
+				
 			case 2: // drawObjectText
 				printObjectText(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].fontNum, _channels[i].textColor, _channels[i].outlineColor, clipInfo);
 				break;
@@ -287,12 +354,12 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 void Screen::updateSprites() {
 	// TODO: This needs some more work, dirty rectangles are currently not used
 
-	memcpy(_screen2->pixels, _screen1->pixels, 64000);
+	memcpy(_workScreen->pixels, _backgroundScreen->pixels, 64000);
 
-	drawSpriteChannels(_clipInfo1, 3, 0);
-	drawSpriteChannels(_clipInfo2, 1, 2);
+	drawSpriteChannels(_backgroundScreenDrawCtx, 3, 0);
+	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
-	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
+	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
 	
 }
 
@@ -300,11 +367,12 @@ void Screen::clearChannels() {
 	for (uint16 i = 0; i < ARRAYSIZE(_channels); i++) {
 		_channels[i].type = 0;
 		_channels[i].index = 0;
+		_channels[i].mask = 0;
 	}
 	_channelsUsedCount = 0;
 }
 
-uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, const ClipInfo &clipInfo) {
+uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
 	if (flexIndex == 0)
 		return 0;
@@ -312,7 +380,7 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 f
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
 	Graphics::Surface *sourceSurface = flex->getPicture();
 
-	drawSurface(sourceSurface, x, y, flipX, flipY, clipInfo);
+	drawSurface(sourceSurface, x, y, flipX, flipY, mask, clipInfo);
 
 	// Palette is set in showPage
 	if (flex->hasPalette() && !_paletteLock && _needPalette) {
@@ -337,24 +405,29 @@ void Screen::drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, i
 	AnimationResource *anim = _vm->_res->getAnimation(animIndex);
 	Graphics::Surface *sourceSurface = anim->getFrame(frameNum);
 
-	drawSurface(sourceSurface, x, y, flipX, flipY, clipInfo);
+	drawSurface(sourceSurface, x, y, flipX, flipY, 0, clipInfo);
 
 	_vm->_res->freeResource(anim);
 }
 
 uint16 Screen::drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY) {
-	drawFlex(index, x, y, flipX, flipY, _clipInfo1);
+	drawFlex(index, x, y, flipX, flipY, 0, _backgroundScreenDrawCtx);
+	return 0;
+}
+
+uint16 Screen::drawMask(uint16 index, int16 x, int16 y) {
+	drawFlex(index, x, y, 0, 0, 0, _maskDrawCtx);
 	return 0;
 }
 
 uint16 Screen::drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY) {
-	drawAnimFrame(animIndex, x, y, frameNum, flipX, flipY, _clipInfo1);
+	drawAnimFrame(animIndex, x, y, frameNum, flipX, flipY, _backgroundScreenDrawCtx);
 	return 0;
 }
 
 void Screen::addSprite(uint16 spriteIndex) {
 	bool oldScreenLock = _screenLock;
-	drawFlex(spriteIndex, 0, 0, 0, 0, _clipInfo1);
+	drawFlex(spriteIndex, 0, 0, 0, 0, 0, _backgroundScreenDrawCtx);
 	_screenLock = oldScreenLock;
 }
 
@@ -401,8 +474,10 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 		_channels[channelIndex].y1 = y1;
 		_channels[channelIndex].x2 = x2;
 		_channels[channelIndex].y2 = y2;
-		_channels[channelIndex].area = (x2 - x2) * (y2 - y1);
-		
+		_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
+		_channels[channelIndex].xofs = 0;
+		_channels[channelIndex].yofs = 0;
+
 		if (_channelsUsedCount <= channelIndex)
 			_channelsUsedCount = channelIndex + 1;
 
@@ -454,7 +529,7 @@ uint16 Screen::placeAnim(uint16 channelIndex, uint16 animIndex, int16 x, int16 y
 		_channels[channelIndex].y1 = y1;
 		_channels[channelIndex].x2 = x2;
 		_channels[channelIndex].y2 = y2;
-		_channels[channelIndex].area = (x2 - x2) * (y2 - y1);
+		_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
 
 		if (_channelsUsedCount <= channelIndex)
 			_channelsUsedCount = channelIndex + 1;
@@ -483,17 +558,6 @@ int16 Screen::getAnimFrame(uint16 channelIndex) {
 		return -1;
 	return _channels[channelIndex - 1].frameNum;
 }
-
-int16 Screen::getAnimFrameCount(uint16 animIndex) {
-	int16 frameCount = 0;
-	AnimationResource *anim = _vm->_res->getAnimation(animIndex);
-	if (anim) {
-		frameCount = anim->getCount();
-		_vm->_res->freeResource(anim);
-	}
-	return frameCount;
-}
-
 
 uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, int16 y, uint16 fontNum, int16 textColor, int16 outlineColor) {
 
@@ -547,7 +611,7 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 	_channels[channelIndex].y1 = y1;
 	_channels[channelIndex].x2 = x2;
 	_channels[channelIndex].y2 = y2;
-	_channels[channelIndex].area = (x2 - x2) * (y2 - y1);
+	_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
 
 	if (_channelsUsedCount <= channelIndex)
 		_channelsUsedCount = channelIndex + 1;
@@ -558,18 +622,17 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 void Screen::show() {
 
 	// TODO
-	
+
 	if (_screenLock)
 		return;
 
-	drawSpriteChannels(_clipInfo1, 3, 0);
-	memcpy(_screen2->pixels, _screen1->pixels, 64000);
-	drawSpriteChannels(_clipInfo2, 1, 2);
+	drawSpriteChannels(_backgroundScreenDrawCtx, 3, 0);
+	memcpy(_workScreen->pixels, _backgroundScreen->pixels, 64000);
+	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
-	// TODO: Implement visual effects (palette fading etc.)
-	if (!_paletteLock)
-		setRGBPalette(_palette, 0, _paletteColorCount);
-	_vm->_system->copyRectToScreen((const byte*)_screen2->pixels, _screen2->pitch, 0, 0, _screen2->w, _screen2->h);
+	_fx->run(_visualEffectNum, _workScreen, _palette, _newPalette, _paletteColorCount);
+	_visualEffectNum = 0;
+
 	_vm->_system->updateScreen();
 
 	if (!_paletteInitialized) {
@@ -581,19 +644,7 @@ void Screen::show() {
 }
 
 void Screen::flash(int flashCount) {
-	int palSize = _paletteColorCount * 3;
-	if (flashCount < 1)
-		flashCount = 1;
-	for (int i = 0; i < palSize; i++)
-		_fxPalette[i] = CLIP<byte>(255 - _palette[i], 0, 255);
-	while (flashCount--) {
-		setRGBPalette(_fxPalette, 0, _paletteColorCount);
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(30);
-		setRGBPalette(_palette, 0, _paletteColorCount);
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(30);
-	}
+	_fx->flash(flashCount, _palette, _paletteColorCount);
 }
 
 void Screen::setFont(int16 fontNum) {
@@ -610,7 +661,7 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 	if (!_font)
 		return;
 
-	int height = _font->getHeight();
+	uint width = 8, height = _font->getHeight();
 	byte *charData = _font->getChar(c);
 	
 	if (!charData)
@@ -618,10 +669,10 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 
 	byte p;
 	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
-	
-	for (int16 yc = 0; yc < height; yc++) {
+
+	for (uint yc = 0; yc < height; yc++) {
 		p = charData[yc];
-		for (int16 xc = 0; xc < 8; xc++) {
+		for (uint xc = 0; xc < width; xc++) {
 			if (p & 0x80)
 				dest[xc] = color;
 			p <<= 1;
@@ -712,7 +763,7 @@ void Screen::printText(const char *text) {
 }
 
 void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
-	if (*text == 0 || x == 0 || y == 0)
+	if (*text == 0 || x < 0 || y < 0)
 		return;
 
 	int16 oldFontNum = _currentFontNum;
@@ -750,5 +801,21 @@ int16 Screen::getTextWidth(int16 fontNum, const char *text) {
 	return _font->getTextWidth(text);
 }
 
+Graphics::Surface *Screen::lockScreen() {
+	return _vm->_system->lockScreen();
+}
+
+void Screen::unlockScreen() {
+	_vm->_system->unlockScreen();
+}
+
+void Screen::showWorkScreen() {
+	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+}
+
+void Screen::updateScreenAndWait(int delay) {
+	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(delay);
+}
 
 } // End of namespace Made

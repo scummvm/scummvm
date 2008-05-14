@@ -81,7 +81,14 @@ public:
 	~AnimationResource();
 	void load(byte *source, int size);
 	int getCount() const { return _frames.size(); }
-	Graphics::Surface *getFrame(int index) const { return _frames[index]; }
+	Graphics::Surface *getFrame(int index) const { 
+		if ((uint)index < _frames.size()) {
+			return _frames[index];
+		} else {
+			warning("getFrame: Tried to obtain invalid frame %i, array has %i frames", index, _frames.size());
+			return _frames[_frames.size() - 1];
+		}
+	}
 	uint16 getFlags() const { return _flags; }
 	int16 getWidth() const { return _width; }
 	int16 getHeight() const { return _height; }

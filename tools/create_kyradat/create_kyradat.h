@@ -156,6 +156,7 @@ enum kExtractID {
 
 	k2IngamePakFiles,
 	k2IngameSfxFiles,
+	k2IngameSfxFilesTns,
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
@@ -163,6 +164,15 @@ enum kExtractID {
 	k2IngameTimJpStrings,
 	k2IngameItemAnimData,
 	k2IngameTlkDemoStrings,
+
+	k3MainMenuStrings,
+	k3MusicFiles,
+	k3ScoreTable,
+	k3SfxFiles,
+	k3SfxMap,
+	k3ItemAnimData,
+	k3ItemMagicTable,
+	k3ItemStringMap,
 
 	kMaxResIDs
 };
@@ -246,7 +256,13 @@ enum kExtractType {
 
 	k2TypeSeqData,
 	k2TypeShpDataV1,
-	k2TypeShpDataV2
+	k2TypeShpDataV2,
+	k2TypeSoundList,
+	k2TypeLangSoundList,
+	k2TypeSfxList,
+
+	k3TypeRaw16to8,
+	k3TypeShpData
 };
 
 struct ExtractType {

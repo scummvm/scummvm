@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _system(system), _currentTim(0) {
+TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, OSystem *system) : _vm(vm), _system(system), _currentTim(0) {
 #define COMMAND(x) { &TIMInterpreter::x, #x }
 #define COMMAND_UNIMPL() { 0, 0 }
 	static CommandEntry commandProcs[] = {

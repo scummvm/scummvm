@@ -23,17 +23,17 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
-#include "kyra/screen_v1.h"
+#include "kyra/kyra_lok.h"
+#include "kyra/screen_lok.h"
 #include "kyra/text.h"
-#include "kyra/animator_v1.h"
+#include "kyra/animator_lok.h"
 #include "kyra/sprites.h"
 #include "kyra/timer.h"
 
 namespace Kyra {
 
-void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum);
+void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum);
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
 	bool drawText = textEnabled();
@@ -154,7 +154,7 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 	//clearKyrandiaButtonIO();
 }
 
-void KyraEngine_v1::endCharacterChat(int8 charNum, int16 convoInitialized) {
+void KyraEngine_LoK::endCharacterChat(int8 charNum, int16 convoInitialized) {
 	_charSayUnk3 = -1;
 
 	if (charNum > 4 && charNum < 11) {
@@ -171,7 +171,7 @@ void KyraEngine_v1::endCharacterChat(int8 charNum, int16 convoInitialized) {
 	}
 }
 
-void KyraEngine_v1::restoreChatPartnerAnimFrame(int8 charNum) {
+void KyraEngine_LoK::restoreChatPartnerAnimFrame(int8 charNum) {
 	_talkingCharNum = -1;
 
 	if (charNum > 0 && charNum < 5) {
@@ -186,7 +186,7 @@ void KyraEngine_v1::restoreChatPartnerAnimFrame(int8 charNum) {
 	_animator->updateAllObjectShapes();
 }
 
-void KyraEngine_v1::backupChatPartnerAnimFrame(int8 charNum) {
+void KyraEngine_LoK::backupChatPartnerAnimFrame(int8 charNum) {
 	_talkingCharNum = 0;
 
 	if (charNum < 5 && charNum > 0)
@@ -202,7 +202,7 @@ void KyraEngine_v1::backupChatPartnerAnimFrame(int8 charNum) {
 	_animator->updateAllObjectShapes();
 }
 
-int8 KyraEngine_v1::getChatPartnerNum() {
+int8 KyraEngine_LoK::getChatPartnerNum() {
 	uint8 sceneTable[] = {0x2, 0x5, 0x2D, 0x7, 0x1B, 0x8, 0x22, 0x9, 0x30, 0x0A};
 	int pos = 0;
 	int partner = -1;
@@ -224,7 +224,7 @@ int8 KyraEngine_v1::getChatPartnerNum() {
 	return partner;
 }
 
-int KyraEngine_v1::initCharacterChat(int8 charNum) {
+int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 	int returnValue = 0;
 
 	if (_talkingCharNum == -1) {
@@ -258,8 +258,8 @@ int KyraEngine_v1::initCharacterChat(int8 charNum) {
 	return returnValue;
 }
 
-void KyraEngine_v1::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
+void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
 	uint16 chatTicks;
@@ -338,8 +338,8 @@ void KyraEngine_v1::characterSays(int vocFile, const char *chatStr, int8 charNum
 	endCharacterChat(charNum, convoInitialized);
 }
 
-void KyraEngine_v1::drawSentenceCommand(const char *sentence, int color) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawSentenceCommand('%s', %i)", sentence, color);
+void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::drawSentenceCommand('%s', %i)", sentence, color);
 	_screen->hideMouse();
 	_screen->fillRect(8, 143, 311, 152, 12);
 
@@ -358,8 +358,8 @@ void KyraEngine_v1::drawSentenceCommand(const char *sentence, int color) {
 	_fadeText = false;
 }
 
-void KyraEngine_v1::updateSentenceCommand(const char *str1, const char *str2, int color) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::updateSentenceCommand('%s', '%s', %i)", str1, str2, color);
+void KyraEngine_LoK::updateSentenceCommand(const char *str1, const char *str2, int color) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::updateSentenceCommand('%s', '%s', %i)", str1, str2, color);
 	char sentenceCommand[500];
 	strncpy(sentenceCommand, str1, 500);
 	if (str2)
@@ -369,8 +369,8 @@ void KyraEngine_v1::updateSentenceCommand(const char *str1, const char *str2, in
 	_screen->updateScreen();
 }
 
-void KyraEngine_v1::updateTextFade() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::updateTextFade()");
+void KyraEngine_LoK::updateTextFade() {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::updateTextFade()");
 	if (!_fadeText)
 		return;
 

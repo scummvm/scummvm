@@ -1444,19 +1444,22 @@ void Inter_v2::o2_initScreen() {
 
 		int16 screenHeight = _vm->_video->_surfHeight;
 
-		_vm->_video->_surfHeight += offY;
+		if (screenHeight < _vm->_height) {
+			_vm->_video->_surfHeight += offY;
+			_vm->_video->_splitStart = screenHeight;
+		} else 
+			_vm->_video->_splitStart = screenHeight - offY;
 
-		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
-		_vm->_video->_splitHeight2 = offY;
-		_vm->_video->_splitStart = screenHeight;
+			_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
+			_vm->_video->_splitHeight2 = offY;
 
-		if ((_vm->_video->_surfHeight + offY) < _vm->_height)
-			_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
-		else
-			_vm->_video->_screenDeltaY = 0;
+			if ((_vm->_video->_surfHeight + offY) < _vm->_height)
+				_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
+			else
+				_vm->_video->_screenDeltaY = 0;
 
-		_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
-		_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
+			_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
+			_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
 
 	} else {
 		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
@@ -1911,7 +1914,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	int16 handle;
 	int16 varOff;
 	int32 size;
-	SaveType type;
+	SaveLoad::SaveMode mode;
 
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
@@ -1919,8 +1922,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	size = -1;
 	handle = 1;
 
-	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
-	if (type == kSaveNone) {
+	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	if (mode == SaveLoad::kSaveModeNone) {
 		handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
 
 		if (handle >= 0) {
@@ -1928,8 +1931,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
 		} else
 			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
-	} else
-		size = _vm->_saveLoad->getSize(type);
+	} else if (mode == SaveLoad::kSaveModeSave)
+		size = _vm->_saveLoad->getSize(_vm->_global->_inter_resStr);
 
 	if (size == -1)
 		handle = -1;
@@ -1950,7 +1953,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	int16 dataVar;
 	int16 handle;
 	byte *buf;
-	SaveType type;
+	SaveLoad::SaveMode mode;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -1962,13 +1965,14 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			_vm->_global->_inter_resStr, dataVar, size, offset);
 
-	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
-	if (type != kSaveNone) {
+	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	if (mode == SaveLoad::kSaveModeSave) {
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(type, dataVar, size, offset))
+		if (_vm->_saveLoad->load(_vm->_global->_inter_resStr, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return false;
-	}
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return false;
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
@@ -2021,7 +2025,7 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	int32 offset;
 	int32 size;
 	int16 dataVar;
-	SaveType type;
+	SaveLoad::SaveMode mode;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -2034,11 +2038,11 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 
 	WRITE_VAR(1, 1);
 
-	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
-	if (type != kSaveNone) {
-		if (_vm->_saveLoad->save(type, dataVar, size, offset))
+	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	if (mode == SaveLoad::kSaveModeSave) {
+		if (_vm->_saveLoad->save(_vm->_global->_inter_resStr, dataVar, size, offset))
 			WRITE_VAR(1, 0);
-	} else
+	} else if (mode == SaveLoad::kSaveModeNone)
 		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
 
 	return false;

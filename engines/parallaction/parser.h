@@ -101,22 +101,18 @@ public:
 	OpcodeSet	*_currentOpcodes;
 	Table		*_currentStatements;
 
-	void	bind(Script *script);
-	void	unbind();
+	void	reset();
 	void	pushTables(OpcodeSet *opcodes, Table* statements);
 	void	popTables();
 	void	parseStatement();
 
-protected:
-	void	reset();
-
-	Script	*_script;
 };
 
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
 #define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
 #define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
 #define DECLARE_UNQUALIFIED_LOCATION_PARSER(sig) void locParse_##sig()
+#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
 
 #define MAX_FORWARDS	50
 
@@ -127,7 +123,8 @@ class LocationParser_ns {
 
 protected:
 	Parallaction_ns*	_vm;
-	Parser	*parser;
+	Script	*_script;
+	Parser	*_parser;
 
 	Table		*_zoneTypeNames;
 	Table		*_zoneFlagNames;
@@ -142,11 +139,10 @@ protected:
 	Table		*_locationZoneStmt;
 	Table		*_locationAnimStmt;
 
-	struct LocationParserContext {
+	struct ParserContext {
 		bool		end;
 
 		const char	*filename;
-		Script		*script;
 		ZonePtr		z;
 		AnimationPtr	a;
 		int			nextToken;
@@ -159,7 +155,7 @@ protected:
 		char *bgName;
 		char *maskName;
 		char *pathName;
-	} _locParseCtxt;
+	} ctxt;
 
 	void warning_unexpected();
 
@@ -204,31 +200,30 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
 
-	virtual void parseGetData(Script &script, ZonePtr z);
-	virtual void parseExamineData(Script &script, ZonePtr z);
-	virtual void parseDoorData(Script &script, ZonePtr z);
-	virtual void parseMergeData(Script &script, ZonePtr z);
-	virtual void parseHearData(Script &script, ZonePtr z);
-	virtual void parseSpeakData(Script &script, ZonePtr z);
+	virtual void parseGetData(ZonePtr z);
+	virtual void parseExamineData(ZonePtr z);
+	virtual void parseDoorData(ZonePtr z);
+	virtual void parseMergeData(ZonePtr z);
+	virtual void parseHearData(ZonePtr z);
+	virtual void parseSpeakData(ZonePtr z);
 
-	char		*parseComment(Script &script);
-	char		*parseDialogueString(Script &script);
-	Dialogue	*parseDialogue(Script &script);
+	char		*parseComment();
+	char		*parseDialogueString();
+	Dialogue	*parseDialogue();
 	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
-	Answer		*parseAnswer(Script &script);
-	Question	*parseQuestion(Script &script);
+	Answer		*parseAnswer();
+	Question	*parseQuestion();
 
-	void		parseZone(Script &script, ZoneList &list, char *name);
-	void		parseZoneTypeBlock(Script &script, ZonePtr z);
-	void		parseWalkNodes(Script& script, WalkNodeList &list);
-	void		parseAnimation(Script &script, AnimationList &list, char *name);
-	void		parseCommands(Script &script, CommandList&);
+	void		parseZone(ZoneList &list, char *name);
+	void		parseZoneTypeBlock(ZonePtr z);
+	void		parseWalkNodes(WalkNodeList &list);
+	void		parseAnimation(AnimationList &list, char *name);
+	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
 	void 		saveCommandForward(const char *name, CommandPtr cmd);
 	void 		resolveCommandForwards();
 	void		createCommand(uint id);
 	void		addCommand();
-	void		initParsers();
 
 	struct CommandForwardReference {
 		char		name[20];
@@ -316,9 +311,98 @@ public:
 };
 
 
+
+class ProgramParser_ns {
+
+protected:
+	Parser	*_parser;
+	Parallaction_ns *_vm;
+
+	Script	*_script;
+	ProgramPtr	_program;
+
+	// program parser
+	OpcodeSet	_instructionParsers;
+	Table		*_instructionNames;
+
+	struct ParserContext {
+		bool		end;
+		AnimationPtr	a;
+		InstructionPtr inst;
+		LocalVariable *locals;
+
+		// BRA specific
+		InstructionPtr openIf;
+	} ctxt;
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
+
+	void		parseInstruction();
+	void		parseLValue(ScriptVar &var, const char *str);
+	virtual void	parseRValue(ScriptVar &var, const char *str);
+
+	void init();
+
+public:
+	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm) {
+		init();
+	}
+
+	virtual ~ProgramParser_ns() {
+		delete _instructionNames;
+	}
+
+	void parse(Script *script, ProgramPtr program);
+
+};
+
+
+class ProgramParser_br : public ProgramParser_ns {
+
+protected:
+	Parallaction_br *_vm;
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(zone);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(color);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(mask);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(print);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(text);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
+
+	virtual void parseRValue(ScriptVar &var, const char *str);
+
+	void init();
+
+public:
+	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm) {
+		init();
+	}
+
+	virtual ~ProgramParser_br() {
+		delete _instructionNames;
+	}
+
+};
+
 } // namespace Parallaction
 
 #endif
+
 
 
 

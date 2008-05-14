@@ -42,7 +42,7 @@
 
 namespace Kyra {
 
-VQAMovie::VQAMovie(KyraEngine *vm, OSystem *system) {
+VQAMovie::VQAMovie(KyraEngine_v1 *vm, OSystem *system) {
 	_system = system;
 	_vm = vm;
 	_opened = false;

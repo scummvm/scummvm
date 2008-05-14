@@ -30,14 +30,14 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "kyra/screen.h"
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/sprites.h"
 #include "kyra/resource.h"
-#include "kyra/animator_v1.h"
+#include "kyra/animator_lok.h"
 
 namespace Kyra {
 
-Sprites::Sprites(KyraEngine_v1 *vm, OSystem *system) {
+Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
 	_vm = vm;
 	_res = vm->resource();
 	_screen = vm->screen();
@@ -554,7 +554,7 @@ void Sprites::loadSceneShapes() {
 
 void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag) {
 	debugC(9, kDebugLevelSprites,  "Sprites::refreshSceneAnimObject(%i, %i, %i, %i, %i, %i", animNum, shapeNum, x, y, flipX, unkFlag);
-	Animator_v1::AnimObject &anim = _vm->animator()->sprites()[animNum];
+	Animator_LoK::AnimObject &anim = _vm->animator()->sprites()[animNum];
 	anim.refreshFlag = 1;
 	anim.bkgdChangeFlag = 1;
 

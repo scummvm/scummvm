@@ -42,7 +42,7 @@
 #ifndef KYRA_SOUND_H
 #define KYRA_SOUND_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/scummsys.h"
 #include "common/file.h"
@@ -66,7 +66,7 @@ namespace Kyra {
  */
 class Sound {
 public:
-	Sound(KyraEngine *vm, Audio::Mixer *mixer);
+	Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	virtual ~Sound();
 
 	enum kType {
@@ -209,7 +209,7 @@ protected:
 
 	int _currentTheme;
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Audio::Mixer *_mixer;
 
 private:
@@ -243,7 +243,7 @@ class AdlibDriver;
  */
 class SoundAdlibPC : public Sound {
 public:
-	SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundAdlibPC();
 
 	kType getMusicType() const { return kAdlib; }
@@ -298,7 +298,7 @@ private:
  */
 class SoundMidiPC : public MidiDriver, public Sound {
 public:
-	SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
+	SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver);
 	~SoundMidiPC();
 
 	kType getMusicType() const { return isMT32() ? kMidiMT32 : kMidiGM; }
@@ -378,7 +378,7 @@ private:
 class SoundTowns_EuphonyDriver;
 class SoundTowns : public MidiDriver, public Sound {
 public:
-	SoundTowns(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundTowns();
 
 	kType getMusicType() const { return kTowns; }
@@ -435,7 +435,7 @@ private:
 //class SoundTowns_v2_TwnDriver;
 class SoundTowns_v2 : public Sound {
 public:
-	SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundTowns_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundTowns_v2();
 
 	kType getMusicType() const { return kTowns; }
@@ -463,7 +463,7 @@ private:
 
 class MixedSoundDriver : public Sound {
 public:
-	MixedSoundDriver(KyraEngine *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
+	MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
 	~MixedSoundDriver() { delete _music; delete _sfx; }
 
 	kType getMusicType() const { return _music->getMusicType(); }
@@ -491,6 +491,7 @@ private:
 
 // Digital Audio
 class AUDStream;
+class KyraEngine_MR;
 
 /**
  * Digital audio output device.
@@ -499,7 +500,7 @@ class AUDStream;
  */
 class SoundDigital {
 public:
-	SoundDigital(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer);
 	~SoundDigital();
 
 	bool init() { return true; }
@@ -548,7 +549,7 @@ public:
 	 */
 	void beginFadeOut(int channel, int ticks);
 private:
-	KyraEngine *_vm;
+	KyraEngine_MR *_vm;
 	Audio::Mixer *_mixer;
 
 	struct Sound {

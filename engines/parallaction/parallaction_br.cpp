@@ -27,6 +27,7 @@
 #include "common/util.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/input.h"
 #include "parallaction/sound.h"
 
 namespace Parallaction {
@@ -72,7 +73,8 @@ int Parallaction_br::init() {
 	initFonts();
 	initCursors();
 	initOpcodes();
-	initParsers();
+	_locationParser = new LocationParser_br(this);
+	_programParser = new ProgramParser_br(this);
 
 	_part = -1;
 
@@ -107,7 +109,7 @@ int Parallaction_br::go() {
 
 //		initCharacter();
 
-		_inputMode = kInputModeGame;
+		_input->_inputMode = Input::kInputModeGame;
 		while ((_engineFlags & (kEngineReturn | kEngineQuit)) == 0) {
 			runGame();
 		}

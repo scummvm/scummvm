@@ -60,6 +60,8 @@ enum MadeGameFeatures {
 	GF_FLOPPY = 1 << 3
 };
 
+const uint32 kTimerResolution = 40;
+
 struct MadeGameDescription;
 
 class ProjectReader;

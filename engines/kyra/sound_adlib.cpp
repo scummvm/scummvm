@@ -2210,7 +2210,7 @@ const int SoundAdlibPC::_kyra1SoundTriggers[] = {
 
 const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1SoundTriggers);
 
-SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
+SoundAdlibPC::SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 	_v2 = (_vm->gameFlags().gameID == GI_KYRA2);

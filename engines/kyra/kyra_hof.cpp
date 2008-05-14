@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
@@ -81,7 +81,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_oldTalkFile = -1;
 	_currentTalkFile = 0;
 	_lastSfxTrack = -1;
-	_handItemSet = -1;
+	_mouseState = -1;
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
@@ -182,7 +182,7 @@ int KyraEngine_HoF::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	KyraEngine::init();
+	KyraEngine_v1::init();
 	initStaticResource();
 
 	_debugger = new Debugger_HoF(this);
@@ -325,10 +325,10 @@ void KyraEngine_HoF::startup() {
 
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
-		_sceneAnimMovie[i] = new WSAMovieV2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
 	memset(_wsaSlots, 0, sizeof(_wsaSlots));
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
-		_wsaSlots[i] = new WSAMovieV2(this, _screen);
+		_wsaSlots[i] = new WSAMovie_v2(this, _screen);
 
 	_screen->_curPage = 0;
 
@@ -449,7 +449,7 @@ void KyraEngine_HoF::runLoop() {
 		update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _handItemSet;
+			_unk3 = _mouseState;
 			handleInput(_mouseX, _mouseY);
 		}
 
@@ -568,7 +568,7 @@ bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 	if (y > 143 || _deathHandler > -1 || queryGameFlag(0x164))
 		return false;
 
-	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
+	if (_mouseState <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
 		updateCharFacing();
 		objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
 		return true;
@@ -723,17 +723,16 @@ void KyraEngine_HoF::updateMouse() {
 		yOffset = 9;
 	}
 
-	if (type != 0 && _handItemSet != type && _screen->isMouseVisible()) {
-		_mouseState = _handItemSet = type;
+	if (type != 0 && _mouseState != type && _screen->isMouseVisible()) {
+		_mouseState = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
 	}
 
-	if (type == 0 && _handItemSet != _itemInHand && _screen->isMouseVisible()) {
+	if (type == 0 && _mouseState != _itemInHand && _screen->isMouseVisible()) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
-			_mouseState = 0;
-			_handItemSet = _itemInHand;
+			_mouseState = _itemInHand;
 			_screen->hideMouse();
 			if (_itemInHand == -1)
 				_screen->setMouseCursor(0, 0, getShapePtr(0));
@@ -742,23 +741,6 @@ void KyraEngine_HoF::updateMouse() {
 			_screen->showMouse();
 		}
 	}
-}
-
-void KyraEngine_HoF::delay(uint32 amount, bool updateGame, bool isMainLoop) {
-	uint32 start = _system->getMillis();
-	do {
-		if (updateGame) {
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-		} else {
-			updateInput();
-		}
-
-		if (amount > 0)
-			_system->delayMillis(amount > 10 ? 10 : amount);
-	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
 }
 
 void KyraEngine_HoF::cleanup() {
@@ -1544,7 +1526,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	else if (_flags.platform == Common::kPlatformPC)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		KyraEngine::snd_playSoundEffect(track);
+		KyraEngine_v1::snd_playSoundEffect(track);
 }
 
 #pragma mark -
@@ -1555,7 +1537,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 		wsaFlags |= 2;
 
 	if (!_invWsa.wsa)
-		_invWsa.wsa = new WSAMovieV2(this, _screen);
+		_invWsa.wsa = new WSAMovie_v2(this, _screen);
 
 	if (!_invWsa.wsa->open(filename, wsaFlags, 0))
 		error("Couldn't open inventory WSA file '%s'", filename);
@@ -1972,7 +1954,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 #pragma mark -
 
 void KyraEngine_HoF::registerDefaultSettings() {
-	KyraEngine::registerDefaultSettings();
+	KyraEngine_v1::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
@@ -2003,13 +1985,13 @@ void KyraEngine_HoF::writeSettings() {
 
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
-	KyraEngine::writeSettings();
+	KyraEngine_v1::writeSettings();
 }
 
 void KyraEngine_HoF::readSettings() {
 	int talkspeed = ConfMan.getInt("talkspeed");
 	_configTextspeed = (talkspeed*95)/255 + 2;
-	KyraEngine::readSettings();
+	KyraEngine_v1::readSettings();
 }
 
 } // end of namespace Kyra

@@ -178,8 +178,8 @@ void Video::retrace(bool mouse) {
 		int screenOffset = _scrollOffsetY * _surfWidth + _scrollOffsetX;
 		int screenX = _screenDeltaX;
 		int screenY = _screenDeltaY;
-		int screenWidth = _vm->_width;
-		int screenHeight = _splitHeight1;
+		int screenWidth = MIN<int>(_surfWidth, _vm->_width);
+		int screenHeight = MIN<int>(_splitHeight1, _vm->_height - _splitHeight2 - _screenDeltaY);
 
 		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
 				_surfWidth, screenX, screenY, screenWidth, screenHeight);
@@ -188,7 +188,7 @@ void Video::retrace(bool mouse) {
 			screenOffset = _splitStart * _surfWidth;
 			screenX = 0;
 			screenY = _vm->_height - _splitHeight2;
-			screenWidth = _vm->_width;
+			screenWidth = MIN<int>(_surfWidth, _vm->_width);
 			screenHeight = _splitHeight2;
 
 			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,

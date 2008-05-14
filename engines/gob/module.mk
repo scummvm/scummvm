@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	saveload.o \
 	saveload_v2.o \
 	saveload_v3.o \
+	saveload_v4.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \

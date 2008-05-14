@@ -26,7 +26,7 @@
 #ifndef KYRA_SCRIPT_TIM_H
 #define KYRA_SCRIPT_TIM_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/array.h"
 #include "common/func.h"
@@ -57,7 +57,7 @@ struct TIM {
 
 class TIMInterpreter {
 public:
-	TIMInterpreter(KyraEngine *vm, OSystem *system);
+	TIMInterpreter(KyraEngine_v1 *vm, OSystem *system);
 
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
@@ -70,7 +70,7 @@ public:
 
 	void play(const char *filename);
 private:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	OSystem *_system;
 
 	TIM *_currentTim;

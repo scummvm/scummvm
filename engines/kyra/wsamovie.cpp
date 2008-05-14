@@ -27,7 +27,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
 #include "kyra/screen_v2.h"
@@ -35,11 +35,11 @@
 #include "kyra/resource.h"
 
 namespace Kyra {
-WSAMovieV1::WSAMovieV1(KyraEngine *vm) : Movie(vm) {}
-WSAMovieV1::~WSAMovieV1() { close(); }
+WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm) {}
+WSAMovie_v1::~WSAMovie_v1() { close(); }
 
-int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
+int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v1::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
 	close();
 
 	uint32 flags = 0;
@@ -123,8 +123,8 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	return _numFrames;
 }
 
-void WSAMovieV1::close() {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::close()");
+void WSAMovie_v1::close() {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v1::close()");
 	if (_opened) {
 		delete[] _deltaBuffer;
 		delete[] _offscreenBuffer;
@@ -134,8 +134,8 @@ void WSAMovieV1::close() {
 	}
 }
 
-void WSAMovieV1::displayFrame(int frameNum, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::displayFrame(%d, ...)", frameNum);
+void WSAMovie_v1::displayFrame(int frameNum, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v1::displayFrame(%d, ...)", frameNum);
 	if (frameNum >= _numFrames || !_opened)
 		return;
 
@@ -198,8 +198,8 @@ void WSAMovieV1::displayFrame(int frameNum, ...) {
 		_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
 }
 
-void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::processFrame(%d, %p)", frameNum, (const void *)dst);
+void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v1::processFrame(%d, %p)", frameNum, (const void *)dst);
 	if (!_opened)
 		return;
 	assert(frameNum <= _numFrames);
@@ -213,11 +213,11 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieAmiga::WSAMovieAmiga(KyraEngine *vm) : WSAMovieV1(vm), _buffer(0) {}
+WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
 
 int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
-	int res = WSAMovieV1::open(filename, offscreenDecode, palBuf);
+	int res = WSAMovie_v1::open(filename, offscreenDecode, palBuf);
 
 	if (!res)
 		return 0;
@@ -233,7 +233,7 @@ void WSAMovieAmiga::close() {
 		delete[] _buffer;
 		_buffer = 0;
 	}
-	WSAMovieV1::close();
+	WSAMovie_v1::close();
 }
 
 void WSAMovieAmiga::displayFrame(int frameNum, ...) {
@@ -342,10 +342,10 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieV2::WSAMovieV2(KyraEngine *vm, Screen_v2 *screen) : WSAMovieV1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
+WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *screen) : WSAMovie_v1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
 
-int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
+int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
 	close();
 
 	uint32 flags = 0;
@@ -429,8 +429,8 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	return _numFrames;
 }
 
-void WSAMovieV2::displayFrame(int frameNum, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV2::displayFrame(%d, ...)", frameNum);
+void WSAMovie_v2::displayFrame(int frameNum, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v2::displayFrame(%d, ...)", frameNum);
 	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 

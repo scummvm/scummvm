@@ -1084,7 +1084,7 @@ void SoundTowns_EuphonyTrackQueue::initDriver() {
 	_driver->send(0x79B0);
 }
 
-SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer)
+SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), _sfxFileData(0),
 	_sfxFileIndex((uint)-1), _sfxWDTable(0), _sfxBTTable(0), _parser(0) {
 
@@ -1109,8 +1109,8 @@ SoundTowns::~SoundTowns() {
 bool SoundTowns::init() {
 	_vm->checkCD();
 	int unused = 0;
-	_sfxWDTable = _vm->staticres()->loadRawData(kKyra1TownsSFXwdTable, unused);
-	_sfxBTTable = _vm->staticres()->loadRawData(kKyra1TownsSFXbtTable, unused);
+	_sfxWDTable = _vm->staticres()->loadRawData(k1TownsSFXwdTable, unused);
+	_sfxBTTable = _vm->staticres()->loadRawData(k1TownsSFXbtTable, unused);
 
 	return loadInstruments();
 }
@@ -1357,7 +1357,7 @@ float SoundTowns::semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiTo
 
 //	KYRA 2
 
-SoundTowns_v2::SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer)
+SoundTowns_v2::SoundTowns_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), /*_driver(0),*/
 	 _twnTrackData(0) {
 }
@@ -1442,7 +1442,10 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 			return false;
 	}
 
-	uint8 * data = _vm->resource()->fileData(file, 0);
+	char filename [13];
+	sprintf(filename, "%s.PCM", file);
+
+	uint8 * data = _vm->resource()->fileData(filename, 0);
 	uint8 * src = data;
 
 	uint16 sfxRate = rates[READ_LE_UINT16(src)];

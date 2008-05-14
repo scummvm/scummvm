@@ -23,77 +23,84 @@
  *
  */
 
-#ifndef KYRA_GUI_V1_H
-#define KYRA_GUI_V1_H
+#ifndef KYRA_GUI_LOK_H
+#define KYRA_GUI_LOK_H
 
 #include "kyra/gui.h"
 
 namespace Kyra {
 
 #define GUI_V1_BUTTON(button, a, b, c, d, e, f, g, h, i, j, k) \
-	button.nextButton = 0; \
-	button.index = a; \
-	button.unk6 = button.unk8 = 0; \
-	button.data0Val1 = b; \
-	button.data1Val1 = c; \
-	button.data2Val1 = d; \
-	button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
-	button.flags = e; \
-	button.dimTableIndex = f; \
-	button.x = g; \
-	button.y = h; \
-	button.width = i; \
-	button.height = j; \
-	button.flags2 = k
+	do { \
+		button.nextButton = 0; \
+		button.index = a; \
+		button.unk6 = button.unk8 = 0; \
+		button.data0Val1 = b; \
+		button.data1Val1 = c; \
+		button.data2Val1 = d; \
+		button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
+		button.flags = e; \
+		button.dimTableIndex = f; \
+		button.x = g; \
+		button.y = h; \
+		button.width = i; \
+		button.height = j; \
+		button.flags2 = k; \
+		button.mouseWheel = 0; \
+	} while (0)
 
 #define GUI_V1_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
-	menu.x = a; \
-	menu.y = b; \
-	menu.width = c; \
-	menu.height = d; \
-	menu.bkgdColor = e; \
-	menu.color1 = f; \
-	menu.color2 = g; \
-	menu.menuNameString = h; \
-	menu.textColor = i; \
-	menu.titleX = j; \
-	menu.titleY = k; \
-	menu.highlightedItem = l; \
-	menu.numberOfItems = m; \
-	menu.scrollUpButtonX = n; \
-	menu.scrollUpButtonY = o; \
-	menu.scrollDownButtonX = p; \
-	menu.scrollDownButtonY = q
+	do { \
+		menu.x = a; \
+		menu.y = b; \
+		menu.width = c; \
+		menu.height = d; \
+		menu.bkgdColor = e; \
+		menu.color1 = f; \
+		menu.color2 = g; \
+		menu.menuNameString = h; \
+		menu.textColor = i; \
+		menu.titleX = j; \
+		menu.titleY = k; \
+		menu.highlightedItem = l; \
+		menu.numberOfItems = m; \
+		menu.scrollUpButtonX = n; \
+		menu.scrollUpButtonY = o; \
+		menu.scrollDownButtonX = p; \
+		menu.scrollDownButtonY = q; \
+	} while (0)
 
 #define GUI_V1_MENU_ITEM(item, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v) \
-	item.enabled = a; \
-	item.itemString = d; \
-	item.x = e; \
-	item.y = g; \
-	item.width = h; \
-	item.height = i; \
-	item.textColor = j; \
-	item.highlightColor = k; \
-	item.titleX = l; \
-	item.bkgdColor = n; \
-	item.color1 = o; \
-	item.color2 = p; \
-	item.saveSlot = q; \
-	item.labelString = r; \
-	item.labelX = s; \
-	item.labelY = t; \
-	item.unk1F = v
+	do { \
+		item.enabled = a; \
+		item.itemString = d; \
+		item.x = e; \
+		item.y = g; \
+		item.width = h; \
+		item.height = i; \
+		item.textColor = j; \
+		item.highlightColor = k; \
+		item.titleX = l; \
+		item.bkgdColor = n; \
+		item.color1 = o; \
+		item.color2 = p; \
+		item.saveSlot = q; \
+		item.labelString = r; \
+		item.labelX = s; \
+		item.labelY = t; \
+		item.unk1F = v; \
+	} while (0)
 
-class KyraEngine_v1;
+class KyraEngine_LoK;
 
-class GUI_v1 : public GUI {
-	friend class KyraEngine_v1;
+class GUI_LoK : public GUI {
+	friend class KyraEngine_LoK;
 public:
-	GUI_v1(KyraEngine_v1 *vm, Screen_v1 *screen);
-	~GUI_v1();
+	GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen);
+	~GUI_LoK();
 
 	void processButton(Button *button);
-	int processButtonList(Button *buttonList, uint16 inputFlags);
+	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
 
 	int buttonMenuCallback(Button *caller);
 private:
@@ -147,8 +154,8 @@ private:
 	const char *getMenuItemTitle(const MenuItem &menuItem) { return menuItem.itemString; }
 	const char *getMenuItemLabel(const MenuItem &menuItem) { return menuItem.labelString; }
 
-	KyraEngine_v1 *_vm;
-	Screen_v1 *_screen;
+	KyraEngine_LoK *_vm;
+	Screen_LoK *_screen;
 
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;

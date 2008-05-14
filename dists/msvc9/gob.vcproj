@@ -466,6 +466,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\saveload_v4.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\scenery.cpp"
 			>
 		</File>

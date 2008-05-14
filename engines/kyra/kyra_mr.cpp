@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen_mr.h"
 #include "kyra/wsamovie.h"
@@ -79,6 +79,8 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mainCharacter.facing = 5;
 	_mainCharacter.animFrame = 0x57;
 	_mainCharacter.walkspeed = 5;
+	memset(_activeItemAnim, 0, sizeof(_activeItemAnim));
+	_nextAnimItem = 0;
 	_text = 0;
 	_commandLineY = 189;
 	_inventoryState = false;
@@ -97,7 +99,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unk5 = 0;
 	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
-	_itemInHand = _handItemSet = -1;
+	_itemInHand = _mouseState = -1;
 	_unk3 = -1;
 	_unk4 = 0;
 	_loadingState = false;
@@ -142,6 +144,11 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_optionsFile = 0;
 	_actorFile = 0;
 	_chatAltFlag = false;
+	_albumChatActive = false;
+	memset(&_album, 0, sizeof(_album));
+	_configHelium = false;
+	_fadeOutMusicChannel = -1;
+	memset(_scaleTable, 0, sizeof(_scaleTable));
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -189,6 +196,10 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete[] _mainButtonData;
 	delete _gui;
 	delete[] _optionsFile;
+
+	delete _album.wsa;
+	delete _album.leftPage.wsa;
+	delete _album.rightPage.wsa;
 }
 
 int KyraEngine_MR::init() {
@@ -196,7 +207,8 @@ int KyraEngine_MR::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	KyraEngine::init();
+	KyraEngine_v1::init();
+	initStaticResource();
 	
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
@@ -205,7 +217,7 @@ int KyraEngine_MR::init() {
 	assert(_soundDigital);
 	if (!_soundDigital->init())
 		error("_soundDigital->init() failed");
-	KyraEngine::_text = _text = new TextDisplayer_MR(this, _screen);
+	KyraEngine_v1::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);
 	_gui = new GUI_MR(this);
 	assert(_gui);
@@ -274,6 +286,8 @@ int KyraEngine_MR::go() {
 			delayUntil(nextRun);
 		}
 
+		_eventList.clear();
+
 		switch (_menu->handle(3)) {
 		case 2:
 			_menuDirectlyToLoad = true;
@@ -314,7 +328,7 @@ int KyraEngine_MR::go() {
 }
 
 void KyraEngine_MR::initMainMenu() {
-	_menuAnim = new WSAMovieV2(this, _screen);
+	_menuAnim = new WSAMovie_v2(this, _screen);
 	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
 	_menuAnim->setX(0);
 	_menuAnim->setY(0);
@@ -409,7 +423,9 @@ void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, Audio::Mixer::kMusicSoundType);
+		char file[13];
+		sprintf(file, "%s.AUD", _soundList[track]);
+		_musicSoundChannel = _soundDigital->playSound(file, 0xFF, Audio::Mixer::kMusicSoundType);
 	}
 
 	_lastMusicCommand = track;
@@ -465,6 +481,7 @@ void KyraEngine_MR::snd_playSoundEffect(int item, int volume) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::snd_playSoundEffect(%d, %d)", item, volume);
 	if (_sfxFileMap[item*2+0] != 0xFF) {
 		char filename[16];
+		assert(_sfxFileMap[item*2+0] < _sfxFileListSize);
 		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
 		uint8 priority = _sfxFileMap[item*2+1];
 
@@ -538,6 +555,13 @@ void KyraEngine_MR::initMouseShapes() {
 
 void KyraEngine_MR::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::startup()");
+
+	_album.wsa = new WSAMovie_v2(this, _screen);
+	assert(_album.wsa);
+	_album.leftPage.wsa = new WSAMovie_v2(this, _screen);
+	assert(_album.leftPage.wsa);
+	_album.rightPage.wsa = new WSAMovie_v2(this, _screen);
+	assert(_album.rightPage.wsa);
 	musicUpdate(0);
 
 	_gamePlayBuffer = new uint8[64000];
@@ -589,7 +613,7 @@ void KyraEngine_MR::startup() {
 
 	for (int i = 0; i < 16; ++i) {
 		_sceneAnims[i].flags = 0;
-		_sceneAnimMovie[i] = new WSAMovieV2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
 		assert(_sceneAnimMovie[i]);
 	}
 
@@ -646,7 +670,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
-	_invWsa = new WSAMovieV2(this, _screen);
+	_invWsa = new WSAMovie_v2(this, _screen);
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;
@@ -794,7 +818,7 @@ void KyraEngine_MR::loadCharacterShapes(int newShapes) {
 
 		ShapeMap::iterator iter = _gameShapes.find(i);
 		if (iter != _gameShapes.end()) {
-			delete iter->_value;
+			delete[] iter->_value;
 			iter->_value = 0;
 		}
 	}
@@ -981,7 +1005,7 @@ void KyraEngine_MR::runLoop() {
 		_timer->update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _handItemSet;
+			_unk3 = _mouseState;
 			Common::Point mouse = getMousePos();
 			handleInput(mouse.x, mouse.y);
 		}
@@ -1125,7 +1149,7 @@ void KyraEngine_MR::update() {
 	updateMouse();
 	updateSpecialSceneScripts();
 	updateCommandLine();
-	//XXX
+	updateItemAnimations();
 	musicUpdate(0);
 
 	_screen->updateScreen();
@@ -1137,7 +1161,7 @@ void KyraEngine_MR::updateWithText() {
 
 	musicUpdate(0);
 	updateMouse();
-	//XXX
+	updateItemAnimations();
 	updateSpecialSceneScripts();
 	updateCommandLine();
 	musicUpdate(0);
@@ -1163,13 +1187,13 @@ void KyraEngine_MR::updateMouse() {
 
 	if (mouse.y > 187) {
 		bool setItemCursor = false;
-		if (_handItemSet == -6) {
+		if (_mouseState == -6) {
 			if (mouse.x < 311)
 				setItemCursor = true;
-		} else if (_handItemSet == -5) {
+		} else if (_mouseState == -5) {
 			if (mouse.x < _sceneMinX || mouse.x > _sceneMaxX)
 				setItemCursor = true;
-		} else if (_handItemSet == -4) {
+		} else if (_mouseState == -4) {
 			if (mouse.x > 8)
 				setItemCursor = true;
 		}
@@ -1186,8 +1210,8 @@ void KyraEngine_MR::updateMouse() {
 		hideInventory();
 	}
 
-	if (hasItemCollision && _handItemSet < -1 && _itemInHand < 0) {
-		_handItemSet = -1;
+	if (hasItemCollision && _mouseState < -1 && _itemInHand < 0) {
+		_mouseState = -1;
 		_itemInHand = -1;
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	}
@@ -1264,26 +1288,13 @@ void KyraEngine_MR::updateMouse() {
 		}
 	}
 
-	if (type != 0 && type != _handItemSet && !hasItemCollision) {
-		_handItemSet = type;
+	if (type != 0 && type != _mouseState && !hasItemCollision) {
+		_mouseState = type;
 		_screen->setMouseCursor(offsetX, offsetY, _gameShapes[shape]);
-	} else if (type == 0 && _handItemSet != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
+	} else if (type == 0 && _mouseState != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
 		setItemMouseCursor();
-	} else if (mouse.y > 187 && _handItemSet > -4 && type == 0 && !_inventoryState) {
+	} else if (mouse.y > 187 && _mouseState > -4 && type == 0 && !_inventoryState) {
 		showInventory();
-	}
-}
-
-void KyraEngine_MR::delay(uint32 millis, bool doUpdate, bool isMainLoop) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::delay(%d, %d, %d)", millis, doUpdate, isMainLoop);
-	uint32 endTime = _system->getMillis() + millis;
-	while (endTime > _system->getMillis()) {
-		if (doUpdate) {
-			//XXX
-			update();
-		}
-
-		_system->delayMillis(10);
 	}
 }
 
@@ -1504,13 +1515,14 @@ void KyraEngine_MR::resetSkipFlag(bool removeEvent) {
 
 void KyraEngine_MR::registerDefaultSettings() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::registerDefaultSettings()");
-	KyraEngine::registerDefaultSettings();
+	KyraEngine_v1::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 5);
 	ConfMan.registerDefault("studio_audience", true);
 	ConfMan.registerDefault("skip_support", true);
+	ConfMan.registerDefault("helium_mode", false);
 }
 
 void KyraEngine_MR::writeSettings() {
@@ -1534,16 +1546,18 @@ void KyraEngine_MR::writeSettings() {
 
 	ConfMan.setBool("studio_audience", _configStudio);
 	ConfMan.setBool("skip_support", _configSkip);
+	ConfMan.setBool("helium_mode", _configHelium);
 
-	KyraEngine::writeSettings();
+	KyraEngine_v1::writeSettings();
 }
 
 void KyraEngine_MR::readSettings() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::readSettings()");
-	KyraEngine::readSettings();
+	KyraEngine_v1::readSettings();
 
 	_configStudio = ConfMan.getBool("studio_audience");
 	_configSkip = ConfMan.getBool("skip_support");
+	_configHelium = ConfMan.getBool("helium_mode");
 }
 
 } // end of namespace Kyra

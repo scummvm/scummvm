@@ -10,10 +10,9 @@ MODULE_OBJS = \
 	redreader.o \
 	resource.o \
 	screen.o \
+	screenfx.o \
 	script.o \
-	scriptfuncs_lgop2.o \
-	scriptfuncs_mhne.o \
-	scriptfuncs_rtz.o \
+	scriptfuncs.o \
 	sound.o
 
 

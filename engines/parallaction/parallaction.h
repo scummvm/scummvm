@@ -33,6 +33,7 @@
 
 #include "engines/engine.h"
 
+#include "parallaction/input.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
 #include "parallaction/objects.h"
@@ -96,14 +97,6 @@ enum {
 	kPriority21 = 21
 };
 
-enum {
-	kMouseNone			= 0,
-	kMouseLeftUp		= 1,
-	kMouseLeftDown		= 2,
-	kMouseRightUp		= 3,
-	kMouseRightDown		= 4
-};
-
 enum EngineFlags {
 	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
@@ -163,7 +156,6 @@ extern const char	*_minidoughName;
 extern const char	*_minidrkiName;
 
 
-void waitUntilLeftClick();
 
 
 
@@ -171,7 +163,7 @@ void waitUntilLeftClick();
 class Debugger;
 class Gfx;
 class SoundMan;
-
+class Input;
 
 struct Location {
 
@@ -246,9 +238,6 @@ public:
 
 
 
-
-#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
-
 #define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
 
@@ -268,20 +257,9 @@ public:
 	virtual bool loadGame() = 0;
 	virtual bool saveGame() = 0;
 
-	uint16		readInput();
-	void		updateInput();
+	Input	*_input;
 
 	void		waitTime(uint32 t);
-
-	enum {
-		kInputModeGame = 0,
-		kInputModeComment = 1
-	};
-
-	int		_inputMode;
-
-	void updateGameInput();
-	void updateCommentInput();
 
 	OpcodeSet	_commandOpcodes;
 
@@ -300,8 +278,7 @@ public:
 		bool		suspend;
 	} _instRunCtxt;
 
-
-	void		showCursor(bool visible);
+	void		processInput(InputData* data);
 
 	void		pauseJobs();
 	void		resumeJobs();
@@ -365,13 +342,6 @@ public:
 	uint16			_numLocations;
 	Location		_location;
 
-	InventoryItem	_activeItem;
-
-	Common::Point	_mousePos;
-	void			getCursorPos(Common::Point& p) {
-		p = _mousePos;
-	}
-
 	ZonePtr			_activeZone;
 
 
@@ -382,36 +352,14 @@ public:
 
 	Common::RandomSource _rnd;
 
-protected:		// data
-
 	Debugger	*_debugger;
 
-	struct InputData {
-		uint16			_event;
-		Common::Point	_mousePos;
-		int16		_inventoryIndex;
-		ZonePtr		_zone;
-		Label*			_label;
-	};
 
-	bool		_mouseHidden;
-
-	// input-only
-	InputData	_input;
-	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
-
-	// these two could/should be merged as they carry on the same duty in two member functions,
-	// respectively processInput and translateInput
-	int16		_procCurrentHoverItem;
-	int16		_transCurrentHoverItem;
-
+protected:		// data
 	uint32		_baseTime;
 	char		_characterName1[50];	// only used in changeCharacter
 
 	Common::String	_saveFileName;
-
-
-	ZonePtr		_hoverZone;
 
 
 protected:		// members
@@ -422,12 +370,6 @@ protected:		// members
 	void		updateView();
 	uint32		getElapsedTime();
 	void		resetTimer();
-
-	InputData	*translateInput();
-	bool		translateGameInput();
-	bool		translateInventoryInput();
-	void		processInput(InputData*);
-
 
 	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();
@@ -470,7 +412,7 @@ public:
 	const char **_callableNamesRes;
 	const char **_instructionNamesRes;
 
-	void highlightInventoryItem(ItemPosition pos, byte color);
+	void highlightInventoryItem(ItemPosition pos);
 	int16 getHoverInventoryItem(int16 x, int16 y);
 	int addInventoryItem(ItemName item);
 	int addInventoryItem(ItemName item, uint32 value);
@@ -554,6 +496,7 @@ public:
 
 private:
 	LocationParser_ns		*_locationParser;
+	ProgramParser_ns		*_programParser;
 
 	void initFonts();
 	void freeFonts();
@@ -645,44 +588,9 @@ protected:
 	void drawAnimations();
 
 	void		parseLocation(const char *filename);
-	void		initOpcodes();
-
-
-	// program parser
-	OpcodeSet	_instructionParsers;
-	Table		*_instructionNames;
-
-	struct {
-		bool		end;
-		AnimationPtr	a;
-		InstructionPtr inst;
-		LocalVariable *locals;
-		ProgramPtr	program;
-
-		// BRA specific
-		InstructionPtr openIf;
-	} _instParseCtxt;
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
-
-	void		parseInstruction(ProgramPtr program);
 	void		loadProgram(AnimationPtr a, const char *filename);
-	void		parseLValue(ScriptVar &var, const char *str);
-	virtual void	parseRValue(ScriptVar &var, const char *str);
+
+	void		initOpcodes();
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
@@ -771,6 +679,7 @@ public:
 
 private:
 	LocationParser_br		*_locationParser;
+	ProgramParser_br		*_programParser;
 
 	void		initResources();
 	void		initFonts();
@@ -817,16 +726,6 @@ private:
 	const Callable *_callables;
 
 	void parseLocation(const char* name);
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(zone);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(color);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(mask);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(print);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(text);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
-
-	virtual void parseRValue(ScriptVar &var, const char *str);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);

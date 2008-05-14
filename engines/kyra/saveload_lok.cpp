@@ -27,16 +27,16 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "kyra/kyra_v1.h"
-#include "kyra/animator_v1.h"
+#include "kyra/kyra_lok.h"
+#include "kyra/animator_lok.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 #include "kyra/timer.h"
 
 namespace Kyra {
-void KyraEngine_v1::loadGame(const char *fileName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::loadGame('%s')", fileName);
+void KyraEngine_LoK::loadGame(const char *fileName) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::loadGame('%s')", fileName);
 
 	SaveHeader header;
 	Common::InSaveFile *in = openSaveForReading(fileName, header);
@@ -183,7 +183,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 0);
 	}
 
-	createMouseItem(_itemInHand);
+	setHandItem(_itemInHand);
 	_animator->setBrandonAnimSeqSize(3, 48);
 	redrawInventory(0);
 	_animator->_noDrawShapesFlag = 1;
@@ -218,8 +218,8 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	delete in;
 }
 
-void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::saveGame('%s', '%s')", fileName, saveName);
+void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s')", fileName, saveName);
 	
 	if (_quitFlag)
 		return;

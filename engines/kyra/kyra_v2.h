@@ -26,7 +26,7 @@
 #ifndef KYRA_KYRA_V2_H
 #define KYRA_KYRA_V2_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/gui.h"
 #include "kyra/wsamovie.h"
 
@@ -35,9 +35,25 @@
 
 namespace Kyra {
 
+struct FrameControl {
+	uint16 index;
+	uint16 delay;
+};
+
+struct ItemAnimData_v2 {
+	int16 itemIndex;
+	uint8 numFrames;
+	const FrameControl *frames;
+};
+
+struct ActiveItemAnim {
+	uint16 currentFrame;
+	uint32 nextFrame;
+};
+
 class Screen_v2;
 
-class KyraEngine_v2 : public KyraEngine {
+class KyraEngine_v2 : public KyraEngine_v1 {
 friend class Debugger_v2;
 friend class GUI_v2;
 public:
@@ -62,6 +78,8 @@ public:
 	virtual Screen_v2 *screen_v2() const = 0;
 	virtual GUI *gui_v2() const = 0;
 
+	void delay(uint32 time, bool update = false, bool isMainLoop = false);
+
 	const EngineDesc &engineDesc() const { return _desc; }
 protected:
 	EngineDesc _desc;
@@ -69,7 +87,6 @@ protected:
 	// run
 	bool _runFlag;
 	bool _showOutro;
-	int8 _deathHandler;
 
 	virtual void update() = 0;
 	virtual void updateWithText() = 0;
@@ -212,7 +229,7 @@ protected:
 	};
 
 	SceneAnim _sceneAnims[16];
-	WSAMovieV2 *_sceneAnimMovie[16];
+	WSAMovie_v2 *_sceneAnimMovie[16];
 
 	void freeSceneAnims();
 
@@ -300,7 +317,6 @@ protected:
 	int _itemListSize;
 
 	int _itemInHand;
-	int _handItemSet;
 
 	int findFreeItem();
 	int countAllItems();
@@ -375,22 +391,10 @@ protected:
 	int o2_moveCharacter(EMCState *script);
 	int o2_checkForItem(EMCState *script);
 	int o2_defineItem(EMCState *script);
-	int o2_queryGameFlag(EMCState *script);
-	int o2_resetGameFlag(EMCState *script);
-	int o2_setGameFlag(EMCState *script);
-	int o2_setHandItem(EMCState *script);
-	int o2_removeHandItem(EMCState *script);
-	int o2_handItemSet(EMCState *script);
-	int o2_hideMouse(EMCState *script);
 	int o2_addSpecialExit(EMCState *script);
-	int o2_setMousePos(EMCState *script);
-	int o2_showMouse(EMCState *script);
 	int o2_delay(EMCState *script);
 	int o2_update(EMCState *script);
 	int o2_getShapeFlag1(EMCState *script);
-	int o2_playWanderScoreViaMap(EMCState *script);
-	int o2_getRand(EMCState *script);
-	int o2_setDeathHandler(EMCState *script);
 	int o2_waitForConfirmationClick(EMCState *script);
 	int o2_randomSceneChat(EMCState *script);
 	int o2_setDlgIndex(EMCState *script);

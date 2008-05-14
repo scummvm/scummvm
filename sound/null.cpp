@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 /* NULL driver */
@@ -31,12 +32,49 @@ public:
 	void send(uint32 b) { }
 };
 
-MidiDriver *MidiDriver_NULL_create() {
-	return new MidiDriver_NULL();
+
+// Plugin interface
+
+class NullMidiPlugin : public MidiPluginObject {
+public:
+	virtual const char *getName() const {
+		return "No music";
+	}
+
+	virtual const char *getId() const {
+		return "null";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS;
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError NullMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_NULL();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_NULL_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	NullMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
 
 #ifdef DISABLE_ADLIB
 MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
-	return new MidiDriver_NULL();
+	return MidiDriver_NULL_create(mixer);
 }
 #endif
+
+//#if PLUGIN_ENABLED_DYNAMIC(NULL)
+	//REGISTER_PLUGIN_DYNAMIC(NULL, PLUGIN_TYPE_MIDI, NullMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(NULL, PLUGIN_TYPE_MIDI, NullMidiPlugin);
+//#endif
