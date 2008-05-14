@@ -401,11 +401,18 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
 
-	{
+	// Kyra3
+	
+	// non installed version
+	{ 
 		{
 			"kyra3",
 			0,
-			AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "WESTWOOD.001", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
@@ -416,7 +423,11 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "WESTWOOD.001", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
@@ -427,7 +438,58 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"),
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "WESTWOOD.001", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_FLAGS
+	},
+
+	// installed version
+	{ 
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
