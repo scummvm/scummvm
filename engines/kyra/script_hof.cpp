@@ -896,14 +896,23 @@ int KyraEngine_HoF::o2_updateSceneAnim(EMCState *script) {
 	// Raziel^.
 	//
 	// We know currently of some different animations where this happens.
-	// - Where Marco is dangling from the flesh-eating plant (see bug #1923638 "HoF: Marco missing animation frames").
-	// - After giving the ticket to the captain. He would move very fast (barely noticeable) onto the ship
-	//   without this delay.
-	// - The scene after giving the sandwitch to the guards in the city. (see bug #1926838 "HoF: Animation plays too fast")
-	//   This scene script calls o2_delay though, but since this updates the scene animation scripts again there is no delay
-	//   for the animation.
-	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) || (stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
-		((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19))
+	// - Where Marco is dangling from the flesh-eating plant (see bug
+	//   #1923638 "HoF: Marco missing animation frames").
+	// - After giving the ticket to the captain. He would move very fast
+	//   (barely noticeable) onto the ship without this delay.
+	// - The scene after giving the sandwitch to the guards in the city.
+	//   (see bug #1926838 "HoF: Animation plays too fast")
+	//   This scene script calls o2_delay though, but since this updates
+	//   the scene animation scripts again there is no delay for the
+	//   animation.
+	// - When the sheriff enters the jail, either to lock you up or to throw
+	//   away the key. (see bug #1926838 "HoF: Animation plays too fast").
+	//   Adding the workaround for the first case also fixes the second,
+	//   even though stackPos(0) is different then.
+	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) ||
+		(stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
+		((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19) ||
+		(stackPos(0) = 1 && _mainCharacter.sceneId == 27))
 		_sceneSpecialScriptsTimer[_lastProcessedSceneScript] = _system->getMillis() + _tickLength * 6;
 
 	_specialSceneScriptRunFlag = false;
