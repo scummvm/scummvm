@@ -909,6 +909,10 @@ int KyraEngine_HoF::o2_updateSceneAnim(EMCState *script) {
 	//   away the key. (see bug #1926838 "HoF: Animation plays too fast").
 	//   Adding the workaround for the first case also fixes the second,
 	//   even though stackPos(0) is different then.
+
+	// FIXME: Shouldn't the check for scene 27 be stackPos(0) == 1? Or is the change to
+	// stackPos(0) intentional here?
+
 	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) ||
 		(stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
 		((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19) ||
