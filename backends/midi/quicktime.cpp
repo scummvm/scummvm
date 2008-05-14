@@ -285,10 +285,10 @@ MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
 	return mididriver;
 }
 
-//#if PLUGIN_ENABLED_DYNAMIC(QT)
-	//REGISTER_PLUGIN_DYNAMIC(QT, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+//#if PLUGIN_ENABLED_DYNAMIC(QUICKTIME)
+	//REGISTER_PLUGIN_DYNAMIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(QT, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+	REGISTER_PLUGIN_STATIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
 //#endif
 
 #endif // MACOSX || macintosh
