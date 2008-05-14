@@ -28,7 +28,7 @@
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
 
-#include "backends/midi/midiplugin.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <mmsystem.h>
@@ -147,7 +147,7 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 
 // Plugin interface
 
-class WindowsMidiPlugin : public MidiPlugin {
+class WindowsMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "Windows MIDI";

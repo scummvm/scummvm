@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#include "backends/midi/midiplugin.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #ifndef DISABLE_TAPWAVE
@@ -124,7 +124,7 @@ void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class ZodiacMidiPlugin : public MidiPlugin {
+class ZodiacMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "Tapwave Zodiac";

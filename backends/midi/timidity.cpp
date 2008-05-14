@@ -36,8 +36,8 @@
 
 #if defined (UNIX)
 
-#include "backends/midi/midiplugin.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <fcntl.h>
@@ -514,7 +514,7 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class TimidityMidiPlugin : public MidiPlugin {
+class TimidityMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "TiMidity";

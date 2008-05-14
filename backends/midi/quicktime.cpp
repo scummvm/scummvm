@@ -24,9 +24,9 @@
 
 #if defined(MACOSX) || defined(macintosh)
 
-#include "backends/midi/midiplugin.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #if defined(MACOSX)
@@ -253,7 +253,7 @@ void MidiDriver_QT::dispose()
 
 // Plugin interface
 
-class QuickTimeMidiPlugin : public MidiPlugin {
+class QuickTimeMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "QuickTime";

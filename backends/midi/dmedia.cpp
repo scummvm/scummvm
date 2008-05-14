@@ -29,9 +29,9 @@
 
 #if defined(IRIX)
 
-#include "backends/midi/midiplugin.h"
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <dmedia/midi.h>
@@ -178,7 +178,7 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class DMediaMidiPlugin : public MidiPlugin {
+class DMediaMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "DMedia";

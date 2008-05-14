@@ -30,8 +30,8 @@
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
 
-#include "backends/midi/midiplugin.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <fcntl.h>
@@ -173,7 +173,7 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class SeqMidiPlugin : public MidiPlugin {
+class SeqMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "SEQ";

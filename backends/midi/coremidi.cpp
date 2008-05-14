@@ -24,9 +24,9 @@
 
 #ifdef MACOSX
 
-#include "backends/midi/midiplugin.h"
 #include "common/config-manager.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <CoreMIDI/CoreMIDI.h>
@@ -179,7 +179,7 @@ void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class CoreMIDIMidiPlugin : public MidiPlugin {
+class CoreMIDIMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "CoreMIDI";

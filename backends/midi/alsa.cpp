@@ -26,9 +26,9 @@
 
 #if defined(UNIX) && defined(USE_ALSA)
 
-#include "backends/midi/midiplugin.h"
 #include "common/config-manager.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <alsa/asoundlib.h>
@@ -241,7 +241,7 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 
 // Plugin interface
 
-class AlsaMidiPlugin : public MidiPlugin {
+class AlsaMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "ALSA";

@@ -26,9 +26,9 @@
 
 #if defined(__amigaos4__)
 
-#include "backends/midi/midiplugin.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include <proto/camd.h>
@@ -166,7 +166,7 @@ void MidiDriver_CAMD::closeAll() {
 
 // Plugin interface
 
-class CamdMidiPlugin : public MidiPlugin {
+class CamdMidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "CAMD";

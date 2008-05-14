@@ -939,7 +939,7 @@
 				Name="midi"
 				>
 				<File
-					RelativePath="..\..\backends\midi\midiplugin.h"
+					RelativePath="..\..\sound\midiplugin.h"
 					>
 				</File>
 				<File

@@ -29,12 +29,12 @@
 #include "sound/mididrv.h"
 
 /**
- * A MidiPlugin is essentially a factory for MidiDriver instances with the
- * added ability of listing the available devices and their capabilities.
+ * A MidiPluginObject is essentially a factory for MidiDriver instances with
+ * the added ability of listing the available devices and their capabilities.
  */
-class MidiPlugin : public PluginObject {
+class MidiPluginObject : public PluginObject {
 public:
-	virtual ~MidiPlugin() {}
+	virtual ~MidiPluginObject() {}
 
 	/**
 	 * Returns a list of the available devices. The empty string means the
@@ -47,13 +47,13 @@ public:
 	}
 
 	/**
-	 * Tries to instantiate an engine instance based on the settings of
-	 * the currently active ConfMan target. That is, the MidiPlugin should
-	 * query the ConfMan singleton for the device name, port, etc.
+	 * Tries to instantiate a MIDI Driver instance based on the settings of
+	 * the currently active ConfMan target. That is, the MidiPluginObject
+	 * should query the ConfMan singleton for the device name, port, etc.
 	 *
 	 * @param mixer			Pointer to the global Mixer object
-	 * @param mididriver	Pointer to a pointer which the MidiPlugin sets to
-	 *				the newly create MidiDriver, or 0 in case of an error
+	 * @param mididriver	Pointer to a pointer which the MidiPluginObject sets
+	 *				to the newly create MidiDriver, or 0 in case of an error
 	 * @return		a PluginError describing the error which occurred, or kNoError
 	 */
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const = 0;

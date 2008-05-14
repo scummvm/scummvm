@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#include "backends/midi/midiplugin.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include "Pa1Lib.h"
@@ -106,7 +106,7 @@ void MidiDriver_YamahaPa1::send(uint32 b) {
 
 // Plugin interface
 
-class YamahaPa1MidiPlugin : public MidiPlugin {
+class YamahaPa1MidiPlugin : public MidiPluginObject {
 public:
 	virtual const char *getName() const {
 		return "Yamaha Pa1";

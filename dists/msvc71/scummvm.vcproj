@@ -693,7 +693,7 @@
 			<Filter
 				Name="midi">
 				<File
-					RelativePath="..\..\backends\midi\midiplugin.h">
+					RelativePath="..\..\sound\midiplugin.h">
 				</File>
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp">
