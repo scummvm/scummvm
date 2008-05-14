@@ -360,7 +360,9 @@ int16 ScriptFunctions::sfShowMouseCursor(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetMusicBeat(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfGetMusicBeat");
+	// This is called loads of times in the intro of the floppy version
+	// of RtZ. Not sure what it does. Commented out to reduce spam
+	//warning("Unimplemented opcode: sfGetMusicBeat");
 	return 0;
 }
 
@@ -485,6 +487,7 @@ int16 ScriptFunctions::sfHomeText(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetTextRect(int16 argc, int16 *argv) {
+	// Used in the save/load screens of RtZ, and perhaps other places as well
 	int16 x1 = CLIP<int16>(argv[4], 1, 318);
 	int16 y1 = CLIP<int16>(argv[3], 1, 198);
 	int16 x2 = CLIP<int16>(argv[2], 1, 318);
