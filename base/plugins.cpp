@@ -317,16 +317,26 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	assert(plugin);
 	// Try to load the plugin
 	if (plugin->loadPlugin()) {
-		// If successful, add it to the list of known plugins and return.
-		_plugins[plugin->getType()].push_back(plugin);
+		// The plugin is valid, see if it provides the same module as an
+		// already loaded one and should replace it.
+		bool found = false;
 
-		// TODO/FIXME: We should perform some additional checks here:
-		// * Check for some kind of "API version" (possibly derived from the
-		//   SVN tree revision?)
-		// * If two plugins provide the same engine, we should only load one.
-		//   To detect this situation, we could just compare the plugin name.
-		//   To handle it, simply prefer modules loaded earlier to those coming.
-		//   Or vice versa... to be determined... :-)
+		PluginList::iterator pl = _plugins[plugin->getType()].begin();
+		while (!found && pl != _plugins[plugin->getType()].end()) {
+			if (!strcmp(plugin->getName(), (*pl)->getName())) {
+				// Found a duplicated module. Replace the old one.
+				found = true;
+				delete *pl;
+				*pl = plugin;
+				debug(1, "Replaced the duplicated plugin: '%s'", plugin->getName());
+			}
+			pl++;
+		}
+
+		if (!found) {
+			// If it provides a new module, just add it to the list of known plugins.
+			_plugins[plugin->getType()].push_back(plugin);
+		}
 
 		return true;
 	} else {

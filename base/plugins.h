@@ -27,9 +27,8 @@
 #define BASE_PLUGINS_H
 
 #include "common/error.h"
-#include "common/list.h"
 #include "common/singleton.h"
-#include "base/game.h"
+#include "common/util.h"
 
 #ifdef DYNAMIC_MODULES
 #include "common/fs.h"
@@ -69,7 +68,7 @@ enum PluginType {
 };
 
 // TODO: Make the engine API version depend on ScummVM's version
-// because of the backlinking
+// because of the backlinking (posibly from the SVN revision)
 #define PLUGIN_TYPE_ENGINE_VERSION 1
 #define PLUGIN_TYPE_MIDI_VERSION 1
 
@@ -274,7 +273,7 @@ protected:
  * managing all Plugin class instances, and unloading them.
  */
 class PluginManager : public Common::Singleton<PluginManager> {
-	typedef Common::List<PluginProvider *> ProviderList;
+	typedef Common::Array<PluginProvider *> ProviderList;
 private:
 	PluginList _plugins[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
