@@ -558,14 +558,17 @@ int AGOSEngine::init() {
 		// Setup midi driver
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
 		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		
+		_driver = MidiDriver::createMidi(midiDriver);
+
 		if (_nativeMT32) {
-			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}
 
 		_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_nativeMT32);
 
-		_midi.setDriver(driver);
+		_midi.setDriver(_driver);
+
 		int ret = _midi.open();
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
@@ -877,6 +880,7 @@ AGOSEngine::~AGOSEngine() {
 		delete _gameFile;
 
 	_midi.close();
+	delete _driver;
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];
@@ -1015,6 +1019,7 @@ void AGOSEngine::shutdown() {
 		delete _gameFile;
 
 	_midi.close();
+	delete _driver;
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];
