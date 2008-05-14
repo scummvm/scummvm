@@ -70,7 +70,7 @@ void SmushChannel::processBuffer() {
 				_tbufferSize = 0;
 			}
 			if (_sbufferSize == 0) {
-				delete []_sbuffer;
+				delete[] _sbuffer;
 				_sbuffer = 0;
 			}
 		} else {
@@ -90,7 +90,7 @@ void SmushChannel::processBuffer() {
 			if (!_sbuffer)
 				error("smush channel failed to allocate memory");
 			memcpy(_sbuffer, _tbuffer + offset, _sbufferSize);
-			delete []_tbuffer;
+			delete[] _tbuffer;
 			_tbuffer = 0;
 			_tbufferSize = 0;
 		} else {
@@ -102,7 +102,7 @@ void SmushChannel::processBuffer() {
 					error("smush channel failed to allocate memory");
 				memcpy(_tbuffer, old + offset, new_size);
 				_tbufferSize = new_size;
-				delete []old;
+				delete[] old;
 			}
 		}
 	}

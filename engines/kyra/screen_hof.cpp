@@ -31,13 +31,7 @@
 namespace Kyra {
 
 Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
-	: Screen_v2(vm, system) {
-	_vm = vm;
-	_wsaFrameAnimBuffer = new uint8[1024];
-}
-
-Screen_HoF::~Screen_HoF() {
-	delete [] _wsaFrameAnimBuffer;
+	: Screen_v2(vm, system), _vm(vm) {
 }
 
 void Screen_HoF::setScreenDim(int dim) {
@@ -74,80 +68,10 @@ void Screen_HoF::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, in
 		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor);
 }
 
-void Screen_HoF::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
-	int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
-
-	if (!(w1 || h1 || w2 || h2))
-		return;
-
-	ScreenDim cdm = _screenDimTable[dim];
-	cdm.sx <<= 3;
-	cdm.w <<= 3;
-
-	int na = 0, nb = 0, nc = w2;
-
-	if (!calcBounds(cdm.w, cdm.h, x2, y2, w2, h2, na, nb, nc))
-		return;
-
-	const uint8 *src = getPagePtr(srcPage) + y1 * 320;
-	uint8 *dst = getPagePtr(dstPage) + (y2 + cdm.sy) * 320;
-
-	int u = -1;
-
-	do {
-		int t = (nb * h1) / h2;
-		if (t != u) {
-			u = t;
-			const uint8 *s = src + (x1 + t) * 320;
-			uint8 *dt = (uint8*) _wsaFrameAnimBuffer;
-
-			t = w2 - w1;
-			if (!t) {
-				memcpy(dt, s, w2);
-			} else if (t > 0) {
-				if (w1 == 1) {
-                    memset(dt, *s, w2);
-				} else {
-					t = ((((((w2 - w1 + 1) & 0xffff) << 8) / w1) + 0x100) & 0xffff) << 8;
-					int bp = 0;
-					for (int i = 0; i < w1; i++) {
-						int cnt = (t >> 16);
-						bp += (t & 0xffff);
-						if (bp > 0xffff) {
-							bp -= 0xffff;
-							cnt++;
-						}
-						memset(dt, *s++, cnt);
-						dt += cnt;
-					}
-				}
-			} else {
-				if (w2 == 1) {
-					*dt = *s;
-				} else {
-					t = (((((w1 - w2) & 0xffff) << 8) / w2) & 0xffff) << 8;
-					int bp = 0;
-					for (int i = 0; i < w2; i++) {
-						*dt++ = *s++;
-						bp += (t & 0xffff);
-						if (bp > 0xffff) {
-							bp -= 0xffff;
-							s++;
-						}
-						s += (t >> 16);
-					}
-				}
-			}
-		}
-		memcpy(dst + x2 + cdm.sx, _wsaFrameAnimBuffer + na, w2);
-		dst += 320;
-	} while (++nb < h2);
-}
-
 void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
 	int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage) {
 
-	if (!(cmpW || cmpH ))
+	if (!cmpW || !cmpH)
 		return;
 
 	int r1, r2, r3, r4, r5, r6;
@@ -192,8 +116,7 @@ void Screen_HoF::copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos
 	memcpy(dst, src, numBytes);
 }
 
-
-void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
+void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX, int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
 	int x0 = dim->sx << 3;
 	int y0 = dim->sy;
 	int w0 = dim->w << 3;
@@ -227,52 +150,6 @@ void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int 
 		dst += 320;
 		src += 320;
 	}
-}
-
-bool Screen_HoF::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2) {
-	x2 = 0;
-	y2 = 0;
-	w2 = w1;
-
-	int t = x1 + w1;
-	if (t < 1) {
-		w1 = h1 = -1;
-	} else {
-		if (t <= x1) {
-			x2 = w1 - t;
-			w1 = t;
-			x1 = 0;
-		}
-		t = w0 - x1;
-		if (t < 1) {
-			w1 = h1 = -1;
-		} else {
-			if (t <= w1) {
-				w1 = t;
-			}
-			w2 -= w1;
-			t = h1 + y1;
-			if (t < 1) {
-				w1 = h1 = -1;
-			} else {
-				if (t <= y1) {
-					y2 = h1 - t;
-					h1 = t;
-					y1 = 0;
-				}
-                t = h0 - y1;
-				if (t < 1) {
-					w1 = h1 = -1;
-				} else {
-					if (t <= h1) {
-						h1 = t;
-					}
-				}
-			}
-		}
-	}
-
-	return (w1 == -1) ? false : true;
 }
 
 } // end of namespace Kyra

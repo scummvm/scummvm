@@ -86,7 +86,7 @@ public:
 	}
 	~StringResource() {
 		for (int32 i = 0; i < _nbStrings; i++) {
-			delete []_strings[i].string;
+			delete[] _strings[i].string;
 		}
 	}
 
@@ -206,7 +206,7 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 	StringResource *sr = new StringResource;
 	assert(sr);
 	sr->init(filebuffer, length);
-	delete []filebuffer;
+	delete[] filebuffer;
 	return sr;
 }
 

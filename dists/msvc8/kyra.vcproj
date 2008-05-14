@@ -165,15 +165,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\animator_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\animator_lok.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\animator_mr.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\animator_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\animator_v1.h"
 			>
 		</File>
 		<File
@@ -209,19 +209,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\gui_lok.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui_mr.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\gui_mr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\gui_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\gui_v1.h"
 			>
 		</File>
 		<File
@@ -237,23 +237,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\items_lok.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\items_mr.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items_v1.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\kyra\items_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\kyra.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\kyra.h"
 			>
 		</File>
 		<File
@@ -262,6 +254,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\kyra_hof.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra_lok.h"
 			>
 		</File>
 		<File
@@ -305,19 +305,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\saveload_lok.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\saveload_mr.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\scene.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\kyra\scene_hof.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\scene_lok.cpp"
 			>
 		</File>
 		<File
@@ -349,19 +349,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\screen_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_lok.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\screen_mr.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\screen_mr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\screen_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\screen_v1.h"
 			>
 		</File>
 		<File
@@ -382,6 +382,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\script_hof.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\script_lok.cpp"
 			>
 		</File>
 		<File
@@ -417,11 +421,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_mr.cpp"
+			RelativePath="..\..\engines\kyra\sequences_lok.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_v1.cpp"
+			RelativePath="..\..\engines\kyra\sequences_mr.cpp"
 			>
 		</File>
 		<File
@@ -445,11 +449,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_towns.cpp"
+			RelativePath="..\..\engines\kyra\sound_lok.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_v1.cpp"
+			RelativePath="..\..\engines\kyra\sound_towns.cpp"
 			>
 		</File>
 		<File
@@ -481,15 +485,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\text_lok.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\text_mr.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\text_mr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\text_v1.cpp"
 			>
 		</File>
 		<File
@@ -505,11 +509,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer_mr.cpp"
+			RelativePath="..\..\engines\kyra\timer_lok.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer_v1.cpp"
+			RelativePath="..\..\engines\kyra\timer_mr.cpp"
 			>
 		</File>
 		<File

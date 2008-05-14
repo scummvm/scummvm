@@ -386,6 +386,9 @@
 				RelativePath="..\..\sound\midiparser_xmidi.cpp">
 			</File>
 			<File
+				RelativePath="..\..\sound\midiplugin.h">
+			</File>
+			<File
 				RelativePath="..\..\sound\mixer.cpp">
 			</File>
 			<File

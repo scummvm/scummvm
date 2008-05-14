@@ -226,14 +226,14 @@ bool Debugger::Cmd_Programs(int argc, const char** argv) {
 
 	int i = 1;
 
-	DebugPrintf("+---+--------------------+----------+\n"
-				"| # | bound animation    |  status  |\n"
-				"+---+--------------------+----------+\n");
+	DebugPrintf("+---+--------------------+--------+----------+\n"
+				"| # | bound animation    |  size  |  status  |\n"
+				"+---+--------------------+--------+----------+\n");
 	for ( ; b != e; b++, i++) {
 		ProgramPtr p = *b;
-		DebugPrintf("|%3i|%-20s|%-10s|\n", i, p->_anim->_name, status[p->_status] );
+		DebugPrintf("|%3i|%-20s|%8i|%-10s|\n", i, p->_anim->_name, p->_instructions.size(), status[p->_status] );
 	}
-	DebugPrintf("+---+--------------------+---------+\n");
+	DebugPrintf("+---+--------------------+--------+----------+\n");
 
 	return true;
 }

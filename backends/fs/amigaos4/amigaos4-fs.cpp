@@ -209,7 +209,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		if (IDOS->NameFromLock(pLock, (STRPTR)n, bufSize) != DOSFALSE) {
 			_sPath = n;
 			_sDisplayName = pDisplayName ? pDisplayName : IDOS->FilePart((STRPTR)n);
-			delete [] n;
+			delete[] n;
 			break;
 		}
 
@@ -217,12 +217,12 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			_bIsValid = false;
 			debug(6, "IoErr() != ERROR_LINE_TOO_LONG");
 			LEAVE();
-			delete [] n;
+			delete[] n;
 			return;
 		}
 
 		bufSize *= 2;
-		delete [] n;
+		delete[] n;
 	}
 
 	_bIsValid =	false;
@@ -536,7 +536,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 
 				sprintf(buffer, "%s (%s)", volName, devName);
 
-				delete [] devName;
+				delete[] devName;
 
 				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, buffer);
 				if (entry) {
@@ -554,7 +554,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 				IDOS->UnLock(volumeLock);
 			}
 
-			delete [] volName;
+			delete[] volName;
 		}
 		dosList	= IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	}

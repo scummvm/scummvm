@@ -495,7 +495,7 @@ void ListWidget::reflowLayout() {
 
 	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
 
-	delete [] _textWidth;
+	delete[] _textWidth;
 	_textWidth = new int[_entriesPerPage];
 
 	for (int i = 0; i < _entriesPerPage; i++)

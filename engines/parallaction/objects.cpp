@@ -116,6 +116,16 @@ int16 Program::addLocal(const char *name, int16 value, int16 min, int16 max) {
 	return _numLocals++;
 }
 
+void LocalVariable::wrap() {
+
+	if (_value >= _max)
+		_value = _min;
+	if (_value < _min)
+		_value = _max - 1;
+
+	return;
+}
+
 
 
 Zone::Zone() {

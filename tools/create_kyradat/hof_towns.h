@@ -15,7 +15,7 @@ const ExtractEntry kyra2File1FMTownsJ[] = {
 
 const ExtractEntry kyra2File2FMTownsE[] = {
 	{ k2IngamePakFiles, 0x00000540, 0x0000065C },
-	{ k2IngameSfxFiles, 0x00003E3C, 0x000047A3 },
+	{ k2IngameSfxFilesTns, 0x00003E3C, 0x000047A3 },
 	{ k2IngameSfxIndex, 0x00013980, 0x00013CD8 },
 	{ k2IngameCDA, 0x0001808C, 0x000181BC },
 	{ k2IngameTalkObjIndex, 0x000199B6, 0x00019A30 },

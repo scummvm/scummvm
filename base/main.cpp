@@ -32,6 +32,7 @@
  */
 
 #include "engines/engine.h"
+#include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -77,8 +78,8 @@ static bool launcherDialog(OSystem &system) {
 	return (dlg.runModal() != -1);
 }
 
-static const Plugin *detectPlugin() {
-	const Plugin *plugin = 0;
+static const EnginePlugin *detectPlugin() {
+	const EnginePlugin *plugin = 0;
 
 	// Make sure the gameid is set in the config manager, and that it is lowercase.
 	Common::String gameid(ConfMan.getActiveDomainName());
@@ -90,7 +91,7 @@ static const Plugin *detectPlugin() {
 
 	// Query the plugins and find one that will handle the specified gameid
 	printf("Looking for %s\n", gameid.c_str());
-	GameDescriptor game = Base::findGame(gameid, &plugin);
+	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
 		printf("Failed game detection\n");
@@ -105,7 +106,7 @@ static const Plugin *detectPlugin() {
 }
 
 // TODO: specify the possible return values here
-static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
+static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	Common::String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.empty()) {
 	} else if (gameDataPath.lastChar() != '/'
@@ -138,7 +139,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 
 	// Create the game engine
 	Engine *engine = 0;
-	PluginError err = plugin->createInstance(&system, &engine);
+	PluginError err = (*plugin)->createInstance(&system, &engine);
 	if (!engine || err != kNoError) {
 		// TODO: Show an error dialog or so?
 		// TODO: Also take 'err' into consideration...
@@ -168,7 +169,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
-	Common::String desc = Base::findGame(ConfMan.get("gameid")).description();
+	Common::String desc = EngineMan.findGame(ConfMan.get("gameid")).description();
 	if (caption.empty() && !desc.empty())
 		caption = desc;
 	if (caption.empty())
@@ -298,11 +299,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// cleanly, so this is now enabled to encourage people to fix bits :)
 	while (0 != ConfMan.getActiveDomain()) {
 		// Try to find a plugin which feels responsible for the specified game.
-		const Plugin *plugin = detectPlugin();
+		const EnginePlugin *plugin = detectPlugin();
 		if (plugin) {
 			// Unload all plugins not needed for this game,
 			// to save memory
-			PluginManager::instance().unloadPluginsExcept(plugin);
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
 
 			// Try to run the game
 			int result = runGame(plugin, system, specialDebug);
@@ -329,7 +330,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 		launcherDialog(system);
 	}
-	PluginManager::instance().unloadPluginsExcept(NULL);
+	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
 	Common::ConfigManager::destroy();
 	GUI::NewGui::destroy();

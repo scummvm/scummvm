@@ -94,7 +94,7 @@ enum ZoneFlags {
 
 
 enum CommandFlags {
-	kFlagsAll			= 0xFFFFFFFF,
+	kFlagsAll			= 0xFFFFFFFFU,
 
 	kFlagsVisited		= 1,
 	kFlagsExit			= 0x10000000,
@@ -104,7 +104,6 @@ enum CommandFlags {
 	// BRA specific
 	kFlagsTestTrue		= 2
 };
-
 
 
 struct CommandData {
@@ -317,6 +316,8 @@ struct LocalVariable {
 		_min = -10000;
 		_max = 10000;
 	}
+
+	void wrap();
 };
 
 enum ParaFlags {

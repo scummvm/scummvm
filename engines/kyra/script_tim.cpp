@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-TIMInterpreter::TIMInterpreter(KyraEngine *vm, OSystem *system) : _vm(vm), _system(system), _currentTim(0) {
+TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, OSystem *system) : _vm(vm), _system(system), _currentTim(0) {
 #define COMMAND(x) { &TIMInterpreter::x, #x }
 #define COMMAND_UNIMPL() { 0, 0 }
 	static CommandEntry commandProcs[] = {
@@ -128,8 +128,8 @@ void TIMInterpreter::unload(TIM *&tim) const {
 	if (!tim)
 		return;
 
-	delete [] tim->text;
-	delete [] tim->avtl;
+	delete[] tim->text;
+	delete[] tim->avtl;
 	delete tim;
 	tim = 0;
 }

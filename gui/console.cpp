@@ -295,7 +295,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 				keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
 
 				// Get rid of the string buffer
-			delete [] str;
+			delete[] str;
 		}
 
 		print(PROMPT);

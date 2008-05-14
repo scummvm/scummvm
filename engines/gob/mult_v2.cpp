@@ -697,7 +697,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.frame = 0;
 		animData.isPaused = 1;
 		if (animData.animation < 0)
-			warning("TODO: AnimType 4, animation: %d", animData.animation);
+			warning("Woodruff Stub: AnimType 4, animation: %d", animData.animation);
 		return;
 	}
 
@@ -705,9 +705,8 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.animType = 11;
 
 	if (animData.animType == 11) {
-		if (animData.isBusy != 0) {
-			warning("TODO: AnimType 11");
-		}
+		if (animData.isBusy != 0)
+			warning("Woodruff Stub: AnimType 11");
 		return;
 	}
 
@@ -754,6 +753,11 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	case 5:
 		animData.isStatic = 1;
 		animData.frame = 0;
+		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
+			_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
+				animObj.videoSlot = 0;
+		}
+		
 		break;
 
 	case 6:
@@ -767,7 +771,12 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			}
 		}
 		break;
+
+	case 10:
+		warning("Woodruff Stub: AnimType 10");
+		break;
 	}
+
 	animData.newCycle = 1;
 }
 

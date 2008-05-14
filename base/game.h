@@ -179,15 +179,4 @@ public:
 /** List of savestates. */
 typedef Common::Array<SaveStateDescriptor> SaveStateList;
 
-
-class Plugin;
-
-namespace Base {
-
-// TODO: Find a better name & place for this function.
-GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL);
-
-} // End of namespace Base
-
-
 #endif

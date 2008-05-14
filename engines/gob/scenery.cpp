@@ -632,8 +632,17 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			frame = _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1) - 1;
 
 		// Seek to frame
-		while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) <= frame)
-			_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < 256) {
+			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) <= frame)
+				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+		} else {
+			int16 curFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1);
+			uint8 frameWrap = curFrame / 256;
+			frame = (frame + 1) % 256;
+
+			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < (frameWrap * 256 + frame))
+				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+		}
 
 		destX = 0;
 		destY = 0;

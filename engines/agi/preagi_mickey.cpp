@@ -238,7 +238,7 @@ bool Mickey::checkMenu() {
 	memcpy(buffer, &menu, sizeof(MSA_MENU));
 
 	getMenuSel(buffer, &iSel0, &iSel1);
-	delete [] buffer;
+	delete[] buffer;
 
 	return parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
 }
@@ -645,7 +645,7 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 					case Common::EVENT_LBUTTONUP:
 					case Common::EVENT_RBUTTONUP:
 					case Common::EVENT_KEYDOWN:
-						delete [] buffer;
+						delete[] buffer;
 						return;
 					default:
 						break;
@@ -657,7 +657,7 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 		break;
 	}
 
-	delete [] buffer;
+	delete[] buffer;
 }
 
 // Graphics
@@ -893,7 +893,7 @@ void Mickey::drawLogo() {
 
 	_vm->_picture->showPic(10, 10, w, h);
 
-	delete [] buffer;
+	delete[] buffer;
 }
 
 void Mickey::animate() {

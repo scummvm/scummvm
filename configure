@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# configue -- custom configure script for ScummVM.
+# configure -- custom configure script for ScummVM.
 #
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
@@ -373,8 +373,15 @@ engine_enable() {
 		opt=yes
 	fi
 	engine=`echo $eng | sed 's/-/_/g'`
+
+	# Filter the parameter for the subengines
+	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
+		option_error
+		return
+	fi
+
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
-		if test "`get_engine_build ${engine}`" != "$opt" ; then
+		if test "`get_engine_name ${engine}`" != "" -a "`get_engine_build ${engine}`" != "$opt" ; then
 			eval _engine_${engine}_build=$opt
 		else
 			option_error
@@ -386,8 +393,14 @@ engine_enable() {
 
 # Disable the given engine
 engine_disable() {
+	# Filter malformed options
+	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
+		option_error
+		return
+	fi
+
 	engine=`echo $1 | sed 's/-/_/g'`
-	if test "`get_engine_build $engine`" != "no" ; then
+	if test "`get_engine_name ${engine}`" != "" -a "`get_engine_build $engine`" != "no" ; then
 		eval _engine_${engine}_build=no
 	else
 		option_error
@@ -453,33 +466,38 @@ prepare_engine_build_strings() {
 get_engine_build_string() {
 	engine_string=""
 	engine_build=`get_engine_build $1`
-	if test $engine_build = no ; then
-		# The engine is disabled
-		if test $2 = no ; then
-			engine_string=`get_engine_name $1`
-		else
-			engine_string=""
-		fi
+	show=no
+
+	# Check if the current engine should be shown for the current status
+	if test $engine_build = $2 ; then
+		show=yes
 	else
-		# The engine is enabled, get the custom string
+		# Test for disabled sub-engines
+		if test $2 = no ; then
+			for subeng in `get_engine_subengines $1` ; do
+				if test `get_engine_build $subeng` = no ; then
+					engine_build=no
+					show=yes
+				fi
+			done
+		fi
+	fi
+
+	# Convert static/dynamic to yes to ease the check of subengines
+	if test $engine_build != no ; then
+		engine_build=yes
+	fi
+
+	# The engine should be shown, build the string
+	if test $show = yes ; then
 		build_string_func=get_${1}_build_string
 		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
-			engine_string=`$build_string_func $1 $2`
+			engine_string=`$build_string_func $1 $engine_build`
 		else
-			engine_string=`get_subengines_build_string $1 $2`
+			engine_string=`get_subengines_build_string $1 $engine_build`
 		fi
 
-		if test $2 = no ; then
-			if test -n "$engine_string" ; then
-				engine_string="`get_engine_name $1` $engine_string"
-			fi
-		else
-			if test $2 = $engine_build ; then
-				engine_string="`get_engine_name $1` $engine_string"
-			else
-				engine_string=""
-			fi
-		fi
+		engine_string="`get_engine_name $1` $engine_string"
 	fi
 
 	echo $engine_string
@@ -523,10 +541,12 @@ get_sword2_build_string() {
 }
 
 get_scumm_build_string() {
-	if test $2 != no ; then
-		base="[v0-v6 games]"
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no ; then
+			base="[v0-v6 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base"
 	fi
-	get_subengines_build_string $1 $2 "$base"
 }
 
 #
@@ -1061,7 +1081,7 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			;;
-		arm-linux|arm-linux-gnueabi|arm-*-linux-gnueabi)
+		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen

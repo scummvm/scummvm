@@ -24,10 +24,10 @@
 
 #if defined(MACOSX) || defined(macintosh)
 
-
-#include "sound/mpu401.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
+#include "sound/mpu401.h"
 
 #if defined(MACOSX)
 #include <QuickTime/QuickTimeComponents.h>
@@ -250,8 +250,45 @@ void MidiDriver_QT::dispose()
 	}
 }
 
-MidiDriver *MidiDriver_QT_create() {
-	return new MidiDriver_QT();
+
+// Plugin interface
+
+class QuickTimeMidiPlugin : public MidiPluginObject {
+public:
+	virtual const char *getName() const {
+		return "QuickTime";
+	}
+
+	virtual const char *getId() const {
+		return "qt";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError QuickTimeMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_QT();
+
+	return kNoError;
 }
+
+MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	QuickTimeMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(QUICKTIME)
+	//REGISTER_PLUGIN_DYNAMIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+//#endif
 
 #endif // MACOSX || macintosh

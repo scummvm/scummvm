@@ -191,7 +191,7 @@ bool ResourceManager::init() {
 
 		if (cdInf[i].cd == 0 && !Common::File::exists((char *)cdInf[i].clusterName)) {
 			_vm->GUIErrorMessage("Broken Sword 2: Cannot find " + Common::String((char *)cdInf[i].clusterName));
-			delete [] cdInf;
+			delete[] cdInf;
 			return false;
 		}
 	}
@@ -205,7 +205,7 @@ bool ResourceManager::init() {
 		}
 
 		if (j == _totalClusters) {
-			delete [] cdInf;
+			delete[] cdInf;
 			_vm->GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
 			return false;
 		}
@@ -213,7 +213,7 @@ bool ResourceManager::init() {
 		_resFiles[i].cd = cdInf[j].cd;
 	}
 
-	delete [] cdInf;
+	delete[] cdInf;
 
 	debug(1, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
 	for (i = 0; i < _totalClusters; i++)

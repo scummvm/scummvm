@@ -97,7 +97,7 @@ void KyraEngine_MR::setMouseCursor(uint16 item) {
 
 void KyraEngine_MR::setItemMouseCursor() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::setItemMouseCursor()");
-	_handItemSet = _itemInHand;
+	_mouseState = _itemInHand;
 	if (_itemInHand == -1)
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	else
@@ -107,7 +107,7 @@ void KyraEngine_MR::setItemMouseCursor() {
 bool KyraEngine_MR::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::dropItem(%d, %d, %d, %d, %d)", unk1, item, x, y, unk2);
 
-	if (_handItemSet <= -1)
+	if (_mouseState <= -1)
 		return false;
 
 	if (processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2))

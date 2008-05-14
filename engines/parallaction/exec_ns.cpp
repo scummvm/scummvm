@@ -23,6 +23,7 @@
  *
  */
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -107,7 +108,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	if (inst->_opA._flags & kParaLocal) {
-		wrapLocalVar(inst->_opA._local);
+		inst->_opA._local->wrap();
 	}
 
 }
@@ -188,16 +189,6 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 }
 
 
-
-void Parallaction_ns::wrapLocalVar(LocalVariable *local) {
-
-	if (local->_value >= local->_max)
-		local->_value = local->_min;
-	if (local->_value < local->_min)
-		local->_value = local->_max - 1;
-
-	return;
-}
 
 
 DECLARE_COMMAND_OPCODE(invalid) {
@@ -371,7 +362,6 @@ void Parallaction_ns::runScripts() {
 
 	debugC(9, kDebugExec, "runScripts");
 
-
 	static uint16 modCounter = 0;
 
 	for (ProgramList::iterator it = _location._programs.begin(); it != _location._programs.end(); it++) {
@@ -389,7 +379,7 @@ void Parallaction_ns::runScripts() {
 
 			(*it)->_status = kProgramRunning;
 
-			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "Animation: %s, instruction: %i", a->_name, (*inst)->_index); //_instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
 			_instRunCtxt.anim = AnimationPtr(a);
@@ -446,7 +436,7 @@ void Parallaction::runCommands(CommandList& list, ZonePtr z) {
 		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
 		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
 
-		debugC(3, kDebugExec, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
+//		debugC(3, kDebugExec, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
 		_cmdRunCtxt.z = z;
 		_cmdRunCtxt.cmd = cmd;
@@ -491,7 +481,7 @@ void Parallaction::displayComment(ExamineData *data) {
 		_gfx->setItemFrame(id, 0);
 	}
 
-	_inputMode = kInputModeComment;
+	_input->_inputMode = Input::kInputModeComment;
 }
 
 

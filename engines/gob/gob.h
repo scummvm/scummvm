@@ -104,8 +104,9 @@ enum {
 	kDebugParser = 1 << 4,
 	kDebugGameFlow = 1 << 5,
 	kDebugFileIO = 1 << 6,
-	kDebugGraphics = 1 << 7,
-	kDebugCollisions = 1 << 8
+	kDebugSaveLoad = 1 << 7,
+	kDebugGraphics = 1 << 8,
+	kDebugCollisions = 1 << 9
 };
 
 inline char *strncpy0(char *dest, const char *src, size_t n) {

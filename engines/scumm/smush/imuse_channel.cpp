@@ -83,7 +83,7 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 			if (!_tbuffer)
 				error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
-			delete []old;
+			delete[] old;
 			b.read(_tbuffer + _tbufferSize, size);
 			_tbufferSize += size;
 		} else {
@@ -155,7 +155,7 @@ void ImuseChannel::decode() {
 			_tbuffer = new byte[new_size];
 			if (!_tbuffer)  error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
-			delete []old;
+			delete[] old;
 			memcpy(_tbuffer + _tbufferSize, _sbuffer + _sbufferSize - remaining_size, remaining_size);
 			_tbufferSize += remaining_size;
 		}
@@ -180,7 +180,7 @@ void ImuseChannel::decode() {
 		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
 		WRITE_BE_UINT16(decoded, value); decoded += 2;
 	}
-	delete []_sbuffer;
+	delete[] _sbuffer;
 	_sbuffer = (byte *)keep;
 	_sbufferSize = new_size;
 }

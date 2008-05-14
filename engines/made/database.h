@@ -41,7 +41,10 @@ class Object {
 public:
 	Object();
 	~Object();
+
 	int loadVersion2(Common::SeekableReadStream &source);
+	int saveVersion2(Common::WriteStream &dest);
+
 	int loadVersion3(Common::SeekableReadStream &source);
 	int loadVersion3(byte *source);
 
@@ -118,6 +121,10 @@ protected:
 	void load(Common::SeekableReadStream &sourceS);
 	void loadVersion2(Common::SeekableReadStream &sourceS);
 	void loadVersion3(Common::SeekableReadStream &sourceS);
+	int16 savegameV2(Common::OutSaveFile *out, const char *description, int16 version);
+	int16 loadgameV2(Common::InSaveFile *in, int16 version);
+	int16 savegameV3(Common::OutSaveFile *out, const char *description, int16 version);
+	int16 loadgameV3(Common::InSaveFile *in, int16 version);
 };
 
 } // End of namespace Made

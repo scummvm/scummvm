@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="parallaction"
 	ProjectGUID="{0068957B-E2E1-4988-8C87-D541D84DAF20}"
 	RootNamespace="parallaction"
@@ -125,7 +125,7 @@
 				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="true"
+				WarnAsError="false"
 				DebugInformationFormat="0"
 			/>
 			<Tool
@@ -227,6 +227,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\gui_ns.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\input.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\input.h"
 			>
 		</File>
 		<File

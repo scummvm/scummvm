@@ -107,5 +107,13 @@ Plugin* Win32PluginProvider::createPlugin(const Common::String &filename) const 
 	return new Win32Plugin(filename);
 }
 
+bool Win32PluginProvider::isPluginFilename(const Common::String &filename) const {
+	// Check the plugin suffix
+	if (!filename.hasSuffix(".dll"))
+		return false;
+
+	return true;
+}
+
 
 #endif // defined(DYNAMIC_MODULES) && defined(_WIN32)

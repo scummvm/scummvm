@@ -29,6 +29,7 @@
 #include "sound/softsynth/mt32/mt32emu.h"
 
 #include "sound/softsynth/emumidi.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 
 #include "common/config-manager.h"
@@ -479,17 +480,49 @@ void MidiDriver_ThreadedMT32::onTimer() {
 }
 #endif
 
-////////////////////////////////////////
-//
-// MidiDriver_MT32 factory
-//
-////////////////////////////////////////
+
+// Plugin interface
+
+class MT32MidiPlugin : public MidiPluginObject {
+public:
+	virtual const char *getName() const {
+		return "MT-32 Emulator";
+	}
+
+	virtual const char *getId() const {
+		return "mt32";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError MT32MidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_MT32(mixer);
+
+	return kNoError;
+}
 
 MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {
 	// HACK: It will stay here until engine plugin loader overhaul
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
-	return new MidiDriver_MT32(mixer);
+
+	MidiDriver *mididriver;
+
+	MT32MidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(MT32)
+	//REGISTER_PLUGIN_DYNAMIC(MT32, PLUGIN_TYPE_MIDI, MT32MidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(MT32, PLUGIN_TYPE_MIDI, MT32MidiPlugin);
+//#endif
 
 #endif

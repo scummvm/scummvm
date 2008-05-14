@@ -49,15 +49,16 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 	out->writeSint16BE(_lastMusicCommand);
 	out->writeByte(_currentChapter);
 	out->writeByte(_characterShapeFile);
-	//XXX
+	out->writeByte(_album.curPage);
 	out->writeSint16BE(_score);
 	out->writeSint16BE(_scoreMax);
 	out->writeByte(_malcolmsMood);
-	out->write(_conversationState, sizeof(_conversationState));
-	out->write(_newSceneDlgState, sizeof(_newSceneDlgState));
+	for (int i = 0; i < 30; ++i)
+		out->write(_conversationState[i], 30);
+	out->write(_newSceneDlgState, 40);
 	for (int i = 0; i < 100; ++i)
 		out->writeUint16BE(_hiddenItems[i]);
-	out->write(_scoreFlagTable, sizeof(_scoreFlagTable));
+	out->write(_scoreFlagTable, 26);
 
 	out->writeUint16BE(_mainCharacter.sceneId);
 	out->writeSint16BE(_mainCharacter.dlgIndex);
@@ -88,6 +89,7 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 		out->writeSint16BE(_talkObjectList[i].x);
 		out->writeSint16BE(_talkObjectList[i].y);
 		out->writeByte(_talkObjectList[i].color);
+		out->writeByte(_talkObjectList[i].sceneId);
 	}
 
 	for (int i = 0; i < 98; ++i) {
@@ -129,6 +131,9 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 		return;
 	}
 
+	if (header.originalSave)
+		warning("Trying to load savegame from original interpreter, while this is possible, it is not officially supported");
+
 	if (_inventoryState) {
 		updateCharacterAnim(0);
 		restorePage3();
@@ -148,32 +153,58 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 
 	_screen->hideMouse();
 
-	_timer->loadDataFromFile(in, header.version);
+	if (!header.originalSave) {
+		_timer->loadDataFromFile(in, header.version);
 
-	uint32 flagsSize = in.readUint32BE();
-	assert(flagsSize <= sizeof(_flagsTable));
-	in.read(_flagsTable, flagsSize);
+		uint32 flagsSize = in.readUint32BE();
+		assert(flagsSize <= sizeof(_flagsTable));
+		in.read(_flagsTable, flagsSize);
+	}
 
-	// usually we have to save the flag set by opcode 10 here
 	_lastMusicCommand = in.readSint16();
 	_currentChapter = in.readByte();
 	_characterShapeFile = in.readByte();
-	//XXX
+
+	if (header.version >= 12 || header.originalSave)
+		_album.curPage = in.readByte();
+	if (header.originalSave)
+		in.readByte();
+
 	_score = in.readSint16();
 	_scoreMax = in.readSint16();
 	_malcolmsMood = in.readByte();
-	in.read(_conversationState, sizeof(_conversationState));
-	in.read(_newSceneDlgState, sizeof(_newSceneDlgState));
+
+	if (header.originalSave)
+		in.seek(8, SEEK_CUR);
+
+	for (int i = 0; i < 30; ++i)
+		in.read(_conversationState[i], 30);
+	
+	if (!header.originalSave) {
+		in.read(_newSceneDlgState, 40);
+	} else {
+		for (int i = 0; i < 40; ++i)
+			_newSceneDlgState[i] = in.readUint16();
+	}
+
 	for (int i = 0; i < 100; ++i)
 		_hiddenItems[i] = in.readUint16();
-	in.read(_scoreFlagTable, sizeof(_scoreFlagTable));
+
+	if (header.originalSave)
+		in.read(_flagsTable, 69);
+	in.read(_scoreFlagTable, 26);
 
 	_mainCharacter.sceneId = in.readUint16();
 	_mainCharacter.dlgIndex = in.readSint16();
 	_mainCharacter.height = in.readByte();
 	_mainCharacter.facing = in.readByte();
 	_mainCharacter.animFrame = in.readUint16();
-	_mainCharacter.walkspeed = in.readByte();
+	if (!header.originalSave) {
+		_mainCharacter.walkspeed = in.readByte();
+	} else {
+		in.seek(2, SEEK_CUR);
+		_mainCharacter.walkspeed = in.readUint32();
+	}
 	for (int i = 0; i < 10; ++i)
 		_mainCharacter.inventory[i] = in.readUint16();
 	_mainCharacter.x1 = in.readSint16();
@@ -188,7 +219,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 		_itemList[i].sceneId = in.readUint16();
 		_itemList[i].x = in.readSint16();
 		_itemList[i].y = in.readSint16();
-		if (header.version <= 9)
+		if (header.version <= 9 || header.originalSave)
 			in.readUint16();
 	}
 
@@ -199,11 +230,25 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 		_talkObjectList[i].x = in.readSint16();
 		_talkObjectList[i].y = in.readSint16();
 		_talkObjectList[i].color = in.readByte();
+		if (header.version >= 13 || header.originalSave)
+			_talkObjectList[i].sceneId = in.readByte();
 	}
 
 	for (int i = 0; i < 98; ++i) {
-		in.read(_sceneList[i].filename1, 10);
-		in.read(_sceneList[i].filename2, 10);
+		if (!header.originalSave) {
+			in.read(_sceneList[i].filename1, 10);
+		} else {
+			in.read(_sceneList[i].filename1, 9);
+			_sceneList[i].filename1[9] = 0;
+		}
+
+		if (!header.originalSave) {
+			in.read(_sceneList[i].filename2, 10);
+		} else {
+			in.read(_sceneList[i].filename2, 9);
+			_sceneList[i].filename2[9] = 0;
+		}
+
 		_sceneList[i].exit1 = in.readUint16();
 		_sceneList[i].exit2 = in.readUint16();
 		_sceneList[i].exit3 = in.readUint16();
@@ -213,6 +258,26 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	}
 
 	_itemInHand = in.readSint16();
+
+	if (header.originalSave) {
+		uint32 currentTime = _system->getMillis();
+
+		for (int i = 0; i < 6; ++i)
+			_timer->setDelay(i, in.readSint32LE());
+
+		for (int i = 0; i < 6; ++i) {
+			if (in.readUint16LE())
+				_timer->enable(i);
+			else
+				_timer->disable(i);
+		}
+
+		for (int i = 0; i < 6; ++i)
+			_timer->setNextRun(i, currentTime + (in.readUint32LE() * _tickLength));
+
+		_timer->resetNextRun();
+	}
+
 	_sceneExit1 = in.readUint16();
 	_sceneExit2 = in.readUint16();
 	_sceneExit3 = in.readUint16();

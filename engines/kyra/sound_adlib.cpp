@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * LPGL License
+ * LGPL License
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -507,7 +507,7 @@ int AdlibDriver::snd_deinitDriver(va_list &list) {
 
 int AdlibDriver::snd_setSoundData(va_list &list) {
 	if (_soundData) {
-		delete [] _soundData;
+		delete[] _soundData;
 		_soundData = 0;
 	}
 	_soundData = va_arg(list, uint8*);
@@ -2210,7 +2210,7 @@ const int SoundAdlibPC::_kyra1SoundTriggers[] = {
 
 const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1SoundTriggers);
 
-SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
+SoundAdlibPC::SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 	_v2 = (_vm->gameFlags().gameID == GI_KYRA2);
@@ -2232,7 +2232,7 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
 
 SoundAdlibPC::~SoundAdlibPC() {
 	delete _driver;
-	delete [] _soundDataPtr;
+	delete[] _soundDataPtr;
 }
 
 bool SoundAdlibPC::init() {
@@ -2382,7 +2382,7 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 
 	memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8));
 
-	delete [] file_data;
+	delete[] file_data;
 	file_data = p = 0;
 	file_size = 0;
 

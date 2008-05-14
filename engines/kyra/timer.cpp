@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/timer.h"
 
 #include "common/func.h"
@@ -34,7 +34,7 @@ namespace Kyra {
 namespace {
 struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
 	uint32 _tickLength, _curTime;
-	TimerResync(KyraEngine *vm, uint32 curTime) : _tickLength(vm->tickLength()), _curTime(curTime) {}
+	TimerResync(KyraEngine_v1 *vm, uint32 curTime) : _tickLength(vm->tickLength()), _curTime(curTime) {}
 
 	void operator()(TimerEntry &entry) const {
 		if (entry.lastUpdate < 0) {
@@ -62,10 +62,32 @@ struct TimerEqual : public Common::UnaryFunction<const TimerEntry&, bool> {
 };
 } // end of anonymous namespace
 
-void TimerManager::reset() {
-	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
-		delete pos->func;
+void TimerManager::pause(bool p) {
+	if (p) {
+		++_isPaused;
+
+		if (_isPaused == 1) {
+			_isPaused = true;
+			_pauseStart = _system->getMillis();
+		}
+	} else if (!p && _isPaused > 0) {
+		--_isPaused;
+
+		if (_isPaused == 0) {
+			const uint32 pausedTime = _system->getMillis() - _pauseStart;
+			_nextRun += pausedTime;
+
+			for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
+				pos->lastUpdate += pausedTime;
+				pos->nextRun += pausedTime;
+			}
+		}
 	}
+}
+
+void TimerManager::reset() {
+	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos)
+		delete pos->func;
 
 	_timers.clear();
 }
@@ -93,7 +115,7 @@ void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabl
 void TimerManager::update() {
 	debugC(9, kDebugLevelTimer, "TimerManager::update()");
 
-	if (_system->getMillis() < _nextRun)
+	if (_system->getMillis() < _nextRun || _isPaused)
 		return;
 
 	_nextRun += 99999;
@@ -121,8 +143,10 @@ void TimerManager::update() {
 void TimerManager::resync() {
 	debugC(9, kDebugLevelTimer, "TimerManager::resync()");
 
+	const uint32 curTime = _isPaused ? _pauseStart : _system->getMillis();
+
 	_nextRun = 0;	// force rerun
-	Common::for_each(_timers.begin(), _timers.end(), TimerResync(_vm, _system->getMillis()));
+	Common::for_each(_timers.begin(), _timers.end(), TimerResync(_vm, curTime));
 }
 
 void TimerManager::resetNextRun() {
@@ -225,7 +249,9 @@ void TimerManager::disable(uint8 id) {
 }
 
 void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int version) {
-	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void*)&file, version);
+	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void *)&file, version);
+
+	const uint32 loadTime = _isPaused ? _pauseStart : _system->getMillis();
 
 	if (version <= 7) {
 		_nextRun = 0;
@@ -240,12 +266,11 @@ void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int versio
 				timer->countdown = countdown;
 
 				if (nextRun) {
-					timer->nextRun = nextRun + _system->getMillis();
+					timer->nextRun = nextRun + loadTime;
 					timer->lastUpdate = timer->nextRun - countdown * _vm->tickLength();
 				} else {
-					uint32 curTime = _system->getMillis();
-					timer->nextRun = curTime;
-					timer->lastUpdate = curTime - countdown * _vm->tickLength();
+					timer->nextRun = loadTime;
+					timer->lastUpdate = loadTime - countdown * _vm->tickLength();
 				}
 			} else {
 				warning("Loading timer data for non existing timer %d", i);
@@ -272,14 +297,16 @@ void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int versio
 }
 
 void TimerManager::saveDataToFile(Common::WriteStream &file) const {
-	debugC(9, kDebugLevelTimer, "TimerManager::saveDataToFile(%p)", (const void*)&file);
+	debugC(9, kDebugLevelTimer, "TimerManager::saveDataToFile(%p)", (const void *)&file);
+
+	const uint32 saveTime = _isPaused ? _pauseStart : _system->getMillis();
 
 	file.writeByte(count());
 	for (CIterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
 		file.writeByte(pos->id);
 		file.writeByte(pos->enabled);
 		file.writeSint32BE(pos->countdown);
-		file.writeSint32BE(pos->lastUpdate - _system->getMillis());
+		file.writeSint32BE(pos->lastUpdate - saveTime);
 	}
 }
 

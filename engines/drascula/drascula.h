@@ -48,10 +48,20 @@ namespace Drascula {
 enum DrasculaGameFeatures {
 };
 
+enum Languages {
+	kEnglish = 0,
+	kSpanish = 1,
+	kGerman = 2,
+	kFrench = 3,
+	kItalian = 4
+};
+
+#define TEXTD_START 68
+
 struct DrasculaGameDescription;
 
 #define NUM_SAVES     10
-#define NUM_BANDERAS  50
+#define NUM_FLAGS     50
 #define ESC          0x01
 #define F1           0x3B
 #define F2           0x3C
@@ -68,12 +78,9 @@ struct DrasculaGameDescription;
 #define CLOSE           4
 #define TALK            5
 #define MOVE            6
-#define INICISOUND      6
-#define FINALSOUND      8
-#define FINDRV          9
 #define DIF_MASK       55
-#define ANCHOBJ        40
-#define ALTOBJ         25
+#define OBJWIDTH        40
+#define OBJHEIGHT         25
 
 #define X_OBJ1         5
 #define Y_OBJ1         10
@@ -164,8 +171,8 @@ struct DrasculaGameDescription;
 
 #define DIF_MASK_HARE   72
 #define DIF_MASK_ABC    22
-#define ANCHO_LETRAS     8
-#define ALTO_LETRAS      6
+#define CHAR_WIDTH     8
+#define CHAR_HEIGHT      6
 
 #define Y_ABC            158
 #define Y_SIGNOS         169
@@ -198,26 +205,26 @@ struct DrasculaGameDescription;
 #define X_X             222
 #define X_Y             231
 #define X_Z             240
-#define X_PUNTO          6
+#define X_DOT             6
 #define X_COMA           15
-#define X_GUION          24
+#define X_HYPHEN          24
 #define X_CIERRA_INTERROGACION        33
 #define X_ABRE_INTERROGACION          42
 #define X_COMILLAS       51
 #define X_CIERRA_EXCLAMACION         60
 #define X_ABRE_EXCLAMACION              69
 #define X_PUNTO_Y_COMA              78
-#define X_MAYOR_QUE              87
-#define X_MENOR_QUE              96
+#define X_GREATER_THAN              87
+#define X_LESSER_THAN              96
 #define X_DOLAR             105
-#define X_POR_CIENTO             114
+#define X_PERCENT             114
 #define X_DOS_PUNTOS             123
 #define X_AND            132
 #define X_BARRA             141
-#define X_ABRE_PARENTESIS             150
-#define X_CIERRA_PARENTESIS             159
+#define X_BRACKET_OPEN             150
+#define X_BRACKET_CLOSE             159
 #define X_ASTERISCO             168
-#define X_MAS             177
+#define X_PLUS             177
 #define X_N1             186
 #define X_N2            195
 #define X_N3            204
@@ -228,28 +235,28 @@ struct DrasculaGameDescription;
 #define X_N8            249
 #define X_N9            258
 #define X_N0            267
-#define ESPACIO         250
+#define SPACE           250
 #define ALTO_TALK_HARE  25
 #define ANCHO_TALK_HARE 23
 #define VON_BRAUN        1
-#define AZUL_OSCURO       2
-#define VERDE_CLARO       3
-#define VERDE_OSCURO      4
-#define AMARILLO          5
-#define NARANJA           6
-#define ROJO              7
-#define MARRON            8
-#define MORADO            9
-#define BLANCO           10
-#define ROSA             11
+#define DARK_BLUE         2
+#define LIGHT_GREEN       3
+#define DARK_GREEN        4
+#define YELLOW            5
+#define ORANGE            6
+#define RED               7
+#define MAROON            8
+#define PURPLE            9
+#define WHITE            10
+#define PINK             11
 #define PASO_HARE_X       8
 #define PASO_HARE_Y       3
-#define ALTO_PERSONAJE   70
-#define ANCHO_PERSONAJE  43
+#define CHARACTER_HEIGHT   70
+#define CHARACTER_WIDTH  43
 #define PIES_HARE        12
 
-#define ANCHO_LETRAS_OPC     6
-#define ALTO_LETRAS_OPC      5
+#define CHAR_WIDTH_OPC     6
+#define CHAR_HEIGHT_OPC      5
 #define Y_ABC_OPC_1          6
 #define Y_SIGNOS_OPC_1       15
 #define Y_ABC_OPC_2          31
@@ -283,27 +290,27 @@ struct DrasculaGameDescription;
 #define X_X_OPC             178
 #define X_Y_OPC             185
 #define X_Z_OPC             192
-#define ESPACIO_OPC         199
-#define X_PUNTO_OPC          10
+#define SPACE_OPC           199
+#define X_DOT_OPC            10
 #define X_COMA_OPC           17
-#define X_GUION_OPC          24
+#define X_HYPHEN_OPC          24
 #define X_CIERRA_INTERROGACION_OPC        31
 #define X_ABRE_INTERROGACION_OPC          38
 #define X_COMILLAS_OPC       45
 #define X_CIERRA_EXCLAMACION_OPC         52
 #define X_ABRE_EXCLAMACION_OPC              59
 #define X_PUNTO_Y_COMA_OPC              66
-#define X_MAYOR_QUE_OPC              73
-#define X_MENOR_QUE_OPC              80
+#define X_GREATER_THAN_OPC              73
+#define X_LESSER_THAN_OPC              80
 #define X_DOLAR_OPC             87
-#define X_POR_CIENTO_OPC            94
+#define X_PERCENT_OPC            94
 #define X_DOS_PUNTOS_OPC             101
 #define X_AND_OPC            108
 #define X_BARRA_OPC             115
-#define X_ABRE_PARENTESIS_OPC             122
-#define X_CIERRA_PARENTESIS_OPC             129
+#define X_BRACKET_OPEN_OPC             122
+#define X_BRACKET_CLOSE_OPC             129
 #define X_ASTERISCO_OPC             136
-#define X_MAS_OPC             143
+#define X_PLUS_OPC             143
 #define X_N1_OPC             150
 #define X_N2_OPC            157
 #define X_N3_OPC            164
@@ -314,18 +321,18 @@ struct DrasculaGameDescription;
 #define X_N8_OPC            199
 #define X_N9_OPC            206
 #define X_N0_OPC            213
-#define NO_PUERTA            99
+#define NO_DOOR              99
 
 #define INIT_FRAME  0
 #define CMP_RLE     1
 #define CMP_OFF     2
 #define END_ANIM    3
-#define SET_PALET   4
+#define SET_PAL     4
 #define MOUSE_KEY   5
 #define EMPTY_FRAME 6
 
-#define COMPLETA    256
-#define MEDIA       128
+#define COMPLETE_PAL   256
+#define HALF_PAL       128
 
 class DrasculaEngine : public ::Engine {
 	int _gameId;
@@ -349,30 +356,29 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	void update_events();
+	void updateEvents();
 
 	Audio::SoundHandle _soundHandle;
 
-	void asigna_memoria();
-	void libera_memoria();
-	void salir_al_dos(int r);
+	void allocMemory();
+	void freeMemory();
+	void releaseGame();
 
 	void loadPic(const char *);
 	void decompressPic(byte *dir_escritura, int plt);
 
 	typedef char DacPalette256[256][3];
 
-	void asigna_rgb(byte *dir_lectura, int plt);
-	void funde_rgb(int plt);
+	void setRGB(byte *dir_lectura, int plt);
 	void paleta_hare();
-	void ActualizaPaleta();
-	void setvgapalette256(byte *PalBuf);
-	void copyBackground(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, byte *Origen, byte *Destino);
-	void copyRect(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, byte *Origen, byte *Destino);
-	void copyRectClip(int *Array, byte *Origen, byte *Destino);
-	void updateScreen(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer);
+	void updatePalette();
+	void setPalette(byte *PalBuf);
+	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
+				int height, byte *src, byte *dest);
+	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
+				int height, byte *src, byte *dest);
+	void copyRectClip(int *Array, byte *src, byte *dest);
+	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
 
 	DacPalette256 palJuego;
 	DacPalette256 palHare;
@@ -399,23 +405,23 @@ public:
 	Common::File *ald, *sku;
 
 	int hay_sb;
-	int nivel_osc, musica_antes, musica_room;
+	int nivel_osc, previousMusic, roomMusic;
 	char num_room[20], roomDisk[20];
-	char datos_actuales[20];
-	int objs_room;
+	char currentData[20];
+	int numRoomObjs;
 	char fondo_y_menu[20];
 
-	char nombre_obj[30][20];
-	char nombre_icono[44][13];
+	char objName[30][20];
+	char iconName[44][13];
 
-	int num_obj[40], visible[40], espuerta[40];
+	int num_obj[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
 	int objetos_que_tengo[43];
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int lleva_objeto, objeto_que_lleva;
-	int con_voces;
+	int withVoices;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[20];
 	int frame_ciego;
@@ -424,17 +430,17 @@ public:
 	int c_mirar;
 	int c_poder;
 
-	int flags[NUM_BANDERAS];
+	int flags[NUM_FLAGS];
 
 	int frame_y;
 	int hare_x, hare_y, hare_se_mueve, direccion_hare, sentido_hare, num_frame, hare_se_ve;
 	int sitio_x, sitio_y, comprueba_flags;
 	int rompo, rompo2;
-	int paso_x, paso_y;
+	int step_x, step_y;
 	int alto_hare, ancho_hare, alto_pies;
 	int alto_talk, ancho_talk;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
-	int cerca, lejos;
+	int near, far;
 	int sentido_final, anda_a_objeto;
 	int obj_saliendo;
 	int diff_vez, conta_vez;
@@ -470,20 +476,19 @@ public:
 	int boton_dch;
 
 	bool escoba();
-	void Negro();
+	void black();
 	void talk_vb(const char *, const char *);
-	void talk_vbpuerta(const char *dicho, const char *filename);
+	void talk_vbpuerta(const char *said, const char *filename);
 	void talk_ciego(const char *, const char *, const char *);
 	void talk_hacker(const char *, const char *);
-	void agarra_objeto(int);
+	void pickObject(int);
 	void anda_parriba();
 	void anda_pabajo();
 	void pon_vb();
 	void lleva_vb(int punto_x);
-	void hipo_sin_nadie(int contador);
-	void abre_puerta(int nflag, int n_puerta);
+	void hipo_sin_nadie(int counter);
+	void openDoor(int nflag, int n_puerta);
 	void mapa();
-	void buffer_teclado() { }
 	void animation_1_1();
 	void animation_2_1();
 	void animation_1_2();
@@ -565,7 +570,7 @@ public:
 	void hare_oscuro();
 
 
-	void sin_verbo();
+	void withoutVerb();
 	bool para_cargar(char[]);
 	void carga_escoba(const char *);
 	void clearRoom();
@@ -585,7 +590,7 @@ public:
 	void delay(int ms);
 	bool confirma_salir();
 	void salva_pantallas();
-	void elige_objeto(int objeto);
+	void chooseObject(int objeto);
 	void suma_objeto(int);
 	int resta_objeto(int osj);
 	void fliplay(const char *filefli, int vel);
@@ -598,28 +603,28 @@ public:
 	void fin_sound_corte();
 	void FundeAlNegro(int VelocidadDeFundido);
 	void pause(int);
-	void talk_dr_grande(const char *dicho, const char *filename);
+	void talk_dr_grande(const char *said, const char *filename);
 	void pon_igor();
 	void pon_bj();
 	void pon_dr();
-	void talk_igor_dch(const char *dicho, const char *filename);
-	void talk_dr_dch(const char *dicho, const char *filename);
-	void talk_dr_izq(const char *dicho, const char *filename);
+	void talk_igor_dch(const char *said, const char *filename);
+	void talk_dr_dch(const char *said, const char *filename);
+	void talk_dr_izq(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
 	void talk_igor_frente(const char *, const char *);
-	void talk_tabernero(const char *dicho, const char *filename);
-	void talk_igorpuerta(const char *dicho, const char *filename);
-	void talk_igor_peluca(const char *dicho, const char *filename);
+	void talk_tabernero(const char *said, const char *filename);
+	void talk_igorpuerta(const char *said, const char *filename);
+	void talk_igor_peluca(const char *said, const char *filename);
 	void hipo(int);
 	void fin_sound();
 	void talk_bj(const char *, const char *);
-	void talk_baul(const char *dicho, const char *filename);
+	void talk_baul(const char *said, const char *filename);
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
 	void cierra_puerta(int nflag, int n_puerta);
-	void playmusic(int p);
-	void stopmusic();
-	int music_status();
+	void playMusic(int p);
+	void stopMusic();
+	int musicStatus();
 	void updateRoom();
 	bool carga_partida(const char *);
 	void puertas_cerradas(int);
@@ -629,7 +634,7 @@ public:
 	void paleta_hare_claro();
 	void paleta_hare_oscuro();
 	void hare_claro();
-	void actualiza_datos();
+	void updateData();
 	void empieza_andar();
 	void updateRefresh();
 	void updateRefresh_pre();
@@ -673,7 +678,7 @@ public:
 	int frame_pen;
 	int flag_tv;
 
-	byte *carga_pcx(byte *NamePcc);
+	byte *loadPCX(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
 	int vez();
@@ -686,7 +691,7 @@ public:
 	void update_62();
 	void update_62_pre();
 	void update_63();
-	void graba_partida(char[]);
+	void saveGame(char[]);
 	void aumenta_num_frame();
 	int sobre_que_objeto();
 	bool comprueba_banderas_menu();
@@ -724,8 +729,8 @@ public:
 	void conversa(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void responde(int);
-	void talk_borracho(const char *dicho, const char *filename);
-	void talk_pianista(const char *dicho, const char *filename);
+	void talk_borracho(const char *said, const char *filename);
+	void talk_pianista(const char *said, const char *filename);
 
 	void MusicFadeout();
 	void ctvd_end();
@@ -783,8 +788,8 @@ public:
 	void update_50();
 	void update_57();
 	void talk_igor_sentado(const char *, const char *);
-	void talk_lobo(const char *dicho, const char *filename);
-	void talk_mus(const char *dicho, const char *filename);
+	void talk_lobo(const char *said, const char *filename);
+	void talk_mus(const char *said, const char *filename);
 	void room_58(int);
 	void room_59(int);
 	bool room_60(int);
@@ -817,15 +822,15 @@ public:
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
 	void talk_taber2(const char *, const char *);
-	void talk_bj_cama(const char *dicho, const char * filename);
-	void talk_htel(const char *dicho, const char *filename);
+	void talk_bj_cama(const char *said, const char * filename);
+	void talk_htel(const char *said, const char *filename);
 
 private:
 	int _lang;
 };
 
 extern const char *_text[][501];
-extern const char *_textd[][79];
+extern const char *_textd[][84];
 extern const char *_textb[][15];
 extern const char *_textbj[][29];
 extern const char *_texte[][24];
@@ -836,6 +841,9 @@ extern const char *_textt[][25];
 extern const char *_textvb[][63];
 extern const char *_textsys[][4];
 extern const char *_texthis[][5];
+extern const char *_textverbs[][6];
+extern const char *_textmisc[][1];
+extern const char *_textd1[][11];
 
 } // End of namespace Drascula
 

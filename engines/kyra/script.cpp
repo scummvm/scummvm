@@ -28,12 +28,12 @@
 #include "common/stream.h"
 #include "common/util.h"
 #include "common/system.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/resource.h"
 #include "kyra/script.h"
 
 namespace Kyra {
-EMCInterpreter::EMCInterpreter(KyraEngine *vm) : _vm(vm) {
+EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
 #define COMMAND(x) { &EMCInterpreter::x, #x }
 	static CommandEntry commandProcs[] = {
 		// 0x00
@@ -139,9 +139,9 @@ void EMCInterpreter::unload(EMCData *data) {
 	if (!data)
 		return;
 
-	delete [] data->text;
-	delete [] data->ordr;
-	delete [] data->data;
+	delete[] data->text;
+	delete[] data->ordr;
+	delete[] data->data;
 
 	data->text = 0;
 	data->ordr = data->data = 0;

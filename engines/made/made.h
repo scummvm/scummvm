@@ -60,6 +60,8 @@ enum MadeGameFeatures {
 	GF_FLOPPY = 1 << 3
 };
 
+const uint32 kTimerResolution = 40;
+
 struct MadeGameDescription;
 
 class ProjectReader;
@@ -102,6 +104,8 @@ public:
 	ScriptInterpreter *_script;
 	MusicPlayer *_music;
 
+	bool _quit;
+
 	int _eventMouseX, _eventMouseY;
 	uint16 _eventKey;
 	int _soundRate;
@@ -118,6 +122,9 @@ public:
 	int16 allocTimer();
 	void freeTimer(int16 timerNum);
 
+	const Common::String getTargetName() { return _targetName; }
+	Common::String getSavegameFilename(int16 saveNum);
+	
 };
 
 } // End of namespace Made

@@ -27,9 +27,9 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
-#define CURRENT_SAVE_VERSION 11
+#define CURRENT_SAVE_VERSION 13
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -37,7 +37,7 @@
 
 namespace Kyra {
 
-KyraEngine::kReadSaveHeaderError KyraEngine::readSaveHeader(Common::InSaveFile *in, SaveHeader &header) {
+KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::InSaveFile *in, SaveHeader &header) {
 	uint32 type = in->readUint32BE();
 	header.originalSave = false;
 	header.oldHeader = false;
@@ -69,6 +69,11 @@ KyraEngine::kReadSaveHeaderError KyraEngine::readSaveHeader(Common::InSaveFile *
 				saveOk = true;
 				header.description = descriptionBuffer;
 				header.gameID = GI_KYRA2;
+				break;
+			} else if (type == MKID_BE('MBL4') && header.version == 102) {
+				saveOk = true;
+				header.description = descriptionBuffer;
+				header.gameID = GI_KYRA3;
 				break;
 			}
 		}
@@ -103,14 +108,14 @@ KyraEngine::kReadSaveHeaderError KyraEngine::readSaveHeader(Common::InSaveFile *
 	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
 }
 
-Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, SaveHeader &header) {
-	debugC(9, kDebugLevelMain, "KyraEngine::openSaveForReading('%s', -)", filename);
+Common::InSaveFile *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForReading('%s', -)", filename);
 
 	Common::InSaveFile *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
 
-	kReadSaveHeaderError errorCode = KyraEngine::readSaveHeader(in, header);
+	kReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, header);
 	if (errorCode != kRSHENoError) {
 		if (errorCode == kRSHEInvalidType)
 			warning("No ScummVM Kyra engine savefile header.");
@@ -154,8 +159,8 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, SaveHea
 	return in;
 }
 
-Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const char *saveName) const {
-	debugC(9, kDebugLevelMain, "KyraEngine::openSaveForWriting('%s', '%s')", filename, saveName);
+Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName) const {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s')", filename, saveName);
 	if (_quitFlag)
 		return 0;
 
@@ -186,7 +191,7 @@ Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const 
 	return out;
 }
 
-const char *KyraEngine::getSavegameFilename(int num) {
+const char *KyraEngine_v1::getSavegameFilename(int num) {
 	static Common::String filename;
 
 	assert(num >= 0 && num <= 999);
@@ -199,7 +204,7 @@ const char *KyraEngine::getSavegameFilename(int num) {
 	return filename.c_str();
 }
 
-bool KyraEngine::saveFileLoadable(int slot) {
+bool KyraEngine_v1::saveFileLoadable(int slot) {
 	if (slot < 0 || slot > 999)
 		return false;
 

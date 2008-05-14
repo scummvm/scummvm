@@ -103,44 +103,6 @@ int KyraEngine_v2::o2_defineItem(EMCState *script) {
 	return freeItem;
 }
 
-int KyraEngine_v2::o2_queryGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_queryGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	return queryGameFlag(stackPos(0));
-}
-
-int KyraEngine_v2::o2_resetGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_resetGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	return resetGameFlag(stackPos(0));
-}
-
-int KyraEngine_v2::o2_setGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	return setGameFlag(stackPos(0));
-}
-
-int KyraEngine_v2::o2_setHandItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setHandItem(%p) (%d)", (const void *)script, stackPos(0));
-	setHandItem(stackPos(0));
-	return 0;
-}
-
-int KyraEngine_v2::o2_removeHandItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_removeHandItem(%p) ()", (const void *)script);
-	removeHandItem();
-	return 0;
-}
-
-int KyraEngine_v2::o2_handItemSet(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_handItemSet(%p) ()", (const void *)script);
-	return _handItemSet;
-}
-
-int KyraEngine_v2::o2_hideMouse(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_hideMouse(%p) ()", (const void *)script);
-	screen()->hideMouse();
-	return 0;
-}
-
 int KyraEngine_v2::o2_addSpecialExit(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_addSpecialExit(%p) (%d, %d, %d, %d, %d)", (const void *)script,
 		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
@@ -152,18 +114,6 @@ int KyraEngine_v2::o2_addSpecialExit(EMCState *script) {
 		_specialExitTable[_specialExitCount+20] = stackPos(4);
 		++_specialExitCount;
 	}
-	return 0;
-}
-
-int KyraEngine_v2::o2_setMousePos(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	setMousePos(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_v2::o2_showMouse(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showMouse(%p) ()", (const void *)script);
-	screen()->showMouse();
 	return 0;
 }
 
@@ -204,24 +154,6 @@ int KyraEngine_v2::o2_update(EMCState *script) {
 int KyraEngine_v2::o2_getShapeFlag1(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getShapeFlag1(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return screen()->getShapeFlag1(stackPos(0), stackPos(1));
-}
-
-int KyraEngine_v2::o2_playWanderScoreViaMap(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
-	return 0;
-}
-
-int KyraEngine_v2::o2_getRand(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) < stackPos(1));
-	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
-}
-
-int KyraEngine_v2::o2_setDeathHandler(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setDeathHandler(%p) (%d)", (const void *)script, stackPos(0));
-	_deathHandler = stackPos(0);
-	return 0;
 }
 
 int KyraEngine_v2::o2_waitForConfirmationClick(EMCState *script) {

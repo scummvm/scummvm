@@ -372,7 +372,7 @@ bool ProjectReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size
 	if (slot && slot->size > 0) {
 		size = slot->size - 62;
 		buffer = new byte[size];
-		debug(2, "ProjectReader::loadResource() %08X\n", slot->offs + 62); fflush(stdout);
+		debug(2, "ProjectReader::loadResource() %08X", slot->offs + 62);
 		_fd->seek(slot->offs + 62);
 		_fd->read(buffer, size);
 		return true;
@@ -384,8 +384,7 @@ bool ProjectReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size
 ResourceSlot *ProjectReader::getResourceSlot(uint32 resType, uint index) {
 	ResourceSlots *slots = _resSlots[resType];
 	if (index >= 1 && index < slots->size()) {
-		ResourceSlot *slot = &slots->operator[](index);
-		return slot;
+		return &slots->operator[](index);
 	} else {
 		return NULL;
 	}
@@ -398,22 +397,20 @@ Resource *ProjectReader::getResourceFromCache(ResourceSlot *slot) {
 }
 
 void ProjectReader::addResourceToCache(ResourceSlot *slot, Resource *res) {
-	if (_cacheCount >= kMaxResourceCacheCount) {
+	if (_cacheCount >= kMaxResourceCacheCount)
 		purgeCache();
-	}
 	slot->res = res;
-	slot->refCount = 0;
+	slot->refCount = 1;
 	_cacheCount++;
 }
 
 void ProjectReader::tossResourceFromCache(ResourceSlot *slot) {
-	if (slot->res) {
+	if (slot->res)
 		slot->refCount--;
-	}
 }
 
 void ProjectReader::purgeCache() {
-	printf("ProjectReader::purgeCache()\n");
+	debug(2, "ProjectReader::purgeCache()");
 	for (ResMap::const_iterator resTypeIter = _resSlots.begin(); resTypeIter != _resSlots.end(); ++resTypeIter) {
 		ResourceSlots *slots = (*resTypeIter)._value;
 		for (ResourceSlots::iterator slotIter = slots->begin(); slotIter != slots->end(); ++slotIter) {

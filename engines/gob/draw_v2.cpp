@@ -245,13 +245,20 @@ void Draw_v2::printTotText(int16 id) {
 	}
 
 	if (_renderFlags & RENDERFLAG_FROMSPLIT) {
-		destY = _vm->_video->_splitHeight1;
+		int16 start;
+
+		if (_vm->_video->_splitHeight1 < _vm->_height)
+			start = _vm->_video->_splitHeight1;
+		else
+			start = _vm->_video->_splitStart;
+
+		destY = start;
 		spriteBottom = READ_LE_UINT16(ptr + 6) - READ_LE_UINT16(ptr + 2);
 
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS)
 			spriteBottom *= 3;
 
-		spriteBottom += _vm->_video->_splitHeight1;
+		spriteBottom += start;
 
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
 			spriteBottom += _backDeltaY;
@@ -650,16 +657,19 @@ void Draw_v2::spriteOperation(int16 operation) {
 	if ((_destSpriteY >= _vm->_video->_splitHeight1) &&
 	    ((_destSurface == 20) || (_destSurface == 21))) {
 
-		_destSpriteY = (_destSpriteY - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
-		if ((operation == DRAW_DRAWLINE) ||
-		   ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
-			_spriteBottom = (_spriteBottom - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
+		if (_vm->_video->_splitHeight1 < _vm->_height) {
+			_destSpriteY = (_destSpriteY - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
+			if ((operation == DRAW_DRAWLINE) ||
+				 ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
+				_spriteBottom = (_spriteBottom - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
+		}
 
 	}
 
 	if ((_spriteTop >= _vm->_video->_splitHeight1) && (operation == DRAW_BLITSURF) &&
 	    ((_destSurface == 20) || (_destSurface == 21)))
-		_spriteTop = (_spriteTop - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
+		if (_vm->_video->_splitHeight1 < _vm->_height)
+			_spriteTop = (_spriteTop - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
 
 	adjustCoords(0, &_destSpriteX, &_destSpriteY);
 	if ((operation != DRAW_LOADSPRITE) && (_needAdjust != 2)) {

@@ -54,8 +54,8 @@ void PmvPlayer::play(const char *filename) {
 	_fd->skip(10);
 	uint soundFreq = _fd->readUint16LE();
 	// FIXME: weird frequencies... (11127 or 22254)
-	//if (soundFreq == 11127) soundFreq = 11025;
-	//if (soundFreq == 22254) soundFreq = 22050;
+	if (soundFreq == 11127) soundFreq = 11025;
+	if (soundFreq == 22254) soundFreq = 22050;
 
 	int unk;
 
@@ -78,6 +78,8 @@ void PmvPlayer::play(const char *filename) {
 	uint32 palSize = 0;
 	byte *frameData, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
+	
+	uint32 soundStartTime = 0, skipFrames = 0;
 
 	uint32 frameNum;
 	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
@@ -88,6 +90,8 @@ void PmvPlayer::play(const char *filename) {
 	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
 
 	while (!_abort && !_fd->eof()) {
+
+		int32 frameTime = _vm->_system->getMillis();
 
 		readChunk(chunkType, chunkSize);
 
@@ -104,7 +108,7 @@ void PmvPlayer::play(const char *filename) {
 
 		if (chunkCount > 50) break;	// FIXME: this is a hack
 
-		debug(2, "chunkCount = %d; chunkSize = %d\n", chunkCount, chunkSize);
+		debug(1, "chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, chunkSize, chunkCount * chunkSize);
 
 		soundSize = chunkCount * chunkSize;
 		soundData = new byte[soundSize];
@@ -117,6 +121,7 @@ void PmvPlayer::play(const char *filename) {
 			palData = frameData + palChunkOfs - 8;
 			palSize = READ_LE_UINT32(palData + 4);
 			decompressPalette(palData + 8, _paletteRGB, palSize);
+			_vm->_screen->setRGBPalette(_paletteRGB);
 		}
 
 		// Handle video
@@ -142,20 +147,30 @@ void PmvPlayer::play(const char *filename) {
 	
 		if (firstTime) {
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+			soundStartTime = g_system->getMillis();
+			skipFrames = 0;
 			firstTime = false;
 		}
 
-		_vm->_screen->setRGBPalette(_paletteRGB);
 		handleEvents();
 		updateScreen();
 
-		frameCount++;
-
 		delete[] frameData;
 
-		while (_mixer->getSoundElapsedTime(_audioStreamHandle) < frameCount * frameDelay) {
-			_vm->_system->delayMillis(10);
-		}
+		if (skipFrames == 0) {
+			int32 waitTime = (frameCount * frameDelay) -
+				(g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
+
+			if (waitTime < 0) {
+				skipFrames = -waitTime / frameDelay;
+				warning("Video A/V sync broken, skipping %d frame(s)", skipFrames + 1);
+			} else if (waitTime > 0)
+				g_system->delayMillis(waitTime);
+
+		} else
+			skipFrames--;
+
+		frameCount++;
 
 	}
 
@@ -188,8 +203,8 @@ void PmvPlayer::handleEvents() {
 				_abort = true;
 			break;
 		case Common::EVENT_QUIT:
-			// TODO: Exit more gracefully
-			g_system->quit();
+			_vm->_quit = true;
+			_abort = true;
 			break;
 		default:
 			break;

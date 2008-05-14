@@ -33,7 +33,8 @@ namespace Kyra {
 
 class Screen_v2 : public Screen {
 public:
-	Screen_v2(KyraEngine *vm, OSystem *system) : Screen(vm, system) {}
+	Screen_v2(KyraEngine_v1 *vm, OSystem *system);
+	~Screen_v2();
 
 	// screen page handling
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
@@ -57,13 +58,18 @@ public:
 
 	// rect handling
 	int getRectSize(int w, int h);
+	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
 
 	// text display
 	void setTextColorMap(const uint8 *cmap);
 
 	// layer handling
 	virtual int getLayer(int x, int y);
+
+	// special WSA handling
+	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
 protected:
+	uint8 *_wsaFrameAnimBuffer;
 };
 
 } // end of namespace Kyra

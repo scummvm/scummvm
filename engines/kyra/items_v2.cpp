@@ -30,7 +30,7 @@ namespace Kyra {
 
 void KyraEngine_v2::initItemList(int size) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::initItemList(%d)", size);
-	delete [] _itemList;
+	delete[] _itemList;
 
 	_itemList = new Item[size];
 	assert(_itemList);
@@ -112,7 +112,7 @@ void KyraEngine_v2::removeHandItem() {
 	scr->hideMouse();
 	scr->setMouseCursor(0, 0, getShapePtr(0));
 	_itemInHand = -1;
-	_handItemSet = -1;
+	_mouseState = -1;
 	scr->showMouse();
 }
 

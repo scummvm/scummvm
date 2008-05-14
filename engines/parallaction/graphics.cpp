@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "graphics/primitives.h"
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
 
@@ -781,9 +782,9 @@ void Gfx::updateFloatingLabel() {
 	int16 _si, _di;
 
 	Common::Point	cursor;
-	_vm->getCursorPos(cursor);
+	_vm->_input->getCursorPos(cursor);
 
-	if (_vm->_activeItem._id != 0) {
+	if (_vm->_input->_activeItem._id != 0) {
 		_si = cursor.x + 16 - _floatingLabel->_cnv.w/2;
 		_di = cursor.y + 34;
 	} else {

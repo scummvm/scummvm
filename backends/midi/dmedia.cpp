@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL:$
+ * $URL$
  * $Id: dmedia.cpp$
  */
 
@@ -30,8 +30,9 @@
 #if defined(IRIX)
 
 #include "common/scummsys.h"
-#include "sound/mpu401.h"
 #include "common/util.h"
+#include "sound/midiplugin.h"
+#include "sound/mpu401.h"
 
 #include <dmedia/midi.h>
 #include <sys/types.h>
@@ -174,8 +175,45 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 	}
 }
 
-MidiDriver *MidiDriver_DMEDIA_create() {
-	return new MidiDriver_DMEDIA();
+
+// Plugin interface
+
+class DMediaMidiPlugin : public MidiPluginObject {
+public:
+	virtual const char *getName() const {
+		return "DMedia";
+	}
+
+	virtual const char *getId() const {
+		return "dmedia";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError DMediaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_DMEDIA();
+
+	return kNoError;
 }
+
+MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	DMediaMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(DMEDIA)
+	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+//#endif
 
 #endif

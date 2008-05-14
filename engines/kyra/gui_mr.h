@@ -48,6 +48,8 @@ public:
 
 	int optionsButton(Button *button);
 private:
+	void getInput();
+
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);
 	const char *getMenuItemLabel(const MenuItem &menuItem);
@@ -77,6 +79,7 @@ private:
 	int changeLanguage(Button *caller);
 	int toggleStudioSFX(Button *caller);
 	int toggleSkipSupport(Button *caller);
+	int toggleHeliumMode(Button *caller);
 
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;

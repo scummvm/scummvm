@@ -28,40 +28,41 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "kyra/screen.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/resource.h"
 
 namespace Kyra {
 
-Screen::Screen(KyraEngine *vm, OSystem *system)
+Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0) {
 	_debugEnabled = false;
+	_maskMinY = _maskMaxY = -1;
 }
 
 Screen::~Screen() {
 	for (int i = 0; i < SCREEN_OVLS_NUM; ++i)
-		delete [] _sjisOverlayPtrs[i];
+		delete[] _sjisOverlayPtrs[i];
 
-	delete [] _pagePtrs[0];
+	delete[] _pagePtrs[0];
 
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
 		delete[] _fonts[f].fontData;
 		_fonts[f].fontData = NULL;
 	}
 
-	delete [] _sjisFontData;
-	delete [] _sjisTempPage;
-	delete [] _currentPalette;
-	delete [] _screenPalette;
-	delete [] _decodeShapeBuffer;
-	delete [] _animBlockPtr;
+	delete[] _sjisFontData;
+	delete[] _sjisTempPage;
+	delete[] _currentPalette;
+	delete[] _screenPalette;
+	delete[] _decodeShapeBuffer;
+	delete[] _animBlockPtr;
 
 	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
 		for (int i = 0; i < ARRAYSIZE(_palettes); ++i)
-			delete [] _palettes[i];
+			delete[] _palettes[i];
 	}
 
-	delete [] _dirtyRects;
+	delete[] _dirtyRects;
 }
 
 bool Screen::init() {
@@ -307,14 +308,16 @@ const uint8 *Screen::getCPagePtr(int pageNum) const {
 uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
 	debugC(9, kDebugLevelScreen, "Screen::getPageRect(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
 	assert(pageNum < SCREEN_PAGE_NUM);
-	if (pageNum == 0 || pageNum == 1) addDirtyRect(x, y, w, h);
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x, y, w, h);
 	return _pagePtrs[pageNum] + y * SCREEN_W + x;
 }
 
 void Screen::clearPage(int pageNum) {
 	debugC(9, kDebugLevelScreen, "Screen::clearPage(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
-	if (pageNum == 0 || pageNum == 1) _forceFullUpdate = true;
+	if (pageNum == 0 || pageNum == 1)
+		_forceFullUpdate = true;
 	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE);
 	clearOverlayPage(pageNum);
 }
@@ -329,7 +332,8 @@ int Screen::setCurPage(int pageNum) {
 
 void Screen::clearCurPage() {
 	debugC(9, kDebugLevelScreen, "Screen::clearCurPage()");
-	if (_curPage == 0 || _curPage == 1) _forceFullUpdate = true;
+	if (_curPage == 0 || _curPage == 1)
+		_forceFullUpdate = true;
 	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
 	clearOverlayPage(_curPage);
 }
@@ -478,7 +482,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 	}
 	addDirtyRect(0, y, SCREEN_W, h);
 	// This would remove the text in the end sequence of
-	// the FM-Towns version.
+	// the (Kyrandia 1) FM-Towns version.
 	// Since this method is just used for the Seqplayer
 	// this shouldn't be a problem anywhere else, so it's
 	// safe to disable the call here.
@@ -576,7 +580,8 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	memcpy(dst, src, SCREEN_W * SCREEN_H);
 	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
 
-	if (dstPage == 0 || dstPage == 1) _forceFullUpdate = true;
+	if (dstPage == 0 || dstPage == 1)
+		_forceFullUpdate = true;
 }
 
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
@@ -843,7 +848,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 
 void Screen::setAnimBlockPtr(int size) {
 	debugC(9, kDebugLevelScreen, "Screen::setAnimBlockPtr(%d)", size);
-	delete [] _animBlockPtr;
+	delete[] _animBlockPtr;
 	_animBlockPtr = new uint8[size];
 	assert(_animBlockPtr);
 	memset(_animBlockPtr, 0, size);
@@ -867,18 +872,18 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 		error("fontId %d is invalid", fontId);
 
 	if (fnt->fontData)
-		delete [] fnt->fontData;
+		delete[] fnt->fontData;
 
 	uint32 sz = 0;
 	uint8 *fontData = fnt->fontData = _vm->resource()->fileData(filename, &sz);
 
 	if (!fontData || !sz)
-		error("couldn't load font file '%s'", filename);
+		error("Couldn't load font file '%s'", filename);
 
 	uint16 fontSig = READ_LE_UINT16(fontData + 2);
 
 	if (fontSig != 0x500)
-		error("Invalid font data (file '%s')", filename);
+		error("Invalid font data (file '%s', fontSig: %.04X)", filename, fontSig);
 
 	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
 	fnt->charSizeOffset = READ_LE_UINT16(fontData + 4);
@@ -934,15 +939,14 @@ int Screen::getTextWidth(const char *str) const {
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
-			if (curLineLen > maxLineLen) {
+			if (curLineLen > maxLineLen)
 				maxLineLen = curLineLen;
-			} else {
+			else
 				curLineLen = 0;
-			}
 		} else {
-			if (c <= 0x7F || !_useSJIS)
+			if (c <= 0x7F || !_useSJIS) {
 				curLineLen += getCharWidth(c);
-			else {
+			} else {
 				c = READ_LE_UINT16(str - 1);
 				++str;
 				curLineLen += getCharWidth(c);
@@ -1894,11 +1898,10 @@ void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool noXor) {
 	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d, %d)", (const void *)dst, (const void *)src, pitch, noXor);
 
-	if (noXor) {
+	if (noXor)
 		wrapped_decodeFrameDeltaPage<true>(dst, src, pitch);
-	} else {
+	else
 		wrapped_decodeFrameDeltaPage<false>(dst, src, pitch);
-	}
 }
 
 void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
@@ -1933,7 +1936,7 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			int bytePos = x/8+y*40;
-			int bitPos = 7-x&7;
+			int bitPos = 7-(x&7);
 
 			byte colorIndex = 0;
 			colorIndex |= (((tmp[bytePos + 8000 * 0] & (1 << bitPos)) >> bitPos) & 0x1) << 0;
@@ -2235,7 +2238,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 				uint8 *newShape2 = new uint8[shapeSize];
 				assert(newShape2);
 				memcpy(newShape2, newShape, shapeSize);
-				delete [] newShape;
+				delete[] newShape;
 				newShape = newShape2;
 			} else {
 				dst = shapePtrBackUp;
@@ -2469,7 +2472,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
 	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
 	CursorMan.showMouse(true);
-	delete [] cursor;
+	delete[] cursor;
 
 	// makes sure that the cursor is drawn
 	// we do not use Screen::updateScreen here
@@ -2642,7 +2645,7 @@ void Screen::shakeScreen(int times) {
 }
 
 void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
+	debugC(9, kDebugLevelScreen, "KyraEngine_v1::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
@@ -2694,7 +2697,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	if (skip)
 		srcData -= 4;
 
-	delete [] srcData;
+	delete[] srcData;
 }
 
 bool Screen::loadPalette(const char *filename, uint8 *palData) {
@@ -2722,7 +2725,7 @@ bool Screen::loadPalette(const char *filename, uint8 *palData) {
 			memcpy(palData, srcData, fileSize);
 		}
 	}
-	delete [] srcData;
+	delete[] srcData;
 	return true;
 }
 
