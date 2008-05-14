@@ -193,7 +193,7 @@ void KyraEngine_LoK::removeHandItem() {
 
 void KyraEngine_LoK::setMouseItem(int item) {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setMouseItem(%d)", item);
-	if (item == -1)
+	if (item == 0xFFFF)
 		_screen->setMouseCursor(1, 1, _shapes[6]);
 	else
 		_screen->setMouseCursor(8, 15, _shapes[216+item]);
