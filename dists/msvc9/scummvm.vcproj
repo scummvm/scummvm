@@ -556,6 +556,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\midiplugin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\mixer.cpp"
 				>
 			</File>
@@ -943,10 +947,6 @@
 			<Filter
 				Name="midi"
 				>
-				<File
-					RelativePath="..\..\sound\midiplugin.h"
-					>
-				</File>
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp"
 					>

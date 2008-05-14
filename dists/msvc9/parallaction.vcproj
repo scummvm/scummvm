@@ -230,6 +230,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\input.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\input.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\inventory.cpp"
 			>
 		</File>
