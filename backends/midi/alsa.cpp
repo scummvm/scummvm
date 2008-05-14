@@ -247,6 +247,14 @@ public:
 		return "ALSA";
 	}
 
+	virtual const char *getId() const {
+		return "alsa";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual Common::StringList getDevices() const;
 
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
@@ -308,5 +316,11 @@ MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(ALSA)
+	//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MIDI, AlsaMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MIDI, AlsaMidiPlugin);
+//#endif
 
 #endif

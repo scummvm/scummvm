@@ -259,6 +259,14 @@ public:
 		return "QuickTime";
 	}
 
+	virtual const char *getId() const {
+		return "qt";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -276,5 +284,11 @@ MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(QT)
+	//REGISTER_PLUGIN_DYNAMIC(QT, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(QT, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+//#endif
 
 #endif // MACOSX || macintosh

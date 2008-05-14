@@ -520,6 +520,14 @@ public:
 		return "TiMidity";
 	}
 
+	virtual const char *getId() const {
+		return "timidity";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -537,5 +545,11 @@ MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(TIMIDITY)
+	//REGISTER_PLUGIN_DYNAMIC(TIMIDITY, PLUGIN_TYPE_MIDI, TimidityMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(TIMIDITY, PLUGIN_TYPE_MIDI, TimidityMidiPlugin);
+//#endif
 
 #endif // defined (UNIX)

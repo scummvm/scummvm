@@ -153,6 +153,14 @@ public:
 		return "Windows MIDI";
 	}
 
+	virtual const char *getId() const {
+		return "windows";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -170,5 +178,11 @@ MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(WINDOWS)
+	//REGISTER_PLUGIN_DYNAMIC(WINDOWS, PLUGIN_TYPE_MIDI, WindowsMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(WINDOWS, PLUGIN_TYPE_MIDI, WindowsMidiPlugin);
+//#endif
 
 #endif

@@ -268,7 +268,7 @@ public:
 
 
 // Factory functions, for faster compile
-extern MidiDriver *MidiDriver_NULL_create();
+extern MidiDriver *MidiDriver_NULL_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer);

@@ -184,6 +184,14 @@ public:
 		return "DMedia";
 	}
 
+	virtual const char *getId() const {
+		return "dmedia";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -201,5 +209,11 @@ MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(DMEDIA)
+	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+//#endif
 
 #endif

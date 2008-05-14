@@ -172,6 +172,14 @@ public:
 		return "CAMD";
 	}
 
+	virtual const char *getId() const {
+		return "camd";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	//virtual Common::StringList getDevices() const;
 
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
@@ -191,5 +199,11 @@ MidiDriver *MidiDriver_CAMD_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(CAMD)
+	//REGISTER_PLUGIN_DYNAMIC(CAMD, PLUGIN_TYPE_MIDI, CamdMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(CAMD, PLUGIN_TYPE_MIDI, CamdMidiPlugin);
+//#endif
 
 #endif

@@ -33,6 +33,7 @@
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
+	PLUGIN_TYPE_MIDI_VERSION,
 };
 
 
@@ -82,6 +83,7 @@ public:
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.
 
+		// Engine plugins
 		#if PLUGIN_ENABLED_STATIC(SCUMM)
 		LINK_PLUGIN(SCUMM)
 		#endif
@@ -138,6 +140,49 @@ public:
 		#endif
 		#if PLUGIN_ENABLED_STATIC(TOUCHE)
 		LINK_PLUGIN(TOUCHE)
+		#endif
+
+		// MIDI plugins
+		// TODO: Use defines to disable or enable each MIDI driver as a
+		// static/dynamic plugin, like it's done for the engines
+		LINK_PLUGIN(NULL)
+		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+		LINK_PLUGIN(WINDOWS)
+		#endif
+		#if defined(UNIX) && defined(USE_ALSA)
+		LINK_PLUGIN(ALSA)
+		#endif
+		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
+		LINK_PLUGIN(SEQ)
+		#endif
+		#if defined(IRIX)
+		LINK_PLUGIN(DMEDIA)
+		#endif
+		#if defined(__amigaos4__)
+		LINK_PLUGIN(CAMD)
+		#endif
+		#if defined(MACOSX)
+		LINK_PLUGIN(COREAUDIO)
+		LINK_PLUGIN(COREMIDI)
+		LINK_PLUGIN(QUICKTIME)
+		#endif
+		#if defined(PALMOS_MODE)
+		#  if defined(COMPILE_CLIE)
+		LINK_PLUGIN(YPA1)
+		#  elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
+		LINK_PLUGIN(ZODIAC)
+		#  endif
+		#endif
+		#ifdef USE_FLUIDSYNTH
+		LINK_PLUGIN(FLUIDSYNTH)
+		#endif
+		#ifdef USE_MT32EMU
+		LINK_PLUGIN(MT32)
+		#endif
+		LINK_PLUGIN(ADLIB)
+		LINK_PLUGIN(TOWNS)
+		#if defined (UNIX)
+		LINK_PLUGIN(TIMIDITY)
 		#endif
 
 		return pl;
@@ -335,4 +380,15 @@ GameList EngineManager::detectGames(const FSList &fslist) const {
 
 const EnginePlugin::list &EngineManager::getPlugins() const {
 	return (const EnginePlugin::list&)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+}
+
+
+// MIDI plugins
+
+#include "sound/midiplugin.h"
+
+DECLARE_SINGLETON(MidiManager);
+
+const MidiPlugin::list &MidiManager::getPlugins() const {
+	return (const MidiPlugin::list&)PluginManager::instance().getPlugins(PLUGIN_TYPE_MIDI);
 }

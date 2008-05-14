@@ -202,6 +202,14 @@ public:
 		return "CoreAudio";
 	}
 
+	virtual const char *getId() const {
+		return "core";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -219,5 +227,11 @@ MidiDriver *MidiDriver_CORE_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(COREAUDIO)
+	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MIDI, CoreAudioMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MIDI, CoreAudioMidiPlugin);
+//#endif
 
 #endif // MACOSX

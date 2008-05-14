@@ -27,6 +27,7 @@
 #ifdef USE_FLUIDSYNTH
 
 #include "common/config-manager.h"
+#include "sound/midiplugin.h"
 #include "sound/mpu401.h"
 #include "sound/softsynth/emumidi.h"
 
@@ -211,12 +212,49 @@ MidiChannel *MidiDriver_FluidSynth::getPercussionChannel() {
 	return &_midiChannels[9];
 }
 
-MidiDriver *MidiDriver_FluidSynth_create(Audio::Mixer *mixer) {
-	return new MidiDriver_FluidSynth(mixer);
-}
-
 void MidiDriver_FluidSynth::generateSamples(int16 *data, int len) {
 	fluid_synth_write_s16(_synth, len, data, 0, 2, data, 1, 2);
 }
+
+
+// Plugin interface
+
+class FluidSynthMidiPlugin : public MidiPluginObject {
+public:
+	virtual const char *getName() const {
+		return "FluidSynth";
+	}
+
+	virtual const char *getId() const {
+		return "fluidsynth";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
+	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+PluginError FluidSynthMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_FluidSynth(mixer);
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_FluidSynth_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	FluidSynthMidiPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(FLUIDSYNTH)
+	//REGISTER_PLUGIN_DYNAMIC(FLUIDSYNTH, PLUGIN_TYPE_MIDI, FluidSynthMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(FLUIDSYNTH, PLUGIN_TYPE_MIDI, FluidSynthMidiPlugin);
+//#endif
 
 #endif

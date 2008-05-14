@@ -179,6 +179,14 @@ public:
 		return "SEQ";
 	}
 
+	virtual const char *getId() const {
+		return "seq";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -196,5 +204,11 @@ MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(SEQ)
+	//REGISTER_PLUGIN_DYNAMIC(SEQ, PLUGIN_TYPE_MIDI, SeqMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(SEQ, PLUGIN_TYPE_MIDI, SeqMidiPlugin);
+//#endif
 
 #endif

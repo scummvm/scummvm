@@ -63,6 +63,7 @@
 
 enum PluginType {
 	PLUGIN_TYPE_ENGINE = 0,
+	PLUGIN_TYPE_MIDI,
 
 	PLUGIN_TYPE_MAX
 };
@@ -70,6 +71,7 @@ enum PluginType {
 // TODO: Make the engine API version depend on ScummVM's version
 // because of the backlinking
 #define PLUGIN_TYPE_ENGINE_VERSION 1
+#define PLUGIN_TYPE_MIDI_VERSION 1
 
 extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 

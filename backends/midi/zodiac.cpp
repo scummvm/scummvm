@@ -130,6 +130,14 @@ public:
 		return "Tapwave Zodiac";
 	}
 
+	virtual const char *getId() const {
+		return "zodiac";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -147,5 +155,11 @@ MidiDriver *MidiDriver_Zodiac_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(ZODIAC)
+	//REGISTER_PLUGIN_DYNAMIC(ZODIAC, PLUGIN_TYPE_MIDI, ZodiacMidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(ZODIAC, PLUGIN_TYPE_MIDI, ZodiacMidiPlugin);
+//#endif
 
 #endif

@@ -37,6 +37,18 @@ public:
 	virtual ~MidiPluginObject() {}
 
 	/**
+	 * Returns a unique string identifier which will be used to save the
+	 * selected MIDI driver to the config file.
+	 */
+	virtual const char *getId() const = 0;
+
+	/**
+	 * Returns the type kind of music supported by this driver, as specified
+	 * by the MidiDriverFlags enum.
+	 */
+	virtual int getCapabilities() const = 0;
+
+	/**
 	 * Returns a list of the available devices. The empty string means the
 	 * default device.
 	 */
@@ -58,5 +70,24 @@ public:
 	 */
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const = 0;
 };
+
+
+// MIDI plugins
+
+typedef PluginSubclass<MidiPluginObject> MidiPlugin;
+
+/**
+ * Singleton class which manages all MIDI plugins.
+ */
+class MidiManager : public Common::Singleton<MidiManager> {
+private:
+	friend class Common::Singleton<SingletonBaseType>;
+
+public:
+	const MidiPlugin::list &getPlugins() const;
+};
+
+/** Convenience shortcut for accessing the MIDI manager. */
+#define MidiMan MidiManager::instance()
 
 #endif

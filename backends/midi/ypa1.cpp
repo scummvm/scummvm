@@ -112,6 +112,14 @@ public:
 		return "Yamaha Pa1";
 	}
 
+	virtual const char *getId() const {
+		return "ypa1";
+	}
+
+	virtual int getCapabilities() const {
+		return MDT_MIDI;
+	}
+
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
@@ -129,3 +137,9 @@ MidiDriver *MidiDriver_YamahaPa1_create(Audio::Mixer *mixer) {
 
 	return mididriver;
 }
+
+//#if PLUGIN_ENABLED_DYNAMIC(YPA1)
+	//REGISTER_PLUGIN_DYNAMIC(YPA1, PLUGIN_TYPE_MIDI, YamahaPa1MidiPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(YPA1, PLUGIN_TYPE_MIDI, YamahaPa1MidiPlugin);
+//#endif

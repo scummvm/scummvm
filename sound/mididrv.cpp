@@ -216,7 +216,7 @@ int MidiDriver::detectMusicDriver(int flags) {
 
 MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	switch (midiDriver) {
-	case MD_NULL:      return MidiDriver_NULL_create();
+	case MD_NULL:      return MidiDriver_NULL_create(g_system->getMixer());
 
 	case MD_ADLIB:     return MidiDriver_ADLIB_create(g_system->getMixer());
 
