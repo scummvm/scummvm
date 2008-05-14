@@ -145,6 +145,23 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - English CD version 1.2 9/29/94
+		// Supplied by Dark-Star in the ScummVM forums
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		0,
+	},
+
+	{
+		// Return to Zork - English CD version 1.2 9/29/94
 		{
 			"rtz",
 			"CD",
@@ -156,6 +173,24 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
+		0,
+	},
+
+	{
+		// Return to Zork - German CD version 1.2 9/29/94
+		// (same as the English 1.2 version)
+		// Supplied by Dark-Star in the ScummVM forums
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
 		0,
 	},
 
