@@ -687,7 +687,13 @@ int16 ScriptFunctionsRtz::o1_GETFRAME(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctionsRtz::o1_GETFRAMECOUNT(int16 argc, int16 *argv) {
-	return _vm->_screen->getAnimFrameCount(argv[0]);
+	int16 frameCount = 0;
+	AnimationResource *anim = _vm->_res->getAnimation(argv[0]);
+	if (anim) {
+		frameCount = anim->getCount();
+		_vm->_res->freeResource(anim);
+	}
+	return frameCount;
 }
 
 int16 ScriptFunctionsRtz::o1_PICWIDTH(int16 argc, int16 *argv) {
