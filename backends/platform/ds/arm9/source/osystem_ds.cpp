@@ -57,8 +57,7 @@ OSystem_DS::~OSystem_DS() {
 	delete _timer;
 }
 
-int OSystem_DS::timerHandler(int t)
-{
+int OSystem_DS::timerHandler(int t) {
 	DSTimerManager *tm = (DSTimerManager *)g_system->getTimerManager();
 	tm->handler();
 	return t;
@@ -183,8 +182,7 @@ void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 }
 
 
-void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 //	consolePrintf("Copy rect %d, %d   %d, %d ", x, y, w, h);
 
 	if (w <= 1) return;
@@ -229,8 +227,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 }
 
-void OSystem_DS::updateScreen()
-{
+void OSystem_DS::updateScreen() {
 
 	if (_frameBufferExists)
 	{
@@ -253,30 +250,25 @@ void OSystem_DS::setShakePos(int shakeOffset) {
 	DS::setShakePos(shakeOffset);
 }
 
-void OSystem_DS::showOverlay ()
-{
+void OSystem_DS::showOverlay () {
 //	consolePrintf("showovl\n");
 	DS::displayMode16Bit();
 }
 
-void OSystem_DS::hideOverlay ()
-{
+void OSystem_DS::hideOverlay () {
 	DS::displayMode8Bit();
 }
 
-void OSystem_DS::clearOverlay ()
-{
+void OSystem_DS::clearOverlay () {
 	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
 //	consolePrintf("clearovl\n");
 }
 
-void OSystem_DS::grabOverlay (OverlayColor *buf, int pitch)
-{
+void OSystem_DS::grabOverlay (OverlayColor *buf, int pitch) {
 //	consolePrintf("grabovl\n");
 }
 
-void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	u16* bg = (u16 *) DS::get16BitBackBuffer();
 	u16* src = (u16 *) buf;
 
@@ -313,27 +305,23 @@ void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, i
 
 }
 
-int16 OSystem_DS::getOverlayHeight()
-{
+int16 OSystem_DS::getOverlayHeight() {
 //	consolePrintf("getovlheight\n");
 	return getHeight();
 }
 
-int16 OSystem_DS::getOverlayWidth()
-{
+int16 OSystem_DS::getOverlayWidth() {
 //	consolePrintf("getovlwid\n");
 	return getWidth();
 }
 
 
-bool OSystem_DS::showMouse(bool visible)
-{
+bool OSystem_DS::showMouse(bool visible) {
 	DS::setShowCursor(visible);
 	return true;
 }
 
-void OSystem_DS::warpMouse(int x, int y)
-{
+void OSystem_DS::warpMouse(int x, int y) {
 }
 
 void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
@@ -344,8 +332,7 @@ void OSystem_DS::addEvent(Common::Event& e) {
 	eventQueue[queuePos++] = e;
 }
 
-bool OSystem_DS::pollEvent(Common::Event &event)
-{
+bool OSystem_DS::pollEvent(Common::Event &event) {
 
 	if (lastPenFrame != DS::getMillis()) {
 
@@ -398,13 +385,11 @@ bool OSystem_DS::pollEvent(Common::Event &event)
 	return false;
 }
 
-uint32 OSystem_DS::getMillis()
-{
+uint32 OSystem_DS::getMillis() {
 	return DS::getMillis();
 }
 
-void OSystem_DS::delayMillis(uint msecs)
-{
+void OSystem_DS::delayMillis(uint msecs) {
 	int st = getMillis();
 	DS::addEventsToQueue();
 	DS::CD::update();
@@ -424,25 +409,20 @@ void OSystem_DS::getTimeAndDate(struct tm &t) const {
 	t = *localtime(&curTime);
 }
 
-OSystem::MutexRef OSystem_DS::createMutex(void)
-{
+OSystem::MutexRef OSystem_DS::createMutex(void) {
 	return NULL;
 }
 
-void OSystem_DS::lockMutex(MutexRef mutex)
-{
+void OSystem_DS::lockMutex(MutexRef mutex) {
 }
 
-void OSystem_DS::unlockMutex(MutexRef mutex)
-{
+void OSystem_DS::unlockMutex(MutexRef mutex) {
 }
 
-void OSystem_DS::deleteMutex(MutexRef mutex)
-{
+void OSystem_DS::deleteMutex(MutexRef mutex) {
 }
 
-void OSystem_DS::clearSoundCallback()
-{
+void OSystem_DS::clearSoundCallback() {
 	consolePrintf("Clearing sound callback");
 //	DS::setSoundProc(NULL, NULL);
 }
@@ -452,23 +432,19 @@ int OSystem_DS::getOutputSampleRate() const
 	return DS::getSoundFrequency();
 }
 
-bool OSystem_DS::openCD(int drive)
-{
+bool OSystem_DS::openCD(int drive) {
 	return DS::CD::checkCD();
 }
 
-bool OSystem_DS::pollCD()
-{
+bool OSystem_DS::pollCD() {
 	return DS::CD::isPlaying();
 }
 
-void OSystem_DS::playCD(int track, int num_loops, int start_frame, int duration)
-{
+void OSystem_DS::playCD(int track, int num_loops, int start_frame, int duration) {
 	DS::CD::playTrack(track, num_loops, start_frame, duration);
 }
 
-void OSystem_DS::stopCD()
-{
+void OSystem_DS::stopCD() {
 	DS::CD::stopTrack();
 }
 
@@ -476,8 +452,7 @@ void OSystem_DS::updateCD()
 {
 }
 
-void OSystem_DS::quit()
-{
+void OSystem_DS::quit() {
 /*	consolePrintf("Soft resetting...");
 	IPC->reset = 1;
 	REG_IE = 0;
@@ -486,16 +461,13 @@ void OSystem_DS::quit()
 	swiSoftReset();*/
 }
 
-void OSystem_DS::setWindowCaption(const char *caption)
-{
+void OSystem_DS::setWindowCaption(const char *caption) {
 }
 
-void OSystem_DS::displayMessageOnOSD(const char *msg)
-{
+void OSystem_DS::displayMessageOnOSD(const char *msg) {
 }
 
-Common::SaveFileManager* OSystem_DS::getSavefileManager()
-{
+Common::SaveFileManager* OSystem_DS::getSavefileManager() {
 	bool forceSram;
 
 	if (ConfMan.hasKey("forcesramsave", "ds")) {
