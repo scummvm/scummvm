@@ -107,7 +107,8 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 
 		if (skipFlag()) {
 			resetSkipFlag();
-			break;
+			if (allowSkip)
+				break;
 		}
 	}
 
