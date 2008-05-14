@@ -107,6 +107,7 @@ public:
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
+	virtual void getTimeAndDate(struct tm &t) const;
 
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);

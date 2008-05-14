@@ -419,6 +419,11 @@ void OSystem_DS::delayMillis(uint msecs)
 	DS::addEventsToQueue();
 }
 
+void OSystem_DS::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
+}
+
 OSystem::MutexRef OSystem_DS::createMutex(void)
 {
 	return NULL;
