@@ -128,6 +128,8 @@ private:
 
 	const Video *getVideoBySlot(int slot = -1) const;
 
+	int getNextFreeSlot();
+
 	void copyPalette(CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,

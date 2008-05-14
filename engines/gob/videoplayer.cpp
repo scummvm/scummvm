@@ -348,15 +348,30 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which) {
 	video->getVideo()->setVideoMemory();
 	video->getVideo()->enableSound(*_vm->_mixer);
 
-	_videoSlots.push_back(video);
+	int slot = getNextFreeSlot();
+
+	_videoSlots[slot] = video;
 
 	WRITE_VAR(7, video->getVideo()->getFramesCount());
 
-	return _videoSlots.size() - 1;
+	return slot;
+}
+
+int VideoPlayer::getNextFreeSlot() {
+	uint slot;
+
+	for (slot = 0; slot < _videoSlots.size(); slot++)
+		if (!_videoSlots[slot])
+			break;
+
+	if (slot == _videoSlots.size())
+		_videoSlots.push_back(0);
+	
+	return slot;
 }
 
 void VideoPlayer::slotPlay(int slot, int16 frame) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	CoktelVideo &video = *(_videoSlots[slot]->getVideo());
@@ -377,18 +392,18 @@ void VideoPlayer::slotPlay(int slot, int16 frame) {
 }
 
 void VideoPlayer::slotClose(int slot) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	delete _videoSlots[slot];
-	_videoSlots.remove_at(slot);
+	_videoSlots[slot] = 0;
 }
 
 void VideoPlayer::slotCopyFrame(int slot, byte *dest,
 		uint16 left, uint16 top, uint16 width, uint16 height,
 		uint16 x, uint16 y, uint16 pitch, int16 transp) {
 
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	_videoSlots[slot]->getVideo()->copyCurrentFrame(dest,
@@ -396,14 +411,14 @@ void VideoPlayer::slotCopyFrame(int slot, byte *dest,
 }
 
 void VideoPlayer::slotCopyPalette(int slot, int16 palStart, int16 palEnd) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	copyPalette(*(_videoSlots[slot]->getVideo()), palStart, palEnd);
 }
 
 void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	CoktelVideo &video = *(_videoSlots[slot]->getVideo());
@@ -413,7 +428,7 @@ void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
 }
 
 bool VideoPlayer::slotIsOpen(int slot) const {
-	if ((slot >= 0) && (((uint) slot) < _videoSlots.size()))
+	if ((slot >= 0) && (((uint) slot) < _videoSlots.size()) && _videoSlots[slot])
 		return true;
 
 	return false;
@@ -423,7 +438,7 @@ const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
 	if (slot < 0) {
 		if (_primaryVideo->isOpen())
 			return _primaryVideo;
-	} else if (((uint) slot) < _videoSlots.size())
+	} else if (((uint) slot) < _videoSlots.size() && _videoSlots[slot])
 		return _videoSlots[slot];
 
 	return 0;
