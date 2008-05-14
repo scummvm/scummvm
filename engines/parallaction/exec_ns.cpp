@@ -23,6 +23,7 @@
  *
  */
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -480,7 +481,7 @@ void Parallaction::displayComment(ExamineData *data) {
 		_gfx->setItemFrame(id, 0);
 	}
 
-	_inputMode = kInputModeComment;
+	_input->_inputMode = Input::kInputModeComment;
 }
 
 

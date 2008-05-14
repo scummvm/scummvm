@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
 
@@ -52,8 +52,18 @@ int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 	return _inventoryRenderer->hitTest(Common::Point(x,y));
 }
 
-void Parallaction::highlightInventoryItem(ItemPosition pos, byte color) {
-	_inventoryRenderer->highlightItem(pos, color);
+void Parallaction::highlightInventoryItem(ItemPosition pos) {
+	static ItemPosition lastHighlightedPos = -1;
+
+	if (lastHighlightedPos != -1) {
+		_inventoryRenderer->highlightItem(lastHighlightedPos, 12);
+	}
+
+	if (pos != -1) {
+		_inventoryRenderer->highlightItem(pos, 19);
+	}
+
+	lastHighlightedPos = pos;
 }
 
 int Parallaction::addInventoryItem(ItemName item) {
@@ -125,8 +135,11 @@ void InventoryRenderer::showInventory() {
 
 	uint16 lines = getNumLines();
 
-	_pos.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, (int)(_vm->_screenWidth - INVENTORY_WIDTH));
-	_pos.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, (int)(_vm->_screenHeight - lines * INVENTORYITEM_HEIGHT));
+	Common::Point p;
+	_vm->_input->getCursorPos(p);
+
+	_pos.x = CLIP(p.x - (INVENTORY_WIDTH / 2), 0, (int)(_vm->_screenWidth - INVENTORY_WIDTH));
+	_pos.y = CLIP(p.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, (int)(_vm->_screenHeight - lines * INVENTORYITEM_HEIGHT));
 
 	refresh();
 }

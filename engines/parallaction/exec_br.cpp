@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {
@@ -184,12 +184,12 @@ DECLARE_COMMAND_OPCODE(followme) {
 
 
 DECLARE_COMMAND_OPCODE(onmouse) {
-	showCursor(true);
+	_input->showCursor(true);
 }
 
 
 DECLARE_COMMAND_OPCODE(offmouse) {
-	showCursor(false);
+	_input->showCursor(false);
 }
 
 

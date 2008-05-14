@@ -25,6 +25,8 @@
 
 #include "common/system.h"
 
+
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {
@@ -164,15 +166,20 @@ int Parallaction_br::guiShowMenu() {
 
 	setMousePointer(0);
 
+	uint32 event;
+	Common::Point p;
 	while (true) {
 
-		if ((_mouseButtons == kMouseLeftUp) && selectedItem >= 0)
+		_input->readInput();
+
+		event = _input->getLastButtonEvent();
+		if ((event == kMouseLeftUp) && selectedItem >= 0)
 			break;
 
-		readInput();
+		_input->getCursorPos(p);
 
-		if ((_mousePos.x > MENUITEMS_X) && (_mousePos.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (_mousePos.y > MENUITEMS_Y)) {
-			selectedItem = (_mousePos.y - MENUITEMS_Y) / MENUITEM_HEIGHT;
+		if ((p.x > MENUITEMS_X) && (p.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (p.y > MENUITEMS_Y)) {
+			selectedItem = (p.y - MENUITEMS_Y) / MENUITEM_HEIGHT;
 
 			if (!(selectedItem < availItems))
 				selectedItem = -1;

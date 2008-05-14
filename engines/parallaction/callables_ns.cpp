@@ -30,6 +30,7 @@
 
 #include "graphics/primitives.h"			// for Graphics::drawLine
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -303,14 +304,14 @@ void Parallaction_ns::_c_trasformata(void *parm) {
 }
 
 void Parallaction_ns::_c_offMouse(void *parm) {
-	showCursor(false);
+	_input->showCursor(false);
 	_engineFlags |= kEngineBlockInput;
 	return;
 }
 
 void Parallaction_ns::_c_onMouse(void *parm) {
 	_engineFlags &= ~kEngineBlockInput;
-	showCursor(true);
+	_input->showCursor(true);
 	return;
 }
 
@@ -339,7 +340,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 		g_system->delayMillis(20);
 	}
 
-	waitUntilLeftClick();
+	_input->waitUntilLeftClick();
 	_gfx->freeBalloons();
 
 	return;
@@ -395,7 +396,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
 	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 130);
 	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 160);
-	waitUntilLeftClick();
+	_input->waitUntilLeftClick();
 
 	_gfx->freeLabels();
 
@@ -467,6 +468,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 	debugC(1, kDebugExec, "endIntro()");
 
+	uint32 event;
 	uint id[2];
 	for (uint16 _si = 0; _si < 6; _si++) {
 		id[0] = _gfx->createLabel(_menuFont, _credits[_si]._role, 1);
@@ -478,9 +480,9 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		_gfx->updateScreen();
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
-			_mouseButtons = kMouseNone;
-			readInput();
-			if (_mouseButtons == kMouseLeftUp)
+			_input->readInput();
+			event = _input->getLastButtonEvent();
+			if (event == kMouseLeftUp)
 				break;
 
 			waitTime( 1 );
@@ -497,7 +499,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		id[0] = _gfx->createLabel(_menuFont, "CLICK MOUSE BUTTON TO START", 1);
 		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
 
-		waitUntilLeftClick();
+		_input->waitUntilLeftClick();
 
 		_gfx->freeLabels();
 
@@ -507,7 +509,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		cleanupGame();
 
 	} else {
-		waitUntilLeftClick();
+		_input->waitUntilLeftClick();
 	}
 
 	return;

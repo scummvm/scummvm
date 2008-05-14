@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/input.h"
 #include "parallaction/sound.h"
 
 
@@ -191,7 +192,7 @@ void Parallaction_ns::setArrowCursor() {
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
 	_gfx->setFloatingLabel(0);
-	_activeItem._id = 0;
+	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
 	_system->showMouse(true);
@@ -207,7 +208,7 @@ void Parallaction_ns::setInventoryCursor(int pos) {
 	if (item->_index == 0)
 		return;
 
-	_activeItem._id = item->_id;
+	_input->_activeItem._id = item->_id;
 
 	byte *v8 = _mouseComposedArrow->getData(0);
 
@@ -243,7 +244,7 @@ int Parallaction_ns::go() {
 
 	changeLocation(_location._name);
 
-	_inputMode = kInputModeGame;
+	_input->_inputMode = Input::kInputModeGame;
 	while ((_engineFlags & kEngineQuit) == 0) {
 		runGame();
 	}
@@ -298,7 +299,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setFloatingLabel(0);
 	_gfx->freeLabels();
 
-	_hoverZone = nullZonePtr;
+	_input->_hoverZone = nullZonePtr;
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
 	}
@@ -314,7 +315,7 @@ void Parallaction_ns::changeLocation(char *location) {
 		showSlide(locname.slide());
 		uint id = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
-		waitUntilLeftClick();
+		_input->waitUntilLeftClick();
 		_gfx->freeLabels();
 		freeBackground();
 	}
