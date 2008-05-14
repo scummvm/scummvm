@@ -396,10 +396,12 @@ int M4Engine::goM4() {
 
 	// Show intro
 
-	if (getGameType() == GType_Burger)
+	if (getGameType() == GType_Burger) {
 		_kernel->newRoom = TITLE_SCENE_BURGER;
-	else
+	} else {
 		_scene->getBackgroundSurface()->loadBackgroundRiddle("main menu");
+		_ws->setBackgroundSurface(_scene->getBackgroundSurface());
+	}
 
 	_viewManager->addView(_scene);
 
