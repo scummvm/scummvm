@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	graphics.o \
 	gui_br.o \
 	gui_ns.o \
+	input.o \
 	inventory.o \
 	objects.o \
 	parallaction.o \
