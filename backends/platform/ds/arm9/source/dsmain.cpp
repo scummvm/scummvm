@@ -2364,9 +2364,13 @@ u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 
 void* fastRamAlloc(int size) {
 //	return malloc(size);
-	void* result = (void *) fastRamPointer;
+	void* result = fastRamPointer;
 	fastRamPointer += size;
-	return (void *) (result);
+	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
+		consolePrintf("FastRam (ITCM) allocation failed!\n");
+		return NULL;
+	}		
+	return result;
 }
 
 void fastRamReset() {
