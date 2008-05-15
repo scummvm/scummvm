@@ -3,11 +3,11 @@
 
 	Hardware Routines for reading an SD card using
 	a NinjaDS SD adapter.
-
+	
 	Original code supplied by NinjaMod
-
+	
  Copyright (c) 2006 Michael "Chishm" Chisholm
-
+	
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
 
@@ -28,7 +28,7 @@
  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+ 
 	2006-08-05 - Chishm
 		* First release
 */
@@ -84,7 +84,7 @@ static u32 _NJSD_relativeCardAddress = 0;
 static inline bool _NJSD_waitIRQ(void) {
 /*#ifdef _NJSD_SYNC
 	int i = IRQ_TIMEOUT;
-	while (!(REG_IF & 0x100000) && --i);
+	while (!(REG_IF & 0x100000) && --i); 
 	REG_IF = 0x100000;
 	if (i <= 0) {
 		return false;
@@ -96,7 +96,7 @@ static inline bool _NJSD_waitIRQ(void) {
 	//if (!(REG_IME & 1))
 	//{
 		// irq's disabled...
-		while (!(REG_IF & 0x100000) && (!(_NJSD_irqFlag)) && --i);
+		while (!(REG_IF & 0x100000) && (!(_NJSD_irqFlag)) && --i); 
 		_NJSD_irqFlag = 0;
 		REG_IF = 0x100000;
 		if (i <= 0) {
@@ -106,7 +106,7 @@ static inline bool _NJSD_waitIRQ(void) {
 		}
 	//} else {
 		// irq's enabled
-	//	while (!(_NJSD_irqFlag) && --i);
+	//	while (!(_NJSD_irqFlag) && --i); 
 	//	_NJSD_irqFlag = 0;
 	//	REG_IF = 0x100000;
 	//	if (i <= 0) {
@@ -118,8 +118,8 @@ static inline bool _NJSD_waitIRQ(void) {
 //#endif
 }
 
-static inline void _NJSD_writeCardCommand
-	(u8 cmd0, u8 cmd1, u8 cmd2, u8 cmd3, u8 cmd4, u8 cmd5, u8 cmd6, u8 cmd7)
+static inline void _NJSD_writeCardCommand 
+	(u8 cmd0, u8 cmd1, u8 cmd2, u8 cmd3, u8 cmd4, u8 cmd5, u8 cmd6, u8 cmd7) 
 {
 	CARD_COMMAND[0] = cmd0;
 	CARD_COMMAND[1] = cmd1;
@@ -142,7 +142,7 @@ static bool _NJSD_reset (void) {
 	if (i <= 0) {
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -179,7 +179,7 @@ static bool _NJSD_sendCMDR (int speed, u8 *rsp_buf, int type, u8 cmd, u32 param)
 	REG_IME = 0;
 #endif
 
-	REG_IE &= ~0x100000;
+	REG_IE &= ~0x100000; 
 	REG_IF =   0x100000;
 
 	CARD_CR1H = CARD_CR1_ENABLE;
@@ -191,7 +191,7 @@ static bool _NJSD_sendCMDR (int speed, u8 *rsp_buf, int type, u8 cmd, u32 param)
 	} else {
 		CARD_COMMAND[0] = 0xF0 | (speed << 2) | 0 | (1 << 1);
 	}
-
+	
 	CARD_COMMAND[1] = (type & 0x40) | ((( type >> 2) & 7) << 3);
 	CARD_COMMAND[2] = 0x40 | cmd;
 	CARD_COMMAND[3] = (param>>24) & 0xFF;
@@ -301,7 +301,7 @@ static bool _NJSD_writeSector (u8 *buffer, u8 *crc_buf, u32 offset) {
 	}
 
 
-	REG_IE &= ~0x100000;
+	REG_IE &= ~0x100000; 
 	REG_IF =   0x100000;
 
 	CARD_CR1H = CARD_CR1_ENABLE;
@@ -334,7 +334,7 @@ static bool _NJSD_writeSector (u8 *buffer, u8 *crc_buf, u32 offset) {
 			i++;
 		}
 	} while (CARD_CR2 & CARD_BUSY);
-
+	
 	i = WRITE_TIMEOUT;
 	responseBuffer[3] = 0;
 	do {
@@ -352,7 +352,7 @@ static bool _NJSD_writeSector (u8 *buffer, u8 *crc_buf, u32 offset) {
 #ifdef _NJSD_SYNC
 	REG_IME = old_REG_IME;
 #endif
-
+	
 	return true;
 }
 
@@ -365,12 +365,12 @@ static bool _NJSD_sendCLK (int speed, int count) {
 	REG_IME = 0;
 
 #endif
-	REG_IE &= ~0x100000;
+	REG_IE &= ~0x100000; 
 	REG_IF =   0x100000;
 
 	//CARD_CR1H = CARD_CR1_ENABLE; // | CARD_CR1_IRQ;
 	_NJSD_writeCardCommand (0xE0 | ((speed & 3) << 2), 0, (count - 1), 0, 0, 0, 0, 0);
-
+	
 	CARD_CR2 = _NJSD_cardFlags;
 	i = COMMAND_TIMEOUT;
 	while ((CARD_CR2 & CARD_BUSY) && --i);
@@ -404,7 +404,7 @@ static bool _NJSD_sendCMDN (int speed, u8 cmd, u32 param) {
 	REG_IME = 0;
 #endif
 
-	REG_IE &= ~0x100000;
+	REG_IE &= ~0x100000; 
 	REG_IF =   0x100000;
 
 	CARD_CR1H = CARD_CR1_ENABLE; // | CARD_CR1_IRQ;
@@ -438,22 +438,22 @@ static bool _NJSD_sendCMDN (int speed, u8 cmd, u32 param) {
 static bool _NJSD_cardInit (void) {
 	u8 responseBuffer[17];
 	int i;
-
+ 
 	// If the commands succeed the first time, assume they'll always succeed
 	if (! _NJSD_sendCLK (SD_CLK_200KHz, 256) ) return false;
 	if (! _NJSD_sendCMDN (SD_CLK_200KHz, GO_IDLE_STATE, 0) ) return false;
 	_NJSD_sendCLK (SD_CLK_200KHz, 8);
-
+ 
 	_NJSD_sendCLK (SD_CLK_200KHz, 256);
-	_NJSD_sendCMDN (SD_CLK_200KHz, GO_IDLE_STATE, 0);
+ 	_NJSD_sendCMDN (SD_CLK_200KHz, GO_IDLE_STATE, 0);
 	_NJSD_sendCLK (SD_CLK_200KHz, 8);
-
+ 
 	for (i = 0; i < MAX_STARTUP_TRIES ; i++) {
 		_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, APP_CMD, 0);
-		if (
+		if ( 
 			_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, SD_APP_OP_COND, SD_OCR_VALUE) &&
 			((responseBuffer[1] & 0x80) != 0))
-		{
+		{	
 			// Card is ready to receive commands now
 			break;
 		}
@@ -461,10 +461,10 @@ static bool _NJSD_cardInit (void) {
 	if (i >= MAX_STARTUP_TRIES) {
 		return false;
 	}
-
+ 
 	// The card's name, as assigned by the manufacturer
 	_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_136, ALL_SEND_CID, 0);
-
+ 
 	// Get a new address
 	for (i = 0; i < MAX_STARTUP_TRIES ; i++) {
 		_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, SEND_RELATIVE_ADDR, 0);
@@ -473,23 +473,23 @@ static bool _NJSD_cardInit (void) {
 			break;
 		}
 	}
-	if (i >= MAX_STARTUP_TRIES) {
+ 	if (i >= MAX_STARTUP_TRIES) {
 		return false;
 	}
 
 	// Some cards won't go to higher speeds unless they think you checked their capabilities
 	_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_136, SEND_CSD, _NJSD_relativeCardAddress);
-
+ 
 	// Only this card should respond to all future commands
 	_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, SELECT_CARD, _NJSD_relativeCardAddress);
-
+ 
 	// Set a 4 bit data bus
 	_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, APP_CMD, _NJSD_relativeCardAddress);
 	_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, SET_BUS_WIDTH, 2); // 4-bit mode.
 
 	// Use 512 byte blocks
 	_NJSD_sendCMDR (SD_CLK_200KHz, responseBuffer, SD_RSP_48, SET_BLOCKLEN, 512); // 512 byte blocks
-
+ 
 	return true;
 }
 
@@ -521,17 +521,17 @@ bool _NJSD_startup(void) {
 		return false;
 	}
 	return true;
-}
+} 
 
 
 bool _NJSD_writeSectors (u32 sector, u32 numSectors, const void* buffer) {
-	u8 crc[8];
+ 	u8 crc[8];
 	u32 offset = sector * BYTES_PER_READ;
 	u8* data = (u8*) buffer;
 
 	while (numSectors--) {
 		_SD_CRC16 ( data, BYTES_PER_READ, crc);
-
+		
 		if (! _NJSD_writeSector (data, crc, offset)) {
 			return false;
 		}
@@ -549,7 +549,7 @@ bool _NJSD_readSectors (u32 sector, u32 numSectors, void* buffer) {
 #ifdef _NJSD_SYNC
 	u32 old_REG_IME;
 #endif
-
+	
 	u8* tbuf = (u8*)buffer;
 
 	if (numSectors == 0) {
@@ -573,7 +573,7 @@ bool _NJSD_readSectors (u32 sector, u32 numSectors, void* buffer) {
 			if (!_NJSD_waitIRQ ()) {
 #ifdef _NJSD_SYNC
 				REG_IME = old_REG_IME;
-#endif
+#endif		
 				return false;
 			}
 		}
@@ -586,10 +586,10 @@ bool _NJSD_readSectors (u32 sector, u32 numSectors, void* buffer) {
 		if (!_NJSD_waitIRQ ()) {
 #ifdef _NJSD_SYNC
 			REG_IME = old_REG_IME;
-#endif
+#endif		
 			return false;
 		}
-
+		
 		if (((int)buffer & 0x03) != 0){
 			cardPolledTransfer (0xA1406000, tmp, BYTES_PER_READ, (u8*)_NJSD_read_cmd);
 			memcpy (tbuf + (numSectors - 1) * BYTES_PER_READ, tmp, BYTES_PER_READ);
@@ -618,7 +618,7 @@ bool _NJSD_readSectors (u32 sector, u32 numSectors, void* buffer) {
 #ifdef _NJSD_SYNC
 	u32 old_REG_IME;
 #endif
-
+	
 	u8* tbuf = (u8*)buffer;
 
 	if (numSectors == 0) {
@@ -637,7 +637,7 @@ bool _NJSD_readSectors (u32 sector, u32 numSectors, void* buffer) {
 			if (!_NJSD_waitIRQ ()) {
 #ifdef _NJSD_SYNC
 				REG_IME = old_REG_IME;
-#endif
+#endif		
 				return false;
 			}
 		}
@@ -645,10 +645,10 @@ bool _NJSD_readSectors (u32 sector, u32 numSectors, void* buffer) {
 		if (!_NJSD_waitIRQ ()) {
 #ifdef _NJSD_SYNC
 			REG_IME = old_REG_IME;
-#endif
+#endif		
 			return false;
 		}
-
+		
 		cardPolledTransfer (0xA1406000, (u32*)(tbuf + (numSectors - 1) * BYTES_PER_READ), BYTES_PER_READ, (u8*)_NJSD_read_cmd);
 	} else {
 		_NJSD_sendCMDR (_NJSD_speed, NULL, SD_RSP_STREAM, READ_SINGLE_BLOCK, sector * BYTES_PER_READ);

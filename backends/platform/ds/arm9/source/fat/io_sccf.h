@@ -1,5 +1,5 @@
 /*
-	io_sccf.h
+	io_sccf.h 
 
 	Hardware Routines for reading a compact flash card
 	using the Supercard CF
@@ -24,7 +24,7 @@ extern LPIO_INTERFACE SCCF_GetInterface(void) ;
 
 #endif	// define IO_SCCF_H
 /*
-	io_sccf.h
+	io_sccf.h 
 
 	Hardware Routines for reading a compact flash card
 	using the Supercard CF

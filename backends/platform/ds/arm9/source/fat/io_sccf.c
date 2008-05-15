@@ -57,7 +57,7 @@ bool SCCF_Unlock(void)
 	temp = (~temp & 0xFF);
 	return (CF_REG_LBA1 == temp);
 #undef CF_REG_LBA1
-}
+} 
 
 bool SCCF_Shutdown(void) {
 	return MPCF_ClearStatus() ;

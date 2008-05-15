@@ -25,7 +25,7 @@
 
 // Maximum number of files open at once
 // Increase this to open more files, decrease to save memory
-#define MAX_FILES_OPEN	4
+#define MAX_FILES_OPEN	16
 
 // Allow file writing
 // Disable this to remove file writing support
@@ -147,7 +147,7 @@ bool FAT_GetAlias (char* alias);
 
 /*-----------------------------------------------------------------
 FAT_GetLongFilename
-Get the long name of the last file or directory retrived with
+Get the long name of the last file or directory retrived with 
 	GetDirEntry. Also works for FindFirstFile and FindNextFile
 char* filename: OUT will be filled with the filename, should be at
 	least 256 bytes long
@@ -210,7 +210,7 @@ FAT_FindNextFile
 Gets the name of the next directory entry
 	(can be a file or subdirectory)
 char* filename: OUT filename, must be at least 13 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed,
+FILE_TYPE return: OUT returns FT_NONE if failed, 
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindNextFile (char* filename);
@@ -220,7 +220,7 @@ FAT_FindFirstFile
 Gets the name of the first directory entry and resets the count
 	(can be a file or subdirectory)
 char* filename: OUT filename, must be at least 13 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed,
+FILE_TYPE return: OUT returns FT_NONE if failed, 
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindFirstFile (char* filename);
@@ -230,7 +230,7 @@ FAT_FindFirstFileLFN
 Gets the long file name of the first directory entry and resets
 	the count (can be a file or subdirectory)
 char* lfn: OUT long file name, must be at least 256 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed,
+FILE_TYPE return: OUT returns FT_NONE if failed, 
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindFirstFileLFN(char* lfn);
@@ -240,16 +240,16 @@ FAT_FindNextFileLFN
 Gets the long file name of the next directory entry
 	(can be a file or subdirectory)
 char* lfn: OUT long file name, must be at least 256 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed,
+FILE_TYPE return: OUT returns FT_NONE if failed, 
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindNextFileLFN(char* lfn);
 
 /*-----------------------------------------------------------------
 FAT_FileExists
-Returns the type of file
+Returns the type of file 
 char* filename: IN filename of the file to look for
-FILE_TYPE return: OUT returns FT_NONE if there is now file with
+FILE_TYPE return: OUT returns FT_NONE if there is now file with 
 	that name, FT_FILE if it is a file and FT_DIR if it is a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FileExists (const char* filename);
@@ -269,7 +269,7 @@ u32 FAT_GetFileSystemTotalSize (void);
 /*-----------------------------------------------------------------
 FAT_chdir
 Changes the current working directory
-const char* path: IN null terminated string of directory separated by
+const char* path: IN null terminated string of directory separated by 
 	forward slashes, / is root
 bool return: OUT returns true if successful
 -----------------------------------------------------------------*/
@@ -282,12 +282,12 @@ bool FAT_chdir (const char* path);
 /*-----------------------------------------------------------------
 FAT_fopen(filename, mode)
 Opens a file
-const char* path: IN null terminated string of filename and path
+const char* path: IN null terminated string of filename and path 
 	separated by forward slashes, / is root
 const char* mode: IN mode to open file in
 	Supported modes: "r", "r+", "w", "w+", "a", "a+", don't use
 	"b" or "t" in any mode, as all files are openned in binary mode
-FAT_FILE* return: OUT handle to open file, returns -1 if the file
+FAT_FILE* return: OUT handle to open file, returns -1 if the file 
 	couldn't be openned
 -----------------------------------------------------------------*/
 FAT_FILE* FAT_fopen(const char* path, const char* mode);
@@ -338,7 +338,7 @@ u32 FAT_fread (void* buffer, u32 size, u32 count, FAT_FILE* file);
 FAT_fwrite(buffer, size, count, file)
 Writes size * count bytes into file from buffer, starting
 	from current position. It then sets the current position to the
-	byte after the last byte written. If the file was openned in
+	byte after the last byte written. If the file was openned in 
 	append mode it always writes to the end of the file.
 const void* buffer IN: Pointer to buffer containing data. Should be
 	at least as big as the number of bytes to be written.
@@ -371,7 +371,7 @@ int FAT_remove (const char* path);
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
 FAT_mkdir (path)
-Makes a new directory, so long as no other directory or file has
+Makes a new directory, so long as no other directory or file has 
 	the same name.
 const char* path IN: Path and filename of directory to make
 int return OUT: zero if successful, non-zero if not
@@ -403,9 +403,9 @@ FAT_fgets (char *tgtBuffer, int num, FAT_FILE* file)
 Gets a up to num bytes from file, stopping at the first
  newline.
 
-CAUTION: does not do strictly streaming. I.e. it's
+CAUTION: does not do strictly streaming. I.e. it's 
  reading more then needed bytes and seeking back.
- shouldn't matter for random access
+ shouldn't matter for random access 
 
 char *tgtBuffer OUT: buffer to write to
 int num IN: size of target buffer

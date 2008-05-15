@@ -73,7 +73,7 @@ MPCF_IsInserted
 Is a compact flash card inserted?
 bool return OUT:  true if a CF card is inserted
 -----------------------------------------------------------------*/
-bool MPCF_IsInserted (void)
+bool MPCF_IsInserted (void) 
 {
 	// Change register, then check if value did change
 	MP_REG_STS = CF_STS_INSERTED;
@@ -86,17 +86,17 @@ MPCF_ClearStatus
 Tries to make the CF card go back to idle mode
 bool return OUT:  true if a CF card is idle
 -----------------------------------------------------------------*/
-bool MPCF_ClearStatus (void)
+bool MPCF_ClearStatus (void) 
 {
 	int i;
-
+	
 	// Wait until CF card is finished previous commands
 	i=0;
 	while ((MP_REG_CMD & CF_STS_BUSY) && (i < CARD_TIMEOUT))
 	{
 		i++;
 	}
-
+	
 	// Wait until card is ready for commands
 	i = 0;
 	while ((!(MP_REG_STS & CF_STS_INSERTED)) && (i < CARD_TIMEOUT))
@@ -139,7 +139,7 @@ bool MPCF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 	{
 		i++;
 	}
-
+	
 	// Wait until card is ready for commands
 	i = 0;
 	while ((!(MP_REG_STS & CF_STS_INSERTED)) && (i < CARD_TIMEOUT))
@@ -148,20 +148,20 @@ bool MPCF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 	}
 	if (i >= CARD_TIMEOUT)
 		return false;
-
+	
 	// Set number of sectors to read
-	MP_REG_SEC = numSecs;
-
+	MP_REG_SEC = numSecs;	
+	
 	// Set read sector
 	MP_REG_LBA1 = sector & 0xFF;						// 1st byte of sector number
 	MP_REG_LBA2 = (sector >> 8) & 0xFF;					// 2nd byte of sector number
 	MP_REG_LBA3 = (sector >> 16) & 0xFF;				// 3rd byte of sector number
 	MP_REG_LBA4 = ((sector >> 24) & 0x0F )| CF_CMD_LBA;	// last nibble of sector number
-
+	
 	// Set command to read
 	MP_REG_CMD = CF_CMD_READ;
-
-
+	
+	
 	while (j--)
 	{
 		// Wait until card is ready for reading
@@ -172,7 +172,7 @@ bool MPCF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 		}
 		if (i >= CARD_TIMEOUT)
 			return false;
-
+		
 		// Read data
 #ifdef _CF_USE_DMA
  #ifdef NDS
@@ -194,12 +194,12 @@ bool MPCF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 			}
 		} else {
 		while(i--)
-			*buff++ = *MP_DATA;
+			*buff++ = *MP_DATA; 
 		}
 #else
 		i=256;
 		while(i--)
-			*buff++ = *MP_DATA;
+			*buff++ = *MP_DATA; 
 #endif
 	}
 #if (defined _CF_USE_DMA) && (defined NDS)
@@ -229,7 +229,7 @@ bool MPCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	u8 *buff_u8 = (u8*)buffer;
 	int temp;
 #endif
-
+	
 #if defined _CF_USE_DMA && defined NDS && defined ARM9
 	DC_FlushRange( buffer, j * BYTE_PER_READ);
 #endif
@@ -240,7 +240,7 @@ bool MPCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	{
 		i++;
 	}
-
+	
 	// Wait until card is ready for commands
 	i = 0;
 	while ((!(MP_REG_STS & CF_STS_INSERTED)) && (i < CARD_TIMEOUT))
@@ -249,19 +249,19 @@ bool MPCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	}
 	if (i >= CARD_TIMEOUT)
 		return false;
-
+	
 	// Set number of sectors to write
-	MP_REG_SEC = numSecs;
-
+	MP_REG_SEC = numSecs;	
+	
 	// Set write sector
 	MP_REG_LBA1 = sector & 0xFF;						// 1st byte of sector number
 	MP_REG_LBA2 = (sector >> 8) & 0xFF;					// 2nd byte of sector number
 	MP_REG_LBA3 = (sector >> 16) & 0xFF;				// 3rd byte of sector number
 	MP_REG_LBA4 = ((sector >> 24) & 0x0F )| CF_CMD_LBA;	// last nibble of sector number
-
+	
 	// Set command to write
 	MP_REG_CMD = CF_CMD_WRITE;
-
+	
 	while (j--)
 	{
 		// Wait until card is ready for writing
@@ -272,7 +272,7 @@ bool MPCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 		}
 		if (i >= CARD_TIMEOUT)
 			return false;
-
+		
 		// Write data
 #ifdef _CF_USE_DMA
  #ifdef NDS
@@ -294,19 +294,19 @@ bool MPCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 			}
 		} else {
 		while(i--)
-			*MP_DATA = *buff++;
+			*MP_DATA = *buff++; 
 		}
 #else
 		i=256;
 		while(i--)
-			*MP_DATA = *buff++;
+			*MP_DATA = *buff++; 
 #endif
 	}
 #if defined _CF_USE_DMA && defined NDS
 	// Wait for end of transfer before returning
 	while(DMA3_CR & DMA_BUSY);
 #endif
-
+	
 	return true;
 }
 
@@ -314,7 +314,7 @@ bool MPCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 MPCF_Shutdown
 unload the GBAMP CF interface
 -----------------------------------------------------------------*/
-bool MPCF_Shutdown(void)
+bool MPCF_Shutdown(void) 
 {
 	return MPCF_ClearStatus() ;
 }

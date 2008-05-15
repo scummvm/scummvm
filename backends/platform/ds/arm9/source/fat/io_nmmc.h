@@ -1,5 +1,5 @@
 /*
-	io_NMMC.h
+	io_NMMC.h 
 
 	Hardware Routines for reading an SD or MMC card using
 	a Neoflash MK2 or MK3.
@@ -26,7 +26,7 @@ extern LPIO_INTERFACE NMMC_GetInterface(void) ;
 
 #endif	// define IO_NMMC_H
 /*
-	io_NMMC.h
+	io_NMMC.h 
 
 	Hardware Routines for reading an SD or MMC card using
 	a Neoflash MK2 or MK3.

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 #include "scummhelp.h"
 
 #define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while (0)

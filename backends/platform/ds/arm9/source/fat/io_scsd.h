@@ -1,12 +1,12 @@
 /*
 	io_scsd.h by SaTa.
 	based on io_sccf.h
-
-
+	
+	
 */
 
 /*
-	io_sccf.h
+	io_sccf.h 
 
 	Hardware Routines for reading a compact flash card
 	using the GBA Movie Player

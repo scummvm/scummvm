@@ -1,8 +1,8 @@
 /*
-	io_dldi.h
+	io_dldi.h 
 
 	Reserved space for new drivers
-
+	
 	This software is completely free. No warranty is provided.
 	If you use it, please give me credit and email me about your
 	project at chishm@hotmail.com
