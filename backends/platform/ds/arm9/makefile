@@ -330,7 +330,8 @@ endef
 ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking.
-.cpp.o:
+#.cpp.o:
+%.o: %.cpp
 
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
@@ -342,7 +343,8 @@ else
 # rule can get you into a bad state if you Ctrl-C at the wrong moment.
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
-.cpp.o:
+#.cpp.o:
+%.o: %.cpp
 #	echo !!!!!!!!!!!! $(notdir $<)
 #	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
 #	 OPTFLAG=-O3
