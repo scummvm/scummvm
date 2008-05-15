@@ -679,6 +679,7 @@ puttcircus	Putt-Putt Joins the Circus
 puttputt	Putt-Putt Joins the Parade
 	0b3222aaa7efcf283eb621e0cefd26cc	-1	ru	DOS	HE 60	-	-	sev
 	7e151c17adf624f1966c8fc5827c95e9	-1	en	3DO	HE 61	-	-	khalek
+	be2abe172f58db170de3a037daa1dd27	-1	jp	3DO	HE 61	-	-	clone2727
 	9708cf716ed8bcc9ff3fcfc69413b746	-1	en	DOS	HE 61	-	-	khalek
 	e361a7058ed8e8ebb462663c0a3ae8d6	-1	hb	DOS	HE 61	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 61	-	-	khalek
