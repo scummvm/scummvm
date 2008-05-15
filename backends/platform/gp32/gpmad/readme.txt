@@ -1,1 +1,0 @@
-You may put libgpmad.a and the header files in this directory when you build with MAD library.
