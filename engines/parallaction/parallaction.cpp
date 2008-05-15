@@ -153,29 +153,6 @@ void Parallaction::updateView() {
 }
 
 
-uint32 Parallaction::getElapsedTime() {
-	return g_system->getMillis() - _baseTime;
-}
-
-void Parallaction::resetTimer() {
-	_baseTime = g_system->getMillis();
-	return;
-}
-
-
-void Parallaction::waitTime(uint32 t) {
-
-	uint32 v4 = 0;
-
-	while (v4 < t * (1000 / 18.2)) {
-		v4 = getElapsedTime();
-	}
-
-	resetTimer();
-
-	return;
-}
-
 
 void Parallaction::freeCharacter() {
 	debugC(1, kDebugExec, "freeCharacter()");
@@ -370,6 +347,33 @@ void Parallaction::processInput(InputData *data) {
 	return;
 }
 
+void Parallaction::runGame() {
+
+	InputData *data = _input->updateInput();
+	if (data->_event != kEvNone) {
+		processInput(data);
+	}
+
+	runPendingZones();
+
+	if (_engineFlags & kEngineChangeLocation) {
+		changeLocation(_location._name);
+	}
+
+
+	_gfx->beginFrame();
+
+	if (_input->_inputMode == Input::kInputModeGame) {
+		runScripts();
+		walk();
+		drawAnimations();
+	}
+
+	// change this to endFrame?
+	updateView();
+
+}
+
 
 
 
@@ -409,8 +413,8 @@ void Parallaction::doLocationEnterTransition() {
 	for (uint16 _si = 0; _si<6; _si++) {
 		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
-		waitTime( 1 );
 		_gfx->updateScreen();
+		g_system->delayMillis(20);
 	}
 
 	_gfx->setPalette(_gfx->_palette);

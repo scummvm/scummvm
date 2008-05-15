@@ -468,7 +468,6 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 	debugC(1, kDebugExec, "endIntro()");
 
-	uint32 event;
 	uint id[2];
 	for (uint16 _si = 0; _si < 6; _si++) {
 		id[0] = _gfx->createLabel(_menuFont, _credits[_si]._role, 1);
@@ -479,14 +478,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		_gfx->updateScreen();
 
-		for (uint16 v2 = 0; v2 < 100; v2++) {
-			_input->readInput();
-			event = _input->getLastButtonEvent();
-			if (event == kMouseLeftUp)
-				break;
-
-			waitTime( 1 );
-		}
+		_input->waitForButtonEvent(kMouseLeftUp, 5500);
 
 		_gfx->freeLabels();
 	}

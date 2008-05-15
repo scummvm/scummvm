@@ -68,6 +68,7 @@ class Input {
 	uint16	_mouseButtons;
 
 	bool		_mouseHidden;
+	ZonePtr			_hoverZone;
 
 public:
 	enum {
@@ -94,13 +95,12 @@ public:
 	}
 
 	int				_inputMode;
-	ZonePtr			_hoverZone;
 	InventoryItem	_activeItem;
 
 	uint16	readInput();
 	InputData* 	updateInput();
 	void 	waitUntilLeftClick();
-	void	waitForButtonEvent(uint32 buttonEventMask);
+	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
 
 	void stopHovering() {

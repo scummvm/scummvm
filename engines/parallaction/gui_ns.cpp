@@ -213,11 +213,7 @@ int Parallaction_ns::guiNewGame() {
 
 	_input->waitForButtonEvent(kMouseLeftUp | kMouseRightUp);
 	uint32 event = _input->getLastButtonEvent();
-/*
-	do {
-		_input->readInput();
-	} while (_mouseButtons != kMouseLeftUp && _mouseButtons != kMouseRightUp);
-*/
+
 	_input->showCursor(true);
 
 	_gfx->freeLabels();
