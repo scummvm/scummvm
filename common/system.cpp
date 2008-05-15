@@ -35,8 +35,6 @@
 #include "gui/message.h"
 #include "sound/mixer.h"
 
-#include <time.h>
-
 OSystem *g_system = 0;
 
 OSystem::OSystem() {
@@ -122,14 +120,6 @@ void OSystem::clearScreen() {
 	Graphics::Surface *screen = lockScreen();
 	memset(screen->pixels, 0, screen->h * screen->pitch);
 	unlockScreen();
-}
-
-void OSystem::getTimeAndDate(struct tm &t) const {
-#ifndef __PLAYSTATION2__
-	// PS2SDK doesn't provide localtime, so this code doesn't compile
-	time_t curTime = time(0);
-	t = *localtime(&curTime);
-#endif
 }
 
 /*
