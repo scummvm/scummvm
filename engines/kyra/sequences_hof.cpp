@@ -2395,17 +2395,32 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 	if (!data)
 		return;
 
-	static const char mark[] = { 5, 13, 0};
+	static const char mark[] = { 5, 13, 0 };
 
 	_screen->clearPage(tempPage1);
 	_screen->clearPage(tempPage2);
 	_screen->copyRegion(d->sx << 3, d->sy, d->sx << 3, d->sy, d->w << 3, d->h, 0, tempPage1);
 
-	uint8 *tmp = new uint8[397];
-	memset(tmp, 0, 397);
-	uint8 **tmpStringTable = new uint8*[35];
+	struct ScrollTextData {
+		int16	x;
+		int16	y;
+		uint8	*text;
+		byte	unk1;
+		byte	height;
+		byte	adjust;
+
+		ScrollTextData() {
+			x = 0;      // 0  11
+			y = 0;		// 2  13
+			text = 0;	// 4  15
+			unk1 = 0;   // 8  19
+			height = 0; // 9  20
+			adjust = 0; // 10 21
+		}
+	};
+
+	ScrollTextData *textData = new ScrollTextData[36];
 	uint8 *ptr = data;
-	int strTblIndex = 0;
 
 	bool loop = true;
 	int cnt = 0;
@@ -2414,8 +2429,12 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 		uint32 endTime = _system->getMillis() + speed * _tickLength;
 
 		while (cnt < 35 && *ptr) {
-			int m = cnt * 11;
-			uint16 cH = cnt ? READ_LE_UINT16(&tmp[m + 2]) + tmp[m + 9] + (tmp[m + 9] >> 3) : d->h;
+			uint16 cH;
+
+			if (cnt)
+				cH = textData[cnt].y + textData[cnt].height + (textData[cnt].height >> 3);
+			else
+				cH = d->h;
 
 			char *str = (char*)ptr;
 
@@ -2423,12 +2442,15 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			if (!ptr)
 				ptr = (uint8*)strchr(str, 0);
 
-			tmp[m + 19] = *ptr;
+			textData[cnt + 1].unk1 = *ptr;
 			*ptr = 0;
-			if (tmp[m + 19])
+			if (textData[cnt + 1].unk1)
 				ptr++;
 
-			tmp[m + 21] = (*str == 3 || *str == 4) ? tmp[m + 21] = *str++ : 0;
+			if (*str == 3 || *str == 4)
+				textData[cnt + 1].adjust = *str++;
+			else
+				textData[cnt + 1].adjust = 0;
 
 			_screen->setFont(fid1);
 
@@ -2439,18 +2461,25 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 				str++;
 			}
 
-			tmp[m + 20] = _screen->getFontHeight();
+			textData[cnt + 1].height = _screen->getFontHeight();
 
-			WRITE_LE_UINT16(&tmp[m + 11], (tmp[m + 21] == 3) ? 157 - _screen->getTextWidth(str) :
-				((tmp[m + 21] == 4) ? 161 : (((d->w << 3) - _screen->getTextWidth(str)) >> 1) + 1));
+			switch (textData[cnt + 1].adjust) {
+			case 3:
+				textData[cnt + 1].x = 157 - _screen->getTextWidth(str);
+				break;
+			case 4:
+				textData[cnt + 1].x = 161;
+				break;
+			default:
+				textData[cnt + 1].x = (((d->w << 3) - _screen->getTextWidth(str)) >> 1) + 1;
+				break;
+			}
 
-			if (tmp[m + 8] == 5)
-				cH -= (tmp[m + 9] + (tmp[m + 9] >> 3));
+			if (textData[cnt].unk1 == 5)
+				cH -= (textData[cnt].height + (textData[cnt].height >> 3));
 
-			WRITE_LE_UINT16(&tmp[m + 13], cH);
-			WRITE_LE_UINT32(&tmp[m + 15], strTblIndex);
-			tmpStringTable[strTblIndex] = (uint8*) str;
-			strTblIndex = (strTblIndex + 1) % 35;
+			textData[cnt + 1].y = cH;
+			textData[cnt + 1].text = (uint8*) str;
 			cnt++;
 		}
 
@@ -2460,11 +2489,10 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 		bool palCycle = 0;
 
 		while (cnt2 < cnt) {
-			int m = cnt2 * 11;
-			const char *str = (const char*)tmpStringTable[READ_LE_UINT32(&tmp[m + 15])];
+			const char *str = (const char*)textData[cnt2 + 1].text;
 			const char *str2 = str;
-			uint16 cW = READ_LE_UINT16(&tmp[m + 11]) - 10;
-			uint16 cH = READ_LE_UINT16(&tmp[m + 13]);
+			int16 cW = textData[cnt2 + 1].x - 10;
+			int16 cH = textData[cnt2 + 1].y;
 			int x = (d->sx << 3) + cW;
 			int y = d->sy + cH;
 			int col1 = 255;
@@ -2472,7 +2500,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			if (cH < d->h) {
 				_screen->setCurPage(tempPage2);
 				_screen->setFont(fid1);
-				if (tmp[m + 20] != _screen->getFontHeight())
+				if (textData[cnt2 + 1].height != _screen->getFontHeight())
 					_screen->setFont(fid2);
 
 				if (specialData) {
@@ -2503,18 +2531,18 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 				_screen->setCurPage(0);
 			}
 
-			WRITE_LE_UINT16(&tmp[m + 13], READ_LE_UINT16(&tmp[m + 13]) - step);
+			textData[cnt2 + 1].y -= step;
 			cnt2++;
 		}
 
 		_screen->copyRegion(d->sx << 3, d->sy, d->sx << 3, d->sy, d->w << 3, d->h, tempPage2, 0);
 		_screen->updateScreen();
 
-		if ((int16)READ_LE_UINT16(&tmp[13]) < -10) {
-			tmpStringTable[tmp[15]] += strlen((char*)tmpStringTable[tmp[15]]);
-			tmpStringTable[tmp[15]][0] = tmp[19];
+		if (textData[1].y < -10) {
+			textData[1].text += strlen((char*)textData[1].text);
+			textData[1].text[0] = textData[1].unk1;
 			cnt--;
-			memcpy(&tmp[11], &tmp[22], cnt * 11);
+			memcpy(&textData[1], &textData[2], cnt * sizeof(ScrollTextData));
 		}
 
 		if (palCycle) {
@@ -2526,7 +2554,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 
 		delayUntil(endTime);
 
-		if ((cnt < 36) && ((d->sy + d->h) > (READ_LE_UINT16(&tmp[cnt * 11 + 2]) + tmp[cnt * 11 + 9])) && !skipFlag()) {
+		if ((cnt < 36) && ((d->sy + d->h) > (textData[cnt].y + textData[cnt].height)) && !skipFlag()) {
 			resetSkipFlag();
 			delay(_tickLength * 500);
 			cnt = 0;
@@ -2542,8 +2570,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 	_abortIntroFlag= false;
 	resetSkipFlag();
 
-	delete[] tmp;
-	delete[] tmpStringTable;
+	delete[] textData;
 }
 
 void KyraEngine_HoF::seq_scrollPage() {
@@ -2782,4 +2809,5 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 }
 
 } // end of namespace Kyra
+
 
