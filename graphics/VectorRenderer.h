@@ -157,6 +157,8 @@ public:
 	 */
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
 
+	virtual void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) = 0;
+
 	/**
 	 * Sets the active drawing surface. All drawing from this
 	 * point on will be done on that surface.
@@ -298,6 +300,15 @@ public:
 		this->_bgColor = RGBToColor<PixelFormat>(r, g, b);
 	}
 
+	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
+		_gradientEnd = RGBToColor<PixelFormat>(r2, g2, b2);
+		_gradientStart = RGBToColor<PixelFormat>(r1, g1, b1);
+
+		_gradientBytes[0] = (_gradientEnd & PixelFormat::kRedMask) - (_gradientStart & PixelFormat::kRedMask);
+		_gradientBytes[1] = (_gradientEnd & PixelFormat::kGreenMask) - (_gradientStart & PixelFormat::kGreenMask);
+		_gradientBytes[2] = (_gradientEnd & PixelFormat::kBlueMask) - (_gradientStart & PixelFormat::kBlueMask);
+	}
+
 	/**
 	 * @see VectorRenderer::fillSurface()
 	 */
@@ -342,6 +353,10 @@ protected:
 		putPixel(x, y, color);
 	}
 
+	virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
+		*ptr = (PixelType)color;
+	}
+
 	/*
 	 * "Bresenham's Line Algorithm", as described in Wikipedia.
 	 * Based on the current implementation in "graphics/primitives.cpp".
@@ -350,12 +365,30 @@ protected:
 	 * floating point operations and direct access to pixel buffer, assumes no special cases.
 	 */
 	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
-	virtual void drawCircleAlg(int x, int y, int r, PixelType color, bool fill = false);
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false);
-	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill = false);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
+	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
+	virtual void drawSquareShadow(int x, int y, int w, int h);
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h);
+
+	inline PixelType calcGradient(int pos, int max, int factor = 1) {
+		PixelType output = 0;
+		pos = (0x1000 * MIN(pos * factor, max)) / max;
+		
+		output |= (_gradientStart + (_gradientBytes[0] * pos >> 12)) & PixelFormat::kRedMask;
+		output |= (_gradientStart + (_gradientBytes[1] * pos >> 12)) & PixelFormat::kGreenMask;
+		output |= (_gradientStart + (_gradientBytes[2] * pos >> 12)) & PixelFormat::kBlueMask;
+		output |= ~(PixelFormat::kRedMask | PixelFormat::kGreenMask | PixelFormat::kBlueMask);
+	
+		return output;
+	}
 
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /** Background color currently being used to draw on the renderer */
+
+	PixelType _gradientStart;
+	PixelType _gradientEnd;
+	int _gradientBytes[3];
 };
 
 /**
@@ -396,7 +429,7 @@ protected:
 	 * @param ptr Pointer to the pixel where we must draw
 	 * @param alpha Intensity of the pixel (0-255).
 	 */
-	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
+	inline virtual void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
 	/**
 	 * @see VectorRenderer::blendPixel()
@@ -420,9 +453,9 @@ protected:
 	 *
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r, PixelType color, bool fill = false);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
 
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill = false);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 };
 
 } // end of namespace Graphics

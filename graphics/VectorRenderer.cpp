@@ -30,12 +30,33 @@
 #include "common/system.h"
 #include "common/events.h"
 
+inline uint32 fp_sqroot(uint32 x) {
+	register uint32 root, remHI, remLO, testDIV, count;
+
+	root = 0;
+	remHI = 0;
+	remLO = x;
+	count = 23;
+
+	do {
+		remHI = (remHI << 2) | (remLO >> 30);
+		remLO <<= 2;
+		root <<= 1;
+		testDIV = (root << 1) + 1;
+
+		if (remHI >= testDIV) {
+			remHI -= testDIV;
+			root++;
+		}
+	} while (count--);
+
+	return root;
+}
+
 namespace Graphics {
 
-inline uint32 fp_sqroot(uint32 x);
-
 VectorRenderer *createRenderer() {
-	return new VectorRendererSpec<uint16, ColorMasks<565> >;
+	return new VectorRendererAA<uint16, ColorMasks<565> >;
 }
 
 
@@ -59,19 +80,20 @@ void vector_renderer_test(OSystem *_system) {
 	_system->showOverlay();
 
 	while (true) { // draw!!
-		vr->setFgColor(255, 255, 255);
+		vr->setFgColor(255, 0, 206);
 		vr->fillSurface();
 
-		vr->setFgColor(255, 0, 0);
+		vr->setFgColor(255, 247, 222);
 		vr->setBgColor(25, 25, 175);
-		vr->setFillMode(VectorRenderer::kForegroundFill);
-		vr->setStrokeWidth(6);
+		vr->setGradientColors(206, 121, 99, 173, 40, 8);
+		vr->setFillMode(VectorRenderer::kGradientFill);
+		vr->setStrokeWidth(1);
 		vr->shadowEnable(1, 1);
 
 		vr->drawLine(25, 25, 125, 300);
 		vr->drawCircle(250, 250, 100);
 		vr->drawSquare(150, 25, 100, 75);
-		vr->drawRoundedSquare(275, 25, 8, 100, 75);
+		vr->drawRoundedSquare(275, 25, 16, 128, 128);
 
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
@@ -90,21 +112,21 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawCircle(int x, int y, int r) {
 	if (Base::_fillMode != kNoFill && Base::_shadows) {
-		drawCircleAlg(x + Base::_shadowXOffset + 1, y + Base::_shadowYOffset + 1, r, 0, true);
+		drawCircleAlg(x + Base::_shadowXOffset + 1, y + Base::_shadowYOffset + 1, r, 0, kForegroundFill);
 	}
 
 	switch(Base::_fillMode) {
 	case kNoFill:
-		drawCircleAlg(x, y, r, _fgColor, false);
+		drawCircleAlg(x, y, r, _fgColor, kNoFill);
 		break;
 
 	case kForegroundFill:
-		drawCircleAlg(x, y, r, _fgColor, true);
+		drawCircleAlg(x, y, r, _fgColor, kForegroundFill);
 		break;
 
 	case kBackgroundFill:
-		VectorRendererSpec::drawCircleAlg(x, y, r, _bgColor, true);
-		drawCircleAlg(x, y, r, _fgColor, false);
+		drawCircleAlg(x, y, r, _fgColor, kForegroundFill);
+		drawCircleAlg(x, y, r - Base::_strokeWidth, _bgColor, kBackgroundFill);
 		break;
 
 	case kGradientFill:
@@ -116,24 +138,26 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawSquare(int x, int y, int w, int h) {
 	if (Base::_fillMode != kNoFill && Base::_shadows) {
-		drawSquareAlg(x + Base::_shadowXOffset + 1, y + Base::_shadowYOffset + 1, w, h, 0, true);
+		drawSquareShadow(x, y, w, h);
 	}
 
 	switch(Base::_fillMode) {
 	case kNoFill:
-		drawSquareAlg(x, y, w, h, _fgColor, false);
+		drawSquareAlg(x, y, w, h, _fgColor, kNoFill);
 		break;
 
 	case kForegroundFill:
-		drawSquareAlg(x, y, w, h, _fgColor, true);
+		drawSquareAlg(x, y, w, h, _fgColor, kForegroundFill);
 		break;
 
 	case kBackgroundFill:
-		drawSquareAlg(x, y, w, h, _bgColor, true);
-		drawSquareAlg(x, y, w, h, _fgColor, false);
+		drawSquareAlg(x, y, w, h, _bgColor, kBackgroundFill);
+		drawSquareAlg(x, y, w, h, _fgColor, kNoFill);
 		break;
 
 	case kGradientFill:
+		VectorRendererSpec::drawSquareAlg(x, y, w, h, 0, kGradientFill);
+		drawSquareAlg(x, y, w, h, _fgColor, kNoFill);
 		break;
 	}
 }
@@ -142,37 +166,48 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
 	if (Base::_fillMode != kNoFill && Base::_shadows) {
-		drawRoundedSquareAlg(x + Base::_shadowXOffset + 1, y + Base::_shadowYOffset + 1, r, w, h, 0, true);
+		drawRoundedSquareShadow(x, y, r, w, h);
 	}
 
 	switch(Base::_fillMode) {
 	case kNoFill:
-		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
+		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, kNoFill);
 		break;
 
 	case kForegroundFill:
-		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, true);
+		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, kForegroundFill);
 		break;
 
 	case kBackgroundFill:
-		VectorRendererSpec::drawRoundedSquareAlg(x, y, r, w, h, _bgColor, true);
-		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, false);
+		VectorRendererSpec::drawRoundedSquareAlg(x, y, r, w, h, _bgColor, kBackgroundFill);
+		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, kNoFill);
 		break;
 
 	case kGradientFill:
+		if (Base::_strokeWidth > 1) {
+			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, kForegroundFill);
+			VectorRendererSpec::drawRoundedSquareAlg(x + Base::_strokeWidth/2, y + Base::_strokeWidth/2, 
+				r - Base::_strokeWidth/2, w - Base::_strokeWidth, h - Base::_strokeWidth, 0, kGradientFill);
+		} else {
+			VectorRendererSpec::drawRoundedSquareAlg(x, y, r, w, h, 0, kGradientFill);
+			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, kNoFill);
+		}
 		break;
 	}
 }
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill) {
-	
+drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
 	int pitch = Base::surfacePitch();
+	int max_h = h;
 	
-	if (fill) {
+	if (fill_m != kNoFill) {
 		while (h--) {
+			if (fill_m == kGradientFill)
+				color = calcGradient(max_h - h, max_h);
+
 			Common::set_to(ptr, ptr + w, color);
 			ptr += pitch;
 		}
@@ -190,6 +225,43 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, bool fill) {
 			Common::set_to(ptr + w - Base::_strokeWidth, ptr + w, color);
 			ptr += pitch;
 		}
+	}
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawSquareShadow(int x, int y, int w, int h) {
+	int blur = 8;
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + blur);
+	int pitch = Base::surfacePitch();
+	int i, j;
+
+	i = h - blur;
+
+	while (i--) {
+		j = blur;
+		while (j--)
+			blendPixelPtr(ptr + j, 0, ((blur - j) << 8) / blur);
+		ptr += pitch;
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + blur, y + h - 1);
+
+	while (i++ < blur) {
+		j = w - blur;
+		while (j--)
+			blendPixelPtr(ptr + j, 0, ((blur - i) << 8) / blur);
+		ptr += pitch;
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + w, y + h);
+
+	i = 0;
+	while (i++ < blur) {
+		j = blur - 1;
+		while (j--)
+			blendPixelPtr(ptr + j, 0, (((blur - j) * (blur - i)) << 8) / (blur * blur));
+		ptr += pitch;
 	}
 }
 
@@ -361,29 +433,6 @@ drawLine(int x1, int y1, int x2, int y2) {
 	}
 }
 
-inline uint32 fp_sqroot(uint32 x) {
-	register uint32 root, remHI, remLO, testDIV, count;
-
-	root = 0;
-	remHI = 0;
-	remLO = x;
-	count = 23;
-
-	do {
-		remHI = (remHI << 2) | (remLO >> 30);
-		remLO <<= 2;
-		root <<= 1;
-		testDIV = (root << 1) + 1;
-
-		if (remHI >= testDIV) {
-			remHI -= testDIV;
-			root++;
-		}
-	} while (count--);
-
-	return root;
-}
-
 #define __BE_ALGORITHM() { \
 	if (f >= 0) { \
 		y--; \
@@ -416,13 +465,13 @@ inline uint32 fp_sqroot(uint32 x) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
+drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
 	int f, ddF_x, ddF_y;
 	int x, y, px, py, sw = 0;
 	int pitch = Base::surfacePitch();
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	if (fill == false) {
+	if (fill_m == kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
 			__BE_RESET();
 			r--;
@@ -458,7 +507,13 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill) {
+drawRoundedSquareShadow(int x1, int y1, int r, int w, int h) {
+
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m) {
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = Base::surfacePitch();
@@ -470,10 +525,11 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
 	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	int short_h = h - (2 * r) + 2;
 	int real_radius = r;
+	int short_h = h - (2 * r) + 2;
+	int long_h = h;
 
-	if (fill == false) {
+	if (fill_m == kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
 			Common::set_to(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
 			Common::set_to(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
@@ -501,20 +557,34 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 		}
 	} else {
 		__BE_RESET();
-		while (x++ < y) {
-			__BE_ALGORITHM();
 
-			Common::set_to(ptr_tl - x - py, ptr_tr + x - py, color);
-			Common::set_to(ptr_tl - y - px, ptr_tr + y - px, color);
+		if (fill_m == kGradientFill) {
+			while (x++ < y) {
+				__BE_ALGORITHM();
+				Common::set_to(ptr_tl - x - py, ptr_tr + x - py, calcGradient(real_radius - y, long_h));
+				Common::set_to(ptr_tl - y - px, ptr_tr + y - px, calcGradient(real_radius - x, long_h));
 
-			Common::set_to(ptr_bl - x + py, ptr_br + x + py, color);
-			Common::set_to(ptr_bl - y + px, ptr_br + y + px, color);
+				Common::set_to(ptr_bl - x + py, ptr_br + x + py, calcGradient(long_h - r + y, long_h));
+				Common::set_to(ptr_bl - y + px, ptr_br + y + px, calcGradient(long_h - r + x, long_h));
+			}
+		} else {
+			while (x++ < y) {
+				__BE_ALGORITHM();			
 
-			__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+				Common::set_to(ptr_tl - x - py, ptr_tr + x - py, color);
+				Common::set_to(ptr_tl - y - px, ptr_tr + y - px, color);
+
+				Common::set_to(ptr_bl - x + py, ptr_br + x + py, color);
+				Common::set_to(ptr_bl - y + px, ptr_br + y + px, color);
+
+				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+			}
 		}
 
 		ptr_fill += pitch * r;
 		while (short_h--) {
+			if (fill_m == kGradientFill)
+				color = calcGradient(real_radius++, long_h);
 			Common::set_to(ptr_fill, ptr_fill + w + 1, color);
 			ptr_fill += pitch;
 		}
@@ -545,7 +615,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool fill) {
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m) {
 	int x, y;
 	int p = Base::surfacePitch(), px, py;
 	int sw = 0, sp = 0, hp = h * p;
@@ -562,7 +632,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 
 	int short_h = h - 2 * r;
 
-	if (fill == false) {
+	if (fill_m == kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
 			Common::set_to(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
 			Common::set_to(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
@@ -614,7 +684,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, bool 
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
+drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
 	int x, y, sw = 0;
 	int p = Base::surfacePitch(), px, py;
 
@@ -624,7 +694,7 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, bool fill) {
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	if (fill == false) {
+	if (fill_m == kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
 			x = r - (sw - 1); y = 0; T = 0;
 			px = p * x; py = 0;
