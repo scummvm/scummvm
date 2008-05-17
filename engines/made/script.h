@@ -63,6 +63,7 @@ public:
 	ScriptInterpreter(MadeEngine *vm);
 	~ScriptInterpreter();
 	void runScript(int16 scriptObjectIndex);
+	void dumpScript(int16 scriptObjectIndex);
 protected:
 	MadeEngine *_vm;
 

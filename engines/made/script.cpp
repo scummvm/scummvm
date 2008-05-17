@@ -183,7 +183,6 @@ ScriptInterpreter::~ScriptInterpreter() {
 }
 
 void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
-
 	_vm->_quit = false;
 	_runningScriptObjectIndex = scriptObjectIndex;
 
@@ -201,7 +200,64 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
 		}
 	}
+}
 
+void ScriptInterpreter::dumpScript(int16 scriptObjectIndex) {
+	_codeBase = _vm->_dat->getObject(scriptObjectIndex)->getData();
+	_codeIp = _codeBase;
+	int16 val = 0;
+
+	// TODO: script size
+	while (true) {
+		byte opcode = readByte();
+		if (opcode >= 1 && opcode <= _commandsMax) {
+			printf("[%04X:%04X] %s\n", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
+			//(this->*_commands[opcode - 1].proc)();
+
+			// Handle command data
+			if (!strcmp(_commands[opcode - 1].desc, "cmd_branchTrue")) {
+				val = readInt16();
+				printf("Offset = %04X\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_branchFalse")) {
+				val = readInt16();
+				printf("Offset = %04X\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_branch")) {
+				val = readInt16();
+				printf("Offset = %04X\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_loadConstant")) {
+				val = readInt16();
+				printf("Constant = %04X\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_loadVariable")) {
+				val = readInt16();
+				printf("Variable = %04X\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_set")) {
+				val = readInt16();
+				printf("Variable = %04X\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_call")) {
+				// TODO
+				printf("TODO\n");
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_arg") ||
+					   !strcmp(_commands[opcode - 1].desc, "cmd_aset") ||
+					   !strcmp(_commands[opcode - 1].desc, "cmd_tmp") ||
+					   !strcmp(_commands[opcode - 1].desc, "cmd_tset") ||
+					   !strcmp(_commands[opcode - 1].desc, "cmd_tspace")) {
+				val = readByte();
+				printf("argIndex = %d\n", val);
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_send")) {
+				/*byte argc = */readByte();
+				// TODO
+				printf("TODO\n");
+			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_extend")) {
+				/*byte func = */readByte();
+
+				/*byte argc = */readByte();
+				// TODO
+				printf("TODO\n");
+			}
+		} else {
+			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
+		}
+	}
 }
 
 byte ScriptInterpreter::readByte() {
