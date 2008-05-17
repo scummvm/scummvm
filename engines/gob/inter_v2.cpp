@@ -1433,49 +1433,17 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 
-	if (videoMode == 0x18) {
+	_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight2 = offY;
+	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
-		if (_vm->_video->_surfWidth < _vm->_width)
-			_vm->_video->_screenDeltaX = (_vm->_width - _vm->_video->_surfWidth) / 2;
-		else
-			_vm->_video->_screenDeltaX = 0;
+	_vm->_video->_screenDeltaX = 0;
+	_vm->_video->_screenDeltaY = 0;
 
-		_vm->_global->_mouseMinX = _vm->_video->_screenDeltaX;
-		_vm->_global->_mouseMaxX = _vm->_video->_screenDeltaX + _vm->_video->_surfWidth - 1;
-
-
-		int16 screenHeight = _vm->_video->_surfHeight;
-
-		if (screenHeight < _vm->_height) {
-			_vm->_video->_surfHeight += offY;
-			_vm->_video->_splitStart = screenHeight;
-		} else 
-			_vm->_video->_splitStart = screenHeight - offY;
-
-			_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
-			_vm->_video->_splitHeight2 = offY;
-
-			if ((_vm->_video->_surfHeight + offY) < _vm->_height)
-				_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
-			else
-				_vm->_video->_screenDeltaY = 0;
-
-			_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
-			_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
-
-	} else {
-		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
-		_vm->_video->_splitHeight2 = offY;
-		_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
-
-		_vm->_video->_screenDeltaX = 0;
-		_vm->_video->_screenDeltaY = 0;
-
-		_vm->_global->_mouseMinX = 0;
-		_vm->_global->_mouseMinY = 0;
-		_vm->_global->_mouseMaxX = _vm->_width;
-		_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
-	}
+	_vm->_global->_mouseMinX = 0;
+	_vm->_global->_mouseMinY = 0;
+	_vm->_global->_mouseMaxX = _vm->_width;
+	_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
