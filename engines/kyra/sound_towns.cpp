@@ -1301,6 +1301,7 @@ bool SoundTowns::loadInstruments() {
 
 void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
+	Common::StackLock lock(_mutex);
 
 	if (!_parser) {
 		_parser = new MidiParser_EuD(_driver->queue());

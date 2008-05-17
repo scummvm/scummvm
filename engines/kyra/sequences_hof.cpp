@@ -855,8 +855,8 @@ int KyraEngine_HoF::seq_finaleFunters(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		seq_printCreditsString(81, 240, 70, _seqTextColorMap, 252);
 		seq_printCreditsString(82, 240, 90, _seqTextColorMap, _seqTextColor[0]);
 		_screen->copyPage(2, 12);
-		delay(endtime - _system->getMillis());
 		seq_playTalkText(_flags.isTalkie ? 28 : 24);
+		delay(endtime - _system->getMillis());
 		_seqTextColor[0] = 1;
 
 		if (_flags.isTalkie) {
@@ -2337,8 +2337,11 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 	uint32 chatTimeout = _system->getMillis() + dur * _tickLength;
 	int curframe = firstframe;
 
-	if (vocIndex && speechEnabled())
+	if (vocIndex && speechEnabled()) {
+		while (_sound->voiceIsPlaying() && !skipFlag())
+			delay(4);
 		seq_playTalkText(vocIndex);
+	}
 
 	while (_system->getMillis() < chatTimeout && !(_abortIntroFlag || skipFlag())) {
 		if (lastframe < 0) {
@@ -2377,11 +2380,8 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 	if (_abortIntroFlag || skipFlag())
 		_sound->voiceStop();
 
-	if (lastframe < 0) {
-		int t = ABS(lastframe);
-		if (t < curframe)
-			curframe = t;
-	}
+	if (ABS(lastframe) < curframe)
+		curframe = ABS(lastframe);
 
 	if (curframe == firstframe)
 		curframe++;
