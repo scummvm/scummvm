@@ -73,12 +73,22 @@ bool Resource::reset() {
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 			loadPakFile("GENERAL.PAK");
 		} else {
+			if (_vm->gameFlags().isTalkie) {
+				// Add default file directories
+				Common::File::addDefaultDirectory(ConfMan.get("path") + "hof_cd");
+				Common::File::addDefaultDirectory(ConfMan.get("path") + "HOF_CD");
+			}
+
 			loadPakFile("INTROGEN.PAK");
 			loadPakFile("OTHER.PAK");
 		}
 
 		return true;
 	} else if (_vm->game() == GI_KYRA3) {
+		// Add default file directories
+		Common::File::addDefaultDirectory(ConfMan.get("path") + "malcolm");
+		Common::File::addDefaultDirectory(ConfMan.get("path") + "MALCOLM");
+
 		loadPakFile("WESTWOOD.001");
 		loadFileList("FILEDATA.FDT");
 
