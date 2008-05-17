@@ -60,19 +60,19 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 
 	switch (effectNum) {
 
-	case 0:
+	case 0:		// No effect
 		vfx00(surface, palette, newPalette, colorCount);
 		break;
 
-	case 9:
+	case 9:		// "Checkerboard" effect
 		vfx09(surface, palette, newPalette, colorCount);
 		break;
 
-	case 14:
+	case 14:	// "Screen open" effect
 		vfx14(surface, palette, newPalette, colorCount);
 		break;
 
-	case 17:
+	case 17:	// Palette fadeout/fadein
 		vfx17(surface, palette, newPalette, colorCount);
 		break;
 
@@ -189,11 +189,13 @@ void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int
 
 }
 
+// No effect
 void ScreenEffects::vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	setPalette(palette);
 	_screen->showWorkScreen();
 }
 
+// "Checkerboard" effect
 void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int i = 0; i < 8; i++) {
 		copyRect(surface, 0, 0, 320, 200);
@@ -205,6 +207,7 @@ void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPa
 	setPalette(palette);
 }
 
+// "Screen open" effect
 void ScreenEffects::vfx14(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	int16 x = 8, y = 5;
 	for (int i = 0; i < 27; i++) {
@@ -217,6 +220,7 @@ void ScreenEffects::vfx14(Graphics::Surface *surface, byte *palette, byte *newPa
  	setPalette(palette);
 }
 
+// Palette fadeout/fadein
 void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 
 	byte tempPalette[768];
