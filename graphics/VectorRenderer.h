@@ -453,9 +453,9 @@ protected:
 	 *
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, VectorRenderer::FillMode fill_m);
 
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 };
 
 } // end of namespace Graphics

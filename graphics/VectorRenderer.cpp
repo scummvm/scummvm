@@ -615,7 +615,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m) {
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
 	int x, y;
 	int p = Base::surfacePitch(), px, py;
 	int sw = 0, sp = 0, hp = h * p;
@@ -632,7 +632,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 
 	int short_h = h - 2 * r;
 
-	if (fill_m == kNoFill) {
+	if (fill_m == VectorRenderer::kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
 			Common::set_to(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
 			Common::set_to(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
@@ -684,7 +684,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
-drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
+drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode fill_m) {
 	int x, y, sw = 0;
 	int p = Base::surfacePitch(), px, py;
 
@@ -694,7 +694,7 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	if (fill_m == kNoFill) {
+	if (fill_m == VectorRenderer::kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
 			x = r - (sw - 1); y = 0; T = 0;
 			px = p * x; py = 0;
