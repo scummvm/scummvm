@@ -755,7 +755,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.frame = 0;
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
-				animObj.videoSlot = 0;
+			animObj.videoSlot = 0;
 		}
 		
 		break;

@@ -623,8 +623,8 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		Mult::Mult_Object &obj = _vm->_mult->_objects[-animation - 1];
 
-		if (!_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
-			_toRedrawLeft = -1234;
+		if ((obj.videoSlot == 0) || !_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
+			_toRedrawLeft = -12345;
 			return;
 		}
 
@@ -736,7 +736,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		}
 
-		if (flags & 4) {
+		if (!(flags & 4)) {
 			_animLeft = _toRedrawLeft = left;
 			_animTop = _toRedrawTop = top;
 			_animRight = _toRedrawRight = right;
