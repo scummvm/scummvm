@@ -542,7 +542,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_draw->_noInvalidated = true;
 	}
 
-	if (state.flags & CoktelVideo::kStatePalette) {
+	if ((state.flags & CoktelVideo::kStatePalette) && (palCmd > 1)) {
 		copyPalette(*(_primaryVideo->getVideo()), palStart, palEnd);
 
 		if (!_backSurf)
