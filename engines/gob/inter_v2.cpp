@@ -1576,6 +1576,10 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
+	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
+			"paletteCmd %d (%d - %d), flags %X", _vm->_global->_inter_resStr, x, y,
+			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
+
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
