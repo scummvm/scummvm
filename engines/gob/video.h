@@ -98,13 +98,18 @@ public:
 	};
 
 	bool _doRangeClamp;
+
 	int16 _surfWidth;
 	int16 _surfHeight;
+
 	int16 _scrollOffsetX;
 	int16 _scrollOffsetY;
+
+	SurfaceDesc::Ptr _splitSurf;
 	int16 _splitHeight1;
 	int16 _splitHeight2;
 	int16 _splitStart;
+
 	int16 _screenDeltaX;
 	int16 _screenDeltaY;
 
