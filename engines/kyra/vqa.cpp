@@ -362,9 +362,8 @@ void VQAMovie::close() {
 		delete[] _partialCodeBook;
 		delete[] _vectorPointers;
 
-		if (_vm->_mixer->isSoundHandleActive(_sound)) {
+		if (_vm->_mixer->isSoundHandleActive(_sound))
 			_vm->_mixer->stopHandle(_sound);
-		}
 
 		_frameInfo = NULL;
 		_frame = NULL;
@@ -655,11 +654,10 @@ void VQAMovie::play() {
 		while (1) {
 			uint32 elapsedTime;
 
-			if (_vm->_mixer->isSoundHandleActive(_sound)) {
+			if (_vm->_mixer->isSoundHandleActive(_sound))
 				elapsedTime = _vm->_mixer->getSoundElapsedTime(_sound);
-			} else {
+			else 
 				elapsedTime = _system->getMillis() - startTick;
-			}
 
 			if (elapsedTime >= (i * 1000) / _header.frameRate)
 				break;
