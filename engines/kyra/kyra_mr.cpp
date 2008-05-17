@@ -402,7 +402,7 @@ void KyraEngine_MR::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
-	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, Audio::Mixer::kMusicSoundType);
+	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, Audio::Mixer::kMusicSoundType, 255, true);
 }
 
 void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
