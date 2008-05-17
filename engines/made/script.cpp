@@ -215,13 +215,9 @@ void ScriptInterpreter::dumpScript(int16 scriptObjectIndex) {
 			//(this->*_commands[opcode - 1].proc)();
 
 			// Handle command data
-			if (!strcmp(_commands[opcode - 1].desc, "cmd_branchTrue")) {
-				val = readInt16();
-				printf("Offset = %04X\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_branchFalse")) {
-				val = readInt16();
-				printf("Offset = %04X\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_branch")) {
+			if (!strcmp(_commands[opcode - 1].desc, "cmd_branchTrue") ||
+				!strcmp(_commands[opcode - 1].desc, "cmd_branchFalse") ||
+				!strcmp(_commands[opcode - 1].desc, "cmd_branch")) {
 				val = readInt16();
 				printf("Offset = %04X\n", val);
 			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_loadConstant")) {
@@ -234,6 +230,7 @@ void ScriptInterpreter::dumpScript(int16 scriptObjectIndex) {
 				val = readInt16();
 				printf("Variable = %04X\n", val);
 			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_call")) {
+				/*byte argc = */readByte();
 				// TODO
 				printf("TODO\n");
 			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_arg") ||
