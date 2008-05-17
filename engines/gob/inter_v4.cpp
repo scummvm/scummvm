@@ -687,6 +687,8 @@ void Inter_v4::executeGoblinOpcode(int i, OpGobParams &params) {
 		}
 
 	if (op == NULL) {
+		warning("unimplemented opcodeGoblin: %d", i);
+
 		int16 val;
 
 		_vm->_global->_inter_execPtr -= 2;
@@ -739,11 +741,14 @@ void Inter_v4::o4_playVmdOrMusic() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
+	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
+			"paletteCmd %d (%d - %d), flags %X", fileName, x, y, startFrame, lastFrame,
+			palCmd, palStart, palEnd, flags);
+
 	close = false;
 	if (lastFrame == -1) {
 		close = true;
 	} else if (lastFrame == -3) {
-//		warning("Woodruff Stub: Video/Music command -3: Play background video %s, %d, %d, %d, %d", fileName, startFrame, x, y, VAR_OFFSET(7872));
 
 		_vm->_mult->_objects[startFrame].pAnimData->animation = -startFrame - 1;
 
@@ -767,17 +772,16 @@ void Inter_v4::o4_playVmdOrMusic() {
 		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
 		return;
 	} else if (lastFrame == -5) {
-//		warning("Woodruff Stub: Video/Music command -5: Stop background music");
 		_vm->_sound->bgStop();
 		return;
 	} else if (lastFrame == -6) {
-//		warning("Woodruff Stub: Video/Music command -6: Load background video %s", fileName);
+		return;
+	} else if (lastFrame == -7) {
 		return;
 	} else if (lastFrame == -8) {
 		warning("Woodruff Stub: Video/Music command -8: Play background video %s", fileName);
 		return;
 	} else if (lastFrame == -9) {
-//		warning("Woodruff Stub: Video/Music command -9: Play background music %s (%d-%d)", fileName, palEnd, palStart);
 		_vm->_sound->bgStop();
 		_vm->_sound->bgSetPlayMode(BackgroundAtmosphere::kPlayModeRandom);
 		_vm->_sound->bgPlay(fileName, palStart);

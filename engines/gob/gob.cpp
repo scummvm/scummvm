@@ -85,12 +85,13 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	Common::addSpecialDebugLevel(kDebugMusic, "Music", "CD, Adlib and Infogrames music debug level");
+	Common::addSpecialDebugLevel(kDebugSound, "Sound", "Sound output debug level");
 	Common::addSpecialDebugLevel(kDebugParser, "Parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addSpecialDebugLevel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
+	Common::addSpecialDebugLevel(kDebugVideo, "Video", "IMD/VMD video debug level");
 	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "gob");

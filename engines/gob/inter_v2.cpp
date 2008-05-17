@@ -1087,6 +1087,8 @@ void Inter_v2::o2_playCDTrack() {
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
+	debugC(1, kDebugSound, "CDROM: Waiting for playback to end");
+
 	while (_vm->_sound->cdGetTrackPos() >= 0)
 		_vm->_util->longDelay(1);
 }
@@ -2056,7 +2058,6 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".INS");
-	debugC(1, kDebugMusic, "Loading Infogrames instrument file \"%s\"", fileName);
 
 	_vm->_sound->infogramesLoadInstruments(fileName);
 }
@@ -2069,7 +2070,6 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".DUM");
-	debugC(1, kDebugMusic, "Playing Infogrames music file \"%s\"", fileName);
 
 	_vm->_sound->infogramesLoadSong(fileName);
 	_vm->_sound->infogramesPlay();

@@ -92,6 +92,8 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, const char *fileName, bool tryExist) 
 	if (!sndDesc)
 		return false;
 
+	debugC(2, kDebugSound, "Loading sample \"%s\"", fileName);
+
 	int16 handle = _vm->_dataIO->openData(fileName);
 	if (handle < 0) {
 		warning("Can't open sample file \"%s\"", fileName);
@@ -137,12 +139,16 @@ void Sound::speakerOn(int16 frequency, int32 length) {
 	if (!_pcspeaker)
 		return;
 
+	debugC(1, kDebugSound, "PCSpeaker: Playing tone (%d, %d)", frequency, length);
+
 	_pcspeaker->speakerOn(frequency, length);
 }
 
 void Sound::speakerOff() {
 	if (!_pcspeaker)
 		return;
+
+	debugC(1, kDebugSound, "PCSpeaker: Stopping tone");
 
 	_pcspeaker->speakerOff();
 }
@@ -158,12 +164,16 @@ bool Sound::infogramesLoadInstruments(const char *fileName) {
 	if (!_infogrames)
 		return false;
 
+	debugC(1, kDebugSound, "Infogrames: Loading instruments \"%s\"", fileName);
+
 	return _infogrames->loadInstruments(fileName);
 }
 
 bool Sound::infogramesLoadSong(const char *fileName) {
 	if (!_infogrames)
 		return false;
+
+	debugC(1, kDebugSound, "Infogrames: Loading song \"%s\"", fileName);
 
 	return _infogrames->loadSong(fileName);
 }
@@ -172,12 +182,16 @@ void Sound::infogramesPlay() {
 	if (!_infogrames)
 		return;
 
+	debugC(1, kDebugSound, "Infogrames: Starting playback");
+
 	_infogrames->play();
 }
 
 void Sound::infogramesStop() {
 	if (!_infogrames)
 		return;
+
+	debugC(1, kDebugSound, "Infogrames: Stopping playback");
 
 	_infogrames->stop();
 }
@@ -186,12 +200,16 @@ bool Sound::adlibLoad(const char *fileName) {
 	if (!_adlib)
 		return false;
 
+	debugC(1, kDebugSound, "Adlib: Loading data (\"%s\")", fileName);
+
 	return _adlib->load(fileName);
 }
 
 bool Sound::adlibLoad(byte *data, uint32 size, int index) {
 	if (!_adlib)
 		return false;
+
+	debugC(1, kDebugSound, "Adlib: Loading data (%d)", index);
 
 	return _adlib->load(data, size, index);
 }
@@ -200,6 +218,8 @@ void Sound::adlibUnload() {
 	if (!_adlib)
 		return;
 
+	debugC(1, kDebugSound, "Adlib: Unloading data");
+
 	_adlib->unload();
 }
 
@@ -207,7 +227,7 @@ void Sound::adlibPlayTrack(const char *trackname) {
 	if (!_adlib || _adlib->isPlaying())
 		return;
 
-	debugC(1, kDebugMusic, "Adlib::playTrack(%s)", trackname);
+	debugC(1, kDebugSound, "Adlib: Playing track \"%s\"", trackname);
 
 	_adlib->unload();
 	_adlib->load(trackname);
@@ -235,12 +255,16 @@ void Sound::adlibPlay() {
 	if (!_adlib)
 		return;
 
+	debugC(1, kDebugSound, "Adlib: Starting playback");
+
 	_adlib->startPlay();
 }
 
 void Sound::adlibStop() {
 	if (!_adlib)
 		return;
+
+	debugC(1, kDebugSound, "Adlib: Stopping playback");
 
 	_adlib->stopPlay();
 }
@@ -278,12 +302,17 @@ void Sound::blasterPlay(SoundDesc *sndDesc, int16 repCount,
 	if (!_blaster || !sndDesc)
 		return;
 
+	debugC(1, kDebugSound, "SoundBlaster: Playing sample (%d, %d, %d)",
+			repCount, frequency, fadeLength);
+
 	_blaster->playSample(*sndDesc, repCount, frequency, fadeLength);
 }
 
 void Sound::blasterStop(int16 fadeLength, SoundDesc *sndDesc) {
 	if (!_blaster)
 		return;
+
+	debugC(1, kDebugSound, "SoundBlaster: Stopping playback");
 
 	_blaster->stopSound(fadeLength, sndDesc);
 }
@@ -292,6 +321,9 @@ void Sound::blasterPlayComposition(int16 *composition, int16 freqVal,
 		SoundDesc *sndDescs, int8 sndCount) {
 	if (!_blaster)
 		return;
+
+	debugC(1, kDebugSound, "SoundBlaster: Playing composition (%d, %d)",
+			freqVal, sndCount);
 
 	blasterWaitEndPlay();
 	_blaster->stopComposition();
@@ -305,6 +337,8 @@ void Sound::blasterPlayComposition(int16 *composition, int16 freqVal,
 void Sound::blasterStopComposition() {
 	if (!_blaster)
 		return;
+
+	debugC(1, kDebugSound, "SoundBlaster: Stopping composition");
 
 	_blaster->stopComposition();
 }
@@ -327,6 +361,8 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 	if (!_blaster)
 		return;
 
+	debugC(1, kDebugSound, "SoundBlaster: Waiting for playback to end");
+
 	if (stopComp)
 		_blaster->endComposition();
 
@@ -344,6 +380,8 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 void Sound::cdLoadLIC(const char *fname) {
 	if (!_cdrom)
 		return;
+
+	debugC(1, kDebugSound, "CDROM: Loading LIC \"%s\"", fname);
 
 	int handle = _vm->_dataIO->openData(fname);
 
@@ -365,6 +403,8 @@ void Sound::cdLoadLIC(const char *fname) {
 void Sound::cdUnloadLIC() {
 	if (!_cdrom)
 		return;
+
+	debugC(1, kDebugSound, "CDROM: Unloading LIC");
 
 	_cdrom->freeLICBuffer();
 }
@@ -400,6 +440,9 @@ void Sound::cdPlayBgMusic() {
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
 		if (!scumm_stricmp(_vm->_game->_curTotFile, tracks[i][0])) {
+			debugC(1, kDebugSound, "CDROM: Playing background music \"%s\" (\"%s\")",
+					tracks[i][1], _vm->_game->_curTotFile);
+
 			_cdrom->startTrack(tracks[i][1]);
 			break;
 		}
@@ -422,6 +465,9 @@ void Sound::cdPlayMultMusic() {
 	int language = _vm->_global->_language <= 4 ? _vm->_global->_language : 2;
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
 		if (!scumm_stricmp(_vm->_game->_curTotFile, tracks[i][0])) {
+			debugC(1, kDebugSound, "CDROM: Playing mult music \"%s\" (\"%s\")",
+					tracks[i][language + 1], _vm->_game->_curTotFile);
+
 			_cdrom->startTrack(tracks[i][language + 1]);
 			break;
 		}
@@ -431,6 +477,7 @@ void Sound::cdPlay(const char *trackName) {
 	if (!_cdrom)
 		return;
 
+	debugC(1, kDebugSound, "CDROM: Playing track \"%s\"", trackName);
 	_cdrom->startTrack(trackName);
 }
 
@@ -438,6 +485,7 @@ void Sound::cdStop() {
 	if (!_cdrom)
 		return;
 
+	debugC(1, kDebugSound, "CDROM: Stopping playback");
 	_cdrom->stopPlaying();
 }
 
@@ -473,6 +521,8 @@ void Sound::bgPlay(const char *base, int count) {
 	if (!_bgatmos)
 		return;
 
+	debugC(1, kDebugSound, "BackgroundAtmosphere: Playing \"%s\" (%d)", base, count);
+
 	_bgatmos->stop();
 	_bgatmos->queueClear();
 
@@ -495,6 +545,8 @@ void Sound::bgStop() {
 	if (!_bgatmos)
 		return;
 
+	debugC(1, kDebugSound, "BackgroundAtmosphere: Stopping playback");
+
 	_bgatmos->stop();
 	_bgatmos->queueClear();
 }
@@ -510,12 +562,16 @@ void Sound::bgShade() {
 	if (!_bgatmos)
 		return;
 
+	debugC(1, kDebugSound, "BackgroundAtmosphere: Shading playback");
+
 	_bgatmos->shade();
 }
 
 void Sound::bgUnshade() {
 	if (!_bgatmos)
 		return;
+
+	debugC(1, kDebugSound, "BackgroundAtmosphere: Unshading playback");
 
 	_bgatmos->unshade();
 }
