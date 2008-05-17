@@ -284,7 +284,7 @@ protected:
 	// -> mouse item
 	void setHandItem(uint16 item);
 	void removeHandItem();
-	void setMouseItem(int item);
+	void setMouseItem(uint16 item);
 
 	// -> graphics effects
 	void wipeDownMouseItem(int xpos, int ypos);
