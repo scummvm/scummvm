@@ -400,7 +400,8 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 
 			// Some localizations may override colors
 			// See credits in Chinese COMI
-			if (chr == '^' && pos == 1) {
+			if (_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN
+			    && chr == '^' && pos == 1) {
 				if (text[pos] == 'c') {
 					pos += 4;
 					chr = text[pos++];
