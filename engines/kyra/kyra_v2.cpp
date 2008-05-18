@@ -326,8 +326,8 @@ int KyraEngine_v2::updateCharPos(int *table, int force) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPos(%p, %d)", (const void*)table, force);
 	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
 		return 0;
-	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
-	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
+	_mainCharacter.x1 += _charAddXPosTable[_mainCharacter.facing];
+	_mainCharacter.y1 += _charAddYPosTable[_mainCharacter.facing];
 	updateCharAnimFrame(0, table);
 	_updateCharPosNextUpdate = _system->getMillis() + getCharacterWalkspeed() * _tickLength;
 	return 1;

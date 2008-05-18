@@ -263,6 +263,11 @@ protected:
 	static const int8 _addXPosTable[];
 	static const int8 _addYPosTable[];
 
+	// Character
+	
+	static const int8 _charAddXPosTable[];
+	static const int8 _charAddYPosTable[];
+
 	// save/load
 	int _gameToLoad;
 

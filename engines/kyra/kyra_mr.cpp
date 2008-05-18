@@ -411,8 +411,6 @@ void KyraEngine_MR::playMenuAudioFile() {
 void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::snd_playWanderScoreViaMap(%d, %d)", track, force);
 
-	// XXX byte_3C87C compare
-
 	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel))
 		force = 1;
 	else if (_musicSoundChannel == -1)

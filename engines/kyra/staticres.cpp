@@ -1281,7 +1281,7 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_introLibrary2, &KyraEngine_HoF::seq_introLibrary2,
 		&KyraEngine_HoF::seq_introMarco, &KyraEngine_HoF::seq_introHand1a,
 		&KyraEngine_HoF::seq_introHand1b, &KyraEngine_HoF::seq_introHand1c,
-		&KyraEngine_HoF::seq_introHand2,	&KyraEngine_HoF::seq_introHand3, 0
+		&KyraEngine_HoF::seq_introHand2, &KyraEngine_HoF::seq_introHand3, 0
 	};
 
 	static const SeqProc hofDemoSequenceCallbacks[] = {
@@ -1363,11 +1363,11 @@ const int8 KyraEngine_v1::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 
-const int8 KyraEngine_LoK::_charXPosTable[] = {
+const int8 KyraEngine_v1::_charAddXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4
 };
 
-const int8 KyraEngine_LoK::_charYPosTable[] = {
+const int8 KyraEngine_v1::_charAddYPosTable[] = {
 	-2, -2,  0,  2,  2,  2,  0, -2
 };
 
@@ -1533,14 +1533,6 @@ const int8 KyraEngine_LoK::_dosTrackMap[] = {
 const int KyraEngine_LoK::_dosTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_dosTrackMap);
 
 // kyra engine v2 static data
-
-const int8 KyraEngine_v2::_updateCharPosXTable[] = {
-	0, 4, 4, 4, 0, -4, -4, -4
-};
-
-const int8 KyraEngine_v2::_updateCharPosYTable[] = {
-	-2, -2, 0, 2, 2, 2, 0, -2
-};
 
 const int GUI_v2::_sliderBarsPosition[] = {
 	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52

@@ -355,8 +355,6 @@ protected:
 	void updateCharPosWithUpdate();
 
 	uint32 _updateCharPosNextUpdate;
-	static const int8 _updateCharPosXTable[];
-	static const int8 _updateCharPosYTable[];
 
 	virtual int getCharacterWalkspeed() const = 0;
 	virtual void updateCharAnimFrame(int num, int *table) = 0;

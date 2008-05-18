@@ -628,9 +628,6 @@ protected:
 	int _cdaTrackTableSize;
 	const AudioDataStruct * _soundData;
 
-	static const int8 _charXPosTable[];
-	static const int8 _charYPosTable[];
-
 	// positions of the inventory
 	static const uint16 _itemPosX[];
 	static const uint8 _itemPosY[];
