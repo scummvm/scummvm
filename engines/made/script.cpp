@@ -175,6 +175,9 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_functions = new ScriptFunctions(_vm);
 	_functions->setupExternalsTable();
 	
+	// set to true to dump scripts instead of parsing them
+	_dumpScripts = false;
+
 #undef COMMAND
 }
 
@@ -194,63 +197,8 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 	while (!_vm->_quit) {
 		byte opcode = readByte();
 		if (opcode >= 1 && opcode <= _commandsMax) {
-			debug(4, "[%04X:%04X] opcode = %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
+			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
-		} else {
-			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
-		}
-	}
-}
-
-void ScriptInterpreter::dumpScript(int16 scriptObjectIndex) {
-	_codeBase = _vm->_dat->getObject(scriptObjectIndex)->getData();
-	_codeIp = _codeBase;
-	int16 val = 0;
-
-	// TODO: script size
-	while (true) {
-		byte opcode = readByte();
-		if (opcode >= 1 && opcode <= _commandsMax) {
-			printf("[%04X:%04X] %s\n", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
-			//(this->*_commands[opcode - 1].proc)();
-
-			// Handle command data
-			if (!strcmp(_commands[opcode - 1].desc, "cmd_branchTrue") ||
-				!strcmp(_commands[opcode - 1].desc, "cmd_branchFalse") ||
-				!strcmp(_commands[opcode - 1].desc, "cmd_branch")) {
-				val = readInt16();
-				printf("Offset = %04X\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_loadConstant")) {
-				val = readInt16();
-				printf("Constant = %04X\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_loadVariable")) {
-				val = readInt16();
-				printf("Variable = %04X\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_set")) {
-				val = readInt16();
-				printf("Variable = %04X\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_call")) {
-				/*byte argc = */readByte();
-				// TODO
-				printf("TODO\n");
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_arg") ||
-					   !strcmp(_commands[opcode - 1].desc, "cmd_aset") ||
-					   !strcmp(_commands[opcode - 1].desc, "cmd_tmp") ||
-					   !strcmp(_commands[opcode - 1].desc, "cmd_tset") ||
-					   !strcmp(_commands[opcode - 1].desc, "cmd_tspace")) {
-				val = readByte();
-				printf("argIndex = %d\n", val);
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_send")) {
-				/*byte argc = */readByte();
-				// TODO
-				printf("TODO\n");
-			} else if (!strcmp(_commands[opcode - 1].desc, "cmd_extend")) {
-				/*byte func = */readByte();
-
-				/*byte argc = */readByte();
-				// TODO
-				printf("TODO\n");
-			}
 		} else {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
 		}
@@ -269,18 +217,27 @@ int16 ScriptInterpreter::readInt16() {
 }
 
 void ScriptInterpreter::cmd_branchTrue() {
+	if (_dumpScripts)
+		return;
+
 	int16 ofs = readInt16();
 	if (_stack.top() != 0)
 		_codeIp = _codeBase + ofs;
 }
 
 void ScriptInterpreter::cmd_branchFalse() {
+	if (_dumpScripts)
+		return;
+
 	int16 ofs = readInt16();
 	if (_stack.top() == 0)
 		_codeIp = _codeBase + ofs;
 }
 
 void ScriptInterpreter::cmd_branch() {
+	if (_dumpScripts)
+		return;
+
 	int16 ofs = readInt16();
 	_codeIp = _codeBase + ofs;
 }
@@ -474,6 +431,9 @@ void ScriptInterpreter::cmd_return() {
 		return;
 	}
 
+	if (_dumpScripts)
+		return;
+
 	int16 funcResult = _stack.top();
 	_stack.setStackPos(_localStackPos);
 	_localStackPos = kScriptStackLimit - _stack.pop();
@@ -489,6 +449,10 @@ void ScriptInterpreter::cmd_return() {
 void ScriptInterpreter::cmd_call() {
 	debug(4, "\nENTER: stackPtr = %d; _localStackPos = %d", _stack.getStackPos(), _localStackPos);
 	byte argc = readByte();
+
+	if (_dumpScripts)
+		return;
+
 	_stack.push(argc);
 	_stack.push(_codeIp - _codeBase);
 	_stack.push(_runningScriptObjectIndex);
@@ -521,6 +485,9 @@ void ScriptInterpreter::cmd_yorn() {
 }
 
 void ScriptInterpreter::cmd_save() {
+	if (_dumpScripts)
+		return;
+
 	int16 result = 0;
 	int16 stringOfs = _stack.top();
 	const char *filename = _vm->_dat->getString(stringOfs);
@@ -529,6 +496,9 @@ void ScriptInterpreter::cmd_save() {
 }
 
 void ScriptInterpreter::cmd_restore() {
+	if (_dumpScripts)
+		return;
+
 	int16 result = 0;
 	int16 stringOfs = _stack.top();
 	const char *filename = _vm->_dat->getString(stringOfs);
@@ -603,6 +573,9 @@ void ScriptInterpreter::cmd_send() {
 	
 	debug(4, "argc = %d", argc);
 	
+	if (_dumpScripts)
+		return;
+
 	_stack.push(argc);
 	_stack.push(_codeIp - _codeBase);
 	_stack.push(_runningScriptObjectIndex);
@@ -645,10 +618,12 @@ void ScriptInterpreter::cmd_extend() {
 	byte argc = readByte();
 	int16 *argv = _stack.getStackPtr();
 
-	//debug(4, "func = %d (%s); argc = %d", func, extendFuncNames[func], argc);
-	debug(2, "func = %d; argc = %d", func, argc);
+	debug(4, "func = %d (%s); argc = %d", func, _functions->getFuncName(func), argc);
 	for (int i = 0; i < argc; i++)
 		debug(2, "argv[%02d] = %04X (%d)", i, argv[i], argv[i]);
+
+	if (_dumpScripts)
+		return;
 
 	int16 result = _functions->callFunction(func, argc, argv);
 	debug(2, "result = %04X (%d)", result, result);

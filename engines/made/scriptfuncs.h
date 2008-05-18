@@ -53,6 +53,7 @@ public:
 		return (*_externalFuncs[index])(argc, argv);
 	}
 	void setupExternalsTable();
+	const char* getFuncName(int index) { return _externalFuncNames[index]; }
 protected:
 	MadeEngine *_vm;
 	Audio::SoundHandle _audioStreamHandle;
