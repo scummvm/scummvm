@@ -56,7 +56,7 @@ public:
 	virtual ~VectorRenderer() {}
 
 	/** Specified the way in which a shape is filled */
-	static enum FillMode {
+	enum FillMode {
 		kNoFill = 0,
 		kForegroundFill = 1,
 		kBackgroundFill = 2,
