@@ -838,12 +838,6 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_fillRect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
-	return 0;
-}
-
 int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playFireflyScore(%p) ()", (const void *)script);
 	if (_sound->getSfxType() == Sound::kAdlib || _sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
@@ -1630,7 +1624,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setRunFlag);
 	Opcode(o2_showLetter);
 	OpcodeUnImpl();
-	Opcode(o2_fillRect);
+	Opcode(o1_fillRect);
 	// 0x68
 	OpcodeUnImpl();
 	OpcodeUnImpl();

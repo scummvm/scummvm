@@ -227,6 +227,7 @@ protected:
 	int o1_getMouseState(EMCState *script);
 	int o1_setDeathHandler(EMCState *script);
 	int o1_playWanderScoreViaMap(EMCState *script);
+	int o1_fillRect(EMCState *script);
 	int o1_blockInWalkableRegion(EMCState *script);
 	int o1_blockOutWalkableRegion(EMCState *script);
 	int o1_playSoundEffect(EMCState *script);
