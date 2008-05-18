@@ -53,7 +53,7 @@ void vector_renderer_test(OSystem *_system);
 class VectorRenderer {
 
 public:
-	VectorRenderer() : _shadows(false), _fillMode(kNoFill), _activeSurface(NULL), _strokeWidth(1) {}
+	VectorRenderer() : _shadowOffset(0), _fillMode(kNoFill), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
 	virtual ~VectorRenderer() {}
 
 	enum FillMode {
@@ -63,10 +63,10 @@ public:
 		kGradientFill = 3
 	};
 
-	enum ColorMode {
+/*	enum ColorMode {
 		kForegroundColor,
 		kBackgroundColor
-	};
+	}; */
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -175,7 +175,7 @@ public:
 	 *
 	 * @param mode Color mode (bg or fg color) used to fill.
 	 */
-	virtual void fillSurface(ColorMode mode = kForegroundColor) = 0;
+	virtual void fillSurface(FillMode mode = kForegroundFill) = 0;
 
 	/**
 	 * Clears the active surface.
@@ -202,7 +202,7 @@ public:
 	 * @param width Witdh of the stroke in pixels.
 	 */
 	virtual void setStrokeWidth(int width) {
-		if (width > 0) _strokeWidth = width;
+		_strokeWidth = width;
 	}
 
 	/**
@@ -214,10 +214,9 @@ public:
 	 * @param y_offset Vertical offset for the shadows.
 	 * @see shadowDisable()
 	 */
-	virtual void shadowEnable(int x_offset, int y_offset) {
-		_shadows = true;
-		_shadowXOffset = x_offset;
-		_shadowYOffset = y_offset;
+	virtual void shadowEnable(int offset) {
+		if (offset > 0)
+			_shadowOffset = offset;
 	}
 
 	/**
@@ -226,7 +225,12 @@ public:
 	 * @see shadowEnable()
 	 */
 	virtual void shadowDisable() {
-		_shadows = false;
+		_shadowOffset = 0;
+	}
+
+	virtual void setGradientFactor(int factor) {
+		if (factor > 0)
+			_gradientFactor = factor;
 	}
 
 protected:
@@ -234,11 +238,11 @@ protected:
 
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
-	bool _shadows; /** Defines if shadows are automatically added to drawn shapes */
-	int _shadowXOffset; /** Horizontal offset for drawn shadows */
-	int _shadowYOffset; /** Vertical offset for drawn shadows */
-
+	int _shadowOffset; /** offset for drawn shadows */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
+
+	int _gradientFactor;
+	int _gradientBytes[3];
 };
 
 
@@ -304,22 +308,32 @@ public:
 		_gradientEnd = RGBToColor<PixelFormat>(r2, g2, b2);
 		_gradientStart = RGBToColor<PixelFormat>(r1, g1, b1);
 
-		_gradientBytes[0] = (_gradientEnd & PixelFormat::kRedMask) - (_gradientStart & PixelFormat::kRedMask);
-		_gradientBytes[1] = (_gradientEnd & PixelFormat::kGreenMask) - (_gradientStart & PixelFormat::kGreenMask);
-		_gradientBytes[2] = (_gradientEnd & PixelFormat::kBlueMask) - (_gradientStart & PixelFormat::kBlueMask);
+		Base::_gradientBytes[0] = (_gradientEnd & PixelFormat::kRedMask) - (_gradientStart & PixelFormat::kRedMask);
+		Base::_gradientBytes[1] = (_gradientEnd & PixelFormat::kGreenMask) - (_gradientStart & PixelFormat::kGreenMask);
+		Base::_gradientBytes[2] = (_gradientEnd & PixelFormat::kBlueMask) - (_gradientStart & PixelFormat::kBlueMask);
 	}
 
 	/**
 	 * @see VectorRenderer::fillSurface()
 	 */
-	void fillSurface(ColorMode mode = kForegroundColor) {
+	void fillSurface(FillMode mode = kForegroundFill) {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
-		int s = _activeSurface->w * _activeSurface->h;
 
-		if (mode == kBackgroundColor)
-			Common::set_to(ptr, ptr + s, _bgColor);
-		else if (mode == kForegroundColor)
-			Common::set_to(ptr, ptr + s, _fgColor);
+		int w = _activeSurface->w;
+		int h = _activeSurface->h ;
+		int pitch = surfacePitch();
+
+		if (mode == kBackgroundFill)
+			Common::set_to(ptr, ptr + w*h, _bgColor);
+		else if (mode == kForegroundFill)
+			Common::set_to(ptr, ptr + w*h, _fgColor);
+		else if (mode == kGradientFill) {
+			int i = h;
+			while (i--) {
+				Common::set_to(ptr, ptr + w, calcGradient(h - i, h));
+				ptr += pitch;
+			}
+		}
 	}
 
 protected:
@@ -341,21 +355,19 @@ protected:
 	 * Blends a single pixel on the surface with the given coordinates, color
 	 * and Alpha intensity.
 	 *
-	 * Note: Pixel blending is currently disabled on the Specialized Renderer
-	 * because of performance issues.
-	 *
 	 * @param x Horizontal coordinate of the pixel.
 	 * @param y Vertical coordinate of the pixel.
 	 * @param color Color of the pixel
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	virtual inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
-		putPixel(x, y, color);
+		if (alpha == 255)
+			putPixel(x, y, color);
+		else if (alpha > 0)
+			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
-	virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
-		*ptr = (PixelType)color;
-	}
+	virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
 	/*
 	 * "Bresenham's Line Algorithm", as described in Wikipedia.
@@ -368,27 +380,31 @@ protected:
 	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
-	virtual void drawSquareShadow(int x, int y, int w, int h);
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h);
+	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
 
-	inline PixelType calcGradient(int pos, int max, int factor = 1) {
+	inline PixelType calcGradient(uint32 pos, uint32 max) {
 		PixelType output = 0;
-		pos = (0x1000 * MIN(pos * factor, max)) / max;
+		pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 		
-		output |= (_gradientStart + (_gradientBytes[0] * pos >> 12)) & PixelFormat::kRedMask;
-		output |= (_gradientStart + (_gradientBytes[1] * pos >> 12)) & PixelFormat::kGreenMask;
-		output |= (_gradientStart + (_gradientBytes[2] * pos >> 12)) & PixelFormat::kBlueMask;
+		output |= (_gradientStart + ((Base::_gradientBytes[0] * pos) >> 12)) & PixelFormat::kRedMask;
+		output |= (_gradientStart + ((Base::_gradientBytes[1] * pos) >> 12)) & PixelFormat::kGreenMask;
+		output |= (_gradientStart + ((Base::_gradientBytes[2] * pos) >> 12)) & PixelFormat::kBlueMask;
 		output |= ~(PixelFormat::kRedMask | PixelFormat::kGreenMask | PixelFormat::kBlueMask);
 	
 		return output;
 	}
+
+	inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
+		while (first != last)
+			blendPixelPtr(first++, color, alpha);
+	}	
 
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /** Background color currently being used to draw on the renderer */
 
 	PixelType _gradientStart;
 	PixelType _gradientEnd;
-	int _gradientBytes[3];
 };
 
 /**
@@ -417,32 +433,6 @@ protected:
 	 * @see VectorRenderer::drawLineAlg()
 	 */
 	void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
-
-	/**
-	 * Perform alpha blending on top of a given pixel, not on a given
-	 * coordinate (just so we don't have to recalculate the surface
-	 * pointer while we are blending consecutive pixels).
-	 *
-	 * Everything from blendPixel() applies here.
-	 *
-	 * @see VectorRenderer::blendPixel()
-	 * @param ptr Pointer to the pixel where we must draw
-	 * @param alpha Intensity of the pixel (0-255).
-	 */
-	inline virtual void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
-
-	/**
-	 * @see VectorRenderer::blendPixel()
-	 *
-	 * The AA renderer does support alpha blending. Special cases are
-	 * handled separately.
-	 */
-	inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
-		if (alpha == 255)
-			putPixel(x, y, color);
-		else if (alpha > 0)
-			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
-	}
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991
