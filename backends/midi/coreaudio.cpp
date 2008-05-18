@@ -24,6 +24,17 @@
 
 #ifdef MACOSX
 
+// HACK to disable deprecated warnings under Mac OS X 10.5.
+// Apple depracted the AUGraphNewNode & AUGraphGetNodeInfo APIs
+// in favor of the new AUGraphAddNode & AUGraphNodeInfo APIs.
+// While it would be trivial to switch to those, this would break
+// binary compatibility with all pre-10.5 systems, so we don't want
+// to do that just now. Maybe when 10.6 comes... :)
+#include <AvailabilityMacros.h>
+#undef DEPRECATED_ATTRIBUTE
+#define DEPRECATED_ATTRIBUTE
+
+
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "sound/midiplugin.h"
