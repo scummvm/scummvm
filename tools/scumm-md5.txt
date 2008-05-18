@@ -575,9 +575,9 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	1d7a2e1ddcade791e2de0cfceac86725	-1	fr	All	-	-	-	gist974, ThierryFR
 	4fa6870d9bc8c313b65d54b1da5a1891	-1	nl	Windows	-	-	-	joostp
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
-	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 99	-	-	Jonathan
 	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
+	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 100	Updated	-	Jonathan
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
 
 	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
@@ -758,9 +758,9 @@ spyfox	SPY Fox 1: Dry Cereal
 	a28135a7ade38cc0208b04507c46efd1	-1	de	All	HE 99	-	-	nachbarnebenan
 	ee785fe2569bc9965526e774f7ab86f1	-1	fr	Mac	HE 99	-	-	ThierryFR
 	76b66b43e593ad4d2f1dfb5cc8f19700	-1	nl	Windows	HE 99	-	-	sugarcube
-	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 99	-	-	Jonathan
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
+	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan
 
 	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev
 	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	en	All	-	Demo	-	sev
