@@ -25,38 +25,19 @@
 
 #include "common/util.h"
 #include "graphics/surface.h"
-#include "graphics/VectorRenderer.h"
 #include "graphics/colormasks.h"
 #include "common/system.h"
 #include "common/events.h"
 
-inline uint32 fp_sqroot(uint32 x) {
-	register uint32 root, remHI, remLO, testDIV, count;
-
-	root = 0;
-	remHI = 0;
-	remLO = x;
-	count = 23;
-
-	do {
-		remHI = (remHI << 2) | (remLO >> 30);
-		remLO <<= 2;
-		root <<= 1;
-		testDIV = (root << 1) + 1;
-
-		if (remHI >= testDIV) {
-			remHI -= testDIV;
-			root++;
-		}
-	} while (count--);
-
-	return root;
-}
+#include "graphics/VectorRenderer.h"
 
 namespace Graphics {
 
+/********************************************************************
+ * DEBUG FUNCTIONS
+ ********************************************************************/
 VectorRenderer *createRenderer() {
-	return new VectorRendererAA<uint16, ColorMasks<565> >;
+	return new VectorRendererSpec<uint16, ColorMasks<565> >;
 }
 
 
@@ -114,10 +95,153 @@ void vector_renderer_test(OSystem *_system) {
 	_system->hideOverlay();
 }
 
+/********************************************************************
+ * MISCELANEOUS functions
+ ********************************************************************/
+/** Fixed point SQUARE ROOT **/
+inline uint32 fp_sqroot(uint32 x) {
+	register uint32 root, remHI, remLO, testDIV, count;
+
+	root = 0;
+	remHI = 0;
+	remLO = x;
+	count = 23;
+
+	do {
+		remHI = (remHI << 2) | (remLO >> 30);
+		remLO <<= 2;
+		root <<= 1;
+		testDIV = (root << 1) + 1;
+
+		if (remHI >= testDIV) {
+			remHI -= testDIV;
+			root++;
+		}
+	} while (count--);
+
+	return root;
+}
+
+/** HELPER MACROS for BESENHALM's circle drawing algorithm **/
+#define __BE_ALGORITHM() { \
+	if (f >= 0) { \
+		y--; \
+		ddF_y += 2; \
+		f += ddF_y; \
+		py -= pitch; \
+	} \
+	px += pitch; \
+	ddF_x += 2; \
+	f += ddF_x + 1; \
+}
+
+#define __BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+	*(ptr1 + (y) - (px)) = color; \
+	*(ptr1 + (x) - (py)) = color; \
+	*(ptr2 - (x) - (py)) = color; \
+	*(ptr2 - (y) - (px)) = color; \
+	*(ptr3 - (y) + (px)) = color; \
+	*(ptr3 - (x) + (py)) = color; \
+	*(ptr4 + (x) + (py)) = color; \
+	*(ptr4 + (y) + (px)) = color; \
+}
+
+#define __BE_RESET() { \
+	f = 1 - r; \
+	ddF_x = 0; ddF_y = -2 * r; \
+	x = 0; y = r; px = 0; py = pitch * r; \
+}
+
+/** HELPER MACROS for WU's circle drawing algorithm **/
+#define __WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
+	blendPixelPtr(ptr1 + (y) - (px), color, a); \
+	blendPixelPtr(ptr1 + (x) - (py), color, a); \
+	blendPixelPtr(ptr2 - (x) - (py), color, a); \
+	blendPixelPtr(ptr2 - (y) - (px), color, a); \
+	blendPixelPtr(ptr3 - (y) + (px), color, a); \
+	blendPixelPtr(ptr3 - (x) + (py), color, a); \
+	blendPixelPtr(ptr4 + (x) + (py), color, a); \
+	blendPixelPtr(ptr4 + (y) + (px), color, a); \
+}
+
+#define __WU_ALGORITHM() { \
+	oldT = T; \
+	T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF; \
+	py += p; \
+	if (T < oldT) { \
+		x--; px -= p; \
+	} \
+	a2 = (T >> 8); \
+	a1 = ~a2; \
+}
+
+/********************************************************************
+ * Primitive shapes drawing - Public API calls - VectorRendererSpec
+ ********************************************************************/
+/** LINES **/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawLine(int x1, int y1, int x2, int y2) {
+	x1 = CLIP(x1, 0, (int)Base::_activeSurface->w);
+	x2 = CLIP(x2, 0, (int)Base::_activeSurface->w);
+	y1 = CLIP(y1, 0, (int)Base::_activeSurface->h);
+	y2 = CLIP(y2, 0, (int)Base::_activeSurface->h);
+
+	// we draw from top to bottom
+	if (y2 < y1) {
+		SWAP(x1, x2);
+		SWAP(y1, y2);
+	}
+
+	int dx = ABS(x2 - x1);
+	int dy = ABS(y2 - y1);
+
+	// this is a point, not a line. stoopid.
+	if (dy == 0 && dx == 0) 
+		return;
+
+	if (Base::_strokeWidth == 0)
+		return;
+
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	int pitch = Base::surfacePitch();
+
+	if (dy == 0) { // horizontal lines
+		// these can be filled really fast with a single memset.
+		// TODO: Platform specific ASM in set_to, would make this thing fly 
+		Common::set_to(ptr, ptr + dx + 1, (PixelType)_fgColor);
+
+	} else if (dx == 0) { // vertical lines
+		// these ones use a static pitch increase.
+		while (y1++ <= y2) {
+			*ptr = (PixelType)_fgColor;
+			ptr += pitch;
+		}
+
+	} else if (ABS(dx) == ABS(dy)) { // diagonal lines
+		// these ones also use a fixed pitch increase
+		pitch += (x2 > x1) ? 1 : -1;
+
+		while (dy--) {
+			*ptr = (PixelType)_fgColor;
+			ptr += pitch;
+		}
+
+	} else { // generic lines, use the standard algorithm...
+		drawLineAlg(x1, y1, x2, y2, dx, dy, (PixelType)_fgColor);
+	}
+}
+
+/** CIRCLES **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawCircle(int x, int y, int r) {
-	if (Base::_fillMode != kNoFill && Base::_shadowOffset) {
+	if (x + r > Base::_activeSurface->w || y + r > Base::_activeSurface->h)
+		return;
+
+	if (Base::_fillMode != kNoFill && Base::_shadowOffset 
+		&& x + r + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + r + Base::_shadowOffset < Base::_activeSurface->h) {
 		drawCircleAlg(x + Base::_shadowOffset + 1, y + Base::_shadowOffset + 1, r, 0, kForegroundFill);
 	}
 
@@ -146,10 +270,16 @@ drawCircle(int x, int y, int r) {
 	}
 }
 
+/** SQUARES **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawSquare(int x, int y, int w, int h) {
-	if (Base::_fillMode != kNoFill && Base::_shadowOffset) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
+		return;
+
+	if (Base::_fillMode != kNoFill && Base::_shadowOffset
+		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset < Base::_activeSurface->h) {
 		drawSquareShadow(x, y, w, h, Base::_shadowOffset);
 	}
 
@@ -176,10 +306,16 @@ drawSquare(int x, int y, int w, int h) {
 	}
 }
 
+/** ROUNDED SQUARES **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
-	if (Base::_fillMode != kNoFill && Base::_shadowOffset) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
+		return;
+
+	if (Base::_fillMode != kNoFill && Base::_shadowOffset
+		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset < Base::_activeSurface->h) {
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
@@ -212,6 +348,10 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 	}
 }
 
+/********************************************************************
+ * Aliased Primitive drawing ALGORITHMS - VectorRendererSpec
+ ********************************************************************/
+/** SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m) {
@@ -244,42 +384,7 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m) {
 	}
 }
 
-template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType, PixelFormat>::
-drawSquareShadow(int x, int y, int w, int h, int blur) {
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + blur);
-	int pitch = Base::surfacePitch();
-	int i, j;
-
-	i = h - blur;
-
-	while (i--) {
-		j = blur;
-		while (j--)
-			blendPixelPtr(ptr + j, 0, ((blur - j) << 8) / blur);
-		ptr += pitch;
-	}
-
-	ptr = (PixelType *)_activeSurface->getBasePtr(x + blur, y + h - 1);
-
-	while (i++ < blur) {
-		j = w - blur;
-		while (j--)
-			blendPixelPtr(ptr + j, 0, ((blur - i) << 8) / blur);
-		ptr += pitch;
-	}
-
-	ptr = (PixelType *)_activeSurface->getBasePtr(x + w, y + h);
-
-	i = 0;
-	while (i++ < blur) {
-		j = blur - 1;
-		while (j--)
-			blendPixelPtr(ptr + j, 0, (((blur - j) * (blur - i)) << 8) / (blur * blur));
-		ptr += pitch;
-	}
-}
-
+/** GENERIC LINE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
 drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
@@ -327,257 +432,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 	*ptr = (PixelType)color;
 }
 
-
-template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType, PixelFormat>::
-blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
-	if (alpha == 255) {
-		*ptr = color;
-		return;
-	}
-
-	register int idst = *ptr;
-	register int isrc = color;
-
-	*ptr = (PixelType)(
-		(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
-		((int)(((int)(isrc & PixelFormat::kRedMask) -
-		(int)(idst & PixelFormat::kRedMask)) * alpha) >> 8))) |
-		(PixelFormat::kGreenMask & ((idst & PixelFormat::kGreenMask) +
-		((int)(((int)(isrc & PixelFormat::kGreenMask) -
-		(int)(idst & PixelFormat::kGreenMask)) * alpha) >> 8))) |
-		(PixelFormat::kBlueMask & ((idst & PixelFormat::kBlueMask) +
-		((int)(((int)(isrc & PixelFormat::kBlueMask) -
-		(int)(idst & PixelFormat::kBlueMask)) * alpha) >> 8))) );
-}
-
-
-template<typename PixelType, typename PixelFormat>
-void VectorRendererAA<PixelType, PixelFormat>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
-
-	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
-	int pitch = Base::surfacePitch();
-	int xdir = (x2 > x1) ? 1 : -1;
-	uint16 error_tmp, error_acc, gradient;
-	uint8 alpha;
-
-	*ptr = (PixelType)color;
-
-	if (dx > dy) {
-		gradient = (uint32)(dy << 16) / (uint32)dx;
-		error_acc = 0;
-
-		while (--dx) {
-			error_tmp = error_acc;
-			error_acc += gradient;
-
-			if (error_acc <= error_tmp)
-				ptr += pitch;
-
-			ptr += xdir;
-			alpha = (error_acc >> 8);
-
-			blendPixelPtr(ptr, color, ~alpha);
-			blendPixelPtr(ptr + pitch, color, alpha);
-		}
-	} else {
-		gradient = (uint32)(dx << 16) / (uint32)dy;
-		error_acc = 0;
-
-		while (--dy) {
-			error_tmp = error_acc;
-			error_acc += gradient;
-
-			if (error_acc <= error_tmp)
-				ptr += xdir;
-
-			ptr += pitch;
-			alpha = (error_acc >> 8);
-
-			blendPixelPtr(ptr, color, ~alpha);
-			blendPixelPtr(ptr + xdir, color, alpha);
-		}
-	}
-
-	Base::putPixel(x2, y2, color);
-}
-
-template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType, PixelFormat>::
-drawLine(int x1, int y1, int x2, int y2) {
-	// we draw from top to bottom
-	if (y2 < y1) {
-		SWAP(x1, x2);
-		SWAP(y1, y2);
-	}
-
-	int dx = ABS(x2 - x1);
-	int dy = ABS(y2 - y1);
-
-	// this is a point, not a line. stoopid.
-	if (dy == 0 && dx == 0) 
-		return;
-
-	if (Base::_strokeWidth == 0)
-		return;
-
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
-	int pitch = Base::surfacePitch();
-
-	if (dy == 0) { // horizontal lines
-		// these can be filled really fast with a single memset.
-		// TODO: Platform specific ASM in set_to, would make this thing fly 
-		Common::set_to(ptr, ptr + dx + 1, (PixelType)_fgColor);
-
-	} else if (dx == 0) { // vertical lines
-		// these ones use a static pitch increase.
-		while (y1++ <= y2) {
-			*ptr = (PixelType)_fgColor;
-			ptr += pitch;
-		}
-
-	} else if (ABS(dx) == ABS(dy)) { // diagonal lines
-		// these ones also use a fixed pitch increase
-		pitch += (x2 > x1) ? 1 : -1;
-
-		while (dy--) {
-			*ptr = (PixelType)_fgColor;
-			ptr += pitch;
-		}
-
-	} else { // generic lines, use the standard algorithm...
-		drawLineAlg(x1, y1, x2, y2, dx, dy, (PixelType)_fgColor);
-	}
-}
-
-#define __BE_ALGORITHM() { \
-	if (f >= 0) { \
-		y--; \
-		ddF_y += 2; \
-		f += ddF_y; \
-		py -= pitch; \
-	} \
-	px += pitch; \
-	ddF_x += 2; \
-	f += ddF_x + 1; \
-}
-
-#define __BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
-	*(ptr1 + (y) - (px)) = color; \
-	*(ptr1 + (x) - (py)) = color; \
-	*(ptr2 - (x) - (py)) = color; \
-	*(ptr2 - (y) - (px)) = color; \
-	*(ptr3 - (y) + (px)) = color; \
-	*(ptr3 - (x) + (py)) = color; \
-	*(ptr4 + (x) + (py)) = color; \
-	*(ptr4 + (y) + (px)) = color; \
-}
-
-#define __BE_RESET() { \
-	f = 1 - r; \
-	ddF_x = 0; ddF_y = -2 * r; \
-	x = 0; y = r; px = 0; py = pitch * r; \
-}
-
-
-template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType, PixelFormat>::
-drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
-	int f, ddF_x, ddF_y;
-	int x, y, px, py, sw = 0;
-	int pitch = Base::surfacePitch();
-	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
-
-	if (fill_m == kNoFill) {
-		while (sw++ < Base::_strokeWidth) {
-			__BE_RESET();
-			r--;
-
-			*(ptr + y) = color;
-			*(ptr - y) = color;
-			*(ptr + py) = color;
-			*(ptr - py) = color;
-
-			while (x++ < y) {
-				__BE_ALGORITHM();
-				__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py);
-
-				if (Base::_strokeWidth > 1) {
-					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x - 1, y, px, py);
-					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px - pitch, py);
-				}
-			}
-		}
-	} else {
-		Common::set_to(ptr - r, ptr + r, color);
-		__BE_RESET();
-
-		while (x++ < y) {
-			__BE_ALGORITHM();
-			Common::set_to(ptr - x + py, ptr + x + py, color);
-			Common::set_to(ptr - x - py, ptr + x - py, color);
-			Common::set_to(ptr - y + px, ptr + y + px, color);
-			Common::set_to(ptr - y - px, ptr + y - px, color);
-		}
-	}
-}
-
-template<typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType, PixelFormat>::
-drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
-	int f, ddF_x, ddF_y;
-	int x, y, px, py;
-	int pitch = Base::surfacePitch();
-	int sw = 0, sp = 0, hp = h * pitch;
-	int alpha = 102;
-
-	x1 += blur;
-	y1 += blur;
-
-	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - blur, y1 + r);
-
-	int short_h = h - (2 * r) + 1;
-
-	__BE_RESET();
-
-	// HACK: As we are drawing circles exploting 8-axis symmetry,
-	// there are 4 pixels on each circle which are drawn twice.
-	// this is ok on filled circles, but when blending on surfaces,
-	// we cannot let it blend twice. awful.
-	bool *hb = new bool[r];
-
-	int i = 0;
-	while (i < r)
-		hb[i++] = false;
-
-	while (x++ < y) {
-		__BE_ALGORITHM();
-
-		if (!hb[x]) {
-			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
-			blendFill(ptr_bl - y + px, ptr_br + y + px, 0, alpha);
-			hb[x] = true;
-		}
-
-		if (!hb[y]) {
-			blendFill(ptr_tr - r - py, ptr_tr + x - py, 0, alpha);
-			blendFill(ptr_bl - x + py, ptr_br + x + py, 0, alpha);
-			hb[y] = true;
-		}
-	}
-
-	delete[] hb;
-
-	while (short_h--) {
-		blendFill(ptr_fill - r, ptr_fill + blur, 0, alpha);
-		ptr_fill += pitch;
-	}
-}
-
+/** ROUNDED SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m) {
@@ -659,28 +514,201 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 	}
 }
 
-#define __WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
-	blendPixelPtr(ptr1 + (y) - (px), color, a); \
-	blendPixelPtr(ptr1 + (x) - (py), color, a); \
-	blendPixelPtr(ptr2 - (x) - (py), color, a); \
-	blendPixelPtr(ptr2 - (y) - (px), color, a); \
-	blendPixelPtr(ptr3 - (y) + (px), color, a); \
-	blendPixelPtr(ptr3 - (x) + (py), color, a); \
-	blendPixelPtr(ptr4 + (x) + (py), color, a); \
-	blendPixelPtr(ptr4 + (y) + (px), color, a); \
+/** CIRCLE ALGORITHM **/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py, sw = 0;
+	int pitch = Base::surfacePitch();
+	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	if (fill_m == kNoFill) {
+		while (sw++ < Base::_strokeWidth) {
+			__BE_RESET();
+			r--;
+
+			*(ptr + y) = color;
+			*(ptr - y) = color;
+			*(ptr + py) = color;
+			*(ptr - py) = color;
+
+			while (x++ < y) {
+				__BE_ALGORITHM();
+				__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py);
+
+				if (Base::_strokeWidth > 1) {
+					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x - 1, y, px, py);
+					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px - pitch, py);
+				}
+			}
+		}
+	} else {
+		Common::set_to(ptr - r, ptr + r, color);
+		__BE_RESET();
+
+		while (x++ < y) {
+			__BE_ALGORITHM();
+			Common::set_to(ptr - x + py, ptr + x + py, color);
+			Common::set_to(ptr - x - py, ptr + x - py, color);
+			Common::set_to(ptr - y + px, ptr + y + px, color);
+			Common::set_to(ptr - y - px, ptr + y - px, color);
+		}
+	}
 }
 
-#define __WU_ALGORITHM() { \
-	oldT = T; \
-	T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF; \
-	py += p; \
-	if (T < oldT) { \
-		x--; px -= p; \
-	} \
-	a2 = (T >> 8); \
-	a1 = ~a2; \
+
+/********************************************************************
+ * SHADOW drawing algorithms - VectorRendererSpec
+ ********************************************************************/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawSquareShadow(int x, int y, int w, int h, int blur) {
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + blur);
+	int pitch = Base::surfacePitch();
+	int i, j;
+
+	i = h - blur;
+
+	while (i--) {
+		j = blur;
+		while (j--)
+			blendPixelPtr(ptr + j, 0, ((blur - j) << 8) / blur);
+		ptr += pitch;
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + blur, y + h - 1);
+
+	while (i++ < blur) {
+		j = w - blur;
+		while (j--)
+			blendPixelPtr(ptr + j, 0, ((blur - i) << 8) / blur);
+		ptr += pitch;
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + w, y + h);
+
+	i = 0;
+	while (i++ < blur) {
+		j = blur - 1;
+		while (j--)
+			blendPixelPtr(ptr + j, 0, (((blur - j) * (blur - i)) << 8) / (blur * blur));
+		ptr += pitch;
+	}
 }
 
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = Base::surfacePitch();
+	int sw = 0, sp = 0, hp = h * pitch;
+	int alpha = 102;
+
+	x1 += blur;
+	y1 += blur;
+
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - blur, y1 + r);
+
+	int short_h = h - (2 * r) + 1;
+
+	__BE_RESET();
+
+	// HACK: As we are drawing circles exploting 8-axis symmetry,
+	// there are 4 pixels on each circle which are drawn twice.
+	// this is ok on filled circles, but when blending on surfaces,
+	// we cannot let it blend twice. awful.
+	bool *hb = new bool[r];
+
+	int i = 0;
+	while (i < r)
+		hb[i++] = false;
+
+	while (x++ < y) {
+		__BE_ALGORITHM();
+
+		if (!hb[x]) {
+			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
+			blendFill(ptr_bl - y + px, ptr_br + y + px, 0, alpha);
+			hb[x] = true;
+		}
+
+		if (!hb[y]) {
+			blendFill(ptr_tr - r - py, ptr_tr + x - py, 0, alpha);
+			blendFill(ptr_bl - x + py, ptr_br + x + py, 0, alpha);
+			hb[y] = true;
+		}
+	}
+
+	delete[] hb;
+
+	while (short_h--) {
+		blendFill(ptr_fill - r, ptr_fill + blur, 0, alpha);
+		ptr_fill += pitch;
+	}
+}
+
+
+/********************************************************************
+ * ANTIALIASED PRIMITIVES drawing algorithms - VectorRendererAA
+ ********************************************************************/
+/** LINES **/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererAA<PixelType, PixelFormat>::
+drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
+
+	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+	int pitch = Base::surfacePitch();
+	int xdir = (x2 > x1) ? 1 : -1;
+	uint16 error_tmp, error_acc, gradient;
+	uint8 alpha;
+
+	*ptr = (PixelType)color;
+
+	if (dx > dy) {
+		gradient = (uint32)(dy << 16) / (uint32)dx;
+		error_acc = 0;
+
+		while (--dx) {
+			error_tmp = error_acc;
+			error_acc += gradient;
+
+			if (error_acc <= error_tmp)
+				ptr += pitch;
+
+			ptr += xdir;
+			alpha = (error_acc >> 8);
+
+			blendPixelPtr(ptr, color, ~alpha);
+			blendPixelPtr(ptr + pitch, color, alpha);
+		}
+	} else {
+		gradient = (uint32)(dx << 16) / (uint32)dy;
+		error_acc = 0;
+
+		while (--dy) {
+			error_tmp = error_acc;
+			error_acc += gradient;
+
+			if (error_acc <= error_tmp)
+				ptr += xdir;
+
+			ptr += pitch;
+			alpha = (error_acc >> 8);
+
+			blendPixelPtr(ptr, color, ~alpha);
+			blendPixelPtr(ptr + xdir, color, alpha);
+		}
+	}
+
+	Base::putPixel(x2, y2, color);
+}
+
+/** ROUNDED SQUARES **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
 drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
@@ -750,6 +778,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	}
 }
 
+/** CIRCLES **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererAA<PixelType, PixelFormat>::
 drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode fill_m) {

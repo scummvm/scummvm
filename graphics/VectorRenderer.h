@@ -51,22 +51,17 @@ void vector_renderer_test(OSystem *_system);
  * @see VectorRendererAA
  */
 class VectorRenderer {
-
 public:
 	VectorRenderer() : _shadowOffset(0), _fillMode(kNoFill), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
 	virtual ~VectorRenderer() {}
 
-	enum FillMode {
+	/** Specified the way in which a shape is filled */
+	static enum FillMode {
 		kNoFill = 0,
 		kForegroundFill = 1,
 		kBackgroundFill = 2,
 		kGradientFill = 3
 	};
-
-/*	enum ColorMode {
-		kForegroundColor,
-		kBackgroundColor
-	}; */
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -157,6 +152,17 @@ public:
 	 */
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
 
+	/**
+	 * Set the active gradient color. All shapes drawn using kGradientFill
+	 * as their fill mode will use this VERTICAL gradient as their fill color.
+	 *
+	 * @param r1	value of the red color byte for the start color
+	 * @param g1	value of the green color byte for the start color
+	 * @param b1	value of the blue color byte for the start color
+	 * @param r2	value of the red color byte for the end color
+	 * @param g2	value of the green color byte for the end color
+	 * @param b2	value of the blue color byte for the end color
+	 */
 	virtual void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) = 0;
 
 	/**
@@ -170,10 +176,10 @@ public:
 	}
 
 	/**
-	 * Fills the active surface with the specified fg/bg color.
+	 * Fills the active surface with the specified fg/bg color or the active gradient.
 	 * Defaults to using the active Foreground color for filling.
 	 *
-	 * @param mode Color mode (bg or fg color) used to fill.
+	 * @param mode Fill mode (bg, fg or gradient) used to fill the surface
 	 */
 	virtual void fillSurface(FillMode mode = kForegroundFill) = 0;
 
@@ -197,7 +203,7 @@ public:
 
 	/**
 	 * Sets the stroke width. All shapes drawn with a stroke will
-	 * have that width.
+	 * have that width. Pass 0 to disable shape stroking.
 	 *
 	 * @param width Witdh of the stroke in pixels.
 	 */
@@ -207,11 +213,11 @@ public:
 
 	/**
 	 * Enables adding shadows to all drawn primitives.
-	 * Shadows are drawn automatically under the shapes, at the
-	 * given x/y offsets.
+	 * Shadows are drawn automatically under the shapes. The given offset
+	 * controls their intensity and size (the higher the offset, the
+	 * bigger the shadows).
 	 *
-	 * @param x_offset Horizontal offset for the shadows.
-	 * @param y_offset Vertical offset for the shadows.
+	 * @param offset Shadow offset.
 	 * @see shadowDisable()
 	 */
 	virtual void shadowEnable(int offset) {
@@ -228,6 +234,12 @@ public:
 		_shadowOffset = 0;
 	}
 
+	/**
+	 * Sets the multiplication factor of the active gradient.
+	 *
+	 * @see _gradientFactor
+	 * @param factor Multiplication factor.
+	 */
 	virtual void setGradientFactor(int factor) {
 		if (factor > 0)
 			_gradientFactor = factor;
@@ -241,8 +253,8 @@ protected:
 	int _shadowOffset; /** offset for drawn shadows */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
 
-	int _gradientFactor;
-	int _gradientBytes[3];
+	int _gradientFactor; /** Multiplication factor of the active gradient */
+	int _gradientBytes[3]; /** Color bytes of the active gradient, used to speed up calculation */
 };
 
 
@@ -304,6 +316,9 @@ public:
 		this->_bgColor = RGBToColor<PixelFormat>(r, g, b);
 	}
 
+	/**
+	 * @see VectorRenderer::setGradientColors()
+	 */
 	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
 		_gradientEnd = RGBToColor<PixelFormat>(r2, g2, b2);
 		_gradientStart = RGBToColor<PixelFormat>(r1, g1, b1);
@@ -324,9 +339,9 @@ public:
 		int pitch = surfacePitch();
 
 		if (mode == kBackgroundFill)
-			Common::set_to(ptr, ptr + w*h, _bgColor);
+			Common::set_to(ptr, ptr + w * h, _bgColor);
 		else if (mode == kForegroundFill)
-			Common::set_to(ptr, ptr + w*h, _fgColor);
+			Common::set_to(ptr, ptr + w * h, _fgColor);
 		else if (mode == kGradientFill) {
 			int i = h;
 			while (i--) {
@@ -367,22 +382,77 @@ protected:
 			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
-	virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
-
-	/*
-	 * "Bresenham's Line Algorithm", as described in Wikipedia.
-	 * Based on the current implementation in "graphics/primitives.cpp".
+	/**
+	 * Blends a single pixel on the surface in the given pixel pointer, using supplied color
+	 * and Alpha intensity.
+	 * 
+	 * This is implemented to prevent blendPixel() to calculate the surface pointer on each call.
+	 * Optimized drawing algorithms should call this function when possible.
 	 *
-	 * Generic line drawing algorithm for the aliased renderer. Optimized with no
-	 * floating point operations and direct access to pixel buffer, assumes no special cases.
+	 * @see blendPixel
+	 * @param ptr Pointer to the pixel to blend on top of
+	 * @param color Color of the pixel
+	 * @param alpha Alpha intensity of the pixel (0-255)
+	 */
+	virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
+		if (alpha == 255) {
+			*ptr = color;
+			return;
+		}
+
+		register int idst = *ptr;
+		register int isrc = color;
+
+		*ptr = (PixelType)(
+			(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
+			((int)(((int)(isrc & PixelFormat::kRedMask) -
+			(int)(idst & PixelFormat::kRedMask)) * alpha) >> 8))) |
+			(PixelFormat::kGreenMask & ((idst & PixelFormat::kGreenMask) +
+			((int)(((int)(isrc & PixelFormat::kGreenMask) -
+			(int)(idst & PixelFormat::kGreenMask)) * alpha) >> 8))) |
+			(PixelFormat::kBlueMask & ((idst & PixelFormat::kBlueMask) +
+			((int)(((int)(isrc & PixelFormat::kBlueMask) -
+			(int)(idst & PixelFormat::kBlueMask)) * alpha) >> 8))) );
+	}
+
+	/**
+	 * PRIMITIVE DRAWING ALGORITHMS
+	 *
+	 * Generic algorithms for drawing all kinds of aliased primitive shapes.
+	 * These may be overloaded in inheriting classes to implement platform-specific
+	 * optimizations or improve looks.
+	 *
+	 * @see VectorRendererAA
+	 * @see VectorRendererAA::drawLineAlg
+	 * @see VectorRendererAA::drawCircleAlg
 	 */
 	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
 	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
+
+	/**
+	 * SHADOW DRAWING ALGORITHMS
+	 *
+	 * Optimized versions of the primitive drawing algorithms with alpha blending
+	 * for shadow drawing.
+	 * There functions may be overloaded in inheriting classes to improve performance
+	 * in the slowest platforms where pixel alpha blending just doesn't cut it.
+	 *
+	 * @param blur Intensity/size of the shadow.
+	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
 
+	/**
+	 * Calculates the color gradient on a given point.
+	 * This function assumes that the gradient start/end colors have been set
+	 * beforehand from the API function call.
+	 *
+	 * @param pos Progress of the gradient.
+	 * @param max Maximum amount of the progress.
+	 * @return Composite color of the gradient at the given "progress" amount.
+	 */
 	inline PixelType calcGradient(uint32 pos, uint32 max) {
 		PixelType output = 0;
 		pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
@@ -395,6 +465,16 @@ protected:
 		return output;
 	}
 
+	/**
+	 * Fills several pixels in a row with a given color and the specifed alpha blending.
+	 *
+	 * @see blendPixelPtr
+	 * @see blendPixel
+	 * @param first Pointer to the first pixel to fill.
+	 * @param last Pointer to the last pixel to fill.
+	 * @param color Color of the pixel
+	 * @param alpha Alpha intensity of the pixel (0-255)
+	 */
 	inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
 		while (first != last)
 			blendPixelPtr(first++, color, alpha);
@@ -403,8 +483,8 @@ protected:
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /** Background color currently being used to draw on the renderer */
 
-	PixelType _gradientStart;
-	PixelType _gradientEnd;
+	PixelType _gradientStart; /** Start color for the fill gradient */
+	PixelType _gradientEnd; /** End color for the fill gradient */
 };
 
 /**
@@ -445,6 +525,13 @@ protected:
 	 */
 	virtual void drawCircleAlg(int x, int y, int r, PixelType color, VectorRenderer::FillMode fill_m);
 
+	/**
+	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991,
+	 * modified with corner displacement to allow drawing of squares with rounded
+	 * corners.
+	 *
+	 * @see VectorRenderer::drawRoundedAlg()
+	 */
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 };
 
