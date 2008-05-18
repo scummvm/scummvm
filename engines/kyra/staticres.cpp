@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 27
+#define RESFILE_VERSION 28
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
