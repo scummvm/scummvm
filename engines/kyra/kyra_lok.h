@@ -791,9 +791,10 @@ protected:
 	int o1_pauseMusicSeconds(EMCState *script);
 	int o1_resetMaskRegion(EMCState *script);
 	int o1_setPaletteChangeFlag(EMCState *script);
-	int o1_dummy(EMCState *script);
+	int o1_fillRect(EMCState *script);
 	int o1_vocUnload(EMCState *script);
 	int o1_vocLoad(EMCState *script);
+	int o1_dummy(EMCState *script);
 };
 
 } // end of namespace Kyra
