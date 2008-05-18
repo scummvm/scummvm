@@ -1554,7 +1554,7 @@ const char *KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
-	"ITA",		Italian and Spanish was never included
+	"ITA",		Italian and Spanish were never included
 	"SPA"*/
 	"JPN"
 };
@@ -1563,7 +1563,7 @@ const char *KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
-	"IMC",		Italian and Spanish was never included
+	"IMC",		Italian and Spanish were never included
 	"SMC"*/
 	"JMC"
 };
@@ -1956,7 +1956,7 @@ const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
-	"TRI",		Italian and Spanish was never included
+	"TRI",		Italian and Spanish were never included
 	"TRS"*/
 };
 
