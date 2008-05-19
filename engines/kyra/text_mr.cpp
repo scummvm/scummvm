@@ -55,25 +55,25 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 		int count = 0, offs = 0;
 		if (textWidth > (3*maxTextWidth)) {
 			count = getCharLength(p, textWidth/4);
-			offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
-		}
-
+		} 
+		
 		if (textWidth > (2*maxTextWidth)) {
 			count = getCharLength(p, textWidth/3);
-			offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
 			textWidth = _screen->getTextWidth(p);
 		}
 
 		count = getCharLength(p, textWidth/2);
-		offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);	
+		offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));	
 		p += count + offs;
 		textWidth = _screen->getTextWidth(p);
 
 		if (textWidth > maxTextWidth) {
 			count = getCharLength(p, textWidth/2);
-			offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);	
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));	
 		}
 	}
 
