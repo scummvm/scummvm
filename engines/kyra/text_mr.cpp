@@ -233,7 +233,7 @@ void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int voc
 		"MTFR00S.EMC", "MTFR00Q.EMC", "MTFR00E.EMC", "MTFR00T.EMC",
 		 "MTL00S.EMC",  "MTL00Q.EMC",  "MTL00E.EMC",  "MTL00T.EMC",
 		 "MTR00S.EMC",  "MTR00Q.EMC",  "MTR00E.EMC",  "MTR00T.EMC",
-		 "MTA00S.EMC",  "MTA00Q.EMC",  "MTA00Q.EMC",  "MTA00T.EMC"
+		 "MTA00S.EMC",  "MTA00Q.EMC",  "MTA00E.EMC",  "MTA00T.EMC"
 	};
 
 	int chat = talkScriptTable[chatType + _mainCharacter.facing * 4];
