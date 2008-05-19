@@ -171,8 +171,6 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 
 	while (height > 0) {
 
-		int drawDestOfs = 0;
-
 		memcpy(bitBuf, cmdBuffer, lineSize);
 		cmdBuffer += lineSize;
 
