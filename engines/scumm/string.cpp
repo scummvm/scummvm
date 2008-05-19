@@ -174,11 +174,10 @@ void ScummEngine_v6::drawBlastTexts() {
 
 				// Some localizations may override colors
 				// See credits in Chinese COMI
-				if (c == '^' && (buf == _blastTextQueue[i].text + 1)) {
-					int color;
-					switch (*buf) {
-					case 'c':
-						color = buf[3] - '0' + 10 *(buf[2] - '0');
+				if (_game.id == GID_CMI && 	_language == Common::ZH_TWN &&
+				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
+					if (*buf == 'c') {
+						int color = buf[3] - '0' + 10 *(buf[2] - '0');
 						_charset->setColor(color);
 
 						buf += 4;
@@ -1114,7 +1113,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if (!(chr == '@' && _game.heversion <= 71) || _language == Common::ZH_TWN) {
+			if (!(chr == '@' && _game.heversion <= 71) ||
+			    (_game.id == GID_CMI && _language == Common::ZH_TWN)) {
 				*dst++ = chr;
 			}
 		}
