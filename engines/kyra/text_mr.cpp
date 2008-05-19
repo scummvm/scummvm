@@ -57,6 +57,7 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 			count = getCharLength(p, textWidth/4);
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
+			// No update of textWidth here
 		} 
 		
 		if (textWidth > (2*maxTextWidth)) {
