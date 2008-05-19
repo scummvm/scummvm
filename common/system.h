@@ -662,7 +662,7 @@ public:
 	 * Move ("warp") the mouse cursor to the specified position in virtual
 	 * screen coordinates.
 	 * @param x		the new x position of the mouse
-	 * @param y		the new x position of the mouse
+	 * @param y		the new y position of the mouse
 	 */
 	virtual void warpMouse(int x, int y) = 0;
 
