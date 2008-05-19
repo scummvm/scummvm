@@ -188,7 +188,8 @@ int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
-	_vm->_mixer->stopHandle(_audioStreamHandle);
+ 	if (_vm->getGameID() != GID_RTZ)
+		_vm->_mixer->stopHandle(_audioStreamHandle);
 	_vm->_screen->show();
 	return 0;
 }
