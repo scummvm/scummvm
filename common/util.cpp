@@ -578,14 +578,8 @@ void NORETURN CDECL error(const char *s, ...) {
 
 
 	// Print the error message to stderr
-#ifdef __GP32__
-	printf("ERROR: %s\n", buf_output);
-#else
 	fprintf(stderr, "%s!\n", buf_output);
-#endif
 
-
-#ifndef __GP32__
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
 	if (g_engine) {
@@ -599,7 +593,6 @@ void NORETURN CDECL error(const char *s, ...) {
 			debugger->onFrame();
 		}
 	}
-#endif
 
 
 #if defined( USE_WINDBG )
@@ -641,13 +634,10 @@ void CDECL warning(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#ifdef __GP32__ //ph0x FIXME: implement fprint?
-	printf("WARNING: %s\n", buf);
-#else
 #if !defined (__SYMBIAN32__)
 	fprintf(stderr, "WARNING: %s!\n", buf);
 #endif
-#endif
+
 #if defined( USE_WINDBG )
 	strcat(buf, "\n");
 #if defined( _WIN32_WCE )
