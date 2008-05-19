@@ -60,7 +60,8 @@ void vector_renderer_test(OSystem *_system) {
 
 	_system->showOverlay();
 
-	while (true) { // draw!!
+	bool running = true;
+	while (running) { // draw!!
 		vr->setFgColor(255, 0, 206);
 		vr->setGradientFactor(1);
 		vr->setGradientColors(214, 113, 8, 240, 200, 25);
@@ -87,8 +88,9 @@ void vector_renderer_test(OSystem *_system) {
 
 		Common::Event event;
 		_system->delayMillis(100);
-		if (eventMan->pollEvent(event) && event.type == Common::EVENT_QUIT) {
-			break;
+		while (eventMan->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT)
+				running = false;
 		}
 	}
 
