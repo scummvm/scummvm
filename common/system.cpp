@@ -130,8 +130,6 @@ void OSystem::clearScreen() {
  */
 #if defined(__DS__)
 	#include "backends/fs/ds/ds-fs-factory.h"
-#elif defined(__GP32__)
-	#include "backends/fs/gp32/gp32-fs-factory.h"
 #elif defined(PALMOS_MODE)
 	#include "backends/fs/palmos/palmos-fs-factory.h"
 #elif defined(__PLAYSTATION2__)
@@ -144,8 +142,6 @@ FilesystemFactory *OSystem::getFilesystemFactory() {
 		return 0;
 	#elif defined(__DS__)
 		return &DSFilesystemFactory::instance();
-	#elif defined(__GP32__)
-		return &GP32FilesystemFactory::instance();
 	#elif defined(PALMOS_MODE)
 		return &PalmOSFilesystemFactory::instance();
 	#elif defined(__PLAYSTATION2__)
