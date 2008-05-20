@@ -143,7 +143,7 @@ void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
-	byte *source, *dest, *maskp;
+	byte *source, *dest, *maskp = 0;
 	int startX = 0;
 	int startY = 0;
 	int clipWidth = sourceSurface->w;
