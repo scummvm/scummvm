@@ -48,12 +48,15 @@ void PmvPlayer::play(const char *filename) {
 	readChunk(chunkType, chunkSize);	// "MHED"
 
 	// TODO: Evaluate header
-	//_fd->skip(0x3A);
 
 	uint frameDelay = _fd->readUint16LE();
 	_fd->skip(10);
 	uint soundFreq = _fd->readUint16LE();
-	// FIXME: weird frequencies... (11127 or 22254)
+	// Note: There seem to be weird sound frequencies in PMV videos.
+	// Not sure why, but leaving those original frequencies intact
+	// results to sound being choppy. Therefore, we set them to more
+	// "common" values here (11025 instead of 11127 and 22050 instead
+	// of 22254)
 	if (soundFreq == 11127) soundFreq = 11025;
 	if (soundFreq == 22254) soundFreq = 22050;
 
