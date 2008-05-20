@@ -98,6 +98,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
 
+	_quit = false;
+
 	_debugger = 0;
 
 	_gameFile = 0;
@@ -933,7 +935,7 @@ void AGOSEngine::pause() {
 	_mixer->pauseAll(true);
 	_sound->ambientPause(true);
 
-	while (_pause) {
+	while (_pause && !_quit) {
 		delay(1);
 		if (_keyPressed.keycode == Common::KEYCODE_p)
 			_pause = false;
@@ -974,7 +976,7 @@ int AGOSEngine::go() {
 		(getFeatures() & GF_DEMO)) {
 		int i;
 
-		while (1) {
+		while (!_quit) {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
@@ -1003,7 +1005,7 @@ int AGOSEngine::go() {
 	runSubroutine101();
 	permitInput();
 
-	while (1) {
+	while (!_quit) {
 		waitForInput();
 		handleVerbClicked(_verbHitArea);
 		delay(100);
@@ -1012,6 +1014,9 @@ int AGOSEngine::go() {
 	return 0;
 }
 
+
+/*  I do not think that this will be used
+ *  
 void AGOSEngine::shutdown() {
 	// Sync with AGOSEngine::~AGOSEngine()
 	// In Simon 2, this gets deleted along with _sound further down
@@ -1059,6 +1064,7 @@ void AGOSEngine::shutdown() {
 
 	_system->quit();
 }
+*/
 
 uint32 AGOSEngine::getTime() const {
 	// FIXME: calling time() is not portable, use OSystem::getMillis instead

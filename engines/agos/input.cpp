@@ -189,12 +189,12 @@ void AGOSEngine::waitForInput() {
 		resetVerbs();
 	}
 
-	for (;;) {
+	while (!_quit) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 		_dragAccept = 1;
 
-		for (;;) {
+		while (!_quit) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 					_keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();
