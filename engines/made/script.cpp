@@ -431,9 +431,6 @@ void ScriptInterpreter::cmd_return() {
 		return;
 	}
 
-	if (_dumpScripts)
-		return;
-
 	int16 funcResult = _stack.top();
 	_stack.setStackPos(_localStackPos);
 	_localStackPos = kScriptStackLimit - _stack.pop();
@@ -449,9 +446,6 @@ void ScriptInterpreter::cmd_return() {
 void ScriptInterpreter::cmd_call() {
 	debug(4, "\nENTER: stackPtr = %d; _localStackPos = %d", _stack.getStackPos(), _localStackPos);
 	byte argc = readByte();
-
-	if (_dumpScripts)
-		return;
 
 	_stack.push(argc);
 	_stack.push(_codeIp - _codeBase);
@@ -573,9 +567,6 @@ void ScriptInterpreter::cmd_send() {
 	
 	debug(4, "argc = %d", argc);
 	
-	if (_dumpScripts)
-		return;
-
 	_stack.push(argc);
 	_stack.push(_codeIp - _codeBase);
 	_stack.push(_runningScriptObjectIndex);
