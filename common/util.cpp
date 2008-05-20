@@ -394,18 +394,40 @@ const char *getRenderModeDescription(RenderMode id) {
 
 #pragma mark -
 
-static Array<EngineDebugLevel> gDebugLevels;
-static uint32 gDebugLevelsEnabled = 0;
+namespace {
+
+DebugLevelContainer gDebugLevels;
+uint32 gDebugLevelsEnabled = 0;
+
+struct DebugLevelSort {
+	bool operator()(const EngineDebugLevel &l, const EngineDebugLevel &r) {
+		return (l.option.compareToIgnoreCase(r.option) < 0);
+	}
+};
+
+struct DebugLevelSearch {
+	const String &_option;
+
+	DebugLevelSearch(const String &option) : _option(option) {}
+
+	bool operator()(const EngineDebugLevel &l) {
+		return _option.equalsIgnoreCase(l.option);
+	}
+};
+
+}
 
 bool addSpecialDebugLevel(uint32 level, const String &option, const String &description) {
-	for (uint i = 0; i < gDebugLevels.size(); ++i) {
-		if (!scumm_stricmp(option.c_str(), gDebugLevels[i].option.c_str())) {
-			warning("Declared engine debug level '%s' again", option.c_str());
-			gDebugLevels[i] = EngineDebugLevel(level, option, description);
-			return true;
-		}
+	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+
+	if (i != gDebugLevels.end()) {
+		warning("Declared engine debug level '%s' again", option.c_str());
+		*i = EngineDebugLevel(level, option, description);
+	} else {
+		gDebugLevels.push_back(EngineDebugLevel(level, option, description));
+		sort(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSort());
 	}
-	gDebugLevels.push_back(EngineDebugLevel(level, option, description));
+
 	return true;
 }
 
@@ -415,43 +437,43 @@ void clearAllSpecialDebugLevels() {
 }
 
 bool enableSpecialDebugLevel(const String &option) {
-	for (uint i = 0; i < gDebugLevels.size(); ++i) {
-		if (!scumm_stricmp(option.c_str(), gDebugLevels[i].option.c_str())) {
-			gDebugLevelsEnabled |= gDebugLevels[i].level;
-			gDebugLevels[i].enabled = true;
-			return true;
-		}
+	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+
+	if (i != gDebugLevels.end()) {
+		gDebugLevelsEnabled |= i->level;
+		i->enabled = true;
+
+		return true;
+	} else {
+		return false;
 	}
-	return false;
 }
 
 void enableSpecialDebugLevelList(const String &option) {
-	uint start = 0;
-	uint end = 0;
+	StringTokenizer tokenizer(option, " ,");
+	String token;
 
-	const char *str = option.c_str();
-	for (end = start + 1; end <= option.size(); ++end) {
-		if (str[end] == ',' || end == option.size()) {
-			if (!enableSpecialDebugLevel(Common::String(&str[start], end-start))) {
-				warning("Engine does not support debug level '%s'", Common::String(&str[start], end-start).c_str());
-			}
-			start = end + 1;
-		}
+	while (!tokenizer.empty()) {
+		token = tokenizer.nextToken();
+		if (!enableSpecialDebugLevel(token))
+			warning("Engine does not support debug level '%s'", token.c_str());
 	}
 }
 
 bool disableSpecialDebugLevel(const String &option) {
-	for (uint i = 0; i < gDebugLevels.size(); ++i) {
-		if (!scumm_stricmp(option.c_str(), gDebugLevels[i].option.c_str())) {
-			gDebugLevelsEnabled &= ~gDebugLevels[i].level;
-			gDebugLevels[i].enabled = false;
-			return true;
-		}
+	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+
+	if (i != gDebugLevels.end()) {
+		gDebugLevelsEnabled &= ~i->level;
+		i->enabled = false;
+
+		return true;
+	} else {
+		return false;
 	}
-	return false;
 }
 
-const Array<EngineDebugLevel> &listSpecialDebugLevels() {
+const DebugLevelContainer &listSpecialDebugLevels() {
 	return gDebugLevels;
 }
 
