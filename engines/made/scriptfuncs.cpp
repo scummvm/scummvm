@@ -319,6 +319,7 @@ int16 ScriptFunctions::sfIsMusicPlaying(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetTextPos(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfSetTextPos");
 	// This seems to be some kind of low-level opcode.
 	// The original engine calls int 10h to set the VGA cursor position.
@@ -331,21 +332,25 @@ int16 ScriptFunctions::sfFlashScreen(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfPlayNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopNote(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfStopNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayTele(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfPlayTele");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopTele(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfStopTele");
 	return 0;
 }
@@ -374,7 +379,7 @@ int16 ScriptFunctions::sfSetScreenLock(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
-		warning("Unimplemented opcode: sfAddSprite");
+		// Unused in RTZ
 		return 0;
 	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
 		return argv[2];
@@ -483,6 +488,7 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfHomeText(int16 argc, int16 *argv) {
+	// TODO: Used in LGOP2
 	warning("Unimplemented opcode: sfHomeText");
 	return 0;
 }
@@ -542,6 +548,7 @@ int16 ScriptFunctions::sfSetSpriteGround(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfLoadResText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfLoadResText");
 	return 0;
 }
@@ -611,6 +618,7 @@ int16 ScriptFunctions::sfGetCdTime(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayCdSegment(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfPlayCdSegment");
 	return 0;
 }
@@ -623,6 +631,7 @@ int16 ScriptFunctions::sfPrintf(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfClearMono");
 	return 0;
 }
@@ -637,11 +646,13 @@ int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfClearText");
 	return 1;
 }
 
 int16 ScriptFunctions::sfAnimText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfAnimText");
 	return 0;
 }
@@ -692,11 +703,13 @@ int16 ScriptFunctions::sfLoadPicture(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetMusicVolume(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfSetMusicVolume");
 	return 0;
 }
 
 int16 ScriptFunctions::sfRestartEvents(int16 argc, int16 *argv) {
+	// TODO: Used in RTZ
 	warning("Unimplemented opcode: sfRestartEvents");
 	return 0;
 }
@@ -724,11 +737,13 @@ int16 ScriptFunctions::sfSetChannelState(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetChannelLocation(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfSetChannelLocation");
 	return 0;
 }
 
 int16 ScriptFunctions::sfSetChannelContent(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfSetChannelContent");
 	return 0;
 }
@@ -796,6 +811,7 @@ int16 ScriptFunctions::sfSetSoundRate(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfDrawAnimPic(int16 argc, int16 *argv) {
+	// TODO: Used in RTZ
 	warning("Unimplemented opcode: sfDrawAnimPic");
 	return 0;
 }
@@ -810,6 +826,7 @@ int16 ScriptFunctions::sfLoadAnim(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfReadText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfReadText");
 	return 0;
 }
@@ -913,11 +930,13 @@ int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfShakeScreen(int16 argc, int16 *argv) {
+	// TODO: Used in RTZ
 	warning("Unimplemented opcode: sfShakeScreen");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlaceMenu(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfPlaceMenu");
 	return 0;
 }

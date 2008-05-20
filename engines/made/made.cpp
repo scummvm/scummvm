@@ -206,7 +206,12 @@ int MadeEngine::go() {
 	}
 
 	_eventKey = _eventMouseX = _eventMouseY = 0;
+	
+#ifdef DUMP_SCRIPTS
+	_script->dumpAllScripts();
+#else
 	_script->runScript(_dat->getMainCodeObjectIndex());
+#endif
 
 	return 0;
 }

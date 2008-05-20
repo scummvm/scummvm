@@ -95,6 +95,8 @@ public:
 			return NULL;
 	}
 
+	uint getObjectCount() const { return _objects.size(); }
+
 	int16 getMainCodeObjectIndex() const { return _mainCodeObjectIndex; }
 
 	int16 getVar(int16 index);

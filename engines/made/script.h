@@ -32,6 +32,11 @@
 
 namespace Made {
 
+// Define this to dump all game scripts and a usage statistic of all
+// opcodes/extended functions instead of running the actual game.
+// Then run ScummVM with debuglevel 1.
+//#define DUMP_SCRIPTS
+
 class MadeEngine;
 class ScriptFunctions;
 
@@ -63,6 +68,8 @@ public:
 	ScriptInterpreter(MadeEngine *vm);
 	~ScriptInterpreter();
 	void runScript(int16 scriptObjectIndex);
+	void dumpScript(int16 objectIndex, int *opcodeStats, int *externStats);
+	void dumpAllScripts();
 protected:
 	MadeEngine *_vm;
 
@@ -71,7 +78,6 @@ protected:
 	int16 _runningScriptObjectIndex;
 	byte *_codeBase, *_codeIp;
 	bool _terminated;
-	bool _dumpScripts;
 
 	ScriptFunctions *_functions;
 
@@ -82,6 +88,9 @@ protected:
 	struct CommandEntry {
 		CommandProc proc;
 		const char *desc;
+#ifdef DUMP_SCRIPTS
+		const char *sig;
+#endif
 	};
 
 	const CommandEntry *_commands;

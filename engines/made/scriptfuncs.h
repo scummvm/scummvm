@@ -54,6 +54,7 @@ public:
 	}
 	void setupExternalsTable();
 	const char* getFuncName(int index) { return _externalFuncNames[index]; }
+	int getCount() const { return _externalFuncs.size(); }
 protected:
 	MadeEngine *_vm;
 	Audio::SoundHandle _audioStreamHandle;
