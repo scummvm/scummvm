@@ -68,11 +68,11 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx09(surface, palette, newPalette, colorCount);
 		break;
 
-	case 10:
+	case 10:	// "Screen wipe in", left to right
 		vfx10(surface, palette, newPalette, colorCount);
 		break;
 
-	case 12:
+	case 12:	// "Screen wipe in", top to bottom
 		vfx12(surface, palette, newPalette, colorCount);
 		break;
 
@@ -215,6 +215,7 @@ void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPa
 	setPalette(palette);
 }
 
+// "Screen wipe in", left to right
 void ScreenEffects::vfx10(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = -56; x < 312; x += 8) {
 		copyRect(surface, x, 0, x + 64, 200);
@@ -224,6 +225,7 @@ void ScreenEffects::vfx10(Graphics::Surface *surface, byte *palette, byte *newPa
 	setPalette(palette);
 }
 
+// "Screen wipe in", top to bottom
 void ScreenEffects::vfx12(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = -70; y < 312; y += 10) {
 		copyRect(surface, 0, y, 320, y + 80);
