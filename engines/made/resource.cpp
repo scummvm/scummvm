@@ -94,7 +94,8 @@ AnimationResource::AnimationResource() {
 }
 
 AnimationResource::~AnimationResource() {
-	// TODO: Free anim frames
+	for (uint i = 0; i < _frames.size(); i++)
+		delete _frames[i];
 }
 
 void AnimationResource::load(byte *source, int size) {
