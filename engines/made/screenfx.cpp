@@ -68,6 +68,14 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx09(surface, palette, newPalette, colorCount);
 		break;
 
+	case 10:
+		vfx10(surface, palette, newPalette, colorCount);
+		break;
+
+	case 12:
+		vfx12(surface, palette, newPalette, colorCount);
+		break;
+
 	case 14:	// "Screen open" effect
 		vfx14(surface, palette, newPalette, colorCount);
 		break;
@@ -108,7 +116,7 @@ void ScreenEffects::setBlendedPalette(byte *palette, byte *newPalette, int color
 	if (!_screen->isPaletteLocked()) {
 		int32 mulValue = (value * 64) / maxValue;
 		for (int i = 0; i < colorCount * 3; i++)
-			_fxPalette[i] = newPalette[i] - (newPalette[i] - palette[i]) * mulValue / 64;
+			_fxPalette[i] = CLIP(newPalette[i] - (newPalette[i] - palette[i]) * mulValue / 64, 0, 255);
 		_screen->setRGBPalette(_fxPalette, 0, 256);
 	}
 }
@@ -203,6 +211,24 @@ void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPa
 			setBlendedPalette(palette, newPalette, colorCount, i * 4 + j, 32);
 			_screen->updateScreenAndWait(25);
 		}
+	}
+	setPalette(palette);
+}
+
+void ScreenEffects::vfx10(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int x = -56; x < 312; x += 8) {
+		copyRect(surface, x, 0, x + 64, 200);
+		setBlendedPalette(palette, newPalette, colorCount, x + 56, 368);
+		_screen->updateScreenAndWait(25);
+	}
+	setPalette(palette);
+}
+
+void ScreenEffects::vfx12(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int y = -70; y < 312; y += 10) {
+		copyRect(surface, 0, y, 320, y + 80);
+		setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);
+		_screen->updateScreenAndWait(25);
 	}
 	setPalette(palette);
 }
