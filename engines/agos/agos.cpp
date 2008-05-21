@@ -891,6 +891,8 @@ AGOSEngine::~AGOSEngine() {
 
 	free(_tablesHeapPtr - _tablesHeapCurPos);
 
+	free(_mouseData);
+	
 	free(_gameOffsetsPtr);
 	free(_iconFilePtr);
 	free(_itemArrayPtr);
@@ -902,6 +904,7 @@ AGOSEngine::~AGOSEngine() {
 	free(_backGroundBuf);
 	free(_backBuf);
 	free(_scaleBuf);
+	free(_zoneBuffers);
 
 	free(_window4BackScn);
 	free(_window6BackScn);
