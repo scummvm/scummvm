@@ -211,7 +211,7 @@ drawLine(int x1, int y1, int x2, int y2) {
 	if (dy == 0) { // horizontal lines
 		// these can be filled really fast with a single memset.
 		// TODO: Platform specific ASM in set_to, would make this thing fly 
-		Common::set_to(ptr, ptr + dx + 1, (PixelType)_fgColor);
+		colorFill(ptr, ptr + dx + 1, (PixelType)_fgColor);
 
 	} else if (dx == 0) { // vertical lines
 		// these ones use a static pitch increase.
@@ -366,21 +366,21 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m) {
 			if (fill_m == kGradientFill)
 				color = calcGradient(max_h - h, max_h);
 
-			Common::set_to(ptr, ptr + w, color);
+			colorFill(ptr, ptr + w, color);
 			ptr += pitch;
 		}
 	} else {
 		int sw = Base::_strokeWidth, sp = 0, hp = pitch * (h - 1);
 
 		while (sw--) {
-			Common::set_to(ptr + sp, ptr + w + sp, color);
-			Common::set_to(ptr + hp - sp, ptr + w + hp - sp, color);
+			colorFill(ptr + sp, ptr + w + sp, color);
+			colorFill(ptr + hp - sp, ptr + w + hp - sp, color);
 			sp += pitch;
 		}
 
 		while (h--) {
-			Common::set_to(ptr, ptr + Base::_strokeWidth, color);
-			Common::set_to(ptr + w - Base::_strokeWidth, ptr + w, color);
+			colorFill(ptr, ptr + Base::_strokeWidth, color);
+			colorFill(ptr + w - Base::_strokeWidth, ptr + w, color);
 			ptr += pitch;
 		}
 	}
@@ -455,8 +455,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 
 	if (fill_m == kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
-			Common::set_to(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
-			Common::set_to(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
+			colorFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
+			colorFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
 			sp += pitch;
 
 			__BE_RESET();
@@ -475,8 +475,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 
 		ptr_fill += pitch * real_radius;
 		while (short_h--) {
-			Common::set_to(ptr_fill, ptr_fill + Base::_strokeWidth, color);
-			Common::set_to(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
+			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth, color);
+			colorFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
 			ptr_fill += pitch;
 		}
 	} else {
@@ -485,21 +485,21 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 		if (fill_m == kGradientFill) {
 			while (x++ < y) {
 				__BE_ALGORITHM();
-				Common::set_to(ptr_tl - x - py, ptr_tr + x - py, calcGradient(real_radius - y, long_h));
-				Common::set_to(ptr_tl - y - px, ptr_tr + y - px, calcGradient(real_radius - x, long_h));
+				colorFill(ptr_tl - x - py, ptr_tr + x - py, calcGradient(real_radius - y, long_h));
+				colorFill(ptr_tl - y - px, ptr_tr + y - px, calcGradient(real_radius - x, long_h));
 
-				Common::set_to(ptr_bl - x + py, ptr_br + x + py, calcGradient(long_h - r + y, long_h));
-				Common::set_to(ptr_bl - y + px, ptr_br + y + px, calcGradient(long_h - r + x, long_h));
+				colorFill(ptr_bl - x + py, ptr_br + x + py, calcGradient(long_h - r + y, long_h));
+				colorFill(ptr_bl - y + px, ptr_br + y + px, calcGradient(long_h - r + x, long_h));
 			}
 		} else {
 			while (x++ < y) {
 				__BE_ALGORITHM();			
 
-				Common::set_to(ptr_tl - x - py, ptr_tr + x - py, color);
-				Common::set_to(ptr_tl - y - px, ptr_tr + y - px, color);
+				colorFill(ptr_tl - x - py, ptr_tr + x - py, color);
+				colorFill(ptr_tl - y - px, ptr_tr + y - px, color);
 
-				Common::set_to(ptr_bl - x + py, ptr_br + x + py, color);
-				Common::set_to(ptr_bl - y + px, ptr_br + y + px, color);
+				colorFill(ptr_bl - x + py, ptr_br + x + py, color);
+				colorFill(ptr_bl - y + px, ptr_br + y + px, color);
 
 				// FIXME: maybe not needed at all?
 				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
@@ -510,7 +510,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillM
 		while (short_h--) {
 			if (fill_m == kGradientFill)
 				color = calcGradient(real_radius++, long_h);
-			Common::set_to(ptr_fill, ptr_fill + w + 1, color);
+			colorFill(ptr_fill, ptr_fill + w + 1, color);
 			ptr_fill += pitch;
 		}
 	}
@@ -546,15 +546,15 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, FillMode fill_m) {
 			}
 		}
 	} else {
-		Common::set_to(ptr - r, ptr + r, color);
+		colorFill(ptr - r, ptr + r, color);
 		__BE_RESET();
 
 		while (x++ < y) {
 			__BE_ALGORITHM();
-			Common::set_to(ptr - x + py, ptr + x + py, color);
-			Common::set_to(ptr - x - py, ptr + x - py, color);
-			Common::set_to(ptr - y + px, ptr + y + px, color);
-			Common::set_to(ptr - y - px, ptr + y - px, color);
+			colorFill(ptr - x + py, ptr + x + py, color);
+			colorFill(ptr - x - py, ptr + x - py, color);
+			colorFill(ptr - y + px, ptr + y + px, color);
+			colorFill(ptr - y - px, ptr + y - px, color);
 		}
 	}
 }
@@ -732,8 +732,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 	if (fill_m == VectorRenderer::kNoFill) {
 		while (sw++ < Base::_strokeWidth) {
-			Common::set_to(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
-			Common::set_to(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
+			colorFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
+			colorFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
 			sp += p;
 
 			x = r - (sw - 1); y = 0; T = 0;
@@ -752,8 +752,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 		ptr_fill += p * r;
 		while (short_h-- >= 0) {
-			Common::set_to(ptr_fill, ptr_fill + Base::_strokeWidth, color);
-			Common::set_to(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
+			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth, color);
+			colorFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
 			ptr_fill += p;
 		}
 	} else {
@@ -763,18 +763,18 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 		while (x > y++) {
 			__WU_ALGORITHM();
 
-			Common::set_to(ptr_tl - x - py, ptr_tr + x - py, color);
-			Common::set_to(ptr_tl - y - px, ptr_tr + y - px, color);
+			colorFill(ptr_tl - x - py, ptr_tr + x - py, color);
+			colorFill(ptr_tl - y - px, ptr_tr + y - px, color);
 
-			Common::set_to(ptr_bl - x + py, ptr_br + x + py, color);
-			Common::set_to(ptr_bl - y + px, ptr_br + y + px, color);
+			colorFill(ptr_bl - x + py, ptr_br + x + py, color);
+			colorFill(ptr_bl - y + px, ptr_br + y + px, color);
 
 			__WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
 		}
 
 		ptr_fill += p * r;
 		while (short_h-- >= 0) {
-			Common::set_to(ptr_fill, ptr_fill + w + 1, color);
+			colorFill(ptr_fill, ptr_fill + w + 1, color);
 			ptr_fill += p;
 		}
 	}
@@ -814,17 +814,17 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 			}
 		}
 	} else {
-		Common::set_to(ptr - r, ptr + r + 1, color);
+		colorFill(ptr - r, ptr + r + 1, color);
 		x = r; y = 0; T = 0;
 		px = p * x; py = 0;
 
 		while (x > y++) {
 			__WU_ALGORITHM();
 
-			Common::set_to(ptr - x + py, ptr + x + py, color);
-			Common::set_to(ptr - x - py, ptr + x - py, color);
-			Common::set_to(ptr - y + px, ptr + y + px, color);
-			Common::set_to(ptr - y - px, ptr + y - px, color);
+			colorFill(ptr - x + py, ptr + x + py, color);
+			colorFill(ptr - x - py, ptr + x - py, color);
+			colorFill(ptr - y + px, ptr + y + px, color);
+			colorFill(ptr - y - px, ptr + y - px, color);
 				
 			__WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py, a1);
 		}				

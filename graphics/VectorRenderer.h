@@ -339,13 +339,13 @@ public:
 		int pitch = surfacePitch();
 
 		if (mode == kBackgroundFill)
-			Common::set_to(ptr, ptr + w * h, _bgColor);
+			colorFill(ptr, ptr + w * h, _bgColor);
 		else if (mode == kForegroundFill)
-			Common::set_to(ptr, ptr + w * h, _fgColor);
+			colorFill(ptr, ptr + w * h, _fgColor);
 		else if (mode == kGradientFill) {
 			int i = h;
 			while (i--) {
-				Common::set_to(ptr, ptr + w, calcGradient(h - i, h));
+				colorFill(ptr, ptr + w, calcGradient(h - i, h));
 				ptr += pitch;
 			}
 		}
@@ -453,7 +453,7 @@ protected:
 	 * @param max Maximum amount of the progress.
 	 * @return Composite color of the gradient at the given "progress" amount.
 	 */
-	inline PixelType calcGradient(uint32 pos, uint32 max) {
+	virtual inline PixelType calcGradient(uint32 pos, uint32 max) {
 		PixelType output = 0;
 		pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 		
@@ -475,10 +475,45 @@ protected:
 	 * @param color Color of the pixel
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
-	inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
+	virtual inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
 		while (first != last)
 			blendPixelPtr(first++, color, alpha);
-	}	
+	}
+
+	/**
+	 * Fills several pixels in a row with a given color.
+	 *
+	 * This is a replacement function for Common::set_to, using an unrolled
+	 * loop to maximize performance on most architectures.
+	 * This function may (and should) be overloaded in any child renderers
+	 * for portable platforms with platform-specific assembly code.
+	 *
+	 * This fill operation is extensively used throughout the renderer, so this
+	 * counts as one of the main bottlenecks. Please replace it with assembly 
+	 * when possible!
+	 *
+	 * @param first Pointer to the first pixel to fill.
+	 * @param last Pointer to the last pixel to fill.
+	 * @param color Color of the pixel
+	 */
+	virtual inline void colorFill(PixelType *first, PixelType *last, PixelType color) {
+		register PixelType *ptr = first;
+		register int count = (last - first);
+		{
+			register int n = (count + 7) / 8;
+			switch (count % 8) {
+			case 0: do { *ptr++ = color;
+			case 7:      *ptr++ = color;
+			case 6:      *ptr++ = color;
+			case 5:      *ptr++ = color;
+			case 4:      *ptr++ = color;
+			case 3:      *ptr++ = color;
+			case 2:      *ptr++ = color;
+			case 1:      *ptr++ = color;
+					} while (--n > 0);
+			}
+		}
+	}
 
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /** Background color currently being used to draw on the renderer */
