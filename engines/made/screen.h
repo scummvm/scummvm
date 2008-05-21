@@ -42,7 +42,7 @@ struct SpriteChannel {
 	int16 state;
 	int16 needRefresh;
 	uint16 index;
-	int16 x, y, xofs, yofs;
+	int16 x, y;
 	int16 x1, y1, x2, y2;
 	uint32 area;
 	uint16 fontNum;
@@ -54,6 +54,10 @@ struct SpriteChannel {
 struct ClipInfo {
 	Common::Rect clipRect;
 	Graphics::Surface *destSurface;
+};
+
+struct SpriteListItem {
+	int16 index, xofs, yofs;
 };
 
 class MadeEngine;
@@ -120,8 +124,6 @@ public:
 	uint16 setChannelLocation(uint16 channelIndex, int16 x, int16 y);
 	uint16 setChannelContent(uint16 channelIndex, uint16 index);
 	void setChannelUseMask(uint16 channelIndex);
-	void setChannelOffsets(uint16 channelIndex, int16 xofs, int16 yofs);
-	void getChannelOffsets(uint16 channelIndex, int16 &xofs, int16 &yofs);
 	void drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask);
 	void updateSprites();
 	void clearChannels();
@@ -161,6 +163,10 @@ public:
 	void showWorkScreen();
 	void updateScreenAndWait(int delay);
 
+	int16 addToSpriteList(int16 index, int16 xofs, int16 yofs);
+	SpriteListItem getFromSpriteList(int16 index);
+	void clearSpriteList();
+
 protected:
 	MadeEngine *_vm;
 	ScreenEffects *_fx;
@@ -193,6 +199,8 @@ protected:
 	
 	uint16 _channelsUsedCount;
 	SpriteChannel _channels[100];
+	
+	Common::Array<SpriteListItem> _spriteList;
 	
 };
 

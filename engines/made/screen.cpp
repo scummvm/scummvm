@@ -266,7 +266,6 @@ uint16 Screen::setChannelLocation(uint16 channelIndex, int16 x, int16 y) {
 uint16 Screen::setChannelContent(uint16 channelIndex, uint16 index) {
 	if (channelIndex < 1 || channelIndex >= 100 || _channels[channelIndex - 1].type == 0)
 		return 0;
-	//debug(2, "setChannelContent(%d, %04X)\n", channelIndex, index); fflush(stdout); g_system->delayMillis(5000);
 	_channels[channelIndex - 1].index = index;
 	return updateChannel(channelIndex - 1) + 1;
 }
@@ -275,20 +274,6 @@ void Screen::setChannelUseMask(uint16 channelIndex) {
 	if (channelIndex < 1 || channelIndex >= 100)
 		return;
 	_channels[channelIndex - 1].mask = _mask;
-}
-
-void Screen::setChannelOffsets(uint16 channelIndex, int16 xofs, int16 yofs) {
-	if (channelIndex < 1 || channelIndex >= 100)
-		return;
-	_channels[channelIndex - 1].xofs = xofs;
-	_channels[channelIndex - 1].yofs = yofs;
-}
-
-void Screen::getChannelOffsets(uint16 channelIndex, int16 &xofs, int16 &yofs) {
-	if (channelIndex < 1 || channelIndex >= 100)
-		return;
-	xofs = _channels[channelIndex - 1].xofs;
-	yofs = _channels[channelIndex - 1].yofs;
 }
 
 void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask) {
@@ -481,8 +466,6 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 		_channels[channelIndex].x2 = x2;
 		_channels[channelIndex].y2 = y2;
 		_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
-		_channels[channelIndex].xofs = 0;
-		_channels[channelIndex].yofs = 0;
 
 		if (_channelsUsedCount <= channelIndex)
 			_channelsUsedCount = channelIndex + 1;
@@ -822,6 +805,23 @@ void Screen::showWorkScreen() {
 void Screen::updateScreenAndWait(int delay) {
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(delay);
+}
+
+int16 Screen::addToSpriteList(int16 index, int16 xofs, int16 yofs) {
+	SpriteListItem item;
+	item.index = index;
+	item.xofs = xofs;
+	item.yofs = yofs;
+	_spriteList.push_back(item);
+	return _spriteList.size();
+}
+
+SpriteListItem Screen::getFromSpriteList(int16 index) {
+	return _spriteList[index - 1];
+}
+
+void Screen::clearSpriteList() {
+	_spriteList.clear();
 }
 
 } // End of namespace Made

@@ -93,7 +93,6 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	void update_events();
 
 private:
 public:
@@ -106,6 +105,7 @@ public:
 
 	bool _quit;
 
+	uint16 _eventNum;
 	int _eventMouseX, _eventMouseY;
 	uint16 _eventKey;
 	int _soundRate;
@@ -124,7 +124,9 @@ public:
 
 	const Common::String getTargetName() { return _targetName; }
 	Common::String getSavegameFilename(int16 saveNum);
-	
+
+	void handleEvents();
+
 };
 
 } // End of namespace Made

@@ -195,61 +195,8 @@ int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPollEvent(int16 argc, int16 *argv) {
-
-	Common::Event event;
-	Common::EventManager *eventMan = g_system->getEventManager();
-
-	int16 eventNum = 0;
-
-	if (eventMan->pollEvent(event)) {
-		switch (event.type) {
-
-		case Common::EVENT_MOUSEMOVE:
-			_vm->_eventMouseX = event.mouse.x;
-			_vm->_eventMouseY = event.mouse.y;
-			break;
-			
-		case Common::EVENT_LBUTTONDOWN:
-			eventNum = 1;
-			break;
-
-		/*
-		case Common::EVENT_LBUTTONUP:
-			eventNum = 2; // TODO: Is this correct?
-			break;
-		*/
-
-		case Common::EVENT_RBUTTONDOWN:
-			eventNum = 3;
-			break;
-
-		/*
-		case Common::EVENT_RBUTTONUP:
-			eventNum = 4; // TODO: Is this correct?
-			break;
-		*/
-
-		case Common::EVENT_KEYDOWN:
-			_vm->_eventKey = event.kbd.ascii;
-			// For unknown reasons, the game accepts ASCII code
-			// 9 as backspace
-			if (_vm->_eventKey == Common::KEYCODE_BACKSPACE)
-				_vm->_eventKey = 9;
-			eventNum = 5;
-			break;
-
-		case Common::EVENT_QUIT:
-			_vm->_quit = true;
-			break;
-
-		default:
-			break;
-
-		}
-	}
-
-	_vm->_system->updateScreen();
-
+	int16 eventNum = _vm->_eventNum;
+	_vm->_eventNum = 0;
 	return eventNum;
 }
 
@@ -382,7 +329,7 @@ int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 		// Unused in RTZ
 		return 0;
 	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
-		return argv[2];
+		return _vm->_screen->addToSpriteList(argv[2], argv[1], argv[0]);
 	} else {
 		return 0;
 	}
@@ -390,6 +337,9 @@ int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfFreeAnim(int16 argc, int16 *argv) {
 	_vm->_screen->clearChannels();
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
+		_vm->_screen->clearSpriteList();
+	}
 	return 0;
 }
 
@@ -397,8 +347,9 @@ int16 ScriptFunctions::sfDrawSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
 		return _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
 	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
-		int16 channel = _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
-		_vm->_screen->setChannelUseMask(channel);
+		SpriteListItem item = _vm->_screen->getFromSpriteList(argv[2]);
+		int16 channelIndex = _vm->_screen->drawSprite(item.index, argv[1] - item.xofs, argv[0] - item.yofs);
+		_vm->_screen->setChannelUseMask(channelIndex);
 		return 0;
 	} else {
 		return 0;

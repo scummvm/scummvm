@@ -196,6 +196,9 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 	_codeIp = _codeBase;
 	
 	while (!_vm->_quit) {
+
+		_vm->handleEvents();
+
 		byte opcode = readByte();
 		if (opcode >= 1 && opcode <= _commandsMax) {
 			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
@@ -203,6 +206,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 		} else {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
 		}
+		
 	}
 }
 
