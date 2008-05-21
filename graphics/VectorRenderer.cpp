@@ -210,7 +210,6 @@ drawLine(int x1, int y1, int x2, int y2) {
 
 	if (dy == 0) { // horizontal lines
 		// these can be filled really fast with a single memset.
-		// TODO: Platform specific ASM in set_to, would make this thing fly 
 		colorFill(ptr, ptr + dx + 1, (PixelType)_fgColor);
 
 	} else if (dx == 0) { // vertical lines
@@ -605,7 +604,6 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = Base::surfacePitch();
-	int sw = 0, sp = 0, hp = h * pitch;
 	int alpha = 102;
 
 	x1 += blur;

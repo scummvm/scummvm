@@ -499,19 +499,18 @@ protected:
 	virtual inline void colorFill(PixelType *first, PixelType *last, PixelType color) {
 		register PixelType *ptr = first;
 		register int count = (last - first);
-		{
-			register int n = (count + 7) / 8;
-			switch (count % 8) {
-			case 0: do { *ptr++ = color;
-			case 7:      *ptr++ = color;
-			case 6:      *ptr++ = color;
-			case 5:      *ptr++ = color;
-			case 4:      *ptr++ = color;
-			case 3:      *ptr++ = color;
-			case 2:      *ptr++ = color;
-			case 1:      *ptr++ = color;
-					} while (--n > 0);
-			}
+		register int n = (count + 7) >> 3;
+		switch (count % 8) {
+		case 0: do { 
+					*ptr++ = color;
+		case 7:		*ptr++ = color;
+		case 6:		*ptr++ = color;
+		case 5:		*ptr++ = color;
+		case 4:		*ptr++ = color;
+		case 3:		*ptr++ = color;
+		case 2:		*ptr++ = color;
+		case 1:		*ptr++ = color;
+				} while (--n > 0);
 		}
 	}
 
