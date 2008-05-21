@@ -679,12 +679,10 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 			int valueType; /* 0: dec; 1: hex; 2: extended function */
 			int16 value;
 			char tempStr[32];
-			if (opcodeStats)
-				opcodeStats[opcode - 1]++;
+			opcodeStats[opcode - 1]++;
 			codeLine += desc;
 			for (; *sig != '\0'; sig++) {
 				codeLine += " ";
-				// Fallthroughs are intended
 				switch (*sig) {
 				case 'b':
 					valueType = 0;
