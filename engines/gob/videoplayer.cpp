@@ -557,7 +557,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 
 	if (_backSurf) {
 		_vm->_draw->invalidateRect(state.left, state.top, state.right, state.bottom);
-		_vm->_draw->blitInvalidated();
+		_vm->_draw->blitInvalidated(palCmd <= 1);
 	}
 	_vm->_video->retrace();
 

@@ -225,7 +225,7 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	_invalidatedCount++;
 }
 
-void Draw::blitInvalidated() {
+void Draw::blitInvalidated(bool noForce) {
 	if (_noInvalidated57 &&
 			((_vm->_global->_videoMode == 5) || (_vm->_global->_videoMode == 7)))
 		return;
@@ -248,8 +248,12 @@ void Draw::blitInvalidated() {
 	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 	if (_applyPal) {
 		clearPalette();
-		forceBlit();
+
+		if (!noForce)
+			forceBlit();
+
 		setPalette();
+
 		_invalidatedCount = 0;
 		_noInvalidated = true;
 		_applyPal = false;
