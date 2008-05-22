@@ -534,8 +534,6 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 		window->iconPtr->upArrow = _scrollUpHitArea;
 		window->iconPtr->downArrow = _scrollDownHitArea;
 	}
-
-	free (window->iconPtr);
 }
 
 uint AGOSEngine_Feeble::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr) {
