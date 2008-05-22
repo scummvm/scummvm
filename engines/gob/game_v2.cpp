@@ -632,13 +632,15 @@ void Game_v2::collisionsBlock(void) {
 	Collision *collArea;
 	int16 timeKey;
 	byte *savedIP;
+	byte collAreaStart;
 
 	if (_shouldPushColls)
 		pushCollisions(0);
 
-	collArea = _collisionAreas;
-	while (collArea->left != 0xFFFF)
-		collArea++;
+	collAreaStart = 0;
+	while (_collisionAreas[collAreaStart].left != 0xFFFF)
+		collAreaStart++;
+	collArea = &_collisionAreas[collAreaStart];
 
 	_shouldPushColls = 0;
 	collResId = -1;
@@ -964,7 +966,7 @@ void Game_v2::collisionsBlock(void) {
 							continue;
 
 						_activeCollResId = collPtr->id;
-						_activeCollIndex = i;
+						_activeCollIndex = i + collAreaStart;
 						_vm->_inter->storeMouse();
 						if (VAR(16) != 0)
 							break;
@@ -1006,7 +1008,7 @@ void Game_v2::collisionsBlock(void) {
 							if ((collPtr->id & 0xF000) == 0x8000)
 								if (++counter == descIndex) {
 									_activeCollResId = collPtr->id;
-									_activeCollIndex = i;
+									_activeCollIndex = i + collAreaStart;
 									break;
 								}
 						}
