@@ -133,7 +133,7 @@ public:
 	int16 _scrollOffsetX;
 
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
-	void blitInvalidated(bool noForce = false);
+	void blitInvalidated();
 	void setPalette();
 	void clearPalette();
 
