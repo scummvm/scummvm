@@ -1073,8 +1073,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 	state.flags |= kStateNoVideoData;
 	state.left = 0x7FFF;
-	state.right = 0x7FFF;
-	state.top = 0;
+	state.top = 0x7FFF;
+	state.right = 0;
 	state.bottom = 0;
 
 	if (!_vidMem)
