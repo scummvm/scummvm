@@ -183,7 +183,7 @@ void Video::retrace(bool mouse) {
 		int screenX = _screenDeltaX;
 		int screenY = _screenDeltaY;
 		int screenWidth = MIN<int>(_surfWidth, _vm->_width);
-		int screenHeight = MIN<int>(_surfHeight + _screenDeltaY - _splitHeight2, _vm->_height);
+		int screenHeight = MIN<int>(_surfHeight - _splitHeight2, _vm->_height);
 
 		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
 				_surfWidth, screenX, screenY, screenWidth, screenHeight);
