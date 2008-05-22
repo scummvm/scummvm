@@ -56,6 +56,8 @@ Sound::~Sound() {
 	delete _blaster;
 	delete _adlib;
 	delete _infogrames;
+	delete _cdrom;
+	delete _bgatmos;
 
 	for (int i = 0; i < kSoundsCount; i++)
 		_sounds[i].free();
