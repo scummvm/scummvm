@@ -99,12 +99,13 @@ void KyraEngine_v2::pauseEngineIntern(bool pause) {
 	KyraEngine_v1::pauseEngineIntern(pause);
 
 	if (!pause) {
+		uint32 pausedTime = _system->getMillis() - _pauseStart;
+		_pauseStart = 0;
+
 		for (int i = 0; i < ARRAYSIZE(_sceneSpecialScriptsTimer); ++i) {
 			if (_sceneSpecialScriptsTimer[i])
-				_sceneSpecialScriptsTimer[i] += _pauseStart;
+				_sceneSpecialScriptsTimer[i] += pausedTime;
 		}
-
-		_pauseStart = 0;
 	} else {
 		_pauseStart = _system->getMillis();
 	}
