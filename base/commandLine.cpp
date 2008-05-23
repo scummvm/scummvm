@@ -46,6 +46,8 @@
 #endif
 #elif defined(__SYMBIAN32__)
 #define DEFAULT_SAVE_PATH "Savegames"
+#elif defined(PALMOS_MODE)
+#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
 #endif
 
 #define DETECTOR_TESTING_HACK
@@ -146,7 +148,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined (__SYMBIAN32__))
+#if !(defined(__GP32__) || defined (__SYMBIAN32__))
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
@@ -229,6 +231,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("savepath", savePath);
 #elif defined (IPHONE)
 	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
+
+#elif defined(PALMOS_MODE)
+	ConfMan.registerDefault("savepath", DEFAULT_SAVE_PATH);
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
 
