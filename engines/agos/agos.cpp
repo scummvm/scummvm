@@ -23,7 +23,7 @@
  *
  */
 
-
+#include <time.h>	// for AGOSEngine::getTime()
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -37,8 +37,6 @@
 
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
-
-#include <time.h>	// for AGOSEngine::getTime()
 
 using Common::File;
 
