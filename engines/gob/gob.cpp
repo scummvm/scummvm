@@ -75,6 +75,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_scenery   = 0; _draw     = 0; _util   = 0;
 	_video     = 0; _saveLoad = 0;
 
+	_pauseStart = 0;
+
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
@@ -246,6 +248,52 @@ int GobEngine::init() {
 
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 	return 0;
+}
+
+void GobEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_pauseStart = _system->getMillis();
+	} else {
+		uint32 duration = _system->getMillis() - _pauseStart;
+
+		_vm->_vidPlayer->notifyPaused(duration);
+
+		_vm->_game->_startTimeKey += duration;
+		_vm->_draw->_cursorTimeKey += duration;
+		if (_vm->_inter->_soundEndTimeKey != 0)
+			_vm->_inter->_soundEndTimeKey += duration;
+	}
+
+	_mixer->pauseAll(pause);
+}
+
+void GobEngine::pauseGame() {
+	Common::Event event;
+	Common::EventManager *eventMan = g_system->getEventManager();
+
+	pauseEngineIntern(true);
+
+	bool end = false;
+	while (!end && !_quitRequested) {
+		if (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.flags == Common::KBD_CTRL)
+					if (event.kbd.keycode == Common::KEYCODE_SPACE)
+						end = true;
+				break;
+			case Common::EVENT_QUIT:
+				_quitRequested = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_vm->_util->delay(15);
+	}
+
+	pauseEngineIntern(false);
 }
 
 bool GobEngine::initGameParts() {

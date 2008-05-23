@@ -340,6 +340,11 @@ void Imd::waitEndFrame() {
 		g_system->delayMillis(_frameLength);
 }
 
+void Imd::notifyPaused(uint32 duration) {
+	if (_soundStage == 2)
+		_soundStartTime += duration;
+}
+
 void Imd::copyCurrentFrame(byte *dest,
 		uint16 left, uint16 top, uint16 width, uint16 height,
 		uint16 x, uint16 y, uint16 pitch, int16 transp) {

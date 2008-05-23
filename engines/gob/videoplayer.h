@@ -83,6 +83,8 @@ public:
 	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
 
+	void notifyPaused(uint32 duration);
+
 private:
 	class Video {
 		public:

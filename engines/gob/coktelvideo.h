@@ -134,7 +134,7 @@ public:
 	/** Use an own memory block as video memory. */
 	virtual void setVideoMemory() = 0;
 
-	/** Play sound (if the IMD has sound). */
+	/** Play sound (if the video has sound). */
 	virtual void enableSound(Audio::Mixer &mixer) = 0;
 	/** Don't play sound or stop currently playing sound. */
 	virtual void disableSound() = 0;
@@ -154,6 +154,9 @@ public:
 	virtual State nextFrame() = 0;
 	/** Wait for the frame to end. */
 	virtual void waitEndFrame() = 0;
+
+	/** Notifies the video that it was paused for duration ms. */
+	virtual void notifyPaused(uint32 duration) = 0;
 
 	/** Copy the current frame.
 	 *
@@ -212,6 +215,8 @@ public:
 
 	State nextFrame();
 	void waitEndFrame();
+
+	void notifyPaused(uint32 duration);
 
 	void copyCurrentFrame(byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,

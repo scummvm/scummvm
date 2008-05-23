@@ -178,9 +178,12 @@ private:
 	int32 _features;
 	Common::Platform _platform;
 
+	uint32 _pauseStart;
+
 	int go();
 	int init();
 
+	void pauseEngineIntern(bool pause);
 	bool initGameParts();
 	void deinitGameParts();
 
@@ -235,6 +238,8 @@ public:
 	virtual ~GobEngine();
 
 	void initGame(const GOBGameDescription *gd);
+
+	void pauseGame();
 };
 
 } // End of namespace Gob
