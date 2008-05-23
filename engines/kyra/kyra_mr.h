@@ -50,6 +50,11 @@ public:
 	KyraEngine_MR(OSystem *system, const GameFlags &flags);
 	~KyraEngine_MR();
 
+	//TODO: proper extended implementation of KyraEngine_v2::pauseEngineIntern.
+	// Idle animation time, item animations and album animations should be taken
+	// care of, but since those would just produce minor glitches it's not that
+	// important.
+
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
 	GUI_v2 *gui_v2() const { return _gui; }

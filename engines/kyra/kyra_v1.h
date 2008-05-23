@@ -109,6 +109,8 @@ public:
 
 	::GUI::Debugger *getDebugger();
 
+	virtual void pauseEngineIntern(bool pause);
+
 	bool quit() const { return _quitFlag; }
 
 	uint8 game() const { return _flags.gameID; }

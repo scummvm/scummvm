@@ -68,6 +68,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	memset(&_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
+
+	_pauseStart = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -91,6 +93,21 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_opcodesAnimation.clear();
 
 	delete[] _screenBuffer;
+}
+
+void KyraEngine_v2::pauseEngineIntern(bool pause) {
+	KyraEngine_v1::pauseEngineIntern(pause);
+
+	if (!pause) {
+		for (int i = 0; i < ARRAYSIZE(_sceneSpecialScriptsTimer); ++i) {
+			if (_sceneSpecialScriptsTimer[i])
+				_sceneSpecialScriptsTimer[i] += _pauseStart;
+		}
+
+		_pauseStart = 0;
+	} else {
+		_pauseStart = _system->getMillis();
+	}
 }
 
 void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {

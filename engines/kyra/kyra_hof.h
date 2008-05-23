@@ -182,6 +182,10 @@ public:
 	KyraEngine_HoF(OSystem *system, const GameFlags &flags);
 	~KyraEngine_HoF();
 
+	//TODO: proper extended implementation of KyraEngine_v2::pauseEngineIntern.
+	// Here we need to take care of the seqeunce play code (LordHoto *thinks*),
+	// item animation, idle animation and tim player.
+
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
 	GUI_v2 *gui_v2() const { return _gui; }
