@@ -28,49 +28,27 @@
 #include "be_save.h"
 
 Common::StringList PalmSaveFileManager::listSavefiles(const char *pattern) {
-	TODO: Implement this. If you don't understand what it should do, just ask
-	(e.g. on scummvm-devel or Fingolfin). It should be pretty simple if you
-	use Common::matchString from common/util.h and read the Doxygen docs,
-	then combine this with the old code below...
-
-/*
-void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	FileRef fileRef;
+	Common::StringList list;
+
 	// try to open the dir
 	Err e = VFSFileOpen(gVars->VFS.volRefNum, SCUMMVM_SAVEPATH, vfsModeRead, &fileRef);
-	memset(marks, false, num*sizeof(bool));
-
 	if (e != errNone)
-		return;
+		return list;
 
-	// enumerate all files
+
 	UInt32 dirEntryIterator = vfsIteratorStart;
 	Char filename[32];
 	FileInfoType info = {0, filename, 32};
-	UInt16 length = StrLen(prefix);
-	int slot = 0;
 
 	while (dirEntryIterator != vfsIteratorStop) {
 		e = VFSDirEntryEnumerate (fileRef, &dirEntryIterator, &info);
 
-		if (e != expErrEnumerationEmpty) {									// there is something
-
-			if (StrLen(info.nameP) == (length + 2)) {						// consider max 99, filename length is ok
-				if (StrNCaselessCompare(prefix, info.nameP, length) == 0) { // this seems to be a save file
-					if (isdigit(info.nameP[length]) && isdigit(info.nameP[length+1])) {
-
-						slot = StrAToI(filename + length);
-						if (slot >= 0 && slot < num)
-							*(marks+slot) = true;
-
-					}
-				}
-			}
-
-		}
+		if (e != expErrEnumerationEmpty)					// there is something
+			if (Common::matchString(info.nameP, pattern))	// this seems to be what we are looking for
+				list.push_back(info.nameP);
 	}
 
 	VFSFileClose(fileRef);
-}
-
+	return list;
 }
