@@ -24,9 +24,9 @@
  */
 
 #include "be_base.h"
-#include "be_save.h"
 #include "common/config-file.h"
 #include "common/config-manager.h"
+#include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
 
