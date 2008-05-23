@@ -211,8 +211,7 @@ public:
 	uint32 getMouseTouching() { return _mouseTouching; }
 	void setMouseTouching(uint32 touching) { _mouseTouching = touching; }
 
-	void pauseGame();
-	void unpauseGame();
+	void pauseEngine(bool pause);
 
 	void setMouse(uint32 res);
 	void setLuggage(uint32 res);
