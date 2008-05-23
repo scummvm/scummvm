@@ -697,6 +697,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	c3b22fa4654bb580b20325ebf4174841	-1	nl	Windows	-	-	-	joostp
 	9781422e4288dbc090720e4563168ba7	-1	fr	Windows	-	-	-	gist974
 	92e7727e67f5cd979d8a1070e4eb8cb3	-1	en	All	HE 98.5	Updated	-	cyx
+	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 100	Updated	-	Adrian
 
 	3486ede0f904789267d4bcc5537a46d4	-1	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
