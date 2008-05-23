@@ -54,7 +54,12 @@ enum rifOptions {
 };
 
 Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
-	_lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
+	_lang = 0;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		_lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		_lang = 2;
 
 	_hintRqState = kRQNoHint;
 	_hintOffer = 0;
