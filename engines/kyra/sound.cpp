@@ -67,9 +67,6 @@ bool Sound::voiceFileIsPresent(const char *file) {
 }
 
 bool Sound::voicePlay(const char *file, bool isSfx) {
-	uint32 fileSize = 0;
-	byte *fileData = 0;
-	bool found = false;
 	char filenamebuffer[25];
 
 	int h = 0;
@@ -88,27 +85,27 @@ bool Sound::voicePlay(const char *file, bool isSfx) {
 		if (!stream)
 			continue;
 		audioStream = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
-		found = true;
 		break;
 	}
 
-	if (!found) {
+	if (!audioStream) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, ".VOC");
 
-		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
+		uint32 fileSize = 0;
+		byte *fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
 			return false;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
 		audioStream = Audio::makeVOCStream(vocStream);
+
+		delete[] fileData;
+		fileSize = 0;
 	}
 
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
-
-	delete[] fileData;
-	fileSize = 0;
 
 	return true;
 }
