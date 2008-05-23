@@ -238,8 +238,6 @@ public:
 	virtual ~GobEngine();
 
 	void initGame(const GOBGameDescription *gd);
-
-	void pauseGame();
 };
 
 } // End of namespace Gob

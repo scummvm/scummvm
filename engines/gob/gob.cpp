@@ -267,35 +267,6 @@ void GobEngine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
-void GobEngine::pauseGame() {
-	Common::Event event;
-	Common::EventManager *eventMan = g_system->getEventManager();
-
-	pauseEngineIntern(true);
-
-	bool end = false;
-	while (!end && !_quitRequested) {
-		if (eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.flags == Common::KBD_CTRL)
-					if (event.kbd.keycode == Common::KEYCODE_SPACE)
-						end = true;
-				break;
-			case Common::EVENT_QUIT:
-				_quitRequested = true;
-				break;
-			default:
-				break;
-			}
-		}
-
-		_vm->_util->delay(15);
-	}
-
-	pauseEngineIntern(false);
-}
-
 bool GobEngine::initGameParts() {
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
 
