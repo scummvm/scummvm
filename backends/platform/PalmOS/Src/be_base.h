@@ -26,6 +26,8 @@
 #ifndef BE_BASE_H
 #define BE_BASE_H
 
+#include <time.h>
+
 #include "PalmVersion.h"
 #include "globals.h"
 
@@ -236,6 +238,7 @@ public:
 
 	bool pollEvent(Common::Event &event);
 
+	void getTimeAndDate(struct tm &t) const;
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 

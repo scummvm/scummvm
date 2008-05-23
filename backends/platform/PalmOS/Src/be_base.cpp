@@ -120,6 +120,11 @@ void OSystem_PalmBase::initBackend() {
 	OSystem::initBackend();
 }
 
+void OSystem_PalmBase::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
+}
+
 uint32 OSystem_PalmBase::getMillis() {
 	return TimGetTicks() * 1000 / SysTicksPerSecond();
 }
