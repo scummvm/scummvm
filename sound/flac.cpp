@@ -143,6 +143,9 @@ public:
 	}
 
 	int32 getTotalPlayTime() const {
+		if (!_totalNumLoops)
+			return AudioStream::kUnknownPlayTime;
+
 		int32 samples = 0;
 
 		if (!_lastSample) {

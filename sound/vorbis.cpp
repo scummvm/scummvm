@@ -120,6 +120,9 @@ public:
 	int getRate() const			{ return _rate; }
 
 	int32 getTotalPlayTime() const {
+		if (!_totalNumLoops)
+			return AudioStream::kUnknownPlayTime;
+
 #ifdef USE_TREMOR
 		return (_endTime - _startTime) * _totalNumLoops;
 #else
