@@ -155,8 +155,7 @@ public:
 	virtual void clearAutoComplete();
 	virtual void setCharactersEntered(int count);
 
-
-
+	FilesystemFactory *getFilesystemFactory();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

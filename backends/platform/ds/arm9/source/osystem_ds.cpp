@@ -37,6 +37,7 @@
 #include "cdaudio.h"
 #include "graphics/surface.h"
 #include "touchkeyboard.h"
+#include "ds-fs-factory.h"
 
 OSystem_DS* OSystem_DS::_instance = NULL;
 
@@ -414,6 +415,10 @@ void OSystem_DS::delayMillis(uint msecs) {
 void OSystem_DS::getTimeAndDate(struct tm &t) const {
 	time_t curTime = time(0);
 	t = *localtime(&curTime);
+}
+
+FilesystemFactory *OSystem_DS::getFilesystemFactory() {
+	return &DSFilesystemFactory::instance();
 }
 
 OSystem::MutexRef OSystem_DS::createMutex(void) {
