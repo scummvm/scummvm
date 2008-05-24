@@ -766,12 +766,15 @@ AgiEngine::~AgiEngine() {
 	}
 
 	agiDeinit();
+	delete _loader;
 	_sound->deinitSound();
 	delete _sound;
 	_gfx->deinitVideo();
 	delete _sprites;
+	delete _picture;
 	free(_game.sbufOrig);
 	_gfx->deinitMachine();
+	delete _gfx;
 	delete _rnd;
 	delete _console;
 
