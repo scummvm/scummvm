@@ -724,23 +724,23 @@ FileExpander::FileExpander() : _src(0) {
 	_tables[0] = new uint8[3914];
 	assert(_tables[0]);
 
-	_tables[1]	= _tables[0] + 320;
-	_tables[2]	= _tables[0] + 352;
-	_tables[3]	= _tables[0] + 864;
-	_tables[4]	= _tables[0] + 2016;
-	_tables[5]	= _tables[0] + 2528;
-	_tables[6]	= _tables[0] + 2656;
-	_tables[7]	= _tables[0] + 2736;
-	_tables[8]	= _tables[0] + 2756;
+	_tables[1] = _tables[0] + 320;
+	_tables[2] = _tables[0] + 352;
+	_tables[3] = _tables[0] + 864;
+	_tables[4] = _tables[0] + 2016;
+	_tables[5] = _tables[0] + 2528;
+	_tables[6] = _tables[0] + 2656;
+	_tables[7] = _tables[0] + 2736;
+	_tables[8] = _tables[0] + 2756;
 
-	_tables16[0] = (uint16*) (_tables[0] + 3268);
-	_tables16[1] = (uint16*) (_tables[0] + 3302);
-	_tables16[2] = (uint16*) (_tables[0] + 3338);
+	_tables16[0] = (uint16 *)(_tables[0] + 3268);
+	_tables16[1] = (uint16 *)(_tables[0] + 3302);
+	_tables16[2] = (uint16 *)(_tables[0] + 3338);
 }
 
 FileExpander::~FileExpander() {
 	delete _src;
-	delete [] _tables[0];
+	delete[] _tables[0];
 }
 
 bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 compressedSize) {
@@ -1075,9 +1075,9 @@ bool FileCache::getData(ResFileEntry entry, uint8 *dst) {
 }
 
 void FileCache::flush() {
-	debug("total amount of cache memory used: %d", _size);
+	debug(1, "total amount of cache memory used: %d", _size);
 	for (Common::List<FileCacheEntry>::const_iterator c = _cachedFileList.begin(); c != _cachedFileList.end(); ++c)
-		delete [] c->data;
+		delete[] c->data;
 	_cachedFileList.clear();
 	_size = 0;
 }
@@ -1344,7 +1344,7 @@ Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::S
 		tmpFile.close();
 
 		FileExpander().process(outbuffer, inbuffer, entry.size, entry.compressedSize);
-		delete [] inbuffer;
+		delete[] inbuffer;
 
 		if (entry.size > INS_CACHE_THRESHOLD)
 			_fileCache.add(entry, outbuffer);
