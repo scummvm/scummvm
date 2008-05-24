@@ -106,7 +106,7 @@ public:
 	 *
 	 * @return	playtime in milliseconds
 	 */
-	int32 getTotalPlayTime() const { return kUnknownPlayTime; }
+	virtual int32 getTotalPlayTime() const { return kUnknownPlayTime; }
 };
 
 /**
