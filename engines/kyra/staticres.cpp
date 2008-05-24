@@ -1548,7 +1548,8 @@ const char *KyraEngine_HoF::_languageExtension[] = {
 	"GER",/*,
 	"ITA",		Italian and Spanish were never included
 	"SPA"*/
-	"JPN"
+	"JPN",
+	"TXT"		// This is used for spell book and letter text
 };
 
 const char *KyraEngine_HoF::_scriptLangExt[] = {
