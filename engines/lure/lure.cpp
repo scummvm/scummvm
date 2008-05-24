@@ -154,6 +154,16 @@ int LureEngine::go() {
 	return 0;
 }
 
+void LureEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (pause) {
+		Sound.pause();
+	} else {
+		Sound.resume();
+	}
+}
+
 void LureEngine::quitGame() {
 	_system->quit();
 }
