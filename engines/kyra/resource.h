@@ -52,12 +52,17 @@ struct ResFileEntry {
 	enum kType {
 		kRaw = 0,
 		kPak = 1,
-		kIns = 2,
-		kTlk = 3,
+		kInsKyra = 2,
+		kInsHof = 3,
+		kInsMal = 4,
+		kTlk = 5,
 		kAutoDetect
 	};
 	kType type;
 	uint32 offset;
+
+	int fileIndex;
+	uint32 compressedSize;
 };
 
 typedef Common::HashMap<Common::String, ResFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResFileMap;

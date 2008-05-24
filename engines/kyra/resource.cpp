@@ -34,6 +34,8 @@
 
 #include "kyra/resource.h"
 
+#define INS_CACHE_THRESHOLD		300000	// all files with file size greater than this will be cached
+
 namespace Kyra {
 
 Resource::Resource(KyraEngine_v1 *vm) : _loaders(), _map(), _vm(vm) {
@@ -69,6 +71,9 @@ bool Resource::reset() {
 		if (_vm->gameFlags().isTalkie)
 			loadPakFile("CHAPTER1.VRM");
 	} else if (_vm->game() == GI_KYRA2) {
+		if (_vm->gameFlags().useInstallerPackage)
+			loadPakFile("WESTWOOD.001");
+
 		// mouse pointer, fonts, etc. required for initializing
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 			loadPakFile("GENERAL.PAK");
@@ -85,11 +90,12 @@ bool Resource::reset() {
 
 		return true;
 	} else if (_vm->game() == GI_KYRA3) {
+		if (_vm->gameFlags().useInstallerPackage)
+			loadPakFile("WESTWOOD.001");
 		// Add default file directories
 		Common::File::addDefaultDirectory(ConfMan.get("path") + "malcolm");
 		Common::File::addDefaultDirectory(ConfMan.get("path") + "MALCOLM");
 
-		loadPakFile("WESTWOOD.001");
 		loadFileList("FILEDATA.FDT");
 
 		return true;
@@ -579,7 +585,7 @@ Common::SeekableReadStream *ResLoaderPak::loadFileFromArchive(const Common::Stri
 	return stream;
 }
 
-class ResLoaderIns : public ResArchiveLoader {
+class ResLoaderInsKyra : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
@@ -587,16 +593,803 @@ public:
 	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
 
 	ResFileEntry::kType getType() const {
-		return ResFileEntry::kIns;
+		return ResFileEntry::kInsKyra;
 	}
 };
 
-bool ResLoaderIns::checkFilename(Common::String filename) const {
-	filename.toUppercase();
-	return (filename.hasSuffix(".001"));
+bool ResLoaderInsKyra::checkFilename(Common::String filename) const {
+	return false;
 }
 
-bool ResLoaderIns::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+bool ResLoaderInsKyra::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+	return true;
+}
+
+bool ResLoaderInsKyra::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+	return true;
+}
+
+Common::SeekableReadStream *ResLoaderInsKyra::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
+	return 0;
+}
+
+class FileExpanderSource {
+public:
+	FileExpanderSource(const uint8 *data) : _dataPtr(data), _bitsLeft(8), _key(0), _index(0) {}
+	~FileExpanderSource() {}
+
+	void advSrcRefresh();
+	void advSrcBitsBy1();
+	void advSrcBitsByIndex(uint8 newIndex);
+
+	uint8 getKeyLower() { return _key & 0xff; }
+	void setIndex(uint8 index) { _index = index; }
+	uint16 getKeyMasked(uint8 newIndex);
+	uint16 keyMaskedAlign(uint16 val);
+
+	void copyBytes(uint8 *& dst);
+
+private:
+	const uint8 *_dataPtr;
+	uint16 _key;
+	int8 _bitsLeft;
+	uint8 _index;
+};
+
+void FileExpanderSource::advSrcBitsBy1() {
+	_key >>= 1;		
+	if (!--_bitsLeft) {
+		_key = ((*_dataPtr++) << 8 ) | (_key & 0xff);
+		_bitsLeft = 8;
+	}
+}
+
+void FileExpanderSource::advSrcBitsByIndex(uint8 newIndex) {
+	_index = newIndex;
+	_bitsLeft -= _index;
+	if (_bitsLeft <= 0) {
+		_key >>= (_index + _bitsLeft);
+		_index = -_bitsLeft;
+		_bitsLeft = 8 - _index;
+		_key = (*_dataPtr++ << 8) | (_key & 0xff);
+	}
+	_key >>= _index;
+}
+
+uint16 FileExpanderSource::getKeyMasked(uint8 newIndex) {
+	static const uint8 mskTable[] = { 0x0F, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF };
+	_index = newIndex;
+	uint16 res = 0;
+
+	if (_index > 8) {
+		newIndex = _index - 8;
+		res = (_key & 0xff) & mskTable[8];		
+		advSrcBitsByIndex(8);
+		_index = newIndex;
+		res |= (((_key & 0xff) & mskTable[_index]) << 8);
+		advSrcBitsByIndex(_index);
+	} else {
+		res = (_key & 0xff) & mskTable[_index];
+		advSrcBitsByIndex(_index);
+	}
+
+	return res;
+}
+
+void FileExpanderSource::copyBytes(uint8 *& dst) {
+	advSrcBitsByIndex(_bitsLeft);
+	uint16 r = (READ_LE_UINT16(_dataPtr) ^ _key) + 1;
+	_dataPtr += 2;
+
+	if (r)
+		error("decompression failure");
+
+	memcpy(dst, _dataPtr, _key);
+	_dataPtr += _key;
+	dst += _key;
+}
+
+uint16 FileExpanderSource::keyMaskedAlign(uint16 val) {
+	val -= 0x101;
+	_index = (val & 0xff) >> 2;
+	int16 b = ((_bitsLeft << 8) | _index) - 1;
+	_bitsLeft = b >> 8;
+	_index = b & 0xff;
+	return (((val & 3) + 4) << _index) + 0x101 + getKeyMasked(_index);
+}
+
+void FileExpanderSource::advSrcRefresh() {
+	_key = READ_LE_UINT16(_dataPtr);
+	_dataPtr += 2;		
+	_bitsLeft = 8;
+}
+
+class FileExpander {
+public:
+	FileExpander();
+	~FileExpander();
+
+	bool process(const uint8 * dst, const uint8 * src, uint32 outsize, uint32 insize);
+
+private:
+	void generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt);
+	uint8 calcCmdAndIndex(const uint8 *tbl, int16 &para);
+
+	FileExpanderSource *_src;
+	uint8 *_tables[9];
+	uint16 *_tables16[3];
+};
+
+FileExpander::FileExpander() : _src(0) {
+	_tables[0] = new uint8[3914];
+	assert(_tables[0]);
+
+	_tables[1]	= _tables[0] + 320;
+	_tables[2]	= _tables[0] + 352;
+	_tables[3]	= _tables[0] + 864;
+	_tables[4]	= _tables[0] + 2016;
+	_tables[5]	= _tables[0] + 2528;
+	_tables[6]	= _tables[0] + 2656;
+	_tables[7]	= _tables[0] + 2736;
+	_tables[8]	= _tables[0] + 2756;
+
+	_tables16[0] = (uint16*) (_tables[0] + 3268);
+	_tables16[1] = (uint16*) (_tables[0] + 3302);
+	_tables16[2] = (uint16*) (_tables[0] + 3338);
+}
+
+FileExpander::~FileExpander() {
+	delete _src;
+	delete [] _tables[0];
+}
+
+bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize, uint32 compressedSize) {
+	static const uint8 indexTable[] = {
+		0x10, 0x11, 0x12, 0x00, 0x08, 0x07, 0x09, 0x06, 0x0A,
+		0x05, 0x0B, 0x04, 0x0C, 0x03, 0x0D, 0x02, 0x0E, 0x01, 0x0F
+	};
+	
+	memset(_tables[0], 0, 3914);
+
+	uint8 *d = (uint8*) dst;
+	uint16 tableSize0 = 0;
+	uint16 tableSize1 = 0;
+	bool needrefresh = true;
+	bool postprocess = false;
+
+	_src = new FileExpanderSource(src);
+
+	while (d < dst + outsize) {
+
+		if (needrefresh) {
+			needrefresh = false;
+			_src->advSrcRefresh();
+		}
+
+		_src->advSrcBitsBy1();
+
+		int mode = _src->getKeyMasked(2) - 1;
+		if (mode == 1) {
+			tableSize0 = _src->getKeyMasked(5) + 257;
+			tableSize1 = _src->getKeyMasked(5) + 1;
+			memset(_tables[7], 0, 19);
+				
+			const uint8 *itbl = (uint8*) indexTable;
+			int numbytes = _src->getKeyMasked(4) + 4;
+			
+			while (numbytes--)
+				_tables[7][*itbl++] = _src->getKeyMasked(3);
+
+			generateTables(7, 8, 255, 19);
+
+			int cnt = tableSize0 + tableSize1;
+			uint8 *tmp = _tables[0];
+
+			while (cnt) {
+				uint16 cmd = _src->getKeyLower();
+				cmd = READ_LE_UINT16(&_tables[8][cmd << 1]);
+				_src->advSrcBitsByIndex(_tables[7][cmd]);
+
+				if (cmd < 16) {
+					*tmp++ = cmd;
+					cnt--;
+				} else {
+					uint8 tmpI = 0;
+					if (cmd == 16) {
+						cmd = _src->getKeyMasked(2) + 3;
+						tmpI = *(tmp - 1);							
+					} else if (cmd == 17) {
+						cmd = _src->getKeyMasked(3) + 3;
+					} else {
+						cmd = _src->getKeyMasked(7) + 11;
+					}
+					_src->setIndex(tmpI);
+					memset(tmp, tmpI, cmd);
+					tmp += cmd;
+
+					cnt -= cmd;
+					if (cnt < 0)
+						error("decompression failure");
+				}
+			}
+				
+			memcpy(_tables[1], _tables[0] + tableSize0, tableSize1);
+			generateTables(0, 2, 3, tableSize0);
+			generateTables(1, 4, 5, tableSize1);
+			postprocess = true;
+		} else if (mode < 0) {
+			_src->copyBytes(d);
+			postprocess = false;
+			needrefresh = true;
+		} else if (mode == 0){
+			uint16 cnt = 144;
+			uint8 *d2 = (uint8*) _tables[0];			
+			memset(d2, 8, 144);
+			memset(d2 + 144, 9, 112);
+			memset(d2 + 256, 7, 24);
+			memset(d2 + 280, 8, 8);
+			d2 = (uint8*) _tables[1];
+			memset(d2, 5, 32);
+			tableSize0 = 288;
+			tableSize1 = 32;
+
+			generateTables(0, 2, 3, tableSize0);
+			generateTables(1, 4, 5, tableSize1);
+			postprocess = true;
+		} else {
+			error("decompression failure");
+		}
+
+		if (!postprocess)
+			continue;
+		
+		int16 cmd = 0;
+		
+		do  {
+			cmd = ((int16*) _tables[2])[_src->getKeyLower()];
+			_src->advSrcBitsByIndex(cmd < 0 ? calcCmdAndIndex(_tables[3], cmd) : _tables[0][cmd]);
+
+			if (cmd == 0x11d) {
+				cmd = 0x200;
+			} else if (cmd > 0x108) {
+				cmd = _src->keyMaskedAlign(cmd);
+			}
+
+			if (!(cmd >> 8)) {
+				*d++ = cmd & 0xff;
+			} else if (cmd != 0x100) {
+				cmd -= 0xfe;
+				int16 offset = ((int16*) _tables[4])[_src->getKeyLower()];
+				_src->advSrcBitsByIndex(offset < 0 ? calcCmdAndIndex(_tables[5], offset) : _tables[1][offset]);
+				if ((offset & 0xff) >= 4) {
+					uint8 newIndex = ((offset & 0xff) >> 1) - 1;
+					offset = (((offset & 1) + 2) << newIndex) + _src->getKeyMasked(newIndex);
+				}
+
+				uint8 *s2 = d - 1 - offset;
+				if (s2 >= dst) {
+					while (cmd--)
+						*d++ = *s2++;
+				} else {
+					uint32 pos = dst - s2;
+					s2 += (d - dst);
+
+					if (pos < (uint32) cmd) {
+						cmd -= pos;
+						while (pos--)
+							*d++ = *s2++;
+						s2 = (uint8*) dst;
+					}
+					while (cmd--)
+						*d++ = *s2++;
+				}
+			}
+		} while (cmd != 0x100);
+	}
+
+	delete _src;
+	_src = 0;
+
+	return true;
+}
+
+void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt) {
+	const uint8 *tbl1 = _tables[srcIndex];
+	const uint8 *tbl2 = _tables[dstIndex];
+	const uint8 *tbl3 = dstIndex2 == 0xff ? 0 : _tables[dstIndex2];
+
+	if (!cnt)
+		return;
+
+	uint8 *s = (uint8*) tbl1;
+	memset(_tables16[0], 0, 32);
+	
+	for (int i = 0; i < cnt; i++) 
+		_tables16[0][(*s++)]++;
+
+	_tables16[1][1] = 0;
+
+	for (uint16 i = 1, r = 0; i < 16; i++) {
+		r = (r + _tables16[0][i]) << 1;
+		_tables16[1][i + 1] = r;
+	}
+
+	if (_tables16[1][16]) {
+		uint16 r = 0;
+		for (uint16 i = 1; i < 16; i++)
+			r += _tables16[0][i];
+		if (r > 1)
+			error("decompression failure");
+	}
+
+	s = (uint8*) tbl1;
+	uint16 *d = _tables16[2];
+	for (int i = 0; i < cnt; i++) {
+		uint16 t = *s++;
+		if (t) {
+			_tables16[1][t]++;
+			t = _tables16[1][t] - 1;
+		}
+		*d++ = t;
+	}
+
+	s = (uint8*) tbl1;
+	d = _tables16[2];
+	for (int i = 0; i < cnt; i++) {
+		int8 t = ((int8)(*s++)) - 1;
+		if (t > 0) {
+			uint16 v1 = *d;
+			uint16 v2 = 0;
+			
+			do {
+				v2 = (v2 << 1) | (v1 & 1);
+				v1 >>= 1;
+			} while (--t && v1);
+			
+			t++;
+			uint8 c1 = (v1 & 1);
+			while (t--) {
+				uint8 c2 = v2 >> 15;
+				v2 = (v2 << 1) | c1;
+				c1 = c2;
+			};
+
+			*d++ = v2;
+		} else {
+			d++;
+		}		
+	}
+
+	memset((void*) tbl2, 0, 512);
+
+	cnt--;
+	s = (uint8*) tbl1 + cnt;
+	d = &_tables16[2][cnt];
+	uint16 * bt = (uint16*) tbl3;
+	uint16 inc = 0;
+	uint16 cnt2 = 0;
+
+	do {
+		uint8 t = *s--;
+		uint16 *s2 = (uint16*) tbl2;
+
+		if (t && t < 9) {
+			inc = 1 << t;
+			uint16 o = *d;
+			
+			do {
+				s2[o] = cnt;
+				o += inc;
+			} while (!(o & 0xf00));
+
+		} else if (t > 8) {
+			if (!bt)
+				error("decompression failure");
+
+			t -= 8;
+			uint8 shiftCnt = 1;
+			uint8 v = (*d) >> 8;
+			s2 = &((uint16*) tbl2)[*d & 0xff];
+
+			do {
+				if (!*s2) {
+					*s2 = (uint16)(~cnt2);
+					*(uint32*)&bt[cnt2] = 0;
+					cnt2 += 2;
+				}
+
+				s2 = &bt[(uint16)(~*s2)];
+				if (v & shiftCnt)
+					s2++;
+
+				shiftCnt <<= 1;
+			} while (--t);
+			*s2 = cnt;
+		}
+		d--;		
+	} while (--cnt >= 0);
+}
+
+uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
+	const uint16 *t = (uint16*) tbl;
+	_src->advSrcBitsByIndex(8);
+	uint8 newIndex = 0;
+	uint16 v = _src->getKeyLower();
+
+	do {
+		newIndex++;
+		para = t[((~para) & 0xfffe) | (v & 1)];
+		v >>= 1;
+	} while (para < 0);
+
+	return newIndex;
+}
+
+class FileCache {
+public:
+	FileCache() : _size(0) {}
+	~FileCache() {}
+
+	void add(ResFileEntry entry, const uint8 *data);
+	bool getData(ResFileEntry entry, uint8 *dst);
+	void flush();
+
+private:
+	struct FileCacheEntry {
+		ResFileEntry entry;
+		const uint8 *data;
+	};
+
+	Common::List<FileCacheEntry> _cachedFileList;
+	uint32 _size;
+};
+
+void FileCache::add(ResFileEntry entry, const uint8 *data) {
+	FileCacheEntry fileCacheEntry;
+	fileCacheEntry.entry.compressedSize = entry.compressedSize;
+	fileCacheEntry.entry.mounted = entry.mounted;
+	fileCacheEntry.entry.offset = entry.offset;
+	fileCacheEntry.entry.parent = entry.parent;
+	fileCacheEntry.entry.preload = entry.preload;
+	fileCacheEntry.entry.prot = entry.prot;
+	fileCacheEntry.entry.size = entry.size;
+	fileCacheEntry.entry.type = entry.type;
+	fileCacheEntry.entry.fileIndex = entry.fileIndex;
+	uint8 *dst = new uint8[entry.size];
+	assert(dst);
+	memcpy(dst, data, entry.size);
+	fileCacheEntry.data = dst;
+	_cachedFileList.push_back(fileCacheEntry);
+	_size += entry.size;
+}
+
+bool FileCache::getData(ResFileEntry entry, uint8 *dst) {
+	for (Common::List<FileCacheEntry>::const_iterator c = _cachedFileList.begin(); c != _cachedFileList.end(); ++c) {
+		if (c->entry.offset == entry.offset && c->entry.compressedSize == entry.compressedSize &&
+			c->entry.fileIndex == entry.fileIndex && c->entry.size == entry.size) {
+				memcpy(dst, c->data, c->entry.size);
+				return true;
+		}
+	}
+	return false;
+}
+
+void FileCache::flush() {
+	debug("total amount of cache memory used: %d", _size);
+	for (Common::List<FileCacheEntry>::const_iterator c = _cachedFileList.begin(); c != _cachedFileList.end(); ++c)
+		delete [] c->data;
+	_cachedFileList.clear();
+	_size = 0;
+}
+
+class ResLoaderInsHof : public ResArchiveLoader {
+public:
+	ResLoaderInsHof() {}
+	~ResLoaderInsHof() { _fileCache.flush(); }
+
+	bool checkFilename(Common::String filename) const;
+	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
+	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
+	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
+
+	ResFileEntry::kType getType() const {
+		return ResFileEntry::kInsHof;
+	}
+private:
+	mutable FileCache _fileCache;
+};
+
+bool ResLoaderInsHof::checkFilename(Common::String filename) const {
+	filename.toUppercase();
+	if (!filename.hasSuffix(".001"))
+		return false;
+	filename.insertChar('2', filename.size() - 1);
+	filename.deleteLastChar();
+	if (!Common::File::exists(filename))
+		return false;
+	return true;
+}
+
+bool ResLoaderInsHof::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+	uint8 fileId = stream.readByte();
+	uint32 size = stream.readUint32LE();
+	
+	if (size < stream.size() + 1)
+		return false;
+
+	return (fileId == 1);
+}
+
+bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+	Common::File tmpFile;
+
+	uint32 pos = 0;
+	uint32 bytesleft = 0;
+	bool startFile = true;
+
+	Common::String fn_base(filename.c_str(), 10);
+	Common::String fn_tmp;
+	char fn_ext[4];
+
+	int i = filename.size() - 1;
+	while (fn_base.lastChar() != '.')
+		fn_base.deleteLastChar();
+
+	struct InsHofArchive {
+		Common::String filename;
+		uint32 firstFile;
+		uint32 startOffset;
+		uint32 lastFile;
+		uint32 endOffset;
+		uint32 totalSize;
+	} newArchive;
+
+	Common::List<InsHofArchive> archives;
+
+	for (int8 currentFile = 1; currentFile; currentFile++) {	
+		sprintf(fn_ext, "%03d", currentFile);
+		fn_tmp = fn_base + Common::String(fn_ext);
+
+		Common::File tmpFile;
+		if (!tmpFile.open(fn_tmp)) {
+			debug(3, "couldn't open file '%s'\n", fn_tmp);
+			break;
+		}
+
+		tmpFile.seek(pos);
+		uint8 fileId = tmpFile.readByte();
+		pos++;
+
+		uint32 size = tmpFile.size() - 1;
+		if (startFile) {
+			size -= 4;
+			if (fileId == currentFile) {
+				size -= 6;
+				pos += 6;
+				tmpFile.seek(6, SEEK_CUR);
+			} else {
+				size = ++size - pos;
+			}
+			newArchive.filename = fn_base;
+			bytesleft = newArchive.totalSize = tmpFile.readUint32LE();
+			pos += 4;
+			newArchive.firstFile = currentFile;
+			newArchive.startOffset = pos;
+			startFile = false;
+		}
+
+		uint32 cs = MIN(size, bytesleft);
+		bytesleft -= cs;
+
+		tmpFile.close();
+		
+		pos += cs;
+		if (cs == size) {
+			if (!bytesleft) {
+				newArchive.lastFile = currentFile;
+				newArchive.endOffset = --pos;
+				archives.push_back(newArchive);
+				currentFile = -1;
+			} else {
+				pos = 0;
+			}
+		} else {
+			startFile = true;
+			bytesleft = size - cs;
+			newArchive.lastFile = currentFile--;
+			newArchive.endOffset = --pos;
+			archives.push_back(newArchive);
+		}
+	}
+
+	ResFileEntry newEntry;
+	pos = 0;
+
+	const uint32 kExecSize = 0x0bba;
+	const uint32 kHeaderSize = 30;
+	const uint32 kHeaderSize2 = 46;
+
+	for (Common::List<InsHofArchive>::iterator a = archives.begin(); a != archives.end(); ++a) {
+		bool startFile = true;
+		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
+			sprintf(fn_ext, "%03d", i);
+			fn_tmp = a->filename + Common::String(fn_ext);
+
+			if (!tmpFile.open(fn_tmp)) {
+				debug(3, "couldn't open file '%s'\n", fn_tmp);
+				break;
+			}
+
+			uint32 size = (i == a->lastFile) ? a->endOffset : tmpFile.size();
+			
+			if (startFile) {
+				startFile = false;
+				pos = a->startOffset + kExecSize;
+				if (pos > size) {
+					pos -= size;
+					tmpFile.close();
+					continue;
+				}
+			} else {
+				pos ++;
+			}
+
+			while (pos < size) {
+				uint8 hdr[43];
+				uint32 m = 0;
+				tmpFile.seek(pos);
+
+				if (pos + 42 > size) {
+					m = size - pos;
+					uint32 b = 42 - m;
+
+					if (m >= 4) {
+						uint32 id = tmpFile.readUint32LE();
+						if (id == 0x06054B50) {
+							startFile = true;
+							break;
+						} else {
+							tmpFile.seek(pos);
+						}
+					}
+
+					
+					sprintf(fn_ext, "%03d", i + 1);
+					fn_tmp = a->filename + Common::String(fn_ext);
+
+					Common::File tmpFile2;
+					tmpFile2.open(fn_tmp);
+					tmpFile.read(hdr, m);
+					tmpFile2.read(hdr + m, b);
+					tmpFile2.close();
+
+				} else {
+					tmpFile.read(hdr, 42);
+				}
+
+				uint32 id = READ_LE_UINT32(hdr);
+				
+				if (id == 0x04034B50) {
+					if (hdr[8] != 8)
+						error("compression type not implemented");
+					newEntry.compressedSize = READ_LE_UINT32(hdr + 18);
+					newEntry.size = READ_LE_UINT32(hdr + 22);
+			
+					uint16 filestrlen = READ_LE_UINT16(hdr + 26);
+					*(hdr + 30 + filestrlen) = 0;
+					pos += (kHeaderSize + filestrlen - m);
+
+					newEntry.parent = filename;
+					newEntry.offset = pos;
+					newEntry.type = ResFileEntry::kAutoDetect;
+					newEntry.mounted = false;
+					newEntry.preload = false;
+					newEntry.prot = false;
+					newEntry.fileIndex = i;
+					files.push_back(File(Common::String((const char*) (hdr + 30)), newEntry));
+
+					pos += newEntry.compressedSize;
+					if (pos > size) {
+						pos -= size;
+						break;
+					}
+				} else {
+					uint32 filestrlen = READ_LE_UINT32(hdr + 28);
+					pos += (kHeaderSize2 + filestrlen - m);
+				}
+			}
+			tmpFile.close();
+		}
+	}
+
+	archives.clear();
+	
+	return true;
+}
+
+Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
+	if (archive) {
+		delete archive;
+		archive = 0;
+	}
+
+	bool resident = false;
+	uint8 * outbuffer = (uint8*) malloc(entry.size);
+	assert(outbuffer);
+
+	if (!_fileCache.getData(entry, outbuffer)) {
+		Common::File tmpFile;
+		char filename[13];
+		sprintf(filename, "WESTWOOD.%03d", entry.fileIndex);
+
+		if (!tmpFile.open(filename)) {
+			delete [] outbuffer;
+			return 0;
+		}
+
+		tmpFile.seek(entry.offset);
+
+		uint8 *inbuffer = new uint8[entry.compressedSize];
+		assert(inbuffer);
+
+		if ((entry.offset + entry.compressedSize) > tmpFile.size()) {
+			// this is for files that are split between two archive files
+			uint32 a = tmpFile.size() - entry.offset;
+			uint32 b = entry.compressedSize - a;
+				
+			tmpFile.read(inbuffer, a);
+			tmpFile.close();
+
+			filename[strlen(filename) - 1]++;
+
+			if (!tmpFile.open(filename))
+				return 0;
+			tmpFile.seek(1);
+			tmpFile.read(inbuffer + a, b);
+
+		} else {
+			tmpFile.read(inbuffer, entry.compressedSize);
+		}
+
+		tmpFile.close();
+
+		FileExpander().process(outbuffer, inbuffer, entry.size, entry.compressedSize);
+		delete [] inbuffer;
+
+		if (entry.size > INS_CACHE_THRESHOLD)
+			_fileCache.add(entry, outbuffer);
+	}
+	
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(outbuffer, entry.size, true);
+	assert(stream);	
+	
+	return stream;
+}
+
+class ResLoaderInsMalcolm : public ResArchiveLoader {
+public:
+	bool checkFilename(Common::String filename) const;
+	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
+	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
+	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
+
+	ResFileEntry::kType getType() const {
+		return ResFileEntry::kInsMal;
+	}
+};
+
+bool ResLoaderInsMalcolm::checkFilename(Common::String filename) const {
+	filename.toUppercase();
+	if (!filename.hasSuffix(".001"))
+		return false;
+	filename.insertChar('2', filename.size() - 1);
+	filename.deleteLastChar();
+	if (Common::File::exists(filename))
+		return false;
+	return true;
+}
+
+bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	stream.seek(3);
 	uint32 size = stream.readUint32LE();
 
@@ -610,7 +1403,7 @@ bool ResLoaderIns::isLoadable(const Common::String &filename, Common::SeekableRe
 	return (buffer[0] == 0x0D && buffer[1] == 0x0A);
 }
 
-bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+bool ResLoaderInsMalcolm::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
 	Common::List<Common::String> filenames;
 
 	// thanks to eriktorbjorn for this code (a bit modified though)
@@ -655,7 +1448,7 @@ bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableRead
 	return true;
 }
 
-Common::SeekableReadStream *ResLoaderIns::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
+Common::SeekableReadStream *ResLoaderInsMalcolm::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
 	assert(archive);
 
 	archive->seek(entry.offset, SEEK_SET);
@@ -748,7 +1541,9 @@ Common::SeekableReadStream *ResLoaderTlk::loadFileFromArchive(const Common::Stri
 
 void Resource::initializeLoaders() {
 	_loaders.push_back(LoaderList::value_type(new ResLoaderPak()));
-	_loaders.push_back(LoaderList::value_type(new ResLoaderIns()));
+	_loaders.push_back(LoaderList::value_type(new ResLoaderInsKyra()));
+	_loaders.push_back(LoaderList::value_type(new ResLoaderInsHof()));
+	_loaders.push_back(LoaderList::value_type(new ResLoaderInsMalcolm()));
 	_loaders.push_back(LoaderList::value_type(new ResLoaderTlk()));
 }
 
