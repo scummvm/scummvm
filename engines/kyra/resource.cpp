@@ -226,7 +226,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		buffer[12] = 0;
 		f.seek(offset + 16, SEEK_SET);
 
-		Common::String filename = (char*)buffer;
+		Common::String filename = Common::String((char*)buffer);
 		filename.toUppercase();
 
 		if (filename.hasSuffix(".PAK")) {
@@ -709,7 +709,7 @@ public:
 	FileExpander();
 	~FileExpander();
 
-	bool process(const uint8 * dst, const uint8 * src, uint32 outsize, uint32 insize);
+	bool process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 insize);
 
 private:
 	void generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt);
@@ -743,7 +743,7 @@ FileExpander::~FileExpander() {
 	delete [] _tables[0];
 }
 
-bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize, uint32 compressedSize) {
+bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 compressedSize) {
 	static const uint8 indexTable[] = {
 		0x10, 0x11, 0x12, 0x00, 0x08, 0x07, 0x09, 0x06, 0x0A,
 		0x05, 0x0B, 0x04, 0x0C, 0x03, 0x0D, 0x02, 0x0E, 0x01, 0x0F
@@ -751,7 +751,7 @@ bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize,
 	
 	memset(_tables[0], 0, 3914);
 
-	uint8 *d = (uint8*) dst;
+	uint8 *d = dst;
 	uint16 tableSize0 = 0;
 	uint16 tableSize1 = 0;
 	bool needrefresh = true;
@@ -774,7 +774,7 @@ bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize,
 			tableSize1 = _src->getKeyMasked(5) + 1;
 			memset(_tables[7], 0, 19);
 				
-			const uint8 *itbl = (uint8*) indexTable;
+			const uint8 *itbl = indexTable;
 			int numbytes = _src->getKeyMasked(4) + 4;
 			
 			while (numbytes--)
@@ -823,12 +823,12 @@ bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize,
 			needrefresh = true;
 		} else if (mode == 0){
 			// uint16 cnt = 144;
-			uint8 *d2 = (uint8*) _tables[0];			
+			uint8 *d2 = _tables[0];			
 			memset(d2, 8, 144);
 			memset(d2 + 144, 9, 112);
 			memset(d2 + 256, 7, 24);
 			memset(d2 + 280, 8, 8);
-			d2 = (uint8*) _tables[1];
+			d2 = _tables[1];
 			memset(d2, 5, 32);
 			tableSize0 = 288;
 			tableSize1 = 32;
@@ -878,7 +878,7 @@ bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize,
 						cmd -= pos;
 						while (pos--)
 							*d++ = *s2++;
-						s2 = (uint8*) dst;
+						s2 = dst;
 					}
 					while (cmd--)
 						*d++ = *s2++;
@@ -901,7 +901,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 	if (!cnt)
 		return;
 
-	uint8 *s = (uint8*) tbl1;
+	const uint8 *s = tbl1;
 	memset(_tables16[0], 0, 32);
 	
 	for (int i = 0; i < cnt; i++) 
@@ -922,7 +922,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 			error("decompression failure");
 	}
 
-	s = (uint8*) tbl1;
+	s = tbl1;
 	uint16 *d = _tables16[2];
 	for (int i = 0; i < cnt; i++) {
 		uint16 t = *s++;
@@ -933,7 +933,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 		*d++ = t;
 	}
 
-	s = (uint8*) tbl1;
+	s = tbl1;
 	d = _tables16[2];
 	for (int i = 0; i < cnt; i++) {
 		int8 t = ((int8)(*s++)) - 1;
@@ -963,7 +963,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 	memset((void*) tbl2, 0, 512);
 
 	cnt--;
-	s = (uint8*) tbl1 + cnt;
+	s = tbl1 + cnt;
 	d = &_tables16[2][cnt];
 	uint16 * bt = (uint16*) tbl3;
 	uint16 inc = 0;
@@ -1011,7 +1011,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 }
 
 uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
-	const uint16 *t = (uint16*) tbl;
+	const uint16 *t = (const uint16*)tbl;
 	_src->advSrcBitsByIndex(8);
 	uint8 newIndex = 0;
 	uint16 v = _src->getKeyLower();
@@ -1159,8 +1159,7 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 				pos += 6;
 				tmpFile.seek(6, SEEK_CUR);
 			} else {
-				// FIXME: GCC warns that this may be undefined!
-				size = ++size - pos;
+				size = size + 1 - pos;
 			}
 			newArchive.filename = fn_base;
 			bytesleft = newArchive.totalSize = tmpFile.readUint32LE();
