@@ -286,6 +286,9 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 			pieceIndex = planePtr->pieceIndex;
 			pictIndex = planePtr->pictIndex - 1;
 
+			if ((pictIndex >= _staticPictCount[scenery]) || (!ptr->pieces))
+				continue;
+
 			_vm->_draw->_destSpriteX = planePtr->destX;
 			_vm->_draw->_destSpriteY = planePtr->destY;
 			left = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].left);
