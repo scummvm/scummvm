@@ -90,6 +90,7 @@ protected:
 	bool _disposeAfterUse;
 
 	uint _numLoops;
+	const uint _totalNumLoops;
 
 	::FLAC__SeekableStreamDecoder *_decoder;
 
@@ -158,7 +159,7 @@ public:
 		int32 seconds = samples / rate;
 		int32 milliseconds = (1000 * (samples % rate)) / rate;
 
-		return seconds * 1000 + milliseconds;
+		return (seconds * 1000 + milliseconds) * _totalNumLoops;
 	}
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
@@ -210,6 +211,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 		_inStream(inStream),
 		_disposeAfterUse(dispose),
 		_numLoops(numLoops),
+		_totalNumLoops(numLoops),
 		_firstSample(0), _lastSample(0),
 		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(false),
 		_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
