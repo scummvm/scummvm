@@ -800,7 +800,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->fadeToBlack(0x14);
 	
 	sprintf(filename, "LETTER%.1d.", letter);
-	strcat(filename, _languageExtension[(_flags.platform == Common::kPlatformPC && (_flags.isTalkie || _lang)) ? _lang : 4]);
+	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
 
 	uint8 *letterBuffer = _res->fileData(filename, 0);
 	if (letterBuffer) {
