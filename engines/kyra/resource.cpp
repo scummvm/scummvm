@@ -30,8 +30,6 @@
 #include "common/fs.h"
 #include "common/func.h"
 
-#include "gui/message.h"
-
 #include "kyra/resource.h"
 
 #define INS_CACHE_THRESHOLD		300000	// all files with file size greater than this will be cached
@@ -57,8 +55,7 @@ bool Resource::reset() {
 
 	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
 		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
-		::GUI::MessageDialog errorMsg(errorMessage);
-		errorMsg.runModal();
+		_vm->GUIErrorMessage(errorMessage);
 		error(errorMessage.c_str());
 	}
 

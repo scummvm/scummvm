@@ -285,7 +285,7 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
-	void outputError();
+	void outputError(const Common::String &error);
 
 	KyraEngine_v1 *_vm;
 
