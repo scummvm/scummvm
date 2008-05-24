@@ -41,6 +41,15 @@
 
 namespace Kyra {
 
+struct InsHofArchive {
+	Common::String filename;
+	uint32 firstFile;
+	uint32 startOffset;
+	uint32 lastFile;
+	uint32 endOffset;
+	uint32 totalSize;
+};
+
 struct ResFileEntry {
 	Common::String parent;
 	uint32 size;

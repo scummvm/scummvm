@@ -822,7 +822,7 @@ bool FileExpander::process(const uint8 * dst, const uint8 * src, uint32 outsize,
 			postprocess = false;
 			needrefresh = true;
 		} else if (mode == 0){
-			uint16 cnt = 144;
+			// uint16 cnt = 144;
 			uint8 *d2 = (uint8*) _tables[0];			
 			memset(d2, 8, 144);
 			memset(d2 + 144, 9, 112);
@@ -1131,18 +1131,10 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 	Common::String fn_tmp;
 	char fn_ext[4];
 
-	int i = filename.size() - 1;
 	while (fn_base.lastChar() != '.')
 		fn_base.deleteLastChar();
 
-	struct InsHofArchive {
-		Common::String filename;
-		uint32 firstFile;
-		uint32 startOffset;
-		uint32 lastFile;
-		uint32 endOffset;
-		uint32 totalSize;
-	} newArchive;
+	InsHofArchive newArchive;
 
 	Common::List<InsHofArchive> archives;
 
@@ -1150,9 +1142,8 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 		sprintf(fn_ext, "%03d", currentFile);
 		fn_tmp = fn_base + Common::String(fn_ext);
 
-		Common::File tmpFile;
 		if (!tmpFile.open(fn_tmp)) {
-			debug(3, "couldn't open file '%s'\n", fn_tmp);
+			debug(3, "couldn't open file '%s'\n", fn_tmp.c_str());
 			break;
 		}
 
@@ -1168,6 +1159,7 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 				pos += 6;
 				tmpFile.seek(6, SEEK_CUR);
 			} else {
+				// FIXME: GCC warns that this may be undefined!
 				size = ++size - pos;
 			}
 			newArchive.filename = fn_base;
@@ -1210,13 +1202,13 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 	const uint32 kHeaderSize2 = 46;
 
 	for (Common::List<InsHofArchive>::iterator a = archives.begin(); a != archives.end(); ++a) {
-		bool startFile = true;
+		startFile = true;
 		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
 			sprintf(fn_ext, "%03d", i);
 			fn_tmp = a->filename + Common::String(fn_ext);
 
 			if (!tmpFile.open(fn_tmp)) {
-				debug(3, "couldn't open file '%s'\n", fn_tmp);
+				debug(3, "couldn't open file '%s'\n", fn_tmp.c_str());
 				break;
 			}
 
@@ -1313,7 +1305,6 @@ Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::S
 		archive = 0;
 	}
 
-	bool resident = false;
 	uint8 * outbuffer = (uint8*) malloc(entry.size);
 	assert(outbuffer);
 
