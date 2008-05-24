@@ -1127,23 +1127,23 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 	uint32 bytesleft = 0;
 	bool startFile = true;
 
-	Common::String fn_base(filename.c_str(), 10);
-	Common::String fn_tmp;
-	char fn_ext[4];
+	Common::String filenameBase(filename.c_str(), 10);
+	Common::String filenameTemp;
+	char filenameExt[4];
 
-	while (fn_base.lastChar() != '.')
-		fn_base.deleteLastChar();
+	while (filenameBase.lastChar() != '.')
+		filenameBase.deleteLastChar();
 
 	InsHofArchive newArchive;
 
 	Common::List<InsHofArchive> archives;
 
 	for (int8 currentFile = 1; currentFile; currentFile++) {	
-		sprintf(fn_ext, "%03d", currentFile);
-		fn_tmp = fn_base + Common::String(fn_ext);
+		sprintf(filenameExt, "%03d", currentFile);
+		filenameTemp = filenameBase + Common::String(filenameExt);
 
-		if (!tmpFile.open(fn_tmp)) {
-			debug(3, "couldn't open file '%s'\n", fn_tmp.c_str());
+		if (!tmpFile.open(filenameTemp)) {
+			debug(3, "couldn't open file '%s'\n", filenameTemp.c_str());
 			break;
 		}
 
@@ -1161,7 +1161,7 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 			} else {
 				size = size + 1 - pos;
 			}
-			newArchive.filename = fn_base;
+			newArchive.filename = filenameBase;
 			bytesleft = newArchive.totalSize = tmpFile.readUint32LE();
 			pos += 4;
 			newArchive.firstFile = currentFile;
@@ -1203,11 +1203,11 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 	for (Common::List<InsHofArchive>::iterator a = archives.begin(); a != archives.end(); ++a) {
 		startFile = true;
 		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
-			sprintf(fn_ext, "%03d", i);
-			fn_tmp = a->filename + Common::String(fn_ext);
+			sprintf(filenameExt, "%03d", i);
+			filenameTemp = a->filename + Common::String(filenameExt);
 
-			if (!tmpFile.open(fn_tmp)) {
-				debug(3, "couldn't open file '%s'\n", fn_tmp.c_str());
+			if (!tmpFile.open(filenameTemp)) {
+				debug(3, "couldn't open file '%s'\n", filenameTemp.c_str());
 				break;
 			}
 
@@ -1243,13 +1243,12 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 							tmpFile.seek(pos);
 						}
 					}
-
-					
-					sprintf(fn_ext, "%03d", i + 1);
-					fn_tmp = a->filename + Common::String(fn_ext);
+				
+					sprintf(filenameExt, "%03d", i + 1);
+					filenameTemp = a->filename + Common::String(filenameExt);
 
 					Common::File tmpFile2;
-					tmpFile2.open(fn_tmp);
+					tmpFile2.open(filenameTemp);
 					tmpFile.read(hdr, m);
 					tmpFile2.read(hdr + m, b);
 					tmpFile2.close();
@@ -1277,7 +1276,7 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 					newEntry.preload = false;
 					newEntry.prot = false;
 					newEntry.fileIndex = i;
-					files.push_back(File(Common::String((const char*) (hdr + 30)), newEntry));
+					files.push_back(File(Common::String((const char *)(hdr + 30)), newEntry));
 
 					pos += newEntry.compressedSize;
 					if (pos > size) {
@@ -1304,7 +1303,7 @@ Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::S
 		archive = 0;
 	}
 
-	uint8 * outbuffer = (uint8*) malloc(entry.size);
+	uint8 *outbuffer = (uint8 *)malloc(entry.size);
 	assert(outbuffer);
 
 	if (!_fileCache.getData(entry, outbuffer)) {
@@ -1313,7 +1312,7 @@ Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::S
 		sprintf(filename, "WESTWOOD.%03d", entry.fileIndex);
 
 		if (!tmpFile.open(filename)) {
-			delete [] outbuffer;
+			free(outbuffer);
 			return 0;
 		}
 
@@ -1336,7 +1335,6 @@ Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::S
 				return 0;
 			tmpFile.seek(1);
 			tmpFile.read(inbuffer + a, b);
-
 		} else {
 			tmpFile.read(inbuffer, entry.compressedSize);
 		}
