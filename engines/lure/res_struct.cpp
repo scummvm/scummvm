@@ -760,8 +760,6 @@ RoomExitCoordinateData &RoomExitCoordinates::getData(uint16 destRoomNumber) {
 // The following classes hold any sequence offsets that are being delayed
 
 SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag) {
-	OSystem &system = *g_system;
-
 	// The delay is in number of seconds - convert it to remaining milliseconds
 	timeoutCtr = delay * 1000;
 	sequenceOffset = seqOffset;
