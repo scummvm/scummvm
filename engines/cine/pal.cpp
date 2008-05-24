@@ -28,8 +28,6 @@
 
 namespace Cine {
 
-uint16 tempPalette[256];
-
 uint16 palEntriesCount;
 
 PalEntry *palPtr = NULL;
@@ -110,6 +108,66 @@ void loadRelatedPalette(const char *fileName) {
 		assert(paletteIndex < palEntriesCount);
 		memcpy(paletteBuffer1, palPtr[paletteIndex].pal1, 16);
 		memcpy(paletteBuffer2, palPtr[paletteIndex].pal2, 16);
+	}
+}
+
+void palRotate(uint16 *pal, byte a, byte b, byte c) {
+	assert(pal);
+
+	if (c == 1) {
+		uint16 currentColor = pal[b];
+
+		for (int i = b; i > a; i--) {
+			pal[i] = pal[i - 1];
+		}
+
+		pal[a] = currentColor;
+	}
+}
+
+void palRotate(byte *pal, byte a, byte b, byte c) {
+	assert(pal);
+
+	if (c == 1) {
+		byte currentR = pal[3 * b + 0];
+		byte currentG = pal[3 * b + 1];
+		byte currentB = pal[3 * b + 2];
+
+		for (int i = b; i > a; i--) {
+			pal[3 * i + 0] = pal[3 * (i - 1) + 0];
+			pal[3 * i + 1] = pal[3 * (i - 1) + 1];
+			pal[3 * i + 2] = pal[3 * (i - 1) + 2];
+		}
+
+		pal[3 * a + 0] = currentR;
+		pal[3 * a + 1] = currentG;
+		pal[3 * a + 2] = currentB;
+	}
+}
+
+uint16 transformColor(uint16 baseColor, int r, int g, int b) {
+	int8 oriR = CLIP( (baseColor & 0x007)       + b, 0, 7);
+	int8 oriG = CLIP(((baseColor & 0x070) >> 4) + g, 0, 7);
+	int8 oriB = CLIP(((baseColor & 0x700) >> 8) + r, 0, 7);
+
+	return oriR | (oriG << 4) | (oriB << 8);
+}
+
+void transformPaletteRange(uint16 *dstPal, uint16 *srcPal, int startColor, int stopColor, int r, int g, int b) {
+	assert(srcPal && dstPal);
+
+	for (int i = startColor; i <= stopColor; i++) {
+		dstPal[i] = transformColor(srcPal[i], r, g, b);
+	}
+}
+
+void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopColor, int r, int g, int b) {
+	assert(srcPal && dstPal);
+
+	for (int i = startColor; i <= stopColor; i++) {
+		dstPal[3 * i + 0] = CLIP(srcPal[3 * i + 0] + r * 32, 0, 255);
+		dstPal[3 * i + 1] = CLIP(srcPal[3 * i + 1] + g * 32, 0, 255);
+		dstPal[3 * i + 2] = CLIP(srcPal[3 * i + 2] + b * 32, 0, 255);
 	}
 }
 

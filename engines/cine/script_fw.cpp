@@ -41,11 +41,6 @@ namespace Cine {
 ScriptVars globalVars(NUM_MAX_VAR);
 
 uint16 compareVars(int16 a, int16 b);
-void palRotate(byte a, byte b, byte c);
-void removeSeq(uint16 param1, uint16 param2, uint16 param3);
-uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
-void addGfxElementA0(int16 param1, int16 param2);
-void removeGfxElementA0(int16 idx, int16 param);
 
 const Opcode FWScript::_opcodeTable[] = {
 	/* 00 */
@@ -1299,7 +1294,7 @@ int FWScript::o1_loadCt() {
 	const char *param = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _line, param);
-	loadCt(param);
+	loadCtFW(param);
 	return 0;
 }
 
@@ -1355,31 +1350,29 @@ int FWScript::o1_blitAndFade() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadein", _line);
 	// TODO: use real code
 
-	drawOverlays();
-	fadeRequired = true;
-	flip();
-
 //	fadeFromBlack();
+
+	renderer->reloadPalette();
 	return 0;
 }
 
 int FWScript::o1_fadeToBlack() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadeout", _line);
 
-	fadeToBlack();
+	renderer->fadeToBlack();
 	return 0;
 }
 
 int FWScript::o1_transformPaletteRange() {
 	byte startColor = getNextByte();
 	byte numColor = getNextByte();
-	uint16 r = getNextWord();
-	uint16 g = getNextWord();
-	uint16 b = getNextWord();
+	int16 r = getNextWord();
+	int16 g = getNextWord();
+	int16 b = getNextWord();
 
 	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d)", _line, startColor, numColor, r, g, b);
 
-	transformPaletteRange(startColor, numColor, r, g, b);
+	renderer->transformPalette(startColor, numColor, r, g, b);
 	return 0;
 }
 
@@ -1387,7 +1380,8 @@ int FWScript::o1_setDefaultMenuColor2() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _line, param);
-	defaultMenuBoxColor2 = param;
+
+	renderer->_messageBg = param;
 	return 0;
 }
 
@@ -1397,7 +1391,8 @@ int FWScript::o1_palRotate() {
 	byte c = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: palRotate(%d,%d,%d)", _line, a, b, c);
-	palRotate(a, b, c);
+
+	renderer->rotatePalette(a, b, c);
 	return 0;
 }
 
@@ -1475,11 +1470,7 @@ int FWScript::o1_compareGlobalVar() {
 
 		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _line, varIdx, value);
 
-		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {	// TODO: fix
-			_compare = 1;
-		} else {
-			_compare = compareVars(_globalVars[varIdx], value);
-		}
+		_compare = compareVars(_globalVars[varIdx], value);
 	}
 
 	return 0;
@@ -1558,7 +1549,8 @@ int FWScript::o1_setDefaultMenuColor() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _line, param);
-	defaultMenuBoxColor = param;
+
+	renderer->_cmdY = param;
 	return 0;
 }
 
@@ -1728,18 +1720,6 @@ int FWScript::o1_unloadMask5() {
 
 //-----------------------------------------------------------------------
 
-void palRotate(byte a, byte b, byte c) {
-	if (c == 1) {
-		uint16 currentColor = c_palette[b];
-
-		for (int16 i = b; i > a; i--) {
-			c_palette[i] = c_palette[i - 1];
-		}
-
-		c_palette[a] = currentColor;
-	}
-}
-
 void addScriptToList0(uint16 idx) {
 	ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx));
 	assert(tmp);
@@ -1863,14 +1843,13 @@ const char *getObjPramName(byte paramIdx) {
 	}
 }
 
-void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx) {
+void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx) {
 	char lineBuffer[256];
-	byte *localScriptPtr = scriptPtr;
+	const byte *localScriptPtr = scriptPtr;
 	uint16 exitScript;
 	uint32 position = 0;
 
 	assert(scriptPtr);
-	// assert(stackPtr);
 
 	exitScript = 0;
 
@@ -2292,7 +2271,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 					sprintf(lineBuffer, "loadPart(%s)\n", localScriptPtr + position);
 				}
 
-				position += strlen((char *)localScriptPtr + position) + 1;
+				position += strlen((const char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x40:
@@ -2309,7 +2288,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "loadPrc(%d,%s)\n", param, localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position) + 1;
+				position += strlen((const char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case OP_requestCheckPendingDataLoad:	// nop
@@ -2461,7 +2440,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "comment: %s\n", localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position);
+				position += strlen((const char *)localScriptPtr + position);
 				break;
 			}
 		case 0x5A:
@@ -2540,7 +2519,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "loadDat(%s)\n", localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position) + 1;
+				position += strlen((const char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x6E:	// nop
@@ -2801,7 +2780,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "ADDBG(%d,%s)\n", param1, localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position);
+				position += strlen((const char *)localScriptPtr + position);
 
 				break;
 			}
@@ -2825,7 +2804,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "loadABS(%d,%s)\n", param1, localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position);
+				position += strlen((const char *)localScriptPtr + position);
 
 				break;
 			}

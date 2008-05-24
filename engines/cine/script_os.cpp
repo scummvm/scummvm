@@ -116,7 +116,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_loadAnim, "s" },
 	/* 3C */
 	{ &FWScript::o1_loadBg, "s" },
-	{ &FWScript::o1_loadCt, "s" },
+	{ &FWScript::o2_loadCt, "s" },
 	{ 0, 0 },
 	{ &FWScript::o2_loadPart, "s" },
 	/* 40 */
@@ -364,6 +364,14 @@ FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index, const
 // ------------------------------------------------------------------------
 // OPERATION STEALTH opcodes
 // ------------------------------------------------------------------------
+
+int FWScript::o2_loadCt() {
+	const char *param = getNextString();
+
+	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _line, param);
+	loadCtOS(param);
+	return 0;
+}
 
 int FWScript::o2_loadPart() {
 	const char *param = getNextString();
@@ -615,20 +623,7 @@ int FWScript::o2_removeBackground() {
 
 	debugC(5, kCineDebugScript, "Line: %d: removeBackground(%d)", _line, param);
 
-	if (additionalBgTable[param]) {
-		free(additionalBgTable[param]);
-		additionalBgTable[param] = NULL;
-	}
-
-	if (currentAdditionalBgIdx == param) {
-		currentAdditionalBgIdx = 0;
-	}
-
-	if (currentAdditionalBgIdx2 == param) {
-		currentAdditionalBgIdx2 = 0;
-	}
-
-	strcpy(currentBgName[param], "");
+	renderer->removeBg(param);
 	return 0;
 }
 
@@ -644,22 +639,11 @@ int FWScript::o2_loadAbs() {
 int FWScript::o2_loadBg() {
 	byte param = getNextByte();
 
-	assert(param <= 8);
+	assert(param < 9);
 
 	debugC(5, kCineDebugScript, "Line: %d: useBg(%d)", _line, param);
 
-	if (additionalBgTable[param]) {
-		currentAdditionalBgIdx = param;
-		if (param == 8) {
-			newColorMode = 3;
-		} else {
-			newColorMode = bgColorMode + 1;
-		}
-		//if (_screenNeedFadeOut == 0) {
-		//	adBgVar1 = 1;
-		//}
-		fadeRequired = true;
-	}
+	renderer->selectBg(param);
 	return 0;
 }
 
@@ -699,13 +683,11 @@ int FWScript::o2_op9C() {
 int FWScript::o2_useBgScroll() {
 	byte param = getNextByte();
 
-	assert(param <= 8);
+	assert(param < 9);
 
 	debugC(5, kCineDebugScript, "Line: %d: useBgScroll(%d)", _line, param);
 
-	if (additionalBgTable[param]) {
-		currentAdditionalBgIdx2 = param;
-	}
+	renderer->selectScrollBg(param);
 	return 0;
 }
 
@@ -716,12 +698,12 @@ int FWScript::o2_setAdditionalBgVScroll() {
 		byte param2 = getNextByte();
 
 		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = var[%d]", _line, param2);
-		additionalBgVScroll = _localVars[param2];
+		renderer->setScroll(_localVars[param2]);
 	} else {
 		uint16 param2 = getNextWord();
 
 		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = %d", _line, param2);
-		additionalBgVScroll = param2;
+		renderer->setScroll(param2);
 	}
 	return 0;
 }
