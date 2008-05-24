@@ -114,6 +114,27 @@ int DrasculaEngine::init() {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
+	switch (getLanguage()) {
+	case Common::EN_ANY:
+		_lang = 0;
+		break;
+	case Common::ES_ESP:
+		_lang = 1;
+		break;
+	case Common::DE_DEU:
+		_lang = 2;
+		break;
+	case Common::FR_FRA:
+		_lang = 3;
+		break;
+	case Common::IT_ITA:
+		_lang = 4;
+		break;
+	default:
+		warning("Unknown game language. Falling back to English");
+		_lang = 0;
+	}
+
 	return 0;
 }
 
@@ -468,7 +489,10 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 bool DrasculaEngine::escoba() {
 	int n;
 
-	dir_texto = dir_mesa;
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+	else
+		dir_texto = dir_mesa;
 
 	previousMusic = -1;
 
@@ -1473,22 +1497,24 @@ void DrasculaEngine::mesa() {
 
 bool DrasculaEngine::saves() {
 	char nombres[10][23];
-	char fichero[13];
+	char fichero[50];
+	char fileEpa[50];
 	int n, n2, num_sav = 0, y = 27;
 	Common::InSaveFile *sav;
 
 	clearRoom();
 
-	if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
+	snprintf(fileEpa, 50, "%s.epa", _targetName.c_str());
+	if (!(sav = _saveFileMan->openForLoading(fileEpa))) {
 		Common::OutSaveFile *epa;
-		if (!(epa = _saveFileMan->openForSaving("saves.epa")))
-			error("Can't open saves.epa file.");
+		if (!(epa = _saveFileMan->openForSaving(fileEpa)))
+			error("Can't open %s file", fileEpa);
 		for (n = 0; n < NUM_SAVES; n++)
 			epa->writeString("*\n");
 		epa->finalize();
 		delete epa;
-		if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
-			error("Can't open saves.epa file.");
+		if (!(sav = _saveFileMan->openForLoading(fileEpa))) {
+			error("Can't open %s file", fileEpa);
 		}
 	}
 	for (n = 0; n < NUM_SAVES; n++)
@@ -1526,11 +1552,11 @@ bool DrasculaEngine::saves() {
 						introduce_nombre();
 						strcpy(nombres[n], select);
 						if (hay_seleccion == 1) {
-							sprintf(fichero, "gsave%02d", n + 1);
+							snprintf(fichero, 50, "%s%02d", _targetName.c_str(), n + 1);
 							para_grabar(fichero);
 							Common::OutSaveFile *tsav;
-							if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
-								error("Can't open saves.epa file.");
+							if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
+								error("Can't open %s file", fileEpa);
 							}
 							for (n = 0; n < NUM_SAVES; n++) {
 								tsav->writeString(nombres[n]);
@@ -1548,7 +1574,7 @@ bool DrasculaEngine::saves() {
 						y = y + 9;
 					}
 					if (hay_seleccion == 1) {
-						sprintf(fichero, "gsave%02d", n + 1);
+						snprintf(fichero, 50, "%s%02d", _targetName.c_str(), n + 1);
 					}
 					num_sav = n;
 				}
@@ -1572,8 +1598,8 @@ bool DrasculaEngine::saves() {
 			} else if (x_raton > 208 && y_raton > 123 && x_raton < 282 && y_raton < 149 && hay_seleccion == 1) {
 				para_grabar(fichero);
 				Common::OutSaveFile *tsav;
-				if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
-					error("Can't open saves.epa file.");
+				if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
+					error("Can't open %s file", fileEpa);
 				}
 				for (n = 0; n < NUM_SAVES; n++) {
 					tsav->writeString(nombres[n]);
@@ -1590,6 +1616,8 @@ bool DrasculaEngine::saves() {
 			delay(400);
 		}
 		y = 26;
+
+		delay(10);
 	}
 
 	clearRoom();
@@ -1606,7 +1634,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 	longitud = strlen(said);
 
 	for (h = 0; h < longitud; h++) {
-		y_de_letra = Y_ABC;
+		y_de_letra = (_lang == kSpanish) ? Y_ABC_ESP : Y_ABC;
 		int c = toupper(said[h]);
 		if (c == 'A')
 			x_de_letra = X_A;
@@ -1660,10 +1688,14 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 			x_de_letra = X_Y;
 		else if (c == 'Z')
 			x_de_letra = X_Z;
+		else if (c == '\245')
+			x_de_letra = X_GN;
+		else if (c == '\244')
+			x_de_letra = X_GN;
 		else if (c == 0xa7 || c == ' ')
 			x_de_letra = SPACE;
 		else {
-			y_de_letra = Y_SIGNOS;
+			y_de_letra = (_lang == kSpanish) ? Y_SIGNOS_ESP : Y_SIGNOS;
 			if (c == '.')
 				x_de_letra = X_DOT;
 			else if (c == ',')
@@ -1672,7 +1704,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_HYPHEN;
 			else if (c == '?')
 				x_de_letra = X_CIERRA_INTERROGACION;
-			else if (c == 0xa8)
+			else if (c == '\250')
 				x_de_letra = X_ABRE_INTERROGACION;
 //			else if (c == '\'') // FIXME
 //				x_de_letra = SPACE; // space for now
@@ -1680,7 +1712,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_COMILLAS;
 			else if (c == '!')
 				x_de_letra = X_CIERRA_EXCLAMACION;
-			else if (c == 0xad)
+			else if (c == '\255')
 				x_de_letra = X_ABRE_EXCLAMACION;
 			else if (c == ';')
 				x_de_letra = X_PUNTO_Y_COMA;
@@ -1726,6 +1758,41 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_N9;
 			else if (c == '0')
 				x_de_letra = X_N0;
+			else y_de_letra=Y_ACENTOS;
+
+			if (c == ' ') x_de_letra=X_A;
+			else if (c =='\202') x_de_letra = X_B;
+			else if (c =='\241') x_de_letra = X_C;
+			else if (c =='\242') x_de_letra = X_D;
+			else if (c =='\243') x_de_letra = X_E;
+			else if (c =='\205') x_de_letra = X_F;
+			else if (c =='\212') x_de_letra = X_G;
+			else if (c =='\215') x_de_letra = X_H;
+			else if (c =='\225') x_de_letra = X_I;
+			else if (c =='\227') x_de_letra = X_J;
+			else if (c =='\203') x_de_letra = X_K;
+			else if (c =='\210') x_de_letra = X_L;
+			else if (c =='\214') x_de_letra = X_M;
+			else if (c =='\223') x_de_letra = X_N;
+			else if (c =='\226') x_de_letra = X_GN;
+			else if (c =='\047') x_de_letra = X_O;
+			else if (c =='\200') x_de_letra = X_P;
+			else if (c =='\207') x_de_letra = X_P;
+			else if (c =='\265') x_de_letra = X_A;
+			else if (c =='\220') x_de_letra = X_B;
+			else if (c =='\326') x_de_letra = X_C;
+			else if (c =='\340') x_de_letra = X_D;
+			else if (c =='\351') x_de_letra = X_E;
+			else if (c =='\267') x_de_letra = X_F;
+			else if (c =='\324') x_de_letra = X_G;
+			else if (c =='\336') x_de_letra = X_H;
+			else if (c =='\343') x_de_letra = X_I;
+			else if (c =='\353') x_de_letra = X_J;
+			else if (c =='\266') x_de_letra = X_K;
+			else if (c =='\322') x_de_letra = X_L;
+			else if (c =='\327') x_de_letra = X_M;
+			else if (c =='\342') x_de_letra = X_N;
+			else if (c =='\352') x_de_letra = X_GN;
 		}
 
 		pos_texto[0] = x_de_letra;
@@ -3992,14 +4059,22 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 		int c = toupper(said[h]);
 		if (c == 'A')
 			x_de_letra = X_A_OPC;
+		else if (c == '\265') x_de_letra = X_A_OPC;
+		else if (c == '\267') x_de_letra = X_A_OPC;
+		else if (c == '\266') x_de_letra = X_A_OPC;
 		else if (c == 'B')
 			x_de_letra = X_B_OPC;
 		else if (c == 'C')
 			x_de_letra = X_C_OPC;
+		else if (c == '\200') x_de_letra = X_C_OPC;
+		else if (c == '\207') x_de_letra = X_C_OPC;
 		else if (c == 'D')
 			x_de_letra = X_D_OPC;
 		else if (c == 'E')
 			x_de_letra = X_E_OPC;
+		else if (c == '\220') x_de_letra = X_E_OPC;
+		else if (c == '\324') x_de_letra = X_E_OPC;
+		else if (c == '\322') x_de_letra = X_E_OPC;
 		else if (c == 'F')
 			x_de_letra = X_F_OPC;
 		else if (c == 'G')
@@ -4008,6 +4083,9 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			x_de_letra = X_H_OPC;
 		else if (c == 'I')
 			x_de_letra = X_I_OPC;
+		else if (c == '\326') x_de_letra = X_I_OPC;
+		else if (c == '\336') x_de_letra = X_I_OPC;
+		else if (c == '\327') x_de_letra = X_I_OPC;
 		else if (c == 'J')
 			x_de_letra = X_J_OPC;
 		else if (c == 'K')
@@ -4018,10 +4096,14 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			x_de_letra = X_M_OPC;
 		else if (c == 'N')
 			x_de_letra = X_N_OPC;
+		else if (c == '\047') x_de_letra = X_GN_OPC;
 		else if (c == 'O')
 			x_de_letra = X_O_OPC;
 		else if (c == 'P')
 			x_de_letra = X_P_OPC;
+		else if (c == '\340') x_de_letra = X_O_OPC;
+		else if (c == '\342') x_de_letra = X_O_OPC;
+		else if (c == '\343') x_de_letra = X_O_OPC;
 		else if (c == 'Q')
 			x_de_letra = X_Q_OPC;
 		else if (c == 'R')
@@ -4032,6 +4114,9 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			x_de_letra = X_T_OPC;
 		else if (c == 'U')
 			x_de_letra = X_U_OPC;
+		else if (c == '\353') x_de_letra = X_U_OPC;
+		else if (c == '\352') x_de_letra = X_U_OPC;
+		else if (c == '\351') x_de_letra = X_U_OPC;
 		else if (c == 'V')
 			x_de_letra = X_V_OPC;
 		else if (c == 'W')

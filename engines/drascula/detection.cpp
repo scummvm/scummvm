@@ -58,6 +58,10 @@ uint16 DrasculaEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
+Common::Language DrasculaEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 }
 
 static const PlainGameDescriptor drasculaGames[] = {
@@ -75,7 +79,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		{
 			"drascula",
 			0,
-			AD_ENTRY1("14.ald", "09b2735953edcd43af115c65ae00b10e"),
+			AD_ENTRY1s("14.ald", "09b2735953edcd43af115c65ae00b10e", 1595),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -85,13 +89,13 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-/*
+
 	{
 		// Drascula Spanish version
 		{
 			"drascula",
 			0,
-			AD_ENTRY1("14.ald", "0746ed1a5cc8d9728f790c29813f4b43"),
+			AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -100,7 +104,55 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 		0,
 		0,
-	},*/
+	},
+
+	{
+		// Drascula German version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "72e46089033d56bad1c179ac36e2a9d2", 610),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Drascula French version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "eeeee96b82169003630e08992248296c", 608),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Drascula Italian version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		0,
+		0,
+		0,
+		0,
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };

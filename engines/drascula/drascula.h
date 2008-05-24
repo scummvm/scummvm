@@ -175,7 +175,9 @@ struct DrasculaGameDescription;
 #define CHAR_HEIGHT      6
 
 #define Y_ABC            158
+#define Y_ABC_ESP        149
 #define Y_SIGNOS         169
+#define Y_SIGNOS_ESP     160
 #define Y_ACENTOS        180
 
 #define X_A              6
@@ -356,6 +358,7 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	Common::Language getLanguage() const;
 	void updateEvents();
 
 	Audio::SoundHandle _soundHandle;
@@ -842,7 +845,7 @@ extern const char *_textvb[][63];
 extern const char *_textsys[][4];
 extern const char *_texthis[][5];
 extern const char *_textverbs[][6];
-extern const char *_textmisc[][1];
+extern const char *_textmisc[][2];
 extern const char *_textd1[][11];
 
 } // End of namespace Drascula

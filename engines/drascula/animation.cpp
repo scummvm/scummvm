@@ -65,7 +65,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_abc(RED);
-		centra_texto("Transilvanya, 1993 d.c.", 160, 100);
+		centra_texto(_textmisc[_lang][1], 160, 100);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -466,6 +466,9 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
+		if (_lang == kSpanish)
+			dir_texto = dir_hare_frente;
+
 		loadPic("an11y13.alg");
 		decompressPic(dir_hare_dch, 1);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
@@ -474,6 +477,9 @@ void DrasculaEngine::animation_2_1() {
 		talk_tabernero(_textt[_lang][22], "T22.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
+
+		if (_lang == kSpanish)
+			dir_texto = dir_hare_dch;
 
 		loadPic("97.alg");
 		decompressPic(dir_hare_dch, 1);
@@ -657,6 +663,9 @@ void DrasculaEngine::animation_2_1() {
 }
 
 void DrasculaEngine::animation_3_1() {
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
@@ -683,11 +692,17 @@ void DrasculaEngine::animation_3_1() {
 
 	flags[0] = 1;
 
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+
 	loadPic("97.alg");
 	decompressPic(dir_hare_dch, 1);
 }
 
 void DrasculaEngine::animation_4_1() {
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
@@ -719,6 +734,9 @@ void DrasculaEngine::animation_4_1() {
 	talk(_text[_lang][208], "208.als");
 	talk_pianista(_textp[_lang][4], "p4.als");
 	talk(_text[_lang][209], "209.als");
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
 
 	flags[11] = 0;
 	loadPic("97.alg");
@@ -842,6 +860,9 @@ void DrasculaEngine::animation_4_2() {
 	loadPic("ciego5.alg");
 	decompressPic(dir_hare_frente, 1);
 
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -891,6 +912,9 @@ void DrasculaEngine::animation_4_2() {
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
 	withoutVerb();
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
 
 	flags[9] = 0;
 	flags[4] = 1;
@@ -2313,6 +2337,10 @@ void DrasculaEngine::animation_1_6() {
 	talk_dr_dch(_textd[_lang][34], "d34.als");
 	sentido_dr = 0;
 	talk_dr_izq(_textd[_lang][35], "d35.als");
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+
 	clearRoom();
 	carga_escoba("102.ald");
 	activa_pendulo();
@@ -2526,6 +2554,9 @@ void DrasculaEngine::animation_19_6() {
 }
 
 void DrasculaEngine::animation_12_2() {
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
 
@@ -2552,6 +2583,9 @@ void DrasculaEngine::animation_12_2() {
 	talk_pianista(_textp[_lang][5], "P5.als");
 	conversa("op_1.cal");
 
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+
 	flags[11] = 0;
 	loadPic("974.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -2559,6 +2593,9 @@ void DrasculaEngine::animation_12_2() {
 
 void DrasculaEngine::animation_26_2() {
 	int n, x = 0;
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
 
 	loadPic("an12.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -2623,6 +2660,9 @@ void DrasculaEngine::animation_26_2() {
 	pickObject(11);
 	resta_objeto(12);
 
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+
 	flags[11] = 0;
 	flags[39] = 1;
 	loadPic("974.alg");
@@ -2631,6 +2671,9 @@ void DrasculaEngine::animation_26_2() {
 }
 
 void DrasculaEngine::animation_11_2() {
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
@@ -2643,6 +2686,9 @@ void DrasculaEngine::animation_11_2() {
 	talk(_text[_lang][355], "355.als");
 	pause(40);
 	talk_tabernero("No, nada", "d82.als");
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
 
 	loadPic("974.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -2829,6 +2875,9 @@ void DrasculaEngine::animation_34_2() {
 }
 
 void DrasculaEngine::animation_36_2() {
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
@@ -2839,6 +2888,9 @@ void DrasculaEngine::animation_36_2() {
 	talk(_text[_lang][355], "355.als");
 	pause(40);
 	talk_tabernero("No, nada", "d82.als");
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
 
 	loadPic("974.alg");
 	decompressPic(dir_hare_dch, 1);
@@ -3207,6 +3259,9 @@ void DrasculaEngine::animation_6_2() {
 	stopMusic();
 	flags[9] = 1;
 
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
+
 	clearRoom();
 	loadPic("ciego1.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
@@ -3251,6 +3306,9 @@ void DrasculaEngine::animation_6_2() {
 	decompressPic(dir_hare_fondo, 1);
 	withoutVerb();
 
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+
 	flags[9] = 0;
 }
 
@@ -3273,6 +3331,9 @@ void DrasculaEngine::animation_33_2() {
 	decompressPic(dir_hare_fondo, 1);
 	loadPic("ciego5.alg");
 	decompressPic(dir_hare_frente, 1);
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_frente;
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -3306,6 +3367,9 @@ void DrasculaEngine::animation_33_2() {
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
 	withoutVerb();
+
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
 
 	flags[33] = 1;
 	flags[9] = 0;
