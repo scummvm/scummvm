@@ -209,6 +209,7 @@ public:
 	void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
+	uint32 snd_getVoicePlayTime();
 
 protected:
 	int32 _speechPlayTime;

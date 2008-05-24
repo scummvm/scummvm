@@ -80,4 +80,11 @@ void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
 	}
 }
 
+uint32 KyraEngine_LoK::snd_getVoicePlayTime() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_getVoicePlayTime()");
+	if (!snd_voiceIsPlaying())
+		return 0;
+	return (_speechPlayTime != -1 ? _speechPlayTime : 0);
+}
+
 } // end of namespace Kyra

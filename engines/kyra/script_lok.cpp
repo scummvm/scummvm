@@ -727,8 +727,8 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	if (_flags.isTalkie) {
 		int specialTime = stackPos(7);
 		if (specialTime) {
-			int32 voiceTime = _speechPlayTime;
-			if (voiceTime && voiceTime != -1) {
+			uint32 voiceTime = snd_getVoicePlayTime();
+			if (voiceTime) {
 				int displayFrames = ABS(endFrame-startFrame)+1;
 				displayFrames *= maxTime;
 				assert(displayFrames != 0);
@@ -745,13 +745,10 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 
 				if (voiceSync) {
 					uint32 voicePlayedTime = _sound->voicePlayedTime(_speechFile.c_str());
-					if (voicePlayedTime >= (uint32)voiceTime)
+					if (voicePlayedTime >= voiceTime)
 						voiceTime = 0;
 					else
 						voiceTime -= voicePlayedTime;
-
-					if (!snd_voiceIsPlaying())
-						voiceTime = 0;
 				}
 
 				waitTime = voiceTime / displayFrames;

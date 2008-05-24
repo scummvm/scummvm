@@ -95,7 +95,7 @@ int32 Sound::voicePlay(const char *file, bool isSfx) {
 		uint32 fileSize = 0;
 		byte *fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
-			return false;
+			return 0;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
 		audioStream = Audio::makeVOCStream(vocStream);
