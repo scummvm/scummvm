@@ -66,14 +66,14 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-bool Sound::voicePlay(const char *file, bool isSfx) {
+int32 Sound::voicePlay(const char *file, bool isSfx) {
 	char filenamebuffer[25];
 
 	int h = 0;
 	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 		h++;
 	if (h >= kNumChannelHandles)
-		return false;
+		return 0;
 
 	Audio::AudioStream *audioStream = 0;
 
@@ -107,7 +107,7 @@ bool Sound::voicePlay(const char *file, bool isSfx) {
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
 
-	return true;
+	return audioStream->getTotalPlayTime();
 }
 
 void Sound::voiceStop(const char *file) {
@@ -138,6 +138,18 @@ bool Sound::voiceIsPlaying(const char *file) {
 		}
 	}
 	return res;
+}
+
+uint32 Sound::voicePlayedTime(const char *file) {
+	if (!file)
+		return 0;
+
+	for (int i = 0; i < kNumChannelHandles; ++i) {
+		if (_soundChannels[i].file == file)
+			return _mixer->getSoundElapsedTime(_soundChannels[i].channelHandle);
+	}
+
+	return 0;
 }
 
 #pragma mark -

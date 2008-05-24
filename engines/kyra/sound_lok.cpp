@@ -67,7 +67,7 @@ void KyraEngine_LoK::snd_playVoiceFile(int id) {
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d", id);
 	_speechFile = vocFile;
-	_sound->voicePlay(vocFile);
+	_speechPlayTime = _sound->voicePlay(vocFile);
 }
 
 void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {

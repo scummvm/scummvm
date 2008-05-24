@@ -174,9 +174,9 @@ public:
 	 *
 	 * @param file	file to be played
 	 * @param isSfx marks file as sfx instead of voice
-	 * @return channel the voice file is played on
+	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual bool voicePlay(const char *file, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
@@ -184,6 +184,13 @@ public:
 	 * @return true when playing, else false
 	 */
 	bool voiceIsPlaying(const char *file = 0);
+
+	/**
+	 * Checks how long a voice has been playing
+	 *
+	 * @return time in milliseconds
+	 */
+	uint32 voicePlayedTime(const char *file);
 
 	/**
 	 * Stops playback of the current voice.
@@ -449,7 +456,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	bool voicePlay(const char *file, bool isSfx = false);
+	int32 voicePlay(const char *file, bool isSfx = false);
 	void playSoundEffect(uint8) {}
 
 private:

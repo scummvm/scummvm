@@ -1432,7 +1432,7 @@ void SoundTowns_v2::haltTrack() {
 	//_driver->reset();
 }
 
-bool SoundTowns_v2::voicePlay(const char *file, bool) {
+int32 SoundTowns_v2::voicePlay(const char *file, bool) {
 	static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
 
 	int h = 0;
@@ -1440,7 +1440,7 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 		while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 			h++;
 		if (h >= kNumChannelHandles)
-			return false;
+			return 0;
 	}
 
 	char filename [13];
@@ -1497,7 +1497,7 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h].channelHandle, _currentSFX);
 
 	delete[] data;
-	return true;
+	return 1;
 }
 
 void SoundTowns_v2::beginFadeOut() {

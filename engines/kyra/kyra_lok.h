@@ -211,6 +211,8 @@ public:
 	void snd_voiceWaitForFinish(bool ingame = true);
 
 protected:
+	int32 _speechPlayTime;
+
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 
