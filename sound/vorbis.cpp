@@ -118,6 +118,14 @@ public:
 	bool isStereo() const		{ return _isStereo; }
 	int getRate() const			{ return _rate; }
 
+	int32 getTotalPlayTime() const {
+#ifdef USE_TREMOR
+		return _endTime - _startTime;
+#else
+		return (int32)((_endTime - _startTime) * 1000.0);
+#endif
+	}
+
 protected:
 	void refill();
 };

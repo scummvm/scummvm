@@ -141,6 +141,26 @@ public:
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
+	int32 getTotalPlayTime() const {
+		int32 samples = 0;
+
+		if (!_lastSample) {
+			if (!_streaminfo.total_samples)
+				return AudioStream::kUnknownPlayTime;
+
+			samples = _streaminfo.total_samples - _firstSample;
+		} else {
+			samples = _lastSample - _firstSample - 1;
+		}
+
+		const int32 rate = _streaminfo.sample_rate;
+
+		int32 seconds = samples / rate;
+		int32 milliseconds = (1000 * (samples % rate)) / rate;
+
+		return seconds * 1000 + milliseconds;
+	}
+
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
 protected:
