@@ -102,6 +102,11 @@ AudioStream* AudioStream::openStreamFile(const Common::String &basename, uint32 
 #pragma mark --- LinearMemoryStream ---
 #pragma mark -
 
+inline int32 calculatePlayTime(int rate, int samples) {
+	int32 seconds = samples / rate;
+	int32 milliseconds = (1000 * (samples % rate)) / rate;
+	return seconds * 1000 + milliseconds;
+}
 
 /**
  * A simple raw audio stream, purely memory based. It operates on a single
@@ -122,10 +127,11 @@ protected:
 	const byte *_loopEnd;
 	const int _rate;
 	const byte *_origPtr;
+	const int32 _playtime;
 
 public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
-		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate) {
+		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
 
 		// Verify the buffer sizes are sane
 		if (is16Bit && stereo)
@@ -147,10 +153,11 @@ public:
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const		{ return stereo; }
-	bool endOfData() const		{ return _ptr >= _end; }
+	bool isStereo() const			{ return stereo; }
+	bool endOfData() const			{ return _ptr >= _end; }
 
-	int getRate() const			{ return _rate; }
+	int getRate() const				{ return _rate; }
+	int32 getTotalPlayTime() const	{ return _playtime; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
