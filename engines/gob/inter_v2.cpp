@@ -1581,6 +1581,12 @@ void Inter_v2::o2_getImdInfo() {
 	varWidth = _vm->_parse->parseVarIndex();
 	varHeight = _vm->_parse->parseVarIndex();
 
+	// WORKAROUND: The nut rolling animation in the administration center
+	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
+	if ((_vm->getGameType() == kGameTypeWoodruff) &&
+			(!scumm_stricmp(_vm->_global->_inter_resStr, "noixroule")))
+		strcpy(_vm->_global->_inter_resStr, "noixroul");
+
 	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
 			varFrames, varWidth, varHeight);
 }

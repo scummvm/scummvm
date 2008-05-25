@@ -811,6 +811,12 @@ void Inter_v4::o4_playVmdOrMusic() {
 	evalExpr(0);
 	strncpy0(fileName, _vm->_global->_inter_resStr, 127);
 
+	// WORKAROUND: The nut rolling animation in the administration center
+	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
+	if ((_vm->getGameType() == kGameTypeWoodruff) &&
+			(!scumm_stricmp(fileName, "noixroule")))
+		strcpy(fileName, "noixroul");
+
 	x = _vm->_parse->parseValExpr();
 	y = _vm->_parse->parseValExpr();
 	startFrame = _vm->_parse->parseValExpr();
