@@ -202,7 +202,7 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		}
 
 		for (int x = 0; x < 8; x++) {
-			if (_activeWSA[x].flags == -1)
+			if (_activeWSA[x].flags != -1)
 				_activeWSA[x].nextFrame += pausedTime;
 		}
 
