@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "common/system.h"
+
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -48,7 +49,7 @@ protected:
 	Graphics::VectorRenderer *createRenderer() {
 		// TODO: Find out what pixel format we are using,
 		// create the renderer accordingly
-		return new VectorRendererSpec<uint16, ColorMasks<565> >;
+		return new Graphics::VectorRendererSpec<uint16, ColorMasks<565> >;
 	}
 
 	Graphics::VectorRenderer *_vectorRenderer;

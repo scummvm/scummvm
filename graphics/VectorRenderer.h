@@ -35,6 +35,14 @@ namespace Graphics {
 
 void vector_renderer_test(OSystem *_system);
 
+/** Specified the way in which a shape is filled */
+enum FillMode {
+	kFillMode_Disabled = 0,
+	kFillMode_Foreground = 1,
+	kFillMode_Background = 2,
+	kFillMode_Gradient = 3
+};
+
 struct DrawStep {
 	bool set_fg, set_bg, set_grad;
 
@@ -47,7 +55,7 @@ struct DrawStep {
 	uint16 x, y, w, h, r;
 	uint8 shadows, stroke, factor;
 
-	Graphics::VectorRenderer::FillMode fill_mode;
+	FillMode fill_mode;
 
 	void (*drawing_call)(DrawStep *step);
 };
@@ -70,16 +78,8 @@ struct DrawStep {
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _shadowOffset(0), _fillMode(kNoFill), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
+	VectorRenderer() : _shadowOffset(0), _fillMode(kFillMode_Disabled), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
 	virtual ~VectorRenderer() {}
-
-	/** Specified the way in which a shape is filled */
-	enum FillMode {
-		kNoFill = 0,
-		kForegroundFill = 1,
-		kBackgroundFill = 2,
-		kGradientFill = 3
-	};
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -171,7 +171,7 @@ public:
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
-	 * Set the active gradient color. All shapes drawn using kGradientFill
+	 * Set the active gradient color. All shapes drawn using kFillMode_Gradient
 	 * as their fill mode will use this VERTICAL gradient as their fill color.
 	 *
 	 * @param r1	value of the red color byte for the start color
@@ -199,7 +199,7 @@ public:
 	 *
 	 * @param mode Fill mode (bg, fg or gradient) used to fill the surface
 	 */
-	virtual void fillSurface(FillMode mode = kForegroundFill) = 0;
+	virtual void fillSurface(FillMode mode = kFillMode_Foreground) = 0;
 
 	/**
 	 * Clears the active surface.
@@ -215,7 +215,7 @@ public:
 	 * @see VectorRenderer::FillMode
 	 * @param mode Specified fill mode.
 	 */
-	virtual void setFillMode(VectorRenderer::FillMode mode) {
+	virtual void setFillMode(FillMode mode) {
 		_fillMode = mode;
 	}
 
@@ -370,18 +370,18 @@ public:
 	/**
 	 * @see VectorRenderer::fillSurface()
 	 */
-	void fillSurface(FillMode mode = kForegroundFill) {
+	void fillSurface(FillMode mode = kFillMode_Foreground) {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
 
 		int w = _activeSurface->w;
 		int h = _activeSurface->h ;
 		int pitch = surfacePitch();
 
-		if (mode == kBackgroundFill)
+		if (mode == kFillMode_Background)
 			colorFill(ptr, ptr + w * h, _bgColor);
-		else if (mode == kForegroundFill)
+		else if (mode == kFillMode_Foreground)
 			colorFill(ptr, ptr + w * h, _fgColor);
-		else if (mode == kGradientFill) {
+		else if (mode == kFillMode_Gradient) {
 			int i = h;
 			while (i--) {
 				colorFill(ptr, ptr + w, calcGradient(h - i, h));
@@ -596,7 +596,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r, PixelType color, VectorRenderer::FillMode fill_m);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991,
@@ -605,7 +605,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawRoundedAlg()
 	 */
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 };
 
 } // end of namespace Graphics
