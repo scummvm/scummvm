@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	editable.o \
 	EditTextWidget.o \
 	eval.o \
+	InterfaceManager.o \
 	launcher.o \
 	ListWidget.o \
 	massadd.o \
