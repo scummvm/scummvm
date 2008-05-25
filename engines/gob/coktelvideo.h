@@ -190,7 +190,11 @@ public:
 	int16 getHeight() const { return _height; }
 	uint16 getFramesCount() const { return _framesCount; }
 	uint16 getCurrentFrame() const { return _curFrame; }
-	int16 getFrameRate() const { if (_hasSound) return 1000 / _soundSliceLength; return _frameRate; }
+	int16 getFrameRate() const {
+		if (_hasSound)
+			return 1000 / (_soundSliceLength >> 16);
+		return _frameRate;
+	}
 	uint32 getSyncLag() const { return _skipFrames; }
 	const byte *getPalette() const { return _palette; }
 
@@ -260,7 +264,7 @@ protected:
 	int16 _soundFreq;
 	int16 _soundSliceSize;
 	int16 _soundSlicesCount;
-	uint16 _soundSliceLength;
+	uint32 _soundSliceLength;
 
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;

@@ -123,8 +123,9 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 			return false;
 		}
 
-		_soundSliceLength = 1000 / (_soundFreq / _soundSliceSize);
-		_frameLength = _soundSliceLength;
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) / 
+				((double) _soundFreq / (double) _soundSliceSize));
+		_frameLength = _soundSliceLength >> 16;
 
 		_soundStage = 1;
 		_hasSound = true;
@@ -325,8 +326,8 @@ void Imd::waitEndFrame() {
 			return;
 
 		if (_skipFrames == 0) {
-			int32 waitTime = (_curFrame * _soundSliceLength) -
-				(g_system->getMillis() - _soundStartTime);
+			int32 waitTime = ((_curFrame * _soundSliceLength) -
+				((g_system->getMillis() - _soundStartTime) << 16)) >> 16;
 
 			if (waitTime < 0) {
 				_skipFrames = -waitTime / _soundSliceLength;
@@ -943,10 +944,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 			_soundSliceSize = -_soundSliceSize;
 		}
 
-		_soundSliceLength = (uint16) (1000.0 /
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) / 
 				((double) _soundFreq / (double) _soundSliceSize));
-
-		_frameLength = _soundSliceLength;
+		_frameLength = _soundSliceLength >> 16;
 
 		_soundStage = 1;
 		_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
