@@ -1133,6 +1133,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 		} else if (part.type == kPartTypeVideo) {
 			state.flags &= ~kStateNoVideoData;
 
+			uint32 size = part.size;
+
 			// New palette
 			if (part.flags & 2) {
 				uint8 index = _stream->readByte();
@@ -1142,9 +1144,12 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				_stream->skip((255 - count) * 3);
 
 				state.flags |= kStatePalette;
+
+				size -= (768 + 2);
 			}
 
-			_stream->read(_frameData, part.size);
+			_stream->read(_frameData, size);
+
 			if (renderFrame(part.left, part.top, part.right, part.bottom)) {
 				// Rendering succeeded, merging areas
 				state.left = MIN(state.left, part.left);
