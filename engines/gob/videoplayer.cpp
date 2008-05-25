@@ -602,20 +602,19 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 	if (primaryOpen(videoFile)) {
 		int16 x, y, width, height;
 
-		if ((VAR_OFFSET(varX) != 0xFFFFFFFF) ||
-		    !_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height)) {
+		x = _primaryVideo->getVideo()->getX();
+		y = _primaryVideo->getVideo()->getY();
+		width = _primaryVideo->getVideo()->getWidth();
+		height = _primaryVideo->getVideo()->getHeight();
 
-			x = _primaryVideo->getVideo()->getX();
-			y = _primaryVideo->getVideo()->getY();
-			width = _primaryVideo->getVideo()->getWidth();
-			height = _primaryVideo->getVideo()->getHeight();
-		}
+		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
+			_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height);
 
 		WRITE_VAR_OFFSET(varX, x);
 		WRITE_VAR_OFFSET(varY, y);
 		WRITE_VAR_OFFSET(varFrames, _primaryVideo->getVideo()->getFramesCount());
 		WRITE_VAR_OFFSET(varWidth, width);
-		WRITE_VAR_OFFSET(varHeight, height);
+		WRITE_VARO_UINT16(varHeight & 0xFFFFFFFC, height);
 
 		primaryClose();
 	} else {
