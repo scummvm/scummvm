@@ -35,6 +35,24 @@ namespace Graphics {
 
 void vector_renderer_test(OSystem *_system);
 
+struct DrawStep {
+	bool set_fg, set_bg, set_grad;
+
+	uint8 fg_r, fg_g, fg_b;
+	uint8 bg_r, bg_g, bg_b;
+
+	uint8 grad_r1, grad_g1, grad_b1;
+	uint8 grad_r2, grad_g2, grad_b2;
+
+	uint16 x, y, w, h, r;
+	uint8 shadows, stroke, factor;
+
+	Graphics::VectorRenderer::FillMode fill_mode;
+
+	void (*drawing_call)(DrawStep *step);
+};
+
+
 /**
  * VectorRenderer: The core Vector Renderer Class
  *
@@ -243,6 +261,27 @@ public:
 	virtual void setGradientFactor(int factor) {
 		if (factor > 0)
 			_gradientFactor = factor;
+	}
+
+	void drawStep_CIRCLE(DrawStep *step) {
+		drawCircle(step->x, step->y, step->r);
+	}
+
+	void drawStep_SQUARE(DrawStep *step) {
+		drawSquare(step->x, step->y, step->w, step->h);
+	}
+
+	void drawStep_LINE(DrawStep *step) {
+		drawLine(step->x, step->y, step->x + step->w, step->y + step->h);
+	}
+
+	void drawStep_ROUNDEDSQ(DrawStep *step) {
+		drawRoundedSquare(step->x, step->y, step->r, step->w, step->h);
+	}
+
+
+	virtual void drawStep(DrawStep *step) {
+
 	}
 
 protected:

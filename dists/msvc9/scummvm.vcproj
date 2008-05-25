@@ -1081,6 +1081,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\InterfaceManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\InterfaceManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\Key.cpp"
 				>
 			</File>
@@ -1303,13 +1311,6 @@
 			<File
 				RelativePath="..\..\graphics\VectorRenderer.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\graphics\VectorRenderer.h"
