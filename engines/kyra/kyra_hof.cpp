@@ -177,6 +177,39 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	_timOpcodes.clear();
 }
 
+void KyraEngine_HoF::pauseEngineIntern(bool pause) {
+	KyraEngine_v2::pauseEngineIntern(pause);
+
+	if (!pause) {
+		uint32 pausedTime = _system->getMillis() - _pauseStart;
+		_pauseStart = 0;
+
+		// sequence player
+		//
+		// Timers in KyraEngine_HoF::seq_cmpFadeFrame() and KyraEngine_HoF::seq_animatedSubFrame()
+		// have been left out for now. I think we don't need them here.
+
+		_seqStartTime += pausedTime;
+		_seqSubFrameStartTime += pausedTime;
+		_seqEndTime += pausedTime;
+		_seqSubFrameEndTimeInternal += pausedTime;
+		_seqWsaChatTimeout += pausedTime;
+		_seqWsaChatFrameTimeout += pausedTime;
+
+		for (int x = 0; x < 10; x++) {
+			if (_activeText[x].duration != -1)
+				_activeText[x].startTime += pausedTime;
+		}
+
+		for (int x = 0; x < 8; x++) {
+			if (_activeWSA[x].flags == -1)
+				_activeWSA[x].nextFrame += pausedTime;
+		}
+
+		// TODO: item animation, idle animation, tim player, etc
+	}
+}
+
 int KyraEngine_HoF::init() {
 	_screen = new Screen_HoF(this, _system);
 	assert(_screen);

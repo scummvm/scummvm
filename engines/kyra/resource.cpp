@@ -819,7 +819,6 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 			postprocess = false;
 			needrefresh = true;
 		} else if (mode == 0){
-			// uint16 cnt = 144;
 			uint8 *d2 = _tables[0];			
 			memset(d2, 8, 144);
 			memset(d2 + 144, 9, 112);

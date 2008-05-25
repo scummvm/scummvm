@@ -182,9 +182,7 @@ public:
 	KyraEngine_HoF(OSystem *system, const GameFlags &flags);
 	~KyraEngine_HoF();
 
-	//TODO: proper extended implementation of KyraEngine_v2::pauseEngineIntern.
-	// Here we need to take care of the seqeunce play code (LordHoto *thinks*),
-	// item animation, idle animation and tim player.
+	void pauseEngineIntern(bool pause);
 
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
@@ -860,7 +858,12 @@ protected:
 
 	uint32 _seqFrameDelay;
 	uint32 _seqStartTime;
+	uint32 _seqSubFrameStartTime;
 	uint32 _seqEndTime;
+	uint32 _seqSubFrameEndTimeInternal;
+	uint32 _seqWsaChatTimeout;
+	uint32 _seqWsaChatFrameTimeout;
+
 	int _seqFrameCounter;
 	int _seqScrollTextCounter;
 	int _seqWsaCurrentFrame;
