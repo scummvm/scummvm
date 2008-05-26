@@ -108,7 +108,7 @@ private:
 public:
 	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
 	GameList detectGames(const FSList &fslist) const;
-	const EnginePlugin::list &getPlugins() const;
+	const EnginePlugin::List &getPlugins() const;
 };
 
 /** Convenience shortcut for accessing the engine manager. */

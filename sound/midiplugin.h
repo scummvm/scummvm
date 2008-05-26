@@ -84,7 +84,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
-	const MidiPlugin::list &getPlugins() const;
+	const MidiPlugin::List &getPlugins() const;
 };
 
 /** Convenience shortcut for accessing the MIDI manager. */

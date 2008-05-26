@@ -193,7 +193,7 @@ public:
 		return (PO_t *)_pluginObject;
 	}
 
-	typedef Common::Array<PluginSubclass *> list;
+	typedef Common::Array<PluginSubclass *> List;
 };
 
 /**
@@ -246,7 +246,7 @@ protected:
 	 * @param filename	the name of the loadable code module
 	 * @return	a pointer to a Plugin instance, or 0 if an error occurred.
 	 */
-	virtual Plugin* createPlugin(const Common::String &filename) const = 0;
+	virtual Plugin *createPlugin(const Common::String &filename) const = 0;
 
 	/**
 	 * Check if the supplied filename corresponds to a loadable plugin file in

@@ -564,8 +564,8 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	const EnginePlugin::list &plugins = EngineMan.getPlugins();
-	EnginePlugin::list::const_iterator iter = plugins.begin();
+	const EnginePlugin::List &plugins = EngineMan.getPlugins();
+	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (**iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
