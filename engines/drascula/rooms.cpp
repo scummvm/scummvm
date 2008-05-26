@@ -32,82 +32,130 @@ static const char mirar_v[3][14] = {"100.als", "101.als", "54.als"};
 static const int poder_t[6] = {11, 109, 111, 110, 115, 116};
 static const char poder_v[6][14] = {"11.als", "109.als", "111.als", "110.als", "115.als", "116.als"};
 
+struct RoomTalkAction {
+	int num;
+	int action;
+	int objectID;
+	int speechID;
+};
+
+// TODO: move these elsewhere, or in a .dat file?
+// Note: default action needs to be LAST for each group
+// of actions with the same number
+RoomTalkAction room0Actions[] = {
+	// num	action		object	speech
+	{ 1,	LOOK,		-1,		 54 },
+	{ 1,	MOVE,		-1,		 19 },
+	{ 1,	PICK,		-1,		 11 },
+	{ 1,	OPEN,		-1,		  9 },
+	{ 1,	CLOSE,		-1,		  9 },
+	{ 1,	TALK,		-1,		 16 },
+	{ 1,	DEFAULT,	-1,		 11 },
+	// -------------------------------
+	{ 2,	MOVE,		-1,		 19 },
+	{ 2,	OPEN,		-1,		  9 },
+	{ 2,	CLOSE,		-1,		  9 },
+	{ 2,	TALK,		-1,		 16 },
+	// -------------------------------
+	{ 3,	LOOK,		-1,		316 },
+	{ 3,	MOVE,		-1,		317 },
+	{ 3,	PICK,		-1,		318 },
+	{ 3,	OPEN,		-1,		319 },
+	{ 3,	CLOSE,		-1,		319 },
+	{ 3,	TALK,		-1,		320 },
+	{ 3,	DEFAULT,	-1,		318 },
+	// -------------------------------
+	{ 4,	MOVE,		-1,		 19 },
+	{ 4,	OPEN,		-1,		  9 },
+	{ 4,	CLOSE,		-1,		  9 },
+	{ 4,	TALK,		-1,		 16 },
+	// -------------------------------
+	{ 5,	OPEN,		-1,		  9 },
+	{ 5,	CLOSE,		-1,		  9 },
+	{ 5,	TALK,		-1,		 16 },
+	// -------------------------------
+	{ 6,	MOVE,		-1,		 19 },
+	{ 6,	OPEN,		-1,		  9 },
+	{ 6,	CLOSE,		-1,		  9 },
+	{ 6,	TALK,		-1,		 16 }
+};
+
+RoomTalkAction room1Actions[] = {
+	{ -1,	PICK,		118,	  5 },
+	{ -1,	OPEN,		118,	  3 },
+	{ -1,	CLOSE,		118,	  4 },
+	{ -1,	TALK,		118,	  6 },
+	{ -1,	LOOK,		119,	  8 },
+	{ -1,	MOVE,		119,	 13 },
+	{ -1,	CLOSE,		119,	 10 },
+	{ -1,	TALK,		119,	 12 },
+	{ -1,	MOVE,		120,	 13 },
+	{ -1,	OPEN,		120,	 18 },
+	{ -1,	TALK,		120,	 15 }
+};
+
+bool DrasculaEngine::roomParse(int roomNo, int flags) {
+	// TODO: find a better way to assign room actions
+	RoomTalkAction *roomActions = 0;
+	bool didAction = false;
+
+	if (roomNo == 0)
+		roomActions = room0Actions;
+	else if (roomNo == 1)
+		roomActions = room1Actions;
+
+	for (int i = 0; i < ARRAYSIZE(roomActions); i++) {
+		if (roomActions[i].num == num_ejec || 
+			roomActions[i].num == -1) {
+			if (roomActions[i].action == objeto_que_lleva ||
+				roomActions[i].action == DEFAULT) {
+				if (roomActions[i].objectID == flags ||
+					roomActions[i].objectID == -1) {
+					talk(roomActions[i].speechID);
+					didAction = true;
+					break;
+				}
+			}
+		}
+	}
+
+	return didAction;
+}
+
 void DrasculaEngine::room_0() {
-	if (num_ejec == 1) {
-		if (objeto_que_lleva == LOOK)
-			talk(_text[_lang][54], "54.als");
-		else if (objeto_que_lleva == MOVE)
-			talk(_text[_lang][19], "19.als");
-		else if (objeto_que_lleva == PICK)
-			talk(_text[_lang][11], "11.als");
-		else if (objeto_que_lleva == OPEN)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == CLOSE)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == TALK)
-			talk(_text[_lang][16], "16.als");
-		else
-			talk(_text[_lang][11],"11.als");
-	} else if (num_ejec == 2) {
+	if (roomParse(0, -1))
+		return;
+
+	// non-default actions
+	if (num_ejec == 2) {
 		if (objeto_que_lleva == LOOK) {
 			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
-		} else if (objeto_que_lleva == MOVE) {
-			talk(_text[_lang][19], "19.als");
 		} else if (objeto_que_lleva == PICK) {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
-		} else if (objeto_que_lleva == OPEN)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == CLOSE)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == TALK)
-			talk(_text[_lang][16], "16.als");
-		else {
+		} else {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
-	} else if (num_ejec == 3) {
-		if (objeto_que_lleva == LOOK)
-			talk(_text[_lang][316], "316.als");
-		else if (objeto_que_lleva == MOVE)
-			talk(_text[_lang][317], "317.als");
-		else if (objeto_que_lleva == PICK)
-			talk(_text[_lang][318], "318.als");
-		else if (objeto_que_lleva == OPEN)
-			talk(_text[_lang][319], "319.als");
-		else if (objeto_que_lleva == CLOSE)
-			talk(_text[_lang][319], "319.als");
-		else if (objeto_que_lleva == TALK)
-			talk(_text[_lang][320], "320.als");
-		else
-			talk(_text[_lang][318], "318.als");
 	} else if (num_ejec == 4) {
 		if (objeto_que_lleva == LOOK) {
 			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
-		} else if (objeto_que_lleva == MOVE)
-			talk(_text[_lang][19], "19.als");
-		else if (objeto_que_lleva == PICK) {
+		} else if (objeto_que_lleva == PICK) {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
-		} else if (objeto_que_lleva == OPEN)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == CLOSE)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == TALK)
-			talk(_text[_lang][16], "16.als");
-		else {
+		} else {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
@@ -119,20 +167,12 @@ void DrasculaEngine::room_0() {
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
-		} else if (objeto_que_lleva == MOVE)
-			talk(_text[_lang][19], "19.als");
-		else if (objeto_que_lleva == PICK) {
+		} else if (objeto_que_lleva == PICK) {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
-		} else if (objeto_que_lleva == OPEN)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == CLOSE)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == TALK)
-			talk(_text[_lang][16], "16.als");
-		else {
+		} else {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
@@ -144,20 +184,12 @@ void DrasculaEngine::room_0() {
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
-		} else if (objeto_que_lleva == MOVE)
-			talk(_text[_lang][19], "19.als");
-		else if (objeto_que_lleva == PICK) {
+		} else if (objeto_que_lleva == PICK) {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
-		} else if (objeto_que_lleva == OPEN)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == CLOSE)
-			talk(_text[_lang][9], "9.als");
-		else if (objeto_que_lleva == TALK)
-			talk(_text[_lang][16], "16.als");
-		else {
+		} else {
 			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
@@ -167,34 +199,15 @@ void DrasculaEngine::room_0() {
 }
 
 void DrasculaEngine::room_1(int fl) {
+	if (roomParse(1, fl))
+		return;
+
 	if (objeto_que_lleva == LOOK && fl == 118) {
 		talk(_text[_lang][1], "1.als");
 		pause(10);
 		talk(_text[_lang][2], "2.als");
-	} else if (objeto_que_lleva == PICK && fl == 118)
-		talk(_text[_lang][5], "5.als");
-	else if (objeto_que_lleva == OPEN && fl == 118)
-		talk(_text[_lang][3], "3.als");
-	else if (objeto_que_lleva == CLOSE && fl == 118)
-		talk(_text[_lang][4], "4.als");
-	else if (objeto_que_lleva == TALK && fl == 118)
-		talk(_text[_lang][6], "6.als");
-	else if (objeto_que_lleva == LOOK && fl == 119)
-		talk(_text[_lang][8], "8.als");
-	else if (objeto_que_lleva == MOVE && fl == 119)
-		talk(_text[_lang][13], "13.als");
-	else if (objeto_que_lleva == CLOSE && fl == 119)
-		talk(_text[_lang][10], "10.als");
-	else if (objeto_que_lleva == TALK && fl == 119)
-		talk(_text[_lang][12], "12.als");
-	else if (objeto_que_lleva == LOOK && fl == 120 && flags[8] == 0)
+	} else if (objeto_que_lleva == LOOK && fl == 120 && flags[8] == 0)
 		talk(_text[_lang][14], "14.als");
-	else if (objeto_que_lleva == MOVE && fl == 120)
-		talk(_text[_lang][13], "13.als");
-	else if (objeto_que_lleva == OPEN && fl == 120)
-		talk(_text[_lang][18], "18.als");
-	else if (objeto_que_lleva == TALK && fl == 120)
-		talk(_text[_lang][15], "15.als");
 	else
 		hay_respuesta = 0;
 }
@@ -287,25 +300,25 @@ void DrasculaEngine::room_3(int fl) {
 
 void DrasculaEngine::room_4(int fl) {
 	if (objeto_que_lleva == MOVE && fl == 189 && flags[34] == 0) {
-		talk(_text[_lang][327], "327.als");
+		talk(327);
 		pickObject(13);
 		flags[34] = 1;
 		if (flags[7] == 1 && flags[26] == 1 && flags[34] == 1 && flags[35] == 1 && flags[37] == 1)
 			flags[38] = 1;
 	} else if (objeto_que_lleva == LOOK && fl == 189)
-		talk(_text[_lang][182], "182.als");
+		talk(182);
 	else if (objeto_que_lleva == LOOK && fl == 207)
-		talk(_text[_lang][175], "175.als");
+		talk(175);
 	else if (objeto_que_lleva == TALK && fl == 207)
-		talk(_text[_lang][176], "176.als");
+		talk(176);
 	else if (objeto_que_lleva == LOOK && fl == 208)
-		talk(_text[_lang][177], "177.als");
+		talk(177);
 	else if (objeto_que_lleva == LOOK && fl == 209)
-		talk(_text[_lang][179], "179.als");
+		talk(179);
 	else if (objeto_que_lleva == LOOK && fl == 210)
-		talk(_text[_lang][180], "180.als");
+		talk(180);
 	else if (objeto_que_lleva == OPEN && fl == 210)
-		talk(_text[_lang][181], "181.als");
+		talk(181);
 	else
 		hay_respuesta = 0;
 }

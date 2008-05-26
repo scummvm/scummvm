@@ -554,6 +554,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
+void DrasculaEngine::talk(int index) {
+	char name[100];
+	sprintf(name, "%s.als", index);
+	talk(_text[_lang][index], name);
+}
+
 void DrasculaEngine::talk(const char *said, const char *filename) {
 	int tiempou;
 	long tiempol;

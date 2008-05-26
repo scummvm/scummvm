@@ -72,6 +72,7 @@ struct DrasculaGameDescription;
 #define F8           0x42
 #define F9           0x43
 #define F10          0x44
+#define DEFAULT        -1
 #define LOOK            1
 #define PICK            2
 #define OPEN            3
@@ -622,6 +623,7 @@ public:
 	void fin_sound();
 	void talk_bj(const char *, const char *);
 	void talk_baul(const char *said, const char *filename);
+	void talk(int);
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
 	void cierra_puerta(int nflag, int n_puerta);
@@ -698,6 +700,7 @@ public:
 	void aumenta_num_frame();
 	int sobre_que_objeto();
 	bool comprueba_banderas_menu();
+	bool roomParse(int, int);
 	void room_0();
 	void room_1(int);
 	void room_2(int);
