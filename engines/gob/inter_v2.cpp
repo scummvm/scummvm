@@ -1502,18 +1502,27 @@ void Inter_v2::o2_scroll() {
 }
 
 void Inter_v2::o2_setScrollOffset() {
-	int16 offset;
+	int16 offsetX, offsetY;
 
-	offset = _vm->_parse->parseValExpr();
+	offsetX = _vm->_parse->parseValExpr();
+	offsetY = _vm->_parse->parseValExpr();
 
-	if (offset == -1) {
-		_vm->_parse->parseValExpr();
+	if (offsetX == -1) {
 		WRITE_VAR(2, _vm->_draw->_scrollOffsetX);
 		WRITE_VAR(3, _vm->_draw->_scrollOffsetY);
 	} else {
-		_vm->_draw->_scrollOffsetX = offset;
-		_vm->_draw->_scrollOffsetY = _vm->_parse->parseValExpr();
+		int16 screenW = _vm->_video->_surfWidth;
+		int16 screenH = _vm->_video->_surfHeight;
+
+		if (screenW > _vm->_width)
+			screenW -= _vm->_width;
+		if (screenH > _vm->_height)
+			screenH -= _vm->_height;
+
+		_vm->_draw->_scrollOffsetX = CLIP<int16>(offsetX, 0, screenW);
+		_vm->_draw->_scrollOffsetY = CLIP<int16>(offsetY, 0, screenH);
 	}
+
 	_vm->_util->setScrollOffset();
 	_noBusyWait = true;
 }

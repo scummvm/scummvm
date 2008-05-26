@@ -505,7 +505,7 @@ void Inter_v4::setupOpcodes() {
 		/* 30 */
 		OPCODE(o1_returnTo),
 		OPCODE(o1_loadSpriteContent),
-		OPCODE(o3_copySprite),
+		OPCODE(o1_copySprite),
 		OPCODE(o1_fillRect),
 		/* 34 */
 		OPCODE(o1_drawLine),
@@ -772,6 +772,10 @@ void Inter_v4::o4_initScreen() {
 	memset(_vm->_global->_greenPalette, 0, 256);
 	memset(_vm->_global->_bluePalette, 0, 256);
 
+	_vm->_video->_splitSurf = 0;
+	_vm->_draw->_spritesArray[24] = 0;
+	_vm->_draw->_spritesArray[25] = 0;
+
 	_vm->_global->_videoMode = videoMode;
 	_vm->_video->initPrimary(videoMode);
 	WRITE_VAR(15, _vm->_global->_fakeVideoMode);
@@ -786,9 +790,6 @@ void Inter_v4::o4_initScreen() {
 
 	_vm->_util->setScrollOffset();
 
-	_vm->_video->_splitSurf = 0;
-	_vm->_draw->_spritesArray[24] = 0;
-	_vm->_draw->_spritesArray[25] = 0;
 	if (offY > 0) {
 		_vm->_draw->_spritesArray[24] = new SurfaceDesc(videoMode, _vm->_width, offY);
 		_vm->_draw->_spritesArray[25] = new SurfaceDesc(videoMode, _vm->_width, offY);
