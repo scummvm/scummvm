@@ -1688,7 +1688,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"woodruff",
 			"",
-			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee0070556a96d8", 7069736),
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 			EN_GRB,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -1701,7 +1701,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"woodruff",
 			"",
-			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee0070556a96d8", 7069736),
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 			DE_DEU,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -1714,7 +1714,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"woodruff",
 			"",
-			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee0070556a96d8", 7069736),
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 			FR_FRA,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -1727,7 +1727,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"woodruff",
 			"",
-			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee0070556a96d8", 7069736),
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 			IT_ITA,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -1740,7 +1740,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"woodruff",
 			"",
-			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee0070556a96d8", 7069736),
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 			ES_ESP,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
