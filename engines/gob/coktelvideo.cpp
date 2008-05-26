@@ -326,11 +326,11 @@ void Imd::waitEndFrame() {
 			return;
 
 		if (_skipFrames == 0) {
-			int32 waitTime = ((_curFrame * _soundSliceLength) -
-				((g_system->getMillis() - _soundStartTime) << 16)) >> 16;
+			int32 waitTime = (int16) (((_curFrame * _soundSliceLength) -
+				((g_system->getMillis() - _soundStartTime) << 16)) >> 16);
 
 			if (waitTime < 0) {
-				_skipFrames = -waitTime / _soundSliceLength;
+				_skipFrames = -waitTime / (_soundSliceLength >> 16);
 				warning("Video A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
 			} else if (waitTime > 0)
 				g_system->delayMillis(waitTime);
