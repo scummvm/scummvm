@@ -29,7 +29,24 @@
 
 namespace Made {
 
-void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, bool deltaFrame) {
+byte ValueReader::readPixel() {
+	byte value;
+	if (_nibbleMode) {
+		if (_nibbleSwitch) {
+			value = (_buffer[0] >> 4) & 0x0F;
+			_buffer++;
+		} else {
+			value = _buffer[0] & 0x0F;
+		}
+		_nibbleSwitch = !_nibbleSwitch;
+	} else {
+		value = _buffer[0];
+		_buffer++;
+	}
+	return value;
+}
+
+void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame) {
 
 	const int offsets[] = {
 		0, 1, 2, 3,
@@ -43,7 +60,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 
 	byte *cmdBuffer = source + cmdOffs;
 	byte *maskBuffer = source + maskOffs;
-	byte *pixelBuffer = source + pixelOffs;
+	ValueReader pixelReader(source + pixelOffs, pixelFlags & 2);
 
 	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
 
@@ -84,14 +101,14 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				switch (cmd) {
 
 				case 0:
-					pixels[0] = *pixelBuffer++;
+					pixels[0] = pixelReader.readPixel();
 					for (int i = 0; i < 16; i++)
 						lineBuf[drawDestOfs + offsets[i]] = pixels[0];
 					break;
 
 				case 1:
-					pixels[0] = *pixelBuffer++;
-					pixels[1] = *pixelBuffer++;
+					pixels[0] = pixelReader.readPixel();
+					pixels[1] = pixelReader.readPixel();
 					mask = READ_LE_UINT16(maskBuffer);
 					maskBuffer += 2;
 					for (int i = 0; i < 16; i++) {
@@ -101,10 +118,10 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 					break;
 
 				case 2:
-					pixels[0] = *pixelBuffer++;
-					pixels[1] = *pixelBuffer++;
-					pixels[2] = *pixelBuffer++;
-					pixels[3] = *pixelBuffer++;
+					pixels[0] = pixelReader.readPixel();
+					pixels[1] = pixelReader.readPixel();
+					pixels[2] = pixelReader.readPixel();
+					pixels[3] = pixelReader.readPixel();
 					mask = READ_LE_UINT32(maskBuffer);
 					maskBuffer += 4;
 					for (int i = 0; i < 16; i++) {
