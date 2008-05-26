@@ -1841,24 +1841,111 @@ bool DrasculaEngine::confirma_salir() {
 
 void DrasculaEngine::salva_pantallas() {
 	int xr, yr;
+	byte *copia, *ghost;
+	Common::File file;
+	float coeff = 0, coeff2 = 0;
+	int count = 0;
+	int count2 = 0;
+	int tempLine[320];
+	int tempRow[200];
 
 	// FIXME: that part (*.ghost) need RE from efecto.lib file for some gfx special effect
 	// for now ignore
-	return;
 
 	clearRoom();
 
 	loadPic("sv.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
-	//TODO inicio_ghost();
-	//TODO carga_ghost();
+
+	// inicio_ghost();
+	copia = (byte *)malloc(64000);
+	ghost = (byte *)malloc(65536);
+
+	// carga_ghost();
+	file.open("ghost.drv");
+	if (!file.isOpen())
+		error("Cannot open file ghost.drv");
+
+	file.read(ghost, 65536);
+	file.close();
 
 	MirarRaton();
 	xr = x_raton;
 	yr = y_raton;
 
 	for (;;) {
-		//TODO efecto(dir_dibujo1);
+		// efecto(dir_dibujo1);
+
+		memcpy(copia, dir_dibujo1, 64000);
+		coeff += 0.1;
+		coeff2 = coeff;
+
+		if (++count > 319)
+			count = 0;
+
+		for (int i = 0; i < 320; i++) {
+			tempLine[i] = (int)(sin(coeff2) * 16);
+			coeff2 += 0.02;
+			if (tempLine[i] < 0)
+				tempLine[i] += 200;
+			if (tempLine[i] > 199)
+				tempLine[i] -= 200;
+		}
+
+		coeff2 = coeff;
+		for (int i = 0; i < 200; i++) {
+			tempRow[i] = (int)(sin(coeff2) * 16);
+			coeff2 += 0.02;
+			if (tempRow[i] < 0)
+				tempRow[i] += 320;
+			if (tempRow[i] > 319)
+				tempRow[i] -= 320;
+		}
+
+		if (++count2 > 199)
+			count2 = 0;
+
+		int x1_, y1_, off1, off2;
+
+		for (int i = 0; i < 200; i++) {
+			for (int j = 0; j < 320; j++) {
+				x1_ = j + tempRow[i];
+				if (x1_ < 0)
+					x1_ += 320;
+				if (x1_ > 319)
+					x1_ -= 319;
+
+				y1_ = i + count2;
+				if (y1_ < 0)
+					y1_ += 200;
+				if (y1_ > 199)
+					y1_ -= 200;
+
+				off1 = 320 * y1_ + x1_;
+
+				x1_ = j + count;
+				if (x1_ < 0)
+					x1_ += 320;
+				if (x1_ > 319)
+					x1_ -= 320;
+
+				y1_ = i + tempLine[j];
+				if (y1_ < 0)
+					y1_ += 200;
+				if (y1_ > 199)
+					y1_ -= 200;
+				off2 = 320 * y1_ + x1_;
+
+				VGA[320 * i + j] = ghost[dir_dibujo1[off2] + (copia[off1] << 8)];
+			}
+		}
+		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+		_system->updateScreen();
+
+		_system->delayMillis(20);
+
+		// end of efecto()
+
 		MirarRaton();
 		if (boton_dch == 1 || boton_izq == 1)
 			break;
@@ -1867,7 +1954,10 @@ void DrasculaEngine::salva_pantallas() {
 		if (y_raton != yr)
 			break;
 	}
-	//TODO fin_ghost();
+	// fin_ghost();
+	free(copia);
+	free(ghost);
+
 	loadPic(num_room);
 	decompressPic(dir_dibujo1, HALF_PAL);
 }
