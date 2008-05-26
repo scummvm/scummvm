@@ -870,7 +870,7 @@ void DrasculaEngine::animation_4_2() {
 	talk_ciego(_textd[_lang][75],"d75.als", _textd1[_lang][75 - TEXTD_START]);
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	_system->delayMillis(1);
+	_system->delayMillis(1000);
 	talk_hacker(_textd[_lang][64], "d64.als");
 	talk_ciego(_textd[_lang][76], "d76.als", _textd1[_lang][76 - TEXTD_START]);
 
@@ -1016,9 +1016,9 @@ void DrasculaEngine::animation_16_2() {
 		goto asco;
 
 	if (_lang == kSpanish)
-		_system->delayMillis(3);
+		_system->delayMillis(3000);
 	else
-		_system->delayMillis(4);
+		_system->delayMillis(4000);
 
 	key = getscan();
 	if (key != 0)
@@ -1043,9 +1043,9 @@ void DrasculaEngine::animation_16_2() {
 		goto asco;
 
 	if (_lang == kSpanish)
-		_system->delayMillis(3);
+		_system->delayMillis(3000);
 	else
-		_system->delayMillis(4);
+		_system->delayMillis(4000);
 
 	key = getscan();
 	if (key != 0)
@@ -1070,9 +1070,9 @@ void DrasculaEngine::animation_16_2() {
 		goto asco;
 
 	if (_lang == kSpanish)
-		_system->delayMillis(3);
+		_system->delayMillis(3000);
 	else
-		_system->delayMillis(4);
+		_system->delayMillis(4000);
 
 	key = getscan();
 	if (key != 0)
@@ -1097,9 +1097,9 @@ void DrasculaEngine::animation_16_2() {
 		goto asco;
 
 	if (_lang == kSpanish)
-		_system->delayMillis(2);
+		_system->delayMillis(2000);
 	else
-		_system->delayMillis(4);
+		_system->delayMillis(4000);
 
 	key = getscan();
 	if (key != 0)
