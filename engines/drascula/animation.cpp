@@ -377,18 +377,12 @@ void DrasculaEngine::animation_1_1() {
 }
 
 void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
 	int x_talk[4] = {47, 93, 139, 185};
 	int cara;
 	int l = 0;
+	int longitud = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(RED);
 
@@ -433,7 +427,7 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
+		longitud -= 2;
 		if (longitud > 0)
 			goto bucless;
 	}

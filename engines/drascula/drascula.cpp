@@ -4475,8 +4475,7 @@ void DrasculaEngine::mapa() {
 }
 
 void DrasculaEngine::grr() {
-	int longitud;
-	longitud = 30;
+	int longitud = 30;
 
 	color_abc(DARK_GREEN);
 
@@ -4510,7 +4509,7 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
+		longitud -= 2;
 		if (longitud > 0)
 			goto bucless;
 	}
