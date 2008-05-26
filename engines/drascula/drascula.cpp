@@ -2289,87 +2289,51 @@ void DrasculaEngine::puertas_cerradas(int l) {
 	if (num_ejec == 1 || num_ejec == 3 || num_ejec == 5 || num_ejec == 6)
 		return;
 	else if (num_ejec == 2) {
-		if (num_obj[l] == 138 && flags[0] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 138 && flags[0] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 136 && flags[8] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 136 && flags[8] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 156 && flags[16] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 156 && flags[16] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 163 && flags[17] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 163 && flags[17] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 177 && flags[15] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 177 && flags[15] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 175 && flags[40] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 175 && flags[40] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 173 && flags[36] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 173 && flags[36] == 1)
-			isDoor[l] = 1;
+		if (num_obj[l] == 138)
+			isDoor[l] = flags[0];
+		else if (num_obj[l] == 136)
+			isDoor[l] = flags[8];
+		else if (num_obj[l] == 156)
+			isDoor[l] = flags[16];
+		else if (num_obj[l] == 163)
+			isDoor[l] = flags[17];
+		else if (num_obj[l] == 177)
+			isDoor[l] = flags[15];
+		else if (num_obj[l] == 175)
+			isDoor[l] = flags[40];
+		else if (num_obj[l] == 173)
+			isDoor[l] = flags[36];
 	} else if (num_ejec == 4) {
 		if (num_obj[l] == 101 && flags[0] == 0)
 			isDoor[l] = 0;
 		else if (num_obj[l] == 101 && flags[0] == 1 && flags[28] == 1)
 			isDoor[l] = 1;
-		else if (num_obj[l] == 103 && flags[0] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 103 && flags[0] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 104 && flags[1] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 104 && flags[1] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 105 && flags[1] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 105 && flags[1] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 106 && flags[2] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 106 && flags[2] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 107 && flags[2] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 107 && flags[2] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 110 && flags[6] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 110 && flags[6] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 114 && flags[4] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 114 && flags[4] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 115 && flags[4] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 115 && flags[4] == 1)
-			isDoor[l] = 1;
+		else if (num_obj[l] == 103)
+			isDoor[l] = flags[0];
+		else if (num_obj[l] == 104)
+			isDoor[l] = flags[1];
+		else if (num_obj[l] == 105)
+			isDoor[l] = flags[1];
+		else if (num_obj[l] == 106)
+			isDoor[l] = flags[2];
+		else if (num_obj[l] == 107)
+			isDoor[l] = flags[2];
+		else if (num_obj[l] == 110)
+			isDoor[l] = flags[6];
+		else if (num_obj[l] == 114)
+			isDoor[l] = flags[4];
+		else if (num_obj[l] == 115)
+			isDoor[l] = flags[4];
 		else if (num_obj[l] == 116 && flags[5] == 0)
 			isDoor[l] = 0;
 		else if (num_obj[l] == 116 && flags[5] == 1 && flags[23] == 1)
 			isDoor[l] = 1;
-		else if (num_obj[l] == 117 && flags[5] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 117 && flags[5] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 120 && flags[8] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 120 && flags[8] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 122 && flags[7] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 122 && flags[7] == 1)
-			isDoor[l] = 1;
+		else if (num_obj[l] == 117)
+			isDoor[l] = flags[5];
+		else if (num_obj[l] == 120)
+			isDoor[l] = flags[8];
+		else if (num_obj[l] == 122)
+			isDoor[l] = flags[7];
 	}
 }
 
@@ -3267,80 +3231,12 @@ void DrasculaEngine::introduce_nombre() {
 		key = getscan();
 		delay(70);
 		if (key != 0) {
-			if (key == Common::KEYCODE_q)
-				select2[v] = 'q';
-			else if (key == Common::KEYCODE_w)
-				select2[v] = 'w';
-			else if (key == Common::KEYCODE_e)
-				select2[v] = 'e';
-			else if (key == Common::KEYCODE_r)
-				select2[v] = 'r';
-			else if (key == Common::KEYCODE_t)
-				select2[v] = 't';
-			else if (key == Common::KEYCODE_y)
-				select2[v] = 'y';
-			else if (key == Common::KEYCODE_u)
-				select2[v] = 'u';
-			else if (key == Common::KEYCODE_i)
-				select2[v] = 'i';
-			else if (key == Common::KEYCODE_o)
-				select2[v] = 'o';
-			else if (key == Common::KEYCODE_p)
-				select2[v] = 'p';
-			else if (key == Common::KEYCODE_a)
-				select2[v] = 'a';
-			else if (key == Common::KEYCODE_s)
-				select2[v] = 's';
-			else if (key == Common::KEYCODE_d)
-				select2[v] = 'd';
-			else if (key == Common::KEYCODE_f)
-				select2[v] = 'f';
-			else if (key == Common::KEYCODE_g)
-				select2[v] = 'g';
-			else if (key == Common::KEYCODE_h)
-				select2[v] = 'h';
-			else if (key == Common::KEYCODE_j)
-				select2[v] = 'j';
-			else if (key == Common::KEYCODE_k)
-				select2[v] = 'k';
-			else if (key == Common::KEYCODE_l)
-				select2[v] = 'l';
+			if (key >= 0 && key <= 0xFF && isalpha(key))
+				select2[v] = tolower(key);
 			else if ((key == Common::KEYCODE_LCTRL) || (key == Common::KEYCODE_RCTRL))
 				select2[v] = '\164';
-			else if (key == Common::KEYCODE_z)
-				select2[v] = 'z';
-			else if (key == Common::KEYCODE_x)
-				select2[v] = 'x';
-			else if (key == Common::KEYCODE_c)
-				select2[v] = 'c';
-			else if (key == Common::KEYCODE_v)
-				select2[v] = 'v';
-			else if (key == Common::KEYCODE_b)
-				select2[v] = 'b';
-			else if (key == Common::KEYCODE_n)
-				select2[v] = 'n';
-			else if (key == Common::KEYCODE_m)
-				select2[v] = 'm';
-			else if (key == Common::KEYCODE_1)
-				select2[v] = '1';
-			else if (key == Common::KEYCODE_2)
-				select2[v] = '2';
-			else if (key == Common::KEYCODE_3)
-				select2[v] = '3';
-			else if (key == Common::KEYCODE_4)
-				select2[v] = '4';
-			else if (key == Common::KEYCODE_5)
-				select2[v] = '5';
-			else if (key == Common::KEYCODE_6)
-				select2[v] = '6';
-			else if (key == Common::KEYCODE_7)
-				select2[v] = '7';
-			else if (key == Common::KEYCODE_8)
-				select2[v] = '8';
-			else if (key == Common::KEYCODE_9)
-				select2[v] = '9';
-			else if (key == Common::KEYCODE_0)
-				select2[v] = '0';
+			else if (key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9)
+				select2[v] = key;
 			else if (key == Common::KEYCODE_SPACE)
 				select2[v] = '\167';
 			else if (key == ESC)
@@ -3759,28 +3655,16 @@ void DrasculaEngine::aumenta_num_frame() {
 		if (num_frame == 6)
 			num_frame = 0;
 
-		if (direccion_hare == 0) {
+		if (direccion_hare == 0 || direccion_hare == 7) {
 			hare_x = hare_x - step_x;
 			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 7) {
-			hare_x = hare_x - step_x;
-			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 1) {
+		} else if (direccion_hare == 1 || direccion_hare == 2) {
 			hare_x = hare_x + step_x;
 			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 2) {
-			hare_x = hare_x + step_x;
-			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 3) {
+		} else if (direccion_hare == 3 || direccion_hare == 4) {
 			hare_x = hare_x + step_x;
 			hare_y = hare_y + step_y;
-		} else if (direccion_hare == 4) {
-			hare_x = hare_x + step_x;
-			hare_y = hare_y + step_y;
-		} else if (direccion_hare == 5) {
-			hare_x = hare_x - step_x;
-			hare_y = hare_y + step_y;
-		} else if (direccion_hare == 6) {
+		} else if (direccion_hare == 5 || direccion_hare == 6) {
 			hare_x = hare_x - step_x;
 			hare_y = hare_y + step_y;
 		}
