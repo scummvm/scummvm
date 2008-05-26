@@ -334,10 +334,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sagaresnames.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\saga\saveload.cpp"
 			>
 		</File>
