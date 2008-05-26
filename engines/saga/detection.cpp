@@ -36,7 +36,6 @@
 #include "saga/rscfile.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
-#include "saga/sagaresnames.h"
 
 namespace Saga {
 struct SAGAGameDescription {
@@ -63,10 +62,7 @@ const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->s
 const GameSoundInfo *SagaEngine::getMusicInfo() const {
 	static GameSoundInfo musicInfo;
 	musicInfo.resourceType = kSoundPCM;
-	musicInfo.frequency = 11025;
 	musicInfo.sampleBits = 16;
-	// The digital music in the ITE Mac demo version is not stereo
-	musicInfo.stereo = _gameDescription->gameType == GID_ITE_MACDEMO2 ? false : true;
 	musicInfo.isBigEndian = false;
 	musicInfo.isSigned = true;
 

@@ -28,7 +28,6 @@
 #include "saga/saga.h"
 
 #include "saga/rscfile.h"
-#include "saga/sagaresnames.h"
 #include "saga/music.h"
 
 #include "sound/audiostream.h"
@@ -40,6 +39,7 @@
 namespace Saga {
 
 #define BUFFER_SIZE 4096
+#define MUSIC_SUNSPOT 26
 
 class DigitalMusicInputStream : public Audio::AudioStream {
 private:
@@ -58,6 +58,7 @@ private:
 	const int16 *_pos;
 	const GameSoundInfo *_musicInfo;
 	MemoryReadStream *_memoryStream;
+	SagaEngine *_vm;
 
 	void refill();
 	bool eosIntern() const {
@@ -73,18 +74,21 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{ return _musicInfo->stereo; }
-	int getRate() const	{ return _musicInfo->frequency; }
+	bool isStereo() const	{
+		// The digital music in the ITE Mac demo version is not stereo
+		return _vm->getGameId() == GID_ITE_MACDEMO2 ? false : true;
+	}
+	int getRate() const	{ return 11025; }
 };
 
 DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart)
-	: _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
+	: _vm(vm), _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
 
 	byte compressedHeader[10];
 
-	resourceData = vm->_resource->getResourceData(context, resourceId);
+	resourceData = _vm->_resource->getResourceData(context, resourceId);
 	_file = context->getFile(resourceData);
-	_musicInfo = vm->getMusicInfo();
+	_musicInfo = _vm->getMusicInfo();
 
 	if (_musicInfo == NULL) {
 		error("DigitalMusicInputStream() wrong musicInfo");
@@ -480,7 +484,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 			if (_digitalMusicContext != NULL) {
 				//TODO: check resource size
 				loopStart = 0;
-				// fix ITE sunstatm score
+				// fix ITE sunstatm/sunspot score
 				if ((_vm->getGameType() == GType_ITE) && (resourceId == MUSIC_SUNSPOT)) {
 					loopStart = 4 * 18727;
 				}
@@ -557,7 +561,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		musicFile.read(resourceData, resourceSize);
 		musicFile.close();
 
-		// TODO: The Mac music format is unknown (probably TFMX?)
+		// TODO: The Mac music format is unsupported (QuickTime MIDI)
 		// so stop here
 		return;
 	} else {

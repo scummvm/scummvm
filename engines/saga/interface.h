@@ -56,6 +56,10 @@ enum InterfaceUpdateFlags {
 #define STATUS_TEXT_LEN 128
 #define STATUS_TEXT_INPUT_MAX 256
 
+#define RID_IHNM_BOSS_SCREEN 19		// not in demo
+#define RID_ITE_TYCHO_MAP 1686
+#define RID_ITE_SPR_CROSSHAIR (73 + 9)
+
 // Converse-specific stuff
 
 enum PanelModes {

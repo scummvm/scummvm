@@ -43,7 +43,6 @@
 #include "saga/sound.h"
 #include "saga/sprite.h"
 #include "saga/rscfile.h"
-#include "saga/sagaresnames.h"
 
 #include "saga/interface.h"
 
@@ -477,9 +476,9 @@ void Interface::setMode(int mode) {
 
 bool Interface::processAscii(Common::KeyState keystate) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
-	// and probably only works with the English version. Maybe we should
-	// add a flag to the button so it can indicate if it's the default or
-	// cancel button?
+	// probably only works with the English version. Maybe we should
+	// add a flag to the button so it can indicate if it's the default
+	// or cancel button?
 	uint16 ascii = keystate.ascii;
 	int i;
 	PanelButton *panelButton;
@@ -2755,7 +2754,7 @@ void Interface::mapPanelDrawCrossHair() {
 
 	if (screen.contains(mapPosition)) {
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites,
-						   _mapPanelCrossHairState? RID_ITE_SPR_XHAIR1 : RID_ITE_SPR_XHAIR2,
+						   _mapPanelCrossHairState? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
 						   mapPosition, 256);
 	}
 }

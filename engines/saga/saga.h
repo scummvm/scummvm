@@ -82,11 +82,11 @@ using Common::MemoryReadStreamEndian;
 #define OBJECT_TYPE_MASK ((1 << OBJECT_TYPE_SHIFT) - 1)
 
 #define OBJ_SPRITE_BASE 9
+#define IHNM_OBJ_PROFILE 0x4000
 
 #define memoryError(Place) error("%s Memory allocation error.", Place)
 
 enum ERRORCODE {
-	MEM = -2,//todo: remove
 	FAILURE = -1,
 	SUCCESS = 0
 };
@@ -303,15 +303,17 @@ struct GameResourceDescription {
 	uint32 mainPanelResourceId;
 	uint32 conversePanelResourceId;
 	uint32 optionPanelResourceId;
-	uint32 warningPanelResourceId;
-	uint32 warningPanelSpritesResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
-	uint32 optionPanelSpritesResourceId;
-	uint32 defaultPortraitsResourceId;
-	uint32 psychicProfileResourceId;
 	uint32 mainStringsResourceId;
+	// ITE specific resources
 	uint32 actorsStringsResourceId;
+	uint32 defaultPortraitsResourceId;
+	// IHNM specific resources
+	uint32 optionPanelSpritesResourceId;
+	uint32 warningPanelResourceId;
+	uint32 warningPanelSpritesResourceId;
+	uint32 psychicProfileResourceId;
 };
 
 struct GameFontDescription {
@@ -322,9 +324,7 @@ struct GameDisplayInfo;
 
 struct GameSoundInfo {
 	GameSoundTypes resourceType;
-	long frequency;
 	int sampleBits;
-	bool stereo;
 	bool isBigEndian;
 	bool isSigned;
 };

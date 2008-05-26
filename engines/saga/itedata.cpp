@@ -26,7 +26,6 @@
 // Actor and Object data tables
 #include "saga/saga.h"
 #include "saga/itedata.h"
-#include "saga/sagaresnames.h"
 #include "saga/sndres.h"
 
 namespace Saga {
@@ -245,7 +244,7 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 23,   0,  480,  480,  0, 24, 23, 0           }, // Silver Medallion
 	{ 24,   0,  480,  480,  0, 25, 24, 0           }, // Mud in Fur
 	{ 25,   0,  480,  480,  0, 26, 25, 0           }, // Gold Ring
-	{ 27,  13, 1036,  572,  40, 47, 14, kObjUseWith }, // Screwdriver
+	{ 27,  13, 1036,  572, 40, 47, 14, kObjUseWith }, // Screwdriver
 	{ 28,   0,  480,  480,  0, 29, 26, 0           }, // Apple Token
 	{ 29,   0,  480,  480,  0, 30, 22, kObjUseWith }, // Letter from Elara
 	{ 30,   0,  164,  440,  0, 31, 16, kObjUseWith }, // Spoon
@@ -258,82 +257,86 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 40, 269,  644,  416,  0, 41, 39, kObjNotFlat }, // Electrical Cable
 	{ 41,  12,  280,  516,  0, 43, 17, kObjUseWith }, // Piece of flint
 	{ 42,   5,  876,  332, 32, 65, 18, 0           }, // Rat Cloak
-	{ 43,  52,  556, 1612,  0, 49, 28, kObjUseWith | kObjNotFlat }, // Bucket
+	{ 43,  52,  556, 1612,  0, 49, 28, kObjUseWith | 
+									   kObjNotFlat }, // Bucket
 	{ 48,  52,  732,  948,  0, 50, 27, kObjUseWith }, // Cup
 	{ 49,  52,  520, 1872,  0, 53, 29, 0           }, // Fertilizer
 	{ 50,  52, 1012, 1268,  0, 52, 30, 0           }, // Feeder
-	{ 51, 252,  -20,  -20,  0, 71, 32, kObjUseWith | kObjNotFlat }, // Bowl in jail cell
+	{ 51, 252,  -20,  -20,  0, 71, 32, kObjUseWith |
+									   kObjNotFlat }, // Bowl in jail cell
 	{ 53, 252, 1148,  388,  0, 70, 33, 0           }, // Loose stone block in jail cell
 	{ 26,  12,  496,  368,  0, 76, 31, 0           }, // Coil of Rope from Quarry
 	{ 54, 281,  620,  352,  0, 80, 46, 0           }  // Orb of Storms in Dam Lab
 };
 
 FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
-	{ FX_DOOR_OPEN,    127 },
-	{ FX_DOOR_CLOSE,   127 },
-	{ FX_RUSH_WATER,    63 }, // Floppy volume: 127
-	{ FX_RUSH_WATER,    26 }, // Floppy volume: 40
-	{ FX_CRICKET,       64 },
-	{ FX_PORTICULLIS,   84 }, // Floppy volume: 127
-	{ FX_CLOCK_1,       64 },
-	{ FX_CLOCK_2,       64 },
-	{ FX_DAM_MACHINE,   64 },
-	{ FX_DAM_MACHINE,   40 },
-	{ FX_HUM1,          64 },
-	{ FX_HUM2,          64 },
-	{ FX_HUM3,          64 },
-	{ FX_HUM4,          64 },
-	{ FX_WATER_LOOP_S,  32 }, // Floppy volume: 64
-	{ FX_SURF,          42 }, // Floppy volume: 127
-	{ FX_SURF,          32 }, // Floppy volume: 64
-	{ FX_FIRELOOP,      64 }, // Floppy volume: 96
-	{ FX_SCRAPING,      84 }, // Floppy volume: 127
-	{ FX_BEE_SWARM,     64 }, // Floppy volume: 96
-	{ FX_BEE_SWARM,     26 }, // Floppy volume: 40
-	{ FX_SQUEAKBOARD,   64 },
-	{ FX_KNOCK,        127 },
-	{ FX_COINS,         32 }, // Floppy volume: 48
-	{ FX_STORM,         84 }, // Floppy volume: 127
-	{ FX_DOOR_CLOSE_2,  84 }, // Floppy volume: 127
-	{ FX_ARCWELD,       84 }, // Floppy volume: 127
-	{ FX_RETRACT_ORB,  127 },
-	{ FX_DRAGON,       127 },
-	{ FX_SNORES,       127 },
-	{ FX_SPLASH,       127 },
-	{ FX_LOBBY_DOOR,   127 },
-	{ FX_CHIRP_LOOP,    26 }, // Floppy volume: 40
-	{ FX_DOOR_CREAK,    96 },
-	{ FX_SPOON_DIG,     64 },
-	{ FX_CROW,          96 },
-	{ FX_COLDWIND,      42 }, // Floppy volume: 64
-	{ FX_TOOL_SND_1,    96 },
-	{ FX_TOOL_SND_2,   127 },
-	{ FX_TOOL_SND_3,    64 },
-	{ FX_DOOR_METAL,    96 },
-	{ FX_WATER_LOOP_S,  32 },
-	{ FX_WATER_LOOP_L,  32 }, // Floppy volume: 64
-	{ FX_DOOR_OPEN_2,  127 },
-	{ FX_JAIL_DOOR,     64 },
-	{ FX_KILN_FIRE,     53 }, // Floppy volume: 80
-
-	// Only in the CD version
-	{ FX_CROWD_01,      64 },
-	{ FX_CROWD_02,      64 },
-	{ FX_CROWD_03,      64 },
-	{ FX_CROWD_04,      64 },
-	{ FX_CROWD_05,      64 },
-	{ FX_CROWD_06,      64 },
-	{ FX_CROWD_07,      64 },
-	{ FX_CROWD_08,      64 },
-	{ FX_CROWD_09,      64 },
-	{ FX_CROWD_10,      64 },
-	{ FX_CROWD_11,      64 },
-	{ FX_CROWD_12,      64 },
-	{ FX_CROWD_13,      64 },
-	{ FX_CROWD_14,      64 },
-	{ FX_CROWD_15,      64 },
-	{ FX_CROWD_16,      64 },
-	{ FX_CROWD_17,      64 }
+	{ 14,	127 },	// Door open
+	{ 15,   127 },	// Door close
+	{ 16,    63 },	// Rush water (floppy volume: 127)
+	{ 16,    26 },	// Rush water (floppy volume: 40)
+	{ 17,    64 },	// Cricket
+	{ 18,    84 },	// Porticullis (floppy volume: 127)
+	{ 19,    64 },	// Clock 1
+	{ 20,    64 },	// Clock 2
+	{ 21,    64 },	// Dam machine
+	{ 21,    40 },	// Dam machine
+	{ 22,    64 },	// Hum 1
+	{ 23,    64 },	// Hum 2
+	{ 24,    64 },	// Hum 3
+	{ 25,    64 },	// Hum 4
+	// Note: the following effect was set to 51 for
+	// some unknown reason
+	{ 26,	 32 },	// Stream
+	{ 27,    42 },	// Surf (floppy volume: 127)
+	{ 27,    32 },	// Surf (floppy volume: 64)
+	{ 28,    64 },	// Fire loop (floppy volume: 96)
+	{ 29,    84 },	// Scraping (floppy volume: 127)
+	{ 30,    64 },	// Bee swarm (floppy volume: 96)
+	{ 30,    26 },	// Bee swarm (floppy volume: 40)
+	{ 31,    64 },	// Squeaky board
+	{ 32,   127 },	// Knock
+	{ 33,    32 },	// Coins (floppy volume: 48)
+	{ 34,    84 },	// Storm (floppy volume: 127)
+	{ 35,	 84 },	// Door close 2 (floppy volume: 127)
+	{ 36,    84 },  // Arcweld (floppy volume: 127)
+	{ 37,	127 },	// Retract orb
+	{ 38,   127 },	// Dragon
+	{ 39,   127 },	// Snores
+	{ 40,   127 },	// Splash
+	{ 41,   127 },	// Lobby door
+	{ 42,    26 },	// Chirp loop (floppy volume: 40)
+	{ 43,    96 },	// Door creak
+	{ 44,    64 },	// Spoon dig
+	{ 45,    96 },	// Crow
+	{ 46,    42 },	// Cold wind (floppy volume: 64)
+	{ 47,    96 },	// Tool sound 1
+	{ 48,   127 },	// Tool sound 2
+	{ 49,    64 },	// Tool sound 3
+	{ 50,    96 },	// Metal door
+	{ 51,	 32 },	// Water loop S
+	{ 52,	 32 },	// Water loop L (floppy volume: 64)
+	{ 53,	127 },	// Door open 2
+	{ 54,	 64 },	// Jail door
+	{ 55,	 53 },	// Killing fire (floppy volume: 80)
+  //{ 56,	  0 },	// Dummy FX
+	// Crowd effects, which exist only in the CD version
+	{ 57,	 64 },
+	{ 58,    64 },
+	{ 59,    64 },
+	{ 60,    64 },
+	{ 61,    64 },
+	{ 62,    64 },
+	{ 63,    64 },
+	{ 64,    64 },
+	{ 65,    64 },
+	{ 66,    64 },
+	{ 67,    64 },
+	{ 68,    64 },
+	{ 69,    64 },
+	{ 70,    64 },
+	{ 71,    64 },
+	{ 72,    64 },
+	{ 73,    64 }
 };
 
 const char *ITEinterfaceTextStrings[][52] = {
@@ -491,14 +494,6 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 	"Psst! Serve un aiutino?",
 	"Io, sai, l'avrei fatto diversamente."
 	}
-};
-
-const char portraitList[] = {
-	RID_ITE_JFERRET_SERIOUS,
-	RID_ITE_JFERRET_GOOFY,
-	RID_ITE_JFERRET_SERIOUS,
-	RID_ITE_JFERRET_GOOFY,
-	RID_ITE_JFERRET_ALOOF
 };
 
 const char *sakkaStr[][NUM_SAKKA] = {
