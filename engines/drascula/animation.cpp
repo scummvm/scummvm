@@ -84,12 +84,10 @@ void DrasculaEngine::animation_1_1() {
 		comienza_sound("s5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		anima("scr2.bin", 17);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("scr2.bin", 17))
 			break;
 		fin_sound_corte();
-		anima("scr3.bin", 17);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("scr3.bin", 17))
 			break;
 		loadPic("cielo2.alg");
 		decompressPic(dir_zona_pantalla, 256);
@@ -198,11 +196,9 @@ void DrasculaEngine::animation_1_1() {
 		talk_dr_izq(_textd[_lang][3], "d3.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		anima("lib.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("lib.bin", 16))
 			break;
-		anima("lib2.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("lib2.bin", 16))
 			break;
 		clearRoom();
 		color_solo = RED;
@@ -219,8 +215,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_solo(_textd[_lang][5], "d5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		anima("lib2.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("lib2.bin", 16))
 			break;
 		clearRoom();
 		loadPic("plan2.alg");
@@ -230,8 +225,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_solo(_textd[_lang][6], "d6.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		anima("lib2.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("lib2.bin", 16))
 			break;
 		clearRoom();
 		loadPic("plan3.alg");
@@ -269,21 +263,16 @@ void DrasculaEngine::animation_1_1() {
 		talk_dr_izq(_textd[_lang][10], "d10.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		anima("rayo1.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("rayo1.bin", 16))
 			break;
 		comienza_sound("s5.als");
-		anima("rayo2.bin", 15);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("rayo2.bin", 15))
 			break;
-		anima("frel2.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("frel2.bin", 16))
 			break;
-		anima("frel.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("frel.bin", 16))
 			break;
-		anima("frel.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("frel.bin", 16))
 			break;
 		fin_sound_corte();
 		clearRoom();
@@ -462,8 +451,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		anima("ag.bin", 14);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("ag.bin", 14))
 			break;
 
 		if (_lang == kSpanish)
@@ -551,8 +539,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		anima("lev.bin", 15);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("lev.bin", 15))
 			break;
 
 		lleva_al_hare(100 + ancho_hare / 2, 99 + alto_hare);
@@ -579,11 +566,11 @@ void DrasculaEngine::animation_2_1() {
 		talk(_text[_lang][221], "221.als");
 		talk_bj(_textbj[_lang][10], "BJ10.als");
 		talk(_text[_lang][222], "222.als");
-		anima("gaf.bin", 15);
-		anima("bjb.bin", 14);
-		playMusic(9);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("gaf.bin", 15))
 			break;
+		if (anima("bjb.bin", 14))
+			break;
+		playMusic(9);
 		loadPic("97.alg");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -629,10 +616,10 @@ void DrasculaEngine::animation_2_1() {
 		lleva_al_hare(157, 98 + alto_hare);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		anima("bes.bin", 16);
+		if (anima("bes.bin", 16))
+			break;
 		playMusic(11);
-		anima("rap.bin", 16);
-		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
+		if (anima("rap.bin", 16))
 			break;
 		sentido_hare = 3;
 		strcpy(num_room, "no_bj.alg");

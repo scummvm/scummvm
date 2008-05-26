@@ -2033,7 +2033,7 @@ void DrasculaEngine::comienza_sound(const char *fichero) {
 	ctvd_output(sku);
 }
 
-void DrasculaEngine::anima(const char *animation, int FPS) {
+bool DrasculaEngine::anima(const char *animation, int FPS) {
 	Common::File FileIn;
 	unsigned j;
 	int NFrames = 1;
@@ -2084,6 +2084,8 @@ void DrasculaEngine::anima(const char *animation, int FPS) {
 	free(AuxBuffLast);
 	free(AuxBuffDes);
 	FileIn.close();
+
+	return ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE));
 }
 
 void DrasculaEngine::animafin_sound_corte() {

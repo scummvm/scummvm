@@ -602,7 +602,7 @@ public:
 	void color_abc(int cl);
 	void centra_texto(const char *,int,int);
 	void comienza_sound(const char *);
-	void anima(const char *animation, int FPS);
+	bool anima(const char *animation, int FPS);
 	void fin_sound_corte();
 	void FundeAlNegro(int VelocidadDeFundido);
 	void pause(int);
