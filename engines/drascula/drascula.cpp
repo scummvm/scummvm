@@ -1877,7 +1877,7 @@ void DrasculaEngine::salva_pantallas() {
 		// efecto(dir_dibujo1);
 
 		memcpy(copia, dir_dibujo1, 64000);
-		coeff += 0.1;
+		coeff += 0.1f;
 		coeff2 = coeff;
 
 		if (++count > 319)
@@ -1885,7 +1885,7 @@ void DrasculaEngine::salva_pantallas() {
 
 		for (int i = 0; i < 320; i++) {
 			tempLine[i] = (int)(sin(coeff2) * 16);
-			coeff2 += 0.02;
+			coeff2 += 0.02f;
 			if (tempLine[i] < 0)
 				tempLine[i] += 200;
 			if (tempLine[i] > 199)
@@ -1895,7 +1895,7 @@ void DrasculaEngine::salva_pantallas() {
 		coeff2 = coeff;
 		for (int i = 0; i < 200; i++) {
 			tempRow[i] = (int)(sin(coeff2) * 16);
-			coeff2 += 0.02;
+			coeff2 += 0.02f;
 			if (tempRow[i] < 0)
 				tempRow[i] += 320;
 			if (tempRow[i] > 319)
