@@ -902,7 +902,6 @@ void DrasculaEngine::talk_ciego(const char *said, const char *filename, const ch
 	byte *num_cara;
 	int p = 0;
 	int pos_ciego[6];
-	int cara = 0;
 
 	int longitud;
 	longitud = strlen(said);
@@ -924,39 +923,23 @@ bucless:
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pos_ciego[5] = 149;
 	char c = toupper(sincronia[p]);
-	if (c == '0')
-		cara = 0;
-	if (c == '1')
-		cara = 1;
-	if (c == '2')
-		cara = 2;
-	if (c == '3')
-		cara = 3;
-	if (c == '4')
-		cara = 4;
-	if (c == '5')
-		cara = 5;
-	if (c == '6')
-		cara = 6;
-	if (c == '7')
-		cara = 7;
 
-	if (cara == 0 || cara == 2 || cara == 4 || cara == 6)
+	if (c == '0' || c == '2' || c == '4' || c == '6')
 		pos_ciego[0] = 1;
 	else
 		pos_ciego[0] = 132;
 
-	if (cara == 0)
+	if (c == '0')
 		num_cara = dir_dibujo3;
-	else if (cara == 1)
+	else if (c == '1')
 		num_cara = dir_dibujo3;
-	else if (cara == 2)
+	else if (c == '2')
 		num_cara = dir_hare_dch;
-	else if (cara == 3)
+	else if (c == '3')
 		num_cara = dir_hare_dch;
-	else if (cara == 4)
+	else if (c == '4')
 		num_cara = dir_hare_fondo;
-	else if (cara == 5)
+	else if (c == '5')
 		num_cara = dir_hare_fondo;
 	else {
 		num_cara = dir_hare_frente;
@@ -1622,16 +1605,7 @@ void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1){
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1731,16 +1705,7 @@ void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1){
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
