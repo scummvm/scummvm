@@ -481,7 +481,9 @@ public:
 
 	bool escoba();
 	void black();
+	void talk_vb(int);
 	void talk_vb(const char *, const char *);
+	void talk_vbpuerta(int);
 	void talk_vbpuerta(const char *said, const char *filename);
 	void talk_ciego(const char *, const char *, const char *);
 	void talk_hacker(const char *, const char *);

@@ -727,6 +727,12 @@ bucless:
 	}
 }
 
+void DrasculaEngine::talk_vb(int index) {
+	char name[100];
+	sprintf(name, "VB%i.als", index);
+	talk_vb(_textvb[_lang][index], name);
+}
+
 void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 	int x_talk[6] = {1, 27, 53, 79, 105, 131};
 	int cara;
@@ -780,6 +786,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
 		playMusic(roomMusic);
+}
+
+void DrasculaEngine::talk_vbpuerta(int index) {
+	char name[100];
+	sprintf(name, "VB%i.als", index);
+	talk_vb(_textvb[_lang][index], name);
 }
 
 void DrasculaEngine::talk_vbpuerta(const char *said, const char *filename) {
