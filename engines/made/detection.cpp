@@ -356,7 +356,8 @@ const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const FSList *fs
 	Made::g_fallbackDesc.features = 0;
 	Made::g_fallbackDesc.version = 0;
 
-	return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	//return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	return NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)

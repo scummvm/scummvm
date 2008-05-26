@@ -234,7 +234,8 @@ const Common::ADGameDescription *DrasculaMetaEngine::fallbackDetect(const FSList
 	Drascula::g_fallbackDesc.features = 0;
 	Drascula::g_fallbackDesc.version = 0;
 
-	return (const Common::ADGameDescription *)&Drascula::g_fallbackDesc;
+	//return (const Common::ADGameDescription *)&Drascula::g_fallbackDesc;
+	return NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRASCULA)
