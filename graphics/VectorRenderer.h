@@ -34,8 +34,9 @@
 namespace Graphics {
 
 void vector_renderer_test(OSystem *_system);
+class VectorRenderer;
 
-/** Specified the way in which a shape is filled */
+/** Specifies the way in which a shape is filled */
 enum FillMode {
 	kFillMode_Disabled = 0,
 	kFillMode_Foreground = 1,
@@ -44,22 +45,33 @@ enum FillMode {
 };
 
 struct DrawStep {
-	bool set_fg, set_bg, set_grad;
+	uint32 flags; /** Step flags, see DrawStepFlags */
 
-	uint8 fg_r, fg_g, fg_b;
-	uint8 bg_r, bg_g, bg_b;
+	struct { 
+		uint8 r, g, b; 
+	}	
+	color1, /** Foreground color/gradient start */
+	color2; /** Background color/gradient end */
 
-	uint8 grad_r1, grad_g1, grad_b1;
-	uint8 grad_r2, grad_g2, grad_b2;
+	uint16 x, y, w, h, r; /** Shape size */
+	uint8 shadow, stroke, factor; /** Misc options... */
 
-	uint16 x, y, w, h, r;
-	uint8 shadows, stroke, factor;
+	FillMode fill_mode; /** active fill mode */
 
-	FillMode fill_mode;
-
-	void (*drawing_call)(DrawStep *step);
+	void (VectorRenderer::*drawing_call)(DrawStep*); /** Pointer to drawing function */
 };
 
+enum DrawStepFlags {
+	kDrawStep_CallbackOnly		= (1 << 0),
+	kDrawStep_SettingsOnly		= (1 << 1),
+	kDrawStep_SetBG				= (1 << 2),
+	kDrawStep_SetFG				= (1 << 3),
+	kDrawStep_SetGradient		= (1 << 4),
+	kDrawStep_SetShadow			= (1 << 5),
+	kDrawStep_SetGradientFactor	= (1 << 6),
+	kDrawStep_SetStroke			= (1 << 7),
+	kDrawStep_SetFillMode		= (1 << 8)
+};
 
 /**
  * VectorRenderer: The core Vector Renderer Class
@@ -199,7 +211,7 @@ public:
 	 *
 	 * @param mode Fill mode (bg, fg or gradient) used to fill the surface
 	 */
-	virtual void fillSurface(FillMode mode = kFillMode_Foreground) = 0;
+	virtual void fillSurface() = 0;
 
 	/**
 	 * Clears the active surface.
@@ -263,26 +275,27 @@ public:
 			_gradientFactor = factor;
 	}
 
-	void drawStep_CIRCLE(DrawStep *step) {
+	void drawCallback_CIRCLE(DrawStep *step) {
 		drawCircle(step->x, step->y, step->r);
 	}
 
-	void drawStep_SQUARE(DrawStep *step) {
+	void drawCallback_SQUARE(DrawStep *step) {
 		drawSquare(step->x, step->y, step->w, step->h);
 	}
 
-	void drawStep_LINE(DrawStep *step) {
+	void drawCallback_LINE(DrawStep *step) {
 		drawLine(step->x, step->y, step->x + step->w, step->y + step->h);
 	}
 
-	void drawStep_ROUNDEDSQ(DrawStep *step) {
+	void drawCallback_ROUNDSQ(DrawStep *step) {
 		drawRoundedSquare(step->x, step->y, step->r, step->w, step->h);
 	}
 
-
-	virtual void drawStep(DrawStep *step) {
-
+	void drawCallback_FILLSURFACE(DrawStep *step) {
+		fillSurface();
 	}
+
+	virtual void drawStep(DrawStep *step);
 
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -370,18 +383,18 @@ public:
 	/**
 	 * @see VectorRenderer::fillSurface()
 	 */
-	void fillSurface(FillMode mode = kFillMode_Foreground) {
+	void fillSurface() {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
 
 		int w = _activeSurface->w;
 		int h = _activeSurface->h ;
 		int pitch = surfacePitch();
 
-		if (mode == kFillMode_Background)
+		if (Base::_fillMode == kFillMode_Background)
 			colorFill(ptr, ptr + w * h, _bgColor);
-		else if (mode == kFillMode_Foreground)
+		else if (Base::_fillMode == kFillMode_Foreground)
 			colorFill(ptr, ptr + w * h, _fgColor);
-		else if (mode == kFillMode_Gradient) {
+		else if (Base::_fillMode == kFillMode_Gradient) {
 			int i = h;
 			while (i--) {
 				colorFill(ptr, ptr + w, calcGradient(h - i, h));

@@ -60,28 +60,53 @@ void vector_renderer_test(OSystem *_system) {
 
 	_system->showOverlay();
 
+	DrawStep *steps = new DrawStep[5];
+
+	steps[0].color1.r = 214;
+	steps[0].color1.g = 113;
+	steps[0].color1.b = 8;
+	steps[0].color2.r = 240;
+	steps[0].color2.g = 200;
+	steps[0].color2.b = 25;
+	steps[0].fill_mode = kFillMode_Gradient;
+	steps[0].drawing_call = &VectorRenderer::drawCallback_FILLSURFACE;
+	steps[0].flags = kDrawStep_SetGradient | kDrawStep_SetFillMode;
+
+	steps[1].color1.r = 206;
+	steps[1].color1.g = 121;
+	steps[1].color1.b = 99;
+	steps[1].color2.r = 173;
+	steps[1].color2.g = 40;
+	steps[1].color2.b = 8;
+	steps[1].x = 500;
+	steps[1].y = 95;
+	steps[1].r = 8;
+	steps[1].w = 120;
+	steps[1].h = 30;
+	steps[1].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[1].flags = kDrawStep_SetGradient;
+
+	steps[2].x = 500;
+	steps[2].y = 135;
+	steps[2].r = 8;
+	steps[2].w = 120;
+	steps[2].h = 30;
+	steps[2].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[2].flags = kDrawStep_CallbackOnly;
+
+	steps[3].x = 500;
+	steps[3].y = 175;
+	steps[3].r = 8;
+	steps[3].w = 120;
+	steps[3].h = 30;
+	steps[3].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[3].flags = kDrawStep_CallbackOnly;
+
 	bool running = true;
 	while (running) { // draw!!
-		vr->setFgColor(255, 0, 206);
-		vr->setGradientFactor(1);
-		vr->setGradientColors(214, 113, 8, 240, 200, 25);
-		vr->fillSurface(kFillMode_Gradient);
 
-		vr->setBgColor(25, 25, 175);
-		vr->shadowEnable(3);
-		vr->setFgColor(240, 204, 120);
-		vr->setStrokeWidth(1);
-		vr->setFillMode(kFillMode_Gradient);
-
-		vr->setGradientFactor(3);
-		vr->setGradientColors(255, 231, 140, 255, 243, 206);	
-		vr->drawRoundedSquare(25, 95, 18, 465, 290);
-
-		vr->setGradientFactor(1);
-		vr->setGradientColors(206, 121, 99, 173, 40, 8);
-		vr->drawRoundedSquare(500, 95, 8, 120, 30);
-		vr->drawRoundedSquare(500, 135, 8, 120, 30);
-		vr->drawRoundedSquare(500, 175, 8, 120, 30);
+		for (int i = 0; i < 4; ++i)
+			vr->drawStep(&steps[i]);
 
 		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
 		_system->updateScreen();
@@ -95,6 +120,44 @@ void vector_renderer_test(OSystem *_system) {
 	}
 
 	_system->hideOverlay();
+}
+
+/********************************************************************
+ * DRAWSTEP handling functions
+ ********************************************************************/
+void VectorRenderer::drawStep(DrawStep *step) {
+
+	if (step->flags & kDrawStep_CallbackOnly) {
+		(this->*(step->drawing_call))(step);
+		return;
+	}
+
+	if (step->flags & kDrawStep_SetBG)
+		setBgColor(step->color2.r, step->color2.g, step->color2.b);
+
+	if (step->flags & kDrawStep_SetFG)
+		setFgColor(step->color1.r, step->color1.g, step->color1.b);
+
+	if (step->flags & kDrawStep_SetGradient)
+		setGradientColors(step->color1.r, step->color1.g, step->color1.b, 
+						  step->color2.r, step->color2.g, step->color2.b);
+
+	if (step->flags & kDrawStep_SetShadow)
+		shadowEnable(step->shadow);
+
+	if (step->flags & kDrawStep_SetGradientFactor)
+		setGradientFactor(step->factor);
+
+	if (step->flags & kDrawStep_SetStroke)
+		setStrokeWidth(step->stroke);
+
+	if (step->flags & kDrawStep_SetFillMode)
+		setFillMode(step->fill_mode);
+		
+	if (step->flags & kDrawStep_SettingsOnly)
+		return;
+
+	(this->*(step->drawing_call))(step);	
 }
 
 /********************************************************************
