@@ -60,7 +60,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 
 	byte *cmdBuffer = source + cmdOffs;
 	byte *maskBuffer = source + maskOffs;
-	ValueReader pixelReader(source + pixelOffs, pixelFlags & 2);
+	ValueReader pixelReader(source + pixelOffs, (pixelFlags & 2) != 0);
 
 	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
 
