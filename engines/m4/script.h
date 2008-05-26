@@ -300,7 +300,7 @@ public:
 	const T& toData(const ScriptValue &value) {
 		printf("ScriptInterpreter::toData() index = %d; type = %d; max = %d\n", value.value, _data[value.value]->type, _data.size());
 		assert((uint32)value.value < _data.size());
-		T* result = _dataCache->load<T>(_scriptFile, _data[value.value]->offset);
+		T *result = _dataCache->load<T>(_scriptFile, _data[value.value]->offset);
 		return *result;
 	}
 
