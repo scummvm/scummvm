@@ -611,6 +611,7 @@ public:
 	void pon_igor();
 	void pon_bj();
 	void pon_dr();
+	void talkInit(const char *filename);
 	void talk_igor_dch(const char *said, const char *filename);
 	void talk_dr_dch(const char *said, const char *filename);
 	void talk_dr_izq(const char *said, const char *filename);
