@@ -1760,7 +1760,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_N0;
 			else y_de_letra=Y_ACENTOS;
 
-			if (c == 'Å†') x_de_letra=X_A;
+			if (c == '\240') x_de_letra=X_A;
 			else if (c =='\202') x_de_letra = X_B;
 			else if (c =='\241') x_de_letra = X_C;
 			else if (c =='\242') x_de_letra = X_D;
