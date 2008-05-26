@@ -285,9 +285,7 @@ void PluginManager::loadPlugins() {
 	                            pp != _providers.end();
 	                            ++pp) {
 		PluginList pl((*pp)->getPlugins());
-		for (PluginList::iterator plugin = pl.begin(); plugin != pl.end(); ++plugin) {
-			tryLoadPlugin(*plugin);
-		}
+		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
 
 }
