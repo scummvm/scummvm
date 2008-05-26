@@ -195,6 +195,9 @@ int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPollEvent(int16 argc, int16 *argv) {
+
+	_vm->_system->updateScreen();
+
 	int16 eventNum = _vm->_eventNum;
 	_vm->_eventNum = 0;
 	return eventNum;
@@ -487,7 +490,6 @@ int16 ScriptFunctions::sfLoadMouseCursor(int16 argc, int16 *argv) {
 	if (flex) {
 		Graphics::Surface *surf = flex->getPicture();
 		CursorMan.replaceCursor((const byte *)surf->pixels, surf->w, surf->h, argv[1], argv[0], 0);
-		CursorMan.showMouse(true);
 		_vm->_res->freeResource(flex);
 	}
 	return 0;

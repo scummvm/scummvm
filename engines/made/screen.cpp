@@ -352,6 +352,8 @@ void Screen::updateSprites() {
 
 	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
 	
+	_vm->_system->updateScreen();
+	
 }
 
 void Screen::clearChannels() {
@@ -822,6 +824,10 @@ SpriteListItem Screen::getFromSpriteList(int16 index) {
 
 void Screen::clearSpriteList() {
 	_spriteList.clear();
+}
+
+void Screen::setDefaultMouseCursor() {
+	CursorMan.replaceCursor(defaultMouseCursor, 16, 16, 9, 2, 0);
 }
 
 } // End of namespace Made

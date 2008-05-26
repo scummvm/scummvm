@@ -31,6 +31,7 @@
 #include "common/rect.h"
 
 #include "graphics/surface.h"
+#include "graphics/cursorman.h"
 
 #include "made/resource.h"
 #include "made/screenfx.h"
@@ -61,6 +62,25 @@ struct SpriteListItem {
 };
 
 class MadeEngine;
+
+static const byte defaultMouseCursor[256] = {
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  1, 15, 15,  1,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  1, 15, 15,  1,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  1, 15, 15,  1,  0,  0,  0,  0,  0,
+	0,  1,  1,  1,  1,  1,  1,  1, 15, 15,  1,  0,  0,  0,  0,  0,
+	1,  1, 15,  1, 15,  1, 15,  1, 15, 15,  1,  0,  0,  0,  0,  0,
+	1, 15, 15,  1, 15,  1, 15,  1, 15, 15,  1,  0,  0,  0,  0,  0,
+	1, 15, 15, 15, 15, 15, 15, 15, 15, 15,  1,  0,  1,  1,  1,  0,
+	1, 15, 15, 15, 15, 15, 15, 15, 15, 15,  1,  1, 15, 15, 15,  1,
+	1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  1,  1,  1,
+	1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  1,  1,  0,  0,
+	1,  1, 15, 15, 15, 15, 15, 15, 15, 15, 15,  1,  1,  0,  0,  0,
+	0,  1,  1, 15, 15, 15, 15, 15, 15, 15,  1,  1,  0,  0,  0,  0,
+	0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+};
 
 class Screen {
 public:
@@ -166,6 +186,8 @@ public:
 	int16 addToSpriteList(int16 index, int16 xofs, int16 yofs);
 	SpriteListItem getFromSpriteList(int16 index);
 	void clearSpriteList();
+	
+	void setDefaultMouseCursor();
 
 protected:
 	MadeEngine *_vm;

@@ -109,7 +109,13 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	
 	_quit = false;
 
-	_soundRate = 8000;
+	// Set default sound frequency
+	// Return to Zork sets it itself via a script funtion
+	if (getGameID() == GID_MANHOLE) {
+		_soundRate = 11025;
+	} else {
+		_soundRate = 8000;
+	}
 
 }
 
@@ -176,7 +182,7 @@ void MadeEngine::handleEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 
-	// NOTE: Don't reset _eventNum to 0 here or no events will come through to the scripts.
+	// NOTE: Don't reset _eventNum to 0 here or no events will get through to the scripts.
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -225,8 +231,6 @@ void MadeEngine::handleEvents() {
 		}
 	}
 
-	_system->updateScreen();
-
 }
 
 int MadeEngine::go() {
@@ -265,13 +269,15 @@ int MadeEngine::go() {
 
 	// FIXME: This should make things a little faster until proper dirty rectangles
 	//        are implemented.
-	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+	// NOTE: Disabled again since it causes major graphics errors.
+	//_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
 	
 #ifdef DUMP_SCRIPTS
 	_script->dumpAllScripts();
 #else
+	_screen->setDefaultMouseCursor();
 	_script->runScript(_dat->getMainCodeObjectIndex());
 #endif
 
