@@ -616,10 +616,15 @@ void DrasculaEngine::animation_2_1() {
 		if (anima("rap.bin", 16))
 			break;
 		sentido_hare = 3;
-		// FIXME: the room number is changed here to "no_bj". Is it
-		// possible to use loadPic("no_bj.alg") instead?
-		loadPic("no_bj.alg");	// is this ok?
-		//strcpy(num_room, "no_bj.alg");
+		// The room number was originally changed here to "no_bj.alg",
+		// which doesn't exist. In reality, this was just a hack to
+		// set the room number to a non-existant one, so that BJ does
+		// not appear again when the room is refreshed after the
+		// animation where Count Drascula abducts her. We set the
+		// room number to -1 for the same purpose
+		// Also check animation_9_6(), where the same hack was used by
+		// the original
+		roomNumber = -1;
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(8);
@@ -2416,12 +2421,14 @@ void DrasculaEngine::animation_9_6() {
 	hare_x = -1;
 	obj_saliendo = 108;
 	carga_escoba("59.ald");
-	// FIXME: the room number is changed here to "nada". Not
-	// sure if this makes any difference, as loadPic is called
-	// right afterwards. Is it possible to use loadPic("nada.alg")
-	// instead?
-	loadPic("nada.alg");	// is this ok?
-	//strcpy(num_room, "nada.alg");
+	// The room number was originally changed here to "nada.alg",
+	// which is a non-existant file. In reality, this was just a
+	// hack to set the room number to a non-existant one, so that
+	// room sprites do not appear again when the room is refreshed.
+	// We set the room number to -1 for the same purpose.
+	// Also check animation_2_1(), where the same hack was used
+	// by the original
+	roomNumber = -1;
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
 	black();
