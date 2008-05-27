@@ -380,7 +380,7 @@ void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
 	int x_talk[4] = {47, 93, 139, 185};
 	int cara;
 	int l = 0;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -427,8 +427,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 }

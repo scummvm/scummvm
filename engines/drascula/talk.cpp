@@ -43,7 +43,7 @@ void DrasculaEngine::talkInit(const char *filename) {
 void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -86,8 +86,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -99,7 +99,7 @@ bucless:
 void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -147,8 +147,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -161,7 +161,7 @@ bucless:
 void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -208,8 +208,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -224,7 +224,7 @@ bucless:
 }
 
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -262,8 +262,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 	if (num_ejec == 6) {
@@ -275,7 +275,7 @@ bucless:
 void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -320,8 +320,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -340,7 +340,7 @@ bucless:
 void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -384,8 +384,8 @@ bucless:
 		delete(sku);
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -396,7 +396,7 @@ bucless:
 void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 	int x_talk[5] = { 64, 92, 120, 148, 176 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -447,8 +447,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -471,7 +471,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
 	int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	if (num_ejec == 6) {
 		if (flags[0] == 0 && roomNumber == 102) {
@@ -585,8 +585,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -602,7 +602,7 @@ bucless:
 void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
 	int x_talk[4] = { 97, 145, 193, 241 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -640,8 +640,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -652,7 +652,7 @@ bucless:
 void DrasculaEngine::talk_borracho(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -704,8 +704,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -736,7 +736,7 @@ void DrasculaEngine::talk_vb(int index) {
 void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 	int x_talk[6] = {1, 27, 53, 79, 105, 131};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -777,8 +777,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -795,7 +795,7 @@ void DrasculaEngine::talk_vbpuerta(int index) {
 }
 
 void DrasculaEngine::talk_vbpuerta(const char *said, const char *filename) {
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -820,8 +820,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -835,7 +835,7 @@ void DrasculaEngine::talk_ciego(const char *said, const char *filename, const ch
 	byte *num_cara;
 	int p = 0;
 	int pos_ciego[6];
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	color_abc(VON_BRAUN);
 
@@ -896,14 +896,14 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 }
 
 void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -929,8 +929,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -940,7 +940,7 @@ bucless:
 void DrasculaEngine::talk_lobo(const char *said, const char *filename) {
 	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -977,8 +977,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -989,7 +989,7 @@ bucless:
 void DrasculaEngine::talk_mus(const char *said, const char *filename) {
 	int x_talk[8] = { 16, 35, 54, 73, 92, 111, 130, 149};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1026,8 +1026,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-	if (longitud > 0)
+		length -= 2;
+	if (length > 0)
 		goto bucless;
 	}
 
@@ -1038,7 +1038,7 @@ bucless:
 void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 	int x_talk[8] = {112, 138, 164, 190, 216, 242, 268, 294};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	flags[1] = 1;
 
@@ -1081,8 +1081,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1095,7 +1095,7 @@ bucless:
 void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
 	int x_talk[5]={122, 148, 174, 200, 226};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	flags[1] = 1;
 
@@ -1134,8 +1134,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1148,7 +1148,7 @@ bucless:
 void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
 	int x_talk[6] = {1, 23, 45, 67, 89, 111};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1185,8 +1185,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1197,7 +1197,7 @@ bucless:
 void DrasculaEngine::talk_bj_cama(const char *said, const char *filename) {
 	int x_talk[5] = {51, 101, 151, 201, 251};
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1235,8 +1235,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 	updateRoom();
@@ -1247,7 +1247,7 @@ void DrasculaEngine::talk_htel(const char *said, const char *filename) {
 	char *num_cara;
 	int x_talk[3] = {1, 94, 187};
 	int cara, pantalla;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1287,8 +1287,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1302,7 +1302,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
 	int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 	int p, cara = 0;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	color_abc(YELLOW);
 
@@ -1400,8 +1400,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1413,7 +1413,7 @@ bucless:
 
 void DrasculaEngine::talk_baul(const char *said, const char *filename) {
 	int cara = 0, cara_antes;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1450,8 +1450,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1461,7 +1461,7 @@ bucless:
 }
 
 void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1486,8 +1486,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1498,7 +1498,7 @@ bucless:
 void DrasculaEngine::talk_igor_sentado(const char *said, const char *filename) {
 	int x_talk[4] = { 80, 102, 124, 146 };
 	int cara;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1535,8 +1535,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1547,7 +1547,7 @@ bucless:
 void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
 	int x_talk[4] = {119, 158, 197, 236};
 	int cara = 0;
-	int longitud = strlen(said);
+	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1584,8 +1584,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud -= 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 

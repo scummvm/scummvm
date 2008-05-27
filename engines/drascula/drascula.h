@@ -338,7 +338,7 @@ public:
 
 	int num_obj[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
-	int objetos_que_tengo[43];
+	int inventoryObjects[43];
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
@@ -366,7 +366,7 @@ public:
 	int sentido_final, anda_a_objeto;
 	int obj_saliendo;
 	int diff_vez, conta_vez;
-	int hay_respuesta;
+	int hay_answer;
 	int conta_ciego_vez;
 	int cambio_de_color;
 	int rompo_y_salgo;
@@ -394,8 +394,8 @@ public:
 	int mouseX;
 	int mouseY;
 	int mouseY_ant;
-	int boton_izq;
-	int boton_dch;
+	int button_izq;
+	int button_dch;
 
 	bool escoba();
 	void black();
@@ -610,10 +610,10 @@ public:
 	int vez();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	char codifica(char);
-	void cuadrante_1();
-	void cuadrante_2();
-	void cuadrante_3();
-	void cuadrante_4();
+	void quadrant_1();
+	void quadrant_2();
+	void quadrant_3();
+	void quadrant_4();
 	void update_62();
 	void update_62_pre();
 	void update_63();
@@ -655,7 +655,7 @@ public:
 	void room_63(int);
 	void conversa(const char *);
 	void print_abc_opc(const char *, int, int, int);
-	void responde(int);
+	void response(int);
 	void talk_borracho(const char *said, const char *filename);
 	void talk_pianista(const char *said, const char *filename);
 
