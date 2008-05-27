@@ -249,6 +249,7 @@ AdlibSoundDriver::AdlibSoundDriver(Audio::Mixer *mixer)
 
 AdlibSoundDriver::~AdlibSoundDriver() {
 	_mixer->stopHandle(_soundHandle);
+	OPLDestroy(_opl);
 }
 
 void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {

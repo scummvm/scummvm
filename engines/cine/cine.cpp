@@ -42,7 +42,6 @@
 #include "cine/sound.h"
 #include "cine/various.h"
 
-
 namespace Cine {
 
 Sound *g_sound;
@@ -70,6 +69,9 @@ CineEngine::~CineEngine() {
 		freeErrmessDat();
 	}
 	Common::clearAllSpecialDebugLevels();
+
+	free(partBuffer);
+	free(textDataPtr);
 }
 
 int CineEngine::init() {
