@@ -173,7 +173,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_setDefaultMenuColor, "b" },
 	{ &FWScript::o1_allowPlayerInput, "" },
 	{ &FWScript::o1_disallowPlayerInput, "" },
-	{ &FWScript::o1_changeDataDisk, "b" },
+	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x95 and 0xA9. */
 	/* 6C */
 	{ 0, 0 },
 	{ &FWScript::o1_loadMusic, "s" },
@@ -193,7 +193,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o2_playSampleAlt, "bbwbww" },
 	{ &FWScript::o1_disableSystemMenu, "b" },
 	{ &FWScript::o1_loadMask5, "b" },
-	{ &FWScript::o1_unloadMask5, "b" },
+	{ &FWScript::o1_unloadMask5, "b" }, /* Last opcode used by Future Wars. */
 	/* 7C */
 	{ 0, 0 },
 	{ 0, 0 },
@@ -226,7 +226,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ 0, 0 },
 	/* 94 */
 	{ 0, 0 },
-	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcode 0xA9. */
+	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x6B and 0xA9. */
 	{ 0, 0 },
 	{ 0, 0 },
 	/* 98 */
@@ -251,7 +251,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ 0, 0 },
 	/* A8 */
 	{ 0, 0 },
-	{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcode 0x95. */
+	{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcodes 0x6B and 0x95. */
 };
 const unsigned int OSScript::_numOpcodes = ARRAYSIZE(OSScript::_opcodeTable);
 
