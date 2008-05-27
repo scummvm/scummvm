@@ -357,7 +357,7 @@ void DrasculaEngine::room_6(int fl){
 	else if (objeto_que_lleva == OPEN && fl == 138)
 		openDoor(0, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 138)
-		cierra_puerta(0, 1);
+		closeDoor(0, 1);
 	else if (objeto_que_lleva == TALK && fl == 138)
 		talk(6);
 	else if (objeto_que_lleva == LOOK && fl == 143)
@@ -372,11 +372,11 @@ void DrasculaEngine::room_6(int fl){
 	copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(10);
-	comienza_sound("s3.als");
+	playSound("s3.als");
 	flags[2] = 1;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	fin_sound();
+	stopSound();
 	} else if (objeto_que_lleva == CLOSE && fl == 143 && flags[2] == 1) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		flags[2] = 0;
@@ -384,10 +384,10 @@ void DrasculaEngine::room_6(int fl){
 		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(5);
-		comienza_sound("s4.als");
+		playSound("s4.als");
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		fin_sound();
+		stopSound();
 	} else if (objeto_que_lleva == TALK && fl == 143)
 		talk(38);
 	else if (objeto_que_lleva == LOOK && fl == 139)
@@ -398,13 +398,13 @@ void DrasculaEngine::room_6(int fl){
 		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pause(19);
-		comienza_sound("s3.als");
+		playSound("s3.als");
 		flags[1] = 1;
 		visible[4] = 1;
 		visible[2] = 0;
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		fin_sound();
+		stopSound();
 	} else if (objeto_que_lleva == LOOK && fl == 140)
 		talk(147);
 	else if (objeto_que_lleva == PICK && fl == 140) {
@@ -487,7 +487,7 @@ void DrasculaEngine::room_12(int fl){
 	else if (objeto_que_lleva == OPEN && fl == 156)
 		openDoor(16, 4);
 	else if (objeto_que_lleva == CLOSE && fl == 156)
-		cierra_puerta(16, 4);
+		closeDoor(16, 4);
 	else
 		hay_respuesta = 0;
 }
@@ -560,8 +560,8 @@ void DrasculaEngine::room_15(int fl) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		copyRect(133, 135, hare_x + 6, hare_y, 39, 63, dir_dibujo3, dir_zona_pantalla);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		comienza_sound("s8.als");
-		fin_sound();
+		playSound("s8.als");
+		stopSound();
 		talk(_text[_lang][338], "338.als");
 		flags[27] = 0;
 		pickObject(19);
@@ -592,7 +592,7 @@ void DrasculaEngine::room_16(int fl) {
 	else if (objeto_que_lleva == OPEN && fl == 163)
 		openDoor(17, 0);
 	else if (objeto_que_lleva == CLOSE && fl == 163)
-		cierra_puerta(17, 0);
+		closeDoor(17, 0);
 	else if (objeto_que_lleva == LOOK && fl == 183)
 		talk(_text[_lang][340], "340.als");
 	else if (objeto_que_lleva == TALK && fl == 183) {
@@ -612,7 +612,7 @@ void DrasculaEngine::room_16(int fl) {
 			pickObject(22);
 		}
 	} else if (objeto_que_lleva == CLOSE && fl == 183)
-		cierra_puerta(19, NO_DOOR);
+		closeDoor(19, NO_DOOR);
 	else if (objeto_que_lleva == LOOK && fl == 185)
 		talk(_text[_lang][37], "37.als");
 	else if (objeto_que_lleva == PICK && fl == 185)
@@ -647,7 +647,7 @@ void DrasculaEngine::room_17(int fl) {
 	else if (objeto_que_lleva == OPEN && fl == 177 && flags[14] == 1)
 		openDoor(15, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 177 && flags[14] == 1)
-		cierra_puerta(15, 1);
+		closeDoor(15, 1);
 	else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0) {
 		talk(_text[_lang][347], "347.als");
 		flags[29] = 1;
@@ -727,7 +727,7 @@ bool DrasculaEngine::room_21(int fl) {
 	else if (objeto_que_lleva == OPEN && fl == 101 && flags[28] == 1)
 		openDoor(0, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 101)
-		cierra_puerta(0, 1);
+		closeDoor(0, 1);
 	else if(objeto_que_lleva == PICK && fl == 141) {
 		pickObject(19);
 		visible[2] = 0;
@@ -755,9 +755,9 @@ void DrasculaEngine::room_22(int fl) {
 	} else if (objeto_que_lleva == 22 && fl == 52) {
 		anima("up.bin",14);
 		flags[26]=1;
-		comienza_sound("s1.als");
+		playSound("s1.als");
 		hipo(14);
-		fin_sound();
+		stopSound();
 		withoutVerb();
 		resta_objeto(22);
 		updateData();
@@ -783,12 +783,12 @@ void DrasculaEngine::room_23(int fl) {
 		openDoor(0, 0);
 		updateData();
 	} else if(objeto_que_lleva == CLOSE && fl == 103) {
-		cierra_puerta(0, 0);
+		closeDoor(0, 0);
 		updateData();
 	} else if(objeto_que_lleva == OPEN && fl == 104)
 		openDoor(1, 1);
 	else if(objeto_que_lleva == CLOSE && fl == 104)
-		cierra_puerta(1, 1);
+		closeDoor(1, 1);
 	else if(objeto_que_lleva == PICK && fl == 142) {
 		pickObject(8);
 		visible[2] = 0;
@@ -805,11 +805,11 @@ void DrasculaEngine::room_24(int fl) {
 	if (objeto_que_lleva == OPEN && fl == 105)
 		openDoor(1, 0);
 	else if (objeto_que_lleva == CLOSE && fl == 105)
-		cierra_puerta(1, 0);
+		closeDoor(1, 0);
 	else if (objeto_que_lleva == OPEN && fl == 106)
 		openDoor(2, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 106)
-		cierra_puerta(2, 1);
+		closeDoor(2, 1);
 	else if (objeto_que_lleva == LOOK && fl == 151)
 		talk(_text[_lang][461], "461.als");
 	else
@@ -822,7 +822,7 @@ void DrasculaEngine::room_26(int fl) {
 	else if (objeto_que_lleva == OPEN && fl == 107 && flags[30] == 1)
 		talk(_text[_lang][421], "421.als");
 	else if (objeto_que_lleva == CLOSE && fl == 107)
-		cierra_puerta(2, 0);
+		closeDoor(2, 0);
 	else if (objeto_que_lleva == 10 && fl == 50 && flags[18] == 1 && flags[12] == 1)
 		animation_5_4();
 	else if (objeto_que_lleva == 8 && fl == 50 && flags[18] == 1 && flags[12] == 1)
@@ -836,7 +836,7 @@ void DrasculaEngine::room_26(int fl) {
 		pickObject(10);
 		visible[1] = 0;
 		flags[12] = 1;
-		cierra_puerta(2, 0);
+		closeDoor(2, 0);
 		sentido_hare = 2;
 		talk_igorpuerta(_texti[_lang][27], "I27.als");
 		flags[30] = 1;
@@ -875,7 +875,7 @@ void DrasculaEngine::room_27(int fl) {
 	if (objeto_que_lleva == OPEN && fl == 110)
 		openDoor(6, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 110)
-		cierra_puerta(6, 1);
+		closeDoor(6, 1);
 	else if (objeto_que_lleva == OPEN && fl == 116 && flags[23] == 0)
 		talk(_text[_lang][419], "419.als");
 	else if (objeto_que_lleva == OPEN && fl == 116 && flags[23] == 1)
@@ -896,7 +896,7 @@ void DrasculaEngine::room_29(int fl) {
 	if (objeto_que_lleva == OPEN && fl == 114)
 		openDoor(4, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 114)
-		cierra_puerta(4, 1);
+		closeDoor(4, 1);
 	else if (objeto_que_lleva == LOOK && fl == 152)
 		talk(_text[_lang][463], "463.als");
 	else if (objeto_que_lleva == OPEN && fl == 152)
@@ -915,7 +915,7 @@ void DrasculaEngine::room_30(int fl) {
 	if (objeto_que_lleva == OPEN && fl == 115)
 		openDoor(4, 0);
 	else if (objeto_que_lleva == CLOSE && fl == 115)
-		cierra_puerta(4, 0);
+		closeDoor(4, 0);
 	else if (objeto_que_lleva == OPEN && fl == 144 && flags[19] == 0)
 		talk(_text[_lang][422], "422.als");
 	else if (objeto_que_lleva == OPEN && fl == 144 && flags[19] == 1 && flags[22] == 1)
@@ -930,7 +930,7 @@ void DrasculaEngine::room_30(int fl) {
 		if (flags[18] == 1)
 			animation_6_4();
 	} else if (objeto_que_lleva == CLOSE && fl == 144)
-		cierra_puerta(16, 1);
+		closeDoor(16, 1);
 	else if (objeto_que_lleva == 13 && fl == 144) {
 		talk(_text[_lang][424], "424.als");
 		flags[19] = 1;
@@ -950,7 +950,7 @@ void DrasculaEngine::room_31(int fl) {
 	} else if (objeto_que_lleva == OPEN && fl == 117)
 		openDoor(5, 0);
 	else if (objeto_que_lleva == CLOSE && fl == 117)
-		cierra_puerta(5, 0);
+		closeDoor(5, 0);
 	else if (objeto_que_lleva == LOOK && fl == 161)
 		talk(_text[_lang][470], "470.als");
 	else if (objeto_que_lleva == OPEN && fl == 161)
@@ -975,7 +975,7 @@ void DrasculaEngine::room_34(int fl) {
 		pickObject(14);
 		flags[25] = 1;
 	} else if (objeto_que_lleva == CLOSE && fl == 120)
-		cierra_puerta(8, 2);
+		closeDoor(8, 2);
 	else
 		hay_respuesta=0;
 }
@@ -1110,9 +1110,9 @@ void DrasculaEngine::room_55(int fl) {
 	else if (objeto_que_lleva == LOOK && fl == 205)
 		talk(_text[_lang][140], "140.als");
 	else if (fl == 206) {
-		comienza_sound("s11.als");
+		playSound("s11.als");
 		anima("det.bin", 17);
-		fin_sound();
+		stopSound();
 		lleva_al_hare(hare_x - 3, hare_y + alto_hare + 6);
 	} else
 		hay_respuesta = 0;
@@ -1156,18 +1156,18 @@ void DrasculaEngine::room_59(int fl) {
 		talk(_text[_lang][265], "265.als");
 		flags[9] = 0;
 		if (flags[11] == 0) {
-			comienza_sound("s12.als");
+			playSound("s12.als");
 			delay(40);
-			fin_sound();
+			stopSound();
 			delay(10);
 			lleva_al_hare(174, 168);
 			sentido_hare = 2;
 			updateRoom();
 			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			pause(40);
-			comienza_sound("s12.als");
+			playSound("s12.als");
 			pause(19);
-			fin_sound_corte();
+			stopSound_corte();
 			hare_se_ve = 0;
 			updateRoom();
 			copyRect(101, 34, hare_x - 4, hare_y - 1, 37, 70, dir_dibujo3, dir_zona_pantalla);

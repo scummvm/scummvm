@@ -81,12 +81,12 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
-		comienza_sound("s5.als");
+		playSound("s5.als");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		if (anima("scr2.bin", 17))
 			break;
-		fin_sound_corte();
+		stopSound_corte();
 		if (anima("scr3.bin", 17))
 			break;
 		loadPic("cielo2.alg");
@@ -265,7 +265,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		if (anima("rayo1.bin", 16))
 			break;
-		comienza_sound("s5.als");
+		playSound("s5.als");
 		if (anima("rayo2.bin", 15))
 			break;
 		if (anima("frel2.bin", 16))
@@ -274,7 +274,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		if (anima("frel.bin", 16))
 			break;
-		fin_sound_corte();
+		stopSound_corte();
 		clearRoom();
 		black();
 		playMusic(23);
@@ -469,9 +469,9 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		pause(4);
-		comienza_sound("s1.als");
+		playSound("s1.als");
 		hipo(18);
-		fin_sound();
+		stopSound();
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -774,7 +774,7 @@ void DrasculaEngine::animation_2_2() {
 	}
 
 	x = 0;
-	comienza_sound("s2.als");
+	playSound("s2.als");
 
 	for (n = 0; n < 6; n++) {
 		x++;
@@ -806,13 +806,13 @@ void DrasculaEngine::animation_2_2() {
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	fin_sound();
+	stopSound();
 
 	pause (4);
 
-	comienza_sound("s1.als");
+	playSound("s1.als");
 	hipo_sin_nadie(12);
-	fin_sound();
+	stopSound();
 }
 
 void DrasculaEngine::animation_3_2() {
@@ -958,10 +958,10 @@ void DrasculaEngine::animation_14_2() {
 
 	decompressPic(dir_dibujo1, 1);
 
-	comienza_sound("s7.als");
+	playSound("s7.als");
 	hipo(15);
 
-	fin_sound();
+	stopSound();
 
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -1294,7 +1294,7 @@ void DrasculaEngine::animation_25_2() {
 
 	flags[24] = 0;
 
-	comienza_sound("s6.als");
+	playSound("s6.als");
 
 	for (n = 0; n >= -160; n = n - 8) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -1311,7 +1311,7 @@ void DrasculaEngine::animation_25_2() {
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
-	fin_sound();
+	stopSound();
 
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -1484,9 +1484,9 @@ void DrasculaEngine::animation_35_2() {
 
 	pause(19);
 
-	comienza_sound("s1.als");
+	playSound("s1.als");
 	hipo_sin_nadie(18);
-	fin_sound();
+	stopSound();
 
 	pause(10);
 
@@ -1798,7 +1798,7 @@ void DrasculaEngine::animation_rayo() {
 
 	pause(50);
 
-	comienza_sound("s5.als");
+	playSound("s5.als");
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_dch);
 	pause(3);
@@ -1811,7 +1811,7 @@ void DrasculaEngine::animation_rayo() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo3);
 	pause(3);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_frente);
-	fin_sound();
+	stopSound();
 }
 
 void DrasculaEngine::animation_2_4() {
@@ -1991,8 +1991,8 @@ void DrasculaEngine::animation_5_5(){
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
 
-	comienza_sound("s1.als");
-	fin_sound();
+	playSound("s1.als");
+	stopSound();
 
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -2068,7 +2068,7 @@ void DrasculaEngine::animation_12_5() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(27);
 	anima("rayo1.bin", 23);
-	comienza_sound("s5.als");
+	playSound("s5.als");
 	anima("rayo2.bin", 17);
 	sentido_hare = 1;
 	updateRoom();
@@ -2119,7 +2119,7 @@ void DrasculaEngine::animation_12_5() {
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
-	fin_sound_corte();
+	stopSound_corte();
 
 	for (frame = 0; frame < 15; frame++) {
 		if (frame == 2 || frame == 4 || frame == 7 || frame == 9)
@@ -2143,9 +2143,9 @@ void DrasculaEngine::animation_12_5() {
 	flags[1] = 1;
 
 	animation_13_5();
-	comienza_sound("s1.als");
+	playSound("s1.als");
 	hipo(12);
-	fin_sound();
+	stopSound();
 
 	loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -2209,19 +2209,19 @@ void DrasculaEngine::animation_13_5() {
 
 void DrasculaEngine::animation_14_5() {
 	flags[11] = 1;
-	comienza_sound("s3.als");
+	playSound("s3.als");
 	updateRoom();
 	updateScreen(0, 0, 0,0 , 320, 200, dir_zona_pantalla);
-	fin_sound();
+	stopSound();
 	pause(17);
 	sentido_hare = 3;
 	talk(_text[_lang][246],"246.als");
 	lleva_al_hare(89, 160);
 	flags[10] = 1;
-	comienza_sound("s7.als");
+	playSound("s7.als");
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	fin_sound();
+	stopSound();
 	pause(14);
 	sentido_hare = 3;
 	updateRoom();
@@ -2474,12 +2474,12 @@ void DrasculaEngine::animation_9_6() {
 }
 
 void DrasculaEngine::animation_10_6() {
-	comienza_sound ("s14.als");
+	playSound ("s14.als");
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateRefresh_pre();
 	copyBackground(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	fin_sound();
+	stopSound();
 	talk_taber2(_textt[_lang][23], "t23.als");
 	flags[7] = 1;
 }
@@ -2529,9 +2529,9 @@ void DrasculaEngine::animation_19_6() {
 	pause(6);
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	comienza_sound("s4.als");
+	playSound("s4.als");
 	pause(6);
-	fin_sound();
+	stopSound();
 }
 
 void DrasculaEngine::animation_12_2() {
@@ -2624,11 +2624,11 @@ void DrasculaEngine::animation_26_2() {
 		updateScreen(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
 		x = x + 50;
 		if (n == 2)
-			comienza_sound("s9.als");
+			playSound("s9.als");
 		pause(3);
 	}
 
-	fin_sound_corte();
+	stopSound_corte();
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
@@ -2709,8 +2709,8 @@ void DrasculaEngine::animation_22_2() {
 	sentido_hare=2;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	comienza_sound("s13.als");
-	fin_sound();
+	playSound("s13.als");
+	stopSound();
 	sentido_hare = 1;
 
 	talk_vbpuerta(1);
@@ -2832,7 +2832,7 @@ void DrasculaEngine::animation_34_2() {
 	}
 
 	x = 0;
-	comienza_sound("s8.als");
+	playSound("s8.als");
 
 	for (n = 0; n < 3; n++) {
 		x++;
@@ -2841,7 +2841,7 @@ void DrasculaEngine::animation_34_2() {
 		x = x + 83;
 		pause(3);
 	}
-	fin_sound();
+	stopSound();
 
 	pause(30);
 
@@ -3199,7 +3199,7 @@ void DrasculaEngine::animation_5_2() {
 		pause(3);
 	}
 
-	comienza_sound("s1.als");
+	playSound("s1.als");
 
 	x = 0;
 
@@ -3210,7 +3210,7 @@ void DrasculaEngine::animation_5_2() {
 		x = x + 52;
 		pause(3);
 	}
-	fin_sound_corte();
+	stopSound_corte();
 
 	x = 0;
 

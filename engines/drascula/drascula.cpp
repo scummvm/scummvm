@@ -2115,7 +2115,7 @@ imprimir:
 	}
 }
 
-void DrasculaEngine::comienza_sound(const char *fichero) {
+void DrasculaEngine::playSound(const char *fichero) {
 	if (hay_sb == 1) {
 		sku = new Common::File;
 		sku->open(fichero);
@@ -2183,7 +2183,7 @@ bool DrasculaEngine::anima(const char *animation, int FPS) {
 	return ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE));
 }
 
-void DrasculaEngine::animafin_sound_corte() {
+void DrasculaEngine::animastopSound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
 		delete sku;
@@ -2308,7 +2308,7 @@ comienza:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::fin_sound() {
+void DrasculaEngine::stopSound() {
 	delay(1);
 
 	if (hay_sb == 1) {
@@ -3363,8 +3363,8 @@ void DrasculaEngine::introduce_nombre() {
 
 void DrasculaEngine::para_grabar(char nom_game[]) {
 	saveGame(nom_game);
-	comienza_sound("99.als");
-	fin_sound();
+	playSound("99.als");
+	stopSound();
 }
 
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
@@ -4289,7 +4289,7 @@ void DrasculaEngine::suma_objeto(int osj) {
 	}
 }
 
-void DrasculaEngine::fin_sound_corte() {
+void DrasculaEngine::stopSound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
 		delete sku;
@@ -4531,23 +4531,23 @@ comienza:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::openDoor(int nflag, int n_puerta) {
+void DrasculaEngine::openDoor(int nflag, int doorNum) {
 	if (flags[nflag] == 0) {
 		if (num_ejec == 1 /*|| num_ejec == 4*/) {
 			if (nflag != 7) {
-				comienza_sound("s3.als");
+				playSound("s3.als");
 				flags[nflag] = 1;
 			}
 		} else {
-			comienza_sound("s3.als");
+			playSound("s3.als");
 			flags[nflag] = 1;
 		}
 
-		if (n_puerta != NO_DOOR)
-			puertas_cerradas(n_puerta);
+		if (doorNum != NO_DOOR)
+			puertas_cerradas(doorNum);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		fin_sound();
+		stopSound();
 		withoutVerb();
 	}
 }
@@ -4631,15 +4631,15 @@ void DrasculaEngine::activa_pendulo() {
 	conta_ciego_vez = vez();
 }
 
-void DrasculaEngine::cierra_puerta(int nflag, int n_puerta) {
+void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 	if (flags[nflag] == 1) {
-		comienza_sound("s4.als");
+		playSound("s4.als");
 		flags[nflag] = 0;
-		if (n_puerta != NO_DOOR)
-			puertas_cerradas(n_puerta);
+		if (doorNum != NO_DOOR)
+			puertas_cerradas(doorNum);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		fin_sound();
+		stopSound();
 		withoutVerb();
 	}
 }
