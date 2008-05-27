@@ -169,11 +169,14 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 
 		// Reinit stream
 		_state = MP3_STATE_INIT;
+
+		// Reset the stream data
+		_inStream->seek(0, SEEK_SET);
 	}
 
 	_totalPlayTime = mad_timer_count(length, MAD_UNITS_MILLISECONDS);
 	
-	if (numLoops)
+	if (numLoops && mad_timer_sign(length) >= 0)
 		_totalPlayTime *= numLoops;
 	else
 		_totalPlayTime = kUnknownPlayTime;

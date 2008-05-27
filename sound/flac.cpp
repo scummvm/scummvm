@@ -90,7 +90,6 @@ protected:
 	bool _disposeAfterUse;
 
 	uint _numLoops;
-	const uint _totalNumLoops;
 
 	::FLAC__SeekableStreamDecoder *_decoder;
 
@@ -102,6 +101,9 @@ protected:
 
 	/** index + 1(!) of the last sample to be played - 0 is end of stream */
 	FLAC__uint64 _lastSample;
+
+	/** total play time */
+	int32 _totalPlayTime;
 
 	/** true if the last sample was decoded from the FLAC-API - there might still be data in the buffer */
 	bool _lastSampleWritten;
@@ -142,28 +144,7 @@ public:
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
-	int32 getTotalPlayTime() const {
-		if (!_totalNumLoops)
-			return AudioStream::kUnknownPlayTime;
-
-		int32 samples = 0;
-
-		if (!_lastSample) {
-			if (!_streaminfo.total_samples)
-				return AudioStream::kUnknownPlayTime;
-
-			samples = _streaminfo.total_samples - _firstSample;
-		} else {
-			samples = _lastSample - _firstSample - 1;
-		}
-
-		const int32 rate = _streaminfo.sample_rate;
-
-		int32 seconds = samples / rate;
-		int32 milliseconds = (1000 * (samples % rate)) / rate;
-
-		return (seconds * 1000 + milliseconds) * _totalNumLoops;
-	}
+	int32 getTotalPlayTime() const { return _totalPlayTime; }
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
@@ -214,7 +195,6 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 		_inStream(inStream),
 		_disposeAfterUse(dispose),
 		_numLoops(numLoops),
-		_totalNumLoops(numLoops),
 		_firstSample(0), _lastSample(0),
 		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(false),
 		_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
@@ -260,7 +240,28 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 			// avoid overflows).
 			_firstSample = (FLAC__uint64)(startTime * (_streaminfo.sample_rate / 1000.0));
 			_lastSample = (FLAC__uint64)(endTime * (_streaminfo.sample_rate / 1000.0));
+
 			if (_firstSample == 0 || seekAbsolute(_firstSample)) {
+				int32 samples = kUnknownPlayTime;
+
+				if (!_lastSample) {
+					if (_streaminfo.total_samples)
+						samples = _streaminfo.total_samples - _firstSample;
+				} else {
+					samples = _lastSample - _firstSample - 1;
+				}
+
+				if (samples != kUnknownPlayTime && samples >= 0 && numLoops) {
+					const int32 rate = _streaminfo.sample_rate;
+
+					int32 seconds = samples / rate;
+					int32 milliseconds = (1000 * (samples % rate)) / rate;
+
+					_totalPlayTime = (seconds * 1000 + milliseconds) * numLoops;
+				} else {
+					_totalPlayTime = kUnknownPlayTime;
+				}
+
 				return; // no error occured
 			}
 		}
