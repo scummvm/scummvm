@@ -56,6 +56,16 @@ enum Languages {
 	kItalian = 4
 };
 
+enum Verbs {
+	kVerbDefault = -1,
+	kVerbLook = 1,
+	kVerbPick = 2,
+	kVerbOpen = 3,
+	kVerbClose = 4,
+	kVerbTalk = 5,
+	kVerbMove = 6
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
@@ -73,13 +83,6 @@ struct RoomTalkAction;
 #define F8           0x42
 #define F9           0x43
 #define F10          0x44
-#define DEFAULT        -1
-#define LOOK            1
-#define PICK            2
-#define OPEN            3
-#define CLOSE           4
-#define TALK            5
-#define MOVE            6
 #define DIF_MASK       55
 #define OBJWIDTH        40
 #define OBJHEIGHT         25
@@ -339,7 +342,7 @@ public:
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
-	int lleva_objeto, objeto_que_lleva;
+	int lleva_objeto, pickedObject;
 	int withVoices;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[20];

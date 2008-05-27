@@ -816,15 +816,15 @@ void DrasculaEngine::pickObject(int objeto) {
 
 void DrasculaEngine::chooseObject(int objeto) {
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && menu_scr == 0 && objeto_que_lleva != 16)
-			suma_objeto(objeto_que_lleva);
+		if (lleva_objeto == 1 && menu_scr == 0 && pickedObject != 16)
+			suma_objeto(pickedObject);
 	} else {
 		if (lleva_objeto == 1 && menu_scr == 0)
-			suma_objeto(objeto_que_lleva);
+			suma_objeto(pickedObject);
 	}
 	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 	lleva_objeto = 1;
-	objeto_que_lleva = objeto;
+	pickedObject = objeto;
 }
 
 int DrasculaEngine::resta_objeto(int osj) {
@@ -846,11 +846,11 @@ void DrasculaEngine::withoutVerb() {
 	if (menu_scr == 1)
 		c = 0;
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && objeto_que_lleva != 16)
-			suma_objeto(objeto_que_lleva);
+		if (lleva_objeto == 1 && pickedObject != 16)
+			suma_objeto(pickedObject);
 	} else {
 		if (lleva_objeto == 1)
-			suma_objeto(objeto_que_lleva);
+			suma_objeto(pickedObject);
 	}
 	copyBackground(0, c, 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
@@ -1426,17 +1426,17 @@ void DrasculaEngine::elige_verbo(int verbo) {
 	if (menu_scr == 1)
 		c = 0;
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && objeto_que_lleva != 16)
-			suma_objeto(objeto_que_lleva);
+		if (lleva_objeto == 1 && pickedObject != 16)
+			suma_objeto(pickedObject);
 	} else {
 		if (lleva_objeto == 1)
-			suma_objeto(objeto_que_lleva);
+			suma_objeto(pickedObject);
 	}
 
 	copyBackground(OBJWIDTH * verbo, c, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
 	lleva_objeto = 1;
-	objeto_que_lleva = verbo;
+	pickedObject = verbo;
 }
 
 void DrasculaEngine::mesa() {
@@ -2378,7 +2378,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 	}
 
 	lleva_objeto = sav->readSint32LE();
-	objeto_que_lleva = sav->readSint32LE();
+	pickedObject = sav->readSint32LE();
 	hay_que_load = 0;
 
 	return true;
@@ -2869,14 +2869,14 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 
 bool DrasculaEngine::coge_objeto() {
 	int h, n;
-	h = objeto_que_lleva;
+	h = pickedObject;
 	comprueba_flags = 1;
 
 	updateRoom();
 	menu_sin_volcar();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	if (objeto_que_lleva < 7)
+	if (pickedObject < 7)
 		goto usando_verbos;
 
 	for (n = 1; n < 43; n++) {
@@ -2909,209 +2909,209 @@ bool DrasculaEngine::banderas(int fl) {
 
 	if (menu_scr == 1) {
 		if (num_ejec == 1) {
-			if (objeto_que_lleva == LOOK && fl == 28)
+			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
 		} else if (num_ejec == 2) {
-			if ((objeto_que_lleva == LOOK && fl == 22 && flags[23] == 0)
-					|| (objeto_que_lleva == OPEN && fl == 22 && flags[23] == 0)) {
+			if ((pickedObject == kVerbLook && fl == 22 && flags[23] == 0)
+					|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
 				talk(_text[_lang][164], "164.als");
 				flags[23] = 1;
 				withoutVerb();
 				suma_objeto(7);
 				suma_objeto(18);
-			} else if (objeto_que_lleva == LOOK && fl == 22 && flags[23] == 1)
+			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
 				talk(_text[_lang][307], "307.als");
-			else if (objeto_que_lleva == LOOK && fl == 28)
+			else if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][143], "143.als");
-			else if (objeto_que_lleva == TALK && fl == 7)
+			else if (pickedObject == kVerbTalk && fl == 7)
 				talk(_text[_lang][144], "144.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][145], "145.als");
-			else if (objeto_que_lleva == TALK && fl == 8)
+			else if (pickedObject == kVerbTalk && fl == 8)
 				talk(_text[_lang][146], "146.als");
-			else if (objeto_que_lleva == LOOK && fl == 9)
+			else if (pickedObject == kVerbLook && fl == 9)
 				talk(_text[_lang][147], "147.als");
-			else if (objeto_que_lleva == TALK && fl == 9)
+			else if (pickedObject == kVerbTalk && fl == 9)
 				talk(_text[_lang][148], "148.als");
-			else if (objeto_que_lleva == LOOK && fl == 10)
+			else if (pickedObject == kVerbLook && fl == 10)
 				talk(_text[_lang][151], "151.als");
-			else if (objeto_que_lleva == LOOK && fl == 11)
+			else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][152], "152.als");
-			else if (objeto_que_lleva == TALK && fl == 11)
+			else if (pickedObject == kVerbTalk && fl == 11)
 				talk(_text[_lang][153], "153.als");
-			else if (objeto_que_lleva == LOOK && fl == 12)
+			else if (pickedObject == kVerbLook && fl == 12)
 				talk(_text[_lang][154], "154.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][155], "155.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][157], "157.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][58], "58.als");
-			else if (objeto_que_lleva == LOOK && fl == 16)
+			else if (pickedObject == kVerbLook && fl == 16)
 				talk(_text[_lang][158], "158.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][159], "159.als");
-			else if (objeto_que_lleva == LOOK && fl == 18)
+			else if (pickedObject == kVerbLook && fl == 18)
 				talk(_text[_lang][160], "160.als");
-			else if (objeto_que_lleva == LOOK && fl == 19)
+			else if (pickedObject == kVerbLook && fl == 19)
 				talk(_text[_lang][161], "161.als");
-			else if (objeto_que_lleva == LOOK && fl == 20)
+			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als");
-			else if (objeto_que_lleva == LOOK && fl == 23)
+			else if (pickedObject == kVerbLook && fl == 23)
 				talk(_text[_lang][152], "152.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 3) {
-			if (objeto_que_lleva == LOOK && fl == 22)
+			if (pickedObject == kVerbLook && fl == 22)
 				talk(_text[_lang][307], "307.als");
-			else if (objeto_que_lleva == LOOK && fl == 28)
+			else if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][143], "143.als");
-			else if (objeto_que_lleva == TALK && fl == 7)
+			else if (pickedObject == kVerbTalk && fl == 7)
 				talk(_text[_lang][144], "144.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][145], "145.als");
-			else if (objeto_que_lleva == TALK && fl == 8)
+			else if (pickedObject == kVerbTalk && fl == 8)
 				talk(_text[_lang][146], "146.als");
-			else if (objeto_que_lleva == LOOK && fl == 9)
+			else if (pickedObject == kVerbLook && fl == 9)
 				talk(_text[_lang][147], "147.als");
-			else if (objeto_que_lleva == TALK && fl == 9)
+			else if (pickedObject == kVerbTalk && fl == 9)
 				talk(_text[_lang][148], "148.als");
-			else if (objeto_que_lleva == LOOK && fl == 10)
+			else if (pickedObject == kVerbLook && fl == 10)
 				talk(_text[_lang][151], "151.als");
-			else if (objeto_que_lleva == LOOK && fl == 11)
+			else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][152], "152.als");
-			else if (objeto_que_lleva == TALK && fl == 11)
+			else if (pickedObject == kVerbTalk && fl == 11)
 				talk(_text[_lang][153], "153.als");
-			else if (objeto_que_lleva == LOOK && fl == 12)
+			else if (pickedObject == kVerbLook && fl == 12)
 				talk(_text[_lang][154], "154.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][155], "155.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][157], "157.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][58], "58.als");
-			else if (objeto_que_lleva == LOOK && fl == 16)
+			else if (pickedObject == kVerbLook && fl == 16)
 				talk(_text[_lang][158], "158.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][159], "159.als");
-			else if (objeto_que_lleva == LOOK && fl == 18)
+			else if (pickedObject == kVerbLook && fl == 18)
 				talk(_text[_lang][160], "160.als");
-			else if (objeto_que_lleva == LOOK && fl == 19)
+			else if (pickedObject == kVerbLook && fl == 19)
 				talk(_text[_lang][161], "161.als");
-			else if (objeto_que_lleva == LOOK && fl == 20)
+			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als");
-			else if (objeto_que_lleva == LOOK && fl == 23)
+			else if (pickedObject == kVerbLook && fl == 23)
 				talk(_text[_lang][152], "152.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 4) {
-			if ((objeto_que_lleva == 18 && fl == 19) || (objeto_que_lleva == 19 && fl == 18)) {
+			if ((pickedObject == 18 && fl == 19) || (pickedObject == 19 && fl == 18)) {
 				withoutVerb();
 				chooseObject(21);
 				resta_objeto(18);
 				resta_objeto(19);
-			} else if ((objeto_que_lleva == 14 && fl == 19) || (objeto_que_lleva == 19 && fl == 14))
+			} else if ((pickedObject == 14 && fl == 19) || (pickedObject == 19 && fl == 14))
 				talk(_text[_lang][484], "484.als");
-			else if (objeto_que_lleva == LOOK && fl == 28)
+			else if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][478], "478.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][480], "480.als");
-			else if (objeto_que_lleva == LOOK && fl == 9) {
+			else if (pickedObject == kVerbLook && fl == 9) {
 				talk(_text[_lang][482], "482.als");
 				talk(_text[_lang][483], "483.als");
-			} else if (objeto_que_lleva == LOOK && fl == 10)
+			} else if (pickedObject == kVerbLook && fl == 10)
 				talk(_text[_lang][485], "485.als");
-			else if (objeto_que_lleva == LOOK && fl == 11)
+			else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][488], "488.als");
-			else if (objeto_que_lleva == LOOK && fl == 12)
+			else if (pickedObject == kVerbLook && fl == 12)
 				talk(_text[_lang][486], "486.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][490], "490.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][122], "122.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][117], "117.als");
-			else if (objeto_que_lleva == TALK && fl == 15)
+			else if (pickedObject == kVerbTalk && fl == 15)
 				talk(_text[_lang][118], "118.als");
-			else if (objeto_que_lleva == OPEN && fl == 15)
+			else if (pickedObject == kVerbOpen && fl == 15)
 				talk(_text[_lang][119], "119.als");
-			else if (objeto_que_lleva == LOOK && fl == 16)
+			else if (pickedObject == kVerbLook && fl == 16)
 				talk(_text[_lang][491], "491.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][478], "478.als");
-			else if (objeto_que_lleva == LOOK && fl == 18)
+			else if (pickedObject == kVerbLook && fl == 18)
 				talk(_text[_lang][493], "493.als");
-			else if (objeto_que_lleva == LOOK && fl == 19) {
+			else if (pickedObject == kVerbLook && fl == 19) {
 				talk(_text[_lang][494], "494.als");
 				talk(_text[_lang][495], "495.als");
-			} else if (objeto_que_lleva == LOOK && fl == 20)
+			} else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als");
-			else if (objeto_que_lleva == LOOK && fl == 21)
+			else if (pickedObject == kVerbLook && fl == 21)
 				talk(_text[_lang][496], "496.als");
-			else if (objeto_que_lleva == LOOK && fl == 22)
+			else if (pickedObject == kVerbLook && fl == 22)
 				talk(_text[_lang][161], "161.als");
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 5) {
-			if (objeto_que_lleva == LOOK && fl == 28)
+			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][478],"478.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][120], "120.als");
-			else if (objeto_que_lleva == LOOK && fl == 9) {
+			else if (pickedObject == kVerbLook && fl == 9) {
 				talk(_text[_lang][482], "482.als");
 				talk(_text[_lang][483], "483.als");
-			} else if (objeto_que_lleva == LOOK && fl == 11)
+			} else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][488], "488.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][490], "490.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][121], "121.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][117], "117.als");
-			else if (objeto_que_lleva == TALK && fl == 15)
+			else if (pickedObject == kVerbTalk && fl == 15)
 				talk(_text[_lang][118], "118.als");
-			else if (objeto_que_lleva == OPEN && fl == 15)
+			else if (pickedObject == kVerbOpen && fl == 15)
 				talk(_text[_lang][119], "119.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][478], "478.als");
-			else if (objeto_que_lleva == LOOK && fl == 20)
+			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als"); 
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == LOOK && fl == 28)
+			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 9) {
+			else if (pickedObject == kVerbLook && fl == 9) {
 				talk(_text[_lang][482], "482.als");
 				talk(_text[_lang][483], "483.als");
-			} else if (objeto_que_lleva == LOOK && fl == 20)
+			} else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][123], "123.als");
-			else if (objeto_que_lleva == LOOK && fl == 21)
+			else if (pickedObject == kVerbLook && fl == 21)
 				talk(_text[_lang][441], "441.als");
 			else
 				hay_respuesta = 0;
 		}
 	} else {
 		if (num_ejec == 1) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][308], "308.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
 			else if (roomNumber == 62)
 				room_62(fl);
@@ -3120,24 +3120,24 @@ bool DrasculaEngine::banderas(int fl) {
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 2) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][308], "308.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
 			// Note: the original check was strcmp(num_room, "18.alg")
-			else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
+			else if (pickedObject == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
 				talk(_text[_lang][315], "315.als");
-			else if (objeto_que_lleva == 13 && fl == 50)
+			else if (pickedObject == 13 && fl == 50)
 				talk(_text[_lang][156], "156.als");
-			else if (objeto_que_lleva == 20 && fl == 50)
+			else if (pickedObject == 20 && fl == 50)
 				talk(_text[_lang][163], "163.als");
 			else if (roomNumber == 1)
 				room_1(fl);
@@ -3172,17 +3172,17 @@ bool DrasculaEngine::banderas(int fl) {
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 3) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][309], "309.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
 			else if (roomNumber == 13) {
 				if (room_13(fl))
@@ -3192,25 +3192,25 @@ bool DrasculaEngine::banderas(int fl) {
 		} else if (num_ejec == 4) {
 			if (roomNumber == 28)
 				talk(_text[_lang][178], "178.als");
-			else if (objeto_que_lleva == LOOK && fl == 50)
+			else if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][309], "309.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (objeto_que_lleva == 8 && fl == 50 && flags[18] == 0)
+			else if (pickedObject == 8 && fl == 50 && flags[18] == 0)
 				talk(_text[_lang][481], "481.als");
-			else if (objeto_que_lleva == 9 && fl == 50)
+			else if (pickedObject == 9 && fl == 50)
 				talk(_text[_lang][484], "484.als");
-			else if (objeto_que_lleva == 12 && fl == 50 && flags[18] == 0)
+			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
 				talk(_text[_lang][487], "487.als");
-			else if (objeto_que_lleva == 20 && fl == 50)
+			else if (pickedObject == 20 && fl == 50)
 				talk(_text[_lang][487], "487.als");
 			else if (roomNumber == 21) {
 				if (room_21(fl))
@@ -3240,19 +3240,19 @@ bool DrasculaEngine::banderas(int fl) {
 			else
 				hay_respuesta = 0;
 		} else if (num_ejec == 5) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk("Cuanto mas me miro, mas me gusto", "54.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk("y luego como me cierro", "19.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk("Tendre que abrirme primero no", "19.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk("Estoy bien donde estoy", "19.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk("Ya me tengo", "11.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk("hola yo", "16.als");
-			else if (objeto_que_lleva == 20 && fl == 50)
+			else if (pickedObject == 20 && fl == 50)
 				talk(_text[_lang][487], "487.als");
 			else if (roomNumber == 49)
 				room_49(fl);
@@ -3268,19 +3268,19 @@ bool DrasculaEngine::banderas(int fl) {
 			} else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 1)
+			if (pickedObject == kVerbLook && fl == 50 && flags[0] == 1)
 				talk(_text[_lang][308], "308.als");
-			else if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 0)
+			else if (pickedObject == kVerbLook && fl == 50 && flags[0] == 0)
 				talk(_text[_lang][310], "250.als" );
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als" );
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als" );
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als" );
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als" );
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als" );
 			else if (roomNumber == 102)
 				room_pendulo(fl);
@@ -3737,7 +3737,7 @@ void DrasculaEngine::saveGame(char nom_game[]) {
 	}
 
 	out->writeSint32LE(lleva_objeto);
-	out->writeSint32LE(objeto_que_lleva);
+	out->writeSint32LE(pickedObject);
 
 	out->finalize();
 	if (out->ioFailed())
