@@ -146,6 +146,36 @@ RoomTalkAction room4Actions[] = {
 	{ -1,	OPEN,		210,	181 }
 };
 
+RoomTalkAction room5Actions[] = {
+	// num	action		object	speech
+	{ -1,	MOVE,		136,	 13 },
+	{ -1,	OPEN,		136,	 18 },
+	{ -1,	TALK,		136,	 15 },
+	// -------------------------------
+	{ -1,	LOOK,		212,	187 },
+	{ -1,	TALK,		212,	188 },
+	// -------------------------------
+	{ -1,	LOOK,		213,	189 },
+	{ -1,	OPEN,		213,	190 }
+};
+
+RoomTalkAction room6Actions[] = {
+	// num	action		object	speech
+	{ -1,	PICK,		144,	 43 },
+	// -------------------------------
+	{ -1,	LOOK,		138,	 35 },
+	{ -1,	TALK,		138,	  6 },
+	// -------------------------------
+	{ -1,	LOOK,		143,	 37 },
+	{ -1,	PICK,		143,	  7 },
+	{ -1,	MOVE,		143,	  7 },
+	{ -1,	TALK,		143,	 38 },
+	// -------------------------------
+	{ -1,	LOOK,		139,	 36 },
+	// -------------------------------
+	{ -1,	LOOK,		140,	147 }
+};
+
 RoomTalkAction room12Actions[] = {
 	// num	action		object	speech
 	{ -1,	LOOK,		154,	329 },
@@ -324,59 +354,40 @@ void DrasculaEngine::room_4(int fl) {
 }
 
 void DrasculaEngine::room_5(int fl) {
-	if (objeto_que_lleva == LOOK && fl == 136 && flags[8]==0) talk(_text[_lang][14], "14.als");
-	else if (objeto_que_lleva == MOVE && fl == 136)
-		talk(13);
-	else if (objeto_que_lleva == OPEN && fl == 136)
-		talk(18);
-	else if (objeto_que_lleva == TALK && fl == 136)
-		talk(15);
+	if (roomParse(room5Actions, fl))
+		return;
+
+	if (objeto_que_lleva == LOOK && fl == 136 && flags[8] == 0) 
+		talk(14);
 	else if (objeto_que_lleva == 10 && fl == 136) {
 		animation_5_2();
 		resta_objeto(10);
-	} else if (objeto_que_lleva == LOOK && fl == 212)
-		talk(187);
-	else if (objeto_que_lleva == TALK && fl == 212)
-		talk(188);
-	else if (objeto_que_lleva == LOOK && fl == 213)
-		talk(189);
-	else if (objeto_que_lleva == OPEN && fl == 213)
-		talk(190);
-	else
+	} else
 		hay_respuesta = 0;
 }
 
 void DrasculaEngine::room_6(int fl){
+	if (roomParse(room6Actions, fl))
+		return;
+
 	if (objeto_que_lleva == LOOK && fl==144) {
 		talk(41);
 		talk(42);
-	} else if (objeto_que_lleva == PICK && fl == 144)
-		talk(43);
-	else if (objeto_que_lleva == LOOK && fl == 138)
-		talk(35);
-	else if (objeto_que_lleva == OPEN && fl == 138)
+	} else if (objeto_que_lleva == OPEN && fl == 138)
 		openDoor(0, 1);
 	else if (objeto_que_lleva == CLOSE && fl == 138)
 		closeDoor(0, 1);
-	else if (objeto_que_lleva == TALK && fl == 138)
-		talk(6);
-	else if (objeto_que_lleva == LOOK && fl == 143)
-		talk(37);
-	else if (objeto_que_lleva == PICK && fl == 143)
-		talk(7);
-	else if (objeto_que_lleva == MOVE && fl == 143)
-		talk(7);
 	else if (objeto_que_lleva == OPEN && fl == 143 && flags[2] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateRefresh_pre();
-	copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	pause(10);
-	playSound("s3.als");
-	flags[2] = 1;
-	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	stopSound();
+		updateRefresh_pre();
+		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, dir_dibujo3, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		pause(10);
+		playSound("s3.als");
+		flags[2] = 1;
+		updateRoom();
+		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		stopSound();
 	} else if (objeto_que_lleva == CLOSE && fl == 143 && flags[2] == 1) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		flags[2] = 0;
@@ -388,11 +399,7 @@ void DrasculaEngine::room_6(int fl){
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		stopSound();
-	} else if (objeto_que_lleva == TALK && fl == 143)
-		talk(38);
-	else if (objeto_que_lleva == LOOK && fl == 139)
-		talk(36);
-	else if (objeto_que_lleva == OPEN && fl == 139 && flags[1] == 0) {
+	} else if (objeto_que_lleva == OPEN && fl == 139 && flags[1] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		updateRefresh_pre();
 		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
@@ -405,9 +412,7 @@ void DrasculaEngine::room_6(int fl){
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		stopSound();
-	} else if (objeto_que_lleva == LOOK && fl == 140)
-		talk(147);
-	else if (objeto_que_lleva == PICK && fl == 140) {
+	} else if (objeto_que_lleva == PICK && fl == 140) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		updateRefresh_pre();
 		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, dir_dibujo3, dir_zona_pantalla);
