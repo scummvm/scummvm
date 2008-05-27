@@ -59,6 +59,7 @@ enum Languages {
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
+struct RoomTalkAction;
 
 #define NUM_SAVES     10
 #define NUM_FLAGS     50
@@ -616,7 +617,7 @@ public:
 	void aumenta_num_frame();
 	int sobre_que_objeto();
 	bool comprueba_banderas_menu();
-	bool roomParse(int, int);
+	bool roomParse(RoomTalkAction*, int);
 	void room_0();
 	void room_1(int);
 	void room_2(int);
