@@ -393,6 +393,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
+void DrasculaEngine::talk_bj(int index) {
+	char name[20];
+	sprintf(name, "BJ%i.als", index);
+	talk_bj(_textbj[_lang][index], name);
+}
+
 void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 	int x_talk[5] = { 64, 92, 120, 148, 176 };
 	int cara;
@@ -457,7 +463,7 @@ bucless:
 }
 
 void DrasculaEngine::talk(int index) {
-	char name[100];
+	char name[20];
 	sprintf(name, "%i.als", index);
 	talk(_text[_lang][index], name);
 }
@@ -728,7 +734,7 @@ bucless:
 }
 
 void DrasculaEngine::talk_vb(int index) {
-	char name[100];
+	char name[20];
 	sprintf(name, "VB%i.als", index);
 	talk_vb(_textvb[_lang][index], name);
 }
@@ -789,7 +795,7 @@ bucless:
 }
 
 void DrasculaEngine::talk_vbpuerta(int index) {
-	char name[100];
+	char name[20];
 	sprintf(name, "VB%i.als", index);
 	talk_vb(_textvb[_lang][index], name);
 }
@@ -1192,6 +1198,12 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+}
+
+void DrasculaEngine::talk_bj_cama(int index) {
+	char name[20];
+	sprintf(name, "BJ%i.als", index);
+	talk_bj_cama(_textbj[_lang][index], name);
 }
 
 void DrasculaEngine::talk_bj_cama(const char *said, const char *filename) {

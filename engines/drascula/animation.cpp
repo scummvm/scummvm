@@ -543,23 +543,23 @@ void DrasculaEngine::animation_2_1() {
 		hare_x = 100;
 		hare_y = 95;
 
-		talk_bj(_textbj[_lang][2], "BJ2.als");
-		talk(_text[_lang][215], "215.als");
-		talk_bj(_textbj[_lang][3], "BJ3.als");
-		talk(_text[_lang][216], "216.als");
-		talk_bj(_textbj[_lang][4], "BJ4.als");
-		talk_bj(_textbj[_lang][5], "BJ5.als");
-		talk_bj(_textbj[_lang][6], "BJ6.als");
-		talk(_text[_lang][217], "217.als");
-		talk_bj(_textbj[_lang][7], "BJ7.als");
-		talk(_text[_lang][218], "218.als");
-		talk_bj(_textbj[_lang][8], "BJ8.als");
-		talk(_text[_lang][219], "219.als");
-		talk_bj(_textbj[_lang][9], "BJ9.als");
-		talk(_text[_lang][220], "220.als");
-		talk(_text[_lang][221], "221.als");
-		talk_bj(_textbj[_lang][10], "BJ10.als");
-		talk(_text[_lang][222], "222.als");
+		talk_bj(2);
+		talk(215);
+		talk_bj(3);
+		talk(216);
+		talk_bj(4);
+		talk_bj(5);
+		talk_bj(6);
+		talk(217);
+		talk_bj(7);
+		talk(218);
+		talk_bj(8);
+		talk(219);
+		talk_bj(9);
+		talk(220);
+		talk(221);
+		talk_bj(10);
+		talk(222);
 		if (anima("gaf.bin", 15))
 			break;
 		if (anima("bjb.bin", 14))
@@ -603,10 +603,10 @@ void DrasculaEngine::animation_2_1() {
 		pause(60);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk(_text[_lang][224], "224.als");
+		talk(224);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_bj(_textbj[_lang][12], "BJ12.als");
+		talk_bj(12);
 		lleva_al_hare(157, 98 + alto_hare);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -630,14 +630,14 @@ void DrasculaEngine::animation_2_1() {
 		pause(8);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk(_text[_lang][225], "225.als");
+		talk(225);
 		pause(76);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		talk(_text[_lang][226], "226.als");
+		talk(226);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
@@ -645,7 +645,7 @@ void DrasculaEngine::animation_2_1() {
 		pause(30);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk(_text[_lang][227],"227.als");
+		talk(227);
 		FundeAlNegro(0);
 		break;
 	}
@@ -1863,26 +1863,26 @@ void DrasculaEngine::animation_7_4() {
 void DrasculaEngine::animation_1_5() {
 	if (flags[0] == 0) {
 		talk(_text[_lang][430], "430.als");
-		talk_bj(_textbj[_lang][16], "BJ16.als");
-		talk_bj(_textbj[_lang][17], "BJ17.als");
-		talk_bj(_textbj[_lang][18], "BJ18.als");
-		talk(_text[_lang][217], "217.als");
-		talk_bj(_textbj[_lang][19], "BJ19.als");
-		talk(_text[_lang][229], "229.als");
+		talk_bj(16);
+		talk_bj(17);
+		talk_bj(18);
+		talk(217);
+		talk_bj(19);
+		talk(229);
 		pause(5);
 		lleva_al_hare(114, 170);
 		sentido_hare = 3;
-		talk(_text[_lang][431], "431.als");
-		talk_bj(_textbj[_lang][20], "BJ20.als");
+		talk(431);
+		talk_bj(20);
 		sentido_hare = 2;
 		pause(4);
-		talk(_text[_lang][438], "438.als");
+		talk(438);
 		sitio_x = 120;
 		sitio_y = 157;
 		anda_a_objeto = 1;
 		sentido_final = 1;
 		empieza_andar();
-		talk_bj(_textbj[_lang][21], "BJ21.als");
+		talk_bj(21);
 
 		for (;;) {
 			if (hare_se_mueve == 0)
@@ -1892,7 +1892,7 @@ void DrasculaEngine::animation_1_5() {
 		}
 
 		sentido_hare = 1;
-		talk(_text[_lang][229], "229.als");
+		talk(229);
 		flags[0] = 1;
 	}
 
@@ -1901,11 +1901,11 @@ void DrasculaEngine::animation_1_5() {
 }
 
 void DrasculaEngine::animation_2_5() {
-	talk_bj(_textbj[_lang][22], "BJ22.als");
+	talk_bj(22);
 }
 
 void DrasculaEngine::animation_3_5() {
-	talk_bj(_textbj[_lang][23], "BJ23.als");
+	talk_bj(23);
 	pickObject(10);
 	rompo_y_salgo = 1;
 }

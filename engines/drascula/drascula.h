@@ -542,6 +542,7 @@ public:
 	void talk_igor_peluca(const char *said, const char *filename);
 	void hipo(int);
 	void stopSound();
+	void talk_bj(int);
 	void talk_bj(const char *, const char *);
 	void talk_baul(const char *said, const char *filename);
 	void talk(int);
@@ -749,6 +750,7 @@ public:
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
 	void talk_taber2(const char *, const char *);
+	void talk_bj_cama(int);
 	void talk_bj_cama(const char *said, const char * filename);
 	void talk_htel(const char *said, const char *filename);
 

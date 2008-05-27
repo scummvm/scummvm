@@ -1140,14 +1140,14 @@ void DrasculaEngine::room_58(int fl) {
 void DrasculaEngine::room_59(int fl) {
 	if ((pickedObject == kVerbTalk && fl == 51) || (pickedObject == kVerbLook && fl == 51)) {
 		flags[9] = 1;
-		talk(_text[_lang][259], "259.als");
-		talk_bj_cama(_textbj[_lang][13], "bj13.als");
-		talk(_text[_lang][263], "263.als");
-		talk_bj_cama(_textbj[_lang][14], "bj14.als");
+		talk(259);
+		talk_bj_cama(13);
+		talk(263);
+		talk_bj_cama(14);
 		pause(40);
-		talk(_text[_lang][264], "264.als");
-		talk_bj_cama(_textbj[_lang][15], "BJ15.als");
-		talk(_text[_lang][265], "265.als");
+		talk(264);
+		talk_bj_cama(15);
+		talk(265);
 		flags[9] = 0;
 		if (flags[11] == 0) {
 			playSound("s12.als");
