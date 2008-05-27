@@ -79,16 +79,30 @@ DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
 }
 
-static const int x_obj[44] = {0, X_OBJ1, X_OBJ2, X_OBJ3, X_OBJ4, X_OBJ5, X_OBJ6, X_OBJ7, X_OBJ8, X_OBJ9, X_OBJ10,
-				X_OBJ11, X_OBJ12, X_OBJ13, X_OBJ14, X_OBJ15, X_OBJ16, X_OBJ17, X_OBJ18, X_OBJ19, X_OBJ20,
-				X_OBJ21, X_OBJ22, X_OBJ23, X_OBJ24, X_OBJ25, X_OBJ26, X_OBJ27, X_OBJ28, X_OBJ29, X_OBJ30,
-				X_OBJ31, X_OBJ32, X_OBJ33, X_OBJ34, X_OBJ35, X_OBJ36, X_OBJ37, X_OBJ38, X_OBJ39, X_OBJ40,
-				X_OBJ41, X_OBJ42, X_OBJ43};
-static const int y_obj[44] = {0, Y_OBJ1, Y_OBJ2, Y_OBJ3, Y_OBJ4, Y_OBJ5, Y_OBJ6, Y_OBJ7, Y_OBJ8, Y_OBJ9, Y_OBJ10,
-				Y_OBJ11, Y_OBJ12, Y_OBJ13, Y_OBJ14, Y_OBJ15, Y_OBJ16, Y_OBJ17, Y_OBJ18, Y_OBJ19, Y_OBJ20,
-				Y_OBJ21, Y_OBJ22, Y_OBJ23, Y_OBJ24, Y_OBJ25, Y_OBJ26, Y_OBJ27, Y_OBJ28, Y_OBJ29, Y_OBJ30,
-				Y_OBJ31, Y_OBJ32, Y_OBJ33, Y_OBJ34, Y_OBJ35, Y_OBJ36, Y_OBJ37, Y_OBJ38, Y_OBJ39, Y_OBJ40,
-				Y_OBJ41, Y_OBJ42, Y_OBJ43};
+struct ItemLocation {
+	int x;
+	int y;
+};
+
+ItemLocation itemLocations[] = {
+	{   0,   0 },							  // empty
+	{   5,  10 }, {  50,  10 }, {  95,  10 }, // 1-3
+	{ 140,  10 }, { 185,  10 }, { 230,  10 }, // 4-6
+	{ 275,  10 }, {   5,  40 }, {  50,  40 }, // 7-9
+	{  95,  40 }, { 140,  40 }, { 185,  40 }, // 10-12
+	{ 230,  40 }, { 275,  40 }, {   5,  70 }, // 13-15
+	{  50,  70 }, {  95,  70 }, { 140,  70 }, // 16-18
+	{ 185,  70 }, { 230,  70 }, { 275,  70 }, // 19-21
+	{   5, 100 }, {  50, 100 }, {  95, 100 }, // 22-24
+	{ 140, 100 }, { 185, 100 }, { 230, 100 }, // 25-27
+	{ 275, 100 }, {   5, 130 }, {  50, 130 }, // 28-30
+	{  95, 130 }, { 140, 130 }, { 185, 130 }, // 31-33
+	{ 230, 130 }, { 275, 130 }, {   5, 160 }, // 34-36
+	{  50, 160 }, {  95, 160 }, { 140, 160 }, // 37-39
+	{ 185, 160 }, { 230, 160 }, { 275, 160 }, // 40-42
+	{ 275, 160 }							  // 43
+};
+
 static const int x_pol[44] = {0, 1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				247, 83, 165, 1, 206, 42, 124, 83, 1, 247,
@@ -2656,18 +2670,18 @@ void DrasculaEngine::menu_sin_volcar() {
 
 		if (h != 0) {
 			if (num_ejec == 6)
-				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
+				copyBackground(x_pol[n], y_pol[n], itemLocations[n].x, itemLocations[n].y,
 						OBJWIDTH, OBJHEIGHT, dir_mesa, dir_zona_pantalla);
 			else
-				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
+				copyBackground(x_pol[n], y_pol[n], itemLocations[n].x, itemLocations[n].y,
 						OBJWIDTH, OBJHEIGHT, dir_hare_frente, dir_zona_pantalla);
 		}
-		copyRect(x1d_menu[h], y1d_menu[h], x_obj[n], y_obj[n],
+		copyRect(x1d_menu[h], y1d_menu[h], itemLocations[n].x, itemLocations[n].y,
 				OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_zona_pantalla);
 	}
 
 	if (x < 7)
-		print_abc(texto_icono, x_obj[x] - 2, y_obj[x] - 7);
+		print_abc(texto_icono, itemLocations[x].x - 2, itemLocations[x].y - 7);
 }
 
 void DrasculaEngine::barra_menu() {
@@ -3765,8 +3779,8 @@ int DrasculaEngine::sobre_que_objeto() {
 	int n = 0;
 
 	for (n = 1; n < 43; n++) {
-		if (mouseX > x_obj[n] && mouseY > y_obj[n]
-				&& mouseX < x_obj[n] + OBJWIDTH && mouseY < y_obj[n] + OBJHEIGHT)
+		if (mouseX > itemLocations[n].x && mouseY > itemLocations[n].y
+				&& mouseX < itemLocations[n].x + OBJWIDTH && mouseY < itemLocations[n].y + OBJHEIGHT)
 			break;
 	}
 
