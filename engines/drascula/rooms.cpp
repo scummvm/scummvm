@@ -1314,133 +1314,133 @@ void DrasculaEngine::room_pendulo(int fl) {
 
 void DrasculaEngine::updateRefresh() {
 	if (num_ejec == 1) {
-		if (!strcmp(num_room, "63.alg"))
+		if (roomNumber == 63)
 			update_63();
-		else if (!strcmp(num_room, "62.alg"))
+		else if (roomNumber == 62)
 			update_62();
 	} else if (num_ejec == 2) {
-		if (!strcmp(num_room, "3.alg"))
+		if (roomNumber == 3)
 			update_3();
-		else if (!strcmp(num_room, "2.alg"))
+		else if (roomNumber == 2)
 			update_2();
-		else if (!strcmp(num_room, "4.alg"))
+		else if (roomNumber == 4)
 			update_4();
-		else if (!strcmp(num_room, "5.alg"))
+		else if (roomNumber == 5)
 			update_5();
-		else if (!strcmp(num_room, "15.alg"))
+		else if (roomNumber == 15)
 			update_15();
-		else if (!strcmp(num_room, "17.alg"))
+		else if (roomNumber == 17)
 			update_17();
-		else if (!strcmp(num_room, "18.alg"))
+		else if (roomNumber == 18)
 			update_18();
-		else if (!strcmp(num_room, "10.alg"))
+		else if (roomNumber == 10)
 			mapa();
 	} else if (num_ejec == 3) {
-		if (!strcmp(num_room, "20.alg"))
+		if (roomNumber == 20)
 			update_20();
-		else if (!strcmp(num_room, "13.alg"))
+		else if (roomNumber == 13)
 			update_13();
 	} else if (num_ejec == 4) {
-		if (!strcmp(num_room, "29.alg"))
+		if (roomNumber == 29)
 			update_29();
-		else if (!strcmp(num_room, "26.alg"))
+		else if (roomNumber == 26)
 			update_26();
-		else if (!strcmp(num_room, "27.alg"))
+		else if (roomNumber == 27)
 			update_27();
-		else if (!strcmp(num_room, "31.alg"))
+		else if (roomNumber == 31)
 			update_31();
-		else if (!strcmp(num_room, "34.alg"))
+		else if (roomNumber == 34)
 			update_34();
-		else if (!strcmp(num_room, "35.alg"))
+		else if (roomNumber == 35)
 			update_35();
 	} else if (num_ejec == 5) {
-		if (!strcmp(num_room, "45.alg"))
+		if (roomNumber == 45)
 			mapa();
-		else if (!strcmp(num_room, "50.alg"))
+		else if (roomNumber == 50)
 			update_50();
-		else if (!strcmp(num_room, "57.alg"))
+		else if (roomNumber == 57)
 			update_57();
 	} else if (num_ejec == 6) {
-		if (!strcmp(num_room, "60.alg"))
+		if (roomNumber == 60)
 			update_60();
-		else if (!strcmp(num_room, "61.alg"))
+		else if (roomNumber == 61)
 			update_61();
-		else if (!strcmp(num_room, "58.alg"))
+		else if (roomNumber == 58)
 			update_58();
 	}
 }
 
 void DrasculaEngine::updateRefresh_pre() {
 	if (num_ejec == 1) {
-		if (!strcmp(num_room, "62.alg"))
+		if (roomNumber == 62)
 			update_62_pre();
-		else if (!strcmp(num_room, "16.alg"))
+		else if (roomNumber == 16)
 			pon_bj();
 	} else if (num_ejec == 2) {
-		if (!strcmp(num_room, "1.alg"))
+		if (roomNumber == 1)
 			update_1_pre();
-		else if (!strcmp(num_room, "3.alg"))
+		else if (roomNumber == 3)
 			update_3_pre();
-		else if (!strcmp(num_room, "5.alg"))
+		else if (roomNumber == 5)
 			update_5_pre();
-		else if (!strcmp(num_room, "6.alg"))
+		else if (roomNumber == 6)
 			update_6_pre();
-		else if (!strcmp(num_room, "7.alg"))
+		else if (roomNumber == 7)
 			update_7_pre();
-		else if (!strcmp(num_room, "9.alg"))
+		else if (roomNumber == 9)
 			update_9_pre();
-		else if (!strcmp(num_room, "12.alg"))
+		else if (roomNumber == 12)
 			update_12_pre();
-		else if (!strcmp(num_room, "14.alg"))
+		else if (roomNumber == 14)
 			update_14_pre();
-		else if (!strcmp(num_room, "16.alg"))
+		else if (roomNumber == 16)
 			update_16_pre();
-		else if (!strcmp(num_room, "17.alg"))
+		else if (roomNumber == 17)
 			update_17_pre();
-		else if (!strcmp(num_room, "18.alg"))
+		else if (roomNumber == 18)
 			update_18_pre();
 	} else if (num_ejec == 3) {
 		// nothing
 	} else if (num_ejec == 4) {
-		if (!strcmp(num_room, "21.alg"))
+		if (roomNumber == 21)
 			update_21_pre();
-		else if (!strcmp(num_room, "22.alg"))
+		else if (roomNumber == 22)
 			update_22_pre();
-		else if (!strcmp(num_room, "23.alg"))
+		else if (roomNumber == 23)
 			update_23_pre();
-		else if (!strcmp(num_room, "24.alg"))
+		else if (roomNumber == 24)
 			update_24_pre();
-		else if (!strcmp(num_room, "26.alg"))
+		else if (roomNumber == 26)
 			update_26_pre();
-		else if (!strcmp(num_room, "27.alg"))
+		else if (roomNumber == 27)
 			update_27_pre();
-		else if (!strcmp(num_room, "29.alg"))
+		else if (roomNumber == 29)
 			update_29_pre();
-		else if (!strcmp(num_room, "30.alg"))
+		else if (roomNumber == 30)
 			update_30_pre();
-		else if (!strcmp(num_room, "31.alg"))
+		else if (roomNumber == 31)
 			update_31_pre();
-		else if (!strcmp(num_room, "34.alg"))
+		else if (roomNumber == 34)
 			update_34_pre();
-		else if (!strcmp(num_room, "35.alg"))
+		else if (roomNumber == 35)
 			update_35_pre();
 	} else if (num_ejec == 5) {
-		if (!strcmp(num_room,"49.alg"))
+		if (roomNumber == 49)
 			update_49_pre();
-		else if (!strcmp(num_room,"53.alg"))
+		else if (roomNumber == 53)
 			update_53_pre();
-		else if (!strcmp(num_room,"54.alg"))
+		else if (roomNumber == 54)
 			update_54_pre();
-		else if (!strcmp(num_room,"56.alg"))
+		else if (roomNumber == 56)
 			update_56_pre();
 	} else if (num_ejec == 6) {
-		if (!strcmp(num_room, "102.alg"))
+		if (roomNumber == 102)
 			update_pendulo();
-		else if (!strcmp(num_room, "58.alg"))
+		else if (roomNumber == 58)
 			update_58_pre();
-		else if (!strcmp(num_room, "59.alg"))
+		else if (roomNumber == 59)
 			update_59_pre();
-		else if (!strcmp(num_room, "60.alg"))
+		else if (roomNumber == 60)
 			update_60_pre();
 	}
 }

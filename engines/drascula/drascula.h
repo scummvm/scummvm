@@ -324,7 +324,8 @@ public:
 
 	int hay_sb;
 	int nivel_osc, previousMusic, roomMusic;
-	char num_room[20], roomDisk[20];
+	int roomNumber;
+	char roomDisk[20];
 	char currentData[20];
 	int numRoomObjs;
 	char fondo_y_menu[20];

@@ -474,11 +474,11 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	int longitud = strlen(said);
 
 	if (num_ejec == 6) {
-		if (flags[0] == 0 && (!strcmp(num_room, "102.alg"))) {
+		if (flags[0] == 0 && roomNumber == 102) {
 			talk_pen(said, filename);
 			return;
 		}
-		if (flags[0] == 0 && (!strcmp(num_room, "58.alg"))) {
+		if (flags[0] == 0 && roomNumber == 58) {
 			talk_pen2(said, filename);
 			return;
 		}
@@ -492,7 +492,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	}
 
 	if (num_ejec == 4) {
-		if (strcmp(num_room, "24.alg") || flags[29] == 0) {
+		if (roomNumber == 24 || flags[29] == 0) {
 			color_abc(YELLOW);
 		}
 	} else {

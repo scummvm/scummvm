@@ -512,7 +512,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		strcpy(num_room, "16.alg");
+		roomNumber = 16;
 
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -616,7 +616,10 @@ void DrasculaEngine::animation_2_1() {
 		if (anima("rap.bin", 16))
 			break;
 		sentido_hare = 3;
-		strcpy(num_room, "no_bj.alg");
+		// FIXME: the room number is changed here to "no_bj". Is it
+		// possible to use loadPic("no_bj.alg") instead?
+		loadPic("no_bj.alg");	// is this ok?
+		//strcpy(num_room, "no_bj.alg");
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(8);
@@ -1121,7 +1124,9 @@ void DrasculaEngine::animation_16_2() {
 asco:
 	loadPic(roomDisk);
 	decompressPic(dir_dibujo3, 1);
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 	black();
 	updateRoom();
@@ -2411,7 +2416,12 @@ void DrasculaEngine::animation_9_6() {
 	hare_x = -1;
 	obj_saliendo = 108;
 	carga_escoba("59.ald");
-	strcpy(num_room, "nada.alg");
+	// FIXME: the room number is changed here to "nada". Not
+	// sure if this makes any difference, as loadPic is called
+	// right afterwards. Is it possible to use loadPic("nada.alg")
+	// instead?
+	loadPic("nada.alg");	// is this ok?
+	//strcpy(num_room, "nada.alg");
 	loadPic("nota2.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
 	black();
@@ -3445,10 +3455,9 @@ void DrasculaEngine::animation_5_4(){
 }
 
 void DrasculaEngine::animation_6_4() {
-	char room[13];
+	int prevRoom = roomNumber;
 
-	strcpy(room, num_room);
-	strcpy(num_room, "26.alg");
+	roomNumber = 26;
 	clearRoom();
 	loadPic("26.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
@@ -3464,13 +3473,15 @@ void DrasculaEngine::animation_6_4() {
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(40);
 	talk_igor_frente(_texti[_lang][26], "I26.als");
-	strcpy(num_room, room);
+	roomNumber = prevRoom;
 	clearRoom();
 	loadPic("96.alg");
 	decompressPic(dir_hare_frente, 1);
 	loadPic(roomDisk);
 	decompressPic(dir_dibujo3, 1);
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 	withoutVerb();
 	updateRoom();

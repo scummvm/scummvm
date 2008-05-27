@@ -645,11 +645,11 @@ bucles:
 	}
 
 	if (num_ejec == 2) {
-		if ((!strcmp(num_room, "3.alg")) && (hare_x == 279) && (hare_y + alto_hare == 101))
+		if (roomNumber == 3 && (hare_x == 279) && (hare_y + alto_hare == 101))
 			animation_1_2();
-		else if ((!strcmp(num_room, "14.alg")) && (hare_x == 214) && (hare_y + alto_hare == 121))
+		else if (roomNumber == 14 && (hare_x == 214) && (hare_y + alto_hare == 121))
 			lleva_al_hare(190, 130);
-		else if ((!strcmp(num_room, "14.alg")) && (hare_x == 246) && (hare_y + alto_hare == 112))
+		else if (roomNumber == 14 && (hare_x == 246) && (hare_y + alto_hare == 112))
 			lleva_al_hare(190, 130);
 	}
 
@@ -782,7 +782,7 @@ bucles:
 			return false;
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && !strcmp(num_room, "61.alg")) {
+	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
 		 loadPic("alcbar.alg");
 		 decompressPic(dir_dibujo1, 255);
 	} else if (cont_sv == 1500) {
@@ -883,8 +883,10 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 		b = buf;
 		while (!fp->eos()) {
 			c = ~fp->readByte();
-			if (c == '\r' || c == '\n' || b - buf >= (len - 1))
+			if (c == '\r')
 				continue;
+			if (c == '\n' || b - buf >= (len - 1))
+				break;
 			*b++ = c;
 		}
 		*b = '\0';
@@ -915,8 +917,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	}
 	int size = ald->size();
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", num_room);
-	strcat(num_room, ".alg");
+	roomNumber = atoi(buffer);
 
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &roomMusic);
@@ -1053,7 +1054,9 @@ martini:
 	loadPic(roomDisk);
 	decompressPic(dir_dibujo3, 1);
 
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
@@ -1085,14 +1088,14 @@ martini:
 		}
 	}
 
-	if (!strcmp(num_room, "24.alg")) {
+	if (roomNumber == 24) {
 		for (l = suelo_y1 - 1; l > 74; l--) {
 			factor_red[l] = (int)(far - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
-	if (num_ejec == 5 && !strcmp(num_room, "54.alg")) {
+	if (num_ejec == 5 && roomNumber == 54) {
 		for (l = suelo_y1 - 1; l > 84; l--) {
 			factor_red[l] = (int)(far - pequegnez);
 			pequegnez = pequegnez + chiquez;
@@ -1130,13 +1133,13 @@ martini:
 		isDoor[7] = 0;
 
 	if (num_ejec == 2) {
-		if (!strcmp(num_room, "14.alg") && flags[39] == 1)
+		if (roomNumber == 14 && flags[39] == 1)
 			roomMusic = 16;
-		else if (!strcmp(num_room, "15.alg") && flags[39] == 1)
+		else if (roomNumber == 15 && flags[39] == 1)
 			roomMusic = 16;
-		if (!strcmp(num_room, "14.alg") && flags[5] == 1)
+		if (roomNumber == 14 && flags[5] == 1)
 			roomMusic = 0;
-		else if (!strcmp(num_room, "15.alg") && flags[5] == 1)
+		else if (roomNumber == 15 && flags[5] == 1)
 			roomMusic = 0;
 
 		if (previousMusic != roomMusic && roomMusic != 0)
@@ -1149,21 +1152,21 @@ martini:
 	}
 
 	if (num_ejec == 2) {
-		if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg")) || (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg")))
+		if (roomNumber == 9 || roomNumber == 2 || roomNumber == 14 || roomNumber == 18)
 			conta_ciego_vez = vez();
 	}
 	if (num_ejec == 4) {
-		if (!strcmp(num_room, "26.alg"))
+		if (roomNumber == 26)
 			conta_ciego_vez = vez();
 	}
 
-	if (num_ejec == 4 && !strcmp(num_room, "24.alg") && flags[29] == 1)
+	if (num_ejec == 4 && roomNumber == 24 && flags[29] == 1)
 		animation_7_4();
 
 	if (num_ejec == 5) {
-		if (!strcmp(num_room, "45.alg"))
+		if (roomNumber == 45)
 			hare_se_ve = 0;
-		if (!strcmp(num_room, "49.alg") && flags[7] == 0)
+		if (roomNumber == 49 && flags[7] == 0)
 			animation_4_5();
 	}
 
@@ -1626,7 +1629,9 @@ bool DrasculaEngine::saves() {
 	}
 
 	clearRoom();
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 	hay_seleccion = 0;
 
@@ -1963,7 +1968,9 @@ void DrasculaEngine::salva_pantallas() {
 	free(copia);
 	free(ghost);
 
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 }
 
@@ -2063,10 +2070,7 @@ void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto)
 		ya = 1;
 
 	strcpy(m1, mensaje);
-	if (x_texto < 60)
-		x_texto = 60;
-	if (x_texto > 255)
-		x_texto = 255;
+	x_texto = CLIP<int>(x_texto, 60, 255);
 
 	x_texto1 = x_texto;
 
@@ -3109,9 +3113,9 @@ bool DrasculaEngine::banderas(int fl) {
 				talk(_text[_lang][313], "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (!strcmp(num_room, "62.alg"))
+			else if (roomNumber == 62)
 				room_62(fl);
-			else if (!strcmp(num_room, "63.alg"))
+			else if (roomNumber == 63)
 				room_63(fl);
 			else
 				hay_respuesta = 0;
@@ -3128,41 +3132,42 @@ bool DrasculaEngine::banderas(int fl) {
 				talk(_text[_lang][313], "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0 && strcmp(num_room, "18.alg"))
+			// Note: the original check was strcmp(num_room, "18.alg")
+			else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
 				talk(_text[_lang][315], "315.als");
 			else if (objeto_que_lleva == 13 && fl == 50)
 				talk(_text[_lang][156], "156.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
 				talk(_text[_lang][163], "163.als");
-			else if (!strcmp(num_room, "1.alg"))
+			else if (roomNumber == 1)
 				room_1(fl);
-			else if (!strcmp(num_room, "3.alg"))
+			else if (roomNumber == 3)
 				room_3(fl);
-			else if (!strcmp(num_room, "4.alg"))
+			else if (roomNumber == 4)
 				room_4(fl);
-			else if (!strcmp(num_room, "5.alg"))
+			else if (roomNumber == 5)
 				room_5(fl);
-			else if (!strcmp(num_room, "6.alg"))
+			else if (roomNumber == 6)
 				room_6(fl);
-			else if (!strcmp(num_room, "7.alg"))
+			else if (roomNumber == 7)
 				room_7(fl);
-			else if (!strcmp(num_room, "8.alg"))
+			else if (roomNumber == 8)
 				room_8(fl);
-			else if (!strcmp(num_room, "9.alg"))
+			else if (roomNumber == 9)
 				room_9(fl);
-			else if (!strcmp(num_room, "12.alg"))
+			else if (roomNumber == 12)
 				room_12(fl);
-			else if (!strcmp(num_room, "14.alg"))
+			else if (roomNumber == 14)
 				room_14(fl);
-			else if (!strcmp(num_room, "15.alg"))
+			else if (roomNumber == 15)
 				room_15(fl);
-			else if (!strcmp(num_room, "16.alg"))
+			else if (roomNumber == 16)
 				room_16(fl);
-			else if (!strcmp(num_room, "17.alg"))
+			else if (roomNumber == 17)
 				room_17(fl);
-			else if (!strcmp(num_room, "18.alg"))
+			else if (roomNumber == 18)
 				room_18(fl);
-			else if (!strcmp(num_room, "19.alg"))
+			else if (roomNumber == 19)
 				room_19(fl);
 			else
 				hay_respuesta = 0;
@@ -3179,13 +3184,13 @@ bool DrasculaEngine::banderas(int fl) {
 				talk(_text[_lang][313], "313.als");
 			else if (objeto_que_lleva == TALK && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (!strcmp(num_room, "13.alg")) {
+			else if (roomNumber == 13) {
 				if (room_13(fl))
 					return true;
 			} else
 				hay_respuesta = 0;
 		} else if (num_ejec == 4) {
-			if (!strcmp(num_room, "28.alg"))
+			if (roomNumber == 28)
 				talk(_text[_lang][178], "178.als");
 			else if (objeto_que_lleva == LOOK && fl == 50)
 				talk(_text[_lang][309], "309.als");
@@ -3207,30 +3212,30 @@ bool DrasculaEngine::banderas(int fl) {
 				talk(_text[_lang][487], "487.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
 				talk(_text[_lang][487], "487.als");
-			else if (!strcmp(num_room, "21.alg")) {
+			else if (roomNumber == 21) {
 				if (room_21(fl))
 					return true;
-			} else if (!strcmp(num_room, "22.alg"))
+			} else if (roomNumber == 22)
 				room_22(fl);
-			else if (!strcmp(num_room, "23.alg"))
+			else if (roomNumber == 23)
 				room_23(fl);
-			else if (!strcmp(num_room, "24.alg"))
+			else if (roomNumber == 24)
 				room_24(fl);
-			else if (!strcmp(num_room, "26.alg"))
+			else if (roomNumber == 26)
 				room_26(fl);
-			else if (!strcmp(num_room, "27.alg"))
+			else if (roomNumber == 27)
 				room_27(fl);
-			else if (!strcmp(num_room, "29.alg"))
+			else if (roomNumber == 29)
 				room_29(fl);
-			else if (!strcmp(num_room, "30.alg"))
+			else if (roomNumber == 30)
 				room_30(fl);
-			else if (!strcmp(num_room, "31.alg"))
+			else if (roomNumber == 31)
 				room_31(fl);
-			else if (!strcmp(num_room, "34.alg"))
+			else if (roomNumber == 34)
 				room_34(fl);
-			else if (!strcmp(num_room, "35.alg"))
+			else if (roomNumber == 35)
 				room_35(fl);
-			else if (!strcmp(num_room, "44.alg"))
+			else if (roomNumber == 44)
 				room_44(fl);
 			else
 				hay_respuesta = 0;
@@ -3249,15 +3254,15 @@ bool DrasculaEngine::banderas(int fl) {
 				talk("hola yo", "16.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
 				talk(_text[_lang][487], "487.als");
-			else if (!strcmp(num_room, "49.alg"))
+			else if (roomNumber == 49)
 				room_49(fl);
-			else if (!strcmp(num_room, "53.alg"))
+			else if (roomNumber == 53)
 				room_53(fl);
-			else if (!strcmp(num_room, "54.alg"))
+			else if (roomNumber == 54)
 				room_54(fl);
-			else if (!strcmp(num_room, "55.alg"))
+			else if (roomNumber == 55)
 				room_55(fl);
-			else if (!strcmp(num_room, "56.alg")) {
+			else if (roomNumber == 56) {
 				if (room_56(fl))
 					return true;
 			} else
@@ -3277,16 +3282,16 @@ bool DrasculaEngine::banderas(int fl) {
 				talk(_text[_lang][313], "313.als" );
 			else if (objeto_que_lleva == TALK && fl == 50)
 				talk(_text[_lang][314], "314.als" );
-			else if (!strcmp(num_room, "102.alg"))
+			else if (roomNumber == 102)
 				room_pendulo(fl);
-			else if (!strcmp(num_room, "58.alg"))
+			else if (roomNumber == 58)
 				room_58(fl);
-			else if (!strcmp(num_room, "59.alg"))
+			else if (roomNumber == 59)
 				room_59(fl);
-			else if (!strcmp(num_room, "60.alg")) {
+			else if (roomNumber == 60) {
 				if (room_60(fl))
 					return true;
-			} else if (!strcmp(num_room, "61.alg"))
+			} else if (roomNumber == 61)
 				room_61(fl);
 			else
 				hay_respuesta = 0;
@@ -4350,69 +4355,69 @@ void DrasculaEngine::updateData() {
 	if (num_ejec == 1) {
 		// nothing
 	} else if (num_ejec == 2) {
-		if (!strcmp(num_room,"2.alg") && flags[40] == 0)
+		if (roomNumber == 2 && flags[40] == 0)
 			visible[3] = 0;
-		else if (!strcmp(num_room, "3.alg") && flags[3] == 1)
+		else if (roomNumber == 3 && flags[3] == 1)
 			visible[8] = 0;
-		else if (!strcmp(num_room, "6.alg") && flags[1] == 1 && flags[10] == 0) {
+		else if (roomNumber == 6 && flags[1] == 1 && flags[10] == 0) {
 			visible[2] = 0;
 			visible[4] = 1;
-		} else if (!strcmp(num_room, "7.alg") && flags[35] == 1)
+		} else if (roomNumber == 7 && flags[35] == 1)
 			visible[3] = 0;
-		else if (!strcmp(num_room, "14.alg") && flags[5] == 1)
+		else if (roomNumber == 14 && flags[5] == 1)
 			visible[4] = 0;
-		else if (!strcmp(num_room, "18.alg") && flags[28] == 1)
+		else if (roomNumber == 18 && flags[28] == 1)
 			visible[2] = 0;
 	} else if (num_ejec == 3) {
 		// nothing
 	} else if (num_ejec == 4) {
-		if (!strcmp(num_room, "23.alg") && flags[0] == 0 && flags[11] == 0)
+		if (roomNumber == 23 && flags[0] == 0 && flags[11] == 0)
 			visible[2] = 1;
-		if (!strcmp(num_room, "23.alg") && flags[0] == 1 && flags[11] == 0)
+		if (roomNumber == 23 && flags[0] == 1 && flags[11] == 0)
 			visible[2] = 0;
-		if (!strcmp(num_room, "21.alg") && flags[10] == 1)
+		if (roomNumber == 21 && flags[10] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room, "22.alg") && flags[26] == 1) {
+		if (roomNumber == 22 && flags[26] == 1) {
 			visible[2] = 0;
 			visible[1] = 1;
 		}
-		if (!strcmp(num_room, "22.alg") && flags[27] == 1)
+		if (roomNumber == 22 && flags[27] == 1)
 			visible[3] = 0;
-		if (!strcmp(num_room, "26.alg") && flags[21] == 0)
+		if (roomNumber == 26 && flags[21] == 0)
 			strcpy(objName[2], _textmisc[_lang][0]);
-		if (!strcmp(num_room, "26.alg") && flags[18] == 1)
+		if (roomNumber == 26 && flags[18] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room, "26.alg") && flags[12] == 1)
+		if (roomNumber == 26 && flags[12] == 1)
 			visible[1] = 0;
-		if (!strcmp(num_room, "35.alg") && flags[14] == 1)
+		if (roomNumber == 35 && flags[14] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room, "35.alg") && flags[17] == 1)
+		if (roomNumber == 35 && flags[17] == 1)
 			visible[3] = 1;
-		if (!strcmp(num_room, "35.alg") && flags[15] == 1)
+		if (roomNumber == 35 && flags[15] == 1)
 			visible[1] = 0;
 	} else if (num_ejec == 5) {
-		if (!strcmp(num_room,"49.alg") && flags[6] == 1)
+		if (roomNumber == 49 && flags[6] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room,"49.alg") && flags[6] == 0)
+		if (roomNumber == 49 && flags[6] == 0)
 			visible[1] = 0;
-		if (!strcmp(num_room,"49.alg") && flags[6] == 1)
+		if (roomNumber == 49 && flags[6] == 1)
 			visible[1] = 1;
-		if (!strcmp(num_room,"45.alg") && flags[6] == 1)
+		if (roomNumber == 45 && flags[6] == 1)
 			visible[3] = 1;
-		if (!strcmp(num_room,"53.alg") && flags[2] == 1)
+		if (roomNumber == 53 && flags[2] == 1)
 			visible[3] = 0;
-		if (!strcmp(num_room,"54.alg") && flags[13] == 1)
+		if (roomNumber == 54 && flags[13] == 1)
 			visible[3] = 0;
-		if (!strcmp(num_room,"55.alg") && flags[8] == 1)
+		if (roomNumber == 55 && flags[8] == 1)
 			visible[1] = 0;
 	} else if (num_ejec == 6) {
-		if ((!strcmp(num_room, "58.alg")) && flags[8] == 0)
+		if (roomNumber == 58 && flags[8] == 0)
 			isDoor[1] = 0;
-		if ((!strcmp(num_room, "58.alg")) && flags[8] == 1)
+		if (roomNumber == 58 && flags[8] == 1)
 			isDoor[1] = 1;
-		if (!strcmp(num_room, "59.alg"))
+		if (roomNumber == 59)
 			isDoor[1] = 0;
-		if (!strcmp(num_room, "60.alg")) {
+		if (roomNumber == 60) {
 			sentido_dr = 0;
 			x_dr = 155;
 			y_dr = 69;
@@ -4616,7 +4621,7 @@ bucless:
 void DrasculaEngine::activa_pendulo() {
 	flags[1] = 2;
 	hare_se_ve = 0;
-	strcpy(num_room, "102.alg");
+	roomNumber = 102;
 	loadPic("102.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("an_p1.alg");
