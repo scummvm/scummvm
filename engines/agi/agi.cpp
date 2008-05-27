@@ -62,9 +62,7 @@ void AgiEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_gfx->deinitVideo();
-			_gfx->deinitMachine();
-			_system->quit();
+			_game.quitProgNow = true;
 			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
 			if (_predictiveDialogRunning)
