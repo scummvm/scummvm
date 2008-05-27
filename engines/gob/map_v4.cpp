@@ -113,7 +113,7 @@ void Map_v4::loadMapObjects(const char *avjFile) {
 	}
 
 	if (_widthByte == 4)
-		_mapWidth = (int16) READ_VARO_UINT16(68);
+		_mapWidth = VAR(17);
 
 	_passWidth = _mapWidth;
 
