@@ -403,10 +403,10 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/64th of a second. Note that it must be a power of two.
+	// about 1/32th of a second. Note that it must be a power of two.
 	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
 	int samples = 8192;
-	while (64 * samples >= _samplesPerSec) {
+	while (32 * samples >= _samplesPerSec) {
 		samples >>= 1;
 	}
 
