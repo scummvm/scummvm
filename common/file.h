@@ -108,10 +108,10 @@ public:
 	 *
 	 * @return: true if the end of file is reached, false otherwise.
 	 */
-	bool eof() const;
+	virtual bool eof() const;
 
-	uint32 pos() const;
-	uint32 size() const;
+	virtual uint32 pos() const;
+	virtual uint32 size() const;
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
 	uint32 write(const void *dataPtr, uint32 dataSize);
