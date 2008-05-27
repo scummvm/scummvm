@@ -538,12 +538,15 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 
 void KyraEngine_v1::snd_stopVoice() {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_stopVoice()");
-	_sound->voiceStop(_speechFile.empty() ? 0 : _speechFile.c_str());
+	if (!_speechFile.empty()) {
+		_sound->voiceStop(_speechFile.c_str());
+		_speechFile.clear();
+	}
 }
 
 bool KyraEngine_v1::snd_voiceIsPlaying() {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_voiceIsPlaying()");
-	return _sound->voiceIsPlaying(_speechFile.empty() ? 0 : _speechFile.c_str());
+	return _speechFile.empty() ? false : _sound->voiceIsPlaying(_speechFile.c_str());
 }
 
 // static res

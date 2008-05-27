@@ -760,7 +760,7 @@ int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 
 int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_isAnySoundPlaying(%p) ()", (const void *)script);
-	return _sound->voiceIsPlaying();
+	return _sound->voiceIsPlaying() ? 1 : 0;
 }
 
 int KyraEngine_HoF::o2_setDrawNoShapeFlag(EMCState *script) {
