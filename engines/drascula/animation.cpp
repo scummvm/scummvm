@@ -2078,9 +2078,9 @@ void DrasculaEngine::animation_12_5() {
 
 	for (color = 0; color < 255; color++)
 		for (componente = 0; componente < 3; componente++) {
-			palFondo1[color][componente] = palJuego[color][componente];
-			palFondo2[color][componente] = palJuego[color][componente];
-			palFondo3[color][componente] = palJuego[color][componente];
+			palFondo1[color][componente] = gamePalette[color][componente];
+			palFondo2[color][componente] = gamePalette[color][componente];
+			palFondo3[color][componente] = gamePalette[color][componente];
 		}
 
 	for (fundido = 1; fundido >= 0; fundido--) {
@@ -2125,7 +2125,7 @@ void DrasculaEngine::animation_12_5() {
 		if (frame == 2 || frame == 4 || frame == 7 || frame == 9)
 			setPalette((byte *)&palFondo1);
 		else if (frame == 1 || frame == 5)
-			setPalette((byte *)&palJuego);
+			setPalette((byte *)&gamePalette);
 		else
 			setPalette((byte *)&palFondo2);
 

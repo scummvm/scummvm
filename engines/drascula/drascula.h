@@ -384,7 +384,7 @@ public:
 	void copyRectClip(int *Array, byte *src, byte *dest);
 	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
 
-	DacPalette256 palJuego;
+	DacPalette256 gamePalette;
 	DacPalette256 palHare;
 	DacPalette256 palHareClaro;
 	DacPalette256 palHareOscuro;
@@ -473,9 +473,9 @@ public:
 	int corta_musica;
 	char select[23];
 	int hay_seleccion;
-	int x_raton;
-	int y_raton;
-	int y_raton_ant;
+	int mouseX;
+	int mouseY;
+	int mouseY_ant;
 	int boton_izq;
 	int boton_dch;
 
