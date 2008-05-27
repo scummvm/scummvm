@@ -73,7 +73,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_loadMask4, "b" },
 	{ &FWScript::o1_unloadMask4, "b" },
 	{ &FWScript::o1_addSpriteFilledToBgList, "b" },
-	{ &FWScript::o1_op1B, "" },
+	{ &FWScript::o1_op1B, "" }, /* TODO: Name this opcode properly. */
 	/* 1C */
 	{ 0, 0 },
 	{ &FWScript::o1_label, "l" },
@@ -181,9 +181,9 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_fadeOutMusic, "" },
 	/* 70 */
 	{ &FWScript::o1_stopSample, "" },
-	{ &FWScript::o1_op71, "bw" },
-	{ &FWScript::o1_op72, "wbw" },
-	{ &FWScript::o1_op72, "wbw" },
+	{ &FWScript::o1_op71, "bw" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x73. TODO: Name this opcode properly. */
+	{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x72. */
 	/* 74 */
 	{ 0, 0 },
 	{ 0, 0 },
@@ -201,8 +201,8 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o2_addSeqListElement, "bbbbwww" },
 	/* 80 */
 	{ &FWScript::o2_removeSeq, "bb" },
-	{ &FWScript::o2_op81, "" },
-	{ &FWScript::o2_op82, "bbw" },
+	{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_op82, "bbw" }, /* TODO: Name this opcode properly. */
 	{ &FWScript::o2_isSeqRunning, "bb" },
 	/* 84 */
 	{ &FWScript::o2_gotoIfSupNearest, "b" },
@@ -216,7 +216,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o2_startObjectScript, "b" },
 	/* 8C */
 	{ &FWScript::o2_stopObjectScript, "b" },
-	{ &FWScript::o2_op8D, "wwwwwwww" },
+	{ &FWScript::o2_op8D, "wwwwwwww" }, /* TODO: Name this opcode properly. */
 	{ &FWScript::o2_addBackground, "bs" },
 	{ &FWScript::o2_removeBackground, "b" },
 	/* 90 */
@@ -226,32 +226,32 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ 0, 0 },
 	/* 94 */
 	{ 0, 0 },
-	{ &FWScript::o1_changeDataDisk, "b" },
+	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcode 0xA9. */
 	{ 0, 0 },
 	{ 0, 0 },
 	/* 98 */
 	{ 0, 0 },
 	{ 0, 0 },
 	{ &FWScript::o2_wasZoneChecked, "" },
-	{ &FWScript::o2_op9B, "wwwwwwww" },
+	{ &FWScript::o2_op9B, "wwwwwwww" }, /* TODO: Name this opcode properly. */
 	/* 9C */
-	{ &FWScript::o2_op9C, "wwww" },
+	{ &FWScript::o2_op9C, "wwww" }, /* TODO: Name this opcode properly. */
 	{ &FWScript::o2_useBgScroll, "b" },
 	{ &FWScript::o2_setAdditionalBgVScroll, "c" },
-	{ &FWScript::o2_op9F, "ww" },
+	{ &FWScript::o2_op9F, "ww" }, /* TODO: Name this opcode properly. */
 	/* A0 */
-	{ &FWScript::o2_addGfxElementA0, "ww" },
-	{ &FWScript::o2_removeGfxElementA0, "ww" },
-	{ &FWScript::o2_opA2, "ww" },
-	{ &FWScript::o2_opA3, "ww" },
+	{ &FWScript::o2_addGfxElementA0, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_removeGfxElementA0, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_opA2, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_opA3, "ww" }, /* TODO: Name this opcode properly. */
 	/* A4 */
-	{ &FWScript::o2_loadMask22, "b" },
-	{ &FWScript::o2_unloadMask22, "b" },
+	{ &FWScript::o2_loadMask22, "b" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_unloadMask22, "b" }, /* TODO: Name this opcode properly. */
 	{ 0, 0 },
 	{ 0, 0 },
 	/* A8 */
 	{ 0, 0 },
-	{ &FWScript::o1_changeDataDisk, "b" }
+	{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcode 0x95. */
 };
 const unsigned int OSScript::_numOpcodes = ARRAYSIZE(OSScript::_opcodeTable);
 
