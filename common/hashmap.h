@@ -535,6 +535,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 		}
 	}
 	_arr[i] = NULL;
+	_nele--;
 	return;
 }
 

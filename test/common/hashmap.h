@@ -37,6 +37,9 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( !container.contains(1) );
 		container[1] = 42;
 		TS_ASSERT( container.contains(1) );
+		container.erase(0);
+		container.erase(1);
+		TS_ASSERT( container.empty() );
 	}
 
 	void test_lookup( void )
