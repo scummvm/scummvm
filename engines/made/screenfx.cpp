@@ -76,8 +76,16 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx10(surface, palette, newPalette, colorCount);
 		break;
 
+	case 11:	// "Screen wipe in", right to left
+		vfx11(surface, palette, newPalette, colorCount);
+		break;
+
 	case 12:	// "Screen wipe in", top to bottom
 		vfx12(surface, palette, newPalette, colorCount);
+		break;
+
+	case 13:	// "Screen wipe in", bottom to top
+		vfx13(surface, palette, newPalette, colorCount);
 		break;
 
 	case 14:	// "Screen open" effect
@@ -256,9 +264,29 @@ void ScreenEffects::vfx10(Graphics::Surface *surface, byte *palette, byte *newPa
 	setPalette(palette);
 }
 
+// "Screen wipe in", right to left
+void ScreenEffects::vfx11(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int x = 312; x > -56; x -= 8) {
+		copyFxRect(surface, x, 0, x + 64, 200);
+		setBlendedPalette(palette, newPalette, colorCount, x + 56, 368);
+		_screen->updateScreenAndWait(25);
+	}
+	setPalette(palette);
+}
+
 // "Screen wipe in", top to bottom
 void ScreenEffects::vfx12(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = -70; y < 312; y += 10) {
+		copyFxRect(surface, 0, y, 320, y + 80);
+		setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);
+		_screen->updateScreenAndWait(25);
+	}
+	setPalette(palette);
+}
+
+// "Screen wipe in", bottom to top
+void ScreenEffects::vfx13(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int y = 312; y > -70; y -= 10) {
 		copyFxRect(surface, 0, y, 320, y + 80);
 		setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);
 		_screen->updateScreenAndWait(25);
