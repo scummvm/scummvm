@@ -1439,9 +1439,13 @@ void ScummEngine_v7::loadLanguageBundle() {
 }
 
 void ScummEngine_v7::playSpeech(const byte *ptr) {
+	printf("playSpeech: %s\n", (const char *) ptr);
+
 	if ((_game.id == GID_DIG || _game.id == GID_CMI) && ptr[0]) {
 		char pointer[20];
 		strcpy(pointer, (const char *)ptr);
+		
+
 
 		// Play speech
 		if (!(_game.features & GF_DEMO) && (_game.id == GID_CMI)) // CMI demo does not have .IMX for voice
@@ -1462,9 +1466,17 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	trans_buff[0] = 0;
 	_lastStringTag[0] = 0;
 
+	if (_game.version >= 7 && text[0] == '/') {
+		// Extract the string tag from the text: /..../
+		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
+			_lastStringTag[i] = toupper(text[i + 1]);
+		_lastStringTag[i] = 0;
+	}
+
 	// WORKAROUND for bug #1172655.
 	if (_game.id == GID_DIG) {
 		// Based on the second release of The Dig
+		// Only applies to the subtitles and not speech
 		if (!strcmp((const char *)text, "faint light"))
 			text = (const byte *)"/NEW.007/faint light";
 		else if (!strcmp((const char *)text, "glowing crystal"))
@@ -1501,8 +1513,8 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	if (_game.version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../
 		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
-			_lastStringTag[i] = target.tag[i] = toupper(text[i + 1]);
-		_lastStringTag[i] = target.tag[i] = 0;
+			target.tag[i] = toupper(text[i + 1]);
+		target.tag[i] = 0;
 		text += i + 2;
 
 		// If a language file was loaded, try to find a translated version
