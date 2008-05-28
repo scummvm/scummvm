@@ -202,7 +202,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	/* 80 */
 	{ &FWScript::o2_removeSeq, "bb" },
 	{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_op82, "bbw" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_op82, "bbwwb" }, /* TODO: Name this opcode properly. */
 	{ &FWScript::o2_isSeqRunning, "bb" },
 	/* 84 */
 	{ &FWScript::o2_gotoIfSupNearest, "b" },
@@ -455,7 +455,9 @@ int FWScript::o2_op82() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 	uint16 c = getNextWord();
-	warning("STUB: o2_op82(%x, %x, %x)", a, b, c);
+	uint16 d = getNextWord();
+	byte e = getNextByte();
+	warning("STUB: o2_op82(%x, %x, %x, %x, %x)", a, b, c, d, e);
 	return 0;
 }
 
