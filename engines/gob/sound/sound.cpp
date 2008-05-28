@@ -29,6 +29,7 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
+#include "gob/inter.h"
 
 namespace Gob {
 
@@ -370,7 +371,7 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 
 	while (_blaster->isPlaying() && !_vm->_quitRequested) {
 		if (interruptible && (_vm->_util->checkKey() == 0x11B)) {
-			WRITE_VAR(57, -1);
+			WRITE_VAR(57, (uint32) -1);
 			return;
 		}
 		_vm->_util->longDelay(200);

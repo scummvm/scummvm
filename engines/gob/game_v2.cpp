@@ -54,7 +54,6 @@ void Game_v2::playTot(int16 skipPlay) {
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
-	int32 variablesCount;
 	int32 totSize;
 	byte *filePtr;
 	byte *savedIP;
@@ -72,7 +71,7 @@ void Game_v2::playTot(int16 skipPlay) {
 
 	if (skipPlay <= 0) {
 		while (!_vm->_quitRequested) {
-			if (_vm->_global->_inter_variables)
+			if (_vm->_inter->_variables)
 				_vm->_draw->animateCursor(4);
 
 			if (skipPlay != -1) {
@@ -204,12 +203,8 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			_vm->_global->_inter_animDataSize =
 				READ_LE_UINT16(_totFileData + 0x38);
-			if (!_vm->_global->_inter_variables) {
-				variablesCount = READ_LE_UINT16(_totFileData + 0x2C);
-				_vm->_global->_inter_variables = new byte[variablesCount * 4];
-				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
-				_vm->_global->clearVars(variablesCount);
-			}
+			if (!_vm->_inter->_variables)
+				_vm->_inter->allocateVars(READ_LE_UINT16(_totFileData + 0x2C));
 
 			_vm->_global->_inter_execPtr = _totFileData;
 			_vm->_global->_inter_execPtr +=
@@ -1408,7 +1403,7 @@ int16 Game_v2::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 
 		flag = 1;
 
-		if (_vm->_global->_inter_variables)
+		if (_vm->_inter->_variables)
 			WRITE_VAR(56, pos);
 
 		while (1) {

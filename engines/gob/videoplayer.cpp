@@ -614,15 +614,15 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 		WRITE_VAR_OFFSET(varY, y);
 		WRITE_VAR_OFFSET(varFrames, _primaryVideo->getVideo()->getFramesCount());
 		WRITE_VAR_OFFSET(varWidth, width);
-		WRITE_VARO_UINT16(varHeight & 0xFFFFFFFC, height);
+		WRITE_VAR_OFFSET(varHeight, height);
 
 		primaryClose();
 	} else {
-		WRITE_VAR_OFFSET(varX, -1);
-		WRITE_VAR_OFFSET(varY, -1);
-		WRITE_VAR_OFFSET(varFrames, -1);
-		WRITE_VAR_OFFSET(varWidth, -1);
-		WRITE_VAR_OFFSET(varHeight, -1);
+		WRITE_VAR_OFFSET(varX, (uint32) -1);
+		WRITE_VAR_OFFSET(varY, (uint32) -1);
+		WRITE_VAR_OFFSET(varFrames, (uint32) -1);
+		WRITE_VAR_OFFSET(varWidth, (uint32) -1);
+		WRITE_VAR_OFFSET(varHeight, (uint32) -1);
 	}
 }
 

@@ -160,6 +160,60 @@ PlainSave::~PlainSave() {
 }
 
 bool PlainSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
+		const Variables *variables) {
+
+	if ((size <= 0) || (offset != 0)) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	byte *vars = new byte[size];
+	byte *varSizes = new byte[size];
+
+	if (!variables->copyTo(dataVar, vars, varSizes, size)) {
+		delete[] vars;
+		delete[] varSizes;
+		warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+		return false;
+	}
+
+	bool result = save(0, size, offset, name, vars, varSizes);
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
+}
+
+bool PlainSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
+		Variables *variables) {
+
+	if ((size <= 0) || (offset != 0)) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	byte *vars = new byte[size];
+	byte *varSizes = new byte[size];
+
+	bool result = load(0, size, offset, name, vars, varSizes);
+
+	if (result && variables) {
+		if (!variables->copyFrom(dataVar, vars, varSizes, size)) {
+			delete[] vars;
+			delete[] varSizes;
+			warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+			return false;
+		}
+	}
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
+}
+
+bool PlainSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
 		const byte *variables, const byte *variableSizes) const {
 
 	if ((size <= 0) || (offset != 0)) {
@@ -283,6 +337,64 @@ void StagedSave::assertMode(Mode mode, const char *name) {
 		_name = new char[strlen(name) + 1];
 		strcpy(_name, name);
 	}
+}
+
+bool StagedSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
+		const Variables *variables) {
+
+	if ((dataVar < 0) || (size <= 0) || (offset < 0)) {
+		warning("Invalid dataVar (%d), size (%d) or offset (%d)", dataVar, size, offset);
+		return false;
+	}
+
+	byte *vars = 0, *varSizes = 0;
+
+	if (variables) {
+		vars = new byte[size];
+		varSizes = new byte[size];
+
+		if (!variables->copyTo(dataVar, vars, varSizes, size)) {
+			delete[] vars;
+			delete[] varSizes;
+			warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+			return false;
+		}
+	}
+
+	bool result = save(0, size, offset, name, vars, varSizes);
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
+}
+
+bool StagedSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
+		Variables *variables) {
+
+	if ((dataVar < 0) || (size <= 0) || (offset < 0)) {
+		warning("Invalid dataVar (%d), size (%d) or offset (%d)", dataVar, size, offset);
+		return false;
+	}
+
+	byte *vars = new byte[size];
+	byte *varSizes = new byte[size];
+
+	bool result = load(0, size, offset, name, vars, varSizes);
+
+	if (result && variables) {
+		if (!variables->copyFrom(dataVar, vars, varSizes, size)) {
+			delete[] vars;
+			delete[] varSizes;
+			warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+			return false;
+		}
+	}
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
 }
 
 bool StagedSave::save(int16 dataVar, int32 size, int32 offset, const char *name,

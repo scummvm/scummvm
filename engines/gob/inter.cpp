@@ -60,6 +60,12 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 	_pastePos = 0;
 
 	_noBusyWait = false;
+
+	_variables = 0;
+}
+
+Inter::~Inter() {
+	delocateVars();
 }
 
 void Inter::initControlVars(char full) {
@@ -277,6 +283,20 @@ void Inter::callSub(int16 retFlag) {
 
 	if (_vm->_global->_inter_execPtr == _vm->_game->_totFileData)
 		_terminate = 1;
+}
+
+void Inter::allocateVars(uint32 count) {
+	if ((_vm->getPlatform() == Common::kPlatformAmiga) ||
+	    (_vm->getPlatform() == Common::kPlatformMacintosh) ||
+	    (_vm->getPlatform() == Common::kPlatformAtariST))
+		_variables = new VariablesBE(count * 4);
+	else
+		_variables = new VariablesLE(count * 4);
+}
+
+void Inter::delocateVars() {
+	delete _variables;
+	_variables = 0;
 }
 
 } // End of namespace Gob

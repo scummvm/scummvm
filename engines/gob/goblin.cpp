@@ -32,6 +32,7 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
+#include "gob/inter.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {
