@@ -38,13 +38,13 @@ class InterfaceManager {
 
 public:
 	enum Graphics_Mode {
-		GFX_Disabled = 0,
-		GFX_Standard_16bit,
-		GFX_Antialias_16bit
+		kGfxDisabled = 0,
+		kGfxStandard16bit,
+		kGfxAntialias16bit
 	};
 
 	InterfaceManager(OSystem *system, Graphics_Mode mode) : _vectorRenderer(0), 
-		_system(system), _graphicsMode(GFX_Disabled), _screen(0), _bytesPerPixel(0) {
+		_system(system), _graphicsMode(kGfxDisabled), _screen(0), _bytesPerPixel(0) {
 
 		setGraphicsMode(mode);
 	}

@@ -27,22 +27,16 @@
 #define VECTOR_RENDERER_H
 
 #include "common/scummsys.h"
+#include "common/system.h"
+
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
-#include "common/system.h"
+
+#include "gui/InterfaceManager.h"
+
 
 namespace Graphics {
 class VectorRenderer;
-
-VectorRenderer *createRenderer(int mode);
-
-/** Specifies the way in which a shape is filled */
-enum FillMode {
-	kFillMode_Disabled = 0,
-	kFillMode_Foreground = 1,
-	kFillMode_Background = 2,
-	kFillMode_Gradient = 3
-};
 
 struct DrawStep {
 	uint32 flags; /** Step flags, see DrawStepFlags */
@@ -56,22 +50,24 @@ struct DrawStep {
 	uint16 x, y, w, h, r; /** Shape size */
 	uint8 shadow, stroke, factor; /** Misc options... */
 
-	FillMode fill_mode; /** active fill mode */
+	int fill_mode; /** active fill mode */
 
 	void (VectorRenderer::*drawing_call)(DrawStep*); /** Pointer to drawing function */
+
+	enum DrawStepFlags {
+		kStepCallbackOnly		= (1 << 0),
+		kStepSettingsOnly		= (1 << 1),
+		kStepSetBG				= (1 << 2),
+		kStepSetFG				= (1 << 3),
+		kStepSetGradient		= (1 << 4),
+		kStepSetShadow			= (1 << 5),
+		kStepSetGradientFactor	= (1 << 6),
+		kStepSetStroke			= (1 << 7),
+		kStepSetFillMode		= (1 << 8)
+	};
 };
 
-enum DrawStepFlags {
-	kDrawStep_CallbackOnly		= (1 << 0),
-	kDrawStep_SettingsOnly		= (1 << 1),
-	kDrawStep_SetBG				= (1 << 2),
-	kDrawStep_SetFG				= (1 << 3),
-	kDrawStep_SetGradient		= (1 << 4),
-	kDrawStep_SetShadow			= (1 << 5),
-	kDrawStep_SetGradientFactor	= (1 << 6),
-	kDrawStep_SetStroke			= (1 << 7),
-	kDrawStep_SetFillMode		= (1 << 8)
-};
+VectorRenderer *createRenderer(int mode);
 
 /**
  * VectorRenderer: The core Vector Renderer Class
@@ -90,8 +86,16 @@ enum DrawStepFlags {
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _shadowOffset(0), _fillMode(kFillMode_Disabled), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
+	VectorRenderer() : _shadowOffset(0), _fillMode(kFillDisabled), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
 	virtual ~VectorRenderer() {}
+
+	/** Specifies the way in which a shape is filled */
+	enum FillMode {
+		kFillDisabled = 0,
+		kFillForeground = 1,
+		kFillBackground = 2,
+		kFillGradient = 3
+	};
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -183,7 +187,7 @@ public:
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
-	 * Set the active gradient color. All shapes drawn using kFillMode_Gradient
+	 * Set the active gradient color. All shapes drawn using kFillGradient
 	 * as their fill mode will use this VERTICAL gradient as their fill color.
 	 *
 	 * @param r1	value of the red color byte for the start color
@@ -311,7 +315,6 @@ protected:
 	int _gradientBytes[3]; /** Color bytes of the active gradient, used to speed up calculation */
 };
 
-
 /**
  * VectorRendererSpec: Specialized Vector Renderer Class
  *
@@ -392,11 +395,11 @@ public:
 		int h = _activeSurface->h ;
 		int pitch = surfacePitch();
 
-		if (Base::_fillMode == kFillMode_Background)
+		if (Base::_fillMode == kFillBackground)
 			colorFill(ptr, ptr + w * h, _bgColor);
-		else if (Base::_fillMode == kFillMode_Foreground)
+		else if (Base::_fillMode == kFillForeground)
 			colorFill(ptr, ptr + w * h, _fgColor);
-		else if (Base::_fillMode == kFillMode_Gradient) {
+		else if (Base::_fillMode == kFillGradient) {
 			int i = h;
 			while (i--) {
 				colorFill(ptr, ptr + w, calcGradient(h - i, h));
@@ -622,7 +625,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
+	virtual void drawCircleAlg(int x, int y, int r, PixelType color, VectorRenderer::FillMode fill_m);
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991,
@@ -631,7 +634,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawRoundedAlg()
 	 */
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 };
 
 } // end of namespace Graphics

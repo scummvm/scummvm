@@ -34,11 +34,13 @@
 
 namespace GUI {
 
+using namespace Graphics;
+
 template<typename PixelType> 
 void InterfaceManager::screenInit() {
 	freeScreen();
 
-	_screen = new Graphics::Surface;
+	_screen = new Surface;
 	_screen->create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(PixelType));
 	_system->clearOverlay();
 }
@@ -50,12 +52,12 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 	_graphicsMode = mode;
 
 	switch (mode) {
-	case GFX_Standard_16bit:
+	case kGfxStandard16bit:
 		_bytesPerPixel = sizeof(uint16);
 		screenInit<uint16>();
 		break;
 
-	case GFX_Antialias_16bit:
+	case kGfxAntialias16bit:
 		_bytesPerPixel = sizeof(uint16);
 		screenInit<uint16>();
 		break;
@@ -64,7 +66,7 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 		return;
 	}
 
-	_vectorRenderer = Graphics::createRenderer(mode);
+	_vectorRenderer = createRenderer(mode);
 	_vectorRenderer->setSurface(_screen);
 }
 
@@ -80,9 +82,9 @@ int InterfaceManager::runGUI() {
 	steps[0].color2.r = 240;
 	steps[0].color2.g = 200;
 	steps[0].color2.b = 25;
-	steps[0].fill_mode = Graphics::kFillMode_Gradient;
-	steps[0].drawing_call = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
-	steps[0].flags = Graphics::kDrawStep_SetGradient | Graphics::kDrawStep_SetFillMode;
+	steps[0].fill_mode = VectorRenderer::kFillGradient;
+	steps[0].drawing_call = &VectorRenderer::drawCallback_FILLSURFACE;
+	steps[0].flags = DrawStep::kStepSetGradient | DrawStep::kStepSetFillMode;
 
 	steps[1].color1.r = 206;
 	steps[1].color1.g = 121;
@@ -95,24 +97,24 @@ int InterfaceManager::runGUI() {
 	steps[1].r = 8;
 	steps[1].w = 120;
 	steps[1].h = 30;
-	steps[1].drawing_call = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
-	steps[1].flags = Graphics::kDrawStep_SetGradient;
+	steps[1].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[1].flags = DrawStep::kStepSetGradient;
 
 	steps[2].x = 500;
 	steps[2].y = 135;
 	steps[2].r = 8;
 	steps[2].w = 120;
 	steps[2].h = 30;
-	steps[2].drawing_call = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
-	steps[2].flags = Graphics::kDrawStep_CallbackOnly;
+	steps[2].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[2].flags = DrawStep::kStepCallbackOnly;
 
 	steps[3].x = 500;
 	steps[3].y = 175;
 	steps[3].r = 8;
 	steps[3].w = 120;
 	steps[3].h = 30;
-	steps[3].drawing_call = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
-	steps[3].flags = Graphics::kDrawStep_CallbackOnly;
+	steps[3].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[3].flags = DrawStep::kStepCallbackOnly;
 
 	bool running = true;
 	while (running) { // draw!!

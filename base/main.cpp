@@ -70,7 +70,7 @@ static bool launcherDialog(OSystem &system) {
 
 #if 1
 
-	GUI::InterfaceManager iManager(&system, GUI::InterfaceManager::GFX_Standard_16bit);
+	GUI::InterfaceManager iManager(&system, GUI::InterfaceManager::kGfxStandard16bit);
 
 	iManager.runGUI();
 	return true;
