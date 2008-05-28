@@ -360,6 +360,12 @@
 			RelativePath="..\..\engines\gob\util.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\variables.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\variables.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\video.cpp">
 		</File>
 		<File
