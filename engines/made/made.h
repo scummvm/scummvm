@@ -108,7 +108,10 @@ public:
 	uint16 _eventNum;
 	int _eventMouseX, _eventMouseY;
 	uint16 _eventKey;
+
 	int _soundRate;
+	bool _autoStopSound;
+
 	int _musicVolume;
 	
 	// 2 = LGOP2, Manhole N&E

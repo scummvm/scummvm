@@ -280,6 +280,7 @@ int MadeEngine::go() {
 	// NOTE: Disabled again since it causes major graphics errors.
 	//_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
+	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
 	
 #ifdef DUMP_SCRIPTS

@@ -183,13 +183,15 @@ int16 ScriptFunctions::sfDrawPicture(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
+	if (_vm->_autoStopSound) {
+		_vm->_mixer->stopHandle(_audioStreamHandle);
+		_vm->_autoStopSound = false;
+	}
  	_vm->_screen->clearScreen();
 	return 0;
 }
 
 int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
- 	if (_vm->getGameID() != GID_RTZ)
-		_vm->_mixer->stopHandle(_audioStreamHandle);
 	_vm->_screen->show();
 	return 0;
 }
@@ -221,21 +223,17 @@ int16 ScriptFunctions::sfSetVisualEffect(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
-	int soundNum = argv[0];
-	bool loop = false;
-
+	int16 soundNum = argv[0];
+	_vm->_autoStopSound = false;
+	_vm->_mixer->stopHandle(_audioStreamHandle);
 	if (argc > 1) {
 		soundNum = argv[1];
-		loop = (argv[0] == 1);
+		_vm->_autoStopSound = (argv[0] == 1);
 	}
-
 	if (soundNum > 0) {
-		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
-			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
-										 _vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, loop));
-		}
+		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
+			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
 	}
-
 	return 0;
 }
 
@@ -535,14 +533,17 @@ int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
 	_vm->_mixer->stopHandle(_audioStreamHandle);
+	_vm->_autoStopSound = false;
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
-	if (argv[0] > 0) {
-		_vm->_mixer->stopHandle(_audioStreamHandle);
+	int16 soundNum = argv[0];
+	_vm->_mixer->stopHandle(_audioStreamHandle);
+	if (soundNum > 0) {
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			_vm->_res->getSound(argv[0])->getAudioStream(_vm->_soundRate, false));
+			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
+		_vm->_autoStopSound = true;
 	}
 	return 0;
 }
