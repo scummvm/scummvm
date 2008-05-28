@@ -819,7 +819,13 @@ int16 Screen::addToSpriteList(int16 index, int16 xofs, int16 yofs) {
 }
 
 SpriteListItem Screen::getFromSpriteList(int16 index) {
-	return _spriteList[index - 1];
+	if (index > _spriteList.size()) {
+		SpriteListItem emptyItem;
+		emptyItem.index = 0;
+		return emptyItem;
+	} else {
+		return _spriteList[index - 1];
+	}
 }
 
 void Screen::clearSpriteList() {
