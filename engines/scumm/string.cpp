@@ -1439,13 +1439,9 @@ void ScummEngine_v7::loadLanguageBundle() {
 }
 
 void ScummEngine_v7::playSpeech(const byte *ptr) {
-	printf("playSpeech: %s\n", (const char *) ptr);
-
 	if ((_game.id == GID_DIG || _game.id == GID_CMI) && ptr[0]) {
 		char pointer[20];
 		strcpy(pointer, (const char *)ptr);
-		
-
 
 		// Play speech
 		if (!(_game.features & GF_DEMO) && (_game.id == GID_CMI)) // CMI demo does not have .IMX for voice
