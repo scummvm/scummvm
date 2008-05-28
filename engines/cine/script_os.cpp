@@ -232,7 +232,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	/* 98 */
 	{ 0, 0 },
 	{ 0, 0 },
-	{ &FWScript::o2_wasZoneChecked, "" },
+	{ &FWScript::o2_wasZoneChecked, "b" },
 	{ &FWScript::o2_op9B, "wwwwwwww" }, /* TODO: Name this opcode properly. */
 	/* 9C */
 	{ &FWScript::o2_op9C, "wwww" }, /* TODO: Name this opcode properly. */
@@ -649,10 +649,12 @@ int FWScript::o2_loadBg() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Check the current implementation for correctness
  */
 int FWScript::o2_wasZoneChecked() {
-	warning("STUB: o2_wasZoneChecked()");
+	byte param = getNextByte();
+	_compare = (param < 16 && zoneData[param]);
+	debugC(5, kCineDebugScript, "Line: %d: o2_wasZoneChecked(%d)", _line, param);
 	return 0;
 }
 
