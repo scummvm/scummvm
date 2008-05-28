@@ -43,8 +43,8 @@ public:
 		GFX_Antialias_16bit
 	};
 
-	InterfaceManager(OSystem *system, Graphics_Mode mode) : _vectorRenderer(NULL), 
-		_system(system), _graphicsMode(GFX_Disabled), _screen(NULL), _bytesPerPixel(0) {
+	InterfaceManager(OSystem *system, Graphics_Mode mode) : _vectorRenderer(0), 
+		_system(system), _graphicsMode(GFX_Disabled), _screen(0), _bytesPerPixel(0) {
 
 		setGraphicsMode(mode);
 	}
@@ -61,14 +61,15 @@ protected:
 	template<typename PixelType> void screenInit();
 
 	void freeRenderer() {
-		if (_vectorRenderer != NULL)
-			delete _vectorRenderer;
+		delete _vectorRenderer;
+		_vectorRenderer = 0;
 	}
 
 	void freeScreen() {
-		if (_screen != NULL) {
+		if (_screen != 0) {
 			_screen->free();
 			delete _screen;
+			_screen = 0;
 		}
 	}
 
