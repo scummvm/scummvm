@@ -58,14 +58,7 @@ public:
 	int runGUI();
 
 protected:
-	Graphics::VectorRenderer *createRenderer() {
-		// TODO: Find out what pixel format we are using,
-		// create the renderer accordingly
-		return new Graphics::VectorRendererSpec<uint16, ColorMasks<565> >;
-	}
-
-	template<typename PixelType> 
-	void screenInit();
+	template<typename PixelType> void screenInit();
 
 	void freeRenderer() {
 		if (_vectorRenderer != NULL)

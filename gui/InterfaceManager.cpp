@@ -59,6 +59,9 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 		_bytesPerPixel = sizeof(uint16);
 		screenInit<uint16>();
 		break;
+
+	default:
+		return;
 	}
 
 	_vectorRenderer = Graphics::createRenderer(mode);
