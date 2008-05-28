@@ -70,7 +70,7 @@ public:
 	virtual int init();
 	virtual int go();
 	virtual void pauseEngineIntern(bool pause);
-	void quitGame();
+	//void quitGame();  This is not being used
 
 	Disk &disk() { return *_disk; }
 

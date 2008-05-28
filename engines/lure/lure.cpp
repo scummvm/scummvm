@@ -164,9 +164,13 @@ void LureEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
+/* This is not being used
+
 void LureEngine::quitGame() {
 	_system->quit();
 }
+
+*/
 
 const char *LureEngine::generateSaveName(int slotNumber) {
 	static char buffer[15];
