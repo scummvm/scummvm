@@ -32,9 +32,9 @@
 #include "common/system.h"
 
 namespace Graphics {
-
-void vector_renderer_test(OSystem *_system);
 class VectorRenderer;
+
+VectorRenderer *createRenderer(int mode);
 
 /** Specifies the way in which a shape is filled */
 enum FillMode {
@@ -297,6 +297,8 @@ public:
 
 	virtual void drawStep(DrawStep *step);
 
+	virtual void copyFrame(OSystem *sys) = 0;
+
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
 
@@ -401,6 +403,17 @@ public:
 				ptr += pitch;
 			}
 		}
+	}
+
+	virtual void copyFrame(OSystem *sys) {
+#ifdef OVERLAY_MULTIPLE_DEPTHS
+		sys->copyRectToOverlay((const PixelType*)_activeSurface->getBasePtr(0, 0), 
+			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->w);
+#else
+		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->getBasePtr(0, 0), 
+			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->w);
+#endif
+		sys->updateScreen();
 	}
 
 protected:
@@ -598,7 +611,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991

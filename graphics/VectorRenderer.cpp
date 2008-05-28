@@ -24,102 +24,28 @@
  */
 
 #include "common/util.h"
-#include "graphics/surface.h"
-#include "graphics/colormasks.h"
 #include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/surface.h"
+#include "graphics/colormasks.h"
+
+#include "gui/InterfaceManager.h"
 #include "graphics/VectorRenderer.h"
 
 namespace Graphics {
 
-/********************************************************************
- * DEBUG FUNCTIONS
- ********************************************************************/
-VectorRenderer *createRenderer() {
-	return new VectorRendererSpec<uint16, ColorMasks<565> >;
-}
+VectorRenderer *createRenderer(int mode) {
+	switch (mode) {
+	case GUI::InterfaceManager::GFX_Standard_16bit:
+		return new VectorRendererSpec<uint16, ColorMasks<565> >;
 
+	case GUI::InterfaceManager::GFX_Antialias_16bit:
+		return new VectorRendererAA<uint16, ColorMasks<565> >;
 
-void vector_renderer_test(OSystem *_system) {
-	Common::EventManager *eventMan = _system->getEventManager();
-
-	VectorRenderer *vr = createRenderer();
-
-	Surface _screen;
-	_screen.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
-
-	if (!_screen.pixels)
-		return;
-
-	_system->clearOverlay();
-	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
-
-	vr->setSurface(&_screen);
-	vr->clearSurface();
-
-	_system->showOverlay();
-
-	DrawStep *steps = new DrawStep[5];
-
-	steps[0].color1.r = 214;
-	steps[0].color1.g = 113;
-	steps[0].color1.b = 8;
-	steps[0].color2.r = 240;
-	steps[0].color2.g = 200;
-	steps[0].color2.b = 25;
-	steps[0].fill_mode = kFillMode_Gradient;
-	steps[0].drawing_call = &VectorRenderer::drawCallback_FILLSURFACE;
-	steps[0].flags = kDrawStep_SetGradient | kDrawStep_SetFillMode;
-
-	steps[1].color1.r = 206;
-	steps[1].color1.g = 121;
-	steps[1].color1.b = 99;
-	steps[1].color2.r = 173;
-	steps[1].color2.g = 40;
-	steps[1].color2.b = 8;
-	steps[1].x = 500;
-	steps[1].y = 95;
-	steps[1].r = 8;
-	steps[1].w = 120;
-	steps[1].h = 30;
-	steps[1].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[1].flags = kDrawStep_SetGradient;
-
-	steps[2].x = 500;
-	steps[2].y = 135;
-	steps[2].r = 8;
-	steps[2].w = 120;
-	steps[2].h = 30;
-	steps[2].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[2].flags = kDrawStep_CallbackOnly;
-
-	steps[3].x = 500;
-	steps[3].y = 175;
-	steps[3].r = 8;
-	steps[3].w = 120;
-	steps[3].h = 30;
-	steps[3].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[3].flags = kDrawStep_CallbackOnly;
-
-	bool running = true;
-	while (running) { // draw!!
-
-		for (int i = 0; i < 4; ++i)
-			vr->drawStep(&steps[i]);
-
-		_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(0, 0), _screen.w, 0, 0, _screen.w, _screen.w);
-		_system->updateScreen();
-
-		Common::Event event;
-		_system->delayMillis(100);
-		while (eventMan->pollEvent(event)) {
-			if (event.type == Common::EVENT_QUIT)
-				running = false;
-		}
+	default:
+		return NULL;
 	}
-
-	_system->hideOverlay();
 }
 
 /********************************************************************

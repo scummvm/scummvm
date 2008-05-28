@@ -42,12 +42,9 @@
 #include "common/system.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
+#include "gui/InterfaceManager.h"
 
-#define _VECTOR_RENDERER_DBG 1
-
-#if defined(_VECTOR_RENDERER_DBG)
-#include "graphics/VectorRenderer.h"
-#elif defined(_WIN32_WCE)
+#if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
 #elif defined(__DC__)
 #include "backends/platform/dc/DCLauncherDialog.h"
@@ -71,9 +68,11 @@ static bool launcherDialog(OSystem &system) {
 	// Clear the main screen
 	system.clearScreen();
 
-#if defined(_VECTOR_RENDERER_DBG)
+#if 1
 
-	Graphics::vector_renderer_test( &system );
+	GUI::InterfaceManager iManager(&system, GUI::InterfaceManager::GFX_Standard_16bit);
+
+	iManager.runGUI();
 	return true;
 
 #else

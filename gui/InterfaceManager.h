@@ -37,13 +37,25 @@ namespace GUI {
 class InterfaceManager {
 
 public:
-	InterfaceManager() : _vectorRenderer(NULL) {
-		_vectorRenderer = createRenderer();
+	enum Graphics_Mode {
+		GFX_Disabled = 0,
+		GFX_Standard_16bit,
+		GFX_Antialias_16bit
+	};
+
+	InterfaceManager(OSystem *system, Graphics_Mode mode) : _vectorRenderer(NULL), 
+		_system(system), _graphicsMode(GFX_Disabled), _screen(NULL), _bytesPerPixel(0) {
+
+		setGraphicsMode(mode);
 	}
 
 	~InterfaceManager() {
-		delete _vectorRenderer;
+		freeRenderer();
+		freeScreen();
 	}
+
+	void setGraphicsMode(Graphics_Mode mode);
+	int runGUI();
 
 protected:
 	Graphics::VectorRenderer *createRenderer() {
@@ -52,7 +64,27 @@ protected:
 		return new Graphics::VectorRendererSpec<uint16, ColorMasks<565> >;
 	}
 
+	template<typename PixelType> 
+	void screenInit();
+
+	void freeRenderer() {
+		if (_vectorRenderer != NULL)
+			delete _vectorRenderer;
+	}
+
+	void freeScreen() {
+		if (_screen != NULL) {
+			_screen->free();
+			delete _screen;
+		}
+	}
+
+	OSystem *_system;
 	Graphics::VectorRenderer *_vectorRenderer;
+	Graphics::Surface *_screen;
+
+	int _bytesPerPixel;
+	Graphics_Mode _graphicsMode;
 };
 
 } // end of namespace GUI.
