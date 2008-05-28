@@ -100,13 +100,14 @@ enum {
 	kDebugFuncOp = 1 << 0,
 	kDebugDrawOp = 1 << 1,
 	kDebugGobOp = 1 << 2,
-	kDebugMusic = 1 << 3,     // CD, Adlib and Infogrames music
+	kDebugSound = 1 << 3,
 	kDebugParser = 1 << 4,
 	kDebugGameFlow = 1 << 5,
 	kDebugFileIO = 1 << 6,
 	kDebugSaveLoad = 1 << 7,
 	kDebugGraphics = 1 << 8,
-	kDebugCollisions = 1 << 9
+	kDebugVideo = 1 << 9,
+	kDebugCollisions = 1 << 10
 };
 
 inline char *strncpy0(char *dest, const char *src, size_t n) {
@@ -177,9 +178,12 @@ private:
 	int32 _features;
 	Common::Platform _platform;
 
+	uint32 _pauseStart;
+
 	int go();
 	int init();
 
+	void pauseEngineIntern(bool pause);
 	bool initGameParts();
 	void deinitGameParts();
 

@@ -43,7 +43,6 @@
 #include "saga/scene.h"
 #include "saga/actor.h"
 #include "saga/rscfile.h"
-#include "saga/sagaresnames.h"
 
 #include "graphics/iff.h"
 #include "common/util.h"

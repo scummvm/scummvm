@@ -27,22 +27,7 @@
 
 namespace Drascula {
 
-void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
-	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
-	int cara;
-
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
-
-	color_abc(WHITE);
-
+void DrasculaEngine::talkInit(const char *filename) {
 	if (hay_sb == 1) {
 		sku = new Common::File;
 		sku->open(filename);
@@ -53,6 +38,18 @@ void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 		ctvd_speaker(1);
 		ctvd_output(sku);
 	}
+}
+
+void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
+	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
+	int cara;
+	int length = strlen(said);
+
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
+
+	color_abc(WHITE);
+
+	talkInit(filename);
 
 bucless:
 
@@ -89,8 +86,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -100,31 +97,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(RED);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -166,8 +147,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -178,31 +159,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(RED);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -243,8 +208,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -259,31 +224,16 @@ bucless:
 }
 
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	if (num_ejec == 1)
 		color_abc(color_solo);
 	else if (num_ejec == 4)
 		color_abc(RED);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 	if (num_ejec == 6)
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -312,8 +262,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 	if (num_ejec == 6) {
@@ -323,31 +273,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -386,8 +320,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -404,31 +338,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(MAROON);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -466,8 +384,8 @@ bucless:
 		delete(sku);
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -475,32 +393,22 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_bj(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+void DrasculaEngine::talk_bj(int index) {
+	char name[20];
+	sprintf(name, "BJ%i.als", index);
+	talk_bj(_textbj[_lang][index], name);
+}
 
+void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 	int x_talk[5] = { 64, 92, 120, 148, 176 };
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 	if (num_ejec != 5) {
@@ -545,8 +453,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -554,10 +462,13 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+void DrasculaEngine::talk(int index) {
+	char name[20];
+	sprintf(name, "%i.als", index);
+	talk(_text[_lang][index], name);
+}
 
+void DrasculaEngine::talk(const char *said, const char *filename) {
 	int suma_1_pixel = 0;
 	if (num_ejec != 2)
 		suma_1_pixel = 1;
@@ -566,24 +477,20 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
 	int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
 	int cara;
-
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
 	if (num_ejec == 6) {
-		if (flags[0] == 0 && (!strcmp(num_room, "102.alg"))) {
+		if (flags[0] == 0 && roomNumber == 102) {
 			talk_pen(said, filename);
 			return;
 		}
-		if (flags[0] == 0 && (!strcmp(num_room, "58.alg"))) {
+		if (flags[0] == 0 && roomNumber == 58) {
 			talk_pen2(said, filename);
 			return;
 		}
 	}
 
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	if (num_ejec != 2) {
 		if (factor_red[hare_y + alto_hare] == 100)
@@ -591,22 +498,14 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	}
 
 	if (num_ejec == 4) {
-		if (strcmp(num_room, "24.alg") || flags[29] == 0) {
+		if (roomNumber == 24 || flags[29] == 0) {
 			color_abc(YELLOW);
 		}
 	} else {
 		color_abc(YELLOW);
 	}
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+
+	talkInit(filename);
 
 bucless:
 
@@ -692,8 +591,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -707,29 +606,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
 	int x_talk[4] = { 97, 145, 193, 241 };
 	int cara;
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -761,8 +646,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -771,17 +656,11 @@ bucless:
 }
 
 void DrasculaEngine::talk_borracho(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
 	int cara;
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	if (num_ejec == 1) {
 		loadPic("an11y13.alg");
@@ -800,16 +679,7 @@ bebiendo:
 
 	color_abc(DARK_GREEN);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz\n");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -840,8 +710,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -863,32 +733,22 @@ bucless:
 	}
 }
 
-void DrasculaEngine::talk_vb(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+void DrasculaEngine::talk_vb(int index) {
+	char name[20];
+	sprintf(name, "VB%i.als", index);
+	talk_vb(_textvb[_lang][index], name);
+}
 
+void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 	int x_talk[6] = {1, 27, 53, 79, 105, 131};
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(VON_BRAUN);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 	copyBackground(vb_x + 5, 64, OBJWIDTH + 1, 0, 25, 27, dir_dibujo1, dir_dibujo3);
 
@@ -923,8 +783,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -934,29 +794,20 @@ bucless:
 		playMusic(roomMusic);
 }
 
+void DrasculaEngine::talk_vbpuerta(int index) {
+	char name[20];
+	sprintf(name, "VB%i.als", index);
+	talk_vb(_textvb[_lang][index], name);
+}
+
 void DrasculaEngine::talk_vbpuerta(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(VON_BRAUN);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -975,8 +826,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -990,26 +841,14 @@ void DrasculaEngine::talk_ciego(const char *said, const char *filename, const ch
 	byte *num_cara;
 	int p = 0;
 	int pos_ciego[6];
-	int cara = 0;
-
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
 	color_abc(VON_BRAUN);
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 	pos_ciego[1] = 2;
 	pos_ciego[2] = 73;
@@ -1021,39 +860,23 @@ bucless:
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pos_ciego[5] = 149;
 	char c = toupper(sincronia[p]);
-	if (c == '0')
-		cara = 0;
-	if (c == '1')
-		cara = 1;
-	if (c == '2')
-		cara = 2;
-	if (c == '3')
-		cara = 3;
-	if (c == '4')
-		cara = 4;
-	if (c == '5')
-		cara = 5;
-	if (c == '6')
-		cara = 6;
-	if (c == '7')
-		cara = 7;
 
-	if (cara == 0 || cara == 2 || cara == 4 || cara == 6)
+	if (c == '0' || c == '2' || c == '4' || c == '6')
 		pos_ciego[0] = 1;
 	else
 		pos_ciego[0] = 132;
 
-	if (cara == 0)
+	if (c == '0')
 		num_cara = dir_dibujo3;
-	else if (cara == 1)
+	else if (c == '1')
 		num_cara = dir_dibujo3;
-	else if (cara == 2)
+	else if (c == '2')
 		num_cara = dir_hare_dch;
-	else if (cara == 3)
+	else if (c == '3')
 		num_cara = dir_hare_dch;
-	else if (cara == 4)
+	else if (c == '4')
 		num_cara = dir_hare_fondo;
-	else if (cara == 5)
+	else if (c == '5')
 		num_cara = dir_hare_fondo;
 	else {
 		num_cara = dir_hare_frente;
@@ -1079,38 +902,23 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 }
 
 void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	color_abc(YELLOW);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 	if (withVoices == 0)
@@ -1127,8 +935,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1136,31 +944,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_lobo(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(RED);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1191,8 +983,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1201,31 +993,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_mus(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[8] = { 16, 35, 54, 73, 92, 111, 130, 149};
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1256,8 +1032,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-	if (longitud > 0)
+		length -= 2;
+	if (length > 0)
 		goto bucless;
 	}
 
@@ -1266,14 +1042,9 @@ bucless:
 }
 
 void DrasculaEngine::talk_pen(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[8] = {112, 138, 164, 190, 216, 242, 268, 294};
 	int cara;
-
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
 	flags[1] = 1;
 
@@ -1281,22 +1052,11 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 	copyRect(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(YELLOW);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1327,8 +1087,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1339,33 +1099,17 @@ bucless:
 }
 
 void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[5]={122, 148, 174, 200, 226};
 	int cara;
-
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
 	flags[1] = 1;
 
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(YELLOW);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1396,8 +1140,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1408,31 +1152,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[6] = {1, 23, 45, 67, 89, 111};
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(MAROON);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1463,8 +1191,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1472,32 +1200,22 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_bj_cama(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+void DrasculaEngine::talk_bj_cama(int index) {
+	char name[20];
+	sprintf(name, "BJ%i.als", index);
+	talk_bj_cama(_textbj[_lang][index], name);
+}
 
+void DrasculaEngine::talk_bj_cama(const char *said, const char *filename) {
 	int x_talk[5] = {51, 101, 151, 201, 251};
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1529,8 +1247,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 	updateRoom();
@@ -1538,32 +1256,16 @@ bucless:
 }
 
 void DrasculaEngine::talk_htel(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
 	char *num_cara;
-
 	int x_talk[3] = {1, 94, 187};
 	int cara, pantalla;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(YELLOW);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1597,8 +1299,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1612,9 +1314,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
 	int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 	int p, cara = 0;
-
-	int longitud;
-	longitud = strlen(said);
+	int length = strlen(said);
 
 	color_abc(YELLOW);
 
@@ -1625,16 +1325,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 
 	p = 0;
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1721,8 +1412,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1733,31 +1424,16 @@ bucless:
 }
 
 void DrasculaEngine::talk_baul(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
 	int cara = 0, cara_antes;
-	int longitud;
+	int length = strlen(said);
 
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	cara_antes = flags[19];
 
 	color_abc(MAROON);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1786,8 +1462,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1797,28 +1473,13 @@ bucless:
 }
 
 void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1){
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1837,8 +1498,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1847,31 +1508,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_igor_sentado(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[4] = { 80, 102, 124, 146 };
 	int cara;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1902,8 +1547,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -1912,31 +1557,15 @@ bucless:
 }
 
 void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
-	int tiempou;
-	long tiempol;
-
 	int x_talk[4] = {119, 158, 197, 236};
 	int cara = 0;
+	int length = strlen(said);
 
-	int longitud;
-	longitud = strlen(said);
-
-	tiempol = _system->getMillis();
-	tiempou = (unsigned int)tiempol / 2;
-	_rnd->setSeed(tiempou);
+	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
 	color_abc(WHITE);
 
-	if (hay_sb == 1){
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	talkInit(filename);
 
 bucless:
 
@@ -1967,8 +1596,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 

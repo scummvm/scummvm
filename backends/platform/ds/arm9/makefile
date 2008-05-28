@@ -34,10 +34,10 @@ ifeq ($(SCUMM_BUILD),g)
         DS_BUILD_G = 1
 endif
 
-#DS_BUILD_A = 1
+DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-#DS_BUILD_D = 1		# started!
+#DS_BUILD_D = 1		
 #DS_BUILD_E = 1
 #DS_BUILD_F = 1
 #DS_BUILD_G = 1
@@ -82,11 +82,15 @@ VPATH = $(srcdir)
 
 USE_ARM_SOUND_ASM = 1
 ARM = 1
+USE_ARM_COSTUME_ASM = 1
 
 ifdef DS_BUILD_A
-	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM
+	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
 	LOGO = logoa.bmp
 	ENABLE_SCUMM = STATIC_PLUGIN
+	DEFINES += -DENABLE_SCUMM=STATIC_PLUGIN
+	MODULES += engines/scumm
+
 	USE_ARM_GFX_ASM = 1
 	BUILD=scummvm-A
 endif
@@ -146,10 +150,12 @@ CXX     = arm-eabi-g++
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-ffast-math -mthumb-interwork
+		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
+
+# -ffast-math 
 
 ifdef USE_DEBUGGER
-	DEFINES += -DUSE_DEBUGGER
+	DEFINES += -DUSE_DEBUGGER 
 	CFLAGS += -g
 endif
 
@@ -258,14 +264,18 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp 
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O3
+OPT_SPEED := -O2
 
 # Compiler options for files which should be optimised for space
-OPT_SIZE := -Os -mthumb -fno-gcse -fno-schedule-insns2
+OPT_SIZE := -Os
 
 
+#-mthumb -fno-gcse -fno-schedule-insns2
 
-OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
+
+			
+OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
+		
 
 
 
@@ -330,8 +340,8 @@ endef
 ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking.
-.cpp.o:
-
+#.cpp.o:
+%.o:%.cpp
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
@@ -342,7 +352,8 @@ else
 # rule can get you into a bad state if you Ctrl-C at the wrong moment.
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
-.cpp.o:
+#.cpp.o:
+%.o:%.cpp
 #	echo !!!!!!!!!!!! $(notdir $<)
 #	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
 #	 OPTFLAG=-O3

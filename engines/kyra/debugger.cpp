@@ -192,6 +192,7 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 
 Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 	: Debugger(vm), _vm(vm) {
+	DCmd_Register("enter",				WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
 	DCmd_Register("rooms",				WRAP_METHOD(Debugger_LoK, cmd_listRooms));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_LoK, cmd_giveItem));
 	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));

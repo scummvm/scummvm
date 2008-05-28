@@ -67,7 +67,7 @@ void KyraEngine_LoK::snd_playVoiceFile(int id) {
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d", id);
 	_speechFile = vocFile;
-	_sound->voicePlay(vocFile);
+	_speechPlayTime = _sound->voicePlay(vocFile);
 }
 
 void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
@@ -78,6 +78,13 @@ void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
 		else
 			_system->delayMillis(10);
 	}
+}
+
+uint32 KyraEngine_LoK::snd_getVoicePlayTime() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_getVoicePlayTime()");
+	if (!snd_voiceIsPlaying())
+		return 0;
+	return (_speechPlayTime != -1 ? _speechPlayTime : 0);
 }
 
 } // end of namespace Kyra

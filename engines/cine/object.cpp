@@ -236,6 +236,10 @@ uint16 compareObjectParam(byte objIdx, byte type, int16 value) {
 	return compareResult;
 }
 
+/*! \bug In Operation Stealth, if you try to go downstairs to the sea in the
+ * location between bank and hotel, getObjectParam is called with paramIdx 16
+ * and crashes
+ */
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 	assert(objIdx <= NUM_MAX_OBJECT);
 

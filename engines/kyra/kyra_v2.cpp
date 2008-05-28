@@ -68,6 +68,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	memset(&_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
+
+	_pauseStart = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -91,6 +93,22 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_opcodesAnimation.clear();
 
 	delete[] _screenBuffer;
+}
+
+void KyraEngine_v2::pauseEngineIntern(bool pause) {
+	KyraEngine_v1::pauseEngineIntern(pause);
+
+	if (!pause) {
+		uint32 pausedTime = _system->getMillis() - _pauseStart;
+
+		for (int i = 0; i < ARRAYSIZE(_sceneSpecialScriptsTimer); ++i) {
+			if (_sceneSpecialScriptsTimer[i])
+				_sceneSpecialScriptsTimer[i] += pausedTime;
+		}
+
+	} else {
+		_pauseStart = _system->getMillis();
+	}
 }
 
 void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
@@ -326,8 +344,8 @@ int KyraEngine_v2::updateCharPos(int *table, int force) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPos(%p, %d)", (const void*)table, force);
 	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
 		return 0;
-	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
-	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
+	_mainCharacter.x1 += _charAddXPosTable[_mainCharacter.facing];
+	_mainCharacter.y1 += _charAddYPosTable[_mainCharacter.facing];
 	updateCharAnimFrame(0, table);
 	_updateCharPosNextUpdate = _system->getMillis() + getCharacterWalkspeed() * _tickLength;
 	return 1;

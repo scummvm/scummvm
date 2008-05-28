@@ -28,7 +28,6 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 #include "saga/interface.h"
-#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/scene.h"
 
@@ -36,6 +35,9 @@
 #include "graphics/cursorman.h"
 
 namespace Saga {
+
+#define RID_IHNM_DEFAULT_PALETTE 1
+#define RID_IHNM_HOURGLASS_CURSOR 11 // not in demo
 
 Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _system(system) {
 	_system->beginGFXTransaction();

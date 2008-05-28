@@ -75,6 +75,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_scenery   = 0; _draw     = 0; _util   = 0;
 	_video     = 0; _saveLoad = 0;
 
+	_pauseStart = 0;
+
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
@@ -85,12 +87,13 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	Common::addSpecialDebugLevel(kDebugMusic, "Music", "CD, Adlib and Infogrames music debug level");
+	Common::addSpecialDebugLevel(kDebugSound, "Sound", "Sound output debug level");
 	Common::addSpecialDebugLevel(kDebugParser, "Parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addSpecialDebugLevel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
+	Common::addSpecialDebugLevel(kDebugVideo, "Video", "IMD/VMD video debug level");
 	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "gob");
@@ -245,6 +248,23 @@ int GobEngine::init() {
 
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 	return 0;
+}
+
+void GobEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_pauseStart = _system->getMillis();
+	} else {
+		uint32 duration = _system->getMillis() - _pauseStart;
+
+		_vm->_vidPlayer->notifyPaused(duration);
+
+		_vm->_game->_startTimeKey += duration;
+		_vm->_draw->_cursorTimeKey += duration;
+		if (_vm->_inter->_soundEndTimeKey != 0)
+			_vm->_inter->_soundEndTimeKey += duration;
+	}
+
+	_mixer->pauseAll(pause);
 }
 
 bool GobEngine::initGameParts() {

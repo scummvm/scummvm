@@ -53,7 +53,6 @@
 #include "saga/music.h"
 #include "saga/palanim.h"
 #include "saga/objectmap.h"
-#include "saga/sagaresnames.h"
 
 namespace Saga {
 
@@ -251,7 +250,7 @@ int SagaEngine::go() {
 		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("boot_param")) {
 		if (getGameType() == GType_ITE)
-			_interface->addToInventory(_actor->objIndexToId(ITE_OBJ_MAGIC_HAT));
+			_interface->addToInventory(_actor->objIndexToId(0));	// Magic hat
 		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// First scene sets up palette
@@ -421,25 +420,25 @@ const char *SagaEngine::getTextString(int textStringId) {
 void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundResourceId) {
 	textString = NULL;
 
+	if (verb == _script->getVerbType(kVerbOpen)) {
+		textString = getTextString(kTextNoPlaceToOpen);
+		soundResourceId = 239;		// Boar voice 0
+	}
+	if (verb == _script->getVerbType(kVerbClose)) {
+		textString = getTextString(kTextNoOpening);
+		soundResourceId = 241;		// Boar voice 2
+	}
+	if (verb == _script->getVerbType(kVerbUse)) {
+		textString = getTextString(kTextDontKnow);
+		soundResourceId = 244;		// Boar voice 5
+	}
+	if (verb == _script->getVerbType(kVerbLookAt)) {
+		textString = getTextString(kTextNothingSpecial);
+		soundResourceId = 245;		// Boar voice 6
+	}
 	if (verb == _script->getVerbType(kVerbPickUp)) {
 		textString = getTextString(kTextICantPickup);
-		soundResourceId = RID_BOAR_VOICE_007;
-	} else
-		if (verb == _script->getVerbType(kVerbLookAt)) {
-		textString = getTextString(kTextNothingSpecial);
-		soundResourceId = RID_BOAR_VOICE_006;
-		}
-		if (verb == _script->getVerbType(kVerbOpen)) {
-		textString = getTextString(kTextNoPlaceToOpen);
-		soundResourceId = RID_BOAR_VOICE_000;
-		}
-		if (verb == _script->getVerbType(kVerbClose)) {
-		textString = getTextString(kTextNoOpening);
-		soundResourceId = RID_BOAR_VOICE_002;
-		}
-		if (verb == _script->getVerbType(kVerbUse)) {
-		textString = getTextString(kTextDontKnow);
-		soundResourceId = RID_BOAR_VOICE_005;
+		soundResourceId = 246;		// Boar voice 7
 	}
 }
 

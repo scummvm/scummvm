@@ -41,6 +41,15 @@
 
 namespace Kyra {
 
+struct InsHofArchive {
+	Common::String filename;
+	uint32 firstFile;
+	uint32 startOffset;
+	uint32 lastFile;
+	uint32 endOffset;
+	uint32 totalSize;
+};
+
 struct ResFileEntry {
 	Common::String parent;
 	uint32 size;
@@ -52,12 +61,17 @@ struct ResFileEntry {
 	enum kType {
 		kRaw = 0,
 		kPak = 1,
-		kIns = 2,
-		kTlk = 3,
+		kInsKyra = 2,
+		kInsHof = 3,
+		kInsMal = 4,
+		kTlk = 5,
 		kAutoDetect
 	};
 	kType type;
 	uint32 offset;
+
+	int fileIndex;
+	uint32 compressedSize;
 };
 
 typedef Common::HashMap<Common::String, ResFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResFileMap;
@@ -271,7 +285,7 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
-	void outputError();
+	void outputError(const Common::String &error);
 
 	KyraEngine_v1 *_vm;
 

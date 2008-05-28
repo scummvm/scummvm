@@ -259,8 +259,6 @@ public:
 
 	Input	*_input;
 
-	void		waitTime(uint32 t);
-
 	OpcodeSet	_commandOpcodes;
 
 	struct ParallactionStruct1 {
@@ -368,8 +366,6 @@ protected:		// members
 	void		initGlobals();
 	void		runGame();
 	void		updateView();
-	uint32		getElapsedTime();
-	void		resetTimer();
 
 	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();

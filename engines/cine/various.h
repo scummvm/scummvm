@@ -43,11 +43,10 @@ extern bool disableSystemMenu;
 extern bool inMenu;
 
 struct SeqListElement {
-	struct SeqListElement *next;
 	int16 var4;
-	int16 var6;
+	uint16 objIdx;
 	int16 var8;
-	int16 varA;
+	int16 frame;
 	int16 varC;
 	int16 varE;
 	int16 var10;
@@ -60,7 +59,7 @@ struct SeqListElement {
 	int16 var1E;
 };
 
-extern SeqListElement seqList;
+extern Common::List<SeqListElement> seqList;
 
 extern uint16 var2;
 extern uint16 var3;
@@ -97,7 +96,6 @@ extern char newRelName[20];
 extern char newObjectName[20];
 extern char newMsgName[20];
 
-extern char currentBgName[8][15];
 extern char currentCtName[15];
 extern char currentPartName[15];
 
@@ -130,20 +128,16 @@ struct SelectedObjStruct {
 	int16 param;
 };
 
-extern uint16 defaultMenuBoxColor;
-extern uint16 defaultMenuBoxColor2;
-
 #define NUM_MAX_ZONE 16
 extern uint16 zoneData[NUM_MAX_ZONE];
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
 
-extern int16 additionalBgVScroll;
+void removeMessages();
 
 void removeSeq(uint16 param1, uint16 param2, uint16 param3);
 uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
-void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
-void resetSeqList();
+void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
 void processSeqList(void);
 
 bool makeTextEntryMenu(const char *caption, char *string, int strLen, int y);

@@ -2,6 +2,6 @@
 #define PREFIX_H
 
 #include "native_common.h"
-#define ENABLE_KYRA STATIC_PLUGIN
+#define ENABLE_M4 STATIC_PLUGIN
 
 #endif

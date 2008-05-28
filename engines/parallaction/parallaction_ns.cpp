@@ -299,7 +299,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setFloatingLabel(0);
 	_gfx->freeLabels();
 
-	_input->_hoverZone = nullZonePtr;
+	_input->stopHovering();
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
 	}

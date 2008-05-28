@@ -59,9 +59,9 @@ void PictureResource::load(byte *source, int size) {
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
 	
 	_hasPalette = (sourceS->readByte() != 0);
-	sourceS->readByte();
-	sourceS->readByte();
-	sourceS->readByte();
+	byte cmdFlags = sourceS->readByte();
+	byte pixelFlags = sourceS->readByte();
+	byte maskFlags = sourceS->readByte();
 	uint16 cmdOffs = sourceS->readUint16LE();
 	uint16 pixelOffs = sourceS->readUint16LE();
 	uint16 maskOffs = sourceS->readUint16LE();
@@ -69,7 +69,11 @@ void PictureResource::load(byte *source, int size) {
 	/*uint16 u = */sourceS->readUint16LE();
 	uint16 width = sourceS->readUint16LE();
 	uint16 height = sourceS->readUint16LE();
-	
+
+	if (cmdFlags || pixelFlags || maskFlags) {
+		warning("PictureResource::load() Graphic has flags set");
+	}
+
 	_paletteColorCount = (cmdOffs - 18) / 3; // 18 = sizeof header
 
 	debug(2, "width = %d; height = %d\n", width, height);
@@ -82,7 +86,7 @@ void PictureResource::load(byte *source, int size) {
 	_picture = new Graphics::Surface();
 	_picture->create(width, height, 1);
 
-	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize);
+	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize, cmdFlags, pixelFlags, maskFlags);
 
 	delete sourceS;
 
@@ -94,7 +98,8 @@ AnimationResource::AnimationResource() {
 }
 
 AnimationResource::~AnimationResource() {
-	// TODO: Free anim frames
+	for (uint i = 0; i < _frames.size(); i++)
+		delete _frames[i];
 }
 
 void AnimationResource::load(byte *source, int size) {
@@ -136,7 +141,7 @@ void AnimationResource::load(byte *source, int size) {
 		Graphics::Surface *frame = new Graphics::Surface();
 		frame->create(frameWidth, frameHeight, 1);
 
-		decompressImage(source + frameOffs, *frame, cmdOffs, pixelOffs, maskOffs, lineSize, _flags & 1);
+		decompressImage(source + frameOffs, *frame, cmdOffs, pixelOffs, maskOffs, lineSize, 0, 0, 0, _flags & 1);
 
 		_frames.push_back(frame);
 

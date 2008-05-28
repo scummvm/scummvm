@@ -30,7 +30,6 @@
 #include "saga/events.h"
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
-#include "saga/sagaresnames.h"
 #include "saga/script.h"
 #include "saga/sound.h"
 #include "saga/scene.h"
@@ -209,7 +208,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 				actor->_finalTarget = actor->_location;
 				_centerActor = _protagonist = actor;
 			} else if (_vm->getGameType() == GType_ITE &&
-					   _vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+					   _vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 				continue;
 			}
 
@@ -416,7 +415,7 @@ void Actor::handleActions(int msec, bool setup) {
 					speed = 4;
 				}
 
-				if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+				if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 					speed = 2;
 				}
 

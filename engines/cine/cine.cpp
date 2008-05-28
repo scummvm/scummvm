@@ -97,7 +97,9 @@ int CineEngine::init() {
 int CineEngine::go() {
 	CursorMan.showMouse(true);
 	mainLoop(1);
-	gfxDestroy();
+
+	delete renderer;
+	delete[] page3Raw;
 	delete g_sound;
 	return 0;
 }
@@ -107,8 +109,14 @@ void CineEngine::initialize() {
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());
-	gfxInit();
 
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		renderer = new OSRenderer;
+	} else {
+		renderer = new FWRenderer;
+	}
+
+	page3Raw = new byte[320 * 200];
 	textDataPtr = (byte *)malloc(8000);
 
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));

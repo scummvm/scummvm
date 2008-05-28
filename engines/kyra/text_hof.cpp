@@ -107,8 +107,7 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 	int textWidth = _screen->getTextWidth(p);
 	_screen->_charWidth = 0;
 
-	// longer text strings for German versions
-	int maxTextWidth = (_vm->language() == 2 ? 240 : 176);
+	int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
 
 	if (textWidth > maxTextWidth) {
 		if (textWidth > (maxTextWidth*2)) {

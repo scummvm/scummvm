@@ -519,6 +519,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 
+	void o4_initScreen();
 	void o4_playVmdOrMusic();
 };
 

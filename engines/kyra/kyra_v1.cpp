@@ -87,6 +87,11 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	return _debugger;
 }
 
+void KyraEngine_v1::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	_timer->pause(pause);
+}
+
 int KyraEngine_v1::init() {
 	registerDefaultSettings();
 

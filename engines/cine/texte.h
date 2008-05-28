@@ -56,7 +56,7 @@ void freeErrmessDat(void);
 void loadPoldatDat(const char *fname);
 void freePoldatDat(void);
 
-uint16 computeMessageLength(const byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult);
+int fitLine(const char *ptr, int maxWidth, int &words, int &width);
 
 } // End of namespace Cine
 

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 #ifndef _ZIPREADER_H_
 #define _ZIPREADER_H_
 #include "portdefs.h"
@@ -45,9 +45,9 @@ class ZipFile {
 
 	char* _zipFile;
 	char _directory[128];
-
+	
 	bool _allFilesVisible;
-
+	
 	FileHeader* _currentFile;
 
 public:
@@ -55,25 +55,25 @@ public:
 	~ZipFile();
 
 	bool isReady();
-
+	
 	// These operations set the current file
 	bool restartFile();
 	bool skipFile();
-	bool findFile(char* search);
+	bool findFile(char* search);	
 
 	// These return the file's data and information
 	char* getFile();
 	int getFileSize();
 	void getFileName(char* name);
 	bool isDirectory();
-
+	
 	// These set the current directory
 	void changeDirectory(char* name);
 	void changeToRoot();
 	void setAllFilesVisible(bool state) { _allFilesVisible = state; }
-
+	
 	bool currentFileInFolder();
-
+	
 	u16 misaligned16(u16* v);
 	u32 misaligned32(u32* v);
 

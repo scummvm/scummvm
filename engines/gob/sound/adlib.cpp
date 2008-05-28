@@ -125,7 +125,7 @@ int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 void AdLib::writeOPL(byte reg, byte val) {
-	debugC(6, kDebugMusic, "writeOPL(%02X, %02X)", reg, val);
+	debugC(6, kDebugSound, "writeOPL(%02X, %02X)", reg, val);
 	OPLWriteReg(_opl, reg, val);
 }
 

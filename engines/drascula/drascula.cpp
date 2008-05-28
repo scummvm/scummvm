@@ -79,16 +79,30 @@ DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
 }
 
-static const int x_obj[44] = {0, X_OBJ1, X_OBJ2, X_OBJ3, X_OBJ4, X_OBJ5, X_OBJ6, X_OBJ7, X_OBJ8, X_OBJ9, X_OBJ10,
-				X_OBJ11, X_OBJ12, X_OBJ13, X_OBJ14, X_OBJ15, X_OBJ16, X_OBJ17, X_OBJ18, X_OBJ19, X_OBJ20,
-				X_OBJ21, X_OBJ22, X_OBJ23, X_OBJ24, X_OBJ25, X_OBJ26, X_OBJ27, X_OBJ28, X_OBJ29, X_OBJ30,
-				X_OBJ31, X_OBJ32, X_OBJ33, X_OBJ34, X_OBJ35, X_OBJ36, X_OBJ37, X_OBJ38, X_OBJ39, X_OBJ40,
-				X_OBJ41, X_OBJ42, X_OBJ43};
-static const int y_obj[44] = {0, Y_OBJ1, Y_OBJ2, Y_OBJ3, Y_OBJ4, Y_OBJ5, Y_OBJ6, Y_OBJ7, Y_OBJ8, Y_OBJ9, Y_OBJ10,
-				Y_OBJ11, Y_OBJ12, Y_OBJ13, Y_OBJ14, Y_OBJ15, Y_OBJ16, Y_OBJ17, Y_OBJ18, Y_OBJ19, Y_OBJ20,
-				Y_OBJ21, Y_OBJ22, Y_OBJ23, Y_OBJ24, Y_OBJ25, Y_OBJ26, Y_OBJ27, Y_OBJ28, Y_OBJ29, Y_OBJ30,
-				Y_OBJ31, Y_OBJ32, Y_OBJ33, Y_OBJ34, Y_OBJ35, Y_OBJ36, Y_OBJ37, Y_OBJ38, Y_OBJ39, Y_OBJ40,
-				Y_OBJ41, Y_OBJ42, Y_OBJ43};
+struct ItemLocation {
+	int x;
+	int y;
+};
+
+ItemLocation itemLocations[] = {
+	{   0,   0 },							  // empty
+	{   5,  10 }, {  50,  10 }, {  95,  10 }, // 1-3
+	{ 140,  10 }, { 185,  10 }, { 230,  10 }, // 4-6
+	{ 275,  10 }, {   5,  40 }, {  50,  40 }, // 7-9
+	{  95,  40 }, { 140,  40 }, { 185,  40 }, // 10-12
+	{ 230,  40 }, { 275,  40 }, {   5,  70 }, // 13-15
+	{  50,  70 }, {  95,  70 }, { 140,  70 }, // 16-18
+	{ 185,  70 }, { 230,  70 }, { 275,  70 }, // 19-21
+	{   5, 100 }, {  50, 100 }, {  95, 100 }, // 22-24
+	{ 140, 100 }, { 185, 100 }, { 230, 100 }, // 25-27
+	{ 275, 100 }, {   5, 130 }, {  50, 130 }, // 28-30
+	{  95, 130 }, { 140, 130 }, { 185, 130 }, // 31-33
+	{ 230, 130 }, { 275, 130 }, {   5, 160 }, // 34-36
+	{  50, 160 }, {  95, 160 }, { 140, 160 }, // 37-39
+	{ 185, 160 }, { 230, 160 }, { 275, 160 }, // 40-42
+	{ 275, 160 }							  // 43
+};
+
 static const int x_pol[44] = {0, 1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				247, 83, 165, 1, 206, 42, 124, 83, 1, 247,
@@ -114,6 +128,27 @@ int DrasculaEngine::init() {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
+	switch (getLanguage()) {
+	case Common::EN_ANY:
+		_lang = 0;
+		break;
+	case Common::ES_ESP:
+		_lang = 1;
+		break;
+	case Common::DE_DEU:
+		_lang = 2;
+		break;
+	case Common::FR_FRA:
+		_lang = 3;
+		break;
+	case Common::IT_ITA:
+		_lang = 4;
+		break;
+	default:
+		warning("Unknown game language. Falling back to English");
+		_lang = 0;
+	}
+
 	return 0;
 }
 
@@ -137,7 +172,7 @@ int DrasculaEngine::go() {
 		step_x = PASO_HARE_X; step_y = PASO_HARE_Y;
 		alto_hare = CHARACTER_HEIGHT; ancho_hare = CHARACTER_WIDTH; alto_pies = PIES_HARE;
 		alto_talk = ALTO_TALK_HARE; ancho_talk = ANCHO_TALK_HARE;
-		hay_respuesta = 0;
+		hay_answer = 0;
 		conta_ciego_vez = 0;
 		cambio_de_color = 0;
 		rompo_y_salgo = 0;
@@ -334,7 +369,7 @@ void DrasculaEngine::paleta_hare() {
 
 	for (color = 235; color < 253; color++)
 		for (componente = 0; componente < 3; componente++)
-			palHare[color][componente] = palJuego[color][componente];
+			palHare[color][componente] = gamePalette[color][componente];
 }
 
 void DrasculaEngine::hare_oscuro() {
@@ -342,7 +377,7 @@ void DrasculaEngine::hare_oscuro() {
 
 	for (color = 235; color < 253; color++ )
 		for (componente = 0; componente < 3; componente++)
-			palJuego[color][componente] = palHareOscuro[color][componente];
+			gamePalette[color][componente] = palHareOscuro[color][componente];
 
 	updatePalette();
 }
@@ -351,9 +386,9 @@ void DrasculaEngine::setRGB(byte *dir_lectura, int plt) {
 	int x, cnt = 0;
 
 	for (x = 0; x < plt; x++) {
-		palJuego[x][0] = dir_lectura[cnt++] / 4;
-		palJuego[x][1] = dir_lectura[cnt++] / 4;
-		palJuego[x][2] = dir_lectura[cnt++] / 4;
+		gamePalette[x][0] = dir_lectura[cnt++] / 4;
+		gamePalette[x][1] = dir_lectura[cnt++] / 4;
+		gamePalette[x][2] = dir_lectura[cnt++] / 4;
 	}
 	updatePalette();
 }
@@ -374,7 +409,7 @@ void DrasculaEngine::black() {
 }
 
 void DrasculaEngine::updatePalette() {
-	setPalette((byte *)&palJuego);
+	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::setPalette(byte *PalBuf) {
@@ -393,10 +428,9 @@ void DrasculaEngine::setPalette(byte *PalBuf) {
 
 void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 								  int height, byte *src, byte *dest) {
-	int x;
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
-	for (x = 0; x < height; x++) {
+	for (int x = 0; x < height; x++) {
 		memcpy(dest, src, width);
 		dest += 320;
 		src += 320;
@@ -450,12 +484,11 @@ void DrasculaEngine::copyRectClip(int *Array, byte *src, byte *dest) {
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
-	int x;
 	byte *ptr = VGA;
 
 	ptr += xdes + ydes * 320;
 	buffer += xorg + yorg * 320;
-	for (x = 0; x < height; x++) {
+	for (int x = 0; x < height; x++) {
 		memcpy(ptr, buffer, width);
 		ptr += 320;
 		buffer += 320;
@@ -468,7 +501,10 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 bool DrasculaEngine::escoba() {
 	int n;
 
-	dir_texto = dir_mesa;
+	if (_lang == kSpanish)
+		dir_texto = dir_hare_dch;
+	else
+		dir_texto = dir_mesa;
 
 	previousMusic = -1;
 
@@ -481,7 +517,7 @@ bool DrasculaEngine::escoba() {
 	}
 
 	for (n = 1; n < 43; n++)
-		objetos_que_tengo[n] = 0;
+		inventoryObjects[n] = 0;
 
 	for (n = 0; n < NUM_FLAGS; n++)
 		flags[n] = 0;
@@ -493,7 +529,7 @@ bool DrasculaEngine::escoba() {
 	}
 
 	for (n = 1; n < 7; n++)
-		objetos_que_tengo[n] = n;
+		inventoryObjects[n] = n;
 
 	if (num_ejec == 1) {
 		pickObject(28);
@@ -609,11 +645,11 @@ bucles:
 	}
 
 	if (num_ejec == 2) {
-		if ((!strcmp(num_room, "3.alg")) && (hare_x == 279) && (hare_y + alto_hare == 101))
+		if (roomNumber == 3 && (hare_x == 279) && (hare_y + alto_hare == 101))
 			animation_1_2();
-		else if ((!strcmp(num_room, "14.alg")) && (hare_x == 214) && (hare_y + alto_hare == 121))
+		else if (roomNumber == 14 && (hare_x == 214) && (hare_y + alto_hare == 121))
 			lleva_al_hare(190, 130);
-		else if ((!strcmp(num_room, "14.alg")) && (hare_x == 246) && (hare_y + alto_hare == 112))
+		else if (roomNumber == 14 && (hare_x == 246) && (hare_y + alto_hare == 112))
 			lleva_al_hare(190, 130);
 	}
 
@@ -633,20 +669,20 @@ bucles:
 	if (menu_scr == 0 && lleva_objeto == 1)
 		comprueba_objetos();
 
-	if (boton_dch == 1 && menu_scr == 1) {
+	if (button_dch == 1 && menu_scr == 1) {
 		delay(100);
 		if (num_ejec == 2)
 			loadPic(fondo_y_menu);
 		else
 			loadPic("99.alg");
 		decompressPic(dir_hare_fondo, 1);
-		setPalette((byte *)&palJuego);
+		setPalette((byte *)&gamePalette);
 		menu_scr = 0;
 		espera_soltar();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
-	if (boton_dch == 1 && menu_scr == 0) {
+	if (button_dch == 1 && menu_scr == 0) {
 		delay(100);
 		hare_se_mueve = 0;
 		if (sentido_hare == 2)
@@ -667,25 +703,25 @@ bucles:
 			cont_sv = 0;
 	}
 
-	if (boton_izq == 1 && menu_bar == 1) {
+	if (button_izq == 1 && menu_bar == 1) {
 		delay(100);
 		elige_en_barra();
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (boton_izq == 1 && lleva_objeto == 0) {
+	} else if (button_izq == 1 && lleva_objeto == 0) {
 		delay(100);
 		if (comprueba1())
 			return true;
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (boton_izq == 1 && lleva_objeto == 1) {
+	} else if (button_izq == 1 && lleva_objeto == 1) {
 		if (comprueba2())
 			return true;
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
 
-	if (y_raton < 24 && menu_scr == 0)
+	if (mouseY < 24 && menu_scr == 0)
 		menu_bar = 1;
 	else
 		menu_bar = 0;
@@ -746,7 +782,7 @@ bucles:
 			return false;
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && !strcmp(num_room, "61.alg")) {
+	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
 		 loadPic("alcbar.alg");
 		 decompressPic(dir_dibujo1, 255);
 	} else if (cont_sv == 1500) {
@@ -780,32 +816,29 @@ void DrasculaEngine::pickObject(int objeto) {
 
 void DrasculaEngine::chooseObject(int objeto) {
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && menu_scr == 0 && objeto_que_lleva != 16)
-			suma_objeto(objeto_que_lleva);
+		if (lleva_objeto == 1 && menu_scr == 0 && pickedObject != 16)
+			suma_objeto(pickedObject);
 	} else {
 		if (lleva_objeto == 1 && menu_scr == 0)
-			suma_objeto(objeto_que_lleva);
+			suma_objeto(pickedObject);
 	}
 	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 	lleva_objeto = 1;
-	objeto_que_lleva = objeto;
+	pickedObject = objeto;
 }
 
 int DrasculaEngine::resta_objeto(int osj) {
-	int h, q = 0;
+	int result = 1;
 
-	for (h = 1; h < 43; h++) {
-		if (objetos_que_tengo[h] == osj) {
-			objetos_que_tengo[h] = 0;
-			q = 1;
+	for (int h = 1; h < 43; h++) {
+		if (inventoryObjects[h] == osj) {
+			inventoryObjects[h] = 0;
+			result = 0;
 			break;
 		}
 	}
 
-	if (q == 1)
-		return 0;
-	else
-		return 1;
+	return result;
 }
 
 void DrasculaEngine::withoutVerb() {
@@ -813,11 +846,11 @@ void DrasculaEngine::withoutVerb() {
 	if (menu_scr == 1)
 		c = 0;
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && objeto_que_lleva != 16)
-			suma_objeto(objeto_que_lleva);
+		if (lleva_objeto == 1 && pickedObject != 16)
+			suma_objeto(pickedObject);
 	} else {
 		if (lleva_objeto == 1)
-			suma_objeto(objeto_que_lleva);
+			suma_objeto(pickedObject);
 	}
 	copyBackground(0, c, 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
@@ -852,9 +885,7 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 			c = ~fp->readByte();
 			if (c == '\r')
 				continue;
-			if (c == '\n')
-				break;
-			if (b - buf >= (len - 1))
+			if (c == '\n' || b - buf >= (len - 1))
 				break;
 			*b++ = c;
 		}
@@ -886,8 +917,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	}
 	int size = ald->size();
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", num_room);
-	strcat(num_room, ".alg");
+	roomNumber = atoi(buffer);
 
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &roomMusic);
@@ -1024,7 +1054,9 @@ martini:
 	loadPic(roomDisk);
 	decompressPic(dir_dibujo3, 1);
 
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
@@ -1056,14 +1088,14 @@ martini:
 		}
 	}
 
-	if (!strcmp(num_room, "24.alg")) {
+	if (roomNumber == 24) {
 		for (l = suelo_y1 - 1; l > 74; l--) {
 			factor_red[l] = (int)(far - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
-	if (num_ejec == 5 && !strcmp(num_room, "54.alg")) {
+	if (num_ejec == 5 && roomNumber == 54) {
 		for (l = suelo_y1 - 1; l > 84; l--) {
 			factor_red[l] = (int)(far - pequegnez);
 			pequegnez = pequegnez + chiquez;
@@ -1101,13 +1133,13 @@ martini:
 		isDoor[7] = 0;
 
 	if (num_ejec == 2) {
-		if (!strcmp(num_room, "14.alg") && flags[39] == 1)
+		if (roomNumber == 14 && flags[39] == 1)
 			roomMusic = 16;
-		else if (!strcmp(num_room, "15.alg") && flags[39] == 1)
+		else if (roomNumber == 15 && flags[39] == 1)
 			roomMusic = 16;
-		if (!strcmp(num_room, "14.alg") && flags[5] == 1)
+		if (roomNumber == 14 && flags[5] == 1)
 			roomMusic = 0;
-		else if (!strcmp(num_room, "15.alg") && flags[5] == 1)
+		else if (roomNumber == 15 && flags[5] == 1)
 			roomMusic = 0;
 
 		if (previousMusic != roomMusic && roomMusic != 0)
@@ -1120,21 +1152,21 @@ martini:
 	}
 
 	if (num_ejec == 2) {
-		if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg")) || (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg")))
+		if (roomNumber == 9 || roomNumber == 2 || roomNumber == 14 || roomNumber == 18)
 			conta_ciego_vez = vez();
 	}
 	if (num_ejec == 4) {
-		if (!strcmp(num_room, "26.alg"))
+		if (roomNumber == 26)
 			conta_ciego_vez = vez();
 	}
 
-	if (num_ejec == 4 && !strcmp(num_room, "24.alg") && flags[29] == 1)
+	if (num_ejec == 4 && roomNumber == 24 && flags[29] == 1)
 		animation_7_4();
 
 	if (num_ejec == 5) {
-		if (!strcmp(num_room, "45.alg"))
+		if (roomNumber == 45)
 			hare_se_ve = 0;
-		if (!strcmp(num_room, "49.alg") && flags[7] == 0)
+		if (roomNumber == 49 && flags[7] == 0)
 			animation_4_5();
 	}
 
@@ -1190,7 +1222,7 @@ void DrasculaEngine::mueve_cursor() {
 	} else if (menu_scr == 0 && _color != LIGHT_GREEN)
 		color_abc(LIGHT_GREEN);
 	if (hay_nombre == 1 && menu_scr == 0)
-		centra_texto(texto_nombre, x_raton, y_raton);
+		centra_texto(texto_nombre, mouseX, mouseY);
 	if (menu_scr == 1)
 		menu_sin_volcar();
 	else if (menu_bar == 1)
@@ -1198,8 +1230,8 @@ void DrasculaEngine::mueve_cursor() {
 
 	pos_cursor[0] = 0;
 	pos_cursor[1] = 0;
-	pos_cursor[2] = x_raton - 20;
-	pos_cursor[3] = y_raton - 17;
+	pos_cursor[2] = mouseX - 20;
+	pos_cursor[3] = mouseY - 17;
 	pos_cursor[4] = OBJWIDTH;
 	pos_cursor[5] = OBJHEIGHT;
 	copyRectClip(pos_cursor, dir_dibujo3, dir_zona_pantalla);
@@ -1209,8 +1241,8 @@ void DrasculaEngine::comprueba_objetos() {
 	int l, veo = 0;
 
 	for (l = 0; l < numRoomObjs; l++) {
-		if (x_raton > x1[l] && y_raton > y1[l]
-				&& x_raton < x2[l] && y_raton < y2[l]
+		if (mouseX > x1[l] && mouseY > y1[l]
+				&& mouseX < x2[l] && mouseY < y2[l]
 				&& visible[l] == 1 && isDoor[l] == 0) {
 			strcpy(texto_nombre, objName[l]);
 			hay_nombre = 1;
@@ -1219,15 +1251,15 @@ void DrasculaEngine::comprueba_objetos() {
 	}
 
 	if (num_ejec == 2) {
-		if (x_raton > hare_x + 2 && y_raton > hare_y + 2
-				&& x_raton < hare_x + ancho_hare - 2 && y_raton < hare_y + alto_hare - 2) {
+		if (mouseX > hare_x + 2 && mouseY > hare_y + 2
+				&& mouseX < hare_x + ancho_hare - 2 && mouseY < hare_y + alto_hare - 2) {
 			strcpy(texto_nombre, "hacker");
 			hay_nombre = 1;
 			veo = 1;
 		}
 	} else {
-		if (x_raton > hare_x + 2 && y_raton > hare_y + 2
-				&& x_raton < hare_x + ancho_hare - 2 && y_raton < hare_y + alto_hare - 2 && veo == 0) {
+		if (mouseX > hare_x + 2 && mouseY > hare_y + 2
+				&& mouseX < hare_x + ancho_hare - 2 && mouseY < hare_y + alto_hare - 2 && veo == 0) {
 			strcpy(texto_nombre, "hacker");
 			hay_nombre = 1;
 			veo = 1;
@@ -1250,7 +1282,7 @@ void DrasculaEngine::elige_en_barra() {
 	int n, num_verbo = -1;
 
 	for (n = 0; n < 7; n++)
-		if (x_raton > x_barra[n] && x_raton < x_barra[n + 1])
+		if (mouseX > x_barra[n] && mouseX < x_barra[n + 1])
 			num_verbo = n;
 
 	if (num_verbo < 1)
@@ -1266,8 +1298,8 @@ bool DrasculaEngine::comprueba1() {
 		saca_objeto();
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
-			if (x_raton >= x1[l] && y_raton >= y1[l]
-					&& x_raton <= x2[l] && y_raton <= y2[l] && rompo == 0) {
+			if (mouseX >= x1[l] && mouseY >= y1[l]
+					&& mouseX <= x2[l] && mouseY <= y2[l] && rompo == 0) {
 				if (sal_de_la_habitacion(l))
 					return true;
 				if (rompo == 1)
@@ -1275,13 +1307,13 @@ bool DrasculaEngine::comprueba1() {
 			}
 		}
 
-		if (x_raton > hare_x && y_raton > hare_y
-				&& x_raton < hare_x + ancho_hare && y_raton < hare_y + alto_hare)
+		if (mouseX > hare_x && mouseY > hare_y
+				&& mouseX < hare_x + ancho_hare && mouseY < hare_y + alto_hare)
 			rompo = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
-			if (x_raton > x1[l] && y_raton > y1[l]
-					&& x_raton < x2[l] && y_raton < y2[l] && rompo == 0) {
+			if (mouseX > x1[l] && mouseY > y1[l]
+					&& mouseX < x2[l] && mouseY < y2[l] && rompo == 0) {
 				sitio_x = sitiobj_x[l];
 				sitio_y = sitiobj_y[l];
 				sentido_final = sentidobj[l];
@@ -1292,8 +1324,8 @@ bool DrasculaEngine::comprueba1() {
 		}
 
 		if (rompo == 0) {
-			sitio_x = x_raton;
-			sitio_y = y_raton;
+			sitio_x = mouseX;
+			sitio_y = mouseY;
 
 			if (sitio_x < suelo_x1)
 				sitio_x = suelo_x1;
@@ -1324,8 +1356,8 @@ bool DrasculaEngine::comprueba2() {
 				return true;
 		} else {
 			for (l = 0; l < numRoomObjs; l++) {
-				if (x_raton > x1[l] && y_raton > y1[l]
-						&& x_raton < x2[l] && y_raton < y2[l] && visible[l] == 1) {
+				if (mouseX > x1[l] && mouseY > y1[l]
+						&& mouseX < x2[l] && mouseY < y2[l] && visible[l] == 1) {
 					sentido_final = sentidobj[l];
 					anda_a_objeto = 1;
 					lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
@@ -1362,20 +1394,20 @@ void DrasculaEngine::updateEvents() {
 			_keyPressed.keycode = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			x_raton = event.mouse.x;
-			y_raton = event.mouse.y;
+			mouseX = event.mouse.x;
+			mouseY = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			boton_izq = 1;
+			button_izq = 1;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			boton_izq = 0;
+			button_izq = 0;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			boton_dch = 1;
+			button_dch = 1;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			boton_dch = 0;
+			button_dch = 0;
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
@@ -1394,17 +1426,17 @@ void DrasculaEngine::elige_verbo(int verbo) {
 	if (menu_scr == 1)
 		c = 0;
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && objeto_que_lleva != 16)
-			suma_objeto(objeto_que_lleva);
+		if (lleva_objeto == 1 && pickedObject != 16)
+			suma_objeto(pickedObject);
 	} else {
 		if (lleva_objeto == 1)
-			suma_objeto(objeto_que_lleva);
+			suma_objeto(pickedObject);
 	}
 
 	copyBackground(OBJWIDTH * verbo, c, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
 	lleva_objeto = 1;
-	objeto_que_lleva = verbo;
+	pickedObject = verbo;
 }
 
 void DrasculaEngine::mesa() {
@@ -1432,35 +1464,35 @@ void DrasculaEngine::mesa() {
 
 		MirarRaton();
 
-		if (boton_dch == 1) {
+		if (button_dch == 1) {
 			delay(100);
 			break;
 		}
-		if (boton_izq == 1) {
+		if (button_izq == 1) {
 			delay(100);
-			if (x_raton > 80 && x_raton < 121) {
+			if (mouseX > 80 && mouseX < 121) {
 				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16;
-				if (y_raton < nivel_master && vol < 15)
+				if (mouseY < nivel_master && vol < 15)
 					vol++;
-				if (y_raton > nivel_master && vol > 0)
+				if (mouseY > nivel_master && vol > 0)
 					vol--;
 				_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol * 16);
 			}
 
-			if (x_raton > 136 && x_raton < 178) {
+			if (mouseX > 136 && mouseX < 178) {
 				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16;
-				if (y_raton < nivel_voc && vol < 15)
+				if (mouseY < nivel_voc && vol < 15)
 					vol++;
-				if (y_raton > nivel_voc && vol > 0)
+				if (mouseY > nivel_voc && vol > 0)
 					vol--;
 				_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol * 16);
 			}
 
-			if (x_raton > 192 && x_raton < 233) {
+			if (mouseX > 192 && mouseX < 233) {
 				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
-				if (y_raton < nivel_cd && vol < 15)
+				if (mouseY < nivel_cd && vol < 15)
 					vol++;
-				if (y_raton > nivel_cd && vol > 0)
+				if (mouseY > nivel_cd && vol > 0)
 					vol--;
 				_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol * 16);
 			}
@@ -1473,22 +1505,24 @@ void DrasculaEngine::mesa() {
 
 bool DrasculaEngine::saves() {
 	char nombres[10][23];
-	char fichero[13];
+	char fichero[50];
+	char fileEpa[50];
 	int n, n2, num_sav = 0, y = 27;
 	Common::InSaveFile *sav;
 
 	clearRoom();
 
-	if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
+	snprintf(fileEpa, 50, "%s.epa", _targetName.c_str());
+	if (!(sav = _saveFileMan->openForLoading(fileEpa))) {
 		Common::OutSaveFile *epa;
-		if (!(epa = _saveFileMan->openForSaving("saves.epa")))
-			error("Can't open saves.epa file.");
+		if (!(epa = _saveFileMan->openForSaving(fileEpa)))
+			error("Can't open %s file", fileEpa);
 		for (n = 0; n < NUM_SAVES; n++)
 			epa->writeString("*\n");
 		epa->finalize();
 		delete epa;
-		if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
-			error("Can't open saves.epa file.");
+		if (!(sav = _saveFileMan->openForLoading(fileEpa))) {
+			error("Can't open %s file", fileEpa);
 		}
 	}
 	for (n = 0; n < NUM_SAVES; n++)
@@ -1514,10 +1548,10 @@ bool DrasculaEngine::saves() {
 
 		MirarRaton();
 
-		if (boton_izq == 1) {
+		if (button_izq == 1) {
 			delay(100);
 			for (n = 0; n < NUM_SAVES; n++) {
-				if (x_raton > 115 && y_raton > y + (9 * n) && x_raton < 115 + 175 && y_raton < y + 10 + (9 * n)) {
+				if (mouseX > 115 && mouseY > y + (9 * n) && mouseX < 115 + 175 && mouseY < y + 10 + (9 * n)) {
 					strcpy(select, nombres[n]);
 
 					if (strcmp(select, "*"))
@@ -1526,11 +1560,11 @@ bool DrasculaEngine::saves() {
 						introduce_nombre();
 						strcpy(nombres[n], select);
 						if (hay_seleccion == 1) {
-							sprintf(fichero, "gsave%02d", n + 1);
+							snprintf(fichero, 50, "%s%02d", _targetName.c_str(), n + 1);
 							para_grabar(fichero);
 							Common::OutSaveFile *tsav;
-							if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
-								error("Can't open saves.epa file.");
+							if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
+								error("Can't open %s file", fileEpa);
 							}
 							for (n = 0; n < NUM_SAVES; n++) {
 								tsav->writeString(nombres[n]);
@@ -1548,13 +1582,13 @@ bool DrasculaEngine::saves() {
 						y = y + 9;
 					}
 					if (hay_seleccion == 1) {
-						sprintf(fichero, "gsave%02d", n + 1);
+						snprintf(fichero, 50, "%s%02d", _targetName.c_str(), n + 1);
 					}
 					num_sav = n;
 				}
 			}
 
-			if (x_raton > 117 && y_raton > 15 && x_raton < 295 && y_raton < 24 && hay_seleccion == 1) {
+			if (mouseX > 117 && mouseY > 15 && mouseX < 295 && mouseY < 24 && hay_seleccion == 1) {
 				introduce_nombre();
 				strcpy(nombres[num_sav], select);
 				print_abc(select, 117, 15);
@@ -1565,15 +1599,15 @@ bool DrasculaEngine::saves() {
 				}
 			}
 
-			if (x_raton > 125 && y_raton > 123 && x_raton < 199 && y_raton < 149 && hay_seleccion == 1) {
+			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && hay_seleccion == 1) {
 				if (!para_cargar(fichero))
 					return false;
 				break;
-			} else if (x_raton > 208 && y_raton > 123 && x_raton < 282 && y_raton < 149 && hay_seleccion == 1) {
+			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && hay_seleccion == 1) {
 				para_grabar(fichero);
 				Common::OutSaveFile *tsav;
-				if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
-					error("Can't open saves.epa file.");
+				if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
+					error("Can't open %s file", fileEpa);
 				}
 				for (n = 0; n < NUM_SAVES; n++) {
 					tsav->writeString(nombres[n]);
@@ -1581,7 +1615,7 @@ bool DrasculaEngine::saves() {
 				}
 				tsav->finalize();
 				delete tsav;
-			} else if (x_raton > 168 && y_raton > 154 && x_raton < 242 && y_raton < 180)
+			} else if (mouseX > 168 && mouseY > 154 && mouseX < 242 && mouseY < 180)
 				break;
 			else if (hay_seleccion == 0) {
 				print_abc("elige una partida", 117, 15);
@@ -1590,10 +1624,14 @@ bool DrasculaEngine::saves() {
 			delay(400);
 		}
 		y = 26;
+
+		delay(10);
 	}
 
 	clearRoom();
-	loadPic(num_room);
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 	hay_seleccion = 0;
 
@@ -1602,11 +1640,11 @@ bool DrasculaEngine::saves() {
 
 void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla) {
 	int pos_texto[8];
-	int y_de_letra = 0, x_de_letra = 0, h, longitud;
-	longitud = strlen(said);
+	int y_de_letra = 0, x_de_letra = 0, h, length;
+	length = strlen(said);
 
-	for (h = 0; h < longitud; h++) {
-		y_de_letra = Y_ABC;
+	for (h = 0; h < length; h++) {
+		y_de_letra = (_lang == kSpanish) ? Y_ABC_ESP : Y_ABC;
 		int c = toupper(said[h]);
 		if (c == 'A')
 			x_de_letra = X_A;
@@ -1660,10 +1698,14 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 			x_de_letra = X_Y;
 		else if (c == 'Z')
 			x_de_letra = X_Z;
+		else if (c == '\245')
+			x_de_letra = X_GN;
+		else if (c == '\244')
+			x_de_letra = X_GN;
 		else if (c == 0xa7 || c == ' ')
 			x_de_letra = SPACE;
 		else {
-			y_de_letra = Y_SIGNOS;
+			y_de_letra = (_lang == kSpanish) ? Y_SIGNOS_ESP : Y_SIGNOS;
 			if (c == '.')
 				x_de_letra = X_DOT;
 			else if (c == ',')
@@ -1672,7 +1714,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_HYPHEN;
 			else if (c == '?')
 				x_de_letra = X_CIERRA_INTERROGACION;
-			else if (c == 0xa8)
+			else if (c == '\250')
 				x_de_letra = X_ABRE_INTERROGACION;
 //			else if (c == '\'') // FIXME
 //				x_de_letra = SPACE; // space for now
@@ -1680,7 +1722,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_COMILLAS;
 			else if (c == '!')
 				x_de_letra = X_CIERRA_EXCLAMACION;
-			else if (c == 0xad)
+			else if (c == '\255')
 				x_de_letra = X_ABRE_EXCLAMACION;
 			else if (c == ';')
 				x_de_letra = X_PUNTO_Y_COMA;
@@ -1726,6 +1768,41 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_N9;
 			else if (c == '0')
 				x_de_letra = X_N0;
+			else y_de_letra=Y_ACENTOS;
+
+			if (c == '\240') x_de_letra=X_A;
+			else if (c =='\202') x_de_letra = X_B;
+			else if (c =='\241') x_de_letra = X_C;
+			else if (c =='\242') x_de_letra = X_D;
+			else if (c =='\243') x_de_letra = X_E;
+			else if (c =='\205') x_de_letra = X_F;
+			else if (c =='\212') x_de_letra = X_G;
+			else if (c =='\215') x_de_letra = X_H;
+			else if (c =='\225') x_de_letra = X_I;
+			else if (c =='\227') x_de_letra = X_J;
+			else if (c =='\203') x_de_letra = X_K;
+			else if (c =='\210') x_de_letra = X_L;
+			else if (c =='\214') x_de_letra = X_M;
+			else if (c =='\223') x_de_letra = X_N;
+			else if (c =='\226') x_de_letra = X_GN;
+			else if (c =='\047') x_de_letra = X_O;
+			else if (c =='\200') x_de_letra = X_P;
+			else if (c =='\207') x_de_letra = X_P;
+			else if (c =='\265') x_de_letra = X_A;
+			else if (c =='\220') x_de_letra = X_B;
+			else if (c =='\326') x_de_letra = X_C;
+			else if (c =='\340') x_de_letra = X_D;
+			else if (c =='\351') x_de_letra = X_E;
+			else if (c =='\267') x_de_letra = X_F;
+			else if (c =='\324') x_de_letra = X_G;
+			else if (c =='\336') x_de_letra = X_H;
+			else if (c =='\343') x_de_letra = X_I;
+			else if (c =='\353') x_de_letra = X_J;
+			else if (c =='\266') x_de_letra = X_K;
+			else if (c =='\322') x_de_letra = X_L;
+			else if (c =='\327') x_de_letra = X_M;
+			else if (c =='\342') x_de_letra = X_N;
+			else if (c =='\352') x_de_letra = X_GN;
 		}
 
 		pos_texto[0] = x_de_letra;
@@ -1774,34 +1851,126 @@ bool DrasculaEngine::confirma_salir() {
 
 void DrasculaEngine::salva_pantallas() {
 	int xr, yr;
+	byte *copia, *ghost;
+	Common::File file;
+	float coeff = 0, coeff2 = 0;
+	int count = 0;
+	int count2 = 0;
+	int tempLine[320];
+	int tempRow[200];
 
 	// FIXME: that part (*.ghost) need RE from efecto.lib file for some gfx special effect
 	// for now ignore
-	return;
 
 	clearRoom();
 
 	loadPic("sv.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
-	//TODO inicio_ghost();
-	//TODO carga_ghost();
+
+	// inicio_ghost();
+	copia = (byte *)malloc(64000);
+	ghost = (byte *)malloc(65536);
+
+	// carga_ghost();
+	file.open("ghost.drv");
+	if (!file.isOpen())
+		error("Cannot open file ghost.drv");
+
+	file.read(ghost, 65536);
+	file.close();
 
 	MirarRaton();
-	xr = x_raton;
-	yr = y_raton;
+	xr = mouseX;
+	yr = mouseY;
 
 	for (;;) {
-		//TODO efecto(dir_dibujo1);
+		// efecto(dir_dibujo1);
+
+		memcpy(copia, dir_dibujo1, 64000);
+		coeff += 0.1f;
+		coeff2 = coeff;
+
+		if (++count > 319)
+			count = 0;
+
+		for (int i = 0; i < 320; i++) {
+			tempLine[i] = (int)(sin(coeff2) * 16);
+			coeff2 += 0.02f;
+			if (tempLine[i] < 0)
+				tempLine[i] += 200;
+			if (tempLine[i] > 199)
+				tempLine[i] -= 200;
+		}
+
+		coeff2 = coeff;
+		for (int i = 0; i < 200; i++) {
+			tempRow[i] = (int)(sin(coeff2) * 16);
+			coeff2 += 0.02f;
+			if (tempRow[i] < 0)
+				tempRow[i] += 320;
+			if (tempRow[i] > 319)
+				tempRow[i] -= 320;
+		}
+
+		if (++count2 > 199)
+			count2 = 0;
+
+		int x1_, y1_, off1, off2;
+
+		for (int i = 0; i < 200; i++) {
+			for (int j = 0; j < 320; j++) {
+				x1_ = j + tempRow[i];
+				if (x1_ < 0)
+					x1_ += 320;
+				if (x1_ > 319)
+					x1_ -= 319;
+
+				y1_ = i + count2;
+				if (y1_ < 0)
+					y1_ += 200;
+				if (y1_ > 199)
+					y1_ -= 200;
+
+				off1 = 320 * y1_ + x1_;
+
+				x1_ = j + count;
+				if (x1_ < 0)
+					x1_ += 320;
+				if (x1_ > 319)
+					x1_ -= 320;
+
+				y1_ = i + tempLine[j];
+				if (y1_ < 0)
+					y1_ += 200;
+				if (y1_ > 199)
+					y1_ -= 200;
+				off2 = 320 * y1_ + x1_;
+
+				VGA[320 * i + j] = ghost[dir_dibujo1[off2] + (copia[off1] << 8)];
+			}
+		}
+		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+		_system->updateScreen();
+
+		_system->delayMillis(20);
+
+		// end of efecto()
+
 		MirarRaton();
-		if (boton_dch == 1 || boton_izq == 1)
+		if (button_dch == 1 || button_izq == 1)
 			break;
-		if (x_raton != xr)
+		if (mouseX != xr)
 			break;
-		if (y_raton != yr)
+		if (mouseY != yr)
 			break;
 	}
-	//TODO fin_ghost();
-	loadPic(num_room);
+	// fin_ghost();
+	free(copia);
+	free(ghost);
+
+	char rm[20];
+	sprintf(rm, "%i.alg", roomNumber);
+	loadPic(rm);
 	decompressPic(dir_dibujo1, HALF_PAL);
 }
 
@@ -1823,7 +1992,7 @@ void DrasculaEngine::FundeDelNegro(int VelocidadDeFundido) {
 	for (fundido = 0; fundido < 64; fundido++) {
 		for (color = 0; color < 256; color++) {
 			for (componente = 0; componente < 3; componente++) {
-				palFundido[color][componente] = LimitaVGA(palJuego[color][componente] - 63 + fundido);
+				palFundido[color][componente] = LimitaVGA(gamePalette[color][componente] - 63 + fundido);
 			}
 		}
 		pause(VelocidadDeFundido);
@@ -1836,48 +2005,48 @@ void DrasculaEngine::color_abc(int cl) {
 	_color = cl;
 
 	if (cl == 0) {
-		palJuego[254][0] = 0;
-		palJuego[254][1] = 0;
-		palJuego[254][2] = 0;
+		gamePalette[254][0] = 0;
+		gamePalette[254][1] = 0;
+		gamePalette[254][2] = 0;
 	} else if (cl == 1) {
-		palJuego[254][0] = 0x10;
-		palJuego[254][1] = 0x3E;
-		palJuego[254][2] = 0x28;
+		gamePalette[254][0] = 0x10;
+		gamePalette[254][1] = 0x3E;
+		gamePalette[254][2] = 0x28;
 	} else if (cl == 3) {
-		palJuego[254][0] = 0x16;
-		palJuego[254][1] = 0x3F;
-		palJuego[254][2] = 0x16;
+		gamePalette[254][0] = 0x16;
+		gamePalette[254][1] = 0x3F;
+		gamePalette[254][2] = 0x16;
 	} else if (cl == 4) {
-		palJuego[254][0] = 0x9;
-		palJuego[254][1] = 0x3F;
-		palJuego[254][2] = 0x12;
+		gamePalette[254][0] = 0x9;
+		gamePalette[254][1] = 0x3F;
+		gamePalette[254][2] = 0x12;
 	} else if (cl == 5) {
-		palJuego[254][0] = 0x3F;
-		palJuego[254][1] = 0x3F;
-		palJuego[254][2] = 0x15;
+		gamePalette[254][0] = 0x3F;
+		gamePalette[254][1] = 0x3F;
+		gamePalette[254][2] = 0x15;
 	} else if (cl == 7) {
-		palJuego[254][0] = 0x38;
-		palJuego[254][1] = 0;
-		palJuego[254][2] = 0;
+		gamePalette[254][0] = 0x38;
+		gamePalette[254][1] = 0;
+		gamePalette[254][2] = 0;
 	} else if (cl == 8) {
-		palJuego[254][0] = 0x3F;
-		palJuego[254][1] = 0x27;
-		palJuego[254][2] = 0x0B;
+		gamePalette[254][0] = 0x3F;
+		gamePalette[254][1] = 0x27;
+		gamePalette[254][2] = 0x0B;
 	} else if (cl == 9) {
-		palJuego[254][0] = 0x2A;
-		palJuego[254][1] = 0;
-		palJuego[254][2] = 0x2A;
+		gamePalette[254][0] = 0x2A;
+		gamePalette[254][1] = 0;
+		gamePalette[254][2] = 0x2A;
 	} else if (cl == 10) {
-		palJuego[254][0] = 0x30;
-		palJuego[254][1] = 0x30;
-		palJuego[254][2] = 0x30;
+		gamePalette[254][0] = 0x30;
+		gamePalette[254][1] = 0x30;
+		gamePalette[254][2] = 0x30;
 	} else if (cl == 11) {
-		palJuego[254][0] = 98;
-		palJuego[254][1] = 91;
-		palJuego[254][2] = 100;
+		gamePalette[254][0] = 98;
+		gamePalette[254][1] = 91;
+		gamePalette[254][2] = 100;
 	};
 
-	setPalette((byte *)&palJuego);
+	setPalette((byte *)&gamePalette);
 }
 
 char DrasculaEngine::LimitaVGA(char valor) {
@@ -1901,10 +2070,7 @@ void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto)
 		ya = 1;
 
 	strcpy(m1, mensaje);
-	if (x_texto < 60)
-		x_texto = 60;
-	if (x_texto > 255)
-		x_texto = 255;
+	x_texto = CLIP<int>(x_texto, 60, 255);
 
 	x_texto1 = x_texto;
 
@@ -1953,7 +2119,7 @@ imprimir:
 	}
 }
 
-void DrasculaEngine::comienza_sound(const char *fichero) {
+void DrasculaEngine::playSound(const char *fichero) {
 	if (hay_sb == 1) {
 		sku = new Common::File;
 		sku->open(fichero);
@@ -1966,7 +2132,7 @@ void DrasculaEngine::comienza_sound(const char *fichero) {
 	ctvd_output(sku);
 }
 
-void DrasculaEngine::anima(const char *animation, int FPS) {
+bool DrasculaEngine::anima(const char *animation, int FPS) {
 	Common::File FileIn;
 	unsigned j;
 	int NFrames = 1;
@@ -2017,9 +2183,11 @@ void DrasculaEngine::anima(const char *animation, int FPS) {
 	free(AuxBuffLast);
 	free(AuxBuffDes);
 	FileIn.close();
+
+	return ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE));
 }
 
-void DrasculaEngine::animafin_sound_corte() {
+void DrasculaEngine::animastopSound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
 		delete sku;
@@ -2037,7 +2205,7 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 	for (fundido = 63; fundido >= 0; fundido--) {
 		for (color = 0; color < 256; color++) {
 			for (componente = 0; componente < 3; componente++) {
-				palFundido[color][componente] = LimitaVGA(palJuego[color][componente] - 63 + fundido);
+				palFundido[color][componente] = LimitaVGA(gamePalette[color][componente] - 63 + fundido);
 			}
 		}
 		pause(VelocidadDeFundido);
@@ -2144,7 +2312,7 @@ comienza:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::fin_sound() {
+void DrasculaEngine::stopSound() {
 	delay(1);
 
 	if (hay_sb == 1) {
@@ -2202,7 +2370,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 	sentido_hare = sav->readSint32LE();
 
 	for (l = 1; l < 43; l++) {
-		objetos_que_tengo[l] = sav->readSint32LE();
+		inventoryObjects[l] = sav->readSint32LE();
 	}
 
 	for (l = 0; l < NUM_FLAGS; l++) {
@@ -2210,7 +2378,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 	}
 
 	lleva_objeto = sav->readSint32LE();
-	objeto_que_lleva = sav->readSint32LE();
+	pickedObject = sav->readSint32LE();
 	hay_que_load = 0;
 
 	return true;
@@ -2220,87 +2388,51 @@ void DrasculaEngine::puertas_cerradas(int l) {
 	if (num_ejec == 1 || num_ejec == 3 || num_ejec == 5 || num_ejec == 6)
 		return;
 	else if (num_ejec == 2) {
-		if (num_obj[l] == 138 && flags[0] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 138 && flags[0] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 136 && flags[8] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 136 && flags[8] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 156 && flags[16] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 156 && flags[16] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 163 && flags[17] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 163 && flags[17] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 177 && flags[15] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 177 && flags[15] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 175 && flags[40] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 175 && flags[40] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 173 && flags[36] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 173 && flags[36] == 1)
-			isDoor[l] = 1;
+		if (num_obj[l] == 138)
+			isDoor[l] = flags[0];
+		else if (num_obj[l] == 136)
+			isDoor[l] = flags[8];
+		else if (num_obj[l] == 156)
+			isDoor[l] = flags[16];
+		else if (num_obj[l] == 163)
+			isDoor[l] = flags[17];
+		else if (num_obj[l] == 177)
+			isDoor[l] = flags[15];
+		else if (num_obj[l] == 175)
+			isDoor[l] = flags[40];
+		else if (num_obj[l] == 173)
+			isDoor[l] = flags[36];
 	} else if (num_ejec == 4) {
 		if (num_obj[l] == 101 && flags[0] == 0)
 			isDoor[l] = 0;
 		else if (num_obj[l] == 101 && flags[0] == 1 && flags[28] == 1)
 			isDoor[l] = 1;
-		else if (num_obj[l] == 103 && flags[0] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 103 && flags[0] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 104 && flags[1] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 104 && flags[1] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 105 && flags[1] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 105 && flags[1] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 106 && flags[2] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 106 && flags[2] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 107 && flags[2] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 107 && flags[2] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 110 && flags[6] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 110 && flags[6] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 114 && flags[4] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 114 && flags[4] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 115 && flags[4] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 115 && flags[4] == 1)
-			isDoor[l] = 1;
+		else if (num_obj[l] == 103)
+			isDoor[l] = flags[0];
+		else if (num_obj[l] == 104)
+			isDoor[l] = flags[1];
+		else if (num_obj[l] == 105)
+			isDoor[l] = flags[1];
+		else if (num_obj[l] == 106)
+			isDoor[l] = flags[2];
+		else if (num_obj[l] == 107)
+			isDoor[l] = flags[2];
+		else if (num_obj[l] == 110)
+			isDoor[l] = flags[6];
+		else if (num_obj[l] == 114)
+			isDoor[l] = flags[4];
+		else if (num_obj[l] == 115)
+			isDoor[l] = flags[4];
 		else if (num_obj[l] == 116 && flags[5] == 0)
 			isDoor[l] = 0;
 		else if (num_obj[l] == 116 && flags[5] == 1 && flags[23] == 1)
 			isDoor[l] = 1;
-		else if (num_obj[l] == 117 && flags[5] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 117 && flags[5] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 120 && flags[8] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 120 && flags[8] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 122 && flags[7] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 122 && flags[7] == 1)
-			isDoor[l] = 1;
+		else if (num_obj[l] == 117)
+			isDoor[l] = flags[5];
+		else if (num_obj[l] == 120)
+			isDoor[l] = flags[8];
+		else if (num_obj[l] == 122)
+			isDoor[l] = flags[7];
 	}
 }
 
@@ -2309,7 +2441,7 @@ void DrasculaEngine::color_hare() {
 
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++) {
-			palJuego[color][componente] = palHare[color][componente];
+			gamePalette[color][componente] = palHare[color][componente];
 		}
 	}
 	updatePalette();
@@ -2322,7 +2454,7 @@ void DrasculaEngine::funde_hare(int oscuridad) {
 	for (fundido = oscuridad; fundido >= 0; fundido--) {
 		for (color = 235; color < 253; color++) {
 			for (componente = 0; componente < 3; componente++)
-				palJuego[color][componente] = LimitaVGA(palJuego[color][componente] - 8 + fundido);
+				gamePalette[color][componente] = LimitaVGA(gamePalette[color][componente] - 8 + fundido);
 		}
 	}
 
@@ -2334,7 +2466,7 @@ void DrasculaEngine::paleta_hare_claro() {
 
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++)
-			palHareClaro[color][componente] = palJuego[color][componente];
+			palHareClaro[color][componente] = gamePalette[color][componente];
 	}
 }
 
@@ -2343,7 +2475,7 @@ void DrasculaEngine::paleta_hare_oscuro() {
 
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++)
-			palHareOscuro[color][componente] = palJuego[color][componente];
+			palHareOscuro[color][componente] = gamePalette[color][componente];
 	}
 }
 
@@ -2352,7 +2484,7 @@ void DrasculaEngine::hare_claro() {
 
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++)
-			palJuego[color][componente] = palHareClaro[color][componente];
+			gamePalette[color][componente] = palHareClaro[color][componente];
 	}
 
 	updatePalette();
@@ -2366,26 +2498,26 @@ void DrasculaEngine::empieza_andar() {
 
 	if (num_ejec == 2) {
 		if ((sitio_x < hare_x) && (sitio_y <= (hare_y + alto_hare)))
-			cuadrante_1();
+			quadrant_1();
 		else if ((sitio_x < hare_x) && (sitio_y > (hare_y + alto_hare)))
-			cuadrante_3();
+			quadrant_3();
 		else if ((sitio_x > hare_x + ancho_hare) && (sitio_y <= (hare_y + alto_hare)))
-			cuadrante_2();
+			quadrant_2();
 		else if ((sitio_x > hare_x + ancho_hare) && (sitio_y > (hare_y + alto_hare)))
-			cuadrante_4();
+			quadrant_4();
 		else if (sitio_y < hare_y + alto_hare)
 			anda_parriba();
 		else if (sitio_y > hare_y + alto_hare)
 			anda_pabajo();
 	} else {
 		if ((sitio_x < hare_x + ancho_hare / 2 ) && (sitio_y <= (hare_y + alto_hare)))
-			cuadrante_1();
+			quadrant_1();
 		else if ((sitio_x < hare_x + ancho_hare / 2) && (sitio_y > (hare_y + alto_hare)))
-			cuadrante_3();
+			quadrant_3();
 		else if ((sitio_x > hare_x + ancho_hare / 2) && (sitio_y <= (hare_y + alto_hare)))
-			cuadrante_2();
+			quadrant_2();
 		else if ((sitio_x > hare_x + ancho_hare / 2) && (sitio_y > (hare_y + alto_hare)))
-			cuadrante_4();
+			quadrant_4();
 		else
 			hare_se_mueve = 0;
 	}
@@ -2538,29 +2670,29 @@ void DrasculaEngine::menu_sin_volcar() {
 	strcpy(texto_icono, iconName[x]);
 
 	for (n = 1; n < 43; n++) {
-		h = objetos_que_tengo[n];
+		h = inventoryObjects[n];
 
 		if (h != 0) {
 			if (num_ejec == 6)
-				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
+				copyBackground(x_pol[n], y_pol[n], itemLocations[n].x, itemLocations[n].y,
 						OBJWIDTH, OBJHEIGHT, dir_mesa, dir_zona_pantalla);
 			else
-				copyBackground(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
+				copyBackground(x_pol[n], y_pol[n], itemLocations[n].x, itemLocations[n].y,
 						OBJWIDTH, OBJHEIGHT, dir_hare_frente, dir_zona_pantalla);
 		}
-		copyRect(x1d_menu[h], y1d_menu[h], x_obj[n], y_obj[n],
+		copyRect(x1d_menu[h], y1d_menu[h], itemLocations[n].x, itemLocations[n].y,
 				OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_zona_pantalla);
 	}
 
 	if (x < 7)
-		print_abc(texto_icono, x_obj[x] - 2, y_obj[x] - 7);
+		print_abc(texto_icono, itemLocations[x].x - 2, itemLocations[x].y - 7);
 }
 
 void DrasculaEngine::barra_menu() {
 	int n, sobre_verbo = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (x_raton > x_barra[n] && x_raton < x_barra[n + 1])
+		if (mouseX > x_barra[n] && mouseX < x_barra[n + 1])
 			sobre_verbo = 0;
 		copyRect(OBJWIDTH * n, OBJHEIGHT * sobre_verbo, x_barra[n], 2,
 						OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_zona_pantalla);
@@ -2575,8 +2707,8 @@ void DrasculaEngine::saca_objeto() {
 
 	for (n = 1; n < 43; n++){
 		if (sobre_que_objeto() == n) {
-			h = objetos_que_tengo[n];
-			objetos_que_tengo[n] = 0;
+			h = inventoryObjects[n];
+			inventoryObjects[n] = 0;
 			if (h != 0)
 				lleva_objeto = 1;
 		}
@@ -2737,19 +2869,19 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 
 bool DrasculaEngine::coge_objeto() {
 	int h, n;
-	h = objeto_que_lleva;
+	h = pickedObject;
 	comprueba_flags = 1;
 
 	updateRoom();
 	menu_sin_volcar();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	if (objeto_que_lleva < 7)
+	if (pickedObject < 7)
 		goto usando_verbos;
 
 	for (n = 1; n < 43; n++) {
-		if (sobre_que_objeto() == n && objetos_que_tengo[n] == 0) {
-			objetos_que_tengo[n] = h;
+		if (sobre_que_objeto() == n && inventoryObjects[n] == 0) {
+			inventoryObjects[n] = h;
 			lleva_objeto = 0;
 			comprueba_flags = 0;
 		}
@@ -2773,400 +2905,401 @@ bool DrasculaEngine::banderas(int fl) {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	hay_respuesta = 1;
+	hay_answer = 1;
 
 	if (menu_scr == 1) {
 		if (num_ejec == 1) {
-			if (objeto_que_lleva == LOOK && fl == 28)
+			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
 		} else if (num_ejec == 2) {
-			if ((objeto_que_lleva == LOOK && fl == 22 && flags[23] == 0)
-					|| (objeto_que_lleva == OPEN && fl == 22 && flags[23] == 0)) {
+			if ((pickedObject == kVerbLook && fl == 22 && flags[23] == 0)
+					|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
 				talk(_text[_lang][164], "164.als");
 				flags[23] = 1;
 				withoutVerb();
 				suma_objeto(7);
 				suma_objeto(18);
-			} else if (objeto_que_lleva == LOOK && fl == 22 && flags[23] == 1)
+			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
 				talk(_text[_lang][307], "307.als");
-			else if (objeto_que_lleva == LOOK && fl == 28)
+			else if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][143], "143.als");
-			else if (objeto_que_lleva == TALK && fl == 7)
+			else if (pickedObject == kVerbTalk && fl == 7)
 				talk(_text[_lang][144], "144.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][145], "145.als");
-			else if (objeto_que_lleva == TALK && fl == 8)
+			else if (pickedObject == kVerbTalk && fl == 8)
 				talk(_text[_lang][146], "146.als");
-			else if (objeto_que_lleva == LOOK && fl == 9)
+			else if (pickedObject == kVerbLook && fl == 9)
 				talk(_text[_lang][147], "147.als");
-			else if (objeto_que_lleva == TALK && fl == 9)
+			else if (pickedObject == kVerbTalk && fl == 9)
 				talk(_text[_lang][148], "148.als");
-			else if (objeto_que_lleva == LOOK && fl == 10)
+			else if (pickedObject == kVerbLook && fl == 10)
 				talk(_text[_lang][151], "151.als");
-			else if (objeto_que_lleva == LOOK && fl == 11)
+			else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][152], "152.als");
-			else if (objeto_que_lleva == TALK && fl == 11)
+			else if (pickedObject == kVerbTalk && fl == 11)
 				talk(_text[_lang][153], "153.als");
-			else if (objeto_que_lleva == LOOK && fl == 12)
+			else if (pickedObject == kVerbLook && fl == 12)
 				talk(_text[_lang][154], "154.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][155], "155.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][157], "157.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][58], "58.als");
-			else if (objeto_que_lleva == LOOK && fl == 16)
+			else if (pickedObject == kVerbLook && fl == 16)
 				talk(_text[_lang][158], "158.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][159], "159.als");
-			else if (objeto_que_lleva == LOOK && fl == 18)
+			else if (pickedObject == kVerbLook && fl == 18)
 				talk(_text[_lang][160], "160.als");
-			else if (objeto_que_lleva == LOOK && fl == 19)
+			else if (pickedObject == kVerbLook && fl == 19)
 				talk(_text[_lang][161], "161.als");
-			else if (objeto_que_lleva == LOOK && fl == 20)
+			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als");
-			else if (objeto_que_lleva == LOOK && fl == 23)
+			else if (pickedObject == kVerbLook && fl == 23)
 				talk(_text[_lang][152], "152.als");
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 3) {
-			if (objeto_que_lleva == LOOK && fl == 22)
+			if (pickedObject == kVerbLook && fl == 22)
 				talk(_text[_lang][307], "307.als");
-			else if (objeto_que_lleva == LOOK && fl == 28)
+			else if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][143], "143.als");
-			else if (objeto_que_lleva == TALK && fl == 7)
+			else if (pickedObject == kVerbTalk && fl == 7)
 				talk(_text[_lang][144], "144.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][145], "145.als");
-			else if (objeto_que_lleva == TALK && fl == 8)
+			else if (pickedObject == kVerbTalk && fl == 8)
 				talk(_text[_lang][146], "146.als");
-			else if (objeto_que_lleva == LOOK && fl == 9)
+			else if (pickedObject == kVerbLook && fl == 9)
 				talk(_text[_lang][147], "147.als");
-			else if (objeto_que_lleva == TALK && fl == 9)
+			else if (pickedObject == kVerbTalk && fl == 9)
 				talk(_text[_lang][148], "148.als");
-			else if (objeto_que_lleva == LOOK && fl == 10)
+			else if (pickedObject == kVerbLook && fl == 10)
 				talk(_text[_lang][151], "151.als");
-			else if (objeto_que_lleva == LOOK && fl == 11)
+			else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][152], "152.als");
-			else if (objeto_que_lleva == TALK && fl == 11)
+			else if (pickedObject == kVerbTalk && fl == 11)
 				talk(_text[_lang][153], "153.als");
-			else if (objeto_que_lleva == LOOK && fl == 12)
+			else if (pickedObject == kVerbLook && fl == 12)
 				talk(_text[_lang][154], "154.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][155], "155.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][157], "157.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][58], "58.als");
-			else if (objeto_que_lleva == LOOK && fl == 16)
+			else if (pickedObject == kVerbLook && fl == 16)
 				talk(_text[_lang][158], "158.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][159], "159.als");
-			else if (objeto_que_lleva == LOOK && fl == 18)
+			else if (pickedObject == kVerbLook && fl == 18)
 				talk(_text[_lang][160], "160.als");
-			else if (objeto_que_lleva == LOOK && fl == 19)
+			else if (pickedObject == kVerbLook && fl == 19)
 				talk(_text[_lang][161], "161.als");
-			else if (objeto_que_lleva == LOOK && fl == 20)
+			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als");
-			else if (objeto_que_lleva == LOOK && fl == 23)
+			else if (pickedObject == kVerbLook && fl == 23)
 				talk(_text[_lang][152], "152.als");
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 4) {
-			if ((objeto_que_lleva == 18 && fl == 19) || (objeto_que_lleva == 19 && fl == 18)) {
+			if ((pickedObject == 18 && fl == 19) || (pickedObject == 19 && fl == 18)) {
 				withoutVerb();
 				chooseObject(21);
 				resta_objeto(18);
 				resta_objeto(19);
-			} else if ((objeto_que_lleva == 14 && fl == 19) || (objeto_que_lleva == 19 && fl == 14))
+			} else if ((pickedObject == 14 && fl == 19) || (pickedObject == 19 && fl == 14))
 				talk(_text[_lang][484], "484.als");
-			else if (objeto_que_lleva == LOOK && fl == 28)
+			else if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][478], "478.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][480], "480.als");
-			else if (objeto_que_lleva == LOOK && fl == 9) {
+			else if (pickedObject == kVerbLook && fl == 9) {
 				talk(_text[_lang][482], "482.als");
 				talk(_text[_lang][483], "483.als");
-			} else if (objeto_que_lleva == LOOK && fl == 10)
+			} else if (pickedObject == kVerbLook && fl == 10)
 				talk(_text[_lang][485], "485.als");
-			else if (objeto_que_lleva == LOOK && fl == 11)
+			else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][488], "488.als");
-			else if (objeto_que_lleva == LOOK && fl == 12)
+			else if (pickedObject == kVerbLook && fl == 12)
 				talk(_text[_lang][486], "486.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][490], "490.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][122], "122.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][117], "117.als");
-			else if (objeto_que_lleva == TALK && fl == 15)
+			else if (pickedObject == kVerbTalk && fl == 15)
 				talk(_text[_lang][118], "118.als");
-			else if (objeto_que_lleva == OPEN && fl == 15)
+			else if (pickedObject == kVerbOpen && fl == 15)
 				talk(_text[_lang][119], "119.als");
-			else if (objeto_que_lleva == LOOK && fl == 16)
+			else if (pickedObject == kVerbLook && fl == 16)
 				talk(_text[_lang][491], "491.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][478], "478.als");
-			else if (objeto_que_lleva == LOOK && fl == 18)
+			else if (pickedObject == kVerbLook && fl == 18)
 				talk(_text[_lang][493], "493.als");
-			else if (objeto_que_lleva == LOOK && fl == 19) {
+			else if (pickedObject == kVerbLook && fl == 19) {
 				talk(_text[_lang][494], "494.als");
 				talk(_text[_lang][495], "495.als");
-			} else if (objeto_que_lleva == LOOK && fl == 20)
+			} else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als");
-			else if (objeto_que_lleva == LOOK && fl == 21)
+			else if (pickedObject == kVerbLook && fl == 21)
 				talk(_text[_lang][496], "496.als");
-			else if (objeto_que_lleva == LOOK && fl == 22)
+			else if (pickedObject == kVerbLook && fl == 22)
 				talk(_text[_lang][161], "161.als");
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 5) {
-			if (objeto_que_lleva == LOOK && fl == 28)
+			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 7)
+			else if (pickedObject == kVerbLook && fl == 7)
 				talk(_text[_lang][478],"478.als");
-			else if (objeto_que_lleva == LOOK && fl == 8)
+			else if (pickedObject == kVerbLook && fl == 8)
 				talk(_text[_lang][120], "120.als");
-			else if (objeto_que_lleva == LOOK && fl == 9) {
+			else if (pickedObject == kVerbLook && fl == 9) {
 				talk(_text[_lang][482], "482.als");
 				talk(_text[_lang][483], "483.als");
-			} else if (objeto_que_lleva == LOOK && fl == 11)
+			} else if (pickedObject == kVerbLook && fl == 11)
 				talk(_text[_lang][488], "488.als");
-			else if (objeto_que_lleva == LOOK && fl == 13)
+			else if (pickedObject == kVerbLook && fl == 13)
 				talk(_text[_lang][490], "490.als");
-			else if (objeto_que_lleva == LOOK && fl == 14)
+			else if (pickedObject == kVerbLook && fl == 14)
 				talk(_text[_lang][121], "121.als");
-			else if (objeto_que_lleva == LOOK && fl == 15)
+			else if (pickedObject == kVerbLook && fl == 15)
 				talk(_text[_lang][117], "117.als");
-			else if (objeto_que_lleva == TALK && fl == 15)
+			else if (pickedObject == kVerbTalk && fl == 15)
 				talk(_text[_lang][118], "118.als");
-			else if (objeto_que_lleva == OPEN && fl == 15)
+			else if (pickedObject == kVerbOpen && fl == 15)
 				talk(_text[_lang][119], "119.als");
-			else if (objeto_que_lleva == LOOK && fl == 17)
+			else if (pickedObject == kVerbLook && fl == 17)
 				talk(_text[_lang][478], "478.als");
-			else if (objeto_que_lleva == LOOK && fl == 20)
+			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als"); 
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == LOOK && fl == 28)
+			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
-			else if (objeto_que_lleva == LOOK && fl == 9) {
+			else if (pickedObject == kVerbLook && fl == 9) {
 				talk(_text[_lang][482], "482.als");
 				talk(_text[_lang][483], "483.als");
-			} else if (objeto_que_lleva == LOOK && fl == 20)
+			} else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][123], "123.als");
-			else if (objeto_que_lleva == LOOK && fl == 21)
+			else if (pickedObject == kVerbLook && fl == 21)
 				talk(_text[_lang][441], "441.als");
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		}
 	} else {
 		if (num_ejec == 1) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][308], "308.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (!strcmp(num_room, "62.alg"))
+			else if (roomNumber == 62)
 				room_62(fl);
-			else if (!strcmp(num_room, "63.alg"))
+			else if (roomNumber == 63)
 				room_63(fl);
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 2) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][308], "308.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (objeto_que_lleva == 11 && fl == 50 && flags[22] == 0 && strcmp(num_room, "18.alg"))
+			// Note: the original check was strcmp(num_room, "18.alg")
+			else if (pickedObject == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
 				talk(_text[_lang][315], "315.als");
-			else if (objeto_que_lleva == 13 && fl == 50)
+			else if (pickedObject == 13 && fl == 50)
 				talk(_text[_lang][156], "156.als");
-			else if (objeto_que_lleva == 20 && fl == 50)
+			else if (pickedObject == 20 && fl == 50)
 				talk(_text[_lang][163], "163.als");
-			else if (!strcmp(num_room, "1.alg"))
+			else if (roomNumber == 1)
 				room_1(fl);
-			else if (!strcmp(num_room, "3.alg"))
+			else if (roomNumber == 3)
 				room_3(fl);
-			else if (!strcmp(num_room, "4.alg"))
+			else if (roomNumber == 4)
 				room_4(fl);
-			else if (!strcmp(num_room, "5.alg"))
+			else if (roomNumber == 5)
 				room_5(fl);
-			else if (!strcmp(num_room, "6.alg"))
+			else if (roomNumber == 6)
 				room_6(fl);
-			else if (!strcmp(num_room, "7.alg"))
+			else if (roomNumber == 7)
 				room_7(fl);
-			else if (!strcmp(num_room, "8.alg"))
+			else if (roomNumber == 8)
 				room_8(fl);
-			else if (!strcmp(num_room, "9.alg"))
+			else if (roomNumber == 9)
 				room_9(fl);
-			else if (!strcmp(num_room, "12.alg"))
+			else if (roomNumber == 12)
 				room_12(fl);
-			else if (!strcmp(num_room, "14.alg"))
+			else if (roomNumber == 14)
 				room_14(fl);
-			else if (!strcmp(num_room, "15.alg"))
+			else if (roomNumber == 15)
 				room_15(fl);
-			else if (!strcmp(num_room, "16.alg"))
+			else if (roomNumber == 16)
 				room_16(fl);
-			else if (!strcmp(num_room, "17.alg"))
+			else if (roomNumber == 17)
 				room_17(fl);
-			else if (!strcmp(num_room, "18.alg"))
+			else if (roomNumber == 18)
 				room_18(fl);
-			else if (!strcmp(num_room, "19.alg"))
+			else if (roomNumber == 19)
 				room_19(fl);
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 3) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][309], "309.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (!strcmp(num_room, "13.alg")) {
+			else if (roomNumber == 13) {
 				if (room_13(fl))
 					return true;
 			} else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 4) {
-			if (!strcmp(num_room, "28.alg"))
+			if (roomNumber == 28)
 				talk(_text[_lang][178], "178.als");
-			else if (objeto_que_lleva == LOOK && fl == 50)
+			else if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][309], "309.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als");
-			else if (objeto_que_lleva == 8 && fl == 50 && flags[18] == 0)
+			else if (pickedObject == 8 && fl == 50 && flags[18] == 0)
 				talk(_text[_lang][481], "481.als");
-			else if (objeto_que_lleva == 9 && fl == 50)
+			else if (pickedObject == 9 && fl == 50)
 				talk(_text[_lang][484], "484.als");
-			else if (objeto_que_lleva == 12 && fl == 50 && flags[18] == 0)
+			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
 				talk(_text[_lang][487], "487.als");
-			else if (objeto_que_lleva == 20 && fl == 50)
+			else if (pickedObject == 20 && fl == 50)
 				talk(_text[_lang][487], "487.als");
-			else if (!strcmp(num_room, "21.alg")) {
+			else if (roomNumber == 21) {
 				if (room_21(fl))
 					return true;
-			} else if (!strcmp(num_room, "22.alg"))
+			} else if (roomNumber == 22)
 				room_22(fl);
-			else if (!strcmp(num_room, "23.alg"))
+			else if (roomNumber == 23)
 				room_23(fl);
-			else if (!strcmp(num_room, "24.alg"))
+			else if (roomNumber == 24)
 				room_24(fl);
-			else if (!strcmp(num_room, "26.alg"))
+			else if (roomNumber == 26)
 				room_26(fl);
-			else if (!strcmp(num_room, "27.alg"))
+			else if (roomNumber == 27)
 				room_27(fl);
-			else if (!strcmp(num_room, "29.alg"))
+			else if (roomNumber == 29)
 				room_29(fl);
-			else if (!strcmp(num_room, "30.alg"))
+			else if (roomNumber == 30)
 				room_30(fl);
-			else if (!strcmp(num_room, "31.alg"))
+			else if (roomNumber == 31)
 				room_31(fl);
-			else if (!strcmp(num_room, "34.alg"))
+			else if (roomNumber == 34)
 				room_34(fl);
-			else if (!strcmp(num_room, "35.alg"))
+			else if (roomNumber == 35)
 				room_35(fl);
-			else if (!strcmp(num_room, "44.alg"))
+			else if (roomNumber == 44)
 				room_44(fl);
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 5) {
-			if (objeto_que_lleva == LOOK && fl == 50)
+			if (pickedObject == kVerbLook && fl == 50)
 				talk("Cuanto mas me miro, mas me gusto", "54.als");
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk("y luego como me cierro", "19.als");
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk("Tendre que abrirme primero no", "19.als");
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk("Estoy bien donde estoy", "19.als");
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk("Ya me tengo", "11.als");
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk("hola yo", "16.als");
-			else if (objeto_que_lleva == 20 && fl == 50)
+			else if (pickedObject == 20 && fl == 50)
 				talk(_text[_lang][487], "487.als");
-			else if (!strcmp(num_room, "49.alg"))
+			else if (roomNumber == 49)
 				room_49(fl);
-			else if (!strcmp(num_room, "53.alg"))
+			else if (roomNumber == 53)
 				room_53(fl);
-			else if (!strcmp(num_room, "54.alg"))
+			else if (roomNumber == 54)
 				room_54(fl);
-			else if (!strcmp(num_room, "55.alg"))
+			else if (roomNumber == 55)
 				room_55(fl);
-			else if (!strcmp(num_room, "56.alg")) {
+			else if (roomNumber == 56) {
 				if (room_56(fl))
 					return true;
 			} else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 1)
+			if (pickedObject == kVerbLook && fl == 50 && flags[0] == 1)
 				talk(_text[_lang][308], "308.als");
-			else if (objeto_que_lleva == LOOK && fl == 50 && flags[0] == 0)
+			else if (pickedObject == kVerbLook && fl == 50 && flags[0] == 0)
 				talk(_text[_lang][310], "250.als" );
-			else if (objeto_que_lleva == OPEN && fl == 50)
+			else if (pickedObject == kVerbOpen && fl == 50)
 				talk(_text[_lang][310], "310.als" );
-			else if (objeto_que_lleva == CLOSE && fl == 50)
+			else if (pickedObject == kVerbClose && fl == 50)
 				talk(_text[_lang][311], "311.als" );
-			else if (objeto_que_lleva == MOVE && fl == 50)
+			else if (pickedObject == kVerbMove && fl == 50)
 				talk(_text[_lang][312], "312.als" );
-			else if (objeto_que_lleva == PICK && fl == 50)
+			else if (pickedObject == kVerbPick && fl == 50)
 				talk(_text[_lang][313], "313.als" );
-			else if (objeto_que_lleva == TALK && fl == 50)
+			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als" );
-			else if (!strcmp(num_room, "102.alg"))
+			else if (roomNumber == 102)
 				room_pendulo(fl);
-			else if (!strcmp(num_room, "58.alg"))
+			else if (roomNumber == 58)
 				room_58(fl);
-			else if (!strcmp(num_room, "59.alg"))
+			else if (roomNumber == 59)
 				room_59(fl);
-			else if (!strcmp(num_room, "60.alg")) {
+			else if (roomNumber == 60) {
 				if (room_60(fl))
 					return true;
-			} else if (!strcmp(num_room, "61.alg"))
+			} else if (roomNumber == 61)
 				room_61(fl);
 			else
-				hay_respuesta = 0;
+				hay_answer = 0;
 		}
 	}
-	if (hay_respuesta == 0 && hay_nombre == 1)
+	if (hay_answer == 0 && hay_nombre == 1)
 		room_0();
-	else if (hay_respuesta == 0 && menu_scr == 1)
+	else if (hay_answer == 0 && menu_scr == 1)
 		room_0();
 
 	return false;
@@ -3177,8 +3310,8 @@ void DrasculaEngine::cursor_mesa() {
 
 	pos_cursor[0] = 225;
 	pos_cursor[1] = 56;
-	pos_cursor[2] = x_raton - 20;
-	pos_cursor[3] = y_raton - 12;
+	pos_cursor[2] = mouseX - 20;
+	pos_cursor[3] = mouseY - 12;
 	pos_cursor[4] = 40;
 	pos_cursor[5] = 25;
 
@@ -3198,80 +3331,12 @@ void DrasculaEngine::introduce_nombre() {
 		key = getscan();
 		delay(70);
 		if (key != 0) {
-			if (key == Common::KEYCODE_q)
-				select2[v] = 'q';
-			else if (key == Common::KEYCODE_w)
-				select2[v] = 'w';
-			else if (key == Common::KEYCODE_e)
-				select2[v] = 'e';
-			else if (key == Common::KEYCODE_r)
-				select2[v] = 'r';
-			else if (key == Common::KEYCODE_t)
-				select2[v] = 't';
-			else if (key == Common::KEYCODE_y)
-				select2[v] = 'y';
-			else if (key == Common::KEYCODE_u)
-				select2[v] = 'u';
-			else if (key == Common::KEYCODE_i)
-				select2[v] = 'i';
-			else if (key == Common::KEYCODE_o)
-				select2[v] = 'o';
-			else if (key == Common::KEYCODE_p)
-				select2[v] = 'p';
-			else if (key == Common::KEYCODE_a)
-				select2[v] = 'a';
-			else if (key == Common::KEYCODE_s)
-				select2[v] = 's';
-			else if (key == Common::KEYCODE_d)
-				select2[v] = 'd';
-			else if (key == Common::KEYCODE_f)
-				select2[v] = 'f';
-			else if (key == Common::KEYCODE_g)
-				select2[v] = 'g';
-			else if (key == Common::KEYCODE_h)
-				select2[v] = 'h';
-			else if (key == Common::KEYCODE_j)
-				select2[v] = 'j';
-			else if (key == Common::KEYCODE_k)
-				select2[v] = 'k';
-			else if (key == Common::KEYCODE_l)
-				select2[v] = 'l';
+			if (key >= 0 && key <= 0xFF && isalpha(key))
+				select2[v] = tolower(key);
 			else if ((key == Common::KEYCODE_LCTRL) || (key == Common::KEYCODE_RCTRL))
 				select2[v] = '\164';
-			else if (key == Common::KEYCODE_z)
-				select2[v] = 'z';
-			else if (key == Common::KEYCODE_x)
-				select2[v] = 'x';
-			else if (key == Common::KEYCODE_c)
-				select2[v] = 'c';
-			else if (key == Common::KEYCODE_v)
-				select2[v] = 'v';
-			else if (key == Common::KEYCODE_b)
-				select2[v] = 'b';
-			else if (key == Common::KEYCODE_n)
-				select2[v] = 'n';
-			else if (key == Common::KEYCODE_m)
-				select2[v] = 'm';
-			else if (key == Common::KEYCODE_1)
-				select2[v] = '1';
-			else if (key == Common::KEYCODE_2)
-				select2[v] = '2';
-			else if (key == Common::KEYCODE_3)
-				select2[v] = '3';
-			else if (key == Common::KEYCODE_4)
-				select2[v] = '4';
-			else if (key == Common::KEYCODE_5)
-				select2[v] = '5';
-			else if (key == Common::KEYCODE_6)
-				select2[v] = '6';
-			else if (key == Common::KEYCODE_7)
-				select2[v] = '7';
-			else if (key == Common::KEYCODE_8)
-				select2[v] = '8';
-			else if (key == Common::KEYCODE_9)
-				select2[v] = '9';
-			else if (key == Common::KEYCODE_0)
-				select2[v] = '0';
+			else if (key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9)
+				select2[v] = key;
 			else if (key == Common::KEYCODE_SPACE)
 				select2[v] = '\167';
 			else if (key == ESC)
@@ -3303,8 +3368,8 @@ void DrasculaEngine::introduce_nombre() {
 
 void DrasculaEngine::para_grabar(char nom_game[]) {
 	saveGame(nom_game);
-	comienza_sound("99.als");
-	fin_sound();
+	playSound("99.als");
+	stopSound();
 }
 
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
@@ -3566,87 +3631,87 @@ char DrasculaEngine::codifica(char car) {
 	return ~car;
 }
 
-void DrasculaEngine::cuadrante_1() {
-	float distancia_x, distancia_y;
+void DrasculaEngine::quadrant_1() {
+	float distance_x, distance_y;
 
 	if (num_ejec == 2)
-		distancia_x = hare_x - sitio_x;
+		distance_x = hare_x - sitio_x;
 	else
-		distancia_x = hare_x + ancho_hare / 2 - sitio_x;
+		distance_x = hare_x + ancho_hare / 2 - sitio_x;
 
-	distancia_y = (hare_y + alto_hare) - sitio_y;
+	distance_y = (hare_y + alto_hare) - sitio_y;
 
-	if (distancia_x < distancia_y) {
+	if (distance_x < distance_y) {
 		direccion_hare = 0;
 		sentido_hare = 2;
-		step_x = (int)(distancia_x / (distancia_y / PASO_HARE_Y));
+		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 7;
 		sentido_hare = 0;
-		step_y = (int)(distancia_y / (distancia_x / PASO_HARE_X));
+		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
-void DrasculaEngine::cuadrante_2() {
-	float distancia_x, distancia_y;
+void DrasculaEngine::quadrant_2() {
+	float distance_x, distance_y;
 
 	if (num_ejec == 2)
-		distancia_x = abs(hare_x + ancho_hare - sitio_x);
+		distance_x = abs(hare_x + ancho_hare - sitio_x);
 	else
-		distancia_x = abs(hare_x + ancho_hare / 2 - sitio_x);
+		distance_x = abs(hare_x + ancho_hare / 2 - sitio_x);
 
-	distancia_y = (hare_y + alto_hare) - sitio_y;
+	distance_y = (hare_y + alto_hare) - sitio_y;
 
-	if (distancia_x < distancia_y) {
+	if (distance_x < distance_y) {
 		direccion_hare = 1;
 		sentido_hare = 2;
-		step_x = (int)(distancia_x / (distancia_y / PASO_HARE_Y));
+		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 2;
 		sentido_hare = 1;
-		step_y = (int)(distancia_y / (distancia_x / PASO_HARE_X));
+		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
-void DrasculaEngine::cuadrante_3() {
-	float distancia_x, distancia_y;
+void DrasculaEngine::quadrant_3() {
+	float distance_x, distance_y;
 
 	if (num_ejec == 2)
-		distancia_x = hare_x - sitio_x;
+		distance_x = hare_x - sitio_x;
 	else
-		distancia_x = hare_x + ancho_hare / 2 - sitio_x;
+		distance_x = hare_x + ancho_hare / 2 - sitio_x;
 
-	distancia_y = sitio_y - (hare_y + alto_hare);
+	distance_y = sitio_y - (hare_y + alto_hare);
 
-	if (distancia_x < distancia_y) {
+	if (distance_x < distance_y) {
 		direccion_hare = 5;
 		sentido_hare = 3;
-		step_x = (int)(distancia_x / (distancia_y / PASO_HARE_Y));
+		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 6;
 		sentido_hare = 0;
-		step_y = (int)(distancia_y / (distancia_x / PASO_HARE_X));
+		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
-void DrasculaEngine::cuadrante_4() {
-	float distancia_x, distancia_y;
+void DrasculaEngine::quadrant_4() {
+	float distance_x, distance_y;
 
 	if (num_ejec == 2)
-		distancia_x = abs(hare_x + ancho_hare - sitio_x);
+		distance_x = abs(hare_x + ancho_hare - sitio_x);
 	else
-		distancia_x = abs(hare_x + ancho_hare / 2 - sitio_x);
+		distance_x = abs(hare_x + ancho_hare / 2 - sitio_x);
 
-	distancia_y = sitio_y - (hare_y + alto_hare);
+	distance_y = sitio_y - (hare_y + alto_hare);
 
-	if (distancia_x < distancia_y) {
+	if (distance_x < distance_y) {
 		direccion_hare = 4;
 		sentido_hare = 3;
-		step_x = (int)(distancia_x / (distancia_y / PASO_HARE_Y));
+		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 3;
 		sentido_hare = 1;
-		step_y = (int)(distancia_y / (distancia_x / PASO_HARE_X));
+		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
@@ -3664,7 +3729,7 @@ void DrasculaEngine::saveGame(char nom_game[]) {
 	out->writeSint32LE(sentido_hare);
 
 	for (l = 1; l < 43; l++) {
-		out->writeSint32LE(objetos_que_tengo[l]);
+		out->writeSint32LE(inventoryObjects[l]);
 	}
 
 	for (l = 0; l < NUM_FLAGS; l++) {
@@ -3672,7 +3737,7 @@ void DrasculaEngine::saveGame(char nom_game[]) {
 	}
 
 	out->writeSint32LE(lleva_objeto);
-	out->writeSint32LE(objeto_que_lleva);
+	out->writeSint32LE(pickedObject);
 
 	out->finalize();
 	if (out->ioFailed())
@@ -3690,28 +3755,16 @@ void DrasculaEngine::aumenta_num_frame() {
 		if (num_frame == 6)
 			num_frame = 0;
 
-		if (direccion_hare == 0) {
+		if (direccion_hare == 0 || direccion_hare == 7) {
 			hare_x = hare_x - step_x;
 			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 7) {
-			hare_x = hare_x - step_x;
-			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 1) {
+		} else if (direccion_hare == 1 || direccion_hare == 2) {
 			hare_x = hare_x + step_x;
 			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 2) {
-			hare_x = hare_x + step_x;
-			hare_y = hare_y - step_y;
-		} else if (direccion_hare == 3) {
+		} else if (direccion_hare == 3 || direccion_hare == 4) {
 			hare_x = hare_x + step_x;
 			hare_y = hare_y + step_y;
-		} else if (direccion_hare == 4) {
-			hare_x = hare_x + step_x;
-			hare_y = hare_y + step_y;
-		} else if (direccion_hare == 5) {
-			hare_x = hare_x - step_x;
-			hare_y = hare_y + step_y;
-		} else if (direccion_hare == 6) {
+		} else if (direccion_hare == 5 || direccion_hare == 6) {
 			hare_x = hare_x - step_x;
 			hare_y = hare_y + step_y;
 		}
@@ -3731,8 +3784,8 @@ int DrasculaEngine::sobre_que_objeto() {
 	int n = 0;
 
 	for (n = 1; n < 43; n++) {
-		if (x_raton > x_obj[n] && y_raton > y_obj[n]
-				&& x_raton < x_obj[n] + OBJWIDTH && y_raton < y_obj[n] + OBJHEIGHT)
+		if (mouseX > itemLocations[n].x && mouseY > itemLocations[n].y
+				&& mouseX < itemLocations[n].x + OBJWIDTH && mouseY < itemLocations[n].y + OBJHEIGHT)
 			break;
 	}
 
@@ -3744,7 +3797,7 @@ bool DrasculaEngine::comprueba_banderas_menu() {
 
 	for (n = 0; n < 43; n++) {
 		if (sobre_que_objeto() == n) {
-			h = objetos_que_tengo[n];
+			h = inventoryObjects[n];
 			if (h != 0)
 				if (banderas(h))
 					return true;
@@ -3756,23 +3809,23 @@ bool DrasculaEngine::comprueba_banderas_menu() {
 
 void DrasculaEngine::conversa(const char *nom_fich) {
 	int h;
-	int juego1 = 1, juego2 = 1, juego3 = 1, juego4 = 1;
-	char frase1[78];
-	char frase2[78];
-	char frase3[87];
-	char frase4[78];
+	int game1 = 1, game2 = 1, game3 = 1, game4 = 1;
+	char phrase1[78];
+	char phrase2[78];
+	char phrase3[87];
+	char phrase4[78];
 	char para_codificar[13];
-	char suena1[13];
-	char suena2[13];
-	char suena3[13];
-	char suena4[13];
-	int longitud;
-	int respuesta1;
-	int respuesta2;
-	int respuesta3;
-	int usado1 = 0;
-	int usado2 = 0;
-	int usado3 = 0;
+	char sound1[13];
+	char sound2[13];
+	char sound3[13];
+	char sound4[13];
+	int length;
+	int answer1;
+	int answer2;
+	int answer3;
+	int used1 = 0;
+	int used2 = 0;
+	int used3 = 0;
 	char buffer[256];
 
 	rompo_y_salgo = 0;
@@ -3790,67 +3843,67 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	int size = ald->size();
 
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", frase1);
+	sscanf(buffer, "%s", phrase1);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", frase2);
+	sscanf(buffer, "%s", phrase2);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", frase3);
+	sscanf(buffer, "%s", phrase3);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", frase4);
+	sscanf(buffer, "%s", phrase4);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", suena1);
+	sscanf(buffer, "%s", sound1);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", suena2);
+	sscanf(buffer, "%s", sound2);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", suena3);
+	sscanf(buffer, "%s", sound3);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", suena4);
+	sscanf(buffer, "%s", sound4);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &respuesta1);
+	sscanf(buffer, "%d", &answer1);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &respuesta2);
+	sscanf(buffer, "%d", &answer2);
 	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &respuesta3);
+	sscanf(buffer, "%d", &answer3);
 	delete ald;
 	ald = NULL;
 
 	if (num_ejec == 2 && !strcmp(nom_fich, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
-		strcpy(frase3, _text[_lang][405]);
-		strcpy(suena3, "405.als");
-		respuesta3 = 31;
+		strcpy(phrase3, _text[_lang][405]);
+		strcpy(sound3, "405.als");
+		answer3 = 31;
 	}
 
 	if (num_ejec == 6 && !strcmp(nom_fich, "op_12.cal") && flags[7] == 1) {
-		strcpy(frase3, _text[_lang][273]);
-		strcpy(suena3, "273.als");
-		respuesta3 = 14;
+		strcpy(phrase3, _text[_lang][273]);
+		strcpy(sound3, "273.als");
+		answer3 = 14;
 	}
 
 	if (num_ejec == 6 && !strcmp(nom_fich, "op_12.cal") && flags[10] == 1) {
-		strcpy(frase3, " cuanto queda para que acabe el partido?");
-		strcpy(suena3, "274.als");
-		respuesta3 = 15;
+		strcpy(phrase3, " cuanto queda para que acabe el partido?");
+		strcpy(sound3, "274.als");
+		answer3 = 15;
 	}
 
-	longitud = strlen(frase1);
-	for (h = 0; h < longitud; h++)
-		if (frase1[h] == (char)0xa7)
-			frase1[h] = ' ';
+	length = strlen(phrase1);
+	for (h = 0; h < length; h++)
+		if (phrase1[h] == (char)0xa7)
+			phrase1[h] = ' ';
 
-	longitud = strlen(frase2);
-	for (h = 0; h < longitud; h++)
-		if (frase2[h] == (char)0xa7)
-			frase2[h] = ' ';
+	length = strlen(phrase2);
+	for (h = 0; h < length; h++)
+		if (phrase2[h] == (char)0xa7)
+			phrase2[h] = ' ';
 
-	longitud = strlen(frase3);
-	for (h = 0; h < longitud; h++)
-		if (frase3[h] == (char)0xa7)
-			frase3[h] = ' ';
+	length = strlen(phrase3);
+	for (h = 0; h < length; h++)
+		if (phrase3[h] == (char)0xa7)
+			phrase3[h] = ' ';
 
-	longitud = strlen(frase4);
-	for (h = 0; h < longitud; h++)
-		if (frase4[h] == (char)0xa7)
-			frase4[h] = ' ';
+	length = strlen(phrase4);
+	for (h = 0; h < length; h++)
+		if (phrase4[h] == (char)0xa7)
+			phrase4[h] = ' ';
 
 	loadPic("car.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -3876,89 +3929,89 @@ bucle_opc:
 
 	MirarRaton();
 
-	if (y_raton > 0 && y_raton < 9) {
-		if (usado1 == 1 && _color != WHITE)
+	if (mouseY > 0 && mouseY < 9) {
+		if (used1 == 1 && _color != WHITE)
 			color_abc(WHITE);
-		else if (usado1 == 0 && _color != LIGHT_GREEN)
+		else if (used1 == 0 && _color != LIGHT_GREEN)
 			color_abc(LIGHT_GREEN);
-	} else if (y_raton > 8 && y_raton < 17) {
-		if (usado2 == 1 && _color != WHITE)
+	} else if (mouseY > 8 && mouseY < 17) {
+		if (used2 == 1 && _color != WHITE)
 			color_abc(WHITE);
-		else if (usado2 == 0 && _color != LIGHT_GREEN)
+		else if (used2 == 0 && _color != LIGHT_GREEN)
 			color_abc(LIGHT_GREEN);
-	} else if (y_raton > 16 && y_raton < 25) {
-		if (usado3 == 1 && _color != WHITE)
+	} else if (mouseY > 16 && mouseY < 25) {
+		if (used3 == 1 && _color != WHITE)
 			color_abc(WHITE);
-		else if (usado3 == 0 && _color != LIGHT_GREEN)
+		else if (used3 == 0 && _color != LIGHT_GREEN)
 			color_abc(LIGHT_GREEN);
 	} else if (_color != LIGHT_GREEN)
 		color_abc(LIGHT_GREEN);
 
-	if (y_raton > 0 && y_raton < 9)
-		juego1 = 2;
-	else if (y_raton > 8 && y_raton < 17)
-		juego2 = 2;
-	else if (y_raton > 16 && y_raton < 25)
-		juego3 = 2;
-	else if (y_raton > 24 && y_raton < 33)
-		juego4 = 2;
+	if (mouseY > 0 && mouseY < 9)
+		game1 = 2;
+	else if (mouseY > 8 && mouseY < 17)
+		game2 = 2;
+	else if (mouseY > 16 && mouseY < 25)
+		game3 = 2;
+	else if (mouseY > 24 && mouseY < 33)
+		game4 = 2;
 
-	print_abc_opc(frase1, 1, 2, juego1);
-	print_abc_opc(frase2, 1, 10, juego2);
-	print_abc_opc(frase3, 1, 18, juego3);
-	print_abc_opc(frase4, 1, 26, juego4);
+	print_abc_opc(phrase1, 1, 2, game1);
+	print_abc_opc(phrase2, 1, 10, game2);
+	print_abc_opc(phrase3, 1, 18, game3);
+	print_abc_opc(phrase4, 1, 26, game4);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	if ((boton_izq == 1) && (juego1 == 2)) {
+	if ((button_izq == 1) && (game1 == 2)) {
 		delay(100);
-		usado1 = 1;
-		talk(frase1, suena1);
+		used1 = 1;
+		talk(phrase1, sound1);
 		if (num_ejec == 3)
 			grr();
 		else
-			responde(respuesta1);
-	} else if ((boton_izq == 1) && (juego2 == 2)) {
+			response(answer1);
+	} else if ((button_izq == 1) && (game2 == 2)) {
 		delay(100);
-		usado2 = 1;
-		talk(frase2, suena2);
+		used2 = 1;
+		talk(phrase2, sound2);
 		if (num_ejec == 3)
 			grr();
 		else
-			responde(respuesta2);
-	} else if ((boton_izq == 1) && (juego3 == 2)) {
+			response(answer2);
+	} else if ((button_izq == 1) && (game3 == 2)) {
 		delay(100);
-		usado3 = 1;
-		talk(frase3, suena3);
+		used3 = 1;
+		talk(phrase3, sound3);
 		if (num_ejec == 3)
 			grr();
 		else
-			responde(respuesta3);
-	} else if ((boton_izq == 1) && (juego4 == 2)) {
+			response(answer3);
+	} else if ((button_izq == 1) && (game4 == 2)) {
 		delay(100);
-		talk(frase4, suena4);
+		talk(phrase4, sound4);
 		rompo_y_salgo = 1;
 	}
 
-	if (boton_izq == 1) {
+	if (button_izq == 1) {
 		delay(100);
 		color_abc(LIGHT_GREEN);
 	}
 
-	if (usado1 == 0)
-		juego1 = 1;
+	if (used1 == 0)
+		game1 = 1;
 	else
-		juego1 = 3;
-	if (usado2 == 0)
-		juego2 = 1;
+		game1 = 3;
+	if (used2 == 0)
+		game2 = 1;
 	else
-		juego2 = 3;
-	if (usado3 == 0)
-		juego3 = 1;
+		game2 = 3;
+	if (used3 == 0)
+		game3 = 1;
 	else
-		juego3 = 3;
+		game3 = 3;
 
-	juego4 = 1;
+	game4 = 1;
 
 	if (rompo_y_salgo == 0)
 		goto bucle_opc;
@@ -3972,16 +4025,16 @@ bucle_opc:
 		withoutVerb();
 }
 
-void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_pantalla, int juego) {
+void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_pantalla, int game) {
 	int pos_texto[6];
-	int y_de_signos, y_de_letra, x_de_letra = 0, h, longitud;
-	longitud = strlen(said);
+	int y_de_signos, y_de_letra, x_de_letra = 0, h, length;
+	length = strlen(said);
 
-	for (h = 0; h < longitud; h++) {
-		if (juego == 1) {
+	for (h = 0; h < length; h++) {
+		if (game == 1) {
 			y_de_letra = Y_ABC_OPC_1;
 			y_de_signos = Y_SIGNOS_OPC_1;
-		} else if (juego == 3) {
+		} else if (game == 3) {
 			y_de_letra = Y_ABC_OPC_3;
 			y_de_signos = Y_SIGNOS_OPC_3;
 		} else {
@@ -3992,14 +4045,22 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 		int c = toupper(said[h]);
 		if (c == 'A')
 			x_de_letra = X_A_OPC;
+		else if (c == '\265') x_de_letra = X_A_OPC;
+		else if (c == '\267') x_de_letra = X_A_OPC;
+		else if (c == '\266') x_de_letra = X_A_OPC;
 		else if (c == 'B')
 			x_de_letra = X_B_OPC;
 		else if (c == 'C')
 			x_de_letra = X_C_OPC;
+		else if (c == '\200') x_de_letra = X_C_OPC;
+		else if (c == '\207') x_de_letra = X_C_OPC;
 		else if (c == 'D')
 			x_de_letra = X_D_OPC;
 		else if (c == 'E')
 			x_de_letra = X_E_OPC;
+		else if (c == '\220') x_de_letra = X_E_OPC;
+		else if (c == '\324') x_de_letra = X_E_OPC;
+		else if (c == '\322') x_de_letra = X_E_OPC;
 		else if (c == 'F')
 			x_de_letra = X_F_OPC;
 		else if (c == 'G')
@@ -4008,6 +4069,9 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			x_de_letra = X_H_OPC;
 		else if (c == 'I')
 			x_de_letra = X_I_OPC;
+		else if (c == '\326') x_de_letra = X_I_OPC;
+		else if (c == '\336') x_de_letra = X_I_OPC;
+		else if (c == '\327') x_de_letra = X_I_OPC;
 		else if (c == 'J')
 			x_de_letra = X_J_OPC;
 		else if (c == 'K')
@@ -4018,10 +4082,14 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			x_de_letra = X_M_OPC;
 		else if (c == 'N')
 			x_de_letra = X_N_OPC;
+		else if (c == '\047') x_de_letra = X_GN_OPC;
 		else if (c == 'O')
 			x_de_letra = X_O_OPC;
 		else if (c == 'P')
 			x_de_letra = X_P_OPC;
+		else if (c == '\340') x_de_letra = X_O_OPC;
+		else if (c == '\342') x_de_letra = X_O_OPC;
+		else if (c == '\343') x_de_letra = X_O_OPC;
 		else if (c == 'Q')
 			x_de_letra = X_Q_OPC;
 		else if (c == 'R')
@@ -4032,6 +4100,9 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			x_de_letra = X_T_OPC;
 		else if (c == 'U')
 			x_de_letra = X_U_OPC;
+		else if (c == '\353') x_de_letra = X_U_OPC;
+		else if (c == '\352') x_de_letra = X_U_OPC;
+		else if (c == '\351') x_de_letra = X_U_OPC;
 		else if (c == 'V')
 			x_de_letra = X_V_OPC;
 		else if (c == 'W')
@@ -4123,7 +4194,7 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 	}
 }
 
-void DrasculaEngine::responde(int funcion) {
+void DrasculaEngine::response(int funcion) {
 	if (num_ejec == 1) {
 		if (funcion == 10)
 			talk_borracho(_textb[_lang][1], "B1.als");
@@ -4205,25 +4276,25 @@ void DrasculaEngine::responde(int funcion) {
 }
 
 void DrasculaEngine::suma_objeto(int osj) {
-	int h, puesto = 0;
+	int h, position = 0;
 
 	for (h = 1; h < 43; h++) {
-		if (objetos_que_tengo[h] == osj)
-			puesto = 1;
+		if (inventoryObjects[h] == osj)
+			position = 1;
 	}
 
-	if (puesto == 0) {
+	if (position == 0) {
 		for (h = 1; h < 43; h++) {
-			if (objetos_que_tengo[h] == 0) {
-				objetos_que_tengo[h] = osj;
-				puesto = 1;
+			if (inventoryObjects[h] == 0) {
+				inventoryObjects[h] = osj;
+				position = 1;
 				break;
 			}
 		}
 	}
 }
 
-void DrasculaEngine::fin_sound_corte() {
+void DrasculaEngine::stopSound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
 		delete sku;
@@ -4284,69 +4355,69 @@ void DrasculaEngine::updateData() {
 	if (num_ejec == 1) {
 		// nothing
 	} else if (num_ejec == 2) {
-		if (!strcmp(num_room,"2.alg") && flags[40] == 0)
+		if (roomNumber == 2 && flags[40] == 0)
 			visible[3] = 0;
-		else if (!strcmp(num_room, "3.alg") && flags[3] == 1)
+		else if (roomNumber == 3 && flags[3] == 1)
 			visible[8] = 0;
-		else if (!strcmp(num_room, "6.alg") && flags[1] == 1 && flags[10] == 0) {
+		else if (roomNumber == 6 && flags[1] == 1 && flags[10] == 0) {
 			visible[2] = 0;
 			visible[4] = 1;
-		} else if (!strcmp(num_room, "7.alg") && flags[35] == 1)
+		} else if (roomNumber == 7 && flags[35] == 1)
 			visible[3] = 0;
-		else if (!strcmp(num_room, "14.alg") && flags[5] == 1)
+		else if (roomNumber == 14 && flags[5] == 1)
 			visible[4] = 0;
-		else if (!strcmp(num_room, "18.alg") && flags[28] == 1)
+		else if (roomNumber == 18 && flags[28] == 1)
 			visible[2] = 0;
 	} else if (num_ejec == 3) {
 		// nothing
 	} else if (num_ejec == 4) {
-		if (!strcmp(num_room, "23.alg") && flags[0] == 0 && flags[11] == 0)
+		if (roomNumber == 23 && flags[0] == 0 && flags[11] == 0)
 			visible[2] = 1;
-		if (!strcmp(num_room, "23.alg") && flags[0] == 1 && flags[11] == 0)
+		if (roomNumber == 23 && flags[0] == 1 && flags[11] == 0)
 			visible[2] = 0;
-		if (!strcmp(num_room, "21.alg") && flags[10] == 1)
+		if (roomNumber == 21 && flags[10] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room, "22.alg") && flags[26] == 1) {
+		if (roomNumber == 22 && flags[26] == 1) {
 			visible[2] = 0;
 			visible[1] = 1;
 		}
-		if (!strcmp(num_room, "22.alg") && flags[27] == 1)
+		if (roomNumber == 22 && flags[27] == 1)
 			visible[3] = 0;
-		if (!strcmp(num_room, "26.alg") && flags[21] == 0)
+		if (roomNumber == 26 && flags[21] == 0)
 			strcpy(objName[2], _textmisc[_lang][0]);
-		if (!strcmp(num_room, "26.alg") && flags[18] == 1)
+		if (roomNumber == 26 && flags[18] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room, "26.alg") && flags[12] == 1)
+		if (roomNumber == 26 && flags[12] == 1)
 			visible[1] = 0;
-		if (!strcmp(num_room, "35.alg") && flags[14] == 1)
+		if (roomNumber == 35 && flags[14] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room, "35.alg") && flags[17] == 1)
+		if (roomNumber == 35 && flags[17] == 1)
 			visible[3] = 1;
-		if (!strcmp(num_room, "35.alg") && flags[15] == 1)
+		if (roomNumber == 35 && flags[15] == 1)
 			visible[1] = 0;
 	} else if (num_ejec == 5) {
-		if (!strcmp(num_room,"49.alg") && flags[6] == 1)
+		if (roomNumber == 49 && flags[6] == 1)
 			visible[2] = 0;
-		if (!strcmp(num_room,"49.alg") && flags[6] == 0)
+		if (roomNumber == 49 && flags[6] == 0)
 			visible[1] = 0;
-		if (!strcmp(num_room,"49.alg") && flags[6] == 1)
+		if (roomNumber == 49 && flags[6] == 1)
 			visible[1] = 1;
-		if (!strcmp(num_room,"45.alg") && flags[6] == 1)
+		if (roomNumber == 45 && flags[6] == 1)
 			visible[3] = 1;
-		if (!strcmp(num_room,"53.alg") && flags[2] == 1)
+		if (roomNumber == 53 && flags[2] == 1)
 			visible[3] = 0;
-		if (!strcmp(num_room,"54.alg") && flags[13] == 1)
+		if (roomNumber == 54 && flags[13] == 1)
 			visible[3] = 0;
-		if (!strcmp(num_room,"55.alg") && flags[8] == 1)
+		if (roomNumber == 55 && flags[8] == 1)
 			visible[1] = 0;
 	} else if (num_ejec == 6) {
-		if ((!strcmp(num_room, "58.alg")) && flags[8] == 0)
+		if (roomNumber == 58 && flags[8] == 0)
 			isDoor[1] = 0;
-		if ((!strcmp(num_room, "58.alg")) && flags[8] == 1)
+		if (roomNumber == 58 && flags[8] == 1)
 			isDoor[1] = 1;
-		if (!strcmp(num_room, "59.alg"))
+		if (roomNumber == 59)
 			isDoor[1] = 0;
-		if (!strcmp(num_room, "60.alg")) {
+		if (roomNumber == 60) {
 			sentido_dr = 0;
 			x_dr = 155;
 			y_dr = 69;
@@ -4465,23 +4536,23 @@ comienza:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::openDoor(int nflag, int n_puerta) {
+void DrasculaEngine::openDoor(int nflag, int doorNum) {
 	if (flags[nflag] == 0) {
 		if (num_ejec == 1 /*|| num_ejec == 4*/) {
 			if (nflag != 7) {
-				comienza_sound("s3.als");
+				playSound("s3.als");
 				flags[nflag] = 1;
 			}
 		} else {
-			comienza_sound("s3.als");
+			playSound("s3.als");
 			flags[nflag] = 1;
 		}
 
-		if (n_puerta != NO_DOOR)
-			puertas_cerradas(n_puerta);
+		if (doorNum != NO_DOOR)
+			puertas_cerradas(doorNum);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		fin_sound();
+		stopSound();
 		withoutVerb();
 	}
 }
@@ -4490,8 +4561,8 @@ void DrasculaEngine::mapa() {
 	int l, veo = 0;
 
 	for (l = 0; l < numRoomObjs; l++) {
-		if (x_raton > x1[l] && y_raton > y1[l]
-				&& x_raton < x2[l] && y_raton < y2[l]
+		if (mouseX > x1[l] && mouseY > y1[l]
+				&& mouseX < x2[l] && mouseY < y2[l]
 				&& visible[l] == 1) {
 			strcpy(texto_nombre, objName[l]);
 			hay_nombre = 1;
@@ -4504,8 +4575,7 @@ void DrasculaEngine::mapa() {
 }
 
 void DrasculaEngine::grr() {
-	int longitud;
-	longitud = 30;
+	int length = 30;
 
 	color_abc(DARK_GREEN);
 
@@ -4539,8 +4609,8 @@ bucless:
 		sku = NULL;
 		ctvd_terminate();
 	} else {
-		longitud = longitud - 2;
-		if (longitud > 0)
+		length -= 2;
+		if (length > 0)
 			goto bucless;
 	}
 
@@ -4551,7 +4621,7 @@ bucless:
 void DrasculaEngine::activa_pendulo() {
 	flags[1] = 2;
 	hare_se_ve = 0;
-	strcpy(num_room, "102.alg");
+	roomNumber = 102;
 	loadPic("102.alg");
 	decompressPic(dir_dibujo1, HALF_PAL);
 	loadPic("an_p1.alg");
@@ -4566,15 +4636,15 @@ void DrasculaEngine::activa_pendulo() {
 	conta_ciego_vez = vez();
 }
 
-void DrasculaEngine::cierra_puerta(int nflag, int n_puerta) {
+void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 	if (flags[nflag] == 1) {
-		comienza_sound("s4.als");
+		playSound("s4.als");
 		flags[nflag] = 0;
-		if (n_puerta != NO_DOOR)
-			puertas_cerradas(n_puerta);
+		if (doorNum != NO_DOOR)
+			puertas_cerradas(doorNum);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		fin_sound();
+		stopSound();
 		withoutVerb();
 	}
 }

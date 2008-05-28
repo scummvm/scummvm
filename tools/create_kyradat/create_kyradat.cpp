@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 27,
+	kKyraDatVersion = 28,
 	kIndexSize = 12
 };
 
@@ -42,6 +42,7 @@ enum {
 #include "esp.h"
 #include "fre.h"
 #include "ger.h"
+#include "ita.h"
 #include "towns.h"
 #include "amiga.h"
 
@@ -425,12 +426,9 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 						continue;
 					uint32 len = strlen((const char*) data + i);
 					i += len;
-#if 1
-					// FIXME: Not sure whether this correct; the original code was ambiguious, see below
+
 					targetsize = targetsize - 1 - len;
-#else
-					targetsize = --targetsize - len;	// FIXME: This operation is undefined
-#endif
+
 					while (!data[++i]) {
 						if (i == len)
 							break;
@@ -1334,6 +1332,7 @@ const Game *gameDescs[] = {
 	kyra1EspGames,
 	kyra1FreGames,
 	kyra1GerGames,
+	kyra1ItaGames,
 	kyra1TownsGames,
 	kyra1AmigaGames,
 	kyra1FanTranslations,

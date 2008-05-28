@@ -46,8 +46,8 @@ struct BGIncrust {
 extern Common::List<BGIncrust> bgIncrustList;
 extern uint32 var8;
 
-void addToBGList(int16 objIdx, bool addList = true);
-void addSpriteFilledToBGList(int16 idx, bool addList = true);
+void addToBGList(int16 objIdx);
+void addSpriteFilledToBGList(int16 idx);
 
 void createBgIncrustListElement(int16 objIdx, int16 param);
 void resetBgIncrustList(void);

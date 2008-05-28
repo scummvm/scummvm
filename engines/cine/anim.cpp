@@ -53,6 +53,7 @@ AnimData animDataTable[NUM_MAX_ANIMDATA];
 
 static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
+	{"TITRE", 0xF},
 	{"TITRE2", 0xF},
 	{"ET", 0xC},
 	{"L311", 0x3},

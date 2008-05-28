@@ -1684,6 +1684,71 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	{ // Supplied by DjDiabolik in bug report #1971294
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
+			EN_GRB,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by DjDiabolik in bug report #1971294
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by DjDiabolik in bug report #1971294
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by DjDiabolik in bug report #1971294
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by DjDiabolik in bug report #1971294
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 	{
 		{
 			"dynasty",

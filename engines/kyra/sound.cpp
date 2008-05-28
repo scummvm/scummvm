@@ -66,17 +66,14 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-bool Sound::voicePlay(const char *file, bool isSfx) {
-	uint32 fileSize = 0;
-	byte *fileData = 0;
-	bool found = false;
+int32 Sound::voicePlay(const char *file, bool isSfx) {
 	char filenamebuffer[25];
 
 	int h = 0;
 	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 		h++;
 	if (h >= kNumChannelHandles)
-		return false;
+		return 0;
 
 	Audio::AudioStream *audioStream = 0;
 
@@ -88,29 +85,29 @@ bool Sound::voicePlay(const char *file, bool isSfx) {
 		if (!stream)
 			continue;
 		audioStream = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
-		found = true;
 		break;
 	}
 
-	if (!found) {
+	if (!audioStream) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, ".VOC");
 
-		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
+		uint32 fileSize = 0;
+		byte *fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
-			return false;
+			return 0;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
 		audioStream = Audio::makeVOCStream(vocStream);
+
+		delete[] fileData;
+		fileSize = 0;
 	}
 
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
 
-	delete[] fileData;
-	fileSize = 0;
-
-	return true;
+	return audioStream->getTotalPlayTime();
 }
 
 void Sound::voiceStop(const char *file) {
@@ -141,6 +138,18 @@ bool Sound::voiceIsPlaying(const char *file) {
 		}
 	}
 	return res;
+}
+
+uint32 Sound::voicePlayedTime(const char *file) {
+	if (!file)
+		return 0;
+
+	for (int i = 0; i < kNumChannelHandles; ++i) {
+		if (_soundChannels[i].file == file)
+			return _mixer->getSoundElapsedTime(_soundChannels[i].channelHandle);
+	}
+
+	return 0;
 }
 
 #pragma mark -
@@ -529,12 +538,15 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 
 void KyraEngine_v1::snd_stopVoice() {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_stopVoice()");
-	_sound->voiceStop(_speechFile.empty() ? 0 : _speechFile.c_str());
+	if (!_speechFile.empty()) {
+		_sound->voiceStop(_speechFile.c_str());
+		_speechFile.clear();
+	}
 }
 
 bool KyraEngine_v1::snd_voiceIsPlaying() {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_voiceIsPlaying()");
-	return _sound->voiceIsPlaying(_speechFile.empty() ? 0 : _speechFile.c_str());
+	return _speechFile.empty() ? false : _sound->voiceIsPlaying(_speechFile.c_str());
 }
 
 // static res

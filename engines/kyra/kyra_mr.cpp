@@ -370,7 +370,10 @@ void KyraEngine_MR::playVQA(const char *name) {
 	snprintf(filename, sizeof(filename), "%s%d.VQA", name, size);
 
 	if (vqa.open(filename)) {
-		_soundDigital->stopAllSounds();
+		for (int i = 0; i < 4; ++i) {
+			if (i != _musicSoundChannel)
+				_soundDigital->stopSound(i);
+		}
 
 		_screen->hideMouse();
 		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
@@ -402,13 +405,11 @@ void KyraEngine_MR::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
-	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, Audio::Mixer::kMusicSoundType);
+	_musicSoundChannel = _soundDigital->playSound(_menuAudioFile, 0xFF, Audio::Mixer::kMusicSoundType, 255, true);
 }
 
 void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::snd_playWanderScoreViaMap(%d, %d)", track, force);
-
-	// XXX byte_3C87C compare
 
 	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel))
 		force = 1;

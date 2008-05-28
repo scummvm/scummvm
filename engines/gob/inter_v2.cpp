@@ -1087,6 +1087,8 @@ void Inter_v2::o2_playCDTrack() {
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
+	debugC(1, kDebugSound, "CDROM: Waiting for playback to end");
+
 	while (_vm->_sound->cdGetTrackPos() >= 0)
 		_vm->_util->longDelay(1);
 }
@@ -1431,49 +1433,17 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 
-	if (videoMode == 0x18) {
+	_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight2 = offY;
+	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
-		if (_vm->_video->_surfWidth < _vm->_width)
-			_vm->_video->_screenDeltaX = (_vm->_width - _vm->_video->_surfWidth) / 2;
-		else
-			_vm->_video->_screenDeltaX = 0;
+	_vm->_video->_screenDeltaX = 0;
+	_vm->_video->_screenDeltaY = 0;
 
-		_vm->_global->_mouseMinX = _vm->_video->_screenDeltaX;
-		_vm->_global->_mouseMaxX = _vm->_video->_screenDeltaX + _vm->_video->_surfWidth - 1;
-
-
-		int16 screenHeight = _vm->_video->_surfHeight;
-
-		if (screenHeight < _vm->_height) {
-			_vm->_video->_surfHeight += offY;
-			_vm->_video->_splitStart = screenHeight;
-		} else 
-			_vm->_video->_splitStart = screenHeight - offY;
-
-			_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
-			_vm->_video->_splitHeight2 = offY;
-
-			if ((_vm->_video->_surfHeight + offY) < _vm->_height)
-				_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
-			else
-				_vm->_video->_screenDeltaY = 0;
-
-			_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
-			_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
-
-	} else {
-		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
-		_vm->_video->_splitHeight2 = offY;
-		_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
-
-		_vm->_video->_screenDeltaX = 0;
-		_vm->_video->_screenDeltaY = 0;
-
-		_vm->_global->_mouseMinX = 0;
-		_vm->_global->_mouseMinY = 0;
-		_vm->_global->_mouseMaxX = _vm->_width;
-		_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
-	}
+	_vm->_global->_mouseMinX = 0;
+	_vm->_global->_mouseMinY = 0;
+	_vm->_global->_mouseMaxX = _vm->_width;
+	_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
@@ -1532,18 +1502,27 @@ void Inter_v2::o2_scroll() {
 }
 
 void Inter_v2::o2_setScrollOffset() {
-	int16 offset;
+	int16 offsetX, offsetY;
 
-	offset = _vm->_parse->parseValExpr();
+	offsetX = _vm->_parse->parseValExpr();
+	offsetY = _vm->_parse->parseValExpr();
 
-	if (offset == -1) {
-		_vm->_parse->parseValExpr();
+	if (offsetX == -1) {
 		WRITE_VAR(2, _vm->_draw->_scrollOffsetX);
 		WRITE_VAR(3, _vm->_draw->_scrollOffsetY);
 	} else {
-		_vm->_draw->_scrollOffsetX = offset;
-		_vm->_draw->_scrollOffsetY = _vm->_parse->parseValExpr();
+		int16 screenW = _vm->_video->_surfWidth;
+		int16 screenH = _vm->_video->_surfHeight;
+
+		if (screenW > _vm->_width)
+			screenW -= _vm->_width;
+		if (screenH > _vm->_height)
+			screenH -= _vm->_height;
+
+		_vm->_draw->_scrollOffsetX = CLIP<int16>(offsetX, 0, screenW);
+		_vm->_draw->_scrollOffsetY = CLIP<int16>(offsetY, 0, screenH);
 	}
+
 	_vm->_util->setScrollOffset();
 	_noBusyWait = true;
 }
@@ -1573,6 +1552,10 @@ void Inter_v2::o2_playImd() {
 	palStart = _vm->_parse->parseValExpr();
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
+
+	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
+			"paletteCmd %d (%d - %d), flags %X", _vm->_global->_inter_resStr, x, y,
+			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
 
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
@@ -1606,6 +1589,12 @@ void Inter_v2::o2_getImdInfo() {
 	varFrames = _vm->_parse->parseVarIndex();
 	varWidth = _vm->_parse->parseVarIndex();
 	varHeight = _vm->_parse->parseVarIndex();
+
+	// WORKAROUND: The nut rolling animation in the administration center
+	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
+	if ((_vm->getGameType() == kGameTypeWoodruff) &&
+			(!scumm_stricmp(_vm->_global->_inter_resStr, "noixroule")))
+		strcpy(_vm->_global->_inter_resStr, "noixroul");
 
 	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
 			varFrames, varWidth, varHeight);
@@ -2056,7 +2045,6 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".INS");
-	debugC(1, kDebugMusic, "Loading Infogrames instrument file \"%s\"", fileName);
 
 	_vm->_sound->infogramesLoadInstruments(fileName);
 }
@@ -2069,7 +2057,6 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".DUM");
-	debugC(1, kDebugMusic, "Playing Infogrames music file \"%s\"", fileName);
 
 	_vm->_sound->infogramesLoadSong(fileName);
 	_vm->_sound->infogramesPlay();

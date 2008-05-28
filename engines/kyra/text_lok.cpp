@@ -62,10 +62,8 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 	if (chatDuration != -1)
 		chatDuration *= _tickLength;
 
-	if (vocFile != -1) {
-		snd_voiceWaitForFinish();
+	if (vocFile != -1)
 		snd_playVoiceFile(vocFile);
-	}
 
 	_timer->disable(14);
 	_timer->disable(18);
@@ -268,6 +266,8 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 
 	if (_currentCharacter->sceneId == 210)
 		return;
+
+	snd_voiceWaitForFinish(true);
 
 	convoInitialized = initCharacterChat(charNum);
 	chatPartnerNum = getChatPartnerNum();

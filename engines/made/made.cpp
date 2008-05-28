@@ -109,7 +109,13 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	
 	_quit = false;
 
-	_soundRate = 8000;
+	// Set default sound frequency
+	// Return to Zork sets it itself via a script funtion
+	if (getGameID() == GID_MANHOLE) {
+		_soundRate = 11025;
+	} else {
+		_soundRate = 8000;
+	}
 
 }
 
@@ -171,6 +177,62 @@ Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
 	return filename;
 }
 
+void MadeEngine::handleEvents() {
+
+	Common::Event event;
+	Common::EventManager *eventMan = _system->getEventManager();
+
+	// NOTE: Don't reset _eventNum to 0 here or no events will get through to the scripts.
+
+	while (eventMan->pollEvent(event)) {
+		switch (event.type) {
+
+		case Common::EVENT_MOUSEMOVE:
+			_eventMouseX = event.mouse.x;
+			_eventMouseY = event.mouse.y;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			_eventNum = 1;
+			break;
+
+		/*
+		case Common::EVENT_LBUTTONUP:
+			_eventNum = 2; // TODO: Is this correct?
+			break;
+		*/
+
+		case Common::EVENT_RBUTTONDOWN:
+			_eventNum = 3;
+			break;
+
+		/*
+		case Common::EVENT_RBUTTONUP:
+			eventNum = 4; // TODO: Is this correct?
+			break;
+		*/
+
+		case Common::EVENT_KEYDOWN:
+			_eventKey = event.kbd.ascii;
+			// For unknown reasons, the game accepts ASCII code
+			// 9 as backspace
+			if (_eventKey == Common::KEYCODE_BACKSPACE)
+				_eventKey = 9;
+			_eventNum = 5;
+			break;
+
+		case Common::EVENT_QUIT:
+			_quit = true;
+			break;
+
+		default:
+			break;
+
+		}
+	}
+
+}
+
 int MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
@@ -205,8 +267,19 @@ int MadeEngine::go() {
 		error ("Unknown MADE game");
 	}
 
-	_eventKey = _eventMouseX = _eventMouseY = 0;
+	// FIXME: This should make things a little faster until proper dirty rectangles
+	//        are implemented.
+	// NOTE: Disabled again since it causes major graphics errors.
+	//_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
+	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
+	
+#ifdef DUMP_SCRIPTS
+	_script->dumpAllScripts();
+#else
+	_screen->setDefaultMouseCursor();
 	_script->runScript(_dat->getMainCodeObjectIndex());
+#endif
 
 	return 0;
 }

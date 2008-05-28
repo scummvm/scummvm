@@ -55,14 +55,14 @@ ARM_adpcm
 loop:
 	LDRH	r10,[r11,r2]	@ r10 = stepTab[stepTableIndex]
 	TST	r12,#4		@ if ((offset & 4) == 0)
-	MOVEQ	r9, #0		@	r9 = diff = 0
+	MOVEQ	r9, #0		@ 	r9 = diff = 0
 	MOVNE	r9, r10		@ else	r9 = diff = stepTab[stepTableIndex]
 
 	TST	r12,#2		@ if (offset & 2)
-	ADDNE	r9, r9, r10,ASR #1	@	diff += r10>>1
+	ADDNE	r9, r9, r10,ASR #1	@ 	diff += r10>>1
 
 	TST	r12,#1		@ if (offset & 1)
-	ADDNE	r9, r9, r10,ASR #2	@	diff += r10>>2
+	ADDNE	r9, r9, r10,ASR #2	@ 	diff += r10>>2
 
 	ADD	r9, r9, r10,ASR #3	@ diff += r10>>3
 

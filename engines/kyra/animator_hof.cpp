@@ -127,12 +127,8 @@ void KyraEngine_HoF::updateItemAnimations() {
 		return;	
 
 	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
-	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
-	
-	if (++_nextAnimItem == 14) {
-		_nextAnimItem = 0;
-		return;
-	}
+	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];	
+	_nextAnimItem = ++_nextAnimItem % _itemAnimDataSize;
 
 	uint32 ctime = _system->getMillis();
 	if (ctime < a->nextFrame)

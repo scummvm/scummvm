@@ -24,6 +24,18 @@
 
 #if defined(MACOSX) || defined(macintosh)
 
+// HACK to disable deprecated warnings under Mac OS X 10.5.
+// Apple depracted the complete QuickTime Music/MIDI API.
+// Apps are supposed to use CoreAudio & CoreMIDI. We do support
+// those, but while QT Midi support is still around, there is no
+// reason to disable this driver. If they really ditch the API in 10.6,
+// we can still release binaries with this driver disabled/removed.
+#include <AvailabilityMacros.h>
+#undef DEPRECATED_ATTRIBUTE
+#define DEPRECATED_ATTRIBUTE
+
+
+
 #include "common/endian.h"
 #include "common/util.h"
 #include "sound/midiplugin.h"
@@ -285,10 +297,10 @@ MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
 	return mididriver;
 }
 
-//#if PLUGIN_ENABLED_DYNAMIC(QT)
-	//REGISTER_PLUGIN_DYNAMIC(QT, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+//#if PLUGIN_ENABLED_DYNAMIC(QUICKTIME)
+	//REGISTER_PLUGIN_DYNAMIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(QT, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+	REGISTER_PLUGIN_STATIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
 //#endif
 
 #endif // MACOSX || macintosh

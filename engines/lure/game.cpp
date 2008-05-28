@@ -167,6 +167,7 @@ void Game::execute() {
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
 				nextFrame();
+				res.delayList().tick();
 
 				Sound.musicInterface_ContinuePlaying();
 			}
@@ -176,8 +177,6 @@ void Game::execute() {
 				timerVal2 = system.getMillis();
 				tickCheck();
 			}
-
-			res.delayList().tick();
 
 			while (events.pollEvent()) {
 				if (events.type() == Common::EVENT_KEYDOWN) {

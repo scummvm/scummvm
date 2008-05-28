@@ -56,9 +56,20 @@ enum Languages {
 	kItalian = 4
 };
 
+enum Verbs {
+	kVerbDefault = -1,
+	kVerbLook = 1,
+	kVerbPick = 2,
+	kVerbOpen = 3,
+	kVerbClose = 4,
+	kVerbTalk = 5,
+	kVerbMove = 6
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
+struct RoomTalkAction;
 
 #define NUM_SAVES     10
 #define NUM_FLAGS     50
@@ -72,102 +83,9 @@ struct DrasculaGameDescription;
 #define F8           0x42
 #define F9           0x43
 #define F10          0x44
-#define LOOK            1
-#define PICK            2
-#define OPEN            3
-#define CLOSE           4
-#define TALK            5
-#define MOVE            6
 #define DIF_MASK       55
 #define OBJWIDTH        40
 #define OBJHEIGHT         25
-
-#define X_OBJ1         5
-#define Y_OBJ1         10
-#define X_OBJ2         50
-#define Y_OBJ2         10
-#define X_OBJ3         95
-#define Y_OBJ3         10
-#define X_OBJ4         140
-#define Y_OBJ4         10
-#define X_OBJ5         185
-#define Y_OBJ5         10
-#define X_OBJ6         230
-#define Y_OBJ6         10
-#define X_OBJ7         275
-#define Y_OBJ7         10
-#define X_OBJ8         5
-#define Y_OBJ8         40
-#define X_OBJ9         50
-#define Y_OBJ9         40
-#define X_OBJ10        95
-#define Y_OBJ10        40
-#define X_OBJ11        140
-#define Y_OBJ11        40
-#define X_OBJ12        185
-#define Y_OBJ12        40
-#define X_OBJ13        230
-#define Y_OBJ13        40
-#define X_OBJ14        275
-#define Y_OBJ14        40
-#define X_OBJ15        5
-#define Y_OBJ15        70
-#define X_OBJ16        50
-#define Y_OBJ16        70
-#define X_OBJ17        95
-#define Y_OBJ17        70
-#define X_OBJ18        140
-#define Y_OBJ18        70
-#define X_OBJ19        185
-#define Y_OBJ19        70
-#define X_OBJ20        230
-#define Y_OBJ20        70
-#define X_OBJ21        275
-#define Y_OBJ21        70
-#define X_OBJ22        5
-#define Y_OBJ22        100
-#define X_OBJ23        50
-#define Y_OBJ23        100
-#define X_OBJ24        95
-#define Y_OBJ24        100
-#define X_OBJ25        140
-#define Y_OBJ25        100
-#define X_OBJ26        185
-#define Y_OBJ26        100
-#define X_OBJ27        230
-#define Y_OBJ27        100
-#define X_OBJ28        275
-#define Y_OBJ28        100
-#define X_OBJ29        5
-#define Y_OBJ29        130
-#define X_OBJ30        50
-#define Y_OBJ30        130
-#define X_OBJ31        95
-#define Y_OBJ31        130
-#define X_OBJ32        140
-#define Y_OBJ32        130
-#define X_OBJ33        185
-#define Y_OBJ33        130
-#define X_OBJ34        230
-#define Y_OBJ34        130
-#define X_OBJ35        275
-#define Y_OBJ35        130
-#define X_OBJ36        5
-#define Y_OBJ36        160
-#define X_OBJ37        50
-#define Y_OBJ37        160
-#define X_OBJ38        95
-#define Y_OBJ38        160
-#define X_OBJ39        140
-#define Y_OBJ39        160
-#define X_OBJ40        185
-#define Y_OBJ40        160
-#define X_OBJ41        230
-#define Y_OBJ41        160
-#define X_OBJ42        275
-#define Y_OBJ42        160
-#define X_OBJ43        275
-#define Y_OBJ43        160
 
 #define DIF_MASK_HARE   72
 #define DIF_MASK_ABC    22
@@ -175,7 +93,9 @@ struct DrasculaGameDescription;
 #define CHAR_HEIGHT      6
 
 #define Y_ABC            158
+#define Y_ABC_ESP        149
 #define Y_SIGNOS         169
+#define Y_SIGNOS_ESP     160
 #define Y_ACENTOS        180
 
 #define X_A              6
@@ -356,6 +276,7 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	Common::Language getLanguage() const;
 	void updateEvents();
 
 	Audio::SoundHandle _soundHandle;
@@ -380,7 +301,7 @@ public:
 	void copyRectClip(int *Array, byte *src, byte *dest);
 	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
 
-	DacPalette256 palJuego;
+	DacPalette256 gamePalette;
 	DacPalette256 palHare;
 	DacPalette256 palHareClaro;
 	DacPalette256 palHareOscuro;
@@ -406,7 +327,8 @@ public:
 
 	int hay_sb;
 	int nivel_osc, previousMusic, roomMusic;
-	char num_room[20], roomDisk[20];
+	int roomNumber;
+	char roomDisk[20];
 	char currentData[20];
 	int numRoomObjs;
 	char fondo_y_menu[20];
@@ -416,11 +338,11 @@ public:
 
 	int num_obj[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
-	int objetos_que_tengo[43];
+	int inventoryObjects[43];
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
-	int lleva_objeto, objeto_que_lleva;
+	int lleva_objeto, pickedObject;
 	int withVoices;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[20];
@@ -444,7 +366,7 @@ public:
 	int sentido_final, anda_a_objeto;
 	int obj_saliendo;
 	int diff_vez, conta_vez;
-	int hay_respuesta;
+	int hay_answer;
 	int conta_ciego_vez;
 	int cambio_de_color;
 	int rompo_y_salgo;
@@ -469,15 +391,17 @@ public:
 	int corta_musica;
 	char select[23];
 	int hay_seleccion;
-	int x_raton;
-	int y_raton;
-	int y_raton_ant;
-	int boton_izq;
-	int boton_dch;
+	int mouseX;
+	int mouseY;
+	int mouseY_ant;
+	int button_izq;
+	int button_dch;
 
 	bool escoba();
 	void black();
+	void talk_vb(int);
 	void talk_vb(const char *, const char *);
+	void talk_vbpuerta(int);
 	void talk_vbpuerta(const char *said, const char *filename);
 	void talk_ciego(const char *, const char *, const char *);
 	void talk_hacker(const char *, const char *);
@@ -487,7 +411,7 @@ public:
 	void pon_vb();
 	void lleva_vb(int punto_x);
 	void hipo_sin_nadie(int counter);
-	void openDoor(int nflag, int n_puerta);
+	void openDoor(int nflag, int doorNum);
 	void mapa();
 	void animation_1_1();
 	void animation_2_1();
@@ -598,15 +522,16 @@ public:
 	char LimitaVGA(char valor);
 	void color_abc(int cl);
 	void centra_texto(const char *,int,int);
-	void comienza_sound(const char *);
-	void anima(const char *animation, int FPS);
-	void fin_sound_corte();
+	void playSound(const char *);
+	bool anima(const char *animation, int FPS);
+	void stopSound_corte();
 	void FundeAlNegro(int VelocidadDeFundido);
 	void pause(int);
 	void talk_dr_grande(const char *said, const char *filename);
 	void pon_igor();
 	void pon_bj();
 	void pon_dr();
+	void talkInit(const char *filename);
 	void talk_igor_dch(const char *said, const char *filename);
 	void talk_dr_dch(const char *said, const char *filename);
 	void talk_dr_izq(const char *said, const char *filename);
@@ -616,19 +541,21 @@ public:
 	void talk_igorpuerta(const char *said, const char *filename);
 	void talk_igor_peluca(const char *said, const char *filename);
 	void hipo(int);
-	void fin_sound();
+	void stopSound();
+	void talk_bj(int);
 	void talk_bj(const char *, const char *);
 	void talk_baul(const char *said, const char *filename);
+	void talk(int);
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
-	void cierra_puerta(int nflag, int n_puerta);
+	void closeDoor(int nflag, int doorNum);
 	void playMusic(int p);
 	void stopMusic();
 	int musicStatus();
 	void updateRoom();
 	bool carga_partida(const char *);
 	void puertas_cerradas(int);
-	void animafin_sound_corte();
+	void animastopSound_corte();
 	void color_hare();
 	void funde_hare(int oscuridad);
 	void paleta_hare_claro();
@@ -684,10 +611,10 @@ public:
 	int vez();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	char codifica(char);
-	void cuadrante_1();
-	void cuadrante_2();
-	void cuadrante_3();
-	void cuadrante_4();
+	void quadrant_1();
+	void quadrant_2();
+	void quadrant_3();
+	void quadrant_4();
 	void update_62();
 	void update_62_pre();
 	void update_63();
@@ -695,6 +622,7 @@ public:
 	void aumenta_num_frame();
 	int sobre_que_objeto();
 	bool comprueba_banderas_menu();
+	bool roomParse(RoomTalkAction*, int);
 	void room_0();
 	void room_1(int);
 	void room_2(int);
@@ -728,7 +656,7 @@ public:
 	void room_63(int);
 	void conversa(const char *);
 	void print_abc_opc(const char *, int, int, int);
-	void responde(int);
+	void response(int);
 	void talk_borracho(const char *said, const char *filename);
 	void talk_pianista(const char *said, const char *filename);
 
@@ -822,6 +750,7 @@ public:
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
 	void talk_taber2(const char *, const char *);
+	void talk_bj_cama(int);
 	void talk_bj_cama(const char *said, const char * filename);
 	void talk_htel(const char *said, const char *filename);
 
@@ -842,7 +771,7 @@ extern const char *_textvb[][63];
 extern const char *_textsys[][4];
 extern const char *_texthis[][5];
 extern const char *_textverbs[][6];
-extern const char *_textmisc[][1];
+extern const char *_textmisc[][2];
 extern const char *_textd1[][11];
 
 } // End of namespace Drascula

@@ -74,6 +74,10 @@ namespace Made {
 static const MadeGameDescription gameDescriptions[] = {
 
 	{
+		// NOTE: Return to Zork entries with *.dat are used to detect the game via rtzcd.dat,
+		// which is packed inside rtzcd.red. Entries with *.red refer to the packed file
+		// directly, which is the "official" way.
+
 		// Return to Zork - English CD version 1.0 9/15/93
 		// Patch #1953654 submitted by spookypeanut
 		{
@@ -109,8 +113,6 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - English CD version 1.1 12/7/93
-		// NOTE: This detects the game via the rtzcd.dat which is inside rtzcd.red.
-		// The entry below detects via rtzcd.red directly, which is the "official" way.
 		{
 			"rtz",
 			"CD",
@@ -143,6 +145,23 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - English CD version 1.2 9/29/94
+		// Supplied by Dark-Star in the ScummVM forums
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		0,
+	},
+
+	{
+		// Return to Zork - English CD version 1.2 9/29/94
 		{
 			"rtz",
 			"CD",
@@ -157,6 +176,41 @@ static const MadeGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		// Return to Zork - German CD version 1.2 9/29/94
+		// (same as the English 1.2 version)
+		// Supplied by Dark-Star in the ScummVM forums
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		0,
+	},
+
+	{
+		// Return to Zork - German CD version 1.2 4/18/95
+		// (same as the English 1.2 version)
+		// Supplied by Dark-Star in the ScummVM forums
+		{
+			"rtz",
+			"CD",
+			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED,
+		0,
+	},
 
 	{
 		// Return to Zork - English floppy version
@@ -302,7 +356,8 @@ const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const FSList *fs
 	Made::g_fallbackDesc.features = 0;
 	Made::g_fallbackDesc.version = 0;
 
-	return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	//return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	return NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)

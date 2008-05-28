@@ -337,6 +337,8 @@ void GUI_LoK::setGUILabels() {
 	} else if (_vm->gameFlags().lang == Common::ES_ESP) {
 		offsetOn = offsetMainMenu = offsetOptions = offset = -4;
 		menuLabelGarbageOffset = 72;
+	} else if (_vm->gameFlags().lang == Common::IT_ITA) {
+		offsetOn = offsetMainMenu = offsetOptions = offset = 32;
 	} else if (_vm->gameFlags().lang == Common::DE_DEU) {
 		offset = offsetMainMenu = offsetOn = offsetOptions = 24;
 	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) {

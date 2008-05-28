@@ -658,12 +658,8 @@ static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
 static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
 
 void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
-	if (chapter < 0) {
-		if (_vm->getGameId() != GID_IHNM_DEMO)
-			chapter = 8;
-		else
-			chapter = 7;
-	}
+	if (chapter < 0)
+		chapter = (_vm->getGameId() != GID_IHNM_DEMO) ? 8 : 7;
 
 	// TODO
 	//if (module.voiceLUT)

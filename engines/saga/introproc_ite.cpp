@@ -36,7 +36,6 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
-#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 
 namespace Saga {
@@ -45,6 +44,21 @@ using Common::UNK_LANG;
 using Common::EN_ANY;
 using Common::DE_DEU;
 using Common::IT_ITA;
+
+// Intro scenes
+#define RID_ITE_INTRO_ANIM_SCENE 1538
+#define RID_ITE_CAVE_SCENE_1 1542
+#define RID_ITE_CAVE_SCENE_2 1545
+#define RID_ITE_CAVE_SCENE_3 1548
+#define RID_ITE_CAVE_SCENE_4 1551
+#define RID_ITE_VALLEY_SCENE 1556
+#define RID_ITE_TREEHOUSE_SCENE 1560
+#define RID_ITE_FAIREPATH_SCENE 1564
+#define RID_ITE_FAIRETENT_SCENE 1567
+
+// ITE intro music
+#define MUSIC_1 9
+#define MUSIC_2 10
 
 LoadSceneParams ITE_IntroList[] = {
 	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
@@ -380,63 +394,65 @@ int Scene::ITEIntroCave1Proc(int param) {
 
 	static const IntroDialogue dialogue[][4] = {
 		{ { // English
-			RID_CAVE_VOICE_0,
+			0,		// cave voice 0
 			"We see the sky, we see the land, we see the water, "
 			"and we wonder: Are we the only ones?"
 		},
 		{
-			RID_CAVE_VOICE_1,
+			1,		// cave voice 1
 			"Long before we came to exist, the humans ruled the "
 			"Earth."
 		},
 		{
-			RID_CAVE_VOICE_2,
+			2,		// cave voice 2
 			"They made marvelous things, and moved whole "
 			"mountains."
 		},
 		{
-			RID_CAVE_VOICE_3,
+			3,		// cave voice 3
 			"They knew the Secret of Flight, the Secret of "
 			"Happiness, and other secrets beyond our imagining."
 		} },
+		// -----------------------------------------------------
 		{ { // German
-			RID_CAVE_VOICE_0,
+			0,		// cave voice 0
 			"Um uns sind der Himmel, das Land und die Seen; und "
 			"wir fragen uns - sind wir die einzigen?"
 		},
 		{
-			RID_CAVE_VOICE_1,
+			1,		// cave voice 1
 			"Lange vor unserer Zeit herrschten die Menschen "
 			"\201ber die Erde."
 		},
 		{
-			RID_CAVE_VOICE_2,
+			2,		// cave voice 2
 			"Sie taten wundersame Dinge und versetzten ganze "
 			"Berge."
 		},
 		{
-			RID_CAVE_VOICE_3,
+			3,		// cave voice 3
 			"Sie kannten das Geheimnis des Fluges, das Geheimnis "
 			"der Fr\224hlichkeit und andere Geheimnisse, die "
 			"unsere Vorstellungskraft \201bersteigen."
 		} },
+		// -----------------------------------------------------
 		{ { // Italian fan translation
-			RID_CAVE_VOICE_0,
+			0,		// cave voice 0
 			"Guardiamo il cielo, guardiamo la terra, guardiamo "
 			"l'acqua, e ci chiediamo: Siamo forse soli?"
 		},
 		{
-			RID_CAVE_VOICE_1,
+			1,		// cave voice 1
 			"Molto tempo prima che noi esistessimo, gli Umani "
 			"dominavano la terra."
 		},
 		{
-			RID_CAVE_VOICE_2,
+			2,		// cave voice 2
 			"Fecero cose meravigliose, e mossero intere "
 			"montagne."
 		},
 		{
-			RID_CAVE_VOICE_3,
+			3,		// cave voice 3
 			"Conoscevano il Segreto del Volo, il Segreto della "
 			"Felicit\224, ed altri segreti oltre ogni nostra "
 			"immaginazione."
@@ -493,47 +509,49 @@ int Scene::ITEIntroCave2Proc(int param) {
 
 	static const IntroDialogue dialogue[][3] = {
 		{ { // English
-			RID_CAVE_VOICE_4,
+			4,		// cave voice 4
 			"The humans also knew the Secret of Life, and they "
 			"used it to give us the Four Great Gifts:"
 		},
 		{
-			RID_CAVE_VOICE_5,
+			5,		// cave voice 5
 			"Thinking minds, feeling hearts, speaking mouths, and "
 			"reaching hands."
 		},
 		{
-			RID_CAVE_VOICE_6,
+			6,		// cave voice 6
 			"We are their children."
 		} },
+		// -----------------------------------------------------
 		{ { // German
-			RID_CAVE_VOICE_4,
+			4,		// cave voice 4
 			"Au$erdem kannten die Menschen das Geheimnis des "
 			"Lebens. Und sie nutzten es, um uns die vier gro$en "
 			"Geschenke zu geben -"
 		},
 		{
-			RID_CAVE_VOICE_5,
+			5,		// cave voice 5
 			"den denkenden Geist, das f\201hlende Herz, den "
 			"sprechenden Mund und die greifende Hand."
 		},
 		{
-			RID_CAVE_VOICE_6,
+			6,		// cave voice 6
 			"Wir sind ihre Kinder."
 		} },
+		// -----------------------------------------------------
 		{ { // Italian fan translation
-			RID_CAVE_VOICE_4,
+			4,		// cave voice 4
 			"Gli Umani conoscevano anche il Segreto della Vita, "
 			"e lo usarono per darci i Quattro Grandi Doni:"
 
 		},
 		{
-			RID_CAVE_VOICE_5,
+			5,		// cave voice 5
 			"Il pensiero, le emozioni, la parola e la manualit\224."
 
 		},
 		{
-			RID_CAVE_VOICE_6,
+			6,		// cave voice 6
 			"Siamo i loro figli."
 		} }
 	};
@@ -595,46 +613,48 @@ int Scene::ITEIntroCave3Proc(int param) {
 
 	static const IntroDialogue dialogue[][3] = {
 		{ { // English
-			RID_CAVE_VOICE_7,
+			7,		// cave voice 7
 			"They taught us how to use our hands, and how to "
 			"speak."
 		},
 		{
-			RID_CAVE_VOICE_8,
+			8,		// cave voice 8
 			"They showed us the joy of using our minds."
 		},
 		{
-			RID_CAVE_VOICE_9,
+			9,		// cave voice 9
 			"They loved us, and when we were ready, they surely "
 			"would have given us the Secret of Happiness."
 		} },
+		// -----------------------------------------------------
 		{ { // German
-			RID_CAVE_VOICE_7,
+			7,		// cave voice 7
 			"Sie lehrten uns zu sprechen und unsere H\204nde zu "
 			"benutzen."
 		},
 		{
-			RID_CAVE_VOICE_8,
+			8,		// cave voice 8
 			"Sie zeigten uns die Freude am Denken."
 		},
 		{
-			RID_CAVE_VOICE_9,
+			9,		// cave voice 9
 			"Sie liebten uns, und w\204ren wir bereit gewesen, "
 			"h\204tten sie uns sicherlich das Geheimnis der "
 			"Fr\224hlichkeit offenbart."
 		} },
+		// -----------------------------------------------------
 		{ { // Italian fan translation
-			RID_CAVE_VOICE_7,
+			7,		// cave voice 7
 			"Ci insegnarono come usare le mani e come parlare. "
 
 		},
 		{
-			RID_CAVE_VOICE_8,
+			8,		// cave voice 8
 			"Ci mostrarono le gioie che l'uso della mente "
 			"pu\242 dare. "
 		},
 		{
-			RID_CAVE_VOICE_9,
+			9,		// cave voice 9
 			"Ci amarono, ed una volta pronti, ci avrebbero "
 			"sicuramente svelato il Segreto della Felicit\224."
 
@@ -698,60 +718,62 @@ int Scene::ITEIntroCave4Proc(int param) {
 
 	static const IntroDialogue dialogue[][4] = {
 		{ { // English
-			RID_CAVE_VOICE_10,
+			10,		// cave voice 10
 			"And now we see the sky, the land, and the water that "
 			"we are heirs to, and we wonder: why did they leave?"
 		},
 		{
-			RID_CAVE_VOICE_11,
+			11,		// cave voice 11
 			"Do they live still, in the stars? In the oceans "
 			"depths? In the wind?"
 		},
 		{
-			RID_CAVE_VOICE_12,
+			12,		// cave voice 12
 			"We wonder, was their fate good or evil?"
 		},
 		{
-			RID_CAVE_VOICE_13,
+			13,		// cave voice 13
 			"And will we also share the same fate one day?"
 		} },
+		// -----------------------------------------------------
 		{ { // German
-			RID_CAVE_VOICE_10,
+			10,		// cave voice 10
 			"Und nun sehen wir den Himmel, das Land und die "
 			"Seen - unser Erbe. Und wir fragen uns - warum "
 			"verschwanden sie?"
 		},
 		{
-			RID_CAVE_VOICE_11,
+			11,		// cave voice 11
 			"Leben sie noch in den Sternen? In den Tiefen des "
 			"Ozeans? Im Wind?"
 		},
 		{
-			RID_CAVE_VOICE_12,
+			12,		// cave voice 12
 			"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
 		},
 		{
-			RID_CAVE_VOICE_13,
+			13,		// cave voice 13
 			"Und wird uns eines Tages das gleiche Schicksal "
 			"ereilen?"
 		} },
+		// -----------------------------------------------------
 		{ { // Italian fan translation
-			RID_CAVE_VOICE_10,
+			10,		// cave voice 10
 			"Ed ora che guardiamo il cielo, la terra e l'acqua "
 			"che abbiamo ereditato, pensiamo: Perch\233 partirono?"
 
 		},
 		{
-			RID_CAVE_VOICE_11,
+			11,		// cave voice 11
 			"Vivono ancora, nelle stelle? Nelle profondit\224 "
 			"dell'oceano? Nel vento?"
 		},
 		{
-			RID_CAVE_VOICE_12,
+			12,		// cave voice 12
 			"Ci domandiamo, il loro destino fu felice o nefasto?"
 		},
 		{
-			RID_CAVE_VOICE_13,
+			13,		// cave voice 13
 			"E un giorno, condivideremo anche noi lo stesso "
 			"destino?"
 		} }

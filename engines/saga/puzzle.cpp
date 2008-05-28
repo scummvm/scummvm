@@ -31,12 +31,13 @@
 #include "saga/sprite.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
-#include "saga/sagaresnames.h"
 
 #include "common/system.h"
 #include "common/timer.h"
 
 namespace Saga {
+
+#define ITE_ACTOR_PUZZLE 176
 
 #define PUZZLE_X_OFFSET		72
 #define PUZZLE_Y_OFFSET		46
@@ -45,6 +46,21 @@ namespace Saga {
 #define PUZZLE_MOVED		0x04   // 1 when somewhere in the box
 #define PUZZLE_ALL_SET		PUZZLE_FIT | PUZZLE_MOVED
 
+// Puzzle portraits
+#define RID_ITE_SAKKA_APPRAISING	6
+#define RID_ITE_SAKKA_DENIAL		7
+#define RID_ITE_SAKKA_EXCITED		8
+#define RID_ITE_JFERRET_SERIOUS		9
+#define RID_ITE_JFERRET_GOOFY		10
+#define RID_ITE_JFERRET_ALOOF		11
+
+const char portraitList[] = {
+	RID_ITE_JFERRET_SERIOUS,
+	RID_ITE_JFERRET_GOOFY,
+	RID_ITE_JFERRET_SERIOUS,
+	RID_ITE_JFERRET_GOOFY,
+	RID_ITE_JFERRET_ALOOF
+};
 
 enum rifOptions {
 	kROLater = 0,
@@ -54,7 +70,12 @@ enum rifOptions {
 };
 
 Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
-	_lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
+	_lang = 0;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		_lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		_lang = 2;
 
 	_hintRqState = kRQNoHint;
 	_hintOffer = 0;

@@ -219,7 +219,7 @@ public:
 	 * @note The fslist parameter may be 0 -- in that case, it is assumed
 	 *       that the callback searchs the current directory.
 	 */
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const {
+	virtual const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const {
 		return 0;
 	}
 };

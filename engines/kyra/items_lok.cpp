@@ -176,7 +176,7 @@ void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 }
 
 void KyraEngine_LoK::setHandItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setHandItem(%d)", item);
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setHandItem(%u)", item);
 	_screen->hideMouse();
 	setMouseItem(item);
 	_itemInHand = item;
@@ -191,9 +191,9 @@ void KyraEngine_LoK::removeHandItem() {
 	_screen->showMouse();
 }
 
-void KyraEngine_LoK::setMouseItem(int item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setMouseItem(%d)", item);
-	if (item == -1)
+void KyraEngine_LoK::setMouseItem(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setMouseItem(%u)", item);
+	if (item == 0xFFFF)
 		_screen->setMouseCursor(1, 1, _shapes[6]);
 	else
 		_screen->setMouseCursor(8, 15, _shapes[216+item]);

@@ -69,6 +69,7 @@ public:
 
 	virtual int init();
 	virtual int go();
+	virtual void pauseEngineIntern(bool pause);
 	void quitGame();
 
 	Disk &disk() { return *_disk; }

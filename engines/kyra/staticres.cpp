@@ -40,11 +40,9 @@
 #include "kyra/gui_hof.h"
 #include "kyra/gui_mr.h"
 
-#include "gui/message.h"
-
 namespace Kyra {
 
-#define RESFILE_VERSION 27
+#define RESFILE_VERSION 28
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -293,18 +291,20 @@ bool StaticResource::init() {
 		error("unknown game ID");
 	}
 
+	char errorBuffer[100];
 	int tempSize = 0;
 	uint8 *temp = getFile("INDEX", tempSize);
 	if (!temp) {
-		warning("No matching INDEX file found ('%s')", getFilename("INDEX"));
-		outputError();
+		snprintf(errorBuffer, sizeof(errorBuffer), "is missing an '%s' entry", getFilename("INDEX"));
+		outputError(errorBuffer);
 		return false;
 	}
 
 	if (tempSize != 3*4) {
 		delete[] temp;
-		warning("'%s' has illegal filesize %d", getFilename("INDEX"), tempSize);
-		outputError();
+
+		snprintf(errorBuffer, sizeof(errorBuffer), "has incorrect header size for entry '%s'", getFilename("INDEX"));
+		outputError(errorBuffer);
 		return false;
 	}
 
@@ -316,28 +316,25 @@ bool StaticResource::init() {
 	temp = 0;
 
 	if (version != RESFILE_VERSION) {
-		warning("Invalid KYRA.DAT file version (%u, required %d)", version, RESFILE_VERSION);
-		outputError();
+		snprintf(errorBuffer, sizeof(errorBuffer), "has invalid version %d required, you got %d", RESFILE_VERSION, version);
+		outputError(errorBuffer);
 		return false;
 	}
 
 	if (gameID != _vm->game()) {
-		warning("Invalid game id (%u)", gameID);
-		outputError();
+		outputError("does not include support for your game");
 		return false;
 	}
 
 	uint32 gameFeatures = createFeatures(_vm->gameFlags());
 	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
-		warning("Your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
-		outputError();
+		outputError("does not include support for your game version");
 		return false;
 	}
 
 	// load all tables for now
 	if (!prefetchId(-1)) {
-		warning("Couldn't load all needed resources from 'KYRA.DAT'");
-		outputError();
+		outputError("is lacking entries for your game version");
 		return false;
 	}
 	return true;
@@ -347,11 +344,10 @@ void StaticResource::deinit() {
 	unloadId(-1);
 }
 
-void StaticResource::outputError() {
-	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file is outdated, reget it from the ScummVM website";
-	::GUI::MessageDialog errorMsg(errorMessage);
-	errorMsg.runModal();
-	error(errorMessage.c_str());
+void StaticResource::outputError(const Common::String &error) {
+	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file " + error + ", reget a correct version from the ScummVM website";
+	_vm->GUIErrorMessage(errorMessage);
+	::error(errorMessage.c_str());
 }
 
 const char * const*StaticResource::loadStrings(int id, int &strings) {
@@ -1281,7 +1277,7 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_introLibrary2, &KyraEngine_HoF::seq_introLibrary2,
 		&KyraEngine_HoF::seq_introMarco, &KyraEngine_HoF::seq_introHand1a,
 		&KyraEngine_HoF::seq_introHand1b, &KyraEngine_HoF::seq_introHand1c,
-		&KyraEngine_HoF::seq_introHand2,	&KyraEngine_HoF::seq_introHand3, 0
+		&KyraEngine_HoF::seq_introHand2, &KyraEngine_HoF::seq_introHand3, 0
 	};
 
 	static const SeqProc hofDemoSequenceCallbacks[] = {
@@ -1363,11 +1359,11 @@ const int8 KyraEngine_v1::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 
-const int8 KyraEngine_LoK::_charXPosTable[] = {
+const int8 KyraEngine_v1::_charAddXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4
 };
 
-const int8 KyraEngine_LoK::_charYPosTable[] = {
+const int8 KyraEngine_v1::_charAddYPosTable[] = {
 	-2, -2,  0,  2,  2,  2,  0, -2
 };
 
@@ -1534,14 +1530,6 @@ const int KyraEngine_LoK::_dosTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_dosTrack
 
 // kyra engine v2 static data
 
-const int8 KyraEngine_v2::_updateCharPosXTable[] = {
-	0, 4, 4, 4, 0, -4, -4, -4
-};
-
-const int8 KyraEngine_v2::_updateCharPosYTable[] = {
-	-2, -2, 0, 2, 2, 2, 0, -2
-};
-
 const int GUI_v2::_sliderBarsPosition[] = {
 	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
 };
@@ -1554,16 +1542,16 @@ const char *KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
-	"ITA",		Italian and Spanish was never included
+	"ITA",		Italian and Spanish were never included
 	"SPA"*/
-	"JPN"
+	"JPN",
 };
 
 const char *KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
-	"IMC",		Italian and Spanish was never included
+	"IMC",		Italian and Spanish were never included
 	"SMC"*/
 	"JMC"
 };
@@ -1956,7 +1944,7 @@ const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
-	"TRI",		Italian and Spanish was never included
+	"TRI",		Italian and Spanish were never included
 	"TRS"*/
 };
 

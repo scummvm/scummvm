@@ -295,13 +295,13 @@ int KyraEngine_LoK::setCharacterPosition(int character, int *facingTable) {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setCharacterPosition(%d, %p)", character, (const void *)facingTable);
 
 	if (character == 0) {
-		_currentCharacter->x1 += _charXPosTable[_currentCharacter->facing];
-		_currentCharacter->y1 += _charYPosTable[_currentCharacter->facing];
+		_currentCharacter->x1 += _charAddXPosTable[_currentCharacter->facing];
+		_currentCharacter->y1 += _charAddYPosTable[_currentCharacter->facing];
 		setCharacterPositionHelper(0, facingTable);
 		return 1;
 	} else {
-		_characterList[character].x1 += _charXPosTable[_characterList[character].facing];
-		_characterList[character].y1 += _charYPosTable[_characterList[character].facing];
+		_characterList[character].x1 += _charAddXPosTable[_characterList[character].facing];
+		_characterList[character].y1 += _charAddYPosTable[_characterList[character].facing];
 		if (_characterList[character].sceneId == _currentCharacter->sceneId)
 			setCharacterPositionHelper(character, 0);
 	}
@@ -1009,8 +1009,8 @@ int KyraEngine_LoK::changeScene(int facing) {
 			return 0;
 	}
 
-	int xpos = _charXPosTable[facing] + _currentCharacter->x1;
-	int ypos = _charYPosTable[facing] + _currentCharacter->y1;
+	int xpos = _charAddXPosTable[facing] + _currentCharacter->x1;
+	int ypos = _charAddYPosTable[facing] + _currentCharacter->y1;
 
 	if (xpos >= 12 && xpos <= 308) {
 		if (!lineIsPassable(xpos, ypos))

@@ -4677,7 +4677,7 @@ const char *_textt[][25] = {
 	"QU'EST-CE QU'IL Y A, QU'Y A-T-IL?",
 	"D'ACCORD. CHAMBRE 512. PAR LES ESCALIERS. LA CL EST SUR LA PORTE",
 	"LE COMTE DRASCULA?!",
-	"NON, RIEN, CE TYPE A UNE MAUVAISE RPUTATION PAR ICI",
+	"NON, RIEN, CE TYPE A UNE MAUVAISE R\220PUTATION PAR ICI",
 	// 5
 	"EH BIEN, IL Y A DES RUMEURS QUI  COURENT SUR LUI. CERTAINS DISENT QUE C'EST UN VAMPIRE ET QU'IL ENLEVE DU MONDE POUR SUCER LEUR SANG ",
 	"MAIS D'AUTRES PENSENT QU'IL EST SEULEMENT UN TRAFICANT D'ORGANES, ET C'EST POUR CELA QUE DES PERSONNES DPECES SONT APPARUES DANS LES ALENTOURS",
@@ -5308,20 +5308,20 @@ const char *_textverbs[][6] = {
 	"mover",
 },
 {
-	"look", // TODO Translate it
-	"take",
-	"open",
-	"close",
-	"talk",
-	"push",
+	"Schau",
+	"Nimm",
+	"oeFFNE",
+	"Schliesse",
+	"Rede",
+	"Druecke",
 },
 {
-	"look", // TODO Translate it
-	"take",
-	"open",
-	"close",
-	"talk",
-	"push",
+	"regardez",
+	"ramassez",
+	"ouvrez",
+	"fermez",
+	"parlez",
+	"poussez",
 },
 {
 	"esamina",
@@ -5334,21 +5334,26 @@ const char *_textverbs[][6] = {
 };
 
 
-const char *_textmisc[][1] = {
+const char *_textmisc[][2] = {
 {
 	"HUNCHBACKED",
+	"Transilvania, 1993 d.c.",
 },
 {
 	"jorobado",
+	"Transilvania, 1993 d.c. (despues de cenar)",
 },
 {
 	"HUNCHBACKED",
+	"Transilvania, 1993 d.c.",
 },
 {
 	"HUNCHBACKED",
+	"Transilvania, 1993 d.c.",
 },
 {
 	"HUNCHBACKED",
+	"Transilvania, 1993 d.c.",
 },
 };
 

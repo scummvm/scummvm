@@ -371,7 +371,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					break;
 			}
 		} else {
-			if (chr == '@' && _vm->_language != Common::ZH_TWN)
+			if (chr == '@' && !(_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN))
 				continue;
 			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = text[pos++];
@@ -400,7 +400,8 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 
 			// Some localizations may override colors
 			// See credits in Chinese COMI
-			if (chr == '^' && pos == 1) {
+			if (_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN &&
+			    chr == '^' && pos == 1) {
 				if (text[pos] == 'c') {
 					pos += 4;
 					chr = text[pos++];

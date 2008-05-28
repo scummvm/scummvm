@@ -113,6 +113,10 @@ public:
 	KyraEngine_LoK(OSystem *system, const GameFlags &flags);
 	~KyraEngine_LoK();
 
+	//TODO: proper extended implementation of KyraEngine_v1::pauseEngineIntern.
+	// _sprites and _seqplayer should be paused here too, to avoid some animation glitches,
+	// also parts of the hardcoded Malcolm fight might need some special handling.
+
 	Screen *screen() { return _screen; }
 	Animator_LoK *animator() { return _animator; }
 	virtual Movie *createWSAMovie();
@@ -205,8 +209,11 @@ public:
 	void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
+	uint32 snd_getVoicePlayTime();
 
 protected:
+	int32 _speechPlayTime;
+
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 
@@ -284,7 +291,7 @@ protected:
 	// -> mouse item
 	void setHandItem(uint16 item);
 	void removeHandItem();
-	void setMouseItem(int item);
+	void setMouseItem(uint16 item);
 
 	// -> graphics effects
 	void wipeDownMouseItem(int xpos, int ypos);
@@ -628,9 +635,6 @@ protected:
 	int _cdaTrackTableSize;
 	const AudioDataStruct * _soundData;
 
-	static const int8 _charXPosTable[];
-	static const int8 _charYPosTable[];
-
 	// positions of the inventory
 	static const uint16 _itemPosX[];
 	static const uint8 _itemPosY[];
@@ -791,9 +795,9 @@ protected:
 	int o1_pauseMusicSeconds(EMCState *script);
 	int o1_resetMaskRegion(EMCState *script);
 	int o1_setPaletteChangeFlag(EMCState *script);
-	int o1_dummy(EMCState *script);
 	int o1_vocUnload(EMCState *script);
 	int o1_vocLoad(EMCState *script);
+	int o1_dummy(EMCState *script);
 };
 
 } // end of namespace Kyra

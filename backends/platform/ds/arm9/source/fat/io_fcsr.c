@@ -4,7 +4,7 @@
 	compact_flash.c
 	By chishm (Michael Chisholm)
 
-	Hardware Routines for using a GBA Flash Cart and SRAM as a
+	Hardware Routines for using a GBA Flash Cart and SRAM as a 
 	block device.
 
 	This software is completely free. No warranty is provided.
@@ -57,7 +57,7 @@ FCSR_IsInserted
 Is a GBA Flash Cart with a valid file system inserted?
 bool return OUT:  true if a GBA FC card is inserted
 -----------------------------------------------------------------*/
-bool FCSR_IsInserted (void)
+bool FCSR_IsInserted (void) 
 {
 	bool flagFoundFileSys = false;
 
@@ -85,7 +85,7 @@ FCSR_ClearStatus
 Finish any pending operations
 bool return OUT:  always true for GBA FC
 -----------------------------------------------------------------*/
-bool FCSR_ClearStatus (void)
+bool FCSR_ClearStatus (void) 
 {
 	return true;
 }
@@ -101,7 +101,7 @@ void* buffer OUT: pointer to 512 byte buffer to store data in
 bool return OUT: true if successful
 -----------------------------------------------------------------*/
 bool FCSR_ReadSectors (u32 sector, u8 numSecs, void* buffer)
-{
+{	
 	int i;
 	bool flagSramSector = false;
 	int numSectors = (numSecs > 0 ? numSecs : 256);
@@ -208,14 +208,14 @@ bool FCSR_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 FCSR_Shutdown
 unload the Flash Cart interface
 -----------------------------------------------------------------*/
-bool FCSR_Shutdown(void)
+bool FCSR_Shutdown(void) 
 {
 	int i;
 	if (FCSR_ClearStatus() == false)
 		return false;
 
 	FCSR_FileSysPointer = 0;
-
+	
 	for (i=0; i < 4; i++)
 	{
 		FCSR_SramSectorPointer[i] = 0;
@@ -262,11 +262,11 @@ bool FCSR_StartUp(void)
 	// Get SRAM sector regions from header block
 	for (i = 0; i < 4; i++)
 	{
-		FCSR_SramSectorStart[i] = fileSysPointer[i+4];
+		FCSR_SramSectorStart[i] = fileSysPointer[i+4];	
 		SramRegionSize[i] = fileSysPointer[i+8];
 		FCSR_SramSectorEnd[i] = FCSR_SramSectorStart[i] + SramRegionSize[i];
 	}
-
+	
 	// Calculate SRAM region pointers
 	FCSR_SramSectorPointer[0] = (u8*)(SRAM_START + 4);
 	for (i = 1; i < 4; i++)

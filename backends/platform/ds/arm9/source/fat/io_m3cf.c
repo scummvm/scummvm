@@ -73,7 +73,7 @@ M3CF_IsInserted
 Is a compact flash card inserted?
 bool return OUT:  true if a CF card is inserted
 -----------------------------------------------------------------*/
-bool M3CF_IsInserted (void)
+bool M3CF_IsInserted (void) 
 {
 	// Change register, then check if value did change
 	M3_REG_STS = CF_STS_INSERTED;
@@ -86,17 +86,17 @@ M3CF_ClearStatus
 Tries to make the CF card go back to idle mode
 bool return OUT:  true if a CF card is idle
 -----------------------------------------------------------------*/
-bool M3CF_ClearStatus (void)
+bool M3CF_ClearStatus (void) 
 {
 	int i;
-
+	
 	// Wait until CF card is finished previous commands
 	i=0;
 	while ((M3_REG_CMD & CF_STS_BUSY) && (i < CARD_TIMEOUT))
 	{
 		i++;
 	}
-
+	
 	// Wait until card is ready for commands
 	i = 0;
 	while ((!(M3_REG_STS & CF_STS_INSERTED)) && (i < CARD_TIMEOUT))
@@ -128,7 +128,7 @@ bool M3CF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 	u8 *buff_u8 = (u8*)buffer;
 	int temp;
 #endif
-
+	
 #if defined _CF_USE_DMA && defined NDS && defined ARM9
 	DC_FlushRange( buffer, j * BYTE_PER_READ);
 #endif
@@ -139,7 +139,7 @@ bool M3CF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 	{
 		i++;
 	}
-
+	
 	// Wait until card is ready for commands
 	i = 0;
 	while ((!(M3_REG_STS & CF_STS_INSERTED)) && (i < CARD_TIMEOUT))
@@ -148,20 +148,20 @@ bool M3CF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 	}
 	if (i >= CARD_TIMEOUT)
 		return false;
-
+	
 	// Set number of sectors to read
-	M3_REG_SEC = numSecs;
-
+	M3_REG_SEC = numSecs;	
+	
 	// Set read sector
 	M3_REG_LBA1 = sector & 0xFF;						// 1st byte of sector number
 	M3_REG_LBA2 = (sector >> 8) & 0xFF;					// 2nd byte of sector number
 	M3_REG_LBA3 = (sector >> 16) & 0xFF;				// 3rd byte of sector number
 	M3_REG_LBA4 = ((sector >> 24) & 0x0F )| CF_CMD_LBA;	// last nibble of sector number
-
+	
 	// Set command to read
 	M3_REG_CMD = CF_CMD_READ;
-
-
+	
+	
 	while (j--)
 	{
 		// Wait until card is ready for reading
@@ -172,7 +172,7 @@ bool M3CF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 		}
 		if (i >= CARD_TIMEOUT)
 			return false;
-
+		
 		// Read data
 #ifdef _CF_USE_DMA
  #ifdef NDS
@@ -194,12 +194,12 @@ bool M3CF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 			}
 		} else {
 		while(i--)
-			*buff++ = *M3_DATA;
+			*buff++ = *M3_DATA; 
 		}
 #else
 		i=256;
 		while(i--)
-			*buff++ = *M3_DATA;
+			*buff++ = *M3_DATA; 
 #endif
 	}
 #if defined _CF_USE_DMA && defined NDS
@@ -230,7 +230,7 @@ bool M3CF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	u8 *buff_u8 = (u8*)buffer;
 	int temp;
 #endif
-
+	
 #if defined _CF_USE_DMA && defined NDS && defined ARM9
 	DC_FlushRange( buffer, j * BYTE_PER_READ);
 #endif
@@ -241,7 +241,7 @@ bool M3CF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	{
 		i++;
 	}
-
+	
 	// Wait until card is ready for commands
 	i = 0;
 	while ((!(M3_REG_STS & CF_STS_INSERTED)) && (i < CARD_TIMEOUT))
@@ -250,19 +250,19 @@ bool M3CF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	}
 	if (i >= CARD_TIMEOUT)
 		return false;
-
+	
 	// Set number of sectors to write
-	M3_REG_SEC = numSecs;
-
+	M3_REG_SEC = numSecs;	
+	
 	// Set write sector
 	M3_REG_LBA1 = sector & 0xFF;						// 1st byte of sector number
 	M3_REG_LBA2 = (sector >> 8) & 0xFF;					// 2nd byte of sector number
 	M3_REG_LBA3 = (sector >> 16) & 0xFF;				// 3rd byte of sector number
 	M3_REG_LBA4 = ((sector >> 24) & 0x0F )| CF_CMD_LBA;	// last nibble of sector number
-
+	
 	// Set command to write
 	M3_REG_CMD = CF_CMD_WRITE;
-
+	
 	while (j--)
 	{
 		// Wait until card is ready for writing
@@ -273,7 +273,7 @@ bool M3CF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 		}
 		if (i >= CARD_TIMEOUT)
 			return false;
-
+		
 		// Write data
 #ifdef _CF_USE_DMA
  #ifdef NDS
@@ -295,19 +295,19 @@ bool M3CF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 			}
 		} else {
 		while(i--)
-			*M3_DATA = *buff++;
+			*M3_DATA = *buff++; 
 		}
 #else
 		i=256;
 		while(i--)
-			*M3_DATA = *buff++;
+			*M3_DATA = *buff++; 
 #endif
 	}
 #if defined _CF_USE_DMA && defined NDS
 	// Wait for end of transfer before returning
 	while(DMA3_CR & DMA_BUSY);
 #endif
-
+	
 	return true;
 }
 
@@ -317,7 +317,7 @@ M3_Unlock
 Returns true if M3 was unlocked, false if failed
 Added by MightyMax
 -----------------------------------------------------------------*/
-bool M3_Unlock(void)
+bool M3_Unlock(void) 
 {
 	// run unlock sequence
 	volatile unsigned short tmp ;
