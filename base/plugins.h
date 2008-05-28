@@ -81,6 +81,12 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #define STATIC_PLUGIN 1
 #define DYNAMIC_PLUGIN 2
 
+// Note: The spaces around ENABLE_##ID have been added on purpose for
+// MSVC. For some reason, MSVC tries to add the parenthesis after
+// ENABLE_##ID to the check, thus making it false all the time.
+// Please do NOT remove them, otherwise no engine plugins will be
+// registered under MSVC
+
 #define PLUGIN_ENABLED_STATIC(ID) \
 	(defined( ENABLE_##ID ) && !PLUGIN_ENABLED_DYNAMIC(ID))
 
