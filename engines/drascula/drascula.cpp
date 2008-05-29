@@ -999,7 +999,7 @@ martini:
 			sscanf(buffer, "%d", &sentido_alkeva[l]);
 			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &alapuertakeva[l]);
-			puertas_cerradas(l);
+			updateDoor(l);
 		}
 	}
 
@@ -1295,7 +1295,7 @@ bool DrasculaEngine::comprueba1() {
 	int l;
 
 	if (menu_scr == 1)
-		saca_objeto();
+		removeObject();
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
 			if (mouseX >= x1[l] && mouseY >= y1[l]
@@ -2323,55 +2323,55 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 	return true;
 }
 
-void DrasculaEngine::puertas_cerradas(int l) {
+void DrasculaEngine::updateDoor(int doorNum) {
 	if (num_ejec == 1 || num_ejec == 3 || num_ejec == 5 || num_ejec == 6)
 		return;
 	else if (num_ejec == 2) {
-		if (num_obj[l] == 138)
-			isDoor[l] = flags[0];
-		else if (num_obj[l] == 136)
-			isDoor[l] = flags[8];
-		else if (num_obj[l] == 156)
-			isDoor[l] = flags[16];
-		else if (num_obj[l] == 163)
-			isDoor[l] = flags[17];
-		else if (num_obj[l] == 177)
-			isDoor[l] = flags[15];
-		else if (num_obj[l] == 175)
-			isDoor[l] = flags[40];
-		else if (num_obj[l] == 173)
-			isDoor[l] = flags[36];
+		if (num_obj[doorNum] == 138)
+			isDoor[doorNum] = flags[0];
+		else if (num_obj[doorNum] == 136)
+			isDoor[doorNum] = flags[8];
+		else if (num_obj[doorNum] == 156)
+			isDoor[doorNum] = flags[16];
+		else if (num_obj[doorNum] == 163)
+			isDoor[doorNum] = flags[17];
+		else if (num_obj[doorNum] == 177)
+			isDoor[doorNum] = flags[15];
+		else if (num_obj[doorNum] == 175)
+			isDoor[doorNum] = flags[40];
+		else if (num_obj[doorNum] == 173)
+			isDoor[doorNum] = flags[36];
 	} else if (num_ejec == 4) {
-		if (num_obj[l] == 101 && flags[0] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 101 && flags[0] == 1 && flags[28] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 103)
-			isDoor[l] = flags[0];
-		else if (num_obj[l] == 104)
-			isDoor[l] = flags[1];
-		else if (num_obj[l] == 105)
-			isDoor[l] = flags[1];
-		else if (num_obj[l] == 106)
-			isDoor[l] = flags[2];
-		else if (num_obj[l] == 107)
-			isDoor[l] = flags[2];
-		else if (num_obj[l] == 110)
-			isDoor[l] = flags[6];
-		else if (num_obj[l] == 114)
-			isDoor[l] = flags[4];
-		else if (num_obj[l] == 115)
-			isDoor[l] = flags[4];
-		else if (num_obj[l] == 116 && flags[5] == 0)
-			isDoor[l] = 0;
-		else if (num_obj[l] == 116 && flags[5] == 1 && flags[23] == 1)
-			isDoor[l] = 1;
-		else if (num_obj[l] == 117)
-			isDoor[l] = flags[5];
-		else if (num_obj[l] == 120)
-			isDoor[l] = flags[8];
-		else if (num_obj[l] == 122)
-			isDoor[l] = flags[7];
+		if (num_obj[doorNum] == 101 && flags[0] == 0)
+			isDoor[doorNum] = 0;
+		else if (num_obj[doorNum] == 101 && flags[0] == 1 && flags[28] == 1)
+			isDoor[doorNum] = 1;
+		else if (num_obj[doorNum] == 103)
+			isDoor[doorNum] = flags[0];
+		else if (num_obj[doorNum] == 104)
+			isDoor[doorNum] = flags[1];
+		else if (num_obj[doorNum] == 105)
+			isDoor[doorNum] = flags[1];
+		else if (num_obj[doorNum] == 106)
+			isDoor[doorNum] = flags[2];
+		else if (num_obj[doorNum] == 107)
+			isDoor[doorNum] = flags[2];
+		else if (num_obj[doorNum] == 110)
+			isDoor[doorNum] = flags[6];
+		else if (num_obj[doorNum] == 114)
+			isDoor[doorNum] = flags[4];
+		else if (num_obj[doorNum] == 115)
+			isDoor[doorNum] = flags[4];
+		else if (num_obj[doorNum] == 116 && flags[5] == 0)
+			isDoor[doorNum] = 0;
+		else if (num_obj[doorNum] == 116 && flags[5] == 1 && flags[23] == 1)
+			isDoor[doorNum] = 1;
+		else if (num_obj[doorNum] == 117)
+			isDoor[doorNum] = flags[5];
+		else if (num_obj[doorNum] == 120)
+			isDoor[doorNum] = flags[8];
+		else if (num_obj[doorNum] == 122)
+			isDoor[doorNum] = flags[7];
 	}
 }
 
@@ -2639,7 +2639,7 @@ void DrasculaEngine::barra_menu() {
 	}
 }
 
-void DrasculaEngine::saca_objeto() {
+void DrasculaEngine::removeObject() {
 	int h = 0, n;
 
 	updateRoom();
@@ -2666,7 +2666,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 		if (num_obj[l] == 105 && flags[0] == 0)
 			talk(_text[_lang][442], "442.als");
 		else {
-			puertas_cerradas(l);
+			updateDoor(l);
 			if (isDoor[l] != 0) {
 				lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 				sentido_hare = sentidobj[l];
@@ -2690,7 +2690,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			}
 		}
 	} else if (num_ejec == 2) {
-		puertas_cerradas(l);
+		updateDoor(l);
 		if (isDoor[l] != 0) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			hare_se_mueve = 0;
@@ -2723,7 +2723,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			carga_escoba(salgo);
 		}
 	} else if (num_ejec == 3) {
-		puertas_cerradas(l);
+		updateDoor(l);
 		if (isDoor[l] != 0 && visible[l] == 1) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
@@ -2741,7 +2741,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			carga_escoba(salgo);
 		}
 	} else if (num_ejec == 4) {
-		puertas_cerradas(l);
+		updateDoor(l);
 		if (isDoor[l] != 0) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
@@ -2762,7 +2762,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			carga_escoba(salgo);
 		}
 	} else if (num_ejec == 5) {
-		puertas_cerradas(l);
+		updateDoor(l);
 		if (isDoor[l] != 0 && visible[l] == 1) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
@@ -2781,7 +2781,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			carga_escoba(salgo);
 		}
 	} else if (num_ejec == 6) {
-		puertas_cerradas(l);
+		updateDoor(l);
 		if (isDoor[l] != 0) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
@@ -4423,7 +4423,7 @@ void DrasculaEngine::openDoor(int nflag, int doorNum) {
 		}
 
 		if (doorNum != NO_DOOR)
-			puertas_cerradas(doorNum);
+			updateDoor(doorNum);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		stopSound();
@@ -4515,7 +4515,7 @@ void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 		playSound("s4.als");
 		flags[nflag] = 0;
 		if (doorNum != NO_DOOR)
-			puertas_cerradas(doorNum);
+			updateDoor(doorNum);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		stopSound();

@@ -511,7 +511,7 @@ public:
 	int musicStatus();
 	void updateRoom();
 	bool carga_partida(const char *);
-	void puertas_cerradas(int);
+	void updateDoor(int);
 	void animastopSound_corte();
 	void color_hare();
 	void funde_hare(int oscuridad);
@@ -525,7 +525,7 @@ public:
 	void pon_hare();
 	void menu_sin_volcar();
 	void barra_menu();
-	void saca_objeto();
+	void removeObject();
 	bool sal_de_la_habitacion(int);
 	bool coge_objeto();
 	bool banderas(int);
