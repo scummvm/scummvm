@@ -325,8 +325,7 @@ public:
 	int cambio_de_color;
 	int rompo_y_salgo;
 	int vb_x, sentido_vb, vb_se_mueve, frame_vb;
-	float nuevo_alto, nuevo_ancho;
-	int diferencia_x, diferencia_y;
+	float newHeight, newWidth;
 	int factor_red[202];
 	int frame_piano;
 	int frame_borracho;

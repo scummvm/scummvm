@@ -3529,23 +3529,23 @@ int DrasculaEngine::vez() {
 	return _system->getMillis() / 20; // originaly was 1
 }
 
-void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int ancho, int alto, int factor, byte *dir_inicio, byte *dir_fin) {
-	float suma_x, suma_y;
+void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int width, int height, int factor, byte *dir_inicio, byte *dir_fin) {
+	float totalX, totalY;
 	int n, m;
 	float pixel_x, pixel_y;
 	int pos_pixel[6];
 
-	nuevo_ancho = (ancho * factor) / 100;
-	nuevo_alto = (alto * factor) / 100;
+	newWidth = (width * factor) / 100;
+	newHeight = (height * factor) / 100;
 
-	suma_x = ancho / nuevo_ancho;
-	suma_y = alto / nuevo_alto;
+	totalX = width / newWidth;
+	totalY = height / newHeight;
 
 	pixel_x = xx1;
 	pixel_y = yy1;
 
-	for (n = 0; n < nuevo_alto; n++) {
-		for (m = 0; m < nuevo_ancho; m++) {
+	for (n = 0; n < newHeight; n++) {
+		for (m = 0; m < newWidth; m++) {
 			pos_pixel[0] = (int)pixel_x;
 			pos_pixel[1] = (int)pixel_y;
 			pos_pixel[2] = xx2 + m;
@@ -3555,10 +3555,10 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int a
 
 			copyRectClip(pos_pixel, dir_inicio, dir_fin);
 
-			pixel_x = pixel_x + suma_x;
+			pixel_x = pixel_x + totalX;
 		}
 		pixel_x = xx1;
-		pixel_y = pixel_y + suma_y;
+		pixel_y = pixel_y + totalY;
 	}
 }
 
@@ -3706,12 +3706,10 @@ void DrasculaEngine::aumenta_num_frame() {
 	}
 
 	if (num_ejec != 2) {
-		diferencia_y = (int)(alto_hare - nuevo_alto);
-		diferencia_x = (int)(ancho_hare - nuevo_ancho);
-		hare_y = hare_y + diferencia_y;
-		hare_x = hare_x + diferencia_x;
-		alto_hare = (int)nuevo_alto;
-		ancho_hare = (int)nuevo_ancho;
+		hare_y += (int)(alto_hare - newHeight);
+		hare_x += (int)(ancho_hare - newWidth);
+		alto_hare = (int)newHeight;
+		ancho_hare = (int)newWidth;
 	}
 }
 
