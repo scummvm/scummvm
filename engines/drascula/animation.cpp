@@ -456,7 +456,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		talk_tabernero(_textt[_lang][22], "T22.als");
+		talk_tabernero(22);
 		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -658,26 +658,26 @@ void DrasculaEngine::animation_3_1() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(_text[_lang][192], "192.als");
-	talk_tabernero(_textt[_lang][1], "t1.als");
-	talk(_text[_lang][193], "193.als");
-	talk_tabernero(_textt[_lang][2], "t2.als");
-	talk(_text[_lang][194], "194.als");
-	talk_tabernero(_textt[_lang][3], "t3.als");
-	talk(_text[_lang][195], "195.als");
-	talk_tabernero(_textt[_lang][4], "t4.als");
-	talk(_text[_lang][196], "196.als");
-	talk_tabernero(_textt[_lang][5], "t5.als");
-	talk_tabernero(_textt[_lang][6], "t6.als");
-	talk(_text[_lang][197], "197.als");
-	talk_tabernero(_textt[_lang][7], "t7.als");
-	talk(_text[_lang][198], "198.als");
-	talk_tabernero(_textt[_lang][8], "t8.als");
-	talk(_text[_lang][199], "199.als");
-	talk_tabernero(_textt[_lang][9], "t9.als");
-	talk(_text[_lang][200], "200.als");
-	talk(_text[_lang][201], "201.als");
-	talk(_text[_lang][202], "202.als");
+	talk(192);
+	talk_tabernero(1);
+	talk(193);
+	talk_tabernero(2);
+	talk(194);
+	talk_tabernero(3);
+	talk(195);
+	talk_tabernero(4);
+	talk(196);
+	talk_tabernero(5);
+	talk_tabernero(6);
+	talk(197);
+	talk_tabernero(7);
+	talk(198);
+	talk_tabernero(8);
+	talk(199);
+	talk_tabernero(9);
+	talk(200);
+	talk(201);
+	talk(202);
 
 	flags[0] = 1;
 
@@ -2675,13 +2675,13 @@ void DrasculaEngine::animation_11_2() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(_text[_lang][352], "352.als");
-	talk_tabernero(_textt[_lang][1], "T1.als");
-	talk(_text[_lang][353], "353.als");
-	talk_tabernero(_textt[_lang][17], "T17.als");
-	talk(_text[_lang][354], "354.als");
-	talk_tabernero(_textt[_lang][18], "T18.als");
-	talk(_text[_lang][355], "355.als");
+	talk(352);
+	talk_tabernero(1);
+	talk(353);
+	talk_tabernero(17);
+	talk(354);
+	talk_tabernero(18);
+	talk(355);
 	pause(40);
 	talk_tabernero("No, nada", "d82.als");
 
@@ -2879,11 +2879,11 @@ void DrasculaEngine::animation_36_2() {
 	loadPic("an11y13.alg");
 	decompressPic(dir_hare_dch, 1);
 
-	talk(_text[_lang][404], "404.als");
-	talk_tabernero(_textt[_lang][19], "T19.als");
-	talk_tabernero(_textt[_lang][20], "T20.als");
-	talk_tabernero(_textt[_lang][21], "T21.als");
-	talk(_text[_lang][355], "355.als");
+	talk(404);
+	talk_tabernero(19);
+	talk_tabernero(20);
+	talk_tabernero(21);
+	talk(355);
 	pause(40);
 	talk_tabernero("No, nada", "d82.als");
 

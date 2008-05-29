@@ -355,6 +355,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
+void DrasculaEngine::talk_tabernero(int index) {
+	char name[20];
+	sprintf(name, "t%i.als", index);
+	talk_tabernero(_textt[_lang][index], name);
+}
+
 void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int cara;
