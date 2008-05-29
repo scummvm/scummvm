@@ -185,6 +185,10 @@ void addObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 }
 
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
+	// Operation Stealth checks object index range, Future Wars doesn't.
+	if (g_cine->getGameType() == Cine::GType_OS && objIdx >= NUM_MAX_OBJECT)
+		return;
+
 	switch (paramIdx) {
 	case 1:
 		objectTable[objIdx].x = newValue;
@@ -213,8 +217,6 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 		break;
 	case 6:
 		objectTable[objIdx].part = newValue;
-		break;
-	default: // No-operation
 		break;
 	}
 }
