@@ -136,6 +136,11 @@ public:
 		_textY = y;
 	}
 	
+	void homeText() {
+		_textX = _textRect.left;
+		_textY = _textRect.top;
+	}
+
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
 	int16 getChannelType(uint16 channelIndex);
@@ -149,6 +154,7 @@ public:
 	void clearChannels();
 	
 	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo);
+
 	void drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
 
 	uint16 drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY);

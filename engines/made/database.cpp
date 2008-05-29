@@ -281,6 +281,20 @@ void GameDatabase::setVar(int16 index, int16 value) {
 	WRITE_LE_UINT16(_gameState + index * 2, value);
 }
 
+const char *GameDatabase::getObjectString(int16 index) {
+	Object *obj = getObject(index);
+	if (obj)
+		return obj->getString();
+	else
+		return "";
+}
+
+void GameDatabase::setObjectString(int16 index, const char *str) {
+	Object *obj = getObject(index);
+	if (obj)
+		obj->setString(str);
+}
+
 int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 
 	if (objectIndex == 0)

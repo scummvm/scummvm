@@ -267,10 +267,11 @@ int16 ScriptFunctions::sfIsMusicPlaying(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetTextPos(int16 argc, int16 *argv) {
-	// TODO: Used in Manhole:NE
-	warning("Unimplemented opcode: sfSetTextPos");
+	// Used in Manhole:NE
+	//warning("Unimplemented opcode: sfSetTextPos");
 	// This seems to be some kind of low-level opcode.
 	// The original engine calls int 10h to set the VGA cursor position.
+	// Since this seems to be used for debugging purposes only it's left out.
 	return 0;
 }
 
@@ -405,8 +406,7 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 	const char *text = NULL;
 
 	if (_vm->getGameID() == GID_RTZ) {
-		Object *obj = _vm->_dat->getObject(argv[argc - 1]);
-		text = obj->getString();
+		text = _vm->_dat->getObjectString(argv[argc - 1]);
 	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
 		text = _vm->_dat->getString(argv[argc - 1]);
 	}
@@ -440,8 +440,7 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfHomeText(int16 argc, int16 *argv) {
-	// TODO: Used in LGOP2
-	warning("Unimplemented opcode: sfHomeText");
+	_vm->_screen->homeText();
 	return 0;
 }
 
@@ -578,8 +577,7 @@ int16 ScriptFunctions::sfPlayCdSegment(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPrintf(int16 argc, int16 *argv) {
-	Object *obj = _vm->_dat->getObject(argv[argc - 1]);
-	const char *text = obj->getString();
+	const char *text = _vm->_dat->getObjectString(argv[argc - 1]);
 	debug(4, "--> text = %s", text);
 	return 0;
 }
@@ -614,15 +612,14 @@ int16 ScriptFunctions::sfAnimText(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfGetTextWidth(int16 argc, int16 *argv) {
 	int16 width = 0;
 	if (argv[1] > 0) {
-		Object *obj = _vm->_dat->getObject(argv[1]);
-		const char *text = obj->getString();
+		const char *text = _vm->_dat->getObjectString(argv[1]);
 		width = _vm->_screen->getTextWidth(argv[0], text);
 	}
 	return width;
 }
 
 int16 ScriptFunctions::sfPlayMovie(int16 argc, int16 *argv) {
-	const char *movieName = _vm->_dat->getObject(argv[1])->getString();
+	const char *movieName = _vm->_dat->getObjectString(argv[1]);
 	_vm->_system->showMouse(false);
 	_vm->_pmvPlayer->play(movieName);
 	_vm->_system->showMouse(true);
@@ -663,8 +660,10 @@ int16 ScriptFunctions::sfSetMusicVolume(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfRestartEvents(int16 argc, int16 *argv) {
-	// TODO: Used in RTZ
-	warning("Unimplemented opcode: sfRestartEvents");
+	// Used in RTZ
+	//warning("Unimplemented opcode: sfRestartEvents");
+	// This is used to reset the event recording/queue.
+	// Since we don't use either it's left out.
 	return 0;
 }
 
@@ -765,9 +764,7 @@ int16 ScriptFunctions::sfSetSoundRate(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfDrawAnimPic(int16 argc, int16 *argv) {
-	// TODO: Used in RTZ
-	warning("Unimplemented opcode: sfDrawAnimPic");
-	return 0;
+	return _vm->_screen->drawAnimPic(argv[5], argv[4], argv[3], argv[2], argv[1], argv[0]);
 }
 
 int16 ScriptFunctions::sfLoadAnim(int16 argc, int16 *argv) {
@@ -794,11 +791,12 @@ int16 ScriptFunctions::sfReadMenu(int16 argc, int16 *argv) {
 	if (menu) {
 		const char *text = menu->getString(textIndex);
 		debug(4, "objectIndex = %04X; text = %s\n", objectIndex, text);
-		Object *obj = _vm->_dat->getObject(objectIndex);
-		obj->setString(text);
+		_vm->_dat->setObjectString(objectIndex, text);
 		_vm->_res->freeResource(menu);
 		if (text)
 			length = strlen(text);
+	} else {
+		_vm->_dat->setObjectString(objectIndex, "");
 	}
 	return length;
 }
@@ -836,11 +834,8 @@ int16 ScriptFunctions::sfSaveGame(int16 argc, int16 *argv) {
 	if (saveNum > 999)
 		return 6;
 
-	Object *obj = _vm->_dat->getObject(descObjectIndex);
-	const char *description = obj->getString();
-
+	const char *description = _vm->_dat->getObjectString(descObjectIndex);
 	Common::String filename = _vm->getSavegameFilename(saveNum);
-
 	return _vm->_dat->savegame(filename.c_str(), description, version);
 	
 }
@@ -854,7 +849,6 @@ int16 ScriptFunctions::sfLoadGame(int16 argc, int16 *argv) {
 		return 1;
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
-
 	return _vm->_dat->loadgame(filename.c_str(), version);
 	
 }
@@ -871,13 +865,11 @@ int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 
-	Object *obj = _vm->_dat->getObject(descObjectIndex);
-
 	if (_vm->_dat->getSavegameDescription(filename.c_str(), description)) {
-		obj->setString(description.c_str());
+		_vm->_dat->setObjectString(descObjectIndex, description.c_str());
 		return 0;
 	} else {
-		obj->setString("");
+		_vm->_dat->setObjectString(descObjectIndex, "");
 		return 1;
 	}
 

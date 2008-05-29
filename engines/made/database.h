@@ -130,6 +130,9 @@ public:
 	int16 getVar(int16 index);
 	void setVar(int16 index, int16 value);
 
+	const char *getObjectString(int16 index);
+	void setObjectString(int16 index, const char *str);
+
 	virtual int16 *getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag) = 0;
 	virtual const char *getString(uint16 offset) = 0;
 	virtual bool getSavegameDescription(const char *filename, Common::String &description) = 0;
