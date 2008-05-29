@@ -162,34 +162,34 @@ int DrasculaEngine::go() {
 		VGA = (byte *)malloc(320 * 200);
 		memset(VGA, 0, 64000);
 
-		lleva_objeto = 0;
-		menu_bar = 0; menu_scr = 0; hay_nombre = 0;
+		takeObject = 0;
+		menuBar = 0; menuScreen = 0; hasName = 0;
 		frame_y = 0;
 		hare_x = -1; hare_se_mueve = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
-		comprueba_flags = 1;
+		checkFlags = 1;
 		rompo = 0; rompo2 = 0;
-		anda_a_objeto = 0;
-		step_x = PASO_HARE_X; step_y = PASO_HARE_Y;
-		alto_hare = CHARACTER_HEIGHT; ancho_hare = CHARACTER_WIDTH; alto_pies = PIES_HARE;
+		walkToObject = 0;
+		stepX = PASO_HARE_X; stepY = PASO_HARE_Y;
+		alto_hare = CHARACTER_HEIGHT; ancho_hare = CHARACTER_WIDTH; feetHeight = PIES_HARE;
 		alto_talk = ALTO_TALK_HARE; ancho_talk = ANCHO_TALK_HARE;
-		hay_answer = 0;
-		conta_ciego_vez = 0;
-		cambio_de_color = 0;
+		hasAnswer = 0;
+		conta_blind_vez = 0;
+		changeColor = 0;
 		rompo_y_salgo = 0;
 		vb_x = 120; sentido_vb = 1; vb_se_mueve = 0; frame_vb = 1;
 		frame_piano = 0;
-		frame_borracho = 0;
+		frame_drunk = 0;
 		frame_velas = 0;
 		cont_sv = 0;
 		term_int = 0;
-		corta_musica = 0;
+		musicStopped = 0;
 		hay_seleccion = 0;
 		Leng = 0;
 		UsingMem = 0;
-		GlobalSpeed = 0;
-		frame_ciego = 0;
-		frame_ronquido = 0;
-		frame_murcielago = 0;
+		globalSpeed = 0;
+		frame_blind = 0;
+		frame_snore = 0;
+		frame_bat = 0;
 		c_mirar = 0;
 		c_poder = 0;
 		ald = NULL;
@@ -252,7 +252,7 @@ int DrasculaEngine::go() {
 			frame_pen = 0;
 			flag_tv = 0;
 
-			dir_pendulo = dir_dibujo3;
+			dir_pendulum = dir_dibujo3;
 
 			loadPic("96.alg");
 			decompressPic(dir_hare_frente, COMPLETE_PAL);
@@ -336,8 +336,8 @@ void DrasculaEngine::loadPic(const char *NamePcc) {
 	if (!file.isOpen())
 		error("missing game data %s %c", NamePcc, 7);
 
-	Buffer_pcx = (byte *)malloc(65000);
-	auxPun = Buffer_pcx;
+	pcxBuffer = (byte *)malloc(65000);
+	auxPun = pcxBuffer;
 	file.seek(128);
 	while (!fExit) {
 		ch = file.readByte();
@@ -359,8 +359,8 @@ void DrasculaEngine::loadPic(const char *NamePcc) {
 }
 
 void DrasculaEngine::decompressPic(byte *dir_escritura, int plt) {
-	memcpy(dir_escritura, Buffer_pcx, 64000);
-	free(Buffer_pcx);
+	memcpy(dir_escritura, pcxBuffer, 64000);
+	free(pcxBuffer);
 	setRGB((byte *)cPal, plt);
 }
 
@@ -541,9 +541,9 @@ bool DrasculaEngine::escoba() {
 		loadPic("2aux62.alg");
 		decompressPic(dir_dibujo2, 1);
 		sentido_hare = 1;
-		obj_saliendo = 104;
+		objExit = 104;
 		if (hay_que_load != 0) {
-			if (!para_cargar(nom_partida)) {
+			if (!para_cargar(saveName)) {
 				return true;
 			}
 		} else {
@@ -553,80 +553,80 @@ bool DrasculaEngine::escoba() {
 			lleva_al_hare(65, 145);
 		}
 	} else if (num_ejec == 2) {
-		suma_objeto(28);
+		addObject(28);
 		sentido_hare = 3;
-		obj_saliendo = 162;
+		objExit = 162;
 		if (hay_que_load == 0)
 			carga_escoba("14.ald");
 		else {
-			if (!para_cargar(nom_partida)) {
+			if (!para_cargar(saveName)) {
 				return true;
 			}
 		}
 	} else if (num_ejec == 3) {
-		suma_objeto(28);
-		suma_objeto(11);
-		suma_objeto(14);
-		suma_objeto(22);
-		suma_objeto(9);
-		suma_objeto(20);
-		suma_objeto(19);
+		addObject(28);
+		addObject(11);
+		addObject(14);
+		addObject(22);
+		addObject(9);
+		addObject(20);
+		addObject(19);
 		flags[1] = 1;
 		sentido_hare = 1;
-		obj_saliendo = 99;
+		objExit = 99;
 		if (hay_que_load == 0)
 			carga_escoba("20.ald");
 		else {
-			if (!para_cargar(nom_partida)) {
+			if (!para_cargar(saveName)) {
 				return true;
 			}
 		}
 	} else if (num_ejec == 4) {
-		suma_objeto(28);
-		suma_objeto(9);
-		suma_objeto(20);
-		suma_objeto(22);
-		obj_saliendo = 100;
+		addObject(28);
+		addObject(9);
+		addObject(20);
+		addObject(22);
+		objExit = 100;
 		if (hay_que_load == 0) {
 			carga_escoba("21.ald");
 			sentido_hare = 0;
 			hare_x = 235;
 			hare_y = 164;
 		} else {
-			if (!para_cargar(nom_partida)) {
+			if (!para_cargar(saveName)) {
 				return true;
 			}
 		}
 	} else if (num_ejec == 5) {
-		suma_objeto(28);
-		suma_objeto(7);
-		suma_objeto(9);
-		suma_objeto(11);
-		suma_objeto(13);
-		suma_objeto(14);
-		suma_objeto(15);
-		suma_objeto(17);
-		suma_objeto(20);
+		addObject(28);
+		addObject(7);
+		addObject(9);
+		addObject(11);
+		addObject(13);
+		addObject(14);
+		addObject(15);
+		addObject(17);
+		addObject(20);
 		sentido_hare = 1;
-		obj_saliendo = 100;
+		objExit = 100;
 		if (hay_que_load == 0) {
 			carga_escoba("45.ald");
 		} else {
-			if (!para_cargar(nom_partida)) {
+			if (!para_cargar(saveName)) {
 				return true;
 			}
 		}
 	} else if (num_ejec == 6) {
-		suma_objeto(28);
-		suma_objeto(9);
+		addObject(28);
+		addObject(9);
 
 		sentido_hare = 1;
-		obj_saliendo = 104;
+		objExit = 104;
 		if (hay_que_load == 0) {
 			carga_escoba("58.ald");
 			animation_1_6();
 		} else {
-			if (!para_cargar(nom_partida)) {
+			if (!para_cargar(saveName)) {
 				return true;
 			}
 			loadPic("auxdr.alg");
@@ -636,12 +636,12 @@ bool DrasculaEngine::escoba() {
 
 bucles:
 	if (hare_se_mueve == 0) {
-		step_x = PASO_HARE_X;
-		step_y = PASO_HARE_Y;
+		stepX = PASO_HARE_X;
+		stepY = PASO_HARE_Y;
 	}
-	if (hare_se_mueve == 0 && anda_a_objeto == 1) {
+	if (hare_se_mueve == 0 && walkToObject == 1) {
 		sentido_hare = sentido_final;
-		anda_a_objeto = 0;
+		walkToObject = 0;
 	}
 
 	if (num_ejec == 2) {
@@ -653,7 +653,7 @@ bucles:
 			lleva_al_hare(190, 130);
 	}
 
-	mueve_cursor();
+	moveCursor();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (num_ejec == 2) {
@@ -666,23 +666,23 @@ bucles:
 
 	updateEvents();
 
-	if (menu_scr == 0 && lleva_objeto == 1)
-		comprueba_objetos();
+	if (menuScreen == 0 && takeObject == 1)
+		checkObjects();
 
-	if (button_dch == 1 && menu_scr == 1) {
+	if (button_dch == 1 && menuScreen == 1) {
 		delay(100);
 		if (num_ejec == 2)
-			loadPic(fondo_y_menu);
+			loadPic(menuBackground);
 		else
 			loadPic("99.alg");
 		decompressPic(dir_hare_fondo, 1);
 		setPalette((byte *)&gamePalette);
-		menu_scr = 0;
+		menuScreen = 0;
 		updateEvents();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
-	if (button_dch == 1 && menu_scr == 0) {
+	if (button_dch == 1 && menuScreen == 0) {
 		delay(100);
 		hare_se_mueve = 0;
 		if (sentido_hare == 2)
@@ -696,58 +696,58 @@ bucles:
 		else
 			loadPic("icons.alg");
 		decompressPic(dir_hare_fondo, 1);
-		menu_scr = 1;
+		menuScreen = 1;
 		updateEvents();
 		withoutVerb();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
 
-	if (button_izq == 1 && menu_bar == 1) {
+	if (button_izq == 1 && menuBar == 1) {
 		delay(100);
 		elige_en_barra();
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (button_izq == 1 && lleva_objeto == 0) {
+	} else if (button_izq == 1 && takeObject == 0) {
 		delay(100);
 		if (comprueba1())
 			return true;
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (button_izq == 1 && lleva_objeto == 1) {
+	} else if (button_izq == 1 && takeObject == 1) {
 		if (comprueba2())
 			return true;
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
 
-	if (mouseY < 24 && menu_scr == 0)
-		menu_bar = 1;
+	if (mouseY < 24 && menuScreen == 0)
+		menuBar = 1;
 	else
-		menu_bar = 0;
+		menuBar = 0;
 
-	Common::KeyCode key = getscan();
-	if (key == Common::KEYCODE_F1 && menu_scr == 0) {
-		elige_verbo(1);
+	Common::KeyCode key = getScan();
+	if (key == Common::KEYCODE_F1 && menuScreen == 0) {
+		selectVerb(1);
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F2 && menu_scr == 0) {
-		elige_verbo(2);
+	} else if (key == Common::KEYCODE_F2 && menuScreen == 0) {
+		selectVerb(2);
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F3 && menu_scr == 0) {
-		elige_verbo(3);
+	} else if (key == Common::KEYCODE_F3 && menuScreen == 0) {
+		selectVerb(3);
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F4 && menu_scr == 0) {
-		elige_verbo(4);
+	} else if (key == Common::KEYCODE_F4 && menuScreen == 0) {
+		selectVerb(4);
 		cont_sv = 0;
-	} else if (key == Common::KEYCODE_F5 && menu_scr == 0) {
-		elige_verbo(5);
+	} else if (key == Common::KEYCODE_F5 && menuScreen == 0) {
+		selectVerb(5);
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F6 && menu_scr == 0) {
-		elige_verbo(6);
+	} else if (key == Common::KEYCODE_F6 && menuScreen == 0) {
+		selectVerb(6);
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (key == Common::KEYCODE_F9) {
@@ -786,7 +786,7 @@ bucles:
 		 loadPic("alcbar.alg");
 		 decompressPic(dir_dibujo1, 255);
 	} else if (cont_sv == 1500) {
-		salva_pantallas();
+		screenSaver();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else {
@@ -808,7 +808,7 @@ void DrasculaEngine::pickObject(int objeto) {
 	decompressPic(dir_hare_fondo, 1);
 	chooseObject(objeto);
 	if (num_ejec == 2)
-		loadPic(fondo_y_menu);
+		loadPic(menuBackground);
 	else
 		loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -816,18 +816,18 @@ void DrasculaEngine::pickObject(int objeto) {
 
 void DrasculaEngine::chooseObject(int objeto) {
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && menu_scr == 0 && pickedObject != 16)
-			suma_objeto(pickedObject);
+		if (takeObject == 1 && menuScreen == 0 && pickedObject != 16)
+			addObject(pickedObject);
 	} else {
-		if (lleva_objeto == 1 && menu_scr == 0)
-			suma_objeto(pickedObject);
+		if (takeObject == 1 && menuScreen == 0)
+			addObject(pickedObject);
 	}
 	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
-	lleva_objeto = 1;
+	takeObject = 1;
 	pickedObject = objeto;
 }
 
-int DrasculaEngine::resta_objeto(int osj) {
+int DrasculaEngine::removeObject(int osj) {
 	int result = 1;
 
 	for (int h = 1; h < 43; h++) {
@@ -843,27 +843,27 @@ int DrasculaEngine::resta_objeto(int osj) {
 
 void DrasculaEngine::withoutVerb() {
 	int c = 171;
-	if (menu_scr == 1)
+	if (menuScreen == 1)
 		c = 0;
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && pickedObject != 16)
-			suma_objeto(pickedObject);
+		if (takeObject == 1 && pickedObject != 16)
+			addObject(pickedObject);
 	} else {
-		if (lleva_objeto == 1)
-			suma_objeto(pickedObject);
+		if (takeObject == 1)
+			addObject(pickedObject);
 	}
 	copyBackground(0, c, 0, 0, OBJWIDTH,OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
-	lleva_objeto = 0;
-	hay_nombre = 0;
+	takeObject = 0;
+	hasName = 0;
 }
 
-bool DrasculaEngine::para_cargar(char nom_game[]) {
+bool DrasculaEngine::para_cargar(char gameName[]) {
 	previousMusic = roomMusic;
-	menu_scr = 0;
+	menuScreen = 0;
 	if (num_ejec != 1)
 		clearRoom();
-	if (!carga_partida(nom_game))
+	if (!loadGame(gameName))
 		return false;
 	if (num_ejec == 2 || num_ejec == 3 || num_ejec == 5) {
 		delete ald;
@@ -905,7 +905,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	char para_codificar[20];
 	char buffer[256];
 
-	hay_nombre = 0;
+	hasName = 0;
 
 	strcpy(para_codificar, nom_fich);
 	strcpy(currentData, nom_fich);
@@ -935,11 +935,11 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%d",&alto_hare);
 		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&alto_pies);
+		sscanf(buffer, "%d",&feetHeight);
 		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&step_x);
+		sscanf(buffer, "%d",&stepX);
 		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&step_y);
+		sscanf(buffer, "%d",&stepY);
 
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%s",pant1);
@@ -957,7 +957,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		loadPic(pant4);
 		decompressPic(dir_hare_fondo, 1);
 
-		strcpy(fondo_y_menu, pant4);
+		strcpy(menuBackground, pant4);
 	}
 
 martini:
@@ -967,7 +967,7 @@ martini:
 
 	for (l = 0; l < numRoomObjs; l++) {
 		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &num_obj[l]);
+		sscanf(buffer, "%d", &objectNum[l]);
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%s", objName[l]);
 		getLine(ald, buffer, size);
@@ -990,7 +990,7 @@ martini:
 		sscanf(buffer, "%d", &isDoor[l]);
 		if (isDoor[l] != 0) {
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%s", alapantallakeva[l]);
+			sscanf(buffer, "%s", targetScreen[l]);
 			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &x_alakeva[l]);
 			getLine(ald, buffer, size);
@@ -1023,11 +1023,11 @@ martini:
 
 	if (num_ejec == 2) {
 		if (martin == 0) {
-			step_x = PASO_HARE_X;
-			step_y = PASO_HARE_Y;
+			stepX = PASO_HARE_X;
+			stepY = PASO_HARE_Y;
 			alto_hare = CHARACTER_HEIGHT;
 			ancho_hare = CHARACTER_WIDTH;
-			alto_pies = PIES_HARE;
+			feetHeight = PIES_HARE;
 			loadPic("97.alg");
 			decompressPic(dir_hare_dch, 1);
 			loadPic("96.alg");
@@ -1035,12 +1035,12 @@ martini:
 			loadPic("99.alg");
 			decompressPic(dir_hare_fondo, 1);
 
-			strcpy(fondo_y_menu, "99.alg");
+			strcpy(menuBackground, "99.alg");
 		}
 	}
 
 	for (l = 0; l < numRoomObjs; l++) {
-		if (num_obj[l] == obj_saliendo)
+		if (objectNum[l] == objExit)
 			obj_salir = l;
 	}
 
@@ -1070,7 +1070,7 @@ martini:
 	paleta_hare_oscuro();
 
 	hare_claro();
-	cambio_de_color = -1;
+	changeColor = -1;
 
 	if (num_ejec == 2)
 		color_abc(LIGHT_GREEN);
@@ -1153,11 +1153,11 @@ martini:
 
 	if (num_ejec == 2) {
 		if (roomNumber == 9 || roomNumber == 2 || roomNumber == 14 || roomNumber == 18)
-			conta_ciego_vez = vez();
+			conta_blind_vez = vez();
 	}
 	if (num_ejec == 4) {
 		if (roomNumber == 26)
-			conta_ciego_vez = vez();
+			conta_blind_vez = vez();
 	}
 
 	if (num_ejec == 4 && roomNumber == 24 && flags[29] == 1)
@@ -1179,7 +1179,7 @@ void DrasculaEngine::clearRoom() {
 	_system->updateScreen();
 }
 
-void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
+void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 	if (num_ejec == 5 || num_ejec == 6) {
 		if (hare_se_ve == 0) {
 			hare_x = sitio_x;
@@ -1187,9 +1187,9 @@ void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
 			goto fin;
 		}
 	}
-	sitio_x = punto_x;
-	sitio_y = punto_y;
-	empieza_andar();
+	sitio_x = pointX;
+	sitio_y = pointY;
+	startWalking();
 
 	for (;;) {
 		updateRoom();
@@ -1198,8 +1198,8 @@ void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
 			break;
 	}
 
-	if (anda_a_objeto == 1) {
-		anda_a_objeto = 0;
+	if (walkToObject == 1) {
+		walkToObject = 0;
 		sentido_hare = sentido_final;
 	}
 fin:
@@ -1207,8 +1207,8 @@ fin:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::mueve_cursor() {
-	int pos_cursor[8];
+void DrasculaEngine::moveCursor() {
+	int cursorPos[8];
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -1216,36 +1216,36 @@ void DrasculaEngine::mueve_cursor() {
 	pon_hare();
 	updateRefresh();
 
-	if (!strcmp(texto_nombre, "hacker") && hay_nombre == 1) {
-		if (_color != RED && menu_scr == 0)
+	if (!strcmp(textName, "hacker") && hasName == 1) {
+		if (_color != RED && menuScreen == 0)
 			color_abc(RED);
-	} else if (menu_scr == 0 && _color != LIGHT_GREEN)
+	} else if (menuScreen == 0 && _color != LIGHT_GREEN)
 		color_abc(LIGHT_GREEN);
-	if (hay_nombre == 1 && menu_scr == 0)
-		centra_texto(texto_nombre, mouseX, mouseY);
-	if (menu_scr == 1)
+	if (hasName == 1 && menuScreen == 0)
+		centerText(textName, mouseX, mouseY);
+	if (menuScreen == 1)
 		menu_sin_volcar();
-	else if (menu_bar == 1)
-		barra_menu();
+	else if (menuBar == 1)
+		clearMenu();
 
-	pos_cursor[0] = 0;
-	pos_cursor[1] = 0;
-	pos_cursor[2] = mouseX - 20;
-	pos_cursor[3] = mouseY - 17;
-	pos_cursor[4] = OBJWIDTH;
-	pos_cursor[5] = OBJHEIGHT;
-	copyRectClip(pos_cursor, dir_dibujo3, dir_zona_pantalla);
+	cursorPos[0] = 0;
+	cursorPos[1] = 0;
+	cursorPos[2] = mouseX - 20;
+	cursorPos[3] = mouseY - 17;
+	cursorPos[4] = OBJWIDTH;
+	cursorPos[5] = OBJHEIGHT;
+	copyRectClip(cursorPos, dir_dibujo3, dir_zona_pantalla);
 }
 
-void DrasculaEngine::comprueba_objetos() {
+void DrasculaEngine::checkObjects() {
 	int l, veo = 0;
 
 	for (l = 0; l < numRoomObjs; l++) {
 		if (mouseX > x1[l] && mouseY > y1[l]
 				&& mouseX < x2[l] && mouseY < y2[l]
 				&& visible[l] == 1 && isDoor[l] == 0) {
-			strcpy(texto_nombre, objName[l]);
-			hay_nombre = 1;
+			strcpy(textName, objName[l]);
+			hasName = 1;
 			veo = 1;
 		}
 	}
@@ -1253,21 +1253,21 @@ void DrasculaEngine::comprueba_objetos() {
 	if (num_ejec == 2) {
 		if (mouseX > hare_x + 2 && mouseY > hare_y + 2
 				&& mouseX < hare_x + ancho_hare - 2 && mouseY < hare_y + alto_hare - 2) {
-			strcpy(texto_nombre, "hacker");
-			hay_nombre = 1;
+			strcpy(textName, "hacker");
+			hasName = 1;
 			veo = 1;
 		}
 	} else {
 		if (mouseX > hare_x + 2 && mouseY > hare_y + 2
 				&& mouseX < hare_x + ancho_hare - 2 && mouseY < hare_y + alto_hare - 2 && veo == 0) {
-			strcpy(texto_nombre, "hacker");
-			hay_nombre = 1;
+			strcpy(textName, "hacker");
+			hasName = 1;
 			veo = 1;
 		}
 	}
 
 	if (veo == 0)
-		hay_nombre = 0;
+		hasName = 0;
 }
 
 void DrasculaEngine::elige_en_barra() {
@@ -1280,19 +1280,19 @@ void DrasculaEngine::elige_en_barra() {
 	if (num_verbo < 1)
 		withoutVerb();
 	else
-		elige_verbo(num_verbo);
+		selectVerb(num_verbo);
 }
 
 bool DrasculaEngine::comprueba1() {
 	int l;
 
-	if (menu_scr == 1)
+	if (menuScreen == 1)
 		removeObject();
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
 			if (mouseX >= x1[l] && mouseY >= y1[l]
 					&& mouseX <= x2[l] && mouseY <= y2[l] && rompo == 0) {
-				if (sal_de_la_habitacion(l))
+				if (exitRoom(l))
 					return true;
 				if (rompo == 1)
 					break;
@@ -1310,8 +1310,8 @@ bool DrasculaEngine::comprueba1() {
 				sitio_y = sitiobj_y[l];
 				sentido_final = sentidobj[l];
 				rompo = 1;
-				anda_a_objeto = 1;
-				empieza_andar();
+				walkToObject = 1;
+				startWalking();
 			}
 		}
 
@@ -1323,12 +1323,12 @@ bool DrasculaEngine::comprueba1() {
 				sitio_x = suelo_x1;
 			if (sitio_x > suelo_x2)
 				sitio_x = suelo_x2;
-			if (sitio_y < suelo_y1 + alto_pies)
-				sitio_y = suelo_y1 + alto_pies;
+			if (sitio_y < suelo_y1 + feetHeight)
+				sitio_y = suelo_y1 + feetHeight;
 			if (sitio_y > suelo_y2)
 				sitio_y = suelo_y2;
 
-			empieza_andar();
+			startWalking();
 		}
 		rompo = 0;
 	}
@@ -1339,21 +1339,21 @@ bool DrasculaEngine::comprueba1() {
 bool DrasculaEngine::comprueba2() {
 	int l;
 
-	if (menu_scr == 1) {
-		if (coge_objeto())
+	if (menuScreen == 1) {
+		if (pickupObject())
 			return true;
 	} else {
-		if (!strcmp(texto_nombre, "hacker") && hay_nombre == 1) {
-			if (banderas(50))
+		if (!strcmp(textName, "hacker") && hasName == 1) {
+			if (checkFlag(50))
 				return true;
 		} else {
 			for (l = 0; l < numRoomObjs; l++) {
 				if (mouseX > x1[l] && mouseY > y1[l]
 						&& mouseX < x2[l] && mouseY < y2[l] && visible[l] == 1) {
 					sentido_final = sentidobj[l];
-					anda_a_objeto = 1;
+					walkToObject = 1;
 					lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
-					if (banderas(num_obj[l]))
+					if (checkFlag(objectNum[l]))
 						return true;
 					if (num_ejec == 4)
 						break;
@@ -1365,7 +1365,7 @@ bool DrasculaEngine::comprueba2() {
 	return false;
 }
 
-Common::KeyCode DrasculaEngine::getscan() {
+Common::KeyCode DrasculaEngine::getScan() {
 	updateEvents();
 
 	return _keyPressed.keycode;
@@ -1412,22 +1412,22 @@ void DrasculaEngine::updateEvents() {
 	}
 }
 
-void DrasculaEngine::elige_verbo(int verbo) {
+void DrasculaEngine::selectVerb(int verbo) {
 	int c = 171;
 
-	if (menu_scr == 1)
+	if (menuScreen == 1)
 		c = 0;
 	if (num_ejec == 5) {
-		if (lleva_objeto == 1 && pickedObject != 16)
-			suma_objeto(pickedObject);
+		if (takeObject == 1 && pickedObject != 16)
+			addObject(pickedObject);
 	} else {
-		if (lleva_objeto == 1)
-			suma_objeto(pickedObject);
+		if (takeObject == 1)
+			addObject(pickedObject);
 	}
 
 	copyBackground(OBJWIDTH * verbo, c, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
-	lleva_objeto = 1;
+	takeObject = 1;
 	pickedObject = verbo;
 }
 
@@ -1450,7 +1450,7 @@ void DrasculaEngine::mesa() {
 		copyBackground(183, 56, 138, nivel_voc, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
 		copyBackground(183, 56, 194, nivel_cd, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
 
-		cursor_mesa();
+		setCursorTable();
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -1496,8 +1496,8 @@ void DrasculaEngine::mesa() {
 }
 
 bool DrasculaEngine::saves() {
-	char nombres[10][23];
-	char fichero[50];
+	char names[10][23];
+	char file[50];
 	char fileEpa[50];
 	int n, n2, num_sav = 0, y = 27;
 	Common::InSaveFile *sav;
@@ -1518,7 +1518,7 @@ bool DrasculaEngine::saves() {
 		}
 	}
 	for (n = 0; n < NUM_SAVES; n++)
-		sav->readLine(nombres[n], 23);
+		sav->readLine(names[n], 23);
 	delete sav;
 
 	loadPic("savescr.alg");
@@ -1530,11 +1530,11 @@ bool DrasculaEngine::saves() {
 		y = 27;
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		for (n = 0; n < NUM_SAVES; n++) {
-			print_abc(nombres[n], 116, y);
+			print_abc(names[n], 116, y);
 			y = y + 9;
 		}
 		print_abc(select, 117, 15);
-		cursor_mesa();
+		setCursorTable();
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		y = 27;
 
@@ -1544,22 +1544,22 @@ bool DrasculaEngine::saves() {
 			delay(100);
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (mouseX > 115 && mouseY > y + (9 * n) && mouseX < 115 + 175 && mouseY < y + 10 + (9 * n)) {
-					strcpy(select, nombres[n]);
+					strcpy(select, names[n]);
 
 					if (strcmp(select, "*"))
 						hay_seleccion = 1;
 					else {
-						introduce_nombre();
-						strcpy(nombres[n], select);
+						enterName();
+						strcpy(names[n], select);
 						if (hay_seleccion == 1) {
-							snprintf(fichero, 50, "%s%02d", _targetName.c_str(), n + 1);
-							para_grabar(fichero);
+							snprintf(file, 50, "%s%02d", _targetName.c_str(), n + 1);
+							para_grabar(file);
 							Common::OutSaveFile *tsav;
 							if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
 								error("Can't open %s file", fileEpa);
 							}
 							for (n = 0; n < NUM_SAVES; n++) {
-								tsav->writeString(nombres[n]);
+								tsav->writeString(names[n]);
 								tsav->writeString("\n");
 							}
 							tsav->finalize();
@@ -1570,39 +1570,39 @@ bool DrasculaEngine::saves() {
 					print_abc(select, 117, 15);
 					y = 27;
 					for (n2 = 0; n2 < NUM_SAVES; n2++) {
-						print_abc(nombres[n2], 116, y);
+						print_abc(names[n2], 116, y);
 						y = y + 9;
 					}
 					if (hay_seleccion == 1) {
-						snprintf(fichero, 50, "%s%02d", _targetName.c_str(), n + 1);
+						snprintf(file, 50, "%s%02d", _targetName.c_str(), n + 1);
 					}
 					num_sav = n;
 				}
 			}
 
 			if (mouseX > 117 && mouseY > 15 && mouseX < 295 && mouseY < 24 && hay_seleccion == 1) {
-				introduce_nombre();
-				strcpy(nombres[num_sav], select);
+				enterName();
+				strcpy(names[num_sav], select);
 				print_abc(select, 117, 15);
 				y = 27;
 				for (n2 = 0; n2 < NUM_SAVES; n2++) {
-					print_abc(nombres[n2], 116, y);
+					print_abc(names[n2], 116, y);
 					y = y + 9;
 				}
 			}
 
 			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && hay_seleccion == 1) {
-				if (!para_cargar(fichero))
+				if (!para_cargar(file))
 					return false;
 				break;
 			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && hay_seleccion == 1) {
-				para_grabar(fichero);
+				para_grabar(file);
 				Common::OutSaveFile *tsav;
 				if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
 					error("Can't open %s file", fileEpa);
 				}
 				for (n = 0; n < NUM_SAVES; n++) {
-					tsav->writeString(nombres[n]);
+					tsav->writeString(names[n]);
 					tsav->writeString("\n");
 				}
 				tsav->finalize();
@@ -1674,7 +1674,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 			else if (c == '\255')
 				x_de_letra = X_ABRE_EXCLAMACION;
 			else if (c == ';')
-				x_de_letra = X_PUNTO_Y_COMA;
+				x_de_letra = X_pointY_COMA;
 			else if (c == '>')
 				x_de_letra = X_GREATER_THAN;
 			else if (c == '<')
@@ -1766,12 +1766,12 @@ bool DrasculaEngine::confirma_salir() {
 
 	color_abc(RED);
 	updateRoom();
-	centra_texto(_textsys[_lang][1], 160, 87);
+	centerText(_textsys[_lang][1], 160, 87);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	delay(100);
 	for (;;) {
-		key = getscan();
+		key = getScan();
 		if (key != 0)
 			break;
 	}
@@ -1784,7 +1784,7 @@ bool DrasculaEngine::confirma_salir() {
 	return true;
 }
 
-void DrasculaEngine::salva_pantallas() {
+void DrasculaEngine::screenSaver() {
 	int xr, yr;
 	byte *copia, *ghost;
 	Common::File file;
@@ -1912,13 +1912,13 @@ void DrasculaEngine::salva_pantallas() {
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
 	OpenSSN(filefli, vel);
 	while (PlayFrameSSN() && (!term_int)) {
-		if (getscan() == Common::KEYCODE_ESCAPE)
+		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
 	EndSSN();
 }
 
-void DrasculaEngine::FundeDelNegro(int VelocidadDeFundido) {
+void DrasculaEngine::fadeFromBlack(int VelocidadDeFundido) {
 	char fundido;
 	unsigned int color, componente;
 
@@ -1956,14 +1956,14 @@ void DrasculaEngine::color_abc(int cl) {
 	setPalette((byte *)&gamePalette);
 }
 
-char DrasculaEngine::LimitaVGA(char valor) {
-	return (valor & 0x3F) * (valor > 0);
+char DrasculaEngine::LimitaVGA(char value) {
+	return (value & 0x3F) * (value > 0);
 }
 
-void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto) {
+void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	char bb[200], m2[200], m1[200], mb[10][50];
 	char m3[200];
-	int h, fil, x_texto3, x_texto2, x_texto1, conta_f = 0, ya = 0;
+	int h, fil, textX3, textX2, textX1, conta_f = 0, ya = 0;
 
 	strcpy(m1, " ");
 	strcpy(m2, " ");
@@ -1973,24 +1973,24 @@ void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto)
 	for (h = 0; h < 10; h++)
 		strcpy(mb[h], " ");
 
-	if (x_texto > 160)
+	if (textX > 160)
 		ya = 1;
 
-	strcpy(m1, mensaje);
-	x_texto = CLIP<int>(x_texto, 60, 255);
+	strcpy(m1, message);
+	textX = CLIP<int>(textX, 60, 255);
 
-	x_texto1 = x_texto;
+	textX1 = textX;
 
 	if (ya == 1)
-		x_texto1 = 315 - x_texto;
+		textX1 = 315 - textX;
 
-	x_texto2 = (strlen(m1) / 2) * CHAR_WIDTH;
+	textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
 
 tut:
 	strcpy(bb, m1);
 	scumm_strrev(bb);
 
-	if (x_texto1 < x_texto2) {
+	if (textX1 < textX2) {
 		strcpy(m3, strrchr(m1, ' '));
 		strcpy(m1, strstr(bb, " "));
 		scumm_strrev(m1);
@@ -1999,8 +1999,8 @@ tut:
 		strcpy(m2, m3);
 	};
 
-	x_texto2 = (strlen(m1) / 2) * CHAR_WIDTH;
-	if (x_texto1 < x_texto2)
+	textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
+	if (textX1 < textX2)
 		goto tut;
 	strcpy(mb[conta_f], m1);
 
@@ -2017,19 +2017,19 @@ tut:
 
 imprimir:
 
-	fil = y_texto - (((conta_f + 3) * CHAR_HEIGHT));
+	fil = textY - (((conta_f + 3) * CHAR_HEIGHT));
 
 	for (h = 0; h < conta_f + 1; h++) {
-		x_texto3 = strlen(mb[h]) / 2;
-		print_abc(mb[h], ((x_texto) - x_texto3 * CHAR_WIDTH) - 1, fil);
+		textX3 = strlen(mb[h]) / 2;
+		print_abc(mb[h], ((textX) - textX3 * CHAR_WIDTH) - 1, fil);
 		fil = fil + CHAR_HEIGHT + 2;
 	}
 }
 
-void DrasculaEngine::playSound(const char *fichero) {
+void DrasculaEngine::playSound(const char *file) {
 	if (hay_sb == 1) {
 		sku = new Common::File;
-		sku->open(fichero);
+		sku->open(file);
 		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
@@ -2051,7 +2051,7 @@ bool DrasculaEngine::anima(const char *animation, int FPS) {
 	FileIn.open(animation);
 
 	if (!FileIn.isOpen()) {
-		error("No encuentro un fichero de animation.");
+		error("No encuentro un file de animation.");
 	}
 
 	FileIn.read(&NFrames, sizeof(NFrames));
@@ -2081,7 +2081,7 @@ bool DrasculaEngine::anima(const char *animation, int FPS) {
 		_system->updateScreen();
 		WaitForNext(FPS);
 		cnt++;
-		byte key = getscan();
+		byte key = getScan();
 		if (key == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 		if (key != 0)
@@ -2091,7 +2091,7 @@ bool DrasculaEngine::anima(const char *animation, int FPS) {
 	free(AuxBuffDes);
 	FileIn.close();
 
-	return ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE));
+	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
 }
 
 void DrasculaEngine::animastopSound_corte() {
@@ -2103,7 +2103,7 @@ void DrasculaEngine::animastopSound_corte() {
 	}
 }
 
-void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
+void DrasculaEngine::fadeToBlack(int VelocidadDeFundido) {
 	char fundido;
 	unsigned int color, componente;
 
@@ -2125,7 +2125,7 @@ void DrasculaEngine::pause(int cuanto) {
 	_system->delayMillis(cuanto * 30); // was originaly 2
 }
 
-void DrasculaEngine::pon_igor() {
+void DrasculaEngine::placeIgor() {
 	int pos_igor[6];
 
 	pos_igor[0] = 1;
@@ -2145,7 +2145,7 @@ void DrasculaEngine::pon_igor() {
 	copyRectClip(pos_igor, dir_hare_frente, dir_zona_pantalla);
 }
 
-void DrasculaEngine::pon_dr() {
+void DrasculaEngine::placeDrascula() {
 	int pos_dr[6];
 
 	if (sentido_dr == 1)
@@ -2166,7 +2166,7 @@ void DrasculaEngine::pon_dr() {
 		copyRectClip(pos_dr, dir_hare_fondo, dir_zona_pantalla);
 }
 
-void DrasculaEngine::pon_bj() {
+void DrasculaEngine::placeBJ() {
 	int pos_bj[6];
 
 	if (sentido_bj == 3)
@@ -2182,7 +2182,7 @@ void DrasculaEngine::pon_bj() {
 	copyRectClip(pos_bj, dir_dibujo3, dir_zona_pantalla);
 }
 
-void DrasculaEngine::hipo(int counter) {
+void DrasculaEngine::hiccup(int counter) {
 	int y = 0, sentido = 0;
 	if (num_ejec == 3)
 		y = -1;
@@ -2256,17 +2256,17 @@ void DrasculaEngine::updateRoom() {
 	updateRefresh();
 }
 
-bool DrasculaEngine::carga_partida(const char *nom_game) {
+bool DrasculaEngine::loadGame(const char *gameName) {
 	int l, n_ejec2;
 	Common::InSaveFile *sav;
 
-	if (!(sav = _saveFileMan->openForLoading(nom_game))) {
+	if (!(sav = _saveFileMan->openForLoading(gameName))) {
 		error("missing savegame file");
 	}
 
 	n_ejec2 = sav->readSint32LE();
 	if (n_ejec2 != num_ejec) {
-		strcpy(nom_partida, nom_game);
+		strcpy(saveName, gameName);
 		num_ejec = n_ejec2 - 1;
 		hay_que_load = 1;
 		return false;
@@ -2284,7 +2284,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 		flags[l] = sav->readSint32LE();
 	}
 
-	lleva_objeto = sav->readSint32LE();
+	takeObject = sav->readSint32LE();
 	pickedObject = sav->readSint32LE();
 	hay_que_load = 0;
 
@@ -2295,50 +2295,50 @@ void DrasculaEngine::updateDoor(int doorNum) {
 	if (num_ejec == 1 || num_ejec == 3 || num_ejec == 5 || num_ejec == 6)
 		return;
 	else if (num_ejec == 2) {
-		if (num_obj[doorNum] == 138)
+		if (objectNum[doorNum] == 138)
 			isDoor[doorNum] = flags[0];
-		else if (num_obj[doorNum] == 136)
+		else if (objectNum[doorNum] == 136)
 			isDoor[doorNum] = flags[8];
-		else if (num_obj[doorNum] == 156)
+		else if (objectNum[doorNum] == 156)
 			isDoor[doorNum] = flags[16];
-		else if (num_obj[doorNum] == 163)
+		else if (objectNum[doorNum] == 163)
 			isDoor[doorNum] = flags[17];
-		else if (num_obj[doorNum] == 177)
+		else if (objectNum[doorNum] == 177)
 			isDoor[doorNum] = flags[15];
-		else if (num_obj[doorNum] == 175)
+		else if (objectNum[doorNum] == 175)
 			isDoor[doorNum] = flags[40];
-		else if (num_obj[doorNum] == 173)
+		else if (objectNum[doorNum] == 173)
 			isDoor[doorNum] = flags[36];
 	} else if (num_ejec == 4) {
-		if (num_obj[doorNum] == 101 && flags[0] == 0)
+		if (objectNum[doorNum] == 101 && flags[0] == 0)
 			isDoor[doorNum] = 0;
-		else if (num_obj[doorNum] == 101 && flags[0] == 1 && flags[28] == 1)
+		else if (objectNum[doorNum] == 101 && flags[0] == 1 && flags[28] == 1)
 			isDoor[doorNum] = 1;
-		else if (num_obj[doorNum] == 103)
+		else if (objectNum[doorNum] == 103)
 			isDoor[doorNum] = flags[0];
-		else if (num_obj[doorNum] == 104)
+		else if (objectNum[doorNum] == 104)
 			isDoor[doorNum] = flags[1];
-		else if (num_obj[doorNum] == 105)
+		else if (objectNum[doorNum] == 105)
 			isDoor[doorNum] = flags[1];
-		else if (num_obj[doorNum] == 106)
+		else if (objectNum[doorNum] == 106)
 			isDoor[doorNum] = flags[2];
-		else if (num_obj[doorNum] == 107)
+		else if (objectNum[doorNum] == 107)
 			isDoor[doorNum] = flags[2];
-		else if (num_obj[doorNum] == 110)
+		else if (objectNum[doorNum] == 110)
 			isDoor[doorNum] = flags[6];
-		else if (num_obj[doorNum] == 114)
+		else if (objectNum[doorNum] == 114)
 			isDoor[doorNum] = flags[4];
-		else if (num_obj[doorNum] == 115)
+		else if (objectNum[doorNum] == 115)
 			isDoor[doorNum] = flags[4];
-		else if (num_obj[doorNum] == 116 && flags[5] == 0)
+		else if (objectNum[doorNum] == 116 && flags[5] == 0)
 			isDoor[doorNum] = 0;
-		else if (num_obj[doorNum] == 116 && flags[5] == 1 && flags[23] == 1)
+		else if (objectNum[doorNum] == 116 && flags[5] == 1 && flags[23] == 1)
 			isDoor[doorNum] = 1;
-		else if (num_obj[doorNum] == 117)
+		else if (objectNum[doorNum] == 117)
 			isDoor[doorNum] = flags[5];
-		else if (num_obj[doorNum] == 120)
+		else if (objectNum[doorNum] == 120)
 			isDoor[doorNum] = flags[8];
-		else if (num_obj[doorNum] == 122)
+		else if (objectNum[doorNum] == 122)
 			isDoor[doorNum] = flags[7];
 	}
 }
@@ -2397,11 +2397,11 @@ void DrasculaEngine::hare_claro() {
 	updatePalette();
 }
 
-void DrasculaEngine::empieza_andar() {
+void DrasculaEngine::startWalking() {
 	hare_se_mueve = 1;
 
-	step_x = PASO_HARE_X;
-	step_y = PASO_HARE_Y;
+	stepX = PASO_HARE_X;
+	stepY = PASO_HARE_Y;
 
 	if (num_ejec == 2) {
 		if ((sitio_x < hare_x) && (sitio_y <= (hare_y + alto_hare)))
@@ -2435,48 +2435,48 @@ void DrasculaEngine::pon_hare() {
 	int pos_hare[6];
 	int r;
 
-	if (hare_se_mueve == 1 && step_x == PASO_HARE_X) {
-		for (r = 0; r < step_x; r++) {
+	if (hare_se_mueve == 1 && stepX == PASO_HARE_X) {
+		for (r = 0; r < stepX; r++) {
 			if (num_ejec != 2) {
 				if (sentido_hare == 0 && sitio_x - r == hare_x + ancho_hare / 2) {
 					hare_se_mueve = 0;
-					step_x = PASO_HARE_X;
-					step_y = PASO_HARE_Y;
+					stepX = PASO_HARE_X;
+					stepY = PASO_HARE_Y;
 				}
 				if (sentido_hare == 1 && sitio_x + r == hare_x + ancho_hare / 2) {
 					hare_se_mueve = 0;
-					step_x = PASO_HARE_X;
-					step_y = PASO_HARE_Y;
+					stepX = PASO_HARE_X;
+					stepY = PASO_HARE_Y;
 					hare_x = sitio_x - ancho_hare / 2;
 					hare_y = sitio_y - alto_hare;
 				}
 			} else if (num_ejec == 2) {
 				if (sentido_hare == 0 && sitio_x - r == hare_x) {
 					hare_se_mueve = 0;
-					step_x = PASO_HARE_X;
-					step_y = PASO_HARE_Y;
+					stepX = PASO_HARE_X;
+					stepY = PASO_HARE_Y;
 				}
 				if (sentido_hare == 1 && sitio_x + r == hare_x + ancho_hare) {
 					hare_se_mueve = 0;
-					step_x = PASO_HARE_X;
-					step_y = PASO_HARE_Y;
+					stepX = PASO_HARE_X;
+					stepY = PASO_HARE_Y;
 					hare_x = sitio_x - ancho_hare + 4;
 					hare_y = sitio_y - alto_hare;
 				}
 			}
 		}
 	}
-	if (hare_se_mueve == 1 && step_y == PASO_HARE_Y) {
-		for (r = 0; r < step_y; r++) {
+	if (hare_se_mueve == 1 && stepY == PASO_HARE_Y) {
+		for (r = 0; r < stepY; r++) {
 			if (sentido_hare == 2 && sitio_y - r == hare_y + alto_hare) {
 				hare_se_mueve = 0;
-				step_x = PASO_HARE_X;
-				step_y = PASO_HARE_Y;
+				stepX = PASO_HARE_X;
+				stepY = PASO_HARE_Y;
 			}
 			if (sentido_hare == 3 && sitio_y + r == hare_y + alto_hare) {
 				hare_se_mueve = 0;
-				step_x = PASO_HARE_X;
-				step_y = PASO_HARE_Y;
+				stepX = PASO_HARE_X;
+				stepY = PASO_HARE_Y;
 			}
 		}
 	}
@@ -2565,7 +2565,7 @@ void DrasculaEngine::pon_hare() {
 		}
 
 no_vuelco:
-		aumenta_num_frame();
+		increaseFrameNum();
 	}
 }
 
@@ -2573,7 +2573,7 @@ void DrasculaEngine::menu_sin_volcar() {
 	int h, n, x;
 	char texto_icono[13];
 
-	x = sobre_que_objeto();
+	x = whichObject();
 	strcpy(texto_icono, iconName[x]);
 
 	for (n = 1; n < 43; n++) {
@@ -2595,7 +2595,7 @@ void DrasculaEngine::menu_sin_volcar() {
 		print_abc(texto_icono, itemLocations[x].x - 2, itemLocations[x].y - 7);
 }
 
-void DrasculaEngine::barra_menu() {
+void DrasculaEngine::clearMenu() {
 	int n, sobre_verbo = 1;
 
 	for (n = 0; n < 7; n++) {
@@ -2613,25 +2613,25 @@ void DrasculaEngine::removeObject() {
 	updateRoom();
 
 	for (n = 1; n < 43; n++){
-		if (sobre_que_objeto() == n) {
+		if (whichObject() == n) {
 			h = inventoryObjects[n];
 			inventoryObjects[n] = 0;
 			if (h != 0)
-				lleva_objeto = 1;
+				takeObject = 1;
 		}
 	}
 
 	updateEvents();
 
-	if (lleva_objeto == 1)
+	if (takeObject == 1)
 		chooseObject(h);
 }
 
-bool DrasculaEngine::sal_de_la_habitacion(int l) {
+bool DrasculaEngine::exitRoom(int l) {
 	char salgo[13];
 
 	if (num_ejec == 1) {
-		if (num_obj[l] == 105 && flags[0] == 0)
+		if (objectNum[l] == 105 && flags[0] == 0)
 			talk(_text[_lang][442], "442.als");
 		else {
 			updateDoor(l);
@@ -2642,16 +2642,16 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 				updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 				hare_se_mueve = 0;
 				sentido_hare = sentido_alkeva[l];
-				obj_saliendo = alapuertakeva[l];
+				objExit = alapuertakeva[l];
 				rompo = 1;
 				previousMusic = roomMusic;
 
-				if (num_obj[l] == 105) {
+				if (objectNum[l] == 105) {
 					animation_2_1();
 					return true;
 				}
 				clearRoom();
-				strcpy(salgo, alapantallakeva[l]);
+				strcpy(salgo, targetScreen[l]);
 				strcat(salgo, ".ald");
 				hare_x = -1;
 				carga_escoba(salgo);
@@ -2663,29 +2663,29 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
-			obj_saliendo = alapuertakeva[l];
+			objExit = alapuertakeva[l];
 			rompo = 1;
 			previousMusic = roomMusic;
-			if (num_obj[l] == 136)
+			if (objectNum[l] == 136)
 				animation_2_2();
-			if (num_obj[l] == 124)
+			if (objectNum[l] == 124)
 				animation_3_2();
-			if (num_obj[l] == 173) {
+			if (objectNum[l] == 173) {
 				animation_35_2();
 				return true;
-			} if (num_obj[l] == 146 && flags[39] == 1) {
+			} if (objectNum[l] == 146 && flags[39] == 1) {
 				flags[5] = 1;
 				flags[11] = 1;
 			}
-			if (num_obj[l] == 176 && flags[29] == 1) {
+			if (objectNum[l] == 176 && flags[29] == 1) {
 				flags[29] = 0;
-				resta_objeto(23);
-				suma_objeto(11);
+				removeObject(23);
+				addObject(11);
 			}
 			clearRoom();
 			delete ald;
 			ald = NULL;
-			strcpy(salgo, alapantallakeva[l]);
+			strcpy(salgo, targetScreen[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
 			carga_escoba(salgo);
@@ -2699,11 +2699,11 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
-			obj_saliendo = alapuertakeva[l];
+			objExit = alapuertakeva[l];
 			rompo = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(salgo, alapantallakeva[l]);
+			strcpy(salgo, targetScreen[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
 			carga_escoba(salgo);
@@ -2717,14 +2717,14 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
-			obj_saliendo = alapuertakeva[l];
+			objExit = alapuertakeva[l];
 			rompo = 1;
 			previousMusic = roomMusic;
 
-			if (num_obj[l] == 108)
+			if (objectNum[l] == 108)
 				lleva_al_hare(171, 78);
 			clearRoom();
-			strcpy(salgo, alapantallakeva[l]);
+			strcpy(salgo, targetScreen[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -2738,12 +2738,12 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
-			obj_saliendo = alapuertakeva[l];
+			objExit = alapuertakeva[l];
 			rompo = 1;
 			previousMusic = roomMusic;
 			hare_se_ve = 1;
 			clearRoom();
-			strcpy(salgo, alapantallakeva[l]);
+			strcpy(salgo, targetScreen[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -2757,16 +2757,16 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
-			obj_saliendo = alapuertakeva[l];
+			objExit = alapuertakeva[l];
 			rompo = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(salgo, alapantallakeva[l]);
+			strcpy(salgo, targetScreen[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
 
-			if (obj_saliendo == 105)
+			if (objExit == 105)
 				animation_19_6();
 		}
 	}
@@ -2774,10 +2774,10 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 	return false;
 }
 
-bool DrasculaEngine::coge_objeto() {
+bool DrasculaEngine::pickupObject() {
 	int h, n;
 	h = pickedObject;
-	comprueba_flags = 1;
+	checkFlags = 1;
 
 	updateRoom();
 	menu_sin_volcar();
@@ -2787,34 +2787,34 @@ bool DrasculaEngine::coge_objeto() {
 		goto usando_verbos;
 
 	for (n = 1; n < 43; n++) {
-		if (sobre_que_objeto() == n && inventoryObjects[n] == 0) {
+		if (whichObject() == n && inventoryObjects[n] == 0) {
 			inventoryObjects[n] = h;
-			lleva_objeto = 0;
-			comprueba_flags = 0;
+			takeObject = 0;
+			checkFlags = 0;
 		}
 	}
 
 usando_verbos:
 
-	if (comprueba_flags == 1) {
-		if (comprueba_banderas_menu())
+	if (checkFlags == 1) {
+		if (checkMenuFlags())
 			return true;
 	}
 	updateEvents();
-	if (lleva_objeto == 0)
+	if (takeObject == 0)
 		withoutVerb();
 
 	return false;
 }
 
-bool DrasculaEngine::banderas(int fl) {
+bool DrasculaEngine::checkFlag(int fl) {
 	hare_se_mueve = 0;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	hay_answer = 1;
+	hasAnswer = 1;
 
-	if (menu_scr == 1) {
+	if (menuScreen == 1) {
 		if (num_ejec == 1) {
 			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
@@ -2824,8 +2824,8 @@ bool DrasculaEngine::banderas(int fl) {
 				talk(_text[_lang][164], "164.als");
 				flags[23] = 1;
 				withoutVerb();
-				suma_objeto(7);
-				suma_objeto(18);
+				addObject(7);
+				addObject(18);
 			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
 				talk(_text[_lang][307], "307.als");
 			else if (pickedObject == kVerbLook && fl == 28)
@@ -2869,7 +2869,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (pickedObject == kVerbLook && fl == 23)
 				talk(_text[_lang][152], "152.als");
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 3) {
 			if (pickedObject == kVerbLook && fl == 22)
 				talk(_text[_lang][307], "307.als");
@@ -2914,13 +2914,13 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (pickedObject == kVerbLook && fl == 23)
 				talk(_text[_lang][152], "152.als");
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 4) {
 			if ((pickedObject == 18 && fl == 19) || (pickedObject == 19 && fl == 18)) {
 				withoutVerb();
 				chooseObject(21);
-				resta_objeto(18);
-				resta_objeto(19);
+				removeObject(18);
+				removeObject(19);
 			} else if ((pickedObject == 14 && fl == 19) || (pickedObject == 19 && fl == 14))
 				talk(_text[_lang][484], "484.als");
 			else if (pickedObject == kVerbLook && fl == 28)
@@ -2964,7 +2964,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (pickedObject == kVerbLook && fl == 22)
 				talk(_text[_lang][161], "161.als");
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 5) {
 			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
@@ -2992,7 +2992,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (pickedObject == kVerbLook && fl == 20)
 				talk(_text[_lang][162], "162.als"); 
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 6) {
 			if (pickedObject == kVerbLook && fl == 28)
 				talk(_text[_lang][328], "328.als");
@@ -3004,7 +3004,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (pickedObject == kVerbLook && fl == 21)
 				talk(_text[_lang][441], "441.als");
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		}
 	} else {
 		if (num_ejec == 1) {
@@ -3025,7 +3025,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (roomNumber == 63)
 				room_63(fl);
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 2) {
 			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][308], "308.als");
@@ -3077,7 +3077,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (roomNumber == 19)
 				room_19(fl);
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 3) {
 			if (pickedObject == kVerbLook && fl == 50)
 				talk(_text[_lang][309], "309.als");
@@ -3095,7 +3095,7 @@ bool DrasculaEngine::banderas(int fl) {
 				if (room_13(fl))
 					return true;
 			} else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 4) {
 			if (roomNumber == 28)
 				talk(_text[_lang][178], "178.als");
@@ -3145,7 +3145,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (roomNumber == 44)
 				room_44(fl);
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 5) {
 			if (pickedObject == kVerbLook && fl == 50)
 				talk("Cuanto mas me miro, mas me gusto", "54.als");
@@ -3173,7 +3173,7 @@ bool DrasculaEngine::banderas(int fl) {
 				if (room_56(fl))
 					return true;
 			} else
-				hay_answer = 0;
+				hasAnswer = 0;
 		} else if (num_ejec == 6) {
 			if (pickedObject == kVerbLook && fl == 50 && flags[0] == 1)
 				talk(_text[_lang][308], "308.als");
@@ -3190,7 +3190,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(_text[_lang][314], "314.als" );
 			else if (roomNumber == 102)
-				room_pendulo(fl);
+				room_pendulum(fl);
 			else if (roomNumber == 58)
 				room_58(fl);
 			else if (roomNumber == 59)
@@ -3201,31 +3201,31 @@ bool DrasculaEngine::banderas(int fl) {
 			} else if (roomNumber == 61)
 				room_61(fl);
 			else
-				hay_answer = 0;
+				hasAnswer = 0;
 		}
 	}
-	if (hay_answer == 0 && hay_nombre == 1)
+	if (hasAnswer == 0 && hasName == 1)
 		room_0();
-	else if (hay_answer == 0 && menu_scr == 1)
+	else if (hasAnswer == 0 && menuScreen == 1)
 		room_0();
 
 	return false;
 }
 
-void DrasculaEngine::cursor_mesa() {
-	int pos_cursor[8];
+void DrasculaEngine::setCursorTable() {
+	int cursorPos[8];
 
-	pos_cursor[0] = 225;
-	pos_cursor[1] = 56;
-	pos_cursor[2] = mouseX - 20;
-	pos_cursor[3] = mouseY - 12;
-	pos_cursor[4] = 40;
-	pos_cursor[5] = 25;
+	cursorPos[0] = 225;
+	cursorPos[1] = 56;
+	cursorPos[2] = mouseX - 20;
+	cursorPos[3] = mouseY - 12;
+	cursorPos[4] = 40;
+	cursorPos[5] = 25;
 
-	copyRectClip(pos_cursor, dir_mesa, dir_zona_pantalla);
+	copyRectClip(cursorPos, dir_mesa, dir_zona_pantalla);
 }
 
-void DrasculaEngine::introduce_nombre() {
+void DrasculaEngine::enterName() {
 	Common::KeyCode key;
 	int v = 0, h = 0;
 	char select2[23];
@@ -3235,7 +3235,7 @@ void DrasculaEngine::introduce_nombre() {
 		copyBackground(115, 14, 115, 14, 176, 9, dir_dibujo1, dir_zona_pantalla);
 		print_abc(select2, 117, 15);
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		key = getscan();
+		key = getScan();
 		delay(70);
 		if (key != 0) {
 			if (key >= 0 && key <= 0xFF && isalpha(key))
@@ -3273,22 +3273,22 @@ void DrasculaEngine::introduce_nombre() {
 	}
 }
 
-void DrasculaEngine::para_grabar(char nom_game[]) {
-	saveGame(nom_game);
+void DrasculaEngine::para_grabar(char gameName[]) {
+	saveGame(gameName);
 	playSound("99.als");
 	stopSound();
 }
 
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	MiVideoSSN = (byte *)malloc(64256);
-	GlobalSpeed = 1000 / Pause;
+	globalSpeed = 1000 / Pause;
 	FrameSSN = 0;
 	UsingMem = 0;
 	if (MiVideoSSN == NULL)
 		return;
-	_Sesion = new Common::File;
-	_Sesion->open(Name);
-	mSesion = TryInMem(_Sesion);
+	_Session = new Common::File;
+	_Session->open(Name);
+	mSession = TryInMem(_Session);
 	LastFrame = _system->getMillis();
 }
 
@@ -3298,18 +3298,18 @@ int DrasculaEngine::PlayFrameSSN() {
 	byte *BufferSSN;
 
 	if (!UsingMem)
-		_Sesion->read(&CHUNK, 1);
+		_Session->read(&CHUNK, 1);
 	else {
-		memcpy(&CHUNK, mSesion, 1);
-		mSesion += 1;
+		memcpy(&CHUNK, mSession, 1);
+		mSession += 1;
 	}
 	switch (CHUNK) {
 	case SET_PAL:
 		if (!UsingMem)
-			_Sesion->read(dacSSN, 768);
+			_Session->read(dacSSN, 768);
 		else {
-			memcpy(dacSSN, mSesion, 768);
-			mSesion += 768;
+			memcpy(dacSSN, mSession, 768);
+			mSession += 768;
 		}
 		set_dacSSN(dacSSN);
 		break;
@@ -3318,22 +3318,22 @@ int DrasculaEngine::PlayFrameSSN() {
 		break;
 	case INIT_FRAME:
 		if (!UsingMem) {
-			_Sesion->read(&CMP, 1);
-			_Sesion->read(&Lengt, 4);
+			_Session->read(&CMP, 1);
+			_Session->read(&Lengt, 4);
 		} else {
-			memcpy(&CMP, mSesion, 1);
-			mSesion += 1;
-			memcpy(&Lengt, mSesion, 4);
-			mSesion += 4;
+			memcpy(&CMP, mSession, 1);
+			mSession += 1;
+			memcpy(&Lengt, mSession, 4);
+			mSession += 4;
 		}
 		if (CMP == CMP_RLE) {
 			if (!UsingMem) {
 				BufferSSN = (byte *)malloc(Lengt);
-				_Sesion->read(BufferSSN, Lengt);
+				_Session->read(BufferSSN, Lengt);
 			} else {
 				BufferSSN = (byte *)malloc(Lengt);
-				memcpy(BufferSSN, mSesion, Lengt);
-				mSesion += Lengt;
+				memcpy(BufferSSN, mSession, Lengt);
+				mSession += Lengt;
 			}
 			Des_RLE(BufferSSN, MiVideoSSN);
 			free(BufferSSN);
@@ -3352,11 +3352,11 @@ int DrasculaEngine::PlayFrameSSN() {
 			if (CMP == CMP_OFF) {
 				if (!UsingMem) {
 					BufferSSN = (byte *)malloc(Lengt);
-					_Sesion->read(BufferSSN, Lengt);
+					_Session->read(BufferSSN, Lengt);
 				} else {
 					BufferSSN = (byte *)malloc(Lengt);
-					memcpy(BufferSSN, mSesion, Lengt);
-					mSesion += Lengt;
+					memcpy(BufferSSN, mSession, Lengt);
+					mSession += Lengt;
 				}
 				Des_OFF(BufferSSN, MiVideoSSN, Lengt);
 				free(BufferSSN);
@@ -3390,24 +3390,24 @@ void DrasculaEngine::EndSSN() {
 	if (UsingMem)
 		free(pointer);
 	else {
-		_Sesion->close();
-		delete _Sesion;
+		_Session->close();
+		delete _Session;
 	}
 }
 
-byte *DrasculaEngine::TryInMem(Common::File *Sesion) {
+byte *DrasculaEngine::TryInMem(Common::File *Session) {
 	int Lengt;
 
-	Sesion->seek(0, SEEK_END);
-	Lengt = Sesion->pos();
-	Sesion->seek(0, SEEK_SET);
+	Session->seek(0, SEEK_END);
+	Lengt = Session->pos();
+	Session->seek(0, SEEK_SET);
 	pointer = (byte *)malloc(Lengt);
 	if (pointer == NULL)
 		return NULL;
-	Sesion->read(pointer, Lengt);
+	Session->read(pointer, Lengt);
 	UsingMem = 1;
-	Sesion->close();
-	delete Sesion;
+	Session->close();
+	delete Session;
 	return pointer;
 }
 
@@ -3458,9 +3458,9 @@ void DrasculaEngine::MixVideo(byte *OldScreen, byte *NewScreen) {
 
 void DrasculaEngine::WaitFrameSSN() {
 	uint32 now;
-	while ((now = _system->getMillis()) - LastFrame < ((uint32) GlobalSpeed))
-		_system->delayMillis(GlobalSpeed - (now - LastFrame));
-	LastFrame = LastFrame + GlobalSpeed;
+	while ((now = _system->getMillis()) - LastFrame < ((uint32) globalSpeed))
+		_system->delayMillis(globalSpeed - (now - LastFrame));
+	LastFrame = LastFrame + globalSpeed;
 }
 
 byte *DrasculaEngine::loadPCX(byte *NamePcc) {
@@ -3551,11 +3551,11 @@ void DrasculaEngine::quadrant_1() {
 	if (distance_x < distance_y) {
 		direccion_hare = 0;
 		sentido_hare = 2;
-		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
+		stepX = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 7;
 		sentido_hare = 0;
-		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
+		stepY = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
@@ -3572,11 +3572,11 @@ void DrasculaEngine::quadrant_2() {
 	if (distance_x < distance_y) {
 		direccion_hare = 1;
 		sentido_hare = 2;
-		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
+		stepX = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 2;
 		sentido_hare = 1;
-		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
+		stepY = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
@@ -3593,11 +3593,11 @@ void DrasculaEngine::quadrant_3() {
 	if (distance_x < distance_y) {
 		direccion_hare = 5;
 		sentido_hare = 3;
-		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
+		stepX = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 6;
 		sentido_hare = 0;
-		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
+		stepY = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
@@ -3614,19 +3614,19 @@ void DrasculaEngine::quadrant_4() {
 	if (distance_x < distance_y) {
 		direccion_hare = 4;
 		sentido_hare = 3;
-		step_x = (int)(distance_x / (distance_y / PASO_HARE_Y));
+		stepX = (int)(distance_x / (distance_y / PASO_HARE_Y));
 	} else {
 		direccion_hare = 3;
 		sentido_hare = 1;
-		step_y = (int)(distance_y / (distance_x / PASO_HARE_X));
+		stepY = (int)(distance_y / (distance_x / PASO_HARE_X));
 	}
 }
 
-void DrasculaEngine::saveGame(char nom_game[]) {
+void DrasculaEngine::saveGame(char gameName[]) {
 	Common::OutSaveFile *out;
 	int l;
 
-	if (!(out = _saveFileMan->openForSaving(nom_game))) {
+	if (!(out = _saveFileMan->openForSaving(gameName))) {
 		error("no puedo abrir el archivo");
 	}
 	out->writeSint32LE(num_ejec);
@@ -3643,17 +3643,17 @@ void DrasculaEngine::saveGame(char nom_game[]) {
 		out->writeSint32LE(flags[l]);
 	}
 
-	out->writeSint32LE(lleva_objeto);
+	out->writeSint32LE(takeObject);
 	out->writeSint32LE(pickedObject);
 
 	out->finalize();
 	if (out->ioFailed())
-		warning("Can't write file '%s'. (Disk full?)", nom_game);
+		warning("Can't write file '%s'. (Disk full?)", gameName);
 
 	delete out;
 }
 
-void DrasculaEngine::aumenta_num_frame() {
+void DrasculaEngine::increaseFrameNum() {
 	diff_vez = vez() - conta_vez;
 
 	if (diff_vez >= 6) {
@@ -3663,17 +3663,17 @@ void DrasculaEngine::aumenta_num_frame() {
 			num_frame = 0;
 
 		if (direccion_hare == 0 || direccion_hare == 7) {
-			hare_x = hare_x - step_x;
-			hare_y = hare_y - step_y;
+			hare_x = hare_x - stepX;
+			hare_y = hare_y - stepY;
 		} else if (direccion_hare == 1 || direccion_hare == 2) {
-			hare_x = hare_x + step_x;
-			hare_y = hare_y - step_y;
+			hare_x = hare_x + stepX;
+			hare_y = hare_y - stepY;
 		} else if (direccion_hare == 3 || direccion_hare == 4) {
-			hare_x = hare_x + step_x;
-			hare_y = hare_y + step_y;
+			hare_x = hare_x + stepX;
+			hare_y = hare_y + stepY;
 		} else if (direccion_hare == 5 || direccion_hare == 6) {
-			hare_x = hare_x - step_x;
-			hare_y = hare_y + step_y;
+			hare_x = hare_x - stepX;
+			hare_y = hare_y + stepY;
 		}
 	}
 
@@ -3685,7 +3685,7 @@ void DrasculaEngine::aumenta_num_frame() {
 	}
 }
 
-int DrasculaEngine::sobre_que_objeto() {
+int DrasculaEngine::whichObject() {
 	int n = 0;
 
 	for (n = 1; n < 43; n++) {
@@ -3697,14 +3697,14 @@ int DrasculaEngine::sobre_que_objeto() {
 	return n;
 }
 
-bool DrasculaEngine::comprueba_banderas_menu() {
+bool DrasculaEngine::checkMenuFlags() {
 	int h, n;
 
 	for (n = 0; n < 43; n++) {
-		if (sobre_que_objeto() == n) {
+		if (whichObject() == n) {
 			h = inventoryObjects[n];
 			if (h != 0)
-				if (banderas(h))
+				if (checkFlag(h))
 					return true;
 		}
 	}
@@ -3712,7 +3712,7 @@ bool DrasculaEngine::comprueba_banderas_menu() {
 	return false;
 }
 
-void DrasculaEngine::conversa(const char *nom_fich) {
+void DrasculaEngine::converse(const char *nom_fich) {
 	int h;
 	int game1 = 1, game2 = 1, game3 = 1, game4 = 1;
 	char phrase1[78];
@@ -3912,7 +3912,7 @@ bucle_opc:
 		goto bucle_opc;
 
 	if (num_ejec == 2)
-		loadPic(fondo_y_menu);
+		loadPic(menuBackground);
 	else
 		loadPic("99.alg");
 	decompressPic(dir_hare_fondo, 1);
@@ -3984,7 +3984,7 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 			else if (c == 0xad)
 				x_de_letra = X_ABRE_EXCLAMACION_OPC;
 			else if (c == ';')
-				x_de_letra = X_PUNTO_Y_COMA_OPC;
+				x_de_letra = X_pointY_COMA_OPC;
 			else if (c == '>')
 				x_de_letra = X_GREATER_THAN_OPC;
 			else if (c == '<')
@@ -4031,11 +4031,11 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 void DrasculaEngine::response(int funcion) {
 	if (num_ejec == 1) {
 		if (funcion == 10)
-			talk_borracho(_textb[_lang][1], "B1.als");
+			talk_drunk(_textb[_lang][1], "B1.als");
 		else if (funcion == 11)
-			talk_borracho(_textb[_lang][2], "B2.als");
+			talk_drunk(_textb[_lang][2], "B2.als");
 		else if (funcion == 12)
-			talk_borracho(_textb[_lang][3], "B3.als");
+			talk_drunk(_textb[_lang][3], "B3.als");
 	} else if (num_ejec == 2) {
 		if (funcion == 8)
 			animation_8_2();
@@ -4109,7 +4109,7 @@ void DrasculaEngine::response(int funcion) {
 	}
 }
 
-void DrasculaEngine::suma_objeto(int osj) {
+void DrasculaEngine::addObject(int osj) {
 	int h, position = 0;
 
 	for (h = 1; h < 43; h++) {
@@ -4262,13 +4262,13 @@ void DrasculaEngine::updateData() {
 void DrasculaEngine::anda_pabajo() {
 	direccion_hare = 4;
 	sentido_hare = 3;
-	step_x = 0;
+	stepX = 0;
 }
 
 void DrasculaEngine::anda_parriba() {
 	direccion_hare = 0;
 	sentido_hare = 2;
-	step_x = 0;
+	stepX = 0;
 }
 
 void DrasculaEngine::pon_vb() {
@@ -4307,8 +4307,8 @@ void DrasculaEngine::pon_vb() {
 	copyRectClip(pos_vb, dir_hare_frente, dir_zona_pantalla);
 }
 
-void DrasculaEngine::lleva_vb(int punto_x) {
-	if (punto_x < vb_x)
+void DrasculaEngine::lleva_vb(int pointX) {
+	if (pointX < vb_x)
 		sentido_vb = 0;
 	else
 		sentido_vb = 1;
@@ -4320,11 +4320,11 @@ void DrasculaEngine::lleva_vb(int punto_x) {
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		if (sentido_vb == 0) {
 			vb_x = vb_x - 5;
-			if (vb_x <= punto_x)
+			if (vb_x <= pointX)
 				break;
 		} else {
 			vb_x = vb_x + 5;
-			if (vb_x >= punto_x)
+			if (vb_x >= pointX)
 				break;
 		}
 		pause(5);
@@ -4391,21 +4391,21 @@ void DrasculaEngine::openDoor(int nflag, int doorNum) {
 	}
 }
 
-void DrasculaEngine::mapa() {
+void DrasculaEngine::showMap() {
 	int l, veo = 0;
 
 	for (l = 0; l < numRoomObjs; l++) {
 		if (mouseX > x1[l] && mouseY > y1[l]
 				&& mouseX < x2[l] && mouseY < y2[l]
 				&& visible[l] == 1) {
-			strcpy(texto_nombre, objName[l]);
-			hay_nombre = 1;
+			strcpy(textName, objName[l]);
+			hasName = 1;
 			veo = 1;
 		}
 	}
 
 	if (veo == 0)
-		hay_nombre = 0;
+		hasName = 0;
 }
 
 void DrasculaEngine::grr() {
@@ -4428,12 +4428,12 @@ void DrasculaEngine::grr() {
 	copyBackground(253, 110, 150, 65, 20, 30, dir_dibujo3, dir_zona_pantalla);
 
 	if (withVoices == 0)
-		centra_texto(".groaaarrrrgghhh!", 153, 65);
+		centerText(".groaaarrrrgghhh!", 153, 65);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 bucless:
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -4452,7 +4452,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::activa_pendulo() {
+void DrasculaEngine::activatePendulum() {
 	flags[1] = 2;
 	hare_se_ve = 0;
 	roomNumber = 102;
@@ -4467,7 +4467,7 @@ void DrasculaEngine::activa_pendulo() {
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, dir_hare_fondo, dir_dibujo3);
 
-	conta_ciego_vez = vez();
+	conta_blind_vez = vez();
 }
 
 void DrasculaEngine::closeDoor(int nflag, int doorNum) {

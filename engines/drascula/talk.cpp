@@ -65,8 +65,8 @@ bucless:
 
 	updateRefresh_pre();
 
-	pon_igor();
-	pon_dr();
+	placeIgor();
+	placeDrascula();
 	copyBackground(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, dir_dibujo1, dir_zona_pantalla);
 
 	copyRect(x_talk[cara], 148, x_igor + 17, y_igor, 25, 24, dir_hare_frente, dir_zona_pantalla);
@@ -74,13 +74,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, x_igor + 26, y_igor);
+		centerText(said, x_igor + 26, y_igor);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -97,8 +97,8 @@ bucless:
 			goto bucless;
 	}
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	pon_igor();
-	pon_dr();
+	placeIgor();
+	placeDrascula();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
@@ -127,8 +127,8 @@ bucless:
 
 	updateRefresh_pre();
 
-	pon_igor();
-	pon_dr();
+	placeIgor();
+	placeDrascula();
 	if (num_ejec == 6)
 		pon_hare();
 
@@ -141,13 +141,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, x_dr + 19, y_dr);
+		centerText(said, x_dr + 19, y_dr);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -165,8 +165,8 @@ bucless:
 	}
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	pon_igor();
-	pon_dr();
+	placeIgor();
+	placeDrascula();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
@@ -194,8 +194,8 @@ bucless:
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	updateRefresh_pre();
 
-	pon_igor();
-	pon_dr();
+	placeIgor();
+	placeDrascula();
 	if (num_ejec == 6)
 		pon_hare();
 
@@ -208,13 +208,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, x_dr + 19, y_dr);
+		centerText(said, x_dr + 19, y_dr);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -234,8 +234,8 @@ bucless:
 	if (num_ejec == 6)
 		updateRoom(); 
 
-	pon_igor();
-	pon_dr();
+	placeIgor();
+	placeDrascula();
 	if (num_ejec == 6)
 		pon_hare();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -260,15 +260,15 @@ bucless:
 
 	if (withVoices == 0) {
 		if (num_ejec == 1)
-			centra_texto(said, 156, 90);
+			centerText(said, 156, 90);
 		else if (num_ejec == 6)
-			centra_texto(said, 213, 72);
+			centerText(said, 213, 72);
 		else if (num_ejec == 5)
-			centra_texto(said, 173, 92);
+			centerText(said, 173, 92);
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -310,9 +310,9 @@ bucless:
 	updateRefresh_pre();
 
 	if (num_ejec == 1 || num_ejec == 4)
-		pon_igor();
+		placeIgor();
 	if (num_ejec == 1)
-		pon_dr();
+		placeDrascula();
 	if (num_ejec == 1 || num_ejec == 6)
 		copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, dir_dibujo1, dir_zona_pantalla);
 	copyRect(x_talk[cara], 173, x_igor, y_igor, 29, 25, dir_hare_frente, dir_zona_pantalla);
@@ -320,13 +320,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, x_igor + 26, y_igor);
+		centerText(said, x_igor + 26, y_igor);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -349,8 +349,8 @@ bucless:
 
 	if (num_ejec == 1) {
 		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		pon_igor();
-		pon_dr();
+		placeIgor();
+		placeDrascula();
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
@@ -393,13 +393,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 132, 45);
+		centerText(said, 132, 45);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -451,7 +451,7 @@ bucless:
 		updateRefresh();
 
 		if (withVoices == 0)
-			centra_texto(said, x_bj + 7, y_bj);
+			centerText(said, x_bj + 7, y_bj);
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
@@ -460,12 +460,12 @@ bucless:
 		updateRoom();
 
 		if (withVoices == 0)
-			centra_texto(said, 93, 80);
+			centerText(said, 93, 80);
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -548,7 +548,7 @@ bucless:
 	pon_hare();
 
 	if (num_ejec == 2) {
-		if (!strcmp(fondo_y_menu, "99.alg") || !strcmp(fondo_y_menu, "994.alg"))
+		if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
 			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
 	} else {
 		copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
@@ -597,13 +597,13 @@ bucless:
 	}
 
 	if (withVoices == 0)
-		centra_texto(said, hare_x, hare_y);
+		centerText(said, hare_x, hare_y);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
@@ -624,7 +624,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if (num_ejec == 1) {
-		if (musicStatus() == 0 && flags[11] == 0 && corta_musica == 0)
+		if (musicStatus() == 0 && flags[11] == 0 && musicStopped == 0)
 			playMusic(roomMusic);
 	}
 }
@@ -654,13 +654,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 221, 128);
+		centerText(said, 221, 128);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -679,7 +679,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_borracho(const char *said, const char *filename) {
+void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
 	int cara;
 	int length = strlen(said);
@@ -718,13 +718,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 181, 54);
+		centerText(said, 181, 54);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	byte key = getscan();
+	byte key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -791,13 +791,13 @@ bucless:
 	}
 
 	if (withVoices == 0)
-		centra_texto(said, vb_x, 66);
+		centerText(said, vb_x, 66);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -837,10 +837,10 @@ bucless:
 
 	updateRoom();
 	if (withVoices == 0)
-		centra_texto(said, 150, 80);
+		centerText(said, 150, 80);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -861,10 +861,10 @@ bucless:
 		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_ciego(const char *said, const char *filename, const char *sincronia) {
+void DrasculaEngine::talk_blind(const char *said, const char *filename, const char *sincronia) {
 	byte *num_cara;
 	int p = 0;
-	int pos_ciego[6];
+	int pos_blind[6];
 	int length = strlen(said);
 
 	color_abc(VON_BRAUN);
@@ -874,21 +874,21 @@ void DrasculaEngine::talk_ciego(const char *said, const char *filename, const ch
 
 	talkInit(filename);
 
-	pos_ciego[1] = 2;
-	pos_ciego[2] = 73;
-	pos_ciego[3] = 1;
-	pos_ciego[4] = 126;
-	pos_ciego[5] = 149;
+	pos_blind[1] = 2;
+	pos_blind[2] = 73;
+	pos_blind[3] = 1;
+	pos_blind[4] = 126;
+	pos_blind[5] = 149;
 
 bucless:
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	pos_ciego[5] = 149;
+	pos_blind[5] = 149;
 	char c = toupper(sincronia[p]);
 
 	if (c == '0' || c == '2' || c == '4' || c == '6')
-		pos_ciego[0] = 1;
+		pos_blind[0] = 1;
 	else
-		pos_ciego[0] = 132;
+		pos_blind[0] = 132;
 
 	if (c == '0')
 		num_cara = dir_dibujo3;
@@ -904,19 +904,19 @@ bucless:
 		num_cara = dir_hare_fondo;
 	else {
 		num_cara = dir_hare_frente;
-		pos_ciego[5] = 146;
+		pos_blind[5] = 146;
 	}
 
-	copyRectClip( pos_ciego, num_cara, dir_zona_pantalla);
+	copyRectClip( pos_blind, num_cara, dir_zona_pantalla);
 
 	if (withVoices == 0)
-		centra_texto(said, 310, 71);
+		centerText(said, 310, 71);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(2);
 	p++;
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -946,10 +946,10 @@ void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
 
 bucless:
 	if (withVoices == 0)
-		centra_texto(said, 156, 170);
+		centerText(said, 156, 170);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -967,7 +967,7 @@ bucless:
 	key = 0;
 }
 
-void DrasculaEngine::talk_lobo(const char *said, const char *filename) {
+void DrasculaEngine::talk_wolf(const char *said, const char *filename) {
 	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
 	int cara;
 	int length = strlen(said);
@@ -991,13 +991,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 203, 78);
+		centerText(said, 203, 78);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1040,13 +1040,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 197, 64);
+		centerText(said, 197, 64);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1095,13 +1095,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 160, 105);
+		centerText(said, 160, 105);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1148,13 +1148,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 195, 107);
+		centerText(said, 195, 107);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1199,13 +1199,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 132, 45);
+		centerText(said, 132, 45);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1224,13 +1224,13 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_bj_cama(int index) {
+void DrasculaEngine::talk_bj_bed(int index) {
 	char name[20];
 	sprintf(name, "BJ%i.als", index);
-	talk_bj_cama(_textbj[_lang][index], name);
+	talk_bj_bed(_textbj[_lang][index], name);
 }
 
-void DrasculaEngine::talk_bj_cama(const char *said, const char *filename) {
+void DrasculaEngine::talk_bj_bed(const char *said, const char *filename) {
 	int x_talk[5] = {51, 101, 151, 201, 251};
 	int cara;
 	int length = strlen(said);
@@ -1255,13 +1255,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 104, 102);
+		centerText(said, 104, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1308,12 +1308,12 @@ bucless:
 	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
 
 	if (withVoices == 0)
-		centra_texto(said, 90, 50);
+		centerText(said, 90, 50);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1419,14 +1419,14 @@ bucless:
 	}
 
 	if (withVoices == 0)
-		centra_texto(said, hare_x, hare_y);
+		centerText(said, hare_x, hare_y);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	p++;
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1470,13 +1470,13 @@ bucless:
 	updateRoom();
 
 	if (withVoices == 0)
-		centra_texto(said, 263, 69);
+		centerText(said, 263, 69);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(4);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1509,10 +1509,10 @@ bucless:
 
 	updateRoom();
 	if (withVoices == 0)
-		centra_texto(said, 87, 66);
+		centerText(said, 87, 66);
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1531,7 +1531,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::talk_igor_sentado(const char *said, const char *filename) {
+void DrasculaEngine::talk_igor_seated(const char *said, const char *filename) {
 	int x_talk[4] = { 80, 102, 124, 146 };
 	int cara;
 	int length = strlen(said);
@@ -1555,13 +1555,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 221, 102);
+		centerText(said, 221, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
@@ -1604,13 +1604,13 @@ bucless:
 	updateRefresh();
 
 	if (withVoices == 0)
-		centra_texto(said, 221, 102);
+		centerText(said, 221, 102);
 
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pause(3);
 
-	int key = getscan();
+	int key = getScan();
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1){

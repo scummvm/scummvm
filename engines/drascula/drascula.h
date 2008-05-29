@@ -116,7 +116,7 @@ struct RoomTalkAction;
 #define X_COMILLAS       51
 #define X_CIERRA_EXCLAMACION         60
 #define X_ABRE_EXCLAMACION              69
-#define X_PUNTO_Y_COMA              78
+#define X_pointY_COMA              78
 #define X_GREATER_THAN              87
 #define X_LESSER_THAN              96
 #define X_DOLAR             105
@@ -179,7 +179,7 @@ struct RoomTalkAction;
 #define X_COMILLAS_OPC       45
 #define X_CIERRA_EXCLAMACION_OPC         52
 #define X_ABRE_EXCLAMACION_OPC              59
-#define X_PUNTO_Y_COMA_OPC              66
+#define X_pointY_COMA_OPC              66
 #define X_GREATER_THAN_OPC              73
 #define X_LESSER_THAN_OPC              80
 #define X_DOLAR_OPC             87
@@ -271,11 +271,10 @@ public:
 	byte *dir_zona_pantalla;
 	byte *dir_hare_frente;
 	byte *dir_texto;
-	byte *dir_pendulo;
+	byte *dir_pendulum;
 
 	byte cPal[768];
-	byte *Buffer_pcx;
-	long LenFile;
+	byte *pcxBuffer;
 
 	Common::File *ald, *sku;
 
@@ -285,24 +284,24 @@ public:
 	char roomDisk[20];
 	char currentData[20];
 	int numRoomObjs;
-	char fondo_y_menu[20];
+	char menuBackground[20];
 
 	char objName[30][20];
 	char iconName[44][13];
 
-	int num_obj[40], visible[40], isDoor[40];
+	int objectNum[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
 	int inventoryObjects[43];
-	char alapantallakeva[40][20];
+	char targetScreen[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
-	int lleva_objeto, pickedObject;
+	int takeObject, pickedObject;
 	int withVoices;
-	int menu_bar, menu_scr, hay_nombre;
-	char texto_nombre[20];
-	int frame_ciego;
-	int frame_ronquido;
-	int frame_murcielago;
+	int menuBar, menuScreen, hasName;
+	char textName[20];
+	int frame_blind;
+	int frame_snore;
+	int frame_bat;
 	int c_mirar;
 	int c_poder;
 
@@ -310,28 +309,28 @@ public:
 
 	int frame_y;
 	int hare_x, hare_y, hare_se_mueve, direccion_hare, sentido_hare, num_frame, hare_se_ve;
-	int sitio_x, sitio_y, comprueba_flags;
+	int sitio_x, sitio_y, checkFlags;
 	int rompo, rompo2;
-	int step_x, step_y;
-	int alto_hare, ancho_hare, alto_pies;
+	int stepX, stepY;
+	int alto_hare, ancho_hare, feetHeight;
 	int alto_talk, ancho_talk;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
 	int near, far;
-	int sentido_final, anda_a_objeto;
-	int obj_saliendo;
+	int sentido_final, walkToObject;
+	int objExit;
 	int diff_vez, conta_vez;
-	int hay_answer;
-	int conta_ciego_vez;
-	int cambio_de_color;
+	int hasAnswer;
+	int conta_blind_vez;
+	int changeColor;
 	int rompo_y_salgo;
 	int vb_x, sentido_vb, vb_se_mueve, frame_vb;
 	float newHeight, newWidth;
 	int factor_red[202];
 	int frame_piano;
-	int frame_borracho;
+	int frame_drunk;
 	int frame_velas;
 	int color_solo;
-	int parpadeo;
+	int blinking;
 	int x_igor, y_igor, sentido_igor;
 	int x_dr, y_dr, sentido_dr;
 	int x_bj, y_bj, sentido_bj;
@@ -339,9 +338,9 @@ public:
 	int term_int;
 	int num_ejec;
 	int hay_que_load;
-	char nom_partida[13];
+	char saveName[13];
 	int _color;
-	int corta_musica;
+	int musicStopped;
 	char select[23];
 	int hay_seleccion;
 	int mouseX;
@@ -356,16 +355,16 @@ public:
 	void talk_vb(const char *, const char *);
 	void talk_vbpuerta(int);
 	void talk_vbpuerta(const char *said, const char *filename);
-	void talk_ciego(const char *, const char *, const char *);
+	void talk_blind(const char *, const char *, const char *);
 	void talk_hacker(const char *, const char *);
 	void pickObject(int);
 	void anda_parriba();
 	void anda_pabajo();
 	void pon_vb();
-	void lleva_vb(int punto_x);
+	void lleva_vb(int pointX);
 	void hipo_sin_nadie(int counter);
 	void openDoor(int nflag, int doorNum);
-	void mapa();
+	void showMap();
 	void animation_1_1();
 	void animation_2_1();
 	void animation_1_2();
@@ -452,36 +451,36 @@ public:
 	void carga_escoba(const char *);
 	void clearRoom();
 	void lleva_al_hare(int, int);
-	void mueve_cursor();
-	void comprueba_objetos();
+	void moveCursor();
+	void checkObjects();
 	void elige_en_barra();
 	bool comprueba1();
 	bool comprueba2();
-	Common::KeyCode getscan();
-	void elige_verbo(int);
+	Common::KeyCode getScan();
+	void selectVerb(int);
 	void mesa();
 	bool saves();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
 	bool confirma_salir();
-	void salva_pantallas();
+	void screenSaver();
 	void chooseObject(int objeto);
-	void suma_objeto(int);
-	int resta_objeto(int osj);
+	void addObject(int);
+	int removeObject(int osj);
 	void fliplay(const char *filefli, int vel);
-	void FundeDelNegro(int VelocidadDeFundido);
-	char LimitaVGA(char valor);
+	void fadeFromBlack(int VelocidadDeFundido);
+	char LimitaVGA(char value);
 	void color_abc(int cl);
-	void centra_texto(const char *,int,int);
+	void centerText(const char *,int,int);
 	void playSound(const char *);
 	bool anima(const char *animation, int FPS);
 	void stopSound_corte();
-	void FundeAlNegro(int VelocidadDeFundido);
+	void fadeToBlack(int VelocidadDeFundido);
 	void pause(int);
 	void talk_dr_grande(const char *said, const char *filename);
-	void pon_igor();
-	void pon_bj();
-	void pon_dr();
+	void placeIgor();
+	void placeBJ();
+	void placeDrascula();
 	void talkInit(const char *filename);
 	void talk_igor_dch(int);
 	void talk_igor_dch(const char *said, const char *filename);
@@ -495,7 +494,7 @@ public:
 	void talk_tabernero(const char *said, const char *filename);
 	void talk_igorpuerta(const char *said, const char *filename);
 	void talk_igor_peluca(const char *said, const char *filename);
-	void hipo(int);
+	void hiccup(int);
 	void stopSound();
 	void talk_bj(int);
 	void talk_bj(const char *, const char *);
@@ -508,7 +507,7 @@ public:
 	void stopMusic();
 	int musicStatus();
 	void updateRoom();
-	bool carga_partida(const char *);
+	bool loadGame(const char *);
 	void updateDoor(int);
 	void animastopSound_corte();
 	void color_hare();
@@ -517,18 +516,18 @@ public:
 	void paleta_hare_oscuro();
 	void hare_claro();
 	void updateData();
-	void empieza_andar();
+	void startWalking();
 	void updateRefresh();
 	void updateRefresh_pre();
 	void pon_hare();
 	void menu_sin_volcar();
-	void barra_menu();
+	void clearMenu();
 	void removeObject();
-	bool sal_de_la_habitacion(int);
-	bool coge_objeto();
-	bool banderas(int);
-	void cursor_mesa();
-	void introduce_nombre();
+	bool exitRoom(int);
+	bool pickupObject();
+	bool checkFlag(int);
+	void setCursorTable();
+	void enterName();
 	void para_grabar(char[]);
 	int LookForFree();
 	void OpenSSN(const char *Name, int Pause);
@@ -537,7 +536,7 @@ public:
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
 	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
 	void set_dacSSN(byte *dacSSN);
-	byte *TryInMem(Common::File *Sesion);
+	byte *TryInMem(Common::File *Session);
 	void EndSSN();
 	int PlayFrameSSN();
 
@@ -548,13 +547,13 @@ public:
 
 	byte *pointer;
 	int UsingMem;
-	Common::File *_Sesion;
+	Common::File *_Session;
 	byte CHUNK;
 	byte CMP, dacSSN[768];
 	byte *MiVideoSSN;
-	byte *mSesion;
+	byte *mSession;
 	int FrameSSN;
-	int GlobalSpeed;
+	int globalSpeed;
 	uint32 LastFrame;
 
 	int frame_pen;
@@ -574,9 +573,9 @@ public:
 	void update_62_pre();
 	void update_63();
 	void saveGame(char[]);
-	void aumenta_num_frame();
-	int sobre_que_objeto();
-	bool comprueba_banderas_menu();
+	void increaseFrameNum();
+	int whichObject();
+	bool checkMenuFlags();
 	bool roomParse(RoomTalkAction*, int);
 	void room_0();
 	void room_1(int);
@@ -609,10 +608,10 @@ public:
 	void room_44(int);
 	void room_62(int);
 	void room_63(int);
-	void conversa(const char *);
+	void converse(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void response(int);
-	void talk_borracho(const char *said, const char *filename);
+	void talk_drunk(const char *said, const char *filename);
 	void talk_pianista(const char *said, const char *filename);
 
 	void MusicFadeout();
@@ -670,15 +669,15 @@ public:
 	void update_56_pre();
 	void update_50();
 	void update_57();
-	void talk_igor_sentado(const char *, const char *);
-	void talk_lobo(const char *said, const char *filename);
+	void talk_igor_seated(const char *, const char *);
+	void talk_wolf(const char *said, const char *filename);
 	void talk_mus(const char *said, const char *filename);
 	void room_58(int);
 	void room_59(int);
 	bool room_60(int);
 	void room_61(int);
-	void room_pendulo(int);
-	void update_pendulo();
+	void room_pendulum(int);
+	void update_pendulum();
 	void update_58();
 	void update_58_pre();
 	void update_59_pre();
@@ -701,12 +700,12 @@ public:
 	void animation_15_6();
 	void animation_18_6();
 	void animation_19_6();
-	void activa_pendulo();
+	void activatePendulum();
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
 	void talk_taber2(const char *, const char *);
-	void talk_bj_cama(int);
-	void talk_bj_cama(const char *said, const char * filename);
+	void talk_bj_bed(int);
+	void talk_bj_bed(const char *said, const char * filename);
 	void talk_htel(const char *said, const char *filename);
 
 private:
