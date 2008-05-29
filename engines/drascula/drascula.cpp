@@ -1650,7 +1650,7 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 		else if (c >= 'A' && c <= 'N')
 			x_de_letra = X_A + (c - 'A') * 9;
 		else if (c >= 'O' && c <= 'Z')
-			x_de_letra = X_A + (c - 'O') * 9;
+			x_de_letra = X_O + (c - 'O') * 9;
 		else if (c == 0xa7 || c == ' ')
 			x_de_letra = SPACE;
 		else {
