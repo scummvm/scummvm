@@ -1697,8 +1697,12 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_ASTERISCO;
 			else if (c == '+')
 				x_de_letra = X_PLUS;
-			else if (c >= '1' && c <= '0')
+			else if (c >= '1' && c <= '9')
 				x_de_letra = X_N1 + (c - '1') * 9;
+			// "0" is mapped after "9" in the game's font
+			// (it's mapped before "1" normally)
+			else if (c == '0')
+				x_de_letra = X_N0;
 			else y_de_letra=Y_ACENTOS;
 
 			if (c == '\240') x_de_letra=X_A;
@@ -4033,8 +4037,12 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 				x_de_letra = X_ASTERISCO_OPC;
 			else if (c == '+')
 				x_de_letra = X_PLUS_OPC;
-			else if (c >= '1' && c <= '0')
+			else if (c >= '1' && c <= '9')
 				x_de_letra = X_N1_OPC + (c - '1') * 7;
+			// "0" is mapped after "9" in the game's font
+			// (it's mapped before "1" normally)
+			else if (c == '0')
+				x_de_letra = X_N0_OPC;
 		}
 
 		pos_texto[0] = x_de_letra;
