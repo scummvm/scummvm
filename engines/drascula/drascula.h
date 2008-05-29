@@ -455,8 +455,6 @@ public:
 	void lleva_al_hare(int, int);
 	void mueve_cursor();
 	void comprueba_objetos();
-	void espera_soltar();
-	void MirarRaton();
 	void elige_en_barra();
 	bool comprueba1();
 	bool comprueba2();

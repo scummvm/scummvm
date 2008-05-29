@@ -664,7 +664,7 @@ bucles:
 			playMusic(roomMusic);
 	}
 
-	MirarRaton();
+	updateEvents();
 
 	if (menu_scr == 0 && lleva_objeto == 1)
 		comprueba_objetos();
@@ -678,7 +678,7 @@ bucles:
 		decompressPic(dir_hare_fondo, 1);
 		setPalette((byte *)&gamePalette);
 		menu_scr = 0;
-		espera_soltar();
+		updateEvents();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	}
@@ -697,7 +697,7 @@ bucles:
 			loadPic("icons.alg");
 		decompressPic(dir_hare_fondo, 1);
 		menu_scr = 1;
-		espera_soltar();
+		updateEvents();
 		withoutVerb();
 		if (num_ejec != 3)
 			cont_sv = 0;
@@ -1270,14 +1270,6 @@ void DrasculaEngine::comprueba_objetos() {
 		hay_nombre = 0;
 }
 
-void DrasculaEngine::espera_soltar() {
-	updateEvents();
-}
-
-void DrasculaEngine::MirarRaton() {
-	updateEvents();
-}
-
 void DrasculaEngine::elige_en_barra() {
 	int n, num_verbo = -1;
 
@@ -1462,7 +1454,7 @@ void DrasculaEngine::mesa() {
 
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-		MirarRaton();
+		updateEvents();
 
 		if (button_dch == 1) {
 			delay(100);
@@ -1500,7 +1492,7 @@ void DrasculaEngine::mesa() {
 
 	}
 
-	espera_soltar();
+	updateEvents();
 }
 
 bool DrasculaEngine::saves() {
@@ -1546,7 +1538,7 @@ bool DrasculaEngine::saves() {
 		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		y = 27;
 
-		MirarRaton();
+		updateEvents();
 
 		if (button_izq == 1) {
 			delay(100);
@@ -1818,7 +1810,7 @@ void DrasculaEngine::salva_pantallas() {
 	file.read(ghost, 65536);
 	file.close();
 
-	MirarRaton();
+	updateEvents();
 	xr = mouseX;
 	yr = mouseY;
 
@@ -1895,7 +1887,7 @@ void DrasculaEngine::salva_pantallas() {
 
 		// end of efecto()
 
-		MirarRaton();
+		updateEvents();
 		if (button_dch == 1 || button_izq == 1)
 			break;
 		if (mouseX != xr)
@@ -2653,7 +2645,7 @@ void DrasculaEngine::removeObject() {
 		}
 	}
 
-	espera_soltar();
+	updateEvents();
 
 	if (lleva_objeto == 1)
 		chooseObject(h);
@@ -2832,7 +2824,7 @@ usando_verbos:
 		if (comprueba_banderas_menu())
 			return true;
 	}
-	espera_soltar();
+	updateEvents();
 	if (lleva_objeto == 0)
 		withoutVerb();
 
@@ -3866,7 +3858,7 @@ bucle_opc:
 			playMusic(roomMusic);
 	}
 
-	MirarRaton();
+	updateEvents();
 
 	if (mouseY > 0 && mouseY < 9) {
 		if (used1 == 1 && _color != WHITE)
@@ -3937,19 +3929,9 @@ bucle_opc:
 		color_abc(LIGHT_GREEN);
 	}
 
-	if (used1 == 0)
-		game1 = 1;
-	else
-		game1 = 3;
-	if (used2 == 0)
-		game2 = 1;
-	else
-		game2 = 3;
-	if (used3 == 0)
-		game3 = 1;
-	else
-		game3 = 3;
-
+	game1 = (used1 == 0) ? 1 : 3;
+	game2 = (used2 == 0) ? 1 : 3;
+	game3 = (used3 == 0) ? 1 : 3;
 	game4 = 1;
 
 	if (rompo_y_salgo == 0)
