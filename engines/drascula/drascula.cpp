@@ -1939,47 +1939,19 @@ void DrasculaEngine::FundeDelNegro(int VelocidadDeFundido) {
 void DrasculaEngine::color_abc(int cl) {
 	_color = cl;
 
-	if (cl == 0) {
-		gamePalette[254][0] = 0;
-		gamePalette[254][1] = 0;
-		gamePalette[254][2] = 0;
-	} else if (cl == 1) {
-		gamePalette[254][0] = 0x10;
-		gamePalette[254][1] = 0x3E;
-		gamePalette[254][2] = 0x28;
-	} else if (cl == 3) {
-		gamePalette[254][0] = 0x16;
-		gamePalette[254][1] = 0x3F;
-		gamePalette[254][2] = 0x16;
-	} else if (cl == 4) {
-		gamePalette[254][0] = 0x9;
-		gamePalette[254][1] = 0x3F;
-		gamePalette[254][2] = 0x12;
-	} else if (cl == 5) {
-		gamePalette[254][0] = 0x3F;
-		gamePalette[254][1] = 0x3F;
-		gamePalette[254][2] = 0x15;
-	} else if (cl == 7) {
-		gamePalette[254][0] = 0x38;
-		gamePalette[254][1] = 0;
-		gamePalette[254][2] = 0;
-	} else if (cl == 8) {
-		gamePalette[254][0] = 0x3F;
-		gamePalette[254][1] = 0x27;
-		gamePalette[254][2] = 0x0B;
-	} else if (cl == 9) {
-		gamePalette[254][0] = 0x2A;
-		gamePalette[254][1] = 0;
-		gamePalette[254][2] = 0x2A;
-	} else if (cl == 10) {
-		gamePalette[254][0] = 0x30;
-		gamePalette[254][1] = 0x30;
-		gamePalette[254][2] = 0x30;
-	} else if (cl == 11) {
-		gamePalette[254][0] = 98;
-		gamePalette[254][1] = 91;
-		gamePalette[254][2] = 100;
+	char colorTable[][3] = {
+		{    0,    0,    0 }, { 0x10, 0x3E, 0x28 },
+		{    0,    0,    0 },	// unused
+		{ 0x16, 0x3F, 0x16 }, { 0x09, 0x3F, 0x12 },
+		{ 0x3F, 0x3F, 0x15 },
+		{    0,    0,    0 },	// unused
+		{ 0x38,    0,    0 }, { 0x3F, 0x27, 0x0B },
+		{ 0x2A,    0, 0x2A }, { 0x30, 0x30, 0x30 },
+		{   98,   91,  100 }
 	};
+
+	for (int i = 0; i <= 2; i++)
+		gamePalette[254][i] = colorTable[cl][i];
 
 	setPalette((byte *)&gamePalette);
 }
