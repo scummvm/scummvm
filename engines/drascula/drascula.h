@@ -98,32 +98,15 @@ struct RoomTalkAction;
 #define Y_SIGNOS_ESP     160
 #define Y_ACENTOS        180
 
+// Normal font, each letter has a space of 9 from the next
+// Spanish has a special character, defined as "X_GN"
+// after N, so these are split from A-N and O-Z
 #define X_A              6
-#define X_B              15
-#define X_C              24
-#define X_D              33
-#define X_E              42
-#define X_F              51
-#define X_G              60
-#define X_H              69
-#define X_I              78
-#define X_J              87
-#define X_K              96
-#define X_L             105
-#define X_M             114
+// (...)
 #define X_N             123
 #define X_GN            132
 #define X_O             141
-#define X_P             150
-#define X_Q             159
-#define X_R             168
-#define X_S             177
-#define X_T             186
-#define X_U             195
-#define X_V             204
-#define X_W             213
-#define X_X             222
-#define X_Y             231
+// (...)
 #define X_Z             240
 #define X_DOT             6
 #define X_COMA           15
@@ -145,15 +128,9 @@ struct RoomTalkAction;
 #define X_BRACKET_CLOSE             159
 #define X_ASTERISCO             168
 #define X_PLUS             177
-#define X_N1             186
-#define X_N2            195
-#define X_N3            204
-#define X_N4            213
-#define X_N5            222
-#define X_N6            231
-#define X_N7            240
-#define X_N8            249
-#define X_N9            258
+// Normal font, each number has a space of 9 from the next
+#define X_N1            186
+// (...)
 #define X_N0            267
 #define SPACE           250
 #define ALTO_TALK_HARE  25
@@ -183,32 +160,15 @@ struct RoomTalkAction;
 #define Y_SIGNOS_OPC_2       40
 #define Y_ABC_OPC_3          56
 #define Y_SIGNOS_OPC_3       65
+// Dialog font, each letter has a space of 7 from the next
+// Spanish has a special character, defined as "X_GN_OPC"
+// after N, so these are split from A-N and O-Z
 #define X_A_OPC              10
-#define X_B_OPC              17
-#define X_C_OPC              24
-#define X_D_OPC              31
-#define X_E_OPC              38
-#define X_F_OPC              45
-#define X_G_OPC              52
-#define X_H_OPC              59
-#define X_I_OPC              66
-#define X_J_OPC              73
-#define X_K_OPC              80
-#define X_L_OPC              87
-#define X_M_OPC              94
+// (...)
 #define X_N_OPC             101
 #define X_GN_OPC            108
 #define X_O_OPC             115
-#define X_P_OPC             122
-#define X_Q_OPC             129
-#define X_R_OPC             136
-#define X_S_OPC             143
-#define X_T_OPC             150
-#define X_U_OPC             157
-#define X_V_OPC             164
-#define X_W_OPC             171
-#define X_X_OPC             178
-#define X_Y_OPC             185
+// (...)
 #define X_Z_OPC             192
 #define SPACE_OPC           199
 #define X_DOT_OPC            10
@@ -231,15 +191,9 @@ struct RoomTalkAction;
 #define X_BRACKET_CLOSE_OPC             129
 #define X_ASTERISCO_OPC             136
 #define X_PLUS_OPC             143
+// Dialog font, each number has a space of 7 from the next
 #define X_N1_OPC             150
-#define X_N2_OPC            157
-#define X_N3_OPC            164
-#define X_N4_OPC            171
-#define X_N5_OPC            178
-#define X_N6_OPC            185
-#define X_N7_OPC            192
-#define X_N8_OPC            199
-#define X_N9_OPC            206
+// (...)
 #define X_N0_OPC            213
 #define NO_DOOR              99
 
@@ -532,8 +486,11 @@ public:
 	void pon_bj();
 	void pon_dr();
 	void talkInit(const char *filename);
+	void talk_igor_dch(int);
 	void talk_igor_dch(const char *said, const char *filename);
+	void talk_dr_dch(int);
 	void talk_dr_dch(const char *said, const char *filename);
+	void talk_dr_izq(int);
 	void talk_dr_izq(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
 	void talk_igor_frente(const char *, const char *);

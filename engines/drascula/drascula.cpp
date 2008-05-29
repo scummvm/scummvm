@@ -1638,70 +1638,27 @@ bool DrasculaEngine::saves() {
 	return true;
 }
 
+struct charInfo {
+
+};
+
 void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla) {
 	int pos_texto[8];
 	int y_de_letra = 0, x_de_letra = 0, h, length;
 	length = strlen(said);
 
+	
 	for (h = 0; h < length; h++) {
 		y_de_letra = (_lang == kSpanish) ? Y_ABC_ESP : Y_ABC;
 		int c = toupper(said[h]);
-		if (c == 'A')
-			x_de_letra = X_A;
-		else if (c == 'B')
-			x_de_letra = X_B;
-		else if (c == 'C')
-			x_de_letra = X_C;
-		else if (c == 'D')
-			x_de_letra = X_D;
-		else if (c == 'E')
-			x_de_letra = X_E;
-		else if (c == 'F')
-			x_de_letra = X_F;
-		else if (c == 'G')
-			x_de_letra = X_G;
-		else if (c == 'H')
-			x_de_letra = X_H;
-		else if (c == 'I')
-			x_de_letra = X_I;
-		else if (c == 'J')
-			x_de_letra = X_J;
-		else if (c == 'K')
-			x_de_letra = X_K;
-		else if (c == 'L')
-			x_de_letra = X_L;
-		else if (c == 'M')
-			x_de_letra = X_M;
-		else if (c == 'N')
-			x_de_letra = X_N;
-		else if (c == 'O')
-			x_de_letra = X_O;
-		else if (c == 'P')
-			x_de_letra = X_P;
-		else if (c == 'Q')
-			x_de_letra = X_Q;
-		else if (c == 'R')
-			x_de_letra = X_R;
-		else if (c == 'S')
-			x_de_letra = X_S;
-		else if (c == 'T')
-			x_de_letra = X_T;
-		else if (c == 'U')
-			x_de_letra = X_U;
-		else if (c == 'V')
-			x_de_letra = X_V;
-		else if (c == 'W')
-			x_de_letra = X_W;
-		else if (c == 'X')
-			x_de_letra = X_X;
-		else if (c == 'Y')
-			x_de_letra = X_Y;
-		else if (c == 'Z')
-			x_de_letra = X_Z;
-		else if (c == '\245')
+		if (c == '\245')
 			x_de_letra = X_GN;
 		else if (c == '\244')
 			x_de_letra = X_GN;
+		else if (c >= 'A' && c <= 'N')
+			x_de_letra = X_A + (c - 'A') * 9;
+		else if (c >= 'O' && c <= 'Z')
+			x_de_letra = X_A + (c - 'O') * 9;
 		else if (c == 0xa7 || c == ' ')
 			x_de_letra = SPACE;
 		else {
@@ -1748,60 +1705,42 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 				x_de_letra = X_ASTERISCO;
 			else if (c == '+')
 				x_de_letra = X_PLUS;
-			else if (c == '1')
-				x_de_letra = X_N1;
-			else if (c == '2')
-				x_de_letra = X_N2;
-			else if (c == '3')
-				x_de_letra = X_N3;
-			else if (c == '4')
-				x_de_letra = X_N4;
-			else if (c == '5')
-				x_de_letra = X_N5;
-			else if (c == '6')
-				x_de_letra = X_N6;
-			else if (c == '7')
-				x_de_letra = X_N7;
-			else if (c == '8')
-				x_de_letra = X_N8;
-			else if (c == '9')
-				x_de_letra = X_N9;
-			else if (c == '0')
-				x_de_letra = X_N0;
+			else if (c >= '1' && c <= '0')
+				x_de_letra = X_N1 + (c - '1') * 9;
 			else y_de_letra=Y_ACENTOS;
 
 			if (c == '\240') x_de_letra=X_A;
-			else if (c =='\202') x_de_letra = X_B;
-			else if (c =='\241') x_de_letra = X_C;
-			else if (c =='\242') x_de_letra = X_D;
-			else if (c =='\243') x_de_letra = X_E;
-			else if (c =='\205') x_de_letra = X_F;
-			else if (c =='\212') x_de_letra = X_G;
-			else if (c =='\215') x_de_letra = X_H;
-			else if (c =='\225') x_de_letra = X_I;
-			else if (c =='\227') x_de_letra = X_J;
-			else if (c =='\203') x_de_letra = X_K;
-			else if (c =='\210') x_de_letra = X_L;
-			else if (c =='\214') x_de_letra = X_M;
-			else if (c =='\223') x_de_letra = X_N;
+			else if (c =='\202') x_de_letra = X_A + 1 * 9;	// B
+			else if (c =='\241') x_de_letra = X_A + 2 * 9;	// C
+			else if (c =='\242') x_de_letra = X_A + 3 * 9;	// D
+			else if (c =='\243') x_de_letra = X_A + 4 * 9;	// E
+			else if (c =='\205') x_de_letra = X_A + 5 * 9;	// F
+			else if (c =='\212') x_de_letra = X_A + 6 * 9;	// G
+			else if (c =='\215') x_de_letra = X_A + 7 * 9;	// H
+			else if (c =='\225') x_de_letra = X_A + 8 * 9;	// I
+			else if (c =='\227') x_de_letra = X_A + 9 * 9;	// J
+			else if (c =='\203') x_de_letra = X_A + 10 * 9;	// K
+			else if (c =='\210') x_de_letra = X_A + 11 * 9;	// L
+			else if (c =='\214') x_de_letra = X_A + 12 * 9;	// M
+			else if (c =='\223') x_de_letra = X_A + 13 * 9;	// N
 			else if (c =='\226') x_de_letra = X_GN;
 			else if (c =='\047') x_de_letra = X_O;
-			else if (c =='\200') x_de_letra = X_P;
-			else if (c =='\207') x_de_letra = X_P;
+			else if (c =='\200') x_de_letra = X_O + 1 * 9;	// P
+			else if (c =='\207') x_de_letra = X_O + 1 * 9;	// P
 			else if (c =='\265') x_de_letra = X_A;
-			else if (c =='\220') x_de_letra = X_B;
-			else if (c =='\326') x_de_letra = X_C;
-			else if (c =='\340') x_de_letra = X_D;
-			else if (c =='\351') x_de_letra = X_E;
-			else if (c =='\267') x_de_letra = X_F;
-			else if (c =='\324') x_de_letra = X_G;
-			else if (c =='\336') x_de_letra = X_H;
-			else if (c =='\343') x_de_letra = X_I;
-			else if (c =='\353') x_de_letra = X_J;
-			else if (c =='\266') x_de_letra = X_K;
-			else if (c =='\322') x_de_letra = X_L;
-			else if (c =='\327') x_de_letra = X_M;
-			else if (c =='\342') x_de_letra = X_N;
+			else if (c =='\220') x_de_letra = X_A + 1 * 9;	// B
+			else if (c =='\326') x_de_letra = X_A + 2 * 9;	// C
+			else if (c =='\340') x_de_letra = X_A + 3 * 9;	// D
+			else if (c =='\351') x_de_letra = X_A + 4 * 9;	// E
+			else if (c =='\267') x_de_letra = X_A + 5 * 9;	// F
+			else if (c =='\324') x_de_letra = X_A + 6 * 9;	// G
+			else if (c =='\336') x_de_letra = X_A + 7 * 9;	// H
+			else if (c =='\343') x_de_letra = X_A + 8 * 9;	// I
+			else if (c =='\353') x_de_letra = X_A + 9 * 9;	// J
+			else if (c =='\266') x_de_letra = X_A + 10 * 9;	// K
+			else if (c =='\322') x_de_letra = X_A + 11 * 9;	// L
+			else if (c =='\327') x_de_letra = X_A + 12 * 9;	// M
+			else if (c =='\342') x_de_letra = X_A + 13 * 9;	// N
 			else if (c =='\352') x_de_letra = X_GN;
 		}
 
@@ -4043,76 +3982,29 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 		}
 
 		int c = toupper(said[h]);
-		if (c == 'A')
-			x_de_letra = X_A_OPC;
-		else if (c == '\265') x_de_letra = X_A_OPC;
+
+		if (c == '\265') x_de_letra = X_A_OPC;
 		else if (c == '\267') x_de_letra = X_A_OPC;
 		else if (c == '\266') x_de_letra = X_A_OPC;
-		else if (c == 'B')
-			x_de_letra = X_B_OPC;
-		else if (c == 'C')
-			x_de_letra = X_C_OPC;
-		else if (c == '\200') x_de_letra = X_C_OPC;
-		else if (c == '\207') x_de_letra = X_C_OPC;
-		else if (c == 'D')
-			x_de_letra = X_D_OPC;
-		else if (c == 'E')
-			x_de_letra = X_E_OPC;
-		else if (c == '\220') x_de_letra = X_E_OPC;
-		else if (c == '\324') x_de_letra = X_E_OPC;
-		else if (c == '\322') x_de_letra = X_E_OPC;
-		else if (c == 'F')
-			x_de_letra = X_F_OPC;
-		else if (c == 'G')
-			x_de_letra = X_G_OPC;
-		else if (c == 'H')
-			x_de_letra = X_H_OPC;
-		else if (c == 'I')
-			x_de_letra = X_I_OPC;
-		else if (c == '\326') x_de_letra = X_I_OPC;
-		else if (c == '\336') x_de_letra = X_I_OPC;
-		else if (c == '\327') x_de_letra = X_I_OPC;
-		else if (c == 'J')
-			x_de_letra = X_J_OPC;
-		else if (c == 'K')
-			x_de_letra = X_K_OPC;
-		else if (c == 'L')
-			x_de_letra = X_L_OPC;
-		else if (c == 'M')
-			x_de_letra = X_M_OPC;
-		else if (c == 'N')
-			x_de_letra = X_N_OPC;
+		else if (c == '\200') x_de_letra = X_A_OPC + 2 * 7;	// C
+		else if (c == '\207') x_de_letra = X_A_OPC + 2 * 7;	// C
+		else if (c == '\220') x_de_letra = X_A_OPC + 4 * 7;	// E
+		else if (c == '\324') x_de_letra = X_A_OPC + 4 * 7;	// E
+		else if (c == '\322') x_de_letra = X_A_OPC + 4 * 7;	// E
+		else if (c == '\326') x_de_letra = X_A_OPC + 8 * 7;	// I
+		else if (c == '\336') x_de_letra = X_A_OPC + 8 * 7;	// I
+		else if (c == '\327') x_de_letra = X_A_OPC + 8 * 7;	// I
 		else if (c == '\047') x_de_letra = X_GN_OPC;
-		else if (c == 'O')
-			x_de_letra = X_O_OPC;
-		else if (c == 'P')
-			x_de_letra = X_P_OPC;
 		else if (c == '\340') x_de_letra = X_O_OPC;
 		else if (c == '\342') x_de_letra = X_O_OPC;
 		else if (c == '\343') x_de_letra = X_O_OPC;
-		else if (c == 'Q')
-			x_de_letra = X_Q_OPC;
-		else if (c == 'R')
-			x_de_letra = X_R_OPC;
-		else if (c == 'S')
-			x_de_letra = X_S_OPC;
-		else if (c == 'T')
-			x_de_letra = X_T_OPC;
-		else if (c == 'U')
-			x_de_letra = X_U_OPC;
-		else if (c == '\353') x_de_letra = X_U_OPC;
-		else if (c == '\352') x_de_letra = X_U_OPC;
-		else if (c == '\351') x_de_letra = X_U_OPC;
-		else if (c == 'V')
-			x_de_letra = X_V_OPC;
-		else if (c == 'W')
-			x_de_letra = X_W_OPC;
-		else if (c == 'X')
-			x_de_letra = X_X_OPC;
-		else if (c == 'Y')
-			x_de_letra = X_Y_OPC;
-		else if (c == 'Z')
-			x_de_letra = X_Z_OPC;
+		else if (c == '\353') x_de_letra = X_O_OPC + 6 * 7;	// U
+		else if (c == '\352') x_de_letra = X_O_OPC + 6 * 7;	// U
+		else if (c == '\351') x_de_letra = X_O_OPC + 6 * 7;	// U
+		else if (c >= 'A' && c <= 'N')
+			x_de_letra = X_A_OPC + (c - 'A') * 7;
+		else if (c >= 'O' && c <= 'Z')
+			x_de_letra = X_O_OPC + (c - 'O') * 7;
 		else if (c == ' ')
 			x_de_letra = SPACE_OPC;
 		else {
@@ -4159,26 +4051,8 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 				x_de_letra = X_ASTERISCO_OPC;
 			else if (c == '+')
 				x_de_letra = X_PLUS_OPC;
-			else if (c == '1')
-				x_de_letra = X_N1_OPC;
-			else if (c == '2')
-				x_de_letra = X_N2_OPC;
-			else if (c == '3')
-				x_de_letra = X_N3_OPC;
-			else if (c == '4')
-				x_de_letra = X_N4_OPC;
-			else if (c == '5')
-				x_de_letra = X_N5_OPC;
-			else if (c == '6')
-				x_de_letra = X_N6_OPC;
-			else if (c == '7')
-				x_de_letra = X_N7_OPC;
-			else if (c == '8')
-				x_de_letra = X_N8_OPC;
-			else if (c == '9')
-				x_de_letra = X_N9_OPC;
-			else if (c == '0')
-				x_de_letra = X_N0_OPC;
+			else if (c >= '1' && c <= '0')
+				x_de_letra = X_N1_OPC + (c - '1') * 7;
 		}
 
 		pos_texto[0] = x_de_letra;

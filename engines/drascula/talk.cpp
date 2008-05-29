@@ -40,6 +40,12 @@ void DrasculaEngine::talkInit(const char *filename) {
 	}
 }
 
+void DrasculaEngine::talk_igor_dch(int index) {
+	char name[20];
+	sprintf(name, "I%i.als", index);
+	talk_igor_dch(_texti[_lang][index], name);
+}
+
 void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
 	int cara;
@@ -94,6 +100,12 @@ bucless:
 	pon_igor();
 	pon_dr();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+}
+
+void DrasculaEngine::talk_dr_izq(int index) {
+	char name[20];
+	sprintf(name, "d%i.als", index);
+	talk_dr_izq(_textd[_lang][index], name);
 }
 
 void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
@@ -156,6 +168,12 @@ bucless:
 	pon_igor();
 	pon_dr();
 	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+}
+
+void DrasculaEngine::talk_dr_dch(int index) {
+	char name[20];
+	sprintf(name, "d%i.als", index);
+	talk_dr_dch(_textd[_lang][index], name);
 }
 
 void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
