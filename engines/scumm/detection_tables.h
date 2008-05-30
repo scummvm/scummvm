@@ -116,7 +116,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "PuttsFunShop", "Putt-Putt's One-Stop Fun Shop" },
 	{ "putttime", "Putt-Putt Travels Through Time" },
 	{ "puttzoo", "Putt-Putt Saves the Zoo" },
-	{ "readdemo", "Blue's Reading Time Activities (Demo)" },
+	{ "readtime", "Blue's Reading Time Activities" },
 	{ "SamsFunShop", "Pajama Sam's One-Stop Fun Shop" },
 	{ "soccer", "Backyard Soccer" },
 	{ "Soccer2004", "Backyard Soccer 2004" },
@@ -353,7 +353,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	// Uses smacker in external files, for testing only
 	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
-	{"readdemo", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 
 
@@ -752,8 +752,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "zoodemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "readdemo", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "readdemo", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "readtime", "Blue's Reading Time", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "SamsFunShop", "SamsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "SamsFunShop", "Sam's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
