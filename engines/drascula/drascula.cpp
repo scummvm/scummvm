@@ -2038,7 +2038,7 @@ void DrasculaEngine::playSound(const char *file) {
 	ctvd_output(sku);
 }
 
-bool DrasculaEngine::animate(const char *animation, int FPS) {
+bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	Common::File FileIn;
 	unsigned j;
 	int NFrames = 1;
@@ -2048,10 +2048,10 @@ bool DrasculaEngine::animate(const char *animation, int FPS) {
 	AuxBuffLast = (byte *)malloc(65000);
 	AuxBuffDes = (byte *)malloc(65000);
 
-	FileIn.open(animation);
+	FileIn.open(animationFile);
 
 	if (!FileIn.isOpen()) {
-		error("No encuentro un file de animation.");
+		error("Animation file %s not found", animationFile);
 	}
 
 	FileIn.read(&NFrames, sizeof(NFrames));
