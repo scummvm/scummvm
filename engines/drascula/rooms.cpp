@@ -1218,7 +1218,7 @@ bool DrasculaEngine::room_60(int fl) {
 		talk(440);
 	else if (pickedObject == kVerbTalk && fl == 52) {
 		talk(266);
-		talk_taber2(_textt[_lang][1], "t1.als");
+		talk_taber2(1);
 		converse("op_12.cal");
 		withoutVerb();
 		pickedObject = 0;

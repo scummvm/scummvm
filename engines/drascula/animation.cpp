@@ -2497,36 +2497,36 @@ void DrasculaEngine::animation_10_6() {
 	copyBackground(164, 85, 155, 48, 113, 114, drawSurface3, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	stopSound();
-	talk_taber2(_textt[_lang][23], "t23.als");
+	talk_taber2(23);
 	flags[7] = 1;
 }
 
 void DrasculaEngine::animation_11_6() {
-	talk_taber2(_textt[_lang][10], "t10.als");
+	talk_taber2(10);
 	talk(268);
-	talk_taber2(_textt[_lang][11], "t11.als");
+	talk_taber2(11);
 }
 
 void DrasculaEngine::animation_12_6() {
-	talk_taber2(_textt[_lang][12], "t12.als");
+	talk_taber2(12);
 	talk(270);
-	talk_taber2(_textt[_lang][13], "t13.als");
-	talk_taber2(_textt[_lang][14], "t14.als");
+	talk_taber2(13);
+	talk_taber2(14);
 }
 
 void DrasculaEngine::animation_13_6() {
-	talk_taber2(_textt[_lang][15], "t15.als");
+	talk_taber2(15);
 }
 
 void DrasculaEngine::animation_14_6() {
-	talk_taber2(_textt[_lang][24], "t24.als");
+	talk_taber2(24);
 	addObject(21);
 	flags[10] = 1;
 	rompo_y_salgo = 1;
 }
 
 void DrasculaEngine::animation_15_6() {
-	talk_taber2(_textt[_lang][16], "t16.als");
+	talk_taber2(16);
 }
 
 void DrasculaEngine::animation_18_6() {

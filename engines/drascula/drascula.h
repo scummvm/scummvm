@@ -484,6 +484,7 @@ public:
 	void placeIgor();
 	void placeBJ();
 	void placeDrascula();
+
 	void talkInit(const char *filename);
 	void talk_igor_dch(int);
 	void talk_igor_dch(const char *said, const char *filename);
@@ -497,14 +498,27 @@ public:
 	void talk_tabernero(const char *said, const char *filename);
 	void talk_igorpuerta(const char *said, const char *filename);
 	void talk_igor_peluca(const char *said, const char *filename);
-	void hiccup(int);
-	void stopSound();
+	void talk_pen(const char *, const char *);
+	void talk_pen2(const char *, const char *);
+	void talk_taber2(int);
+	void talk_taber2(const char *, const char *);
+	void talk_bj_bed(int);
+	void talk_bj_bed(const char *said, const char * filename);
+	void talk_htel(const char *said, const char *filename);
 	void talk_bj(int);
 	void talk_bj(const char *, const char *);
 	void talk_baul(const char *said, const char *filename);
 	void talk(int);
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
+	void talk_drunk(const char *said, const char *filename);
+	void talk_pianista(const char *said, const char *filename);
+	void talk_igor_seated(const char *, const char *);
+	void talk_wolf(const char *said, const char *filename);
+	void talk_mus(const char *said, const char *filename);
+
+	void hiccup(int);
+	void stopSound();
 	void closeDoor(int nflag, int doorNum);
 	void playMusic(int p);
 	void stopMusic();
@@ -612,8 +626,6 @@ public:
 	void converse(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void response(int);
-	void talk_drunk(const char *said, const char *filename);
-	void talk_pianista(const char *said, const char *filename);
 
 	void MusicFadeout();
 	void ctvd_end();
@@ -670,9 +682,6 @@ public:
 	void update_56_pre();
 	void update_50();
 	void update_57();
-	void talk_igor_seated(const char *, const char *);
-	void talk_wolf(const char *said, const char *filename);
-	void talk_mus(const char *said, const char *filename);
 	void room_58(int);
 	void room_59(int);
 	bool room_60(int);
@@ -702,12 +711,6 @@ public:
 	void animation_18_6();
 	void animation_19_6();
 	void activatePendulum();
-	void talk_pen(const char *, const char *);
-	void talk_pen2(const char *, const char *);
-	void talk_taber2(const char *, const char *);
-	void talk_bj_bed(int);
-	void talk_bj_bed(const char *said, const char * filename);
-	void talk_htel(const char *said, const char *filename);
 
 private:
 	int _lang;
