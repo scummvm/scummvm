@@ -928,8 +928,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	if (num_ejec == 2) {
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &martin);
-		if (martin == 0)
-			goto martini;
+	}
+
+	if (num_ejec == 2 && martin != 0) {
 		ancho_hare = martin;
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%d",&alto_hare);
@@ -958,8 +959,6 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 		strcpy(menuBackground, pant4);
 	}
-
-martini:
 
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &numRoomObjs);
@@ -1183,7 +1182,9 @@ void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 		if (hare_se_ve == 0) {
 			hare_x = sitio_x;
 			hare_y = sitio_y;
-			goto fin;
+			updateRoom();
+			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			return;
 		}
 	}
 	sitio_x = pointX;
@@ -1201,7 +1202,6 @@ void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 		walkToObject = 0;
 		sentido_hare = sentido_final;
 	}
-fin:
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
@@ -2187,33 +2187,32 @@ void DrasculaEngine::hiccup(int counter) {
 	if (num_ejec == 3)
 		y = -1;
 
-comienza:
-	counter--;
+	do {
+		counter--;
 
-	updateRoom();
-	if (num_ejec == 3)
-		updateScreen(0, 0, 0, y, 320, 200, screenSurface);
-	else
-		updateScreen(0, 1, 0, y, 320, 198, screenSurface);
+		updateRoom();
+		if (num_ejec == 3)
+			updateScreen(0, 0, 0, y, 320, 200, screenSurface);
+		else
+			updateScreen(0, 1, 0, y, 320, 198, screenSurface);
 
-	if (sentido == 0)
-		y++;
-	else
-		y--;
+		if (sentido == 0)
+			y++;
+		else
+			y--;
 
-	if (num_ejec == 3) {
-		if (y == 1)
-			sentido = 1;
-		if (y == -1)
-			sentido = 0;
-	} else {
-		if (y == 2)
-			sentido = 1;
-		if (y == 0)
-			sentido = 0;
-	}
-	if (counter > 0)
-		goto comienza;
+		if (num_ejec == 3) {
+			if (y == 1)
+				sentido = 1;
+			if (y == -1)
+				sentido = 0;
+		} else {
+			if (y == 2)
+				sentido = 1;
+			if (y == 0)
+				sentido = 0;
+		}
+	} while (counter > 0);
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -2482,8 +2481,10 @@ void DrasculaEngine::pon_hare() {
 	}
 
 	if (num_ejec == 1 || num_ejec == 4 || num_ejec == 5 || num_ejec == 6) {
-		if (hare_se_ve == 0)
-			goto no_vuelco;
+		if (hare_se_ve == 0) {
+			increaseFrameNum();
+			return;
+		}
 	}
 
 	if (hare_se_mueve == 0) {
@@ -2563,8 +2564,6 @@ void DrasculaEngine::pon_hare() {
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], frontSurface, screenSurface);
 		}
-
-no_vuelco:
 		increaseFrameNum();
 	}
 }
@@ -2783,18 +2782,16 @@ bool DrasculaEngine::pickupObject() {
 	menu_sin_volcar();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	if (pickedObject < 7)
-		goto usando_verbos;
-
-	for (n = 1; n < 43; n++) {
-		if (whichObject() == n && inventoryObjects[n] == 0) {
-			inventoryObjects[n] = h;
-			takeObject = 0;
-			checkFlags = 0;
+	// Objects with an ID smaller than 7 are the inventory verbs
+	if (pickedObject >= 7) {
+		for (n = 1; n < 43; n++) {
+			if (whichObject() == n && inventoryObjects[n] == 0) {
+				inventoryObjects[n] = h;
+				takeObject = 0;
+				checkFlags = 0;
+			}
 		}
 	}
-
-usando_verbos:
 
 	if (checkFlags == 1) {
 		if (checkMenuFlags())
@@ -4338,33 +4335,32 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 	if (num_ejec == 3)
 		y = -1;
 
-comienza:
-	counter--;
+	do {
+		counter--;
 
-	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-	if (num_ejec == 3)
-		updateScreen(0, 0, 0, y, 320, 200, screenSurface);
-	else
-		updateScreen(0, 1, 0, y, 320, 198, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		if (num_ejec == 3)
+			updateScreen(0, 0, 0, y, 320, 200, screenSurface);
+		else
+			updateScreen(0, 1, 0, y, 320, 198, screenSurface);
 
-	if (sentido == 0)
-		y++;
-	else
-		y--;
+		if (sentido == 0)
+			y++;
+		else
+			y--;
 
-	if (num_ejec == 3) {
-		if (y == 1)
-			sentido = 1;
-		if (y == -1)
-			sentido = 0;
-	} else {
-		if (y == 2)
-			sentido = 1;
-		if (y == 0)
-			sentido = 0;
-	}
-	if (counter > 0)
-		goto comienza;
+		if (num_ejec == 3) {
+			if (y == 1)
+				sentido = 1;
+			if (y == -1)
+				sentido = 0;
+		} else {
+			if (y == 2)
+				sentido = 1;
+			if (y == 0)
+				sentido = 0;
+		}
+	} while (counter > 0);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
