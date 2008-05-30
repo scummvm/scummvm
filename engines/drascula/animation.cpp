@@ -378,7 +378,7 @@ void DrasculaEngine::animation_1_1() {
 
 void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
 	int x_talk[4] = {47, 93, 139, 185};
-	int cara;
+	int face;
 	int l = 0;
 	int length = strlen(said);
 
@@ -399,10 +399,10 @@ void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(3);
+	face = _rnd->getRandomNumber(3);
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, drawSurface2, screenSurface);
-	copyBackground(x_talk[cara], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
+	copyBackground(x_talk[face], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
 	l++;
 	if (l == 7)
 		l = 0;
@@ -2061,16 +2061,16 @@ void DrasculaEngine::animation_11_5() {
 }
 
 void DrasculaEngine::animation_12_5() {
-	DacPalette256 palFondo1;
-	DacPalette256 palFondo2;
-	DacPalette256 palFondo3;
+	DacPalette256 bgPalette1;
+	DacPalette256 bgPalette2;
+	DacPalette256 bgPalette3;
 
 	int frame;
 	const int rayo_x[] = {1, 46, 91, 136, 181, 226, 271, 181};
 	const int frusky_x[] = {100, 139, 178, 217, 100, 178, 217, 139, 100, 139};
 	const int elfrusky_x[] = {1, 68, 135, 1, 68, 135, 1, 68, 135, 68, 1, 135, 68, 135, 68};
 	//const int humo_x[] = {1, 29, 57, 85, 113, 141, 169, 197, 225};
-	int color, componente;
+	int color, component;
 	char fundido;
 
 	playMusic(26);
@@ -2087,28 +2087,28 @@ void DrasculaEngine::animation_12_5() {
 	hare_oscuro();
 
 	for (color = 0; color < 255; color++)
-		for (componente = 0; componente < 3; componente++) {
-			palFondo1[color][componente] = gamePalette[color][componente];
-			palFondo2[color][componente] = gamePalette[color][componente];
-			palFondo3[color][componente] = gamePalette[color][componente];
+		for (component = 0; component < 3; component++) {
+			bgPalette1[color][component] = gamePalette[color][component];
+			bgPalette2[color][component] = gamePalette[color][component];
+			bgPalette3[color][component] = gamePalette[color][component];
 		}
 
 	for (fundido = 1; fundido >= 0; fundido--) {
 		for (color = 0; color < 128; color++)
-			for (componente = 0; componente < 3; componente++)
-				palFondo1[color][componente] = LimitaVGA(palFondo1[color][componente] - 8 + fundido);
+			for (component = 0; component < 3; component++)
+				bgPalette1[color][component] = LimitaVGA(bgPalette1[color][component] - 8 + fundido);
 	}
 
 	for (fundido = 2; fundido >= 0; fundido--) {
 		for (color = 0; color < 128; color++)
-			for (componente = 0; componente < 3; componente++)
-				palFondo2[color][componente] = LimitaVGA(palFondo2[color][componente] - 8 + fundido);
+			for (component = 0; component < 3; component++)
+				bgPalette2[color][component] = LimitaVGA(bgPalette2[color][component] - 8 + fundido);
 	}
 
 	for (fundido = 3; fundido >= 0; fundido--) {
 		for (color = 0; color < 128; color++)
-			for (componente = 0; componente < 3; componente++)
-				palFondo3[color][componente] = LimitaVGA(palFondo3[color][componente] - 8 + fundido);
+			for (component = 0; component < 3; component++)
+				bgPalette3[color][component] = LimitaVGA(bgPalette3[color][component] - 8 + fundido);
 	}
 
 	loadPic("3an11_1.alg");
@@ -2116,11 +2116,11 @@ void DrasculaEngine::animation_12_5() {
 
 	for (frame = 0; frame < 8; frame++) {
 		if (frame == 2 || frame == 4 || frame == 8 || frame==10)
-			setPalette((byte *)&palFondo1);
+			setPalette((byte *)&bgPalette1);
 		else if (frame == 1 || frame == 5 || frame == 7 || frame == 9)
-			setPalette((byte *)&palFondo2);
+			setPalette((byte *)&bgPalette2);
 		else
-			setPalette((byte *)&palFondo3);
+			setPalette((byte *)&bgPalette3);
 
 		pause(4);
 		updateRoom();
@@ -2133,11 +2133,11 @@ void DrasculaEngine::animation_12_5() {
 
 	for (frame = 0; frame < 15; frame++) {
 		if (frame == 2 || frame == 4 || frame == 7 || frame == 9)
-			setPalette((byte *)&palFondo1);
+			setPalette((byte *)&bgPalette1);
 		else if (frame == 1 || frame == 5)
 			setPalette((byte *)&gamePalette);
 		else
-			setPalette((byte *)&palFondo2);
+			setPalette((byte *)&bgPalette2);
 
 		pause(4);
 		updateRoom();

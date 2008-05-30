@@ -48,7 +48,7 @@ void DrasculaEngine::talk_igor_dch(int index) {
 
 void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -59,7 +59,7 @@ void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -69,7 +69,7 @@ bucless:
 	placeDrascula();
 	copyBackground(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, drawSurface1, screenSurface);
 
-	copyRect(x_talk[cara], 148, x_igor + 17, y_igor, 25, 24, frontSurface, screenSurface);
+	copyRect(x_talk[face], 148, x_igor + 17, y_igor, 25, 24, frontSurface, screenSurface);
 
 	updateRefresh();
 
@@ -110,7 +110,7 @@ void DrasculaEngine::talk_dr_izq(int index) {
 
 void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -121,7 +121,7 @@ void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -134,9 +134,9 @@ bucless:
 
 	copyBackground(x_dr, y_dr, x_dr, y_dr, 38, 31, drawSurface1, screenSurface);
 	if (num_ejec == 6)
-		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, drawSurface2, screenSurface);
+		copyRect(x_talk[face], 90, x_dr, y_dr, 38, 31, drawSurface2, screenSurface);
 	else
-		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, backSurface, screenSurface);
+		copyRect(x_talk[face], 90, x_dr, y_dr, 38, 31, backSurface, screenSurface);
 
 	updateRefresh();
 
@@ -178,7 +178,7 @@ void DrasculaEngine::talk_dr_dch(int index) {
 
 void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -189,7 +189,7 @@ void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateRefresh_pre();
@@ -201,9 +201,9 @@ bucless:
 
 	copyBackground(x_dr, y_dr, x_dr, y_dr, 45, 31, drawSurface1, screenSurface);
 	if (num_ejec != 6)
-		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, backSurface, screenSurface);
+		copyRect(x_talk[face], 58, x_dr + 7, y_dr, 38, 31, backSurface, screenSurface);
 	else
-		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, drawSurface2, screenSurface);
+		copyRect(x_talk[face], 58, x_dr + 7, y_dr, 38, 31, drawSurface2, screenSurface);
 
 	updateRefresh();
 
@@ -292,7 +292,7 @@ bucless:
 
 void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -303,7 +303,7 @@ void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -315,7 +315,7 @@ bucless:
 		placeDrascula();
 	if (num_ejec == 1 || num_ejec == 6)
 		copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, drawSurface1, screenSurface);
-	copyRect(x_talk[cara], 173, x_igor, y_igor, 29, 25, frontSurface, screenSurface);
+	copyRect(x_talk[face], 173, x_igor, y_igor, 29, 25, frontSurface, screenSurface);
 
 	updateRefresh();
 
@@ -363,7 +363,7 @@ void DrasculaEngine::talk_tabernero(int index) {
 
 void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -382,13 +382,13 @@ bucless:
 			playMusic(roomMusic);
 	}
 
-	cara = _rnd->getRandomNumber(8);
+	face = _rnd->getRandomNumber(8);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 2, 121, 44, 21, 24, extraSurface, screenSurface);
+	copyBackground(x_talk[face], 2, 121, 44, 21, 24, extraSurface, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -425,7 +425,7 @@ void DrasculaEngine::talk_bj(int index) {
 
 void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 	int x_talk[5] = { 64, 92, 120, 148, 176 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -436,7 +436,7 @@ void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 
 bucless:
 	if (num_ejec != 5) {
-		cara = _rnd->getRandomNumber(4);
+		face = _rnd->getRandomNumber(4);
 
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -445,7 +445,7 @@ bucless:
 		copyBackground(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
 					drawSurface1, screenSurface);
 
-		copyRect(x_talk[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
+		copyRect(x_talk[face], 99, x_bj + 2, y_bj - 1, 27, 40,
 					drawSurface3, screenSurface);
 		pon_hare();
 		updateRefresh();
@@ -500,7 +500,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	int y_mask_talk = 170;
 	int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
 	int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	if (num_ejec == 6) {
@@ -533,7 +533,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(5);
+	face = _rnd->getRandomNumber(5);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -558,38 +558,38 @@ bucless:
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk,
+			copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk,
 						extraSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_izq[cara], y_mask_talk, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
+			reduce_hare_chico(x_talk_izq[face], y_mask_talk, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
 						hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare],
 						extraSurface, screenSurface);
 
 		updateRefresh();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
+			copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
 					extraSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_dch[cara], y_mask_talk, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
+			reduce_hare_chico(x_talk_dch[face], y_mask_talk, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
 					hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
+			copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
 					frontSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_izq[cara], y_mask_talk,
+			reduce_hare_chico(x_talk_izq[face], y_mask_talk,
 						suma_1_pixel + hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
 						hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare],
 						frontSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk,
+			copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk,
 					frontSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_dch[cara], y_mask_talk,
+			reduce_hare_chico(x_talk_dch[face], y_mask_talk,
 						suma_1_pixel + hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
 						hare_y, ancho_talk,alto_talk, factor_red[hare_y + alto_hare],
 						frontSurface, screenSurface);
@@ -631,7 +631,7 @@ bucless:
 
 void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
 	int x_talk[4] = { 97, 145, 193, 241 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -642,13 +642,13 @@ void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(3);
+	face = _rnd->getRandomNumber(3);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 139, 228, 112, 47, 60,
+	copyBackground(x_talk[face], 139, 228, 112, 47, 60,
 				extraSurface, screenSurface);
 	pon_hare();
 	updateRefresh();
@@ -681,7 +681,7 @@ bucless:
 
 void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -707,13 +707,13 @@ bebiendo:
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 29, 177, 50, 19, 19, frontSurface, screenSurface);
+	copyBackground(x_talk[face], 29, 177, 50, 19, 19, frontSurface, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -765,7 +765,7 @@ void DrasculaEngine::talk_vb(int index) {
 
 void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 	int x_talk[6] = {1, 27, 53, 79, 105, 131};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -779,14 +779,14 @@ void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 bucless:
 
 	if (sentido_vb == 1) {
-		cara = _rnd->getRandomNumber(5);
+		face = _rnd->getRandomNumber(5);
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		pon_hare();
 		pon_vb();
 
 		copyBackground(OBJWIDTH + 1, 0, vb_x + 5, 64, 25, 27, drawSurface3, screenSurface);
-		copyRect(x_talk[cara], 34, vb_x + 5, 64, 25, 27, frontSurface, screenSurface);
+		copyRect(x_talk[face], 34, vb_x + 5, 64, 25, 27, frontSurface, screenSurface);
 		updateRefresh();
 	}
 
@@ -969,7 +969,7 @@ bucless:
 
 void DrasculaEngine::talk_wolf(const char *said, const char *filename) {
 	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -980,13 +980,13 @@ void DrasculaEngine::talk_wolf(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(8);
+	face = _rnd->getRandomNumber(8);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 136, 198, 81, 26, 24, drawSurface3, screenSurface);
+	copyBackground(x_talk[face], 136, 198, 81, 26, 24, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -1018,7 +1018,7 @@ bucless:
 
 void DrasculaEngine::talk_mus(const char *said, const char *filename) {
 	int x_talk[8] = { 16, 35, 54, 73, 92, 111, 130, 149};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1029,13 +1029,13 @@ void DrasculaEngine::talk_mus(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 156, 190, 64, 18, 24, drawSurface3, screenSurface);
+	copyBackground(x_talk[face], 156, 190, 64, 18, 24, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -1067,7 +1067,7 @@ bucless:
 
 void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 	int x_talk[8] = {112, 138, 164, 190, 216, 242, 268, 294};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	flags[1] = 1;
@@ -1084,13 +1084,13 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(7);
+	face = _rnd->getRandomNumber(7);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyRect(x_talk[cara], 145, 145, 105, 25, 29, drawSurface3, screenSurface);
+	copyRect(x_talk[face], 145, 145, 105, 25, 29, drawSurface3, screenSurface);
 
 	updateRefresh();
 
@@ -1124,7 +1124,7 @@ bucless:
 
 void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
 	int x_talk[5]={122, 148, 174, 200, 226};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	flags[1] = 1;
@@ -1137,13 +1137,13 @@ void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(4);
+	face = _rnd->getRandomNumber(4);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 171, 173, 116, 25, 28, drawSurface3, screenSurface);
+	copyBackground(x_talk[face], 171, 173, 116, 25, 28, drawSurface3, screenSurface);
 
 	updateRefresh();
 
@@ -1177,7 +1177,7 @@ bucless:
 
 void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
 	int x_talk[6] = {1, 23, 45, 67, 89, 111};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1188,13 +1188,13 @@ void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(5);
+	face = _rnd->getRandomNumber(5);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 130, 151, 43, 21, 24, drawSurface3, screenSurface);
+	copyBackground(x_talk[face], 130, 151, 43, 21, 24, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -1232,7 +1232,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 
 void DrasculaEngine::talk_bj_bed(const char *said, const char *filename) {
 	int x_talk[5] = {51, 101, 151, 201, 251};
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1243,14 +1243,14 @@ void DrasculaEngine::talk_bj_bed(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(4);
+	face = _rnd->getRandomNumber(4);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
 	copyBackground(65, 103, 65, 103, 49, 38, drawSurface1, screenSurface);
-	copyRect(x_talk[cara], 105, 65, 103, 49, 38, drawSurface3, screenSurface);
+	copyRect(x_talk[face], 105, 65, 103, 49, 38, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -1282,7 +1282,7 @@ bucless:
 void DrasculaEngine::talk_htel(const char *said, const char *filename) {
 	char *num_cara;
 	int x_talk[3] = {1, 94, 187};
-	int cara, pantalla;
+	int face, pantalla;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1293,10 +1293,10 @@ void DrasculaEngine::talk_htel(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(2);
+	face = _rnd->getRandomNumber(2);
 	pantalla = _rnd->getRandomNumber(2);
 
-	if (cara == 0 && pantalla == 0)
+	if (face == 0 && pantalla == 0)
 		num_cara = (char *)drawSurface3;
 	else if (pantalla == 1)
 		num_cara = (char *)frontSurface;
@@ -1305,7 +1305,7 @@ bucless:
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
-	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, screenSurface);
+	copyBackground(x_talk[face], 1, 45, 24, 92, 108, (byte *)num_cara, screenSurface);
 
 	if (withVoices == 0)
 		centerText(said, 90, 50);
@@ -1337,7 +1337,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	int y_mask_talk = 170;
 	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
 	int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
-	int p, cara = 0;
+	int p, face = 0;
 	int length = strlen(said);
 
 	color_abc(kColorYellow);
@@ -1354,21 +1354,21 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 bucless:
 
 	if (sincronia[p] == '0')
-		cara = 0;
+		face = 0;
 	if (sincronia[p] == '1')
-		cara = 1;
+		face = 1;
 	if (sincronia[p] == '2')
-		cara = 2;
+		face = 2;
 	if (sincronia[p] == '3')
-		cara = 3;
+		face = 3;
 	if (sincronia[p] == '4')
-		cara = 4;
+		face = 4;
 	if (sincronia[p] == '5')
-		cara = 5;
+		face = 5;
 	if (sincronia[p] == '6')
-		cara = 6;
+		face = 6;
 	if (sincronia[p] == '7')
-		cara = 7;
+		face = 7;
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -1388,31 +1388,31 @@ bucless:
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk, extraSurface, screenSurface);
+			copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk, extraSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_izq[cara], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
+			reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, extraSurface, screenSurface);
+			copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, extraSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_dch[cara], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
+			reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
+			copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_izq[cara], y_mask_talk,
+			reduce_hare_chico(x_talk_izq[face], y_mask_talk,
 						(int)(suma_1_pixel + hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
 						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
+			copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
 		else
-			reduce_hare_chico(x_talk_dch[cara], y_mask_talk,
+			reduce_hare_chico(x_talk_dch[face], y_mask_talk,
 						(int)(suma_1_pixel + hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
 						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
 		updateRefresh();
@@ -1448,7 +1448,7 @@ bucless:
 }
 
 void DrasculaEngine::talk_baul(const char *said, const char *filename) {
-	int cara = 0, cara_antes;
+	int face = 0, cara_antes;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1461,12 +1461,12 @@ void DrasculaEngine::talk_baul(const char *said, const char *filename) {
 
 bucless:
 
-	if (cara == 1)
-		cara = 0;
+	if (face == 1)
+		face = 0;
 	else
-		cara = 1;
+		face = 1;
 
-	flags[19] = cara;
+	flags[19] = face;
 	updateRoom();
 
 	if (withVoices == 0)
@@ -1533,7 +1533,7 @@ bucless:
 
 void DrasculaEngine::talk_igor_seated(const char *said, const char *filename) {
 	int x_talk[4] = { 80, 102, 124, 146 };
-	int cara;
+	int face;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1544,13 +1544,13 @@ void DrasculaEngine::talk_igor_seated(const char *said, const char *filename) {
 
 bucless:
 
-	cara = _rnd->getRandomNumber(3);
+	face = _rnd->getRandomNumber(3);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
+	copyBackground(x_talk[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
@@ -1582,7 +1582,7 @@ bucless:
 
 void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
 	int x_talk[4] = {119, 158, 197, 236};
-	int cara = 0;
+	int face = 0;
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1599,7 +1599,7 @@ bucless:
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
+	copyBackground(x_talk[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 

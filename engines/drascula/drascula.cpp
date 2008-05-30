@@ -364,19 +364,19 @@ void DrasculaEngine::decompressPic(byte *dir_escritura, int plt) {
 }
 
 void DrasculaEngine::paleta_hare() {
-	int color, componente;
+	int color, component;
 
 	for (color = 235; color < 253; color++)
-		for (componente = 0; componente < 3; componente++)
-			palHare[color][componente] = gamePalette[color][componente];
+		for (component = 0; component < 3; component++)
+			palHare[color][component] = gamePalette[color][component];
 }
 
 void DrasculaEngine::hare_oscuro() {
-	int color, componente;
+	int color, component;
 
 	for (color = 235; color < 253; color++ )
-		for (componente = 0; componente < 3; componente++)
-			gamePalette[color][componente] = palHareOscuro[color][componente];
+		for (component = 0; component < 3; component++)
+			gamePalette[color][component] = palHareOscuro[color][component];
 
 	updatePalette();
 }
@@ -393,12 +393,12 @@ void DrasculaEngine::setRGB(byte *dir_lectura, int plt) {
 }
 
 void DrasculaEngine::black() {
-	int color, componente;
+	int color, component;
 	DacPalette256 palNegra;
 
 	for (color = 0; color < 256; color++)
-		for (componente = 0; componente < 3; componente++)
-			palNegra[color][componente] = 0;
+		for (component = 0; component < 3; component++)
+			palNegra[color][component] = 0;
 
 	palNegra[254][0] = 0x3F;
 	palNegra[254][1] = 0x3F;
@@ -1909,8 +1909,8 @@ void DrasculaEngine::screenSaver() {
 }
 
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
-	OpenSSN(filefli, vel);
-	while (PlayFrameSSN() && (!term_int)) {
+	openSSN(filefli, vel);
+	while (playFrameSSN() && (!term_int)) {
 		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
@@ -1919,14 +1919,14 @@ void DrasculaEngine::fliplay(const char *filefli, int vel) {
 
 void DrasculaEngine::fadeFromBlack(int VelocidadDeFundido) {
 	char fundido;
-	unsigned int color, componente;
+	unsigned int color, component;
 
 	DacPalette256 palFundido;
 
 	for (fundido = 0; fundido < 64; fundido++) {
 		for (color = 0; color < 256; color++) {
-			for (componente = 0; componente < 3; componente++) {
-				palFundido[color][componente] = LimitaVGA(gamePalette[color][componente] - 63 + fundido);
+			for (component = 0; component < 3; component++) {
+				palFundido[color][component] = LimitaVGA(gamePalette[color][component] - 63 + fundido);
 			}
 		}
 		pause(VelocidadDeFundido);
@@ -2105,14 +2105,14 @@ void DrasculaEngine::animastopSound_corte() {
 
 void DrasculaEngine::fadeToBlack(int VelocidadDeFundido) {
 	char fundido;
-	unsigned int color, componente;
+	unsigned int color, component;
 
 	DacPalette256 palFundido;
 
 	for (fundido = 63; fundido >= 0; fundido--) {
 		for (color = 0; color < 256; color++) {
-			for (componente = 0; componente < 3; componente++) {
-				palFundido[color][componente] = LimitaVGA(gamePalette[color][componente] - 63 + fundido);
+			for (component = 0; component < 3; component++) {
+				palFundido[color][component] = LimitaVGA(gamePalette[color][component] - 63 + fundido);
 			}
 		}
 		pause(VelocidadDeFundido);
@@ -2343,11 +2343,11 @@ void DrasculaEngine::updateDoor(int doorNum) {
 }
 
 void DrasculaEngine::color_hare() {
-	int color, componente;
+	int color, component;
 
 	for (color = 235; color < 253; color++) {
-		for (componente = 0; componente < 3; componente++) {
-			gamePalette[color][componente] = palHare[color][componente];
+		for (component = 0; component < 3; component++) {
+			gamePalette[color][component] = palHare[color][component];
 		}
 	}
 	updatePalette();
@@ -2355,12 +2355,12 @@ void DrasculaEngine::color_hare() {
 
 void DrasculaEngine::funde_hare(int oscuridad) {
 	char fundido;
-	unsigned int color, componente;
+	unsigned int color, component;
 
 	for (fundido = oscuridad; fundido >= 0; fundido--) {
 		for (color = 235; color < 253; color++) {
-			for (componente = 0; componente < 3; componente++)
-				gamePalette[color][componente] = LimitaVGA(gamePalette[color][componente] - 8 + fundido);
+			for (component = 0; component < 3; component++)
+				gamePalette[color][component] = LimitaVGA(gamePalette[color][component] - 8 + fundido);
 		}
 	}
 
@@ -2368,29 +2368,29 @@ void DrasculaEngine::funde_hare(int oscuridad) {
 }
 
 void DrasculaEngine::paleta_hare_claro() {
-	int color, componente;
+	int color, component;
 
 	for (color = 235; color < 253; color++) {
-		for (componente = 0; componente < 3; componente++)
-			palHareClaro[color][componente] = gamePalette[color][componente];
+		for (component = 0; component < 3; component++)
+			palHareClaro[color][component] = gamePalette[color][component];
 	}
 }
 
 void DrasculaEngine::paleta_hare_oscuro() {
-	int color, componente;
+	int color, component;
 
 	for (color = 235; color < 253; color++) {
-		for (componente = 0; componente < 3; componente++)
-			palHareOscuro[color][componente] = gamePalette[color][componente];
+		for (component = 0; component < 3; component++)
+			palHareOscuro[color][component] = gamePalette[color][component];
 	}
 }
 
 void DrasculaEngine::hare_claro() {
-	int color, componente;
+	int color, component;
 
 	for (color = 235; color < 253; color++) {
-		for (componente = 0; componente < 3; componente++)
-			gamePalette[color][componente] = palHareClaro[color][componente];
+		for (component = 0; component < 3; component++)
+			gamePalette[color][component] = palHareClaro[color][component];
 	}
 
 	updatePalette();
@@ -3276,7 +3276,7 @@ void DrasculaEngine::para_grabar(char gameName[]) {
 	stopSound();
 }
 
-void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
+void DrasculaEngine::openSSN(const char *Name, int Pause) {
 	MiVideoSSN = (byte *)malloc(64256);
 	globalSpeed = 1000 / Pause;
 	FrameSSN = 0;
@@ -3289,7 +3289,7 @@ void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	LastFrame = _system->getMillis();
 }
 
-int DrasculaEngine::PlayFrameSSN() {
+int DrasculaEngine::playFrameSSN() {
 	int Exit = 0;
 	int Lengt;
 	byte *BufferSSN;

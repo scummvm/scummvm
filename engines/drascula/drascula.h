@@ -533,7 +533,7 @@ public:
 	void enterName();
 	void para_grabar(char[]);
 	int LookForFree();
-	void OpenSSN(const char *Name, int Pause);
+	void openSSN(const char *Name, int Pause);
 	void WaitFrameSSN();
 	void MixVideo(byte *OldScreen, byte *NewScreen);
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
@@ -541,7 +541,7 @@ public:
 	void set_dacSSN(byte *dacSSN);
 	byte *TryInMem(Common::File *Session);
 	void EndSSN();
-	int PlayFrameSSN();
+	int playFrameSSN();
 
 	byte *AuxBuffOrg;
 	byte *AuxBuffLast;
