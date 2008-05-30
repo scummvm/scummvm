@@ -2163,7 +2163,7 @@ void DrasculaEngine::animation_12_5() {
 	lleva_al_hare(40, 169);
 	lleva_al_hare(-14, 175);
 
-	rompo = 1;
+	doBreak = 1;
 	previousMusic = roomMusic;
 	hare_se_ve = 1;
 	clearRoom();
@@ -2389,7 +2389,7 @@ void DrasculaEngine::animation_6_6() {
 	decompressPic(extraSurface, 1);
 	loadPic("99.alg");
 	decompressPic(backSurface, 1);
-	rompo = 1;
+	doBreak = 1;
 	objExit = 104;
 	hare_x = -1;
 	withoutVerb();

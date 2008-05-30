@@ -167,7 +167,7 @@ int DrasculaEngine::go() {
 		frame_y = 0;
 		hare_x = -1; hare_se_mueve = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
 		checkFlags = 1;
-		rompo = 0; rompo2 = 0;
+		doBreak = 0;
 		walkToObject = 0;
 		stepX = PASO_HARE_X; stepY = PASO_HARE_Y;
 		alto_hare = CHARACTER_HEIGHT; ancho_hare = CHARACTER_WIDTH; feetHeight = PIES_HARE;
@@ -1291,31 +1291,31 @@ bool DrasculaEngine::comprueba1() {
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
 			if (mouseX >= x1[l] && mouseY >= y1[l]
-					&& mouseX <= x2[l] && mouseY <= y2[l] && rompo == 0) {
+					&& mouseX <= x2[l] && mouseY <= y2[l] && doBreak == 0) {
 				if (exitRoom(l))
 					return true;
-				if (rompo == 1)
+				if (doBreak == 1)
 					break;
 			}
 		}
 
 		if (mouseX > hare_x && mouseY > hare_y
 				&& mouseX < hare_x + ancho_hare && mouseY < hare_y + alto_hare)
-			rompo = 1;
+			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
 			if (mouseX > x1[l] && mouseY > y1[l]
-					&& mouseX < x2[l] && mouseY < y2[l] && rompo == 0) {
+					&& mouseX < x2[l] && mouseY < y2[l] && doBreak == 0) {
 				sitio_x = sitiobj_x[l];
 				sitio_y = sitiobj_y[l];
 				sentido_final = sentidobj[l];
-				rompo = 1;
+				doBreak = 1;
 				walkToObject = 1;
 				startWalking();
 			}
 		}
 
-		if (rompo == 0) {
+		if (doBreak == 0) {
 			sitio_x = mouseX;
 			sitio_y = mouseY;
 
@@ -1330,7 +1330,7 @@ bool DrasculaEngine::comprueba1() {
 
 			startWalking();
 		}
-		rompo = 0;
+		doBreak = 0;
 	}
 
 	return false;
@@ -2643,7 +2643,7 @@ bool DrasculaEngine::exitRoom(int l) {
 				hare_se_mueve = 0;
 				sentido_hare = sentido_alkeva[l];
 				objExit = alapuertakeva[l];
-				rompo = 1;
+				doBreak = 1;
 				previousMusic = roomMusic;
 
 				if (objectNum[l] == 105) {
@@ -2664,7 +2664,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
-			rompo = 1;
+			doBreak = 1;
 			previousMusic = roomMusic;
 			if (objectNum[l] == 136)
 				animation_2_2();
@@ -2700,7 +2700,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
-			rompo = 1;
+			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
 			strcpy(salgo, targetScreen[l]);
@@ -2718,7 +2718,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
-			rompo = 1;
+			doBreak = 1;
 			previousMusic = roomMusic;
 
 			if (objectNum[l] == 108)
@@ -2739,7 +2739,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
-			rompo = 1;
+			doBreak = 1;
 			previousMusic = roomMusic;
 			hare_se_ve = 1;
 			clearRoom();
@@ -2758,7 +2758,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
-			rompo = 1;
+			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
 			strcpy(salgo, targetScreen[l]);

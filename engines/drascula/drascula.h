@@ -313,7 +313,7 @@ public:
 	int frame_y;
 	int hare_x, hare_y, hare_se_mueve, direccion_hare, sentido_hare, num_frame, hare_se_ve;
 	int sitio_x, sitio_y, checkFlags;
-	int rompo, rompo2;
+	int doBreak;
 	int stepX, stepY;
 	int alto_hare, ancho_hare, feetHeight;
 	int alto_talk, ancho_talk;
