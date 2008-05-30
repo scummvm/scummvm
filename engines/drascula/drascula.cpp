@@ -1793,9 +1793,6 @@ void DrasculaEngine::screenSaver() {
 	int tempLine[320];
 	int tempRow[200];
 
-	// FIXME: that part (*.ghost) need RE from efecto.lib file for some gfx special effect
-	// for now ignore
-
 	clearRoom();
 
 	loadPic("sv.alg");
