@@ -27,9 +27,6 @@
 
 namespace Drascula {
 
-static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
-static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
-
 void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delay) {
 	int x = 0;
 
@@ -399,63 +396,6 @@ void DrasculaEngine::animation_1_1() {
 	decompressPic(frontSurface, COMPLETE_PAL);
 	loadPic("99.alg");
 	decompressPic(backSurface, 1);
-}
-
-void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
-	int x_talk[4] = {47, 93, 139, 185};
-	int face;
-	int l = 0;
-	int length = strlen(said);
-
-	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
-
-	color_abc(kColorRed);
-
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
-
-bucless:
-
-	face = _rnd->getRandomNumber(3);
-	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-	copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, drawSurface2, screenSurface);
-	copyBackground(x_talk[face], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
-	l++;
-	if (l == 7)
-		l = 0;
-
-	if (withVoices == 0)
-		centerText(said, 191, 69);
-
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-
-	pause(3);
-
-	byte key = getScan();
-	if (key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (LookForFree() != 0)
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
 }
 
 void DrasculaEngine::animation_2_1() {

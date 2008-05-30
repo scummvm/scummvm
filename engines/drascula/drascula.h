@@ -211,6 +211,9 @@ struct RoomTalkAction;
 #define COMPLETE_PAL   256
 #define HALF_PAL       128
 
+static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
+static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
+
 class DrasculaEngine : public ::Engine {
 	int _gameId;
 	Common::KeyState _keyPressed;
