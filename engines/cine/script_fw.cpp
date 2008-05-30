@@ -1609,7 +1609,8 @@ int FWScript::o1_stopSample() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Implement this instruction's Amiga part (PC part already done)
+ * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op71() {
 	byte a = getNextByte();
@@ -1618,7 +1619,8 @@ int FWScript::o1_op71() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Implement this instruction's Amiga part (PC part already done)
+ * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op72() {
 	uint16 a = getNextWord();
@@ -1628,7 +1630,8 @@ int FWScript::o1_op72() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Implement this instruction's Amiga part (PC part already done)
+ * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op73() {
 	// I believe this opcode is identical to o1_op72(). In fact, Operation
@@ -1636,7 +1639,7 @@ int FWScript::o1_op73() {
 	uint16 a = getNextWord();
 	byte b = getNextByte();
 	uint16 c = getNextWord();
-	warning("STUB: o1_op72(%x, %x, %x)", a, b, c);
+	warning("STUB: o1_op73(%x, %x, %x)", a, b, c);
 	return 0;
 }
 
