@@ -493,7 +493,7 @@ public:
 	void talk_dr_izq(int);
 	void talk_dr_izq(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
-	void talk_igor_frente(const char *, const char *);
+	void talk_igor_front(const char *, const char *);
 	void talk_tabernero(int);
 	void talk_tabernero(const char *said, const char *filename);
 	void talk_igor_door(const char *said, const char *filename);

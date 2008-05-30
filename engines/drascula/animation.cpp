@@ -381,7 +381,7 @@ void DrasculaEngine::animation_1_1() {
 		pause(18);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_frente(_texti[_lang][6], "I6.als");
+		talk_igor_front(_texti[_lang][6], "I6.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		fadeToBlack(0);
@@ -2092,7 +2092,7 @@ void DrasculaEngine::animation_1_6() {
 	talk_igor_dch(11);
 	sentido_igor = 3;
 	talk_dr_dch(33);
-	talk_igor_frente(_texti[_lang][12], "I12.als");
+	talk_igor_front(_texti[_lang][12], "I12.als");
 	talk_dr_dch(34);
 	sentido_dr = 0;
 	talk_dr_izq(35);
@@ -2914,8 +2914,8 @@ void DrasculaEngine::animation_5_4(){
 	decompressPic(frontSurface, 1);
 	x_igor = 100;
 	y_igor = 65;
-	talk_igor_frente(_texti[_lang][29], "I29.ALS");
-	talk_igor_frente(_texti[_lang][30], "I30.als");
+	talk_igor_front(_texti[_lang][29], "I29.ALS");
+	talk_igor_front(_texti[_lang][30], "I30.als");
 	loadPic("96.alg");
 	decompressPic(frontSurface, 1);
 	loadPic("99.alg");
@@ -2943,7 +2943,7 @@ void DrasculaEngine::animation_6_4() {
 	placeIgor();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(40);
-	talk_igor_frente(_texti[_lang][26], "I26.als");
+	talk_igor_front(_texti[_lang][26], "I26.als");
 	roomNumber = prevRoom;
 	clearRoom();
 	loadPic("96.alg");

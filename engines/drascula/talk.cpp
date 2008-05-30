@@ -290,7 +290,7 @@ bucless:
 	}
 }
 
-void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
+void DrasculaEngine::talk_igor_front(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
 	int face;
 	int length = strlen(said);
