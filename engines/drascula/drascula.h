@@ -93,7 +93,18 @@ enum SSNFrames {
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
-struct RoomTalkAction;
+
+struct RoomTalkAction {
+	int num;
+	int action;
+	int objectID;
+	int speechID;
+};
+
+struct ItemLocation {
+	int x;
+	int y;
+};
 
 #define NUM_SAVES     10
 #define NUM_FLAGS     50
@@ -742,6 +753,12 @@ extern const char *_texthis[][5];
 extern const char *_textverbs[][6];
 extern const char *_textmisc[][2];
 extern const char *_textd1[][11];
+
+extern ItemLocation itemLocations[];
+extern int frame_x[20];
+extern const int x_pol[44], y_pol[44];
+extern const int x_barra[];
+extern const int x1d_menu[], y1d_menu[];
 
 } // End of namespace Drascula
 

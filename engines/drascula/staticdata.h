@@ -23,9 +23,215 @@
  *
  */
 
+#ifndef STATICDATA_H
+#define STATICDATA_H
+
 #include "drascula/drascula.h"
 
 namespace Drascula {
+
+ItemLocation itemLocations[] = {
+	{   0,   0 },							  // empty
+	{   5,  10 }, {  50,  10 }, {  95,  10 }, // 1-3
+	{ 140,  10 }, { 185,  10 }, { 230,  10 }, // 4-6
+	{ 275,  10 }, {   5,  40 }, {  50,  40 }, // 7-9
+	{  95,  40 }, { 140,  40 }, { 185,  40 }, // 10-12
+	{ 230,  40 }, { 275,  40 }, {   5,  70 }, // 13-15
+	{  50,  70 }, {  95,  70 }, { 140,  70 }, // 16-18
+	{ 185,  70 }, { 230,  70 }, { 275,  70 }, // 19-21
+	{   5, 100 }, {  50, 100 }, {  95, 100 }, // 22-24
+	{ 140, 100 }, { 185, 100 }, { 230, 100 }, // 25-27
+	{ 275, 100 }, {   5, 130 }, {  50, 130 }, // 28-30
+	{  95, 130 }, { 140, 130 }, { 185, 130 }, // 31-33
+	{ 230, 130 }, { 275, 130 }, {   5, 160 }, // 34-36
+	{  50, 160 }, {  95, 160 }, { 140, 160 }, // 37-39
+	{ 185, 160 }, { 230, 160 }, { 275, 160 }, // 40-42
+	{ 275, 160 }							  // 43
+};
+
+const int x_pol[44] = {0, 1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
+				1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
+				247, 83, 165, 1, 206, 42, 124, 83, 1, 247,
+				83, 165, 1, 206, 42, 124, 83, 1, 247, 42,
+				1, 165, 206};
+const int y_pol[44] = {0, 1, 1, 1, 1, 1, 1, 1, 27, 27, 1,
+						27, 27, 27, 27, 27, 27, 27, 1, 1, 27,
+						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
+						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
+						27, 1, 1};
+const int x_barra[] = {6, 51, 96, 141, 186, 232, 276, 321};
+const int x1d_menu[] = {280, 40, 80, 120, 160, 200, 240, 0, 40, 80, 120,
+						160, 200, 240, 0, 40, 80, 120, 160, 200, 240, 0,
+						40, 80, 120, 160, 200, 240, 0};
+const int y1d_menu[] = {0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25,
+						50, 50, 50, 50, 50, 50, 50, 75, 75, 75, 75, 75, 75, 75, 100};
+int frame_x[20] = {43, 87, 130, 173, 216, 259};
+
+
+// Note: default action needs to be LAST for each group
+// of actions with the same number
+RoomTalkAction room0Actions[] = {
+	// num	action			object	speech
+	{ 1,	kVerbLook,		-1,		 54 },
+	{ 1,	kVerbMove,		-1,		 19 },
+	{ 1,	kVerbPick,		-1,		 11 },
+	{ 1,	kVerbOpen,		-1,		  9 },
+	{ 1,	kVerbClose,		-1,		  9 },
+	{ 1,	kVerbTalk,		-1,		 16 },
+	{ 1,	kVerbDefault,	-1,		 11 },
+	// ----------------------------------
+	{ 2,	kVerbMove,		-1,		 19 },
+	{ 2,	kVerbOpen,		-1,		  9 },
+	{ 2,	kVerbClose,		-1,		  9 },
+	{ 2,	kVerbTalk,		-1,		 16 },
+	// ----------------------------------
+	{ 3,	kVerbLook,		-1,		316 },
+	{ 3,	kVerbMove,		-1,		317 },
+	{ 3,	kVerbPick,		-1,		318 },
+	{ 3,	kVerbOpen,		-1,		319 },
+	{ 3,	kVerbClose,		-1,		319 },
+	{ 3,	kVerbTalk,		-1,		320 },
+	{ 3,	kVerbDefault,	-1,		318 },
+	// ----------------------------------
+	{ 4,	kVerbMove,		-1,		 19 },
+	{ 4,	kVerbOpen,		-1,		  9 },
+	{ 4,	kVerbClose,		-1,		  9 },
+	{ 4,	kVerbTalk,		-1,		 16 },
+	// ----------------------------------
+	{ 5,	kVerbOpen,		-1,		  9 },
+	{ 5,	kVerbClose,		-1,		  9 },
+	{ 5,	kVerbTalk,		-1,		 16 },
+	// ----------------------------------
+	{ 6,	kVerbMove,		-1,		 19 },
+	{ 6,	kVerbOpen,		-1,		  9 },
+	{ 6,	kVerbClose,		-1,		  9 },
+	{ 6,	kVerbTalk,		-1,		 16 }
+};
+
+RoomTalkAction room1Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbPick,		118,	  5 },
+	{ -1,	kVerbOpen,		118,	  3 },
+	{ -1,	kVerbClose,		118,	  4 },
+	{ -1,	kVerbTalk,		118,	  6 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		119,	  8 },
+	{ -1,	kVerbMove,		119,	 13 },
+	{ -1,	kVerbClose,		119,	 10 },
+	{ -1,	kVerbTalk,		119,	 12 },
+	// ----------------------------------
+	{ -1,	kVerbMove,		120,	 13 },
+	{ -1,	kVerbOpen,		120,	 18 },
+	{ -1,	kVerbTalk,		120,	 15 }
+};
+
+RoomTalkAction room3Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		129,	 21 },
+	{ -1,	kVerbPick,		129,	  5 },
+	{ -1,	kVerbMove,		129,	 24 },
+	{ -1,	kVerbOpen,		129,	 22 },
+	{ -1,	kVerbClose,		129,	 10 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		131,	 27 },
+	{ -1,	kVerbPick,		131,	  5 },
+	{ -1,	kVerbMove,		131,	 24 },
+	{ -1,	kVerbOpen,		131,	 22 },
+	{ -1,	kVerbClose,		131,	 10 },
+	{ -1,	kVerbTalk,		131,	 23 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		132,	 28 },
+	{ -1,	kVerbPick,		132,	  5 },
+	{ -1,	kVerbMove,		132,	 24 },
+	{ -1,	kVerbOpen,		132,	 22 },
+	{ -1,	kVerbClose,		132,	 10 },
+	{ -1,	kVerbTalk,		132,	 23 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		133,	321 },
+	{ -1,	kVerbPick,		133,	 31 },
+	{ -1,	kVerbMove,		133,	 34 },
+	{ -1,	kVerbOpen,		133,	 30 },
+	{ -1,	kVerbClose,		133,	 10 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		166,	 55 },
+	{ -1,	kVerbPick,		166,	  7 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		211,	184 }
+};
+
+RoomTalkAction room4Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		189,	182 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		207,	175 },
+	{ -1,	kVerbTalk,		207,	176 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		208,	177 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		209,	179 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		210,	180 },
+	{ -1,	kVerbOpen,		210,	181 }
+};
+
+RoomTalkAction room5Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbMove,		136,	 13 },
+	{ -1,	kVerbOpen,		136,	 18 },
+	{ -1,	kVerbTalk,		136,	 15 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		212,	187 },
+	{ -1,	kVerbTalk,		212,	188 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		213,	189 },
+	{ -1,	kVerbOpen,		213,	190 }
+};
+
+RoomTalkAction room6Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbPick,		144,	 43 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		138,	 35 },
+	{ -1,	kVerbTalk,		138,	  6 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		143,	 37 },
+	{ -1,	kVerbPick,		143,	  7 },
+	{ -1,	kVerbMove,		143,	  7 },
+	{ -1,	kVerbTalk,		143,	 38 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		139,	 36 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		140,	147 }
+};
+
+RoomTalkAction room12Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		154,	329 },
+	{ -1,	kVerbTalk,		154,	330 },
+	// ----------------------------------
+	{ -1,	kVerbMove,		155,	 48 },
+	{ -1,	kVerbTalk,		155,	331 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		156,	 35 },
+	{ -1,	kVerbMove,		156,	 48 },
+	{ -1,	kVerbTalk,		156,	 50 }
+};
+
+RoomTalkAction room14Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		200,	165 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		201,	166 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		202,	167 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		203,	168 },
+	{ -1,	kVerbPick,		203,	170 },
+	{ -1,	kVerbMove,		203,	170 },
+	{ -1,	kVerbTalk,		203,	169 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		204,	171 }
+};
 
 const char *_text[][501] = {
 {
@@ -5358,3 +5564,5 @@ const char *_textmisc[][2] = {
 };
 
 } // End of namespace Drascula
+
+#endif /* STATICDATA_H */
