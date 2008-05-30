@@ -751,7 +751,7 @@ bucles:
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (key == Common::KEYCODE_ESCAPE) {
-		if (!confirma_salir())
+		if (!confirmExit())
 			return false;
 		if (num_ejec != 3)
 			cont_sv = 0;
@@ -958,9 +958,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 			getLine(ald, buffer, size);
 			sscanf(buffer, "%s", targetSurface[l]);
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &x_alakeva[l]);
+			sscanf(buffer, "%d", &destX[l]);
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &y_alakeva[l]);
+			sscanf(buffer, "%d", &destY[l]);
 			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &sentido_alkeva[l]);
 			getLine(ald, buffer, size);
@@ -1009,8 +1009,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	if (num_ejec == 2) {
 		if (hare_x == -1) {
-			hare_x = x_alakeva[obj_salir];
-			hare_y = y_alakeva[obj_salir] - alto_hare;
+			hare_x = destX[obj_salir];
+			hare_y = destY[obj_salir] - alto_hare;
 		}
 		characterMoved = 0;
 	}
@@ -1065,8 +1065,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	if (num_ejec != 2) {
 		if (hare_x == -1) {
-			hare_x = x_alakeva[obj_salir];
-			hare_y = y_alakeva[obj_salir];
+			hare_x = destX[obj_salir];
+			hare_y = destY[obj_salir];
 			alto_hare = (CHARACTER_HEIGHT * factor_red[hare_y]) / 100;
 			ancho_hare = (CHARACTER_WIDTH * factor_red[hare_y]) / 100;
 			hare_y = hare_y - alto_hare;
@@ -1278,18 +1278,8 @@ bool DrasculaEngine::comprueba1() {
 		}
 
 		if (doBreak == 0) {
-			sitio_x = mouseX;
-			sitio_y = mouseY;
-
-			if (sitio_x < suelo_x1)
-				sitio_x = suelo_x1;
-			if (sitio_x > suelo_x2)
-				sitio_x = suelo_x2;
-			if (sitio_y < suelo_y1 + feetHeight)
-				sitio_y = suelo_y1 + feetHeight;
-			if (sitio_y > suelo_y2)
-				sitio_y = suelo_y2;
-
+			sitio_x = CLIP(mouseX, suelo_x1, suelo_x2);
+			sitio_y = CLIP(mouseY, suelo_y1 + feetHeight, suelo_y2);
 			startWalking();
 		}
 		doBreak = 0;
@@ -1721,7 +1711,7 @@ void DrasculaEngine::delay(int ms) {
 	_system->delayMillis(ms * 2); // originaly was 1
 }
 
-bool DrasculaEngine::confirma_salir() {
+bool DrasculaEngine::confirmExit() {
 	byte key;
 
 	color_abc(kColorRed);

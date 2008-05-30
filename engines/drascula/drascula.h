@@ -296,7 +296,7 @@ public:
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
 	int inventoryObjects[43];
 	char targetSurface[40][20];
-	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
+	int destX[40], destY[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	int withVoices;
@@ -465,7 +465,7 @@ public:
 	bool saves();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
-	bool confirma_salir();
+	bool confirmExit();
 	void screenSaver();
 	void chooseObject(int objeto);
 	void addObject(int);
