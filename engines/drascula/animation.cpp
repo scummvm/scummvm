@@ -103,7 +103,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
-		playSound("s5.als");
+		playSound(5);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		if (animate("scr2.bin", 17))
@@ -287,7 +287,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		if (animate("rayo1.bin", 16))
 			break;
-		playSound("s5.als");
+		playSound(5);
 		if (animate("rayo2.bin", 15))
 			break;
 		if (animate("frel2.bin", 16))
@@ -434,7 +434,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		pause(4);
-		playSound("s1.als");
+		playSound(1);
 		hiccup(18);
 		stopSound();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -721,7 +721,7 @@ void DrasculaEngine::animation_2_2() {
 	updateAnim(55, 201, 87, 50, 52, 6, frontSurface);
 	updateAnim(109, 201, 87, 50, 52, 6, frontSurface);
 
-	playSound("s2.als");
+	playSound(2);
 
 	updateAnim(1, 201, 87, 50, 52, 6, extraSurface);
 	updateAnim(55, 201, 87, 50, 52, 6, extraSurface);
@@ -734,7 +734,7 @@ void DrasculaEngine::animation_2_2() {
 
 	pause (4);
 
-	playSound("s1.als");
+	playSound(1);
 	hipo_sin_nadie(12);
 	stopSound();
 }
@@ -882,7 +882,7 @@ void DrasculaEngine::animation_14_2() {
 
 	decompressPic(drawSurface1, 1);
 
-	playSound("s7.als");
+	playSound(7);
 	hiccup(15);
 
 	stopSound();
@@ -1220,7 +1220,7 @@ void DrasculaEngine::animation_25_2() {
 
 	flags[24] = 0;
 
-	playSound("s6.als");
+	playSound(6);
 
 	for (n = 0; n >= -160; n = n - 8) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -1376,7 +1376,7 @@ void DrasculaEngine::animation_35_2() {
 
 	pause(19);
 
-	playSound("s1.als");
+	playSound(1);
 	hipo_sin_nadie(18);
 	stopSound();
 
@@ -1516,7 +1516,7 @@ void DrasculaEngine::animation_rayo() {
 
 	pause(50);
 
-	playSound("s5.als");
+	playSound(5);
 
 	updateScreen(0, 0, 0, 0, 320, 200, extraSurface);
 	pause(3);
@@ -1709,7 +1709,7 @@ void DrasculaEngine::animation_5_5(){
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, drawSurface1);
 
-	playSound("s1.als");
+	playSound(1);
 	stopSound();
 
 	loadPic("99.alg");
@@ -1786,7 +1786,7 @@ void DrasculaEngine::animation_12_5() {
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(27);
 	animate("rayo1.bin", 23);
-	playSound("s5.als");
+	playSound(5);
 	animate("rayo2.bin", 17);
 	sentido_hare = 1;
 	updateRoom();
@@ -1861,7 +1861,7 @@ void DrasculaEngine::animation_12_5() {
 	flags[1] = 1;
 
 	animation_13_5();
-	playSound("s1.als");
+	playSound(1);
 	hiccup(12);
 	stopSound();
 
@@ -1927,7 +1927,7 @@ void DrasculaEngine::animation_13_5() {
 
 void DrasculaEngine::animation_14_5() {
 	flags[11] = 1;
-	playSound("s3.als");
+	playSound(3);
 	updateRoom();
 	updateScreen(0, 0, 0,0 , 320, 200, screenSurface);
 	stopSound();
@@ -1936,7 +1936,7 @@ void DrasculaEngine::animation_14_5() {
 	talk(246);
 	lleva_al_hare(89, 160);
 	flags[10] = 1;
-	playSound("s7.als");
+	playSound(7);
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	stopSound();
@@ -2199,7 +2199,7 @@ void DrasculaEngine::animation_9_6() {
 }
 
 void DrasculaEngine::animation_10_6() {
-	playSound ("s14.als");
+	playSound(14);
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateRefresh_pre();
 	copyBackground(164, 85, 155, 48, 113, 114, drawSurface3, screenSurface);
@@ -2254,7 +2254,7 @@ void DrasculaEngine::animation_19_6() {
 	pause(6);
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-	playSound("s4.als");
+	playSound(4);
 	pause(6);
 	stopSound();
 }
@@ -2342,7 +2342,7 @@ void DrasculaEngine::animation_26_2() {
 		updateScreen(225, 113, 225, 113, 50, 59, screenSurface);
 		x = x + 50;
 		if (n == 2)
-			playSound("s9.als");
+			playSound(9);
 		pause(3);
 	}
 
@@ -2421,7 +2421,7 @@ void DrasculaEngine::animation_22_2() {
 	sentido_hare=2;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-	playSound("s13.als");
+	playSound(13);
 	stopSound();
 	sentido_hare = 1;
 
@@ -2502,7 +2502,7 @@ void DrasculaEngine::animation_34_2() {
 	updateAnim(1, 218, 79, 83, 75, 3, backSurface);
 	updateAnim(77, 218, 79, 83, 75, 3, backSurface);
 
-	playSound("s8.als");
+	playSound(8);
 
 	updateAnim(1, 218, 79, 83, 75, 3, extraSurface);
 
@@ -2637,7 +2637,7 @@ void DrasculaEngine::animation_5_2() {
 	updateAnim(86, 213, 66, 53, 84, 6, extraSurface);
 	updateAnim(1, 213, 66, 53, 84, 6, frontSurface);
 
-	playSound("s1.als");
+	playSound(1);
 	updateAnim(86, 213, 66, 53, 84, 6, frontSurface);
 	stopSound_corte();
 

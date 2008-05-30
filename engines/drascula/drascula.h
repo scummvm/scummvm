@@ -470,7 +470,7 @@ public:
 	char LimitaVGA(char value);
 	void color_abc(int cl);
 	void centerText(const char *,int,int);
-	void playSound(const char *);
+	void playSound(int soundNum);
 	bool animate(const char *animation, int FPS);
 	void stopSound_corte();
 	void fadeToBlack(int VelocidadDeFundido);

@@ -383,7 +383,7 @@ void DrasculaEngine::room_6(int fl){
 		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, drawSurface3, screenSurface);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(10);
-		playSound("s3.als");
+		playSound(3);
 		flags[2] = 1;
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -395,7 +395,7 @@ void DrasculaEngine::room_6(int fl){
 		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, drawSurface3, screenSurface);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(5);
-		playSound("s4.als");
+		playSound(4);
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		stopSound();
@@ -405,7 +405,7 @@ void DrasculaEngine::room_6(int fl){
 		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, drawSurface3, screenSurface);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(19);
-		playSound("s3.als");
+		playSound(3);
 		flags[1] = 1;
 		visible[4] = 1;
 		visible[2] = 0;
@@ -554,7 +554,7 @@ void DrasculaEngine::room_15(int fl) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		copyRect(133, 135, hare_x + 6, hare_y, 39, 63, drawSurface3, screenSurface);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-		playSound("s8.als");
+		playSound(8);
 		stopSound();
 		talk(338);
 		flags[27] = 0;
@@ -749,7 +749,7 @@ void DrasculaEngine::room_22(int fl) {
 	} else if (pickedObject == 22 && fl == 52) {
 		animate("up.bin",14);
 		flags[26]=1;
-		playSound("s1.als");
+		playSound(1);
 		hiccup(14);
 		stopSound();
 		withoutVerb();
@@ -1104,7 +1104,7 @@ void DrasculaEngine::room_55(int fl) {
 	else if (pickedObject == kVerbLook && fl == 205)
 		talk(140);
 	else if (fl == 206) {
-		playSound("s11.als");
+		playSound(11);
 		animate("det.bin", 17);
 		stopSound();
 		lleva_al_hare(hare_x - 3, hare_y + alto_hare + 6);
@@ -1150,7 +1150,7 @@ void DrasculaEngine::room_59(int fl) {
 		talk(265);
 		flags[9] = 0;
 		if (flags[11] == 0) {
-			playSound("s12.als");
+			playSound(12);
 			delay(40);
 			stopSound();
 			delay(10);
@@ -1159,7 +1159,7 @@ void DrasculaEngine::room_59(int fl) {
 			updateRoom();
 			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 			pause(40);
-			playSound("s12.als");
+			playSound(12);
 			pause(19);
 			stopSound_corte();
 			hare_se_ve = 0;

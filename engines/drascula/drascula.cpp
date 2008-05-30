@@ -2022,7 +2022,10 @@ imprimir:
 	}
 }
 
-void DrasculaEngine::playSound(const char *file) {
+void DrasculaEngine::playSound(int soundNum) {
+	char file[20];
+	sprintf(file, "s%i.als", soundNum);
+
 	if (hay_sb == 1) {
 		sku = new Common::File;
 		sku->open(file);
@@ -3269,7 +3272,7 @@ void DrasculaEngine::enterName() {
 
 void DrasculaEngine::para_grabar(char gameName[]) {
 	saveGame(gameName);
-	playSound("99.als");
+	playSound(99);
 	stopSound();
 }
 
@@ -4360,11 +4363,11 @@ void DrasculaEngine::openDoor(int nflag, int doorNum) {
 	if (flags[nflag] == 0) {
 		if (num_ejec == 1 /*|| num_ejec == 4*/) {
 			if (nflag != 7) {
-				playSound("s3.als");
+				playSound(3);
 				flags[nflag] = 1;
 			}
 		} else {
-			playSound("s3.als");
+			playSound(3);
 			flags[nflag] = 1;
 		}
 
@@ -4458,7 +4461,7 @@ void DrasculaEngine::activatePendulum() {
 
 void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 	if (flags[nflag] == 1) {
-		playSound("s4.als");
+		playSound(4);
 		flags[nflag] = 0;
 		if (doorNum != NO_DOOR)
 			updateDoor(doorNum);
