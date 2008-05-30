@@ -42,6 +42,25 @@ void DrasculaEngine::talkInit(const char *filename) {
 	}
 }
 
+bool DrasculaEngine::isTalkFinished(int* length) {
+	byte key = getScan();
+	if (key != 0)
+		ctvd_stop();
+	if (hay_sb == 1) {
+		if (soundIsActive())
+			return false;
+		delete(sku);
+		sku = 0;
+		ctvd_terminate();
+	} else {
+		length -= 2;
+		if (length > 0)
+			return false;
+	}
+
+	return true;
+}
+
 void DrasculaEngine::talk_igor_dch(int index) {
 	char name[20];
 	sprintf(name, "I%i.als", index);
@@ -80,22 +99,9 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
+
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	placeIgor();
 	placeDrascula();
@@ -145,22 +151,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	placeIgor();
@@ -210,22 +202,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	if (num_ejec == 6)
 		updateRoom(); 
@@ -262,22 +240,9 @@ bucless:
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
+
 	if (num_ejec == 6) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -324,22 +289,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	if (num_ejec == 6) {
 		updateRoom();
@@ -395,19 +346,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete(sku);
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -459,22 +399,8 @@ bucless:
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -595,22 +521,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
-		term_int = 1;
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -656,20 +568,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -723,20 +623,8 @@ bucless:
 
 	pause(3);
 
-	byte key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -793,20 +681,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -834,20 +710,8 @@ bucless:
 		centerText(said, 150, 80);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -904,20 +768,8 @@ bucless:
 	pause(2);
 	p++;
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 }
 
 void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
@@ -935,22 +787,8 @@ bucless:
 		centerText(said, 156, 170);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
-
-	key = 0;
+	if (!isTalkFinished(&length))
+		goto bucless;
 }
 
 void DrasculaEngine::talk_wolf(int index) {
@@ -987,20 +825,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1040,20 +866,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-	if (length > 0)
+	if (!isTalkFinished(&length))
 		goto bucless;
-	}
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1093,20 +907,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	flags[1] = 0;
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -1144,20 +946,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	flags[1] = 0;
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -1199,20 +989,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1253,20 +1031,9 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
+
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
@@ -1309,20 +1076,8 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1407,20 +1162,8 @@ bucless:
 	p++;
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	if (num_ejec == 1 && musicStatus() == 0 && flags[11] == 0)
 		playMusic(roomMusic);
@@ -1452,20 +1195,8 @@ bucless:
 
 	pause(4);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	flags[19] = cara_antes;
 	updateRoom();
@@ -1492,20 +1223,8 @@ bucless:
 		centerText(said, 87, 66);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1545,20 +1264,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1598,20 +1305,8 @@ bucless:
 
 	pause(3);
 
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1){
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1648,19 +1343,8 @@ bucless:
 	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 }
 
 } // End of namespace Drascula

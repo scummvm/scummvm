@@ -365,12 +365,6 @@ public:
 
 	bool escoba();
 	void black();
-	void talk_vb(int);
-	void talk_vb(const char *, const char *);
-	void talk_vbpuerta(int);
-	void talk_vbpuerta(const char *said, const char *filename);
-	void talk_blind(const char *, const char *, const char *);
-	void talk_hacker(const char *, const char *);
 	void pickObject(int);
 	void anda_parriba();
 	void anda_pabajo();
@@ -491,12 +485,12 @@ public:
 	void stopSound_corte();
 	void fadeToBlack(int VelocidadDeFundido);
 	void pause(int);
-	void talk_dr_grande(const char *said, const char *filename);
 	void placeIgor();
 	void placeBJ();
 	void placeDrascula();
 
 	void talkInit(const char *filename);
+	bool isTalkFinished(int* length);
 	void talk_igor_dch(int);
 	void talk_igor_dch(const char *said, const char *filename);
 	void talk_dr_dch(int);
@@ -536,6 +530,13 @@ public:
 	void talk_wolf(const char *said, const char *filename);
 	void talk_mus(int);
 	void talk_mus(const char *said, const char *filename);
+	void talk_dr_grande(const char *said, const char *filename);
+	void talk_vb(int);
+	void talk_vb(const char *, const char *);
+	void talk_vbpuerta(int);
+	void talk_vbpuerta(const char *said, const char *filename);
+	void talk_blind(const char *, const char *, const char *);
+	void talk_hacker(const char *, const char *);
 
 	void hiccup(int);
 	void stopSound();

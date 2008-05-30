@@ -4324,20 +4324,8 @@ void DrasculaEngine::grr() {
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 bucless:
-	int key = getScan();
-	if (key != 0)
-		ctvd_stop();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			goto bucless;
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	} else {
-		length -= 2;
-		if (length > 0)
-			goto bucless;
-	}
+	if (!isTalkFinished(&length))
+		goto bucless;
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
