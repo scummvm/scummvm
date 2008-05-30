@@ -1179,19 +1179,19 @@ void DrasculaEngine::room_59(int fl) {
 			decompressPic(backSurface, 1);
 			talk_htel(_text[_lang][240], "240.als");
 
-			color_abc(VON_BRAUN);
+			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][58], "VB58.als");
 			talk_htel(_text[_lang][241], "241.als");
-			color_abc(VON_BRAUN);
+			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][59], "VB59.als");
 			talk_htel(_text[_lang][242], "242.als");
-			color_abc(VON_BRAUN);
+			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][60], "VB60.als");
 			talk_htel(_text[_lang][196], "196.als");
-			color_abc(VON_BRAUN);
+			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][61],"VB61.als");
 			talk_htel(_text[_lang][244], "244.als");
-			color_abc(VON_BRAUN);
+			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][62], "VB62.als");
 			clearRoom();
 			loadPic("aux59.alg");

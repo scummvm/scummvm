@@ -1073,7 +1073,7 @@ martini:
 	changeColor = -1;
 
 	if (num_ejec == 2)
-		color_abc(LIGHT_GREEN);
+		color_abc(kColorLightGreen);
 
 	if (num_ejec != 2) {
 		for (l = 0; l <= suelo_y1; l++)
@@ -1217,10 +1217,10 @@ void DrasculaEngine::moveCursor() {
 	updateRefresh();
 
 	if (!strcmp(textName, "hacker") && hasName == 1) {
-		if (_color != RED && menuScreen == 0)
-			color_abc(RED);
-	} else if (menuScreen == 0 && _color != LIGHT_GREEN)
-		color_abc(LIGHT_GREEN);
+		if (_color != kColorRed && menuScreen == 0)
+			color_abc(kColorRed);
+	} else if (menuScreen == 0 && _color != kColorLightGreen)
+		color_abc(kColorLightGreen);
 	if (hasName == 1 && menuScreen == 0)
 		centerText(textName, mouseX, mouseY);
 	if (menuScreen == 1)
@@ -1524,7 +1524,7 @@ bool DrasculaEngine::saves() {
 	loadPic("savescr.alg");
 	decompressPic(drawSurface1, HALF_PAL);
 
-	color_abc(LIGHT_GREEN);
+	color_abc(kColorLightGreen);
 
 	for (;;) {
 		y = 27;
@@ -1764,7 +1764,7 @@ void DrasculaEngine::delay(int ms) {
 bool DrasculaEngine::confirma_salir() {
 	byte key;
 
-	color_abc(RED);
+	color_abc(kColorRed);
 	updateRoom();
 	centerText(_textsys[_lang][1], 160, 87);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -3815,7 +3815,7 @@ void DrasculaEngine::converse(const char *nom_fich) {
 	// TODO code here should limit y position for mouse in dialog menu,
 	// but we can't implement this due lack backend functionality
 	// from 1(top) to 31
-	color_abc(LIGHT_GREEN);
+	color_abc(kColorLightGreen);
 
 bucle_opc:
 
@@ -3835,22 +3835,22 @@ bucle_opc:
 	updateEvents();
 
 	if (mouseY > 0 && mouseY < 9) {
-		if (used1 == 1 && _color != WHITE)
-			color_abc(WHITE);
-		else if (used1 == 0 && _color != LIGHT_GREEN)
-			color_abc(LIGHT_GREEN);
+		if (used1 == 1 && _color != kColorWhite)
+			color_abc(kColorWhite);
+		else if (used1 == 0 && _color != kColorLightGreen)
+			color_abc(kColorLightGreen);
 	} else if (mouseY > 8 && mouseY < 17) {
-		if (used2 == 1 && _color != WHITE)
-			color_abc(WHITE);
-		else if (used2 == 0 && _color != LIGHT_GREEN)
-			color_abc(LIGHT_GREEN);
+		if (used2 == 1 && _color != kColorWhite)
+			color_abc(kColorWhite);
+		else if (used2 == 0 && _color != kColorLightGreen)
+			color_abc(kColorLightGreen);
 	} else if (mouseY > 16 && mouseY < 25) {
-		if (used3 == 1 && _color != WHITE)
-			color_abc(WHITE);
-		else if (used3 == 0 && _color != LIGHT_GREEN)
-			color_abc(LIGHT_GREEN);
-	} else if (_color != LIGHT_GREEN)
-		color_abc(LIGHT_GREEN);
+		if (used3 == 1 && _color != kColorWhite)
+			color_abc(kColorWhite);
+		else if (used3 == 0 && _color != kColorLightGreen)
+			color_abc(kColorLightGreen);
+	} else if (_color != kColorLightGreen)
+		color_abc(kColorLightGreen);
 
 	if (mouseY > 0 && mouseY < 9)
 		game1 = 2;
@@ -3900,7 +3900,7 @@ bucle_opc:
 
 	if (button_izq == 1) {
 		delay(100);
-		color_abc(LIGHT_GREEN);
+		color_abc(kColorLightGreen);
 	}
 
 	game1 = (used1 == 0) ? 1 : 3;
@@ -4411,7 +4411,7 @@ void DrasculaEngine::showMap() {
 void DrasculaEngine::grr() {
 	int length = 30;
 
-	color_abc(DARK_GREEN);
+	color_abc(kColorDarkGreen);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;

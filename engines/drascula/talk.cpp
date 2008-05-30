@@ -53,7 +53,7 @@ void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -115,7 +115,7 @@ void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(RED);
+	color_abc(kColorRed);
 
 	talkInit(filename);
 
@@ -183,7 +183,7 @@ void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(RED);
+	color_abc(kColorRed);
 
 	talkInit(filename);
 
@@ -249,7 +249,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	if (num_ejec == 1)
 		color_abc(color_solo);
 	else if (num_ejec == 4)
-		color_abc(RED);
+		color_abc(kColorRed);
 
 	talkInit(filename);
 
@@ -297,7 +297,7 @@ void DrasculaEngine::talk_igor_frente(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -368,7 +368,7 @@ void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(MAROON);
+	color_abc(kColorMaroon);
 
 	talkInit(filename);
 
@@ -430,7 +430,7 @@ void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -523,10 +523,10 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 	if (num_ejec == 4) {
 		if (roomNumber == 24 || flags[29] == 0) {
-			color_abc(YELLOW);
+			color_abc(kColorYellow);
 		}
 	} else {
-		color_abc(YELLOW);
+		color_abc(kColorYellow);
 	}
 
 	talkInit(filename);
@@ -636,7 +636,7 @@ void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -701,7 +701,7 @@ bebiendo:
 		goto bebiendo;
 	}
 
-	color_abc(DARK_GREEN);
+	color_abc(kColorDarkGreen);
 
 	talkInit(filename);
 
@@ -770,7 +770,7 @@ void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(VON_BRAUN);
+	color_abc(kColorBrown);
 
 	talkInit(filename);
 
@@ -829,7 +829,7 @@ void DrasculaEngine::talk_vbpuerta(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(VON_BRAUN);
+	color_abc(kColorBrown);
 
 	talkInit(filename);
 
@@ -867,7 +867,7 @@ void DrasculaEngine::talk_blind(const char *said, const char *filename, const ch
 	int pos_blind[6];
 	int length = strlen(said);
 
-	color_abc(VON_BRAUN);
+	color_abc(kColorBrown);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -940,7 +940,7 @@ void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	color_abc(YELLOW);
+	color_abc(kColorYellow);
 
 	talkInit(filename);
 
@@ -974,7 +974,7 @@ void DrasculaEngine::talk_wolf(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(RED);
+	color_abc(kColorRed);
 
 	talkInit(filename);
 
@@ -1023,7 +1023,7 @@ void DrasculaEngine::talk_mus(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -1078,7 +1078,7 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(YELLOW);
+	color_abc(kColorYellow);
 
 	talkInit(filename);
 
@@ -1131,7 +1131,7 @@ void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(YELLOW);
+	color_abc(kColorYellow);
 
 	talkInit(filename);
 
@@ -1182,7 +1182,7 @@ void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(MAROON);
+	color_abc(kColorMaroon);
 
 	talkInit(filename);
 
@@ -1237,7 +1237,7 @@ void DrasculaEngine::talk_bj_bed(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -1287,7 +1287,7 @@ void DrasculaEngine::talk_htel(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(YELLOW);
+	color_abc(kColorYellow);
 
 	talkInit(filename);
 
@@ -1340,7 +1340,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	int p, cara = 0;
 	int length = strlen(said);
 
-	color_abc(YELLOW);
+	color_abc(kColorYellow);
 
 	if (num_ejec == 1) {
 		if (factor_red[hare_y + alto_hare] == 100)
@@ -1455,7 +1455,7 @@ void DrasculaEngine::talk_baul(const char *said, const char *filename) {
 
 	cara_antes = flags[19];
 
-	color_abc(MAROON);
+	color_abc(kColorMaroon);
 
 	talkInit(filename);
 
@@ -1501,7 +1501,7 @@ void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -1538,7 +1538,7 @@ void DrasculaEngine::talk_igor_seated(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 
@@ -1587,7 +1587,7 @@ void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 
 	talkInit(filename);
 

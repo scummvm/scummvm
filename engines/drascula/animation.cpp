@@ -64,7 +64,7 @@ void DrasculaEngine::animation_1_1() {
 		delay(900);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		color_abc(RED);
+		color_abc(kColorRed);
 		centerText(_textmisc[_lang][1], 160, 100);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -201,7 +201,7 @@ void DrasculaEngine::animation_1_1() {
 		if (anima("lib2.bin", 16))
 			break;
 		clearRoom();
-		color_solo = RED;
+		color_solo = kColorRed;
 		loadPic("plan1.alg");
 		decompressPic(screenSurface, HALF_PAL);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -384,7 +384,7 @@ void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	color_abc(RED);
+	color_abc(kColorRed);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -479,7 +479,7 @@ void DrasculaEngine::animation_2_1() {
 		stopMusic();
 		musicStopped = 1;
 		memset(screenSurface, 0, 64000);
-		color_solo = WHITE;
+		color_solo = kColorWhite;
 		pause(80);
 
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -497,7 +497,7 @@ void DrasculaEngine::animation_2_1() {
 		fadeFromBlack(1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		color_solo = YELLOW;
+		color_solo = kColorYellow;
 		talk_solo(_text[_lang][214], "214.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -581,7 +581,7 @@ void DrasculaEngine::animation_2_1() {
 		talk_solo(_text[_lang][223], "223.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		color_solo = WHITE;
+		color_solo = kColorWhite;
 		updateRoom();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -1001,7 +1001,7 @@ void DrasculaEngine::animation_16_2() {
 		goto asco;
 
 	if (_lang != kSpanish)
-		color_abc(DARK_GREEN);
+		color_abc(kColorDarkGreen);
 
 	loadPic("his1.alg");
 	decompressPic(drawSurface1, HALF_PAL);
@@ -2446,7 +2446,7 @@ void DrasculaEngine::animation_9_6() {
 	clearRoom();
 	loadPic("nota.alg");
 	decompressPic(drawSurface1, COMPLETE_PAL);
-	color_abc(WHITE);
+	color_abc(kColorWhite);
 	talk_solo(_textbj[_lang][24], "bj24.als");
 	talk_solo(_textbj[_lang][25], "bj25.als");
 	talk_solo(_textbj[_lang][26], "bj26.als");
@@ -2467,7 +2467,7 @@ void DrasculaEngine::animation_9_6() {
 	updateRoom();
 	copyBackground(0, 0, 0, 0, 320, 200, screenSurface, drawSurface1);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-	color_abc(LIGHT_GREEN);
+	color_abc(kColorLightGreen);
 	talk_solo("GOOOOOOOOOOOOOOOL", "s15.als");
 	loadPic("nota2.alg");
 	decompressPic(drawSurface1, 1);

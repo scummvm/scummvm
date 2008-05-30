@@ -66,6 +66,20 @@ enum Verbs {
 	kVerbMove = 6
 };
 
+enum Colors {
+	kColorBrown = 1,
+	kColorDarkBlue = 2,
+	kColorLightGreen = 3,
+	kColorDarkGreen = 4,
+	kColorYellow = 5,
+	kColorOrange = 6,
+	kColorRed = 7,
+	kColorMaroon = 8,
+	kColorPurple = 9,
+	kColorWhite = 10,
+	kColorPink = 11
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
@@ -135,17 +149,6 @@ struct RoomTalkAction;
 #define SPACE           250
 #define ALTO_TALK_HARE  25
 #define ANCHO_TALK_HARE 23
-#define VON_BRAUN        1
-#define DARK_BLUE         2
-#define LIGHT_GREEN       3
-#define DARK_GREEN        4
-#define YELLOW            5
-#define ORANGE            6
-#define RED               7
-#define MAROON            8
-#define PURPLE            9
-#define WHITE            10
-#define PINK             11
 #define PASO_HARE_X       8
 #define PASO_HARE_Y       3
 #define CHARACTER_HEIGHT   70
