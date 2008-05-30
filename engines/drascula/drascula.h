@@ -311,7 +311,7 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int hare_x, hare_y, hare_se_mueve, direccion_hare, sentido_hare, num_frame, hare_se_ve;
+	int hare_x, hare_y, characterMoved, direccion_hare, sentido_hare, num_frame, hare_se_ve;
 	int sitio_x, sitio_y, checkFlags;
 	int doBreak;
 	int stepX, stepY;
@@ -523,7 +523,7 @@ public:
 	void updateRefresh();
 	void updateRefresh_pre();
 	void pon_hare();
-	void menu_sin_volcar();
+	void showMenu();
 	void clearMenu();
 	void removeObject();
 	bool exitRoom(int);
@@ -564,9 +564,8 @@ public:
 	byte *loadPCX(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
-	int vez();
+	int getTime();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
-	char codifica(char);
 	void quadrant_1();
 	void quadrant_2();
 	void quadrant_3();

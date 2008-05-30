@@ -32,7 +32,7 @@ static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
 
 void DrasculaEngine::animation_1_1() {
 	int l, l2, p;
-	int pos_pixel[6];
+	int pixelPos[6];
 
 	while (term_int == 0) {
 		playMusic(29);
@@ -130,19 +130,19 @@ void DrasculaEngine::animation_1_1() {
 				break;
 
 		l2 = 0; p = 0;
-		pos_pixel[3] = 45;
-		pos_pixel[4] = 63;
-		pos_pixel[5] = 31;
+		pixelPos[3] = 45;
+		pixelPos[4] = 63;
+		pixelPos[5] = 31;
 
 		for (l = 0; l < 180; l++) {
 			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
 			copyBackground(l, 0, 0, 0, 320 - l, 200, drawSurface1, screenSurface);
 
-			pos_pixel[0] = interf_x[l2];
-			pos_pixel[1] = interf_y[l2];
-			pos_pixel[2] = 156 - l;
+			pixelPos[0] = interf_x[l2];
+			pixelPos[1] = interf_y[l2];
+			pixelPos[2] = 156 - l;
 
-			copyRectClip(pos_pixel, drawSurface2, screenSurface);
+			copyRectClip(pixelPos, drawSurface2, screenSurface);
 			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 			p++;
 			if (p == 6) {
@@ -1766,7 +1766,7 @@ void DrasculaEngine::animation_6_3() {
 	int yoda_x[] = { 3 ,82, 161, 240, 3, 82 };
 	int yoda_y[] = { 3, 3, 3, 3, 94, 94 };
 
-	hare_se_mueve = 0;
+	characterMoved = 0;
 	flags[3] = 1;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1885,7 +1885,7 @@ void DrasculaEngine::animation_1_5() {
 		talk_bj(21);
 
 		for (;;) {
-			if (hare_se_mueve == 0)
+			if (characterMoved == 0)
 				break;
 			updateRoom();
 			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1937,7 +1937,7 @@ void DrasculaEngine::animation_5_5(){
 	int hueso_x[] = {1, 99, 197, 1, 99, 197, 1, 99, 197};
 	int hueso_y[] = {1, 1, 1, 66, 66, 66, 131, 131, 131};
 	int vuela_x[] = {1, 63, 125, 187, 249};
-	int pixel_x = hare_x - 53, pixel_y = hare_y - 9;
+	int pixelX = hare_x - 53, pixelY = hare_y - 9;
 
 	withoutVerb();
 	removeObject(8);
@@ -1955,8 +1955,8 @@ void DrasculaEngine::animation_5_5(){
 	for (frame = 0; frame < 9; frame++) {
 		pause(3);
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, backSurface, screenSurface);
-		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97,64, screenSurface);
+		copyRect(hueso_x[frame], hueso_y[frame], pixelX, pixelY, 97, 64, backSurface, screenSurface);
+		updateScreen(pixelX, pixelY, pixelX,pixelY, 97,64, screenSurface);
 	}
 
 	copyBackground(52, 161, 198, 81, 26, 24, drawSurface3, screenSurface);
@@ -1965,8 +1965,8 @@ void DrasculaEngine::animation_5_5(){
 	for (frame = 0; frame < 9; frame++) {
 		pause(3);
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, frontSurface, screenSurface);
-		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97, 64, screenSurface);
+		copyRect(hueso_x[frame], hueso_y[frame], pixelX, pixelY, 97, 64, frontSurface, screenSurface);
+		updateScreen(pixelX, pixelY, pixelX,pixelY, 97, 64, screenSurface);
 	}
 
 	flags[6] = 1;
@@ -2168,7 +2168,7 @@ void DrasculaEngine::animation_12_5() {
 	hare_se_ve = 1;
 	clearRoom();
 	sentido_hare = 1;
-	hare_se_mueve = 0;
+	characterMoved = 0;
 	hare_x = -1;
 	objExit = 104;
 	withoutVerb();

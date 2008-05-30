@@ -1469,7 +1469,7 @@ void DrasculaEngine::update_1_pre() {
 
 void DrasculaEngine::update_2(){
 	int pos_murci[6];
-	int diferencia;
+	int difference;
 	int murci_x[] = {0, 38, 76, 114, 152, 190, 228, 266,
 					0, 38, 76, 114, 152, 190, 228, 266,
 					0, 38, 76, 114, 152, 190,
@@ -1507,10 +1507,10 @@ void DrasculaEngine::update_2(){
 	pos_murci[3] = 19;
 
 	copyRectClip(pos_murci, drawSurface3, screenSurface);
-	diferencia = vez() - conta_blind_vez;
-	if (diferencia >= 6) {
+	difference = getTime() - conta_blind_vez;
+	if (difference >= 6) {
 		frame_bat++;
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 
 	copyRect(29, 37, 58, 114, 57, 39, drawSurface3, screenSurface);
@@ -1580,14 +1580,14 @@ void DrasculaEngine::update_7_pre() {
 void DrasculaEngine::update_9_pre() {
 	int blind_x[] = {26, 68, 110, 152, 194, 236, 278, 26, 68};
 	int blind_y[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
-	int diferencia;
+	int difference;
 
 	copyRect(blind_x[frame_blind], blind_y[frame_blind], 122, 57, 41, 72, drawSurface3, screenSurface);
 	if (flags[9] == 0) {
-		diferencia = vez() - conta_blind_vez;
-		if (diferencia >= 11) {
+		difference = getTime() - conta_blind_vez;
+		if (difference >= 11) {
 			frame_blind++;
-			conta_blind_vez = vez();
+			conta_blind_vez = getTime();
 		}
 		if (frame_blind == 9)
 			frame_blind = 0;
@@ -1615,7 +1615,7 @@ void DrasculaEngine::update_14_pre() {
 	int cirio_x[] = {14, 19, 24};
 	int pianista_x[] = {1, 91, 61, 31, 91, 31, 1, 61, 31};
 	int drunk_x[] = {1, 42, 83, 124, 165, 206, 247, 1};
-	int diferencia;
+	int difference;
 
 	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, drawSurface3, screenSurface);
 	copyBackground(cirio_x[frame_velas], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
@@ -1633,8 +1633,8 @@ void DrasculaEngine::update_14_pre() {
 
 	if (flags[12] == 1)
 		copyBackground(drunk_x[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
-	diferencia = vez() - conta_blind_vez;
-	if (diferencia > 6) {
+	difference = getTime() - conta_blind_vez;
+	if (difference > 6) {
 		if (flags[12] == 1) {
 			frame_drunk++;
 			if (frame_drunk == 8) {
@@ -1651,7 +1651,7 @@ void DrasculaEngine::update_14_pre() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		blinking = _rnd->getRandomNumber(10);
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 }
 
@@ -1676,7 +1676,7 @@ void DrasculaEngine::update_17() {
 }
 
 void DrasculaEngine::update_18_pre() {
-	int diferencia;
+	int difference;
 	int snore_x[] = {95, 136, 95, 136, 95, 95, 95, 95, 136, 95, 95, 95, 95, 95, 95, 95};
 	int snore_y[] = {18, 18, 56, 56, 94, 94, 94, 94, 94, 18, 18, 18, 18, 18, 18, 18};
 
@@ -1686,12 +1686,12 @@ void DrasculaEngine::update_18_pre() {
 	} else
 		pon_vb();
 
-	diferencia = vez() - conta_blind_vez;
-	if (diferencia > 9) {
+	difference = getTime() - conta_blind_vez;
+	if (difference > 9) {
 		frame_snore++;
 		if (frame_snore == 16)
 			frame_snore = 0;
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 }
 
@@ -1746,7 +1746,7 @@ void DrasculaEngine::update_24_pre() {
 }
 
 void DrasculaEngine::update_26_pre() {
-	int diferencia;
+	int difference;
 
 	if (flags[2] == 1)
 		copyBackground(1, 130, 87, 44, 50, 69, drawSurface3, screenSurface);
@@ -1760,10 +1760,10 @@ void DrasculaEngine::update_26_pre() {
 	if (blinking == 5 && flags[18] == 0)
 		copyBackground(52, 172, 226, 106, 3, 4, drawSurface3, screenSurface);
 
-	diferencia = vez() - conta_blind_vez;
-	if (diferencia >= 10) {
+	difference = getTime() - conta_blind_vez;
+	if (difference >= 10) {
 		blinking = _rnd->getRandomNumber(10);
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 
 	if (flags[20] == 1)
@@ -1916,7 +1916,7 @@ void DrasculaEngine::update_59_pre() {
 
 void DrasculaEngine::update_60_pre() {
 	int velas_y[] = {158, 172, 186};
-	int diferencia;
+	int difference;
 
 	if (flags[5] == 0)
 		placeDrascula();
@@ -1926,17 +1926,17 @@ void DrasculaEngine::update_60_pre() {
 	if (flag_tv == 1)
 		copyBackground(114, 158, 8, 30, 8, 23, drawSurface3, screenSurface);
 
-	diferencia = vez() - conta_blind_vez;
+	difference = getTime() - conta_blind_vez;
 	blinking = _rnd->getRandomNumber(7);
 	if (blinking == 5 && flag_tv == 0)
 		flag_tv = 1;
 	else if (blinking == 5 && flag_tv == 1)
 		flag_tv = 0;
-	if (diferencia > 6) {
+	if (difference > 6) {
 		frame_velas++;
 		if (frame_velas == 3)
 			frame_velas = 0;
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 }
 
@@ -1954,7 +1954,7 @@ void DrasculaEngine::update_62_pre() {
 	int cirio_x[] = { 14, 19, 24 };
 	int pianista_x[] = {1, 91, 61, 31, 91, 31, 1, 61, 31 };
 	int drunk_x[] = {1, 42, 83, 124, 165, 206, 247, 1 };
-	int diferencia;
+	int difference;
 
 	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, drawSurface3, screenSurface);
 	copyBackground(cirio_x[frame_velas], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
@@ -1975,8 +1975,8 @@ void DrasculaEngine::update_62_pre() {
 	if (flags[12] == 1)
 		copyBackground(drunk_x[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 
-	diferencia = vez() - conta_blind_vez;
-	if (diferencia > 6) {
+	difference = getTime() - conta_blind_vez;
+	if (difference > 6) {
 		if (flags[12] == 1) {
 			frame_drunk++;
 			if (frame_drunk == 8) {
@@ -1993,7 +1993,7 @@ void DrasculaEngine::update_62_pre() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		blinking = _rnd->getRandomNumber(10);
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 }
 
@@ -2014,7 +2014,7 @@ void DrasculaEngine::update_63() {
 
 void DrasculaEngine::update_pendulum() {
 	int pendulum_x[] = {40, 96, 152, 208, 264, 40, 96, 152, 208, 208, 152, 264, 40, 96, 152, 208, 264};
-	int diferencia;
+	int difference;
 
 	if (frame_pen <= 4)
 		pendulumSurface = drawSurface3;
@@ -2031,12 +2031,12 @@ void DrasculaEngine::update_pendulum() {
 	if (flags[1] == 0)
 		copyRect(44, 145, 145, 105, 25, 29, drawSurface3, screenSurface);
 
-	diferencia = vez() - conta_blind_vez;
-	if (diferencia > 8) {
+	difference = getTime() - conta_blind_vez;
+	if (difference > 8) {
 		frame_pen++;
 		if (frame_pen == 17)
 			frame_pen = 0;
-		conta_blind_vez = vez();
+		conta_blind_vez = getTime();
 	}
 }
 
