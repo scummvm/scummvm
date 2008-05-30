@@ -1175,6 +1175,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
+void DrasculaEngine::talk_taber2(int index) {
+	char name[20];
+	sprintf(name, "t%i.als", index);
+	talk_taber2(_textt[_lang][index], name);
+}
+
 void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
 	int x_talk[6] = {1, 23, 45, 67, 89, 111};
 	int face;
