@@ -126,10 +126,10 @@
 			RelativePath="..\..\engines\drascula\rooms.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\drascula\talk.cpp">
+			RelativePath="..\..\engines\drascula\staticdata.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\drascula\texts.cpp">
+			RelativePath="..\..\engines\drascula\talk.cpp">
 		</File>
 	</Files>
 	<Globals>
