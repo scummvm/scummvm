@@ -695,7 +695,7 @@ void DrasculaEngine::animation_4_1() {
 	loadPic("an12.alg");
 	decompressPic(extraSurface, 1);
 
-	talk(205;
+	talk(205);
 
 	updateRefresh_pre();
 
@@ -834,7 +834,7 @@ void DrasculaEngine::animation_4_2() {
 	flags[9] = 1;
 
 	pause(12);
-	talk([56);
+	talk(56);
 	pause(8);
 
 	clearRoom();
@@ -2056,7 +2056,7 @@ void DrasculaEngine::animation_11_5() {
 		animation_12_5();
 	else {
 		flags[9] = 0;
-		talk(33;
+		talk(33);
 	}
 }
 
@@ -2225,7 +2225,7 @@ void DrasculaEngine::animation_14_5() {
 	stopSound();
 	pause(17);
 	sentido_hare = 3;
-	talk(246;
+	talk(246);
 	lleva_al_hare(89, 160);
 	flags[10] = 1;
 	playSound("s7.als");
@@ -2721,7 +2721,7 @@ void DrasculaEngine::animation_18_2() {
 }
 
 void DrasculaEngine::animation_22_2() {
-	talk(374;
+	talk(374);
 
 	sentido_hare=2;
 	updateRoom();
@@ -3315,7 +3315,7 @@ void DrasculaEngine::animation_33_2() {
 	flags[9] = 1;
 
 	pause(12);
-	talk([56 );
+	talk(56);
 	pause(8);
 
 	clearRoom();

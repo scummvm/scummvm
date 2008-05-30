@@ -2849,7 +2849,7 @@ bool DrasculaEngine::checkFlag(int fl) {
 			else if (pickedObject == kVerbLook && fl == 14)
 				talk(157);
 			else if (pickedObject == kVerbLook && fl == 15)
-				talk(58;
+				talk(58);
 			else if (pickedObject == kVerbLook && fl == 16)
 				talk(158);
 			else if (pickedObject == kVerbLook && fl == 17)
@@ -2894,7 +2894,7 @@ bool DrasculaEngine::checkFlag(int fl) {
 			else if (pickedObject == kVerbLook && fl == 14)
 				talk(157);
 			else if (pickedObject == kVerbLook && fl == 15)
-				talk(58;
+				talk(58);
 			else if (pickedObject == kVerbLook && fl == 16)
 				talk(158);
 			else if (pickedObject == kVerbLook && fl == 17)
@@ -2963,7 +2963,7 @@ bool DrasculaEngine::checkFlag(int fl) {
 			if (pickedObject == kVerbLook && fl == 28)
 				talk(328);
 			else if (pickedObject == kVerbLook && fl == 7)
-				talk(478;
+				talk(478);
 			else if (pickedObject == kVerbLook && fl == 8)
 				talk(120);
 			else if (pickedObject == kVerbLook && fl == 9) {

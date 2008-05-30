@@ -217,68 +217,68 @@ void DrasculaEngine::room_0() {
 	// non-default actions
 	if (num_ejec == 2) {
 		if (pickedObject == kVerbLook) {
-			talk(mirar_t[c_mirarc_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (pickedObject == kVerbPick) {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
 	} else if (num_ejec == 4) {
 		if (pickedObject == kVerbLook) {
-			talk(mirar_t[c_mirarc_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (pickedObject == kVerbPick) {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
 	} else if (num_ejec == 5) {
 		if (pickedObject == kVerbLook) {
-			talk(mirar_t[c_mirarc_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (pickedObject == kVerbPick) {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		}
 	} else if (num_ejec == 6) {
 		if (pickedObject == kVerbLook) {
-			talk(mirar_t[c_mirarc_mirar]);
+			talk(_text[_lang][mirar_t[c_mirar]], mirar_v[c_mirar]);
 			c_mirar++;
 			if (c_mirar == 3)
 				c_mirar = 0;
 		} else if (pickedObject == kVerbPick) {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
 		} else {
-			talk(poder_t[c_poderc_poder]);
+			talk(_text[_lang][poder_t[c_poder]], poder_v[c_poder]);
 			c_poder++;
 			if (c_poder == 6)
 				c_poder = 0;
@@ -582,7 +582,7 @@ void DrasculaEngine::room_15(int fl) {
 
 void DrasculaEngine::room_16(int fl) {
 	if (pickedObject == kVerbTalk && fl == 163)
-		talk(6
+	  talk(6);
 	else if (pickedObject == kVerbOpen && fl == 163)
 		openDoor(17, 0);
 	else if (pickedObject == kVerbClose && fl == 163)
@@ -608,13 +608,13 @@ void DrasculaEngine::room_16(int fl) {
 	} else if (pickedObject == kVerbClose && fl == 183)
 		closeDoor(19, NO_DOOR);
 	else if (pickedObject == kVerbLook && fl == 185)
-		talk(37;
+		talk(37);
 	else if (pickedObject == kVerbPick && fl == 185)
-		talk(7
+		talk(7);
 	else if (pickedObject == kVerbMove && fl == 185)
-		talk(7
+		talk(7);
 	else if (pickedObject == kVerbTalk && fl == 185)
-		talk(38;
+		talk(38);
 	else if (pickedObject == kVerbLook && fl == 187) {
 		talk(343);
 		sentido_hare = 3;
@@ -629,9 +629,9 @@ void DrasculaEngine::room_16(int fl) {
 
 void DrasculaEngine::room_17(int fl) {
 	if (pickedObject == kVerbLook && fl == 177)
-		talk(35;
+		talk(35);
 	else if (pickedObject == kVerbTalk && fl == 177 && flags[18] == 0)
-		talk(6
+		talk(6);
 	else if (pickedObject == kVerbTalk && fl == 177 && flags[18] == 1)
 		animation_18_2();
 	else if (pickedObject == kVerbOpen && fl == 177 && flags[18] == 1)
@@ -741,7 +741,7 @@ bool DrasculaEngine::room_21(int fl) {
 
 void DrasculaEngine::room_22(int fl) {
 	if (pickedObject == kVerbPick && fl == 140)
-		talk(7
+		talk(7);
 	else if (pickedObject == 11 && fl == 140) {
 		pickObject(18);
 		visible[1] = 0;
