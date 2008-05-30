@@ -884,17 +884,11 @@ bucless:
 	else
 		pos_blind[0] = 132;
 
-	if (c == '0')
+	if (c == '0' || c == '1')
 		num_cara = drawSurface3;
-	else if (c == '1')
-		num_cara = drawSurface3;
-	else if (c == '2')
+	else if (c == '2' || c == '3')
 		num_cara = extraSurface;
-	else if (c == '3')
-		num_cara = extraSurface;
-	else if (c == '4')
-		num_cara = backSurface;
-	else if (c == '5')
+	else if (c == '4' || c == '5')
 		num_cara = backSurface;
 	else {
 		num_cara = frontSurface;
@@ -1446,10 +1440,7 @@ void DrasculaEngine::talk_baul(const char *said, const char *filename) {
 
 bucless:
 
-	if (face == 1)
-		face = 0;
-	else
-		face = 1;
+	face = (face == 1) ? 0 : 1;
 
 	flags[19] = face;
 	updateRoom();
