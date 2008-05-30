@@ -496,8 +496,8 @@ public:
 	void talk_igor_frente(const char *, const char *);
 	void talk_tabernero(int);
 	void talk_tabernero(const char *said, const char *filename);
-	void talk_igorpuerta(const char *said, const char *filename);
-	void talk_igor_peluca(const char *said, const char *filename);
+	void talk_igor_door(const char *said, const char *filename);
+	void talk_igor_wig(const char *said, const char *filename);
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
 	void talk_taber2(int);

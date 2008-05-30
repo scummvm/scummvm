@@ -1359,22 +1359,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 
 bucless:
 
-	if (sincronia[p] == '0')
-		face = 0;
-	if (sincronia[p] == '1')
-		face = 1;
-	if (sincronia[p] == '2')
-		face = 2;
-	if (sincronia[p] == '3')
-		face = 3;
-	if (sincronia[p] == '4')
-		face = 4;
-	if (sincronia[p] == '5')
-		face = 5;
-	if (sincronia[p] == '6')
-		face = 6;
-	if (sincronia[p] == '7')
-		face = 7;
+	face = atoi(&sincronia[p]);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -1502,7 +1487,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
-void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
+void DrasculaEngine::talk_igor_door(const char *said, const char *filename) {
 	int length = strlen(said);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -1586,7 +1571,7 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
-void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
+void DrasculaEngine::talk_igor_wig(const char *said, const char *filename) {
 	int x_talk[4] = {119, 158, 197, 236};
 	int face = 0;
 	int length = strlen(said);
