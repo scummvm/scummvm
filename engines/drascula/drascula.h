@@ -80,6 +80,16 @@ enum Colors {
 	kColorPink = 11
 };
 
+enum SSNFrames {
+	kFrameInit = 0,
+	kFrameCmpRle = 1,
+	kFrameCmpOff = 2,
+	kFrameEndAnim = 3,
+	kFrameSetPal = 4,
+	kFrameMouseKey = 5,		// unused
+	kFrameEmptyFrame = 6
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
@@ -87,16 +97,6 @@ struct RoomTalkAction;
 
 #define NUM_SAVES     10
 #define NUM_FLAGS     50
-#define ESC          0x01
-#define F1           0x3B
-#define F2           0x3C
-#define F3           0x3D
-#define F4           0x3E
-#define F5           0x3F
-#define F6           0x40
-#define F8           0x42
-#define F9           0x43
-#define F10          0x44
 #define DIF_MASK       55
 #define OBJWIDTH        40
 #define OBJHEIGHT         25
@@ -199,14 +199,6 @@ struct RoomTalkAction;
 // (...)
 #define X_N0_OPC            213
 #define NO_DOOR              99
-
-#define INIT_FRAME  0
-#define CMP_RLE     1
-#define CMP_OFF     2
-#define END_ANIM    3
-#define SET_PAL     4
-#define MOUSE_KEY   5
-#define EMPTY_FRAME 6
 
 #define COMPLETE_PAL   256
 #define HALF_PAL       128

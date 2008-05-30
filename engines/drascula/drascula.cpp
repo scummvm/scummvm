@@ -3240,7 +3240,7 @@ void DrasculaEngine::enterName() {
 				select2[v] = key;
 			else if (key == Common::KEYCODE_SPACE)
 				select2[v] = '\167';
-			else if (key == ESC)
+			else if (key == Common::KEYCODE_ESCAPE)
 				break;
 			else if (key == Common::KEYCODE_RETURN) {
 				select2[v] = '\0';
@@ -3297,8 +3297,9 @@ int DrasculaEngine::playFrameSSN() {
 		memcpy(&CHUNK, mSession, 1);
 		mSession += 1;
 	}
+
 	switch (CHUNK) {
-	case SET_PAL:
+	case kFrameSetPal:
 		if (!UsingMem)
 			_Session->read(dacSSN, 768);
 		else {
@@ -3307,10 +3308,10 @@ int DrasculaEngine::playFrameSSN() {
 		}
 		set_dacSSN(dacSSN);
 		break;
-	case EMPTY_FRAME:
+	case kFrameEmptyFrame:
 		WaitFrameSSN();
 		break;
-	case INIT_FRAME:
+	case kFrameInit:
 		if (!UsingMem) {
 			_Session->read(&CMP, 1);
 			_Session->read(&Lengt, 4);
@@ -3320,7 +3321,7 @@ int DrasculaEngine::playFrameSSN() {
 			memcpy(&Lengt, mSession, 4);
 			mSession += 4;
 		}
-		if (CMP == CMP_RLE) {
+		if (CMP == kFrameCmpRle) {
 			if (!UsingMem) {
 				BufferSSN = (byte *)malloc(Lengt);
 				_Session->read(BufferSSN, Lengt);
@@ -3343,7 +3344,7 @@ int DrasculaEngine::playFrameSSN() {
 			_system->updateScreen();
 			FrameSSN++;
 		} else {
-			if (CMP == CMP_OFF) {
+			if (CMP == kFrameCmpOff) {
 				if (!UsingMem) {
 					BufferSSN = (byte *)malloc(Lengt);
 					_Session->read(BufferSSN, Lengt);
@@ -3368,7 +3369,7 @@ int DrasculaEngine::playFrameSSN() {
 			}
 		}
 		break;
-	case END_ANIM:
+	case kFrameEndAnim:
 		Exit = 1;
 		break;
 	default:
