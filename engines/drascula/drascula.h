@@ -638,6 +638,8 @@ public:
 	bool room_13(int fl);
 	void update_13();
 	void update_20();
+	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delay = 3);
+	void updateAnim2(int y, int px, int py, int width, int height, int count, byte* src);
 	void animation_1_3();
 	void animation_2_3();
 	void animation_3_3();

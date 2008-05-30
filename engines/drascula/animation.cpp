@@ -30,6 +30,31 @@ namespace Drascula {
 static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
 
+void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delay) {
+	int x = 0;
+
+	for (int n = 0; n < count; n++){
+		x++;
+		copyBackground(x, y, destX, destY, width, height, src, screenSurface);
+		updateScreen(destX, destY, destX, destY, width, height, screenSurface);
+		x += width;
+		pause(delay);
+	}
+}
+
+void DrasculaEngine::updateAnim2(int y, int px, int py, int width, int height, int count, byte* src) {
+	int x = 0;
+
+	for (int n = 0; n < count; n++) {
+		x++;
+		copyBackground(px, py, px, py, width, height, drawSurface1, screenSurface);
+		copyRect(x, y, px, py, width, height, src, screenSurface);
+		updateScreen(px, py, px, py, width, height, screenSurface);
+		x = x + width;
+		pause(3);
+	}
+}
+
 void DrasculaEngine::animation_1_1() {
 	int l, l2, p;
 	int pixelPos[6];
@@ -738,8 +763,6 @@ void DrasculaEngine::animation_1_2() {
 }
 
 void DrasculaEngine::animation_2_2() {
-	int n, x=0;
-
 	sentido_hare = 0;
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	pon_hare();
@@ -753,63 +776,16 @@ void DrasculaEngine::animation_2_2() {
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	copyBackground(1, 1, 201, 87, 50, 52, frontSurface, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 201, 87, 50, 52, frontSurface, screenSurface);
-		updateScreen(201,87, 201,87, 50,52, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
 
-	x = 0;
+	updateAnim(1, 201, 87, 50, 52, 6, frontSurface);
+	updateAnim(55, 201, 87, 50, 52, 6, frontSurface);
+	updateAnim(109, 201, 87, 50, 52, 6, frontSurface);
 
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 55, 201, 87, 50, 52, frontSurface, screenSurface);
-		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++){
-		x++;
-		copyBackground(x, 109, 201, 87, 50, 52, frontSurface, screenSurface);
-		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
-
-	x = 0;
 	playSound("s2.als");
 
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 201, 87, 50, 52, extraSurface, screenSurface);
-		updateScreen(201,87, 201,87, 50,52, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 55, 201, 87, 50, 52, extraSurface, screenSurface);
-		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
-	x = 0;
-
-	for (n = 0; n < 2; n++) {
-		x++;
-		copyBackground(x, 109, 201, 87, 50, 52, extraSurface, screenSurface);
-		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
+	updateAnim(1, 201, 87, 50, 52, 6, extraSurface);
+	updateAnim(55, 201, 87, 50, 52, 6, extraSurface);
+	updateAnim(109, 201, 87, 50, 52, 2, extraSurface);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -1438,8 +1414,6 @@ void DrasculaEngine::animation_31_2() {
 }
 
 void DrasculaEngine::animation_35_2() {
-	int n, x = 0;
-
 	lleva_al_hare(96, 165);
 	lleva_al_hare(79, 165);
 
@@ -1451,42 +1425,10 @@ void DrasculaEngine::animation_35_2() {
 	loadPic("an35_2.alg");
 	decompressPic(frontSurface, 1);
 
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 70, 90, 46, 80, backSurface, screenSurface);
-		updateScreen(70,90, 70,90, 46,80,screenSurface);
-		x = x + 46;
-		pause(3);
-	}
-
-	x = 0;
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 82, 70, 90, 46, 80, backSurface, screenSurface);
-		updateScreen(70, 90, 70, 90, 46, 80, screenSurface);
-		x = x + 46;
-		pause(3);
-	}
-
-	x = 0;
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 70, 90, 46, 80, frontSurface, screenSurface);
-		updateScreen(70, 90, 70, 90, 46, 80, screenSurface);
-
-		x = x + 46;
-
-		pause(3);
-	}
-
-	x = 0;
-	for (n = 0; n < 2; n++) {
-		x++;
-		copyBackground(x, 82, 70, 90, 46, 80, frontSurface, screenSurface);
-		updateScreen(70, 90, 70,90, 46, 80,screenSurface);
-		x = x + 46;
-		pause(3);
-	}
+	updateAnim(1, 70, 90, 46, 80, 6, backSurface);
+	updateAnim(82, 70, 90, 46, 80, 6, backSurface);
+	updateAnim(1, 70, 90, 46, 80, 6, frontSurface);
+	updateAnim(82, 70, 90, 46, 80, 2, frontSurface);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -1534,7 +1476,6 @@ void DrasculaEngine::animation_2_3() {
 }
 
 void DrasculaEngine::animation_3_3() {
-	int n, x = 0;
 	int px = hare_x - 20, py = hare_y - 1;
 
 	loadPic("an2y_1.alg");
@@ -1544,73 +1485,15 @@ void DrasculaEngine::animation_3_3() {
 	loadPic("an2y_3.alg");
 	decompressPic(backSurface, 1);
 
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 2, px, py, 71, 72, frontSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 75, px, py, 71, 72, frontSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 2, px, py, 71, 72, extraSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 75, px, py, 71, 72, extraSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 2, px, py, 71, 72, backSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 75, px, py, 71, 72, backSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
+	updateAnim2(2, px, py, 71, 72, 4, frontSurface);
+	updateAnim2(75, px, py, 71, 72, 4, frontSurface);
+	updateAnim2(2, px, py, 71, 72, 4, extraSurface);
+	updateAnim2(75, px, py, 71, 72, 4, extraSurface);
+	updateAnim2(2, px, py, 71, 72, 4, backSurface);
+	updateAnim2(75, px, py, 71, 72, 4, backSurface);
 }
 
 void DrasculaEngine::animation_4_3() {
-	int n, x = 0;
 	int px = 120, py = 63;
 
 	loadPic("any_1.alg");
@@ -1620,73 +1503,15 @@ void DrasculaEngine::animation_4_3() {
 	loadPic("any_3.alg");
 	decompressPic(backSurface, 1);
 
-	for (n = 0; n < 4; n++){
-		x++;
-		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
-		copyRect(x, 1, px, py, 77, 89, frontSurface, screenSurface);
-		updateScreen(px, py, px, py, 77, 89, screenSurface);
-		x = x + 77;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
-		copyRect(x, 91, px, py, 77, 89, frontSurface, screenSurface);
-		updateScreen(px, py, px, py, 77, 89, screenSurface);
-		x = x + 77;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
-		copyRect(x, 1, px, py, 77, 89, extraSurface, screenSurface);
-		updateScreen(px, py, px, py, 77, 89, screenSurface);
-		x = x + 77;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
-		copyRect(x, 91, px, py, 77, 89, extraSurface, screenSurface);
-		updateScreen(px, py, px, py, 77, 89, screenSurface);
-		x = x + 77;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
-		copyRect(x, 1, px, py, 77, 89, backSurface, screenSurface);
-		updateScreen(px, py, px, py, 77, 89, screenSurface);
-		x = x + 77;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
-		copyRect(x, 91, px, py, 77, 89, backSurface, screenSurface);
-		updateScreen(px, py, px, py, 77, 89, screenSurface);
-		x = x + 77;
-		pause(3);
-	}
+	updateAnim2(1, px, py, 77, 89, 4, frontSurface);
+	updateAnim2(91, px, py, 77, 89, 4, frontSurface);
+	updateAnim2(1, px, py, 77, 89, 4, extraSurface);
+	updateAnim2(91, px, py, 77, 89, 4, extraSurface);
+	updateAnim2(1, px, py, 77, 89, 4, backSurface);
+	updateAnim2(91, px, py, 77, 89, 4, backSurface);
 }
 
 void DrasculaEngine::animation_5_3() {
-	int n, x = 0;
 	int px = hare_x - 20, py = hare_y - 1;
 
 	loadPic("an3y_1.alg");
@@ -1696,69 +1521,12 @@ void DrasculaEngine::animation_5_3() {
 	loadPic("an3y_3.alg");
 	decompressPic(backSurface, 1);
 
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 2, px, py, 71, 72, frontSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 75, px, py, 71, 72, frontSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 2, px, py, 71, 72, extraSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 75, px, py, 71, 72, extraSurface, screenSurface);
-		updateScreen(px,py, px,py, 71,72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 2, px, py, 71, 72, backSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
-		copyRect(x, 75, px, py, 71, 72, backSurface, screenSurface);
-		updateScreen(px, py, px, py, 71, 72, screenSurface);
-		x = x + 71;
-		pause(3);
-	}
+	updateAnim2(2, px, py, 71, 72, 4, frontSurface);
+	updateAnim2(75, px, py, 71, 72, 4, frontSurface);
+	updateAnim2(2, px, py, 71, 72, 4, extraSurface);
+	updateAnim2(75, px, py, 71, 72, 4, extraSurface);
+	updateAnim2(2, px, py, 71, 72, 4, backSurface);
+	updateAnim2(75, px, py, 71, 72, 4, backSurface);
 }
 
 void DrasculaEngine::animation_6_3() {
@@ -2590,8 +2358,6 @@ void DrasculaEngine::animation_12_2() {
 }
 
 void DrasculaEngine::animation_26_2() {
-	int n, x = 0;
-
 	if (_lang == kSpanish)
 		textSurface = frontSurface;
 
@@ -2626,16 +2392,11 @@ void DrasculaEngine::animation_26_2() {
 
 	loadPic("an26.alg");
 	decompressPic(extraSurface, 1);
-	for (n = 0; n < 6; n++){
-		x++;
-		copyBackground(x, 1, 225, 113, 50, 59, extraSurface, screenSurface);
-		updateScreen(225,113, 225,113, 50,59, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
 
-	x = 0;
-	for (n = 0; n < 6; n++) {
+	updateAnim(1, 225, 113, 50, 59, 6, extraSurface);
+
+	int	x = 0;
+	for (int n = 0; n < 6; n++) {
 		x++;
 		copyBackground(x, 61, 225, 113, 50, 59, extraSurface, screenSurface);
 		updateScreen(225, 113, 225, 113, 50, 59, screenSurface);
@@ -2646,14 +2407,8 @@ void DrasculaEngine::animation_26_2() {
 	}
 
 	stopSound_corte();
-	x = 0;
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 121, 225, 113, 50, 59, extraSurface, screenSurface);
-		updateScreen(225, 113, 225, 113, 50, 59, screenSurface);
-		x = x + 50;
-		pause(3);
-	}
+
+	updateAnim(121, 225, 113, 50, 59, 6, extraSurface);
 
 	pickObject(11);
 	removeObject(12);
@@ -2771,41 +2526,17 @@ void DrasculaEngine::animation_24_2() {
 }
 
 void DrasculaEngine::animation_32_2() {
-	int n, x = 0;
-
 	loadPic("an32_1.alg");
 	decompressPic(drawSurface3, 1);
 	loadPic("an32_2.alg");
 	decompressPic(backSurface, 1);
 
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(x, 1, 113, 53, 65, 81, drawSurface3, screenSurface);
-		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
-		x = x + 65;
-		pause(4);
-	}
+	updateAnim(1, 113, 53, 65, 81, 4, drawSurface3, 4);
+	updateAnim(83, 113, 53, 65, 81, 4, drawSurface3, 4);
+	updateAnim(1, 113, 53, 65, 81, 4, backSurface, 4);
 
-	x = 0;
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(x, 83, 113, 53, 65, 81, drawSurface3, screenSurface);
-		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
-		x = x + 65;
-		pause(4);
-	}
-
-	x = 0;
-	for (n = 0; n < 4; n++) {
-		x++;
-		copyBackground(x, 1, 113, 53, 65, 81, backSurface, screenSurface);
-		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
-		x = x + 65;
-		pause(4);
-	}
-
-	x = 0;
-	for (n = 0; n < 3; n++) {
+	int x = 0;
+	for (int n = 0; n < 3; n++) {
 		x++;
 		copyBackground(x, 83, 113, 53, 65, 81, backSurface, screenSurface);
 		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
@@ -2819,8 +2550,6 @@ void DrasculaEngine::animation_32_2() {
 }
 
 void DrasculaEngine::animation_34_2() {
-	int n, x = 0;
-
 	sentido_hare = 1;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -2830,34 +2559,13 @@ void DrasculaEngine::animation_34_2() {
 	loadPic("an34_2.alg");
 	decompressPic(extraSurface, 1);
 
-	for (n = 0; n < 3; n++) {
-		x++;
-		copyBackground(x, 1, 218, 79, 83, 75, backSurface, screenSurface);
-		updateScreen(218, 79, 218, 79, 83, 75, screenSurface);
-		x = x + 83;
-		pause(3);
-	}
+	updateAnim(1, 218, 79, 83, 75, 3, backSurface);
+	updateAnim(77, 218, 79, 83, 75, 3, backSurface);
 
-	x = 0;
-
-	for (n = 0; n < 3; n++) {
-		x++;
-		copyBackground(x, 77, 218, 79, 83, 75, backSurface, screenSurface);
-		updateScreen(218, 79, 218, 79, 83, 75, screenSurface);
-		x = x + 83;
-		pause(3);
-	}
-
-	x = 0;
 	playSound("s8.als");
 
-	for (n = 0; n < 3; n++) {
-		x++;
-		copyBackground(x, 1, 218, 79, 83, 75,	extraSurface, screenSurface);
-		updateScreen(218, 79, 218, 79, 83,75, screenSurface);
-		x = x + 83;
-		pause(3);
-	}
+	updateAnim(1, 218, 79, 83, 75, 3, extraSurface);
+
 	stopSound();
 
 	pause(30);
@@ -2895,8 +2603,6 @@ void DrasculaEngine::animation_36_2() {
 }
 
 void DrasculaEngine::animation_7_2() {
-	int n, x = 0;
-
 	loadPic("an7_1.alg");
 	decompressPic(backSurface, 1);
 	loadPic("an7_2.alg");
@@ -2911,58 +2617,12 @@ void DrasculaEngine::animation_7_2() {
 
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64, 51, 73, backSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
+	updateAnim2(1, 80, 64, 51, 73, 6, backSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, backSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, extraSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, extraSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, frontSurface);
 
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, backSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64,	51, 73, extraSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, extraSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64, 51, 73, frontSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
 	loadPic("an7_4.alg");
 	decompressPic(backSurface, 1);
 	loadPic("an7_5.alg");
@@ -2972,153 +2632,25 @@ void DrasculaEngine::animation_7_2() {
 	loadPic("an7_7.alg");
 	decompressPic(drawSurface3, 1);
 
-	x = 0;
+	updateAnim2(1, 80, 64, 51, 73, 6, backSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, backSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, extraSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, extraSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, frontSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, extraSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, frontSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, frontSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, drawSurface3);
+	updateAnim2(75, 80, 64, 51, 73, 2, drawSurface3);
 
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1,	80, 64, 51, 73, backSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, backSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1,	80, 64, 51,73, extraSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, extraSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64, 51, 73, frontSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, extraSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64,	51, 73, frontSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, frontSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64, 51, 73, drawSurface3, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 2; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, drawSurface3, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
 	loadPic("an7_8.alg");
 	decompressPic(backSurface, 1);
 	loadPic("an7_9.alg");
 	decompressPic(extraSurface, 1);
 
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64,	51, 73, backSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 75, 80, 64, 51, 73, backSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
-		copyRect(x, 1, 80, 64, 51, 73,	extraSurface, screenSurface);
-		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
-		x = x + 51;
-		pause(3);
-	}
-
+	updateAnim2(1, 80, 64, 51, 73, 6, backSurface);
+	updateAnim2(75, 80, 64, 51, 73, 6, backSurface);
+	updateAnim2(1, 80, 64, 51, 73, 6, extraSurface);
 
 	copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
 	copyRect(1, 75, 80, 64, 51, 73, extraSurface, screenSurface);
@@ -3140,8 +2672,6 @@ void DrasculaEngine::animation_7_2() {
 }
 
 void DrasculaEngine::animation_5_2() {
-	int n, x = 0;
-
 	sentido_hare = 0;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -3158,86 +2688,20 @@ void DrasculaEngine::animation_5_2() {
 	copyBackground(1, 1, 213, 66,	53,84, backSurface, screenSurface);
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 213, 66, 53, 84, backSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84,screenSurface);
-		x = x + 52;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 86, 213, 66, 53, 84, backSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 213, 66, 53, 84, extraSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 213, 66,	53, 84, extraSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 86, 213, 66, 53, 84, extraSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 213, 66,	53, 84, frontSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
+	// FIXME: the widths in these calls were 53 and 52 (by mistake, probably).
+	// I've set them to 53, but if any problems arise, we should try 52 as well
+	updateAnim(1, 213, 66, 53, 84, 6, backSurface);
+	updateAnim(86, 213, 66, 53, 84, 6, backSurface);
+	updateAnim(1, 213, 66, 53, 84, 6, extraSurface);
+	updateAnim(1, 213, 66, 53, 84, 6, extraSurface);
+	updateAnim(86, 213, 66, 53, 84, 6, extraSurface);
+	updateAnim(1, 213, 66, 53, 84, 6, frontSurface);
 
 	playSound("s1.als");
-
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 86, 213, 66, 53, 84, frontSurface, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
+	updateAnim(86, 213, 66, 53, 84, 6, frontSurface);
 	stopSound_corte();
 
-	x = 0;
-
-	for (n = 0; n < 6; n++) {
-		x++;
-		copyBackground(x, 1, 213, 66, 53, 84,	drawSurface3, screenSurface);
-		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
-		x = x + 52;
-		pause(3);
-	}
+	updateAnim(1, 213, 66, 53, 84, 6, drawSurface3);
 
 	loadPic("994.alg");
 	decompressPic(backSurface, 1);
