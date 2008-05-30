@@ -27,7 +27,7 @@
 
 namespace Drascula {
 
-void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delay) {
+void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal) {
 	int x = 0;
 
 	for (int n = 0; n < count; n++){
@@ -35,7 +35,7 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 		copyBackground(x, y, destX, destY, width, height, src, screenSurface);
 		updateScreen(destX, destY, destX, destY, width, height, screenSurface);
 		x += width;
-		pause(delay);
+		pause(delayVal);
 	}
 }
 

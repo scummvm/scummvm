@@ -956,11 +956,11 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		sscanf(buffer, "%d", &isDoor[l]);
 		if (isDoor[l] != 0) {
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%s", targetSurface[l]);
+			sscanf(buffer, "%s", _targetSurface[l]);
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &destX[l]);
+			sscanf(buffer, "%d", &_destX[l]);
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &destY[l]);
+			sscanf(buffer, "%d", &_destY[l]);
 			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &sentido_alkeva[l]);
 			getLine(ald, buffer, size);
@@ -1009,8 +1009,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	if (num_ejec == 2) {
 		if (hare_x == -1) {
-			hare_x = destX[obj_salir];
-			hare_y = destY[obj_salir] - alto_hare;
+			hare_x = _destX[obj_salir];
+			hare_y = _destY[obj_salir] - alto_hare;
 		}
 		characterMoved = 0;
 	}
@@ -1065,8 +1065,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	if (num_ejec != 2) {
 		if (hare_x == -1) {
-			hare_x = destX[obj_salir];
-			hare_y = destY[obj_salir];
+			hare_x = _destX[obj_salir];
+			hare_y = _destY[obj_salir];
 			alto_hare = (CHARACTER_HEIGHT * factor_red[hare_y]) / 100;
 			ancho_hare = (CHARACTER_WIDTH * factor_red[hare_y]) / 100;
 			hare_y = hare_y - alto_hare;
@@ -2599,7 +2599,7 @@ bool DrasculaEngine::exitRoom(int l) {
 					return true;
 				}
 				clearRoom();
-				strcpy(salgo, targetSurface[l]);
+				strcpy(salgo, _targetSurface[l]);
 				strcat(salgo, ".ald");
 				hare_x = -1;
 				carga_escoba(salgo);
@@ -2633,7 +2633,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			delete ald;
 			ald = NULL;
-			strcpy(salgo, targetSurface[l]);
+			strcpy(salgo, _targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
 			carga_escoba(salgo);
@@ -2651,7 +2651,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(salgo, targetSurface[l]);
+			strcpy(salgo, _targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
 			carga_escoba(salgo);
@@ -2672,7 +2672,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			if (objectNum[l] == 108)
 				lleva_al_hare(171, 78);
 			clearRoom();
-			strcpy(salgo, targetSurface[l]);
+			strcpy(salgo, _targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -2691,7 +2691,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			previousMusic = roomMusic;
 			hare_se_ve = 1;
 			clearRoom();
-			strcpy(salgo, targetSurface[l]);
+			strcpy(salgo, _targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -2709,7 +2709,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(salgo, targetSurface[l]);
+			strcpy(salgo, _targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);

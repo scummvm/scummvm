@@ -295,8 +295,8 @@ public:
 	int objectNum[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
 	int inventoryObjects[43];
-	char targetSurface[40][20];
-	int destX[40], destY[40], sentido_alkeva[40], alapuertakeva[40];
+	char _targetSurface[40][20];
+	int _destX[40], _destY[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	int withVoices;
@@ -647,7 +647,7 @@ public:
 	bool room_13(int fl);
 	void update_13();
 	void update_20();
-	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delay = 3);
+	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3);
 	void updateAnim2(int y, int px, int py, int width, int height, int count, byte* src);
 	void animation_1_3();
 	void animation_2_3();
