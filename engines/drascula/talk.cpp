@@ -61,22 +61,22 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
 	placeIgor();
 	placeDrascula();
-	copyBackground(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(x_igor + 17, y_igor, x_igor + 17, y_igor, 37, 24, drawSurface1, screenSurface);
 
-	copyRect(x_talk[cara], 148, x_igor + 17, y_igor, 25, 24, dir_hare_frente, dir_zona_pantalla);
+	copyRect(x_talk[cara], 148, x_igor + 17, y_igor, 25, 24, frontSurface, screenSurface);
 
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, x_igor + 26, y_igor);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -96,10 +96,10 @@ bucless:
 		if (length > 0)
 			goto bucless;
 	}
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	placeIgor();
 	placeDrascula();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_dr_izq(int index) {
@@ -123,7 +123,7 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
@@ -132,18 +132,18 @@ bucless:
 	if (num_ejec == 6)
 		pon_hare();
 
-	copyBackground(x_dr, y_dr, x_dr, y_dr, 38, 31, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(x_dr, y_dr, x_dr, y_dr, 38, 31, drawSurface1, screenSurface);
 	if (num_ejec == 6)
-		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, drawSurface2, screenSurface);
 	else
-		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(x_talk[cara], 90, x_dr, y_dr, 38, 31, backSurface, screenSurface);
 
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, x_dr + 19, y_dr);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -164,10 +164,10 @@ bucless:
 			goto bucless;
 	}
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	placeIgor();
 	placeDrascula();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_dr_dch(int index) {
@@ -191,7 +191,7 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateRefresh_pre();
 
 	placeIgor();
@@ -199,18 +199,18 @@ bucless:
 	if (num_ejec == 6)
 		pon_hare();
 
-	copyBackground(x_dr, y_dr, x_dr, y_dr, 45, 31, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(x_dr, y_dr, x_dr, y_dr, 45, 31, drawSurface1, screenSurface);
 	if (num_ejec != 6)
-		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, backSurface, screenSurface);
 	else
-		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+		copyRect(x_talk[cara], 58, x_dr + 7, y_dr, 38, 31, drawSurface2, screenSurface);
 
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, x_dr + 19, y_dr);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -238,7 +238,7 @@ bucless:
 	placeDrascula();
 	if (num_ejec == 6)
 		pon_hare();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
@@ -254,7 +254,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	talkInit(filename);
 
 	if (num_ejec == 6)
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 bucless:
 
@@ -266,7 +266,7 @@ bucless:
 		else if (num_ejec == 5)
 			centerText(said, 173, 92);
 	}
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	byte key = getScan();
 	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
@@ -285,8 +285,8 @@ bucless:
 			goto bucless;
 	}
 	if (num_ejec == 6) {
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 }
 
@@ -305,7 +305,7 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
@@ -314,15 +314,15 @@ bucless:
 	if (num_ejec == 1)
 		placeDrascula();
 	if (num_ejec == 1 || num_ejec == 6)
-		copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, dir_dibujo1, dir_zona_pantalla);
-	copyRect(x_talk[cara], 173, x_igor, y_igor, 29, 25, dir_hare_frente, dir_zona_pantalla);
+		copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, drawSurface1, screenSurface);
+	copyRect(x_talk[cara], 173, x_igor, y_igor, 29, 25, frontSurface, screenSurface);
 
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, x_igor + 26, y_igor);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -348,11 +348,11 @@ bucless:
 	}
 
 	if (num_ejec == 1) {
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
 	}
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_tabernero(int index) {
@@ -384,18 +384,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(8);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 2, 121, 44, 21, 24, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 2, 121, 44, 21, 24, extraSurface, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 132, 45);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -414,7 +414,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_bj(int index) {
@@ -438,22 +438,22 @@ bucless:
 	if (num_ejec != 5) {
 		cara = _rnd->getRandomNumber(4);
 
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
 
 		copyBackground(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
-					dir_dibujo1, dir_zona_pantalla);
+					drawSurface1, screenSurface);
 
 		copyRect(x_talk[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
-					dir_dibujo3, dir_zona_pantalla);
+					drawSurface3, screenSurface);
 		pon_hare();
 		updateRefresh();
 
 		if (withVoices == 0)
 			centerText(said, x_bj + 7, y_bj);
 
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 		pause(3);
 	} else {
@@ -462,7 +462,7 @@ bucless:
 		if (withVoices == 0)
 			centerText(said, 93, 80);
 
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 
 	byte key = getScan();
@@ -483,7 +483,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk(int index) {
@@ -535,71 +535,71 @@ bucless:
 
 	cara = _rnd->getRandomNumber(5);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 	if (num_ejec == 2)
-		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, screenSurface, drawSurface3);
 	else
 		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]),
-				dir_zona_pantalla, dir_dibujo3);
+				screenSurface, drawSurface3);
 
 	pon_hare();
 
 	if (num_ejec == 2) {
 		if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
-			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, drawSurface3, screenSurface);
 	} else {
 		copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]),
-				dir_dibujo3, dir_zona_pantalla);
+				drawSurface3, screenSurface);
 	}
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
 			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk,
-						dir_hare_dch, dir_zona_pantalla);
+						extraSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_izq[cara], y_mask_talk, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
 						hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare],
-						dir_hare_dch, dir_zona_pantalla);
+						extraSurface, screenSurface);
 
 		updateRefresh();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
 			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
-					dir_hare_dch, dir_zona_pantalla);
+					extraSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_dch[cara], y_mask_talk, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-					hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
+					hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
 			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
-					dir_hare_frente, dir_zona_pantalla);
+					frontSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_izq[cara], y_mask_talk,
 						suma_1_pixel + hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
 						hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare],
-						dir_hare_frente, dir_zona_pantalla);
+						frontSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
 			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk,
-					dir_hare_frente, dir_zona_pantalla);
+					frontSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_dch[cara], y_mask_talk,
 						suma_1_pixel + hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
 						hare_y, ancho_talk,alto_talk, factor_red[hare_y + alto_hare],
-						dir_hare_frente, dir_zona_pantalla);
+						frontSurface, screenSurface);
 		updateRefresh();
 	}
 
 	if (withVoices == 0)
 		centerText(said, hare_x, hare_y);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -621,7 +621,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	if (num_ejec == 1) {
 		if (musicStatus() == 0 && flags[11] == 0 && musicStopped == 0)
@@ -644,19 +644,19 @@ bucless:
 
 	cara = _rnd->getRandomNumber(3);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
 	copyBackground(x_talk[cara], 139, 228, 112, 47, 60,
-				dir_hare_dch, dir_zona_pantalla);
+				extraSurface, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 221, 128);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -676,7 +676,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
@@ -688,7 +688,7 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 
 	if (num_ejec == 1) {
 		loadPic("an11y13.alg");
-		decompressPic(dir_hare_frente, 1);
+		decompressPic(frontSurface, 1);
 	}
 
 	flags[13] = 1;
@@ -697,7 +697,7 @@ bebiendo:
 
 	if (flags[12] == 1) {
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		goto bebiendo;
 	}
 
@@ -709,18 +709,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 29, 177, 50, 19, 19, dir_hare_frente, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 29, 177, 50, 19, 19, frontSurface, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 181, 54);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -740,12 +740,12 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	flags[13] = 0;
 	if (num_ejec == 1) {
 		loadPic("96.alg");
-		decompressPic(dir_hare_frente, 1);
+		decompressPic(frontSurface, 1);
 	}
 
 	if (num_ejec == 1) {
@@ -774,26 +774,26 @@ void DrasculaEngine::talk_vb(const char *said, const char *filename) {
 
 	talkInit(filename);
 
-	copyBackground(vb_x + 5, 64, OBJWIDTH + 1, 0, 25, 27, dir_dibujo1, dir_dibujo3);
+	copyBackground(vb_x + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
 
 bucless:
 
 	if (sentido_vb == 1) {
 		cara = _rnd->getRandomNumber(5);
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		pon_hare();
 		pon_vb();
 
-		copyBackground(OBJWIDTH + 1, 0, vb_x + 5, 64, 25, 27, dir_dibujo3, dir_zona_pantalla);
-		copyRect(x_talk[cara], 34, vb_x + 5, 64, 25, 27, dir_hare_frente, dir_zona_pantalla);
+		copyBackground(OBJWIDTH + 1, 0, vb_x + 5, 64, 25, 27, drawSurface3, screenSurface);
+		copyRect(x_talk[cara], 34, vb_x + 5, 64, 25, 27, frontSurface, screenSurface);
 		updateRefresh();
 	}
 
 	if (withVoices == 0)
 		centerText(said, vb_x, 66);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -813,7 +813,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
 		playMusic(roomMusic);
 }
@@ -838,7 +838,7 @@ bucless:
 	updateRoom();
 	if (withVoices == 0)
 		centerText(said, 150, 80);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	int key = getScan();
 	if (key != 0)
@@ -856,7 +856,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
 		playMusic(roomMusic);
 }
@@ -869,8 +869,8 @@ void DrasculaEngine::talk_blind(const char *said, const char *filename, const ch
 
 	color_abc(VON_BRAUN);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	talkInit(filename);
 
@@ -881,7 +881,7 @@ void DrasculaEngine::talk_blind(const char *said, const char *filename, const ch
 	pos_blind[5] = 149;
 
 bucless:
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	pos_blind[5] = 149;
 	char c = toupper(sincronia[p]);
 
@@ -891,28 +891,28 @@ bucless:
 		pos_blind[0] = 132;
 
 	if (c == '0')
-		num_cara = dir_dibujo3;
+		num_cara = drawSurface3;
 	else if (c == '1')
-		num_cara = dir_dibujo3;
+		num_cara = drawSurface3;
 	else if (c == '2')
-		num_cara = dir_hare_dch;
+		num_cara = extraSurface;
 	else if (c == '3')
-		num_cara = dir_hare_dch;
+		num_cara = extraSurface;
 	else if (c == '4')
-		num_cara = dir_hare_fondo;
+		num_cara = backSurface;
 	else if (c == '5')
-		num_cara = dir_hare_fondo;
+		num_cara = backSurface;
 	else {
-		num_cara = dir_hare_frente;
+		num_cara = frontSurface;
 		pos_blind[5] = 146;
 	}
 
-	copyRectClip( pos_blind, num_cara, dir_zona_pantalla);
+	copyRectClip( pos_blind, num_cara, screenSurface);
 
 	if (withVoices == 0)
 		centerText(said, 310, 71);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(2);
 	p++;
 
@@ -937,8 +937,8 @@ void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	color_abc(YELLOW);
 
@@ -947,7 +947,7 @@ void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
 bucless:
 	if (withVoices == 0)
 		centerText(said, 156, 170);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	int key = getScan();
 	if (key != 0)
@@ -982,18 +982,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(8);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 136, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 136, 198, 81, 26, 24, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 203, 78);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1013,7 +1013,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_mus(const char *said, const char *filename) {
@@ -1031,18 +1031,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 156, 190, 64, 18, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 156, 190, 64, 18, 24, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 197, 64);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1062,7 +1062,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_pen(const char *said, const char *filename) {
@@ -1073,8 +1073,8 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename) {
 	flags[1] = 1;
 
 	updateRoom();
-	copyRect(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyRect(44, 145, 145, 105, 25, 29, drawSurface3, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -1086,18 +1086,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(7);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyRect(x_talk[cara], 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
+	copyRect(x_talk[cara], 145, 145, 105, 25, 29, drawSurface3, screenSurface);
 
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 160, 105);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1117,9 +1117,9 @@ bucless:
 	}
 
 	flags[1] = 0;
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateRefresh_pre();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_pen2(const char *said, const char *filename) {
@@ -1139,18 +1139,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(4);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 171, 173, 116, 25, 28, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 171, 173, 116, 25, 28, drawSurface3, screenSurface);
 
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 195, 107);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1170,9 +1170,9 @@ bucless:
 	}
 
 	flags[1] = 0;
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateRefresh_pre();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_taber2(const char *said, const char *filename) {
@@ -1190,18 +1190,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(5);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 130, 151, 43, 21, 24, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 130, 151, 43, 21, 24, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 132, 45);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1221,7 +1221,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_bj_bed(int index) {
@@ -1245,19 +1245,19 @@ bucless:
 
 	cara = _rnd->getRandomNumber(4);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(65, 103, 65, 103, 49, 38, dir_dibujo1, dir_zona_pantalla);
-	copyRect(x_talk[cara], 105, 65, 103, 49, 38, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(65, 103, 65, 103, 49, 38, drawSurface1, screenSurface);
+	copyRect(x_talk[cara], 105, 65, 103, 49, 38, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 104, 102);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1276,7 +1276,7 @@ bucless:
 			goto bucless;
 	}
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_htel(const char *said, const char *filename) {
@@ -1297,20 +1297,20 @@ bucless:
 	pantalla = _rnd->getRandomNumber(2);
 
 	if (cara == 0 && pantalla == 0)
-		num_cara = (char *)dir_dibujo3;
+		num_cara = (char *)drawSurface3;
 	else if (pantalla == 1)
-		num_cara = (char *)dir_hare_frente;
+		num_cara = (char *)frontSurface;
 	else
-		num_cara = (char *)dir_hare_fondo;
+		num_cara = (char *)backSurface;
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
-	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 1, 45, 24, 92, 108, (byte *)num_cara, screenSurface);
 
 	if (withVoices == 0)
 		centerText(said, 90, 50);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(3);
 
 	int key = getScan();
@@ -1328,8 +1328,8 @@ bucless:
 			goto bucless;
 	}
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_sinc(const char *said, const char *filename, const char *sincronia) {
@@ -1370,58 +1370,58 @@ bucless:
 	if (sincronia[p] == '7')
 		cara = 7;
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 	if (num_ejec == 2)
-		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, dir_zona_pantalla, dir_dibujo3);
+		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, screenSurface, drawSurface3);
 	else
 		copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), dir_zona_pantalla, dir_dibujo3);
+				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), screenSurface, drawSurface3);
 	pon_hare();
 	if (num_ejec == 2) {
 		if (alto_hare != 56)
-			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, dir_dibujo3, dir_zona_pantalla);
+			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, drawSurface3, screenSurface);
 	} else
 		copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), dir_dibujo3, dir_zona_pantalla);
+				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), drawSurface3, screenSurface);
 
 	if (sentido_hare == 0) {
 		if (num_ejec == 2)
-			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk, dir_hare_dch, dir_zona_pantalla);
+			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk, extraSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_izq[cara], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
+							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 2)
-			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, dir_hare_dch, dir_zona_pantalla);
+			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, extraSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_dch[cara], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
+							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
-			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, dir_hare_frente, dir_zona_pantalla);
+			copyRect(x_talk_izq[cara], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_izq[cara], y_mask_talk,
 						(int)(suma_1_pixel + hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
+						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
 		updateRefresh();
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
-			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk, dir_hare_frente, dir_zona_pantalla);
+			copyRect(x_talk_dch[cara], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
 		else
 			reduce_hare_chico(x_talk_dch[cara], y_mask_talk,
 						(int)(suma_1_pixel + hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
+						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
 		updateRefresh();
 	}
 
 	if (withVoices == 0)
 		centerText(said, hare_x, hare_y);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	p++;
 	pause(3);
@@ -1472,7 +1472,7 @@ bucless:
 	if (withVoices == 0)
 		centerText(said, 263, 69);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(4);
 
@@ -1493,7 +1493,7 @@ bucless:
 
 	flags[19] = cara_antes;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_igorpuerta(const char *said, const char *filename) {
@@ -1510,7 +1510,7 @@ bucless:
 	updateRoom();
 	if (withVoices == 0)
 		centerText(said, 87, 66);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	int key = getScan();
 	if (key != 0)
@@ -1528,7 +1528,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_igor_seated(const char *said, const char *filename) {
@@ -1546,18 +1546,18 @@ bucless:
 
 	cara = _rnd->getRandomNumber(3);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 109, 207, 92, 21, 23, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 221, 102);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1577,7 +1577,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::talk_igor_peluca(const char *said, const char *filename) {
@@ -1595,18 +1595,18 @@ bucless:
 
 	_rnd->getRandomNumber(3);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
 
-	copyBackground(x_talk[cara], 78, 199, 94, 38, 27, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(x_talk[cara], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 	pon_hare();
 	updateRefresh();
 
 	if (withVoices == 0)
 		centerText(said, 221, 102);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -1626,7 +1626,7 @@ bucless:
 	}
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 } // End of namespace Drascula

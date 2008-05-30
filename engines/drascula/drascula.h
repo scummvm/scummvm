@@ -262,16 +262,16 @@ public:
 
 	byte *VGA;
 
-	byte *dir_dibujo1;
-	byte *dir_hare_fondo;
-	byte *dir_dibujo3;
-	byte *dir_dibujo2;
-	byte *dir_mesa;
-	byte *dir_hare_dch;
-	byte *dir_zona_pantalla;
-	byte *dir_hare_frente;
-	byte *dir_texto;
-	byte *dir_pendulum;
+	byte *drawSurface1;
+	byte *backSurface;
+	byte *drawSurface3;
+	byte *drawSurface2;
+	byte *tableSurface;
+	byte *extraSurface;	// not sure about this one, was "dir_hare_dch"
+	byte *screenSurface;
+	byte *frontSurface;
+	byte *textSurface;
+	byte *pendulumSurface;
 
 	byte cPal[768];
 	byte *pcxBuffer;

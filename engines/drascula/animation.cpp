@@ -55,9 +55,9 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 		loadPic("cielo.alg");
-		decompressPic(dir_zona_pantalla, 256);
+		decompressPic(screenSurface, 256);
 		black();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		fadeFromBlack(2);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -66,7 +66,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		color_abc(RED);
 		centerText(_textmisc[_lang][1], 160, 100);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(1000);
@@ -90,8 +90,8 @@ void DrasculaEngine::animation_1_1() {
 		if (anima("scr3.bin", 17))
 			break;
 		loadPic("cielo2.alg");
-		decompressPic(dir_zona_pantalla, 256);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		decompressPic(screenSurface, 256);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		fadeToBlack(1);
@@ -100,13 +100,13 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 
 		loadPic("96.alg");
-		decompressPic(dir_hare_frente, COMPLETE_PAL);
+		decompressPic(frontSurface, COMPLETE_PAL);
 		loadPic("103.alg");
-		decompressPic(dir_dibujo1, HALF_PAL);
+		decompressPic(drawSurface1, HALF_PAL);
 		loadPic("104.alg");
-		decompressPic(dir_dibujo3, 1);
+		decompressPic(drawSurface3, 1);
 		loadPic("aux104.alg");
-		decompressPic(dir_dibujo2, 1);
+		decompressPic(drawSurface2, 1);
 
 		playMusic(4);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -117,9 +117,9 @@ void DrasculaEngine::animation_1_1() {
 
 		for (l2 = 0; l2 < 3; l2++)
 			for (l = 0; l < 7; l++) {
-				copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-				copyBackground(interf_x[l], interf_y[l], 156, 45, 63, 31, dir_dibujo2, dir_zona_pantalla);
-				updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+				copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+				copyBackground(interf_x[l], interf_y[l], 156, 45, 63, 31, drawSurface2, screenSurface);
+				updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 				if (getScan() == Common::KEYCODE_ESCAPE) {
 					term_int = 1;
 					break;
@@ -135,15 +135,15 @@ void DrasculaEngine::animation_1_1() {
 		pos_pixel[5] = 31;
 
 		for (l = 0; l < 180; l++) {
-			copyBackground(0, 0, 320 - l, 0, l, 200, dir_dibujo3, dir_zona_pantalla);
-			copyBackground(l, 0, 0, 0, 320 - l, 200, dir_dibujo1, dir_zona_pantalla);
+			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
+			copyBackground(l, 0, 0, 0, 320 - l, 200, drawSurface1, screenSurface);
 
 			pos_pixel[0] = interf_x[l2];
 			pos_pixel[1] = interf_y[l2];
 			pos_pixel[2] = 156 - l;
 
-			copyRectClip(pos_pixel, dir_dibujo2, dir_zona_pantalla);
-			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			copyRectClip(pos_pixel, drawSurface2, screenSurface);
+			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 			p++;
 			if (p == 6) {
 				p = 0;
@@ -158,7 +158,7 @@ void DrasculaEngine::animation_1_1() {
 		}
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
+		copyBackground(0, 0, 0, 0, 320, 200, screenSurface, drawSurface1);
 
 		talk_dr_grande(_textd[_lang][1], "D1.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -167,11 +167,11 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 
 		loadPic("100.alg");
-		decompressPic(dir_dibujo1, HALF_PAL);
+		decompressPic(drawSurface1, HALF_PAL);
 		loadPic("auxigor.alg");
-		decompressPic(dir_hare_frente, 1);
+		decompressPic(frontSurface, 1);
 		loadPic("auxdr.alg");
-		decompressPic(dir_hare_fondo, 1);
+		decompressPic(backSurface, 1);
 		sentido_dr = 0;
 		x_dr = 129;
 		y_dr = 95;
@@ -179,17 +179,17 @@ void DrasculaEngine::animation_1_1() {
 		x_igor = 66;
 		y_igor = 97;
 
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_igor_dch(8);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_dr_izq(2);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -203,15 +203,15 @@ void DrasculaEngine::animation_1_1() {
 		clearRoom();
 		color_solo = RED;
 		loadPic("plan1.alg");
-		decompressPic(dir_zona_pantalla, HALF_PAL);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		decompressPic(screenSurface, HALF_PAL);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(10);
 		talk_solo(_textd[_lang][4],"d4.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan1.alg");
-		decompressPic(dir_zona_pantalla, HALF_PAL);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		decompressPic(screenSurface, HALF_PAL);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_solo(_textd[_lang][5], "d5.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -219,8 +219,8 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 		loadPic("plan2.alg");
-		decompressPic(dir_zona_pantalla, HALF_PAL);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		decompressPic(screenSurface, HALF_PAL);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(20);
 		talk_solo(_textd[_lang][6], "d6.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -229,8 +229,8 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 		loadPic("plan3.alg");
-		decompressPic(dir_zona_pantalla, HALF_PAL);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		decompressPic(screenSurface, HALF_PAL);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(20);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -238,14 +238,14 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan3.alg");
-		decompressPic(dir_zona_pantalla, HALF_PAL);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		decompressPic(screenSurface, HALF_PAL);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_solo(_textd[_lang][8], "d8.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
 		loadPic("100.alg");
-		decompressPic(dir_dibujo1, HALF_PAL);
+		decompressPic(drawSurface1, HALF_PAL);
 		MusicFadeout();
 		stopMusic();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -289,30 +289,30 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(1);
 		sentido_dr = 0;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_dr_izq(12);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(1);
 		sentido_dr = 1;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_igor_dch(2);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -321,16 +321,16 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(1);
 		sentido_dr = 0;
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk_dr_izq(14);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -371,9 +371,9 @@ void DrasculaEngine::animation_1_1() {
 	}
 	clearRoom();
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, COMPLETE_PAL);
+	decompressPic(frontSurface, COMPLETE_PAL);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 }
 
 void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
@@ -400,9 +400,9 @@ void DrasculaEngine::talk_dr_grande(const char *said, const char *filename) {
 bucless:
 
 	cara = _rnd->getRandomNumber(3);
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, dir_dibujo2, dir_zona_pantalla);
-	copyBackground(x_talk[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, drawSurface2, screenSurface);
+	copyBackground(x_talk[cara], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
 	l++;
 	if (l == 7)
 		l = 0;
@@ -410,7 +410,7 @@ bucless:
 	if (withVoices == 0)
 		centerText(said, 191, 69);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 
@@ -449,10 +449,10 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		if (_lang == kSpanish)
-			dir_texto = dir_hare_frente;
+			textSurface = frontSurface;
 
 		loadPic("an11y13.alg");
-		decompressPic(dir_hare_dch, 1);
+		decompressPic(extraSurface, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -461,10 +461,10 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		if (_lang == kSpanish)
-			dir_texto = dir_hare_dch;
+			textSurface = extraSurface;
 
 		loadPic("97.alg");
-		decompressPic(dir_hare_dch, 1);
+		decompressPic(extraSurface, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -478,7 +478,7 @@ void DrasculaEngine::animation_2_1() {
 		clearRoom();
 		stopMusic();
 		musicStopped = 1;
-		memset(dir_zona_pantalla, 0, 64000);
+		memset(screenSurface, 0, 64000);
 		color_solo = WHITE;
 		pause(80);
 
@@ -489,11 +489,11 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		clearRoom();
 		loadPic("bj.alg");
-		decompressPic(dir_zona_pantalla, HALF_PAL);
+		decompressPic(screenSurface, HALF_PAL);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		black();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		fadeFromBlack(1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -504,11 +504,11 @@ void DrasculaEngine::animation_2_1() {
 		clearRoom();
 
 		loadPic("16.alg");
-		decompressPic(dir_dibujo1, HALF_PAL);
+		decompressPic(drawSurface1, HALF_PAL);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("auxbj.alg");
-		decompressPic(dir_dibujo3, 1);
+		decompressPic(drawSurface3, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -529,7 +529,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		loadPic("97g.alg");
-		decompressPic(dir_hare_dch, 1);
+		decompressPic(extraSurface, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -568,11 +568,11 @@ void DrasculaEngine::animation_2_1() {
 		loadPic("97.alg");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		decompressPic(dir_hare_dch, 1);
+		decompressPic(extraSurface, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(120);
@@ -585,7 +585,7 @@ void DrasculaEngine::animation_2_1() {
 		updateRoom();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(110);
 		talk_solo(_textbj[_lang][11], "BJ11.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -593,7 +593,7 @@ void DrasculaEngine::animation_2_1() {
 		updateRoom();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(118);
@@ -629,19 +629,19 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		pause(8);
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk(225);
 		pause(76);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		talk(226);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(30);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -653,10 +653,10 @@ void DrasculaEngine::animation_2_1() {
 
 void DrasculaEngine::animation_3_1() {
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	loadPic("an11y13.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	talk(192);
 	talk_tabernero(1);
@@ -682,34 +682,34 @@ void DrasculaEngine::animation_3_1() {
 	flags[0] = 1;
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 }
 
 void DrasculaEngine::animation_4_1() {
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	loadPic("an12.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	talk(_text[_lang][205],"205.als");
 
 	updateRefresh_pre();
 
-	copyBackground(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
-	updateScreen(228,112, 228,112, 47,60, dir_zona_pantalla);
+	copyBackground(1, 139, 228, 112, 47, 60, extraSurface, screenSurface);
+	updateScreen(228,112, 228,112, 47,60, screenSurface);
 
 	pause(3);
 
 	updateRefresh_pre();
 
-	copyBackground(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(49, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	pon_hare();
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 	stopMusic();
@@ -725,11 +725,11 @@ void DrasculaEngine::animation_4_1() {
 	talk(_text[_lang][209], "209.als");
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	flags[11] = 0;
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 }
 
 void DrasculaEngine::animation_1_2() {
@@ -741,22 +741,22 @@ void DrasculaEngine::animation_2_2() {
 	int n, x=0;
 
 	sentido_hare = 0;
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	pon_hare();
 	updateRefresh();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	loadPic("an2_1.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("an2_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	copyBackground(1, 1, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	copyBackground(1, 1, 201, 87, 50, 52, frontSurface, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(201,87, 201,87, 50,52, dir_zona_pantalla);
+		copyBackground(x, 1, 201, 87, 50, 52, frontSurface, screenSurface);
+		updateScreen(201,87, 201,87, 50,52, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -765,8 +765,8 @@ void DrasculaEngine::animation_2_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 55, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 55, 201, 87, 50, 52, frontSurface, screenSurface);
+		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -775,8 +775,8 @@ void DrasculaEngine::animation_2_2() {
 
 	for (n = 0; n < 6; n++){
 		x++;
-		copyBackground(x, 109, 201, 87, 50, 52, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 109, 201, 87, 50, 52, frontSurface, screenSurface);
+		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -786,8 +786,8 @@ void DrasculaEngine::animation_2_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(201,87, 201,87, 50,52, dir_zona_pantalla);
+		copyBackground(x, 1, 201, 87, 50, 52, extraSurface, screenSurface);
+		updateScreen(201,87, 201,87, 50,52, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -796,8 +796,8 @@ void DrasculaEngine::animation_2_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 55, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 55, 201, 87, 50, 52, extraSurface, screenSurface);
+		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -805,14 +805,14 @@ void DrasculaEngine::animation_2_2() {
 
 	for (n = 0; n < 2; n++) {
 		x++;
-		copyBackground(x, 109, 201, 87, 50, 52, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(201, 87, 201, 87, 50, 52, dir_zona_pantalla);
+		copyBackground(x, 109, 201, 87, 50, 52, extraSurface, screenSurface);
+		updateScreen(201, 87, 201, 87, 50, 52, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	stopSound();
 
@@ -839,21 +839,21 @@ void DrasculaEngine::animation_4_2() {
 
 	clearRoom();
 	loadPic("ciego1.alg"); // ciego = blind
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("ciego2.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("ciego3.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("ciego4.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("ciego5.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(10);
 
@@ -876,14 +876,14 @@ void DrasculaEngine::animation_4_2() {
 	talk_blind(_textd[_lang][74],"d74.als", _textd1[_lang][74 - TEXTD_START]);
 	talk_hacker(_textd[_lang][63],"d63.als");
 	talk_blind(_textd[_lang][75],"d75.als", _textd1[_lang][75 - TEXTD_START]);
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	_system->delayMillis(1000);
 	talk_hacker(_textd[_lang][64], "d64.als");
 	talk_blind(_textd[_lang][76], "d76.als", _textd1[_lang][76 - TEXTD_START]);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(14);
 
@@ -891,19 +891,19 @@ void DrasculaEngine::animation_4_2() {
 
 	playMusic(roomMusic);
 	loadPic("9.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("aux9.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	withoutVerb();
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	flags[9] = 0;
 	flags[4] = 1;
@@ -940,7 +940,7 @@ void DrasculaEngine::animation_14_2() {
 	int l = 0;
 
 	loadPic("an14_2.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an14_1.alg");
 
 	pos_cabina[0] = 150;
@@ -951,20 +951,20 @@ void DrasculaEngine::animation_14_2() {
 	pos_cabina[5] = 161;
 
 	for (n = -160; n <= 0; n = n + 5 + l) {
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
 		pon_hare();
 		pon_vb();
 		pos_cabina[3] = n;
-		copyRectClip(pos_cabina, dir_hare_fondo, dir_zona_pantalla);
+		copyRectClip(pos_cabina, backSurface, screenSurface);
 		updateRefresh();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		l = l + 1;
 	}
 
 	flags[24] = 1;
 
-	decompressPic(dir_dibujo1, 1);
+	decompressPic(drawSurface1, 1);
 
 	playSound("s7.als");
 	hiccup(15);
@@ -972,7 +972,7 @@ void DrasculaEngine::animation_14_2() {
 	stopSound();
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 }
 
 void DrasculaEngine::animation_15_2() {
@@ -1004,17 +1004,17 @@ void DrasculaEngine::animation_16_2() {
 		color_abc(DARK_GREEN);
 
 	loadPic("his1.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 
 	if (_lang == kSpanish)
 		black();
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	if (_lang != kSpanish)
 		centerText(_texthis[_lang][1], 180, 180);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	if (_lang == kSpanish)
 		fadeFromBlack(1);
@@ -1039,13 +1039,13 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 	loadPic("his2.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	decompressPic(drawSurface1, HALF_PAL);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	if (_lang != kSpanish)
 		centerText(_texthis[_lang][2], 180, 180);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	key = getScan();
 	if (key != 0)
 		goto asco;
@@ -1066,13 +1066,13 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 	loadPic("his3.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	decompressPic(drawSurface1, HALF_PAL);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	if (_lang != kSpanish)
 		centerText(_texthis[_lang][3], 180, 180);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	key = getScan();
 	if (key != 0)
 		goto asco;
@@ -1090,16 +1090,16 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 	loadPic("his4_1.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("his4_2.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface3, screenSurface);
 
 	if (_lang != kSpanish)
 		centerText(_texthis[_lang][1], 180, 180);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	key = getScan();
 	if (key != 0)
 		goto asco;
@@ -1114,9 +1114,9 @@ void DrasculaEngine::animation_16_2() {
 		goto asco;
 
 	for (l = 1; l < 200; l++) {
-		copyBackground(0, 0, 0, l, 320, 200 - l, dir_dibujo3, dir_zona_pantalla);
-		copyBackground(0, 200 - l, 0, 0, 320, l, dir_dibujo1, dir_zona_pantalla);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyBackground(0, 0, 0, l, 320, 200 - l, drawSurface3, screenSurface);
+		copyBackground(0, 200 - l, 0, 0, 320, l, drawSurface1, screenSurface);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		key = getScan();
 		if (key != 0)
 			goto asco;
@@ -1128,14 +1128,14 @@ void DrasculaEngine::animation_16_2() {
 
 asco:
 	loadPic(roomDisk);
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
 	loadPic(rm);
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	black();
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	fadeFromBlack(0);
 	if (roomMusic != 0)
 		playMusic(roomMusic);
@@ -1189,7 +1189,7 @@ void DrasculaEngine::animation_21_2() {
 
 void DrasculaEngine::animation_23_2() {
 	loadPic("an24.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	flags[21] = 1;
 
@@ -1251,18 +1251,18 @@ void DrasculaEngine::animation_23_anexo() {
 				76, 76, 76, 76, 76, 76, 76, 1, 1, 1, 1};
 
 	loadPic("an23.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (n = 0; n < 34; n++) {
-		copyRect(p_x, p_y, p_x, p_y, 36, 74, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x[n], y[n], p_x, p_y, 36, 74, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(p_x, p_y, p_x, p_y, 36, 74, drawSurface1, screenSurface);
+		copyRect(x[n], y[n], p_x, p_y, 36, 74, backSurface, screenSurface);
 		updateRefresh();
-		updateScreen(p_x, p_y, p_x, p_y, 36, 74, dir_zona_pantalla);
+		updateScreen(p_x, p_y, p_x, p_y, 36, 74, screenSurface);
 		pause(5);
 	}
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 }
 
 void DrasculaEngine::animation_23_anexo2() {
@@ -1273,27 +1273,27 @@ void DrasculaEngine::animation_23_anexo2() {
 	pause(50);
 
 	loadPic("an23_2.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (n = 0; n < 14; n++) {
-		copyRect(p_x, p_y, p_x, p_y, 33, 71, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x[n], y[n], p_x, p_y, 33, 71, dir_hare_fondo, dir_zona_pantalla);
+		copyRect(p_x, p_y, p_x, p_y, 33, 71, drawSurface1, screenSurface);
+		copyRect(x[n], y[n], p_x, p_y, 33, 71, backSurface, screenSurface);
 		updateRefresh();
-		updateScreen(p_x,p_y, p_x,p_y, 33,71, dir_zona_pantalla);
+		updateScreen(p_x,p_y, p_x,p_y, 33,71, screenSurface);
 		pause(5);
 	}
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo,1);
+	decompressPic(backSurface,1);
 }
 
 void DrasculaEngine::animation_25_2() {
 	int n, pos_cabina[6];
 
 	loadPic("an14_2.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("18.alg");
-	decompressPic(dir_dibujo1, 1);
+	decompressPic(drawSurface1, 1);
 
 	pos_cabina[0] = 150;
 	pos_cabina[1] = 6;
@@ -1307,7 +1307,7 @@ void DrasculaEngine::animation_25_2() {
 	playSound("s6.als");
 
 	for (n = 0; n >= -160; n = n - 8) {
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
 		pon_hare();
@@ -1315,16 +1315,16 @@ void DrasculaEngine::animation_25_2() {
 
 		pos_cabina[3] = n;
 
-		copyRectClip(pos_cabina, dir_hare_fondo, dir_zona_pantalla);
+		copyRectClip(pos_cabina, backSurface, screenSurface);
 
 		updateRefresh();
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 
 	stopSound();
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 }
 
 void DrasculaEngine::animation_27_2() {
@@ -1395,14 +1395,14 @@ void DrasculaEngine::animation_31_2() {
 	pause(15);
 	lleva_al_hare(159, 140);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	sentido_hare = 2;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(78);
 	sentido_hare = 0;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(22);
 	talk(406);
 	lleva_vb(98);
@@ -1444,17 +1444,17 @@ void DrasculaEngine::animation_35_2() {
 	lleva_al_hare(79, 165);
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	loadPic("an35_1.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an35_2.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 70, 90, 46, 80, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(70,90, 70,90, 46,80,dir_zona_pantalla);
+		copyBackground(x, 1, 70, 90, 46, 80, backSurface, screenSurface);
+		updateScreen(70,90, 70,90, 46,80,screenSurface);
 		x = x + 46;
 		pause(3);
 	}
@@ -1462,8 +1462,8 @@ void DrasculaEngine::animation_35_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 82, 70, 90, 46, 80, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(70, 90, 70, 90, 46, 80, dir_zona_pantalla);
+		copyBackground(x, 82, 70, 90, 46, 80, backSurface, screenSurface);
+		updateScreen(70, 90, 70, 90, 46, 80, screenSurface);
 		x = x + 46;
 		pause(3);
 	}
@@ -1471,8 +1471,8 @@ void DrasculaEngine::animation_35_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 70, 90, 46, 80, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(70, 90, 70, 90, 46, 80, dir_zona_pantalla);
+		copyBackground(x, 1, 70, 90, 46, 80, frontSurface, screenSurface);
+		updateScreen(70, 90, 70, 90, 46, 80, screenSurface);
 
 		x = x + 46;
 
@@ -1482,15 +1482,15 @@ void DrasculaEngine::animation_35_2() {
 	x = 0;
 	for (n = 0; n < 2; n++) {
 		x++;
-		copyBackground(x, 82, 70, 90, 46, 80, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(70, 90, 70,90, 46, 80,dir_zona_pantalla);
+		copyBackground(x, 82, 70, 90, 46, 80, frontSurface, screenSurface);
+		updateScreen(70, 90, 70,90, 46, 80,screenSurface);
 		x = x + 46;
 		pause(3);
 	}
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(19);
 
@@ -1518,17 +1518,17 @@ void DrasculaEngine::animation_2_3() {
 	animation_4_3();
 	flags[1] = 1;
 	updateRoom();
-	updateScreen(120, 0, 120, 0, 200, 200, dir_zona_pantalla);
+	updateScreen(120, 0, 120, 0, 200, 200, screenSurface);
 	animation_5_3();
 	flags[0] = 0;
 	flags[1] = 1;
 
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	lleva_al_hare(332, 127);
 }
@@ -1538,17 +1538,17 @@ void DrasculaEngine::animation_3_3() {
 	int px = hare_x - 20, py = hare_y - 1;
 
 	loadPic("an2y_1.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("an2y_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("an2y_3.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 2, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 2, px, py, 71, 72, frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1557,9 +1557,9 @@ void DrasculaEngine::animation_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 75, px, py, 71, 72, frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1568,9 +1568,9 @@ void DrasculaEngine::animation_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 2, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 2, px, py, 71, 72, extraSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1579,9 +1579,9 @@ void DrasculaEngine::animation_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 75, px, py, 71, 72, extraSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1590,9 +1590,9 @@ void DrasculaEngine::animation_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 2, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 2, px, py, 71, 72, backSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1601,9 +1601,9 @@ void DrasculaEngine::animation_3_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 75, px, py, 71, 72, backSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1614,17 +1614,17 @@ void DrasculaEngine::animation_4_3() {
 	int px = 120, py = 63;
 
 	loadPic("any_1.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("any_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("any_3.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (n = 0; n < 4; n++){
 		x++;
-		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, px, py, 77, 89, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
+		copyRect(x, 1, px, py, 77, 89, frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 77, 89, screenSurface);
 		x = x + 77;
 		pause(3);
 	}
@@ -1633,9 +1633,9 @@ void DrasculaEngine::animation_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 91, px, py, 77, 89, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
+		copyRect(x, 91, px, py, 77, 89, frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 77, 89, screenSurface);
 		x = x + 77;
 		pause(3);
 	}
@@ -1644,9 +1644,9 @@ void DrasculaEngine::animation_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, px, py, 77, 89, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
+		copyRect(x, 1, px, py, 77, 89, extraSurface, screenSurface);
+		updateScreen(px, py, px, py, 77, 89, screenSurface);
 		x = x + 77;
 		pause(3);
 	}
@@ -1655,9 +1655,9 @@ void DrasculaEngine::animation_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 91, px, py, 77, 89, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
+		copyRect(x, 91, px, py, 77, 89, extraSurface, screenSurface);
+		updateScreen(px, py, px, py, 77, 89, screenSurface);
 		x = x + 77;
 		pause(3);
 	}
@@ -1666,9 +1666,9 @@ void DrasculaEngine::animation_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, px, py, 77, 89, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
+		copyRect(x, 1, px, py, 77, 89, backSurface, screenSurface);
+		updateScreen(px, py, px, py, 77, 89, screenSurface);
 		x = x + 77;
 		pause(3);
 	}
@@ -1677,9 +1677,9 @@ void DrasculaEngine::animation_4_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 77, 89, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 91, px, py, 77, 89, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 77, 89, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 77, 89, drawSurface1, screenSurface);
+		copyRect(x, 91, px, py, 77, 89, backSurface, screenSurface);
+		updateScreen(px, py, px, py, 77, 89, screenSurface);
 		x = x + 77;
 		pause(3);
 	}
@@ -1690,17 +1690,17 @@ void DrasculaEngine::animation_5_3() {
 	int px = hare_x - 20, py = hare_y - 1;
 
 	loadPic("an3y_1.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("an3y_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("an3y_3.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 2, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 2, px, py, 71, 72, frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1709,9 +1709,9 @@ void DrasculaEngine::animation_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, px, py, 71, 72, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 75, px, py, 71, 72, frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1720,9 +1720,9 @@ void DrasculaEngine::animation_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 2, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 2, px, py, 71, 72, extraSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1731,9 +1731,9 @@ void DrasculaEngine::animation_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, px, py, 71, 72, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(px,py, px,py, 71,72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 75, px, py, 71, 72, extraSurface, screenSurface);
+		updateScreen(px,py, px,py, 71,72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1742,9 +1742,9 @@ void DrasculaEngine::animation_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 2, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 2, px, py, 71, 72, backSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1753,9 +1753,9 @@ void DrasculaEngine::animation_5_3() {
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(px, py, px, py, 71, 72, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, px, py, 71, 72, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 71, 72, dir_zona_pantalla);
+		copyBackground(px, py, px, py, 71, 72, drawSurface1, screenSurface);
+		copyRect(x, 75, px, py, 71, 72, backSurface, screenSurface);
+		updateScreen(px, py, px, py, 71, 72, screenSurface);
 		x = x + 71;
 		pause(3);
 	}
@@ -1769,58 +1769,58 @@ void DrasculaEngine::animation_6_3() {
 	hare_se_mueve = 0;
 	flags[3] = 1;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	flags[1] = 0;
 
 	loadPic("an4y.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	for (frame = 0; frame < 6; frame++) {
 		pause(3);
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		copyRect(yoda_x[frame], yoda_y[frame], px, py,	78, 90,	dir_hare_frente, dir_zona_pantalla);
-		updateScreen(px, py, px, py, 78, 90, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyRect(yoda_x[frame], yoda_y[frame], px, py,	78, 90,	frontSurface, screenSurface);
+		updateScreen(px, py, px, py, 78, 90, screenSurface);
 	}
 
 	flags[2] = 1;
 
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
 void DrasculaEngine::animation_rayo() {
 	loadPic("anr_1.alg");
-	decompressPic(dir_hare_frente, HALF_PAL);
+	decompressPic(frontSurface, HALF_PAL);
 	loadPic("anr_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("anr_3.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("anr_4.alg");
-	decompressPic(dir_dibujo1, 1);
+	decompressPic(drawSurface1, 1);
 	loadPic("anr_5.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_frente);
+	updateScreen(0, 0, 0, 0, 320, 200, frontSurface);
 
 	pause(50);
 
 	playSound("s5.als");
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_dch);
+	updateScreen(0, 0, 0, 0, 320, 200, extraSurface);
 	pause(3);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_fondo);
+	updateScreen(0, 0, 0, 0, 320, 200, backSurface);
 	pause(3);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, drawSurface1);
 	pause(3);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_fondo);
+	updateScreen(0, 0, 0, 0, 320, 200, backSurface);
 	pause(3);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo3);
+	updateScreen(0, 0, 0, 0, 320, 200, drawSurface3);
 	pause(3);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_hare_frente);
+	updateScreen(0, 0, 0, 0, 320, 200, frontSurface);
 	stopSound();
 }
 
@@ -1888,7 +1888,7 @@ void DrasculaEngine::animation_1_5() {
 			if (hare_se_mueve == 0)
 				break;
 			updateRoom();
-			updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		}
 
 		sentido_hare = 1;
@@ -1913,7 +1913,7 @@ void DrasculaEngine::animation_3_5() {
 void DrasculaEngine::animation_4_5() {
 	flags[7] = 1;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	talk(_text[_lang][228], "228.als");
 	talk_wolf(_textl[_lang][1], "L1.als");
 	talk_wolf(_textl[_lang][2], "L2.als");
@@ -1945,28 +1945,28 @@ void DrasculaEngine::animation_5_5(){
 	lleva_al_hare(hare_x - 19, hare_y + alto_hare);
 	sentido_hare = 1;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	loadPic("3an5_1.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("3an5_2.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	for (frame = 0; frame < 9; frame++) {
 		pause(3);
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97,64, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, backSurface, screenSurface);
+		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97,64, screenSurface);
 	}
 
-	copyBackground(52, 161, 198, 81, 26, 24, dir_dibujo3, dir_zona_pantalla);
-	updateScreen(198, 81, 198, 81, 26, 24, dir_zona_pantalla);
+	copyBackground(52, 161, 198, 81, 26, 24, drawSurface3, screenSurface);
+	updateScreen(198, 81, 198, 81, 26, 24, screenSurface);
 
 	for (frame = 0; frame < 9; frame++) {
 		pause(3);
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97, 64, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyRect(hueso_x[frame], hueso_y[frame], pixel_x, pixel_y, 97, 64, frontSurface, screenSurface);
+		updateScreen(pixel_x, pixel_y, pixel_x,pixel_y, 97, 64, screenSurface);
 	}
 
 	flags[6] = 1;
@@ -1974,45 +1974,45 @@ void DrasculaEngine::animation_5_5(){
 	pause(12);
 
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	for (h = 0; h < (200 - 18); h++)
-		copyBackground(0, 53, 0, h, 320, 19, dir_hare_frente, dir_zona_pantalla);
+		copyBackground(0, 53, 0, h, 320, 19, frontSurface, screenSurface);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	loadPic("101.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("3an5_3.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("3an5_4.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, drawSurface1);
 	pause(9);
 	for (frame = 0; frame < 5; frame++) {
 		pause(3);
-		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(174, 79, 174, 79, 61, 109, dir_zona_pantalla);
+		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, backSurface, screenSurface);
+		updateScreen(174, 79, 174, 79, 61, 109, screenSurface);
 	}
 	for (frame = 0; frame < 5; frame++) {
 		pause(3);
-		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(174, 79, 174, 79, 61, 109, dir_zona_pantalla);
+		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, extraSurface, screenSurface);
+		updateScreen(174, 79, 174, 79, 61, 109, screenSurface);
 	}
-	updateScreen(0, 0, 0, 0, 320, 200, dir_dibujo1);
+	updateScreen(0, 0, 0, 0, 320, 200, drawSurface1);
 
 	playSound("s1.als");
 	stopSound();
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	clearRoom();
 
 	loadPic("49.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 }
 
 void DrasculaEngine::animation_6_5() {
@@ -2075,14 +2075,14 @@ void DrasculaEngine::animation_12_5() {
 
 	playMusic(26);
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(27);
 	anima("rayo1.bin", 23);
 	playSound("s5.als");
 	anima("rayo2.bin", 17);
 	sentido_hare = 1;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	hare_oscuro();
 
@@ -2112,7 +2112,7 @@ void DrasculaEngine::animation_12_5() {
 	}
 
 	loadPic("3an11_1.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (frame = 0; frame < 8; frame++) {
 		if (frame == 2 || frame == 4 || frame == 8 || frame==10)
@@ -2124,9 +2124,9 @@ void DrasculaEngine::animation_12_5() {
 
 		pause(4);
 		updateRoom();
-		copyRect(rayo_x[frame], 1, 41, 0, 44, 44, dir_hare_fondo, dir_zona_pantalla);
-		copyRect(frusky_x[frame], 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(rayo_x[frame], 1, 41, 0, 44, 44, backSurface, screenSurface);
+		copyRect(frusky_x[frame], 113, 205, 50, 38, 86, drawSurface3, screenSurface);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 
 	stopSound_corte();
@@ -2141,8 +2141,8 @@ void DrasculaEngine::animation_12_5() {
 
 		pause(4);
 		updateRoom();
-		copyRect(elfrusky_x[frame], 47, 192, 39, 66, 106, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRect(elfrusky_x[frame], 47, 192, 39, 66, 106, backSurface, screenSurface);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 
 	anima("frel.bin", 16);
@@ -2158,7 +2158,7 @@ void DrasculaEngine::animation_12_5() {
 	stopSound();
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	lleva_al_hare(40, 169);
 	lleva_al_hare(-14, 175);
@@ -2183,7 +2183,7 @@ void DrasculaEngine::animation_13_5() {
 	int pos_frusky[6];
 
 	loadPic("auxfr.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	pos_frusky[3] = 81;
 	pos_frusky[4] = 44;
@@ -2192,8 +2192,8 @@ void DrasculaEngine::animation_13_5() {
 	pos_frusky[1] = 1;
 	pos_frusky[2] = frank_x;
 	updateRoom();
-	copyRectClip(pos_frusky, dir_hare_fondo, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyRectClip(pos_frusky, backSurface, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(15);
 
 	playMusic(18);
@@ -2203,8 +2203,8 @@ void DrasculaEngine::animation_13_5() {
 		pos_frusky[0] = frus_x[frame];
 		pos_frusky[1] = frus_y[frame];
 		pos_frusky[2] = frank_x;
-		copyRectClip( pos_frusky, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		copyRectClip( pos_frusky, backSurface, screenSurface);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		frank_x = frank_x - 5;
 		frame++;
 		if (frank_x <= -45)
@@ -2221,7 +2221,7 @@ void DrasculaEngine::animation_14_5() {
 	flags[11] = 1;
 	playSound("s3.als");
 	updateRoom();
-	updateScreen(0, 0, 0,0 , 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0,0 , 320, 200, screenSurface);
 	stopSound();
 	pause(17);
 	sentido_hare = 3;
@@ -2230,12 +2230,12 @@ void DrasculaEngine::animation_14_5() {
 	flags[10] = 1;
 	playSound("s7.als");
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	stopSound();
 	pause(14);
 	sentido_hare = 3;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	talk_solo(_textd[_lang][18], "d18.als");
 	fadeToBlack(1);
 }
@@ -2267,11 +2267,11 @@ void DrasculaEngine::animation_1_6() {
 		factor_red[l] = 98;
 
 	loadPic("auxig2.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("auxdr.alg");
-	decompressPic(dir_dibujo2, 1);
+	decompressPic(drawSurface2, 1);
 	loadPic("car.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	talk_dr_dch(19);
 	talk(247);
 	talk_dr_dch(20);
@@ -2293,15 +2293,15 @@ void DrasculaEngine::animation_1_6() {
 	fadeToBlack(1);
 	clearRoom();
 	loadPic("time1.alg");
-	decompressPic(dir_zona_pantalla, 1);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	decompressPic(screenSurface, 1);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	delay(930);
 	clearRoom();
 	black();
 	hare_se_ve = 0;
 	flags[0] = 0;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	fadeFromBlack(1);
 	talk(256);
 	talk_dr_dch(30);
@@ -2309,13 +2309,13 @@ void DrasculaEngine::animation_1_6() {
 	fadeToBlack(0);
 	clearRoom();
 	loadPic("time1.alg");
-	decompressPic(dir_zona_pantalla,1);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	decompressPic(screenSurface,1);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	delay(900);
 	clearRoom();
 	black();
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	fadeFromBlack(1);
 	talk(258);
 	talk_dr_dch(31);
@@ -2330,7 +2330,7 @@ void DrasculaEngine::animation_1_6() {
 	talk_dr_izq(35);
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	clearRoom();
 	carga_escoba("102.ald");
@@ -2362,14 +2362,14 @@ void DrasculaEngine::animation_5_6() {
 	anima("man.bin", 14);
 
 	for (n = -125; n <= 0; n = n + 2) {
-		copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
 		pos_pen[3] = n;
-		copyRectClip(pos_pen, dir_dibujo3, dir_zona_pantalla);
+		copyRectClip(pos_pen, drawSurface3, screenSurface);
 
 		updateRefresh();
 
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 		pause(2);
 	}
 
@@ -2382,13 +2382,13 @@ void DrasculaEngine::animation_6_6() {
 	withoutVerb();
 	removeObject(20);
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	rompo = 1;
 	objExit = 104;
 	hare_x = -1;
@@ -2430,22 +2430,22 @@ void DrasculaEngine::animation_9_6() {
 	// by the original
 	roomNumber = -1;
 	loadPic("nota2.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	black();
 	sentido_hare = 1;
 	hare_x -= 21;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	fadeFromBlack(0);
 	pause(96);
 	lleva_al_hare(116, 178);
 	sentido_hare = 2;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	playMusic(9);
 	clearRoom();
 	loadPic("nota.alg");
-	decompressPic(dir_dibujo1, COMPLETE_PAL);
+	decompressPic(drawSurface1, COMPLETE_PAL);
 	color_abc(WHITE);
 	talk_solo(_textbj[_lang][24], "bj24.als");
 	talk_solo(_textbj[_lang][25], "bj25.als");
@@ -2455,9 +2455,9 @@ void DrasculaEngine::animation_9_6() {
 	sentido_hare = 3;
 	clearRoom();
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, COMPLETE_PAL);
+	decompressPic(frontSurface, COMPLETE_PAL);
 	loadPic("nota2.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	talk(_text[_lang][296], "296.als");
 	talk(_text[_lang][297], "297.als");
 	talk(_text[_lang][298], "298.als");
@@ -2465,15 +2465,15 @@ void DrasculaEngine::animation_9_6() {
 	talk(_text[_lang][299], "299.als");
 	talk(_text[_lang][300], "300.als");
 	updateRoom();
-	copyBackground(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, screenSurface, drawSurface1);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	color_abc(LIGHT_GREEN);
 	talk_solo("GOOOOOOOOOOOOOOOL", "s15.als");
 	loadPic("nota2.alg");
-	decompressPic(dir_dibujo1, 1);
+	decompressPic(drawSurface1, 1);
 	sentido_hare = 0;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	talk(_text[_lang][301], "301.als");
 	v_cd = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
 	v_cd = v_cd + 4;
@@ -2492,10 +2492,10 @@ void DrasculaEngine::animation_9_6() {
 
 void DrasculaEngine::animation_10_6() {
 	playSound ("s14.als");
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateRefresh_pre();
-	copyBackground(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(164, 85, 155, 48, 113, 114, drawSurface3, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	stopSound();
 	talk_taber2(_textt[_lang][23], "t23.als");
 	flags[7] = 1;
@@ -2537,15 +2537,15 @@ void DrasculaEngine::animation_18_6() {
 }
 
 void DrasculaEngine::animation_19_6() {
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	copyBackground(140, 23, 161, 69, 35, 80, dir_dibujo3, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	copyBackground(140, 23, 161, 69, 35, 80, drawSurface3, screenSurface);
 
 	updateRefresh_pre();
 	pon_hare();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(6);
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	playSound("s4.als");
 	pause(6);
 	stopSound();
@@ -2553,26 +2553,26 @@ void DrasculaEngine::animation_19_6() {
 
 void DrasculaEngine::animation_12_2() {
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	loadPic("an12.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	talk(_text[_lang][356], "356.als");
 
 	updateRefresh_pre();
 
-	copyBackground(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
-	updateScreen(228, 112, 228, 112, 47, 60, dir_zona_pantalla);
+	copyBackground(1, 139, 228, 112, 47, 60, extraSurface, screenSurface);
+	updateScreen(228, 112, 228, 112, 47, 60, screenSurface);
 
 	pause(3);
 
 	updateRefresh_pre();
 
-	copyBackground(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(49, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	pon_hare();
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 	stopMusic();
@@ -2582,37 +2582,37 @@ void DrasculaEngine::animation_12_2() {
 	converse("op_1.cal");
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	flags[11] = 0;
 	loadPic("974.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 }
 
 void DrasculaEngine::animation_26_2() {
 	int n, x = 0;
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	loadPic("an12.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	talk(_text[_lang][392], "392.als");
 
 	updateRefresh_pre();
 
-	copyBackground(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
-	updateScreen(228, 112, 228, 112, 47, 60, dir_zona_pantalla);
+	copyBackground(1, 139, 228, 112, 47, 60, extraSurface, screenSurface);
+	updateScreen(228, 112, 228, 112, 47, 60, screenSurface);
 
 	pause(3);
 
 	updateRefresh_pre();
 
-	copyBackground(49, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
+	copyBackground(49, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	pon_hare();
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(3);
 	stopMusic();
@@ -2625,11 +2625,11 @@ void DrasculaEngine::animation_26_2() {
 	talk_pianista(_textp[_lang][19], "P19.als");
 
 	loadPic("an26.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	for (n = 0; n < 6; n++){
 		x++;
-		copyBackground(x, 1, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(225,113, 225,113, 50,59, dir_zona_pantalla);
+		copyBackground(x, 1, 225, 113, 50, 59, extraSurface, screenSurface);
+		updateScreen(225,113, 225,113, 50,59, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -2637,8 +2637,8 @@ void DrasculaEngine::animation_26_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 61, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
+		copyBackground(x, 61, 225, 113, 50, 59, extraSurface, screenSurface);
+		updateScreen(225, 113, 225, 113, 50, 59, screenSurface);
 		x = x + 50;
 		if (n == 2)
 			playSound("s9.als");
@@ -2649,8 +2649,8 @@ void DrasculaEngine::animation_26_2() {
 	x = 0;
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 121, 225, 113, 50, 59, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(225, 113, 225, 113, 50, 59, dir_zona_pantalla);
+		copyBackground(x, 121, 225, 113, 50, 59, extraSurface, screenSurface);
+		updateScreen(225, 113, 225, 113, 50, 59, screenSurface);
 		x = x + 50;
 		pause(3);
 	}
@@ -2659,21 +2659,21 @@ void DrasculaEngine::animation_26_2() {
 	removeObject(12);
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	flags[11] = 0;
 	flags[39] = 1;
 	loadPic("974.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	roomMusic = 16;
 }
 
 void DrasculaEngine::animation_11_2() {
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	loadPic("an11y13.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	talk(352);
 	talk_tabernero(1);
@@ -2686,15 +2686,15 @@ void DrasculaEngine::animation_11_2() {
 	talk_tabernero("No, nada", "d82.als");
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	loadPic("974.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 }
 
 void DrasculaEngine::animation_13_2() {
 	loadPic("an11y13.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	if (flags[41] == 0) {
 		talk(_text[_lang][103], "103.als");
@@ -2711,7 +2711,7 @@ void DrasculaEngine::animation_13_2() {
 	converse("op_2.cal");
 
 	loadPic("964.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 }
 
 void DrasculaEngine::animation_18_2() {
@@ -2725,7 +2725,7 @@ void DrasculaEngine::animation_22_2() {
 
 	sentido_hare=2;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	playSound("s13.als");
 	stopSound();
 	sentido_hare = 1;
@@ -2750,7 +2750,7 @@ void DrasculaEngine::animation_24_2() {
 	talk(356);
 
 	loadPic("an24.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	animation_32_2();
 
@@ -2774,14 +2774,14 @@ void DrasculaEngine::animation_32_2() {
 	int n, x = 0;
 
 	loadPic("an32_1.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("an32_2.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(x, 1, 113, 53, 65, 81, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 1, 113, 53, 65, 81, drawSurface3, screenSurface);
+		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
 		x = x + 65;
 		pause(4);
 	}
@@ -2789,8 +2789,8 @@ void DrasculaEngine::animation_32_2() {
 	x = 0;
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(x, 83, 113, 53, 65, 81, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 83, 113, 53, 65, 81, drawSurface3, screenSurface);
+		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
 		x = x + 65;
 		pause(4);
 	}
@@ -2798,8 +2798,8 @@ void DrasculaEngine::animation_32_2() {
 	x = 0;
 	for (n = 0; n < 4; n++) {
 		x++;
-		copyBackground(x, 1, 113, 53, 65, 81, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 1, 113, 53, 65, 81, backSurface, screenSurface);
+		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
 		x = x + 65;
 		pause(4);
 	}
@@ -2807,15 +2807,15 @@ void DrasculaEngine::animation_32_2() {
 	x = 0;
 	for (n = 0; n < 3; n++) {
 		x++;
-		copyBackground(x, 83, 113, 53, 65, 81, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(113, 53, 113, 53, 65, 81, dir_zona_pantalla);
+		copyBackground(x, 83, 113, 53, 65, 81, backSurface, screenSurface);
+		updateScreen(113, 53, 113, 53, 65, 81, screenSurface);
 		x = x + 65;
 		if (n < 2)
 			pause(4);
 	}
 
 	loadPic("aux18.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 }
 
 void DrasculaEngine::animation_34_2() {
@@ -2823,17 +2823,17 @@ void DrasculaEngine::animation_34_2() {
 
 	sentido_hare = 1;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	loadPic("an34_1.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an34_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	for (n = 0; n < 3; n++) {
 		x++;
-		copyBackground(x, 1, 218, 79, 83, 75, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
+		copyBackground(x, 1, 218, 79, 83, 75, backSurface, screenSurface);
+		updateScreen(218, 79, 218, 79, 83, 75, screenSurface);
 		x = x + 83;
 		pause(3);
 	}
@@ -2842,8 +2842,8 @@ void DrasculaEngine::animation_34_2() {
 
 	for (n = 0; n < 3; n++) {
 		x++;
-		copyBackground(x, 77, 218, 79, 83, 75, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
+		copyBackground(x, 77, 218, 79, 83, 75, backSurface, screenSurface);
+		updateScreen(218, 79, 218, 79, 83, 75, screenSurface);
 		x = x + 83;
 		pause(3);
 	}
@@ -2853,8 +2853,8 @@ void DrasculaEngine::animation_34_2() {
 
 	for (n = 0; n < 3; n++) {
 		x++;
-		copyBackground(x, 1, 218, 79, 83, 75,	dir_hare_dch, dir_zona_pantalla);
-		updateScreen(218, 79, 218, 79, 83,75, dir_zona_pantalla);
+		copyBackground(x, 1, 218, 79, 83, 75,	extraSurface, screenSurface);
+		updateScreen(218, 79, 218, 79, 83,75, screenSurface);
 		x = x + 83;
 		pause(3);
 	}
@@ -2862,22 +2862,22 @@ void DrasculaEngine::animation_34_2() {
 
 	pause(30);
 
-	copyBackground(1, 77, 218, 79, 83, 75, dir_hare_dch, dir_zona_pantalla);
-	updateScreen(218, 79, 218, 79, 83, 75, dir_zona_pantalla);
+	copyBackground(1, 77, 218, 79, 83, 75, extraSurface, screenSurface);
+	updateScreen(218, 79, 218, 79, 83, 75, screenSurface);
 	pause(3);
 
 	loadPic("994.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("974.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 }
 
 void DrasculaEngine::animation_36_2() {
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	loadPic("an11y13.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	talk(404);
 	talk_tabernero(19);
@@ -2888,34 +2888,34 @@ void DrasculaEngine::animation_36_2() {
 	talk_tabernero("No, nada", "d82.als");
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	loadPic("974.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 }
 
 void DrasculaEngine::animation_7_2() {
 	int n, x = 0;
 
 	loadPic("an7_1.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an7_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("an7_3.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	if (flags[3] == 1)
-		copyBackground(258, 110, 85, 44, 23, 53, dir_dibujo3, dir_dibujo1);
+		copyBackground(258, 110, 85, 44, 23, 53, drawSurface3, drawSurface1);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64, 51, 73, backSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -2924,9 +2924,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, backSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -2935,9 +2935,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64,	51, 73, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64,	51, 73, extraSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -2946,9 +2946,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, extraSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -2957,28 +2957,28 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64, 51, 73, frontSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
 	loadPic("an7_4.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an7_5.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("an7_6.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("an7_7.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 
 	x = 0;
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1,	80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1,	80, 64, 51, 73, backSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -2987,9 +2987,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, backSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -2998,9 +2998,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1,	80, 64, 51,73, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1,	80, 64, 51,73, extraSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3009,9 +3009,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, extraSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3020,9 +3020,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64, 51, 73, frontSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3031,9 +3031,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, extraSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3042,9 +3042,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64,	51, 73, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64,	51, 73, frontSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3053,9 +3053,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, frontSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3064,9 +3064,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64, 51, 73, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64, 51, 73, drawSurface3, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3075,24 +3075,24 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 2; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, drawSurface3, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
 	loadPic("an7_8.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an7_9.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 
 	x = 0;
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64,	51, 73, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64,	51, 73, backSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3101,9 +3101,9 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 75, 80, 64, 51, 73, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 75, 80, 64, 51, 73, backSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
@@ -3112,17 +3112,17 @@ void DrasculaEngine::animation_7_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-		copyRect(x, 1, 80, 64, 51, 73,	dir_hare_dch, dir_zona_pantalla);
-		updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+		copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+		copyRect(x, 1, 80, 64, 51, 73,	extraSurface, screenSurface);
+		updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 		x = x + 51;
 		pause(3);
 	}
 
 
-	copyBackground(80, 64, 80, 64, 51, 73, dir_dibujo1, dir_zona_pantalla);
-	copyRect(1, 75, 80, 64, 51, 73, dir_hare_dch, dir_zona_pantalla);
-	updateScreen(80, 64, 80, 64, 51, 73, dir_zona_pantalla);
+	copyBackground(80, 64, 80, 64, 51, 73, drawSurface1, screenSurface);
+	copyRect(1, 75, 80, 64, 51, 73, extraSurface, screenSurface);
+	updateScreen(80, 64, 80, 64, 51, 73, screenSurface);
 
 	flags[37] = 1;
 
@@ -3130,13 +3130,13 @@ void DrasculaEngine::animation_7_2() {
 		flags[38] = 1;
 
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("aux3.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 }
 
 void DrasculaEngine::animation_5_2() {
@@ -3144,24 +3144,24 @@ void DrasculaEngine::animation_5_2() {
 
 	sentido_hare = 0;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	loadPic("an5_1.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("an5_2.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("an5_3.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("an5_4.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 
-	copyBackground(1, 1, 213, 66,	53,84, dir_hare_fondo, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(1, 1, 213, 66,	53,84, backSurface, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 213, 66, 53, 84, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84,dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66, 53, 84, backSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84,screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3170,8 +3170,8 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 86, 213, 66, 53, 84, dir_hare_fondo, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 86, 213, 66, 53, 84, backSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3180,8 +3180,8 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 213, 66, 53, 84, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66, 53, 84, extraSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3190,8 +3190,8 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 213, 66,	53, 84, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66,	53, 84, extraSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3200,8 +3200,8 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 86, 213, 66, 53, 84, dir_hare_dch, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 86, 213, 66, 53, 84, extraSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3210,8 +3210,8 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 213, 66,	53, 84, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66,	53, 84, frontSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3222,8 +3222,8 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 86, 213, 66, 53, 84, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 86, 213, 66, 53, 84, frontSurface, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
@@ -3233,20 +3233,20 @@ void DrasculaEngine::animation_5_2() {
 
 	for (n = 0; n < 6; n++) {
 		x++;
-		copyBackground(x, 1, 213, 66, 53, 84,	dir_dibujo3, dir_zona_pantalla);
-		updateScreen(213, 66, 213, 66, 53, 84, dir_zona_pantalla);
+		copyBackground(x, 1, 213, 66, 53, 84,	drawSurface3, screenSurface);
+		updateScreen(213, 66, 213, 66, 53, 84, screenSurface);
 		x = x + 52;
 		pause(3);
 	}
 
 	loadPic("994.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("974.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("964.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("aux5.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	flags[8] = 1;
 	hare_x = hare_x - 4;
 	talk_sinc(_text[_lang][46], "46.als", "4442444244244");
@@ -3258,22 +3258,22 @@ void DrasculaEngine::animation_6_2() {
 	flags[9] = 1;
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
 	clearRoom();
 	loadPic("ciego1.alg"); // ciego = blind
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("ciego2.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("ciego3.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("ciego4.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("ciego5.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(1);
 
@@ -3284,8 +3284,8 @@ void DrasculaEngine::animation_6_2() {
 	pause(4);
 	talk_hacker(_textd[_lang][67], "d67.als");
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(10);
 
@@ -3293,19 +3293,19 @@ void DrasculaEngine::animation_6_2() {
 
 	playMusic(roomMusic);
 	loadPic("9.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("aux9.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	withoutVerb();
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	flags[9] = 0;
 }
@@ -3320,21 +3320,21 @@ void DrasculaEngine::animation_33_2() {
 
 	clearRoom();
 	loadPic("ciego1.alg"); // ciego = blind
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("ciego2.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("ciego3.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("ciego4.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	loadPic("ciego5.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_frente;
+		textSurface = frontSurface;
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(10);
 
@@ -3346,8 +3346,8 @@ void DrasculaEngine::animation_33_2() {
 	talk_blind(_textd[_lang][77], "d77.als", _textd1[_lang][77 - TEXTD_START]);
 	talk_hacker(_textd[_lang][65], "d65.als");
 
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	pause(14);
 
@@ -3355,19 +3355,19 @@ void DrasculaEngine::animation_33_2() {
 
 	playMusic(roomMusic);
 	loadPic("9.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("aux9.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("97.alg");
-	decompressPic(dir_hare_dch, 1);
+	decompressPic(extraSurface, 1);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	withoutVerb();
 
 	if (_lang == kSpanish)
-		dir_texto = dir_hare_dch;
+		textSurface = extraSurface;
 
 	flags[33] = 1;
 	flags[9] = 0;
@@ -3380,17 +3380,17 @@ void DrasculaEngine::animation_1_4() {
 
 		updateRefresh_pre();
 
-		copyBackground(131, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(199, 95, 199, 95, 50, 66, dir_zona_pantalla);
+		copyBackground(131, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
+		updateScreen(199, 95, 199, 95, 50, 66, screenSurface);
 
 		pause(3);
 
 		updateRefresh_pre();
 
-		copyBackground(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(182, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
 		pon_hare();
 
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 		pause(3);
 		flags[18] = 1;
@@ -3405,16 +3405,16 @@ void DrasculaEngine::animation_1_4() {
 
 		updateRefresh_pre();
 
-		copyBackground(131, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
-		updateScreen(199, 95, 199, 95, 50, 66, dir_zona_pantalla);
+		copyBackground(131, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
+		updateScreen(199, 95, 199, 95, 50, 66, screenSurface);
 		pause(2);
 
 		updateRefresh_pre();
 
-		copyBackground(182, 133, 199, 95, 50, 66, dir_dibujo3, dir_zona_pantalla);
+		copyBackground(182, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
 		pon_hare();
 
-		updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 		flags[18] = 1;
 		flags[20] = 1;
@@ -3432,30 +3432,30 @@ void DrasculaEngine::animation_1_4() {
 void DrasculaEngine::animation_5_4(){
 	sentido_hare = 3;
 	loadPic("anh_dr.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	lleva_al_hare(99, 160);
 	lleva_al_hare(38, 177);
 	hare_se_ve = 0;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	delay(800);
 	anima("bio.bin", 14);
 	flags[29] = 1;
 	hare_x = 95;
 	hare_y = 82;
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	openDoor(2, 0);
 	loadPic("auxigor.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	x_igor = 100;
 	y_igor = 65;
 	talk_igor_frente(_texti[_lang][29], "I29.ALS");
 	talk_igor_frente(_texti[_lang][30], "I30.als");
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic("99.alg");
-	decompressPic(dir_hare_fondo, 1);
+	decompressPic(backSurface, 1);
 	hare_se_ve = 1;
 	fadeToBlack(0);
 	exitRoom(0);
@@ -3467,29 +3467,29 @@ void DrasculaEngine::animation_6_4() {
 	roomNumber = 26;
 	clearRoom();
 	loadPic("26.alg");
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	loadPic("aux26.alg");
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	loadPic("auxigor.alg");
-	decompressPic(dir_hare_frente, 1);
-	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	decompressPic(frontSurface, 1);
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	update_26_pre();
 	x_igor = 104;
 	y_igor = 71;
 	placeIgor();
-	updateScreen(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(40);
 	talk_igor_frente(_texti[_lang][26], "I26.als");
 	roomNumber = prevRoom;
 	clearRoom();
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	loadPic(roomDisk);
-	decompressPic(dir_dibujo3, 1);
+	decompressPic(drawSurface3, 1);
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
 	loadPic(rm);
-	decompressPic(dir_dibujo1, HALF_PAL);
+	decompressPic(drawSurface1, HALF_PAL);
 	withoutVerb();
 	updateRoom();
 }
@@ -3500,16 +3500,16 @@ void DrasculaEngine::animation_8_4() {
 	int estanteria_y[] = {1, 1, 1, 1, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74};
 
 	loadPic("an_8.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 
 	for (frame = 0; frame < 14; frame++) {
 		pause(2);
-		copyBackground(estanteria_x[frame], estanteria_y[frame], 77, 45, 73, 72, dir_hare_frente, dir_zona_pantalla);
-		updateScreen(77, 45, 77, 45, 73, 72, dir_zona_pantalla);
+		copyBackground(estanteria_x[frame], estanteria_y[frame], 77, 45, 73, 72, frontSurface, screenSurface);
+		updateScreen(77, 45, 77, 45, 73, 72, screenSurface);
 	}
 
 	loadPic("96.alg");
-	decompressPic(dir_hare_frente, 1);
+	decompressPic(frontSurface, 1);
 	openDoor(7, 2);
 }
 
