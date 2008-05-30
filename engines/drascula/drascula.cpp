@@ -184,7 +184,6 @@ int DrasculaEngine::go() {
 		term_int = 0;
 		musicStopped = 0;
 		hay_seleccion = 0;
-		Leng = 0;
 		UsingMem = 0;
 		globalSpeed = 0;
 		frame_blind = 0;
@@ -2039,11 +2038,12 @@ void DrasculaEngine::playSound(const char *file) {
 	ctvd_output(sku);
 }
 
-bool DrasculaEngine::anima(const char *animation, int FPS) {
+bool DrasculaEngine::animate(const char *animation, int FPS) {
 	Common::File FileIn;
 	unsigned j;
 	int NFrames = 1;
 	int cnt = 2;
+	int dataSize = 0;
 
 	AuxBuffLast = (byte *)malloc(65000);
 	AuxBuffDes = (byte *)malloc(65000);
@@ -2055,9 +2055,9 @@ bool DrasculaEngine::anima(const char *animation, int FPS) {
 	}
 
 	FileIn.read(&NFrames, sizeof(NFrames));
-	FileIn.read(&Leng, sizeof(Leng));
-	AuxBuffOrg = (byte *)malloc(Leng);
-	FileIn.read(AuxBuffOrg, Leng);
+	FileIn.read(&dataSize, sizeof(dataSize));
+	AuxBuffOrg = (byte *)malloc(dataSize);
+	FileIn.read(AuxBuffOrg, dataSize);
 	FileIn.read(cPal, 768);
 	loadPCX(AuxBuffOrg);
 	free(AuxBuffOrg);
@@ -2068,9 +2068,9 @@ bool DrasculaEngine::anima(const char *animation, int FPS) {
 	memcpy(AuxBuffLast, AuxBuffDes, 64000);
 	WaitForNext(FPS);
 	while (cnt < NFrames) {
-		FileIn.read(&Leng, sizeof(Leng));
-		AuxBuffOrg = (byte *)malloc(Leng);
-		FileIn.read(AuxBuffOrg, Leng);
+		FileIn.read(&dataSize, sizeof(dataSize));
+		AuxBuffOrg = (byte *)malloc(dataSize);
+		FileIn.read(AuxBuffOrg, dataSize);
 		FileIn.read(cPal, 768);
 		loadPCX(AuxBuffOrg);
 		free(AuxBuffOrg);

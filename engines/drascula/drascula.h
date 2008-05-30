@@ -476,7 +476,7 @@ public:
 	void color_abc(int cl);
 	void centerText(const char *,int,int);
 	void playSound(const char *);
-	bool anima(const char *animation, int FPS);
+	bool animate(const char *animation, int FPS);
 	void stopSound_corte();
 	void fadeToBlack(int VelocidadDeFundido);
 	void pause(int);
@@ -546,7 +546,6 @@ public:
 	byte *AuxBuffOrg;
 	byte *AuxBuffLast;
 	byte *AuxBuffDes;
-	int Leng;
 
 	byte *pointer;
 	int UsingMem;

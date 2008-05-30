@@ -747,7 +747,7 @@ void DrasculaEngine::room_22(int fl) {
 		visible[1] = 0;
 		flags[24] = 1;
 	} else if (pickedObject == 22 && fl == 52) {
-		anima("up.bin",14);
+		animate("up.bin",14);
 		flags[26]=1;
 		playSound("s1.als");
 		hiccup(14);
@@ -1105,7 +1105,7 @@ void DrasculaEngine::room_55(int fl) {
 		talk(_text[_lang][140], "140.als");
 	else if (fl == 206) {
 		playSound("s11.als");
-		anima("det.bin", 17);
+		animate("det.bin", 17);
 		stopSound();
 		lleva_al_hare(hare_x - 3, hare_y + alto_hare + 6);
 	} else
@@ -1242,7 +1242,7 @@ bool DrasculaEngine::room_60(int fl) {
 		animation_9_6();
 		return true;
 	} else if (pickedObject == 9 && fl == 56 && flags[6] == 0) {
-		anima("cnf.bin", 14);
+		animate("cnf.bin", 14);
 		talk(_text[_lang][455], "455.als");
 	} else
 		hasAnswer = 0;

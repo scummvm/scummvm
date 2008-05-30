@@ -84,10 +84,10 @@ void DrasculaEngine::animation_1_1() {
 		playSound("s5.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		if (anima("scr2.bin", 17))
+		if (animate("scr2.bin", 17))
 			break;
 		stopSound_corte();
-		if (anima("scr3.bin", 17))
+		if (animate("scr3.bin", 17))
 			break;
 		loadPic("cielo2.alg");
 		decompressPic(screenSurface, 256);
@@ -196,9 +196,9 @@ void DrasculaEngine::animation_1_1() {
 		talk_dr_izq(3);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		if (anima("lib.bin", 16))
+		if (animate("lib.bin", 16))
 			break;
-		if (anima("lib2.bin", 16))
+		if (animate("lib2.bin", 16))
 			break;
 		clearRoom();
 		color_solo = kColorRed;
@@ -215,7 +215,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_solo(_textd[_lang][5], "d5.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		if (anima("lib2.bin", 16))
+		if (animate("lib2.bin", 16))
 			break;
 		clearRoom();
 		loadPic("plan2.alg");
@@ -225,7 +225,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_solo(_textd[_lang][6], "d6.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		if (anima("lib2.bin", 16))
+		if (animate("lib2.bin", 16))
 			break;
 		clearRoom();
 		loadPic("plan3.alg");
@@ -263,16 +263,16 @@ void DrasculaEngine::animation_1_1() {
 		talk_dr_izq(10);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		if (anima("rayo1.bin", 16))
+		if (animate("rayo1.bin", 16))
 			break;
 		playSound("s5.als");
-		if (anima("rayo2.bin", 15))
+		if (animate("rayo2.bin", 15))
 			break;
-		if (anima("frel2.bin", 16))
+		if (animate("frel2.bin", 16))
 			break;
-		if (anima("frel.bin", 16))
+		if (animate("frel.bin", 16))
 			break;
-		if (anima("frel.bin", 16))
+		if (animate("frel.bin", 16))
 			break;
 		stopSound_corte();
 		clearRoom();
@@ -445,7 +445,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		if (anima("ag.bin", 14))
+		if (animate("ag.bin", 14))
 			break;
 
 		if (_lang == kSpanish)
@@ -533,7 +533,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		if (anima("lev.bin", 15))
+		if (animate("lev.bin", 15))
 			break;
 
 		lleva_al_hare(100 + ancho_hare / 2, 99 + alto_hare);
@@ -560,9 +560,9 @@ void DrasculaEngine::animation_2_1() {
 		talk(221);
 		talk_bj(10);
 		talk(222);
-		if (anima("gaf.bin", 15))
+		if (animate("gaf.bin", 15))
 			break;
-		if (anima("bjb.bin", 14))
+		if (animate("bjb.bin", 14))
 			break;
 		playMusic(9);
 		loadPic("97.alg");
@@ -610,10 +610,10 @@ void DrasculaEngine::animation_2_1() {
 		lleva_al_hare(157, 98 + alto_hare);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		if (anima("bes.bin", 16))
+		if (animate("bes.bin", 16))
 			break;
 		playMusic(11);
-		if (anima("rap.bin", 16))
+		if (animate("rap.bin", 16))
 			break;
 		sentido_hare = 3;
 		// The room number was originally changed here to "no_bj.alg",
@@ -2077,9 +2077,9 @@ void DrasculaEngine::animation_12_5() {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(27);
-	anima("rayo1.bin", 23);
+	animate("rayo1.bin", 23);
 	playSound("s5.als");
-	anima("rayo2.bin", 17);
+	animate("rayo2.bin", 17);
 	sentido_hare = 1;
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
@@ -2145,7 +2145,7 @@ void DrasculaEngine::animation_12_5() {
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 
-	anima("frel.bin", 16);
+	animate("frel.bin", 16);
 	clearRoom();
 	hare_claro();
 	updatePalette();
@@ -2283,7 +2283,7 @@ void DrasculaEngine::animation_1_6() {
 	converse("op_11.cal");
 	talk_dr_dch(26);
 
-	anima("fum.bin", 15);
+	animate("fum.bin", 15);
 
 	talk_dr_dch(27);
 	talk(254);
@@ -2359,7 +2359,7 @@ void DrasculaEngine::animation_5_6() {
 	pos_pen[4] = 18;
 	pos_pen[5] = 125;
 
-	anima("man.bin", 14);
+	animate("man.bin", 14);
 
 	for (n = -125; n <= 0; n = n + 2) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -2377,7 +2377,7 @@ void DrasculaEngine::animation_5_6() {
 }
 
 void DrasculaEngine::animation_6_6() {
-	anima("rct.bin", 11);
+	animate("rct.bin", 11);
 	clearRoom();
 	withoutVerb();
 	removeObject(20);
@@ -2396,7 +2396,7 @@ void DrasculaEngine::animation_6_6() {
 	carga_escoba("58.ald");
 	hare_se_ve = 1;
 	sentido_hare = 1;
-	anima("hbp.bin", 14);
+	animate("hbp.bin", 14);
 
 	sentido_hare = 3;
 	flags[0] = 1;
@@ -2412,10 +2412,10 @@ void DrasculaEngine::animation_7_6() {
 void DrasculaEngine::animation_9_6() {
 	int v_cd;
 
-	anima("fin.bin", 14);
+	animate("fin.bin", 14);
 	playMusic(13);
 	flags[5] = 1;
-	anima("drf.bin", 16);
+	animate("drf.bin", 16);
 	fadeToBlack(0);
 	clearRoom();
 	hare_x = -1;
@@ -2533,7 +2533,7 @@ void DrasculaEngine::animation_18_6() {
 	flags[6] = 1;
 	withoutVerb();
 	removeObject(21);
-	anima("beb.bin", 10);
+	animate("beb.bin", 10);
 }
 
 void DrasculaEngine::animation_19_6() {
@@ -3439,7 +3439,7 @@ void DrasculaEngine::animation_5_4(){
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	delay(800);
-	anima("bio.bin", 14);
+	animate("bio.bin", 14);
 	flags[29] = 1;
 	hare_x = 95;
 	hare_y = 82;
@@ -3514,7 +3514,7 @@ void DrasculaEngine::animation_8_4() {
 }
 
 void DrasculaEngine::animation_9_4() {
-	anima("st.bin", 14);
+	animate("st.bin", 14);
 	fadeToBlack(1);
 }
 
