@@ -155,8 +155,8 @@ protected:
 	int o1_getObjectParam();
 	int o1_addObjectParam();
 	int o1_subObjectParam();
-	int o1_add2ObjectParam();
-	int o1_sub2ObjectParam();
+	int o1_mulObjectParam();
+	int o1_divObjectParam();
 	int o1_compareObjectParam();
 	int o1_setupObject();
 	int o1_checkCollision();

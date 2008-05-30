@@ -49,8 +49,8 @@ const Opcode FWScript::_opcodeTable[] = {
 	{ &FWScript::o1_addObjectParam, "bbw" },
 	{ &FWScript::o1_subObjectParam, "bbw" },
 	/* 04 */
-	{ &FWScript::o1_add2ObjectParam, "bbw" },
-	{ &FWScript::o1_sub2ObjectParam, "bbw" },
+	{ &FWScript::o1_mulObjectParam, "bbw" },
+	{ &FWScript::o1_divObjectParam, "bbw" },
 	{ &FWScript::o1_compareObjectParam, "bbw" },
 	{ &FWScript::o1_setupObject, "bwwww" },
 	/* 08 */
@@ -803,23 +803,32 @@ int FWScript::o1_subObjectParam() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o1_add2ObjectParam() {
-	uint16 a = getNextByte();
-	uint16 b = getNextByte();
-	uint16 c = getNextWord();
-	warning("STUB: o1_add2ObjectParam(%x, %x, %x)", a, b, c);
+int FWScript::o1_mulObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: mulObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	// FIXME? In PC versions of Future Wars and Operation Stealth the multiplication is done unsigned.
+	// (16b x 16b -> 32b, taking only 16 LSBs). The question is, does it really matter?
+	int16 currentValue = getObjectParam(objIdx, paramIdx);
+	modifyObjectParam(objIdx, paramIdx, currentValue * newValue);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o1_sub2ObjectParam() {
-	uint16 a = getNextByte();
-	uint16 b = getNextByte();
-	uint16 c = getNextWord();
-	warning("STUB: o1_sub2ObjectParam(%x, %x, %x)", a, b, c);
+int FWScript::o1_divObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: divObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	// In PC versions of Future Wars and Operation Stealth the division is done signed.
+	// Dividend is first sign extended from 16 bits to 32 bits and then divided by the
+	// 16 bit divider using signed division. Only 16 LSBs of the quotient are saved.
+	int16 currentValue = getObjectParam(objIdx, paramIdx);
+	modifyObjectParam(objIdx, paramIdx, currentValue / newValue);
 	return 0;
 }
 

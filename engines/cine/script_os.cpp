@@ -45,8 +45,8 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_addObjectParam, "bbw" },
 	{ &FWScript::o1_subObjectParam, "bbw" },
 	/* 04 */
-	{ &FWScript::o1_add2ObjectParam, "bbw" },
-	{ &FWScript::o1_sub2ObjectParam, "bbw" },
+	{ &FWScript::o1_mulObjectParam, "bbw" },
+	{ &FWScript::o1_divObjectParam, "bbw" },
 	{ &FWScript::o1_compareObjectParam, "bbw" },
 	{ &FWScript::o1_setupObject, "bwwww" },
 	/* 08 */
