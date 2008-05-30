@@ -2171,7 +2171,7 @@ void DrasculaEngine::stopSound() {
 	delay(1);
 
 	if (hay_sb == 1) {
-		while (LookForFree() != 0);
+		while (soundIsActive());
 		delete sku;
 		sku = NULL;
 	}
@@ -4122,7 +4122,7 @@ void DrasculaEngine::ctvd_init(int b) {
 					11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 }
 
-int DrasculaEngine::LookForFree() {
+bool DrasculaEngine::soundIsActive() {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
@@ -4373,7 +4373,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;

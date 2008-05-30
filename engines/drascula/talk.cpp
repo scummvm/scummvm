@@ -86,7 +86,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -151,7 +151,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -216,7 +216,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -268,7 +268,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -330,7 +330,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -399,7 +399,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete(sku);
 		ctvd_terminate();
@@ -465,7 +465,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -601,7 +601,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -660,7 +660,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -727,7 +727,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -797,7 +797,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -838,7 +838,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -908,7 +908,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -939,7 +939,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -991,7 +991,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1044,7 +1044,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1097,7 +1097,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1148,7 +1148,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1203,7 +1203,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1257,7 +1257,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1313,7 +1313,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1411,7 +1411,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1456,7 +1456,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1496,7 +1496,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1549,7 +1549,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1602,7 +1602,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1){
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;
@@ -1651,7 +1651,7 @@ bucless:
 	if (key != 0)
 		ctvd_stop();
 	if (hay_sb == 1) {
-		if (LookForFree() != 0)
+		if (soundIsActive())
 			goto bucless;
 		delete sku;
 		sku = NULL;

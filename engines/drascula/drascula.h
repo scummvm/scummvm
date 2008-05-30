@@ -555,7 +555,7 @@ public:
 	void setCursorTable();
 	void enterName();
 	void para_grabar(char[]);
-	int LookForFree();
+	bool soundIsActive();
 	void openSSN(const char *Name, int Pause);
 	void WaitFrameSSN();
 	void MixVideo(byte *OldScreen, byte *NewScreen);
