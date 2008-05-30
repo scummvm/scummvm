@@ -1800,4 +1800,409 @@ void DrasculaEngine::update_pendulum() {
 	}
 }
 
+bool DrasculaEngine::checkFlag(int fl) {
+	characterMoved = 0;
+	updateRoom();
+	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+
+	hasAnswer = 1;
+
+	if (menuScreen == 1) {
+		if (num_ejec == 1) {
+			if (pickedObject == kVerbLook && fl == 28)
+				talk(328);
+		} else if (num_ejec == 2) {
+			if ((pickedObject == kVerbLook && fl == 22 && flags[23] == 0)
+					|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
+				talk(164);
+				flags[23] = 1;
+				withoutVerb();
+				addObject(7);
+				addObject(18);
+			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
+				talk(307);
+			else if (pickedObject == kVerbLook && fl == 28)
+				talk(328);
+			else if (pickedObject == kVerbLook && fl == 7)
+				talk(143);
+			else if (pickedObject == kVerbTalk && fl == 7)
+				talk(144);
+			else if (pickedObject == kVerbLook && fl == 8)
+				talk(145);
+			else if (pickedObject == kVerbTalk && fl == 8)
+				talk(146);
+			else if (pickedObject == kVerbLook && fl == 9)
+				talk(147);
+			else if (pickedObject == kVerbTalk && fl == 9)
+				talk(148);
+			else if (pickedObject == kVerbLook && fl == 10)
+				talk(151);
+			else if (pickedObject == kVerbLook && fl == 11)
+				talk(152);
+			else if (pickedObject == kVerbTalk && fl == 11)
+				talk(153);
+			else if (pickedObject == kVerbLook && fl == 12)
+				talk(154);
+			else if (pickedObject == kVerbLook && fl == 13)
+				talk(155);
+			else if (pickedObject == kVerbLook && fl == 14)
+				talk(157);
+			else if (pickedObject == kVerbLook && fl == 15)
+				talk(58);
+			else if (pickedObject == kVerbLook && fl == 16)
+				talk(158);
+			else if (pickedObject == kVerbLook && fl == 17)
+				talk(159);
+			else if (pickedObject == kVerbLook && fl == 18)
+				talk(160);
+			else if (pickedObject == kVerbLook && fl == 19)
+				talk(161);
+			else if (pickedObject == kVerbLook && fl == 20)
+				talk(162);
+			else if (pickedObject == kVerbLook && fl == 23)
+				talk(152);
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 3) {
+			if (pickedObject == kVerbLook && fl == 22)
+				talk(307);
+			else if (pickedObject == kVerbLook && fl == 28)
+				talk(328);
+			else if (pickedObject == kVerbLook && fl == 7)
+				talk(143);
+			else if (pickedObject == kVerbTalk && fl == 7)
+				talk(144);
+			else if (pickedObject == kVerbLook && fl == 8)
+				talk(145);
+			else if (pickedObject == kVerbTalk && fl == 8)
+				talk(146);
+			else if (pickedObject == kVerbLook && fl == 9)
+				talk(147);
+			else if (pickedObject == kVerbTalk && fl == 9)
+				talk(148);
+			else if (pickedObject == kVerbLook && fl == 10)
+				talk(151);
+			else if (pickedObject == kVerbLook && fl == 11)
+				talk(152);
+			else if (pickedObject == kVerbTalk && fl == 11)
+				talk(153);
+			else if (pickedObject == kVerbLook && fl == 12)
+				talk(154);
+			else if (pickedObject == kVerbLook && fl == 13)
+				talk(155);
+			else if (pickedObject == kVerbLook && fl == 14)
+				talk(157);
+			else if (pickedObject == kVerbLook && fl == 15)
+				talk(58);
+			else if (pickedObject == kVerbLook && fl == 16)
+				talk(158);
+			else if (pickedObject == kVerbLook && fl == 17)
+				talk(159);
+			else if (pickedObject == kVerbLook && fl == 18)
+				talk(160);
+			else if (pickedObject == kVerbLook && fl == 19)
+				talk(161);
+			else if (pickedObject == kVerbLook && fl == 20)
+				talk(162);
+			else if (pickedObject == kVerbLook && fl == 23)
+				talk(152);
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 4) {
+			if ((pickedObject == 18 && fl == 19) || (pickedObject == 19 && fl == 18)) {
+				withoutVerb();
+				chooseObject(21);
+				removeObject(18);
+				removeObject(19);
+			} else if ((pickedObject == 14 && fl == 19) || (pickedObject == 19 && fl == 14))
+				talk(484);
+			else if (pickedObject == kVerbLook && fl == 28)
+				talk(328);
+			else if (pickedObject == kVerbLook && fl == 7)
+				talk(478);
+			else if (pickedObject == kVerbLook && fl == 8)
+				talk(480);
+			else if (pickedObject == kVerbLook && fl == 9) {
+				talk(482);
+				talk(483);
+			} else if (pickedObject == kVerbLook && fl == 10)
+				talk(485);
+			else if (pickedObject == kVerbLook && fl == 11)
+				talk(488);
+			else if (pickedObject == kVerbLook && fl == 12)
+				talk(486);
+			else if (pickedObject == kVerbLook && fl == 13)
+				talk(490);
+			else if (pickedObject == kVerbLook && fl == 14)
+				talk(122);
+			else if (pickedObject == kVerbLook && fl == 15)
+				talk(117);
+			else if (pickedObject == kVerbTalk && fl == 15)
+				talk(118);
+			else if (pickedObject == kVerbOpen && fl == 15)
+				talk(119);
+			else if (pickedObject == kVerbLook && fl == 16)
+				talk(491);
+			else if (pickedObject == kVerbLook && fl == 17)
+				talk(478);
+			else if (pickedObject == kVerbLook && fl == 18)
+				talk(493);
+			else if (pickedObject == kVerbLook && fl == 19) {
+				talk(494);
+				talk(495);
+			} else if (pickedObject == kVerbLook && fl == 20)
+				talk(162);
+			else if (pickedObject == kVerbLook && fl == 21)
+				talk(496);
+			else if (pickedObject == kVerbLook && fl == 22)
+				talk(161);
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 5) {
+			if (pickedObject == kVerbLook && fl == 28)
+				talk(328);
+			else if (pickedObject == kVerbLook && fl == 7)
+				talk(478);
+			else if (pickedObject == kVerbLook && fl == 8)
+				talk(120);
+			else if (pickedObject == kVerbLook && fl == 9) {
+				talk(482);
+				talk(483);
+			} else if (pickedObject == kVerbLook && fl == 11)
+				talk(488);
+			else if (pickedObject == kVerbLook && fl == 13)
+				talk(490);
+			else if (pickedObject == kVerbLook && fl == 14)
+				talk(121);
+			else if (pickedObject == kVerbLook && fl == 15)
+				talk(117);
+			else if (pickedObject == kVerbTalk && fl == 15)
+				talk(118);
+			else if (pickedObject == kVerbOpen && fl == 15)
+				talk(119);
+			else if (pickedObject == kVerbLook && fl == 17)
+				talk(478);
+			else if (pickedObject == kVerbLook && fl == 20)
+				talk(162); 
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 6) {
+			if (pickedObject == kVerbLook && fl == 28)
+				talk(328);
+			else if (pickedObject == kVerbLook && fl == 9) {
+				talk(482);
+				talk(483);
+			} else if (pickedObject == kVerbLook && fl == 20)
+				talk(123);
+			else if (pickedObject == kVerbLook && fl == 21)
+				talk(441);
+			else
+				hasAnswer = 0;
+		}
+	} else {
+		if (num_ejec == 1) {
+			if (pickedObject == kVerbLook && fl == 50)
+				talk(308);
+			else if (pickedObject == kVerbOpen && fl == 50)
+				talk(310);
+			else if (pickedObject == kVerbClose && fl == 50)
+				talk(311);
+			else if (pickedObject == kVerbMove && fl == 50)
+				talk(312);
+			else if (pickedObject == kVerbPick && fl == 50)
+				talk(313);
+			else if (pickedObject == kVerbTalk && fl == 50)
+				talk(314);
+			else if (roomNumber == 62)
+				room_62(fl);
+			else if (roomNumber == 63)
+				room_63(fl);
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 2) {
+			if (pickedObject == kVerbLook && fl == 50)
+				talk(308);
+			else if (pickedObject == kVerbOpen && fl == 50)
+				talk(310);
+			else if (pickedObject == kVerbClose && fl == 50)
+				talk(311);
+			else if (pickedObject == kVerbMove && fl == 50)
+				talk(312);
+			else if (pickedObject == kVerbPick && fl == 50)
+				talk(313);
+			else if (pickedObject == kVerbTalk && fl == 50)
+				talk(314);
+			// Note: the original check was strcmp(num_room, "18.alg")
+			else if (pickedObject == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
+				talk(315);
+			else if (pickedObject == 13 && fl == 50)
+				talk(156);
+			else if (pickedObject == 20 && fl == 50)
+				talk(163);
+			else if (roomNumber == 1)
+				room_1(fl);
+			else if (roomNumber == 3)
+				room_3(fl);
+			else if (roomNumber == 4)
+				room_4(fl);
+			else if (roomNumber == 5)
+				room_5(fl);
+			else if (roomNumber == 6)
+				room_6(fl);
+			else if (roomNumber == 7)
+				room_7(fl);
+			else if (roomNumber == 8)
+				room_8(fl);
+			else if (roomNumber == 9)
+				room_9(fl);
+			else if (roomNumber == 12)
+				room_12(fl);
+			else if (roomNumber == 14)
+				room_14(fl);
+			else if (roomNumber == 15)
+				room_15(fl);
+			else if (roomNumber == 16)
+				room_16(fl);
+			else if (roomNumber == 17)
+				room_17(fl);
+			else if (roomNumber == 18)
+				room_18(fl);
+			else if (roomNumber == 19)
+				room_19(fl);
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 3) {
+			if (pickedObject == kVerbLook && fl == 50)
+				talk(309);
+			else if (pickedObject == kVerbOpen && fl == 50)
+				talk(310);
+			else if (pickedObject == kVerbClose && fl == 50)
+				talk(311);
+			else if (pickedObject == kVerbMove && fl == 50)
+				talk(312);
+			else if (pickedObject == kVerbPick && fl == 50)
+				talk(313);
+			else if (pickedObject == kVerbTalk && fl == 50)
+				talk(314);
+			else if (roomNumber == 13) {
+				if (room_13(fl))
+					return true;
+			} else
+				hasAnswer = 0;
+		} else if (num_ejec == 4) {
+			if (roomNumber == 28)
+				talk(178);
+			else if (pickedObject == kVerbLook && fl == 50)
+				talk(309);
+			else if (pickedObject == kVerbOpen && fl == 50)
+				talk(310);
+			else if (pickedObject == kVerbClose && fl == 50)
+				talk(311);
+			else if (pickedObject == kVerbMove && fl == 50)
+				talk(312);
+			else if (pickedObject == kVerbPick && fl == 50)
+				talk(313);
+			else if (pickedObject == kVerbTalk && fl == 50)
+				talk(314);
+			else if (pickedObject == 8 && fl == 50 && flags[18] == 0)
+				talk(481);
+			else if (pickedObject == 9 && fl == 50)
+				talk(484);
+			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
+				talk(487);
+			else if (pickedObject == 20 && fl == 50)
+				talk(487);
+			else if (roomNumber == 21) {
+				if (room_21(fl))
+					return true;
+			} else if (roomNumber == 22)
+				room_22(fl);
+			else if (roomNumber == 23)
+				room_23(fl);
+			else if (roomNumber == 24)
+				room_24(fl);
+			else if (roomNumber == 26)
+				room_26(fl);
+			else if (roomNumber == 27)
+				room_27(fl);
+			else if (roomNumber == 29)
+				room_29(fl);
+			else if (roomNumber == 30)
+				room_30(fl);
+			else if (roomNumber == 31)
+				room_31(fl);
+			else if (roomNumber == 34)
+				room_34(fl);
+			else if (roomNumber == 35)
+				room_35(fl);
+			else if (roomNumber == 44)
+				room_44(fl);
+			else
+				hasAnswer = 0;
+		} else if (num_ejec == 5) {
+			if (pickedObject == kVerbLook && fl == 50)
+				talk("Cuanto mas me miro, mas me gusto", "54.als");
+			else if (pickedObject == kVerbOpen && fl == 50)
+				talk("y luego como me cierro", "19.als");
+			else if (pickedObject == kVerbClose && fl == 50)
+				talk("Tendre que abrirme primero no", "19.als");
+			else if (pickedObject == kVerbMove && fl == 50)
+				talk("Estoy bien donde estoy", "19.als");
+			else if (pickedObject == kVerbPick && fl == 50)
+				talk("Ya me tengo", "11.als");
+			else if (pickedObject == kVerbTalk && fl == 50)
+				talk("hola yo", "16.als");
+			else if (pickedObject == 20 && fl == 50)
+				talk(487);
+			else if (roomNumber == 49)
+				room_49(fl);
+			else if (roomNumber == 53)
+				room_53(fl);
+			else if (roomNumber == 54)
+				room_54(fl);
+			else if (roomNumber == 55)
+				room_55(fl);
+			else if (roomNumber == 56) {
+				if (room_56(fl))
+					return true;
+			} else
+				hasAnswer = 0;
+		} else if (num_ejec == 6) {
+			if (pickedObject == kVerbLook && fl == 50 && flags[0] == 1)
+				talk(308);
+			else if (pickedObject == kVerbLook && fl == 50 && flags[0] == 0)
+				talk(310 );
+			else if (pickedObject == kVerbOpen && fl == 50)
+				talk(310 );
+			else if (pickedObject == kVerbClose && fl == 50)
+				talk(311 );
+			else if (pickedObject == kVerbMove && fl == 50)
+				talk(312 );
+			else if (pickedObject == kVerbPick && fl == 50)
+				talk(313 );
+			else if (pickedObject == kVerbTalk && fl == 50)
+				talk(314 );
+			else if (roomNumber == 102)
+				room_pendulum(fl);
+			else if (roomNumber == 58)
+				room_58(fl);
+			else if (roomNumber == 59)
+				room_59(fl);
+			else if (roomNumber == 60) {
+				if (room_60(fl))
+					return true;
+			} else if (roomNumber == 61)
+				room_61(fl);
+			else
+				hasAnswer = 0;
+		}
+	}
+	if (hasAnswer == 0 && hasName == 1)
+		room_0();
+	else if (hasAnswer == 0 && menuScreen == 1)
+		room_0();
+
+	return false;
+}
+
 } // End of namespace Drascula

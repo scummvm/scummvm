@@ -1535,118 +1535,35 @@ bool DrasculaEngine::saves() {
 	return true;
 }
 
-struct charInfo {
-
-};
-
 void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla) {
 	int pos_texto[8];
-	int y_de_letra = 0, x_de_letra = 0, h, length;
+	int letterY = 0, letterX = 0, h, length;
 	length = strlen(said);
-
 	
 	for (h = 0; h < length; h++) {
-		y_de_letra = (_lang == kSpanish) ? Y_ABC_ESP : Y_ABC;
 		int c = toupper(said[h]);
-		if (c == '\245')
-			x_de_letra = X_GN;
-		else if (c == '\244')
-			x_de_letra = X_GN;
-		else if (c >= 'A' && c <= 'N')
-			x_de_letra = X_A + (c - 'A') * 9;
-		else if (c >= 'O' && c <= 'Z')
-			x_de_letra = X_O + (c - 'O') * 9;
-		else if (c == 0xa7 || c == ' ')
-			x_de_letra = SPACE;
-		else {
-			y_de_letra = (_lang == kSpanish) ? Y_SIGNOS_ESP : Y_SIGNOS;
-			if (c == '.')
-				x_de_letra = X_DOT;
-			else if (c == ',')
-				x_de_letra = X_COMA;
-			else if (c == '-')
-				x_de_letra = X_HYPHEN;
-			else if (c == '?')
-				x_de_letra = X_CIERRA_INTERROGACION;
-			else if (c == '\250')
-				x_de_letra = X_ABRE_INTERROGACION;
-//			else if (c == '\'') // FIXME
-//				x_de_letra = SPACE; // space for now
-			else if (c == '"')
-				x_de_letra = X_COMILLAS;
-			else if (c == '!')
-				x_de_letra = X_CIERRA_EXCLAMACION;
-			else if (c == '\255')
-				x_de_letra = X_ABRE_EXCLAMACION;
-			else if (c == ';')
-				x_de_letra = X_pointY_COMA;
-			else if (c == '>')
-				x_de_letra = X_GREATER_THAN;
-			else if (c == '<')
-				x_de_letra = X_LESSER_THAN;
-			else if (c == '$')
-				x_de_letra = X_DOLAR;
-			else if (c == '%')
-				x_de_letra = X_PERCENT;
-			else if (c == ':')
-				x_de_letra = X_DOS_PUNTOS;
-			else if (c == '&')
-				x_de_letra = X_AND;
-			else if (c == '/')
-				x_de_letra = X_BARRA;
-			else if (c == '(')
-				x_de_letra = X_BRACKET_OPEN;
-			else if (c == ')')
-				x_de_letra = X_BRACKET_CLOSE;
-			else if (c == '*')
-				x_de_letra = X_ASTERISCO;
-			else if (c == '+')
-				x_de_letra = X_PLUS;
-			else if (c >= '1' && c <= '9')
-				x_de_letra = X_N1 + (c - '1') * 9;
-			// "0" is mapped after "9" in the game's font
-			// (it's mapped before "1" normally)
-			else if (c == '0')
-				x_de_letra = X_N0;
-			else y_de_letra=Y_ACENTOS;
 
-			if (c == '\240') x_de_letra=X_A;
-			else if (c =='\202') x_de_letra = X_A + 1 * 9;	// B
-			else if (c =='\241') x_de_letra = X_A + 2 * 9;	// C
-			else if (c =='\242') x_de_letra = X_A + 3 * 9;	// D
-			else if (c =='\243') x_de_letra = X_A + 4 * 9;	// E
-			else if (c =='\205') x_de_letra = X_A + 5 * 9;	// F
-			else if (c =='\212') x_de_letra = X_A + 6 * 9;	// G
-			else if (c =='\215') x_de_letra = X_A + 7 * 9;	// H
-			else if (c =='\225') x_de_letra = X_A + 8 * 9;	// I
-			else if (c =='\227') x_de_letra = X_A + 9 * 9;	// J
-			else if (c =='\203') x_de_letra = X_A + 10 * 9;	// K
-			else if (c =='\210') x_de_letra = X_A + 11 * 9;	// L
-			else if (c =='\214') x_de_letra = X_A + 12 * 9;	// M
-			else if (c =='\223') x_de_letra = X_A + 13 * 9;	// N
-			else if (c =='\226') x_de_letra = X_GN;
-			else if (c =='\047') x_de_letra = X_O;
-			else if (c =='\200') x_de_letra = X_O + 1 * 9;	// P
-			else if (c =='\207') x_de_letra = X_O + 1 * 9;	// P
-			else if (c =='\265') x_de_letra = X_A;
-			else if (c =='\220') x_de_letra = X_A + 1 * 9;	// B
-			else if (c =='\326') x_de_letra = X_A + 2 * 9;	// C
-			else if (c =='\340') x_de_letra = X_A + 3 * 9;	// D
-			else if (c =='\351') x_de_letra = X_A + 4 * 9;	// E
-			else if (c =='\267') x_de_letra = X_A + 5 * 9;	// F
-			else if (c =='\324') x_de_letra = X_A + 6 * 9;	// G
-			else if (c =='\336') x_de_letra = X_A + 7 * 9;	// H
-			else if (c =='\343') x_de_letra = X_A + 8 * 9;	// I
-			else if (c =='\353') x_de_letra = X_A + 9 * 9;	// J
-			else if (c =='\266') x_de_letra = X_A + 10 * 9;	// K
-			else if (c =='\322') x_de_letra = X_A + 11 * 9;	// L
-			else if (c =='\327') x_de_letra = X_A + 12 * 9;	// M
-			else if (c =='\342') x_de_letra = X_A + 13 * 9;	// N
-			else if (c =='\352') x_de_letra = X_GN;
-		}
+		for (int i = 0; i < CHARMAP_SIZE; i++) {
+			if (c == charMap[i].inChar) {
+				letterX = charMap[i].mappedChar;
 
-		pos_texto[0] = x_de_letra;
-		pos_texto[1] = y_de_letra;
+				switch (charMap[i].charType) {
+					case 0:		// letters
+						letterY = (_lang == kSpanish) ? 149 : 158;
+						break;
+					case 1:		// signs
+						letterY = (_lang == kSpanish) ? 160 : 169;
+						break;
+					case 2:		// accented
+						letterY = 180;
+						break;
+				}	// switch
+				break;
+			}	// if
+		}	// for
+
+		pos_texto[0] = letterX;
+		pos_texto[1] = letterY;
 		pos_texto[2] = x_pantalla;
 		pos_texto[3] = y_pantalla;
 		pos_texto[4] = CHAR_WIDTH;
@@ -1659,6 +1576,53 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 			x_pantalla = 0;
 			y_pantalla = y_pantalla + CHAR_HEIGHT + 2;
 		}
+	}	// for
+}
+
+void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_pantalla, int game) {
+	int pos_texto[6];
+	int y_de_signos, letterY, letterX = 0, h, length;
+	length = strlen(said);
+
+	for (h = 0; h < length; h++) {
+		if (game == 1) {
+			letterY = 6;
+			y_de_signos = 15;
+		} else if (game == 3) {
+			letterY = 56;
+			y_de_signos = 65;
+		} else {
+			letterY = 31;
+			y_de_signos = 40;
+		}
+
+		int c = toupper(said[h]);
+
+		for (int i = 0; i < CHARMAP_SIZE; i++) {
+			if (c == charMap[i].inChar) {
+				// Convert the mapped char of the normal font to the
+				// mapped char of the dialogue font
+
+				int multiplier = (charMap[i].mappedChar - 6) / 9;
+
+				letterX = multiplier * 7 + 10;
+
+				if (charMap[i].charType > 0)
+					letterY = y_de_signos;
+				break;
+			}	// if
+		}	// for
+
+		pos_texto[0] = letterX;
+		pos_texto[1] = letterY;
+		pos_texto[2] = x_pantalla;
+		pos_texto[3] = y_pantalla;
+		pos_texto[4] = CHAR_WIDTH_OPC;
+		pos_texto[5] = CHAR_HEIGHT_OPC;
+
+		copyRectClip(pos_texto, backSurface, screenSurface);
+
+		x_pantalla = x_pantalla + CHAR_WIDTH_OPC;
 	}
 }
 
@@ -2708,411 +2672,6 @@ bool DrasculaEngine::pickupObject() {
 	return false;
 }
 
-bool DrasculaEngine::checkFlag(int fl) {
-	characterMoved = 0;
-	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-
-	hasAnswer = 1;
-
-	if (menuScreen == 1) {
-		if (num_ejec == 1) {
-			if (pickedObject == kVerbLook && fl == 28)
-				talk(328);
-		} else if (num_ejec == 2) {
-			if ((pickedObject == kVerbLook && fl == 22 && flags[23] == 0)
-					|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
-				talk(164);
-				flags[23] = 1;
-				withoutVerb();
-				addObject(7);
-				addObject(18);
-			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
-				talk(307);
-			else if (pickedObject == kVerbLook && fl == 28)
-				talk(328);
-			else if (pickedObject == kVerbLook && fl == 7)
-				talk(143);
-			else if (pickedObject == kVerbTalk && fl == 7)
-				talk(144);
-			else if (pickedObject == kVerbLook && fl == 8)
-				talk(145);
-			else if (pickedObject == kVerbTalk && fl == 8)
-				talk(146);
-			else if (pickedObject == kVerbLook && fl == 9)
-				talk(147);
-			else if (pickedObject == kVerbTalk && fl == 9)
-				talk(148);
-			else if (pickedObject == kVerbLook && fl == 10)
-				talk(151);
-			else if (pickedObject == kVerbLook && fl == 11)
-				talk(152);
-			else if (pickedObject == kVerbTalk && fl == 11)
-				talk(153);
-			else if (pickedObject == kVerbLook && fl == 12)
-				talk(154);
-			else if (pickedObject == kVerbLook && fl == 13)
-				talk(155);
-			else if (pickedObject == kVerbLook && fl == 14)
-				talk(157);
-			else if (pickedObject == kVerbLook && fl == 15)
-				talk(58);
-			else if (pickedObject == kVerbLook && fl == 16)
-				talk(158);
-			else if (pickedObject == kVerbLook && fl == 17)
-				talk(159);
-			else if (pickedObject == kVerbLook && fl == 18)
-				talk(160);
-			else if (pickedObject == kVerbLook && fl == 19)
-				talk(161);
-			else if (pickedObject == kVerbLook && fl == 20)
-				talk(162);
-			else if (pickedObject == kVerbLook && fl == 23)
-				talk(152);
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 3) {
-			if (pickedObject == kVerbLook && fl == 22)
-				talk(307);
-			else if (pickedObject == kVerbLook && fl == 28)
-				talk(328);
-			else if (pickedObject == kVerbLook && fl == 7)
-				talk(143);
-			else if (pickedObject == kVerbTalk && fl == 7)
-				talk(144);
-			else if (pickedObject == kVerbLook && fl == 8)
-				talk(145);
-			else if (pickedObject == kVerbTalk && fl == 8)
-				talk(146);
-			else if (pickedObject == kVerbLook && fl == 9)
-				talk(147);
-			else if (pickedObject == kVerbTalk && fl == 9)
-				talk(148);
-			else if (pickedObject == kVerbLook && fl == 10)
-				talk(151);
-			else if (pickedObject == kVerbLook && fl == 11)
-				talk(152);
-			else if (pickedObject == kVerbTalk && fl == 11)
-				talk(153);
-			else if (pickedObject == kVerbLook && fl == 12)
-				talk(154);
-			else if (pickedObject == kVerbLook && fl == 13)
-				talk(155);
-			else if (pickedObject == kVerbLook && fl == 14)
-				talk(157);
-			else if (pickedObject == kVerbLook && fl == 15)
-				talk(58);
-			else if (pickedObject == kVerbLook && fl == 16)
-				talk(158);
-			else if (pickedObject == kVerbLook && fl == 17)
-				talk(159);
-			else if (pickedObject == kVerbLook && fl == 18)
-				talk(160);
-			else if (pickedObject == kVerbLook && fl == 19)
-				talk(161);
-			else if (pickedObject == kVerbLook && fl == 20)
-				talk(162);
-			else if (pickedObject == kVerbLook && fl == 23)
-				talk(152);
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 4) {
-			if ((pickedObject == 18 && fl == 19) || (pickedObject == 19 && fl == 18)) {
-				withoutVerb();
-				chooseObject(21);
-				removeObject(18);
-				removeObject(19);
-			} else if ((pickedObject == 14 && fl == 19) || (pickedObject == 19 && fl == 14))
-				talk(484);
-			else if (pickedObject == kVerbLook && fl == 28)
-				talk(328);
-			else if (pickedObject == kVerbLook && fl == 7)
-				talk(478);
-			else if (pickedObject == kVerbLook && fl == 8)
-				talk(480);
-			else if (pickedObject == kVerbLook && fl == 9) {
-				talk(482);
-				talk(483);
-			} else if (pickedObject == kVerbLook && fl == 10)
-				talk(485);
-			else if (pickedObject == kVerbLook && fl == 11)
-				talk(488);
-			else if (pickedObject == kVerbLook && fl == 12)
-				talk(486);
-			else if (pickedObject == kVerbLook && fl == 13)
-				talk(490);
-			else if (pickedObject == kVerbLook && fl == 14)
-				talk(122);
-			else if (pickedObject == kVerbLook && fl == 15)
-				talk(117);
-			else if (pickedObject == kVerbTalk && fl == 15)
-				talk(118);
-			else if (pickedObject == kVerbOpen && fl == 15)
-				talk(119);
-			else if (pickedObject == kVerbLook && fl == 16)
-				talk(491);
-			else if (pickedObject == kVerbLook && fl == 17)
-				talk(478);
-			else if (pickedObject == kVerbLook && fl == 18)
-				talk(493);
-			else if (pickedObject == kVerbLook && fl == 19) {
-				talk(494);
-				talk(495);
-			} else if (pickedObject == kVerbLook && fl == 20)
-				talk(162);
-			else if (pickedObject == kVerbLook && fl == 21)
-				talk(496);
-			else if (pickedObject == kVerbLook && fl == 22)
-				talk(161);
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 5) {
-			if (pickedObject == kVerbLook && fl == 28)
-				talk(328);
-			else if (pickedObject == kVerbLook && fl == 7)
-				talk(478);
-			else if (pickedObject == kVerbLook && fl == 8)
-				talk(120);
-			else if (pickedObject == kVerbLook && fl == 9) {
-				talk(482);
-				talk(483);
-			} else if (pickedObject == kVerbLook && fl == 11)
-				talk(488);
-			else if (pickedObject == kVerbLook && fl == 13)
-				talk(490);
-			else if (pickedObject == kVerbLook && fl == 14)
-				talk(121);
-			else if (pickedObject == kVerbLook && fl == 15)
-				talk(117);
-			else if (pickedObject == kVerbTalk && fl == 15)
-				talk(118);
-			else if (pickedObject == kVerbOpen && fl == 15)
-				talk(119);
-			else if (pickedObject == kVerbLook && fl == 17)
-				talk(478);
-			else if (pickedObject == kVerbLook && fl == 20)
-				talk(162); 
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 6) {
-			if (pickedObject == kVerbLook && fl == 28)
-				talk(328);
-			else if (pickedObject == kVerbLook && fl == 9) {
-				talk(482);
-				talk(483);
-			} else if (pickedObject == kVerbLook && fl == 20)
-				talk(123);
-			else if (pickedObject == kVerbLook && fl == 21)
-				talk(441);
-			else
-				hasAnswer = 0;
-		}
-	} else {
-		if (num_ejec == 1) {
-			if (pickedObject == kVerbLook && fl == 50)
-				talk(308);
-			else if (pickedObject == kVerbOpen && fl == 50)
-				talk(310);
-			else if (pickedObject == kVerbClose && fl == 50)
-				talk(311);
-			else if (pickedObject == kVerbMove && fl == 50)
-				talk(312);
-			else if (pickedObject == kVerbPick && fl == 50)
-				talk(313);
-			else if (pickedObject == kVerbTalk && fl == 50)
-				talk(314);
-			else if (roomNumber == 62)
-				room_62(fl);
-			else if (roomNumber == 63)
-				room_63(fl);
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 2) {
-			if (pickedObject == kVerbLook && fl == 50)
-				talk(308);
-			else if (pickedObject == kVerbOpen && fl == 50)
-				talk(310);
-			else if (pickedObject == kVerbClose && fl == 50)
-				talk(311);
-			else if (pickedObject == kVerbMove && fl == 50)
-				talk(312);
-			else if (pickedObject == kVerbPick && fl == 50)
-				talk(313);
-			else if (pickedObject == kVerbTalk && fl == 50)
-				talk(314);
-			// Note: the original check was strcmp(num_room, "18.alg")
-			else if (pickedObject == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
-				talk(315);
-			else if (pickedObject == 13 && fl == 50)
-				talk(156);
-			else if (pickedObject == 20 && fl == 50)
-				talk(163);
-			else if (roomNumber == 1)
-				room_1(fl);
-			else if (roomNumber == 3)
-				room_3(fl);
-			else if (roomNumber == 4)
-				room_4(fl);
-			else if (roomNumber == 5)
-				room_5(fl);
-			else if (roomNumber == 6)
-				room_6(fl);
-			else if (roomNumber == 7)
-				room_7(fl);
-			else if (roomNumber == 8)
-				room_8(fl);
-			else if (roomNumber == 9)
-				room_9(fl);
-			else if (roomNumber == 12)
-				room_12(fl);
-			else if (roomNumber == 14)
-				room_14(fl);
-			else if (roomNumber == 15)
-				room_15(fl);
-			else if (roomNumber == 16)
-				room_16(fl);
-			else if (roomNumber == 17)
-				room_17(fl);
-			else if (roomNumber == 18)
-				room_18(fl);
-			else if (roomNumber == 19)
-				room_19(fl);
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 3) {
-			if (pickedObject == kVerbLook && fl == 50)
-				talk(309);
-			else if (pickedObject == kVerbOpen && fl == 50)
-				talk(310);
-			else if (pickedObject == kVerbClose && fl == 50)
-				talk(311);
-			else if (pickedObject == kVerbMove && fl == 50)
-				talk(312);
-			else if (pickedObject == kVerbPick && fl == 50)
-				talk(313);
-			else if (pickedObject == kVerbTalk && fl == 50)
-				talk(314);
-			else if (roomNumber == 13) {
-				if (room_13(fl))
-					return true;
-			} else
-				hasAnswer = 0;
-		} else if (num_ejec == 4) {
-			if (roomNumber == 28)
-				talk(178);
-			else if (pickedObject == kVerbLook && fl == 50)
-				talk(309);
-			else if (pickedObject == kVerbOpen && fl == 50)
-				talk(310);
-			else if (pickedObject == kVerbClose && fl == 50)
-				talk(311);
-			else if (pickedObject == kVerbMove && fl == 50)
-				talk(312);
-			else if (pickedObject == kVerbPick && fl == 50)
-				talk(313);
-			else if (pickedObject == kVerbTalk && fl == 50)
-				talk(314);
-			else if (pickedObject == 8 && fl == 50 && flags[18] == 0)
-				talk(481);
-			else if (pickedObject == 9 && fl == 50)
-				talk(484);
-			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
-				talk(487);
-			else if (pickedObject == 20 && fl == 50)
-				talk(487);
-			else if (roomNumber == 21) {
-				if (room_21(fl))
-					return true;
-			} else if (roomNumber == 22)
-				room_22(fl);
-			else if (roomNumber == 23)
-				room_23(fl);
-			else if (roomNumber == 24)
-				room_24(fl);
-			else if (roomNumber == 26)
-				room_26(fl);
-			else if (roomNumber == 27)
-				room_27(fl);
-			else if (roomNumber == 29)
-				room_29(fl);
-			else if (roomNumber == 30)
-				room_30(fl);
-			else if (roomNumber == 31)
-				room_31(fl);
-			else if (roomNumber == 34)
-				room_34(fl);
-			else if (roomNumber == 35)
-				room_35(fl);
-			else if (roomNumber == 44)
-				room_44(fl);
-			else
-				hasAnswer = 0;
-		} else if (num_ejec == 5) {
-			if (pickedObject == kVerbLook && fl == 50)
-				talk("Cuanto mas me miro, mas me gusto", "54.als");
-			else if (pickedObject == kVerbOpen && fl == 50)
-				talk("y luego como me cierro", "19.als");
-			else if (pickedObject == kVerbClose && fl == 50)
-				talk("Tendre que abrirme primero no", "19.als");
-			else if (pickedObject == kVerbMove && fl == 50)
-				talk("Estoy bien donde estoy", "19.als");
-			else if (pickedObject == kVerbPick && fl == 50)
-				talk("Ya me tengo", "11.als");
-			else if (pickedObject == kVerbTalk && fl == 50)
-				talk("hola yo", "16.als");
-			else if (pickedObject == 20 && fl == 50)
-				talk(487);
-			else if (roomNumber == 49)
-				room_49(fl);
-			else if (roomNumber == 53)
-				room_53(fl);
-			else if (roomNumber == 54)
-				room_54(fl);
-			else if (roomNumber == 55)
-				room_55(fl);
-			else if (roomNumber == 56) {
-				if (room_56(fl))
-					return true;
-			} else
-				hasAnswer = 0;
-		} else if (num_ejec == 6) {
-			if (pickedObject == kVerbLook && fl == 50 && flags[0] == 1)
-				talk(308);
-			else if (pickedObject == kVerbLook && fl == 50 && flags[0] == 0)
-				talk(310 );
-			else if (pickedObject == kVerbOpen && fl == 50)
-				talk(310 );
-			else if (pickedObject == kVerbClose && fl == 50)
-				talk(311 );
-			else if (pickedObject == kVerbMove && fl == 50)
-				talk(312 );
-			else if (pickedObject == kVerbPick && fl == 50)
-				talk(313 );
-			else if (pickedObject == kVerbTalk && fl == 50)
-				talk(314 );
-			else if (roomNumber == 102)
-				room_pendulum(fl);
-			else if (roomNumber == 58)
-				room_58(fl);
-			else if (roomNumber == 59)
-				room_59(fl);
-			else if (roomNumber == 60) {
-				if (room_60(fl))
-					return true;
-			} else if (roomNumber == 61)
-				room_61(fl);
-			else
-				hasAnswer = 0;
-		}
-	}
-	if (hasAnswer == 0 && hasName == 1)
-		room_0();
-	else if (hasAnswer == 0 && menuScreen == 1)
-		room_0();
-
-	return false;
-}
-
 void DrasculaEngine::setCursorTable() {
 	int cursorPos[8];
 
@@ -3814,114 +3373,6 @@ bucle_opc:
 		loadAndDecompressPic("99.alg", backSurface, 1);
 	if (num_ejec != 5)
 		withoutVerb();
-}
-
-void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_pantalla, int game) {
-	int pos_texto[6];
-	int y_de_signos, y_de_letra, x_de_letra = 0, h, length;
-	length = strlen(said);
-
-	for (h = 0; h < length; h++) {
-		if (game == 1) {
-			y_de_letra = Y_ABC_OPC_1;
-			y_de_signos = Y_SIGNOS_OPC_1;
-		} else if (game == 3) {
-			y_de_letra = Y_ABC_OPC_3;
-			y_de_signos = Y_SIGNOS_OPC_3;
-		} else {
-			y_de_letra = Y_ABC_OPC_2;
-			y_de_signos = Y_SIGNOS_OPC_2;
-		}
-
-		int c = toupper(said[h]);
-
-		if (c == '\265') x_de_letra = X_A_OPC;
-		else if (c == '\267') x_de_letra = X_A_OPC;
-		else if (c == '\266') x_de_letra = X_A_OPC;
-		else if (c == '\200') x_de_letra = X_A_OPC + 2 * 7;	// C
-		else if (c == '\207') x_de_letra = X_A_OPC + 2 * 7;	// C
-		else if (c == '\220') x_de_letra = X_A_OPC + 4 * 7;	// E
-		else if (c == '\324') x_de_letra = X_A_OPC + 4 * 7;	// E
-		else if (c == '\322') x_de_letra = X_A_OPC + 4 * 7;	// E
-		else if (c == '\326') x_de_letra = X_A_OPC + 8 * 7;	// I
-		else if (c == '\336') x_de_letra = X_A_OPC + 8 * 7;	// I
-		else if (c == '\327') x_de_letra = X_A_OPC + 8 * 7;	// I
-		else if (c == '\047') x_de_letra = X_GN_OPC;
-		else if (c == '\340') x_de_letra = X_O_OPC;
-		else if (c == '\342') x_de_letra = X_O_OPC;
-		else if (c == '\343') x_de_letra = X_O_OPC;
-		else if (c == '\353') x_de_letra = X_O_OPC + 6 * 7;	// U
-		else if (c == '\352') x_de_letra = X_O_OPC + 6 * 7;	// U
-		else if (c == '\351') x_de_letra = X_O_OPC + 6 * 7;	// U
-		else if (c >= 'A' && c <= 'N')
-			x_de_letra = X_A_OPC + (c - 'A') * 7;
-		else if (c >= 'O' && c <= 'Z')
-			x_de_letra = X_O_OPC + (c - 'O') * 7;
-		else if (c == ' ')
-			x_de_letra = SPACE_OPC;
-		else {
-			y_de_letra = y_de_signos;
-			if (c == '.')
-				x_de_letra = X_DOT_OPC;
-			else if (c == ',')
-				x_de_letra = X_COMA_OPC;
-			else if (c == '-')
-				x_de_letra = X_HYPHEN_OPC;
-			else if (c == '?')
-				x_de_letra = X_CIERRA_INTERROGACION_OPC;
-			else if (c == 0xa8)
-				x_de_letra = X_ABRE_INTERROGACION_OPC;
-//			else if (c == '\'') // FIXME
-//				x_de_letra = SPACE; // space for now
-			else if (c == '"')
-				x_de_letra = X_COMILLAS_OPC;
-			else if (c == '!')
-				x_de_letra = X_CIERRA_INTERROGACION_OPC;
-			else if (c == 0xad)
-				x_de_letra = X_ABRE_EXCLAMACION_OPC;
-			else if (c == ';')
-				x_de_letra = X_pointY_COMA_OPC;
-			else if (c == '>')
-				x_de_letra = X_GREATER_THAN_OPC;
-			else if (c == '<')
-				x_de_letra = X_LESSER_THAN_OPC;
-			else if (c == '$')
-				x_de_letra = X_DOLAR_OPC;
-			else if (c == '%')
-				x_de_letra = X_PERCENT_OPC;
-			else if (c == ':')
-				x_de_letra = X_DOS_PUNTOS_OPC;
-			else if (c == '&')
-				x_de_letra = X_AND_OPC;
-			else if (c == '/')
-				x_de_letra = X_BARRA_OPC;
-			else if (c == '(')
-				x_de_letra = X_BRACKET_OPEN_OPC;
-			else if (c == ')')
-				x_de_letra = X_BRACKET_CLOSE_OPC;
-			else if (c == '*')
-				x_de_letra = X_ASTERISCO_OPC;
-			else if (c == '+')
-				x_de_letra = X_PLUS_OPC;
-			else if (c >= '1' && c <= '9')
-				x_de_letra = X_N1_OPC + (c - '1') * 7;
-			// "0" is mapped after "9" in the game's font
-			// (it's mapped before "1" normally)
-			else if (c == '0')
-				x_de_letra = X_N0_OPC;
-		}
-
-		pos_texto[0] = x_de_letra;
-		pos_texto[1] = y_de_letra;
-		pos_texto[2] = x_pantalla;
-		pos_texto[3] = y_pantalla;
-		pos_texto[4] = CHAR_WIDTH_OPC;
-		pos_texto[5] = CHAR_HEIGHT_OPC;
-
-		copyRectClip(pos_texto, backSurface, screenSurface);
-
-		x_pantalla = x_pantalla + CHAR_WIDTH_OPC;
-	}
 }
 
 void DrasculaEngine::response(int function) {

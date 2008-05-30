@@ -106,6 +106,13 @@ struct ItemLocation {
 	int y;
 };
 
+struct CharInfo {
+	int inChar;
+	int mappedChar;
+	int charType;	// 0 - letters, 1 - signs, 2 - accented
+};
+
+#define CHARMAP_SIZE 93
 #define NUM_SAVES     10
 #define NUM_FLAGS     50
 #define DIF_MASK       55
@@ -117,47 +124,6 @@ struct ItemLocation {
 #define CHAR_WIDTH     8
 #define CHAR_HEIGHT      6
 
-#define Y_ABC            158
-#define Y_ABC_ESP        149
-#define Y_SIGNOS         169
-#define Y_SIGNOS_ESP     160
-#define Y_ACENTOS        180
-
-// Normal font, each letter has a space of 9 from the next
-// Spanish has a special character, defined as "X_GN"
-// after N, so these are split from A-N and O-Z
-#define X_A              6
-// (...)
-#define X_N             123
-#define X_GN            132
-#define X_O             141
-// (...)
-#define X_Z             240
-#define X_DOT             6
-#define X_COMA           15
-#define X_HYPHEN          24
-#define X_CIERRA_INTERROGACION        33
-#define X_ABRE_INTERROGACION          42
-#define X_COMILLAS       51
-#define X_CIERRA_EXCLAMACION         60
-#define X_ABRE_EXCLAMACION              69
-#define X_pointY_COMA              78
-#define X_GREATER_THAN              87
-#define X_LESSER_THAN              96
-#define X_DOLAR             105
-#define X_PERCENT             114
-#define X_DOS_PUNTOS             123
-#define X_AND            132
-#define X_BARRA             141
-#define X_BRACKET_OPEN             150
-#define X_BRACKET_CLOSE             159
-#define X_ASTERISCO             168
-#define X_PLUS             177
-// Normal font, each number has a space of 9 from the next
-#define X_N1            186
-// (...)
-#define X_N0            267
-#define SPACE           250
 #define ALTO_TALK_HARE  25
 #define ANCHO_TALK_HARE 23
 #define PASO_HARE_X       8
@@ -168,47 +134,6 @@ struct ItemLocation {
 
 #define CHAR_WIDTH_OPC     6
 #define CHAR_HEIGHT_OPC      5
-#define Y_ABC_OPC_1          6
-#define Y_SIGNOS_OPC_1       15
-#define Y_ABC_OPC_2          31
-#define Y_SIGNOS_OPC_2       40
-#define Y_ABC_OPC_3          56
-#define Y_SIGNOS_OPC_3       65
-// Dialog font, each letter has a space of 7 from the next
-// Spanish has a special character, defined as "X_GN_OPC"
-// after N, so these are split from A-N and O-Z
-#define X_A_OPC              10
-// (...)
-#define X_N_OPC             101
-#define X_GN_OPC            108
-#define X_O_OPC             115
-// (...)
-#define X_Z_OPC             192
-#define SPACE_OPC           199
-#define X_DOT_OPC            10
-#define X_COMA_OPC           17
-#define X_HYPHEN_OPC          24
-#define X_CIERRA_INTERROGACION_OPC        31
-#define X_ABRE_INTERROGACION_OPC          38
-#define X_COMILLAS_OPC       45
-#define X_CIERRA_EXCLAMACION_OPC         52
-#define X_ABRE_EXCLAMACION_OPC              59
-#define X_pointY_COMA_OPC              66
-#define X_GREATER_THAN_OPC              73
-#define X_LESSER_THAN_OPC              80
-#define X_DOLAR_OPC             87
-#define X_PERCENT_OPC            94
-#define X_DOS_PUNTOS_OPC             101
-#define X_AND_OPC            108
-#define X_BARRA_OPC             115
-#define X_BRACKET_OPEN_OPC             122
-#define X_BRACKET_CLOSE_OPC             129
-#define X_ASTERISCO_OPC             136
-#define X_PLUS_OPC             143
-// Dialog font, each number has a space of 7 from the next
-#define X_N1_OPC             150
-// (...)
-#define X_N0_OPC            213
 #define NO_DOOR              99
 
 #define COMPLETE_PAL   256
@@ -755,11 +680,13 @@ extern const char *_textverbs[][6];
 extern const char *_textmisc[][2];
 extern const char *_textd1[][11];
 
-extern ItemLocation itemLocations[];
+extern const ItemLocation itemLocations[];
 extern int frame_x[20];
 extern const int x_pol[44], y_pol[44];
 extern const int x_barra[];
 extern const int x1d_menu[], y1d_menu[];
+
+extern const CharInfo charMap[];
 
 } // End of namespace Drascula
 
