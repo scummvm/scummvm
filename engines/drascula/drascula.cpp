@@ -712,7 +712,7 @@ bucles:
 			cont_sv = 0;
 	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
 		 loadAndDecompressPic("alcbar.alg", drawSurface1, 255);
-	} else if (cont_sv == 1500) {
+	} else if (cont_sv == 15000) {
 		screenSaver();
 		if (num_ejec != 3)
 			cont_sv = 0;
