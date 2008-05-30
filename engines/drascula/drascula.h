@@ -237,8 +237,13 @@ public:
 	void freeMemory();
 	void releaseGame();
 
-	void loadPic(const char *);
+	void loadPic(const char *NamePcc);
 	void decompressPic(byte *targetSurface, int colorCount);
+
+	void loadAndDecompressPic(const char *NamePcc, byte *targetSurface, int colorCount) {
+		loadPic(NamePcc);
+		decompressPic(targetSurface, colorCount);
+	}
 
 	typedef char DacPalette256[256][3];
 
@@ -502,6 +507,7 @@ public:
 	void talk_taber2(const char *, const char *);
 	void talk_bj_bed(int);
 	void talk_bj_bed(const char *said, const char * filename);
+	void talk_htel(int);
 	void talk_htel(const char *said, const char *filename);
 	void talk_bj(int);
 	void talk_bj(const char *, const char *);
@@ -511,10 +517,13 @@ public:
 	void talk_sinc(const char *, const char *, const char *);
 	void talk_drunk(int);
 	void talk_drunk(const char *said, const char *filename);
-	void talk_pianista(const char *said, const char *filename);
+	void talk_pianist(int);
+	void talk_pianist(const char *said, const char *filename);
 	void talk_igor_seated(int);
 	void talk_igor_seated(const char *, const char *);
+	void talk_wolf(int);
 	void talk_wolf(const char *said, const char *filename);
+	void talk_mus(int);
 	void talk_mus(const char *said, const char *filename);
 
 	void hiccup(int);

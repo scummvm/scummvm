@@ -201,50 +201,33 @@ int DrasculaEngine::go() {
 		hay_seleccion = 0;
 
 		if (num_ejec != 6) {
-			loadPic("95.alg");
-			decompressPic(tableSurface, 1);
+			loadAndDecompressPic("95.alg", tableSurface, 1);
 		}
 
 		if (num_ejec == 1) {
-			loadPic("96.alg");
-			decompressPic(frontSurface, COMPLETE_PAL);
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
-			loadPic("97.alg");
-			decompressPic(extraSurface, 1);
+			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadAndDecompressPic("99.alg", backSurface, 1);
+			loadAndDecompressPic("97.alg", extraSurface, 1);
 		} else if (num_ejec == 2) {
-			loadPic("96.alg");
-			decompressPic(frontSurface, COMPLETE_PAL);
-			loadPic("pts.alg");
-			decompressPic(drawSurface2, 1);
+			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadAndDecompressPic("pts.alg", drawSurface2, 1);
 		} else if (num_ejec == 3) {
-			loadPic("aux13.alg");
-			decompressPic(drawSurface1, COMPLETE_PAL);
-			loadPic("96.alg");
-			decompressPic(frontSurface, 1);
-			loadPic("97.alg");
-			decompressPic(extraSurface, 1);
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
+			loadAndDecompressPic("aux13.alg", drawSurface1, COMPLETE_PAL);
+			loadAndDecompressPic("96.alg", frontSurface, 1);
+			loadAndDecompressPic("97.alg", extraSurface, 1);
+			loadAndDecompressPic("99.alg", backSurface, 1);
 		} else if (num_ejec == 4) {
-			loadPic("96.alg");
-			decompressPic(frontSurface, COMPLETE_PAL);
+			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
 			if (hay_que_load == 0)
 				animation_rayo();
-			loadPic("96.alg");
-			decompressPic(frontSurface, 1);
+			loadAndDecompressPic("96.alg", frontSurface, 1);
 			clearRoom();
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
-			loadPic("97.alg");
-			decompressPic(extraSurface, 1);
+			loadAndDecompressPic("99.alg", backSurface, 1);
+			loadAndDecompressPic("97.alg", extraSurface, 1);
 		} else if (num_ejec == 5) {
-			loadPic("96.alg");
-			decompressPic(frontSurface, COMPLETE_PAL);
-			loadPic("97.alg");
-			decompressPic(extraSurface, 1);
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
+			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadAndDecompressPic("97.alg", extraSurface, 1);
+			loadAndDecompressPic("99.alg", backSurface, 1);
 		} else if (num_ejec == 6) {
 			x_igor = 105, y_igor = 85, sentido_igor = 1;
 			x_dr = 62, y_dr = 99, sentido_dr = 1;
@@ -253,15 +236,10 @@ int DrasculaEngine::go() {
 
 			pendulumSurface = drawSurface3;
 
-			loadPic("96.alg");
-			decompressPic(frontSurface, COMPLETE_PAL);
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
-			loadPic("97.alg");
-			decompressPic(extraSurface, 1);
-
-			loadPic("95.alg");
-			decompressPic(tableSurface, 1);
+			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadAndDecompressPic("99.alg", backSurface, 1);
+			loadAndDecompressPic("97.alg", extraSurface, 1);
+			loadAndDecompressPic("95.alg", tableSurface, 1);
 		}
 		memset(iconName, 0, sizeof(iconName));
 
@@ -537,8 +515,7 @@ bool DrasculaEngine::escoba() {
 			animation_1_1();
 
 		withoutVerb();
-		loadPic("2aux62.alg");
-		decompressPic(drawSurface2, 1);
+		loadAndDecompressPic("2aux62.alg", drawSurface2, 1);
 		sentido_hare = 1;
 		objExit = 104;
 		if (hay_que_load != 0) {
@@ -628,8 +605,7 @@ bool DrasculaEngine::escoba() {
 			if (!para_cargar(saveName)) {
 				return true;
 			}
-			loadPic("auxdr.alg");
-			decompressPic(drawSurface2, 1);
+			loadAndDecompressPic("auxdr.alg", drawSurface2, 1);
 		}
 	}
 
@@ -671,10 +647,9 @@ bucles:
 	if (button_dch == 1 && menuScreen == 1) {
 		delay(100);
 		if (num_ejec == 2)
-			loadPic(menuBackground);
+			loadAndDecompressPic(menuBackground, backSurface, 1);
 		else
-			loadPic("99.alg");
-		decompressPic(backSurface, 1);
+			loadAndDecompressPic("99.alg", backSurface, 1);
 		setPalette((byte *)&gamePalette);
 		menuScreen = 0;
 		updateEvents();
@@ -687,14 +662,13 @@ bucles:
 		if (sentido_hare == 2)
 			sentido_hare = 1;
 		if (num_ejec == 4)
-			loadPic("icons2.alg");
+			loadAndDecompressPic("icons2.alg", backSurface, 1);
 		else if (num_ejec == 5)
-			loadPic("icons3.alg");
+			loadAndDecompressPic("icons3.alg", backSurface, 1);
 		else if (num_ejec == 6)
-			loadPic("iconsp.alg");
+			loadAndDecompressPic("iconsp.alg", backSurface, 1);
 		else
-			loadPic("icons.alg");
-		decompressPic(backSurface, 1);
+			loadAndDecompressPic("icons.alg", backSurface, 1);
 		menuScreen = 1;
 		updateEvents();
 		withoutVerb();
@@ -782,8 +756,7 @@ bucles:
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
-		 loadPic("alcbar.alg");
-		 decompressPic(drawSurface1, 255);
+		 loadAndDecompressPic("alcbar.alg", drawSurface1, 255);
 	} else if (cont_sv == 1500) {
 		screenSaver();
 		if (num_ejec != 3)
@@ -797,20 +770,18 @@ bucles:
 
 void DrasculaEngine::pickObject(int objeto) {
 	if (num_ejec == 6)
-		loadPic("iconsp.alg");
+		loadAndDecompressPic("iconsp.alg", backSurface, 1);
 	else if (num_ejec == 4)
-		loadPic("icons2.alg");
+		loadAndDecompressPic("icons2.alg", backSurface, 1);
 	else if (num_ejec == 5)
-		loadPic("icons3.alg");
+		loadAndDecompressPic("icons3.alg", backSurface, 1);
 	else
-		loadPic("icons.alg");
-	decompressPic(backSurface, 1);
+		loadAndDecompressPic("icons.alg", backSurface, 1);
 	chooseObject(objeto);
 	if (num_ejec == 2)
-		loadPic(menuBackground);
+		loadAndDecompressPic(menuBackground, backSurface, 1);
 	else
-		loadPic("99.alg");
-	decompressPic(backSurface, 1);
+		loadAndDecompressPic("99.alg", backSurface, 1);
 }
 
 void DrasculaEngine::chooseObject(int objeto) {
@@ -950,12 +921,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		getLine(ald, buffer, size);
 		sscanf(buffer, "%s",pant4);
 
-		loadPic(pant2);
-		decompressPic(extraSurface, 1);
-		loadPic(pant1);
-		decompressPic(frontSurface, 1);
-		loadPic(pant4);
-		decompressPic(backSurface, 1);
+		loadAndDecompressPic(pant2, extraSurface, 1);
+		loadAndDecompressPic(pant1, frontSurface, 1);
+		loadAndDecompressPic(pant4, backSurface, 1);
 
 		strcpy(menuBackground, pant4);
 	}
@@ -1026,12 +994,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 			alto_hare = CHARACTER_HEIGHT;
 			ancho_hare = CHARACTER_WIDTH;
 			feetHeight = PIES_HARE;
-			loadPic("97.alg");
-			decompressPic(extraSurface, 1);
-			loadPic("96.alg");
-			decompressPic(frontSurface, 1);
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
+			loadAndDecompressPic("97.alg", extraSurface, 1);
+			loadAndDecompressPic("96.alg", frontSurface, 1);
+			loadAndDecompressPic("99.alg", backSurface, 1);
 
 			strcpy(menuBackground, "99.alg");
 		}
@@ -1049,13 +1014,11 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		}
 		characterMoved = 0;
 	}
-	loadPic(roomDisk);
-	decompressPic(drawSurface3, 1);
+	loadAndDecompressPic(roomDisk, drawSurface3, 1);
 
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm);
-	decompressPic(drawSurface1, HALF_PAL);
+	loadAndDecompressPic(rm, drawSurface1, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
@@ -1520,8 +1483,7 @@ bool DrasculaEngine::saves() {
 		sav->readLine(names[n], 23);
 	delete sav;
 
-	loadPic("savescr.alg");
-	decompressPic(drawSurface1, HALF_PAL);
+	loadAndDecompressPic("savescr.alg", drawSurface1, HALF_PAL);
 
 	color_abc(kColorLightGreen);
 
@@ -1622,8 +1584,7 @@ bool DrasculaEngine::saves() {
 	clearRoom();
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm);
-	decompressPic(drawSurface1, HALF_PAL);
+	loadAndDecompressPic(rm, drawSurface1, HALF_PAL);
 	hay_seleccion = 0;
 
 	return true;
@@ -1795,8 +1756,7 @@ void DrasculaEngine::screenSaver() {
 
 	clearRoom();
 
-	loadPic("sv.alg");
-	decompressPic(drawSurface1, HALF_PAL);
+	loadAndDecompressPic("sv.alg", drawSurface1, HALF_PAL);
 
 	// inicio_ghost();
 	copia = (byte *)malloc(64000);
@@ -1901,8 +1861,7 @@ void DrasculaEngine::screenSaver() {
 
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm);
-	decompressPic(drawSurface1, HALF_PAL);
+	loadAndDecompressPic(rm, drawSurface1, HALF_PAL);
 }
 
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
@@ -3804,8 +3763,7 @@ void DrasculaEngine::converse(const char *nom_fich) {
 		if (phrase4[h] == (char)0xa7)
 			phrase4[h] = ' ';
 
-	loadPic("car.alg");
-	decompressPic(backSurface, 1);
+	loadAndDecompressPic("car.alg", backSurface, 1);
 	// TODO code here should limit y position for mouse in dialog menu,
 	// but we can't implement this due lack backend functionality
 	// from 1(top) to 31
@@ -3906,10 +3864,9 @@ bucle_opc:
 		goto bucle_opc;
 
 	if (num_ejec == 2)
-		loadPic(menuBackground);
+		loadAndDecompressPic(menuBackground, backSurface, 1);
 	else
-		loadPic("99.alg");
-	decompressPic(backSurface, 1);
+		loadAndDecompressPic("99.alg", backSurface, 1);
 	if (num_ejec != 5)
 		withoutVerb();
 }
@@ -4445,14 +4402,10 @@ void DrasculaEngine::activatePendulum() {
 	flags[1] = 2;
 	hare_se_ve = 0;
 	roomNumber = 102;
-	loadPic("102.alg");
-	decompressPic(drawSurface1, HALF_PAL);
-	loadPic("an_p1.alg");
-	decompressPic(drawSurface3, 1);
-	loadPic("an_p2.alg");
-	decompressPic(extraSurface, 1);
-	loadPic("an_p3.alg");
-	decompressPic(frontSurface, 1);
+	loadAndDecompressPic("102.alg", drawSurface1, HALF_PAL);
+	loadAndDecompressPic("an_p1.alg", drawSurface3, 1);
+	loadAndDecompressPic("an_p2.alg", extraSurface, 1);
+	loadAndDecompressPic("an_p3.alg", frontSurface, 1);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 

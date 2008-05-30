@@ -621,7 +621,13 @@ bucless:
 	}
 }
 
-void DrasculaEngine::talk_pianista(const char *said, const char *filename) {
+void DrasculaEngine::talk_pianist(int index) {
+	char name[20];
+	sprintf(name, "P%i.als", index);
+	talk(_textp[_lang][index], name);
+}
+
+void DrasculaEngine::talk_pianist(const char *said, const char *filename) {
 	int x_talk[4] = { 97, 145, 193, 241 };
 	int face;
 	int length = strlen(said);
@@ -681,8 +687,7 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	int length = strlen(said);
 
 	if (num_ejec == 1) {
-		loadPic("an11y13.alg");
-		decompressPic(frontSurface, 1);
+		loadAndDecompressPic("an11y13.alg", frontSurface, 1);
 	}
 
 	flags[13] = 1;
@@ -738,8 +743,7 @@ bucless:
 
 	flags[13] = 0;
 	if (num_ejec == 1) {
-		loadPic("96.alg");
-		decompressPic(frontSurface, 1);
+		loadAndDecompressPic("96.alg", frontSurface, 1);
 	}
 
 	if (num_ejec == 1) {
@@ -955,6 +959,12 @@ bucless:
 	key = 0;
 }
 
+void DrasculaEngine::talk_wolf(int index) {
+	char name[20];
+	sprintf(name, "L%i.als", index);
+	talk_wolf(_textl[_lang][index], name);
+}
+
 void DrasculaEngine::talk_wolf(const char *said, const char *filename) {
 	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
 	int face;
@@ -1000,6 +1010,12 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+}
+
+void DrasculaEngine::talk_mus(int index) {
+	char name[20];
+	sprintf(name, "E%i.als", index);
+	talk_mus(_texte[_lang][index], name);
 }
 
 void DrasculaEngine::talk_mus(const char *said, const char *filename) {
@@ -1259,6 +1275,12 @@ bucless:
 	}
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+}
+
+void DrasculaEngine::talk_htel(int index) {
+	char name[20];
+	sprintf(name, "%i.als", index);
+	talk_htel(_text[_lang][index], name);
 }
 
 void DrasculaEngine::talk_htel(const char *said, const char *filename) {

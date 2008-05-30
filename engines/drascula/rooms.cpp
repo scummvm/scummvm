@@ -668,28 +668,17 @@ void DrasculaEngine::room_18(int fl) {
 		pickObject(12);
 		visible[2] = 0;
 		flags[28] = 1;
-	} else if (pickedObject == kVerbLook && fl == 182)
+	} else if (pickedObject == kVerbLook && fl == 182) {
 		talk(154);
-	else if (pickedObject == 8 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(349);
-	else if (pickedObject == 13 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(349);
-	else if (pickedObject == 15 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(349);
-	else if (pickedObject == 16 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(349);
-	else if (pickedObject == 17 && fl == 55 && flags[38] == 0 && flags[33] == 1)
-		talk(349);
-	else if (pickedObject == 8 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animation_24_2();
-	else if (pickedObject == 13 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animation_24_2();
-	else if (pickedObject == 15 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animation_24_2();
-	else if (pickedObject == 16 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animation_24_2();
-	else if (pickedObject == 17 && fl == 55 && flags[38] == 1 && flags[33] == 1)
-		animation_24_2();
+	} else if (fl == 55 && flags[38] == 0 && flags[33] == 0) {
+		if (pickedObject == 8 || pickedObject == 13 || pickedObject == 15 ||
+			pickedObject == 16 || pickedObject == 17)
+			talk(349);
+	} else if (fl == 55 && flags[38] == 1 && flags[33] == 1) {
+		if (pickedObject == 8 || pickedObject == 13 || pickedObject == 15 ||
+			pickedObject == 16 || pickedObject == 17)
+			animation_24_2();
+	}
 	else if (pickedObject == 11 && fl == 50 && flags[22] == 0) {
 		sentido_hare = 3;
 		updateRoom();
@@ -1065,10 +1054,10 @@ void DrasculaEngine::room_54(int fl) {
 		talk(288);
 		flags[12] = 1;
 		pause(10);
-		talk_mus(_texte[_lang][1], "E1.als");
+		talk_mus(1);
 		talk(289);
-		talk_mus(_texte[_lang][2], "E2.als");
-		talk_mus(_texte[_lang][3], "E3.als");
+		talk_mus(2);
+		talk_mus(3);
 		converse("op_10.cal");
 		flags[12] = 0;
 		flags[14] = 1;
@@ -1077,7 +1066,7 @@ void DrasculaEngine::room_54(int fl) {
 	else if (pickedObject == kVerbPick && fl == 9999 && flags[13] == 0) {
 		pickObject(8);
 		flags[13] = 1;
-		talk_mus(_texte[_lang][10], "e10.als");
+		talk_mus(10);
 		updateData();
 	} else if (pickedObject == kVerbOpen && fl == 119)
 		talk(125);
@@ -1169,39 +1158,31 @@ void DrasculaEngine::room_59(int fl) {
 			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 			hare_se_ve = 1;
 			clearRoom();
-			loadPic("tlef0.alg");
-			decompressPic(drawSurface1, COMPLETE_PAL);
-			loadPic("tlef1.alg");
-			decompressPic(drawSurface3, 1);
-			loadPic("tlef2.alg");
-			decompressPic(frontSurface, 1);
-			loadPic("tlef3.alg");
-			decompressPic(backSurface, 1);
-			talk_htel(_text[_lang][240], "240.als");
+			loadAndDecompressPic("tlef0.alg", drawSurface1, COMPLETE_PAL);
+			loadAndDecompressPic("tlef1.alg", drawSurface3, 1);
+			loadAndDecompressPic("tlef2.alg", frontSurface, 1);
+			loadAndDecompressPic("tlef3.alg", backSurface, 1);
+			talk_htel(240);
 
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][58], "VB58.als");
-			talk_htel(_text[_lang][241], "241.als");
+			talk_htel(241);
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][59], "VB59.als");
-			talk_htel(_text[_lang][242], "242.als");
+			talk_htel(242);
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][60], "VB60.als");
-			talk_htel(_text[_lang][196], "196.als");
+			talk_htel(196);
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][61],"VB61.als");
-			talk_htel(_text[_lang][244], "244.als");
+			talk_htel(244);
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][62], "VB62.als");
 			clearRoom();
-			loadPic("aux59.alg");
-			decompressPic(drawSurface3, 1);
-			loadPic("96.alg");
-			decompressPic(frontSurface, COMPLETE_PAL);
-			loadPic("99.alg");
-			decompressPic(backSurface, 1);
-			loadPic("59.alg");
-			decompressPic(drawSurface1, HALF_PAL);
+			loadAndDecompressPic("aux59.alg", drawSurface3, 1);
+			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadAndDecompressPic("99.alg", backSurface, 1);
+			loadAndDecompressPic("59.alg", drawSurface1, HALF_PAL);
 			sentido_hare = 3;
 			talk(245);
 			withoutVerb();
