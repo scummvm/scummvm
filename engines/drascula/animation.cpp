@@ -838,15 +838,15 @@ void DrasculaEngine::animation_4_2() {
 	pause(8);
 
 	clearRoom();
-	loadPic("blind1.alg");
+	loadPic("ciego1.alg"); // ciego = blind
 	decompressPic(dir_dibujo1, HALF_PAL);
-	loadPic("blind2.alg");
+	loadPic("ciego2.alg");
 	decompressPic(dir_dibujo3, 1);
-	loadPic("blind3.alg");
+	loadPic("ciego3.alg");
 	decompressPic(dir_hare_dch, 1);
-	loadPic("blind4.alg");
+	loadPic("ciego4.alg");
 	decompressPic(dir_hare_fondo, 1);
-	loadPic("blind5.alg");
+	loadPic("ciego5.alg");
 	decompressPic(dir_hare_frente, 1);
 
 	if (_lang == kSpanish)
@@ -3261,15 +3261,15 @@ void DrasculaEngine::animation_6_2() {
 		dir_texto = dir_hare_frente;
 
 	clearRoom();
-	loadPic("blind1.alg");
+	loadPic("ciego1.alg"); // ciego = blind
 	decompressPic(dir_dibujo1, HALF_PAL);
-	loadPic("blind2.alg");
+	loadPic("ciego2.alg");
 	decompressPic(dir_dibujo3, 1);
-	loadPic("blind3.alg");
+	loadPic("ciego3.alg");
 	decompressPic(dir_hare_dch, 1);
-	loadPic("blind4.alg");
+	loadPic("ciego4.alg");
 	decompressPic(dir_hare_fondo, 1);
-	loadPic("blind5.alg");
+	loadPic("ciego5.alg");
 	decompressPic(dir_hare_frente, 1);
 
 	copyBackground(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -3319,15 +3319,15 @@ void DrasculaEngine::animation_33_2() {
 	pause(8);
 
 	clearRoom();
-	loadPic("blind1.alg");
+	loadPic("ciego1.alg"); // ciego = blind
 	decompressPic(dir_dibujo1, HALF_PAL);
-	loadPic("blind2.alg");
+	loadPic("ciego2.alg");
 	decompressPic(dir_dibujo3, 1);
-	loadPic("blind3.alg");
+	loadPic("ciego3.alg");
 	decompressPic(dir_hare_dch, 1);
-	loadPic("blind4.alg");
+	loadPic("ciego4.alg");
 	decompressPic(dir_hare_fondo, 1);
-	loadPic("blind5.alg");
+	loadPic("ciego5.alg");
 	decompressPic(dir_hare_frente, 1);
 
 	if (_lang == kSpanish)
