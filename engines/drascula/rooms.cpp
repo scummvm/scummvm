@@ -832,16 +832,16 @@ void DrasculaEngine::room_26(int fl) {
 		flags[12] = 1;
 		closeDoor(2, 0);
 		sentido_hare = 2;
-		talk_igor_door(_texti[_lang][27], "I27.als");
+		talk_igor_door(27);
 		flags[30] = 1;
-		talk_igor_door(_texti[_lang][28], "I28.als");
+		talk_igor_door(28);
 		lleva_al_hare(153, 180);
 	} else if (pickedObject == kVerbPick && fl == 143 && flags[18] == 0) {
 		lleva_al_hare(260, 180);
 		copyBackground(80, 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 		updateScreen(199, 94, 199, 94, 38, 27, screenSurface);
 		pause(3);
-		talk_igor_wig(_texti[_lang][25], "I25.als");
+		talk_igor_wig(25);
 		lleva_al_hare(153, 180);
 	} else if (pickedObject == kVerbTalk && fl == 51)
 		animation_1_4();

@@ -284,6 +284,12 @@ bucless:
 	}
 }
 
+void DrasculaEngine::talk_igor_front(int index) {
+	char name[20];
+	sprintf(name, "I%i.als", index);
+	talk_igor_front(_texti[_lang][index], name);
+}
+
 void DrasculaEngine::talk_igor_front(const char *said, const char *filename) {
 	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
 	int face;
@@ -1447,6 +1453,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
+void DrasculaEngine::talk_igor_door(int index) {
+	char name[20];
+	sprintf(name, "I%i.als", index);
+	talk_igor_door(_texti[_lang][index], name);
+}
+
 void DrasculaEngine::talk_igor_door(const char *said, const char *filename) {
 	int length = strlen(said);
 
@@ -1478,6 +1490,12 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+}
+
+void DrasculaEngine::talk_igor_seated(int index) {
+	char name[20];
+	sprintf(name, "I%i.als", index);
+	talk_igor_seated(_texti[_lang][index], name);
 }
 
 void DrasculaEngine::talk_igor_seated(const char *said, const char *filename) {
@@ -1525,6 +1543,12 @@ bucless:
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+}
+
+void DrasculaEngine::talk_igor_wig(int index) {
+	char name[20];
+	sprintf(name, "I%i.als", index);
+	talk_igor_wig(_texti[_lang][index], name);
 }
 
 void DrasculaEngine::talk_igor_wig(const char *said, const char *filename) {

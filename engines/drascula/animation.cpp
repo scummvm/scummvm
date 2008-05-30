@@ -378,7 +378,7 @@ void DrasculaEngine::animation_1_1() {
 		pause(18);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor_front(_texti[_lang][6], "I6.als");
+		talk_igor_front(6);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		fadeToBlack(0);
@@ -1533,26 +1533,26 @@ void DrasculaEngine::animation_rayo() {
 }
 
 void DrasculaEngine::animation_2_4() {
-	talk_igor_seated(_texti[_lang][16], "I16.als");
+	talk_igor_seated(16);
 	talk(278);
-	talk_igor_seated(_texti[_lang][17], "I17.als");
+	talk_igor_seated(17);
 	talk(279);
-	talk_igor_seated(_texti[_lang][18], "I18.als");
+	talk_igor_seated(18);
 }
 
 void DrasculaEngine::animation_3_4() {
-	talk_igor_seated(_texti[_lang][19], "I19.als");
-	talk_igor_seated(_texti[_lang][20], "I20.als");
+	talk_igor_seated(19);
+	talk_igor_seated(20);
 	talk(281);
 }
 
 void DrasculaEngine::animation_4_4() {
 	talk(287);
-	talk_igor_seated(_texti[_lang][21], "I21.als");
+	talk_igor_seated(21);
 	talk(284);
-	talk_igor_seated(_texti[_lang][22], "I22.als");
+	talk_igor_seated(22);
 	talk(285);
-	talk_igor_seated(_texti[_lang][23], "I23.als");
+	talk_igor_seated(23);
 }
 
 void DrasculaEngine::animation_7_4() {
@@ -2032,7 +2032,7 @@ void DrasculaEngine::animation_1_6() {
 	talk_igor_dch(11);
 	sentido_igor = 3;
 	talk_dr_dch(33);
-	talk_igor_front(_texti[_lang][12], "I12.als");
+	talk_igor_front(12);
 	talk_dr_dch(34);
 	sentido_dr = 0;
 	talk_dr_izq(35);
@@ -2800,9 +2800,9 @@ void DrasculaEngine::animation_1_4() {
 		flags[18] = 1;
 		flags[20] = 1;
 
-		talk_igor_seated(_texti[_lang][13], "I13.als");
-		talk_igor_seated(_texti[_lang][14], "I14.als");
-		talk_igor_seated(_texti[_lang][15], "I15.als");
+		talk_igor_seated(13);
+		talk_igor_seated(14);
+		talk_igor_seated(15);
 		flags[21] = 1;
 	} else {
 		talk(356);
@@ -2825,7 +2825,7 @@ void DrasculaEngine::animation_1_4() {
 
 		talk(276);
 		pause(14);
-		talk_igor_seated(_texti[_lang][6], "I6.als");
+		talk_igor_seated(6);
 	}
 
 	converse("op_6.cal");
@@ -2854,8 +2854,8 @@ void DrasculaEngine::animation_5_4(){
 	decompressPic(frontSurface, 1);
 	x_igor = 100;
 	y_igor = 65;
-	talk_igor_front(_texti[_lang][29], "I29.ALS");
-	talk_igor_front(_texti[_lang][30], "I30.als");
+	talk_igor_front(29);
+	talk_igor_front(30);
 	loadPic("96.alg");
 	decompressPic(frontSurface, 1);
 	loadPic("99.alg");
@@ -2883,7 +2883,7 @@ void DrasculaEngine::animation_6_4() {
 	placeIgor();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	pause(40);
-	talk_igor_front(_texti[_lang][26], "I26.als");
+	talk_igor_front(26);
 	roomNumber = prevRoom;
 	clearRoom();
 	loadPic("96.alg");

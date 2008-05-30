@@ -488,10 +488,13 @@ public:
 	void talk_dr_izq(int);
 	void talk_dr_izq(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
+	void talk_igor_front(int);
 	void talk_igor_front(const char *, const char *);
 	void talk_tabernero(int);
 	void talk_tabernero(const char *said, const char *filename);
+	void talk_igor_door(int);
 	void talk_igor_door(const char *said, const char *filename);
+	void talk_igor_wig(int);
 	void talk_igor_wig(const char *said, const char *filename);
 	void talk_pen(const char *, const char *);
 	void talk_pen2(const char *, const char *);
@@ -508,6 +511,7 @@ public:
 	void talk_sinc(const char *, const char *, const char *);
 	void talk_drunk(const char *said, const char *filename);
 	void talk_pianista(const char *said, const char *filename);
+	void talk_igor_seated(int);
 	void talk_igor_seated(const char *, const char *);
 	void talk_wolf(const char *said, const char *filename);
 	void talk_mus(const char *said, const char *filename);
