@@ -238,7 +238,7 @@ public:
 	void releaseGame();
 
 	void loadPic(const char *);
-	void decompressPic(byte *dir_escritura, int plt);
+	void decompressPic(byte *targetSurface, int colorCount);
 
 	typedef char DacPalette256[256][3];
 
@@ -290,7 +290,7 @@ public:
 	int objectNum[40], visible[40], isDoor[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
 	int inventoryObjects[43];
-	char targetScreen[40][20];
+	char targetSurface[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
@@ -509,6 +509,7 @@ public:
 	void talk(int);
 	void talk(const char *, const char *);
 	void talk_sinc(const char *, const char *, const char *);
+	void talk_drunk(int);
 	void talk_drunk(const char *said, const char *filename);
 	void talk_pianista(const char *said, const char *filename);
 	void talk_igor_seated(int);

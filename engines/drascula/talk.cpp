@@ -669,6 +669,12 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
+void DrasculaEngine::talk_drunk(int index) {
+	char name[20];
+	sprintf(name, "B%i.als", index);
+	talk_drunk(_textb[_lang][index], name);
+}
+
 void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	int x_talk[8] = { 1, 21, 41, 61, 81, 101, 121, 141 };
 	int face;

@@ -892,17 +892,17 @@ void DrasculaEngine::animation_14_2() {
 }
 
 void DrasculaEngine::animation_15_2() {
-	talk_drunk(_textb[_lang][8], "B8.als");
+	talk_drunk(8);
 	pause(7);
-	talk_drunk(_textb[_lang][9], "B9.als");
-	talk_drunk(_textb[_lang][10], "B10.als");
-	talk_drunk(_textb[_lang][11], "B11.als");
+	talk_drunk(9);
+	talk_drunk(10);
+	talk_drunk(11);
 }
 
 void DrasculaEngine::animation_16_2() {
 	int l;
 
-	talk_drunk(_textb[_lang][12], "B12.als");
+	talk_drunk(12);
 	talk(371);
 
 	clearRoom();
@@ -1060,8 +1060,8 @@ asco:
 }
 
 void DrasculaEngine::animation_17_2() {
-	talk_drunk(_textb[_lang][13], "B13.als");
-	talk_drunk(_textb[_lang][14], "B14.als");
+	talk_drunk(13);
+	talk_drunk(14);
 	flags[40] = 1;
 }
 
@@ -2393,14 +2393,14 @@ void DrasculaEngine::animation_13_2() {
 
 	if (flags[41] == 0) {
 		talk(103);
-		talk_drunk(_textb[_lang][4], "B4.als");
+		talk_drunk(4);
 		flags[12] = 1;
 		talk(367);
-		talk_drunk(_textb[_lang][5], "B5.als");
+		talk_drunk(5);
 		flags[12] = 1;
 		talk(368);
-		talk_drunk(_textb[_lang][6], "B6.als");
-		talk_drunk(_textb[_lang][7], "B7.als");
+		talk_drunk(6);
+		talk_drunk(7);
 		flags[41] = 1;
 	}
 	converse("op_2.cal");

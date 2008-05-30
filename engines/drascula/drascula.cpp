@@ -357,10 +357,10 @@ void DrasculaEngine::loadPic(const char *NamePcc) {
 	file.close();
 }
 
-void DrasculaEngine::decompressPic(byte *dir_escritura, int plt) {
-	memcpy(dir_escritura, pcxBuffer, 64000);
+void DrasculaEngine::decompressPic(byte *targetSurface, int colorCount) {
+	memcpy(targetSurface, pcxBuffer, 64000);
 	free(pcxBuffer);
-	setRGB((byte *)cPal, plt);
+	setRGB((byte *)cPal, colorCount);
 }
 
 void DrasculaEngine::paleta_hare() {
@@ -988,7 +988,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		sscanf(buffer, "%d", &isDoor[l]);
 		if (isDoor[l] != 0) {
 			getLine(ald, buffer, size);
-			sscanf(buffer, "%s", targetScreen[l]);
+			sscanf(buffer, "%s", targetSurface[l]);
 			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &x_alakeva[l]);
 			getLine(ald, buffer, size);
@@ -1117,7 +1117,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	if (num_ejec == 2) {
 		soc = 0;
 		for (l = 0; l < 6; l++) {
-			soc = soc + ancho_hare;
+			soc += ancho_hare;
 			frame_x[l] = soc;
 		}
 	}
@@ -2647,7 +2647,7 @@ bool DrasculaEngine::exitRoom(int l) {
 					return true;
 				}
 				clearRoom();
-				strcpy(salgo, targetScreen[l]);
+				strcpy(salgo, targetSurface[l]);
 				strcat(salgo, ".ald");
 				hare_x = -1;
 				carga_escoba(salgo);
@@ -2681,7 +2681,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			delete ald;
 			ald = NULL;
-			strcpy(salgo, targetScreen[l]);
+			strcpy(salgo, targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
 			carga_escoba(salgo);
@@ -2699,7 +2699,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(salgo, targetScreen[l]);
+			strcpy(salgo, targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
 			carga_escoba(salgo);
@@ -2720,7 +2720,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			if (objectNum[l] == 108)
 				lleva_al_hare(171, 78);
 			clearRoom();
-			strcpy(salgo, targetScreen[l]);
+			strcpy(salgo, targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -2739,7 +2739,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			previousMusic = roomMusic;
 			hare_se_ve = 1;
 			clearRoom();
-			strcpy(salgo, targetScreen[l]);
+			strcpy(salgo, targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -2757,7 +2757,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(salgo, targetScreen[l]);
+			strcpy(salgo, targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x = -1;
 			carga_escoba(salgo);
@@ -4019,83 +4019,83 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 	}
 }
 
-void DrasculaEngine::response(int funcion) {
+void DrasculaEngine::response(int function) {
 	if (num_ejec == 1) {
-		if (funcion == 10)
-			talk_drunk(_textb[_lang][1], "B1.als");
-		else if (funcion == 11)
-			talk_drunk(_textb[_lang][2], "B2.als");
-		else if (funcion == 12)
-			talk_drunk(_textb[_lang][3], "B3.als");
+		if (function == 10)
+			talk_drunk(1);
+		else if (function == 11)
+			talk_drunk(2);
+		else if (function == 12)
+			talk_drunk(3);
 	} else if (num_ejec == 2) {
-		if (funcion == 8)
+		if (function == 8)
 			animation_8_2();
-		else if (funcion == 9)
+		else if (function == 9)
 			animation_9_2();
-		else if (funcion == 10)
+		else if (function == 10)
 			animation_10_2();
-		else if (funcion == 15)
+		else if (function == 15)
 			animation_15_2();
-		else if (funcion == 16)
+		else if (function == 16)
 			animation_16_2();
-		else if (funcion == 17)
+		else if (function == 17)
 			animation_17_2();
-		else if (funcion == 19)
+		else if (function == 19)
 			animation_19_2();
-		else if (funcion == 20)
+		else if (function == 20)
 			animation_20_2();
-		else if (funcion == 21)
+		else if (function == 21)
 			animation_21_2();
-		else if (funcion == 23)
+		else if (function == 23)
 			animation_23_2();
-		else if (funcion == 28)
+		else if (function == 28)
 			animation_28_2();
-		else if (funcion == 29)
+		else if (function == 29)
 			animation_29_2();
-		else if (funcion == 30)
+		else if (function == 30)
 			animation_30_2();
-		else if (funcion == 31)
+		else if (function == 31)
 			animation_31_2();
 	} else if (num_ejec == 4) {
-		if (funcion == 2)
+		if (function == 2)
 			animation_2_4();
-		else if (funcion == 3)
+		else if (function == 3)
 			animation_3_4();
-		else if (funcion == 4)
+		else if (function == 4)
 			animation_4_4();
 	} else if (num_ejec == 5) {
-		if (funcion == 2)
+		if (function == 2)
 			animation_2_5();
-		else if (funcion == 3)
+		else if (function == 3)
 			animation_3_5();
-		else if (funcion == 6)
+		else if (function == 6)
 			animation_6_5();
-		else if (funcion == 7)
+		else if (function == 7)
 			animation_7_5();
-		else if (funcion == 8)
+		else if (function == 8)
 			animation_8_5();
-		else if (funcion == 15)
+		else if (function == 15)
 			animation_15_5();
-		else if (funcion == 16)
+		else if (function == 16)
 			animation_16_5();
-		else if (funcion == 17)
+		else if (function == 17)
 			animation_17_5();
 	} else if (num_ejec == 6) {
-		if (funcion == 2)
+		if (function == 2)
 			animation_2_6();
-		else if (funcion == 3)
+		else if (function == 3)
 			animation_3_6();
-		else if (funcion == 4)
+		else if (function == 4)
 			animation_4_6();
-		else if (funcion == 11)
+		else if (function == 11)
 			animation_11_6();
-		else if (funcion == 12)
+		else if (function == 12)
 			animation_12_6();
-		else if (funcion == 13)
+		else if (function == 13)
 			animation_13_6();
-		else if (funcion == 14)
+		else if (function == 14)
 			animation_14_6();
-		else if (funcion == 15)
+		else if (function == 15)
 			animation_15_6();
 	}
 }
@@ -4299,11 +4299,7 @@ void DrasculaEngine::pon_vb() {
 }
 
 void DrasculaEngine::lleva_vb(int pointX) {
-	if (pointX < vb_x)
-		sentido_vb = 0;
-	else
-		sentido_vb = 1;
-
+	sentido_vb = (pointX < vb_x) ? 0 : 1;
 	vb_se_mueve = 1;
 
 	for (;;) {
