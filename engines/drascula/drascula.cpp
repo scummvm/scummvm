@@ -187,7 +187,7 @@ int DrasculaEngine::go() {
 			loadAndDecompressPic("97.alg", extraSurface, 1);
 			loadAndDecompressPic("99.alg", backSurface, 1);
 		} else if (currentChapter == 6) {
-			x_igor = 105, y_igor = 85, sentido_igor = 1;
+			igorX = 105, igorY = 85, sentido_igor = 1;
 			x_dr = 62, y_dr = 99, sentido_dr = 1;
 			frame_pen = 0;
 			flag_tv = 0;
@@ -1960,8 +1960,8 @@ void DrasculaEngine::placeIgor() {
 		else if (sentido_igor == 1)
 			pos_igor[1] = 76;
 	}
-	pos_igor[2] = x_igor;
-	pos_igor[3] = y_igor;
+	pos_igor[2] = igorX;
+	pos_igor[3] = igorY;
 	pos_igor[4] = 54;
 	pos_igor[5] = 61;
 

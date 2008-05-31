@@ -189,8 +189,8 @@ void DrasculaEngine::animation_1_1() {
 		x_dr = 129;
 		y_dr = 95;
 		sentido_igor = 1;
-		x_igor = 66;
-		y_igor = 97;
+		igorX = 66;
+		igorY = 97;
 
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
@@ -203,10 +203,10 @@ void DrasculaEngine::animation_1_1() {
 		placeIgor();
 		placeDrascula();
 		updateScreen();
-		talk_dr_izq(2);
+		talk_drascula(2);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(3);
+		talk_drascula(3);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		if (animate("lib.bin", 16))
@@ -260,14 +260,14 @@ void DrasculaEngine::animation_1_1() {
 		talk_igor_dch(9);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(9);
+		talk_drascula(9);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_igor_dch(10);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		playMusic(11);
-		talk_dr_izq(10);
+		talk_drascula(10);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		if (animate("rayo1.bin", 16))
@@ -306,7 +306,7 @@ void DrasculaEngine::animation_1_1() {
 		placeIgor();
 		placeDrascula();
 		updateScreen();
-		talk_dr_izq(12);
+		talk_drascula(12);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -338,26 +338,26 @@ void DrasculaEngine::animation_1_1() {
 		placeIgor();
 		placeDrascula();
 		updateScreen();
-		talk_dr_izq(14);
+		talk_drascula(14);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_igor_dch(3);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(15);
+		talk_drascula(15);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_igor_dch(4);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_izq(16);
+		talk_drascula(16);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_igor_dch(5);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_igor = 3;
-		talk_dr_izq(17);
+		talk_drascula(17);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(18);
@@ -1934,7 +1934,7 @@ void DrasculaEngine::animation_1_6() {
 	talk_igor_front(12);
 	talk_dr_dch(34);
 	sentido_dr = 0;
-	talk_dr_izq(35);
+	talk_drascula(35);
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;
@@ -2680,8 +2680,8 @@ void DrasculaEngine::animation_5_4(){
 	updateScreen();
 	openDoor(2, 0);
 	loadAndDecompressPic("auxigor.alg", frontSurface, 1);
-	x_igor = 100;
-	y_igor = 65;
+	igorX = 100;
+	igorY = 65;
 	talk_igor_front(29);
 	talk_igor_front(30);
 	loadAndDecompressPic("96.alg", frontSurface, 1);
@@ -2701,8 +2701,8 @@ void DrasculaEngine::animation_6_4() {
 	loadAndDecompressPic("auxigor.alg", frontSurface, 1);
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	update_26_pre();
-	x_igor = 104;
-	y_igor = 71;
+	igorX = 104;
+	igorY = 71;
 	placeIgor();
 	updateScreen();
 	pause(40);

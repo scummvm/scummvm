@@ -283,7 +283,7 @@ public:
 	int frame_candles;
 	int color_solo;
 	int blinking;
-	int x_igor, y_igor, sentido_igor;
+	int igorX, igorY, sentido_igor;
 	int x_dr, y_dr, sentido_dr;
 	int x_bj, y_bj, sentido_bj;
 	int cont_sv;
@@ -432,9 +432,8 @@ public:
 	void talk_igor_dch(int);
 	void talk_igor_dch(const char *said, const char *filename);
 	void talk_dr_dch(int);
-	void talk_dr_dch(const char *said, const char *filename);
-	void talk_dr_izq(int);
-	void talk_dr_izq(const char *said, const char *filename);
+	void talk_drascula(int index, int talkerType = 0);
+	void talk_drascula(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
 	void talk_igor_front(int);
 	void talk_igor_front(const char *, const char *);
