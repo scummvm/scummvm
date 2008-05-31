@@ -21,8 +21,8 @@
  */
  
 #include "cdaudio.h"
-#include "ds-fs.h"
-#include "config-manager.h"
+#include "backends/fs/ds/ds-fs.h"
+#include "common/config-manager.h"
 #include "dsmain.h"
 #include "NDS/scummvm_ipc.h"
 #include "console2.h"

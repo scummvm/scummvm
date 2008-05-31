@@ -53,7 +53,7 @@
 //----------------------------------------------------------------------
 
 #if defined _CF_USE_DMA && defined _CF_ALLOW_UNALIGNED
- #error You can't use both DMA and unaligned memory
+ #error You can not use both DMA and unaligned memory
 #endif
 
 // When compiling for NDS, make sure NDS is defined

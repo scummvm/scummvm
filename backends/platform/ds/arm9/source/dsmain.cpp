@@ -74,9 +74,9 @@
 #include "system.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"
-#include "gba_nds_fat.h"
-#include "disc_io.h"
-#include "config-manager.h"
+#include "fat/gba_nds_fat.h"
+#include "fat/disc_io.h"
+#include "common/config-manager.h"
 #include "engines/scumm/scumm.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
@@ -89,14 +89,13 @@
 #include "user_debugger.h"
 #endif
 #include "ramsave.h"
-#include "disc_io.h"
 #include "blitters.h"
 #include "cartreset_nolibfat.h"
 #include "keys.h"
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
 #endif
-#include "ds-fs.h"
+#include "backends/fs/ds/ds-fs.h"
 
 namespace DS {
 
@@ -749,7 +748,7 @@ void displayMode16Bit() {
 
 
 	if (displayModeIs8Bit) {
-		static int test = 0;
+//		static int test = 0;
 //		consolePrintf("saving buffer... %d\n", test++);
 		saveGameBackBuffer();
 		for (int r = 0; r < 32 * 32; r++) {

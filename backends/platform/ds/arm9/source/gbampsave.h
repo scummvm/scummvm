@@ -23,8 +23,8 @@
 #ifndef _GBAMPSAVE_H_
 #define _GBAMPSAVE_H_
 
-#include "system.h"
-#include "ds-fs.h"
+#include "common/system.h"
+#include "backends/fs/ds/ds-fs.h"
 
 #define SAVE_BUFFER_SIZE 100000
 

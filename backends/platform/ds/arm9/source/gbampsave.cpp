@@ -21,9 +21,9 @@
  */
 
 #include "gbampsave.h"
-#include "gba_nds_fat.h"
-#include "ds-fs.h"
-#include "config-manager.h"
+#include "fat/gba_nds_fat.h"
+#include "backends/fs/ds/ds-fs.h"
+#include "common/config-manager.h"
 
 /////////////////////////
 // GBAMP Save File
