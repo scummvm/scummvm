@@ -164,7 +164,7 @@ ifdef USE_PROFILER
 	DEFINES += -DUSE_PROFILER
 endif
 
-CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
+CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 		-fno-exceptions -fno-rtti -mthumb-interwork
 
 #		-mthumb
