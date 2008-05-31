@@ -1415,7 +1415,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 					} else {
 						tmpFile.read(inbuffer, insize);
 						inPart2 = 0;
-						FileExpander().process(outbuffer, inbuffer, insize, outsize);
+						FileExpander().process(outbuffer, inbuffer, outsize, insize);
 						delete[] inbuffer;
 						inbuffer = 0;
 						newEntry.data = outbuffer;
