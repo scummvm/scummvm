@@ -133,7 +133,7 @@ int DrasculaEngine::go() {
 		hasAnswer = 0;
 		conta_blind_vez = 0;
 		changeColor = 0;
-		rompo_y_salgo = 0;
+		breakOut = 0;
 		vb_x = 120; sentido_vb = 1; vb_se_mueve = 0; frame_vb = 1;
 		frame_piano = 0;
 		frame_drunk = 0;
@@ -3190,7 +3190,7 @@ void DrasculaEngine::converse(const char *nom_fich) {
 	int used3 = 0;
 	char buffer[256];
 
-	rompo_y_salgo = 0;
+	breakOut = 0;
 
 	strcpy(para_codificar, nom_fich);
 
@@ -3351,7 +3351,7 @@ bucle_opc:
 	} else if ((button_izq == 1) && (game4 == 2)) {
 		delay(100);
 		talk(phrase4, sound4);
-		rompo_y_salgo = 1;
+		breakOut = 1;
 	}
 
 	if (button_izq == 1) {
@@ -3364,7 +3364,7 @@ bucle_opc:
 	game3 = (used3 == 0) ? 1 : 3;
 	game4 = 1;
 
-	if (rompo_y_salgo == 0)
+	if (breakOut == 0)
 		goto bucle_opc;
 
 	if (num_ejec == 2)

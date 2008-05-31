@@ -261,7 +261,7 @@ public:
 	int hasAnswer;
 	int conta_blind_vez;
 	int changeColor;
-	int rompo_y_salgo;
+	int breakOut;
 	int vb_x, sentido_vb, vb_se_mueve, frame_vb;
 	float newHeight, newWidth;
 	int factor_red[202];

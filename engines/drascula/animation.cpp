@@ -1043,7 +1043,7 @@ void DrasculaEngine::animation_20_2() {
 		sentido_vb = 1;
 		vb_x = 120;
 
-		rompo_y_salgo = 1;
+		breakOut = 1;
 	}
 }
 
@@ -1103,7 +1103,7 @@ void DrasculaEngine::animation_23_2() {
 		animation_27_2();
 
 	flags[25] = 1;
-	rompo_y_salgo = 1;
+	breakOut = 1;
 }
 
 void DrasculaEngine::animation_23_joined() {
@@ -1233,7 +1233,7 @@ void DrasculaEngine::animation_29_2() {
 
 	if (flags[38] == 0) {
 		talk(403);
-		rompo_y_salgo = 1;
+		breakOut = 1;
 	} else
 		talk(386);
 }
@@ -1277,7 +1277,7 @@ void DrasculaEngine::animation_31_2() {
 	talk(410);
 	talk_vb(56);
 
-	rompo_y_salgo = 1;
+	breakOut = 1;
 
 	flags[38] = 0;
 	flags[36] = 1;
@@ -1531,7 +1531,7 @@ void DrasculaEngine::animation_2_5() {
 void DrasculaEngine::animation_3_5() {
 	talk_bj(23);
 	pickObject(10);
-	rompo_y_salgo = 1;
+	breakOut = 1;
 }
 
 void DrasculaEngine::animation_4_5() {
@@ -2120,7 +2120,7 @@ void DrasculaEngine::animation_14_6() {
 	talk_taber2(24);
 	addObject(21);
 	flags[10] = 1;
-	rompo_y_salgo = 1;
+	breakOut = 1;
 }
 
 void DrasculaEngine::animation_15_6() {
