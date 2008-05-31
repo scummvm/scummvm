@@ -1222,7 +1222,7 @@ void DrasculaEngine::talk_igor_wig(const char *said, const char *filename) {
 	talkInit(filename);
 
 	do {
-		_rnd->getRandomNumber(3);
+		face = _rnd->getRandomNumber(3);
 
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
