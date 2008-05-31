@@ -1669,20 +1669,14 @@ void DrasculaEngine::screenSaver() {
 		for (int i = 0; i < 320; i++) {
 			tempLine[i] = (int)(sin(coeff2) * 16);
 			coeff2 += 0.02f;
-			if (tempLine[i] < 0)
-				tempLine[i] += 200;
-			if (tempLine[i] > 199)
-				tempLine[i] -= 200;
+			tempLine[i] = checkWrapY(tempLine[i]);
 		}
 
 		coeff2 = coeff;
 		for (int i = 0; i < 200; i++) {
 			tempRow[i] = (int)(sin(coeff2) * 16);
 			coeff2 += 0.02f;
-			if (tempRow[i] < 0)
-				tempRow[i] += 320;
-			if (tempRow[i] > 319)
-				tempRow[i] -= 320;
+			tempRow[i] = checkWrapX(tempRow[i]);
 		}
 
 		if (++count2 > 199)
@@ -1693,30 +1687,18 @@ void DrasculaEngine::screenSaver() {
 		for (int i = 0; i < 200; i++) {
 			for (int j = 0; j < 320; j++) {
 				x1_ = j + tempRow[i];
-				if (x1_ < 0)
-					x1_ += 320;
-				if (x1_ > 319)
-					x1_ -= 319;
+				x1_ = checkWrapX(x1_);
 
 				y1_ = i + count2;
-				if (y1_ < 0)
-					y1_ += 200;
-				if (y1_ > 199)
-					y1_ -= 200;
+				y1_ = checkWrapY(y1_);
 
 				off1 = 320 * y1_ + x1_;
 
 				x1_ = j + count;
-				if (x1_ < 0)
-					x1_ += 320;
-				if (x1_ > 319)
-					x1_ -= 320;
+				x1_ = checkWrapX(x1_);
 
 				y1_ = i + tempLine[j];
-				if (y1_ < 0)
-					y1_ += 200;
-				if (y1_ > 199)
-					y1_ -= 200;
+				y1_ = checkWrapY(y1_);
 				off2 = 320 * y1_ + x1_;
 
 				VGA[320 * i + j] = ghost[drawSurface1[off2] + (copia[off1] << 8)];

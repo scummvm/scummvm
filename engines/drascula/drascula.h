@@ -193,6 +193,16 @@ public:
 				int height, byte *src, byte *dest);
 	void copyRectClip(int *Array, byte *src, byte *dest);
 	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
+	int checkWrapX(int x) {
+		if (x < 0) x += 320;
+		if (x > 319) x -= 320;
+		return x;
+	}
+	int checkWrapY(int y) {
+		if (y < 0) y += 200;
+		if (y > 199) y -= 200;
+		return y;
+	}
 
 	DacPalette256 gamePalette;
 	DacPalette256 palHare;
