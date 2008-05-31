@@ -587,7 +587,7 @@ bool DrasculaEngine::escoba() {
 		}
 
 		moveCursor();
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 
 		if (currentChapter == 2) {
 			if (musicStatus() == 0 && roomMusic != 0)
@@ -694,14 +694,14 @@ bool DrasculaEngine::escoba() {
 		} else if (key == Common::KEYCODE_v) {
 			withVoices = 1;
 			print_abc(_textsys[_lang][2], 96, 86);
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			delay(1410);
 			if (currentChapter != 3)
 				cont_sv = 0;
 		} else if (key == Common::KEYCODE_t) {
 			withVoices = 0;
 			print_abc(_textsys[_lang][3], 94, 86);
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			delay(1460);
 			if (currentChapter != 3)
 				cont_sv = 0;
@@ -1074,7 +1074,7 @@ void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 			hare_x = sitio_x;
 			hare_y = sitio_y;
 			updateRoom();
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			return;
 		}
 	}
@@ -1084,7 +1084,7 @@ void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 
 	for (;;) {
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 		if (characterMoved == 0)
 			break;
 	}
@@ -1094,7 +1094,7 @@ void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 		sentido_hare = sentido_final;
 	}
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 }
 
 void DrasculaEngine::moveCursor() {
@@ -1332,7 +1332,7 @@ void DrasculaEngine::mesa() {
 
 		setCursorTable();
 
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 
 		updateEvents();
 
@@ -1414,7 +1414,7 @@ bool DrasculaEngine::saves() {
 		}
 		print_abc(select, 117, 15);
 		setCursorTable();
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 		y = 27;
 
 		updateEvents();
@@ -1491,7 +1491,7 @@ bool DrasculaEngine::saves() {
 			else if (hay_seleccion == 0) {
 				print_abc("elige una partida", 117, 15);
 			}
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			delay(400);
 		}
 		y = 26;
@@ -1609,7 +1609,7 @@ bool DrasculaEngine::confirmExit() {
 	color_abc(kColorRed);
 	updateRoom();
 	centerText(_textsys[_lang][1], 160, 87);
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 
 	delay(100);
 	for (;;) {
@@ -2038,7 +2038,7 @@ void DrasculaEngine::hiccup(int counter) {
 	} while (counter > 0);
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 }
 
 void DrasculaEngine::stopSound() {
@@ -2461,7 +2461,7 @@ bool DrasculaEngine::exitRoom(int l) {
 				lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 				sentido_hare = sentidobj[l];
 				updateRoom();
-				updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+				updateScreen();
 				characterMoved = 0;
 				sentido_hare = sentido_alkeva[l];
 				objExit = alapuertakeva[l];
@@ -2518,7 +2518,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			updateRoom();
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			characterMoved = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
@@ -2536,7 +2536,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			updateRoom();
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			characterMoved = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
@@ -2557,7 +2557,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			updateRoom();
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			characterMoved = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
@@ -2576,7 +2576,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			updateRoom();
-			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			updateScreen();
 			characterMoved = 0;
 			sentido_hare = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
@@ -2603,7 +2603,7 @@ bool DrasculaEngine::pickupObject() {
 
 	updateRoom();
 	showMenu();
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 
 	// Objects with an ID smaller than 7 are the inventory verbs
 	if (pickedObject >= 7) {
@@ -2649,7 +2649,7 @@ void DrasculaEngine::enterName() {
 		select2[v] = '-';
 		copyBackground(115, 14, 115, 14, 176, 9, drawSurface1, screenSurface);
 		print_abc(select2, 117, 15);
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 		key = getScan();
 		delay(70);
 		if (key != 0) {
@@ -3265,7 +3265,7 @@ void DrasculaEngine::converse(const char *nom_fich) {
 		print_abc_opc(phrase3, 1, 18, game3);
 		print_abc_opc(phrase4, 1, 26, game4);
 
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 
 		if ((button_izq == 1) && (game1 == 2)) {
 			delay(100);
@@ -3601,7 +3601,7 @@ void DrasculaEngine::lleva_vb(int pointX) {
 
 	for (;;) {
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 		if (sentido_vb == 0) {
 			vb_x = vb_x - 5;
 			if (vb_x <= pointX)
@@ -3650,7 +3650,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 	} while (counter > 0);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 }
 
 void DrasculaEngine::openDoor(int nflag, int doorNum) {
@@ -3668,7 +3668,7 @@ void DrasculaEngine::openDoor(int nflag, int doorNum) {
 		if (doorNum != NO_DOOR)
 			updateDoor(doorNum);
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 		stopSound();
 		withoutVerb();
 	}
@@ -3713,12 +3713,12 @@ void DrasculaEngine::grr() {
 	if (withVoices == 0)
 		centerText(".groaaarrrrgghhh!", 153, 65);
 
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 
 	while (!isTalkFinished(&length));
 
 	updateRoom();
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	updateScreen();
 }
 
 void DrasculaEngine::activatePendulum() {
@@ -3742,7 +3742,7 @@ void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 		if (doorNum != NO_DOOR)
 			updateDoor(doorNum);
 		updateRoom();
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		updateScreen();
 		stopSound();
 		withoutVerb();
 	}

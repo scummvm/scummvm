@@ -192,6 +192,9 @@ public:
 	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
 	void copyRectClip(int *Array, byte *src, byte *dest);
+	void updateScreen() {
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+	}
 	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
 	int checkWrapX(int x) {
 		if (x < 0) x += 320;
