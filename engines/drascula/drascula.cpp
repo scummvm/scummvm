@@ -1877,8 +1877,8 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 		error("Animation file %s not found", animationFile);
 	}
 
-	FileIn.read(&NFrames, sizeof(NFrames));
-	FileIn.read(&dataSize, sizeof(dataSize));
+	NFrames = FileIn.readSint32LE();
+	dataSize = FileIn.readSint32LE();
 	AuxBuffOrg = (byte *)malloc(dataSize);
 	FileIn.read(AuxBuffOrg, dataSize);
 	FileIn.read(cPal, 768);
@@ -1891,7 +1891,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	memcpy(AuxBuffLast, AuxBuffDes, 64000);
 	WaitForNext(FPS);
 	while (cnt < NFrames) {
-		FileIn.read(&dataSize, sizeof(dataSize));
+		dataSize = FileIn.readSint32LE();
 		AuxBuffOrg = (byte *)malloc(dataSize);
 		FileIn.read(AuxBuffOrg, dataSize);
 		FileIn.read(cPal, 768);
