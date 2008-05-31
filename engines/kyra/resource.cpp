@@ -1302,6 +1302,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 		}
 	}
 
+	FileExpander exp;
 	CompFileEntry newEntry;
 	uint32 insize = 0;
 	uint32 outsize = 0;
@@ -1343,7 +1344,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 					tmpFile.seek(1);
 					tmpFile.read(inbuffer + inPart1, inPart2);
 					inPart2 = 0;
-					FileExpander().process(outbuffer, inbuffer, outsize, insize);
+					exp.process(outbuffer, inbuffer, outsize, insize);
 					delete[] inbuffer;
 					inbuffer = 0;
 					newEntry.data = outbuffer;
@@ -1415,7 +1416,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 					} else {
 						tmpFile.read(inbuffer, insize);
 						inPart2 = 0;
-						FileExpander().process(outbuffer, inbuffer, outsize, insize);
+						exp.process(outbuffer, inbuffer, outsize, insize);
 						delete[] inbuffer;
 						inbuffer = 0;
 						newEntry.data = outbuffer;
