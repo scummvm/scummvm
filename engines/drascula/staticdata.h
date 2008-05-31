@@ -84,7 +84,7 @@ const CharInfo charMap[CHARMAP_SIZE] = {
 	{ '\343',  78,   2 }, { '\353',  87,   2 },	// I, J
 	{ '\266',  96,   2 }, { '\322', 105,   2 },	// K, L
 	{ '\327', 114,   2 }, { '\342', 123,   2 },	// M, N
-	{ '\352', 132,   0 }						// special Spanish char
+	{ '\352', 132,   2 }						// special Spanish char
 };
 
 const ItemLocation itemLocations[] = {
