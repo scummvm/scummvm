@@ -403,7 +403,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		talk_tabernero(22);
+		talk_bartender(22);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
@@ -597,22 +597,22 @@ void DrasculaEngine::animation_3_1() {
 	loadAndDecompressPic("an11y13.alg", extraSurface, 1);
 
 	talk(192);
-	talk_tabernero(1);
+	talk_bartender(1);
 	talk(193);
-	talk_tabernero(2);
+	talk_bartender(2);
 	talk(194);
-	talk_tabernero(3);
+	talk_bartender(3);
 	talk(195);
-	talk_tabernero(4);
+	talk_bartender(4);
 	talk(196);
-	talk_tabernero(5);
-	talk_tabernero(6);
+	talk_bartender(5);
+	talk_bartender(6);
 	talk(197);
-	talk_tabernero(7);
+	talk_bartender(7);
 	talk(198);
-	talk_tabernero(8);
+	talk_bartender(8);
 	talk(199);
-	talk_tabernero(9);
+	talk_bartender(9);
 	talk(200);
 	talk(201);
 	talk(202);
@@ -1079,9 +1079,9 @@ void DrasculaEngine::animation_23_2() {
 	talk_vb(18);
 
 	if (flags[29] == 0)
-		animation_23_anexo();
+		animation_23_joined();
 	else
-		animation_23_anexo2();
+		animation_23_joined2();
 
 	sentido_vb = 2;
 	animation_25_2();
@@ -1106,7 +1106,7 @@ void DrasculaEngine::animation_23_2() {
 	rompo_y_salgo = 1;
 }
 
-void DrasculaEngine::animation_23_anexo() {
+void DrasculaEngine::animation_23_joined() {
 	int n, p_x = hare_x + 2, p_y = hare_y - 3;
 	int x[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
 				1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
@@ -1126,7 +1126,7 @@ void DrasculaEngine::animation_23_anexo() {
 	loadAndDecompressPic("99.alg", backSurface, 1);
 }
 
-void DrasculaEngine::animation_23_anexo2() {
+void DrasculaEngine::animation_23_joined2() {
 	int n, p_x = hare_x + 4, p_y = hare_y;
 	int x[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
 	int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
@@ -1711,19 +1711,19 @@ void DrasculaEngine::animation_12_5() {
 	for (fundido = 1; fundido >= 0; fundido--) {
 		for (color = 0; color < 128; color++)
 			for (component = 0; component < 3; component++)
-				bgPalette1[color][component] = LimitaVGA(bgPalette1[color][component] - 8 + fundido);
+				bgPalette1[color][component] = adjustToVGA(bgPalette1[color][component] - 8 + fundido);
 	}
 
 	for (fundido = 2; fundido >= 0; fundido--) {
 		for (color = 0; color < 128; color++)
 			for (component = 0; component < 3; component++)
-				bgPalette2[color][component] = LimitaVGA(bgPalette2[color][component] - 8 + fundido);
+				bgPalette2[color][component] = adjustToVGA(bgPalette2[color][component] - 8 + fundido);
 	}
 
 	for (fundido = 3; fundido >= 0; fundido--) {
 		for (color = 0; color < 128; color++)
 			for (component = 0; component < 3; component++)
-				bgPalette3[color][component] = LimitaVGA(bgPalette3[color][component] - 8 + fundido);
+				bgPalette3[color][component] = adjustToVGA(bgPalette3[color][component] - 8 + fundido);
 	}
 
 	loadAndDecompressPic("3an11_1.alg", backSurface, 1);
@@ -2255,14 +2255,14 @@ void DrasculaEngine::animation_11_2() {
 	loadAndDecompressPic("an11y13.alg", extraSurface, 1);
 
 	talk(352);
-	talk_tabernero(1);
+	talk_bartender(1);
 	talk(353);
-	talk_tabernero(17);
+	talk_bartender(17);
 	talk(354);
-	talk_tabernero(18);
+	talk_bartender(18);
 	talk(355);
 	pause(40);
-	talk_tabernero("No, nada", "d82.als");
+	talk_bartender("No, nada", "d82.als");
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;
@@ -2400,12 +2400,12 @@ void DrasculaEngine::animation_36_2() {
 	loadAndDecompressPic("an11y13.alg", extraSurface, 1);
 
 	talk(404);
-	talk_tabernero(19);
-	talk_tabernero(20);
-	talk_tabernero(21);
+	talk_bartender(19);
+	talk_bartender(20);
+	talk_bartender(21);
 	talk(355);
 	pause(40);
-	talk_tabernero("No, nada", "d82.als");
+	talk_bartender("No, nada", "d82.als");
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;

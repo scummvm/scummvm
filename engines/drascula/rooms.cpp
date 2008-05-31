@@ -1371,14 +1371,14 @@ void DrasculaEngine::update_13() {
 }
 
 void DrasculaEngine::update_14_pre() {
-	int velas_y[] = {158, 172, 186};
+	int candles_y[] = {158, 172, 186};
 	int cirio_x[] = {14, 19, 24};
 	int pianista_x[] = {1, 91, 61, 31, 91, 31, 1, 61, 31};
 	int drunk_x[] = {1, 42, 83, 124, 165, 206, 247, 1};
 	int difference;
 
-	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, drawSurface3, screenSurface);
-	copyBackground(cirio_x[frame_velas], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
+	copyBackground(123, candles_y[frame_candles], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(cirio_x[frame_candles], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
@@ -1404,9 +1404,9 @@ void DrasculaEngine::update_14_pre() {
 		} else if ((_rnd->getRandomNumber(94) == 15) && (flags[13] == 0))
 			flags[12] = 1;
 
-		frame_velas++;
-		if (frame_velas == 3)
-			frame_velas = 0;
+		frame_candles++;
+		if (frame_candles == 3)
+			frame_candles = 0;
 		frame_piano++;
 		if (frame_piano == 9)
 			frame_piano = 0;
@@ -1675,13 +1675,13 @@ void DrasculaEngine::update_59_pre() {
 }
 
 void DrasculaEngine::update_60_pre() {
-	int velas_y[] = {158, 172, 186};
+	int candles_y[] = {158, 172, 186};
 	int difference;
 
 	if (flags[5] == 0)
 		placeDrascula();
 
-	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(123, candles_y[frame_candles], 142, 14, 39, 13, drawSurface3, screenSurface);
 
 	if (flag_tv == 1)
 		copyBackground(114, 158, 8, 30, 8, 23, drawSurface3, screenSurface);
@@ -1693,9 +1693,9 @@ void DrasculaEngine::update_60_pre() {
 	else if (blinking == 5 && flag_tv == 1)
 		flag_tv = 0;
 	if (difference > 6) {
-		frame_velas++;
-		if (frame_velas == 3)
-			frame_velas = 0;
+		frame_candles++;
+		if (frame_candles == 3)
+			frame_candles = 0;
 		conta_blind_vez = getTime();
 	}
 }
@@ -1710,14 +1710,14 @@ void DrasculaEngine::update_61() {
 }
 
 void DrasculaEngine::update_62_pre() {
-	int velas_y[] = { 158, 172, 186 };
+	int candles_y[] = { 158, 172, 186 };
 	int cirio_x[] = { 14, 19, 24 };
 	int pianista_x[] = {1, 91, 61, 31, 91, 31, 1, 61, 31 };
 	int drunk_x[] = {1, 42, 83, 124, 165, 206, 247, 1 };
 	int difference;
 
-	copyBackground(123, velas_y[frame_velas], 142, 14, 39, 13, drawSurface3, screenSurface);
-	copyBackground(cirio_x[frame_velas], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
+	copyBackground(123, candles_y[frame_candles], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(cirio_x[frame_candles], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
@@ -1746,9 +1746,9 @@ void DrasculaEngine::update_62_pre() {
 		} else if ((_rnd->getRandomNumber(94) == 15) && (flags[13] == 0))
 			flags[12] = 1;
 
-		frame_velas++;
-		if (frame_velas == 3)
-			frame_velas = 0;
+		frame_candles++;
+		if (frame_candles == 3)
+			frame_candles = 0;
 		frame_piano++;
 		if (frame_piano == 9)
 			frame_piano = 0;

@@ -137,7 +137,7 @@ int DrasculaEngine::go() {
 		vb_x = 120; sentido_vb = 1; vb_se_mueve = 0; frame_vb = 1;
 		frame_piano = 0;
 		frame_drunk = 0;
-		frame_velas = 0;
+		frame_candles = 0;
 		cont_sv = 0;
 		term_int = 0;
 		musicStopped = 0;
@@ -1782,7 +1782,7 @@ void DrasculaEngine::fliplay(const char *filefli, int vel) {
 	EndSSN();
 }
 
-void DrasculaEngine::fadeFromBlack(int VelocidadDeFundido) {
+void DrasculaEngine::fadeFromBlack(int fadeSpeed) {
 	char fundido;
 	unsigned int color, component;
 
@@ -1791,10 +1791,10 @@ void DrasculaEngine::fadeFromBlack(int VelocidadDeFundido) {
 	for (fundido = 0; fundido < 64; fundido++) {
 		for (color = 0; color < 256; color++) {
 			for (component = 0; component < 3; component++) {
-				palFundido[color][component] = LimitaVGA(gamePalette[color][component] - 63 + fundido);
+				palFundido[color][component] = adjustToVGA(gamePalette[color][component] - 63 + fundido);
 			}
 		}
-		pause(VelocidadDeFundido);
+		pause(fadeSpeed);
 
 		setPalette((byte *)&palFundido);
 	}
@@ -1820,7 +1820,7 @@ void DrasculaEngine::color_abc(int cl) {
 	setPalette((byte *)&gamePalette);
 }
 
-char DrasculaEngine::LimitaVGA(char value) {
+char DrasculaEngine::adjustToVGA(char value) {
 	return (value & 0x3F) * (value > 0);
 }
 
@@ -1971,7 +1971,7 @@ void DrasculaEngine::animastopSound_corte() {
 	}
 }
 
-void DrasculaEngine::fadeToBlack(int VelocidadDeFundido) {
+void DrasculaEngine::fadeToBlack(int fadeSpeed) {
 	char fundido;
 	unsigned int color, component;
 
@@ -1980,10 +1980,10 @@ void DrasculaEngine::fadeToBlack(int VelocidadDeFundido) {
 	for (fundido = 63; fundido >= 0; fundido--) {
 		for (color = 0; color < 256; color++) {
 			for (component = 0; component < 3; component++) {
-				palFundido[color][component] = LimitaVGA(gamePalette[color][component] - 63 + fundido);
+				palFundido[color][component] = adjustToVGA(gamePalette[color][component] - 63 + fundido);
 			}
 		}
-		pause(VelocidadDeFundido);
+		pause(fadeSpeed);
 
 		setPalette((byte *)&palFundido);
 	}
@@ -2228,7 +2228,7 @@ void DrasculaEngine::funde_hare(int oscuridad) {
 	for (fundido = oscuridad; fundido >= 0; fundido--) {
 		for (color = 235; color < 253; color++) {
 			for (component = 0; component < 3; component++)
-				gamePalette[color][component] = LimitaVGA(gamePalette[color][component] - 8 + fundido);
+				gamePalette[color][component] = adjustToVGA(gamePalette[color][component] - 8 + fundido);
 		}
 	}
 
@@ -2280,9 +2280,9 @@ void DrasculaEngine::startWalking() {
 		else if ((sitio_x > hare_x + ancho_hare) && (sitio_y > (hare_y + alto_hare)))
 			quadrant_4();
 		else if (sitio_y < hare_y + alto_hare)
-			anda_parriba();
+			walkUp();
 		else if (sitio_y > hare_y + alto_hare)
-			anda_pabajo();
+			walkDown();
 	} else {
 		if ((sitio_x < hare_x + ancho_hare / 2 ) && (sitio_y <= (hare_y + alto_hare)))
 			quadrant_1();
@@ -3606,13 +3606,13 @@ void DrasculaEngine::updateData() {
 	}
 }
 
-void DrasculaEngine::anda_pabajo() {
+void DrasculaEngine::walkDown() {
 	direccion_hare = 4;
 	sentido_hare = 3;
 	stepX = 0;
 }
 
-void DrasculaEngine::anda_parriba() {
+void DrasculaEngine::walkUp() {
 	direccion_hare = 0;
 	sentido_hare = 2;
 	stepX = 0;

@@ -304,13 +304,13 @@ bucless:
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
 
-void DrasculaEngine::talk_tabernero(int index) {
+void DrasculaEngine::talk_bartender(int index) {
 	char name[20];
 	sprintf(name, "t%i.als", index);
-	talk_tabernero(_textt[_lang][index], name);
+	talk_bartender(_textt[_lang][index], name);
 }
 
-void DrasculaEngine::talk_tabernero(const char *said, const char *filename) {
+void DrasculaEngine::talk_bartender(const char *said, const char *filename) {
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int face;
 	int length = strlen(said);
