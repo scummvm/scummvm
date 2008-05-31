@@ -5564,7 +5564,7 @@ const char *_textverbs[][6] = {
 },
 {
 	"mirar",
-	"cogar",
+	"coger",
 	"abrir",
 	"cerrar",
 	"hablar",
