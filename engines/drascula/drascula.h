@@ -275,7 +275,7 @@ public:
 	int x_bj, y_bj, sentido_bj;
 	int cont_sv;
 	int term_int;
-	int num_ejec;
+	int currentChapter;
 	int hay_que_load;
 	char saveName[13];
 	int _color;
@@ -478,7 +478,7 @@ public:
 	void paleta_hare_claro();
 	void paleta_hare_oscuro();
 	void hare_claro();
-	void updateData();
+	void updateVisible();
 	void startWalking();
 	void updateRefresh();
 	void updateRefresh_pre();

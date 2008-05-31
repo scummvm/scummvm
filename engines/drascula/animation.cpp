@@ -1592,7 +1592,7 @@ void DrasculaEngine::animation_5_5(){
 	}
 
 	flags[6] = 1;
-	updateData();
+	updateVisible();
 	pause(12);
 
 	loadAndDecompressPic("96.alg", frontSurface, 1);
@@ -2009,7 +2009,7 @@ void DrasculaEngine::animation_6_6() {
 
 void DrasculaEngine::animation_7_6() {
 	flags[8] = 1;
-	updateData();
+	updateVisible();
 }
 
 void DrasculaEngine::animation_9_6() {

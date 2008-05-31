@@ -130,11 +130,11 @@ void DrasculaEngine::talk_dr_izq(const char *said, const char *filename) {
 
 		placeIgor();
 		placeDrascula();
-		if (num_ejec == 6)
+		if (currentChapter == 6)
 			pon_hare();
 
 		copyBackground(x_dr, y_dr, x_dr, y_dr, 38, 31, drawSurface1, screenSurface);
-		if (num_ejec == 6)
+		if (currentChapter == 6)
 			copyRect(x_talk[face], 90, x_dr, y_dr, 38, 31, drawSurface2, screenSurface);
 		else
 			copyRect(x_talk[face], 90, x_dr, y_dr, 38, 31, backSurface, screenSurface);
@@ -179,11 +179,11 @@ void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 
 		placeIgor();
 		placeDrascula();
-		if (num_ejec == 6)
+		if (currentChapter == 6)
 			pon_hare();
 
 		copyBackground(x_dr, y_dr, x_dr, y_dr, 45, 31, drawSurface1, screenSurface);
-		if (num_ejec != 6)
+		if (currentChapter != 6)
 			copyRect(x_talk[face], 58, x_dr + 7, y_dr, 38, 31, backSurface, screenSurface);
 		else
 			copyRect(x_talk[face], 58, x_dr + 7, y_dr, 38, 31, drawSurface2, screenSurface);
@@ -199,12 +199,12 @@ void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 
 	} while (!isTalkFinished(&length));
 
-	if (num_ejec == 6)
+	if (currentChapter == 6)
 		updateRoom(); 
 
 	placeIgor();
 	placeDrascula();
-	if (num_ejec == 6)
+	if (currentChapter == 6)
 		pon_hare();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 }
@@ -212,29 +212,29 @@ void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	int length = strlen(said);
 
-	if (num_ejec == 1)
+	if (currentChapter == 1)
 		color_abc(color_solo);
-	else if (num_ejec == 4)
+	else if (currentChapter == 4)
 		color_abc(kColorRed);
 
 	talkInit(filename);
 
-	if (num_ejec == 6)
+	if (currentChapter == 6)
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	do {
 		if (withVoices == 0) {
-			if (num_ejec == 1)
+			if (currentChapter == 1)
 				centerText(said, 156, 90);
-			else if (num_ejec == 6)
+			else if (currentChapter == 6)
 				centerText(said, 213, 72);
-			else if (num_ejec == 5)
+			else if (currentChapter == 5)
 				centerText(said, 173, 92);
 		}
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	} while (!isTalkFinished(&length));
 
-	if (num_ejec == 6) {
+	if (currentChapter == 6) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
@@ -262,11 +262,11 @@ void DrasculaEngine::talk_igor_front(const char *said, const char *filename) {
 
 		updateRefresh_pre();
 
-		if (num_ejec == 1 || num_ejec == 4)
+		if (currentChapter == 1 || currentChapter == 4)
 			placeIgor();
-		if (num_ejec == 1)
+		if (currentChapter == 1)
 			placeDrascula();
-		if (num_ejec == 1 || num_ejec == 6)
+		if (currentChapter == 1 || currentChapter == 6)
 			copyBackground(x_igor, y_igor, x_igor, y_igor, 29, 25, drawSurface1, screenSurface);
 		copyRect(x_talk[face], 173, x_igor, y_igor, 29, 25, frontSurface, screenSurface);
 
@@ -280,11 +280,11 @@ void DrasculaEngine::talk_igor_front(const char *said, const char *filename) {
 		pause(3);
 	} while (!isTalkFinished(&length));
 
-	if (num_ejec == 6) {
+	if (currentChapter == 6) {
 		updateRoom();
 	}
 
-	if (num_ejec == 1) {
+	if (currentChapter == 1) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		placeIgor();
 		placeDrascula();
@@ -308,10 +308,10 @@ void DrasculaEngine::talk_bartender(const char *said, const char *filename) {
 	talkInit(filename);
 
 	do {
-		if (num_ejec == 1) {
+		if (currentChapter == 1) {
 			if (musicStatus() == 0)
 				playMusic(roomMusic);
-		} else if (num_ejec == 2) {
+		} else if (currentChapter == 2) {
 			if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
 				playMusic(roomMusic);
 		}
@@ -355,7 +355,7 @@ void DrasculaEngine::talk_bj(const char *said, const char *filename) {
 	talkInit(filename);
 
 	do {
-		if (num_ejec != 5) {
+		if (currentChapter != 5) {
 			face = _rnd->getRandomNumber(4);
 
 			copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -398,7 +398,7 @@ void DrasculaEngine::talk(int index) {
 
 void DrasculaEngine::talk(const char *said, const char *filename) {
 	int suma_1_pixel = 0;
-	if (num_ejec != 2)
+	if (currentChapter != 2)
 		suma_1_pixel = 1;
 
 	int y_mask_talk = 170;
@@ -407,7 +407,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	int face;
 	int length = strlen(said);
 
-	if (num_ejec == 6) {
+	if (currentChapter == 6) {
 		if (flags[0] == 0 && roomNumber == 102) {
 			talk_pen(said, filename);
 			return;
@@ -418,12 +418,12 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 		}
 	}
 
-	if (num_ejec != 2) {
+	if (currentChapter != 2) {
 		if (factor_red[hare_y + alto_hare] == 100)
 			suma_1_pixel = 0;
 	}
 
-	if (num_ejec == 4) {
+	if (currentChapter == 4) {
 		if (roomNumber == 24 || flags[29] == 0) {
 			color_abc(kColorYellow);
 		}
@@ -439,7 +439,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
-		if (num_ejec == 2)
+		if (currentChapter == 2)
 			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, screenSurface, drawSurface3);
 		else
 			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
@@ -448,7 +448,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 		pon_hare();
 
-		if (num_ejec == 2) {
+		if (currentChapter == 2) {
 			if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
 				copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, drawSurface3, screenSurface);
 		} else {
@@ -458,7 +458,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 		}
 
 		if (sentido_hare == 0) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk,
 						extraSurface, screenSurface);
 			else
@@ -468,7 +468,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 			updateRefresh();
 		} else if (sentido_hare == 1) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
 					extraSurface, screenSurface);
 			else
@@ -476,7 +476,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 					hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 2) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk,
 					frontSurface, screenSurface);
 			else
@@ -486,7 +486,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 						frontSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 3) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk,
 					frontSurface, screenSurface);
 			else
@@ -508,7 +508,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	if (num_ejec == 1) {
+	if (currentChapter == 1) {
 		if (musicStatus() == 0 && flags[11] == 0 && musicStopped == 0)
 			playMusic(roomMusic);
 	}
@@ -564,7 +564,7 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	int face;
 	int length = strlen(said);
 
-	if (num_ejec == 1) {
+	if (currentChapter == 1) {
 		loadAndDecompressPic("an11y13.alg", frontSurface, 1);
 	}
 
@@ -602,14 +602,14 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
 	flags[13] = 0;
-	if (num_ejec == 1) {
+	if (currentChapter == 1) {
 		loadAndDecompressPic("96.alg", frontSurface, 1);
 	}
 
-	if (num_ejec == 1) {
+	if (currentChapter == 1) {
 		if (musicStatus() == 0 && flags[11] == 0)
 			playMusic(roomMusic);
-	} else if (num_ejec == 2) {
+	} else if (currentChapter == 2) {
 		if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
 			playMusic(roomMusic);
 	}
@@ -1037,7 +1037,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 
 	color_abc(kColorYellow);
 
-	if (num_ejec == 1) {
+	if (currentChapter == 1) {
 		if (factor_red[hare_y + alto_hare] == 100)
 			suma_1_pixel = 0;
 	}
@@ -1052,13 +1052,13 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
-		if (num_ejec == 2)
+		if (currentChapter == 2)
 			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, alto_talk - 1, screenSurface, drawSurface3);
 		else
 			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), screenSurface, drawSurface3);
 		pon_hare();
-		if (num_ejec == 2) {
+		if (currentChapter == 2) {
 			if (alto_hare != 56)
 				copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, alto_talk - 1, drawSurface3, screenSurface);
 		} else
@@ -1066,21 +1066,21 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 				(int)(((float)(alto_talk - 1) / 100) * factor_red[hare_y + alto_hare]), drawSurface3, screenSurface);
 
 		if (sentido_hare == 0) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, ancho_talk, alto_talk, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 1) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_talk, alto_talk, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 2) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
@@ -1088,7 +1088,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 						ancho_talk, alto_talk, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 3) {
-			if (num_ejec == 2)
+			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, ancho_talk, alto_talk, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
@@ -1106,9 +1106,9 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 		pause(3);
 	} while (!isTalkFinished(&length));
 
-	if (num_ejec == 1 && musicStatus() == 0 && flags[11] == 0)
+	if (currentChapter == 1 && musicStatus() == 0 && flags[11] == 0)
 		playMusic(roomMusic);
-	if (num_ejec == 2 && musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+	if (currentChapter == 2 && musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
 		playMusic(roomMusic);
 }
 
