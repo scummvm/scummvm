@@ -2430,7 +2430,7 @@ u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 
 void* fastRamAlloc(int size) {
 //	return malloc(size);
-	void* result = fastRamPointer;
+	void* result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
 		consolePrintf("FastRam (ITCM) allocation failed!\n");
@@ -2824,33 +2824,25 @@ int main(void)
 	//printf("'%s'", Common::ConfigManager::kApplicationDomain.c_str());
 
 #if defined(DS_BUILD_A)
-	char* argv[2] = {"/scummvmds", "--config=scummvm.ini"};
+	const char *argv[] = {"/scummvmds"};
 #elif defined(DS_BUILD_B)
-	char* argv[2] = {"/scummvmds", "--config=scummvmb.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmb.ini"};
 #elif defined(DS_BUILD_C)
-	char* argv[2] = {"/scummvmds", "--config=scummvmc.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmc.ini"};
 #elif defined(DS_BUILD_D)
-	char* argv[3] = {"/scummvmds", "--config=scummvmd.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmd.ini"};
 #elif defined(DS_BUILD_E)
-	char* argv[3] = {"/scummvmds", "--config=scummvme.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvme.ini"};
 #elif defined(DS_BUILD_F)
-	char* argv[3] = {"/scummvmds", "--config=scummvmf.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
 #elif defined(DS_BUILD_G)
-	char* argv[3] = {"/scummvmds", "--config=scummvmg.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
 #endif
 
-#ifdef DS_NON_SCUMM_BUILD	
-
 	while (1) {
-		scummvm_main(2, (char **) &argv);
+		scummvm_main(ARRAYSIZE(argv), (char **) &argv);
 		powerOff();
 	}
-#else
-	while (1) {
-		scummvm_main(1, (char **) &argv);
-		powerOff();
-	}
-#endif
 
 	return 0;
 }
