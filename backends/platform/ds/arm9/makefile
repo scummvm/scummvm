@@ -1,6 +1,6 @@
 #DYNAMIC_MODULES = 1
-#libndsdir = $(DEVKITPRO)/libnds
-libndsdir = /home/neil/devkitpror21/libnds
+libndsdir = $(DEVKITPRO)/libnds
+#libndsdir = /home/neil/devkitpror21/libnds
 
 # Select the build you want by uncommenting one of the following lines:
 
@@ -34,7 +34,7 @@ ifeq ($(SCUMM_BUILD),g)
         DS_BUILD_G = 1
 endif
 
-DS_BUILD_A = 1
+#DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
 #DS_BUILD_D = 1		
