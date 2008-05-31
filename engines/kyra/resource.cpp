@@ -1210,11 +1210,6 @@ public:
 	bool loadFile(CompFileMap &loadTo) const;
 
 private:
-	struct FileEntry : public ResFileEntry {
-		int fileIndex;
-		uint32 compressedSize;
-	};
-	
 	struct Archive {
 		Common::String filename;
 		uint32 firstFile;
