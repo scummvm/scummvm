@@ -200,7 +200,7 @@ void DrasculaEngine::talk_dr_dch(const char *said, const char *filename) {
 	} while (!isTalkFinished(&length));
 
 	if (currentChapter == 6)
-		updateRoom(); 
+		updateRoom();
 
 	placeIgor();
 	placeDrascula();

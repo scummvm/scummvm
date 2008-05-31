@@ -1512,7 +1512,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	int textPos[8];
 	int letterY = 0, letterX = 0, h, length;
 	length = strlen(said);
-	
+
 	for (h = 0; h < length; h++) {
 		int c = toupper(said[h]);
 

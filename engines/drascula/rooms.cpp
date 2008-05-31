@@ -32,7 +32,7 @@ bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int fl) {
 	bool didAction = false;
 
 	for (int i = 0; i < ARRAYSIZE(roomActions); i++) {
-		if (roomActions[i].num == currentChapter || 
+		if (roomActions[i].num == currentChapter ||
 			roomActions[i].num == -1) {
 			if (roomActions[i].action == pickedObject ||
 				roomActions[i].action == kVerbDefault) {
@@ -57,7 +57,7 @@ void DrasculaEngine::room_0() {
 		return;
 
 	// non-default actions
-	if (currentChapter == 2 || currentChapter == 4 || 
+	if (currentChapter == 2 || currentChapter == 4 ||
 		currentChapter == 5 || currentChapter == 6) {
 		if (pickedObject == kVerbLook) {
 			talk(mirar_t[c_mirar]);
@@ -149,7 +149,7 @@ void DrasculaEngine::room_5(int fl) {
 	if (roomParse(room5Actions, fl))
 		return;
 
-	if (pickedObject == kVerbLook && fl == 136 && flags[8] == 0) 
+	if (pickedObject == kVerbLook && fl == 136 && flags[8] == 0)
 		talk(14);
 	else if (pickedObject == 10 && fl == 136) {
 		animation_5_2();
@@ -1983,7 +1983,7 @@ bool DrasculaEngine::checkFlag(int fl) {
 			else if (pickedObject == kVerbLook && fl == 17)
 				talk(478);
 			else if (pickedObject == kVerbLook && fl == 20)
-				talk(162); 
+				talk(162);
 			else
 				hasAnswer = 0;
 		} else if (currentChapter == 6) {
