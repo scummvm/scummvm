@@ -32,8 +32,6 @@
 
 #include "kyra/resource.h"
 
-#define INS_CACHE_THRESHOLD		300000	// all files with file size greater than this will be cached
-
 namespace Kyra {
 
 Resource::Resource(KyraEngine_v1 *vm) : _loaders(), _map(), _vm(vm) {
@@ -43,9 +41,13 @@ Resource::Resource(KyraEngine_v1 *vm) : _loaders(), _map(), _vm(vm) {
 Resource::~Resource() {
 	_map.clear();
 	_loaders.clear();
+
+	clearCompFileList();
+	_compLoaders.clear();
 }
 
 bool Resource::reset() {
+	clearCompFileList();
 	unloadAllPakFiles();
 
 	FilesystemNode dir(ConfMan.get("path"));
@@ -69,7 +71,7 @@ bool Resource::reset() {
 			loadPakFile("CHAPTER1.VRM");
 	} else if (_vm->game() == GI_KYRA2) {
 		if (_vm->gameFlags().useInstallerPackage)
-			loadPakFile("WESTWOOD.001");
+			tryLoadCompFiles();
 
 		// mouse pointer, fonts, etc. required for initializing
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
@@ -89,6 +91,7 @@ bool Resource::reset() {
 	} else if (_vm->game() == GI_KYRA3) {
 		if (_vm->gameFlags().useInstallerPackage)
 			loadPakFile("WESTWOOD.001");
+
 		// Add default file directories
 		Common::File::addDefaultDirectory(ConfMan.get("path") + "malcolm");
 		Common::File::addDefaultDirectory(ConfMan.get("path") + "MALCOLM");
@@ -153,6 +156,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	const ResArchiveLoader *loader = getLoader(iter->_value.type);
 	if (!loader) {
+		assert(loader);
 		error("no archive loader for file '%s' found which is of type %d", filename.c_str(), iter->_value.type);
 		return false;
 	}
@@ -264,6 +268,13 @@ void Resource::unloadPakFile(const Common::String &filename) {
 	}
 }
 
+void Resource::clearCompFileList() {
+	for (CompFileMap::iterator i = _compFiles.begin(); i != _compFiles.end(); ++i)
+		delete[] i->_value.data;
+
+	_compFiles.clear();
+}
+
 bool Resource::isInPakList(const Common::String &filename) {
 	if (!isAccessable(filename))
 		return false;
@@ -304,6 +315,8 @@ bool Resource::exists(const char *file, bool errorOutOnFail) {
 }
 
 uint32 Resource::getFileSize(const char *file) {
+	CompFileMap::iterator compEntry;
+
 	if (Common::File::exists(file)) {
 		Common::File f;
 		if (f.open(file))
@@ -325,12 +338,14 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 		return false;
 
 	memset(buf, 0, maxSize);
-	stream->read(buf, stream->size());
+	stream->read(buf, (maxSize <= stream->size()) ? maxSize : stream->size());
 	delete stream;
 	return true;
 }
 
 Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
+	CompFileMap::iterator compEntry;
+
 	if (Common::File::exists(file)) {
 		Common::File *stream = new Common::File();
 		if (!stream->open(file)) {
@@ -339,6 +354,8 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 			error("Couldn't open file '%s'", file.c_str());
 		}
 		return stream;
+	} else if ((compEntry = _compFiles.find(file)) != _compFiles.end()) {
+		return new Common::MemoryReadStream(compEntry->_value.data, compEntry->_value.size, false);		
 	} else {
 		if (!isAccessable(file))
 			return 0;
@@ -387,19 +404,35 @@ bool Resource::isAccessable(const Common::String &file) {
 }
 
 void Resource::checkFile(const Common::String &file) {
-	if (_map.find(file) == _map.end() && Common::File::exists(file)) {
-		Common::File temp;
-		if (temp.open(file)) {
+	if (_map.find(file) == _map.end()) {
+		CompFileMap::const_iterator iter;
+
+		if (Common::File::exists(file)) {
+			Common::File temp;
+			if (temp.open(file)) {
+				ResFileEntry entry;
+				entry.parent = "";
+				entry.size = temp.size();
+				entry.mounted = file.compareToIgnoreCase(StaticResource::staticDataFilename()) != 0;
+				entry.preload = false;
+				entry.prot = false;
+				entry.type = ResFileEntry::kAutoDetect;
+				entry.offset = 0;
+				_map[file] = entry;
+				temp.close();
+
+				detectFileTypes();
+			}
+		} else if ((iter = _compFiles.find(file)) != _compFiles.end()) {
 			ResFileEntry entry;
 			entry.parent = "";
-			entry.size = temp.size();
-			entry.mounted = file.compareToIgnoreCase(StaticResource::staticDataFilename()) != 0;
+			entry.size = iter->_value.size;
+			entry.mounted = false;
 			entry.preload = false;
 			entry.prot = false;
 			entry.type = ResFileEntry::kAutoDetect;
 			entry.offset = 0;
 			_map[file] = entry;
-			temp.close();
 
 			detectFileTypes();
 		}
@@ -433,6 +466,13 @@ void Resource::detectFileTypes() {
 			if (i->_value.type == ResFileEntry::kAutoDetect)
 				i->_value.type = ResFileEntry::kRaw;
 		}
+	}
+}
+
+void Resource::tryLoadCompFiles() {
+	for (CCompLoaderIterator i = _compLoaders.begin(); i != _compLoaders.end(); ++i) {
+		if ((*i)->checkForFiles())
+			(*i)->loadFile(_compFiles);
 	}
 }
 
@@ -582,7 +622,7 @@ Common::SeekableReadStream *ResLoaderPak::loadFileFromArchive(const Common::Stri
 	return stream;
 }
 
-class ResLoaderInsKyra : public ResArchiveLoader {
+class ResLoaderInsMalcolm : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
@@ -590,25 +630,168 @@ public:
 	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
 
 	ResFileEntry::kType getType() const {
-		return ResFileEntry::kInsKyra;
+		return ResFileEntry::kInsMal;
 	}
 };
 
-bool ResLoaderInsKyra::checkFilename(Common::String filename) const {
-	return false;
-}
-
-bool ResLoaderInsKyra::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+bool ResLoaderInsMalcolm::checkFilename(Common::String filename) const {
+	filename.toUppercase();
+	if (!filename.hasSuffix(".001"))
+		return false;
 	return true;
 }
 
-bool ResLoaderInsKyra::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+	stream.seek(3);
+	uint32 size = stream.readUint32LE();
+
+	if (size+7 > stream.size())
+		return false;
+
+	stream.seek(size+5, SEEK_SET);
+	uint8 buffer[2];
+	stream.read(&buffer, 2);
+
+	return (buffer[0] == 0x0D && buffer[1] == 0x0A);
+}
+
+bool ResLoaderInsMalcolm::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+	Common::List<Common::String> filenames;
+
+	// thanks to eriktorbjorn for this code (a bit modified though)
+	stream.seek(3, SEEK_SET);
+
+	// first file is the index table
+	uint32 size = stream.readUint32LE();
+	Common::String temp = "";
+
+	for (uint32 i = 0; i < size; ++i) {
+		byte c = stream.readByte();
+
+		if (c == '\\') {
+			temp = "";
+		} else if (c == 0x0D) {
+			// line endings are CRLF
+			c = stream.readByte();
+			assert(c == 0x0A);
+			++i;
+
+			filenames.push_back(temp);
+		} else {
+			temp += (char)c;
+		}
+	}
+
+	stream.seek(3, SEEK_SET);
+
+	for (Common::List<Common::String>::iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		ResFileEntry entry;
+		entry.parent = filename;
+		entry.type = ResFileEntry::kAutoDetect;
+		entry.mounted = false;
+		entry.preload = false;
+		entry.prot = false;
+		entry.size = stream.readUint32LE();
+		entry.offset = stream.pos();
+		stream.seek(entry.size, SEEK_CUR);
+		files.push_back(File(*file, entry));
+	}
+
 	return true;
 }
 
-Common::SeekableReadStream *ResLoaderInsKyra::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
-	return 0;
+Common::SeekableReadStream *ResLoaderInsMalcolm::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
+	assert(archive);
+
+	archive->seek(entry.offset, SEEK_SET);
+	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
+	assert(stream);
+	return stream;
 }
+
+class ResLoaderTlk : public ResArchiveLoader {
+public:
+	bool checkFilename(Common::String filename) const;
+	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
+	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
+	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
+
+	ResFileEntry::kType getType() const {
+		return ResFileEntry::kTlk;
+	}
+
+private:
+	static bool sortTlkFileList(const File &l, const File &r);
+	static FileList::const_iterator nextFile(const FileList &list, FileList::const_iterator iter);
+};
+
+bool ResLoaderTlk::checkFilename(Common::String filename) const {
+	filename.toUppercase();
+	return (filename.hasSuffix(".TLK"));
+}
+
+bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+	uint16 entries = stream.readUint16LE();
+	uint32 entryTableSize = (entries * 8);
+
+	if (entryTableSize + 2 > stream.size())
+		return false;
+
+	uint32 offset = 0;
+
+	for (uint i = 0; i < entries; ++i) {
+		stream.readUint32LE();
+		offset = stream.readUint32LE();
+
+		if (offset > stream.size())
+			return false;
+	}
+
+	return true;
+}
+
+bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+	uint16 entries = stream.readUint16LE();
+	
+	for (uint i = 0; i < entries; ++i) {
+		ResFileEntry entry;
+		entry.parent = filename;
+		entry.type = ResFileEntry::kAutoDetect;
+		entry.mounted = false;
+		entry.preload = false;
+		entry.prot = false;
+
+		uint32 resFilename = stream.readUint32LE();
+		uint32 resOffset = stream.readUint32LE();
+
+		entry.offset = resOffset+4;
+
+		char realFilename[20];
+		snprintf(realFilename, 20, "%u.AUD", resFilename);
+
+		uint32 curOffset = stream.pos();
+		stream.seek(resOffset, SEEK_SET);
+		entry.size = stream.readUint32LE();
+		stream.seek(curOffset, SEEK_SET);
+
+		files.push_back(FileList::value_type(realFilename, entry));
+	}
+
+	return true;
+}
+
+Common::SeekableReadStream *ResLoaderTlk::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
+	assert(archive);
+
+	archive->seek(entry.offset, SEEK_SET);
+	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
+	assert(stream);
+	return stream;
+}
+
+#pragma mark -
+#pragma mark - CompFileLoader
+#pragma mark -
 
 class FileExpanderSource {
 public:
@@ -1021,120 +1204,50 @@ uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
 	return newIndex;
 }
 
-class FileCache {
+class CompLoaderInsHof : public CompArchiveLoader {
 public:
-	FileCache() : _size(0) {}
-	~FileCache() {}
-
-	void add(ResFileEntry entry, const uint8 *data);
-	bool getData(ResFileEntry entry, uint8 *dst);
-	void flush();
+	bool checkForFiles() const;
+	bool loadFile(CompFileMap &loadTo) const;
 
 private:
-	struct FileCacheEntry {
-		ResFileEntry entry;
-		const uint8 *data;
+	struct FileEntry : public ResFileEntry {
+		int fileIndex;
+		uint32 compressedSize;
 	};
-
-	Common::List<FileCacheEntry> _cachedFileList;
-	uint32 _size;
-};
-
-void FileCache::add(ResFileEntry entry, const uint8 *data) {
-	FileCacheEntry fileCacheEntry;
-	fileCacheEntry.entry.compressedSize = entry.compressedSize;
-	fileCacheEntry.entry.mounted = entry.mounted;
-	fileCacheEntry.entry.offset = entry.offset;
-	fileCacheEntry.entry.parent = entry.parent;
-	fileCacheEntry.entry.preload = entry.preload;
-	fileCacheEntry.entry.prot = entry.prot;
-	fileCacheEntry.entry.size = entry.size;
-	fileCacheEntry.entry.type = entry.type;
-	fileCacheEntry.entry.fileIndex = entry.fileIndex;
-	uint8 *dst = new uint8[entry.size];
-	assert(dst);
-	memcpy(dst, data, entry.size);
-	fileCacheEntry.data = dst;
-	_cachedFileList.push_back(fileCacheEntry);
-	_size += entry.size;
-}
-
-bool FileCache::getData(ResFileEntry entry, uint8 *dst) {
-	for (Common::List<FileCacheEntry>::const_iterator c = _cachedFileList.begin(); c != _cachedFileList.end(); ++c) {
-		if (c->entry.offset == entry.offset && c->entry.compressedSize == entry.compressedSize &&
-			c->entry.fileIndex == entry.fileIndex && c->entry.size == entry.size) {
-				memcpy(dst, c->data, c->entry.size);
-				return true;
-		}
-	}
-	return false;
-}
-
-void FileCache::flush() {
-	debug(1, "total amount of cache memory used: %d", _size);
-	for (Common::List<FileCacheEntry>::const_iterator c = _cachedFileList.begin(); c != _cachedFileList.end(); ++c)
-		delete[] c->data;
-	_cachedFileList.clear();
-	_size = 0;
-}
-
-class ResLoaderInsHof : public ResArchiveLoader {
-public:
-	ResLoaderInsHof() {}
-	~ResLoaderInsHof() { _fileCache.flush(); }
-
-	bool checkFilename(Common::String filename) const;
-	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
-	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
-
-	ResFileEntry::kType getType() const {
-		return ResFileEntry::kInsHof;
-	}
-private:
-	mutable FileCache _fileCache;
-};
-
-bool ResLoaderInsHof::checkFilename(Common::String filename) const {
-	filename.toUppercase();
-	if (!filename.hasSuffix(".001"))
-		return false;
-	filename.insertChar('2', filename.size() - 1);
-	filename.deleteLastChar();
-	if (!Common::File::exists(filename))
-		return false;
-	return true;
-}
-
-bool ResLoaderInsHof::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	uint8 fileId = stream.readByte();
-	uint32 size = stream.readUint32LE();
 	
-	if (size < stream.size() + 1)
-		return false;
+	struct Archive {
+		Common::String filename;
+		uint32 firstFile;
+		uint32 startOffset;
+		uint32 lastFile;
+		uint32 endOffset;
+		uint32 totalSize;
+	};
+};
 
-	return (fileId == 1);
+bool CompLoaderInsHof::checkForFiles() const {
+	return (Common::File::exists("WESTWOOD.001") && Common::File::exists("WESTWOOD.002"));
 }
 
-bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
+bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 	Common::File tmpFile;
 
 	uint32 pos = 0;
 	uint32 bytesleft = 0;
 	bool startFile = true;
 
-	Common::String filenameBase(filename.c_str(), 10);
+	Common::String filenameBase = "WESTWOOD.";
 	Common::String filenameTemp;
 	char filenameExt[4];
 
 	while (filenameBase.lastChar() != '.')
 		filenameBase.deleteLastChar();
 
-	InsHofArchive newArchive;
+	Archive newArchive;
 
-	Common::List<InsHofArchive> archives;
+	Common::List<Archive> archives;
 
-	for (int8 currentFile = 1; currentFile; currentFile++) {	
+	for (int8 currentFile = 1; currentFile; currentFile++) {
 		sprintf(filenameExt, "%03d", currentFile);
 		filenameTemp = filenameBase + Common::String(filenameExt);
 
@@ -1189,14 +1302,22 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 		}
 	}
 
-	ResFileEntry newEntry;
+	CompFileEntry newEntry;
+	uint32 insize = 0;
+	uint32 outsize = 0;
+	uint8 *inbuffer = 0;
+	uint8 *outbuffer = 0;
+	uint32 inPart1 = 0;
+	uint32 inPart2 = 0;
+	Common::String entryStr;
+
 	pos = 0;
 
 	const uint32 kExecSize = 0x0bba;
 	const uint32 kHeaderSize = 30;
 	const uint32 kHeaderSize2 = 46;
 
-	for (Common::List<InsHofArchive>::iterator a = archives.begin(); a != archives.end(); ++a) {
+	for (Common::List<Archive>::iterator a = archives.begin(); a != archives.end(); ++a) {
 		startFile = true;
 		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
 			sprintf(filenameExt, "%03d", i);
@@ -1218,7 +1339,18 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 					continue;
 				}
 			} else {
-				pos ++;
+				if (inPart2) {
+					tmpFile.seek(1);
+					tmpFile.read(inbuffer + inPart1, inPart2);
+					inPart2 = 0;
+					FileExpander().process(outbuffer, inbuffer, outsize, insize);
+					delete[] inbuffer;
+					inbuffer = 0;
+					newEntry.data = outbuffer;
+					newEntry.size = outsize;					
+					loadTo[entryStr] = newEntry;
+				}
+				pos++;
 			}
 
 			while (pos < size) {
@@ -1258,23 +1390,40 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 				if (id == 0x04034B50) {
 					if (hdr[8] != 8)
 						error("compression type not implemented");
-					newEntry.compressedSize = READ_LE_UINT32(hdr + 18);
-					newEntry.size = READ_LE_UINT32(hdr + 22);
+					insize = READ_LE_UINT32(hdr + 18);
+					outsize = READ_LE_UINT32(hdr + 22);
 			
 					uint16 filestrlen = READ_LE_UINT16(hdr + 26);
 					*(hdr + 30 + filestrlen) = 0;
+					entryStr = Common::String((const char *)(hdr + 30));
 					pos += (kHeaderSize + filestrlen - m);
+					tmpFile.seek(pos);
 
-					newEntry.parent = filename;
-					newEntry.offset = pos;
-					newEntry.type = ResFileEntry::kAutoDetect;
-					newEntry.mounted = false;
-					newEntry.preload = false;
-					newEntry.prot = false;
-					newEntry.fileIndex = i;
-					files.push_back(File(Common::String((const char *)(hdr + 30)), newEntry));
+					outbuffer = new uint8[outsize];
+					assert(outbuffer);
 
-					pos += newEntry.compressedSize;
+					if (!inbuffer) {
+						inbuffer = new uint8[insize];
+						assert(inbuffer);
+					}
+
+					if ((pos + insize) > size) {
+						// this is for files that are split between two archive files
+						inPart1 = size - pos;
+						inPart2 = insize - inPart1;				
+						tmpFile.read(inbuffer, inPart1);
+					} else {
+						tmpFile.read(inbuffer, insize);
+						inPart2 = 0;
+						FileExpander().process(outbuffer, inbuffer, insize, outsize);
+						delete[] inbuffer;
+						inbuffer = 0;
+						newEntry.data = outbuffer;
+						newEntry.size = outsize;
+						loadTo[entryStr] = newEntry;
+					}
+
+					pos += insize;
 					if (pos > size) {
 						pos -= size;
 						break;
@@ -1288,247 +1437,18 @@ bool ResLoaderInsHof::loadFile(const Common::String &filename, Common::SeekableR
 		}
 	}
 
-	archives.clear();
-	
+	archives.clear();	
 	return true;
-}
-
-Common::SeekableReadStream *ResLoaderInsHof::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
-	if (archive) {
-		delete archive;
-		archive = 0;
-	}
-
-	uint8 *outbuffer = (uint8 *)malloc(entry.size);
-	assert(outbuffer);
-
-	if (!_fileCache.getData(entry, outbuffer)) {
-		Common::File tmpFile;
-		char filename[13];
-		sprintf(filename, "WESTWOOD.%03d", entry.fileIndex);
-
-		if (!tmpFile.open(filename)) {
-			free(outbuffer);
-			return 0;
-		}
-
-		tmpFile.seek(entry.offset);
-
-		uint8 *inbuffer = new uint8[entry.compressedSize];
-		assert(inbuffer);
-
-		if ((entry.offset + entry.compressedSize) > tmpFile.size()) {
-			// this is for files that are split between two archive files
-			uint32 a = tmpFile.size() - entry.offset;
-			uint32 b = entry.compressedSize - a;
-				
-			tmpFile.read(inbuffer, a);
-			tmpFile.close();
-
-			filename[strlen(filename) - 1]++;
-
-			if (!tmpFile.open(filename))
-				return 0;
-			tmpFile.seek(1);
-			tmpFile.read(inbuffer + a, b);
-		} else {
-			tmpFile.read(inbuffer, entry.compressedSize);
-		}
-
-		tmpFile.close();
-
-		FileExpander().process(outbuffer, inbuffer, entry.size, entry.compressedSize);
-		delete[] inbuffer;
-
-		if (entry.size > INS_CACHE_THRESHOLD)
-			_fileCache.add(entry, outbuffer);
-	}
-	
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(outbuffer, entry.size, true);
-	assert(stream);	
-	
-	return stream;
-}
-
-class ResLoaderInsMalcolm : public ResArchiveLoader {
-public:
-	bool checkFilename(Common::String filename) const;
-	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
-	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
-
-	ResFileEntry::kType getType() const {
-		return ResFileEntry::kInsMal;
-	}
-};
-
-bool ResLoaderInsMalcolm::checkFilename(Common::String filename) const {
-	filename.toUppercase();
-	if (!filename.hasSuffix(".001"))
-		return false;
-	filename.insertChar('2', filename.size() - 1);
-	filename.deleteLastChar();
-	if (Common::File::exists(filename))
-		return false;
-	return true;
-}
-
-bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	stream.seek(3);
-	uint32 size = stream.readUint32LE();
-
-	if (size+7 > stream.size())
-		return false;
-
-	stream.seek(size+5, SEEK_SET);
-	uint8 buffer[2];
-	stream.read(&buffer, 2);
-
-	return (buffer[0] == 0x0D && buffer[1] == 0x0A);
-}
-
-bool ResLoaderInsMalcolm::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
-	Common::List<Common::String> filenames;
-
-	// thanks to eriktorbjorn for this code (a bit modified though)
-	stream.seek(3, SEEK_SET);
-
-	// first file is the index table
-	uint32 size = stream.readUint32LE();
-	Common::String temp = "";
-
-	for (uint32 i = 0; i < size; ++i) {
-		byte c = stream.readByte();
-
-		if (c == '\\') {
-			temp = "";
-		} else if (c == 0x0D) {
-			// line endings are CRLF
-			c = stream.readByte();
-			assert(c == 0x0A);
-			++i;
-
-			filenames.push_back(temp);
-		} else {
-			temp += (char)c;
-		}
-	}
-
-	stream.seek(3, SEEK_SET);
-
-	for (Common::List<Common::String>::iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		ResFileEntry entry;
-		entry.parent = filename;
-		entry.type = ResFileEntry::kAutoDetect;
-		entry.mounted = false;
-		entry.preload = false;
-		entry.prot = false;
-		entry.size = stream.readUint32LE();
-		entry.offset = stream.pos();
-		stream.seek(entry.size, SEEK_CUR);
-		files.push_back(File(*file, entry));
-	}
-
-	return true;
-}
-
-Common::SeekableReadStream *ResLoaderInsMalcolm::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
-	assert(archive);
-
-	archive->seek(entry.offset, SEEK_SET);
-	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
-	assert(stream);
-	return stream;
-}
-
-class ResLoaderTlk : public ResArchiveLoader {
-public:
-	bool checkFilename(Common::String filename) const;
-	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
-	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
-
-	ResFileEntry::kType getType() const {
-		return ResFileEntry::kTlk;
-	}
-
-private:
-	static bool sortTlkFileList(const File &l, const File &r);
-	static FileList::const_iterator nextFile(const FileList &list, FileList::const_iterator iter);
-};
-
-bool ResLoaderTlk::checkFilename(Common::String filename) const {
-	filename.toUppercase();
-	return (filename.hasSuffix(".TLK"));
-}
-
-bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	uint16 entries = stream.readUint16LE();
-	uint32 entryTableSize = (entries * 8);
-
-	if (entryTableSize + 2 > stream.size())
-		return false;
-
-	uint32 offset = 0;
-
-	for (uint i = 0; i < entries; ++i) {
-		stream.readUint32LE();
-		offset = stream.readUint32LE();
-
-		if (offset > stream.size())
-			return false;
-	}
-
-	return true;
-}
-
-bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
-	uint16 entries = stream.readUint16LE();
-	
-	for (uint i = 0; i < entries; ++i) {
-		ResFileEntry entry;
-		entry.parent = filename;
-		entry.type = ResFileEntry::kAutoDetect;
-		entry.mounted = false;
-		entry.preload = false;
-		entry.prot = false;
-
-		uint32 resFilename = stream.readUint32LE();
-		uint32 resOffset = stream.readUint32LE();
-
-		entry.offset = resOffset+4;
-
-		char realFilename[20];
-		snprintf(realFilename, 20, "%u.AUD", resFilename);
-
-		uint32 curOffset = stream.pos();
-		stream.seek(resOffset, SEEK_SET);
-		entry.size = stream.readUint32LE();
-		stream.seek(curOffset, SEEK_SET);
-
-		files.push_back(FileList::value_type(realFilename, entry));
-	}
-
-	return true;
-}
-
-Common::SeekableReadStream *ResLoaderTlk::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
-	assert(archive);
-
-	archive->seek(entry.offset, SEEK_SET);
-	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
-	assert(stream);
-	return stream;
 }
 
 #pragma mark -
 
 void Resource::initializeLoaders() {
 	_loaders.push_back(LoaderList::value_type(new ResLoaderPak()));
-	_loaders.push_back(LoaderList::value_type(new ResLoaderInsKyra()));
-	_loaders.push_back(LoaderList::value_type(new ResLoaderInsHof()));
 	_loaders.push_back(LoaderList::value_type(new ResLoaderInsMalcolm()));
 	_loaders.push_back(LoaderList::value_type(new ResLoaderTlk()));
+
+	_compLoaders.push_back(CompLoaderList::value_type(new CompLoaderInsHof()));
 }
 
 const ResArchiveLoader *Resource::getLoader(ResFileEntry::kType type) const {
@@ -1540,5 +1460,6 @@ const ResArchiveLoader *Resource::getLoader(ResFileEntry::kType type) const {
 }
 
 } // end of namespace Kyra
+
 
 

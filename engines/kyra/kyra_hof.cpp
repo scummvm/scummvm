@@ -287,8 +287,6 @@ int KyraEngine_HoF::go() {
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
-		if (_flags.useInstallerPackage)
-			_res->loadPakFile("WESTWOOD.001");
 		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
 			_res->loadFileList("FILEDATA.FDT");
 		else
