@@ -823,6 +823,16 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 	return buf;
 }
 
+void getIntFromLine(Common::File *fp, char *buf, int len, int* result) {
+	getLine(fp, buf, len);
+	sscanf(buf, "%d", result);
+}
+
+void getStringFromLine(Common::File *fp, char *buf, int len, char* result) {
+	getLine(fp, buf, len);
+	sscanf(buf, "%s", result);
+}
+
 void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	int soc, l, martin = 0, obj_salir = 0;
 	float chiquez = 0, pequegnez = 0;
@@ -841,40 +851,26 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		error("missing data file");
 	}
 	int size = ald->size();
-	getLine(ald, buffer, size);
-	roomNumber = atoi(buffer);
 
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &roomMusic);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", roomDisk);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &nivel_osc);
+	getIntFromLine(ald, buffer, size, &roomNumber);
+	getIntFromLine(ald, buffer, size, &roomMusic);
+	getStringFromLine(ald, buffer, size, roomDisk);
+	getIntFromLine(ald, buffer, size, &nivel_osc);
 
-	if (currentChapter == 2) {
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &martin);
-	}
+	if (currentChapter == 2)
+		getIntFromLine(ald, buffer, size, &martin);
 
 	if (currentChapter == 2 && martin != 0) {
 		ancho_hare = martin;
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&alto_hare);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&feetHeight);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&stepX);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d",&stepY);
+		getIntFromLine(ald, buffer, size, &alto_hare);
+		getIntFromLine(ald, buffer, size, &feetHeight);
+		getIntFromLine(ald, buffer, size, &stepX);
+		getIntFromLine(ald, buffer, size, &stepY);
 
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%s",pant1);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%s",pant2);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%s",pant3);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%s",pant4);
+		getStringFromLine(ald, buffer, size, pant1);
+		getStringFromLine(ald, buffer, size, pant2);
+		getStringFromLine(ald, buffer, size, pant3);
+		getStringFromLine(ald, buffer, size, pant4);
 
 		loadAndDecompressPic(pant2, extraSurface, 1);
 		loadAndDecompressPic(pant1, frontSurface, 1);
@@ -883,61 +879,38 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		strcpy(menuBackground, pant4);
 	}
 
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &numRoomObjs);
+	getIntFromLine(ald, buffer, size, &numRoomObjs);
 
 	for (l = 0; l < numRoomObjs; l++) {
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &objectNum[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%s", objName[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &x1[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &y1[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &x2[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &y2[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &sitiobj_x[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &sitiobj_y[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &sentidobj[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &visible[l]);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &isDoor[l]);
+		getIntFromLine(ald, buffer, size, &objectNum[l]);
+		getStringFromLine(ald, buffer, size, objName[l]);
+		getIntFromLine(ald, buffer, size, &x1[l]);
+		getIntFromLine(ald, buffer, size, &y1[l]);
+		getIntFromLine(ald, buffer, size, &x2[l]);
+		getIntFromLine(ald, buffer, size, &y2[l]);
+		getIntFromLine(ald, buffer, size, &sitiobj_x[l]);
+		getIntFromLine(ald, buffer, size, &sitiobj_y[l]);
+		getIntFromLine(ald, buffer, size, &sentidobj[l]);
+		getIntFromLine(ald, buffer, size, &visible[l]);
+		getIntFromLine(ald, buffer, size, &isDoor[l]);
 		if (isDoor[l] != 0) {
-			getLine(ald, buffer, size);
-			sscanf(buffer, "%s", _targetSurface[l]);
-			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &_destX[l]);
-			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &_destY[l]);
-			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &sentido_alkeva[l]);
-			getLine(ald, buffer, size);
-			sscanf(buffer, "%d", &alapuertakeva[l]);
+			getStringFromLine(ald, buffer, size, _targetSurface[l]);
+			getIntFromLine(ald, buffer, size, &_destX[l]);
+			getIntFromLine(ald, buffer, size, &_destY[l]);
+			getIntFromLine(ald, buffer, size, &sentido_alkeva[l]);
+			getIntFromLine(ald, buffer, size, &alapuertakeva[l]);
 			updateDoor(l);
 		}
 	}
 
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &suelo_x1);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &suelo_y1);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &suelo_x2);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &suelo_y2);
+	getIntFromLine(ald, buffer, size, &suelo_x1);
+	getIntFromLine(ald, buffer, size, &suelo_y1);
+	getIntFromLine(ald, buffer, size, &suelo_x2);
+	getIntFromLine(ald, buffer, size, &suelo_y2);
 
 	if (currentChapter != 2) {
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &far);
-		getLine(ald, buffer, size);
-		sscanf(buffer, "%d", &near);
+		getIntFromLine(ald, buffer, size, &far);
+		getIntFromLine(ald, buffer, size, &near);
 	}
 	delete ald;
 	ald = NULL;
@@ -3204,28 +3177,17 @@ void DrasculaEngine::converse(const char *nom_fich) {
 	}
 	int size = ald->size();
 
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", phrase1);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", phrase2);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", phrase3);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", phrase4);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", sound1);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", sound2);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", sound3);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%s", sound4);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &answer1);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &answer2);
-	getLine(ald, buffer, size);
-	sscanf(buffer, "%d", &answer3);
+	getStringFromLine(ald, buffer, size, phrase1);
+	getStringFromLine(ald, buffer, size, phrase2);
+	getStringFromLine(ald, buffer, size, phrase3);
+	getStringFromLine(ald, buffer, size, phrase4);
+	getStringFromLine(ald, buffer, size, sound1);
+	getStringFromLine(ald, buffer, size, sound2);
+	getStringFromLine(ald, buffer, size, sound3);
+	getStringFromLine(ald, buffer, size, sound4);
+	getIntFromLine(ald, buffer, size, &answer1);
+	getIntFromLine(ald, buffer, size, &answer2);
+	getIntFromLine(ald, buffer, size, &answer3);
 	delete ald;
 	ald = NULL;
 
