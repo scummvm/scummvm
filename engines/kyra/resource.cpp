@@ -1396,11 +1396,13 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 					tmpFile.seek(pos);
 
 					outbuffer = new uint8[outsize];
-					assert(outbuffer);
+					if (!outbuffer)
+						error("Out of memory: Can't uncompress installer files");
 
 					if (!inbuffer) {
 						inbuffer = new uint8[insize];
-						assert(inbuffer);
+						if (!inbuffer)
+							error("Out of memory: Can't uncompress installer files");
 					}
 
 					if ((pos + insize) > size) {
