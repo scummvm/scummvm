@@ -22,7 +22,6 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "system.h"
 
 #include "common/util.h"
 #include "common/rect.h"

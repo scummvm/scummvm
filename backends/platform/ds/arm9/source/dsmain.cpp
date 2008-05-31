@@ -71,7 +71,6 @@
 #include <stdlib.h>
 #include "dsmain.h"
 #include "string.h"
-#include "system.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"
 #include "fat/gba_nds_fat.h"
@@ -359,14 +358,14 @@ void initSprites() {
 	   sprites[i].attribute[0] = ATTR0_DISABLED;
 	   sprites[i].attribute[1] = 0;
 	   sprites[i].attribute[2] = 0;
-	   sprites[i].attribute[3] = 0;
+	   sprites[i].filler = 0;
     }
 	
 	for (int i = 0; i < 128; i++) {
 	   spritesMain[i].attribute[0] = ATTR0_DISABLED;
 	   spritesMain[i].attribute[1] = 0;
 	   spritesMain[i].attribute[2] = 0;
-	   spritesMain[i].attribute[3] = 0;
+	   spritesMain[i].filler = 0;
     }
 	
 	updateOAM();
@@ -1611,7 +1610,7 @@ void updateStatus() {
 //		spritesMain[0].attribute[0] = ATTR0_DISABLED;
 //		spritesMain[0].attribute[1] = 0;
 //		spritesMain[0].attribute[2] = 0;
-//		spritesMain[0].attribute[3] = 0;
+//		spritesMain[0].filler = 0;
 		setIconMain(0, 0, 0, 0, 0, false);
 	}
 
