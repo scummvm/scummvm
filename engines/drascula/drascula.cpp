@@ -2709,7 +2709,7 @@ void DrasculaEngine::openSSN(const char *Name, int Pause) {
 
 int DrasculaEngine::playFrameSSN() {
 	int Exit = 0;
-	int Lengt;
+	uint32 Lengt;
 	byte *BufferSSN;
 
 	if (!UsingMem)
@@ -2734,12 +2734,12 @@ int DrasculaEngine::playFrameSSN() {
 		break;
 	case kFrameInit:
 		if (!UsingMem) {
-			_Session->read(&CMP, 1);
-			_Session->read(&Lengt, 4);
+			CMP = _Session->readByte();
+			Lengt = _Session->readUint32LE();
 		} else {
 			memcpy(&CMP, mSession, 1);
 			mSession += 1;
-			memcpy(&Lengt, mSession, 4);
+			Lengt = READ_LE_UINT32(mSession);
 			mSession += 4;
 		}
 		if (CMP == kFrameCmpRle) {
