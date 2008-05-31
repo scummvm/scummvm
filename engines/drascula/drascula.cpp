@@ -1508,8 +1508,8 @@ bool DrasculaEngine::saves() {
 	return true;
 }
 
-void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla) {
-	int pos_texto[8];
+void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
+	int textPos[8];
 	int letterY = 0, letterX = 0, h, length;
 	length = strlen(said);
 	
@@ -1535,38 +1535,38 @@ void DrasculaEngine::print_abc(const char *said, int x_pantalla, int y_pantalla)
 			}	// if
 		}	// for
 
-		pos_texto[0] = letterX;
-		pos_texto[1] = letterY;
-		pos_texto[2] = x_pantalla;
-		pos_texto[3] = y_pantalla;
-		pos_texto[4] = CHAR_WIDTH;
-		pos_texto[5] = CHAR_HEIGHT;
+		textPos[0] = letterX;
+		textPos[1] = letterY;
+		textPos[2] = screenX;
+		textPos[3] = screenY;
+		textPos[4] = CHAR_WIDTH;
+		textPos[5] = CHAR_HEIGHT;
 
-		copyRectClip(pos_texto, textSurface, screenSurface);
+		copyRectClip(textPos, textSurface, screenSurface);
 
-		x_pantalla = x_pantalla + CHAR_WIDTH;
-		if (x_pantalla > 317) {
-			x_pantalla = 0;
-			y_pantalla = y_pantalla + CHAR_HEIGHT + 2;
+		screenX = screenX + CHAR_WIDTH;
+		if (screenX > 317) {
+			screenX = 0;
+			screenY = screenY + CHAR_HEIGHT + 2;
 		}
 	}	// for
 }
 
-void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_pantalla, int game) {
-	int pos_texto[6];
-	int y_de_signos, letterY, letterX = 0, h, length;
+void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, int game) {
+	int textPos[6];
+	int signY, letterY, letterX = 0, h, length;
 	length = strlen(said);
 
 	for (h = 0; h < length; h++) {
 		if (game == 1) {
 			letterY = 6;
-			y_de_signos = 15;
+			signY = 15;
 		} else if (game == 3) {
 			letterY = 56;
-			y_de_signos = 65;
+			signY = 65;
 		} else {
 			letterY = 31;
-			y_de_signos = 40;
+			signY = 40;
 		}
 
 		int c = toupper(said[h]);
@@ -1581,21 +1581,21 @@ void DrasculaEngine::print_abc_opc(const char *said, int x_pantalla, int y_panta
 				letterX = multiplier * 7 + 10;
 
 				if (charMap[i].charType > 0)
-					letterY = y_de_signos;
+					letterY = signY;
 				break;
 			}	// if
 		}	// for
 
-		pos_texto[0] = letterX;
-		pos_texto[1] = letterY;
-		pos_texto[2] = x_pantalla;
-		pos_texto[3] = y_pantalla;
-		pos_texto[4] = CHAR_WIDTH_OPC;
-		pos_texto[5] = CHAR_HEIGHT_OPC;
+		textPos[0] = letterX;
+		textPos[1] = letterY;
+		textPos[2] = screenX;
+		textPos[3] = screenY;
+		textPos[4] = CHAR_WIDTH_OPC;
+		textPos[5] = CHAR_HEIGHT_OPC;
 
-		copyRectClip(pos_texto, backSurface, screenSurface);
+		copyRectClip(textPos, backSurface, screenSurface);
 
-		x_pantalla = x_pantalla + CHAR_WIDTH_OPC;
+		screenX = screenX + CHAR_WIDTH_OPC;
 	}
 }
 
