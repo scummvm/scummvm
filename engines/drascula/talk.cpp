@@ -570,12 +570,9 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 
 	flags[13] = 1;
 
-bebiendo:
-
-	if (flags[12] == 1) {
+	while (flags[12] == 1) {
 		updateRoom();
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-		goto bebiendo;
 	}
 
 	color_abc(kColorDarkGreen);

@@ -567,160 +567,160 @@ bool DrasculaEngine::escoba() {
 		}
 	}
 
-bucles:
-	if (characterMoved == 0) {
-		stepX = PASO_HARE_X;
-		stepY = PASO_HARE_Y;
-	}
-	if (characterMoved == 0 && walkToObject == 1) {
-		sentido_hare = sentido_final;
-		walkToObject = 0;
-	}
+	while (1) {
+		if (characterMoved == 0) {
+			stepX = PASO_HARE_X;
+			stepY = PASO_HARE_Y;
+		}
+		if (characterMoved == 0 && walkToObject == 1) {
+			sentido_hare = sentido_final;
+			walkToObject = 0;
+		}
 
-	if (num_ejec == 2) {
-		if (roomNumber == 3 && (hare_x == 279) && (hare_y + alto_hare == 101))
-			animation_1_2();
-		else if (roomNumber == 14 && (hare_x == 214) && (hare_y + alto_hare == 121))
-			lleva_al_hare(190, 130);
-		else if (roomNumber == 14 && (hare_x == 246) && (hare_y + alto_hare == 112))
-			lleva_al_hare(190, 130);
-	}
+		if (num_ejec == 2) {
+			if (roomNumber == 3 && (hare_x == 279) && (hare_y + alto_hare == 101))
+				animation_1_2();
+			else if (roomNumber == 14 && (hare_x == 214) && (hare_y + alto_hare == 121))
+				lleva_al_hare(190, 130);
+			else if (roomNumber == 14 && (hare_x == 246) && (hare_y + alto_hare == 112))
+				lleva_al_hare(190, 130);
+		}
 
-	moveCursor();
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+		moveCursor();
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-	if (num_ejec == 2) {
-		if (musicStatus() == 0 && roomMusic != 0)
-			playMusic(roomMusic);
-	} else {
-		if (musicStatus() == 0)
-			playMusic(roomMusic);
-	}
+		if (num_ejec == 2) {
+			if (musicStatus() == 0 && roomMusic != 0)
+				playMusic(roomMusic);
+		} else {
+			if (musicStatus() == 0)
+				playMusic(roomMusic);
+		}
 
-	updateEvents();
-
-	if (menuScreen == 0 && takeObject == 1)
-		checkObjects();
-
-	if (button_dch == 1 && menuScreen == 1) {
-		delay(100);
-		if (num_ejec == 2)
-			loadAndDecompressPic(menuBackground, backSurface, 1);
-		else
-			loadAndDecompressPic("99.alg", backSurface, 1);
-		setPalette((byte *)&gamePalette);
-		menuScreen = 0;
 		updateEvents();
-		if (num_ejec != 3)
-			cont_sv = 0;
-	}
-	if (button_dch == 1 && menuScreen == 0) {
-		delay(100);
-		characterMoved = 0;
-		if (sentido_hare == 2)
-			sentido_hare = 1;
-		if (num_ejec == 4)
-			loadAndDecompressPic("icons2.alg", backSurface, 1);
-		else if (num_ejec == 5)
-			loadAndDecompressPic("icons3.alg", backSurface, 1);
-		else if (num_ejec == 6)
-			loadAndDecompressPic("iconsp.alg", backSurface, 1);
-		else
-			loadAndDecompressPic("icons.alg", backSurface, 1);
-		menuScreen = 1;
-		updateEvents();
-		withoutVerb();
-		if (num_ejec != 3)
-			cont_sv = 0;
-	}
 
-	if (button_izq == 1 && menuBar == 1) {
-		delay(100);
-		elige_en_barra();
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (button_izq == 1 && takeObject == 0) {
-		delay(100);
-		if (comprueba1())
-			return true;
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (button_izq == 1 && takeObject == 1) {
-		if (comprueba2())
-			return true;
-		if (num_ejec != 3)
-			cont_sv = 0;
-	}
+		if (menuScreen == 0 && takeObject == 1)
+			checkObjects();
 
-	menuBar = (mouseY < 24 && menuScreen == 0) ? 1 : 0;
+		if (button_dch == 1 && menuScreen == 1) {
+			delay(100);
+			if (num_ejec == 2)
+				loadAndDecompressPic(menuBackground, backSurface, 1);
+			else
+				loadAndDecompressPic("99.alg", backSurface, 1);
+			setPalette((byte *)&gamePalette);
+			menuScreen = 0;
+			updateEvents();
+			if (num_ejec != 3)
+				cont_sv = 0;
+		}
+		if (button_dch == 1 && menuScreen == 0) {
+			delay(100);
+			characterMoved = 0;
+			if (sentido_hare == 2)
+				sentido_hare = 1;
+			if (num_ejec == 4)
+				loadAndDecompressPic("icons2.alg", backSurface, 1);
+			else if (num_ejec == 5)
+				loadAndDecompressPic("icons3.alg", backSurface, 1);
+			else if (num_ejec == 6)
+				loadAndDecompressPic("iconsp.alg", backSurface, 1);
+			else
+				loadAndDecompressPic("icons.alg", backSurface, 1);
+			menuScreen = 1;
+			updateEvents();
+			withoutVerb();
+			if (num_ejec != 3)
+				cont_sv = 0;
+		}
 
-	Common::KeyCode key = getScan();
-	if (key == Common::KEYCODE_F1 && menuScreen == 0) {
-		selectVerb(1);
-		if (num_ejec != 3)
+		if (button_izq == 1 && menuBar == 1) {
+			delay(100);
+			elige_en_barra();
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (button_izq == 1 && takeObject == 0) {
+			delay(100);
+			if (comprueba1())
+				return true;
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (button_izq == 1 && takeObject == 1) {
+			if (comprueba2())
+				return true;
+			if (num_ejec != 3)
+				cont_sv = 0;
+		}
+
+		menuBar = (mouseY < 24 && menuScreen == 0) ? 1 : 0;
+
+		Common::KeyCode key = getScan();
+		if (key == Common::KEYCODE_F1 && menuScreen == 0) {
+			selectVerb(1);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_F2 && menuScreen == 0) {
+			selectVerb(2);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_F3 && menuScreen == 0) {
+			selectVerb(3);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_F4 && menuScreen == 0) {
+			selectVerb(4);
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F2 && menuScreen == 0) {
-		selectVerb(2);
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F3 && menuScreen == 0) {
-		selectVerb(3);
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F4 && menuScreen == 0) {
-		selectVerb(4);
-		cont_sv = 0;
-	} else if (key == Common::KEYCODE_F5 && menuScreen == 0) {
-		selectVerb(5);
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F6 && menuScreen == 0) {
-		selectVerb(6);
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F9) {
+		} else if (key == Common::KEYCODE_F5 && menuScreen == 0) {
+			selectVerb(5);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_F6 && menuScreen == 0) {
+			selectVerb(6);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_F9) {
 		mesa();
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F10) {
-		if (!saves())
-			return true;
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_F8) {
-		withoutVerb();
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_v) {
-		withVoices = 1;
-		print_abc(_textsys[_lang][2], 96, 86);
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-		delay(1410);
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_t) {
-		withVoices = 0;
-		print_abc(_textsys[_lang][3], 94, 86);
-		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-		delay(1460);
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (key == Common::KEYCODE_ESCAPE) {
-		if (!confirmExit())
-			return false;
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
-		 loadAndDecompressPic("alcbar.alg", drawSurface1, 255);
-	} else if (cont_sv == 15000) {
-		screenSaver();
-		if (num_ejec != 3)
-			cont_sv = 0;
-	} else {
-		if (num_ejec != 3)
-			cont_sv++;
+		} else if (key == Common::KEYCODE_F10) {
+			if (!saves())
+				return true;
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_F8) {
+			withoutVerb();
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_v) {
+			withVoices = 1;
+			print_abc(_textsys[_lang][2], 96, 86);
+			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			delay(1410);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_t) {
+			withVoices = 0;
+			print_abc(_textsys[_lang][3], 94, 86);
+			updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+			delay(1460);
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (key == Common::KEYCODE_ESCAPE) {
+			if (!confirmExit())
+				return false;
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else if (num_ejec == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
+			loadAndDecompressPic("alcbar.alg", drawSurface1, 255);
+		} else if (cont_sv == 15000) {
+			screenSaver();
+			if (num_ejec != 3)
+				cont_sv = 0;
+		} else {
+			if (num_ejec != 3)
+				cont_sv++;
+		}
 	}
-	goto bucles;
 }
 
 void DrasculaEngine::pickObject(int objeto) {
@@ -1850,36 +1850,36 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 
 	textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
 
-tut:
-	strcpy(bb, m1);
-	scumm_strrev(bb);
+	while (true) {
+		strcpy(bb, m1);
+		scumm_strrev(bb);
 
-	if (textX1 < textX2) {
-		strcpy(m3, strrchr(m1, ' '));
-		strcpy(m1, strstr(bb, " "));
-		scumm_strrev(m1);
-		m1[strlen(m1) - 1] = '\0';
-		strcat(m3, m2);
-		strcpy(m2, m3);
-	};
+		if (textX1 < textX2) {
+			strcpy(m3, strrchr(m1, ' '));
+			strcpy(m1, strstr(bb, " "));
+			scumm_strrev(m1);
+			m1[strlen(m1) - 1] = '\0';
+			strcat(m3, m2);
+			strcpy(m2, m3);
+		};
 
-	textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
-	if (textX1 < textX2)
-		goto tut;
-	strcpy(mb[conta_f], m1);
+		textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
 
-	if (!strcmp(m2, ""))
-		goto imprimir;
-	scumm_strrev(m2);
-	m2[strlen(m2) - 1] = '\0';
-	scumm_strrev(m2);
-	strcpy(m1, m2);
-	strcpy(m2, "");
-	conta_f++;
+		if (textX1 < textX2)
+			continue;
 
-	goto tut;
+		strcpy(mb[conta_f], m1);
 
-imprimir:
+		if (!strcmp(m2, ""))
+			break;
+
+		scumm_strrev(m2);
+		m2[strlen(m2) - 1] = '\0';
+		scumm_strrev(m2);
+		strcpy(m1, m2);
+		strcpy(m2, "");
+		conta_f++;
+	}
 
 	fil = textY - (((conta_f + 3) * CHAR_HEIGHT));
 
@@ -3273,99 +3273,96 @@ void DrasculaEngine::converse(const char *nom_fich) {
 	// from 1(top) to 31
 	color_abc(kColorLightGreen);
 
-bucle_opc:
+	while (breakOut == 0) {
+		updateRoom();
 
-	updateRoom();
+		if (num_ejec == 1 || num_ejec == 4 || num_ejec == 6) {
+			if (musicStatus() == 0 && flags[11] == 0)
+				playMusic(roomMusic);
+		} else if (num_ejec == 2) {
+			if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
+				playMusic(roomMusic);
+		} else if (num_ejec == 3 || num_ejec == 5) {
+			if (musicStatus() == 0)
+				playMusic(roomMusic);
+		}
 
-	if (num_ejec == 1 || num_ejec == 4 || num_ejec == 6) {
-		if (musicStatus() == 0 && flags[11] == 0)
-			playMusic(roomMusic);
-	} else if (num_ejec == 2) {
-		if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
-			playMusic(roomMusic);
-	} else if (num_ejec == 3 || num_ejec == 5) {
-		if (musicStatus() == 0)
-			playMusic(roomMusic);
-	}
+		updateEvents();
 
-	updateEvents();
-
-	if (mouseY > 0 && mouseY < 9) {
-		if (used1 == 1 && _color != kColorWhite)
-			color_abc(kColorWhite);
-		else if (used1 == 0 && _color != kColorLightGreen)
+		if (mouseY > 0 && mouseY < 9) {
+			if (used1 == 1 && _color != kColorWhite)
+				color_abc(kColorWhite);
+			else if (used1 == 0 && _color != kColorLightGreen)
+				color_abc(kColorLightGreen);
+		} else if (mouseY > 8 && mouseY < 17) {
+			if (used2 == 1 && _color != kColorWhite)
+				color_abc(kColorWhite);
+			else if (used2 == 0 && _color != kColorLightGreen)
+				color_abc(kColorLightGreen);
+		} else if (mouseY > 16 && mouseY < 25) {
+			if (used3 == 1 && _color != kColorWhite)
+				color_abc(kColorWhite);
+			else if (used3 == 0 && _color != kColorLightGreen)
+				color_abc(kColorLightGreen);
+		} else if (_color != kColorLightGreen)
 			color_abc(kColorLightGreen);
-	} else if (mouseY > 8 && mouseY < 17) {
-		if (used2 == 1 && _color != kColorWhite)
-			color_abc(kColorWhite);
-		else if (used2 == 0 && _color != kColorLightGreen)
+
+		if (mouseY > 0 && mouseY < 9)
+			game1 = 2;
+		else if (mouseY > 8 && mouseY < 17)
+			game2 = 2;
+		else if (mouseY > 16 && mouseY < 25)
+			game3 = 2;
+		else if (mouseY > 24 && mouseY < 33)
+			game4 = 2;
+
+		print_abc_opc(phrase1, 1, 2, game1);
+		print_abc_opc(phrase2, 1, 10, game2);
+		print_abc_opc(phrase3, 1, 18, game3);
+		print_abc_opc(phrase4, 1, 26, game4);
+
+		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
+
+		if ((button_izq == 1) && (game1 == 2)) {
+			delay(100);
+			used1 = 1;
+			talk(phrase1, sound1);
+			if (num_ejec == 3)
+				grr();
+			else
+				response(answer1);
+		} else if ((button_izq == 1) && (game2 == 2)) {
+			delay(100);
+			used2 = 1;
+			talk(phrase2, sound2);
+			if (num_ejec == 3)
+				grr();
+			else
+				response(answer2);
+		} else if ((button_izq == 1) && (game3 == 2)) {
+			delay(100);
+			used3 = 1;
+			talk(phrase3, sound3);
+			if (num_ejec == 3)
+				grr();
+			else
+				response(answer3);
+		} else if ((button_izq == 1) && (game4 == 2)) {
+			delay(100);
+			talk(phrase4, sound4);
+			breakOut = 1;
+		}
+
+		if (button_izq == 1) {
+			delay(100);
 			color_abc(kColorLightGreen);
-	} else if (mouseY > 16 && mouseY < 25) {
-		if (used3 == 1 && _color != kColorWhite)
-			color_abc(kColorWhite);
-		else if (used3 == 0 && _color != kColorLightGreen)
-			color_abc(kColorLightGreen);
-	} else if (_color != kColorLightGreen)
-		color_abc(kColorLightGreen);
+		}
 
-	if (mouseY > 0 && mouseY < 9)
-		game1 = 2;
-	else if (mouseY > 8 && mouseY < 17)
-		game2 = 2;
-	else if (mouseY > 16 && mouseY < 25)
-		game3 = 2;
-	else if (mouseY > 24 && mouseY < 33)
-		game4 = 2;
-
-	print_abc_opc(phrase1, 1, 2, game1);
-	print_abc_opc(phrase2, 1, 10, game2);
-	print_abc_opc(phrase3, 1, 18, game3);
-	print_abc_opc(phrase4, 1, 26, game4);
-
-	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
-
-	if ((button_izq == 1) && (game1 == 2)) {
-		delay(100);
-		used1 = 1;
-		talk(phrase1, sound1);
-		if (num_ejec == 3)
-			grr();
-		else
-			response(answer1);
-	} else if ((button_izq == 1) && (game2 == 2)) {
-		delay(100);
-		used2 = 1;
-		talk(phrase2, sound2);
-		if (num_ejec == 3)
-			grr();
-		else
-			response(answer2);
-	} else if ((button_izq == 1) && (game3 == 2)) {
-		delay(100);
-		used3 = 1;
-		talk(phrase3, sound3);
-		if (num_ejec == 3)
-			grr();
-		else
-			response(answer3);
-	} else if ((button_izq == 1) && (game4 == 2)) {
-		delay(100);
-		talk(phrase4, sound4);
-		breakOut = 1;
-	}
-
-	if (button_izq == 1) {
-		delay(100);
-		color_abc(kColorLightGreen);
-	}
-
-	game1 = (used1 == 0) ? 1 : 3;
-	game2 = (used2 == 0) ? 1 : 3;
-	game3 = (used3 == 0) ? 1 : 3;
-	game4 = 1;
-
-	if (breakOut == 0)
-		goto bucle_opc;
+		game1 = (used1 == 0) ? 1 : 3;
+		game2 = (used2 == 0) ? 1 : 3;
+		game3 = (used3 == 0) ? 1 : 3;
+		game4 = 1;
+	} // while (breakOut == 0)
 
 	if (num_ejec == 2)
 		loadAndDecompressPic(menuBackground, backSurface, 1);
@@ -3774,9 +3771,7 @@ void DrasculaEngine::grr() {
 
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 
-bucless:
-	if (!isTalkFinished(&length))
-		goto bucless;
+	while (!isTalkFinished(&length));
 
 	updateRoom();
 	updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
