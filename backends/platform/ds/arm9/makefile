@@ -1,3 +1,6 @@
+srcdir      ?= .
+DEPDIR      := .deps
+
 #DYNAMIC_MODULES = 1
 libndsdir = $(DEVKITPRO)/libnds
 #libndsdir = /home/neil/devkitpror21/libnds
