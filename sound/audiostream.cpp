@@ -134,17 +134,19 @@ public:
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
 
 		// Verify the buffer sizes are sane
-		if (is16Bit && stereo)
+		if (is16Bit && stereo) {
 			assert((len & 3) == 0 && (loopLen & 3) == 0);
-		else if (is16Bit || stereo)
+		} else if (is16Bit || stereo) {
 			assert((len & 1) == 0 && (loopLen & 1) == 0);
+		}
 
 		if (loopLen) {
 			_loopPtr = _ptr + loopOffset;
 			_loopEnd = _loopPtr + loopLen;
 		}
-		if (stereo)	// Stereo requires even sized data
+		if (stereo)	{ // Stereo requires even sized data
 			assert(len % 2 == 0);
+		}
 
 		_origPtr = autoFreeMemory ? ptr : 0;
 	}
@@ -329,10 +331,11 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::queueBuffer(byte
 	Common::StackLock lock(_mutex);
 
 	// Verify the buffer size is sane
-	if (is16Bit && stereo)
+	if (is16Bit && stereo) {
 		assert((size & 3) == 0);
-	else if (is16Bit || stereo)
+	} else if (is16Bit || stereo) {
 		assert((size & 1) == 0);
+	}
 
 	// Verify that the stream has not yet been finalized (by a call to finish())
 	assert(!_finalized);
