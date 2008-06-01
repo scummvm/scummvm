@@ -89,7 +89,8 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "baseball2001", "Backyard Baseball 2001" },
 	{ "Baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
-	{ "BluesABCTime", "Blue's ABC Time" },
+	{ "Blues123Time", "Blue's 123 Time Activities" },
+	{ "BluesABCTime", "Blue's ABC Time Activities" },
 	{ "BluesBirthday", "Blue's Birthday Adventure" },
 	{ "catalog", "Humongous Interactive Catalog" },
 	{ "chase", "SPY Fox in Cheese Chase" },
@@ -314,6 +315,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttrace", "HE 98.5", 0, GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_HE_985, UNK},
 	{"puttrace", "HE 99",   0, GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY, UNK},
 
+	{"blues123time", "", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
 	{"bluesabctime", "", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
 	{"BluesBirthday", 0, 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
 	{"soccer", "", 0, GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
@@ -510,6 +512,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "basketball", "basketball", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "basketball", "Basketball", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "blues123time", "Blues123time", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "bluesabctime", "bluesabctime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
