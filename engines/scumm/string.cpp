@@ -1481,9 +1481,9 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			text = (const byte *)"/NEW.009/glowing crystals";
 		else if (!strcmp((const char *)text, "pit"))
 			text = (const byte *)"/NEW.010/pit";
-		else if (!strcmp((const char *)text, "/NEWTON.032/"))
+		else if (!strcmp((const char *)text, "You wish."))
 			text = (const byte *)"/NEW.011/You wish.";
-		else if (!strcmp((const char *)text, "/NEWTON.034/"))
+		else if (!strcmp((const char *)text, "In your dreams."))
 			text = (const byte *)"/NEW.012/In your dreams";
 		else if (!strcmp((const char *)text, "left"))
 			text = (const byte *)"/CATHPLAT.068/left";
