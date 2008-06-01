@@ -514,7 +514,7 @@ public:
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
 	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
 	void set_dacSSN(byte *dacSSN);
-	byte *TryInMem(Common::File *Session);
+	byte *TryInMem();
 	void EndSSN();
 	int playFrameSSN();
 
@@ -524,7 +524,6 @@ public:
 
 	byte *pointer;
 	int UsingMem;
-	Common::File *_Session;
 	byte CHUNK;
 	byte CMP, dacSSN[768];
 	byte *MiVideoSSN;

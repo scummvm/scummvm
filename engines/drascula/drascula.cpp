@@ -1630,7 +1630,6 @@ bool DrasculaEngine::confirmExit() {
 void DrasculaEngine::screenSaver() {
 	int xr, yr;
 	byte *copia, *ghost;
-	Common::File file;
 	float coeff = 0, coeff2 = 0;
 	int count = 0;
 	int count2 = 0;
@@ -1646,12 +1645,12 @@ void DrasculaEngine::screenSaver() {
 	ghost = (byte *)malloc(65536);
 
 	// carga_ghost();
-	file.open("ghost.drv");
-	if (!file.isOpen())
+	_arj.open("ghost.drv");
+	if (!_arj.isOpen())
 		error("Cannot open file ghost.drv");
 
-	file.read(ghost, 65536);
-	file.close();
+	_arj.read(ghost, 65536);
+	_arj.close();
 
 	updateEvents();
 	xr = mouseX;
@@ -1863,7 +1862,6 @@ void DrasculaEngine::playSound(int soundNum) {
 }
 
 bool DrasculaEngine::animate(const char *animationFile, int FPS) {
-	Common::File FileIn;
 	unsigned j;
 	int NFrames = 1;
 	int cnt = 2;
@@ -1872,17 +1870,17 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	AuxBuffLast = (byte *)malloc(65000);
 	AuxBuffDes = (byte *)malloc(65000);
 
-	FileIn.open(animationFile);
+	_arj.open(animationFile);
 
-	if (!FileIn.isOpen()) {
+	if (!_arj.isOpen()) {
 		error("Animation file %s not found", animationFile);
 	}
 
-	NFrames = FileIn.readSint32LE();
-	dataSize = FileIn.readSint32LE();
+	NFrames = _arj.readSint32LE();
+	dataSize = _arj.readSint32LE();
 	AuxBuffOrg = (byte *)malloc(dataSize);
-	FileIn.read(AuxBuffOrg, dataSize);
-	FileIn.read(cPal, 768);
+	_arj.read(AuxBuffOrg, dataSize);
+	_arj.read(cPal, 768);
 	loadPCX(AuxBuffOrg);
 	free(AuxBuffOrg);
 	memcpy(VGA, AuxBuffDes, 64000);
@@ -1892,10 +1890,10 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	memcpy(AuxBuffLast, AuxBuffDes, 64000);
 	WaitForNext(FPS);
 	while (cnt < NFrames) {
-		dataSize = FileIn.readSint32LE();
+		dataSize = _arj.readSint32LE();
 		AuxBuffOrg = (byte *)malloc(dataSize);
-		FileIn.read(AuxBuffOrg, dataSize);
-		FileIn.read(cPal, 768);
+		_arj.read(AuxBuffOrg, dataSize);
+		_arj.read(cPal, 768);
 		loadPCX(AuxBuffOrg);
 		free(AuxBuffOrg);
 		for (j = 0;j < 64000; j++) {
@@ -1913,7 +1911,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	}
 	free(AuxBuffLast);
 	free(AuxBuffDes);
-	FileIn.close();
+	_arj.close();
 
 	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
 }
@@ -2702,9 +2700,8 @@ void DrasculaEngine::openSSN(const char *Name, int Pause) {
 	UsingMem = 0;
 	if (MiVideoSSN == NULL)
 		return;
-	_Session = new Common::File;
-	_Session->open(Name);
-	mSession = TryInMem(_Session);
+	_arj.open(Name);
+	mSession = TryInMem();
 	LastFrame = _system->getMillis();
 }
 
@@ -2714,7 +2711,7 @@ int DrasculaEngine::playFrameSSN() {
 	byte *BufferSSN;
 
 	if (!UsingMem)
-		_Session->read(&CHUNK, 1);
+		_arj.read(&CHUNK, 1);
 	else {
 		memcpy(&CHUNK, mSession, 1);
 		mSession += 1;
@@ -2723,7 +2720,7 @@ int DrasculaEngine::playFrameSSN() {
 	switch (CHUNK) {
 	case kFrameSetPal:
 		if (!UsingMem)
-			_Session->read(dacSSN, 768);
+			_arj.read(dacSSN, 768);
 		else {
 			memcpy(dacSSN, mSession, 768);
 			mSession += 768;
@@ -2735,8 +2732,8 @@ int DrasculaEngine::playFrameSSN() {
 		break;
 	case kFrameInit:
 		if (!UsingMem) {
-			CMP = _Session->readByte();
-			Lengt = _Session->readUint32LE();
+			CMP = _arj.readByte();
+			Lengt = _arj.readUint32LE();
 		} else {
 			memcpy(&CMP, mSession, 1);
 			mSession += 1;
@@ -2746,7 +2743,7 @@ int DrasculaEngine::playFrameSSN() {
 		if (CMP == kFrameCmpRle) {
 			if (!UsingMem) {
 				BufferSSN = (byte *)malloc(Lengt);
-				_Session->read(BufferSSN, Lengt);
+				_arj.read(BufferSSN, Lengt);
 			} else {
 				BufferSSN = (byte *)malloc(Lengt);
 				memcpy(BufferSSN, mSession, Lengt);
@@ -2769,7 +2766,7 @@ int DrasculaEngine::playFrameSSN() {
 			if (CMP == kFrameCmpOff) {
 				if (!UsingMem) {
 					BufferSSN = (byte *)malloc(Lengt);
-					_Session->read(BufferSSN, Lengt);
+					_arj.read(BufferSSN, Lengt);
 				} else {
 					BufferSSN = (byte *)malloc(Lengt);
 					memcpy(BufferSSN, mSession, Lengt);
@@ -2807,24 +2804,23 @@ void DrasculaEngine::EndSSN() {
 	if (UsingMem)
 		free(pointer);
 	else {
-		_Session->close();
-		delete _Session;
+		_arj.close();
 	}
 }
 
-byte *DrasculaEngine::TryInMem(Common::File *Session) {
+byte *DrasculaEngine::TryInMem() {
 	int Lengt;
 
-	Session->seek(0, SEEK_END);
-	Lengt = Session->pos();
-	Session->seek(0, SEEK_SET);
+	_arj.seek(0, SEEK_END);
+	Lengt = _arj.pos();
+	_arj.seek(0, SEEK_SET);
 	pointer = (byte *)malloc(Lengt);
 	if (pointer == NULL)
 		return NULL;
-	Session->read(pointer, Lengt);
+	_arj.read(pointer, Lengt);
 	UsingMem = 1;
-	Session->close();
-	delete Session;
+	_arj.close();
+
 	return pointer;
 }
 
