@@ -184,6 +184,13 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 	} while (loop);
 }
 
+void TIMInterpreter::refreshTimersAfterPause(uint32 elapsedTime) {
+	for (int i = 0; i < 10; i++) {
+		_currentTim->func[i].lastTime += elapsedTime;
+		_currentTim->func[i].nextTime += elapsedTime;
+	}
+}
+
 int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 	if (cmd < 0 || cmd >= _commandsSize) {
 		warning("Calling unimplemented TIM command %d", cmd);

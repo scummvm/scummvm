@@ -69,6 +69,7 @@ public:
 	void stopCurFunc() { if (_currentTim) cmd_stopCurFunc(0); }
 
 	void play(const char *filename);
+	void refreshTimersAfterPause(uint32 elapsedTime);
 private:
 	KyraEngine_v1 *_vm;
 	OSystem *_system;

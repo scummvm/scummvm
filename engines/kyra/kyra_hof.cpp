@@ -206,7 +206,12 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 				_activeWSA[x].nextFrame += pausedTime;
 		}
 
-		// TODO: item animation, idle animation, tim player, etc
+		_nextIdleAnim += pausedTime;
+		
+		for (int x = 0; x < _itemAnimDataSize; x++)
+			_activeItemAnim[x].nextFrame += pausedTime;
+
+		_tim->refreshTimersAfterPause(pausedTime);
 	}
 }
 
