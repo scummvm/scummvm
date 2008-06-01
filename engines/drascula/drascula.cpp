@@ -108,6 +108,7 @@ int DrasculaEngine::init() {
 	}
 
 	_arj.registerArchive("packet.001");
+	_arj.enableFallback(true);
 
 	return 0;
 }
