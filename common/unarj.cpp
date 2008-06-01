@@ -550,7 +550,7 @@ void ArjFile::decode() {
 	r = 0;
 
 	while (count < _origsize) {
-		if ((c = decode_c()) <= UCHAR_MAX) {
+		if ((c = decode_c()) <= ARJ_UCHAR_MAX) {
 			_text[r] = (byte) c;
 			count++;
 			if (++r >= DDICSIZ) {
@@ -558,7 +558,7 @@ void ArjFile::decode() {
 				_outstream->write(_text, DDICSIZ);
 			}
 		} else {
-			j = c - (UCHAR_MAX + 1 - THRESHOLD);
+			j = c - (ARJ_UCHAR_MAX + 1 - THRESHOLD);
 			count += j;
 			i = decode_p();
 			if ((i = r - i - 1) < 0)
@@ -591,7 +591,7 @@ void ArjFile::decode() {
 #define GETBITS(c,l) {if(_getlen<l)BFIL c=(uint16)_getbuf>>(CODE_BIT-l);BPUL(l)}
 
 int16 ArjFile::decode_ptr() {
-	int16 c;
+	int16 c = 0;
 	int16 width;
 	int16 plus;
 	int16 pwr;
@@ -612,7 +612,7 @@ int16 ArjFile::decode_ptr() {
 }
 
 int16 ArjFile::decode_len() {
-	int16 c;
+	int16 c = 0;
 	int16 width;
 	int16 plus;
 	int16 pwr;

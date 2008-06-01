@@ -44,13 +44,13 @@ namespace Common {
 
 #define CODE_BIT    16
 #define CHAR_BIT  8
-#define UCHAR_MAX 255
+#define ARJ_UCHAR_MAX 255		// UCHAR_MAX is defined in limits.h in MSVC
 #define THRESHOLD	3
 #define DDICSIZ	  26624
 #define MAXDICBIT   16
 #define MATCHBIT	 8
 #define MAXMATCH   256
-#define NC		  (UCHAR_MAX + MAXMATCH + 2 - THRESHOLD)
+#define NC		  (ARJ_UCHAR_MAX + MAXMATCH + 2 - THRESHOLD)
 #define NP		  (MAXDICBIT + 1)
 #define CBIT		 9
 #define NT		  (CODE_BIT + 3)
