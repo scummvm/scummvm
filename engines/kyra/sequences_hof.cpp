@@ -300,6 +300,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				_eventList.clear();
 				seqNum = kSequenceFirates;
 			}
+		} else if (seqNum == kSequenceDemoFisher && !(_abortIntroFlag || skipFlag())) {
+			seqNum = kSequenceDemoVirgin;
 		}
 
 		if (_menuChoice) {
