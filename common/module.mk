@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	stream.o \
 	util.o \
 	system.o \
+	unarj.o \
 	unzip.o \
 	zlib.o
 
