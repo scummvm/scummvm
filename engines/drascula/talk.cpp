@@ -30,28 +30,17 @@ namespace Drascula {
 void DrasculaEngine::talkInit(const char *filename) {
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(filename);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(2);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	if (hay_sb == 1)
+		playFile(filename);
 }
 
 bool DrasculaEngine::isTalkFinished(int* length) {
 	byte key = getScan();
 	if (key != 0)
-		ctvd_stop();
+		stopSound();
 	if (hay_sb == 1) {
 		if (soundIsActive())
 			return false;
-		delete(sku);
-		sku = 0;
-		ctvd_terminate();
 	} else {
 		length -= 2;
 		if (length > 0)

@@ -229,8 +229,6 @@ public:
 	byte cPal[768];
 	byte *pcxBuffer;
 
-	Common::File *ald, *sku;
-
 	Common::ArjFile _arj;
 
 	int hay_sb;
@@ -423,7 +421,6 @@ public:
 	void centerText(const char *,int,int);
 	void playSound(int soundNum);
 	bool animate(const char *animation, int FPS);
-	void stopSound_corte();
 	void fadeToBlack(int fadeSpeed);
 	void pause(int);
 	void placeIgor();
@@ -479,6 +476,7 @@ public:
 	void talk_hacker(const char *, const char *);
 
 	void hiccup(int);
+	void finishSound();
 	void stopSound();
 	void closeDoor(int nflag, int doorNum);
 	void playMusic(int p);
@@ -487,7 +485,6 @@ public:
 	void updateRoom();
 	bool loadGame(const char *);
 	void updateDoor(int);
-	void animastopSound_corte();
 	void color_hare();
 	void funde_hare(int oscuridad);
 	void paleta_hare_claro();
@@ -588,12 +585,12 @@ public:
 	void response(int);
 
 	void MusicFadeout();
-	void ctvd_end();
-	void ctvd_stop();
-	void ctvd_terminate();
-	void ctvd_speaker(int flag);
-	void ctvd_output(Common::File *file_handle);
-	void ctvd_init(int b);
+	void playFile(const char *fname);
+
+	char *getLine(char *buf, int len);
+	void getIntFromLine(char *buf, int len, int* result);
+	void getStringFromLine(char *buf, int len, char* result);
+
 	void grr();
 	bool room_13(int fl);
 	void update_13();

@@ -179,7 +179,7 @@ void DrasculaEngine::room_6(int fl){
 		flags[2] = 1;
 		updateRoom();
 		updateScreen();
-		stopSound();
+		finishSound();
 	} else if (pickedObject == kVerbClose && fl == 143 && flags[2] == 1) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		flags[2] = 0;
@@ -190,7 +190,7 @@ void DrasculaEngine::room_6(int fl){
 		playSound(4);
 		updateRoom();
 		updateScreen();
-		stopSound();
+		finishSound();
 	} else if (pickedObject == kVerbOpen && fl == 139 && flags[1] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
@@ -203,7 +203,7 @@ void DrasculaEngine::room_6(int fl){
 		visible[2] = 0;
 		updateRoom();
 		updateScreen();
-		stopSound();
+		finishSound();
 	} else if (pickedObject == kVerbPick && fl == 140) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
@@ -334,7 +334,7 @@ void DrasculaEngine::room_15(int fl) {
 		copyRect(133, 135, hare_x + 6, hare_y, 39, 63, drawSurface3, screenSurface);
 		updateScreen();
 		playSound(8);
-		stopSound();
+		finishSound();
 		talk(338);
 		flags[27] = 0;
 		pickObject(19);
@@ -519,7 +519,7 @@ void DrasculaEngine::room_22(int fl) {
 		flags[26]=1;
 		playSound(1);
 		hiccup(14);
-		stopSound();
+		finishSound();
 		withoutVerb();
 		removeObject(22);
 		updateVisible();
@@ -874,7 +874,7 @@ void DrasculaEngine::room_55(int fl) {
 	else if (fl == 206) {
 		playSound(11);
 		animate("det.bin", 17);
-		stopSound();
+		finishSound();
 		lleva_al_hare(hare_x - 3, hare_y + alto_hare + 6);
 	} else
 		hasAnswer = 0;
@@ -920,7 +920,7 @@ void DrasculaEngine::room_59(int fl) {
 		if (flags[11] == 0) {
 			playSound(12);
 			delay(40);
-			stopSound();
+			finishSound();
 			delay(10);
 			lleva_al_hare(174, 168);
 			sentido_hare = 2;
@@ -929,7 +929,7 @@ void DrasculaEngine::room_59(int fl) {
 			pause(40);
 			playSound(12);
 			pause(19);
-			stopSound_corte();
+			stopSound();
 			hare_se_ve = 0;
 			updateRoom();
 			copyRect(101, 34, hare_x - 4, hare_y - 1, 37, 70, drawSurface3, screenSurface);

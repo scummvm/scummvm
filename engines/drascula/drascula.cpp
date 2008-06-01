@@ -151,8 +151,6 @@ int DrasculaEngine::go() {
 		frame_bat = 0;
 		c_mirar = 0;
 		c_poder = 0;
-		ald = NULL;
-		sku = NULL;
 
 		allocMemory();
 
@@ -223,7 +221,7 @@ int DrasculaEngine::go() {
 
 void DrasculaEngine::releaseGame() {
 	if (hay_sb == 1)
-		ctvd_end();
+		stopSound();
 	clearRoom();
 	black();
 	MusicFadeout();
@@ -792,8 +790,7 @@ bool DrasculaEngine::para_cargar(char gameName[]) {
 	if (!loadGame(gameName))
 		return false;
 	if (currentChapter == 2 || currentChapter == 3 || currentChapter == 5) {
-		delete ald;
-		ald = NULL;
+		//
 	}
 	carga_escoba(currentData);
 	withoutVerb();
@@ -801,14 +798,14 @@ bool DrasculaEngine::para_cargar(char gameName[]) {
 	return true;
 }
 
-static char *getLine(Common::File *fp, char *buf, int len) {
+char *DrasculaEngine::getLine(char *buf, int len) {
 	byte c;
 	char *b;
 
 	for (;;) {
 		b = buf;
-		while (!fp->eos()) {
-			c = ~fp->readByte();
+		while (!_arj.eos()) {
+			c = ~_arj.readByte();
 			if (c == '\r')
 				continue;
 			if (c == '\n' || b - buf >= (len - 1))
@@ -816,7 +813,7 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 			*b++ = c;
 		}
 		*b = '\0';
-		if (fp->eos() && b == buf)
+		if (_arj.eos() && b == buf)
 			return NULL;
 		if (b != buf)
 			break;
@@ -824,13 +821,13 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 	return buf;
 }
 
-void getIntFromLine(Common::File *fp, char *buf, int len, int* result) {
-	getLine(fp, buf, len);
+void DrasculaEngine::getIntFromLine(char *buf, int len, int* result) {
+	getLine(buf, len);
 	sscanf(buf, "%d", result);
 }
 
-void getStringFromLine(Common::File *fp, char *buf, int len, char* result) {
-	getLine(fp, buf, len);
+void DrasculaEngine::getStringFromLine(char *buf, int len, char* result) {
+	getLine(buf, len);
 	sscanf(buf, "%s", result);
 }
 
@@ -846,32 +843,31 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	strcpy(para_codificar, nom_fich);
 	strcpy(currentData, nom_fich);
 
-	ald = new Common::File;
-	ald->open(nom_fich);
-	if (!ald->isOpen()) {
-		error("missing data file");
+	_arj.open(nom_fich);
+	if (!_arj.isOpen()) {
+		error("missing data file %s", nom_fich);
 	}
-	int size = ald->size();
+	int size = _arj.size();
 
-	getIntFromLine(ald, buffer, size, &roomNumber);
-	getIntFromLine(ald, buffer, size, &roomMusic);
-	getStringFromLine(ald, buffer, size, roomDisk);
-	getIntFromLine(ald, buffer, size, &nivel_osc);
+	getIntFromLine(buffer, size, &roomNumber);
+	getIntFromLine(buffer, size, &roomMusic);
+	getStringFromLine(buffer, size, roomDisk);
+	getIntFromLine(buffer, size, &nivel_osc);
 
 	if (currentChapter == 2)
-		getIntFromLine(ald, buffer, size, &martin);
+		getIntFromLine(buffer, size, &martin);
 
 	if (currentChapter == 2 && martin != 0) {
 		ancho_hare = martin;
-		getIntFromLine(ald, buffer, size, &alto_hare);
-		getIntFromLine(ald, buffer, size, &feetHeight);
-		getIntFromLine(ald, buffer, size, &stepX);
-		getIntFromLine(ald, buffer, size, &stepY);
+		getIntFromLine(buffer, size, &alto_hare);
+		getIntFromLine(buffer, size, &feetHeight);
+		getIntFromLine(buffer, size, &stepX);
+		getIntFromLine(buffer, size, &stepY);
 
-		getStringFromLine(ald, buffer, size, pant1);
-		getStringFromLine(ald, buffer, size, pant2);
-		getStringFromLine(ald, buffer, size, pant3);
-		getStringFromLine(ald, buffer, size, pant4);
+		getStringFromLine(buffer, size, pant1);
+		getStringFromLine(buffer, size, pant2);
+		getStringFromLine(buffer, size, pant3);
+		getStringFromLine(buffer, size, pant4);
 
 		loadAndDecompressPic(pant2, extraSurface, 1);
 		loadAndDecompressPic(pant1, frontSurface, 1);
@@ -880,41 +876,40 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		strcpy(menuBackground, pant4);
 	}
 
-	getIntFromLine(ald, buffer, size, &numRoomObjs);
+	getIntFromLine(buffer, size, &numRoomObjs);
 
 	for (l = 0; l < numRoomObjs; l++) {
-		getIntFromLine(ald, buffer, size, &objectNum[l]);
-		getStringFromLine(ald, buffer, size, objName[l]);
-		getIntFromLine(ald, buffer, size, &x1[l]);
-		getIntFromLine(ald, buffer, size, &y1[l]);
-		getIntFromLine(ald, buffer, size, &x2[l]);
-		getIntFromLine(ald, buffer, size, &y2[l]);
-		getIntFromLine(ald, buffer, size, &sitiobj_x[l]);
-		getIntFromLine(ald, buffer, size, &sitiobj_y[l]);
-		getIntFromLine(ald, buffer, size, &sentidobj[l]);
-		getIntFromLine(ald, buffer, size, &visible[l]);
-		getIntFromLine(ald, buffer, size, &isDoor[l]);
+		getIntFromLine(buffer, size, &objectNum[l]);
+		getStringFromLine(buffer, size, objName[l]);
+		getIntFromLine(buffer, size, &x1[l]);
+		getIntFromLine(buffer, size, &y1[l]);
+		getIntFromLine(buffer, size, &x2[l]);
+		getIntFromLine(buffer, size, &y2[l]);
+		getIntFromLine(buffer, size, &sitiobj_x[l]);
+		getIntFromLine(buffer, size, &sitiobj_y[l]);
+		getIntFromLine(buffer, size, &sentidobj[l]);
+		getIntFromLine(buffer, size, &visible[l]);
+		getIntFromLine(buffer, size, &isDoor[l]);
 		if (isDoor[l] != 0) {
-			getStringFromLine(ald, buffer, size, _targetSurface[l]);
-			getIntFromLine(ald, buffer, size, &_destX[l]);
-			getIntFromLine(ald, buffer, size, &_destY[l]);
-			getIntFromLine(ald, buffer, size, &sentido_alkeva[l]);
-			getIntFromLine(ald, buffer, size, &alapuertakeva[l]);
+			getStringFromLine(buffer, size, _targetSurface[l]);
+			getIntFromLine(buffer, size, &_destX[l]);
+			getIntFromLine(buffer, size, &_destY[l]);
+			getIntFromLine(buffer, size, &sentido_alkeva[l]);
+			getIntFromLine(buffer, size, &alapuertakeva[l]);
 			updateDoor(l);
 		}
 	}
 
-	getIntFromLine(ald, buffer, size, &suelo_x1);
-	getIntFromLine(ald, buffer, size, &suelo_y1);
-	getIntFromLine(ald, buffer, size, &suelo_x2);
-	getIntFromLine(ald, buffer, size, &suelo_y2);
+	getIntFromLine(buffer, size, &suelo_x1);
+	getIntFromLine(buffer, size, &suelo_y1);
+	getIntFromLine(buffer, size, &suelo_x2);
+	getIntFromLine(buffer, size, &suelo_y2);
 
 	if (currentChapter != 2) {
-		getIntFromLine(ald, buffer, size, &far);
-		getIntFromLine(ald, buffer, size, &near);
+		getIntFromLine(buffer, size, &far);
+		getIntFromLine(buffer, size, &near);
 	}
-	delete ald;
-	ald = NULL;
+	_arj.close();
 
 	if (currentChapter == 2) {
 		if (martin == 0) {
@@ -1849,16 +1844,8 @@ void DrasculaEngine::playSound(int soundNum) {
 	char file[20];
 	sprintf(file, "s%i.als", soundNum);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open(file);
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-	}
-	ctvd_init(2);
-	ctvd_speaker(1);
-	ctvd_output(sku);
+	if (hay_sb == 1)
+		playFile(file);
 }
 
 bool DrasculaEngine::animate(const char *animationFile, int FPS) {
@@ -1914,15 +1901,6 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	_arj.close();
 
 	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
-}
-
-void DrasculaEngine::animastopSound_corte() {
-	if (hay_sb == 1) {
-		ctvd_stop();
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
-	}
 }
 
 void DrasculaEngine::fadeToBlack(int fadeSpeed) {
@@ -2040,13 +2018,12 @@ void DrasculaEngine::hiccup(int counter) {
 	updateScreen();
 }
 
-void DrasculaEngine::stopSound() {
+void DrasculaEngine::finishSound() {
 	delay(1);
 
 	if (hay_sb == 1) {
-		while (soundIsActive());
-		delete sku;
-		sku = NULL;
+		while (soundIsActive())
+			_system->delayMillis(10);
 	}
 }
 
@@ -2504,8 +2481,7 @@ bool DrasculaEngine::exitRoom(int l) {
 				addObject(11);
 			}
 			clearRoom();
-			delete ald;
-			ald = NULL;
+
 			strcpy(salgo, _targetSurface[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
@@ -2690,7 +2666,7 @@ void DrasculaEngine::enterName() {
 void DrasculaEngine::para_grabar(char gameName[]) {
 	saveGame(gameName);
 	playSound(99);
-	stopSound();
+	finishSound();
 }
 
 void DrasculaEngine::openSSN(const char *Name, int Pause) {
@@ -3149,26 +3125,25 @@ void DrasculaEngine::converse(const char *nom_fich) {
 	if (currentChapter == 5)
 		withoutVerb();
 
-	ald = new Common::File;
-	ald->open(nom_fich);
-	if (!ald->isOpen()) {
-		error("missing data file");
+	_arj.open(nom_fich);
+	if (!_arj.isOpen()) {
+		error("missing data file %s", nom_fich);
 	}
-	int size = ald->size();
+	int size = _arj.size();
 
-	getStringFromLine(ald, buffer, size, phrase1);
-	getStringFromLine(ald, buffer, size, phrase2);
-	getStringFromLine(ald, buffer, size, phrase3);
-	getStringFromLine(ald, buffer, size, phrase4);
-	getStringFromLine(ald, buffer, size, sound1);
-	getStringFromLine(ald, buffer, size, sound2);
-	getStringFromLine(ald, buffer, size, sound3);
-	getStringFromLine(ald, buffer, size, sound4);
-	getIntFromLine(ald, buffer, size, &answer1);
-	getIntFromLine(ald, buffer, size, &answer2);
-	getIntFromLine(ald, buffer, size, &answer3);
-	delete ald;
-	ald = NULL;
+	getStringFromLine(buffer, size, phrase1);
+	getStringFromLine(buffer, size, phrase2);
+	getStringFromLine(buffer, size, phrase3);
+	getStringFromLine(buffer, size, phrase4);
+	getStringFromLine(buffer, size, sound1);
+	getStringFromLine(buffer, size, sound2);
+	getStringFromLine(buffer, size, sound3);
+	getStringFromLine(buffer, size, sound4);
+	getIntFromLine(buffer, size, &answer1);
+	getIntFromLine(buffer, size, &answer2);
+	getIntFromLine(buffer, size, &answer3);
+
+	_arj.close();
 
 	if (currentChapter == 2 && !strcmp(nom_fich, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
 		strcpy(phrase3, _text[_lang][405]);
@@ -3413,12 +3388,9 @@ void DrasculaEngine::addObject(int osj) {
 	}
 }
 
-void DrasculaEngine::stopSound_corte() {
+void DrasculaEngine::stopSound() {
 	if (hay_sb == 1) {
-		ctvd_stop();
-		delete sku;
-		sku = NULL;
-		ctvd_terminate();
+		_mixer->stopHandle(_soundHandle);
 	}
 }
 
@@ -3441,27 +3413,15 @@ void DrasculaEngine::MusicFadeout() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, org_vol);
 }
 
-void DrasculaEngine::ctvd_end() {
-	_mixer->stopHandle(_soundHandle);
-}
+void DrasculaEngine::playFile(const char *fname) {
+	_arj.open(fname);
 
-void DrasculaEngine::ctvd_stop() {
-	_mixer->stopHandle(_soundHandle);
-}
-
-void DrasculaEngine::ctvd_terminate() {
-//	_mixer->stopHandle(_soundHandle);
-}
-
-void DrasculaEngine::ctvd_speaker(int flag) {}
-
-void DrasculaEngine::ctvd_output(Common::File *file_handle) {}
-
-void DrasculaEngine::ctvd_init(int b) {
-	int soundSize = sku->size();
+	int soundSize = _arj.size();
 	byte *soundData = (byte *)malloc(soundSize);
-	sku->seek(32);
-	sku->read(soundData, soundSize);
+	_arj.seek(32);
+	_arj.read(soundData, soundSize);
+	_arj.close();
+
 	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, soundData, soundSize - 64,
 					11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 }
@@ -3666,7 +3626,7 @@ void DrasculaEngine::openDoor(int nflag, int doorNum) {
 			updateDoor(doorNum);
 		updateRoom();
 		updateScreen();
-		stopSound();
+		finishSound();
 		withoutVerb();
 	}
 }
@@ -3693,16 +3653,8 @@ void DrasculaEngine::grr() {
 
 	color_abc(kColorDarkGreen);
 
-	if (hay_sb == 1) {
-		sku = new Common::File;
-		sku->open("s10.als");
-		if (!sku->isOpen()) {
-			error("no puedo abrir archivo de voz");
-		}
-		ctvd_init(4);
-		ctvd_speaker(1);
-		ctvd_output(sku);
-	}
+	if (hay_sb == 1)
+		playFile("s10.als");
 
 	updateRoom();
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
@@ -3740,7 +3692,7 @@ void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 			updateDoor(doorNum);
 		updateRoom();
 		updateScreen();
-		stopSound();
+		finishSound();
 		withoutVerb();
 	}
 }
