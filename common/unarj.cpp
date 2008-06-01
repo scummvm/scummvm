@@ -78,6 +78,7 @@ static uint32 GetCRC(byte *data, int len) {
 ArjFile::ArjFile() {
 	InitCRC();
 	_isOpen = false;
+	_fallBack = false;
 }
 
 ArjFile::~ArjFile() {
@@ -234,6 +235,15 @@ bool ArjFile::open(const Common::String &filename, AccessMode mode) {
 
 	_isOpen = false;
 
+	if (_fallBack) {
+		_currArchive.open(filename);
+		if (_currArchive.isOpen()) {
+			_isOpen = true;
+			_uncompressed = &_currArchive;
+			return true;
+		}
+	}
+
 	if (!_fileMap.contains(filename))
 		return false;
 
@@ -279,7 +289,12 @@ bool ArjFile::open(const Common::String &filename, AccessMode mode) {
 void ArjFile::close() {
 	_isOpen = false;
 
-	delete _uncompressed;
+	if (_fallBack) {
+		_currArchive.close();
+	} else {
+		delete _uncompressed;
+	}
+
 	_uncompressed = NULL;
 
 	free(_uncompressedData);

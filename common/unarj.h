@@ -106,6 +106,8 @@ public:
 	ArjFile();
 	~ArjFile();
 
+	void enableFallback(bool val) { _fallBack = val; }
+
 	void registerArchive(const String &filename);
 
 	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
@@ -119,6 +121,8 @@ public:
 	bool isOpen() { return _isOpen; }
 
 private:
+	bool _fallBack;
+
 	File _currArchive;
 	Array<ArjHeader *> _headers;
 	ArjFilesMap _fileMap;
@@ -128,7 +132,7 @@ private:
 	byte *_compressedData;
 	MemoryWriteStream *_outstream;
 	MemoryReadStream *_compressed;
-	MemoryReadStream *_uncompressed;
+	SeekableReadStream *_uncompressed;
 
 	bool _isOpen;
 
