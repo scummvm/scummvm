@@ -166,6 +166,28 @@ inline uint32 fp_sqroot(uint32 x) {
 	a1 = ~a2; \
 }
 
+#define __TRIANGLE_MAINX() \
+		if (error_term >= 0) { \
+			ptr_right += pitch; \
+			ptr_left += pitch; \
+			error_term += dysub; \
+		} else { \
+			error_term += ddy; \
+		} \
+		ptr_right++; \
+		ptr_left--;
+
+#define __TRIANGLE_MAINY() \
+		if (error_term >= 0) { \
+			ptr_right++; \
+			ptr_left--; \
+			error_term += dxsub; \
+		} else { \
+			error_term += ddx; \
+		} \
+		ptr_right += pitch; \
+		ptr_left += pitch;
+
 /********************************************************************
  * Primitive shapes drawing - Public API calls - VectorRendererSpec
  ********************************************************************/
@@ -235,7 +257,7 @@ drawCircle(int x, int y, int r) {
 		drawCircleAlg(x + Base::_shadowOffset + 1, y + Base::_shadowOffset + 1, r, 0, kFillForeground);
 	}
 
-	switch(Base::_fillMode) {
+	switch (Base::_fillMode) {
 	case kFillDisabled:
 		if (Base::_strokeWidth)
 			drawCircleAlg(x, y, r, _fgColor, kFillDisabled);
@@ -273,7 +295,7 @@ drawSquare(int x, int y, int w, int h) {
 		drawSquareShadow(x, y, w, h, Base::_shadowOffset);
 	}
 
-	switch(Base::_fillMode) {
+	switch (Base::_fillMode) {
 	case kFillDisabled:
 		if (Base::_strokeWidth)
 			drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
@@ -309,7 +331,7 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
-	switch(Base::_fillMode) {
+	switch (Base::_fillMode) {
 	case kFillDisabled:
 		if (Base::_strokeWidth)
 			drawRoundedSquareAlg(x, y, r, w, h, _fgColor, kFillDisabled);
@@ -336,6 +358,41 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		}
 		break;
 	}
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
+		return;
+
+	PixelType color = 0;
+
+	if (Base::_strokeWidth <= 1) {
+		if (Base::_fillMode == kFillForeground)
+			color = _fgColor;
+		else if (Base::_fillMode == kFillBackground)
+			color = _bgColor;
+	} else {
+		if (Base::_fillMode == kFillDisabled)
+			return;
+		color = _fgColor;
+	}
+
+	switch(orient) {
+		case kTriangleUp:
+		case kTriangleDown:
+			drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
+			break;
+
+		case kTriangleLeft:
+		case kTriangleRight:
+			break;
+	}
+
+	if (Base::_strokeWidth > 0)
+		if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillGradient)
+			drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), _fgColor, kFillDisabled);
 }
 
 /********************************************************************
@@ -421,6 +478,88 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 	ptr = (PixelType *)_activeSurface->getBasePtr(x2, y2);
 	*ptr = (PixelType)color;
 }
+
+/** VERTICAL TRIANGLE DRAWING ALGORITHM **/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType,PixelFormat>::
+drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	int dx = w >> 1, dy = h, gradient_h = 0;
+	int pitch = Base::surfacePitch();
+	PixelType *ptr_right = 0, *ptr_left = 0;
+
+	if (inverted) {
+		ptr_right = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+		ptr_left = (PixelType *)_activeSurface->getBasePtr(x1 + w, y1);
+	} else {
+		ptr_right = ptr_left = (PixelType *)_activeSurface->getBasePtr(x1 + dx, y1);
+	}
+
+	if (dx > dy) {
+		int ddy = dy * 2;
+		int dysub = ddy - (dx * 2);
+		int error_term = ddy - dx;
+
+		switch(fill_m) {
+		case kFillDisabled:
+			while (dx--) {
+				__TRIANGLE_MAINX();
+				*ptr_right = color;
+				*ptr_left = color;
+			}
+			colorFill(ptr_left, ptr_right, color);
+			break;
+
+		case kFillForeground:
+		case kFillBackground:
+			while (dx--) {
+				__TRIANGLE_MAINX();
+				if (inverted) colorFill(ptr_right, ptr_left, color);
+				else colorFill(ptr_left, ptr_right, color);
+			}
+			break;
+
+		case kFillGradient:
+			while (dx--) {
+				__TRIANGLE_MAINX();
+				if (inverted) colorFill(ptr_right, ptr_left, calcGradient(gradient_h++, h));
+				else colorFill(ptr_left, ptr_right, calcGradient(gradient_h++, h));
+			}
+			break;
+		}
+	} else {
+		int ddx = dx * 2;
+		int dxsub = ddx - (dy * 2);
+		int error_term = ddx - dy;
+
+		switch(fill_m) {
+		case kFillDisabled:
+			while (dy--) {
+				__TRIANGLE_MAINY();
+				*ptr_right = color;
+				*ptr_left = color;
+			}
+			colorFill(ptr_left, ptr_right, color);
+			break;
+
+		case kFillForeground:
+		case kFillBackground:
+			while (dy--) {
+				__TRIANGLE_MAINY();
+				if (inverted) colorFill(ptr_right, ptr_left, color);
+				else colorFill(ptr_left, ptr_right, color);
+			}
+			break;
+		case kFillGradient:
+			while (dy--) {
+				__TRIANGLE_MAINY();
+				if (inverted) colorFill(ptr_right, ptr_left, calcGradient(gradient_h++, h));
+				else colorFill(ptr_left, ptr_right, calcGradient(gradient_h++, h));
+			}
+			break;
+		}
+	}
+}
+
 
 /** ROUNDED SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>

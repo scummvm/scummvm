@@ -97,6 +97,13 @@ public:
 		kFillGradient = 3
 	};
 
+	enum TriangleOrientation {
+		kTriangleUp,
+		kTriangleDown,
+		kTriangleLeft,
+		kTriangleRight
+	};
+
 	/**
 	 * Draws a line by considering the special cases for optimization.
 	 *
@@ -137,6 +144,8 @@ public:
 	 * @param r Radius of the corners.
 	 */
 	virtual void drawRoundedSquare(int x, int y, int r, int w, int h) = 0;
+
+	virtual void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -360,6 +369,11 @@ public:
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
 
 	/**
+	 * @see VectorRenderer::drawTriangle()
+	 */
+	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
+
+	/**
 	 * @see VectorRenderer::setFgColor()
 	 */
 	void setFgColor(uint8 r, uint8 g, uint8 b) {
@@ -498,6 +512,7 @@ protected:
 	virtual void drawCircleAlg(int x, int y, int r, PixelType color, FillMode fill_m);
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
+	virtual void drawTriangleVertAlg(int x, int y, int w, int h, bool inverted, PixelType color, FillMode fill_m);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS
@@ -565,6 +580,11 @@ protected:
 	 * @param color Color of the pixel
 	 */
 	virtual inline void colorFill(PixelType *first, PixelType *last, PixelType color) {
+		if (first == last) {
+			*first = color;
+			return;
+		}
+
 		register PixelType *ptr = first;
 		register int count = (last - first);
 		register int n = (count + 7) >> 3;
