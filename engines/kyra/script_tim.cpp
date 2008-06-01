@@ -118,7 +118,8 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	for (uint i = 0; i < avtlChunkSize; ++i)
 		tim->avtl[i] = READ_LE_UINT16(tim->avtl + i);
 	
-	for (int i = 0; i < 10; ++i)
+	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : TIM::kCountFuncs;
+	for (int i = 0; i < num; ++i)
 		tim->func[i].avtl = tim->avtl + tim->avtl[i];	
 
 	return tim;
@@ -145,7 +146,7 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 	}
 
 	do {
-		for (_currentFunc = 0; _currentFunc < 10; ++_currentFunc) {
+		for (_currentFunc = 0; _currentFunc < TIM::kCountFuncs; ++_currentFunc) {
 			TIM::Function &cur = _currentTim->func[_currentFunc];
 
 			if (_currentTim->procFunc != -1)
@@ -185,7 +186,10 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 }
 
 void TIMInterpreter::refreshTimersAfterPause(uint32 elapsedTime) {
-	for (int i = 0; i < 10; i++) {
+	if (!_currentTim)
+		return;
+
+	for (int i = 0; i < TIM::kCountFuncs; i++) {
 		if (_currentTim->func[i].lastTime)
 			_currentTim->func[i].lastTime += elapsedTime;
 		if (_currentTim->func[i].nextTime)
@@ -215,7 +219,7 @@ int TIMInterpreter::cmd_initFunc0(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_stopCurFunc(const uint16 *param) {
-	if (_currentFunc < 10)
+	if (_currentFunc < TIM::kCountFuncs)
 		_currentTim->func[_currentFunc].ip = 0;
 	if (!_currentFunc)
 		_finished = true;
@@ -224,7 +228,7 @@ int TIMInterpreter::cmd_stopCurFunc(const uint16 *param) {
 
 int TIMInterpreter::cmd_initFunc(const uint16 *param) {
 	uint16 func = *param;
-	assert(func < 10);
+	assert(func < TIM::kCountFuncs);
 	if (_currentTim->func[func].avtl)
 		_currentTim->func[func].ip = _currentTim->func[func].avtl;
 	else
@@ -234,13 +238,13 @@ int TIMInterpreter::cmd_initFunc(const uint16 *param) {
 
 int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 	uint16 func = *param;
-	assert(func < 10);
+	assert(func < TIM::kCountFuncs);
 	_currentTim->func[func].ip = 0;
 	return 1;
 }
 
 int TIMInterpreter::cmd_resetAllRuntimes(const uint16 *param) {
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < TIM::kCountFuncs; ++i) {
 		if (_currentTim->func[i].ip)
 			_currentTim->func[i].nextTime = _system->getMillis();
 	}
@@ -264,7 +268,7 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 int TIMInterpreter::cmd_initFuncNow(const uint16 *param) {
 	uint16 func = *param;
-	assert(func < 10);
+	assert(func < TIM::kCountFuncs);
 	_currentTim->func[func].ip = _currentTim->func[func].avtl;
 	_currentTim->func[func].lastTime = _currentTim->func[func].nextTime = _system->getMillis();
 	return 1;
@@ -272,7 +276,7 @@ int TIMInterpreter::cmd_initFuncNow(const uint16 *param) {
 
 int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 	uint16 func = *param;
-	assert(func < 10);
+	assert(func < TIM::kCountFuncs);
 	_currentTim->func[func].ip = 0;
 	_currentTim->func[func].lastTime = _currentTim->func[func].nextTime = _system->getMillis();
 	return 1;

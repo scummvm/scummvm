@@ -40,6 +40,10 @@ struct TIM {
 	int16 procFunc;
 	uint16 procParam;
 
+	enum {
+		kCountFuncs = 10
+	};
+
 	struct Function {
 		const uint16 *ip;
 
@@ -47,7 +51,7 @@ struct TIM {
 		uint32 nextTime;
 
 		const uint16 *avtl;
-	} func[10];
+	} func[kCountFuncs];
 
 	uint16 *avtl;
 	uint8 *text;
