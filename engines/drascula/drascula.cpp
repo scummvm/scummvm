@@ -108,6 +108,11 @@ int DrasculaEngine::init() {
 	}
 
 	_arj.registerArchive("packet.001");
+	// Use override files for non-English versions
+	if (_lang == 3)	// French
+		_arj.registerArchive("packet.002");
+	else if (_lang == 2) // German
+		_arj.registerArchive("packet.003");
 	_arj.enableFallback(true);
 
 	return 0;
