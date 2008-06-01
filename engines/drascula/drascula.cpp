@@ -107,6 +107,8 @@ int DrasculaEngine::init() {
 		_lang = 0;
 	}
 
+	_arj.registerArchive("packet.001");
+
 	return 0;
 }
 
@@ -264,22 +266,21 @@ void DrasculaEngine::loadPic(const char *NamePcc) {
 	unsigned int con, x = 0;
 	unsigned int fExit = 0;
 	byte ch, rep;
-	Common::File file;
 	byte *auxPun;
 
-	file.open(NamePcc);
-	if (!file.isOpen())
+	_arj.open(NamePcc);
+	if (!_arj.isOpen())
 		error("missing game data %s %c", NamePcc, 7);
 
 	pcxBuffer = (byte *)malloc(65000);
 	auxPun = pcxBuffer;
-	file.seek(128);
+	_arj.seek(128);
 	while (!fExit) {
-		ch = file.readByte();
+		ch = _arj.readByte();
 		rep = 1;
 		if ((ch & 192) == 192) {
 			rep = (ch & 63);
-			ch = file.readByte();
+			ch = _arj.readByte();
 		}
 		for (con = 0; con < rep; con++) {
 			*auxPun++ = ch;
@@ -289,8 +290,8 @@ void DrasculaEngine::loadPic(const char *NamePcc) {
 		}
 	}
 
-	file.read(cPal, 768);
-	file.close();
+	_arj.read(cPal, 768);
+	_arj.close();
 }
 
 void DrasculaEngine::decompressPic(byte *targetSurface, int colorCount) {

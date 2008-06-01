@@ -35,6 +35,7 @@
 #include "common/hash-str.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/unarj.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -229,6 +230,8 @@ public:
 	byte *pcxBuffer;
 
 	Common::File *ald, *sku;
+
+	Common::ArjFile _arj;
 
 	int hay_sb;
 	int nivel_osc, previousMusic, roomMusic;
