@@ -118,7 +118,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	for (uint i = 0; i < avtlChunkSize; ++i)
 		tim->avtl[i] = READ_LE_UINT16(tim->avtl + i);
 	
-	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : TIM::kCountFuncs;
+	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
 		tim->func[i].avtl = tim->avtl + tim->avtl[i];	
 
