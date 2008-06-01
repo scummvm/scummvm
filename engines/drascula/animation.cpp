@@ -292,7 +292,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_igor_dch(1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_dr_dch(11);
+		talk_drascula(11, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -324,7 +324,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(13);
-		talk_dr_dch(13);
+		talk_drascula(13, 1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
@@ -1881,24 +1881,24 @@ void DrasculaEngine::animation_1_6() {
 	loadAndDecompressPic("auxig2.alg", frontSurface, 1);
 	loadAndDecompressPic("auxdr.alg", drawSurface2, 1);
 	loadAndDecompressPic("car.alg", backSurface, 1);
-	talk_dr_dch(19);
+	talk_drascula(19, 1);
 	talk(247);
-	talk_dr_dch(20);
-	talk_dr_dch(21);
+	talk_drascula(20, 1);
+	talk_drascula(21, 1);
 	talk(248);
-	talk_dr_dch(22);
+	talk_drascula(22, 1);
 	talk(249);
-	talk_dr_dch(23);
+	talk_drascula(23, 1);
 	converse("op_11.cal");
-	talk_dr_dch(26);
+	talk_drascula(26, 1);
 
 	animate("fum.bin", 15);
 
-	talk_dr_dch(27);
+	talk_drascula(27, 1);
 	talk(254);
-	talk_dr_dch(28);
+	talk_drascula(28, 1);
 	talk(255);
-	talk_dr_dch(29);
+	talk_drascula(29, 1);
 	fadeToBlack(1);
 	clearRoom();
 	loadAndDecompressPic("time1.alg", screenSurface, 1);
@@ -1912,7 +1912,7 @@ void DrasculaEngine::animation_1_6() {
 	updateScreen();
 	fadeFromBlack(1);
 	talk(256);
-	talk_dr_dch(30);
+	talk_drascula(30, 1);
 	talk(257);
 	fadeToBlack(0);
 	clearRoom();
@@ -1925,14 +1925,14 @@ void DrasculaEngine::animation_1_6() {
 	updateScreen();
 	fadeFromBlack(1);
 	talk(258);
-	talk_dr_dch(31);
+	talk_drascula(31, 1);
 	animation_5_6();
-	talk_dr_dch(32);
+	talk_drascula(32, 1);
 	talk_igor_dch(11);
 	sentido_igor = 3;
-	talk_dr_dch(33);
+	talk_drascula(33, 1);
 	talk_igor_front(12);
-	talk_dr_dch(34);
+	talk_drascula(34, 1);
 	sentido_dr = 0;
 	talk_drascula(35);
 
@@ -1945,15 +1945,15 @@ void DrasculaEngine::animation_1_6() {
 }
 
 void DrasculaEngine::animation_2_6() {
-	talk_dr_dch(24);
+	talk_drascula(24, 1);
 }
 
 void DrasculaEngine::animation_3_6() {
-	talk_dr_dch(24);
+	talk_drascula(24, 1);
 }
 
 void DrasculaEngine::animation_4_6() {
-	talk_dr_dch(25);
+	talk_drascula(25, 1);
 }
 
 void DrasculaEngine::animation_5_6() {
@@ -2095,36 +2095,36 @@ void DrasculaEngine::animation_10_6() {
 	copyBackground(164, 85, 155, 48, 113, 114, drawSurface3, screenSurface);
 	updateScreen();
 	finishSound();
-	talk_taber2(23);
+	talk_bartender(23, 1);
 	flags[7] = 1;
 }
 
 void DrasculaEngine::animation_11_6() {
-	talk_taber2(10);
+	talk_bartender(10, 1);
 	talk(268);
-	talk_taber2(11);
+	talk_bartender(11, 1);
 }
 
 void DrasculaEngine::animation_12_6() {
-	talk_taber2(12);
+	talk_bartender(12, 1);
 	talk(270);
-	talk_taber2(13);
-	talk_taber2(14);
+	talk_bartender(13, 1);
+	talk_bartender(14, 1);
 }
 
 void DrasculaEngine::animation_13_6() {
-	talk_taber2(15);
+	talk_bartender(15, 1);
 }
 
 void DrasculaEngine::animation_14_6() {
-	talk_taber2(24);
+	talk_bartender(24, 1);
 	addObject(21);
 	flags[10] = 1;
 	breakOut = 1;
 }
 
 void DrasculaEngine::animation_15_6() {
-	talk_taber2(16);
+	talk_bartender(16, 1);
 }
 
 void DrasculaEngine::animation_18_6() {
