@@ -35,6 +35,8 @@ Variables::Variables(uint32 size) {
 
 	_vars = new byte[_size];
 	_sizes = new byte[_size];
+
+	clear();
 }
 
 Variables::~Variables() {
