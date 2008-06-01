@@ -291,6 +291,7 @@ void ArjFile::close() {
 
 	if (_fallBack) {
 		_currArchive.close();
+		return;
 	} else {
 		delete _uncompressed;
 	}
