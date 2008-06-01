@@ -77,6 +77,7 @@ static uint32 GetCRC(byte *data, int len) {
 
 ArjFile::ArjFile() {
 	InitCRC();
+	_isOpen = false;
 }
 
 ArjFile::~ArjFile() {
@@ -228,6 +229,9 @@ ArjHeader *ArjFile::readHeader() {
 
 
 bool ArjFile::open(const Common::String &filename, AccessMode mode) {
+	if (_isOpen)
+		error("Attempt to open another instance of archive");
+
 	_isOpen = false;
 
 	if (!_fileMap.contains(filename))
@@ -246,12 +250,22 @@ bool ArjFile::open(const Common::String &filename, AccessMode mode) {
 	_currArchive.open(_archMap[filename]);
 	_currArchive.seek(hdr->pos, SEEK_SET);
 
-	if (hdr->method == 0) // store
+	if (hdr->method == 0) { // store
         _currArchive.read(_uncompressedData, _origsize);
-    else if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
-        decode();
-    else if (hdr->method == 4)
-        decode_f();
+	} else {
+		_compressedData = (byte *)malloc(_compsize);
+		_currArchive.read(_compressedData, _compsize);
+
+		_compressed = new MemoryReadStream(_compressedData, _compsize);
+
+		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
+			decode();
+		else if (hdr->method == 4)
+			decode_f();
+
+		delete _compressed;
+		free(_compressedData);
+	}
 
 	_currArchive.close();
 	delete _outstream;
@@ -305,7 +319,7 @@ void ArjFile::fillbuf(int n) {    // Shift bitbuf n bits left, read n bits
 		_bitbuf |= _subbitbuf << (n -= _bitcount);
 		if (_compsize != 0) {
 			_compsize--;
-			_subbitbuf = _currArchive.readByte();
+			_subbitbuf = _compressed->readByte();
 		} else
 			_subbitbuf = 0;
 		_bitcount = CHAR_BIT;

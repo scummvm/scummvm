@@ -125,7 +125,9 @@ private:
 	StringMap _archMap;
 	ReadStream *_stream;
 	byte *_uncompressedData;
+	byte *_compressedData;
 	MemoryWriteStream *_outstream;
+	MemoryReadStream *_compressed;
 	MemoryReadStream *_uncompressed;
 
 	bool _isOpen;
