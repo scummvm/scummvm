@@ -186,8 +186,10 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 
 void TIMInterpreter::refreshTimersAfterPause(uint32 elapsedTime) {
 	for (int i = 0; i < 10; i++) {
-		_currentTim->func[i].lastTime += elapsedTime;
-		_currentTim->func[i].nextTime += elapsedTime;
+		if (_currentTim->func[i].lastTime)
+			_currentTim->func[i].lastTime += elapsedTime;
+		if (_currentTim->func[i].nextTime)
+			_currentTim->func[i].nextTime += elapsedTime;
 	}
 }
 
