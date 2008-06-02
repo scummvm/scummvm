@@ -91,7 +91,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "c6a8697396e213a18472542d5f547cb4", 32847563),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_KEEPMATCH
 		},
 		GF_PACKED,
 	},
@@ -120,7 +120,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.003", 0, "4401123400f22f212b89f15fb4b43013", 721122},
+				{"packet.002", 0, "4401123400f22f212b89f15fb4b43013", 721122},
 				{NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
