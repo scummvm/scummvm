@@ -875,10 +875,6 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		getStringFromLine(buffer, size, pant3);
 		getStringFromLine(buffer, size, pant4);
 
-		loadAndDecompressPic(pant2, extraSurface, 1);
-		loadAndDecompressPic(pant1, frontSurface, 1);
-		loadAndDecompressPic(pant4, backSurface, 1);
-
 		strcpy(menuBackground, pant4);
 	}
 
@@ -916,6 +912,12 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		getIntFromLine(buffer, size, &near);
 	}
 	_arj.close();
+
+	if (currentChapter == 2 && martin != 0) {
+		loadAndDecompressPic(pant2, extraSurface, 1);
+		loadAndDecompressPic(pant1, frontSurface, 1);
+		loadAndDecompressPic(pant4, backSurface, 1);
+	}
 
 	if (currentChapter == 2) {
 		if (martin == 0) {
