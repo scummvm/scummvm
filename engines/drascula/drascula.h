@@ -174,13 +174,8 @@ public:
 	void freeMemory();
 	void releaseGame();
 
-	void loadPic(const char *NamePcc);
+	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount);
 	void decompressPic(byte *targetSurface, int colorCount);
-
-	void loadAndDecompressPic(const char *NamePcc, byte *targetSurface, int colorCount) {
-		loadPic(NamePcc);
-		decompressPic(targetSurface, colorCount);
-	}
 
 	typedef char DacPalette256[256][3];
 

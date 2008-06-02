@@ -515,7 +515,7 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 	int length = strlen(said);
 
 	if (currentChapter == 1) {
-		loadAndDecompressPic("an11y13.alg", frontSurface, 1);
+		loadPic("an11y13.alg", frontSurface, 1);
 	}
 
 	flags[13] = 1;
@@ -553,7 +553,7 @@ void DrasculaEngine::talk_drunk(const char *said, const char *filename) {
 
 	flags[13] = 0;
 	if (currentChapter == 1) {
-		loadAndDecompressPic("96.alg", frontSurface, 1);
+		loadPic("96.alg", frontSurface, 1);
 	}
 
 	if (currentChapter == 1) {

@@ -937,10 +937,10 @@ void DrasculaEngine::room_59(int fl) {
 			updateScreen();
 			hare_se_ve = 1;
 			clearRoom();
-			loadAndDecompressPic("tlef0.alg", drawSurface1, COMPLETE_PAL);
-			loadAndDecompressPic("tlef1.alg", drawSurface3, 1);
-			loadAndDecompressPic("tlef2.alg", frontSurface, 1);
-			loadAndDecompressPic("tlef3.alg", backSurface, 1);
+			loadPic("tlef0.alg", drawSurface1, COMPLETE_PAL);
+			loadPic("tlef1.alg", drawSurface3, 1);
+			loadPic("tlef2.alg", frontSurface, 1);
+			loadPic("tlef3.alg", backSurface, 1);
 			talk_htel(240);
 
 			color_abc(kColorBrown);
@@ -958,10 +958,10 @@ void DrasculaEngine::room_59(int fl) {
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][62], "VB62.als");
 			clearRoom();
-			loadAndDecompressPic("aux59.alg", drawSurface3, 1);
-			loadAndDecompressPic("96.alg", frontSurface, COMPLETE_PAL);
-			loadAndDecompressPic("99.alg", backSurface, 1);
-			loadAndDecompressPic("59.alg", drawSurface1, HALF_PAL);
+			loadPic("aux59.alg", drawSurface3, 1);
+			loadPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadPic("99.alg", backSurface, 1);
+			loadPic("59.alg", drawSurface1, HALF_PAL);
 			sentido_hare = 3;
 			talk(245);
 			withoutVerb();
