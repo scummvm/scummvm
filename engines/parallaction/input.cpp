@@ -80,11 +80,8 @@ uint16 Input::readInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-			// TODO: don't quit() here, just have caller routines to check
-			// on kEngineQuit and exit gracefully to allow the engine to shut down
 			_engineFlags |= kEngineQuit;
-			_vm->_system->quit();
-			break;
+			return KeyDown;
 
 		default:
 			break;

@@ -89,16 +89,18 @@ Parallaction::~Parallaction() {
 	delete _globalTable;
 
 	delete _callableNames;
-	delete _localFlagNames;
+	//delete _localFlagNames;
 
 	freeLocation();
 
 	freeCharacter();
 	destroyInventory();
 
+	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
 	delete _disk;
+	delete _input;
 }
 
 
@@ -354,12 +356,20 @@ void Parallaction::runGame() {
 		processInput(data);
 	}
 
+	if (_engineFlags & kEngineQuit)
+		return;
+
 	runPendingZones();
+
+	if (_engineFlags & kEngineQuit)
+		return;
 
 	if (_engineFlags & kEngineChangeLocation) {
 		changeLocation(_location._name);
 	}
 
+	if (_engineFlags & kEngineQuit)
+		return;
 
 	_gfx->beginFrame();
 
@@ -522,6 +532,7 @@ void Character::free() {
 	delete _talk;
 	delete _head;
 	delete _objs;
+	delete _ani->gfxobj;
 
 	_ani->gfxobj = NULL;
 	_talk = NULL;

@@ -518,6 +518,8 @@ uint16 Parallaction::runZone(ZonePtr z) {
 
 	case kZoneSpeak:
 		runDialogue(z->u.speak);
+		if (_engineFlags & kEngineQuit)
+			return 0;
 		break;
 
 	}

@@ -31,6 +31,8 @@ namespace Parallaction {
 char			_tokens[20][MAX_TOKEN_LEN];
 
 Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {
+
+//	clearAllTokens();
 }
 
 Script::~Script() {
@@ -72,6 +74,17 @@ void Script::clearTokens() {
 	return;
 
 }
+
+/*
+void Script::clearAllTokens() {
+
+	for (uint16 i = 0; i < 20; i++)
+		for (uint16 j = 0; j < 50; j++)
+			_tokens[i][j] = '\0';
+	
+	return;
+}
+*/
 
 void Script::skip(const char* endToken) {
 
