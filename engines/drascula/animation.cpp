@@ -1681,7 +1681,7 @@ void DrasculaEngine::animation_12_5() {
 	DacPalette256 bgPalette3;
 
 	int frame;
-	const int rayo_x[] = {1, 46, 91, 136, 181, 226, 271, 181};
+	const int rayX[] = {1, 46, 91, 136, 181, 226, 271, 181};
 	const int frusky_x[] = {100, 139, 178, 217, 100, 178, 217, 139, 100, 139};
 	const int elfrusky_x[] = {1, 68, 135, 1, 68, 135, 1, 68, 135, 68, 1, 135, 68, 135, 68};
 	//const int humo_x[] = {1, 29, 57, 85, 113, 141, 169, 197, 225};
@@ -1738,7 +1738,7 @@ void DrasculaEngine::animation_12_5() {
 
 		pause(4);
 		updateRoom();
-		copyRect(rayo_x[frame], 1, 41, 0, 44, 44, backSurface, screenSurface);
+		copyRect(rayX[frame], 1, 41, 0, 44, 44, backSurface, screenSurface);
 		copyRect(frusky_x[frame], 113, 205, 50, 38, 86, drawSurface3, screenSurface);
 		updateScreen();
 	}

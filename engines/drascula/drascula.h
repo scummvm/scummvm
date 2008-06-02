@@ -134,13 +134,13 @@ struct CharInfo {
 #define CHAR_WIDTH     8
 #define CHAR_HEIGHT      6
 
-#define ALTO_TALK_HARE  25
-#define ANCHO_TALK_HARE 23
-#define PASO_HARE_X       8
-#define PASO_HARE_Y       3
+#define TALK_HEIGHT  25
+#define TALK_WIDTH 23
+#define STEP_X       8
+#define STEP_Y       3
 #define CHARACTER_HEIGHT   70
 #define CHARACTER_WIDTH  43
-#define PIES_HARE        12
+#define FEET_HEIGHT        12
 
 #define CHAR_WIDTH_OPC     6
 #define CHAR_HEIGHT_OPC      5
@@ -265,7 +265,7 @@ public:
 	int doBreak;
 	int stepX, stepY;
 	int alto_hare, ancho_hare, feetHeight;
-	int alto_talk, ancho_talk;
+	int talkHeight, talkWidth;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
 	int near, far;
 	int sentido_final, walkToObject;
