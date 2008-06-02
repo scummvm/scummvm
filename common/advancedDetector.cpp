@@ -428,7 +428,13 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			if (curFilesMatched > maxFilesMatched) {
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
-				matched.clear();
+
+				for (uint j = 0; j < matched.size();) {
+					if (matched[j]->flags & ADGF_KEEPMATCH)
+						 ++j;
+					else
+						matched.remove_at(j);
+				}
 				matched.push_back(g);
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back(g);
