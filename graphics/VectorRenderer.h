@@ -146,6 +146,7 @@ public:
 	virtual void drawRoundedSquare(int x, int y, int r, int w, int h) = 0;
 
 	virtual void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) = 0;
+	virtual void drawBeveledSquare(int x, int y, int w, int h, int bevel) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -373,6 +374,10 @@ public:
 	 */
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
 
+	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
+		drawBevelSquareAlg(x, y, w, h, bevel, _fgColor, _bgColor);
+	}
+
 	/**
 	 * @see VectorRenderer::setFgColor()
 	 */
@@ -513,6 +518,7 @@ protected:
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h, bool inverted, PixelType color, FillMode fill_m);
+	virtual void drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS

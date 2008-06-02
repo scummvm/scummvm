@@ -431,6 +431,44 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, VectorRenderer::FillM
 	}
 }
 
+/** SQUARE ALGORITHM **/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color) {
+	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+	int pitch = Base::surfacePitch();
+	int i, j;
+	
+	i = bevel;
+	while (i--) {
+		colorFill(ptr_left, ptr_left + w, top_color);
+		ptr_left += pitch;
+	}
+
+	i = h - bevel;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y + bevel);
+	while (i--) {
+		colorFill(ptr_left, ptr_left + bevel, top_color);
+		ptr_left += pitch;
+	}
+
+	i = bevel;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y + h - bevel);
+	while (i--) {
+		colorFill(ptr_left + i, ptr_left + w, bottom_color);
+		ptr_left += pitch;
+	}
+
+	i = h - bevel;
+	j = bevel;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y);
+	while (i--) {
+		colorFill(ptr_left + j, ptr_left + bevel, bottom_color);
+		if (j > 0) j--;
+		ptr_left += pitch;
+	}
+}
+
 /** GENERIC LINE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
