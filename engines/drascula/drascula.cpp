@@ -58,8 +58,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	const GameSettings *g;
-
 	_rnd = new Common::RandomSource();
 	syst->getEventManager()->registerRandomSource(*_rnd, "drascula");
 
@@ -102,13 +100,7 @@ int DrasculaEngine::init() {
 		_lang = 0;
 	}
 
-	_arj.registerArchive("packet.001");
-	// Use override files for non-English versions
-	if (_lang == 3)	// French
-		_arj.registerArchive("packet.002");
-	else if (_lang == 2) // German
-		_arj.registerArchive("packet.003");
-	_arj.enableFallback(true);
+	loadArchives();
 
 	return 0;
 }

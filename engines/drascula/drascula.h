@@ -162,6 +162,8 @@ public:
 	Common::Language getLanguage() const;
 	void updateEvents();
 
+	void loadArchives();
+
 	Audio::SoundHandle _soundHandle;
 
 	void allocMemory();

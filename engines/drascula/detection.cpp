@@ -47,6 +47,17 @@ Common::Language DrasculaEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+void DrasculaEngine::loadArchives() {
+	const Common::ADGameFileDescription *ag;
+
+	if (getFeatures() & GF_PACKED) {
+		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
+			_arj.registerArchive(ag->fileName);
+	}
+
+	_arj.enableFallback(true);
+}
+
 }
 
 static const PlainGameDescriptor drasculaGames[] = {
