@@ -286,8 +286,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"dog", "", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
 	{"maze", "", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
 
-	{"water", "",      0, GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
-	{"water", "HE 99", 0, GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY, UNK},
+	{"water", "",      0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
 
 	// condMaskCode value changed in setUserCondition & setTalkCondition
 	{"putttime", "", 0, GID_HEGAME, 6, 85, MDT_NONE, GF_USE_KEY, UNK},
