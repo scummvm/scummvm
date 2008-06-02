@@ -47,6 +47,7 @@
 namespace Drascula {
 
 enum DrasculaGameFeatures {
+	GF_PACKED = (1 << 0)
 };
 
 enum Languages {
@@ -144,7 +145,6 @@ static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
 
 class DrasculaEngine : public ::Engine {
-	int _gameId;
 	Common::KeyState _keyPressed;
 
 protected:
@@ -155,16 +155,10 @@ protected:
 public:
 	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);
 	virtual ~DrasculaEngine();
-	int getGameId() {
-		return _gameId;
-	}
 
 	Common::RandomSource *_rnd;
 	const DrasculaGameDescription *_gameDescription;
-	uint32 getGameID() const;
 	uint32 getFeatures() const;
-	uint16 getVersion() const;
-	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	void updateEvents();
 

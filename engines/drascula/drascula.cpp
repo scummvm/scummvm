@@ -60,11 +60,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	const GameSettings *g;
 
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = drasculaSettings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid))
-			_gameId = g->id;
-
 	_rnd = new Common::RandomSource();
 	syst->getEventManager()->registerRandomSource(*_rnd, "drascula");
 

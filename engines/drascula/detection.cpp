@@ -36,26 +36,11 @@ namespace Drascula {
 struct DrasculaGameDescription {
 	Common::ADGameDescription desc;
 
-	int gameID;
-	int gameType;
 	uint32 features;
-	uint16 version;
 };
-
-uint32 DrasculaEngine::getGameID() const {
-	return _gameDescription->gameID;
-}
 
 uint32 DrasculaEngine::getFeatures() const {
 	return _gameDescription->features;
-}
-
-Common::Platform DrasculaEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-uint16 DrasculaEngine::getVersion() const {
-	return _gameDescription->version;
 }
 
 Common::Language DrasculaEngine::getLanguage() const {
@@ -85,9 +70,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		0,
-		0,
-		0,
-		0,
 	},
 
 	{
@@ -100,10 +82,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
-		0,
+		GF_PACKED,
 	},
 
 	{
@@ -111,15 +90,16 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		{
 			"drascula",
 			0,
-			AD_ENTRY1s("packet.003", "e8f4dc6091037329bab4ddb1cba35807", 719728),
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.003", 0, "e8f4dc6091037329bab4ddb1cba35807", 719728},
+				{NULL, 0, NULL, 0}
+			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
-		0,
+		GF_PACKED,
 	},
 
 	{
@@ -127,15 +107,16 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		{
 			"drascula",
 			0,
-			AD_ENTRY1s("packet.002", "4401123400f22f212b89f15fb4b43013", 721122),
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.003", 0, "4401123400f22f212b89f15fb4b43013", 721122},
+				{NULL, 0, NULL, 0}
+			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
-		0,
+		GF_PACKED,
 	},
 
 	{
@@ -148,9 +129,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
 		0,
 	},
 
@@ -165,9 +143,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		0,
-		0,
-		0,
-		0,
 	},
 
 	{
@@ -180,9 +155,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
 		0,
 	},
 
@@ -197,31 +169,9 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		0,
-		0,
-		0,
-		0,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
-};
-
-/**
- * The fallback game descriptor used by the Drascula engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector.
- */
-static DrasculaGameDescription g_fallbackDesc = {
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
-	},
-	0,
-	0,
-	0,
-	0,
+	{ AD_TABLE_END_MARKER, 0, }
 };
 
 } // End of namespace Drascula
@@ -258,9 +208,6 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
-
 };
 
 bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -269,21 +216,6 @@ bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Co
 		*engine = new Drascula::DrasculaEngine(syst, gd);
 	}
 	return gd != 0;
-}
-
-const Common::ADGameDescription *DrasculaMetaEngine::fallbackDetect(const FSList *fslist) const {
-	// Set the default values for the fallback descriptor's ADGameDescription part.
-	Drascula::g_fallbackDesc.desc.language = Common::UNK_LANG;
-	Drascula::g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	Drascula::g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
-
-	// Set default values for the fallback descriptor's DrasculaGameDescription part.
-	Drascula::g_fallbackDesc.gameID = 0;
-	Drascula::g_fallbackDesc.features = 0;
-	Drascula::g_fallbackDesc.version = 0;
-
-	//return (const Common::ADGameDescription *)&Drascula::g_fallbackDesc;
-	return NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRASCULA)
