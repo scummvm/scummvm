@@ -172,18 +172,8 @@ void Parallaction_ns::freeFonts() {
 }
 
 void Parallaction_ns::initCursors() {
-
 	_mouseComposedArrow = _disk->loadPointer("pointer");
-
-	byte temp[MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT];
-	memcpy(temp, _mouseArrow, MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT);
-
-	uint16 k = 0;
-	for (uint16 i = 0; i < 4; i++) {
-		for (uint16 j = 0; j < 64; j++) _mouseArrow[k++] = temp[i + j * 4];
-	}
-
-	return;
+	_mouseArrow = _resMouseArrow;
 }
 
 void Parallaction_ns::setArrowCursor() {
