@@ -463,7 +463,7 @@ public:
 	void talk_vb(const char *, const char *);
 	void talk_vbpuerta(int);
 	void talk_vbpuerta(const char *said, const char *filename);
-	void talk_blind(const char *, const char *, const char *);
+	void talk_blind(int);
 	void talk_hacker(const char *, const char *);
 
 	void hiccup(int);

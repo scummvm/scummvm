@@ -736,30 +736,30 @@ void DrasculaEngine::animation_4_2() {
 
 	pause(10);
 
-	talk_blind(_textd[_lang][68], "d68.als", _textd1[_lang][68 - TEXTD_START]);
+	talk_blind(1);
 	pause(5);
 	talk_hacker(_textd[_lang][57], "d57.als");
 	pause(6);
-	talk_blind(_textd[_lang][69],"d69.als", _textd1[_lang][69 - TEXTD_START]);
+	talk_blind(2);
 	pause(4);
 	talk_hacker(_textd[_lang][58],"d58.als");
-	talk_blind(_textd[_lang][70],"d70.als", _textd1[_lang][70 - TEXTD_START]);
+	talk_blind(3);
 	delay(14);
 	talk_hacker(_textd[_lang][59],"d59.als");
-	talk_blind(_textd[_lang][71],"d71.als", _textd1[_lang][71 - TEXTD_START]);
+	talk_blind(4);
 	talk_hacker(_textd[_lang][60],"d60.als");
-	talk_blind(_textd[_lang][72],"d72.als", _textd1[_lang][72 - TEXTD_START]);
+	talk_blind(5);
 	talk_hacker(_textd[_lang][61],"d61.als");
-	talk_blind(_textd[_lang][73],"d73.als", _textd1[_lang][73 - TEXTD_START]);
+	talk_blind(6);
 	talk_hacker(_textd[_lang][62],"d62.als");
-	talk_blind(_textd[_lang][74],"d74.als", _textd1[_lang][74 - TEXTD_START]);
+	talk_blind(7);
 	talk_hacker(_textd[_lang][63],"d63.als");
-	talk_blind(_textd[_lang][75],"d75.als", _textd1[_lang][75 - TEXTD_START]);
+	talk_blind(8);
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
 	_system->delayMillis(1000);
 	talk_hacker(_textd[_lang][64], "d64.als");
-	talk_blind(_textd[_lang][76], "d76.als", _textd1[_lang][76 - TEXTD_START]);
+	talk_blind(9);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
@@ -2529,7 +2529,7 @@ void DrasculaEngine::animation_6_2() {
 	if (flags[4] == 1)
 		talk_hacker(_textd[_lang][66], "d66.als");
 	pause(6);
-	talk_blind(_textd[_lang][78], "d78.als", _textd1[_lang][78 - TEXTD_START]);
+	talk_blind(11);
 	pause(4);
 	talk_hacker(_textd[_lang][67], "d67.als");
 
@@ -2577,12 +2577,12 @@ void DrasculaEngine::animation_33_2() {
 
 	pause(10);
 
-	talk_blind(_textd[_lang][68], "d68.als", _textd1[_lang][68 - TEXTD_START]);
+	talk_blind(1);
 	pause(5);
 	talk_hacker(_textd[_lang][57], "d57.als");
 	pause(6);
 	_system->delayMillis(1000);
-	talk_blind(_textd[_lang][77], "d77.als", _textd1[_lang][77 - TEXTD_START]);
+	talk_blind(10);
 	talk_hacker(_textd[_lang][65], "d65.als");
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);

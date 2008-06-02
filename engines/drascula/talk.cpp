@@ -637,7 +637,15 @@ void DrasculaEngine::talk_vbpuerta(const char *said, const char *filename) {
 		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_blind(const char *said, const char *filename, const char *sincronia) {
+void DrasculaEngine::talk_blind(int index) {
+	// Special case: a second array is used for sync here
+	// Also, the blind man's texts in the first array and his
+	// voice files start from 58, not 1
+	char filename[20];
+	sprintf(filename, "d%i.als", index + TEXTD_START - 1);
+	const char *said = _textd[_lang][index + TEXTD_START - 1];
+	const char *sincronia = _textd1[_lang][index - 1];
+
 	byte *num_cara;
 	int p = 0;
 	int pos_blind[6];
