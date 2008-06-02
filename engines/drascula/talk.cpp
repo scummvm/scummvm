@@ -60,8 +60,8 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	char filename[20];
 	sprintf(filename, "I%i.als", index);
 	const char *said = _texti[_lang][index];
-	int  x_talk[8] = {  56,  82, 108, 134, 160, 186, 212, 238 };
-	int x_talk2[8] = {  56,  86, 116, 146, 176, 206, 236, 266 };
+	int x_talk0[8] = {  56,  82, 108, 134, 160, 186, 212, 238 };
+	int x_talk1[8] = {  56,  86, 116, 146, 176, 206, 236, 266 };
 	int x_talk3[4] = {  80, 102, 124, 146 };
 	int x_talk4[4] = { 119, 158, 197, 236 };
 	int face;
@@ -86,7 +86,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			placeIgor();
 			placeDrascula();
 			copyBackground(igorX + 17, igorY, igorX + 17, igorY, 37, 24, drawSurface1, screenSurface);
-			copyRect(x_talk[face], 148, igorX + 17, igorY, 25, 24, frontSurface, screenSurface);
+			copyRect(x_talk0[face], 148, igorX + 17, igorY, 25, 24, frontSurface, screenSurface);
 			updateRefresh();
 			if (withVoices == 0)
 				centerText(said, igorX + 26, igorY);
@@ -99,7 +99,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 				placeDrascula();
 			if (currentChapter == 1 || currentChapter == 6)
 				copyBackground(igorX, igorY, igorX, igorY, 29, 25, drawSurface1, screenSurface);
-			copyRect(x_talk2[face], 173, igorX, igorY, 29, 25, frontSurface, screenSurface);
+			copyRect(x_talk1[face], 173, igorX, igorY, 29, 25, frontSurface, screenSurface);
 			updateRefresh();
 			if (withVoices == 0)
 				centerText(said, igorX + 26, igorY);
@@ -111,7 +111,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 				centerText(said, 87, 66);
 			updateScreen();
 		} else if (talkerType == 3) {
-			copyBackground(x_talk2[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
+			copyBackground(x_talk3[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
 			pon_hare();
 			updateRefresh();
 			if (withVoices == 0)
@@ -120,7 +120,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			updateScreen();
 			pause(3);
 		} else if (talkerType == 4) {
-			copyBackground(x_talk3[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
+			copyBackground(x_talk4[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 			pon_hare();
 			updateRefresh();
 			if (withVoices == 0)
