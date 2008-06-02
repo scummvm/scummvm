@@ -86,7 +86,15 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ProjectReader();
 	_screen = new Screen(this);
-	_dat = new GameDatabase(this);
+
+	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE) {
+		_dat = new GameDatabaseV2(this);
+	} else if (getGameID() == GID_RTZ) {
+		_dat = new GameDatabaseV3(this);
+	} else {
+		error("Unknown GameID");
+	}
+
 	_script = new ScriptInterpreter(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -272,6 +280,7 @@ int MadeEngine::go() {
 	// NOTE: Disabled again since it causes major graphics errors.
 	//_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
+	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
 	
 #ifdef DUMP_SCRIPTS

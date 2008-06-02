@@ -522,8 +522,9 @@ private:
 	void initCursors();
 	void initParsers();
 
-	static byte			_mouseArrow[256];
-	Frames			*_mouseComposedArrow;
+	static byte _resMouseArrow[256];
+	byte	*_mouseArrow;
+	Frames	*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];

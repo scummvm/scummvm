@@ -31,6 +31,7 @@
 #include "gob/global.h"
 #include "gob/game.h"
 #include "gob/draw.h"
+#include "gob/inter.h"
 
 namespace Gob {
 
@@ -209,9 +210,8 @@ bool SaveLoad_v2::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		SaveLoad::buildIndex(_vm->_global->_inter_variables + dataVar,
+		SaveLoad::buildIndex(_vm->_inter->_variables->getAddressOff8(dataVar, 600),
 				saveFile.destName, 15, 40);
-		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, 600);
 
 	} else {
 		int slot = getSlot(offset);
@@ -227,8 +227,7 @@ bool SaveLoad_v2::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		if (!_save.load(dataVar, size, 40, saveFile.destName,
-					_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes))
+		if (!_save.load(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))
 			return false;
 	}
 
@@ -269,8 +268,7 @@ bool SaveLoad_v2::loadNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Loading the notes");
 
-	return _notes.load(dataVar, size, offset, saveFile.destName,
-			_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes);
+	return _notes.load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
 }
 
 bool SaveLoad_v2::saveGame(SaveFile &saveFile,
@@ -289,7 +287,7 @@ bool SaveLoad_v2::saveGame(SaveFile &saveFile,
 			return false;
 		}
 
-		memcpy(_indexBuffer, _vm->_global->_inter_variables + dataVar, 600);
+		_vm->_inter->_variables->copyTo(dataVar, _indexBuffer, 0, 600);
 		_hasIndex = true;
 
 	} else {
@@ -318,8 +316,7 @@ bool SaveLoad_v2::saveGame(SaveFile &saveFile,
 		if(!_save.save(0, 40, 0, saveFile.destName, _indexBuffer + (slot * 40), sizes))
 			return false;
 
-		if (!_save.save(dataVar, size, 40, saveFile.destName,
-					_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes))
+		if (!_save.save(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))
 			return false;
 
 	}
@@ -353,8 +350,7 @@ bool SaveLoad_v2::saveNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Saving the notes");
 
-	return _notes.save(dataVar, size, offset, saveFile.destName,
-			_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes);
+	return _notes.save(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
 	return false;
 }
 

@@ -225,7 +225,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 #endif
 
 	_gamePaused = false;
-	_graphicsLevelFudged = false;
 
 	_gameCycle = 0;
 	_gameSpeed = 1;
@@ -701,22 +700,14 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 		_sound->pauseAllSound();
 		_mouse->pauseEngine(true);
 
-		// If render level is at max, turn it down because palette-
-		// matching won't work when the palette is dimmed.
-
-		if (_screen->getRenderLevel() == 3) {
-			_screen->setRenderLevel(2);
-			_graphicsLevelFudged = true;
-		}
-
 #ifdef SWORD2_DEBUG
 		// Don't dim it if we're single-stepping through frames
 		// dim the palette during the pause
 
 		if (!_stepOneCycle)
-			_screen->dimPalette();
+			_screen->dimPalette(true);
 #else
-		_screen->dimPalette();
+		_screen->dimPalette(true);
 #endif
 
 		_gamePaused = true;
@@ -724,14 +715,7 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 		_mouse->pauseEngine(false);
 		_sound->unpauseAllSound();
 
-		// Put back game screen palette; see screen.cpp
-		_screen->setFullPalette(-1);
-
-		// If graphics level at max, turn up again
-		if (_graphicsLevelFudged) {
-			_screen->setRenderLevel(3);
-			_graphicsLevelFudged = false;
-		}
+		_screen->dimPalette(false);
 
 		_gamePaused = false;
 

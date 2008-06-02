@@ -22,7 +22,6 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "system.h"
 
 #include "common/util.h"
 #include "common/rect.h"
@@ -32,12 +31,12 @@
 #include "nds.h"
 #include "dsmain.h"
 #include "nds/registers_alt.h"
-#include "config-manager.h"
+#include "common/config-manager.h"
 #include "common/str.h"
 #include "cdaudio.h"
 #include "graphics/surface.h"
 #include "touchkeyboard.h"
-#include "ds-fs-factory.h"
+#include "backends/fs/ds/ds-fs-factory.h"
 
 OSystem_DS* OSystem_DS::_instance = NULL;
 

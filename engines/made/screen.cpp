@@ -328,7 +328,7 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 				break;
 
 			case 4: // drawMenuText
-				// TODO
+				// Never used in any game
 				break;
 				
 			default:
@@ -430,7 +430,7 @@ uint16 Screen::drawSprite(uint16 flexIndex, int16 x, int16 y) {
 
 uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16 y) {
 
-	debug(2, "placeSprite(%d, %04X, %d, %d)\n", channelIndex, flexIndex, x, y); fflush(stdout);
+	debug(2, "placeSprite(%d, %04X, %d, %d)\n", channelIndex, flexIndex, x, y);
 
 	if (channelIndex < 1 || channelIndex >= 100)
 		return 0;
@@ -819,7 +819,13 @@ int16 Screen::addToSpriteList(int16 index, int16 xofs, int16 yofs) {
 }
 
 SpriteListItem Screen::getFromSpriteList(int16 index) {
-	return _spriteList[index - 1];
+	if (((uint) index) > _spriteList.size()) {
+		SpriteListItem emptyItem;
+		emptyItem.index = 0;
+		return emptyItem;
+	} else {
+		return _spriteList[index - 1];
+	}
 }
 
 void Screen::clearSpriteList() {

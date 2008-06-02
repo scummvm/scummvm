@@ -23,8 +23,8 @@
 #ifndef _RAMSAVE_H_
 #define _RAMSAVE_H_
 
-#include "system.h"
-#include "savefile.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 // SaveFileManager class
 

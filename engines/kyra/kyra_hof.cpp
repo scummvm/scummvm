@@ -206,7 +206,12 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 				_activeWSA[x].nextFrame += pausedTime;
 		}
 
-		// TODO: item animation, idle animation, tim player, etc
+		_nextIdleAnim += pausedTime;
+		
+		for (int x = 0; x < _itemAnimDataSize; x++)
+			_activeItemAnim[x].nextFrame += pausedTime;
+
+		_tim->refreshTimersAfterPause(pausedTime);
 	}
 }
 
@@ -287,8 +292,6 @@ int KyraEngine_HoF::go() {
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
-		if (_flags.useInstallerPackage)
-			_res->loadPakFile("WESTWOOD.001");
 		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
 			_res->loadFileList("FILEDATA.FDT");
 		else

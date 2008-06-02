@@ -410,7 +410,10 @@ thinkerk	Big Thinkers Kindergarten
 
 	695fe0b3963333b7e15b37514db3c745	29789	us	All	-	Demo	-	khalek, sev
 
-BluesABCTime	Blue's ABC Time
+Blues123time	Blue's 123 Time Activities
+	71d384e7676c53d513ddd333eae1d82c	-1	en	All	-	-	-	Vasyl Tsvirkunov
+
+BluesABCTime	Blue's ABC Time Activities
 	95b3806e043be08668c54c3ffe98650f	-1	en	All	-	-	-	sev
 
 	7ddeaf52c8b9a50551ce0aa2ac811d07	-1	en	All	-	Demo	-	khalek, sev
@@ -419,6 +422,7 @@ BluesABCTime	Blue's ABC Time
 
 arttime	Blue's Art Time Activities
 	6269b8fbf51a353e5b501e4ad98cdc67	-1	en	Windows	-	-	-	killiandor
+	d00ffc8c32d17e575fd985d435d2eb88	-1	en	All	-	Demo	-	Kirben
 
 BluesBirthday	Blue's Birthday Adventure
 	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	-	-	knifethrower
@@ -427,6 +431,9 @@ BluesBirthday	Blue's Birthday Adventure
 	2d4acbdcfd8e374c9da8c2e7303a5cd0	-1	en	All	-	Demo	-	Kirben
 	dbf4d59d70b826733f379f998354d350	-1	en	All	-	Demo	-	Kirben
 	fa30c4a7a806629626269b6dcab59a15	7819264	All	All	HE CUP	Preview	-	sev
+
+readtime	Blue's Reading Time Activities
+	95818b178d473c989ac753574e8892aa	-1	en	All	-	Demo	-	Kirben
 
 fbear	Fatty Bear's Birthday Surprise
 	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 61	-	-	sev

@@ -795,6 +795,14 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 /*! \brief Fade to black
  */
 void FWRenderer::fadeToBlack() {
+	// FIXME: _activeLowPal is invalid when starting Operation Stealth
+	// Adding this sanity check fixes a crash when the game
+	// starts, but I'm not sure if this is the best place to check it
+	if (!_activeLowPal) {
+		warning("_activeLowPal is invalid");
+		return;
+	}
+
 	assert(_activeLowPal);
 
 	for (int i = 0; i < 8; i++) {

@@ -60,31 +60,7 @@ public:
 };
 
 
-
-class Opcode {
-
-public:
-	virtual void operator()() const = 0;
-	virtual ~Opcode() { }
-};
-
-template <class T>
-class OpcodeImpl : public Opcode {
-
-	typedef void (T::*Fn)();
-
-	T*	_instance;
-	Fn	_fn;
-
-public:
-	OpcodeImpl(T* instance, const Fn &fn) : _instance(instance), _fn(fn) { }
-
-	void operator()() const {
-		(_instance->*_fn)();
-	}
-
-};
-
+typedef Common::Functor0<void> Opcode;
 typedef Common::Array<const Opcode*>	OpcodeSet;
 
 
@@ -233,6 +209,11 @@ protected:
 	uint		_numForwardedCommands;
 
 	void init();
+	void clearSet(OpcodeSet &opcodes) {
+		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+			delete *i;
+		opcodes.clear();
+	}
 
 public:
 	LocationParser_ns(Parallaction_ns *vm) : _vm(vm) {
@@ -248,6 +229,13 @@ public:
 		delete _locationAnimStmt;
 		delete _zoneTypeNames;
 		delete _zoneFlagNames;
+
+		delete _parser;
+
+		clearSet(_commandParsers);
+		clearSet(_locationAnimParsers);
+		clearSet(_locationZoneParsers);
+		clearSet(_locationParsers);
 	}
 
 	void parse(Script *script);
@@ -361,6 +349,11 @@ protected:
 	virtual void	parseRValue(ScriptVar &var, const char *str);
 
 	void init();
+	void clearSet(OpcodeSet &opcodes) {
+		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+			delete *i;
+		opcodes.clear();
+	}
 
 public:
 	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm) {
@@ -369,6 +362,7 @@ public:
 
 	virtual ~ProgramParser_ns() {
 		delete _instructionNames;
+		clearSet(_instructionParsers);
 	}
 
 	void parse(Script *script, ProgramPtr program);
@@ -400,6 +394,8 @@ public:
 
 	virtual ~ProgramParser_br() {
 		delete _instructionNames;
+		delete _parser;
+
 	}
 
 };

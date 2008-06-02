@@ -71,12 +71,11 @@
 #include <stdlib.h>
 #include "dsmain.h"
 #include "string.h"
-#include "system.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"
-#include "gba_nds_fat.h"
-#include "disc_io.h"
-#include "config-manager.h"
+#include "fat/gba_nds_fat.h"
+#include "fat/disc_io.h"
+#include "common/config-manager.h"
 #include "engines/scumm/scumm.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
@@ -89,14 +88,13 @@
 #include "user_debugger.h"
 #endif
 #include "ramsave.h"
-#include "disc_io.h"
 #include "blitters.h"
 #include "cartreset_nolibfat.h"
 #include "keys.h"
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
 #endif
-#include "ds-fs.h"
+#include "backends/fs/ds/ds-fs.h"
 
 namespace DS {
 
@@ -360,14 +358,14 @@ void initSprites() {
 	   sprites[i].attribute[0] = ATTR0_DISABLED;
 	   sprites[i].attribute[1] = 0;
 	   sprites[i].attribute[2] = 0;
-	   sprites[i].attribute[3] = 0;
+	   sprites[i].filler = 0;
     }
 	
 	for (int i = 0; i < 128; i++) {
 	   spritesMain[i].attribute[0] = ATTR0_DISABLED;
 	   spritesMain[i].attribute[1] = 0;
 	   spritesMain[i].attribute[2] = 0;
-	   spritesMain[i].attribute[3] = 0;
+	   spritesMain[i].filler = 0;
     }
 	
 	updateOAM();
@@ -749,7 +747,7 @@ void displayMode16Bit() {
 
 
 	if (displayModeIs8Bit) {
-		static int test = 0;
+//		static int test = 0;
 //		consolePrintf("saving buffer... %d\n", test++);
 		saveGameBackBuffer();
 		for (int r = 0; r < 32 * 32; r++) {
@@ -1612,7 +1610,7 @@ void updateStatus() {
 //		spritesMain[0].attribute[0] = ATTR0_DISABLED;
 //		spritesMain[0].attribute[1] = 0;
 //		spritesMain[0].attribute[2] = 0;
-//		spritesMain[0].attribute[3] = 0;
+//		spritesMain[0].filler = 0;
 		setIconMain(0, 0, 0, 0, 0, false);
 	}
 
@@ -2431,7 +2429,7 @@ u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 
 void* fastRamAlloc(int size) {
 //	return malloc(size);
-	void* result = fastRamPointer;
+	void* result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
 		consolePrintf("FastRam (ITCM) allocation failed!\n");
@@ -2825,33 +2823,25 @@ int main(void)
 	//printf("'%s'", Common::ConfigManager::kApplicationDomain.c_str());
 
 #if defined(DS_BUILD_A)
-	char* argv[2] = {"/scummvmds", "--config=scummvm.ini"};
+	const char *argv[] = {"/scummvmds"};
 #elif defined(DS_BUILD_B)
-	char* argv[2] = {"/scummvmds", "--config=scummvmb.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmb.ini"};
 #elif defined(DS_BUILD_C)
-	char* argv[2] = {"/scummvmds", "--config=scummvmc.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmc.ini"};
 #elif defined(DS_BUILD_D)
-	char* argv[3] = {"/scummvmds", "--config=scummvmd.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmd.ini"};
 #elif defined(DS_BUILD_E)
-	char* argv[3] = {"/scummvmds", "--config=scummvme.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvme.ini"};
 #elif defined(DS_BUILD_F)
-	char* argv[3] = {"/scummvmds", "--config=scummvmf.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
 #elif defined(DS_BUILD_G)
-	char* argv[3] = {"/scummvmds", "--config=scummvmg.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
 #endif
 
-#ifdef DS_NON_SCUMM_BUILD	
-
 	while (1) {
-		scummvm_main(2, (char **) &argv);
+		scummvm_main(ARRAYSIZE(argv), (char **) &argv);
 		powerOff();
 	}
-#else
-	while (1) {
-		scummvm_main(1, (char **) &argv);
-		powerOff();
-	}
-#endif
 
 	return 0;
 }

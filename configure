@@ -1307,7 +1307,7 @@ PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .dll
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		:= -shared ./libscummvm.a
+PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '

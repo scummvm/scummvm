@@ -33,6 +33,7 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
+#include "gob/inter.h"
 
 namespace Gob {
 

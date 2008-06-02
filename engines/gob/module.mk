@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	scenery_v1.o \
 	scenery_v2.o \
 	util.o \
+	variables.o \
 	video.o \
 	video_v1.o \
 	video_v2.o \

@@ -300,6 +300,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				_eventList.clear();
 				seqNum = kSequenceFirates;
 			}
+		} else if (seqNum == kSequenceDemoFisher && !(_abortIntroFlag || skipFlag())) {
+			seqNum = kSequenceDemoVirgin;
 		}
 
 		if (_menuChoice) {
@@ -2651,8 +2653,6 @@ void KyraEngine_HoF::seq_init() {
 
 	_res->unloadAllPakFiles();
 	_res->loadPakFile(StaticResource::staticDataFilename());
-	if (_flags.useInstallerPackage)
-		_res->loadPakFile("WESTWOOD.001");
 	_res->loadFileList(_sequencePakList, _sequencePakListSize);
 
 	int numShp = -1;

@@ -166,12 +166,8 @@ void Game_v1::playTot(int16 skipPlay) {
 
 			_vm->_global->_inter_animDataSize =
 				READ_LE_UINT16(_totFileData + 0x38);
-			if (!_vm->_global->_inter_variables) {
-				variablesCount = READ_LE_UINT16(_totFileData + 0x2C);
-				_vm->_global->_inter_variables = new byte[variablesCount * 4];
-				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
-				_vm->_global->clearVars(variablesCount);
-			}
+			if (!_vm->_inter->_variables)
+				_vm->_inter->allocateVars(READ_LE_UINT16(_totFileData + 0x2C));
 
 			_vm->_global->_inter_execPtr = _totFileData;
 			_vm->_global->_inter_execPtr += READ_LE_UINT32(_totFileData + 0x64);

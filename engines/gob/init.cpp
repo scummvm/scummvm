@@ -33,6 +33,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/palanim.h"
+#include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
@@ -62,7 +63,6 @@ void Init::initGame(const char *totName) {
 	char *infPtr;
 	char *infEnd;
 	char buffer[128];
-	int32 varsCount;
 
 	initVideo();
 
@@ -90,8 +90,6 @@ void Init::initGame(const char *totName) {
 	_vm->_game->_totTextData = 0;
 	_vm->_game->_totFileData = 0;
 	_vm->_game->_totResourceTable = 0;
-	_vm->_global->_inter_variables = 0;
-	_vm->_global->_inter_variablesSizes = 0;
 	_palDesc = new Video::PalDesc;
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);
@@ -157,13 +155,9 @@ void Init::initGame(const char *totName) {
 		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
 		stream->seek(0x2C);
-		varsCount = stream->readUint16LE();
+		_vm->_inter->allocateVars(stream->readUint16LE());
 
 		delete stream;
-
-		_vm->_global->_inter_variables = new byte[varsCount * 4];
-		_vm->_global->_inter_variablesSizes = new byte[varsCount * 4];
-		_vm->_global->clearVars(varsCount);
 
 		strcpy(_vm->_game->_curTotFile, buffer);
 
@@ -214,8 +208,6 @@ void Init::initGame(const char *totName) {
 		_vm->_sound->cdStop();
 		_vm->_sound->cdUnloadLIC();
 
-		delete[] _vm->_global->_inter_variables;
-		delete[] _vm->_global->_inter_variablesSizes;
 		delete[] _vm->_game->_totFileData;
 		if (_vm->_game->_totTextData) {
 			if (_vm->_game->_totTextData->items)

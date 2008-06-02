@@ -730,7 +730,7 @@ void loadResource(const char *resourceName) {
 	} else if (strstr(resourceName, ".SEQ")) {
 		loadSeq(resourceName, -1);
 		return;
-	} else if (strstr(resourceName, "ECHEC")) {
+	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
 		exitEngine = 1;
 		return;
 	}

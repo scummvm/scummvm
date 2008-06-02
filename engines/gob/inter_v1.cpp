@@ -929,16 +929,16 @@ void Inter_v1::o1_initMult() {
 				_vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (int i = 0; i < _vm->_mult->_objCount; i++) {
-			_vm->_mult->_objects[i].pPosX =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posXVar / 4) * 4);
-			_vm->_mult->_objects[i].pPosY =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posYVar / 4) * 4);
+			uint32 offPosX = i * 4 + (posXVar / 4) * 4;
+			uint32 offPosY = i * 4 + (posYVar / 4) * 4;
+			uint32 offAnim = animDataVar + i * 4 * _vm->_global->_inter_animDataSize;
+
+			_vm->_mult->_objects[i].pPosX = (int32 *) _variables->getAddressOff32(offPosX);
+			_vm->_mult->_objects[i].pPosY = (int32 *) _variables->getAddressOff32(offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables +
-							animDataVar + i * 4 * _vm->_global->_inter_animDataSize);
+				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
+						_vm->_global->_inter_animDataSize);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -2069,8 +2069,7 @@ bool Inter_v1::o1_prepareStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_parse->parseVarIndex();
-	_vm->_util->prepareStr(GET_VARO_STR(strVar));
-	_vm->_global->writeVarSizeStr(strVar, strlen(GET_VARO_STR(strVar)));
+	_vm->_util->prepareStr(GET_VARO_FSTR(strVar));
 	return false;
 }
 
@@ -2081,8 +2080,9 @@ bool Inter_v1::o1_insertStr(OpFuncParams &params) {
 	strVar = _vm->_parse->parseVarIndex();
 	evalExpr(0);
 	pos = _vm->_parse->parseValExpr();
-	_vm->_util->insertStr(_vm->_global->_inter_resStr, GET_VARO_STR(strVar), pos);
-	_vm->_global->writeVarSizeStr(strVar, strlen(GET_VARO_STR(strVar)));
+
+	char *str = GET_VARO_FSTR(strVar);
+	_vm->_util->insertStr(_vm->_global->_inter_resStr, str, pos);
 	return false;
 }
 
@@ -2222,7 +2222,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		if (((dataVar >> 2) == 59) && (size == 4))
 			WRITE_VAR(59, stream->readUint32LE());
 		else
-			retSize = stream->read(_vm->_global->_inter_variables + dataVar, size);
+			retSize = stream->read((byte *) _variables->getAddressOff8(dataVar, size), size);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);

@@ -1,6 +1,3 @@
-
-
-
 namespace DS {
 
 extern bool findWordCompletions(char* input);

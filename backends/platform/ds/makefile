@@ -15,6 +15,24 @@ all:
 	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i; fi; done;
 clean:
 	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i clean; fi; done;
+semiclean:
+	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i semiclean; fi; done;
 
 export:
 	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i export; fi; done;
+
+allbuilds:
+	make semiclean
+	make all       SCUMM_BUILD=a
+	make semiclean
+	make all       SCUMM_BUILD=b
+	make semiclean
+	make all       SCUMM_BUILD=c
+	make semiclean
+	make all       SCUMM_BUILD=d
+	make semiclean
+	make all       SCUMM_BUILD=e
+	make semiclean
+	make all       SCUMM_BUILD=f
+	make semiclean
+	make all       SCUMM_BUILD=g

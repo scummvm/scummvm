@@ -207,7 +207,6 @@ public:
 	uint32 findBufferSize();
 
 	bool _gamePaused;
-	bool _graphicsLevelFudged;
 
 	void startGame();
 	void gameCycle();

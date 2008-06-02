@@ -903,19 +903,16 @@ void Inter_v2::o2_initMult() {
 				_vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (int i = 0; i < _vm->_mult->_objCount; i++) {
-			_vm->_mult->_objects[i].pPosX =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posXVar / 4) * 4);
-			_vm->_mult->_objects[i].pPosY =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posYVar / 4) * 4);
+			uint32 offPosX = i * 4 + (posXVar / 4) * 4;
+			uint32 offPosY = i * 4 + (posYVar / 4) * 4;
+			uint32 offAnim = animDataVar + i * 4 * _vm->_global->_inter_animDataSize;
+
+			_vm->_mult->_objects[i].pPosX = (int32 *) _variables->getAddressOff32(offPosX);
+			_vm->_mult->_objects[i].pPosY = (int32 *) _variables->getAddressOff32(offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables +
-							animDataVar + i * 4 * _vm->_global->_inter_animDataSize);
-			memset(_vm->_global->_inter_variablesSizes +
-					i * 4 * _vm->_global->_inter_animDataSize, 0,
-					_vm->_global->_inter_animDataSize);
+				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
+						_vm->_global->_inter_animDataSize);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -1186,10 +1183,7 @@ void Inter_v2::o2_copyVars() {
 			varOff = _vm->_parse->parseVarIndex();
 			_vm->_global->_inter_execPtr++;
 
-			memcpy(_pasteBuf + _pastePos, _vm->_global->_inter_variables + varOff,
-					_vm->_global->_inter_animDataSize * 4);
-			memcpy(_pasteSizeBuf + _pastePos,
-					_vm->_global->_inter_variablesSizes + varOff,
+			_variables->copyTo(varOff, _pasteBuf + _pastePos, _pasteSizeBuf + _pastePos,
 					_vm->_global->_inter_animDataSize * 4);
 
 			_pastePos += _vm->_global->_inter_animDataSize * 4;
@@ -1199,6 +1193,7 @@ void Inter_v2::o2_copyVars() {
 		} else {
 			if (evalExpr(&varOff) == 20)
 				_vm->_global->_inter_resVal = 0;
+
 			memcpy(_pasteBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
 			memcpy(_pasteSizeBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
 			_pastePos += 4;
@@ -1222,8 +1217,7 @@ void Inter_v2::o2_pasteVars() {
 		assert(sizeV == sizeS);
 
 		_pastePos -= sizeV;
-		memcpy(_vm->_global->_inter_variables + varOff, _pasteBuf + _pastePos, sizeV);
-		memcpy(_vm->_global->_inter_variablesSizes + varOff, _pasteSizeBuf + _pastePos, sizeS);
+		_variables->copyFrom(varOff, _pasteBuf + _pastePos, _pasteSizeBuf + _pastePos, sizeV);
 	}
 }
 
@@ -1558,7 +1552,7 @@ void Inter_v2::o2_playImd() {
 			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
 
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
-		WRITE_VAR(11, -1);
+		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
 
@@ -1972,8 +1966,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 	}
 
-	buf = _vm->_global->_inter_variables + dataVar;
-	memset(_vm->_global->_inter_variablesSizes + dataVar, 0, size);
+	buf = _variables->getAddressOff8(dataVar, size);
 
 	if (_vm->_global->_inter_resStr[0] == 0) {
 		WRITE_VAR(1, size);

@@ -1225,7 +1225,7 @@ const uint8 Control::_languageStrings[8 * 20][43] = {
 	"Testo",
 	"Fatto",
 	"OK",
-	"Annula",
+	"Annulla",
 	"Musica",
 	"Parlato",
 	"Fx",
