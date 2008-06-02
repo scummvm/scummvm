@@ -131,6 +131,19 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Drascula Spanish version (original packed version)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("packet.001", "3c971aba65a037d29d0b479cad6f5943", 31702652),
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_PACKED,
+	},
+
+	{
 		// Drascula Spanish version
 		{
 			"drascula",
@@ -169,6 +182,18 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		// Drascula Italian version (original packed version)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("packet.001", "0253e924af223f5fe52537023385159b", 32564209),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_PACKED,
+	},
 	{
 		// Drascula Italian version
 		{
