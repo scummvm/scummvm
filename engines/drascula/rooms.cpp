@@ -373,7 +373,7 @@ void DrasculaEngine::room_16(int fl) {
 		pause(10);
 		talk_sinc(_text[_lang][50], "50.als", "11111111111144432554433");
 		pause(3);
-		talk_baul(_text[_lang][83], "d83.als");
+		talk_baul(83);
 	} else if (pickedObject == kVerbOpen && fl == 183) {
 		openDoor(19, NO_DOOR);
 		if (flags[20] == 0) {
@@ -600,16 +600,16 @@ void DrasculaEngine::room_26(int fl) {
 		flags[12] = 1;
 		closeDoor(2, 0);
 		sentido_hare = 2;
-		talk_igor_door(27);
+		talk_igor(27, 2);
 		flags[30] = 1;
-		talk_igor_door(28);
+		talk_igor(28, 2);
 		lleva_al_hare(153, 180);
 	} else if (pickedObject == kVerbPick && fl == 143 && flags[18] == 0) {
 		lleva_al_hare(260, 180);
 		copyBackground(80, 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 		updateScreen(199, 94, 199, 94, 38, 27, screenSurface);
 		pause(3);
-		talk_igor_wig(25);
+		talk_igor(25, 4);
 		lleva_al_hare(153, 180);
 	} else if (pickedObject == kVerbTalk && fl == 51)
 		animation_1_4();
