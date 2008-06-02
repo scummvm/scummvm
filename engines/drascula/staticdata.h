@@ -3414,7 +3414,7 @@ const char *_textd[][84] = {
 	// 80
 	"",
 	"",
-	"",
+	"No, nada",
 	"bla, bla, bla."
 },
 {
@@ -3517,7 +3517,7 @@ const char *_textd[][84] = {
 	// 80
 	"",
 	"",
-	"",
+	"No, nada",
 	"\244a, \244a, \244a. que bueno, que bueno."
 },
 {
@@ -3620,7 +3620,7 @@ const char *_textd[][84] = {
 	// 80
 	"",
 	"",
-	"",
+	"No, nada",
 	"bla, bla, bla."
 },
 {
@@ -3723,7 +3723,7 @@ const char *_textd[][84] = {
 	// 80
 	"",
 	"",
-	"",
+	"No, nada",
 	"bla, bla, bla."
 },
 {
@@ -3826,7 +3826,7 @@ const char *_textd[][84] = {
 	// 80
 	"",
 	"",
-	"",
+	"No, nada",
 	"bla, bla, bla."
 },
 };

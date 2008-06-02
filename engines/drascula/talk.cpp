@@ -233,15 +233,15 @@ void DrasculaEngine::talk_igor_front(int index) {
 void DrasculaEngine::talk_bartender(int index, int talkerType) {
 	char filename[20];
 	sprintf(filename, "t%i.als", index);
-	char specialLine[20];
-	sprintf(specialLine, "No, nada");
 	const char *said;
 
-	// Line 82 is hardcoded
+	// Line 82 is a special case
 	if (index != 82)
 		said = _textt[_lang][index];
-	else
-		said = (const char*)specialLine;
+	else {
+		sprintf(filename, "d%i.als", index);
+		said = _textd[_lang][index];
+	}
 
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int face;
