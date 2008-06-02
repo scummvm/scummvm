@@ -411,7 +411,7 @@ thinkerk	Big Thinkers Kindergarten
 	695fe0b3963333b7e15b37514db3c745	29789	us	All	-	Demo	-	khalek, sev
 
 Blues123time	Blue's 123 Time Activities
-	71d384e7676c53d513ddd333eae1d82c	-1	en	Windows	-	-	-	Vasyl Tsvirkunov
+	71d384e7676c53d513ddd333eae1d82c	-1	en	All	-	-	-	Vasyl Tsvirkunov
 
 BluesABCTime	Blue's ABC Time Activities
 	95b3806e043be08668c54c3ffe98650f	-1	en	All	-	-	-	sev

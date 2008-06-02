@@ -513,6 +513,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "basketball", "Basketball", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "blues123time", "Blues123time", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "blues123time", "Blue's 123 Time", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "bluesabctime", "bluesabctime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
