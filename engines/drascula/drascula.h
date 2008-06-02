@@ -425,14 +425,10 @@ public:
 	void talkInit(const char *filename);
 	bool isTalkFinished(int* length);
 	void talk_igor_dch(int);
-	void talk_igor_dch(const char *said, const char *filename);
 	void talk_drascula(int index, int talkerType = 0);
-	void talk_drascula(const char *said, const char *filename);
 	void talk_solo(const char *, const char *);
 	void talk_igor_front(int);
-	void talk_igor_front(const char *, const char *);
 	void talk_bartender(int, int talkerType = 0);
-	void talk_bartender(const char *said, const char *filename, int talkerType = 0);
 	void talk_igor_door(int);
 	void talk_igor_door(const char *said, const char *filename);
 	void talk_igor_wig(int);
@@ -443,7 +439,6 @@ public:
 	void talk_htel(int);
 	void talk_htel(const char *said, const char *filename);
 	void talk_bj(int);
-	void talk_bj(const char *, const char *);
 	void talk_baul(const char *said, const char *filename);
 	void talk(int);
 	void talk(const char *, const char *);

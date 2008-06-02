@@ -2262,7 +2262,7 @@ void DrasculaEngine::animation_11_2() {
 	talk_bartender(18);
 	talk(355);
 	pause(40);
-	talk_bartender("No, nada", "d82.als");
+	talk_bartender(82);
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;
@@ -2405,7 +2405,7 @@ void DrasculaEngine::animation_36_2() {
 	talk_bartender(21);
 	talk(355);
 	pause(40);
-	talk_bartender("No, nada", "d82.als");
+	talk_bartender(82);
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;

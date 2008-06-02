@@ -51,12 +51,9 @@ bool DrasculaEngine::isTalkFinished(int* length) {
 }
 
 void DrasculaEngine::talk_igor_dch(int index) {
-	char name[20];
-	sprintf(name, "I%i.als", index);
-	talk_igor_dch(_texti[_lang][index], name);
-}
-
-void DrasculaEngine::talk_igor_dch(const char *said, const char *filename) {
+	char filename[20];
+	sprintf(filename, "I%i.als", index);
+	const char *said = _texti[_lang][index];
 	int x_talk[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
 	int face;
 	int length = strlen(said);
@@ -185,12 +182,9 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 }
 
 void DrasculaEngine::talk_igor_front(int index) {
-	char name[20];
-	sprintf(name, "I%i.als", index);
-	talk_igor_front(_texti[_lang][index], name);
-}
-
-void DrasculaEngine::talk_igor_front(const char *said, const char *filename) {
+	char filename[20];
+	sprintf(filename, "I%i.als", index);
+	const char *said = _texti[_lang][index];
 	int x_talk[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
 	int face;
 	int length = strlen(said);
@@ -237,12 +231,18 @@ void DrasculaEngine::talk_igor_front(const char *said, const char *filename) {
 }
 
 void DrasculaEngine::talk_bartender(int index, int talkerType) {
-	char name[20];
-	sprintf(name, "t%i.als", index);
-	talk_bartender(_textt[_lang][index], name);
-}
+	char filename[20];
+	sprintf(filename, "t%i.als", index);
+	char specialLine[20];
+	sprintf(specialLine, "No, nada");
+	const char *said;
 
-void DrasculaEngine::talk_bartender(const char *said, const char *filename, int talkerType) {
+	// Line 82 is hardcoded
+	if (index != 82)
+		said = _textt[_lang][index];
+	else
+		said = (const char*)specialLine;
+
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int face;
 	int length = strlen(said);
@@ -290,12 +290,9 @@ void DrasculaEngine::talk_bartender(const char *said, const char *filename, int 
 }
 
 void DrasculaEngine::talk_bj(int index) {
-	char name[20];
-	sprintf(name, "BJ%i.als", index);
-	talk_bj(_textbj[_lang][index], name);
-}
-
-void DrasculaEngine::talk_bj(const char *said, const char *filename) {
+	char filename[20];
+	sprintf(filename, "BJ%i.als", index);
+	const char *said = _textbj[_lang][index];
 	int x_talk[5] = { 64, 92, 120, 148, 176 };
 	int face;
 	int length = strlen(said);
