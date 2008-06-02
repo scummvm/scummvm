@@ -600,16 +600,16 @@ void DrasculaEngine::room_26(int fl) {
 		flags[12] = 1;
 		closeDoor(2, 0);
 		sentido_hare = 2;
-		talk_igor(27, 2);
+		talk_igor(27, kIgorDoor);
 		flags[30] = 1;
-		talk_igor(28, 2);
+		talk_igor(28, kIgorDoor);
 		lleva_al_hare(153, 180);
 	} else if (pickedObject == kVerbPick && fl == 143 && flags[18] == 0) {
 		lleva_al_hare(260, 180);
 		copyBackground(80, 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 		updateScreen(199, 94, 199, 94, 38, 27, screenSurface);
 		pause(3);
-		talk_igor(25, 4);
+		talk_igor(25, kIgorWig);
 		lleva_al_hare(153, 180);
 	} else if (pickedObject == kVerbTalk && fl == 51)
 		animation_1_4();

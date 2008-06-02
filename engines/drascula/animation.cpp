@@ -196,7 +196,7 @@ void DrasculaEngine::animation_1_1() {
 		placeIgor();
 		placeDrascula();
 		updateScreen();
-		talk_igor(8, 0);
+		talk_igor(8, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -257,13 +257,13 @@ void DrasculaEngine::animation_1_1() {
 		stopMusic();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor(9, 0);
+		talk_igor(9, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_drascula(9);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor(10, 0);
+		talk_igor(10, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		playMusic(11);
@@ -289,7 +289,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 1;
-		talk_igor(1, 0);
+		talk_igor(1, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_drascula(11, 1);
@@ -320,7 +320,7 @@ void DrasculaEngine::animation_1_1() {
 		placeIgor();
 		placeDrascula();
 		updateScreen();
-		talk_igor(2, 0);
+		talk_igor(2, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		pause(13);
@@ -341,19 +341,19 @@ void DrasculaEngine::animation_1_1() {
 		talk_drascula(14);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor(3, 0);
+		talk_igor(3, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_drascula(15);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor(4, 0);
+		talk_igor(4, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		talk_drascula(16);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor(5, 0);
+		talk_igor(5, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_igor = 3;
@@ -363,7 +363,7 @@ void DrasculaEngine::animation_1_1() {
 		pause(18);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_igor(6, 1);
+		talk_igor(6, kIgorFront);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		fadeToBlack(0);
@@ -1449,26 +1449,26 @@ void DrasculaEngine::animation_rayo() {
 }
 
 void DrasculaEngine::animation_2_4() {
-	talk_igor(16, 3);
+	talk_igor(16, kIgorSeated);
 	talk(278);
-	talk_igor(17, 3);
+	talk_igor(17, kIgorSeated);
 	talk(279);
-	talk_igor(18, 3);
+	talk_igor(18, kIgorSeated);
 }
 
 void DrasculaEngine::animation_3_4() {
-	talk_igor(19, 3);
-	talk_igor(20, 3);
+	talk_igor(19, kIgorSeated);
+	talk_igor(20, kIgorSeated);
 	talk(281);
 }
 
 void DrasculaEngine::animation_4_4() {
 	talk(287);
-	talk_igor(21, 3);
+	talk_igor(21, kIgorSeated);
 	talk(284);
-	talk_igor(22, 3);
+	talk_igor(22, kIgorSeated);
 	talk(285);
-	talk_igor(23, 3);
+	talk_igor(23, kIgorSeated);
 }
 
 void DrasculaEngine::animation_7_4() {
@@ -1928,10 +1928,10 @@ void DrasculaEngine::animation_1_6() {
 	talk_drascula(31, 1);
 	animation_5_6();
 	talk_drascula(32, 1);
-	talk_igor(11, 0);
+	talk_igor(11, kIgorDch);
 	sentido_igor = 3;
 	talk_drascula(33, 1);
-	talk_igor(12, 1);
+	talk_igor(12, kIgorFront);
 	talk_drascula(34, 1);
 	sentido_dr = 0;
 	talk_drascula(35);
@@ -2630,9 +2630,9 @@ void DrasculaEngine::animation_1_4() {
 		flags[18] = 1;
 		flags[20] = 1;
 
-		talk_igor(13, 3);
-		talk_igor(14, 3);
-		talk_igor(15, 3);
+		talk_igor(13, kIgorSeated);
+		talk_igor(14, kIgorSeated);
+		talk_igor(15, kIgorSeated);
 		flags[21] = 1;
 	} else {
 		talk(356);
@@ -2655,7 +2655,7 @@ void DrasculaEngine::animation_1_4() {
 
 		talk(276);
 		pause(14);
-		talk_igor(6, 3);
+		talk_igor(6, kIgorSeated);
 	}
 
 	converse("op_6.cal");
@@ -2682,8 +2682,8 @@ void DrasculaEngine::animation_5_4(){
 	loadPic("auxigor.alg", frontSurface, 1);
 	igorX = 100;
 	igorY = 65;
-	talk_igor(29, 1);
-	talk_igor(30, 1);
+	talk_igor(29, kIgorFront);
+	talk_igor(30, kIgorFront);
 	loadPic("96.alg", frontSurface, 1);
 	loadPic("99.alg", backSurface, 1);
 	hare_se_ve = 1;
@@ -2706,7 +2706,7 @@ void DrasculaEngine::animation_6_4() {
 	placeIgor();
 	updateScreen();
 	pause(40);
-	talk_igor(26, 1);
+	talk_igor(26, kIgorFront);
 	roomNumber = prevRoom;
 	clearRoom();
 	loadPic("96.alg", frontSurface, 1);

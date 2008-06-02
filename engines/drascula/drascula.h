@@ -92,6 +92,14 @@ enum SSNFrames {
 	kFrameEmptyFrame = 6
 };
 
+enum IgorTalkerTypes {
+	kIgorDch = 0,
+	kIgorFront = 1,
+	kIgorDoor = 2,
+	kIgorSeated = 3,
+	kIgorWig = 4
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
