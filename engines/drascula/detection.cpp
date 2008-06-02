@@ -35,12 +35,10 @@ namespace Drascula {
 
 struct DrasculaGameDescription {
 	Common::ADGameDescription desc;
-
-	uint32 features;
 };
 
 uint32 DrasculaEngine::getFeatures() const {
-	return _gameDescription->features;
+	return _gameDescription->desc.flags;
 }
 
 Common::Language DrasculaEngine::getLanguage() const {
@@ -80,7 +78,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
 	},
 
 	{
@@ -91,9 +88,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "c6a8697396e213a18472542d5f547cb4", 32847563),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_KEEPMATCH
+			Common::ADGF_KEEPMATCH | GF_PACKED
 		},
-		GF_PACKED,
 	},
 
 	{
@@ -108,9 +104,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			GF_PACKED
 		},
-		GF_PACKED,
 	},
 
 	{
@@ -125,9 +120,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			GF_PACKED
 		},
-		GF_PACKED,
 	},
 
 	{
@@ -138,9 +132,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "3c971aba65a037d29d0b479cad6f5943", 31702652),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			GF_PACKED
 		},
-		GF_PACKED,
 	},
 
 	{
@@ -153,7 +146,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
 	},
 
 	{
@@ -166,7 +158,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
 	},
 
 	{
@@ -179,7 +170,6 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
 	},
 
 	{
@@ -190,9 +180,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "0253e924af223f5fe52537023385159b", 32564209),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			GF_PACKED
 		},
-		GF_PACKED,
 	},
 	{
 		// Drascula Italian version
@@ -204,10 +193,9 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, }
+	{ AD_TABLE_END_MARKER }
 };
 
 } // End of namespace Drascula
