@@ -112,7 +112,7 @@ void DrasculaEngine::room_3(int fl) {
 	} else if (pickedObject == kVerbPick && fl == 165) {
 		copyBackground(0, 0, 0,0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		copyRect(44, 1, hare_x, hare_y, 41, 70, drawSurface2, screenSurface);
+		copyRect(44, 1, curX, curY, 41, 70, drawSurface2, screenSurface);
 		updateRefresh();
 		updateScreen();
 		pause(4);
@@ -172,7 +172,7 @@ void DrasculaEngine::room_6(int fl){
 	else if (pickedObject == kVerbOpen && fl == 143 && flags[2] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, drawSurface3, screenSurface);
+		copyRect(228, 102, curX + 5, curY - 1, 47, 73, drawSurface3, screenSurface);
 		updateScreen();
 		pause(10);
 		playSound(3);
@@ -184,7 +184,7 @@ void DrasculaEngine::room_6(int fl){
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		flags[2] = 0;
 		updateRefresh_pre();
-		copyRect(228, 102, hare_x + 5, hare_y - 1, 47, 73, drawSurface3, screenSurface);
+		copyRect(228, 102, curX + 5, curY - 1, 47, 73, drawSurface3, screenSurface);
 		updateScreen();
 		pause(5);
 		playSound(4);
@@ -194,7 +194,7 @@ void DrasculaEngine::room_6(int fl){
 	} else if (pickedObject == kVerbOpen && fl == 139 && flags[1] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, drawSurface3, screenSurface);
+		copyRect(267, 1, curX - 14, curY - 2, 52, 73, drawSurface3, screenSurface);
 		updateScreen();
 		pause(19);
 		playSound(3);
@@ -207,7 +207,7 @@ void DrasculaEngine::room_6(int fl){
 	} else if (pickedObject == kVerbPick && fl == 140) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		copyRect(267, 1, hare_x - 14, hare_y - 2, 52, 73, drawSurface3, screenSurface);
+		copyRect(267, 1, curX - 14, curY - 2, 52, 73, drawSurface3, screenSurface);
 		updateScreen();
 		pause(19);
 		pickObject(9);
@@ -331,7 +331,7 @@ void DrasculaEngine::room_15(int fl) {
 		sentido_hare = 1;
 	} else if (pickedObject == 18 && fl == 188 && flags[26] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-		copyRect(133, 135, hare_x + 6, hare_y, 39, 63, drawSurface3, screenSurface);
+		copyRect(133, 135, curX + 6, curY, 39, 63, drawSurface3, screenSurface);
 		updateScreen();
 		playSound(8);
 		finishSound();
@@ -440,7 +440,7 @@ void DrasculaEngine::room_18(int fl) {
 	else if (pickedObject == kVerbPick && fl == 182) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		copyRect(44, 1, hare_x, hare_y, 41, 70, drawSurface2, screenSurface);
+		copyRect(44, 1, curX, curY, 41, 70, drawSurface2, screenSurface);
 		updateRefresh();
 		updateScreen();
 		pause(4);
@@ -464,7 +464,7 @@ void DrasculaEngine::room_18(int fl) {
 		updateScreen();
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		copyRect(1, 1, hare_x - 1, hare_y + 3, 42, 67, drawSurface2, screenSurface);
+		copyRect(1, 1, curX - 1, curY + 3, 42, 67, drawSurface2, screenSurface);
 		updateRefresh();
 		updateScreen();
 		pause(6);
@@ -875,7 +875,7 @@ void DrasculaEngine::room_55(int fl) {
 		playSound(11);
 		animate("det.bin", 17);
 		finishSound();
-		lleva_al_hare(hare_x - 3, hare_y + alto_hare + 6);
+		lleva_al_hare(curX - 3, curY + curHeight + 6);
 	} else
 		hasAnswer = 0;
 }
@@ -932,7 +932,7 @@ void DrasculaEngine::room_59(int fl) {
 			stopSound();
 			hare_se_ve = 0;
 			updateRoom();
-			copyRect(101, 34, hare_x - 4, hare_y - 1, 37, 70, drawSurface3, screenSurface);
+			copyRect(101, 34, curX - 4, curY - 1, 37, 70, drawSurface3, screenSurface);
 			copyBackground(0, 0, 0, 0, 320, 200, screenSurface, drawSurface1);
 			updateScreen();
 			hare_se_ve = 1;
@@ -1213,7 +1213,7 @@ void DrasculaEngine::updateRefresh_pre() {
 void DrasculaEngine::update_1_pre() {
 	int cambio_col_antes = changeColor;
 
-	if (hare_x > 98 && hare_x < 153)
+	if (curX > 98 && curX < 153)
 		changeColor = 1;
 	else
 		changeColor = 0;
@@ -1283,14 +1283,14 @@ void DrasculaEngine::update_3_pre() {
 }
 
 void DrasculaEngine::update_3() {
-	if (hare_y + alto_hare < 118)
+	if (curY + curHeight < 118)
 		copyRect(129, 110, 194, 36, 126, 88, drawSurface3, screenSurface);
 	copyRect(47, 57, 277, 143, 43, 50, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_4() {
 	int cambio_col_antes = changeColor;
-	if (hare_x > 190)
+	if (curX > 190)
 		changeColor = 1;
 	else
 		changeColor = 0;
@@ -1313,8 +1313,8 @@ void DrasculaEngine::update_5() {
 void DrasculaEngine::update_6_pre() {
 	int cambio_col_antes = changeColor;
 
-	if ((hare_x > 149 && hare_y + alto_hare > 160 && hare_x < 220 && hare_y + alto_hare < 188) ||
-			(hare_x > 75 && hare_y + alto_hare > 183 && hare_x < 145))
+	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) ||
+			(curX > 75 && curY + curHeight > 183 && curX < 145))
 		changeColor = 0;
 	else
 		changeColor = 1;
@@ -1361,7 +1361,7 @@ void DrasculaEngine::update_12_pre() {
 }
 
 void DrasculaEngine::update_13() {
-	if (hare_x > 55 && flags[3] == 0)
+	if (curX > 55 && flags[3] == 0)
 		animation_6_3();
 	if (flags[1] == 0)
 		copyRect(185, 110, 121, 65, 67, 88, drawSurface3, screenSurface);
@@ -1382,7 +1382,7 @@ void DrasculaEngine::update_14_pre() {
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
-	if (hare_x > 101 && hare_x < 155)
+	if (curX > 101 && curX < 155)
 		copyBackground(31, 138, 178, 51, 18, 16, drawSurface3, screenSurface);
 	if (flags[11] == 0)
 		copyBackground(pianista_x[frame_piano], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
@@ -1532,7 +1532,7 @@ void DrasculaEngine::update_26_pre() {
 
 void DrasculaEngine::update_26() {
 	if (flags[29] == 1)
-		copyRect(93, 1, hare_x, hare_y, 45, 78, backSurface, screenSurface);
+		copyRect(93, 1, curX, curY, 45, 78, backSurface, screenSurface);
 
 	copyRect(233, 107, 17, 102, 66, 92, drawSurface3, screenSurface);
 }
@@ -1701,7 +1701,7 @@ void DrasculaEngine::update_60_pre() {
 }
 
 void DrasculaEngine::update_60() {
-	if (hare_y - 10 < y_dr && flags[5] == 0)
+	if (curY - 10 < y_dr && flags[5] == 0)
 		placeDrascula();
 }
 
@@ -1722,7 +1722,7 @@ void DrasculaEngine::update_62_pre() {
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
 
-	if (hare_x > 101 && hare_x < 155)
+	if (curX > 101 && curX < 155)
 		copyBackground(31, 138, 178, 51, 18, 16, drawSurface3, screenSurface);
 
 	if (flags[11] == 0)
@@ -1762,7 +1762,7 @@ void DrasculaEngine::update_62() {
 
 	copyRect(1, 1, 0, 0, 62, 142, drawSurface2, screenSurface);
 
-	if (hare_y + alto_hare < 89) {
+	if (curY + curHeight < 89) {
 		copyRect(205, 1, 180, 9, 82, 80, drawSurface3, screenSurface);
 		copyBackground(drunk_x[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 	}

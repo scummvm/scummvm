@@ -118,12 +118,12 @@ int DrasculaEngine::go() {
 		takeObject = 0;
 		menuBar = 0; menuScreen = 0; hasName = 0;
 		frame_y = 0;
-		hare_x = -1; characterMoved = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
+		curX = -1; characterMoved = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
 		checkFlags = 1;
 		doBreak = 0;
 		walkToObject = 0;
 		stepX = STEP_X; stepY = STEP_Y;
-		alto_hare = CHARACTER_HEIGHT; ancho_hare = CHARACTER_WIDTH; feetHeight = FEET_HEIGHT;
+		curHeight = CHARACTER_HEIGHT; curWidth = CHARACTER_WIDTH; feetHeight = FEET_HEIGHT;
 		talkHeight = TALK_HEIGHT; talkWidth = TALK_WIDTH;
 		hasAnswer = 0;
 		conta_blind_vez = 0;
@@ -476,8 +476,8 @@ bool DrasculaEngine::escoba() {
 			}
 		} else {
 			carga_escoba("62.ald");
-			hare_x = -20;
-			hare_y = 56;
+			curX = -20;
+			curY = 56;
 			lleva_al_hare(65, 145);
 		}
 	} else if (currentChapter == 2) {
@@ -518,8 +518,8 @@ bool DrasculaEngine::escoba() {
 		if (hay_que_load == 0) {
 			carga_escoba("21.ald");
 			sentido_hare = 0;
-			hare_x = 235;
-			hare_y = 164;
+			curX = 235;
+			curY = 164;
 		} else {
 			if (!para_cargar(saveName)) {
 				return true;
@@ -572,11 +572,11 @@ bool DrasculaEngine::escoba() {
 		}
 
 		if (currentChapter == 2) {
-			if (roomNumber == 3 && (hare_x == 279) && (hare_y + alto_hare == 101))
+			if (roomNumber == 3 && (curX == 279) && (curY + curHeight == 101))
 				animation_1_2();
-			else if (roomNumber == 14 && (hare_x == 214) && (hare_y + alto_hare == 121))
+			else if (roomNumber == 14 && (curX == 214) && (curY + curHeight == 121))
 				lleva_al_hare(190, 130);
-			else if (roomNumber == 14 && (hare_x == 246) && (hare_y + alto_hare == 112))
+			else if (roomNumber == 14 && (curX == 246) && (curY + curHeight == 112))
 				lleva_al_hare(190, 130);
 		}
 
@@ -853,8 +853,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		getIntFromLine(buffer, size, &martin);
 
 	if (currentChapter == 2 && martin != 0) {
-		ancho_hare = martin;
-		getIntFromLine(buffer, size, &alto_hare);
+		curWidth = martin;
+		getIntFromLine(buffer, size, &curHeight);
 		getIntFromLine(buffer, size, &feetHeight);
 		getIntFromLine(buffer, size, &stepX);
 		getIntFromLine(buffer, size, &stepY);
@@ -912,8 +912,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		if (martin == 0) {
 			stepX = STEP_X;
 			stepY = STEP_Y;
-			alto_hare = CHARACTER_HEIGHT;
-			ancho_hare = CHARACTER_WIDTH;
+			curHeight = CHARACTER_HEIGHT;
+			curWidth = CHARACTER_WIDTH;
 			feetHeight = FEET_HEIGHT;
 			loadPic("97.alg", extraSurface, 1);
 			loadPic("96.alg", frontSurface, 1);
@@ -929,9 +929,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	}
 
 	if (currentChapter == 2) {
-		if (hare_x == -1) {
-			hare_x = _destX[obj_salir];
-			hare_y = _destY[obj_salir] - alto_hare;
+		if (curX == -1) {
+			curX = _destX[obj_salir];
+			curY = _destY[obj_salir] - curHeight;
 		}
 		characterMoved = 0;
 	}
@@ -985,15 +985,15 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	}
 
 	if (currentChapter != 2) {
-		if (hare_x == -1) {
-			hare_x = _destX[obj_salir];
-			hare_y = _destY[obj_salir];
-			alto_hare = (CHARACTER_HEIGHT * factor_red[hare_y]) / 100;
-			ancho_hare = (CHARACTER_WIDTH * factor_red[hare_y]) / 100;
-			hare_y = hare_y - alto_hare;
+		if (curX == -1) {
+			curX = _destX[obj_salir];
+			curY = _destY[obj_salir];
+			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
+			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
+			curY = curY - curHeight;
 		} else {
-			alto_hare = (CHARACTER_HEIGHT * factor_red[hare_y]) / 100;
-			ancho_hare = (CHARACTER_WIDTH * factor_red[hare_y]) / 100;
+			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
+			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
 		}
 		characterMoved = 0;
 	}
@@ -1001,7 +1001,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	if (currentChapter == 2) {
 		soc = 0;
 		for (l = 0; l < 6; l++) {
-			soc += ancho_hare;
+			soc += curWidth;
 			frame_x[l] = soc;
 		}
 	}
@@ -1064,8 +1064,8 @@ void DrasculaEngine::clearRoom() {
 void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 	if (currentChapter == 5 || currentChapter == 6) {
 		if (hare_se_ve == 0) {
-			hare_x = sitio_x;
-			hare_y = sitio_y;
+			curX = sitio_x;
+			curY = sitio_y;
 			updateRoom();
 			updateScreen();
 			return;
@@ -1134,15 +1134,15 @@ void DrasculaEngine::checkObjects() {
 	}
 
 	if (currentChapter == 2) {
-		if (mouseX > hare_x + 2 && mouseY > hare_y + 2
-				&& mouseX < hare_x + ancho_hare - 2 && mouseY < hare_y + alto_hare - 2) {
+		if (mouseX > curX + 2 && mouseY > curY + 2
+				&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2) {
 			strcpy(textName, "hacker");
 			hasName = 1;
 			veo = 1;
 		}
 	} else {
-		if (mouseX > hare_x + 2 && mouseY > hare_y + 2
-				&& mouseX < hare_x + ancho_hare - 2 && mouseY < hare_y + alto_hare - 2 && veo == 0) {
+		if (mouseX > curX + 2 && mouseY > curY + 2
+				&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2 && veo == 0) {
 			strcpy(textName, "hacker");
 			hasName = 1;
 			veo = 1;
@@ -1181,8 +1181,8 @@ bool DrasculaEngine::verify1() {
 			}
 		}
 
-		if (mouseX > hare_x && mouseY > hare_y
-				&& mouseX < hare_x + ancho_hare && mouseY < hare_y + alto_hare)
+		if (mouseX > curX && mouseY > curY
+				&& mouseX < curX + curWidth && mouseY < curY + curHeight)
 			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
@@ -2043,7 +2043,7 @@ void DrasculaEngine::updateRoom() {
 		if (flags[0] == 0)
 			pon_hare();
 		else
-			copyRect(113, 54, hare_x - 20, hare_y - 1, 77, 89, drawSurface3, screenSurface);
+			copyRect(113, 54, curX - 20, curY - 1, 77, 89, drawSurface3, screenSurface);
 	} else {
 		pon_hare();
 	}
@@ -2066,8 +2066,8 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 		return false;
 	}
 	sav->read(currentData, 20);
-	hare_x = sav->readSint32LE();
-	hare_y = sav->readSint32LE();
+	curX = sav->readSint32LE();
+	curY = sav->readSint32LE();
 	sentido_hare = sav->readSint32LE();
 
 	for (l = 1; l < 43; l++) {
@@ -2198,26 +2198,26 @@ void DrasculaEngine::startWalking() {
 	stepY = STEP_Y;
 
 	if (currentChapter == 2) {
-		if ((sitio_x < hare_x) && (sitio_y <= (hare_y + alto_hare)))
+		if ((sitio_x < curX) && (sitio_y <= (curY + curHeight)))
 			quadrant_1();
-		else if ((sitio_x < hare_x) && (sitio_y > (hare_y + alto_hare)))
+		else if ((sitio_x < curX) && (sitio_y > (curY + curHeight)))
 			quadrant_3();
-		else if ((sitio_x > hare_x + ancho_hare) && (sitio_y <= (hare_y + alto_hare)))
+		else if ((sitio_x > curX + curWidth) && (sitio_y <= (curY + curHeight)))
 			quadrant_2();
-		else if ((sitio_x > hare_x + ancho_hare) && (sitio_y > (hare_y + alto_hare)))
+		else if ((sitio_x > curX + curWidth) && (sitio_y > (curY + curHeight)))
 			quadrant_4();
-		else if (sitio_y < hare_y + alto_hare)
+		else if (sitio_y < curY + curHeight)
 			walkUp();
-		else if (sitio_y > hare_y + alto_hare)
+		else if (sitio_y > curY + curHeight)
 			walkDown();
 	} else {
-		if ((sitio_x < hare_x + ancho_hare / 2 ) && (sitio_y <= (hare_y + alto_hare)))
+		if ((sitio_x < curX + curWidth / 2 ) && (sitio_y <= (curY + curHeight)))
 			quadrant_1();
-		else if ((sitio_x < hare_x + ancho_hare / 2) && (sitio_y > (hare_y + alto_hare)))
+		else if ((sitio_x < curX + curWidth / 2) && (sitio_y > (curY + curHeight)))
 			quadrant_3();
-		else if ((sitio_x > hare_x + ancho_hare / 2) && (sitio_y <= (hare_y + alto_hare)))
+		else if ((sitio_x > curX + curWidth / 2) && (sitio_y <= (curY + curHeight)))
 			quadrant_2();
-		else if ((sitio_x > hare_x + ancho_hare / 2) && (sitio_y > (hare_y + alto_hare)))
+		else if ((sitio_x > curX + curWidth / 2) && (sitio_y > (curY + curHeight)))
 			quadrant_4();
 		else
 			characterMoved = 0;
@@ -2232,42 +2232,42 @@ void DrasculaEngine::pon_hare() {
 	if (characterMoved == 1 && stepX == STEP_X) {
 		for (r = 0; r < stepX; r++) {
 			if (currentChapter != 2) {
-				if (sentido_hare == 0 && sitio_x - r == hare_x + ancho_hare / 2) {
+				if (sentido_hare == 0 && sitio_x - r == curX + curWidth / 2) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
 				}
-				if (sentido_hare == 1 && sitio_x + r == hare_x + ancho_hare / 2) {
+				if (sentido_hare == 1 && sitio_x + r == curX + curWidth / 2) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
-					hare_x = sitio_x - ancho_hare / 2;
-					hare_y = sitio_y - alto_hare;
+					curX = sitio_x - curWidth / 2;
+					curY = sitio_y - curHeight;
 				}
 			} else if (currentChapter == 2) {
-				if (sentido_hare == 0 && sitio_x - r == hare_x) {
+				if (sentido_hare == 0 && sitio_x - r == curX) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
 				}
-				if (sentido_hare == 1 && sitio_x + r == hare_x + ancho_hare) {
+				if (sentido_hare == 1 && sitio_x + r == curX + curWidth) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
-					hare_x = sitio_x - ancho_hare + 4;
-					hare_y = sitio_y - alto_hare;
+					curX = sitio_x - curWidth + 4;
+					curY = sitio_y - curHeight;
 				}
 			}
 		}
 	}
 	if (characterMoved == 1 && stepY == STEP_Y) {
 		for (r = 0; r < stepY; r++) {
-			if (sentido_hare == 2 && sitio_y - r == hare_y + alto_hare) {
+			if (sentido_hare == 2 && sitio_y - r == curY + curHeight) {
 				characterMoved = 0;
 				stepX = STEP_X;
 				stepY = STEP_Y;
 			}
-			if (sentido_hare == 3 && sitio_y + r == hare_y + alto_hare) {
+			if (sentido_hare == 3 && sitio_y + r == curY + curHeight) {
 				characterMoved = 0;
 				stepX = STEP_X;
 				stepY = STEP_Y;
@@ -2285,11 +2285,11 @@ void DrasculaEngine::pon_hare() {
 	if (characterMoved == 0) {
 		pos_hare[0] = 0;
 		pos_hare[1] = DIF_MASK_HARE;
-		pos_hare[2] = hare_x;
-		pos_hare[3] = hare_y;
+		pos_hare[2] = curX;
+		pos_hare[3] = curY;
 		if (currentChapter == 2) {
-			pos_hare[4] = ancho_hare;
-			pos_hare[5] = alto_hare;
+			pos_hare[4] = curWidth;
+			pos_hare[5] = curHeight;
 		} else {
 			pos_hare[4] = CHARACTER_WIDTH;
 			pos_hare[5] = CHARACTER_HEIGHT;
@@ -2301,34 +2301,34 @@ void DrasculaEngine::pon_hare() {
 				copyRectClip(pos_hare, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (sentido_hare == 1) {
 			if (currentChapter == 2)
 				copyRectClip(pos_hare, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (sentido_hare == 2) {
 			if (currentChapter == 2)
 				copyRectClip(pos_hare, backSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], backSurface, screenSurface);
+									factor_red[curY + curHeight], backSurface, screenSurface);
 		} else {
 			if (currentChapter == 2)
 				copyRectClip(pos_hare, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], frontSurface, screenSurface);
+									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 	} else if (characterMoved == 1) {
 		pos_hare[0] = frame_x[num_frame];
 		pos_hare[1] = frame_y + DIF_MASK_HARE;
-		pos_hare[2] = hare_x;
-		pos_hare[3] = hare_y;
+		pos_hare[2] = curX;
+		pos_hare[3] = curY;
 		if (currentChapter == 2) {
-			pos_hare[4] = ancho_hare;
-			pos_hare[5] = alto_hare;
+			pos_hare[4] = curWidth;
+			pos_hare[5] = curHeight;
 		} else {
 			pos_hare[4] = CHARACTER_WIDTH;
 			pos_hare[5] = CHARACTER_HEIGHT;
@@ -2339,25 +2339,25 @@ void DrasculaEngine::pon_hare() {
 				copyRectClip(pos_hare, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (sentido_hare == 1) {
 			if (currentChapter == 2)
 				copyRectClip(pos_hare, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (sentido_hare == 2) {
 			if (currentChapter == 2)
 				copyRectClip(pos_hare, backSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], backSurface, screenSurface);
+									factor_red[curY + curHeight], backSurface, screenSurface);
 		} else {
 			if (currentChapter == 2)
 				copyRectClip(pos_hare, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
-									factor_red[hare_y + alto_hare], frontSurface, screenSurface);
+									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 		increaseFrameNum();
 	}
@@ -2447,7 +2447,7 @@ bool DrasculaEngine::exitRoom(int l) {
 				clearRoom();
 				strcpy(roomExit, _targetSurface[l]);
 				strcat(roomExit, ".ald");
-				hare_x = -1;
+				curX = -1;
 				carga_escoba(roomExit);
 			}
 		}
@@ -2480,7 +2480,7 @@ bool DrasculaEngine::exitRoom(int l) {
 
 			strcpy(roomExit, _targetSurface[l]);
 			strcat(roomExit, ".ald");
-			hare_x =- 1;
+			curX =- 1;
 			carga_escoba(roomExit);
 		}
 	} else if (currentChapter == 3) {
@@ -2498,7 +2498,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			strcpy(roomExit, _targetSurface[l]);
 			strcat(roomExit, ".ald");
-			hare_x =- 1;
+			curX =- 1;
 			carga_escoba(roomExit);
 		}
 	} else if (currentChapter == 4) {
@@ -2519,7 +2519,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			strcpy(roomExit, _targetSurface[l]);
 			strcat(roomExit, ".ald");
-			hare_x = -1;
+			curX = -1;
 			carga_escoba(roomExit);
 		}
 	} else if (currentChapter == 5) {
@@ -2538,7 +2538,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			strcpy(roomExit, _targetSurface[l]);
 			strcat(roomExit, ".ald");
-			hare_x = -1;
+			curX = -1;
 			carga_escoba(roomExit);
 		}
 	} else if (currentChapter == 6) {
@@ -2556,7 +2556,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			strcpy(roomExit, _targetSurface[l]);
 			strcat(roomExit, ".ald");
-			hare_x = -1;
+			curX = -1;
 			carga_escoba(roomExit);
 
 			if (objExit == 105)
@@ -2923,18 +2923,18 @@ void DrasculaEngine::quadrant_1() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = hare_x - sitio_x;
+		distance_x = curX - sitio_x;
 	else
-		distance_x = hare_x + ancho_hare / 2 - sitio_x;
+		distance_x = curX + curWidth / 2 - sitio_x;
 
-	distance_y = (hare_y + alto_hare) - sitio_y;
+	distance_y = (curY + curHeight) - sitio_y;
 
 	if (distance_x < distance_y) {
-		direccion_hare = 0;
+		curDirection = 0;
 		sentido_hare = 2;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
-		direccion_hare = 7;
+		curDirection = 7;
 		sentido_hare = 0;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
@@ -2944,18 +2944,18 @@ void DrasculaEngine::quadrant_2() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = abs(hare_x + ancho_hare - sitio_x);
+		distance_x = abs(curX + curWidth - sitio_x);
 	else
-		distance_x = abs(hare_x + ancho_hare / 2 - sitio_x);
+		distance_x = abs(curX + curWidth / 2 - sitio_x);
 
-	distance_y = (hare_y + alto_hare) - sitio_y;
+	distance_y = (curY + curHeight) - sitio_y;
 
 	if (distance_x < distance_y) {
-		direccion_hare = 1;
+		curDirection = 1;
 		sentido_hare = 2;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
-		direccion_hare = 2;
+		curDirection = 2;
 		sentido_hare = 1;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
@@ -2965,18 +2965,18 @@ void DrasculaEngine::quadrant_3() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = hare_x - sitio_x;
+		distance_x = curX - sitio_x;
 	else
-		distance_x = hare_x + ancho_hare / 2 - sitio_x;
+		distance_x = curX + curWidth / 2 - sitio_x;
 
-	distance_y = sitio_y - (hare_y + alto_hare);
+	distance_y = sitio_y - (curY + curHeight);
 
 	if (distance_x < distance_y) {
-		direccion_hare = 5;
+		curDirection = 5;
 		sentido_hare = 3;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
-		direccion_hare = 6;
+		curDirection = 6;
 		sentido_hare = 0;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
@@ -2986,18 +2986,18 @@ void DrasculaEngine::quadrant_4() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = abs(hare_x + ancho_hare - sitio_x);
+		distance_x = abs(curX + curWidth - sitio_x);
 	else
-		distance_x = abs(hare_x + ancho_hare / 2 - sitio_x);
+		distance_x = abs(curX + curWidth / 2 - sitio_x);
 
-	distance_y = sitio_y - (hare_y + alto_hare);
+	distance_y = sitio_y - (curY + curHeight);
 
 	if (distance_x < distance_y) {
-		direccion_hare = 4;
+		curDirection = 4;
 		sentido_hare = 3;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
-		direccion_hare = 3;
+		curDirection = 3;
 		sentido_hare = 1;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
@@ -3012,8 +3012,8 @@ void DrasculaEngine::saveGame(char gameName[]) {
 	}
 	out->writeSint32LE(currentChapter);
 	out->write(currentData, 20);
-	out->writeSint32LE(hare_x);
-	out->writeSint32LE(hare_y);
+	out->writeSint32LE(curX);
+	out->writeSint32LE(curY);
 	out->writeSint32LE(sentido_hare);
 
 	for (l = 1; l < 43; l++) {
@@ -3043,26 +3043,26 @@ void DrasculaEngine::increaseFrameNum() {
 		if (num_frame == 6)
 			num_frame = 0;
 
-		if (direccion_hare == 0 || direccion_hare == 7) {
-			hare_x = hare_x - stepX;
-			hare_y = hare_y - stepY;
-		} else if (direccion_hare == 1 || direccion_hare == 2) {
-			hare_x = hare_x + stepX;
-			hare_y = hare_y - stepY;
-		} else if (direccion_hare == 3 || direccion_hare == 4) {
-			hare_x = hare_x + stepX;
-			hare_y = hare_y + stepY;
-		} else if (direccion_hare == 5 || direccion_hare == 6) {
-			hare_x = hare_x - stepX;
-			hare_y = hare_y + stepY;
+		if (curDirection == 0 || curDirection == 7) {
+			curX -= stepX;
+			curY -= stepY;
+		} else if (curDirection == 1 || curDirection == 2) {
+			curX += stepX;
+			curY -= stepY;
+		} else if (curDirection == 3 || curDirection == 4) {
+			curX += stepX;
+			curY += stepY;
+		} else if (curDirection == 5 || curDirection == 6) {
+			curX -= stepX;
+			curY += stepY;
 		}
 	}
 
 	if (currentChapter != 2) {
-		hare_y += (int)(alto_hare - newHeight);
-		hare_x += (int)(ancho_hare - newWidth);
-		alto_hare = (int)newHeight;
-		ancho_hare = (int)newWidth;
+		curY += (int)(curHeight - newHeight);
+		curX += (int)(curWidth - newWidth);
+		curHeight = (int)newHeight;
+		curWidth = (int)newWidth;
 	}
 }
 
@@ -3501,13 +3501,13 @@ void DrasculaEngine::updateVisible() {
 }
 
 void DrasculaEngine::walkDown() {
-	direccion_hare = 4;
+	curDirection = 4;
 	sentido_hare = 3;
 	stepX = 0;
 }
 
 void DrasculaEngine::walkUp() {
-	direccion_hare = 0;
+	curDirection = 0;
 	sentido_hare = 2;
 	stepX = 0;
 }

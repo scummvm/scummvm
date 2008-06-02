@@ -370,7 +370,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	}
 
 	if (currentChapter != 2) {
-		if (factor_red[hare_y + alto_hare] == 100)
+		if (factor_red[curY + curHeight] == 100)
 			suma_1_pixel = 0;
 	}
 
@@ -391,65 +391,65 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, talkHeight - 1, screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
 		else
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]),
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
 						   screenSurface, drawSurface3);
 
 		pon_hare();
 
 		if (currentChapter == 2) {
 			if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
-				copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, talkHeight - 1, drawSurface3, screenSurface);
+				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
 		} else {
-			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]),
+			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
 						   drawSurface3, screenSurface);
 		}
 
 		if (sentido_hare == 0) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, talkWidth, talkHeight,
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight,
 						extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_izq[face], y_mask_talk, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare],
+				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
+						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
 						extraSurface, screenSurface);
 
 			updateRefresh();
 		} else if (sentido_hare == 1) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight,
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_dch[face], y_mask_talk, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-					hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
+					curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 2) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight,
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						suma_1_pixel + hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare],
+						suma_1_pixel + curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
+						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
 						frontSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 3) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, talkWidth, talkHeight,
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						suma_1_pixel + hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, talkWidth,talkHeight, factor_red[hare_y + alto_hare],
+						suma_1_pixel + curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
+						curY, talkWidth,talkHeight, factor_red[curY + curHeight],
 						frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, hare_x, hare_y);
+			centerText(said, curX, curY);
 
 		updateScreen();
 
@@ -911,7 +911,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	color_abc(kColorYellow);
 
 	if (currentChapter == 1) {
-		if (factor_red[hare_y + alto_hare] == 100)
+		if (factor_red[curY + curHeight] == 100)
 			suma_1_pixel = 0;
 	}
 
@@ -926,52 +926,52 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, talkHeight - 1, screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
 		else
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]), screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
 		pon_hare();
 		if (currentChapter == 2) {
-			if (alto_hare != 56)
-				copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, talkHeight - 1, drawSurface3, screenSurface);
+			if (curHeight != 56)
+				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
 		} else
-			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]), drawSurface3, screenSurface);
+			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
 
 		if (sentido_hare == 0) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, talkWidth, talkHeight, extraSurface, screenSurface);
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(curX + (8.0f / 100) * factor_red[curY + curHeight]),
+							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 1) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight, extraSurface, screenSurface);
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(curX + (12.0f / 100) * factor_red[curY + curHeight]),
+							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 2) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight, frontSurface, screenSurface);
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						(int)(suma_1_pixel + hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						talkWidth, talkHeight, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
+						(int)(suma_1_pixel + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
+						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		} else if (sentido_hare == 3) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, talkWidth, talkHeight, frontSurface, screenSurface);
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						(int)(suma_1_pixel + hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						talkWidth, talkHeight, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
+						(int)(suma_1_pixel + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
+						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, hare_x, hare_y);
+			centerText(said, curX, curY);
 
 		updateScreen();
 

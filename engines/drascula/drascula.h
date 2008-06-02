@@ -260,11 +260,11 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int hare_x, hare_y, characterMoved, direccion_hare, sentido_hare, num_frame, hare_se_ve;
+	int curX, curY, characterMoved, curDirection, sentido_hare, num_frame, hare_se_ve;
 	int sitio_x, sitio_y, checkFlags;
 	int doBreak;
 	int stepX, stepY;
-	int alto_hare, ancho_hare, feetHeight;
+	int curHeight, curWidth, feetHeight;
 	int talkHeight, talkWidth;
 	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
 	int near, far;
