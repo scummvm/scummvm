@@ -270,7 +270,7 @@ public:
 	int near, far;
 	int sentido_final, walkToObject;
 	int objExit;
-	int diff_vez, conta_vez;
+	int timeDiff, startTime;
 	int hasAnswer;
 	int conta_blind_vez;
 	int changeColor;
@@ -399,9 +399,9 @@ public:
 	void lleva_al_hare(int, int);
 	void moveCursor();
 	void checkObjects();
-	void elige_en_barra();
-	bool comprueba1();
-	bool comprueba2();
+	void selectVerbFromBar();
+	bool verify1();
+	bool verify2();
 	Common::KeyCode getScan();
 	void selectVerb(int);
 	void mesa();
@@ -669,7 +669,7 @@ extern const char *_textd1[][11];
 extern const ItemLocation itemLocations[];
 extern int frame_x[20];
 extern const int x_pol[44], y_pol[44];
-extern const int x_barra[];
+extern const int verbBarX[];
 extern const int x1d_menu[], y1d_menu[];
 
 extern const CharInfo charMap[];

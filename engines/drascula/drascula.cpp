@@ -630,17 +630,17 @@ bool DrasculaEngine::escoba() {
 
 		if (button_izq == 1 && menuBar == 1) {
 			delay(100);
-			elige_en_barra();
+			selectVerbFromBar();
 			if (currentChapter != 3)
 				cont_sv = 0;
 		} else if (button_izq == 1 && takeObject == 0) {
 			delay(100);
-			if (comprueba1())
+			if (verify1())
 				return true;
 			if (currentChapter != 3)
 				cont_sv = 0;
 		} else if (button_izq == 1 && takeObject == 1) {
-			if (comprueba2())
+			if (verify2())
 				return true;
 			if (currentChapter != 3)
 				cont_sv = 0;
@@ -1153,20 +1153,19 @@ void DrasculaEngine::checkObjects() {
 		hasName = 0;
 }
 
-void DrasculaEngine::elige_en_barra() {
-	int n, num_verbo = -1;
+void DrasculaEngine::selectVerbFromBar() {
+	for (int n = 0; n < 7; n++) {
+		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1]) {
+			selectVerb(n);
+			return;
+		}
+	}
 
-	for (n = 0; n < 7; n++)
-		if (mouseX > x_barra[n] && mouseX < x_barra[n + 1])
-			num_verbo = n;
-
-	if (num_verbo < 1)
-		withoutVerb();
-	else
-		selectVerb(num_verbo);
+	// no verb selected
+	withoutVerb();
 }
 
-bool DrasculaEngine::comprueba1() {
+bool DrasculaEngine::verify1() {
 	int l;
 
 	if (menuScreen == 1)
@@ -1209,7 +1208,7 @@ bool DrasculaEngine::comprueba1() {
 	return false;
 }
 
-bool DrasculaEngine::comprueba2() {
+bool DrasculaEngine::verify2() {
 	int l;
 
 	if (menuScreen == 1) {
@@ -2223,7 +2222,7 @@ void DrasculaEngine::startWalking() {
 		else
 			characterMoved = 0;
 	}
-	conta_vez = getTime();
+	startTime = getTime();
 }
 
 void DrasculaEngine::pon_hare() {
@@ -2394,9 +2393,9 @@ void DrasculaEngine::clearMenu() {
 	int n, sobre_verbo = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (mouseX > x_barra[n] && mouseX < x_barra[n + 1])
+		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1])
 			sobre_verbo = 0;
-		copyRect(OBJWIDTH * n, OBJHEIGHT * sobre_verbo, x_barra[n], 2,
+		copyRect(OBJWIDTH * n, OBJHEIGHT * sobre_verbo, verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, backSurface, screenSurface);
 		sobre_verbo = 1;
 	}
@@ -3036,10 +3035,10 @@ void DrasculaEngine::saveGame(char gameName[]) {
 }
 
 void DrasculaEngine::increaseFrameNum() {
-	diff_vez = getTime() - conta_vez;
+	timeDiff = getTime() - startTime;
 
-	if (diff_vez >= 6) {
-		conta_vez = getTime();
+	if (timeDiff >= 6) {
+		startTime = getTime();
 		num_frame++;
 		if (num_frame == 6)
 			num_frame = 0;
