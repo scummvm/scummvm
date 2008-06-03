@@ -182,7 +182,7 @@ endif
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
 
-INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source -I$(portdir)/source/fat \
+INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source \
 			-I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
 			-I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
 			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h

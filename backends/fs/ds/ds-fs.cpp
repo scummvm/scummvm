@@ -25,7 +25,7 @@
 //#include <NDS/ARM9/console.h> //basic print funcionality
 #include "backends/fs/ds/ds-fs.h"
 #include "dsmain.h"
-#include "gba_nds_fat.h"
+#include "fat/gba_nds_fat.h"
 
 
 
