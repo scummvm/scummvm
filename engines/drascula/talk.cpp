@@ -27,6 +27,9 @@
 
 namespace Drascula {
 
+int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
+int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
+
 void DrasculaEngine::talkInit(const char *filename) {
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
@@ -348,13 +351,11 @@ void DrasculaEngine::talk(int index) {
 }
 
 void DrasculaEngine::talk(const char *said, const char *filename) {
-	int suma_1_pixel = 0;
+	int talkOffset = 0;
 	if (currentChapter != 2)
-		suma_1_pixel = 1;
+		talkOffset = 1;
 
 	int y_mask_talk = 170;
-	int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
-	int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
 	int face;
 	int length = strlen(said);
 
@@ -371,7 +372,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 	if (currentChapter != 2) {
 		if (factor_red[curY + curHeight] == 100)
-			suma_1_pixel = 0;
+			talkOffset = 0;
 	}
 
 	if (currentChapter == 4) {
@@ -408,7 +409,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 						   drawSurface3, screenSurface);
 		}
 
-		if (sentido_hare == 0) {
+		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight,
 						extraSurface, screenSurface);
@@ -418,7 +419,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 						extraSurface, screenSurface);
 
 			updateRefresh();
-		} else if (sentido_hare == 1) {
+		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					extraSurface, screenSurface);
@@ -426,23 +427,23 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
 					curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 2) {
+		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						suma_1_pixel + curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
+						talkOffset + curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
 						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
 						frontSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 3) {
+		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						suma_1_pixel + curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
+						talkOffset + curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
 						curY, talkWidth,talkHeight, factor_red[curY + curHeight],
 						frontSurface, screenSurface);
 			updateRefresh();
@@ -572,23 +573,23 @@ void DrasculaEngine::talk_vb(int index) {
 
 	talkInit(filename);
 
-	copyBackground(vb_x + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
+	copyBackground(vbX + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
 
 	do {
-		if (sentido_vb == 1) {
+		if (trackVB == 1) {
 			face = _rnd->getRandomNumber(5);
 			copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 			pon_hare();
-			pon_vb();
+			moveVB();
 
-			copyBackground(OBJWIDTH + 1, 0, vb_x + 5, 64, 25, 27, drawSurface3, screenSurface);
-			copyRect(x_talk[face], 34, vb_x + 5, 64, 25, 27, frontSurface, screenSurface);
+			copyBackground(OBJWIDTH + 1, 0, vbX + 5, 64, 25, 27, drawSurface3, screenSurface);
+			copyRect(x_talk[face], 34, vbX + 5, 64, 25, 27, frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, vb_x, 66);
+			centerText(said, vbX, 66);
 
 		updateScreen();
 
@@ -633,7 +634,7 @@ void DrasculaEngine::talk_blind(int index) {
 	char filename[20];
 	sprintf(filename, "d%i.als", index + TEXTD_START - 1);
 	const char *said = _textd[_lang][index + TEXTD_START - 1];
-	const char *sincronia = _textd1[_lang][index - 1];
+	const char *syncChar = _textd1[_lang][index - 1];
 
 	byte *faceBuffer;
 	int p = 0;
@@ -656,7 +657,7 @@ void DrasculaEngine::talk_blind(int index) {
 	do {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		pos_blind[5] = 149;
-		char c = toupper(sincronia[p]);
+		char c = toupper(syncChar[p]);
 
 		if (c == '0' || c == '2' || c == '4' || c == '6')
 			pos_blind[0] = 1;
@@ -900,11 +901,9 @@ void DrasculaEngine::talk_htel(int index) {
 	updateScreen();
 }
 
-void DrasculaEngine::talk_sinc(const char *said, const char *filename, const char *sincronia) {
-	int suma_1_pixel = 1;
+void DrasculaEngine::talk_sinc(const char *said, const char *filename, const char *syncChar) {
+	int talkOffset = 1;
 	int y_mask_talk = 170;
-	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
-	int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 	int p, face = 0;
 	int length = strlen(said);
 
@@ -912,7 +911,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 
 	if (currentChapter == 1) {
 		if (factor_red[curY + curHeight] == 100)
-			suma_1_pixel = 0;
+			talkOffset = 0;
 	}
 
 	p = 0;
@@ -920,7 +919,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	talkInit(filename);
 
 	do {
-		face = atoi(&sincronia[p]);
+		face = atoi(&syncChar[p]);
 
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
@@ -938,34 +937,34 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
 				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
 
-		if (sentido_hare == 0) {
+		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(curX + (8.0f / 100) * factor_red[curY + curHeight]),
 							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 1) {
+		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(curX + (12.0f / 100) * factor_red[curY + curHeight]),
 							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 2) {
+		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						(int)(suma_1_pixel + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
+						(int)(talkOffset + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
 						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 3) {
+		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						(int)(suma_1_pixel + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
+						(int)(talkOffset + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
 						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		}

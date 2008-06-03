@@ -242,7 +242,7 @@ public:
 	char iconName[44][13];
 
 	int objectNum[40], visible[40], isDoor[40];
-	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
+	int roomObjX[40], roomObjY[40], trackObj[40];
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
 	int _destX[40], _destY[40], sentido_alkeva[40], alapuertakeva[40];
@@ -260,22 +260,22 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, sentido_hare, num_frame, hare_se_ve;
-	int sitio_x, sitio_y, checkFlags;
+	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame, hare_se_ve;
+	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
 	int curHeight, curWidth, feetHeight;
 	int talkHeight, talkWidth;
-	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
+	int floorX1, floorY1, floorX2, floorY2;
 	int near, far;
-	int sentido_final, walkToObject;
+	int trackFinal, walkToObject;
 	int objExit;
 	int timeDiff, startTime;
 	int hasAnswer;
 	int conta_blind_vez;
 	int changeColor;
 	int breakOut;
-	int vb_x, sentido_vb, vb_se_mueve, frame_vb;
+	int vbX, trackVB, vbHasMoved, frame_vb;
 	float newHeight, newWidth;
 	int factor_red[202];
 	int frame_piano;
@@ -284,7 +284,7 @@ public:
 	int color_solo;
 	int blinking;
 	int igorX, igorY, sentido_igor;
-	int x_dr, y_dr, sentido_dr;
+	int x_dr, y_dr, trackDrascula;
 	int x_bj, y_bj, sentido_bj;
 	int cont_sv;
 	int term_int;
@@ -294,7 +294,7 @@ public:
 	int _color;
 	int musicStopped;
 	char select[23];
-	int hay_seleccion;
+	int selectionMade;
 	int mouseX;
 	int mouseY;
 	int mouseY_ant;
@@ -306,7 +306,7 @@ public:
 	void pickObject(int);
 	void walkUp();
 	void walkDown();
-	void pon_vb();
+	void moveVB();
 	void lleva_vb(int pointX);
 	void hipo_sin_nadie(int counter);
 	void openDoor(int nflag, int doorNum);
@@ -396,7 +396,7 @@ public:
 	bool para_cargar(char[]);
 	void carga_escoba(const char *);
 	void clearRoom();
-	void lleva_al_hare(int, int);
+	void gotoObject(int, int);
 	void moveCursor();
 	void checkObjects();
 	void selectVerbFromBar();

@@ -118,7 +118,7 @@ int DrasculaEngine::go() {
 		takeObject = 0;
 		menuBar = 0; menuScreen = 0; hasName = 0;
 		frame_y = 0;
-		curX = -1; characterMoved = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
+		curX = -1; characterMoved = 0; trackProtagonist = 3; num_frame = 0; hare_se_ve = 1;
 		checkFlags = 1;
 		doBreak = 0;
 		walkToObject = 0;
@@ -129,14 +129,14 @@ int DrasculaEngine::go() {
 		conta_blind_vez = 0;
 		changeColor = 0;
 		breakOut = 0;
-		vb_x = 120; sentido_vb = 1; vb_se_mueve = 0; frame_vb = 1;
+		vbX = 120; trackVB = 1; vbHasMoved = 0; frame_vb = 1;
 		frame_piano = 0;
 		frame_drunk = 0;
 		frame_candles = 0;
 		cont_sv = 0;
 		term_int = 0;
 		musicStopped = 0;
-		hay_seleccion = 0;
+		selectionMade = 0;
 		UsingMem = 0;
 		globalSpeed = 0;
 		frame_blind = 0;
@@ -149,7 +149,7 @@ int DrasculaEngine::go() {
 
 		hay_sb = 1;
 		withVoices = 0;
-		hay_seleccion = 0;
+		selectionMade = 0;
 
 		if (currentChapter != 6) {
 			loadPic("95.alg", tableSurface, 1);
@@ -181,7 +181,7 @@ int DrasculaEngine::go() {
 			loadPic("99.alg", backSurface, 1);
 		} else if (currentChapter == 6) {
 			igorX = 105, igorY = 85, sentido_igor = 1;
-			x_dr = 62, y_dr = 99, sentido_dr = 1;
+			x_dr = 62, y_dr = 99, trackDrascula = 1;
 			frame_pen = 0;
 			flag_tv = 0;
 
@@ -468,7 +468,7 @@ bool DrasculaEngine::escoba() {
 
 		withoutVerb();
 		loadPic("2aux62.alg", drawSurface2, 1);
-		sentido_hare = 1;
+		trackProtagonist = 1;
 		objExit = 104;
 		if (hay_que_load != 0) {
 			if (!para_cargar(saveName)) {
@@ -478,11 +478,11 @@ bool DrasculaEngine::escoba() {
 			carga_escoba("62.ald");
 			curX = -20;
 			curY = 56;
-			lleva_al_hare(65, 145);
+			gotoObject(65, 145);
 		}
 	} else if (currentChapter == 2) {
 		addObject(28);
-		sentido_hare = 3;
+		trackProtagonist = 3;
 		objExit = 162;
 		if (hay_que_load == 0)
 			carga_escoba("14.ald");
@@ -500,7 +500,7 @@ bool DrasculaEngine::escoba() {
 		addObject(20);
 		addObject(19);
 		flags[1] = 1;
-		sentido_hare = 1;
+		trackProtagonist = 1;
 		objExit = 99;
 		if (hay_que_load == 0)
 			carga_escoba("20.ald");
@@ -517,7 +517,7 @@ bool DrasculaEngine::escoba() {
 		objExit = 100;
 		if (hay_que_load == 0) {
 			carga_escoba("21.ald");
-			sentido_hare = 0;
+			trackProtagonist = 0;
 			curX = 235;
 			curY = 164;
 		} else {
@@ -535,7 +535,7 @@ bool DrasculaEngine::escoba() {
 		addObject(15);
 		addObject(17);
 		addObject(20);
-		sentido_hare = 1;
+		trackProtagonist = 1;
 		objExit = 100;
 		if (hay_que_load == 0) {
 			carga_escoba("45.ald");
@@ -548,7 +548,7 @@ bool DrasculaEngine::escoba() {
 		addObject(28);
 		addObject(9);
 
-		sentido_hare = 1;
+		trackProtagonist = 1;
 		objExit = 104;
 		if (hay_que_load == 0) {
 			carga_escoba("58.ald");
@@ -567,7 +567,7 @@ bool DrasculaEngine::escoba() {
 			stepY = STEP_Y;
 		}
 		if (characterMoved == 0 && walkToObject == 1) {
-			sentido_hare = sentido_final;
+			trackProtagonist = trackFinal;
 			walkToObject = 0;
 		}
 
@@ -575,9 +575,9 @@ bool DrasculaEngine::escoba() {
 			if (roomNumber == 3 && (curX == 279) && (curY + curHeight == 101))
 				animation_1_2();
 			else if (roomNumber == 14 && (curX == 214) && (curY + curHeight == 121))
-				lleva_al_hare(190, 130);
+				gotoObject(190, 130);
 			else if (roomNumber == 14 && (curX == 246) && (curY + curHeight == 112))
-				lleva_al_hare(190, 130);
+				gotoObject(190, 130);
 		}
 
 		moveCursor();
@@ -611,8 +611,8 @@ bool DrasculaEngine::escoba() {
 		if (button_dch == 1 && menuScreen == 0) {
 			delay(100);
 			characterMoved = 0;
-			if (sentido_hare == 2)
-				sentido_hare = 1;
+			if (trackProtagonist == 2)
+				trackProtagonist = 1;
 			if (currentChapter == 4)
 				loadPic("icons2.alg", backSurface, 1);
 			else if (currentChapter == 5)
@@ -826,8 +826,8 @@ void DrasculaEngine::getStringFromLine(char *buf, int len, char* result) {
 	sscanf(buf, "%s", result);
 }
 
-void DrasculaEngine::carga_escoba(const char *nom_fich) {
-	int soc, l, martin = 0, obj_salir = 0;
+void DrasculaEngine::carga_escoba(const char *fileName) {
+	int soc, l, martin = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
 	char pant1[20], pant2[20], pant3[20], pant4[20];
 	char para_codificar[20];
@@ -835,12 +835,12 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	hasName = 0;
 
-	strcpy(para_codificar, nom_fich);
-	strcpy(currentData, nom_fich);
+	strcpy(para_codificar, fileName);
+	strcpy(currentData, fileName);
 
-	_arj.open(nom_fich);
+	_arj.open(fileName);
 	if (!_arj.isOpen()) {
-		error("missing data file %s", nom_fich);
+		error("missing data file %s", fileName);
 	}
 	int size = _arj.size();
 
@@ -876,9 +876,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		getIntFromLine(buffer, size, &y1[l]);
 		getIntFromLine(buffer, size, &x2[l]);
 		getIntFromLine(buffer, size, &y2[l]);
-		getIntFromLine(buffer, size, &sitiobj_x[l]);
-		getIntFromLine(buffer, size, &sitiobj_y[l]);
-		getIntFromLine(buffer, size, &sentidobj[l]);
+		getIntFromLine(buffer, size, &roomObjX[l]);
+		getIntFromLine(buffer, size, &roomObjY[l]);
+		getIntFromLine(buffer, size, &trackObj[l]);
 		getIntFromLine(buffer, size, &visible[l]);
 		getIntFromLine(buffer, size, &isDoor[l]);
 		if (isDoor[l] != 0) {
@@ -891,10 +891,10 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		}
 	}
 
-	getIntFromLine(buffer, size, &suelo_x1);
-	getIntFromLine(buffer, size, &suelo_y1);
-	getIntFromLine(buffer, size, &suelo_x2);
-	getIntFromLine(buffer, size, &suelo_y2);
+	getIntFromLine(buffer, size, &floorX1);
+	getIntFromLine(buffer, size, &floorY1);
+	getIntFromLine(buffer, size, &floorX2);
+	getIntFromLine(buffer, size, &floorY2);
 
 	if (currentChapter != 2) {
 		getIntFromLine(buffer, size, &far);
@@ -925,13 +925,13 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	for (l = 0; l < numRoomObjs; l++) {
 		if (objectNum[l] == objExit)
-			obj_salir = l;
+			objIsExit = l;
 	}
 
 	if (currentChapter == 2) {
 		if (curX == -1) {
-			curX = _destX[obj_salir];
-			curY = _destY[obj_salir] - curHeight;
+			curX = _destX[objIsExit];
+			curY = _destY[objIsExit] - curHeight;
 		}
 		characterMoved = 0;
 	}
@@ -958,27 +958,27 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		color_abc(kColorLightGreen);
 
 	if (currentChapter != 2) {
-		for (l = 0; l <= suelo_y1; l++)
+		for (l = 0; l <= floorY1; l++)
 			factor_red[l] = far;
-		for (l = suelo_y1; l <= 201; l++)
+		for (l = floorY1; l <= 201; l++)
 			factor_red[l] = near;
 
-		chiquez = (float)(near - far) / (float)(suelo_y2 - suelo_y1);
-		for (l = suelo_y1; l <= suelo_y2; l++) {
+		chiquez = (float)(near - far) / (float)(floorY2 - floorY1);
+		for (l = floorY1; l <= floorY2; l++) {
 			factor_red[l] = (int)(far + pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
 	if (roomNumber == 24) {
-		for (l = suelo_y1 - 1; l > 74; l--) {
+		for (l = floorY1 - 1; l > 74; l--) {
 			factor_red[l] = (int)(far - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
 	if (currentChapter == 5 && roomNumber == 54) {
-		for (l = suelo_y1 - 1; l > 84; l--) {
+		for (l = floorY1 - 1; l > 84; l--) {
 			factor_red[l] = (int)(far - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
@@ -986,8 +986,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	if (currentChapter != 2) {
 		if (curX == -1) {
-			curX = _destX[obj_salir];
-			curY = _destY[obj_salir];
+			curX = _destX[objIsExit];
+			curY = _destY[objIsExit];
 			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
 			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
 			curY = curY - curHeight;
@@ -1061,18 +1061,18 @@ void DrasculaEngine::clearRoom() {
 	_system->updateScreen();
 }
 
-void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
+void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	if (currentChapter == 5 || currentChapter == 6) {
 		if (hare_se_ve == 0) {
-			curX = sitio_x;
-			curY = sitio_y;
+			curX = roomX;
+			curY = roomY;
 			updateRoom();
 			updateScreen();
 			return;
 		}
 	}
-	sitio_x = pointX;
-	sitio_y = pointY;
+	roomX = pointX;
+	roomY = pointY;
 	startWalking();
 
 	for (;;) {
@@ -1084,7 +1084,7 @@ void DrasculaEngine::lleva_al_hare(int pointX, int pointY) {
 
 	if (walkToObject == 1) {
 		walkToObject = 0;
-		sentido_hare = sentido_final;
+		trackProtagonist = trackFinal;
 	}
 	updateRoom();
 	updateScreen();
@@ -1188,9 +1188,9 @@ bool DrasculaEngine::verify1() {
 		for (l = 0; l < numRoomObjs; l++) {
 			if (mouseX > x1[l] && mouseY > y1[l]
 					&& mouseX < x2[l] && mouseY < y2[l] && doBreak == 0) {
-				sitio_x = sitiobj_x[l];
-				sitio_y = sitiobj_y[l];
-				sentido_final = sentidobj[l];
+				roomX = roomObjX[l];
+				roomY = roomObjY[l];
+				trackFinal = trackObj[l];
 				doBreak = 1;
 				walkToObject = 1;
 				startWalking();
@@ -1198,8 +1198,8 @@ bool DrasculaEngine::verify1() {
 		}
 
 		if (doBreak == 0) {
-			sitio_x = CLIP(mouseX, suelo_x1, suelo_x2);
-			sitio_y = CLIP(mouseY, suelo_y1 + feetHeight, suelo_y2);
+			roomX = CLIP(mouseX, floorX1, floorX2);
+			roomY = CLIP(mouseY, floorY1 + feetHeight, floorY2);
 			startWalking();
 		}
 		doBreak = 0;
@@ -1222,9 +1222,9 @@ bool DrasculaEngine::verify2() {
 			for (l = 0; l < numRoomObjs; l++) {
 				if (mouseX > x1[l] && mouseY > y1[l]
 						&& mouseX < x2[l] && mouseY < y2[l] && visible[l] == 1) {
-					sentido_final = sentidobj[l];
+					trackFinal = trackObj[l];
 					walkToObject = 1;
-					lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
+					gotoObject(roomObjX[l], roomObjY[l]);
 					if (checkFlag(objectNum[l]))
 						return true;
 					if (currentChapter == 4)
@@ -1418,11 +1418,11 @@ bool DrasculaEngine::saves() {
 					strcpy(select, names[n]);
 
 					if (strcmp(select, "*"))
-						hay_seleccion = 1;
+						selectionMade = 1;
 					else {
 						enterName();
 						strcpy(names[n], select);
-						if (hay_seleccion == 1) {
+						if (selectionMade == 1) {
 							snprintf(file, 50, "%s%02d", _targetName.c_str(), n + 1);
 							para_grabar(file);
 							Common::OutSaveFile *tsav;
@@ -1444,14 +1444,14 @@ bool DrasculaEngine::saves() {
 						print_abc(names[n2], 116, y);
 						y = y + 9;
 					}
-					if (hay_seleccion == 1) {
+					if (selectionMade == 1) {
 						snprintf(file, 50, "%s%02d", _targetName.c_str(), n + 1);
 					}
 					num_sav = n;
 				}
 			}
 
-			if (mouseX > 117 && mouseY > 15 && mouseX < 295 && mouseY < 24 && hay_seleccion == 1) {
+			if (mouseX > 117 && mouseY > 15 && mouseX < 295 && mouseY < 24 && selectionMade == 1) {
 				enterName();
 				strcpy(names[num_sav], select);
 				print_abc(select, 117, 15);
@@ -1462,11 +1462,11 @@ bool DrasculaEngine::saves() {
 				}
 			}
 
-			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && hay_seleccion == 1) {
+			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && selectionMade == 1) {
 				if (!para_cargar(file))
 					return false;
 				break;
-			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && hay_seleccion == 1) {
+			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && selectionMade == 1) {
 				para_grabar(file);
 				Common::OutSaveFile *tsav;
 				if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
@@ -1480,7 +1480,7 @@ bool DrasculaEngine::saves() {
 				delete tsav;
 			} else if (mouseX > 168 && mouseY > 154 && mouseX < 242 && mouseY < 180)
 				break;
-			else if (hay_seleccion == 0) {
+			else if (selectionMade == 0) {
 				print_abc("elige una partida", 117, 15);
 			}
 			updateScreen();
@@ -1495,7 +1495,7 @@ bool DrasculaEngine::saves() {
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
 	loadPic(rm, drawSurface1, HALF_PAL);
-	hay_seleccion = 0;
+	selectionMade = 0;
 
 	return true;
 }
@@ -1729,20 +1729,20 @@ void DrasculaEngine::fliplay(const char *filefli, int vel) {
 }
 
 void DrasculaEngine::fadeFromBlack(int fadeSpeed) {
-	char fundido;
+	char fade;
 	unsigned int color, component;
 
-	DacPalette256 palFundido;
+	DacPalette256 palFade;
 
-	for (fundido = 0; fundido < 64; fundido++) {
+	for (fade = 0; fade < 64; fade++) {
 		for (color = 0; color < 256; color++) {
 			for (component = 0; component < 3; component++) {
-				palFundido[color][component] = adjustToVGA(gamePalette[color][component] - 63 + fundido);
+				palFade[color][component] = adjustToVGA(gamePalette[color][component] - 63 + fade);
 			}
 		}
 		pause(fadeSpeed);
 
-		setPalette((byte *)&palFundido);
+		setPalette((byte *)&palFade);
 	}
 }
 
@@ -1900,25 +1900,25 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 }
 
 void DrasculaEngine::fadeToBlack(int fadeSpeed) {
-	char fundido;
+	char fade;
 	unsigned int color, component;
 
-	DacPalette256 palFundido;
+	DacPalette256 palFade;
 
-	for (fundido = 63; fundido >= 0; fundido--) {
+	for (fade = 63; fade >= 0; fade--) {
 		for (color = 0; color < 256; color++) {
 			for (component = 0; component < 3; component++) {
-				palFundido[color][component] = adjustToVGA(gamePalette[color][component] - 63 + fundido);
+				palFade[color][component] = adjustToVGA(gamePalette[color][component] - 63 + fade);
 			}
 		}
 		pause(fadeSpeed);
 
-		setPalette((byte *)&palFundido);
+		setPalette((byte *)&palFade);
 	}
 }
 
-void DrasculaEngine::pause(int cuanto) {
-	_system->delayMillis(cuanto * 30); // was originaly 2
+void DrasculaEngine::pause(int duration) {
+	_system->delayMillis(duration * 30); // was originaly 2
 }
 
 void DrasculaEngine::placeIgor() {
@@ -1944,11 +1944,11 @@ void DrasculaEngine::placeIgor() {
 void DrasculaEngine::placeDrascula() {
 	int pos_dr[6];
 
-	if (sentido_dr == 1)
+	if (trackDrascula == 1)
 		pos_dr[0] = 47;
-	else if (sentido_dr == 0)
+	else if (trackDrascula == 0)
 		pos_dr[0] = 1;
-	else if (sentido_dr == 3 && currentChapter == 1)
+	else if (trackDrascula == 3 && currentChapter == 1)
 		pos_dr[0] = 93;
 	pos_dr[1] = 122;
 	pos_dr[2] = x_dr;
@@ -2068,7 +2068,7 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	sav->read(currentData, 20);
 	curX = sav->readSint32LE();
 	curY = sav->readSint32LE();
-	sentido_hare = sav->readSint32LE();
+	trackProtagonist = sav->readSint32LE();
 
 	for (l = 1; l < 43; l++) {
 		inventoryObjects[l] = sav->readSint32LE();
@@ -2149,13 +2149,13 @@ void DrasculaEngine::color_hare() {
 }
 
 void DrasculaEngine::funde_hare(int oscuridad) {
-	char fundido;
+	char fade;
 	unsigned int color, component;
 
-	for (fundido = oscuridad; fundido >= 0; fundido--) {
+	for (fade = oscuridad; fade >= 0; fade--) {
 		for (color = 235; color < 253; color++) {
 			for (component = 0; component < 3; component++)
-				gamePalette[color][component] = adjustToVGA(gamePalette[color][component] - 8 + fundido);
+				gamePalette[color][component] = adjustToVGA(gamePalette[color][component] - 8 + fade);
 		}
 	}
 
@@ -2198,26 +2198,26 @@ void DrasculaEngine::startWalking() {
 	stepY = STEP_Y;
 
 	if (currentChapter == 2) {
-		if ((sitio_x < curX) && (sitio_y <= (curY + curHeight)))
+		if ((roomX < curX) && (roomY <= (curY + curHeight)))
 			quadrant_1();
-		else if ((sitio_x < curX) && (sitio_y > (curY + curHeight)))
+		else if ((roomX < curX) && (roomY > (curY + curHeight)))
 			quadrant_3();
-		else if ((sitio_x > curX + curWidth) && (sitio_y <= (curY + curHeight)))
+		else if ((roomX > curX + curWidth) && (roomY <= (curY + curHeight)))
 			quadrant_2();
-		else if ((sitio_x > curX + curWidth) && (sitio_y > (curY + curHeight)))
+		else if ((roomX > curX + curWidth) && (roomY > (curY + curHeight)))
 			quadrant_4();
-		else if (sitio_y < curY + curHeight)
+		else if (roomY < curY + curHeight)
 			walkUp();
-		else if (sitio_y > curY + curHeight)
+		else if (roomY > curY + curHeight)
 			walkDown();
 	} else {
-		if ((sitio_x < curX + curWidth / 2 ) && (sitio_y <= (curY + curHeight)))
+		if ((roomX < curX + curWidth / 2 ) && (roomY <= (curY + curHeight)))
 			quadrant_1();
-		else if ((sitio_x < curX + curWidth / 2) && (sitio_y > (curY + curHeight)))
+		else if ((roomX < curX + curWidth / 2) && (roomY > (curY + curHeight)))
 			quadrant_3();
-		else if ((sitio_x > curX + curWidth / 2) && (sitio_y <= (curY + curHeight)))
+		else if ((roomX > curX + curWidth / 2) && (roomY <= (curY + curHeight)))
 			quadrant_2();
-		else if ((sitio_x > curX + curWidth / 2) && (sitio_y > (curY + curHeight)))
+		else if ((roomX > curX + curWidth / 2) && (roomY > (curY + curHeight)))
 			quadrant_4();
 		else
 			characterMoved = 0;
@@ -2226,48 +2226,48 @@ void DrasculaEngine::startWalking() {
 }
 
 void DrasculaEngine::pon_hare() {
-	int pos_hare[6];
+	int curPos[6];
 	int r;
 
 	if (characterMoved == 1 && stepX == STEP_X) {
 		for (r = 0; r < stepX; r++) {
 			if (currentChapter != 2) {
-				if (sentido_hare == 0 && sitio_x - r == curX + curWidth / 2) {
+				if (trackProtagonist == 0 && roomX - r == curX + curWidth / 2) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
 				}
-				if (sentido_hare == 1 && sitio_x + r == curX + curWidth / 2) {
+				if (trackProtagonist == 1 && roomX + r == curX + curWidth / 2) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
-					curX = sitio_x - curWidth / 2;
-					curY = sitio_y - curHeight;
+					curX = roomX - curWidth / 2;
+					curY = roomY - curHeight;
 				}
 			} else if (currentChapter == 2) {
-				if (sentido_hare == 0 && sitio_x - r == curX) {
+				if (trackProtagonist == 0 && roomX - r == curX) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
 				}
-				if (sentido_hare == 1 && sitio_x + r == curX + curWidth) {
+				if (trackProtagonist == 1 && roomX + r == curX + curWidth) {
 					characterMoved = 0;
 					stepX = STEP_X;
 					stepY = STEP_Y;
-					curX = sitio_x - curWidth + 4;
-					curY = sitio_y - curHeight;
+					curX = roomX - curWidth + 4;
+					curY = roomY - curHeight;
 				}
 			}
 		}
 	}
 	if (characterMoved == 1 && stepY == STEP_Y) {
 		for (r = 0; r < stepY; r++) {
-			if (sentido_hare == 2 && sitio_y - r == curY + curHeight) {
+			if (trackProtagonist == 2 && roomY - r == curY + curHeight) {
 				characterMoved = 0;
 				stepX = STEP_X;
 				stepY = STEP_Y;
 			}
-			if (sentido_hare == 3 && sitio_y + r == curY + curHeight) {
+			if (trackProtagonist == 3 && roomY + r == curY + curHeight) {
 				characterMoved = 0;
 				stepX = STEP_X;
 				stepY = STEP_Y;
@@ -2283,80 +2283,80 @@ void DrasculaEngine::pon_hare() {
 	}
 
 	if (characterMoved == 0) {
-		pos_hare[0] = 0;
-		pos_hare[1] = DIF_MASK_HARE;
-		pos_hare[2] = curX;
-		pos_hare[3] = curY;
+		curPos[0] = 0;
+		curPos[1] = DIF_MASK_HARE;
+		curPos[2] = curX;
+		curPos[3] = curY;
 		if (currentChapter == 2) {
-			pos_hare[4] = curWidth;
-			pos_hare[5] = curHeight;
+			curPos[4] = curWidth;
+			curPos[5] = curHeight;
 		} else {
-			pos_hare[4] = CHARACTER_WIDTH;
-			pos_hare[5] = CHARACTER_HEIGHT;
+			curPos[4] = CHARACTER_WIDTH;
+			curPos[5] = CHARACTER_HEIGHT;
 		}
 
-		if (sentido_hare == 0) {
-			pos_hare[1] = 0;
+		if (trackProtagonist == 0) {
+			curPos[1] = 0;
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, extraSurface, screenSurface);
+				copyRectClip(curPos, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
-		} else if (sentido_hare == 1) {
+		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, extraSurface, screenSurface);
+				copyRectClip(curPos, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
-		} else if (sentido_hare == 2) {
+		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, backSurface, screenSurface);
+				copyRectClip(curPos, backSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], backSurface, screenSurface);
 		} else {
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, frontSurface, screenSurface);
+				copyRectClip(curPos, frontSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 	} else if (characterMoved == 1) {
-		pos_hare[0] = frame_x[num_frame];
-		pos_hare[1] = frame_y + DIF_MASK_HARE;
-		pos_hare[2] = curX;
-		pos_hare[3] = curY;
+		curPos[0] = frame_x[num_frame];
+		curPos[1] = frame_y + DIF_MASK_HARE;
+		curPos[2] = curX;
+		curPos[3] = curY;
 		if (currentChapter == 2) {
-			pos_hare[4] = curWidth;
-			pos_hare[5] = curHeight;
+			curPos[4] = curWidth;
+			curPos[5] = curHeight;
 		} else {
-			pos_hare[4] = CHARACTER_WIDTH;
-			pos_hare[5] = CHARACTER_HEIGHT;
+			curPos[4] = CHARACTER_WIDTH;
+			curPos[5] = CHARACTER_HEIGHT;
 		}
-		if (sentido_hare == 0) {
-			pos_hare[1] = 0;
+		if (trackProtagonist == 0) {
+			curPos[1] = 0;
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, extraSurface, screenSurface);
+				copyRectClip(curPos, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
-		} else if (sentido_hare == 1) {
+		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, extraSurface, screenSurface);
+				copyRectClip(curPos, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
-		} else if (sentido_hare == 2) {
+		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, backSurface, screenSurface);
+				copyRectClip(curPos, backSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], backSurface, screenSurface);
 		} else {
 			if (currentChapter == 2)
-				copyRectClip(pos_hare, frontSurface, screenSurface);
+				copyRectClip(curPos, frontSurface, screenSurface);
 			else
-				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 		increaseFrameNum();
@@ -2430,12 +2430,12 @@ bool DrasculaEngine::exitRoom(int l) {
 		else {
 			updateDoor(l);
 			if (isDoor[l] != 0) {
-				lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
-				sentido_hare = sentidobj[l];
+				gotoObject(roomObjX[l], roomObjY[l]);
+				trackProtagonist = trackObj[l];
 				updateRoom();
 				updateScreen();
 				characterMoved = 0;
-				sentido_hare = sentido_alkeva[l];
+				trackProtagonist = sentido_alkeva[l];
 				objExit = alapuertakeva[l];
 				doBreak = 1;
 				previousMusic = roomMusic;
@@ -2454,9 +2454,9 @@ bool DrasculaEngine::exitRoom(int l) {
 	} else if (currentChapter == 2) {
 		updateDoor(l);
 		if (isDoor[l] != 0) {
-			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
+			gotoObject(roomObjX[l], roomObjY[l]);
 			characterMoved = 0;
-			sentido_hare = sentido_alkeva[l];
+			trackProtagonist = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2486,12 +2486,12 @@ bool DrasculaEngine::exitRoom(int l) {
 	} else if (currentChapter == 3) {
 		updateDoor(l);
 		if (isDoor[l] != 0 && visible[l] == 1) {
-			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
-			sentido_hare = sentidobj[l];
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			sentido_hare = sentido_alkeva[l];
+			trackProtagonist = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2504,18 +2504,18 @@ bool DrasculaEngine::exitRoom(int l) {
 	} else if (currentChapter == 4) {
 		updateDoor(l);
 		if (isDoor[l] != 0) {
-			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
-			sentido_hare = sentidobj[l];
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			sentido_hare = sentido_alkeva[l];
+			trackProtagonist = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
 
 			if (objectNum[l] == 108)
-				lleva_al_hare(171, 78);
+				gotoObject(171, 78);
 			clearRoom();
 			strcpy(roomExit, _targetSurface[l]);
 			strcat(roomExit, ".ald");
@@ -2525,12 +2525,12 @@ bool DrasculaEngine::exitRoom(int l) {
 	} else if (currentChapter == 5) {
 		updateDoor(l);
 		if (isDoor[l] != 0 && visible[l] == 1) {
-			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
-			sentido_hare = sentidobj[l];
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			sentido_hare = sentido_alkeva[l];
+			trackProtagonist = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2544,12 +2544,12 @@ bool DrasculaEngine::exitRoom(int l) {
 	} else if (currentChapter == 6) {
 		updateDoor(l);
 		if (isDoor[l] != 0) {
-			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
-			sentido_hare = sentidobj[l];
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			sentido_hare = sentido_alkeva[l];
+			trackProtagonist = sentido_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2655,7 +2655,7 @@ void DrasculaEngine::enterName() {
 	}
 	if (h == 1) {
 		strcpy(select, select2);
-		hay_seleccion = 1;
+		selectionMade = 1;
 	}
 }
 
@@ -2923,19 +2923,19 @@ void DrasculaEngine::quadrant_1() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = curX - sitio_x;
+		distance_x = curX - roomX;
 	else
-		distance_x = curX + curWidth / 2 - sitio_x;
+		distance_x = curX + curWidth / 2 - roomX;
 
-	distance_y = (curY + curHeight) - sitio_y;
+	distance_y = (curY + curHeight) - roomY;
 
 	if (distance_x < distance_y) {
 		curDirection = 0;
-		sentido_hare = 2;
+		trackProtagonist = 2;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
 		curDirection = 7;
-		sentido_hare = 0;
+		trackProtagonist = 0;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
 }
@@ -2944,19 +2944,19 @@ void DrasculaEngine::quadrant_2() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = abs(curX + curWidth - sitio_x);
+		distance_x = abs(curX + curWidth - roomX);
 	else
-		distance_x = abs(curX + curWidth / 2 - sitio_x);
+		distance_x = abs(curX + curWidth / 2 - roomX);
 
-	distance_y = (curY + curHeight) - sitio_y;
+	distance_y = (curY + curHeight) - roomY;
 
 	if (distance_x < distance_y) {
 		curDirection = 1;
-		sentido_hare = 2;
+		trackProtagonist = 2;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
 		curDirection = 2;
-		sentido_hare = 1;
+		trackProtagonist = 1;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
 }
@@ -2965,19 +2965,19 @@ void DrasculaEngine::quadrant_3() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = curX - sitio_x;
+		distance_x = curX - roomX;
 	else
-		distance_x = curX + curWidth / 2 - sitio_x;
+		distance_x = curX + curWidth / 2 - roomX;
 
-	distance_y = sitio_y - (curY + curHeight);
+	distance_y = roomY - (curY + curHeight);
 
 	if (distance_x < distance_y) {
 		curDirection = 5;
-		sentido_hare = 3;
+		trackProtagonist = 3;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
 		curDirection = 6;
-		sentido_hare = 0;
+		trackProtagonist = 0;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
 }
@@ -2986,19 +2986,19 @@ void DrasculaEngine::quadrant_4() {
 	float distance_x, distance_y;
 
 	if (currentChapter == 2)
-		distance_x = abs(curX + curWidth - sitio_x);
+		distance_x = abs(curX + curWidth - roomX);
 	else
-		distance_x = abs(curX + curWidth / 2 - sitio_x);
+		distance_x = abs(curX + curWidth / 2 - roomX);
 
-	distance_y = sitio_y - (curY + curHeight);
+	distance_y = roomY - (curY + curHeight);
 
 	if (distance_x < distance_y) {
 		curDirection = 4;
-		sentido_hare = 3;
+		trackProtagonist = 3;
 		stepX = (int)(distance_x / (distance_y / STEP_Y));
 	} else {
 		curDirection = 3;
-		sentido_hare = 1;
+		trackProtagonist = 1;
 		stepY = (int)(distance_y / (distance_x / STEP_X));
 	}
 }
@@ -3014,7 +3014,7 @@ void DrasculaEngine::saveGame(char gameName[]) {
 	out->write(currentData, 20);
 	out->writeSint32LE(curX);
 	out->writeSint32LE(curY);
-	out->writeSint32LE(sentido_hare);
+	out->writeSint32LE(trackProtagonist);
 
 	for (l = 1; l < 43; l++) {
 		out->writeSint32LE(inventoryObjects[l]);
@@ -3093,7 +3093,7 @@ bool DrasculaEngine::checkMenuFlags() {
 	return false;
 }
 
-void DrasculaEngine::converse(const char *nom_fich) {
+void DrasculaEngine::converse(const char *fileName) {
 	int h;
 	int game1 = 1, game2 = 1, game3 = 1, game4 = 1;
 	char phrase1[78];
@@ -3116,14 +3116,14 @@ void DrasculaEngine::converse(const char *nom_fich) {
 
 	breakOut = 0;
 
-	strcpy(para_codificar, nom_fich);
+	strcpy(para_codificar, fileName);
 
 	if (currentChapter == 5)
 		withoutVerb();
 
-	_arj.open(nom_fich);
+	_arj.open(fileName);
 	if (!_arj.isOpen()) {
-		error("missing data file %s", nom_fich);
+		error("missing data file %s", fileName);
 	}
 	int size = _arj.size();
 
@@ -3141,19 +3141,19 @@ void DrasculaEngine::converse(const char *nom_fich) {
 
 	_arj.close();
 
-	if (currentChapter == 2 && !strcmp(nom_fich, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
+	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
 		strcpy(phrase3, _text[_lang][405]);
 		strcpy(sound3, "405.als");
 		answer3 = 31;
 	}
 
-	if (currentChapter == 6 && !strcmp(nom_fich, "op_12.cal") && flags[7] == 1) {
+	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[7] == 1) {
 		strcpy(phrase3, _text[_lang][273]);
 		strcpy(sound3, "273.als");
 		answer3 = 14;
 	}
 
-	if (currentChapter == 6 && !strcmp(nom_fich, "op_12.cal") && flags[10] == 1) {
+	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[10] == 1) {
 		strcpy(phrase3, " cuanto queda para que acabe el partido?");
 		strcpy(sound3, "274.als");
 		answer3 = 15;
@@ -3493,7 +3493,7 @@ void DrasculaEngine::updateVisible() {
 		if (roomNumber == 59)
 			isDoor[1] = 0;
 		if (roomNumber == 60) {
-			sentido_dr = 0;
+			trackDrascula = 0;
 			x_dr = 155;
 			y_dr = 69;
 		}
@@ -3502,37 +3502,37 @@ void DrasculaEngine::updateVisible() {
 
 void DrasculaEngine::walkDown() {
 	curDirection = 4;
-	sentido_hare = 3;
+	trackProtagonist = 3;
 	stepX = 0;
 }
 
 void DrasculaEngine::walkUp() {
 	curDirection = 0;
-	sentido_hare = 2;
+	trackProtagonist = 2;
 	stepX = 0;
 }
 
-void DrasculaEngine::pon_vb() {
+void DrasculaEngine::moveVB() {
 	int pos_vb[6];
 
-	if (vb_se_mueve == 0) {
+	if (vbHasMoved == 0) {
 		pos_vb[0] = 256;
 		pos_vb[1] = 129;
-		pos_vb[2] = vb_x;
+		pos_vb[2] = vbX;
 		pos_vb[3] = 66;
 		pos_vb[4] = 33;
 		pos_vb[5] = 69;
-		if (sentido_vb == 0)
+		if (trackVB == 0)
 			pos_vb[0] = 222;
-		else if (sentido_vb == 1)
+		else if (trackVB == 1)
 			pos_vb[0] = 188;
 	} else {
-		pos_vb[2] = vb_x;
+		pos_vb[2] = vbX;
 		pos_vb[3] = 66;
 		pos_vb[4] = 28;
 		pos_vb[5] = 68;
 
-		if (sentido_vb == 0) {
+		if (trackVB == 0) {
 			pos_vb[0] = frame_vb;
 			pos_vb[1] = 62;
 		} else {
@@ -3549,25 +3549,25 @@ void DrasculaEngine::pon_vb() {
 }
 
 void DrasculaEngine::lleva_vb(int pointX) {
-	sentido_vb = (pointX < vb_x) ? 0 : 1;
-	vb_se_mueve = 1;
+	trackVB = (pointX < vbX) ? 0 : 1;
+	vbHasMoved = 1;
 
 	for (;;) {
 		updateRoom();
 		updateScreen();
-		if (sentido_vb == 0) {
-			vb_x = vb_x - 5;
-			if (vb_x <= pointX)
+		if (trackVB == 0) {
+			vbX = vbX - 5;
+			if (vbX <= pointX)
 				break;
 		} else {
-			vb_x = vb_x + 5;
-			if (vb_x >= pointX)
+			vbX = vbX + 5;
+			if (vbX >= pointX)
 				break;
 		}
 		pause(5);
 	}
 
-	vb_se_mueve = 0;
+	vbHasMoved = 0;
 }
 
 void DrasculaEngine::hipo_sin_nadie(int counter){
