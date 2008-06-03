@@ -59,7 +59,7 @@ const KyraEngine_v2::EngineDesc KyraEngine_MR::_mrEngineDesc = {
 KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _mrEngineDesc) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
-	_menuAudioFile = "TITLE1.AUD";
+	_menuAudioFile = "TITLE1";
 	_lastMusicCommand = -1;
 	_itemBuffer1 = _itemBuffer2 = 0;
 	_scoreFile = 0;
@@ -425,7 +425,7 @@ void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 		assert(track < _soundListSize && track >= 0);
 
 		char file[13];
-		sprintf(file, "%s.AUD", _soundList[track]);
+		sprintf(file, "%s", _soundList[track]);
 		_musicSoundChannel = _soundDigital->playSound(file, 0xFF, Audio::Mixer::kMusicSoundType);
 	}
 
@@ -483,7 +483,7 @@ void KyraEngine_MR::snd_playSoundEffect(int item, int volume) {
 	if (_sfxFileMap[item*2+0] != 0xFF) {
 		char filename[16];
 		assert(_sfxFileMap[item*2+0] < _sfxFileListSize);
-		snprintf(filename, 16, "%s.AUD", _sfxFileList[_sfxFileMap[item*2+0]]);
+		snprintf(filename, 16, "%s", _sfxFileList[_sfxFileMap[item*2+0]]);
 		uint8 priority = _sfxFileMap[item*2+1];
 
 		_soundDigital->playSound(filename, priority, Audio::Mixer::kSFXSoundType, volume);
@@ -498,7 +498,7 @@ void KyraEngine_MR::playVoice(int high, int low) {
 void KyraEngine_MR::snd_playVoiceFile(int file) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::snd_playVoiceFile(%d)", file);
 	char filename[16];
-	snprintf(filename, 16, "%u.AUD", (uint)file);
+	snprintf(filename, 16, "%.08u", (uint)file);
 
 	_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
 }

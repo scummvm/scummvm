@@ -75,6 +75,10 @@ public:
 		File() : filename(), entry() {}
 		File(const Common::String &f, const ResFileEntry &e) : filename(f), entry(e) {}
 
+		bool operator ==(const Common::String &r) const {
+			return filename.equalsIgnoreCase(r);
+		}
+
 		Common::String filename;
 		ResFileEntry entry;
 	};

@@ -232,7 +232,7 @@ private:
 			uint numLoops);
 	};
 
-	static const SpeechCodecs _supportedCodes[];
+	static const SpeechCodecs _supportedCodecs[];
 };
 
 class AdlibDriver;
@@ -498,6 +498,7 @@ private:
 
 // Digital Audio
 class AUDStream;
+class KyraAudioStream;
 class KyraEngine_MR;
 
 /**
@@ -564,8 +565,20 @@ private:
 
 		char filename[16];
 		uint8 priority;
-		AUDStream *stream;
+		KyraAudioStream *stream;
 	} _sounds[4];
+
+	struct AudioCodecs {
+		const char *fileext;
+		Audio::AudioStream *(*streamFunc)(
+			Common::SeekableReadStream *stream,
+			bool disposeAfterUse,
+			uint32 startTime,
+			uint32 duration,
+			uint numLoops);
+	};
+
+	static const AudioCodecs _supportedCodecs[];
 };
 
 } // end of namespace Kyra
