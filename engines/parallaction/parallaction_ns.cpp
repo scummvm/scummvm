@@ -154,7 +154,9 @@ int Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
-
+	
+	delete _locationParser;
+	delete _programParser;
 	delete _mouseComposedArrow;
 
 	_location._animations.remove(_char._ani);

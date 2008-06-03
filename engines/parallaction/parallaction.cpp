@@ -84,18 +84,18 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 
 Parallaction::~Parallaction() {
+	clearSet(_commandOpcodes);
+	clearSet(_instructionOpcodes);
+	
 	delete _debugger;
-
 	delete _globalTable;
-
 	delete _callableNames;
-	//delete _localFlagNames;
 
 	freeLocation();
 
 	freeCharacter();
 	destroyInventory();
-
+	
 	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
@@ -138,9 +138,11 @@ int Parallaction::init() {
 }
 
 
-
-
-
+void Parallaction::clearSet(OpcodeSet &opcodes) {
+	for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+		delete *i;
+	opcodes.clear();
+}
 
 
 void Parallaction::updateView() {
@@ -534,10 +536,10 @@ void Character::free() {
 	delete _objs;
 	delete _ani->gfxobj;
 
-	_ani->gfxobj = NULL;
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
+	_ani->gfxobj = NULL;
 
 	return;
 }

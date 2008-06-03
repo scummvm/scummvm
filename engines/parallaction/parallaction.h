@@ -385,6 +385,9 @@ protected:		// members
 
 	int16		pickupItem(ZonePtr z);
 
+	void 		clearSet(OpcodeSet &opcodes);
+
+
 public:
 	virtual	void callFunction(uint index, void* parm) { }
 
@@ -400,6 +403,7 @@ public:
 	virtual void drawAnimations() = 0;
 
 	void		beep();
+
 
 public:
 //	const char **_zoneFlagNamesRes;

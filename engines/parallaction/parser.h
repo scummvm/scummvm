@@ -44,7 +44,6 @@ class Script {
 	uint	_line;				// for debug messages
 
 	void clearTokens();
-	//void clearAllTokens();
 	uint16 fillTokens(char* line);
 
 public:
@@ -222,15 +221,12 @@ public:
 
 	virtual ~LocationParser_ns() {
 		delete _parser;
-		delete _script;
 		delete _commandsNames;
 		delete _locationStmt;
 		delete _locationZoneStmt;
 		delete _locationAnimStmt;
 		delete _zoneTypeNames;
 		delete _zoneFlagNames;
-
-		delete _parser;
 
 		clearSet(_commandParsers);
 		clearSet(_locationAnimParsers);
@@ -361,7 +357,9 @@ public:
 	}
 
 	virtual ~ProgramParser_ns() {
+		delete _parser;
 		delete _instructionNames;
+
 		clearSet(_instructionParsers);
 	}
 

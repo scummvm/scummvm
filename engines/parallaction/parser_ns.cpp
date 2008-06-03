@@ -1396,7 +1396,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	list.push_front(z);
 
 	_parser->pushTables(&_locationZoneParsers, _locationZoneStmt);
-
+	
 	return;
 }
 
