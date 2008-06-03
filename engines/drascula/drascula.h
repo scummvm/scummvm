@@ -105,7 +105,7 @@ enum IgorTalkerTypes {
 struct DrasculaGameDescription;
 
 struct RoomTalkAction {
-	int num;
+	int chapter;
 	int action;
 	int objectID;
 	int speechID;
