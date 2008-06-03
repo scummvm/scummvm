@@ -137,7 +137,9 @@ int Parallaction_ns::init() {
 	initCursors();
 	initOpcodes();
 	_locationParser = new LocationParser_ns(this);
+	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
+	_programParser->init();
 
 	_introSarcData1 = 0;
 	_introSarcData2 = 1;

@@ -207,7 +207,6 @@ protected:
 	} _forwardedCommands[MAX_FORWARDS];
 	uint		_numForwardedCommands;
 
-	void init();
 	void clearSet(OpcodeSet &opcodes) {
 		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
 			delete *i;
@@ -216,8 +215,9 @@ protected:
 
 public:
 	LocationParser_ns(Parallaction_ns *vm) : _vm(vm) {
-		init();
 	}
+
+	virtual void init();
 
 	virtual ~LocationParser_ns() {
 		delete _commandsNames;
@@ -282,12 +282,11 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
-	void init();
-
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {
-		init();
 	}
+
+	virtual void init();
 
 	virtual ~LocationParser_br() {
 		delete _commandsNames;
@@ -343,7 +342,6 @@ protected:
 	void		parseLValue(ScriptVar &var, const char *str);
 	virtual void	parseRValue(ScriptVar &var, const char *str);
 
-	void init();
 	void clearSet(OpcodeSet &opcodes) {
 		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
 			delete *i;
@@ -352,8 +350,9 @@ protected:
 
 public:
 	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm) {
-		init();
 	}
+
+	virtual void init();
 
 	virtual ~ProgramParser_ns() {
 		delete _instructionNames;
@@ -380,12 +379,11 @@ protected:
 
 	virtual void parseRValue(ScriptVar &var, const char *str);
 
-	void init();
-
 public:
 	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm) {
-		init();
 	}
+
+	virtual void init();
 
 	virtual ~ProgramParser_br() {
 		delete _instructionNames;

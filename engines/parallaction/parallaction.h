@@ -723,6 +723,7 @@ private:
 	const Callable *_callables;
 
 	void parseLocation(const char* name);
+	void loadProgram(AnimationPtr a, const char *filename);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
