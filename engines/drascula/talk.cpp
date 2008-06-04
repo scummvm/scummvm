@@ -904,7 +904,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 	int y_mask_talk = 170;
 	int p, face = 0;
 	int length = strlen(said);
-	char buf[1];
+	char buf[2];
 
 	color_abc(kColorYellow);
 
