@@ -185,7 +185,6 @@ public:
 
 	void setRGB(byte *dir_lectura, int plt);
 	void assignDefaultPalette();
-	void updatePalette();
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
@@ -315,8 +314,7 @@ public:
 	void setDarkPalette();
 
 	void withoutVerb();
-	bool para_cargar(char[]);
-	void carga_escoba(const char *);
+	void enterNewRoom(int);
 	void clearRoom();
 	void gotoObject(int, int);
 	void moveCursor();
@@ -361,7 +359,7 @@ public:
 	void talk_baul(int);
 	void talk(int);
 	void talk(const char *, const char *);
-	void talk_sinc(const char *, const char *, const char *);
+	void talk_sync(const char *, const char *, const char *);
 	void talk_drunk(int);
 	void talk_pianist(int);
 	void talk_wolf(int);
@@ -406,7 +404,6 @@ public:
 	void MixVideo(byte *OldScreen, byte *NewScreen);
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
 	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
-	void set_dacSSN(byte *dacSSN);
 	byte *TryInMem();
 	void EndSSN();
 	int playFrameSSN();
@@ -429,7 +426,6 @@ public:
 	int flag_tv;
 
 	byte *loadPCX(byte *NamePcc);
-	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
 	int getTime();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);

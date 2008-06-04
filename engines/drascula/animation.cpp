@@ -1762,7 +1762,7 @@ void DrasculaEngine::animation_12_5() {
 	animate("frel.bin", 16);
 	clearRoom();
 	setBrightPalette();
-	updatePalette();
+	setPalette((byte *)&gamePalette);
 
 	flags[1] = 1;
 
@@ -1785,7 +1785,7 @@ void DrasculaEngine::animation_12_5() {
 	curX = -1;
 	objExit = 104;
 	withoutVerb();
-	carga_escoba("57.ald");
+	enterNewRoom(57);
 }
 
 void DrasculaEngine::animation_13_5() {
@@ -1940,7 +1940,7 @@ void DrasculaEngine::animation_1_6() {
 		textSurface = extraSurface;
 
 	clearRoom();
-	carga_escoba("102.ald");
+	enterNewRoom(102);
 	activatePendulum();
 }
 
@@ -1996,7 +1996,7 @@ void DrasculaEngine::animation_6_6() {
 	objExit = 104;
 	curX = -1;
 	withoutVerb();
-	carga_escoba("58.ald");
+	enterNewRoom(58);
 	hare_se_ve = 1;
 	trackProtagonist = 1;
 	animate("hbp.bin", 14);
@@ -2023,7 +2023,7 @@ void DrasculaEngine::animation_9_6() {
 	clearRoom();
 	curX = -1;
 	objExit = 108;
-	carga_escoba("59.ald");
+	enterNewRoom(59);
 	// The room number was originally changed here to "nada.alg",
 	// which is a non-existant file. In reality, this was just a
 	// hack to set the room number to a non-existant one, so that
@@ -2503,7 +2503,7 @@ void DrasculaEngine::animation_5_2() {
 	loadPic("aux5.alg", drawSurface3, 1);
 	flags[8] = 1;
 	curX = curX - 4;
-	talk_sinc(_text[_lang][46], "46.als", "4442444244244");
+	talk_sync(_text[_lang][46], "46.als", "4442444244244");
 	withoutVerb();
 }
 

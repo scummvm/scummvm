@@ -301,7 +301,7 @@ void DrasculaEngine::setRGB(byte *dir_lectura, int plt) {
 		gamePalette[x][1] = dir_lectura[cnt++] / 4;
 		gamePalette[x][2] = dir_lectura[cnt++] / 4;
 	}
-	updatePalette();
+	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::black() {
@@ -317,10 +317,6 @@ void DrasculaEngine::black() {
 	palNegra[254][2] = 0x15;
 
 	setPalette((byte *)&palNegra);
-}
-
-void DrasculaEngine::updatePalette() {
-	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::setPalette(byte *PalBuf) {
@@ -453,11 +449,11 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 104;
 		if (hay_que_load != 0) {
-			if (!para_cargar(saveName)) {
+			if (!loadGame(saveName)) {
 				return true;
 			}
 		} else {
-			carga_escoba("62.ald");
+			enterNewRoom(62);
 			curX = -20;
 			curY = 56;
 			gotoObject(65, 145);
@@ -467,9 +463,9 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 3;
 		objExit = 162;
 		if (hay_que_load == 0)
-			carga_escoba("14.ald");
+			enterNewRoom(14);
 		else {
-			if (!para_cargar(saveName)) {
+			if (!loadGame(saveName)) {
 				return true;
 			}
 		}
@@ -485,9 +481,9 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 99;
 		if (hay_que_load == 0)
-			carga_escoba("20.ald");
+			enterNewRoom(20);
 		else {
-			if (!para_cargar(saveName)) {
+			if (!loadGame(saveName)) {
 				return true;
 			}
 		}
@@ -498,12 +494,12 @@ bool DrasculaEngine::escoba() {
 		addObject(22);
 		objExit = 100;
 		if (hay_que_load == 0) {
-			carga_escoba("21.ald");
+			enterNewRoom(21);
 			trackProtagonist = 0;
 			curX = 235;
 			curY = 164;
 		} else {
-			if (!para_cargar(saveName)) {
+			if (!loadGame(saveName)) {
 				return true;
 			}
 		}
@@ -520,9 +516,9 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 100;
 		if (hay_que_load == 0) {
-			carga_escoba("45.ald");
+			enterNewRoom(45);
 		} else {
-			if (!para_cargar(saveName)) {
+			if (!loadGame(saveName)) {
 				return true;
 			}
 		}
@@ -533,10 +529,10 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 104;
 		if (hay_que_load == 0) {
-			carga_escoba("58.ald");
+			enterNewRoom(58);
 			animation_1_6();
 		} else {
-			if (!para_cargar(saveName)) {
+			if (!loadGame(saveName)) {
 				return true;
 			}
 			loadPic("auxdr.alg", drawSurface2, 1);
@@ -743,9 +739,8 @@ int DrasculaEngine::removeObject(int osj) {
 }
 
 void DrasculaEngine::withoutVerb() {
-	int c = 171;
-	if (menuScreen == 1)
-		c = 0;
+	int c = (menuScreen == 1) ? 0 : 171;
+
 	if (currentChapter == 5) {
 		if (takeObject == 1 && pickedObject != 16)
 			addObject(pickedObject);
@@ -757,22 +752,6 @@ void DrasculaEngine::withoutVerb() {
 
 	takeObject = 0;
 	hasName = 0;
-}
-
-bool DrasculaEngine::para_cargar(char gameName[]) {
-	previousMusic = roomMusic;
-	menuScreen = 0;
-	if (currentChapter != 1)
-		clearRoom();
-	if (!loadGame(gameName))
-		return false;
-	if (currentChapter == 2 || currentChapter == 3 || currentChapter == 5) {
-		//
-	}
-	carga_escoba(currentData);
-	withoutVerb();
-
-	return true;
 }
 
 char *DrasculaEngine::getLine(char *buf, int len) {
@@ -808,7 +787,9 @@ void DrasculaEngine::getStringFromLine(char *buf, int len, char* result) {
 	sscanf(buf, "%s", result);
 }
 
-void DrasculaEngine::carga_escoba(const char *fileName) {
+void DrasculaEngine::enterNewRoom(int index) {
+	char fileName[20];
+	sprintf(fileName, "%d.ald", index);
 	int soc, l, martin = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
 	char pant1[20], pant2[20], pant3[20], pant4[20];
@@ -1445,7 +1426,7 @@ bool DrasculaEngine::saves() {
 			}
 
 			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && selectionMade == 1) {
-				if (!para_cargar(file))
+				if (!loadGame(file))
 					return false;
 				break;
 			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && selectionMade == 1) {
@@ -1851,7 +1832,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	memcpy(VGA, AuxBuffDes, 64000);
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 	_system->updateScreen();
-	set_dac(cPal);
+	setPalette(cPal);
 	memcpy(AuxBuffLast, AuxBuffDes, 64000);
 	WaitForNext(FPS);
 	while (cnt < NFrames) {
@@ -2033,17 +2014,22 @@ void DrasculaEngine::updateRoom() {
 }
 
 bool DrasculaEngine::loadGame(const char *gameName) {
-	int l, n_ejec2;
+	int l, savedChapter, roomNum = 0;
 	Common::InSaveFile *sav;
+
+	previousMusic = roomMusic;
+	menuScreen = 0;
+	if (currentChapter != 1)
+		clearRoom();
 
 	if (!(sav = _saveFileMan->openForLoading(gameName))) {
 		error("missing savegame file");
 	}
 
-	n_ejec2 = sav->readSint32LE();
-	if (n_ejec2 != currentChapter) {
+	savedChapter = sav->readSint32LE();
+	if (savedChapter != currentChapter) {
 		strcpy(saveName, gameName);
-		currentChapter = n_ejec2 - 1;
+		currentChapter = savedChapter - 1;
 		hay_que_load = 1;
 		return false;
 	}
@@ -2063,6 +2049,9 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	takeObject = sav->readSint32LE();
 	pickedObject = sav->readSint32LE();
 	hay_que_load = 0;
+	sscanf(currentData, "%d.ald", &roomNum);
+	enterNewRoom(roomNum);
+	withoutVerb();
 
 	return true;
 }
@@ -2153,7 +2142,7 @@ void DrasculaEngine::setDefaultPalette() {
 			gamePalette[color][component] = defaultPalette[color][component];
 		}
 	}
-	updatePalette();
+	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::setBrightPalette() {
@@ -2164,7 +2153,7 @@ void DrasculaEngine::setBrightPalette() {
 			gamePalette[color][component] = brightPalette[color][component];
 	}
 
-	updatePalette();
+	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::setDarkPalette() {
@@ -2174,7 +2163,7 @@ void DrasculaEngine::setDarkPalette() {
 		for (component = 0; component < 3; component++)
 			gamePalette[color][component] = darkPalette[color][component];
 
-	updatePalette();
+	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::setPaletteBase(int darkness) {
@@ -2188,7 +2177,7 @@ void DrasculaEngine::setPaletteBase(int darkness) {
 		}
 	}
 
-	updatePalette();
+	setPalette((byte *)&gamePalette);
 }
 
 void DrasculaEngine::startWalking() {
@@ -2422,7 +2411,7 @@ void DrasculaEngine::removeObject() {
 }
 
 bool DrasculaEngine::exitRoom(int l) {
-	char roomExit[13];
+	int roomNum = 0;
 
 	if (currentChapter == 1) {
 		if (objectNum[l] == 105 && flags[0] == 0)
@@ -2445,10 +2434,9 @@ bool DrasculaEngine::exitRoom(int l) {
 					return true;
 				}
 				clearRoom();
-				strcpy(roomExit, _targetSurface[l]);
-				strcat(roomExit, ".ald");
+				sscanf(_targetSurface[l], "%d", &roomNum);
 				curX = -1;
-				carga_escoba(roomExit);
+				enterNewRoom(roomNum);
 			}
 		}
 	} else if (currentChapter == 2) {
@@ -2477,11 +2465,9 @@ bool DrasculaEngine::exitRoom(int l) {
 				addObject(11);
 			}
 			clearRoom();
-
-			strcpy(roomExit, _targetSurface[l]);
-			strcat(roomExit, ".ald");
+			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX =- 1;
-			carga_escoba(roomExit);
+			enterNewRoom(roomNum);
 		}
 	} else if (currentChapter == 3) {
 		updateDoor(l);
@@ -2496,10 +2482,9 @@ bool DrasculaEngine::exitRoom(int l) {
 			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(roomExit, _targetSurface[l]);
-			strcat(roomExit, ".ald");
+			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX =- 1;
-			carga_escoba(roomExit);
+			enterNewRoom(roomNum);
 		}
 	} else if (currentChapter == 4) {
 		updateDoor(l);
@@ -2517,10 +2502,9 @@ bool DrasculaEngine::exitRoom(int l) {
 			if (objectNum[l] == 108)
 				gotoObject(171, 78);
 			clearRoom();
-			strcpy(roomExit, _targetSurface[l]);
-			strcat(roomExit, ".ald");
+			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX = -1;
-			carga_escoba(roomExit);
+			enterNewRoom(roomNum);
 		}
 	} else if (currentChapter == 5) {
 		updateDoor(l);
@@ -2536,10 +2520,9 @@ bool DrasculaEngine::exitRoom(int l) {
 			previousMusic = roomMusic;
 			hare_se_ve = 1;
 			clearRoom();
-			strcpy(roomExit, _targetSurface[l]);
-			strcat(roomExit, ".ald");
+			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX = -1;
-			carga_escoba(roomExit);
+			enterNewRoom(roomNum);
 		}
 	} else if (currentChapter == 6) {
 		updateDoor(l);
@@ -2554,10 +2537,9 @@ bool DrasculaEngine::exitRoom(int l) {
 			doBreak = 1;
 			previousMusic = roomMusic;
 			clearRoom();
-			strcpy(roomExit, _targetSurface[l]);
-			strcat(roomExit, ".ald");
+			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX = -1;
-			carga_escoba(roomExit);
+			enterNewRoom(roomNum);
 
 			if (objExit == 105)
 				animation_19_6();
@@ -2690,7 +2672,7 @@ int DrasculaEngine::playFrameSSN() {
 			memcpy(dacSSN, mSession, 768);
 			mSession += 768;
 		}
-		set_dacSSN(dacSSN);
+		setPalette(dacSSN);
 		break;
 	case kFrameEmptyFrame:
 		WaitFrameSSN();
@@ -2789,10 +2771,6 @@ byte *DrasculaEngine::TryInMem() {
 	return pointer;
 }
 
-void DrasculaEngine::set_dacSSN(byte *PalBuf) {
-	setPalette((byte *)PalBuf);
-}
-
 void DrasculaEngine::Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght) {
 	int x = 0;
 	unsigned char Reps;
@@ -2865,10 +2843,6 @@ byte *DrasculaEngine::loadPCX(byte *NamePcc) {
 		}
 	}
 	return AuxBuffDes;
-}
-
-void DrasculaEngine::set_dac(byte *dac) {
-	setPalette((byte *)dac);
 }
 
 void DrasculaEngine::WaitForNext(int FPS) {

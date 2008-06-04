@@ -901,7 +901,7 @@ void DrasculaEngine::talk_htel(int index) {
 	updateScreen();
 }
 
-void DrasculaEngine::talk_sinc(const char *said, const char *filename, const char *syncChar) {
+void DrasculaEngine::talk_sync(const char *said, const char *filename, const char *syncChar) {
 	int talkOffset = 1;
 	int y_mask_talk = 170;
 	int p, face = 0;

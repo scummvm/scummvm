@@ -99,9 +99,9 @@ void DrasculaEngine::room_3(int fl) {
 	if (pickedObject == kVerbTalk && fl == 129) {
 		talk(23);
 		pause(6);
-		talk_sinc(_text[_lang][50], "50.als", "11111111111144432554433");
+		talk_sync(_text[_lang][50], "50.als", "11111111111144432554433");
 	} else if (pickedObject == kVerbTalk && fl == 133) {
-		talk_sinc(_text[_lang][322], "322.als", "13333334125433333333");
+		talk_sync(_text[_lang][322], "322.als", "13333334125433333333");
 		updateRoom();
 		updateScreen();
 		pause(25);
@@ -326,7 +326,7 @@ void DrasculaEngine::room_15(int fl) {
 		talk(336);
 		trackProtagonist = 3;
 		talk(337);
-		talk_sinc(_text[_lang][46], "46.als", "4442444244244");
+		talk_sync(_text[_lang][46], "46.als", "4442444244244");
 		trackProtagonist = 1;
 	} else if (pickedObject == 18 && fl == 188 && flags[26] == 0) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -361,7 +361,7 @@ void DrasculaEngine::room_16(int fl) {
 	else if (pickedObject == kVerbTalk && fl == 183) {
 		talk(341);
 		pause(10);
-		talk_sinc(_text[_lang][50], "50.als", "11111111111144432554433");
+		talk_sync(_text[_lang][50], "50.als", "11111111111144432554433");
 		pause(3);
 		talk_baul(83);
 	} else if (pickedObject == kVerbOpen && fl == 183) {
