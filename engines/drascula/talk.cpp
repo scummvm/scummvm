@@ -115,7 +115,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			updateScreen();
 		} else if (talkerType == 3) {
 			copyBackground(x_talk3[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
-			pon_hare();
+			moveCharacters();
 			updateRefresh();
 			if (withVoices == 0)
 				centerText(said, 221, 102);
@@ -124,7 +124,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			pause(3);
 		} else if (talkerType == 4) {
 			copyBackground(x_talk4[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
-			pon_hare();
+			moveCharacters();
 			updateRefresh();
 			if (withVoices == 0)
 				centerText(said, 221, 102);
@@ -172,7 +172,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 		placeIgor();
 		placeDrascula();
 		if (currentChapter == 6)
-			pon_hare();
+			moveCharacters();
 
 		copyBackground(x_dr, y_dr, x_dr, y_dr, 38 + offset, 31, drawSurface1, screenSurface);
 		if (currentChapter == 6)
@@ -201,7 +201,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 	placeDrascula();
 
 	if (talkerType == 1 && currentChapter == 6)
-		pon_hare();
+		moveCharacters();
 
 	updateScreen();
 }
@@ -281,7 +281,7 @@ void DrasculaEngine::talk_bartender(int index, int talkerType) {
 			copyBackground(x_talk[face], 2, 121, 44, 21, 24, extraSurface, screenSurface);
 		else
 			copyBackground(x_talk[face], 130, 151, 43, 21, 24, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -321,7 +321,7 @@ void DrasculaEngine::talk_bj(int index) {
 
 			copyRect(x_talk[face], 99, x_bj + 2, y_bj - 1, 27, 40,
 					 drawSurface3, screenSurface);
-			pon_hare();
+			moveCharacters();
 			updateRefresh();
 
 			if (withVoices == 0)
@@ -398,7 +398,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
 						   screenSurface, drawSurface3);
 
-		pon_hare();
+		moveCharacters();
 
 		if (currentChapter == 2) {
 			if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
@@ -487,7 +487,7 @@ void DrasculaEngine::talk_pianist(int index) {
 
 		copyBackground(x_talk[face], 139, 228, 112, 47, 60,
 					   extraSurface, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -533,7 +533,7 @@ void DrasculaEngine::talk_drunk(int index) {
 		updateRefresh_pre();
 
 		copyBackground(x_talk[face], 29, 177, 50, 19, 19, frontSurface, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -580,7 +580,7 @@ void DrasculaEngine::talk_vb(int index) {
 			face = _rnd->getRandomNumber(5);
 			copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
-			pon_hare();
+			moveCharacters();
 			moveVB();
 
 			copyBackground(OBJWIDTH + 1, 0, vbX + 5, 64, 25, 27, drawSurface3, screenSurface);
@@ -723,7 +723,7 @@ void DrasculaEngine::talk_wolf(int index) {
 		updateRefresh_pre();
 
 		copyBackground(x_talk[face], 136, 198, 81, 26, 24, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -758,7 +758,7 @@ void DrasculaEngine::talk_mus(int index) {
 		updateRefresh_pre();
 
 		copyBackground(x_talk[face], 156, 190, 64, 18, 24, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -847,7 +847,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 
 		copyBackground(65, 103, 65, 103, 49, 38, drawSurface1, screenSurface);
 		copyRect(x_talk[face], 105, 65, 103, 49, 38, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -929,7 +929,7 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 		else
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
 				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
-		pon_hare();
+		moveCharacters();
 		if (currentChapter == 2) {
 			if (curHeight != 56)
 				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);

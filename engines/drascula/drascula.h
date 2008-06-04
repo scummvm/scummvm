@@ -122,32 +122,32 @@ struct CharInfo {
 	int charType;	// 0 - letters, 1 - signs, 2 - accented
 };
 
-#define CHARMAP_SIZE 93
-#define NUM_SAVES     10
-#define NUM_FLAGS     50
-#define DIF_MASK       55
-#define OBJWIDTH        40
-#define OBJHEIGHT         25
+#define CHARMAP_SIZE	93
+#define NUM_SAVES		10
+#define NUM_FLAGS		50
+#define DIF_MASK		55
+#define OBJWIDTH		40
+#define OBJHEIGHT		25
 
-#define DIF_MASK_HARE   72
-#define DIF_MASK_ABC    22
-#define CHAR_WIDTH     8
-#define CHAR_HEIGHT      6
+#define DIF_MASK_HARE	72
+#define DIF_MASK_ABC	22
+#define CHAR_WIDTH		8
+#define CHAR_HEIGHT		6
 
-#define TALK_HEIGHT  25
-#define TALK_WIDTH 23
-#define STEP_X       8
-#define STEP_Y       3
-#define CHARACTER_HEIGHT   70
-#define CHARACTER_WIDTH  43
-#define FEET_HEIGHT        12
+#define TALK_HEIGHT		25
+#define TALK_WIDTH		23
+#define STEP_X			8
+#define STEP_Y			3
+#define CHARACTER_HEIGHT	70
+#define CHARACTER_WIDTH		43
+#define FEET_HEIGHT		12
 
-#define CHAR_WIDTH_OPC     6
-#define CHAR_HEIGHT_OPC      5
-#define NO_DOOR              99
+#define CHAR_WIDTH_OPC	6
+#define CHAR_HEIGHT_OPC	5
+#define NO_DOOR			99
 
-#define COMPLETE_PAL   256
-#define HALF_PAL       128
+#define COMPLETE_PAL	256
+#define HALF_PAL		128
 
 static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
@@ -184,7 +184,7 @@ public:
 	typedef char DacPalette256[256][3];
 
 	void setRGB(byte *dir_lectura, int plt);
-	void paleta_hare();
+	void assignDefaultPalette();
 	void updatePalette();
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
@@ -208,9 +208,9 @@ public:
 	}
 
 	DacPalette256 gamePalette;
-	DacPalette256 palHare;
-	DacPalette256 palHareClaro;
-	DacPalette256 palHareOscuro;
+	DacPalette256 defaultPalette;
+	DacPalette256 brightPalette;
+	DacPalette256 darkPalette;
 
 	byte *VGA;
 
@@ -272,7 +272,7 @@ public:
 	int objExit;
 	int timeDiff, startTime;
 	int hasAnswer;
-	int conta_blind_vez;
+	int savedTime;
 	int changeColor;
 	int breakOut;
 	int vbX, trackVB, vbHasMoved, frame_vb;
@@ -312,7 +312,7 @@ public:
 	void openDoor(int nflag, int doorNum);
 	void showMap();
 
-	void hare_oscuro();
+	void setDarkPalette();
 
 	void withoutVerb();
 	bool para_cargar(char[]);
@@ -382,16 +382,16 @@ public:
 	void updateRoom();
 	bool loadGame(const char *);
 	void updateDoor(int);
-	void color_hare();
-	void funde_hare(int oscuridad);
-	void paleta_hare_claro();
-	void paleta_hare_oscuro();
-	void hare_claro();
+	void setDefaultPalette();
+	void setPaletteBase(int darkness);
+	void assignBrightPalette();
+	void assignDarkPalette();
+	void setBrightPalette();
 	void updateVisible();
 	void startWalking();
 	void updateRefresh();
 	void updateRefresh_pre();
-	void pon_hare();
+	void moveCharacters();
 	void showMenu();
 	void clearMenu();
 	void removeObject();

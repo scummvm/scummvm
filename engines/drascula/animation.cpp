@@ -643,7 +643,7 @@ void DrasculaEngine::animation_4_1() {
 	updateRefresh_pre();
 
 	copyBackground(49, 139, 228, 112, 47, 60, extraSurface, screenSurface);
-	pon_hare();
+	moveCharacters();
 
 	updateScreen();
 
@@ -675,7 +675,7 @@ void DrasculaEngine::animation_1_2() {
 void DrasculaEngine::animation_2_2() {
 	trackProtagonist = 0;
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-	pon_hare();
+	moveCharacters();
 	updateRefresh();
 	updateScreen();
 	loadPic("an2_1.alg", frontSurface, 1);
@@ -825,7 +825,7 @@ void DrasculaEngine::animation_14_2() {
 	for (n = -160; n <= 0; n = n + 5 + l) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
-		pon_hare();
+		moveCharacters();
 		moveVB();
 		pos_cabina[3] = n;
 		copyRectClip(pos_cabina, backSurface, screenSurface);
@@ -1167,7 +1167,7 @@ void DrasculaEngine::animation_25_2() {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
-		pon_hare();
+		moveCharacters();
 		moveVB();
 
 		pos_cabina[3] = n;
@@ -1699,7 +1699,7 @@ void DrasculaEngine::animation_12_5() {
 	updateRoom();
 	updateScreen();
 
-	hare_oscuro();
+	setDarkPalette();
 
 	for (color = 0; color < 255; color++)
 		for (component = 0; component < 3; component++) {
@@ -1761,7 +1761,7 @@ void DrasculaEngine::animation_12_5() {
 
 	animate("frel.bin", 16);
 	clearRoom();
-	hare_claro();
+	setBrightPalette();
 	updatePalette();
 
 	flags[1] = 1;
@@ -2139,7 +2139,7 @@ void DrasculaEngine::animation_19_6() {
 	copyBackground(140, 23, 161, 69, 35, 80, drawSurface3, screenSurface);
 
 	updateRefresh_pre();
-	pon_hare();
+	moveCharacters();
 	updateScreen();
 	pause(6);
 	updateRoom();
@@ -2167,7 +2167,7 @@ void DrasculaEngine::animation_12_2() {
 	updateRefresh_pre();
 
 	copyBackground(49, 139, 228, 112, 47, 60, extraSurface, screenSurface);
-	pon_hare();
+	moveCharacters();
 
 	updateScreen();
 
@@ -2203,7 +2203,7 @@ void DrasculaEngine::animation_26_2() {
 	updateRefresh_pre();
 
 	copyBackground(49, 139, 228, 112, 47, 60, extraSurface, screenSurface);
-	pon_hare();
+	moveCharacters();
 
 	updateScreen();
 
@@ -2622,7 +2622,7 @@ void DrasculaEngine::animation_1_4() {
 		updateRefresh_pre();
 
 		copyBackground(182, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 
 		updateScreen();
 
@@ -2646,7 +2646,7 @@ void DrasculaEngine::animation_1_4() {
 		updateRefresh_pre();
 
 		copyBackground(182, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 
 		updateScreen();
 

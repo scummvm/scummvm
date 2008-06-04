@@ -1170,26 +1170,22 @@ void DrasculaEngine::updateRefresh_pre() {
 }
 
 void DrasculaEngine::update_1_pre() {
-	int cambio_col_antes = changeColor;
-
-	if (curX > 98 && curX < 153)
+	if (curX > 98 && curX < 153) {
 		changeColor = 1;
-	else
+		setDarkPalette();
+	} else {
 		changeColor = 0;
-
-	if (cambio_col_antes != changeColor && changeColor == 1)
-		hare_oscuro();
-	if (cambio_col_antes != changeColor && changeColor == 0)
-		hare_claro();
+		setBrightPalette();
+	}
 
 	if (flags[8] == 0)
 		copyBackground(2, 158, 208, 67, 27, 40, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_2(){
-	int pos_murci[6];
+	int batPos[6];
 	int difference;
-	int murci_x[] = {0, 38, 76, 114, 152, 190, 228, 266,
+	int batX[] = {0, 38, 76, 114, 152, 190, 228, 266,
 					0, 38, 76, 114, 152, 190, 228, 266,
 					0, 38, 76, 114, 152, 190,
 					0, 48, 96, 144, 192, 240,
@@ -1197,7 +1193,7 @@ void DrasculaEngine::update_2(){
 					88, 146, 204, 262,
 					88, 146, 204, 262};
 
-	int murci_y[] = {179, 179, 179, 179, 179, 179, 179, 179,
+	int batY[] = {179, 179, 179, 179, 179, 179, 179, 179,
 					158, 158, 158, 158, 158, 158, 158, 158,
 					137, 137, 137, 137, 137, 137,
 					115, 115, 115, 115, 115, 115,
@@ -1208,28 +1204,28 @@ void DrasculaEngine::update_2(){
 	if (frame_bat == 41)
 		frame_bat = 0;
 
-	pos_murci[0] = murci_x[frame_bat];
-	pos_murci[1] = murci_y[frame_bat];
+	batPos[0] = batX[frame_bat];
+	batPos[1] = batY[frame_bat];
 
 	if (frame_bat < 22) {
-		pos_murci[4] = 37;
-		pos_murci[5] = 21;
+		batPos[4] = 37;
+		batPos[5] = 21;
 	} else if (frame_bat > 27) {
-		pos_murci[4] = 57;
-		pos_murci[5] = 36;
+		batPos[4] = 57;
+		batPos[5] = 36;
 	} else {
-		pos_murci[4] = 47;
-		pos_murci[5] = 22;
+		batPos[4] = 47;
+		batPos[5] = 22;
 	}
 
-	pos_murci[2] = 239;
-	pos_murci[3] = 19;
+	batPos[2] = 239;
+	batPos[3] = 19;
 
-	copyRectClip(pos_murci, drawSurface3, screenSurface);
-	difference = getTime() - conta_blind_vez;
+	copyRectClip(batPos, drawSurface3, screenSurface);
+	difference = getTime() - savedTime;
 	if (difference >= 6) {
 		frame_bat++;
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 
 	copyRect(29, 37, 58, 114, 57, 39, drawSurface3, screenSurface);
@@ -1248,16 +1244,13 @@ void DrasculaEngine::update_3() {
 }
 
 void DrasculaEngine::update_4() {
-	int cambio_col_antes = changeColor;
-	if (curX > 190)
+	if (curX > 190) {
 		changeColor = 1;
-	else
+		setDarkPalette();
+	} else {
 		changeColor = 0;
-
-	if (cambio_col_antes != changeColor && changeColor == 1)
-		hare_oscuro();
-	if (cambio_col_antes != changeColor && changeColor == 0)
-		hare_claro();
+		setBrightPalette();
+	}
 }
 
 void DrasculaEngine::update_5_pre(){
@@ -1270,23 +1263,19 @@ void DrasculaEngine::update_5() {
 }
 
 void DrasculaEngine::update_6_pre() {
-	int cambio_col_antes = changeColor;
-
 	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) ||
-			(curX > 75 && curY + curHeight > 183 && curX < 145))
+		(curX > 75 && curY + curHeight > 183 && curX < 145)) {
 		changeColor = 0;
-	else
+		setBrightPalette();
+	} else {
 		changeColor = 1;
+		setDarkPalette();
+	}
 
-	if (cambio_col_antes != changeColor && changeColor == 1)
-		hare_oscuro();
-	if (cambio_col_antes != changeColor && changeColor == 0)
-		hare_claro();
-
-	if (flags[1] == 0)
-		copyBackground(97, 117, 34, 148, 36, 31, drawSurface3, screenSurface);
 	if (flags[0] == 0)
 		copyBackground(3, 103, 185, 69, 23, 76, drawSurface3, screenSurface);
+	if (flags[1] == 0)
+		copyBackground(97, 117, 34, 148, 36, 31, drawSurface3, screenSurface);
 	if (flags[2] == 0)
 		copyBackground(28, 100, 219, 72, 64, 97, drawSurface3, screenSurface);
 }
@@ -1297,16 +1286,16 @@ void DrasculaEngine::update_7_pre() {
 }
 
 void DrasculaEngine::update_9_pre() {
-	int blind_x[] = {26, 68, 110, 152, 194, 236, 278, 26, 68};
-	int blind_y[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
+	int blindX[] = {26, 68, 110, 152, 194, 236, 278, 26, 68};
+	int blindY[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
 	int difference;
 
-	copyRect(blind_x[frame_blind], blind_y[frame_blind], 122, 57, 41, 72, drawSurface3, screenSurface);
+	copyRect(blindX[frame_blind], blindY[frame_blind], 122, 57, 41, 72, drawSurface3, screenSurface);
 	if (flags[9] == 0) {
-		difference = getTime() - conta_blind_vez;
+		difference = getTime() - savedTime;
 		if (difference >= 11) {
 			frame_blind++;
-			conta_blind_vez = getTime();
+			savedTime = getTime();
 		}
 		if (frame_blind == 9)
 			frame_blind = 0;
@@ -1352,7 +1341,7 @@ void DrasculaEngine::update_14_pre() {
 
 	if (flags[12] == 1)
 		copyBackground(drunkX[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
-	difference = getTime() - conta_blind_vez;
+	difference = getTime() - savedTime;
 	if (difference > 6) {
 		if (flags[12] == 1) {
 			frame_drunk++;
@@ -1370,7 +1359,7 @@ void DrasculaEngine::update_14_pre() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		blinking = _rnd->getRandomNumber(10);
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 }
 
@@ -1405,12 +1394,12 @@ void DrasculaEngine::update_18_pre() {
 	} else
 		moveVB();
 
-	difference = getTime() - conta_blind_vez;
+	difference = getTime() - savedTime;
 	if (difference > 9) {
 		frame_snore++;
 		if (frame_snore == 16)
 			frame_snore = 0;
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 }
 
@@ -1479,10 +1468,10 @@ void DrasculaEngine::update_26_pre() {
 	if (blinking == 5 && flags[18] == 0)
 		copyBackground(52, 172, 226, 106, 3, 4, drawSurface3, screenSurface);
 
-	difference = getTime() - conta_blind_vez;
+	difference = getTime() - savedTime;
 	if (difference >= 10) {
 		blinking = _rnd->getRandomNumber(10);
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 
 	if (flags[20] == 1)
@@ -1645,7 +1634,7 @@ void DrasculaEngine::update_60_pre() {
 	if (flag_tv == 1)
 		copyBackground(114, 158, 8, 30, 8, 23, drawSurface3, screenSurface);
 
-	difference = getTime() - conta_blind_vez;
+	difference = getTime() - savedTime;
 	blinking = _rnd->getRandomNumber(7);
 	if (blinking == 5 && flag_tv == 0)
 		flag_tv = 1;
@@ -1655,7 +1644,7 @@ void DrasculaEngine::update_60_pre() {
 		frame_candles++;
 		if (frame_candles == 3)
 			frame_candles = 0;
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 }
 
@@ -1694,7 +1683,7 @@ void DrasculaEngine::update_62_pre() {
 	if (flags[12] == 1)
 		copyBackground(drunkX[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 
-	difference = getTime() - conta_blind_vez;
+	difference = getTime() - savedTime;
 	if (difference > 6) {
 		if (flags[12] == 1) {
 			frame_drunk++;
@@ -1712,7 +1701,7 @@ void DrasculaEngine::update_62_pre() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		blinking = _rnd->getRandomNumber(10);
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 }
 
@@ -1750,12 +1739,12 @@ void DrasculaEngine::update_pendulum() {
 	if (flags[1] == 0)
 		copyRect(44, 145, 145, 105, 25, 29, drawSurface3, screenSurface);
 
-	difference = getTime() - conta_blind_vez;
+	difference = getTime() - savedTime;
 	if (difference > 8) {
 		frame_pen++;
 		if (frame_pen == 17)
 			frame_pen = 0;
-		conta_blind_vez = getTime();
+		savedTime = getTime();
 	}
 }
 
