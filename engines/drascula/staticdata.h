@@ -261,6 +261,25 @@ RoomTalkAction room6Actions[] = {
 	{ -1,	kVerbLook,		140,	147 }
 };
 
+RoomTalkAction room7Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		164,	 35 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		169,	 44 }
+};
+
+RoomTalkAction room8Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		147,	 59 }
+};
+
+RoomTalkAction room9Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		150,	 35 },
+	{ -1,	kVerbTalk,		150,	  6 },
+	{ -1,	kVerbLook,		 51,	 60 },
+};
+
 RoomTalkAction room12Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbLook,		154,	329 },
@@ -305,28 +324,54 @@ RoomTalkAction room15Actions[] = {
 RoomTalkAction room16Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbTalk,		163,	  6 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		183,	340 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		185,	 37 },
 	{ -1,	kVerbPick,		185,	  7 },
 	{ -1,	kVerbMove,		185,	  7 },
 	{ -1,	kVerbTalk,		185,	 38 },
+	// ----------------------------------
 	{ -1,	kVerbTalk,		187,	345 }
 };
 
 RoomTalkAction room18Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbLook,		181,	348 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		182,	154 }
+};
+
+RoomTalkAction room19Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		214,	191 }
+};
+
+RoomTalkAction room22Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbPick,		140,	  7 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		 52,	497 },
+	{ -1,	kVerbTalk,		 52,	498 }
+};
+
+RoomTalkAction room24Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		151,	461 }
 };
 
 RoomTalkAction room26Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbOpen,		167,	467 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		164,	470 },
 	{ -1,	kVerbOpen,		164,	471 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		163,	472 },
 	{ -1,	kVerbPick,		163,	473 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		165,	474 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		168,	476 },
 	{ -1,	kVerbPick,		168,	477 }
 };
@@ -335,9 +380,146 @@ RoomTalkAction room29Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbLook,		152,	463 },
 	{ -1,	kVerbOpen,		152,	464 },
+	// ----------------------------------
 	{ -1,	kVerbLook,		153,	465 },
+	// ----------------------------------
 	{ -1,	kVerbPick,		154,	466 },
+	// ----------------------------------
 	{ -1,	kVerbOpen,		156,	467 }
+};
+
+RoomTalkAction room30Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbOpen,		157,	468 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		158,	469 }
+};
+
+RoomTalkAction room31Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		161,	470 },
+	{ -1,	kVerbOpen,		161,	471 }
+};
+
+RoomTalkAction room34Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		146,	458 },
+	{ -1,	kVerbPick,		146,	459 }
+};
+
+RoomTalkAction room44Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		172,	428 }
+};
+
+RoomTalkAction room49Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		 51,	132 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		200,	133 },
+	{ -1,	kVerbTalk,		200,	134 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		201,	135 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		203,	137 }
+};
+
+RoomTalkAction room53Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		121,	128 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		209,	129 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		 52,	447 },
+	{ -1,	kVerbTalk,		 52,	131 }
+};
+
+RoomTalkAction room54Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		 53,	127 },
+	// ----------------------------------
+	{ -1,	kVerbOpen,		119,	125 },
+	{ -1,	kVerbLook,		119,	126 }
+};
+
+RoomTalkAction room55Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		122,	138 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		204,	139 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		205,	140 }
+};
+
+RoomTalkAction room56Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		124,	450 },
+	// ----------------------------------
+	{ -1,	kVerbOpen,		207,	141 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		208,	142 }
+};
+
+RoomTalkAction room58Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		104,	454 }
+};
+
+RoomTalkAction room60Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		112,	440 },
+	// ----------------------------------
+	{ -1,	kVerbTalk,		115,	455 },
+	// ----------------------------------
+	{ -1,	kVerbTalk,		 56,	455 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		114,	167 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		113,	168 },
+	{ -1,	kVerbPick,		113,	170 },
+	{ -1,	kVerbMove,		113,	170 },
+	{ -1,	kVerbTalk,		113,	169 }
+};
+
+RoomTalkAction room61Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		116,	172 },
+	// ----------------------------------
+	{ -1,	kVerbLook,		117,	173 },
+	// ----------------------------------
+	{ -1,	kVerbMove,		117,	174 },
+	{ -1,	kVerbOpen,		117,	174 },
+};
+
+RoomTalkAction room62Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		100,	168},
+	{ -1,	kVerbTalk,		100,	169},
+	{ -1,	kVerbPick,		100,	170},
+	// ----------------------------------
+	{ -1,	kVerbLook,		101,	171},
+	// ----------------------------------
+	{ -1,	kVerbLook,		102,	167},
+	// ----------------------------------
+	{ -1,	kVerbLook,		103,	166}
+};
+
+RoomTalkAction room63Actions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		110,	172},
+	// ----------------------------------
+	{ -1,	kVerbLook,		109,	173},
+	{ -1,	kVerbMove,		109,	174},
+	// ----------------------------------
+	{ -1,	kVerbLook,		108,	334},
+	{ -1,	kVerbTalk,		108,	333}
+};
+
+RoomTalkAction roomPendulumActions[] = {
+	// num	action			object	speech
+	{ -1,	kVerbLook,		100,	452},
+	// ----------------------------------
+	{ -1,	kVerbLook,		101,	123}
 };
 
 const char *_text[][501] = {
