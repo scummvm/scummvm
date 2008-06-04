@@ -943,6 +943,12 @@ if test "$_cxx_major" -ge "3" ; then
 	add_line_to_config_mk 'HAVE_GCC3 = 1'
 fi;
 
+if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
+else
+	CXXFLAGS="$CXXFLAGS -Wconversion"
+fi;
+
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 

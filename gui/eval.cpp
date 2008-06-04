@@ -102,7 +102,7 @@ void Eval::level4(int *result) {
 	char op;
 
 	op = 0;
-	if ((_tokenType == tDelimiter) && *_token == '+' || *_token == '-') {
+	if ((_tokenType == tDelimiter) && (*_token == '+' || *_token == '-')) {
 		op = *_token;
 		getToken();
 	}

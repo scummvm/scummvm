@@ -187,7 +187,7 @@ struct Parallax {
 	// The dimensions are followed by an offset table, but we don't know in
 	// advance how big it is. See initializeBackgroundLayer().
 
-	static const int size() {
+	static int size() {
 		return 4;
 	}
 
