@@ -330,7 +330,7 @@ public:
 	Common::KeyCode getScan();
 	void selectVerb(int);
 	void mesa();
-	bool saves();
+	bool saveLoadScreen();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
 	bool confirmExit();

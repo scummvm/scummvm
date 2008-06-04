@@ -650,7 +650,7 @@ bool DrasculaEngine::escoba() {
 		if (currentChapter != 3)
 			cont_sv = 0;
 		} else if (key == Common::KEYCODE_F10) {
-			if (!saves())
+			if (!saveLoadScreen())
 				return true;
 			if (currentChapter != 3)
 				cont_sv = 0;
@@ -1326,7 +1326,7 @@ void DrasculaEngine::mesa() {
 	updateEvents();
 }
 
-bool DrasculaEngine::saves() {
+bool DrasculaEngine::saveLoadScreen() {
 	char names[10][23];
 	char file[50];
 	char fileEpa[50];
