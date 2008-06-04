@@ -1371,7 +1371,7 @@ bool DrasculaEngine::saves() {
 		updateEvents();
 
 		if (button_izq == 1) {
-			delay(100);
+			delay(50);
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (mouseX > 115 && mouseY > y + (9 * n) && mouseX < 115 + 175 && mouseY < y + 10 + (9 * n)) {
 					strcpy(select, names[n]);
@@ -1443,11 +1443,11 @@ bool DrasculaEngine::saves() {
 				print_abc("elige una partida", 117, 15);
 			}
 			updateScreen();
-			delay(400);
+			delay(200);
 		}
 		y = 26;
 
-		delay(10);
+		delay(5);
 	}
 
 	clearRoom();
