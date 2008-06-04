@@ -180,7 +180,7 @@ int DrasculaEngine::go() {
 			loadPic("97.alg", extraSurface, 1);
 			loadPic("99.alg", backSurface, 1);
 		} else if (currentChapter == 6) {
-			igorX = 105, igorY = 85, sentido_igor = 1;
+			igorX = 105, igorY = 85, trackIgor = 1;
 			x_dr = 62, y_dr = 99, trackDrascula = 1;
 			frame_pen = 0;
 			flag_tv = 0;
@@ -1406,7 +1406,7 @@ bool DrasculaEngine::saves() {
 						strcpy(names[n], select);
 						if (selectionMade == 1) {
 							snprintf(file, 50, "%s%02d", _targetName.c_str(), n + 1);
-							para_grabar(file);
+							saveGame(file);
 							Common::OutSaveFile *tsav;
 							if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
 								error("Can't open %s file", fileEpa);
@@ -1449,7 +1449,7 @@ bool DrasculaEngine::saves() {
 					return false;
 				break;
 			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && selectionMade == 1) {
-				para_grabar(file);
+				saveGame(file);
 				Common::OutSaveFile *tsav;
 				if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
 					error("Can't open %s file", fileEpa);
@@ -1910,9 +1910,9 @@ void DrasculaEngine::placeIgor() {
 	if (currentChapter == 4) {
 		pos_igor[1] = 138;
 	} else {
-		if (sentido_igor == 3)
+		if (trackIgor == 3)
 			pos_igor[1] = 138;
-		else if (sentido_igor == 1)
+		else if (trackIgor == 1)
 			pos_igor[1] = 76;
 	}
 	pos_igor[2] = igorX;
@@ -1947,9 +1947,9 @@ void DrasculaEngine::placeDrascula() {
 void DrasculaEngine::placeBJ() {
 	int pos_bj[6];
 
-	if (sentido_bj == 3)
+	if (trackBJ == 3)
 		pos_bj[0] = 10;
-	else if (sentido_bj == 0)
+	else if (trackBJ == 0)
 		pos_bj[0] = 37;
 	pos_bj[1] = 99;
 	pos_bj[2] = x_bj;
@@ -2568,8 +2568,7 @@ bool DrasculaEngine::exitRoom(int l) {
 }
 
 bool DrasculaEngine::pickupObject() {
-	int h, n;
-	h = pickedObject;
+	int h = pickedObject;
 	checkFlags = 1;
 
 	updateRoom();
@@ -2578,7 +2577,7 @@ bool DrasculaEngine::pickupObject() {
 
 	// Objects with an ID smaller than 7 are the inventory verbs
 	if (pickedObject >= 7) {
-		for (n = 1; n < 43; n++) {
+		for (int n = 1; n < 43; n++) {
 			if (whichObject() == n && inventoryObjects[n] == 0) {
 				inventoryObjects[n] = h;
 				takeObject = 0;
@@ -2657,12 +2656,6 @@ void DrasculaEngine::enterName() {
 		strcpy(select, select2);
 		selectionMade = 1;
 	}
-}
-
-void DrasculaEngine::para_grabar(char gameName[]) {
-	saveGame(gameName);
-	playSound(99);
-	finishSound();
 }
 
 void DrasculaEngine::openSSN(const char *Name, int Pause) {
@@ -3032,6 +3025,9 @@ void DrasculaEngine::saveGame(char gameName[]) {
 		warning("Can't write file '%s'. (Disk full?)", gameName);
 
 	delete out;
+
+	playSound(99);
+	finishSound();
 }
 
 void DrasculaEngine::increaseFrameNum() {

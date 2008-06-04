@@ -188,7 +188,7 @@ void DrasculaEngine::animation_1_1() {
 		trackDrascula = 0;
 		x_dr = 129;
 		y_dr = 95;
-		sentido_igor = 1;
+		trackIgor = 1;
 		igorX = 66;
 		igorY = 97;
 
@@ -356,7 +356,7 @@ void DrasculaEngine::animation_1_1() {
 		talk_igor(5, kIgorDch);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		sentido_igor = 3;
+		trackIgor = 3;
 		talk_drascula(17);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -463,7 +463,7 @@ void DrasculaEngine::animation_2_1() {
 			factor_red[l] = 99;
 		x_bj = 170;
 		y_bj = 90;
-		sentido_bj = 0;
+		trackBJ = 0;
 		curX = 91;
 		curY = 95;
 		trackProtagonist = 1;
@@ -1929,7 +1929,7 @@ void DrasculaEngine::animation_1_6() {
 	animation_5_6();
 	talk_drascula(32, 1);
 	talk_igor(11, kIgorDch);
-	sentido_igor = 3;
+	trackIgor = 3;
 	talk_drascula(33, 1);
 	talk_igor(12, kIgorFront);
 	talk_drascula(34, 1);

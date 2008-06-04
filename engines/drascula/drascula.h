@@ -283,9 +283,9 @@ public:
 	int frame_candles;
 	int color_solo;
 	int blinking;
-	int igorX, igorY, sentido_igor;
+	int igorX, igorY, trackIgor;
 	int x_dr, y_dr, trackDrascula;
-	int x_bj, y_bj, sentido_bj;
+	int x_bj, y_bj, trackBJ;
 	int cont_sv;
 	int term_int;
 	int currentChapter;
@@ -400,7 +400,6 @@ public:
 	bool checkFlag(int);
 	void setCursorTable();
 	void enterName();
-	void para_grabar(char[]);
 	bool soundIsActive();
 	void openSSN(const char *Name, int Pause);
 	void WaitFrameSSN();
