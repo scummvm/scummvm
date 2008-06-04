@@ -314,7 +314,7 @@ public:
 	void setDarkPalette();
 
 	void withoutVerb();
-	void enterNewRoom(int);
+	void enterRoom(int);
 	void clearRoom();
 	void gotoObject(int, int);
 	void moveCursor();

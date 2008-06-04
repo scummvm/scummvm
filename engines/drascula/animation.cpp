@@ -1785,7 +1785,7 @@ void DrasculaEngine::animation_12_5() {
 	curX = -1;
 	objExit = 104;
 	withoutVerb();
-	enterNewRoom(57);
+	enterRoom(57);
 }
 
 void DrasculaEngine::animation_13_5() {
@@ -1940,7 +1940,7 @@ void DrasculaEngine::animation_1_6() {
 		textSurface = extraSurface;
 
 	clearRoom();
-	enterNewRoom(102);
+	enterRoom(102);
 	activatePendulum();
 }
 
@@ -1996,7 +1996,7 @@ void DrasculaEngine::animation_6_6() {
 	objExit = 104;
 	curX = -1;
 	withoutVerb();
-	enterNewRoom(58);
+	enterRoom(58);
 	hare_se_ve = 1;
 	trackProtagonist = 1;
 	animate("hbp.bin", 14);
@@ -2023,7 +2023,7 @@ void DrasculaEngine::animation_9_6() {
 	clearRoom();
 	curX = -1;
 	objExit = 108;
-	enterNewRoom(59);
+	enterRoom(59);
 	// The room number was originally changed here to "nada.alg",
 	// which is a non-existant file. In reality, this was just a
 	// hack to set the room number to a non-existant one, so that

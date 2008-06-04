@@ -453,7 +453,7 @@ bool DrasculaEngine::escoba() {
 				return true;
 			}
 		} else {
-			enterNewRoom(62);
+			enterRoom(62);
 			curX = -20;
 			curY = 56;
 			gotoObject(65, 145);
@@ -463,7 +463,7 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 3;
 		objExit = 162;
 		if (hay_que_load == 0)
-			enterNewRoom(14);
+			enterRoom(14);
 		else {
 			if (!loadGame(saveName)) {
 				return true;
@@ -481,7 +481,7 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 99;
 		if (hay_que_load == 0)
-			enterNewRoom(20);
+			enterRoom(20);
 		else {
 			if (!loadGame(saveName)) {
 				return true;
@@ -494,7 +494,7 @@ bool DrasculaEngine::escoba() {
 		addObject(22);
 		objExit = 100;
 		if (hay_que_load == 0) {
-			enterNewRoom(21);
+			enterRoom(21);
 			trackProtagonist = 0;
 			curX = 235;
 			curY = 164;
@@ -516,7 +516,7 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 100;
 		if (hay_que_load == 0) {
-			enterNewRoom(45);
+			enterRoom(45);
 		} else {
 			if (!loadGame(saveName)) {
 				return true;
@@ -529,7 +529,7 @@ bool DrasculaEngine::escoba() {
 		trackProtagonist = 1;
 		objExit = 104;
 		if (hay_que_load == 0) {
-			enterNewRoom(58);
+			enterRoom(58);
 			animation_1_6();
 		} else {
 			if (!loadGame(saveName)) {
@@ -787,9 +787,11 @@ void DrasculaEngine::getStringFromLine(char *buf, int len, char* result) {
 	sscanf(buf, "%s", result);
 }
 
-void DrasculaEngine::enterNewRoom(int index) {
+void DrasculaEngine::enterRoom(int roomIndex) {
+	debug(2, "Entering room %d", roomIndex);
+
 	char fileName[20];
-	sprintf(fileName, "%d.ald", index);
+	sprintf(fileName, "%d.ald", roomIndex);
 	int soc, l, martin = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
 	char pant1[20], pant2[20], pant3[20], pant4[20];
@@ -2050,7 +2052,7 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	pickedObject = sav->readSint32LE();
 	hay_que_load = 0;
 	sscanf(currentData, "%d.ald", &roomNum);
-	enterNewRoom(roomNum);
+	enterRoom(roomNum);
 	withoutVerb();
 
 	return true;
@@ -2411,6 +2413,8 @@ void DrasculaEngine::removeObject() {
 }
 
 bool DrasculaEngine::exitRoom(int l) {
+	debug(2, "Exiting room from door %d", l);
+
 	int roomNum = 0;
 
 	if (currentChapter == 1) {
@@ -2436,7 +2440,7 @@ bool DrasculaEngine::exitRoom(int l) {
 				clearRoom();
 				sscanf(_targetSurface[l], "%d", &roomNum);
 				curX = -1;
-				enterNewRoom(roomNum);
+				enterRoom(roomNum);
 			}
 		}
 	} else if (currentChapter == 2) {
@@ -2467,7 +2471,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX =- 1;
-			enterNewRoom(roomNum);
+			enterRoom(roomNum);
 		}
 	} else if (currentChapter == 3) {
 		updateDoor(l);
@@ -2484,7 +2488,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX =- 1;
-			enterNewRoom(roomNum);
+			enterRoom(roomNum);
 		}
 	} else if (currentChapter == 4) {
 		updateDoor(l);
@@ -2504,7 +2508,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX = -1;
-			enterNewRoom(roomNum);
+			enterRoom(roomNum);
 		}
 	} else if (currentChapter == 5) {
 		updateDoor(l);
@@ -2522,7 +2526,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX = -1;
-			enterNewRoom(roomNum);
+			enterRoom(roomNum);
 		}
 	} else if (currentChapter == 6) {
 		updateDoor(l);
@@ -2539,7 +2543,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			clearRoom();
 			sscanf(_targetSurface[l], "%d", &roomNum);
 			curX = -1;
-			enterNewRoom(roomNum);
+			enterRoom(roomNum);
 
 			if (objExit == 105)
 				animation_19_6();
