@@ -308,8 +308,6 @@ void LocationParser_ns::parseAnimation(AnimationList &list, char *name) {
 
 void ProgramParser_ns::parseInstruction() {
 
-	InstructionPtr inst(new Instruction);
-
 	_script->readLineToken(true);
 
 	if (_tokens[0][1] == '.') {
@@ -322,10 +320,13 @@ void ProgramParser_ns::parseInstruction() {
 	} else
 		ctxt.a = _program->_anim;
 
+	if (!ctxt.a) {
+		return;
+	}
+
+	InstructionPtr inst(new Instruction);
 	ctxt.inst = inst;
-
 	_parser->parseStatement();
-
 	_program->_instructions.push_back(inst);
 
 	return;
