@@ -28,10 +28,8 @@
 
 namespace Drascula {
 
-bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int fl) {
-	// FIXME: ARRAYSIZE is plain wrong in this case...
-	//printf("%d\n", ARRAYSIZE(&roomActions));
-	for (int i = 0; i < ARRAYSIZE(&roomActions); i++) {
+bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int actionCount, int fl) {
+	for (int i = 0; i < actionCount; i++) {
 		if (roomActions[i].chapter == currentChapter ||
 			roomActions[i].chapter == -1) {
 			if (roomActions[i].action == pickedObject ||
@@ -52,7 +50,7 @@ void DrasculaEngine::room_0() {
 	static const int lookExcuses[3] = {100, 101, 54};
 	static const int actionExcuses[6] = {11, 109, 111, 110, 115, 116};
 
-	if (roomParse(room0Actions, -1))
+	if (roomParse(room0Actions, ARRAYSIZE(room0Actions), -1))
 		return;
 
 	// non-default actions
@@ -73,7 +71,7 @@ void DrasculaEngine::room_0() {
 }
 
 void DrasculaEngine::room_1(int fl) {
-	if (roomParse(room1Actions, fl))
+	if (roomParse(room1Actions, ARRAYSIZE(room1Actions), fl))
 		return;
 
 	if (pickedObject == kVerbLook && fl == 118) {
@@ -87,7 +85,7 @@ void DrasculaEngine::room_1(int fl) {
 }
 
 void DrasculaEngine::room_3(int fl) {
-	if (roomParse(room3Actions, fl))
+	if (roomParse(room3Actions, ARRAYSIZE(room3Actions), fl))
 		return;
 
 	if (pickedObject == kVerbTalk && fl == 129) {
@@ -126,7 +124,7 @@ void DrasculaEngine::room_3(int fl) {
 }
 
 void DrasculaEngine::room_4(int fl) {
-	if (roomParse(room4Actions, fl))
+	if (roomParse(room4Actions, ARRAYSIZE(room4Actions), fl))
 		return;
 
 	if (pickedObject == kVerbMove && fl == 189 && flags[34] == 0) {
@@ -140,7 +138,7 @@ void DrasculaEngine::room_4(int fl) {
 }
 
 void DrasculaEngine::room_5(int fl) {
-	if (roomParse(room5Actions, fl))
+	if (roomParse(room5Actions, ARRAYSIZE(room5Actions), fl))
 		return;
 
 	if (pickedObject == kVerbLook && fl == 136 && flags[8] == 0)
@@ -153,7 +151,7 @@ void DrasculaEngine::room_5(int fl) {
 }
 
 void DrasculaEngine::room_6(int fl){
-	if (roomParse(room6Actions, fl))
+	if (roomParse(room6Actions, ARRAYSIZE(room6Actions), fl))
 		return;
 
 	if (pickedObject == kVerbLook && fl==144) {
@@ -214,7 +212,7 @@ void DrasculaEngine::room_6(int fl){
 }
 
 void DrasculaEngine::room_7(int fl){
-	if (roomParse(room7Actions, fl))
+	if (roomParse(room7Actions, ARRAYSIZE(room7Actions), fl))
 		return;
 
 	if (pickedObject == kVerbPick && fl == 190) {
@@ -228,7 +226,7 @@ void DrasculaEngine::room_7(int fl){
 }
 
 void DrasculaEngine::room_8(int fl) {
-	if (roomParse(room8Actions, fl))
+	if (roomParse(room8Actions, ARRAYSIZE(room8Actions), fl))
 		return;
 
 	if (pickedObject == kVerbLook && fl == 147 && flags[7] == 0) {
@@ -242,7 +240,7 @@ void DrasculaEngine::room_8(int fl) {
 }
 
 void DrasculaEngine::room_9(int fl){
-	if (roomParse(room9Actions, fl))
+	if (roomParse(room9Actions, ARRAYSIZE(room9Actions), fl))
 		return;
 
 	if (pickedObject == kVerbTalk && fl == 51 && flags[4] == 0)
@@ -258,7 +256,7 @@ void DrasculaEngine::room_9(int fl){
 }
 
 void DrasculaEngine::room_12(int fl){
-	if (roomParse(room12Actions, fl))
+	if (roomParse(room12Actions, ARRAYSIZE(room12Actions), fl))
 		return;
 
 	if (pickedObject == kVerbOpen && fl == 156)
@@ -288,7 +286,7 @@ bool DrasculaEngine::room_13(int fl) {
 }
 
 void DrasculaEngine::room_14(int fl) {
-	if (roomParse(room14Actions, fl))
+	if (roomParse(room14Actions, ARRAYSIZE(room14Actions), fl))
 		return;
 
 	if (pickedObject == kVerbTalk && fl == 54 && flags[39] == 0)
@@ -308,7 +306,7 @@ void DrasculaEngine::room_14(int fl) {
 }
 
 void DrasculaEngine::room_15(int fl) {
-	if (roomParse(room15Actions, fl))
+	if (roomParse(room15Actions, ARRAYSIZE(room15Actions), fl))
 		return;
 
 	if (pickedObject == 19 && fl == 188 && flags[27] == 0)
@@ -342,7 +340,7 @@ void DrasculaEngine::room_15(int fl) {
 }
 
 void DrasculaEngine::room_16(int fl) {
-	if (roomParse(room16Actions, fl))
+	if (roomParse(room16Actions, ARRAYSIZE(room16Actions), fl))
 		return;
 
 	if (pickedObject == kVerbOpen && fl == 163)
@@ -402,7 +400,7 @@ void DrasculaEngine::room_17(int fl) {
 }
 
 void DrasculaEngine::room_18(int fl) {
-	if (roomParse(room18Actions, fl))
+	if (roomParse(room18Actions, ARRAYSIZE(room18Actions), fl))
 		return;
 
 	if (pickedObject == kVerbTalk && fl == 55 && flags[36] == 0)
@@ -447,7 +445,7 @@ void DrasculaEngine::room_18(int fl) {
 }
 
 void DrasculaEngine::room_19(int fl) {
-	if (roomParse(room19Actions, fl))
+	if (roomParse(room19Actions, ARRAYSIZE(room19Actions), fl))
 		return;
 
 	hasAnswer = 0;
@@ -478,7 +476,7 @@ bool DrasculaEngine::room_21(int fl) {
 }
 
 void DrasculaEngine::room_22(int fl) {
-	if (roomParse(room22Actions, fl))
+	if (roomParse(room22Actions, ARRAYSIZE(room22Actions), fl))
 		return;
 
 	if (pickedObject == 11 && fl == 140) {
@@ -531,7 +529,7 @@ void DrasculaEngine::room_23(int fl) {
 }
 
 void DrasculaEngine::room_24(int fl) {
-	if (roomParse(room24Actions, fl))
+	if (roomParse(room24Actions, ARRAYSIZE(room24Actions), fl))
 		return;
 
 	if (pickedObject == kVerbOpen && fl == 105)
@@ -547,7 +545,7 @@ void DrasculaEngine::room_24(int fl) {
 }
 
 void DrasculaEngine::room_26(int fl) {
-	if (roomParse(room26Actions, fl))
+	if (roomParse(room26Actions, ARRAYSIZE(room26Actions), fl))
 		return;
 
 	if (pickedObject == kVerbOpen && fl == 107 && flags[30] == 0)
@@ -610,7 +608,7 @@ void DrasculaEngine::room_27(int fl) {
 }
 
 void DrasculaEngine::room_29(int fl) {
-	if (roomParse(room29Actions, fl))
+	if (roomParse(room29Actions, ARRAYSIZE(room29Actions), fl))
 		return;
 
 	if (pickedObject == kVerbOpen && fl == 114)
@@ -622,7 +620,7 @@ void DrasculaEngine::room_29(int fl) {
 }
 
 void DrasculaEngine::room_30(int fl) {
-	if (roomParse(room30Actions, fl))
+	if (roomParse(room30Actions, ARRAYSIZE(room30Actions), fl))
 		return;
 
 	if (pickedObject == kVerbOpen && fl == 115)
@@ -652,7 +650,7 @@ void DrasculaEngine::room_30(int fl) {
 }
 
 void DrasculaEngine::room_31(int fl) {
-	if (roomParse(room31Actions, fl))
+	if (roomParse(room31Actions, ARRAYSIZE(room31Actions), fl))
 		return;
 
 	if (pickedObject == kVerbPick && fl == 145) {
@@ -668,7 +666,7 @@ void DrasculaEngine::room_31(int fl) {
 }
 
 void DrasculaEngine::room_34(int fl) {
-	if (roomParse(room34Actions, fl))
+	if (roomParse(room34Actions, ARRAYSIZE(room34Actions), fl))
 		return;
 
 	if (pickedObject == kVerbMove && fl == 146)
@@ -712,14 +710,14 @@ void DrasculaEngine::room_35(int fl) {
 }
 
 void DrasculaEngine::room_44(int fl) {
-	if (roomParse(room44Actions, fl))
+	if (roomParse(room44Actions, ARRAYSIZE(room44Actions), fl))
 		return;
 
 	hasAnswer = 0;
 }
 
 void DrasculaEngine::room_49(int fl){
-	if (roomParse(room49Actions, fl))
+	if (roomParse(room49Actions, ARRAYSIZE(room49Actions), fl))
 		return;
 
 	if (pickedObject == kVerbTalk && fl ==51)
@@ -731,7 +729,7 @@ void DrasculaEngine::room_49(int fl){
 }
 
 void DrasculaEngine::room_53(int fl) {
-	if (roomParse(room53Actions, fl))
+	if (roomParse(room53Actions, ARRAYSIZE(room53Actions), fl))
 		return;
 
 	if (pickedObject == kVerbPick && fl == 120) {
@@ -756,7 +754,7 @@ void DrasculaEngine::room_53(int fl) {
 }
 
 void DrasculaEngine::room_54(int fl) {
-	if (roomParse(room54Actions, fl))
+	if (roomParse(room54Actions, ARRAYSIZE(room54Actions), fl))
 		return;
 
 	if ((pickedObject == kVerbTalk && fl == 118) || (pickedObject == kVerbLook && fl == 118 && flags[0] == 0))
@@ -791,7 +789,7 @@ void DrasculaEngine::room_54(int fl) {
 }
 
 void DrasculaEngine::room_55(int fl) {
-	if (roomParse(room55Actions, fl))
+	if (roomParse(room55Actions, ARRAYSIZE(room55Actions), fl))
 		return;
 
 	if (pickedObject == kVerbPick && fl == 122) {
@@ -808,7 +806,7 @@ void DrasculaEngine::room_55(int fl) {
 }
 
 bool DrasculaEngine::room_56(int fl) {
-	if (roomParse(room56Actions, fl))
+	if (roomParse(room56Actions, ARRAYSIZE(room56Actions), fl))
 		return false;
 
 	if (pickedObject == kVerbOpen && fl == 124) {
@@ -821,7 +819,7 @@ bool DrasculaEngine::room_56(int fl) {
 }
 
 void DrasculaEngine::room_58(int fl) {
-	if (roomParse(room56Actions, fl))
+	if (roomParse(room58Actions, ARRAYSIZE(room58Actions), fl))
 		return;
 
 	if (pickedObject == kVerbMove && fl == 103)
@@ -897,7 +895,7 @@ void DrasculaEngine::room_59(int fl) {
 }
 
 bool DrasculaEngine::room_60(int fl) {
-	if (roomParse(room60Actions, fl))
+	if (roomParse(room60Actions, ARRAYSIZE(room60Actions), fl))
 		return false;
 
 	if (pickedObject == kVerbMove && fl == 112)
@@ -923,14 +921,14 @@ bool DrasculaEngine::room_60(int fl) {
 }
 
 void DrasculaEngine::room_61(int fl) {
-	if (roomParse(room61Actions, fl))
+	if (roomParse(room61Actions, ARRAYSIZE(room61Actions), fl))
 		return;
 
 	hasAnswer = 0;
 }
 
 void DrasculaEngine::room_62(int fl) {
-	if (roomParse(room62Actions, fl))
+	if (roomParse(room62Actions, ARRAYSIZE(room62Actions), fl))
 		return;
 
 	if (pickedObject == kVerbTalk && fl == 53)
@@ -946,14 +944,14 @@ void DrasculaEngine::room_62(int fl) {
 }
 
 void DrasculaEngine::room_63(int fl) {
-	if (roomParse(room63Actions, fl))
+	if (roomParse(room63Actions, ARRAYSIZE(room63Actions), fl))
 		return;
 
 	hasAnswer = 0;
 }
 
 void DrasculaEngine::room_pendulum(int fl) {
-	if (roomParse(roomPendulumActions, fl))
+	if (roomParse(roomPendulumActions, ARRAYSIZE(roomPendulumActions), fl))
 		return;
 
 	if (pickedObject == kVerbPick && fl == 101)

@@ -443,7 +443,7 @@ public:
 	void increaseFrameNum();
 	int whichObject();
 	bool checkMenuFlags();
-	bool roomParse(RoomTalkAction*, int);
+	bool roomParse(RoomTalkAction*, int, int);
 	void converse(const char *);
 	void print_abc_opc(const char *, int, int, int);
 	void response(int);
