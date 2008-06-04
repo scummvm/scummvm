@@ -654,6 +654,7 @@ public:
 public:
 	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
+	void		changeCharacter(const char *name);
 
 public:
 	Table		*_countersNames;
@@ -688,7 +689,6 @@ private:
 	void setInventoryCursor(int pos);
 
 	void		changeLocation(char *location);
-	void		changeCharacter(const char *name);
 	void 		runPendingZones();
 
 	void		initPart();

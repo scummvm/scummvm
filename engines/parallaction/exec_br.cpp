@@ -176,7 +176,8 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 
 DECLARE_COMMAND_OPCODE(character) {
-	warning("Parallaction_br::cmdOp_character not yet implemented");
+	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", _cmdRunCtxt.cmd->u._string);
+	changeCharacter(_cmdRunCtxt.cmd->u._string);
 }
 
 

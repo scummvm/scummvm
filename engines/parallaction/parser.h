@@ -131,6 +131,7 @@ protected:
 		char *bgName;
 		char *maskName;
 		char *pathName;
+		char *characterName;
 	} ctxt;
 
 	void warning_unexpected();

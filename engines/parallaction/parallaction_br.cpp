@@ -202,7 +202,7 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;
-//		runZone(z);			// FIXME: BRA doesn't handle sound yet
+		runZone(z);			// FIXME: BRA doesn't handle sound yet
 	}
 
 	if (_activeZone2) {
@@ -281,7 +281,13 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 
 void Parallaction_br::changeCharacter(const char *name) {
+	const char *charName = _char.getName();
+	if (!stricmp(charName, name)) {
+		return;
+	}
 
+	_char.setName(name);
+	_char._talk = _disk->loadTalk(name);
 }
 
 

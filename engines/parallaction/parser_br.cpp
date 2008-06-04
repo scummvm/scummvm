@@ -442,7 +442,7 @@ DECLARE_LOCATION_PARSER(redundant)  {
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
 
-//	changeCharacter(character);
+	ctxt.characterName = strdup(_tokens[0]);
 }
 
 
@@ -1113,15 +1113,21 @@ void LocationParser_br::parse(Script *script) {
 	ctxt.bgName = 0;
 	ctxt.maskName = 0;
 	ctxt.pathName = 0;
+	ctxt.characterName = 0;
 
 	LocationParser_ns::parse(script);
 
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.bgName, ctxt.maskName, ctxt.pathName);
 	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo.path;
 
+	if (ctxt.characterName) {
+		_vm->changeCharacter(ctxt.characterName);
+	}
+
 	free(ctxt.bgName);
 	free(ctxt.maskName);
 	free(ctxt.pathName);
+	free(ctxt.characterName);
 
 }
 
