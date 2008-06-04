@@ -452,10 +452,13 @@ enum {
 	kBackgroundSlide = 2
 };
 
+typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
+
 class Gfx {
 
 public:
 	Disk *_disk;
+	VarMap _vars;
 
 	GfxObjList _gfxobjList[3];
 	GfxObj* loadAnim(const char *name);
