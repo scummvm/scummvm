@@ -1356,6 +1356,8 @@ bool DrasculaEngine::saves() {
 
 	color_abc(kColorLightGreen);
 
+	sprintf(select, "");
+
 	for (;;) {
 		y = 27;
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
