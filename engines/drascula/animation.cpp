@@ -2480,20 +2480,18 @@ void DrasculaEngine::animation_5_2() {
 	copyBackground(1, 1, 213, 66,	53,84, backSurface, screenSurface);
 	updateScreen();
 
-	// FIXME: the widths in these calls were 53 and 52 (by mistake, probably).
-	// I've set them to 53, but if any problems arise, we should try 52 as well
-	updateAnim(1, 213, 66, 53, 84, 6, backSurface);
-	updateAnim(86, 213, 66, 53, 84, 6, backSurface);
-	updateAnim(1, 213, 66, 53, 84, 6, extraSurface);
-	updateAnim(1, 213, 66, 53, 84, 6, extraSurface);
-	updateAnim(86, 213, 66, 53, 84, 6, extraSurface);
-	updateAnim(1, 213, 66, 53, 84, 6, frontSurface);
+	updateAnim(1, 213, 66, 52, 84, 6, backSurface);
+	updateAnim(86, 213, 66, 52, 84, 6, backSurface);
+	updateAnim(1, 213, 66, 52, 84, 6, extraSurface);
+	updateAnim(1, 213, 66, 52, 84, 6, extraSurface);
+	updateAnim(86, 213, 66, 52, 84, 6, extraSurface);
+	updateAnim(1, 213, 66, 52, 84, 6, frontSurface);
 
 	playSound(1);
-	updateAnim(86, 213, 66, 53, 84, 6, frontSurface);
+	updateAnim(86, 213, 66, 52, 84, 6, frontSurface);
 	stopSound();
 
-	updateAnim(1, 213, 66, 53, 84, 6, drawSurface3);
+	updateAnim(1, 213, 66, 52, 84, 6, drawSurface3);
 
 	loadPic(994, backSurface);
 	loadPic(974, extraSurface);

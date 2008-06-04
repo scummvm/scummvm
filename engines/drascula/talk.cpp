@@ -904,6 +904,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 	int y_mask_talk = 170;
 	int p, face = 0;
 	int length = strlen(said);
+	char buf[1];
 
 	color_abc(kColorYellow);
 
@@ -917,7 +918,8 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 	talkInit(filename);
 
 	do {
-		face = atoi(&syncChar[p]);
+		strncpy(buf, &syncChar[p], 1);
+		face = atoi(buf);
 
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
