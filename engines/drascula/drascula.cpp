@@ -283,10 +283,6 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	_arj.read(cPal, 768);
 	_arj.close();
 
-	decompressPic(targetSurface, colorCount);
-}
-
-void DrasculaEngine::decompressPic(byte *targetSurface, int colorCount) {
 	memcpy(targetSurface, pcxBuffer, 64000);
 	free(pcxBuffer);
 	setRGB((byte *)cPal, colorCount);

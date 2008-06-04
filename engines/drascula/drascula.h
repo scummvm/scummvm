@@ -185,7 +185,6 @@ public:
 	}
 
 	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount = 1);
-	void decompressPic(byte *targetSurface, int colorCount);
 
 	typedef char DacPalette256[256][3];
 

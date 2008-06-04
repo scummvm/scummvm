@@ -836,7 +836,7 @@ void DrasculaEngine::animation_14_2() {
 
 	flags[24] = 1;
 
-	decompressPic(drawSurface1, 1);
+	memcpy(drawSurface1, screenSurface, 64000);
 
 	playSound(7);
 	hiccup(15);
