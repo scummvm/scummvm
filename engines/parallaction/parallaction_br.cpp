@@ -282,7 +282,7 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 void Parallaction_br::changeCharacter(const char *name) {
 	const char *charName = _char.getName();
-	if (!stricmp(charName, name)) {
+	if (!scumm_stricmp(charName, name)) {
 		return;
 	}
 
