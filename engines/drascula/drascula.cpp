@@ -1120,7 +1120,7 @@ void DrasculaEngine::checkObjects() {
 
 void DrasculaEngine::selectVerbFromBar() {
 	for (int n = 0; n < 7; n++) {
-		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1]) {
+		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1] && n > 0) {
 			selectVerb(n);
 			return;
 		}
