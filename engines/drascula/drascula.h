@@ -176,9 +176,15 @@ public:
 
 	void allocMemory();
 	void freeMemory();
-	void releaseGame();
+	void quitGame();
 
-	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount);
+	void loadPic(int roomNum, byte *targetSurface, int colorCount = 1) {
+		char rm[20];
+		sprintf(rm, "%i.alg", roomNum);
+		loadPic(rm, targetSurface, colorCount);
+	}
+
+	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount = 1);
 	void decompressPic(byte *targetSurface, int colorCount);
 
 	typedef char DacPalette256[256][3];
@@ -230,7 +236,7 @@ public:
 	Common::ArjFile _arj;
 
 	int hay_sb;
-	int nivel_osc, previousMusic, roomMusic;
+	int previousMusic, roomMusic;
 	int roomNumber;
 	char roomDisk[20];
 	char currentData[20];

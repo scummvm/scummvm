@@ -897,9 +897,9 @@ void DrasculaEngine::room_59(int fl) {
 			hare_se_ve = 1;
 			clearRoom();
 			loadPic("tlef0.alg", drawSurface1, COMPLETE_PAL);
-			loadPic("tlef1.alg", drawSurface3, 1);
-			loadPic("tlef2.alg", frontSurface, 1);
-			loadPic("tlef3.alg", backSurface, 1);
+			loadPic("tlef1.alg", drawSurface3);
+			loadPic("tlef2.alg", frontSurface);
+			loadPic("tlef3.alg", backSurface);
 			talk_htel(240);
 
 			color_abc(kColorBrown);
@@ -917,10 +917,10 @@ void DrasculaEngine::room_59(int fl) {
 			color_abc(kColorBrown);
 			talk_solo(_textvb[_lang][62], "VB62.als");
 			clearRoom();
-			loadPic("aux59.alg", drawSurface3, 1);
-			loadPic("96.alg", frontSurface, COMPLETE_PAL);
-			loadPic("99.alg", backSurface, 1);
-			loadPic("59.alg", drawSurface1, HALF_PAL);
+			loadPic("aux59.alg", drawSurface3);
+			loadPic(96, frontSurface, COMPLETE_PAL);
+			loadPic(99, backSurface);
+			loadPic(59, drawSurface1, HALF_PAL);
 			trackProtagonist = 3;
 			talk(245);
 			withoutVerb();

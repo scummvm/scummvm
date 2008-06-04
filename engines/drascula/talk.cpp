@@ -510,9 +510,8 @@ void DrasculaEngine::talk_drunk(int index) {
 	int face;
 	int length = strlen(said);
 
-	if (currentChapter == 1) {
-		loadPic("an11y13.alg", frontSurface, 1);
-	}
+	if (currentChapter == 1)
+		loadPic("an11y13.alg", frontSurface);
 
 	flags[13] = 1;
 
@@ -548,9 +547,8 @@ void DrasculaEngine::talk_drunk(int index) {
 	updateScreen();
 
 	flags[13] = 0;
-	if (currentChapter == 1) {
-		loadPic("96.alg", frontSurface, 1);
-	}
+	if (currentChapter == 1)
+		loadPic("96.alg", frontSurface);
 
 	if (currentChapter == 1) {
 		if (musicStatus() == 0 && flags[11] == 0)

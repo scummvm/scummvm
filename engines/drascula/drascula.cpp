@@ -151,34 +151,33 @@ int DrasculaEngine::go() {
 		withVoices = 0;
 		selectionMade = 0;
 
-		if (currentChapter != 6) {
-			loadPic("95.alg", tableSurface, 1);
-		}
+		if (currentChapter != 6)
+			loadPic(95, tableSurface);
 
 		if (currentChapter == 1) {
-			loadPic("96.alg", frontSurface, COMPLETE_PAL);
-			loadPic("99.alg", backSurface, 1);
-			loadPic("97.alg", extraSurface, 1);
+			loadPic(96, frontSurface, COMPLETE_PAL);
+			loadPic(99, backSurface);
+			loadPic(97, extraSurface);
 		} else if (currentChapter == 2) {
-			loadPic("96.alg", frontSurface, COMPLETE_PAL);
-			loadPic("pts.alg", drawSurface2, 1);
+			loadPic(96, frontSurface, COMPLETE_PAL);
+			loadPic("pts.alg", drawSurface2);
 		} else if (currentChapter == 3) {
 			loadPic("aux13.alg", drawSurface1, COMPLETE_PAL);
-			loadPic("96.alg", frontSurface, 1);
-			loadPic("97.alg", extraSurface, 1);
-			loadPic("99.alg", backSurface, 1);
+			loadPic(96, frontSurface);
+			loadPic(97, extraSurface);
+			loadPic(99, backSurface);
 		} else if (currentChapter == 4) {
-			loadPic("96.alg", frontSurface, COMPLETE_PAL);
+			loadPic(96, frontSurface, COMPLETE_PAL);
 			if (hay_que_load == 0)
 				animation_rayo();
-			loadPic("96.alg", frontSurface, 1);
+			loadPic(96, frontSurface);
 			clearRoom();
-			loadPic("99.alg", backSurface, 1);
-			loadPic("97.alg", extraSurface, 1);
+			loadPic(99, backSurface);
+			loadPic(97, extraSurface);
 		} else if (currentChapter == 5) {
-			loadPic("96.alg", frontSurface, COMPLETE_PAL);
-			loadPic("97.alg", extraSurface, 1);
-			loadPic("99.alg", backSurface, 1);
+			loadPic(96, frontSurface, COMPLETE_PAL);
+			loadPic(97, extraSurface);
+			loadPic(99, backSurface);
 		} else if (currentChapter == 6) {
 			igorX = 105, igorY = 85, trackIgor = 1;
 			x_dr = 62, y_dr = 99, trackDrascula = 1;
@@ -187,10 +186,10 @@ int DrasculaEngine::go() {
 
 			pendulumSurface = drawSurface3;
 
-			loadPic("96.alg", frontSurface, COMPLETE_PAL);
-			loadPic("99.alg", backSurface, 1);
-			loadPic("97.alg", extraSurface, 1);
-			loadPic("95.alg", tableSurface, 1);
+			loadPic(96, frontSurface, COMPLETE_PAL);
+			loadPic(99, backSurface);
+			loadPic(97, extraSurface);
+			loadPic(95, tableSurface);
 		}
 		memset(iconName, 0, sizeof(iconName));
 
@@ -199,10 +198,10 @@ int DrasculaEngine::go() {
 
 		assignDefaultPalette();
 		if (!escoba()) {
-			releaseGame();
+			quitGame();
 			break;
 		}
-		releaseGame();
+		quitGame();
 		if (currentChapter == 6)
 			break;
 
@@ -212,7 +211,7 @@ int DrasculaEngine::go() {
 	return 0;
 }
 
-void DrasculaEngine::releaseGame() {
+void DrasculaEngine::quitGame() {
 	if (hay_sb == 1)
 		stopSound();
 	clearRoom();
@@ -445,7 +444,7 @@ bool DrasculaEngine::escoba() {
 			animation_1_1();
 
 		withoutVerb();
-		loadPic("2aux62.alg", drawSurface2, 1);
+		loadPic("2aux62.alg", drawSurface2);
 		trackProtagonist = 1;
 		objExit = 104;
 		if (hay_que_load != 0) {
@@ -535,7 +534,7 @@ bool DrasculaEngine::escoba() {
 			if (!loadGame(saveName)) {
 				return true;
 			}
-			loadPic("auxdr.alg", drawSurface2, 1);
+			loadPic("auxdr.alg", drawSurface2);
 		}
 	}
 
@@ -577,9 +576,9 @@ bool DrasculaEngine::escoba() {
 		if (button_dch == 1 && menuScreen == 1) {
 			delay(100);
 			if (currentChapter == 2)
-				loadPic(menuBackground, backSurface, 1);
+				loadPic(menuBackground, backSurface);
 			else
-				loadPic("99.alg", backSurface, 1);
+				loadPic(99, backSurface);
 			setPalette((byte *)&gamePalette);
 			menuScreen = 0;
 			updateEvents();
@@ -592,13 +591,13 @@ bool DrasculaEngine::escoba() {
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
 			if (currentChapter == 4)
-				loadPic("icons2.alg", backSurface, 1);
+				loadPic("icons2.alg", backSurface);
 			else if (currentChapter == 5)
-				loadPic("icons3.alg", backSurface, 1);
+				loadPic("icons3.alg", backSurface);
 			else if (currentChapter == 6)
-				loadPic("iconsp.alg", backSurface, 1);
+				loadPic("iconsp.alg", backSurface);
 			else
-				loadPic("icons.alg", backSurface, 1);
+				loadPic("icons.alg", backSurface);
 			menuScreen = 1;
 			updateEvents();
 			withoutVerb();
@@ -697,18 +696,18 @@ bool DrasculaEngine::escoba() {
 
 void DrasculaEngine::pickObject(int objeto) {
 	if (currentChapter == 6)
-		loadPic("iconsp.alg", backSurface, 1);
+		loadPic("iconsp.alg", backSurface);
 	else if (currentChapter == 4)
-		loadPic("icons2.alg", backSurface, 1);
+		loadPic("icons2.alg", backSurface);
 	else if (currentChapter == 5)
-		loadPic("icons3.alg", backSurface, 1);
+		loadPic("icons3.alg", backSurface);
 	else
-		loadPic("icons.alg", backSurface, 1);
+		loadPic("icons.alg", backSurface);
 	chooseObject(objeto);
 	if (currentChapter == 2)
-		loadPic(menuBackground, backSurface, 1);
+		loadPic(menuBackground, backSurface);
 	else
-		loadPic("99.alg", backSurface, 1);
+		loadPic(99, backSurface);
 }
 
 void DrasculaEngine::chooseObject(int objeto) {
@@ -797,6 +796,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	char pant1[20], pant2[20], pant3[20], pant4[20];
 	char para_codificar[20];
 	char buffer[256];
+	int palLevel = 0;
 
 	hasName = 0;
 
@@ -812,7 +812,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	getIntFromLine(buffer, size, &roomNumber);
 	getIntFromLine(buffer, size, &roomMusic);
 	getStringFromLine(buffer, size, roomDisk);
-	getIntFromLine(buffer, size, &nivel_osc);
+	getIntFromLine(buffer, size, &palLevel);
 
 	if (currentChapter == 2)
 		getIntFromLine(buffer, size, &martin);
@@ -868,9 +868,9 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	_arj.close();
 
 	if (currentChapter == 2 && martin != 0) {
-		loadPic(pant2, extraSurface, 1);
-		loadPic(pant1, frontSurface, 1);
-		loadPic(pant4, backSurface, 1);
+		loadPic(pant2, extraSurface);
+		loadPic(pant1, frontSurface);
+		loadPic(pant4, backSurface);
 	}
 
 	if (currentChapter == 2) {
@@ -880,9 +880,9 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			curHeight = CHARACTER_HEIGHT;
 			curWidth = CHARACTER_WIDTH;
 			feetHeight = FEET_HEIGHT;
-			loadPic("97.alg", extraSurface, 1);
-			loadPic("96.alg", frontSurface, 1);
-			loadPic("99.alg", backSurface, 1);
+			loadPic(97, extraSurface);
+			loadPic(96, frontSurface);
+			loadPic(99, backSurface);
 
 			strcpy(menuBackground, "99.alg");
 		}
@@ -900,7 +900,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		}
 		characterMoved = 0;
 	}
-	loadPic(roomDisk, drawSurface3, 1);
+	loadPic(roomDisk, drawSurface3);
 
 	char rm[20];
 	sprintf(rm, "%i.alg", roomNumber);
@@ -909,11 +909,11 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
 	setDefaultPalette();
-	if (nivel_osc != 0)
-		setPaletteBase(nivel_osc);
+	if (palLevel != 0)
+		setPaletteBase(palLevel);
 	assignBrightPalette();
 	setDefaultPalette();
-	setPaletteBase(nivel_osc + 2);
+	setPaletteBase(palLevel + 2);
 	assignDarkPalette();
 
 	setBrightPalette();
@@ -1240,7 +1240,7 @@ void DrasculaEngine::updateEvents() {
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
-			releaseGame();
+			quitGame();
 			exit(0);
 			break;
 		default:
@@ -3153,7 +3153,7 @@ void DrasculaEngine::converse(const char *fileName) {
 		if (phrase4[h] == (char)0xa7)
 			phrase4[h] = ' ';
 
-	loadPic("car.alg", backSurface, 1);
+	loadPic("car.alg", backSurface);
 	// TODO code here should limit y position for mouse in dialog menu,
 	// but we can't implement this due lack backend functionality
 	// from 1(top) to 31
@@ -3251,9 +3251,9 @@ void DrasculaEngine::converse(const char *fileName) {
 	} // while (breakOut == 0)
 
 	if (currentChapter == 2)
-		loadPic(menuBackground, backSurface, 1);
+		loadPic(menuBackground, backSurface);
 	else
-		loadPic("99.alg", backSurface, 1);
+		loadPic(99, backSurface);
 	if (currentChapter != 5)
 		withoutVerb();
 }
@@ -3644,10 +3644,10 @@ void DrasculaEngine::activatePendulum() {
 	flags[1] = 2;
 	hare_se_ve = 0;
 	roomNumber = 102;
-	loadPic("102.alg", drawSurface1, HALF_PAL);
-	loadPic("an_p1.alg", drawSurface3, 1);
-	loadPic("an_p2.alg", extraSurface, 1);
-	loadPic("an_p3.alg", frontSurface, 1);
+	loadPic(102, drawSurface1, HALF_PAL);
+	loadPic("an_p1.alg", drawSurface3);
+	loadPic("an_p2.alg", extraSurface);
+	loadPic("an_p3.alg", frontSurface);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
