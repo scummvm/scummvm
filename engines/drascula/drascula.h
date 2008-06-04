@@ -250,7 +250,7 @@ public:
 	int roomObjX[40], roomObjY[40], trackObj[40];
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
-	int _destX[40], _destY[40], sentido_alkeva[40], alapuertakeva[40];
+	int _destX[40], _destY[40], trackCharacter_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	int withVoices;
@@ -259,8 +259,8 @@ public:
 	int frame_blind;
 	int frame_snore;
 	int frame_bat;
-	int c_mirar;
-	int c_poder;
+	int curExcuseLook;
+	int curExcuseAction;
 
 	int flags[NUM_FLAGS];
 
@@ -312,7 +312,7 @@ public:
 	void walkUp();
 	void walkDown();
 	void moveVB();
-	void lleva_vb(int pointX);
+	void placeVB(int pointX);
 	void hipo_sin_nadie(int counter);
 	void openDoor(int nflag, int doorNum);
 	void showMap();

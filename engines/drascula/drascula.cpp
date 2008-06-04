@@ -142,8 +142,8 @@ int DrasculaEngine::go() {
 		frame_blind = 0;
 		frame_snore = 0;
 		frame_bat = 0;
-		c_mirar = 0;
-		c_poder = 0;
+		curExcuseLook = 0;
+		curExcuseAction = 0;
 
 		allocMemory();
 
@@ -850,7 +850,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			getStringFromLine(buffer, size, _targetSurface[l]);
 			getIntFromLine(buffer, size, &_destX[l]);
 			getIntFromLine(buffer, size, &_destY[l]);
-			getIntFromLine(buffer, size, &sentido_alkeva[l]);
+			getIntFromLine(buffer, size, &trackCharacter_alkeva[l]);
 			getIntFromLine(buffer, size, &alapuertakeva[l]);
 			updateDoor(l);
 		}
@@ -1938,7 +1938,7 @@ void DrasculaEngine::placeBJ() {
 }
 
 void DrasculaEngine::hiccup(int counter) {
-	int y = 0, sentido = 0;
+	int y = 0, trackCharacter = 0;
 	if (currentChapter == 3)
 		y = -1;
 
@@ -1951,21 +1951,21 @@ void DrasculaEngine::hiccup(int counter) {
 		else
 			updateScreen(0, 1, 0, y, 320, 198, screenSurface);
 
-		if (sentido == 0)
+		if (trackCharacter == 0)
 			y++;
 		else
 			y--;
 
 		if (currentChapter == 3) {
 			if (y == 1)
-				sentido = 1;
+				trackCharacter = 1;
 			if (y == -1)
-				sentido = 0;
+				trackCharacter = 0;
 		} else {
 			if (y == 2)
-				sentido = 1;
+				trackCharacter = 1;
 			if (y == 0)
-				sentido = 0;
+				trackCharacter = 0;
 		}
 	} while (counter > 0);
 
@@ -2422,7 +2422,7 @@ bool DrasculaEngine::exitRoom(int l) {
 				updateRoom();
 				updateScreen();
 				characterMoved = 0;
-				trackProtagonist = sentido_alkeva[l];
+				trackProtagonist = trackCharacter_alkeva[l];
 				objExit = alapuertakeva[l];
 				doBreak = 1;
 				previousMusic = roomMusic;
@@ -2442,7 +2442,7 @@ bool DrasculaEngine::exitRoom(int l) {
 		if (isDoor[l] != 0) {
 			gotoObject(roomObjX[l], roomObjY[l]);
 			characterMoved = 0;
-			trackProtagonist = sentido_alkeva[l];
+			trackProtagonist = trackCharacter_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2475,7 +2475,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			trackProtagonist = sentido_alkeva[l];
+			trackProtagonist = trackCharacter_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2492,7 +2492,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			trackProtagonist = sentido_alkeva[l];
+			trackProtagonist = trackCharacter_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2512,7 +2512,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			trackProtagonist = sentido_alkeva[l];
+			trackProtagonist = trackCharacter_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -2530,7 +2530,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			updateRoom();
 			updateScreen();
 			characterMoved = 0;
-			trackProtagonist = sentido_alkeva[l];
+			trackProtagonist = trackCharacter_alkeva[l];
 			objExit = alapuertakeva[l];
 			doBreak = 1;
 			previousMusic = roomMusic;
@@ -3516,7 +3516,7 @@ void DrasculaEngine::moveVB() {
 	copyRectClip(pos_vb, frontSurface, screenSurface);
 }
 
-void DrasculaEngine::lleva_vb(int pointX) {
+void DrasculaEngine::placeVB(int pointX) {
 	trackVB = (pointX < vbX) ? 0 : 1;
 	vbHasMoved = 1;
 
@@ -3539,7 +3539,7 @@ void DrasculaEngine::lleva_vb(int pointX) {
 }
 
 void DrasculaEngine::hipo_sin_nadie(int counter){
-	int y = 0, sentido = 0;
+	int y = 0, trackCharacter = 0;
 	if (currentChapter == 3)
 		y = -1;
 
@@ -3552,21 +3552,21 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 		else
 			updateScreen(0, 1, 0, y, 320, 198, screenSurface);
 
-		if (sentido == 0)
+		if (trackCharacter == 0)
 			y++;
 		else
 			y--;
 
 		if (currentChapter == 3) {
 			if (y == 1)
-				sentido = 1;
+				trackCharacter = 1;
 			if (y == -1)
-				sentido = 0;
+				trackCharacter = 0;
 		} else {
 			if (y == 2)
-				sentido = 1;
+				trackCharacter = 1;
 			if (y == 0)
-				sentido = 0;
+				trackCharacter = 0;
 		}
 	} while (counter > 0);
 

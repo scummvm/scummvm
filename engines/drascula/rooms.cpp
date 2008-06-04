@@ -50,8 +50,8 @@ bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int fl) {
 }
 
 void DrasculaEngine::room_0() {
-	static const int mirar_t[3] = {100, 101, 54};
-	static const int poder_t[6] = {11, 109, 111, 110, 115, 116};
+	static const int lookExcuses[3] = {100, 101, 54};
+	static const int actionExcuses[6] = {11, 109, 111, 110, 115, 116};
 
 	if (roomParse(room0Actions, -1))
 		return;
@@ -60,20 +60,15 @@ void DrasculaEngine::room_0() {
 	if (currentChapter == 2 || currentChapter == 4 ||
 		currentChapter == 5 || currentChapter == 6) {
 		if (pickedObject == kVerbLook) {
-			talk(mirar_t[c_mirar]);
-			c_mirar++;
-			if (c_mirar == 3)
-				c_mirar = 0;
-		} else if (pickedObject == kVerbPick) {
-			talk(poder_t[c_poder]);
-			c_poder++;
-			if (c_poder == 6)
-				c_poder = 0;
+			talk(lookExcuses[curExcuseLook]);
+			curExcuseLook++;
+			if (curExcuseLook == 3)
+				curExcuseLook = 0;
 		} else {
-			talk(poder_t[c_poder]);
-			c_poder++;
-			if (c_poder == 6)
-				c_poder = 0;
+			talk(actionExcuses[curExcuseAction]);
+			curExcuseAction++;
+			if (curExcuseAction == 6)
+				curExcuseAction = 0;
 		}
 	}
 }

@@ -1062,7 +1062,7 @@ void DrasculaEngine::animation_23_2() {
 	}
 
 	talk_vb(15);
-	lleva_vb(42);
+	placeVB(42);
 	trackVB = 1;
 	talk_vb(16);
 	trackVB = 2;
@@ -1083,7 +1083,7 @@ void DrasculaEngine::animation_23_2() {
 
 	trackVB = 2;
 	animation_25_2();
-	lleva_vb(99);
+	placeVB(99);
 
 	if (flags[29] == 0) {
 		talk_vb(19);
@@ -1243,7 +1243,7 @@ void DrasculaEngine::animation_30_2() {
 
 void DrasculaEngine::animation_31_2() {
 	talk_vb(44);
-	lleva_vb(-50);
+	placeVB(-50);
 	pause(15);
 	gotoObject(159, 140);
 	loadPic(99, backSurface);
@@ -1256,7 +1256,7 @@ void DrasculaEngine::animation_31_2() {
 	updateScreen();
 	pause(22);
 	talk(406);
-	lleva_vb(98);
+	placeVB(98);
 	talk_vb(45);
 	talk_vb(46);
 	talk_vb(47);
