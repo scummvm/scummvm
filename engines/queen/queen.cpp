@@ -418,7 +418,7 @@ int QueenEngine::init() {
 	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
 	_grid = new Grid(this);
-	_input = new Input(_resource->getLanguage(), _system);
+	_input = new Input(_resource->getLanguage(), _system, this);
 
 	if (_resource->isDemo()) {
 		_logic = new LogicDemo(this);
