@@ -994,9 +994,7 @@ void DrasculaEngine::animation_16_2() {
 
 asco:
 	loadPic(roomDisk, drawSurface3);
-	char rm[20];
-	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm, drawSurface1, HALF_PAL);
+	loadPic(roomNumber, drawSurface1, HALF_PAL);
 	black();
 	updateRoom();
 	updateScreen();

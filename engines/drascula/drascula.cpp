@@ -900,11 +900,9 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		}
 		characterMoved = 0;
 	}
-	loadPic(roomDisk, drawSurface3);
 
-	char rm[20];
-	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm, drawSurface1, HALF_PAL);
+	loadPic(roomDisk, drawSurface3);
+	loadPic(roomNumber, drawSurface1, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
@@ -1457,9 +1455,7 @@ bool DrasculaEngine::saves() {
 	}
 
 	clearRoom();
-	char rm[20];
-	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm, drawSurface1, HALF_PAL);
+	loadPic(roomNumber, drawSurface1, HALF_PAL);
 	selectionMade = 0;
 
 	return true;
@@ -1679,9 +1675,7 @@ void DrasculaEngine::screenSaver() {
 	free(copia);
 	free(ghost);
 
-	char rm[20];
-	sprintf(rm, "%i.alg", roomNumber);
-	loadPic(rm, drawSurface1, HALF_PAL);
+	loadPic(roomNumber, drawSurface1, HALF_PAL);
 }
 
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
