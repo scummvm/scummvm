@@ -137,7 +137,7 @@ void OSystem::clearScreen() {
 #endif
 
 FilesystemFactory *OSystem::getFilesystemFactory() {
-	#if defined(__amigaos4__) || defined(__DC__) || defined(__SYMBIAN32__) || defined(UNIX) || defined(WIN32) || defined(__PSP__) || defined(__DS__)
+	#if defined(__amigaos4__) || defined(__DC__) || defined(__SYMBIAN32__) || defined(UNIX) || defined(WIN32) || defined(__WII__) || defined(__PSP__) || defined(__DS__)
 		// These ports already implement this function, so it should never be called.
 		return 0;
 	#elif defined(PALMOS_MODE)

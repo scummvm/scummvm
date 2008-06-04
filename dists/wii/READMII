@@ -1,0 +1,64 @@
+Wii port of ScummVM README
+--------------------------
+
+features not compiled in:
+- the AGI game engine
+
+REQUIREMENTS
+
+  - sd card
+  - wiimote or gamecube controller in port 1
+
+INSTALL
+
+  - copy the "apps" folder to the root of your sd card
+  - copy your demos and/or games onto the same sd card
+    each game goes into its own subdirectory, do not place those under
+    "/apps/scummvm", and do not set the "theme" or "extra" path to that folder
+    freeware versions: http://scummvm.org/downloads.php#extras
+    demos: http://scummvm.org/demos.php
+
+RUN
+
+  either use the homebrew channel, available at
+
+  http://hbc.hackmii.com/
+
+  or load "boot.dol" with your favorite loader
+
+CONTROLS
+
+  wiimote
+
+    analog stick: mouse movement
+    a: left mouse button
+    b: right mouse button
+    minus: escape
+    plus: "." (skip current line of text)
+    2: enter
+    home: f5 (scummvm menu)
+    dpad up: shift (mass add for the gui)
+    dpad down: "0"
+    dpad left: "y"
+    dpad right: "n"
+
+  gamecube pad
+
+    analog stick: mouse movement
+    a: left mouse button
+    b: right mouse button
+    x: escape
+    y: "." (skip current line of text)
+    z: enter
+    start: f5 (scummvm menu)
+    dpad up: shift (mass add for the gui)
+    dpad down: "0"
+    dpad left: "y"
+    dpad right: "n"
+
+THANKS
+
+  shagkur and WinterMute, for devkitppc/libogc and the coorperation
+  svpe, for fixing the libfat feof/thread bugs on the last minute
+  para, for making wiiuse available in libogc
+
