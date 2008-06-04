@@ -226,15 +226,16 @@ void DrasculaEngine::room_7(int fl){
 }
 
 void DrasculaEngine::room_8(int fl) {
-	if (roomParse(room8Actions, ARRAYSIZE(room8Actions), fl))
-		return;
-
-	if (pickedObject == kVerbLook && fl == 147 && flags[7] == 0) {
-		talk(58);
-		pickObject(15);
-		flags[7] = 1;
-		if (flags[7] == 1 && flags[26] == 1 && flags[34] == 1 && flags[35] == 1 && flags[37] == 1)
-			flags[38] = 1;
+	if (pickedObject == kVerbLook && fl == 147) {
+		if (flags[7] == 0) {
+			talk(58);
+			pickObject(15);
+			flags[7] = 1;
+			if (flags[7] == 1 && flags[26] == 1 && flags[34] == 1 && flags[35] == 1 && flags[37] == 1)
+				flags[38] = 1;
+		} else {
+			talk(59);
+		}
 	} else
 		hasAnswer = 0;
 }

@@ -268,11 +268,6 @@ RoomTalkAction room7Actions[] = {
 	{ -1,	kVerbLook,		169,	 44 }
 };
 
-RoomTalkAction room8Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbLook,		147,	 59 }
-};
-
 RoomTalkAction room9Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbLook,		150,	 35 },
