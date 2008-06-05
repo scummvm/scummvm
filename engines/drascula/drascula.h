@@ -234,7 +234,6 @@ public:
 
 	Common::ArjFile _arj;
 
-	int hay_sb;
 	int previousMusic, roomMusic;
 	int roomNumber;
 	char roomDisk[20];
@@ -302,8 +301,8 @@ public:
 	int mouseX;
 	int mouseY;
 	int mouseY_ant;
-	int button_izq;
-	int button_dch;
+	int leftMouseButton;
+	int rightMouseButton;
 
 	bool escoba();
 	void black();
@@ -329,7 +328,8 @@ public:
 	bool verify2();
 	Common::KeyCode getScan();
 	void selectVerb(int);
-	void mesa();
+	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
+	void volumeControls();
 	bool saveLoadScreen();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
@@ -338,7 +338,7 @@ public:
 	void chooseObject(int objeto);
 	void addObject(int);
 	int removeObject(int osj);
-	void fliplay(const char *filefli, int vel);
+	void playFLI(const char *filefli, int vel);
 	void fadeFromBlack(int fadeSpeed);
 	char adjustToVGA(char value);
 	void color_abc(int cl);
@@ -404,13 +404,11 @@ public:
 	void setCursorTable();
 	void enterName();
 	bool soundIsActive();
-	void openSSN(const char *Name, int Pause);
 	void WaitFrameSSN();
 	void MixVideo(byte *OldScreen, byte *NewScreen);
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
 	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
 	byte *TryInMem();
-	void EndSSN();
 	int playFrameSSN();
 
 	byte *AuxBuffOrg;
@@ -553,7 +551,7 @@ public:
 	void animation_4_3();
 	void animation_5_3();
 	void animation_6_3();
-	void animation_rayo();
+	void animation_ray();
 	//
 	void animation_1_4();
 	void animation_2_4();

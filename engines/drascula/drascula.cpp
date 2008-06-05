@@ -147,7 +147,6 @@ int DrasculaEngine::go() {
 
 		allocMemory();
 
-		hay_sb = 1;
 		withVoices = 0;
 		selectionMade = 0;
 
@@ -169,7 +168,7 @@ int DrasculaEngine::go() {
 		} else if (currentChapter == 4) {
 			loadPic(96, frontSurface, COMPLETE_PAL);
 			if (hay_que_load == 0)
-				animation_rayo();
+				animation_ray();
 			loadPic(96, frontSurface);
 			clearRoom();
 			loadPic(99, backSurface);
@@ -212,8 +211,7 @@ int DrasculaEngine::go() {
 }
 
 void DrasculaEngine::quitGame() {
-	if (hay_sb == 1)
-		stopSound();
+	stopSound();
 	clearRoom();
 	black();
 	MusicFadeout();
@@ -569,7 +567,7 @@ bool DrasculaEngine::escoba() {
 		if (menuScreen == 0 && takeObject == 1)
 			checkObjects();
 
-		if (button_dch == 1 && menuScreen == 1) {
+		if (rightMouseButton == 1 && menuScreen == 1) {
 			delay(100);
 			if (currentChapter == 2)
 				loadPic(menuBackground, backSurface);
@@ -581,7 +579,7 @@ bool DrasculaEngine::escoba() {
 			if (currentChapter != 3)
 				cont_sv = 0;
 		}
-		if (button_dch == 1 && menuScreen == 0) {
+		if (rightMouseButton == 1 && menuScreen == 0) {
 			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
@@ -601,18 +599,18 @@ bool DrasculaEngine::escoba() {
 				cont_sv = 0;
 		}
 
-		if (button_izq == 1 && menuBar == 1) {
+		if (leftMouseButton == 1 && menuBar == 1) {
 			delay(100);
 			selectVerbFromBar();
 			if (currentChapter != 3)
 				cont_sv = 0;
-		} else if (button_izq == 1 && takeObject == 0) {
+		} else if (leftMouseButton == 1 && takeObject == 0) {
 			delay(100);
 			if (verify1())
 				return true;
 			if (currentChapter != 3)
 				cont_sv = 0;
-		} else if (button_izq == 1 && takeObject == 1) {
+		} else if (leftMouseButton == 1 && takeObject == 1) {
 			if (verify2())
 				return true;
 			if (currentChapter != 3)
@@ -646,7 +644,7 @@ bool DrasculaEngine::escoba() {
 			if (currentChapter != 3)
 				cont_sv = 0;
 		} else if (key == Common::KEYCODE_F9) {
-		mesa();
+		volumeControls();
 		if (currentChapter != 3)
 			cont_sv = 0;
 		} else if (key == Common::KEYCODE_F10) {
@@ -1092,16 +1090,9 @@ void DrasculaEngine::checkObjects() {
 		}
 	}
 
-	if (currentChapter == 2) {
-		if (mouseX > curX + 2 && mouseY > curY + 2
-				&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2) {
-			strcpy(textName, "hacker");
-			hasName = 1;
-			veo = 1;
-		}
-	} else {
-		if (mouseX > curX + 2 && mouseY > curY + 2
-				&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2 && veo == 0) {
+	if (mouseX > curX + 2 && mouseY > curY + 2
+			&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2) {
+		if (currentChapter == 2 || veo == 0) {
 			strcpy(textName, "hacker");
 			hasName = 1;
 			veo = 1;
@@ -1221,16 +1212,16 @@ void DrasculaEngine::updateEvents() {
 			mouseY = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			button_izq = 1;
+			leftMouseButton = 1;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			button_izq = 0;
+			leftMouseButton = 0;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			button_dch = 1;
+			rightMouseButton = 1;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			button_dch = 0;
+			rightMouseButton = 0;
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
@@ -1244,10 +1235,8 @@ void DrasculaEngine::updateEvents() {
 }
 
 void DrasculaEngine::selectVerb(int verbo) {
-	int c = 171;
+	int c = (menuScreen == 1) ? 0 : 171;
 
-	if (menuScreen == 1)
-		c = 0;
 	if (currentChapter == 5) {
 		if (takeObject == 1 && pickedObject != 16)
 			addObject(pickedObject);
@@ -1262,24 +1251,33 @@ void DrasculaEngine::selectVerb(int verbo) {
 	pickedObject = verbo;
 }
 
-void DrasculaEngine::mesa() {
-	int nivel_master, nivel_voc, nivel_cd;
+void DrasculaEngine::updateVolume(Audio::Mixer::SoundType soundType, int prevVolume) {
+	int vol = _mixer->getVolumeForSoundType(soundType) / 16;
+	if (mouseY < prevVolume && vol < 15)
+		vol++;
+	if (mouseY > prevVolume && vol > 0)
+		vol--;
+	_mixer->setVolumeForSoundType(soundType, vol * 16);
+}
+
+void DrasculaEngine::volumeControls() {
+	int masterVolume, voiceVolume, musicVolume;
 
 	copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
 	updateScreen(73, 63, 73, 63, 177, 97, screenSurface);
 
-	for (;;) {
-		nivel_master = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
-		nivel_voc = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4);
-		nivel_cd = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4);
+	masterVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
+	voiceVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4);
+	musicVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4);
 
+	for (;;) {
 		updateRoom();
 
 		copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
 
-		copyBackground(183, 56, 82, nivel_master, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4), tableSurface, screenSurface);
-		copyBackground(183, 56, 138, nivel_voc, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), tableSurface, screenSurface);
-		copyBackground(183, 56, 194, nivel_cd, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), tableSurface, screenSurface);
+		copyBackground(183, 56, 82, masterVolume, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4), tableSurface, screenSurface);
+		copyBackground(183, 56, 138, voiceVolume, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), tableSurface, screenSurface);
+		copyBackground(183, 56, 194, musicVolume, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), tableSurface, screenSurface);
 
 		setCursorTable();
 
@@ -1287,37 +1285,25 @@ void DrasculaEngine::mesa() {
 
 		updateEvents();
 
-		if (button_dch == 1) {
+		if (rightMouseButton == 1) {
 			delay(100);
 			break;
 		}
-		if (button_izq == 1) {
+		if (leftMouseButton == 1) {
 			delay(100);
 			if (mouseX > 80 && mouseX < 121) {
-				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16;
-				if (mouseY < nivel_master && vol < 15)
-					vol++;
-				if (mouseY > nivel_master && vol > 0)
-					vol--;
-				_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol * 16);
+				updateVolume(Audio::Mixer::kPlainSoundType, mouseY);
+				masterVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
 			}
 
 			if (mouseX > 136 && mouseX < 178) {
-				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16;
-				if (mouseY < nivel_voc && vol < 15)
-					vol++;
-				if (mouseY > nivel_voc && vol > 0)
-					vol--;
-				_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol * 16);
+				updateVolume(Audio::Mixer::kSFXSoundType, mouseY);
+				voiceVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4);
 			}
 
 			if (mouseX > 192 && mouseX < 233) {
-				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
-				if (mouseY < nivel_cd && vol < 15)
-					vol++;
-				if (mouseY > nivel_cd && vol > 0)
-					vol--;
-				_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol * 16);
+				updateVolume(Audio::Mixer::kMusicSoundType, mouseY);
+				musicVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4);
 			}
 		}
 
@@ -1372,7 +1358,7 @@ bool DrasculaEngine::saveLoadScreen() {
 
 		updateEvents();
 
-		if (button_izq == 1) {
+		if (leftMouseButton == 1) {
 			delay(50);
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (mouseX > 115 && mouseY > y + (9 * n) && mouseX < 115 + 175 && mouseY < y + 10 + (9 * n)) {
@@ -1662,7 +1648,7 @@ void DrasculaEngine::screenSaver() {
 		// end of efecto()
 
 		updateEvents();
-		if (button_dch == 1 || button_izq == 1)
+		if (rightMouseButton == 1 || leftMouseButton == 1)
 			break;
 		if (mouseX != xr)
 			break;
@@ -1676,13 +1662,28 @@ void DrasculaEngine::screenSaver() {
 	loadPic(roomNumber, drawSurface1, HALF_PAL);
 }
 
-void DrasculaEngine::fliplay(const char *filefli, int vel) {
-	openSSN(filefli, vel);
+void DrasculaEngine::playFLI(const char *filefli, int vel) {
+	// Open file
+	MiVideoSSN = (byte *)malloc(64256);
+	globalSpeed = 1000 / vel;
+	FrameSSN = 0;
+	UsingMem = 0;
+	if (MiVideoSSN == NULL)
+		return;
+	_arj.open(filefli);
+	mSession = TryInMem();
+	LastFrame = _system->getMillis();
+
 	while (playFrameSSN() && (!term_int)) {
 		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
-	EndSSN();
+
+	free(MiVideoSSN);
+	if (UsingMem)
+		free(pointer);
+	else
+		_arj.close();
 }
 
 void DrasculaEngine::fadeFromBlack(int fadeSpeed) {
@@ -1797,8 +1798,7 @@ void DrasculaEngine::playSound(int soundNum) {
 	char file[20];
 	sprintf(file, "s%i.als", soundNum);
 
-	if (hay_sb == 1)
-		playFile(file);
+	playFile(file);
 }
 
 bool DrasculaEngine::animate(const char *animationFile, int FPS) {
@@ -1974,10 +1974,8 @@ void DrasculaEngine::hiccup(int counter) {
 void DrasculaEngine::finishSound() {
 	delay(1);
 
-	if (hay_sb == 1) {
-		while (soundIsActive())
-			_system->delayMillis(10);
-	}
+	while (soundIsActive())
+		_system->delayMillis(10);
 }
 
 void DrasculaEngine::playMusic(int p) {
@@ -2636,18 +2634,6 @@ void DrasculaEngine::enterName() {
 	}
 }
 
-void DrasculaEngine::openSSN(const char *Name, int Pause) {
-	MiVideoSSN = (byte *)malloc(64256);
-	globalSpeed = 1000 / Pause;
-	FrameSSN = 0;
-	UsingMem = 0;
-	if (MiVideoSSN == NULL)
-		return;
-	_arj.open(Name);
-	mSession = TryInMem();
-	LastFrame = _system->getMillis();
-}
-
 int DrasculaEngine::playFrameSSN() {
 	int Exit = 0;
 	uint32 Lengt;
@@ -2740,15 +2726,6 @@ int DrasculaEngine::playFrameSSN() {
 	}
 
 	return (!Exit);
-}
-
-void DrasculaEngine::EndSSN() {
-	free(MiVideoSSN);
-	if (UsingMem)
-		free(pointer);
-	else {
-		_arj.close();
-	}
 }
 
 byte *DrasculaEngine::TryInMem() {
@@ -3201,7 +3178,7 @@ void DrasculaEngine::converse(const char *fileName) {
 
 		updateScreen();
 
-		if ((button_izq == 1) && (game1 == 2)) {
+		if ((leftMouseButton == 1) && (game1 == 2)) {
 			delay(100);
 			used1 = 1;
 			talk(phrase1, sound1);
@@ -3209,7 +3186,7 @@ void DrasculaEngine::converse(const char *fileName) {
 				grr();
 			else
 				response(answer1);
-		} else if ((button_izq == 1) && (game2 == 2)) {
+		} else if ((leftMouseButton == 1) && (game2 == 2)) {
 			delay(100);
 			used2 = 1;
 			talk(phrase2, sound2);
@@ -3217,7 +3194,7 @@ void DrasculaEngine::converse(const char *fileName) {
 				grr();
 			else
 				response(answer2);
-		} else if ((button_izq == 1) && (game3 == 2)) {
+		} else if ((leftMouseButton == 1) && (game3 == 2)) {
 			delay(100);
 			used3 = 1;
 			talk(phrase3, sound3);
@@ -3225,13 +3202,13 @@ void DrasculaEngine::converse(const char *fileName) {
 				grr();
 			else
 				response(answer3);
-		} else if ((button_izq == 1) && (game4 == 2)) {
+		} else if ((leftMouseButton == 1) && (game4 == 2)) {
 			delay(100);
 			talk(phrase4, sound4);
 			breakOut = 1;
 		}
 
-		if (button_izq == 1) {
+		if (leftMouseButton == 1) {
 			delay(100);
 			color_abc(kColorLightGreen);
 		}
@@ -3252,12 +3229,8 @@ void DrasculaEngine::converse(const char *fileName) {
 
 void DrasculaEngine::response(int function) {
 	if (currentChapter == 1) {
-		if (function == 10)
-			talk_drunk(1);
-		else if (function == 11)
-			talk_drunk(2);
-		else if (function == 12)
-			talk_drunk(3);
+		if (function >= 10 && function <= 12)
+			talk_drunk(function - 9);
 	} else if (currentChapter == 2) {
 		if (function == 8)
 			animation_8_2();
@@ -3351,9 +3324,7 @@ void DrasculaEngine::addObject(int osj) {
 }
 
 void DrasculaEngine::stopSound() {
-	if (hay_sb == 1) {
-		_mixer->stopHandle(_soundHandle);
-	}
+	_mixer->stopHandle(_soundHandle);
 }
 
 void DrasculaEngine::MusicFadeout() {
@@ -3615,8 +3586,7 @@ void DrasculaEngine::grr() {
 
 	color_abc(kColorDarkGreen);
 
-	if (hay_sb == 1)
-		playFile("s10.als");
+	playFile("s10.als");
 
 	updateRoom();
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);

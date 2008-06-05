@@ -58,7 +58,7 @@ void DrasculaEngine::animation_1_1() {
 
 	while (term_int == 0) {
 		playMusic(29);
-		fliplay("logoddm.bin", 9);
+		playFLI("logoddm.bin", 9);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(600);
@@ -72,7 +72,7 @@ void DrasculaEngine::animation_1_1() {
 		delay(500);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		fliplay("logoalc.bin", 8);
+		playFLI("logoalc.bin", 8);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -97,7 +97,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 
-		fliplay("scrollb.bin", 9);
+		playFLI("scrollb.bin", 9);
 
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -373,7 +373,7 @@ void DrasculaEngine::animation_1_1() {
 
 		playMusic(2);
 		pause(5);
-		fliplay("intro.bin", 12);
+		playFLI("intro.bin", 12);
 		term_int = 1;
 	}
 	clearRoom();
@@ -1419,7 +1419,7 @@ void DrasculaEngine::animation_6_3() {
 	updateScreen();
 }
 
-void DrasculaEngine::animation_rayo() {
+void DrasculaEngine::animation_ray() {
 	loadPic("anr_1.alg", frontSurface, HALF_PAL);
 	loadPic("anr_2.alg", extraSurface);
 	loadPic("anr_3.alg", backSurface);
@@ -1556,9 +1556,9 @@ void DrasculaEngine::animation_4_5() {
 void DrasculaEngine::animation_5_5(){
 	int h;
 	int frame = 0;
-	int hueso_x[] = {1, 99, 197, 1, 99, 197, 1, 99, 197};
-	int hueso_y[] = {1, 1, 1, 66, 66, 66, 131, 131, 131};
-	int vuela_x[] = {1, 63, 125, 187, 249};
+	int boneX[] = {1, 99, 197, 1, 99, 197, 1, 99, 197};
+	int boneY[] = {1, 1, 1, 66, 66, 66, 131, 131, 131};
+	int flyX[] = {1, 63, 125, 187, 249};
 	int pixelX = curX - 53, pixelY = curY - 9;
 
 	withoutVerb();
@@ -1575,7 +1575,7 @@ void DrasculaEngine::animation_5_5(){
 	for (frame = 0; frame < 9; frame++) {
 		pause(3);
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-		copyRect(hueso_x[frame], hueso_y[frame], pixelX, pixelY, 97, 64, backSurface, screenSurface);
+		copyRect(boneX[frame], boneY[frame], pixelX, pixelY, 97, 64, backSurface, screenSurface);
 		updateScreen(pixelX, pixelY, pixelX,pixelY, 97,64, screenSurface);
 	}
 
@@ -1585,7 +1585,7 @@ void DrasculaEngine::animation_5_5(){
 	for (frame = 0; frame < 9; frame++) {
 		pause(3);
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
-		copyRect(hueso_x[frame], hueso_y[frame], pixelX, pixelY, 97, 64, frontSurface, screenSurface);
+		copyRect(boneX[frame], boneY[frame], pixelX, pixelY, 97, 64, frontSurface, screenSurface);
 		updateScreen(pixelX, pixelY, pixelX,pixelY, 97, 64, screenSurface);
 	}
 
@@ -1607,12 +1607,12 @@ void DrasculaEngine::animation_5_5(){
 	pause(9);
 	for (frame = 0; frame < 5; frame++) {
 		pause(3);
-		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, backSurface, screenSurface);
+		copyBackground(flyX[frame], 1, 174, 79, 61, 109, backSurface, screenSurface);
 		updateScreen(174, 79, 174, 79, 61, 109, screenSurface);
 	}
 	for (frame = 0; frame < 5; frame++) {
 		pause(3);
-		copyBackground(vuela_x[frame], 1, 174, 79, 61, 109, extraSurface, screenSurface);
+		copyBackground(flyX[frame], 1, 174, 79, 61, 109, extraSurface, screenSurface);
 		updateScreen(174, 79, 174, 79, 61, 109, screenSurface);
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, drawSurface1);
@@ -1682,7 +1682,6 @@ void DrasculaEngine::animation_12_5() {
 	const int rayX[] = {1, 46, 91, 136, 181, 226, 271, 181};
 	const int frusky_x[] = {100, 139, 178, 217, 100, 178, 217, 139, 100, 139};
 	const int elfrusky_x[] = {1, 68, 135, 1, 68, 135, 1, 68, 135, 68, 1, 135, 68, 135, 68};
-	//const int humo_x[] = {1, 29, 57, 85, 113, 141, 169, 197, 225};
 	int color, component;
 	char fade;
 
@@ -2076,13 +2075,13 @@ void DrasculaEngine::animation_9_6() {
 	playMusic(17);
 	fadeToBlack(1);
 	clearRoom();
-	fliplay("qpc.bin", 1);
+	playFLI("qpc.bin", 1);
 	MusicFadeout();
 	stopMusic();
 	clearRoom();
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, v_cd * 16);
 	playMusic(3);
-	fliplay("crd.bin", 1);
+	playFLI("crd.bin", 1);
 	stopMusic();
 }
 

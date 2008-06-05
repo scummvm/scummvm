@@ -33,22 +33,15 @@ int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 void DrasculaEngine::talkInit(const char *filename) {
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	if (hay_sb == 1)
-		playFile(filename);
+	playFile(filename);
 }
 
 bool DrasculaEngine::isTalkFinished(int* length) {
 	byte key = getScan();
 	if (key != 0)
 		stopSound();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			return false;
-	} else {
-		length -= 2;
-		if (length > 0)
-			return false;
-	}
+	if (soundIsActive())
+		return false;
 
 	return true;
 }
