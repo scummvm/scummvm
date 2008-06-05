@@ -74,7 +74,9 @@ int Parallaction_br::init() {
 	initCursors();
 	initOpcodes();
 	_locationParser = new LocationParser_br(this);
+	_locationParser->init();
 	_programParser = new ProgramParser_br(this);
+	_programParser->init();
 
 	_part = -1;
 
@@ -203,7 +205,7 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;
-//		runZone(z);			// FIXME: BRA doesn't handle sound yet
+		runZone(z);			// FIXME: BRA doesn't handle sound yet
 	}
 
 	if (_activeZone2) {
@@ -261,9 +263,34 @@ void Parallaction_br::parseLocation(const char *filename) {
 	return;
 }
 
+void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
+	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_name, filename);
+
+	Script *script = _disk->loadScript(filename);
+	ProgramPtr program(new Program);
+	program->_anim = a;
+
+	_programParser->parse(script, program);
+
+	delete script;
+
+	_vm->_location._programs.push_back(program);
+
+	debugC(1, kDebugParser, "loadProgram() done");
+
+	return;
+}
+
+
 
 void Parallaction_br::changeCharacter(const char *name) {
+	const char *charName = _char.getName();
+	if (!scumm_stricmp(charName, name)) {
+		return;
+	}
 
+	_char.setName(name);
+	_char._talk = _disk->loadTalk(name);
 }
 
 

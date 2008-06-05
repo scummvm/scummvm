@@ -580,15 +580,15 @@ public:
 		_mouseClickCount = 0;
 	}
 
-	const bool leftMouseButtonPressed() const {
+	bool leftMouseButtonPressed() const {
 		return _leftMouseButtonPressed;
 	}
 
-	const bool rightMouseButtonPressed() const {
+	bool rightMouseButtonPressed() const {
 		return _rightMouseButtonPressed;
 	}
 
-	const bool mouseButtonPressed() const {
+	bool mouseButtonPressed() const {
 		return _leftMouseButtonPressed || _rightMouseButtonPressed;
 	}
 
@@ -622,8 +622,8 @@ public:
 public:
 	bool initGame(void);
 
-	const bool isBigEndian() const;
-	const bool isMacResources() const;
+	bool isBigEndian() const;
+	bool isMacResources() const;
 	const GameResourceDescription *getResourceDescription();
 	const GameSoundInfo *getVoiceInfo() const;
 	const GameSoundInfo *getSfxInfo() const;

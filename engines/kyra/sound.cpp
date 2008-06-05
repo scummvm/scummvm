@@ -50,9 +50,9 @@ Sound::~Sound() {
 
 bool Sound::voiceFileIsPresent(const char *file) {
 	char filenamebuffer[25];
-	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodes[i].fileext);
+		strcat(filenamebuffer, _supportedCodecs[i].fileext);
 		if (_vm->resource()->getFileSize(filenamebuffer) > 0)
 			return true;
 	}
@@ -77,14 +77,14 @@ int32 Sound::voicePlay(const char *file, bool isSfx) {
 
 	Audio::AudioStream *audioStream = 0;
 
-	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodes[i].fileext);
+		strcat(filenamebuffer, _supportedCodecs[i].fileext);
 
 		Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filenamebuffer);
 		if (!stream)
 			continue;
-		audioStream = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
+		audioStream = _supportedCodecs[i].streamFunc(stream, true, 0, 0, 1);
 		break;
 	}
 
@@ -551,7 +551,7 @@ bool KyraEngine_v1::snd_voiceIsPlaying() {
 
 // static res
 
-const Sound::SpeechCodecs Sound::_supportedCodes[] = {
+const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 #ifdef USE_FLAC
 	{ ".VOF", Audio::makeFlacStream },
 #endif // USE_FLAC

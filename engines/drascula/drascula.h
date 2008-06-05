@@ -68,6 +68,38 @@ enum Verbs {
 	kVerbMove = 6
 };
 
+// Items up to chapter 3
+enum InventoryItems {
+	kItemMoney = 7,
+	kItemLeaves = 8,
+	kItemCross = 9,
+	kItemSpike = 10,
+	kItemEarplugs = 11,
+	kItemBook = 12,
+	kItemBubbleGum = 13,
+	kItemSickle = 14,
+	kItemTissues = 15,
+	kItemCigarettes = 16,
+	kItemCandle = 17,
+	kItemTwoCoins = 18,
+	kItemOneCoin = 19,
+	kItemReefer = 20,
+	kItemKey = 21,
+	kItemHandbag = 22,
+	kItemEarWithEarPlug = 23,
+	kItemPhone = 28
+};
+
+// Items from chapter 4 onwards
+enum InventoryItems2 {
+	kItemKey2 = 7,
+	kItemCross2 = 9,
+	kItemRope2 = 19,
+	kItemReefer2 = 20,
+	kItemOneCoin2 = 22,
+	kItemPhone2 = 28
+};
+
 enum Colors {
 	kColorBrown = 1,
 	kColorDarkBlue = 2,
@@ -105,7 +137,8 @@ enum IgorTalkerTypes {
 struct DrasculaGameDescription;
 
 struct RoomTalkAction {
-	int num;
+	int room;
+	int chapter;
 	int action;
 	int objectID;
 	int speechID;
@@ -122,32 +155,32 @@ struct CharInfo {
 	int charType;	// 0 - letters, 1 - signs, 2 - accented
 };
 
-#define CHARMAP_SIZE 93
-#define NUM_SAVES     10
-#define NUM_FLAGS     50
-#define DIF_MASK       55
-#define OBJWIDTH        40
-#define OBJHEIGHT         25
+#define CHARMAP_SIZE	93
+#define NUM_SAVES		10
+#define NUM_FLAGS		50
+#define DIF_MASK		55
+#define OBJWIDTH		40
+#define OBJHEIGHT		25
 
-#define DIF_MASK_HARE   72
-#define DIF_MASK_ABC    22
-#define CHAR_WIDTH     8
-#define CHAR_HEIGHT      6
+#define DIF_MASK_HARE	72
+#define DIF_MASK_ABC	22
+#define CHAR_WIDTH		8
+#define CHAR_HEIGHT		6
 
-#define TALK_HEIGHT  25
-#define TALK_WIDTH 23
-#define STEP_X       8
-#define STEP_Y       3
-#define CHARACTER_HEIGHT   70
-#define CHARACTER_WIDTH  43
-#define FEET_HEIGHT        12
+#define TALK_HEIGHT		25
+#define TALK_WIDTH		23
+#define STEP_X			8
+#define STEP_Y			3
+#define CHARACTER_HEIGHT	70
+#define CHARACTER_WIDTH		43
+#define FEET_HEIGHT		12
 
-#define CHAR_WIDTH_OPC     6
-#define CHAR_HEIGHT_OPC      5
-#define NO_DOOR              99
+#define CHAR_WIDTH_OPC	6
+#define CHAR_HEIGHT_OPC	5
+#define NO_DOOR			99
 
-#define COMPLETE_PAL   256
-#define HALF_PAL       128
+#define COMPLETE_PAL	256
+#define HALF_PAL		128
 
 static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
@@ -176,16 +209,20 @@ public:
 
 	void allocMemory();
 	void freeMemory();
-	void releaseGame();
+	void quitGame();
 
-	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount);
-	void decompressPic(byte *targetSurface, int colorCount);
+	void loadPic(int roomNum, byte *targetSurface, int colorCount = 1) {
+		char rm[20];
+		sprintf(rm, "%i.alg", roomNum);
+		loadPic(rm, targetSurface, colorCount);
+	}
+
+	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount = 1);
 
 	typedef char DacPalette256[256][3];
 
 	void setRGB(byte *dir_lectura, int plt);
-	void paleta_hare();
-	void updatePalette();
+	void assignDefaultPalette();
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
@@ -208,9 +245,9 @@ public:
 	}
 
 	DacPalette256 gamePalette;
-	DacPalette256 palHare;
-	DacPalette256 palHareClaro;
-	DacPalette256 palHareOscuro;
+	DacPalette256 defaultPalette;
+	DacPalette256 brightPalette;
+	DacPalette256 darkPalette;
 
 	byte *VGA;
 
@@ -230,8 +267,7 @@ public:
 
 	Common::ArjFile _arj;
 
-	int hay_sb;
-	int nivel_osc, previousMusic, roomMusic;
+	int previousMusic, roomMusic;
 	int roomNumber;
 	char roomDisk[20];
 	char currentData[20];
@@ -242,10 +278,10 @@ public:
 	char iconName[44][13];
 
 	int objectNum[40], visible[40], isDoor[40];
-	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
+	int roomObjX[40], roomObjY[40], trackObj[40];
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
-	int _destX[40], _destY[40], sentido_alkeva[40], alapuertakeva[40];
+	int _destX[40], _destY[40], trackCharacter_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	int withVoices;
@@ -254,28 +290,28 @@ public:
 	int frame_blind;
 	int frame_snore;
 	int frame_bat;
-	int c_mirar;
-	int c_poder;
+	int curExcuseLook;
+	int curExcuseAction;
 
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int hare_x, hare_y, characterMoved, direccion_hare, sentido_hare, num_frame, hare_se_ve;
-	int sitio_x, sitio_y, checkFlags;
+	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame, hare_se_ve;
+	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
-	int alto_hare, ancho_hare, feetHeight;
+	int curHeight, curWidth, feetHeight;
 	int talkHeight, talkWidth;
-	int suelo_x1, suelo_y1, suelo_x2, suelo_y2;
+	int floorX1, floorY1, floorX2, floorY2;
 	int near, far;
-	int sentido_final, walkToObject;
+	int trackFinal, walkToObject;
 	int objExit;
-	int diff_vez, conta_vez;
+	int timeDiff, startTime;
 	int hasAnswer;
-	int conta_blind_vez;
+	int savedTime;
 	int changeColor;
 	int breakOut;
-	int vb_x, sentido_vb, vb_se_mueve, frame_vb;
+	int vbX, trackVB, vbHasMoved, frame_vb;
 	float newHeight, newWidth;
 	int factor_red[202];
 	int frame_piano;
@@ -283,9 +319,9 @@ public:
 	int frame_candles;
 	int color_solo;
 	int blinking;
-	int igorX, igorY, sentido_igor;
-	int x_dr, y_dr, sentido_dr;
-	int x_bj, y_bj, sentido_bj;
+	int igorX, igorY, trackIgor;
+	int x_dr, y_dr, trackDrascula;
+	int x_bj, y_bj, trackBJ;
 	int cont_sv;
 	int term_int;
 	int currentChapter;
@@ -294,29 +330,217 @@ public:
 	int _color;
 	int musicStopped;
 	char select[23];
-	int hay_seleccion;
+	int selectionMade;
 	int mouseX;
 	int mouseY;
 	int mouseY_ant;
-	int button_izq;
-	int button_dch;
+	int leftMouseButton;
+	int rightMouseButton;
 
-	bool escoba();
+	bool runCurrentChapter();
 	void black();
 	void pickObject(int);
 	void walkUp();
 	void walkDown();
-	void pon_vb();
-	void lleva_vb(int pointX);
+	void moveVB();
+	void placeVB(int pointX);
 	void hipo_sin_nadie(int counter);
 	void openDoor(int nflag, int doorNum);
 	void showMap();
+
+	void setDarkPalette();
+
+	void withoutVerb();
+	void enterRoom(int);
+	void clearRoom();
+	void gotoObject(int, int);
+	void moveCursor();
+	void checkObjects();
+	void selectVerbFromBar();
+	bool verify1();
+	bool verify2();
+	Common::KeyCode getScan();
+	void selectVerb(int);
+	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
+	void volumeControls();
+	bool saveLoadScreen();
+	void print_abc(const char *, int, int);
+	void delay(int ms);
+	bool confirmExit();
+	void screenSaver();
+	void chooseObject(int objeto);
+	void addObject(int);
+	int removeObject(int osj);
+	void playFLI(const char *filefli, int vel);
+	void fadeFromBlack(int fadeSpeed);
+	char adjustToVGA(char value);
+	void color_abc(int cl);
+	void centerText(const char *,int,int);
+	void playSound(int soundNum);
+	bool animate(const char *animation, int FPS);
+	void fadeToBlack(int fadeSpeed);
+	void pause(int);
+	void placeIgor();
+	void placeBJ();
+	void placeDrascula();
+
+	void talkInit(const char *filename);
+	bool isTalkFinished(int* length);
+	void talk_igor(int, int);
+	void talk_drascula(int index, int talkerType = 0);
+	void talk_solo(const char *, const char *);
+	void talk_bartender(int, int talkerType = 0);
+	void talk_pen(const char *, const char *, int);
+	void talk_bj_bed(int);
+	void talk_htel(int);
+	void talk_bj(int);
+	void talk_baul(int);
+	void talk(int);
+	void talk(const char *, const char *);
+	void talk_sync(const char *, const char *, const char *);
+	void talk_drunk(int);
+	void talk_pianist(int);
+	void talk_wolf(int);
+	void talk_mus(int);
+	void talk_dr_grande(int);
+	void talk_vb(int);
+	void talk_vbpuerta(int);
+	void talk_blind(int);
+	void talk_hacker(const char *, const char *);
+
+	void hiccup(int);
+	void finishSound();
+	void stopSound();
+	void closeDoor(int nflag, int doorNum);
+	void playMusic(int p);
+	void stopMusic();
+	int musicStatus();
+	void updateRoom();
+	bool loadGame(const char *);
+	void updateDoor(int);
+	void setDefaultPalette();
+	void setPaletteBase(int darkness);
+	void assignBrightPalette();
+	void assignDarkPalette();
+	void setBrightPalette();
+	void updateVisible();
+	void startWalking();
+	void updateRefresh();
+	void updateRefresh_pre();
+	void moveCharacters();
+	void showMenu();
+	void clearMenu();
+	void removeObject();
+	bool exitRoom(int);
+	bool pickupObject();
+	bool checkAction(int);
+	void setCursorTable();
+	void enterName();
+	bool soundIsActive();
+	void WaitFrameSSN();
+	void MixVideo(byte *OldScreen, byte *NewScreen);
+	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
+	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
+	byte *TryInMem();
+	int playFrameSSN();
+
+	byte *AuxBuffOrg;
+	byte *AuxBuffLast;
+	byte *AuxBuffDes;
+
+	byte *pointer;
+	int UsingMem;
+	byte CHUNK;
+	byte CMP, dacSSN[768];
+	byte *MiVideoSSN;
+	byte *mSession;
+	int FrameSSN;
+	int globalSpeed;
+	uint32 LastFrame;
+
+	int frame_pen;
+	int flag_tv;
+
+	byte *loadPCX(byte *NamePcc);
+	void WaitForNext(int FPS);
+	int getTime();
+	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
+	void quadrant_1();
+	void quadrant_2();
+	void quadrant_3();
+	void quadrant_4();
+	void saveGame(char[]);
+	void increaseFrameNum();
+	int whichObject();
+	bool checkMenuFlags();
+	void setupRoomsTable();
+	bool roomParse(int, int);
+	void converse(int);
+	void print_abc_opc(const char *, int, int, int);
+	void response(int);
+	void activatePendulum();
+
+	void MusicFadeout();
+	void playFile(const char *fname);
+
+	char *getLine(char *buf, int len);
+	void getIntFromLine(char *buf, int len, int* result);
+	void getStringFromLine(char *buf, int len, char* result);
+
+	void grr();
+	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3);
+	void updateAnim2(int y, int px, int py, int width, int height, int count, byte* src);
+
+	void room_0();
+	void room_1(int);
+	void room_2(int);
+	void room_3(int);
+	void room_4(int);
+	void room_5(int);
+	void room_6(int);
+	void room_7(int);
+	void room_8(int);
+	void room_9(int);
+	void room_12(int);
+	bool room_13(int fl);
+	void room_14(int);
+	void room_15(int);
+	void room_16(int);
+	void room_17(int);
+	void room_18(int);
+	void room_19(int);
+	bool room_21(int);
+	void room_22(int);
+	void room_23(int);
+	void room_24(int);
+	void room_26(int);
+	void room_27(int);
+	void room_29(int);
+	void room_30(int);
+	void room_31(int);
+	void room_34(int);
+	void room_35(int);
+	void room_44(int);
+	void room_49(int);
+	void room_53(int);
+	void room_54(int);
+	void room_55(int);
+	bool room_56(int);
+	void room_58(int);
+	void room_59(int);
+	bool room_60(int);
+	void room_61(int);
+	void room_62(int);
+	void room_63(int);
+	void room_102(int);
+
 	void animation_1_1();
 	void animation_2_1();
-	void animation_1_2();
-	void animation_2_2();
 	void animation_3_1();
 	void animation_4_1();
+	//
+	void animation_1_2();
+	void animation_2_2();
 	void animation_3_2();
 	void animation_4_2();
 	void animation_5_2();
@@ -353,232 +577,15 @@ public:
 	void animation_34_2();
 	void animation_35_2();
 	void animation_36_2();
-
-	void update_1_pre();
-	void update_2();
-	void update_3();
-	void update_3_pre();
-	void update_4();
-	void update_5();
-	void update_5_pre();
-	void update_6_pre();
-	void update_7_pre();
-	void update_9_pre();
-	void update_12_pre();
-	void update_14_pre();
-	void update_15();
-	void update_16_pre();
-	void update_17_pre();
-	void update_17();
-	void update_18_pre();
-	void update_18();
-	void update_21_pre();
-	void update_22_pre();
-	void update_23_pre();
-	void update_24_pre();
-	void update_26_pre();
-	void update_26();
-	void update_27();
-	void update_27_pre();
-	void update_29();
-	void update_29_pre();
-	void update_30_pre();
-	void update_31_pre();
-	void update_34_pre();
-	void update_35_pre();
-	void update_31();
-	void update_34();
-	void update_35();
-	void hare_oscuro();
-
-
-	void withoutVerb();
-	bool para_cargar(char[]);
-	void carga_escoba(const char *);
-	void clearRoom();
-	void lleva_al_hare(int, int);
-	void moveCursor();
-	void checkObjects();
-	void elige_en_barra();
-	bool comprueba1();
-	bool comprueba2();
-	Common::KeyCode getScan();
-	void selectVerb(int);
-	void mesa();
-	bool saves();
-	void print_abc(const char *, int, int);
-	void delay(int ms);
-	bool confirmExit();
-	void screenSaver();
-	void chooseObject(int objeto);
-	void addObject(int);
-	int removeObject(int osj);
-	void fliplay(const char *filefli, int vel);
-	void fadeFromBlack(int fadeSpeed);
-	char adjustToVGA(char value);
-	void color_abc(int cl);
-	void centerText(const char *,int,int);
-	void playSound(int soundNum);
-	bool animate(const char *animation, int FPS);
-	void fadeToBlack(int fadeSpeed);
-	void pause(int);
-	void placeIgor();
-	void placeBJ();
-	void placeDrascula();
-
-	void talkInit(const char *filename);
-	bool isTalkFinished(int* length);
-	void talk_igor(int, int);
-	void talk_drascula(int index, int talkerType = 0);
-	void talk_solo(const char *, const char *);
-	void talk_bartender(int, int talkerType = 0);
-	void talk_pen(const char *, const char *, int);
-	void talk_bj_bed(int);
-	void talk_htel(int);
-	void talk_bj(int);
-	void talk_baul(int);
-	void talk(int);
-	void talk(const char *, const char *);
-	void talk_sinc(const char *, const char *, const char *);
-	void talk_drunk(int);
-	void talk_pianist(int);
-	void talk_wolf(int);
-	void talk_mus(int);
-	void talk_dr_grande(int);
-	void talk_vb(int);
-	void talk_vbpuerta(int);
-	void talk_blind(int);
-	void talk_hacker(const char *, const char *);
-
-	void hiccup(int);
-	void finishSound();
-	void stopSound();
-	void closeDoor(int nflag, int doorNum);
-	void playMusic(int p);
-	void stopMusic();
-	int musicStatus();
-	void updateRoom();
-	bool loadGame(const char *);
-	void updateDoor(int);
-	void color_hare();
-	void funde_hare(int oscuridad);
-	void paleta_hare_claro();
-	void paleta_hare_oscuro();
-	void hare_claro();
-	void updateVisible();
-	void startWalking();
-	void updateRefresh();
-	void updateRefresh_pre();
-	void pon_hare();
-	void showMenu();
-	void clearMenu();
-	void removeObject();
-	bool exitRoom(int);
-	bool pickupObject();
-	bool checkFlag(int);
-	void setCursorTable();
-	void enterName();
-	void para_grabar(char[]);
-	bool soundIsActive();
-	void openSSN(const char *Name, int Pause);
-	void WaitFrameSSN();
-	void MixVideo(byte *OldScreen, byte *NewScreen);
-	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
-	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
-	void set_dacSSN(byte *dacSSN);
-	byte *TryInMem();
-	void EndSSN();
-	int playFrameSSN();
-
-	byte *AuxBuffOrg;
-	byte *AuxBuffLast;
-	byte *AuxBuffDes;
-
-	byte *pointer;
-	int UsingMem;
-	byte CHUNK;
-	byte CMP, dacSSN[768];
-	byte *MiVideoSSN;
-	byte *mSession;
-	int FrameSSN;
-	int globalSpeed;
-	uint32 LastFrame;
-
-	int frame_pen;
-	int flag_tv;
-
-	byte *loadPCX(byte *NamePcc);
-	void set_dac(byte *dac);
-	void WaitForNext(int FPS);
-	int getTime();
-	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
-	void quadrant_1();
-	void quadrant_2();
-	void quadrant_3();
-	void quadrant_4();
-	void update_62();
-	void update_62_pre();
-	void update_63();
-	void saveGame(char[]);
-	void increaseFrameNum();
-	int whichObject();
-	bool checkMenuFlags();
-	bool roomParse(RoomTalkAction*, int);
-	void room_0();
-	void room_1(int);
-	void room_2(int);
-	void room_3(int);
-	void room_4(int);
-	void room_5(int);
-	void room_6(int);
-	void room_7(int);
-	void room_8(int);
-	void room_9(int);
-	void room_12(int);
-	void room_14(int);
-	void room_15(int);
-	void room_16(int);
-	void room_17(int);
-	void room_18(int);
-	void room_19(int);
-	bool room_21(int);
-	void room_22(int);
-	void room_23(int);
-	void room_24(int);
-	void room_26(int);
-	void room_27(int);
-	void room_29(int);
-	void room_30(int);
-	void room_31(int);
-	void room_34(int);
-	void room_35(int);
-	void room_44(int);
-	void room_62(int);
-	void room_63(int);
-	void converse(const char *);
-	void print_abc_opc(const char *, int, int, int);
-	void response(int);
-
-	void MusicFadeout();
-	void playFile(const char *fname);
-
-	char *getLine(char *buf, int len);
-	void getIntFromLine(char *buf, int len, int* result);
-	void getStringFromLine(char *buf, int len, char* result);
-
-	void grr();
-	bool room_13(int fl);
-	void update_13();
-	void update_20();
-	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3);
-	void updateAnim2(int y, int px, int py, int width, int height, int count, byte* src);
+	//
 	void animation_1_3();
 	void animation_2_3();
 	void animation_3_3();
 	void animation_4_3();
 	void animation_5_3();
 	void animation_6_3();
-	void animation_rayo();
+	void animation_ray();
+	//
 	void animation_1_4();
 	void animation_2_4();
 	void animation_3_4();
@@ -588,6 +595,7 @@ public:
 	void animation_7_4();
 	void animation_8_4();
 	void animation_9_4();
+	//
 	void animation_1_5();
 	void animation_2_5();
 	void animation_3_5();
@@ -605,29 +613,7 @@ public:
 	void animation_15_5();
 	void animation_16_5();
 	void animation_17_5();
-	void room_49(int);
-	void room_53(int);
-	void room_54(int);
-	void room_55(int);
-	bool room_56(int);
-	void update_53_pre();
-	void update_54_pre();
-	void update_49_pre();
-	void update_56_pre();
-	void update_50();
-	void update_57();
-	void room_58(int);
-	void room_59(int);
-	bool room_60(int);
-	void room_61(int);
-	void room_pendulum(int);
-	void update_pendulum();
-	void update_58();
-	void update_58_pre();
-	void update_59_pre();
-	void update_60_pre();
-	void update_60();
-	void update_61();
+	//
 	void animation_1_6();
 	void animation_2_6();
 	void animation_3_6();
@@ -644,7 +630,60 @@ public:
 	void animation_15_6();
 	void animation_18_6();
 	void animation_19_6();
-	void activatePendulum();
+
+	void update_1_pre();
+	void update_2();
+	void update_3();
+	void update_3_pre();
+	void update_4();
+	void update_5();
+	void update_5_pre();
+	void update_6_pre();
+	void update_7_pre();
+	void update_9_pre();
+	void update_12_pre();
+	void update_14_pre();
+	void update_13();
+	void update_15();
+	void update_16_pre();
+	void update_17_pre();
+	void update_17();
+	void update_18_pre();
+	void update_18();
+	void update_20();
+	void update_21_pre();
+	void update_22_pre();
+	void update_23_pre();
+	void update_24_pre();
+	void update_26_pre();
+	void update_26();
+	void update_27();
+	void update_27_pre();
+	void update_29();
+	void update_29_pre();
+	void update_30_pre();
+	void update_31_pre();
+	void update_34_pre();
+	void update_35_pre();
+	void update_31();
+	void update_34();
+	void update_35();
+	void update_49_pre();
+	void update_53_pre();
+	void update_54_pre();
+	void update_56_pre();
+	void update_50();
+	void update_57();
+	void update_58();
+	void update_58_pre();
+	void update_59_pre();
+	void update_60_pre();
+	void update_60();
+	void update_61();
+	void update_62();
+	void update_62_pre();
+	void update_63();
+	void update_102();
 
 private:
 	int _lang;
@@ -669,7 +708,7 @@ extern const char *_textd1[][11];
 extern const ItemLocation itemLocations[];
 extern int frame_x[20];
 extern const int x_pol[44], y_pol[44];
-extern const int x_barra[];
+extern const int verbBarX[];
 extern const int x1d_menu[], y1d_menu[];
 
 extern const CharInfo charMap[];

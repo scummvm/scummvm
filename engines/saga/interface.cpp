@@ -326,6 +326,9 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_statusTextInputState = kStatusTextInputFirstRun;
 
 	_disableAbortSpeeches = false;
+
+	// set save game reminder alarm
+	_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
 }
 
 Interface::~Interface(void) {
@@ -334,6 +337,22 @@ Interface::~Interface(void) {
 	_mainPanel.sprites.freeMem();
 	_defPortraits.freeMem();
 	_scenePortraits.freeMem();
+}
+
+void Interface::saveReminderCallback(void *refCon) {
+	((Interface *)refCon)->updateSaveReminder();
+}
+
+void Interface::updateSaveReminder() {
+	// TODO: finish this
+	/*
+	if (_active && _panelMode == kPanelMain) {
+		_vm->_timer->removeTimerProc(&saveReminderCallback);
+		_saveReminderState = (_saveReminderState == 0) ? 1 : 0;
+		drawStatusBar();
+		_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+	}
+	*/
 }
 
 int Interface::activate() {

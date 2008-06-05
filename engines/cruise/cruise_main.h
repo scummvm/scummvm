@@ -45,7 +45,6 @@
 #include "cruise/stack.h"
 #include "cruise/script.h"
 #include "cruise/various.h"
-#include "cruise/stringSupport.h"
 #include "cruise/function.h"
 #include "cruise/saveload.h"
 #include "cruise/linker.h"

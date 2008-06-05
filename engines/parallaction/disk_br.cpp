@@ -139,12 +139,19 @@ DosDisk_br::~DosDisk_br() {
 }
 
 Frames* DosDisk_br::loadTalk(const char *name) {
-	debugC(5, kDebugDisk, "DosDisk_br::loadTalk");
+	debugC(5, kDebugDisk, "DosDisk_br::loadTalk(%s)", name);
+
+	Common::File stream;
 
 	char path[PATH_LEN];
-	sprintf(path, "%s/tal/%s.tal", _partPath, name);
+	sprintf(path, "%s/tal/%s", _partPath, name);
+	if (!stream.open(path)) {
+		sprintf(path, "%s/tal/%s.tal", _partPath, name);
+		if (!stream.open(path))
+			errorFileNotFound(path);
+	}
 
-	return createSprites(path);
+	return createSprites(stream);
 }
 
 Script* DosDisk_br::loadLocation(const char *name) {
@@ -252,12 +259,7 @@ Frames* DosDisk_br::loadStatic(const char* name) {
 	return new SurfaceToFrames(surf);
 }
 
-Sprites* DosDisk_br::createSprites(const char *path) {
-
-	Common::File	stream;
-	if (!stream.open(path)) {
-		errorFileNotFound(path);
-	}
+Sprites* DosDisk_br::createSprites(Common::ReadStream &stream) {
 
 	uint16 num = stream.readUint16LE();
 
@@ -284,7 +286,12 @@ Frames* DosDisk_br::loadFrames(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s/ani/%s", _partPath, name);
 
-	return createSprites(path);
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+
+	return createSprites(stream);
 }
 
 // Slides in Nippon Safes are basically screen-sized pictures with valid

@@ -369,6 +369,14 @@
 	#define STRINGBUFLEN 256
 	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
 
+#elif defined(__WII__)
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define	SCUMM_BIG_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
+
 #else
 	#error No system type defined
 

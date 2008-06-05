@@ -27,25 +27,21 @@
 
 namespace Drascula {
 
+int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
+int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
+
 void DrasculaEngine::talkInit(const char *filename) {
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
 
-	if (hay_sb == 1)
-		playFile(filename);
+	playFile(filename);
 }
 
 bool DrasculaEngine::isTalkFinished(int* length) {
 	byte key = getScan();
 	if (key != 0)
 		stopSound();
-	if (hay_sb == 1) {
-		if (soundIsActive())
-			return false;
-	} else {
-		length -= 2;
-		if (length > 0)
-			return false;
-	}
+	if (soundIsActive())
+		return false;
 
 	return true;
 }
@@ -112,7 +108,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			updateScreen();
 		} else if (talkerType == 3) {
 			copyBackground(x_talk3[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
-			pon_hare();
+			moveCharacters();
 			updateRefresh();
 			if (withVoices == 0)
 				centerText(said, 221, 102);
@@ -121,7 +117,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			pause(3);
 		} else if (talkerType == 4) {
 			copyBackground(x_talk4[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
-			pon_hare();
+			moveCharacters();
 			updateRefresh();
 			if (withVoices == 0)
 				centerText(said, 221, 102);
@@ -169,7 +165,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 		placeIgor();
 		placeDrascula();
 		if (currentChapter == 6)
-			pon_hare();
+			moveCharacters();
 
 		copyBackground(x_dr, y_dr, x_dr, y_dr, 38 + offset, 31, drawSurface1, screenSurface);
 		if (currentChapter == 6)
@@ -198,7 +194,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 	placeDrascula();
 
 	if (talkerType == 1 && currentChapter == 6)
-		pon_hare();
+		moveCharacters();
 
 	updateScreen();
 }
@@ -278,7 +274,7 @@ void DrasculaEngine::talk_bartender(int index, int talkerType) {
 			copyBackground(x_talk[face], 2, 121, 44, 21, 24, extraSurface, screenSurface);
 		else
 			copyBackground(x_talk[face], 130, 151, 43, 21, 24, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -318,7 +314,7 @@ void DrasculaEngine::talk_bj(int index) {
 
 			copyRect(x_talk[face], 99, x_bj + 2, y_bj - 1, 27, 40,
 					 drawSurface3, screenSurface);
-			pon_hare();
+			moveCharacters();
 			updateRefresh();
 
 			if (withVoices == 0)
@@ -348,13 +344,11 @@ void DrasculaEngine::talk(int index) {
 }
 
 void DrasculaEngine::talk(const char *said, const char *filename) {
-	int suma_1_pixel = 0;
+	int talkOffset = 0;
 	if (currentChapter != 2)
-		suma_1_pixel = 1;
+		talkOffset = 1;
 
 	int y_mask_talk = 170;
-	int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
-	int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
 	int face;
 	int length = strlen(said);
 
@@ -370,8 +364,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	}
 
 	if (currentChapter != 2) {
-		if (factor_red[hare_y + alto_hare] == 100)
-			suma_1_pixel = 0;
+		if (factor_red[curY + curHeight] == 100)
+			talkOffset = 0;
 	}
 
 	if (currentChapter == 4) {
@@ -391,65 +385,65 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, talkHeight - 1, screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
 		else
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]),
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
 						   screenSurface, drawSurface3);
 
-		pon_hare();
+		moveCharacters();
 
 		if (currentChapter == 2) {
 			if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
-				copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, talkHeight - 1, drawSurface3, screenSurface);
+				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
 		} else {
-			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]),
+			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
 						   drawSurface3, screenSurface);
 		}
 
-		if (sentido_hare == 0) {
+		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, talkWidth, talkHeight,
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight,
 						extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_izq[face], y_mask_talk, hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare],
+				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
+						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
 						extraSurface, screenSurface);
 
 			updateRefresh();
-		} else if (sentido_hare == 1) {
+		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight,
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_dch[face], y_mask_talk, hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-					hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
+					curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 2) {
+		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight,
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						suma_1_pixel + hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare],
+						talkOffset + curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
+						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
 						frontSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 3) {
+		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, talkWidth, talkHeight,
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						suma_1_pixel + hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
-						hare_y, talkWidth,talkHeight, factor_red[hare_y + alto_hare],
+						talkOffset + curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
+						curY, talkWidth,talkHeight, factor_red[curY + curHeight],
 						frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, hare_x, hare_y);
+			centerText(said, curX, curY);
 
 		updateScreen();
 
@@ -486,7 +480,7 @@ void DrasculaEngine::talk_pianist(int index) {
 
 		copyBackground(x_talk[face], 139, 228, 112, 47, 60,
 					   extraSurface, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -509,9 +503,8 @@ void DrasculaEngine::talk_drunk(int index) {
 	int face;
 	int length = strlen(said);
 
-	if (currentChapter == 1) {
-		loadPic("an11y13.alg", frontSurface, 1);
-	}
+	if (currentChapter == 1)
+		loadPic("an11y13.alg", frontSurface);
 
 	flags[13] = 1;
 
@@ -532,7 +525,7 @@ void DrasculaEngine::talk_drunk(int index) {
 		updateRefresh_pre();
 
 		copyBackground(x_talk[face], 29, 177, 50, 19, 19, frontSurface, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -547,9 +540,8 @@ void DrasculaEngine::talk_drunk(int index) {
 	updateScreen();
 
 	flags[13] = 0;
-	if (currentChapter == 1) {
-		loadPic("96.alg", frontSurface, 1);
-	}
+	if (currentChapter == 1)
+		loadPic("96.alg", frontSurface);
 
 	if (currentChapter == 1) {
 		if (musicStatus() == 0 && flags[11] == 0)
@@ -572,23 +564,23 @@ void DrasculaEngine::talk_vb(int index) {
 
 	talkInit(filename);
 
-	copyBackground(vb_x + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
+	copyBackground(vbX + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
 
 	do {
-		if (sentido_vb == 1) {
+		if (trackVB == 1) {
 			face = _rnd->getRandomNumber(5);
 			copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
-			pon_hare();
-			pon_vb();
+			moveCharacters();
+			moveVB();
 
-			copyBackground(OBJWIDTH + 1, 0, vb_x + 5, 64, 25, 27, drawSurface3, screenSurface);
-			copyRect(x_talk[face], 34, vb_x + 5, 64, 25, 27, frontSurface, screenSurface);
+			copyBackground(OBJWIDTH + 1, 0, vbX + 5, 64, 25, 27, drawSurface3, screenSurface);
+			copyRect(x_talk[face], 34, vbX + 5, 64, 25, 27, frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, vb_x, 66);
+			centerText(said, vbX, 66);
 
 		updateScreen();
 
@@ -633,7 +625,7 @@ void DrasculaEngine::talk_blind(int index) {
 	char filename[20];
 	sprintf(filename, "d%i.als", index + TEXTD_START - 1);
 	const char *said = _textd[_lang][index + TEXTD_START - 1];
-	const char *sincronia = _textd1[_lang][index - 1];
+	const char *syncChar = _textd1[_lang][index - 1];
 
 	byte *faceBuffer;
 	int p = 0;
@@ -656,7 +648,7 @@ void DrasculaEngine::talk_blind(int index) {
 	do {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		pos_blind[5] = 149;
-		char c = toupper(sincronia[p]);
+		char c = toupper(syncChar[p]);
 
 		if (c == '0' || c == '2' || c == '4' || c == '6')
 			pos_blind[0] = 1;
@@ -722,7 +714,7 @@ void DrasculaEngine::talk_wolf(int index) {
 		updateRefresh_pre();
 
 		copyBackground(x_talk[face], 136, 198, 81, 26, 24, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -757,7 +749,7 @@ void DrasculaEngine::talk_mus(int index) {
 		updateRefresh_pre();
 
 		copyBackground(x_talk[face], 156, 190, 64, 18, 24, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -846,7 +838,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 
 		copyBackground(65, 103, 65, 103, 49, 38, drawSurface1, screenSurface);
 		copyRect(x_talk[face], 105, 65, 103, 49, 38, drawSurface3, screenSurface);
-		pon_hare();
+		moveCharacters();
 		updateRefresh();
 
 		if (withVoices == 0)
@@ -900,19 +892,18 @@ void DrasculaEngine::talk_htel(int index) {
 	updateScreen();
 }
 
-void DrasculaEngine::talk_sinc(const char *said, const char *filename, const char *sincronia) {
-	int suma_1_pixel = 1;
+void DrasculaEngine::talk_sync(const char *said, const char *filename, const char *syncChar) {
+	int talkOffset = 1;
 	int y_mask_talk = 170;
-	int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
-	int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 	int p, face = 0;
 	int length = strlen(said);
+	char buf[2];
 
 	color_abc(kColorYellow);
 
 	if (currentChapter == 1) {
-		if (factor_red[hare_y + alto_hare] == 100)
-			suma_1_pixel = 0;
+		if (factor_red[curY + curHeight] == 100)
+			talkOffset = 0;
 	}
 
 	p = 0;
@@ -920,58 +911,59 @@ void DrasculaEngine::talk_sinc(const char *said, const char *filename, const cha
 	talkInit(filename);
 
 	do {
-		face = atoi(&sincronia[p]);
+		strncpy(buf, &syncChar[p], 1);
+		face = atoi(buf);
 
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, ancho_hare, talkHeight - 1, screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
 		else
-			copyBackground(hare_x, hare_y, OBJWIDTH + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]), screenSurface, drawSurface3);
-		pon_hare();
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
+		moveCharacters();
 		if (currentChapter == 2) {
-			if (alto_hare != 56)
-				copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, ancho_hare, talkHeight - 1, drawSurface3, screenSurface);
+			if (curHeight != 56)
+				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
 		} else
-			copyBackground(OBJWIDTH + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
-				(int)(((float)(talkHeight - 1) / 100) * factor_red[hare_y + alto_hare]), drawSurface3, screenSurface);
+			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
+				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
 
-		if (sentido_hare == 0) {
+		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 8, hare_y - 1, talkWidth, talkHeight, extraSurface, screenSurface);
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(curX + (8.0f / 100) * factor_red[curY + curHeight]),
+							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 1) {
+		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight, extraSurface, screenSurface);
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]),
-							hare_y, talkWidth, talkHeight, factor_red[hare_y + alto_hare], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(curX + (12.0f / 100) * factor_red[curY + curHeight]),
+							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 2) {
+		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, hare_x + 12, hare_y, talkWidth, talkHeight, frontSurface, screenSurface);
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						(int)(suma_1_pixel + hare_x + (12.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						talkWidth, talkHeight, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
+						(int)(talkOffset + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
+						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
-		} else if (sentido_hare == 3) {
+		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, hare_x + 8, hare_y, talkWidth, talkHeight, frontSurface, screenSurface);
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						(int)(suma_1_pixel + hare_x + (8.0f / 100) * factor_red[hare_y + alto_hare]), hare_y,
-						talkWidth, talkHeight, factor_red[hare_y + alto_hare], frontSurface, screenSurface);
+						(int)(talkOffset + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
+						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, hare_x, hare_y);
+			centerText(said, curX, curY);
 
 		updateScreen();
 

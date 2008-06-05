@@ -209,7 +209,7 @@ protected:
 protected:
 	void errorFileNotFound(const char *s);
 	Font *createFont(const char *name, Common::ReadStream &stream);
-	Sprites*	createSprites(const char *name);
+	Sprites*	createSprites(Common::ReadStream &stream);
 	void loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette);
 
 public:

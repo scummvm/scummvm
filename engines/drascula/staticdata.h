@@ -116,7 +116,7 @@ const int y_pol[44] = {0, 1, 1, 1, 1, 1, 1, 1, 27, 27, 1,
 						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
 						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
 						27, 1, 1};
-const int x_barra[] = {6, 51, 96, 141, 186, 232, 276, 321};
+const int verbBarX[] = {6, 51, 96, 141, 186, 232, 276, 321};
 const int x1d_menu[] = {280, 40, 80, 120, 160, 200, 240, 0, 40, 80, 120,
 						160, 200, 240, 0, 40, 80, 120, 160, 200, 240, 0,
 						40, 80, 120, 160, 200, 240, 0};
@@ -127,174 +127,426 @@ int frame_x[20] = {43, 87, 130, 173, 216, 259};
 
 // Note: default action needs to be LAST for each group
 // of actions with the same number
-RoomTalkAction room0Actions[] = {
-	// num	action			object	speech
-	{ 1,	kVerbLook,		-1,		 54 },
-	{ 1,	kVerbMove,		-1,		 19 },
-	{ 1,	kVerbPick,		-1,		 11 },
-	{ 1,	kVerbOpen,		-1,		  9 },
-	{ 1,	kVerbClose,		-1,		  9 },
-	{ 1,	kVerbTalk,		-1,		 16 },
-	{ 1,	kVerbDefault,	-1,		 11 },
+RoomTalkAction roomActions[] = {
+	//room	num	action			object	speech
+	{ 0,	1, 	kVerbLook,		-1,		 54 },
+	{ 0,	1,	kVerbMove,		-1,		 19 },
+	{ 0,	1,	kVerbPick,		-1,		 11 },
+	{ 0,	1,	kVerbOpen,		-1,		  9 },
+	{ 0,	1,	kVerbClose,		-1,		  9 },
+	{ 0,	1,	kVerbTalk,		-1,		 16 },
+	{ 0,	1,	kVerbDefault,	-1,		 11 },
 	// ----------------------------------
-	{ 2,	kVerbMove,		-1,		 19 },
-	{ 2,	kVerbOpen,		-1,		  9 },
-	{ 2,	kVerbClose,		-1,		  9 },
-	{ 2,	kVerbTalk,		-1,		 16 },
+	{ 0,	2,	kVerbMove,		-1,		 19 },
+	{ 0,	2,	kVerbOpen,		-1,		  9 },
+	{ 0,	2,	kVerbClose,		-1,		  9 },
+	{ 0,	2,	kVerbTalk,		-1,		 16 },
 	// ----------------------------------
-	{ 3,	kVerbLook,		-1,		316 },
-	{ 3,	kVerbMove,		-1,		317 },
-	{ 3,	kVerbPick,		-1,		318 },
-	{ 3,	kVerbOpen,		-1,		319 },
-	{ 3,	kVerbClose,		-1,		319 },
-	{ 3,	kVerbTalk,		-1,		320 },
-	{ 3,	kVerbDefault,	-1,		318 },
+	{ 0,	3,	kVerbLook,		-1,		316 },
+	{ 0,	3,	kVerbMove,		-1,		317 },
+	{ 0,	3,	kVerbPick,		-1,		318 },
+	{ 0,	3,	kVerbOpen,		-1,		319 },
+	{ 0,	3,	kVerbClose,		-1,		319 },
+	{ 0,	3,	kVerbTalk,		-1,		320 },
+	{ 0,	3,	kVerbDefault,	-1,		318 },
 	// ----------------------------------
-	{ 4,	kVerbMove,		-1,		 19 },
-	{ 4,	kVerbOpen,		-1,		  9 },
-	{ 4,	kVerbClose,		-1,		  9 },
-	{ 4,	kVerbTalk,		-1,		 16 },
+	{ 0,	4,	kVerbMove,		-1,		 19 },
+	{ 0,	4,	kVerbOpen,		-1,		  9 },
+	{ 0,	4,	kVerbClose,		-1,		  9 },
+	{ 0,	4,	kVerbTalk,		-1,		 16 },
 	// ----------------------------------
-	{ 5,	kVerbOpen,		-1,		  9 },
-	{ 5,	kVerbClose,		-1,		  9 },
-	{ 5,	kVerbTalk,		-1,		 16 },
+	{ 0,	5,	kVerbOpen,		-1,		  9 },
+	{ 0,	5,	kVerbClose,		-1,		  9 },
+	{ 0,	5,	kVerbTalk,		-1,		 16 },
 	// ----------------------------------
-	{ 6,	kVerbMove,		-1,		 19 },
-	{ 6,	kVerbOpen,		-1,		  9 },
-	{ 6,	kVerbClose,		-1,		  9 },
-	{ 6,	kVerbTalk,		-1,		 16 }
-};
+	{ 0,	6,	kVerbMove,		-1,		 19 },
+	{ 0,	6,	kVerbOpen,		-1,		  9 },
+	{ 0,	6,	kVerbClose,		-1,		  9 },
+	{ 0,	6,	kVerbTalk,		-1,		 16 },
+	// ==================================
+	{ 1,	-1,	kVerbPick,		118,	  5 },
+	{ 1,	-1,	kVerbOpen,		118,	  3 },
+	{ 1,	-1,	kVerbClose,		118,	  4 },
+	{ 1,	-1,	kVerbTalk,		118,	  6 },
+	// ----------------------------------
+	{ 1,	-1,	kVerbLook,		119,	  8 },
+	{ 1,	-1,	kVerbMove,		119,	 13 },
+	{ 1,	-1,	kVerbClose,		119,	 10 },
+	{ 1,	-1,	kVerbTalk,		119,	 12 },
+	// ----------------------------------
+	{ 1,	-1,	kVerbMove,		120,	 13 },
+	{ 1,	-1,	kVerbOpen,		120,	 18 },
+	{ 1,	-1,	kVerbTalk,		120,	 15 },
+	// ==================================
+	{ 3,	-1,	kVerbLook,		129,	 21 },
+	{ 3,	-1,	kVerbPick,		129,	  5 },
+	{ 3,	-1,	kVerbMove,		129,	 24 },
+	{ 3,	-1,	kVerbOpen,		129,	 22 },
+	{ 3,	-1,	kVerbClose,		129,	 10 },
+	// ----------------------------------
+	{ 3,	-1,	kVerbLook,		131,	 27 },
+	{ 3,	-1,	kVerbPick,		131,	  5 },
+	{ 3,	-1,	kVerbMove,		131,	 24 },
+	{ 3,	-1,	kVerbOpen,		131,	 22 },
+	{ 3,	-1,	kVerbClose,		131,	 10 },
+	{ 3,	-1,	kVerbTalk,		131,	 23 },
+	// ----------------------------------
+	{ 3,	-1,	kVerbLook,		132,	 28 },
+	{ 3,	-1,	kVerbPick,		132,	  5 },
+	{ 3,	-1,	kVerbMove,		132,	 24 },
+	{ 3,	-1,	kVerbOpen,		132,	 22 },
+	{ 3,	-1,	kVerbClose,		132,	 10 },
+	{ 3,	-1,	kVerbTalk,		132,	 23 },
+	// ----------------------------------
+	{ 3,	-1,	kVerbLook,		133,	321 },
+	{ 3,	-1,	kVerbPick,		133,	 31 },
+	{ 3,	-1,	kVerbMove,		133,	 34 },
+	{ 3,	-1,	kVerbOpen,		133,	 30 },
+	{ 3,	-1,	kVerbClose,		133,	 10 },
+	// ----------------------------------
+	{ 3,	-1,	kVerbLook,		166,	 55 },
+	{ 3,	-1,	kVerbPick,		166,	  7 },
+	// ----------------------------------
+	{ 3,	-1,	kVerbLook,		211,	184 },
+	// ==================================
+	{ 4,	-1,	kVerbLook,		189,	182 },
+	// ----------------------------------
+	{ 4,	-1,	kVerbLook,		207,	175 },
+	{ 4,	-1,	kVerbTalk,		207,	176 },
+	// ----------------------------------
+	{ 4,	-1,	kVerbLook,		208,	177 },
+	// ----------------------------------
+	{ 4,	-1,	kVerbLook,		209,	179 },
+	// ----------------------------------
+	{ 4,	-1,	kVerbLook,		210,	180 },
+	{ 4,	-1,	kVerbOpen,		210,	181 },
+	// ==================================
+	{ 5,	-1,	kVerbMove,		136,	 13 },
+	{ 5,	-1,	kVerbOpen,		136,	 18 },
+	{ 5,	-1,	kVerbTalk,		136,	 15 },
+	// ----------------------------------
+	{ 5,	-1,	kVerbLook,		212,	187 },
+	{ 5,	-1,	kVerbTalk,		212,	188 },
+	// ----------------------------------
+	{ 5,	-1,	kVerbLook,		213,	189 },
+	{ 5,	-1,	kVerbOpen,		213,	190 },
+	// ==================================
+	{ 6,	-1,	kVerbPick,		144,	 43 },
+	// ----------------------------------
+	{ 6,	-1,	kVerbLook,		138,	 35 },
+	{ 6,	-1,	kVerbTalk,		138,	  6 },
+	// ----------------------------------
+	{ 6,	-1,	kVerbLook,		143,	 37 },
+	{ 6,	-1,	kVerbPick,		143,	  7 },
+	{ 6,	-1,	kVerbMove,		143,	  7 },
+	{ 6,	-1,	kVerbTalk,		143,	 38 },
+	// ----------------------------------
+	{ 6,	-1,	kVerbLook,		139,	 36 },
+	// ----------------------------------
+	{ 6,	-1,	kVerbLook,		140,	147 },
+	// ==================================
+	{ 7,	-1,	kVerbLook,		164,	 35 },
+	// ----------------------------------
+	{ 7,	-1,	kVerbLook,		169,	 44 },
+	// ==================================
+	{ 9,	-1,	kVerbLook,		150,	 35 },
+	{ 9,	-1,	kVerbTalk,		150,	  6 },
+	// ----------------------------------
+	{ 9,	-1,	kVerbLook,		 51,	 60 },
+	// ==================================
+	{ 12,	-1,	kVerbLook,		154,	329 },
+	{ 12,	-1,	kVerbTalk,		154,	330 },
+	// ----------------------------------
+	{ 12,	-1,	kVerbMove,		155,	 48 },
+	{ 12,	-1,	kVerbTalk,		155,	331 },
+	// ----------------------------------
+	{ 12,	-1,	kVerbLook,		156,	 35 },
+	{ 12,	-1,	kVerbMove,		156,	 48 },
+	{ 12,	-1,	kVerbTalk,		156,	 50 },
+	// ==================================
+	{ 14,	-1,	kVerbLook,		200,	165 },
+	// ----------------------------------
+	{ 14,	-1,	kVerbLook,		201,	166 },
+	// ----------------------------------
+	{ 14,	-1,	kVerbLook,		202,	167 },
+	// ----------------------------------
+	{ 14,	-1,	kVerbLook,		203,	168 },
+	{ 14,	-1,	kVerbPick,		203,	170 },
+	{ 14,	-1,	kVerbMove,		203,	170 },
+	{ 14,	-1,	kVerbTalk,		203,	169 },
+	// ----------------------------------
+	{ 14,	-1,	kVerbLook,		204,	171 },
+	// ==================================
+	{ 15,	-1,	kVerbTalk,		188,	333 },
+	{ 15,	-1,	kVerbLook,		188,	334 },
+	// ----------------------------------
+	{ 15,	-1,	kVerbLook,		205,	172 },
+	// ----------------------------------
+	{ 15,	-1,	kVerbLook,		206,	173 },
+	{ 15,	-1,	kVerbMove,		206,	174 },
+	{ 15,	-1,	kVerbOpen,		206,	174 },
+	// ==================================
+	{ 16,	-1,	kVerbTalk,		163,	  6 },
+	// ----------------------------------
+	{ 16,	-1,	kVerbLook,		183,	340 },
+	// ----------------------------------
+	{ 16,	-1,	kVerbLook,		185,	 37 },
+	{ 16,	-1,	kVerbPick,		185,	  7 },
+	{ 16,	-1,	kVerbMove,		185,	  7 },
+	{ 16,	-1,	kVerbTalk,		185,	 38 },
+	// ----------------------------------
+	{ 16,	-1,	kVerbTalk,		187,	345 },
+	// ==================================
+	{ 18,	-1,	kVerbLook,		181,	348 },
+	// ----------------------------------
+	{ 18,	-1,	kVerbLook,		182,	154 },
+	// ==================================
+	{ 19,	-1,	kVerbLook,		214,	191 },
+	// ==================================
+	{ 22,	-1,	kVerbPick,		140,	  7 },
+	// ----------------------------------
+	{ 22,	-1,	kVerbLook,		 52,	497 },
+	{ 22,	-1,	kVerbTalk,		 52,	498 },
+	// ==================================
+	{ 24,	-1,	kVerbLook,		151,	461 },
+	// ==================================
+	{ 26,	-1,	kVerbOpen,		167,	467 },
+	// ----------------------------------
+	{ 26,	-1,	kVerbLook,		164,	470 },
+	{ 26,	-1,	kVerbOpen,		164,	471 },
+	// ----------------------------------
+	{ 26,	-1,	kVerbLook,		163,	472 },
+	{ 26,	-1,	kVerbPick,		163,	473 },
+	// ----------------------------------
+	{ 26,	-1,	kVerbLook,		165,	474 },
+	// ----------------------------------
+	{ 26,	-1,	kVerbLook,		168,	476 },
+	{ 26,	-1,	kVerbPick,		168,	477 },
+	// ==================================
+	{ 29,	-1,	kVerbLook,		152,	463 },
+	{ 29,	-1,	kVerbOpen,		152,	464 },
+	// ----------------------------------
+	{ 29,	-1,	kVerbLook,		153,	465 },
+	// ----------------------------------
+	{ 29,	-1,	kVerbPick,		154,	466 },
+	// ----------------------------------
+	{ 29,	-1,	kVerbOpen,		156,	467 },
+	// ==================================
+	{ 30,	-1,	kVerbOpen,		157,	468 },
+	// ----------------------------------
+	{ 30,	-1,	kVerbLook,		158,	469 },
+	// ==================================
+	{ 31,	-1,	kVerbLook,		161,	470 },
+	{ 31,	-1,	kVerbOpen,		161,	471 },
+	// ==================================
+	{ 34,	-1,	kVerbLook,		146,	458 },
+	{ 34,	-1,	kVerbPick,		146,	459 },
+	// ==================================
+	{ 44,	-1,	kVerbLook,		172,	428 },
+	// ==================================
+	{ 49,	-1,	kVerbLook,		 51,	132 },
+	// ----------------------------------
+	{ 49,	-1,	kVerbLook,		200,	133 },
+	{ 49,	-1,	kVerbTalk,		200,	134 },
+	// ----------------------------------
+	{ 49,	-1,	kVerbLook,		201,	135 },
+	// ----------------------------------
+	{ 49,	-1,	kVerbLook,		203,	137 },
+	// ==================================
+	{ 53,	-1,	kVerbLook,		121,	128 },
+	// ----------------------------------
+	{ 53,	-1,	kVerbLook,		209,	129 },
+	// ----------------------------------
+	{ 53,	-1,	kVerbLook,		 52,	447 },
+	{ 53,	-1,	kVerbTalk,		 52,	131 },
+	// ==================================
+	{ 54,	-1,	kVerbLook,		 53,	127 },
+	// ----------------------------------
+	{ 54,	-1,	kVerbOpen,		119,	125 },
+	{ 54,	-1,	kVerbLook,		119,	126 },
+	// ==================================
+	{ 55,	-1,	kVerbLook,		122,	138 },
+	// ----------------------------------
+	{ 55,	-1,	kVerbLook,		204,	139 },
+	// ----------------------------------
+	{ 55,	-1,	kVerbLook,		205,	140 },
+	// ==================================
+	{ 56,	-1,	kVerbLook,		124,	450 },
+	// ----------------------------------
+	{ 56,	-1,	kVerbOpen,		207,	141 },
+	// ----------------------------------
+	{ 56,	-1,	kVerbLook,		208,	142 },
+	// ==================================
+	{ 58,	-1,	kVerbLook,		104,	454 },
+	// ==================================
+	{ 60,	-1,	kVerbLook,		112,	440 },
+	// ----------------------------------
+	{ 60,	-1,	kVerbTalk,		115,	455 },
+	// ----------------------------------
+	{ 60,	-1,	kVerbTalk,		 56,	455 },
+	// ----------------------------------
+	{ 60,	-1,	kVerbLook,		114,	167 },
+	// ----------------------------------
+	{ 60,	-1,	kVerbLook,		113,	168 },
+	{ 60,	-1,	kVerbPick,		113,	170 },
+	{ 60,	-1,	kVerbMove,		113,	170 },
+	{ 60,	-1,	kVerbTalk,		113,	169 },
+	// ==================================
+	{ 61,	-1,	kVerbLook,		116,	172 },
+	// ----------------------------------
+	{ 61,	-1,	kVerbLook,		117,	173 },
+	// ----------------------------------
+	{ 61,	-1,	kVerbMove,		117,	174 },
+	{ 61,	-1,	kVerbOpen,		117,	174 },
+	{ 62,	-1,	kVerbLook,		100,	168 },
+	{ 62,	-1,	kVerbTalk,		100,	169 },
+	{ 62,	-1,	kVerbPick,		100,	170 },
+	// ----------------------------------
+	{ 62,	-1,	kVerbLook,		101,	171 },
+	// ----------------------------------
+	{ 62,	-1,	kVerbLook,		102,	167 },
+	// ----------------------------------
+	{ 62,	-1,	kVerbLook,		103,	166 },
+	// ==================================
+	{ 63,	-1,	kVerbLook,		110,	172 },
+	// ----------------------------------
+	{ 63,	-1,	kVerbLook,		109,	173 },
+	{ 63,	-1,	kVerbMove,		109,	174 },
+	// ----------------------------------
+	{ 63,	-1,	kVerbLook,		108,	334 },
+	{ 63,	-1,	kVerbTalk,		108,	333 },
+	// ==================================
+	{ 102,	-1,	kVerbLook,		100,	452 },
+	{ 102,	-1,	kVerbLook,		101,	123 },
+	// ==================================
+	// Pseudoroom. checkAction() menuScreen == 1
+	{ 200,	1,	kVerbLook,		28,		328 },
+	// ----------------------------------
+	{ 200,	2,	kVerbLook,		28,		328 },
+	{ 200,	2,	kVerbLook,		7,		143 },
+	{ 200,	2,	kVerbLook,		8,		145 },
+	{ 200,	2,	kVerbLook,		9,		147 },
+	{ 200,	2,	kVerbLook,		10,		151 },
+	{ 200,	2,	kVerbLook,		11,		152 },
+	{ 200,	2,	kVerbLook,		12,		154 },
+	{ 200,	2,	kVerbLook,		13,		155 },
+	{ 200,	2,	kVerbLook,		14,		157 },
+	{ 200,	2,	kVerbLook,		15,		58 },
+	{ 200,	2,	kVerbLook,		16,		158 },
+	{ 200,	2,	kVerbLook,		17,		159 },
+	{ 200,	2,	kVerbLook,		18,		160 },
+	{ 200,	2,	kVerbLook,		19,		161 },
+	{ 200,	2,	kVerbLook,		23,		152 },
+	{ 200,	2,	kVerbTalk,		7,		144 },
+	{ 200,	2,	kVerbTalk,		8,		146 },
+	{ 200,	2,	kVerbTalk,		9,		148 },
+	{ 200,	2,	kVerbTalk,		11,		153 },
+	// ----------------------------------
+	{ 200,	3,	kVerbLook,		22,		307 },
+	{ 200,	3,	kVerbLook,		28,		328 },
+	{ 200,	3,	kVerbLook,		7,		143 },
+	{ 200,	3,	kVerbLook,		8,		145 },
+	{ 200,	3,	kVerbLook,		9,		147 },
+	{ 200,	3,	kVerbLook,		10,		151 },
+	{ 200,	3,	kVerbLook,		11,		152 },
+	{ 200,	3,	kVerbLook,		12,		154 },
+	{ 200,	3,	kVerbLook,		13,		155 },
+	{ 200,	3,	kVerbLook,		14,		157 },
+	{ 200,	3,	kVerbLook,		15,		58 },
+	{ 200,	3,	kVerbLook,		16,		158 },
+	{ 200,	3,	kVerbLook,		17,		159 },
+	{ 200,	3,	kVerbLook,		18,		160 },
+	{ 200,	3,	kVerbLook,		19,		161 },
+	{ 200,	3,	kVerbLook,		20,		162 },
+	{ 200,	3,	kVerbLook,		23,		152 },
+	{ 200,	3,	kVerbTalk,		7,		144 },
+	{ 200,	3,	kVerbTalk,		8,		146 },
+	{ 200,	3,	kVerbTalk,		9,		148 },
+	{ 200,	3,	kVerbTalk,		11,		153 },
+	// ----------------------------------
+	{ 200,	4,	kVerbLook,		7,		478 },
+	{ 200,	4,	kVerbLook,		8,		480 },
+	{ 200,	4,	kVerbLook,		10,		485 },
+	{ 200,	4,	kVerbLook,		11,		488 },
+	{ 200,	4,	kVerbLook,		12,		486 },
+	{ 200,	4,	kVerbLook,		13,		490 },
+	{ 200,	4,	kVerbLook,		14,		122 },
+	{ 200,	4,	kVerbLook,		15,		117 },
+	{ 200,	4,	kVerbLook,		16,		491 },
+	{ 200,	4,	kVerbLook,		17,		478 },
+	{ 200,	4,	kVerbLook,		18,		493 },
+	{ 200,	4,	kVerbLook,		20,		162 },
+	{ 200,	4,	kVerbLook,		21,		496 },
+	{ 200,	4,	kVerbLook,		22,		161 },
+	{ 200,	4,	kVerbLook,		28,		328 },
+	{ 200,	4,	kVerbTalk,		15,		118 },
+	{ 200,	4,	kVerbOpen,		15,		119 },
+	// ----------------------------------
+	{ 200,	5,	kVerbLook,		7,		478 },
+	{ 200,	5,	kVerbLook,		8,		120 },
+	{ 200,	5,	kVerbLook,		11,		488 },
+	{ 200,	5,	kVerbLook,		13,		490 },
+	{ 200,	5,	kVerbLook,		14,		121 },
+	{ 200,	5,	kVerbLook,		15,		117 },
+	{ 200,	5,	kVerbLook,		17,		478 },
+	{ 200,	5,	kVerbLook,		20,		162 },
+	{ 200,	5,	kVerbLook,		28,		328 },
+	{ 200,	5,	kVerbTalk,		15,		118 },
+	{ 200,	5,	kVerbOpen,		15,		119 },
+	// ----------------------------------
+	{ 200,	6,	kVerbLook,		20,		123 },
+	{ 200,	6,	kVerbLook,		21,		441 },
+	{ 200,	6,	kVerbLook,		28,		328 },
+	// ==================================
+	// Pseudoroom. checkAction() menuScreen != 1
+	{ 201,	1,	kVerbLook,		50,		308 },
+	{ 201,	1,	kVerbOpen,		50,		310 },
+	{ 201,	1,	kVerbClose,		50,		311 },
+	{ 201,	1,	kVerbMove,		50,		312 },
+	{ 201,	1,	kVerbPick,		50,		313 },
+	{ 201,	1,	kVerbTalk,		50,		314 },
+	// ----------------------------------
+	{ 201,	2,	kVerbLook,		50,		308 },
+	{ 201,	2,	kVerbOpen,		50,		310 },
+	{ 201,	2,	kVerbClose,		50,		311 },
+	{ 201,	2,	kVerbMove,		50,		312 },
+	{ 201,	2,	kVerbPick,		50,		313 },
+	{ 201,	2,	kVerbTalk,		50,		314 },
+	// ----------------------------------
+	{ 201,	3,	kVerbLook,		50,		309 },
+	{ 201,	3,	kVerbOpen,		50,		310 },
+	{ 201,	3,	kVerbClose,		50,		311 },
+	{ 201,	3,	kVerbMove,		50,		312 },
+	{ 201,	3,	kVerbPick,		50,		313 },
+	{ 201,	3,	kVerbTalk,		50,		314 },
+	// ----------------------------------
+	{ 201,	4,	kVerbLook,		50,		309 },
+	{ 201,	4,	kVerbOpen,		50,		310 },
+	{ 201,	4,	kVerbClose,		50,		311 },
+	{ 201,	4,	kVerbMove,		50,		312 },
+	{ 201,	4,	kVerbPick,		50,		313 },
+	{ 201,	4,	kVerbTalk,		50,		314 },
+	// ----------------------------------
+	{ 201,	5,	kVerbLook,		50,		309 }, // Originally these are with
+	{ 201,	5,	kVerbOpen,		50,		310 }, // completely wrong voices
+	{ 201,	5,	kVerbClose,		50,		311 },
+	{ 201,	5,	kVerbMove,		50,		312 },
+	{ 201,	5,	kVerbPick,		50,		313 },
+	{ 201,	5,	kVerbTalk,		50,		314 },
+	// ----------------------------------
+	{ 201,	6,	kVerbOpen,		50,		310 },
+	{ 201,	6,	kVerbClose,		50,		311 },
+	{ 201,	6,	kVerbMove,		50,		312 },
+	{ 201,	6,	kVerbPick,		50,		313 },
+	{ 201,	6,	kVerbTalk,		50,		314 },
 
-RoomTalkAction room1Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbPick,		118,	  5 },
-	{ -1,	kVerbOpen,		118,	  3 },
-	{ -1,	kVerbClose,		118,	  4 },
-	{ -1,	kVerbTalk,		118,	  6 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		119,	  8 },
-	{ -1,	kVerbMove,		119,	 13 },
-	{ -1,	kVerbClose,		119,	 10 },
-	{ -1,	kVerbTalk,		119,	 12 },
-	// ----------------------------------
-	{ -1,	kVerbMove,		120,	 13 },
-	{ -1,	kVerbOpen,		120,	 18 },
-	{ -1,	kVerbTalk,		120,	 15 }
-};
-
-RoomTalkAction room3Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbLook,		129,	 21 },
-	{ -1,	kVerbPick,		129,	  5 },
-	{ -1,	kVerbMove,		129,	 24 },
-	{ -1,	kVerbOpen,		129,	 22 },
-	{ -1,	kVerbClose,		129,	 10 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		131,	 27 },
-	{ -1,	kVerbPick,		131,	  5 },
-	{ -1,	kVerbMove,		131,	 24 },
-	{ -1,	kVerbOpen,		131,	 22 },
-	{ -1,	kVerbClose,		131,	 10 },
-	{ -1,	kVerbTalk,		131,	 23 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		132,	 28 },
-	{ -1,	kVerbPick,		132,	  5 },
-	{ -1,	kVerbMove,		132,	 24 },
-	{ -1,	kVerbOpen,		132,	 22 },
-	{ -1,	kVerbClose,		132,	 10 },
-	{ -1,	kVerbTalk,		132,	 23 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		133,	321 },
-	{ -1,	kVerbPick,		133,	 31 },
-	{ -1,	kVerbMove,		133,	 34 },
-	{ -1,	kVerbOpen,		133,	 30 },
-	{ -1,	kVerbClose,		133,	 10 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		166,	 55 },
-	{ -1,	kVerbPick,		166,	  7 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		211,	184 }
-};
-
-RoomTalkAction room4Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbLook,		189,	182 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		207,	175 },
-	{ -1,	kVerbTalk,		207,	176 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		208,	177 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		209,	179 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		210,	180 },
-	{ -1,	kVerbOpen,		210,	181 }
-};
-
-RoomTalkAction room5Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbMove,		136,	 13 },
-	{ -1,	kVerbOpen,		136,	 18 },
-	{ -1,	kVerbTalk,		136,	 15 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		212,	187 },
-	{ -1,	kVerbTalk,		212,	188 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		213,	189 },
-	{ -1,	kVerbOpen,		213,	190 }
-};
-
-RoomTalkAction room6Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbPick,		144,	 43 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		138,	 35 },
-	{ -1,	kVerbTalk,		138,	  6 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		143,	 37 },
-	{ -1,	kVerbPick,		143,	  7 },
-	{ -1,	kVerbMove,		143,	  7 },
-	{ -1,	kVerbTalk,		143,	 38 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		139,	 36 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		140,	147 }
-};
-
-RoomTalkAction room12Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbLook,		154,	329 },
-	{ -1,	kVerbTalk,		154,	330 },
-	// ----------------------------------
-	{ -1,	kVerbMove,		155,	 48 },
-	{ -1,	kVerbTalk,		155,	331 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		156,	 35 },
-	{ -1,	kVerbMove,		156,	 48 },
-	{ -1,	kVerbTalk,		156,	 50 }
-};
-
-RoomTalkAction room14Actions[] = {
-	// num	action			object	speech
-	{ -1,	kVerbLook,		200,	165 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		201,	166 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		202,	167 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		203,	168 },
-	{ -1,	kVerbPick,		203,	170 },
-	{ -1,	kVerbMove,		203,	170 },
-	{ -1,	kVerbTalk,		203,	169 },
-	// ----------------------------------
-	{ -1,	kVerbLook,		204,	171 }
 };
 
 const char *_text[][501] = {
 {
 	// 0
 	"",
-	"ITS THE SECOND BIGGEST DOOR I'VE SEEN IN MY LIFE",
+	"THAT'S THE SECOND BIGGEST DOOR I'VE SEEN IN MY LIFE",
 	"NOT REALLY",
 	"THE CHURCH IS ALL BOARDED UP, IT MUST HAVE BEEN ABANDONED SEVERAL YEARS AGO",
 	"I HAVEN'T OPENED IT",
@@ -302,7 +554,7 @@ const char *_text[][501] = {
 	"WHAT SHOULD I DO, SHOULD I PULL IT OFF?",
 	"HI THERE DOOR, I'M GOING TO MAKE YOU A DOOR-FRAME",
 	"IT'S TOO MUCH FOR ME",
-	"THERE'S A WINDOW STOPPING THE GAME FROM WORKING PROPERLY",
+	"THE WINDOW IS BOARDED UP",
 	"I CAN'T",
 	// 10
 	"YES, THAT'S DONE",
@@ -332,7 +584,7 @@ const char *_text[][501] = {
 	"ITS LOCKED",
 	"I'VE GOT ONE",
 	"YOO HOO, UNCLE EVARISTO!",
-	"THERE'S NO REPLY",
+	"THERE'S NO POWER",
 	"IT'S NOT WELL PARKED",
 	// 35
 	"IT'S A DOOR",
@@ -422,7 +674,7 @@ const char *_text[][501] = {
 	"HOW IS THE FAMILY?",
 	"THAT IS JUST LIKE YOU!",
 	"BUT HOW DO I GET THAT?",
-	"MY RELIGION DOES NOT ALLOW ME",
+	"MY RELIGION DOES NOT ALLOW ME TO",
 	"IT'D BE BETTER NOT",
 	// 110
 	"YEAH, SURE MAN!",
@@ -438,8 +690,8 @@ const char *_text[][501] = {
 	"NO, IT MUST BE KEPT SOMEWHERE AWAY FROM THE MUTANT ACTION OF THE ATMOSPHERE",
 	// 120
 	"HE IS VERY STIFF, JUST LIKE MY BOSS",
-	"A VERY SHARP STICK",
-	"YOU FAITHFUL SHARP-PAINTED STICK, NOBLE TRANSILVANIAN OAK TREE",
+	"A VERY SHARP STAKE",
+	"YOU FAITHFUL SHARP-PAINTED STAKE, NOBLE TRANSILVANIAN OAK TREE",
 	"DAMN, I HAVE TO CUT MY NAILS!",
 	"B.J. IS IN THERE... SHE IS A REALLY HOT CHICK!",
 	// 125
@@ -453,7 +705,7 @@ const char *_text[][501] = {
 	"FORGET IT. I AM NOT GOING TO TELL HIM ANYTHING IN CASE HE GETS MAD",
 	"IT SEEMS QUITE RATIONAL",
 	"IT IS A PICTURE OF PLATO WRITING HIS LOST DIALOGUE",
-	"I AM NOT ONE OF THOSE WHO TALKS TO POSTERS",
+	"I AM NOT ONE OF THOSE PEOPLE WHO TALKS TO POSTERS",
 	// 135
 	"THAT'S A VERY CUTE DESK",
 	"IT IS A VAMPIRES HUNTER'S DIPLOMA OFFICIALLY APPROVED BY OXFORD UNIVERSITY",
@@ -461,7 +713,7 @@ const char *_text[][501] = {
 	"IT SEEMS LIKE THESE SCREWS ARE NOT TIGHTENED PROPERLY",
 	"DON'T LOOK NOW, BUT I THINK THAT A HIDDEN CAMERA IS FOCUSING ON ME",
 	// 140
-	"THAT'S A VERY MODERN STICK DETECTOR",
+	"THAT'S A VERY MODERN STAKE DETECTOR",
 	"NO. THE LABORATORY IS ON THE SECOND FLOOR",
 	"A NICE BEDSIDE TABLE",
 	"IT'S A LOT OF MONEY THAT CAN'T BE MISSING IN ANY VALUABLE ADVENTURE",
@@ -469,24 +721,24 @@ const char *_text[][501] = {
 	// 145
 	"THOSE ARE STRANGE LEAVES. THEY MUST HAVE BROUGHT THEM FROM SOUTH AMERICA OR AROUND THERE",
 	"I DON'T THINK THEY WOULD ANSWER ME",
-	"THAT'S A BEAUTIFUL WOODEN CRUCIFIX. THE ICON DOESN'T REALLY SHOW THE BEAUTY WITHIN IT",
+	"THAT'S A BEAUTIFUL WOODEN CRUCIFIX. THE ICON DOESN'T REALLY SHOW THE FULL EXTENT OF ITS BEAUTY",
 	"I ONLY PRAY BEFORE I GO TO BED",
-	"HEY, THIS PIKE SEEMS A LITTLE BIT LOOSE!",
+	"HEY, THIS SPIKE SEEMS A LITTLE BIT LOOSE!",
 	// 150
 	"I HOPE YOU WON'T COMPLAIN ABOUT NOT GETTING ANY CLUES FROM ME",
-	"IT'S A QUITE CONVENTIONAL PIKE",
+	"IT'S A QUITE CONVENTIONAL SPIKE",
 	"THEY ARE CUTE, THOUGH THEY ARE COVERED WITH A LITTLE BIT OF SHIT",
 	"NO, THEY WON'T HEAR ME. HA,HA,HA THIS IS GREAT!",
 	"\"SLEEPING BEAUTY\" FROM TCHAIKOVSKY, OR CHOIFRUSKY, OR WHATEVER IT IS",
 	// 155
 	"VERY TEMPTING",
-	"NO, I DO NOT PUT USED BUBBLE GUMS IN MY MOUTH",
+	"NO, I DO NOT PUT USED BUBBLE GUM IN MY MOUTH",
 	"THAT'S A VERY NICE SICKLE. I WONDER WHERE THE HAMMER IS",
 	"TOBACCO MANUFACTURERS WARN ABOUT HEALTH BEING SERIOUSLY DAMAGED BY SANITARY AUTHORITIES",
 	"AN ABSOLUTELY NORMAL CANDLE, INCLUDING WAX AND EVERYTHING",
 	// 160
-	"THESE TWO SHINY COINS REALLY DO GLITTER!",
-	"THIS SHINY COIN REALLY DOES GLITTER!",
+	"THESE TWO SHINY COINS REALLY GLITTER!",
+	"THIS SHINY COIN REALLY GLITTERS!",
 	"WITH THIS I WILL BE IMMUNE AGAINST VAMPIRE BITES",
 	"NO, IT'S IS NOT THE RIGHT MOMENT YET",
 	"THERE IS A ONE THOUSAND BILL AND A COUPLE OF COINS",
@@ -511,7 +763,7 @@ const char *_text[][501] = {
 	// 180
 	"A VERY NICE DOOR",
 	"IT'S CLOSED",
-	"A COMPLETELY LOCKED BARREL",
+	"A COMPLETELY SEALED BARREL",
 	"",
 	"AREN'T THESE BUGS REALLY CUTE?",
 	// 185
@@ -519,19 +771,19 @@ const char *_text[][501] = {
 	"THERE IS NO ANSWER",
 	"THE MOON IS A SATELLITE THAT TURNS AROUND THE EARTH WITH A REVOLUTION PERIOD OF 28 DAYS",
 	"HI, LOONY MOON",
-	"IT'S TOTALLY BLOCKED UP WITH PLANKS",
+	"IT'S TOTALLY BOARDED UP WITH PLANKS",
 	// 190
 	"IT'S IMPOSSIBLE. NOT EVEN THAT TOUGH GUY FROM TV COULD OPEN THIS",
 	"HEY! THE SHADOW OF THAT CYPRESS LOOKS PROLONGED TO ME!",
 	"YOU, BARTENDER...!!",
 	"I WOULD LIKE TO HAVE A ROOM PLEASE",
-	"DO YOU KNOW WHERE I CAN FIND THE SO CALLED DRASCULA?",
+	"DO YOU KNOW WHERE I CAN FIND THE MAN CALLED DRASCULA?",
 	// 195
 	"YES, SO WHAT?",
 	"SO?",
 	"IS...THAT RIGHT?",
-	"GOOD QUESTION. NOW, LET ME TELL YOU MY STORY. LOOK...",
-	"IT'S JUST FIVE MINUTES",
+	"GOOD QUESTION. GET ME A DRINK AND LET ME TELL YOU MY STORY. LOOK...",
+	"IT WILL TAKE JUST FIVE MINUTES",
 	// 200
 	"I'M JOHN HACKER AND I REPRESENT A BRITISH PROPERTY COMPANY",
 	"AS FAR AS I KNOW, COUNT DRASCULA WANTS TO BUY SOME PIECES OF LAND IN GIBRALTAR AND MY COMPANY SENT ME HERE TO NEGOTIATE THE SALE",
@@ -549,9 +801,9 @@ const char *_text[][501] = {
 	"AND HOW IS THE FAMILY?",
 	"THIS IS QUITE GROOVY, HUH?",
 	"I'D BETTER NOT SAY ANYTHING",
-	"THERE IS NO PLACE LIKE HOME. THERE IS NO...WHAT?, BUT YOU ARE NOT AUNT EMMA. AS A MATTER OF FACT, I DON'T HAVE ANY AUNT EMMA!",
+	"THERE IS NO PLACE LIKE HOME. THERE IS NO...WHAT?, BUT YOU ARE NOT AUNTIE EMMA. AS A MATTER OF FACT, I DON'T HAVE AN AUNTIE EMMA!",
 	// 215
-	"YES, SO DOES MINE. YOU CAN CALL ME ANYTHING YOU WANT, BUT IF YOU CALL ME JHONNY, I'LL COME TO YOU LIKE A DOG",
+	"YES, SO DOES MINE. YOU CAN CALL ME ANYTHING YOU WANT, BUT IF YOU CALL ME JOHNNY, I'LL COME TO YOU LIKE A DOG",
 	"AREN'T I JUST A FUNNY GUY, HUH?. BY THE WAY, WHERE AM I?",
 	"YES",
 	"SHOOT...!",
@@ -569,13 +821,13 @@ const char *_text[][501] = {
 	"AHHH A WEREWOLF!! DIE YOU DAMNED EVIL!",
 	"YES, WELL...",
 	// 230
-	"YES, WELL...I THINK I'LL JUST GO ON MY WAY. EXCUSE ME",
+	"YES, WELL... I THINK I'LL JUST GO ON MY WAY. EXCUSE ME",
 	"WHAT?",
 	"TO TELL YOU THE TRUTH...ON SECOND THOUGHTS...I DON'T REALLY THINK SO",
 	"AND SO TELL ME YOU ERUDITE PHILOSOPHER, IS THERE ANY RELATIONSHIP CAUSE-AND-EFFECT BETWEEN SILLY AND BILLY?",
 	"OK, OK, FORGET IT. I DON'T EVEN KNOW WHY I SAID ANYTHING ABOUT IT",
 	// 235
-	"WHAT ARE YOU DOING PHILOSOPHIZING INSTEAD OF EATING SOME PEOPLE",
+	"WHY ARE YOU PHILOSOPHIZING INSTEAD OF EATING PEOPLE?",
 	"HOW COME?",
 	"HEY, COULD YOU SAY ALL THAT STUFF ABOUT PRE-EVOLUTIONARY RELATIONSHIPS AGAIN?",
 	"YES, MAN. ALL THAT STUFF YOU TOLD ME ABOUT BEFORE. I DIDN'T UNDERSTAND IT, YOU KNOW",
@@ -585,13 +837,13 @@ const char *_text[][501] = {
 	"YES, WHAT'S UP?",
 	"WELL, NOW THAT YOU MENTION IT, I'LL TELL YOU THAT...",
 	"",
-	"WELL, THANKS FOR CALLING. BY THE WAY, THIS IS NOT THE CASE, OF COURSE, BUT WHAT COULD HAPPEN IF A VAMPIRE GOT THE RECIPE BY ANY CHANCE?",
+	"BY THE WAY, THIS IS NOT THE CASE, OF COURSE, BUT WHAT COULD HAPPEN IF A VAMPIRE GOT THE RECIPE BY ANY CHANCE?",
 	// 245
-	"WELL ANYWAY. LISTEN, DOESN'T THIS LOOK TO YOU LIKE A LOT OF CRAP TO END UP SOON WITH THE GAME?. WELL, MAYBE NOT",
+	"WELL ANYWAY. LISTEN, DOESN'T THIS LOOK TO YOU LIKE A LOT OF CRAP TO END THE GAME WITH?. WELL, MAYBE NOT",
 	"IT'S EMPTY!",
-	"WHY DID YOU TAKE MY ONLY LOVE, B.J., AWAY FROM ME?. LIFE HAS NO MEANING FOR WITHOUT HER",
+	"WHY DID YOU TAKE MY ONLY LOVE, B.J., AWAY FROM ME?. LIFE HAS NO MEANING FOR ME WITHOUT HER",
 	"HER BRAIN?\?!!",
-	"TO TELL YOU THE TRUTH, I THINK I HAD JUST ENOUGH WITH YOUR OF YOUR LITTLE MONSTER",
+	"TO TELL YOU THE TRUTH, I THINK I HAVE HAD JUST ABOUT ENOUGH OF YOUR LITTLE MONSTER",
 	// 250
 	"OH PLEASE, HOLY VIRGIN, DON'T LET ANYTHING WORSE HAPPEN TO ME!!",
 	"YOU ARE NOT GOING TO GET YOUR WAY. I'M SURE SUPERMAN WILL COME AND RESCUE ME!",
@@ -600,7 +852,7 @@ const char *_text[][501] = {
 	"HA. HA, I'M NOW IMMUNIZED AGAINST YOU DAMNED EVIL!. THIS CIGARETTE IS AN ANTI-VAMPIRE BREW THAT VON BRAUN GAVE TO ME",
 	// 255
 	"YES SURE, BUT YOU'LL NEVER GET ME TO GIVE YOU THE RECIPE",
-	"APART FROM CREATING TORTURE, I CAN ALSO STAND IT.",
+	"APART FROM CREATING TORTURE, I CAN ALSO WITHSTAND IT.",
 	"OH, NO PLEASE! I'LL TALK, BUT PLEASE, DON'T DO THAT TO ME!",
 	"ALL RIGHT THEN. I TOLD YOU WHAT YOU WANTED TO KNOW. NOW SET B.J. AND ME FREE THEN LEAVE US ALONE!",
 	"WHAT ARE YOU DOING HERE B.J.?. WHERE IS DRASCULA?",
@@ -800,10 +1052,10 @@ const char *_text[][501] = {
 	"THE MAGPIE WOULD PECK OUT MY EYES IF I TRIED!",
 	"OH MY GOD. IT'S LOCKED...THAT'S SCARY, HUH?",
 	"THE HINGES ARE RUSTY",
-	"THERE IS ONLY ONE CAN OF FLOUR IN THERE",
+	"THERE IS ONLY ONE BAG OF FLOUR IN THERE",
 	"THAT TOOK AWAY THE RUST",
 	// 425
-	"I FOUND A PINE STICK",
+	"I FOUND A PINE STAKE",
 	"I'LL TAKE THIS THICKER ONE",
 	"WELL, I THINK I CAN GET RID OF THIS STUPID DISGUISE",
 	"\"PASSAGE TO TOWERS CLOSED FOR REPAIRS. PLEASE USE THE MAIN ENTRANCE. SORRY FOR THE INCONVENIENCE\"",
@@ -3355,7 +3607,7 @@ const char *_textd[][84] = {
 	"OK, LET'S SEE IT. IGOR, BRING ME THE CD \"SCRATCHING YOUR NAILS ALL OVER THE BLACKBOARD\"",
 	"NO WAY. THE GIRL STAYS WITH ME. YOU'RE STAYING THERE UNTIL THE PENDULUM CUTS YOU INTO THIN SLICES. HA, HA, HA",
 	"MAN I'M I JUST BAD... COME ON IGOR, LET'S MAKE THE BREW AND CONQUER THE WORLD",
-	"WHAT HAPPENS NOW?",
+	"WHAT HAPPENED NOW?",
 	"YES, WHAT?...OH, DAMNED, THE GAME!",
 	// 35
 	"I FORGOT ABOUT THAT. GET THE GIRL AND LET'S GO AND WATCH IT. WE CAN CONQUER THE WORLD LATER",
@@ -3941,7 +4193,7 @@ const char *_textbj[][29] = {
 	"ARE YOU ALL RIGHT? HEY, COME ON, WAKE UP! CAN YOU HEAR ME? ARE YOU DEAD?",
 	"NO, MY NAME IS BILLIE JEAN, BUT YOU CAN CALL ME B.J. IT'S SHORTER",
 	"HA, HA...! THAT WAS A GOOD ONE!",
-	"WELL, JHONNY. YOU SEE, I WAS HERE JUST READY TO GO TO BED WHEN I HEARD THIS LOUD NOISE DOWN THE CORRIDOR",
+	"WELL, JOHNNY. YOU SEE, I WAS HERE JUST READY TO GO TO BED WHEN I HEARD THIS LOUD NOISE DOWN THE CORRIDOR",
 	// 5
 	"I DIDN'T PAY ATTENTION AT FIRST, BUT AFTER ABOUT TWO HOURS OR SO I COULDN'T SLEEP AND WENT OUT FOR A WALK",
 	"AS I OPENED THE DOOR I WAS SHOCKED TO FIND YOU THERE, LYING ON THE FLOOR. I THOUGHT YOU WERE DEAD, I SWEAR... HA, HA, SILLY BILLY",
@@ -3952,7 +4204,7 @@ const char *_textbj[][29] = {
 	"OH, NO...! IT WASN'T THE HIT, HA, HA. I JUST STEPPED ON YOUR GLASSES BY ACCIDENT",
 	"YOU REALLY LOOK GOOD WITH THOSE GLASSES. I KNOW HE'S NOT FERNANDO LANCHA, BUT I FIND HIM ATTRACTIVE...",
 	"YES, YES, I DO... COME ON, HOLD ME AND KISS ME TIGHT",
-	"OH JHONNY, HONEY, THANK GOD YOU'RE HERE... THAT DAMNED DRASCULA TIED ME UP TO THE BED AND THEN HE'S GONE DOWNSTAIRS TO WATCH THE FOOTBALL GAME",
+	"OH JOHNNY, HONEY, THANK GOD YOU'RE HERE... THAT DAMNED DRASCULA TIED ME UP TO THE BED AND THEN HE'S GONE DOWNSTAIRS TO WATCH THE FOOTBALL GAME",
 	"YES, IT'S TRUE. PLEASE, SET ME FREE",
 	// 15
 	"NO, I'M SORRY. I USED THEM ALL IN THE TOWER WHEN I WAS TRYING TO ESCAPE WHILE YOU LET ME DOWN",
@@ -3961,7 +4213,7 @@ const char *_textbj[][29] = {
 	"FIRSTLY HE BROUGHT ME FLYING OVER HERE AND THEN PUT ME IN THIS DISGUSTING ROOM WITHOUT A MIRROR OR ANYTHING",
 	"I'M TELLING YOU! AND THE WORST PART IS THAT HE DIDN'T EVEN APOLOGIZE, NOT EVEN ONCE",
 	// 20
-	"JHONNY HONEY, WHERE ARE YOU?",
+	"JOHNNY HONEY, WHERE ARE YOU?",
 	"I'M READY TO LEAVE DEAR",
 	"WAIT, I'M GOING TO TAKE A LOOK... NO DARLING, I'M SORRY",
 	"THERE YOU GO...",
@@ -3969,7 +4221,7 @@ const char *_textbj[][29] = {
 	// 25
 	"I'LL NEVER FORGET YOU BUT I'VE REALIZED THAT THIS JUST COULDN'T WORK OUT RIGHT. TO BE HONEST, I'LL TELL YOU THAT THERE IS ANOTHER MAN. HE'S TALLER, STRONGER",
 	"AND HE HAS ALSO RESCUED ME FROM DRASCULA. HE HAS ASKED ME TO MARRY HIM, AND I HAVE ACCEPTED",
-	"BYE JHONNY. PLEASE DON'T TRY TO FIND SOME KIND OF EXPLANATION. YOU KNOW LOVE IS BLIND AND HAS ITS OWN WAYS",
+	"BYE JOHNNY. PLEASE DON'T TRY TO FIND SOME KIND OF EXPLANATION. YOU KNOW LOVE IS BLIND AND HAS ITS OWN WAYS",
 	"I HOPE THERE WON'T BE HARD FEELINGS BETWEEN US. REMEMBER THAT I STILL LOVE YOU, BUT ONLY AS A FRIEND",
 },
 {
@@ -4511,8 +4763,8 @@ const char *_textl[][32] = {
 	"WELL THEN",
 	"WELL, THAT DEPENDS ON WHAT WE TAKE A RELATIONSHIP FOR. SOME AUTHORS DEFEND...",
 	// 10
-	"PUKE! HUNTING AS A WAY TO SURVIVE IS AN INCOMPATIBLE ARCHAIC THING FOR A SUPERIOR BEING LIKE ME. BESIDES, I'VE BECOME A VEGETARIAN",
-	"IT JUST HAPPENS THAT I WAS ACTUALLY EATING A GUY AND I STARTED TO THINK AND GET TO THE ABOVE MENTIONED THOUGHT",
+	"YUCK! HUNTING AS A WAY TO SURVIVE IS AN INCOMPREHENSIBLE ARCHAIC THING FOR A SUPERIOR BEING LIKE ME. BESIDES, I'VE BECOME A VEGETARIAN",
+	"IT JUST SO HAPPENS THAT I WAS ACTUALLY EATING A GUY AND I STARTED TO THINK AND GET TO THE ABOVE MENTIONED THOUGHT",
 	"IT TOOK ME A LONG TIME TO QUIT OLD HABITS BUT AT LEAST MY IRASCIBLE SOUL BIT UP THE CONCUPISCIBLE ONE, AND EVER SINCE, I'VE NEVER EATEN MEAT AGAIN",
 	"NOT EVEN THE PLEASURE OF SUCKING UP THE BONE, FEELING THE TASTE OF THE SKIN AND THAT SWEET TASTE OF MARROW...THAT JUST TAKES YOU TO HEAVENLY PLACES",
 	"IT DOESN'T REALLY GET TO ME AT ALL",
@@ -4842,14 +5094,14 @@ const char *_textt[][25] = {
 	// 0
 	"",
 	"WHAT HAPPENED? WHAT'S THE MATTER?",
-	"OK. ROOM 512. UPSTAIRS. THE KEY IS ON THE DOOR",
+	"OK. ROOM 512. UPSTAIRS. THE KEY IS UNDER THE DOOR",
 	"COUNT DRASCULA!!?",
-	"NO, NOTHING. THAT GUY JUST HAS A BAD REPUTATION OVER HERE",
+	"NO, NOTHING. THAT GUY JUST HAS A BAD REPUTATION AROUND HERE",
 	// 5
 	"WELL, THERE ARE ALL KINDS OF STORIES GOING AROUND ABOUT HIM, SOME SAY HE IS A VAMPIRE WHO KIDNAPS PEOPLE TO SUCK THEIR BLOOD",
 	"HOWEVER, SOME OTHERS SAY THAT HE IS JUST AN ORGAN-DEALER AND THAT IS THE REASON WHY THERE ARE BODY PARTS ALL OVER THE PLACE",
 	"BUT OF COURSE, THOSE ARE JUST RUMORS. HE'S PROBABLY BOTH THINGS. BY THE WAY, WHY DO YOU WANT TO MEET HIM?",
-	"NO, FORGET IT. I'M REALLY BUSY...",
+	"HERE IS YOUR DRINK, FORGET IT. I'M REALLY BUSY...",
 	"WELL, OK. BUT JUST BECAUSE I WANT TO DO IT, NOT BECAUSE YOU TOLD ME TO",
 	// 10
 	"THEY'RE WINNING",
@@ -5036,9 +5288,9 @@ const char *_textvb[][63] = {
 	// 25
 	"LEAVE ME ALONE NOW, I WANT TO GET SOME SLEEP",
 	"WHENEVER YOU ARE READY TO FIGHT AGAINST THE VAMPIRES, JUST COME BACK AND I'LL HELP YOU OUT",
-	"OH, THAT'S EASY. JUST USING THE LIGHT OF ONE CRUCIFIX IS ENOUGH TO DESTROY HIM",
+	"OH, THAT'S EASY. TAKE THIS CRUCIFIX JUST USING THE LIGHT OF THIS CRUCIFIX IS ENOUGH TO DESTROY HIM",
 	"YOU HAVE TO BE EXTRA CAREFUL WITH DRASCULA, HIS FRISISNOTIC POWERS HAVE MADE OF HIM THE MOST POWERFUL VAMPIRE",
-	"YOU'D BE LOST IF IT WASN'T FOR THEM...",
+	"YOU'D BE LOST IF IT WASN'T FOR THIS...",
 	// 30
 	"...BREW!",
 	"YEAH, YOU'RE RIGHT! I MIGHT HAVE SOME PROBLEMS WITH MY BACK IN THE FUTURE IF I KEEP ON SLEEPING THIS WAY",
@@ -5482,8 +5734,8 @@ const char *_textd1[][11] = {
 	// 75
 	"44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555",
 	"5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444",
-	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444"
-	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777",
+	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444",
+	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777"
 },
 {
 	// 68
@@ -5498,8 +5750,8 @@ const char *_textd1[][11] = {
 	// 75
 	"4444777444455550022220555044444446666622526644475533223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555",
 	"5555000444555033022755644446666005204402266222003332222774440446665555005550335544444",
-	"5666500444555033022755555000444444444444444444444444444444"
-	"00222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777",
+	"5666500444555033022755555000444444444444444444444444444444",
+	"00222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777"
 },
 {
 	// 68
@@ -5514,8 +5766,8 @@ const char *_textd1[][11] = {
 	// 75
 	"44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555",
 	"5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444",
-	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444"
-	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777",
+	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444",
+	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777"
 },
 {
 	// 68
@@ -5530,8 +5782,8 @@ const char *_textd1[][11] = {
 	// 75
 	"44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555",
 	"5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444",
-	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444"
-	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777",
+	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444",
+	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777"
 },
 {
 	// 68
@@ -5546,8 +5798,8 @@ const char *_textd1[][11] = {
 	// 75
 	"44447774444555500222205550444444466666225266444755444722255000222275555444446633223220044022203336227555770550444660557220553302224477777550550550222635533000662220002275572227025555",
 	"5555500004445550330244472225500022227555544444662755644446666005204402266222003332222774440446665555005550335544444",
-	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444"
-	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777",
+	"56665004444447222550002222755554444466555033022755555000444444444444444444444444444444",
+	"004447222550002222755554444466222000220555002220550444446666662220000557550033344477222522665444466663337446055504446550550550222633003330000666622044422755722270255566667555655007222777"
 },
 
 };

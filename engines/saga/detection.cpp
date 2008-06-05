@@ -54,8 +54,8 @@ struct SAGAGameDescription {
 	const GamePatchDescription *patchDescriptions;
 };
 
-const bool SagaEngine::isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
-const bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
+bool SagaEngine::isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
+bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
 const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
 const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->sfxInfo; }

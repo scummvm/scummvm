@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	fs/psp/psp-fs-factory.o \
 	fs/symbian/symbian-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
+	fs/wii/wii-fs-factory.o \
 	events/default/default-events.o \
 	midi/alsa.o \
 	midi/camd.o \

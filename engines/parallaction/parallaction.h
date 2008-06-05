@@ -658,6 +658,7 @@ public:
 public:
 	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
+	void		changeCharacter(const char *name);
 
 public:
 	Table		*_countersNames;
@@ -692,7 +693,6 @@ private:
 	void setInventoryCursor(int pos);
 
 	void		changeLocation(char *location);
-	void		changeCharacter(const char *name);
 	void 		runPendingZones();
 
 	void		initPart();
@@ -727,6 +727,7 @@ private:
 	const Callable *_callables;
 
 	void parseLocation(const char* name);
+	void loadProgram(AnimationPtr a, const char *filename);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);

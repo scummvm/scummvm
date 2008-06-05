@@ -48,7 +48,7 @@ struct ObjectMouse {
 	int32 priority;
 	int32 pointer;			// type (or resource id?) of pointer used over this area
 
-	static const int size() {
+	static int size() {
 		return 24;
 	}
 
@@ -91,7 +91,7 @@ public:
 		_addr = addr;
 	}
 
-	static const int size() {
+	static int size() {
 		return 8;
 	}
 
@@ -139,7 +139,7 @@ public:
 		_addr = addr;
 	}
 
-	static const int size() {
+	static int size() {
 		return 12;
 	}
 
@@ -178,7 +178,7 @@ public:
 		_addr = addr;
 	}
 
-	static const int size() {
+	static int size() {
 		return 36;
 	}
 
@@ -240,7 +240,7 @@ public:
 		_addr = addr;
 	}
 
-	static const int size() {
+	static int size() {
 		return 56;
 	}
 
@@ -291,7 +291,7 @@ struct ObjectWalkdata {
 	int32 dx[8 * (12 + 1)];		// walk step distances in x direction
 	int32 dy[8 * (12 + 1)];		// walk step distances in y direction
 
-	static const int size() {
+	static int size() {
 		return 916;
 	}
 

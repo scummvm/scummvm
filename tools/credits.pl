@@ -626,6 +626,10 @@ begin_credits("Credits");
 		  add_person("Lars Persson", "AnotherGuest", "");
 	  end_section();
 
+	  begin_section("Wii");
+		  add_person("Andre Heider", "dhewg", "");
+	  end_section();
+
     end_section();
 
     begin_section("Other subsystems");

@@ -543,6 +543,20 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 	return true;
 }
 
+namespace {
+
+Common::String readString(Common::SeekableReadStream &stream) {
+	Common::String result;
+	char c = 0;
+
+	while ((c = stream.readByte()) != 0)
+			result += c;
+
+	return result;
+}
+
+} // end of anonymous namespace
+
 bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
 	uint32 filesize = stream.size();
 	
@@ -608,6 +622,33 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			break;
 
 		startoffset = endoffset;
+	}
+
+	FileList::const_iterator iter = Common::find(files.begin(), files.end(), Common::String("LINKLIST"));
+	if (iter != files.end()) {
+		stream.seek(iter->entry.offset, SEEK_SET);
+
+		uint32 magic = stream.readUint32BE();
+
+		if (magic != MKID_BE('SCVM'))
+			error("LINKLIST file does not contain 'SCVM' header");
+
+		uint32 links = stream.readUint32BE();
+		for (uint i = 0; i < links; ++i) {
+			Common::String linksTo = readString(stream);
+			uint32 sources = stream.readUint32BE();
+
+			iter = Common::find(files.begin(), files.end(), linksTo);
+			if (iter == files.end())
+				error("PAK file link destination '%s' not found", linksTo.c_str());
+
+			for (uint j = 0; j < sources; ++j) {
+				Common::String dest = readString(stream);
+				files.push_back(File(dest, iter->entry));
+				// Better safe than sorry, we update the 'iter' value, in case push_back invalidated it
+				iter = Common::find(files.begin(), files.end(), linksTo);
+			}
+		}
 	}
 
 	return true;
@@ -767,7 +808,7 @@ bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableRead
 		entry.offset = resOffset+4;
 
 		char realFilename[20];
-		snprintf(realFilename, 20, "%u.AUD", resFilename);
+		snprintf(realFilename, 20, "%.08u.AUD", resFilename);
 
 		uint32 curOffset = stream.pos();
 		stream.seek(resOffset, SEEK_SET);

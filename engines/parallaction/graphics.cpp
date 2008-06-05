@@ -33,10 +33,6 @@
 
 namespace Parallaction {
 
-
-typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
-VarMap _vars;
-
 void Gfx::registerVar(const Common::String &name, int32 initialValue) {
 	if (_vars.contains(name)) {
 		warning("Variable '%s' already registered, ignoring initial value.\n", name.c_str());

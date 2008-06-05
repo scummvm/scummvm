@@ -28,7 +28,7 @@
 #include "zipreader.h"
 #include "ramsave.h"
 #include "scummconsole.h"
-#include "gba_nds_fat.h"
+#include "fat/gba_nds_fat.h"
 #include "backends/fs/abstract-fs.h"
 
 namespace DS {
