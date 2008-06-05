@@ -453,7 +453,7 @@ bool DrasculaEngine::escoba() {
 			gotoObject(65, 145);
 		}
 	} else if (currentChapter == 2) {
-		addObject(28);
+		addObject(kItemPhone);
 		trackProtagonist = 3;
 		objExit = 162;
 		if (hay_que_load == 0)
@@ -464,13 +464,13 @@ bool DrasculaEngine::escoba() {
 			}
 		}
 	} else if (currentChapter == 3) {
-		addObject(28);
-		addObject(11);
-		addObject(14);
-		addObject(22);
-		addObject(9);
-		addObject(20);
-		addObject(19);
+		addObject(kItemPhone);
+		addObject(kItemEarplugs);
+		addObject(kItemSickle);
+		addObject(kItemHandbag);
+		addObject(kItemCross);
+		addObject(kItemReefer);
+		addObject(kItemOneCoin);
 		flags[1] = 1;
 		trackProtagonist = 1;
 		objExit = 99;
@@ -481,11 +481,12 @@ bool DrasculaEngine::escoba() {
 				return true;
 			}
 		}
+	// From here onwards the items have different IDs
 	} else if (currentChapter == 4) {
-		addObject(28);
-		addObject(9);
-		addObject(20);
-		addObject(22);
+		addObject(kItemPhone2);
+		addObject(kItemCross2);
+		addObject(kItemReefer2);
+		addObject(kItemOneCoin2);
 		objExit = 100;
 		if (hay_que_load == 0) {
 			enterRoom(21);
@@ -718,11 +719,11 @@ void DrasculaEngine::chooseObject(int objeto) {
 	pickedObject = objeto;
 }
 
-int DrasculaEngine::removeObject(int osj) {
+int DrasculaEngine::removeObject(int obj) {
 	int result = 1;
 
 	for (int h = 1; h < 43; h++) {
-		if (inventoryObjects[h] == osj) {
+		if (inventoryObjects[h] == obj) {
 			inventoryObjects[h] = 0;
 			result = 0;
 			break;
@@ -2345,10 +2346,10 @@ void DrasculaEngine::moveCharacters() {
 
 void DrasculaEngine::showMenu() {
 	int h, n, x;
-	char texto_icono[13];
+	char textIcon[13];
 
 	x = whichObject();
-	strcpy(texto_icono, iconName[x]);
+	strcpy(textIcon, iconName[x]);
 
 	for (n = 1; n < 43; n++) {
 		h = inventoryObjects[n];
@@ -2366,18 +2367,18 @@ void DrasculaEngine::showMenu() {
 	}
 
 	if (x < 7)
-		print_abc(texto_icono, itemLocations[x].x - 2, itemLocations[x].y - 7);
+		print_abc(textIcon, itemLocations[x].x - 2, itemLocations[x].y - 7);
 }
 
 void DrasculaEngine::clearMenu() {
-	int n, sobre_verbo = 1;
+	int n, verbActivated = 1;
 
 	for (n = 0; n < 7; n++) {
 		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1])
-			sobre_verbo = 0;
-		copyRect(OBJWIDTH * n, OBJHEIGHT * sobre_verbo, verbBarX[n], 2,
+			verbActivated = 0;
+		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, backSurface, screenSurface);
-		sobre_verbo = 1;
+		verbActivated = 1;
 	}
 }
 
@@ -2454,8 +2455,8 @@ bool DrasculaEngine::exitRoom(int l) {
 			}
 			if (objectNum[l] == 176 && flags[29] == 1) {
 				flags[29] = 0;
-				removeObject(23);
-				addObject(11);
+				removeObject(kItemEarWithEarPlug);
+				addObject(kItemEarplugs);
 			}
 			clearRoom();
 			sscanf(_targetSurface[l], "%d", &roomNum);
@@ -3302,18 +3303,18 @@ void DrasculaEngine::response(int function) {
 	}
 }
 
-void DrasculaEngine::addObject(int osj) {
+void DrasculaEngine::addObject(int obj) {
 	int h, position = 0;
 
 	for (h = 1; h < 43; h++) {
-		if (inventoryObjects[h] == osj)
+		if (inventoryObjects[h] == obj)
 			position = 1;
 	}
 
 	if (position == 0) {
 		for (h = 1; h < 43; h++) {
 			if (inventoryObjects[h] == 0) {
-				inventoryObjects[h] = osj;
+				inventoryObjects[h] = obj;
 				position = 1;
 				break;
 			}

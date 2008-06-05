@@ -1089,11 +1089,11 @@ void DrasculaEngine::animation_23_2() {
 		talk_vb(19);
 		if (flags[25] == 0) {
 			talk_vb(20);
-			if (removeObject(7) == 0)
+			if (removeObject(kItemMoney) == 0)
 				flags[30] = 1;
-			if (removeObject(18) == 0)
+			if (removeObject(kItemTwoCoins) == 0)
 				flags[31] = 1;
-			if (removeObject(19) == 0)
+			if (removeObject(kItemOneCoin) == 0)
 				flags[32] = 1;
 		}
 		talk_vb(21);
@@ -1185,17 +1185,17 @@ void DrasculaEngine::animation_27_2() {
 	flags[22] = 1;
 
 	withoutVerb();
-	removeObject(23);
-	addObject(11);
+	removeObject(kItemEarWithEarPlug);
+	addObject(kItemEarplugs);
 
 	talk_vb(23);
 	talk_vb(24);
 	if (flags[30] == 1)
-		addObject(7);
+		addObject(kItemMoney);
 	if (flags[31] == 1)
-		addObject(18);
+		addObject(kItemTwoCoins);
 	if (flags[32] == 1)
-		addObject(19);
+		addObject(kItemOneCoin);
 	talk_vb(25);
 	talk_vb(26);
 }
@@ -1280,12 +1280,12 @@ void DrasculaEngine::animation_31_2() {
 	flags[38] = 0;
 	flags[36] = 1;
 	withoutVerb();
-	removeObject(8);
-	removeObject(13);
-	removeObject(15);
-	removeObject(16);
-	removeObject(17);
-	addObject(20);
+	removeObject(kItemLeaves);
+	removeObject(kItemBubbleGum);
+	removeObject(kItemTissues);
+	removeObject(kItemCigarettes);
+	removeObject(kItemCandle);
+	addObject(kItemReefer);
 }
 
 void DrasculaEngine::animation_35_2() {
@@ -2234,7 +2234,7 @@ void DrasculaEngine::animation_26_2() {
 	updateAnim(121, 225, 113, 50, 59, 6, extraSurface);
 
 	pickObject(11);
-	removeObject(12);
+	removeObject(kItemBook);
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;

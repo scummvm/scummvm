@@ -68,6 +68,38 @@ enum Verbs {
 	kVerbMove = 6
 };
 
+// Items up to chapter 3
+enum InventoryItems {
+	kItemMoney = 7,
+	kItemLeaves = 8,
+	kItemCross = 9,
+	kItemSpike = 10,
+	kItemEarplugs = 11,
+	kItemBook = 12,
+	kItemBubbleGum = 13,
+	kItemSickle = 14,
+	kItemTissues = 15,
+	kItemCigarettes = 16,
+	kItemCandle = 17,
+	kItemTwoCoins = 18,
+	kItemOneCoin = 19,
+	kItemReefer = 20,
+	kItemKey = 21,
+	kItemHandbag = 22,
+	kItemEarWithEarPlug = 23,
+	kItemPhone = 28
+};
+
+// Items from chapter 4 onwards
+enum InventoryItems2 {
+	kItemKey2 = 7,
+	kItemCross2 = 9,
+	kItemRope2 = 19,
+	kItemReefer2 = 20,
+	kItemOneCoin2 = 22,
+	kItemPhone2 = 28
+};
+
 enum Colors {
 	kColorBrown = 1,
 	kColorDarkBlue = 2,

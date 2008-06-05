@@ -269,7 +269,7 @@ void DrasculaEngine::room_5(int fl) {
 		talk(14);
 	else if (pickedObject == 10 && fl == 136) {
 		animation_5_2();
-		removeObject(10);
+		removeObject(kItemSpike);
 	} else
 		hasAnswer = 0;
 }
@@ -374,7 +374,7 @@ void DrasculaEngine::room_9(int fl){
 		animation_33_2();
 	else if (pickedObject == 7 && fl == 51) {
 		animation_6_2();
-		removeObject(7);
+		removeObject(kItemMoney);
 		pickObject(14);}
 	else
 		hasAnswer = 0;
@@ -451,7 +451,7 @@ void DrasculaEngine::room_15(int fl) {
 		talk(338);
 		flags[27] = 0;
 		pickObject(19);
-		removeObject(18);
+		removeObject(kItemTwoCoins);
 	} else if (pickedObject == kVerbMove && fl == 188 && flags[27] == 0) {
 		animation_34_2();
 		talk(339);
@@ -519,7 +519,7 @@ void DrasculaEngine::room_17(int fl) {
 		talk(347);
 		flags[29] = 1;
 		pickObject(23);
-		removeObject(11);
+		removeObject(kItemEarplugs);
 	} else
 		hasAnswer = 0;
 }
@@ -564,7 +564,7 @@ void DrasculaEngine::room_18(int fl) {
 		talk(347);
 		flags[29] = 1;
 		pickObject(23);
-		removeObject(11);
+		removeObject(kItemEarplugs);
 	} else
 		hasAnswer = 0;
 }
@@ -1728,8 +1728,8 @@ bool DrasculaEngine::checkAction(int fl) {
 				talk(164);
 				flags[23] = 1;
 				withoutVerb();
-				addObject(7);
-				addObject(18);
+				addObject(kItemMoney);
+				addObject(kItemTwoCoins);
 			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
 				talk(307);
 			else if (pickedObject == kVerbLook && fl == 28)
