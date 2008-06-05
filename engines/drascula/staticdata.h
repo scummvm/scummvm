@@ -511,7 +511,7 @@ RoomTalkAction room63Actions[] = {
 	{ -1,	kVerbTalk,		108,	333}
 };
 
-RoomTalkAction roomPendulumActions[] = {
+RoomTalkAction room102Actions[] = {
 	// num	action			object	speech
 	{ -1,	kVerbLook,		100,	452},
 	// ----------------------------------

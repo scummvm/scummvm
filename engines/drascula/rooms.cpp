@@ -95,6 +95,7 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_61);
 	ROOM(room_62);
 	ROOM(room_63);
+	ROOM(room_102);
 
 	PREUPDATEROOM(update_1_pre);
 	PREUPDATEROOM(update_3_pre);
@@ -149,6 +150,7 @@ void DrasculaEngine::setupRoomsTable() {
 	UPDATEROOM(update_61);
 	UPDATEROOM(update_62);
 	UPDATEROOM(update_63);
+	UPDATEROOM(update_102);
 }
 
 bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int actionCount, int fl) {
@@ -1075,8 +1077,8 @@ void DrasculaEngine::room_63(int fl) {
 	hasAnswer = 0;
 }
 
-void DrasculaEngine::room_pendulum(int fl) {
-	if (roomParse(roomPendulumActions, ARRAYSIZE(roomPendulumActions), fl))
+void DrasculaEngine::room_102(int fl) {
+	if (roomParse(room102Actions, ARRAYSIZE(room102Actions), fl))
 		return;
 
 	if (pickedObject == kVerbPick && fl == 101)
@@ -1121,8 +1123,6 @@ void DrasculaEngine::updateRefresh_pre() {
 
 	if (currentChapter == 1 && roomNumber == 16)
 		placeBJ();
-	else if (roomNumber == 102)
-		update_pendulum();
 }
 
 void DrasculaEngine::update_1_pre() {
@@ -1681,7 +1681,7 @@ void DrasculaEngine::update_63() {
 	copyRect(1, 154, 83, 122, 131, 44, drawSurface3, screenSurface);
 }
 
-void DrasculaEngine::update_pendulum() {
+void DrasculaEngine::update_102() {
 	int pendulum_x[] = {40, 96, 152, 208, 264, 40, 96, 152, 208, 208, 152, 264, 40, 96, 152, 208, 264};
 	int difference;
 
@@ -2031,7 +2031,7 @@ bool DrasculaEngine::checkAction(int fl) {
 			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(314);
 			else if (roomNumber == 102)
-				room_pendulum(fl);
+				room_102(fl);
 			else if (roomNumber == 60) {
 				if (room_60(fl))
 					return true;

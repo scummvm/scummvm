@@ -477,8 +477,6 @@ public:
 	void converse(int);
 	void print_abc_opc(const char *, int, int, int);
 	void response(int);
-	void room_pendulum(int);
-	void update_pendulum();
 	void activatePendulum();
 
 	void MusicFadeout();
@@ -533,6 +531,7 @@ public:
 	void room_61(int);
 	void room_62(int);
 	void room_63(int);
+	void room_102(int);
 
 	void animation_1_1();
 	void animation_2_1();
@@ -683,6 +682,7 @@ public:
 	void update_62();
 	void update_62_pre();
 	void update_63();
+	void update_102();
 
 private:
 	int _lang;
