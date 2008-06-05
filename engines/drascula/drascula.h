@@ -336,7 +336,7 @@ public:
 	int leftMouseButton;
 	int rightMouseButton;
 
-	bool escoba();
+	bool runCurrentChapter();
 	void black();
 	void pickObject(int);
 	void walkUp();

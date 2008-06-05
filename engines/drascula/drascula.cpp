@@ -197,7 +197,7 @@ int DrasculaEngine::go() {
 			strcpy(iconName[i + 1], _textverbs[_lang][i]);
 
 		assignDefaultPalette();
-		if (!escoba()) {
+		if (!runCurrentChapter()) {
 			quitGame();
 			break;
 		}
@@ -399,7 +399,7 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 	_system->updateScreen();
 }
 
-bool DrasculaEngine::escoba() {
+bool DrasculaEngine::runCurrentChapter() {
 	int n;
 
 	if (_lang == kSpanish)
