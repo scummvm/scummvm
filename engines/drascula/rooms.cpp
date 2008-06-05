@@ -23,10 +23,133 @@
  *
  */
 
+#include "common/array.h"
+
 #include "drascula/drascula.h"
 #include "drascula/staticdata.h"
 
 namespace Drascula {
+
+typedef void (DrasculaEngine::*RoomParser)(int args);
+
+struct DrasculaRoomParser {
+	DrasculaRoomParser(const char* d, RoomParser p) : desc(d), proc(p) {}
+	const char* desc;
+	RoomParser proc;
+};
+
+typedef void (DrasculaEngine::*Updater)();
+
+struct DrasculaUpdater {
+	DrasculaUpdater(const char* d, Updater p) : desc(d), proc(p) {}
+	const char* desc;
+	Updater proc;
+};
+
+Common::Array<DrasculaRoomParser*> _roomParsers;
+Common::Array<DrasculaUpdater*> _roomPreupdaters;
+Common::Array<DrasculaUpdater*> _roomUpdaters;
+
+#define ROOM(x) _roomParsers.push_back(new DrasculaRoomParser(#x, &DrasculaEngine::x))
+#define PREUPDATEROOM(x) _roomPreupdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
+#define UPDATEROOM(x) _roomUpdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
+
+void DrasculaEngine::setupRoomsTable() {
+	//ROOM(room_0);		// default
+	ROOM(room_1);
+	ROOM(room_3);
+	ROOM(room_4);
+	ROOM(room_5);
+	ROOM(room_6);
+	ROOM(room_7);
+	ROOM(room_8);
+	ROOM(room_9);
+	ROOM(room_12);
+	//ROOM(room_13);	// returns bool
+	ROOM(room_14);
+	ROOM(room_15);
+	ROOM(room_16);
+	ROOM(room_17);
+	ROOM(room_18);
+	ROOM(room_19);
+	//ROOM(room_21);	// returns bool
+	ROOM(room_22);
+	ROOM(room_23);
+	ROOM(room_24);
+	ROOM(room_26);
+	ROOM(room_27);
+	ROOM(room_29);
+	ROOM(room_30);
+	ROOM(room_31);
+	ROOM(room_34);
+	ROOM(room_35);
+	ROOM(room_44);
+	ROOM(room_49);
+	ROOM(room_53);
+	ROOM(room_54);
+	ROOM(room_55);
+	//ROOM(room_56);	// returns bool
+	ROOM(room_58);
+	ROOM(room_59);
+	//ROOM(room_60);	// returns bool
+	ROOM(room_61);
+	ROOM(room_62);
+	ROOM(room_63);
+
+	PREUPDATEROOM(update_1_pre);
+	PREUPDATEROOM(update_3_pre);
+	PREUPDATEROOM(update_5_pre);
+	PREUPDATEROOM(update_6_pre);
+	PREUPDATEROOM(update_7_pre);
+	PREUPDATEROOM(update_9_pre);
+	PREUPDATEROOM(update_12_pre);
+	PREUPDATEROOM(update_14_pre);
+	PREUPDATEROOM(update_16_pre);
+	PREUPDATEROOM(update_17_pre);
+	PREUPDATEROOM(update_18_pre);
+	PREUPDATEROOM(update_21_pre);
+	PREUPDATEROOM(update_22_pre);
+	PREUPDATEROOM(update_23_pre);
+	PREUPDATEROOM(update_24_pre);
+	PREUPDATEROOM(update_26_pre);
+	PREUPDATEROOM(update_27_pre);
+	PREUPDATEROOM(update_29_pre);
+	PREUPDATEROOM(update_30_pre);
+	PREUPDATEROOM(update_31_pre);
+	PREUPDATEROOM(update_34_pre);
+	PREUPDATEROOM(update_35_pre);
+	PREUPDATEROOM(update_49_pre);
+	PREUPDATEROOM(update_53_pre);
+	PREUPDATEROOM(update_54_pre);
+	PREUPDATEROOM(update_56_pre);
+	PREUPDATEROOM(update_58_pre);
+	PREUPDATEROOM(update_59_pre);
+	PREUPDATEROOM(update_60_pre);
+	PREUPDATEROOM(update_62_pre);
+
+	UPDATEROOM(update_2);
+	UPDATEROOM(update_3);
+	UPDATEROOM(update_4);
+	UPDATEROOM(update_5);
+	UPDATEROOM(update_13);
+	UPDATEROOM(update_15);
+	UPDATEROOM(update_17);
+	UPDATEROOM(update_18);
+	UPDATEROOM(update_20);
+	UPDATEROOM(update_26);
+	UPDATEROOM(update_27);
+	UPDATEROOM(update_29);
+	UPDATEROOM(update_31);
+	UPDATEROOM(update_34);
+	UPDATEROOM(update_35);
+	UPDATEROOM(update_50);
+	UPDATEROOM(update_57);
+	UPDATEROOM(update_58);
+	UPDATEROOM(update_60);
+	UPDATEROOM(update_61);
+	UPDATEROOM(update_62);
+	UPDATEROOM(update_63);
+}
 
 bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int actionCount, int fl) {
 	for (int i = 0; i < actionCount; i++) {
@@ -37,6 +160,7 @@ bool DrasculaEngine::roomParse(RoomTalkAction* roomActions, int actionCount, int
 				if (roomActions[i].objectID == fl ||
 					roomActions[i].objectID == -1) {
 					talk(roomActions[i].speechID);
+					hasAnswer = 1;
 					return true;
 				}
 			}
@@ -275,7 +399,7 @@ bool DrasculaEngine::room_13(int fl) {
 		talk(412);
 		strcpy(objName[1], "yoda");
 	} else if (pickedObject == kVerbTalk && fl == 51)
-		converse("op_7.cal");
+		converse(7);
 	else if (pickedObject == 19 && fl == 51)
 		animation_1_3();
 	else if (pickedObject == 9 && fl == 51) {
@@ -722,7 +846,7 @@ void DrasculaEngine::room_49(int fl){
 		return;
 
 	if (pickedObject == kVerbTalk && fl ==51)
-		converse("op_9.cal");
+		converse(9);
 	else if ((pickedObject == 8 && fl == 51) || (pickedObject == 8 && fl == 203))
 		animation_5_5();
 	else
@@ -770,7 +894,7 @@ void DrasculaEngine::room_54(int fl) {
 		talk(289);
 		talk_mus(2);
 		talk_mus(3);
-		converse("op_10.cal");
+		converse(10);
 		flags[12] = 0;
 		flags[14] = 1;
 	} else if (pickedObject == kVerbTalk && fl == 53 && flags[14] == 1)
@@ -904,7 +1028,7 @@ bool DrasculaEngine::room_60(int fl) {
 	else if (pickedObject == kVerbTalk && fl == 52) {
 		talk(266);
 		talk_bartender(1, 1);
-		converse("op_12.cal");
+		converse(12);
 		withoutVerb();
 		pickedObject = 0;
 	} else if (pickedObject == 21 && fl == 56)
@@ -933,7 +1057,7 @@ void DrasculaEngine::room_62(int fl) {
 		return;
 
 	if (pickedObject == kVerbTalk && fl == 53)
-		converse("op_13.cal");
+		converse(13);
 	else if (pickedObject == kVerbTalk && fl == 52 && flags[0] == 0)
 		animation_3_1();
 	else if (pickedObject == kVerbTalk && fl == 52 && flags[0] == 1)
@@ -966,136 +1090,39 @@ void DrasculaEngine::room_pendulum(int fl) {
 }
 
 void DrasculaEngine::updateRefresh() {
-	if (currentChapter == 1) {
-		if (roomNumber == 63)
-			update_63();
-		else if (roomNumber == 62)
-			update_62();
-	} else if (currentChapter == 2) {
-		if (roomNumber == 3)
-			update_3();
-		else if (roomNumber == 2)
-			update_2();
-		else if (roomNumber == 4)
-			update_4();
-		else if (roomNumber == 5)
-			update_5();
-		else if (roomNumber == 15)
-			update_15();
-		else if (roomNumber == 17)
-			update_17();
-		else if (roomNumber == 18)
-			update_18();
-		else if (roomNumber == 10)
-			showMap();
-	} else if (currentChapter == 3) {
-		if (roomNumber == 20)
-			update_20();
-		else if (roomNumber == 13)
-			update_13();
-	} else if (currentChapter == 4) {
-		if (roomNumber == 29)
-			update_29();
-		else if (roomNumber == 26)
-			update_26();
-		else if (roomNumber == 27)
-			update_27();
-		else if (roomNumber == 31)
-			update_31();
-		else if (roomNumber == 34)
-			update_34();
-		else if (roomNumber == 35)
-			update_35();
-	} else if (currentChapter == 5) {
-		if (roomNumber == 45)
-			showMap();
-		else if (roomNumber == 50)
-			update_50();
-		else if (roomNumber == 57)
-			update_57();
-	} else if (currentChapter == 6) {
-		if (roomNumber == 60)
-			update_60();
-		else if (roomNumber == 61)
-			update_61();
-		else if (roomNumber == 58)
-			update_58();
+	// Call room-specific updater
+	char rm[20];
+	sprintf(rm, "update_%d", roomNumber);
+	for (uint i = 0; i < _roomUpdaters.size(); i++) {
+		if (!strcmp(rm, _roomUpdaters[i]->desc)) {
+			debug(4, "Calling room updater %d", roomNumber);
+			(this->*(_roomUpdaters[i]->proc))();
+			break;
+		}
 	}
+
+	if (roomNumber == 10)
+		showMap();
+	else if (roomNumber == 45)
+		showMap();
 }
 
 void DrasculaEngine::updateRefresh_pre() {
-	if (currentChapter == 1) {
-		if (roomNumber == 62)
-			update_62_pre();
-		else if (roomNumber == 16)
-			placeBJ();
-	} else if (currentChapter == 2) {
-		if (roomNumber == 1)
-			update_1_pre();
-		else if (roomNumber == 3)
-			update_3_pre();
-		else if (roomNumber == 5)
-			update_5_pre();
-		else if (roomNumber == 6)
-			update_6_pre();
-		else if (roomNumber == 7)
-			update_7_pre();
-		else if (roomNumber == 9)
-			update_9_pre();
-		else if (roomNumber == 12)
-			update_12_pre();
-		else if (roomNumber == 14)
-			update_14_pre();
-		else if (roomNumber == 16)
-			update_16_pre();
-		else if (roomNumber == 17)
-			update_17_pre();
-		else if (roomNumber == 18)
-			update_18_pre();
-	} else if (currentChapter == 3) {
-		// nothing
-	} else if (currentChapter == 4) {
-		if (roomNumber == 21)
-			update_21_pre();
-		else if (roomNumber == 22)
-			update_22_pre();
-		else if (roomNumber == 23)
-			update_23_pre();
-		else if (roomNumber == 24)
-			update_24_pre();
-		else if (roomNumber == 26)
-			update_26_pre();
-		else if (roomNumber == 27)
-			update_27_pre();
-		else if (roomNumber == 29)
-			update_29_pre();
-		else if (roomNumber == 30)
-			update_30_pre();
-		else if (roomNumber == 31)
-			update_31_pre();
-		else if (roomNumber == 34)
-			update_34_pre();
-		else if (roomNumber == 35)
-			update_35_pre();
-	} else if (currentChapter == 5) {
-		if (roomNumber == 49)
-			update_49_pre();
-		else if (roomNumber == 53)
-			update_53_pre();
-		else if (roomNumber == 54)
-			update_54_pre();
-		else if (roomNumber == 56)
-			update_56_pre();
-	} else if (currentChapter == 6) {
-		if (roomNumber == 102)
-			update_pendulum();
-		else if (roomNumber == 58)
-			update_58_pre();
-		else if (roomNumber == 59)
-			update_59_pre();
-		else if (roomNumber == 60)
-			update_60_pre();
+	// Call room-specific preupdater
+	char rm[20];
+	sprintf(rm, "update_%d_pre", roomNumber);
+	for (uint i = 0; i < _roomPreupdaters.size(); i++) {
+		if (!strcmp(rm, _roomPreupdaters[i]->desc)) {
+			debug(4, "Calling room preupdater %d", roomNumber);
+			(this->*(_roomPreupdaters[i]->proc))();
+			break;
+		}
 	}
+
+	if (currentChapter == 1 && roomNumber == 16)
+		placeBJ();
+	else if (roomNumber == 102)
+		update_pendulum();
 }
 
 void DrasculaEngine::update_1_pre() {
@@ -1297,6 +1324,11 @@ void DrasculaEngine::update_15() {
 }
 
 void DrasculaEngine::update_16_pre() {
+	if (currentChapter != 2) {
+		debug(4, "update_16_pre: Special case, current chapter is not 2, not performing update");
+		return;
+	}
+
 	if (flags[17] == 0)
 		copyBackground(1, 103, 24, 72, 33, 95, drawSurface3, screenSurface);
 	if (flags[19] == 1)
@@ -1677,7 +1709,7 @@ void DrasculaEngine::update_pendulum() {
 	}
 }
 
-bool DrasculaEngine::checkFlag(int fl) {
+bool DrasculaEngine::checkAction(int fl) {
 	characterMoved = 0;
 	updateRoom();
 	updateScreen();
@@ -1688,6 +1720,8 @@ bool DrasculaEngine::checkFlag(int fl) {
 		if (currentChapter == 1) {
 			if (pickedObject == kVerbLook && fl == 28)
 				talk(328);
+			else
+				hasAnswer = 0;
 		} else if (currentChapter == 2) {
 			if ((pickedObject == kVerbLook && fl == 22 && flags[23] == 0)
 					|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
@@ -1890,10 +1924,6 @@ bool DrasculaEngine::checkFlag(int fl) {
 				talk(313);
 			else if (pickedObject == kVerbTalk && fl == 50)
 				talk(314);
-			else if (roomNumber == 62)
-				room_62(fl);
-			else if (roomNumber == 63)
-				room_63(fl);
 			else
 				hasAnswer = 0;
 		} else if (currentChapter == 2) {
@@ -1916,36 +1946,6 @@ bool DrasculaEngine::checkFlag(int fl) {
 				talk(156);
 			else if (pickedObject == 20 && fl == 50)
 				talk(163);
-			else if (roomNumber == 1)
-				room_1(fl);
-			else if (roomNumber == 3)
-				room_3(fl);
-			else if (roomNumber == 4)
-				room_4(fl);
-			else if (roomNumber == 5)
-				room_5(fl);
-			else if (roomNumber == 6)
-				room_6(fl);
-			else if (roomNumber == 7)
-				room_7(fl);
-			else if (roomNumber == 8)
-				room_8(fl);
-			else if (roomNumber == 9)
-				room_9(fl);
-			else if (roomNumber == 12)
-				room_12(fl);
-			else if (roomNumber == 14)
-				room_14(fl);
-			else if (roomNumber == 15)
-				room_15(fl);
-			else if (roomNumber == 16)
-				room_16(fl);
-			else if (roomNumber == 17)
-				room_17(fl);
-			else if (roomNumber == 18)
-				room_18(fl);
-			else if (roomNumber == 19)
-				room_19(fl);
 			else
 				hasAnswer = 0;
 		} else if (currentChapter == 3) {
@@ -1992,29 +1992,7 @@ bool DrasculaEngine::checkFlag(int fl) {
 			else if (roomNumber == 21) {
 				if (room_21(fl))
 					return true;
-			} else if (roomNumber == 22)
-				room_22(fl);
-			else if (roomNumber == 23)
-				room_23(fl);
-			else if (roomNumber == 24)
-				room_24(fl);
-			else if (roomNumber == 26)
-				room_26(fl);
-			else if (roomNumber == 27)
-				room_27(fl);
-			else if (roomNumber == 29)
-				room_29(fl);
-			else if (roomNumber == 30)
-				room_30(fl);
-			else if (roomNumber == 31)
-				room_31(fl);
-			else if (roomNumber == 34)
-				room_34(fl);
-			else if (roomNumber == 35)
-				room_35(fl);
-			else if (roomNumber == 44)
-				room_44(fl);
-			else
+			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 5) {
 			// TODO: These are not translated
@@ -2032,14 +2010,6 @@ bool DrasculaEngine::checkFlag(int fl) {
 				talk("hola yo", "16.als");
 			else if (pickedObject == 20 && fl == 50)
 				talk(487);
-			else if (roomNumber == 49)
-				room_49(fl);
-			else if (roomNumber == 53)
-				room_53(fl);
-			else if (roomNumber == 54)
-				room_54(fl);
-			else if (roomNumber == 55)
-				room_55(fl);
 			else if (roomNumber == 56) {
 				if (room_56(fl))
 					return true;
@@ -2062,22 +2032,31 @@ bool DrasculaEngine::checkFlag(int fl) {
 				talk(314);
 			else if (roomNumber == 102)
 				room_pendulum(fl);
-			else if (roomNumber == 58)
-				room_58(fl);
-			else if (roomNumber == 59)
-				room_59(fl);
 			else if (roomNumber == 60) {
 				if (room_60(fl))
 					return true;
-			} else if (roomNumber == 61)
-				room_61(fl);
+			}
 			else
 				hasAnswer = 0;
 		}
 	}
-	if (hasAnswer == 0 && hasName == 1)
-		room_0();
-	else if (hasAnswer == 0 && menuScreen == 1)
+
+	if (hasAnswer == 0) {
+		hasAnswer = 1;
+
+		// Call room-specific parser
+		char rm[20];
+		sprintf(rm, "room_%d", roomNumber);
+		for (uint i = 0; i < _roomParsers.size(); i++) {
+			if (!strcmp(rm, _roomParsers[i]->desc)) {
+				debug(4, "Calling room parser %d", roomNumber);
+				(this->*(_roomParsers[i]->proc))(fl);
+				break;
+			}
+		}
+	}
+
+	if (hasAnswer == 0 && (hasName == 1 || menuScreen == 1))
 		room_0();
 
 	return false;

@@ -100,6 +100,7 @@ int DrasculaEngine::init() {
 		_lang = 0;
 	}
 
+	setupRoomsTable();
 	loadArchives();
 
 	return 0;
@@ -788,13 +789,11 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	int soc, l, martin = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
 	char pant1[20], pant2[20], pant3[20], pant4[20];
-	char para_codificar[20];
 	char buffer[256];
 	int palLevel = 0;
 
 	hasName = 0;
 
-	strcpy(para_codificar, fileName);
 	strcpy(currentData, fileName);
 
 	_arj.open(fileName);
@@ -1166,7 +1165,7 @@ bool DrasculaEngine::verify2() {
 			return true;
 	} else {
 		if (!strcmp(textName, "hacker") && hasName == 1) {
-			if (checkFlag(50))
+			if (checkAction(50))
 				return true;
 		} else {
 			for (l = 0; l < numRoomObjs; l++) {
@@ -1175,7 +1174,7 @@ bool DrasculaEngine::verify2() {
 					trackFinal = trackObj[l];
 					walkToObject = 1;
 					gotoObject(roomObjX[l], roomObjY[l]);
-					if (checkFlag(objectNum[l]))
+					if (checkAction(objectNum[l]))
 						return true;
 					if (currentChapter == 4)
 						break;
@@ -3028,7 +3027,7 @@ bool DrasculaEngine::checkMenuFlags() {
 		if (whichObject() == n) {
 			h = inventoryObjects[n];
 			if (h != 0)
-				if (checkFlag(h))
+				if (checkAction(h))
 					return true;
 		}
 	}
@@ -3036,14 +3035,15 @@ bool DrasculaEngine::checkMenuFlags() {
 	return false;
 }
 
-void DrasculaEngine::converse(const char *fileName) {
+void DrasculaEngine::converse(int index) {
+	char fileName[20];
+	sprintf(fileName, "op_%d.cal", index);
 	int h;
 	int game1 = 1, game2 = 1, game3 = 1, game4 = 1;
 	char phrase1[78];
 	char phrase2[78];
 	char phrase3[87];
 	char phrase4[78];
-	char para_codificar[13];
 	char sound1[13];
 	char sound2[13];
 	char sound3[13];
@@ -3058,8 +3058,6 @@ void DrasculaEngine::converse(const char *fileName) {
 	char buffer[256];
 
 	breakOut = 0;
-
-	strcpy(para_codificar, fileName);
 
 	if (currentChapter == 5)
 		withoutVerb();

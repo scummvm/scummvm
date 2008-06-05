@@ -1519,7 +1519,7 @@ void DrasculaEngine::animation_1_5() {
 	}
 
 	trackProtagonist = 1;
-	converse("op_8.cal");
+	converse(8);
 }
 
 void DrasculaEngine::animation_2_5() {
@@ -1886,7 +1886,7 @@ void DrasculaEngine::animation_1_6() {
 	talk_drascula(22, 1);
 	talk(249);
 	talk_drascula(23, 1);
-	converse("op_11.cal");
+	converse(11);
 	talk_drascula(26, 1);
 
 	animate("fum.bin", 15);
@@ -2173,7 +2173,7 @@ void DrasculaEngine::animation_12_2() {
 	flags[11] = 1;
 
 	talk_pianist(5);
-	converse("op_1.cal");
+	converse(1);
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;
@@ -2282,7 +2282,7 @@ void DrasculaEngine::animation_13_2() {
 		talk_drunk(7);
 		flags[41] = 1;
 	}
-	converse("op_2.cal");
+	converse(2);
 
 	loadPic(964, frontSurface);
 }
@@ -2290,7 +2290,7 @@ void DrasculaEngine::animation_13_2() {
 void DrasculaEngine::animation_18_2() {
 	talk(378);
 	talk_vbpuerta(4);
-	converse("op_3.cal");
+	converse(3);
 }
 
 void DrasculaEngine::animation_22_2() {
@@ -2331,9 +2331,9 @@ void DrasculaEngine::animation_24_2() {
 	talk_vb(22);
 
 	if (flags[22] == 0)
-		converse("op_4.cal");
+		converse(4);
 	else
-		converse("op_5.cal");
+		converse(5);
 
 	exitRoom(0);
 	flags[21] = 0;
@@ -2653,7 +2653,7 @@ void DrasculaEngine::animation_1_4() {
 		talk_igor(6, kIgorSeated);
 	}
 
-	converse("op_6.cal");
+	converse(6);
 	flags[20] = 0;
 	flags[18] = 0;
 }

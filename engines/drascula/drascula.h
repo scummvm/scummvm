@@ -400,7 +400,7 @@ public:
 	void removeObject();
 	bool exitRoom(int);
 	bool pickupObject();
-	bool checkFlag(int);
+	bool checkAction(int);
 	void setCursorTable();
 	void enterName();
 	bool soundIsActive();
@@ -440,8 +440,9 @@ public:
 	void increaseFrameNum();
 	int whichObject();
 	bool checkMenuFlags();
+	void setupRoomsTable();
 	bool roomParse(RoomTalkAction*, int, int);
-	void converse(const char *);
+	void converse(int);
 	void print_abc_opc(const char *, int, int, int);
 	void response(int);
 	void room_pendulum(int);
@@ -635,9 +636,9 @@ public:
 	void update_31();
 	void update_34();
 	void update_35();
+	void update_49_pre();
 	void update_53_pre();
 	void update_54_pre();
-	void update_49_pre();
 	void update_56_pre();
 	void update_50();
 	void update_57();
