@@ -1341,7 +1341,7 @@ bool DrasculaEngine::saveLoadScreen() {
 
 	color_abc(kColorLightGreen);
 
-	sprintf(select, "");
+	select[0] = 0;
 
 	for (;;) {
 		y = 27;
