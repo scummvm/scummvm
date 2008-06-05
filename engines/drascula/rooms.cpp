@@ -154,8 +154,11 @@ void DrasculaEngine::setupRoomsTable() {
 }
 
 bool DrasculaEngine::roomParse(int room, int fl) {
+	bool seen = false;
+
 	for (int i = 0; i < ARRAYSIZE(roomActions); i++) {
 		if (roomActions[i].room == room) {
+			seen = true;
 			if (roomActions[i].chapter == currentChapter ||
 				roomActions[i].chapter == -1) {
 				if (roomActions[i].action == pickedObject ||
@@ -168,7 +171,8 @@ bool DrasculaEngine::roomParse(int room, int fl) {
 					}
 				}
 			}
-		}
+		} else if (seen) // Stop searching down the list
+			break;
 	}
 
 	return false;
