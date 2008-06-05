@@ -182,6 +182,9 @@ void DrasculaEngine::room_0() {
 	static const int lookExcuses[3] = {100, 101, 54};
 	static const int actionExcuses[6] = {11, 109, 111, 110, 115, 116};
 
+	if (roomParse(0, -1))
+ 		return;
+
 	// non-default actions
 	if (currentChapter == 2 || currentChapter == 4 ||
 		currentChapter == 5 || currentChapter == 6) {
@@ -861,6 +864,9 @@ void DrasculaEngine::room_55(int fl) {
 }
 
 bool DrasculaEngine::room_56(int fl) {
+	if (roomParse(56, fl))
+ 		return false;
+
 	if (pickedObject == kVerbOpen && fl == 124) {
 		animation_14_5();
 		return true;
@@ -944,6 +950,9 @@ void DrasculaEngine::room_59(int fl) {
 }
 
 bool DrasculaEngine::room_60(int fl) {
+	if (roomParse(60, fl))
+ 		return false;
+
 	if (pickedObject == kVerbMove && fl == 112)
 		animation_10_6();
 	else if (pickedObject == kVerbTalk && fl == 52) {
