@@ -137,6 +137,7 @@ enum IgorTalkerTypes {
 struct DrasculaGameDescription;
 
 struct RoomTalkAction {
+	int room;
 	int chapter;
 	int action;
 	int objectID;
@@ -473,7 +474,7 @@ public:
 	int whichObject();
 	bool checkMenuFlags();
 	void setupRoomsTable();
-	bool roomParse(RoomTalkAction*, int, int);
+	bool roomParse(int, int);
 	void converse(int);
 	void print_abc_opc(const char *, int, int, int);
 	void response(int);
