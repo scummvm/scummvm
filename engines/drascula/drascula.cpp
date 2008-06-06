@@ -1481,6 +1481,12 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, i
 
 		int c = toupper(said[h]);
 
+		// WORKAROUND: Even original did not process it correctly
+		// Fixes apostrophe rendering
+		if (_lang != kSpanish)
+			if (c == '\'')
+				c = '\244';
+
 		for (int i = 0; i < CHARMAP_SIZE; i++) {
 			if (c == charMap[i].inChar) {
 				// Convert the mapped char of the normal font to the
