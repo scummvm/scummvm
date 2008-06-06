@@ -1421,8 +1421,9 @@ bool DrasculaEngine::saveLoadScreen() {
 void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	int textPos[8];
 	int letterY = 0, letterX = 0, c, i;
+	uint len = strlen(said);
 
-	for (uint h = 0; h < strlen(said); h++) {
+	for (uint h = 0; h < len; h++) {
 		c = toupper(said[h]);
 
 		for (i = 0; i < CHARMAP_SIZE; i++) {
@@ -1464,8 +1465,9 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, int game) {
 	int textPos[6];
 	int signY, letterY, letterX = 0;
+	uint len = strlen(said);
 
-	for (uint h = 0; h < strlen(said); h++) {
+	for (uint h = 0; h < len; h++) {
 		if (game == 1) {
 			letterY = 6;
 			signY = 15;
@@ -3017,6 +3019,7 @@ void DrasculaEngine::converse(int index) {
 	int used2 = 0;
 	int used3 = 0;
 	char buffer[256];
+	uint len;
 
 	breakOut = 0;
 
@@ -3061,19 +3064,23 @@ void DrasculaEngine::converse(int index) {
 		answer3 = 15;
 	}
 
-	for (h = 0; h < strlen(phrase1); h++)
+	len = strlen(phrase1);
+	for (h = 0; h < len; h++)
 		if (phrase1[h] == (char)0xa7)
 			phrase1[h] = ' ';
 
-	for (h = 0; h < strlen(phrase2); h++)
+	len = strlen(phrase2);
+	for (h = 0; h < len; h++)
 		if (phrase2[h] == (char)0xa7)
 			phrase2[h] = ' ';
 
-	for (h = 0; h < strlen(phrase3); h++)
+	len = strlen(phrase3);
+	for (h = 0; h < len; h++)
 		if (phrase3[h] == (char)0xa7)
 			phrase3[h] = ' ';
 
-	for (h = 0; h < strlen(phrase4); h++)
+	len = strlen(phrase4);
+	for (h = 0; h < len; h++)
 		if (phrase4[h] == (char)0xa7)
 			phrase4[h] = ' ';
 
