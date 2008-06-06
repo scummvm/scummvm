@@ -1796,7 +1796,6 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 
 void DrasculaEngine::playSound(int soundNum) {
 	char file[20];
-	printf("playSound(%d)\n", soundNum);
 	sprintf(file, "s%i.als", soundNum);
 
 	playFile(file);
