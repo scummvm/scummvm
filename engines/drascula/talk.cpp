@@ -106,17 +106,11 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			if (withVoices == 0)
 				centerText(said, 87, 66);
 			updateScreen();
-		} else if (talkerType == 3) {
-			copyBackground(x_talk3[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
-			moveCharacters();
-			updateRefresh();
-			if (withVoices == 0)
-				centerText(said, 221, 102);
-
-			updateScreen();
-			pause(3);
-		} else if (talkerType == 4) {
-			copyBackground(x_talk4[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
+		} else if (talkerType == 3 || talkerType == 4) {
+			if (talkerType == 3)
+				copyBackground(x_talk3[face], 109, 207, 92, 21, 23, drawSurface3, screenSurface);
+			else
+				copyBackground(x_talk4[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 			moveCharacters();
 			updateRefresh();
 			if (withVoices == 0)
