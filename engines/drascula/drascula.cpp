@@ -1796,6 +1796,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 
 void DrasculaEngine::playSound(int soundNum) {
 	char file[20];
+	printf("playSound(%d)\n", soundNum);
 	sprintf(file, "s%i.als", soundNum);
 
 	playFile(file);
@@ -3346,16 +3347,17 @@ void DrasculaEngine::MusicFadeout() {
 }
 
 void DrasculaEngine::playFile(const char *fname) {
-	_arj.open(fname);
+	if (_arj.open(fname)) {
+		int soundSize = _arj.size();
+		byte *soundData = (byte *)malloc(soundSize);
+		_arj.seek(32);
+		_arj.read(soundData, soundSize);
+		_arj.close();
 
-	int soundSize = _arj.size();
-	byte *soundData = (byte *)malloc(soundSize);
-	_arj.seek(32);
-	_arj.read(soundData, soundSize);
-	_arj.close();
-
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, soundData, soundSize - 64,
-					11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, soundData, soundSize - 64,
+						11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
+	} else
+		warning("playFile: Could not open %s", fname);
 }
 
 bool DrasculaEngine::soundIsActive() {
