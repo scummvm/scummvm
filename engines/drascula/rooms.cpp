@@ -1494,9 +1494,7 @@ bool DrasculaEngine::checkAction(int fl) {
 				chooseObject(21);
 				removeObject(18);
 				removeObject(19);
-			} else if ((pickedObject == 14 && fl == 19) || (pickedObject == 19 && fl == 14))
-				talk(484);
-			else if (pickedObject == kVerbLook && fl == 9) {
+			} else if (pickedObject == kVerbLook && fl == 9) {
 				talk(482);
 				talk(483);
 			} else if (pickedObject == kVerbLook && fl == 19) {
@@ -1524,10 +1522,6 @@ bool DrasculaEngine::checkAction(int fl) {
 			// Note: the original check was strcmp(num_room, "18.alg")
 			if (pickedObject == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
 				talk(315);
-			else if (pickedObject == 13 && fl == 50)
-				talk(156);
-			else if (pickedObject == 20 && fl == 50)
-				talk(163);
 			else
 				hasAnswer = 0;
 		} else if (currentChapter == 3) {
@@ -1541,11 +1535,7 @@ bool DrasculaEngine::checkAction(int fl) {
 				talk(178);
 			else if (pickedObject == 8 && fl == 50 && flags[18] == 0)
 				talk(481);
-			else if (pickedObject == 9 && fl == 50)
-				talk(484);
 			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
-				talk(487);
-			else if (pickedObject == 20 && fl == 50)
 				talk(487);
 			else if (roomNumber == 21) {
 				if (room(21, fl))
@@ -1553,9 +1543,7 @@ bool DrasculaEngine::checkAction(int fl) {
 			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 5) {
-			if (pickedObject == 20 && fl == 50)
-				talk(487);
-			else if (roomNumber == 56) {
+			if (roomNumber == 56) {
 				if (room(56, fl))
 					return true;
 			} else

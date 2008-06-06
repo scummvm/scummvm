@@ -464,7 +464,6 @@ public:
 	int playFrameSSN();
 
 	byte *AuxBuffOrg;
-	byte *AuxBuffLast;
 	byte *AuxBuffDes;
 
 	byte *pointer;

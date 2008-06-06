@@ -574,6 +574,8 @@ RoomTalkAction roomActions[] = {
 	{ 200,	4,	kVerbLook,		28,		328 },
 	{ 200,	4,	kVerbTalk,		15,		118 },
 	{ 200,	4,	kVerbOpen,		15,		119 },
+	{ 200,	4,		   14,		19,		484 },
+	{ 200,	4,		   19,		14,		484 },
 	// ----------------------------------
 	{ 200,	5,	kVerbLook,		7,		478 },
 	{ 200,	5,	kVerbLook,		8,		120 },
@@ -605,6 +607,8 @@ RoomTalkAction roomActions[] = {
 	{ 201,	2,	kVerbMove,		50,		312 },
 	{ 201,	2,	kVerbPick,		50,		313 },
 	{ 201,	2,	kVerbTalk,		50,		314 },
+	{ 201,	2,		   13,		50,		156 },
+	{ 201,	2,		   20,		50,		163 },
 	// ----------------------------------
 	{ 201,	3,	kVerbLook,		50,		309 },
 	{ 201,	3,	kVerbOpen,		50,		310 },
@@ -619,6 +623,8 @@ RoomTalkAction roomActions[] = {
 	{ 201,	4,	kVerbMove,		50,		312 },
 	{ 201,	4,	kVerbPick,		50,		313 },
 	{ 201,	4,	kVerbTalk,		50,		314 },
+	{ 201,	4,		    9,		50,		484 },
+	{ 201,	4,		   20,		50,		487 },
 	// ----------------------------------
 	{ 201,	5,	kVerbLook,		50,		309 }, // Originally these are with
 	{ 201,	5,	kVerbOpen,		50,		310 }, // completely wrong voices
@@ -626,6 +632,7 @@ RoomTalkAction roomActions[] = {
 	{ 201,	5,	kVerbMove,		50,		312 },
 	{ 201,	5,	kVerbPick,		50,		313 },
 	{ 201,	5,	kVerbTalk,		50,		314 },
+	{ 201,	5,		   20,		50,		487 },
 	// ----------------------------------
 	{ 201,	6,	kVerbOpen,		50,		310 },
 	{ 201,	6,	kVerbClose,		50,		311 },

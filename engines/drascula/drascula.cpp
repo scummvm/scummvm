@@ -1420,13 +1420,12 @@ bool DrasculaEngine::saveLoadScreen() {
 
 void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	int textPos[8];
-	int letterY = 0, letterX = 0, h, length;
-	length = strlen(said);
+	int letterY = 0, letterX = 0, c, i;
 
-	for (h = 0; h < length; h++) {
-		int c = toupper(said[h]);
+	for (uint h = 0; h < strlen(said); h++) {
+		c = toupper(said[h]);
 
-		for (int i = 0; i < CHARMAP_SIZE; i++) {
+		for (i = 0; i < CHARMAP_SIZE; i++) {
 			if (c == charMap[i].inChar) {
 				letterX = charMap[i].mappedChar;
 
@@ -1464,10 +1463,9 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 
 void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, int game) {
 	int textPos[6];
-	int signY, letterY, letterX = 0, h, length;
-	length = strlen(said);
+	int signY, letterY, letterX = 0;
 
-	for (h = 0; h < length; h++) {
+	for (uint h = 0; h < strlen(said); h++) {
 		if (game == 1) {
 			letterY = 6;
 			signY = 15;
@@ -1780,7 +1778,6 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	int cnt = 2;
 	int dataSize = 0;
 
-	AuxBuffLast = (byte *)malloc(65000);
 	AuxBuffDes = (byte *)malloc(65000);
 
 	_arj.open(animationFile);
@@ -1800,7 +1797,6 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 	_system->updateScreen();
 	setPalette(cPal);
-	memcpy(AuxBuffLast, AuxBuffDes, 64000);
 	WaitForNext(FPS);
 	while (cnt < NFrames) {
 		dataSize = _arj.readSint32LE();
@@ -1810,7 +1806,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 		loadPCX(AuxBuffOrg);
 		free(AuxBuffOrg);
 		for (j = 0;j < 64000; j++) {
-			VGA[j] = AuxBuffLast[j] = AuxBuffDes[j] ^ AuxBuffLast[j];
+			VGA[j] = AuxBuffDes[j] ^ VGA[j];
 		}
 		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 		_system->updateScreen();
@@ -1822,7 +1818,6 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 		if (key != 0)
 			break;
 	}
-	free(AuxBuffLast);
 	free(AuxBuffDes);
 	_arj.close();
 
@@ -2753,8 +2748,7 @@ void DrasculaEngine::Des_RLE(byte *BufferRLE, byte *MiVideoRLE) {
 }
 
 void DrasculaEngine::MixVideo(byte *OldScreen, byte *NewScreen) {
-	int x;
-	for (x = 0; x < 64000; x++)
+	for (int x = 0; x < 64000; x++)
 		OldScreen[x] ^= NewScreen[x];
 }
 
@@ -2770,9 +2764,7 @@ byte *DrasculaEngine::loadPCX(byte *NamePcc) {
 	unsigned int X = 0;
 	unsigned int fExit = 0;
 	char ch, rep;
-	byte *AuxPun;
-
-	AuxPun = AuxBuffDes;
+	byte *AuxPun = AuxBuffDes;
 
 	while (!fExit) {
 		ch = *NamePcc++;
@@ -2825,10 +2817,10 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 
 			copyRectClip(pixelPos, dir_inicio, dir_fin);
 
-			pixelX = pixelX + totalX;
+			pixelX += totalX;
 		}
 		pixelX = xx1;
-		pixelY = pixelY + totalY;
+		pixelY += totalY;
 	}
 }
 
@@ -3008,7 +3000,7 @@ bool DrasculaEngine::checkMenuFlags() {
 void DrasculaEngine::converse(int index) {
 	char fileName[20];
 	sprintf(fileName, "op_%d.cal", index);
-	int h;
+	uint h;
 	int game1 = 1, game2 = 1, game3 = 1, game4 = 1;
 	char phrase1[78];
 	char phrase2[78];
@@ -3018,7 +3010,6 @@ void DrasculaEngine::converse(int index) {
 	char sound2[13];
 	char sound3[13];
 	char sound4[13];
-	int length;
 	int answer1;
 	int answer2;
 	int answer3;
@@ -3070,23 +3061,19 @@ void DrasculaEngine::converse(int index) {
 		answer3 = 15;
 	}
 
-	length = strlen(phrase1);
-	for (h = 0; h < length; h++)
+	for (h = 0; h < strlen(phrase1); h++)
 		if (phrase1[h] == (char)0xa7)
 			phrase1[h] = ' ';
 
-	length = strlen(phrase2);
-	for (h = 0; h < length; h++)
+	for (h = 0; h < strlen(phrase2); h++)
 		if (phrase2[h] == (char)0xa7)
 			phrase2[h] = ' ';
 
-	length = strlen(phrase3);
-	for (h = 0; h < length; h++)
+	for (h = 0; h < strlen(phrase3); h++)
 		if (phrase3[h] == (char)0xa7)
 			phrase3[h] = ' ';
 
-	length = strlen(phrase4);
-	for (h = 0; h < length; h++)
+	for (h = 0; h < strlen(phrase4); h++)
 		if (phrase4[h] == (char)0xa7)
 			phrase4[h] = ' ';
 
