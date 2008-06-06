@@ -401,6 +401,11 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
 
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+	else
+		textSurface = tableSurface;
+
 	previousMusic = -1;
 
 	if (currentChapter != 2) {
@@ -1447,7 +1452,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 		textPos[4] = CHAR_WIDTH;
 		textPos[5] = CHAR_HEIGHT;
 
-		copyRectClip(textPos, tableSurface, screenSurface);
+		copyRectClip(textPos, textSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {

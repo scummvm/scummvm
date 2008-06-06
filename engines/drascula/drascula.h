@@ -283,6 +283,7 @@ public:
 	byte *extraSurface;	// not sure about this one, was "dir_hare_dch"
 	byte *screenSurface;
 	byte *frontSurface;
+	byte *textSurface;
 	byte *pendulumSurface;
 
 	byte cPal[768];

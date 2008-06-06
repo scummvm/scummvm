@@ -396,6 +396,9 @@ void DrasculaEngine::animation_2_1() {
 		if (animate("ag.bin", 14))
 			break;
 
+		if (_lang == kSpanish)
+			textSurface = frontSurface;
+
 		loadPic("an11y13.alg", extraSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -403,6 +406,9 @@ void DrasculaEngine::animation_2_1() {
 		talk_bartender(22);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
+
+		if (_lang == kSpanish)
+			textSurface = extraSurface;
 
 		loadPic(97, extraSurface);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
@@ -585,6 +591,9 @@ void DrasculaEngine::animation_2_1() {
 }
 
 void DrasculaEngine::animation_3_1() {
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	loadPic("an11y13.alg", extraSurface);
 
 	talk(192);
@@ -610,10 +619,16 @@ void DrasculaEngine::animation_3_1() {
 
 	flags[0] = 1;
 
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+
 	loadPic(97, extraSurface);
 }
 
 void DrasculaEngine::animation_4_1() {
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	loadPic("an12.alg", extraSurface);
 
 	talk(205);
@@ -644,6 +659,9 @@ void DrasculaEngine::animation_4_1() {
 	talk(208);
 	talk_pianist(4);
 	talk(209);
+
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
 
 	flags[11] = 0;
 	loadPic(97, extraSurface);
@@ -710,6 +728,9 @@ void DrasculaEngine::animation_4_2() {
 	loadPic("ciego4.alg", backSurface);
 	loadPic("ciego5.alg", frontSurface);
 
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
 
@@ -754,6 +775,9 @@ void DrasculaEngine::animation_4_2() {
 	loadPic(97, extraSurface);
 	loadPic(99, backSurface);
 	withoutVerb();
+
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
 
 	flags[9] = 0;
 	flags[4] = 1;
@@ -1907,6 +1931,9 @@ void DrasculaEngine::animation_1_6() {
 	trackDrascula = 0;
 	talk_drascula(35);
 
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+
 	clearRoom();
 	enterRoom(102);
 	activatePendulum();
@@ -2118,6 +2145,9 @@ void DrasculaEngine::animation_19_6() {
 }
 
 void DrasculaEngine::animation_12_2() {
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	loadPic("an12.alg", extraSurface);
 
 	talk(356);
@@ -2143,11 +2173,17 @@ void DrasculaEngine::animation_12_2() {
 	talk_pianist(5);
 	converse(1);
 
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+
 	flags[11] = 0;
 	loadPic(974, extraSurface);
 }
 
 void DrasculaEngine::animation_26_2() {
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	loadPic("an12.alg", extraSurface);
 
 	talk(392);
@@ -2198,6 +2234,9 @@ void DrasculaEngine::animation_26_2() {
 	pickObject(11);
 	removeObject(kItemBook);
 
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+
 	flags[11] = 0;
 	flags[39] = 1;
 	loadPic(974, extraSurface);
@@ -2205,6 +2244,9 @@ void DrasculaEngine::animation_26_2() {
 }
 
 void DrasculaEngine::animation_11_2() {
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	loadPic("an11y13.alg", extraSurface);
 
 	talk(352);
@@ -2216,6 +2258,9 @@ void DrasculaEngine::animation_11_2() {
 	talk(355);
 	pause(40);
 	talk_bartender(82);
+
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
 
 	loadPic(974, extraSurface);
 }
@@ -2344,6 +2389,9 @@ void DrasculaEngine::animation_34_2() {
 }
 
 void DrasculaEngine::animation_36_2() {
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	loadPic("an11y13.alg", extraSurface);
 
 	talk(404);
@@ -2353,6 +2401,10 @@ void DrasculaEngine::animation_36_2() {
 	talk(355);
 	pause(40);
 	talk_bartender(82);
+
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+
 	loadPic(974, extraSurface);
 }
 
@@ -2452,6 +2504,9 @@ void DrasculaEngine::animation_6_2() {
 	stopMusic();
 	flags[9] = 1;
 
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
+
 	clearRoom();
 	loadPic("ciego1.alg", drawSurface1, HALF_PAL);	// ciego = blind
 	loadPic("ciego2.alg", drawSurface3);
@@ -2486,6 +2541,9 @@ void DrasculaEngine::animation_6_2() {
 	loadPic(99, backSurface);
 	withoutVerb();
 
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
+
 	flags[9] = 0;
 }
 
@@ -2503,6 +2561,9 @@ void DrasculaEngine::animation_33_2() {
 	loadPic("ciego3.alg", extraSurface);
 	loadPic("ciego4.alg", backSurface);
 	loadPic("ciego5.alg", frontSurface);
+
+	if (_lang == kSpanish)
+		textSurface = frontSurface;
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
@@ -2531,6 +2592,9 @@ void DrasculaEngine::animation_33_2() {
 	loadPic(97, extraSurface);
 	loadPic(99, backSurface);
 	withoutVerb();
+
+	if (_lang == kSpanish)
+		textSurface = extraSurface;
 
 	flags[33] = 1;
 	flags[9] = 0;
