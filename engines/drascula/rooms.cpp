@@ -683,9 +683,7 @@ bool DrasculaEngine::room_27(int fl) {
 		flags[23] = 1;
 		openDoor(5,3);
 		withoutVerb();
-	} else if (pickedObject == kVerbLook && fl == 175)
-		talk(429);
-	else if (fl == 150)
+	} else if (fl == 150)
 		talk(460);
 	else
 		hasAnswer = 0;
@@ -831,7 +829,7 @@ bool DrasculaEngine::room_53(int fl) {
 bool DrasculaEngine::room_54(int fl) {
 	if ((pickedObject == kVerbTalk && fl == 118) || (pickedObject == kVerbLook && fl == 118 && flags[0] == 0))
 		animation_1_5();
-	else if (pickedObject == kVerbLook && fl == 118 && flags[0]==1)
+	else if (pickedObject == kVerbLook && fl == 118 && flags[0] == 1)
 		talk(124);
 	else if (pickedObject == kVerbTalk && fl == 53 && flags[14] == 0) {
 		talk(288);
@@ -1008,8 +1006,6 @@ bool DrasculaEngine::room_102(int fl) {
 		pickObject(20);
 	else if (pickedObject == 20 && fl == 100)
 		animation_6_6();
-	else if (pickedObject == kVerbPick || pickedObject == kVerbOpen)
-		talk(453);
 	else
 		hasAnswer = 0;
 
