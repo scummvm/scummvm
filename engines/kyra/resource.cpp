@@ -156,7 +156,6 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	const ResArchiveLoader *loader = getLoader(iter->_value.type);
 	if (!loader) {
-		assert(loader);
 		error("no archive loader for file '%s' found which is of type %d", filename.c_str(), iter->_value.type);
 		return false;
 	}

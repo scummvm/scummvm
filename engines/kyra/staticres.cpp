@@ -1200,31 +1200,31 @@ void KyraEngine_HoF::initStaticResource() {
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
 	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);	
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
-	_ingameSoundIndex = (const uint16*) _staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
+	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
 	_musicFileListIngame = _staticres->loadStrings(k2IngameTracks, _musicFileListIngameSize);
 	_musicFileListFinale = _staticres->loadStrings(k2SeqplayFinaleTracks, _musicFileListFinaleSize);
 	_cdaTrackTableIntro = _staticres->loadRawData(k2SeqplayIntroCDA, _cdaTrackTableIntroSize);
 	_cdaTrackTableIngame = _staticres->loadRawData(k2IngameCDA, _cdaTrackTableIngameSize);
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
-	_ingameTalkObjIndex = (const uint16*) _staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
+	_ingameTalkObjIndex = (const uint16 *)_staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
 	_itemAnimData = _staticres->loadShapeAnimData_v2(k2IngameShapeAnimData, _itemAnimDataSize);
 
 	// replace sequence talkie files with localized versions
-	const char* const* seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
-	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
-	char ** tmpSndLst = new char*[_sequenceSoundListSize];
+	const char *const *seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
+	const char *const *tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
+	char **tmpSndLst = new char*[_sequenceSoundListSize];
 
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		int len = strlen(seqSoundList[i]);
+		const int len = strlen(seqSoundList[i]);
 
 		tmpSndLst[i] = new char[len + 1];
 		tmpSndLst[i][0] = 0;
 
 		if (tlkfiles && len > 1) {
 			for (int ii = 0; ii < tmpSize; ii++) {
-				if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
+				if (strlen(tlkfiles[ii]) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
 						strcpy(tmpSndLst[i], tlkfiles[ii]);
 			}
 		}
