@@ -161,16 +161,16 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 		if (currentChapter == 6)
 			moveCharacters();
 
-		copyBackground(x_dr, y_dr, x_dr, y_dr, 38 + offset, 31, drawSurface1, screenSurface);
+		copyBackground(drasculaX, drasculaY, drasculaX, drasculaY, 38 + offset, 31, drawSurface1, screenSurface);
 		if (currentChapter == 6)
-			copyRect(x_talk[face], offset2, x_dr + offset, y_dr, 38, 31, drawSurface2, screenSurface);
+			copyRect(x_talk[face], offset2, drasculaX + offset, drasculaY, 38, 31, drawSurface2, screenSurface);
 		else
-			copyRect(x_talk[face], offset2, x_dr + offset, y_dr, 38, 31, backSurface, screenSurface);
+			copyRect(x_talk[face], offset2, drasculaX + offset, drasculaY, 38, 31, backSurface, screenSurface);
 
 		updateRefresh();
 
 		if (withVoices == 0)
-			centerText(said, x_dr + 19, y_dr);
+			centerText(said, drasculaX + 19, drasculaY);
 
 		updateScreen();
 
@@ -303,16 +303,16 @@ void DrasculaEngine::talk_bj(int index) {
 
 			updateRefresh_pre();
 
-			copyBackground(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
+			copyBackground(bjX + 2, bjY - 1, bjX + 2, bjY - 1, 27, 40,
 						   drawSurface1, screenSurface);
 
-			copyRect(x_talk[face], 99, x_bj + 2, y_bj - 1, 27, 40,
+			copyRect(x_talk[face], 99, bjX + 2, bjY - 1, 27, 40,
 					 drawSurface3, screenSurface);
 			moveCharacters();
 			updateRefresh();
 
 			if (withVoices == 0)
-				centerText(said, x_bj + 7, y_bj);
+				centerText(said, bjX + 7, bjY);
 
 			updateScreen();
 
@@ -546,7 +546,7 @@ void DrasculaEngine::talk_drunk(int index) {
 	}
 }
 
-void DrasculaEngine::talk_vb(int index) {
+void DrasculaEngine::talk_vonBraun(int index) {
 	char filename[20];
 	sprintf(filename, "VB%i.als", index);
 	const char *said = _textvb[_lang][index];
@@ -558,23 +558,23 @@ void DrasculaEngine::talk_vb(int index) {
 
 	talkInit(filename);
 
-	copyBackground(vbX + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
+	copyBackground(vonBraunX + 5, 64, OBJWIDTH + 1, 0, 25, 27, drawSurface1, drawSurface3);
 
 	do {
-		if (trackVB == 1) {
+		if (trackVonBraun == 1) {
 			face = _rnd->getRandomNumber(5);
 			copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 			moveCharacters();
-			moveVB();
+			moveVonBraun();
 
-			copyBackground(OBJWIDTH + 1, 0, vbX + 5, 64, 25, 27, drawSurface3, screenSurface);
-			copyRect(x_talk[face], 34, vbX + 5, 64, 25, 27, frontSurface, screenSurface);
+			copyBackground(OBJWIDTH + 1, 0, vonBraunX + 5, 64, 25, 27, drawSurface3, screenSurface);
+			copyRect(x_talk[face], 34, vonBraunX + 5, 64, 25, 27, frontSurface, screenSurface);
 			updateRefresh();
 		}
 
 		if (withVoices == 0)
-			centerText(said, vbX, 66);
+			centerText(said, vonBraunX, 66);
 
 		updateScreen();
 
@@ -587,7 +587,7 @@ void DrasculaEngine::talk_vb(int index) {
 		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_vbpuerta(int index) {
+void DrasculaEngine::talk_vonBraunpuerta(int index) {
 	char filename[20];
 	sprintf(filename, "VB%i.als", index);
 	const char *said = _textvb[_lang][index];
@@ -688,7 +688,7 @@ void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
 	} while (!isTalkFinished(&length));
 }
 
-void DrasculaEngine::talk_wolf(int index) {
+void DrasculaEngine::talk_werewolf(int index) {
 	char filename[20];
 	sprintf(filename, "L%i.als", index);
 	const char *said = _textl[_lang][index];

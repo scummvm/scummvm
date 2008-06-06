@@ -132,6 +132,17 @@ enum IgorTalkerTypes {
 	kIgorWig = 4
 };
 
+enum AnimFrameTypes {
+	kFrameBlind = 0,
+	kFrameSnore = 1,
+	kFrameBat = 2,
+	kFrameVonBraun = 3,
+	kFramePianist = 4,
+	kFrameDrunk = 5,
+	kFrameCandles = 6,
+	kFramePendulum = 7
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
@@ -234,7 +245,7 @@ public:
 
 	typedef char DacPalette256[256][3];
 
-	void setRGB(byte *dir_lectura, int plt);
+	void setRGB(byte *pal, int plt);
 	void assignDefaultPalette();
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
@@ -280,6 +291,8 @@ public:
 
 	Common::ArjFile _arj;
 
+	int actorFrames[8];
+
 	int previousMusic, roomMusic;
 	int roomNumber;
 	char roomDisk[20];
@@ -300,9 +313,6 @@ public:
 	int withVoices;
 	int menuBar, menuScreen, hasName;
 	char textName[20];
-	int frame_blind;
-	int frame_snore;
-	int frame_bat;
 	int curExcuseLook;
 	int curExcuseAction;
 
@@ -324,18 +334,15 @@ public:
 	int savedTime;
 	int changeColor;
 	int breakOut;
-	int vbX, trackVB, vbHasMoved, frame_vb;
+	int vonBraunX, trackVonBraun, vonBraunHasMoved;
 	float newHeight, newWidth;
 	int factor_red[202];
-	int frame_piano;
-	int frame_drunk;
-	int frame_candles;
 	int color_solo;
 	int blinking;
 	int igorX, igorY, trackIgor;
-	int x_dr, y_dr, trackDrascula;
-	int x_bj, y_bj, trackBJ;
-	int cont_sv;
+	int drasculaX, drasculaY, trackDrascula;
+	int bjX, bjY, trackBJ;
+	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
 	int hay_que_load;
@@ -346,7 +353,6 @@ public:
 	int selectionMade;
 	int mouseX;
 	int mouseY;
-	int mouseY_ant;
 	int leftMouseButton;
 	int rightMouseButton;
 
@@ -355,8 +361,8 @@ public:
 	void pickObject(int);
 	void walkUp();
 	void walkDown();
-	void moveVB();
-	void placeVB(int pointX);
+	void moveVonBraun();
+	void placeVonBraun(int pointX);
 	void hipo_sin_nadie(int counter);
 	void openDoor(int nflag, int doorNum);
 	void showMap();
@@ -386,12 +392,12 @@ public:
 	int removeObject(int osj);
 	void playFLI(const char *filefli, int vel);
 	void fadeFromBlack(int fadeSpeed);
+	void fadeToBlack(int fadeSpeed);
 	char adjustToVGA(char value);
 	void color_abc(int cl);
 	void centerText(const char *,int,int);
 	void playSound(int soundNum);
 	bool animate(const char *animation, int FPS);
-	void fadeToBlack(int fadeSpeed);
 	void pause(int);
 	void placeIgor();
 	void placeBJ();
@@ -413,11 +419,11 @@ public:
 	void talk_sync(const char *, const char *, const char *);
 	void talk_drunk(int);
 	void talk_pianist(int);
-	void talk_wolf(int);
+	void talk_werewolf(int);
 	void talk_mus(int);
 	void talk_dr_grande(int);
-	void talk_vb(int);
-	void talk_vbpuerta(int);
+	void talk_vonBraun(int);
+	void talk_vonBraunpuerta(int);
 	void talk_blind(int);
 	void talk_hacker(const char *, const char *);
 
@@ -471,7 +477,6 @@ public:
 	int globalSpeed;
 	uint32 LastFrame;
 
-	int frame_pen;
 	int flag_tv;
 
 	byte *loadPCX(byte *NamePcc);

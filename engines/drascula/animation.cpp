@@ -186,8 +186,8 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("auxigor.alg", frontSurface);
 		loadPic("auxdr.alg", backSurface);
 		trackDrascula = 0;
-		x_dr = 129;
-		y_dr = 95;
+		drasculaX = 129;
+		drasculaY = 95;
 		trackIgor = 1;
 		igorX = 66;
 		igorY = 97;
@@ -461,8 +461,8 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		for (l = 0; l < 200; l++)
 			factor_red[l] = 99;
-		x_bj = 170;
-		y_bj = 90;
+		bjX = 170;
+		bjY = 90;
 		trackBJ = 0;
 		curX = 91;
 		curY = 95;
@@ -810,28 +810,28 @@ void DrasculaEngine::animation_10_2() {
 }
 
 void DrasculaEngine::animation_14_2() {
-	int n, pos_cabina[6];
+	int cabinPos[6];
 	int l = 0;
 
 	loadPic("an14_2.alg", backSurface);
 
-	pos_cabina[0] = 150;
-	pos_cabina[1] = 6;
-	pos_cabina[2] = 69;
-	pos_cabina[3] = -160;
-	pos_cabina[4] = 158;
-	pos_cabina[5] = 161;
+	cabinPos[0] = 150;
+	cabinPos[1] = 6;
+	cabinPos[2] = 69;
+	cabinPos[3] = -160;
+	cabinPos[4] = 158;
+	cabinPos[5] = 161;
 
-	for (n = -160; n <= 0; n = n + 5 + l) {
+	for (int n = -160; n <= 0; n = n + 5 + l) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
 		moveCharacters();
-		moveVB();
-		pos_cabina[3] = n;
-		copyRectClip(pos_cabina, backSurface, screenSurface);
+		moveVonBraun();
+		cabinPos[3] = n;
+		copyRectClip(cabinPos, backSurface, screenSurface);
 		updateRefresh();
 		updateScreen();
-		l = l + 1;
+		l++;
 	}
 
 	flags[24] = 1;
@@ -855,8 +855,6 @@ void DrasculaEngine::animation_15_2() {
 }
 
 void DrasculaEngine::animation_16_2() {
-	int l;
-
 	talk_drunk(12);
 	talk(371);
 
@@ -979,7 +977,7 @@ void DrasculaEngine::animation_16_2() {
 	if (key != 0)
 		goto asco;
 
-	for (l = 1; l < 200; l++) {
+	for (int l = 1; l < 200; l++) {
 		copyBackground(0, 0, 0, l, 320, 200 - l, drawSurface3, screenSurface);
 		copyBackground(0, 200 - l, 0, 0, 320, l, drawSurface1, screenSurface);
 		updateScreen();
@@ -1012,24 +1010,24 @@ void DrasculaEngine::animation_17_2() {
 }
 
 void DrasculaEngine::animation_19_2() {
-	talk_vbpuerta(5);
+	talk_vonBraunpuerta(5);
 }
 
 void DrasculaEngine::animation_20_2() {
-	talk_vbpuerta(7);
-	talk_vbpuerta(8);
+	talk_vonBraunpuerta(7);
+	talk_vonBraunpuerta(8);
 	talk(383);
-	talk_vbpuerta(9);
+	talk_vonBraunpuerta(9);
 	talk(384);
-	talk_vbpuerta(10);
+	talk_vonBraunpuerta(10);
 	talk(385);
-	talk_vbpuerta(11);
+	talk_vonBraunpuerta(11);
 	if (flags[23] == 0) {
 		talk(350);
-		talk_vbpuerta(57);
+		talk_vonBraunpuerta(57);
 	} else {
 		talk(386);
-		talk_vbpuerta(12);
+		talk_vonBraunpuerta(12);
 		flags[18] = 0;
 		flags[14] = 1;
 		openDoor(15, 1);
@@ -1038,15 +1036,15 @@ void DrasculaEngine::animation_20_2() {
 		exitRoom(0);
 		flags[21] = 0;
 		flags[24] = 0;
-		trackVB = 1;
-		vbX = 120;
+		trackVonBraun = 1;
+		vonBraunX = 120;
 
 		breakOut = 1;
 	}
 }
 
 void DrasculaEngine::animation_21_2() {
-	talk_vbpuerta(6);
+	talk_vonBraunpuerta(6);
 }
 
 void DrasculaEngine::animation_23_2() {
@@ -1055,40 +1053,40 @@ void DrasculaEngine::animation_23_2() {
 	flags[21] = 1;
 
 	if (flags[25] == 0) {
-		talk_vb(13);
-		talk_vb(14);
+		talk_vonBraun(13);
+		talk_vonBraun(14);
 		pause(10);
 		talk(387);
 	}
 
-	talk_vb(15);
-	placeVB(42);
-	trackVB = 1;
-	talk_vb(16);
-	trackVB = 2;
+	talk_vonBraun(15);
+	placeVonBraun(42);
+	trackVonBraun = 1;
+	talk_vonBraun(16);
+	trackVonBraun = 2;
 	gotoObject(157, 147);
 	gotoObject(131, 149);
 	trackProtagonist = 0;
 	animation_14_2();
 	if (flags[25] == 0)
-		talk_vb(17);
+		talk_vonBraun(17);
 	pause(8);
-	trackVB = 1;
-	talk_vb(18);
+	trackVonBraun = 1;
+	talk_vonBraun(18);
 
 	if (flags[29] == 0)
 		animation_23_joined();
 	else
 		animation_23_joined2();
 
-	trackVB = 2;
+	trackVonBraun = 2;
 	animation_25_2();
-	placeVB(99);
+	placeVonBraun(99);
 
 	if (flags[29] == 0) {
-		talk_vb(19);
+		talk_vonBraun(19);
 		if (flags[25] == 0) {
-			talk_vb(20);
+			talk_vonBraun(20);
 			if (removeObject(kItemMoney) == 0)
 				flags[30] = 1;
 			if (removeObject(kItemTwoCoins) == 0)
@@ -1096,7 +1094,7 @@ void DrasculaEngine::animation_23_2() {
 			if (removeObject(kItemOneCoin) == 0)
 				flags[32] = 1;
 		}
-		talk_vb(21);
+		talk_vonBraun(21);
 	} else
 		animation_27_2();
 
@@ -1105,7 +1103,7 @@ void DrasculaEngine::animation_23_2() {
 }
 
 void DrasculaEngine::animation_23_joined() {
-	int n, p_x = curX + 2, p_y = curY - 3;
+	int p_x = curX + 2, p_y = curY - 3;
 	int x[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
 				1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
 	int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 76, 76, 76, 76, 76, 76, 76,
@@ -1113,7 +1111,7 @@ void DrasculaEngine::animation_23_joined() {
 
 	loadPic("an23.alg", backSurface);
 
-	for (n = 0; n < 34; n++) {
+	for (int n = 0; n < 34; n++) {
 		copyRect(p_x, p_y, p_x, p_y, 36, 74, drawSurface1, screenSurface);
 		copyRect(x[n], y[n], p_x, p_y, 36, 74, backSurface, screenSurface);
 		updateRefresh();
@@ -1125,7 +1123,7 @@ void DrasculaEngine::animation_23_joined() {
 }
 
 void DrasculaEngine::animation_23_joined2() {
-	int n, p_x = curX + 4, p_y = curY;
+	int p_x = curX + 4, p_y = curY;
 	int x[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
 	int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
 
@@ -1133,7 +1131,7 @@ void DrasculaEngine::animation_23_joined2() {
 
 	loadPic("an23_2.alg", backSurface);
 
-	for (n = 0; n < 14; n++) {
+	for (int n = 0; n < 14; n++) {
 		copyRect(p_x, p_y, p_x, p_y, 33, 71, drawSurface1, screenSurface);
 		copyRect(x[n], y[n], p_x, p_y, 33, 71, backSurface, screenSurface);
 		updateRefresh();
@@ -1145,32 +1143,32 @@ void DrasculaEngine::animation_23_joined2() {
 }
 
 void DrasculaEngine::animation_25_2() {
-	int n, pos_cabina[6];
+	int cabinPos[6];
 
 	loadPic("an14_2.alg", backSurface);
 	loadPic(18, drawSurface1);
 
-	pos_cabina[0] = 150;
-	pos_cabina[1] = 6;
-	pos_cabina[2] = 69;
-	pos_cabina[3] = 0;
-	pos_cabina[4] = 158;
-	pos_cabina[5] = 161;
+	cabinPos[0] = 150;
+	cabinPos[1] = 6;
+	cabinPos[2] = 69;
+	cabinPos[3] = 0;
+	cabinPos[4] = 158;
+	cabinPos[5] = 161;
 
 	flags[24] = 0;
 
 	playSound(6);
 
-	for (n = 0; n >= -160; n = n - 8) {
+	for (int n = 0; n >= -160; n = n - 8) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 		updateRefresh_pre();
 		moveCharacters();
-		moveVB();
+		moveVonBraun();
 
-		pos_cabina[3] = n;
+		cabinPos[3] = n;
 
-		copyRectClip(pos_cabina, backSurface, screenSurface);
+		copyRectClip(cabinPos, backSurface, screenSurface);
 
 		updateRefresh();
 		updateScreen();
@@ -1188,46 +1186,46 @@ void DrasculaEngine::animation_27_2() {
 	removeObject(kItemEarWithEarPlug);
 	addObject(kItemEarplugs);
 
-	talk_vb(23);
-	talk_vb(24);
+	talk_vonBraun(23);
+	talk_vonBraun(24);
 	if (flags[30] == 1)
 		addObject(kItemMoney);
 	if (flags[31] == 1)
 		addObject(kItemTwoCoins);
 	if (flags[32] == 1)
 		addObject(kItemOneCoin);
-	talk_vb(25);
-	talk_vb(26);
+	talk_vonBraun(25);
+	talk_vonBraun(26);
 }
 
 void DrasculaEngine::animation_28_2() {
 	for(int i = 27; i <= 30; i++)
-		talk_vb(i);
+		talk_vonBraun(i);
 }
 
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
-		talk_vb(32);
+		talk_vonBraun(32);
 		talk(398);
-		talk_vb(33);
+		talk_vonBraun(33);
 		talk(399);
-		talk_vb(34);
-		talk_vb(35);
+		talk_vonBraun(34);
+		talk_vonBraun(35);
 		talk(400);
-		talk_vb(36);
-		talk_vb(37);
+		talk_vonBraun(36);
+		talk_vonBraun(37);
 		talk(386);
-		talk_vb(38);
-		talk_vb(39);
+		talk_vonBraun(38);
+		talk_vonBraun(39);
 		talk(401);
-		talk_vb(40);
-		talk_vb(41);
+		talk_vonBraun(40);
+		talk_vonBraun(41);
 		flags[33] = 1;
 	} else
-		talk_vb(43);
+		talk_vonBraun(43);
 
 	talk(402);
-	talk_vb(42);
+	talk_vonBraun(42);
 
 	if (flags[38] == 0) {
 		talk(403);
@@ -1237,13 +1235,13 @@ void DrasculaEngine::animation_29_2() {
 }
 
 void DrasculaEngine::animation_30_2() {
-	talk_vb(31);
+	talk_vonBraun(31);
 	talk(396);
 }
 
 void DrasculaEngine::animation_31_2() {
-	talk_vb(44);
-	placeVB(-50);
+	talk_vonBraun(44);
+	placeVonBraun(-50);
 	pause(15);
 	gotoObject(159, 140);
 	loadPic(99, backSurface);
@@ -1256,24 +1254,24 @@ void DrasculaEngine::animation_31_2() {
 	updateScreen();
 	pause(22);
 	talk(406);
-	placeVB(98);
-	talk_vb(45);
-	talk_vb(46);
-	talk_vb(47);
+	placeVonBraun(98);
+	talk_vonBraun(45);
+	talk_vonBraun(46);
+	talk_vonBraun(47);
 	talk(407);
-	talk_vb(48);
-	talk_vb(49);
+	talk_vonBraun(48);
+	talk_vonBraun(49);
 	talk(408);
-	talk_vb(50);
-	talk_vb(51);
+	talk_vonBraun(50);
+	talk_vonBraun(51);
 	talk(409);
-	talk_vb(52);
-	talk_vb(53);
+	talk_vonBraun(52);
+	talk_vonBraun(53);
 	pause(12);
-	talk_vb(54);
-	talk_vb(55);
+	talk_vonBraun(54);
+	talk_vonBraun(55);
 	talk(410);
-	talk_vb(56);
+	talk_vonBraun(56);
 
 	breakOut = 1;
 
@@ -1537,20 +1535,20 @@ void DrasculaEngine::animation_4_5() {
 	updateRoom();
 	updateScreen();
 	talk(228);
-	talk_wolf(1);
-	talk_wolf(2);
+	talk_werewolf(1);
+	talk_werewolf(2);
 	pause(23);
 	talk(229);
-	talk_wolf(3);
-	talk_wolf(4);
+	talk_werewolf(3);
+	talk_werewolf(4);
 	talk(230);
-	talk_wolf(5);
+	talk_werewolf(5);
 	talk(231);
-	talk_wolf(6);
-	talk_wolf(7);
+	talk_werewolf(6);
+	talk_werewolf(7);
 	pause(33);
 	talk(232);
-	talk_wolf(8);
+	talk_werewolf(8);
 }
 
 void DrasculaEngine::animation_5_5(){
@@ -1629,24 +1627,24 @@ void DrasculaEngine::animation_5_5(){
 }
 
 void DrasculaEngine::animation_6_5() {
-	talk_wolf(9);
+	talk_werewolf(9);
 	talk(234);
 }
 
 void DrasculaEngine::animation_7_5() {
-	talk_wolf(10);
+	talk_werewolf(10);
 	talk(236);
-	talk_wolf(11);
-	talk_wolf(12);
-	talk_wolf(13);
+	talk_werewolf(11);
+	talk_werewolf(12);
+	talk_werewolf(13);
 	pause(34);
-	talk_wolf(14);
+	talk_werewolf(14);
 }
 
 void DrasculaEngine::animation_8_5() {
-	talk_wolf(15);
+	talk_werewolf(15);
 	talk(238);
-	talk_wolf(16);
+	talk_werewolf(16);
 }
 
 void DrasculaEngine::animation_9_5() {
@@ -2289,7 +2287,7 @@ void DrasculaEngine::animation_13_2() {
 
 void DrasculaEngine::animation_18_2() {
 	talk(378);
-	talk_vbpuerta(4);
+	talk_vonBraunpuerta(4);
 	converse(3);
 }
 
@@ -2303,11 +2301,11 @@ void DrasculaEngine::animation_22_2() {
 	finishSound();
 	trackProtagonist = 1;
 
-	talk_vbpuerta(1);
+	talk_vonBraunpuerta(1);
 	talk(375);
-	talk_vbpuerta(2);
+	talk_vonBraunpuerta(2);
 	talk(376);
-	talk_vbpuerta(3);
+	talk_vonBraunpuerta(3);
 
 	flags[18] = 1;
 }
@@ -2328,7 +2326,7 @@ void DrasculaEngine::animation_24_2() {
 
 	flags[21] = 1;
 
-	talk_vb(22);
+	talk_vonBraun(22);
 
 	if (flags[22] == 0)
 		converse(4);
@@ -2338,8 +2336,8 @@ void DrasculaEngine::animation_24_2() {
 	exitRoom(0);
 	flags[21] = 0;
 	flags[24] = 0;
-	trackVB = 1;
-	vbX = 120;
+	trackVonBraun = 1;
+	vonBraunX = 120;
 }
 
 void DrasculaEngine::animation_32_2() {

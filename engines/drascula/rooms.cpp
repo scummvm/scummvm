@@ -1122,16 +1122,16 @@ void DrasculaEngine::update_2() {
 					41, 41, 41, 41,
 					4, 4, 4, 4};
 
-	if (frame_bat == 41)
-		frame_bat = 0;
+	if (actorFrames[kFrameBat] == 41)
+		actorFrames[kFrameBat] = 0;
 
-	batPos[0] = batX[frame_bat];
-	batPos[1] = batY[frame_bat];
+	batPos[0] = batX[actorFrames[kFrameBat]];
+	batPos[1] = batY[actorFrames[kFrameBat]];
 
-	if (frame_bat < 22) {
+	if (actorFrames[kFrameBat] < 22) {
 		batPos[4] = 37;
 		batPos[5] = 21;
-	} else if (frame_bat > 27) {
+	} else if (actorFrames[kFrameBat] > 27) {
 		batPos[4] = 57;
 		batPos[5] = 36;
 	} else {
@@ -1145,7 +1145,7 @@ void DrasculaEngine::update_2() {
 	copyRectClip(batPos, drawSurface3, screenSurface);
 	difference = getTime() - savedTime;
 	if (difference >= 6) {
-		frame_bat++;
+		actorFrames[kFrameBat]++;
 		savedTime = getTime();
 	}
 
@@ -1185,17 +1185,18 @@ void DrasculaEngine::update_9_pre() {
 	int blindY[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
 	int difference;
 
-	copyRect(blindX[frame_blind], blindY[frame_blind], 122, 57, 41, 72, drawSurface3, screenSurface);
+	copyRect(blindX[actorFrames[kFrameBlind]], blindY[actorFrames[kFrameBlind]], 
+			 122, 57, 41, 72, drawSurface3, screenSurface);
 	if (flags[9] == 0) {
 		difference = getTime() - savedTime;
 		if (difference >= 11) {
-			frame_blind++;
+			actorFrames[kFrameBlind]++;
 			savedTime = getTime();
 		}
-		if (frame_blind == 9)
-			frame_blind = 0;
+		if (actorFrames[kFrameBlind] == 9)
+			actorFrames[kFrameBlind] = 0;
 	} else
-		frame_blind = 3;
+		actorFrames[kFrameBlind] = 3;
 }
 
 void DrasculaEngine::update_13() {
@@ -1216,39 +1217,39 @@ void DrasculaEngine::update_14_pre() {
 	int drunkX[] = {1, 42, 83, 124, 165, 206, 247, 1};
 	int difference;
 
-	copyBackground(123, candleY[frame_candles], 142, 14, 39, 13, drawSurface3, screenSurface);
-	copyBackground(candleX[frame_candles], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
+	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(candleX[actorFrames[kFrameCandles]], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
 	if (curX > 101 && curX < 155)
 		copyBackground(31, 138, 178, 51, 18, 16, drawSurface3, screenSurface);
 	if (flags[11] == 0)
-		copyBackground(pianistX[frame_piano], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
+		copyBackground(pianistX[actorFrames[kFramePianist]], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
 	else if (flags[5] == 0)
 		copyBackground(145, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	else
 		copyBackground(165, 140, 229, 117, 43, 59, drawSurface3, screenSurface);
 
 	if (flags[12] == 1)
-		copyBackground(drunkX[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
+		copyBackground(drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 	difference = getTime() - savedTime;
 	if (difference > 6) {
 		if (flags[12] == 1) {
-			frame_drunk++;
-			if (frame_drunk == 8) {
-				frame_drunk = 0;
+			actorFrames[kFrameDrunk]++;
+			if (actorFrames[kFrameDrunk] == 8) {
+				actorFrames[kFrameDrunk] = 0;
 				flags[12] = 0;
 			}
 		} else if ((_rnd->getRandomNumber(94) == 15) && (flags[13] == 0))
 			flags[12] = 1;
 
-		frame_candles++;
-		if (frame_candles == 3)
-			frame_candles = 0;
-		frame_piano++;
-		if (frame_piano == 9)
-			frame_piano = 0;
+		actorFrames[kFrameCandles]++;
+		if (actorFrames[kFrameCandles] == 3)
+			actorFrames[kFrameCandles] = 0;
+		actorFrames[kFramePianist]++;
+		if (actorFrames[kFramePianist] == 9)
+			actorFrames[kFramePianist] = 0;
 		blinking = _rnd->getRandomNumber(10);
 		savedTime = getTime();
 	}
@@ -1273,15 +1274,17 @@ void DrasculaEngine::update_18_pre() {
 
 	if (flags[21] == 0) {
 		copyBackground(1, 69, 120, 58, 56, 61, drawSurface3, screenSurface);
-		copyBackground(snore_x[frame_snore], snore_y[frame_snore], 124, 59, 40, 37, drawSurface3, screenSurface);
+		copyBackground(snore_x[actorFrames[kFrameSnore]], 
+					  snore_y[actorFrames[kFrameSnore]],
+					  124, 59, 40, 37, drawSurface3, screenSurface);
 	} else
-		moveVB();
+		moveVonBraun();
 
 	difference = getTime() - savedTime;
 	if (difference > 9) {
-		frame_snore++;
-		if (frame_snore == 16)
-			frame_snore = 0;
+		actorFrames[kFrameSnore]++;
+		if (actorFrames[kFrameSnore] == 16)
+			actorFrames[kFrameSnore] = 0;
 		savedTime = getTime();
 	}
 }
@@ -1361,7 +1364,7 @@ void DrasculaEngine::update_60_pre() {
 	if (flags[5] == 0)
 		placeDrascula();
 
-	copyBackground(123, candleY[frame_candles], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
 
 	if (flag_tv == 1)
 		copyBackground(114, 158, 8, 30, 8, 23, drawSurface3, screenSurface);
@@ -1373,15 +1376,15 @@ void DrasculaEngine::update_60_pre() {
 	else if (blinking == 5 && flag_tv == 1)
 		flag_tv = 0;
 	if (difference > 6) {
-		frame_candles++;
-		if (frame_candles == 3)
-			frame_candles = 0;
+		actorFrames[kFrameCandles]++;
+		if (actorFrames[kFrameCandles] == 3)
+			actorFrames[kFrameCandles] = 0;
 		savedTime = getTime();
 	}
 }
 
 void DrasculaEngine::update_60() {
-	if (curY - 10 < y_dr && flags[5] == 0)
+	if (curY - 10 < drasculaY && flags[5] == 0)
 		placeDrascula();
 }
 
@@ -1392,8 +1395,8 @@ void DrasculaEngine::update_62_pre() {
 	int drunkX[] = {1, 42, 83, 124, 165, 206, 247, 1 };
 	int difference;
 
-	copyBackground(123, candleY[frame_candles], 142, 14, 39, 13, drawSurface3, screenSurface);
-	copyBackground(candleX[frame_candles], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
+	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(candleX[actorFrames[kFrameCandles]], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
@@ -1402,32 +1405,32 @@ void DrasculaEngine::update_62_pre() {
 		copyBackground(31, 138, 178, 51, 18, 16, drawSurface3, screenSurface);
 
 	if (flags[11] == 0)
-		copyBackground(pianistX[frame_piano], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
+		copyBackground(pianistX[actorFrames[kFramePianist]], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
 	else if (flags[5] == 0)
 		copyBackground(145, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	else
 		copyBackground(165, 140, 229, 117, 43, 59, drawSurface3, screenSurface);
 
 	if (flags[12] == 1)
-		copyBackground(drunkX[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
+		copyBackground(drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 
 	difference = getTime() - savedTime;
 	if (difference > 6) {
 		if (flags[12] == 1) {
-			frame_drunk++;
-			if (frame_drunk == 8) {
-				frame_drunk = 0;
+			actorFrames[kFrameDrunk]++;
+			if (actorFrames[kFrameDrunk] == 8) {
+				actorFrames[kFrameDrunk] = 0;
 				flags[12] = 0;
 			}
 		} else if ((_rnd->getRandomNumber(94) == 15) && (flags[13] == 0))
 			flags[12] = 1;
 
-		frame_candles++;
-		if (frame_candles == 3)
-			frame_candles = 0;
-		frame_piano++;
-		if (frame_piano == 9)
-			frame_piano = 0;
+		actorFrames[kFrameCandles]++;
+		if (actorFrames[kFrameCandles] == 3)
+			actorFrames[kFrameCandles] = 0;
+		actorFrames[kFramePianist]++;
+		if (actorFrames[kFramePianist] == 9)
+			actorFrames[kFramePianist] = 0;
 		blinking = _rnd->getRandomNumber(10);
 		savedTime = getTime();
 	}
@@ -1440,7 +1443,7 @@ void DrasculaEngine::update_62() {
 
 	if (curY + curHeight < 89) {
 		copyRect(205, 1, 180, 9, 82, 80, drawSurface3, screenSurface);
-		copyBackground(drunkX[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
+		copyBackground(drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 	}
 }
 
@@ -1448,14 +1451,14 @@ void DrasculaEngine::update_102() {
 	int pendulum_x[] = {40, 96, 152, 208, 264, 40, 96, 152, 208, 208, 152, 264, 40, 96, 152, 208, 264};
 	int difference;
 
-	if (frame_pen <= 4)
+	if (actorFrames[kFramePendulum] <= 4)
 		pendulumSurface = drawSurface3;
-	else if (frame_pen <= 11)
+	else if (actorFrames[kFramePendulum] <= 11)
 		pendulumSurface = extraSurface;
 	else
 		pendulumSurface = frontSurface;
 
-	copyBackground(pendulum_x[frame_pen], 19, 152, 0, 55, 125, pendulumSurface, screenSurface);
+	copyBackground(pendulum_x[actorFrames[kFramePendulum]], 19, 152, 0, 55, 125, pendulumSurface, screenSurface);
 
 	if (flags[1] == 2)
 		copyRect(18, 145, 145, 105, 25, 29, drawSurface3, screenSurface);
@@ -1465,9 +1468,9 @@ void DrasculaEngine::update_102() {
 
 	difference = getTime() - savedTime;
 	if (difference > 8) {
-		frame_pen++;
-		if (frame_pen == 17)
-			frame_pen = 0;
+		actorFrames[kFramePendulum]++;
+		if (actorFrames[kFramePendulum] == 17)
+			actorFrames[kFramePendulum] = 0;
 		savedTime = getTime();
 	}
 }
