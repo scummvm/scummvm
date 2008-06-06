@@ -55,7 +55,7 @@ Common::Array<DrasculaUpdater*> _roomUpdaters;
 #define UPDATEROOM(x) _roomUpdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
 
 void DrasculaEngine::setupRoomsTable() {
-	//ROOM(room_0);		// default
+	ROOM(room_0);	// default
 	ROOM(room_1);
 	ROOM(room_3);
 	ROOM(room_4);
@@ -65,14 +65,14 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_8);
 	ROOM(room_9);
 	ROOM(room_12);
-	//ROOM(room_13);	// returns bool
+	ROOM(room_13);	// returns bool
 	ROOM(room_14);
 	ROOM(room_15);
 	ROOM(room_16);
 	ROOM(room_17);
 	ROOM(room_18);
 	ROOM(room_19);
-	//ROOM(room_21);	// returns bool
+	ROOM(room_21);	// returns bool
 	ROOM(room_22);
 	ROOM(room_23);
 	ROOM(room_24);
@@ -88,10 +88,10 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_53);
 	ROOM(room_54);
 	ROOM(room_55);
-	//ROOM(room_56);	// returns bool
+	ROOM(room_56);	// returns bool
 	ROOM(room_58);
 	ROOM(room_59);
-	//ROOM(room_60);	// returns bool
+	ROOM(room_60);	// returns bool
 	ROOM(room_61);
 	ROOM(room_62);
 	ROOM(room_63);
