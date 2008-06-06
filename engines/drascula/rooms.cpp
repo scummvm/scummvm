@@ -1805,6 +1805,9 @@ bool DrasculaEngine::room(int rN, int fl) {
 				return (this->*(_roomParsers[i]->proc))(fl);
 			}
 		}
+
+		// We did not find any parser, let default one work
+		hasAnswer = 0;
 	}
 
 	return false;
