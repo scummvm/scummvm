@@ -51,6 +51,7 @@ struct DrawStep {
 	uint8 shadow, stroke, factor; /** Misc options... */
 
 	int fill_mode; /** active fill mode */
+	int extra; /** Generic parameter for extra options */
 
 	void (VectorRenderer::*drawing_call)(DrawStep*); /** Pointer to drawing function */
 
@@ -145,7 +146,30 @@ public:
 	 */
 	virtual void drawRoundedSquare(int x, int y, int r, int w, int h) = 0;
 
+	/**
+	 * Draws a triangle starting at (x,y) with the given base and height.
+	 * The triangle will always be isosceles, with the given base and height.
+	 * The orientation parameter controls the position of the base of the triangle.
+	 *
+	 * @param x Horizontal (X) coordinate for the top left corner of the triangle
+	 * @param y Vertical (Y) coordinate for the top left corner of the triangle
+	 * @param base Width of the base of the triangle
+	 * @param h Height of the triangle
+	 * @param orient Orientation of the triangle.
+	 */
 	virtual void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) = 0;
+
+	/**
+	 * Draws a beveled square like the ones in the Classic GUI themes.
+	 * Beveled squares are always drawn with a transparent background. Draw them on top
+	 * of a standard square to fill it.
+	 *
+	 * @param x Horizontal (X) coordinate for the center of the square
+	 * @param y Vertical (Y) coordinate for the center of the square
+	 * @param w Width of the square.
+	 * @param h Height of the square
+	 * @param bevel Amount of bevel. Must be positive.
+	 */
 	virtual void drawBeveledSquare(int x, int y, int w, int h, int bevel) = 0;
 
 	/**
@@ -289,6 +313,9 @@ public:
 			_gradientFactor = factor;
 	}
 
+	/**
+	 * DrawStep callback functions for each drawing feature 
+	 */
 	void drawCallback_CIRCLE(DrawStep *step) {
 		drawCircle(step->x, step->y, step->r);
 	}
@@ -309,8 +336,27 @@ public:
 		fillSurface();
 	}
 
+	void drawCallback_TRIANGLE(DrawStep *step) {
+		drawTriangle(step->x, step->y, step->w, step->h, (TriangleOrientation)step->extra);
+	}
+
+	void drawCallback_BEVELSQ(DrawStep *step) {
+		drawBeveledSquare(step->x, step->y, step->w, step->h, step->extra);
+	}
+
+	/**
+	 * Draws the specified draw step on the screen.
+	 * 
+	 * @see DrawStep
+	 * @param step Pointer to a DrawStep struct.
+	 */
 	virtual void drawStep(DrawStep *step);
 
+	/**
+	 * Copies the current surface to the system overlay 
+	 *
+	 * @param sys Pointer to the global System class
+	 */
 	virtual void copyFrame(OSystem *sys) = 0;
 
 protected:
@@ -427,6 +473,9 @@ public:
 		}
 	}
 
+	/**
+	 * @see VectorRenderer::copyFrame()
+	 */
 	virtual void copyFrame(OSystem *sys) {
 #ifdef OVERLAY_MULTIPLE_DEPTHS
 		sys->copyRectToOverlay((const PixelType*)_activeSurface->getBasePtr(0, 0), 
