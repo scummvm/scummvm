@@ -685,7 +685,7 @@ extern const char *_textvb[][63];
 extern const char *_textsys[][4];
 extern const char *_texthis[][5];
 extern const char *_textverbs[][6];
-extern const char *_textmisc[][2];
+extern const char *_textmisc[][3];
 extern const char *_textd1[][11];
 
 extern const ItemLocation itemLocations[];

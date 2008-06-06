@@ -2062,7 +2062,7 @@ void DrasculaEngine::animation_9_6() {
 	copyBackground(0, 0, 0, 0, 320, 200, screenSurface, drawSurface1);
 	updateScreen();
 	color_abc(kColorLightGreen);
-	talk_solo("GOOOOOOOOOOOOOOOL", "s15.als");
+	talk_solo(_textmisc[_lang][2], "s15.als");
 	loadPic("nota2.alg", drawSurface1);
 	trackProtagonist = 0;
 	updateRoom();

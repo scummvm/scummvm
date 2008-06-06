@@ -1401,7 +1401,7 @@ bool DrasculaEngine::saveLoadScreen() {
 			} else if (mouseX > 168 && mouseY > 154 && mouseX < 242 && mouseY < 180)
 				break;
 			else if (selectionMade == 0) {
-				print_abc("elige una partida", 117, 15);
+				print_abc("Please select a saved game to load", 117, 15);
 			}
 			updateScreen();
 			delay(200);
@@ -2915,7 +2915,7 @@ void DrasculaEngine::saveGame(char gameName[]) {
 	int l;
 
 	if (!(out = _saveFileMan->openForSaving(gameName))) {
-		error("no puedo abrir el archivo");
+		error("Unable to open the file");
 	}
 	out->writeSint32LE(currentChapter);
 	out->write(currentData, 20);
@@ -3059,7 +3059,7 @@ void DrasculaEngine::converse(int index) {
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[10] == 1) {
-		strcpy(phrase3, " cuanto queda para que acabe el partido?");
+		strcpy(phrase3, _text[_lang][274]);
 		strcpy(sound3, "274.als");
 		answer3 = 15;
 	}
@@ -3545,7 +3545,7 @@ void DrasculaEngine::grr() {
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
 
 	if (withVoices == 0)
-		centerText(".groaaarrrrgghhh!", 153, 65);
+		centerText("groaaarrrrgghhhh!", 153, 65);
 
 	updateScreen();
 
