@@ -144,6 +144,19 @@ struct RoomTalkAction {
 	int speechID;
 };
 
+struct RoomUpdate {
+	int roomNum;
+	int flag;
+	int flagValue;
+	int sourceX;
+	int sourceY;
+	int destX;
+	int destY;
+	int width;
+	int height;
+	int type;	// 0 - background, 1 - rect
+};
+
 struct ItemLocation {
 	int x;
 	int y;
@@ -631,55 +644,24 @@ public:
 	void update_1_pre();
 	void update_2();
 	void update_3();
-	void update_3_pre();
 	void update_4();
-	void update_5();
-	void update_5_pre();
 	void update_6_pre();
-	void update_7_pre();
 	void update_9_pre();
-	void update_12_pre();
 	void update_14_pre();
 	void update_13();
-	void update_15();
 	void update_16_pre();
-	void update_17_pre();
-	void update_17();
 	void update_18_pre();
-	void update_18();
-	void update_20();
-	void update_21_pre();
-	void update_22_pre();
 	void update_23_pre();
-	void update_24_pre();
 	void update_26_pre();
 	void update_26();
-	void update_27();
-	void update_27_pre();
-	void update_29();
-	void update_29_pre();
-	void update_30_pre();
-	void update_31_pre();
-	void update_34_pre();
 	void update_35_pre();
-	void update_31();
-	void update_34();
-	void update_35();
-	void update_49_pre();
-	void update_53_pre();
-	void update_54_pre();
-	void update_56_pre();
-	void update_50();
-	void update_57();
 	void update_58();
 	void update_58_pre();
 	void update_59_pre();
 	void update_60_pre();
 	void update_60();
-	void update_61();
 	void update_62();
 	void update_62_pre();
-	void update_63();
 	void update_102();
 
 private:

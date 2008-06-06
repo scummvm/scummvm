@@ -94,31 +94,14 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_102);
 
 	PREUPDATEROOM(update_1_pre);
-	PREUPDATEROOM(update_3_pre);
-	PREUPDATEROOM(update_5_pre);
 	PREUPDATEROOM(update_6_pre);
-	PREUPDATEROOM(update_7_pre);
 	PREUPDATEROOM(update_9_pre);
-	PREUPDATEROOM(update_12_pre);
 	PREUPDATEROOM(update_14_pre);
 	PREUPDATEROOM(update_16_pre);
-	PREUPDATEROOM(update_17_pre);
 	PREUPDATEROOM(update_18_pre);
-	PREUPDATEROOM(update_21_pre);
-	PREUPDATEROOM(update_22_pre);
 	PREUPDATEROOM(update_23_pre);
-	PREUPDATEROOM(update_24_pre);
 	PREUPDATEROOM(update_26_pre);
-	PREUPDATEROOM(update_27_pre);
-	PREUPDATEROOM(update_29_pre);
-	PREUPDATEROOM(update_30_pre);
-	PREUPDATEROOM(update_31_pre);
-	PREUPDATEROOM(update_34_pre);
 	PREUPDATEROOM(update_35_pre);
-	PREUPDATEROOM(update_49_pre);
-	PREUPDATEROOM(update_53_pre);
-	PREUPDATEROOM(update_54_pre);
-	PREUPDATEROOM(update_56_pre);
 	PREUPDATEROOM(update_58_pre);
 	PREUPDATEROOM(update_59_pre);
 	PREUPDATEROOM(update_60_pre);
@@ -127,25 +110,11 @@ void DrasculaEngine::setupRoomsTable() {
 	UPDATEROOM(update_2);
 	UPDATEROOM(update_3);
 	UPDATEROOM(update_4);
-	UPDATEROOM(update_5);
 	UPDATEROOM(update_13);
-	UPDATEROOM(update_15);
-	UPDATEROOM(update_17);
-	UPDATEROOM(update_18);
-	UPDATEROOM(update_20);
 	UPDATEROOM(update_26);
-	UPDATEROOM(update_27);
-	UPDATEROOM(update_29);
-	UPDATEROOM(update_31);
-	UPDATEROOM(update_34);
-	UPDATEROOM(update_35);
-	UPDATEROOM(update_50);
-	UPDATEROOM(update_57);
 	UPDATEROOM(update_58);
 	UPDATEROOM(update_60);
-	UPDATEROOM(update_61);
 	UPDATEROOM(update_62);
-	UPDATEROOM(update_63);
 	UPDATEROOM(update_102);
 }
 
@@ -1048,6 +1017,26 @@ bool DrasculaEngine::room_102(int fl) {
 }
 
 void DrasculaEngine::updateRefresh() {
+	// Check generic updaters
+	for (int i = 0; i < ARRAYSIZE(roomUpdates); i++) {
+		if (roomUpdates[i].roomNum == roomNumber) {
+			if (roomUpdates[i].flag < 0 || 
+				flags[roomUpdates[i].flag] == roomUpdates[i].flagValue) {
+				if (roomUpdates[i].type == 0) {
+					copyBackground(roomUpdates[i].sourceX, roomUpdates[i].sourceY,
+								   roomUpdates[i].destX, roomUpdates[i].destY,
+								   roomUpdates[i].width, roomUpdates[i].height,
+								   drawSurface3, screenSurface);
+				} else {
+					copyRect(roomUpdates[i].sourceX, roomUpdates[i].sourceY,
+							 roomUpdates[i].destX, roomUpdates[i].destY,
+							 roomUpdates[i].width, roomUpdates[i].height,
+							 drawSurface3, screenSurface);
+				}
+			}
+		}
+	}
+
 	// Call room-specific updater
 	char rm[20];
 	sprintf(rm, "update_%d", roomNumber);
@@ -1066,6 +1055,26 @@ void DrasculaEngine::updateRefresh() {
 }
 
 void DrasculaEngine::updateRefresh_pre() {
+	// Check generic preupdaters
+	for (int i = 0; i < ARRAYSIZE(roomPreUpdates); i++) {
+		if (roomPreUpdates[i].roomNum == roomNumber) {
+			if (roomPreUpdates[i].flag < 0 ||
+				flags[roomPreUpdates[i].flag] == roomPreUpdates[i].flagValue) {
+				if (roomPreUpdates[i].type == 0) {
+					copyBackground(roomPreUpdates[i].sourceX, roomPreUpdates[i].sourceY,
+								   roomPreUpdates[i].destX, roomPreUpdates[i].destY,
+								   roomPreUpdates[i].width, roomPreUpdates[i].height,
+								   drawSurface3, screenSurface);
+				} else {
+					copyRect(roomPreUpdates[i].sourceX, roomPreUpdates[i].sourceY,
+							 roomPreUpdates[i].destX, roomPreUpdates[i].destY,
+							 roomPreUpdates[i].width, roomPreUpdates[i].height,
+							 drawSurface3, screenSurface);
+				}
+			}
+		}
+	}
+
 	// Call room-specific preupdater
 	char rm[20];
 	sprintf(rm, "update_%d_pre", roomNumber);
@@ -1144,11 +1153,6 @@ void DrasculaEngine::update_2() {
 	showMap();
 }
 
-void DrasculaEngine::update_3_pre() {
-	if (flags[3] == 1)
-		copyBackground(258, 110, 85, 44, 23, 53, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_3() {
 	if (curY + curHeight < 118)
 		copyRect(129, 110, 194, 36, 126, 88, drawSurface3, screenSurface);
@@ -1165,15 +1169,6 @@ void DrasculaEngine::update_4() {
 	}
 }
 
-void DrasculaEngine::update_5_pre() {
-	if (flags[8] == 0)
-		copyBackground(256, 152, 208, 67, 27, 40, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_5() {
-	copyRect(114, 130, 211, 87, 109, 69, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_6_pre() {
 	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) ||
 		(curX > 75 && curY + curHeight > 183 && curX < 145)) {
@@ -1183,18 +1178,6 @@ void DrasculaEngine::update_6_pre() {
 		changeColor = 1;
 		setDarkPalette();
 	}
-
-	if (flags[0] == 0)
-		copyBackground(3, 103, 185, 69, 23, 76, drawSurface3, screenSurface);
-	if (flags[1] == 0)
-		copyBackground(97, 117, 34, 148, 36, 31, drawSurface3, screenSurface);
-	if (flags[2] == 0)
-		copyBackground(28, 100, 219, 72, 64, 97, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_7_pre() {
-	if (flags[35] == 0)
-		copyBackground(1, 72, 158, 162, 19, 12, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_9_pre() {
@@ -1215,14 +1198,10 @@ void DrasculaEngine::update_9_pre() {
 		frame_blind = 3;
 }
 
-void DrasculaEngine::update_12_pre() {
-	if (flags[16] == 0)
-		copyBackground(1, 131, 106, 117, 55, 68, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_13() {
 	if (curX > 55 && flags[3] == 0)
 		animation_6_3();
+	// These cannot be placed in an array, as they're between screen updates
 	if (flags[1] == 0)
 		copyRect(185, 110, 121, 65, 67, 88, drawSurface3, screenSurface);
 	if (flags[2] == 0)
@@ -1275,10 +1254,6 @@ void DrasculaEngine::update_14_pre() {
 	}
 }
 
-void DrasculaEngine::update_15() {
-	copyRect(1, 154, 83, 122, 131, 44, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_16_pre() {
 	if (currentChapter != 2) {
 		debug(4, "update_16_pre: Special case, current chapter is not 2, not performing update");
@@ -1289,15 +1264,6 @@ void DrasculaEngine::update_16_pre() {
 		copyBackground(1, 103, 24, 72, 33, 95, drawSurface3, screenSurface);
 	if (flags[19] == 1)
 		copyBackground(37, 151, 224, 115, 56, 47, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_17_pre() {
-	if (flags[15] == 1)
-		copyBackground(1, 135, 108, 65, 44, 63, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_17() {
-	copyRect(48, 135, 78, 139, 80, 30, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_18_pre() {
@@ -1320,41 +1286,12 @@ void DrasculaEngine::update_18_pre() {
 	}
 }
 
-void DrasculaEngine::update_18() {
-	if (flags[24] == 1)
-		copyRect(177, 1, 69, 29, 142, 130, drawSurface3, screenSurface);
-	copyRect(105, 132, 109, 108, 196, 65, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_20() {
-	copyRect(1, 137, 106, 121, 213, 61, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_21_pre() {
-	if (flags[0] == 1)
-		copyBackground(2, 171, 84, 126, 17, 26, drawSurface3, screenSurface);
-
-	if (flags[10] == 1)
-		copyBackground(20, 163, 257, 149, 14, 34, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_22_pre() {
-	if (flags[24] == 1)
-		copyBackground(2, 187, 107, 106, 62, 12, drawSurface3, screenSurface);
-
-	if (flags[27] == 0)
-		copyBackground(32, 181, 203, 88, 13, 5, drawSurface3, screenSurface);
-
-	if (flags[26] == 0)
-		copyBackground(2, 133, 137, 83, 29, 53, drawSurface3, screenSurface);
-	else
-		copyBackground(65, 174, 109, 145, 55, 25, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_23_pre() {
 	if (flags[11] == 1 && flags[0] == 0)
 		copyBackground(87, 171, 237, 110, 20, 28, drawSurface3, screenSurface);
 
+	// It might be possible to put these in an array, though I'm a bit unsure
+	// of the draw order
 	if (flags[0] == 1)
 		copyBackground(29, 126, 239, 94, 57, 73, drawSurface3, screenSurface);
 
@@ -1362,25 +1299,8 @@ void DrasculaEngine::update_23_pre() {
 		copyRect(1, 135, 7, 94, 27, 64, drawSurface3, screenSurface);
 }
 
-void DrasculaEngine::update_24_pre() {
-	if (flags[1] == 1)
-		copyBackground(1, 163, 225, 124, 12, 36, drawSurface3, screenSurface);
-
-	if (flags[2] == 1)
-		copyBackground(14, 153, 30, 107, 23, 46, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_26_pre() {
 	int difference;
-
-	if (flags[2] == 1)
-		copyBackground(1, 130, 87, 44, 50, 69, drawSurface3, screenSurface);
-
-	if (flags[12] == 1)
-		copyBackground(52, 177, 272, 103, 27, 22, drawSurface3, screenSurface);
-
-	if (flags[18] == 0)
-		copyBackground(80, 133, 199, 95, 50, 66, drawSurface3, screenSurface);
 
 	if (blinking == 5 && flags[18] == 0)
 		copyBackground(52, 172, 226, 106, 3, 4, drawSurface3, screenSurface);
@@ -1402,123 +1322,20 @@ void DrasculaEngine::update_26() {
 	copyRect(233, 107, 17, 102, 66, 92, drawSurface3, screenSurface);
 }
 
-void DrasculaEngine::update_27_pre() {
-	if (flags[5] == 1)
-		copyRect(1, 175, 59, 109, 17, 24, drawSurface3, screenSurface);
-
-	if (flags[6] == 1)
-		copyRect(19, 177, 161, 103, 18, 22, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_27() {
-	copyRect(38, 177, 103, 171, 21, 22, drawSurface3, screenSurface);
-	copyRect(60, 162, 228, 156, 18, 37, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_29_pre() {
-	if (flags[4] == 1)
-		copyBackground(12, 113, 247, 49, 41, 84, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_29() {
-	copyRect(1, 180, 150, 126, 10, 17, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_30_pre() {
-	if (flags[4] == 1)
-		copyBackground(1, 148, 148, 66, 35, 51, drawSurface3, screenSurface);
-
-	if (flags[16] == 1)
-		copyBackground(37, 173, 109, 84, 20, 26, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_31_pre() {
-	if (flags[13] == 1)
-		copyBackground(1, 163, 116, 41, 61, 36, drawSurface3, screenSurface);
-
-	if (flags[5] == 1)
-		copyBackground(1, 78, 245, 63, 30, 84, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_31() {
-	copyRect(63, 190, 223, 157, 17, 9, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_34_pre() {
-	if (flags[7] == 1)
-		copyBackground(99, 127, 73, 41, 79, 72, drawSurface3, screenSurface);
-
-	if (flags[8] == 1)
-		copyBackground(36, 129, 153, 41, 62, 65, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_34() {
-	copyRect(5, 171, 234, 126, 29, 23, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::update_35_pre() {
-	if (flags[14] == 1)
-		copyBackground(1, 86, 246, 65, 68, 87, drawSurface3, screenSurface);
-
 	if (flags[17] == 0 && flags[15] == 1)
 		copyBackground(111, 150, 118, 52, 40, 23, drawSurface3, screenSurface);
-
-	if (flags[17] == 1)
-		copyBackground(70, 150, 118, 52, 40, 23, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_35() {
-	copyRect(1, 174, 54, 152, 195, 25, drawSurface3, screenSurface);
-}
-
-
-void DrasculaEngine::update_49_pre() {
-	if (flags[6] == 0)
-		copyBackground(2, 136, 176, 81, 49, 62, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_50() {
-	copyRect(4, 153, 118, 95, 67, 44, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_53_pre() {
-	if (flags[1] == 0)
-		copyRect(2, 113, 205, 50, 38, 86, drawSurface3, screenSurface);
-	if (flags[2] == 0)
-		copyBackground(41, 159, 27, 117, 25, 40, drawSurface3, screenSurface);
-	if (flags[9] == 1)
-		copyBackground(67, 184, 56, 93, 32, 15, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_54_pre() {
-	if (flags[5] == 1)
-		copyBackground(168, 156, 187, 111, 7, 11, drawSurface3, screenSurface);
-	if (flags[12] == 1)
-		copyBackground(16, 156, 190, 64, 18, 24, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_56_pre() {
-	if (flags[10] == 0)
-		copyBackground(2, 126, 42, 67, 57, 67, drawSurface3, screenSurface);
-	if (flags[11] == 1)
-		copyBackground(60, 160, 128, 97, 103, 38, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::update_57() {
-	copyRect(7, 113, 166, 61, 62, 82, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_58_pre() {
-	if (flags[0] == 0)
-		copyBackground(1, 156, 143, 120, 120, 43, drawSurface3, screenSurface);
-	if (flags[1] == 2)
-		copyRect(252, 171, 173, 116, 25, 28, drawSurface3, screenSurface);
 	if (flags[1] == 0 && flags[0] == 0)
 		copyRect(278, 171, 173, 116, 25, 28, drawSurface3, screenSurface);
 	if (flags[2] == 0) {
 		placeIgor();
 		placeDrascula();
 	}
+	// Not possible to put these in an array, as there are other surfaces
+	// copied above
 	if (flags[3] == 1)
 		copyRect(1, 29, 204, 0, 18, 125, drawSurface3, screenSurface);
 	if (flags[8] == 1)
@@ -1531,8 +1348,6 @@ void DrasculaEngine::update_58() {
 }
 
 void DrasculaEngine::update_59_pre() {
-	if (flags[4] == 0)
-		copyRect(1, 146, 65, 106, 83, 40, drawSurface3, screenSurface);
 	if (flags[9] == 1) {
 		copyBackground(65, 103, 65, 103, 49, 38, drawSurface1, screenSurface);
 		copyRect(1, 105, 65, 103, 49, 38, drawSurface3, screenSurface);
@@ -1568,10 +1383,6 @@ void DrasculaEngine::update_60_pre() {
 void DrasculaEngine::update_60() {
 	if (curY - 10 < y_dr && flags[5] == 0)
 		placeDrascula();
-}
-
-void DrasculaEngine::update_61() {
-	copyRect(1, 154, 83, 122, 131, 44, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_62_pre() {
@@ -1631,10 +1442,6 @@ void DrasculaEngine::update_62() {
 		copyRect(205, 1, 180, 9, 82, 80, drawSurface3, screenSurface);
 		copyBackground(drunkX[frame_drunk], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 	}
-}
-
-void DrasculaEngine::update_63() {
-	copyRect(1, 154, 83, 122, 131, 44, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_102() {
