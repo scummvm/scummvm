@@ -1211,10 +1211,6 @@ void DrasculaEngine::update_13() {
 }
 
 void DrasculaEngine::update_14_pre() {
-	int candleY[] = {158, 172, 186};
-	int candleX[] = {14, 19, 24};
-	int pianistX[] = {1, 91, 61, 31, 91, 31, 1, 61, 31};
-	int drunkX[] = {1, 42, 83, 124, 165, 206, 247, 1};
 	int difference;
 
 	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
@@ -1358,7 +1354,6 @@ void DrasculaEngine::update_59_pre() {
 }
 
 void DrasculaEngine::update_60_pre() {
-	int candleY[] = {158, 172, 186};
 	int difference;
 
 	if (flags[5] == 0)
@@ -1389,10 +1384,6 @@ void DrasculaEngine::update_60() {
 }
 
 void DrasculaEngine::update_62_pre() {
-	int candleY[] = { 158, 172, 186 };
-	int candleX[] = { 14, 19, 24 };
-	int pianistX[] = {1, 91, 61, 31, 91, 31, 1, 61, 31 };
-	int drunkX[] = {1, 42, 83, 124, 165, 206, 247, 1 };
 	int difference;
 
 	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
@@ -1437,8 +1428,6 @@ void DrasculaEngine::update_62_pre() {
 }
 
 void DrasculaEngine::update_62() {
-	int drunkX[] = { 1, 42, 83, 124, 165, 206, 247, 1 };
-
 	copyRect(1, 1, 0, 0, 62, 142, drawSurface2, screenSurface);
 
 	if (curY + curHeight < 89) {

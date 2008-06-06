@@ -401,18 +401,13 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
 
-	if (_lang == kSpanish)
-		textSurface = extraSurface;
-	else
-		textSurface = tableSurface;
-
 	previousMusic = -1;
 
 	if (currentChapter != 2) {
 		int soc = 0;
 		for (n = 0; n < 6; n++) {
 			soc = soc + CHARACTER_WIDTH;
-			frame_x[n] = soc;
+			frameX[n] = soc;
 		}
 	}
 
@@ -932,7 +927,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		soc = 0;
 		for (l = 0; l < 6; l++) {
 			soc += curWidth;
-			frame_x[l] = soc;
+			frameX[l] = soc;
 		}
 	}
 
@@ -1452,7 +1447,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 		textPos[4] = CHAR_WIDTH;
 		textPos[5] = CHAR_HEIGHT;
 
-		copyRectClip(textPos, textSurface, screenSurface);
+		copyRectClip(textPos, tableSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {
@@ -2276,7 +2271,7 @@ void DrasculaEngine::moveCharacters() {
 									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 	} else if (characterMoved == 1) {
-		curPos[0] = frame_x[num_frame];
+		curPos[0] = frameX[num_frame];
 		curPos[1] = frame_y + DIF_MASK_HARE;
 		curPos[2] = curX;
 		curPos[3] = curY;

@@ -283,7 +283,6 @@ public:
 	byte *extraSurface;	// not sure about this one, was "dir_hare_dch"
 	byte *screenSurface;
 	byte *frontSurface;
-	byte *textSurface;
 	byte *pendulumSurface;
 
 	byte cPal[768];
@@ -690,7 +689,7 @@ extern const char *_textmisc[][2];
 extern const char *_textd1[][11];
 
 extern const ItemLocation itemLocations[];
-extern int frame_x[20];
+extern int frameX[20];
 extern const int x_pol[44], y_pol[44];
 extern const int verbBarX[];
 extern const int x1d_menu[], y1d_menu[];
