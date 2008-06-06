@@ -503,13 +503,12 @@ public:
 	bool room_8(int);
 	bool room_9(int);
 	bool room_12(int);
-	bool room_13(int fl);
+	bool room_13(int);
 	bool room_14(int);
 	bool room_15(int);
 	bool room_16(int);
 	bool room_17(int);
 	bool room_18(int);
-	bool room_19(int);
 	bool room_21(int);
 	bool room_22(int);
 	bool room_23(int);
@@ -521,7 +520,6 @@ public:
 	bool room_31(int);
 	bool room_34(int);
 	bool room_35(int);
-	bool room_44(int);
 	bool room_49(int);
 	bool room_53(int);
 	bool room_54(int);
@@ -530,9 +528,7 @@ public:
 	bool room_58(int);
 	bool room_59(int);
 	bool room_60(int);
-	bool room_61(int);
 	bool room_62(int);
-	bool room_63(int);
 	bool room_102(int);
 
 	void animation_1_1();

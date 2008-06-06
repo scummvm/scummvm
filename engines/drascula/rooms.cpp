@@ -71,7 +71,6 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_16);
 	ROOM(room_17);
 	ROOM(room_18);
-	ROOM(room_19);
 	ROOM(room_21);	// returns bool
 	ROOM(room_22);
 	ROOM(room_23);
@@ -83,7 +82,6 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_31);
 	ROOM(room_34);
 	ROOM(room_35);
-	ROOM(room_44);
 	ROOM(room_49);
 	ROOM(room_53);
 	ROOM(room_54);
@@ -92,9 +90,7 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_58);
 	ROOM(room_59);
 	ROOM(room_60);	// returns bool
-	ROOM(room_61);
 	ROOM(room_62);
-	ROOM(room_63);
 	ROOM(room_102);
 
 	PREUPDATEROOM(update_1_pre);
@@ -571,12 +567,6 @@ bool DrasculaEngine::room_18(int fl) {
 	return true;
 }
 
-bool DrasculaEngine::room_19(int fl) {
-	hasAnswer = 0;
-
-	return true;
-}
-
 bool DrasculaEngine::room_21(int fl) {
 	if (pickedObject == kVerbOpen && fl == 101 && flags[28] == 0)
 		talk(419);
@@ -834,12 +824,6 @@ bool DrasculaEngine::room_35(int fl) {
 	return true;
 }
 
-bool DrasculaEngine::room_44(int fl) {
-	hasAnswer = 0;
-
-	return true;
-}
-
 bool DrasculaEngine::room_49(int fl) {
 	if (pickedObject == kVerbTalk && fl ==51)
 		converse(9);
@@ -1035,12 +1019,6 @@ bool DrasculaEngine::room_60(int fl) {
 	return false;
 }
 
-bool DrasculaEngine::room_61(int fl) {
-	hasAnswer = 0;
-
-	return true;
-}
-
 bool DrasculaEngine::room_62(int fl) {
 	if (pickedObject == kVerbTalk && fl == 53)
 		converse(13);
@@ -1052,12 +1030,6 @@ bool DrasculaEngine::room_62(int fl) {
 		animation_4_1();
 	else
 		hasAnswer = 0;
-
-	return true;
-}
-
-bool DrasculaEngine::room_63(int fl) {
-	hasAnswer = 0;
 
 	return true;
 }
