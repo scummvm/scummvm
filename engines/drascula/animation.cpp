@@ -52,6 +52,7 @@ void DrasculaEngine::updateAnim2(int y, int px, int py, int width, int height, i
 	}
 }
 
+// This is the game's introduction sequence
 void DrasculaEngine::animation_1_1() {
 	int l, l2, p;
 	int pixelPos[6];
@@ -381,6 +382,7 @@ void DrasculaEngine::animation_1_1() {
 	loadPic(99, backSurface);
 }
 
+// John falls in love with BJ, who is then abducted by Drascula
 void DrasculaEngine::animation_2_1() {
 	int l;
 
@@ -1143,17 +1145,10 @@ void DrasculaEngine::animation_23_joined2() {
 }
 
 void DrasculaEngine::animation_25_2() {
-	int cabinPos[6];
+	int cabinPos[6] = { 150, 6, 69, 0, 158, 161 };
 
 	loadPic("an14_2.alg", backSurface);
 	loadPic(18, drawSurface1);
-
-	cabinPos[0] = 150;
-	cabinPos[1] = 6;
-	cabinPos[2] = 69;
-	cabinPos[3] = 0;
-	cabinPos[4] = 158;
-	cabinPos[5] = 161;
 
 	flags[24] = 0;
 
@@ -1703,22 +1698,16 @@ void DrasculaEngine::animation_12_5() {
 			bgPalette3[color][component] = gamePalette[color][component];
 		}
 
-	for (fade = 1; fade >= 0; fade--) {
-		for (color = 0; color < 128; color++)
-			for (component = 0; component < 3; component++)
-				bgPalette1[color][component] = adjustToVGA(bgPalette1[color][component] - 8 + fade);
-	}
-
-	for (fade = 2; fade >= 0; fade--) {
-		for (color = 0; color < 128; color++)
-			for (component = 0; component < 3; component++)
-				bgPalette2[color][component] = adjustToVGA(bgPalette2[color][component] - 8 + fade);
-	}
-
 	for (fade = 3; fade >= 0; fade--) {
-		for (color = 0; color < 128; color++)
-			for (component = 0; component < 3; component++)
+		for (color = 0; color < 128; color++) {
+			for (component = 0; component < 3; component++) {
 				bgPalette3[color][component] = adjustToVGA(bgPalette3[color][component] - 8 + fade);
+				if (fade <= 2)
+					bgPalette2[color][component] = adjustToVGA(bgPalette2[color][component] - 8 + fade);
+				if (fade <= 1)
+					bgPalette1[color][component] = adjustToVGA(bgPalette1[color][component] - 8 + fade);
+			}
+		}
 	}
 
 	loadPic("3an11_1.alg", backSurface);
@@ -1788,16 +1777,10 @@ void DrasculaEngine::animation_13_5() {
 	int frame = 0;
 	int frus_x[] = {1, 46, 91, 136, 181, 226, 271};
 	int frus_y[] = {1, 1, 1, 1, 1, 1, 1, 89};
-	int pos_frusky[6];
+	int pos_frusky[6] = { 1, 1, frank_x, 81, 44, 87 };
 
 	loadPic("auxfr.alg", backSurface);
 
-	pos_frusky[3] = 81;
-	pos_frusky[4] = 44;
-	pos_frusky[5] = 87;
-	pos_frusky[0] = 1;
-	pos_frusky[1] = 1;
-	pos_frusky[2] = frank_x;
 	updateRoom();
 	copyRectClip(pos_frusky, backSurface, screenSurface);
 	updateScreen();
@@ -1812,7 +1795,7 @@ void DrasculaEngine::animation_13_5() {
 		pos_frusky[2] = frank_x;
 		copyRectClip( pos_frusky, backSurface, screenSurface);
 		updateScreen();
-		frank_x = frank_x - 5;
+		frank_x -= 5;
 		frame++;
 		if (frank_x <= -45)
 			break;
@@ -1864,13 +1847,11 @@ void DrasculaEngine::animation_17_5() {
 }
 
 void DrasculaEngine::animation_1_6() {
-	int l;
-
 	trackProtagonist = 0;
 	curX = 103;
 	curY = 108;
 	flags[0] = 1;
-	for (l = 0; l < 200; l++)
+	for (int l = 0; l < 200; l++)
 		factor_red[l] = 98;
 
 	loadPic("auxig2.alg", frontSurface);
@@ -1952,18 +1933,11 @@ void DrasculaEngine::animation_4_6() {
 }
 
 void DrasculaEngine::animation_5_6() {
-	int n, pos_pen[6];
-
-	pos_pen[0] = 1;
-	pos_pen[1] = 29;
-	pos_pen[2] = 204;
-	pos_pen[3] = -125;
-	pos_pen[4] = 18;
-	pos_pen[5] = 125;
+	int pos_pen[6] = { 1, 29, 204, -125, 18, 125 };
 
 	animate("man.bin", 14);
 
-	for (n = -125; n <= 0; n = n + 2) {
+	for (int n = -125; n <= 0; n = n + 2) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
 		pos_pen[3] = n;
@@ -2069,7 +2043,7 @@ void DrasculaEngine::animation_9_6() {
 	updateScreen();
 	talk(301);
 	v_cd = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
-	v_cd = v_cd + 4;
+	v_cd += 4;
 	playMusic(17);
 	fadeToBlack(1);
 	clearRoom();
@@ -2710,15 +2684,14 @@ void DrasculaEngine::animation_6_4() {
 }
 
 void DrasculaEngine::animation_8_4() {
-	int frame;
-	int estanteria_x[] = {1, 75, 149, 223, 1, 75, 149, 223, 149, 223, 149, 223, 149, 223};
-	int estanteria_y[] = {1, 1, 1, 1, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74};
+	int bookcaseX[] = {1, 75, 149, 223, 1, 75, 149, 223, 149, 223, 149, 223, 149, 223};
+	int bookcaseY[] = {1, 1, 1, 1, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74};
 
 	loadPic("an_8.alg", frontSurface);
 
-	for (frame = 0; frame < 14; frame++) {
+	for (int frame = 0; frame < 14; frame++) {
 		pause(2);
-		copyBackground(estanteria_x[frame], estanteria_y[frame], 77, 45, 73, 72, frontSurface, screenSurface);
+		copyBackground(bookcaseX[frame], bookcaseY[frame], 77, 45, 73, 72, frontSurface, screenSurface);
 		updateScreen(77, 45, 77, 45, 73, 72, screenSurface);
 	}
 

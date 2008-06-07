@@ -965,7 +965,6 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 		updateScreen();
 
 		pause(3);
-
 	} while (!isTalkFinished(&length));
 
 	updateRoom();
