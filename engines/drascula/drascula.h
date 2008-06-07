@@ -46,6 +46,9 @@
 
 namespace Drascula {
 
+// Do not update this yet. The file is not loaded fully
+#define DRASCULA_DAT_VER 1
+
 enum DrasculaGameFeatures {
 	GF_PACKED = (1 << 0)
 };
@@ -174,12 +177,11 @@ struct ItemLocation {
 };
 
 struct CharInfo {
-	int inChar;
-	int mappedChar;
-	int charType;	// 0 - letters, 1 - signs, 2 - accented
+	byte inChar;
+	uint16 mappedChar;
+	byte charType;	// 0 - letters, 1 - signs, 2 - accented
 };
 
-#define CHARMAP_SIZE	93
 #define NUM_SAVES		10
 #define NUM_FLAGS		50
 #define DIF_MASK		55
@@ -355,6 +357,8 @@ public:
 	int mouseY;
 	int leftMouseButton;
 	int rightMouseButton;
+
+	bool loadDrasculaDat();
 
 	bool runCurrentChapter();
 	void black();
@@ -671,6 +675,9 @@ public:
 
 private:
 	int _lang;
+
+	CharInfo *_charMap;
+	int _charMapSize;
 };
 
 extern const char *_text[][501];
@@ -694,8 +701,6 @@ extern int frameX[20];
 extern const int x_pol[44], y_pol[44];
 extern const int verbBarX[];
 extern const int x1d_menu[], y1d_menu[];
-
-extern const CharInfo charMap[];
 
 } // End of namespace Drascula
 

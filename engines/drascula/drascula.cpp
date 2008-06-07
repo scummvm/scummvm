@@ -70,6 +70,8 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
+
+	free(_charMap);
 }
 
 int DrasculaEngine::init() {
@@ -99,6 +101,9 @@ int DrasculaEngine::init() {
 		warning("Unknown game language. Falling back to English");
 		_lang = 0;
 	}
+
+	if (!loadDrasculaDat())
+		return 1;
 
 	setupRoomsTable();
 	loadArchives();
@@ -716,6 +721,55 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
+}
+
+bool DrasculaEngine::loadDrasculaDat() {
+	Common::File in;
+
+	in.open("drascula.dat");
+
+	if (!in.isOpen()) {
+		Common::String errorMessage = "You're missing the 'drascula.dat' file. Get it from the ScummVM website";
+		GUIErrorMessage(errorMessage);
+		warning(errorMessage.c_str());
+
+		return false;
+	}
+
+	char buf[256];
+	int ver;
+
+	in.read(buf, 8);
+	buf[8] = '\0';
+
+	if (strcmp(buf, "DRASCULA")) {
+		Common::String errorMessage = "File 'drascula.dat' is corrupt. Get it from the ScummVM website";
+		GUIErrorMessage(errorMessage);
+		warning(errorMessage.c_str());
+
+		return false;
+	}
+
+	ver = in.readByte();
+	
+	if (ver != DRASCULA_DAT_VER) {
+		snprintf(buf, 256, "File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
+		GUIErrorMessage(buf);
+		warning(buf);
+
+		return false;
+	}
+
+	_charMapSize = in.readUint16BE();
+	_charMap = (CharInfo *)malloc(sizeof(CharInfo) * _charMapSize);
+
+	for (int i = 0; i < _charMapSize; i++) {
+		_charMap[i].inChar = in.readByte();
+		_charMap[i].mappedChar = in.readUint16BE();
+		_charMap[i].charType = in.readByte();
+	}
+
+	return true;
 }
 
 } // End of namespace Drascula

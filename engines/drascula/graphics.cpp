@@ -234,17 +234,18 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 
 void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	int textPos[8];
-	int letterY = 0, letterX = 0, c, i;
+	int letterY = 0, letterX = 0, i;
 	uint len = strlen(said);
+	byte c;
 
 	for (uint h = 0; h < len; h++) {
 		c = toupper(said[h]);
 
-		for (i = 0; i < CHARMAP_SIZE; i++) {
-			if (c == charMap[i].inChar) {
-				letterX = charMap[i].mappedChar;
+		for (i = 0; i < _charMapSize; i++) {
+			if (c == _charMap[i].inChar) {
+				letterX = _charMap[i].mappedChar;
 
-				switch (charMap[i].charType) {
+				switch (_charMap[i].charType) {
 					case 0:		// letters
 						letterY = (_lang == kSpanish) ? 149 : 158;
 						break;
@@ -301,16 +302,16 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, i
 			if (c == '\'')
 				c = '\244';
 
-		for (int i = 0; i < CHARMAP_SIZE; i++) {
-			if (c == charMap[i].inChar) {
+		for (int i = 0; i < _charMapSize; i++) {
+			if (c == _charMap[i].inChar) {
 				// Convert the mapped char of the normal font to the
 				// mapped char of the dialogue font
 
-				int multiplier = (charMap[i].mappedChar - 6) / 9;
+				int multiplier = (_charMap[i].mappedChar - 6) / 9;
 
 				letterX = multiplier * 7 + 10;
 
-				if (charMap[i].charType > 0)
+				if (_charMap[i].charType > 0)
 					letterY = signY;
 				break;
 			}	// if
