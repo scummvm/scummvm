@@ -2704,5 +2704,18 @@ void DrasculaEngine::animation_9_4() {
 	fadeToBlack(1);
 }
 
+void DrasculaEngine::activatePendulum() {
+	flags[1] = 2;
+	hare_se_ve = 0;
+	roomNumber = 102;
+	loadPic(102, drawSurface1, HALF_PAL);
+	loadPic("an_p1.alg", drawSurface3);
+	loadPic("an_p2.alg", extraSurface);
+	loadPic("an_p3.alg", frontSurface);
+
+	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
+
+	savedTime = getTime();
+}
 
 } // End of namespace Drascula

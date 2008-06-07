@@ -1596,4 +1596,481 @@ bool DrasculaEngine::room(int rN, int fl) {
 	return false;
 }
 
+void DrasculaEngine::enterRoom(int roomIndex) {
+	debug(2, "Entering room %d", roomIndex);
+
+	char fileName[20];
+	sprintf(fileName, "%d.ald", roomIndex);
+	int soc, l, martin = 0, objIsExit = 0;
+	float chiquez = 0, pequegnez = 0;
+	char pant1[20], pant2[20], pant3[20], pant4[20];
+	char buffer[256];
+	int palLevel = 0;
+
+	hasName = 0;
+
+	strcpy(currentData, fileName);
+
+	_arj.open(fileName);
+	if (!_arj.isOpen()) {
+		error("missing data file %s", fileName);
+	}
+	int size = _arj.size();
+
+	getIntFromLine(buffer, size, &roomNumber);
+	getIntFromLine(buffer, size, &roomMusic);
+	getStringFromLine(buffer, size, roomDisk);
+	getIntFromLine(buffer, size, &palLevel);
+
+	if (currentChapter == 2)
+		getIntFromLine(buffer, size, &martin);
+
+	if (currentChapter == 2 && martin != 0) {
+		curWidth = martin;
+		getIntFromLine(buffer, size, &curHeight);
+		getIntFromLine(buffer, size, &feetHeight);
+		getIntFromLine(buffer, size, &stepX);
+		getIntFromLine(buffer, size, &stepY);
+
+		getStringFromLine(buffer, size, pant1);
+		getStringFromLine(buffer, size, pant2);
+		getStringFromLine(buffer, size, pant3);
+		getStringFromLine(buffer, size, pant4);
+
+		strcpy(menuBackground, pant4);
+	}
+
+	getIntFromLine(buffer, size, &numRoomObjs);
+
+	for (l = 0; l < numRoomObjs; l++) {
+		getIntFromLine(buffer, size, &objectNum[l]);
+		getStringFromLine(buffer, size, objName[l]);
+		getIntFromLine(buffer, size, &x1[l]);
+		getIntFromLine(buffer, size, &y1[l]);
+		getIntFromLine(buffer, size, &x2[l]);
+		getIntFromLine(buffer, size, &y2[l]);
+		getIntFromLine(buffer, size, &roomObjX[l]);
+		getIntFromLine(buffer, size, &roomObjY[l]);
+		getIntFromLine(buffer, size, &trackObj[l]);
+		getIntFromLine(buffer, size, &visible[l]);
+		getIntFromLine(buffer, size, &isDoor[l]);
+		if (isDoor[l] != 0) {
+			getStringFromLine(buffer, size, _targetSurface[l]);
+			getIntFromLine(buffer, size, &_destX[l]);
+			getIntFromLine(buffer, size, &_destY[l]);
+			getIntFromLine(buffer, size, &trackCharacter_alkeva[l]);
+			getIntFromLine(buffer, size, &alapuertakeva[l]);
+			updateDoor(l);
+		}
+	}
+
+	getIntFromLine(buffer, size, &floorX1);
+	getIntFromLine(buffer, size, &floorY1);
+	getIntFromLine(buffer, size, &floorX2);
+	getIntFromLine(buffer, size, &floorY2);
+
+	if (currentChapter != 2) {
+		getIntFromLine(buffer, size, &far);
+		getIntFromLine(buffer, size, &near);
+	}
+	_arj.close();
+
+	if (currentChapter == 2 && martin != 0) {
+		loadPic(pant2, extraSurface);
+		loadPic(pant1, frontSurface);
+		loadPic(pant4, backSurface);
+	}
+
+	if (currentChapter == 2) {
+		if (martin == 0) {
+			stepX = STEP_X;
+			stepY = STEP_Y;
+			curHeight = CHARACTER_HEIGHT;
+			curWidth = CHARACTER_WIDTH;
+			feetHeight = FEET_HEIGHT;
+			loadPic(97, extraSurface);
+			loadPic(96, frontSurface);
+			loadPic(99, backSurface);
+
+			strcpy(menuBackground, "99.alg");
+		}
+	}
+
+	for (l = 0; l < numRoomObjs; l++) {
+		if (objectNum[l] == objExit)
+			objIsExit = l;
+	}
+
+	if (currentChapter == 2) {
+		if (curX == -1) {
+			curX = _destX[objIsExit];
+			curY = _destY[objIsExit] - curHeight;
+		}
+		characterMoved = 0;
+	}
+
+	loadPic(roomDisk, drawSurface3);
+	loadPic(roomNumber, drawSurface1, HALF_PAL);
+
+	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
+
+	setDefaultPalette();
+	if (palLevel != 0)
+		setPaletteBase(palLevel);
+	assignBrightPalette();
+	setDefaultPalette();
+	setPaletteBase(palLevel + 2);
+	assignDarkPalette();
+
+	setBrightPalette();
+	changeColor = -1;
+
+	if (currentChapter == 2)
+		color_abc(kColorLightGreen);
+
+	if (currentChapter != 2) {
+		for (l = 0; l <= floorY1; l++)
+			factor_red[l] = far;
+		for (l = floorY1; l <= 201; l++)
+			factor_red[l] = near;
+
+		chiquez = (float)(near - far) / (float)(floorY2 - floorY1);
+		for (l = floorY1; l <= floorY2; l++) {
+			factor_red[l] = (int)(far + pequegnez);
+			pequegnez = pequegnez + chiquez;
+		}
+	}
+
+	if (roomNumber == 24) {
+		for (l = floorY1 - 1; l > 74; l--) {
+			factor_red[l] = (int)(far - pequegnez);
+			pequegnez = pequegnez + chiquez;
+		}
+	}
+
+	if (currentChapter == 5 && roomNumber == 54) {
+		for (l = floorY1 - 1; l > 84; l--) {
+			factor_red[l] = (int)(far - pequegnez);
+			pequegnez = pequegnez + chiquez;
+		}
+	}
+
+	if (currentChapter != 2) {
+		if (curX == -1) {
+			curX = _destX[objIsExit];
+			curY = _destY[objIsExit];
+			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
+			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
+			curY = curY - curHeight;
+		} else {
+			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
+			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
+		}
+		characterMoved = 0;
+	}
+
+	if (currentChapter == 2) {
+		soc = 0;
+		for (l = 0; l < 6; l++) {
+			soc += curWidth;
+			frameX[l] = soc;
+		}
+	}
+
+	if (currentChapter == 5)
+		hare_se_ve = 1;
+
+	updateVisible();
+
+	if (currentChapter == 1)
+		isDoor[7] = 0;
+
+	if (currentChapter == 2) {
+		if (roomNumber == 14 && flags[39] == 1)
+			roomMusic = 16;
+		else if (roomNumber == 15 && flags[39] == 1)
+			roomMusic = 16;
+		if (roomNumber == 14 && flags[5] == 1)
+			roomMusic = 0;
+		else if (roomNumber == 15 && flags[5] == 1)
+			roomMusic = 0;
+
+		if (previousMusic != roomMusic && roomMusic != 0)
+			playMusic(roomMusic);
+		if (roomMusic == 0)
+			stopMusic();
+	} else {
+		if (previousMusic != roomMusic && roomMusic != 0)
+			playMusic(roomMusic);
+	}
+
+	if (currentChapter == 2) {
+		if (roomNumber == 9 || roomNumber == 2 || roomNumber == 14 || roomNumber == 18)
+			savedTime = getTime();
+	}
+	if (currentChapter == 4) {
+		if (roomNumber == 26)
+			savedTime = getTime();
+	}
+
+	if (currentChapter == 4 && roomNumber == 24 && flags[29] == 1)
+		animation_7_4();
+
+	if (currentChapter == 5) {
+		if (roomNumber == 45)
+			hare_se_ve = 0;
+		if (roomNumber == 49 && flags[7] == 0)
+			animation_4_5();
+	}
+
+	updateRoom();
+}
+
+void DrasculaEngine::clearRoom() {
+	memset(VGA, 0, 64000);
+	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->updateScreen();
+}
+
+bool DrasculaEngine::exitRoom(int l) {
+	debug(2, "Exiting room from door %d", l);
+
+	int roomNum = 0;
+
+	if (currentChapter == 1) {
+		if (objectNum[l] == 105 && flags[0] == 0)
+			talk(442);
+		else {
+			updateDoor(l);
+			if (isDoor[l] != 0) {
+				gotoObject(roomObjX[l], roomObjY[l]);
+				trackProtagonist = trackObj[l];
+				updateRoom();
+				updateScreen();
+				characterMoved = 0;
+				trackProtagonist = trackCharacter_alkeva[l];
+				objExit = alapuertakeva[l];
+				doBreak = 1;
+				previousMusic = roomMusic;
+
+				if (objectNum[l] == 105) {
+					animation_2_1();
+					return true;
+				}
+				clearRoom();
+				sscanf(_targetSurface[l], "%d", &roomNum);
+				curX = -1;
+				enterRoom(roomNum);
+			}
+		}
+	} else if (currentChapter == 2) {
+		updateDoor(l);
+		if (isDoor[l] != 0) {
+			gotoObject(roomObjX[l], roomObjY[l]);
+			characterMoved = 0;
+			trackProtagonist = trackCharacter_alkeva[l];
+			objExit = alapuertakeva[l];
+			doBreak = 1;
+			previousMusic = roomMusic;
+			if (objectNum[l] == 136)
+				animation_2_2();
+			if (objectNum[l] == 124)
+				animation_3_2();
+			if (objectNum[l] == 173) {
+				animation_35_2();
+				return true;
+			} if (objectNum[l] == 146 && flags[39] == 1) {
+				flags[5] = 1;
+				flags[11] = 1;
+			}
+			if (objectNum[l] == 176 && flags[29] == 1) {
+				flags[29] = 0;
+				removeObject(kItemEarWithEarPlug);
+				addObject(kItemEarplugs);
+			}
+			clearRoom();
+			sscanf(_targetSurface[l], "%d", &roomNum);
+			curX =- 1;
+			enterRoom(roomNum);
+		}
+	} else if (currentChapter == 3) {
+		updateDoor(l);
+		if (isDoor[l] != 0 && visible[l] == 1) {
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
+			updateRoom();
+			updateScreen();
+			characterMoved = 0;
+			trackProtagonist = trackCharacter_alkeva[l];
+			objExit = alapuertakeva[l];
+			doBreak = 1;
+			previousMusic = roomMusic;
+			clearRoom();
+			sscanf(_targetSurface[l], "%d", &roomNum);
+			curX =- 1;
+			enterRoom(roomNum);
+		}
+	} else if (currentChapter == 4) {
+		updateDoor(l);
+		if (isDoor[l] != 0) {
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
+			updateRoom();
+			updateScreen();
+			characterMoved = 0;
+			trackProtagonist = trackCharacter_alkeva[l];
+			objExit = alapuertakeva[l];
+			doBreak = 1;
+			previousMusic = roomMusic;
+
+			if (objectNum[l] == 108)
+				gotoObject(171, 78);
+			clearRoom();
+			sscanf(_targetSurface[l], "%d", &roomNum);
+			curX = -1;
+			enterRoom(roomNum);
+		}
+	} else if (currentChapter == 5) {
+		updateDoor(l);
+		if (isDoor[l] != 0 && visible[l] == 1) {
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
+			updateRoom();
+			updateScreen();
+			characterMoved = 0;
+			trackProtagonist = trackCharacter_alkeva[l];
+			objExit = alapuertakeva[l];
+			doBreak = 1;
+			previousMusic = roomMusic;
+			hare_se_ve = 1;
+			clearRoom();
+			sscanf(_targetSurface[l], "%d", &roomNum);
+			curX = -1;
+			enterRoom(roomNum);
+		}
+	} else if (currentChapter == 6) {
+		updateDoor(l);
+		if (isDoor[l] != 0) {
+			gotoObject(roomObjX[l], roomObjY[l]);
+			trackProtagonist = trackObj[l];
+			updateRoom();
+			updateScreen();
+			characterMoved = 0;
+			trackProtagonist = trackCharacter_alkeva[l];
+			objExit = alapuertakeva[l];
+			doBreak = 1;
+			previousMusic = roomMusic;
+			clearRoom();
+			sscanf(_targetSurface[l], "%d", &roomNum);
+			curX = -1;
+			enterRoom(roomNum);
+
+			if (objExit == 105)
+				animation_19_6();
+		}
+	}
+
+	return false;
+}
+
+void DrasculaEngine::updateRoom() {
+	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	updateRefresh_pre();
+	if (currentChapter == 3) {
+		if (flags[0] == 0)
+			moveCharacters();
+		else
+			copyRect(113, 54, curX - 20, curY - 1, 77, 89, drawSurface3, screenSurface);
+	} else {
+		moveCharacters();
+	}
+	updateRefresh();
+}
+
+void DrasculaEngine::updateDoor(int doorNum) {
+	if (currentChapter == 1 || currentChapter == 3 || currentChapter == 5 || currentChapter == 6)
+		return;
+	else if (currentChapter == 2) {
+		if (objectNum[doorNum] == 138)
+			isDoor[doorNum] = flags[0];
+		else if (objectNum[doorNum] == 136)
+			isDoor[doorNum] = flags[8];
+		else if (objectNum[doorNum] == 156)
+			isDoor[doorNum] = flags[16];
+		else if (objectNum[doorNum] == 163)
+			isDoor[doorNum] = flags[17];
+		else if (objectNum[doorNum] == 177)
+			isDoor[doorNum] = flags[15];
+		else if (objectNum[doorNum] == 175)
+			isDoor[doorNum] = flags[40];
+		else if (objectNum[doorNum] == 173)
+			isDoor[doorNum] = flags[36];
+	} else if (currentChapter == 4) {
+		if (objectNum[doorNum] == 101 && flags[0] == 0)
+			isDoor[doorNum] = 0;
+		else if (objectNum[doorNum] == 101 && flags[0] == 1 && flags[28] == 1)
+			isDoor[doorNum] = 1;
+		else if (objectNum[doorNum] == 103)
+			isDoor[doorNum] = flags[0];
+		else if (objectNum[doorNum] == 104)
+			isDoor[doorNum] = flags[1];
+		else if (objectNum[doorNum] == 105)
+			isDoor[doorNum] = flags[1];
+		else if (objectNum[doorNum] == 106)
+			isDoor[doorNum] = flags[2];
+		else if (objectNum[doorNum] == 107)
+			isDoor[doorNum] = flags[2];
+		else if (objectNum[doorNum] == 110)
+			isDoor[doorNum] = flags[6];
+		else if (objectNum[doorNum] == 114)
+			isDoor[doorNum] = flags[4];
+		else if (objectNum[doorNum] == 115)
+			isDoor[doorNum] = flags[4];
+		else if (objectNum[doorNum] == 116 && flags[5] == 0)
+			isDoor[doorNum] = 0;
+		else if (objectNum[doorNum] == 116 && flags[5] == 1 && flags[23] == 1)
+			isDoor[doorNum] = 1;
+		else if (objectNum[doorNum] == 117)
+			isDoor[doorNum] = flags[5];
+		else if (objectNum[doorNum] == 120)
+			isDoor[doorNum] = flags[8];
+		else if (objectNum[doorNum] == 122)
+			isDoor[doorNum] = flags[7];
+	}
+}
+
+void DrasculaEngine::openDoor(int nflag, int doorNum) {
+	if (flags[nflag] == 0) {
+		if (currentChapter == 1 /*|| currentChapter == 4*/) {
+			if (nflag != 7) {
+				playSound(3);
+				flags[nflag] = 1;
+			}
+		} else {
+			playSound(3);
+			flags[nflag] = 1;
+		}
+
+		if (doorNum != NO_DOOR)
+			updateDoor(doorNum);
+		updateRoom();
+		updateScreen();
+		finishSound();
+		withoutVerb();
+	}
+}
+
+void DrasculaEngine::closeDoor(int nflag, int doorNum) {
+	if (flags[nflag] == 1) {
+		playSound(4);
+		flags[nflag] = 0;
+		if (doorNum != NO_DOOR)
+			updateDoor(doorNum);
+		updateRoom();
+		updateScreen();
+		finishSound();
+		withoutVerb();
+	}
+}
+
 } // End of namespace Drascula
