@@ -161,7 +161,15 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\drascula\actors.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\drascula\animation.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\converse.cpp"
 			>
 		</File>
 		<File
@@ -177,7 +185,31 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\drascula\graphics.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\interface.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\objects.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\palette.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\drascula\rooms.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\drascula\sound.cpp"
 			>
 		</File>
 		<File
