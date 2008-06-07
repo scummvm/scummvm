@@ -461,7 +461,7 @@ void DrasculaEngine::talk_pianist(int index) {
 	int coords[7] = { 139, 228, 112, 47, 60, 221, 128 };
 
 	color_abc(kColorWhite);
-	talk_generic(said, filename, x_talk, 4, coords);
+	talk_generic(said, filename, x_talk, 4, coords, extraSurface);
 }
 
 void DrasculaEngine::talk_drunk(int index) {
@@ -483,7 +483,7 @@ void DrasculaEngine::talk_drunk(int index) {
 
 	color_abc(kColorDarkGreen);
 
-	talk_generic(said, filename, x_talk, 8, coords);
+	talk_generic(said, filename, x_talk, 8, coords, frontSurface);
 
 	flags[13] = 0;
 	if (currentChapter == 1)
@@ -651,7 +651,7 @@ void DrasculaEngine::talk_werewolf(int index) {
 	int coords[7] = { 136, 198, 81, 26, 24, 203, 78 };
 
 	color_abc(kColorRed);
-	talk_generic(said, filename, x_talk, 9, coords);
+	talk_generic(said, filename, x_talk, 9, coords, drawSurface3);
 }
 
 void DrasculaEngine::talk_mus(int index) {
@@ -662,7 +662,7 @@ void DrasculaEngine::talk_mus(int index) {
 	int coords[7] = { 156, 190, 64, 18, 24, 197, 64 };
 
 	color_abc(kColorWhite);
-	talk_generic(said, filename, x_talk, 8, coords);
+	talk_generic(said, filename, x_talk, 8, coords, drawSurface3);
 }
 
 void DrasculaEngine::talk_pen(const char *said, const char *filename, int talkerType) {
@@ -944,7 +944,7 @@ void DrasculaEngine::talk_dr_grande(int index) {
 	} while (!isTalkFinished(&length));
 }
 
-void DrasculaEngine::talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords) {
+void DrasculaEngine::talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface) {
 	int face;
 	int length = strlen(said);
 	talkInit(filename);
@@ -955,7 +955,7 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 		updateRefresh_pre();
 		copyBackground(faces[face], coords[0], coords[1], coords[2], 
-						coords[3], coords[4], drawSurface3, screenSurface);
+						coords[3], coords[4], surface, screenSurface);
 		moveCharacters();
 		updateRefresh();
 
