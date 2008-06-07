@@ -63,8 +63,7 @@ INCDIR   = $(srcdir) . $(srcdir)/engines/ $(DEVKITPRO)/libogc/include
 LIBDIR   = $(DEVKITPRO)/libogc/lib/wii
 
 CXXFLAGS = -g -Os -Wall $(MACHDEP) -D__WII__ -Wno-multichar -Wno-long-long \
-		-Wno-multichar -Wno-unknown-pragmas -Wno-reorder \
-		-fno-exceptions -fno-rtti
+		-Wno-unknown-pragmas -Wno-reorder -fno-exceptions -fno-rtti
 
 CXXFLAGS += $(addprefix -I,$(INCDIR))
 LDFLAGS   = -g $(MACHDEP) -Wl,-Map,$(TARGET).elf.map
