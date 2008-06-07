@@ -678,6 +678,19 @@ private:
 
 	CharInfo *_charMap;
 	int _charMapSize;
+
+	int _itemLocationsSize;
+	int _xPolSize;
+	int _verbBarXSize;
+	int _x1dMenuSize;
+	int _frameXSize;
+	int _candleXSize;
+	int _pianistXSize;
+	int _drunkXSize;
+	int _roomPreUpdatesSize;
+	int _roomUpdatesSize;
+	int _roomActionsSize;
+	int _numLangs;
 };
 
 extern const char *_text[][501];

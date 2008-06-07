@@ -769,6 +769,89 @@ bool DrasculaEngine::loadDrasculaDat() {
 		_charMap[i].charType = in.readByte();
 	}
 
+	_itemLocationsSize = in.readUint16BE();
+	for (int i = 0; i < _itemLocationsSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_xPolSize = in.readUint16BE();
+	for (int i = 0; i < _xPolSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_verbBarXSize = in.readUint16BE();
+	for (int i = 0; i < _verbBarXSize; i++) {
+		in.readUint16BE();
+	}
+
+	_x1dMenuSize = in.readUint16BE();
+	for (int i = 0; i < _x1dMenuSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_frameXSize = in.readUint16BE();
+	for (int i = 0; i < _frameXSize; i++) {
+		in.readUint16BE();
+	}
+
+	_candleXSize = in.readUint16BE();
+	for (int i = 0; i < _candleXSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_pianistXSize = in.readUint16BE();
+	for (int i = 0; i < _pianistXSize; i++) {
+		in.readUint16BE();
+	}
+
+	_drunkXSize = in.readUint16BE();
+	for (int i = 0; i < _drunkXSize; i++) {
+		in.readUint16BE();
+	}
+
+	_roomPreUpdatesSize = in.readUint16BE();
+	for (int i = 0; i < _roomPreUpdatesSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_roomUpdatesSize = in.readUint16BE();
+	for (int i = 0; i < _roomUpdatesSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_roomActionsSize = in.readUint16BE();
+	for (int i = 0; i < _roomActionsSize; i++) {
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+		in.readUint16BE();
+	}
+
+	_numLangs = in.readUint16BE();
+
 	return true;
 }
 
