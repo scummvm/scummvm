@@ -40,9 +40,6 @@
 
 #define DRASCULA_DAT_VER 1	// 1 byte
 
-typedef unsigned char   uint8;
-typedef unsigned short uint16;
-
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
 }
@@ -66,9 +63,9 @@ int main(int argc, char *argv[]) {
 	// Write charmap
 	writeUint16BE(outFile, ARRAYSIZE(charMap));
 	for (i = 0; i < ARRAYSIZE(charMap); i++) {
-		writeUint16BE(outFile, charMap[i].inChar);
+		writeByte(outFile, charMap[i].inChar);
 		writeUint16BE(outFile, charMap[i].mappedChar);
-		writeUint16BE(outFile, charMap[i].charType);
+		writeByte(outFile, charMap[i].charType);
 	}
 
 	// Write item locations

@@ -45,6 +45,9 @@
 #define NUM_TEXTMISC 3
 #define NUM_TEXTD1 11
 
+typedef unsigned char   uint8;
+typedef unsigned short uint16;
+
 enum Verbs {
 	kVerbDefault = -1,
 	kVerbLook = 1,
@@ -69,9 +72,9 @@ struct ItemLocation {
 };
 
 struct CharInfo {
-	int inChar;
-	int mappedChar;
-	int charType;	// 0 - letters, 1 - signs, 2 - accented
+	char inChar;
+	uint16 mappedChar;
+	char charType;	// 0 - letters, 1 - signs, 2 - accented
 };
 
 struct RoomUpdate {
