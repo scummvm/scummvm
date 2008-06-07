@@ -48,6 +48,7 @@ struct DrawStep {
 	color2; /** Background color/gradient end */
 
 	uint16 x, y, w, h, r; /** Shape size */
+	uint16 offset_x, offset_y; /** Offset when drawing directly to the whole screen */
 	uint8 shadow, stroke, factor; /** Misc options... */
 
 	int fill_mode; /** active fill mode */
@@ -87,7 +88,12 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _shadowOffset(0), _fillMode(kFillDisabled), _activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {}
+	VectorRenderer() : _shadowOffset(0), _fillMode(kFillDisabled), 
+		_activeSurface(NULL), _strokeWidth(1), _gradientFactor(1),
+	_stepOffsetX(0), _stepOffsetY(0) {
+	
+	}
+
 	virtual ~VectorRenderer() {}
 
 	/** Specifies the way in which a shape is filled */
@@ -317,19 +323,19 @@ public:
 	 * DrawStep callback functions for each drawing feature 
 	 */
 	void drawCallback_CIRCLE(DrawStep *step) {
-		drawCircle(step->x, step->y, step->r);
+		drawCircle(_stepOffsetX + step->x, _stepOffsetY + step->y, step->r);
 	}
 
 	void drawCallback_SQUARE(DrawStep *step) {
-		drawSquare(step->x, step->y, step->w, step->h);
+		drawSquare(_stepOffsetX + step->x, _stepOffsetY + step->y, step->w, step->h);
 	}
 
 	void drawCallback_LINE(DrawStep *step) {
-		drawLine(step->x, step->y, step->x + step->w, step->y + step->h);
+		drawLine(_stepOffsetX + step->x, _stepOffsetY + step->y, step->x + step->w, step->y + step->h);
 	}
 
 	void drawCallback_ROUNDSQ(DrawStep *step) {
-		drawRoundedSquare(step->x, step->y, step->r, step->w, step->h);
+		drawRoundedSquare(_stepOffsetX + step->x, _stepOffsetY + step->y, step->r, step->w, step->h);
 	}
 
 	void drawCallback_FILLSURFACE(DrawStep *step) {
@@ -337,11 +343,11 @@ public:
 	}
 
 	void drawCallback_TRIANGLE(DrawStep *step) {
-		drawTriangle(step->x, step->y, step->w, step->h, (TriangleOrientation)step->extra);
+		drawTriangle(_stepOffsetX + step->x, _stepOffsetY + step->y, step->w, step->h, (TriangleOrientation)step->extra);
 	}
 
 	void drawCallback_BEVELSQ(DrawStep *step) {
-		drawBeveledSquare(step->x, step->y, step->w, step->h, step->extra);
+		drawBeveledSquare(_stepOffsetX + step->x, _stepOffsetY + step->y, step->w, step->h, step->extra);
 	}
 
 	/**
@@ -359,8 +365,31 @@ public:
 	 */
 	virtual void copyFrame(OSystem *sys) = 0;
 
+	/**
+	 * Enables drawing offset for all the Draw Step operations, 
+	 * i.e. when we are drawing widgets directly on a whole screen
+	 * instead of individual surfaces for caching/blitting.
+	 *
+	 * @param x Horizontal drawing offset.
+	 * @param y Veritcal drawing offset.
+	 */
+	void setDrawOffset(int x, int y) {
+		_stepOffsetX = x;
+		_stepOffsetY = y;
+	}
+
+	/**
+	 * Disables the drawing offset for draw step operations.
+	 */
+	void disableDrawOffset() {
+		_stepOffsetX = _stepOffsetY = 0;
+	}
+
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
+
+	int _stepOffsetX; /** Offset for all the drawing steps */
+	int _stepOffsetY; /** Offset for all the drawing steps */
 
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
