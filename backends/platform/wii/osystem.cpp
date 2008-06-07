@@ -63,6 +63,8 @@ OSystem_Wii::OSystem_Wii() :
 	_mouseKeyColor(0),
 	_mouseCursor(NULL),
 
+	_event_quit(false),
+
 	_savefile(NULL),
 	_mixer(NULL),
 	_timer(NULL) {

@@ -37,6 +37,17 @@
 #include <gccore.h>
 #include <ogcsys.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern bool reset_btn_pressed;
+extern bool power_btn_pressed;
+
+#ifdef __cplusplus
+}
+#endif
+
 class OSystem_Wii : public OSystem {
 private:
 	s64 _startup_time;
@@ -68,6 +79,8 @@ private:
 	s32 _mouseHotspotX, _mouseHotspotY;
 	u8 _mouseKeyColor;
 	u8 *_mouseCursor;
+
+	bool _event_quit;
 
 	u32 _lastPadCheck;
 
