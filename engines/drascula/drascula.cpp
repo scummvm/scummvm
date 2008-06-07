@@ -1401,7 +1401,7 @@ bool DrasculaEngine::saveLoadScreen() {
 			} else if (mouseX > 168 && mouseY > 154 && mouseX < 242 && mouseY < 180)
 				break;
 			else if (selectionMade == 0) {
-				print_abc("Please select a saved game to load", 117, 15);
+				print_abc("Please select a slot", 117, 15);
 			}
 			updateScreen();
 			delay(200);
