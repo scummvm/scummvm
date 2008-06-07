@@ -671,7 +671,10 @@ void DrasculaEngine::talk_blind(int index) {
 	} while (!isTalkFinished(&length));
 }
 
-void DrasculaEngine::talk_hacker(const char *said, const char *filename) {
+void DrasculaEngine::talk_hacker(int index) {
+	char filename[20];
+	sprintf(filename, "d%i.als", index);
+	const char *said = _textd[_lang][index];
 	int length = strlen(said);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);

@@ -425,7 +425,7 @@ public:
 	void talk_vonBraun(int);
 	void talk_vonBraunpuerta(int);
 	void talk_blind(int);
-	void talk_hacker(const char *, const char *);
+	void talk_hacker(int);
 
 	void hiccup(int);
 	void finishSound();

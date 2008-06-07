@@ -738,27 +738,27 @@ void DrasculaEngine::animation_4_2() {
 
 	talk_blind(1);
 	pause(5);
-	talk_hacker(_textd[_lang][57], "d57.als");
+	talk_hacker(57);
 	pause(6);
 	talk_blind(2);
 	pause(4);
-	talk_hacker(_textd[_lang][58],"d58.als");
+	talk_hacker(58);
 	talk_blind(3);
 	delay(14);
-	talk_hacker(_textd[_lang][59],"d59.als");
+	talk_hacker(59);
 	talk_blind(4);
-	talk_hacker(_textd[_lang][60],"d60.als");
+	talk_hacker(60);
 	talk_blind(5);
-	talk_hacker(_textd[_lang][61],"d61.als");
+	talk_hacker(61);
 	talk_blind(6);
-	talk_hacker(_textd[_lang][62],"d62.als");
+	talk_hacker(62);
 	talk_blind(7);
-	talk_hacker(_textd[_lang][63],"d63.als");
+	talk_hacker(63);
 	talk_blind(8);
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
 	_system->delayMillis(1000);
-	talk_hacker(_textd[_lang][64], "d64.als");
+	talk_hacker(64);
 	talk_blind(9);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
@@ -2520,11 +2520,11 @@ void DrasculaEngine::animation_6_2() {
 	pause(1);
 
 	if (flags[4] == 1)
-		talk_hacker(_textd[_lang][66], "d66.als");
+		talk_hacker(66);
 	pause(6);
 	talk_blind(11);
 	pause(4);
-	talk_hacker(_textd[_lang][67], "d67.als");
+	talk_hacker(67);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
@@ -2572,11 +2572,11 @@ void DrasculaEngine::animation_33_2() {
 
 	talk_blind(1);
 	pause(5);
-	talk_hacker(_textd[_lang][57], "d57.als");
+	talk_hacker(57);
 	pause(6);
 	_system->delayMillis(1000);
 	talk_blind(10);
-	talk_hacker(_textd[_lang][65], "d65.als");
+	talk_hacker(65);
 
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 	updateScreen();
