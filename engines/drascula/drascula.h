@@ -426,6 +426,7 @@ public:
 	void talk_vonBraunpuerta(int);
 	void talk_blind(int);
 	void talk_hacker(int);
+	void talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords);
 
 	void hiccup(int);
 	void finishSound();
