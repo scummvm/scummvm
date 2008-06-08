@@ -151,10 +151,8 @@ void DrasculaEngine::showFrame(bool firstFrame) {
 
 	free(pcxData);
 
-	if (!firstFrame) {
-		for (int j = 0; j < 64000; j++)
-			VGA[j] = prevFrame[j] ^ VGA[j];
-	}
+	if (!firstFrame)
+		mixVideo(VGA, prevFrame);
 
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 	_system->updateScreen();
@@ -532,7 +530,7 @@ int DrasculaEngine::playFrameSSN() {
 		setPalette(dacSSN);
 		break;
 	case kFrameEmptyFrame:
-		WaitFrameSSN();
+		waitFrameSSN();
 		break;
 	case kFrameInit:
 		if (!UsingMem) {
@@ -554,9 +552,9 @@ int DrasculaEngine::playFrameSSN() {
 			}
 			Des_RLE(BufferSSN, MiVideoSSN);
 			free(BufferSSN);
-			WaitFrameSSN();
+			waitFrameSSN();
 			if (FrameSSN)
-				MixVideo(VGA, MiVideoSSN);			
+				mixVideo(VGA, MiVideoSSN);			
 			else
 				memcpy(VGA, MiVideoSSN, 64000);
 			_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
@@ -573,9 +571,9 @@ int DrasculaEngine::playFrameSSN() {
 				}
 				Des_OFF(BufferSSN, MiVideoSSN, Lengt);
 				free(BufferSSN);
-				WaitFrameSSN();
+				waitFrameSSN();
 				if (FrameSSN)
-					MixVideo(VGA, MiVideoSSN);
+					mixVideo(VGA, MiVideoSSN);
 				else
 					memcpy(VGA, MiVideoSSN, 64000);
 				_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
@@ -646,12 +644,12 @@ void DrasculaEngine::Des_RLE(byte *BufferRLE, byte *MiVideoRLE) {
 	}
 }
 
-void DrasculaEngine::MixVideo(byte *OldScreen, byte *NewScreen) {
+void DrasculaEngine::mixVideo(byte *OldScreen, byte *NewScreen) {
 	for (int x = 0; x < 64000; x++)
 		OldScreen[x] ^= NewScreen[x];
 }
 
-void DrasculaEngine::WaitFrameSSN() {
+void DrasculaEngine::waitFrameSSN() {
 	uint32 now;
 	while ((now = _system->getMillis()) - LastFrame < ((uint32) globalSpeed))
 		_system->delayMillis(globalSpeed - (now - LastFrame));

@@ -462,8 +462,8 @@ public:
 	void setCursorTable();
 	void enterName();
 	bool soundIsActive();
-	void WaitFrameSSN();
-	void MixVideo(byte *OldScreen, byte *NewScreen);
+	void waitFrameSSN();
+	void mixVideo(byte *OldScreen, byte *NewScreen);
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
 	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
 	byte *TryInMem();
