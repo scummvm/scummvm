@@ -635,7 +635,7 @@ void DrasculaEngine::updateEvents() {
 		case Common::EVENT_QUIT:
 			// TODO
 			quitGame();
-			exit(0);
+			_system->quit();
 			break;
 		default:
 			break;
