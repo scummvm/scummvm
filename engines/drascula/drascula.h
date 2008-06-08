@@ -275,8 +275,8 @@ public:
 	DacPalette256 brightPalette;
 	DacPalette256 darkPalette;
 
+	// Graphics buffers/pointers
 	byte *VGA;
-
 	byte *drawSurface1;
 	byte *backSurface;
 	byte *drawSurface3;
@@ -287,9 +287,14 @@ public:
 	byte *frontSurface;
 	byte *textSurface;
 	byte *pendulumSurface;
+	byte *pcxBuffer;
+	byte *AuxBuffOrg;
+	byte *AuxBuffDes;
+	byte *pointer;
+	byte *MiVideoSSN;
+	byte *mSession;
 
 	byte cPal[768];
-	byte *pcxBuffer;
 
 	Common::ArjFile _arj;
 
@@ -468,15 +473,9 @@ public:
 	byte *TryInMem();
 	int playFrameSSN();
 
-	byte *AuxBuffOrg;
-	byte *AuxBuffDes;
-
-	byte *pointer;
 	int UsingMem;
 	byte CHUNK;
 	byte CMP, dacSSN[768];
-	byte *MiVideoSSN;
-	byte *mSession;
 	int FrameSSN;
 	int globalSpeed;
 	uint32 LastFrame;
