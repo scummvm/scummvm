@@ -270,13 +270,13 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, i
 			signY = 40;
 		}
 
-		int c = toupper(said[h]);
+		byte c = toupper(said[h]);
 
 		// WORKAROUND: Even original did not process it correctly
 		// Fixes apostrophe rendering
 		if (_lang != kSpanish)
 			if (c == '\'')
-				c = '\244';
+				c = (byte)'\244';
 
 		for (int i = 0; i < _charMapSize; i++) {
 			if (c == _charMap[i].inChar) {
