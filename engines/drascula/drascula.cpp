@@ -72,6 +72,21 @@ DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
 
 	free(_charMap);
+	freeTexts(_text);
+	freeTexts(_textd);
+	freeTexts(_textb);
+	freeTexts(_textbj);
+	freeTexts(_texte);
+	freeTexts(_texti);
+	freeTexts(_textl);
+	freeTexts(_textp);
+	freeTexts(_textt);
+	freeTexts(_textvb);
+	freeTexts(_textsys);
+	freeTexts(_texthis);
+	freeTexts(_textverbs);
+	freeTexts(_textmisc);
+	freeTexts(_textd1);
 }
 
 int DrasculaEngine::init() {
@@ -103,6 +118,22 @@ int DrasculaEngine::init() {
 	}
 
 	_charMap = 0;
+	_text = 0;
+	_textd = 0;
+	_textb = 0;
+	_textbj = 0;
+	_texte = 0;
+	_texti = 0;
+	_textl = 0;
+	_textp = 0;
+	_textt = 0;
+	_textvb = 0;
+	_textsys = 0;
+	_texthis = 0;
+	_textverbs = 0;
+	_textmisc = 0;
+	_textd1 = 0;
+
 	if (!loadDrasculaDat())
 		return 1;
 
@@ -851,7 +882,64 @@ bool DrasculaEngine::loadDrasculaDat() {
 
 	_numLangs = in.readUint16BE();
 
+	_text = loadTexts(in);
+	_textd = loadTexts(in);
+	_textb = loadTexts(in);
+	_textbj = loadTexts(in);
+	_texte = loadTexts(in);
+	_texti = loadTexts(in);
+	_textl = loadTexts(in);
+	_textp = loadTexts(in);
+	_textt = loadTexts(in);
+	_textvb = loadTexts(in);
+	_textsys = loadTexts(in);
+	_texthis = loadTexts(in);
+	_textverbs = loadTexts(in);
+	_textmisc = loadTexts(in);
+	_textd1 = loadTexts(in);
+
 	return true;
+}
+
+char ***DrasculaEngine::loadTexts(Common::File &in) {
+	int numTexts = in.readUint16BE();
+	char ***res;
+	int entryLen;
+	char *pos;
+	int len;
+
+	res = (char ***)malloc(sizeof(char *) * _numLangs);
+
+	for (int lang = 0; lang < _numLangs; lang++) {
+		entryLen = in.readUint16BE();
+
+		res[lang] = (char **)malloc(sizeof(char *) * numTexts);
+
+		res[lang][0] = pos = (char *)malloc(entryLen);
+
+		in.read(res[lang][0], entryLen);
+
+		pos += 4;
+
+		for (int i = 1; i < numTexts; i++) {
+			pos -= 2;
+
+			len = READ_BE_UINT16(pos);
+			pos += 2 + len;
+
+			res[lang][i] = pos;
+		}
+	}
+
+	return res;
+}
+
+void DrasculaEngine::freeTexts(char ***ptr) {
+	for (int lang = 0; lang < _numLangs; lang++) {
+		free(ptr[lang][0]);
+		free(ptr[lang]);
+	}
+	free(ptr);
 }
 
 } // End of namespace Drascula

@@ -684,23 +684,27 @@ private:
 	int _roomUpdatesSize;
 	int _roomActionsSize;
 	int _numLangs;
+
+	char ***_text;
+	char ***_textd;
+	char ***_textb;
+	char ***_textbj;
+	char ***_texte;
+	char ***_texti;
+	char ***_textl;
+	char ***_textp;
+	char ***_textt;
+	char ***_textvb;
+	char ***_textsys;
+	char ***_texthis;
+	char ***_textverbs;
+	char ***_textmisc;
+	char ***_textd1;
+
+	char ***loadTexts(Common::File &in);
+	void freeTexts(char ***ptr);
 };
 
-extern const char *_text[][501];
-extern const char *_textd[][84];
-extern const char *_textb[][15];
-extern const char *_textbj[][29];
-extern const char *_texte[][24];
-extern const char *_texti[][33];
-extern const char *_textl[][32];
-extern const char *_textp[][20];
-extern const char *_textt[][25];
-extern const char *_textvb[][63];
-extern const char *_textsys[][4];
-extern const char *_texthis[][5];
-extern const char *_textverbs[][6];
-extern const char *_textmisc[][3];
-extern const char *_textd1[][11];
 
 extern const ItemLocation itemLocations[];
 extern int frameX[20];
