@@ -28,6 +28,8 @@
 
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
+#define DATAALIGNMENT 4
+
 #define NUM_LANGS 5
 #define NUM_TEXT 501
 #define NUM_TEXTD 84

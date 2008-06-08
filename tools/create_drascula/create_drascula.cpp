@@ -52,7 +52,8 @@ static void writeUint16BE(FILE *fp, uint16 value) {
 int main(int argc, char *argv[]) {
 	FILE* outFile;
 	int i, lang;
-	int len;
+	int len, pad;
+	uint8 padBuf[DATAALIGNMENT];
 
 	outFile = fopen("drascula.dat", "wb");
 
@@ -164,6 +165,9 @@ int main(int argc, char *argv[]) {
 		writeUint16BE(outFile, roomActions[i].speechID);
 	}
 
+	for (i = 0; i < DATAALIGNMENT; i++)
+		padBuf[i] = 0;
+
 	// langs
 	writeUint16BE(outFile, NUM_LANGS);
 
@@ -173,12 +177,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXT; i++) {
 			len += strlen(_text[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXT; i++) {
 			writeUint16BE(outFile, strlen(_text[lang][i]));
 			fwrite(_text[lang][i], strlen(_text[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -188,12 +196,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTD; i++) {
 			len += strlen(_textd[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTD; i++) {
 			writeUint16BE(outFile, strlen(_textd[lang][i]));
 			fwrite(_textd[lang][i], strlen(_textd[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -203,12 +215,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTB; i++) {
 			len += strlen(_textb[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTB; i++) {
 			writeUint16BE(outFile, strlen(_textb[lang][i]));
 			fwrite(_textb[lang][i], strlen(_textb[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -218,12 +234,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTBJ; i++) {
 			len += strlen(_textbj[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTBJ; i++) {
 			writeUint16BE(outFile, strlen(_textbj[lang][i]));
 			fwrite(_textbj[lang][i], strlen(_textbj[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -233,12 +253,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTE; i++) {
 			len += strlen(_texte[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTE; i++) {
 			writeUint16BE(outFile, strlen(_texte[lang][i]));
 			fwrite(_texte[lang][i], strlen(_texte[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -248,12 +272,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTI; i++) {
 			len += strlen(_texti[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTI; i++) {
 			writeUint16BE(outFile, strlen(_texti[lang][i]));
 			fwrite(_texti[lang][i], strlen(_texti[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -263,12 +291,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTL; i++) {
 			len += strlen(_textl[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTL; i++) {
 			writeUint16BE(outFile, strlen(_textl[lang][i]));
 			fwrite(_textl[lang][i], strlen(_textl[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -278,12 +310,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTP; i++) {
 			len += strlen(_textp[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTP; i++) {
 			writeUint16BE(outFile, strlen(_textp[lang][i]));
 			fwrite(_textp[lang][i], strlen(_textp[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
   
@@ -293,12 +329,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTT; i++) {
 			len += strlen(_textt[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTT; i++) {
 			writeUint16BE(outFile, strlen(_textt[lang][i]));
 			fwrite(_textt[lang][i], strlen(_textt[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -308,12 +348,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTVB; i++) {
 			len += strlen(_textvb[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTVB; i++) {
 			writeUint16BE(outFile, strlen(_textvb[lang][i]));
 			fwrite(_textvb[lang][i], strlen(_textvb[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -323,12 +367,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTSYS; i++) {
 			len += strlen(_textsys[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTSYS; i++) {
 			writeUint16BE(outFile, strlen(_textsys[lang][i]));
 			fwrite(_textsys[lang][i], strlen(_textsys[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -338,12 +386,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTHIS; i++) {
 			len += strlen(_texthis[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTHIS; i++) {
 			writeUint16BE(outFile, strlen(_texthis[lang][i]));
 			fwrite(_texthis[lang][i], strlen(_texthis[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -353,12 +405,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTVERBS; i++) {
 			len += strlen(_textverbs[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTVERBS; i++) {
 			writeUint16BE(outFile, strlen(_textverbs[lang][i]));
 			fwrite(_textverbs[lang][i], strlen(_textverbs[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -368,12 +424,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTMISC; i++) {
 			len += strlen(_textmisc[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTMISC; i++) {
 			writeUint16BE(outFile, strlen(_textmisc[lang][i]));
 			fwrite(_textmisc[lang][i], strlen(_textmisc[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
@@ -383,12 +443,16 @@ int main(int argc, char *argv[]) {
 		len = 0;
 		for (i = 0; i < NUM_TEXTD1; i++) {
 			len += strlen(_textd1[lang][i]) + 2;
+			pad = len % DATAALIGNMENT;
+			len += pad;
 		}
 		writeUint16BE(outFile, len);
 
 		for (i = 0; i < NUM_TEXTD1; i++) {
 			writeUint16BE(outFile, strlen(_textd1[lang][i]));
 			fwrite(_textd1[lang][i], strlen(_textd1[lang][i]), 1, outFile);
+
+			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
 
