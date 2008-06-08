@@ -286,8 +286,6 @@ public:
 	byte *screenSurface;
 	byte *frontSurface;
 	byte *textSurface;
-	byte *AuxBuffOrg;
-	byte *AuxBuffDes;
 	byte *pointer;
 	byte *MiVideoSSN;
 	byte *mSession;
@@ -480,8 +478,7 @@ public:
 
 	int flag_tv;
 
-	byte *loadPCX(byte *NamePcc);
-	void WaitForNext(int FPS);
+	void showFrame(bool firstFrame = false);
 	int getTime();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	void quadrant_1();

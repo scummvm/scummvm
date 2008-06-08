@@ -118,28 +118,50 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	setRGB((byte *)cPal, colorCount);
 }
 
-byte *DrasculaEngine::loadPCX(byte *NamePcc) {
-	signed int con = 0;
-	unsigned int X = 0;
-	unsigned int fExit = 0;
-	char ch, rep;
-	byte *AuxPun = AuxBuffDes;
+void DrasculaEngine::showFrame(bool firstFrame) {
+	bool stopProcessing = false;
+	byte pixel;
+	uint repeat, curByte = 0;
 
-	while (!fExit) {
-		ch = *NamePcc++;
-		rep = 1;
-		if ((ch & 192) == 192) {
-			rep = (ch & 63);
-			ch = *NamePcc++;
+	int dataSize = _arj.readSint32LE();
+	byte *pcxData = (byte *)malloc(dataSize);
+	_arj.read(pcxData, dataSize);
+	_arj.read(cPal, 768);
+	byte *srcPtr = pcxData;
+	byte *dstPtr = VGA;
+	byte *prevFrame = (byte *)malloc(64000);
+	memcpy(prevFrame, VGA, 64000);
+
+	while (!stopProcessing) {
+		pixel = *srcPtr++;
+		repeat = 1;
+		if ((pixel & 192) == 192) {
+			repeat = (pixel & 63);
+			pixel = *srcPtr++;
 		}
-		for (con = 0; con< rep; con++) {
-			*AuxPun++ = ch;
-			X++;
-			if (X > 64000)
-				fExit = 1;
+		for (uint j = 0; j < repeat; j++) {
+			curByte++;
+			if (curByte > 64000) {
+				stopProcessing = true;
+				break;
+			}
+			*dstPtr++ = pixel;
 		}
 	}
-	return AuxBuffDes;
+
+	free(pcxData);
+
+	if (!firstFrame) {
+		for (int j = 0; j < 64000; j++)
+			VGA[j] = prevFrame[j] ^ VGA[j];
+	}
+
+	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->updateScreen();
+	if (firstFrame)
+		setPalette(cPal);
+
+	free(prevFrame);
 }
 
 void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
@@ -636,17 +658,9 @@ void DrasculaEngine::WaitFrameSSN() {
 	LastFrame = LastFrame + globalSpeed;
 }
 
-void DrasculaEngine::WaitForNext(int FPS) {
-	_system->delayMillis(1000 / FPS);
-}
-
 bool DrasculaEngine::animate(const char *animationFile, int FPS) {
-	unsigned j;
 	int NFrames = 1;
 	int cnt = 2;
-	int dataSize = 0;
-
-	AuxBuffDes = (byte *)malloc(65000);
 
 	_arj.open(animationFile);
 
@@ -655,30 +669,11 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	}
 
 	NFrames = _arj.readSint32LE();
-	dataSize = _arj.readSint32LE();
-	AuxBuffOrg = (byte *)malloc(dataSize);
-	_arj.read(AuxBuffOrg, dataSize);
-	_arj.read(cPal, 768);
-	loadPCX(AuxBuffOrg);
-	free(AuxBuffOrg);
-	memcpy(VGA, AuxBuffDes, 64000);
-	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
-	_system->updateScreen();
-	setPalette(cPal);
-	WaitForNext(FPS);
+	showFrame(true);
+	_system->delayMillis(1000 / FPS);
 	while (cnt < NFrames) {
-		dataSize = _arj.readSint32LE();
-		AuxBuffOrg = (byte *)malloc(dataSize);
-		_arj.read(AuxBuffOrg, dataSize);
-		_arj.read(cPal, 768);
-		loadPCX(AuxBuffOrg);
-		free(AuxBuffOrg);
-		for (j = 0;j < 64000; j++) {
-			VGA[j] = AuxBuffDes[j] ^ VGA[j];
-		}
-		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
-		_system->updateScreen();
-		WaitForNext(FPS);
+		showFrame();
+		_system->delayMillis(1000 / FPS);
 		cnt++;
 		byte key = getScan();
 		if (key == Common::KEYCODE_ESCAPE)
@@ -686,7 +681,6 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 		if (key != 0)
 			break;
 	}
-	free(AuxBuffDes);
 	_arj.close();
 
 	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
