@@ -235,7 +235,7 @@ public:
 
 	void allocMemory();
 	void freeMemory();
-	void quitGame();
+	void endChapter();
 
 	void loadPic(int roomNum, byte *targetSurface, int colorCount = 1) {
 		char rm[20];

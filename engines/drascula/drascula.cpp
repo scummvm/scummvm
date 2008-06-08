@@ -201,10 +201,10 @@ int DrasculaEngine::go() {
 
 		assignDefaultPalette();
 		if (!runCurrentChapter()) {
-			quitGame();
+			endChapter();
 			break;
 		}
-		quitGame();
+		endChapter();
 		if (currentChapter == 6)
 			break;
 
@@ -214,7 +214,7 @@ int DrasculaEngine::go() {
 	return 0;
 }
 
-void DrasculaEngine::quitGame() {
+void DrasculaEngine::endChapter() {
 	stopSound();
 	clearRoom();
 	black();
@@ -632,7 +632,7 @@ void DrasculaEngine::updateEvents() {
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
-			quitGame();
+			endChapter();
 			_system->quit();
 			break;
 		default:
