@@ -287,7 +287,6 @@ public:
 	byte *frontSurface;
 	byte *textSurface;
 	byte *pendulumSurface;
-	byte *pcxBuffer;
 	byte *AuxBuffOrg;
 	byte *AuxBuffDes;
 	byte *pointer;

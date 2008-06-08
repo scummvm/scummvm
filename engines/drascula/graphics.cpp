@@ -89,14 +89,11 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	unsigned int con, x = 0;
 	unsigned int fExit = 0;
 	byte ch, rep;
-	byte *auxPun;
 
 	_arj.open(NamePcc);
 	if (!_arj.isOpen())
 		error("missing game data %s %c", NamePcc, 7);
 
-	pcxBuffer = (byte *)malloc(65000);
-	auxPun = pcxBuffer;
 	_arj.seek(128);
 	while (!fExit) {
 		ch = _arj.readByte();
@@ -106,18 +103,18 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 			ch = _arj.readByte();
 		}
 		for (con = 0; con < rep; con++) {
-			*auxPun++ = ch;
 			x++;
-			if (x > 64000)
+			if (x > 64000) {
 				fExit = 1;
+				break;
+			}
+			*targetSurface++ = ch;
 		}
 	}
 
 	_arj.read(cPal, 768);
 	_arj.close();
 
-	memcpy(targetSurface, pcxBuffer, 64000);
-	free(pcxBuffer);
 	setRGB((byte *)cPal, colorCount);
 }
 
