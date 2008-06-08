@@ -119,35 +119,14 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 }
 
 void DrasculaEngine::showFrame(bool firstFrame) {
-	bool stopProcessing = false;
-	byte pixel;
-	uint repeat, curByte = 0;
-
 	int dataSize = _arj.readSint32LE();
 	byte *pcxData = (byte *)malloc(dataSize);
 	_arj.read(pcxData, dataSize);
 	_arj.read(cPal, 768);
-	byte *srcPtr = pcxData;
-	byte *dstPtr = VGA;
 	byte *prevFrame = (byte *)malloc(64000);
 	memcpy(prevFrame, VGA, 64000);
 
-	while (!stopProcessing) {
-		pixel = *srcPtr++;
-		repeat = 1;
-		if ((pixel & 192) == 192) {
-			repeat = (pixel & 63);
-			pixel = *srcPtr++;
-		}
-		for (uint j = 0; j < repeat; j++) {
-			curByte++;
-			if (curByte > 64000) {
-				stopProcessing = true;
-				break;
-			}
-			*dstPtr++ = pixel;
-		}
-	}
+	decodeRLE(pcxData, VGA);
 
 	free(pcxData);
 
@@ -502,7 +481,7 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 
 	free(MiVideoSSN);
 	if (UsingMem)
-		free(pointer);
+		free(memPtr);
 	else
 		_arj.close();
 }
@@ -550,7 +529,7 @@ int DrasculaEngine::playFrameSSN() {
 				memcpy(BufferSSN, mSession, Lengt);
 				mSession += Lengt;
 			}
-			Des_RLE(BufferSSN, MiVideoSSN);
+			decodeRLE(BufferSSN, MiVideoSSN);
 			free(BufferSSN);
 			waitFrameSSN();
 			if (FrameSSN)
@@ -569,7 +548,7 @@ int DrasculaEngine::playFrameSSN() {
 					memcpy(BufferSSN, mSession, Lengt);
 					mSession += Lengt;
 				}
-				Des_OFF(BufferSSN, MiVideoSSN, Lengt);
+				decodeOffset(BufferSSN, MiVideoSSN, Lengt);
 				free(BufferSSN);
 				waitFrameSSN();
 				if (FrameSSN)
@@ -599,23 +578,23 @@ byte *DrasculaEngine::TryInMem() {
 	_arj.seek(0, SEEK_END);
 	Lengt = _arj.pos();
 	_arj.seek(0, SEEK_SET);
-	pointer = (byte *)malloc(Lengt);
-	if (pointer == NULL)
+	memPtr = (byte *)malloc(Lengt);
+	if (memPtr == NULL)
 		return NULL;
-	_arj.read(pointer, Lengt);
+	_arj.read(memPtr, Lengt);
 	UsingMem = 1;
 	_arj.close();
 
-	return pointer;
+	return memPtr;
 }
 
-void DrasculaEngine::Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght) {
+void DrasculaEngine::decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length) {
 	int x = 0;
 	unsigned char Reps;
 	int Offset;
 
 	memset(MiVideoSSN, 0, 64000);
-	while (x < Lenght) {
+	while (x < length) {
 		Offset = BufferOFF[x] + BufferOFF[x + 1] * 256;
 		Reps = BufferOFF[x + 2];
 		memcpy(MiVideoOFF + Offset, &BufferOFF[x + 3], Reps);
@@ -623,23 +602,26 @@ void DrasculaEngine::Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght) {
 	}
 }
 
-void DrasculaEngine::Des_RLE(byte *BufferRLE, byte *MiVideoRLE) {
-	signed int con = 0;
-	unsigned int X = 0;
-	unsigned int fExit = 0;
-	char ch, rep;
-	while (!fExit) {
-		ch = *BufferRLE++;
-		rep = 1;
-		if ((ch & 192) == 192) {
-			rep = (ch & 63);
-			ch =* BufferRLE++;
+void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr) {
+	bool stopProcessing = false;
+	byte pixel;
+	uint repeat;
+	int curByte = 0;
+
+	while (!stopProcessing) {
+		pixel = *srcPtr++;
+		repeat = 1;
+		if ((pixel & 192) == 192) {
+			repeat = (pixel & 63);
+			pixel = *srcPtr++;
 		}
-		for (con = 0; con < rep; con++) {
-			*MiVideoRLE++ = ch;
-			X++;
-			if (X > 64000)
-				fExit = 1;
+		for (uint j = 0; j < repeat; j++) {
+			curByte++;
+			if (curByte > 64000) {
+				stopProcessing = true;
+				break;
+			}
+			*dstPtr++ = pixel;
 		}
 	}
 }

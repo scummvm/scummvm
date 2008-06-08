@@ -286,7 +286,7 @@ public:
 	byte *screenSurface;
 	byte *frontSurface;
 	byte *textSurface;
-	byte *pointer;
+	byte *memPtr;
 	byte *MiVideoSSN;
 	byte *mSession;
 
@@ -464,8 +464,8 @@ public:
 	bool soundIsActive();
 	void waitFrameSSN();
 	void mixVideo(byte *OldScreen, byte *NewScreen);
-	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
-	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
+	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE);
+	void decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length);
 	byte *TryInMem();
 	int playFrameSSN();
 
