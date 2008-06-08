@@ -102,6 +102,7 @@ int DrasculaEngine::init() {
 		_lang = 0;
 	}
 
+	_charMap = 0;
 	if (!loadDrasculaDat())
 		return 1;
 
