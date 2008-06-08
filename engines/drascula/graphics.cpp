@@ -58,8 +58,6 @@ void DrasculaEngine::freeMemory() {
 }
 
 void DrasculaEngine::moveCursor() {
-	int cursorPos[8];
-
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
 
 	updateRefresh_pre();
@@ -78,25 +76,12 @@ void DrasculaEngine::moveCursor() {
 	else if (menuBar == 1)
 		clearMenu();
 
-	cursorPos[0] = 0;
-	cursorPos[1] = 0;
-	cursorPos[2] = mouseX - 20;
-	cursorPos[3] = mouseY - 17;
-	cursorPos[4] = OBJWIDTH;
-	cursorPos[5] = OBJHEIGHT;
+	int cursorPos[6] = { 0, 0, mouseX - 20, mouseY - 17, OBJWIDTH, OBJHEIGHT };
 	copyRectClip(cursorPos, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::setCursorTable() {
-	int cursorPos[8];
-
-	cursorPos[0] = 225;
-	cursorPos[1] = 56;
-	cursorPos[2] = mouseX - 20;
-	cursorPos[3] = mouseY - 12;
-	cursorPos[4] = 40;
-	cursorPos[5] = 25;
-
+	int cursorPos[6] = { 225, 56, mouseX - 20, mouseY - 12, 40, 25 };
 	copyRectClip(cursorPos, tableSurface, screenSurface);
 }
 
@@ -233,7 +218,6 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 }
 
 void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
-	int textPos[8];
 	int letterY = 0, letterX = 0, i;
 	uint len = strlen(said);
 	byte c;
@@ -260,13 +244,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 			}	// if
 		}	// for
 
-		textPos[0] = letterX;
-		textPos[1] = letterY;
-		textPos[2] = screenX;
-		textPos[3] = screenY;
-		textPos[4] = CHAR_WIDTH;
-		textPos[5] = CHAR_HEIGHT;
-
+		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH, CHAR_HEIGHT };
 		copyRectClip(textPos, textSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
@@ -278,7 +256,6 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 }
 
 void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, int game) {
-	int textPos[6];
 	int signY, letterY, letterX = 0;
 	uint len = strlen(said);
 
@@ -317,13 +294,7 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, i
 			}	// if
 		}	// for
 
-		textPos[0] = letterX;
-		textPos[1] = letterY;
-		textPos[2] = screenX;
-		textPos[3] = screenY;
-		textPos[4] = CHAR_WIDTH_OPC;
-		textPos[5] = CHAR_HEIGHT_OPC;
-
+		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC };
 		copyRectClip(textPos, backSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH_OPC;
@@ -555,48 +526,40 @@ int DrasculaEngine::playFrameSSN() {
 			mSession += 4;
 		}
 		if (CMP == kFrameCmpRle) {
+			BufferSSN = (byte *)malloc(Lengt);
 			if (!UsingMem) {
-				BufferSSN = (byte *)malloc(Lengt);
 				_arj.read(BufferSSN, Lengt);
 			} else {
-				BufferSSN = (byte *)malloc(Lengt);
 				memcpy(BufferSSN, mSession, Lengt);
 				mSession += Lengt;
 			}
 			Des_RLE(BufferSSN, MiVideoSSN);
 			free(BufferSSN);
-			if (FrameSSN) {
-				WaitFrameSSN();
-				MixVideo(VGA, MiVideoSSN);
-				_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
-			} else {
-				WaitFrameSSN();
+			WaitFrameSSN();
+			if (FrameSSN)
+				MixVideo(VGA, MiVideoSSN);			
+			else
 				memcpy(VGA, MiVideoSSN, 64000);
-				_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
-			}
+			_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 			_system->updateScreen();
 			FrameSSN++;
 		} else {
 			if (CMP == kFrameCmpOff) {
+				BufferSSN = (byte *)malloc(Lengt);
 				if (!UsingMem) {
-					BufferSSN = (byte *)malloc(Lengt);
 					_arj.read(BufferSSN, Lengt);
 				} else {
-					BufferSSN = (byte *)malloc(Lengt);
 					memcpy(BufferSSN, mSession, Lengt);
 					mSession += Lengt;
 				}
 				Des_OFF(BufferSSN, MiVideoSSN, Lengt);
 				free(BufferSSN);
-				if (FrameSSN) {
-					WaitFrameSSN();
+				WaitFrameSSN();
+				if (FrameSSN)
 					MixVideo(VGA, MiVideoSSN);
-					_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
-				} else {
-					WaitFrameSSN();
+				else
 					memcpy(VGA, MiVideoSSN, 64000);
-					_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
-				}
+				_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 				_system->updateScreen();
 				FrameSSN++;
 			}

@@ -575,7 +575,7 @@ void DrasculaEngine::talk_blind(int index) {
 
 	byte *faceBuffer;
 	int p = 0;
-	int pos_blind[6];
+	int pos_blind[6] = { 0, 2, 73, 1, 126, 149 };
 	int length = strlen(said);
 
 	color_abc(kColorBrown);
@@ -584,12 +584,6 @@ void DrasculaEngine::talk_blind(int index) {
 	updateScreen();
 
 	talkInit(filename);
-
-	pos_blind[1] = 2;
-	pos_blind[2] = 73;
-	pos_blind[3] = 1;
-	pos_blind[4] = 126;
-	pos_blind[5] = 149;
 
 	do {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);

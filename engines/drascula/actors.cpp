@@ -28,9 +28,8 @@
 namespace Drascula {
 
 void DrasculaEngine::placeIgor() {
-	int pos_igor[6];
+	int pos_igor[6] = { 1, 0, igorX, igorY, 54, 61 };
 
-	pos_igor[0] = 1;
 	if (currentChapter == 4) {
 		pos_igor[1] = 138;
 	} else {
@@ -39,16 +38,12 @@ void DrasculaEngine::placeIgor() {
 		else if (trackIgor == 1)
 			pos_igor[1] = 76;
 	}
-	pos_igor[2] = igorX;
-	pos_igor[3] = igorY;
-	pos_igor[4] = 54;
-	pos_igor[5] = 61;
 
 	copyRectClip(pos_igor, frontSurface, screenSurface);
 }
 
 void DrasculaEngine::placeDrascula() {
-	int pos_dr[6];
+	int pos_dr[6] = { 0, 122, drasculaX, drasculaY, 45, 77 };
 
 	if (trackDrascula == 1)
 		pos_dr[0] = 47;
@@ -56,11 +51,6 @@ void DrasculaEngine::placeDrascula() {
 		pos_dr[0] = 1;
 	else if (trackDrascula == 3 && currentChapter == 1)
 		pos_dr[0] = 93;
-	pos_dr[1] = 122;
-	pos_dr[2] = drasculaX;
-	pos_dr[3] = drasculaY;
-	pos_dr[4] = 45;
-	pos_dr[5] = 77;
 
 	if (currentChapter == 6)
 		copyRectClip(pos_dr, drawSurface2, screenSurface);
@@ -69,17 +59,12 @@ void DrasculaEngine::placeDrascula() {
 }
 
 void DrasculaEngine::placeBJ() {
-	int pos_bj[6];
+	int pos_bj[6] = { 0, 99, bjX, bjY, 26, 76 };
 
 	if (trackBJ == 3)
 		pos_bj[0] = 10;
 	else if (trackBJ == 0)
 		pos_bj[0] = 37;
-	pos_bj[1] = 99;
-	pos_bj[2] = bjX;
-	pos_bj[3] = bjY;
-	pos_bj[4] = 26;
-	pos_bj[5] = 76;
 
 	copyRectClip(pos_bj, drawSurface3, screenSurface);
 }

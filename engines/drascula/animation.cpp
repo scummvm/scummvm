@@ -812,17 +812,10 @@ void DrasculaEngine::animation_10_2() {
 }
 
 void DrasculaEngine::animation_14_2() {
-	int cabinPos[6];
+	int cabinPos[6] = { 150, 6, 69, -160, 158, 161 };
 	int l = 0;
 
 	loadPic("an14_2.alg", backSurface);
-
-	cabinPos[0] = 150;
-	cabinPos[1] = 6;
-	cabinPos[2] = 69;
-	cabinPos[3] = -160;
-	cabinPos[4] = 158;
-	cabinPos[5] = 161;
 
 	for (int n = -160; n <= 0; n = n + 5 + l) {
 		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
