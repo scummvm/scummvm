@@ -189,8 +189,6 @@ int DrasculaEngine::go() {
 			actorFrames[kFramePendulum] = 0;
 			flag_tv = 0;
 
-			pendulumSurface = drawSurface3;
-
 			loadPic(96, frontSurface, COMPLETE_PAL);
 			loadPic(99, backSurface);
 			loadPic(97, extraSurface);

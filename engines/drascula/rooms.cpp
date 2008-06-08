@@ -1435,6 +1435,7 @@ void DrasculaEngine::update_62() {
 void DrasculaEngine::update_102() {
 	int pendulum_x[] = {40, 96, 152, 208, 264, 40, 96, 152, 208, 208, 152, 264, 40, 96, 152, 208, 264};
 	int difference;
+	byte *pendulumSurface = drawSurface3;
 
 	if (actorFrames[kFramePendulum] <= 4)
 		pendulumSurface = drawSurface3;
