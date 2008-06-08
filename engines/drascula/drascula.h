@@ -287,7 +287,6 @@ public:
 	byte *frontSurface;
 	byte *textSurface;
 	byte *memPtr;
-	byte *MiVideoSSN;
 	byte *mSession;
 
 	byte cPal[768];

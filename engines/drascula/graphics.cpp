@@ -28,7 +28,10 @@
 namespace Drascula {
 
 void DrasculaEngine::allocMemory() {
-	screenSurface = (byte *)malloc(64000);
+	// FIXME: decodeOffset writes beyond 64000, so this
+	// buffer has been initialized to 64256 bytes (like
+	// the original did with the MiVideoSSN buffer)
+	screenSurface = (byte *)malloc(64256);
 	assert(screenSurface);
 	frontSurface = (byte *)malloc(64000);
 	assert(frontSurface);
@@ -464,12 +467,9 @@ void DrasculaEngine::screenSaver() {
 
 void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	// Open file
-	MiVideoSSN = (byte *)malloc(64256);
 	globalSpeed = 1000 / vel;
 	FrameSSN = 0;
 	UsingMem = 0;
-	if (MiVideoSSN == NULL)
-		return;
 	_arj.open(filefli);
 	mSession = TryInMem();
 	LastFrame = _system->getMillis();
@@ -479,7 +479,6 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 			term_int = 1;
 	}
 
-	free(MiVideoSSN);
 	if (UsingMem)
 		free(memPtr);
 	else
@@ -529,13 +528,13 @@ int DrasculaEngine::playFrameSSN() {
 				memcpy(BufferSSN, mSession, Lengt);
 				mSession += Lengt;
 			}
-			decodeRLE(BufferSSN, MiVideoSSN);
+			decodeRLE(BufferSSN, screenSurface);
 			free(BufferSSN);
 			waitFrameSSN();
 			if (FrameSSN)
-				mixVideo(VGA, MiVideoSSN);			
+				mixVideo(VGA, screenSurface);			
 			else
-				memcpy(VGA, MiVideoSSN, 64000);
+				memcpy(VGA, screenSurface, 64000);
 			_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 			_system->updateScreen();
 			FrameSSN++;
@@ -548,13 +547,13 @@ int DrasculaEngine::playFrameSSN() {
 					memcpy(BufferSSN, mSession, Lengt);
 					mSession += Lengt;
 				}
-				decodeOffset(BufferSSN, MiVideoSSN, Lengt);
+				decodeOffset(BufferSSN, screenSurface, Lengt);
 				free(BufferSSN);
 				waitFrameSSN();
 				if (FrameSSN)
-					mixVideo(VGA, MiVideoSSN);
+					mixVideo(VGA, screenSurface);
 				else
-					memcpy(VGA, MiVideoSSN, 64000);
+					memcpy(VGA, screenSurface, 64000);
 				_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 				_system->updateScreen();
 				FrameSSN++;
@@ -590,15 +589,17 @@ byte *DrasculaEngine::TryInMem() {
 
 void DrasculaEngine::decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length) {
 	int x = 0;
-	unsigned char Reps;
-	int Offset;
+	int size;
+	int offset;
 
-	memset(MiVideoSSN, 0, 64000);
+	memset(screenSurface, 0, 64000);
 	while (x < length) {
-		Offset = BufferOFF[x] + BufferOFF[x + 1] * 256;
-		Reps = BufferOFF[x + 2];
-		memcpy(MiVideoOFF + Offset, &BufferOFF[x + 3], Reps);
-		x += 3 + Reps;
+		offset = BufferOFF[x] + BufferOFF[x + 1] * 256;
+		// FIXME: this writes beyond 64000, so the buffer has been initialized
+		// to 64256 bytes (like the original did)
+		size = BufferOFF[x + 2];
+		memcpy(MiVideoOFF + offset, &BufferOFF[x + 3], size);
+		x += 3 + size;
 	}
 }
 
