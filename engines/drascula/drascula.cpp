@@ -930,10 +930,11 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 		res[lang] = (char **)malloc(sizeof(char *) * numTexts);
 
 		res[lang][0] = pos = (char *)malloc(entryLen);
+		res[lang][0] = pos + DATAALIGNMENT;
 
 		in.read(res[lang][0], entryLen);
 
-		pos += 4;
+		pos += DATAALIGNMENT;
 
 		for (int i = 1; i < numTexts; i++) {
 			pos -= 2;

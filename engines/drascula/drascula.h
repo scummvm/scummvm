@@ -48,6 +48,7 @@ namespace Drascula {
 
 // Do not update this yet. The file is not loaded fully
 #define DRASCULA_DAT_VER 1
+#define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
 	GF_PACKED = (1 << 0)
