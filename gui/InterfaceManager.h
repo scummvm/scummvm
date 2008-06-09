@@ -37,10 +37,14 @@
 
 namespace GUI {
 
+#define g_InterfaceManager	(GUI::InterfaceManager::instance())
+
 struct WidgetDrawData;
 class InterfaceManager;
 
-class InterfaceManager {
+class InterfaceManager : public Common::Singleton<InterfaceManager> {
+
+	friend class Common::Singleton<SingletonBaseType>;
 
 public:
 	enum Graphics_Mode {
@@ -107,12 +111,15 @@ public:
 		kTextAlignRight		//! Text should be aligned to the right
 	};
 
+	//! Function used to process areas other than the current dialog
+	enum ShadingStyle {
+		kShadingNone,		//! No special post processing
+		kShadingDim,		//! Dimming unused areas
+		kShadingLuminance	//! Converting colors to luminance for unused areas
+	};
 
-	InterfaceManager(OSystem *system, Graphics_Mode mode) : _vectorRenderer(0), 
-		_system(system), _graphicsMode(kGfxDisabled), _screen(0), _bytesPerPixel(0) {
 
-		setGraphicsMode(mode);
-	}
+	InterfaceManager();
 
 	~InterfaceManager() {
 		freeRenderer();
@@ -121,7 +128,9 @@ public:
 
 	void setGraphicsMode(Graphics_Mode mode);
 	int runGUI();
-	void init();
+
+	bool init();
+	bool deinit();
 
 	/** Font management */
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }

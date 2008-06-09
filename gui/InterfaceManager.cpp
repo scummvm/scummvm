@@ -32,9 +32,19 @@
 #include "gui/InterfaceManager.h"
 #include "graphics/VectorRenderer.h"
 
+DECLARE_SINGLETON(GUI::InterfaceManager);
+
 namespace GUI {
 
 using namespace Graphics;
+
+InterfaceManager::InterfaceManager() : 
+	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
+	_screen(0), _bytesPerPixel(0) {
+	_system = g_system;
+
+	setGraphicsMode(kGfxStandard16bit);
+}
 
 template<typename PixelType> 
 void InterfaceManager::screenInit() {
@@ -53,10 +63,6 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 
 	switch (mode) {
 	case kGfxStandard16bit:
-		_bytesPerPixel = sizeof(uint16);
-		screenInit<uint16>();
-		break;
-
 	case kGfxAntialias16bit:
 		_bytesPerPixel = sizeof(uint16);
 		screenInit<uint16>();
@@ -70,8 +76,8 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 	_vectorRenderer->setSurface(_screen);
 }
 
-void InterfaceManager::init() {
-
+bool InterfaceManager::init() {
+	return false;
 }
 
 void InterfaceManager::drawWidgetBackground(int x, int y, uint16 hints, WidgetBackground background, WidgetStateInfo state, float scale){
@@ -168,6 +174,7 @@ int InterfaceManager::runGUI() {
 
 		_vectorRenderer->setFillMode(VectorRenderer::kFillGradient);
 		_vectorRenderer->setFgColor(0, 0, 0);
+		_vectorRenderer->setBgColor(128, 64, 255);
 		_vectorRenderer->drawTriangle(32, 32, 64, 64, VectorRenderer::kTriangleUp);
 
 		_vectorRenderer->drawBeveledSquare(128, 128, 256, 64, 4);
