@@ -364,7 +364,9 @@ void NewGui::restoreState() {
 void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
 	_needRedraw = true;
-
+	
+	CursorMan.popAllCursors();
+	
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
 	// and reflow all other open dialogs, too.

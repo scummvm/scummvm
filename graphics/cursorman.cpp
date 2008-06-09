@@ -83,6 +83,24 @@ void CursorManager::popCursor() {
 	g_system->showMouse(isVisible());
 }
 
+
+void CursorManager::popAllCursors() {
+	while (!_cursorStack.empty()) {
+		Cursor *cur = _cursorStack.pop();
+		delete cur;
+	}
+
+	if (g_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
+		while (!_cursorPaletteStack.empty()) {
+			Palette *pal = _cursorPaletteStack.pop();
+			delete pal;
+		}
+	}
+
+	g_system->showMouse(isVisible());
+}
+
+
 void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 	if (_cursorStack.empty()) {
 		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
