@@ -125,9 +125,12 @@ _prefix=/usr/local
 
 _srcdir=`dirname $0`
 
-# TODO: We should really use mktemp(1) to determine a random tmp file name.
-# However, that tool might not be available everywhere.
-TMPO=${_srcdir}/scummvm-conf
+# Determine a tmp file name, using mktemp(1) when available.
+if type mktemp > /dev/null 2>&1 ; then
+	TMPO=`mktemp`
+else
+	TMPO=${_srcdir}/scummvm-conf
+fi
 TMPC=${TMPO}.cpp
 TMPLOG=${_srcdir}/config.log
 
