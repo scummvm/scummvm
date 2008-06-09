@@ -72,6 +72,20 @@ DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
 
 	free(_charMap);
+	free(_itemLocations);
+	free(_polX);
+	free(_polY);
+	free(_verbBarX);
+	free(_x1d_menu);
+	free(_y1d_menu);
+	free(_frameX);
+	free(_candleX);
+	free(_candleY);
+	free(_pianistX);
+	free(_drunkX);
+	free(_roomPreUpdates);
+	free(_roomUpdates);
+	free(_roomActions);
 	freeTexts(_text);
 	freeTexts(_textd);
 	freeTexts(_textb);
@@ -118,6 +132,20 @@ int DrasculaEngine::init() {
 	}
 
 	_charMap = 0;
+	_itemLocations = 0;
+	_polX = 0;
+	_polY = 0;
+	_verbBarX = 0;
+	_x1d_menu = 0;
+	_y1d_menu = 0;
+	_frameX = 0;
+	_candleX = 0;
+	_candleY = 0;
+	_pianistX = 0;
+	_drunkX = 0;
+	_roomPreUpdates = 0;
+	_roomUpdates = 0;
+	_roomActions = 0;
 	_text = 0;
 	_textd = 0;
 	_textb = 0;
@@ -930,7 +958,7 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 		res[lang] = (char **)malloc(sizeof(char *) * numTexts);
 
 		res[lang][0] = pos = (char *)malloc(entryLen);
-		res[lang][0] = pos + DATAALIGNMENT;
+		res[lang][0] = pos = pos + DATAALIGNMENT;
 
 		in.read(res[lang][0], entryLen);
 
