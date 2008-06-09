@@ -957,8 +957,8 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 
 		res[lang] = (char **)malloc(sizeof(char *) * numTexts);
 
-		res[lang][0] = pos = (char *)malloc(entryLen);
-		res[lang][0] = pos = pos + DATAALIGNMENT;
+		pos = (char *)malloc(entryLen);
+		res[lang][0] = pos + DATAALIGNMENT;
 
 		in.read(res[lang][0], entryLen);
 
@@ -979,7 +979,7 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 
 void DrasculaEngine::freeTexts(char ***ptr) {
 	for (int lang = 0; lang < _numLangs; lang++) {
-		free(ptr[lang][0]);
+		free(ptr[lang][0] - DATAALIGNMENT);
 		free(ptr[lang]);
 	}
 	free(ptr);
