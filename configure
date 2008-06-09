@@ -221,7 +221,7 @@ if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
 	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -1214,7 +1214,7 @@ int main(int argc, char **argv)
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO && _need_memalign=no
+			cc_check && $TMPO$EXEEXT && _need_memalign=no
 			;;
 	esac
 	echo "$_need_memalign"
@@ -1523,7 +1523,7 @@ EOF
 		# don't execute while cross compiling
 		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
 	else
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$EXEEXT && _mpeg2=yes
 	fi
 fi
 if test "$_mpeg2" = yes ; then
