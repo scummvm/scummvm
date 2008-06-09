@@ -26,7 +26,6 @@
 #include "common/array.h"
 
 #include "drascula/drascula.h"
-#include "drascula/staticdata.h"
 
 namespace Drascula {
 
@@ -121,16 +120,16 @@ void DrasculaEngine::setupRoomsTable() {
 bool DrasculaEngine::roomParse(int rN, int fl) {
 	bool seen = false;
 
-	for (int i = 0; i < ARRAYSIZE(roomActions); i++) {
-		if (roomActions[i].room == rN) {
+	for (int i = 0; i < ARRAYSIZE(_roomActions); i++) {
+		if (_roomActions[i].room == rN) {
 			seen = true;
-			if (roomActions[i].chapter == currentChapter ||
-				roomActions[i].chapter == -1) {
-				if (roomActions[i].action == pickedObject ||
-					roomActions[i].action == kVerbDefault) {
-					if (roomActions[i].objectID == fl ||
-						roomActions[i].objectID == -1) {
-						talk(roomActions[i].speechID);
+			if (_roomActions[i].chapter == currentChapter ||
+				_roomActions[i].chapter == -1) {
+				if (_roomActions[i].action == pickedObject ||
+					_roomActions[i].action == kVerbDefault) {
+					if (_roomActions[i].objectID == fl ||
+						_roomActions[i].objectID == -1) {
+						talk(_roomActions[i].speechID);
 						hasAnswer = 1;
 						return true;
 					}
@@ -1014,19 +1013,19 @@ bool DrasculaEngine::room_102(int fl) {
 
 void DrasculaEngine::updateRefresh() {
 	// Check generic updaters
-	for (int i = 0; i < ARRAYSIZE(roomUpdates); i++) {
-		if (roomUpdates[i].roomNum == roomNumber) {
-			if (roomUpdates[i].flag < 0 || 
-				flags[roomUpdates[i].flag] == roomUpdates[i].flagValue) {
-				if (roomUpdates[i].type == 0) {
-					copyBackground(roomUpdates[i].sourceX, roomUpdates[i].sourceY,
-								   roomUpdates[i].destX, roomUpdates[i].destY,
-								   roomUpdates[i].width, roomUpdates[i].height,
+	for (int i = 0; i < ARRAYSIZE(_roomUpdates); i++) {
+		if (_roomUpdates[i].roomNum == roomNumber) {
+			if (_roomUpdates[i].flag < 0 || 
+				flags[_roomUpdates[i].flag] == _roomUpdates[i].flagValue) {
+				if (_roomUpdates[i].type == 0) {
+					copyBackground(_roomUpdates[i].sourceX, _roomUpdates[i].sourceY,
+								   _roomUpdates[i].destX, _roomUpdates[i].destY,
+								   _roomUpdates[i].width, _roomUpdates[i].height,
 								   drawSurface3, screenSurface);
 				} else {
-					copyRect(roomUpdates[i].sourceX, roomUpdates[i].sourceY,
-							 roomUpdates[i].destX, roomUpdates[i].destY,
-							 roomUpdates[i].width, roomUpdates[i].height,
+					copyRect(_roomUpdates[i].sourceX, _roomUpdates[i].sourceY,
+							 _roomUpdates[i].destX, _roomUpdates[i].destY,
+							 _roomUpdates[i].width, _roomUpdates[i].height,
 							 drawSurface3, screenSurface);
 				}
 			}
@@ -1052,19 +1051,19 @@ void DrasculaEngine::updateRefresh() {
 
 void DrasculaEngine::updateRefresh_pre() {
 	// Check generic preupdaters
-	for (int i = 0; i < ARRAYSIZE(roomPreUpdates); i++) {
-		if (roomPreUpdates[i].roomNum == roomNumber) {
-			if (roomPreUpdates[i].flag < 0 ||
-				flags[roomPreUpdates[i].flag] == roomPreUpdates[i].flagValue) {
-				if (roomPreUpdates[i].type == 0) {
-					copyBackground(roomPreUpdates[i].sourceX, roomPreUpdates[i].sourceY,
-								   roomPreUpdates[i].destX, roomPreUpdates[i].destY,
-								   roomPreUpdates[i].width, roomPreUpdates[i].height,
+	for (int i = 0; i < ARRAYSIZE(_roomPreUpdates); i++) {
+		if (_roomPreUpdates[i].roomNum == roomNumber) {
+			if (_roomPreUpdates[i].flag < 0 ||
+				flags[_roomPreUpdates[i].flag] == _roomPreUpdates[i].flagValue) {
+				if (_roomPreUpdates[i].type == 0) {
+					copyBackground(_roomPreUpdates[i].sourceX, _roomPreUpdates[i].sourceY,
+								   _roomPreUpdates[i].destX, _roomPreUpdates[i].destY,
+								   _roomPreUpdates[i].width, _roomPreUpdates[i].height,
 								   drawSurface3, screenSurface);
 				} else {
-					copyRect(roomPreUpdates[i].sourceX, roomPreUpdates[i].sourceY,
-							 roomPreUpdates[i].destX, roomPreUpdates[i].destY,
-							 roomPreUpdates[i].width, roomPreUpdates[i].height,
+					copyRect(_roomPreUpdates[i].sourceX, _roomPreUpdates[i].sourceY,
+							 _roomPreUpdates[i].destX, _roomPreUpdates[i].destY,
+							 _roomPreUpdates[i].width, _roomPreUpdates[i].height,
 							 drawSurface3, screenSurface);
 				}
 			}
@@ -1209,22 +1208,22 @@ void DrasculaEngine::update_13() {
 void DrasculaEngine::update_14_pre() {
 	int difference;
 
-	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
-	copyBackground(candleX[actorFrames[kFrameCandles]], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
+	copyBackground(123, _candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(_candleX[actorFrames[kFrameCandles]], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
 	if (curX > 101 && curX < 155)
 		copyBackground(31, 138, 178, 51, 18, 16, drawSurface3, screenSurface);
 	if (flags[11] == 0)
-		copyBackground(pianistX[actorFrames[kFramePianist]], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
+		copyBackground(_pianistX[actorFrames[kFramePianist]], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
 	else if (flags[5] == 0)
 		copyBackground(145, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	else
 		copyBackground(165, 140, 229, 117, 43, 59, drawSurface3, screenSurface);
 
 	if (flags[12] == 1)
-		copyBackground(drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
+		copyBackground(_drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 	difference = getTime() - savedTime;
 	if (difference > 6) {
 		if (flags[12] == 1) {
@@ -1355,7 +1354,7 @@ void DrasculaEngine::update_60_pre() {
 	if (flags[5] == 0)
 		placeDrascula();
 
-	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(123, _candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
 
 	if (flag_tv == 1)
 		copyBackground(114, 158, 8, 30, 8, 23, drawSurface3, screenSurface);
@@ -1382,8 +1381,8 @@ void DrasculaEngine::update_60() {
 void DrasculaEngine::update_62_pre() {
 	int difference;
 
-	copyBackground(123, candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
-	copyBackground(candleX[actorFrames[kFrameCandles]], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
+	copyBackground(123, _candleY[actorFrames[kFrameCandles]], 142, 14, 39, 13, drawSurface3, screenSurface);
+	copyBackground(_candleX[actorFrames[kFrameCandles]], 146, 311, 80, 4, 8, drawSurface3, screenSurface);
 
 	if (blinking == 5)
 		copyBackground(1, 149, 127, 52, 9, 5, drawSurface3, screenSurface);
@@ -1392,14 +1391,14 @@ void DrasculaEngine::update_62_pre() {
 		copyBackground(31, 138, 178, 51, 18, 16, drawSurface3, screenSurface);
 
 	if (flags[11] == 0)
-		copyBackground(pianistX[actorFrames[kFramePianist]], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
+		copyBackground(_pianistX[actorFrames[kFramePianist]], 157, 245, 130, 29, 42, drawSurface3, screenSurface);
 	else if (flags[5] == 0)
 		copyBackground(145, 139, 228, 112, 47, 60, extraSurface, screenSurface);
 	else
 		copyBackground(165, 140, 229, 117, 43, 59, drawSurface3, screenSurface);
 
 	if (flags[12] == 1)
-		copyBackground(drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
+		copyBackground(_drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 
 	difference = getTime() - savedTime;
 	if (difference > 6) {
@@ -1428,7 +1427,7 @@ void DrasculaEngine::update_62() {
 
 	if (curY + curHeight < 89) {
 		copyRect(205, 1, 180, 9, 82, 80, drawSurface3, screenSurface);
-		copyBackground(drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
+		copyBackground(_drunkX[actorFrames[kFrameDrunk]], 82, 170, 50, 40, 53, drawSurface3, screenSurface);
 	}
 }
 
@@ -1774,7 +1773,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		soc = 0;
 		for (l = 0; l < 6; l++) {
 			soc += curWidth;
-			frameX[l] = soc;
+			_frameX[l] = soc;
 		}
 	}
 

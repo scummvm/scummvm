@@ -29,7 +29,7 @@ namespace Drascula {
 
 void DrasculaEngine::selectVerbFromBar() {
 	for (int n = 0; n < 7; n++) {
-		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1] && n > 0) {
+		if (mouseX > _verbBarX[n] && mouseX < _verbBarX[n + 1] && n > 0) {
 			selectVerb(n);
 			return;
 		}
@@ -82,7 +82,7 @@ bool DrasculaEngine::confirmExit() {
 void DrasculaEngine::showMenu() {
 	int h, n, x;
 	char textIcon[13];
-
+	byte *srcSurface = (currentChapter == 6) ? tableSurface : frontSurface;
 	x = whichObject();
 	strcpy(textIcon, iconName[x]);
 
@@ -90,28 +90,24 @@ void DrasculaEngine::showMenu() {
 		h = inventoryObjects[n];
 
 		if (h != 0) {
-			if (currentChapter == 6)
-				copyBackground(x_pol[n], y_pol[n], itemLocations[n].x, itemLocations[n].y,
-						OBJWIDTH, OBJHEIGHT, tableSurface, screenSurface);
-			else
-				copyBackground(x_pol[n], y_pol[n], itemLocations[n].x, itemLocations[n].y,
-						OBJWIDTH, OBJHEIGHT, frontSurface, screenSurface);
+			copyBackground(_polX[n], _polY[n], _itemLocations[n].x, _itemLocations[n].y,
+							OBJWIDTH, OBJHEIGHT, srcSurface, screenSurface);
 		}
-		copyRect(x1d_menu[h], y1d_menu[h], itemLocations[n].x, itemLocations[n].y,
+		copyRect(_x1d_menu[h], _y1d_menu[h], _itemLocations[n].x, _itemLocations[n].y,
 				OBJWIDTH, OBJHEIGHT, backSurface, screenSurface);
 	}
 
 	if (x < 7)
-		print_abc(textIcon, itemLocations[x].x - 2, itemLocations[x].y - 7);
+		print_abc(textIcon, _itemLocations[x].x - 2, _itemLocations[x].y - 7);
 }
 
 void DrasculaEngine::clearMenu() {
 	int n, verbActivated = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (mouseX > verbBarX[n] && mouseX < verbBarX[n + 1])
+		if (mouseX > _verbBarX[n] && mouseX < _verbBarX[n + 1])
 			verbActivated = 0;
-		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, verbBarX[n], 2,
+		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, backSurface, screenSurface);
 		verbActivated = 1;
 	}

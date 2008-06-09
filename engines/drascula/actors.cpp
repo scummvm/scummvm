@@ -236,7 +236,7 @@ void DrasculaEngine::moveCharacters() {
 									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 	} else if (characterMoved == 1) {
-		curPos[0] = frameX[num_frame];
+		curPos[0] = _frameX[num_frame];
 		curPos[1] = frame_y + DIF_MASK_HARE;
 		curPos[2] = curX;
 		curPos[3] = curY;

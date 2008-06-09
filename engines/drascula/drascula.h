@@ -391,7 +391,7 @@ public:
 	void delay(int ms);
 	bool confirmExit();
 	void screenSaver();
-	void chooseObject(int objeto);
+	void chooseObject(int object);
 	void addObject(int);
 	int removeObject(int osj);
 	void playFLI(const char *filefli, int vel);
@@ -673,7 +673,7 @@ private:
 	int _charMapSize;
 
 	int _itemLocationsSize;
-	int _xPolSize;
+	int _polXSize;
 	int _verbBarXSize;
 	int _x1dMenuSize;
 	int _frameXSize;
@@ -700,17 +700,19 @@ private:
 	char ***_textverbs;
 	char ***_textmisc;
 	char ***_textd1;
+	ItemLocation *_itemLocations;
+	int *_polX, *_polY;
+	int *_verbBarX;
+	int *_x1d_menu, *_y1d_menu;
+	int *_frameX;
+	int *_candleX, *_candleY;
+	int *_pianistX, *_drunkX;
+	RoomUpdate *_roomPreUpdates, *_roomUpdates;
+	RoomTalkAction *_roomActions;
 
 	char ***loadTexts(Common::File &in);
 	void freeTexts(char ***ptr);
 };
-
-
-extern const ItemLocation itemLocations[];
-extern int frameX[20];
-extern const int x_pol[44], y_pol[44];
-extern const int verbBarX[];
-extern const int x1d_menu[], y1d_menu[];
 
 } // End of namespace Drascula
 

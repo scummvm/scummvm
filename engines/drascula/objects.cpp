@@ -27,7 +27,7 @@
 
 namespace Drascula {
 
-void DrasculaEngine::pickObject(int objeto) {
+void DrasculaEngine::pickObject(int object) {
 	if (currentChapter == 6)
 		loadPic("iconsp.alg", backSurface);
 	else if (currentChapter == 4)
@@ -36,14 +36,14 @@ void DrasculaEngine::pickObject(int objeto) {
 		loadPic("icons3.alg", backSurface);
 	else
 		loadPic("icons.alg", backSurface);
-	chooseObject(objeto);
+	chooseObject(object);
 	if (currentChapter == 2)
 		loadPic(menuBackground, backSurface);
 	else
 		loadPic(99, backSurface);
 }
 
-void DrasculaEngine::chooseObject(int objeto) {
+void DrasculaEngine::chooseObject(int object) {
 	if (currentChapter == 5) {
 		if (takeObject == 1 && menuScreen == 0 && pickedObject != 16)
 			addObject(pickedObject);
@@ -51,9 +51,9 @@ void DrasculaEngine::chooseObject(int objeto) {
 		if (takeObject == 1 && menuScreen == 0)
 			addObject(pickedObject);
 	}
-	copyBackground(x1d_menu[objeto], y1d_menu[objeto], 0, 0, OBJWIDTH,OBJHEIGHT, backSurface, drawSurface3);
+	copyBackground(_x1d_menu[object], _y1d_menu[object], 0, 0, OBJWIDTH,OBJHEIGHT, backSurface, drawSurface3);
 	takeObject = 1;
-	pickedObject = objeto;
+	pickedObject = object;
 }
 
 int DrasculaEngine::removeObject(int obj) {
@@ -214,8 +214,9 @@ int DrasculaEngine::whichObject() {
 	int n = 0;
 
 	for (n = 1; n < 43; n++) {
-		if (mouseX > itemLocations[n].x && mouseY > itemLocations[n].y
-				&& mouseX < itemLocations[n].x + OBJWIDTH && mouseY < itemLocations[n].y + OBJHEIGHT)
+		if (mouseX > _itemLocations[n].x && mouseY > _itemLocations[n].y &&
+			mouseX < _itemLocations[n].x + OBJWIDTH && 
+			mouseY < _itemLocations[n].y + OBJHEIGHT)
 			break;
 	}
 

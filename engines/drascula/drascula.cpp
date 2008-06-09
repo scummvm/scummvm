@@ -269,7 +269,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		int soc = 0;
 		for (n = 0; n < 6; n++) {
 			soc = soc + CHARACTER_WIDTH;
-			frameX[n] = soc;
+			_frameX[n] = soc;
 		}
 	}
 
@@ -755,6 +755,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 
 bool DrasculaEngine::loadDrasculaDat() {
 	Common::File in;
+	int i;
 
 	in.open("drascula.dat");
 
@@ -792,92 +793,105 @@ bool DrasculaEngine::loadDrasculaDat() {
 
 	_charMapSize = in.readUint16BE();
 	_charMap = (CharInfo *)malloc(sizeof(CharInfo) * _charMapSize);
-
-	for (int i = 0; i < _charMapSize; i++) {
+	for (i = 0; i < _charMapSize; i++) {
 		_charMap[i].inChar = in.readByte();
 		_charMap[i].mappedChar = in.readUint16BE();
 		_charMap[i].charType = in.readByte();
 	}
 
 	_itemLocationsSize = in.readUint16BE();
-	for (int i = 0; i < _itemLocationsSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
+	_itemLocations = (ItemLocation *)malloc(sizeof(ItemLocation) * _itemLocationsSize);
+	for (i = 0; i < _itemLocationsSize; i++) {
+		_itemLocations[i].x = in.readUint16BE();
+		_itemLocations[i].y = in.readUint16BE();
 	}
 
-	_xPolSize = in.readUint16BE();
-	for (int i = 0; i < _xPolSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
+	_polXSize = in.readUint16BE();
+	_polX = (int *)malloc(sizeof(int) * _polXSize);
+	_polY = (int *)malloc(sizeof(int) * _polXSize);
+	for (i = 0; i < _polXSize; i++) {
+		_polX[i] = in.readUint16BE();
+		_polY[i] = in.readUint16BE();
 	}
 
 	_verbBarXSize = in.readUint16BE();
-	for (int i = 0; i < _verbBarXSize; i++) {
-		in.readUint16BE();
+	_verbBarX = (int *)malloc(sizeof(int) * _verbBarXSize);
+	for (i = 0; i < _verbBarXSize; i++) {
+		_verbBarX[i] = in.readUint16BE();
 	}
 
 	_x1dMenuSize = in.readUint16BE();
-	for (int i = 0; i < _x1dMenuSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
+	_x1d_menu = (int *)malloc(sizeof(int) * _x1dMenuSize);
+	_y1d_menu = (int *)malloc(sizeof(int) * _x1dMenuSize);
+	for (i = 0; i < _x1dMenuSize; i++) {
+		_x1d_menu[i] = in.readUint16BE();
+		_y1d_menu[i] = in.readUint16BE();
 	}
 
 	_frameXSize = in.readUint16BE();
-	for (int i = 0; i < _frameXSize; i++) {
-		in.readUint16BE();
+	_frameX = (int *)malloc(sizeof(int) * _frameXSize);
+	for (i = 0; i < _frameXSize; i++) {
+		_frameX[i] = in.readUint16BE();
 	}
 
 	_candleXSize = in.readUint16BE();
-	for (int i = 0; i < _candleXSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
+	_candleX = (int *)malloc(sizeof(int) * _candleXSize);
+	_candleY = (int *)malloc(sizeof(int) * _candleXSize);
+	for (i = 0; i < _candleXSize; i++) {
+		_candleX[i] = in.readUint16BE();
+		_candleY[i] = in.readUint16BE();
 	}
 
 	_pianistXSize = in.readUint16BE();
-	for (int i = 0; i < _pianistXSize; i++) {
-		in.readUint16BE();
+	_pianistX = (int *)malloc(sizeof(int) * _pianistXSize);
+	for (i = 0; i < _pianistXSize; i++) {
+		_pianistX[i] = in.readUint16BE();
 	}
 
 	_drunkXSize = in.readUint16BE();
-	for (int i = 0; i < _drunkXSize; i++) {
-		in.readUint16BE();
+	_drunkX = (int *)malloc(sizeof(int) * _drunkXSize);
+	for (i = 0; i < _drunkXSize; i++) {
+		_drunkX[i] = in.readUint16BE();
 	}
 
 	_roomPreUpdatesSize = in.readUint16BE();
-	for (int i = 0; i < _roomPreUpdatesSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
+	_roomPreUpdates = (RoomUpdate *)malloc(sizeof(RoomUpdate) * _roomPreUpdatesSize);
+	for (i = 0; i < _roomPreUpdatesSize; i++) {
+		_roomPreUpdates[i].roomNum = in.readUint16BE();
+		_roomPreUpdates[i].flag = in.readUint16BE();
+		_roomPreUpdates[i].flagValue = in.readUint16BE();
+		_roomPreUpdates[i].sourceX = in.readUint16BE();
+		_roomPreUpdates[i].sourceY = in.readUint16BE();
+		_roomPreUpdates[i].destX = in.readUint16BE();
+		_roomPreUpdates[i].destY = in.readUint16BE();
+		_roomPreUpdates[i].width = in.readUint16BE();
+		_roomPreUpdates[i].height = in.readUint16BE();
+		_roomPreUpdates[i].type = in.readUint16BE();
 	}
 
 	_roomUpdatesSize = in.readUint16BE();
-	for (int i = 0; i < _roomUpdatesSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
+	_roomUpdates = (RoomUpdate *)malloc(sizeof(RoomUpdate) * _roomUpdatesSize);
+	for (i = 0; i < _roomUpdatesSize; i++) {
+		_roomUpdates[i].roomNum = in.readUint16BE();
+		_roomUpdates[i].flag = in.readUint16BE();
+		_roomUpdates[i].flagValue = in.readUint16BE();
+		_roomUpdates[i].sourceX = in.readUint16BE();
+		_roomUpdates[i].sourceY = in.readUint16BE();
+		_roomUpdates[i].destX = in.readUint16BE();
+		_roomUpdates[i].destY = in.readUint16BE();
+		_roomUpdates[i].width = in.readUint16BE();
+		_roomUpdates[i].height = in.readUint16BE();
+		_roomUpdates[i].type = in.readUint16BE();
 	}
 
 	_roomActionsSize = in.readUint16BE();
-	for (int i = 0; i < _roomActionsSize; i++) {
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
-		in.readUint16BE();
+	_roomActions = (RoomTalkAction *)malloc(sizeof(RoomTalkAction) * _roomActionsSize);
+	for (i = 0; i < _roomActionsSize; i++) {
+		_roomActions[i].room = in.readUint16BE();
+		_roomActions[i].chapter = in.readUint16BE();
+		_roomActions[i].action = in.readUint16BE();
+		_roomActions[i].objectID = in.readUint16BE();
+		_roomActions[i].speechID = in.readUint16BE();
 	}
 
 	_numLangs = in.readUint16BE();
