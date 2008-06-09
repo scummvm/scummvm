@@ -214,10 +214,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\drascula\staticdata.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\drascula\talk.cpp"
 			>
 		</File>
