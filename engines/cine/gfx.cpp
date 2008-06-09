@@ -335,8 +335,8 @@ int FWRenderer::drawChar(char character, int x, int y) {
 
 	if (character == ' ') {
 		x += 5;
-	} else if ((width = fontParamTable[character].characterWidth)) {
-		idx = fontParamTable[character].characterIdx;
+	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = fontParamTable[(unsigned char)character].characterIdx;
 		drawSpriteRaw(textTable[idx][0], textTable[idx][1], 16, 8, _backBuffer, x, y);
 		x += width + 1;
 	}
@@ -936,8 +936,8 @@ int OSRenderer::drawChar(char character, int x, int y) {
 
 	if (character == ' ') {
 		x += 5;
-	} else if ((width = fontParamTable[character].characterWidth)) {
-		idx = fontParamTable[character].characterIdx;
+	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = fontParamTable[(unsigned char)character].characterIdx;
 		drawSpriteRaw2(textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
 		x += width + 1;
 	}

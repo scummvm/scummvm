@@ -1110,7 +1110,7 @@ void Converse::setValue(int32 offset, int32 value) {
 	_variables[hashOffset] = value;
 }
 
-const int32 Converse::getValue(int32 offset) {
+int32 Converse::getValue(int32 offset) {
 	char hashOffset[10];
 	sprintf(hashOffset, "%i", offset);
 	ConvVarHashMap::const_iterator entry = _variables.find(hashOffset);

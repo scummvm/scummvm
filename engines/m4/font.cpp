@@ -192,7 +192,7 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 
 	while (*text) {
 
-		char theChar = (*text++) & 0x7F;
+		unsigned char theChar = (*text++) & 0x7F;
 		int charWidth = _charWidths[theChar];
 		
 		if (charWidth > 0) {
