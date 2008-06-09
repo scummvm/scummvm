@@ -79,7 +79,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 ToucheEngine::~ToucheEngine() {
 	Common::clearAllSpecialDebugLevels();
 	delete _midiPlayer;
-//	delete driver;
 }
 
 int ToucheEngine::init() {
@@ -98,7 +97,6 @@ int ToucheEngine::init() {
 	_midiPlayer = new MidiPlayer(driver, native_mt32);
 
 
-//	delete driver;
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
