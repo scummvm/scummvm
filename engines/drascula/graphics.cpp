@@ -115,7 +115,12 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 		}
 	}
 
-	_arj.read(cPal, 768);
+	for (int i = 0; i < 256; i++) {
+		cPal[i * 3 + 0] = _arj.readByte();
+		cPal[i * 3 + 1] = _arj.readByte();
+		cPal[i * 3 + 2] = _arj.readByte();
+	}
+
 	_arj.close();
 
 	setRGB((byte *)cPal, colorCount);
@@ -125,7 +130,13 @@ void DrasculaEngine::showFrame(bool firstFrame) {
 	int dataSize = _arj.readSint32LE();
 	byte *pcxData = (byte *)malloc(dataSize);
 	_arj.read(pcxData, dataSize);
-	_arj.read(cPal, 768);
+
+	for (int i = 0; i < 256; i++) {
+		cPal[i * 3 + 0] = _arj.readByte();
+		cPal[i * 3 + 1] = _arj.readByte();
+		cPal[i * 3 + 2] = _arj.readByte();
+	}
+
 	byte *prevFrame = (byte *)malloc(64000);
 	memcpy(prevFrame, VGA, 64000);
 
@@ -487,11 +498,11 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 
 int DrasculaEngine::playFrameSSN() {
 	int Exit = 0;
-	uint32 Lengt;
+	uint32 length;
 	byte *BufferSSN;
 
 	if (!UsingMem)
-		_arj.read(&CHUNK, 1);
+		CHUNK = _arj.readByte();
 	else {
 		memcpy(&CHUNK, mSession, 1);
 		mSession += 1;
@@ -499,9 +510,13 @@ int DrasculaEngine::playFrameSSN() {
 
 	switch (CHUNK) {
 	case kFrameSetPal:
-		if (!UsingMem)
-			_arj.read(dacSSN, 768);
-		else {
+		if (!UsingMem) {
+			for (int i = 0; i < 256; i++) {
+				dacSSN[i * 3 + 0] = _arj.readByte();
+				dacSSN[i * 3 + 1] = _arj.readByte();
+				dacSSN[i * 3 + 2] = _arj.readByte();
+			}
+		} else {
 			memcpy(dacSSN, mSession, 768);
 			mSession += 768;
 		}
@@ -513,20 +528,20 @@ int DrasculaEngine::playFrameSSN() {
 	case kFrameInit:
 		if (!UsingMem) {
 			CMP = _arj.readByte();
-			Lengt = _arj.readUint32LE();
+			length = _arj.readUint32LE();
 		} else {
 			memcpy(&CMP, mSession, 1);
 			mSession += 1;
-			Lengt = READ_LE_UINT32(mSession);
+			length = READ_LE_UINT32(mSession);
 			mSession += 4;
 		}
 		if (CMP == kFrameCmpRle) {
-			BufferSSN = (byte *)malloc(Lengt);
+			BufferSSN = (byte *)malloc(length);
 			if (!UsingMem) {
-				_arj.read(BufferSSN, Lengt);
+				_arj.read(BufferSSN, length);
 			} else {
-				memcpy(BufferSSN, mSession, Lengt);
-				mSession += Lengt;
+				memcpy(BufferSSN, mSession, length);
+				mSession += length;
 			}
 			decodeRLE(BufferSSN, screenSurface);
 			free(BufferSSN);
@@ -540,14 +555,14 @@ int DrasculaEngine::playFrameSSN() {
 			FrameSSN++;
 		} else {
 			if (CMP == kFrameCmpOff) {
-				BufferSSN = (byte *)malloc(Lengt);
+				BufferSSN = (byte *)malloc(length);
 				if (!UsingMem) {
-					_arj.read(BufferSSN, Lengt);
+					_arj.read(BufferSSN, length);
 				} else {
-					memcpy(BufferSSN, mSession, Lengt);
-					mSession += Lengt;
+					memcpy(BufferSSN, mSession, length);
+					mSession += length;
 				}
-				decodeOffset(BufferSSN, screenSurface, Lengt);
+				decodeOffset(BufferSSN, screenSurface, length);
 				free(BufferSSN);
 				waitFrameSSN();
 				if (FrameSSN)
@@ -572,15 +587,15 @@ int DrasculaEngine::playFrameSSN() {
 }
 
 byte *DrasculaEngine::TryInMem() {
-	int Lengt;
+	int length;
 
 	_arj.seek(0, SEEK_END);
-	Lengt = _arj.pos();
+	length = _arj.pos();
 	_arj.seek(0, SEEK_SET);
-	memPtr = (byte *)malloc(Lengt);
+	memPtr = (byte *)malloc(length);
 	if (memPtr == NULL)
 		return NULL;
-	_arj.read(memPtr, Lengt);
+	_arj.read(memPtr, length);
 	UsingMem = 1;
 	_arj.close();
 
