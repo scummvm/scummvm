@@ -39,10 +39,10 @@ private:
 	/** Reads a single big endian 32-bit integer from the source and goes backwards 4 bytes. */
 	uint32 readSource();
 	int rcr(int CF);
-	int nextChunk();
-	uint16 getCode(byte numChunks);
-	void unpackHelper1(byte numChunks, byte addCount);
-	void unpackHelper2(byte numChunks);
+	int nextBit();
+	uint16 getBits(byte numBits);
+	void unpackHelper1(byte numBits, byte addCount);
+	void unpackHelper2(byte numBits);
 private:
 	int _size, _datasize;
 	uint32 _crc;

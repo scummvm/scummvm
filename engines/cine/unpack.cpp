@@ -45,7 +45,7 @@ int CineUnpacker::rcr(int CF) {
 	return rCF;
 }
 
-int CineUnpacker::nextChunk() {
+int CineUnpacker::nextBit() {
 	int CF = rcr(0);
 	if (_chk == 0) {
 		_chk = readSource();
@@ -55,28 +55,26 @@ int CineUnpacker::nextChunk() {
 	return CF;
 }
 
-uint16 CineUnpacker::getCode(byte numChunks) {
+uint16 CineUnpacker::getBits(byte numBits) {
 	uint16 c = 0;
-	while (numChunks--) {
+	while (numBits--) {
 		c <<= 1;
-		if (nextChunk()) {
-			c |= 1;
-		}
+		c |= nextBit();
 	}
 	return c;
 }
 
-void CineUnpacker::unpackHelper1(byte numChunks, byte addCount) {
-	uint16 count = getCode(numChunks) + addCount + 1;
+void CineUnpacker::unpackHelper1(byte numBits, byte addCount) {
+	uint16 count = getBits(numBits) + addCount + 1;
 	_datasize -= count;
 	while (count--) {
-		*_dst = (byte)getCode(8);
+		*_dst = (byte)getBits(8);
 		--_dst;
 	}
 }
 
-void CineUnpacker::unpackHelper2(byte numChunks) {
-	uint16 i = getCode(numChunks);
+void CineUnpacker::unpackHelper2(byte numBits) {
+	uint16 i = getBits(numBits);
 	uint16 count = _size + 1;
 	_datasize -= count;
 	while (count--) {
@@ -94,22 +92,22 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 	_chk = readSource();
 	_crc ^= _chk;
 	do {
-		if (!nextChunk()) {
+		if (!nextBit()) {
 			_size = 1;
-			if (!nextChunk()) {
+			if (!nextBit()) {
 				unpackHelper1(3, 0);
 			} else {
 				unpackHelper2(8);
 			}
 		} else {
-			uint16 c = getCode(2);
+			uint16 c = getBits(2);
 			if (c == 3) {
 				unpackHelper1(8, 8);
 			} else if (c < 2) {
 				_size = c + 2;
 				unpackHelper2(c + 9);
 			} else {
-				_size = getCode(8);
+				_size = getBits(8);
 				unpackHelper2(12);
 			}
 		}
