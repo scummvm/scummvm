@@ -120,7 +120,7 @@ void DrasculaEngine::setupRoomsTable() {
 bool DrasculaEngine::roomParse(int rN, int fl) {
 	bool seen = false;
 
-	for (int i = 0; i < ARRAYSIZE(_roomActions); i++) {
+	for (int i = 0; i < _roomActionsSize; i++) {
 		if (_roomActions[i].room == rN) {
 			seen = true;
 			if (_roomActions[i].chapter == currentChapter ||
@@ -1013,7 +1013,7 @@ bool DrasculaEngine::room_102(int fl) {
 
 void DrasculaEngine::updateRefresh() {
 	// Check generic updaters
-	for (int i = 0; i < ARRAYSIZE(_roomUpdates); i++) {
+	for (int i = 0; i < _roomUpdatesSize; i++) {
 		if (_roomUpdates[i].roomNum == roomNumber) {
 			if (_roomUpdates[i].flag < 0 || 
 				flags[_roomUpdates[i].flag] == _roomUpdates[i].flagValue) {
@@ -1051,7 +1051,7 @@ void DrasculaEngine::updateRefresh() {
 
 void DrasculaEngine::updateRefresh_pre() {
 	// Check generic preupdaters
-	for (int i = 0; i < ARRAYSIZE(_roomPreUpdates); i++) {
+	for (int i = 0; i < _roomPreUpdatesSize; i++) {
 		if (_roomPreUpdates[i].roomNum == roomNumber) {
 			if (_roomPreUpdates[i].flag < 0 ||
 				flags[_roomPreUpdates[i].flag] == _roomPreUpdates[i].flagValue) {
