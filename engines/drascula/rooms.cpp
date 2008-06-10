@@ -1005,6 +1005,8 @@ bool DrasculaEngine::room_102(int fl) {
 		pickObject(20);
 	else if (pickedObject == 20 && fl == 100)
 		animation_6_6();
+	else if (pickedObject == kVerbPick || pickedObject == kVerbOpen)
+		talk(453);
 	else
 		hasAnswer = 0;
 
