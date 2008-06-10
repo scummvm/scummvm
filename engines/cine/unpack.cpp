@@ -30,94 +30,91 @@
 
 namespace Cine {
 
-struct UnpackCtx {
-	int size, datasize;
-	uint32 crc;
-	uint32 chk;
-	byte *dst;
-	const byte *src;
-};
+uint32 CineUnpacker::readSource() {
+	uint32 value = READ_BE_UINT32(_src);
+	_src -= 4;
+	return value;
+}
 
-static int rcr(UnpackCtx *uc, int CF) {
-	int rCF = (uc->chk & 1);
-	uc->chk >>= 1;
+int CineUnpacker::rcr(int CF) {
+	int rCF = (_chk & 1);
+	_chk >>= 1;
 	if (CF) {
-		uc->chk |= 0x80000000;
+		_chk |= 0x80000000;
 	}
 	return rCF;
 }
 
-static int nextChunk(UnpackCtx *uc) {
-	int CF = rcr(uc, 0);
-	if (uc->chk == 0) {
-		uc->chk = READ_BE_UINT32(uc->src); uc->src -= 4;
-		uc->crc ^= uc->chk;
-		CF = rcr(uc, 1);
+int CineUnpacker::nextChunk() {
+	int CF = rcr(0);
+	if (_chk == 0) {
+		_chk = readSource();
+		_crc ^= _chk;
+		CF = rcr(1);
 	}
 	return CF;
 }
 
-static uint16 getCode(UnpackCtx *uc, byte numChunks) {
+uint16 CineUnpacker::getCode(byte numChunks) {
 	uint16 c = 0;
 	while (numChunks--) {
 		c <<= 1;
-		if (nextChunk(uc)) {
+		if (nextChunk()) {
 			c |= 1;
 		}
 	}
 	return c;
 }
 
-static void unpackHelper1(UnpackCtx *uc, byte numChunks, byte addCount) {
-	uint16 count = getCode(uc, numChunks) + addCount + 1;
-	uc->datasize -= count;
+void CineUnpacker::unpackHelper1(byte numChunks, byte addCount) {
+	uint16 count = getCode(numChunks) + addCount + 1;
+	_datasize -= count;
 	while (count--) {
-		*uc->dst = (byte)getCode(uc, 8);
-		--uc->dst;
+		*_dst = (byte)getCode(8);
+		--_dst;
 	}
 }
 
-static void unpackHelper2(UnpackCtx *uc, byte numChunks) {
-	uint16 i = getCode(uc, numChunks);
-	uint16 count = uc->size + 1;
-	uc->datasize -= count;
+void CineUnpacker::unpackHelper2(byte numChunks) {
+	uint16 i = getCode(numChunks);
+	uint16 count = _size + 1;
+	_datasize -= count;
 	while (count--) {
-		*uc->dst = *(uc->dst + i);
-		--uc->dst;
+		*_dst = *(_dst + i);
+		--_dst;
 	}
 }
 
-bool delphineUnpack(byte *dst, const byte *src, int len) {
-	UnpackCtx uc;
-	uc.src = src + len - 4;
-	uc.datasize = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.dst = dst + uc.datasize - 1;
-	uc.size = 0;
-	uc.crc = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.chk = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.crc ^= uc.chk;
+bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
+	_src = src + srcLen - 4;
+	_datasize = readSource();
+	_dst = dst + _datasize - 1;
+	_size = 0;
+	_crc = readSource();
+	_chk = readSource();
+	_crc ^= _chk;
 	do {
-		if (!nextChunk(&uc)) {
-			uc.size = 1;
-			if (!nextChunk(&uc)) {
-				unpackHelper1(&uc, 3, 0);
+		if (!nextChunk()) {
+			_size = 1;
+			if (!nextChunk()) {
+				unpackHelper1(3, 0);
 			} else {
-				unpackHelper2(&uc, 8);
+				unpackHelper2(8);
 			}
 		} else {
-			uint16 c = getCode(&uc, 2);
+			uint16 c = getCode(2);
 			if (c == 3) {
-				unpackHelper1(&uc, 8, 8);
+				unpackHelper1(8, 8);
 			} else if (c < 2) {
-				uc.size = c + 2;
-				unpackHelper2(&uc, c + 9);
+				_size = c + 2;
+				unpackHelper2(c + 9);
 			} else {
-				uc.size = getCode(&uc, 8);
-				unpackHelper2(&uc, 12);
+				_size = getCode(8);
+				unpackHelper2(12);
 			}
 		}
-	} while (uc.datasize > 0 && uc.src >= src - 4);
-	return uc.crc == 0;
+	} while (_datasize > 0 && _src >= src - 4);
+	return _crc == 0;
 }
 
 } // End of namespace Cine

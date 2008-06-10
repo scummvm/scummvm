@@ -31,7 +31,25 @@
 
 namespace Cine {
 
-bool delphineUnpack(byte *dst, const byte *src, int len);
+class CineUnpacker {
+public:
+	/** Returns true if unpacking was successful, otherwise false. */
+	bool unpack(byte *dst, const byte *src, int srcLen);
+private:
+	/** Reads a single big endian 32-bit integer from the source and goes backwards 4 bytes. */
+	uint32 readSource();
+	int rcr(int CF);
+	int nextChunk();
+	uint16 getCode(byte numChunks);
+	void unpackHelper1(byte numChunks, byte addCount);
+	void unpackHelper2(byte numChunks);
+private:
+	int _size, _datasize;
+	uint32 _crc;
+	uint32 _chk;
+	byte *_dst;
+	const byte *_src;
+};
 
 } // End of namespace Cine
 
