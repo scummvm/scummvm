@@ -38,7 +38,13 @@ public:
 private:
 	/** Reads a single big endian 32-bit integer from the source and goes backwards 4 bytes. */
 	uint32 readSource();
-	int rcr(int CF);
+
+	/**
+	 * Shifts the current internal 32-bit chunk to the right by one.
+	 * Puts input carry into internal chunk's topmost (i.e. leftmost) bit.
+	 * Returns the least significant bit that was shifted out.
+	 */
+	int rcr(int inputCarry);
 	int nextBit();
 	uint16 getBits(byte numBits);
 	void unpackBytes(uint16 numBytes);
@@ -46,7 +52,7 @@ private:
 private:
 	int _datasize;
 	uint32 _crc;
-	uint32 _chk;
+	uint32 _chunk32b; //!< The current internal 32-bit chunk
 	byte *_dst;
 	const byte *_src;
 };

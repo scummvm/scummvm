@@ -36,23 +36,23 @@ uint32 CineUnpacker::readSource() {
 	return value;
 }
 
-int CineUnpacker::rcr(int CF) {
-	int rCF = (_chk & 1);
-	_chk >>= 1;
-	if (CF) {
-		_chk |= 0x80000000;
+int CineUnpacker::rcr(int inputCarry) {
+	int outputCarry = (_chunk32b & 1);
+	_chunk32b >>= 1;
+	if (inputCarry) {
+		_chunk32b |= 0x80000000;
 	}
-	return rCF;
+	return outputCarry;
 }
 
 int CineUnpacker::nextBit() {
-	int CF = rcr(0);
-	if (_chk == 0) {
-		_chk = readSource();
-		_crc ^= _chk;
-		CF = rcr(1);
+	int carry = rcr(0);
+	if (_chunk32b == 0) {
+		_chunk32b = readSource();
+		_crc ^= _chunk32b;
+		carry = rcr(1);
 	}
-	return CF;
+	return carry;
 }
 
 uint16 CineUnpacker::getBits(byte numBits) {
@@ -85,8 +85,8 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 	_datasize = readSource();
 	_dst = dst + _datasize - 1;
 	_crc = readSource();
-	_chk = readSource();
-	_crc ^= _chk;
+	_chunk32b = readSource();
+	_crc ^= _chunk32b;
 	do {
 		if (!nextBit()) {
 			if (!nextBit()) {
