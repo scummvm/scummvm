@@ -49,6 +49,10 @@ static void writeUint16BE(FILE *fp, uint16 value) {
 	writeByte(fp, (uint8)(value & 0xFF));
 }
 
+void writeSint16BE(FILE *fp, int16 value) {
+	writeUint16BE(fp, (uint16)value);
+}
+
 int main(int argc, char *argv[]) {
 	FILE* outFile;
 	int i, lang;
@@ -69,103 +73,103 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, ARRAYSIZE(charMap));
 	for (i = 0; i < ARRAYSIZE(charMap); i++) {
 		writeByte(outFile, charMap[i].inChar);
-		writeUint16BE(outFile, charMap[i].mappedChar);
+		writeSint16BE(outFile, charMap[i].mappedChar);
 		writeByte(outFile, charMap[i].charType);
 	}
 
 	// Write item locations
 	writeUint16BE(outFile, ARRAYSIZE(itemLocations));
 	for (i = 0; i < ARRAYSIZE(itemLocations); i++) {
-		writeUint16BE(outFile, itemLocations[i].x);
-		writeUint16BE(outFile, itemLocations[i].y);
+		writeSint16BE(outFile, itemLocations[i].x);
+		writeSint16BE(outFile, itemLocations[i].y);
 	}
 
 	// Write x_pol and y_pol
 	writeUint16BE(outFile, ARRAYSIZE(x_pol));
 	for (i = 0; i < ARRAYSIZE(x_pol); i++) {
-		writeUint16BE(outFile, x_pol[i]);
-		writeUint16BE(outFile, y_pol[i]);
+		writeSint16BE(outFile, x_pol[i]);
+		writeSint16BE(outFile, y_pol[i]);
 	}
 
 	// Write verbBarX
 	writeUint16BE(outFile, ARRAYSIZE(verbBarX));
 	for (i = 0; i < ARRAYSIZE(verbBarX); i++) {
-		writeUint16BE(outFile, verbBarX[i]);
+		writeSint16BE(outFile, verbBarX[i]);
 	}
 
 	// Write x1d_menu and y1d_menu
 	writeUint16BE(outFile, ARRAYSIZE(x1d_menu));
 	for (i = 0; i < ARRAYSIZE(x1d_menu); i++) {
-		writeUint16BE(outFile, x1d_menu[i]);
-		writeUint16BE(outFile, y1d_menu[i]);
+		writeSint16BE(outFile, x1d_menu[i]);
+		writeSint16BE(outFile, y1d_menu[i]);
 	}
 
 	// Write frameX
 	writeUint16BE(outFile, ARRAYSIZE(frameX));
 	for (i = 0; i < ARRAYSIZE(frameX); i++) {
-		writeUint16BE(outFile, frameX[i]);
+		writeSint16BE(outFile, frameX[i]);
 	}
 
 	// Write candleX and candleY
 	writeUint16BE(outFile, ARRAYSIZE(candleX));
 	for (i = 0; i < ARRAYSIZE(candleX); i++) {
-		writeUint16BE(outFile, candleX[i]);
-		writeUint16BE(outFile, candleY[i]);
+		writeSint16BE(outFile, candleX[i]);
+		writeSint16BE(outFile, candleY[i]);
 	}
 
 	// Write pianistX
 	writeUint16BE(outFile, ARRAYSIZE(pianistX));
 	for (i = 0; i < ARRAYSIZE(pianistX); i++) {
-		writeUint16BE(outFile, pianistX[i]);
+		writeSint16BE(outFile, pianistX[i]);
 	}
 
 	// Write drunkX
 	writeUint16BE(outFile, ARRAYSIZE(drunkX));
 	for (i = 0; i < ARRAYSIZE(drunkX); i++) {
-		writeUint16BE(outFile, drunkX[i]);
+		writeSint16BE(outFile, drunkX[i]);
 	}
 
 	// Write preupdates
 	writeUint16BE(outFile, ARRAYSIZE(roomPreUpdates));
 
 	for (i = 0; i < ARRAYSIZE(roomPreUpdates); i++) {
-		writeUint16BE(outFile, roomPreUpdates[i].roomNum);
-		writeUint16BE(outFile, roomPreUpdates[i].flag);
-		writeUint16BE(outFile, roomPreUpdates[i].flagValue);
-		writeUint16BE(outFile, roomPreUpdates[i].sourceX);
-		writeUint16BE(outFile, roomPreUpdates[i].sourceY);
-		writeUint16BE(outFile, roomPreUpdates[i].destX);
-		writeUint16BE(outFile, roomPreUpdates[i].destY);
-		writeUint16BE(outFile, roomPreUpdates[i].width);
-		writeUint16BE(outFile, roomPreUpdates[i].height);
-		writeUint16BE(outFile, roomPreUpdates[i].type);
+		writeSint16BE(outFile, roomPreUpdates[i].roomNum);
+		writeSint16BE(outFile, roomPreUpdates[i].flag);
+		writeSint16BE(outFile, roomPreUpdates[i].flagValue);
+		writeSint16BE(outFile, roomPreUpdates[i].sourceX);
+		writeSint16BE(outFile, roomPreUpdates[i].sourceY);
+		writeSint16BE(outFile, roomPreUpdates[i].destX);
+		writeSint16BE(outFile, roomPreUpdates[i].destY);
+		writeSint16BE(outFile, roomPreUpdates[i].width);
+		writeSint16BE(outFile, roomPreUpdates[i].height);
+		writeSint16BE(outFile, roomPreUpdates[i].type);
 	}
 
 	// Write updates
 	writeUint16BE(outFile, ARRAYSIZE(roomUpdates));
 
 	for (i = 0; i < ARRAYSIZE(roomUpdates); i++) {
-		writeUint16BE(outFile, roomUpdates[i].roomNum);
-		writeUint16BE(outFile, roomUpdates[i].flag);
-		writeUint16BE(outFile, roomUpdates[i].flagValue);
-		writeUint16BE(outFile, roomUpdates[i].sourceX);
-		writeUint16BE(outFile, roomUpdates[i].sourceY);
-		writeUint16BE(outFile, roomUpdates[i].destX);
-		writeUint16BE(outFile, roomUpdates[i].destY);
-		writeUint16BE(outFile, roomUpdates[i].width);
-		writeUint16BE(outFile, roomUpdates[i].height);
-		writeUint16BE(outFile, roomUpdates[i].type);
+		writeSint16BE(outFile, roomUpdates[i].roomNum);
+		writeSint16BE(outFile, roomUpdates[i].flag);
+		writeSint16BE(outFile, roomUpdates[i].flagValue);
+		writeSint16BE(outFile, roomUpdates[i].sourceX);
+		writeSint16BE(outFile, roomUpdates[i].sourceY);
+		writeSint16BE(outFile, roomUpdates[i].destX);
+		writeSint16BE(outFile, roomUpdates[i].destY);
+		writeSint16BE(outFile, roomUpdates[i].width);
+		writeSint16BE(outFile, roomUpdates[i].height);
+		writeSint16BE(outFile, roomUpdates[i].type);
 	}
 
 	// Write room actions
 	writeUint16BE(outFile, ARRAYSIZE(roomActions));
 
 	for (i = 0; i < ARRAYSIZE(roomActions); i++) {
-		writeUint16BE(outFile, roomActions[i].room);
-		writeUint16BE(outFile, roomActions[i].chapter);
-		writeUint16BE(outFile, roomActions[i].action);
-		writeUint16BE(outFile, roomActions[i].objectID);
-		writeUint16BE(outFile, roomActions[i].speechID);
+		writeSint16BE(outFile, roomActions[i].room);
+		writeSint16BE(outFile, roomActions[i].chapter);
+		writeSint16BE(outFile, roomActions[i].action);
+		writeSint16BE(outFile, roomActions[i].objectID);
+		writeSint16BE(outFile, roomActions[i].speechID);
 	}
 
 	// langs

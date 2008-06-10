@@ -49,6 +49,7 @@
 
 typedef unsigned char   uint8;
 typedef unsigned short uint16;
+typedef signed short int16;
 
 enum Verbs {
 	kVerbDefault = -1,
