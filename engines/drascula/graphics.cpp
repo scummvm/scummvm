@@ -37,8 +37,8 @@ void DrasculaEngine::allocMemory() {
 	assert(frontSurface);
 	backSurface = (byte *)malloc(64000);
 	assert(backSurface);
-	drawSurface1 = (byte *)malloc(64000);
-	assert(drawSurface1);
+	bgSurface = (byte *)malloc(64000);
+	assert(bgSurface);
 	drawSurface2 = (byte *)malloc(64000);
 	assert(drawSurface2);
 	drawSurface3 = (byte *)malloc(64000);
@@ -51,7 +51,7 @@ void DrasculaEngine::allocMemory() {
 
 void DrasculaEngine::freeMemory() {
 	free(screenSurface);
-	free(drawSurface1);
+	free(bgSurface);
 	free(backSurface);
 	free(drawSurface2);
 	free(tableSurface);
@@ -61,7 +61,7 @@ void DrasculaEngine::freeMemory() {
 }
 
 void DrasculaEngine::moveCursor() {
-	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 
 	updateRefresh_pre();
 	moveCharacters();
@@ -388,7 +388,7 @@ void DrasculaEngine::screenSaver() {
 
 	clearRoom();
 
-	loadPic("sv.alg", drawSurface1, HALF_PAL);
+	loadPic("sv.alg", bgSurface, HALF_PAL);
 
 	// inicio_ghost();
 	copia = (byte *)malloc(64000);
@@ -407,9 +407,9 @@ void DrasculaEngine::screenSaver() {
 	yr = mouseY;
 
 	for (;;) {
-		// efecto(drawSurface1);
+		// efecto(bgSurface);
 
-		memcpy(copia, drawSurface1, 64000);
+		memcpy(copia, bgSurface, 64000);
 		coeff += 0.1f;
 		coeff2 = coeff;
 
@@ -451,7 +451,7 @@ void DrasculaEngine::screenSaver() {
 				y1_ = checkWrapY(y1_);
 				off2 = 320 * y1_ + x1_;
 
-				VGA[320 * i + j] = ghost[drawSurface1[off2] + (copia[off1] << 8)];
+				VGA[320 * i + j] = ghost[bgSurface[off2] + (copia[off1] << 8)];
 			}
 		}
 		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
@@ -473,7 +473,7 @@ void DrasculaEngine::screenSaver() {
 	free(copia);
 	free(ghost);
 
-	loadPic(roomNumber, drawSurface1, HALF_PAL);
+	loadPic(roomNumber, bgSurface, HALF_PAL);
 }
 
 void DrasculaEngine::playFLI(const char *filefli, int vel) {

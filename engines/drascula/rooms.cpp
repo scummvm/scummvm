@@ -195,7 +195,7 @@ bool DrasculaEngine::room_3(int fl) {
 		talk(149);
 		talk(150);
 	} else if (pickedObject == kVerbPick && fl == 165) {
-		copyBackground(0, 0, 0,0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0,0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(44, 1, curX, curY, 41, 70, drawSurface2, screenSurface);
 		updateRefresh();
@@ -252,7 +252,7 @@ bool DrasculaEngine::room_6(int fl) {
 	else if (pickedObject == kVerbClose && fl == 138)
 		closeDoor(0, 1);
 	else if (pickedObject == kVerbOpen && fl == 143 && flags[2] == 0) {
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(228, 102, curX + 5, curY - 1, 47, 73, drawSurface3, screenSurface);
 		updateScreen();
@@ -263,7 +263,7 @@ bool DrasculaEngine::room_6(int fl) {
 		updateScreen();
 		finishSound();
 	} else if (pickedObject == kVerbClose && fl == 143 && flags[2] == 1) {
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		flags[2] = 0;
 		updateRefresh_pre();
 		copyRect(228, 102, curX + 5, curY - 1, 47, 73, drawSurface3, screenSurface);
@@ -274,7 +274,7 @@ bool DrasculaEngine::room_6(int fl) {
 		updateScreen();
 		finishSound();
 	} else if (pickedObject == kVerbOpen && fl == 139 && flags[1] == 0) {
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(267, 1, curX - 14, curY - 2, 52, 73, drawSurface3, screenSurface);
 		updateScreen();
@@ -287,7 +287,7 @@ bool DrasculaEngine::room_6(int fl) {
 		updateScreen();
 		finishSound();
 	} else if (pickedObject == kVerbPick && fl == 140) {
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(267, 1, curX - 14, curY - 2, 52, 73, drawSurface3, screenSurface);
 		updateScreen();
@@ -407,7 +407,7 @@ bool DrasculaEngine::room_15(int fl) {
 		talk_sync(_text[_lang][46], "46.als", "4442444244244");
 		trackProtagonist = 1;
 	} else if (pickedObject == 18 && fl == 188 && flags[26] == 0) {
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		copyRect(133, 135, curX + 6, curY, 39, 63, drawSurface3, screenSurface);
 		updateScreen();
 		playSound(8);
@@ -497,7 +497,7 @@ bool DrasculaEngine::room_18(int fl) {
 	else if (pickedObject == kVerbTalk && fl == 55 && flags[36] == 1)
 		talk(109);
 	else if (pickedObject == kVerbPick && fl == 182) {
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(44, 1, curX, curY, 41, 70, drawSurface2, screenSurface);
 		updateRefresh();
@@ -519,7 +519,7 @@ bool DrasculaEngine::room_18(int fl) {
 		trackProtagonist = 3;
 		updateRoom();
 		updateScreen();
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(1, 1, curX - 1, curY + 3, 42, 67, drawSurface2, screenSurface);
 		updateRefresh();
@@ -922,11 +922,11 @@ bool DrasculaEngine::room_59(int fl) {
 			hare_se_ve = 0;
 			updateRoom();
 			copyRect(101, 34, curX - 4, curY - 1, 37, 70, drawSurface3, screenSurface);
-			copyBackground(0, 0, 0, 0, 320, 200, screenSurface, drawSurface1);
+			copyBackground(0, 0, 0, 0, 320, 200, screenSurface, bgSurface);
 			updateScreen();
 			hare_se_ve = 1;
 			clearRoom();
-			loadPic("tlef0.alg", drawSurface1, COMPLETE_PAL);
+			loadPic("tlef0.alg", bgSurface, COMPLETE_PAL);
 			loadPic("tlef1.alg", drawSurface3);
 			loadPic("tlef2.alg", frontSurface);
 			loadPic("tlef3.alg", backSurface);
@@ -950,7 +950,7 @@ bool DrasculaEngine::room_59(int fl) {
 			loadPic("aux59.alg", drawSurface3);
 			loadPic(96, frontSurface, COMPLETE_PAL);
 			loadPic(99, backSurface);
-			loadPic(59, drawSurface1, HALF_PAL);
+			loadPic(59, bgSurface, HALF_PAL);
 			trackProtagonist = 3;
 			talk(245);
 			withoutVerb();
@@ -1343,7 +1343,7 @@ void DrasculaEngine::update_58() {
 
 void DrasculaEngine::update_59_pre() {
 	if (flags[9] == 1) {
-		copyBackground(65, 103, 65, 103, 49, 38, drawSurface1, screenSurface);
+		copyBackground(65, 103, 65, 103, 49, 38, bgSurface, screenSurface);
 		copyRect(1, 105, 65, 103, 49, 38, drawSurface3, screenSurface);
 	}
 }
@@ -1710,7 +1710,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 
 	loadPic(roomDisk, drawSurface3);
-	loadPic(roomNumber, drawSurface1, HALF_PAL);
+	loadPic(roomNumber, bgSurface, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
@@ -1974,7 +1974,7 @@ bool DrasculaEngine::exitRoom(int l) {
 }
 
 void DrasculaEngine::updateRoom() {
-	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 	updateRefresh_pre();
 	if (currentChapter == 3) {
 		if (flags[0] == 0)

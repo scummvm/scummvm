@@ -120,7 +120,7 @@ void DrasculaEngine::enterName() {
 	strcpy(select2, "                      ");
 	for (;;) {
 		select2[v] = '-';
-		copyBackground(115, 14, 115, 14, 176, 9, drawSurface1, screenSurface);
+		copyBackground(115, 14, 115, 14, 176, 9, bgSurface, screenSurface);
 		print_abc(select2, 117, 15);
 		updateScreen();
 		key = getScan();

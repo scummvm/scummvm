@@ -53,7 +53,7 @@ bool DrasculaEngine::saveLoadScreen() {
 		sav->readLine(names[n], 23);
 	delete sav;
 
-	loadPic("savescr.alg", drawSurface1, HALF_PAL);
+	loadPic("savescr.alg", bgSurface, HALF_PAL);
 
 	color_abc(kColorLightGreen);
 
@@ -61,7 +61,7 @@ bool DrasculaEngine::saveLoadScreen() {
 
 	for (;;) {
 		y = 27;
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		for (n = 0; n < NUM_SAVES; n++) {
 			print_abc(names[n], 116, y);
 			y = y + 9;
@@ -154,7 +154,7 @@ bool DrasculaEngine::saveLoadScreen() {
 	}
 
 	clearRoom();
-	loadPic(roomNumber, drawSurface1, HALF_PAL);
+	loadPic(roomNumber, bgSurface, HALF_PAL);
 	selectionMade = 0;
 
 	return true;

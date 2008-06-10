@@ -226,7 +226,7 @@ int DrasculaEngine::go() {
 			loadPic(96, frontSurface, COMPLETE_PAL);
 			loadPic("pts.alg", drawSurface2);
 		} else if (currentChapter == 3) {
-			loadPic("aux13.alg", drawSurface1, COMPLETE_PAL);
+			loadPic("aux13.alg", bgSurface, COMPLETE_PAL);
 			loadPic(96, frontSurface);
 			loadPic(97, extraSurface);
 			loadPic(99, backSurface);
@@ -529,7 +529,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			if (!confirmExit())
 				return false;
 		} else if (currentChapter == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
-			loadPic("alcbar.alg", drawSurface1, 255);
+			loadPic("alcbar.alg", bgSurface, 255);
 		}
 		
 		if (leftMouseButton != 0 || rightMouseButton != 0 || key != 0)
@@ -753,7 +753,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 	do {
 		counter--;
 
-		copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		if (currentChapter == 3)
 			updateScreen(0, 0, 0, y, 320, 200, screenSurface);
 		else
@@ -777,7 +777,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 		}
 	} while (counter > 0);
 
-	copyBackground(0, 0, 0, 0, 320, 200, drawSurface1, screenSurface);
+	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 	updateScreen();
 }
 

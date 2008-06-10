@@ -278,7 +278,7 @@ public:
 
 	// Graphics buffers/pointers
 	byte *VGA;
-	byte *drawSurface1;
+	byte *bgSurface;
 	byte *backSurface;
 	byte *drawSurface3;
 	byte *drawSurface2;
