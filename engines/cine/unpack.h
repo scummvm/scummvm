@@ -41,7 +41,7 @@ private:
 	int rcr(int CF);
 	int nextBit();
 	uint16 getBits(byte numBits);
-	void unpackHelper1(byte numBits, byte addCount);
+	void unpackBytes(uint16 numBytes);
 	void copyRelocatedBytes(uint16 offset, uint16 numBytes);
 private:
 	int _datasize;

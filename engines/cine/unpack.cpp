@@ -64,10 +64,9 @@ uint16 CineUnpacker::getBits(byte numBits) {
 	return c;
 }
 
-void CineUnpacker::unpackHelper1(byte numBits, byte addCount) {
-	uint16 count = getBits(numBits) + addCount + 1;
-	_datasize -= count;
-	while (count--) {
+void CineUnpacker::unpackBytes(uint16 numBytes) {
+	_datasize -= numBytes;
+	while (numBytes--) {
 		*_dst = (byte)getBits(8);
 		--_dst;
 	}
@@ -91,7 +90,8 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 	do {
 		if (!nextBit()) {
 			if (!nextBit()) {
-				unpackHelper1(3, 0);
+				uint16 numBytes = getBits(3) + 1;
+				unpackBytes(numBytes);
 			} else {
 				uint16 numBytes = 2;
 				uint16 offset   = getBits(8);
@@ -100,7 +100,8 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 		} else {
 			uint16 c = getBits(2);
 			if (c == 3) {
-				unpackHelper1(8, 8);
+				uint16 numBytes = getBits(8) + 9;
+				unpackBytes(numBytes);
 			} else if (c < 2) { // c == 0 || c == 1
 				uint16 numBytes = c + 3;
 				uint16 offset   = getBits(c + 9);
