@@ -429,12 +429,21 @@ bool DrasculaEngine::runCurrentChapter() {
 		}
 
 		if (currentChapter == 2) {
-			if (roomNumber == 3 && (curX == 279) && (curY + curHeight == 101))
+			// NOTE: the checks for room number 14 below are a hack used in the original
+			// game, and move the character to a place where his feet are not drawn above
+			// the pianist's head. Originally, walkToObject was not updated properly, which
+			// lead to an incorrect setting of the protagonist's tracking flag (above). This
+			// made the character start walking off screen, as his actual position was
+			// different than the displayed one
+			if (roomNumber == 3 && (curX == 279) && (curY + curHeight == 101)) {
 				animation_1_2();
-			else if (roomNumber == 14 && (curX == 214) && (curY + curHeight == 121))
+			} else if (roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
+				walkToObject = 1;
 				gotoObject(190, 130);
-			else if (roomNumber == 14 && (curX == 246) && (curY + curHeight == 112))
+			} else if (roomNumber == 14 && (curX == 246) && (curY + curHeight == 112)) {
+				walkToObject = 1;
 				gotoObject(190, 130);
+			}
 		}
 
 		moveCursor();
