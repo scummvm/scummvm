@@ -505,8 +505,6 @@ RoomTalkAction roomActions[] = {
 	// ==================================
 	{ 102,	-1,	kVerbLook,		100,	452 },
 	{ 102,	-1,	kVerbLook,		101,	123 },
-	{ 102,	-1,	kVerbPick,		-1,		453 },
-	{ 102,	-1,	kVerbOpen,		-1,		453 },
 	// ==================================
 	// Pseudoroom. checkAction() menuScreen == 1
 	{ 200,	1,	kVerbLook,		28,		328 },
