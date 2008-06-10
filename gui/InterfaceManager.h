@@ -45,6 +45,7 @@ class InterfaceManager;
 class InterfaceManager : public Common::Singleton<InterfaceManager> {
 
 	friend class Common::Singleton<SingletonBaseType>;
+	typedef Common::String String;
 
 public:
 	enum Graphics_Mode {
@@ -139,16 +140,16 @@ public:
 	int getCharWidth(byte c, FontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
 	/** Widget drawing */
-	void drawWidgetBackground(int x, int y, uint16 hints, WidgetBackground background, WidgetStateInfo state, float scale = 1.0f);
-	void drawButton(int x, int y, const Common::String &str, WidgetStateInfo state, uint16 hints, float scale = 1.0f);
-	void drawSurface(int x, int y, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans, float scale = 1.0f);
-	void drawSlider(int x, int y, int width, WidgetStateInfo state, float scale = 1.0f);
-	void drawCheckbox(int x, int y, const Common::String &str, bool checked, WidgetStateInfo state, float scale = 1.0f);
-	void drawTab(int x, int y, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state, float scale = 1.0f);
-	void drawScrollbar(int x, int y, int sliderY, int sliderHeight, ScrollbarState, WidgetStateInfo state, float scale = 1.0f);
-	void drawPopUpWidget(int x, int y, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align, float scale = 1.0f);
-	void drawCaret(int x, int y, bool erase, WidgetStateInfo state, float scale = 1.0f);
-	void drawLineSeparator(int x, int y, WidgetStateInfo state, float scale = 1.0f);
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled) {}
+	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, uint16 hints = 0) {}
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false) {}
+	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled) {}
+	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state = kStateEnabled) {}
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state = kStateEnabled) {}
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, WidgetStateInfo state = kStateEnabled) {}
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft) {}
+	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled) {}
+	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled) {}
 
 protected:
 	template<typename PixelType> void screenInit();
@@ -183,6 +184,9 @@ protected:
 };
 
 struct WidgetDrawData {
+	Common::Rect _realSize;
+	bool _scaled;
+
 	Graphics::DrawStep **_steps;
 	int _stepCount;
 

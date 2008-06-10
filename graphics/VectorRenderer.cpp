@@ -51,10 +51,10 @@ VectorRenderer *createRenderer(int mode) {
 /********************************************************************
  * DRAWSTEP handling functions
  ********************************************************************/
-void VectorRenderer::drawStep(DrawStep *step) {
+void VectorRenderer::drawStep(Common::Rect area, DrawStep *step) {
 
 	if (step->flags & DrawStep::kStepCallbackOnly) {
-		(this->*(step->drawing_call))(step);
+		(this->*(step->drawing_call))(&area, step->extra_data);
 		return;
 	}
 
@@ -83,7 +83,7 @@ void VectorRenderer::drawStep(DrawStep *step) {
 	if (step->flags & DrawStep::kStepSettingsOnly)
 		return;
 
-	(this->*(step->drawing_call))(step);	
+	(this->*(step->drawing_call))(&area, step->extra_data);	
 }
 
 /********************************************************************
@@ -248,7 +248,8 @@ drawLine(int x1, int y1, int x2, int y2) {
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawCircle(int x, int y, int r) {
-	if (x + r > Base::_activeSurface->w || y + r > Base::_activeSurface->h)
+	if (x + r > Base::_activeSurface->w || y + r > Base::_activeSurface->h ||
+		x - r < 0 || y - r < 0 || x == 0 || y == 0 || r <= 0)
 		return;
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset 
@@ -286,7 +287,8 @@ drawCircle(int x, int y, int r) {
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawSquare(int x, int y, int w, int h) {
-	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
+		w <= 0 || h <= 0 || x < 0 || y < 0)
 		return;
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
@@ -322,7 +324,8 @@ drawSquare(int x, int y, int w, int h) {
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
-	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
+		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0 || r > 128)
 		return;
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset

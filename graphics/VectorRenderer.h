@@ -47,14 +47,12 @@ struct DrawStep {
 	color1, /** Foreground color/gradient start */
 	color2; /** Background color/gradient end */
 
-	uint16 x, y, w, h, r; /** Shape size */
-	uint16 offset_x, offset_y; /** Offset when drawing directly to the whole screen */
 	uint8 shadow, stroke, factor; /** Misc options... */
 
 	int fill_mode; /** active fill mode */
-	int extra; /** Generic parameter for extra options */
+	int extra_data; /** Generic parameter for extra options (radius/orientation/bevel) */
 
-	void (VectorRenderer::*drawing_call)(DrawStep*); /** Pointer to drawing function */
+	void (VectorRenderer::*drawing_call)(Common::Rect*, int); /** Pointer to drawing function */
 
 	enum DrawStepFlags {
 		kStepCallbackOnly		= (1 << 0),
@@ -89,8 +87,7 @@ VectorRenderer *createRenderer(int mode);
 class VectorRenderer {
 public:
 	VectorRenderer() : _shadowOffset(0), _fillMode(kFillDisabled), 
-		_activeSurface(NULL), _strokeWidth(1), _gradientFactor(1),
-	_stepOffsetX(0), _stepOffsetY(0) {
+		_activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {
 	
 	}
 
@@ -322,41 +319,42 @@ public:
 	/**
 	 * DrawStep callback functions for each drawing feature 
 	 */
-	void drawCallback_CIRCLE(DrawStep *step) {
-		drawCircle(_stepOffsetX + step->x, _stepOffsetY + step->y, step->r);
+	void drawCallback_CIRCLE(Common::Rect *area, int data) {
+		drawCircle(area->left + data, area->top + data, data);
 	}
 
-	void drawCallback_SQUARE(DrawStep *step) {
-		drawSquare(_stepOffsetX + step->x, _stepOffsetY + step->y, step->w, step->h);
+	void drawCallback_SQUARE(Common::Rect *area, int data) {
+		drawSquare(area->left, area->top, area->width(), area->height());
 	}
 
-	void drawCallback_LINE(DrawStep *step) {
-		drawLine(_stepOffsetX + step->x, _stepOffsetY + step->y, step->x + step->w, step->y + step->h);
+	void drawCallback_LINE(Common::Rect *area, int data) {
+		drawLine(area->left, area->top, area->right, area->bottom);
 	}
 
-	void drawCallback_ROUNDSQ(DrawStep *step) {
-		drawRoundedSquare(_stepOffsetX + step->x, _stepOffsetY + step->y, step->r, step->w, step->h);
+	void drawCallback_ROUNDSQ(Common::Rect *area, int data) {
+		drawRoundedSquare(area->left, area->top, data, area->width(), area->height());
 	}
 
-	void drawCallback_FILLSURFACE(DrawStep *step) {
+	void drawCallback_FILLSURFACE(Common::Rect *area, int data) {
 		fillSurface();
 	}
 
-	void drawCallback_TRIANGLE(DrawStep *step) {
-		drawTriangle(_stepOffsetX + step->x, _stepOffsetY + step->y, step->w, step->h, (TriangleOrientation)step->extra);
+	void drawCallback_TRIANGLE(Common::Rect *area, int data) {
+		drawTriangle(area->top, area->left, area->width(), area->height(), (TriangleOrientation)data);
 	}
 
-	void drawCallback_BEVELSQ(DrawStep *step) {
-		drawBeveledSquare(_stepOffsetX + step->x, _stepOffsetY + step->y, step->w, step->h, step->extra);
+	void drawCallback_BEVELSQ(Common::Rect *area, int data) {
+		drawBeveledSquare(area->left, area->top, area->width(), area->height(), data);
 	}
 
 	/**
 	 * Draws the specified draw step on the screen.
 	 * 
 	 * @see DrawStep
+	 * @param area Zone to paint on
 	 * @param step Pointer to a DrawStep struct.
 	 */
-	virtual void drawStep(DrawStep *step);
+	virtual void drawStep(Common::Rect area, DrawStep *step);
 
 	/**
 	 * Copies the current surface to the system overlay 
@@ -365,31 +363,8 @@ public:
 	 */
 	virtual void copyFrame(OSystem *sys) = 0;
 
-	/**
-	 * Enables drawing offset for all the Draw Step operations, 
-	 * i.e. when we are drawing widgets directly on a whole screen
-	 * instead of individual surfaces for caching/blitting.
-	 *
-	 * @param x Horizontal drawing offset.
-	 * @param y Veritcal drawing offset.
-	 */
-	void setDrawOffset(int x, int y) {
-		_stepOffsetX = x;
-		_stepOffsetY = y;
-	}
-
-	/**
-	 * Disables the drawing offset for draw step operations.
-	 */
-	void disableDrawOffset() {
-		_stepOffsetX = _stepOffsetY = 0;
-	}
-
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
-
-	int _stepOffsetX; /** Offset for all the drawing steps */
-	int _stepOffsetY; /** Offset for all the drawing steps */
 
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
