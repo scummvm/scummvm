@@ -122,6 +122,21 @@ bool DrasculaEngine::saveLoadScreen() {
 					print_abc(names[n2], 116, y);
 					y = y + 9;
 				}
+
+				if (selectionMade == 1) {
+					snprintf(file, 50, "%s%02d", _targetName.c_str(), n + 1);
+					saveGame(file);
+					Common::OutSaveFile *tsav;
+					if (!(tsav = _saveFileMan->openForSaving(fileEpa))) {
+						error("Can't open %s file", fileEpa);
+					}
+					for (n = 0; n < NUM_SAVES; n++) {
+						tsav->writeString(names[n]);
+						tsav->writeString("\n");
+					}
+					tsav->finalize();
+					delete tsav;
+				}
 			}
 
 			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && selectionMade == 1) {
