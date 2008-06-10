@@ -42,9 +42,9 @@ private:
 	int nextBit();
 	uint16 getBits(byte numBits);
 	void unpackHelper1(byte numBits, byte addCount);
-	void unpackHelper2(byte numBits);
+	void copyRelocatedBytes(uint16 offset, uint16 numBytes);
 private:
-	int _size, _datasize;
+	int _datasize;
 	uint32 _crc;
 	uint32 _chk;
 	byte *_dst;

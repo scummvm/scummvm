@@ -73,12 +73,10 @@ void CineUnpacker::unpackHelper1(byte numBits, byte addCount) {
 	}
 }
 
-void CineUnpacker::unpackHelper2(byte numBits) {
-	uint16 i = getBits(numBits);
-	uint16 count = _size + 1;
-	_datasize -= count;
-	while (count--) {
-		*_dst = *(_dst + i);
+void CineUnpacker::copyRelocatedBytes(uint16 offset, uint16 numBytes) {
+	_datasize -= numBytes;
+	while (numBytes--) {
+		*_dst = *(_dst + offset);
 		--_dst;
 	}
 }
@@ -87,28 +85,30 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 	_src = src + srcLen - 4;
 	_datasize = readSource();
 	_dst = dst + _datasize - 1;
-	_size = 0;
 	_crc = readSource();
 	_chk = readSource();
 	_crc ^= _chk;
 	do {
 		if (!nextBit()) {
-			_size = 1;
 			if (!nextBit()) {
 				unpackHelper1(3, 0);
 			} else {
-				unpackHelper2(8);
+				uint16 numBytes = 2;
+				uint16 offset   = getBits(8);
+				copyRelocatedBytes(offset, numBytes);
 			}
 		} else {
 			uint16 c = getBits(2);
 			if (c == 3) {
 				unpackHelper1(8, 8);
-			} else if (c < 2) {
-				_size = c + 2;
-				unpackHelper2(c + 9);
-			} else {
-				_size = getBits(8);
-				unpackHelper2(12);
+			} else if (c < 2) { // c == 0 || c == 1
+				uint16 numBytes = c + 3;
+				uint16 offset   = getBits(c + 9);
+				copyRelocatedBytes(offset, numBytes);
+			} else { // c == 2
+				uint16 numBytes = getBits(8) + 1;
+				uint16 offset   = getBits(12);
+				copyRelocatedBytes(offset, numBytes);
 			}
 		}
 	} while (_datasize > 0 && _src >= src - 4);
