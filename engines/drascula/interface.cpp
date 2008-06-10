@@ -39,7 +39,7 @@ void DrasculaEngine::selectVerbFromBar() {
 	withoutVerb();
 }
 
-void DrasculaEngine::selectVerb(int verbo) {
+void DrasculaEngine::selectVerb(int verb) {
 	int c = (menuScreen == 1) ? 0 : 171;
 
 	if (currentChapter == 5) {
@@ -50,10 +50,10 @@ void DrasculaEngine::selectVerb(int verbo) {
 			addObject(pickedObject);
 	}
 
-	copyBackground(OBJWIDTH * verbo, c, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
+	copyBackground(OBJWIDTH * verb, c, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
 	takeObject = 1;
-	pickedObject = verbo;
+	pickedObject = verb;
 }
 
 bool DrasculaEngine::confirmExit() {
