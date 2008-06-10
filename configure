@@ -162,7 +162,7 @@ add_line_to_config_mk() {
 '"$1"
 }
 
-# Add a line of data to h.mk.
+# Add a line of data to config.h.
 add_line_to_config_h() {
 	_config_h_data="$_config_h_data"'
 '"$1"
@@ -582,7 +582,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, gp2x, iphone, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp2x, iphone, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -1092,7 +1092,7 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			_endian=little
 			_need_memalign=yes
@@ -1107,7 +1107,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SMUSH_ASM"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1116,7 +1116,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2x"
-			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
 			_build_hq_scalers="no"
 			;;
 		ppc-amigaos)
@@ -1154,7 +1153,7 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SMUSH_ASM"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1163,7 +1162,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
-			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
 			_build_hq_scalers="no"
 			;;
 		*)
