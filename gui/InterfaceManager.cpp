@@ -103,23 +103,35 @@ int InterfaceManager::runGUI() {
 	steps[1].color2.r = 173;
 	steps[1].color2.g = 40;
 	steps[1].color2.b = 8;
-	steps[1].extra_data = 8; // radius
+	steps[1].radius = 8; // radius
+	steps[1].fill_area = true;
 	steps[1].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
 	steps[1].flags = DrawStep::kStepSetGradient;
+	steps[1].scale = (1 << 16);
 
-	steps[2].extra_data = 8; // radius
+	steps[2].radius = 8; // radius
+	steps[2].fill_area = false;
+	steps[2].x.relative = true;
+	steps[2].x.pos = 32;
+	steps[2].y.relative = false;
+	steps[2].y.pos = 32;
+	steps[2].w = 128;
+	steps[2].h = 32;
 	steps[2].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
 	steps[2].flags = DrawStep::kStepCallbackOnly;
+	steps[2].scale = (1 << 16);
 
 	steps[3].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
 	steps[3].flags = DrawStep::kStepCallbackOnly;
+
+	Common::Rect area = Common::Rect(32, 32, 256, 256);
 
 	bool running = true;
 	while (running) { // draw!!
 
 		_vectorRenderer->drawStep(Common::Rect(), &steps[0]);
-		_vectorRenderer->drawStep(Common::Rect(32, 32, 256, 256), &steps[1]);
-		_vectorRenderer->drawStep(Common::Rect(128, 128, 512, 190), &steps[2]);
+		_vectorRenderer->drawStep(area, &steps[1]);
+		_vectorRenderer->drawStep(area, &steps[2]);
 //		_vectorRenderer->drawStep(Common::Rect(32, 32, 256, 256), &steps[3]);
 
 		_vectorRenderer->copyFrame(_system);

@@ -54,7 +54,7 @@ VectorRenderer *createRenderer(int mode) {
 void VectorRenderer::drawStep(Common::Rect area, DrawStep *step) {
 
 	if (step->flags & DrawStep::kStepCallbackOnly) {
-		(this->*(step->drawing_call))(&area, step->extra_data);
+		(this->*(step->drawing_call))(&area, step);
 		return;
 	}
 
@@ -83,7 +83,7 @@ void VectorRenderer::drawStep(Common::Rect area, DrawStep *step) {
 	if (step->flags & DrawStep::kStepSettingsOnly)
 		return;
 
-	(this->*(step->drawing_call))(&area, step->extra_data);	
+	(this->*(step->drawing_call))(&area, step);	
 }
 
 /********************************************************************
