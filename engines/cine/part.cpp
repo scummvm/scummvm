@@ -70,25 +70,41 @@ void closePart(void) {
 	// TODO
 }
 
-static void fixVolCnfFileName(char *dst, const uint8 *src) {
-	memcpy(dst, src, 8);
-	src += 8;
-	dst[8] = 0;
+static Common::String fixVolCnfFileName(const uint8 *src, uint len) {
+	assert(len == 11 || len == 13);
+	// Copy source to a temporary buffer and force a trailing zero for string manipulation
+	char tmp[14];
+	memcpy(tmp, src, len);
+	tmp[len] = 0;
 
-	char *ext = strchr(dst, ' ');
-	if (!ext) {
-		ext = &dst[8];
-	}
-	if (*src == ' ') {
-		*ext = 0;
-	} else {
-		*ext++ = '.';
-		memcpy(ext, src, 3);
-		char *end = strchr(ext, ' ');
-		if (!end) {
-			end = &ext[3];
+	if (len == 11) {
+		// Filenames of length 11 have no separation of the extension and the basename
+		// so that's why we have to convert them first. There's no trailing zero in them
+		// either and they're always of the full length 11 with padding spaces. Extension
+		// can be always found at offset 8 onwards.
+		// 
+		// Examples of filename mappings:
+		// "AEROPORTMSG" -> "AEROPORT.MSG"
+		// "MITRAILLHP " -> "MITRAILL.HP" (Notice the trailing space after the extension)
+		// "BOND10     " -> "BOND10"
+		// "GIRL    SET" -> "GIRL.SET"
+
+		// Replace all space characters with zeroes
+		for (uint i = 0; i < len; i++)
+			if (tmp[i] == ' ')
+				tmp[i] = 0;
+		// Extract the filename's extension
+		Common::String extension(tmp + 8);
+		tmp[8] = 0; // Force separation of extension and basename
+		Common::String basename(tmp);
+		if (extension.empty()) {
+			return basename;
+		} else {
+			return basename + "." + extension;
 		}
-		*end = 0;
+	} else {
+		// Filenames of length 13 are okay as they are, no need for conversion
+		return Common::String(tmp);
 	}
 }
 
@@ -97,30 +113,25 @@ void CineEngine::readVolCnf() {
 	if (!f.open("vol.cnf")) {
 		error("Unable to open 'vol.cnf'");
 	}
-	bool abaseHeader = false;
 	uint32 unpackedSize, packedSize;
 	char hdr[8];
 	f.read(hdr, 8);
-	if (memcmp(hdr, "ABASECP", 7) == 0) {
-		abaseHeader = true;
+	bool compressed = (memcmp(hdr, "ABASECP", 7) == 0);
+	if (compressed) {
 		unpackedSize = f.readUint32BE();
 		packedSize = f.readUint32BE();
 	} else {
 		f.seek(0);
 		unpackedSize = packedSize = f.size();
 	}
-	uint8 *buf = (uint8 *)malloc(unpackedSize);
-	if (!buf) {
-		error("Unable to allocate %d bytes", unpackedSize);
-	}
+	uint8 *buf = new uint8[unpackedSize];
 	f.read(buf, packedSize);
 	if (packedSize != unpackedSize) {
-		bool b = delphineUnpack(buf, buf, packedSize);
-		if (!b) {
+		CineUnpacker cineUnpacker;
+		if (!cineUnpacker.unpack(buf, buf, packedSize)) {
 			error("Error while unpacking 'vol.cnf' data");
 		}
 	}
-	const int fileNameLength = abaseHeader ? 11 : 13;
 	uint8 *p = buf;
 	int resourceFilesCount = READ_BE_UINT16(p); p += 2;
 	int entrySize = READ_BE_UINT16(p); p += 2;
@@ -132,31 +143,48 @@ void CineEngine::readVolCnf() {
 		p += entrySize;
 	}
 
-	int volumeEntriesCount = 0;
+	// Check file name blocks' sizes
+	bool fileNameLenMod11, fileNameLenMod13;
+	fileNameLenMod11 = fileNameLenMod13 = true;
 	for (int i = 0; i < resourceFilesCount; ++i) {
 		int size = READ_BE_UINT32(p); p += 4;
-		assert((size % fileNameLength) == 0);
-		volumeEntriesCount += size / fileNameLength;
+		fileNameLenMod11 &= ((size % 11) == 0);
+		fileNameLenMod13 &= ((size % 13) == 0);
 		p += size;
+	}
+	// Make sure at least one of the candidates for file name length fits the data
+	assert(fileNameLenMod11 || fileNameLenMod13);
+
+	// File name length used to be deduced from the fact whether the file
+	// was compressed or not. Compressed files used file name length 11,
+	// uncompressed files used file name length 13. It worked almost always,
+	// but not with the game entry that's detected as the Operation Stealth's
+	// US Amiga release. It uses a compressed 'vol.cnf' file but still uses
+	// file names of length 13. So we try to deduce the file name length from
+	// the data in the 'vol.cnf' file.
+	int fileNameLength; 
+	if (fileNameLenMod11 != fileNameLenMod13) {
+		// All file name blocks' sizes were divisible by either 11 or 13, but not with both.
+		fileNameLength = (fileNameLenMod11 ? 11 : 13);
+	} else {
+		warning("Couldn't deduce file name length from data in 'vol.cnf', using a backup deduction scheme.");
+		// Here we use the former file name length detection method
+		// if we couldn't deduce the file name length from the data.
+		fileNameLength = (compressed ? 11 : 13);
 	}
 
 	p = buf + 4 + resourceFilesCount * entrySize;
 	for (int i = 0; i < resourceFilesCount; ++i) {
 		int count = READ_BE_UINT32(p) / fileNameLength; p += 4;
 		while (count--) {
-			char volumeEntryName[13];
-			if (abaseHeader) {
-				fixVolCnfFileName(volumeEntryName, p);
-			} else {
-				memcpy(volumeEntryName, p, fileNameLength);
-			}
+			Common::String volumeEntryName = fixVolCnfFileName(p, fileNameLength);
 			_volumeEntriesMap.setVal(volumeEntryName, _volumeResourceFiles[i].c_str());
-			debugC(5, kCineDebugPart, "Added volume entry name '%s' resource file '%s'", volumeEntryName, _volumeResourceFiles[i].c_str());
+			debugC(5, kCineDebugPart, "Added volume entry name '%s' resource file '%s'", volumeEntryName.c_str(), _volumeResourceFiles[i].c_str());
 			p += fileNameLength;
 		}
 	}
 
-	free(buf);
+	delete[] buf;
 }
 
 int16 findFileInBundle(const char *fileName) {
@@ -197,7 +225,8 @@ byte *readBundleFile(int16 foundFileIdx) {
 	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
 		byte *unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
 		readFromPart(foundFileIdx, unpackBuffer);
-		delphineUnpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
+		CineUnpacker cineUnpacker;
+		cineUnpacker.unpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
 		free(unpackBuffer);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);

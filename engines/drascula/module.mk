@@ -1,10 +1,18 @@
 MODULE := engines/drascula
 
 MODULE_OBJS = \
+	actors.o \
 	animation.o \
+	converse.o \
 	detection.o \
 	drascula.o \
+	graphics.o \
+	interface.o \
+	objects.o \
+	palette.o \
 	rooms.o \
+	saveload.o \
+	sound.o \
 	talk.o
 
 

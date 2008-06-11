@@ -635,7 +635,7 @@ int fitLine(const char *str, int maxWidth, int &words, int &width) {
 			bkpWidth = width;
 			bkpLen = i + 1;
 		} else {
-			charWidth = fontParamTable[str[i]].characterWidth + 1;
+			charWidth = fontParamTable[(unsigned char)str[i]].characterWidth + 1;
 			width += charWidth;
 		}
 

@@ -128,9 +128,7 @@ void OSystem::clearScreen() {
  * TODO: Remove these gradually and move the getFilesystemFactory() implementations
  * to the respective backends. Then turn it into a pure virtual method of OSystem.
  */
-#if defined(__DS__)
-	#include "backends/fs/ds/ds-fs-factory.h"
-#elif defined(PALMOS_MODE)
+#if defined(PALMOS_MODE)
 	#include "backends/fs/palmos/palmos-fs-factory.h"
 #elif defined(__PLAYSTATION2__)
 	#include "backends/fs/ps2/ps2-fs-factory.h"

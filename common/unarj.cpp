@@ -289,6 +289,9 @@ bool ArjFile::open(const Common::String &filename, AccessMode mode) {
 }
 
 void ArjFile::close() {
+	if (!_isOpen)
+		return;
+
 	_isOpen = false;
 
 	if (_fallBack) {

@@ -96,7 +96,7 @@ public:
 		return (uint16)_height;
 	}
 
-	uint16 drawChar(char c) {
+	uint16 drawChar(unsigned char c) {
 		assert(c < _numGlyphs);
 
 		byte *src = _data + _offsets[c];

@@ -36,6 +36,17 @@
 extern "C" {
 #endif
 
+bool reset_btn_pressed = false;
+bool power_btn_pressed = false;
+
+void reset_cb(void) {
+	reset_btn_pressed = true;
+}
+
+void power_cb(void) {
+	power_btn_pressed = true;
+}
+
 int main(int argc, char *argv[]) {
 	s32 res;
 
@@ -49,6 +60,9 @@ int main(int argc, char *argv[]) {
 #endif
 
 	printf("startup\n");
+
+	SYS_SetResetCallback(reset_cb);
+	SYS_SetPowerCallback(power_cb);
 
 	if (!fatInitDefault()) {
 		printf("fatInitDefault failed\n");
@@ -75,6 +89,11 @@ int main(int argc, char *argv[]) {
 	if (!fatUnmount(PI_DEFAULT)) {
 		printf("fatUnmount failed\n");
 		fatUnsafeUnmount(PI_DEFAULT);
+	}
+
+	if (power_btn_pressed) {
+		printf("shutting down\n");
+		SYS_ResetSystem(SYS_POWEROFF, 0, 0);
 	}
 
 	printf("reloading\n");

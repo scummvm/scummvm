@@ -140,6 +140,15 @@ void OSystem_Wii::updateEventScreenResolution() {
 	} while (0)
 
 bool OSystem_Wii::pollEvent(Common::Event &event) {
+	if ((reset_btn_pressed || power_btn_pressed) && !_event_quit) {
+		_event_quit = true;
+		event.type = Common::EVENT_QUIT;
+
+		printf("quit event\n");
+
+		return true;
+	}
+
 	u32 bd, bh, bu;
 
 	PAD_ScanPads();

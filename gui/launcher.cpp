@@ -572,8 +572,16 @@ void LauncherDialog::updateListing() {
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+#ifdef __DS__
+		// DS port uses an extra section called 'ds'.  This prevents the section from being
+		// detected as a game.
+		if (iter->_key == "ds") {
+			continue;
+		}
+#endif
+
 		String gameid(iter->_value.get("gameid"));
 		String description(iter->_value.get("description"));
 
@@ -584,14 +592,6 @@ void LauncherDialog::updateListing() {
 			if (g.contains("description"))
 				description = g.description();
 		}
-
-#ifdef __DS__
-		// DS port uses an extra section called 'ds'.  This prevents the section from being
-		// detected as a game.
-		if (gameid == "ds") {
-			continue;
-		}
-#endif
 
 		if (description.empty())
 			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
