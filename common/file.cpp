@@ -136,7 +136,7 @@
 
 namespace Common {
 
-typedef HashMap<String, int, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringIntMap;
+typedef HashMap<String, int> StringIntMap;
 
 // The following two objects could be turned into static members of class
 // File. However, then we would be forced to #include hashmap in file.h

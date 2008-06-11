@@ -2148,7 +2148,7 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 }
 
 const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fslist) const {
-	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
+	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
 	bool matchedUsingWag = false;
