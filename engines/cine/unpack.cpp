@@ -47,10 +47,12 @@ int CineUnpacker::rcr(int inputCarry) {
 
 int CineUnpacker::nextBit() {
 	int carry = rcr(0);
+	// Normally if the chunk becomes zero then the carry is one as
+	// the end of chunk marker is always the last to be shifted out.
 	if (_chunk32b == 0) {
 		_chunk32b = readSource();
 		_crc ^= _chunk32b;
-		carry = rcr(1);
+		carry = rcr(1); // Put the end of chunk marker in the most significant bit
 	}
 	return carry;
 }
@@ -64,7 +66,7 @@ uint16 CineUnpacker::getBits(byte numBits) {
 	return c;
 }
 
-void CineUnpacker::unpackBytes(uint16 numBytes) {
+void CineUnpacker::unpackRawBytes(uint16 numBytes) {
 	_datasize -= numBytes;
 	while (numBytes--) {
 		*_dst = (byte)getBits(8);
@@ -82,31 +84,40 @@ void CineUnpacker::copyRelocatedBytes(uint16 offset, uint16 numBytes) {
 
 bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 	_src = src + srcLen - 4;
-	_datasize = readSource();
+	_datasize = readSource(); // Unpacked length in bytes
 	_dst = dst + _datasize - 1;
 	_crc = readSource();
 	_chunk32b = readSource();
 	_crc ^= _chunk32b;
 	do {
-		if (!nextBit()) {
-			if (!nextBit()) {
+		/*
+		Bits  => Action:
+		0 0   => unpackRawBytes(3 bits + 1)              i.e. unpackRawBytes(1..9)
+		1 1 1 => unpackRawBytes(8 bits + 9)              i.e. unpackRawBytes(9..264)
+		0 1   => copyRelocatedBytes(8 bits, 2)           i.e. copyRelocatedBytes(0..255, 2)
+		1 0 0 => copyRelocatedBytes(9 bits, 3)           i.e. copyRelocatedBytes(0..511, 3)
+		1 0 1 => copyRelocatedBytes(10 bits, 4)          i.e. copyRelocatedBytes(0..1023, 4)
+		1 1 0 => copyRelocatedBytes(12 bits, 8 bits + 1) i.e. copyRelocatedBytes(0..4095, 1..256)
+		*/
+		if (!nextBit()) { // 0...
+			if (!nextBit()) { // 0 0
 				uint16 numBytes = getBits(3) + 1;
-				unpackBytes(numBytes);
-			} else {
+				unpackRawBytes(numBytes);
+			} else { // 0 1
 				uint16 numBytes = 2;
 				uint16 offset   = getBits(8);
 				copyRelocatedBytes(offset, numBytes);
 			}
-		} else {
+		} else { // 1...
 			uint16 c = getBits(2);
-			if (c == 3) {
+			if (c == 3) { // 1 1 1
 				uint16 numBytes = getBits(8) + 9;
-				unpackBytes(numBytes);
-			} else if (c < 2) { // c == 0 || c == 1
+				unpackRawBytes(numBytes);
+			} else if (c < 2) { // 1 0 x
 				uint16 numBytes = c + 3;
 				uint16 offset   = getBits(c + 9);
 				copyRelocatedBytes(offset, numBytes);
-			} else { // c == 2
+			} else { // 1 1 0
 				uint16 numBytes = getBits(8) + 1;
 				uint16 offset   = getBits(12);
 				copyRelocatedBytes(offset, numBytes);
