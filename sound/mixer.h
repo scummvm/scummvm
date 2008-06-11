@@ -147,7 +147,7 @@ public:
 		SoundType type,
 		SoundHandle *handle,
 		void *sound, uint32 size, uint rate, byte flags,
-		int id = -1, byte volume = 255, int8 balance = 0,
+		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
 		uint32 loopStart = 0, uint32 loopEnd = 0);
 
 	/**
@@ -174,7 +174,7 @@ public:
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,
-		int id = -1, byte volume = 255, int8 balance = 0,
+		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
 		bool autofreeStream = true,
 		bool permanent = false,
 		bool reverseStereo = false);
@@ -258,7 +258,7 @@ public:
 	 * Set the channel volume for the given handle.
 	 *
 	 * @param handle the sound to affect
-	 * @param volume the new channel volume (0 - 255)
+	 * @param volume the new channel volume (0 - kMaxChannelVolume)
 	 */
 	void setChannelVolume(SoundHandle handle, byte volume);
 
@@ -290,7 +290,7 @@ public:
 	 * Set the volume for the given sound type.
 	 *
 	 * @param type the sound type
-	 * @param volume the new global volume, 0-kMaxMixerVolume
+	 * @param volume the new global volume, 0 - kMaxMixerVolume
 	 */
 	void setVolumeForSoundType(SoundType type, int volume);
 
@@ -298,7 +298,7 @@ public:
 	 * Query the global volume.
 	 *
 	 * @param type the sound type
-	 * @return the global music volume, 0-kMaxMixerVolume
+	 * @return the global music volume, 0 - kMaxMixerVolume
 	 */
 	int getVolumeForSoundType(SoundType type) const;
 
