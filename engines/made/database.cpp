@@ -489,7 +489,7 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 
 	}
 
-	debug(1, "findObjectProperty(%04X, %04) Property not found", objectIndex, propertyId);
+	debug(1, "findObjectProperty(%04X, %04X) Property not found", objectIndex, propertyId);
 	return NULL;
 
 }
