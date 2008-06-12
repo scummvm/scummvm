@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68B0E0198B200DCA546 /* hashmap.cpp */; };
+		2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68D0E0198B200DCA546 /* memorypool.cpp */; };
+		2862A6970E0198B200DCA546 /* str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A6900E0198B200DCA546 /* str.cpp */; };
 		289EEE110D8921CA00521A80 /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0B0D8921CA00521A80 /* audiostream.cpp */; };
 		289EEE120D8921CA00521A80 /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0D0D8921CA00521A80 /* mixer.cpp */; };
 		289EEE130D8921CA00521A80 /* rate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0F0D8921CA00521A80 /* rate.cpp */; };
@@ -111,6 +114,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2862A6860E0198B200DCA546 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = algorithm.h; sourceTree = "<group>"; };
+		2862A6870E0198B200DCA546 /* array.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
+		2862A6880E0198B200DCA546 /* endian.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		2862A6890E0198B200DCA546 /* func.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = func.h; sourceTree = "<group>"; };
+		2862A68A0E0198B200DCA546 /* hash-str.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "hash-str.h"; sourceTree = "<group>"; };
+		2862A68B0E0198B200DCA546 /* hashmap.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = hashmap.cpp; sourceTree = "<group>"; };
+		2862A68C0E0198B200DCA546 /* hashmap.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = hashmap.h; sourceTree = "<group>"; };
+		2862A68D0E0198B200DCA546 /* memorypool.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = memorypool.cpp; sourceTree = "<group>"; };
+		2862A68E0E0198B200DCA546 /* memorypool.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = memorypool.h; sourceTree = "<group>"; };
+		2862A6900E0198B200DCA546 /* str.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = str.cpp; sourceTree = "<group>"; };
+		2862A6910E0198B200DCA546 /* str.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = str.h; sourceTree = "<group>"; };
+		2862A6920E0198B200DCA546 /* util.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		289EEE0B0D8921CA00521A80 /* audiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = audiostream.cpp; sourceTree = "<group>"; };
 		289EEE0C0D8921CA00521A80 /* audiostream.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = audiostream.h; sourceTree = "<group>"; };
 		289EEE0D0D8921CA00521A80 /* mixer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = mixer.cpp; sourceTree = "<group>"; };
@@ -128,7 +143,6 @@
 		289EEE1D0D8921E400521A80 /* mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = mutex.cpp; sourceTree = "<group>"; };
 		289EEE1E0D8921E400521A80 /* mutex.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = mutex.h; sourceTree = "<group>"; };
 		289EEE1F0D8921E400521A80 /* noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = noncopyable.h; sourceTree = "<group>"; };
-		289EEE200D8921E400521A80 /* platform.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
 		289EEE210D8921E400521A80 /* sys.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = sys.h; sourceTree = "<group>"; };
 		289EEE220D8921E400521A80 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		289EEE230D8921E400521A80 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = vector3d.h; sourceTree = "<group>"; };
@@ -341,6 +355,18 @@
 		289EEE140D8921E400521A80 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				2862A6860E0198B200DCA546 /* algorithm.h */,
+				2862A6870E0198B200DCA546 /* array.h */,
+				2862A6880E0198B200DCA546 /* endian.h */,
+				2862A6890E0198B200DCA546 /* func.h */,
+				2862A68A0E0198B200DCA546 /* hash-str.h */,
+				2862A68B0E0198B200DCA546 /* hashmap.cpp */,
+				2862A68C0E0198B200DCA546 /* hashmap.h */,
+				2862A68D0E0198B200DCA546 /* memorypool.cpp */,
+				2862A68E0E0198B200DCA546 /* memorypool.h */,
+				2862A6900E0198B200DCA546 /* str.cpp */,
+				2862A6910E0198B200DCA546 /* str.h */,
+				2862A6920E0198B200DCA546 /* util.h */,
 				289EEE150D8921E400521A80 /* debug.cpp */,
 				289EEE160D8921E400521A80 /* debug.h */,
 				289EEE170D8921E400521A80 /* frac.h */,
@@ -352,7 +378,6 @@
 				289EEE1D0D8921E400521A80 /* mutex.cpp */,
 				289EEE1E0D8921E400521A80 /* mutex.h */,
 				289EEE1F0D8921E400521A80 /* noncopyable.h */,
-				289EEE200D8921E400521A80 /* platform.h */,
 				289EEE210D8921E400521A80 /* sys.h */,
 				289EEE220D8921E400521A80 /* timer.h */,
 				289EEE230D8921E400521A80 /* vector3d.h */,
@@ -700,6 +725,9 @@
 				289EEF2D0D8921F600521A80 /* zmath.cpp in Sources */,
 				289EEF2E0D8921F600521A80 /* ztriangle.cpp in Sources */,
 				289EEF2F0D8921F600521A80 /* walkplane.cpp in Sources */,
+				2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */,
+				2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */,
+				2862A6970E0198B200DCA546 /* str.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -749,6 +777,7 @@
 					"-I/sw/include/SDL",
 					"-D_GNU_SOURCE=1",
 					"-D_THREAD_SAFE",
+					"-DSYSTEM_LITTLE_ENDIAN",
 				);
 				OTHER_LDFLAGS = (
 					"-L/sw/lib",
@@ -786,6 +815,7 @@
 					"-I/sw/include/SDL",
 					"-D_GNU_SOURCE=1",
 					"-D_THREAD_SAFE",
+					"-DSYSTEM_LITTLE_ENDIAN",
 				);
 				OTHER_LDFLAGS = (
 					"-L/sw/lib",
