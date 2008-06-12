@@ -20,6 +20,11 @@
  *
  */
 
+#ifdef _WIN32
+#include <windows.h>
+#undef ARRAYSIZE
+#endif
+
 #include "common/sys.h"
 #include "common/endian.h"
 #include "common/util.h"
@@ -53,8 +58,6 @@
 extern Imuse *g_imuse;
 
 #ifdef _WIN32
-
-#include <windows.h>
 
 extern WIN32_FIND_DATAA g_find_file_data;
 extern HANDLE g_searchFile;

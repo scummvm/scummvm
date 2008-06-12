@@ -70,6 +70,7 @@
 				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				EntryPointSymbol="WinMainCRTStartup"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -157,6 +158,7 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="0"
+				EntryPointSymbol="WinMainCRTStartup"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -191,6 +193,14 @@
 			Name="common"
 			>
 			<File
+				RelativePath="..\..\common\algorithm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\array.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\debug.cpp"
 				>
 			</File>
@@ -199,7 +209,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\endian.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\frac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\func.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\hash-str.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\hashmap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\hashmap.h"
 				>
 			</File>
 			<File
@@ -223,6 +253,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\memorypool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\memorypool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\module.mk"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\mutex.cpp"
 				>
 			</File>
@@ -235,7 +277,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\platform.h"
+				RelativePath="..\..\common\str.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\str.h"
 				>
 			</File>
 			<File
@@ -247,7 +293,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\util.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\vector3d.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\zlib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\zlib.h"
 				>
 			</File>
 		</Filter>
