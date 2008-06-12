@@ -30,10 +30,15 @@
 #include "graphics/surface.h"
 #include "common/system.h"
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "common/stack.h"
+
 namespace GUI {
 
 class ThemeParser {
 
+public:
 	ThemeParser() {}
 	~ThemeParser() {}
 
@@ -43,11 +48,16 @@ class ThemeParser {
 		kParserKeyNeedSubkey,
 		kParserNeedKey,
 		kParserInComment,
-		kParserError
+		kParserError,
+		kParserSuccess
 	};
 
 	bool parseDrawData();
+	void parseKeyValue(Common::String &key_name);
+	void parseActiveKey(bool closed);
 	void parserError(const char *error_string);
+
+	void debug_testEval();
 	
 protected:
 	int _pos;
@@ -57,6 +67,9 @@ protected:
 
 	Common::String _error;
 	Common::String _token;
+
+	Common::FixedStack<Common::String, 5> _activeKey;
+	Common::StringMap _keyValues;
 };
 
 }

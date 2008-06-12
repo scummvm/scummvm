@@ -43,6 +43,7 @@
 #include "gui/newgui.h"
 #include "gui/message.h"
 #include "gui/InterfaceManager.h"
+#include "gui/ThemeParser.h"
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -70,6 +71,8 @@ static bool launcherDialog(OSystem &system) {
 
 #if 1
 
+	GUI::ThemeParser parser;
+	parser.debug_testEval();
 	g_InterfaceManager.runGUI();
 	return true;
 
