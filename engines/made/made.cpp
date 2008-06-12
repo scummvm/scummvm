@@ -35,6 +35,7 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+#include "sound/audiocd.h"
 #include "sound/mixer.h"
 
 #include "made/made.h"
@@ -87,7 +88,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_res = new ProjectReader();
 	_screen = new Screen(this);
 
-	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE) {
+	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
 		_dat = new GameDatabaseV2(this);
 	} else if (getGameID() == GID_RTZ) {
 		_dat = new GameDatabaseV3(this);
@@ -119,7 +120,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	// Set default sound frequency
 	// Return to Zork sets it itself via a script funtion
-	if (getGameID() == GID_MANHOLE) {
+	if (getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
 		_soundRate = 11025;
 	} else {
 		_soundRate = 8000;
@@ -238,6 +239,8 @@ void MadeEngine::handleEvents() {
 
 		}
 	}
+	
+	AudioCD.updateCD();
 
 }
 
@@ -245,7 +248,7 @@ int MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
 		_timers[i] = -1;
-	
+
 	if (getGameID() == GID_RTZ) {
 		_engineVersion = 3;
 		if (getFeatures() & GF_DEMO) {
@@ -271,6 +274,10 @@ int MadeEngine::go() {
 		_engineVersion = 2;
 		_dat->open("lgop2.dat");
 		_res->open("lgop2.prj");
+	} else if (getGameID() == GID_RODNEY) {
+		_engineVersion = 2;
+		_dat->open("rodneys.dat");
+		_res->open("rodneys.prj");
 	} else {
 		error ("Unknown MADE game");
 	}

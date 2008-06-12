@@ -95,6 +95,7 @@ public:
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 	bool isPaletteLocked() { return _paletteLock; }
 	void setPaletteLock(bool lock) { _paletteLock = lock; }
+	bool isScreenLocked() { return _screenLock; }
 	void setScreenLock(bool lock) { _screenLock = lock; }
 	void setVisualEffectNum(int visualEffectNum) { _visualEffectNum = visualEffectNum; }
 

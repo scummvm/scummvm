@@ -65,6 +65,7 @@ static const PlainGameDescriptor madeGames[] = {
 	{"manhole", "The Manhole"},
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
+	{"rodney", "Rodney's Fun Screen"},
 	{0, 0}
 };
 
@@ -271,6 +272,22 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GID_LGOP2,
+		0,
+		GF_FLOPPY,
+		0,
+	},
+
+	{
+		// Rodney's Fun Screen
+		{
+			"rodney",
+			"",
+			AD_ENTRY1("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RODNEY,
 		0,
 		GF_FLOPPY,
 		0,
