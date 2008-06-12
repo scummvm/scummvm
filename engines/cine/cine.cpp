@@ -70,6 +70,7 @@ CineEngine::~CineEngine() {
 	}
 	Common::clearAllSpecialDebugLevels();
 
+	free(palPtr);
 	free(partBuffer);
 	free(textDataPtr);
 }
