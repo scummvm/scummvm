@@ -24,7 +24,6 @@
 #define SOUND_MIXER_H
 
 #include "common/sys.h"
-#include "common/platform.h"
 #include "common/mutex.h"
 
 namespace Audio {

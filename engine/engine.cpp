@@ -49,6 +49,8 @@ int g_flags = 0;
 
 #ifdef _WIN32
 
+#include <windows.h>
+
 WIN32_FIND_DATAA g_find_file_data;
 HANDLE g_searchFile;
 bool g_firstFind;

@@ -23,7 +23,7 @@
 #ifndef BACKEND_DRIVER_H
 #define BACKEND_DRIVER_H
 
-#include "common/platform.h"
+#include "common/sys.h"
 #include "common/vector3d.h"
 #include "common/mutex.h"
 

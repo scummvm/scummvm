@@ -23,7 +23,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "common/platform.h"
+#include "common/sys.h"
 
 class Color {
 public:

@@ -48,7 +48,7 @@ void DriverRonin::setupCamera(float fov, float nclip, float fclip, float roll)
 
 	clearMatrixStack();
 
-	float cot_fov = 1 / std::tan(fov * (M_PI / 180 / 2));
+	float cot_fov = 1 / std::tan(fov * (LOCAL_PI / 180 / 2));
 	float frustum[4][4] = {
 		{ (-640/2) * cot_fov, 0, 0, 0 },
 		{ 0, (480/2 / 0.75) * cot_fov, 0, 0 },

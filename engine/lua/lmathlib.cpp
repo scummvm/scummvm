@@ -12,13 +12,13 @@
 #include "lua.h"
 #include "lualib.h"
 
-#ifndef PI
-#define PI          ((double)3.14159265358979323846)
+#ifndef LOCAL_PI
+#define LOCAL_PI          (3.14159265358979323846)
 #endif
 
 
-#define FROMRAD(a) ((a)*(180.0/PI))
-#define TORAD(a)    ((a)*(PI/180.0))
+#define FROMRAD(a) ((a)*(180.0/LOCAL_PI))
+#define TORAD(a)    ((a)*(LOCAL_PI/180.0))
 
 
 static void math_abs (void)
@@ -105,12 +105,12 @@ static void math_exp (void)
 
 static void math_deg (void)
 {
-  lua_pushnumber(luaL_check_number(1)*(180.0/PI));
+  lua_pushnumber(luaL_check_number(1)*(180.0/LOCAL_PI));
 }
 
 static void math_rad (void)
 {
-  lua_pushnumber(luaL_check_number(1)*(PI/180.0));
+  lua_pushnumber(luaL_check_number(1)*(LOCAL_PI/180.0));
 }
 
 static void math_frexp (void) {
@@ -211,6 +211,6 @@ void lua_mathlibopen (void)
   lua_pushcfunction(math_pow);
   lua_pushnumber(0);  /* to get its tag */
   lua_settagmethod(lua_tag(lua_pop()), "pow");
-  lua_pushnumber(PI); lua_setglobal("PI");
+  lua_pushnumber(LOCAL_PI); lua_setglobal("PI");
 }
 

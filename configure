@@ -1,0 +1,1238 @@
+#!/bin/sh
+#
+# configure -- custom configure script for Residual.
+#
+# ScummVM is the legal property of its developers, whose names
+# are too numerous to list here. Please refer to the COPYRIGHT
+# file distributed with this source distribution.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# $URL$
+# $Id$
+
+# Save the current environment variables for next runs
+SAVED_CONFIGFLAGS=$@
+SAVED_LDFLAGS=$LDFLAGS
+SAVED_CXX=$CXX
+SAVED_CXXFLAGS=$CXXFLAGS
+SAVED_CPPFLAGS=$CPPFLAGS
+
+# use environment vars if set
+CXXFLAGS="$CXXFLAGS $CPPFLAGS"
+
+# Backslashes into forward slashes:
+# The following OS/2 specific code is performed to deal with handling of backslashes by ksh.
+# Borrowed from the Sane configure script
+
+if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
+	ac_save_IFS="$IFS"
+	IFS="\\"
+	ac_TEMP_PATH=
+	for ac_dir in $PATH; do
+		IFS=$ac_save_IFS
+		if test -z "$ac_TEMP_PATH"; then
+			ac_TEMP_PATH="$ac_dir"
+		else
+			ac_TEMP_PATH="$ac_TEMP_PATH/$ac_dir"
+		fi
+	done
+	PATH="$ac_TEMP_PATH"
+	export PATH
+	unset ac_TEMP_PATH
+fi
+
+
+# default lib behaviour yes/no/auto
+_vorbis=auto
+_tremor=auto
+_flac=auto
+_mad=auto
+_alsa=auto
+_zlib=auto
+_mpeg2=auto
+
+_endian=unknown
+_need_memalign=no
+_have_x86=no
+
+# more defaults
+_backend=sdl
+_ranlib=ranlib
+_ar="ar cru"
+_windres=windres
+_win32path="C:/residual"
+_aos4path="Games:Residual"
+_sdlconfig=sdl-config
+_sdlpath="$PATH"
+_prefix=/usr/local
+
+_srcdir=`dirname $0`
+
+# Determine a tmp file name, using mktemp(1) when available.
+if type mktemp > /dev/null 2>&1 ; then
+	TMPO=`mktemp`
+else
+	TMPO=${_srcdir}/residual-conf
+fi
+TMPC=${TMPO}.cpp
+TMPLOG=${_srcdir}/config.log
+
+# For cross compiling
+_host=""
+_host_cpu=""
+_host_vendor=""
+_host_os=""
+
+cc_check() {
+	echo >> "$TMPLOG"
+	cat "$TMPC" >> "$TMPLOG"
+	echo >> "$TMPLOG"
+	echo "$CXX $TMPC -o $TMPO$EXEEXT $@" >> "$TMPLOG"
+	rm -f "$TMPO$EXEEXT"
+	rm -rf "$TMPO.dSYM"
+	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$EXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	TMP="$?"
+	echo >> "$TMPLOG"
+	return "$TMP"
+}
+
+echocheck () {
+	echo_n "Checking for $@... "
+}
+
+# Add a line of data to config.mk.
+add_line_to_config_mk() {
+	_config_mk_data="$_config_mk_data"'
+'"$1"
+}
+
+# Add a line of data to config.h.
+add_line_to_config_h() {
+	_config_h_data="$_config_h_data"'
+'"$1"
+}
+
+add_to_config_h_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_h "$2"
+	else
+		add_line_to_config_h "/* $2 */"
+	fi
+}
+
+# Conditionally add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'no' to "comment out" the line, i.e.
+# make it ineffective, use 'yes' otherwise.
+# The second param is the line to insert.
+add_to_config_mk_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_mk "$2"
+	else
+		add_line_to_config_mk "# $2"
+	fi
+}
+
+# Conditionally add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'yes' to "comment out" the line, i.e.
+# make it ineffective, use 'no' otherwise.
+# The second param is the line to insert.
+add_to_config_mk_if_no() {
+	if test "$1" = no ; then
+		add_line_to_config_mk "$2"
+	else
+		add_line_to_config_mk "# $2"
+	fi
+}
+
+#
+# Check whether the given command is a working C++ compiler
+#
+test_compiler ()
+{
+cat <<EOF >tmp_cxx_compiler.cpp
+class Foo {
+	int a;
+};
+int main(int argc, char **argv)
+{
+	Foo *a = new Foo();
+	delete a;
+	return 0;
+}
+EOF
+
+if test -n "$_host"; then
+	# In cross-compiling mode, we cannot run the result
+	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -rf tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp tmp_cxx_compiler.dSYM
+else
+	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp tmp_cxx_compiler.dSYM
+fi
+}
+
+#
+# Determine sdl-config
+#
+# TODO: small bit of code to test sdl useability
+find_sdlconfig()
+{
+
+	echo_n "Looking for sdl-config... "
+	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	_sdlconfig=
+
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
+	for path_dir in $_sdlpath; do
+		#reset separator to parse sdlconfigs
+		IFS=":"
+		for sdlconfig in $sdlconfigs; do
+			if test -f "$path_dir/$sdlconfig" ; then
+				_sdlconfig="$path_dir/$sdlconfig"
+				echo $_sdlconfig
+				# Save the prefix
+				_sdlpath=$path_dir
+				if test `basename $path_dir` = bin ; then
+					_sdlpath=`dirname $path_dir`
+				fi
+				# break at first sdl-config found in path
+				break 2
+			fi
+		done
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test -z "$_sdlconfig"; then
+		echo "none found!"
+		exit 1
+	fi
+}
+
+#
+# Function to provide echo -n for bourne shells that don't have it
+#
+echo_n()
+{
+	printf "$@"
+}
+
+#
+# Determine a data type with the given length
+#
+find_type_with_size ()
+{
+for datatype in int short char long unknown; do
+cat <<EOF >tmp_find_type_with_size.cpp
+typedef $datatype ac__type_sizeof_;
+int main() {
+	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
+	test_array [0] = 0;
+	return 0;
+}
+EOF
+if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+	break
+else
+	if test "$datatype" = "unknown"; then
+		echo "couldn't find data type with $1 bytes"
+		exit 1
+	fi
+	continue
+fi
+done
+rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
+echo $datatype
+}
+
+# Show the configure help line for an option
+option_help() {
+        tmpopt=`echo $1 | sed 's/_/-/g'`
+	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	echo "  ${option}  ${2}"
+}
+
+#
+# Greet user
+#
+
+echo "Running Residual configure..."
+echo "Configure run on" `date` > $TMPLOG
+
+#
+# Check any parameters we received
+#
+# TODO:
+# * Change --disable-mad / --enable-mad to the way it's done in autoconf:
+#  That is, --without-mad / --with-mad=/prefix/to/mad. Useful for people
+#  who have Mad/Vorbis/ALSA installed in a non-standard locations.
+#
+
+for parm in "$@" ; do
+	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
+		cat << EOF
+
+Usage: $0 [OPTIONS]...
+
+Configuration:
+  -h, --help             display this help and exit
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, null) [sdl]
+
+Installation directories:
+  --prefix=DIR           use this prefix for installing Residual [/usr/local]
+  --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
+  --mandir=DIR           directory to install the manpage in [PREFIX/share/man]
+  --datadir=DIR          directory to install the data files in [PREFIX/share]
+  --libdir=DIR           directory to install the plugins in [PREFIX/lib]
+
+Special configuration feature:
+  --host=HOST            cross-compile to target HOST (arm-linux, ...)
+                         special targets: linupy for Yopy PDA
+
+Optional Features:
+  --disable-debug          disable building with debugging symbols
+  --enable-Werror          treat warnings as errors
+
+Optional Libraries:
+  --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
+  --disable-alsa           disable ALSA midi sound support [autodetect]
+
+  --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
+  --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
+  --disable-vorbis         disable Ogg Vorbis support [autodetect]
+
+  --with-tremor-prefix=DIR Prefix where tremor is installed (optional)
+  --disable-tremor         disable tremor support [autodetect]
+
+  --with-mad-prefix=DIR    Prefix where libmad is installed (optional)
+  --disable-mad            disable libmad (MP3) support [autodetect]
+
+  --with-flac-prefix=DIR   Prefix where libFLAC is installed (optional)
+  --disable-flac           disable FLAC support [autodetect]
+
+  --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
+  --disable-zlib           disable zlib (compression) support [autodetect]
+
+  --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
+  --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
+
+  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
+
+Some influential environment variables:
+  LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
+            nonstandard directory <lib dir>
+  CXX       C++ compiler command
+  CXXFLAGS  C++ compiler flags
+  CPPFLAGS  C++ preprocessor flags, e.g. -I<include dir> if you have
+            headers in a nonstandard directory <include dir>
+
+EOF
+		exit 0
+	fi
+done # for parm in ...
+
+DEBFLAGS="-g"
+
+option_error() {
+	echo "error: unrecognised option: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
+for ac_option in $@; do
+	case "$ac_option" in
+	--enable-alsa)            _alsa=yes       ;;
+	--disable-alsa)           _alsa=no        ;;
+	--enable-vorbis)          _vorbis=yes     ;;
+	--disable-vorbis)         _vorbis=no      ;;
+	--enable-tremor)          _tremor=yes     ;;
+	--disable-tremor)         _tremor=no      ;;
+	--enable-flac)            _flac=yes       ;;
+	--disable-flac)           _flac=no        ;;
+	--enable-mad)             _mad=yes        ;;
+	--disable-mad)            _mad=no         ;;
+	--enable-zlib)            _zlib=yes       ;;
+	--disable-zlib)           _zlib=no        ;;
+	--disable-mpeg2)          _mpeg2=no       ;;
+	--with-mpeg2-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		MPEG2_CFLAGS="-I$arg/include"
+		MPEG2_LIBS="-L$arg/lib"
+		;;
+	--with-alsa-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ALSA_CFLAGS="-I$arg/include"
+		ALSA_LIBS="-L$arg/lib"
+		;;
+	--with-ogg-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		OGG_CFLAGS="-I$arg/include"
+		OGG_LIBS="-L$arg/lib"
+		;;
+	--with-vorbis-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		VORBIS_CFLAGS="-I$arg/include"
+		VORBIS_LIBS="-L$arg/lib"
+		;;
+	--with-tremor-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		TREMOR_CFLAGS="-I$arg/include"
+		TREMOR_LIBS="-L$arg/lib"
+		;;
+	--with-flac-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FLAC_CFLAGS="-I$arg/include"
+		FLAC_LIBS="-L$arg/lib"
+		;;
+	--with-mad-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		MAD_CFLAGS="-I$arg/include"
+		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-zlib-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ZLIB_CFLAGS="-I$arg/include"
+		ZLIB_LIBS="-L$arg/lib"
+		;;
+	--backend=*)
+		_backend=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-debug)
+		# debug is enabled by default
+		;;
+	--disable-debug)
+		DEBFLAGS=""
+		;;
+	--enable-Werror)
+		CXXFLAGS="$CXXFLAGS -Werror"
+		;;
+	--enable-release)
+		DEBFLAGS="-O2 -Wuninitialized"
+		;;
+	--with-sdl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_sdlpath="$arg:$arg/bin"
+		;;
+	--host=*)
+		_host=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--prefix=*)
+		_prefix=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--bindir=*)
+		_bindir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--mandir=*)
+		_mandir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--datadir=*)
+		_datadir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--libdir=*)
+		_libdir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-*)
+		engine_enable `echo $ac_option | cut -d '-' -f 4-`
+		;;
+	--disable-*)
+		engine_disable `echo $ac_option | cut -d '-' -f 4-`
+		;;
+	*)
+		option_error
+		;;
+	esac;
+done;
+
+CXXFLAGS="$CXXFLAGS $DEBFLAGS"
+
+case $_host in
+linupy)
+	_host_os=linux
+	_host_cpu=arm
+	;;
+arm-riscos)
+	_host_os=riscos
+	_host_cpu=arm
+	;;
+ppc-amigaos)
+	_host_os=amigaos
+	_host_cpu=ppc
+	;;
+i586-mingw32msvc)
+	_host_os=mingw32msvc
+	_host_cpu=i586
+	;;
+iphone)
+	_host_os=iphone
+	_host_cpu=arm
+	;;
+*)
+	if test -z "$_host"; then
+		guessed_host=`$_srcdir/config.guess`
+	else
+		guessed_host=`$_srcdir/config.sub $_host`
+	fi
+	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+	_host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+	;;
+esac
+
+#
+# Determine extension used for executables
+#
+case $_host_os in
+mingw* | cygwin* | os2-emx*)
+	EXEEXT=".exe"
+	;;
+arm-riscos)
+	EXEEXT=",ff8"
+	;;
+gp2x-linux)
+	EXEEXT=".gp2x"
+	;;
+*)
+	EXEEXT=""
+	;;
+esac
+
+#
+# Determine separator used for $PATH
+#
+case $_host_os in
+os2-emx* )
+	SEPARATOR=";"
+	;;
+* )
+	SEPARATOR=":"
+	;;
+esac
+
+#
+# Determine the C++ compiler
+#
+echo_n "Looking for C++ compiler... "
+if test -n "$_host"; then
+	compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++ $_host-g++ $_host-c++"
+else
+	compilers="$CXX g++ c++"
+fi
+
+CXX=
+for compiler in $compilers; do
+	if test_compiler $compiler; then
+	CXX=$compiler
+	echo $CXX
+	break
+	fi
+done
+if test -z "$CXX"; then
+	echo "none found!"
+	exit 1
+fi
+
+#
+# Determine the compiler version
+
+echocheck "compiler version"
+
+case $_host_os in
+	# On Solaris, use Unix-compliant tail
+	solaris*)
+		tail=/usr/xpg4/bin/tail
+		;;
+
+	# All other OSes: use the tail in PATH
+	*)
+		tail=tail
+		;;
+esac
+
+
+cxx_version=`( $CXX -dumpversion ) 2>&1`
+if test "$?" -gt 0; then
+	cxx_version="not found"
+fi
+
+case $cxx_version in
+	2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
+		_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
+		_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
+		cxx_version="$cxx_version, ok"
+		cxx_verc_fail=no
+		;;
+	# whacky beos version strings
+	2.9-beos-991026*|2.9-beos-000224*)
+		_cxx_major=2
+		_cxx_minor=95
+		cxx_version="$cxx_version, ok"
+		cxx_verc_fail=no
+		;;
+	3_4)
+		_cxx_major=3
+		_mxx_minor=4
+		;;
+	'not found')
+		cxx_verc_fail=yes
+		;;
+	*)
+		cxx_version="$cxx_version, bad"
+		cxx_verc_fail=yes
+		;;
+esac
+
+echo "$cxx_version"
+
+if test "$cxx_verc_fail" = yes ; then
+	echo
+	echo "The version of your compiler is not supported at this time"
+	echo "Please ensure you are using GCC >= 2.95"
+	exit 1
+fi
+
+#
+# Do CXXFLAGS now we know the compiler version
+#
+
+if test "$_cxx_major" -ge "3" ; then
+	case $_host_os in
+	mingw* | cygwin*)
+		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+		;;
+	*)
+		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+		;;
+	esac
+	add_line_to_config_mk 'HAVE_GCC3 = 1'
+fi;
+
+if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
+else
+	CXXFLAGS="$CXXFLAGS -Wconversion"
+fi;
+
+#
+# Check for endianness
+#
+echo_n "Checking endianness... "
+cat <<EOF >tmp_endianness_check.cpp
+short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
+short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
+void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
+short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
+short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
+void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
+int main() { _ascii (); _ebcdic (); return 0; }
+EOF
+$CXX $CXXFLAGS -c -o tmp_endianness_check.o tmp_endianness_check.cpp
+if strings tmp_endianness_check.o | grep BIGenDianSyS >/dev/null; then
+	_endian=big
+else
+	_endian=little
+fi
+echo $_endian;
+rm -f tmp_endianness_check.o tmp_endianness_check.cpp
+
+#
+# Determine data type sizes
+# TODO: proper error checking
+# TODO: Actually, we should check individually for both signed & unsigned
+# data types - there are systems on which the size of an unsigned int
+# differs from that of a signed int!
+# However, so far we haven't encountered one of those, so we can live with
+# the limited check for now.
+#
+echo_n "Type with 1 byte... "
+type_1_byte=`find_type_with_size 1`
+TMP="$?"
+echo "$type_1_byte"
+test $TMP -eq 0 || exit 1	# check exit code of subshell
+
+echo_n "Type with 2 bytes... "
+type_2_byte=`find_type_with_size 2`
+TMP="$?"
+echo "$type_2_byte"
+test $TMP -eq 0 || exit 1	# check exit code of subshell
+
+echo_n "Type with 4 bytes... "
+type_4_byte=`find_type_with_size 4`
+TMP="$?"
+echo "$type_4_byte"
+test $TMP -eq 0 || exit 1	# check exit code of subshell
+
+#
+# Check whether we can use x86 asm routines
+#
+echo_n "Running on x86... "
+case $_host_cpu in
+	i386|i486|i586|i686)
+		_have_x86=yes
+		;;
+	*)
+		_have_x86=no
+		;;
+esac
+echo "$_have_x86"
+
+#
+# Determine build settings
+#
+# TODO - also add an command line option to override this?!?
+echo_n "Checking hosttype... "
+echo $_host_os
+case $_host_os in
+	linux* | uclinux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux*)
+		DEFINES="$DEFINES -DUNIX"
+		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		;;
+	beos*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		LIBS="$LIBS -lbind"
+		type_1_byte='char'
+		type_2_byte='short'
+		type_4_byte='long'
+		;;	
+	solaris*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		LIBS="$LIBS -lnsl"
+		;;
+	irix*)
+		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		LIBS="$LIBS -lmd"
+		_ranlib=:
+		;;
+	darwin*)
+		DEFINES="$DEFINES -DUNIX -DMACOSX"
+		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -lGL -lGLU -L/usr/X11/lib \
+		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+		;;
+	mingw*)
+		DEFINES="$DEFINES -DWIN32"
+		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
+		#OBJS="$OBJS residualico.o"
+		;;
+	cygwin*)
+		DEFINES="$DEFINES -mno-cygwin -DWIN32"
+		LIBS="$LIBS -mno-cygwin -lmingw32 -lopengl32 -lglu32"
+		#OBJS="$OBJS residualico.o"
+		;;
+	os2-emx*)
+		DEFINES="$DEFINES -DUNIX"
+		;;
+	mint*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		;;
+	amigaos*)
+		# TODO: anything to be added here?
+		;;
+	# given this is a shell script assume some type of unix
+	*)
+		echo "WARNING: could not establish system type, assuming unix like"
+		DEFINES="$DEFINES -DUNIX"
+		;;
+esac
+
+if test -n "$_host"; then
+	# Cross-compiling mode - add your target here if needed
+	case "$_host" in
+		linupy|arm-riscos)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_h "#define LINUPY"
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			;;
+		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			;;
+		bfin*)
+			_need_memalign=yes
+			;;
+		gp2x)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			_backend="gp2x"
+			;;
+		ppc-amigaos)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=big
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='long'
+			CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
+			LDFLAGS="$LDFLAGS -mcrt=newlib"
+			;;
+		m68k-atari-mint)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+			_endian=big
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='long'
+			_ranlib=m68k-atari-mint-ranlib
+			_ar="m68k-atari-mint-ar cru"
+			;;
+		*mingw32*)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=little
+			_have_x86=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_sdlconfig=$_host-sdl-config
+			_windres=$_host-windres
+			_ar="$_host-ar cru"
+			_ranlib=$_host-ranlib
+			;;
+		iphone)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SOUND_ASM"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			_backend="iphone"
+			;;
+		*)
+			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
+			;;
+	esac
+
+else
+	#
+	# Check whether memory alignment is required
+	#
+	echo_n "Alignment required... "
+	case $_host_cpu in
+		arm*)
+			_need_memalign=yes
+			;;
+		alpha*)
+			# Hardcode alignment requirements for Alpha processsors
+			_need_memalign=yes
+			;;
+		sh*)
+			# Hardcode alignment requirements for SH processsors.
+			# While these can emulate unaligned memory access, this
+			# emulation is rather slow.
+			_need_memalign=yes
+			;;
+		mips*)
+			# Hardcode alignment requirements for MIPS processsors.
+			# While these can emulate unaligned memory access, this
+			# emulation is rather slow.
+			_need_memalign=yes
+			;;
+		*)
+			# Try to auto-detect....
+			cat > $TMPC << EOF
+#include <stdlib.h>
+#include <signal.h>
+int main(int argc, char **argv)
+{
+	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
+	signal(SIGBUS, exit);
+	signal(SIGABRT, exit);
+	signal(SIGSEGV, exit);
+	if (*((unsigned int *)(test + 1)) != 0x55443322 && *((unsigned int *)(test + 1)) != 0x22334455) {
+		return 1;
+	}
+	return 0;
+}
+EOF
+			_need_memalign=yes
+			cc_check && $TMPO$EXEEXT && _need_memalign=no
+			;;
+	esac
+	echo "$_need_memalign"
+fi
+
+#
+# Add the results of the above checks to config.h
+#
+case $_endian in
+	big)
+		add_line_to_config_h '/* #define SYSTEM_LITTLE_ENDIAN */'
+		add_line_to_config_h '#define SYSTEM_BIG_ENDIAN'
+		;;
+	little)
+		add_line_to_config_h '#define SYSTEM_LITTLE_ENDIAN'
+		add_line_to_config_h '/* #define SYSTEM_BIG_ENDIAN */'
+		;;
+	*)
+		exit 1
+		;;
+esac
+
+add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
+
+add_to_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
+
+#
+# Check for math lib
+#
+cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+cc_check $LDFLAGS $CXXFLAGS && LDFLAGS="$LDFLAGS"
+
+#
+# Check for Ogg Vorbis
+#
+echocheck "Ogg Vorbis"
+if test "$_vorbis" = auto ; then
+	_vorbis=no
+	cat > $TMPC << EOF
+#include <vorbis/codec.h>
+int main(void) { vorbis_packet_blocksize(0,0); return 0; }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+		-lvorbisfile -lvorbis -logg && _vorbis=yes
+fi
+if test "$_vorbis" = yes ; then
+	_def_vorbis='#define USE_VORBIS'
+	LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
+	INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
+else
+	_def_vorbis='#undef USE_VORBIS'
+fi
+add_to_config_mk_if_yes "$_vorbis" 'USE_VORBIS = 1'
+echo "$_vorbis"
+
+#
+# Check for Tremor
+#
+echocheck "Tremor"
+if test "$_tremor" = auto ; then
+	_tremor=no
+	cat > $TMPC << EOF
+#include <tremor/ivorbiscodec.h>
+int main(void) { vorbis_packet_blocksize(0,0); return 0; }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+	_tremor=yes
+fi
+if test "$_tremor" = yes && test "$_vorbis" = no; then
+	_def_tremor='#define USE_TREMOR'
+	_def_vorbis='#define USE_VORBIS'
+	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
+else
+	if test "$_vorbis" = yes; then
+		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
+	fi
+	_def_tremor='#undef USE_TREMOR'
+fi
+add_to_config_mk_if_yes "$_tremor" 'USE_TREMOR = 1'
+echo "$_tremor"
+
+#
+# Check for FLAC
+#
+echocheck "FLAC >= 1.0.1"
+if test "$_flac" = auto ; then
+	_flac=no
+	cat > $TMPC << EOF
+#include <FLAC/format.h>
+int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+		-lFLAC -logg && _flac=yes
+fi
+if test "$_flac" = yes ; then
+	_def_flac='#define USE_FLAC'
+	if test "$_vorbis" = yes ; then
+		LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
+	else
+		LIBS="$LIBS $FLAC_LIBS -lFLAC"
+	fi
+	INCLUDES="$INCLUDES $FLAC_CFLAGS"
+else
+	_def_flac='#undef USE_FLAC'
+fi
+add_to_config_mk_if_yes "$_flac" 'USE_FLAC = 1'
+echo "$_flac"
+
+#
+# Check for MAD (MP3 library)
+#
+echocheck "MAD"
+if test "$_mad" = auto ; then
+	_mad=no
+	cat > $TMPC << EOF
+#include <mad.h>
+int main(void) {return 0; }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
+fi
+if test "$_mad" = yes ; then
+	_def_mad='#define USE_MAD'
+	LIBS="$LIBS $MAD_LIBS -lmad"
+	INCLUDES="$INCLUDES $MAD_CFLAGS"
+else
+	_def_mad='#undef USE_MAD'
+fi
+add_to_config_mk_if_yes "$_mad" 'USE_MAD = 1'
+echo "$_mad"
+
+#
+# Check for ALSA
+#
+echocheck "ALSA >= 0.9"
+if test "$_alsa" = auto ; then
+	_alsa=no
+	cat > $TMPC << EOF
+#include <alsa/asoundlib.h>
+int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
+fi
+if test "$_alsa" = yes ; then
+	_def_alsa='#define USE_ALSA'
+	LIBS="$LIBS $ALSA_LIBS -lasound"
+	INCLUDES="$INCLUDES $ALSA_CFLAGS"
+else
+	_def_alsa='#undef USE_ALSA'
+fi
+echo "$_alsa"
+
+#
+# Check for ZLib
+#
+echocheck "zlib"
+if test "$_zlib" = auto ; then
+	_zlib=no
+	cat > $TMPC << EOF
+#include <string.h>
+#include <zlib.h>
+int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+fi
+if test "$_zlib" = yes ; then
+	_def_zlib='#define USE_ZLIB'
+	LIBS="$LIBS $ZLIB_LIBS -lz"
+	INCLUDES="$INCLUDES $ZLIB_CFLAGS"
+else
+	_def_zlib='#undef USE_ZLIB'
+fi
+echo "$_zlib"
+
+#
+# Check for LibMPEG2
+#
+echocheck "libmpeg2 >= 0.3.2"
+if test "$_mpeg2" = auto ; then
+	_mpeg2=no
+	cat > $TMPC << EOF
+typedef signed $type_1_byte int8_t;
+typedef signed $type_2_byte int16_t;
+typedef signed $type_4_byte int32_t;
+
+typedef unsigned $type_1_byte uint8_t;
+typedef unsigned $type_2_byte uint16_t;
+typedef unsigned $type_4_byte uint32_t;
+
+#include <mpeg2dec/mpeg2.h>
+int main(void) {
+	/* mpeg2_state_t first appears in 0.4.0 */
+	mpeg2_state_t state;
+
+		#ifdef MPEG2_RELEASE
+		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 3, 2))
+			return 0;
+	#endif
+	return 1;
+}
+EOF
+
+	if test -n "$_host"; then
+		# don't execute while cross compiling
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
+	else
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$EXEXT && _mpeg2=yes
+	fi
+fi
+if test "$_mpeg2" = yes ; then
+	_def_mpeg2='#define USE_MPEG2'
+	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
+	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
+else
+	_def_mpeg2='#undef USE_MPEG2'
+fi
+add_to_config_mk_if_yes "$_mpeg2" 'USE_MPEG2 = 1'
+echo "$_mpeg2"
+
+rm -rf $TMPC $TMPO$EXEEXT $TMPO.dSYM
+
+#
+# figure out installation directories
+#
+test -z "$_bindir" && _bindir="$_prefix/bin"
+test -z "$_mandir" && _mandir="$_prefix/share/man"
+test -z "$_datadir" && _datadir="$_prefix/share"
+test -z "$_libdir" && _libdir="$_prefix/lib"
+
+DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/residual\\\""
+
+
+#
+# Backend related stuff
+#
+case $_backend in
+	sdl)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		MODULES="$MODULES engine/backend/sdl"
+		;;
+	gp2x)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS -static"
+		CXXFLAGS="$CXXFLAGS -march=armv4t"
+		MODULES="$MODULES backend/gp2x"
+		;;
+	iphone)
+		OBJCFLAGS="$OBJCFLAGS --std=c99"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework LayerKit -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		DEFINES="$DEFINES -DIPHONE_BACKEND"
+		MODULES="$MODULES backend/iphone"
+		;;
+	*)
+		echo "support for $_backend backend not implemented in configure script yet"
+		exit 1
+		;;
+esac
+
+echo
+echo "Creating config.h"
+cat > config.h << EOF
+/* This file is automatically generated by configure */
+/* DO NOT EDIT MANUALLY */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+$_config_h_data
+
+/* Data types */
+typedef unsigned $type_1_byte byte;
+typedef unsigned int uint;
+typedef unsigned $type_1_byte uint8;
+typedef unsigned $type_2_byte uint16;
+typedef unsigned $type_4_byte uint32;
+typedef signed $type_1_byte int8;
+typedef signed $type_2_byte int16;
+typedef signed $type_4_byte int32;
+
+/* Libs */
+$_def_vorbis
+$_def_tremor
+$_def_flac
+$_def_mad
+$_def_alsa
+$_def_zlib
+$_def_mpeg2
+
+/* Plugin settings */
+$_def_plugin
+
+#endif /* CONFIG_H */
+EOF
+
+echo "Creating config.mk"
+cat > config.mk << EOF
+# -------- Generated by configure -----------
+
+CXX := $CXX
+CXXFLAGS := $CXXFLAGS
+LIBS += $LIBS
+RANLIB := $_ranlib
+AR := $_ar
+WINDRES := $_windres
+WIN32PATH=$_win32path
+AOS4PATH=$_aos4path
+
+BACKEND := $_backend
+MODULES += $MODULES
+MODULE_DIRS += $MODULE_DIRS
+EXEEXT := $EXEEXT
+
+PREFIX := $_prefix
+BINDIR := $_bindir
+MANDIR := $_mandir
+DATADIR := $_datadir
+LIBDIR := $_libdir
+
+$_config_mk_data
+
+INCLUDES += $INCLUDES
+OBJS += $OBJS
+DEFINES += $DEFINES
+LDFLAGS += $LDFLAGS
+
+$_mak_plugins
+
+SAVED_CONFIGFLAGS := $SAVED_CONFIGFLAGS
+SAVED_LDFLAGS     := $SAVED_LDFLAGS
+SAVED_CXX         := $SAVED_CXX
+SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
+SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
+EOF
+
+#
+# Create a custom Makefile when building outside the source tree
+# TODO: Add a better check than just looking for 'Makefile'
+#
+if test ! -f Makefile ; then
+echo "Creating Makefile"
+
+cat > Makefile << EOF
+# -------- Generated by configure -----------
+srcdir = $_srcdir
+vpath %.h \$(srcdir)
+vpath %.cpp \$(srcdir)
+vpath %.c \$(srcdir)
+vpath %.m \$(srcdir)
+vpath %.asm \$(srcdir)
+vpath %.s \$(srcdir)
+include \$(srcdir)/Makefile
+EOF
+
+fi

@@ -21,7 +21,7 @@
  */
 
 #include "common/sys.h"
-#include "common/platform.h"
+#include "common/endian.h"
 #include "common/debug.h"
 #include "common/timer.h"
 
@@ -73,7 +73,7 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 }
 
 void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize) {
-	if (READ_UINT32(ptr) == MKID('RIFF')) {
+	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF')) {
 		sound->region = new Region[1];
 		sound->jump = new Jump[0];
 		sound->numJumps = 0;
@@ -84,7 +84,7 @@ void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize)
 		sound->freq = READ_LE_UINT32(ptr + 24);
 		sound->channels = *(ptr + 22);
 		headerSize = 44;
-	} else if (READ_UINT32(ptr) == MKID('iMUS')) {
+	} else if (READ_BE_UINT32(ptr) == MKID_BE('iMUS')) {
 		uint32 tag;
 		int32 size = 0;
 		byte *s_ptr = ptr;

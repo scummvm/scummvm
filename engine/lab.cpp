@@ -21,7 +21,7 @@
  */
 
 #include "common/sys.h"
-#include "common/platform.h"
+#include "common/endian.h"
 #include "engine/lab.h"
 
 #include <algorithm>

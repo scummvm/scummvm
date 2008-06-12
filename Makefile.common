@@ -1,110 +1,126 @@
-OBJS =\
-	common/debug.o \
-	common/matrix3.o \
-	common/matrix4.o \
-	common/mutex.o \
-	mixer/audiostream.o \
-	mixer/mixer.o \
-	mixer/rate.o \
-	engine/lua/lapi.o \
-	engine/lua/lauxlib.o \
-	engine/lua/lbuffer.o \
-	engine/lua/lbuiltin.o \
-	engine/lua/ldo.o \
-	engine/lua/lfunc.o \
-	engine/lua/lgc.o \
-	engine/lua/liolib.o \
-	engine/lua/llex.o \
-	engine/lua/lmathlib.o \
-	engine/lua/lmem.o \
-	engine/lua/lobject.o \
-	engine/lua/lparser.o \
-	engine/lua/lrestore.o \
-	engine/lua/lsave.o \
-	engine/lua/lstate.o \
-	engine/lua/lstring.o \
-	engine/lua/lstrlib.o \
-	engine/lua/ltable.o \
-	engine/lua/ltask.o \
-	engine/lua/ltm.o \
-	engine/lua/lundump.o \
-	engine/lua/lvm.o \
-	engine/lua/lzio.o \
-	engine/imuse/imuse.o \
-	engine/imuse/imuse_mcmp_mgr.o \
-	engine/imuse/imuse_music.o \
-	engine/imuse/imuse_script.o \
-	engine/imuse/imuse_sndmgr.o \
-	engine/imuse/imuse_tables.o \
-	engine/imuse/imuse_track.o \
-	engine/smush/blocky16.o \
-	engine/smush/smush.o \
-	engine/smush/vima.o \
-	engine/actor.o \
-	engine/bitmap.o \
-	engine/costume.o \
-	engine/engine.o \
-	engine/savegame.o \
-	engine/font.o \
-	engine/keyframe.o \
-	engine/lab.o \
-	engine/lipsynch.o \
-	engine/localize.o \
-	engine/lua.o \
-	engine/main.o \
-	engine/material.o \
-	engine/model.o \
-	engine/objectstate.o \
-	engine/primitives.o \
-	engine/registry.o \
-	engine/resource.o \
-	engine/scene.o \
-	engine/textobject.o \
-	engine/textsplit.o \
-	engine/walkplane.o \
-	$(DRIVER_OBJS)
+# This file is used by Makefile and declares common build rules,
+# a list of common object files etc.
+#
+# $URL$
+# $Id$
 
-DRIVER_OBJS ?=\
-	engine/backend/default-timer.o \
-	engine/backend/sdl/driver_sdl.o \
-	engine/backend/sdl/driver_gl.o \
-	engine/backend/sdl/driver_tinygl.o \
-	$(TINYGL_OBJS)
+######################################################################
+# The default build target: just build the scummvm executable
+######################################################################
 
-TINYGL_OBJS =\
-	engine/tinygl/api.o \
-	engine/tinygl/arrays.o \
-	engine/tinygl/clear.o \
-	engine/tinygl/clip.o \
-	engine/tinygl/error.o \
-	engine/tinygl/get.o \
-	engine/tinygl/image_util.o \
-	engine/tinygl/init.o \
-	engine/tinygl/light.o \
-	engine/tinygl/list.o \
-	engine/tinygl/matrix.o \
-	engine/tinygl/memory.o \
-	engine/tinygl/misc.o \
-	engine/tinygl/msghandling.o \
-	engine/tinygl/select.o \
-	engine/tinygl/specbuf.o \
-	engine/tinygl/texture.o \
-	engine/tinygl/vertex.o \
-	engine/tinygl/zbuffer.o \
-	engine/tinygl/zline.o \
-	engine/tinygl/zmath.o \
-	engine/tinygl/ztriangle.o
+all: $(EXECUTABLE) 
 
-DEPS = $(OBJS:.o=.d)
 
-residual: $(OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+######################################################################
+# Module settings
+######################################################################
 
-.cpp.o:
-	@test -d $(*D) || mkdir -p $(*D)
-	$(CXX) $(CXXFLAGS) -Wp,-MMD,"$*.d",-MQ,"$*.o",-MP -c $(<) -o $*.o
+MODULES := $(MODULES)
 
-clean: 
-	-rm -f residual$(EXEEXT) *.o *.d common/*.[od] engine/*.[od] engine/backend/sdl/*.[od] engine/imuse/*.[od] engine/lua/*.[od] engine/smush/*.[od] engine/tinygl/*.[od] mixer/*.[od]
+# After the game specific modules follow the shared modules
+MODULES += \
+	engine \
+	engine/backend \
+	engine/imuse \
+	engine/lua \
+	engine/smush \
+	engine/tinygl \
+	common \
+	mixer
 
--include $(DEPS)
+
+######################################################################
+# The build rules follow - normally you should have no need to
+# touch whatever comes after here.
+######################################################################
+
+# Concat DEFINES and INCLUDES to form the CPPFLAGS
+CPPFLAGS := $(DEFINES) $(INCLUDES)
+
+# Include the build instructions for all modules
+-include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
+
+# Depdir information
+DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
+DEPFILES =
+
+# The build rule for the Residual executable
+$(EXECUTABLE): $(OBJS)
+	$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+
+distclean: clean
+	$(RM) config.h config.mk config.log
+
+clean:
+	$(RM_REC) $(DEPDIRS)
+	$(RM) $(OBJS) $(EXECUTABLE)
+
+ifndef HAVE_GCC3
+# If you use GCC, disable the above and enable this for intelligent
+# dependency tracking.
+%.o: %.cpp
+	$(MKDIR) $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
+else
+# If you even have GCC 3.x, you can use this build rule, which is safer; the above
+# rule can get you into a bad state if you Ctrl-C at the wrong moment.
+# Also, with this GCC inserts additional dummy rules for the involved headers,
+# which ensures a smooth compilation even if said headers become obsolete.
+%.o: %.cpp
+	$(MKDIR) $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+%.o: %.m
+	$(MKDIR) $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
+endif
+
+# Include the dependency tracking files.
+-include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
+
+
+######################################################################
+# Create the files that depend on the version
+######################################################################
+
+
+######################################################################
+# Distribution settings
+######################################################################
+
+ifeq ($(VER_EXTRA),svn)
+DISTVERSION = $(shell date '+%Y-%m-%d')
+else
+DISTVERSION = $(VERSION)
+endif
+
+DISTNAME := residual-$(DISTVERSION)
+DISTDIR := dist
+
+ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
+SVNROOT := $(srcdir)
+else
+SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/residual/trunk/
+endif
+
+
+$(DISTDIR)/$(DISTNAME).tar.gz: 
+	cd $(DISTDIR); tar zcf $(DISTNAME).tar.gz $(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).tar.bz2: 
+	cd $(DISTDIR); tar jcf $(DISTNAME).tar.bz2 $(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).zip: 
+	cd $(DISTDIR); zip -qr9 $(DISTNAME).zip $(DISTNAME)
+
+dist-src: \
+	$(DISTDIR)/$(DISTNAME).tar.gz \
+	$(DISTDIR)/$(DISTNAME).tar.bz2 \
+	$(DISTDIR)/$(DISTNAME).zip
+	@#RPM-src?
+	@#DEB-src?
+
+
+.PHONY: all clean distclean dist-src

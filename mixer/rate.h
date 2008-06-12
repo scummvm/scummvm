@@ -23,7 +23,7 @@
 #ifndef SOUND_RATE_H
 #define SOUND_RATE_H
 
-#include "common/platform.h"
+#include "common/sys.h"
 
 class AudioStream;
 

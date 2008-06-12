@@ -20,7 +20,7 @@
  *
  */
 
-#include "common/platform.h"
+#include "common/sys.h"
 
 #ifndef COMMON_DEBUG_H
 #define COMMON_DEBUG_H

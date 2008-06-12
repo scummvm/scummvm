@@ -21,6 +21,7 @@
  */
 
 #include "common/sys.h"
+#include "common/endian.h"
 #include "common/debug.h"
 
 #include "engine/colormap.h"
@@ -877,30 +878,30 @@ void Costume::Chore::update() {
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
-	if (tag == MKID('MMDL'))
+	if (FROM_BE_32(tag) == MKID_BE('MMDL'))
 		return new MainModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (tag == MKID('MODL'))
+	else if (FROM_BE_32(tag) == MKID_BE('MODL'))
 		return new ModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (tag == MKID('CMAP'))
+	else if (FROM_BE_32(tag) == MKID_BE('CMAP'))
 		return new ColormapComponent(parent, parentID, name, tag);
-	else if (tag == MKID('KEYF'))
+	else if (FROM_BE_32(tag) == MKID_BE('KEYF'))
 		return new KeyframeComponent(parent, parentID, name, tag);
-	else if (tag == MKID('MESH'))
+	else if (FROM_BE_32(tag) == MKID_BE('MESH'))
 		return new MeshComponent(parent, parentID, name, tag);
-	else if (tag == MKID('LUAV'))
+	else if (FROM_BE_32(tag) == MKID_BE('LUAV'))
 		return new LuaVarComponent(parent, parentID, name, tag);
-	else if (tag == MKID('IMLS'))
+	else if (FROM_BE_32(tag) == MKID_BE('IMLS'))
 		return new SoundComponent(parent, parentID, name, tag);
-	else if (tag == MKID('BKND'))
+	else if (FROM_BE_32(tag) == MKID_BE('BKND'))
 		return new BitmapComponent(parent, parentID, name, tag);
-	else if (tag == MKID('MAT '))
+	else if (FROM_BE_32(tag) == MKID_BE('MAT '))
 		return new MaterialComponent(parent, parentID, name, tag);
-	else if (tag == MKID('SPRT'))
+	else if (FROM_BE_32(tag) == MKID_BE('SPRT'))
 		return NULL;// new SpriteComponent(parent, parentID, name);
 
 	char t[4];
 	std::memcpy(t, &tag, sizeof(tag32));
-	error("Unknown tag '%c%c%c%c', name '%s'\n", t[0], t[1], t[2], t[3], name);
+	error("loadComponent: Unknown tag '%c%c%c%c', name '%s'\n", t[0], t[1], t[2], t[3], name);
 	return NULL;
 }
 
@@ -911,7 +912,7 @@ Model::HierNode *Costume::getModelNodes()
 				continue;
 			// Needs to handle Main Models (pigeons) and normal Models
 			// (when Manny climbs the rope)
-			if (_components[i]->tag() == MKID('MMDL'))
+			if (_components[i]->tag() == MKID_BE('MMDL'))
 				return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
 		}
 		return NULL;

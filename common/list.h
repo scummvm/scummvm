@@ -29,9 +29,9 @@ namespace Common {
 
 /**
  * Simple double linked list, modeled after the list template of the standard
- * C++ library. 
+ * C++ library.
  */
-template <class t_T>
+template<class t_T>
 class List {
 protected:
 #if defined (_WIN32_WCE) || defined (_MSC_VER)
@@ -42,16 +42,17 @@ public:
 		NodeBase *_prev;
 		NodeBase *_next;
 	};
-	
+
 	template <class t_T2>
 	struct Node : public NodeBase {
 		t_T2 _data;
-		
+
 		Node(const t_T2 &x) : _data(x) {}
 	};
 
-	template <class t_T2>
+	template<class t_T2>
 	class Iterator {
+		template<class T> friend class Iterator;
 		friend class List<t_T>;
 		NodeBase *_node;
 
@@ -63,6 +64,14 @@ public:
 
 	public:
 		Iterator() : _node(0) {}
+		template<class T>
+		Iterator(const Iterator<T> &c) : _node(c._node) {}
+
+		template<class T>
+		Iterator<t_T2> &operator=(const Iterator<T> &c) {
+			_node = c._node;
+			return *this;
+		}
 
 		// Prefix inc
 		Iterator<t_T2> &operator++() {
@@ -88,28 +97,30 @@ public:
 			--(*this);
 			return tmp;
 		}
-		t_T2& operator*() const {
+		t_T2 &operator*() const {
 			assert(_node);
 #if (__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)
 			return static_cast<List<t_T>::Node<t_T2> *>(_node)->_data;
 #else
-			return static_cast<Node<t_T2>*>(_node)->_data;
+			return static_cast<Node<t_T2> *>(_node)->_data;
 #endif
 		}
-		t_T2* operator->() const {
+		t_T2 *operator->() const {
 			return &(operator*());
 		}
-		
-		bool operator==(const Iterator<t_T2>& x) const {
+
+		template<class T>
+		bool operator==(const Iterator<T> &x) const {
 			return _node == x._node;
 		}
-		
-		bool operator!=(const Iterator<t_T2>& x) const {
+
+		template<class T>
+		bool operator!=(const Iterator<T> &x) const {
 			return _node != x._node;
 		}
 	};
 
-	NodeBase *_anchor;
+	NodeBase _anchor;
 
 public:
 	typedef Iterator<t_T>			iterator;
@@ -119,41 +130,38 @@ public:
 
 public:
 	List() {
-		_anchor = new NodeBase;
-		_anchor->_prev = _anchor;
-		_anchor->_next = _anchor;
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
 	}
-	List(const List<t_T>& list) {
-		_anchor = new NodeBase;
-		_anchor->_prev = _anchor;
-		_anchor->_next = _anchor;
+	List(const List<t_T> &list) {
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
 
 		insert(begin(), list.begin(), list.end());
 	}
 
 	~List() {
 		clear();
-		delete _anchor;
 	}
 
-	void push_front(const t_T& element) {
+	void push_front(const t_T &element) {
 		insert(begin(), element);
 	}
 
-	void push_back(const t_T& element) {
+	void push_back(const t_T &element) {
 		insert(end(), element);
 	}
 
-	void insert(iterator pos, const t_T& element) {
+	void insert(iterator pos, const t_T &element) {
 		NodeBase *newNode = new Node<t_T>(element);
-		
+
 		newNode->_next = pos._node;
 		newNode->_prev = pos._node->_prev;
 		newNode->_prev->_next = newNode;
 		newNode->_next->_prev = newNode;
 	}
 
-    template <typename iterator2>
+	template<typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
@@ -200,7 +208,7 @@ public:
 	}
 
 
-	List<t_T>& operator  =(const List<t_T>& list) {
+	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
 			iterator i;
 			const_iterator j;
@@ -214,7 +222,7 @@ public:
 			else
 				erase(i, end());
 		}
-		
+
 		return *this;
 	}
 
@@ -228,34 +236,34 @@ public:
 	void clear() {
 		erase(begin(), end());
 	}
-	
-	bool empty() const { 
-		return (_anchor == _anchor->_next);
+
+	bool empty() const {
+		return (&_anchor == _anchor._next);
 	}
 
 
 	iterator		begin() {
-		return iterator(_anchor->_next);
+		return iterator(_anchor._next);
 	}
 
 	iterator		reverse_begin() {
-		return iterator(_anchor->_prev);
+		return iterator(_anchor._prev);
 	}
 
 	iterator		end() {
-		return iterator(_anchor);
+		return iterator(&_anchor);
 	}
 
 	const_iterator	begin() const {
-		return const_iterator(_anchor->_next);
+		return const_iterator(_anchor._next);
 	}
 
 	const_iterator	reverse_begin() const {
-		return const_iterator(_anchor->_prev);
+		return const_iterator(_anchor._prev);
 	}
 
 	const_iterator	end() const {
-		return const_iterator(_anchor);
+		return const_iterator(const_cast<NodeBase*>(&_anchor));
 	}
 };
 

@@ -24,7 +24,6 @@
 #define SMUSH_PLAYER_H
 
 #include "common/sys.h"
-#include "common/platform.h"
 #include "common/debug.h"
 
 #include "engine/smush/blocky16.h"

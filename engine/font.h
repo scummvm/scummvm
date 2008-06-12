@@ -23,7 +23,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "common/platform.h"
+#include "common/sys.h"
 
 #include "engine/resource.h"
 

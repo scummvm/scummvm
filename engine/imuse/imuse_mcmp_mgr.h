@@ -24,7 +24,6 @@
 #define MCMP_MGR_H
 
 #include "common/sys.h"
-#include "common/platform.h"
 #include "common/debug.h"
 #include "common/timer.h"
 

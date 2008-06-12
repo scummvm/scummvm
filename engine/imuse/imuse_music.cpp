@@ -21,7 +21,6 @@
  */
 
 #include "common/sys.h"
-#include "common/platform.h"
 #include "common/debug.h"
 
 #include "engine/imuse/imuse.h"

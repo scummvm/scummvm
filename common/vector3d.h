@@ -24,10 +24,7 @@
 #define COMMON_VECTOR3D_H
 
 #include <cmath>
-
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
+#include <common/sys.h>
 
 class Vector3d {
 public:
@@ -40,18 +37,18 @@ public:
 	float& z() { return _coords[2]; }
 	float z() const { return _coords[2]; }
 
-	Vector3d() { this->x() = 0; this->y() = 0; this->z() = 0; }
+	Vector3d() { x() = 0; y() = 0; z() = 0; }
 
-	Vector3d(float x, float y, float z) {
-		this->x() = x; this->y() = y; this->z() = z;
+	Vector3d(float lx, float ly, float lz) {
+		x() = lx; y() = ly; z() = lz;
 	}
 
 	Vector3d(const Vector3d &v) {
 		x() = v.x(); y() = v.y(); z() = v.z();
 	}
 
-	void set(float x, float y, float z) {
-		this->x() = x; this->y() = y; this->z() = z;
+	void set(float lx, float ly, float lz) {
+		x() = lx; y() = ly; z() = lz;
 	}
 
 	Vector3d& operator =(const Vector3d &v) {
@@ -99,7 +96,7 @@ public:
 		float yaw;
 		
 		// find the angle on the upper half of the unit circle
-		yaw = std::acos(a) * (180.0f / (float)PI);
+		yaw = std::acos(a) * (180.0f / LOCAL_PI);
 		if (b < 0.0f)
 			// adjust for the lower half of the unit circle
 			return 360.0f - yaw;
@@ -168,5 +165,29 @@ inline Vector3d operator /(const Vector3d& v, float s) {
 inline bool operator ==(const Vector3d& v1, const Vector3d& v2) {
 	return v1.x() == v2.x() && v1.y() == v2.y() && v1.z() == v2.z();
 }
+
+#if defined(SYSTEM_BIG_ENDIAN)
+
+inline float get_float(const char *data) {
+	const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
+	unsigned char fdata[4];
+	fdata[0] = udata[3];
+	fdata[1] = udata[2];
+	fdata[2] = udata[1];
+	fdata[3] = udata[0];
+	return *(reinterpret_cast<const float *>(fdata));
+}
+
+#else
+
+inline float get_float(const char *data) {
+	return *(reinterpret_cast<const float *>(data));
+}
+#endif
+
+inline Vector3d get_vector3d(const char *data) {
+	return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
+}
+
 
 #endif

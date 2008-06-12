@@ -22,6 +22,7 @@
 
 #include "common/sys.h"
 #include "common/debug.h"
+#include "common/timer.h"
 
 #include "engine/bitmap.h"
 #include "engine/resource.h"
@@ -29,7 +30,6 @@
 #include "engine/registry.h"
 #include "engine/localize.h"
 #include "engine/engine.h"
-#include "common/timer.h"
 #include "engine/smush/smush.h"
 
 #include "engine/backend/sdl/driver_gl.h"
@@ -41,16 +41,6 @@
 
 #include <SDL.h>
 #include <SDL_video.h>
-
-#if defined (WIN32) && !defined (_MSC_VER)
-int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-    return main(__argc, __argv);
-}
-#endif
-
-#ifdef _MSC_VER
-	#undef main
-#endif
 
 // Hacky global toggles for experimental/debug code
 bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
@@ -89,7 +79,7 @@ static bool parseBoolStr(const char *val) {
 
 void quit();
 
-int main(int argc, char *argv[]) {
+extern "C" int residual_main(int argc, char *argv[]) {
 	int i;
 
 	g_registry = new Registry();

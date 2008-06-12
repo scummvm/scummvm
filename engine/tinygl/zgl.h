@@ -322,10 +322,6 @@ GLContext *gl_get_context(void);
 
 void gl_fatal_error(char *format, ...);
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
 // specular buffer "api"
 GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
 
@@ -333,6 +329,10 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 #define dprintf fprintf
 #else
 #define dprintf
+#endif
+
+#ifndef LOCAL_PI
+#define LOCAL_PI	(3.14159265358979323846)
 #endif
 
 // glopXXX functions

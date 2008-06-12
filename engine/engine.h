@@ -207,19 +207,6 @@ extern int g_imuseState;
 
 extern Actor *g_currentUpdatedActor;
 
-#ifdef _WIN32
-
-extern WIN32_FIND_DATAA g_find_file_data;
-extern HANDLE g_searchFile;
-extern bool g_firstFind;
-
-#else
-
-extern char g_find_file_data[100];
-extern DIR *g_searchFile;
-
-#endif
-
 void vimaInit(uint16 *destTable);
 void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 

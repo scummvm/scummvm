@@ -24,6 +24,10 @@
 
 #include "engine/backend/sdl/driver_sdl.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 // NOTE: This is not a complete driver, it needs to be subclassed
 //       to provide rendering functionality.
 
@@ -436,3 +440,17 @@ void DriverSDL::quit() {
 	if (SDL_PushEvent(&event) != 0)
 		error("Unable to push exit event!");
 }
+
+#if defined (WIN32)
+int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+	SDL_SetModuleHandle(GetModuleHandle(NULL));
+	return main(__argc, __argv);
+}
+#endif
+
+int main(int argc, char *argv[]) {
+	int res = residual_main(argc, argv);
+
+	return res;
+}
+

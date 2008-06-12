@@ -21,8 +21,8 @@
  */
 
 #include "common/sys.h"
-#include "common/platform.h"
 #include "common/debug.h"
+#include "common/endian.h"
 
 #include "engine/bitmap.h"
 #include "engine/smush/smush.h"

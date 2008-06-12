@@ -21,7 +21,7 @@
  */
 
 #include "common/sys.h"
-#include "common/platform.h"
+#include "common/endian.h"
 #include "common/debug.h"
 
 #include "engine/model.h"

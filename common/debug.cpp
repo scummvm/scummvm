@@ -87,7 +87,7 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 	printf("|\n");
 }
 
-void warning(const char *fmt, ...) {
+void CDECL warning(const char *fmt, ...) {
 	std::fprintf(stderr, "WARNING: ");
 
 	std::va_list va;
@@ -98,7 +98,7 @@ void warning(const char *fmt, ...) {
 	std::fprintf(stderr, "\n");
 }
 
-void error(const char *fmt, ...) {
+void CDECL error(const char *fmt, ...) {
 	std::fprintf(stderr, "ERROR: ");
 
 	std::va_list va;

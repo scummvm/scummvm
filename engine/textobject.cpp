@@ -21,6 +21,7 @@
  */
 
 #include "common/sys.h"
+#include "common/util.h"
 
 #include "engine/textobject.h"
 #include "engine/engine.h"

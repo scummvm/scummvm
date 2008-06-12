@@ -29,6 +29,7 @@
  */
 
 #include "common/sys.h"
+#include "common/util.h"
 #include "common/debug.h"
 #include "common/frac.h"
 

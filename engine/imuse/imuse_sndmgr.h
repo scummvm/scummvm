@@ -24,7 +24,6 @@
 #define IMUSE_SNDMGR_H
 
 #include "common/sys.h"
-#include "common/platform.h"
 #include "common/debug.h"
 #include "common/timer.h"
 
