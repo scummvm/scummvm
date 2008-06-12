@@ -146,7 +146,7 @@ residualico.o: $(srcdir)/icons/residual.ico
 # Special target to create a win32 snapshot binary
 win32dist: residual$(EXEEXT)
 	mkdir -p $(WIN32PATH)
-	#strip residual.exe -o $(WIN32PATH)/residual$(EXEEXT)
+	strip residual.exe -o $(WIN32PATH)/residual$(EXEEXT)
 	#cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	#cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
