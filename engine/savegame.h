@@ -23,11 +23,15 @@
 #ifndef SAVEGAME_H
 #define SAVEGAME_H
 
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
+#include <zlib.h>
+#endif
+
 #include "common/debug.h"
 
 #include "engine/lua.h"
-
-#include <zlib.h>
 
 class SaveGame {
 public:

@@ -23,6 +23,12 @@
 #ifndef SMUSH_PLAYER_H
 #define SMUSH_PLAYER_H
 
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
+#include <zlib.h>
+#endif
+
 #include "common/sys.h"
 #include "common/debug.h"
 
@@ -31,7 +37,6 @@
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
-#include <zlib.h>
 #include <cstring>
 
 struct SavePos {

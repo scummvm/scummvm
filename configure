@@ -61,7 +61,6 @@ _tremor=auto
 _flac=auto
 _mad=auto
 _alsa=auto
-_zlib=auto
 _mpeg2=auto
 
 _endian=unknown
@@ -322,7 +321,6 @@ Optional Libraries:
   --disable-flac           disable FLAC support [autodetect]
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
-  --disable-zlib           disable zlib (compression) support [autodetect]
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
@@ -362,8 +360,6 @@ for ac_option in $@; do
 	--disable-flac)           _flac=no        ;;
 	--enable-mad)             _mad=yes        ;;
 	--disable-mad)            _mad=no         ;;
-	--enable-zlib)            _zlib=yes       ;;
-	--disable-zlib)           _zlib=no        ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
 	--with-mpeg2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1033,21 +1029,24 @@ echo "$_alsa"
 # Check for ZLib
 #
 echocheck "zlib"
-if test "$_zlib" = auto ; then
-	_zlib=no
-	cat > $TMPC << EOF
+_zlib=no
+
+cat > $TMPC << EOF
 #include <string.h>
 #include <zlib.h>
 int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
-fi
+
+cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+
 if test "$_zlib" = yes ; then
 	_def_zlib='#define USE_ZLIB'
 	LIBS="$LIBS $ZLIB_LIBS -lz"
 	INCLUDES="$INCLUDES $ZLIB_CFLAGS"
 else
-	_def_zlib='#undef USE_ZLIB'
+	echo
+	echo "zlib library support required"
+	exit 1
 fi
 echo "$_zlib"
 
@@ -1167,11 +1166,7 @@ $_def_tremor
 $_def_flac
 $_def_mad
 $_def_alsa
-$_def_zlib
 $_def_mpeg2
-
-/* Plugin settings */
-$_def_plugin
 
 #endif /* CONFIG_H */
 EOF

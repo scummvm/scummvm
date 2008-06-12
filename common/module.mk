@@ -7,8 +7,7 @@ MODULE_OBJS := \
 	matrix4.o \
 	memorypool.o \
 	str.o \
-	mutex.o \
-	zlib.o
+	mutex.o
 
 # Include common rules
 include $(srcdir)/rules.mk

@@ -53,7 +53,12 @@
 
 #include <cstdio>
 #include <cmath>
+
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
 #include <zlib.h>
+#endif
 
 extern Imuse *g_imuse;
 

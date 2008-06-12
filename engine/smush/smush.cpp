@@ -34,7 +34,6 @@
 #include "mixer/mixer.h"
 
 #include <cstring>
-#include <zlib.h>
 
 #define SMUSH_LOOPMOVIE(x)		(x & 0x000001)
 #define SMUSH_ALTSPEED(x)		(x & 0x000004)
