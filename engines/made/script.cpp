@@ -363,8 +363,7 @@ void ScriptInterpreter::cmd_set() {
 
 void ScriptInterpreter::cmd_print() {
 	// TODO: This opcode was used for printing debug messages
-	Object *obj = _vm->_dat->getObject(_stack.top());
-	const char *text = obj->getString();
+	const char *text = _vm->_dat->getObjectString(_stack.top());
 	debug(4, "%s", text);
 	_stack.setTop(0);
 }
@@ -672,7 +671,7 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 	debug(1, "Dumping code for object %04X", objectIndex);
 
 	Object *obj = _vm->_dat->getObject(objectIndex);
-	byte *code = obj->getData(), *codeEnd = code + obj->getSize();
+	byte *code = obj->getData(), *codeStart = code, *codeEnd = code + obj->getSize();
 	
 	while (code < codeEnd) {
 		byte opcode = *code++;
@@ -684,6 +683,8 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 			int16 value;
 			char tempStr[32];
 			opcodeStats[opcode - 1]++;
+			snprintf(tempStr, 32, "[%04X] ", (uint16)(code - codeStart - 1));
+			codeLine += tempStr;
 			codeLine += desc;
 			for (; *sig != '\0'; sig++) {
 				codeLine += " ";
