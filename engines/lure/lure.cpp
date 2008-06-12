@@ -103,6 +103,7 @@ LureEngine::~LureEngine() {
 	if (_initialised) {
 		// Delete and deinitialise subsystems
 		Surface::deinitialise();
+		Sound.destroy();
 		delete _fights;
 		delete _room;
 		delete _menu;
@@ -163,14 +164,6 @@ void LureEngine::pauseEngineIntern(bool pause) {
 		Sound.resume();
 	}
 }
-
-/* This is not being used
-
-void LureEngine::quitGame() {
-	_system->quit();
-}
-
-*/
 
 const char *LureEngine::generateSaveName(int slotNumber) {
 	static char buffer[15];
