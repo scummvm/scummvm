@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	theme.o \
 	ThemeClassic.o \
 	ThemeModern.o \
+	ThemeParser.o \
 	theme-config.o
 
 # Include common rules

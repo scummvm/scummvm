@@ -123,6 +123,40 @@ void InterfaceManager::drawLineSeparator(const Common::Rect &r, WidgetStateInfo 
 	addDirtyRect(r);
 }
 
+void InterfaceManager::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+	if (!_initOk)
+		return;
+
+	drawDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r);
+
+	Common::Rect r2 = r;
+	r2.left += 16; // TODO: add variable for checkbox text offset.
+
+	// TODO: text drawing
+//	getFont()->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, false);
+
+	addDirtyRect(r);
+}
+
+void InterfaceManager::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
+	if (!_initOk)
+		return;
+
+	drawDD(kDDSliderEmpty, r);
+
+	Common::Rect r2 = r;
+	r2.setWidth(MIN((int16)width, r.width()));
+
+	drawDD(kDDSliderFull, r2);
+
+	addDirtyRect(r);
+}
+
+void InterfaceManager::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
+	if (!_initOk)
+		return;
+}
+
 int InterfaceManager::runGUI() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	_system->showOverlay();
