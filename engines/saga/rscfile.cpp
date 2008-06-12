@@ -769,6 +769,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_sprite->_mainSprites.freeMem();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);
 
+
 	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);
 
 	_vm->_resource->loadResource(resourceContext, _metaResource.cutawayListResourceID, resourcePointer, resourceLength);
@@ -806,6 +807,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		// The IHNM demo has a fixed music track and doesn't load a song table
 		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 		_vm->_music->play(3, MUSIC_LOOP);
+		free(resourcePointer);
 	}
 
 	int voiceLUTResourceID = 0;

@@ -63,6 +63,8 @@ Font::~Font(void) {
 
 		free(_fonts[i]);
 	}
+
+	free(_fonts);
 }
 
 

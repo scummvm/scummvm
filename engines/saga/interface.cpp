@@ -334,7 +334,21 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 Interface::~Interface(void) {
 	free(_inventory);
 
+	free(_mainPanel.image);
+	free(_conversePanel.image);
+	free(_optionPanel.image);
+	free(_quitPanel.image);
+	free(_loadPanel.image);
+	free(_savePanel.image);
+
 	_mainPanel.sprites.freeMem();
+	_conversePanel.sprites.freeMem();
+	_optionPanel.sprites.freeMem();
+	_quitPanel.sprites.freeMem();
+	_loadPanel.sprites.freeMem();
+	_savePanel.sprites.freeMem();
+	_protectPanel.sprites.freeMem();
+
 	_defPortraits.freeMem();
 	_scenePortraits.freeMem();
 }

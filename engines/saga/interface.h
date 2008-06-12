@@ -112,7 +112,11 @@ struct InterfacePanel {
 		buttonsCount = 0;
 		buttons = NULL;
 	}
-
+/*
+	~InterfacePanel() {
+		sprites.freeMem();
+	}
+*/
 	PanelButton *getButton(int index) {
 		if ((index >= 0) && (index < buttonsCount)) {
 			return &buttons[index];

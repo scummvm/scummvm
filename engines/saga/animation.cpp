@@ -55,6 +55,7 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 
 Anim::~Anim(void) {
 	reset();
+	freeCutawayList();
 }
 
 void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
