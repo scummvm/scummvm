@@ -55,16 +55,30 @@ public:
 	};
 
 	enum DrawData {
-		kDrawDataBackground,
-		kDrawDataButton,
-		kDrawDataSurface,
-		kDrawDataSlider,
-		kDrawDataCheckbox,
-		kDrawDataTab,
-		kDrawDataScrollBar,
-		kDrawDataPopUp,
-		kDrawDataCaret,
-		kDrawDataSeparator,
+		kDDMainDialogBackground,
+		kDDSpecialColorBackground,
+		kDDPlainColorBackground,
+		kDDDefaulBackground,
+
+		kDDButtonIdle,
+		kDDButtonHover,
+
+		kDDSurface,
+
+		kDDSliderFull,
+		kDDSliderEmpty,
+
+		kDDCheckboxEnabled,
+		kDDCheckboxDisabled,
+
+		kDDTab,
+
+		kDDScrollBarBase,
+		kDDScrollBarHandle,
+
+		kDDPopUp,
+		kDDCaret,
+		kDDSeparator,
 		kDrawDataMAX
 	};
 
@@ -141,7 +155,7 @@ public:
 
 	/** Widget drawing */
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled) {}
-	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, uint16 hints = 0) {}
+	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, uint16 hints = 0); // {}
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false) {}
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled) {}
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state = kStateEnabled) {}
@@ -149,7 +163,7 @@ public:
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, WidgetStateInfo state = kStateEnabled) {}
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft) {}
 	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled) {}
-	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled) {}
+	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
 protected:
 	template<typename PixelType> void screenInit();
@@ -166,6 +180,12 @@ protected:
 			_screen = 0;
 		}
 	}
+
+	bool isWidgetCached(DrawData type, const Common::Rect &r);
+	void drawCached(DrawData type, const Common::Rect &r);
+
+	inline void drawDD(DrawData type, const Common::Rect &r);
+	void addDirtyRect(const Common::Rect &r) {}
 
 	OSystem *_system;
 	Graphics::VectorRenderer *_vectorRenderer;

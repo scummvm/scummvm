@@ -420,6 +420,14 @@ public:
 	 */
 	virtual void copyFrame(OSystem *sys) = 0;
 
+	/**
+	 * Blits a given graphics surface on top of the current drawing surface.
+	 *
+	 * @param source Surface to blit into the drawing surface.
+	 * @param r Position in the active drawing surface to do the blitting.
+	 */
+	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
+
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
 
@@ -546,6 +554,25 @@ public:
 			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->w);
 #endif
 		sys->updateScreen();
+	}
+
+	/**
+	 * @see VectorRenderer::blitSurface()
+	 */
+	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) {
+		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(r.top, r.left);
+		PixelType *src_ptr = (PixelType *)source->getBasePtr(0, 0);
+
+		int dst_pitch = surfacePitch();
+		int src_pitch = source->pitch / source->bytesPerPixel;
+
+		int h = r.height(), w = r.width();
+
+		while (h--) {
+			colorCopy(src_ptr, dst_ptr, w);
+			dst_ptr += dst_pitch;
+			src_ptr += src_pitch;
+		}
 	}
 
 protected:
@@ -714,6 +741,31 @@ protected:
 		case 3:		*ptr++ = color;
 		case 2:		*ptr++ = color;
 		case 1:		*ptr++ = color;
+				} while (--n > 0);
+		}
+	}
+
+	/**
+	 * Copies several pixes in a row from a surface to another one.
+	 * Used for surface blitting.
+	 * See colorFill() for optimization guidelines.
+	 *
+	 * @param src Source surface.
+	 * @param dst Destination surface.
+	 * @param count Amount of pixels to copy over.
+	 */
+	virtual inline void colorCopy(PixelType *src, PixelType *dst, int count) {
+		register int n = (count + 7) >> 3;
+		switch (count % 8) {
+		case 0: do { 
+					*dst++ = *src++;
+		case 7:		*dst++ = *src++;
+		case 6:		*dst++ = *src++;
+		case 5:		*dst++ = *src++;
+		case 4:		*dst++ = *src++;
+		case 3:		*dst++ = *src++;
+		case 2:		*dst++ = *src++;
+		case 1:		*dst++ = *src++;
 				} while (--n > 0);
 		}
 	}

@@ -81,6 +81,48 @@ bool InterfaceManager::init() {
 	return false;
 }
 
+bool InterfaceManager::isWidgetCached(DrawData type, const Common::Rect &r) {
+	return _widgets[type] && _widgets[type]->_cached &&
+		_widgets[type]->_surfaceCache->w == r.width() && 
+		_widgets[type]->_surfaceCache->h == r.height();
+}
+
+void InterfaceManager::drawCached(DrawData type, const Common::Rect &r) {
+	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen->bytesPerPixel);
+	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
+}
+
+void InterfaceManager::drawDD(DrawData type, const Common::Rect &r) {
+	if (isWidgetCached(type, r)) {
+		drawCached(type, r);
+	} else {
+		for (int i = 0; i < _widgets[type]->_stepCount; ++i)
+			_vectorRenderer->drawStep(r, _widgets[type]->_steps[i]);
+	}
+}
+
+void InterfaceManager::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
+	if (!_initOk)
+		return;
+
+	if (state == kStateEnabled)
+		drawDD(kDDButtonIdle, r);
+	else if (state == kStateHighlight)
+		drawDD(kDDButtonHover, r);
+
+	// TODO: Add text drawing.
+
+	addDirtyRect(r);
+}
+
+void InterfaceManager::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
+	if (!_initOk)
+		return;
+
+	drawDD(kDDSeparator, r);
+	addDirtyRect(r);
+}
+
 int InterfaceManager::runGUI() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	_system->showOverlay();
