@@ -50,13 +50,10 @@ public:
 	~ThemeParser() {}
 
 	enum ParserState {
-		kParserKeyNeedName,
-		kParserKeyNeedToken,
-		kParserKeyNeedSubkey,
 		kParserNeedKey,
-		kParserInComment,
-		kParserError,
-		kParserSuccess
+		kParserNeedKeyName,
+		kParserNeedKeyValues,
+		kParserError
 	};
 
 	bool parse();
@@ -70,6 +67,22 @@ public:
 protected:
 	void parserCallback_DRAW();
 	void parserCallback_DRAWDATA();
+
+	inline void skipSpaces() {
+		while (isspace(_text[_pos]))
+			_pos++;
+	}
+
+	inline void skipComments() {
+		if (_text[_pos] == '/' && _text[_pos + 1] == '*') {
+			_pos += 2;
+			while (_text[_pos++]) {
+				if (_text[_pos - 2] == '*' && _text[_pos - 1] == '/')
+					break;
+			}
+			skipSpaces();
+		}
+	}
 
 	int _pos;
 	char *_text;

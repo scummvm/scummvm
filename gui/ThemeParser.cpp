@@ -100,8 +100,7 @@ void ThemeParser::parseKeyValue(Common::String &key_name) {
 		return;
 	}
 
-	while (isspace(_text[_pos]))
-		_pos++;
+	skipSpaces();
 
 	Common::String data;
 
@@ -131,18 +130,8 @@ bool ThemeParser::parse() {
 		if (_state == kParserError)
 			break;
 
-		while (isspace(_text[_pos]))
-			_pos++;
-
-		// comment handling: skip everything between /* and */
-		if (_text[_pos] == '/' && _text[_pos + 1] == '*') {
-			_pos += 2;
-			while (_text[_pos++]) {
-				if (_text[_pos - 2] == '*' && _text[_pos - 1] == '/')
-					break;
-			}
-			continue;
-		}
+		skipSpaces();
+		skipComments();
 
 		switch (_state) {
 			case kParserNeedKey:
@@ -157,25 +146,26 @@ bool ThemeParser::parse() {
 					while (isValidNameChar(_text[_pos]))
 						_token += _text[_pos++];
 
-					if (!_activeKey.empty() && _token == _activeKey.top()) {
+					if (_activeKey.empty() || _token != _activeKey.top())
+						parserError("Unexpected closure.");
+					else {
 						_activeKey.pop();
 						_keyValues.pop();
 
-						while (isspace(_text[_pos]) || _text[_pos] == '>')
-							_pos++;
+						skipSpaces();
 
-						break;
-					} else {
-						parserError("Unexpected closure.");
-						break;
+						if (_text[_pos++] != '>')
+							parserError("Malformed tag closure.");
 					}
+	
+					break;
 				}
 
 				_keyValues.push(Common::StringMap());
-				_state = kParserKeyNeedName;
+				_state = kParserNeedKeyName;
 				break;
 
-			case kParserKeyNeedName:
+			case kParserNeedKeyName:
 				_token.clear();
 				while (isValidNameChar(_text[_pos]))
 					_token += _text[_pos++];
@@ -185,11 +175,11 @@ bool ThemeParser::parse() {
 					break;
 				}
 
-				_state = kParserKeyNeedToken;
+				_state = kParserNeedKeyValues;
 				_activeKey.push(_token);
 				break;
 
-			case kParserKeyNeedToken:
+			case kParserNeedKeyValues:
 				_token.clear();
 
 				if ((_text[_pos] == '/' && _text[_pos + 1] == '>') || _text[_pos] == '>') {
@@ -203,8 +193,7 @@ bool ThemeParser::parse() {
 				while (isValidNameChar(_text[_pos]))
 					_token += _text[_pos++];
 
-				while (isspace(_text[_pos]))
-					_pos++;
+				skipSpaces();
 
 				if (_text[_pos] != '=') {
 					parserError("Unexpected character after key name.");
