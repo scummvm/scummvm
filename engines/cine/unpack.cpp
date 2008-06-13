@@ -40,8 +40,8 @@ uint32 CineUnpacker::readSource() {
 	return value;
 }
 
-int CineUnpacker::rcr(int inputCarry) {
-	int outputCarry = (_chunk32b & 1);
+uint CineUnpacker::rcr(bool inputCarry) {
+	uint outputCarry = (_chunk32b & 1);
 	_chunk32b >>= 1;
 	if (inputCarry) {
 		_chunk32b |= 0x80000000;
@@ -49,20 +49,20 @@ int CineUnpacker::rcr(int inputCarry) {
 	return outputCarry;
 }
 
-int CineUnpacker::nextBit() {
-	int carry = rcr(0);
+uint CineUnpacker::nextBit() {
+	uint carry = rcr(false);
 	// Normally if the chunk becomes zero then the carry is one as
 	// the end of chunk marker is always the last to be shifted out.
 	if (_chunk32b == 0) {
 		_chunk32b = readSource();
 		_crc ^= _chunk32b;
-		carry = rcr(1); // Put the end of chunk marker in the most significant bit
+		carry = rcr(true); // Put the end of chunk marker in the most significant bit
 	}
 	return carry;
 }
 
-uint16 CineUnpacker::getBits(byte numBits) {
-	uint16 c = 0;
+uint CineUnpacker::getBits(uint numBits) {
+	uint c = 0;
 	while (numBits--) {
 		c <<= 1;
 		c |= nextBit();
@@ -70,7 +70,7 @@ uint16 CineUnpacker::getBits(byte numBits) {
 	return c;
 }
 
-void CineUnpacker::unpackRawBytes(uint16 numBytes) {
+void CineUnpacker::unpackRawBytes(uint numBytes) {
 	if (_dst >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
 		_error = true;
 		return; // Destination pointer is out of bounds for this operation
@@ -81,7 +81,7 @@ void CineUnpacker::unpackRawBytes(uint16 numBytes) {
 	}
 }
 
-void CineUnpacker::copyRelocatedBytes(uint16 offset, uint16 numBytes) {
+void CineUnpacker::copyRelocatedBytes(uint offset, uint numBytes) {
 	if (_dst + offset >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
 		_error = true;
 		return; // Destination pointer is out of bounds for this operation
