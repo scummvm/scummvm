@@ -31,7 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <dmedia/midi.h>
@@ -178,7 +178,7 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class DMediaMidiPlugin : public MidiPluginObject {
+class DMediaMusicPlugin : public MusicPluginObject {
 public:
 	virtual const char *getName() const {
 		return "DMedia";
@@ -195,7 +195,7 @@ public:
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError DMediaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+PluginError DMediaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_DMEDIA();
 
 	return kNoError;
@@ -204,16 +204,16 @@ PluginError DMediaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **m
 MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	DMediaMidiPlugin p;
+	DMediaMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(DMEDIA)
-	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
 //#endif
 
 #endif

@@ -22,19 +22,19 @@
  * $Id$
  */
 
-#ifndef BACKENDS_MIDI_MIDIPLUGIN_H
-#define BACKENDS_MIDI_MIDIPLUGIN_H
+#ifndef SOUND_MUSICPLUGIN_H
+#define SOUND_MUSICPLUGIN_H
 
 #include "base/plugins.h"
 #include "sound/mididrv.h"
 
 /**
- * A MidiPluginObject is essentially a factory for MidiDriver instances with
+ * A MusicPluginObject is essentially a factory for MidiDriver instances with
  * the added ability of listing the available devices and their capabilities.
  */
-class MidiPluginObject : public PluginObject {
+class MusicPluginObject : public PluginObject {
 public:
-	virtual ~MidiPluginObject() {}
+	virtual ~MusicPluginObject() {}
 
 	/**
 	 * Returns a unique string identifier which will be used to save the
@@ -60,11 +60,11 @@ public:
 
 	/**
 	 * Tries to instantiate a MIDI Driver instance based on the settings of
-	 * the currently active ConfMan target. That is, the MidiPluginObject
+	 * the currently active ConfMan target. That is, the MusicPluginObject
 	 * should query the ConfMan singleton for the device name, port, etc.
 	 *
 	 * @param mixer			Pointer to the global Mixer object
-	 * @param mididriver	Pointer to a pointer which the MidiPluginObject sets
+	 * @param mididriver	Pointer to a pointer which the MusicPluginObject sets
 	 *				to the newly create MidiDriver, or 0 in case of an error
 	 * @return		a PluginError describing the error which occurred, or kNoError
 	 */
@@ -72,22 +72,22 @@ public:
 };
 
 
-// MIDI plugins
+// Music plugins
 
-typedef PluginSubclass<MidiPluginObject> MidiPlugin;
+typedef PluginSubclass<MusicPluginObject> MusicPlugin;
 
 /**
- * Singleton class which manages all MIDI plugins.
+ * Singleton class which manages all Music plugins.
  */
-class MidiManager : public Common::Singleton<MidiManager> {
+class MusicManager : public Common::Singleton<MusicManager> {
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
-	const MidiPlugin::List &getPlugins() const;
+	const MusicPlugin::List &getPlugins() const;
 };
 
-/** Convenience shortcut for accessing the MIDI manager. */
-#define MidiMan MidiManager::instance()
+/** Convenience shortcut for accessing the Music manager. */
+#define MusicMan MusicManager::instance()
 
 #endif

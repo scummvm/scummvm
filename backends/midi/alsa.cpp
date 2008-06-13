@@ -28,7 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <alsa/asoundlib.h>
@@ -241,7 +241,7 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 
 // Plugin interface
 
-class AlsaMidiPlugin : public MidiPluginObject {
+class AlsaMusicPlugin : public MusicPluginObject {
 public:
 	virtual const char *getName() const {
 		return "ALSA";
@@ -271,7 +271,7 @@ static int check_permission(snd_seq_port_info_t *pinfo)
 	return 0;
 }
 
-Common::StringList AlsaMidiPlugin::getDevices() const {
+Common::StringList AlsaMusicPlugin::getDevices() const {
 	Common::StringList devices;
 
 	snd_seq_t *seq;
@@ -302,7 +302,7 @@ Common::StringList AlsaMidiPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError AlsaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+PluginError AlsaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_ALSA();
 
 	return kNoError;
@@ -311,16 +311,16 @@ PluginError AlsaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mid
 MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	AlsaMidiPlugin p;
+	AlsaMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ALSA)
-	//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MIDI, AlsaMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MIDI, AlsaMidiPlugin);
+	REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
 //#endif
 
 #endif

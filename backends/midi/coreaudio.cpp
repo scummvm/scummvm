@@ -37,7 +37,7 @@
 
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <AudioToolbox/AUGraph.h>
@@ -207,7 +207,7 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class CoreAudioMidiPlugin : public MidiPluginObject {
+class CoreAudioMusicPlugin : public MusicPluginObject {
 public:
 	virtual const char *getName() const {
 		return "CoreAudio";
@@ -224,7 +224,7 @@ public:
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError CoreAudioMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+PluginError CoreAudioMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_CORE();
 
 	return kNoError;
@@ -233,16 +233,16 @@ PluginError CoreAudioMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver 
 MidiDriver *MidiDriver_CORE_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	CoreAudioMidiPlugin p;
+	CoreAudioMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(COREAUDIO)
-	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MIDI, CoreAudioMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MIDI, CoreAudioMidiPlugin);
+	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#endif
 
 #endif // MACOSX

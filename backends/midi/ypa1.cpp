@@ -23,7 +23,7 @@
  */
 
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include "Pa1Lib.h"
@@ -106,7 +106,7 @@ void MidiDriver_YamahaPa1::send(uint32 b) {
 
 // Plugin interface
 
-class YamahaPa1MidiPlugin : public MidiPluginObject {
+class YamahaPa1MusicPlugin : public MusicPluginObject {
 public:
 	virtual const char *getName() const {
 		return "Yamaha Pa1";
@@ -123,7 +123,7 @@ public:
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError YamahaPa1MidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+PluginError YamahaPa1MusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_YamahaPa1();
 
 	return kNoError;
@@ -132,14 +132,14 @@ PluginError YamahaPa1MidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver 
 MidiDriver *MidiDriver_YamahaPa1_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	YamahaPa1MidiPlugin p;
+	YamahaPa1MusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(YPA1)
-	//REGISTER_PLUGIN_DYNAMIC(YPA1, PLUGIN_TYPE_MIDI, YamahaPa1MidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(YPA1, PLUGIN_TYPE_MUSIC, YamahaPa1MusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(YPA1, PLUGIN_TYPE_MIDI, YamahaPa1MidiPlugin);
+	REGISTER_PLUGIN_STATIC(YPA1, PLUGIN_TYPE_MUSIC, YamahaPa1MusicPlugin);
 //#endif

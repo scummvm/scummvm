@@ -26,7 +26,7 @@
 
 #include "sound/softsynth/ym2612.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 
 ////////////////////////////////////////
 //
@@ -755,7 +755,7 @@ void MidiDriver_YM2612::removeLookupTables() {
 
 // Plugin interface
 
-class TownsMidiPlugin : public MidiPluginObject {
+class TownsMusicPlugin : public MusicPluginObject {
 public:
 	virtual const char *getName() const {
 		return "FM Towns Emulator";
@@ -772,7 +772,7 @@ public:
 	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError TownsMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+PluginError TownsMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_YM2612(mixer);
 
 	return kNoError;
@@ -781,14 +781,14 @@ PluginError TownsMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mi
 MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	TownsMidiPlugin p;
+	TownsMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(TOWNS)
-	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MIDI, TownsMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MIDI, TownsMidiPlugin);
+	REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsMusicPlugin);
 //#endif
