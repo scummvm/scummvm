@@ -37,6 +37,7 @@
 
 namespace Graphics {
 class VectorRenderer;
+struct DrawStep;
 
 struct DrawStep {
 	uint32 flags; /** Step flags, see DrawStepFlags */
@@ -64,7 +65,7 @@ struct DrawStep {
 
 	uint32 scale; /** scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
-	void (VectorRenderer::*drawing_call)(Common::Rect*, DrawStep*); /** Pointer to drawing function */
+	void (VectorRenderer::*drawing_call)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
 
 	enum DrawStepFlags {
 		kStepCallbackOnly		= (1 << 0),
@@ -77,38 +78,6 @@ struct DrawStep {
 		kStepSetStroke			= (1 << 7),
 		kStepSetFillMode		= (1 << 8)
 	};
-
-	void getPositions(Common::Rect *area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
-		if (fill_area) {
-			in_x = area->left;
-			in_y = area->top;
-			in_w = area->width();
-			in_h = area->height();
-		} else {
-			if (!x.relative) in_x = area->left + x.pos; 
-			else in_x = area->left + area->width() - x.pos;
-
-			if (!y.relative) in_y = area->top + y.pos;
-			else in_y = area->top + area->height() - y.pos;
-
-			if (in_x + w > area->right) in_w = area->right - in_x;
-			else in_w = w;
-
-			if (in_y + h > area->bottom) in_h = area->bottom - in_y;
-			else in_h = h;
-		}
-
-		if (scale != (1 << 16) && scale != 0) {
-			in_x = (in_x * scale) >> 16;
-			in_y = (in_y * scale) >> 16;
-			in_w = (in_w * scale) >> 16;
-			in_h = (in_h * scale) >> 16;
-		}
-	}
-
-	uint8 getRadius() {
-		return (((uint32)radius * scale) >> 16);
-	}
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -360,48 +329,76 @@ public:
 			_gradientFactor = factor;
 	}
 
+	void stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
+		if (step.fill_area) {
+			in_x = area.left;
+			in_y = area.top;
+			in_w = area.width();
+			in_h = area.height();
+		} else {
+			if (!step.x.relative) in_x = area.left + step.x.pos; 
+			else in_x = area.left + area.width() - step.x.pos;
+
+			if (!step.y.relative) in_y = area.top + step.y.pos;
+			else in_y = area.top + area.height() - step.y.pos;
+
+			if (in_x + step.w > area.right) in_w = area.right - in_x;
+			else in_w = step.w;
+
+			if (in_y + step.h > area.bottom) in_h = area.bottom - in_y;
+			else in_h = step.h;
+		}
+
+		if (step.scale != (1 << 16) && step.scale != 0) {
+			in_x = (in_x * step.scale) >> 16;
+			in_y = (in_y * step.scale) >> 16;
+			in_w = (in_w * step.scale) >> 16;
+			in_h = (in_h * step.scale) >> 16;
+		}
+	}
+
 	/**
 	 * DrawStep callback functions for each drawing feature 
 	 */
-	void drawCallback_CIRCLE(Common::Rect *area, DrawStep *step) {
+	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
-		step->getPositions(area, x, y, w, h);
-		drawCircle(x, y, step->getRadius());
+		stepGetPositions(step, area, x, y, w, h);
+		drawCircle(x, y, (step.radius * step.scale) >> 16);
 	}
 
-	void drawCallback_SQUARE(Common::Rect *area, DrawStep *step) {
+	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
-		step->getPositions(area, x, y, w, h);
+		stepGetPositions(step, area, x, y, w, h);
 		drawSquare(x, y, w, h);
 	}
 
-	void drawCallback_LINE(Common::Rect *area, DrawStep *step) {
+	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
-		step->getPositions(area, x, y, w, h);
+		stepGetPositions(step, area, x, y, w, h);
 		drawLine(x, y, x + w, y + w);
 	}
 
-	void drawCallback_ROUNDSQ(Common::Rect *area, DrawStep *step) {
+	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
-		step->getPositions(area, x, y, w, h);
+		stepGetPositions(step, area, x, y, w, h);
 		/* HACK! Radius of the rounded squares isn't scaled */
-		drawRoundedSquare(x, y, step->radius, w, h);
+		drawRoundedSquare(x, y, step.radius, w, h);
 	}
 
-	void drawCallback_FILLSURFACE(Common::Rect *area, DrawStep *step) {
+	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step) {
 		fillSurface();
 	}
 
-	void drawCallback_TRIANGLE(Common::Rect *area, DrawStep *step) {
+	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
-		step->getPositions(area, x, y, w, h);
-		drawTriangle(x, y, w, h, (TriangleOrientation)step->extra_data);
+		stepGetPositions(step, area, x, y, w, h);
+		drawTriangle(x, y, w, h, (TriangleOrientation)step.extra_data);
 	}
 
-	void drawCallback_BEVELSQ(Common::Rect *area, DrawStep *step) {
+	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
-		step->getPositions(area, x, y, w, h);
-		drawBeveledSquare(x, y, w, h, step->extra_data);
+		stepGetPositions(step, area, x, y, w, h);
+		drawBeveledSquare(x, y, w, h, step.extra_data);
 	}
 
 	/**
@@ -411,7 +408,7 @@ public:
 	 * @param area Zone to paint on
 	 * @param step Pointer to a DrawStep struct.
 	 */
-	virtual void drawStep(Common::Rect area, DrawStep *step);
+	virtual void drawStep(const Common::Rect &area, const DrawStep &step);
 
 	/**
 	 * Copies the current surface to the system overlay 

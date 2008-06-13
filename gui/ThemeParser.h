@@ -38,8 +38,8 @@ namespace GUI {
 
 class ThemeParser {
 
-	static const int PARSER_MAX_DEPTH = 4;
-	typedef void (ThemeParser::*PARSER_CALLBACK)();
+	static const int kParserMaxDepth = 4;
+	typedef void (ThemeParser::*ParserCallback)();
 
 public:
 	ThemeParser() {
@@ -73,15 +73,16 @@ protected:
 			_pos++;
 	}
 
-	inline void skipComments() {
+	inline bool skipComments() {
 		if (_text[_pos] == '/' && _text[_pos + 1] == '*') {
 			_pos += 2;
 			while (_text[_pos++]) {
 				if (_text[_pos - 2] == '*' && _text[_pos - 1] == '/')
 					break;
 			}
-			skipSpaces();
+			return true;
 		}
+		return false;
 	}
 
 	int _pos;
@@ -92,10 +93,10 @@ protected:
 	Common::String _error;
 	Common::String _token;
 
-	Common::FixedStack<Common::String, PARSER_MAX_DEPTH> _activeKey;
-	Common::FixedStack<Common::StringMap, PARSER_MAX_DEPTH> _keyValues;
+	Common::FixedStack<Common::String, kParserMaxDepth> _activeKey;
+	Common::FixedStack<Common::StringMap, kParserMaxDepth> _keyValues;
 
-	Common::HashMap<Common::String, PARSER_CALLBACK, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
+	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 };
 
 }

@@ -103,14 +103,15 @@ void ThemeParser::parseKeyValue(Common::String &key_name) {
 	skipSpaces();
 
 	Common::String data;
+	char string_start;
 
-	if (_text[_pos] == '"') {
-		data += _text[_pos++];
+	if (_text[_pos] == '"' || _text[_pos] == '\'') {
+		string_start = _text[_pos++];
 
-		while (_text[_pos] != '"')
+		while (_text[_pos] != string_start)
 			data += _text[_pos++];
 
-		data += _text[_pos++];
+		_pos++;
 	} else {
 		while (isValidNameChar(_text[_pos]))
 			data += _text[_pos++];
@@ -131,7 +132,9 @@ bool ThemeParser::parse() {
 			break;
 
 		skipSpaces();
-		skipComments();
+
+		if (skipComments())
+			continue;
 
 		switch (_state) {
 			case kParserNeedKey:

@@ -97,7 +97,7 @@ void InterfaceManager::drawDD(DrawData type, const Common::Rect &r) {
 		drawCached(type, r);
 	} else {
 		for (int i = 0; i < _widgets[type]->_stepCount; ++i)
-			_vectorRenderer->drawStep(r, _widgets[type]->_steps[i]);
+			_vectorRenderer->drawStep(r, *_widgets[type]->_steps[i]);
 	}
 }
 
@@ -205,9 +205,9 @@ int InterfaceManager::runGUI() {
 	bool running = true;
 	while (running) { // draw!!
 
-		_vectorRenderer->drawStep(Common::Rect(), &steps[0]);
-		_vectorRenderer->drawStep(area, &steps[1]);
-		_vectorRenderer->drawStep(area, &steps[2]);
+		_vectorRenderer->drawStep(Common::Rect(), steps[0]);
+		_vectorRenderer->drawStep(area, steps[1]);
+		_vectorRenderer->drawStep(area, steps[2]);
 //		_vectorRenderer->drawStep(Common::Rect(32, 32, 256, 256), &steps[3]);
 
 		_vectorRenderer->copyFrame(_system);

@@ -51,39 +51,39 @@ VectorRenderer *createRenderer(int mode) {
 /********************************************************************
  * DRAWSTEP handling functions
  ********************************************************************/
-void VectorRenderer::drawStep(Common::Rect area, DrawStep *step) {
+void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
 
-	if (step->flags & DrawStep::kStepCallbackOnly) {
-		(this->*(step->drawing_call))(&area, step);
+	if (step.flags & DrawStep::kStepCallbackOnly) {
+		(this->*(step.drawing_call))(area, step);
 		return;
 	}
 
-	if (step->flags & DrawStep::kStepSetBG)
-		setBgColor(step->color2.r, step->color2.g, step->color2.b);
+	if (step.flags & DrawStep::kStepSetBG)
+		setBgColor(step.color2.r, step.color2.g, step.color2.b);
 
-	if (step->flags & DrawStep::kStepSetFG)
-		setFgColor(step->color1.r, step->color1.g, step->color1.b);
+	if (step.flags & DrawStep::kStepSetFG)
+		setFgColor(step.color1.r, step.color1.g, step.color1.b);
 
-	if (step->flags & DrawStep::kStepSetGradient)
-		setGradientColors(step->color1.r, step->color1.g, step->color1.b, 
-						  step->color2.r, step->color2.g, step->color2.b);
+	if (step.flags & DrawStep::kStepSetGradient)
+		setGradientColors(step.color1.r, step.color1.g, step.color1.b, 
+						  step.color2.r, step.color2.g, step.color2.b);
 
-	if (step->flags & DrawStep::kStepSetShadow)
-		shadowEnable(step->shadow);
+	if (step.flags & DrawStep::kStepSetShadow)
+		shadowEnable(step.shadow);
 
-	if (step->flags & DrawStep::kStepSetGradientFactor)
-		setGradientFactor(step->factor);
+	if (step.flags & DrawStep::kStepSetGradientFactor)
+		setGradientFactor(step.factor);
 
-	if (step->flags & DrawStep::kStepSetStroke)
-		setStrokeWidth(step->stroke);
+	if (step.flags & DrawStep::kStepSetStroke)
+		setStrokeWidth(step.stroke);
 
-	if (step->flags & DrawStep::kStepSetFillMode)
-		setFillMode((FillMode)step->fill_mode);
+	if (step.flags & DrawStep::kStepSetFillMode)
+		setFillMode((FillMode)step.fill_mode);
 		
-	if (step->flags & DrawStep::kStepSettingsOnly)
+	if (step.flags & DrawStep::kStepSettingsOnly)
 		return;
 
-	(this->*(step->drawing_call))(&area, step);	
+	(this->*(step.drawing_call))(area, step);	
 }
 
 /********************************************************************
