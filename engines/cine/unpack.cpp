@@ -120,25 +120,25 @@ bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) 
 		*/
 		if (!nextBit()) { // 0...
 			if (!nextBit()) { // 0 0
-				uint16 numBytes = getBits(3) + 1;
+				uint numBytes = getBits(3) + 1;
 				unpackRawBytes(numBytes);
 			} else { // 0 1
-				uint16 numBytes = 2;
-				uint16 offset   = getBits(8);
+				uint numBytes = 2;
+				uint offset   = getBits(8);
 				copyRelocatedBytes(offset, numBytes);
 			}
 		} else { // 1...
-			uint16 c = getBits(2);
+			uint c = getBits(2);
 			if (c == 3) { // 1 1 1
-				uint16 numBytes = getBits(8) + 9;
+				uint numBytes = getBits(8) + 9;
 				unpackRawBytes(numBytes);
 			} else if (c < 2) { // 1 0 x
-				uint16 numBytes = c + 3;
-				uint16 offset   = getBits(c + 9);
+				uint numBytes = c + 3;
+				uint offset   = getBits(c + 9);
 				copyRelocatedBytes(offset, numBytes);
 			} else { // 1 1 0
-				uint16 numBytes = getBits(8) + 1;
-				uint16 offset   = getBits(12);
+				uint numBytes = getBits(8) + 1;
+				uint offset   = getBits(12);
 				copyRelocatedBytes(offset, numBytes);
 			}
 		}
