@@ -221,20 +221,23 @@ void MidiDriver_FluidSynth::generateSamples(int16 *data, int len) {
 
 class FluidSynthMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "FluidSynth";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "fluidsynth";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
+
+MusicDevices FluidSynthMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
 
 PluginError FluidSynthMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_FluidSynth(mixer);

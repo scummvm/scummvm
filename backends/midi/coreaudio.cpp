@@ -209,20 +209,25 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 
 class CoreAudioMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "CoreAudio";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "core";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
+
+MusicDevices CoreAudioMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
 
 PluginError CoreAudioMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_CORE();

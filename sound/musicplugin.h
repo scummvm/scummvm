@@ -29,6 +29,51 @@
 #include "sound/mididrv.h"
 
 /**
+ * Music types that music drivers can implement and engines can rely on.
+ */
+enum MusicType {
+	MT_PCSPK = 1,  // PC Speaker
+	MT_PCJR  = 2,  // PCjr
+	MT_ADLIB = 3,  // AdLib
+	MT_TOWNS = 4,  // FM-TOWNS
+	MT_GM    = 5,  // General MIDI
+	MT_MT32  = 6,  // MT-32
+	MT_GS    = 7   // Roland GS
+};
+
+class MusicPluginObject;
+
+/**
+ * Description of a Music device. Used to list the devices a Music driver
+ * can manage and their capabilities.
+ * A device with an empty name means the default device.
+ */
+class MusicDevice {
+public:
+	MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt);
+
+	Common::String &getName() { return _name; }
+	Common::String &getMusicDriverName() { return _musicDriverName; }
+	Common::String &getMusicDriverId() { return _musicDriverId; }
+	MusicType getMusicType() { return _type; }
+
+	/**
+	 * Returns a user readable string that contains the name of the current
+	 * device name (if it isn't the default one) and the name of the driver.
+	 */
+	Common::String getCompleteName();
+
+private:
+	Common::String _name;
+	Common::String _musicDriverName;
+	Common::String _musicDriverId;
+	MusicType _type;
+};
+
+/** List of music devices. */
+typedef Common::List<MusicDevice> MusicDevices;
+
+/**
  * A MusicPluginObject is essentially a factory for MidiDriver instances with
  * the added ability of listing the available devices and their capabilities.
  */
@@ -43,20 +88,9 @@ public:
 	virtual const char *getId() const = 0;
 
 	/**
-	 * Returns the type kind of music supported by this driver, as specified
-	 * by the MidiDriverFlags enum.
+	 * Returns a list of the available devices.
 	 */
-	virtual int getCapabilities() const = 0;
-
-	/**
-	 * Returns a list of the available devices. The empty string means the
-	 * default device.
-	 */
-	virtual Common::StringList getDevices() const {
-		Common::StringList dev;
-		dev.push_back("");
-		return dev;
-	}
+	virtual MusicDevices getDevices() const = 0;
 
 	/**
 	 * Tries to instantiate a MIDI Driver instance based on the settings of

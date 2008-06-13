@@ -516,20 +516,23 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 
 class TimidityMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "TiMidity";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "timidity";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
+
+MusicDevices TimidityMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
 
 PluginError TimidityMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_TIMIDITY();

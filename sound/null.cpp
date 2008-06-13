@@ -37,25 +37,29 @@ public:
 
 class NullMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "No music";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "null";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 PluginError NullMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_NULL();
 
 	return kNoError;
+}
+
+MusicDevices NullMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: return a different music type?
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
 
 MidiDriver *MidiDriver_NULL_create(Audio::Mixer *mixer) {

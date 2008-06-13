@@ -755,24 +755,27 @@ void MidiDriver_YM2612::removeLookupTables() {
 
 // Plugin interface
 
-class TownsMusicPlugin : public MusicPluginObject {
+class TownsEmuMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "FM Towns Emulator";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "towns";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_TOWNS;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError TownsMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices TownsEmuMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_TOWNS));
+	return devices;
+}
+
+PluginError TownsEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_YM2612(mixer);
 
 	return kNoError;
@@ -781,14 +784,14 @@ PluginError TownsMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **m
 MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	TownsMusicPlugin p;
+	TownsEmuMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(TOWNS)
-	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsMusicPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsMusicPlugin);
+	REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
 //#endif
