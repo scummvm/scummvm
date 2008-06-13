@@ -52,25 +52,33 @@ public:
 	enum ParserState {
 		kParserNeedKey,
 		kParserNeedKeyName,
-		kParserNeedKeyValues,
+
+		kParserNeedPropertyName,
+		kParserNeedPropertyOperator,
+		kParserNeedPropertyValue,
+
 		kParserError
 	};
 
 	bool parse();
-	void parseKeyValue(Common::String &key_name);
-	void parseActiveKey(bool closed);
-
-	void parserError(const char *error_string);
-
 	void debug_testEval();
 	
 protected:
 	void parserCallback_DRAW();
 	void parserCallback_DRAWDATA();
 
-	inline void skipSpaces() {
-		while (isspace(_text[_pos]))
+	bool parseKeyValue(Common::String &key_name);
+	void parseActiveKey(bool closed);
+	void parserError(const char *error_string);
+
+	inline bool skipSpaces() {
+		if (!isspace(_text[_pos]))
+			return false;
+
+		while (_text[_pos] && isspace(_text[_pos]))
 			_pos++;
+
+		return true;
 	}
 
 	inline bool skipComments() {
@@ -83,6 +91,18 @@ protected:
 			return true;
 		}
 		return false;
+	}
+
+	inline bool isValidNameChar(char c) {
+		return isalnum(c) || c == '_';
+	}
+
+	inline bool parseToken() {
+		_token.clear();
+		while (isValidNameChar(_text[_pos]))
+			_token += _text[_pos++];
+
+		return (_text[_pos] != 0);
 	}
 
 	int _pos;

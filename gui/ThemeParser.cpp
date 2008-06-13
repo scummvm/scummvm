@@ -42,15 +42,11 @@
 
 namespace GUI {
 
-inline bool isValidNameChar(char c) {
-	return isalnum(c) || c == '_';
-}
-
 void ThemeParser::debug_testEval() {
 	static const char *debug_config_text =
 		"<drawdata id = \"background_default\" cache = true>"
 		"<draw func = \"roundedsq\" /*/fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>"
-		"<draw func = \"roundedsq\" fill = \"none\" color = \"0, 0, 0\" size = \"auto\"/>"
+		"<draw func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>"
 		"</drawdata>/* lol this is just a simple test*/";
 
 	_text = strdup(debug_config_text);
@@ -91,36 +87,37 @@ void ThemeParser::parseActiveKey(bool closed) {
 	}
 }
 
-void ThemeParser::parseKeyValue(Common::String &key_name) {
-	assert(_text[_pos++] == '=');
+bool ThemeParser::parseKeyValue(Common::String &key_name) {
 	assert(_keyValues.empty() == false);
 
-	if (_keyValues.top().contains(key_name)) {
-		parserError("Repeated value inside key.");
-		return;
-	}
+	if (_keyValues.top().contains(key_name))
+		return false;
 
-	skipSpaces();
-
-	Common::String data;
+	Common::String name = key_name;
+	_token.clear();
 	char string_start;
 
 	if (_text[_pos] == '"' || _text[_pos] == '\'') {
 		string_start = _text[_pos++];
 
-		while (_text[_pos] != string_start)
-			data += _text[_pos++];
+		while (_text[_pos] && _text[_pos] != string_start)
+			_token += _text[_pos++];
 
-		_pos++;
-	} else {
-		while (isValidNameChar(_text[_pos]))
-			data += _text[_pos++];
+		if (_text[_pos++] == 0)
+			return false;
+
+	} else if (!parseToken()) {
+		return false;
 	}
 
-	_keyValues.top()[key_name] = data;
+	_keyValues.top()[name] = _token;
+	return true;
 }
 
 bool ThemeParser::parse() {
+
+	bool active_closure = false;
+	bool self_closure = false;
 
 	_state = kParserNeedKey;
 	_pos = 0;
@@ -131,79 +128,74 @@ bool ThemeParser::parse() {
 		if (_state == kParserError)
 			break;
 
-		skipSpaces();
+		if (skipSpaces())
+			continue;
 
 		if (skipComments())
 			continue;
 
 		switch (_state) {
 			case kParserNeedKey:
-				if (_text[_pos++] != '<') {
-					parserError("Expecting key start.");
-					break;
-				}
-
-				if (_text[_pos] == '/') {
-					_pos++;
-					_token.clear();
-					while (isValidNameChar(_text[_pos]))
-						_token += _text[_pos++];
-
-					if (_activeKey.empty() || _token != _activeKey.top())
-						parserError("Unexpected closure.");
-					else {
-						_activeKey.pop();
-						_keyValues.pop();
-
-						skipSpaces();
-
-						if (_text[_pos++] != '>')
-							parserError("Malformed tag closure.");
-					}
-	
-					break;
-				}
-
-				_keyValues.push(Common::StringMap());
-				_state = kParserNeedKeyName;
+				if (_text[_pos++] != '<') parserError("Expecting key start.");
+				else _state = kParserNeedKeyName;
 				break;
 
 			case kParserNeedKeyName:
-				_token.clear();
-				while (isValidNameChar(_text[_pos]))
-					_token += _text[_pos++];
-
-				if (!isspace(_text[_pos]) && _text[_pos] != '>') {
-					parserError("Invalid character in token name.");
+				if (_text[_pos] == '/') {
+					_pos++;
+					active_closure = true;
+				}
+				
+				if (!parseToken()) {
+					parserError("Unexpected end of file while parsing token.");
 					break;
 				}
 
-				_state = kParserNeedKeyValues;
-				_activeKey.push(_token);
+				if (active_closure) {
+					if (_activeKey.empty() || _token != _activeKey.top())
+						parserError("Unexpected closure.");
+				} else {
+					_keyValues.push(Common::StringMap());
+					_activeKey.push(_token);
+				}
+
+				_state = kParserNeedPropertyName;
 				break;
 
-			case kParserNeedKeyValues:
-				_token.clear();
+			case kParserNeedPropertyName:
+				if (active_closure) {
+					active_closure = false;
+					_activeKey.pop();
+					_keyValues.pop();
 
-				if ((_text[_pos] == '/' && _text[_pos + 1] == '>') || _text[_pos] == '>') {
-					bool closed = _text[_pos] == '/';
-					parseActiveKey(closed);
-					_pos += closed ? 2 : 1;
+					if (_text[_pos++] != '>')
+						parserError("Invalid syntax in key closure.");
+					
 					_state = kParserNeedKey;
 					break;
 				}
 
-				while (isValidNameChar(_text[_pos]))
-					_token += _text[_pos++];
+				self_closure = (_text[_pos] == '/');
 
-				skipSpaces();
-
-				if (_text[_pos] != '=') {
-					parserError("Unexpected character after key name.");
+				if ((self_closure && _text[_pos + 1] == '>') || _text[_pos] == '>') {
+					parseActiveKey(self_closure);
+					_pos += self_closure ? 2 : 1;
+					_state = kParserNeedKey;
 					break;
 				}
 
-				parseKeyValue(_token);
+				if (!parseToken()) parserError("Error when parsing key value.");
+				else _state = kParserNeedPropertyOperator;
+				break;
+
+			case kParserNeedPropertyOperator:
+				if (_text[_pos++] != '=') parserError("Unexpected character after key name.");
+				else  _state = kParserNeedPropertyValue;
+				break;
+
+			case kParserNeedPropertyValue:
+				if (!parseKeyValue(_token)) parserError("Unable to parse key value.");
+				else _state = kParserNeedPropertyName;
 				break;
 
 			default:
@@ -217,6 +209,7 @@ bool ThemeParser::parse() {
 
 	if (_state != kParserNeedKey || !_activeKey.empty()) {
 		parserError("Unexpected end of file.");
+		return false;
 	}
 
 	return true;
