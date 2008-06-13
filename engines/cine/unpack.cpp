@@ -31,6 +31,10 @@
 namespace Cine {
 
 uint32 CineUnpacker::readSource() {
+	if (_src < _srcBegin || _src + 4 > _srcEnd) {
+		_error = true;
+		return 0; // The source pointer is out of bounds, returning a default value
+	}
 	uint32 value = READ_BE_UINT32(_src);
 	_src -= 4;
 	return value;
@@ -67,7 +71,10 @@ uint16 CineUnpacker::getBits(byte numBits) {
 }
 
 void CineUnpacker::unpackRawBytes(uint16 numBytes) {
-	_datasize -= numBytes;
+	if (_dst >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
+		_error = true;
+		return; // Destination pointer is out of bounds for this operation
+	}
 	while (numBytes--) {
 		*_dst = (byte)getBits(8);
 		--_dst;
@@ -75,21 +82,33 @@ void CineUnpacker::unpackRawBytes(uint16 numBytes) {
 }
 
 void CineUnpacker::copyRelocatedBytes(uint16 offset, uint16 numBytes) {
-	_datasize -= numBytes;
+	if (_dst + offset >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
+		_error = true;
+		return; // Destination pointer is out of bounds for this operation
+	}
 	while (numBytes--) {
 		*_dst = *(_dst + offset);
 		--_dst;
 	}
 }
 
-bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
-	_src = src + srcLen - 4;
-	_datasize = readSource(); // Unpacked length in bytes
-	_dst = dst + _datasize - 1;
+bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) {
+	// Initialize variables used for detecting errors during unpacking
+	_error    = false;
+	_srcBegin = src;
+	_srcEnd   = src + srcLen;
+	_dstBegin = dst;
+	_dstEnd   = dst + dstLen;
+
+	// Initialize other variables
+	_src = _srcBegin + srcLen - 4;
+	uint32 unpackedLength = readSource(); // Unpacked length in bytes
+	_dst = _dstBegin + unpackedLength - 1;
 	_crc = readSource();
 	_chunk32b = readSource();
 	_crc ^= _chunk32b;
-	do {
+
+	while (_dst >= _dstBegin && !_error) {
 		/*
 		Bits  => Action:
 		0 0   => unpackRawBytes(3 bits + 1)              i.e. unpackRawBytes(1..9)
@@ -123,8 +142,8 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 				copyRelocatedBytes(offset, numBytes);
 			}
 		}
-	} while (_datasize > 0 && _src >= src - 4);
-	return _crc == 0;
+	}
+	return !_error && (_crc == 0);
 }
 
 } // End of namespace Cine

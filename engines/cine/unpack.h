@@ -40,7 +40,7 @@ namespace Cine {
 class CineUnpacker {
 public:
 	/** Returns true if unpacking was successful, otherwise false. */
-	bool unpack(byte *dst, const byte *src, int srcLen);
+	bool unpack(const byte *src, uint srcLen, byte *dst, uint dstLen);
 private:
 	/** Reads a single big endian 32-bit integer from the source and goes backwards 4 bytes. */
 	uint32 readSource();
@@ -69,11 +69,17 @@ private:
 	 */
 	void copyRelocatedBytes(uint16 offset, uint16 numBytes);
 private:
-	int _datasize;    //!< Bytes left to write into the unpacked data stream
-	uint32 _crc;      //!< Error-detecting code
+	uint32 _crc;      //!< Error-detecting code (This should be zero after successful unpacking)
 	uint32 _chunk32b; //!< The current internal 32-bit chunk
-	byte *_dst;       //!< Destination buffer pointer
-	const byte *_src; //!< Source buffer pointer
+	byte *_dst;       //!< Pointer to the current position in the destination buffer
+	const byte *_src; //!< Pointer to the current position in the source buffer
+
+	// These are used for detecting errors (e.g. out of bounds issues) during unpacking
+	bool _error;           //!< Did an error occur during unpacking?
+	const byte *_srcBegin; //!< Source buffer's beginning
+	const byte *_srcEnd;   //!< Source buffer's end
+	byte *_dstBegin;       //!< Destination buffer's beginning
+	byte *_dstEnd;         //!< Destination buffer's end
 };
 
 } // End of namespace Cine

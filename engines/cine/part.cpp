@@ -128,7 +128,7 @@ void CineEngine::readVolCnf() {
 	f.read(buf, packedSize);
 	if (packedSize != unpackedSize) {
 		CineUnpacker cineUnpacker;
-		if (!cineUnpacker.unpack(buf, buf, packedSize)) {
+		if (!cineUnpacker.unpack(buf, packedSize, buf, unpackedSize)) {
 			error("Error while unpacking 'vol.cnf' data");
 		}
 	}
@@ -226,7 +226,9 @@ byte *readBundleFile(int16 foundFileIdx) {
 		byte *unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
 		readFromPart(foundFileIdx, unpackBuffer);
 		CineUnpacker cineUnpacker;
-		cineUnpacker.unpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
+		if (!cineUnpacker.unpack(unpackBuffer, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize)) {
+			warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
+		}
 		free(unpackBuffer);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);
