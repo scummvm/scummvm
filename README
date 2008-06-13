@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.06a-CVS
-(C) 2003-2008 The ScummVM-Residual team             Last Updated: 14 May 2006
+(C) 2003-2008 The ScummVM-Residual team             Last Updated: 13 Jun 2008
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -114,34 +114,3 @@ j          : Enter jump number
 How do I report bugs?
 ---------------------
 Don't. Residual is very alpha and we KNOW it doesn't work right.
-
-What else should I know?
-------------------------
-  * See TODO for other stuff
-
-Credits:
-------------------------------
-ScummVM-Residual Team:
- James 'Ender' Brown          	    Core developer. ScummVM co-lead dev
- Pawel 'aquadran' Kolodziejski      Core developer. SMUSH, iMUSE implemention
- Erich 'Compholio' Hoover           x86-64, various fixes and comments, menu support, improved state support
-
-Contributors:
- Daniel Schepler                    Initial engine codebase, LUA support
- Vincent Hamm                       Various engine code
- Christian 'mannythegnome' Neumair  Various optimisation patches
- Lionel 'bbrox' Ulmer               OpenGL optimisations
- Ori 'salty-horse' Avtalion         Lipsync, LAF support
- Andrea 'Yak Bizzarro' Corna        Improved font support
- Marcus Comstedt                    Dreamcast port
-
-Special Thanks To:
------------------- 
- The LUA developers, for creating a nice compact script interpreter.
- 
- Tim Schafer, for obvious reasons, and everybody else who helped make
- Grim Fandango a brilliant game; and the EMI team for giving it their
- best try.
- 
- Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine,
- and avoiding the horrible hack it could have been.
