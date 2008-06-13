@@ -38,8 +38,15 @@ namespace GUI {
 
 class ThemeParser {
 
+	static const int PARSER_MAX_DEPTH = 4;
+	typedef void (ThemeParser::*PARSER_CALLBACK)();
+
 public:
-	ThemeParser() {}
+	ThemeParser() {
+		_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
+		_callbacks["draw"] = &ThemeParser::parserCallback_DRAW;
+	}
+
 	~ThemeParser() {}
 
 	enum ParserState {
@@ -52,14 +59,18 @@ public:
 		kParserSuccess
 	};
 
-	bool parseDrawData();
+	bool parse();
 	void parseKeyValue(Common::String &key_name);
 	void parseActiveKey(bool closed);
+
 	void parserError(const char *error_string);
 
 	void debug_testEval();
 	
 protected:
+	void parserCallback_DRAW();
+	void parserCallback_DRAWDATA();
+
 	int _pos;
 	char *_text;
 
@@ -68,8 +79,10 @@ protected:
 	Common::String _error;
 	Common::String _token;
 
-	Common::FixedStack<Common::String, 5> _activeKey;
-	Common::StringMap _keyValues;
+	Common::FixedStack<Common::String, PARSER_MAX_DEPTH> _activeKey;
+	Common::FixedStack<Common::StringMap, PARSER_MAX_DEPTH> _keyValues;
+
+	Common::HashMap<Common::String, PARSER_CALLBACK, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 };
 
 }
