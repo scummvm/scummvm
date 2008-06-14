@@ -197,8 +197,10 @@ int InterfaceManager::runGUI() {
 	steps[2].flags = DrawStep::kStepCallbackOnly;
 	steps[2].scale = (1 << 16);
 
-	steps[3].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[3].flags = DrawStep::kStepCallbackOnly;
+	steps[3].color1.r = 255;
+	steps[3].color1.g = 255;
+	steps[3].color1.b = 255;
+	steps[3].flags = DrawStep::kStepSettingsOnly | DrawStep::kStepSetFG;
 
 	Common::Rect area = Common::Rect(32, 32, 256, 256);
 
@@ -206,6 +208,7 @@ int InterfaceManager::runGUI() {
 	while (running) { // draw!!
 
 		_vectorRenderer->drawStep(Common::Rect(), steps[0]);
+		_vectorRenderer->drawStep(Common::Rect(), steps[3]);
 		_vectorRenderer->drawStep(area, steps[1]);
 		_vectorRenderer->drawStep(area, steps[2]);
 //		_vectorRenderer->drawStep(Common::Rect(32, 32, 256, 256), &steps[3]);

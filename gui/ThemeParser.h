@@ -67,9 +67,9 @@ protected:
 	void parserCallback_DRAW();
 	void parserCallback_DRAWDATA();
 
-	bool parseKeyValue(Common::String &key_name);
+	bool parseKeyValue(Common::String keyName);
 	void parseActiveKey(bool closed);
-	void parserError(const char *error_string);
+	void parserError(const char *errorString);
 
 	inline bool skipSpaces() {
 		if (!isspace(_text[_pos]))

@@ -43,13 +43,13 @@
 namespace GUI {
 
 void ThemeParser::debug_testEval() {
-	static const char *debug_config_text =
+	static const char *debugConfigText =
 		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>"
 		"<draw func = \"roundedsq\" /*/fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>"
 		"<draw func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>"
 		"</ drawdata>/* lol this is just a simple test*/";
 
-	_text = strdup(debug_config_text);
+	_text = strdup(debugConfigText);
 	parse();
 }
 	
@@ -87,20 +87,19 @@ void ThemeParser::parseActiveKey(bool closed) {
 	}
 }
 
-bool ThemeParser::parseKeyValue(Common::String &key_name) {
+bool ThemeParser::parseKeyValue(Common::String keyName) {
 	assert(_keyValues.empty() == false);
 
-	if (_keyValues.top().contains(key_name))
+	if (_keyValues.top().contains(keyName))
 		return false;
 
-	Common::String name = key_name;
 	_token.clear();
-	char string_start;
+	char stringStart;
 
 	if (_text[_pos] == '"' || _text[_pos] == '\'') {
-		string_start = _text[_pos++];
+		stringStart = _text[_pos++];
 
-		while (_text[_pos] && _text[_pos] != string_start)
+		while (_text[_pos] && _text[_pos] != stringStart)
 			_token += _text[_pos++];
 
 		if (_text[_pos++] == 0)
@@ -110,14 +109,14 @@ bool ThemeParser::parseKeyValue(Common::String &key_name) {
 		return false;
 	}
 
-	_keyValues.top()[name] = _token;
+	_keyValues.top()[keyName] = _token;
 	return true;
 }
 
 bool ThemeParser::parse() {
 
-	bool active_closure = false;
-	bool self_closure = false;
+	bool activeClosure = false;
+	bool selfClosure = false;
 
 	_state = kParserNeedKey;
 	_pos = 0;
@@ -136,14 +135,19 @@ bool ThemeParser::parse() {
 
 		switch (_state) {
 			case kParserNeedKey:
-				if (_text[_pos++] != '<' || _text[_pos] == 0) {
+				if (_text[_pos++] != '<') {
 					parserError("Expecting key start.");
+					break;
+				}
+
+				if (_text[_pos] == 0) {
+					parserError("Unexpected end of file.");
 					break;
 				}
 
 				if (_text[_pos] == '/' && _text[_pos + 1] != '*') {
 					_pos++;
-					active_closure = true;
+					activeClosure = true;
 				}
 
 				_state = kParserNeedKeyName;
@@ -155,7 +159,7 @@ bool ThemeParser::parse() {
 					break;
 				}
 
-				if (active_closure) {
+				if (activeClosure) {
 					if (_activeKey.empty() || _token != _activeKey.top())
 						parserError("Unexpected closure.");
 				} else {
@@ -167,8 +171,8 @@ bool ThemeParser::parse() {
 				break;
 
 			case kParserNeedPropertyName:
-				if (active_closure) {
-					active_closure = false;
+				if (activeClosure) {
+					activeClosure = false;
 					_activeKey.pop();
 					_keyValues.pop();
 
@@ -180,11 +184,11 @@ bool ThemeParser::parse() {
 					break;
 				}
 
-				self_closure = (_text[_pos] == '/');
+				selfClosure = (_text[_pos] == '/');
 
-				if ((self_closure && _text[_pos + 1] == '>') || _text[_pos] == '>') {
-					parseActiveKey(self_closure);
-					_pos += self_closure ? 2 : 1;
+				if ((selfClosure && _text[_pos + 1] == '>') || _text[_pos] == '>') {
+					parseActiveKey(selfClosure);
+					_pos += selfClosure ? 2 : 1;
 					_state = kParserNeedKey;
 					break;
 				}
