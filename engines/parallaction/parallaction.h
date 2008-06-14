@@ -33,6 +33,7 @@
 
 #include "engines/engine.h"
 
+#include "parallaction/input.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
 #include "parallaction/objects.h"
@@ -96,14 +97,6 @@ enum {
 	kPriority21 = 21
 };
 
-enum {
-	kMouseNone			= 0,
-	kMouseLeftUp		= 1,
-	kMouseLeftDown		= 2,
-	kMouseRightUp		= 3,
-	kMouseRightDown		= 4
-};
-
 enum EngineFlags {
 	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
@@ -151,7 +144,6 @@ extern char			_password[8];
 extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
-#define MAX_FORWARDS	50
 extern char			_saveData1[];
 extern uint32		_commandFlags;
 extern const char	*_dinoName;
@@ -164,7 +156,6 @@ extern const char	*_minidoughName;
 extern const char	*_minidrkiName;
 
 
-void waitUntilLeftClick();
 
 
 
@@ -172,7 +163,7 @@ void waitUntilLeftClick();
 class Debugger;
 class Gfx;
 class SoundMan;
-
+class Input;
 
 struct Location {
 
@@ -194,6 +185,7 @@ struct Location {
 
 	// NS specific
 	WalkNodeList	_walkNodes;
+	char _slideText[2][MAX_TOKEN_LEN];
 
 	// BRA specific
 	int			_zeta0;
@@ -246,13 +238,6 @@ public:
 
 
 
-
-#define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
-#define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
-#define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
-#define DECLARE_UNQUALIFIED_LOCATION_PARSER(sig) void locParse_##sig()
-#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
-
 #define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
 
@@ -272,20 +257,7 @@ public:
 	virtual bool loadGame() = 0;
 	virtual bool saveGame() = 0;
 
-	uint16		readInput();
-	void		updateInput();
-
-	void		waitTime(uint32 t);
-
-	enum {
-		kInputModeGame = 0,
-		kInputModeComment = 1
-	};
-
-	int		_inputMode;
-
-	void updateGameInput();
-	void updateCommentInput();
+	Input	*_input;
 
 	OpcodeSet	_commandOpcodes;
 
@@ -304,8 +276,7 @@ public:
 		bool		suspend;
 	} _instRunCtxt;
 
-
-	void		showCursor(bool visible);
+	void		processInput(InputData* data);
 
 	void		pauseJobs();
 	void		resumeJobs();
@@ -331,12 +302,8 @@ public:
 
 	Table		*_globalTable;
 	Table		*_objectsNames;
-	Table		*_zoneTypeNames;
-	Table		*_zoneFlagNames;
 	Table		*_callableNames;
 	Table		*_localFlagNames;
-
-	Parser		*_locationParser;
 
 public:
 	int getGameType() const;
@@ -373,13 +340,6 @@ public:
 	uint16			_numLocations;
 	Location		_location;
 
-	InventoryItem	_activeItem;
-
-	Common::Point	_mousePos;
-	void			getCursorPos(Common::Point& p) {
-		p = _mousePos;
-	}
-
 	ZonePtr			_activeZone;
 
 
@@ -390,36 +350,14 @@ public:
 
 	Common::RandomSource _rnd;
 
-protected:		// data
-
 	Debugger	*_debugger;
 
-	struct InputData {
-		uint16			_event;
-		Common::Point	_mousePos;
-		int16		_inventoryIndex;
-		ZonePtr		_zone;
-		Label*			_label;
-	};
 
-	bool		_mouseHidden;
-
-	// input-only
-	InputData	_input;
-	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
-
-	// these two could/should be merged as they carry on the same duty in two member functions,
-	// respectively processInput and translateInput
-	int16		_procCurrentHoverItem;
-	int16		_transCurrentHoverItem;
-
+protected:		// data
 	uint32		_baseTime;
 	char		_characterName1[50];	// only used in changeCharacter
 
 	Common::String	_saveFileName;
-
-
-	ZonePtr		_hoverZone;
 
 
 protected:		// members
@@ -428,14 +366,6 @@ protected:		// members
 	void		initGlobals();
 	void		runGame();
 	void		updateView();
-	uint32		getElapsedTime();
-	void		resetTimer();
-
-	InputData	*translateInput();
-	bool		translateGameInput();
-	bool		translateInventoryInput();
-	void		processInput(InputData*);
-
 
 	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();
@@ -472,13 +402,13 @@ public:
 	void		beep();
 
 public:
-	const char **_zoneFlagNamesRes;
-	const char **_zoneTypeNamesRes;
-	const char **_commandsNamesRes;
+//	const char **_zoneFlagNamesRes;
+//	const char **_zoneTypeNamesRes;
+//	const char **_commandsNamesRes;
 	const char **_callableNamesRes;
 	const char **_instructionNamesRes;
 
-	void highlightInventoryItem(ItemPosition pos, byte color);
+	void highlightInventoryItem(ItemPosition pos);
 	int16 getHoverInventoryItem(int16 x, int16 y);
 	int addInventoryItem(ItemName item);
 	int addInventoryItem(ItemName item, uint32 value);
@@ -558,8 +488,12 @@ public:
 	bool loadGame();
 	bool saveGame();
 
+	void		switchBackground(const char* background, const char* mask);
 
 private:
+	LocationParser_ns		*_locationParser;
+	ProgramParser_ns		*_programParser;
+
 	void initFonts();
 	void freeFonts();
 	void renameOldSavefiles();
@@ -586,9 +520,11 @@ private:
 
 	void initResources();
 	void initCursors();
+	void initParsers();
 
-	static byte			_mouseArrow[256];
-	Frames			*_mouseComposedArrow;
+	static byte _resMouseArrow[256];
+	byte	*_mouseArrow;
+	Frames	*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -600,7 +536,6 @@ private:
 	ZonePtr _moveSarcZone0;
 	ZonePtr _moveSarcZone1;
 	uint16 num_foglie;
-	char _slideText[2][MAX_TOKEN_LEN];
 	int16 _introSarcData1;
 	uint16	_introSarcData2;		 // sarcophagus stuff to be saved
 	uint16	_introSarcData3;		 // sarcophagus stuff to be saved
@@ -649,149 +584,10 @@ protected:
 	void walk();
 	void drawAnimations();
 
-
-	// location parser
-	OpcodeSet	_locationParsers;
-	OpcodeSet	_locationZoneParsers;
-	OpcodeSet	_locationAnimParsers;
-	OpcodeSet	_commandParsers;
-	Table		*_commandsNames;
-	Table		*_locationStmt;
-	Table		*_locationZoneStmt;
-	Table		*_locationAnimStmt;
-
-	struct LocationParserContext {
-		bool		end;
-
-		const char	*filename;
-		Script		*script;
-		ZonePtr		z;
-		AnimationPtr	a;
-		int			nextToken;
-		CommandList *list;
-		bool		endcommands;
-		CommandPtr	cmd;
-
-		// BRA specific
-		int numZones;
-		char *bgName;
-		char *maskName;
-		char *pathName;
-	} _locParseCtxt;
-
-	void warning_unexpected();
-
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(endlocation);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(disk);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(nodes);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(localflags);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(commands);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(acommands);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(flags);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(comment);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(commands);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(label);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(flags);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(endzone);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(null);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(script);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(commands);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(type);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(label);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(flags);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(file);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(flags);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(animation);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(drop);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(call);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(simple);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
-
-	virtual void parseGetData(Script &script, ZonePtr z);
-	virtual void parseExamineData(Script &script, ZonePtr z);
-	virtual void parseDoorData(Script &script, ZonePtr z);
-	virtual void parseMergeData(Script &script, ZonePtr z);
-	virtual void parseHearData(Script &script, ZonePtr z);
-	virtual void parseSpeakData(Script &script, ZonePtr z);
-
 	void		parseLocation(const char *filename);
-	char		*parseComment(Script &script);
-	char		*parseDialogueString(Script &script);
-	Dialogue	*parseDialogue(Script &script);
-	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
-	Answer		*parseAnswer(Script &script);
-	Question	*parseQuestion(Script &script);
-
-	void		parseZone(Script &script, ZoneList &list, char *name);
-	void		parseZoneTypeBlock(Script &script, ZonePtr z);
-	void		parseWalkNodes(Script& script, WalkNodeList &list);
-	void		parseAnimation(Script &script, AnimationList &list, char *name);
-	void		parseCommands(Script &script, CommandList&);
-	void		parseCommandFlags();
-	void 		saveCommandForward(const char *name, CommandPtr cmd);
-	void 		resolveCommandForwards();
-	void		createCommand(uint id);
-	void		addCommand();
-	void		initOpcodes();
-	void		initParsers();
-
-	struct CommandForwardReference {
-		char		name[20];
-		CommandPtr	cmd;
-	} _forwardedCommands[MAX_FORWARDS];
-	uint		_numForwardedCommands;
-
-	// program parser
-	OpcodeSet	_instructionParsers;
-	Table		*_instructionNames;
-
-	struct {
-		bool		end;
-		AnimationPtr	a;
-		InstructionPtr inst;
-		LocalVariable *locals;
-		ProgramPtr	program;
-
-		// BRA specific
-		InstructionPtr openIf;
-	} _instParseCtxt;
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
-
-	void		parseInstruction(ProgramPtr program);
 	void		loadProgram(AnimationPtr a, const char *filename);
-	void		parseLValue(ScriptVar &var, const char *str);
-	virtual void	parseRValue(ScriptVar &var, const char *str);
-	void		wrapLocalVar(LocalVariable *local);
+
+	void		initOpcodes();
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
@@ -837,7 +633,6 @@ protected:
 	uint16		guiSelectGame();
 	int			guiGetSelectedBlock(const Common::Point &p);
 
-	void		switchBackground(const char* background, const char* mask);
 	void		showSlide(const char *name);
 };
 
@@ -859,11 +654,11 @@ public:
 public:
 	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
+	void		changeCharacter(const char *name);
 
 public:
 	Table		*_countersNames;
 
-	Table		*_audioCommandsNames;
 	const char **_audioCommandsNamesRes;
 
 	int			_part;
@@ -881,6 +676,9 @@ public:
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
 private:
+	LocationParser_br		*_locationParser;
+	ProgramParser_br		*_programParser;
+
 	void		initResources();
 	void		initFonts();
 	void		freeFonts();
@@ -891,7 +689,6 @@ private:
 	void setInventoryCursor(int pos);
 
 	void		changeLocation(char *location);
-	void		changeCharacter(const char *name);
 	void 		runPendingZones();
 
 	void		initPart();
@@ -925,48 +722,8 @@ private:
 
 	const Callable *_callables;
 
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(localflags);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(flags);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(comment);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(redundant);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(ifchar);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(character);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(mask);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(path);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(escape);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(zeta);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(null);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(ifchar);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(endif);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(toggle);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(string);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(math);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(test);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(music);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(zeta);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(swap);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(give);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(text);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(unary);
-
 	void parseLocation(const char* name);
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(zone);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(color);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(mask);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(print);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(text);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
-
-	virtual void parseRValue(ScriptVar &var, const char *str);
+	void loadProgram(AnimationPtr a, const char *filename);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
@@ -1003,13 +760,6 @@ private:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ret);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onsave);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offsave);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(file);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);

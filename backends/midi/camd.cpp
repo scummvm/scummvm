@@ -26,9 +26,10 @@
 
 #if defined(__amigaos4__)
 
-#include "sound/mpu401.h"
-#include "common/util.h"
 #include "common/endian.h"
+#include "common/util.h"
+#include "sound/musicplugin.h"
+#include "sound/mpu401.h"
 
 #include <proto/camd.h>
 #include <proto/exec.h>
@@ -162,8 +163,50 @@ void MidiDriver_CAMD::closeAll() {
 	_isOpen = false;
 }
 
-MidiDriver *MidiDriver_CAMD_create() {
-	return new MidiDriver_CAMD();
+
+// Plugin interface
+
+class CamdMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "CAMD";
+	}
+
+	const char *getId() const {
+		return "camd";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices CamdMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
+
+PluginError CamdMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_CAMD();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_CAMD_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	CamdMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(CAMD)
+	//REGISTER_PLUGIN_DYNAMIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
+//#endif
 
 #endif

@@ -32,7 +32,8 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
+#include "gob/inter.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -164,7 +165,7 @@ Goblin::~Goblin() {
 						for (col = 0; col < 6; col++)
 							if (_goblins[i]->realStateMach[state][col])
 								delete _goblins[i]->realStateMach[state][col];
-				delete []_goblins[i]->realStateMach;
+				delete[] _goblins[i]->realStateMach;
 			}
 			delete _goblins[i];
 		}
@@ -176,7 +177,7 @@ Goblin::~Goblin() {
 					for (col = 0; col < 6; col++)
 						if (_objects[i]->realStateMach[state][col])
 							delete _objects[i]->realStateMach[state][col];
-				delete []_objects[i]->realStateMach;
+				delete[] _objects[i]->realStateMach;
 			}
 			delete _objects[i];
 		}
@@ -255,8 +256,8 @@ void Goblin::sortByOrder(Util::List *list) {
 
 void Goblin::playSound(SoundDesc &snd, int16 repCount, int16 freq) {
 	if (!snd.empty()) {
-		_vm->_snd->stopSound(0);
-		_vm->_snd->playSample(snd, repCount, freq);
+		_vm->_sound->blasterStop(0);
+		_vm->_sound->blasterPlay(&snd, repCount, freq);
 	}
 }
 
@@ -1216,7 +1217,7 @@ void Goblin::zeroObjects(void) {
 		_objects[i] = 0;
 
 	for (int i = 0; i < 16; i++)
-		_vm->_snd->freeSample(_soundData[i]);
+		_vm->_sound->sampleFree(&_soundData[i]);
 }
 
 void Goblin::freeAllObjects(void) {
@@ -1717,12 +1718,12 @@ void Goblin::playSounds(Mult::Mult_Object *obj) {
 
 			if (!speaker) {
 				sndSlot = obj->goblinStates[animData->state][i].sndItem;
-				_vm->_snd->stopSound(0);
+				_vm->_sound->blasterStop(0);
 				if (sndSlot < _soundSlotsCount)
-					_vm->_snd->playSample(_vm->_game->_soundSamples[_soundSlots[sndSlot] & 0x7FFF],
+					_vm->_sound->blasterPlay(_vm->_sound->sampleGetBySlot(_soundSlots[sndSlot] & 0x7FFF),
 							repCount, frequency);
 			} else
-				_vm->_snd->speakerOn(frequency, repCount * 10);
+				_vm->_sound->speakerOn(frequency, repCount * 10);
 
 		}
 	}

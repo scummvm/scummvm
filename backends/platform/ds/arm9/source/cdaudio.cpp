@@ -19,10 +19,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 #include "cdaudio.h"
-#include "ds-fs.h"
-#include "config-manager.h"
+#include "backends/fs/ds/ds-fs.h"
+#include "common/config-manager.h"
 #include "dsmain.h"
 #include "NDS/scummvm_ipc.h"
 #include "console2.h"
@@ -53,14 +53,14 @@ struct WaveHeader {
 	u16			fmtExtraData;	// Number of extra fmt bytes
 	u16			fmtExtra;		// Samples per block (only for IMA-ADPCM files)
 } __attribute__ ((packed));
-
+	
 struct chunkHeader {
-	char		name[4];
+	char 		name[4];	
 	u32			size;
 } __attribute__ ((packed));
 
 struct Header {
-	s16			firstSample;
+	s16 		firstSample;
 	char		stepTableIndex;
 	char		reserved;
 } __attribute__ ((packed));
@@ -112,7 +112,7 @@ void decompressBlock();
 
 
 void allocBuffers() {
-
+	
 }
 
 void setActive(bool active) {
@@ -125,17 +125,17 @@ bool getActive() {
 
 void playTrack(int track, int numLoops, int startFrame, int duration) {
 	Common::String path = ConfMan.get("path");
-
+	
 	if (isPlayingFlag) {
 		stopTrack();
 	}
-
+	
 	if (trackStartsAt2) {
 		track++;
 	}
-
-
-
+	
+	
+	
 	char str[100];
 
 	if (path[strlen(path.c_str()) - 1] == '/') {
@@ -145,50 +145,50 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 		sprintf(str, "/track%d.wav", track);
 		path = path + str;
 	}
-
-
+	
+	
 	//1820160
-
+	
 	file = DS::std_fopen(path.c_str(), "rb");
-
+	
 	if (!file) {
 		consolePrintf("Failed to open %s!\n", path.c_str());
 		return;
 	}
-
-
+	
+	
 	DS::std_fread((const void *) &waveHeader, sizeof(waveHeader), 1, file);
-
+	
 	consolePrintf("Playing track %d\n", track);
 	consolePrintf("Format: %d\n", waveHeader.fmtFormatTag);
 	consolePrintf("Rate  : %d\n", waveHeader.fmtSamPerSec);
 	consolePrintf("Bits  : %d\n", waveHeader.fmtBitsPerSam);
 	consolePrintf("BlkSz : %d\n", waveHeader.fmtExtra);
-
+	
 	if ((waveHeader.fmtFormatTag != 17) && (waveHeader.fmtFormatTag != 20)) {
 		consolePrintf("Wave file is in the wrong format!  You must use IMA-ADPCM 4-bit mono.\n");
 		DS::std_fclose(file);
 		return;
 	}
-
+	
 	for (int r = 0; r < 8; r++) {
 		IPC->adpcm.buffer[r] = (u8 * volatile) (decoderFormat *) malloc(waveHeader.fmtBlockAlign);
 		IPC->adpcm.filled[r] = false;
 		IPC->adpcm.arm7Dirty[r] = false;
 	}
-
+	
 	// Skip chunks until we reach the data chunk
 	chunkHeader chunk;
 	DS::std_fread((const void *) &chunk, sizeof(chunkHeader), 1, file);
-
+	
 	while (!((chunk.name[0] == 'd') && (chunk.name[1] == 'a') && (chunk.name[2] == 't') && (chunk.name[3] == 'a'))) {
 		DS::std_fseek(file, chunk.size, SEEK_CUR);
 		DS::std_fread((const void *) &chunk, sizeof(chunkHeader), 1, file);
 	}
-
+	
 	dataChunkStart = DS::std_ftell(file);
-
-
+	
+	
 	static bool started = false;
 	sampleNum = 0;
 	blockCount = 0;
@@ -206,35 +206,35 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 		memset(audioBuffer, 0, BUFFER_SIZE * 2);
 		memset(decompressionBuffer, 0, waveHeader.fmtExtra * 2);
 		DS::playSound(audioBuffer, BUFFER_SIZE * 2, false, false, waveHeader.fmtSamPerSec);
-
-	}
+		
+	}	
 	fillPos = (IPC->streamPlayingSection + 1) & 3;
 	isPlayingFlag = true;
-
-
+	
+	
 	// Startframe is a 75Hz timer.  Dunno why, since nothing else
 	// seems to run at that rate.
 	int tenths = (startFrame * 10) / 75;
-
+	
 	// Seek to the nearest block start to the start time
 	int samples = (tenths * waveHeader.fmtSamPerSec) / 10;
 	int block = samples / waveHeader.fmtExtra;
-
-
+	
+	
 	if (duration == 0) {
 		blocksLeft = 0;
 	} else {
 		blocksLeft = ((((duration * 100) / 75) * (waveHeader.fmtSamPerSec)) / (waveHeader.fmtExtra) / 100) + 10;
 	}
 //	consolePrintf("Playing %d blocks (%d)\n\n", blocksLeft, duration);
-
+	
 	// No need to seek if we're starting from the beginning
 	if (block != 0) {
 		DS::std_fseek(file, dataChunkStart + block * waveHeader.fmtBlockAlign, SEEK_SET);
 //		consolePrintf("Startframe: %d  msec: %d (%d,%d)\n", startFrame, tenthssec, samples, block);
 	}
-
-
+	
+	
 	//decompressBlock();
 	playNextBlock();
 	DS::CD::numLoops = numLoops;
@@ -252,21 +252,21 @@ extern "C" void ARM_adcpm(int *block, int len, int stepTableIndex,
 void decompressBlock() {
 	int block[2048];
 	bool loop = false;
-
+	
 	blockCount++;
-
+	
 	if (blockCount < 10) return;
-
-
+	
+	
 	do {
 		DS::std_fread((const void *) &blockHeader, sizeof(blockHeader), 1, file);
-
+	
 		DS::std_fread(&block[0], waveHeader.fmtBlockAlign - sizeof(blockHeader), 1, file);
 
 		if (DS::std_feof(file) ) {
 			// Reached end of file, so loop
-
-
+			
+			
 			if ((numLoops == -1) || (numLoops > 1)) {
 				// Seek file to first packet
 				if (numLoops != -1) {
@@ -283,14 +283,14 @@ void decompressBlock() {
 				stopTrack();
 				return;
 			}
-
+			
 		} else {
 			loop = false;
 		}
-
+		
 	} while (loop);
-
-
+		
+		
 	if (blocksLeft > 0) {
 		blocksLeft--;
 	//	consolePrintf("%d ", blocksLeft);
@@ -305,37 +305,37 @@ void decompressBlock() {
 	          blockHeader.stepTableIndex,
 	          blockHeader.firstSample,
 	          decompressionBuffer);
-#else
+#else		
 	// First sample is in header
 	decompressionBuffer[0] = blockHeader.firstSample;
-
+	
 	// Set up initial table indeces
 	int stepTableIndex = blockHeader.stepTableIndex;
 	int prevSample = blockHeader.firstSample;
-
+	
 //	consolePrintf("Decompressing block step=%d fs=%d\n", stepTableIndex, prevSample);
 
 	for (int r = 0; r < waveHeader.fmtExtra - 1; r++) {
-
+		
 		int word = block[r >> 3];
 		int offset = 0;
-
+		
 		switch (7 - (r & 0x0007)) {
 			case 0: {
 				offset = (word & 0xF0000000) >> 28;
 				break;
 			}
-
+			
 			case 1: {
 				offset = (word & 0x0F000000) >> 24;
 				break;
 			}
-
+			
 			case 2: {
 				offset = (word & 0x00F00000) >> 20;
 				break;
 			}
-
+			
 			case 3: {
 				offset = (word & 0x000F0000) >> 16;
 				break;
@@ -361,41 +361,41 @@ void decompressBlock() {
 				break;
 			}
 		}
-
+		
 		int diff = 0;
-
+		
 		if (offset & 4) {
 			diff = diff + stepTab[stepTableIndex];
 		}
-
+		
 		if (offset & 2) {
 			diff = diff + (stepTab[stepTableIndex] >> 1);
 		}
-
+		
 		if (offset & 1) {
 			diff = diff + (stepTab[stepTableIndex] >> 2);
 		}
-
+		
 		diff = diff + (stepTab[stepTableIndex] >> 3);
-
+		
 		if (offset & 8) {
-			diff = -diff;
+			diff = -diff;		
 		}
-
+		
 		int newSample = prevSample + diff;
-
+		
 		if (newSample > 32767) newSample = 32767;
 		if (newSample < -32768) newSample = -32768;
-
+		
 		decompressionBuffer[r + 1] = newSample;
-
+		
 		prevSample = newSample;
-
+		
 		stepTableIndex += indexTab[offset];
-
+		
 		if (stepTableIndex > 88) stepTableIndex = 88;
 		if (stepTableIndex < 0) stepTableIndex = 0;
-
+		
 
 	}
 #endif
@@ -404,21 +404,21 @@ void decompressBlock() {
 void playNextBlock() {
 	if (!isPlayingFlag) return;
 	int lastBlockId = -1;
-
+	
 	while (IPC->adpcm.semaphore);		// Wait for buffer to become free if needed
 	IPC->adpcm.semaphore = true;		// Lock the buffer structure to prevent clashing with the ARM7
 //	DC_FlushAll();
-
+	
 	//-8644, 25088
 	for (int block = fillPos + 1; block < fillPos + 4; block++) {
 
 		int blockId = block & 3;
-
+		
 		if (IPC->streamFillNeeded[blockId]) {
-
+			
 			IPC->streamFillNeeded[blockId] = false;
 //			DC_FlushAll();
-
+			
 /*			if (!(REG_KEYINPUT & KEY_R)) {
 				//consolePrintf("Align: %d First: %d  Step:%d  Res:%d\n", waveHeader.fmtBlockAlign, blockHeader.firstSample, blockHeader.stepTableIndex, blockHeader.reserved);
 				consolePrintf("Filling buffer %d\n", blockId);
@@ -432,19 +432,19 @@ void playNextBlock() {
 					}
 				}
 			}
-
+			
 			lastBlockId = blockId;
 			IPC->streamFillNeeded[blockId] = false;
 //			DC_FlushAll();
 
 		}
-
-
-
+	
+		
+		
 	}
-
-
-
+	
+	
+	
 	if (lastBlockId != -1) {
 		fillPos = lastBlockId;
 /*		if (!(REG_KEYINPUT & KEY_R)) {
@@ -459,18 +459,18 @@ void stopTrack() {
 	if (!isPlayingFlag) return;
 
 	DS::std_fclose(file);
-
+	
 	isPlayingFlag = false;
-
+	
 	for (int r = 0; r < BUFFER_SIZE; r++) {
 		audioBuffer[r] = 0;
 	}
-
+	
 	for (int r= 0; r < waveHeader.fmtExtra; r++) {
 		decompressionBuffer[r] = 0;
 	}
 //	DS::stopSound(1);
-
+	
 //	free(audioBuffer);
 //	free(decompressionBuffer);
 
@@ -507,7 +507,7 @@ bool trackExists(int num) {
 bool checkCD() {
 	// Need to check whethe CD audio files are present - do this by trying to open Track1.wav.
 	consolePrintf("Attempted to open cd drive\n");
-
+	
 	if (trackExists(1)) {
 		trackStartsAt2 = false;
 		return true;

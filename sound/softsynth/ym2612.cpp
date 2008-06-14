@@ -26,6 +26,7 @@
 
 #include "sound/softsynth/ym2612.h"
 #include "common/util.h"
+#include "sound/musicplugin.h"
 
 ////////////////////////////////////////
 //
@@ -742,22 +743,55 @@ void MidiDriver_YM2612::createLookupTables() {
 }
 
 void MidiDriver_YM2612::removeLookupTables() {
-	delete [] sintbl;
-	delete [] powtbl;
-	delete [] frequencyTable;
-	delete [] keycodeTable;
-	delete [] keyscaleTable;
-	delete [] attackOut;
+	delete[] sintbl;
+	delete[] powtbl;
+	delete[] frequencyTable;
+	delete[] keycodeTable;
+	delete[] keyscaleTable;
+	delete[] attackOut;
 	sintbl = powtbl = frequencyTable = keycodeTable = keyscaleTable = attackOut = 0;
 }
 
-////////////////////////////////////////
-//
-// MidiDriver_YM2612 factory
-//
-////////////////////////////////////////
 
-MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer) {
-	return new MidiDriver_YM2612(mixer);
+// Plugin interface
+
+class TownsEmuMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "FM Towns Emulator";
+	}
+
+	const char *getId() const {
+		return "towns";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices TownsEmuMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_TOWNS));
+	return devices;
 }
 
+PluginError TownsEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_YM2612(mixer);
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	TownsEmuMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(TOWNS)
+	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
+//#endif

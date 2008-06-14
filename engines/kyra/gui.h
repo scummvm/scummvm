@@ -26,7 +26,7 @@
 #ifndef KYRA_GUI_H
 #define KYRA_GUI_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/ptr.h"
 #include "common/array.h"
@@ -74,6 +74,8 @@ struct Button {
 	uint8 data2Val3;
 
 	uint16 flags2;
+
+	int8 mouseWheel;
 
 	Callback buttonCallback;
 };
@@ -133,14 +135,14 @@ class TextDisplayer;
 
 class GUI {
 public:
-	GUI(KyraEngine *vm);
+	GUI(KyraEngine_v1 *vm);
 	virtual ~GUI() {}
 
 	// button specific
 	virtual Button *addButtonToList(Button *list, Button *newButton);
 
 	virtual void processButton(Button *button) = 0;
-	virtual int processButtonList(Button *buttonList, uint16 inputFlags) = 0;
+	virtual int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) = 0;
 
 	virtual int redrawShadedButtonCallback(Button *button);
 	virtual int redrawButtonCallback(Button *button);
@@ -152,12 +154,11 @@ public:
 	void processHighlights(Menu &menu, int mouseX, int mouseY);
 
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Screen *_screen;
 	TextDisplayer *_text;
 
 	Button *_menuButtonList;
-	bool _haveScrollButtons;
 	bool _displayMenu;
 	bool _displaySubMenu;
 	bool _cancelSubMenu;
@@ -195,7 +196,7 @@ class Movie;
 
 class MainMenu {
 public:
-	MainMenu(KyraEngine *vm);
+	MainMenu(KyraEngine_v1 *vm);
 	virtual ~MainMenu() {}
 
 	struct Animation {
@@ -218,11 +219,9 @@ public:
 	void init(StaticData data, Animation anim);
 	int handle(int dim);
 private:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Screen *_screen;
 	OSystem *_system;
-
-	bool _quitFlag;
 
 	StaticData _static;
 	struct AnimIntern {

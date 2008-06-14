@@ -182,6 +182,9 @@ DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.ini modern.zip class
 
 # Engine data files
 DIST_FILES_ENGINEDATA=
+ifdef ENABLE_DRASCULA
+DIST_FILES_ENGINEDATA+=drascula.dat
+endif
 ifdef ENABLE_IGOR
 DIST_FILES_ENGINEDATA+=igor.tbl
 endif

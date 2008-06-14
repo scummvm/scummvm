@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# configue -- custom configure script for ScummVM.
+# configure -- custom configure script for ScummVM.
 #
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
@@ -125,9 +125,12 @@ _prefix=/usr/local
 
 _srcdir=`dirname $0`
 
-# TODO: We should really use mktemp(1) to determine a random tmp file name.
-# However, that tool might not be available everywhere.
-TMPO=${_srcdir}/scummvm-conf
+# Determine a tmp file name, using mktemp(1) when available.
+if type mktemp > /dev/null 2>&1 ; then
+	TMPO=`mktemp`
+else
+	TMPO=${_srcdir}/scummvm-conf
+fi
 TMPC=${TMPO}.cpp
 TMPLOG=${_srcdir}/config.log
 
@@ -159,7 +162,7 @@ add_line_to_config_mk() {
 '"$1"
 }
 
-# Add a line of data to h.mk.
+# Add a line of data to config.h.
 add_line_to_config_h() {
 	_config_h_data="$_config_h_data"'
 '"$1"
@@ -218,7 +221,7 @@ if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
 	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -373,8 +376,15 @@ engine_enable() {
 		opt=yes
 	fi
 	engine=`echo $eng | sed 's/-/_/g'`
+
+	# Filter the parameter for the subengines
+	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
+		option_error
+		return
+	fi
+
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
-		if test "`get_engine_build ${engine}`" != "$opt" ; then
+		if test "`get_engine_name ${engine}`" != "" ; then
 			eval _engine_${engine}_build=$opt
 		else
 			option_error
@@ -386,8 +396,14 @@ engine_enable() {
 
 # Disable the given engine
 engine_disable() {
+	# Filter malformed options
+	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
+		option_error
+		return
+	fi
+
 	engine=`echo $1 | sed 's/-/_/g'`
-	if test "`get_engine_build $engine`" != "no" ; then
+	if test "`get_engine_name ${engine}`" != "" ; then
 		eval _engine_${engine}_build=no
 	else
 		option_error
@@ -453,33 +469,38 @@ prepare_engine_build_strings() {
 get_engine_build_string() {
 	engine_string=""
 	engine_build=`get_engine_build $1`
-	if test $engine_build = no ; then
-		# The engine is disabled
-		if test $2 = no ; then
-			engine_string=`get_engine_name $1`
-		else
-			engine_string=""
-		fi
+	show=no
+
+	# Check if the current engine should be shown for the current status
+	if test $engine_build = $2 ; then
+		show=yes
 	else
-		# The engine is enabled, get the custom string
+		# Test for disabled sub-engines
+		if test $2 = no ; then
+			for subeng in `get_engine_subengines $1` ; do
+				if test `get_engine_build $subeng` = no ; then
+					engine_build=no
+					show=yes
+				fi
+			done
+		fi
+	fi
+
+	# Convert static/dynamic to yes to ease the check of subengines
+	if test $engine_build != no ; then
+		engine_build=yes
+	fi
+
+	# The engine should be shown, build the string
+	if test $show = yes ; then
 		build_string_func=get_${1}_build_string
 		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
-			engine_string=`$build_string_func $1 $2`
+			engine_string=`$build_string_func $1 $engine_build`
 		else
-			engine_string=`get_subengines_build_string $1 $2`
+			engine_string=`get_subengines_build_string $1 $engine_build`
 		fi
 
-		if test $2 = no ; then
-			if test -n "$engine_string" ; then
-				engine_string="`get_engine_name $1` $engine_string"
-			fi
-		else
-			if test $2 = $engine_build ; then
-				engine_string="`get_engine_name $1` $engine_string"
-			else
-				engine_string=""
-			fi
-		fi
+		engine_string="`get_engine_name $1` $engine_string"
 	fi
 
 	echo $engine_string
@@ -523,10 +544,12 @@ get_sword2_build_string() {
 }
 
 get_scumm_build_string() {
-	if test $2 != no ; then
-		base="[v0-v6 games]"
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no ; then
+			base="[v0-v6 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base"
 	fi
-	get_subengines_build_string $1 $2 "$base"
 }
 
 #
@@ -559,7 +582,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, gp2x, iphone, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp2x, iphone, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -923,6 +946,12 @@ if test "$_cxx_major" -ge "3" ; then
 	add_line_to_config_mk 'HAVE_GCC3 = 1'
 fi;
 
+if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
+else
+	CXXFLAGS="$CXXFLAGS -Wconversion"
+fi;
+
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
@@ -1061,9 +1090,9 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			;;
-		arm-linux|arm-linux-gnueabi|arm-*-linux-gnueabi)
+		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			_endian=little
 			_need_memalign=yes
@@ -1078,7 +1107,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SMUSH_ASM"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1087,7 +1116,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2x"
-			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
 			_build_hq_scalers="no"
 			;;
 		ppc-amigaos)
@@ -1125,7 +1153,7 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SMUSH_ASM"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1134,7 +1162,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
-			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
 			_build_hq_scalers="no"
 			;;
 		*)
@@ -1185,7 +1212,7 @@ int main(int argc, char **argv)
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO && _need_memalign=no
+			cc_check && $TMPO$EXEEXT && _need_memalign=no
 			;;
 	esac
 	echo "$_need_memalign"
@@ -1287,7 +1314,7 @@ PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .dll
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		:= -shared ./libscummvm.a
+PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
@@ -1494,7 +1521,7 @@ EOF
 		# don't execute while cross compiling
 		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
 	else
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$EXEEXT && _mpeg2=yes
 	fi
 fi
 if test "$_mpeg2" = yes ; then

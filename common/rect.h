@@ -61,7 +61,7 @@ struct Point {
 		if (diffy >= 0x1000)
 			return 0xFFFFFF;
 
-		return diffx*diffx + diffy*diffy;
+		return uint(diffx*diffx + diffy*diffy);
 	}
 };
 

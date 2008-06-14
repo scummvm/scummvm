@@ -53,8 +53,8 @@ public:
 	struct FileList {
 		FileList() : filename(0), size(0), data(0), next(0) {}
 		~FileList() {
-			delete [] filename;
-			delete [] data;
+			delete[] filename;
+			delete[] data;
 			delete next;
 		}
 

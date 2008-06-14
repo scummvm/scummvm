@@ -135,7 +135,7 @@ bool SaudChannel::appendData(Chunk &b, int32 size) {
 		if (!_tbuffer)
 			error("saud_channel failed to allocate memory");
 		memcpy(_tbuffer, old, _tbufferSize);
-		delete []old;
+		delete[] old;
 		b.read(_tbuffer + _tbufferSize, size);
 		_tbufferSize += size;
 	} else {

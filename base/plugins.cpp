@@ -24,11 +24,22 @@
  */
 
 #include "base/plugins.h"
-#include "common/util.h"
+
+#include "common/func.h"
+
+#ifdef DYNAMIC_MODULES
+#include "common/config-manager.h"
+#endif
+
+// Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
+	PLUGIN_TYPE_MUSIC_VERSION,
 };
+
+
+// Abstract plugins
 
 PluginType Plugin::getType() const {
 	return _type;
@@ -37,31 +48,6 @@ PluginType Plugin::getType() const {
 const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
-
-const char *Plugin::getCopyright() const {
-	return ((MetaEngine*)_pluginObject)->getCopyright();
-}
-
-PluginError Plugin::createInstance(OSystem *syst, Engine **engine) const {
-	return ((MetaEngine*)_pluginObject)->createInstance(syst, engine);
-}
-
-GameList Plugin::getSupportedGames() const {
-	return ((MetaEngine*)_pluginObject)->getSupportedGames();
-}
-
-GameDescriptor Plugin::findGame(const char *gameid) const {
-	return ((MetaEngine*)_pluginObject)->findGame(gameid);
-}
-
-GameList Plugin::detectGames(const FSList &fslist) const {
-	return ((MetaEngine*)_pluginObject)->detectGames(fslist);
-}
-
-SaveStateList Plugin::listSaves(const char *target) const {
-	return ((MetaEngine*)_pluginObject)->listSaves(target);
-}
-
 
 class StaticPlugin : public Plugin {
 public:
@@ -99,6 +85,7 @@ public:
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.
 
+		// Engine plugins
 		#if PLUGIN_ENABLED_STATIC(SCUMM)
 		LINK_PLUGIN(SCUMM)
 		#endif
@@ -157,6 +144,49 @@ public:
 		LINK_PLUGIN(TOUCHE)
 		#endif
 
+		// Music plugins
+		// TODO: Use defines to disable or enable each MIDI driver as a
+		// static/dynamic plugin, like it's done for the engines
+		LINK_PLUGIN(NULL)
+		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+		LINK_PLUGIN(WINDOWS)
+		#endif
+		#if defined(UNIX) && defined(USE_ALSA)
+		LINK_PLUGIN(ALSA)
+		#endif
+		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
+		LINK_PLUGIN(SEQ)
+		#endif
+		#if defined(IRIX)
+		LINK_PLUGIN(DMEDIA)
+		#endif
+		#if defined(__amigaos4__)
+		LINK_PLUGIN(CAMD)
+		#endif
+		#if defined(MACOSX)
+		LINK_PLUGIN(COREAUDIO)
+		LINK_PLUGIN(COREMIDI)
+		LINK_PLUGIN(QUICKTIME)
+		#endif
+		#if defined(PALMOS_MODE)
+		#  if defined(COMPILE_CLIE)
+		LINK_PLUGIN(YPA1)
+		#  elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
+		LINK_PLUGIN(ZODIAC)
+		#  endif
+		#endif
+		#ifdef USE_FLUIDSYNTH
+		LINK_PLUGIN(FLUIDSYNTH)
+		#endif
+		#ifdef USE_MT32EMU
+		LINK_PLUGIN(MT32)
+		#endif
+		LINK_PLUGIN(ADLIB)
+		LINK_PLUGIN(TOWNS)
+		#if defined (UNIX)
+		LINK_PLUGIN(TIMIDITY)
+		#endif
+
 		return pl;
 	}
 };
@@ -167,30 +197,34 @@ PluginList FilePluginProvider::getPlugins() {
 	PluginList pl;
 
 	// Prepare the list of directories to search
-	Common::StringList pluginDirs;
-	// TODO: Add the user specified directory (via config file)
-	pluginDirs.push_back(".");
-	pluginDirs.push_back("plugins");
+	FSList pluginDirs;
+
+	// Add the default directories
+	pluginDirs.push_back(FilesystemNode("."));
+	pluginDirs.push_back(FilesystemNode("plugins"));
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
 
-	Common::StringList::const_iterator d;
-	for (d = pluginDirs.begin(); d != pluginDirs.end(); d++) {
+	// Add the user specified directory
+	Common::String pluginsPath(ConfMan.get("pluginspath"));
+	if (!pluginsPath.empty())
+		pluginDirs.push_back(FilesystemNode(pluginsPath));
+
+	FSList::const_iterator dir;
+	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); dir++) {
 		// Load all plugins.
 		// Scan for all plugins in this directory
-		FilesystemNode dir(*d);
 		FSList files;
-		if (!dir.getChildren(files, FilesystemNode::kListFilesOnly)) {
-			debug(1, "Couldn't open plugin directory '%s'", d->c_str());
+		if (!dir->getChildren(files, FilesystemNode::kListFilesOnly)) {
+			debug(1, "Couldn't open plugin directory '%s'", dir->getPath().c_str());
 			continue;
 		} else {
-			debug(1, "Reading plugins from plugin directory '%s'", d->c_str());
+			debug(1, "Reading plugins from plugin directory '%s'", dir->getPath().c_str());
 		}
 
 		for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-			Common::String name(i->getName());
-			if (name.hasPrefix(getPrefix()) && name.hasSuffix(getSuffix())) {
+			if (isPluginFilename(i->getName())) {
 				pl.push_back(createPlugin(i->getPath()));
 			}
 		}
@@ -199,25 +233,25 @@ PluginList FilePluginProvider::getPlugins() {
 	return pl;
 }
 
-const char* FilePluginProvider::getPrefix() const {
+bool FilePluginProvider::isPluginFilename(const Common::String &filename) const {
 #ifdef PLUGIN_PREFIX
-	return PLUGIN_PREFIX;
-#else
-	return "";
+	// Check the plugin prefix
+	if (!filename.hasPrefix(PLUGIN_PREFIX))
+		return false;
 #endif
-}
 
-const char* FilePluginProvider::getSuffix() const {
 #ifdef PLUGIN_SUFFIX
-	return PLUGIN_SUFFIX;
-#else
-	return "";
+	// Check the plugin suffix
+	if (!filename.hasSuffix(PLUGIN_SUFFIX))
+		return false;
 #endif
+
+	return true;
 }
 
-void FilePluginProvider::addCustomDirectories(Common::StringList &dirs) const {
+void FilePluginProvider::addCustomDirectories(FSList &dirs) const {
 #ifdef PLUGIN_DIRECTORY
-	dirs.push_back(PLUGIN_DIRECTORY);
+	dirs.push_back(FilesystemNode(PLUGIN_DIRECTORY));
 #endif
 }
 
@@ -252,31 +286,30 @@ void PluginManager::loadPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
 	                            ++pp) {
-		PluginList pl((**pp).getPlugins());
-		for (PluginList::iterator plugin = pl.begin(); plugin != pl.end(); ++plugin) {
-			tryLoadPlugin(*plugin);
-		}
+		PluginList pl((*pp)->getPlugins());
+		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
 
 }
 
 void PluginManager::unloadPlugins() {
-	unloadPluginsExcept(NULL);
+	for (int i = 0; i < PLUGIN_TYPE_MAX; i++)
+		unloadPluginsExcept((PluginType)i, NULL);
 }
 
-void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
+void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin) {
 	Plugin *found = NULL;
-	for (PluginList::iterator p = _plugins.begin(); p != _plugins.end(); ++p) {
+	for (PluginList::iterator p = _plugins[type].begin(); p != _plugins[type].end(); ++p) {
 		if (*p == plugin) {
 			found = *p;
 		} else {
-			(**p).unloadPlugin();
+			(*p)->unloadPlugin();
 			delete *p;
 		}
 	}
-	_plugins.clear();
+	_plugins[type].clear();
 	if (found != NULL) {
-		_plugins.push_back(found);
+		_plugins[type].push_back(found);
 	}
 }
 
@@ -284,16 +317,26 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	assert(plugin);
 	// Try to load the plugin
 	if (plugin->loadPlugin()) {
-		// If successful, add it to the list of known plugins and return.
-		_plugins.push_back(plugin);
+		// The plugin is valid, see if it provides the same module as an
+		// already loaded one and should replace it.
+		bool found = false;
 
-		// TODO/FIXME: We should perform some additional checks here:
-		// * Check for some kind of "API version" (possibly derived from the
-		//   SVN tree revision?)
-		// * If two plugins provide the same engine, we should only load one.
-		//   To detect this situation, we could just compare the plugin name.
-		//   To handle it, simply prefer modules loaded earlier to those coming.
-		//   Or vice versa... to be determined... :-)
+		PluginList::iterator pl = _plugins[plugin->getType()].begin();
+		while (!found && pl != _plugins[plugin->getType()].end()) {
+			if (!strcmp(plugin->getName(), (*pl)->getName())) {
+				// Found a duplicated module. Replace the old one.
+				found = true;
+				delete *pl;
+				*pl = plugin;
+				debug(1, "Replaced the duplicated plugin: '%s'", plugin->getName());
+			}
+			pl++;
+		}
+
+		if (!found) {
+			// If it provides a new module, just add it to the list of known plugins.
+			_plugins[plugin->getType()].push_back(plugin);
+		}
 
 		return true;
 	} else {
@@ -303,15 +346,59 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	}
 }
 
-GameList PluginManager::detectGames(const FSList &fslist) const {
+
+// Engine plugins
+
+#include "engines/metaengine.h"
+
+DECLARE_SINGLETON(EngineManager);
+
+GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
+	// Find the GameDescriptor for this target
+	const EnginePlugin::List &plugins = getPlugins();
+	GameDescriptor result;
+
+	if (plugin)
+		*plugin = 0;
+
+	EnginePlugin::List::const_iterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		result = (**iter)->findGame(gameName.c_str());
+		if (!result.gameid().empty()) {
+			if (plugin)
+				*plugin = *iter;
+			break;
+		}
+	}
+	return result;
+}
+
+GameList EngineManager::detectGames(const FSList &fslist) const {
 	GameList candidates;
+
+	const EnginePlugin::List &plugins = getPlugins();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	PluginList::const_iterator iter;
-	for (iter = _plugins.begin(); iter != _plugins.end(); ++iter) {
-		candidates.push_back((*iter)->detectGames(fslist));
+	EnginePlugin::List::const_iterator iter;
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		candidates.push_back((**iter)->detectGames(fslist));
 	}
 
 	return candidates;
+}
+
+const EnginePlugin::List &EngineManager::getPlugins() const {
+	return (const EnginePlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+}
+
+
+// Music plugins
+
+#include "sound/musicplugin.h"
+
+DECLARE_SINGLETON(MusicManager);
+
+const MusicPlugin::List &MusicManager::getPlugins() const {
+	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }

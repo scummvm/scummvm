@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/events.h"
 
@@ -37,18 +36,16 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
-#include "gob/sound.h"
+#include "gob/sound/sound.h"
 #include "gob/init.h"
 #include "gob/inter.h"
 #include "gob/draw.h"
-#include "gob/cdrom.h"
 #include "gob/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/palanim.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/music.h"
 #include "gob/videoplayer.h"
 #include "gob/saveload.h"
 
@@ -71,13 +68,14 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_vm = this;
 
-	_snd      = 0; _adlib  = 0; _mult      = 0;
-	_game     = 0; _global = 0; _cdrom     = 0;
-	_dataIO   = 0; _goblin = 0; _vidPlayer = 0;
-	_init     = 0; _inter  = 0; _map       = 0;
-	_palAnim  = 0; _parse  = 0; _scenery   = 0;
-	_draw     = 0; _util   = 0; _video     = 0;
-	_saveLoad = 0;
+	_sound     = 0; _mult     = 0; _game   = 0;
+	_global    = 0; _dataIO   = 0; _goblin = 0;
+	_vidPlayer = 0; _init     = 0; _inter  = 0;
+	_map       = 0; _palAnim  = 0; _parse  = 0;
+	_scenery   = 0; _draw     = 0; _util   = 0;
+	_video     = 0; _saveLoad = 0;
+
+	_pauseStart = 0;
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -89,21 +87,24 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	Common::addSpecialDebugLevel(kDebugMusic, "Music", "CD, Adlib and Infogrames music debug level");
+	Common::addSpecialDebugLevel(kDebugSound, "Sound", "Sound output debug level");
 	Common::addSpecialDebugLevel(kDebugParser, "Parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
+	Common::addSpecialDebugLevel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
+	Common::addSpecialDebugLevel(kDebugVideo, "Video", "IMD/VMD video debug level");
 	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "gob");
 }
 
 GobEngine::~GobEngine() {
+	deinitGameParts();
+
 	// Stop all mixer streams (except for the permanent ones).
 	_vm->_mixer->stopAll();
 
-	deinitGameParts();
 	delete[] _startTot;
 	delete[] _startTot0;
 }
@@ -116,6 +117,12 @@ int GobEngine::go() {
 
 void GobEngine::shutdown() {
 	_quitRequested = true;
+}
+
+const char *GobEngine::getLangDesc(int16 language) const {
+	if ((language < 0) || (language > 8))
+		language = 2;
+	return Common::getLanguageDescription(_gobToScummVMLang[language]);
 }
 
 void GobEngine::validateLanguage() {
@@ -138,6 +145,30 @@ void GobEngine::validateVideoMode(int16 videoMode) {
 	if ((videoMode != 0x10) && (videoMode != 0x13) &&
 		  (videoMode != 0x14) && (videoMode != 0x18))
 		error("Video mode 0x%X is not supported!", videoMode);
+}
+
+Common::Platform GobEngine::getPlatform() const {
+	return _platform;
+}
+
+GameType GobEngine::getGameType() const {
+	return _gameType;
+}
+
+bool GobEngine::isCD() const {
+	return (_features & kFeaturesCD) != 0;
+}
+
+bool GobEngine::isEGA() const {
+	return (_features & kFeaturesEGA) != 0;
+}
+
+bool GobEngine::is640() const {
+	return (_features & kFeatures640) != 0;
+}
+
+bool GobEngine::hasAdlib() const {
+	return (_features & kFeaturesAdlib) != 0;
 }
 
 int GobEngine::init() {
@@ -219,8 +250,26 @@ int GobEngine::init() {
 	return 0;
 }
 
+void GobEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_pauseStart = _system->getMillis();
+	} else {
+		uint32 duration = _system->getMillis() - _pauseStart;
+
+		_vm->_vidPlayer->notifyPaused(duration);
+
+		_vm->_game->_startTimeKey += duration;
+		_vm->_draw->_cursorTimeKey += duration;
+		if (_vm->_inter->_soundEndTimeKey != 0)
+			_vm->_inter->_soundEndTimeKey += duration;
+	}
+
+	_mixer->pauseAll(pause);
+}
+
 bool GobEngine::initGameParts() {
-	_adlib = 0;
+	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
+
 	_saveLoad = 0;
 
 	_global = new Global(this);
@@ -228,8 +277,7 @@ bool GobEngine::initGameParts() {
 	_dataIO = new DataIO(this);
 	_palAnim = new PalAnim(this);
 	_vidPlayer = new VideoPlayer(this);
-	_cdrom = new CDROM(this);
-	_snd = new Snd(this);
+	_sound = new Sound(this);
 
 	switch (_gameType) {
 		case kGameTypeGob1:
@@ -327,7 +375,7 @@ bool GobEngine::initGameParts() {
 			_map = new Map_v4(this);
 			_goblin = new Goblin_v4(this);
 			_scenery = new Scenery_v2(this);
-			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
+			_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
 			break;
 
 		default:
@@ -335,10 +383,6 @@ bool GobEngine::initGameParts() {
 			return false;
 			break;
 	}
-
-	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
-	if (!_noMusic && hasAdlib())
-		_adlib = new Adlib(this);
 
 	if (is640()) {
 		_video->_surfWidth = _width = 640;
@@ -360,15 +404,12 @@ bool GobEngine::initGameParts() {
 }
 
 void GobEngine::deinitGameParts() {
-	delete _snd;       _snd = 0;
-	delete _adlib;     _adlib = 0;
+	delete _saveLoad;  _saveLoad = 0;
 	delete _mult;      _mult = 0;
+	delete _vidPlayer; _vidPlayer = 0;
 	delete _game;      _game = 0;
 	delete _global;    _global = 0;
-	delete _cdrom;     _cdrom = 0;
-	delete _dataIO;    _dataIO = 0;
 	delete _goblin;    _goblin = 0;
-	delete _vidPlayer; _vidPlayer = 0;
 	delete _init;      _init = 0;
 	delete _inter;     _inter = 0;
 	delete _map;       _map = 0;
@@ -378,7 +419,8 @@ void GobEngine::deinitGameParts() {
 	delete _draw;      _draw = 0;
 	delete _util;      _util = 0;
 	delete _video;     _video = 0;
-	delete _saveLoad;  _saveLoad = 0;
+	delete _sound;     _sound = 0;
+	delete _dataIO;    _dataIO = 0;
 }
 
 } // End of namespace Gob

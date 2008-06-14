@@ -114,8 +114,8 @@ _forceRedraw(false), _lastUsedBitMask(0), _fonts(), _cursor(0), _imageHandles(),
 ThemeModern::~ThemeModern() {
 	deleteFonts();
 	deinit();
-	delete [] _images;
-	delete [] _cursor;
+	delete[] _images;
+	delete[] _cursor;
 	_images = 0;
 	for (int i = 0; i < kImageHandlesMax; ++i) {
 		ImageMan.unregisterSurface(_imageHandles[i]);
@@ -1470,7 +1470,7 @@ void ThemeModern::createCursor() {
 	_system->colorToRGB(_colors[kColorTransparency], r, g, b);
 	uint16 transparency = RGBToColor<ColorMasks<565> >(r, g, b);
 
-	delete [] _cursor;
+	delete[] _cursor;
 
 	_cursor = new byte[_cursorWidth * _cursorHeight];
 	assert(_cursor);
@@ -1502,7 +1502,7 @@ void ThemeModern::createCursor() {
 	}
 
 	_useCursor = true;
-	delete [] table;
+	delete[] table;
 }
 
 #pragma mark -

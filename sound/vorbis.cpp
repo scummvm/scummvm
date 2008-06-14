@@ -92,6 +92,7 @@ protected:
 	bool _isStereo;
 	int _rate;
 	uint _numLoops;
+	const uint _totalNumLoops;
 
 #ifdef USE_TREMOR
 	ogg_int64_t _startTime;
@@ -118,6 +119,17 @@ public:
 	bool isStereo() const		{ return _isStereo; }
 	int getRate() const			{ return _rate; }
 
+	int32 getTotalPlayTime() const {
+		if (!_totalNumLoops)
+			return AudioStream::kUnknownPlayTime;
+
+#ifdef USE_TREMOR
+		return (_endTime - _startTime) * _totalNumLoops;
+#else
+		return (int32)((_endTime - _startTime) * 1000.0) * _totalNumLoops;
+#endif
+	}
+
 protected:
 	void refill();
 };
@@ -126,6 +138,7 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
 	_numLoops(numLoops),
+	_totalNumLoops(numLoops),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
 
 	bool err = (ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap) < 0);

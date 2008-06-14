@@ -160,14 +160,82 @@
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\gob\cdrom.cpp"
+		<Filter
+			Name="sound"
 			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\cdrom.h"
-			>
-		</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\adlib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\adlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\bgatmosphere.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\bgatmosphere.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\cdrom.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\cdrom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\infogrames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\infogrames.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\pcspeaker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\pcspeaker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\sound.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\sound.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\soundblaster.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\soundblaster.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\sounddesc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\sounddesc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\soundmixer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\soundmixer.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\engines\gob\coktelvideo.cpp"
 			>
@@ -357,14 +425,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\music.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\music.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\palanim.cpp"
 			>
 		</File>
@@ -405,6 +465,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\saveload_v4.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\scenery.cpp"
 			>
 		</File>
@@ -421,19 +485,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\sound.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\util.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\util.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\variables.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\variables.h"
 			>
 		</File>
 		<File

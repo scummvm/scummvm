@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -206,20 +207,18 @@ int Parallaction_ns::guiNewGame() {
 	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 100);
 	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 120);
 
-	showCursor(false);
+	_input->showCursor(false);
 
 	_gfx->updateScreen();
 
-	_mouseButtons = kMouseNone;
-	do {
-		readInput();
-	} while (_mouseButtons != kMouseLeftUp && _mouseButtons != kMouseRightUp);
+	_input->waitForButtonEvent(kMouseLeftUp | kMouseRightUp);
+	uint32 event = _input->getLastButtonEvent();
 
-	showCursor(true);
+	_input->showCursor(true);
 
 	_gfx->freeLabels();
 
-	if (_mouseButtons != kMouseRightUp) {
+	if (event != kMouseRightUp) {
 		return START_INTRO;
 	}
 
@@ -267,11 +266,14 @@ uint16 Parallaction_ns::guiChooseLanguage() {
 
 	setArrowCursor();
 
+	Common::Point p;
+
 	int selection = -1;
 	while (selection == -1) {
-		waitUntilLeftClick();
+		_input->waitUntilLeftClick();
+		_input->getCursorPos(p);
 		for (uint16 i = 0; i < 4; i++) {
-			if (blocks[i].contains(_mousePos)) {
+			if (blocks[i].contains(p)) {
 				selection = i;
 				break;
 			}
@@ -299,12 +301,18 @@ uint16 Parallaction_ns::guiSelectGame() {
 	id0 = _gfx->createLabel(_introFont, loadGameMsg[_language], 1);
 	id1 = _gfx->createLabel(_introFont, newGameMsg[_language], 1);
 
-	_mouseButtons = kMouseNone;
-	while (_mouseButtons != kMouseLeftUp) {
+	Common::Point p;
 
-		readInput();
+	_input->readInput();
+	uint32 event = _input->getLastButtonEvent();
 
-		_si = (_mousePos.x > 160) ? 1 : 0;
+	while (event != kMouseLeftUp) {
+
+		_input->readInput();
+		_input->getCursorPos(p);
+		event = _input->getLastButtonEvent();
+
+		_si = (p.x > 160) ? 1 : 0;
 
 		if (_si != _di) {
 			if (_si != 0) {
@@ -409,6 +417,8 @@ int Parallaction_ns::guiSelectCharacter() {
 	Graphics::Surface block;
 	block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 
+	Common::Point p;
+
 	while (true) {
 
 		points[0] = 0;
@@ -422,8 +432,10 @@ int Parallaction_ns::guiSelectCharacter() {
 		_di = 0;
 		while (_di < PASSWORD_LEN) {
 
-			waitUntilLeftClick();
-			int _si = guiGetSelectedBlock(_mousePos);
+			_input->waitUntilLeftClick();
+			_input->getCursorPos(p);
+
+			int _si = guiGetSelectedBlock(p);
 
 			if (_si != -1) {
 				_gfx->grabBackground(codeTrueBlocks[_si], block);

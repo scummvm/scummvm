@@ -40,7 +40,7 @@
 
 namespace Kyra {
 
-Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
+Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
 	_sfxEnabled(true), _soundDataList(0) {
 }
@@ -50,9 +50,9 @@ Sound::~Sound() {
 
 bool Sound::voiceFileIsPresent(const char *file) {
 	char filenamebuffer[25];
-	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodes[i].fileext);
+		strcat(filenamebuffer, _supportedCodecs[i].fileext);
 		if (_vm->resource()->getFileSize(filenamebuffer) > 0)
 			return true;
 	}
@@ -66,51 +66,48 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-bool Sound::voicePlay(const char *file, bool isSfx) {
-	uint32 fileSize = 0;
-	byte *fileData = 0;
-	bool found = false;
+int32 Sound::voicePlay(const char *file, bool isSfx) {
 	char filenamebuffer[25];
 
 	int h = 0;
 	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 		h++;
 	if (h >= kNumChannelHandles)
-		return false;
+		return 0;
 
 	Audio::AudioStream *audioStream = 0;
 
-	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodes[i].fileext);
+		strcat(filenamebuffer, _supportedCodecs[i].fileext);
 
 		Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filenamebuffer);
 		if (!stream)
 			continue;
-		audioStream = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
-		found = true;
+		audioStream = _supportedCodecs[i].streamFunc(stream, true, 0, 0, 1);
 		break;
 	}
 
-	if (!found) {
+	if (!audioStream) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, ".VOC");
 
-		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
+		uint32 fileSize = 0;
+		byte *fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
-			return false;
+			return 0;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
 		audioStream = Audio::makeVOCStream(vocStream);
+
+		delete[] fileData;
+		fileSize = 0;
 	}
 
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
 
-	delete [] fileData;
-	fileSize = 0;
-
-	return true;
+	return audioStream->getTotalPlayTime();
 }
 
 void Sound::voiceStop(const char *file) {
@@ -143,9 +140,21 @@ bool Sound::voiceIsPlaying(const char *file) {
 	return res;
 }
 
+uint32 Sound::voicePlayedTime(const char *file) {
+	if (!file)
+		return 0;
+
+	for (int i = 0; i < kNumChannelHandles; ++i) {
+		if (_soundChannels[i].file == file)
+			return _mixer->getSoundElapsedTime(_soundChannels[i].channelHandle);
+	}
+
+	return 0;
+}
+
 #pragma mark -
 
-SoundMidiPC::SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
+SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
 	_driver = driver;
 	_passThrough = false;
 
@@ -320,7 +329,7 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 
 struct DeleterArray {
 	void operator ()(byte *ptr) {
-		delete [] ptr;
+		delete[] ptr;
 	}
 };
 
@@ -467,8 +476,8 @@ void SoundMidiPC::beginFadeOut() {
 
 #pragma mark -
 
-void KyraEngine::snd_playTheme(int file, int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d, %d)", file, track);
+void KyraEngine_v1::snd_playTheme(int file, int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playTheme(%d, %d)", file, track);
 	if (_curMusicTheme == file)
 		return;
 
@@ -478,13 +487,13 @@ void KyraEngine::snd_playTheme(int file, int track) {
 		_sound->playTrack(track);
 }
 
-void KyraEngine::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d, %d)", track, volume);
+void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d, %d)", track, volume);
 	_sound->playSoundEffect(track);
 }
 
-void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playWanderScoreViaMap(%d, %d)", command, restart);
 	if (restart)
 		_lastMusicCommand = -1;
 
@@ -527,19 +536,22 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	_lastMusicCommand = command;
 }
 
-void KyraEngine::snd_stopVoice() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_stopVoice()");
-	_sound->voiceStop(_speechFile.empty() ? 0 : _speechFile.c_str());
+void KyraEngine_v1::snd_stopVoice() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_stopVoice()");
+	if (!_speechFile.empty()) {
+		_sound->voiceStop(_speechFile.c_str());
+		_speechFile.clear();
+	}
 }
 
-bool KyraEngine::snd_voiceIsPlaying() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceIsPlaying()");
-	return _sound->voiceIsPlaying(_speechFile.empty() ? 0 : _speechFile.c_str());
+bool KyraEngine_v1::snd_voiceIsPlaying() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_voiceIsPlaying()");
+	return _speechFile.empty() ? false : _sound->voiceIsPlaying(_speechFile.c_str());
 }
 
 // static res
 
-const Sound::SpeechCodecs Sound::_supportedCodes[] = {
+const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 #ifdef USE_FLAC
 	{ ".VOF", Audio::makeFlacStream },
 #endif // USE_FLAC

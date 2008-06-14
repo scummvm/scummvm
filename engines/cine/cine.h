@@ -64,7 +64,7 @@ enum CineGameFeatures {
 
 struct CINEGameDescription;
 
-typedef Common::HashMap<Common::String, const char *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> StringPtrHashMap;
+typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
 
 class CineEngine : public Engine {
 

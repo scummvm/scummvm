@@ -56,7 +56,7 @@ struct ResHeader {
 					// compressed)
 	byte name[NAME_LEN];		// Name of object
 
-	static const int size() {
+	static int size() {
 		return 44;
 	}
 
@@ -152,7 +152,7 @@ struct AnimHeader {
 	uint8 feetEndDir;	// Direction to start in after running anim
 	uint16 blend;
 
-	static const int size() {
+	static int size() {
 		return 15;
 	}
 
@@ -209,7 +209,7 @@ struct CdtEntry {
 	uint8 frameType;	// 0 = print sprite normally with top-left
 				// corner at (x,y), otherwise see below...
 
-	static const int size() {
+	static int size() {
 		return 9;
 	}
 
@@ -250,7 +250,7 @@ struct FrameHeader {
 	uint16 width;		// Dimensions of frame
 	uint16 height;
 
-	static const int size() {
+	static int size() {
 		return 8;
 	}
 
@@ -299,7 +299,7 @@ struct MultiScreenHeader {
 	uint32 paletteTable;
 	uint32 maskOffset;
 
-	static const int size() {
+	static int size() {
 		return 36;
 	}
 
@@ -339,7 +339,7 @@ struct ScreenHeader {
 	uint16 height;
 	uint16 noLayers;	// number of layer areas
 
-	static const int size() {
+	static int size() {
 		return 6;
 	}
 
@@ -374,7 +374,7 @@ struct LayerHeader {
 	uint32 offset;		// where to find mask data (from start of
 				// standard file header)
 
-	static const int size() {
+	static int size() {
 		return 16;
 	}
 
@@ -436,7 +436,7 @@ public:
 		_addr = NULL;
 	}
 
-	static const int size() {
+	static int size() {
 		return 44;
 	}
 
@@ -479,7 +479,7 @@ struct TextHeader {
 	uint32 noOfLines;	// how many lines of text are there in this
 				// module
 
-	static const int size() {
+	static int size() {
 		return 4;
 	}
 

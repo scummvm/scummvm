@@ -32,12 +32,12 @@ class SoundHandle;
 } // end of namespace Audio
 
 namespace Kyra {
-class KyraEngine;
+class KyraEngine_v1;
 class Screen_v2;
 
 class Movie {
 public:
-	Movie(KyraEngine *vm) : _vm(vm), _opened(false),  _x(-1), _y(-1), _drawPage(-1) {}
+	Movie(KyraEngine_v1 *vm) : _vm(vm), _opened(false),  _x(-1), _y(-1), _drawPage(-1) {}
 	virtual ~Movie() {}
 
 	virtual bool opened() { return _opened; }
@@ -53,17 +53,17 @@ public:
 	virtual void setY(int y) { _y = y; }
 	virtual void setDrawPage(int page) { _drawPage = page; }
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	bool _opened;
 
 	int _x, _y;
 	int _drawPage;
 };
 
-class WSAMovieV1 : public Movie {
+class WSAMovie_v1 : public Movie {
 public:
-	WSAMovieV1(KyraEngine *vm);
-	virtual ~WSAMovieV1();
+	WSAMovie_v1(KyraEngine_v1 *vm);
+	virtual ~WSAMovie_v1();
 
 	virtual int open(const char *filename, int offscreen, uint8 *palette);
 	virtual void close();
@@ -94,9 +94,9 @@ protected:
 	uint8 *_frameData;
 };
 
-class WSAMovieAmiga : public WSAMovieV1 {
+class WSAMovieAmiga : public WSAMovie_v1 {
 public:
-	WSAMovieAmiga(KyraEngine *vm);
+	WSAMovieAmiga(KyraEngine_v1 *vm);
 	int open(const char *filename, int offscreen, uint8 *palette);
 	void close();
 
@@ -107,9 +107,9 @@ private:
 	uint8 *_buffer;
 };
 
-class WSAMovieV2 : public WSAMovieV1 {
+class WSAMovie_v2 : public WSAMovie_v1 {
 public:
-	WSAMovieV2(KyraEngine *vm, Screen_v2 *scren);
+	WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *scren);
 
 	int open(const char *filename, int unk1, uint8 *palette);
 

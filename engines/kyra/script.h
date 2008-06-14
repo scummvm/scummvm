@@ -27,6 +27,7 @@
 #define KYRA_SCRIPT_H
 
 #include "common/stream.h"
+#include "common/array.h"
 #include "common/func.h"
 
 namespace Kyra {
@@ -63,7 +64,7 @@ struct EMCState {
 #define AVTL_CHUNK 0x4C545641
 
 class Resource;
-class KyraEngine;
+class KyraEngine_v1;
 
 class ScriptFileParser {
 public:
@@ -89,7 +90,7 @@ private:
 
 class EMCInterpreter {
 public:
-	EMCInterpreter(KyraEngine *vm);
+	EMCInterpreter(KyraEngine_v1 *vm);
 
 	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode*> *opcodes);
 	void unload(EMCData *data);
@@ -101,7 +102,7 @@ public:
 
 	bool run(EMCState *script);
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	int16 _parameter;
 
 	typedef void (EMCInterpreter::*CommandProc)(EMCState*);

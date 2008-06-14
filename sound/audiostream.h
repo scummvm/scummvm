@@ -93,6 +93,20 @@ public:
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
 	static AudioStream* openStreamFile(const Common::String &basename, uint32 startTime = 0, uint32 duration = 0, uint numLoops = 1);
+
+	enum {
+		kUnknownPlayTime = -1
+	};
+
+	/**
+	 * Returns total playtime of the AudioStream object.
+	 * Note that this does not require to return an playtime, if the
+	 * playtime of the AudioStream is unknown it returns 'kUnknownPlayTime'.
+	 * @see kUnknownPlayTime
+	 *
+	 * @return	playtime in milliseconds
+	 */
+	virtual int32 getTotalPlayTime() const { return kUnknownPlayTime; }
 };
 
 /**

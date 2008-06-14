@@ -35,11 +35,10 @@
 namespace Gob {
 
 class Game;
-class Snd;
+class Sound;
 class Video;
 class Global;
 class Draw;
-class CDROM;
 class DataIO;
 class Goblin;
 class VideoPlayer;
@@ -52,31 +51,33 @@ class Parse;
 class Scenery;
 class Util;
 class SaveLoad;
-class Adlib;
 
-#define VARP(offs)			(_vm->_global->_inter_variables + (offs))
-#define WRITE_VARO_UINT32(offs, val)	_vm->_global->writeVar(offs, (uint32) (val))
-#define WRITE_VARO_UINT16(offs, val)	_vm->_global->writeVar(offs, (uint16) (val))
-#define WRITE_VARO_UINT8(offs, val)	_vm->_global->writeVar(offs, (uint8) (val))
-#define WRITE_VARO_STR(offs, str)	_vm->_global->writeVar(offs, (const char *) (str))
-#define WRITE_VAR_UINT32(var, val)	WRITE_VARO_UINT32((var) << 2, (val))
-#define WRITE_VAR_UINT16(var, val)	WRITE_VARO_UINT16((var) << 2, (val))
-#define WRITE_VAR_UINT8(var, val)	WRITE_VARO_UINT8((var) << 2, (val))
-#define WRITE_VAR_STR(var, str)		WRITE_VARO_STR((var) << 2, (str))
-#define READ_VARO_UINT32(offs)		READ_UINT32(VARP(offs))
-#define READ_VARO_UINT16(offs)		READ_UINT16(VARP(offs))
-#define READ_VARO_UINT8(offs)		(*((uint8 *) VARP(offs)))
-#define READ_VAR_UINT32(var)		READ_VARO_UINT32((var) << 2)
-#define READ_VAR_UINT16(var)		READ_VARO_UINT16((var) << 2)
-#define READ_VAR_UINT8(var)		READ_VARO_UINT8((var) << 2)
-#define GET_VARO_STR(offs)		((char *) VARP(offs))
-#define GET_VAR_STR(var)		GET_VARO_STR((var) << 2)
+#define WRITE_VAR_UINT32(var, val)  _vm->_inter->_variables->writeVar32(var, val)
+#define WRITE_VAR_UINT16(var, val)  _vm->_inter->_variables->writeVar16(var, val)
+#define WRITE_VAR_UINT8(var, val)   _vm->_inter->_variables->writeVar8(var, val)
+#define WRITE_VAR_STR(var, str)     _vm->_inter->_variables->writeVarString(var, str)
+#define WRITE_VARO_UINT32(off, val) _vm->_inter->_variables->writeOff32(off, val)
+#define WRITE_VARO_UINT16(off, val) _vm->_inter->_variables->writeOff16(off, val)
+#define WRITE_VARO_UINT8(off, val)  _vm->_inter->_variables->writeOff8(off, val)
+#define WRITE_VARO_STR(off, str)    _vm->_inter->_variables->writeOffString(off, str)
+#define READ_VAR_UINT32(var)        _vm->_inter->_variables->readVar32(var)
+#define READ_VAR_UINT16(var)        _vm->_inter->_variables->readVar16(var)
+#define READ_VAR_UINT8(var)         _vm->_inter->_variables->readVar8(var)
+#define READ_VARO_UINT32(off)       _vm->_inter->_variables->readOff32(off)
+#define READ_VARO_UINT16(off)       _vm->_inter->_variables->readOff16(off)
+#define READ_VARO_UINT8(off)        _vm->_inter->_variables->readOff8(off)
+#define GET_VAR_STR(var)            _vm->_inter->_variables->getAddressVarString(var, 0)
+#define GET_VARO_STR(off)           _vm->_inter->_variables->getAddressOffString(off, 0)
+#define GET_VAR_FSTR(var)           _vm->_inter->_variables->getAddressVarString(var)
+#define GET_VARO_FSTR(off)          _vm->_inter->_variables->getAddressOffString(off)
 
-#define WRITE_VAR_OFFSET(offs, val)	WRITE_VARO_UINT32((offs), (val))
-#define WRITE_VAR(var, val)		WRITE_VAR_UINT32((var), (val))
-#define VAR_OFFSET(offs)		READ_VARO_UINT32(offs)
-#define VAR(var)			READ_VAR_UINT32(var)
-#define VAR_ADDRESS(var)		((uint32 *) VARP((var) << 2))
+#define VAR_ADDRESS(var)            _vm->_inter->_variables->getAddressVar32(var)
+
+#define WRITE_VAR_OFFSET(off, val)  WRITE_VARO_UINT32((off), (val))
+#define WRITE_VAR(var, val)         WRITE_VAR_UINT32((var), (val))
+#define VAR_OFFSET(off)             READ_VARO_UINT32(off)
+#define VAR(var)                    READ_VAR_UINT32(var)
+
 
 enum GameType {
 	kGameTypeNone = 0,
@@ -102,12 +103,14 @@ enum {
 	kDebugFuncOp = 1 << 0,
 	kDebugDrawOp = 1 << 1,
 	kDebugGobOp = 1 << 2,
-	kDebugMusic = 1 << 3,     // CD, Adlib and Infogrames music
+	kDebugSound = 1 << 3,
 	kDebugParser = 1 << 4,
 	kDebugGameFlow = 1 << 5,
 	kDebugFileIO = 1 << 6,
-	kDebugGraphics = 1 << 7,
-	kDebugCollisions = 1 << 8
+	kDebugSaveLoad = 1 << 7,
+	kDebugGraphics = 1 << 8,
+	kDebugVideo = 1 << 9,
+	kDebugCollisions = 1 << 10
 };
 
 inline char *strncpy0(char *dest, const char *src, size_t n) {
@@ -171,12 +174,19 @@ private:
 struct GOBGameDescription;
 
 class GobEngine : public Engine {
-protected:
+private:
 	GobEngine *_vm;
+
+	GameType _gameType;
+	int32 _features;
+	Common::Platform _platform;
+
+	uint32 _pauseStart;
 
 	int go();
 	int init();
 
+	void pauseEngineIntern(bool pause);
 	bool initGameParts();
 	void deinitGameParts();
 
@@ -185,11 +195,7 @@ public:
 
 	Common::RandomSource _rnd;
 
-	GameType _gameType;
-	int32 _features;
 	Common::Language _language;
-	Common::Platform _platform;
-
 	uint16 _width;
 	uint16 _height;
 	uint8 _mode;
@@ -204,10 +210,9 @@ public:
 	Util *_util;
 	DataIO *_dataIO;
 	Game *_game;
-	Snd *_snd;
+	Sound *_sound;
 	Video *_video;
 	Draw *_draw;
-	CDROM *_cdrom;
 	Goblin *_goblin;
 	Init *_init;
 	Map *_map;
@@ -217,24 +222,20 @@ public:
 	Scenery *_scenery;
 	Inter *_inter;
 	SaveLoad *_saveLoad;
-	Adlib *_adlib;
 	VideoPlayer *_vidPlayer;
 
 	void shutdown();
 
-	const char *getLangDesc(int16 language) {
-		if ((language < 0) || (language > 8))
-			language = 2;
-		return Common::getLanguageDescription(_gobToScummVMLang[language]);
-	}
+	const char *getLangDesc(int16 language) const;
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);
 
-	GameType getGameType() { return _gameType; }
-	bool isCD() { return (_features & kFeaturesCD) != 0; }
-	bool isEGA() { return (_features & kFeaturesEGA) != 0; }
-	bool is640() { return (_features & kFeatures640) != 0; }
-	bool hasAdlib() { return (_features & kFeaturesAdlib) != 0; }
+	Common::Platform getPlatform() const;
+	GameType getGameType() const;
+	bool isCD() const;
+	bool isEGA() const;
+	bool is640() const;
+	bool hasAdlib() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();

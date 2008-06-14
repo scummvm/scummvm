@@ -84,7 +84,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 	FontManager();
 
-	Common::HashMap<Common::String, const Font *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> _fontMap;
+	Common::HashMap<Common::String, const Font *> _fontMap;
 };
 
 

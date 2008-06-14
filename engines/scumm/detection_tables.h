@@ -89,7 +89,8 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "baseball2001", "Backyard Baseball 2001" },
 	{ "Baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
-	{ "BluesABCTime", "Blue's ABC Time" },
+	{ "Blues123Time", "Blue's 123 Time Activities" },
+	{ "BluesABCTime", "Blue's ABC Time Activities" },
 	{ "BluesBirthday", "Blue's Birthday Adventure" },
 	{ "catalog", "Humongous Interactive Catalog" },
 	{ "chase", "SPY Fox in Cheese Chase" },
@@ -116,7 +117,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "PuttsFunShop", "Putt-Putt's One-Stop Fun Shop" },
 	{ "putttime", "Putt-Putt Travels Through Time" },
 	{ "puttzoo", "Putt-Putt Saves the Zoo" },
-	{ "readdemo", "Blue's Reading Time Activities (Demo)" },
+	{ "readtime", "Blue's Reading Time Activities" },
 	{ "SamsFunShop", "Pajama Sam's One-Stop Fun Shop" },
 	{ "soccer", "Backyard Soccer" },
 	{ "Soccer2004", "Backyard Soccer 2004" },
@@ -285,8 +286,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"dog", "", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
 	{"maze", "", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
 
-	{"water", "",      0, GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
-	{"water", "HE 99", 0, GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY, UNK},
+	{"water", "",      0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
 
 	// condMaskCode value changed in setUserCondition & setTalkCondition
 	{"putttime", "", 0, GID_HEGAME, 6, 85, MDT_NONE, GF_USE_KEY, UNK},
@@ -319,6 +319,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"soccer", "", 0, GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
 
 	// Global scripts increased to 2048
+	{"blues123time", "", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_HE_985, UNK},
 	{"freddi4", "",       0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_HE_985, UNK},
 	{"freddi4", "unenc",  0, GID_HEGAME, 6, 98, MDT_NONE,              GF_HE_985, UNK},
 
@@ -353,7 +354,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	// Uses smacker in external files, for testing only
 	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
-	{"readdemo", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 
 
@@ -511,6 +512,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "basketball", "basketball", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "basketball", "Basketball", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
+	{ "blues123time", "Blues123time", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "blues123time", "Blue's 123 Time", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
 	{ "bluesabctime", "bluesabctime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -550,6 +554,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "freddi", "freddi", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi", "Freddi", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddi", "Freddi1", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi", "freddemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi", "Freddi Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi", "Freddi Fish", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -641,6 +646,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama", "Pajama Sam", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama", "PajamaNHD", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama", "PJS-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama", "pjsam", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama", "PjSamDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama", "PYJAMA", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama", "SAMDEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
@@ -750,8 +756,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "zoodemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "readdemo", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "readdemo", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "readtime", "Blue's Reading Time", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "SamsFunShop", "SamsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "SamsFunShop", "Sam's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },

@@ -35,6 +35,7 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+#include "sound/audiocd.h"
 #include "sound/mixer.h"
 
 #include "made/made.h"
@@ -86,7 +87,15 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ProjectReader();
 	_screen = new Screen(this);
-	_dat = new GameDatabase(this);
+
+	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
+		_dat = new GameDatabaseV2(this);
+	} else if (getGameID() == GID_RTZ) {
+		_dat = new GameDatabaseV3(this);
+	} else {
+		error("Unknown GameID");
+	}
+
 	_script = new ScriptInterpreter(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -107,7 +116,15 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		debug(1, "Music disabled.");
 	}
 	
-	_soundRate = 8000;
+	_quit = false;
+
+	// Set default sound frequency
+	// Return to Zork sets it itself via a script funtion
+	if (getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
+		_soundRate = 11025;
+	} else {
+		_soundRate = 8000;
+	}
 
 }
 
@@ -132,21 +149,26 @@ int MadeEngine::init() {
 }
 
 int16 MadeEngine::getTimer(int16 timerNum) {
-	return (_system->getMillis() - _timers[timerNum]) / 60;
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
+		return (_system->getMillis() - _timers[timerNum - 1]) / kTimerResolution;
+	else
+		return 32000;
 }
 
 void MadeEngine::setTimer(int16 timerNum, int16 value) {
-	_timers[timerNum] = value * 60;
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+		_timers[timerNum - 1] = value * kTimerResolution;
 }
 
 void MadeEngine::resetTimer(int16 timerNum) {
-	_timers[timerNum] = _system->getMillis();
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+		_timers[timerNum - 1] = _system->getMillis();
 }
 
 int16 MadeEngine::allocTimer() {
 	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
 		if (_timers[i] == -1) {
-		 	resetTimer(i);
+			_timers[i] = _system->getMillis();
 			return i + 1;
 		}
 	}
@@ -154,14 +176,79 @@ int16 MadeEngine::allocTimer() {
 }
 
 void MadeEngine::freeTimer(int16 timerNum) {
-	_timers[timerNum] = -1;
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+		_timers[timerNum - 1] = -1;
+}
+
+Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
+	char filename[256];
+	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
+	return filename;
+}
+
+void MadeEngine::handleEvents() {
+
+	Common::Event event;
+	Common::EventManager *eventMan = _system->getEventManager();
+
+	// NOTE: Don't reset _eventNum to 0 here or no events will get through to the scripts.
+
+	while (eventMan->pollEvent(event)) {
+		switch (event.type) {
+
+		case Common::EVENT_MOUSEMOVE:
+			_eventMouseX = event.mouse.x;
+			_eventMouseY = event.mouse.y;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			_eventNum = 1;
+			break;
+
+		/*
+		case Common::EVENT_LBUTTONUP:
+			_eventNum = 2; // TODO: Is this correct?
+			break;
+		*/
+
+		case Common::EVENT_RBUTTONDOWN:
+			_eventNum = 3;
+			break;
+
+		/*
+		case Common::EVENT_RBUTTONUP:
+			eventNum = 4; // TODO: Is this correct?
+			break;
+		*/
+
+		case Common::EVENT_KEYDOWN:
+			_eventKey = event.kbd.ascii;
+			// For unknown reasons, the game accepts ASCII code
+			// 9 as backspace
+			if (_eventKey == Common::KEYCODE_BACKSPACE)
+				_eventKey = 9;
+			_eventNum = 5;
+			break;
+
+		case Common::EVENT_QUIT:
+			_quit = true;
+			break;
+
+		default:
+			break;
+
+		}
+	}
+	
+	AudioCD.updateCD();
+
 }
 
 int MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
 		_timers[i] = -1;
-	
+
 	if (getGameID() == GID_RTZ) {
 		_engineVersion = 3;
 		if (getFeatures() & GF_DEMO) {
@@ -187,12 +274,28 @@ int MadeEngine::go() {
 		_engineVersion = 2;
 		_dat->open("lgop2.dat");
 		_res->open("lgop2.prj");
+	} else if (getGameID() == GID_RODNEY) {
+		_engineVersion = 2;
+		_dat->open("rodneys.dat");
+		_res->open("rodneys.prj");
 	} else {
 		error ("Unknown MADE game");
 	}
 
-	_eventMouseX = _eventMouseY = 0;
+	// FIXME: This should make things a little faster until proper dirty rectangles
+	//        are implemented.
+	// NOTE: Disabled again since it causes major graphics errors.
+	//_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
+	_autoStopSound = false;
+	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
+	
+#ifdef DUMP_SCRIPTS
+	_script->dumpAllScripts();
+#else
+	_screen->setDefaultMouseCursor();
 	_script->runScript(_dat->getMainCodeObjectIndex());
+#endif
 
 	return 0;
 }

@@ -23,7 +23,7 @@ void addAutoCompleteLine(char* line) {
 	{
 		char word[32];
 		int length;
-
+		
 		// Skip the T9-style numbers
 		while (*line != ' ')
 		{
@@ -37,7 +37,7 @@ void addAutoCompleteLine(char* line) {
 			if (*line == ' ') line++;
 
 
-			// Copy the new word
+			// Copy the new word 
 			do {
 				word[length++] = *line++;
 			} while ((*line != '\0') && (*line != ' ') && (*line != '\n'));
@@ -47,7 +47,7 @@ void addAutoCompleteLine(char* line) {
 
 			// Store a pointer to the start of the word
 			wordBufferPtr[wordBufferPtrPos++] = &wordBuffer[wordBufferPos];
-
+	
 			// copy the new word into the buffer
 			strcpy(&wordBuffer[wordBufferPos], word);
 			wordBufferPos += strlen(word) + 1;
@@ -104,11 +104,11 @@ bool findWordCompletions(char* input)
 		// Get the word from the dictonary line
 		word = wordBufferPtr[position];
 
-
+		
 
 		// Now check to see if the word is before or after the stub we're after
 		int result = scumm_stricmp((const char *) partialWord, (const char *) word);
-
+		
 		if (result == 0) {
 			// We've found the whole word.  Aren't we good.
 			break;
@@ -128,10 +128,10 @@ bool findWordCompletions(char* input)
 	word = wordBufferPtr[position];
 	//consolePrintf("Final word: %s\n", word);
 
-
+	
 
 	system->setCharactersEntered(strlen(partialWord));
-
+	
 
 	bool match = true;
 
@@ -161,7 +161,7 @@ bool findWordCompletions(char* input)
 				break;
 			}
 		}
-
+	
 		if (match) {
 			system->addAutoComplete(word);
 		}

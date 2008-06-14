@@ -52,7 +52,7 @@ Codec37Decoder::Codec37Decoder(int width, int height) {
 
 Codec37Decoder::~Codec37Decoder() {
 	if (_offsetTable) {
-		delete []_offsetTable;
+		delete[] _offsetTable;
 		_offsetTable = 0;
 		_tableLastPitch = -1;
 		_tableLastIndex = -1;

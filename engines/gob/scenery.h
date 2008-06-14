@@ -34,16 +34,16 @@ public:
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct PieceDesc {
-		int16 left;		//NOTE:
-		int16 right;		//These are stored in Little Endian format
-		int16 top;		//And should be converted by client code when accessed
-		int16 bottom;		//i.e. use FROM_LE_16()
+		int16 left;
+		int16 right;
+		int16 top;
+		int16 bottom;
 	} PACKED_STRUCT;
 
 	struct StaticPlane {
-		int8 pictIndex;
-		int8 pieceIndex;
-		int8 drawOrder;
+		uint8 pictIndex;
+		uint8 pieceIndex;
+		uint8 drawOrder;
 		int16 destX;
 		int16 destY;
 		int8 transp;
@@ -82,19 +82,16 @@ public:
 		int16 layersCount;
 		StaticLayer *layers;
 		PieceDesc **pieces;
-		bool *piecesFromExt;
-		Static() : layersCount(0), layers(0), pieces(0),
-				   piecesFromExt(0) {}
+		uint32 *piecesCount;
+		Static() : layersCount(0), layers(0), pieces(0), piecesCount(0) {}
 	};
 
 	struct Animation {
 		int16 layersCount;
 		AnimLayer *layers;
 		PieceDesc **pieces;
-		bool *piecesFromExt;
-		uint16 *sizes;
-		Animation() : layersCount(0), layers(0), pieces(0),
-			              piecesFromExt(0) {}
+		uint32 *piecesCount;
+		Animation() : layersCount(0), layers(0), pieces(0), piecesCount(0) {}
 	};
 
 	int16 _curStatic;
@@ -150,6 +147,8 @@ protected:
 	Animation _animations[10];
 
 	GobEngine *_vm;
+
+	void loadPieces(int16 pictDescId, PieceDesc *&pieceDesc, uint32 &piecesCount);
 
 	void updateStatic(int16 orderFrom, byte index, byte layer);
 };

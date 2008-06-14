@@ -30,6 +30,7 @@
 
 #include "graphics/primitives.h"			// for Graphics::drawLine
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -303,14 +304,14 @@ void Parallaction_ns::_c_trasformata(void *parm) {
 }
 
 void Parallaction_ns::_c_offMouse(void *parm) {
-	showCursor(false);
+	_input->showCursor(false);
 	_engineFlags |= kEngineBlockInput;
 	return;
 }
 
 void Parallaction_ns::_c_onMouse(void *parm) {
 	_engineFlags &= ~kEngineBlockInput;
-	showCursor(true);
+	_input->showCursor(true);
 	return;
 }
 
@@ -339,7 +340,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 		g_system->delayMillis(20);
 	}
 
-	waitUntilLeftClick();
+	_input->waitUntilLeftClick();
 	_gfx->freeBalloons();
 
 	return;
@@ -395,7 +396,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
 	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 130);
 	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 160);
-	waitUntilLeftClick();
+	_input->waitUntilLeftClick();
 
 	_gfx->freeLabels();
 
@@ -422,8 +423,8 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	parseLocation("common");
 
 	uint id[2];
-	id[0] = _gfx->createLabel(_menuFont, _slideText[0], 1);
-	id[1] = _gfx->createLabel(_menuFont, _slideText[1], 1);
+	id[0] = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
+	id[1] = _gfx->createLabel(_menuFont, _location._slideText[1], 1);
 
 	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 38);
 	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 58);
@@ -477,14 +478,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		_gfx->updateScreen();
 
-		for (uint16 v2 = 0; v2 < 100; v2++) {
-			_mouseButtons = kMouseNone;
-			readInput();
-			if (_mouseButtons == kMouseLeftUp)
-				break;
-
-			waitTime( 1 );
-		}
+		_input->waitForButtonEvent(kMouseLeftUp, 5500);
 
 		_gfx->freeLabels();
 	}
@@ -497,7 +491,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		id[0] = _gfx->createLabel(_menuFont, "CLICK MOUSE BUTTON TO START", 1);
 		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
 
-		waitUntilLeftClick();
+		_input->waitUntilLeftClick();
 
 		_gfx->freeLabels();
 
@@ -507,7 +501,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		cleanupGame();
 
 	} else {
-		waitUntilLeftClick();
+		_input->waitUntilLeftClick();
 	}
 
 	return;

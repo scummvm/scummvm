@@ -26,7 +26,7 @@
 #ifndef KYRA_SCRIPT_TIM_H
 #define KYRA_SCRIPT_TIM_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/array.h"
 #include "common/func.h"
@@ -40,6 +40,10 @@ struct TIM {
 	int16 procFunc;
 	uint16 procParam;
 
+	enum {
+		kCountFuncs = 10
+	};
+
 	struct Function {
 		const uint16 *ip;
 
@@ -47,7 +51,7 @@ struct TIM {
 		uint32 nextTime;
 
 		const uint16 *avtl;
-	} func[10];
+	} func[kCountFuncs];
 
 	uint16 *avtl;
 	uint8 *text;
@@ -57,7 +61,7 @@ struct TIM {
 
 class TIMInterpreter {
 public:
-	TIMInterpreter(KyraEngine *vm, OSystem *system);
+	TIMInterpreter(KyraEngine_v1 *vm, OSystem *system);
 
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
@@ -69,8 +73,9 @@ public:
 	void stopCurFunc() { if (_currentTim) cmd_stopCurFunc(0); }
 
 	void play(const char *filename);
+	void refreshTimersAfterPause(uint32 elapsedTime);
 private:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	OSystem *_system;
 
 	TIM *_currentTim;

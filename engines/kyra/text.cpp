@@ -25,7 +25,7 @@
 
 
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
 #include "kyra/text.h"
 
@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-TextDisplayer::TextDisplayer(KyraEngine *vm, Screen *screen) {
+TextDisplayer::TextDisplayer(KyraEngine_v1 *vm, Screen *screen) {
 	_screen = screen;
 	_vm = vm;
 
@@ -210,7 +210,7 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	calcWidestLineBounds(x1, x2, w, x);
 	_talkCoords.x = x1;
 	_talkCoords.w = w + 2;
-	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage, Screen::CR_NO_P_CHECK);
 	int curPage = _screen->_curPage;
 	_screen->_curPage = srcPage;
 	for (int i = 0; i < lineCount; ++i) {

@@ -29,7 +29,24 @@
 
 namespace Made {
 
-void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, bool deltaFrame) {
+byte ValueReader::readPixel() {
+	byte value;
+	if (_nibbleMode) {
+		if (_nibbleSwitch) {
+			value = (_buffer[0] >> 4) & 0x0F;
+			_buffer++;
+		} else {
+			value = _buffer[0] & 0x0F;
+		}
+		_nibbleSwitch = !_nibbleSwitch;
+	} else {
+		value = _buffer[0];
+		_buffer++;
+	}
+	return value;
+}
+
+void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame) {
 
 	const int offsets[] = {
 		0, 1, 2, 3,
@@ -43,11 +60,10 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 
 	byte *cmdBuffer = source + cmdOffs;
 	byte *maskBuffer = source + maskOffs;
-	byte *pixelBuffer = source + pixelOffs;
+	ValueReader pixelReader(source + pixelOffs, (pixelFlags & 2) != 0);
 
 	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
 
-	//byte lineBuf[320 * 4];
 	byte lineBuf[640 * 4];
 	byte bitBuf[40];
 
@@ -85,14 +101,14 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				switch (cmd) {
 
 				case 0:
-					pixels[0] = *pixelBuffer++;
+					pixels[0] = pixelReader.readPixel();
 					for (int i = 0; i < 16; i++)
 						lineBuf[drawDestOfs + offsets[i]] = pixels[0];
 					break;
 
 				case 1:
-					pixels[0] = *pixelBuffer++;
-					pixels[1] = *pixelBuffer++;
+					pixels[0] = pixelReader.readPixel();
+					pixels[1] = pixelReader.readPixel();
 					mask = READ_LE_UINT16(maskBuffer);
 					maskBuffer += 2;
 					for (int i = 0; i < 16; i++) {
@@ -102,10 +118,10 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 					break;
 
 				case 2:
-					pixels[0] = *pixelBuffer++;
-					pixels[1] = *pixelBuffer++;
-					pixels[2] = *pixelBuffer++;
-					pixels[3] = *pixelBuffer++;
+					pixels[0] = pixelReader.readPixel();
+					pixels[1] = pixelReader.readPixel();
+					pixels[2] = pixelReader.readPixel();
+					pixels[3] = pixelReader.readPixel();
 					mask = READ_LE_UINT32(maskBuffer);
 					maskBuffer += 4;
 					for (int i = 0; i < 16; i++) {
@@ -144,6 +160,114 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				destPtr += width;
 			}
 		}
+
+	}
+
+}
+
+void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize) {
+
+	uint16 width = surface.w;
+	uint16 height = surface.h;
+	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4;
+
+	byte *cmdBuffer = source + cmdOffs;
+	byte *maskBuffer = source + maskOffs;
+	byte *pixelBuffer = source + pixelOffs;
+
+	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
+
+	byte bitBuf[40];
+
+	int bitBufLastOfs = (((lineSize + 1) >> 1) << 1) - 2;
+	int bitBufLastCount = ((width + 3) >> 2) & 7;
+	if (bitBufLastCount == 0)
+		bitBufLastCount = 8;
+		
+	debug(1, "width = %d; bw = %d", width, bw);
+
+	while (height > 0) {
+
+		memcpy(bitBuf, cmdBuffer, lineSize);
+		cmdBuffer += lineSize;
+
+		for (uint16 bitBufOfs = 0; bitBufOfs < lineSize; bitBufOfs += 2) {
+
+			uint16 bits = READ_LE_UINT16(&bitBuf[bitBufOfs]);
+
+			int bitCount;
+			if (bitBufOfs == bitBufLastOfs)
+				bitCount = bitBufLastCount;
+			else
+				bitCount = 8;
+
+			for (int curCmd = 0; curCmd < bitCount; curCmd++) {
+				uint cmd = bits & 3;
+				bits >>= 2;
+
+				byte pixels[4], block[16];
+				uint32 mask;
+
+				switch (cmd) {
+
+				case 0:
+					pixels[0] = *pixelBuffer++;
+					for (int i = 0; i < 16; i++)
+						block[i] = pixels[0];
+					break;
+
+				case 1:
+					pixels[0] = *pixelBuffer++;
+					pixels[1] = *pixelBuffer++;
+					mask = READ_LE_UINT16(maskBuffer);
+					maskBuffer += 2;
+					for (int i = 0; i < 16; i++) {
+						block[i] = pixels[mask & 1];
+						mask >>= 1;
+					}
+					break;
+
+				case 2:
+					pixels[0] = *pixelBuffer++;
+					pixels[1] = *pixelBuffer++;
+					pixels[2] = *pixelBuffer++;
+					pixels[3] = *pixelBuffer++;
+					mask = READ_LE_UINT32(maskBuffer);
+					maskBuffer += 4;
+					for (int i = 0; i < 16; i++) {
+						block[i] = pixels[mask & 3];
+						mask >>= 2;
+					}
+					break;
+
+				case 3:
+					break;
+
+				}
+
+				if (cmd != 3) {
+					uint16 blockPos = 0;
+					uint32 maxW = MIN(4, surface.w - bx);
+					uint32 maxH = (MIN(4, surface.h - by) + by) * width;
+					for (uint32 yc = by * width; yc < maxH; yc += width) {
+						for (uint32 xc = 0; xc < maxW; xc++) {
+							destPtr[(bx + xc) + yc] = block[xc + blockPos];
+						}
+						blockPos += 4;
+					}
+				}
+
+				bx += 4;
+				if (bx >= bw) {
+					bx = 0;
+					by += 4;
+				}
+
+			}
+
+		}
+
+		height -= 4;
 
 	}
 

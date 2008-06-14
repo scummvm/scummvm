@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -34,6 +33,7 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
+#include "gob/inter.h"
 
 namespace Gob {
 

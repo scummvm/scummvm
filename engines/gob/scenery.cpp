@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -101,7 +100,6 @@ int16 Scenery::loadStatic(char search) {
 	byte *extData = 0;
 	byte *dataPtr;
 	Static *ptr;
-	int16 pictDescId;
 	int16 width;
 	int16 height;
 	int16 sprResId;
@@ -144,8 +142,6 @@ int16 Scenery::loadStatic(char search) {
 	dataPtr += 2;
 
 	ptr->layers = new StaticLayer[ptr->layersCount];
-	ptr->pieces = new PieceDesc*[picsCount];
-	ptr->piecesFromExt = new bool[picsCount];
 
 	for (int i = 0; i < ptr->layersCount; i++) {
 		int16 offset = READ_LE_UINT16(dataPtr + i * 2);
@@ -155,9 +151,9 @@ int16 Scenery::loadStatic(char search) {
 
 		ptr->layers[i].planes = new StaticPlane[ptr->layers[i].planeCount];
 		for (int j = 0; j < ptr->layers[i].planeCount; ++j) {
-			ptr->layers[i].planes[j].pictIndex = layerData.readSByte();
-			ptr->layers[i].planes[j].pieceIndex = layerData.readSByte();
-			ptr->layers[i].planes[j].drawOrder = layerData.readSByte();
+			ptr->layers[i].planes[j].pictIndex = layerData.readByte();
+			ptr->layers[i].planes[j].pieceIndex = layerData.readByte();
+			ptr->layers[i].planes[j].drawOrder = layerData.readByte();
 			ptr->layers[i].planes[j].destX = layerData.readSint16LE();
 			ptr->layers[i].planes[j].destY = layerData.readSint16LE();
 			ptr->layers[i].planes[j].transp = layerData.readSByte();
@@ -167,18 +163,13 @@ int16 Scenery::loadStatic(char search) {
 		backsPtr++;
 	}
 
-	for (int i = 0; i < picsCount; i++) {
-		pictDescId = _vm->_inter->load16();
+	ptr->pieces = new PieceDesc*[picsCount];
+	ptr->piecesCount = new uint32[picsCount];
 
-		if (pictDescId >= 30000) {
-			ptr->pieces[i] =
-				(PieceDesc *) _vm->_game->loadExtData(pictDescId, 0, 0);
-			ptr->piecesFromExt[i] = true;
-		} else {
-			ptr->pieces[i] =
-				(PieceDesc *) _vm->_game->loadTotResource(pictDescId);
-			ptr->piecesFromExt[i] = false;
-		}
+	for (int i = 0; i < picsCount; i++) {
+		int16 pictDescId = _vm->_inter->load16();
+
+		loadPieces(pictDescId, ptr->pieces[i], ptr->piecesCount[i]);
 
 		width = _vm->_inter->load16();
 		height = _vm->_inter->load16();
@@ -225,8 +216,7 @@ void Scenery::freeStatic(int16 index) {
 		return;
 
 	for (int i = 0; i < _staticPictCount[index]; i++) {
-		if (_statics[index].piecesFromExt[i])
-			delete[] _statics[index].pieces[i];
+		delete[] _statics[index].pieces[i];
 
 		spr = _staticPictToSprite[index * 7 + i];
 		_spriteRefs[spr]--;
@@ -240,7 +230,7 @@ void Scenery::freeStatic(int16 index) {
 		delete[] _statics[index].layers[i].planes;
 	delete[] _statics[index].layers;
 	delete[] _statics[index].pieces;
-	delete[] _statics[index].piecesFromExt;
+	delete[] _statics[index].piecesCount;
 
 	_statics[index].layersCount = 0;
 	_staticPictCount[index] = -1;
@@ -254,8 +244,8 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	int16 order;
 	int16 plane;
 
-	int16 pieceIndex;
-	int16 pictIndex;
+	uint16 pieceIndex;
+	uint16 pictIndex;
 
 	int16 left;
 	int16 right;
@@ -278,7 +268,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	}
 
 	planeCount = layerPtr->planeCount;
-	for (order = 0; order < 40; order++) {
+	for (order = 0; order < 100; order++) {
 		for (plane = 0, planePtr = layerPtr->planes;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
@@ -287,12 +277,21 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 			pieceIndex = planePtr->pieceIndex;
 			pictIndex = planePtr->pictIndex - 1;
 
+			if (pictIndex >= _staticPictCount[scenery])
+				continue;
+
+			if (!ptr->pieces || !ptr->pieces[pictIndex])
+				continue;
+
+			if (pieceIndex >= ptr->piecesCount[pictIndex])
+				continue;
+
 			_vm->_draw->_destSpriteX = planePtr->destX;
 			_vm->_draw->_destSpriteY = planePtr->destY;
-			left = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].left);
-			right = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].right);
-			top = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].top);
-			bottom = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].bottom);
+			left = ptr->pieces[pictIndex][pieceIndex].left;
+			right = ptr->pieces[pictIndex][pieceIndex].right;
+			top = ptr->pieces[pictIndex][pieceIndex].top;
+			bottom = ptr->pieces[pictIndex][pieceIndex].bottom;
 
 			_vm->_draw->_sourceSurface =
 			    _staticPictToSprite[scenery * 7 + pictIndex];
@@ -314,8 +313,8 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 	int16 planeCount;
 	int16 order;
 	int16 plane;
-	int16 pieceIndex;
-	int16 pictIndex;
+	uint16 pieceIndex;
+	uint16 pictIndex;
 
 	int16 left;
 	int16 right;
@@ -330,7 +329,7 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 	planeCount = layerPtr->planeCount;
 
-	for (order = orderFrom; order < 40; order++) {
+	for (order = orderFrom; order < 100; order++) {
 		for (planePtr = layerPtr->planes, plane = 0;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
@@ -338,13 +337,23 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 			pieceIndex = planePtr->pieceIndex;
 			pictIndex = planePtr->pictIndex - 1;
+
+			if (pictIndex >= _staticPictCount[index])
+				continue;
+
+			if (!pictPtr || !pictPtr[pictIndex])
+				continue;
+
+			if (pieceIndex >= _statics[index].piecesCount[pictIndex])
+				continue;
+
 			_vm->_draw->_destSpriteX = planePtr->destX;
 			_vm->_draw->_destSpriteY = planePtr->destY;
 
-			left = FROM_LE_16(pictPtr[pictIndex][pieceIndex].left);
-			right = FROM_LE_16(pictPtr[pictIndex][pieceIndex].right);
-			top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
-			bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
+			left = pictPtr[pictIndex][pieceIndex].left;
+			right = pictPtr[pictIndex][pieceIndex].right;
+			top = pictPtr[pictIndex][pieceIndex].top;
+			bottom = pictPtr[pictIndex][pieceIndex].bottom;
 
 			if (_vm->_draw->_destSpriteX > _toRedrawRight)
 				continue;
@@ -415,7 +424,6 @@ int16 Scenery::loadAnim(char search) {
 	byte *extData;
 	byte *dataPtr;
 	Animation *ptr;
-	int16 pictDescId;
 	int16 width;
 	int16 height;
 	int16 sprResId;
@@ -454,9 +462,6 @@ int16 Scenery::loadAnim(char search) {
 	dataPtr += 2;
 
 	ptr->layers = new AnimLayer[ptr->layersCount];
-	ptr->pieces = new PieceDesc*[picsCount];
-	ptr->piecesFromExt = new bool[picsCount];
-	ptr->sizes = new uint16[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		int16 offset = READ_LE_UINT16(dataPtr + i * 2);
@@ -492,23 +497,13 @@ int16 Scenery::loadAnim(char search) {
 		}
 	}
 
+	ptr->pieces = new PieceDesc*[picsCount];
+	ptr->piecesCount = new uint32[picsCount];
+
 	for (i = 0; i < picsCount; i++) {
-		pictDescId = _vm->_inter->load16();
-		if (pictDescId >= 30000) {
-			uint32 size;
+		int16 pictDescId = _vm->_inter->load16();
 
-			ptr->pieces[i] =
-				(PieceDesc *) _vm->_game->loadExtData(pictDescId, 0, 0, &size);
-			ptr->piecesFromExt[i] = true;
-			ptr->sizes[i] = size / 8;
-		} else {
-			int16 size;
-
-			ptr->pieces[i] =
-				(PieceDesc *) _vm->_game->loadTotResource(pictDescId, &size);
-			ptr->piecesFromExt[i] = false;
-			ptr->sizes[i] = size / 8;
-		}
+		loadPieces(pictDescId, ptr->pieces[i], ptr->piecesCount[i]);
 
 		width = _vm->_inter->load16();
 		height = _vm->_inter->load16();
@@ -554,8 +549,7 @@ void Scenery::freeAnim(int16 index) {
 		return;
 
 	for (int i = 0; i < _animPictCount[index]; i++) {
-		if (_animations[index].piecesFromExt[i])
-			delete[] _animations[index].pieces[i];
+		delete[] _animations[index].pieces[i];
 
 		spr = _animPictToSprite[index * 7 + i];
 		_spriteRefs[spr]--;
@@ -569,8 +563,7 @@ void Scenery::freeAnim(int16 index) {
 		delete[] _animations[index].layers[i].frames;
 	delete[] _animations[index].layers;
 	delete[] _animations[index].pieces;
-	delete[] _animations[index].piecesFromExt;
-	delete[] _animations[index].sizes;
+	delete[] _animations[index].piecesCount;
 
 	_animPictCount[index] = 0;
 }
@@ -620,8 +613,8 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		Mult::Mult_Object &obj = _vm->_mult->_objects[-animation - 1];
 
-		if (!_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
-			_toRedrawLeft = -1234;
+		if ((obj.videoSlot == 0) || !_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
+			_toRedrawLeft = -12345;
 			return;
 		}
 
@@ -629,8 +622,17 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			frame = _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1) - 1;
 
 		// Seek to frame
-		while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) <= frame)
-			_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < 256) {
+			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) <= frame)
+				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+		} else {
+			int16 curFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1);
+			uint8 frameWrap = curFrame / 256;
+			frame = (frame + 1) % 256;
+
+			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < (frameWrap * 256 + frame))
+				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+		}
 
 		destX = 0;
 		destY = 0;
@@ -724,7 +726,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		}
 
-		if (flags & 4) {
+		if (!(flags & 4)) {
 			_animLeft = _toRedrawLeft = left;
 			_animTop = _toRedrawTop = top;
 			_animRight = _toRedrawRight = right;
@@ -812,20 +814,19 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		pictIndex = (pictIndex & 15) - 1;
 
-		if ((pictIndex == 0xFFFF) || (_animPictCount[animation] <= pictIndex)) {
-			warning("Scenery::updateAnim: pictIndex out of range");
-			return;
-		}
-
-		if (_animations[animation].sizes[pictIndex] <= pieceIndex) {
-			warning("Scenery::updateAnim: pieceIndex out of range");
+		if (pictIndex >= _animPictCount[animation])
 			continue;
-		}
 
-		left = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].left);
-		right = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].right);
-		top = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].top);
-		bottom = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].bottom);
+		if (!pictPtr[pictIndex])
+			continue;
+
+		if (pieceIndex >= _animations[animation].piecesCount[pictIndex])
+			continue;
+
+		left = pictPtr[pictIndex][pieceIndex].left;
+		right = pictPtr[pictIndex][pieceIndex].right;
+		top = pictPtr[pictIndex][pieceIndex].top;
+		bottom = pictPtr[pictIndex][pieceIndex].bottom;
 
 		if (flags & 2) {
 			if (destX < _vm->_mult->_animLeft) {
@@ -944,6 +945,44 @@ Scenery::AnimLayer *Scenery::getAnimLayer(uint16 index, uint16 layer) {
 	assert(layer < _animations[index].layersCount);
 
 	return &_animations[index].layers[layer];
+}
+
+void Scenery::loadPieces(int16 pictDescId, PieceDesc *&pieceDesc, uint32 &piecesCount) {
+	byte *data;
+	uint32 size;
+	bool fromExt = false;
+
+	if (pictDescId >= 30000) {
+		fromExt = true;
+
+		uint32 eSize;
+
+		data = _vm->_game->loadExtData(pictDescId, 0, 0, &eSize);
+		size = eSize;
+	} else {
+		int16 tSize;
+
+		data = _vm->_game->loadTotResource(pictDescId, &tSize);
+		size = tSize;
+	}
+
+	if (!data)
+		error("Scenery::loadPieces(): Can't load pictDescId %d", pictDescId);
+
+	piecesCount = size / 8;
+	pieceDesc = new PieceDesc[piecesCount];
+
+	Common::MemoryReadStream pieceData(data, size);
+
+	for (uint32 i = 0; i < piecesCount; i++) {
+		pieceDesc[i].left = (int16) pieceData.readUint16LE();
+		pieceDesc[i].right = (int16) pieceData.readUint16LE();
+		pieceDesc[i].top = (int16) pieceData.readUint16LE();
+		pieceDesc[i].bottom = (int16) pieceData.readUint16LE();
+	}
+
+	if (fromExt)
+		delete[] data;
 }
 
 } // End of namespace Gob

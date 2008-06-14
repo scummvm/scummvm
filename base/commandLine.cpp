@@ -23,7 +23,7 @@
  *
  */
 
-#include "engines/engine.h"
+#include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -46,6 +46,8 @@
 #endif
 #elif defined(__SYMBIAN32__)
 #define DEFAULT_SAVE_PATH "Savegames"
+#elif defined(PALMOS_MODE)
+#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
 #endif
 
 #define DETECTOR_TESTING_HACK
@@ -146,7 +148,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined (__SYMBIAN32__))
+#if !(defined(__GP32__) || defined (__SYMBIAN32__))
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
@@ -229,6 +231,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("savepath", savePath);
 #elif defined (IPHONE)
 	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
+
+#elif defined(PALMOS_MODE)
+	ConfMan.registerDefault("savepath", DEFAULT_SAVE_PATH);
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
 
@@ -559,10 +564,10 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-	PluginList::const_iterator iter = plugins.begin();
+	const EnginePlugin::List &plugins = EngineMan.getPlugins();
+	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (*iter)->getSupportedGames();
+		GameList list = (**iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
 		}
@@ -586,7 +591,7 @@ static void listTargets() {
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
 			Common::String gameid(name);
-			GameDescriptor g = Base::findGame(gameid);
+			GameDescriptor g = EngineMan.findGame(gameid);
 			if (g.description().size() > 0)
 				description = g.description();
 		}
@@ -613,8 +618,8 @@ static void listSaves(const char *target) {
 	gameid.toLowercase();	// Normalize it to lower case
 
 	// Find the plugin that will handle the specified gameid
-	const Plugin *plugin = 0;
-	GameDescriptor game = Base::findGame(gameid, &plugin);
+	const EnginePlugin *plugin = 0;
+	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
 		error("Could not find any plugin to handle gameid '%s' (target '%s')", gameid.c_str(), target);
@@ -622,7 +627,7 @@ static void listSaves(const char *target) {
 	}
 
 	// Query the plugin for a list of savegames
-	SaveStateList saveList = plugin->listSaves(target);
+	SaveStateList saveList = (*plugin)->listSaves(target);
 
 	// TODO: Include more info about the target (desc, engine name, ...) ???
 	printf("Saves for target '%s':\n", target);
@@ -667,7 +672,7 @@ static void runDetectorTest() {
 			continue;
 		}
 
-		GameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(EngineMan.detectGames(files));
 		bool gameidDiffers = false;
 		GameList::iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
@@ -740,7 +745,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		GameDescriptor gd = Base::findGame(command);
+		GameDescriptor gd = EngineMan.findGame(command);
 		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
 			bool idCameFromCommandLine = false;
 

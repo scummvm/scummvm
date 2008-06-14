@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -31,13 +30,13 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
-#include "gob/cdrom.h"
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/palanim.h"
-#include "gob/sound.h"
+#include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -51,8 +50,8 @@ void Init::cleanup(void) {
 	_vm->_video->freeDriver();
 	_vm->_global->_primarySurfDesc = 0;
 
-	_vm->_snd->speakerOff();
-	_vm->_snd->stopSound(0);
+	_vm->_sound->speakerOff();
+	_vm->_sound->blasterStop(0);
 	_vm->_dataIO->closeDataFile();
 }
 
@@ -64,7 +63,6 @@ void Init::initGame(const char *totName) {
 	char *infPtr;
 	char *infEnd;
 	char buffer[128];
-	int32 varsCount;
 
 	initVideo();
 
@@ -92,8 +90,6 @@ void Init::initGame(const char *totName) {
 	_vm->_game->_totTextData = 0;
 	_vm->_game->_totFileData = 0;
 	_vm->_game->_totResourceTable = 0;
-	_vm->_global->_inter_variables = 0;
-	_vm->_global->_inter_variablesSizes = 0;
 	_palDesc = new Video::PalDesc;
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);
@@ -159,18 +155,14 @@ void Init::initGame(const char *totName) {
 		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
 		stream->seek(0x2C);
-		varsCount = stream->readUint16LE();
+		_vm->_inter->allocateVars(stream->readUint16LE());
 
 		delete stream;
 
-		_vm->_global->_inter_variables = new byte[varsCount * 4];
-		_vm->_global->_inter_variablesSizes = new byte[varsCount * 4];
-		_vm->_global->clearVars(varsCount);
-
 		strcpy(_vm->_game->_curTotFile, buffer);
 
-		_vm->_cdrom->testCD(1, "GOB");
-		_vm->_cdrom->readLIC("gob.lic");
+		_vm->_sound->cdTest(1, "GOB");
+		_vm->_sound->cdLoadLIC("gob.lic");
 
 		// Search for a Coktel logo animation or image to display
 		imdHandle = _vm->_dataIO->openData("coktel.imd");
@@ -213,11 +205,9 @@ void Init::initGame(const char *totName) {
 
 		_vm->_game->start();
 
-		_vm->_cdrom->stopPlaying();
-		_vm->_cdrom->freeLICbuffer();
+		_vm->_sound->cdStop();
+		_vm->_sound->cdUnloadLIC();
 
-		delete[] _vm->_global->_inter_variables;
-		delete[] _vm->_global->_inter_variablesSizes;
 		delete[] _vm->_game->_totFileData;
 		if (_vm->_game->_totTextData) {
 			if (_vm->_game->_totTextData->items)

@@ -68,6 +68,7 @@ public:
 			uint16 left, uint16 top, uint16 width, uint16 height,
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
 	void slotCopyPalette(int slot, int16 palStart = -1, int16 palEnd = -1);
+	void slotWaitEndFrame(int slot, bool onlySound = false);
 
 	bool slotIsOpen(int slot) const;
 
@@ -81,6 +82,8 @@ public:
 
 	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
+
+	void notifyPaused(uint32 duration);
 
 private:
 	class Video {
@@ -127,10 +130,13 @@ private:
 
 	const Video *getVideoBySlot(int slot = -1) const;
 
+	int getNextFreeSlot();
+
 	void copyPalette(CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
 			int16 palFrame, int16 endFrame);
+	void evalBgShading(CoktelVideo &video);
 };
 
 } // End of namespace Gob

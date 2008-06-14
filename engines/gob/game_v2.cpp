@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -38,9 +37,9 @@
 #include "gob/mult.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -55,7 +54,6 @@ void Game_v2::playTot(int16 skipPlay) {
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
-	int32 variablesCount;
 	int32 totSize;
 	byte *filePtr;
 	byte *savedIP;
@@ -73,7 +71,7 @@ void Game_v2::playTot(int16 skipPlay) {
 
 	if (skipPlay <= 0) {
 		while (!_vm->_quitRequested) {
-			if (_vm->_global->_inter_variables)
+			if (_vm->_inter->_variables)
 				_vm->_draw->animateCursor(4);
 
 			if (skipPlay != -1) {
@@ -205,12 +203,8 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			_vm->_global->_inter_animDataSize =
 				READ_LE_UINT16(_totFileData + 0x38);
-			if (!_vm->_global->_inter_variables) {
-				variablesCount = READ_LE_UINT16(_totFileData + 0x2C);
-				_vm->_global->_inter_variables = new byte[variablesCount * 4];
-				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
-				_vm->_global->clearVars(variablesCount);
-			}
+			if (!_vm->_inter->_variables)
+				_vm->_inter->allocateVars(READ_LE_UINT16(_totFileData + 0x2C));
 
 			_vm->_global->_inter_execPtr = _totFileData;
 			_vm->_global->_inter_execPtr +=
@@ -265,11 +259,14 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (skipPlay != -1) {
 				_vm->_goblin->freeObjects();
 
-				_vm->_snd->stopSound(0);
+				_vm->_sound->blasterStop(0);
 
-				for (int i = 0; i < 60; i++)
-					if (_soundSamples[i].getType() == SOUND_SND)
-						_vm->_snd->freeSample(_soundSamples[i]);
+				for (int i = 0; i < Sound::kSoundsCount; i++) {
+					SoundDesc *sound = _vm->_sound->sampleGetBySlot(i);
+
+					if (sound && (sound->getType() == SOUND_SND))
+						_vm->_sound->sampleFree(sound);
+				}
 			}
 
 			_vm->_vidPlayer->primaryClose();
@@ -630,13 +627,15 @@ void Game_v2::collisionsBlock(void) {
 	Collision *collArea;
 	int16 timeKey;
 	byte *savedIP;
+	byte collAreaStart;
 
 	if (_shouldPushColls)
 		pushCollisions(0);
 
-	collArea = _collisionAreas;
-	while (collArea->left != 0xFFFF)
-		collArea++;
+	collAreaStart = 0;
+	while (_collisionAreas[collAreaStart].left != 0xFFFF)
+		collAreaStart++;
+	collArea = &_collisionAreas[collAreaStart];
 
 	_shouldPushColls = 0;
 	collResId = -1;
@@ -962,7 +961,7 @@ void Game_v2::collisionsBlock(void) {
 							continue;
 
 						_activeCollResId = collPtr->id;
-						_activeCollIndex = i;
+						_activeCollIndex = i + collAreaStart;
 						_vm->_inter->storeMouse();
 						if (VAR(16) != 0)
 							break;
@@ -1004,7 +1003,7 @@ void Game_v2::collisionsBlock(void) {
 							if ((collPtr->id & 0xF000) == 0x8000)
 								if (++counter == descIndex) {
 									_activeCollResId = collPtr->id;
-									_activeCollIndex = i;
+									_activeCollIndex = i + collAreaStart;
 									break;
 								}
 						}
@@ -1404,7 +1403,7 @@ int16 Game_v2::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 
 		flag = 1;
 
-		if (_vm->_global->_inter_variables)
+		if (_vm->_inter->_variables)
 			WRITE_VAR(56, pos);
 
 		while (1) {

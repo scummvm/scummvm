@@ -3,13 +3,13 @@ MODULE := backends
 MODULE_OBJS := \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	fs/ds/ds-fs-factory.o \
-	fs/gp32/gp32-fs-factory.o \
 	fs/palmos/palmos-fs-factory.o \
 	fs/posix/posix-fs-factory.o \
 	fs/ps2/ps2-fs-factory.o \
 	fs/psp/psp-fs-factory.o \
 	fs/symbian/symbian-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
+	fs/wii/wii-fs-factory.o \
 	events/default/default-events.o \
 	midi/alsa.o \
 	midi/camd.o \

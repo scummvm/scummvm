@@ -40,26 +40,25 @@ namespace Made {
 class Object {
 public:
 	Object();
-	~Object();
-	int loadVersion2(Common::SeekableReadStream &source);
-	int loadVersion3(Common::SeekableReadStream &source);
-	int loadVersion3(byte *source);
+	virtual ~Object();
 
-	uint16 getFlags() const;
-	uint16 getClass() const;
-	uint16 getSize() const;
+	virtual int load(Common::SeekableReadStream &source) = 0;
+	virtual int load(byte *source) = 0;
+	virtual int save(Common::WriteStream &dest) = 0;
+	virtual uint16 getFlags() = 0;
+	virtual uint16 getClass() = 0;
+	virtual uint16 getSize() = 0;
+	virtual byte getCount1() = 0;
+	virtual byte getCount2() = 0;
+	virtual byte *getData() = 0;
+	virtual bool isConstant() = 0;
 
-	byte getCount1() const;
-	byte getCount2() const;
-
-	byte *getData();
 	const char *getString();
 	void setString(const char *str);
 
 	bool isObject();
 	bool isVector();
-	bool isConstant() const { return !(getFlags() & 1); }
-	
+
 	int16 getVectorSize();
 	int16 getVectorItem(int16 index);
 	void setVectorItem(int16 index, int16 value);
@@ -72,52 +71,113 @@ protected:
 	byte *_objData;
 };
 
+class ObjectV2 : public Object {
+public:
+	int load(Common::SeekableReadStream &source);
+	int load(byte *source);
+	int save(Common::WriteStream &dest);
+	uint16 getFlags();
+	uint16 getClass();
+	uint16 getSize();
+	byte getCount1();
+	byte getCount2();
+	byte *getData();
+	
+	bool isConstant() {
+		return false;
+	}
+	
+};
+
+class ObjectV3 : public Object {
+public:
+	int load(Common::SeekableReadStream &source);
+	int load(byte *source);
+	int save(Common::WriteStream &dest);
+	uint16 getFlags();
+	uint16 getClass();
+	uint16 getSize();
+	byte getCount1();
+	byte getCount2();
+	byte *getData();
+	
+	bool isConstant() {
+		return !(getFlags() & 1);
+	}
+	
+};
+
 class GameDatabase {
 public:
 
 	GameDatabase(MadeEngine *vm);
-	~GameDatabase();
+	virtual ~GameDatabase();
 
 	void open(const char *filename);
 	void openFromRed(const char *redFilename, const char *filename);
 
-	bool getSavegameDescription(const char *filename, Common::String &description);
-	int16 savegame(const char *filename, const char *description, int16 version);
-	int16 loadgame(const char *filename, int16 version);
-
-	Object *getObject(int16 index) const { 
+	Object *getObject(int16 index) const {
 		if (index >= 1)
 			return _objects[index - 1];
 		else
 			return NULL;
 	}
 
+	uint getObjectCount() const { return _objects.size(); }
+
 	int16 getMainCodeObjectIndex() const { return _mainCodeObjectIndex; }
 
 	int16 getVar(int16 index);
 	void setVar(int16 index, int16 value);
-	
-	int16 *getObjectPropertyPtrV2(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
-	int16 *getObjectPropertyPtrV3(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
-	int16 *getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
-	
+
+	const char *getObjectString(int16 index);
+	void setObjectString(int16 index, const char *str);
+
+	virtual int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) = 0;
+	virtual const char *getString(uint16 offset) = 0;
+	virtual bool getSavegameDescription(const char *filename, Common::String &description) = 0;
+	virtual int16 savegame(const char *filename, const char *description, int16 version) = 0;
+	virtual int16 loadgame(const char *filename, int16 version) = 0;
+
 	int16 getObjectProperty(int16 objectIndex, int16 propertyId);
 	int16 setObjectProperty(int16 objectIndex, int16 propertyId, int16 value);
-	
-	const char *getString(uint16 offset);
 
 	void dumpObject(int16 index);
-	
+
 protected:
 	MadeEngine *_vm;
 	Common::Array<Object*> _objects;
 	byte *_gameState;
 	uint32 _gameStateSize;
-	char *_gameText;
 	int16 _mainCodeObjectIndex;
+	virtual void load(Common::SeekableReadStream &sourceS) = 0;
+};
+
+class GameDatabaseV2 : public GameDatabase {
+public:
+	GameDatabaseV2(MadeEngine *vm);
+	~GameDatabaseV2();
+	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
+	const char *getString(uint16 offset);
+	bool getSavegameDescription(const char *filename, Common::String &description);
+	int16 savegame(const char *filename, const char *description, int16 version);
+	int16 loadgame(const char *filename, int16 version);
+protected:
+	char *_gameText;
 	void load(Common::SeekableReadStream &sourceS);
-	void loadVersion2(Common::SeekableReadStream &sourceS);
-	void loadVersion3(Common::SeekableReadStream &sourceS);
+};
+
+class GameDatabaseV3 : public GameDatabase {
+public:
+	GameDatabaseV3(MadeEngine *vm);
+	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
+	const char *getString(uint16 offset);
+	bool getSavegameDescription(const char *filename, Common::String &description);
+	int16 savegame(const char *filename, const char *description, int16 version);
+	int16 loadgame(const char *filename, int16 version);
+protected:
+	char *_gameText;
+	void load(Common::SeekableReadStream &sourceS);
 };
 
 } // End of namespace Made

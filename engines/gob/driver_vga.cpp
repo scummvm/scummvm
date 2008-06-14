@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "graphics/primitives.h"
 
@@ -110,10 +109,16 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	int16 width = MIN((right - left) + 1, (int) dest->getWidth());
 	int16 height = MIN((bottom - top) + 1, (int) dest->getHeight());
 
+	if ((width < 1) || (height < 1))
+		return;
+
 	byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
 	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;
 
+	uint32 size = width * height;
+	
 	if (transp) {
+
 		while (height--) {
 			for (int16 i = 0; i < width; ++i) {
 				if (srcPos[i])
@@ -123,13 +128,26 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			srcPos += source->getWidth();
 			destPos += dest->getWidth();
 		}
+
+	} else if (((srcPos  >= destPos) && (srcPos  <= (destPos + size))) ||
+	           ((destPos >= srcPos)  && (destPos <= (srcPos  + size)))) {
+
+		while (height--) {
+			memmove(destPos, srcPos, width);
+
+			srcPos += source->getWidth();
+			destPos += dest->getWidth();
+		}
+
 	} else {
+
 		while (height--) {
 			memcpy(destPos, srcPos, width);
 
 			srcPos += source->getWidth();
 			destPos += dest->getWidth();
 		}
+
 	}
 }
 

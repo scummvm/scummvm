@@ -36,15 +36,12 @@ class Screen_HoF : public Screen_v2 {
 friend class Debugger_v2;
 public:
 	Screen_HoF(KyraEngine_HoF *vm, OSystem *system);
-	~Screen_HoF();
 
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
 
 	// sequence player
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
-	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
-	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
 	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,	int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
 	void copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes);
 	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
@@ -53,8 +50,6 @@ private:
 
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
-
-	uint8 *_wsaFrameAnimBuffer;
 };
 
 } // End of namespace Kyra

@@ -53,6 +53,7 @@ AnimData animDataTable[NUM_MAX_ANIMDATA];
 
 static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
+	{"TITRE", 0xF},
 	{"TITRE2", 0xF},
 	{"ET", 0xC},
 	{"L311", 0x3},
@@ -380,8 +381,8 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
 	fHandle.writeUint16BE(_var1);
 	fHandle.writeUint16BE(_bpp);
 	fHandle.writeUint16BE(_height);
-	fHandle.writeUint32BE(0); // _data
-	fHandle.writeUint32BE(0); // _mask
+	fHandle.writeUint32BE(_data != NULL); // _data
+	fHandle.writeUint32BE(_mask != NULL); // _mask
 	fHandle.writeUint16BE(_fileIdx);
 	fHandle.writeUint16BE(_frameIdx);
 	fHandle.write(_name, sizeof(_name));
@@ -729,7 +730,7 @@ void loadResource(const char *resourceName) {
 	} else if (strstr(resourceName, ".SEQ")) {
 		loadSeq(resourceName, -1);
 		return;
-	} else if (strstr(resourceName, "ECHEC")) {
+	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
 		exitEngine = 1;
 		return;
 	}

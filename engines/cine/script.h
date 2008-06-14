@@ -155,8 +155,8 @@ protected:
 	int o1_getObjectParam();
 	int o1_addObjectParam();
 	int o1_subObjectParam();
-	int o1_add2ObjectParam();
-	int o1_sub2ObjectParam();
+	int o1_mulObjectParam();
+	int o1_divObjectParam();
 	int o1_compareObjectParam();
 	int o1_setupObject();
 	int o1_checkCollision();
@@ -230,6 +230,7 @@ protected:
 	int o1_unloadMask5();
 
 	// pointers to member functions in C++ suck...
+	int o2_loadCt();
 	int o2_loadPart();
 	int o2_addSeqListElement();
 	int o2_removeSeq();
@@ -362,7 +363,7 @@ extern ScriptVars globalVars;
 
 void setupOpcodes();
 
-void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx);
+void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
 #define OP_loadPart                     0x3F

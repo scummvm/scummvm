@@ -82,7 +82,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 			font = Graphics::NewFont::loadFromCache(stream);
 
-			delete [] buffer;
+			delete[] buffer;
 			buffer = 0;
 		}
 		unzClose(zipFile);
@@ -112,7 +112,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 			font = Graphics::NewFont::loadFont(stream);
 
-			delete [] buffer;
+			delete[] buffer;
 			buffer = 0;
 		}
 		unzClose(zipFile);
@@ -175,7 +175,7 @@ bool Theme::loadConfigFile(const Common::String &stylefile) {
 				unzClose(zipFile);
 				return false;
 			}
-			delete [] buffer;
+			delete[] buffer;
 			buffer = 0;
 		} else {
 			unzClose(zipFile);
@@ -225,7 +225,7 @@ bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::St
 					unzClose(zipFile);
 					return false;
 				}
-				delete [] buffer;
+				delete[] buffer;
 				buffer = 0;
 			}
 		} else {

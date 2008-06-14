@@ -1,4 +1,4 @@
-script.cpp:
+script_fw.cpp:
 setupOpcodes() - replaced with FWScript/OSScript class members
 getNextByte() - replaced with RawScript/FWScript class members
 getNextWord() - replaced with RawScript/FWScript class members
@@ -89,6 +89,9 @@ o1_disableSystemMenu() - replaced with FWScript::o1_disableSystemMenu()
 o1_loadMask5() - replaced with FWScript::o1_loadMask5()
 o1_unloadMask5() - replaced with FWScript::o1_unloadMask5()
 
+palRotate() - modified and moved to pal.cpp
+
+script_os.cpp:
 o2_loadPart() - replaced with FWScript::o2_loadPart()
 o2_addSeqListElement() - replaced with FWScript::o2_addSeqListElement()
 o2_removeSeq() - replaced with FWScript::o2_removeSeq()
@@ -134,20 +137,48 @@ releaseObjectScripts() - removed (obsoleted by Common::List::clear())
 various.cpp:
 setupScriptList() - removed (obsoleted by new makeLoad() and
 	loadScriptFromSave() implementation)
+drawChar() - removed (obsoleted by FWRenderer::drawChar())
+makeTextEntry() - removed (obsoleted by FWRenderer::drawMenu())
+drawMenuBox() - removed (obsoleted by FWRenderer::drawCommand())
+backupOverlayPage() - removed (obsoleted by FWRenderer::drawBackground())
+drawMessage() - removed (obsoleted by FWRenderer::drawMessage())
+drawDialogueMessage() - removed (obsoleted by FWRenderer::renderOverlay())
+drawFailureMessage() - removed (obsoleted by FWRenderer::renderOverlay())
+drawOverlays() - removed (obsoleted by FWRenderer::drawOverlays())
+resetSeqList() - removed (obsoleted by Common::List)
 
 anim.cpp:
 freeAnimData() - replaced with animData::clear()
 allocFrame() - replaced with animData::load()
 reserveFrame() - replaced with animData::load()
 
-bg_list.cpp
+bg_list.cpp:
 reincrustAllBg() - removed (obsoleted by new loadResourcesFromSave() and
 	loadBgIncrustFromSave() implementation)
 freeBgIncrustList() - removed (obsoleted by Common::List::clear())
 
-object.cpp
+object.cpp:
 unloadAllMasks() - removed (obsoleted by Common::List::clear())
 resetMessageHead() - removed (obsoleted by Common::List)
 freeOverlay() - removed (duplicate of removeOverlay)
 removeOverlayElement() - renamed to removeOverlay
 loadOverlayElement() - renamed to addOverlay
+
+gfx.cpp:
+gfxInit() - removed (obsoleted by FWRenderer)
+gfxDestroy() - removed (obsoleted by FWRenderer)
+transformColor() - moved to pal.cpp
+transformPaletteRange() - modified and moved to pal.cpp
+gfxCopyRawPage() - removed (obsoleted by FWRenderer)
+gfxFlipRawPage() - removed (obsoleted by FWRenderer::blit() and
+	FWRenderer::refreshPalette())
+fadeToBlack() - removed (obsoleted by FWRenderer::fadeToBlack())
+blitRawScreen() - removed (obsoleted by FWRenderer)
+flip() - removed (obsoleted by FWRenderer::reloadPalette())
+
+bg.cpp:
+loadCt() - split into loadCtFW() and loadCtOS()
+loadBgHigh() - removed (obsoleted by OSRenderer::loadBg256())
+
+texte.cpp:
+computeMessageLength() - replaced with fitLine()

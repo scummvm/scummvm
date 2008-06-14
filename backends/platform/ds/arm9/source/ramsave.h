@@ -19,12 +19,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 #ifndef _RAMSAVE_H_
 #define _RAMSAVE_H_
 
-#include "system.h"
-#include "savefile.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 // SaveFileManager class
 
@@ -46,56 +46,56 @@ class DSSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 		u16 extraMagic;	// 32
 		u32 reserved;	// 36
 	} __attribute__ ((packed));
-
+	
 	SCUMMSave save;
 	u8* saveData;
 	SCUMMSave* origHeader;
 	bool isOpenFlag;
 	bool isTempFile;
-
+	
 public:
 	DSSaveFile();
 	DSSaveFile(SCUMMSave* s, bool saveCompressed, u8* data);
 	~DSSaveFile();
-
+	
 	void reset();
-
+	
 	bool isOpen() const { return isOpenFlag; }
 	virtual bool eos() const;
 	virtual void skip(uint32 size);
-
+	
 	virtual uint32 pos() const;
 	virtual uint32 size() const;
 	virtual void seek(int32 pos, int whence);
 
 	uint32 read(void *buf, uint32 size);
 	uint32 write(const void *buf, uint32 size);
-
+	
 	void setName(char *name);
 	char* getName() { return save.name; }
-
+	
 	bool isValid() { return save.isValid; }
 	bool isTemp() { return isTempFile; }
 	bool matches(char* prefix, int num);
 	bool matches(char* filename);
-
+	
 	void clearData();
 	void compress();
-
+	
 	int getRamUsage() { return sizeof(save) + save.compressedSize; }
 	char* getRamImage() { return (char *) &save; }
-
+	
 	int getSize() { return save.size; }
-
+	
 	DSSaveFile* clone();
-
+	
 	bool loadFromSaveRAM(vu8* address);
 	int saveToSaveRAM(vu8* address);
 
-
-
+	
+	
 	void deleteFile();
-
+	
 	void operator delete(void *p) {
 //		consolePrintf("Finished! size=%d\n", ((DSSaveFile *) (p))->save->size);
 	}
@@ -107,25 +107,25 @@ public:
 
 
 class DSSaveFileManager : public Common::SaveFileManager {
-
+	
 	DSSaveFile gbaSave[8];
 	static DSSaveFileManager* instancePtr;
 	int sramBytesFree;
-
+	
 public:
 	DSSaveFileManager();
 	~DSSaveFileManager();
-
+	
 	static DSSaveFileManager* instance() { return instancePtr; }
 
 	DSSaveFile *openSavefile(const char *filename, bool saveOrLoad);
-
+	
 	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
 
 	virtual bool removeSavefile(const char *filename);
 	virtual Common::StringList listSavefiles(const char *pattern);
-
+	
 	void flushToSaveRAM();
 
 	void addBytesFree(int size) { sramBytesFree += size; }
@@ -134,7 +134,7 @@ public:
 	void deleteFile(char* name);
 	void listFiles();
 	void formatSram();
-
+	
 	void loadAllFromSRAM();
 
 	static bool isExtraDataPresent();

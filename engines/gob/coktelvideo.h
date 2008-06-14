@@ -134,10 +134,13 @@ public:
 	/** Use an own memory block as video memory. */
 	virtual void setVideoMemory() = 0;
 
-	/** Play sound (if the IMD has sound). */
+	/** Play sound (if the video has sound). */
 	virtual void enableSound(Audio::Mixer &mixer) = 0;
 	/** Don't play sound or stop currently playing sound. */
 	virtual void disableSound() = 0;
+
+	/** Is sound currently playing? */
+	virtual bool isSoundPlaying() const = 0;
 
 	/** Seek to a specific frame.
 	 *
@@ -151,6 +154,9 @@ public:
 	virtual State nextFrame() = 0;
 	/** Wait for the frame to end. */
 	virtual void waitEndFrame() = 0;
+
+	/** Notifies the video that it was paused for duration ms. */
+	virtual void notifyPaused(uint32 duration) = 0;
 
 	/** Copy the current frame.
 	 *
@@ -184,7 +190,11 @@ public:
 	int16 getHeight() const { return _height; }
 	uint16 getFramesCount() const { return _framesCount; }
 	uint16 getCurrentFrame() const { return _curFrame; }
-	int16 getFrameRate() const { if (_hasSound) return 1000 / _soundSliceLength; return _frameRate; }
+	int16 getFrameRate() const {
+		if (_hasSound)
+			return 1000 / (_soundSliceLength >> 16);
+		return _frameRate;
+	}
 	uint32 getSyncLag() const { return _skipFrames; }
 	const byte *getPalette() const { return _palette; }
 
@@ -203,10 +213,14 @@ public:
 	void enableSound(Audio::Mixer &mixer);
 	void disableSound();
 
+	bool isSoundPlaying() const;
+
 	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
 
 	State nextFrame();
 	void waitEndFrame();
+
+	void notifyPaused(uint32 duration);
 
 	void copyCurrentFrame(byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
@@ -250,7 +264,7 @@ protected:
 	int16 _soundFreq;
 	int16 _soundSliceSize;
 	int16 _soundSlicesCount;
-	uint16 _soundSliceLength;
+	uint32 _soundSliceLength;
 
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;

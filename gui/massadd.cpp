@@ -22,10 +22,9 @@
  * $Id$
  */
 
-#include "engines/engine.h"
-#include "base/game.h"
-#include "base/plugins.h"
+#include "engines/metaengine.h"
 #include "common/events.h"
+#include "common/config-manager.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
@@ -89,6 +88,29 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 
 	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
 
+	// Build a map from all configured game paths to the targets using them
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::const_iterator iter;
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+
+#ifdef __DS__
+		// DS port uses an extra section called 'ds'.  This prevents the section from being
+		// detected as a game.
+		if (iter->_key == "ds") {
+			continue;
+		}
+#endif
+
+		Common::String path(iter->_value.get("path"));
+		// Remove trailing slash, so that "/foo" and "/foo/" match.
+		// This works around a bug in the POSIX FS code (and others?)
+		// where paths are not normalized (so FSNodes refering to identical
+		// FS objects may return different values in path()).
+		while (path != "/" && path.lastChar() == '/')
+			path.deleteLastChar();
+		if (!path.empty())
+			_pathToTargets[path].push_back(iter->_key);
+	}
 }
 
 
@@ -132,15 +154,42 @@ void MassAddDialog::handleTickle() {
 		}
 
 		// Run the detector on the dir
-		GameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(EngineMan.detectGames(files));
 
 		// Just add all detected games / game variants. If we get more than one,
 		// that either means the directory contains multiple games, or the detector
 		// could not fully determine which game variant it was seeing. In either
 		// case, let the user choose which entries he wants to keep.
+		//
+		// However, we only add games which are not already in the config file.
 		for (GameList::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
 			GameDescriptor result = *cand;
-			result["path"] = dir.getPath();
+			Common::String path = dir.getPath();
+
+			// Remove trailing slashes
+			while (path != "/" && path.lastChar() == '/')
+				path.deleteLastChar();
+
+			// Check for existing config entries for this path/gameid/lang/platform combination
+			if (_pathToTargets.contains(path)) {
+				bool duplicate = false;
+				const Common::StringList &targets = _pathToTargets[path];
+				for (Common::StringList::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
+					// If the gameid, platform and language match -> skip it
+					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
+					assert(dom);
+
+					if ((*dom)["gameid"] == result["gameid"] &&
+					    (*dom)["platform"] == result["platform"] && 
+					    (*dom)["language"] == result["language"]) {
+						duplicate = true;
+						break;
+					}
+				}
+				if (duplicate)
+					break;	// Skip duplicates
+			}
+			result["path"] = path;
 			_games.push_back(result);
 		}
 
@@ -166,14 +215,14 @@ void MassAddDialog::handleTickle() {
 		snprintf(buf, sizeof(buf), "Scan complete!");
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), "Discovered %d games.", _games.size());
+		snprintf(buf, sizeof(buf), "Discovered %d new games.", _games.size());
 		_gameProgressText->setLabel(buf);
 
 	} else {
 		snprintf(buf, sizeof(buf), "Scanned %d directories ...", _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), "Discovered %d games ...", _games.size());
+		snprintf(buf, sizeof(buf), "Discovered %d new games ...", _games.size());
 		_gameProgressText->setLabel(buf);
 	}
 

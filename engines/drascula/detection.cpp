@@ -35,27 +35,25 @@ namespace Drascula {
 
 struct DrasculaGameDescription {
 	Common::ADGameDescription desc;
-
-	int gameID;
-	int gameType;
-	uint32 features;
-	uint16 version;
 };
 
-uint32 DrasculaEngine::getGameID() const {
-	return _gameDescription->gameID;
-}
-
 uint32 DrasculaEngine::getFeatures() const {
-	return _gameDescription->features;
+	return _gameDescription->desc.flags;
 }
 
-Common::Platform DrasculaEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
+Common::Language DrasculaEngine::getLanguage() const {
+	return _gameDescription->desc.language;
 }
 
-uint16 DrasculaEngine::getVersion() const {
-	return _gameDescription->version;
+void DrasculaEngine::loadArchives() {
+	const Common::ADGameFileDescription *ag;
+
+	if (getFeatures() & GF_PACKED) {
+		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
+			_arj.registerArchive(ag->fileName);
+	}
+
+	_arj.enableFallback(true);
 }
 
 }
@@ -75,53 +73,129 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		{
 			"drascula",
 			0,
-			AD_ENTRY1("14.ald", "09b2735953edcd43af115c65ae00b10e"),
+			AD_ENTRY1s("14.ald", "09b2735953edcd43af115c65ae00b10e", 1595),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
-		0,
 	},
-/*
+
+	{
+		// Drascula English version (original packed files)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("packet.001", "c6a8697396e213a18472542d5f547cb4", 32847563),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_KEEPMATCH | GF_PACKED
+		},
+	},
+
+	{
+		// Drascula German version (original packed files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.003", 0, "e8f4dc6091037329bab4ddb1cba35807", 719728},
+				{NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			GF_PACKED
+		},
+	},
+
+	{
+		// Drascula French version (original packed files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.002", 0, "4401123400f22f212b89f15fb4b43013", 721122},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			GF_PACKED
+		},
+	},
+
+	{
+		// Drascula Spanish version (original packed version)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("packet.001", "3c971aba65a037d29d0b479cad6f5943", 31702652),
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			GF_PACKED
+		},
+	},
+
 	{
 		// Drascula Spanish version
 		{
 			"drascula",
 			0,
-			AD_ENTRY1("14.ald", "0746ed1a5cc8d9728f790c29813f4b43"),
+			AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		0,
-		0,
-		0,
-		0,
-	},*/
-
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
-};
-
-/**
- * The fallback game descriptor used by the Drascula engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector.
- */
-static DrasculaGameDescription g_fallbackDesc = {
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
 	},
-	0,
-	0,
-	0,
-	0,
+
+	{
+		// Drascula German version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "72e46089033d56bad1c179ac36e2a9d2", 610),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+	},
+
+	{
+		// Drascula French version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "eeeee96b82169003630e08992248296c", 608),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+	},
+
+	{
+		// Drascula Italian version (original packed version)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("packet.001", "0253e924af223f5fe52537023385159b", 32564209),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			GF_PACKED
+		},
+	},
+	{
+		// Drascula Italian version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+	},
+
+	{ AD_TABLE_END_MARKER }
 };
 
 } // End of namespace Drascula
@@ -158,9 +232,6 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
-
 };
 
 bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -169,20 +240,6 @@ bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Co
 		*engine = new Drascula::DrasculaEngine(syst, gd);
 	}
 	return gd != 0;
-}
-
-const Common::ADGameDescription *DrasculaMetaEngine::fallbackDetect(const FSList *fslist) const {
-	// Set the default values for the fallback descriptor's ADGameDescription part.
-	Drascula::g_fallbackDesc.desc.language = Common::UNK_LANG;
-	Drascula::g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	Drascula::g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
-
-	// Set default values for the fallback descriptor's DrasculaGameDescription part.
-	Drascula::g_fallbackDesc.gameID = 0;
-	Drascula::g_fallbackDesc.features = 0;
-	Drascula::g_fallbackDesc.version = 0;
-
-	return (const Common::ADGameDescription *)&Drascula::g_fallbackDesc;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRASCULA)

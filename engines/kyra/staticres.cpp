@@ -26,24 +26,23 @@
 
 #include "common/endian.h"
 #include "common/md5.h"
-#include "kyra/kyra.h"
 #include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
+#include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
-#include "kyra/screen_v1.h"
+#include "kyra/screen_lok.h"
 #include "kyra/screen_hof.h"
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
-#include "kyra/gui_v1.h"
+#include "kyra/gui_lok.h"
 #include "kyra/gui_hof.h"
 #include "kyra/gui_mr.h"
 
-#include "gui/message.h"
-
 namespace Kyra {
 
-#define RESFILE_VERSION 24
+#define RESFILE_VERSION 28
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -143,8 +142,8 @@ bool StaticResource::init() {
 		{ kPaletteTable, proc(loadPaletteTable), proc(freePaletteTable) },
 
 		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
-		{ k2ShpAnimDataV1, proc(loadHofShapeAnimDataV1), proc(freeHofShapeAnimDataV1) },
-		{ k2ShpAnimDataV2, proc(loadHofShapeAnimDataV2), proc(freeHofShapeAnimDataV2) },
+		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
+		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
 
 		{ 0, 0, 0 }
 	};
@@ -154,85 +153,85 @@ bool StaticResource::init() {
 	// Kyrandia 1 Filenames
 	static const FilenameTable kyra1StaticRes[] = {
 		// INTRO / OUTRO sequences
-		{ kForestSeq, kRawData, "FOREST.SEQ" },
-		{ kKallakWritingSeq, kRawData, "KALLAK-WRITING.SEQ" },
-		{ kKyrandiaLogoSeq, kRawData, "KYRANDIA-LOGO.SEQ" },
-		{ kKallakMalcolmSeq, kRawData, "KALLAK-MALCOLM.SEQ" },
-		{ kMalcolmTreeSeq, kRawData, "MALCOLM-TREE.SEQ" },
-		{ kWestwoodLogoSeq, kRawData, "WESTWOOD-LOGO.SEQ" },
-		{ kDemo1Seq, kRawData, "DEMO1.SEQ" },
-		{ kDemo2Seq, kRawData, "DEMO2.SEQ" },
-		{ kDemo3Seq, kRawData, "DEMO3.SEQ" },
-		{ kDemo4Seq, kRawData, "DEMO4.SEQ" },
-		{ kOutroReunionSeq, kRawData, "REUNION.SEQ" },
+		{ k1ForestSeq, kRawData, "FOREST.SEQ" },
+		{ k1KallakWritingSeq, kRawData, "KALLAK-WRITING.SEQ" },
+		{ k1KyrandiaLogoSeq, kRawData, "KYRANDIA-LOGO.SEQ" },
+		{ k1KallakMalcolmSeq, kRawData, "KALLAK-MALCOLM.SEQ" },
+		{ k1MalcolmTreeSeq, kRawData, "MALCOLM-TREE.SEQ" },
+		{ k1WestwoodLogoSeq, kRawData, "WESTWOOD-LOGO.SEQ" },
+		{ k1Demo1Seq, kRawData, "DEMO1.SEQ" },
+		{ k1Demo2Seq, kRawData, "DEMO2.SEQ" },
+		{ k1Demo3Seq, kRawData, "DEMO3.SEQ" },
+		{ k1Demo4Seq, kRawData, "DEMO4.SEQ" },
+		{ k1OutroReunionSeq, kRawData, "REUNION.SEQ" },
 
 		// INTRO / OUTRO strings
-		{ kIntroCPSStrings, kStringList, "INTRO-CPS.TXT" },
-		{ kIntroCOLStrings, kStringList, "INTRO-COL.TXT" },
-		{ kIntroWSAStrings, kStringList, "INTRO-WSA.TXT" },
-		{ kIntroStrings, kLanguageList, "INTRO-STRINGS." },
-		{ kOutroHomeString, kLanguageList, "HOME." },
+		{ k1IntroCPSStrings, kStringList, "INTRO-CPS.TXT" },
+		{ k1IntroCOLStrings, kStringList, "INTRO-COL.TXT" },
+		{ k1IntroWSAStrings, kStringList, "INTRO-WSA.TXT" },
+		{ k1IntroStrings, kLanguageList, "INTRO-STRINGS." },
+		{ k1OutroHomeString, kLanguageList, "HOME." },
 
 		// INGAME strings
-		{ kItemNames, kLanguageList, "ITEMLIST." },
-		{ kTakenStrings, kLanguageList, "TAKEN." },
-		{ kPlacedStrings, kLanguageList, "PLACED." },
-		{ kDroppedStrings, kLanguageList, "DROPPED." },
-		{ kNoDropStrings, kLanguageList, "NODROP." },
-		{ kPutDownString, kLanguageList, "PUTDOWN." },
-		{ kWaitAmuletString, kLanguageList, "WAITAMUL." },
-		{ kBlackJewelString, kLanguageList, "BLACKJEWEL." },
-		{ kPoisonGoneString, kLanguageList, "POISONGONE." },
-		{ kHealingTipString, kLanguageList, "HEALINGTIP." },
-		{ kThePoisonStrings, kLanguageList, "THEPOISON." },
-		{ kFluteStrings, kLanguageList, "FLUTE." },
-		{ kWispJewelStrings, kLanguageList, "WISPJEWEL." },
-		{ kMagicJewelStrings, kLanguageList, "MAGICJEWEL." },
-		{ kFlaskFullString, kLanguageList, "FLASKFULL." },
-		{ kFullFlaskString, kLanguageList, "FULLFLASK." },
-		{ kVeryCleverString, kLanguageList, "VERYCLEVER." },
-		{ kNewGameString, kLanguageList, "NEWGAME." },
+		{ k1ItemNames, kLanguageList, "ITEMLIST." },
+		{ k1TakenStrings, kLanguageList, "TAKEN." },
+		{ k1PlacedStrings, kLanguageList, "PLACED." },
+		{ k1DroppedStrings, kLanguageList, "DROPPED." },
+		{ k1NoDropStrings, kLanguageList, "NODROP." },
+		{ k1PutDownString, kLanguageList, "PUTDOWN." },
+		{ k1WaitAmuletString, kLanguageList, "WAITAMUL." },
+		{ k1BlackJewelString, kLanguageList, "BLACKJEWEL." },
+		{ k1PoisonGoneString, kLanguageList, "POISONGONE." },
+		{ k1HealingTipString, kLanguageList, "HEALINGTIP." },
+		{ k1ThePoisonStrings, kLanguageList, "THEPOISON." },
+		{ k1FluteStrings, kLanguageList, "FLUTE." },
+		{ k1WispJewelStrings, kLanguageList, "WISPJEWEL." },
+		{ k1MagicJewelStrings, kLanguageList, "MAGICJEWEL." },
+		{ k1FlaskFullString, kLanguageList, "FLASKFULL." },
+		{ k1FullFlaskString, kLanguageList, "FULLFLASK." },
+		{ k1VeryCleverString, kLanguageList, "VERYCLEVER." },
+		{ k1NewGameString, kLanguageList, "NEWGAME." },
 
 		// GUI strings table
-		{ kGUIStrings, kLanguageList, "GUISTRINGS." },
-		{ kConfigStrings, kLanguageList, "CONFIGSTRINGS." },
+		{ k1GUIStrings, kLanguageList, "GUISTRINGS." },
+		{ k1ConfigStrings, kLanguageList, "CONFIGSTRINGS." },
 
 		// ROOM table/filenames
-		{ Kyra::kRoomList, StaticResource::kRoomList, "ROOM-TABLE.ROOM" },
-		{ kRoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
+		{ k1RoomList, kRoomList, "ROOM-TABLE.ROOM" },
+		{ k1RoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
 
 		// SHAPE tables
-		{ kDefaultShapes, kShapeList, "SHAPES-DEFAULT.SHP" },
-		{ kHealing1Shapes, kShapeList, "HEALING.SHP" },
-		{ kHealing2Shapes, kShapeList, "HEALING2.SHP" },
-		{ kPoisonDeathShapes, kShapeList, "POISONDEATH.SHP" },
-		{ kFluteShapes, kShapeList, "FLUTE.SHP" },
-		{ kWinter1Shapes, kShapeList, "WINTER1.SHP" },
-		{ kWinter2Shapes, kShapeList, "WINTER2.SHP" },
-		{ kWinter3Shapes, kShapeList, "WINTER3.SHP" },
-		{ kDrinkShapes, kShapeList, "DRINK.SHP" },
-		{ kWispShapes, kShapeList, "WISP.SHP" },
-		{ kMagicAnimShapes, kShapeList, "MAGICANIM.SHP" },
-		{ kBranStoneShapes, kShapeList, "BRANSTONE.SHP" },
+		{ k1DefaultShapes, kShapeList, "SHAPES-DEFAULT.SHP" },
+		{ k1Healing1Shapes, kShapeList, "HEALING.SHP" },
+		{ k1Healing2Shapes, kShapeList, "HEALING2.SHP" },
+		{ k1PoisonDeathShapes, kShapeList, "POISONDEATH.SHP" },
+		{ k1FluteShapes, kShapeList, "FLUTE.SHP" },
+		{ k1Winter1Shapes, kShapeList, "WINTER1.SHP" },
+		{ k1Winter2Shapes, kShapeList, "WINTER2.SHP" },
+		{ k1Winter3Shapes, kShapeList, "WINTER3.SHP" },
+		{ k1DrinkShapes, kShapeList, "DRINK.SHP" },
+		{ k1WispShapes, kShapeList, "WISP.SHP" },
+		{ k1MagicAnimShapes, kShapeList, "MAGICANIM.SHP" },
+		{ k1BranStoneShapes, kShapeList, "BRANSTONE.SHP" },
 
 		// IMAGE filename table
-		{ kCharacterImageFilenames, kStringList, "CHAR-IMAGE.TXT" },
+		{ k1CharacterImageFilenames, kStringList, "CHAR-IMAGE.TXT" },
 
 		// AMULET anim
-		{ kAmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
+		{ k1AmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
 
 		// PALETTE table
-		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
+		{ k1PaletteList, kPaletteTable, "1 33 PALTABLE" },
 
 		// AUDIO files
-		{ kAudioTracks, kStringList, "TRACKS.TXT" },
-		{ kAudioTracksIntro, kStringList, "TRACKSINT.TXT" },
+		{ k1AudioTracks, kStringList, "TRACKS.TXT" },
+		{ k1AudioTracksIntro, kStringList, "TRACKSINT.TXT" },
 
 		// FM-TOWNS specific
-		{ kKyra1TownsSFXwdTable, kRawData, "SFXWDTABLE" },
-		{ kKyra1TownsSFXbtTable, kRawData, "SFXBTTABLE" },
-		{ kKyra1TownsCDATable, kRawData, "CDATABLE" },
-		{ kCreditsStrings, kRawData, "CREDITS" },
+		{ k1TownsSFXwdTable, kRawData, "SFXWDTABLE" },
+		{ k1TownsSFXbtTable, kRawData, "SFXBTTABLE" },
+		{ k1TownsCDATable, kRawData, "CDATABLE" },
+		{ k1CreditsStrings, kRawData, "CREDITS" },
 
 		{ 0, 0, 0 }
 	};
@@ -261,7 +260,20 @@ bool StaticResource::init() {
 		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
 		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
 		{ k2IngameShapeAnimData, k2ShpAnimDataV2, "I_INVANIM.SHP" },
-		{ k2IngameTlkDemoStrings, kLanguageList, "I_TLKDEMO.TXT." },		
+		{ k2IngameTlkDemoStrings, kLanguageList, "I_TLKDEMO.TXT." },
+
+		{ 0, 0, 0 }
+	};
+
+	static const FilenameTable kyra3StaticRes[] = {
+		{ k3MainMenuStrings, kStringList, "MAINMENU.TXT" },
+		{ k3MusicFiles, kStringList, "SCORE.TRA" },
+		{ k3ScoreTable, kRawData, "SCORE.MAP" },
+		{ k3SfxFiles, kStringList, "SFXFILES.TRA" },
+		{ k3SfxMap, kRawData, "SFXINDEX.MAP" },
+		{ k3ItemAnimData, k2ShpAnimDataV2, "INVANIM.SHP" },
+		{ k3ItemMagicTable, kRawData, "ITEMMAGIC.MAP" },
+		{ k3ItemStringMap, kRawData, "ITEMSTRINGS.MAP" },
 
 		{ 0, 0, 0 }
 	};
@@ -273,23 +285,26 @@ bool StaticResource::init() {
 		_builtIn = 0;
 		_filenameTable = kyra2StaticRes;
 	} else if (_vm->game() == GI_KYRA3) {
-		return true;
+		_builtIn = 0;
+		_filenameTable = kyra3StaticRes;
 	} else {
 		error("unknown game ID");
 	}
 
+	char errorBuffer[100];
 	int tempSize = 0;
 	uint8 *temp = getFile("INDEX", tempSize);
 	if (!temp) {
-		warning("No matching INDEX file found ('%s')", getFilename("INDEX"));
-		outputError();
+		snprintf(errorBuffer, sizeof(errorBuffer), "is missing an '%s' entry", getFilename("INDEX"));
+		outputError(errorBuffer);
 		return false;
 	}
 
 	if (tempSize != 3*4) {
-		delete [] temp;
-		warning("'%s' has illegal filesize %d", getFilename("INDEX"), tempSize);
-		outputError();
+		delete[] temp;
+
+		snprintf(errorBuffer, sizeof(errorBuffer), "has incorrect header size for entry '%s'", getFilename("INDEX"));
+		outputError(errorBuffer);
 		return false;
 	}
 
@@ -297,32 +312,29 @@ bool StaticResource::init() {
 	uint32 gameID = READ_BE_UINT32((temp+4));
 	uint32 featuresValue = READ_BE_UINT32((temp+8));
 
-	delete [] temp;
+	delete[] temp;
 	temp = 0;
 
 	if (version != RESFILE_VERSION) {
-		warning("Invalid KYRA.DAT file version (%u, required %d)", version, RESFILE_VERSION);
-		outputError();
+		snprintf(errorBuffer, sizeof(errorBuffer), "has invalid version %d required, you got %d", RESFILE_VERSION, version);
+		outputError(errorBuffer);
 		return false;
 	}
 
 	if (gameID != _vm->game()) {
-		warning("Invalid game id (%u)", gameID);
-		outputError();
+		outputError("does not include support for your game");
 		return false;
 	}
 
 	uint32 gameFeatures = createFeatures(_vm->gameFlags());
 	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
-		warning("Your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
-		outputError();
+		outputError("does not include support for your game version");
 		return false;
 	}
 
 	// load all tables for now
 	if (!prefetchId(-1)) {
-		warning("Couldn't load all needed resources from 'KYRA.DAT'");
-		outputError();
+		outputError("is lacking entries for your game version");
 		return false;
 	}
 	return true;
@@ -332,11 +344,10 @@ void StaticResource::deinit() {
 	unloadId(-1);
 }
 
-void StaticResource::outputError() {
-	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file is outdated, reget it from the ScummVM website";
-	::GUI::MessageDialog errorMsg(errorMessage);
-	errorMsg.runModal();
-	error(errorMessage.c_str());
+void StaticResource::outputError(const Common::String &error) {
+	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file " + error + ", reget a correct version from the ScummVM website";
+	_vm->GUIErrorMessage(errorMessage);
+	::error(errorMessage.c_str());
 }
 
 const char * const*StaticResource::loadStrings(int id, int &strings) {
@@ -366,11 +377,11 @@ const HofSeqData *StaticResource::loadHofSequenceData(int id, int &entries) {
 	return (const HofSeqData*)getData(id, k2SeqData, entries);
 }
 
-const ItemAnimData_v1 *StaticResource::loadHofShapeAnimDataV1(int id, int &entries) {
+const ItemAnimData_v1 *StaticResource::loadShapeAnimData_v1(int id, int &entries) {
 	return (const ItemAnimData_v1*)getData(id, k2ShpAnimDataV1, entries);
 }
 
-const ItemAnimData_v2 *StaticResource::loadHofShapeAnimDataV2(int id, int &entries) {
+const ItemAnimData_v2 *StaticResource::loadShapeAnimData_v2(int id, int &entries) {
 	return (const ItemAnimData_v2*)getData(id, k2ShpAnimDataV2, entries);
 }
 
@@ -545,7 +556,7 @@ bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size
 		curPos += strLen+1;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = output;
 
 	return true;
@@ -579,7 +590,7 @@ bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size)
 		loadTo[i].yOffset = *src++;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -609,7 +620,7 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -642,7 +653,7 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 		snprintf(name, 64, "%s%d.PAL", file, i);
 		table[(start != 0) ? (i-start) : i] = (char*)getFile(name, size);
 		if (!table[(start != 0) ? (i-start) : i]) {
-			delete [] table;
+			delete[] table;
 			return false;
 		}
 	}
@@ -743,7 +754,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		}
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 
 	HofSeqData *loadTo = new HofSeqData;
 	assert(loadTo);
@@ -758,7 +769,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 	return true;
 }
 
-bool StaticResource::loadHofShapeAnimDataV1(const char *filename, void *&ptr, int &size) {
+bool StaticResource::loadShapeAnimData_v1(const char *filename, void *&ptr, int &size) {
 	int filesize;
 	uint8 *filePtr = getFile(filename, filesize);
 	uint8 *src = filePtr;
@@ -783,13 +794,13 @@ bool StaticResource::loadHofShapeAnimDataV1(const char *filename, void *&ptr, in
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
 }
 
-bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, int &size) {
+bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int &size) {
 	int filesize;
 	uint8 *filePtr = getFile(filename, filesize);
 	uint8 *src = filePtr;
@@ -815,7 +826,7 @@ bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, in
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete [] filePtr;
+	delete[] filePtr;
 	ptr = loadTo;
 
 	return true;
@@ -823,7 +834,7 @@ bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, in
 
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8*)ptr;
-	delete [] data;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
@@ -831,21 +842,22 @@ void StaticResource::freeRawData(void *&ptr, int &size) {
 void StaticResource::freeStringTable(void *&ptr, int &size) {
 	char **data = (char**)ptr;
 	while (size--)
-		delete [] data[size];
+		delete[] data[size];
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
 
 void StaticResource::freeShapeTable(void *&ptr, int &size) {
 	Shape *data = (Shape*)ptr;
-	delete [] data;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
 
 void StaticResource::freeRoomTable(void *&ptr, int &size) {
 	Room *data = (Room*)ptr;
-	delete [] data;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
@@ -854,16 +866,16 @@ void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
 	HofSeqData *h = (HofSeqData*) ptr;
 
 	for (int i = 0; i < h->numSeq; i++) {
-		delete [] h->seq[i].wsaFile;
-		delete [] h->seq[i].cpsFile;
+		delete[] h->seq[i].wsaFile;
+		delete[] h->seq[i].cpsFile;
 	}
-	delete [] h->seq;
+	delete[] h->seq;
 
 	for (int i = 0; i < h->numSeqn; i++) {
-		delete [] h->seqn[i].wsaFile;
-		delete [] h->seqn[i].wsaControl;
+		delete[] h->seqn[i].wsaFile;
+		delete[] h->seqn[i].wsaControl;
 	}
-	delete [] h->seqn;
+	delete[] h->seqn;
 
 	delete h;
 	ptr = 0;
@@ -873,8 +885,8 @@ void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
 void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
 	ItemAnimData_v1 *d= (ItemAnimData_v1*) ptr;
 	for (int i = 0; i < size; i++)
-		delete [] d[i].frames;
-	delete [] d;
+		delete[] d[i].frames;
+	delete[] d;
 	ptr = 0;
 	size = 0;
 }
@@ -882,8 +894,8 @@ void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
 void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
 	ItemAnimData_v2 *d= (ItemAnimData_v2*) ptr;
 	for (int i = 0; i < size; i++)
-		delete [] d[i].frames;
-	delete [] d;
+		delete[] d[i].frames;
+	delete[] d;
 	ptr = 0;
 	size = 0;
 }
@@ -891,7 +903,7 @@ void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
 void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
 	while (size--)
-		delete [] data[size];
+		delete[] data[size];
 	ptr = 0;
 	size = 0;
 }
@@ -903,8 +915,10 @@ const char *StaticResource::getFilename(const char *name) {
 
 	if (_vm->gameFlags().gameID == GI_KYRA2)
 		filename += ".K2";
+	else if (_vm->gameFlags().gameID == GI_KYRA3)
+		filename += ".K3";
 
-	if (_vm->gameFlags().isTalkie)
+	if (_vm->gameFlags().isTalkie && _vm->gameFlags().gameID != GI_KYRA3)
 		filename += ".CD";
 	else if (_vm->gameFlags().isDemo)
 		filename += ".DEM";
@@ -925,76 +939,76 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 
 #pragma mark -
 
-void KyraEngine_v1::initStaticResource() {
+void KyraEngine_LoK::initStaticResource() {
 	int temp = 0;
-	_seq_Forest = _staticres->loadRawData(kForestSeq, temp);
-	_seq_KallakWriting = _staticres->loadRawData(kKallakWritingSeq, temp);
-	_seq_KyrandiaLogo = _staticres->loadRawData(kKyrandiaLogoSeq, temp);
-	_seq_KallakMalcolm = _staticres->loadRawData(kKallakMalcolmSeq, temp);
-	_seq_MalcolmTree = _staticres->loadRawData(kMalcolmTreeSeq, temp);
-	_seq_WestwoodLogo = _staticres->loadRawData(kWestwoodLogoSeq, temp);
-	_seq_Demo1 = _staticres->loadRawData(kDemo1Seq, temp);
-	_seq_Demo2 = _staticres->loadRawData(kDemo2Seq, temp);
-	_seq_Demo3 = _staticres->loadRawData(kDemo3Seq, temp);
-	_seq_Demo4 = _staticres->loadRawData(kDemo4Seq, temp);
-	_seq_Reunion = _staticres->loadRawData(kOutroReunionSeq, temp);
+	_seq_Forest = _staticres->loadRawData(k1ForestSeq, temp);
+	_seq_KallakWriting = _staticres->loadRawData(k1KallakWritingSeq, temp);
+	_seq_KyrandiaLogo = _staticres->loadRawData(k1KyrandiaLogoSeq, temp);
+	_seq_KallakMalcolm = _staticres->loadRawData(k1KallakMalcolmSeq, temp);
+	_seq_MalcolmTree = _staticres->loadRawData(k1MalcolmTreeSeq, temp);
+	_seq_WestwoodLogo = _staticres->loadRawData(k1WestwoodLogoSeq, temp);
+	_seq_Demo1 = _staticres->loadRawData(k1Demo1Seq, temp);
+	_seq_Demo2 = _staticres->loadRawData(k1Demo2Seq, temp);
+	_seq_Demo3 = _staticres->loadRawData(k1Demo3Seq, temp);
+	_seq_Demo4 = _staticres->loadRawData(k1Demo4Seq, temp);
+	_seq_Reunion = _staticres->loadRawData(k1OutroReunionSeq, temp);
 
-	_seq_WSATable = _staticres->loadStrings(kIntroWSAStrings, _seq_WSATable_Size);
-	_seq_CPSTable = _staticres->loadStrings(kIntroCPSStrings, _seq_CPSTable_Size);
-	_seq_COLTable = _staticres->loadStrings(kIntroCOLStrings, _seq_COLTable_Size);
-	_seq_textsTable = _staticres->loadStrings(kIntroStrings, _seq_textsTable_Size);
+	_seq_WSATable = _staticres->loadStrings(k1IntroWSAStrings, _seq_WSATable_Size);
+	_seq_CPSTable = _staticres->loadStrings(k1IntroCPSStrings, _seq_CPSTable_Size);
+	_seq_COLTable = _staticres->loadStrings(k1IntroCOLStrings, _seq_COLTable_Size);
+	_seq_textsTable = _staticres->loadStrings(k1IntroStrings, _seq_textsTable_Size);
 
-	_itemList = _staticres->loadStrings(kItemNames, _itemList_Size);
-	_takenList = _staticres->loadStrings(kTakenStrings, _takenList_Size);
-	_placedList = _staticres->loadStrings(kPlacedStrings, _placedList_Size);
-	_droppedList = _staticres->loadStrings(kDroppedStrings, _droppedList_Size);
-	_noDropList = _staticres->loadStrings(kNoDropStrings, _noDropList_Size);
-	_putDownFirst = _staticres->loadStrings(kPutDownString, _putDownFirst_Size);
-	_waitForAmulet = _staticres->loadStrings(kWaitAmuletString, _waitForAmulet_Size);
-	_blackJewel = _staticres->loadStrings(kBlackJewelString, _blackJewel_Size);
-	_poisonGone = _staticres->loadStrings(kPoisonGoneString, _poisonGone_Size);
-	_healingTip = _staticres->loadStrings(kHealingTipString, _healingTip_Size);
-	_thePoison = _staticres->loadStrings(kThePoisonStrings, _thePoison_Size);
-	_fluteString = _staticres->loadStrings(kFluteStrings, _fluteString_Size);
-	_wispJewelStrings = _staticres->loadStrings(kWispJewelStrings, _wispJewelStrings_Size);
-	_magicJewelString = _staticres->loadStrings(kMagicJewelStrings, _magicJewelString_Size);
-	_flaskFull = _staticres->loadStrings(kFlaskFullString, _flaskFull_Size);
-	_fullFlask = _staticres->loadStrings(kFullFlaskString, _fullFlask_Size);
-	_veryClever = _staticres->loadStrings(kVeryCleverString, _veryClever_Size);
-	_homeString = _staticres->loadStrings(kOutroHomeString, _homeString_Size);
-	_newGameString = _staticres->loadStrings(kNewGameString, _newGameString_Size);
+	_itemList = _staticres->loadStrings(k1ItemNames, _itemList_Size);
+	_takenList = _staticres->loadStrings(k1TakenStrings, _takenList_Size);
+	_placedList = _staticres->loadStrings(k1PlacedStrings, _placedList_Size);
+	_droppedList = _staticres->loadStrings(k1DroppedStrings, _droppedList_Size);
+	_noDropList = _staticres->loadStrings(k1NoDropStrings, _noDropList_Size);
+	_putDownFirst = _staticres->loadStrings(k1PutDownString, _putDownFirst_Size);
+	_waitForAmulet = _staticres->loadStrings(k1WaitAmuletString, _waitForAmulet_Size);
+	_blackJewel = _staticres->loadStrings(k1BlackJewelString, _blackJewel_Size);
+	_poisonGone = _staticres->loadStrings(k1PoisonGoneString, _poisonGone_Size);
+	_healingTip = _staticres->loadStrings(k1HealingTipString, _healingTip_Size);
+	_thePoison = _staticres->loadStrings(k1ThePoisonStrings, _thePoison_Size);
+	_fluteString = _staticres->loadStrings(k1FluteStrings, _fluteString_Size);
+	_wispJewelStrings = _staticres->loadStrings(k1WispJewelStrings, _wispJewelStrings_Size);
+	_magicJewelString = _staticres->loadStrings(k1MagicJewelStrings, _magicJewelString_Size);
+	_flaskFull = _staticres->loadStrings(k1FlaskFullString, _flaskFull_Size);
+	_fullFlask = _staticres->loadStrings(k1FullFlaskString, _fullFlask_Size);
+	_veryClever = _staticres->loadStrings(k1VeryCleverString, _veryClever_Size);
+	_homeString = _staticres->loadStrings(k1OutroHomeString, _homeString_Size);
+	_newGameString = _staticres->loadStrings(k1NewGameString, _newGameString_Size);
 
-	_healingShapeTable = _staticres->loadShapeTable(kHealing1Shapes, _healingShapeTableSize);
-	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);
-	_posionDeathShapeTable = _staticres->loadShapeTable(kPoisonDeathShapes, _posionDeathShapeTableSize);
-	_fluteAnimShapeTable = _staticres->loadShapeTable(kFluteShapes, _fluteAnimShapeTableSize);
-	_winterScrollTable = _staticres->loadShapeTable(kWinter1Shapes, _winterScrollTableSize);
-	_winterScroll1Table = _staticres->loadShapeTable(kWinter2Shapes, _winterScroll1TableSize);
-	_winterScroll2Table = _staticres->loadShapeTable(kWinter3Shapes, _winterScroll2TableSize);
-	_drinkAnimationTable = _staticres->loadShapeTable(kDrinkShapes, _drinkAnimationTableSize);
-	_brandonToWispTable = _staticres->loadShapeTable(kWispShapes, _brandonToWispTableSize);
-	_magicAnimationTable = _staticres->loadShapeTable(kMagicAnimShapes, _magicAnimationTableSize);
-	_brandonStoneTable = _staticres->loadShapeTable(kBranStoneShapes, _brandonStoneTableSize);
+	_healingShapeTable = _staticres->loadShapeTable(k1Healing1Shapes, _healingShapeTableSize);
+	_healingShape2Table = _staticres->loadShapeTable(k1Healing2Shapes, _healingShape2TableSize);
+	_posionDeathShapeTable = _staticres->loadShapeTable(k1PoisonDeathShapes, _posionDeathShapeTableSize);
+	_fluteAnimShapeTable = _staticres->loadShapeTable(k1FluteShapes, _fluteAnimShapeTableSize);
+	_winterScrollTable = _staticres->loadShapeTable(k1Winter1Shapes, _winterScrollTableSize);
+	_winterScroll1Table = _staticres->loadShapeTable(k1Winter2Shapes, _winterScroll1TableSize);
+	_winterScroll2Table = _staticres->loadShapeTable(k1Winter3Shapes, _winterScroll2TableSize);
+	_drinkAnimationTable = _staticres->loadShapeTable(k1DrinkShapes, _drinkAnimationTableSize);
+	_brandonToWispTable = _staticres->loadShapeTable(k1WispShapes, _brandonToWispTableSize);
+	_magicAnimationTable = _staticres->loadShapeTable(k1MagicAnimShapes, _magicAnimationTableSize);
+	_brandonStoneTable = _staticres->loadShapeTable(k1BranStoneShapes, _brandonStoneTableSize);
 
-	_characterImageTable = _staticres->loadStrings(kCharacterImageFilenames, _characterImageTableSize);
+	_characterImageTable = _staticres->loadStrings(k1CharacterImageFilenames, _characterImageTableSize);
 
-	_roomFilenameTable = _staticres->loadStrings(kRoomFilenames, _roomFilenameTableSize);
+	_roomFilenameTable = _staticres->loadStrings(k1RoomFilenames, _roomFilenameTableSize);
 
-	_amuleteAnim = _staticres->loadRawData(kAmuleteAnimSeq, temp);
+	_amuleteAnim = _staticres->loadRawData(k1AmuleteAnimSeq, temp);
 
-	_specialPalettes = _staticres->loadPaletteTable(kPaletteList, temp);
+	_specialPalettes = _staticres->loadPaletteTable(k1PaletteList, temp);
 
-	_guiStrings = _staticres->loadStrings(kGUIStrings, _guiStringsSize);
-	_configStrings = _staticres->loadStrings(kConfigStrings, _configStringsSize);
+	_guiStrings = _staticres->loadStrings(k1GUIStrings, _guiStringsSize);
+	_configStrings = _staticres->loadStrings(k1ConfigStrings, _configStringsSize);
 
-	_soundFiles = _staticres->loadStrings(kAudioTracks, _soundFilesSize);
-	_soundFilesIntro = _staticres->loadStrings(kAudioTracksIntro, _soundFilesIntroSize);
-	_cdaTrackTable = (const int32*) _staticres->loadRawData(kKyra1TownsCDATable, _cdaTrackTableSize);
+	_soundFiles = _staticres->loadStrings(k1AudioTracks, _soundFilesSize);
+	_soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, _soundFilesIntroSize);
+	_cdaTrackTable = (const int32*) _staticres->loadRawData(k1TownsCDATable, _cdaTrackTableSize);
 
 	// copied static res
 
 	// room list
-	const Room *tempRoomList = _staticres->loadRoomTable(kRoomList, _roomTableSize);
+	const Room *tempRoomList = _staticres->loadRoomTable(k1RoomList, _roomTableSize);
 
 	if (_roomTableSize > 0) {
 		_roomTable = new Room[_roomTableSize];
@@ -1003,11 +1017,11 @@ void KyraEngine_v1::initStaticResource() {
 		memcpy(_roomTable, tempRoomList, _roomTableSize*sizeof(Room));
 		tempRoomList = 0;
 
-		_staticres->unloadId(kRoomList);
+		_staticres->unloadId(k1RoomList);
 	}
 
 	// default shape table
-	const Shape *tempShapeTable = _staticres->loadShapeTable(kDefaultShapes, _defaultShapeTableSize);
+	const Shape *tempShapeTable = _staticres->loadShapeTable(k1DefaultShapes, _defaultShapeTableSize);
 
 	if (_defaultShapeTableSize > 0) {
 		_defaultShapeTable = new Shape[_defaultShapeTableSize];
@@ -1016,7 +1030,7 @@ void KyraEngine_v1::initStaticResource() {
 		memcpy(_defaultShapeTable, tempShapeTable, _defaultShapeTableSize*sizeof(Shape));
 		tempShapeTable = 0;
 
-		_staticres->unloadId(kDefaultShapes);
+		_staticres->unloadId(k1DefaultShapes);
 	}
 
 	// audio data tables
@@ -1034,7 +1048,7 @@ void KyraEngine_v1::initStaticResource() {
 	_soundData = (_flags.platform == Common::kPlatformPC) ? soundData_PC : soundData_TOWNS;
 }
 
-void KyraEngine_v1::loadMouseShapes() {
+void KyraEngine_LoK::loadMouseShapes() {
 	_screen->loadBitmap("MOUSE.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 	_shapes[0] = _screen->encodeShape(0, 0, 8, 10, 0);
@@ -1050,7 +1064,7 @@ void KyraEngine_v1::loadMouseShapes() {
 	_screen->setShapePages(5, 3);
 }
 
-void KyraEngine_v1::loadCharacterShapes() {
+void KyraEngine_LoK::loadCharacterShapes() {
 	int curImage = 0xFF;
 	int videoPage = _screen->_curPage;
 	_screen->_curPage = 2;
@@ -1071,7 +1085,7 @@ void KyraEngine_v1::loadCharacterShapes() {
 	_screen->_curPage = videoPage;
 }
 
-void KyraEngine_v1::loadSpecialEffectShapes() {
+void KyraEngine_LoK::loadSpecialEffectShapes() {
 	_screen->loadBitmap("EFFECTS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 
@@ -1089,7 +1103,7 @@ void KyraEngine_v1::loadSpecialEffectShapes() {
 		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
 }
 
-void KyraEngine_v1::loadItems() {
+void KyraEngine_LoK::loadItems() {
 	int shape;
 
 	_screen->loadBitmap("JEWELS3.CPS", 3, 3, 0);
@@ -1143,7 +1157,7 @@ void KyraEngine_v1::loadItems() {
 	delete[] fileData;
 }
 
-void KyraEngine_v1::loadButtonShapes() {
+void KyraEngine_LoK::loadButtonShapes() {
 	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 	_gui->_scrollUpButton.data0ShapePtr = _screen->encodeShape(0, 0, 24, 14, 1);
@@ -1155,7 +1169,7 @@ void KyraEngine_v1::loadButtonShapes() {
 	_screen->_curPage = 0;
 }
 
-void KyraEngine_v1::loadMainScreen(int page) {
+void KyraEngine_LoK::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
@@ -1186,43 +1200,37 @@ void KyraEngine_HoF::initStaticResource() {
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
 	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);	
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
-	_ingameSoundIndex = (const uint16*) _staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
+	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
 	_musicFileListIngame = _staticres->loadStrings(k2IngameTracks, _musicFileListIngameSize);
 	_musicFileListFinale = _staticres->loadStrings(k2SeqplayFinaleTracks, _musicFileListFinaleSize);
 	_cdaTrackTableIntro = _staticres->loadRawData(k2SeqplayIntroCDA, _cdaTrackTableIntroSize);
 	_cdaTrackTableIngame = _staticres->loadRawData(k2IngameCDA, _cdaTrackTableIngameSize);
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
-	_ingameTalkObjIndex = (const uint16*) _staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
+	_ingameTalkObjIndex = (const uint16 *)_staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
-	_itemAnimData = _staticres->loadHofShapeAnimDataV2(k2IngameShapeAnimData, _itemAnimDataSize);
+	_itemAnimData = _staticres->loadShapeAnimData_v2(k2IngameShapeAnimData, _itemAnimDataSize);
 
-	// replace sequence talkie files with localized versions and cut off .voc
-	// suffix from voc files so as to allow compression specific file extensions
-	const char* const* seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
-	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
-	char ** tmpSndLst = new char*[_sequenceSoundListSize];
+	// replace sequence talkie files with localized versions
+	const char *const *seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
+	const char *const *tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
+	char **tmpSndLst = new char*[_sequenceSoundListSize];
 
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		int len = strlen(seqSoundList[i]);
+		const int len = strlen(seqSoundList[i]);
 
 		tmpSndLst[i] = new char[len + 1];
 		tmpSndLst[i][0] = 0;
 
-		if (_flags.platform == Common::kPlatformPC)
-			len -= 4;
-
-		if (tlkfiles) {
+		if (tlkfiles && len > 1) {
 			for (int ii = 0; ii < tmpSize; ii++) {
-				if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
-					strcpy(tmpSndLst[i], tlkfiles[ii]);
+				if (strlen(tlkfiles[ii]) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
+						strcpy(tmpSndLst[i], tlkfiles[ii]);
 			}
 		}
 
 		if (tmpSndLst[i][0] == 0)
 			strcpy(tmpSndLst[i], seqSoundList[i]);
-
-		tmpSndLst[i][len] = 0;
 	}
 
 	tlkfiles = seqSoundList = 0;
@@ -1269,7 +1277,7 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_introLibrary2, &KyraEngine_HoF::seq_introLibrary2,
 		&KyraEngine_HoF::seq_introMarco, &KyraEngine_HoF::seq_introHand1a,
 		&KyraEngine_HoF::seq_introHand1b, &KyraEngine_HoF::seq_introHand1c,
-		&KyraEngine_HoF::seq_introHand2,	&KyraEngine_HoF::seq_introHand3, 0
+		&KyraEngine_HoF::seq_introHand2, &KyraEngine_HoF::seq_introHand3, 0
 	};
 
 	static const SeqProc hofDemoSequenceCallbacks[] = {
@@ -1289,7 +1297,19 @@ void KyraEngine_HoF::initStaticResource() {
 	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
 }
 
-const ScreenDim Screen_v1::_screenDimTable[] = {
+void KyraEngine_MR::initStaticResource() {
+	int tmp = 0;
+	_mainMenuStrings = _staticres->loadStrings(k3MainMenuStrings, _mainMenuStringsSize);
+	_soundList = _staticres->loadStrings(k3MusicFiles, _soundListSize);
+	_scoreTable = _staticres->loadRawData(k3ScoreTable, _scoreTableSize);	
+	_sfxFileList = _staticres->loadStrings(k3SfxFiles, _sfxFileListSize);
+	_sfxFileMap = _staticres->loadRawData(k3SfxMap, _sfxFileMapSize);	
+	_itemAnimData = _staticres->loadShapeAnimData_v2(k3ItemAnimData, tmp);
+	_itemMagicTable = _staticres->loadRawData(k3ItemMagicTable, tmp);
+	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
+}
+
+const ScreenDim Screen_LoK::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x01, 0x08, 0x26, 0x80, 0x0F, 0x0C, 0x00, 0x00 },
@@ -1303,7 +1323,7 @@ const ScreenDim Screen_v1::_screenDimTable[] = {
 	{ 0x03, 0x28, 0x22, 0x46, 0x0F, 0x0D, 0x00, 0x00 }
 };
 
-const int Screen_v1::_screenDimTableCount = ARRAYSIZE(Screen_v1::_screenDimTable);
+const int Screen_LoK::_screenDimTableCount = ARRAYSIZE(Screen_LoK::_screenDimTable);
 
 const ScreenDim Screen_HoF::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },
@@ -1331,31 +1351,31 @@ const ScreenDim Screen_MR::_screenDimTable[] = {
 
 const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
 
-const int8 KyraEngine::_addXPosTable[] = {
+const int8 KyraEngine_v1::_addXPosTable[] = {
 	 4,  4,  0, -4, -4, -4,  0,  4
 };
 
-const int8 KyraEngine::_addYPosTable[] = {
+const int8 KyraEngine_v1::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 
-const int8 KyraEngine_v1::_charXPosTable[] = {
+const int8 KyraEngine_v1::_charAddXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4
 };
 
-const int8 KyraEngine_v1::_charYPosTable[] = {
+const int8 KyraEngine_v1::_charAddYPosTable[] = {
 	-2, -2,  0,  2,  2,  2,  0, -2
 };
 
-const uint16 KyraEngine_v1::_itemPosX[] = {
+const uint16 KyraEngine_LoK::_itemPosX[] = {
 	95, 115, 135, 155, 175, 95, 115, 135, 155, 175
 };
 
-const uint8 KyraEngine_v1::_itemPosY[] = {
+const uint8 KyraEngine_LoK::_itemPosY[] = {
 	160, 160, 160, 160, 160, 181, 181, 181, 181, 181
 };
 
-void GUI_v1::initStaticResource() {
+void GUI_LoK::initStaticResource() {
 	GUI_V1_BUTTON(_scrollUpButton, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0f, 0);
 	GUI_V1_BUTTON(_scrollDownButton, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0f, 0);
 
@@ -1366,13 +1386,13 @@ void GUI_v1::initStaticResource() {
 	GUI_V1_BUTTON(_menuButtonData[4], 0x10, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 	GUI_V1_BUTTON(_menuButtonData[5], 0x11, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 
-	delete [] _menu;
+	delete[] _menu;
 	_menu = new Menu[6];
 	assert(_menu);
 
-	Button::Callback quitPlayingFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::quitPlaying);
-	Button::Callback loadGameMenuFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::loadGameMenu);
-	Button::Callback cancelSubMenuFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::cancelSubMenu);
+	Button::Callback quitPlayingFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitPlaying);
+	Button::Callback loadGameMenuFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::loadGameMenu);
+	Button::Callback cancelSubMenuFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::cancelSubMenu);
 
 	GUI_V1_MENU(_menu[0], -1, -1, 0x100, 0x8B, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1381,16 +1401,16 @@ void GUI_v1::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, 0x51, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, 0x6E, 0xDC, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[0].item[0].callback = loadGameMenuFunctor;
-	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::saveGameMenu);
-	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::gameControlsMenu);
+	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGameMenu);
+	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::gameControlsMenu);
 	_menu[0].item[3].callback = quitPlayingFunctor;
-	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::resumeGame);
+	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::resumeGame);
 	
 	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::quitConfirmYes);
-	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::quitConfirmNo);
+	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
+	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmNo);
 	
 	GUI_V1_MENU(_menu[2], -1, -1, 0x120, 0xA0, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124);
 	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, 0x27, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1404,7 +1424,7 @@ void GUI_v1::initStaticResource() {
 	GUI_V1_MENU(_menu[3], -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 24, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 179, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::savegameConfirm);
+	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
 	
 	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
@@ -1420,16 +1440,16 @@ void GUI_v1::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 0xA5, 0, 0x51, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x53, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 0xA5, 0, 0x62, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x65, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, 0x7F, 0x6C, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, -0, 0, 0, 0, 0);
-	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeMusic);
-	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeSounds);
-	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeWalk);
-	_menu[5].item[4].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeText);
-	_menu[5].item[5].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsApply);
+	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeMusic);
+	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeSounds);
+	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
+	_menu[5].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeText);
+	_menu[5].item[5].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsApply);
 }
 
-void KyraEngine_v1::setupButtonData() {
-	delete [] _buttonData;
-	delete [] _buttonDataListPtr;
+void KyraEngine_LoK::setupButtonData() {
+	delete[] _buttonData;
+	delete[] _buttonDataListPtr;
 
 	_buttonData = new Button[15];
 	assert(_buttonData);
@@ -1437,9 +1457,9 @@ void KyraEngine_v1::setupButtonData() {
 	assert(_buttonDataListPtr);
 
 	GUI_V1_BUTTON(_buttonData[1], 0x01, 1, 1, 1, 0x0487, 0, 0x009, 0xA4, 0x36, 0x1E, 0);
-	_buttonData[1].buttonCallback = BUTTON_FUNCTOR(GUI_v1, _gui, &GUI_v1::buttonMenuCallback);
+	_buttonData[1].buttonCallback = BUTTON_FUNCTOR(GUI_LoK, _gui, &GUI_LoK::buttonMenuCallback);
 
-	Button::Callback inventoryFunctor = BUTTON_FUNCTOR(KyraEngine_v1, this, &KyraEngine_v1::buttonInventoryCallback);
+	Button::Callback inventoryFunctor = BUTTON_FUNCTOR(KyraEngine_LoK, this, &KyraEngine_LoK::buttonInventoryCallback);
 	for (int i = 2; i <= 10; ++i)
 		_buttonData[i].buttonCallback = inventoryFunctor;
 	_buttonData[0].buttonCallback = inventoryFunctor;
@@ -1454,7 +1474,7 @@ void KyraEngine_v1::setupButtonData() {
 	GUI_V1_BUTTON(_buttonData[9], 0x0A, 0, 0, 0, 0x0400, 0, 0x099, 0xB3, 0x13, 0x14, 0);
 	GUI_V1_BUTTON(_buttonData[10], 0x0B, 0, 0, 0, 0x0400, 0, 0x0AD, 0xB3, 0x13, 0x14, 0);
 
-	Button::Callback amuletFunctor = BUTTON_FUNCTOR(KyraEngine_v1, this, &KyraEngine_v1::buttonAmuletCallback);
+	Button::Callback amuletFunctor = BUTTON_FUNCTOR(KyraEngine_LoK, this, &KyraEngine_LoK::buttonAmuletCallback);
 	GUI_V1_BUTTON(_buttonData[11], 0x15, 1, 1, 1, 0x0487, 0, 0x0FD, 0x9C, 0x1A, 0x12, 0);
 	GUI_V1_BUTTON(_buttonData[12], 0x16, 1, 1, 1, 0x0487, 0, 0x0E7, 0xAA, 0x1A, 0x12, 0);
 	GUI_V1_BUTTON(_buttonData[13], 0x17, 1, 1, 1, 0x0487, 0, 0x0FD, 0xB5, 0x1A, 0x12, 0);
@@ -1467,29 +1487,29 @@ void KyraEngine_v1::setupButtonData() {
 	_buttonDataListPtr[14] = 0;
 }
 
-const uint8 KyraEngine_v1::_magicMouseItemStartFrame[] = {
+const uint8 KyraEngine_LoK::_magicMouseItemStartFrame[] = {
 	0xAD, 0xB7, 0xBE, 0x00
 };
 
-const uint8 KyraEngine_v1::_magicMouseItemEndFrame[] = {
+const uint8 KyraEngine_LoK::_magicMouseItemEndFrame[] = {
 	0xB1, 0xB9, 0xC2, 0x00
 };
 
-const uint8 KyraEngine_v1::_magicMouseItemStartFrame2[] = {
+const uint8 KyraEngine_LoK::_magicMouseItemStartFrame2[] = {
 	0xB2, 0xBA, 0xC3, 0x00
 };
 
-const uint8 KyraEngine_v1::_magicMouseItemEndFrame2[] = {
+const uint8 KyraEngine_LoK::_magicMouseItemEndFrame2[] = {
 	0xB6, 0xBD, 0xC8, 0x00
 };
 
-const uint16 KyraEngine_v1::_amuletX[] = { 231, 275, 253, 253 };
-const uint16 KyraEngine_v1::_amuletY[] = { 170, 170, 159, 181 };
+const uint16 KyraEngine_LoK::_amuletX[] = { 231, 275, 253, 253 };
+const uint16 KyraEngine_LoK::_amuletY[] = { 170, 170, 159, 181 };
 
-const uint16 KyraEngine_v1::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
-const uint16 KyraEngine_v1::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
+const uint16 KyraEngine_LoK::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
+const uint16 KyraEngine_LoK::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
 
-const int8 KyraEngine_v1::_dosTrackMap[] = {
+const int8 KyraEngine_LoK::_dosTrackMap[] = {
 	-1,   0,  -1,   1,   0,   3,   0,   2,
 	 0,   4,   1,   2,   1,   3,   1,   4,
 	 1,  92,   1,   6,   1,   7,   2,   2,
@@ -1506,17 +1526,9 @@ const int8 KyraEngine_v1::_dosTrackMap[] = {
 	 8,   4,   8,   5,   6,  11,   5,  11
 };
 
-const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMap);
+const int KyraEngine_LoK::_dosTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_dosTrackMap);
 
 // kyra engine v2 static data
-
-const int8 KyraEngine_v2::_updateCharPosXTable[] = {
-	0, 4, 4, 4, 0, -4, -4, -4
-};
-
-const int8 KyraEngine_v2::_updateCharPosYTable[] = {
-	-2, -2, 0, 2, 2, 2, 0, -2
-};
 
 const int GUI_v2::_sliderBarsPosition[] = {
 	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
@@ -1530,16 +1542,16 @@ const char *KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
-	"ITA",		Italian and Spanish was never included
+	"ITA",		Italian and Spanish were never included
 	"SPA"*/
-	"JPN"
+	"JPN",
 };
 
 const char *KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
-	"IMC",		Italian and Spanish was never included
+	"IMC",		Italian and Spanish were never included
 	"SMC"*/
 	"JMC"
 };
@@ -1611,7 +1623,7 @@ const int8 KyraEngine_HoF::_dosTrackMap[] = {
 const int KyraEngine_HoF::_dosTrackMapSize = ARRAYSIZE(KyraEngine_HoF::_dosTrackMap);
 
 void KyraEngine_HoF::initInventoryButtonList() {
-	delete [] _inventoryButtons;
+	delete[] _inventoryButtons;
 
 	_inventoryButtons = new Button[15];
 	assert(_inventoryButtons);
@@ -1655,19 +1667,15 @@ void GUI_HoF::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 0x17, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
 
-	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
 		GUI_V2_BUTTON(_menuButtons[i], 0x10+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
-	}
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickLoadSlot);
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickSaveSlot);
@@ -1932,74 +1940,11 @@ const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 
 // kyra 3 static res
 
-const char *KyraEngine_MR::_mainMenuStrings[] = {
-	"Start a new game",
-	"Introduction",
-	"Load a game",
-	"Exit the game",
-	"Nouvelle Partie",
-	"Introduction",
-	"Charger une partie",
-	"Quitter le jeu",
-	"Neues Spiel starten",
-	"Intro",
-	"Spielstand laden",
-	"Spiel beenden",
-	0
-};
-
-const char *KyraEngine_MR::_soundList[] = {
-	"ARREST1.AUD",
-	"BATH1.AUD",
-	"OCEAN1.AUD",
-	"CLOWN1.AUD",
-	"DARM2.AUD",
-	"FALL1M.AUD",
-	"FALL2.AUD",
-	"FISH1.AUD",
-	"FISHWNDR.AUD",
-	"HERMAN1.AUD",
-	"JAIL1.AUD",
-	"JUNGLE1.AUD",
-	"KATHY1.AUD",
-	"NICESINE.AUD",
-	"PEGASUS1.AUD",
-	"PIRATE1.AUD",
-	"PIRATE2.AUD",
-	"PIRATE3.AUD",
-	"POP3.AUD",
-	"PORT1.AUD",
-	"QUEEN1.AUD",
-	"RUINS1.AUD",
-	"SNAKES1.AUD",
-	"SPRING1.AUD",
-	"STATUE1.AUD",
-	"STATUE2.AUD",
-	"TITLE1.AUD",
-	"UNDER1.AUD",
-	"WALKCHP1.AUD",
-	"YANK1.AUD",
-	"ZAN2.AUD",
-	"GROOVE2.AUD",
-	"GROOVE3.AUD",
-	"KING1.AUD",
-	"KING2.AUD",
-	"GROOVE1.AUD",
-	"JAIL2.AUD",
-	"SPIRIT1.AUD",
-	"SPRING1A.AUD",
-	"POP1.AUD",
-	"POP2.AUD",
-	"SQUIRL1.AUD"
-};
-
-const int KyraEngine_MR::_soundListSize = ARRAYSIZE(KyraEngine_MR::_soundList);
-
 const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
-	"TRI",		Italian and Spanish was never included
+	"TRI",		Italian and Spanish were never included
 	"TRS"*/
 };
 
@@ -2025,316 +1970,6 @@ const int KyraEngine_MR::_shapeDescsSize = ARRAYSIZE(KyraEngine_MR::_shapeDescs)
 const uint8 KyraEngine_MR::_characterFrameTable[] = {
 	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34
 };
-
-const uint8 KyraEngine_MR::_sfxFileMap[] = {
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x99, 0x00,
-	0x46, 0x00, 0xA9, 0x00, 0x33, 0x00, 0x65, 0x00,
-	0x9B, 0x00, 0x17, 0x00, 0xBB, 0x00, 0x64, 0x00,
-	0x55, 0x00, 0xD5, 0x00, 0x66, 0x00, 0xB9, 0x00,
-	0x9A, 0x00, 0xFF, 0x00, 0xCC, 0x00, 0x67, 0x00,
-	0x2E, 0x00, 0xA1, 0x00, 0xD0, 0x00, 0x63, 0x00,
-	0x89, 0x00, 0xBE, 0x00, 0x80, 0x00, 0x1D, 0x00,
-	0x02, 0x00, 0x28, 0x00, 0x91, 0x00, 0x29, 0x00,
-	0xCE, 0x00, 0x8F, 0x00, 0x49, 0x00, 0x2B, 0x00,
-	0x2D, 0x00, 0x2C, 0x00, 0x3E, 0x00, 0x22, 0x00,
-	0x80, 0x00, 0x9C, 0x00, 0x2E, 0x00, 0x04, 0x00,
-	0x47, 0x00, 0xA8, 0x00, 0x51, 0x00, 0x52, 0x00,
-	0x80, 0x00, 0x48, 0x00, 0x38, 0x0A, 0x0C, 0x00,
-	0xD8, 0x00, 0xD1, 0x00, 0xD2, 0x00, 0xD3, 0x00,
-	0xD1, 0x00, 0x6A, 0x00, 0x8A, 0x00, 0xC0, 0x00,
-	0xC1, 0x00, 0xC2, 0x00, 0x9F, 0x00, 0xA3, 0x00,
-	0x90, 0x00, 0xB6, 0x00, 0x37, 0x00, 0x71, 0x00,
-	0x13, 0x00, 0x50, 0x00, 0x5A, 0x00, 0x6E, 0x00,
-	0x70, 0x00, 0x11, 0x00, 0x16, 0x00, 0x14, 0x00,
-	0x43, 0x00, 0xCD, 0x00, 0xAA, 0x00, 0x15, 0x00,
-	0x83, 0x00, 0x19, 0x00, 0xB3, 0x00, 0x6F, 0x00,
-	0x26, 0x00, 0xC8, 0x00, 0xA7, 0x00, 0x98, 0x00,
-	0x87, 0x00, 0xC7, 0x00, 0xA2, 0x00, 0xB0, 0x00,
-	0x12, 0x00, 0xD7, 0x00, 0x56, 0x00, 0x45, 0x00,
-	0x4B, 0x00, 0xAF, 0x00, 0x3B, 0x00, 0x6C, 0x00,
-	0x8E, 0x00, 0x39, 0x00, 0x38, 0x00, 0x92, 0x00,
-	0x4B, 0x00, 0xD0, 0x00, 0x4A, 0x00, 0x9D, 0x00,
-	0x7F, 0x00, 0x6D, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x3D, 0x00, 0x72, 0x00, 0x40, 0x00, 0x66, 0x00,
-	0x01, 0x00, 0xA5, 0x00, 0x00, 0x00, 0x3C, 0x00,
-	0xAC, 0x00, 0x38, 0x00, 0x8B, 0x00, 0xDF, 0x00,
-	0x0E, 0x00, 0x54, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x94, 0x00, 0xAB, 0x00, 0x76, 0x00, 0x58, 0x00,
-	0x6B, 0x00, 0x27, 0x00, 0xFF, 0x00, 0x77, 0x00,
-	0xA6, 0x00, 0x63, 0x00, 0x9E, 0x00, 0xDE, 0x00,
-	0x84, 0x00, 0x85, 0x00, 0x86, 0x00, 0x3F, 0x00,
-	0xCC, 0x00, 0xCC, 0x00, 0xCC, 0x00, 0x93, 0x00,
-	0x9D, 0x00, 0x75, 0x00, 0x75, 0x00, 0x75, 0x00,
-	0x75, 0x00, 0x3A, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xAE, 0x00, 0x8C, 0x00, 0x20, 0x00,
-	0xFF, 0x00, 0x32, 0x00, 0x32, 0x00, 0xFF, 0x00,
-	0x4D, 0x00, 0xD9, 0x00, 0x88, 0x00, 0x4D, 0x00,
-	0x4D, 0x00, 0x4D, 0x00, 0x4D, 0x00, 0xA0, 0x00,
-	0x4C, 0x00, 0x8C, 0x00, 0x4C, 0x00, 0x4C, 0x00,
-	0x8C, 0x00, 0x8C, 0x00, 0x5C, 0x00, 0x5D, 0x00,
-	0x60, 0x00, 0x5F, 0x00, 0xC5, 0x00, 0xBF, 0x00,
-	0xFF, 0x00, 0x4F, 0x00, 0x16, 0x00, 0x59, 0x00,
-	0xFF, 0x00, 0x24, 0x00, 0xA4, 0x00, 0xCF, 0x00,
-	0xFF, 0x00, 0x47, 0x00, 0x95, 0x00, 0x96, 0x00,
-	0x7B, 0x00, 0xBD, 0x00, 0xFF, 0x00, 0x34, 0x00,
-	0x35, 0x00, 0x36, 0x00, 0xDE, 0x00, 0xFF, 0x00,
-	0x4B, 0x00, 0xD6, 0x00, 0xFF, 0x00, 0x61, 0x00,
-	0x62, 0x00, 0xFF, 0x00, 0x78, 0x00, 0xFF, 0x00,
-	0x44, 0x00, 0xB4, 0x00, 0xB5, 0x00, 0x42, 0x00,
-	0x27, 0x00, 0xA2, 0x00, 0x27, 0x00, 0x5D, 0x00,
-	0x7A, 0x00, 0x89, 0x00, 0x1A, 0x00, 0x0E, 0x00,
-	0x82, 0x00, 0xFF, 0x00, 0x79, 0x00, 0x2A, 0x00,
-	0x81, 0x00, 0xFF, 0x00, 0x74, 0x00, 0x4E, 0x00,
-	0xB1, 0x00, 0x1B, 0x00, 0x2F, 0x00, 0xBA, 0x00,
-	0xBB, 0x00, 0xBC, 0x00, 0xDA, 0x00, 0xDB, 0x00,
-	0x18, 0x00, 0x5E, 0x00, 0x0D, 0x0A, 0x88, 0x00,
-	0x1E, 0x00, 0x1F, 0x00, 0x20, 0x00, 0x21, 0x00,
-	0x69, 0x00, 0x1C, 0x00, 0x7C, 0x00, 0x30, 0x00,
-	0xC3, 0x00, 0xC4, 0x00, 0xAD, 0x00, 0x25, 0x00,
-	0x53, 0x00, 0xB7, 0x00, 0xB8, 0x00, 0xDC, 0x00,
-	0x8D, 0x00, 0xCB, 0x00, 0xD4, 0x00, 0xB2, 0x00,
-	0xDD, 0x00, 0x57, 0x00, 0x41, 0x00, 0x10, 0x00,
-	0x4C, 0x00, 0xC9, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x7D, 0x00, 0x7E, 0x00, 0xCA, 0x00, 0x03, 0x00,
-	0x04, 0x00, 0x05, 0x00, 0x06, 0x00, 0x07, 0x00,
-	0x08, 0x00, 0x09, 0x00, 0x0A, 0x00, 0x0B, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-	0x23, 0x00, 0x97, 0x00, 0x73, 0x00
-};
-
-const int KyraEngine_MR::_sfxFileMapSize = ARRAYSIZE(KyraEngine_MR::_sfxFileMap);
-
-const char *KyraEngine_MR::_sfxFileList[] = {
-	"ALARM1",
-	"ARMOIRE1",
-	"ARROW1",
-	"AUDLAFF1",
-	"AUDLAFF2",
-	"AUDLAFF3",
-	"AUDLAFF4",
-	"AUDLAFF5",
-	"AUDLAFF6",
-	"AUDLAFF7",
-	"AUDLAFF8",
-	"AUDLAFF9",
-	"BARK22A",
-	"BEAM1",
-	"BEDSQK1",
-	"BEDSQK2",
-	"BIGCLOK1",
-	"BIGDOR2",
-	"BIRD4",
-	"BIRD122",
-	"BIRD222",
-	"BIRD322",
-	"BLAST22D",
-	"BLINK1",
-	"BOATMIX1",
-	"BODYFAL1",
-	"BOTLBLOW",
-	"BOUNCE3",
-	"BOUNCE5",
-	"BOW2",
-	"BUBL1",
-	"BUBL2",
-	"BUBL3",
-	"BUBL4",
-	"BUTTON1",
-	"BUTTON2",
-	"CANNON1",
-	"CASHREG1",
-	"CATHY1",
-	"CHAIN1",
-	"CHATTER1",
-	"CHATTER2",
-	"CHEESE1",
-	"CHICHIC2",
-	"CHIPLAF1",
-	"CHIPROR1",
-	"CLANG1",
-	"CLDOOR1",
-	"CLEAT1",
-	"CLOTHES1",
-	"COIN2",
-	"COUNTER1",
-	"CREAK1",
-	"CREAK2",
-	"CREAK3",
-	"CRIKT22A",
-	"CRMAD1",
-	"CRNORM1",
-	"CRUMBLE1",
-	"CRUNCH1",
-	"CRYSTAL1",
-	"DFLY1",
-	"DIAL1",
-	"DIGDIRT1",
-	"DIZZY1",
-	"DODO1",
-	"DOORBELL",
-	"DOORCL1",
-	"DOOROP1",
-	"DRIP1",
-	"DROPITM1",
-	"EAT22A",
-	"EATNUT1",
-	"ELEC1",
-	"EXPLODE2",
-	"FALL1",
-	"FALLM2",
-	"FALLM3",
-	"FESTRE1",
-	"FISHLAF2",
-	"FLAG22A",
-	"FLAG22B",
-	"FLAG22C",
-	"FLPOOF1",
-	"FOLDER1",
-	"FROG1",
-	"FROGJMP1",
-	"FSHBUBL1",
-	"FUNNEL1",
-	"FUSE1",
-	"GATE22A",
-	"GEM1",
-	"GEMFIRE1",
-	"GEMLIT1",
-	"GEMPUT1",
-	"GEMRAIN1",
-	"GEMWND1",
-	"GIRLLAF1",
-	"GIRLLAF2",
-	"GLASBRK1",
-	"GLOWY1",
-	"GOODK33",
-	"GROWTWIG",
-	"GUNTHER3",
-	"H2ODROP2",
-	"H2OFALL1",
-	"HAMMER1",
-	"HAYFALL2",
-	"HERMMAG1",
-	"HIPRES1",
-	"HITHED22",
-	"HOWL1",
-	"HUM1",
-	"HYPNO1",
-	"HYPNO2",
-	"IMPACT1",
-	"JOHAN1",
-	"JUNGAMB2",
-	"KISS1",
-	"KISS2",
-	"KNIFE",
-	"KNIFHIT1",
-	"KNIFSTAB",
-	"KNOCK",
-	"LAND1",
-	"LEVIBAB1",
-	"LEVIMAN1",
-	"LID",
-	"MACHMIX1",
-	"MALCFALL",
-	"MALCYAWN",
-	"MJUMP1",
-	"MOO1",
-	"MOO2",
-	"MOO3",
-	"MORPH1",
-	"MORPH2",
-	"MORPH3",
-	"MORPH4",
-	"MOTHS1",
-	"MSPLASH1",
-	"MTLSLAM1",
-	"MUDBATH1",
-	"NAIL1",
-	"NEIGH1",
-	"NETCATCH",
-	"NETMAL1",
-	"NETRIP1",
-	"OPDOOR1",
-	"OWL1",
-	"OWL2",
-	"PEDAL3",
-	"PEGWING1",
-	"PICKUP1",
-	"PLUCK3",
-	"POLGULP1",
-	"POOF1",
-	"PORTAL1",
-	"POURH2O1",
-	"PRIMOR1",
-	"PUMP1",
-	"PUNCTRE1",
-	"RATTLE1",
-	"REV2",
-	"RING",
-	"ROAR3",
-	"ROWBOAT1",
-	"RUCKUS1",
-	"RUMBLE1",
-	"SCOLD1",
-	"SCRATCH1",
-	"SHOVEL1",
-	"SHOWER2",
-	"SLOTPUL1",
-	"SNAKKILL",
-	"SNAP1",
-	"SNIFF1",
-	"SNIFF2",
-	"SNIFFM1",
-	"SNIP22B",
-	"SNORIN1",
-	"SNOROUT1",
-	"SNORT1",
-	"SPITBAL1",
-	"SPITBAL2",
-	"SPLASH1",
-	"SQUEAK1",
-	"SQUEAK2",
-	"SQUEAK3",
-	"STATUE",
-	"STAMPED1",
-	"STARS1",
-	"STONE1",
-	"STONE2",
-	"STONE3",
-	"STRETCH1",
-	"STRETCH2",
-	"SUNRISE1",
-	"SWALLOW1",
-	"SWALLOW2",
-	"SWAV22B",
-	"TELBEL1",
-	"TELBEL2",
-	"TENNIS1",
-	"THROW1",
-	"THUMP1",
-	"TOILET1",
-	"TRAPDOR1",
-	"TRICKLE",
-	"TROLGRNT",
-	"TROLYEL1",
-	"TROLYEL2",
-	"TUBEDOR1",
-	"TWIGSNAP",
-	"UMBRLA1",
-	"UNLOK22A",
-	"VACUUM",
-	"WAVELT1",
-	"WHIP1",
-	"WHIP2",
-	"WOODHIT1",
-	"YAWN1",
-	"ZING",
-	"ZIPPER1"
-};
-
-const int KyraEngine_MR::_sfxFileListSize = ARRAYSIZE(KyraEngine_MR::_sfxFileList);
 
 const uint8 KyraEngine_MR::_badConscienceFrameTable[] = {
 	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
@@ -2376,28 +2011,6 @@ const uint8 KyraEngine_MR::_trashItemList[] = {
 	0x39, 0x40, 0x3E, 0x3D, 0x3C, 0x3F, 0xFF
 };
 
-const uint8 KyraEngine_MR::_itemMagicTable[] = {
-	0x06, 0x05, 0x07, 0xFE, 0x05, 0x06, 0x07, 0xFE,
-	0x03, 0x00, 0x22, 0xFE, 0x00, 0x03, 0x22, 0xFE,
-	0x10, 0x00, 0x20, 0x0F, 0x00, 0x10, 0x0F, 0x20,
-	0x10, 0x22, 0x21, 0x0F, 0x22, 0x10, 0x0F, 0x21,
-	0xFF, 0xFF, 0xFF, 0xFF
-};
-
-const uint8 KyraEngine_MR::_itemStringMap[] = {
-	1, 0, 2, 0, 2, 2, 0, 0,
-	2, 2, 2, 2, 2, 2, 2, 0,
-	0, 0, 0, 0, 0, 0, 3, 1,
-	2, 0, 2, 2, 0, 0, 0, 0,
-	0, 0, 1, 2, 0, 2, 0, 2,
-	0, 0, 2, 0, 0, 0, 0, 1,
-	1, 0, 2, 2, 0, 0, 2, 0,
-	0, 2, 0, 2, 2, 0, 0, 2,
-	0, 0, 0, 0, 2, 0, 0, 2
-};
-
-const uint KyraEngine_MR::_itemStringMapSize = ARRAYSIZE(KyraEngine_MR::_itemStringMap);
-
 const uint8 KyraEngine_MR::_itemStringPickUp[] = {
 	0x4, 0x7, 0x0, 0xA
 };
@@ -2409,36 +2022,6 @@ const uint8 KyraEngine_MR::_itemStringDrop[] = {
 const uint8 KyraEngine_MR::_itemStringInv[] = {
 	0x6, 0x9, 0x2, 0xC
 };
-
-const int8 KyraEngine_MR::_scoreTable[] = {
-	10,  8,  5,  9, 10, 10,  7,  8,
-	 9,  9,  8,  8,  7,  8,  5,  9,
-	 6, 10,  7,  8,  5,  9,  6,  6,
-	 7,  8,  5,  9,  6,  8,  7,  8,
-	 5,  9,  6, 10,  7,  8,  5,  5,
-	 5,  7,  5,  7, 10,  5, 10,  5,
-	 5,  8,  6,  8,  7,  5,  5,  8,
-	 6,  9,  5,  7,  6,  5,  5,  7,
-	 7,  7,  6,  5,  8,  6, 10,  5,
-	 7,  5, 10,  5,  5,  5,  5,  7,
-	 5,  8,  9,  7,  7,  6, 10,  6,
-	 5, 10,  8,  5,  8,  6, 10,  5,
-	 5,  8,  8,  5,  7,  7,  7,  6,
-	 8,  9,  8,  8,  6,  5,  7,  6,
-	 5,  8, 15,  7,  9,  6,  6,  8,
-	 5,  8, 15, 15,  5, 15,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,	 0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0 
-}; 
-
-const int KyraEngine_MR::_scoreTableSize = ARRAYSIZE(KyraEngine_MR::_scoreTable);
 
 void KyraEngine_MR::initMainButtonList(bool disable) {
 	if (!_mainButtonListInitialized) {
@@ -2483,19 +2066,15 @@ void GUI_MR::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 22, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 23, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
 
-	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
 		GUI_V2_BUTTON(_menuButtons[i], 0x0F+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-	}
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickLoadSlot);
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickSaveSlot);
@@ -2523,6 +2102,7 @@ void GUI_MR::initStaticData() {
 	GUI_V2_MENU_ITEM(_audioOptions.item[1], 0, 0, 160, 47, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 24, 8, 49, 0x0000);
 	GUI_V2_MENU_ITEM(_audioOptions.item[2], 0, 0, 160, 64, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 39, 8, 66, 0x0000);
 	GUI_V2_MENU_ITEM(_audioOptions.item[3], 1, 0, 152, 81, 116, 15, 0xFA, 0xFF, 5, 0xD0, 0xD1, 0xCF, -1, 47, 8, 83, 0x0000);
+	_audioOptions.item[3].callback = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::toggleHeliumMode);
 	GUI_V2_MENU_ITEM(_audioOptions.item[4], 1, 16, -1, 110, 92, 15, 0xFA, 0xFF, -1, 0xD0, 0xD1, 0xCF, -1, 0, 0, 0, 0x0000);
 	_audioOptions.item[4].callback = clickQuitOptionsFunctor;
 	for (int i = 5; i < 7; ++i)
@@ -2591,6 +2171,16 @@ void GUI_MR::initStaticData() {
 	for (int i = 2; i < 7; ++i)
 		_deathMenu.item[i].enabled = false;
 }
+
+const int8 KyraEngine_MR::_albumWSAX[] = {
+	  0, 77, -50, 99, -61, 82, -58, 85,
+	-64, 80, -63, 88, -63, 88, -64,  0
+};
+
+const int8 KyraEngine_MR::_albumWSAY[] = {
+	 0, -1, 3, 0, -1,  0, -2, 0,
+	-1, -2, 2, 2, -6, -6, -6, 0
+};
 
 } // End of namespace Kyra
 

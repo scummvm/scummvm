@@ -17,10 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * 
  */
  // Save in order 1,2,3,4,larger 2,5
-#include "system.h"
 #include "ramsave.h"
 #include "nds.h"
 #include "compressor/lz.h"
@@ -52,18 +51,18 @@ DSSaveFile::DSSaveFile(SCUMMSave* s, bool compressed, u8* data) {
 		ownsData = true;
 		saveCompressed = false;
 //		consolePrintf("Decompressed. name=%s size=%d (%d)", save.name, save.size, save.compressedSize);
-
+		
 	} else {
 		ownsData = false;
 		origHeader = s;
 	}
-
+	
 	if (save.magic == (int) 0xBEEFCAFE) {
 		save.isValid = true;
 	} else {
 		save.isValid = false;
 	}
-
+	
 	isTempFile = false;
 }
 
@@ -78,7 +77,7 @@ DSSaveFile::~DSSaveFile() {
 }
 
 bool DSSaveFile::loadFromSaveRAM(vu8* address) {
-
+	
 	SCUMMSave newSave;
 
 	for (int t = 0; t < (int) sizeof(newSave); t++) {
@@ -89,13 +88,13 @@ bool DSSaveFile::loadFromSaveRAM(vu8* address) {
 		newSave.isValid = true;
 
 		*((u16 *) (0x4000204)) |= 0x3;
-
+		
 		saveData = new unsigned char[newSave.compressedSize];
-
+		
 		for (int t = 0; t < (int) newSave.compressedSize; t++) {
 			((char *) (saveData))[t] = *(address + t + sizeof(newSave));
 		}
-
+		
 		if (ownsData) delete this->saveData;
 		save = newSave;
 		saveCompressed = true;
@@ -105,7 +104,7 @@ bool DSSaveFile::loadFromSaveRAM(vu8* address) {
 
 		return true;
 	}
-
+	
 	return false;
 }
 
@@ -114,11 +113,11 @@ void DSSaveFile::compress() {
 		unsigned char* compBuffer = new unsigned char[(save.size * 110) / 100];
 		int compSize = LZ_Compress((u8 *) saveData, compBuffer, save.size);
 		save.compressedSize = compSize;
-
-
-
+		
+		
+		
 		delete saveData;
-
+		
 		// Make the save smaller
 		saveData = (u8 *) realloc(compBuffer, save.compressedSize);
 		saveCompressed = true;
@@ -129,39 +128,39 @@ int DSSaveFile::saveToSaveRAM(vu8* address) {
 
 	unsigned char* compBuffer;
 	bool failed;
-
+	
 
 	int compSize;
-
+	
 	compress();
-
+	
 	compSize = save.compressedSize;
 	compBuffer = saveData;
-
+	
 	if (DSSaveFileManager::instance()->getBytesFree() >= getRamUsage()) {
 
 		DSSaveFileManager::instance()->addBytesFree(-getRamUsage());
-
+	
 		// Write header
 		for (int t = 0; t < sizeof(save); t++) {
 			while (*(address + t) != ((char *) (&save))[t]) {
 				*(address + t) = ((char *) (&save))[t];
 			}
 		}
-
+	
 		// Write compressed buffer
 		for (int t = sizeof(save); t < (int) sizeof(save) + compSize; t++) {
 			while (*(address + t) != compBuffer[t - sizeof(save)]) {
 				*(address + t) = compBuffer[t - sizeof(save)];
 			}
 		}
-
+		
 		failed = false;
 	} else {
 		failed = true;
 	}
 
-
+		
 	return failed? 0: compSize + sizeof(save);
 
 }
@@ -177,7 +176,7 @@ uint32 DSSaveFile::read(void *buf, uint32 size) {
 	}
 	memcpy(buf, saveData + ptr, size);
 //	consolePrintf("byte: %d ", ((u8 *) (buf))[0]);
-
+	
 	ptr += size;
 	return size;
 }
@@ -249,7 +248,7 @@ bool DSSaveFile::matches(char* filename) {
 		return false;
 	}
 }
-
+	
 void DSSaveFile::setName(char *name) {
 	save.isValid = true;
 	save.magic = 0xBEEFCAFE;
@@ -258,7 +257,7 @@ void DSSaveFile::setName(char *name) {
 	save.compressedSize = 0;
 	saveData = new unsigned char[DS_MAX_SAVE_SIZE];
 	strcpy(save.name, name);
-
+	
 	if ((strstr(name, ".s99")) || (strstr(name, ".c"))) {
 		isTempFile = true;
 	} else {
@@ -298,10 +297,10 @@ void DSSaveFile::deleteFile() {
 
 DSSaveFileManager::DSSaveFileManager() {
 	instancePtr = this;
-
+	
 	*((u16 *) (0x4000204)) |= 0x3;
 	swiWaitForVBlank();
-
+	
 	loadAllFromSRAM();
 }
 
@@ -311,7 +310,7 @@ DSSaveFileManager::~DSSaveFileManager() {
 
 void DSSaveFileManager::loadAllFromSRAM() {
 	int addr = 1;
-
+	
 	for (int r = 0; r < 8; r++) {
 		gbaSave[r].deleteFile();
 	}
@@ -332,7 +331,7 @@ void DSSaveFileManager::formatSram() {
 	for (int r = 0; r < SRAM_SAVE_MAX; r++) {
 		*(CART_RAM + r) = 0;
 	}
-
+	
 	loadAllFromSRAM();
 }
 
@@ -358,7 +357,7 @@ DSSaveFile *DSSaveFileManager::openSavefile(const char* filename, bool saveOrLoa
 			return gbaSave[r].clone();
 		}
 	}
-
+	
 	if (saveOrLoad) {
 		return makeSaveFile(filename, saveOrLoad);
 	} else {
@@ -383,16 +382,26 @@ void DSSaveFileManager::deleteFile(char* name) {
 	flushToSaveRAM();
 }
 
-void DSSaveFileManager::removeSavefile(const char *filename) {
-	TODO: Implement this. Most likely, you just have to use the code of deleteFile?
+bool DSSaveFileManager::removeSavefile(const char *filename) {
+	consolePrintf("DSSaveFileManager::removeSavefile : Not implemented yet.\n");
+	assert(false);
+	//TODO: Implement this. Most likely, you just have to use the code of deleteFile?
+	return false;
 }
 
 
 Common::StringList DSSaveFileManager::listSavefiles(const char *pattern) {
+	consolePrintf("DSSaveFileManager::listSavefiles : Not implemented yet.\n");
+	assert(false);
+	return Common::StringList();
+	/*
 	TODO: Implement this. If you don't understand what it should do, just ask
 	(e.g. on scummvm-devel or Fingolfin). It should be pretty simple if you
 	use Common::matchString from common/util.h and read the Doxygen docs,
 	then combine this with the old code below...
+	*/
+}
+
 
 /*
 void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
@@ -408,21 +417,20 @@ void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) 
 			}
 		}
 	}
-
+	
 }
 */
 
-}
 
 DSSaveFile *DSSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
-
+	
 	// Find a free save slot
 	int r = 0;
-
+	
 	while ((r < 8) && (gbaSave[r].isValid())) {
 		r++;
 	}
-
+	
 	if ((r == 8) && (gbaSave[r].isValid())) {
 		// No more saves
 		return NULL;
@@ -439,9 +447,9 @@ void DSSaveFileManager::flushToSaveRAM() {
 	int cartAddr = 1;
 	int s;
 	int extraData = DSSaveFileManager::getExtraData();
-
+	
 	*((u16 *) (0x4000204)) |= 0x3;
-
+	
 	swiWaitForVBlank();
 
 	int size = 0;
@@ -451,20 +459,20 @@ void DSSaveFileManager::flushToSaveRAM() {
 			if (!gbaSave[r].isTemp()) size += gbaSave[r].getRamUsage();
 		}
 	}
-
+	
 	if (size <= SRAM_SAVE_MAX) {
 
 		for (int r = 0; r < SRAM_SAVE_MAX; r++) {
 			*(CART_RAM + r) = 0;
 		}
-
+		
 		sramBytesFree = SRAM_SAVE_MAX;
-
+		
 		for (int r = 0; (r < 8); r++) {
 			if (gbaSave[r].isValid() && (!gbaSave[r].isTemp())) {
-
+				
 				cartAddr += s = gbaSave[r].saveToSaveRAM(CART_RAM + cartAddr);
-
+				
 	/*			if (s == 0) {
 					consolePrintf("WARNING: Save didn't fit in cart RAM and has been lost!!  Delete files and save again.", gbaSave[r].getName());
 					failed = true;
@@ -475,7 +483,7 @@ void DSSaveFileManager::flushToSaveRAM() {
 
 		consolePrintf("WARNING: Save didn't fit in cart RAM and has been lost!!  Delete files and save again.");
 		loadAllFromSRAM();
-
+		
 	}
 
 	DSSaveFileManager::setExtraData(extraData);

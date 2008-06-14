@@ -40,7 +40,7 @@
 
 namespace Kyra {
 
-SeqPlayer::SeqPlayer(KyraEngine_v1 *vm, OSystem *system) {
+SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
 	_vm = vm;
 	_system = system;
 
@@ -110,7 +110,7 @@ void SeqPlayer::makeHandShapes() {
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 			if (_handShapes[i])
-				delete [] _handShapes[i];
+				delete[] _handShapes[i];
 			_handShapes[i] = setPanPages(3, i);
 			assert(_handShapes[i]);
 		}
@@ -120,7 +120,7 @@ void SeqPlayer::makeHandShapes() {
 void SeqPlayer::freeHandShapes() {
 	debugC(9, kDebugLevelSequence, "SeqPlayer::freeHandShapes()");
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
-		delete [] _handShapes[i];
+		delete[] _handShapes[i];
 		_handShapes[i] = 0;
 	}
 }
@@ -262,7 +262,7 @@ void SeqPlayer::s1_loadPalette() {
 		uint8 *srcData;
 		srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
 		memcpy(_screen->_currentPalette, srcData, fileSize);
-		delete [] srcData;
+		delete[] srcData;
 	}
 }
 
@@ -667,7 +667,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 
 		_screen->updateScreen();
 	}
-	delete [] _specialBuffer;
+	delete[] _specialBuffer;
 	_specialBuffer = 0;
 	return seqSkippedFlag;
 }

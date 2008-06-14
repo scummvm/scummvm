@@ -22,8 +22,9 @@
  * $Id$
  */
 
-#include "sound/mpu401.h"
 #include "common/util.h"
+#include "sound/musicplugin.h"
+#include "sound/mpu401.h"
 
 #ifndef DISABLE_TAPWAVE
 
@@ -120,8 +121,50 @@ void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
 	TwMidiSysEx(_midiHandle, 0, (byte *)buf, length + 2);
 }
 
-MidiDriver *MidiDriver_Zodiac_create() {
-	return new MidiDriver_Zodiac();
+
+// Plugin interface
+
+class ZodiacMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "Tapwave Zodiac";
+	}
+
+	const char *getId() const {
+		return "zodiac";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices ZodiacMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
+
+PluginError ZodiacMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_Zodiac();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_Zodiac_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	ZodiacMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(ZODIAC)
+	//REGISTER_PLUGIN_DYNAMIC(ZODIAC, PLUGIN_TYPE_MUSIC, ZodiacMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(ZODIAC, PLUGIN_TYPE_MUSIC, ZodiacMusicPlugin);
+//#endif
 
 #endif

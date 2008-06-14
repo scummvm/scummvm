@@ -27,7 +27,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "kyra/debugger.h"
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-Debugger::Debugger(KyraEngine *vm)
+Debugger::Debugger(KyraEngine_v1 *vm)
 	: ::GUI::Debugger() {
 	_vm = vm;
 
@@ -190,22 +190,23 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 
 #pragma mark -
 
-Debugger_v1::Debugger_v1(KyraEngine_v1 *vm)
+Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 	: Debugger(vm), _vm(vm) {
-	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v1, cmd_listRooms));
-	DCmd_Register("give",				WRAP_METHOD(Debugger_v1, cmd_giveItem));
-	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_v1, cmd_listBirthstones));
+	DCmd_Register("enter",				WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
+	DCmd_Register("rooms",				WRAP_METHOD(Debugger_LoK, cmd_listRooms));
+	DCmd_Register("give",				WRAP_METHOD(Debugger_LoK, cmd_giveItem));
+	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
 }
 
-void Debugger_v1::preEnter() {
+void Debugger_LoK::preEnter() {
 	//_vm->midi.pause(1);
 }
 
-void Debugger_v1::postEnter() {
+void Debugger_LoK::postEnter() {
 	//_vm->midi.pause(0);
 }
 
-bool Debugger_v1::cmd_enterRoom(int argc, const char **argv) {
+bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
 		int room = atoi(argv[1]);
@@ -244,7 +245,7 @@ bool Debugger_v1::cmd_enterRoom(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v1::cmd_listRooms(int argc, const char **argv) {
+bool Debugger_LoK::cmd_listRooms(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_roomTableSize; i++) {
 		DebugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
 		if (!(i % 8))
@@ -255,7 +256,7 @@ bool Debugger_v1::cmd_listRooms(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v1::cmd_giveItem(int argc, const char **argv) {
+bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
@@ -274,7 +275,7 @@ bool Debugger_v1::cmd_giveItem(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v1::cmd_listBirthstones(int argc, const char **argv) {
+bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
 	DebugPrintf("Needed Birthstone gems:\n");
 	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
 		DebugPrintf("%-2d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
@@ -421,9 +422,8 @@ bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
-		// Kyrandia 2 has only 178 items (-1 to 176), otherwise it will crash
-		if (item < -1 || item > 176) {
-			DebugPrintf("itemid must be any value between (including) -1 and 176\n");
+		if (item < -1 || item > _vm->engineDesc().maxItemId) {
+			DebugPrintf("itemid must be any value between (including) -1 and %d\n", _vm->engineDesc().maxItemId);
 			return true;
 		}
 

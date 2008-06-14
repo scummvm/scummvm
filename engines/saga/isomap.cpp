@@ -27,7 +27,6 @@
 
 #include "saga/saga.h"
 #include "saga/gfx.h"
-#include "saga/sagaresnames.h"
 #include "saga/scene.h"
 #include "saga/isomap.h"
 
@@ -285,7 +284,7 @@ void IsoMap::adjustScroll(bool jump) {
 
 	tileCoordsToScreenPoint(_vm->_actor->_centerActor->_location, playerPoint);
 
-	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+	if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 		_mapPosition.x = (playerPoint.x + _viewScroll.x) * 30 / 100 - (381);
 		_mapPosition.y = (playerPoint.y + _viewScroll.y) * 30 / 100 - (342);
 	}
@@ -322,7 +321,7 @@ void IsoMap::adjustScroll(bool jump) {
 		_viewScroll.x = smoothSlide( _viewScroll.x, minScrollPos.x, maxScrollPos.x );
 	}
 
-	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+	if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 		ObjectData *obj;
 		uint16 objectId;
 		objectId = _vm->_actor->objIndexToId(ITE_OBJ_MAP);
@@ -1510,7 +1509,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 	memset( &_searchArray, 0, sizeof(_searchArray));
 
 	if (!(actor->_actorFlags & kActorNoCollide) &&
-		(_vm->_scene->currentSceneResourceId() != RID_ITE_OVERMAP_SCENE)) {
+		(_vm->_scene->currentSceneResourceId() != ITE_SCENE_OVERMAP)) {
 			for (i = 0; i < _vm->_actor->_actorsCount; i++) {
 				other = _vm->_actor->_actors[i];
 				if (!other->_inScene) continue;
@@ -1664,7 +1663,7 @@ void IsoMap::screenPointToTileCoords(const Point &position, Location &location) 
 	Point mPos(position);
 	int x,y;
 
-	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE){
+	if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP){
 		if (mPos.y < 16) {
 			mPos.y = 16;
 		}

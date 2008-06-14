@@ -42,7 +42,7 @@
 
 namespace Kyra {
 
-VQAMovie::VQAMovie(KyraEngine *vm, OSystem *system) {
+VQAMovie::VQAMovie(KyraEngine_v1 *vm, OSystem *system) {
 	_system = system;
 	_vm = vm;
 	_opened = false;
@@ -69,7 +69,7 @@ void *VQAMovie::allocBuffer(int num, uint32 size) {
 		 * We could use realloc() here, but we don't actually need the
 		 * old contents of the buffer.
 		 */
-		delete [] _buffers[num].data;
+		delete[] _buffers[num].data;
 		_buffers[num].data = new uint8[size];
 		_buffers[num].size = size;
 	}
@@ -81,7 +81,7 @@ void *VQAMovie::allocBuffer(int num, uint32 size) {
 
 void VQAMovie::freeBuffers() {
 	for (int i = 0; i < ARRAYSIZE(_buffers); i++) {
-		delete [] _buffers[i].data;
+		delete[] _buffers[i].data;
 		_buffers[i].data = NULL;
 		_buffers[i].size = 0;
 	}
@@ -356,15 +356,14 @@ bool VQAMovie::open(const char *filename) {
 void VQAMovie::close() {
 	debugC(9, kDebugLevelMovie, "VQAMovie::close()");
 	if (_opened) {
-		delete [] _frameInfo;
-		delete [] _frame;
-		delete [] _codeBook;
-		delete [] _partialCodeBook;
-		delete [] _vectorPointers;
+		delete[] _frameInfo;
+		delete[] _frame;
+		delete[] _codeBook;
+		delete[] _partialCodeBook;
+		delete[] _vectorPointers;
 
-		if (_vm->_mixer->isSoundHandleActive(_sound)) {
+		if (_vm->_mixer->isSoundHandleActive(_sound))
 			_vm->_mixer->stopHandle(_sound);
-		}
 
 		_frameInfo = NULL;
 		_frame = NULL;
@@ -655,11 +654,10 @@ void VQAMovie::play() {
 		while (1) {
 			uint32 elapsedTime;
 
-			if (_vm->_mixer->isSoundHandleActive(_sound)) {
+			if (_vm->_mixer->isSoundHandleActive(_sound))
 				elapsedTime = _vm->_mixer->getSoundElapsedTime(_sound);
-			} else {
+			else 
 				elapsedTime = _system->getMillis() - startTick;
-			}
 
 			if (elapsedTime >= (i * 1000) / _header.frameRate)
 				break;

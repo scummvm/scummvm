@@ -81,10 +81,10 @@ void loadRel(char *pRelName) {
 		char buffer[256];
 
 		for (s = 0; s < numEntry; s++) {
-			if (relTable[s].size) {
+			if (relTable[s]->_size) {
 				sprintf(buffer, "%s_%03d.txt", pRelName, s);
 
-				decompileScript(relTable[s].data, NULL, relTable[s].size, s);
+				decompileScript((const byte *)relTable[s]->getString(0), relTable[s]->_size, s);
 				dumpScript(buffer);
 			}
 		}

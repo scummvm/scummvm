@@ -24,10 +24,22 @@
 
 #if defined(MACOSX) || defined(macintosh)
 
+// HACK to disable deprecated warnings under Mac OS X 10.5.
+// Apple depracted the complete QuickTime Music/MIDI API.
+// Apps are supposed to use CoreAudio & CoreMIDI. We do support
+// those, but while QT Midi support is still around, there is no
+// reason to disable this driver. If they really ditch the API in 10.6,
+// we can still release binaries with this driver disabled/removed.
+#include <AvailabilityMacros.h>
+#undef DEPRECATED_ATTRIBUTE
+#define DEPRECATED_ATTRIBUTE
 
-#include "sound/mpu401.h"
+
+
 #include "common/endian.h"
 #include "common/util.h"
+#include "sound/musicplugin.h"
+#include "sound/mpu401.h"
 
 #if defined(MACOSX)
 #include <QuickTime/QuickTimeComponents.h>
@@ -250,8 +262,50 @@ void MidiDriver_QT::dispose()
 	}
 }
 
-MidiDriver *MidiDriver_QT_create() {
-	return new MidiDriver_QT();
+
+// Plugin interface
+
+class QuickTimeMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "QuickTime";
+	}
+
+	const char *getId() const {
+		return "qt";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices QuickTimeMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
+
+PluginError QuickTimeMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_QT();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	QuickTimeMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(QUICKTIME)
+	//REGISTER_PLUGIN_DYNAMIC(QUICKTIME, PLUGIN_TYPE_MUSIC, QuickTimeMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(QUICKTIME, PLUGIN_TYPE_MUSIC, QuickTimeMusicPlugin);
+//#endif
 
 #endif // MACOSX || macintosh

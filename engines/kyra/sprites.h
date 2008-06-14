@@ -26,7 +26,7 @@
 #ifndef KYRA_SPRITES_H
 #define KYRA_SPRITES_H
 
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_lok.h"
 
 namespace Kyra {
 
@@ -63,11 +63,11 @@ struct Anim {
 	bool disable;
 };
 
-class KyraEngine_v1;
+class KyraEngine_LoK;
 
 class Sprites {
 public:
-	Sprites(KyraEngine_v1 *vm, OSystem *system);
+	Sprites(KyraEngine_LoK *vm, OSystem *system);
 	~Sprites();
 
 	void updateSceneAnims();
@@ -86,7 +86,7 @@ public:
 protected:
 	void freeSceneShapes();
 
-	KyraEngine_v1 *_vm;
+	KyraEngine_LoK *_vm;
 	Resource *_res;
 	OSystem *_system;
 	Screen *_screen;

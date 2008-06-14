@@ -23,7 +23,7 @@
  *
  */
 
-
+#include <time.h>	// for AGOSEngine::getTime()
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -37,8 +37,6 @@
 
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
-
-#include <time.h>	// for AGOSEngine::getTime()
 
 using Common::File;
 
@@ -879,7 +877,7 @@ AGOSEngine::~AGOSEngine() {
 	_midi.close();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
-		delete [] _itemHeap[i];
+		delete[] _itemHeap[i];
 	}
 	_itemHeap.clear();
 
@@ -908,7 +906,7 @@ AGOSEngine::~AGOSEngine() {
 	delete _dummyItem3;
 
 	delete _dummyWindow;
-	delete [] _windowList;
+	delete[] _windowList;
 
 	delete _debugger;
 	delete _moviePlay;
@@ -919,25 +917,31 @@ GUI::Debugger *AGOSEngine::getDebugger() {
 	return _debugger;
 }
 
-void AGOSEngine::pause() {
-	_keyPressed.reset();
-	_pause = true;
-	bool ambient_status = _ambientPaused;
-	bool music_status = _musicPaused;
+void AGOSEngine::pauseEngineIntern(bool pauseIt) {
+	if (pauseIt) {
+		_keyPressed.reset();
+		_pause = true;
 
-	_midi.pause(true);
-	_mixer->pauseAll(true);
-	_sound->ambientPause(true);
+		_midi.pause(true);
+		_mixer->pauseAll(true);
+		_sound->ambientPause(true);
+	} else {
+		_pause = false;
+
+		_midi.pause(_musicPaused);
+		_mixer->pauseAll(false);
+		_sound->ambientPause(_ambientPaused);
+	}
+}
+
+void AGOSEngine::pause() {
+	pauseEngine(true);
 
 	while (_pause) {
 		delay(1);
 		if (_keyPressed.keycode == Common::KEYCODE_p)
-			_pause = false;
+			pauseEngine(false);
 	}
-
-	_midi.pause(music_status);
-	_mixer->pauseAll(false);
-	_sound->ambientPause(ambient_status);
 }
 
 int AGOSEngine::go() {
@@ -1017,7 +1021,7 @@ void AGOSEngine::shutdown() {
 	_midi.close();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
-		delete [] _itemHeap[i];
+		delete[] _itemHeap[i];
 	}
 	_itemHeap.clear();
 
@@ -1046,7 +1050,7 @@ void AGOSEngine::shutdown() {
 	delete _dummyItem3;
 
 	delete _dummyWindow;
-	delete [] _windowList;
+	delete[] _windowList;
 
 	delete _debugger;
 	delete _moviePlay;

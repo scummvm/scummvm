@@ -48,17 +48,20 @@
 namespace Made {
 
 enum MadeGameID {
-	GID_RTZ = 0,
-	GID_MANHOLE = 1,
-	GID_LGOP2 = 2
+	GID_RTZ		= 0,
+	GID_MANHOLE	= 1,
+	GID_LGOP2	= 2,
+	GID_RODNEY	= 3
 };
 
 enum MadeGameFeatures {
-	GF_DEMO = 1 << 0,
-	GF_CD = 1 << 1,
-	GF_CD_COMPRESSED = 1 << 2,
-	GF_FLOPPY = 1 << 3
+	GF_DEMO				= 1 << 0,
+	GF_CD				= 1 << 1,
+	GF_CD_COMPRESSED	= 1 << 2,
+	GF_FLOPPY			= 1 << 3
 };
+
+const uint32 kTimerResolution = 40;
 
 struct MadeGameDescription;
 
@@ -91,7 +94,6 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	void update_events();
 
 private:
 public:
@@ -102,9 +104,15 @@ public:
 	ScriptInterpreter *_script;
 	MusicPlayer *_music;
 
+	bool _quit;
+
+	uint16 _eventNum;
 	int _eventMouseX, _eventMouseY;
 	uint16 _eventKey;
+
 	int _soundRate;
+	bool _autoStopSound;
+
 	int _musicVolume;
 	
 	// 2 = LGOP2, Manhole N&E
@@ -117,6 +125,11 @@ public:
 	void resetTimer(int16 timerNum);
 	int16 allocTimer();
 	void freeTimer(int16 timerNum);
+
+	const Common::String getTargetName() { return _targetName; }
+	Common::String getSavegameFilename(int16 saveNum);
+
+	void handleEvents();
 
 };
 

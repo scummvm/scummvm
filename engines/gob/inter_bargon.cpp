@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -34,9 +33,9 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/palanim.h"
-#include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -768,9 +767,9 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 		return;
 
 	for (i = 0; i < 4; i++)
-		_vm->_snd->loadSample(samples[i], sndFiles[i]);
-	_vm->_snd->playComposition(comp, 0, samples, 4);
-	_vm->_snd->waitEndPlay(true, false);
+		_vm->_sound->sampleLoad(&samples[i], sndFiles[i]);
+	_vm->_sound->blasterPlayComposition(comp, 0, samples, 4);
+	_vm->_sound->blasterWaitEndPlay(true, false);
 	_vm->_palAnim->fade(0, 0, 0);
 	_vm->_video->clearSurf(_vm->_draw->_frontSurface);
 }
@@ -787,12 +786,12 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	static const char *palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
 
 	for (int i = 0; i < 2; i++)
-		_vm->_snd->loadSample(samples[i], sndFiles[i]);
+		_vm->_sound->sampleLoad(&samples[i], sndFiles[i]);
 	for (int i = 0; i < 4; i++)
 		palettes[i] = _vm->_dataIO->getData(palFiles[i]);
 	palBak = _vm->_global->_pPaletteDesc->vgaPal;
 
-	_vm->_snd->playComposition(comp, 0, samples, 2);
+	_vm->_sound->blasterPlayComposition(comp, 0, samples, 2);
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 4; j++) {
 			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *) palettes[j];
@@ -801,7 +800,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 		}
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B) ||
 				_vm->_quitRequested) {
-			_vm->_snd->stopSound(10);
+			_vm->_sound->blasterStop(10);
 			_vm->_palAnim->fade(0, -2, 0);
 			_vm->_video->clearSurf(_vm->_draw->_frontSurface);
 			memset((char *) _vm->_draw->_vgaPalette, 0, 768);
@@ -811,7 +810,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 			break;
 		}
 	}
-	_vm->_snd->waitEndPlay(false, false);
+	_vm->_sound->blasterWaitEndPlay(false, false);
 
 	_vm->_global->_pPaletteDesc->vgaPal = palBak;
 	for (int i = 0; i < 4; i++)

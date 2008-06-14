@@ -31,6 +31,8 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"
 #include "parallaction/sound.h"
@@ -43,9 +45,6 @@ namespace Parallaction {
 Parallaction *_vm = NULL;
 
 // public stuff
-
-uint16	_mouseButtons = 0;
-
 
 char		_saveData1[30] = { '\0' };
 uint16		_language = 0;
@@ -67,8 +66,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	// FIXME
 	_vm = this;
 
-	_mouseHidden = false;
-
 	Common::File::addDefaultDirectory( _gameDataPath );
 
 	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
@@ -89,13 +86,10 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 Parallaction::~Parallaction() {
 	delete _debugger;
 
-	delete _locationParser;
 	delete _globalTable;
 
 	delete _callableNames;
 	delete _localFlagNames;
-	delete _zoneTypeNames;
-	delete _zoneFlagNames;
 
 	freeLocation();
 
@@ -114,11 +108,6 @@ int Parallaction::init() {
 	_objectsNames = NULL;
 	_globalTable = NULL;
 	_location._hasSound = false;
-	_transCurrentHoverItem = 0;
-	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
-	_activeItem._index = 0;
-	_activeItem._id = 0;
-	_procCurrentHoverItem = -1;
 	_baseTime = 0;
 	_numLocations = 0;
 	_location._startPosition.x = -1000;
@@ -137,6 +126,8 @@ int Parallaction::init() {
 
 	initInventory();	// needs to be pushed into subclass
 
+	_input = new Input(this);
+
 	_gfx = new Gfx(this);
 
 	_debugger = new Debugger(this);
@@ -150,111 +141,6 @@ int Parallaction::init() {
 
 
 
-// FIXME: the engine has 3 event loops. The following routine hosts the main one,
-// and it's called from 8 different places in the code. There exist 2 more specialised
-// loops which could possibly be merged into this one with some effort in changing
-// caller code, i.e. adding condition checks.
-//
-uint16 Parallaction::readInput() {
-
-	Common::Event e;
-	uint16 KeyDown = 0;
-
-	_mouseButtons = kMouseNone;
-
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (eventMan->pollEvent(e)) {
-
-		switch (e.type) {
-		case Common::EVENT_KEYDOWN:
-			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
-				_debugger->attach();
-			if (getFeatures() & GF_DEMO) break;
-			if (e.kbd.keycode == Common::KEYCODE_l) KeyDown = kEvLoadGame;
-			if (e.kbd.keycode == Common::KEYCODE_s) KeyDown = kEvSaveGame;
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-			_mouseButtons = kMouseLeftDown;
-			_mousePos = e.mouse;
-			break;
-
-		case Common::EVENT_LBUTTONUP:
-			_mouseButtons = kMouseLeftUp;
-			_mousePos = e.mouse;
-			break;
-
-		case Common::EVENT_RBUTTONDOWN:
-			_mouseButtons = kMouseRightDown;
-			_mousePos = e.mouse;
-			break;
-
-		case Common::EVENT_RBUTTONUP:
-			_mouseButtons = kMouseRightUp;
-			_mousePos = e.mouse;
-			break;
-
-		case Common::EVENT_MOUSEMOVE:
-			_mousePos = e.mouse;
-			break;
-
-		case Common::EVENT_QUIT:
-			// TODO: don't quit() here, just have caller routines to check
-			// on kEngineQuit and exit gracefully to allow the engine to shut down
-			_engineFlags |= kEngineQuit;
-			g_system->quit();
-			break;
-
-		default:
-			break;
-
-		}
-
-	}
-
-	if (_debugger->isAttached())
-		_debugger->onFrame();
-
-	return KeyDown;
-
-}
-
-// FIXME: see comment for readInput()
-void waitUntilLeftClick() {
-
-	do {
-		_vm->readInput();
-		_vm->_gfx->updateScreen();
-		g_system->delayMillis(30);
-	} while (_mouseButtons != kMouseLeftUp);
-
-	return;
-}
-
-void Parallaction::runGame() {
-
-	updateInput();
-
-	runPendingZones();
-
-	if (_engineFlags & kEngineChangeLocation) {
-		changeLocation(_location._name);
-	}
-
-
-	_gfx->beginFrame();
-
-	if (_inputMode == kInputModeGame) {
-		runScripts();
-		walk();
-		drawAnimations();
-	}
-
-	// change this to endFrame?
-	updateView();
-
-}
-
 void Parallaction::updateView() {
 
 	if ((_engineFlags & kEnginePauseJobs) && (_engineFlags & kEngineInventory) == 0) {
@@ -264,301 +150,6 @@ void Parallaction::updateView() {
 	_gfx->animatePalette();
 	_gfx->updateScreen();
 	g_system->delayMillis(30);
-}
-
-
-void Parallaction::processInput(InputData *data) {
-
-	switch (data->_event) {
-	case kEvEnterZone:
-		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->setFloatingLabel(data->_label);
-		break;
-
-	case kEvExitZone:
-		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		_gfx->setFloatingLabel(0);
-		break;
-
-	case kEvAction:
-		debugC(2, kDebugInput, "processInput: kEvAction");
-		_procCurrentHoverItem = -1;
-		_hoverZone = nullZonePtr;
-		pauseJobs();
-		runZone(data->_zone);
-		resumeJobs();
-		break;
-
-	case kEvOpenInventory:
-		_procCurrentHoverItem = -1;
-		_hoverZone = nullZonePtr;
-		_gfx->setFloatingLabel(0);
-		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
-			setArrowCursor();
-		}
-		pauseJobs();
-		openInventory();
-		break;
-
-	case kEvCloseInventory: // closes inventory and possibly select item
-		closeInventory();
-		setInventoryCursor(data->_inventoryIndex);
-		resumeJobs();
-		break;
-
-	case kEvHoverInventory:
-		highlightInventoryItem(_procCurrentHoverItem, 12);	// disable
-		highlightInventoryItem(data->_inventoryIndex, 19);						// enable
-		_procCurrentHoverItem = data->_inventoryIndex;
-		break;
-
-	case kEvWalk:
-		debugC(2, kDebugInput, "processInput: kEvWalk");
-		_hoverZone = nullZonePtr;
-		setArrowCursor();
-		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
-		break;
-
-	case kEvQuitGame:
-		_engineFlags |= kEngineQuit;
-		break;
-
-	case kEvSaveGame:
-		_hoverZone = nullZonePtr;
-		saveGame();
-		setArrowCursor();
-		break;
-
-	case kEvLoadGame:
-		_hoverZone = nullZonePtr;
-		loadGame();
-		setArrowCursor();
-		break;
-
-	}
-
-	return;
-}
-
-
-
-
-
-void Parallaction::updateGameInput() {
-
-	int16 keyDown = readInput();
-
-	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
-		!_mouseHidden,
-		(_engineFlags & kEngineBlockInput) == 0,
-		(_engineFlags & kEngineWalking) == 0,
-		(_engineFlags & kEngineChangeLocation) == 0
-	);
-
-	if ((_mouseHidden) ||
-		(_engineFlags & kEngineBlockInput) ||
-		(_engineFlags & kEngineWalking) ||
-		(_engineFlags & kEngineChangeLocation)) {
-
-		return;
-	}
-
-	if (keyDown == kEvQuitGame) {
-		_input._event = kEvQuitGame;
-	} else
-	if (keyDown == kEvSaveGame) {
-		_input._event = kEvSaveGame;
-	} else
-	if (keyDown == kEvLoadGame) {
-		_input._event = kEvLoadGame;
-	} else {
-		_input._mousePos = _mousePos;
-		_input._event = kEvNone;
-		if (!translateGameInput()) {
-			translateInventoryInput();
-		}
-	}
-
-	if (_input._event != kEvNone)
-		processInput(&_input);
-
-}
-
-void Parallaction::updateCommentInput() {
-	waitUntilLeftClick();
-
-	_gfx->hideDialogueStuff();
-	_gfx->setHalfbriteMode(false);
-
-	_inputMode = kInputModeGame;
-}
-
-void Parallaction::updateInput() {
-
-	switch (_inputMode) {
-	case kInputModeComment:
-		updateCommentInput();
-		break;
-
-	case kInputModeGame:
-		updateGameInput();
-		break;
-	}
-
-	return;
-}
-
-bool Parallaction::translateGameInput() {
-
-	if ((_engineFlags & kEnginePauseJobs) || (_engineFlags & kEngineInventory)) {
-		return false;
-	}
-
-	if (_actionAfterWalk) {
-		// if walking is over, then take programmed action
-		_input._event = kEvAction;
-		_actionAfterWalk = false;
-		return true;
-	}
-
-	if (_mouseButtons == kMouseRightDown) {
-		// right button down shows inventory
-
-		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
-			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
-			_engineFlags |= kEngineDragging;
-		}
-
-		_input._event = kEvOpenInventory;
-		_transCurrentHoverItem = -1;
-		return true;
-	}
-
-	// test if mouse is hovering on an interactive zone for the currently selected inventory item
-	ZonePtr z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
-
-	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || ((z->_type & 0xFFFF) != kZoneCommand))) {
-		_input._event = kEvWalk;
-		return true;
-	}
-
-	if ((z != _hoverZone) && (_hoverZone)) {
-		_hoverZone = nullZonePtr;
-		_input._event = kEvExitZone;
-		return true;
-	}
-
-	if (!z) {
-		_input._event = kEvNone;
-		return true;
-	}
-
-	if ((!_hoverZone) && ((z->_flags & kFlagsNoName) == 0)) {
-		_hoverZone = z;
-		_input._event = kEvEnterZone;
-		_input._label = z->_label;
-		return true;
-	}
-
-	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
-
-		_input._zone = z;
-		if (z->_flags & kFlagsNoWalk) {
-			// character doesn't need to walk to take specified action
-			_input._event = kEvAction;
-
-		} else {
-			// action delayed: if Zone defined a moveto position the character is programmed to move there,
-			// else it will move to the mouse position
-			_input._event = kEvWalk;
-			_actionAfterWalk = true;
-			if (z->_moveTo.y != 0) {
-				_input._mousePos = z->_moveTo;
-			}
-		}
-
-		beep();
-		setArrowCursor();
-		return true;
-	}
-
-	return true;
-
-}
-
-bool Parallaction::translateInventoryInput() {
-
-	if ((_engineFlags & kEngineInventory) == 0) {
-		return false;
-	}
-
-	// in inventory
-	int16 _si = getHoverInventoryItem(_mousePos.x, _mousePos.y);
-
-	if (_mouseButtons == kMouseRightUp) {
-		// right up hides inventory
-
-		_input._event = kEvCloseInventory;
-		_input._inventoryIndex = getHoverInventoryItem(_mousePos.x, _mousePos.y);
-		highlightInventoryItem(_transCurrentHoverItem, 12);			// disable
-
-		if ((_engineFlags & kEngineDragging) == 0) {
-			return true;
-		}
-
-		_engineFlags &= ~kEngineDragging;
-		ZonePtr z = hitZone(kZoneMerge, _activeItem._index, getInventoryItemIndex(_input._inventoryIndex));
-
-		if (z) {
-			dropItem(z->u.merge->_obj1);
-			dropItem(z->u.merge->_obj2);
-			addInventoryItem(z->u.merge->_obj3);
-			runCommands(z->_commands);
-		}
-
-		return true;
-	}
-
-	if (_si == _transCurrentHoverItem) {
-		_input._event = kEvNone;
-		return true;
-	}
-
-	_transCurrentHoverItem = _si;
-	_input._event = kEvHoverInventory;
-	_input._inventoryIndex = _si;
-	return true;
-
-}
-
-
-uint32 Parallaction::getElapsedTime() {
-	return g_system->getMillis() - _baseTime;
-}
-
-void Parallaction::resetTimer() {
-	_baseTime = g_system->getMillis();
-	return;
-}
-
-
-void Parallaction::waitTime(uint32 t) {
-
-	uint32 v4 = 0;
-
-	while (v4 < t * (1000 / 18.2)) {
-		v4 = getElapsedTime();
-	}
-
-	resetTimer();
-
-	return;
-}
-
-
-void Parallaction::showCursor(bool visible) {
-	_mouseHidden = !visible;
-	g_system->showMouse(visible);
 }
 
 
@@ -687,6 +278,102 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 }
 
 
+void Parallaction::processInput(InputData *data) {
+
+	switch (data->_event) {
+	case kEvEnterZone:
+		debugC(2, kDebugInput, "processInput: kEvEnterZone");
+		_gfx->setFloatingLabel(data->_label);
+		break;
+
+	case kEvExitZone:
+		debugC(2, kDebugInput, "processInput: kEvExitZone");
+		_gfx->setFloatingLabel(0);
+		break;
+
+	case kEvAction:
+		debugC(2, kDebugInput, "processInput: kEvAction");
+		_input->stopHovering();
+		pauseJobs();
+		runZone(data->_zone);
+		resumeJobs();
+		break;
+
+	case kEvOpenInventory:
+		_input->stopHovering();
+		_gfx->setFloatingLabel(0);
+		if (hitZone(kZoneYou, data->_mousePos.x, data->_mousePos.y) == 0) {
+			setArrowCursor();
+		}
+		pauseJobs();
+		openInventory();
+		break;
+
+	case kEvCloseInventory: // closes inventory and possibly select item
+		closeInventory();
+		setInventoryCursor(data->_inventoryIndex);
+		resumeJobs();
+		break;
+
+	case kEvHoverInventory:
+		highlightInventoryItem(data->_inventoryIndex);						// enable
+		break;
+
+	case kEvWalk:
+		debugC(2, kDebugInput, "processInput: kEvWalk");
+		_input->stopHovering();
+		setArrowCursor();
+		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
+		break;
+
+	case kEvQuitGame:
+		_engineFlags |= kEngineQuit;
+		break;
+
+	case kEvSaveGame:
+		_input->stopHovering();
+		saveGame();
+		setArrowCursor();
+		break;
+
+	case kEvLoadGame:
+		_input->stopHovering();
+		loadGame();
+		setArrowCursor();
+		break;
+
+	}
+
+	return;
+}
+
+void Parallaction::runGame() {
+
+	InputData *data = _input->updateInput();
+	if (data->_event != kEvNone) {
+		processInput(data);
+	}
+
+	runPendingZones();
+
+	if (_engineFlags & kEngineChangeLocation) {
+		changeLocation(_location._name);
+	}
+
+
+	_gfx->beginFrame();
+
+	if (_input->_inputMode == Input::kInputModeGame) {
+		runScripts();
+		walk();
+		drawAnimations();
+	}
+
+	// change this to endFrame?
+	updateView();
+
+}
+
 
 
 
@@ -719,15 +406,15 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->updateScreen();
 
 	showLocationComment(_location._comment, false);
-	waitUntilLeftClick();
+	_input->waitUntilLeftClick();
 	_gfx->freeBalloons();
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
 		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
-		waitTime( 1 );
 		_gfx->updateScreen();
+		g_system->delayMillis(20);
 	}
 
 	_gfx->setPalette(_gfx->_palette);

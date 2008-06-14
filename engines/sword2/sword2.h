@@ -113,8 +113,7 @@ private:
 
 	uint32 calcChecksum(byte *buffer, uint32 size);
 
-	void pauseGame();
-	void unpauseGame();
+	virtual void pauseEngineIntern(bool pause);
 
 	uint32 _totalStartups;
 	uint32 _totalScreenManagers;
@@ -208,7 +207,6 @@ public:
 	uint32 findBufferSize();
 
 	bool _gamePaused;
-	bool _graphicsLevelFudged;
 
 	void startGame();
 	void gameCycle();

@@ -43,7 +43,6 @@
 #include "saga/sound.h"
 #include "saga/sprite.h"
 #include "saga/rscfile.h"
-#include "saga/sagaresnames.h"
 
 #include "saga/interface.h"
 
@@ -327,6 +326,9 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_statusTextInputState = kStatusTextInputFirstRun;
 
 	_disableAbortSpeeches = false;
+
+	// set save game reminder alarm
+	_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
 }
 
 Interface::~Interface(void) {
@@ -335,6 +337,22 @@ Interface::~Interface(void) {
 	_mainPanel.sprites.freeMem();
 	_defPortraits.freeMem();
 	_scenePortraits.freeMem();
+}
+
+void Interface::saveReminderCallback(void *refCon) {
+	((Interface *)refCon)->updateSaveReminder();
+}
+
+void Interface::updateSaveReminder() {
+	// TODO: finish this
+	/*
+	if (_active && _panelMode == kPanelMain) {
+		_vm->_timer->removeTimerProc(&saveReminderCallback);
+		_saveReminderState = (_saveReminderState == 0) ? 1 : 0;
+		drawStatusBar();
+		_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+	}
+	*/
 }
 
 int Interface::activate() {
@@ -477,9 +495,9 @@ void Interface::setMode(int mode) {
 
 bool Interface::processAscii(Common::KeyState keystate) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
-	// and probably only works with the English version. Maybe we should
-	// add a flag to the button so it can indicate if it's the default or
-	// cancel button?
+	// probably only works with the English version. Maybe we should
+	// add a flag to the button so it can indicate if it's the default
+	// or cancel button?
 	uint16 ascii = keystate.ascii;
 	int i;
 	PanelButton *panelButton;
@@ -2755,7 +2773,7 @@ void Interface::mapPanelDrawCrossHair() {
 
 	if (screen.contains(mapPosition)) {
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites,
-						   _mapPanelCrossHairState? RID_ITE_SPR_XHAIR1 : RID_ITE_SPR_XHAIR2,
+						   _mapPanelCrossHairState? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
 						   mapPosition, 256);
 	}
 }

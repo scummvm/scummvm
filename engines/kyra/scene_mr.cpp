@@ -182,7 +182,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 		if (_itemInHand < 0) {
 			_itemInHand = -1;
-			_handItemSet = -1;
+			_mouseState = -1;
 			_screen->setMouseCursor(0, 0, _gameShapes[0]);
 		}
 
@@ -311,7 +311,7 @@ void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
 
 void KyraEngine_MR::unloadScene() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::unloadScene()");
-	delete [] _sceneStrings;
+	delete[] _sceneStrings;
 	_sceneStrings = 0;
 	musicUpdate(0);
 	_emc->unload(&_sceneScriptData);
@@ -325,7 +325,7 @@ void KyraEngine_MR::unloadScene() {
 void KyraEngine_MR::freeSceneShapes() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::freeSceneShapes()");
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i) {
-		delete [] _sceneShapes[i];
+		delete[] _sceneShapes[i];
 		_sceneShapes[i] = 0;
 	}
 }
@@ -430,6 +430,8 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 		_screen->_curPage = pageBackUp;
 		musicUpdate(0);
 	}
+	delete stream;
+	stream = 0;
 	musicUpdate(0);
 
 	strcpy(filename, scene.filename1);
@@ -691,7 +693,7 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		if (ret)
 			++moveTable;
 
-		update();
+		delay(10, true);
 	}
 
 	if (updateChar)

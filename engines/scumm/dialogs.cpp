@@ -692,8 +692,8 @@ void HelpDialog::displayKeyBindings() {
 		_dsc[i]->setLabel(dscStr[i]);
 	}
 
-	delete [] keyStr;
-	delete [] dscStr;
+	delete[] keyStr;
+	delete[] dscStr;
 }
 
 void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

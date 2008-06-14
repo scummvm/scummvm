@@ -85,7 +85,7 @@ void Resources::freeData() {
 	delete _talkDialogData;
 	delete _messagesData;
 	delete _cursors;
-	delete [] _charOffsets;
+	delete[] _charOffsets;
 }
 
 struct AnimRecordTemp {

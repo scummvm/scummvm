@@ -21,7 +21,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;ENABLE_AGI;ENABLE_AGOS;ENABLE_CINE;ENABLE_CRUISE;ENABLE_DRASCULA;ENABLE_GOB;ENABLE_IGOR;ENABLE_KYRA;ENABLE_LURE;ENABLE_M4;ENABLE_MADE;ENABLE_PARALLACTION;ENABLE_QUEEN;ENABLE_SAGA;ENABLE_SCUMM;ENABLE_SKY;ENABLE_SWORD1;ENABLE_SWORD2;ENABLE_TOUCHE;ENABLE_SCUMM_7_8;ENABLE_HE"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -50,6 +50,8 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -74,7 +76,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU;ENABLE_AGI;ENABLE_AGOS;ENABLE_CINE;ENABLE_CRUISE;ENABLE_DRASCULA;ENABLE_GOB;ENABLE_IGOR;ENABLE_KYRA;ENABLE_LURE;ENABLE_M4;ENABLE_MADE;ENABLE_PARALLACTION;ENABLE_QUEEN;ENABLE_SAGA;ENABLE_SCUMM;ENABLE_SKY;ENABLE_SWORD1;ENABLE_SWORD2;ENABLE_TOUCHE;ENABLE_SCUMM_7_8;ENABLE_HE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="TRUE"
@@ -104,6 +106,8 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -291,6 +295,12 @@
 				RelativePath="..\..\common\timer.h">
 			</File>
 			<File
+				RelativePath="..\..\common\unarj.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\unarj.h">
+			</File>
+			<File
 				RelativePath="..\..\common\unzip.cpp">
 			</File>
 			<File
@@ -384,6 +394,9 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\midiparser_xmidi.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\musicplugin.h">
 			</File>
 			<File
 				RelativePath="..\..\sound\mixer.cpp">

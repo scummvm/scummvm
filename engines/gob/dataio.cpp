@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -233,8 +232,10 @@ int16 DataIO::getChunk(const char *chunkName) {
 			if (_chunkPos[file * MAX_SLOT_COUNT + slot] == -1)
 				break;
 
-		if (slot == MAX_SLOT_COUNT)
+		if (slot == MAX_SLOT_COUNT) {
+			warning("Chunk slots full");
 			return -1;
+		}
 
 		dataDesc = _dataFiles[file];
 		for (int16 chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {

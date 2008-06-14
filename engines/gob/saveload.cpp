@@ -24,456 +24,714 @@
  */
 
 #include "common/endian.h"
-#include "common/file.h"
+#include "common/savefile.h"
 
 #include "gob/gob.h"
 #include "gob/saveload.h"
-#include "gob/global.h"
 #include "gob/draw.h"
-#include "gob/video.h"
 
 namespace Gob {
 
-SaveLoad::SaveLoad(GobEngine *vm, const char *targetName) : _vm(vm) {
-	_curSlot = -1;
-
-	_stagesCount = 0;
-	_buffer = 0;
-
-	_tempSprite = 0;
-	memset(_tempPal, 0, 768);
-	_tempSpriteSize = -1;
-
-	_saveFiles = new char*[5];
-
-	assert(_saveFiles);
-
-	_saveFiles[0] = new char[strlen(targetName) + 5];
-	_saveFiles[1] = 0;
-	_saveFiles[2] = new char[strlen(targetName) + 5];
-	_saveFiles[3] = _saveFiles[0];
-	_saveFiles[4] = 0;
-
-	assert(_saveFiles[0] && _saveFiles[2]);
-
-	sprintf(_saveFiles[0], "%s.s00", targetName);
-	sprintf(_saveFiles[2], "%s.blo", targetName);
+TempSprite::TempSprite() {
+	_sprite = 0;
+	_width = _height = 0;
+	_size = -1;
+	memset(_palette, 0, 768);
 }
 
-SaveLoad::~SaveLoad() {
-	if (_buffer) {
-		for (int i = 0; i < _stagesCount; i++)
-			delete[] _buffer[i];
-		delete[] _buffer;
-	}
-
-	delete _tempSprite;
-
-	delete[] _saveFiles[0];
-	delete[] _saveFiles[2];
-	delete[] _saveFiles;
+TempSprite::~TempSprite() {
+	delete[] _sprite;
 }
 
-const char *SaveLoad::setCurSlot(int slot) {
-	static char *slotBase = _saveFiles[0] + strlen(_saveFiles[0]) - 2;
+int TempSprite::getSpriteIndex(int32 size) const {
+	if (size < -1000)
+		size += 1000;
 
-	if (_curSlot != slot) {
-		_curSlot = slot;
-
-		if (_curSlot >= 0)
-			snprintf(slotBase, 3, "%02d", slot);
-	}
-
-	return _saveFiles[0];
+	return -size - 1;
 }
 
-uint32 SaveLoad::read(Common::ReadStream &in, byte *buf,
-		byte *sizes, uint32 count) {
-	uint32 nRead;
-
-	nRead = in.read(buf, count);
-	if (nRead != count) {
-		warning("Can't read data: requested %d, got %d", count, nRead);
-		return 0;
-	}
-
-	nRead = in.read(sizes, count);
-	if (nRead != count) {
-		warning("Can't read data sizes: requested %d, got %d", count, nRead);
-		return 0;
-	}
-
-	return count;
+bool TempSprite::getSpritePalette(int32 size) const {
+	return size < -1000;
 }
 
-uint32 SaveLoad::write(Common::WriteStream &out, byte *buf,
-		byte *sizes, uint32 count) {
-	uint32 written;
+bool TempSprite::getProperties(int16 dataVar, int32 size, int32 offset,
+		int &index, bool &palette) const {
 
-	written = out.write(buf, count);
-	if (written != count) {
-		warning("Can't write data: requested %d, wrote %d", count, written);
-		return 0;
+	if (size >= 0) {
+		warning("Invalid index (%d)", size);
+		return false;
 	}
 
-	written = out.write(sizes, count);
-	if (written != count) {
-		warning("Can't write data: requested %d, wrote %d", count, written);
-		return 0;
+	index = getSpriteIndex(size);
+	palette = getSpritePalette(size);
+
+	if ((index < 0) || (index >= SPRITES_COUNT)) {
+		warning("Index out of range (%d)", index);
+		return false;
 	}
 
-	return count;
+	return true;
 }
 
-bool SaveLoad::loadDataEndian(Common::ReadStream &in,
-		int16 dataVar, uint32 size) {
+int32 TempSprite::getSize() const {
+	return _size;
+}
 
-	bool retVal = false;
+bool TempSprite::saveSprite(const SurfaceDesc &surfDesc) {
+	delete[] _sprite;
 
-	byte *varBuf = new byte[size];
-	byte *sizeBuf = new byte[size];
+	_width = surfDesc.getWidth();
+	_height = surfDesc.getHeight();
+	_size = _width * _height;
+	_sprite = new byte[_size];
 
-	assert(varBuf && sizeBuf);
+	memcpy(_sprite, surfDesc.getVidMem(), _size);
 
-	if (read(in, varBuf, sizeBuf, size) == size) {
-		if (fromEndian(varBuf, sizeBuf, size)) {
-			memcpy(_vm->_global->_inter_variables + dataVar, varBuf, size);
-			memcpy(_vm->_global->_inter_variablesSizes + dataVar, sizeBuf, size);
-			retVal = true;
+	return true;
+}
+
+bool TempSprite::savePalette(const Video::Color *palette) {
+	memcpy((byte *) _palette, (byte *) palette, 768);
+	return true;
+}
+
+bool TempSprite::loadSprite(SurfaceDesc &surfDesc) {
+	if (!_sprite) {
+		warning("No sprite saved");
+		return false;
+	}
+
+	if (_size != (surfDesc.getWidth() * surfDesc.getHeight())) {
+		warning("Dimensions don't match (%dx%d - %dx%d",
+				_width, _height, surfDesc.getWidth(), surfDesc.getHeight());
+		return false;
+	}
+
+	memcpy(surfDesc.getVidMem(), _sprite, _size);
+
+	return true;
+}
+
+bool TempSprite::loadPalette(Video::Color *palette) {
+	memcpy((byte *) palette, (byte *) _palette, 768);
+	return true;
+}
+
+bool TempSprite::toBuffer(byte *buffer, int32 size, bool palette) const {
+
+	int32 haveSize = _size + (palette ? 768 : 0);
+	if (size != haveSize) {
+		warning("Sizes don't match (%d != %d)", size, haveSize);
+		return false;
+	}
+
+	if (palette) {
+		memcpy(buffer, (byte *) _palette, 768);
+		buffer += 768;
+	}
+
+	memcpy(buffer, _sprite, _size);
+
+	return true;
+}
+
+bool TempSprite::fromBuffer(const byte *buffer, int32 size, bool palette) {
+	if (palette) {
+		memcpy((byte *) _palette, buffer, 768);
+		buffer += 768;
+		size -= 768;
+	}
+
+	_size = size;
+
+	delete[] _sprite;
+	_sprite = new byte[_size];
+
+	memcpy(_sprite, buffer, _size);
+
+	return true;
+}
+
+
+PlainSave::PlainSave() {
+}
+
+PlainSave::~PlainSave() {
+}
+
+bool PlainSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
+		const Variables *variables) {
+
+	if ((size <= 0) || (offset != 0)) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	byte *vars = new byte[size];
+	byte *varSizes = new byte[size];
+
+	if (!variables->copyTo(dataVar, vars, varSizes, size)) {
+		delete[] vars;
+		delete[] varSizes;
+		warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+		return false;
+	}
+
+	bool result = save(0, size, offset, name, vars, varSizes);
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
+}
+
+bool PlainSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
+		Variables *variables) {
+
+	if ((size <= 0) || (offset != 0)) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	byte *vars = new byte[size];
+	byte *varSizes = new byte[size];
+
+	bool result = load(0, size, offset, name, vars, varSizes);
+
+	if (result && variables) {
+		if (!variables->copyFrom(dataVar, vars, varSizes, size)) {
+			delete[] vars;
+			delete[] varSizes;
+			warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+			return false;
 		}
 	}
 
-	delete[] varBuf;
-	delete[] sizeBuf;
+	delete[] vars;
+	delete[] varSizes;
 
-	return retVal;
+	return result;
 }
 
-bool SaveLoad::saveDataEndian(Common::WriteStream &out,
-		int16 dataVar, uint32 size) {
+bool PlainSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
+		const byte *variables, const byte *variableSizes) const {
 
-	bool retVal = false;
-
-	byte *varBuf = new byte[size];
-	byte *sizeBuf = new byte[size];
-
-	assert(varBuf && sizeBuf);
-
-	memcpy(varBuf, _vm->_global->_inter_variables + dataVar, size);
-	memcpy(sizeBuf, _vm->_global->_inter_variablesSizes + dataVar, size);
-
-	if (toEndian(varBuf, sizeBuf, size))
-		if (write(out, varBuf, sizeBuf, size) == size)
-			retVal = true;
-
-	delete[] varBuf;
-	delete[] sizeBuf;
-
-	return retVal;
-}
-
-int32 SaveLoad::getSize(SaveType type) {
-	switch (type) {
-	case kSaveNone:
-		return -1;
-		break;
-
-	case kSaveGame:
-		return getSizeGame();
-		break;
-
-	case kSaveTempSprite:
-		return getSizeTempSprite();
-		break;
-
-	case kSaveNotes:
-		return getSizeNotes();
-		break;
-
-	case kSaveScreenshot:
-		return getSizeScreenshot();
-		break;
-
-	case kSaveIgnore:
-		return -1;
-		break;
+	if ((size <= 0) || (offset != 0)) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
 	}
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *out = saveMan->openForSaving(name);
+
+	if (!out) {
+		warning("Can't open file \"%s\" for writing", name);
+		return false;
+	}
+
+	bool retVal;
+	retVal = SaveLoad::saveDataEndian(*out, dataVar, size, variables, variableSizes);
+
+	out->finalize();
+	if (out->ioFailed()) {
+		warning("Can't write to file \"%s\"", name);
+		retVal = false;
+	}
+
+	delete out;
+	return retVal;
+}
+
+bool PlainSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
+		byte *variables, byte *variableSizes) const {
+
+	if ((size <= 0) || (offset != 0)) {
+		warning("Invalid size (%d) or offset (%d)", size, offset);
+		return false;
+	}
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in = saveMan->openForLoading(name);
+
+	if (!in) {
+		warning("Can't open file \"%s\" for reading", name);
+		return false;
+	}
+
+	bool retVal = SaveLoad::loadDataEndian(*in, dataVar, size, variables, variableSizes);
+	delete in;
+	return retVal;
+}
+
+
+StagedSave::StagedSave() {
+	_mode = kModeNone;
+	_name = 0;
+	_loaded = false;
+}
+
+StagedSave::~StagedSave() {
+	clear();
+}
+
+void StagedSave::addStage(int32 size, bool endianed) {
+	int32 offset = 0;
+
+	if (!_stages.empty())
+		offset = _stages[_stages.size() - 1].offset +
+		         _stages[_stages.size() - 1].size;
+
+	Stage stage(size, offset, endianed);
+	_stages.push_back(stage);
+}
+
+int StagedSave::findStage(int16 dataVar, int32 size, int32 offset) const {
+	for (uint i = 0; i < _stages.size(); i++)
+		if ((_stages[i].size == size) &&
+		    (_stages[i].offset == offset))
+			return i;
 
 	return -1;
 }
 
-bool SaveLoad::load(SaveType type, int16 dataVar, int32 size, int32 offset) {
-	switch (type) {
-	case kSaveNone:
-		return false;
-		break;
-
-	case kSaveGame:
-		return loadGame(dataVar, size, offset);
-		break;
-
-	case kSaveTempSprite:
-		return loadTempSprite(dataVar, size, offset);
-		break;
-
-	case kSaveNotes:
-		return loadNotes(dataVar, size, offset);
-		break;
-
-	case kSaveScreenshot:
-		return loadScreenshot(dataVar, size, offset);
-		break;
-
-	case kSaveIgnore:
-		return true;
-		break;
-	}
-
-	return false;
-}
-
-bool SaveLoad::save(SaveType type, int16 dataVar, int32 size, int32 offset) {
-	switch (type) {
-	case kSaveNone:
-		return false;
-		break;
-
-	case kSaveGame:
-		return saveGame(dataVar, size, offset);
-		break;
-
-	case kSaveTempSprite:
-		return saveTempSprite(dataVar, size, offset);
-		break;
-
-	case kSaveNotes:
-		return saveNotes(dataVar, size, offset);
-		break;
-
-	case kSaveScreenshot:
-		return saveScreenshot(dataVar, size, offset);
-		break;
-
-	case kSaveIgnore:
-		return true;
-		break;
-	}
-
-	return false;
-}
-
-int32 SaveLoad::getSizeTempSprite() {
-	return _tempSpriteSize;
-}
-
-bool SaveLoad::loadTempSprite(int16 dataVar, int32 size, int32 offset) {
-	int index;
-	bool readPal;
-
-	if (size >= 0) {
-		warning("Invalid attempt at loading from the temporary sprite");
-		return false;
-	}
-
-	index = getSpriteIndex(size);
-	readPal = getSpritePalette(size);
-
-	if ((index < 0) || (index >= SPRITES_COUNT)) {
-		warning("Index out of range while loading from the temporary "
-				"sprite (%d)", index);
-		return false;
-	}
-
-	return loadTempSprite(index, readPal);
-}
-
-bool SaveLoad::saveTempSprite(int16 dataVar, int32 size, int32 offset) {
-	int index;
-	bool readPal;
-
-	if (size >= 0) {
-		warning("Invalid attempt at saving to the temporary sprite");
-		return false;
-	}
-
-	index = getSpriteIndex(size);
-	readPal = getSpritePalette(size);
-
-	if ((index < 0) || (index >= SPRITES_COUNT)) {
-		warning("Index out of range while saving to the temporary sprite (%d)",
-				index);
-		return false;
-	}
-
-	return saveTempSprite(index, readPal);
-}
-
-bool SaveLoad::loadTempSprite(uint32 index, bool palette) {
-	SurfaceDesc *sprite;
-
-	if (palette) {
-		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal,
-				(char *) _tempPal, 768);
-		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-	}
-
-	sprite = _vm->_draw->_spritesArray[index];
-
-	if (!sprite) {
-		warning("Couldn't load from the temporary sprite: "
-				"No such sprite %d", index);
-		return false;
-	}
-
-	if ((sprite->getWidth() != _tempSprite->getWidth()) ||
-			(sprite->getHeight() != _tempSprite->getHeight())) {
-		warning("Resolution doesn't match while loading from the "
-				"temporary sprite (%d: %dx%d vs. %dx%d)", index,
-				sprite->getWidth(), sprite->getHeight(),
-				_tempSprite->getWidth(), _tempSprite->getHeight());
-		return false;
-	}
-
-	_vm->_video->drawSprite(_tempSprite, sprite, 0, 0,
-			sprite->getWidth() - 1, sprite->getHeight() - 1, 0, 0, 0);
-
-	if (index == 21) {
-		_vm->_draw->forceBlit();
-		_vm->_video->retrace();
-	}
-
-	return true;
-}
-
-bool SaveLoad::saveTempSprite(uint32 index, bool palette) {
-	SurfaceDesc *sprite = _vm->_draw->_spritesArray[index];
-
-	if (!sprite) {
-		warning("Couldn't save to the temporary sprite: "
-				"No such sprite %d", index);
-		return false;
-	}
-
-	delete _tempSprite;
-	_tempSprite = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
-			sprite->getWidth(), sprite->getHeight(), 0);
-
-	_vm->_video->drawSprite(sprite, _tempSprite, 0, 0,
-			sprite->getWidth() - 1, sprite->getHeight() - 1, 0, 0, 0);
-
-	_tempSpriteSize = _vm->_draw->getSpriteRectSize(index);
-
-	if (palette) {
-		memcpy((char *) _tempPal,
-				(char *) _vm->_global->_pPaletteDesc->vgaPal, 768);
-		_tempSpriteSize += 768;
-	}
-
-	return true;
-}
-
-bool SaveLoad::loadSprite(Common::ReadStream &in, int32 size) {
-	SurfaceDesc *sprite;
-	byte *buf;
-	int nRead;
-	int index;
-	bool readPal;
-
-	if (size >= 0) {
-		warning("Invalid attempt at loading a sprite");
-		return false;
-	}
-
-	index = getSpriteIndex(size);
-	readPal = getSpritePalette(size);
-
-	if ((index < 0) || (index >= SPRITES_COUNT)) {
-		warning("Index out of range while loading a sprite (%d)",
-				index);
-		return false;
-	}
-
-	size = _vm->_draw->getSpriteRectSize(index);
-	sprite = _vm->_draw->_spritesArray[index];
-
-	if (!sprite) {
-		warning("Couldn't load sprite: No such sprite %d", index);
-		return false;
-	}
-
-	buf = new byte[MAX<int>(768, size)];
-	assert(buf);
-
-	if (readPal) {
-		nRead = in.read(buf, 768);
-		if (nRead != 768) {
-			warning("Couldn't read a palette: requested 768, got %d", nRead);
-			delete[] buf;
+bool StagedSave::allSaved() const {
+	for (uint i = 0; i < _stages.size(); i++)
+		if (!_stages[i].bufVar)
 			return false;
-		}
 
-		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal,
-				(char *) buf, 768);
-		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-	}
-
-	nRead = in.read(buf, size);
-	if (nRead != size) {
-		warning("Couldn't read sprite data: requested %d, got %d", size, nRead);
-		delete[] buf;
-		return false;
-	}
-
-	memcpy((char *) sprite->getVidMem(), buf, size);
-
-	delete[] buf;
 	return true;
 }
 
-bool SaveLoad::saveSprite(Common::WriteStream &out, int32 size) {
-	SurfaceDesc *sprite;
-	int written;
-	int index;
-	bool readPal;
+uint32 StagedSave::getSize() const {
+	uint32 size = 0;
 
-	if (size >= 0) {
-		warning("Invalid attempt at saving a sprite");
+	for (uint i = 0; i < _stages.size(); i++) {
+		if (_stages[i].endianed)
+			size += 2 * _stages[i].size;
+		else
+			size += _stages[i].size;
+	}
+	
+	return size;
+}
+
+void StagedSave::clear() {
+	for (uint i = 0; i < _stages.size(); i++) {
+		delete[] _stages[i].bufVar;
+		delete[] _stages[i].bufVarSizes;
+		_stages[i].bufVar = 0;
+		_stages[i].bufVarSizes = 0;
+	}
+
+	delete[] _name;
+	_name = 0;
+
+	_mode = kModeNone;
+	_loaded = false;
+}
+
+void StagedSave::assertMode(Mode mode, const char *name) {
+	if ((_mode != mode) || ((name[0] != '\0') && strcmp(_name, name))) {
+		clear();
+		_mode = mode;
+		_name = new char[strlen(name) + 1];
+		strcpy(_name, name);
+	}
+}
+
+bool StagedSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
+		const Variables *variables) {
+
+	if ((dataVar < 0) || (size <= 0) || (offset < 0)) {
+		warning("Invalid dataVar (%d), size (%d) or offset (%d)", dataVar, size, offset);
 		return false;
 	}
 
-	index = getSpriteIndex(size);
-	readPal = getSpritePalette(size);
+	byte *vars = 0, *varSizes = 0;
 
-	if ((index < 0) || (index >= SPRITES_COUNT)) {
-		warning("Index out of range while saving a sprite (%d)",
-				index);
-		return false;
-	}
+	if (variables) {
+		vars = new byte[size];
+		varSizes = new byte[size];
 
-	size = _vm->_draw->getSpriteRectSize(index);
-	sprite = _vm->_draw->_spritesArray[index];
-
-	if (!sprite) {
-		warning("Couldn't save sprite: No such sprite %d", index);
-		return false;
-	}
-
-	if (readPal) {
-		written = out.write((char *) _vm->_global->_pPaletteDesc->vgaPal, 768);
-		if (written != 768) {
-			warning("Couldn't write a palette: requested 768, wrote %d", written);
+		if (!variables->copyTo(dataVar, vars, varSizes, size)) {
+			delete[] vars;
+			delete[] varSizes;
+			warning("dataVar (%d) or size (%d) out of range", dataVar, size);
 			return false;
 		}
 	}
 
-	written = out.write((char *) sprite->getVidMem(), size);
-	if (written != size) {
-		warning("Couldn't write a sprite: requested %d, wrote %d",
-				size, written);
+	bool result = save(0, size, offset, name, vars, varSizes);
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
+}
+
+bool StagedSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
+		Variables *variables) {
+
+	if ((dataVar < 0) || (size <= 0) || (offset < 0)) {
+		warning("Invalid dataVar (%d), size (%d) or offset (%d)", dataVar, size, offset);
 		return false;
 	}
 
+	byte *vars = new byte[size];
+	byte *varSizes = new byte[size];
+
+	bool result = load(0, size, offset, name, vars, varSizes);
+
+	if (result && variables) {
+		if (!variables->copyFrom(dataVar, vars, varSizes, size)) {
+			delete[] vars;
+			delete[] varSizes;
+			warning("dataVar (%d) or size (%d) out of range", dataVar, size);
+			return false;
+		}
+	}
+
+	delete[] vars;
+	delete[] varSizes;
+
+	return result;
+}
+
+bool StagedSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
+		const byte *variables, const byte *variableSizes) {
+
+	if ((dataVar < 0) || (size <= 0) || (offset < 0)) {
+		warning("Invalid dataVar (%d), size (%d) or offset (%d)", dataVar, size, offset);
+		return false;
+	}
+
+	int stage = findStage(dataVar, size, offset);
+	if (stage == -1) {
+		warning("Invalid saving procedure");
+		return false;
+	}
+
+	if (!variables || (_stages[stage].endianed && !variableSizes)) {
+		warning("Missing data");
+		return false;
+	}
+
+	assertMode(kModeSave, name);
+
+	_stages[stage].bufVar = new byte[size];
+	memcpy(_stages[stage].bufVar, variables + dataVar, size);
+
+	if (_stages[stage].endianed) {
+		_stages[stage].bufVarSizes = new byte[size];
+		memcpy(_stages[stage].bufVarSizes, variableSizes + dataVar, size);
+	}
+
+	if (allSaved()) {
+		bool result = write();
+		clear();
+		return result;
+	}
+
 	return true;
+}
+
+bool StagedSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
+		byte *variables, byte *variableSizes) {
+
+	if ((dataVar < 0) || (size <= 0) || (offset < 0)) {
+		warning("Invalid dataVar (%d), size (%d) or offset (%d)", dataVar, size, offset);
+		return false;
+	}
+
+	int stage = findStage(dataVar, size, offset);
+	if (stage == -1) {
+		warning("Invalid loading procedure");
+		return false;
+	}
+
+	assertMode(kModeLoad, name);
+
+	if (!_loaded) {
+		if (!read()) {
+			clear();
+			return false;
+		}
+	}
+
+	if (variables)
+		memcpy(variables + dataVar, _stages[stage].bufVar, size);
+	if (_stages[stage].endianed && variableSizes)
+		memcpy(variableSizes + dataVar, _stages[stage].bufVarSizes, size);
+
+	return true;
+}
+
+bool StagedSave::write() const {
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *out = saveMan->openForSaving(_name);
+
+	if (!out) {
+		warning("Can't open file \"%s\" for writing", _name);
+		return false;
+	}
+
+	bool result = true;
+	for (uint i = 0; (i < _stages.size()) && result; i++) {
+		if (!_stages[i].endianed) {
+
+			uint32 written = out->write(_stages[i].bufVar, _stages[i].size);
+
+			result = (written == ((uint32) _stages[i].size));
+			if (!result)
+				warning("Can't write data: requested %d, wrote %d", _stages[i].size, written);
+
+		} else
+			result = SaveLoad::saveDataEndian(*out, 0, _stages[i].size,
+					_stages[i].bufVar, _stages[i].bufVarSizes);
+	}
+
+	if (result) {
+		out->finalize();
+		if (out->ioFailed()) {
+			warning("Can't write to file \"%s\"", _name);
+			result = false;
+		}
+	}
+
+	delete out;
+	return result;
+}
+
+bool StagedSave::read() {
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in = saveMan->openForLoading(_name);
+
+	if (!in) {
+		warning("Can't open file \"%s\" for reading", _name);
+		return false;
+	}
+
+	uint32 saveSize = getSize();
+	if (in->size() != saveSize) {
+		warning("Wrong size (%d != %d)", in->size(), saveSize);
+		return false;
+	}
+
+	bool result = true;
+	for (uint i = 0; ((i < _stages.size()) && result); i++) {
+		_stages[i].bufVar = new byte[_stages[i].size];
+
+		if (!_stages[i].endianed) {
+
+			uint32 nRead = in->read(_stages[i].bufVar, _stages[i].size);
+
+			result = (nRead == ((uint32) _stages[i].size));
+			if (!result)
+				warning("Can't read data: requested %d, got %d", _stages[i].size, nRead);
+
+		} else {
+			_stages[i].bufVarSizes = new byte[_stages[i].size];
+
+			result = SaveLoad::loadDataEndian(*in, 0, _stages[i].size,
+					_stages[i].bufVar, _stages[i].bufVarSizes);
+		}
+	}
+
+	if (result)
+		_loaded = true;
+
+	delete in;
+	return result;
+}
+
+
+PagedBuffer::PagedBuffer(uint32 pageSize) {
+
+	_size = 0;
+	_pageSize = pageSize;
+}
+
+PagedBuffer::~PagedBuffer() {
+	clear();
+}
+
+bool PagedBuffer::empty() const {
+	return _pages.empty();
+}
+
+uint32 PagedBuffer::getSize() const {
+	return _size;
+}
+
+void PagedBuffer::clear() {
+	for (uint i = 0; i < _pages.size(); i++)
+		delete[] _pages[i];
+	_pages.clear();
+	_size = 0;
+}
+
+bool PagedBuffer::write(const byte *buffer, uint32 size, uint32 offset) {
+	grow(size, offset);
+
+	uint page = offset / _pageSize;
+	while (size > 0) {
+		if (!_pages[page])
+			_pages[page] = new byte[_pageSize];
+
+		uint32 pStart = offset % _pageSize;
+		uint32 n = MIN(size, _pageSize - pStart);
+
+		memcpy(_pages[page] + pStart, buffer, n);
+
+		buffer += n;
+		offset += n;
+		size -= n;
+		page++;
+	}
+
+	return true;
+}
+
+bool PagedBuffer::read(byte *buffer, uint32 size, uint32 offset) const {
+	uint page = offset / _pageSize;
+
+	while (size > 0) {
+		if (offset >= _size) {
+			memset(buffer, 0, size);
+			break;
+		}
+
+		uint32 pStart = offset % _pageSize;
+		uint32 n = MIN(MIN(size, _pageSize - pStart), _size - offset);
+
+		if (_pages[page])
+			memcpy(buffer, _pages[page] + pStart, n);
+		else
+			memset(buffer, 0, n);
+
+		buffer += n;
+		offset += n;
+		size -= n;
+		page++;
+	}
+
+	return true;
+}
+
+uint32 PagedBuffer::writeToStream(Common::WriteStream &out) const {
+	for (uint i = 0; i < _pages.size(); i++) {
+		if (!_pages[i]) {
+			for (uint32 j = 0; j < _pageSize; j++)
+				out.writeByte(0);
+		} else
+			out.write(_pages[i], _pageSize);
+	}
+
+	return _size;
+}
+
+uint32 PagedBuffer::readFromStream(Common::ReadStream &in) {
+	clear();
+
+	while (!in.eos()) {
+		byte *buffer = new byte[_pageSize];
+
+		_size += in.read(buffer, _pageSize);
+
+		_pages.push_back(buffer);
+	}
+
+	return _size;
+}
+
+void PagedBuffer::grow(uint32 size, uint32 offset) {
+	uint32 eSize = offset + size;
+
+	while (_size < eSize) {
+		_pages.push_back(0);
+		_size += MIN(_pageSize, eSize - _size);
+	}
+}
+
+
+SaveLoad::SaveLoad(GobEngine *vm, const char *targetName) : _vm(vm) {
+
+	_targetName = new char[strlen(targetName) + 1];
+	strcpy(_targetName, targetName);
+}
+
+SaveLoad::~SaveLoad() {
+	delete[] _targetName;
+}
+
+int32 SaveLoad::getSize(const char *fileName) {
+	int type;
+
+	type = getSaveType(stripPath(fileName));
+	if (type == -1)
+		return -1;
+
+	debugC(3, kDebugSaveLoad, "Requested size of save file \"%s\" (type %d)",
+			fileName, type);
+
+	return getSizeVersioned(type);
+}
+
+bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offset) {
+	int type;
+
+	type = getSaveType(stripPath(fileName));
+	if (type == -1)
+		return false;
+
+	debugC(3, kDebugSaveLoad, "Requested loading of save file \"%s\" (type %d) - %d, %d, %d",
+			fileName, type, dataVar, size, offset);
+
+	return loadVersioned(type, dataVar, size, offset);
+}
+
+bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offset) {
+	int type;
+
+	type = getSaveType(stripPath(fileName));
+	if (type == -1)
+		return false;
+
+	debugC(3, kDebugSaveLoad, "Requested saving of save file \"%s\" (type %d) - %d, %d, %d",
+			fileName, type, dataVar, size, offset);
+
+	return saveVersioned(type, dataVar, size, offset);
+}
+
+const char *SaveLoad::stripPath(const char *fileName) {
+	const char *backSlash;
+	if ((backSlash = strrchr(fileName, '\\')))
+		return backSlash + 1;
+
+	return fileName;
+}
+
+char *SaveLoad::setCurrentSlot(char *destName, int slot) {
+	char *slotBase = destName + strlen(destName) - 2;
+
+	snprintf(slotBase, 3, "%02d", slot);
+
+	return destName;
+}
+
+void SaveLoad::buildIndex(byte *buffer, char *name, int n, int32 size, int32 offset) {
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in;
+
+	for (int i = 0; i < n; i++, buffer += size) {
+		in = saveMan->openForLoading(setCurrentSlot(name, i));
+		if (in) {
+			in->seek(offset);
+			in->read(buffer, size);
+			delete in;
+		} else
+			memset(buffer, 0, size);
+	}
 }
 
 bool SaveLoad::fromEndian(byte *buf, const byte *sizes, uint32 count) {
@@ -512,6 +770,91 @@ bool SaveLoad::toEndian(byte *buf, const byte *sizes, uint32 count) {
 	}
 
 	return true;
+}
+
+uint32 SaveLoad::read(Common::ReadStream &in,
+		byte *buf, byte *sizes, uint32 count) {
+	uint32 nRead;
+
+	nRead = in.read(buf, count);
+	if (nRead != count) {
+		warning("Can't read data: requested %d, got %d", count, nRead);
+		return 0;
+	}
+
+	nRead = in.read(sizes, count);
+	if (nRead != count) {
+		warning("Can't read data sizes: requested %d, got %d", count, nRead);
+		return 0;
+	}
+
+	return count;
+}
+
+uint32 SaveLoad::write(Common::WriteStream &out,
+		const byte *buf, const byte *sizes, uint32 count) {
+	uint32 written;
+
+	written = out.write(buf, count);
+	if (written != count) {
+		warning("Can't write data: requested %d, wrote %d", count, written);
+		return 0;
+	}
+
+	written = out.write(sizes, count);
+	if (written != count) {
+		warning("Can't write data: requested %d, wrote %d", count, written);
+		return 0;
+	}
+
+	return count;
+}
+
+bool SaveLoad::loadDataEndian(Common::ReadStream &in,
+		int16 dataVar, uint32 size, byte *variables, byte *variableSizes) {
+
+	bool retVal = false;
+
+	byte *varBuf = new byte[size];
+	byte *sizeBuf = new byte[size];
+
+	assert(varBuf && sizeBuf);
+
+	if (read(in, varBuf, sizeBuf, size) == size) {
+		if (fromEndian(varBuf, sizeBuf, size)) {
+			memcpy(variables + dataVar, varBuf, size);
+			memcpy(variableSizes + dataVar, sizeBuf, size);
+			retVal = true;
+		}
+	}
+
+	delete[] varBuf;
+	delete[] sizeBuf;
+
+	return retVal;
+}
+
+bool SaveLoad::saveDataEndian(Common::WriteStream &out,
+		int16 dataVar, uint32 size, const byte *variables, const byte *variableSizes) {
+
+	bool retVal = false;
+
+	byte *varBuf = new byte[size];
+	byte *sizeBuf = new byte[size];
+
+	assert(varBuf && sizeBuf);
+
+	memcpy(varBuf, variables + dataVar, size);
+	memcpy(sizeBuf, variableSizes + dataVar, size);
+
+	if (toEndian(varBuf, sizeBuf, size))
+		if (write(out, varBuf, sizeBuf, size) == size)
+			retVal = true;
+
+	delete[] varBuf;
+	delete[] sizeBuf;
+
+	return retVal;
 }
 
 } // End of namespace Gob

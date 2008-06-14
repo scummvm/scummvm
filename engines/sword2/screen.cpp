@@ -97,6 +97,8 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_renderAverageTime = 60;
 
 	_layer = 0;
+
+	_dimPalette = false;
 }
 
 Screen::~Screen() {

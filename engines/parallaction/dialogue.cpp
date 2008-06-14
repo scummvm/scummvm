@@ -24,6 +24,8 @@
  */
 
 #include "common/events.h"
+
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
 
@@ -195,7 +197,7 @@ void DialogueManager::displayQuestion() {
 	_vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
 
 	_vm->_gfx->updateScreen();
-	waitUntilLeftClick();
+	_vm->_input->waitUntilLeftClick();
 	_vm->_gfx->hideDialogueStuff();
 
 	return;
@@ -254,7 +256,7 @@ int16 DialogueManager::selectAnswer() {
 
 	if (numAvailableAnswers == 1) {
 		_vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 0);
-		waitUntilLeftClick();
+		_vm->_input->waitUntilLeftClick();
 		_vm->_gfx->hideDialogueStuff();
 		return 0;
 	}
@@ -262,10 +264,14 @@ int16 DialogueManager::selectAnswer() {
 	int oldSelection = -1;
 	int selection;
 
+	uint32 event;
+	Common::Point p;
 	while (true) {
 
-		_vm->readInput();
-		selection = _vm->_gfx->hitTestDialogueBalloon(_vm->_mousePos.x, _vm->_mousePos.y);
+		_vm->_input->readInput();
+		_vm->_input->getCursorPos(p);
+		event = _vm->_input->getLastButtonEvent();
+		selection = _vm->_gfx->hitTestDialogueBalloon(p.x, p.y);
 
 		if (selection != oldSelection) {
 			if (oldSelection != -1) {
@@ -278,7 +284,7 @@ int16 DialogueManager::selectAnswer() {
 			}
 		}
 
-		if ((selection != -1) && (_mouseButtons == kMouseLeftUp)) {
+		if ((selection != -1) && (event == kMouseLeftUp)) {
 			break;
 		}
 

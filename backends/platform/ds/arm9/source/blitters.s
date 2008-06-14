@@ -21,7 +21,7 @@
 @ @author Robin Watts (robin@wss.co.uk)
 
 	.text
-
+	
 	.global	asmDrawStripToScreen
 	.global	asmCopy8Col
 	.global	Rescale_320x256xPAL8_To_256x256x1555
@@ -142,7 +142,7 @@ asmCopy8Col:
 	@ r3 = height
 	STMFD	r13!,{r14}
 	SUB	r1,r1,#4
-
+	
 	TST	r3,#1
 	ADDNE   r3,r3,#1
 	BNE	roll2
@@ -177,7 +177,7 @@ Rescale_320x256x1555_To_256x256x1555:
 	@ r2 = dstStride
 	@ r3 = srcStride
 	STMFD	r13!,{r4-r5,r8-r11,r14}
-
+	
 	SUB	r2,r2,#64*5		@ srcStride -= line length
 	SUB	r3,r3,#64*4		@ dstStride -= line length
 
@@ -187,7 +187,7 @@ Rescale_320x256x1555_To_256x256x1555:
 	MOV	r5, #200		@ r5 = y
 yLoop3:
 	MOV	r4, #64			@ r4 = x
-xLoop3:
+xLoop3:	
 	LDRH	r9, [r0],#2		@ r9 = src0
 	LDRH	r10,[r0],#2		@ r10= src1
 	LDRH	r11,[r0],#2		@ r11= src2
@@ -212,7 +212,7 @@ xLoop3:
 	ADD	r11,r11,r12		@ r11= dst2
 	ADD	r12,r12,r14		@ r12= src3 + src4
 	ADD	r12,r12,r14,LSL #1	@ r12= src3 + src4*3 = dst3<<2
-
+	
 	AND	r9, r8, r9, LSR #2	@ r9 = dst0 (split)
 	AND	r10,r8, r10,LSR #1	@ r10= dst1 (split)
 	AND	r11,r8, r11,LSR #1	@ r11= dst2 (split)
@@ -227,7 +227,7 @@ xLoop3:
 	ORR	r10,r10,#0x8000
 	ORR	r11,r11,#0x8000
 	ORR	r12,r12,#0x8000
-
+	
 	STRH	r9, [r1],#2
 	STRH	r10,[r1],#2
 	STRH	r11,[r1],#2
@@ -235,7 +235,7 @@ xLoop3:
 
 	SUBS	r4,r4,#1
 	BGT	xLoop3
-
+	
 	ADD	r0,r0,r2,LSL #1
 	ADD	r1,r2,r3,LSL #1
 	SUBS	r5,r5,#1
@@ -266,7 +266,7 @@ Rescale_320x256xPAL8_To_256x256x1555:
 	ORR	r8, r8,#0x00007C00
 	ORR	r8, r8,#0x03E00000	@ r8 = mask
 	LDR	r9, [r13,#7*4]		@ r9 = palette
-
+	
 	SUB	r13,r13,#256*4		@ r13 = 1K of space on the stack.
 	MOV	r5, r13			@ r5 points to this space
 	MOV	r14,#256
@@ -277,14 +277,14 @@ palLoop:
 	AND	r10,r10,r8		@ r10 = separated palette entry
 	STR	r10,[r5], #4
 	BGT	palLoop
-
+	
 	SUB	r2,r2,#64*5		@ srcStride -= line length
 	SUB	r3,r3,#64*4		@ dstStride -= line length
 
 	MOV	r5,#200			@ r5 = y
 yLoop4:
 	MOV	r4,#64			@ r4 = x
-xLoop4:
+xLoop4:	
 	LDRB	r9, [r0],#1		@ r9 = src0
 	LDRB	r10,[r0],#1		@ r10= src1
 	LDRB	r11,[r0],#1		@ r11= src2
@@ -303,7 +303,7 @@ xLoop4:
 	ADD	r11,r11,r12		@ r11= dst2
 	ADD	r12,r12,r14		@ r12= src3 + src4
 	ADD	r12,r12,r14,LSL #1	@ r12= src3 + src4*3 = dst3<<2
-
+	
 	AND	r9, r8, r9, LSR #2	@ r9 = dst0 (split)
 	AND	r10,r8, r10,LSR #1	@ r10= dst1 (split)
 	AND	r11,r8, r11,LSR #1	@ r11= dst2 (split)
@@ -318,7 +318,7 @@ xLoop4:
 	ORR	r10,r10,#0x8000
 	ORR	r11,r11,#0x8000
 	ORR	r12,r12,#0x8000
-
+	
 	STRH	r9, [r1],#2
 	STRH	r10,[r1],#2
 	STRH	r11,[r1],#2
@@ -326,7 +326,7 @@ xLoop4:
 
 	SUBS	r4,r4,#1
 	BGT	xLoop4
-
+	
 	ADD	r0,r0,r2
 	ADD	r1,r2,r3,LSL #1
 	SUBS	r5,r5,#1
@@ -336,4 +336,4 @@ xLoop4:
 
 	LDMFD	r13!,{r4-r5,r8-r11,PC}
 
-
+ 	  	 

@@ -33,10 +33,9 @@
 
 namespace Kyra {
 
-GUI::GUI(KyraEngine *kyra)
+GUI::GUI(KyraEngine_v1 *kyra)
 	: _vm(kyra), _screen(kyra->screen()), _text(kyra->text()) {
 	_menuButtonList = 0;
-	_haveScrollButtons = false;
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
@@ -148,13 +147,12 @@ void GUI::initMenu(Menu &menu) {
 	}
 
 	if (menu.scrollUpButtonX != -1) {
-		_haveScrollButtons = true;
-
 		Button *scrollUpButton = getScrollUpButton();
 		scrollUpButton->x = menu.scrollUpButtonX + menu.x;
 		scrollUpButton->y = menu.scrollUpButtonY + menu.y;
 		scrollUpButton->buttonCallback = getScrollUpButtonHandler();
 		scrollUpButton->nextButton = 0;
+		scrollUpButton->mouseWheel = -1;
 		
 		_menuButtonList = addButtonToList(_menuButtonList, scrollUpButton);
 		updateMenuButton(scrollUpButton);
@@ -164,11 +162,10 @@ void GUI::initMenu(Menu &menu) {
 		scrollDownButton->y = menu.scrollDownButtonY + menu.y;
 		scrollDownButton->buttonCallback = getScrollDownButtonHandler();
 		scrollDownButton->nextButton = 0;
+		scrollDownButton->mouseWheel = 1;
 
 		_menuButtonList = addButtonToList(_menuButtonList, scrollDownButton);
 		updateMenuButton(scrollDownButton);
-	} else {
-		_haveScrollButtons = false;
 	}
 
 	_screen->showMouse();
@@ -342,7 +339,7 @@ int GUI::getNextSavegameSlot() {
 
 #pragma mark -
 
-MainMenu::MainMenu(KyraEngine *vm) : _vm(vm), _screen(0) {
+MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(0) {
 	_screen = _vm->screen();
 	_nextUpdate = 0;
 	_system = g_system;
@@ -382,7 +379,7 @@ bool MainMenu::getInput() {
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_quitFlag = true;
+			_vm->quitGame();
 			break;
 		case Common::EVENT_LBUTTONUP:
 			return true;
@@ -396,7 +393,6 @@ bool MainMenu::getInput() {
 int MainMenu::handle(int dim) {
 	debugC(9, kDebugLevelMain, "MainMenu::handle(%d)", dim);
 	int command = -1;
-	_quitFlag = false;
 
 	uint8 colorMap[16];
 	memset(colorMap, 0, sizeof(colorMap));
@@ -436,7 +432,7 @@ int MainMenu::handle(int dim) {
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
 
-	while (!_quitFlag) {
+	while (!_vm->quit()) {
 		updateAnimation();
 		bool mousePressed = getInput();
 
@@ -467,7 +463,7 @@ int MainMenu::handle(int dim) {
 		_system->delayMillis(10);
 	}
 
-	if (_quitFlag)
+	if (_vm->quit())
 		command = -1;
 
 	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);

@@ -213,7 +213,9 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 void Parser::reset() {
 	_currentOpcodes = 0;
 	_currentStatements = 0;
-	_script = 0;
+
+	_statements.clear();
+	_opcodes.clear();
 }
 
 void Parser::pushTables(OpcodeSet *opcodes, Table *statements) {
@@ -234,21 +236,11 @@ void Parser::popTables() {
 void Parser::parseStatement() {
 	assert(_currentOpcodes != 0);
 
-	_script->readLineToken(true);
 	_lookup = _currentStatements->lookup(_tokens[0]);
 
 	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
 
 	(*(*_currentOpcodes)[_lookup])();
-}
-
-void Parser::bind(Script *script) {
-	reset();
-	_script = script;
-}
-
-void Parser::unbind() {
-	reset();
 }
 
 

@@ -23,6 +23,7 @@
  *
  */
 
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -49,12 +50,13 @@ namespace Parallaction {
 #define INST_MOVE						18
 #define INST_ENDSCRIPT					19
 
+#define SetOpcodeTable(x) table = &x;
 
-typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
-#define COMMAND_OPCODE(op) OpcodeV1(this, &Parallaction_ns::cmdOp_##op)
+typedef Common::Functor0Mem<void, Parallaction_ns> OpcodeV2;
+#define COMMAND_OPCODE(op) table->push_back(new OpcodeV2(this, &Parallaction_ns::cmdOp_##op))
 #define DECLARE_COMMAND_OPCODE(op) void Parallaction_ns::cmdOp_##op()
 
-#define INSTRUCTION_OPCODE(op) OpcodeV1(this, &Parallaction_ns::instOp_##op)
+#define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &Parallaction_ns::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_ns::instOp_##op()
 
 
@@ -107,7 +109,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	if (inst->_opA._flags & kParaLocal) {
-		wrapLocalVar(inst->_opA._local);
+		inst->_opA._local->wrap();
 	}
 
 }
@@ -188,16 +190,6 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 }
 
 
-
-void Parallaction_ns::wrapLocalVar(LocalVariable *local) {
-
-	if (local->_value >= local->_max)
-		local->_value = local->_min;
-	if (local->_value < local->_min)
-		local->_value = local->_max - 1;
-
-	return;
-}
 
 
 DECLARE_COMMAND_OPCODE(invalid) {
@@ -371,7 +363,6 @@ void Parallaction_ns::runScripts() {
 
 	debugC(9, kDebugExec, "runScripts");
 
-
 	static uint16 modCounter = 0;
 
 	for (ProgramList::iterator it = _location._programs.begin(); it != _location._programs.end(); it++) {
@@ -389,7 +380,7 @@ void Parallaction_ns::runScripts() {
 
 			(*it)->_status = kProgramRunning;
 
-			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "Animation: %s, instruction: %i", a->_name, (*inst)->_index); //_instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
 			_instRunCtxt.anim = AnimationPtr(a);
@@ -446,7 +437,7 @@ void Parallaction::runCommands(CommandList& list, ZonePtr z) {
 		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
 		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
 
-		debugC(3, kDebugExec, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
+//		debugC(3, kDebugExec, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
 		_cmdRunCtxt.z = z;
 		_cmdRunCtxt.cmd = cmd;
@@ -491,7 +482,7 @@ void Parallaction::displayComment(ExamineData *data) {
 		_gfx->setItemFrame(id, 0);
 	}
 
-	_inputMode = kInputModeComment;
+	_input->_inputMode = Input::kInputModeComment;
 }
 
 
@@ -663,56 +654,48 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 void Parallaction_ns::initOpcodes() {
 
-	static const OpcodeV1 op1[] = {
-		INSTRUCTION_OPCODE(invalid),
-		INSTRUCTION_OPCODE(on),
-		INSTRUCTION_OPCODE(off),
-		INSTRUCTION_OPCODE(set),		// x
-		INSTRUCTION_OPCODE(set),		// y
-		INSTRUCTION_OPCODE(set),		// z
-		INSTRUCTION_OPCODE(set),		// f
-		INSTRUCTION_OPCODE(loop),
-		INSTRUCTION_OPCODE(endloop),
-		INSTRUCTION_OPCODE(null),
-		INSTRUCTION_OPCODE(inc),
-		INSTRUCTION_OPCODE(inc),		// dec
-		INSTRUCTION_OPCODE(set),
-		INSTRUCTION_OPCODE(put),
-		INSTRUCTION_OPCODE(call),
-		INSTRUCTION_OPCODE(wait),
-		INSTRUCTION_OPCODE(start),
-		INSTRUCTION_OPCODE(sound),
-		INSTRUCTION_OPCODE(move),
-		INSTRUCTION_OPCODE(endscript)
-	};
+	Common::Array<const Opcode*> *table = 0;
 
-	uint i;
-	for (i = 0; i < ARRAYSIZE(op1); i++)
-		_instructionOpcodes.push_back(&op1[i]);
+	SetOpcodeTable(_instructionOpcodes);
+	INSTRUCTION_OPCODE(invalid);
+	INSTRUCTION_OPCODE(on);
+	INSTRUCTION_OPCODE(off);
+	INSTRUCTION_OPCODE(set);		// x
+	INSTRUCTION_OPCODE(set);		// y
+	INSTRUCTION_OPCODE(set);		// z
+	INSTRUCTION_OPCODE(set);		// f
+	INSTRUCTION_OPCODE(loop);
+	INSTRUCTION_OPCODE(endloop);
+	INSTRUCTION_OPCODE(null);
+	INSTRUCTION_OPCODE(inc);
+	INSTRUCTION_OPCODE(inc);		// dec
+	INSTRUCTION_OPCODE(set);
+	INSTRUCTION_OPCODE(put);
+	INSTRUCTION_OPCODE(call);
+	INSTRUCTION_OPCODE(wait);
+	INSTRUCTION_OPCODE(start);
+	INSTRUCTION_OPCODE(sound);
+	INSTRUCTION_OPCODE(move);
+	INSTRUCTION_OPCODE(endscript);
 
-	static const OpcodeV1 op3[] = {
-		COMMAND_OPCODE(invalid),
-		COMMAND_OPCODE(set),
-		COMMAND_OPCODE(clear),
-		COMMAND_OPCODE(start),
-		COMMAND_OPCODE(speak),
-		COMMAND_OPCODE(get),
-		COMMAND_OPCODE(location),
-		COMMAND_OPCODE(open),
-		COMMAND_OPCODE(close),
-		COMMAND_OPCODE(on),
-		COMMAND_OPCODE(off),
-		COMMAND_OPCODE(call),
-		COMMAND_OPCODE(toggle),
-		COMMAND_OPCODE(drop),
-		COMMAND_OPCODE(quit),
-		COMMAND_OPCODE(move),
-		COMMAND_OPCODE(stop)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op3); i++)
-		_commandOpcodes.push_back(&op3[i]);
-
+	SetOpcodeTable(_commandOpcodes);
+	COMMAND_OPCODE(invalid);
+	COMMAND_OPCODE(set);
+	COMMAND_OPCODE(clear);
+	COMMAND_OPCODE(start);
+	COMMAND_OPCODE(speak);
+	COMMAND_OPCODE(get);
+	COMMAND_OPCODE(location);
+	COMMAND_OPCODE(open);
+	COMMAND_OPCODE(close);
+	COMMAND_OPCODE(on);
+	COMMAND_OPCODE(off);
+	COMMAND_OPCODE(call);
+	COMMAND_OPCODE(toggle);
+	COMMAND_OPCODE(drop);
+	COMMAND_OPCODE(quit);
+	COMMAND_OPCODE(move);
+	COMMAND_OPCODE(stop);
 }
 
 

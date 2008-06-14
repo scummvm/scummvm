@@ -90,7 +90,7 @@ int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= ~3; toX &= ~3;
 	y &= ~1; toY &= ~1;
-	int size = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
+	int size = KyraEngine_v1::findWay(x, y, toX, toY, moveTable, moveTableSize);
 	static bool usePostProcess = false;
 	if (size && !usePostProcess) {
 		usePostProcess = true;
@@ -98,7 +98,7 @@ int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 		temp = pathfinderInitPositionIndexTable(temp, x, y);
 		pathfinderFinializePath(moveTable, temp, x, y, moveTableSize);
 		usePostProcess = false;
-	} 
+	}
 	return usePostProcess ? size : getMoveTableSize(moveTable);
 }
 
@@ -106,13 +106,14 @@ bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::directLinePassable(%d, %d, %d, %d)", x, y, toX, toY);
 	Screen *scr = screen();
 
-	while (x != toX && y != toY) {
+	while (x != toX || y != toY) {
 		int facing = getFacingFromPointToPoint(x, y, toX, toY);
 		x += _addXPosTable[facing];
 		y += _addYPosTable[facing];
 		if (!scr->getShapeFlag1(x, y))
 			return false;
 	}
+
 	return true;
 }
 

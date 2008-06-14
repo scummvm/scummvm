@@ -1,46 +1,38 @@
+srcdir      ?= .
+DEPDIR      := .deps
+
 #DYNAMIC_MODULES = 1
-#libndsdir = $(DEVKITPRO)/libnds
-libndsdir = /home/neil/devkitpror21/libnds
+libndsdir = $(DEVKITPRO)/libnds
+#libndsdir = /home/neil/devkitpror21/libnds
 
-# Select the build you want by uncommenting one of the following lines:
-
-
-
-ifeq ($(SCUMM_BUILD),a)
-        DS_BUILD_A = 1
-endif
-
-ifeq ($(SCUMM_BUILD),b)
-        DS_BUILD_B = 1
-endif
-
-ifeq ($(SCUMM_BUILD),c)
-        DS_BUILD_C = 1
-endif
-
-ifeq ($(SCUMM_BUILD),d)
-        DS_BUILD_D = 1
-endif
-
-ifeq ($(SCUMM_BUILD),e)
-        DS_BUILD_E = 1
-endif
-
-ifeq ($(SCUMM_BUILD),f)
-        DS_BUILD_F = 1
-endif
+# Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
+# Anything else gets build a.
 
 ifeq ($(SCUMM_BUILD),g)
         DS_BUILD_G = 1
+else
+ ifeq ($(SCUMM_BUILD),f)
+        DS_BUILD_F = 1
+ else
+  ifeq ($(SCUMM_BUILD),e)
+        DS_BUILD_E = 1
+  else
+   ifeq ($(SCUMM_BUILD),d)
+        DS_BUILD_D = 1
+   else
+    ifeq ($(SCUMM_BUILD),c)
+        DS_BUILD_C = 1
+    else
+     ifeq ($(SCUMM_BUILD),b)
+        DS_BUILD_B = 1
+     else
+        DS_BUILD_A = 1
+     endif
+    endif
+   endif
+  endif
+ endif
 endif
-
-#DS_BUILD_A = 1
-#DS_BUILD_B = 1
-#DS_BUILD_C = 1
-#DS_BUILD_D = 1		# started!
-#DS_BUILD_E = 1
-#DS_BUILD_F = 1
-#DS_BUILD_G = 1
 
 # To do:
 # - FAT cache?
@@ -79,14 +71,21 @@ VPATH = $(srcdir)
 
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
+#
+# I actually had to use
+# ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' LDFLAGS='C:/Progra~1/devkitpro/libnds/lib/libnds9.a' --disable-shared --disable-debugging
 
 USE_ARM_SOUND_ASM = 1
 ARM = 1
+USE_ARM_COSTUME_ASM = 1
 
 ifdef DS_BUILD_A
-	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM
+	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
 	LOGO = logoa.bmp
 	ENABLE_SCUMM = STATIC_PLUGIN
+	DEFINES += -DENABLE_SCUMM=STATIC_PLUGIN
+	MODULES += engines/scumm
+
 	USE_ARM_GFX_ASM = 1
 	BUILD=scummvm-A
 endif
@@ -146,10 +145,12 @@ CXX     = arm-eabi-g++
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-ffast-math -mthumb-interwork
+		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
+
+# -ffast-math 
 
 ifdef USE_DEBUGGER
-	DEFINES += -DUSE_DEBUGGER
+	DEFINES += -DUSE_DEBUGGER 
 	CFLAGS += -g
 endif
 
@@ -158,7 +159,7 @@ ifdef USE_PROFILER
 	DEFINES += -DUSE_PROFILER
 endif
 
-CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
+CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 		-fno-exceptions -fno-rtti -mthumb-interwork
 
 #		-mthumb
@@ -181,9 +182,9 @@ endif
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
 
-INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source -I$(portdir)/source/compressor -I$(portdir)/source/fat \
-			-I$(srcdir)/backends/fs  -I$(srcdir)/backends/fs/ds -I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
-			-I$(srcdir)/scumm -I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
+INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source \
+			-I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
+			-I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
 			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h
 
 
@@ -258,11 +259,13 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp 
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O3
+OPT_SPEED := -O2
 
 # Compiler options for files which should be optimised for space
-OPT_SIZE := -Os -mthumb -fno-gcse -fno-schedule-insns2
+OPT_SIZE := -Os
 
+
+#-mthumb -fno-gcse -fno-schedule-insns2
 
 
 OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
@@ -276,6 +279,9 @@ ndsall:
 	make -C ./$(BUILD) -f ../makefile scummvm.nds
 
 include $(srcdir)/Makefile.common
+
+semiclean:
+	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
@@ -330,8 +336,8 @@ endef
 ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking.
-.cpp.o:
-
+#.cpp.o:
+%.o:%.cpp
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
@@ -342,7 +348,8 @@ else
 # rule can get you into a bad state if you Ctrl-C at the wrong moment.
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
-.cpp.o:
+#.cpp.o:
+%.o:%.cpp
 #	echo !!!!!!!!!!!! $(notdir $<)
 #	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
 #	 OPTFLAG=-O3
@@ -354,8 +361,7 @@ else
 #	echo !!!!!!!! $(OPTFLAG)
 
 	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
 endif
 
 

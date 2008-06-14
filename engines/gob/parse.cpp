@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -45,7 +44,7 @@ int32 Parse::encodePtr(byte *ptr, int type) {
 		offset = ptr - _vm->_game->_totFileData;
 		break;
 	case kInterVar:
-		offset = ptr - _vm->_global->_inter_variables;
+		offset = ptr - ((byte *) _vm->_inter->_variables->getAddressOff8(0, 0));
 		break;
 	case kResStr:
 		offset = ptr - ((byte *) _vm->_global->_inter_resStr);
@@ -65,7 +64,7 @@ byte *Parse::decodePtr(int32 n) {
 		ptr = _vm->_game->_totFileData;
 		break;
 	case kInterVar:
-		ptr = _vm->_global->_inter_variables;
+		ptr = (byte *) _vm->_inter->_variables->getAddressOff8(0, 0);
 		break;
 	case kResStr:
 		ptr = (byte *) _vm->_global->_inter_resStr;

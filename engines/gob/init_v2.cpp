@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -50,8 +49,8 @@ void Init_v2::initVideo() {
 	_vm->_global->_inVM = 0;
 
 	_vm->_global->_colorCount = 16;
-	if (((_vm->_platform == Common::kPlatformPC) ||
-	     (_vm->_platform == Common::kPlatformMacintosh)) &&
+	if (((_vm->getPlatform() == Common::kPlatformPC) ||
+	     (_vm->getPlatform() == Common::kPlatformMacintosh)) &&
 	    ((_vm->_global->_videoMode == 0x13) ||
 	     (_vm->_global->_videoMode == 0x14)))
 		_vm->_global->_colorCount = 256;

@@ -152,7 +152,7 @@ private:
 		}
 
 		~Cursor() {
-			delete [] _data;
+			delete[] _data;
 		}
 	};
 
@@ -180,7 +180,7 @@ private:
 		}
 
 		~Palette() {
-			delete [] _data;
+			delete[] _data;
 		}
 	};
 

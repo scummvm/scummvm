@@ -101,3 +101,4 @@ echo Place rpl.exe from the bin folder inside the archive in the folder where
 echo this batch file resides
 
 :the_end
+pause

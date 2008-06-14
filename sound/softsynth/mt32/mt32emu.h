@@ -29,7 +29,7 @@
 #define MT32EMU_MONITOR_PARTIALS 0
 // Determines how the waveform cache file is handled (must be regenerated after sampling rate change)
 #define MT32EMU_WAVECACHEMODE 0 // Load existing cache if possible, otherwise generate and save cache
-//#define MT32EMU_WAVECACHEMODE 1 // Load existing cache if possible, otherwise generage but don't save cache
+//#define MT32EMU_WAVECACHEMODE 1 // Load existing cache if possible, otherwise generate but don't save cache
 //#define MT32EMU_WAVECACHEMODE 2 // Ignore existing cache, generate and save cache
 //#define MT32EMU_WAVECACHEMODE 3 // Ignore existing cache, generate but don't save cache
 

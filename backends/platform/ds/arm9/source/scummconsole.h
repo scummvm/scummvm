@@ -25,7 +25,7 @@
 //
 // Changelog:
 //   0.1: First version
-//	 0.2: Fixed sprite mapping bug.  1D mapping should work now.
+//	 0.2: Fixed sprite mapping bug.  1D mapping should work now.  
 //			Changed some register defines for consistency.
 //
 //////////////////////////////////////////////////////////////////////

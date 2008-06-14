@@ -599,18 +599,18 @@ SoundTowns_EuphonyDriver::~SoundTowns_EuphonyDriver() {
 	MidiDriver_YM2612::removeLookupTables();
 
 	if (_fmInstruments) {
-		delete [] _fmInstruments;
+		delete[] _fmInstruments;
 		_fmInstruments = 0;
 	}
 
 	if (_waveInstruments) {
-		delete [] _waveInstruments;
+		delete[] _waveInstruments;
 		_waveInstruments = 0;
 	}
 
 	for (int i = 0; i < 10; i++) {
 		if (_waveSounds[i]) {
-			delete [] _waveSounds[i];
+			delete[] _waveSounds[i];
 			_waveSounds[i] = 0;
 		}
 	}
@@ -709,14 +709,14 @@ void SoundTowns_EuphonyDriver::send(byte chan, uint32 b) {
 
 void SoundTowns_EuphonyDriver::loadFmInstruments(const byte *instr) {
 	if (_fmInstruments)
-		delete [] _fmInstruments;
+		delete[] _fmInstruments;
 	_fmInstruments = new uint8[0x1800];
 	memcpy(_fmInstruments, instr, 0x1800);
 }
 
 void SoundTowns_EuphonyDriver::loadWaveInstruments(const byte *instr) {
 	if (_waveInstruments)
-		delete [] _waveInstruments;
+		delete[] _waveInstruments;
 	_waveInstruments = new uint8[0x1000];
 	memcpy(_waveInstruments, instr, 0x1000);
 
@@ -724,7 +724,7 @@ void SoundTowns_EuphonyDriver::loadWaveInstruments(const byte *instr) {
 
 	for (uint8 i = 0; i < 10; i++) {
 		if (_waveSounds[i])
-			delete [] _waveSounds[i];
+			delete[] _waveSounds[i];
 		uint32 numsamples = READ_LE_UINT32(pos + 0x0C);
 		_waveSounds[i] = new int8[numsamples + 0x20];
         memcpy(_waveSounds[i], pos, 0x20);
@@ -1010,7 +1010,7 @@ SoundTowns_EuphonyTrackQueue * SoundTowns_EuphonyTrackQueue::reset() {
 
 void SoundTowns_EuphonyTrackQueue::loadDataToCurrentPosition(uint8 * trackdata, uint32 size, bool loop) {
 	if (_trackData)
-		delete [] _trackData;
+		delete[] _trackData;
 	_trackData = new uint8[0xC58A];
 	memset(_trackData, 0, 0xC58A);
 	Screen::decodeFrame4(trackdata, _trackData, size);
@@ -1051,13 +1051,13 @@ void SoundTowns_EuphonyTrackQueue::release() {
 	_used = _fchan = _wchan = 0;
 
 	if (_trackData) {
-		delete [] _trackData;
+		delete[] _trackData;
 		_trackData = 0;
 	}
 
 	while (i) {
 		if (i->_trackData) {
-			delete [] i->_trackData;
+			delete[] i->_trackData;
 			i->_trackData = 0;
 		}
 		i = i->_next;
@@ -1084,7 +1084,7 @@ void SoundTowns_EuphonyTrackQueue::initDriver() {
 	_driver->send(0x79B0);
 }
 
-SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer)
+SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), _sfxFileData(0),
 	_sfxFileIndex((uint)-1), _sfxWDTable(0), _sfxBTTable(0), _parser(0) {
 
@@ -1097,7 +1097,7 @@ SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer)
 SoundTowns::~SoundTowns() {
 	AudioCD.stop();
 	haltTrack();
-	delete [] _sfxFileData;
+	delete[] _sfxFileData;
 
 	Common::StackLock lock(_mutex);
 	_driver->setTimerCallback(0, 0);
@@ -1109,8 +1109,8 @@ SoundTowns::~SoundTowns() {
 bool SoundTowns::init() {
 	_vm->checkCD();
 	int unused = 0;
-	_sfxWDTable = _vm->staticres()->loadRawData(kKyra1TownsSFXwdTable, unused);
-	_sfxBTTable = _vm->staticres()->loadRawData(kKyra1TownsSFXbtTable, unused);
+	_sfxWDTable = _vm->staticres()->loadRawData(k1TownsSFXwdTable, unused);
+	_sfxBTTable = _vm->staticres()->loadRawData(k1TownsSFXbtTable, unused);
 
 	return loadInstruments();
 }
@@ -1164,7 +1164,7 @@ void SoundTowns::loadSoundFile(uint file) {
 	if (_sfxFileIndex == file)
 		return;
 	_sfxFileIndex = file;
-	delete [] _sfxFileData;
+	delete[] _sfxFileData;
 	_sfxFileData = _vm->resource()->fileData(fileListEntry(file), 0);
 }
 
@@ -1293,7 +1293,7 @@ bool SoundTowns::loadInstruments() {
 
 	_driver->queue()->loadDataToCurrentPosition(twm + 0x0CA0, 0xC58A);
 	_driver->loadWaveInstruments(_driver->queue()->trackData() + 8);
-	delete [] twm;
+	delete[] twm;
 	_driver->queue()->release();
 
 	return true;
@@ -1301,6 +1301,7 @@ bool SoundTowns::loadInstruments() {
 
 void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
+	Common::StackLock lock(_mutex);
 
 	if (!_parser) {
 		_parser = new MidiParser_EuD(_driver->queue());
@@ -1311,7 +1312,7 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	_parser->property(MidiParser::mpAutoLoop, loop);
 	_parser->loadMusic(twm + 0x4b70 + offset, 0xC58A);
 
-	delete [] twm;
+	delete[] twm;
 }
 
 void SoundTowns::onTimer(void * data) {
@@ -1357,7 +1358,7 @@ float SoundTowns::semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiTo
 
 //	KYRA 2
 
-SoundTowns_v2::SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer)
+SoundTowns_v2::SoundTowns_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), /*_driver(0),*/
 	 _twnTrackData(0) {
 }
@@ -1366,7 +1367,7 @@ SoundTowns_v2::~SoundTowns_v2() {
 	/*if (_driver)
 		delete _driver;*/
 	if (_twnTrackData)
-		delete [] _twnTrackData;
+		delete[] _twnTrackData;
 }
 
 bool SoundTowns_v2::init() {
@@ -1416,7 +1417,7 @@ void SoundTowns_v2::playTrack(uint8 track) {
 		char musicfile[13];
 		sprintf(musicfile, fileListEntry(0), track);
 		if (_twnTrackData)
-			delete [] _twnTrackData;
+			delete[] _twnTrackData;
 		_twnTrackData = _vm->resource()->fileData(musicfile, 0);
 		//_driver->loadData(_twnTrackData);
 	}
@@ -1431,7 +1432,7 @@ void SoundTowns_v2::haltTrack() {
 	//_driver->reset();
 }
 
-bool SoundTowns_v2::voicePlay(const char *file, bool) {
+int32 SoundTowns_v2::voicePlay(const char *file, bool) {
 	static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
 
 	int h = 0;
@@ -1439,10 +1440,13 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 		while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 			h++;
 		if (h >= kNumChannelHandles)
-			return false;
+			return 0;
 	}
 
-	uint8 * data = _vm->resource()->fileData(file, 0);
+	char filename [13];
+	sprintf(filename, "%s.PCM", file);
+
+	uint8 * data = _vm->resource()->fileData(filename, 0);
 	uint8 * src = data;
 
 	uint16 sfxRate = rates[READ_LE_UINT16(src)];
@@ -1492,8 +1496,8 @@ bool SoundTowns_v2::voicePlay(const char *file, bool) {
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h].channelHandle, _currentSFX);
 
-	delete [] data;
-	return true;
+	delete[] data;
+	return 1;
 }
 
 void SoundTowns_v2::beginFadeOut() {

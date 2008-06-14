@@ -241,7 +241,7 @@ void KyraEngine_MR::uninitAnimationShapes(int count, uint8 *filedata) {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_MR::uninitAnimationShapes(%d, %p)", count, (const void*)filedata);
 	for (int i = 0; i < count; ++i)
 		_gameShapes[9+i] = 0;
-	delete [] filedata;
+	delete[] filedata;
 	setNextIdleAnimTimer();
 }
 

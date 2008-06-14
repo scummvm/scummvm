@@ -36,7 +36,7 @@
 #include "common/stream.h"
 #include "common/ptr.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 
 namespace Kyra {
@@ -52,7 +52,7 @@ struct ResFileEntry {
 	enum kType {
 		kRaw = 0,
 		kPak = 1,
-		kIns = 2,
+		kInsMal = 2,
 		kTlk = 3,
 		kAutoDetect
 	};
@@ -60,7 +60,13 @@ struct ResFileEntry {
 	uint32 offset;
 };
 
+struct CompFileEntry {
+	uint32 size;
+	uint8 *data;
+};
+
 typedef Common::HashMap<Common::String, ResFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResFileMap;
+typedef Common::HashMap<Common::String, CompFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CompFileMap;
 class Resource;
 
 class ResArchiveLoader {
@@ -68,6 +74,10 @@ public:
 	struct File {
 		File() : filename(), entry() {}
 		File(const Common::String &f, const ResFileEntry &e) : filename(f), entry(e) {}
+
+		bool operator ==(const Common::String &r) const {
+			return filename.equalsIgnoreCase(r);
+		}
 
 		Common::String filename;
 		ResFileEntry entry;
@@ -86,9 +96,17 @@ public:
 protected:
 };
 
+class CompArchiveLoader {
+public:
+	virtual ~CompArchiveLoader() {}
+
+	virtual bool checkForFiles() const = 0;
+	virtual bool loadFile(CompFileMap &loadTo) const = 0;
+};
+
 class Resource {
 public:
-	Resource(KyraEngine *vm);
+	Resource(KyraEngine_v1 *vm);
 	~Resource();
 
 	bool reset();
@@ -122,89 +140,97 @@ protected:
 	LoaderList _loaders;
 	ResFileMap _map;
 
-	KyraEngine *_vm;
+	typedef Common::List<Common::SharedPtr<CompArchiveLoader> > CompLoaderList;
+	typedef CompLoaderList::iterator CompLoaderIterator;
+	typedef CompLoaderList::const_iterator CCompLoaderIterator;
+	CompLoaderList _compLoaders;
+	CompFileMap _compFiles;
+
+	void tryLoadCompFiles();
+	void clearCompFileList();
+
+	KyraEngine_v1 *_vm;
 };
 
-// TODO?: maybe prefix all things here with 'kKyra1' instead of 'k'
 enum kKyraResources {
 	kLoadAll = -1,
 
-	kForestSeq,
-	kKallakWritingSeq,
-	kKyrandiaLogoSeq,
-	kKallakMalcolmSeq,
-	kMalcolmTreeSeq,
-	kWestwoodLogoSeq,
+	k1ForestSeq,
+	k1KallakWritingSeq,
+	k1KyrandiaLogoSeq,
+	k1KallakMalcolmSeq,
+	k1MalcolmTreeSeq,
+	k1WestwoodLogoSeq,
 
-	kDemo1Seq,
-	kDemo2Seq,
-	kDemo3Seq,
-	kDemo4Seq,
+	k1Demo1Seq,
+	k1Demo2Seq,
+	k1Demo3Seq,
+	k1Demo4Seq,
 
-	kAmuleteAnimSeq,
+	k1AmuleteAnimSeq,
 
-	kOutroReunionSeq,
+	k1OutroReunionSeq,
 
-	kIntroCPSStrings,
-	kIntroCOLStrings,
-	kIntroWSAStrings,
-	kIntroStrings,
+	k1IntroCPSStrings,
+	k1IntroCOLStrings,
+	k1IntroWSAStrings,
+	k1IntroStrings,
 
-	kOutroHomeString,
+	k1OutroHomeString,
 
-	kRoomFilenames,
-	kRoomList,
+	k1RoomFilenames,
+	k1RoomList,
 
-	kCharacterImageFilenames,
+	k1CharacterImageFilenames,
 
-	kItemNames,
-	kTakenStrings,
-	kPlacedStrings,
-	kDroppedStrings,
-	kNoDropStrings,
+	k1ItemNames,
+	k1TakenStrings,
+	k1PlacedStrings,
+	k1DroppedStrings,
+	k1NoDropStrings,
 
-	kPutDownString,
-	kWaitAmuletString,
-	kBlackJewelString,
-	kPoisonGoneString,
-	kHealingTipString,
-	kWispJewelStrings,
-	kMagicJewelStrings,
+	k1PutDownString,
+	k1WaitAmuletString,
+	k1BlackJewelString,
+	k1PoisonGoneString,
+	k1HealingTipString,
+	k1WispJewelStrings,
+	k1MagicJewelStrings,
 
-	kThePoisonStrings,
-	kFluteStrings,
+	k1ThePoisonStrings,
+	k1FluteStrings,
 
-	kFlaskFullString,
-	kFullFlaskString,
+	k1FlaskFullString,
+	k1FullFlaskString,
 
-	kVeryCleverString,
-	kNewGameString,
+	k1VeryCleverString,
+	k1NewGameString,
 
-	kDefaultShapes,
-	kHealing1Shapes,
-	kHealing2Shapes,
-	kPoisonDeathShapes,
-	kFluteShapes,
-	kWinter1Shapes,
-	kWinter2Shapes,
-	kWinter3Shapes,
-	kDrinkShapes,
-	kWispShapes,
-	kMagicAnimShapes,
-	kBranStoneShapes,
+	k1DefaultShapes,
+	k1Healing1Shapes,
+	k1Healing2Shapes,
+	k1PoisonDeathShapes,
+	k1FluteShapes,
+	k1Winter1Shapes,
+	k1Winter2Shapes,
+	k1Winter3Shapes,
+	k1DrinkShapes,
+	k1WispShapes,
+	k1MagicAnimShapes,
+	k1BranStoneShapes,
 
-	kPaletteList,
+	k1PaletteList,
 
-	kGUIStrings,
-	kConfigStrings,
+	k1GUIStrings,
+	k1ConfigStrings,
 
-	kAudioTracks,
-	kAudioTracksIntro,
+	k1AudioTracks,
+	k1AudioTracksIntro,
 
-	kKyra1TownsSFXwdTable,
-	kKyra1TownsSFXbtTable,
-	kKyra1TownsCDATable,
-	kCreditsStrings,
+	k1TownsSFXwdTable,
+	k1TownsSFXbtTable,
+	k1TownsCDATable,
+	k1CreditsStrings,
 
 	k2SeqplayPakFiles,
 	k2SeqplayCredits,
@@ -229,6 +255,15 @@ enum kKyraResources {
 	k2IngameShapeAnimData,
 	k2IngameTlkDemoStrings,
 
+	k3MainMenuStrings,
+	k3MusicFiles,
+	k3ScoreTable,
+	k3SfxFiles,
+	k3SfxMap,
+	k3ItemAnimData,
+	k3ItemMagicTable,
+	k3ItemStringMap,
+
 	kMaxResIDs
 };
 
@@ -239,7 +274,7 @@ class StaticResource {
 public:
 	static const Common::String staticDataFilename() { return "kyra.dat"; }
 
-	StaticResource(KyraEngine *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
+	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 
 	static bool checkKyraDat();
@@ -253,8 +288,8 @@ public:
 	const Room *loadRoomTable(int id, int &entries);
 	const uint8 * const*loadPaletteTable(int id, int &entries);
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
-	const ItemAnimData_v1 *loadHofShapeAnimDataV1(int id, int &entries);
-	const ItemAnimData_v2 *loadHofShapeAnimDataV2(int id, int &entries);
+	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
+	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -263,9 +298,9 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
-	void outputError();
+	void outputError(const Common::String &error);
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	struct FilenameTable;
 	struct ResData;
@@ -284,8 +319,8 @@ private:
 	bool loadRoomTable(const char *filename, void *&ptr, int &size);
 	bool loadPaletteTable(const char *filename, void *&ptr, int &size);
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
-	bool loadHofShapeAnimDataV1(const char *filename, void *&ptr, int &size);
-	bool loadHofShapeAnimDataV2(const char *filename, void *&ptr, int &size);
+	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
+	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
@@ -351,6 +386,7 @@ private:
 } // end of namespace Kyra
 
 #endif
+
 
 
 

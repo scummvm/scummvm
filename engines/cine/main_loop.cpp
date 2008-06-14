@@ -182,14 +182,12 @@ int getKeyData() {
 void CineEngine::mainLoop(int bootScriptIdx) {
 	bool playerAction;
 	uint16 quitFlag;
-	uint16 i;
 	byte di;
 	uint16 mouseButton;
 
 	quitFlag = 0;
 
 	if (_preLoad == false) {
-		resetSeqList();
 		resetBgIncrustList();
 
 		setTextWindow(0, 0, 20, 200);
@@ -223,17 +221,10 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			globalVars[VAR_LOW_MEMORY] = 0; // set to 1 to disable some animations, sounds etc.
 		}
 
-		for (i = 0; i < 16; i++) {
-			c_palette[i] = 0;
-		}
-
-		_paletteNeedUpdate = true;
-
 		strcpy(newPrcName, "");
 		strcpy(newRelName, "");
 		strcpy(newObjectName, "");
 		strcpy(newMsgName, "");
-		strcpy(currentBgName[0], "");
 		strcpy(currentCtName, "");
 		strcpy(currentPartName, "");
 
@@ -257,8 +248,9 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			setMouseCursor(MOUSE_CURSOR_CROSS);
 		}
 
-		drawOverlays();
-		flip();
+		if (renderer->ready()) {
+			renderer->drawFrame();
+		}
 
 		if (waitForPlayerClick) {
 			playerAction = false;
@@ -289,6 +281,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			} while (mouseButton != 0);
 
 			waitForPlayerClick = 0;
+
+			removeMessages();
 		}
 
 		if (checkForPendingDataLoadSwitch) {

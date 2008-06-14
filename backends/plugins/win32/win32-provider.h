@@ -34,8 +34,7 @@ class Win32PluginProvider : public FilePluginProvider {
 protected:
 	Plugin* createPlugin(const Common::String &filename) const;
 
-	virtual const char* getPrefix() const { return ""; }
-	virtual const char* getSuffix() const { return ".dll"; }
+	bool isPluginFilename(const Common::String &filename) const;
 
 	virtual void addCustomDirectories(Common::StringList &dirs) const {}
 };

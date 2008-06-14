@@ -55,25 +55,26 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 		int count = 0, offs = 0;
 		if (textWidth > (3*maxTextWidth)) {
 			count = getCharLength(p, textWidth/4);
-			offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
-		}
-
+			// No update of textWidth here
+		} 
+		
 		if (textWidth > (2*maxTextWidth)) {
 			count = getCharLength(p, textWidth/3);
-			offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
 			textWidth = _screen->getTextWidth(p);
 		}
 
 		count = getCharLength(p, textWidth/2);
-		offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);	
+		offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));	
 		p += count + offs;
 		textWidth = _screen->getTextWidth(p);
 
 		if (textWidth > maxTextWidth) {
 			count = getCharLength(p, textWidth/2);
-			offs = dropCRIntoString(p, getCharLength(p, maxTextWidth), count);	
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));	
 		}
 	}
 
@@ -131,6 +132,12 @@ int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
 
 void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
 	debugC(9, kDebugLevelMain, "TextDisplayer_MR::printText('%s', %d, %d, %d, %d, %d)", str, x, y, c0, c1, c2);
+	if (_vm->_albumChatActive) {
+		c0 = 0xEE;
+		c1 = 0xE3;
+		c2 = 0x00;
+	}
+
 	uint8 colorMap[] = { 0, 255, 240, 240 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
@@ -226,7 +233,7 @@ void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int voc
 		"MTFR00S.EMC", "MTFR00Q.EMC", "MTFR00E.EMC", "MTFR00T.EMC",
 		 "MTL00S.EMC",  "MTL00Q.EMC",  "MTL00E.EMC",  "MTL00T.EMC",
 		 "MTR00S.EMC",  "MTR00Q.EMC",  "MTR00E.EMC",  "MTR00T.EMC",
-		 "MTA00S.EMC",  "MTA00Q.EMC",  "MTA00Q.EMC",  "MTA00T.EMC"
+		 "MTA00S.EMC",  "MTA00Q.EMC",  "MTA00E.EMC",  "MTA00T.EMC"
 	};
 
 	int chat = talkScriptTable[chatType + _mainCharacter.facing * 4];
@@ -483,6 +490,134 @@ void KyraEngine_MR::goodConscienceChatWaitToFinish() {
 		}
 
 		updateWithText();
+
+		const uint32 curTime = _system->getMillis();
+		if ((textEnabled() && !speechEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {
+			snd_stopVoice();
+			resetSkipFlag();
+			nextFrame = curTime;
+			running = false;
+		}
+
+		delay(10);
+	}
+}
+
+void KyraEngine_MR::albumChat(const char *str, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::albumChat('%s', %d, %d)", str, vocHigh, vocLow);
+
+	_talkObjectList[1].x = 190;
+	_talkObjectList[1].y = 188;
+	
+	_chatVocHigh = _chatVocLow = -1;
+	_albumChatActive = true;
+	albumChatInit(str, 1, vocHigh, vocLow);
+	_albumChatActive = false;
+
+	_chatText = str;
+	_chatObject = 1;
+	_screen->hideMouse();
+	albumChatWaitToFinish();
+	_screen->showMouse();
+
+	_chatText = 0;
+	_chatObject = -1;
+}
+
+void KyraEngine_MR::albumChatInit(const char *str, int object, int vocHigh, int vocLow) {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::albumChatInit('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
+	Common::String realString;
+
+	while (*str) {
+		if (str[0] == '\\' && str[1] == 'r') {
+			realString += '\r';
+			++str;
+		} else {
+			realString += *str;
+		}
+
+		++str;
+	}
+
+	str = realString.c_str();
+
+	str = _text->preprocessString(str);
+	int lineNum = _text->buildMessageSubstrings(str);
+	
+	int xPos = 0, yPos = 0;
+
+	if (!object) {
+		int scale = getScale(_mainCharacter.x1, _mainCharacter.y1);
+		yPos = _mainCharacter.y1 - ((_mainCharacter.height * scale) >> 8) - 8;
+		xPos = _mainCharacter.x1;
+	} else {
+		yPos = _talkObjectList[object].y;
+		xPos = _talkObjectList[object].x;
+	}
+
+	yPos -= lineNum * 10;
+	yPos = MAX(yPos, 0);
+	_text->_talkMessageY = yPos;
+	_text->_talkMessageH = lineNum*10;
+
+	int width = _text->getWidestLineWidth(lineNum);
+	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
+	_text->_talkCoords.x = xPos;
+	_text->_talkCoords.w = width + 2;
+
+	_screen->hideMouse();
+
+	if (textEnabled()) {
+		objectChatPrintText(str, object);
+		_chatEndTime = _system->getMillis() + chatCalcDuration(str) * _tickLength;
+	} else {
+		_chatEndTime = _system->getMillis();
+	}
+
+	if (speechEnabled()) {
+		_chatVocHigh = vocHigh;
+		_chatVocLow = vocLow;
+	} else {
+		_chatVocHigh = _chatVocLow = -1;
+	}
+
+	_screen->showMouse();
+}
+
+void KyraEngine_MR::albumChatWaitToFinish() {
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::albumChatWaitToFinish()");
+	if (_chatVocHigh) {
+		playVoice(_chatVocHigh, _chatVocLow);
+		_chatVocHigh = _chatVocLow = -1;
+	}
+
+	bool running = true;
+	const uint32 endTime = _chatEndTime;
+	resetSkipFlag();
+
+	uint32 nextFrame = 0;
+	int frame = 12;
+	while (running && !_quitFlag) {
+		if (nextFrame < _system->getMillis()) {
+			++frame;
+			if (frame > 22)
+				frame = 13;
+
+			_album.wsa->setX(-100);
+			_album.wsa->setY(90);
+			_album.wsa->setDrawPage(2);
+
+			albumRestoreRect();
+			_album.wsa->displayFrame(frame, 0x4000);
+			albumUpdateRect();
+
+			nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(4, 8) * _tickLength;
+		}
+
+		if (_album.nextPage != 14)
+			albumUpdateAnims();
+		else
+			_screen->updateScreen();
 
 		const uint32 curTime = _system->getMillis();
 		if ((textEnabled() && !speechEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {

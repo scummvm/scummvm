@@ -148,7 +148,7 @@ void OSystem_SDL::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
-			SDL_WarpMouse(_km.x, _km.y);
+			SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
 		}
 	}
 }

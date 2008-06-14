@@ -104,18 +104,217 @@ namespace Parallaction {
 #define INST_ENDIF		30
 #define INST_STOP		31
 
-#define DECLARE_ZONE_PARSER(sig) void Parallaction_br::locZoneParse_##sig()
-#define DECLARE_ANIM_PARSER(sig) void Parallaction_br::locAnimParse_##sig()
-#define DECLARE_COMMAND_PARSER(sig) void Parallaction_br::cmdParse_##sig()
-#define DECLARE_INSTRUCTION_PARSER(sig) void Parallaction_br::instParse_##sig()
-#define DECLARE_LOCATION_PARSER(sig) void Parallaction_br::locParse_##sig()
+const char *_zoneTypeNamesRes_br[] = {
+	"examine",
+	"door",
+	"get",
+	"merge",
+	"taste",
+	"hear",
+	"feel",
+	"speak",
+	"none",
+	"trap",
+	"you",
+	"command",
+	"path",
+	"box"
+};
+
+const char *_zoneFlagNamesRes_br[] = {
+	"closed",
+	"active",
+	"remove",
+	"acting",
+	"locked",
+	"fixed",
+	"noname",
+	"nomasked",
+	"looping",
+	"added",
+	"character",
+	"nowalk",
+	"yourself",
+	"scaled",
+	"selfuse"
+};
+
+const char *_commandsNamesRes_br[] = {
+	"set",
+	"clear",
+	"start",
+	"speak",
+	"get",
+	"location",
+	"open",
+	"close",
+	"on",
+	"off",
+	"call",
+	"toggle",
+	"drop",
+	"quit",
+	"move",
+	"stop",
+	"character",
+	"followme",
+	"onmouse",
+	"offmouse",
+	"add",
+	"leave",
+	"inc",
+	"dec",
+	"test",
+	"dummy",
+	"dummy",
+	"let",
+	"music",
+	"fix",
+	"unfix",
+	"zeta",
+	"scroll",
+	"swap",
+	"give",
+	"text",
+	"part",
+	"dummy",
+	"return",
+	"onsave",
+	"offsave",
+	"endcommands",
+	"ifchar",
+	"endif"
+};
+
+
+const char *_audioCommandsNamesRes_br[] = {
+	"play",
+	"stop",
+	"pause",
+	"channel_level",
+	"fadein",
+	"fadeout",
+	"volume",
+	" ",
+	"faderate",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	"loop"
+};
+
+const char *_locationStmtRes_br[] = {
+	"character",
+	"endlocation",
+	"ifchar",
+	"endif",
+	"location",
+	"mask",
+	"path",
+	"disk",
+	"localflags",
+	"commands",
+	"escape",
+	"acommands",
+	"flags",
+	"comment",
+	"endcomment",
+	"zone",
+	"animation",
+	"zeta",
+	"music",
+	"sound"
+};
+
+const char *_locationZoneStmtRes_br[] = {
+	"endzone",
+	"limits",
+	"moveto",
+	"type",
+	"commands",
+	"label",
+	"flags"
+};
+
+const char *_locationAnimStmtRes_br[] = {
+	"endanimation",
+	"endzone",
+	"script",
+	"commands",
+	"type",
+	"label",
+	"flags",
+	"file",
+	"position",
+	"moveto"
+};
+
+const char *_instructionNamesRes_br[] = {
+	"on",
+	"off",
+	"x",
+	"y",
+	"z",
+	"f",
+	"loop",
+	"endloop",
+	"show",
+	"inc",
+	"dec",
+	"set",
+	"put",
+	"call",
+	"wait",
+	"start",
+	"process",
+	"move",
+	"color",
+	"sound",
+	"mask",
+	"print",
+	"text",
+	"mul",
+	"div",
+	"if",
+	"dummy",
+	"dummy",
+	"endif",
+	"stop",
+	"endscript"
+};
+
+
+#define SetOpcodeTable(x) table = &x;
+
+typedef Common::Functor0Mem<void, ProgramParser_br> OpcodeV1;
+#define INSTRUCTION_PARSER(sig) table->push_back(new OpcodeV1(this, &ProgramParser_br::instParse_##sig))
+
+typedef Common::Functor0Mem<void, LocationParser_br> OpcodeV2;
+#define ZONE_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::locZoneParse_##sig))
+#define ANIM_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::locAnimParse_##sig))
+#define LOCATION_PARSER(sig)	table->push_back(new OpcodeV2(this, &LocationParser_br::locParse_##sig))
+#define COMMAND_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::cmdParse_##sig))
+
+#define WARNING_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::warning_##sig))
+
+
+#define DECLARE_ZONE_PARSER(sig) void LocationParser_br::locZoneParse_##sig()
+#define DECLARE_ANIM_PARSER(sig) void LocationParser_br::locAnimParse_##sig()
+#define DECLARE_COMMAND_PARSER(sig) void LocationParser_br::cmdParse_##sig()
+#define DECLARE_LOCATION_PARSER(sig) void LocationParser_br::locParse_##sig()
+
+#define DECLARE_INSTRUCTION_PARSER(sig) void ProgramParser_br::instParse_##sig()
 
 
 DECLARE_LOCATION_PARSER(location)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(location) ");
 
-	strcpy(_location._name, _tokens[1]);
-	_locParseCtxt.bgName = strdup(_tokens[1]);
+	strcpy(_vm->_location._name, _tokens[1]);
+	ctxt.bgName = strdup(_tokens[1]);
 
 	bool flip = false;
 	int nextToken;
@@ -130,14 +329,14 @@ DECLARE_LOCATION_PARSER(location)  {
 	// TODO: handle background horizontal flip (via a context parameter)
 
 	if (_tokens[nextToken][0] != '\0') {
-		_char._ani->_left = atoi(_tokens[nextToken]);
+		_vm->_char._ani->_left = atoi(_tokens[nextToken]);
 		nextToken++;
-		_char._ani->_top = atoi(_tokens[nextToken]);
+		_vm->_char._ani->_top = atoi(_tokens[nextToken]);
 		nextToken++;
 	}
 
 	if (_tokens[nextToken][0] != '\0') {
-		_char._ani->_frame = atoi(_tokens[nextToken]);
+		_vm->_char._ani->_frame = atoi(_tokens[nextToken]);
 	}
 }
 
@@ -146,14 +345,14 @@ DECLARE_LOCATION_PARSER(location)  {
 DECLARE_LOCATION_PARSER(zone)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zone) ");
 
-	parseZone(*_locParseCtxt.script, _location._zones, _tokens[1]);
+	parseZone(_vm->_location._zones, _tokens[1]);
 
-	_locParseCtxt.z->_index = _locParseCtxt.numZones++;
+	ctxt.z->_index = ctxt.numZones++;
 
-	if (getLocationFlags() & kFlagsVisited) {
-		_locParseCtxt.z->_flags = _zoneFlags[_currentLocationIndex][_locParseCtxt.z->_index];
+	if (_vm->getLocationFlags() & kFlagsVisited) {
+		ctxt.z->_flags = _vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.z->_index];
 	} else {
-		_zoneFlags[_currentLocationIndex][_locParseCtxt.z->_index] = _locParseCtxt.z->_flags;
+		_vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.z->_index] = ctxt.z->_flags;
 	}
 
 }
@@ -162,14 +361,14 @@ DECLARE_LOCATION_PARSER(zone)  {
 DECLARE_LOCATION_PARSER(animation)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(animation) ");
 
-	parseAnimation(*_locParseCtxt.script, _location._animations, _tokens[1]);
+	parseAnimation(_vm->_location._animations, _tokens[1]);
 
-	_locParseCtxt.a->_index = _locParseCtxt.numZones++;
+	ctxt.a->_index = ctxt.numZones++;
 
-	if (getLocationFlags() & kFlagsVisited) {
-		_locParseCtxt.a->_flags = _zoneFlags[_currentLocationIndex][_locParseCtxt.a->_index];
+	if (_vm->getLocationFlags() & kFlagsVisited) {
+		ctxt.a->_flags = _vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.a->_index];
 	} else {
-		_zoneFlags[_currentLocationIndex][_locParseCtxt.a->_index] = _locParseCtxt.a->_flags;
+		_vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.a->_index] = ctxt.a->_flags;
 	}
 
 }
@@ -180,7 +379,7 @@ DECLARE_LOCATION_PARSER(localflags)  {
 
 	int _si = 1;
 	while (_tokens[_si][0] != '\0') {
-		_localFlagNames->addData(_tokens[_si]);
+		_vm->_localFlagNames->addData(_tokens[_si]);
 		_si++;
 	}
 }
@@ -189,14 +388,14 @@ DECLARE_LOCATION_PARSER(localflags)  {
 DECLARE_LOCATION_PARSER(flags)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(flags) ");
 
-	if ((getLocationFlags() & kFlagsVisited) == 0) {
+	if ((_vm->getLocationFlags() & kFlagsVisited) == 0) {
 		// only for 1st visit
-		clearLocationFlags(kFlagsAll);
+		_vm->clearLocationFlags(kFlagsAll);
 		int _si = 1;
 
 		do {
-			byte _al = _localFlagNames->lookup(_tokens[_si]);
-			setLocationFlags(1 << (_al - 1));
+			byte _al = _vm->_localFlagNames->lookup(_tokens[_si]);
+			_vm->setLocationFlags(1 << (_al - 1));
 
 			_si++;
 			if (scumm_stricmp(_tokens[_si], "|")) break;
@@ -209,14 +408,14 @@ DECLARE_LOCATION_PARSER(flags)  {
 DECLARE_LOCATION_PARSER(comment)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(comment) ");
 
-	_location._comment = parseComment(*_locParseCtxt.script);
+	_vm->_location._comment = parseComment();
 }
 
 
 DECLARE_LOCATION_PARSER(endcomment)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(endcomment) ");
 
-	_location._endComment = parseComment(*_locParseCtxt.script);
+	_vm->_location._endComment = parseComment();
 }
 
 
@@ -236,21 +435,21 @@ DECLARE_LOCATION_PARSER(music)  {
 DECLARE_LOCATION_PARSER(redundant)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(redundant) ");
 
-	warning("redundant '%s' line found in script '%s'", _tokens[0], _locParseCtxt.filename);
+	warning("redundant '%s' line found in script '%s'", _tokens[0], ctxt.filename);
 }
 
 
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
 
-//	changeCharacter(character);
+	ctxt.characterName = strdup(_tokens[0]);
 }
 
 
 DECLARE_LOCATION_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(ifchar) ");
 
-	_locParseCtxt.script->skip("ENDIF");
+	_script->skip("ENDIF");
 }
 
 
@@ -264,45 +463,45 @@ DECLARE_LOCATION_PARSER(null)  {
 DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
-	_locParseCtxt.maskName = strdup(_tokens[1]);
-	_gfx->_backgroundInfo.layers[0] = atoi(_tokens[2]);
-	_gfx->_backgroundInfo.layers[1] = atoi(_tokens[3]);
-	_gfx->_backgroundInfo.layers[2] = atoi(_tokens[4]);
+	ctxt.maskName = strdup(_tokens[1]);
+	_vm->_gfx->_backgroundInfo.layers[0] = atoi(_tokens[2]);
+	_vm->_gfx->_backgroundInfo.layers[1] = atoi(_tokens[3]);
+	_vm->_gfx->_backgroundInfo.layers[2] = atoi(_tokens[4]);
 }
 
 
 DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
 
-	_locParseCtxt.pathName = strdup(_tokens[1]);
+	ctxt.pathName = strdup(_tokens[1]);
 }
 
 
 DECLARE_LOCATION_PARSER(escape)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(escape) ");
 
-	parseCommands(*_locParseCtxt.script, _location._escapeCommands);
+	parseCommands(_vm->_location._escapeCommands);
 }
 
 
 DECLARE_LOCATION_PARSER(zeta)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zeta) ");
 
-	_location._zeta0 = atoi(_tokens[1]);
-	_location._zeta1 = atoi(_tokens[2]);
+	_vm->_location._zeta0 = atoi(_tokens[1]);
+	_vm->_location._zeta1 = atoi(_tokens[2]);
 
 	if (_tokens[3][0] != '\0') {
-		_location._zeta2 = atoi(_tokens[1]);
+		_vm->_location._zeta2 = atoi(_tokens[1]);
 	} else {
-		_location._zeta2 = 50;
+		_vm->_location._zeta2 = 50;
 	}
 }
 
 DECLARE_COMMAND_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(ifchar) ");
 
-	if (!scumm_stricmp(_char.getName(), _tokens[1]))
-		_locParseCtxt.script->skip("endif");
+	if (!scumm_stricmp(_vm->_char.getName(), _tokens[1]))
+		_script->skip("endif");
 }
 
 
@@ -316,24 +515,24 @@ DECLARE_COMMAND_PARSER(endif)  {
 DECLARE_COMMAND_PARSER(location)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(location) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._string = strdup(_tokens[1]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._string = strdup(_tokens[1]);
+	ctxt.nextToken++;
 
-	if (_tokens[_locParseCtxt.nextToken][0] != '\0') {
-		if (isdigit(_tokens[_locParseCtxt.nextToken][0]) || _tokens[_locParseCtxt.nextToken][0] == '-') {
-			_locParseCtxt.cmd->u._startPos.x = atoi(_tokens[_locParseCtxt.nextToken]);
-			_locParseCtxt.nextToken++;
-			_locParseCtxt.cmd->u._startPos.y = atoi(_tokens[_locParseCtxt.nextToken]);
-			_locParseCtxt.nextToken++;
+	if (_tokens[ctxt.nextToken][0] != '\0') {
+		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
+			ctxt.cmd->u._startPos.x = atoi(_tokens[ctxt.nextToken]);
+			ctxt.nextToken++;
+			ctxt.cmd->u._startPos.y = atoi(_tokens[ctxt.nextToken]);
+			ctxt.nextToken++;
 		}
 
-		if (isdigit(_tokens[_locParseCtxt.nextToken][0]) || _tokens[_locParseCtxt.nextToken][0] == '-') {
-			_locParseCtxt.cmd->u._startPos2.x = atoi(_tokens[_locParseCtxt.nextToken]);
-			_locParseCtxt.nextToken++;
-			_locParseCtxt.cmd->u._startPos2.y = atoi(_tokens[_locParseCtxt.nextToken]);
-			_locParseCtxt.nextToken++;
+		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
+			ctxt.cmd->u._startPos2.x = atoi(_tokens[ctxt.nextToken]);
+			ctxt.nextToken++;
+			ctxt.cmd->u._startPos2.y = atoi(_tokens[ctxt.nextToken]);
+			ctxt.nextToken++;
 		}
 	}
 
@@ -345,10 +544,10 @@ DECLARE_COMMAND_PARSER(location)  {
 DECLARE_COMMAND_PARSER(string)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(string) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._string = strdup(_tokens[1]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._string = strdup(_tokens[1]);
+	ctxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -357,12 +556,12 @@ DECLARE_COMMAND_PARSER(string)  {
 DECLARE_COMMAND_PARSER(math)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(math) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._lvalue = _countersNames->lookup(_tokens[1]);
-	_locParseCtxt.nextToken++;
-	_locParseCtxt.cmd->u._rvalue = atoi(_tokens[2]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._lvalue = _vm->_countersNames->lookup(_tokens[1]);
+	ctxt.nextToken++;
+	ctxt.cmd->u._rvalue = atoi(_tokens[2]);
+	ctxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -372,29 +571,29 @@ DECLARE_COMMAND_PARSER(math)  {
 DECLARE_COMMAND_PARSER(test)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(test) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	uint counter = _countersNames->lookup(_tokens[1]);
-	_locParseCtxt.nextToken++;
+	uint counter = _vm->_countersNames->lookup(_tokens[1]);
+	ctxt.nextToken++;
 
 	if (counter == Table::notFound) {
 		if (!scumm_stricmp("SFX", _tokens[1])) {
-			_locParseCtxt.cmd->_id = CMD_TEST_SFX;
+			ctxt.cmd->_id = CMD_TEST_SFX;
 		} else {
 			error("unknown counter '%s' in test opcode", _tokens[1]);
 		}
 	} else {
-		_locParseCtxt.cmd->u._lvalue = counter;
-		_locParseCtxt.cmd->u._rvalue = atoi(_tokens[3]);
-		_locParseCtxt.nextToken++;
+		ctxt.cmd->u._lvalue = counter;
+		ctxt.cmd->u._rvalue = atoi(_tokens[3]);
+		ctxt.nextToken++;
 
 		if (_tokens[2][0] == '>') {
-			_locParseCtxt.cmd->_id = CMD_TEST_GT;
+			ctxt.cmd->_id = CMD_TEST_GT;
 		} else
 		if (_tokens[2][0] == '<') {
-			_locParseCtxt.cmd->_id = CMD_TEST_LT;
+			ctxt.cmd->_id = CMD_TEST_LT;
 		}
-		_locParseCtxt.nextToken++;
+		ctxt.nextToken++;
 	}
 
 	parseCommandFlags();
@@ -405,14 +604,14 @@ DECLARE_COMMAND_PARSER(test)  {
 DECLARE_COMMAND_PARSER(music)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(music) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._musicCommand = _audioCommandsNames->lookup(_tokens[1]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._musicCommand = _audioCommandsNames->lookup(_tokens[1]);
+	ctxt.nextToken++;
 
 	if (_tokens[2][0] != '\0' && scumm_stricmp("flags", _tokens[2]) && scumm_stricmp("gflags", _tokens[2])) {
-		_locParseCtxt.cmd->u._musicParm = atoi(_tokens[2]);
-		_locParseCtxt.nextToken++;
+		ctxt.cmd->u._musicParm = atoi(_tokens[2]);
+		ctxt.nextToken++;
 	}
 
 	parseCommandFlags();
@@ -423,18 +622,18 @@ DECLARE_COMMAND_PARSER(music)  {
 DECLARE_COMMAND_PARSER(zeta)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zeta) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._zeta0 = atoi(_tokens[1]);
-	_locParseCtxt.nextToken++;
-	_locParseCtxt.cmd->u._zeta1 = atoi(_tokens[2]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._zeta0 = atoi(_tokens[1]);
+	ctxt.nextToken++;
+	ctxt.cmd->u._zeta1 = atoi(_tokens[2]);
+	ctxt.nextToken++;
 
 	if (_tokens[3][0] != '\0') {
-		_locParseCtxt.cmd->u._zeta2 = atoi(_tokens[3]);
-		_locParseCtxt.nextToken++;
+		ctxt.cmd->u._zeta2 = atoi(_tokens[3]);
+		ctxt.nextToken++;
 	} else {
-		_locParseCtxt.cmd->u._zeta2 = 50;
+		ctxt.cmd->u._zeta2 = 50;
 	}
 
 	parseCommandFlags();
@@ -445,23 +644,23 @@ DECLARE_COMMAND_PARSER(zeta)  {
 DECLARE_COMMAND_PARSER(give)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(give) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._object = 4 + atoi(_tokens[1]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._object = 4 + atoi(_tokens[1]);
+	ctxt.nextToken++;
 
 	if (!scumm_stricmp("dino", _tokens[2])) {
-		_locParseCtxt.cmd->u._characterId = 1;
+		ctxt.cmd->u._characterId = 1;
 	} else
 	if (!scumm_stricmp("doug", _tokens[2])) {
-		_locParseCtxt.cmd->u._characterId = 2;
+		ctxt.cmd->u._characterId = 2;
 	} else
 	if (!scumm_stricmp("donna", _tokens[2])) {
-		_locParseCtxt.cmd->u._characterId = 3;
+		ctxt.cmd->u._characterId = 3;
 	} else
 		error("unknown recipient '%s' in give command", _tokens[2]);
 
-	_locParseCtxt.nextToken++;
+	ctxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -471,21 +670,21 @@ DECLARE_COMMAND_PARSER(give)  {
 DECLARE_COMMAND_PARSER(text)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(text) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
 	if (isdigit(_tokens[1][1])) {
-		_locParseCtxt.cmd->u._zeta0 = atoi(_tokens[1]);
-		_locParseCtxt.nextToken++;
+		ctxt.cmd->u._zeta0 = atoi(_tokens[1]);
+		ctxt.nextToken++;
 	} else {
-		_locParseCtxt.cmd->u._zeta0 = -1;
+		ctxt.cmd->u._zeta0 = -1;
 	}
 
-	_locParseCtxt.cmd->u._string = strdup(_tokens[_locParseCtxt.nextToken]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._string = strdup(_tokens[ctxt.nextToken]);
+	ctxt.nextToken++;
 
-	if (_tokens[_locParseCtxt.nextToken][0] != '\0' && scumm_stricmp("flags", _tokens[_locParseCtxt.nextToken])) {
-		_locParseCtxt.cmd->u._string2 = strdup(_tokens[_locParseCtxt.nextToken]);
-		_locParseCtxt.nextToken++;
+	if (_tokens[ctxt.nextToken][0] != '\0' && scumm_stricmp("flags", _tokens[ctxt.nextToken])) {
+		ctxt.cmd->u._string2 = strdup(_tokens[ctxt.nextToken]);
+		ctxt.nextToken++;
 	}
 
 
@@ -497,10 +696,10 @@ DECLARE_COMMAND_PARSER(text)  {
 DECLARE_COMMAND_PARSER(unary)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(unary) ");
 
-	createCommand(_locationParser->_lookup);
+	createCommand(_parser->_lookup);
 
-	_locParseCtxt.cmd->u._rvalue = atoi(_tokens[1]);
-	_locParseCtxt.nextToken++;
+	ctxt.cmd->u._rvalue = atoi(_tokens[1]);
+	ctxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -511,14 +710,14 @@ DECLARE_ZONE_PARSER(limits)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(limits) ");
 
 	if (isalpha(_tokens[1][1])) {
-		_locParseCtxt.z->_flags |= kFlagsAnimLinked;
-		_locParseCtxt.z->_linkedAnim = findAnimation(_tokens[1]);
-		_locParseCtxt.z->_linkedName = strdup(_tokens[1]);
+		ctxt.z->_flags |= kFlagsAnimLinked;
+		ctxt.z->_linkedAnim = _vm->findAnimation(_tokens[1]);
+		ctxt.z->_linkedName = strdup(_tokens[1]);
 	} else {
-		_locParseCtxt.z->_left = atoi(_tokens[1]);
-		_locParseCtxt.z->_top = atoi(_tokens[2]);
-		_locParseCtxt.z->_right = atoi(_tokens[3]);
-		_locParseCtxt.z->_bottom = atoi(_tokens[4]);
+		ctxt.z->_left = atoi(_tokens[1]);
+		ctxt.z->_top = atoi(_tokens[2]);
+		ctxt.z->_right = atoi(_tokens[3]);
+		ctxt.z->_bottom = atoi(_tokens[4]);
 	}
 }
 
@@ -526,9 +725,9 @@ DECLARE_ZONE_PARSER(limits)  {
 DECLARE_ZONE_PARSER(moveto)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(moveto) ");
 
-	_locParseCtxt.z->_moveTo.x = atoi(_tokens[1]);
-	_locParseCtxt.z->_moveTo.y = atoi(_tokens[2]);
-//	_locParseCtxt.z->_moveTo.z = atoi(_tokens[3]);
+	ctxt.z->_moveTo.x = atoi(_tokens[1]);
+	ctxt.z->_moveTo.y = atoi(_tokens[2]);
+//	ctxt.z->_moveTo.z = atoi(_tokens[3]);
 }
 
 
@@ -536,45 +735,45 @@ DECLARE_ZONE_PARSER(type)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(type) ");
 
 	if (_tokens[2][0] != '\0') {
-		_locParseCtxt.z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
+		ctxt.z->_type = (4 + _vm->_objectsNames->lookup(_tokens[2])) << 16;
 	}
 	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 	if (_si != Table::notFound) {
-		_locParseCtxt.z->_type |= 1 << (_si - 1);
-		parseZoneTypeBlock(*_locParseCtxt.script, _locParseCtxt.z);
+		ctxt.z->_type |= 1 << (_si - 1);
+		parseZoneTypeBlock(ctxt.z);
 
-//		if (_locParseCtxt.z->_type & kZoneHear) {
+//		if (ctxt.z->_type & kZoneHear) {
 //			_soundMan->sfxCommand(START...);
 //		}
 	}
 
-	_locationParser->popTables();
+	_parser->popTables();
 }
 
 
 DECLARE_ANIM_PARSER(file)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(file) ");
 
-	_locParseCtxt.a->gfxobj = _gfx->loadAnim(_tokens[1]);
+	ctxt.a->gfxobj = _vm->_gfx->loadAnim(_tokens[1]);
 }
 
 
 DECLARE_ANIM_PARSER(position)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(position) ");
 
-	_locParseCtxt.a->_left = atoi(_tokens[1]);
-	_locParseCtxt.a->_top = atoi(_tokens[2]);
-	_locParseCtxt.a->_z = atoi(_tokens[3]);
-	_locParseCtxt.a->_frame = atoi(_tokens[4]);
+	ctxt.a->_left = atoi(_tokens[1]);
+	ctxt.a->_top = atoi(_tokens[2]);
+	ctxt.a->_z = atoi(_tokens[3]);
+	ctxt.a->_frame = atoi(_tokens[4]);
 }
 
 
 DECLARE_ANIM_PARSER(moveto)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(moveto) ");
 
-	_locParseCtxt.a->_moveTo.x = atoi(_tokens[1]);
-	_locParseCtxt.a->_moveTo.y = atoi(_tokens[2]);
-//	_locParseCtxt.a->_moveTo.z = atoi(_tokens[3]);
+	ctxt.a->_moveTo.x = atoi(_tokens[1]);
+	ctxt.a->_moveTo.y = atoi(_tokens[2]);
+//	ctxt.a->_moveTo.z = atoi(_tokens[3]);
 }
 
 
@@ -582,17 +781,17 @@ DECLARE_ANIM_PARSER(endanimation)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");
 
 
-	if (_locParseCtxt.a->gfxobj) {
-		_locParseCtxt.a->_right = _locParseCtxt.a->width();
-		_locParseCtxt.a->_bottom = _locParseCtxt.a->height();
+	if (ctxt.a->gfxobj) {
+		ctxt.a->_right = ctxt.a->width();
+		ctxt.a->_bottom = ctxt.a->height();
 	}
 
-	_locParseCtxt.a->_oldPos.x = -1000;
-	_locParseCtxt.a->_oldPos.y = -1000;
+	ctxt.a->_oldPos.x = -1000;
+	ctxt.a->_oldPos.y = -1000;
 
-	_locParseCtxt.a->_flags |= 0x1000000;
+	ctxt.a->_flags |= 0x1000000;
 
-	_locationParser->popTables();
+	_parser->popTables();
 }
 
 
@@ -607,7 +806,8 @@ DECLARE_ANIM_PARSER(endanimation)  {
 DECLARE_INSTRUCTION_PARSER(zone)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(zone) ");
 
-	_instParseCtxt.inst->_z = findZone(_tokens[1]);
+	ctxt.inst->_z = _vm->findZone(_tokens[1]);
+	ctxt.inst->_index = _parser->_lookup;
 }
 
 
@@ -616,11 +816,12 @@ DECLARE_INSTRUCTION_PARSER(color)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(color) ");
 
 
-	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	parseRValue(ctxt.inst->_opB, _tokens[1]);
 
-	_instParseCtxt.inst->_colors[0] = atoi(_tokens[2]);
-	_instParseCtxt.inst->_colors[1] = atoi(_tokens[3]);
-	_instParseCtxt.inst->_colors[2] = atoi(_tokens[4]);
+	ctxt.inst->_colors[0] = atoi(_tokens[2]);
+	ctxt.inst->_colors[1] = atoi(_tokens[3]);
+	ctxt.inst->_colors[2] = atoi(_tokens[4]);
+	ctxt.inst->_index = _parser->_lookup;
 
 }
 
@@ -629,9 +830,10 @@ DECLARE_INSTRUCTION_PARSER(mask)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(mask) ");
 
 
-	parseRValue(_instParseCtxt.inst->_opA, _tokens[1]);
-	parseRValue(_instParseCtxt.inst->_opB, _tokens[2]);
-	parseRValue(_instParseCtxt.inst->_opC, _tokens[3]);
+	parseRValue(ctxt.inst->_opA, _tokens[1]);
+	parseRValue(ctxt.inst->_opB, _tokens[2]);
+	parseRValue(ctxt.inst->_opC, _tokens[3]);
+	ctxt.inst->_index = _parser->_lookup;
 
 }
 
@@ -639,7 +841,8 @@ DECLARE_INSTRUCTION_PARSER(mask)  {
 DECLARE_INSTRUCTION_PARSER(print)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(print) ");
 
-	parseRValue(_instParseCtxt.inst->_opB, _tokens[1]);
+	parseRValue(ctxt.inst->_opB, _tokens[1]);
+	ctxt.inst->_index = _parser->_lookup;
 }
 
 
@@ -650,18 +853,19 @@ DECLARE_INSTRUCTION_PARSER(text)  {
 	int _si = 1;
 
 	if (isdigit(_tokens[1][1])) {
-		_instParseCtxt.inst->_y = atoi(_tokens[1]);
+		ctxt.inst->_y = atoi(_tokens[1]);
 		_si = 2;
 	} else {
-		_instParseCtxt.inst->_y = -1;
+		ctxt.inst->_y = -1;
 	}
 
-	_instParseCtxt.inst->_text = strdup(_tokens[_si]);
+	ctxt.inst->_text = strdup(_tokens[_si]);
 	_si++;
 
 	if (_tokens[_si][0] != '\0' && scumm_stricmp("flags", _tokens[_si])) {
-		_instParseCtxt.inst->_text2 = strdup(_tokens[_si]);
+		ctxt.inst->_text2 = strdup(_tokens[_si]);
 	}
+	ctxt.inst->_index = _parser->_lookup;
 
 }
 
@@ -670,24 +874,24 @@ DECLARE_INSTRUCTION_PARSER(if_op)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(if_op) ");
 
 
-	if (_instParseCtxt.openIf)
+	if (ctxt.openIf)
 		error("cannot nest 'if' blocks");
 
-	parseLValue(_instParseCtxt.inst->_opA, _tokens[1]);
-	parseRValue(_instParseCtxt.inst->_opB, _tokens[3]);
+	parseLValue(ctxt.inst->_opA, _tokens[1]);
+	parseRValue(ctxt.inst->_opB, _tokens[3]);
 
 	if (_tokens[2][0] == '=') {
-		_instParseCtxt.inst->_index = INST_IFEQ;
+		ctxt.inst->_index = INST_IFEQ;
 	} else
 	if (_tokens[2][0] == '>') {
-		_instParseCtxt.inst->_index = INST_IFGT;
+		ctxt.inst->_index = INST_IFGT;
 	} else
 	if (_tokens[2][0] == '<') {
-		_instParseCtxt.inst->_index = INST_IFLT;
+		ctxt.inst->_index = INST_IFLT;
 	} else
 		error("unknown test operator '%s' in if-clause", _tokens[2]);
 
-	_instParseCtxt.openIf = _instParseCtxt.inst;
+	ctxt.openIf = ctxt.inst;
 
 }
 
@@ -695,35 +899,36 @@ DECLARE_INSTRUCTION_PARSER(if_op)  {
 DECLARE_INSTRUCTION_PARSER(endif)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(endif) ");
 
-	if (!_instParseCtxt.openIf)
+	if (!ctxt.openIf)
 		error("unexpected 'endif'");
 
-//	_instParseCtxt.openIf->_endif = _instParseCtxt.inst;
-	_instParseCtxt.openIf = nullInstructionPtr;
+//	ctxt.openIf->_endif = ctxt.inst;
+	ctxt.openIf = nullInstructionPtr;
+	ctxt.inst->_index = _parser->_lookup;
 }
 
 
-void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
+void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 
 	if (isdigit(str[0]) || str[0] == '-') {
 		v.setImmediate(atoi(str));
 		return;
 	}
 
-	int index = _instParseCtxt.program->findLocal(str);
+	int index = _program->findLocal(str);
 	if (index != -1) {
-		v.setLocal(&_instParseCtxt.locals[index]);
+		v.setLocal(&ctxt.locals[index]);
 		return;
 	}
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = findAnimation(&str[2]);
+		a = _vm->findAnimation(&str[2]);
 		if (!a) {
 			error("unknown animation '%s' in script", &str[2]);
 		}
 	} else
-		a = AnimationPtr(_instParseCtxt.a);
+		a = AnimationPtr(ctxt.a);
 
 	if (str[0] == 'X') {
 		v.setField(&a->_left);
@@ -744,197 +949,186 @@ void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
 		v.setRandom(atoi(&str[1]));
 	} else
 	if (str[0] == 'L') {
-		v.setField(&_lipSyncVal);
+		v.setField(&_vm->_lipSyncVal);
 	}
 
 }
 
-typedef OpcodeImpl<Parallaction_br> OpcodeV2;
-#define INSTRUCTION_PARSER(sig) OpcodeV2(this, &Parallaction_br::instParse_##sig)
-#define ZONE_PARSER(sig)		OpcodeV2(this, &Parallaction_br::locZoneParse_##sig)
-#define ANIM_PARSER(sig)		OpcodeV2(this, &Parallaction_br::locAnimParse_##sig)
-#define LOCATION_PARSER(sig)	OpcodeV2(this, &Parallaction_br::locParse_##sig)
-#define COMMAND_PARSER(sig)		OpcodeV2(this, &Parallaction_br::cmdParse_##sig)
 
-#define WARNING_PARSER(sig)		OpcodeV2(this, &Parallaction_br::warning_##sig)
+void LocationParser_br::init() {
 
-void Parallaction_br::initParsers() {
+	_parser = new Parser;
 
-	_locationParser = new Parser;
+	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_br), _zoneFlagNamesRes_br);
+	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_br), _zoneTypeNamesRes_br);
+	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_br), _commandsNamesRes_br);
+	_audioCommandsNames = new Table(ARRAYSIZE(_audioCommandsNamesRes_br), _audioCommandsNamesRes_br);
+	_locationStmt = new Table(ARRAYSIZE(_locationStmtRes_br), _locationStmtRes_br);
+	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
+	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
 
-	static const OpcodeV2 op0[] = {
-		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition
-		INSTRUCTION_PARSER(zone),		// on
-		INSTRUCTION_PARSER(zone),		// off
-		INSTRUCTION_PARSER(x),
-		INSTRUCTION_PARSER(y),
-		INSTRUCTION_PARSER(z),
-		INSTRUCTION_PARSER(f),
-		INSTRUCTION_PARSER(loop),
-		INSTRUCTION_PARSER(null),		// endloop
-		INSTRUCTION_PARSER(null),		// show
-		INSTRUCTION_PARSER(inc),
-		INSTRUCTION_PARSER(inc),		// dec
-		INSTRUCTION_PARSER(set),
-		INSTRUCTION_PARSER(put),
-		INSTRUCTION_PARSER(call),
-		INSTRUCTION_PARSER(null),		// wait
-		INSTRUCTION_PARSER(zone),		// start
-		INSTRUCTION_PARSER(zone),		// process
-		INSTRUCTION_PARSER(move),
-		INSTRUCTION_PARSER(color),
-		INSTRUCTION_PARSER(zone),		// sound
-		INSTRUCTION_PARSER(mask),
-		INSTRUCTION_PARSER(print),
-		INSTRUCTION_PARSER(text),
-		INSTRUCTION_PARSER(inc),		// mul
-		INSTRUCTION_PARSER(inc),		// div
-		INSTRUCTION_PARSER(if_op),
-		INSTRUCTION_PARSER(null),
-		INSTRUCTION_PARSER(null),
-		INSTRUCTION_PARSER(endif),
-		INSTRUCTION_PARSER(zone),		// stop
-		INSTRUCTION_PARSER(endscript)
-	};
+	Common::Array<const Opcode*> *table = 0;
 
-	uint i;
-	for (i = 0; i < ARRAYSIZE(op0); i++)
-		_instructionParsers.push_back(&op0[i]);
+	SetOpcodeTable(_commandParsers);
+	WARNING_PARSER(unexpected);
+	COMMAND_PARSER(flags);		// set
+	COMMAND_PARSER(flags);		// clear
+	COMMAND_PARSER(zone);	// start
+	COMMAND_PARSER(zone);		// speak
+	COMMAND_PARSER(zone);		// get
+	COMMAND_PARSER(location);
+	COMMAND_PARSER(zone);		// open
+	COMMAND_PARSER(zone);		// close
+	COMMAND_PARSER(zone);		// on
+	COMMAND_PARSER(zone);		// off
+	COMMAND_PARSER(call);
+	COMMAND_PARSER(flags);		// toggle
+	COMMAND_PARSER(drop);
+	COMMAND_PARSER(simple);		// quit
+	COMMAND_PARSER(move);
+	COMMAND_PARSER(zone);	// stop
+	COMMAND_PARSER(string);		// character
+	COMMAND_PARSER(string);		// followme
+	COMMAND_PARSER(simple);		// onmouse
+	COMMAND_PARSER(simple);		// offmouse
+	COMMAND_PARSER(drop);		// add
+	COMMAND_PARSER(zone);		// leave
+	COMMAND_PARSER(math);		// inc
+	COMMAND_PARSER(math);		// dec
+	COMMAND_PARSER(test);		// test
+	WARNING_PARSER(unexpected);
+	WARNING_PARSER(unexpected);
+	COMMAND_PARSER(math);		// let
+	COMMAND_PARSER(music);
+	COMMAND_PARSER(zone);		// fix
+	COMMAND_PARSER(zone);		// unfix
+	COMMAND_PARSER(zeta);
+	COMMAND_PARSER(unary);		// scroll
+	COMMAND_PARSER(string);		// swap
+	COMMAND_PARSER(give);
+	COMMAND_PARSER(text);
+	COMMAND_PARSER(unary);		// part
+	WARNING_PARSER(unexpected);
+	COMMAND_PARSER(simple);		// return
+	COMMAND_PARSER(simple);		// onsave
+	COMMAND_PARSER(simple);		// offsave
+	COMMAND_PARSER(endcommands);	// endcommands
+	COMMAND_PARSER(ifchar);
+	COMMAND_PARSER(endif);
+
+	SetOpcodeTable(_locationParsers);
+	WARNING_PARSER(unexpected);
+	LOCATION_PARSER(character);
+	LOCATION_PARSER(endlocation);
+	LOCATION_PARSER(ifchar);
+	LOCATION_PARSER(null);			// endif
+	LOCATION_PARSER(location);
+	LOCATION_PARSER(mask);
+	LOCATION_PARSER(path);
+	LOCATION_PARSER(null);			// disk
+	LOCATION_PARSER(localflags);
+	LOCATION_PARSER(commands);
+	LOCATION_PARSER(escape);
+	LOCATION_PARSER(acommands);
+	LOCATION_PARSER(flags);
+	LOCATION_PARSER(comment);
+	LOCATION_PARSER(endcomment);
+	LOCATION_PARSER(zone);
+	LOCATION_PARSER(animation);
+	LOCATION_PARSER(zeta);
+	LOCATION_PARSER(music);
+	LOCATION_PARSER(sound);
+
+	SetOpcodeTable(_locationZoneParsers);
+	WARNING_PARSER(unexpected);
+	ZONE_PARSER(endzone);
+	ZONE_PARSER(limits);
+	ZONE_PARSER(moveto);
+	ZONE_PARSER(type);
+	ZONE_PARSER(commands);
+	ZONE_PARSER(label);
+	ZONE_PARSER(flags);
 
 
-	static const OpcodeV2 op2[] = {
-		WARNING_PARSER(unexpected),
-		COMMAND_PARSER(flags),		// set
-		COMMAND_PARSER(flags),		// clear
-		COMMAND_PARSER(zone),	// start
-		COMMAND_PARSER(zone),		// speak
-		COMMAND_PARSER(zone),		// get
-		COMMAND_PARSER(location),
-		COMMAND_PARSER(zone),		// open
-		COMMAND_PARSER(zone),		// close
-		COMMAND_PARSER(zone),		// on
-		COMMAND_PARSER(zone),		// off
-		COMMAND_PARSER(call),
-		COMMAND_PARSER(flags),		// toggle
-		COMMAND_PARSER(drop),
-		COMMAND_PARSER(simple),		// quit
-		COMMAND_PARSER(move),
-		COMMAND_PARSER(zone),	// stop
-		COMMAND_PARSER(string),		// character
-		COMMAND_PARSER(string),		// followme
-		COMMAND_PARSER(simple),		// onmouse
-		COMMAND_PARSER(simple),		// offmouse
-		COMMAND_PARSER(drop),		// add
-		COMMAND_PARSER(zone),		// leave
-		COMMAND_PARSER(math),		// inc
-		COMMAND_PARSER(math),		// dec
-		COMMAND_PARSER(test),		// test
-		WARNING_PARSER(unexpected),
-		WARNING_PARSER(unexpected),
-		COMMAND_PARSER(math),		// let
-		COMMAND_PARSER(music),
-		COMMAND_PARSER(zone),		// fix
-		COMMAND_PARSER(zone),		// unfix
-		COMMAND_PARSER(zeta),
-		COMMAND_PARSER(unary),		// scroll
-		COMMAND_PARSER(string),		// swap
-		COMMAND_PARSER(give),
-		COMMAND_PARSER(text),
-		COMMAND_PARSER(unary),		// part
-		WARNING_PARSER(unexpected),
-		COMMAND_PARSER(simple),		// return
-		COMMAND_PARSER(simple),		// onsave
-		COMMAND_PARSER(simple),		// offsave
-		COMMAND_PARSER(endcommands),	// endcommands
-		COMMAND_PARSER(ifchar),
-		COMMAND_PARSER(endif)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op2); i++)
-		_commandParsers.push_back(&op2[i]);
-
-	static const OpcodeV2 op4[] = {
-		WARNING_PARSER(unexpected),
-		LOCATION_PARSER(character),
-		LOCATION_PARSER(endlocation),
-		LOCATION_PARSER(ifchar),
-		LOCATION_PARSER(null),			// endif
-		LOCATION_PARSER(location),
-		LOCATION_PARSER(mask),
-		LOCATION_PARSER(path),
-		LOCATION_PARSER(null),			// disk
-		LOCATION_PARSER(localflags),
-		LOCATION_PARSER(commands),
-		LOCATION_PARSER(escape),
-		LOCATION_PARSER(acommands),
-		LOCATION_PARSER(flags),
-		LOCATION_PARSER(comment),
-		LOCATION_PARSER(endcomment),
-		LOCATION_PARSER(zone),
-		LOCATION_PARSER(animation),
-		LOCATION_PARSER(zeta),
-		LOCATION_PARSER(music),
-		LOCATION_PARSER(sound)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op4); i++)
-		_locationParsers.push_back(&op4[i]);
-
-	static const OpcodeV2 op5[] = {
-		WARNING_PARSER(unexpected),
-		ZONE_PARSER(endzone),
-		ZONE_PARSER(limits),
-		ZONE_PARSER(moveto),
-		ZONE_PARSER(type),
-		ZONE_PARSER(commands),
-		ZONE_PARSER(label),
-		ZONE_PARSER(flags)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op5); i++)
-		_locationZoneParsers.push_back(&op5[i]);
-
-	static const OpcodeV2 op6[] = {
-		WARNING_PARSER(unexpected),
-		ANIM_PARSER(endanimation),
-		ANIM_PARSER(endanimation),		// endzone
-		ANIM_PARSER(script),
-		ANIM_PARSER(commands),
-		ANIM_PARSER(type),
-		ANIM_PARSER(label),
-		ANIM_PARSER(flags),
-		ANIM_PARSER(file),
-		ANIM_PARSER(position),
-		ANIM_PARSER(moveto)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op6); i++)
-		_locationAnimParsers.push_back(&op6[i]);
+	SetOpcodeTable(_locationAnimParsers);
+	WARNING_PARSER(unexpected);
+	ANIM_PARSER(endanimation);
+	ANIM_PARSER(endanimation);		// endzone
+	ANIM_PARSER(script);
+	ANIM_PARSER(commands);
+	ANIM_PARSER(type);
+	ANIM_PARSER(label);
+	ANIM_PARSER(flags);
+	ANIM_PARSER(file);
+	ANIM_PARSER(position);
+	ANIM_PARSER(moveto);
 }
 
-void Parallaction_br::parseLocation(const char* filename) {
+void ProgramParser_br::init() {
 
-	_locParseCtxt.numZones = 0;
-	_locParseCtxt.bgName = 0;
-	_locParseCtxt.maskName = 0;
-	_locParseCtxt.pathName = 0;
+	_parser = new Parser;
 
-	Super::parseLocation(filename);
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 
-	_gfx->setBackground(kBackgroundLocation, _locParseCtxt.bgName, _locParseCtxt.maskName, _locParseCtxt.pathName);
-	_pathBuffer = &_gfx->_backgroundInfo.path;
+	Common::Array<const Opcode*> *table = 0;
 
-	free(_locParseCtxt.bgName);
-	free(_locParseCtxt.maskName);
-	free(_locParseCtxt.pathName);
-
-//	drawZones();
-
-	return;
+	SetOpcodeTable(_instructionParsers);
+	INSTRUCTION_PARSER(defLocal);	// invalid opcode -> local definition
+	INSTRUCTION_PARSER(zone);		// on
+	INSTRUCTION_PARSER(zone);		// off
+	INSTRUCTION_PARSER(x);
+	INSTRUCTION_PARSER(y);
+	INSTRUCTION_PARSER(z);
+	INSTRUCTION_PARSER(f);
+	INSTRUCTION_PARSER(loop);
+	INSTRUCTION_PARSER(null);		// endloop
+	INSTRUCTION_PARSER(null);		// show
+	INSTRUCTION_PARSER(inc);
+	INSTRUCTION_PARSER(inc);		// dec
+	INSTRUCTION_PARSER(set);
+	INSTRUCTION_PARSER(put);
+	INSTRUCTION_PARSER(call);
+	INSTRUCTION_PARSER(null);		// wait
+	INSTRUCTION_PARSER(zone);		// start
+	INSTRUCTION_PARSER(zone);		// process
+	INSTRUCTION_PARSER(move);
+	INSTRUCTION_PARSER(color);
+	INSTRUCTION_PARSER(zone);		// sound
+	INSTRUCTION_PARSER(mask);
+	INSTRUCTION_PARSER(print);
+	INSTRUCTION_PARSER(text);
+	INSTRUCTION_PARSER(inc);		// mul
+	INSTRUCTION_PARSER(inc);		// div
+	INSTRUCTION_PARSER(if_op);
+	INSTRUCTION_PARSER(null);
+	INSTRUCTION_PARSER(null);
+	INSTRUCTION_PARSER(endif);
+	INSTRUCTION_PARSER(zone);		// stop
+	INSTRUCTION_PARSER(endscript);
 }
 
+void LocationParser_br::parse(Script *script) {
 
+	ctxt.numZones = 0;
+	ctxt.bgName = 0;
+	ctxt.maskName = 0;
+	ctxt.pathName = 0;
+	ctxt.characterName = 0;
 
+	LocationParser_ns::parse(script);
 
+	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.bgName, ctxt.maskName, ctxt.pathName);
+	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo.path;
+
+	if (ctxt.characterName) {
+		_vm->changeCharacter(ctxt.characterName);
+	}
+
+	free(ctxt.bgName);
+	free(ctxt.maskName);
+	free(ctxt.pathName);
+	free(ctxt.characterName);
+
+}
 
 } // namespace Parallaction

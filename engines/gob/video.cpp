@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "graphics/cursorman.h"
 
@@ -87,10 +86,14 @@ void SurfaceDesc::swap(SurfaceDesc &surf) {
 Video::Video(GobEngine *vm) : _vm(vm) {
 	_doRangeClamp = false;
 	_videoDriver = 0;
+
 	_surfWidth = 320;
 	_surfHeight = 200;
+
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
+
+	_splitSurf = 0;
 	_splitHeight1 = 200;
 	_splitHeight2 = 0;
 	_splitStart = 0;
@@ -179,21 +182,34 @@ void Video::retrace(bool mouse) {
 		int screenOffset = _scrollOffsetY * _surfWidth + _scrollOffsetX;
 		int screenX = _screenDeltaX;
 		int screenY = _screenDeltaY;
-		int screenWidth = _vm->_width;
-		int screenHeight = _splitHeight1;
+		int screenWidth = MIN<int>(_surfWidth - _scrollOffsetX, _vm->_width);
+		int screenHeight = MIN<int>(_surfHeight - _splitHeight2 - _scrollOffsetY, _vm->_height);
 
 		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
 				_surfWidth, screenX, screenY, screenWidth, screenHeight);
 
-		if (_splitHeight2 > 0) {
+		if (_splitSurf) {
+
+			screenOffset = 0;
+			screenX = 0;
+			screenY = _vm->_height - _splitSurf->getHeight();
+			screenWidth = MIN<int>(_vm->_width, _splitSurf->getWidth());
+			screenHeight = _splitSurf->getHeight();
+
+			g_system->copyRectToScreen(_splitSurf->getVidMem() + screenOffset,
+					_splitSurf->getWidth(), screenX, screenY, screenWidth, screenHeight);
+
+		} else if (_splitHeight2 > 0) {
+
 			screenOffset = _splitStart * _surfWidth;
 			screenX = 0;
 			screenY = _vm->_height - _splitHeight2;
-			screenWidth = _vm->_width;
+			screenWidth = MIN<int>(_surfWidth, _vm->_width);
 			screenHeight = _splitHeight2;
 
 			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
 					_surfWidth, screenX, screenY, screenWidth, screenHeight);
+
 		}
 
 		g_system->updateScreen();

@@ -760,10 +760,8 @@ RoomExitCoordinateData &RoomExitCoordinates::getData(uint16 destRoomNumber) {
 // The following classes hold any sequence offsets that are being delayed
 
 SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag) {
-	OSystem &system = *g_system;
-
-	// The delay is in number of seconds
-	timeoutCtr = system.getMillis() + delay * 1000;
+	// The delay is in number of seconds - convert it to remaining milliseconds
+	timeoutCtr = delay * 1000;
 	sequenceOffset = seqOffset;
 	canClear = canClearFlag;
 }
@@ -784,21 +782,23 @@ void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 }
 
 void SequenceDelayList::tick() {
-	uint32 currTime = g_system->getMillis();
 	SequenceDelayList::iterator i;
 
-	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d", currTime);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d", 
+		g_system->getMillis());
 
 	for (i = begin(); i != end(); i++) {
 		SequenceDelayData *entry = (*i).get();
 		debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check %xh at time %d", entry->sequenceOffset, entry->timeoutCtr);
 
-		if (currTime >= entry->timeoutCtr) {
+		if (entry->timeoutCtr <= GAME_FRAME_DELAY) {
 			// Timeout reached - delete entry from list and execute the sequence
 			uint16 seqOffset = entry->sequenceOffset;
 			erase(i);
 			Script::execute(seqOffset);
 			return;
+		} else {
+			entry->timeoutCtr -= GAME_FRAME_DELAY;
 		}
 	}
 }
@@ -816,14 +816,12 @@ void SequenceDelayList::clear(bool forceClear) {
 }
 
 void SequenceDelayList::saveToStream(WriteStream *stream) {
-	uint32 currTime = g_system->getMillis();
 	SequenceDelayList::iterator i;
 
 	for (i = begin(); i != end(); ++i) {
 		SequenceDelayData *entry = (*i).get();
 		stream->writeUint16LE(entry->sequenceOffset);
-		stream->writeUint32LE((currTime > entry->timeoutCtr ) ? 0 :
-			entry->timeoutCtr - currTime);
+		stream->writeUint32LE(entry->timeoutCtr);
 		stream->writeByte(entry->canClear);
 	}
 
@@ -833,10 +831,9 @@ void SequenceDelayList::saveToStream(WriteStream *stream) {
 void SequenceDelayList::loadFromStream(ReadStream *stream) {
 	clear(true);
 	uint16 seqOffset;
-	uint32 currTime = g_system->getMillis();
 
 	while ((seqOffset = stream->readUint16LE()) != 0) {
-		uint32 delay = currTime + stream->readUint32LE();
+		uint32 delay = stream->readUint32LE();
 		bool canClear = stream->readByte() != 0;
 		push_back(SequenceDelayList::value_type(SequenceDelayData::load(delay, seqOffset, canClear)));
 	}
@@ -1008,8 +1005,8 @@ RandomActionSet::RandomActionSet(uint16 *&offset) {
 }
 
 RandomActionSet::~RandomActionSet() {
-	delete [] _types;
-	delete [] _ids;
+	delete[] _types;
+	delete[] _ids;
 }
 
 RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {

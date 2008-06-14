@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -148,22 +148,22 @@
 			RelativePath="..\..\engines\made\screen.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\made\screenfx.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\made\screenfx.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\made\script.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\made\script.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\made\scriptfuncs.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\made\scriptfuncs.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\made\scriptfuncs_lgop2.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\made\scriptfuncs_mhne.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\made\scriptfuncs_rtz.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\made\sound.cpp">

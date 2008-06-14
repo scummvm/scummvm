@@ -78,7 +78,7 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 		startoffset = endoffset;
 	}
 
-	delete [] buffer;
+	delete[] buffer;
 	return true;
 }
 

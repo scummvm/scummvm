@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -32,8 +31,6 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
-#include "gob/music.h"
-#include "gob/cdrom.h"
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/goblin.h"
@@ -43,8 +40,8 @@
 #include "gob/palanim.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -932,16 +929,16 @@ void Inter_v1::o1_initMult() {
 				_vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (int i = 0; i < _vm->_mult->_objCount; i++) {
-			_vm->_mult->_objects[i].pPosX =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posXVar / 4) * 4);
-			_vm->_mult->_objects[i].pPosY =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posYVar / 4) * 4);
+			uint32 offPosX = i * 4 + (posXVar / 4) * 4;
+			uint32 offPosY = i * 4 + (posYVar / 4) * 4;
+			uint32 offAnim = animDataVar + i * 4 * _vm->_global->_inter_animDataSize;
+
+			_vm->_mult->_objects[i].pPosX = (int32 *) _variables->getAddressOff32(offPosX);
+			_vm->_mult->_objects[i].pPosY = (int32 *) _variables->getAddressOff32(offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables +
-							animDataVar + i * 4 * _vm->_global->_inter_animDataSize);
+				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
+						_vm->_global->_inter_animDataSize);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -1071,12 +1068,8 @@ void Inter_v1::o1_loadCurLayer() {
 
 void Inter_v1::o1_playCDTrack() {
 	evalExpr(0);
-	if (_vm->_platform == Common::kPlatformMacintosh) {
-		if (_vm->_adlib)
-			_vm->_adlib->playTrack(_vm->_global->_inter_resStr);
-	} else
-		// Used in gob1 CD
-		_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
+	_vm->_sound->adlibPlayBgMusic(); // Mac version
+	_vm->_sound->cdPlay(_vm->_global->_inter_resStr); // PC CD version
 }
 
 void Inter_v1::o1_getCDTrackPos() {
@@ -1088,19 +1081,15 @@ void Inter_v1::o1_getCDTrackPos() {
 
 	_vm->_util->longDelay(1);
 
-	int pos = _vm->_cdrom->getTrackPos();
+	int pos = _vm->_sound->cdGetTrackPos();
 	if (pos == -1)
 		pos = 32767;
 	WRITE_VAR(5, pos);
 }
 
 void Inter_v1::o1_stopCD() {
-	if (_vm->_platform == Common::kPlatformMacintosh) {
-		if (_vm->_adlib)
-			_vm->_adlib->stopPlay();
-	} else
-		// Used in gob1 CD
-		_vm->_cdrom->stopPlaying();
+	_vm->_sound->adlibStop(); // Mac version
+	_vm->_sound->cdStop(); // PC CD version
 }
 
 void Inter_v1::o1_loadFontToSprite() {
@@ -1685,7 +1674,7 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	default:
-		_vm->_snd->speakerOnUpdate(cmd);
+		_vm->_sound->speakerOnUpdate(cmd);
 		if (cmd < 20) {
 			_vm->_util->delay(cmd);
 			_noBusyWait = true;
@@ -1759,12 +1748,12 @@ bool Inter_v1::o1_renewTimeInVars(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_speakerOn(OpFuncParams &params) {
-	_vm->_snd->speakerOn(_vm->_parse->parseValExpr(), -1);
+	_vm->_sound->speakerOn(_vm->_parse->parseValExpr(), -1);
 	return false;
 }
 
 bool Inter_v1::o1_speakerOff(OpFuncParams &params) {
-	_vm->_snd->speakerOff();
+	_vm->_sound->speakerOff();
 	return false;
 }
 
@@ -1978,10 +1967,10 @@ bool Inter_v1::o1_playSound(OpFuncParams &params) {
 	repCount = _vm->_parse->parseValExpr();
 	frequency = _vm->_parse->parseValExpr();
 
-	SoundDesc &sample = _vm->_game->_soundSamples[index];
+	SoundDesc *sample = _vm->_sound->sampleGetBySlot(index);
 
 	_soundEndTimeKey = 0;
-	if (sample.empty())
+	if (!sample || sample->empty())
 		return false;
 
 	if (repCount < 0) {
@@ -1991,31 +1980,28 @@ bool Inter_v1::o1_playSound(OpFuncParams &params) {
 		repCount = -repCount;
 		_soundEndTimeKey = _vm->_util->getTimeKey();
 
-		freq2 = frequency ? frequency : sample._frequency;
+		freq2 = frequency ? frequency : sample->_frequency;
 		endRep = MAX(repCount - 1, 1);
 
-		_soundStopVal = sample.calcFadeOutLength(freq2);
-		_soundEndTimeKey += sample.calcLength(endRep, freq2, true);
+		_soundStopVal = sample->calcFadeOutLength(freq2);
+		_soundEndTimeKey += sample->calcLength(endRep, freq2, true);
 	}
 
-	if (sample.getType() == SOUND_ADL) {
-		if (_vm->_adlib) {
-			_vm->_adlib->load(sample.getData(), sample.size(), index);
-			_vm->_adlib->setRepeating(repCount - 1);
-			_vm->_adlib->startPlay();
-		}
+	if (sample->getType() == SOUND_ADL) {
+		_vm->_sound->adlibLoad(sample->getData(), sample->size(), index);
+		_vm->_sound->adlibSetRepeating(repCount - 1);
+		_vm->_sound->adlibPlay();
 	} else {
-		_vm->_snd->stopSound(0);
-		_vm->_snd->playSample(sample, repCount - 1, frequency);
+		_vm->_sound->blasterStop(0);
+		_vm->_sound->blasterPlay(sample, repCount - 1, frequency);
 	}
 
 	return false;
 }
 
 bool Inter_v1::o1_stopSound(OpFuncParams &params) {
-	if (_vm->_adlib)
-		_vm->_adlib->stopPlay();
-	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
+	_vm->_sound->adlibStop();
+	_vm->_sound->blasterStop(_vm->_parse->parseValExpr());
 
 	_soundEndTimeKey = 0;
 	return false;
@@ -2032,7 +2018,7 @@ bool Inter_v1::o1_freeSoundSlot(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
-	_vm->_snd->waitEndPlay();
+	_vm->_sound->blasterWaitEndPlay();
 	return false;
 }
 
@@ -2046,7 +2032,7 @@ bool Inter_v1::o1_playComposition(OpFuncParams &params) {
 	for (int i = 0; i < 50; i++)
 		composition[i] = (int16) VAR_OFFSET(dataVar + i * 4);
 
-	_vm->_snd->playComposition(composition, freqVal);
+	_vm->_sound->blasterPlayComposition(composition, freqVal);
 	return false;
 }
 
@@ -2083,8 +2069,7 @@ bool Inter_v1::o1_prepareStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_parse->parseVarIndex();
-	_vm->_util->prepareStr(GET_VARO_STR(strVar));
-	_vm->_global->writeVarSizeStr(strVar, strlen(GET_VARO_STR(strVar)));
+	_vm->_util->prepareStr(GET_VARO_FSTR(strVar));
 	return false;
 }
 
@@ -2095,8 +2080,9 @@ bool Inter_v1::o1_insertStr(OpFuncParams &params) {
 	strVar = _vm->_parse->parseVarIndex();
 	evalExpr(0);
 	pos = _vm->_parse->parseValExpr();
-	_vm->_util->insertStr(_vm->_global->_inter_resStr, GET_VARO_STR(strVar), pos);
-	_vm->_global->writeVarSizeStr(strVar, strlen(GET_VARO_STR(strVar)));
+
+	char *str = GET_VARO_FSTR(strVar);
+	_vm->_util->insertStr(_vm->_global->_inter_resStr, str, pos);
 	return false;
 }
 
@@ -2236,7 +2222,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		if (((dataVar >> 2) == 59) && (size == 4))
 			WRITE_VAR(59, stream->readUint32LE());
 		else
-			retSize = stream->read(_vm->_global->_inter_variables + dataVar, size);
+			retSize = stream->read((byte *) _variables->getAddressOff8(dataVar, size), size);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);
@@ -2803,11 +2789,9 @@ void Inter_v1::o1_animateObjects(OpGobParams &params) {
 void Inter_v1::o1_drawObjects(OpGobParams &params) {
 	_vm->_goblin->drawObjects();
 
-	if (_vm->_platform == Common::kPlatformMacintosh) {
-		if (_vm->_adlib)
-			_vm->_adlib->playBgMusic();
-	} else if (_vm->_cdrom->getTrackPos() == -1)
-		_vm->_cdrom->playBgMusic();
+	_vm->_sound->adlibPlayBgMusic(); // Mac version
+	if (_vm->_sound->cdGetTrackPos() == -1)
+		_vm->_sound->cdPlayBgMusic(); // PC CD version
 }
 
 void Inter_v1::o1_loadMap(OpGobParams &params) {
@@ -2993,9 +2977,11 @@ int16 Inter_v1::loadSound(int16 slot) {
 		dataSize = (uint32) ((int32) totSize);
 	}
 
-	if (dataPtr)
-		_vm->_game->_soundSamples[slot].load(SOUND_SND, source,
-				dataPtr, dataSize);
+	if (dataPtr) {
+		SoundDesc *sample = _vm->_sound->sampleGetBySlot(slot);
+		if (sample)
+			sample->load(SOUND_SND, source, dataPtr, dataSize);
+	}
 	return 0;
 }
 

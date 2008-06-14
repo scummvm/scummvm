@@ -41,11 +41,6 @@ namespace Cine {
 ScriptVars globalVars(NUM_MAX_VAR);
 
 uint16 compareVars(int16 a, int16 b);
-void palRotate(byte a, byte b, byte c);
-void removeSeq(uint16 param1, uint16 param2, uint16 param3);
-uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
-void addGfxElementA0(int16 param1, int16 param2);
-void removeGfxElementA0(int16 idx, int16 param);
 
 const Opcode FWScript::_opcodeTable[] = {
 	/* 00 */
@@ -54,8 +49,8 @@ const Opcode FWScript::_opcodeTable[] = {
 	{ &FWScript::o1_addObjectParam, "bbw" },
 	{ &FWScript::o1_subObjectParam, "bbw" },
 	/* 04 */
-	{ &FWScript::o1_add2ObjectParam, "bbw" },
-	{ &FWScript::o1_sub2ObjectParam, "bbw" },
+	{ &FWScript::o1_mulObjectParam, "bbw" },
+	{ &FWScript::o1_divObjectParam, "bbw" },
 	{ &FWScript::o1_compareObjectParam, "bbw" },
 	{ &FWScript::o1_setupObject, "bwwww" },
 	/* 08 */
@@ -808,23 +803,32 @@ int FWScript::o1_subObjectParam() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o1_add2ObjectParam() {
-	uint16 a = getNextByte();
-	uint16 b = getNextByte();
-	uint16 c = getNextWord();
-	warning("STUB: o1_add2ObjectParam(%x, %x, %x)", a, b, c);
+int FWScript::o1_mulObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: mulObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	// FIXME? In PC versions of Future Wars and Operation Stealth the multiplication is done unsigned.
+	// (16b x 16b -> 32b, taking only 16 LSBs). The question is, does it really matter?
+	int16 currentValue = getObjectParam(objIdx, paramIdx);
+	modifyObjectParam(objIdx, paramIdx, currentValue * newValue);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o1_sub2ObjectParam() {
-	uint16 a = getNextByte();
-	uint16 b = getNextByte();
-	uint16 c = getNextWord();
-	warning("STUB: o1_sub2ObjectParam(%x, %x, %x)", a, b, c);
+int FWScript::o1_divObjectParam() {
+	byte objIdx = getNextByte();
+	byte paramIdx = getNextByte();
+	int16 newValue = getNextWord();
+
+	debugC(5, kCineDebugScript, "Line: %d: divObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", _line, objIdx, paramIdx, newValue);
+
+	// In PC versions of Future Wars and Operation Stealth the division is done signed.
+	// Dividend is first sign extended from 16 bits to 32 bits and then divided by the
+	// 16 bit divider using signed division. Only 16 LSBs of the quotient are saved.
+	int16 currentValue = getObjectParam(objIdx, paramIdx);
+	modifyObjectParam(objIdx, paramIdx, currentValue / newValue);
 	return 0;
 }
 
@@ -1299,7 +1303,7 @@ int FWScript::o1_loadCt() {
 	const char *param = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _line, param);
-	loadCt(param);
+	loadCtFW(param);
 	return 0;
 }
 
@@ -1355,31 +1359,29 @@ int FWScript::o1_blitAndFade() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadein", _line);
 	// TODO: use real code
 
-	drawOverlays();
-	fadeRequired = true;
-	flip();
-
 //	fadeFromBlack();
+
+	renderer->reloadPalette();
 	return 0;
 }
 
 int FWScript::o1_fadeToBlack() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadeout", _line);
 
-	fadeToBlack();
+	renderer->fadeToBlack();
 	return 0;
 }
 
 int FWScript::o1_transformPaletteRange() {
 	byte startColor = getNextByte();
 	byte numColor = getNextByte();
-	uint16 r = getNextWord();
-	uint16 g = getNextWord();
-	uint16 b = getNextWord();
+	int16 r = getNextWord();
+	int16 g = getNextWord();
+	int16 b = getNextWord();
 
 	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d)", _line, startColor, numColor, r, g, b);
 
-	transformPaletteRange(startColor, numColor, r, g, b);
+	renderer->transformPalette(startColor, numColor, r, g, b);
 	return 0;
 }
 
@@ -1387,7 +1389,8 @@ int FWScript::o1_setDefaultMenuColor2() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _line, param);
-	defaultMenuBoxColor2 = param;
+
+	renderer->_messageBg = param;
 	return 0;
 }
 
@@ -1397,7 +1400,8 @@ int FWScript::o1_palRotate() {
 	byte c = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: palRotate(%d,%d,%d)", _line, a, b, c);
-	palRotate(a, b, c);
+
+	renderer->rotatePalette(a, b, c);
 	return 0;
 }
 
@@ -1475,11 +1479,7 @@ int FWScript::o1_compareGlobalVar() {
 
 		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _line, varIdx, value);
 
-		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {	// TODO: fix
-			_compare = 1;
-		} else {
-			_compare = compareVars(_globalVars[varIdx], value);
-		}
+		_compare = compareVars(_globalVars[varIdx], value);
 	}
 
 	return 0;
@@ -1558,7 +1558,8 @@ int FWScript::o1_setDefaultMenuColor() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _line, param);
-	defaultMenuBoxColor = param;
+
+	renderer->_cmdY = param;
 	return 0;
 }
 
@@ -1608,7 +1609,8 @@ int FWScript::o1_stopSample() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Implement this instruction's Amiga part (PC part already done)
+ * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op71() {
 	byte a = getNextByte();
@@ -1617,7 +1619,8 @@ int FWScript::o1_op71() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Implement this instruction's Amiga part (PC part already done)
+ * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op72() {
 	uint16 a = getNextWord();
@@ -1627,7 +1630,8 @@ int FWScript::o1_op72() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/*! \todo Implement this instruction's Amiga part (PC part already done)
+ * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op73() {
 	// I believe this opcode is identical to o1_op72(). In fact, Operation
@@ -1635,7 +1639,7 @@ int FWScript::o1_op73() {
 	uint16 a = getNextWord();
 	byte b = getNextByte();
 	uint16 c = getNextWord();
-	warning("STUB: o1_op72(%x, %x, %x)", a, b, c);
+	warning("STUB: o1_op73(%x, %x, %x)", a, b, c);
 	return 0;
 }
 
@@ -1727,18 +1731,6 @@ int FWScript::o1_unloadMask5() {
 }
 
 //-----------------------------------------------------------------------
-
-void palRotate(byte a, byte b, byte c) {
-	if (c == 1) {
-		uint16 currentColor = c_palette[b];
-
-		for (int16 i = b; i > a; i--) {
-			c_palette[i] = c_palette[i - 1];
-		}
-
-		c_palette[a] = currentColor;
-	}
-}
 
 void addScriptToList0(uint16 idx) {
 	ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx));
@@ -1863,14 +1855,13 @@ const char *getObjPramName(byte paramIdx) {
 	}
 }
 
-void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx) {
+void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx) {
 	char lineBuffer[256];
-	byte *localScriptPtr = scriptPtr;
+	const byte *localScriptPtr = scriptPtr;
 	uint16 exitScript;
 	uint32 position = 0;
 
 	assert(scriptPtr);
-	// assert(stackPtr);
 
 	exitScript = 0;
 
@@ -2292,7 +2283,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 					sprintf(lineBuffer, "loadPart(%s)\n", localScriptPtr + position);
 				}
 
-				position += strlen((char *)localScriptPtr + position) + 1;
+				position += strlen((const char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x40:
@@ -2309,7 +2300,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "loadPrc(%d,%s)\n", param, localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position) + 1;
+				position += strlen((const char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case OP_requestCheckPendingDataLoad:	// nop
@@ -2461,7 +2452,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "comment: %s\n", localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position);
+				position += strlen((const char *)localScriptPtr + position);
 				break;
 			}
 		case 0x5A:
@@ -2540,7 +2531,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 			{
 				sprintf(lineBuffer, "loadDat(%s)\n", localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position) + 1;
+				position += strlen((const char *)localScriptPtr + position) + 1;
 				break;
 			}
 		case 0x6E:	// nop
@@ -2801,7 +2792,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "ADDBG(%d,%s)\n", param1, localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position);
+				position += strlen((const char *)localScriptPtr + position);
 
 				break;
 			}
@@ -2825,7 +2816,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 
 				sprintf(lineBuffer, "loadABS(%d,%s)\n", param1, localScriptPtr + position);
 
-				position += strlen((char *)localScriptPtr + position);
+				position += strlen((const char *)localScriptPtr + position);
 
 				break;
 			}

@@ -435,6 +435,7 @@ int SkyEngine::init() {
 		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
 	}
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	 _mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_floppyIntro = ConfMan.getBool("alt_intro");
 

@@ -27,8 +27,8 @@
 #define GOB_GOBLIN_H
 
 #include "gob/util.h"
-#include "gob/sound.h"
 #include "gob/mult.h"
+#include "gob/sound/sounddesc.h"
 
 namespace Gob {
 

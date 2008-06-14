@@ -33,7 +33,18 @@
 
 namespace Made {
 
-void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, bool deltaFrame = false);
+class ValueReader {
+public:
+	ValueReader(byte *source, bool nibbleMode) : _buffer(source), _nibbleBuf(0), _nibbleMode(nibbleMode), _nibbleSwitch(false) {}
+	byte readPixel();
+protected:
+	byte _nibbleBuf;
+	bool _nibbleMode, _nibbleSwitch;
+	byte *_buffer;
+};
+
+void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame = false);
+void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize);
 
 } // End of namespace Made
 

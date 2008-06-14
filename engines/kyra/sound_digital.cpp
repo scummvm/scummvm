@@ -25,10 +25,82 @@
 
 #include "kyra/sound.h"
 #include "kyra/resource.h"
+#include "kyra/kyra_mr.h"
 
 #include "sound/audiostream.h"
 
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
+
 namespace Kyra {
+
+class KyraAudioStream : public Audio::AudioStream {
+public:
+	KyraAudioStream(Audio::AudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
+	~KyraAudioStream() { delete _impl; _impl = 0; }
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return _impl->isStereo(); }
+	bool endOfData() const { return _impl->endOfData() | _endOfData; }
+	int getRate() const { return _rate; }
+	int32 getTotalPlayTime() const { return _impl->getTotalPlayTime(); }
+
+	void setRate(int newRate) { _rate = newRate; }
+	void beginFadeOut(uint32 millis);
+private:
+	Audio::AudioStream *_impl;
+
+	int _rate;
+
+	int32 _fadeSamples;
+	int32 _fadeCount;
+	int _fading;
+	
+	bool _endOfData;
+};
+
+void KyraAudioStream::beginFadeOut(uint32 millis) {
+	_fadeSamples = (millis * getRate()) / 1000;
+	if (_fading == 0)
+		_fadeCount = _fadeSamples;
+	_fading = -1;
+}
+
+int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesRead = _impl->readBuffer(buffer, numSamples);
+	
+	if (_fading) {
+		int samplesProcessed = 0;
+		for (; samplesProcessed < samplesRead; ++samplesProcessed) {
+			// To help avoid overflows for long fade times, we divide both
+			// _fadeSamples and _fadeCount when calculating the new sample.
+	
+			int32 div = _fadeSamples / 256;
+			if (_fading) {
+				*buffer = (*buffer * (_fadeCount / 256)) / div;
+				++buffer;
+
+				_fadeCount += _fading;
+
+				if (_fadeCount < 0) {
+					_fadeCount = 0;
+					_endOfData = true;
+				} else if (_fadeCount > _fadeSamples) {
+					_fadeCount = _fadeSamples;
+					_fading = 0;
+				}
+			}
+		}
+
+		if (_endOfData) {
+			memset(buffer, 0, (samplesRead - samplesProcessed) * sizeof(int16));
+			samplesRead = samplesProcessed;
+		}
+	}
+
+	return samplesRead;
+}
 
 // Thanks to Torbjorn Andersson (eriktorbjorn) for his aud player on which
 // this code is based on
@@ -46,9 +118,6 @@ public:
 	bool endOfData() const { return _endOfData; }
 
 	int getRate() const { return _rate; }
-
-	void beginFadeIn(uint32 millis);
-	void beginFadeOut(uint32 millis);
 private:
 	Common::SeekableReadStream *_stream;
 	bool _loop;
@@ -66,10 +135,6 @@ private:
 
 	byte *_inBuffer;
 	uint _inBufferSize;
-
-	int32 _fadeSamples;
-	int32 _fadeCount;
-	int _fading;
 
 	int readChunk(int16 *buffer, const int maxSamples);
 
@@ -91,9 +156,6 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(st
 	_totalSize = _stream->readUint32LE();
 	_loop = loop;
 
-	_fadeSamples = 0;
-	_fading = 0;
-
 	// TODO?: add checks
 	int flags = _stream->readByte();	// flags
 	int type = _stream->readByte();	// type
@@ -107,23 +169,9 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(st
 }
 
 AUDStream::~AUDStream() {
-	delete [] _outBuffer;
-	delete [] _inBuffer;
+	delete[] _outBuffer;
+	delete[] _inBuffer;
 	delete _stream;
-}
-
-void AUDStream::beginFadeIn(uint32 millis) {
-	_fadeSamples = (millis * getRate()) / 1000;
-	if (_fading == 0)
-		_fadeCount = 0;
-	_fading = 1;
-}
-
-void AUDStream::beginFadeOut(uint32 millis) {
-	_fadeSamples = (millis * getRate()) / 1000;
-	if (_fading == 0)
-		_fadeCount = _fadeSamples;
-	_fading = -1;
 }
 
 int AUDStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -174,7 +222,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 		if (size == outSize) {
 			if (outSize > _outBufferSize) {
 				_outBufferSize = outSize;
-				delete [] _outBuffer;
+				delete[] _outBuffer;
 				_outBuffer = new uint8[_outBufferSize];
 				assert(_outBuffer);
 			}
@@ -187,14 +235,14 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 			if (outSize > _outBufferSize) {
 				_outBufferSize = outSize;
-				delete [] _outBuffer;
+				delete[] _outBuffer;
 				_outBuffer = new uint8[_outBufferSize];
 				assert(_outBuffer);
 			}
 
 			if (size > _inBufferSize) {
 				_inBufferSize = size;
-				delete [] _inBuffer;
+				delete[] _inBuffer;
 				_inBuffer = new uint8[_inBufferSize];
 				assert(_inBuffer);
 			}
@@ -286,40 +334,19 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 		samplesProcessed += samples;
 		_bytesLeft -= samples;
 
-		// To help avoid overflows for long fade times, we divide both
-		// _fadeSamples and _fadeCount when calculating the new sample.
-
-		int32 div = _fadeSamples / 256;
-
 		while (samples--) {
 			int16 sample = (_outBuffer[_outBufferOffset++] << 8) ^ 0x8000;
-
-			if (_fading) {
-				sample = (sample * (_fadeCount / 256)) / div;
-				_fadeCount += _fading;
-
-				if (_fadeCount < 0) {
-					_fadeCount = 0;
-					_endOfData = true;
-				} else if (_fadeCount > _fadeSamples) {
-					_fadeCount = _fadeSamples;
-					_fading = 0;
-				}
-			}
 
 			*buffer++ = sample;
 		}
 	}
-
-	if (_fading < 0 && _fadeCount == 0)
-		_fading = 0;
 
 	return samplesProcessed;
 }
 
 #pragma mark -
 
-SoundDigital::SoundDigital(KyraEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {
+SoundDigital::SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _sounds() {
 	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
 		_sounds[i].stream = 0;
 }
@@ -365,7 +392,19 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 		}
 	}
 
-	Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filename);
+	Common::SeekableReadStream *stream = 0;
+	int usedCodec = -1;
+	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
+		Common::String file = filename;
+		file += _supportedCodecs[i].fileext;
+
+		if (!_vm->resource()->exists(file.c_str()))
+			continue;
+
+		stream = _vm->resource()->getFileStream(file);
+		usedCodec = i;
+	}
+
 	if (!stream) {
 		warning("Couldn't find soundfile '%s'", filename);
 		return -1;
@@ -373,7 +412,13 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 
 	strncpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
-	use->stream = new AUDStream(stream, loop);
+	Audio::AudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, true, 0, 0, loop ? 0 : 1);
+	if (!audioStream) {
+		warning("Couldn't create audio stream for file '%s'", filename);
+		return -1;
+	}
+	use->stream = new KyraAudioStream(audioStream);
+	assert(use->stream);
 	if (use->stream->endOfData()) {
 		delete use->stream;
 		use->stream = 0;
@@ -384,6 +429,9 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	if (volume > 255)
 		volume = 255;
 	volume = (volume * Audio::Mixer::kMaxChannelVolume) / 255;
+	
+	if (type == Audio::Mixer::kSpeechSoundType && _vm->heliumMode())
+		use->stream->setRate(32765);
 
 	_mixer->playInputStream(type, &use->handle, use->stream, -1, volume);
 
@@ -422,6 +470,31 @@ void SoundDigital::beginFadeOut(int channel, int ticks) {
 	if (isPlaying(channel))
 		_sounds[channel].stream->beginFadeOut(ticks * _vm->tickLength());
 }
+
+// static res
+
+namespace {
+
+Audio::AudioStream *makeAUDStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
+	return new AUDStream(stream, numLoops == 0 ? true : false);
+}
+
+} // end of anonymous namespace
+
+const SoundDigital::AudioCodecs SoundDigital::_supportedCodecs[] = {
+#ifdef USE_FLAC
+	{ ".FLA", Audio::makeFlacStream },
+#endif // USE_FLAC
+#ifdef USE_VORBIS
+	{ ".OGG", Audio::makeVorbisStream },
+#endif // USE_VORBIS
+#ifdef USE_MAD
+	{ ".MP3", Audio::makeMP3Stream },
+#endif // USE_MAD
+	{ ".AUD", makeAUDStream },
+	{ 0, 0 }
+};
+
 
 } // end of namespace Kyra
 

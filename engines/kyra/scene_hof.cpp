@@ -98,7 +98,7 @@ void KyraEngine_HoF::enterNewScene(uint16 newScene, int facing, int unk1, int un
 			_emc->run(&_sceneScriptState);
 	}
 
-	Common::for_each(_wsaSlots, _wsaSlots+ARRAYSIZE(_wsaSlots), Common::mem_fun(&WSAMovieV2::close));
+	Common::for_each(_wsaSlots, _wsaSlots+ARRAYSIZE(_wsaSlots), Common::mem_fun(&WSAMovie_v2::close));
 	_specialExitCount = 0;
 	memset(_specialExitTable, -1, sizeof(_specialExitTable));
 
@@ -322,6 +322,8 @@ int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
 			refreshAnimObjectsIfNeed();
 			updateType = -1;
 		}
+
+		delay(10);
 	}
 
 	if (updateChar)
@@ -702,7 +704,7 @@ void KyraEngine_HoF::initSceneScreen(int unk1) {
 void KyraEngine_HoF::freeSceneShapePtrs() {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::freeSceneShapePtrs()");
 	for (int i = 0; i < ARRAYSIZE(_sceneShapeTable); ++i)
-		delete [] _sceneShapeTable[i];
+		delete[] _sceneShapeTable[i];
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 }
 

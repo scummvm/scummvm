@@ -30,11 +30,11 @@ class OSystem;
 
 namespace Kyra {
 
-class KyraEngine;
+class KyraEngine_v1;
 
 class VQAMovie {
 public:
-	VQAMovie(KyraEngine *vm, OSystem *system);
+	VQAMovie(KyraEngine_v1 *vm, OSystem *system);
 	~VQAMovie();
 
 	bool opened() { return _opened; }
@@ -54,7 +54,7 @@ public:
 
 protected:
 	OSystem *_system;
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	bool _opened;
 	int _x, _y;

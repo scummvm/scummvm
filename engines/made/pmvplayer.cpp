@@ -48,14 +48,17 @@ void PmvPlayer::play(const char *filename) {
 	readChunk(chunkType, chunkSize);	// "MHED"
 
 	// TODO: Evaluate header
-	//_fd->skip(0x3A);
 
 	uint frameDelay = _fd->readUint16LE();
 	_fd->skip(10);
 	uint soundFreq = _fd->readUint16LE();
-	// FIXME: weird frequencies... (11127 or 22254)
-	//if (soundFreq == 11127) soundFreq = 11025;
-	//if (soundFreq == 22254) soundFreq = 22050;
+	// Note: There seem to be weird sound frequencies in PMV videos.
+	// Not sure why, but leaving those original frequencies intact
+	// results to sound being choppy. Therefore, we set them to more
+	// "common" values here (11025 instead of 11127 and 22050 instead
+	// of 22254)
+	if (soundFreq == 11127) soundFreq = 11025;
+	if (soundFreq == 22254) soundFreq = 22050;
 
 	int unk;
 
@@ -74,10 +77,12 @@ void PmvPlayer::play(const char *filename) {
 	uint32 frameCount = 0;
 	uint16 chunkCount = 0;
 	uint32 soundSize = 0;
-	uint32 palChunkOfs = 0;
+	uint32 soundChunkOfs = 0, palChunkOfs = 0;
 	uint32 palSize = 0;
 	byte *frameData, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
+	
+	uint32 soundStartTime = 0, skipFrames = 0;
 
 	uint32 frameNum;
 	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
@@ -89,6 +94,8 @@ void PmvPlayer::play(const char *filename) {
 
 	while (!_abort && !_fd->eof()) {
 
+		int32 frameTime = _vm->_system->getMillis();
+
 		readChunk(chunkType, chunkSize);
 
 		if (_fd->eof())
@@ -96,27 +103,34 @@ void PmvPlayer::play(const char *filename) {
 
 		frameData = new byte[chunkSize];
 		_fd->read(frameData, chunkSize);
+		
+		soundChunkOfs = READ_LE_UINT32(frameData + 8);
+		palChunkOfs = READ_LE_UINT32(frameData + 16);
 
 		// Handle audio
-		audioData = frameData + READ_LE_UINT32(frameData + 8) - 8;
-		chunkSize = READ_LE_UINT16(audioData + 4);
-		chunkCount = READ_LE_UINT16(audioData + 6);
+		if (soundChunkOfs) {
 
-		if (chunkCount > 50) break;	// FIXME: this is a hack
+			audioData = frameData + soundChunkOfs - 8;
+			chunkSize = READ_LE_UINT16(audioData + 4);
+			chunkCount = READ_LE_UINT16(audioData + 6);
 
-		debug(2, "chunkCount = %d; chunkSize = %d\n", chunkCount, chunkSize);
+			debug(1, "chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, chunkSize, chunkCount * chunkSize);
 
-		soundSize = chunkCount * chunkSize;
-		soundData = new byte[soundSize];
-		decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
-		_audioStream->queueBuffer(soundData, soundSize);
+			if (chunkCount > 50) break;	// FIXME: this is a hack
+
+			soundSize = chunkCount * chunkSize;
+			soundData = new byte[soundSize];
+			decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
+			_audioStream->queueBuffer(soundData, soundSize);
+
+		}
 
 		// Handle palette
-		palChunkOfs = READ_LE_UINT32(frameData + 16);
 		if (palChunkOfs) {
 			palData = frameData + palChunkOfs - 8;
 			palSize = READ_LE_UINT32(palData + 4);
 			decompressPalette(palData + 8, _paletteRGB, palSize);
+			_vm->_screen->setRGBPalette(_paletteRGB);
 		}
 
 		// Handle video
@@ -138,24 +152,34 @@ void PmvPlayer::play(const char *filename) {
 			_surface->create(width, height, 1);
 		}
 
-		decompressImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize, frameNum > 0);
+		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize);
 	
 		if (firstTime) {
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+			soundStartTime = g_system->getMillis();
+			skipFrames = 0;
 			firstTime = false;
 		}
 
-		_vm->_screen->setRGBPalette(_paletteRGB);
 		handleEvents();
 		updateScreen();
 
-		frameCount++;
-
 		delete[] frameData;
 
-		while (_mixer->getSoundElapsedTime(_audioStreamHandle) < frameCount * frameDelay) {
-			_vm->_system->delayMillis(10);
-		}
+		if (skipFrames == 0) {
+			int32 waitTime = (frameCount * frameDelay) -
+				(g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
+
+			if (waitTime < 0) {
+				skipFrames = -waitTime / frameDelay;
+				warning("Video A/V sync broken, skipping %d frame(s)", skipFrames + 1);
+			} else if (waitTime > 0)
+				g_system->delayMillis(waitTime);
+
+		} else
+			skipFrames--;
+
+		frameCount++;
 
 	}
 
@@ -188,8 +212,8 @@ void PmvPlayer::handleEvents() {
 				_abort = true;
 			break;
 		case Common::EVENT_QUIT:
-			// TODO: Exit more gracefully
-			g_system->quit();
+			_vm->_quit = true;
+			_abort = true;
 			break;
 		default:
 			break;

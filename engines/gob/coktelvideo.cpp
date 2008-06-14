@@ -123,8 +123,9 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 			return false;
 		}
 
-		_soundSliceLength = 1000 / (_soundFreq / _soundSliceSize);
-		_frameLength = _soundSliceLength;
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) / 
+				((double) _soundFreq / (double) _soundSliceSize));
+		_frameLength = _soundSliceLength >> 16;
 
 		_soundStage = 1;
 		_hasSound = true;
@@ -270,6 +271,13 @@ void Imd::disableSound() {
 	_mixer = 0;
 }
 
+bool Imd::isSoundPlaying() const {
+	if (_audioStream && _mixer->isSoundHandleActive(_audioHandle))
+		return true;
+
+	return false;
+}
+
 void Imd::seekFrame(int32 frame, int16 whence, bool restart) {
 	if (!_stream)
 		// Nothing to do
@@ -318,11 +326,11 @@ void Imd::waitEndFrame() {
 			return;
 
 		if (_skipFrames == 0) {
-			int32 waitTime = (_curFrame * _soundSliceLength) -
-				(g_system->getMillis() - _soundStartTime);
+			int32 waitTime = (int16) (((_curFrame * _soundSliceLength) -
+				((g_system->getMillis() - _soundStartTime) << 16)) >> 16);
 
 			if (waitTime < 0) {
-				_skipFrames = -waitTime / _soundSliceLength;
+				_skipFrames = -waitTime / (_soundSliceLength >> 16);
 				warning("Video A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
 			} else if (waitTime > 0)
 				g_system->delayMillis(waitTime);
@@ -331,6 +339,11 @@ void Imd::waitEndFrame() {
 			_skipFrames--;
 	} else
 		g_system->delayMillis(_frameLength);
+}
+
+void Imd::notifyPaused(uint32 duration) {
+	if (_soundStage == 2)
+		_soundStartTime += duration;
 }
 
 void Imd::copyCurrentFrame(byte *dest,
@@ -931,10 +944,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 			_soundSliceSize = -_soundSliceSize;
 		}
 
-		_soundSliceLength = (uint16) (1000.0 /
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) / 
 				((double) _soundFreq / (double) _soundSliceSize));
-
-		_frameLength = _soundSliceLength;
+		_frameLength = _soundSliceLength >> 16;
 
 		_soundStage = 1;
 		_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
@@ -1066,8 +1078,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 	state.flags |= kStateNoVideoData;
 	state.left = 0x7FFF;
-	state.right = 0x7FFF;
-	state.top = 0;
+	state.top = 0x7FFF;
+	state.right = 0;
 	state.bottom = 0;
 
 	if (!_vidMem)
@@ -1121,6 +1133,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 		} else if (part.type == kPartTypeVideo) {
 			state.flags &= ~kStateNoVideoData;
 
+			uint32 size = part.size;
+
 			// New palette
 			if (part.flags & 2) {
 				uint8 index = _stream->readByte();
@@ -1130,9 +1144,12 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				_stream->skip((255 - count) * 3);
 
 				state.flags |= kStatePalette;
+
+				size -= (768 + 2);
 			}
 
-			_stream->read(_frameData, part.size);
+			_stream->read(_frameData, size);
+
 			if (renderFrame(part.left, part.top, part.right, part.bottom)) {
 				// Rendering succeeded, merging areas
 				state.left = MIN(state.left, part.left);

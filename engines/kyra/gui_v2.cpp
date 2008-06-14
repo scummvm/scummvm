@@ -43,6 +43,8 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollUpButton);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollDownButton);
 	_sliderHandlerFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::sliderHandler);
+	_savegameOffset = 0;
+	_isDeleteMenu = false;
 }
 
 Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
@@ -138,7 +140,7 @@ void GUI_v2::processButton(Button *button) {
 	_screen->updateScreen();
 }
 
-int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
+int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {
 	static uint16 flagsModifier = 0;
 
 	if (!buttonList)
@@ -234,6 +236,12 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		}
 
 		bool unk1 = false;
+
+		if (mouseWheel && buttonList->mouseWheel == mouseWheel) {
+			progress = true;
+			unk1 = true;
+		}
+
 		if (!progress)
 			buttonList->flags2 &= ~6;
 
@@ -407,6 +415,8 @@ void GUI_v2::getInput() {
 		_isOptionsMenu = false;
 		_isDeleteMenu = false;
 	}
+
+	_vm->delay(10);
 }
 
 void GUI_v2::renewHighlight(Menu &menu) {
@@ -441,7 +451,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	if (_isSaveMenu && _savegameOffset == 0)
 		startSlot = 1;
 
-	KyraEngine::SaveHeader header;
+	KyraEngine_v1::SaveHeader header;
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
@@ -844,7 +854,7 @@ void GUI_v2::checkTextfieldInput() {
 		}
 	}
 
-	processButtonList(_menuButtonList, keys | 0x8000);
+	processButtonList(_menuButtonList, keys | 0x8000, 0);
 }
 
 void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {

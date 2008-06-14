@@ -25,6 +25,7 @@
 #include "sound/softsynth/emumidi.h"
 #include "common/util.h"
 #include "sound/fmopl.h"
+#include "sound/musicplugin.h"
 
 #ifdef DEBUG_ADLIB
 static int tick;
@@ -970,10 +971,6 @@ MidiChannel *MidiDriver_ADLIB::allocateChannel() {
 	return NULL;
 }
 
-MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
-	return new MidiDriver_ADLIB(mixer);
-}
-
 // All the code brought over from IMuseAdlib
 
 void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
@@ -1517,3 +1514,47 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 	curnote_table[chan] = code;
 	adlib_playnote(chan, (int16) channel_table_2[chan] + code);
 }
+
+
+// Plugin interface
+
+class AdlibEmuMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "AdLib Emulator";
+	}
+
+	const char *getId() const {
+		return "adlib";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices AdlibEmuMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_ADLIB));
+	return devices;
+}
+
+PluginError AdlibEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_ADLIB(mixer);
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	AdlibEmuMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(ADLIB)
+	//REGISTER_PLUGIN_DYNAMIC(ADLIB, PLUGIN_TYPE_MUSIC, AdlibEmuMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(ADLIB, PLUGIN_TYPE_MUSIC, AdlibEmuMusicPlugin);
+//#endif

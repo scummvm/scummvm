@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "engines/engine.h"
+#include "engines/metaengine.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/events.h"
@@ -128,8 +128,8 @@ AboutDialog::AboutDialog()
 	_lines.push_back("");
 
 	addLine("\\C\\c1""Available engines:");
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-	PluginList::const_iterator iter = plugins.begin();
+	const EnginePlugin::List &plugins = EngineMan.getPlugins();
+	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 	  Common::String str;
 	  str = "\\C";
@@ -137,7 +137,7 @@ AboutDialog::AboutDialog()
 	  addLine(str.c_str());
 
 	  str = "\\C\\c2";
-	  str += (**iter).getCopyright();
+	  str += (**iter)->getCopyright();
 	  addLine(str.c_str());
 
 	  //addLine("");

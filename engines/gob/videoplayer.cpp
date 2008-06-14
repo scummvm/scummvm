@@ -33,6 +33,7 @@
 #include "gob/palanim.h"
 #include "gob/inter.h"
 #include "gob/map.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -289,6 +290,8 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame))
 			break;
 
+		evalBgShading(video);
+
 		if (fade) {
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 			fade = false;
@@ -299,18 +302,27 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		startFrame++;
 	}
 
+	evalBgShading(video);
+
 	if (reverseTo >= 0) {
 		int16 toFrame = video.getFramesCount() - reverseTo;
 		for (int i = video.getCurrentFrame(); i >= toFrame; i--) {
 			video.seekFrame(i, SEEK_SET, true);
-			if (doPlay(i, breakKey, 0, 0, 0, 0, 0)) {
+
+			bool b = doPlay(i, breakKey, 0, 0, 0, 0, 0);
+			evalBgShading(video);
+
+			if (b) {
 				_vm->_palAnim->fade(0, -2, 0);
 				memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			}
+
 			if (!_noCursorSwitch)
 				video.waitEndFrame();
 		}
 	}
+
+	evalBgShading(video);
 }
 
 void VideoPlayer::primaryClose() {
@@ -334,17 +346,32 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which) {
 	}
 
 	video->getVideo()->setVideoMemory();
-	video->getVideo()->disableSound();
+	video->getVideo()->enableSound(*_vm->_mixer);
 
-	_videoSlots.push_back(video);
+	int slot = getNextFreeSlot();
+
+	_videoSlots[slot] = video;
 
 	WRITE_VAR(7, video->getVideo()->getFramesCount());
 
-	return _videoSlots.size() - 1;
+	return slot;
+}
+
+int VideoPlayer::getNextFreeSlot() {
+	uint slot;
+
+	for (slot = 0; slot < _videoSlots.size(); slot++)
+		if (!_videoSlots[slot])
+			break;
+
+	if (slot == _videoSlots.size())
+		_videoSlots.push_back(0);
+	
+	return slot;
 }
 
 void VideoPlayer::slotPlay(int slot, int16 frame) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	CoktelVideo &video = *(_videoSlots[slot]->getVideo());
@@ -360,21 +387,23 @@ void VideoPlayer::slotPlay(int slot, int16 frame) {
 
 	_videoSlots[slot]->nextFrame();
 	WRITE_VAR(11, frame);
+
+	evalBgShading(video);
 }
 
 void VideoPlayer::slotClose(int slot) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	delete _videoSlots[slot];
-	_videoSlots.remove_at(slot);
+	_videoSlots[slot] = 0;
 }
 
 void VideoPlayer::slotCopyFrame(int slot, byte *dest,
 		uint16 left, uint16 top, uint16 width, uint16 height,
 		uint16 x, uint16 y, uint16 pitch, int16 transp) {
 
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	_videoSlots[slot]->getVideo()->copyCurrentFrame(dest,
@@ -382,14 +411,24 @@ void VideoPlayer::slotCopyFrame(int slot, byte *dest,
 }
 
 void VideoPlayer::slotCopyPalette(int slot, int16 palStart, int16 palEnd) {
-	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()))
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
 		return;
 
 	copyPalette(*(_videoSlots[slot]->getVideo()), palStart, palEnd);
 }
 
+void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
+	if ((slot < 0) || (((uint) slot) >= _videoSlots.size()) || !_videoSlots[slot])
+		return;
+
+	CoktelVideo &video = *(_videoSlots[slot]->getVideo());
+
+	if (!onlySound || (video.getFeatures() & CoktelVideo::kFeaturesSound))
+		video.waitEndFrame();
+}
+
 bool VideoPlayer::slotIsOpen(int slot) const {
-	if ((slot >= 0) && (((uint) slot) < _videoSlots.size()))
+	if ((slot >= 0) && (((uint) slot) < _videoSlots.size()) && _videoSlots[slot])
 		return true;
 
 	return false;
@@ -399,7 +438,7 @@ const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
 	if (slot < 0) {
 		if (_primaryVideo->isOpen())
 			return _primaryVideo;
-	} else if (((uint) slot) < _videoSlots.size())
+	} else if (((uint) slot) < _videoSlots.size() && _videoSlots[slot])
 		return _videoSlots[slot];
 
 	return 0;
@@ -503,7 +542,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_draw->_noInvalidated = true;
 	}
 
-	if (state.flags & CoktelVideo::kStatePalette) {
+	if ((state.flags & CoktelVideo::kStatePalette) && (palCmd > 1)) {
 		copyPalette(*(_primaryVideo->getVideo()), palStart, palEnd);
 
 		if (!_backSurf)
@@ -563,14 +602,13 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 	if (primaryOpen(videoFile)) {
 		int16 x, y, width, height;
 
-		if ((VAR_OFFSET(varX) != 0xFFFFFFFF) ||
-		    !_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height)) {
+		x = _primaryVideo->getVideo()->getX();
+		y = _primaryVideo->getVideo()->getY();
+		width = _primaryVideo->getVideo()->getWidth();
+		height = _primaryVideo->getVideo()->getHeight();
 
-			x = _primaryVideo->getVideo()->getX();
-			y = _primaryVideo->getVideo()->getY();
-			width = _primaryVideo->getVideo()->getWidth();
-			height = _primaryVideo->getVideo()->getHeight();
-		}
+		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
+			_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height);
 
 		WRITE_VAR_OFFSET(varX, x);
 		WRITE_VAR_OFFSET(varY, y);
@@ -580,12 +618,28 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 
 		primaryClose();
 	} else {
-		WRITE_VAR_OFFSET(varX, -1);
-		WRITE_VAR_OFFSET(varY, -1);
-		WRITE_VAR_OFFSET(varFrames, -1);
-		WRITE_VAR_OFFSET(varWidth, -1);
-		WRITE_VAR_OFFSET(varHeight, -1);
+		WRITE_VAR_OFFSET(varX, (uint32) -1);
+		WRITE_VAR_OFFSET(varY, (uint32) -1);
+		WRITE_VAR_OFFSET(varFrames, (uint32) -1);
+		WRITE_VAR_OFFSET(varWidth, (uint32) -1);
+		WRITE_VAR_OFFSET(varHeight, (uint32) -1);
 	}
+}
+
+void VideoPlayer::evalBgShading(CoktelVideo &video) {
+	if (video.isSoundPlaying())
+		_vm->_sound->bgShade();
+	else
+		_vm->_sound->bgUnshade();
+}
+
+void VideoPlayer::notifyPaused(uint32 duration) {
+	if (_primaryVideo->isOpen())
+		_primaryVideo->getVideo()->notifyPaused(duration);
+
+	for (uint i = 0; i < _videoSlots.size(); i++)
+		if (_videoSlots[i] && _videoSlots[i]->isOpen())
+			_videoSlots[i]->getVideo()->notifyPaused(duration);
 }
 
 } // End of namespace Gob

@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
@@ -49,11 +49,13 @@ const KyraEngine_v2::EngineDesc KyraEngine_HoF::_hofEngineDesc = {
 	8,
 
 	// Animation script specific
-	33
+	33,
+
+	// Item specific
+	175
 };
 
 KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
-	_mouseSHPBuf = 0;
 	_screen = 0;
 	_text = 0;
 
@@ -79,7 +81,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_oldTalkFile = -1;
 	_currentTalkFile = 0;
 	_lastSfxTrack = -1;
-	_handItemSet = -1;
+	_mouseState = -1;
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
@@ -140,13 +142,14 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 
 	_menuDirectlyToLoad = false;
 	_menu = 0;
+	_chatIsNote = false;
+	memset(&_npcScriptData, 0, sizeof(_npcScriptData));
 }
 
 KyraEngine_HoF::~KyraEngine_HoF() {
 	cleanup();
 	seq_uninit();
 
-	delete [] _mouseSHPBuf;
 	delete _screen;
 	delete _text;
 	delete _gui;
@@ -157,21 +160,59 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	if (_sequenceSoundList) {
 		for (int i = 0; i < _sequenceSoundListSize; i++) {
 			if (_sequenceSoundList[i])
-				delete [] _sequenceSoundList[i];
+				delete[] _sequenceSoundList[i];
 		}
-		delete [] _sequenceSoundList;
+		delete[] _sequenceSoundList;
 		_sequenceSoundList = NULL;
 	}
 
 	if (_dlgBuffer)
-		delete [] _dlgBuffer;
+		delete[] _dlgBuffer;
 	for (int i = 0; i < 19; i++)
-		delete [] _conversationState[i];
-	delete [] _conversationState;
+		delete[] _conversationState[i];
+	delete[] _conversationState;
 
 	for (Common::Array<const TIMOpcode*>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
 		delete *i;
 	_timOpcodes.clear();
+}
+
+void KyraEngine_HoF::pauseEngineIntern(bool pause) {
+	KyraEngine_v2::pauseEngineIntern(pause);
+
+	if (!pause) {
+		uint32 pausedTime = _system->getMillis() - _pauseStart;
+		_pauseStart = 0;
+
+		// sequence player
+		//
+		// Timers in KyraEngine_HoF::seq_cmpFadeFrame() and KyraEngine_HoF::seq_animatedSubFrame()
+		// have been left out for now. I think we don't need them here.
+
+		_seqStartTime += pausedTime;
+		_seqSubFrameStartTime += pausedTime;
+		_seqEndTime += pausedTime;
+		_seqSubFrameEndTimeInternal += pausedTime;
+		_seqWsaChatTimeout += pausedTime;
+		_seqWsaChatFrameTimeout += pausedTime;
+
+		for (int x = 0; x < 10; x++) {
+			if (_activeText[x].duration != -1)
+				_activeText[x].startTime += pausedTime;
+		}
+
+		for (int x = 0; x < 8; x++) {
+			if (_activeWSA[x].flags != -1)
+				_activeWSA[x].nextFrame += pausedTime;
+		}
+
+		_nextIdleAnim += pausedTime;
+		
+		for (int x = 0; x < _itemAnimDataSize; x++)
+			_activeItemAnim[x].nextFrame += pausedTime;
+
+		_tim->refreshTimersAfterPause(pausedTime);
+	}
 }
 
 int KyraEngine_HoF::init() {
@@ -179,7 +220,7 @@ int KyraEngine_HoF::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	KyraEngine::init();
+	KyraEngine_v1::init();
 	initStaticResource();
 
 	_debugger = new Debugger_HoF(this);
@@ -218,11 +259,14 @@ int KyraEngine_HoF::init() {
 	if (_flags.isDemo && !_flags.isTalkie)
 		return 0;
 
-	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
-	assert(_mouseSHPBuf);
+	_res->exists("PWGMOUSE.SHP", true);
+	uint8 *shapes = _res->fileData("PWGMOUSE.SHP", 0);
+	assert(shapes);
 
 	for (int i = 0; i < 2; i++)
-		addShapeToPool(_screen->getPtrToShape(_mouseSHPBuf, i), i);
+		addShapeToPool(shapes, i, i);
+	
+	delete[] shapes;
 
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
 	return 0;
@@ -280,10 +324,7 @@ void KyraEngine_HoF::startup() {
 	allocAnimObjects(1, 10, 30);
 
 	_screen->_curPage = 0;
-	delete [] _mouseSHPBuf;
-	_mouseSHPBuf = 0;
 
-	_gameShapes.clear();
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	_gamePlayBuffer = new uint8[46080];
 	_unkBuf500Bytes = new uint8[500];
@@ -316,18 +357,16 @@ void KyraEngine_HoF::startup() {
 
 	_screen->setShapePages(5, 3);
 
-	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
 	_mainCharacter.height = 0x30;
 	_mainCharacter.facing = 4;
 	_mainCharacter.animFrame = 0x12;
-	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
-		_sceneAnimMovie[i] = new WSAMovieV2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
 	memset(_wsaSlots, 0, sizeof(_wsaSlots));
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
-		_wsaSlots[i] = new WSAMovieV2(this, _screen);
+		_wsaSlots[i] = new WSAMovie_v2(this, _screen);
 
 	_screen->_curPage = 0;
 
@@ -448,7 +487,7 @@ void KyraEngine_HoF::runLoop() {
 		update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _handItemSet;
+			_unk3 = _mouseState;
 			handleInput(_mouseX, _mouseY);
 		}
 
@@ -567,7 +606,7 @@ bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 	if (y > 143 || _deathHandler > -1 || queryGameFlag(0x164))
 		return false;
 
-	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
+	if (_mouseState <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
 		updateCharFacing();
 		objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
 		return true;
@@ -722,17 +761,16 @@ void KyraEngine_HoF::updateMouse() {
 		yOffset = 9;
 	}
 
-	if (type != 0 && _handItemSet != type && _screen->isMouseVisible()) {
-		_mouseState = _handItemSet = type;
+	if (type != 0 && _mouseState != type && _screen->isMouseVisible()) {
+		_mouseState = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
 	}
 
-	if (type == 0 && _handItemSet != _itemInHand && _screen->isMouseVisible()) {
+	if (type == 0 && _mouseState != _itemInHand && _screen->isMouseVisible()) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
-			_mouseState = 0;
-			_handItemSet = _itemInHand;
+			_mouseState = _itemInHand;
 			_screen->hideMouse();
 			if (_itemInHand == -1)
 				_screen->setMouseCursor(0, 0, getShapePtr(0));
@@ -743,44 +781,25 @@ void KyraEngine_HoF::updateMouse() {
 	}
 }
 
-void KyraEngine_HoF::delay(uint32 amount, bool updateGame, bool isMainLoop) {
-	uint32 start = _system->getMillis();
-	do {
-		if (updateGame) {
-			if (_chatText)
-				updateWithText();
-			else
-				update();
-		} else {
-			updateInput();
-		}
-
-		if (amount > 0)
-			_system->delayMillis(amount > 10 ? 10 : amount);
-	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
-}
-
 void KyraEngine_HoF::cleanup() {
-	delete [] _inventoryButtons; _inventoryButtons = 0;
+	delete[] _inventoryButtons; _inventoryButtons = 0;
 
-	delete [] _gamePlayBuffer; _gamePlayBuffer = 0;
-	delete [] _unkBuf500Bytes; _unkBuf500Bytes = 0;
-	delete [] _unkBuf200kByte; _unkBuf200kByte = 0;
+	delete[] _gamePlayBuffer; _gamePlayBuffer = 0;
+	delete[] _unkBuf500Bytes; _unkBuf500Bytes = 0;
+	delete[] _unkBuf200kByte; _unkBuf200kByte = 0;
 
 	freeSceneShapePtrs();
 
 	if (_optionsBuffer != _cCodeBuffer)
-		delete [] _optionsBuffer;
+		delete[] _optionsBuffer;
 	_optionsBuffer = 0;
-	delete [] _cCodeBuffer; _cCodeBuffer = 0;
-	delete [] _chapterBuffer; _chapterBuffer = 0;
+	delete[] _cCodeBuffer; _cCodeBuffer = 0;
+	delete[] _chapterBuffer; _chapterBuffer = 0;
 
-	delete [] _talkObjectList; _talkObjectList = 0;
-	delete [] _shapeDescTable; _shapeDescTable = 0;
+	delete[] _talkObjectList; _talkObjectList = 0;
+	delete[] _shapeDescTable; _shapeDescTable = 0;
 
-	delete [] _gfxBackUpRect; _gfxBackUpRect = 0;
-
-	delete [] _sceneList; _sceneList = 0;
+	delete[] _gfxBackUpRect; _gfxBackUpRect = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
 		delete _sceneAnimMovie[i];
@@ -791,9 +810,11 @@ void KyraEngine_HoF::cleanup() {
 		_wsaSlots[i] = 0;
 	}
 	for (int i = 0; i < ARRAYSIZE(_buttonShapes); ++i) {
-		delete [] _buttonShapes[i];
+		delete[] _buttonShapes[i];
 		_buttonShapes[i] = 0;
 	}
+
+	_emc->unload(&_npcScriptData);
 }
 
 #pragma mark - Localization
@@ -803,7 +824,7 @@ void KyraEngine_HoF::loadCCodeBuffer(const char *file) {
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
 
-	delete [] _cCodeBuffer;
+	delete[] _cCodeBuffer;
 	_cCodeBuffer = _res->fileData(tempString, 0);
 }
 
@@ -812,7 +833,7 @@ void KyraEngine_HoF::loadOptionsBuffer(const char *file) {
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
 
-	delete [] _optionsBuffer;
+	delete[] _optionsBuffer;
 	_optionsBuffer = _res->fileData(tempString, 0);
 }
 
@@ -827,7 +848,7 @@ void KyraEngine_HoF::loadChapterBuffer(int chapter) {
 	strcpy(tempString, chapterFilenames[chapter-1]);
 	changeFileExtension(tempString);
 
-	delete [] _chapterBuffer;
+	delete[] _chapterBuffer;
 	_chapterBuffer = _res->fileData(tempString, 0);
 	_currentChapter = chapter;
 }
@@ -1008,7 +1029,7 @@ void KyraEngine_HoF::loadMouseShapes() {
 	_screen->loadBitmap("_MOUSE.CSH", 3, 3, 0);
 
 	for (int i = 0; i <= 8; ++i)
-		addShapeToPool(_screen->makeShapeCopy(_screen->getCPagePtr(3), i), i);
+		addShapeToPool(_screen->getCPagePtr(3), i, i);
 }
 
 void KyraEngine_HoF::loadItemShapes() {
@@ -1033,7 +1054,7 @@ void KyraEngine_HoF::loadCharacterShapes(int shapes) {
 	uint8 *data = _res->fileData(file, 0);
 	for (int i = 9; i <= 32; ++i)
 		addShapeToPool(data, i, i-9);
-	delete [] data;
+	delete[] data;
 
 	_characterShapeFile = shapes;
 }
@@ -1070,6 +1091,8 @@ void KyraEngine_HoF::runStartScript(int script, int unk1) {
 }
 
 void KyraEngine_HoF::loadNPCScript() {
+	_emc->unload(&_npcScriptData);
+
 	char filename[12];
 	strcpy(filename, "_NPC.EMC");
 
@@ -1382,7 +1405,7 @@ int KyraEngine_HoF::initAnimationShapes(uint8 *filedata) {
 void KyraEngine_HoF::uninitAnimationShapes(int count, uint8 *filedata) {
 	for (int i = 0; i < count; ++i)
 		remShapeFromPool(i+33);
-	delete [] filedata;
+	delete[] filedata;
 	setNextIdleAnimTimer();
 }
 
@@ -1541,7 +1564,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	else if (_flags.platform == Common::kPlatformPC)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		KyraEngine::snd_playSoundEffect(track);
+		KyraEngine_v1::snd_playSoundEffect(track);
 }
 
 #pragma mark -
@@ -1552,7 +1575,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 		wsaFlags |= 2;
 
 	if (!_invWsa.wsa)
-		_invWsa.wsa = new WSAMovieV2(this, _screen);
+		_invWsa.wsa = new WSAMovie_v2(this, _screen);
 
 	if (!_invWsa.wsa->open(filename, wsaFlags, 0))
 		error("Couldn't open inventory WSA file '%s'", filename);
@@ -1969,7 +1992,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 #pragma mark -
 
 void KyraEngine_HoF::registerDefaultSettings() {
-	KyraEngine::registerDefaultSettings();
+	KyraEngine_v1::registerDefaultSettings();
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
@@ -2000,13 +2023,13 @@ void KyraEngine_HoF::writeSettings() {
 
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
-	KyraEngine::writeSettings();
+	KyraEngine_v1::writeSettings();
 }
 
 void KyraEngine_HoF::readSettings() {
 	int talkspeed = ConfMan.getInt("talkspeed");
 	_configTextspeed = (talkspeed*95)/255 + 2;
-	KyraEngine::readSettings();
+	KyraEngine_v1::readSettings();
 }
 
 } // end of namespace Kyra

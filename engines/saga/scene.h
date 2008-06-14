@@ -38,8 +38,20 @@ namespace Saga {
 //#define SCENE_DEBUG // for scene debugging
 
 #define SCENE_DOORS_MAX 16
-
 #define NO_CHAPTER_CHANGE -2
+
+// Scenes
+#define ITE_SCENE_INV -1
+#define ITE_SCENE_PUZZLE 26
+#define ITE_SCENE_LODGE 21
+#define ITE_SCENE_ENDCREDIT1 295
+#define ITE_SCENE_OVERMAP 226
+
+// Default scenes
+#define ITE_DEFAULT_SCENE 32
+#define IHNM_DEFAULT_SCENE 151
+#define ITEDEMO_DEFAULT_SCENE 68
+#define IHNMDEMO_DEFAULT_SCENE 144
 
 class ObjectMap;
 

@@ -31,11 +31,11 @@
 #include "kyra/screen.h"
 
 namespace Kyra {
-class KyraEngine;
+class KyraEngine_v1;
 
 class TextDisplayer {
 public:
-	TextDisplayer(KyraEngine *vm, Screen *screen);
+	TextDisplayer(KyraEngine_v1 *vm, Screen *screen);
 	virtual ~TextDisplayer() {}
 
 	int maxSubstringLen() const { return TALK_SUBSTRING_LEN; }
@@ -60,7 +60,7 @@ public:
 	bool printed() const { return _talkMessagePrinted; }
 protected:
 	Screen *_screen;
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	struct TalkCoords {
 		uint16 y, x, w;

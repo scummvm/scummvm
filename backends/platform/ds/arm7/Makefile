@@ -68,7 +68,8 @@ endif
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	/home/neil/devkitpror21/libnds home/neil/devkitpror21/libnds/nds
+#LIBDIRS	:=	/home/neil/devkitpror21/libnds home/neil/devkitpror21/libnds/nds
+LIBDIRS	:=	$(DEVKITPRO)/libnds
 
 
 #---------------------------------------------------------------------------------
@@ -126,6 +127,10 @@ $(BUILD):
 clean:
 	@echo clean ...$(TARGET)
 	@rm -fr $(BUILD) *.bin
+
+#---------------------------------------------------------------------------------
+semiclean:
+	@echo semiclean ...$(TARGET)
 
 
 #---------------------------------------------------------------------------------

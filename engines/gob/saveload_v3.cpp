@@ -24,62 +24,181 @@
  */
 
 #include "common/endian.h"
-#include "common/file.h"
+#include "common/savefile.h"
 
 #include "gob/gob.h"
 #include "gob/saveload.h"
 #include "gob/global.h"
 #include "gob/game.h"
+#include "gob/draw.h"
+#include "gob/inter.h"
 
 namespace Gob {
 
+SaveLoad_v3::SaveFile SaveLoad_v3::_saveFiles[] = {
+	{    "cat.inf", 0, kSaveModeSave,   kSaveGame,       -1},
+	{    "ima.inf", 0, kSaveModeSave,   kSaveScreenshot, -1},
+	{  "intro.$$$", 0, kSaveModeSave,   kSaveTempSprite, -1},
+	{   "bloc.inf", 0, kSaveModeSave,   kSaveNotes,      -1},
+	{   "prot",     0, kSaveModeIgnore, kSaveNone,       -1},
+	{ "config",     0, kSaveModeIgnore, kSaveNone,       -1},
+};
+
 SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName,
 		uint32 screenshotSize, int32 indexOffset, int32 screenshotOffset) :
-	SaveLoad_v2(vm, targetName) {
+	SaveLoad(vm, targetName) {
 
 	_screenshotSize = screenshotSize;
 	_indexOffset = indexOffset;
 	_screenshotOffset = screenshotOffset;
 
-	_saveSlot = -1;
-	_stagesCount = 3;
-
 	_useScreenshots = false;
 	_firstSizeGame = true;
+
+	_saveFiles[0].destName = new char[strlen(targetName) + 5];
+	_saveFiles[1].destName = _saveFiles[0].destName;
+	_saveFiles[2].destName = 0;
+	_saveFiles[3].destName = new char[strlen(targetName) + 5];
+	_saveFiles[4].destName = 0;
+	_saveFiles[5].destName = 0;
+
+	sprintf(_saveFiles[0].destName, "%s.s00", targetName);
+	sprintf(_saveFiles[3].destName, "%s.blo", targetName);
+
+	_varSize = 0;
+	_hasIndex = false;
+	memset(_propBuffer, 0, 1000);
 }
 
-SaveType SaveLoad_v3::getSaveType(const char *fileName) {
-	const char *backSlash;
-	if ((backSlash = strrchr(fileName, '\\')))
-		fileName = backSlash + 1;
-
-	if (!scumm_stricmp(fileName, "cat.inf"))
-		return kSaveGame;
-	if (!scumm_stricmp(fileName, "ima.inf"))
-		return kSaveScreenshot;
-	if (!scumm_stricmp(fileName, "intro.$$$"))
-		return kSaveTempSprite;
-	if (!scumm_stricmp(fileName, "bloc.inf"))
-		return kSaveNotes;
-	if (!scumm_stricmp(fileName, "prot"))
-		return kSaveIgnore;
-	if (!scumm_stricmp(fileName, "config"))
-		return kSaveIgnore;
-
-	return kSaveNone;
+SaveLoad_v3::~SaveLoad_v3() {
+	delete[] _saveFiles[0].destName;
+	delete[] _saveFiles[3].destName;
 }
 
-uint32 SaveLoad_v3::getSaveGameSize() {
-	uint32 size;
+SaveLoad::SaveMode SaveLoad_v3::getSaveMode(const char *fileName) {
+	fileName = stripPath(fileName);
 
-	size = 1040 + (READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4) * 2;
-	if (_useScreenshots)
-		size += _screenshotSize;
+	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
+			return _saveFiles[i].mode;
 
-	return size;
+	return kSaveModeNone;
 }
 
-int32 SaveLoad_v3::getSizeGame() {
+int SaveLoad_v3::getSaveType(const char *fileName) {
+	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
+			return i;
+
+	return -1;
+}
+
+int32 SaveLoad_v3::getSizeVersioned(int type) {
+	assertInited();
+
+	switch (_saveFiles[type].type) {
+	case kSaveGame:
+		return getSizeGame(_saveFiles[type]);
+	case kSaveTempSprite:
+		return getSizeTempSprite(_saveFiles[type]);
+	case kSaveNotes:
+		return getSizeNotes(_saveFiles[type]);
+	case kSaveScreenshot:
+		return getSizeScreenshot(_saveFiles[type]);
+	default:
+		break;
+	}
+
+	return -1;
+}
+
+bool SaveLoad_v3::loadVersioned(int type, int16 dataVar, int32 size, int32 offset) {
+	assertInited();
+
+	switch (_saveFiles[type].type) {
+	case kSaveGame:
+		if (loadGame(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While loading from slot %d", getSlot(offset));
+		break;
+
+	case kSaveTempSprite:
+		if(loadTempSprite(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While loading the temporary sprite");
+		break;
+
+	case kSaveNotes:
+		if (loadNotes(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While loading the notes");
+		break;
+
+	case kSaveScreenshot:
+		if (loadScreenshot(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While loading a screenshot");
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool SaveLoad_v3::saveVersioned(int type, int16 dataVar, int32 size, int32 offset) {
+	assertInited();
+
+	switch (_saveFiles[type].type) {
+	case kSaveGame:
+		if (saveGame(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While saving to slot %d", getSlot(offset));
+		break;
+
+	case kSaveTempSprite:
+		if(saveTempSprite(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While saving the temporary sprite");
+		break;
+
+	case kSaveNotes:
+		if (saveNotes(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While saving the notes");
+		break;
+
+	case kSaveScreenshot:
+		if (saveScreenshot(_saveFiles[type], dataVar, size, offset))
+			return true;
+
+		warning("While saving a screenshot");
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+int SaveLoad_v3::getSlot(int32 offset) const {
+	return ((offset - 1700) / _varSize);
+}
+
+int SaveLoad_v3::getSlotRemainder(int32 offset) const {
+	return ((offset - 1700) % _varSize);
+}
+
+int32 SaveLoad_v3::getSizeGame(SaveFile &saveFile) {
 	if (_firstSizeGame) {
 		_firstSizeGame = false;
 		return -1;
@@ -89,358 +208,403 @@ int32 SaveLoad_v3::getSizeGame() {
 	Common::InSaveFile *in;
 	int32 size = -1;
 
-	int slot = _curSlot;
+	int slot = saveFile.slot;
 	for (int i = 29; i >= 0; i--) {
-		in = saveMan->openForLoading(setCurSlot(i));
+		in = saveMan->openForLoading(setCurrentSlot(saveFile.destName, i));
 		if (in) {
 			delete in;
-			size = (i + 1) * READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) *
-				4 + 1700;
+			size = (i + 1) * _varSize + 1700;
 			break;
 		}
 	}
-	setCurSlot(slot);
+	setCurrentSlot(saveFile.destName, slot);
 
 	return size;
 }
 
-int32 SaveLoad_v3::getSizeScreenshot() {
+int32 SaveLoad_v3::getSizeTempSprite(SaveFile &saveFile) {
+	return _tmpSprite.getSize();
+}
+
+int32 SaveLoad_v3::getSizeNotes(SaveFile &saveFile) {
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in;
 	int32 size = -1;
 
-	_useScreenshots = true;
-	int slot = _curSlot;
+	in = saveMan->openForLoading(saveFile.destName);
+	if (in) {
+		size = in->size();
+		delete in;
+	}
+
+	return size;
+}
+
+int32 SaveLoad_v3::getSizeScreenshot(SaveFile &saveFile) {
+	if (!_useScreenshots) {
+		_useScreenshots = true;
+		_save.addStage(_screenshotSize, false);
+	}
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in;
+	int32 size = -1;
+
+	int slot = saveFile.slot;
 	for (int i = 29; i >= 0; i--) {
-		in = saveMan->openForLoading(setCurSlot(i));
+		in = saveMan->openForLoading(setCurrentSlot(saveFile.destName, i));
 		if (in) {
 			delete in;
 			size = (i + 1) * _screenshotSize + _screenshotOffset;
 			break;
 		}
 	}
-	setCurSlot(slot);
+	setCurrentSlot(saveFile.destName, slot);
 
 	return size;
 }
 
-bool SaveLoad_v3::loadGame(int16 dataVar, int32 size, int32 offset) {
-	int32 varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *in;
+bool SaveLoad_v3::loadGame(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
 
-	int slot = (offset - 1700) / varSize;
-	int slotR = (offset - 1700) % varSize;
-
-	initBuffer();
-
-	if ((size > 0) && (offset < 500) && ((size + offset) <= 500)) {
-
-		memcpy(_vm->_global->_inter_variables + dataVar,
-				_buffer[0] + offset, size);
-		memcpy(_vm->_global->_inter_variablesSizes + dataVar,
-				_buffer[0] + offset + 500, size);
-		return true;
-
-	} else if ((size == 1200) && (offset == 500)) {
-
-		memset(_buffer[1], 0, 1200);
-
-		slot = _curSlot;
-		for (int i = 0; i < 30; i++) {
-			in = saveMan->openForLoading(setCurSlot(i));
-			if (in) {
-				in->seek(1000);
-				in->read(_buffer[1] + i * 40, 40);
-				delete in;
-			}
-		}
-		setCurSlot(slot);
-
-		memcpy(_vm->_global->_inter_variables + dataVar, _buffer[1], 1200);
-		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, 1200);
-		return true;
-
-	} else if ((offset > 0) && (slot < 30) &&
-			(slotR == 0) && (size == 0)) {
-
-		in = saveMan->openForLoading(setCurSlot(slot));
-		if (!in) {
-			warning("Can't open file for slot %d", slot);
-			return false;
-		}
-
-		uint32 sGameSize = getSaveGameSize();
-		uint32 fSize = in->size();
-		if (fSize != sGameSize) {
-			warning("Can't load from slot %d: Wrong size (%d, %d)", slot,
-					fSize, sGameSize);
-			delete in;
-			return false;
-		}
-
-		byte varBuf[500], sizeBuf[500];
-		if (read(*in, varBuf, sizeBuf, 500) == 500) {
-			if (fromEndian(varBuf, sizeBuf, 500)) {
-				memcpy(_buffer[0], varBuf, 500);
-				memcpy(_buffer[0] + 500, sizeBuf, 500);
-				in->seek(1040);
-				if (loadDataEndian(*in, 0, varSize)) {
-					delete in;
-					debugC(1, kDebugFileIO, "Loading from slot %d", slot);
-					return true;
-				}
-			}
-		}
-		delete in;
-
-	} else
-		warning("Invalid loading procedure (%d, %d, %d, %d)",
-				offset, size, slot, slotR);
-
-	return false;
-}
-
-bool SaveLoad_v3::loadScreenshot(int16 dataVar, int32 size, int32 offset) {
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *in;
-
-	int slot = (offset - _screenshotOffset) / _screenshotSize;
-	int slotR = (offset - _screenshotOffset) % _screenshotSize;
-
-	_useScreenshots = true;
-	if ((size == 40) && (offset == _indexOffset)) {
-		char buf[40];
-
-		memset(buf, 0, 40);
-
-		slot = _curSlot;
-		for (int i = 0; i < 30; i++) {
-			in = saveMan->openForLoading(setCurSlot(i));
-			if (in) {
-				delete in;
-				buf[i] = 1;
-			}
-		}
-		setCurSlot(slot);
-
-		memcpy(_vm->_global->_inter_variables + dataVar, buf, 40);
-		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, 40);
-		return true;
-
-	} else if ((offset > 0) && (slot < 30) &&
-			(slotR == 0) && (size < 0)) {
-
-		int32 varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
-
-		in = saveMan->openForLoading(setCurSlot(slot));
-		if (!in) {
-			warning("Can't open file for slot %d", slot);
-			return false;
-		}
-
-		uint32 sGameSize = getSaveGameSize();
-		uint32 fSize = in->size();
-		if (fSize != sGameSize) {
-			warning("Can't load screenshot from slot %d: Wrong size (%d, %d)",
-					slot, fSize, sGameSize);
-			delete in;
-			return false;
-		}
-
-		in->seek(1040 + varSize * 2);
-
-		bool success = loadSprite(*in, size);
-		delete in;
-		return success;
-
-	} else
-		warning("Invalid attempt at loading a screenshot (%d, %d, %d, %d)",
-				offset, size, slot, slotR);
-
-	return false;
-}
-
-bool SaveLoad_v3::saveGame(int16 dataVar, int32 size, int32 offset) {
-	int32 varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
-
-	int slot = (offset - 1700) / varSize;
-	int slotR = (offset - 1700) % varSize;
-
-	initBuffer();
-
-	if ((size > 0) && (offset < 500) && ((size + offset) <= 500)) {
-
-		memcpy(_buffer[0] + offset,
-				_vm->_global->_inter_variables + dataVar, size);
-		memcpy(_buffer[0] + offset + 500,
-				_vm->_global->_inter_variablesSizes + dataVar, size);
-
-		return true;
-
-	} else if ((size > 0) && (offset >= 500) && (offset < 1700) &&
-			((size + offset) <= 1700)) {
-
-		memcpy(_buffer[1] + offset - 500,
-				_vm->_global->_inter_variables + dataVar, size);
-
-		return true;
-
-	} else if ((offset > 0) && (slot < 30) &&
-			(slotR == 0) && (size == 0)) {
-
-		_saveSlot = -1;
-
-		delete _buffer[2];
-		_buffer[2] = new byte[varSize * 2];
-		assert(_buffer[2]);
-
-		memcpy(_buffer[2], _vm->_global->_inter_variables, varSize);
-		memcpy(_buffer[2] + varSize,
-				_vm->_global->_inter_variablesSizes, varSize);
-
-		if (!toEndian(_buffer[2], _buffer[2] + varSize, varSize)) {
-			delete _buffer[2];
-			_buffer[2] = 0;
-			return false;
-		}
-
-		_saveSlot = slot;
-
-		if (!_useScreenshots)
-			return saveGame(0);
-
-		return true;
-
-	} else
-		warning("Invalid saving procedure (%d, %d, %d, %d)",
-				offset, size, slot, slotR);
-
-	return false;
-}
-
-bool SaveLoad_v3::saveNotes(int16 dataVar, int32 size, int32 offset) {
-	return SaveLoad_v2::saveNotes(dataVar, size - 160, offset);
-}
-
-bool SaveLoad_v3::saveScreenshot(int16 dataVar, int32 size, int32 offset) {
-	int slot = (offset - _screenshotOffset) / _screenshotSize;
-	int slotR = (offset - _screenshotOffset) % _screenshotSize;
-
-	_useScreenshots = true;
-
-	if ((offset < _screenshotOffset) && (size > 0)) {
-
-		return true;
-
-	} else if ((offset > 0) && (slot < 30) &&
-			(slotR == 0) && (size < 0)) {
-
-		return saveGame(size);
-
-	} else
-		warning("Invalid attempt at saving a screenshot (%d, %d, %d, %d)",
-				offset, size, slot, slotR);
-
-	return false;
-}
-
-bool SaveLoad_v3::saveGame(int32 screenshotSize) {
-	int8 slot = _saveSlot;
-
-	_saveSlot = -1;
-
-	initBuffer();
-
-	if ((slot < 0) || (slot > 29)) {
-		warning("Can't save to slot %d: Out of range", slot);
-		delete[] _buffer[2];
-		_buffer[2] = 0;
-		return false;
+	if (size == 0) {
+		dataVar = 0;
+		size = _varSize;
 	}
 
-	if (!_buffer[2]) {
-		warning("Can't save to slot %d: No data", slot);
-		return false;
-	}
+	if (offset < 500) {
+		debugC(3, kDebugSaveLoad, "Loading global properties");
 
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *out;
-
-	out = saveMan->openForSaving(setCurSlot(slot));
-	if (!out) {
-		warning("Can't open file for slot %d for writing", slot);
-		delete[] _buffer[2];
-		_buffer[2] = 0;
-		return false;
-	}
-
-	int32 varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
-	byte varBuf[500], sizeBuf[500];
-
-	memcpy(varBuf, _buffer[0], 500);
-	memcpy(sizeBuf, _buffer[0] + 500, 500);
-
-	bool retVal = false;
-	if (toEndian(varBuf, sizeBuf, 500))
-		if (write(*out, varBuf, sizeBuf, 500) == 500)
-			if (out->write(_buffer[1] + slot * 40, 40) == 40)
-				if (out->write(_buffer[2], varSize * 2) == ((uint32) (varSize * 2))) {
-					out->flush();
-					if (!out->ioFailed())
-						retVal = true;
-				}
-
-	delete[] _buffer[2];
-	_buffer[2] = 0;
-
-	if (!retVal) {
-		warning("Can't save to slot %d", slot);
-		delete out;
-		return false;
-	}
-
-	if (_useScreenshots) {
-		if (screenshotSize >= 0) {
-			warning("Can't save to slot %d: Screenshot expected", slot);
-			delete out;
+		if ((size + offset) > 500) {
+			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
-		if (!saveSprite(*out, screenshotSize)) {
-			delete out;
+		_vm->_inter->_variables->copyFrom(dataVar,
+				_propBuffer + offset, _propBuffer + offset + 500, size);
+
+	} else if (offset == 500) {
+		debugC(3, kDebugSaveLoad, "Loading save index");
+
+		if (size != 1200) {
+			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
+
+		int slot = saveFile.slot;
+
+		SaveLoad::buildIndex(_vm->_inter->_variables->getAddressOff8(dataVar, 1200),
+				saveFile.destName, 30, 40, 1000);
+
+		setCurrentSlot(saveFile.destName, slot);
+
+	} else {
+		saveFile.slot = getSlot(offset);
+		int slotRem = getSlotRemainder(offset);
+
+		debugC(2, kDebugSaveLoad, "Loading from slot %d", saveFile.slot); 
+
+		SaveLoad::setCurrentSlot(saveFile.destName, saveFile.slot);
+
+		if ((saveFile.slot < 0) || (saveFile.slot >= 30) || (slotRem != 0)) {
+			warning("Invalid loading procedure (%d, %d, %d, %d, %d)",
+					dataVar, size, offset, saveFile.slot, slotRem);
+			return false;
+		}
+
+		if (!_save.load(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
+			return false;
 	}
 
-	out->finalize();
-	if (out->ioFailed()) {
-		warning("Can't save to slot %d", slot);
-		delete out;
-		return false;
-	}
-
-	debugC(1, kDebugFileIO, "Saved to slot %d", slot);
-	delete out;
 	return true;
 }
 
-void SaveLoad_v3::initBuffer() {
-	if (_buffer)
+bool SaveLoad_v3::loadTempSprite(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(3, kDebugSaveLoad, "Loading from the temporary sprite");
+
+	int index;
+	bool palette;
+
+	if (!_tmpSprite.getProperties(dataVar, size, offset, index, palette))
+		return false;
+
+	if (!_tmpSprite.loadSprite(*_vm->_draw->_spritesArray[index]))
+		return false;
+
+	if (palette) {
+		if (!_tmpSprite.loadPalette(_vm->_global->_pPaletteDesc->vgaPal))
+			return false;
+
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+	}
+
+	if (index == 21) {
+		_vm->_draw->forceBlit();
+		_vm->_video->retrace();
+	}
+
+	return true;
+}
+
+bool SaveLoad_v3::loadNotes(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(2, kDebugSaveLoad, "Loading the notes");
+
+	return _notes.load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
+}
+
+bool SaveLoad_v3::loadScreenshot(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(3, kDebugSaveLoad, "Loading a screenshot");
+
+	if (!_useScreenshots) {
+		_useScreenshots = true;
+		_save.addStage(_screenshotSize, false);
+	}
+
+	if (offset == _indexOffset) {
+		if (size != 40) {
+			warning("Requested index has wrong size (%d)", size);
+			return false;
+		}
+
+		byte buffer[40];
+		memset(buffer, 0, 40);
+
+		int slot = saveFile.slot;
+		buildScreenshotIndex(buffer, saveFile.destName, 30);
+		setCurrentSlot(saveFile.destName, slot);
+
+		memcpy(_vm->_inter->_variables->getAddressOff8(dataVar, 40), buffer, 40);
+
+	} else {
+		saveFile.slot = (offset - _screenshotOffset) / _screenshotSize;
+		int slotRem = (offset - _screenshotOffset) % _screenshotSize;
+
+		SaveLoad::setCurrentSlot(saveFile.destName, saveFile.slot);
+
+		if ((saveFile.slot < 0) || (saveFile.slot >= 30) || (slotRem != 0)) {
+			warning("Invalid loading procedure (%d, %d, %d, %d, %d)",
+					dataVar, size, offset, saveFile.slot, slotRem);
+			return false;
+		}
+
+		byte *buffer = new byte[_screenshotSize];
+
+		if (!_save.load(0, _screenshotSize, _varSize + 540, saveFile.destName, buffer, 0)) {
+			delete[] buffer;
+			return false;
+		}
+
+		int index;
+		bool palette;
+
+		if (!_screenshot.getProperties(dataVar, size, offset, index, palette)) {
+			delete[] buffer;
+			return false;
+		}
+
+		if (!_screenshot.fromBuffer(buffer, _screenshotSize, palette)) {
+			delete[] buffer;
+			return false;
+		}
+
+		if (!_screenshot.loadSprite(*_vm->_draw->_spritesArray[index])) {
+			delete[] buffer;
+			return false;
+		}
+
+		if (palette) {
+			if (!_screenshot.loadPalette(_vm->_global->_pPaletteDesc->vgaPal)) {
+				delete[] buffer;
+				return false;
+			}
+			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+		}
+
+		delete[] buffer;
+	}
+
+	return true;
+}
+
+bool SaveLoad_v3::saveGame(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	if (size == 0) {
+		dataVar = 0;
+		size = _varSize;
+	}
+
+	if (offset < 500) {
+		debugC(3, kDebugSaveLoad, "Loading global properties");
+
+		if ((size + offset) > 500) {
+			warning("Wrong global properties list size (%d, %d)", size, offset);
+			return false;
+		}
+
+		_vm->_inter->_variables->copyTo(dataVar,
+				_propBuffer + offset, _propBuffer + offset + 500, size);
+
+	} else if (offset == 500) {
+		debugC(3, kDebugSaveLoad, "Saving save index");
+
+		if (size != 1200) {
+			warning("Requested index has wrong size (%d)", size);
+			return false;
+		}
+
+		_vm->_inter->_variables->copyTo(dataVar, _indexBuffer, 0, size);
+		_hasIndex = true;
+
+	} else {
+		saveFile.slot = getSlot(offset);
+		int slotRem = getSlotRemainder(offset);
+
+		debugC(2, kDebugSaveLoad, "Saving to slot %d", saveFile.slot);
+
+		SaveLoad::setCurrentSlot(saveFile.destName, saveFile.slot);
+
+		if ((saveFile.slot < 0) || (saveFile.slot >= 30) || (slotRem != 0)) {
+			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
+					dataVar, size, offset, saveFile.slot, slotRem);
+			return false;
+		}
+
+		if (!_hasIndex) {
+			warning("No index written yet");
+			return false;
+		}
+
+		_hasIndex = false;
+
+		if(!_save.save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
+			return false;
+
+		if(!_save.save(0, 40, 500, saveFile.destName, _indexBuffer + (saveFile.slot * 40), 0))
+			return false;
+
+		if (!_save.save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
+			return false;
+
+	}
+
+	return true;
+}
+
+bool SaveLoad_v3::saveTempSprite(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(3, kDebugSaveLoad, "Saving to the temporary sprite");
+
+	int index;
+	bool palette;
+
+	if (!_tmpSprite.getProperties(dataVar, size, offset, index, palette))
+		return false;
+
+	if (!_tmpSprite.saveSprite(*_vm->_draw->_spritesArray[index]))
+		return false;
+
+	if (palette)
+		if (!_tmpSprite.savePalette(_vm->_global->_pPaletteDesc->vgaPal))
+			return false;
+
+	return true;
+}
+
+bool SaveLoad_v3::saveNotes(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(2, kDebugSaveLoad, "Saving the notes");
+
+	return _notes.save(dataVar, size - 160, offset, saveFile.destName, _vm->_inter->_variables);
+	return false;
+}
+
+bool SaveLoad_v3::saveScreenshot(SaveFile &saveFile,
+		int16 dataVar, int32 size, int32 offset) {
+
+	debugC(3, kDebugSaveLoad, "Saving a screenshot");
+
+	if (!_useScreenshots) {
+		_useScreenshots = true;
+		_save.addStage(_screenshotSize, false);
+	}
+
+	if (offset >= _screenshotOffset) {
+
+		saveFile.slot = (offset - _screenshotOffset) / _screenshotSize;
+		int slotRem = (offset - _screenshotOffset) % _screenshotSize;
+
+		setCurrentSlot(saveFile.destName, saveFile.slot);
+
+		if ((saveFile.slot < 0) || (saveFile.slot >= 30) || (slotRem != 0)) {
+			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
+					dataVar, size, offset, saveFile.slot, slotRem);
+			return false;
+		}
+
+		int index;
+		bool palette;
+
+		if (!_screenshot.getProperties(dataVar, size, offset, index, palette))
+			return false;
+
+		if (!_screenshot.saveSprite(*_vm->_draw->_spritesArray[index]))
+			return false;
+
+		if (palette)
+			if (!_screenshot.savePalette(_vm->_global->_pPaletteDesc->vgaPal))
+				return false;
+
+		
+		byte *buffer = new byte[_screenshotSize];
+
+		if (!_screenshot.toBuffer(buffer, _screenshotSize, palette)) {
+			delete[] buffer;
+			return false;
+		}
+
+		if (!_save.save(0, _screenshotSize, _varSize + 540, saveFile.destName, buffer, 0)) {
+			delete[] buffer;
+			return false;
+		}
+
+		delete[] buffer;
+	}
+
+	return true;
+}
+
+void SaveLoad_v3::assertInited() {
+	if (_varSize > 0)
 		return;
 
-	_buffer = new byte*[_stagesCount];
+	_varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 
-	assert(_buffer);
+	_save.addStage(500);
+	_save.addStage(40, false);
+	_save.addStage(_varSize);
+}
 
-	_buffer[0] = new byte[1000];
-	_buffer[1] = new byte[1200];
-	_buffer[2] = 0;
+void SaveLoad_v3::buildScreenshotIndex(byte *buffer, char *name, int n) {
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in;
 
-	assert(_buffer[0] && _buffer[1]);
-
-	memset(_buffer[0], 0, 1000);
-	memset(_buffer[1], 0, 1200);
+	memset(buffer, 0, n);
+	for (int i = 0; i < n; i++) {
+		in = saveMan->openForLoading(setCurrentSlot(name, i));
+		if (in) {
+			delete in;
+			buffer[i] = 1;
+		}
+	}
 }
 
 } // End of namespace Gob

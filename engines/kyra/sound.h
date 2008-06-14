@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * LPGL License
+ * LGPL License
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@
 #ifndef KYRA_SOUND_H
 #define KYRA_SOUND_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/scummsys.h"
 #include "common/file.h"
@@ -61,12 +61,12 @@ namespace Kyra {
 
 /**
  * Analog audio output device API for Kyrandia games.
- * It countains functionallity to play music tracks,
+ * It contains functionality to play music tracks,
  * sound effects and voices.
  */
 class Sound {
 public:
-	Sound(KyraEngine *vm, Audio::Mixer *mixer);
+	Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	virtual ~Sound();
 
 	enum kType {
@@ -92,7 +92,7 @@ public:
 	virtual void process() {}
 
 	/**
-	 * Updates internal volume settings according to ConfigManager
+	 * Updates internal volume settings according to ConfigManager.
 	 */
 	virtual void updateVolumeSettings() {}
 
@@ -105,7 +105,7 @@ public:
 	virtual void setSoundList(const AudioDataStruct *list) { _soundDataList = list; }
 
 	/**
-	 * Checks if a given sound file is present
+	 * Checks if a given sound file is present.
 	 *
 	 * @param track	track number
 	 * @return true if available, false otherwise
@@ -126,19 +126,19 @@ public:
 	virtual void playTrack(uint8 track) = 0;
 
 	/**
-	 * Stop playback of the current track
+	 * Stop playback of the current track.
 	 */
 	virtual void haltTrack() = 0;
 
 	/**
-	 * Plays the specified sound effect
+	 * Plays the specified sound effect.
 	 *
 	 * @param track	sound effect id
 	 */
 	virtual void playSoundEffect(uint8 track) = 0;
 
 	/**
-	 * Checks if the sound driver plays any sound
+	 * Checks if the sound driver plays any sound.
 	 *
 	 * @return true if playing, false otherwise
 	 */
@@ -174,9 +174,9 @@ public:
 	 *
 	 * @param file	file to be played
 	 * @param isSfx marks file as sfx instead of voice
-	 * @return channel the voice file is played on
+	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual bool voicePlay(const char *file, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
@@ -186,13 +186,20 @@ public:
 	bool voiceIsPlaying(const char *file = 0);
 
 	/**
+	 * Checks how long a voice has been playing
+	 *
+	 * @return time in milliseconds
+	 */
+	uint32 voicePlayedTime(const char *file);
+
+	/**
 	 * Stops playback of the current voice.
 	 */
 	void voiceStop(const char *file = 0);
 protected:
 	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->_fileListLen) ? _soundDataList->_fileList[file] : ""; }
 	const void *cdaData() const { return _soundDataList != 0 ? _soundDataList->_cdaTracks : 0; }
-	const int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->_cdaNumTracks : 0; }
+	int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->_cdaNumTracks : 0; }
 
 	enum {
 		kNumChannelHandles = 4
@@ -209,7 +216,7 @@ protected:
 
 	int _currentTheme;
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Audio::Mixer *_mixer;
 
 private:
@@ -225,7 +232,7 @@ private:
 			uint numLoops);
 	};
 
-	static const SpeechCodecs _supportedCodes[];
+	static const SpeechCodecs _supportedCodecs[];
 };
 
 class AdlibDriver;
@@ -243,7 +250,7 @@ class AdlibDriver;
  */
 class SoundAdlibPC : public Sound {
 public:
-	SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundAdlibPC();
 
 	kType getMusicType() const { return kAdlib; }
@@ -298,7 +305,7 @@ private:
  */
 class SoundMidiPC : public MidiDriver, public Sound {
 public:
-	SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
+	SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver);
 	~SoundMidiPC();
 
 	kType getMusicType() const { return isMT32() ? kMidiMT32 : kMidiGM; }
@@ -378,7 +385,7 @@ private:
 class SoundTowns_EuphonyDriver;
 class SoundTowns : public MidiDriver, public Sound {
 public:
-	SoundTowns(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundTowns();
 
 	kType getMusicType() const { return kTowns; }
@@ -435,7 +442,7 @@ private:
 //class SoundTowns_v2_TwnDriver;
 class SoundTowns_v2 : public Sound {
 public:
-	SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundTowns_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundTowns_v2();
 
 	kType getMusicType() const { return kTowns; }
@@ -449,7 +456,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	bool voicePlay(const char *file, bool isSfx = false);
+	int32 voicePlay(const char *file, bool isSfx = false);
 	void playSoundEffect(uint8) {}
 
 private:
@@ -463,7 +470,7 @@ private:
 
 class MixedSoundDriver : public Sound {
 public:
-	MixedSoundDriver(KyraEngine *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
+	MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
 	~MixedSoundDriver() { delete _music; delete _sfx; }
 
 	kType getMusicType() const { return _music->getMusicType(); }
@@ -491,6 +498,8 @@ private:
 
 // Digital Audio
 class AUDStream;
+class KyraAudioStream;
+class KyraEngine_MR;
 
 /**
  * Digital audio output device.
@@ -499,7 +508,7 @@ class AUDStream;
  */
 class SoundDigital {
 public:
-	SoundDigital(KyraEngine *vm, Audio::Mixer *mixer);
+	SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer);
 	~SoundDigital();
 
 	bool init() { return true; }
@@ -535,7 +544,7 @@ public:
 	void stopSound(int channel);
 
 	/**
-	 * Stops playback of all sounds
+	 * Stops playback of all sounds.
 	 */
 	void stopAllSounds();
 
@@ -548,7 +557,7 @@ public:
 	 */
 	void beginFadeOut(int channel, int ticks);
 private:
-	KyraEngine *_vm;
+	KyraEngine_MR *_vm;
 	Audio::Mixer *_mixer;
 
 	struct Sound {
@@ -556,8 +565,20 @@ private:
 
 		char filename[16];
 		uint8 priority;
-		AUDStream *stream;
+		KyraAudioStream *stream;
 	} _sounds[4];
+
+	struct AudioCodecs {
+		const char *fileext;
+		Audio::AudioStream *(*streamFunc)(
+			Common::SeekableReadStream *stream,
+			bool disposeAfterUse,
+			uint32 startTime,
+			uint32 duration,
+			uint numLoops);
+	};
+
+	static const AudioCodecs _supportedCodecs[];
 };
 
 } // end of namespace Kyra

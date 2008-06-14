@@ -225,7 +225,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 #endif
 
 	_gamePaused = false;
-	_graphicsLevelFudged = false;
 
 	_gameCycle = 0;
 	_gameSpeed = 1;
@@ -392,7 +391,7 @@ int Sword2Engine::go() {
 
 #ifdef SWORD2_DEBUG
 		if (_stepOneCycle) {
-			pauseGame();
+			pauseEngineIntern(true);
 			_stepOneCycle = false;
 		}
 #endif
@@ -406,9 +405,9 @@ int Sword2Engine::go() {
 				switch (ke->kbd.keycode) {
 				case Common::KEYCODE_p:
 					if (_gamePaused)
-						unpauseGame();
+						pauseEngineIntern(false);
 					else
-						pauseGame();
+						pauseEngineIntern(true);
 					break;
 				case Common::KEYCODE_c:
 					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
@@ -421,7 +420,7 @@ int Sword2Engine::go() {
 				case Common::KEYCODE_SPACE:
 					if (_gamePaused) {
 						_stepOneCycle = true;
-						unpauseGame();
+						pauseEngineIntern(false);
 					}
 					break;
 				case Common::KEYCODE_s:
@@ -689,53 +688,41 @@ void Sword2Engine::sleepUntil(uint32 time) {
 	}
 }
 
-void Sword2Engine::pauseGame() {
-	// Don't allow Pause while screen fading or while black
-	if (_screen->getFadeStatus() != RDFADE_NONE)
-		return;
+void Sword2Engine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		// FIXME: We should never disallow pausing, and we need to do
+		// something about pausing during cutscene moves, credits, etc.
 
-	_sound->pauseAllSound();
-	_mouse->pauseGame();
+		// Don't allow Pause while screen fading or while black
+		if (_screen->getFadeStatus() != RDFADE_NONE)
+			return;
 
-	// If render level is at max, turn it down because palette-matching
-	// won't work when the palette is dimmed.
-
-	if (_screen->getRenderLevel() == 3) {
-		_screen->setRenderLevel(2);
-		_graphicsLevelFudged = true;
-	}
+		_sound->pauseAllSound();
+		_mouse->pauseEngine(true);
 
 #ifdef SWORD2_DEBUG
-	// Don't dim it if we're single-stepping through frames
-	// dim the palette during the pause
+		// Don't dim it if we're single-stepping through frames
+		// dim the palette during the pause
 
-	if (!_stepOneCycle)
-		_screen->dimPalette();
+		if (!_stepOneCycle)
+			_screen->dimPalette(true);
 #else
-	_screen->dimPalette();
+		_screen->dimPalette(true);
 #endif
 
-	_gamePaused = true;
-}
+		_gamePaused = true;
+	} else {
+		_mouse->pauseEngine(false);
+		_sound->unpauseAllSound();
 
-void Sword2Engine::unpauseGame() {
-	_mouse->unpauseGame();
-	_sound->unpauseAllSound();
+		_screen->dimPalette(false);
 
-	// Put back game screen palette; see screen.cpp
-	_screen->setFullPalette(-1);
+		_gamePaused = false;
 
-	// If graphics level at max, turn up again
-	if (_graphicsLevelFudged) {
-		_screen->setRenderLevel(3);
-		_graphicsLevelFudged = false;
+		// If mouse is about or we're in a chooser menu
+		if (!_mouse->getMouseStatus() || _mouse->isChoosing())
+			_mouse->setMouse(NORMAL_MOUSE_ID);
 	}
-
-	_gamePaused = false;
-
-	// If mouse is about or we're in a chooser menu
-	if (!_mouse->getMouseStatus() || _mouse->isChoosing())
-		_mouse->setMouse(NORMAL_MOUSE_ID);
 }
 
 uint32 Sword2Engine::getMillis() {

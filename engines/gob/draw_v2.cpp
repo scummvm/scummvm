@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "graphics/cursorman.h"
 
@@ -33,6 +32,7 @@
 #include "gob/util.h"
 #include "gob/game.h"
 #include "gob/scenery.h"
+#include "gob/inter.h"
 #include "gob/video.h"
 
 namespace Gob {
@@ -178,13 +178,13 @@ void Draw_v2::animateCursor(int16 cursor) {
 					_vm->_util->delay(5);
 			}
 		}
-	} else
+	} else {
 		blitCursor();
+		_cursorX = newX;
+		_cursorY = newY;
+	}
 
 	_showCursor &= ~1;
-
-	_cursorX = newX;
-	_cursorY = newY;
 }
 
 void Draw_v2::printTotText(int16 id) {
@@ -246,22 +246,29 @@ void Draw_v2::printTotText(int16 id) {
 	}
 
 	if (_renderFlags & RENDERFLAG_FROMSPLIT) {
-		destY = _vm->_video->_splitStart;
+		int16 start;
+
+		start = _vm->_video->_splitStart;
+
+		destY = start;
 		spriteBottom = READ_LE_UINT16(ptr + 6) - READ_LE_UINT16(ptr + 2);
+
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS)
 			spriteBottom *= 3;
-		spriteBottom += _vm->_video->_splitStart;
+
+		spriteBottom += start;
+
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
-			spriteBottom += _backDeltaX;
-			destY += _backDeltaX;
+			spriteBottom += _backDeltaY;
+			destY += _backDeltaY;
 		}
 	} else {
+		destY = READ_LE_UINT16(ptr + 2);
+		spriteBottom = READ_LE_UINT16(ptr + 6);
+
 		if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
-			destY = READ_LE_UINT16(ptr + 2) * 2;
-			spriteBottom = READ_LE_UINT16(ptr + 6) * 2;
-		} else {
-			destY = READ_LE_UINT16(ptr + 2);
-			spriteBottom = READ_LE_UINT16(ptr + 6);
+			destY *= 2;
+			spriteBottom *= 2;
 		}
 	}
 
@@ -629,8 +636,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 			_destSpriteX += _backDeltaX;
 			_destSpriteY += _backDeltaY;
 			if ((operation == DRAW_DRAWLINE) ||
-			   ((operation >= DRAW_DRAWBAR) &&
-			    (operation <= DRAW_FILLRECTABS))) {
+			   ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS))) {
 				_spriteRight += _backDeltaX;
 				_spriteBottom += _backDeltaY;
 			}
@@ -645,6 +651,24 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 destSpriteY = _destSpriteY;
 	int16 destSurface = _destSurface;
 	int16 sourceSurface = _sourceSurface;
+
+	if (_vm->_video->_splitSurf && ((_destSurface == 20) || (_destSurface == 21))) {
+		if ((_destSpriteY >= _vm->_video->_splitStart)) {
+			_destSpriteY -= _vm->_video->_splitStart;
+			if ((operation == DRAW_DRAWLINE) ||
+				 ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
+				_spriteBottom -= _vm->_video->_splitStart;
+
+			_destSurface += 4;
+		}
+
+		if ((_spriteTop >= _vm->_video->_splitStart) && (operation == DRAW_BLITSURF)) {
+			_spriteTop -= _vm->_video->_splitStart;
+			if (_destSurface < 24)
+				_destSurface += 4;
+		}
+
+	}
 
 	adjustCoords(0, &_destSpriteX, &_destSpriteY);
 	if ((operation != DRAW_LOADSPRITE) && (_needAdjust != 2)) {

@@ -142,7 +142,7 @@ void OSystem_SDL_Symbian::initBackend() {
 }
 
 OSystem_SDL_Symbian::~OSystem_SDL_Symbian() {
-	delete []_stereo_mix_buffer;
+	delete[] _stereo_mix_buffer;
 }
 
 int OSystem_SDL_Symbian::getDefaultGraphicsMode() const {

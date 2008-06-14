@@ -27,7 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/array.h"
+#include "common/list.h"
 
 #ifdef MIN
 #undef MIN
@@ -308,11 +308,13 @@ void enableSpecialDebugLevelList(const String &option);
  */
 bool disableSpecialDebugLevel(const String &option);
 
+typedef List<EngineDebugLevel> DebugLevelContainer;
+
 /**
  * Lists all debug levels
  * @return returns a arry with all debug levels
  */
-const Array<EngineDebugLevel> &listSpecialDebugLevels();
+const DebugLevelContainer &listSpecialDebugLevels();
 
 /**
  * Return the active debug flag mask (i.e. all active debug flags ORed

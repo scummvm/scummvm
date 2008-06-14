@@ -26,6 +26,7 @@
 
 #include "common/config-manager.h"
 #include "common/util.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <CoreMIDI/CoreMIDI.h>
@@ -175,8 +176,50 @@ void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
 	MIDISend(mOutPort, mDest, packetList);
 }
 
-MidiDriver *MidiDriver_CoreMIDI_create() {
-	return new MidiDriver_CoreMIDI();
+
+// Plugin interface
+
+class CoreMIDIMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "CoreMIDI";
+	}
+
+	const char *getId() const {
+		return "coremidi";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices CoreMIDIMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
+
+PluginError CoreMIDIMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_CoreMIDI();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_CoreMIDI_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	CoreMIDIMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(COREMIDI)
+	//REGISTER_PLUGIN_DYNAMIC(COREMIDI, PLUGIN_TYPE_MUSIC, CoreMIDIMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(COREMIDI, PLUGIN_TYPE_MUSIC, CoreMIDIMusicPlugin);
+//#endif
 
 #endif // MACOSX

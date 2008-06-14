@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "graphics/cursorman.h"
 
@@ -31,9 +30,10 @@
 #include "gob/draw.h"
 #include "gob/global.h"
 #include "gob/util.h"
-#include "gob/cdrom.h"
 #include "gob/game.h"
 #include "gob/scenery.h"
+#include "gob/inter.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -170,7 +170,7 @@ void Draw_v1::printTotText(int16 id) {
 	int16 spriteRight, spriteBottom;
 	char buf[20];
 
-	_vm->_cdrom->playMultMusic();
+	_vm->_sound->cdPlayMultMusic();
 
 	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr)
 		return;

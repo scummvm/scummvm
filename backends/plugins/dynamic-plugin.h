@@ -46,6 +46,7 @@ public:
 			return false;
 		}
 		if (verFunc() != PLUGIN_VERSION) {
+			warning("Plugin uses a different API version (you have: '%d', needed is: '%d')", verFunc(), PLUGIN_VERSION);
 			unloadPlugin();
 			return false;
 		}
@@ -58,6 +59,7 @@ public:
 		}
 		_type = (PluginType)typeFunc();
 		if (_type >= PLUGIN_TYPE_MAX) {
+			warning("Plugin type unknown: %d", _type);
 			unloadPlugin();
 			return false;
 		}
@@ -69,6 +71,7 @@ public:
 			return false;
 		}
 		if (typeVerFunc() != pluginTypeVersions[_type]) {
+			warning("Plugin uses a different type API version (you have: '%d', needed is: '%d')", typeVerFunc(), pluginTypeVersions[_type]);
 			unloadPlugin();
 			return false;
 		}
@@ -83,6 +86,7 @@ public:
 		// Get the plugin object
 		_pluginObject = getObject();
 		if (!_pluginObject) {
+			warning("Couldn't get the plugin object");
 			unloadPlugin();
 			return false;
 		}

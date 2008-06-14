@@ -36,7 +36,6 @@
 #include "saga/rscfile.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
-#include "saga/sagaresnames.h"
 
 namespace Saga {
 struct SAGAGameDescription {
@@ -55,18 +54,15 @@ struct SAGAGameDescription {
 	const GamePatchDescription *patchDescriptions;
 };
 
-const bool SagaEngine::isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
-const bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
+bool SagaEngine::isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
+bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
 const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
 const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->sfxInfo; }
 const GameSoundInfo *SagaEngine::getMusicInfo() const {
 	static GameSoundInfo musicInfo;
 	musicInfo.resourceType = kSoundPCM;
-	musicInfo.frequency = 11025;
 	musicInfo.sampleBits = 16;
-	// The digital music in the ITE Mac demo version is not stereo
-	musicInfo.stereo = _gameDescription->gameType == GID_ITE_MACDEMO2 ? false : true;
 	musicInfo.isBigEndian = false;
 	musicInfo.isSigned = true;
 

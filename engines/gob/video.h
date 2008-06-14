@@ -37,10 +37,11 @@ class SurfaceDesc : public ReferenceCounter<SurfaceDesc> {
 public:
 	int16 _vidMode;
 
-	int16 getWidth() { return _width; }
-	int16 getHeight() { return _height; }
+	int16 getWidth() const { return _width; }
+	int16 getHeight() const { return _height; }
 	byte *getVidMem() { return _vidMem; }
-	bool hasOwnVidMem() { return _ownVidMem; }
+	const byte *getVidMem() const { return _vidMem; }
+	bool hasOwnVidMem() const { return _ownVidMem; }
 
 	void setVidMem(byte *vidMem);
 	void resize(int16 width, int16 height);
@@ -97,13 +98,18 @@ public:
 	};
 
 	bool _doRangeClamp;
+
 	int16 _surfWidth;
 	int16 _surfHeight;
+
 	int16 _scrollOffsetX;
 	int16 _scrollOffsetY;
+
+	SurfaceDesc::Ptr _splitSurf;
 	int16 _splitHeight1;
 	int16 _splitHeight2;
 	int16 _splitStart;
+
 	int16 _screenDeltaX;
 	int16 _screenDeltaY;
 

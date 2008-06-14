@@ -1,5 +1,5 @@
 /*
-	io_m3cf.h
+	io_m3cf.h 
 
 	Hardware Routines for reading a compact flash card
 	using the M3 CF
@@ -24,7 +24,7 @@ extern LPIO_INTERFACE M3CF_GetInterface(void) ;
 
 #endif	// define IO_M3CF_H
 /*
-	io_m3cf.h
+	io_m3cf.h 
 
 	Hardware Routines for reading a compact flash card
 	using the M3 CF

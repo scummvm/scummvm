@@ -244,12 +244,6 @@
 			RelativePath="..\..\engines\cruise\stack.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cruise\stringSupport.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\stringSupport.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\cruise\various.cpp">
 		</File>
 		<File

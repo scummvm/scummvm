@@ -107,8 +107,7 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 	int textWidth = _screen->getTextWidth(p);
 	_screen->_charWidth = 0;
 
-	// longer text strings for German versions
-	int maxTextWidth = (_vm->language() == 2 ? 240 : 176);
+	int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
 
 	if (textWidth > maxTextWidth) {
 		if (textWidth > (maxTextWidth*2)) {
@@ -452,7 +451,7 @@ void KyraEngine_HoF::updateDlgBuffer() {
 		filename[11] = suffix[_lang];
 
 	if (_dlgBuffer)
-		delete [] _dlgBuffer;
+		delete[] _dlgBuffer;
 
 	_dlgBuffer = _res->fileData(filename, 0);
 }
@@ -649,7 +648,7 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 	}
 
 	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || skipFlag())) {
-		if (!speechEnabled() && chatAnimEndTime > _system->getMillis() || speechEnabled() && snd_voiceIsPlaying()) {
+		if ((!speechEnabled() && chatAnimEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) {
 			_tim->resetFinishedFlag();
 			while (!_tim->finished() && !skipFlag() && !_quitFlag) {
 				if (_currentTalkSections.TLKTim)

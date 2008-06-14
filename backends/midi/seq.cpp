@@ -30,8 +30,9 @@
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
 
-#include "sound/mpu401.h"
 #include "common/util.h"
+#include "sound/musicplugin.h"
+#include "sound/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -169,8 +170,50 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 	write (device, buf, position);
 }
 
-MidiDriver *MidiDriver_SEQ_create() {
-	return new MidiDriver_SEQ();
+
+// Plugin interface
+
+class SeqMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "SEQ";
+	}
+
+	const char *getId() const {
+		return "seq";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices SeqMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
+
+PluginError SeqMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_SEQ();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	SeqMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(SEQ)
+	//REGISTER_PLUGIN_DYNAMIC(SEQ, PLUGIN_TYPE_MUSIC, SeqMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(SEQ, PLUGIN_TYPE_MUSIC, SeqMusicPlugin);
+//#endif
 
 #endif

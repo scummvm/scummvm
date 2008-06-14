@@ -93,4 +93,25 @@ public:
 	}
 };
 
+
+// Engine plugins
+
+typedef PluginSubclass<MetaEngine> EnginePlugin;
+
+/**
+ * Singleton class which manages all Engine plugins.
+ */
+class EngineManager : public Common::Singleton<EngineManager> {
+private:
+	friend class Common::Singleton<SingletonBaseType>;
+
+public:
+	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
+	GameList detectGames(const FSList &fslist) const;
+	const EnginePlugin::List &getPlugins() const;
+};
+
+/** Convenience shortcut for accessing the engine manager. */
+#define EngineMan EngineManager::instance()
+
 #endif

@@ -1,5 +1,5 @@
 /*
-	io_fcsr.h
+	io_fcsr.h 
 
 	Hardware Routines for using a GBA Flash Cart with SRAM
 
@@ -23,7 +23,7 @@ extern LPIO_INTERFACE FCSR_GetInterface(void) ;
 
 #endif	// define IO_FCSR_H
 /*
-	io_fcsr.h
+	io_fcsr.h 
 
 	Hardware Routines for using a GBA Flash Cart with SRAM
 

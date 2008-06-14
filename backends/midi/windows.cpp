@@ -24,11 +24,14 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
-
 #include <windows.h>
-#include <mmsystem.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
-#include "common/util.h"
+
+#include <mmsystem.h>
 
 ////////////////////////////////////////
 //
@@ -141,8 +144,50 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 	}
 }
 
-MidiDriver *MidiDriver_WIN_create() {
-	return new MidiDriver_WIN();
+
+// Plugin interface
+
+class WindowsMusicPlugin : public MusicPluginObject {
+public:
+	const char *getName() const {
+		return "Windows MIDI";
+	}
+
+	const char *getId() const {
+		return "windows";
+	}
+
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+};
+
+MusicDevices WindowsMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
+
+PluginError WindowsMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_WIN();
+
+	return kNoError;
+}
+
+MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer) {
+	MidiDriver *mididriver;
+
+	WindowsMusicPlugin p;
+	p.createInstance(mixer, &mididriver);
+
+	return mididriver;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(WINDOWS)
+	//REGISTER_PLUGIN_DYNAMIC(WINDOWS, PLUGIN_TYPE_MUSIC, WindowsMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(WINDOWS, PLUGIN_TYPE_MUSIC, WindowsMusicPlugin);
+//#endif
 
 #endif

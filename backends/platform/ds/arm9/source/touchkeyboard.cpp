@@ -45,7 +45,7 @@ struct key_data {
 
 key_data keys[DS_NUM_KEYS] = {
 	// Key number		x		y		character
-
+	
 	// Numbers
 	{28,				3,		0,		'1'},
 	{29,				5,		0,		'2'},
@@ -116,7 +116,7 @@ key_data keys[DS_NUM_KEYS] = {
 	{54,				29,		8,		Common::KEYCODE_DOWN},
 	{53,				31,		8,		Common::KEYCODE_RIGHT},
 	{51,				29,		6,		Common::KEYCODE_UP},
-
+	
 	// Close button
 	{56,				30,		0,		Common::KEYCODE_INVALID},
 
@@ -133,7 +133,7 @@ key_data keys[DS_NUM_KEYS] = {
 	{66,				26,		-2,		Common::KEYCODE_F10},
 	{67,				28,		-2,		Common::KEYCODE_F11},
 	{68,				30,		-2,		Common::KEYCODE_F12},
-
+	
 };
 
 int keyboardX;
@@ -162,7 +162,7 @@ void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
 /*	for (int r = 0; r < 32 * 32; r++) {
 		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = *saveSpace++;
 	}
-
+	
 	for (int r = 0; r < 4096; r++) {
 		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r]	= *saveSpace++;
 	}*/
@@ -175,77 +175,77 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 //		*saveSpace++ = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r];
 		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = 0;
 	}
-
+	
 	for (int r = 0; r < KEYBOARD_DATA_SIZE / 2; r++) {
 //		*saveSpace++ = ((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r];
 		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r] = ((u16 *) (keyboard_raw))[r];
 	}
-
+	
 	for (int r = 0; r < 16; r++) {
 		BG_PALETTE_SUB[r] = ((u16 *) (keyboard_pal_raw))[r];
 	}
 
 	// this is the font
 	for (int tile = 0; tile < 94; tile++) {
-
+		
 		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + ((KEYBOARD_DATA_SIZE) + (tile * 32)));
 		u8* src = ((u8 *) (_8x8font_tga_raw)) + 18 + tile * 8;
 
 		for (int y = 0 ; y < 8; y++) {
 			for (int x = 0; x < 2; x++) {
 				 *(tileAddr + (y * 2) + x) =(*(src + (y * 752) + (x * 4) + 0) & 0x0F)
-										 | ((*(src + (y * 752) + (x * 4) + 1) & 0x0F) << 4)
+									 	 | ((*(src + (y * 752) + (x * 4) + 1) & 0x0F) << 4)
 										 | ((*(src + (y * 752) + (x * 4) + 2) & 0x0F) << 8)
 										 | ((*(src + (y * 752) + (x * 4) + 3) & 0x0F) << 12);
-
+					
 			}
 		}
 	}
-
+				
 
 
 
 	for (int r = 0; r < 16; r++) {
 		int col = ((u16 *) (keyboard_pal_raw))[r];
-
+		
 		int red = col & 0x001F;
 		int green = (col & 0x03E0) >> 5;
 		int blue = (col & 0x7C00) >> 10;
-
+		
 		red = (red * 8) / 16;
 		green = (green * 24) / 16;
 		blue = (blue * 8) / 16;
 
 		if (green > 31) green = 31;
-
+				
 		BG_PALETTE_SUB[16 + r] = red | (green << 5) | (blue << 10);
 	}
-
+	
 	keyboardX = -2;
 	keyboardY = 2;
-
+	
 	DS::mapBase = mapBase;
 	DS::tileBase = tileBase;
-
+	
 	shiftState = false;
 	capsLockState = false;
-
+	
 	int x = keyboardX;
 	int y = keyboardY;
-
+	
 	u16* base = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase));
 	baseAddress = base;
-
+	
 	for (int r = 0; r < DS_NUM_KEYS; r++) {
 		base[(y + keys[r].y) * 32 + x + keys[r].x] = 10 + keys[r].keyNum * 2;
 		base[(y + keys[r].y) * 32 + x + keys[r].x + 1] = 10 + keys[r].keyNum * 2 + 1;
-
+		
 		base[(y + keys[r].y + 1) * 32 + x + keys[r].x] = 10 + 148 + keys[r].keyNum * 2;
 		base[(y + keys[r].y + 1) * 32 + x + keys[r].x + 1] = 10 + 148 + keys[r].keyNum * 2 + 1;
-
+		
 		keys[r].pressed = false;
 	}
-
+	
 	closed = false;
 	clearAutoComplete();
 }
@@ -257,7 +257,7 @@ void drawAutoComplete() {
 			baseAddress[y * 32 + x] = 0;
 		}
 	}
-
+			
 
 	for (int r = 0; r < autoCompleteCount; r++) {
 		int y = 12 + (r % 6) * 2;
@@ -265,15 +265,15 @@ void drawAutoComplete() {
 
 		for (int p = 0; p < strlen(autoCompleteWord[r]); p++) {
 			char c = autoCompleteWord[r][p];
-
+			
 			int tile = c - 33 + (KEYBOARD_DATA_SIZE / 32);
 
 			if (selectedCompletion == r) {
 				tile |= 0x1000;
 			}
 
-			baseAddress[y * 32 + x + p] = tile;
-
+			baseAddress[y * 32 + x + p] = tile;			
+			
 
 		}
 	}
@@ -317,7 +317,7 @@ void clearAutoComplete() {
 
 void typeCompletion(int current) {
 	Common::Event event;
-	OSystem_DS* system = OSystem_DS::instance();
+   	OSystem_DS* system = OSystem_DS::instance();
 
 	strcat(autoCompleteBuffer, &autoCompleteWord[current][charactersEntered]);
 	strcat(autoCompleteBuffer, " ");
@@ -330,7 +330,7 @@ void typeCompletion(int current) {
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.flags = 0;
 		system->addEvent(event);
-
+	
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 	}
@@ -350,14 +350,14 @@ void updateTypeEvents()
 	if (autoCompleteBuffer[0] != '\0')
 	{
 		Common::Event event;
-		OSystem_DS* system = OSystem_DS::instance();
-
+   		OSystem_DS* system = OSystem_DS::instance();
+	
 		event.kbd.keycode = (Common::KeyCode) autoCompleteBuffer[0];
 		event.kbd.ascii = autoCompleteBuffer[0];
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.flags = 0;
 		system->addEvent(event);
-
+	
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 
@@ -380,30 +380,37 @@ void createKeyEvent(int keyNum, Common::Event& event)
 		} else {
 			event.kbd.keycode = (Common::KeyCode) (Common::KEYCODE_F1 - (keys[keyNum].character - '1'));
 			event.kbd.ascii = 0;
-		}
-
+		}					
+	
 	} else if ((keys[keyNum].character >= 'A') && (keys[keyNum].character <= 'Z')) {
-
+		
 		if ((!DS::shiftState) && (!DS::capsLockState)) {
 			event.kbd.ascii = keys[keyNum].character + 32; // Make key lowercase.
 		} else {
 			event.kbd.ascii = keys[keyNum].character;
 		}
-
+		
 		event.kbd.keycode = (Common::KeyCode) event.kbd.ascii;
 	} else {
-		event.kbd.ascii = keys[keyNum].character;
-		event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
-	}
+		if ((keys[keyNum].character >= Common::KEYCODE_F1) && (keys[keyNum].character >= Common::KEYCODE_F12))	{
+			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
+			event.kbd.ascii = keys[keyNum].character - Common::KEYCODE_F1 + Common::ASCII_F1;
+		} else {
+			event.kbd.ascii = keys[keyNum].character;
+			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
+		}
+	}				
 }
 
 void addKeyboardEvents() {
+	bool resetShift = false;
+
 	updateTypeEvents();
 
 	if (DS::getPenDown()) {
 		int x = IPC->touchXpx;
 		int y = IPC->touchYpx;
-
+		
 		int tx = (x >> 3);
 		int ty = (y >> 3);
 
@@ -427,81 +434,89 @@ void addKeyboardEvents() {
 
 		tx -= keyboardX;
 		ty -= keyboardY;
-
+		
 //		consolePrintf("x=%d y=%d\n", tx, ty);
-
+		
 		for (int r = 0; r < DS_NUM_KEYS; r++) {
-			if (( (tx >= keys[r].x) && (tx <= keys[r].x + 1)) &&
+			if (( (tx >= keys[r].x) && (tx <= keys[r].x + 1)) && 
 				   (ty >= keys[r].y) && (ty <= keys[r].y + 1)) {
-				OSystem_DS* system = OSystem_DS::instance();
+			   	OSystem_DS* system = OSystem_DS::instance();
 				Common::Event event;
-
+				
 //				consolePrintf("Key: %d\n", r);
 				if ((keys[r].character == Common::KEYCODE_INVALID)) {
 					// Close button
 					DS::closed = true;
 				} else {
 					createKeyEvent(r, event);
-				}
-
-				//event.kbd.keycode = keys[r].character;
-				//event.kbd.ascii = keys[r].character;
+				}				
+				
+				//event.kbd.keycode = keys[r].character;		
+				//event.kbd.ascii = keys[r].character;		
 				event.type = Common::EVENT_KEYDOWN;
 				system->addEvent(event);
 
 //				event.type = Common::EVENT_KEYUP;
 //				system->addEvent(event);
-
+				
 				switch (keys[r].character) {
 					case DS_SHIFT: {
 						DS::shiftState = !DS::shiftState;
 						DS::setKeyHighlight(r, DS::shiftState);
 						break;
 					}
-
+					
 					case DS_CAPSLOCK: {
 						DS::capsLockState = !DS::capsLockState;
 						DS::setKeyHighlight(r, DS::capsLockState);
 						break;
 					}
-
+					
 					default: {
 						DS::setKeyHighlight(r, true);
 						keys[r].pressed = true;
-
-						if (DS::shiftState) {
-							DS::shiftState = false;
-							for (int t = 0; t < DS_NUM_KEYS; t++) {
-								if (keys[t].character == DS_SHIFT) {
-									DS::setKeyHighlight(t, false);
-								}
-							}
-						}
 						break;
 					}
 				}
-
+				
 			}
 		}
 	}
-
+	
 	if (DS::getPenReleased()) {
-
+		
 		for (int r = 0; r < DS_NUM_KEYS; r++) {
 			if (keys[r].pressed) {
 				DS::setKeyHighlight(r, false);
 
-				OSystem_DS* system = OSystem_DS::instance();
-
+			   	OSystem_DS* system = OSystem_DS::instance();
+				
 				Common::Event event;
 				createKeyEvent(r, event);
 				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 
 				keys[r].pressed = false;
+
+				if (keys[r].character != DS_SHIFT) {
+					resetShift = true;
+				}
+			}
+		}	
+
+	}
+
+
+	if ((resetShift) && (DS::shiftState)) {
+		DS::shiftState = false;
+		resetShift = false;
+		for (int t = 0; t < DS_NUM_KEYS; t++) {
+			if (keys[t].character == DS_SHIFT) {
+				DS::setKeyHighlight(t, false);
 			}
 		}
 	}
+
 }
 
 }

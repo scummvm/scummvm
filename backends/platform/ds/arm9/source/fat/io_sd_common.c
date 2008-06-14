@@ -5,10 +5,10 @@
 
 	Common SD card routines
 
-	SD routines partially based on sd.s by Romman
+	SD routines partially based on sd.s by Romman 
 
  Copyright (c) 2006 Michael "Chishm" Chisholm
-
+	
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
 
@@ -29,7 +29,7 @@
  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+		
 	2006-08-07 - Chishm
 		* Moved the SD initialization to a common function
 		* Increased timeouts for slower cards
@@ -61,10 +61,10 @@ u8 _SD_CRC7(u8* data, int cnt) {
     }
     crc = (crc << 1) | 1;
     return(crc);
-}
+} 
 
 /*
-Calculates the CRC16 for a sector of data. Calculates it
+Calculates the CRC16 for a sector of data. Calculates it 
 as 4 separate lots, merged into one buffer. This is used
 for 4 SD data lines, not for 1 data line alone.
 */
@@ -79,53 +79,53 @@ void _SD_CRC16 (u8* buff, int buffLength, u8* crc16buff) {
 	b = 0;	// r4
 	c = 0;	// r5
 	d = 0;	// r6
-
+	
 	buffLength = buffLength * 8;
-
-
+	
+	
 	do {
 		if (bitPattern & 0x80) dataByte = *buff++;
-
+		
 		a = a << 1;
 		if ( a & 0x10000) a ^= crcConst;
 		if (dataByte & (bitPattern >> 24)) a ^= crcConst;
-
+		
 		b = b << 1;
 		if (b & 0x10000) b ^= crcConst;
 		if (dataByte & (bitPattern >> 25)) b ^= crcConst;
-
+	
 		c = c << 1;
 		if (c & 0x10000) c ^= crcConst;
 		if (dataByte & (bitPattern >> 26)) c ^= crcConst;
-
+		
 		d = d << 1;
 		if (d & 0x10000) d ^= crcConst;
 		if (dataByte & (bitPattern >> 27)) d ^= crcConst;
-
+		
 		bitPattern = (bitPattern >> 4) | (bitPattern << 28);
 	} while (buffLength-=4);
-
+	
 	count = 16;	// r8
-
+	
 	do {
 		bitPattern = bitPattern << 4;
 		if (a & 0x8000) bitPattern |= 8;
 		if (b & 0x8000) bitPattern |= 4;
 		if (c & 0x8000) bitPattern |= 2;
 		if (d & 0x8000) bitPattern |= 1;
-
+	
 		a = a << 1;
 		b = b << 1;
 		c = c << 1;
 		d = d << 1;
-
+		
 		count--;
-
+		
 		if (!(count & 0x01)) {
 			*crc16buff++ = (u8)(bitPattern & 0xff);
 		}
 	} while (count != 0);
-
+	
 	return;
 }
 
@@ -136,20 +136,20 @@ cmd_17byte_response: a pointer to a function that sends the SD card a command an
 use4bitBus: initialise card to use a 4 bit data bus when communicating with the card
 RCA: a pointer to the location to store the card's Relative Card Address, preshifted up by 16 bits.
 */
-bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
+bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response, 
 					_SD_FN_CMD_17BYTE_RESPONSE cmd_17byte_response,
 					bool use4bitBus,
 					u32 *RCA)
 {
 	u8 responseBuffer[17] = {0};
 	int i;
-
+	
 	for (i = 0; i < MAX_STARTUP_TRIES ; i++) {
 		cmd_6byte_response (responseBuffer, APP_CMD, 0);
-		if (
+		if ( 
 			cmd_6byte_response (responseBuffer, SD_APP_OP_COND, SD_OCR_VALUE) &&
 			((responseBuffer[1] & 0x80) != 0))
-		{
+		{	
 			// Card is ready to receive commands now
 			break;
 		}
@@ -157,10 +157,10 @@ bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
 	if (i >= MAX_STARTUP_TRIES) {
 		return false;
 	}
-
+ 
 	// The card's name, as assigned by the manufacturer
 	cmd_17byte_response (responseBuffer, ALL_SEND_CID, 0);
-
+ 
 	// Get a new address
 	for (i = 0; i < MAX_STARTUP_TRIES ; i++) {
 		cmd_6byte_response (responseBuffer, SEND_RELATIVE_ADDR, 0);
@@ -169,16 +169,16 @@ bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
 			break;
 		}
 	}
-	if (i >= MAX_STARTUP_TRIES) {
+ 	if (i >= MAX_STARTUP_TRIES) {
 		return false;
 	}
 
 	// Some cards won't go to higher speeds unless they think you checked their capabilities
 	cmd_17byte_response (responseBuffer, SEND_CSD, *RCA);
-
+ 
 	// Only this card should respond to all future commands
 	cmd_6byte_response (responseBuffer, SELECT_CARD, *RCA);
-
+ 
 	if (use4bitBus) {
 		// Set a 4 bit data bus
 		cmd_6byte_response (responseBuffer, APP_CMD, *RCA);
@@ -187,7 +187,7 @@ bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
 
 	// Use 512 byte blocks
 	cmd_6byte_response (responseBuffer, SET_BLOCKLEN, 512); // 512 byte blocks
-
+	
 	// Wait until card is ready for data
 	i = 0;
 	do {
@@ -196,7 +196,7 @@ bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
 		}
 		i++;
 	} while (!cmd_6byte_response (responseBuffer, SEND_STATUS, *RCA) && ((responseBuffer[3] & 0x1f) != ((SD_STATE_TRAN << 1) | READY_FOR_DATA)));
-
+ 
 	return true;
 }
 

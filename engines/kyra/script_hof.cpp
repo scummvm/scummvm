@@ -723,28 +723,10 @@ int KyraEngine_HoF::o2_loadMusicTrack(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_playSoundEffect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
-	snd_playSoundEffect(stackPos(0));
-	return 0;
-}
-
 int KyraEngine_HoF::o2_setSceneAnimPos(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setSceneAnimPos(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	_sceneAnims[stackPos(0)].x = stackPos(1);
 	_sceneAnims[stackPos(0)].y = stackPos(2);
-	return 0;
-}
-
-int KyraEngine_HoF::o2_blockInRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_blockInRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
-	return 0;
-}
-
-int KyraEngine_HoF::o2_blockOutRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
@@ -778,7 +760,7 @@ int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 
 int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_isAnySoundPlaying(%p) ()", (const void *)script);
-	return _sound->voiceIsPlaying();
+	return _sound->voiceIsPlaying() ? 1 : 0;
 }
 
 int KyraEngine_HoF::o2_setDrawNoShapeFlag(EMCState *script) {
@@ -818,7 +800,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->fadeToBlack(0x14);
 	
 	sprintf(filename, "LETTER%.1d.", letter);
-	strcat(filename, _languageExtension[_lang]);
+	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
 
 	uint8 *letterBuffer = _res->fileData(filename, 0);
 	if (letterBuffer) {
@@ -856,10 +838,14 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	return 0;
 }
 
-int	KyraEngine_HoF::o2_fillRect(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
-	return 0;
+int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playFireflyScore(%p) ()", (const void *)script);
+	if (_sound->getSfxType() == Sound::kAdlib || _sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
+		snd_playWanderScoreViaMap(86, 1);
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 int KyraEngine_HoF::o2_encodeShape(EMCState *script) {
@@ -910,14 +896,22 @@ int KyraEngine_HoF::o2_updateSceneAnim(EMCState *script) {
 	// Raziel^.
 	//
 	// We know currently of some different animations where this happens.
-	// - Where Marco is dangling from the flesh-eating plant (see bug #1923638 "HoF: Marco missing animation frames").
-	// - After giving the ticket to the captain. He would move very fast (barely noticeable) onto the ship
-	//   without this delay.
-	// - The scene after giving the sandwitch to the guards in the city. (see bug #1926838 "HoF: Animation plays too fast")
-	//   This scene script calls o2_delay though, but since this updates the scene animation scripts again there is no delay
-	//   for the animation.
-	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) || (stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
-		((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19))
+	// - Where Marco is dangling from the flesh-eating plant (see bug
+	//   #1923638 "HoF: Marco missing animation frames").
+	// - After giving the ticket to the captain. He would move very fast
+	//   (barely noticeable) onto the ship without this delay.
+	// - The scene after giving the sandwitch to the guards in the city.
+	//   (see bug #1926838 "HoF: Animation plays too fast")
+	//   This scene script calls o2_delay though, but since this updates
+	//   the scene animation scripts again there is no delay for the
+	//   animation.
+	// - When the sheriff enters the jail, either to lock you up or to throw
+	//   away the key. (see bug #1926838 "HoF: Animation plays too fast").
+
+	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) ||
+			(stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
+			((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19) ||
+			((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 27))
 		_sceneSpecialScriptsTimer[_lastProcessedSceneScript] = _system->getMillis() + _tickLength * 6;
 
 	_specialSceneScriptRunFlag = false;
@@ -1325,9 +1319,20 @@ int KyraEngine_HoF::o2_drawSceneShapeEx(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_HoF::o2_getBoolFromStack(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getBoolFromStack(%p) ()", (const void *)script);
-	return stackPos(0) ? 1 : 0;
+int KyraEngine_HoF::o2_midiSoundFadeout(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_midiSoundFadeout(%p) ()", (const void *)script);
+	if (!stackPos(0)) {
+		if ((_sound->getMusicType() == Sound::kMidiMT32 || _sound->getMusicType() == Sound::kMidiGM) &&
+			(_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM)) {
+			_sound->beginFadeOut();
+			delay(2000, true);
+			_lastMusicCommand = -1;
+		} else {
+			return 0;
+		}
+	}
+
+	return 1;
 }
 
 int KyraEngine_HoF::o2_getSfxDriver(EMCState *script) {
@@ -1539,25 +1544,25 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_removeItemFromInventory);
 	Opcode(o2_countItemInInventory);
 	Opcode(o2_countItemsInScene);
-	Opcode(o2_queryGameFlag);
+	Opcode(o1_queryGameFlag);
 	// 0x28
-	Opcode(o2_resetGameFlag);
-	Opcode(o2_setGameFlag);
-	Opcode(o2_setHandItem);
-	Opcode(o2_removeHandItem);
+	Opcode(o1_resetGameFlag);
+	Opcode(o1_setGameFlag);
+	Opcode(o1_setHandItem);
+	Opcode(o1_removeHandItem);
 	// 0x2c
-	Opcode(o2_handItemSet);
-	Opcode(o2_hideMouse);
+	Opcode(o1_getMouseState);
+	Opcode(o1_hideMouse);
 	Opcode(o2_addSpecialExit);
-	Opcode(o2_setMousePos);
+	Opcode(o1_setMousePos);
 	// 0x30
-	Opcode(o2_showMouse);
+	Opcode(o1_showMouse);
 	OpcodeUnImpl();
 	Opcode(o2_wipeDownMouseItem);
 	Opcode(o2_getElapsedSecs);
 	// 0x34
 	Opcode(o2_getTimerDelay);
-	Opcode(o2_playSoundEffect);
+	Opcode(o1_playSoundEffect);
 	Opcode(o2_delaySecs);
 	Opcode(o2_delay);
 	// 0x38
@@ -1601,29 +1606,29 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setZanthiaPos);
 	Opcode(o2_loadMusicTrack);
 	// 0x58
-	Opcode(o2_playWanderScoreViaMap);
-	Opcode(o2_playSoundEffect);
+	Opcode(o1_playWanderScoreViaMap);
+	Opcode(o1_playSoundEffect);
 	Opcode(o2_setSceneAnimPos);
-	Opcode(o2_blockInRegion);
+	Opcode(o1_blockInWalkableRegion);
 	// 0x5c
-	Opcode(o2_blockOutRegion);
+	Opcode(o1_blockOutWalkableRegion);
 	OpcodeUnImpl();
 	Opcode(o2_setCauldronState);
 	Opcode(o2_showItemString);
 	// 0x60
-	Opcode(o2_getRand);
+	Opcode(o1_getRand);
 	Opcode(o2_isAnySoundPlaying);
-	Opcode(o2_setDeathHandler);
+	Opcode(o1_setDeathHandler);
 	Opcode(o2_setDrawNoShapeFlag);
 	// 0x64
 	Opcode(o2_setRunFlag);
 	Opcode(o2_showLetter);
 	OpcodeUnImpl();
-	Opcode(o2_fillRect);
+	Opcode(o1_fillRect);
 	// 0x68
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o2_playFireflyScore);
 	Opcode(o2_waitForConfirmationClick);
 	// 0x6c
 	Opcode(o2_encodeShape);
@@ -1694,7 +1699,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_updateTwoSceneAnims);
 	Opcode(o2_getRainbowRoomData);
 	Opcode(o2_drawSceneShapeEx);
-	Opcode(o2_getBoolFromStack);
+	Opcode(o2_midiSoundFadeout);
 	// 0xa4
 	Opcode(o2_getSfxDriver);
 	Opcode(o2_getVocSupport);
@@ -1716,7 +1721,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	// 0x00
 	Opcode(o2a_setAnimationShapes);
 	Opcode(o2a_setCharacterFrame);
-	Opcode(o2_playSoundEffect);
+	Opcode(o1_playSoundEffect);
 	Opcode(o2_fadeScenePal);
 	// 0x04
 	_flags.isTalkie ? Opcode(o2a_setResetFrame) : Opcode(o2_dummy);

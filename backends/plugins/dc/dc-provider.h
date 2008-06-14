@@ -34,8 +34,7 @@ class DCPluginProvider : public FilePluginProvider {
 protected:
 	Plugin* createPlugin(const Common::String &filename) const;
 
-	virtual const char* getPrefix() const { return ""; }
-	virtual const char* getSuffix() const { return ".PLG"; }
+	bool isPluginFilename(const Common::String &filename) const;
 
 	virtual void addCustomDirectories(Common::StringList &dirs) const {
 		dirs.push_back("/");

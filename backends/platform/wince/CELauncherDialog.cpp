@@ -28,7 +28,7 @@
 
 #include "CELauncherDialog.h"
 
-#include "engines/engine.h"
+#include "engines/metaengine.h"
 
 #include "gui/newgui.h"
 #include "gui/widget.h"
@@ -77,7 +77,7 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 	FSList files;
 	node.getChildren(files, FilesystemNode::kListFilesOnly);
 	// detect
-	GameList candidates(PluginManager::instance().detectGames(files));
+	GameList candidates(EngineMan.detectGames(files));
 	// insert
 	if (candidates.size() >= 1) {
 		GameDescriptor result = candidates[0];

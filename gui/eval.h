@@ -68,9 +68,9 @@ public:
 
 	char *lastToken() { return _token; }
 
-	typedef HashMap<String, int, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> VariablesMap;
-	typedef HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> AliasesMap;
-	typedef HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> StringsMap;
+	typedef HashMap<String, int> VariablesMap;
+	typedef HashMap<String, String> AliasesMap;
+	typedef HashMap<String, String> StringsMap;
 
 private:
 	enum TokenTypes {

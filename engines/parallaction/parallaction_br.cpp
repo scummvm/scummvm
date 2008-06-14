@@ -27,6 +27,7 @@
 #include "common/util.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/input.h"
 #include "parallaction/sound.h"
 
 namespace Parallaction {
@@ -72,7 +73,10 @@ int Parallaction_br::init() {
 	initFonts();
 	initCursors();
 	initOpcodes();
-	initParsers();
+	_locationParser = new LocationParser_br(this);
+	_locationParser->init();
+	_programParser = new ProgramParser_br(this);
+	_programParser->init();
 
 	_part = -1;
 
@@ -107,7 +111,7 @@ int Parallaction_br::go() {
 
 //		initCharacter();
 
-		_inputMode = kInputModeGame;
+		_input->_inputMode = Input::kInputModeGame;
 		while ((_engineFlags & (kEngineReturn | kEngineQuit)) == 0) {
 			runGame();
 		}
@@ -198,7 +202,7 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;
-//		runZone(z);			// FIXME: BRA doesn't handle sound yet
+		runZone(z);			// FIXME: BRA doesn't handle sound yet
 	}
 
 	if (_activeZone2) {
@@ -233,8 +237,57 @@ void Parallaction_br::changeLocation(char *location) {
 	_engineFlags &= ~kEngineChangeLocation;
 }
 
-void Parallaction_br::changeCharacter(const char *name) {
 
+// FIXME: Parallaction_br::parseLocation() is now a verbatim copy of the same routine from Parallaction_ns.
+void Parallaction_br::parseLocation(const char *filename) {
+	debugC(1, kDebugParser, "parseLocation('%s')", filename);
+
+	allocateLocationSlot(filename);
+	Script *script = _disk->loadLocation(filename);
+
+	_locationParser->parse(script);
+	delete script;
+
+	// this loads animation scripts
+	AnimationList::iterator it = _vm->_location._animations.begin();
+	for ( ; it != _vm->_location._animations.end(); it++) {
+		if ((*it)->_scriptName) {
+			loadProgram(*it, (*it)->_scriptName);
+		}
+	}
+
+	debugC(1, kDebugParser, "parseLocation('%s') done", filename);
+	return;
+}
+
+void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
+	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_name, filename);
+
+	Script *script = _disk->loadScript(filename);
+	ProgramPtr program(new Program);
+	program->_anim = a;
+
+	_programParser->parse(script, program);
+
+	delete script;
+
+	_vm->_location._programs.push_back(program);
+
+	debugC(1, kDebugParser, "loadProgram() done");
+
+	return;
+}
+
+
+
+void Parallaction_br::changeCharacter(const char *name) {
+	const char *charName = _char.getName();
+	if (!scumm_stricmp(charName, name)) {
+		return;
+	}
+
+	_char.setName(name);
+	_char._talk = _disk->loadTalk(name);
 }
 
 

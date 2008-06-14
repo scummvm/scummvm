@@ -28,71 +28,81 @@
 namespace Saga {
 
 static const GameResourceDescription ITE_Resources = {
-	RID_ITE_SCENE_LUT,  // Scene lookup table RN
-	RID_ITE_SCRIPT_LUT, // Script lookup table RN
-	RID_ITE_MAIN_PANEL,
-	RID_ITE_CONVERSE_PANEL,
-	RID_ITE_OPTION_PANEL,
-	0,					// Warning panel (IHNM only)
-	0,					// Warning panel sprites (IHNM only)
-	RID_ITE_MAIN_SPRITES,
-	RID_ITE_MAIN_PANEL_SPRITES,
-	0,					// Option panel sprites (IHNM only)
-	RID_ITE_DEFAULT_PORTRAITS,
-	0,					// Psychic profile background (IHNM only)
-	RID_ITE_MAIN_STRINGS,
-	RID_ITE_ACTOR_NAMES
+	1806,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
 };
 
+// FIXME: Option panel should be 4 but it is an empty resource.
+// Proper fix would be to not load the options panel when the demo is running
 static const GameResourceDescription ITEDemo_Resources = {
-	RID_ITEDEMO_SCENE_LUT,  // Scene lookup table RN
-	RID_ITEDEMO_SCRIPT_LUT, // Script lookup table RN
-	RID_ITEDEMO_MAIN_PANEL,
-	RID_ITEDEMO_CONVERSE_PANEL,
-	RID_ITEDEMO_OPTION_PANEL,
-	0,						// Warning panel (IHNM only)
-	0,						// Warning panel sprites (IHNM only)
-	RID_ITEDEMO_MAIN_SPRITES,
-	RID_ITEDEMO_MAIN_PANEL_SPRITES,
-	0,						// Option panel sprites (IHNM only)
-	RID_ITEDEMO_DEFAULT_PORTRAITS,
-	0,						// Psychic profile background (IHNM only)
-	RID_ITEDEMO_MAIN_STRINGS,
-	RID_ITEDEMO_ACTOR_NAMES
+	318,	// Scene lookup table RN
+	146,	// Script lookup table RN
+	2,		// Main panel
+	3,		// Converse panel
+	3,		// Option panel
+	5,		// Main sprites
+	6,		// Main panel sprites
+	8,		// Main strings
+	// ITE specific resources
+	9,		// Actor names
+	80,		// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
 };
 
 static const GameResourceDescription IHNM_Resources = {
-	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
-	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
-	RID_IHNM_MAIN_PANEL,
-	RID_IHNM_CONVERSE_PANEL,
-	RID_IHNM_OPTION_PANEL,
-	RID_IHNM_WARNING_PANEL,
-	RID_IHNM_WARNING_PANEL_SPRITES,
-	RID_IHNM_MAIN_SPRITES,
-	RID_IHNM_MAIN_PANEL_SPRITES,
-	RID_IHNM_OPTION_PANEL_SPRITES,
-	0,					// Default portraits (ITE only)
-	RID_IHNM_PROFILE_BG,
-	RID_IHNM_MAIN_STRINGS,
-	0					// Actors strings (ITE only)
+	1272,	// Scene lookup table RN
+	29,		// Script lookup table RN
+	9,		// Main panel
+	10,		// Converse panel
+	15,		// Option panel
+	12,		// Main sprites
+	12,		// Main panel sprites
+	21,		// Main strings
+	// ITE specific resources
+	0,		// Actor names
+	0,		// Default portraits
+	// IHNM specific resources
+	16,		// Option panel sprites
+	17,		// Warning panel
+	18,		// Warning panel sprites
+	20		// Psychic profile background
 };
 
 static const GameResourceDescription IHNMDEMO_Resources = {
-	RID_IHNMDEMO_SCENE_LUT,  // Scene lookup table RN
-	RID_IHNMDEMO_SCRIPT_LUT, // Script lookup table RN
-	RID_IHNMDEMO_MAIN_PANEL,
-	RID_IHNMDEMO_CONVERSE_PANEL,
-	RID_IHNMDEMO_OPTION_PANEL,
-	RID_IHNMDEMO_WARNING_PANEL,
-	RID_IHNMDEMO_WARNING_PANEL_SPRITES,
-	RID_IHNMDEMO_MAIN_SPRITES,
-	RID_IHNMDEMO_MAIN_PANEL_SPRITES,
-	RID_IHNMDEMO_OPTION_PANEL_SPRITES,
-	0,					// Default portraits (ITE only)
-	RID_IHNMDEMO_PROFILE_BG,
-	RID_IHNMDEMO_MAIN_STRINGS,
-	0					// Actors strings (ITE only)
+	286,	// Scene lookup table RN
+	18,		// Script lookup table RN
+	5,		// Main panel
+	6,		// Converse panel
+	10,		// Option panel
+	7,		// Main sprites
+	7,		// Main panel sprites
+	16,		// Main strings
+	// ITE specific resources
+	0,		// Actor names
+	0,		// Default portraits
+	// IHNM specific resources
+	11,		// Option panel sprites
+	12,		// Warning panel
+	13,		// Warning panel sprites
+	15		// Psychic profile background
 };
 
 static const GameFontDescription ITEDEMO_GameFonts[]    = { {0}, {1} };
@@ -102,14 +112,14 @@ static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
 // Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
 static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
 
-//                                                             frequency, sampleBits, stereo, isBigEndian, isSigned
-static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    22050,         16,  false,       false,     true };
-static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,    22050,          8,  false,       false,    false };
-static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM, 22050,          8,  false,       false,    false };
-static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,       -1,         -1,  false,       false,     true };
-static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    22050,         16,  false,       false,     true };
-static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,       -1,         -1,  false,       false,     true };
-static const GameSoundInfo MAC_GameSound         = { kSoundPCM,    22050,         16,  false,        true,     true };
+//                                                         sampleBits, isBigEndian, isSigned
+static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    16,  false,     true };
+static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,     8,  false,    false };
+static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM,  8,  false,    false };
+static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,    -1,  false,     true };
+static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    16,  false,     true };
+static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,    -1,  false,     true };
+static const GameSoundInfo MAC_GameSound         = { kSoundPCM,    16,   true,     true };
 
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {

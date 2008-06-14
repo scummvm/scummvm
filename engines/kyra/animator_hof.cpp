@@ -127,19 +127,15 @@ void KyraEngine_HoF::updateItemAnimations() {
 		return;	
 
 	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
-	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
-	
-	if (++_nextAnimItem == 14) {
-		_nextAnimItem = 0;
-		return;
-	}
+	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];	
+	_nextAnimItem = ++_nextAnimItem % _itemAnimDataSize;
 
 	uint32 ctime = _system->getMillis();
 	if (ctime < a->nextFrame)
 		return;
 
 	uint16 shpIdx = s->frames[a->currentFrame].index + 64;
-	if ((s->itemIndex == _handItemSet || s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
+	if (s->itemIndex == _mouseState && s->itemIndex == _itemInHand && _screen->isMouseVisible()) {
 		nextFrame = true;
 		_screen->setMouseCursor(8, 15, getShapePtr(shpIdx));
 	}

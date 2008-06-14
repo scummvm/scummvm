@@ -174,11 +174,10 @@ void ScummEngine_v6::drawBlastTexts() {
 
 				// Some localizations may override colors
 				// See credits in Chinese COMI
-				if (c == '^' && (buf == _blastTextQueue[i].text + 1)) {
-					int color;
-					switch (*buf) {
-					case 'c':
-						color = buf[3] - '0' + 10 *(buf[2] - '0');
+				if (_game.id == GID_CMI && 	_language == Common::ZH_TWN &&
+				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
+					if (*buf == 'c') {
+						int color = buf[3] - '0' + 10 *(buf[2] - '0');
 						_charset->setColor(color);
 
 						buf += 4;
@@ -1114,7 +1113,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if (!(chr == '@' && _game.heversion <= 71) || _language == Common::ZH_TWN) {
+			if (!(chr == '@' && _game.heversion <= 71) ||
+			    (_game.id == GID_CMI && _language == Common::ZH_TWN)) {
 				*dst++ = chr;
 			}
 		}
@@ -1462,8 +1462,17 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	trans_buff[0] = 0;
 	_lastStringTag[0] = 0;
 
+	if (_game.version >= 7 && text[0] == '/') {
+		// Extract the string tag from the text: /..../
+		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
+			_lastStringTag[i] = toupper(text[i + 1]);
+		_lastStringTag[i] = 0;
+	}
+
 	// WORKAROUND for bug #1172655.
 	if (_game.id == GID_DIG) {
+		// Based on the second release of The Dig
+		// Only applies to the subtitles and not speech
 		if (!strcmp((const char *)text, "faint light"))
 			text = (const byte *)"/NEW.007/faint light";
 		else if (!strcmp((const char *)text, "glowing crystal"))
@@ -1488,12 +1497,6 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			text = (const byte *)"/NEW.013/unattached lens";
 		else if (!strcmp((const char *)text, "lens slot"))
 			text = (const byte *)"/NEW.014/lens slot";
-
-		// Added in second release of The Dig
-		else if (!strcmp((const char *)text, "/NEWTON.032/"))
-			text = (const byte *)"/NEW.11/You wish.";
-		else if (!strcmp((const char *)text, "/NEWTON.034/"))
-			text = (const byte *)"/NEW.12/In your dreams";
 		else if (!strcmp((const char *)text, "Jonathon Jackson"))
 			text = (const byte *)"Aram Gutowski";
 		else if (!strcmp((const char *)text, "Brink"))
@@ -1506,8 +1509,8 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	if (_game.version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../
 		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
-			_lastStringTag[i] = target.tag[i] = toupper(text[i + 1]);
-		_lastStringTag[i] = target.tag[i] = 0;
+			target.tag[i] = toupper(text[i + 1]);
+		target.tag[i] = 0;
 		text += i + 2;
 
 		// If a language file was loaded, try to find a translated version

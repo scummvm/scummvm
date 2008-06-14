@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -409,8 +408,8 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				else if (operation == 27)
 					*valPtr = (int16) READ_VARO_UINT16(temp * 2 + offset * 2);
 				else if (operation == 28) {
-					*valPtr = encodePtr(_vm->_global->_inter_variables +
-							temp * 4 + offset * _vm->_global->_inter_animDataSize * 4,
+					*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(
+								temp * 4 + offset * _vm->_global->_inter_animDataSize * 4, 0),
 							kInterVar);
 					if (*_vm->_global->_inter_execPtr == 13) {
 						_vm->_global->_inter_execPtr++;
@@ -468,7 +467,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 			case 25:
 				*operPtr = 22;
 				temp = _vm->_inter->load16() * 4;
-				*valPtr = encodePtr(_vm->_global->_inter_variables + temp, kInterVar);
+				*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(temp, 0), kInterVar);
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
 					temp += parseValExpr(12);

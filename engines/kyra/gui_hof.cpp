@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
@@ -271,7 +271,7 @@ void KyraEngine_HoF::redrawInventory(int page) {
 }
 
 void KyraEngine_HoF::scrollInventoryWheel() {
-	WSAMovieV2 movie(this, _screen);
+	WSAMovie_v2 movie(this, _screen);
 	movie.open("INVWHEEL.WSA", 0, 0);
 	int frames = movie.opened() ? movie.frames() : 6;
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
@@ -348,7 +348,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 		return 0;
 	}
 
-	if (_handItemSet != -1) {
+	if (_mouseState != -1) {
 		snd_playSoundEffect(0x0D);
 		return 0;
 	}
@@ -455,12 +455,12 @@ void KyraEngine_HoF::showBookPage() {
 	char filename[16];
 
 	sprintf(filename, "PAGE%.01X.", _bookCurPage);
-	strcat(filename, _languageExtension[_lang]);
+	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
 	uint8 *leftPage = _res->fileData(filename, 0);
 	int leftPageY = _bookPageYOffset[_bookCurPage];
 
 	sprintf(filename, "PAGE%.01X.", _bookCurPage+1);
-	strcat(filename, _languageExtension[_lang]);
+	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
 	uint8 *rightPage = (_bookCurPage != _bookMaxPage) ? _res->fileData(filename, 0) : 0;
 	int rightPageY = _bookPageYOffset[_bookCurPage+1];
 
@@ -468,13 +468,13 @@ void KyraEngine_HoF::showBookPage() {
 	if (leftPage) {
 		bookDecodeText(leftPage);
 		bookPrintText(2, leftPage, 20, leftPageY+20, 0x31);
-		delete [] leftPage;
+		delete[] leftPage;
 	}
 
 	if (rightPage) {
 		bookDecodeText(rightPage);
 		bookPrintText(2, rightPage, 176, rightPageY+20, 0x31);
-		delete [] rightPage;
+		delete[] rightPage;
 	}
 	_screen->showMouse();
 }
@@ -515,6 +515,7 @@ void KyraEngine_HoF::bookLoop() {
 			_screen->updateScreen();
 			_screen->showMouse();
 		}
+		_system->delayMillis(10);
 	}
 	_screen->clearPage(2);
 }
@@ -600,7 +601,7 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 		return 0;
 	}
 
-	if (!_screen->isMouseVisible() || _handItemSet < -1)
+	if (!_screen->isMouseVisible() || _mouseState < -1)
 		return 0;
 
 	if (queryGameFlag(0xE4)) {
@@ -666,6 +667,8 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 #pragma mark -
 
 int GUI_HoF::optionsButton(Button *button) {
+	PauseTimer pause(*_vm->_timer);
+
 	_restartGame = false;
 	_reloadTemporarySave = false;
 
@@ -678,8 +681,8 @@ int GUI_HoF::optionsButton(Button *button) {
 
 	_vm->showMessage(0, 0xCF);
 
-	if (_vm->_handItemSet < -1) {
-		_vm->_handItemSet = -1;
+	if (_vm->_mouseState < -1) {
+		_vm->_mouseState = -1;
 		_screen->hideMouse();
 		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
 		_screen->showMouse();
@@ -824,10 +827,10 @@ void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
 
 	int position = 0;
 	if (_vm->gameFlags().isTalkie) {
-		position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+		position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 	} else {
 		if (slider < 2)
-			position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+			position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 		else if (slider == 2)
 			position = (_vm->_configWalkspeed == 3) ? 97 : 2;
 		else if (slider == 3)
@@ -897,7 +900,7 @@ int GUI_HoF::audioOptions(Button *caller) {
 
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
-	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
+	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine_v1::kVolumeSpeech) == 2)) {
 		_vm->_configVoice = 0;
 		choiceDialog(0x1D, 0);
 	}
@@ -975,7 +978,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
 		_vm->_configVoice = 1;
-		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
+		_vm->setVolume(KyraEngine_v1::kVolumeSpeech, 75);
 		choiceDialog(0x1E, 0);
 	}
 
@@ -1051,10 +1054,10 @@ int GUI_HoF::sliderHandler(Button *caller) {
 	int oldVolume = 0;
 	
 	if (_vm->gameFlags().isTalkie) {
-		oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+		oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 	} else {
 		if (button < 2)
-			oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+			oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 		else if (button == 2)
 			oldVolume = (_vm->_configWalkspeed == 3) ? 97 : 2;
 		else if (button == 3)
@@ -1089,7 +1092,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 				_vm->_configVoice = 1;
 		}
 
-		_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+		_vm->setVolume(KyraEngine_v1::kVolumeEntry(button), newVolume);
 
 		switch (button) {
 		case 0:
@@ -1109,7 +1112,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 		}
 	} else {
 		if (button < 2) {
-			_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+			_vm->setVolume(KyraEngine_v1::kVolumeEntry(button), newVolume);
 			if (button == 0)
 				lastMusicCommand = _vm->_lastMusicCommand;
 			else
@@ -1126,7 +1129,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 	if (playSoundEffect)
 		_vm->snd_playSoundEffect(0x18);
 	else if (lastMusicCommand >= 0)
-		_vm->snd_playWanderScoreViaMap(lastMusicCommand, 1);
+		_vm->snd_playWanderScoreViaMap(lastMusicCommand, 0);
 
 	_screen->updateScreen();
 	return 0;

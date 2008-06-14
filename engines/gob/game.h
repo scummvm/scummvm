@@ -26,9 +26,7 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
-#include "sound/mods/infogrames.h"
-
-#include "gob/sound.h"
+#include "gob/variables.h"
 
 namespace Gob {
 
@@ -119,12 +117,6 @@ public:
 
 	int16 _extHandle;
 
-	SoundDesc _soundSamples[60];
-
-	Audio::Infogrames::Instruments *_infIns;
-	Audio::Infogrames *_infogrames;
-	Audio::SoundHandle _infHandle;
-
 	char _totToLoad[20];
 
 	int32 _startTimeKey;
@@ -210,9 +202,8 @@ protected:
 	ExtTable *_extTableArray[5];
 	int16 _extHandleArray[5];
 	byte *_imFileDataArray[5];
-	byte *_variablesArray[5];
+	Variables *_variablesArray[5];
 	char _curTotFileArray[5][14];
-	byte *_variablesSizesArray[5];
 
 	GobEngine *_vm;
 

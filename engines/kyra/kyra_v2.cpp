@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine(system, flags), _desc(desc) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc) {
 	memset(&_sceneAnims, 0, sizeof(_sceneAnims));
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 
@@ -64,18 +64,25 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 
-	_debugger = 0;
 	_screenBuffer = 0;
+
+	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
+	memset(&_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
+
+	_pauseStart = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
-	for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
-		delete[] i->_value;
-		i->_value = 0;
+	if (!(_flags.isDemo && !_flags.isTalkie)) {
+		for (ShapeMap::iterator i = _gameShapes.begin(); i != _gameShapes.end(); ++i) {
+			delete[] i->_value;
+			i->_value = 0;
+		}
+		_gameShapes.clear();
 	}
-	_gameShapes.clear();
 
 	delete[] _itemList;
+	delete[] _sceneList;
 
 	_emc->unload(&_sceneScriptData);
 
@@ -85,8 +92,42 @@ KyraEngine_v2::~KyraEngine_v2() {
 		delete *i;
 	_opcodesAnimation.clear();
 
-	delete _debugger;
 	delete[] _screenBuffer;
+}
+
+void KyraEngine_v2::pauseEngineIntern(bool pause) {
+	KyraEngine_v1::pauseEngineIntern(pause);
+
+	if (!pause) {
+		uint32 pausedTime = _system->getMillis() - _pauseStart;
+
+		for (int i = 0; i < ARRAYSIZE(_sceneSpecialScriptsTimer); ++i) {
+			if (_sceneSpecialScriptsTimer[i])
+				_sceneSpecialScriptsTimer[i] += pausedTime;
+		}
+
+	} else {
+		_pauseStart = _system->getMillis();
+	}
+}
+
+void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::delay(%u, %d, %d)", amount, updateGame, isMainLoop);
+
+	uint32 start = _system->getMillis();
+	do {
+		if (updateGame) {
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		} else {
+			updateInput();
+		}
+
+		if (amount > 0)
+			_system->delayMillis(amount > 10 ? 10 : amount);
+	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
 }
 
 int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
@@ -94,6 +135,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 	updateInput();
 
 	int keys = 0;
+	int8 mouseWheel = 0;
 
 	while (_eventList.size()) {
 		Common::Event event = *_eventList.begin();
@@ -135,6 +177,14 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 			breakLoop = true;
 			} break;
 
+		case Common::EVENT_WHEELUP:
+			mouseWheel = -1;
+			break;
+
+		case Common::EVENT_WHEELDOWN:
+			mouseWheel = 1;
+			break;
+
 		default:
 			break;
 		}
@@ -148,7 +198,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 		_eventList.erase(_eventList.begin());
 	}
 
-	return gui_v2()->processButtonList(buttonList, keys | 0x8000);
+	return gui_v2()->processButtonList(buttonList, keys | 0x8000, mouseWheel);
 }
 
 void KyraEngine_v2::updateInput() {
@@ -178,6 +228,8 @@ void KyraEngine_v2::updateInput() {
 			// fall through
 
 		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
 			_eventList.push_back(event);
 			break;
 
@@ -223,20 +275,18 @@ void KyraEngine_v2::addShapeToPool(const uint8 *data, int realIndex, int shape) 
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::addShapeToPool(%p, %d, %d)", data, realIndex, shape);
 	remShapeFromPool(realIndex);
 	_gameShapes[realIndex] = screen_v2()->makeShapeCopy(data, shape);
-	assert(_gameShapes[realIndex]);
 }
 
 void KyraEngine_v2::addShapeToPool(uint8 *shpData, int index) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::addShapeToPool(%p, %d)", shpData, index);
 	remShapeFromPool(index);
 	_gameShapes[index] = shpData;
-	assert(_gameShapes[index]);
 }
 
 void KyraEngine_v2::remShapeFromPool(int idx) {
 	ShapeMap::iterator iter = _gameShapes.find(idx);
 	if (iter != _gameShapes.end()) {
-		delete [] iter->_value;
+		delete[] iter->_value;
 		iter->_value = 0;
 	}
 }
@@ -294,8 +344,8 @@ int KyraEngine_v2::updateCharPos(int *table, int force) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPos(%p, %d)", (const void*)table, force);
 	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
 		return 0;
-	_mainCharacter.x1 += _updateCharPosXTable[_mainCharacter.facing];
-	_mainCharacter.y1 += _updateCharPosYTable[_mainCharacter.facing];
+	_mainCharacter.x1 += _charAddXPosTable[_mainCharacter.facing];
+	_mainCharacter.y1 += _charAddYPosTable[_mainCharacter.facing];
 	updateCharAnimFrame(0, table);
 	_updateCharPosNextUpdate = _system->getMillis() + getCharacterWalkspeed() * _tickLength;
 	return 1;

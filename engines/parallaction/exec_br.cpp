@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {
@@ -62,11 +62,13 @@ namespace Parallaction {
 
 
 
-typedef OpcodeImpl<Parallaction_br> OpcodeV2;
-#define COMMAND_OPCODE(op) OpcodeV2(this, &Parallaction_br::cmdOp_##op)
+#define SetOpcodeTable(x) table = &x;
+
+typedef Common::Functor0Mem<void, Parallaction_br> OpcodeV2;
+#define COMMAND_OPCODE(op) table->push_back(new OpcodeV2(this, &Parallaction_br::cmdOp_##op))
 #define DECLARE_COMMAND_OPCODE(op) void Parallaction_br::cmdOp_##op()
 
-#define INSTRUCTION_OPCODE(op) OpcodeV2(this, &Parallaction_br::instOp_##op)
+#define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &Parallaction_br::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
@@ -174,7 +176,8 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 
 DECLARE_COMMAND_OPCODE(character) {
-	warning("Parallaction_br::cmdOp_character not yet implemented");
+	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", _cmdRunCtxt.cmd->u._string);
+	changeCharacter(_cmdRunCtxt.cmd->u._string);
 }
 
 
@@ -184,12 +187,12 @@ DECLARE_COMMAND_OPCODE(followme) {
 
 
 DECLARE_COMMAND_OPCODE(onmouse) {
-	showCursor(true);
+	_input->showCursor(true);
 }
 
 
 DECLARE_COMMAND_OPCODE(offmouse) {
-	showCursor(false);
+	_input->showCursor(false);
 }
 
 
@@ -399,7 +402,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	if (inst->_opA._flags & kParaLocal) {
-		wrapLocalVar(inst->_opA._local);
+		inst->_opA._local->wrap();
 	}
 
 }
@@ -498,95 +501,85 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 
 void Parallaction_br::initOpcodes() {
 
-	static const OpcodeV2 op1[] = {
-		COMMAND_OPCODE(invalid),
-		COMMAND_OPCODE(set),
-		COMMAND_OPCODE(clear),
-		COMMAND_OPCODE(start),
-		COMMAND_OPCODE(speak),
-		COMMAND_OPCODE(get),
-		COMMAND_OPCODE(location),
-		COMMAND_OPCODE(open),
-		COMMAND_OPCODE(close),
-		COMMAND_OPCODE(on),
-		COMMAND_OPCODE(off),
-		COMMAND_OPCODE(call),
-		COMMAND_OPCODE(toggle),
-		COMMAND_OPCODE(drop),
-		COMMAND_OPCODE(quit),
-		COMMAND_OPCODE(move),
-		COMMAND_OPCODE(stop),
-		COMMAND_OPCODE(character),
-		COMMAND_OPCODE(followme),
-		COMMAND_OPCODE(onmouse),
-		COMMAND_OPCODE(offmouse),
-		COMMAND_OPCODE(add),
-		COMMAND_OPCODE(leave),
-		COMMAND_OPCODE(inc),
-		COMMAND_OPCODE(dec),
-		COMMAND_OPCODE(ifeq),
-		COMMAND_OPCODE(iflt),
-		COMMAND_OPCODE(ifgt),
-		COMMAND_OPCODE(let),
-		COMMAND_OPCODE(music),
-		COMMAND_OPCODE(fix),
-		COMMAND_OPCODE(unfix),
-		COMMAND_OPCODE(zeta),
-		COMMAND_OPCODE(scroll),
-		COMMAND_OPCODE(swap),
-		COMMAND_OPCODE(give),
-		COMMAND_OPCODE(text),
-		COMMAND_OPCODE(part),
-		COMMAND_OPCODE(testsfx),
-		COMMAND_OPCODE(ret),
-		COMMAND_OPCODE(onsave),
-		COMMAND_OPCODE(offsave)
-	};
+	Common::Array<const Opcode*> *table = 0;
 
-	uint i;
-	for (i = 0; i < ARRAYSIZE(op1); i++)
-		_commandOpcodes.push_back(&op1[i]);
+	SetOpcodeTable(_commandOpcodes);
+	COMMAND_OPCODE(invalid);
+	COMMAND_OPCODE(set);
+	COMMAND_OPCODE(clear);
+	COMMAND_OPCODE(start);
+	COMMAND_OPCODE(speak);
+	COMMAND_OPCODE(get);
+	COMMAND_OPCODE(location);
+	COMMAND_OPCODE(open);
+	COMMAND_OPCODE(close);
+	COMMAND_OPCODE(on);
+	COMMAND_OPCODE(off);
+	COMMAND_OPCODE(call);
+	COMMAND_OPCODE(toggle);
+	COMMAND_OPCODE(drop);
+	COMMAND_OPCODE(quit);
+	COMMAND_OPCODE(move);
+	COMMAND_OPCODE(stop);
+	COMMAND_OPCODE(character);
+	COMMAND_OPCODE(followme);
+	COMMAND_OPCODE(onmouse);
+	COMMAND_OPCODE(offmouse);
+	COMMAND_OPCODE(add);
+	COMMAND_OPCODE(leave);
+	COMMAND_OPCODE(inc);
+	COMMAND_OPCODE(dec);
+	COMMAND_OPCODE(ifeq);
+	COMMAND_OPCODE(iflt);
+	COMMAND_OPCODE(ifgt);
+	COMMAND_OPCODE(let);
+	COMMAND_OPCODE(music);
+	COMMAND_OPCODE(fix);
+	COMMAND_OPCODE(unfix);
+	COMMAND_OPCODE(zeta);
+	COMMAND_OPCODE(scroll);
+	COMMAND_OPCODE(swap);
+	COMMAND_OPCODE(give);
+	COMMAND_OPCODE(text);
+	COMMAND_OPCODE(part);
+	COMMAND_OPCODE(testsfx);
+	COMMAND_OPCODE(ret);
+	COMMAND_OPCODE(onsave);
+	COMMAND_OPCODE(offsave);
 
-
-	static const OpcodeV2 op2[] = {
-		INSTRUCTION_OPCODE(invalid),
-		INSTRUCTION_OPCODE(on),
-		INSTRUCTION_OPCODE(off),
-		INSTRUCTION_OPCODE(set),		// x
-		INSTRUCTION_OPCODE(set),		// y
-		INSTRUCTION_OPCODE(set),		// z
-		INSTRUCTION_OPCODE(set),		// f
-		INSTRUCTION_OPCODE(loop),
-		INSTRUCTION_OPCODE(endloop),
-		INSTRUCTION_OPCODE(null),		// show
-		INSTRUCTION_OPCODE(inc),
-		INSTRUCTION_OPCODE(inc),		// dec
-		INSTRUCTION_OPCODE(set),
-		INSTRUCTION_OPCODE(put),
-		INSTRUCTION_OPCODE(call),
-		INSTRUCTION_OPCODE(wait),
-		INSTRUCTION_OPCODE(start),
-		INSTRUCTION_OPCODE(process),
-		INSTRUCTION_OPCODE(move),
-		INSTRUCTION_OPCODE(color),
-		INSTRUCTION_OPCODE(process),	// sound
-		INSTRUCTION_OPCODE(mask),
-		INSTRUCTION_OPCODE(print),
-		INSTRUCTION_OPCODE(text),
-		INSTRUCTION_OPCODE(inc),		// mul
-		INSTRUCTION_OPCODE(inc),		// div
-		INSTRUCTION_OPCODE(ifeq),
-		INSTRUCTION_OPCODE(iflt),
-		INSTRUCTION_OPCODE(ifgt),
-		INSTRUCTION_OPCODE(endif),
-		INSTRUCTION_OPCODE(stop),
-		INSTRUCTION_OPCODE(endscript)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op2); i++)
-		_instructionOpcodes.push_back(&op2[i]);
-
-
+	SetOpcodeTable(_instructionOpcodes);
+	INSTRUCTION_OPCODE(invalid);
+	INSTRUCTION_OPCODE(on);
+	INSTRUCTION_OPCODE(off);
+	INSTRUCTION_OPCODE(set);		// x
+	INSTRUCTION_OPCODE(set);		// y
+	INSTRUCTION_OPCODE(set);		// z
+	INSTRUCTION_OPCODE(set);		// f
+	INSTRUCTION_OPCODE(loop);
+	INSTRUCTION_OPCODE(endloop);
+	INSTRUCTION_OPCODE(null);		// show
+	INSTRUCTION_OPCODE(inc);
+	INSTRUCTION_OPCODE(inc);		// dec
+	INSTRUCTION_OPCODE(set);
+	INSTRUCTION_OPCODE(put);
+	INSTRUCTION_OPCODE(call);
+	INSTRUCTION_OPCODE(wait);
+	INSTRUCTION_OPCODE(start);
+	INSTRUCTION_OPCODE(process);
+	INSTRUCTION_OPCODE(move);
+	INSTRUCTION_OPCODE(color);
+	INSTRUCTION_OPCODE(process);	// sound
+	INSTRUCTION_OPCODE(mask);
+	INSTRUCTION_OPCODE(print);
+	INSTRUCTION_OPCODE(text);
+	INSTRUCTION_OPCODE(inc);		// mul
+	INSTRUCTION_OPCODE(inc);		// div
+	INSTRUCTION_OPCODE(ifeq);
+	INSTRUCTION_OPCODE(iflt);
+	INSTRUCTION_OPCODE(ifgt);
+	INSTRUCTION_OPCODE(endif);
+	INSTRUCTION_OPCODE(stop);
+	INSTRUCTION_OPCODE(endscript);
 }
 
 #if 0

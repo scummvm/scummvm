@@ -30,94 +30,120 @@
 
 namespace Cine {
 
-struct UnpackCtx {
-	int size, datasize;
-	uint32 crc;
-	uint32 chk;
-	byte *dst;
-	const byte *src;
-};
-
-static int rcr(UnpackCtx *uc, int CF) {
-	int rCF = (uc->chk & 1);
-	uc->chk >>= 1;
-	if (CF) {
-		uc->chk |= 0x80000000;
+uint32 CineUnpacker::readSource() {
+	if (_src < _srcBegin || _src + 4 > _srcEnd) {
+		_error = true;
+		return 0; // The source pointer is out of bounds, returning a default value
 	}
-	return rCF;
+	uint32 value = READ_BE_UINT32(_src);
+	_src -= 4;
+	return value;
 }
 
-static int nextChunk(UnpackCtx *uc) {
-	int CF = rcr(uc, 0);
-	if (uc->chk == 0) {
-		uc->chk = READ_BE_UINT32(uc->src); uc->src -= 4;
-		uc->crc ^= uc->chk;
-		CF = rcr(uc, 1);
+uint CineUnpacker::rcr(bool inputCarry) {
+	uint outputCarry = (_chunk32b & 1);
+	_chunk32b >>= 1;
+	if (inputCarry) {
+		_chunk32b |= 0x80000000;
 	}
-	return CF;
+	return outputCarry;
 }
 
-static uint16 getCode(UnpackCtx *uc, byte numChunks) {
-	uint16 c = 0;
-	while (numChunks--) {
+uint CineUnpacker::nextBit() {
+	uint carry = rcr(false);
+	// Normally if the chunk becomes zero then the carry is one as
+	// the end of chunk marker is always the last to be shifted out.
+	if (_chunk32b == 0) {
+		_chunk32b = readSource();
+		_crc ^= _chunk32b;
+		carry = rcr(true); // Put the end of chunk marker in the most significant bit
+	}
+	return carry;
+}
+
+uint CineUnpacker::getBits(uint numBits) {
+	uint c = 0;
+	while (numBits--) {
 		c <<= 1;
-		if (nextChunk(uc)) {
-			c |= 1;
-		}
+		c |= nextBit();
 	}
 	return c;
 }
 
-static void unpackHelper1(UnpackCtx *uc, byte numChunks, byte addCount) {
-	uint16 count = getCode(uc, numChunks) + addCount + 1;
-	uc->datasize -= count;
-	while (count--) {
-		*uc->dst = (byte)getCode(uc, 8);
-		--uc->dst;
+void CineUnpacker::unpackRawBytes(uint numBytes) {
+	if (_dst >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
+		_error = true;
+		return; // Destination pointer is out of bounds for this operation
+	}
+	while (numBytes--) {
+		*_dst = (byte)getBits(8);
+		--_dst;
 	}
 }
 
-static void unpackHelper2(UnpackCtx *uc, byte numChunks) {
-	uint16 i = getCode(uc, numChunks);
-	uint16 count = uc->size + 1;
-	uc->datasize -= count;
-	while (count--) {
-		*uc->dst = *(uc->dst + i);
-		--uc->dst;
+void CineUnpacker::copyRelocatedBytes(uint offset, uint numBytes) {
+	if (_dst + offset >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
+		_error = true;
+		return; // Destination pointer is out of bounds for this operation
+	}
+	while (numBytes--) {
+		*_dst = *(_dst + offset);
+		--_dst;
 	}
 }
 
-bool delphineUnpack(byte *dst, const byte *src, int len) {
-	UnpackCtx uc;
-	uc.src = src + len - 4;
-	uc.datasize = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.dst = dst + uc.datasize - 1;
-	uc.size = 0;
-	uc.crc = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.chk = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.crc ^= uc.chk;
-	do {
-		if (!nextChunk(&uc)) {
-			uc.size = 1;
-			if (!nextChunk(&uc)) {
-				unpackHelper1(&uc, 3, 0);
-			} else {
-				unpackHelper2(&uc, 8);
+bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) {
+	// Initialize variables used for detecting errors during unpacking
+	_error    = false;
+	_srcBegin = src;
+	_srcEnd   = src + srcLen;
+	_dstBegin = dst;
+	_dstEnd   = dst + dstLen;
+
+	// Initialize other variables
+	_src = _srcBegin + srcLen - 4;
+	uint32 unpackedLength = readSource(); // Unpacked length in bytes
+	_dst = _dstBegin + unpackedLength - 1;
+	_crc = readSource();
+	_chunk32b = readSource();
+	_crc ^= _chunk32b;
+
+	while (_dst >= _dstBegin && !_error) {
+		/*
+		Bits  => Action:
+		0 0   => unpackRawBytes(3 bits + 1)              i.e. unpackRawBytes(1..9)
+		1 1 1 => unpackRawBytes(8 bits + 9)              i.e. unpackRawBytes(9..264)
+		0 1   => copyRelocatedBytes(8 bits, 2)           i.e. copyRelocatedBytes(0..255, 2)
+		1 0 0 => copyRelocatedBytes(9 bits, 3)           i.e. copyRelocatedBytes(0..511, 3)
+		1 0 1 => copyRelocatedBytes(10 bits, 4)          i.e. copyRelocatedBytes(0..1023, 4)
+		1 1 0 => copyRelocatedBytes(12 bits, 8 bits + 1) i.e. copyRelocatedBytes(0..4095, 1..256)
+		*/
+		if (!nextBit()) { // 0...
+			if (!nextBit()) { // 0 0
+				uint numBytes = getBits(3) + 1;
+				unpackRawBytes(numBytes);
+			} else { // 0 1
+				uint numBytes = 2;
+				uint offset   = getBits(8);
+				copyRelocatedBytes(offset, numBytes);
 			}
-		} else {
-			uint16 c = getCode(&uc, 2);
-			if (c == 3) {
-				unpackHelper1(&uc, 8, 8);
-			} else if (c < 2) {
-				uc.size = c + 2;
-				unpackHelper2(&uc, c + 9);
-			} else {
-				uc.size = getCode(&uc, 8);
-				unpackHelper2(&uc, 12);
+		} else { // 1...
+			uint c = getBits(2);
+			if (c == 3) { // 1 1 1
+				uint numBytes = getBits(8) + 9;
+				unpackRawBytes(numBytes);
+			} else if (c < 2) { // 1 0 x
+				uint numBytes = c + 3;
+				uint offset   = getBits(c + 9);
+				copyRelocatedBytes(offset, numBytes);
+			} else { // 1 1 0
+				uint numBytes = getBits(8) + 1;
+				uint offset   = getBits(12);
+				copyRelocatedBytes(offset, numBytes);
 			}
 		}
-	} while (uc.datasize > 0 && uc.src >= src - 4);
-	return uc.crc == 0;
+	}
+	return !_error && (_crc == 0);
 }
 
 } // End of namespace Cine

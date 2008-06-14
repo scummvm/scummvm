@@ -27,26 +27,26 @@
 	$Log: keys.c,v $
 	Revision 1.13  2006/01/12 09:10:47  wntrmute
 	Added key repeat as suggested by pepsiman
-
+	
 	Revision 1.12  2005/11/27 12:30:25  wntrmute
 	reverted to correct hardware REGisters
-
+	
 	Revision 1.11  2005/11/27 07:48:45  joatski
 	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
 	Changed function returns to uint32
-
+	
 	Revision 1.10  2005/11/03 23:38:49  wntrmute
 	don't use enum for key function returns
-
+	
 	Revision 1.9  2005/10/13 16:30:11  dovoto
 	Changed KEYPAD_BITS to a typedef enum, this resolved some issues with multiple redefinition of KEYPAD_BITS (although this error did not allways occur).
-
+	
 	Revision 1.8  2005/10/03 21:21:59  wntrmute
 	use enum types
-
+	
 	Revision 1.7  2005/09/07 18:06:27  wntrmute
 	use new register names
-
+	
 	Revision 1.6  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 

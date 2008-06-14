@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "sound/mixer.h"
 #include "sound/mods/infogrames.h"
@@ -33,8 +32,6 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
-#include "gob/music.h"
-#include "gob/cdrom.h"
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/goblin.h"
@@ -42,10 +39,10 @@
 #include "gob/mult.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/saveload.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -899,26 +896,23 @@ void Inter_v2::o2_initMult() {
 		if (_terminate)
 			return;
 
-		_vm->_mult->_orderArray = new uint8[_vm->_mult->_objCount];
+		_vm->_mult->_orderArray = new int8[_vm->_mult->_objCount];
 		memset(_vm->_mult->_orderArray, 0, _vm->_mult->_objCount * sizeof(int8));
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
 		memset(_vm->_mult->_objects, 0,
 				_vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (int i = 0; i < _vm->_mult->_objCount; i++) {
-			_vm->_mult->_objects[i].pPosX =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posXVar / 4) * 4);
-			_vm->_mult->_objects[i].pPosY =
-				(int32 *)(_vm->_global->_inter_variables +
-						i * 4 + (posYVar / 4) * 4);
+			uint32 offPosX = i * 4 + (posXVar / 4) * 4;
+			uint32 offPosY = i * 4 + (posYVar / 4) * 4;
+			uint32 offAnim = animDataVar + i * 4 * _vm->_global->_inter_animDataSize;
+
+			_vm->_mult->_objects[i].pPosX = (int32 *) _variables->getAddressOff32(offPosX);
+			_vm->_mult->_objects[i].pPosY = (int32 *) _variables->getAddressOff32(offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables +
-							animDataVar + i * 4 * _vm->_global->_inter_animDataSize);
-			memset(_vm->_global->_inter_variablesSizes +
-					i * 4 * _vm->_global->_inter_animDataSize, 0,
-					_vm->_global->_inter_animDataSize);
+				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
+						_vm->_global->_inter_animDataSize);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -1086,16 +1080,18 @@ void Inter_v2::o2_playCDTrack() {
 		_vm->_draw->blitInvalidated();
 
 	evalExpr(0);
-	_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
+	_vm->_sound->cdPlay(_vm->_global->_inter_resStr);
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
-	while (_vm->_cdrom->getTrackPos() >= 0)
+	debugC(1, kDebugSound, "CDROM: Waiting for playback to end");
+
+	while (_vm->_sound->cdGetTrackPos() >= 0)
 		_vm->_util->longDelay(1);
 }
 
 void Inter_v2::o2_stopCD() {
-	_vm->_cdrom->stopPlaying();
+	_vm->_sound->cdStop();
 }
 
 void Inter_v2::o2_readLIC() {
@@ -1105,11 +1101,11 @@ void Inter_v2::o2_readLIC() {
 	strncpy0(path, _vm->_global->_inter_resStr, 35);
 	strcat(path, ".LIC");
 
-	_vm->_cdrom->readLIC(path);
+	_vm->_sound->cdLoadLIC(path);
 }
 
 void Inter_v2::o2_freeLIC() {
-	_vm->_cdrom->freeLICbuffer();
+	_vm->_sound->cdUnloadLIC();
 }
 
 void Inter_v2::o2_getCDTrackPos() {
@@ -1121,8 +1117,8 @@ void Inter_v2::o2_getCDTrackPos() {
 	varPos = _vm->_parse->parseVarIndex();
 	varName = _vm->_parse->parseVarIndex();
 
-	WRITE_VAR_OFFSET(varPos, _vm->_cdrom->getTrackPos(GET_VARO_STR(varName)));
-	WRITE_VARO_STR(varName, _vm->_cdrom->getCurTrack());
+	WRITE_VAR_OFFSET(varPos, _vm->_sound->cdGetTrackPos(GET_VARO_STR(varName)));
+	WRITE_VARO_STR(varName, _vm->_sound->cdGetCurrentTrack());
 }
 
 void Inter_v2::o2_loadFontToSprite() {
@@ -1187,10 +1183,7 @@ void Inter_v2::o2_copyVars() {
 			varOff = _vm->_parse->parseVarIndex();
 			_vm->_global->_inter_execPtr++;
 
-			memcpy(_pasteBuf + _pastePos, _vm->_global->_inter_variables + varOff,
-					_vm->_global->_inter_animDataSize * 4);
-			memcpy(_pasteSizeBuf + _pastePos,
-					_vm->_global->_inter_variablesSizes + varOff,
+			_variables->copyTo(varOff, _pasteBuf + _pastePos, _pasteSizeBuf + _pastePos,
 					_vm->_global->_inter_animDataSize * 4);
 
 			_pastePos += _vm->_global->_inter_animDataSize * 4;
@@ -1200,6 +1193,7 @@ void Inter_v2::o2_copyVars() {
 		} else {
 			if (evalExpr(&varOff) == 20)
 				_vm->_global->_inter_resVal = 0;
+
 			memcpy(_pasteBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
 			memcpy(_pasteSizeBuf + _pastePos, &_vm->_global->_inter_resVal, 4);
 			_pastePos += 4;
@@ -1223,8 +1217,7 @@ void Inter_v2::o2_pasteVars() {
 		assert(sizeV == sizeS);
 
 		_pastePos -= sizeV;
-		memcpy(_vm->_global->_inter_variables + varOff, _pasteBuf + _pastePos, sizeV);
-		memcpy(_vm->_global->_inter_variablesSizes + varOff, _pasteSizeBuf + _pastePos, sizeS);
+		_variables->copyFrom(varOff, _pasteBuf + _pastePos, _pasteSizeBuf + _pastePos, sizeV);
 	}
 }
 
@@ -1434,46 +1427,17 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 
-	if (videoMode == 0x18) {
+	_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight2 = offY;
+	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
-		if (_vm->_video->_surfWidth < _vm->_width)
-			_vm->_video->_screenDeltaX = (_vm->_width - _vm->_video->_surfWidth) / 2;
-		else
-			_vm->_video->_screenDeltaX = 0;
+	_vm->_video->_screenDeltaX = 0;
+	_vm->_video->_screenDeltaY = 0;
 
-		_vm->_global->_mouseMinX = _vm->_video->_screenDeltaX;
-		_vm->_global->_mouseMaxX = _vm->_video->_screenDeltaX + _vm->_video->_surfWidth - 1;
-
-
-		int16 screenHeight = _vm->_video->_surfHeight;
-
-		_vm->_video->_surfHeight += offY;
-
-		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, screenHeight - offY);
-		_vm->_video->_splitHeight2 = offY;
-		_vm->_video->_splitStart = screenHeight;
-
-		if ((_vm->_video->_surfHeight + offY) < _vm->_height)
-			_vm->_video->_screenDeltaY = (_vm->_height - (screenHeight + offY)) / 2;
-		else
-			_vm->_video->_screenDeltaY = 0;
-
-		_vm->_global->_mouseMaxY = (screenHeight + _vm->_video->_screenDeltaY) - offY - 1;
-		_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
-
-	} else {
-		_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
-		_vm->_video->_splitHeight2 = offY;
-		_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
-
-		_vm->_video->_screenDeltaX = 0;
-		_vm->_video->_screenDeltaY = 0;
-
-		_vm->_global->_mouseMinX = 0;
-		_vm->_global->_mouseMinY = 0;
-		_vm->_global->_mouseMaxX = _vm->_width;
-		_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
-	}
+	_vm->_global->_mouseMinX = 0;
+	_vm->_global->_mouseMinY = 0;
+	_vm->_global->_mouseMaxX = _vm->_width;
+	_vm->_global->_mouseMaxY = _vm->_height - _vm->_video->_splitHeight2 - 1;
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
@@ -1532,18 +1496,27 @@ void Inter_v2::o2_scroll() {
 }
 
 void Inter_v2::o2_setScrollOffset() {
-	int16 offset;
+	int16 offsetX, offsetY;
 
-	offset = _vm->_parse->parseValExpr();
+	offsetX = _vm->_parse->parseValExpr();
+	offsetY = _vm->_parse->parseValExpr();
 
-	if (offset == -1) {
-		_vm->_parse->parseValExpr();
+	if (offsetX == -1) {
 		WRITE_VAR(2, _vm->_draw->_scrollOffsetX);
 		WRITE_VAR(3, _vm->_draw->_scrollOffsetY);
 	} else {
-		_vm->_draw->_scrollOffsetX = offset;
-		_vm->_draw->_scrollOffsetY = _vm->_parse->parseValExpr();
+		int16 screenW = _vm->_video->_surfWidth;
+		int16 screenH = _vm->_video->_surfHeight;
+
+		if (screenW > _vm->_width)
+			screenW -= _vm->_width;
+		if (screenH > _vm->_height)
+			screenH -= _vm->_height;
+
+		_vm->_draw->_scrollOffsetX = CLIP<int16>(offsetX, 0, screenW);
+		_vm->_draw->_scrollOffsetY = CLIP<int16>(offsetY, 0, screenH);
 	}
+
 	_vm->_util->setScrollOffset();
 	_noBusyWait = true;
 }
@@ -1574,8 +1547,12 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
+	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
+			"paletteCmd %d (%d - %d), flags %X", _vm->_global->_inter_resStr, x, y,
+			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
+
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
-		WRITE_VAR(11, -1);
+		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
 
@@ -1606,6 +1583,12 @@ void Inter_v2::o2_getImdInfo() {
 	varFrames = _vm->_parse->parseVarIndex();
 	varWidth = _vm->_parse->parseVarIndex();
 	varHeight = _vm->_parse->parseVarIndex();
+
+	// WORKAROUND: The nut rolling animation in the administration center
+	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
+	if ((_vm->getGameType() == kGameTypeWoodruff) &&
+			(!scumm_stricmp(_vm->_global->_inter_resStr, "noixroule")))
+		strcpy(_vm->_global->_inter_resStr, "noixroul");
 
 	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
 			varFrames, varWidth, varHeight);
@@ -1883,10 +1866,9 @@ bool Inter_v2::o2_stopSound(OpFuncParams &params) {
 	expr = _vm->_parse->parseValExpr();
 
 	if (expr < 0) {
-		if (_vm->_adlib)
-			_vm->_adlib->stopPlay();
+		_vm->_sound->adlibStop();
 	} else
-		_vm->_snd->stopSound(expr);
+		_vm->_sound->blasterStop(expr);
 
 	_soundEndTimeKey = 0;
 	return false;
@@ -1915,7 +1897,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	int16 handle;
 	int16 varOff;
 	int32 size;
-	SaveType type;
+	SaveLoad::SaveMode mode;
 
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
@@ -1923,8 +1905,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	size = -1;
 	handle = 1;
 
-	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
-	if (type == kSaveNone) {
+	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	if (mode == SaveLoad::kSaveModeNone) {
 		handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
 
 		if (handle >= 0) {
@@ -1932,8 +1914,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
 		} else
 			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
-	} else
-		size = _vm->_saveLoad->getSize(type);
+	} else if (mode == SaveLoad::kSaveModeSave)
+		size = _vm->_saveLoad->getSize(_vm->_global->_inter_resStr);
 
 	if (size == -1)
 		handle = -1;
@@ -1954,7 +1936,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	int16 dataVar;
 	int16 handle;
 	byte *buf;
-	SaveType type;
+	SaveLoad::SaveMode mode;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -1966,13 +1948,14 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			_vm->_global->_inter_resStr, dataVar, size, offset);
 
-	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
-	if (type != kSaveNone) {
+	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	if (mode == SaveLoad::kSaveModeSave) {
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(type, dataVar, size, offset))
+		if (_vm->_saveLoad->load(_vm->_global->_inter_resStr, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return false;
-	}
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return false;
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
@@ -1983,8 +1966,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 	}
 
-	buf = _vm->_global->_inter_variables + dataVar;
-	memset(_vm->_global->_inter_variablesSizes + dataVar, 0, size);
+	buf = _variables->getAddressOff8(dataVar, size);
 
 	if (_vm->_global->_inter_resStr[0] == 0) {
 		WRITE_VAR(1, size);
@@ -2009,7 +1991,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		WRITE_VAR(59, stream->readUint32LE());
 		// The scripts in some versions divide through 256^3 then,
 		// effectively doing a LE->BE conversion
-		if ((_vm->_platform != Common::kPlatformPC) && (VAR(59) < 256))
+		if ((_vm->getPlatform() != Common::kPlatformPC) && (VAR(59) < 256))
 			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
 	} else
 		retSize = stream->read(buf, size);
@@ -2025,7 +2007,7 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	int32 offset;
 	int32 size;
 	int16 dataVar;
-	SaveType type;
+	SaveLoad::SaveMode mode;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -2038,11 +2020,11 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 
 	WRITE_VAR(1, 1);
 
-	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
-	if (type != kSaveNone) {
-		if (_vm->_saveLoad->save(type, dataVar, size, offset))
+	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	if (mode == SaveLoad::kSaveModeSave) {
+		if (_vm->_saveLoad->save(_vm->_global->_inter_resStr, dataVar, size, offset))
 			WRITE_VAR(1, 0);
-	} else
+	} else if (mode == SaveLoad::kSaveModeNone)
 		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
 
 	return false;
@@ -2054,29 +2036,10 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 
 	varName = load16();
 
-	if (_vm->_noMusic)
-		return;
-
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".INS");
-	debugC(1, kDebugMusic, "Loading Infogrames instrument file \"%s\"",
-			fileName);
 
-	if (_vm->_game->_infogrames) {
-		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
-		delete _vm->_game->_infogrames;
-		_vm->_game->_infogrames = 0;
-	}
-
-	if (_vm->_game->_infIns)
-		delete _vm->_game->_infIns;
-
-	_vm->_game->_infIns = new Audio::Infogrames::Instruments;
-	if (!_vm->_game->_infIns->load(fileName)) {
-		warning("Couldn't load instruments file");
-		delete _vm->_game->_infIns;
-		_vm->_game->_infIns = 0;
-	}
+	_vm->_sound->infogramesLoadInstruments(fileName);
 }
 
 void Inter_v2::o2_playInfogrames(OpGobParams &params) {
@@ -2085,58 +2048,23 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	varName = load16();
 
-	if (_vm->_noMusic)
-		return;
-
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".DUM");
-	debugC(1, kDebugMusic, "Playing Infogrames music file \"%s\"", fileName);
 
-	if (!_vm->_game->_infIns) {
-		_vm->_game->_infIns = new Audio::Infogrames::Instruments;
-
-		if (!_vm->_game->_infIns->load("i1.ins")) {
-			warning("Couldn't load instruments file");
-			delete _vm->_game->_infIns;
-			_vm->_game->_infIns = 0;
-		}
-	}
-
-	if (_vm->_game->_infIns) {
-		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
-		delete _vm->_game->_infogrames;
-		_vm->_game->_infogrames =
-			new Audio::Infogrames(*_vm->_game->_infIns, true,
-					_vm->_mixer->getOutputRate(),
-					_vm->_mixer->getOutputRate() / 75);
-
-		if (!_vm->_game->_infogrames->load(fileName)) {
-			warning("Couldn't load infogrames music");
-			delete _vm->_game->_infogrames;
-			_vm->_game->_infogrames = 0;
-		} else
-			_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
-					&_vm->_game->_infHandle, _vm->_game->_infogrames,
-					-1, 255, 0, false);
-	}
+	_vm->_sound->infogramesLoadSong(fileName);
+	_vm->_sound->infogramesPlay();
 }
 
 void Inter_v2::o2_startInfogrames(OpGobParams &params) {
 	load16();
 
-	if (_vm->_game->_infogrames &&
-			!_vm->_mixer->isSoundHandleActive(_vm->_game->_infHandle)) {
-		_vm->_game->_infogrames->restart();
-		_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
-				&_vm->_game->_infHandle, _vm->_game->_infogrames,
-				-1, 255, 0, false);
-	}
+	_vm->_sound->infogramesPlay();
 }
 
 void Inter_v2::o2_stopInfogrames(OpGobParams &params) {
 	load16();
 
-	_vm->_mixer->stopHandle(_vm->_game->_infHandle);
+	_vm->_sound->infogramesStop();
 }
 
 void Inter_v2::o2_handleGoblins(OpGobParams &params) {
@@ -2172,15 +2100,15 @@ int16 Inter_v2::loadSound(int16 search) {
 	} else {
 		id = load16();
 
-		for (slot = 0; slot < 60; slot++)
-			if (_vm->_game->_soundSamples[slot].isId(id)) {
+		for (slot = 0; slot < Sound::kSoundsCount; slot++)
+			if (_vm->_sound->sampleGetBySlot(slot)->isId(id)) {
 				slotIdMask = 0x8000;
 				break;
 			}
 
-		if (slot == 60) {
-			for (slot = 59; slot >= 0; slot--) {
-				if (_vm->_game->_soundSamples[slot].empty())
+		if (slot == Sound::kSoundsCount) {
+			for (slot = (Sound::kSoundsCount - 1); slot >= 0; slot--) {
+				if (_vm->_sound->sampleGetBySlot(slot)->empty())
 					break;
 			}
 
@@ -2192,7 +2120,9 @@ int16 Inter_v2::loadSound(int16 search) {
 		}
 	}
 
-	_vm->_game->freeSoundSlot(slot);
+	SoundDesc *sample = _vm->_sound->sampleGetBySlot(slot);
+
+	_vm->_sound->sampleFree(sample, true, slot);
 
 	if (id == -1) {
 		char sndfile[14];
@@ -2224,8 +2154,8 @@ int16 Inter_v2::loadSound(int16 search) {
 	}
 
 	if (dataPtr) {
-		_vm->_game->_soundSamples[slot].load(type, source, dataPtr, dataSize);
-		_vm->_game->_soundSamples[slot]._id = id;
+		sample->load(type, source, dataPtr, dataSize);
+		sample->_id = id;
 	}
 
 	return slot | slotIdMask;

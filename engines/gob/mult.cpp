@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -34,9 +33,10 @@
 #include "gob/game.h"
 #include "gob/palanim.h"
 #include "gob/scenery.h"
-#include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+#include "gob/inter.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -188,7 +188,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (_frame >= endFrame)
 			stopNoClear = true;
 
-		if (_vm->_snd->_playingSound)
+		if (_vm->_sound->blasterPlayingSound())
 			stop = false;
 
 		_vm->_util->processInput();
@@ -225,8 +225,8 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animDataAllocated = false;
 		}
 
-		if (_vm->_snd->_playingSound)
-			_vm->_snd->stopSound(10);
+		if (_vm->_sound->blasterPlayingSound())
+			_vm->_sound->blasterStop(10);
 
 		WRITE_VAR(57, (uint32) -1);
 	} else
@@ -415,21 +415,24 @@ void Mult::doSoundAnim(bool &stop, int16 frame) {
 
 		if (sndKey->cmd != -1) {
 			if ((sndKey->cmd == 1) || (sndKey->cmd == 4)) {
-				SoundDesc &sample = _vm->_game->_soundSamples[sndKey->soundIndex];
+				SoundDesc *sample = _vm->_sound->sampleGetBySlot(sndKey->soundIndex);
 
-				_vm->_snd->stopSound(0);
-				if (!sample.empty())
-					_vm->_snd->playSample(sample, sndKey->repCount,
+				_vm->_sound->blasterStop(0);
+				if (sample && !sample->empty())
+					_vm->_sound->blasterPlay(sample, sndKey->repCount,
 							sndKey->freq, sndKey->fadeLength);
 			}
 		} else {
-			if (_vm->_snd->_playingSound)
-				_vm->_snd->stopSound(sndKey->fadeLength);
+			if (_vm->_sound->blasterPlayingSound())
+				_vm->_sound->blasterStop(sndKey->fadeLength);
 		}
 	}
 }
 
 void Mult::clearObjectVideos() {
+	if (!_objects)
+		return;
+
 	for (int i = 0; i < _objCount; i++)
 		if (_objects[i].videoSlot > 0)
 			_vm->_vidPlayer->slotClose(_objects[i].videoSlot - 1);

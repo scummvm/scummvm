@@ -134,6 +134,12 @@ int KyraEngine_MR::o3_hideBadConscience(EMCState *script) {
 	return 0;
 }
 
+int KyraEngine_MR::o3_showAlbum(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_showAlbum(%p) ()", (const void *)script);
+	showAlbum();
+	return 0;
+}
+
 int KyraEngine_MR::o3_setInventorySlot(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setInventorySlot(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int slot = MAX<int16>(0, MIN<int16>(10, stackPos(0)));
@@ -551,7 +557,7 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 			convs[0] = 0;
 			convs[1] = 4;
 			convs[2] = 0;
-			convs[4] = 1;
+			convs[3] = 1;
 			break;
 
 		case 10:
@@ -585,6 +591,13 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 			_conversationState[dlgIndex][convs[i]] = 0;
 	}
 
+	return 1;
+}
+
+int KyraEngine_MR::o3_removeItemSlot(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeItemSlot(%p) (%d)", (const void *)script, stackPos(0));
+	deleteItemAnimEntry(stackPos(0));
+	_itemList[stackPos(0)].id = 0xFFFF;
 	return 1;
 }
 
@@ -798,8 +811,8 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	return selection;
 }
 
-int KyraEngine_MR::o3_blockOutRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+int KyraEngine_MR::o3_blockOutWalkableRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_blockOutWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	const int x1 = stackPos(0);
 	int y1 = stackPos(1);
 	const int x2 = stackPos(2);
@@ -1169,7 +1182,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_hideBadConscience);
 	// 0x18
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o3_showAlbum);
 	Opcode(o3_setInventorySlot);
 	Opcode(o3_getInventorySlot);
 	// 0x1c
@@ -1186,19 +1199,19 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_removeInventoryItemInstances);
 	Opcode(o3_countInventoryItemInstances);
 	Opcode(o3_npcChatSequence);
-	Opcode(o2_queryGameFlag);
+	Opcode(o1_queryGameFlag);
 	// 0x28
-	Opcode(o2_resetGameFlag);
-	Opcode(o2_setGameFlag);
-	Opcode(o2_setHandItem);
-	Opcode(o2_removeHandItem);
+	Opcode(o1_resetGameFlag);
+	Opcode(o1_setGameFlag);
+	Opcode(o1_setHandItem);
+	Opcode(o1_removeHandItem);
 	// 0x2c
-	Opcode(o2_handItemSet);
-	Opcode(o2_hideMouse);
+	Opcode(o1_getMouseState);
+	Opcode(o1_hideMouse);
 	Opcode(o2_addSpecialExit);
-	Opcode(o2_setMousePos);
+	Opcode(o1_setMousePos);
 	// 0x30
-	Opcode(o2_showMouse);
+	Opcode(o1_showMouse);
 	Opcode(o3_badConscienceChat);
 	Opcode(o3_wipeDownMouseItem);
 	Opcode(o3_dummy);
@@ -1220,7 +1233,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x40
 	Opcode(o3_checkInRect);
 	Opcode(o3_updateConversations);
-	OpcodeUnImpl();
+	Opcode(o3_removeItemSlot);
 	Opcode(o3_dummy);
 	// 0x44
 	Opcode(o3_dummy);
@@ -1248,19 +1261,19 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_setMalcolmPos);
 	Opcode(o3_stopMusic);
 	// 0x58
-	Opcode(o2_playWanderScoreViaMap);
+	Opcode(o1_playWanderScoreViaMap);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_getScore);
 	Opcode(o3_daggerWarning);
 	// 0x5c
-	Opcode(o3_blockOutRegion);
+	Opcode(o3_blockOutWalkableRegion);
 	Opcode(o3_dummy);
 	Opcode(o3_showSceneStringsMessage);
 	OpcodeUnImpl();
 	// 0x60
-	Opcode(o2_getRand);
+	Opcode(o1_getRand);
 	Opcode(o3_dummy);
-	Opcode(o2_setDeathHandler);
+	Opcode(o1_setDeathHandler);
 	Opcode(o3_showGoodConscience);
 	// 0x64
 	Opcode(o3_goodConscienceChat);
@@ -1366,7 +1379,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	// 0x0a
 	Opcode(o2a_setResetFrame);
-	Opcode(o2_getRand);
+	Opcode(o1_getRand);
 	Opcode(o3_getMalcolmShapes);
 	Opcode(o3_dummy);
 
@@ -1374,8 +1387,8 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x00
 	Opcode(o3d_updateAnim);
 	Opcode(o3d_delay);
-	Opcode(o2_getRand);
-	Opcode(o2_queryGameFlag);
+	Opcode(o1_getRand);
+	Opcode(o1_queryGameFlag);
 	// 0x04
 	Opcode(o3_dummy);
 }

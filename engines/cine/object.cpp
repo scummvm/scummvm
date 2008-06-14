@@ -185,37 +185,37 @@ void addObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 }
 
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
-	paramIdx--;
-
-	assert(paramIdx <= 5);
+	// Operation Stealth checks object index range, Future Wars doesn't.
+	if (g_cine->getGameType() == Cine::GType_OS && objIdx >= NUM_MAX_OBJECT)
+		return;
 
 	switch (paramIdx) {
-	case 0:
+	case 1:
 		objectTable[objIdx].x = newValue;
 		break;
-	case 1:
+	case 2:
 		objectTable[objIdx].y = newValue;
 		break;
-	case 2:
+	case 3:
 		objectTable[objIdx].mask = newValue;
 
+		// TODO: Check this part against disassembly
 		if (removeOverlay(objIdx, 0)) {
 			addOverlay(objIdx, 0);
 		}
 		break;
-	case 3:
+	case 4:
 		objectTable[objIdx].frame = newValue;
 		break;
-	case 4:
-		// is it really in Future Wars? it breaks the newspaper machine
-		// on the airport in Operation Stealth
-		if (newValue == -1 && g_cine->getGameType() != Cine::GType_OS) {
+	case 5:
+		// TODO: Test if this really breaks the newspaper machine on the airport in Operation Stealth.
+		if (g_cine->getGameType() == Cine::GType_FW && newValue == -1) {
 			objectTable[objIdx].costume = globalVars[0];
 		} else {
 			objectTable[objIdx].costume = newValue;
 		}
 		break;
-	case 5:
+	case 6:
 		objectTable[objIdx].part = newValue;
 		break;
 	}
@@ -236,6 +236,10 @@ uint16 compareObjectParam(byte objIdx, byte type, int16 value) {
 	return compareResult;
 }
 
+/*! \bug In Operation Stealth, if you try to go downstairs to the sea in the
+ * location between bank and hotel, getObjectParam is called with paramIdx 16
+ * and crashes
+ */
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 	assert(objIdx <= NUM_MAX_OBJECT);
 

@@ -1205,6 +1205,7 @@ protected:
 	void checkTimerCallback();
 	void delay(uint delay);
 	void pause();
+	virtual void pauseEngineIntern(bool pause);
 
 	void waitForMark(uint i);
 	void scrollScreen();

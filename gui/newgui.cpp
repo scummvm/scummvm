@@ -219,6 +219,7 @@ void NewGui::runLoop() {
 	Dialog *activeDialog = getTopDialog();
 	bool didSaveState = false;
 	int button;
+	uint32 time;
 
 	if (activeDialog == 0)
 		return;
@@ -252,7 +253,6 @@ void NewGui::runLoop() {
 		_system->updateScreen();
 
 		Common::Event event;
-		uint32 time = _system->getMillis();
 
 		while (eventMan->pollEvent(event)) {
 			if (activeDialog != getTopDialog() && event.type != Common::EVENT_QUIT && event.type != Common::EVENT_SCREEN_CHANGED)
@@ -288,6 +288,7 @@ void NewGui::runLoop() {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
+				time = _system->getMillis();
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 							&& ABS(_lastClick.x - event.mouse.x) < 3
 							&& ABS(_lastClick.y - event.mouse.y) < 3) {

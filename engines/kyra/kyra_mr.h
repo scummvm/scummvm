@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KYRA_KYRA_V3_H
-#define KYRA_KYRA_V3_H
+#ifndef KYRA_KYRA_MR_H
+#define KYRA_KYRA_MR_H
 
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_mr.h"
@@ -39,7 +39,7 @@ namespace Kyra {
 class SoundDigital;
 class Screen_MR;
 class MainMenu;
-class WSAMovieV2;
+class WSAMovie_v2;
 class TextDisplayer_MR;
 struct Button;
 
@@ -50,11 +50,17 @@ public:
 	KyraEngine_MR(OSystem *system, const GameFlags &flags);
 	~KyraEngine_MR();
 
+	//TODO: proper extended implementation of KyraEngine_v2::pauseEngineIntern.
+	// Idle animation time, item animations and album animations should be taken
+	// care of, but since those would just produce minor glitches it's not that
+	// important.
+
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
 	GUI_v2 *gui_v2() const { return _gui; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
+	bool heliumMode() const { return _configHelium; }
 
 	int go();
 
@@ -66,10 +72,13 @@ private:
 	// config
 	bool _configStudio;
 	bool _configSkip;
+	bool _configHelium;
 
 	void registerDefaultSettings();
 	void writeSettings();
 	void readSettings();
+
+	void initStaticResource();
 
 	// --
 	Screen_MR *_screen;
@@ -98,8 +107,6 @@ private:
 	void updateWithText();
 	void updateMouse();
 
-	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
-
 	// sound specific
 private:
 	void playMenuAudioFile();
@@ -108,8 +115,8 @@ private:
 	int _fadeOutMusicChannel;
 	const char *_menuAudioFile;
 
-	static const char *_soundList[];
-	static const int _soundListSize;
+	const char *const *_soundList;
+	int _soundListSize;
 
 	void snd_playWanderScoreViaMap(int track, int force);
 	void stopMusicTrack();
@@ -119,10 +126,10 @@ private:
 
 	void snd_playSoundEffect(int item, int volume);
 
-	static const uint8 _sfxFileMap[];
-	static const int _sfxFileMapSize;
-	static const char *_sfxFileList[];
-	static const int _sfxFileListSize;
+	const uint8 *_sfxFileMap;
+	int _sfxFileMapSize;
+	const char *const *_sfxFileList;
+	int _sfxFileListSize;
 
 	int _voiceSoundChannel;
 
@@ -157,7 +164,7 @@ private:
 	void initMainMenu();
 	void uninitMainMenu();
 
-	WSAMovieV2 *_menuAnim;
+	WSAMovie_v2 *_menuAnim;
 
 	// timer
 	void setupTimers();
@@ -177,7 +184,8 @@ private:
 
 private:
 	// main menu
-	static const char *_mainMenuStrings[];
+	const char *const *_mainMenuStrings;
+	int _mainMenuStringsSize;
 
 	// animator
 	uint8 *_gamePlayBuffer;
@@ -194,6 +202,7 @@ private:
 	void refreshAnimObjects(int force);
 
 	bool _loadingState;
+	void updateItemAnimations();
 	void updateCharacterAnim(int charId);
 
 	void updateSceneAnim(int anim, int newFrame);
@@ -208,6 +217,10 @@ private:
 
 	bool _nextIdleType;
 	void showIdleAnim();
+
+	const ItemAnimData_v2 *_itemAnimData;
+	ActiveItemAnim _activeItemAnim[10];
+	int _nextAnimItem;
 
 	// interface
 	uint8 *_interface;
@@ -247,7 +260,7 @@ private:
 	void clearInventorySlot(int slot, int page);
 	void drawInventorySlot(int page, int item, int slot);
 
-	WSAMovieV2 *_invWsa;
+	WSAMovie_v2 *_invWsa;
 	int _invWsaFrame;
 
 	// localization
@@ -282,12 +295,12 @@ private:
 
 	bool isDropable(int x, int y);
 
-	static const uint8 _itemMagicTable[];
+	const uint8 *_itemMagicTable;
 	bool itemListMagic(int handItem, int itemSlot);
 	bool itemInventoryMagic(int handItem, int invSlot);
 
-	static const uint8 _itemStringMap[];
-	static const uint _itemStringMapSize;
+	const uint8 *_itemStringMap;
+	int _itemStringMapSize;
 	static const uint8 _itemStringPickUp[];
 	static const uint8 _itemStringDrop[];
 	static const uint8 _itemStringInv[];
@@ -415,6 +428,11 @@ private:
 	void goodConscienceChat(const char *str, int vocHigh, int vocLow);
 	void goodConscienceChatWaitToFinish();
 
+	bool _albumChatActive;
+	void albumChat(const char *str, int vocHigh, int vocLow);
+	void albumChatInit(const char *str, int object, int vocHigh, int vocLow);
+	void albumChatWaitToFinish();
+
 	void malcolmSceneStartupChat();
 
 	byte _newSceneDlgState[40];
@@ -503,13 +521,63 @@ private:
 	int _score;
 	int _scoreMax;
 	
-	static const int8 _scoreTable[];
-	static const int _scoreTableSize;
+	const uint8 *_scoreTable;
+	int _scoreTableSize;
+
 	int8 _scoreFlagTable[26];
 	bool updateScore(int scoreId, int strId);
 	void scoreIncrease(int count, const char *str);
 
 	void eelScript();
+
+	// Album
+	struct Album {
+		uint8 *backUpPage;
+		uint8 *file;
+		WSAMovie_v2 *wsa;
+		uint8 *backUpRect;
+
+		struct PageMovie {
+			WSAMovie_v2 *wsa;
+			int curFrame;
+			int maxFrame;
+			uint32 timer;
+		};
+
+		PageMovie leftPage, rightPage;
+
+		int curPage, nextPage;
+		bool running;
+		bool isPage14;
+	} _album;
+
+	static const int8 _albumWSAX[];
+	static const int8 _albumWSAY[];
+
+	void showAlbum();
+
+	void loadAlbumPage();
+	void loadAlbumPageWSA();
+
+	void printAlbumPageText();
+	void printAlbumText(int page, const char *str, int x, int y, uint8 c0);
+	
+	void processAlbum();
+
+	void albumNewPage();
+	void albumUpdateAnims();
+	void albumAnim1();
+	void albumAnim2();
+
+	void albumBackUpRect();
+	void albumRestoreRect();
+	void albumUpdateRect();
+
+	void albumSwitchPages(int oldPage, int newPage, int srcPage);
+
+	int albumNextPage(Button *caller);
+	int albumPrevPage(Button *caller);
+	int albumClose(Button *caller);
 
 	// save/load
 	void saveGame(const char *fileName, const char *saveName);
@@ -527,6 +595,7 @@ private:
 	int o3_setCharacterAnimFrameFromFacing(EMCState *script);
 	int o3_showBadConscience(EMCState *script);
 	int o3_hideBadConscience(EMCState *script);
+	int o3_showAlbum(EMCState *script);
 	int o3_setInventorySlot(EMCState *script);
 	int o3_getInventorySlot(EMCState *script);
 	int o3_addItemToInventory(EMCState *script);
@@ -548,6 +617,7 @@ private:
 	int o3_drawSceneShapeOnPage(EMCState *script);
 	int o3_checkInRect(EMCState *script);
 	int o3_updateConversations(EMCState *script);
+	int o3_removeItemSlot(EMCState *script);
 	int o3_setSceneDim(EMCState *script);
 	int o3_setSceneAnimPosAndFrame(EMCState *script);
 	int o3_removeItemInstances(EMCState *script);
@@ -560,7 +630,7 @@ private:
 	int o3_playSoundEffect(EMCState *script);
 	int o3_getScore(EMCState *script);
 	int o3_daggerWarning(EMCState *script);
-	int o3_blockOutRegion(EMCState *script);
+	int o3_blockOutWalkableRegion(EMCState *script);
 	int o3_showSceneStringsMessage(EMCState *script);
 	int o3_showGoodConscience(EMCState *script);
 	int o3_goodConscienceChat(EMCState *script);
