@@ -570,6 +570,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\musicplugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\musicplugin.h"
 				>
 			</File>
