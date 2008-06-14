@@ -100,7 +100,6 @@ add_engine saga "SAGA" yes
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
 add_engine sword2 "Broken Sword 2" yes
-add_engine tinsel "Tinsel" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 
 _endian=unknown
