@@ -44,10 +44,10 @@ namespace GUI {
 
 void ThemeParser::debug_testEval() {
 	static const char *debug_config_text =
-		"<drawdata id = \"background_default\" cache = true>"
+		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>"
 		"<draw func = \"roundedsq\" /*/fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>"
 		"<draw func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>"
-		"</drawdata>/* lol this is just a simple test*/";
+		"</ drawdata>/* lol this is just a simple test*/";
 
 	_text = strdup(debug_config_text);
 	parse();
@@ -136,18 +136,22 @@ bool ThemeParser::parse() {
 
 		switch (_state) {
 			case kParserNeedKey:
-				if (_text[_pos++] != '<') parserError("Expecting key start.");
-				else _state = kParserNeedKeyName;
-				break;
+				if (_text[_pos++] != '<' || _text[_pos] == 0) {
+					parserError("Expecting key start.");
+					break;
+				}
 
-			case kParserNeedKeyName:
-				if (_text[_pos] == '/') {
+				if (_text[_pos] == '/' && _text[_pos + 1] != '*') {
 					_pos++;
 					active_closure = true;
 				}
-				
+
+				_state = kParserNeedKeyName;
+				break;
+
+			case kParserNeedKeyName:
 				if (!parseToken()) {
-					parserError("Unexpected end of file while parsing token.");
+					parserError("Invalid key name.");
 					break;
 				}
 
@@ -170,8 +174,9 @@ bool ThemeParser::parse() {
 
 					if (_text[_pos++] != '>')
 						parserError("Invalid syntax in key closure.");
-					
-					_state = kParserNeedKey;
+					else 
+						_state = kParserNeedKey;
+
 					break;
 				}
 
@@ -184,21 +189,27 @@ bool ThemeParser::parse() {
 					break;
 				}
 
-				if (!parseToken()) parserError("Error when parsing key value.");
-				else _state = kParserNeedPropertyOperator;
+				if (!parseToken()) 
+					parserError("Error when parsing key value.");
+				else 
+					_state = kParserNeedPropertyOperator;
+
 				break;
 
 			case kParserNeedPropertyOperator:
-				if (_text[_pos++] != '=') parserError("Unexpected character after key name.");
-				else  _state = kParserNeedPropertyValue;
+				if (_text[_pos++] != '=') 
+					parserError("Unexpected character after key name.");
+				else  
+					_state = kParserNeedPropertyValue;
+
 				break;
 
 			case kParserNeedPropertyValue:
-				if (!parseKeyValue(_token)) parserError("Unable to parse key value.");
-				else _state = kParserNeedPropertyName;
-				break;
+				if (!parseKeyValue(_token)) 
+					parserError("Unable to parse key value.");
+				else 
+					_state = kParserNeedPropertyName;
 
-			default:
 				break;
 		}
 	}

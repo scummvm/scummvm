@@ -102,7 +102,7 @@ protected:
 		while (isValidNameChar(_text[_pos]))
 			_token += _text[_pos++];
 
-		return (_text[_pos] != 0);
+		return isspace(_text[_pos]) != 0 || _text[_pos] == '>';
 	}
 
 	int _pos;
