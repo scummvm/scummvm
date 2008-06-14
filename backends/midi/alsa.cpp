@@ -79,7 +79,7 @@ MidiDriver_ALSA::MidiDriver_ALSA()
 }
 
 int MidiDriver_ALSA::open() {
-	char *var;
+	const char *var;
 
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
@@ -87,7 +87,8 @@ int MidiDriver_ALSA::open() {
 
 	if (!(var = getenv("SCUMMVM_PORT"))) {
 		// use config option if no var specified
-		if (parse_addr(ConfMan.get("alsa_port").c_str(), &seq_client, &seq_port) < 0) {
+		var = ConfMan.get("alsa_port").c_str();
+		if (parse_addr(var, &seq_client, &seq_port) < 0) {
 			error("Invalid port %s", var);
 			return -1;
 		}
