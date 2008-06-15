@@ -33,6 +33,7 @@
 #include "engine/registry.h"
 #include "engine/localize.h"
 #include "engine/engine.h"
+#include "engine/version.h"
 #include "engine/smush/smush.h"
 
 #include "engine/backend/sdl/driver_gl.h"
@@ -84,6 +85,9 @@ void quit();
 
 extern "C" int residual_main(int argc, char *argv[]) {
 	int i;
+
+	printf("%s Version\n", gResidualFullVersion);
+	printf("------------------------------------------------\n");
 
 	g_registry = new Registry();
 
@@ -140,8 +144,6 @@ extern "C" int residual_main(int argc, char *argv[]) {
 		} else {
 			int j;
 needshelp:
-			printf("Residual SVN Version\n");
-			printf("--------------------\n");
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
 			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
