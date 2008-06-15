@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	scene.o \
 	textobject.o \
 	textsplit.o \
+	version.o \
 	walkplane.o
 
 # Include common rules

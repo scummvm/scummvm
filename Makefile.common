@@ -44,6 +44,11 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES =
 
+# Make engine/version.o depend on all other object files. This way if anything is
+# changed, it causes version.cpp to be recompiled. This in turn ensures that
+# the build date in gResidualBuildDate is correct.
+engine/version.o: $(filter-out engine/libengine.a,$(OBJS))
+
 # The build rule for the Residual executable
 $(EXECUTABLE): $(OBJS)
 	$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
@@ -85,6 +90,26 @@ endif
 # Create the files that depend on the version
 ######################################################################
 
+VERSION_FILES =
+#$(srcdir)/dists/iphone/Info.plist \
+#$(srcdir)/dists/macosx/Info.plist
+
+VERSION = $(shell cat "${srcdir}/engine/internal_version.h" | cut -d\" -f2)
+VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
+VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
+VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
+VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
+
+$(VERSION_FILES): %: %.in
+	@echo "Creating $@"
+	@cat $< | sed \
+		-e "s/@VER_MAJOR@/$(VER_MAJOR)/g" \
+		-e "s/@VER_MINOR@/$(VER_MINOR)/g" \
+		-e "s/@VER_PATCH@/$(VER_PATCH)/g" \
+		-e "s/@VER_EXTRA@/$(VER_EXTRA)/g" \
+		-e "s/@VERSION@/$(VERSION)/g" \
+		> $@
+
 
 ######################################################################
 # Distribution settings
@@ -98,6 +123,7 @@ endif
 
 DISTNAME := residual-$(DISTVERSION)
 DISTDIR := dist
+VERFILE := $(DISTDIR)/$(DISTNAME)/engine/internal_version.h
 
 ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
 SVNROOT := $(srcdir)
@@ -105,6 +131,10 @@ else
 SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/residual/trunk/
 endif
 
+$(VERFILE): $(srcdir)/engine/internal_version.h
+	@$(RM_REC) $(DISTDIR)
+	@$(MKDIR) $(DISTDIR)
+	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
 
 $(DISTDIR)/$(DISTNAME).tar.gz: 
 	cd $(DISTDIR); tar zcf $(DISTNAME).tar.gz $(DISTNAME)
