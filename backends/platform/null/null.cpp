@@ -102,6 +102,7 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
+	virtual void getTimeAndDate(struct tm &t) const;
 	virtual Common::TimerManager *getTimerManager();
 };
 
@@ -293,6 +294,9 @@ Audio::Mixer *OSystem_NULL::getMixer() {
 Common::TimerManager *OSystem_NULL::getTimerManager() {
 	assert(_timer);
 	return _timer;
+}
+
+void OSystem_NULL::getTimeAndDate(struct tm &t) const {
 }
 
 OSystem *OSystem_NULL_create() {
