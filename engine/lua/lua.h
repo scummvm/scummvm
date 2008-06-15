@@ -19,9 +19,6 @@
 
 #define LUA_ANYTAG    (-1)
 
-#define ADD_CUSTOM_FOPEN
-// this allow enable additionaly code in io_readfrom func
-
 typedef void (*lua_CFunction) (void);
 typedef unsigned int lua_Object;
 

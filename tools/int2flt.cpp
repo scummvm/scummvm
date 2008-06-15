@@ -24,8 +24,8 @@
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-  unsigned i = atoi(argv[1]);
-  float *f = &i;
-  printf("%g\n", *f);
-  return 0;
+    unsigned i = atoi(argv[1]);
+    float *f = (float *)&i;
+    printf("%g\n", *f);
+    return 0;
 }

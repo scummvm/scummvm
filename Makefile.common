@@ -15,7 +15,7 @@ all: $(EXECUTABLE)
 # Module settings
 ######################################################################
 
-MODULES := $(MODULES)
+MODULES := tools $(MODULES)
 
 # After the game specific modules follow the shared modules
 MODULES += \

@@ -20,28 +20,31 @@
  *
  */
 
-#include "util.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 
 struct lab_header {
-  uint32 magic;
-  uint32 magic2;
-  uint32 num_entries;
-  uint32 string_table_size;
+  uint32_t magic;
+  uint32_t magic2;
+  uint32_t num_entries;
+  uint32_t string_table_size;
 };
 
 struct lab_entry {
-  uint32 fname_offset;
-  uint32 start;
-  uint32 size;
-  uint32 reserved;
+  uint32_t fname_offset;
+  uint32_t start;
+  uint32_t size;
+  uint32_t reserved;
 };
 
-uint16 READ_LE_UINT16(const void *ptr) {
-	const byte *b = (const byte *)ptr;
+uint16_t READ_LE_UINT16(const void *ptr) {
+	const uint8_t *b = (const uint8_t *)ptr;
 	return (b[1] << 8) + b[0];
 }
-uint32 READ_LE_UINT32(const void *ptr) {
-	const byte *b = (const byte *)ptr;
+uint32_t READ_LE_UINT32(const void *ptr) {
+	const uint8_t *b = (const uint8_t *)ptr;
 	return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
 }
 
@@ -50,28 +53,33 @@ int main(int argc, char **argv) {
   struct lab_header head;
   struct lab_entry *entries;
   char *str_table;
-  uint i;
+  uint32_t i;
   off_t offset;
 
   infile = fopen(argv[1], "rb");
   if (infile == 0)
   {
-    error("can't open source file: %s", argv[1]);
+    printf("can't open source file: %s\n", argv[1]);
+    exit(1);
   }
 
   fread(&head.magic, 1, 4, infile);
   fread(&head.magic2, 1, 4, infile);
-  head.num_entries = readUint32LE(infile);
-  head.string_table_size = readUint32LE(infile);
+  uint32_t num, s_size;
+  fread(&num, 1, 4, infile);
+  fread(&s_size, 1, 4, infile);
+  head.num_entries = READ_LE_UINT32(&num);
+  head.string_table_size = READ_LE_UINT32(&s_size);
   if (0 != memcmp(&head.magic, "LABN", 4))
   {
-    error("There is no LABN header in source file");
+    printf("There is no LABN header in source file\n");
+    exit(1);
   }
 
   entries = (struct lab_entry *)malloc(head.num_entries * sizeof(struct lab_entry));
   fread(entries, 1, head.num_entries * sizeof(struct lab_entry), infile);
 
-  str_table = (char *) malloc(head.string_table_size);
+  str_table = (char *)malloc(head.string_table_size);
   fread(str_table, 1, head.string_table_size, infile);
 
   for (i = 0; i < head.num_entries; i++) {

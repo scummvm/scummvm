@@ -7,7 +7,7 @@
 
 srcdir      ?= .
 
-DEFINES     := -DHAVE_CONFIG_H
+DEFINES     := -DHAVE_CONFIG_H -DLUA_ADD_CUSTOM_FOPEN
 LDFLAGS     :=
 INCLUDES    := -I. -I$(srcdir)
 LIBS        :=

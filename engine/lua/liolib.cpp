@@ -16,7 +16,7 @@
 #include "luadebug.h"
 #include "lualib.h"
 
-#ifdef ADD_CUSTOM_FOPEN
+#ifdef LUA_ADD_CUSTOM_FOPEN
 #include "../resource.h"
 #endif
 
@@ -141,7 +141,7 @@ static void io_readfrom (void)
       current = popen(s+1, "r");
 	else {
       current = fopen(s, "r");
-#ifdef ADD_CUSTOM_FOPEN
+#ifdef LUA_ADD_CUSTOM_FOPEN
       if (current == NULL)
 	    current = g_resourceloader->openNewStream(s);
 #endif
