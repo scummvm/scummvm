@@ -14,14 +14,14 @@ install: all
 	#$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
 	#$(INSTALL) -c -m 644 "$(srcdir)/dists/residual.6" "$(DESTDIR)$(MANDIR)/man6/residual.6"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
-	#$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYING.GPL" "$(srcdir)/NEWS" "$(srcdir)/README" "$(srcdir)/TODO""$(DESTDIR)$(PREFIX)/share/doc/residual/"
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/residual$(EXEEXT)"
 	#rm -f "$(DESTDIR)$(MANDIR)/man6/residual.6"
-	#rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
+	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 
 deb:
