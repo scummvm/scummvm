@@ -717,7 +717,7 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
-		#OBJS="$OBJS residualico.o"
+		OBJS="$OBJS residualico.o"
 		;;
 	cygwin*)
 		DEFINES="$DEFINES -mno-cygwin -DWIN32"
