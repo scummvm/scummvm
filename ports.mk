@@ -32,7 +32,7 @@ deb:
 
 # Special target to create a application wrapper for Mac OS X
 bundle_name = Residual.app
-bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
+bundle: residual-static $(srcdir)/dists/macosx/Info.plist
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -59,7 +59,7 @@ OSXOPT=/sw
 ifeq ($(BACKEND), iphone)
 OSXOPT=/usr/local/arm-apple-darwin
 else
-# Static libaries, used for the scummvm-static and iphone targets
+# Static libaries, used for the residual-static and iphone targets
 OSX_STATIC_LIBS := `$(OSXOPT)/bin/sdl-config --static-libs`
 endif
 

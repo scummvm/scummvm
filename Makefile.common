@@ -5,7 +5,7 @@
 # $Id$
 
 ######################################################################
-# The default build target: just build the scummvm executable
+# The default build target: just build the residual executable
 ######################################################################
 
 all: $(EXECUTABLE) 
