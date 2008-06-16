@@ -90,9 +90,9 @@ endif
 # Create the files that depend on the version
 ######################################################################
 
-VERSION_FILES =
-#$(srcdir)/dists/iphone/Info.plist \
-#$(srcdir)/dists/macosx/Info.plist
+VERSION_FILES = \
+	$(srcdir)/dists/macosx/Info.plist
+#$(srcdir)/dists/iphone/Info.plist
 
 VERSION = $(shell cat "${srcdir}/engine/internal_version.h" | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)

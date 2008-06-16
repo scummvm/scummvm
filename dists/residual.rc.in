@@ -28,7 +28,7 @@ BEGIN
             VALUE "FileDescription", "http://www.scummvm.org/\0"
             VALUE "FileVersion", "@VERSION@\0"
             VALUE "InternalName", "residual\0"
-            VALUE "LegalCopyright", "Copyright © 2003-2008 The ScummVM-Residual\0"
+            VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "residual.exe\0"
             VALUE "PrivateBuild", "\0"

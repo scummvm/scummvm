@@ -38,7 +38,7 @@ bundle: residual-static $(srcdir)/dists/macosx/Info.plist
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/icons/residual.icns $(bundle_name)/Contents/Resources/
-	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
+	#$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp residual-static $(bundle_name)/Contents/MacOS/residual
 	chmod 755 $(bundle_name)/Contents/MacOS/residual
@@ -118,10 +118,10 @@ osxsnap: bundle credits
 	cp $(srcdir)/README ./Residual-snapshot/Residual\ ReadMe
 	/Developer/Tools/SetFile -t ttro -c ttxt ./Residual-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./Residual-snapshot/
-	cp $(srcdir)/dists/macosx/DS_Store ./Residual-snapshot/.DS_Store
-	cp $(srcdir)/dists/macosx/background.jpg ./Residual-snapshot/background.jpg
-	/Developer/Tools/SetFile -a V ./Residual-snapshot/.DS_Store
-	/Developer/Tools/SetFile -a V ./Residual-snapshot/background.jpg
+	#cp $(srcdir)/dists/macosx/DS_Store ./Residual-snapshot/.DS_Store
+	#cp $(srcdir)/dists/macosx/background.jpg ./Residual-snapshot/background.jpg
+	#/Developer/Tools/SetFile -a V ./Residual-snapshot/.DS_Store
+	#/Developer/Tools/SetFile -a V ./Residual-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder Residual-snapshot \
 					-volname "Residual snapshot" \
