@@ -5,19 +5,19 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>ScummVM</string>
+	<string>Residual</string>
 	<key>CFBundleExecutable</key>
-	<string>scummvm</string>
+	<string>residual</string>
 	<key>CFBundleGetInfoString</key>
 	<string>@VERSION@</string>
 	<key>CFBundleIconFile</key>
-	<string>scummvm.icns</string>
+	<string>residual.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.scummvm.scummvm</string>
+	<string>org.scummvm.residual</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>ScummVM</string>
+	<string>Residual</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -27,6 +27,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyrights information are in AUTHORS file</string>
+	<string>Copyrights information are in Credits.rtf file</string>
 </dict>
 </plist>
