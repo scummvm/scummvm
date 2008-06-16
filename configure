@@ -722,7 +722,7 @@ case $_host_os in
 	cygwin*)
 		DEFINES="$DEFINES -mno-cygwin -DWIN32"
 		LIBS="$LIBS -mno-cygwin -lmingw32 -lopengl32 -lglu32"
-		#OBJS="$OBJS residualico.o"
+		OBJS="$OBJS residualico.o"
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"

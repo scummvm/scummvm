@@ -132,7 +132,7 @@ osxsnap: bundle credits
 # Windows specific
 #
 
-residualico.o: 
+residualico.o: $(srcdir)/icons/residual.ico
 	$(WINDRES) -I$(srcdir) $(srcdir)/dists/residual.rc residualico.o
 
 # Special target to create a win32 snapshot binary
