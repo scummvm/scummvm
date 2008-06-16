@@ -45,10 +45,12 @@ struct DrawStep {
 	struct { 
 		uint8 r, g, b; 
 	}	
-	color1, /** Foreground color/gradient start */
-	color2; /** Background color/gradient end */
+	fgColor, /** Foreground color */
+	bgColor, /** backgroudn color */
+	gradColor1, /** gradient start*/
+	gradColor2; /** gradient end */
 
-	bool fill_area; /** If enabled, the draw step occupies the whole drawing area */
+	bool fillArea; /** If enabled, the draw step occupies the whole drawing area */
 
 	struct {
 		uint16 pos;
@@ -60,12 +62,12 @@ struct DrawStep {
 
 	uint8 shadow, stroke, factor, radius; /** Misc options... */
 
-	uint8 fill_mode; /** active fill mode */
-	uint8 extra_data; /** Generic parameter for extra options (orientation/bevel) */
+	uint8 fillMode; /** active fill mode */
+	uint8 extraData; /** Generic parameter for extra options (orientation/bevel) */
 
 	uint32 scale; /** scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
-	void (VectorRenderer::*drawing_call)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
+	void (VectorRenderer::*drawingCall)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
 
 	enum DrawStepFlags {
 		kStepCallbackOnly		= (1 << 0),
@@ -330,7 +332,7 @@ public:
 	}
 
 	void stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
-		if (step.fill_area) {
+		if (step.fillArea) {
 			in_x = area.left;
 			in_y = area.top;
 			in_w = area.width();
@@ -392,13 +394,13 @@ public:
 	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawTriangle(x, y, w, h, (TriangleOrientation)step.extra_data);
+		drawTriangle(x, y, w, h, (TriangleOrientation)step.extraData);
 	}
 
 	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawBeveledSquare(x, y, w, h, step.extra_data);
+		drawBeveledSquare(x, y, w, h, step.extraData);
 	}
 
 	/**

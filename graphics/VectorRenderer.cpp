@@ -54,19 +54,19 @@ VectorRenderer *createRenderer(int mode) {
 void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
 
 	if (step.flags & DrawStep::kStepCallbackOnly) {
-		(this->*(step.drawing_call))(area, step);
+		(this->*(step.drawingCall))(area, step);
 		return;
 	}
 
 	if (step.flags & DrawStep::kStepSetBG)
-		setBgColor(step.color2.r, step.color2.g, step.color2.b);
+		setBgColor(step.bgColor.r, step.bgColor.g, step.bgColor.b);
 
 	if (step.flags & DrawStep::kStepSetFG)
-		setFgColor(step.color1.r, step.color1.g, step.color1.b);
+		setFgColor(step.fgColor.r, step.fgColor.g, step.fgColor.b);
 
 	if (step.flags & DrawStep::kStepSetGradient)
-		setGradientColors(step.color1.r, step.color1.g, step.color1.b, 
-						  step.color2.r, step.color2.g, step.color2.b);
+		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b, 
+						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
 	if (step.flags & DrawStep::kStepSetShadow)
 		shadowEnable(step.shadow);
@@ -78,12 +78,12 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
 		setStrokeWidth(step.stroke);
 
 	if (step.flags & DrawStep::kStepSetFillMode)
-		setFillMode((FillMode)step.fill_mode);
+		setFillMode((FillMode)step.fillMode);
 		
 	if (step.flags & DrawStep::kStepSettingsOnly)
 		return;
 
-	(this->*(step.drawing_call))(area, step);	
+	(this->*(step.drawingCall))(area, step);	
 }
 
 /********************************************************************

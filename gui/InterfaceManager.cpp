@@ -163,43 +163,43 @@ int InterfaceManager::runGUI() {
 
 	Graphics::DrawStep *steps = new Graphics::DrawStep[5];
 
-	steps[0].color1.r = 214;
-	steps[0].color1.g = 113;
-	steps[0].color1.b = 8;
-	steps[0].color2.r = 240;
-	steps[0].color2.g = 200;
-	steps[0].color2.b = 25;
-	steps[0].fill_mode = VectorRenderer::kFillGradient;
-	steps[0].drawing_call = &VectorRenderer::drawCallback_FILLSURFACE;
+	steps[0].gradColor1.r = 214;
+	steps[0].gradColor1.g = 113;
+	steps[0].gradColor1.b = 8;
+	steps[0].gradColor2.r = 240;
+	steps[0].gradColor2.g = 200;
+	steps[0].gradColor2.b = 25;
+	steps[0].fillMode = VectorRenderer::kFillGradient;
+	steps[0].drawingCall = &VectorRenderer::drawCallback_FILLSURFACE;
 	steps[0].flags = DrawStep::kStepSetGradient | DrawStep::kStepSetFillMode;
 
-	steps[1].color1.r = 206;
-	steps[1].color1.g = 121;
-	steps[1].color1.b = 99;
-	steps[1].color2.r = 173;
-	steps[1].color2.g = 40;
-	steps[1].color2.b = 8;
+	steps[1].gradColor1.r = 206;
+	steps[1].gradColor1.g = 121;
+	steps[1].gradColor1.b = 99;
+	steps[1].gradColor2.r = 173;
+	steps[1].gradColor2.g = 40;
+	steps[1].gradColor2.b = 8;
 	steps[1].radius = 8; // radius
-	steps[1].fill_area = true;
-	steps[1].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[1].fillArea = true;
+	steps[1].drawingCall = &VectorRenderer::drawCallback_ROUNDSQ;
 	steps[1].flags = DrawStep::kStepSetGradient;
 	steps[1].scale = (1 << 16);
 
 	steps[2].radius = 8; // radius
-	steps[2].fill_area = false;
+	steps[2].fillArea = false;
 	steps[2].x.relative = true;
 	steps[2].x.pos = 32;
 	steps[2].y.relative = false;
 	steps[2].y.pos = 32;
 	steps[2].w = 128;
 	steps[2].h = 32;
-	steps[2].drawing_call = &VectorRenderer::drawCallback_ROUNDSQ;
+	steps[2].drawingCall = &VectorRenderer::drawCallback_ROUNDSQ;
 	steps[2].flags = DrawStep::kStepCallbackOnly;
 	steps[2].scale = (1 << 16);
 
-	steps[3].color1.r = 255;
-	steps[3].color1.g = 255;
-	steps[3].color1.b = 255;
+	steps[3].fgColor.r = 255;
+	steps[3].fgColor.g = 255;
+	steps[3].fgColor.b = 255;
 	steps[3].flags = DrawStep::kStepSettingsOnly | DrawStep::kStepSetFG;
 
 	Common::Rect area = Common::Rect(32, 32, 256, 256);

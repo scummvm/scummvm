@@ -44,10 +44,10 @@ namespace GUI {
 
 void ThemeParser::debug_testEval() {
 	static const char *debugConfigText =
-		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>"
-		"<draw func = \"roundedsq\" /*/fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>"
-		"<draw func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>"
-		"</ drawdata>/* lol this is just a simple test*/";
+		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>\n"
+		"<drawstep func = \"roundedsq\" fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>\n"
+		"//<drawstep func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>\n"
+		"</ drawdata>/* lol this is just a simple test*/\n";
 
 	_text = strdup(debugConfigText);
 	parse();
@@ -59,7 +59,7 @@ void ThemeParser::parserError(const char *error_string) {
 	printf("PARSER ERROR: %s\n", error_string);
 }
 
-void ThemeParser::parserCallback_DRAW() {
+void ThemeParser::parserCallback_DRAWSTEP() {
 	printf("Draw callback!\n");
 }
 
@@ -68,29 +68,28 @@ void ThemeParser::parserCallback_DRAWDATA() {
 }
 
 void ThemeParser::parseActiveKey(bool closed) {
-	printf("Parsed key %s.\n", _activeKey.top().c_str());
+	printf("Parsed key %s.\n", _activeKey.top()->name.c_str());
 
-	if (!_callbacks.contains(_activeKey.top())) {
+	if (!_callbacks.contains(_activeKey.top()->name)) {
 		parserError("Unhandled value inside key.");
 		return;
 	}
 
 	// Don't you just love C++ syntax? Water clear.
-	(this->*(_callbacks[_activeKey.top()]))();
+	(this->*(_callbacks[_activeKey.top()->name]))();
 
-	for (Common::StringMap::const_iterator t = _keyValues.top().begin(); t != _keyValues.top().end(); ++t)
+	for (Common::StringMap::const_iterator t = _activeKey.top()->values.begin(); t != _activeKey.top()->values.end(); ++t)
 		printf("    Key %s = %s\n", t->_key.c_str(), t->_value.c_str());
 
 	if (closed) {
-		_keyValues.pop();
-		_activeKey.pop();
+		delete _activeKey.pop();
 	}
 }
 
 bool ThemeParser::parseKeyValue(Common::String keyName) {
-	assert(_keyValues.empty() == false);
+	assert(_activeKey.empty() == false);
 
-	if (_keyValues.top().contains(keyName))
+	if (_activeKey.top()->values.contains(keyName))
 		return false;
 
 	_token.clear();
@@ -109,7 +108,7 @@ bool ThemeParser::parseKeyValue(Common::String keyName) {
 		return false;
 	}
 
-	_keyValues.top()[keyName] = _token;
+	_activeKey.top()->values[keyName] = _token;
 	return true;
 }
 
@@ -120,7 +119,6 @@ bool ThemeParser::parse() {
 
 	_state = kParserNeedKey;
 	_pos = 0;
-	_keyValues.clear();
 	_activeKey.clear();
 	
 	while (_text[_pos]) {
@@ -160,11 +158,12 @@ bool ThemeParser::parse() {
 				}
 
 				if (activeClosure) {
-					if (_activeKey.empty() || _token != _activeKey.top())
+					if (_activeKey.empty() || _token != _activeKey.top()->name)
 						parserError("Unexpected closure.");
 				} else {
-					_keyValues.push(Common::StringMap());
-					_activeKey.push(_token);
+					ParserNode *node = new ParserNode;
+					node->name = _token;
+					_activeKey.push(node);
 				}
 
 				_state = kParserNeedPropertyName;
@@ -173,8 +172,7 @@ bool ThemeParser::parse() {
 			case kParserNeedPropertyName:
 				if (activeClosure) {
 					activeClosure = false;
-					_activeKey.pop();
-					_keyValues.pop();
+					delete _activeKey.pop();
 
 					if (_text[_pos++] != '>')
 						parserError("Invalid syntax in key closure.");
@@ -214,6 +212,9 @@ bool ThemeParser::parse() {
 				else 
 					_state = kParserNeedPropertyName;
 
+				break;
+
+			default:
 				break;
 		}
 	}
