@@ -28,7 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <alsa/asoundlib.h>
@@ -79,7 +79,7 @@ MidiDriver_ALSA::MidiDriver_ALSA()
 }
 
 int MidiDriver_ALSA::open() {
-	char *var;
+	const char *var;
 
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
@@ -87,7 +87,8 @@ int MidiDriver_ALSA::open() {
 
 	if (!(var = getenv("SCUMMVM_PORT"))) {
 		// use config option if no var specified
-		if (parse_addr(ConfMan.get("alsa_port").c_str(), &seq_client, &seq_port) < 0) {
+		var = ConfMan.get("alsa_port").c_str();
+		if (parse_addr(var, &seq_client, &seq_port) < 0) {
 			error("Invalid port %s", var);
 			return -1;
 		}
@@ -241,23 +242,18 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 
 // Plugin interface
 
-class AlsaMidiPlugin : public MidiPluginObject {
+class AlsaMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "ALSA";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "alsa";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual Common::StringList getDevices() const;
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 #define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
@@ -271,8 +267,8 @@ static int check_permission(snd_seq_port_info_t *pinfo)
 	return 0;
 }
 
-Common::StringList AlsaMidiPlugin::getDevices() const {
-	Common::StringList devices;
+MusicDevices AlsaMusicPlugin::getDevices() const {
+	MusicDevices devices;
 
 	snd_seq_t *seq;
 	if (snd_seq_open(&seq, "default", SND_SEQ_OPEN_DUPLEX, 0) < 0)
@@ -292,7 +288,8 @@ Common::StringList AlsaMidiPlugin::getDevices() const {
 		while (!found_valid_port && snd_seq_query_next_port(seq, pinfo) >= 0) {
 			if (check_permission(pinfo)) {
 				found_valid_port = true;
-				devices.push_back(snd_seq_client_info_get_name(cinfo));
+				// TODO: Return a different music type depending on the configuration
+				devices.push_back(MusicDevice(this, snd_seq_client_info_get_name(cinfo), MT_GM));
 				//snd_seq_client_info_get_client(cinfo) : snd_seq_port_info_get_port(pinfo)
 			}
 		}
@@ -302,7 +299,7 @@ Common::StringList AlsaMidiPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError AlsaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+PluginError AlsaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_ALSA();
 
 	return kNoError;
@@ -311,16 +308,16 @@ PluginError AlsaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mid
 MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	AlsaMidiPlugin p;
+	AlsaMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ALSA)
-	//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MIDI, AlsaMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MIDI, AlsaMidiPlugin);
+	REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
 //#endif
 
 #endif

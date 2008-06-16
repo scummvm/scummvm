@@ -31,13 +31,17 @@
 namespace Cine {
 
 uint32 CineUnpacker::readSource() {
+	if (_src < _srcBegin || _src + 4 > _srcEnd) {
+		_error = true;
+		return 0; // The source pointer is out of bounds, returning a default value
+	}
 	uint32 value = READ_BE_UINT32(_src);
 	_src -= 4;
 	return value;
 }
 
-int CineUnpacker::rcr(int inputCarry) {
-	int outputCarry = (_chunk32b & 1);
+uint CineUnpacker::rcr(bool inputCarry) {
+	uint outputCarry = (_chunk32b & 1);
 	_chunk32b >>= 1;
 	if (inputCarry) {
 		_chunk32b |= 0x80000000;
@@ -45,20 +49,20 @@ int CineUnpacker::rcr(int inputCarry) {
 	return outputCarry;
 }
 
-int CineUnpacker::nextBit() {
-	int carry = rcr(0);
+uint CineUnpacker::nextBit() {
+	uint carry = rcr(false);
 	// Normally if the chunk becomes zero then the carry is one as
 	// the end of chunk marker is always the last to be shifted out.
 	if (_chunk32b == 0) {
 		_chunk32b = readSource();
 		_crc ^= _chunk32b;
-		carry = rcr(1); // Put the end of chunk marker in the most significant bit
+		carry = rcr(true); // Put the end of chunk marker in the most significant bit
 	}
 	return carry;
 }
 
-uint16 CineUnpacker::getBits(byte numBits) {
-	uint16 c = 0;
+uint CineUnpacker::getBits(uint numBits) {
+	uint c = 0;
 	while (numBits--) {
 		c <<= 1;
 		c |= nextBit();
@@ -66,30 +70,45 @@ uint16 CineUnpacker::getBits(byte numBits) {
 	return c;
 }
 
-void CineUnpacker::unpackRawBytes(uint16 numBytes) {
-	_datasize -= numBytes;
+void CineUnpacker::unpackRawBytes(uint numBytes) {
+	if (_dst >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
+		_error = true;
+		return; // Destination pointer is out of bounds for this operation
+	}
 	while (numBytes--) {
 		*_dst = (byte)getBits(8);
 		--_dst;
 	}
 }
 
-void CineUnpacker::copyRelocatedBytes(uint16 offset, uint16 numBytes) {
-	_datasize -= numBytes;
+void CineUnpacker::copyRelocatedBytes(uint offset, uint numBytes) {
+	if (_dst + offset >= _dstEnd || _dst - numBytes + 1 < _dstBegin) {
+		_error = true;
+		return; // Destination pointer is out of bounds for this operation
+	}
 	while (numBytes--) {
 		*_dst = *(_dst + offset);
 		--_dst;
 	}
 }
 
-bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
-	_src = src + srcLen - 4;
-	_datasize = readSource(); // Unpacked length in bytes
-	_dst = dst + _datasize - 1;
+bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) {
+	// Initialize variables used for detecting errors during unpacking
+	_error    = false;
+	_srcBegin = src;
+	_srcEnd   = src + srcLen;
+	_dstBegin = dst;
+	_dstEnd   = dst + dstLen;
+
+	// Initialize other variables
+	_src = _srcBegin + srcLen - 4;
+	uint32 unpackedLength = readSource(); // Unpacked length in bytes
+	_dst = _dstBegin + unpackedLength - 1;
 	_crc = readSource();
 	_chunk32b = readSource();
 	_crc ^= _chunk32b;
-	do {
+
+	while (_dst >= _dstBegin && !_error) {
 		/*
 		Bits  => Action:
 		0 0   => unpackRawBytes(3 bits + 1)              i.e. unpackRawBytes(1..9)
@@ -101,30 +120,30 @@ bool CineUnpacker::unpack(byte *dst, const byte *src, int srcLen) {
 		*/
 		if (!nextBit()) { // 0...
 			if (!nextBit()) { // 0 0
-				uint16 numBytes = getBits(3) + 1;
+				uint numBytes = getBits(3) + 1;
 				unpackRawBytes(numBytes);
 			} else { // 0 1
-				uint16 numBytes = 2;
-				uint16 offset   = getBits(8);
+				uint numBytes = 2;
+				uint offset   = getBits(8);
 				copyRelocatedBytes(offset, numBytes);
 			}
 		} else { // 1...
-			uint16 c = getBits(2);
+			uint c = getBits(2);
 			if (c == 3) { // 1 1 1
-				uint16 numBytes = getBits(8) + 9;
+				uint numBytes = getBits(8) + 9;
 				unpackRawBytes(numBytes);
 			} else if (c < 2) { // 1 0 x
-				uint16 numBytes = c + 3;
-				uint16 offset   = getBits(c + 9);
+				uint numBytes = c + 3;
+				uint offset   = getBits(c + 9);
 				copyRelocatedBytes(offset, numBytes);
 			} else { // 1 1 0
-				uint16 numBytes = getBits(8) + 1;
-				uint16 offset   = getBits(12);
+				uint numBytes = getBits(8) + 1;
+				uint offset   = getBits(12);
 				copyRelocatedBytes(offset, numBytes);
 			}
 		}
-	} while (_datasize > 0 && _src >= src - 4);
-	return _crc == 0;
+	}
+	return !_error && (_crc == 0);
 }
 
 } // End of namespace Cine

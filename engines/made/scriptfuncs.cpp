@@ -26,8 +26,8 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/events.h"
-
 #include "graphics/cursorman.h"
+#include "sound/audiocd.h"
 
 #include "made/made.h"
 #include "made/resource.h"
@@ -94,7 +94,7 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfSetSpriteGround);
 	External(sfLoadResText);
 	
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
 	} else if (_vm->getGameID() == GID_RTZ) {
@@ -183,6 +183,8 @@ int16 ScriptFunctions::sfDrawPicture(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
+	if (_vm->_screen->isScreenLocked())
+		return 0;
 	if (_vm->_autoStopSound) {
 		_vm->_mixer->stopHandle(_audioStreamHandle);
 		_vm->_autoStopSound = false;
@@ -548,25 +550,27 @@ int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayCd(int16 argc, int16 *argv) {
-	// This one is called loads of times, so it has been commented out to reduce spam
-	//warning("Unimplemented opcode: sfPlayCd");
+	AudioCD.play(argv[0], -1, 0, 0);
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopCd(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfStopCd");
-	return 0;
+	if (AudioCD.isPlaying()) {
+		AudioCD.stop();
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 int16 ScriptFunctions::sfGetCdStatus(int16 argc, int16 *argv) {
-	// This one is called loads of times, so it has been commented out to reduce spam
-	//warning("Unimplemented opcode: sfGetCdStatus");
-	return 0;
+	return AudioCD.isPlaying() ? 1 : 0;
 }
 
 int16 ScriptFunctions::sfGetCdTime(int16 argc, int16 *argv) {
 	// This one is called loads of times, so it has been commented out to reduce spam
 	//warning("Unimplemented opcode: sfGetCdTime");
+	// TODO
 	return 0;
 }
 

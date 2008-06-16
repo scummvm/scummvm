@@ -35,7 +35,7 @@
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
-	PLUGIN_TYPE_MIDI_VERSION,
+	PLUGIN_TYPE_MUSIC_VERSION,
 };
 
 
@@ -144,7 +144,7 @@ public:
 		LINK_PLUGIN(TOUCHE)
 		#endif
 
-		// MIDI plugins
+		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(NULL)
@@ -393,12 +393,12 @@ const EnginePlugin::List &EngineManager::getPlugins() const {
 }
 
 
-// MIDI plugins
+// Music plugins
 
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 
-DECLARE_SINGLETON(MidiManager);
+DECLARE_SINGLETON(MusicManager);
 
-const MidiPlugin::List &MidiManager::getPlugins() const {
-	return (const MidiPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MIDI);
+const MusicPlugin::List &MusicManager::getPlugins() const {
+	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }

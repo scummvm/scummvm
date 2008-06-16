@@ -38,7 +38,7 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #if defined(MACOSX)
@@ -265,24 +265,29 @@ void MidiDriver_QT::dispose()
 
 // Plugin interface
 
-class QuickTimeMidiPlugin : public MidiPluginObject {
+class QuickTimeMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "QuickTime";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "qt";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError QuickTimeMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices QuickTimeMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
+
+PluginError QuickTimeMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_QT();
 
 	return kNoError;
@@ -291,16 +296,16 @@ PluginError QuickTimeMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver 
 MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	QuickTimeMidiPlugin p;
+	QuickTimeMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(QUICKTIME)
-	//REGISTER_PLUGIN_DYNAMIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(QUICKTIME, PLUGIN_TYPE_MUSIC, QuickTimeMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(QUICKTIME, PLUGIN_TYPE_MIDI, QuickTimeMidiPlugin);
+	REGISTER_PLUGIN_STATIC(QUICKTIME, PLUGIN_TYPE_MUSIC, QuickTimeMusicPlugin);
 //#endif
 
 #endif // MACOSX || macintosh

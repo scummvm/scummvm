@@ -565,7 +565,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\sound\midiplugin.h"
+				RelativePath="..\..\sound\musicplugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\musicplugin.h"
 				>
 			</File>
 			<File

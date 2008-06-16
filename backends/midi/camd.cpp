@@ -28,7 +28,7 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <proto/camd.h>
@@ -166,26 +166,29 @@ void MidiDriver_CAMD::closeAll() {
 
 // Plugin interface
 
-class CamdMidiPlugin : public MidiPluginObject {
+class CamdMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "CAMD";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "camd";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	//virtual Common::StringList getDevices() const;
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError CamdMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices CamdMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
+
+PluginError CamdMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_CAMD();
 
 	return kNoError;
@@ -194,16 +197,16 @@ PluginError CamdMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mid
 MidiDriver *MidiDriver_CAMD_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	CamdMidiPlugin p;
+	CamdMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(CAMD)
-	//REGISTER_PLUGIN_DYNAMIC(CAMD, PLUGIN_TYPE_MIDI, CamdMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(CAMD, PLUGIN_TYPE_MIDI, CamdMidiPlugin);
+	REGISTER_PLUGIN_STATIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
 //#endif
 
 #endif

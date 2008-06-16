@@ -301,7 +301,7 @@ int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 		return 0;
 
 	int16 propertyFlag;
-	int16 *property = getObjectPropertyPtr(objectIndex, propertyId, propertyFlag);
+	int16 *property = findObjectProperty(objectIndex, propertyId, propertyFlag);
 
 	if (property) {
 		return (int16)READ_LE_UINT16(property);
@@ -317,7 +317,7 @@ int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16
 		return 0;
 
 	int16 propertyFlag;
-	int16 *property = getObjectPropertyPtr(objectIndex, propertyId, propertyFlag);
+	int16 *property = findObjectProperty(objectIndex, propertyId, propertyFlag);
 
 	if (property) {
 		if (propertyFlag == 1) {
@@ -430,7 +430,7 @@ int16 GameDatabaseV2::loadgame(const char *filename, int16 version) {
 	return result;
 }
 
-int16 *GameDatabaseV2::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
+int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
 	Object *obj = getObject(objectIndex);
 
 	int16 *prop = (int16*)obj->getData();
@@ -489,6 +489,7 @@ int16 *GameDatabaseV2::getObjectPropertyPtr(int16 objectIndex, int16 propertyId,
 
 	}
 
+	debug(1, "findObjectProperty(%04X, %04X) Property not found", objectIndex, propertyId);
 	return NULL;
 
 }
@@ -597,7 +598,7 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	return result;
 }
 
-int16 *GameDatabaseV3::getObjectPropertyPtr(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
+int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
 	Object *obj = getObject(objectIndex);
 
 	int16 *prop = (int16*)obj->getData();

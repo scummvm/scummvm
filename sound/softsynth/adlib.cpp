@@ -25,7 +25,7 @@
 #include "sound/softsynth/emumidi.h"
 #include "common/util.h"
 #include "sound/fmopl.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 
 #ifdef DEBUG_ADLIB
 static int tick;
@@ -1518,24 +1518,27 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 
 // Plugin interface
 
-class AdlibMidiPlugin : public MidiPluginObject {
+class AdlibEmuMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "AdLib Emulator";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "adlib";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_ADLIB;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError AdlibMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices AdlibEmuMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_ADLIB));
+	return devices;
+}
+
+PluginError AdlibEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_ADLIB(mixer);
 
 	return kNoError;
@@ -1544,14 +1547,14 @@ PluginError AdlibMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mi
 MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	AdlibMidiPlugin p;
+	AdlibEmuMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ADLIB)
-	//REGISTER_PLUGIN_DYNAMIC(ADLIB, PLUGIN_TYPE_MIDI, AdlibMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(ADLIB, PLUGIN_TYPE_MUSIC, AdlibEmuMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(ADLIB, PLUGIN_TYPE_MIDI, AdlibMidiPlugin);
+	REGISTER_PLUGIN_STATIC(ADLIB, PLUGIN_TYPE_MUSIC, AdlibEmuMusicPlugin);
 //#endif
