@@ -1,65 +1,70 @@
 ScummVM-Residual Team:
- James Brown          	Core developer. ScummVM co-lead dev
- Erich Hoover           x86-64, various fixes and comments, menu support, improved state support
- Pawel Kolodziejski     Core developer. SMUSH, iMUSE implemention
-
+**********************
+   James Brown           - Core developer. ScummVM co-lead dev
+   Erich Hoover          - x86-64, various fixes and comments, menu support,
+                           improved state support
+   Pawel Kolodziejski    - Core developer. SMUSH, iMUSE implemention
 
 Contributors:
-If you have contributed to this project then you deserve to be on this
-list.  Contact us and we'll add you.
- Torbjorn Andersson     Various code fixes
- Ori Avtalion           Lipsync, LAF support
- Marcus Comstedt        Dreamcast port
- Andrea Corna           Improved font support
- Jonathan Gray          Various code fixes
- Vincent Hamm           Various engine code
- Travis Howell          Various code fixes, Windows daily builds
- Joost Peters           Various code fixes
- Christian Neumair      Various optimisation patches
- Daniel Schepler        Initial engine codebase, LUA support
- Lionel Ulmer           OpenGL optimisations
+*************
+   If you have contributed to this project then you deserve to be on this
+   list. Contact us and we'll add you.
 
+   Torbjorn Andersson    - Various code fixes
+   Ori Avtalion          - Lipsync, LAF support
+   Marcus Comstedt       - Dreamcast port
+   Andrea Corna          - Improved font support
+   Jonathan Gray         - Various code fixes
+   Vincent Hamm          - Various engine code
+   Travis Howell         - Various code fixes, Windows daily builds
+   Joost Peters          - Various code fixes
+   Christian Neumair     - Various optimisation patches
+   Daniel Schepler       - Initial engine codebase, LUA support
+   Lionel Ulmer          - OpenGL optimisations
 
-Residual use some ScummVM code like common, mixer and imuse code.
-ScummVM copyrights for this partial code belongs to:
-If you are missed in this list contact us and we'll add you.
- Torbjorn Andersson
- Chris Apers
- Bertrand Augereau
- James Brown
- Jamieson Christian
- Robert Goeffringmann
- Jonathan Gray
- Vincent Hamm
- Ruediger Hanke
- Max Horn
- Filippos Karapetis
- Oliver Kiehl
- Pawel Kolodziejski
- Andrew Kurushin
- Claudio Matsuoka
- Gregory Montoir
- Kostas Nakos
- Willem Jan Palenstijn
- Lars Persson
- Kari Salminen
- Eugene Sandulenko
- Johannes Schickel
- Ludvig Strigeus
- Lionel Ulmer
- Jordi Vilalta
- Robin Watts
- agent-q
- arisme
- peres
+ScummVM code:
+*************
+   Residual use some ScummVM code like common, mixer and imuse code. ScummVM
+   copyrights for this partial code belongs to: If you are missed in this
+   list contact us and we'll add you.
 
-Special Thanks To:
------------------- 
- The LUA developers, for creating a nice compact script interpreter.
- 
- Tim Schafer, for obvious reasons, and everybody else who helped make
- Grim Fandango a brilliant game; and the EMI team for giving it their
- best try.
- 
- Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine,
- and avoiding the horrible hack it could have been.
+   Torbjorn Andersson   
+   Chris Apers          
+   Bertrand Augereau    
+   James Brown          
+   Jamieson Christian   
+   Robert Goeffringmann 
+   Jonathan Gray        
+   Vincent Hamm         
+   Ruediger Hanke       
+   Max Horn             
+   Filippos Karapetis   
+   Oliver Kiehl         
+   Pawel Kolodziejski   
+   Andrew Kurushin      
+   Claudio Matsuoka     
+   Gregory Montoir      
+   Kostas Nakos         
+   Willem Jan Palenstijn
+   Lars Persson         
+   Kari Salminen        
+   Eugene Sandulenko    
+   Johannes Schickel    
+   Ludvig Strigeus      
+   Lionel Ulmer         
+   Jordi Vilalta        
+   Robin Watts          
+   agent-q              
+   arisme               
+   peres                
+
+Special thanks to
+*****************
+   The LUA developers, for creating a nice compact script interpreter. 
+
+   Tim Schafer, for obvious reasons, and everybody else who helped make Grim
+   Fandango a brilliant game; and the EMI team for giving it their best try.
+
+   Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine, and
+   avoiding the horrible hack it could have been.
+
