@@ -87,12 +87,12 @@ void DrasculaEngine::color_abc(int cl) {
 	setPalette((byte *)&gamePalette);
 }
 
-char DrasculaEngine::adjustToVGA(char value) {
+signed char DrasculaEngine::adjustToVGA(signed char value) {
 	return (value & 0x3F) * (value > 0);
 }
 
 void DrasculaEngine::fadeToBlack(int fadeSpeed) {
-	char fade;
+	signed char fade;
 	unsigned int color, component;
 
 	DacPalette256 palFade;
@@ -110,7 +110,7 @@ void DrasculaEngine::fadeToBlack(int fadeSpeed) {
 }
 
 void DrasculaEngine::fadeFromBlack(int fadeSpeed) {
-	char fade;
+	signed char fade;
 	unsigned int color, component;
 
 	DacPalette256 palFade;
@@ -186,7 +186,7 @@ void DrasculaEngine::setDarkPalette() {
 }
 
 void DrasculaEngine::setPaletteBase(int darkness) {
-	char fade;
+	signed char fade;
 	unsigned int color, component;
 
 	for (fade = darkness; fade >= 0; fade--) {

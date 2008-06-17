@@ -245,7 +245,7 @@ public:
 
 	void loadPic(const char *NamePcc, byte *targetSurface, int colorCount = 1);
 
-	typedef char DacPalette256[256][3];
+	typedef signed char DacPalette256[256][3];
 
 	void setRGB(byte *pal, int plt);
 	void assignDefaultPalette();
@@ -397,7 +397,7 @@ public:
 	void playFLI(const char *filefli, int vel);
 	void fadeFromBlack(int fadeSpeed);
 	void fadeToBlack(int fadeSpeed);
-	char adjustToVGA(char value);
+	signed char adjustToVGA(signed char value);
 	void color_abc(int cl);
 	void centerText(const char *,int,int);
 	void playSound(int soundNum);
