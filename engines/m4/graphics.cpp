@@ -320,7 +320,7 @@ byte *M4Surface::getBasePtr(int x, int y) {
 void M4Surface::freeData() {
 }
 
-void M4Surface::empty() {
+void M4Surface::clear() {
 	Common::set_to((byte *) pixels, (byte *) pixels + w * h, _vm->_palette->BLACK);
 }
 
@@ -389,7 +389,7 @@ void M4Surface::loadBackgroundRiddle(const char *sceneName) {
 }
 
 void M4Surface::loadBackground(int sceneNumber, RGBList **palData) {
-	this->empty();		// clear previous scene
+	clear();		// clear previous scene
 
 	if (_vm->isM4() || (_vm->getGameType() == GType_RexNebular)) {
 		char resourceName[20];
@@ -502,7 +502,7 @@ void M4Surface::madsLoadBackground(int roomNumber, RGBList **palData) {
 
 		//printf("Tile: %i, compressed size: %i\n", i, compressedTileDataSize);
 
-		newTile->empty();
+		newTile->clear();
 
 		byte *compressedTileData = new byte[compressedTileDataSize];
 

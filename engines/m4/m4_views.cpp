@@ -331,7 +331,7 @@ bool GameInterfaceView::onEvent(M4EventType eventType, int param, int x, int y, 
 }
 		
 void GameInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
-	empty();
+	clear();
 
 	_statusText.onRefresh();
 	_inventory.onRefresh();
