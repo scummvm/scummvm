@@ -148,27 +148,31 @@ int MadeEngine::init() {
 	return 0;
 }
 
+int16 MadeEngine::getTicks() {
+	return g_system->getMillis() * 30 / 1000;
+}
+
 int16 MadeEngine::getTimer(int16 timerNum) {
 	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
-		return (_system->getMillis() - _timers[timerNum - 1]) / kTimerResolution;
+		return (getTicks() - _timers[timerNum - 1]);
 	else
 		return 32000;
 }
 
 void MadeEngine::setTimer(int16 timerNum, int16 value) {
 	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
-		_timers[timerNum - 1] = value * kTimerResolution;
+		_timers[timerNum - 1] = value;
 }
 
 void MadeEngine::resetTimer(int16 timerNum) {
 	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
-		_timers[timerNum - 1] = _system->getMillis();
+		_timers[timerNum - 1] = getTicks();
 }
 
 int16 MadeEngine::allocTimer() {
 	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
 		if (_timers[i] == -1) {
-			_timers[i] = _system->getMillis();
+			_timers[i] = getTicks();
 			return i + 1;
 		}
 	}
@@ -202,24 +206,20 @@ void MadeEngine::handleEvents() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+			_eventNum = 2;
+			break;
+
+		case Common::EVENT_LBUTTONUP:
 			_eventNum = 1;
 			break;
 
-		/*
-		case Common::EVENT_LBUTTONUP:
-			_eventNum = 2; // TODO: Is this correct?
-			break;
-		*/
-
 		case Common::EVENT_RBUTTONDOWN:
+			_eventNum = 4;
+			break;
+
+		case Common::EVENT_RBUTTONUP:
 			_eventNum = 3;
 			break;
-
-		/*
-		case Common::EVENT_RBUTTONUP:
-			eventNum = 4; // TODO: Is this correct?
-			break;
-		*/
 
 		case Common::EVENT_KEYDOWN:
 			_eventKey = event.kbd.ascii;
@@ -239,7 +239,7 @@ void MadeEngine::handleEvents() {
 
 		}
 	}
-	
+
 	AudioCD.updateCD();
 
 }
