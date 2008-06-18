@@ -111,7 +111,7 @@ bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) 
 	while (_dst >= _dstBegin && !_error) {
 		/*
 		Bits  => Action:
-		0 0   => unpackRawBytes(3 bits + 1)              i.e. unpackRawBytes(1..9)
+		0 0   => unpackRawBytes(3 bits + 1)              i.e. unpackRawBytes(1..8)
 		1 1 1 => unpackRawBytes(8 bits + 9)              i.e. unpackRawBytes(9..264)
 		0 1   => copyRelocatedBytes(8 bits, 2)           i.e. copyRelocatedBytes(0..255, 2)
 		1 0 0 => copyRelocatedBytes(9 bits, 3)           i.e. copyRelocatedBytes(0..511, 3)
