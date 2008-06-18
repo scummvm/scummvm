@@ -165,6 +165,9 @@ public:
 
 	uint hash() const;
 
+	// Tanoku: Regular expression support for the String class
+	bool regexMatch(const char *regex, bool skipSpaces = false);
+
 public:
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
@@ -189,6 +192,20 @@ protected:
 	void ensureCapacity(uint32 new_len, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
+
+	enum RegexMatchType {
+		kRegexMatchAny,
+		kRegexMatchDigit,
+		kRegexMatchSpace,
+		kRegexMatchAlphanum,
+		kRegexMatchAlpha,
+		kRegexMatchWord,
+		kRegexMatchCharacter
+	};
+
+	bool regexMatchStar(RegexMatchType type, char regexChar, const char *regex, int regexPos, int strPos, bool skipSpaces);
+	bool regexMatchCharacter(RegexMatchType type, char regexChar, char strChar);
+	bool regexMatchPos(int strPos, const char *regex, int regexPos, bool skipSpaces);
 };
 
 // Append two strings to form a new (temp) string

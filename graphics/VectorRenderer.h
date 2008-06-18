@@ -40,10 +40,9 @@ class VectorRenderer;
 struct DrawStep;
 
 struct DrawStep {
-	uint32 flags; /** Step flags, see DrawStepFlags */
-
 	struct { 
-		uint8 r, g, b; 
+		uint8 r, g, b;
+		bool set;
 	}	
 	fgColor, /** Foreground color */
 	bgColor, /** backgroudn color */
@@ -68,18 +67,6 @@ struct DrawStep {
 	uint32 scale; /** scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
 	void (VectorRenderer::*drawingCall)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
-
-	enum DrawStepFlags {
-		kStepCallbackOnly		= (1 << 0),
-		kStepSettingsOnly		= (1 << 1),
-		kStepSetBG				= (1 << 2),
-		kStepSetFG				= (1 << 3),
-		kStepSetGradient		= (1 << 4),
-		kStepSetShadow			= (1 << 5),
-		kStepSetGradientFactor	= (1 << 6),
-		kStepSetStroke			= (1 << 7),
-		kStepSetFillMode		= (1 << 8)
-	};
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -402,6 +389,8 @@ public:
 		stepGetPositions(step, area, x, y, w, h);
 		drawBeveledSquare(x, y, w, h, step.extraData);
 	}
+
+	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}
 
 	/**
 	 * Draws the specified draw step on the screen.

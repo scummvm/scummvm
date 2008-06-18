@@ -167,6 +167,12 @@ public:
 	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled) {}
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
+	DrawData getDrawDataId(Common::String &name) {
+		return (DrawData)0;
+	}
+
+	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step);
+
 protected:
 	template<typename PixelType> void screenInit();
 
@@ -209,8 +215,7 @@ struct WidgetDrawData {
 	Common::Rect _realSize;
 	bool _scaled;
 
-	Graphics::DrawStep **_steps;
-	int _stepCount;
+	Common::Array<Graphics::DrawStep*> _steps;
 
 	bool _cached;
 	Graphics::Surface *_surfaceCache;

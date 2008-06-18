@@ -29,7 +29,9 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
+#include "gui/InterfaceManager.h"
 #include "gui/ThemeParser.h"
+#include "graphics/VectorRenderer.h"
 
 /**
 
@@ -42,6 +44,8 @@
 
 namespace GUI {
 
+using namespace Graphics;
+
 void ThemeParser::debug_testEval() {
 	static const char *debugConfigText =
 		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>\n"
@@ -50,6 +54,11 @@ void ThemeParser::debug_testEval() {
 		"</ drawdata>/* lol this is just a simple test*/\n";
 
 	_text = strdup(debugConfigText);
+
+	Common::String test = "12,  125, 125";
+
+	printf("\n\nRegex result: %s.\n\n", test.regexMatch("^[d]*,[d]*,[d]*$", true) ? "Success." : "Fail");
+
 	parse();
 }
 	
@@ -59,8 +68,59 @@ void ThemeParser::parserError(const char *error_string) {
 	printf("PARSER ERROR: %s\n", error_string);
 }
 
+Graphics::DrawStep *ThemeParser::newDrawStep() {
+
+	Graphics::DrawStep *step = new DrawStep;
+
+	step->fgColor.set = false;
+	step->bgColor.set = false;
+	step->gradColor1.set = false;
+	step->gradColor2.set = false;
+
+	step->extraData = 0;
+	step->factor = 1;
+	step->fillArea = false;
+	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
+	step->scale = (1 << 16);
+	step->shadow = 0;
+	step->stroke = 1;
+
+	return step;
+}
+
 void ThemeParser::parserCallback_DRAWSTEP() {
-	printf("Draw callback!\n");
+	ParserNode *stepNode = _activeKey.pop();
+	ParserNode *drawdataNode = _activeKey.pop();
+
+	assert(stepNode->name == "drawstep");
+	assert(drawdataNode->name == "drawdata");
+	assert(drawdataNode->values.contains("id"));
+
+	Graphics::DrawStep *drawstep = newDrawStep();
+
+	Common::String functionName = stepNode->values["func"]; 
+
+	if (_drawFunctions.contains(functionName) == false) {
+		parserError("Invalid drawing function in draw step.");
+		_activeKey.push(drawdataNode);
+		_activeKey.push(stepNode);
+		return;
+	}	
+
+	drawstep->drawingCall = _drawFunctions[functionName];
+
+	if (stepNode->values.contains("stroke")) {
+
+	}
+
+	if (functionName == "roundedsq") {
+
+	}
+
+	g_InterfaceManager.addDrawStep(drawdataNode->values["id"], drawstep);
+
+	_activeKey.push(drawdataNode);
+	_activeKey.push(stepNode);
 }
 
 void ThemeParser::parserCallback_DRAWDATA() {
@@ -78,8 +138,8 @@ void ThemeParser::parseActiveKey(bool closed) {
 	// Don't you just love C++ syntax? Water clear.
 	(this->*(_callbacks[_activeKey.top()->name]))();
 
-	for (Common::StringMap::const_iterator t = _activeKey.top()->values.begin(); t != _activeKey.top()->values.end(); ++t)
-		printf("    Key %s = %s\n", t->_key.c_str(), t->_value.c_str());
+//	for (Common::StringMap::const_iterator t = _activeKey.top()->values.begin(); t != _activeKey.top()->values.end(); ++t)
+//		printf("    Key %s = %s\n", t->_key.c_str(), t->_value.c_str());
 
 	if (closed) {
 		delete _activeKey.pop();

@@ -77,6 +77,11 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 	_vectorRenderer->setSurface(_screen);
 }
 
+void InterfaceManager::addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step) {
+	_widgets[getDrawDataId(drawDataId)]->_steps.push_back(step);
+}
+
+
 bool InterfaceManager::init() {
 	return false;
 }
@@ -96,7 +101,7 @@ void InterfaceManager::drawDD(DrawData type, const Common::Rect &r) {
 	if (isWidgetCached(type, r)) {
 		drawCached(type, r);
 	} else {
-		for (int i = 0; i < _widgets[type]->_stepCount; ++i)
+		for (uint i = 0; i < _widgets[type]->_steps.size(); ++i)
 			_vectorRenderer->drawStep(r, *_widgets[type]->_steps[i]);
 	}
 }
@@ -171,7 +176,6 @@ int InterfaceManager::runGUI() {
 	steps[0].gradColor2.b = 25;
 	steps[0].fillMode = VectorRenderer::kFillGradient;
 	steps[0].drawingCall = &VectorRenderer::drawCallback_FILLSURFACE;
-	steps[0].flags = DrawStep::kStepSetGradient | DrawStep::kStepSetFillMode;
 
 	steps[1].gradColor1.r = 206;
 	steps[1].gradColor1.g = 121;
@@ -182,7 +186,6 @@ int InterfaceManager::runGUI() {
 	steps[1].radius = 8; // radius
 	steps[1].fillArea = true;
 	steps[1].drawingCall = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[1].flags = DrawStep::kStepSetGradient;
 	steps[1].scale = (1 << 16);
 
 	steps[2].radius = 8; // radius
@@ -194,13 +197,12 @@ int InterfaceManager::runGUI() {
 	steps[2].w = 128;
 	steps[2].h = 32;
 	steps[2].drawingCall = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[2].flags = DrawStep::kStepCallbackOnly;
 	steps[2].scale = (1 << 16);
 
 	steps[3].fgColor.r = 255;
 	steps[3].fgColor.g = 255;
 	steps[3].fgColor.b = 255;
-	steps[3].flags = DrawStep::kStepSettingsOnly | DrawStep::kStepSetFG;
+	steps[3].drawingCall = &VectorRenderer::drawCallback_VOID;
 
 	Common::Rect area = Common::Rect(32, 32, 256, 256);
 

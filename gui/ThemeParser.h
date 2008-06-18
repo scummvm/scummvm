@@ -34,6 +34,8 @@
 #include "common/hash-str.h"
 #include "common/stack.h"
 
+#include "graphics/VectorRenderer.h"
+
 /**
  *********************************************
  ** Theme Description File format overview. **
@@ -302,10 +304,13 @@ func = "fill"
 
 namespace GUI {
 
+using namespace Graphics;
+
 class ThemeParser {
 
 	static const int kParserMaxDepth = 4;
 	typedef void (ThemeParser::*ParserCallback)();
+	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
 
 public:
 	ThemeParser() {
@@ -336,6 +341,8 @@ protected:
 	bool parseKeyValue(Common::String keyName);
 	void parseActiveKey(bool closed);
 	void parserError(const char *errorString);
+
+	Graphics::DrawStep *newDrawStep();
 
 	inline bool skipSpaces() {
 		if (!isspace(_text[_pos]))
@@ -395,7 +402,9 @@ protected:
 	};
 
 	Common::FixedStack<ParserNode*, kParserMaxDepth> _activeKey;
+
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
+	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;
 };
 
 }

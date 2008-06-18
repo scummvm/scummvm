@@ -53,35 +53,20 @@ VectorRenderer *createRenderer(int mode) {
  ********************************************************************/
 void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
 
-	if (step.flags & DrawStep::kStepCallbackOnly) {
-		(this->*(step.drawingCall))(area, step);
-		return;
-	}
-
-	if (step.flags & DrawStep::kStepSetBG)
+	if (step.bgColor.set)
 		setBgColor(step.bgColor.r, step.bgColor.g, step.bgColor.b);
 
-	if (step.flags & DrawStep::kStepSetFG)
+	if (step.fgColor.set)
 		setFgColor(step.fgColor.r, step.fgColor.g, step.fgColor.b);
 
-	if (step.flags & DrawStep::kStepSetGradient)
+	if (step.gradColor1.set && step.gradColor2.set)
 		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b, 
 						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
-	if (step.flags & DrawStep::kStepSetShadow)
-		shadowEnable(step.shadow);
-
-	if (step.flags & DrawStep::kStepSetGradientFactor)
-		setGradientFactor(step.factor);
-
-	if (step.flags & DrawStep::kStepSetStroke)
-		setStrokeWidth(step.stroke);
-
-	if (step.flags & DrawStep::kStepSetFillMode)
-		setFillMode((FillMode)step.fillMode);
-		
-	if (step.flags & DrawStep::kStepSettingsOnly)
-		return;
+	shadowEnable(step.shadow);
+	setGradientFactor(step.factor);
+	setStrokeWidth(step.stroke);
+	setFillMode((FillMode)step.fillMode);
 
 	(this->*(step.drawingCall))(area, step);	
 }
