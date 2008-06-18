@@ -1,0 +1,208 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#ifndef XML_PARSER_H
+#define XML_PARSER_H
+
+#include "common/scummsys.h"
+#include "graphics/surface.h"
+#include "common/system.h"
+#include "common/xmlparser.h"
+
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "common/stack.h"
+
+namespace Common {
+
+/**
+ * The base XMLParser class implements generic functionality for parsing
+ * XML-like files.
+ *
+ * In order to use it, it must be inherited with a child class that implements
+ * the XMLParser::keyCallback() function.
+ *
+ * @see XMLParser::keyCallback()
+ */
+class XMLParser {
+	/** Maximum depth for nested keys that the parser supports */
+	static const int kParserMaxDepth = 4;
+
+public:
+	/**
+	 * Parser constructor.
+	 */
+	XMLParser() {}
+
+	virtual ~XMLParser() {}
+
+	/** Active state for the parser */
+	enum ParserState {
+		kParserNeedKey,
+		kParserNeedKeyName,
+
+		kParserNeedPropertyName,
+		kParserNeedPropertyOperator,
+		kParserNeedPropertyValue,
+
+		kParserError
+	};
+
+	/** Struct representing a parsed node */
+	struct ParserNode {
+		Common::String name;
+		Common::StringMap values;
+	};
+
+	virtual bool parse();
+	void debug_testEval();
+
+	/**
+	 * Returns the active node being parsed (the one on top of
+	 * the node stack).
+	 */
+	ParserNode *activeNode() {
+		if (!_activeKey.empty())
+			return _activeKey.top();
+
+		return 0;
+	}
+
+protected:
+	/**
+	 * The keycallback function must be overloaded by inheriting classes
+	 * to implement parser-specific functions.
+	 *
+	 * This function is called everytime a key has successfully been parsed.
+	 * The keyName parameter contains the name of the key that has just been
+	 * parsed; this same key is still on top of the Node Stack.
+	 *
+	 * Access the node stack to view this key's properties and its parents.
+	 * Remember to leave the node stack _UNCHANGED_ in your own function. Removal
+	 * of closed keys is done automatically.
+	 *
+	 * Return true if the key was properly handled. False otherwise.
+	 * See the sample implementation in GUI::ThemeParser.
+	 */
+	virtual bool keyCallback(Common::String keyName) {
+		return false;
+	}
+
+	/**
+	 * Parses the value of a given key. There's no reason to overload this.
+	 */
+	virtual bool parseKeyValue(Common::String keyName);
+
+	/**
+	 * Called once a key has been parsed. It handles the closing/cleanup of the
+	 * node stack and calls the keyCallback.
+	 * There's no reason to overload this.
+	 */
+	virtual void parseActiveKey(bool closed);
+
+	/**
+	 * Prints an error message when parsing fails and stops the parser.
+	 * TODO: More descriptive error messages.
+	 */
+	virtual void parserError(const char *errorString);
+
+	/**
+	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
+	 * Overload this if you want to make your parser depend on newlines or
+	 * whatever.
+	 */
+	virtual bool skipSpaces() {
+		if (!isspace(_text[_pos]))
+			return false;
+
+		while (_text[_pos] && isspace(_text[_pos]))
+			_pos++;
+
+		return true;
+	}
+
+	/**
+	 * Skips comment blocks and comment lines.
+	 * Returns true if any comments were skipped.
+	 * Overload this if you want to disable comments on your XML syntax
+	 * or to change the commenting syntax.
+	 */
+	virtual bool skipComments() {
+		if (_text[_pos] == '/' && _text[_pos + 1] == '*') {
+			_pos += 2;
+			while (_text[_pos++]) {
+				if (_text[_pos - 2] == '*' && _text[_pos - 1] == '/')
+					break;
+				if (_text[_pos] == 0)
+					parserError("Comment has no closure.");
+			}
+			return true;
+		}
+
+		if (_text[_pos] == '/' && _text[_pos + 1] == '/') {
+			_pos += 2;
+			while (_text[_pos] && _text[_pos] != '\n')
+				_pos++;
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a given character can be part of a KEY or VALUE name.
+	 * Overload this if you want to support keys with strange characters
+	 * in their name.
+	 */
+	virtual bool isValidNameChar(char c) {
+		return isalnum(c) || c == '_';
+	}
+
+	/**
+	 * Parses a the first textual token found.
+	 * There's no reason to overload this.
+	 */
+	virtual bool parseToken() {
+		_token.clear();
+		while (isValidNameChar(_text[_pos]))
+			_token += _text[_pos++];
+
+		return isspace(_text[_pos]) != 0 || _text[_pos] == '>';
+	}
+
+	int _pos; /** Current position on the XML buffer. */
+	char *_text; /** Buffer with the text being parsed */
+
+	ParserState _state; /** Internal state of the parser */
+
+	Common::String _error; /** Current error message */
+	Common::String _token; /** Current text token */
+
+	Common::FixedStack<ParserNode*, kParserMaxDepth> _activeKey; /** Node stack of the parsed keys */
+};
+
+}
+
+#endif

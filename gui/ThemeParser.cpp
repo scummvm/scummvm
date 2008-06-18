@@ -28,44 +28,28 @@
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/xmlparser.h"
 
 #include "gui/InterfaceManager.h"
 #include "gui/ThemeParser.h"
 #include "graphics/VectorRenderer.h"
 
-/**
-
-<drawdata = "background_default" cache = true>
-	<draw func = "roundedsq" fill = "gradient" gradient_start = "255, 255, 128" gradient_end = "128, 128, 128" size = "auto">
-	<draw func = "roundedsq" fill = "none" color = "0, 0, 0" size = "auto">
-</drawdata>
-
-*/
-
 namespace GUI {
 
 using namespace Graphics;
+using namespace Common;
 
-void ThemeParser::debug_testEval() {
-	static const char *debugConfigText =
-		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>\n"
-		"<drawstep func = \"roundedsq\" fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>\n"
-		"//<drawstep func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>\n"
-		"</ drawdata>/* lol this is just a simple test*/\n";
-
-	_text = strdup(debugConfigText);
-
-	Common::String test = "12,  125, 125";
-
-	printf("\n\nRegex result: %s.\n\n", test.regexMatch("^[d]*,[d]*,[d]*$", true) ? "Success." : "Fail");
-
-	parse();
+ThemeParser::ThemeParser() : XMLParser() {
+	_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
+	_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
 }
-	
 
-void ThemeParser::parserError(const char *error_string) {
-	_state = kParserError;
-	printf("PARSER ERROR: %s\n", error_string);
+bool ThemeParser::keyCallback(Common::String keyName) {
+	// automatically handle with a function from the hash table.
+	if (!_callbacks.contains(_activeKey.top()->name))
+		return false;
+
+	return (this->*(_callbacks[_activeKey.top()->name]))();
 }
 
 Graphics::DrawStep *ThemeParser::newDrawStep() {
@@ -88,7 +72,7 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 	return step;
 }
 
-void ThemeParser::parserCallback_DRAWSTEP() {
+bool ThemeParser::parserCallback_DRAWSTEP() {
 	ParserNode *stepNode = _activeKey.pop();
 	ParserNode *drawdataNode = _activeKey.pop();
 
@@ -104,7 +88,7 @@ void ThemeParser::parserCallback_DRAWSTEP() {
 		parserError("Invalid drawing function in draw step.");
 		_activeKey.push(drawdataNode);
 		_activeKey.push(stepNode);
-		return;
+		return false;
 	}	
 
 	drawstep->drawingCall = _drawFunctions[functionName];
@@ -121,173 +105,12 @@ void ThemeParser::parserCallback_DRAWSTEP() {
 
 	_activeKey.push(drawdataNode);
 	_activeKey.push(stepNode);
-}
 
-void ThemeParser::parserCallback_DRAWDATA() {
-	printf("Drawdata callback!\n");
-}
-
-void ThemeParser::parseActiveKey(bool closed) {
-	printf("Parsed key %s.\n", _activeKey.top()->name.c_str());
-
-	if (!_callbacks.contains(_activeKey.top()->name)) {
-		parserError("Unhandled value inside key.");
-		return;
-	}
-
-	// Don't you just love C++ syntax? Water clear.
-	(this->*(_callbacks[_activeKey.top()->name]))();
-
-//	for (Common::StringMap::const_iterator t = _activeKey.top()->values.begin(); t != _activeKey.top()->values.end(); ++t)
-//		printf("    Key %s = %s\n", t->_key.c_str(), t->_value.c_str());
-
-	if (closed) {
-		delete _activeKey.pop();
-	}
-}
-
-bool ThemeParser::parseKeyValue(Common::String keyName) {
-	assert(_activeKey.empty() == false);
-
-	if (_activeKey.top()->values.contains(keyName))
-		return false;
-
-	_token.clear();
-	char stringStart;
-
-	if (_text[_pos] == '"' || _text[_pos] == '\'') {
-		stringStart = _text[_pos++];
-
-		while (_text[_pos] && _text[_pos] != stringStart)
-			_token += _text[_pos++];
-
-		if (_text[_pos++] == 0)
-			return false;
-
-	} else if (!parseToken()) {
-		return false;
-	}
-
-	_activeKey.top()->values[keyName] = _token;
 	return true;
 }
 
-bool ThemeParser::parse() {
-
-	bool activeClosure = false;
-	bool selfClosure = false;
-
-	_state = kParserNeedKey;
-	_pos = 0;
-	_activeKey.clear();
-	
-	while (_text[_pos]) {
-		if (_state == kParserError)
-			break;
-
-		if (skipSpaces())
-			continue;
-
-		if (skipComments())
-			continue;
-
-		switch (_state) {
-			case kParserNeedKey:
-				if (_text[_pos++] != '<') {
-					parserError("Expecting key start.");
-					break;
-				}
-
-				if (_text[_pos] == 0) {
-					parserError("Unexpected end of file.");
-					break;
-				}
-
-				if (_text[_pos] == '/' && _text[_pos + 1] != '*') {
-					_pos++;
-					activeClosure = true;
-				}
-
-				_state = kParserNeedKeyName;
-				break;
-
-			case kParserNeedKeyName:
-				if (!parseToken()) {
-					parserError("Invalid key name.");
-					break;
-				}
-
-				if (activeClosure) {
-					if (_activeKey.empty() || _token != _activeKey.top()->name)
-						parserError("Unexpected closure.");
-				} else {
-					ParserNode *node = new ParserNode;
-					node->name = _token;
-					_activeKey.push(node);
-				}
-
-				_state = kParserNeedPropertyName;
-				break;
-
-			case kParserNeedPropertyName:
-				if (activeClosure) {
-					activeClosure = false;
-					delete _activeKey.pop();
-
-					if (_text[_pos++] != '>')
-						parserError("Invalid syntax in key closure.");
-					else 
-						_state = kParserNeedKey;
-
-					break;
-				}
-
-				selfClosure = (_text[_pos] == '/');
-
-				if ((selfClosure && _text[_pos + 1] == '>') || _text[_pos] == '>') {
-					parseActiveKey(selfClosure);
-					_pos += selfClosure ? 2 : 1;
-					_state = kParserNeedKey;
-					break;
-				}
-
-				if (!parseToken()) 
-					parserError("Error when parsing key value.");
-				else 
-					_state = kParserNeedPropertyOperator;
-
-				break;
-
-			case kParserNeedPropertyOperator:
-				if (_text[_pos++] != '=') 
-					parserError("Unexpected character after key name.");
-				else  
-					_state = kParserNeedPropertyValue;
-
-				break;
-
-			case kParserNeedPropertyValue:
-				if (!parseKeyValue(_token)) 
-					parserError("Unable to parse key value.");
-				else 
-					_state = kParserNeedPropertyName;
-
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	if (_state == kParserError) {
-		return false;
-	}
-
-	if (_state != kParserNeedKey || !_activeKey.empty()) {
-		parserError("Unexpected end of file.");
-		return false;
-	}
-
+bool ThemeParser::parserCallback_DRAWDATA() {
+	printf("Drawdata callback!\n");
 	return true;
 }
 

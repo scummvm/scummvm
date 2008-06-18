@@ -33,6 +33,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
+#include "common/xmlparser.h"
 
 #include "graphics/VectorRenderer.h"
 
@@ -305,106 +306,25 @@ func = "fill"
 namespace GUI {
 
 using namespace Graphics;
+using namespace Common;
 
-class ThemeParser {
-
-	static const int kParserMaxDepth = 4;
-	typedef void (ThemeParser::*ParserCallback)();
+class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
+	typedef bool (ThemeParser::*ParserCallback)();
 
 public:
-	ThemeParser() {
-		_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
-		_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
-	}
+	ThemeParser();
 
-	~ThemeParser() {}
-
-	enum ParserState {
-		kParserNeedKey,
-		kParserNeedKeyName,
-
-		kParserNeedPropertyName,
-		kParserNeedPropertyOperator,
-		kParserNeedPropertyValue,
-
-		kParserError
-	};
-
-	bool parse();
-	void debug_testEval();
-	
 protected:
-	void parserCallback_DRAWSTEP();
-	void parserCallback_DRAWDATA();
+	bool keyCallback(Common::String keyName);
 
-	bool parseKeyValue(Common::String keyName);
-	void parseActiveKey(bool closed);
-	void parserError(const char *errorString);
+	bool parserCallback_DRAWSTEP();
+	bool parserCallback_DRAWDATA();
 
 	Graphics::DrawStep *newDrawStep();
 
-	inline bool skipSpaces() {
-		if (!isspace(_text[_pos]))
-			return false;
-
-		while (_text[_pos] && isspace(_text[_pos]))
-			_pos++;
-
-		return true;
-	}
-
-	inline bool skipComments() {
-		if (_text[_pos] == '/' && _text[_pos + 1] == '*') {
-			_pos += 2;
-			while (_text[_pos++]) {
-				if (_text[_pos - 2] == '*' && _text[_pos - 1] == '/')
-					break;
-				if (_text[_pos] == 0)
-					parserError("Comment has no closure.");
-			}
-			return true;
-		}
-
-		if (_text[_pos] == '/' && _text[_pos + 1] == '/') {
-			_pos += 2;
-			while (_text[_pos] && _text[_pos] != '\n')
-				_pos++;
-			return true;
-		}
-
-		return false;
-	}
-
-	inline bool isValidNameChar(char c) {
-		return isalnum(c) || c == '_';
-	}
-
-	inline bool parseToken() {
-		_token.clear();
-		while (isValidNameChar(_text[_pos]))
-			_token += _text[_pos++];
-
-		return isspace(_text[_pos]) != 0 || _text[_pos] == '>';
-	}
-
-	int _pos;
-	char *_text;
-
-	ParserState _state;
-
-	Common::String _error;
-	Common::String _token;
-
-	struct ParserNode {
-		Common::String name;
-		Common::StringMap values;
-	};
-
-	Common::FixedStack<ParserNode*, kParserMaxDepth> _activeKey;
-
-	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;
+	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 };
 
 }

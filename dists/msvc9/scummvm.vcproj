@@ -454,6 +454,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\xmlparser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\xmlparser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\zlib.cpp"
 				>
 			</File>
@@ -1223,10 +1231,24 @@
 			<File
 				RelativePath="..\..\gui\ThemeParser.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\gui\ThemeParser.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp"
