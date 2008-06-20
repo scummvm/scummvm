@@ -132,6 +132,8 @@ void Scene::IHNMLoadCutaways() {
 
 	// Load the cutaways for the title screens
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
+
+	free(resourcePointer);
 }
 
 bool Scene::checkKey() {

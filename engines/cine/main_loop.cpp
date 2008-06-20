@@ -186,6 +186,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	uint16 mouseButton;
 
 	quitFlag = 0;
+	exitEngine = 0;
 
 	if (_preLoad == false) {
 		resetBgIncrustList();

@@ -57,6 +57,11 @@ MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
 	_width = (bounds->contentsWidth + 3) << 3;
 }
 
+MenuRecord::~MenuRecord() {
+	free(_entries);
+	_entries = NULL;
+}
+
 const char *MenuRecord::getEntry(uint8 index) {
 	if (index >= _numEntries) error("Invalid menuitem index specified: %d", index);
 	return _entries[index];

@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "queen/queen.h"
 #include "queen/input.h"
 
 namespace Queen {
@@ -51,12 +52,12 @@ const Verb Input::_verbKeys[] = {
 	VERB_USE
 };
 
-Input::Input(Common::Language language, OSystem *system) :
+Input::Input(Common::Language language, OSystem *system, QueenEngine *vm) :
 	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
 	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
 	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
 	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INVALID),
-	_mouseButton(0), _idleTime(0) {
+	_mouseButton(0), _idleTime(0) , _vm(vm) {
 
 	switch (language) {
 	case Common::EN_ANY:
@@ -119,8 +120,8 @@ void Input::delay(uint amount) {
 				break;
 
 			case Common::EVENT_QUIT:
-				_system->quit();
-				break;
+				_vm->quitGame();
+				return;
 
 			default:
 				break;

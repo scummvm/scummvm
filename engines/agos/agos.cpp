@@ -37,6 +37,7 @@
 
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
+#include "sound/audiocd.h"
 
 using Common::File;
 
@@ -95,6 +96,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
+
+	_quit = false;
 
 	_debugger = 0;
 
@@ -556,14 +559,17 @@ int AGOSEngine::init() {
 		// Setup midi driver
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
 		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		
+		_driver = MidiDriver::createMidi(midiDriver);
+
 		if (_nativeMT32) {
-			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}
 
 		_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_nativeMT32);
 
-		_midi.setDriver(driver);
+		_midi.setDriver(_driver);
+
 		int ret = _midi.open();
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
@@ -875,6 +881,9 @@ AGOSEngine::~AGOSEngine() {
 		delete _gameFile;
 
 	_midi.close();
+	delete _driver;
+
+	AudioCD.destroy();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];
@@ -883,6 +892,8 @@ AGOSEngine::~AGOSEngine() {
 
 	free(_tablesHeapPtr - _tablesHeapCurPos);
 
+	free(_mouseData);
+	
 	free(_gameOffsetsPtr);
 	free(_iconFilePtr);
 	free(_itemArrayPtr);
@@ -894,6 +905,7 @@ AGOSEngine::~AGOSEngine() {
 	free(_backGroundBuf);
 	free(_backBuf);
 	free(_scaleBuf);
+	free(_zoneBuffers);
 
 	free(_window4BackScn);
 	free(_window6BackScn);
@@ -937,7 +949,7 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 void AGOSEngine::pause() {
 	pauseEngine(true);
 
-	while (_pause) {
+	while (_pause && !_quit) {
 		delay(1);
 		if (_keyPressed.keycode == Common::KEYCODE_p)
 			pauseEngine(false);
@@ -974,7 +986,7 @@ int AGOSEngine::go() {
 		(getFeatures() & GF_DEMO)) {
 		int i;
 
-		while (1) {
+		while (!_quit) {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
@@ -1003,7 +1015,7 @@ int AGOSEngine::go() {
 	runSubroutine101();
 	permitInput();
 
-	while (1) {
+	while (!_quit) {
 		waitForInput();
 		handleVerbClicked(_verbHitArea);
 		delay(100);
@@ -1012,6 +1024,9 @@ int AGOSEngine::go() {
 	return 0;
 }
 
+
+/*  I do not think that this will be used
+ *  
 void AGOSEngine::shutdown() {
 	// Sync with AGOSEngine::~AGOSEngine()
 	// In Simon 2, this gets deleted along with _sound further down
@@ -1019,6 +1034,7 @@ void AGOSEngine::shutdown() {
 		delete _gameFile;
 
 	_midi.close();
+	delete _driver;
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];
@@ -1058,6 +1074,7 @@ void AGOSEngine::shutdown() {
 
 	_system->quit();
 }
+*/
 
 uint32 AGOSEngine::getTime() const {
 	// FIXME: calling time() is not portable, use OSystem::getMillis instead

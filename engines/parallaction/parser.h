@@ -221,12 +221,13 @@ public:
 	virtual void init();
 
 	virtual ~LocationParser_ns() {
+		delete _parser;
 		delete _commandsNames;
 		delete _locationStmt;
+		delete _locationZoneStmt;
+		delete _locationAnimStmt;
 		delete _zoneTypeNames;
 		delete _zoneFlagNames;
-
-		delete _parser;
 
 		clearSet(_commandParsers);
 		clearSet(_locationAnimParsers);
@@ -356,7 +357,9 @@ public:
 	virtual void init();
 
 	virtual ~ProgramParser_ns() {
+		delete _parser;
 		delete _instructionNames;
+
 		clearSet(_instructionParsers);
 	}
 

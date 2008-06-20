@@ -105,10 +105,8 @@ uint16 DialogueManager::askPassword() {
 
 		if (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_QUIT) {
-				// TODO: don't quit() here, just have caller routines to check
-				// on kEngineQuit and exit gracefully to allow the engine to shut down
 				_engineFlags |= kEngineQuit;
-				g_system->quit();
+				break;
 			}
 
 			if ((e.type == Common::EVENT_KEYDOWN) && isdigit(e.kbd.ascii)) {
@@ -231,11 +229,19 @@ void DialogueManager::run() {
 		answer = 0;
 
 		displayQuestion();
+		
+		if (_engineFlags & kEngineQuit)
+			return;
+
 		if (_q->_answers[0] == NULL) break;
 
 		if (scumm_stricmp(_q->_answers[0]->_text, "NULL")) {
 			if (!displayAnswers()) break;
 			answer = getAnswer();
+
+			if (_engineFlags & kEngineQuit)
+				return;
+
 			cmdlist = &_q->_answers[answer]->_commands;
 		}
 
@@ -266,7 +272,7 @@ int16 DialogueManager::selectAnswer() {
 
 	uint32 event;
 	Common::Point p;
-	while (true) {
+	while (_engineFlags & kEngineQuit == 0) {
 
 		_vm->_input->readInput();
 		_vm->_input->getCursorPos(p);

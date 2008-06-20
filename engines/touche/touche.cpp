@@ -96,6 +96,7 @@ int ToucheEngine::init() {
 	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 	_midiPlayer = new MidiPlayer(driver, native_mt32);
 
+
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);

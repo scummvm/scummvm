@@ -62,9 +62,7 @@ void AgiEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_gfx->deinitVideo();
-			_gfx->deinitMachine();
-			_system->quit();
+			_game.quitProgNow = true;
 			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
 			if (_predictiveDialogRunning)
@@ -766,12 +764,15 @@ AgiEngine::~AgiEngine() {
 	}
 
 	agiDeinit();
+	delete _loader;
 	_sound->deinitSound();
 	delete _sound;
 	_gfx->deinitVideo();
 	delete _sprites;
+	delete _picture;
 	free(_game.sbufOrig);
 	_gfx->deinitMachine();
+	delete _gfx;
 	delete _rnd;
 	delete _console;
 

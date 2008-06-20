@@ -280,7 +280,7 @@ void MoviePlayer::handleNextFrame() {
 			_rightButtonDown = false;
 			break;
 		case Common::EVENT_QUIT:
-			_vm->_system->quit();
+			_vm->_quit = true;
 			break;
 		default:
 			break;

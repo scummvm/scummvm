@@ -34,6 +34,8 @@ struct PalEntry {
 	byte pal2[16];
 };
 
+extern PalEntry *palPtr;
+
 void loadPal(const char *fileName);
 
 void loadRelatedPalette(const char *fileName);

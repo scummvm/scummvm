@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 
 #include "common/stream.h"
+#include "sound/mididrv.h"
 
 #include "saga/gfx.h"
 #include "saga/list.h"
@@ -531,6 +532,7 @@ public:
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;
+	MidiDriver *_driver;
 	Anim *_anim;
 	Render *_render;
 	IsoMap *_isoMap;

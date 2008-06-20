@@ -85,8 +85,10 @@ SoundManager::~SoundManager() {
 	if (_soundData)
 		delete _soundData;
 
-	if (_driver)
+	if (_driver) {
 		_driver->close();
+		delete _driver;
+	}
 	_driver = NULL;
 
 	g_system->deleteMutex(_soundMutex);
@@ -143,7 +145,7 @@ void SoundManager::bellsBodge() {
 	Room &room = Room::getReference();
 
 	RoomData *roomData = res.getRoom(room.roomNumber());
-	if (roomData->areaFlag != res.fieldList().getField(AREA_FLAG)) {
+	if (roomData && roomData->areaFlag != res.fieldList().getField(AREA_FLAG)) {
 		res.fieldList().setField(AREA_FLAG, roomData->areaFlag);
 
 		switch (roomData->areaFlag) {

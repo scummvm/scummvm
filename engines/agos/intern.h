@@ -161,6 +161,7 @@ struct WindowBlock {
 	uint8 fill_color, text_color;
 	IconBlock *iconPtr;
 	WindowBlock() { memset(this, 0, sizeof(*this)); }
+	~WindowBlock() { free (iconPtr); }
 };
 // note on text offset:
 // the actual x-coordinate is: textColumn * 8 + textColumnOffset

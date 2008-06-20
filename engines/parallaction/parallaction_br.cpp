@@ -109,6 +109,9 @@ int Parallaction_br::go() {
 
 		guiStart();
 
+		if (_engineFlags & kEngineQuit)
+			return 0;
+
 //		initCharacter();
 
 		_input->_inputMode = Input::kInputModeGame;

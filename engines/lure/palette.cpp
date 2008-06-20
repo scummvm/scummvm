@@ -106,6 +106,12 @@ Palette::Palette(uint16 resourceId, PaletteSource paletteSource) {
 	delete srcData;
 }
 
+// Destructor
+
+Palette::~Palette() {
+	delete _palette;
+}
+
 void Palette::convertRgb64Palette(const byte *srcPalette, uint16 srcNumEntries) {
 	byte *pDest = _palette->data();
 	const byte *pSrc = srcPalette;

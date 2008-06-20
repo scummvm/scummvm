@@ -228,7 +228,9 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
-	return 0;
+
+
+    return 1;   // Changing from return 0, in order to return to launcher
 }
 
 

@@ -156,7 +156,9 @@ int Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
-
+	
+	delete _locationParser;
+	delete _programParser;
 	delete _mouseComposedArrow;
 
 	_location._animations.remove(_char._ani);
@@ -233,8 +235,14 @@ int Parallaction_ns::go() {
 	_globalTable = _disk->loadTable("global");
 
 	guiStart();
-
+	
+	if (_engineFlags & kEngineQuit)
+		return 0;
+	
 	changeLocation(_location._name);
+
+	if (_engineFlags & kEngineQuit)
+		return 0;
 
 	_input->_inputMode = Input::kInputModeGame;
 	while ((_engineFlags & kEngineQuit) == 0) {

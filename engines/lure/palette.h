@@ -46,6 +46,7 @@ public:
 	Palette(uint16 srcNumEntries, const byte *srcData, PaletteSource paletteSource);
 	Palette(Palette &src);
 	Palette(uint16 resourceId, PaletteSource paletteSource = DEFAULT);
+	~Palette();
 
 	uint8 *data() { return _palette->data(); }
 	MemoryBlock *palette() { return _palette; }
