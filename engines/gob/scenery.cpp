@@ -595,7 +595,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	int16 destX;
 	int16 destY;
 
-	if (animation < 0) {
+	if ((_vm->getGameType() == kGameTypeWoodruff) && (animation < 0)) {
 		// Object video
 
 		if (flags & 1) { // Do capture
@@ -736,6 +736,8 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		return;
 	}
 
+	if ((animation < 0) || (animation >= 10))
+		return;
 	if ((_animPictCount[animation] == 0) || (layer < 0))
 		return;
 	if (layer >= _animations[animation].layersCount)

@@ -89,31 +89,21 @@ void DrasculaEngine::setCursorTable() {
 }
 
 void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int colorCount) {
-	unsigned int con, x = 0;
-	unsigned int fExit = 0;
-	byte ch, rep;
+	uint dataSize = 0;
+	byte *pcxData;
 
 	_arj.open(NamePcc);
 	if (!_arj.isOpen())
 		error("missing game data %s %c", NamePcc, 7);
 
-	_arj.seek(128);
-	while (!fExit) {
-		ch = _arj.readByte();
-		rep = 1;
-		if ((ch & 192) == 192) {
-			rep = (ch & 63);
-			ch = _arj.readByte();
-		}
-		for (con = 0; con < rep; con++) {
-			x++;
-			if (x > 64000) {
-				fExit = 1;
-				break;
-			}
-			*targetSurface++ = ch;
-		}
-	}
+	dataSize = _arj.size() - 128 - (256 * 3);
+	pcxData = (byte *)malloc(dataSize);
+
+	_arj.seek(128, SEEK_SET);
+	_arj.read(pcxData, dataSize);
+
+	decodeRLE(pcxData, targetSurface);
+	free(pcxData);
 
 	for (int i = 0; i < 256; i++) {
 		cPal[i * 3 + 0] = _arj.readByte();
@@ -141,7 +131,6 @@ void DrasculaEngine::showFrame(bool firstFrame) {
 	memcpy(prevFrame, VGA, 64000);
 
 	decodeRLE(pcxData, VGA);
-
 	free(pcxData);
 
 	if (!firstFrame)

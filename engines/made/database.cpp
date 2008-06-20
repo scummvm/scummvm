@@ -88,10 +88,7 @@ int16 Object::getVectorItem(int16 index) {
 	if (getClass() == 0x7FFF) {
 		byte *vector = (byte*)getData();
 		return vector[index];
-	} else if (getClass() == 0x7FFE) {
-		int16 *vector = (int16*)getData();
-		return READ_LE_UINT16(&vector[index]);
-	} else if (getClass() < 0x7FFE) {
+	} else if (getClass() <= 0x7FFE) {
 		int16 *vector = (int16*)getData();
 		return READ_LE_UINT16(&vector[index]);
 	} else {
@@ -372,7 +369,7 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	debug(2, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", textOffs, textSize, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize);
 
 	_gameState = new byte[_gameStateSize + 2];
-	memset(_gameState, 0, _gameStateSize);
+	memset(_gameState, 0, _gameStateSize + 2);
 	setVar(1, objectCount);
 
 	sourceS.seek(textOffs);
@@ -441,7 +438,7 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 	int16 *propPtr2 = prop + count2;
 
 	// First see if the property exists in the given object
-	while (count2-- > 0) {
+	while (count2--) {
 		if ((READ_LE_UINT16(prop) & 0x7FFF) == propertyId) {
 			propertyFlag = obj->getFlags() & 1;
 			return propPtr1;
@@ -467,8 +464,8 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 		propPtr1 = propPtr2 + count1 - count2;
 		int16 *propertyPtr = prop + count1;
 
-		while (count2-- > 0) {
-			if (!(READ_LE_UINT16(prop) & 0x8000)) {
+		while (count2--) {
+			if ((READ_LE_UINT16(prop) & 0x8000) == 0) {
 				if ((READ_LE_UINT16(prop) & 0x7FFF) == propertyId) {
 					propertyFlag = obj->getFlags() & 1;
 					return propPtr1;

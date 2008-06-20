@@ -588,12 +588,14 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 }
 
 void VideoPlayer::copyPalette(CoktelVideo &video, int16 palStart, int16 palEnd) {
-	if ((palStart != -1) && (palEnd != -1))
-		memcpy(((char *) (_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
-				video.getPalette() + palStart * 3,
-				(palEnd - palStart + 1) * 3);
-	else
-		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal, video.getPalette(), 768);
+	if (palStart < 0)
+		palStart = 0;
+	if (palEnd < 0)
+		palEnd = 255;
+
+	memcpy(((char *) (_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
+			video.getPalette() + palStart * 3,
+			(palEnd - palStart + 1) * 3);
 }
 
 void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,

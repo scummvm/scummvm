@@ -65,7 +65,7 @@ static const PlainGameDescriptor madeGames[] = {
 	{"manhole", "The Manhole"},
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
-	{"rodney", "Rodney's Fun Screen"},
+	{"rodney", "Rodney's Funscreen"},
 	{0, 0}
 };
 
@@ -278,7 +278,7 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Rodney's Fun Screen
+		// Rodney's Funscreen
 		{
 			"rodney",
 			"",
