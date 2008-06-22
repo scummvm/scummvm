@@ -121,7 +121,7 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 	mad_timer_add(&length, start);
 	mad_timer_negate(&length);
 
-	if (mad_timer_sign(end) == 0) {
+	if (mad_timer_sign(end) != 0) {
 		mad_timer_add(&length, end);
 	} else {
 		mad_stream_init(&_stream);
