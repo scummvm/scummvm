@@ -296,6 +296,9 @@ int KyraEngine_HoF::go() {
 			_res->loadFileList("FILEDATA.FDT");
 		else
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
+
+		if (_flags.platform == Common::kPlatformPC98)
+			_res->loadPakFile("AUDIO.PAK");
 	}
 
 	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;

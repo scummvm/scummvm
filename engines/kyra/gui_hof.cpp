@@ -455,13 +455,29 @@ void KyraEngine_HoF::showBookPage() {
 	char filename[16];
 
 	sprintf(filename, "PAGE%.01X.", _bookCurPage);
-	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
+	strcat(filename, _languageExtension[_lang]);
 	uint8 *leftPage = _res->fileData(filename, 0);
+	if (!leftPage) {
+		// some floppy version use a TXT extension
+		sprintf(filename, "PAGE%.01X.", _bookCurPage);
+		strcat(filename, "TXT");
+		leftPage = _res->fileData(filename, 0);
+	}
+
 	int leftPageY = _bookPageYOffset[_bookCurPage];
 
 	sprintf(filename, "PAGE%.01X.", _bookCurPage+1);
-	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
-	uint8 *rightPage = (_bookCurPage != _bookMaxPage) ? _res->fileData(filename, 0) : 0;
+	strcat(filename, _languageExtension[_lang]);
+	uint8 *rightPage = 0;
+	if (_bookCurPage != _bookMaxPage) {
+		rightPage = _res->fileData(filename, 0);
+		if (!rightPage) {
+			sprintf(filename, "PAGE%.01X.", _bookCurPage);
+			strcat(filename, "TXT");
+			rightPage = _res->fileData(filename, 0);
+		}
+	}
+	
 	int rightPageY = _bookPageYOffset[_bookCurPage+1];
 
 	_screen->hideMouse();
