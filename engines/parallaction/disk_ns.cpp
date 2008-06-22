@@ -1395,9 +1395,7 @@ Common::ReadStream* AmigaDisk_ns::loadSound(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.snd", name);
 
-	openArchivedFile(path);
-
-	return new DummyArchiveStream(_resArchive);
+	return openArchivedFile(path);
 }
 
 } // namespace Parallaction
