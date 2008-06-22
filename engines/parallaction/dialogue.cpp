@@ -268,11 +268,11 @@ int16 DialogueManager::selectAnswer() {
 	}
 
 	int oldSelection = -1;
-	int selection;
+	int selection = 0;
 
 	uint32 event;
 	Common::Point p;
-	while (_engineFlags & kEngineQuit == 0) {
+	while ((_engineFlags & kEngineQuit) == 0) {
 
 		_vm->_input->readInput();
 		_vm->_input->getCursorPos(p);
