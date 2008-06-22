@@ -181,6 +181,9 @@ struct Question {
 
 struct Dialogue {
 	Question	*_questions[NUM_QUESTIONS];
+
+	Dialogue();
+	~Dialogue();
 };
 
 struct GetData {	// size = 24
