@@ -86,7 +86,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 Parallaction::~Parallaction() {
 	clearSet(_commandOpcodes);
 	clearSet(_instructionOpcodes);
-	
+
 	delete _debugger;
 	delete _globalTable;
 	delete _callableNames;
@@ -95,7 +95,7 @@ Parallaction::~Parallaction() {
 
 	freeCharacter();
 	destroyInventory();
-	
+
 	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
@@ -193,6 +193,9 @@ AnimationPtr Parallaction::findAnimation(const char *name) {
 }
 
 void Parallaction::freeAnimations() {
+	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
+		(*it)->_commands.clear();	// See comment for freeZones(), about circular references.
+	}
 	_location._animations.clear();
 	return;
 }
@@ -479,6 +482,9 @@ void Parallaction::freeZones() {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
+			(*it)->_commands.clear();	// Since commands may reference zones, and both commands and zones are kept stored into
+										// SharedPtr's, we need to kill commands explicitly to destroy any potential circular
+										// reference.
 			it = _location._zones.erase(it);
 		}
 	}
