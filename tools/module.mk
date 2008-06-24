@@ -23,8 +23,6 @@ TOOLS := \
 #	tools/mat2ppm$(EXEEXT)
 #	tools/bm2ppm$(EXEEXT)
 
-include $(srcdir)/tools/*/module.mk
-
 # Make sure the 'all' / 'clean' targets build/clean the tools, too
 #all:
 clean: clean-tools
