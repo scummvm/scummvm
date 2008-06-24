@@ -530,7 +530,6 @@ struct AgiGame {
 
 	/* internal flags */
 	int playerControl;		/**< player is in control */
-	int quitProgNow;		/**< quit now */
 	int statusLine;		/**< status line on/off */
 	int clockEnabled;		/**< clock is on/off */
 	int exitAllLogics;	/**< break cycle after new.room */

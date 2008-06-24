@@ -229,8 +229,8 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	Common::File::resetDefaultDirectories();
 
 
-
-    return 1;   // Changing from return 0, in order to return to launcher
+	// If result=1 return to the launcher, else quit ScummVM
+    return result;
 }
 
 

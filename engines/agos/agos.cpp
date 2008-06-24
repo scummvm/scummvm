@@ -30,6 +30,10 @@
 #include "common/system.h"
 #include "common/events.h"
 
+//#include "gui/message.h"
+//#include "gui/newgui.h"
+
+//#include "agos/dialogs.h"
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
@@ -97,7 +101,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
 
-	_quit = false;
+	//_quit = false;
+	//_rtl = false;
 
 	_debugger = 0;
 
@@ -194,6 +199,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_fastMode = 0;
 
 	_backFlag = 0;
+
+	//_mainMenuDialog = NULL;
 
 	_debugMode = 0;
 	_startMainScript = false;
@@ -1021,7 +1028,7 @@ int AGOSEngine::go() {
 		delay(100);
 	}
 
-	return 0;
+	return _rtl;
 }
 
 
@@ -1080,5 +1087,25 @@ uint32 AGOSEngine::getTime() const {
 	// FIXME: calling time() is not portable, use OSystem::getMillis instead
 	return (uint32)time(NULL);
 }
+/*
+int AGOSEngine::runDialog(Dialog &dialog) {
 
+	pauseEngine(true);
+
+	int result = dialog.runModal();
+
+	pauseEngine(false);
+
+	return 0;
+}
+/*
+void AGOSEngine::mainMenuDialog() {
+	if (!_mainMenuDialog)
+		_mainMenuDialog = new MainMenuDialog(this);
+	runDialog(*_mainMenuDialog);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_midi.setVolume(ConfMan.getInt("music_volume"));
+}
+*/
 } // End of namespace AGOS

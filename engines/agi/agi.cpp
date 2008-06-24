@@ -62,7 +62,7 @@ void AgiEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_game.quitProgNow = true;
+			_quit = true;
 			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
 			if (_predictiveDialogRunning)
@@ -809,7 +809,7 @@ int AgiEngine::go() {
 
 	runGame();
 
-	return 0;
+	return _rtl;
 }
 
 } // End of namespace Agi

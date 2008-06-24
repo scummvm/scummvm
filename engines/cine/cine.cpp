@@ -102,7 +102,8 @@ int CineEngine::go() {
 	delete renderer;
 	delete[] page3Raw;
 	delete g_sound;
-	return 0;
+	
+	return _rtl;
 }
 
 

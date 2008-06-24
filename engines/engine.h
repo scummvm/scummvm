@@ -39,7 +39,10 @@ namespace Common {
 }
 namespace GUI {
 	class Debugger;
+	class Dialog;
 }
+
+using GUI::Dialog;
 
 class Engine {
 public:
@@ -47,10 +50,16 @@ public:
 	Audio::Mixer *_mixer;
 	Common::TimerManager * _timer;
 
+	bool _quit;
+	bool _rtl;
+
 protected:
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
+	
+	Dialog *_mainMenuDialog;
 
+	virtual int runDialog(Dialog &dialog);	
 	const Common::String _targetName; // target name for saves
 	const Common::String _gameDataPath;
 
@@ -112,6 +121,8 @@ public:
 	 * Return whether the engine is currently paused or not.
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
+
+	void mainMenuDialog();
 
 public:
 

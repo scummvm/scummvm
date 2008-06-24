@@ -375,7 +375,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_modifierState = event.kbd.flags;
-
 			// init continuous event stream
 			// not done on PalmOS because keyboard is emulated and keyup is not generated
 #if !defined(PALMOS_MODE)
@@ -384,7 +383,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
+
+			// Global Main Menu
+			if (event.kbd.keycode == Common::KEYCODE_F11)
+				if (g_engine && !g_engine->isPaused())
+					g_engine->mainMenuDialog();
+
 			break;
+
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
 			if (event.kbd.keycode == _currentKeyDown.keycode) {
@@ -401,6 +407,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_mousePos = event.mouse;
 			_buttonState |= LBUTTON;
 			break;
+
 		case Common::EVENT_LBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~LBUTTON;
@@ -410,9 +417,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_mousePos = event.mouse;
 			_buttonState |= RBUTTON;
 			break;
+
 		case Common::EVENT_RBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~RBUTTON;
+			break;
+
+		case Common::EVENT_MAINMENU:
+			if (g_engine && !g_engine->isPaused())
+				g_engine->mainMenuDialog();
 			break;
 
 		case Common::EVENT_QUIT:

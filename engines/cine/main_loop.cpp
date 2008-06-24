@@ -62,7 +62,7 @@ static void processEvent(Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_QUIT:
-		exitEngine = 1;
+		g_cine->_quit = 1;
 		break;
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
@@ -181,12 +181,11 @@ int getKeyData() {
 
 void CineEngine::mainLoop(int bootScriptIdx) {
 	bool playerAction;
-	uint16 quitFlag;
+	//uint16 quitFlag;
 	byte di;
 	uint16 mouseButton;
 
-	quitFlag = 0;
-	exitEngine = 0;
+	//quitFlag = 0;
 
 	if (_preLoad == false) {
 		resetBgIncrustList();
@@ -296,7 +295,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			if ("quit"[menuCommandLen] == (char)di) {
 				++menuCommandLen;
 				if (menuCommandLen == 4) {
-					quitFlag = 1;
+				g_cine->_quit = 1;
 				}
 			} else {
 				menuCommandLen = 0;
@@ -305,7 +304,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		manageEvents();
 
-	} while (!exitEngine && !quitFlag && _danKeysPressed != 7);
+	} while (!g_cine->_quit && _danKeysPressed != 7);
 
 	hideMouse();
 	g_sound->stopMusic();

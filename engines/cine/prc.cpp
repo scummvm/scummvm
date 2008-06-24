@@ -53,7 +53,7 @@ void loadPrc(const char *pPrcName) {
 
 	// This is copy protection. Used to hang the machine
 	if (!scumm_stricmp(pPrcName, "L201.ANI")) {
-		exitEngine = 1;
+		g_cine->_quit = 1;
 		return;
 	}
 

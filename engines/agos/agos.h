@@ -269,7 +269,7 @@ protected:
 
 	uint16 _marks;
 
-	bool _quit;
+	// bool _quit;
 	bool _scriptVar2;
 	bool _runScriptReturn1;
 	bool _runScriptCondition[40];

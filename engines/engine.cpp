@@ -36,7 +36,9 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "gui/message.h"
+#include "gui/newgui.h"
 #include "sound/mixer.h"
+#include "engines/dialogs.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
@@ -54,7 +56,10 @@ Engine::Engine(OSystem *syst)
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
 		_gameDataPath(ConfMan.get("path")),
-		_pauseLevel(0) {
+		_pauseLevel(0),
+		_mainMenuDialog(NULL),
+		_quit(false),
+		_rtl(false) {
 
 	g_engine = this;
 	_autosavePeriod = ConfMan.getInt("autosave_period");
@@ -210,3 +215,21 @@ void Engine::pauseEngineIntern(bool pause) {
 	// By default, just (un)pause all digital sounds
 	_mixer->pauseAll(pause);
 }
+
+void Engine::mainMenuDialog() {
+	if (!_mainMenuDialog)
+		_mainMenuDialog = new MainMenuDialog(this);
+	runDialog(*_mainMenuDialog);
+}
+
+int Engine::runDialog(Dialog &dialog) {
+	
+	pauseEngine(true);
+
+	int result = dialog.runModal();
+
+	pauseEngine(false);
+
+	return 0;
+}
+
