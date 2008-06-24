@@ -240,10 +240,10 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o2_setAdditionalBgVScroll, "c" },
 	{ &FWScript::o2_op9F, "ww" }, /* TODO: Name this opcode properly. */
 	/* A0 */
-	{ &FWScript::o2_addGfxElementA0, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_removeGfxElementA0, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_opA2, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_opA3, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_addGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_removeGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_addGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_removeGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
 	/* A4 */
 	{ &FWScript::o2_loadMask22, "b" }, /* TODO: Name this opcode properly. */
 	{ &FWScript::o2_unloadMask22, "b" }, /* TODO: Name this opcode properly. */
@@ -721,42 +721,36 @@ int FWScript::o2_op9F() {
 	return 0;
 }
 
-int FWScript::o2_addGfxElementA0() {
+int FWScript::o2_addGfxElementType20() {
 	uint16 param1 = getNextWord();
 	uint16 param2 = getNextWord();
 
-	debugC(5, kCineDebugScript, "Line: %d: addGfxElementA0(%d,%d)", _line, param1, param2);
-	addGfxElementA0(param1, param2);
+	debugC(5, kCineDebugScript, "Line: %d: o2_addGfxElementType20(%d,%d)", _line, param1, param2);
+	addGfxElement(param1, param2, 20);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_removeGfxElementA0() {
+int FWScript::o2_removeGfxElementType20() {
 	uint16 idx = getNextWord();
 	uint16 param = getNextWord();
-	warning("STUB? o2_removeGfxElementA0(%x, %x)", idx, param);
-	removeGfxElementA0(idx, param);
+	debugC(5, kCineDebugScript, "Line: %d: o2_removeGfxElementType20(%d,%d)", _line, idx, param);
+	removeGfxElement(idx, param, 20);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_opA2() {
+int FWScript::o2_addGfxElementType21() {
 	uint16 a = getNextWord();
 	uint16 b = getNextWord();
-	warning("STUB: o2_opA2(%x, %x)", a, b);
-	// addGfxElementA2();
+	debugC(5, kCineDebugScript, "Line: %d: o2_addGfxElementType21(%d,%d)", _line, a, b);
+	addGfxElement(a, b, 21);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_opA3() {
+int FWScript::o2_removeGfxElementType21() {
 	uint16 a = getNextWord();
 	uint16 b = getNextWord();
-	warning("STUB: o2_opA3(%x, %x)", a, b);
-	// removeGfxElementA2();
+	debugC(5, kCineDebugScript, "Line: %d: o2_removeGfxElementType21(%d,%d)", _line, a, b);
+	removeGfxElement(a, b, 21);
 	return 0;
 }
 

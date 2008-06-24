@@ -122,24 +122,22 @@ void addOverlay(uint16 objIdx, uint16 param) {
  * \param objIdx Associate the overlay with this object
  * \param param source background index
  */
-void addGfxElementA0(int16 objIdx, int16 param) {
+void addGfxElement(int16 objIdx, int16 param, int16 type) {
 	Common::List<overlay>::iterator it;
 	overlay tmp;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
-		// wtf?!
-		if (objectTable[it->objIdx].mask == objectTable[objIdx].mask &&
-			(it->type == 2 || it->type == 3)) {
+		if (objectTable[it->objIdx].mask >= objectTable[objIdx].mask || it->type == 2 || it->type == 3) {
 			break;
 		}
 	}
 
-	if (it != overlayList.end() && it->objIdx == objIdx && it->type == 20 && it->x == param) {
+	if (it != overlayList.end() && it->objIdx == objIdx && it->type == type && it->x == param) {
 		return;
 	}
 
 	tmp.objIdx = objIdx;
-	tmp.type = 20;
+	tmp.type = type;
 	tmp.x = param;
 	tmp.y = 0;
 	tmp.width = 0;
@@ -153,11 +151,11 @@ void addGfxElementA0(int16 objIdx, int16 param) {
  * \param param Remove overlay using this background
  * \todo Check that it works
  */
-void removeGfxElementA0(int16 objIdx, int16 param) {
+void removeGfxElement(int16 objIdx, int16 param, int16 type) {
 	Common::List<overlay>::iterator it;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
-		if (it->objIdx == objIdx && it->type == 20 && it->x == param) {
+		if (it->objIdx == objIdx && it->type == type && it->x == param) {
 			overlayList.erase(it);
 			return;
 		}

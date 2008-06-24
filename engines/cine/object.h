@@ -62,8 +62,8 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 
 void addOverlay(uint16 objIdx, uint16 param);
 int removeOverlay(uint16 objIdx, uint16 param);
-void addGfxElementA0(int16 objIdx, int16 param);
-void removeGfxElementA0(int16 objIdx, int16 param);
+void addGfxElement(int16 objIdx, int16 param, int16 type);
+void removeGfxElement(int16 objIdx, int16 param, int16 type);
 
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx);
 

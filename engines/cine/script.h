@@ -258,10 +258,10 @@ protected:
 	int o2_useBgScroll();
 	int o2_setAdditionalBgVScroll();
 	int o2_op9F();
-	int o2_addGfxElementA0();
-	int o2_removeGfxElementA0();
-	int o2_opA2();
-	int o2_opA3();
+	int o2_addGfxElementType20();
+	int o2_removeGfxElementType20();
+	int o2_addGfxElementType21();
+	int o2_removeGfxElementType21();
 	int o2_loadMask22();
 	int o2_unloadMask22();
 
