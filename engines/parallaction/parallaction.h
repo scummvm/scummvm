@@ -548,6 +548,9 @@ private:
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
 
+	bool	_inTestResult;
+
+
 	// common callables
 	void _c_play_boogie(void*);
 	void _c_startIntro(void*);

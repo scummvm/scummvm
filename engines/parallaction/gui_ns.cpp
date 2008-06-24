@@ -166,6 +166,8 @@ void Parallaction_ns::guiStart() {
 }
 
 void Parallaction_ns::selectStartLocation() {
+	_inTestResult = false;
+
 	int character = guiSelectCharacter();
 	if (character == -1)
 		error("invalid character selected from menu screen");

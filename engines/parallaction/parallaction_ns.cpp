@@ -147,6 +147,8 @@ int Parallaction_ns::init() {
 
 	num_foglie = 0;
 
+	_inTestResult = false;
+
 	_location._animations.push_front(_char._ani);
 
 	Parallaction::init();
@@ -156,7 +158,7 @@ int Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
-	
+
 	delete _locationParser;
 	delete _programParser;
 	delete _mouseComposedArrow;
@@ -235,10 +237,10 @@ int Parallaction_ns::go() {
 	_globalTable = _disk->loadTable("global");
 
 	guiStart();
-	
+
 	if (_engineFlags & kEngineQuit)
 		return 0;
-	
+
 	changeLocation(_location._name);
 
 	if (_engineFlags & kEngineQuit)

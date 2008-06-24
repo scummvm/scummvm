@@ -417,6 +417,11 @@ void Parallaction_ns::_c_ridux(void *parm) {
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
+	if (_inTestResult) {
+		return;
+	}
+	_inTestResult = true;
+
 	_gfx->updateScreen();
 
 	_disk->selectArchive("disk1");
