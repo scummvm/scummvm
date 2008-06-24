@@ -723,7 +723,7 @@ void KyraEngine_HoF::fadeScenePal(int srcIndex, int delayTime) {
 
 bool KyraEngine_HoF::lineIsPassable(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::lineIsPassable(%d, %d)", x, y);
-	static int unkTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
+	static const int widthTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
 
 	if (_pathfinderFlag & 2) {
 		if (x >= 320)
@@ -743,7 +743,7 @@ bool KyraEngine_HoF::lineIsPassable(int x, int y) {
 	if (y > 143)
 		return false;
 
-	int unk1 = unkTable[getScale(x, y) >> 5];
+	int unk1 = widthTable[getScale(x, y) >> 5];
 
 	if (y < 0)
 		y = 0;

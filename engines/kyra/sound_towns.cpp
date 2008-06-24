@@ -878,7 +878,7 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 				pos += 6;
 			}
 		} else if (cmd == 0xF2) {
-			static uint16 tickTable [] = { 0x180, 0xC0, 0x80, 0x60, 0x40, 0x30, 0x20, 0x18 };
+			static const uint16 tickTable[] = { 0x180, 0xC0, 0x80, 0x60, 0x40, 0x30, 0x20, 0x18 };
 			_baseTick += tickTable[_nextBaseTickStep >> 4] * ((_nextBaseTickStep & 0x0f) + 1);
 			_nextBaseTickStep = pos[1];
 			pos += 6;

@@ -35,7 +35,7 @@
 namespace Kyra {
 EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
 #define COMMAND(x) { &EMCInterpreter::x, #x }
-	static CommandEntry commandProcs[] = {
+	static const CommandEntry commandProcs[] = {
 		// 0x00
 		COMMAND(cmd_jmpTo),
 		COMMAND(cmd_setRetValue),
