@@ -321,6 +321,24 @@ protected:
 	bool parserCallback_DRAWSTEP();
 	bool parserCallback_DRAWDATA();
 
+	bool validateKeyIntSigned(const char *key) {
+		if (!isdigit(*key) && *key != '+' && *key != '-')
+			return false;
+
+		return validateKeyInt(key + 1);
+	}
+
+	bool validateKeyInt(const char *key) {
+		if (*key == 0)
+			return false;
+
+		while (*key)
+			if (!isdigit(*key++))
+				return false;
+
+		return true;
+	}
+
 	Graphics::DrawStep *newDrawStep();
 
 	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;

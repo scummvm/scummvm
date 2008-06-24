@@ -74,6 +74,7 @@ public:
 	struct ParserNode {
 		Common::String name;
 		Common::StringMap values;
+		bool ignore;
 	};
 
 	virtual bool parse();
@@ -103,7 +104,13 @@ protected:
 	 * Remember to leave the node stack _UNCHANGED_ in your own function. Removal
 	 * of closed keys is done automatically.
 	 *
-	 * Return true if the key was properly handled. False otherwise.
+	 * When parsing a key, one may chose to skip it, e.g. because it's not needed
+	 * on the current configuration. In order to ignore a key, you must set
+	 * the "ignore" field of its KeyNode struct to "true": The key and all its children
+	 * will then be automatically ignored by the parser.
+	 *
+	 * Return true if the key was properly handled (this includes the case when the
+	 * key is being ignored). False otherwise.
 	 * See the sample implementation in GUI::ThemeParser.
 	 */
 	virtual bool keyCallback(Common::String keyName) {
@@ -120,13 +127,12 @@ protected:
 	 * node stack and calls the keyCallback.
 	 * There's no reason to overload this.
 	 */
-	virtual void parseActiveKey(bool closed);
+	virtual bool parseActiveKey(bool closed);
 
 	/**
 	 * Prints an error message when parsing fails and stops the parser.
-	 * TODO: More descriptive error messages.
 	 */
-	virtual void parserError(const char *errorString);
+	virtual void parserError(const char *errorString, ...);
 
 	/**
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
@@ -163,7 +169,7 @@ protected:
 
 		if (_text[_pos] == '/' && _text[_pos + 1] == '/') {
 			_pos += 2;
-			while (_text[_pos] && _text[_pos] != '\n')
+			while (_text[_pos] && _text[_pos] != '\n' && _text[_pos] != '\r')
 				_pos++;
 			return true;
 		}
@@ -194,6 +200,7 @@ protected:
 
 	int _pos; /** Current position on the XML buffer. */
 	char *_text; /** Buffer with the text being parsed */
+	char *_fileName;
 
 	ParserState _state; /** Internal state of the parser */
 

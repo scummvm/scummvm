@@ -42,6 +42,15 @@ using namespace Common;
 ThemeParser::ThemeParser() : XMLParser() {
 	_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
 	_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
+
+	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
+	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
+	_drawFunctions["roundedsq"]  = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
+	_drawFunctions["bevelsq"]  = &Graphics::VectorRenderer::drawCallback_BEVELSQ;
+	_drawFunctions["line"]  = &Graphics::VectorRenderer::drawCallback_LINE;
+	_drawFunctions["triangle"]  = &Graphics::VectorRenderer::drawCallback_TRIANGLE;
+	_drawFunctions["fill"]  = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
+	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
 }
 
 bool ThemeParser::keyCallback(Common::String keyName) {
@@ -73,8 +82,12 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 }
 
 bool ThemeParser::parserCallback_DRAWSTEP() {
-	ParserNode *stepNode = _activeKey.pop();
-	ParserNode *drawdataNode = _activeKey.pop();
+	ParserNode *stepNode = _activeKey.top();
+
+	// HACK: Any cleaner way to access the second item from
+	// the top without popping? Let's keep it this way and hope
+	// the internal representation doesn't change
+	ParserNode *drawdataNode = _activeKey[_activeKey.size() - 2];
 
 	assert(stepNode->name == "drawstep");
 	assert(drawdataNode->name == "drawdata");
@@ -85,32 +98,108 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	Common::String functionName = stepNode->values["func"]; 
 
 	if (_drawFunctions.contains(functionName) == false) {
-		parserError("Invalid drawing function in draw step.");
-		_activeKey.push(drawdataNode);
-		_activeKey.push(stepNode);
+		parserError("%s is not a valid drawing function name", functionName.c_str());
 		return false;
 	}	
 
 	drawstep->drawingCall = _drawFunctions[functionName];
 
-	if (stepNode->values.contains("stroke")) {
+	uint32 red, green, blue;
 
+/**
+ * Helper macro to sanitize and assign an integer value from a key
+ * to the draw step.
+ *
+ * @param struct_name Name of the field of a DrawStep struct that must be
+ *                    assigned.
+ * @param key_name Name as STRING of the key identifier as it appears in the
+ *                 theme description format.
+ */
+#define __PARSER_ASSIGN_INT(struct_name, key_name) \
+	if (stepNode->values.contains(key_name)) { \
+		if (!validateKeyInt(stepNode->values[key_name].c_str())) \
+			return false; \
+		\
+		drawstep->struct_name = atoi(stepNode->values[key_name].c_str()); \
 	}
 
-	if (functionName == "roundedsq") {
-
+/**
+ * Helper macro to sanitize and assign a RGB value from a key to the draw
+ * step. RGB values have the following syntax: "R, G, B".
+ *
+ * TODO: Handle also specific name colors such as "red", "green", etc.
+ *
+ * @param struct_name Name of the field of a DrawStep struct that must be
+ *                    assigned.
+ * @param key_name Name as STRING of the key identifier as it appears in the
+ *                 theme description format.
+ */
+#define __PARSER_ASSIGN_RGB(struct_name, key_name) \
+	if (stepNode->values.contains(key_name)) { \
+		if (sscanf(stepNode->values[key_name].c_str(), "%d, %d, %d", &red, &green, &blue) != 3) \
+			return false; \
+		\
+		drawstep->struct_name.r = red; \
+		drawstep->struct_name.g = green; \
+		drawstep->struct_name.b = blue; \
 	}
+
+	__PARSER_ASSIGN_INT(stroke, "stroke");
+	__PARSER_ASSIGN_INT(shadow, "shadow");
+	__PARSER_ASSIGN_INT(factor, "gradient_factor");
+
+	__PARSER_ASSIGN_RGB(fgColor, "fg_color");
+	__PARSER_ASSIGN_RGB(bgColor, "bg_color");
+	__PARSER_ASSIGN_RGB(gradColor1, "gradient_start");
+	__PARSER_ASSIGN_RGB(gradColor2, "gradient_end");
+
+	if (functionName == "roundedsq" || functionName == "circle") {
+		__PARSER_ASSIGN_INT(radius, "radius");
+	}
+
+	if (functionName == "bevelsq") {
+		__PARSER_ASSIGN_INT(extraData, "bevel");
+	}
+
+#undef __PARSER_ASSIGN_INT
+#undef __PARSER_ASSIGN_RGB
 
 	g_InterfaceManager.addDrawStep(drawdataNode->values["id"], drawstep);
-
-	_activeKey.push(drawdataNode);
-	_activeKey.push(stepNode);
-
 	return true;
 }
 
 bool ThemeParser::parserCallback_DRAWDATA() {
-	printf("Drawdata callback!\n");
+	ParserNode *drawdataNode = _activeKey.top();
+	bool cached = false;
+
+	if (drawdataNode->values.contains("id") == false) {
+		parserError("DrawData notes must contain an identifier.");
+		return false;
+	}
+
+	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
+
+	if (id == -1) {
+		parserError("%d is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
+		return false;
+	}
+
+	if (drawdataNode->values.contains("cached") && drawdataNode->values["cached"] == "true") {
+		cached = true;
+	}
+
+	if (drawdataNode->values.contains("platform")) {
+		if (drawdataNode->values["platform"].compareToIgnoreCase(Common::getHostPlatformString()) != 0) {
+			drawdataNode->ignore = true;
+			return true;
+		}
+	}
+
+	if (g_InterfaceManager.addDrawData(id, cached) == false) {
+		parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
+		return false;
+	}
+
 	return true;
 }
 

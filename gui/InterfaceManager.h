@@ -47,6 +47,8 @@ class InterfaceManager : public Common::Singleton<InterfaceManager> {
 	friend class Common::Singleton<SingletonBaseType>;
 	typedef Common::String String;
 
+	static const char *kDrawDataStrings[];
+
 public:
 	enum Graphics_Mode {
 		kGfxDisabled = 0,
@@ -168,10 +170,15 @@ public:
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
 	DrawData getDrawDataId(Common::String &name) {
-		return (DrawData)0;
+		for (int i = 0; i < kDrawDataMAX; ++i)
+			if (name.compareToIgnoreCase(kDrawDataStrings[i]) == 0)
+				return (DrawData)i;
+
+		return (DrawData)-1;
 	}
 
 	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step);
+	bool addDrawData(DrawData data_id, bool cached);
 
 protected:
 	template<typename PixelType> void screenInit();

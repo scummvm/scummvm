@@ -36,35 +36,86 @@ using namespace Graphics;
 
 void XMLParser::debug_testEval() {
 	static const char *debugConfigText =
-		"</* lol this is just a moronic test */drawdata id = \"background_default\" cache = true>\n"
-		"<drawstep func = \"roundedsq\" fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>\n"
+		"</* lol this is just a moronic test */drawdata id = \"mainmenu_bg\" cache = true>\n"
+		"<drawstep| func = \"roundedsq\" fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>\n"
 		"//<drawstep func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>\n"
 		"</ drawdata>/* lol this is just a simple test*/\n";
 
 	_text = strdup(debugConfigText);
+	_fileName = strdup("test_parse.xml");
 
 	Common::String test = "12,  125, 125";
-
-	printf("\n\nRegex result: %s.\n\n", test.regexMatch("^[d]*,[d]*,[d]*$", true) ? "Success." : "Fail");
 
 	parse();
 }
 
 
-void XMLParser::parserError(const char *error_string) {
+void XMLParser::parserError(const char *error_string, ...) {
 	_state = kParserError;
-	printf("PARSER ERROR: %s\n", error_string);
+
+	int pos = _pos;
+	int line_count = 1;
+	int line_start = -1;
+	int line_width = 1;
+
+	do {
+		if (_text[pos] == '\n' || _text[pos] == '\r') {
+			line_count++;
+			
+			if (line_start == -1)
+				line_start = pos;
+		}
+	} while (pos-- > 0);
+
+	line_start = MAX(line_start, _pos - 80);
+
+	do {
+		if (_text[line_start + line_width] == '\n' || _text[line_start + line_width] == '\r')
+			break;
+	} while (_text[line_start + line_width++]);
+
+	line_width = MIN(line_width, 80);
+
+	char linestr[81];
+	strncpy(linestr, &_text[line_start] + 1, line_width );
+	linestr[line_width - 1] = 0;
+
+	printf("  File <%s>, line %d:\n", _fileName, line_count);
+
+	printf("%s\n", linestr);
+	for (int i = 1; i < _pos - line_start; ++i)
+		printf(" ");
+
+	printf("^\n");
+	printf("Parser error: ");
+
+	va_list args;
+	va_start(args, error_string);
+	vprintf(error_string, args);
+	va_end(args);
+
+	printf("\n");
 }
 
-void XMLParser::parseActiveKey(bool closed) {
-	if (keyCallback(_activeKey.top()->name) == false) {
-		parserError("Unhandled value inside key.");
-		return;
+bool XMLParser::parseActiveKey(bool closed) {
+	bool ignore = false;
+
+	// check if any of the parents must be ignored.
+	// if a parent is ignored, all children are too.
+	for (int i = _activeKey.size() - 1; i >= 0; --i) {
+		if (_activeKey[i]->ignore)
+			ignore = true;
+	}
+
+	if (ignore == false && keyCallback(_activeKey.top()->name) == false) {
+		return false;
 	}
 	
 	if (closed) {
 		delete _activeKey.pop();
 	}
+
+	return true;
 }
 
 bool XMLParser::parseKeyValue(Common::String keyName) {
@@ -115,7 +166,7 @@ bool XMLParser::parse() {
 		switch (_state) {
 			case kParserNeedKey:
 				if (_text[_pos++] != '<') {
-					parserError("Expecting key start.");
+					parserError("Parser expecting key start.");
 					break;
 				}
 
@@ -144,6 +195,7 @@ bool XMLParser::parse() {
 				} else {
 					ParserNode *node = new ParserNode;
 					node->name = _token;
+					node->ignore = false;
 					_activeKey.push(node);
 				}
 
@@ -166,9 +218,10 @@ bool XMLParser::parse() {
 				selfClosure = (_text[_pos] == '/');
 
 				if ((selfClosure && _text[_pos + 1] == '>') || _text[_pos] == '>') {
-					parseActiveKey(selfClosure);
-					_pos += selfClosure ? 2 : 1;
-					_state = kParserNeedKey;
+					if (parseActiveKey(selfClosure)) {
+						_pos += selfClosure ? 2 : 1;
+						_state = kParserNeedKey;
+					}
 					break;
 				}
 
@@ -181,7 +234,7 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyOperator:
 				if (_text[_pos++] != '=') 
-					parserError("Unexpected character after key name.");
+					parserError("Syntax error after key name.");
 				else  
 					_state = kParserNeedPropertyValue;
 
@@ -189,7 +242,7 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyValue:
 				if (!parseKeyValue(_token)) 
-					parserError("Unable to parse key value.");
+					parserError("Invalid key value.");
 				else 
 					_state = kParserNeedPropertyName;
 

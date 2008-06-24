@@ -38,10 +38,43 @@ namespace GUI {
 
 using namespace Graphics;
 
+const char *InterfaceManager::kDrawDataStrings[] = {
+	"mainmenu_bg",
+	"special_bg",
+	"plain_bg",
+	"default_bg",
+
+	"button_idle",
+	"button_hover",
+
+	"surface",
+
+	"slider_full",
+	"slider_empty",
+
+	"checkbox_enabled",
+	"checkbox_disabled",
+
+	"tab",
+
+	"scrollbar_base",
+	"scrollbar_top",
+	"scrollbar_bottom",
+	"scrollbar_handle",
+
+	"popup",
+	"caret",
+	"separator"
+};
+
 InterfaceManager::InterfaceManager() : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
 	_screen(0), _bytesPerPixel(0) {
 	_system = g_system;
+
+	for (int i = 0; i < kDrawDataMAX; ++i) {
+		_widgets[i] = 0;
+	}
 
 	setGraphicsMode(kGfxStandard16bit);
 }
@@ -78,9 +111,25 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 }
 
 void InterfaceManager::addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step) {
-	_widgets[getDrawDataId(drawDataId)]->_steps.push_back(step);
+	DrawData id = getDrawDataId(drawDataId);
+	
+	assert(_widgets[id] != 0);
+	_widgets[id]->_steps.push_back(step);
 }
 
+bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
+	assert(data_id >= 0 && data_id < kDrawDataMAX);
+
+	if (_widgets[data_id] != 0)
+		return false;
+
+	_widgets[data_id] = new WidgetDrawData;
+	_widgets[data_id]->_cached = cached;
+	_widgets[data_id]->_type = data_id;
+	_widgets[data_id]->_scaled = false;
+
+	return true;
+}
 
 bool InterfaceManager::init() {
 	return false;
