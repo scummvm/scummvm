@@ -82,7 +82,6 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_copyProtection = ConfMan.getBool("copy_protection");
-	_quitRequested = false;
 
 	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
@@ -112,11 +111,11 @@ GobEngine::~GobEngine() {
 int GobEngine::go() {
 	_init->initGame(0);
 
-	return 0;
+	return _rtl;
 }
 
 void GobEngine::shutdown() {
-	_quitRequested = true;
+	_quit = true;
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {

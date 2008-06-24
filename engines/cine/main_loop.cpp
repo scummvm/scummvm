@@ -181,11 +181,8 @@ int getKeyData() {
 
 void CineEngine::mainLoop(int bootScriptIdx) {
 	bool playerAction;
-	//uint16 quitFlag;
 	byte di;
 	uint16 mouseButton;
-
-	//quitFlag = 0;
 
 	if (_preLoad == false) {
 		resetBgIncrustList();

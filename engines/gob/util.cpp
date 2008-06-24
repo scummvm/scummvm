@@ -72,7 +72,7 @@ void Util::longDelay(uint16 msecs) {
 		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
-	} while (!_vm->_quitRequested &&
+	} while (!_vm->_quit &&
 	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 
@@ -119,7 +119,7 @@ void Util::processInput(bool scroll) {
 		case Common::EVENT_KEYUP:
 			break;
 		case Common::EVENT_QUIT:
-			_vm->_quitRequested = true;
+			_vm->_quit = true;
 			break;
 		default:
 			break;

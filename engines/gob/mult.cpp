@@ -197,7 +197,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		_frame++;
 		_vm->_util->waitEndFrame();
-	} while (!stop && !stopNoClear && !_vm->_quitRequested);
+	} while (!stop && !stopNoClear && !_vm->_quit);
 
 	if (!stopNoClear) {
 		if (_animDataAllocated) {

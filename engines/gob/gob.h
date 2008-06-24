@@ -204,7 +204,6 @@ public:
 	char *_startTot0;
 	bool _copyProtection;
 	bool _noMusic;
-	bool _quitRequested;
 
 	Global *_global;
 	Util *_util;

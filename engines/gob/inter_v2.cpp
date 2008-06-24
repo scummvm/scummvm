@@ -1483,7 +1483,7 @@ void Inter_v2::o2_scroll() {
 
 	curX = startX;
 	curY = startY;
-	while (!_vm->_quitRequested && ((curX != endX) || (curY != endY))) {
+	while (!_vm->_quit && ((curX != endX) || (curY != endY))) {
 		curX = stepX > 0 ? MIN(curX + stepX, (int) endX) :
 			MAX(curX + stepX, (int) endX);
 		curY = stepY > 0 ? MIN(curY + stepY, (int) endY) :

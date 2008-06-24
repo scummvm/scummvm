@@ -117,8 +117,6 @@ void mainLoopSub6(void);
 
 void checkForPendingDataLoad(void);
 
-//extern uint16 exitEngine;
-
 void hideMouse(void);
 
 void removeExtention(char *dest, const char *source);

@@ -110,7 +110,6 @@ static const int16 canUseOnItemTable[] = { 1, 0, 0, 1, 1, 0, 0 };
 CommandeType objectListCommand[20];
 int16 objListTab[20];
 
-//uint16 exitEngine;
 uint16 zoneData[NUM_MAX_ZONE];
 
 
