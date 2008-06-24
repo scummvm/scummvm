@@ -60,8 +60,6 @@ _vorbis=auto
 _tremor=auto
 _flac=auto
 _mad=auto
-_alsa=auto
-_mpeg2=auto
 
 _endian=unknown
 _need_memalign=no
@@ -304,9 +302,6 @@ Optional Features:
   --enable-Werror          treat warnings as errors
 
 Optional Libraries:
-  --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
-  --disable-alsa           disable ALSA midi sound support [autodetect]
-
   --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
   --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
@@ -321,9 +316,6 @@ Optional Libraries:
   --disable-flac           disable FLAC support [autodetect]
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
-
-  --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
-  --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
 
@@ -350,8 +342,6 @@ Try \`$0 --help' for more information." >&2
 
 for ac_option in $@; do
 	case "$ac_option" in
-	--enable-alsa)            _alsa=yes       ;;
-	--disable-alsa)           _alsa=no        ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -360,17 +350,6 @@ for ac_option in $@; do
 	--disable-flac)           _flac=no        ;;
 	--enable-mad)             _mad=yes        ;;
 	--disable-mad)            _mad=no         ;;
-	--disable-mpeg2)          _mpeg2=no       ;;
-	--with-mpeg2-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		MPEG2_CFLAGS="-I$arg/include"
-		MPEG2_LIBS="-L$arg/lib"
-		;;
-	--with-alsa-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		ALSA_CFLAGS="-I$arg/include"
-		ALSA_LIBS="-L$arg/lib"
-		;;
 	--with-ogg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		OGG_CFLAGS="-I$arg/include"
@@ -1005,27 +984,6 @@ add_to_config_mk_if_yes "$_mad" 'USE_MAD = 1'
 echo "$_mad"
 
 #
-# Check for ALSA
-#
-echocheck "ALSA >= 0.9"
-if test "$_alsa" = auto ; then
-	_alsa=no
-	cat > $TMPC << EOF
-#include <alsa/asoundlib.h>
-int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
-EOF
-	cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
-fi
-if test "$_alsa" = yes ; then
-	_def_alsa='#define USE_ALSA'
-	LIBS="$LIBS $ALSA_LIBS -lasound"
-	INCLUDES="$INCLUDES $ALSA_CFLAGS"
-else
-	_def_alsa='#undef USE_ALSA'
-fi
-echo "$_alsa"
-
-#
 # Check for ZLib
 #
 echocheck "zlib"
@@ -1050,50 +1008,6 @@ else
 fi
 echo "$_zlib"
 
-#
-# Check for LibMPEG2
-#
-echocheck "libmpeg2 >= 0.3.2"
-if test "$_mpeg2" = auto ; then
-	_mpeg2=no
-	cat > $TMPC << EOF
-typedef signed $type_1_byte int8_t;
-typedef signed $type_2_byte int16_t;
-typedef signed $type_4_byte int32_t;
-
-typedef unsigned $type_1_byte uint8_t;
-typedef unsigned $type_2_byte uint16_t;
-typedef unsigned $type_4_byte uint32_t;
-
-#include <mpeg2dec/mpeg2.h>
-int main(void) {
-	/* mpeg2_state_t first appears in 0.4.0 */
-	mpeg2_state_t state;
-
-		#ifdef MPEG2_RELEASE
-		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 3, 2))
-			return 0;
-	#endif
-	return 1;
-}
-EOF
-
-	if test -n "$_host"; then
-		# don't execute while cross compiling
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
-	else
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$EXEXT && _mpeg2=yes
-	fi
-fi
-if test "$_mpeg2" = yes ; then
-	_def_mpeg2='#define USE_MPEG2'
-	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
-	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
-else
-	_def_mpeg2='#undef USE_MPEG2'
-fi
-add_to_config_mk_if_yes "$_mpeg2" 'USE_MPEG2 = 1'
-echo "$_mpeg2"
 
 rm -rf $TMPC $TMPO$EXEEXT $TMPO.dSYM
 
@@ -1165,8 +1079,6 @@ $_def_vorbis
 $_def_tremor
 $_def_flac
 $_def_mad
-$_def_alsa
-$_def_mpeg2
 
 #endif /* CONFIG_H */
 EOF
