@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
+#include "gui/ThemeParser.h"
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -143,6 +144,7 @@ public:
 	~InterfaceManager() {
 		freeRenderer();
 		freeScreen();
+		delete _parser;
 	}
 
 	void setGraphicsMode(Graphics_Mode mode);
@@ -180,8 +182,20 @@ public:
 	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step);
 	bool addDrawData(DrawData data_id, bool cached);
 
+	ThemeParser *parser() {
+		return _parser;
+	}
+
+	bool ready() {
+		return _initOk && _themeOk;
+	}
+
+	bool loadTheme(Common::String &themeName);
+
 protected:
 	template<typename PixelType> void screenInit();
+
+	bool loadThemeXML(Common::String &themeName);
 
 	void freeRenderer() {
 		delete _vectorRenderer;
@@ -205,6 +219,7 @@ protected:
 	OSystem *_system;
 	Graphics::VectorRenderer *_vectorRenderer;
 	Graphics::Surface *_screen;
+	GUI::ThemeParser *_parser;
 
 	int _bytesPerPixel;
 	Graphics_Mode _graphicsMode;
@@ -215,17 +230,16 @@ protected:
 	WidgetDrawData *_widgets[kDrawDataMAX];
 
 	bool _initOk;
+	bool _themeOk;
 	bool _caching;
 };
 
 struct WidgetDrawData {
-	Common::Rect _realSize;
-	bool _scaled;
-
 	Common::Array<Graphics::DrawStep*> _steps;
 
 	bool _cached;
 	Graphics::Surface *_surfaceCache;
+	uint32 _cachedW, _cachedH;
 
 	InterfaceManager::DrawData _type;
 };

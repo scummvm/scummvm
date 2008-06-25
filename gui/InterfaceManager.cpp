@@ -28,6 +28,7 @@
 #include "graphics/colormasks.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/config-manager.h"
 
 #include "gui/InterfaceManager.h"
 #include "graphics/VectorRenderer.h"
@@ -69,8 +70,9 @@ const char *InterfaceManager::kDrawDataStrings[] = {
 
 InterfaceManager::InterfaceManager() : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
-	_screen(0), _bytesPerPixel(0) {
+	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false) {
 	_system = g_system;
+	_parser = new ThemeParser();
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		_widgets[i] = 0;
@@ -126,9 +128,48 @@ bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
 	_widgets[data_id]->_type = data_id;
-	_widgets[data_id]->_scaled = false;
 
 	return true;
+}
+
+bool InterfaceManager::loadTheme(Common::String &themeName) {
+	if (!loadThemeXML(themeName)) {
+		warning("Could not parse custom theme '%s'.", themeName.c_str());
+		return false;
+	}
+
+	for (int i = 0; i < kDrawDataMAX; ++i) {
+		if (_widgets[i] == 0) {
+#ifdef REQUIRE_ALL_DD_SETS
+			warning("Error when parsing custom theme '%s': Missing data assets.", themeName.c_str());
+			return false;
+#endif
+		} else if (_widgets[i]->_cached) {
+			// draw the cached widget to the cache surface
+		}
+	}
+
+	_themeOk = true;
+	return true;
+}
+
+bool InterfaceManager::loadThemeXML(Common::String &themeName) {
+	assert(_parser);
+
+	if (ConfMan.hasKey("themepath"))
+		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+
+#ifdef DATA_PATH
+	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
+#endif
+
+	if (ConfMan.hasKey("extrapath"))
+		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+
+	if (!parser()->loadFile(themeName + ".xml"))
+		return false;
+	
+	return parser()->parse();
 }
 
 bool InterfaceManager::init() {

@@ -148,6 +148,9 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 
 bool XMLParser::parse() {
 
+	if (_text.ready() == false)
+		return parserError("XML stream not ready for reading.");
+
 	bool activeClosure = false;
 	bool selfClosure = false;
 

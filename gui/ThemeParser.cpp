@@ -237,7 +237,7 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 			else if (val == "right")
 				drawstep->extraData = VectorRenderer::kTriangleRight;
 			else
-				return parserError("'%s' is not a valid value for triangle orientation.", stepNode->values["orientation"].c_str());
+				return parserError("'%s' is not a valid value for triangle orientation.", val.c_str());
 		}
 	}
 
@@ -289,7 +289,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
 
 	if (id == -1)
-		return parserError("%d is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
+		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
 
 	if (drawdataNode->values.contains("cached") && drawdataNode->values["cached"] == "true") {
 		cached = true;

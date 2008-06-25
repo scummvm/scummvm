@@ -70,6 +70,10 @@ public:
 		delete _stream;
 		_stream = s;
 	}
+
+	bool ready() {
+		return _stream != 0;
+	}
 };
 
 /**
@@ -116,7 +120,7 @@ public:
 		int depth;
 	};
 
-	virtual bool loadFile(const char *filename) {
+	virtual bool loadFile(Common::String filename) {
 		Common::File *f = new Common::File;
 
 		if (!f->open(filename, Common::File::kFileReadMode))
