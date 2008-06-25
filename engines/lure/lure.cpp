@@ -126,8 +126,8 @@ int LureEngine::go() {
 		CopyProtectionDialog *dialog = new CopyProtectionDialog();
 		bool result = dialog->show();
 		delete dialog;
-		if (_events->quitFlag)
-			return 0;
+		if (_quit)
+			return _rtl;
 
 		if (!result)
 			error("Sorry - copy protection failed");
@@ -145,14 +145,14 @@ int LureEngine::go() {
 	}
 
 	// Play the game
-	if (!_events->quitFlag) {
+	if (!_quit) {
 		// Play the game
 		Sound.loadSection(Sound.isRoland() ? ROLAND_MAIN_SOUND_RESOURCE_ID : ADLIB_MAIN_SOUND_RESOURCE_ID);
 		gameInstance->execute();
 	}
 
 	delete gameInstance;
-	return 0;
+	return _rtl;
 }
 
 void LureEngine::pauseEngineIntern(bool pause) {

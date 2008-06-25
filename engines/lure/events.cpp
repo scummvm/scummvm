@@ -29,6 +29,7 @@
 #include "graphics/cursorman.h"
 
 #include "lure/events.h"
+#include "lure/lure.h"
 #include "lure/res.h"
 
 namespace Lure {
@@ -137,11 +138,12 @@ void Mouse::setPosition(int newX, int newY) {
 
 void Mouse::waitForRelease() {
 	Events &e = Events::getReference();
+	LureEngine &engine = LureEngine::getReference();
 
 	do {
-		while (e.pollEvent() && !e.quitFlag) ;
+		while (e.pollEvent() && !engine._quit) ;
 		g_system->delayMillis(20);
-	} while (!e.quitFlag && (lButton() || rButton() || mButton()));
+	} while (!engine._quit && (lButton() || rButton() || mButton()));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -150,7 +152,6 @@ static Events *int_events = NULL;
 
 Events::Events() {
 	int_events = this;
-	quitFlag = false;
 }
 
 Events &Events::getReference() {
@@ -159,12 +160,14 @@ Events &Events::getReference() {
 
 
 bool Events::pollEvent() {
+	LureEngine &engine = LureEngine::getReference();
+	
 	if (!g_system->getEventManager()->pollEvent(_event)) return false;
 
 	// Handle keypress
 	switch (_event.type) {
 	case Common::EVENT_QUIT:
-		quitFlag = true;
+		engine._quit = true;
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
@@ -210,10 +213,11 @@ void Events::waitForPress() {
 
 bool Events::interruptableDelay(uint32 milliseconds) {
 	Events &events = Events::getReference();
+	LureEngine &engine = LureEngine::getReference();
 	uint32 delayCtr = g_system->getMillis() + milliseconds;
 
 	while (g_system->getMillis() < delayCtr) {
-		if (events.quitFlag) return true;
+		if (engine._quit) return true;
 
 		if (events.pollEvent()) {
 			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||

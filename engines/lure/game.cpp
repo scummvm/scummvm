@@ -23,10 +23,10 @@
  *
  */
 
-#include "lure/lure.h"
 #include "lure/game.h"
 #include "lure/animseq.h"
 #include "lure/fights.h"
+#include "lure/lure.h"
 #include "lure/res_struct.h"
 #include "lure/room.h"
 #include "lure/scripts.h"
@@ -125,6 +125,7 @@ void Game::nextFrame() {
 
 void Game::execute() {
 	OSystem &system = *g_system;
+	LureEngine &engine = LureEngine::getReference();
 	Room &room = Room::getReference();
 	Resources &res = Resources::getReference();
 	Events &events = Events::getReference();
@@ -142,7 +143,7 @@ void Game::execute() {
 	setState(GS_RESTART);
 	bool initialRestart = true;
 
-	while (!events.quitFlag) {
+	while (!engine._quit) {
 
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
@@ -162,7 +163,7 @@ void Game::execute() {
 		mouse.cursorOn();
 
 		// Main game loop
-		while (!events.quitFlag && ((_state & GS_RESTART) == 0)) {
+		while (!engine._quit && ((_state & GS_RESTART) == 0)) {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
@@ -294,7 +295,7 @@ void Game::execute() {
 
 		} else if ((_state & GS_RESTART) == 0)
 			// Exiting game
-			events.quitFlag = true;
+			engine._quit = true;
 	}
 }
 
@@ -892,7 +893,7 @@ void Game::doShowCredits() {
 void Game::doQuit() {
 	Sound.pause();
 	if (getYN())
-		Events::getReference().quitFlag = true;
+		LureEngine::getReference()._quit = true;
 	Sound.resume();
 }
 
@@ -977,6 +978,7 @@ bool Game::getYN() {
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
 	Resources &res = Resources::getReference();
+	LureEngine &engine = LureEngine::getReference();
 
 	Common::Language l = LureEngine::getReference().getLanguage();
 	Common::KeyCode y = Common::KEYCODE_y;
@@ -1018,7 +1020,7 @@ bool Game::getYN() {
 		}
 
 		g_system->delayMillis(10);
-	} while (!events.quitFlag && !breakFlag);
+	} while (!engine._quit && !breakFlag);
 
 	screen.update();
 	if (!vKbdFlag)

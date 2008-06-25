@@ -52,8 +52,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
-	_quitFlag = false;
-
 	_speechFile = "";
 	_trackMap = 0;
 	_trackMapSize = 0;
@@ -220,7 +218,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 void KyraEngine_v1::quitGame() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::quitGame()");
-	_quitFlag = true;
+	_quit = true;
 	// Nothing to do here
 }
 
@@ -258,7 +256,7 @@ int KyraEngine_v1::resetGameFlag(int flag) {
 }
 
 void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !_quitFlag) {
+	while (_system->getMillis() < timestamp && !_quit) {
 		if (timestamp - _system->getMillis() >= 10)
 			delay(10, update, isMainLoop);
 	}

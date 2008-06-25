@@ -459,7 +459,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		updateAllMenuButtons();
 	}
 
-	while (_displayMenu && !_vm->_quitFlag) {
+	while (_displayMenu && !_vm->_quit) {
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[_toplevelMenu], mouse.x, mouse.y);
 		processButtonList(_menuButtonList, 0, 0);
@@ -582,7 +582,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu && !_vm->_quitFlag) {
+	while (_displaySubMenu && !_vm->_quit) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[2], mouse.x, mouse.y);
@@ -631,7 +631,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 
 	_vm->_gameToLoad = -1;
 
-	while (_displaySubMenu && !_vm->_quitFlag) {
+	while (_displaySubMenu && !_vm->_quit) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[2], mouse.x, mouse.y);
@@ -719,7 +719,7 @@ int GUI_LoK::saveGame(Button *button) {
 	}
 	redrawTextfield();
 
-	while (_displaySubMenu && !_vm->_quitFlag) {
+	while (_displaySubMenu && !_vm->_quit) {
 		getInput();
 		updateSavegameString();
 		Common::Point mouse = _vm->getMousePos();
@@ -795,7 +795,7 @@ bool GUI_LoK::quitConfirm(const char *str) {
 	_displaySubMenu = true;
 	_cancelSubMenu = true;
 
-	while (_displaySubMenu && !_vm->_quitFlag) {
+	while (_displaySubMenu && !_vm->_quit) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[1], mouse.x, mouse.y);
@@ -861,7 +861,7 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu && !_vm->_quitFlag) {
+	while (_displaySubMenu && !_vm->_quit) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[5], mouse.x, mouse.y);

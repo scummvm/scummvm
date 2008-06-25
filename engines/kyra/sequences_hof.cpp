@@ -75,7 +75,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 	_seqEndTime = 0;
 	_menuChoice = 0;
 
-	for (int seqNum = startSeq; seqNum <= endSeq && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
+	for (int seqNum = startSeq; seqNum <= endSeq && !((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
 		_screen->clearPage(0);
 		_screen->clearPage(8);
 		memcpy(_screen->getPalette(1), _screen->getPalette(0), 0x300);
@@ -131,7 +131,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 		seq_sequenceCommand(cseq.startupCommand);
 
-		if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+		if (!((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			_screen->copyPage(2, 0);
 			_screen->updateScreen();
 		}
@@ -165,7 +165,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_seqWsaCurrentFrame = cseq.startFrame;
 
 			bool loop = true;
-			while (loop && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			while (loop && !((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 
 				if (_seqWsa || !cb)
@@ -189,16 +189,16 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				seq_processWSAs();
 				seq_processText();
 
-				if ((_seqWsa || !cb) && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				if ((_seqWsa || !cb) && !((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					_screen->copyPage(2, 0);
 					_screen->updateScreen();
 				}
 
 				bool loop2 = true;
-				while (loop2 && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				while (loop2 && !((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					if (_seqWsa) {
 						seq_processText();
-						if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+						if (!((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 							_screen->copyPage(2, 0);
 							_screen->updateScreen();
 						}
@@ -230,7 +230,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		} else {
 			_seqFrameDelay = cseq.frameDelay;
 			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
-			while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			while (!((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				_seqSubFrameStartTime = _system->getMillis();
 				seq_processWSAs();
 				if (cb)
@@ -262,7 +262,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			dl = ct;
 		_seqEndTime = _system->getMillis() + dl;
 
-		while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+		while (!((skipFlag() && allowSkip) || _quit || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			_seqSubFrameStartTime = _system->getMillis();
 			seq_processWSAs();
 
@@ -2093,7 +2093,7 @@ void KyraEngine_HoF::seq_loadNestedSequence(int wsaNum, int seqNum) {
 void KyraEngine_HoF::seq_nestedSequenceFrame(int command, int wsaNum) {
 	int xa = 0, ya = 0;
 	command--;
-	if (!_activeWSA[wsaNum].movie || skipFlag() || _quitFlag || _abortIntroFlag)
+	if (!_activeWSA[wsaNum].movie || skipFlag() || _quit || _abortIntroFlag)
 		return;
 
 	switch (command) {
@@ -2293,7 +2293,7 @@ bool KyraEngine_HoF::seq_processNextSubFrame(int wsaNum) {
 
 void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor) {
 	uint8 colormap[16];
-	if (skipFlag() || _quitFlag || _abortIntroFlag || _menuChoice)
+	if (skipFlag() || _quit || _abortIntroFlag || _menuChoice)
 		return;
 
 	memset(&_screen->getPalette(0)[0x2fa], 0x3f, 6);
@@ -2774,7 +2774,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 
 		++_invWsa.curFrame;
 
-		if (_invWsa.curFrame >= _invWsa.lastFrame && !_quitFlag)
+		if (_invWsa.curFrame >= _invWsa.lastFrame && !_quit)
 			break;
 
 		switch (_invWsa.curFrame) {

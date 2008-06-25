@@ -161,7 +161,7 @@ Common::InSaveFile *KyraEngine_v1::openSaveForReading(const char *filename, Save
 
 Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName) const {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s')", filename, saveName);
-	if (_quitFlag)
+	if (_quit)
 		return 0;
 
 	Common::OutSaveFile *out = 0;

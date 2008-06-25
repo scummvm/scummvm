@@ -22,6 +22,7 @@
 #include "lure/fights.h"
 #include "lure/luredefs.h"
 #include "lure/game.h"
+#include "lure/lure.h"
 #include "lure/res.h"
 #include "lure/room.h"
 #include "lure/sound.h"
@@ -108,6 +109,7 @@ bool FightsManager::isFighting() {
 }
 
 void FightsManager::fightLoop() {
+	LureEngine &engine = LureEngine::getReference();
 	Resources &res = Resources::getReference();
 	Game &game = Game::getReference();
 	Room &room = Room::getReference();
@@ -116,7 +118,7 @@ void FightsManager::fightLoop() {
 	uint32 timerVal = g_system->getMillis();
 
 	// Loop for the duration of the battle
-	while (!events.quitFlag && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
+	while (!engine._quit && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
 		checkEvents();
 
 		if (g_system->getMillis() > timerVal + GAME_FRAME_DELAY) {
@@ -184,6 +186,7 @@ const KeyMapping keyList[] = {
 	{Common::KEYCODE_INVALID, 0}};
 
 void FightsManager::checkEvents() {
+	LureEngine &engine = LureEngine::getReference();
 	Game &game = Game::getReference();
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
@@ -196,7 +199,7 @@ void FightsManager::checkEvents() {
 		if (events.type() == Common::EVENT_KEYDOWN) {
 			switch (events.event().kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				events.quitFlag = true;
+				engine._quit = true;
 				return;
 
 			case Common::KEYCODE_d:

@@ -311,7 +311,7 @@ int KyraEngine_HoF::go() {
 			seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
 
-	return 0;
+	return _rtl;
 }
 
 void KyraEngine_HoF::startup() {
@@ -440,9 +440,9 @@ void KyraEngine_HoF::startup() {
 void KyraEngine_HoF::runLoop() {
 	_screen->updateScreen();
 
-	_quitFlag = false;
+	_quit = false;
 	_runFlag = true;
-	while (!_quitFlag && _runFlag) {
+	while (!_quit && _runFlag) {
 		if (_deathHandler >= 0) {
 			removeHandItem();
 			delay(5);
@@ -1603,7 +1603,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 	_invWsa.timer = _system->getMillis();
 
 	if (run) {
-		while (_invWsa.running && !skipFlag() && !_quitFlag) {
+		while (_invWsa.running && !skipFlag() && !_quit) {
 			update();
 			_system->delayMillis(10);
 		}
@@ -1977,7 +1977,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 		return;
 
 	_tim->resetFinishedFlag();
-	while (!_quitFlag && !_tim->finished()) {
+	while (!_quit && !_tim->finished()) {
 		_tim->exec(tim, 0);
 		if (_chatText)
 			updateWithText();

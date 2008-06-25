@@ -65,7 +65,7 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	else screen.paletteFadeIn(&p);
 
 	bool result = interruptableDelay(delaySize);
-	if (events.quitFlag) return true;
+	if (LureEngine::getReference()._quit) return true;
 
 	if (!isEGA)
 		screen.paletteFadeOut();

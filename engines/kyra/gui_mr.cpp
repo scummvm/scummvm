@@ -868,7 +868,7 @@ void KyraEngine_MR::processAlbum() {
 	albumNewPage();
 	_album.running = true;
 
-	while (_album.running && !_quitFlag) {
+	while (_album.running && !_quit) {
 		updateInput();
 		checkInput(buttonList);
 		removeInputTop();
