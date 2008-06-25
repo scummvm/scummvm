@@ -31,6 +31,7 @@
 #include "common/system.h"
 #include "common/xmlparser.h"
 #include "common/stream.h"
+#include "common/file.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -65,13 +66,9 @@ public:
 		return _stream->readSByte();
 	}
 
-	void fillFromMem(const char *buffer, bool dispose = false) {
+	void loadStream(SeekableReadStream *stream) {
 		delete _stream;
-		_stream = new MemoryReadStream((const byte*)buffer, strlen(buffer), dispose);
-	}
-
-	void fillFromFile(const char *filename) {
-
+		_stream = stream;
 	}
 };
 
@@ -94,7 +91,10 @@ public:
 	 */
 	XMLParser() {}
 
-	virtual ~XMLParser() {}
+	virtual ~XMLParser() {
+		while (!_activeKey.empty())
+			delete _activeKey.pop();
+	}
 
 	/** Active state for the parser */
 	enum ParserState {
@@ -114,6 +114,21 @@ public:
 		Common::StringMap values;
 		bool ignore;
 	};
+
+	virtual bool loadFile(const char *filename) {
+		Common::File *f = new Common::File;
+
+		if (!f->open(filename, Common::File::kFileReadMode))
+			return false;
+
+		_text.loadStream(f);
+		return true;
+	}
+
+	virtual bool loadBuffer(const char *buffer, bool disposable = false) {
+		_text.loadStream(new MemoryReadStream((const byte*)buffer, strlen(buffer), disposable));
+		return true;
+	}
 
 	virtual bool parse();
 	void debug_testEval();
@@ -169,8 +184,10 @@ protected:
 
 	/**
 	 * Prints an error message when parsing fails and stops the parser.
+	 * Parser error always returns "false" so we can pass the return value directly
+	 * and break down the parsing.
 	 */
-	virtual void parserError(const char *errorString, ...) GCC_PRINTF(1, 2);
+	virtual bool parserError(const char *errorString, ...) GCC_PRINTF(1, 2);
 
 	/**
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.

@@ -55,10 +55,8 @@ ThemeParser::ThemeParser() : XMLParser() {
 
 bool ThemeParser::keyCallback(Common::String keyName) {
 	// automatically handle with a function from the hash table.
-	if (!_callbacks.contains(_activeKey.top()->name)) {
-		parserError("%s is not a valid key name.", keyName.c_str());
-		return false;
-	}
+	if (!_callbacks.contains(_activeKey.top()->name))
+		return parserError("%s is not a valid key name.", keyName.c_str());
 
 	return (this->*(_callbacks[_activeKey.top()->name]))();
 }
@@ -99,14 +97,13 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 
 	Common::String functionName = stepNode->values["func"]; 
 
-	if (_drawFunctions.contains(functionName) == false) {
-		parserError("%s is not a valid drawing function name", functionName.c_str());
-		return false;
-	}	
+	if (_drawFunctions.contains(functionName) == false)
+		return parserError("%s is not a valid drawing function name", functionName.c_str());
 
 	drawstep->drawingCall = _drawFunctions[functionName];
 
 	uint32 red, green, blue, w, h;
+	Common::String val;
 
 /**
  * Helper macro to sanitize and assign an integer value from a key
@@ -120,14 +117,12 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
  */
 #define __PARSER_ASSIGN_INT(struct_name, key_name, force) \
 	if (stepNode->values.contains(key_name)) { \
-		if (!validateKeyInt(stepNode->values[key_name].c_str())) {\
-			parserError("Error when parsing key value for '%s'.", key_name); \
-			return false; \
-		} \
+		if (!validateKeyInt(stepNode->values[key_name].c_str()))\
+			return parserError("Error when parsing key value for '%s'.", key_name); \
+		\
 		drawstep->struct_name = atoi(stepNode->values[key_name].c_str()); \
 	} else if (force) { \
-		parserError("Missing necessary key '%s'.", key_name); \
-		return false; \
+		return parserError("Missing necessary key '%s'.", key_name); \
 	}
 
 /**
@@ -144,10 +139,9 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 #define __PARSER_ASSIGN_RGB(struct_name, key_name) \
 	if (stepNode->values.contains(key_name)) { \
 		if (sscanf(stepNode->values[key_name].c_str(), "%d, %d, %d", &red, &green, &blue) != 3 || \
-			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) {\
-				parserError("Error when parsing color struct '%s'", stepNode->values[key_name].c_str());\
-				return false; \
-			}\
+			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
+			return parserError("Error when parsing color struct '%s'", stepNode->values[key_name].c_str());\
+		\
 		drawstep->struct_name.r = red; \
 		drawstep->struct_name.g = green; \
 		drawstep->struct_name.b = blue; \
@@ -172,7 +166,22 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	}
 
 	if (functionName == "triangle") {
+		drawstep->extraData = VectorRenderer::kTriangleUp;
 
+		if (stepNode->values.contains("orientation")) {
+			val = stepNode->values["orientation"];
+
+			if ( val == "top")
+				drawstep->extraData = VectorRenderer::kTriangleUp;
+			else if (val == "bottom")
+				drawstep->extraData = VectorRenderer::kTriangleDown;
+			else if (val == "left")
+				drawstep->extraData = VectorRenderer::kTriangleLeft;
+			else if (val == "right")
+				drawstep->extraData = VectorRenderer::kTriangleRight;
+			else
+				return parserError("'%s' is not a valid value for triangle orientation.", stepNode->values["orientation"].c_str());
+		}
 	}
 
 	if (stepNode->values.contains("size")) {
@@ -183,24 +192,22 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 			drawstep->w = w;
 			drawstep->h = h;
 		} else {
-			parserError("Invalid value in 'size' subkey: Valid options are 'auto' or 'X, X' to define width and height.");
-			return false;
+			return parserError("Invalid value in 'size' subkey: Valid options are 'auto' or 'X, X' to define width and height.");
 		}
 	}
 
 	if (stepNode->values.contains("fill")) {
-		if (stepNode->values["fill"] == "none")
+		val = stepNode->values["fill"];
+		if (val == "none")
 			drawstep->fillMode = VectorRenderer::kFillDisabled;
-		else if (stepNode->values["fill"] == "foreground")
+		else if (val == "foreground")
 			drawstep->fillMode = VectorRenderer::kFillForeground;
-		else if (stepNode->values["fill"] == "background")
+		else if (val == "background")
 			drawstep->fillMode = VectorRenderer::kFillBackground;
-		else if (stepNode->values["fill"] == "gradient")
+		else if (val == "gradient")
 			drawstep->fillMode = VectorRenderer::kFillGradient;
-		else {
-			parserError("'%s' is not a valid fill mode for a shape.", stepNode->values["fill"].c_str());
-			return false;
-		}
+		else
+			return parserError("'%s' is not a valid fill mode for a shape.", stepNode->values["fill"].c_str());
 	}
 
 #undef __PARSER_ASSIGN_INT
@@ -214,17 +221,13 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	ParserNode *drawdataNode = _activeKey.top();
 	bool cached = false;
 
-	if (drawdataNode->values.contains("id") == false) {
-		parserError("DrawData notes must contain an identifier.");
-		return false;
-	}
+	if (drawdataNode->values.contains("id") == false)
+		return parserError("DrawData notes must contain an identifier.");
 
 	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
 
-	if (id == -1) {
-		parserError("%d is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
-		return false;
-	}
+	if (id == -1)
+		return parserError("%d is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
 
 	if (drawdataNode->values.contains("cached") && drawdataNode->values["cached"] == "true") {
 		cached = true;
@@ -240,10 +243,8 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 		}
 	}*/
 
-	if (g_InterfaceManager.addDrawData(id, cached) == false) {
-		parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
-		return false;
-	}
+	if (g_InterfaceManager.addDrawData(id, cached) == false)
+		return parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
 
 	return true;
 }

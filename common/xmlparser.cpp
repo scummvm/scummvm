@@ -42,16 +42,14 @@ void XMLParser::debug_testEval() {
 		"</ drawdata>/* lol this is just a simple test*/\n"
 		"I loled";
 
-	_text.fillFromMem(strdup(debugConfigText));
+	loadBuffer(debugConfigText);
 	_fileName = strdup("test_parse.xml");
-
-	Common::String test = "12,  125, 125";
 
 	parse();
 }
 
 
-void XMLParser::parserError(const char *errorString, ...) {
+bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
 
 	int pos = _pos;
@@ -90,6 +88,8 @@ void XMLParser::parserError(const char *errorString, ...) {
 	va_end(args);
 
 	printf("\n");
+
+	return false;
 }
 
 bool XMLParser::parseActiveKey(bool closed) {
@@ -248,14 +248,11 @@ bool XMLParser::parse() {
 		}
 	}
 
-	if (_state == kParserError) {
+	if (_state == kParserError)
 		return false;
-	}
 
-	if (_state != kParserNeedKey || !_activeKey.empty()) {
-		parserError("Unexpected end of file.");
-		return false;
-	}
+	if (_state != kParserNeedKey || !_activeKey.empty())
+		return parserError("Unexpected end of file.");
 
 	return true;
 }
