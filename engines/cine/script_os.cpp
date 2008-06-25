@@ -654,8 +654,7 @@ int FWScript::o2_loadBg() {
  */
 int FWScript::o2_wasZoneChecked() {
 	byte param = getNextByte();
-	// FIXME: Using a wrong table here, it's not zoneData we want, but something else (zoneQuery)
-	_compare = (param < 16 && zoneData[param]);
+	_compare = (param < NUM_MAX_ZONE && zoneQuery[param]) ? 1 : 0;
 	debugC(5, kCineDebugScript, "Line: %d: o2_wasZoneChecked(%d)", _line, param);
 	return 0;
 }

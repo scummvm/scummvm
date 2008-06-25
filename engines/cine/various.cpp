@@ -112,6 +112,7 @@ int16 objListTab[20];
 
 uint16 exitEngine;
 uint16 zoneData[NUM_MAX_ZONE];
+uint16 zoneQuery[NUM_MAX_ZONE]; //!< Only exists in Operation Stealth
 
 
 void stopMusicAfterFadeOut(void) {
@@ -391,6 +392,7 @@ bool brokenSave(Common::InSaveFile &fHandle) {
 }
 
 /*! \todo Implement Operation Stealth loading, this is obviously Future Wars only
+ * \todo Add support for loading the zoneQuery table (Operation Stealth specific)
  */
 bool CineEngine::makeLoad(char *saveName) {
 	int16 i;
@@ -588,6 +590,8 @@ bool CineEngine::makeLoad(char *saveName) {
 	return true;
 }
 
+/*! \todo Add support for saving the zoneQuery table (Operation Stealth specific)
+ */
 void makeSave(char *saveFileName) {
 	int16 i;
 	Common::OutSaveFile *fHandle;
