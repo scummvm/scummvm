@@ -80,7 +80,7 @@ uint16 Input::readInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-			_engineFlags |= kEngineQuit;
+			_vm->_quit = true;
 			return KeyDown;
 
 		default:

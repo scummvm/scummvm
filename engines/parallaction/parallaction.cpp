@@ -331,7 +331,7 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvQuitGame:
-		_engineFlags |= kEngineQuit;
+		_vm->_quit = true;
 		break;
 
 	case kEvSaveGame:
@@ -358,19 +358,19 @@ void Parallaction::runGame() {
 		processInput(data);
 	}
 
-	if (_engineFlags & kEngineQuit)
+	if (_vm->_quit)
 		return;
 
 	runPendingZones();
 
-	if (_engineFlags & kEngineQuit)
+	if (_vm->_quit)
 		return;
 
 	if (_engineFlags & kEngineChangeLocation) {
 		changeLocation(_location._name);
 	}
 
-	if (_engineFlags & kEngineQuit)
+	if (_vm->_quit)
 		return;
 
 	_gfx->beginFrame();
@@ -466,7 +466,7 @@ ZonePtr Parallaction::findZone(const char *name) {
 
 
 void Parallaction::freeZones() {
-	debugC(2, kDebugExec, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
+	debugC(2, kDebugExec, "freeZones: _vm->_quit = %i", _vm->_quit);
 
 	ZoneList::iterator it = _location._zones.begin();
 
@@ -475,7 +475,7 @@ void Parallaction::freeZones() {
 		// NOTE : this condition has been relaxed compared to the original, to allow the engine
 		// to retain special - needed - zones that were lost across location switches.
 		ZonePtr z = *it;
-		if (((z->_top == -1) || (z->_left == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
+		if (((z->_top == -1) || (z->_left == -2)) && ((_vm->_quit) == 0)) {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {

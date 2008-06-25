@@ -105,17 +105,17 @@ int Parallaction_br::go() {
 	guiSplash("dyna");
 	guiSplash("core");
 
-	while ((_engineFlags & kEngineQuit) == 0) {
+	while (_vm->_quit == 0) {
 
 		guiStart();
 
-		if (_engineFlags & kEngineQuit)
-			return 0;
+		if (_vm->_quit)
+			return _rtl;
 
 //		initCharacter();
 
 		_input->_inputMode = Input::kInputModeGame;
-		while ((_engineFlags & (kEngineReturn | kEngineQuit)) == 0) {
+		while (((_engineFlags & kEngineReturn) == 0) && (!_vm->_quit)) {
 			runGame();
 		}
 		_engineFlags &= ~kEngineReturn;
@@ -125,7 +125,7 @@ int Parallaction_br::go() {
 
 	}
 
-	return 0;
+	return _rtl;
 }
 
 

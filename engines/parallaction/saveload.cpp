@@ -132,11 +132,13 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	// TODO (LIST): unify (and parametrize) calls to freeZones.
 	// We aren't calling freeAnimations because it is not needed, since
 	// kChangeLocation will trigger a complete deletion. Anyway, we still
-	// need to invoke freeZones here with kEngineQuit set, because the
+	// need to invoke freeZones here with _quit set, because the
 	// call in changeLocation preserve certain zones.
-	_engineFlags |= kEngineQuit;
+	_quit = true;
+
 	freeZones();
-	_engineFlags &= ~kEngineQuit;
+
+	_quit = false;
 
 	_numLocations = atoi(s);
 

@@ -297,7 +297,7 @@ DECLARE_COMMAND_OPCODE(drop){
 
 
 DECLARE_COMMAND_OPCODE(quit) {
-	_engineFlags |= kEngineQuit;
+	_vm->_quit = true;
 }
 
 
@@ -427,7 +427,7 @@ void Parallaction::runCommands(CommandList& list, ZonePtr z) {
 		CommandPtr cmd = *it;
 		uint32 v8 = getLocationFlags();
 
-		if (_engineFlags & kEngineQuit)
+		if (_vm->_quit)
 			break;
 
 		if (cmd->_flagsOn & kFlagsGlobal) {
@@ -519,7 +519,7 @@ uint16 Parallaction::runZone(ZonePtr z) {
 
 	case kZoneSpeak:
 		runDialogue(z->u.speak);
-		if (_engineFlags & kEngineQuit)
+		if (_vm->_quit)
 			return 0;
 		break;
 

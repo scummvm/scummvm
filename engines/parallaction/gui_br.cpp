@@ -50,7 +50,7 @@ void Parallaction_br::guiStart() {
 	int option = guiShowMenu();
 	switch (option) {
 	case kMenuQuit:
-		_engineFlags |= kEngineQuit;
+		_vm->_quit = true;
 		break;
 
 	case kMenuLoadGame:
