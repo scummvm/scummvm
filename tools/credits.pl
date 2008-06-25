@@ -478,7 +478,7 @@ begin_credits("Credits");
   begin_section("ScummVM code:");
 	  add_paragraph(
 	  "Residual use some ScummVM code like common, mixer and imuse code. ".
-	  "ScummVM copyrights for this partial code belongs to: ".
+	  "Copyrights for this code belongs to persons listed below. ".
 	  "If you are missed in this list contact us and we'll add you.");
 	  begin_persons();
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
