@@ -705,6 +705,16 @@
 				RelativePath="..\..\mixer\rate.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="rsc"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath="..\..\icons\residual.ico">
+			</File>
+			<File
+				RelativePath="..\..\dists\residual.rc">
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\README">
 		</File>
