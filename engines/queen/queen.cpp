@@ -381,7 +381,7 @@ int QueenEngine::go() {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
 	_lastSaveTime = _lastUpdateTime = _system->getMillis();
-	_quit = false;
+
 	while (!_quit) {
 		if (_logic->newRoom() > 0) {
 			_logic->update();
@@ -400,7 +400,7 @@ int QueenEngine::go() {
 			update(true);
 		}
 	}
-	return 0;
+	return _rtl;
 }
 
 int QueenEngine::init() {

@@ -137,7 +137,6 @@ protected:
 
 	int _talkSpeed;
 	bool _subtitles;
-	bool _quit;
 	uint32 _lastSaveTime;
 	uint32 _lastUpdateTime;
 

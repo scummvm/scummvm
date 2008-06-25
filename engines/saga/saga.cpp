@@ -64,7 +64,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 
 	_console = NULL;
-	_quit = false;
 
 	_resource = NULL;
 	_sndRes = NULL;
@@ -310,7 +309,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 
-	return 0;
+	return _rtl;
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {

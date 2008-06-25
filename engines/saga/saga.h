@@ -610,8 +610,6 @@ public:
 	bool _rightMouseButtonPressed;
 	int _mouseClickCount;
 
-	bool _quit;
-
 //current game description
 	int _gameNumber;
 	const SAGAGameDescription *_gameDescription;
