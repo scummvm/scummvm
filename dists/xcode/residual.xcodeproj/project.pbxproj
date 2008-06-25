@@ -778,6 +778,7 @@
 					"-D_GNU_SOURCE=1",
 					"-D_THREAD_SAFE",
 					"-DSYSTEM_LITTLE_ENDIAN",
+					"-DLUA_ADD_CUSTOM_FOPEN",
 				);
 				OTHER_LDFLAGS = (
 					"-L/sw/lib",
@@ -816,6 +817,7 @@
 					"-D_GNU_SOURCE=1",
 					"-D_THREAD_SAFE",
 					"-DSYSTEM_LITTLE_ENDIAN",
+					"-DLUA_ADD_CUSTOM_FOPEN",
 				);
 				OTHER_LDFLAGS = (
 					"-L/sw/lib",
