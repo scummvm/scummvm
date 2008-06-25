@@ -1618,6 +1618,19 @@ void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, i
 	seqList.insert(it, tmp);
 }
 
+void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 param2, int16 param3, int16 param4) {
+	// Find a suitable list element and modify it
+	for (Common::List<SeqListElement>::iterator it = seqList.begin(); it != seqList.end(); ++it) {
+		if (it->objIdx == objIdx && it->var4 == var4Test) {
+			it->varC  = param1;
+			it->var18 = param2;
+			it->var1A = param3;
+			it->var10 = it->var12 = param4;
+			break;
+		}
+	}
+}
+
 void computeMove1(SeqListElement &element, int16 x, int16 y, int16 param1,
     int16 param2, int16 x2, int16 y2) {
 	element.var16 = 0;

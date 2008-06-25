@@ -202,7 +202,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	/* 80 */
 	{ &FWScript::o2_removeSeq, "bb" },
 	{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_op82, "bbwwb" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_modifySeqListElement, "bbwwb" },
 	{ &FWScript::o2_isSeqRunning, "bb" },
 	/* 84 */
 	{ &FWScript::o2_gotoIfSupNearest, "b" },
@@ -449,15 +449,15 @@ int FWScript::o2_op81() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_op82() {
+int FWScript::o2_modifySeqListElement() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 	uint16 c = getNextWord();
 	uint16 d = getNextWord();
 	byte e = getNextByte();
-	warning("STUB: o2_op82(%x, %x, %x, %x, %x)", a, b, c, d, e);
+	debugC(5, kCineDebugScript, "Line: %d: o2_modifySeqListElement(%d,%d,%d,%d,%d)", _line, a, b, c, d, e);
+
+	modifySeqListElement(a, 0, b, c, d, e);	
 	return 0;
 }
 

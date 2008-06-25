@@ -237,7 +237,7 @@ protected:
 	int o2_playSample();
 	int o2_playSampleAlt();
 	int o2_op81();
-	int o2_op82();
+	int o2_modifySeqListElement();
 	int o2_isSeqRunning();
 	int o2_gotoIfSupNearest();
 	int o2_gotoIfSupEquNearest();
