@@ -498,9 +498,6 @@ public:
 	void restart();
 	void shutDown();
 
-	/** We keep running until this is set to true. */
-	bool _quit;
-
 protected:
 	Dialog *_pauseDialog;
 	Dialog *_versionDialog;

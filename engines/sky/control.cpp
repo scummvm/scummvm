@@ -492,7 +492,7 @@ void Control::doControlPanel(void) {
 	_curButtonText = 0;
 	uint16 clickRes = 0;
 
-	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
+	while (!quitPanel && !g_engine->_quit) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
@@ -524,7 +524,7 @@ void Control::doControlPanel(void) {
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	if (!SkyEngine::_systemVars.quitGame)
+	if (!g_engine->_quit)
 		_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
@@ -603,7 +603,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 	case QUIT_TO_DOS:
 		animClick(pButton);
 		if (getYesNo(quitDos))
-			SkyEngine::_systemVars.quitGame = true;
+			g_engine->_quit = true;
 		return 0;
 	default:
 		error("Control::handleClick: unknown routine: %X",pButton->_onClick);
@@ -875,7 +875,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	bool refreshNames = true;
 	bool refreshAll = true;
 	uint16 clickRes = 0;
-	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
+	while (!quitPanel && !g_engine->_quit) {
 		clickRes = 0;
 		if (refreshNames || refreshAll) {
 			if (refreshAll) {
@@ -1547,7 +1547,7 @@ void Control::delay(unsigned int amount) {
 				_mouseWheel = 1;
 				break;
 			case Common::EVENT_QUIT:
-				SkyEngine::_systemVars.quitGame = true;
+				g_engine->_quit = true;
 				break;
 			default:
 				break;

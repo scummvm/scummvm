@@ -1759,7 +1759,7 @@ int ScummEngine::go() {
 		}
 	}
 
-	return 0;
+	return _rtl;
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {

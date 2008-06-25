@@ -50,7 +50,10 @@ public:
 	Audio::Mixer *_mixer;
 	Common::TimerManager * _timer;
 
+	/** We keep running until this is set to true. */
 	bool _quit;
+
+	/** This is used when returning from go() to specifiy if we return to the launcher (true), or quit (false). */
 	bool _rtl;
 
 protected:

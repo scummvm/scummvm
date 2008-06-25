@@ -2489,7 +2489,7 @@ bool Logic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
-	SkyEngine::_systemVars.quitGame = true;
+	g_engine->_quit = true;
 	return false;
 }
 

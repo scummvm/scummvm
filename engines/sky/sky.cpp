@@ -257,7 +257,7 @@ namespace Sky {
 
 void *SkyEngine::_itemList[300];
 
-SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false, false };
+SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
 SkyEngine::SkyEngine(OSystem *syst)
 	: Engine(syst), _fastMode(0), _debugger(0) {
@@ -340,8 +340,6 @@ void SkyEngine::handleKey(void) {
 
 int SkyEngine::go() {
 
-	_systemVars.quitGame = false;
-
 	_keyPressed.reset();
 
 	uint16 result = 0;
@@ -353,12 +351,9 @@ int SkyEngine::go() {
 		if (_systemVars.gameVersion > 267) { // don't do intro for floppydemos
 			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
-			_systemVars.quitGame = _skyIntro->_quitProg;
-
-			delete _skyIntro;
 		}
 
-		if (!_systemVars.quitGame) {
+		if (!_quit) {
 			_skyLogic->initScreen0();
 			if (introSkipped)
 				_skyControl->restartGame();
@@ -368,7 +363,7 @@ int SkyEngine::go() {
 	_lastSaveTime = _system->getMillis();
 
 	uint32 delayCount = _system->getMillis();
-	while (!_systemVars.quitGame) {
+	while (!_quit) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
@@ -419,7 +414,7 @@ int SkyEngine::go() {
 	_skyMusic->stopMusic();
 	ConfMan.flushToDisk();
 	delay(1500);
-	return 0;
+	return _rtl;
 }
 
 int SkyEngine::init() {
@@ -616,7 +611,7 @@ void SkyEngine::delay(int32 amount) {
 				_skyMouse->buttonPressed(1);
 				break;
 			case Common::EVENT_QUIT:
-				_systemVars.quitGame = true;
+				_quit = true;
 				break;
 			default:
 				break;

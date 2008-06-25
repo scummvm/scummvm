@@ -41,7 +41,6 @@ struct SystemVars {
 	uint16 gameSpeed;
 	uint16 currentMusic;
 	bool pastIntro;
-	bool quitGame;
 	bool paused;
 };
 

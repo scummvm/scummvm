@@ -180,7 +180,7 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 	while (mousePressed || _system->getMillis() < now + minDelay) {
 
 		if (eventMan->shouldQuit()) {
-			SkyEngine::_systemVars.quitGame = true;
+			g_engine->_quit = true;
 			minDelay = 0;
 			mousePressed = false;
 		}

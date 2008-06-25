@@ -636,7 +636,6 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 	_textBuf = (uint8*)malloc(10000);
 	_saveBuf = (uint8*)malloc(10000);
 	_bgBuf = NULL;
-	_quitProg = false;
 	_relDelay = 0;
 }
 
@@ -913,7 +912,7 @@ bool Intro::escDelay(uint32 msecs) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					return false;
 			} else if (event.type == Common::EVENT_QUIT) {
-				_quitProg = true;
+				g_engine->_quit = true;
 				return false;
 			}
 		}

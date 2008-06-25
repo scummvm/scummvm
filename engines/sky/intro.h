@@ -43,7 +43,6 @@ public:
 	Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, Audio::Mixer *mixer, OSystem *system);
 	~Intro(void);
 	bool doIntro(bool floppyIntro);
-	bool _quitProg;
 private:
 	static uint16 _mainIntroSeq[];
 	static uint16 _floppyIntroSeq[];
