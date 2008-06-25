@@ -36,14 +36,18 @@ using namespace Graphics;
 
 void XMLParser::debug_testEval() {
 	static const char *debugConfigText =
-		"</* lol this is just assa moronic test */drawdata id = \"mainmenu_bg\" cache = true>\n"
-		"<drawstep func = \"roundedsq\" fill = \"none\" color = \"0, 1, 2\" size = \"auto\" />\n"
-		"<drawstep func = \"roundedsqXD\" fill = \"none\" color = \"0, 1, 2\" size = \"auto\"/>\n"
-		"</ drawdata>/* lol this is just a simple test*/\n"
-		"I loled";
+		"<render_info>\n"
+		"<palette>\n"
+		"<color name = \"red\" rgb = \"255, 255, 255\"/>\n"
+		"</palette>\n"
+		"<drawdata id = \"mainmenu_bg\" cache = true>\n"
+		"<drawstep func = \"roundedsq\" radius = 23 fill = \"none\" color = \"0, 1, 2\" size = \"auto\" />\n"
+		"<drawstep func = \"roundedsq\" radius = 15 fill = \"none\" color = \"red\" size = \"auto\"/>\n"
+		"</drawdata>/* lol this is just a simple test*/\n"
+		"</render_info>";
 
 	loadBuffer(debugConfigText);
-	_fileName = strdup("test_parse.xml");
+	_fileName = "test_parse.xml";
 
 	parse();
 }
@@ -54,13 +58,13 @@ bool XMLParser::parserError(const char *errorString, ...) {
 
 	int pos = _pos;
 	int lineCount = 1;
-	int lineStart = -1;
+	int lineStart = 0;
 
 	do {
 		if (_text[pos] == '\n' || _text[pos] == '\r') {
 			lineCount++;
 			
-			if (lineStart == -1)
+			if (lineStart == 0)
 				lineStart = MAX(pos + 1, _pos - 60);
 		}
 	} while (pos-- > 0);
@@ -69,14 +73,17 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	_text.stream()->seek(lineStart, SEEK_SET);
 	_text.stream()->readLine(lineStr, 70);
 
-	printf("  File <%s>, line %d:\n", _fileName, lineCount);
+	printf("  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 
-	printf("%s%s%s\n", 
-		lineStr[0] == '<' ? "" : "...", 
-		lineStr[strlen(lineStr) - 1] == '>' ? "" : "...",
-		lineStr);
+	bool startFull = lineStr[0] == '<';
+	bool endFull = lineStr[strlen(lineStr) - 1] == '>';
 
-	for (int i = 0; i < _pos - lineStart + 3; ++i)
+	printf("%s%s%s\n", startFull ? "" : "...", endFull ? "" : "...", lineStr);
+
+	if (!startFull)
+		lineStart -= 3;
+
+	for (int i = 0; i < _pos - lineStart; ++i)
 		printf(" ");
 
 	printf("^\n");
@@ -185,12 +192,15 @@ bool XMLParser::parse() {
 				}
 
 				if (activeClosure) {
-					if (_activeKey.empty() || _token != _activeKey.top()->name)
+					if (_activeKey.empty() || _token != _activeKey.top()->name) {
 						parserError("Unexpected closure.");
+						break;
+					}
 				} else {
 					ParserNode *node = new ParserNode;
 					node->name = _token;
 					node->ignore = false;
+					node->depth = _activeKey.size();
 					_activeKey.push(node);
 				}
 

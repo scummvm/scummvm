@@ -113,6 +113,7 @@ public:
 		Common::String name;
 		Common::StringMap values;
 		bool ignore;
+		int depth;
 	};
 
 	virtual bool loadFile(const char *filename) {
@@ -137,11 +138,18 @@ public:
 	 * Returns the active node being parsed (the one on top of
 	 * the node stack).
 	 */
-	ParserNode *activeNode() {
+	ParserNode *getActiveNode() {
 		if (!_activeKey.empty())
 			return _activeKey.top();
 
 		return 0;
+	}
+
+	/**
+	 * Returns the parent of a given node in the stack.
+	 */
+	ParserNode *getParentNode(ParserNode *child) {
+		return child->depth > 0 ? _activeKey[child->depth - 1] : 0;
 	}
 
 protected:
@@ -255,7 +263,7 @@ protected:
 
 	int _pos; /** Current position on the XML buffer. */
 	XMLStream _text; /** Buffer with the text being parsed */
-	char *_fileName;
+	Common::String _fileName;
 
 	ParserState _state; /** Internal state of the parser */
 

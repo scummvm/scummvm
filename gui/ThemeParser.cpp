@@ -42,6 +42,9 @@ using namespace Common;
 ThemeParser::ThemeParser() : XMLParser() {
 	_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
 	_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
+	_callbacks["palette"] = &ThemeParser::parserCallback_palette;
+	_callbacks["color"] = &ThemeParser::parserCallback_color;
+	_callbacks["render_info"] = &ThemeParser::parserCallback_renderInfo;
 
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
@@ -81,20 +84,69 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 	return step;
 }
 
+bool ThemeParser::parserCallback_renderInfo() {
+	ParserNode *infoNode = getActiveNode();
+
+	assert(infoNode->name == "render_info");
+
+	if (getParentNode(infoNode) != 0)
+		return parserError("<render_info> keys must be root elements.");
+
+	// TODO: Skip key if it's not for this platform.
+
+	return true;
+}
+
+bool ThemeParser::parserCallback_palette() {
+	ParserNode *paletteNode = getActiveNode();
+
+	assert(paletteNode->name == "palette");
+
+	if (getParentNode(paletteNode) == 0 || getParentNode(paletteNode)->name != "render_info")
+		return parserError("Palette keys must be contained inside a <render_info> section.");
+
+	return true;
+}
+
+bool ThemeParser::parserCallback_color() {
+	ParserNode *colorNode = getActiveNode();
+
+	if (getParentNode(colorNode) == 0 || getParentNode(colorNode)->name != "palette")
+		return parserError("Colors must be specified inside <palette> tags.");
+
+	if (!colorNode->values.contains("name") || !colorNode->values.contains("rgb"))
+		return parserError("Color keys must contain 'name' and 'rgb' values for the color.");
+
+	Common::String name = colorNode->values["name"];
+
+	if (_palette.contains(name))
+		return parserError("Color '%s' has already been defined.", name.c_str());
+
+	int red, green, blue;
+
+	if (sscanf(colorNode->values["rgb"].c_str(), "%d, %d, %d", &red, &green, &blue) != 3 ||
+		red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
+		return parserError("Error when parsing RGB values for palette color '%s'", name.c_str());\
+
+	_palette[name].r = red;
+	_palette[name].g = green;
+	_palette[name].b = blue;
+
+	return true;
+}
+
+
 bool ThemeParser::parserCallback_DRAWSTEP() {
 	ParserNode *stepNode = _activeKey.top();
+	ParserNode *drawdataNode = getParentNode(stepNode);
 
-	// HACK: Any cleaner way to access the second item from
-	// the top without popping? Let's keep it this way and hope
-	// the internal representation doesn't change
-	ParserNode *drawdataNode = _activeKey[_activeKey.size() - 2];
+	if (!drawdataNode || drawdataNode->name != "drawdata")
+		return parserError("DrawStep keys must be located inside a DrawData set.");
 
 	assert(stepNode->name == "drawstep");
-	assert(drawdataNode->name == "drawdata");
 	assert(drawdataNode->values.contains("id"));
 
 	Graphics::DrawStep *drawstep = newDrawStep();
-
 	Common::String functionName = stepNode->values["func"]; 
 
 	if (_drawFunctions.contains(functionName) == false)
@@ -102,7 +154,7 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 
 	drawstep->drawingCall = _drawFunctions[functionName];
 
-	uint32 red, green, blue, w, h;
+	int red, green, blue, w, h;
 	Common::String val;
 
 /**
@@ -138,9 +190,14 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
  */
 #define __PARSER_ASSIGN_RGB(struct_name, key_name) \
 	if (stepNode->values.contains(key_name)) { \
-		if (sscanf(stepNode->values[key_name].c_str(), "%d, %d, %d", &red, &green, &blue) != 3 || \
+		val = stepNode->values[key_name]; \
+		if (_palette.contains(val)) { \
+			red = _palette[val].r; \
+			green = _palette[val].g; \
+			blue = _palette[val].b; \
+		} else if (sscanf(val.c_str(), "%d, %d, %d", &red, &green, &blue) != 3 || \
 			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
-			return parserError("Error when parsing color struct '%s'", stepNode->values[key_name].c_str());\
+			return parserError("Error when parsing color struct '%s'", val.c_str());\
 		\
 		drawstep->struct_name.r = red; \
 		drawstep->struct_name.g = green; \
@@ -221,8 +278,13 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	ParserNode *drawdataNode = _activeKey.top();
 	bool cached = false;
 
+	assert(drawdataNode->name == "drawdata");
+
+	if (getParentNode(drawdataNode) == 0 || getParentNode(drawdataNode)->name != "render_info")
+		return parserError("DrawData keys must be contained inside a <render_info> section.");
+
 	if (drawdataNode->values.contains("id") == false)
-		return parserError("DrawData notes must contain an identifier.");
+		return parserError("DrawData keys must contain an identifier.");
 
 	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
 

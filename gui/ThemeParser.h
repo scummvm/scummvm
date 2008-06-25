@@ -320,6 +320,9 @@ protected:
 
 	bool parserCallback_DRAWSTEP();
 	bool parserCallback_DRAWDATA();
+	bool parserCallback_palette();
+	bool parserCallback_color();
+	bool parserCallback_renderInfo();
 
 	bool validateKeyIntSigned(const char *key) {
 		if (!isdigit(*key) && *key != '+' && *key != '-')
@@ -343,6 +346,12 @@ protected:
 
 	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
+
+	struct PaletteColor {
+		uint8 r, g, b;
+	};
+
+	Common::HashMap<Common::String, PaletteColor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _palette;
 };
 
 }
