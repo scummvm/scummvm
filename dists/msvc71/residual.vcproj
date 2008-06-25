@@ -249,6 +249,9 @@
 				RelativePath="..\..\engine\font.h">
 			</File>
 			<File
+				RelativePath="..\..\engine\internal_version.h">
+			</File>
+			<File
 				RelativePath="..\..\engine\keyframe.cpp">
 			</File>
 			<File
@@ -340,6 +343,12 @@
 			</File>
 			<File
 				RelativePath="..\..\engine\textsplit.h">
+			</File>
+			<File
+				RelativePath="..\..\engine\version.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engine\version.h">
 			</File>
 			<File
 				RelativePath="..\..\engine\walkplane.cpp">
