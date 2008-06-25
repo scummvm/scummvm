@@ -55,8 +55,10 @@ ThemeParser::ThemeParser() : XMLParser() {
 
 bool ThemeParser::keyCallback(Common::String keyName) {
 	// automatically handle with a function from the hash table.
-	if (!_callbacks.contains(_activeKey.top()->name))
+	if (!_callbacks.contains(_activeKey.top()->name)) {
+		parserError("%s is not a valid key name.", keyName.c_str());
 		return false;
+	}
 
 	return (this->*(_callbacks[_activeKey.top()->name]))();
 }
@@ -72,7 +74,7 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 
 	step->extraData = 0;
 	step->factor = 1;
-	step->fillArea = false;
+	step->fillArea = true;
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
 	step->shadow = 0;
@@ -104,7 +106,7 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 
 	drawstep->drawingCall = _drawFunctions[functionName];
 
-	uint32 red, green, blue;
+	uint32 red, green, blue, w, h;
 
 /**
  * Helper macro to sanitize and assign an integer value from a key
@@ -114,13 +116,18 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
  *                    assigned.
  * @param key_name Name as STRING of the key identifier as it appears in the
  *                 theme description format.
+ * @param force Sets if the key is optional or necessary.
  */
-#define __PARSER_ASSIGN_INT(struct_name, key_name) \
+#define __PARSER_ASSIGN_INT(struct_name, key_name, force) \
 	if (stepNode->values.contains(key_name)) { \
-		if (!validateKeyInt(stepNode->values[key_name].c_str())) \
+		if (!validateKeyInt(stepNode->values[key_name].c_str())) {\
+			parserError("Error when parsing key value for '%s'.", key_name); \
 			return false; \
-		\
+		} \
 		drawstep->struct_name = atoi(stepNode->values[key_name].c_str()); \
+	} else if (force) { \
+		parserError("Missing necessary key '%s'.", key_name); \
+		return false; \
 	}
 
 /**
@@ -136,17 +143,20 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
  */
 #define __PARSER_ASSIGN_RGB(struct_name, key_name) \
 	if (stepNode->values.contains(key_name)) { \
-		if (sscanf(stepNode->values[key_name].c_str(), "%d, %d, %d", &red, &green, &blue) != 3) \
-			return false; \
-		\
+		if (sscanf(stepNode->values[key_name].c_str(), "%d, %d, %d", &red, &green, &blue) != 3 || \
+			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) {\
+				parserError("Error when parsing color struct '%s'", stepNode->values[key_name].c_str());\
+				return false; \
+			}\
 		drawstep->struct_name.r = red; \
 		drawstep->struct_name.g = green; \
 		drawstep->struct_name.b = blue; \
+		drawstep->struct_name.set = true; \
 	}
 
-	__PARSER_ASSIGN_INT(stroke, "stroke");
-	__PARSER_ASSIGN_INT(shadow, "shadow");
-	__PARSER_ASSIGN_INT(factor, "gradient_factor");
+	__PARSER_ASSIGN_INT(stroke, "stroke", false);
+	__PARSER_ASSIGN_INT(shadow, "shadow", false);
+	__PARSER_ASSIGN_INT(factor, "gradient_factor", false);
 
 	__PARSER_ASSIGN_RGB(fgColor, "fg_color");
 	__PARSER_ASSIGN_RGB(bgColor, "bg_color");
@@ -154,11 +164,43 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	__PARSER_ASSIGN_RGB(gradColor2, "gradient_end");
 
 	if (functionName == "roundedsq" || functionName == "circle") {
-		__PARSER_ASSIGN_INT(radius, "radius");
+		__PARSER_ASSIGN_INT(radius, "radius", true)
 	}
 
 	if (functionName == "bevelsq") {
-		__PARSER_ASSIGN_INT(extraData, "bevel");
+		__PARSER_ASSIGN_INT(extraData, "bevel", true);
+	}
+
+	if (functionName == "triangle") {
+
+	}
+
+	if (stepNode->values.contains("size")) {
+		if (stepNode->values["size"] == "auto") {
+			drawstep->fillArea = true;
+		} else if (sscanf(stepNode->values["size"].c_str(), "%d, %d", &w, &h) == 2) {
+			drawstep->fillArea = false;
+			drawstep->w = w;
+			drawstep->h = h;
+		} else {
+			parserError("Invalid value in 'size' subkey: Valid options are 'auto' or 'X, X' to define width and height.");
+			return false;
+		}
+	}
+
+	if (stepNode->values.contains("fill")) {
+		if (stepNode->values["fill"] == "none")
+			drawstep->fillMode = VectorRenderer::kFillDisabled;
+		else if (stepNode->values["fill"] == "foreground")
+			drawstep->fillMode = VectorRenderer::kFillForeground;
+		else if (stepNode->values["fill"] == "background")
+			drawstep->fillMode = VectorRenderer::kFillBackground;
+		else if (stepNode->values["fill"] == "gradient")
+			drawstep->fillMode = VectorRenderer::kFillGradient;
+		else {
+			parserError("'%s' is not a valid fill mode for a shape.", stepNode->values["fill"].c_str());
+			return false;
+		}
 	}
 
 #undef __PARSER_ASSIGN_INT
@@ -188,12 +230,15 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 		cached = true;
 	}
 
-	if (drawdataNode->values.contains("platform")) {
+	// Both Max and Johannes suggest using a non-platform specfic approach based on available
+	// resources and active resolution. getHostPlatformString() has been removed, so fix this.
+
+/*	if (drawdataNode->values.contains("platform")) {
 		if (drawdataNode->values["platform"].compareToIgnoreCase(Common::getHostPlatformString()) != 0) {
 			drawdataNode->ignore = true;
 			return true;
 		}
-	}
+	}*/
 
 	if (g_InterfaceManager.addDrawData(id, cached) == false) {
 		parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");

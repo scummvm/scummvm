@@ -30,12 +30,50 @@
 #include "graphics/surface.h"
 #include "common/system.h"
 #include "common/xmlparser.h"
+#include "common/stream.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
 
 namespace Common {
+
+class XMLStream {
+protected:
+	SeekableReadStream *_stream;
+	int _pos;
+
+public:
+	XMLStream() : _stream(0), _pos(0) {}
+
+	~XMLStream() {
+		delete _stream;
+	}
+
+	SeekableReadStream *stream() {
+		return _stream;
+	}
+
+	const char operator [](int idx) {
+		assert(_stream && idx >= 0);
+
+		if (_pos + 1 != idx)
+			_stream->seek(idx, SEEK_SET);
+
+		_pos = idx;
+
+		return _stream->readSByte();
+	}
+
+	void fillFromMem(const char *buffer, bool dispose = false) {
+		delete _stream;
+		_stream = new MemoryReadStream((const byte*)buffer, strlen(buffer), dispose);
+	}
+
+	void fillFromFile(const char *filename) {
+
+	}
+};
 
 /**
  * The base XMLParser class implements generic functionality for parsing
@@ -132,7 +170,7 @@ protected:
 	/**
 	 * Prints an error message when parsing fails and stops the parser.
 	 */
-	virtual void parserError(const char *errorString, ...);
+	virtual void parserError(const char *errorString, ...) GCC_PRINTF(1, 2);
 
 	/**
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
@@ -199,7 +237,7 @@ protected:
 	}
 
 	int _pos; /** Current position on the XML buffer. */
-	char *_text; /** Buffer with the text being parsed */
+	XMLStream _text; /** Buffer with the text being parsed */
 	char *_fileName;
 
 	ParserState _state; /** Internal state of the parser */

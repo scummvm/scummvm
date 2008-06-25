@@ -36,12 +36,13 @@ using namespace Graphics;
 
 void XMLParser::debug_testEval() {
 	static const char *debugConfigText =
-		"</* lol this is just a moronic test */drawdata id = \"mainmenu_bg\" cache = true>\n"
-		"<drawstep| func = \"roundedsq\" fill = \"gradient\" gradient_start = \"255, 255, 128\" gradient_end = \"128, 128, 128\" size = \"auto\"/>\n"
-		"//<drawstep func = \"roundedsq\" fill = \"none\" color = /*\"0, 0, 0\"*/\"0, 1, 2\" size = \"auto\"/>\n"
-		"</ drawdata>/* lol this is just a simple test*/\n";
+		"</* lol this is just assa moronic test */drawdata id = \"mainmenu_bg\" cache = true>\n"
+		"<drawstep func = \"roundedsq\" fill = \"none\" color = \"0, 1, 2\" size = \"auto\" />\n"
+		"<drawstep func = \"roundedsqXD\" fill = \"none\" color = \"0, 1, 2\" size = \"auto\"/>\n"
+		"</ drawdata>/* lol this is just a simple test*/\n"
+		"I loled";
 
-	_text = strdup(debugConfigText);
+	_text.fillFromMem(strdup(debugConfigText));
 	_fileName = strdup("test_parse.xml");
 
 	Common::String test = "12,  125, 125";
@@ -50,48 +51,42 @@ void XMLParser::debug_testEval() {
 }
 
 
-void XMLParser::parserError(const char *error_string, ...) {
+void XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
 
 	int pos = _pos;
-	int line_count = 1;
-	int line_start = -1;
-	int line_width = 1;
+	int lineCount = 1;
+	int lineStart = -1;
 
 	do {
 		if (_text[pos] == '\n' || _text[pos] == '\r') {
-			line_count++;
+			lineCount++;
 			
-			if (line_start == -1)
-				line_start = pos;
+			if (lineStart == -1)
+				lineStart = MAX(pos + 1, _pos - 60);
 		}
 	} while (pos-- > 0);
 
-	line_start = MAX(line_start, _pos - 80);
+	char lineStr[70];
+	_text.stream()->seek(lineStart, SEEK_SET);
+	_text.stream()->readLine(lineStr, 70);
 
-	do {
-		if (_text[line_start + line_width] == '\n' || _text[line_start + line_width] == '\r')
-			break;
-	} while (_text[line_start + line_width++]);
+	printf("  File <%s>, line %d:\n", _fileName, lineCount);
 
-	line_width = MIN(line_width, 80);
+	printf("%s%s%s\n", 
+		lineStr[0] == '<' ? "" : "...", 
+		lineStr[strlen(lineStr) - 1] == '>' ? "" : "...",
+		lineStr);
 
-	char linestr[81];
-	strncpy(linestr, &_text[line_start] + 1, line_width );
-	linestr[line_width - 1] = 0;
-
-	printf("  File <%s>, line %d:\n", _fileName, line_count);
-
-	printf("%s\n", linestr);
-	for (int i = 1; i < _pos - line_start; ++i)
+	for (int i = 0; i < _pos - lineStart + 3; ++i)
 		printf(" ");
 
 	printf("^\n");
 	printf("Parser error: ");
 
 	va_list args;
-	va_start(args, error_string);
-	vprintf(error_string, args);
+	va_start(args, errorString);
+	vprintf(errorString, args);
 	va_end(args);
 
 	printf("\n");
