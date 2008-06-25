@@ -1773,7 +1773,7 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 
 		// The zoneQuery table is updated here only in Operation Stealth
 		if (g_cine->getGameType() == Cine::GType_OS) {
-			if (zoneData[idx] >= 0 && zoneData[idx] < NUM_MAX_ZONE) {
+			if (zoneData[idx] < NUM_MAX_ZONE) {
 				zoneQuery[zoneData[idx]]++;
 			}
 		}
