@@ -328,7 +328,7 @@ public:
 	int curHeight, curWidth, feetHeight;
 	int talkHeight, talkWidth;
 	int floorX1, floorY1, floorX2, floorY2;
-	int near, far;
+	int lowerLimit, upperLimit;
 	int trackFinal, walkToObject;
 	int objExit;
 	int timeDiff, startTime;
