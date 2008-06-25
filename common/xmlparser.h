@@ -66,9 +66,9 @@ public:
 		return _stream->readSByte();
 	}
 
-	void loadStream(SeekableReadStream *stream) {
+	void loadStream(SeekableReadStream *s) {
 		delete _stream;
-		_stream = stream;
+		_stream = s;
 	}
 };
 
@@ -195,7 +195,7 @@ protected:
 	 * Parser error always returns "false" so we can pass the return value directly
 	 * and break down the parsing.
 	 */
-	virtual bool parserError(const char *errorString, ...) GCC_PRINTF(1, 2);
+	virtual bool parserError(const char *errorString, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
