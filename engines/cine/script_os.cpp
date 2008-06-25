@@ -596,16 +596,17 @@ int FWScript::o2_stopObjectScript() {
 /*! \todo Implement this instruction
  */
 int FWScript::o2_op8D() {
-	uint16 a = getNextWord();
-	uint16 b = getNextWord();
-	uint16 c = getNextWord();
-	uint16 d = getNextWord();
-	uint16 e = getNextWord();
-	uint16 f = getNextWord();
-	uint16 g = getNextWord();
-	uint16 h = getNextWord();
-	warning("STUB: o2_op8D(%x, %x, %x, %x, %x, %x, %x, %x)", a, b, c, d, e, f, g, h);
-	// _currentScriptElement->compareResult = ...
+	uint16 objIdx1  = getNextWord();
+	uint16 xAdd1    = getNextWord();
+	uint16 yAdd1    = getNextWord();
+	uint16 maskAdd1 = getNextWord();
+	uint16 objIdx2  = getNextWord();
+	uint16 xAdd2    = getNextWord();
+	uint16 yAdd2    = getNextWord();
+	uint16 maskAdd2 = getNextWord();
+	debugC(5, kCineDebugScript, "Line: %d: o2_op8D(%d, %d, %d, %d, %d, %d, %d, %d)", _line, objIdx1, xAdd1, yAdd1, maskAdd1, objIdx2, xAdd2, yAdd2, maskAdd2);
+
+	_compare = compareObjectParamRanges(objIdx1, xAdd1, yAdd1, maskAdd1, objIdx2, xAdd2, yAdd2, maskAdd2);
 	return 0;
 }
 

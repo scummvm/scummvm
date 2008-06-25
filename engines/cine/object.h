@@ -69,6 +69,8 @@ int16 getObjectParam(uint16 objIdx, uint16 paramIdx);
 
 void addObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 void subObjectParam(byte objIdx, byte paramIdx, int16 newValue);
+bool compareRanges(uint16 aStart, uint16 aEnd, uint16 bStart, uint16 bEnd);
+uint16 compareObjectParamRanges(uint16 objIdx1, uint16 xAdd1, uint16 yAdd1, uint16 maskAdd1, uint16 objIdx2, uint16 xAdd2, uint16 yAdd2, uint16 maskAdd2);
 uint16 compareObjectParam(byte objIdx, byte param1, int16 param2);
 
 } // End of namespace Cine
