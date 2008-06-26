@@ -650,8 +650,6 @@ int FWScript::o2_loadBg() {
 	return 0;
 }
 
-/*! \todo Check the current implementation for correctness
- */
 int FWScript::o2_wasZoneChecked() {
 	byte param = getNextByte();
 	_compare = (param < NUM_MAX_ZONE && zoneQuery[param]) ? 1 : 0;
