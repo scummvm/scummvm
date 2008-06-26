@@ -46,6 +46,7 @@ ThemeParser::ThemeParser() : XMLParser() {
 	_callbacks["color"] = &ThemeParser::parserCallback_color;
 	_callbacks["render_info"] = &ThemeParser::parserCallback_renderInfo;
 	_callbacks["layout_info"] = &ThemeParser::parserCallback_layoutInfo;
+	_callbacks["default"] = &ThemeParser::parserCallback_defaultSet;
 
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
@@ -55,6 +56,9 @@ ThemeParser::ThemeParser() : XMLParser() {
 	_drawFunctions["triangle"]  = &Graphics::VectorRenderer::drawCallback_TRIANGLE;
 	_drawFunctions["fill"]  = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
 	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
+
+	_defaultStepGlobal = defaultDrawStep();
+	_defaultStepLocal = 0;
 }
 
 bool ThemeParser::keyCallback(Common::String keyName) {
@@ -65,8 +69,7 @@ bool ThemeParser::keyCallback(Common::String keyName) {
 	return (this->*(_callbacks[_activeKey.top()->name]))();
 }
 
-Graphics::DrawStep *ThemeParser::newDrawStep() {
-
+Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	Graphics::DrawStep *step = new DrawStep;
 
 	step->fgColor.set = false;
@@ -83,6 +86,42 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 	step->stroke = 1;
 
 	return step;
+}
+
+Graphics::DrawStep *ThemeParser::newDrawStep() {
+	assert(_defaultStepGlobal);
+	Graphics::DrawStep *step = new DrawStep;
+
+	if (_defaultStepLocal) {
+		memcpy(step, _defaultStepLocal, sizeof(DrawStep));
+	} else {
+		memcpy(step, _defaultStepGlobal, sizeof(DrawStep));
+	}
+
+	return step;
+}
+
+bool ThemeParser::parserCallback_defaultSet() {
+	ParserNode *defNode = getActiveNode();
+	ParserNode *parentNode = getParentNode(defNode);
+	Graphics::DrawStep *step = 0;
+
+	if (parentNode == 0)
+		return parserError("The <default> key must be contained inside <render_info> keys.");
+
+	if (parentNode->name == "render_info") {
+		step = _defaultStepGlobal;
+	} else if (parentNode->name == "drawdata") {
+		if (_defaultStepLocal == 0)
+			_defaultStepLocal = new DrawStep;
+
+		memcpy(_defaultStepLocal, _defaultStepGlobal, sizeof(DrawStep));
+		step = _defaultStepLocal;
+	} else {
+		return parserError("<default> key out of scope. Must be inside <drawdata> or <render_info> keys.");
+	}
+
+	return parseDrawStep(defNode, step, false);
 }
 
 bool ThemeParser::parserCallback_renderInfo() {
@@ -159,6 +198,10 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	assert(drawdataNode->values.contains("id"));
 
 	Graphics::DrawStep *drawstep = newDrawStep();
+
+	if (!stepNode->values.contains("func"))
+		return parserError("All Draw Steps must contain a 'func' definition.");
+
 	Common::String functionName = stepNode->values["func"]; 
 
 	if (_drawFunctions.contains(functionName) == false)
@@ -166,6 +209,56 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 
 	drawstep->drawingCall = _drawFunctions[functionName];
 
+	if (!parseDrawStep(stepNode, drawstep, true))
+		return false;
+
+	g_InterfaceManager.addDrawStep(drawdataNode->values["id"], drawstep);
+	return true;
+}
+
+bool ThemeParser::parserCallback_DRAWDATA() {
+	ParserNode *drawdataNode = _activeKey.top();
+	bool cached = false;
+
+	assert(drawdataNode->name == "drawdata");
+
+	if (getParentNode(drawdataNode) == 0 || getParentNode(drawdataNode)->name != "render_info")
+		return parserError("DrawData keys must be contained inside a <render_info> section.");
+
+	if (drawdataNode->values.contains("id") == false)
+		return parserError("DrawData keys must contain an identifier.");
+
+	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
+
+	if (id == -1)
+		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
+
+	if (drawdataNode->values.contains("cached") && drawdataNode->values["cached"] == "true") {
+		cached = true;
+	}
+
+	// Both Max and Johannes suggest using a non-platform specfic approach based on available
+	// resources and active resolution. getHostPlatformString() has been removed, so fix this.
+
+/*	if (drawdataNode->values.contains("platform")) {
+		if (drawdataNode->values["platform"].compareToIgnoreCase(Common::getHostPlatformString()) != 0) {
+			drawdataNode->ignore = true;
+			return true;
+		}
+	}*/
+
+	if (g_InterfaceManager.addDrawData(id, cached) == false)
+		return parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
+
+	if (_defaultStepLocal) {
+		delete _defaultStepLocal;
+		_defaultStepLocal = 0;
+	}
+
+	return true;
+}
+
+bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific) {
 	int red, green, blue, w, h;
 	Common::String val;
 
@@ -226,42 +319,47 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	__PARSER_ASSIGN_RGB(gradColor1, "gradient_start");
 	__PARSER_ASSIGN_RGB(gradColor2, "gradient_end");
 
-	if (functionName == "roundedsq" || functionName == "circle") {
-		__PARSER_ASSIGN_INT(radius, "radius", true)
-	}
+	if (functionSpecific) {
+		assert(stepNode->values.contains("func"));
+		Common::String functionName = stepNode->values["func"];
 
-	if (functionName == "bevelsq") {
-		__PARSER_ASSIGN_INT(extraData, "bevel", true);
-	}
-
-	if (functionName == "triangle") {
-		drawstep->extraData = VectorRenderer::kTriangleUp;
-
-		if (stepNode->values.contains("orientation")) {
-			val = stepNode->values["orientation"];
-
-			if ( val == "top")
-				drawstep->extraData = VectorRenderer::kTriangleUp;
-			else if (val == "bottom")
-				drawstep->extraData = VectorRenderer::kTriangleDown;
-			else if (val == "left")
-				drawstep->extraData = VectorRenderer::kTriangleLeft;
-			else if (val == "right")
-				drawstep->extraData = VectorRenderer::kTriangleRight;
-			else
-				return parserError("'%s' is not a valid value for triangle orientation.", val.c_str());
+		if (functionName == "roundedsq" || functionName == "circle") {
+			__PARSER_ASSIGN_INT(radius, "radius", true)
 		}
-	}
 
-	if (stepNode->values.contains("size")) {
-		if (stepNode->values["size"] == "auto") {
-			drawstep->fillArea = true;
-		} else if (sscanf(stepNode->values["size"].c_str(), "%d, %d", &w, &h) == 2) {
-			drawstep->fillArea = false;
-			drawstep->w = w;
-			drawstep->h = h;
-		} else {
-			return parserError("Invalid value in 'size' subkey: Valid options are 'auto' or 'X, X' to define width and height.");
+		if (functionName == "bevelsq") {
+			__PARSER_ASSIGN_INT(extraData, "bevel", true);
+		}
+
+		if (functionName == "triangle") {
+			drawstep->extraData = VectorRenderer::kTriangleUp;
+
+			if (stepNode->values.contains("orientation")) {
+				val = stepNode->values["orientation"];
+
+				if ( val == "top")
+					drawstep->extraData = VectorRenderer::kTriangleUp;
+				else if (val == "bottom")
+					drawstep->extraData = VectorRenderer::kTriangleDown;
+				else if (val == "left")
+					drawstep->extraData = VectorRenderer::kTriangleLeft;
+				else if (val == "right")
+					drawstep->extraData = VectorRenderer::kTriangleRight;
+				else
+					return parserError("'%s' is not a valid value for triangle orientation.", val.c_str());
+			}
+		}
+
+		if (stepNode->values.contains("size")) {
+			if (stepNode->values["size"] == "auto") {
+				drawstep->fillArea = true;
+			} else if (sscanf(stepNode->values["size"].c_str(), "%d, %d", &w, &h) == 2) {
+				drawstep->fillArea = false;
+				drawstep->w = w;
+				drawstep->h = h;
+			} else {
+				return parserError("Invalid value in 'size' subkey: Valid options are 'auto' or 'X, X' to define width and height.");
+			}
 		}
 	}
 
@@ -281,44 +379,6 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 
 #undef __PARSER_ASSIGN_INT
 #undef __PARSER_ASSIGN_RGB
-
-	g_InterfaceManager.addDrawStep(drawdataNode->values["id"], drawstep);
-	return true;
-}
-
-bool ThemeParser::parserCallback_DRAWDATA() {
-	ParserNode *drawdataNode = _activeKey.top();
-	bool cached = false;
-
-	assert(drawdataNode->name == "drawdata");
-
-	if (getParentNode(drawdataNode) == 0 || getParentNode(drawdataNode)->name != "render_info")
-		return parserError("DrawData keys must be contained inside a <render_info> section.");
-
-	if (drawdataNode->values.contains("id") == false)
-		return parserError("DrawData keys must contain an identifier.");
-
-	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
-
-	if (id == -1)
-		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
-
-	if (drawdataNode->values.contains("cached") && drawdataNode->values["cached"] == "true") {
-		cached = true;
-	}
-
-	// Both Max and Johannes suggest using a non-platform specfic approach based on available
-	// resources and active resolution. getHostPlatformString() has been removed, so fix this.
-
-/*	if (drawdataNode->values.contains("platform")) {
-		if (drawdataNode->values["platform"].compareToIgnoreCase(Common::getHostPlatformString()) != 0) {
-			drawdataNode->ignore = true;
-			return true;
-		}
-	}*/
-
-	if (g_InterfaceManager.addDrawData(id, cached) == false)
-		return parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
 
 	return true;
 }

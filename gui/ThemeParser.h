@@ -324,6 +324,7 @@ protected:
 	bool parserCallback_color();
 	bool parserCallback_renderInfo();
 	bool parserCallback_layoutInfo();
+	bool parserCallback_defaultSet();
 		
 
 	bool validateKeyIntSigned(const char *key) {
@@ -345,6 +346,11 @@ protected:
 	}
 
 	Graphics::DrawStep *newDrawStep();
+	Graphics::DrawStep *defaultDrawStep();
+	bool parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific);
+
+	Graphics::DrawStep *_defaultStepGlobal;
+	Graphics::DrawStep *_defaultStepLocal;
 
 	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;

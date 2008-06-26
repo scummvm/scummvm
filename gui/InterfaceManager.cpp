@@ -261,23 +261,12 @@ int InterfaceManager::runGUI() {
 
 	_system->showOverlay();
 
-	Graphics::DrawStep *steps = new Graphics::DrawStep[2];
-
-	steps[0].gradColor1.r = 214;
-	steps[0].gradColor1.g = 113;
-	steps[0].gradColor1.b = 8;
-	steps[0].gradColor1.set = true;
-	steps[0].gradColor2.r = 240;
-	steps[0].gradColor2.g = 200;
-	steps[0].gradColor2.b = 25;
-	steps[0].gradColor2.set = true;
-	steps[0].fillMode = VectorRenderer::kFillGradient;
-	steps[0].drawingCall = &VectorRenderer::drawCallback_FILLSURFACE;
-
 	bool running = true;
 	while (running) { // draw!!
 
-		_vectorRenderer->drawStep(Common::Rect(), steps[0]);
+		drawDD(kDDMainDialogBackground, Common::Rect());
+		drawDD(kDDButtonIdle, Common::Rect(32, 32, 128, 128));
+
 		_vectorRenderer->copyFrame(_system);
 
 		Common::Event event;

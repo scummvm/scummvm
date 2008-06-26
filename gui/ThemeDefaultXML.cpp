@@ -43,8 +43,12 @@ bool InterfaceManager::loadDefaultXML() {
 		"<color name = 'green' rgb = '0, 255, 0' />"
 		"<color name = 'blue' rgb = '0, 0, 255' />"
 	"</palette>"
+	"<default fill = 'gradient' fg_color = '255, 255, 255' />"
 	"<drawdata id = 'mainmenu_bg' cache = false>"
-		"<drawstep func = 'roundedsq' radius = 8 fill = 'none' color = '0, 1, 2' size = 'auto' />"
+		"<drawstep func = 'fill' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
+	"</drawdata>"
+	"<drawdata id = 'button_idle' cache = false>"
+		"<drawstep func = 'roundedsq' radius = '8' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' />"
 	"</drawdata>"
 "</render_info>";
 

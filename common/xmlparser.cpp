@@ -61,10 +61,12 @@ bool XMLParser::parserError(const char *errorString, ...) {
 
 	printf("%s%s%s\n", startFull ? "" : "...", endFull ? "" : "...", lineStr);
 
-	if (!startFull)
-		lineStart -= 3;
+	int cursor = MIN(_pos - lineStart, 70);
 
-	for (int i = 0; i < _pos - lineStart; ++i)
+	if (!startFull)
+		cursor += 3;
+
+	while (cursor--)
 		printf(" ");
 
 	printf("^\n");
