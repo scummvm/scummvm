@@ -295,7 +295,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	if (stream->readUint32LE() != saveLoadEndMarker) {
 		warning("Corrupted gamestate data");
 		// if that ever happens, exit the game
-		_flagsTable[611] = 1;
+		_quit = 1;
 	}
 	_flagsTable[614] = roomOffsX;
 	_flagsTable[615] = roomOffsY;

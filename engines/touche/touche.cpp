@@ -115,7 +115,7 @@ int ToucheEngine::go() {
 
 	res_deallocateTables();
 	res_closeDataFile();
-	return 0;
+	return _rtl;
 }
 
 void ToucheEngine::restart() {
@@ -262,7 +262,7 @@ void ToucheEngine::mainLoop() {
 	}
 
 	uint32 frameTimeStamp = _system->getMillis();
-	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
+	for (uint32 cycleCounter = 0; _quit == 0; ++cycleCounter) {
 		if ((cycleCounter % 3) == 0) {
 			runCycle();
 		}
@@ -292,7 +292,7 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_flagsTable[611] = 1;
+			_quit = 1;
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (!handleKeyEvents) {
@@ -301,7 +301,7 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			_flagsTable[600] = event.kbd.keycode;
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				if (_displayQuitDialog) {
-					_flagsTable[611] = displayQuitDialog();
+					_quit = displayQuitDialog();
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
@@ -1832,7 +1832,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	_menuRedrawCounter = 2;
 	Common::Rect rect(0, y, kScreenWidth, y + h);
 	i = -1;
-	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
+	while (_inp_rightMouseButtonPressed && _quit == 0) {
 		Common::Point mousePos = getMousePos();
 		if (rect.contains(mousePos)) {
 			int c = (mousePos.y - y) / kTextHeight;
