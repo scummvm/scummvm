@@ -323,6 +323,8 @@ protected:
 	bool parserCallback_palette();
 	bool parserCallback_color();
 	bool parserCallback_renderInfo();
+	bool parserCallback_layoutInfo();
+		
 
 	bool validateKeyIntSigned(const char *key) {
 		if (!isdigit(*key) && *key != '+' && *key != '-')

@@ -120,23 +120,45 @@ public:
 		int depth;
 	};
 
+	/**
+	 * Loads a file into the parser.
+	 * Used for the loading of Theme Description files
+	 * straight from the filesystem.
+	 *
+	 * @param filename Name of the file to load.
+	 */
 	virtual bool loadFile(Common::String filename) {
 		Common::File *f = new Common::File;
 
 		if (!f->open(filename, Common::File::kFileReadMode))
 			return false;
 
+		_fileName = filename;
 		_text.loadStream(f);
 		return true;
 	}
 
+	/**
+	 * Loads a memory buffer into the parser.
+	 * Used for loading the default theme fallback directly
+	 * from memory if no themes can be found.
+	 *
+	 * @param buffer Pointer to the buffer.
+	 * @param disposable Sets if the XMLParser owns the buffer,
+	 *                   i.e. if it can be freed safely after it's
+	 *                   no longer needed by the parser.
+	 */
 	virtual bool loadBuffer(const char *buffer, bool disposable = false) {
 		_text.loadStream(new MemoryReadStream((const byte*)buffer, strlen(buffer), disposable));
+		_fileName = "Memory Stream";
 		return true;
 	}
 
+	/**
+	 * The actual parsing function.
+	 * Parses the loaded data stream, returns true if successful.
+	 */
 	virtual bool parse();
-	void debug_testEval();
 
 	/**
 	 * Returns the active node being parsed (the one on top of

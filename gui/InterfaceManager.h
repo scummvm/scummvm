@@ -190,12 +190,13 @@ public:
 		return _initOk && _themeOk;
 	}
 
-	bool loadTheme(Common::String &themeName);
+	bool loadTheme(Common::String themeName);
 
 protected:
 	template<typename PixelType> void screenInit();
 
-	bool loadThemeXML(Common::String &themeName);
+	bool loadThemeXML(Common::String themeName);
+	bool loadDefaultXML();
 
 	void freeRenderer() {
 		delete _vectorRenderer;
@@ -232,6 +233,8 @@ protected:
 	bool _initOk;
 	bool _themeOk;
 	bool _caching;
+
+	static const char *_defaultXML;
 };
 
 struct WidgetDrawData {

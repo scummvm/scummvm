@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	widget.o \
 	theme.o \
 	ThemeClassic.o \
+	ThemeDefaultXML.o \
 	ThemeModern.o \
 	ThemeParser.o \
 	theme-config.o

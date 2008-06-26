@@ -1225,19 +1225,16 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\ThemeDefaultXML.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\ThemeModern.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\gui\ThemeParser.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\gui\ThemeParser.h"

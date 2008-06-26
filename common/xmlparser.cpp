@@ -34,25 +34,6 @@ namespace Common {
 
 using namespace Graphics;
 
-void XMLParser::debug_testEval() {
-	static const char *debugConfigText =
-		"<render_info>\n"
-		"<palette>\n"
-		"<color name = \"red\" rgb = \"255, 255, 255\"/>\n"
-		"</palette>\n"
-		"<drawdata id = \"mainmenu_bg\" cache = true>\n"
-		"<drawstep func = \"roundedsq\" radius = 23 fill = \"none\" color = \"0, 1, 2\" size = \"auto\" />\n"
-		"<drawstep func = \"roundedsq\" radius = 15 fill = \"none\" color = \"red\" size = \"auto\"/>\n"
-		"</drawdata>/* lol this is just a simple test*/\n"
-		"</render_info>";
-
-	loadBuffer(debugConfigText);
-	_fileName = "test_parse.xml";
-
-	parse();
-}
-
-
 bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
 

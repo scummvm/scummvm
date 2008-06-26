@@ -72,8 +72,6 @@ static bool launcherDialog(OSystem &system) {
 
 #if 1
 
-	GUI::ThemeParser parser;
-	parser.debug_testEval();
 	g_InterfaceManager.runGUI();
 	return true;
 

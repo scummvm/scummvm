@@ -132,10 +132,12 @@ bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
 	return true;
 }
 
-bool InterfaceManager::loadTheme(Common::String &themeName) {
+bool InterfaceManager::loadTheme(Common::String themeName) {
 	if (!loadThemeXML(themeName)) {
-		warning("Could not parse custom theme '%s'.", themeName.c_str());
-		return false;
+		warning("Could not parse custom theme '%s'.\nFalling back to default theme", themeName.c_str());
+		
+		if (!loadDefaultXML()) // if we can't load the embeded theme, this is a complete failure
+			error("Could not load default embeded theme.");
 	}
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
@@ -153,7 +155,7 @@ bool InterfaceManager::loadTheme(Common::String &themeName) {
 	return true;
 }
 
-bool InterfaceManager::loadThemeXML(Common::String &themeName) {
+bool InterfaceManager::loadThemeXML(Common::String themeName) {
 	assert(_parser);
 
 	if (ConfMan.hasKey("themepath"))
@@ -254,57 +256,28 @@ void InterfaceManager::drawScrollbar(const Common::Rect &r, int sliderY, int sli
 
 int InterfaceManager::runGUI() {
 	Common::EventManager *eventMan = _system->getEventManager();
+
+	loadTheme("modern_theme.xml");
+
 	_system->showOverlay();
 
-	Graphics::DrawStep *steps = new Graphics::DrawStep[5];
+	Graphics::DrawStep *steps = new Graphics::DrawStep[2];
 
 	steps[0].gradColor1.r = 214;
 	steps[0].gradColor1.g = 113;
 	steps[0].gradColor1.b = 8;
+	steps[0].gradColor1.set = true;
 	steps[0].gradColor2.r = 240;
 	steps[0].gradColor2.g = 200;
 	steps[0].gradColor2.b = 25;
+	steps[0].gradColor2.set = true;
 	steps[0].fillMode = VectorRenderer::kFillGradient;
 	steps[0].drawingCall = &VectorRenderer::drawCallback_FILLSURFACE;
-
-	steps[1].gradColor1.r = 206;
-	steps[1].gradColor1.g = 121;
-	steps[1].gradColor1.b = 99;
-	steps[1].gradColor2.r = 173;
-	steps[1].gradColor2.g = 40;
-	steps[1].gradColor2.b = 8;
-	steps[1].radius = 8; // radius
-	steps[1].fillArea = true;
-	steps[1].drawingCall = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[1].scale = (1 << 16);
-
-	steps[2].radius = 8; // radius
-	steps[2].fillArea = false;
-	steps[2].x.relative = true;
-	steps[2].x.pos = 32;
-	steps[2].y.relative = false;
-	steps[2].y.pos = 32;
-	steps[2].w = 128;
-	steps[2].h = 32;
-	steps[2].drawingCall = &VectorRenderer::drawCallback_ROUNDSQ;
-	steps[2].scale = (1 << 16);
-
-	steps[3].fgColor.r = 255;
-	steps[3].fgColor.g = 255;
-	steps[3].fgColor.b = 255;
-	steps[3].drawingCall = &VectorRenderer::drawCallback_VOID;
-
-	Common::Rect area = Common::Rect(32, 32, 256, 256);
 
 	bool running = true;
 	while (running) { // draw!!
 
 		_vectorRenderer->drawStep(Common::Rect(), steps[0]);
-		_vectorRenderer->drawStep(Common::Rect(), steps[3]);
-		_vectorRenderer->drawStep(area, steps[1]);
-		_vectorRenderer->drawStep(area, steps[2]);
-//		_vectorRenderer->drawStep(Common::Rect(32, 32, 256, 256), &steps[3]);
-
 		_vectorRenderer->copyFrame(_system);
 
 		Common::Event event;

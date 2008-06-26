@@ -45,6 +45,7 @@ ThemeParser::ThemeParser() : XMLParser() {
 	_callbacks["palette"] = &ThemeParser::parserCallback_palette;
 	_callbacks["color"] = &ThemeParser::parserCallback_color;
 	_callbacks["render_info"] = &ThemeParser::parserCallback_renderInfo;
+	_callbacks["layout_info"] = &ThemeParser::parserCallback_layoutInfo;
 
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
@@ -93,6 +94,17 @@ bool ThemeParser::parserCallback_renderInfo() {
 		return parserError("<render_info> keys must be root elements.");
 
 	// TODO: Skip key if it's not for this platform.
+
+	return true;
+}
+
+bool ThemeParser::parserCallback_layoutInfo() {
+	ParserNode *layoutNode = getActiveNode();
+
+	assert(layoutNode->name == "layout_info");
+
+	if (getParentNode(layoutNode) != 0)
+		return parserError("<layout_info> keys must be root elements.");
 
 	return true;
 }
