@@ -388,8 +388,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (event.kbd.keycode == Common::KEYCODE_F11)
 				if (g_engine && !g_engine->isPaused())
 					g_engine->mainMenuDialog();
-
-			break;
+			
+			if (!g_engine->_quit)
+				break;
+			else
+				event.type = Common::EVENT_QUIT;
 
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
