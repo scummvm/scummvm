@@ -1103,7 +1103,7 @@ public:
 	void generateOutput(int phasebuf, int *feedbuf, int &out);
 
 	void feedbackLevel(int32 level) {_feedbackLevel = level ? level + 6 : 0; }
-	void detune(int value) { _detn = (int32*) &_detnTbl[value << 5]; }
+	void detune(int value) { _detn = &_detnTbl[value << 5]; }
 	void multiple(uint32 value) { _multiple = value ? (value << 1) : 1;	}
 	void attackRate(uint32 value) { _specifiedAttackRate = value; }
 	bool scaleRate(uint8 value);
@@ -1132,7 +1132,7 @@ protected:
 	uint8 _kcode;
 	uint32 _phase;
 	uint32 _phaseIncrement;
-	int32 *_detn;
+	const int32 *_detn;
 
 	const uint8 *_rateTbl;
 	const uint8 *_rshiftTbl;
@@ -1297,7 +1297,7 @@ void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *feedbuf, int &out)
 void TownsPC98_OpnOperator::reset(){
 	keyOff();
 	_tick = 0;
-	_keyScale2 = -1;
+	_keyScale2 = 0;
 	_currentLevel = 1023;
 
 	frequency(0);
@@ -1676,7 +1676,7 @@ void TownsPC98_OpnDriver::loadData(uint8 * data, bool loadPaused) {
 		//_channels[i]->flags = (_channels[i]->flags & ~CHS_EOT) | CHS_ALL_BUT_EOT;
 		//_channels[i]->ticksLeft = 1;
 		//_channels[i]->dataPtr = data + READ_LE_UINT16(src_a);
-		uint8 *tmp = data + READ_LE_UINT16(src_a);
+		//uint8 *tmp = data + READ_LE_UINT16(src_a);
 		src_a += 2;
 	}
 
@@ -1755,7 +1755,7 @@ void TownsPC98_OpnDriver::nextTick(int16 *buffer, uint32 bufferSize) {
 		int *feed = _channels[i]->feedbuf;
 		int *del = &feed[2];
 		
-		for (int ii = 0; ii < bufferSize ; ii++) {	
+		for (uint32 ii = 0; ii < bufferSize ; ii++) {	
 			phbuf1 = phbuf2 = output = 0;
 
 			switch (_channels[i]->algorithm) {
@@ -1903,7 +1903,6 @@ void TownsPC98_OpnDriver::generateTables() {
 	delete [] _oprDetune;
 	_oprDetune = new int32[256];
 	for (int i = 0; i < 128; i++) {
-		double rate = ((double)dtt[i]) * 1024.0  * _baserate  * (1<<16) / ((double)(1<<20));
 		_oprDetune[i] = (int32)	((double)dtt[i] * _baserate * 64.0);
 		_oprDetune[i + 128] = -_oprDetune[i];
 	}
@@ -2133,9 +2132,9 @@ bool TownsPC98_OpnDriver::control_f8_togglePitchWheel(TwnChannel *chan, uint8 pa
 			chan->flags |= CHS_PITCHWHEELOFF;
 		}
 	} else {
-		uint8 skipChannels = para / 36;
-		uint8 entry = para % 36;
-		TownsPC98_OpnDriver::TwnChannel *t = &chan[skipChannels];
+		//uint8 skipChannels = para / 36;
+		//uint8 entry = para % 36;
+		//TownsPC98_OpnDriver::TwnChannel *t = &chan[skipChannels];
 		////// NOT IMPLEMENTED
 		//t->unnamedEntries[entry] = *chan->dataPtr++;
 	}
