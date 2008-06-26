@@ -229,7 +229,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameCycle = 0;
 	_gameSpeed = 1;
 
-	_quit = false;
 	syst->getEventManager()->registerRandomSource(_rnd, "sword2");
 }
 
@@ -460,7 +459,7 @@ int Sword2Engine::go() {
 #endif
 	}
 
-	return 0;
+	return _rtl;
 }
 
 void Sword2Engine::closeGame() {

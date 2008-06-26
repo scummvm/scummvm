@@ -141,8 +141,6 @@ public:
 	bool getSubtitles() { return _useSubtitles; }
 	void setSubtitles(bool b) { _useSubtitles = b; }
 
-	bool _quit;
-
 	uint32 _features;
 
 	MemoryManager *_memory;
