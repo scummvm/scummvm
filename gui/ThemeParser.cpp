@@ -233,8 +233,12 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	if (id == -1)
 		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
 
-	if (drawdataNode->values.contains("cached") && drawdataNode->values["cached"] == "true") {
-		cached = true;
+	if (drawdataNode->values.contains("cache")) {
+		if (drawdataNode->values["cache"] == "true") 
+			cached = true;
+		else if (drawdataNode->values["cache"] == "false")
+			cached = false;
+		else return parserError("'Parsed' value must be either true or false.");
 	}
 
 	// Both Max and Johannes suggest using a non-platform specfic approach based on available

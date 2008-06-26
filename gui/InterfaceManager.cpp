@@ -257,7 +257,8 @@ void InterfaceManager::drawScrollbar(const Common::Rect &r, int sliderY, int sli
 int InterfaceManager::runGUI() {
 	Common::EventManager *eventMan = _system->getEventManager();
 
-	loadTheme("modern_theme.xml");
+	if (!loadTheme("modern_theme.xml"))
+		return 0;
 
 	_system->showOverlay();
 
