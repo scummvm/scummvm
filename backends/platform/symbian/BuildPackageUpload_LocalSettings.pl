@@ -162,14 +162,14 @@
 		#$FTP_Pass = "password";
 		#$FTP_Dir  = "cvsbuilds";
 
-		#$SDK_RootDirs{'UIQ2'}= "E:\\UIQ2";
-		$SDK_RootDirs{'UIQ3'}= "E:\\UIQ3";
-		#$SDK_RootDirs{'S60v1'}= "E:\\S60v1";
-		#$SDK_RootDirs{'S60v2'}= "E:\\S60v2";
-		$SDK_RootDirs{'S60v3'}= "E:\\S60v3";
-		#$SDK_RootDirs{'S80'}= "E:\\S80";
-		#$SDK_RootDirs{'S90'}= "E:\\S90";
-		$ECompXL_BinDir= "E:\\ECompXL\\";
+		#$SDK_RootDirs{'UIQ2'}= "D:\\UIQ2";
+		$SDK_RootDirs{'UIQ3'}= "D:\\UIQ3";
+		#$SDK_RootDirs{'S60v1'}= "D:\\S60v1";
+		#$SDK_RootDirs{'S60v2'}= "D:\\S60v2";
+		$SDK_RootDirs{'S60v3'}= "D:\\S60v3";
+		#$SDK_RootDirs{'S80'}= "D:\\S80";
+		#$SDK_RootDirs{'S90'}= "D:\\S90";
+		$ECompXL_BinDir= "D:\\ECompXL\\";
 		if (0) # so we can turn them on/off easily
 		{
 #			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
