@@ -38,6 +38,7 @@ Building ScummVM
 	Lets just say the framework needs quite some time to set up and takes a while
 	to get used to. If you choose to continue you will need the following items:
 
+	- UIQ 3.0 SDK (To build for UIQ3 devices)
 	- UIQ 2.1 SDK (To build for UIQ2 devices);
 	  http://www.symbian.com/developer/sdks_uiq.asp
 
@@ -58,14 +59,14 @@ Building ScummVM
 
 	- zlib, a massively spiffy yet delicately unobtrusive compression library
 	  http://www.zlib.net/
-
-	These are probably too heavy-duty for your phone:
+	- latest version of active perl (included with Symbian SDK does not work with the build scripts)
 
 	- libogg, the free media file container format
 	  http://www.xiph.org/ogg/
-
+	
 	- libvorbis, the free audio codec
 	  http://www.vorbis.com/
+	These are probably too heavy-duty for your phone:
 
 	- flac, the Free Lossless Audio Codec
 	  http://flac.sourceforge.net/
