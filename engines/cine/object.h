@@ -60,7 +60,7 @@ void loadObject(char *pObjectName);
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 
-void addOverlay(uint16 objIdx, uint16 param);
+void addOverlay(uint16 objIdx, uint16 type);
 int removeOverlay(uint16 objIdx, uint16 param);
 void addGfxElement(int16 objIdx, int16 param, int16 type);
 void removeGfxElement(int16 objIdx, int16 param, int16 type);

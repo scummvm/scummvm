@@ -99,21 +99,32 @@ int removeOverlay(uint16 objIdx, uint16 param) {
 
 /*! \brief Add new overlay sprite to the list
  * \param objIdx Associate the overlay with this object
- * \param param Type of new overlay
+ * \param type Type of new overlay
  * \todo Why are x, y, width and color left uninitialized?
  */
-void addOverlay(uint16 objIdx, uint16 param) {
+void addOverlay(uint16 objIdx, uint16 type) {
 	Common::List<overlay>::iterator it;
 	overlay tmp;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		// This is done for both Future Wars and Operation Stealth
 		if (objectTable[it->objIdx].mask >= objectTable[objIdx].mask) {
+			break;
+		}
+
+		// There are additional checks in Operation Stealth's implementation
+		if (g_cine->getGameType() == Cine::GType_OS && (it->type == 2 || it->type == 3)) {
 			break;
 		}
 	}
 
+	// In Operation Stealth's implementation we might bail out early
+	if (g_cine->getGameType() == Cine::GType_OS && it != overlayList.end() && it->objIdx == objIdx && it->type == type) {
+		return;
+	}
+
 	tmp.objIdx = objIdx;
-	tmp.type = param;
+	tmp.type = type;
 
 	overlayList.insert(it, tmp);
 }
