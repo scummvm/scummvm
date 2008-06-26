@@ -43,7 +43,7 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 	if (restart)
 		_lastMusicCommand = -1;
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+	if (_flags.platform == Common::kPlatformFMTowns) {
 		if (command == 1) {
 			_sound->beginFadeOut();
 		} else if (command >= 35 && command <= 38) {
@@ -56,6 +56,13 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 		} else {
 			_sound->haltTrack();
 		}
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		
+		//////////////
+		//// TODO ////
+		//////////////
+		_sound->playTrack(command);
+		
 	} else {
 		KyraEngine_v1::snd_playWanderScoreViaMap(command, restart);
 	}
