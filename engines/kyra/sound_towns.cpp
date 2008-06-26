@@ -159,7 +159,7 @@ public:
 	void loadDataToEndOfQueue(uint8 *trackdata, uint32 size, bool loop = 0);
 	void setPlayBackStatus(bool playing);
 	bool isPlaying() {return _playing; }
-	const uint8 * trackData() {return _trackData; }
+	uint8 *trackData() {return _trackData; }
 
 	bool _loop;
 	Towns_EuphonyTrackQueue *_next;
@@ -807,7 +807,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 		if (info.ext.type == 0x2F) {
 			unloadMusic();
 			memset(&info, 0, sizeof(EventInfo));
-			pos = _position._play_pos = _tracks[0] = (byte*) _queue->trackData() + 0x806;
+			pos = _position._play_pos = _tracks[0] = _queue->trackData() + 0x806;
 		} else if (_active_track == 255) {
 			_queue = _queue->_next;
 			setup();
@@ -964,7 +964,7 @@ void Towns_EuphonyParser::resetTracking() {
 }
 
 void Towns_EuphonyParser::setup() {
-	uint8 *data = (uint8 *) _queue->trackData();
+	uint8 *data = _queue->trackData();
 	if (!data)
 		return;
 	_queue->initDriver();
