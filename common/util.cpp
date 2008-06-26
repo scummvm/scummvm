@@ -481,34 +481,6 @@ uint32 getEnabledSpecialDebugLevels() {
 	return gDebugLevelsEnabled;
 }
 
-const char *getHostPlatformString() {
-
-#if defined(__SYMBIAN32__)
-	return "symbian";
-#elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__) || defined(UNIX)
-	return "pc";
-#elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
-	return "palmos";
-#elif defined(__DC__)
-	return "dc";
-#elif defined(__GP32__)
-	return "gp32";
-#elif defined(__PLAYSTATION2__)
-	return "ps2";
-#elif defined(__PSP__)
-	return "psp";
-#elif defined(__amigaos4__)
-	return "amigaos";
-#elif defined (__DS__) //NeilM
-	return "nds";
-#elif defined(__WII__)
-	return "wii";
-#else
-	return "";
-#endif
-
-}
-
 
 }	// End of namespace Common
 
@@ -722,4 +694,3 @@ Common::String tag2string(uint32 tag) {
 	str[4] = '\0';
 	return Common::String(str);
 }
-

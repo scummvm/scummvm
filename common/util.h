@@ -323,13 +323,6 @@ const DebugLevelContainer &listSpecialDebugLevels();
 uint32 getEnabledSpecialDebugLevels();
 
 
-/**
- * Return a string containing the name of the currently running host.
- * E.g. returns "wii" if ScummVM is being run in a Wii, and so on.
- */
-const char *getHostPlatformString();
-
-
 }	// End of namespace Common
 
 
