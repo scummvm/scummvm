@@ -61,8 +61,8 @@ protected:
 	Common::SaveFileManager *_saveFileMan;
 	
 	Dialog *_mainMenuDialog;
+	virtual int runDialog(Dialog &dialog);
 
-	virtual int runDialog(Dialog &dialog);	
 	const Common::String _targetName; // target name for saves
 	const Common::String _gameDataPath;
 
@@ -125,7 +125,14 @@ public:
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
 
+
+	/** Run the Global Main Menu Dialog
+	 */
 	void mainMenuDialog();
+
+	/** Sync the engine's sound settings with the config manager
+	 */
+	virtual void syncSoundSettings();
 
 public:
 

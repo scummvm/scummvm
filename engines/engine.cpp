@@ -77,7 +77,8 @@ Engine::Engine(OSystem *syst)
 
 Engine::~Engine() {
 	_mixer->stopAll();
-
+	
+	delete _mainMenuDialog;
 	g_engine = NULL;
 }
 
@@ -220,6 +221,7 @@ void Engine::mainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
+	syncSoundSettings();
 }
 
 int Engine::runDialog(Dialog &dialog) {
@@ -233,3 +235,14 @@ int Engine::runDialog(Dialog &dialog) {
 	return 0;
 }
 
+void Engine::syncSoundSettings() {
+
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}

@@ -589,6 +589,8 @@ protected:
 
 	void loadSoundFile(const char *filename);
 
+	virtual void syncSoundSettings();
+
 	int getUserFlag(Item *item, int a);
 	int getUserFlag1(Item *item, int a);
 	int getUserItem(Item *item, int n);
