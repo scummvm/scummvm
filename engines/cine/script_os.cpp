@@ -442,6 +442,7 @@ int FWScript::o2_removeSeq() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op81() {
 	warning("STUB: o2_op81()");
@@ -593,8 +594,6 @@ int FWScript::o2_stopObjectScript() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
 int FWScript::o2_op8D() {
 	uint16 objIdx1  = getNextWord();
 	uint16 xAdd1    = getNextWord();
@@ -658,6 +657,7 @@ int FWScript::o2_wasZoneChecked() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9B() {
 	uint16 a = getNextWord();
@@ -673,6 +673,7 @@ int FWScript::o2_op9B() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9C() {
 	uint16 a = getNextWord();
@@ -712,6 +713,7 @@ int FWScript::o2_setAdditionalBgVScroll() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9F() {
 	warning("o2_op9F()");
