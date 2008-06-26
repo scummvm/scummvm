@@ -1090,10 +1090,10 @@ void Towns_EuphonyTrackQueue::initDriver() {
 
 class TownsPC98_OpnOperator {
 public:
-	TownsPC98_OpnOperator::TownsPC98_OpnOperator(double rate, uint8 id, const uint8 *rateTable,
+	TownsPC98_OpnOperator(double rate, uint8 id, const uint8 *rateTable,
 		const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
 		const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
-	TownsPC98_OpnOperator::~TownsPC98_OpnOperator() {}
+	~TownsPC98_OpnOperator() {}
 
 	void keyOn();
 	void keyOff();
