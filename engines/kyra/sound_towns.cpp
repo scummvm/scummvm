@@ -1455,8 +1455,9 @@ protected:
 	int32 *_oprLevelOut;
 	int32 *_oprDetune;
 
-	const uint8 *_trackData;
-	const uint8 *_patches;
+	uint8 *_trackData;
+	uint8 *_patches;
+
 	uint8 _cbCounter;
 	uint8 _updateChannelsFlag;
 	uint8 _finishedChannelsFlag;
@@ -1626,7 +1627,7 @@ void TownsPC98_OpnDriver::loadData(uint8 * data, bool loadPaused) {
 			_channels[i]->opr[ii] = _operators[(i << 2) + ii];
 	}
 
-	const uint8 *src_a = (const uint8*) data;
+	uint8 *src_a = data;
 	uint8 bl = 0;
 
 	for (uint8 i = 0; i < _numChan; i++) {
@@ -1955,7 +1956,7 @@ void TownsPC98_OpnDriver::processEvents(TwnChannel *chan) {
 void TownsPC98_OpnDriver::processFrequency(TwnChannel *chan) {
 	if (chan->flags & CHS_RECALCFREQ) {
 		uint8 block = (chan->frqBlockMSB & 0x70) >> 1;
-		uint16 bfreq = ((uint16*)_twnFreqTable)[chan->frqBlockMSB & 0x0f];
+		uint16 bfreq = ((const uint16*)_twnFreqTable)[chan->frqBlockMSB & 0x0f];
 		chan->frequency = (bfreq + chan->frqLSB) | (block << 8);
 
 		writeReg(chan, (chan->regOffset + 0xa4), (chan->frequency >> 8));
@@ -2041,7 +2042,7 @@ bool TownsPC98_OpnDriver::control_f0_setPatch(TwnChannel *chan, uint8 para) {
 		reg += 4;
 	}
 
-	const uint8 *tptr = (uint8*) _patches + ((uint32)chan->instrID << 5);
+	const uint8 *tptr = _patches + ((uint32)chan->instrID << 5);
 	reg = chan->regOffset + 0x30;
 
 	// write registers 0x30 to 0x8f
@@ -2105,7 +2106,7 @@ bool TownsPC98_OpnDriver::control_f6_repeatSection(TwnChannel *chan, uint8 para)
 
 	if (*chan->dataPtr) {
 		// repeat section until counter has reached zero
-		chan->dataPtr = (uint8*) _trackData + READ_LE_UINT16(chan->dataPtr + 2);
+		chan->dataPtr = _trackData + READ_LE_UINT16(chan->dataPtr + 2);
 	} else {
 		// reset counter, advance to next section
 		chan->dataPtr[0] = chan->dataPtr[1];
@@ -2180,7 +2181,7 @@ bool TownsPC98_OpnDriver::control_fc_decOutLevel(TwnChannel *chan, uint8 para) {
 }
 
 bool TownsPC98_OpnDriver::control_fd_jump(TwnChannel *chan, uint8 para) {
-	uint8 *tmp = (uint8*) _trackData + READ_LE_UINT16(chan->dataPtr - 1);
+	uint8 *tmp = _trackData + READ_LE_UINT16(chan->dataPtr - 1);
 	chan->dataPtr = (tmp[1] == 1) ? tmp : ++chan->dataPtr;
 	return true;
 }
@@ -2194,7 +2195,7 @@ bool TownsPC98_OpnDriver::control_ff_endOfTrack(TwnChannel *chan, uint8 para) {
 	uint16 val = READ_LE_UINT16(--chan->dataPtr);
 	if (val) {
 		// loop
-		chan->dataPtr = (uint8 *) _trackData + val;
+		chan->dataPtr = _trackData + val;
 		return true;
 	} else {
 		// quit parsing for active channel
