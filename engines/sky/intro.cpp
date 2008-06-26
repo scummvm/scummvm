@@ -911,7 +911,7 @@ bool Intro::escDelay(uint32 msecs) {
 			if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					return false;
-			} else if (event.type == Common::EVENT_QUIT) {
+			} else if (event.type == Common::EVENT_QUIT || g_engine->_quit) {
 				g_engine->_quit = true;
 				return false;
 			}

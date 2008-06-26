@@ -101,9 +101,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
 
-	//_quit = false;
-	//_rtl = false;
-
 	_debugger = 0;
 
 	_gameFile = 0;
