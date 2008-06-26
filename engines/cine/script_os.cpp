@@ -462,11 +462,13 @@ int FWScript::o2_modifySeqListElement() {
 	return 0;
 }
 
+/*! \todo Check whether this opcode's name is backwards (i.e. should it be o2_isSeqNotRunning?)
+ */
 int FWScript::o2_isSeqRunning() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: OP83(%d,%d) -> TODO", _line, a, b);
+	debugC(5, kCineDebugScript, "Line: %d: o2_isSeqRunning(%d,%d)", _line, a, b);
 
 	if (isSeqRunning(a, 0, b)) {
 		_compare = 1;

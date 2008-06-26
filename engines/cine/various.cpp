@@ -1586,16 +1586,19 @@ void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
 	}
 }
 
-uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
+bool isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
 	Common::List<SeqListElement>::iterator it;
 
 	for (it = seqList.begin(); it != seqList.end(); ++it) {
 		if (it->objIdx == param1 && it->var4 == param2 && it->varE == param3) {
-			return 1;
+			// Just to be on the safe side there's a restriction of the
+			// addition's result to 16-bit arithmetic here like in the
+			// original. It's possible that it's not strictly needed.
+			return ((it->var14 + it->var16) & 0xFFFF) == 0;
 		}
 	}
 
-	return 0;
+	return true;
 }
 
 void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
