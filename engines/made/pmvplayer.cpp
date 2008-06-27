@@ -40,7 +40,10 @@ void PmvPlayer::play(const char *filename) {
 	_surface = NULL;
 
 	_fd = new Common::File();
-	_fd->open(filename);
+	if (!_fd->open(filename)) {
+		delete _fd;
+		return;
+	}
 
 	uint32 chunkType, chunkSize;
 

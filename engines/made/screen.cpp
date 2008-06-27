@@ -688,7 +688,7 @@ void Screen::printText(const char *text) {
 	
 	for (int textPos = 0; textPos < textLen; textPos++) {
 	
-		uint c = text[textPos];
+		uint c = ((byte*)text)[textPos];
 		int charWidth = _font->getCharWidth(c);
 
 		if (c == 9) {
