@@ -34,6 +34,19 @@
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
 
+/*
+ * Include header files needed for the getFilesystemFactory() method.
+ */
+#if defined(__amigaos4__)
+	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#elif defined(UNIX)
+	#include "backends/fs/posix/posix-fs-factory.h"
+#elif defined(WIN32)
+	#include "backends/fs/windows/windows-fs-factory.h"
+#endif
+
+
+
 class OSystem_NULL : public OSystem {
 protected:
 	Common::SaveFileManager *_savefile;
@@ -104,6 +117,8 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(struct tm &t) const;
 	virtual Common::TimerManager *getTimerManager();
+	FilesystemFactory *getFilesystemFactory();
+
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -298,6 +313,19 @@ Common::TimerManager *OSystem_NULL::getTimerManager() {
 
 void OSystem_NULL::getTimeAndDate(struct tm &t) const {
 }
+
+FilesystemFactory *OSystem_NULL::getFilesystemFactory() {
+	#if defined(__amigaos4__)
+		return &AmigaOSFilesystemFactory::instance();
+	#elif defined(UNIX)
+		return &POSIXFilesystemFactory::instance();
+	#elif defined(WIN32)
+		return &WindowsFilesystemFactory::instance();
+	#else
+		#error Unknown and unsupported backend in OSystem_NULL::getFilesystemFactory
+	#endif
+}
+
 
 OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();
