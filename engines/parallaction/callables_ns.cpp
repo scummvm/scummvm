@@ -417,7 +417,9 @@ void Parallaction_ns::_c_ridux(void *parm) {
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
-	if (_inTestResult) {
+	if (_inTestResult) {		// NOTE: _inTestResult has been added because the scripts call _c_testResult multiple times to cope with
+								// the multiple buffering that was used in the original engine. _inTestResult now prevents the engine
+								// from crashing when the scripts are executed.
 		return;
 	}
 	_inTestResult = true;
