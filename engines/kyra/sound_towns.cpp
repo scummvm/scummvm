@@ -1716,13 +1716,13 @@ void TownsPC98_OpnDriver::fadeOut() {
 		
 		lock();
 		uint32 dTime = _tickCounter + 2;
-		for (int i = 0; i < _numChan; i++) {
-			if (_updateChannelsFlag & _channels[i]->idFlag) {
-				uint8 tmp = _channels[i]->totalLevel + 3;
+		for (int j = 0; j < _numChan; j++) {
+			if (_updateChannelsFlag & _channels[j]->idFlag) {
+				uint8 tmp = _channels[j]->totalLevel + 3;
 				if (tmp > 0x7f)
 					tmp = 0x7f;
-				_channels[i]->totalLevel = tmp;
-				setOutputLevel(_channels[i]);
+				_channels[j]->totalLevel = tmp;
+				setOutputLevel(_channels[j]);
 			}
 		}
 		unlock();
