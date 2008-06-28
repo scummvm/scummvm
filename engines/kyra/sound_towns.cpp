@@ -1090,7 +1090,7 @@ void Towns_EuphonyTrackQueue::initDriver() {
 
 class TownsPC98_OpnOperator {
 public:
-	TownsPC98_OpnOperator(double rate, uint8 id, const uint8 *rateTable,
+	TownsPC98_OpnOperator(double rate, const uint8 *rateTable,
 		const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
 		const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
 	~TownsPC98_OpnOperator() {}
@@ -1152,9 +1152,9 @@ protected:
 	} fs_a, fs_d, fs_s, fs_r;
 };
 
-TownsPC98_OpnOperator::TownsPC98_OpnOperator(double rate, uint8 id,
-	const uint8 *rateTable, const uint8 *shiftTable, const uint8 *attackDecayTable,
-	const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
+TownsPC98_OpnOperator::TownsPC98_OpnOperator(double rate, const uint8 *rateTable, 
+	const uint8 *shiftTable, const uint8 *attackDecayTable,	const uint32 *frqTable,
+	const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
 	_rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
 	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(rate * 65536.0),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
@@ -1467,6 +1467,7 @@ protected:
 	bool _playing;
 	bool _fading;
 	uint8 _looping;
+	uint32 _tickCounter;
 
 	bool _updateEnvelopes;
 
@@ -1490,7 +1491,7 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_operators(0), _looping(0), _twnCarrier(_drvTables + 76), _twnFreqTable(_drvTables + 84),
 	_twnFxCmdLen(_drvTables + 36), _twnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 220)) ,
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0),	_oprSinTbl(0), _oprLevelOut(0),
-	_oprDetune(0), _cbCounter(4), _updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F),
+	_oprDetune(0), _cbCounter(4), _tickCounter(0), _updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F),
 	_finishedChannelsFlag(0), _samplesTillCallback(0), _samplesTillCallbackRemainder(0),
 	_numSSG(type == OD_TOWNS ? 0 : 3), _hasADPCM(type == OD_TYPE86 ? true : false),
 	_numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true) {	
@@ -1536,7 +1537,7 @@ bool TownsPC98_OpnDriver::init() {
 
 	_operators = new TownsPC98_OpnOperator*[(_numChan << 2)];
 	for (int i = 0; i < (_numChan << 2); i++)
-		_operators[i] = new TownsPC98_OpnOperator(_baserate, i & 3, _oprRates,
+		_operators[i] = new TownsPC98_OpnOperator(_baserate, _oprRates,
 			_oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
 
 	if (_channels) {
@@ -1702,6 +1703,7 @@ void TownsPC98_OpnDriver::reset() {
 
 	_playing = false;
 	_looping = 0;
+	_tickCounter = 0;
 }
 
 void TownsPC98_OpnDriver::fadeOut() {
@@ -1711,16 +1713,29 @@ void TownsPC98_OpnDriver::fadeOut() {
 	_fading = true;
 
 	for (int i = 0; i < 20; i++) {
-
-		/// TODO ///
-		// twnFade();
-		//waitTicks(s);
 		
+		lock();
+		uint32 dTime = _tickCounter + 2;
+		for (int i = 0; i < _numChan; i++) {
+			if (_updateChannelsFlag & _channels[i]->idFlag) {
+				uint8 tmp = _channels[i]->totalLevel + 3;
+				if (tmp > 0x7f)
+					tmp = 0x7f;
+				_channels[i]->totalLevel = tmp;
+				setOutputLevel(_channels[i]);
+			}
+		}
+		unlock();
+
+		while (_playing) {
+			if (_tickCounter >= dTime)
+				break;
+		}
 	}
 
 	_fading = false;
 
-	//haltTrack();
+	reset();
 }
 
 void TownsPC98_OpnDriver::callback() {
@@ -1728,6 +1743,7 @@ void TownsPC98_OpnDriver::callback() {
 		return;
 
 	_cbCounter = 4;
+	_tickCounter++;
 
 	lock();
 	for (int i = 0; i < _numChan; i++) {
@@ -2770,6 +2786,7 @@ bool SoundTownsPC98_v2::init() {
 		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
 		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
 			_musicEnabled = 2;
+	_musicEnabled = 1;
 	return _driver->init();
 }
 
@@ -2793,7 +2810,7 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 		}
 	}
 
-	haltTrack();
+	beginFadeOut();
 
 	char musicfile[13];
 	sprintf(musicfile, fileListEntry(0), track);
