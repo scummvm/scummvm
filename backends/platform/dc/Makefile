@@ -16,6 +16,7 @@ LDFLAGS = -Wl,-Ttext,0x8c010000 -nostartfiles $(ronindir)/lib/crt0.o
 INCLUDES= -I./ -I$(srcdir) -I$(ronindir)/include/ -I$(srcdir)/engines
 LIBS	= -L$(ronindir)/lib -lmad -lronin -lz -lm
 EXECUTABLE = scummvm.elf
+DEPDIR = .deps
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.x plugin.syms scummvm.elf
@@ -37,7 +38,7 @@ endif
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 	label.o vmsave.o softkbd.o dcloader.o cache.o dc-fs.o
 
-MODULE_DIRS += .
+MODULE_DIRS += ./
 
 include $(srcdir)/Makefile.common
 
