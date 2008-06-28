@@ -175,7 +175,7 @@ bool ThemeParser::parserCallback_color() {
 
 	int red, green, blue;
 
-	if (sscanf(colorNode->values["rgb"].c_str(), "%d, %d, %d", &red, &green, &blue) != 3 ||
+	if (parseIntegerKey(colorNode->values["rgb"].c_str(), 3, &red, &green, &blue) == false ||
 		red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
 		return parserError("Error when parsing RGB values for palette color '%s'", name.c_str());\
 
@@ -263,7 +263,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 }
 
 bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific) {
-	int red, green, blue, w, h;
+	int red, green, blue, w, h, x;
 	Common::String val;
 
 /**
@@ -278,10 +278,10 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
  */
 #define __PARSER_ASSIGN_INT(struct_name, key_name, force) \
 	if (stepNode->values.contains(key_name)) { \
-		if (!validateKeyInt(stepNode->values[key_name].c_str()))\
+		if (!parseIntegerKey(stepNode->values[key_name].c_str(), 1, &x)) \
 			return parserError("Error when parsing key value for '%s'.", key_name); \
 		\
-		drawstep->struct_name = atoi(stepNode->values[key_name].c_str()); \
+		drawstep->struct_name = x; \
 	} else if (force) { \
 		return parserError("Missing necessary key '%s'.", key_name); \
 	}
@@ -304,7 +304,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			red = _palette[val].r; \
 			green = _palette[val].g; \
 			blue = _palette[val].b; \
-		} else if (sscanf(val.c_str(), "%d, %d, %d", &red, &green, &blue) != 3 || \
+		} else if (parseIntegerKey(val.c_str(), 3, &red, &green, &blue) == false || \
 			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
 			return parserError("Error when parsing color struct '%s'", val.c_str());\
 		\

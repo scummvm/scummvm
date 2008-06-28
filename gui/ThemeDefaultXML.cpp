@@ -51,7 +51,7 @@ bool InterfaceManager::loadDefaultXML() {
 	"</drawdata>"
 
 	"<drawdata id = 'button_idle' cache = false>"
-		"<drawstep func = 'roundedsq' radius = '8' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' />"
+		"<drawstep func = 'roundedsq' radius = '8' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 3 />"
 	"</drawdata>"
 "</render_info>"
 

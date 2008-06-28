@@ -55,7 +55,7 @@ public:
 		return _stream;
 	}
 
-	const char operator [](int idx) {
+	char operator [](int idx) {
 		assert(_stream && idx >= 0);
 
 		if (_pos + 1 != idx)
@@ -285,6 +285,51 @@ protected:
 			_token += _text[_pos++];
 
 		return isspace(_text[_pos]) != 0 || _text[_pos] == '>';
+	}
+
+	/**
+	 * Parses the values inside an integer key.
+	 * The count parameter specifies the number of values inside
+	 * the key, which are expected to be separated with commas.
+	 *
+	 * Sample usage:
+	 * parseIntegerKey("255, 255, 255", 3, &red, &green, &blue);
+	 * [will parse each field into its own integer]
+	 *
+	 * parseIntegerKey("1234", 1, &number);
+	 * [will parse the single number into the variable]
+	 *
+	 * @param key String containing the integers to be parsed.
+	 * @param count Number of comma-separated ints in the string.
+	 * @param ... Integer variables to store the parsed ints, passed
+	 *            by reference.
+	 * @returns True if the parsing succeeded.
+	 */
+	virtual bool parseIntegerKey(const char *key, int count, ...) {
+		char *parseEnd = 0;
+		int *num_ptr;
+
+		va_list args;
+		va_start(args, count);
+
+		while (count--) {
+			while (isspace(*key))
+				key++;
+
+			num_ptr = va_arg(args, int*);
+			*num_ptr = strtol(key, &parseEnd, 10);
+
+			while (isspace(*parseEnd))
+				parseEnd++;
+
+			if (count && *parseEnd++ != ',')
+				return false;
+
+			key = parseEnd;
+		}
+
+		va_end(args);
+		return (*parseEnd == 0);
 	}
 
 	int _pos; /** Current position on the XML buffer. */

@@ -325,25 +325,6 @@ protected:
 	bool parserCallback_renderInfo();
 	bool parserCallback_layoutInfo();
 	bool parserCallback_defaultSet();
-		
-
-	bool validateKeyIntSigned(const char *key) {
-		if (!isdigit(*key) && *key != '+' && *key != '-')
-			return false;
-
-		return validateKeyInt(key + 1);
-	}
-
-	bool validateKeyInt(const char *key) {
-		if (*key == 0)
-			return false;
-
-		while (*key)
-			if (!isdigit(*key++))
-				return false;
-
-		return true;
-	}
 
 	Graphics::DrawStep *newDrawStep();
 	Graphics::DrawStep *defaultDrawStep();

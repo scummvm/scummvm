@@ -137,7 +137,7 @@ bool InterfaceManager::loadTheme(Common::String themeName) {
 		warning("Could not parse custom theme '%s'.\nFalling back to default theme", themeName.c_str());
 		
 		if (!loadDefaultXML()) // if we can't load the embeded theme, this is a complete failure
-			error("Could not load default embeded theme.");
+			error("Could not load default embeded theme");
 	}
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
