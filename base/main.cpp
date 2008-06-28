@@ -70,7 +70,7 @@ static bool launcherDialog(OSystem &system) {
 	// Clear the main screen
 	system.clearScreen();
 
-#if 1
+#if defined LOL
 
 	g_InterfaceManager.runGUI();
 	return true;

@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
+#include "gui/dialog.h"
 #include "gui/ThemeParser.h"
 #include "graphics/VectorRenderer.h"
 
@@ -43,18 +44,48 @@ namespace GUI {
 struct WidgetDrawData;
 class InterfaceManager;
 
+struct WidgetDrawData {
+	Common::Array<Graphics::DrawStep*> _steps;
+
+	bool _cached;
+	Graphics::Surface *_surfaceCache;
+	uint32 _cachedW, _cachedH;
+
+	~WidgetDrawData() {
+		for (uint i = 0; i < _steps.size(); ++i)
+			delete _steps[i];
+
+		_steps.clear();
+
+		if (_surfaceCache) {
+			_surfaceCache->free();
+			delete _surfaceCache;
+		}
+	}
+};
+
 class InterfaceManager : public Common::Singleton<InterfaceManager> {
 
-	friend class Common::Singleton<SingletonBaseType>;
 	typedef Common::String String;
+	typedef GUI::Dialog Dialog;
+
+	friend class GUI::Dialog;
+	friend class GUI::GuiObject;
+	friend class Common::Singleton<SingletonBaseType>;
 
 	static const char *kDrawDataStrings[];
+	static const int kMaxDialogDepth = 4;
 
 public:
 	enum Graphics_Mode {
 		kGfxDisabled = 0,
 		kGfxStandard16bit,
 		kGfxAntialias16bit
+	};
+
+	enum {
+		kDoubleClickDelay = 500, // milliseconds
+		kCursorAnimateDelay = 250
 	};
 
 	enum DrawData {
@@ -150,8 +181,7 @@ public:
 	void setGraphicsMode(Graphics_Mode mode);
 	int runGUI();
 
-	bool init();
-	bool deinit();
+	void init();
 
 	/** Font management */
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
@@ -190,6 +220,43 @@ public:
 		return _initOk && _themeOk;
 	}
 
+	void refresh() {
+		init();
+		if (_enabled) {
+			_system->showOverlay();
+//			CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+//			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+		}
+	}
+
+	void enable() {
+		init();
+		_system->showOverlay();
+		_enabled = true;
+	}
+
+	void disable() {
+		_system->hideOverlay();
+		_enabled = false;
+	}
+
+	void deinit() {
+		if (_initOk) {
+			_system->hideOverlay();
+			_initOk = false;
+		}
+	}
+
+	bool loadTheme() {
+		ConfMan.registerDefault("gui_theme", "default");
+		Common::String style(ConfMan.get("gui_theme"));
+
+		if (style.compareToIgnoreCase("default") == 0)
+			style = "modern";
+
+		return loadTheme(style);
+	}
+
 	bool loadTheme(Common::String themeName);
 
 protected:
@@ -197,6 +264,18 @@ protected:
 
 	bool loadThemeXML(Common::String themeName);
 	bool loadDefaultXML();
+
+	void unloadTheme() {
+		if (!_themeOk)
+			return;
+
+		for (int i = 0; i < kDrawDataMAX; ++i) {
+			delete _widgets[i];
+			_widgets[i] = 0;
+		}
+	}
+
+	void screenChange() {}
 
 	void freeRenderer() {
 		delete _vectorRenderer;
@@ -211,16 +290,32 @@ protected:
 		}
 	}
 
+	Dialog *getTopDialog() const {
+		if (_dialogStack.empty())
+			return 0;
+		return _dialogStack.top();
+	}
+
+	bool needThemeReload() {
+		return (_themeOk == false || _needThemeLoad == true);
+	}
+
+
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 	void drawCached(DrawData type, const Common::Rect &r);
 
 	inline void drawDD(DrawData type, const Common::Rect &r);
-	void addDirtyRect(const Common::Rect &r) {}
+
+	void addDirtyRect(const Common::Rect &r) {
+		_dirtyScreen.extend(r);
+	}
 
 	OSystem *_system;
 	Graphics::VectorRenderer *_vectorRenderer;
-	Graphics::Surface *_screen;
 	GUI::ThemeParser *_parser;
+
+	Graphics::Surface *_screen;
+	Graphics::Surface *_screenCache;
 
 	int _bytesPerPixel;
 	Graphics_Mode _graphicsMode;
@@ -229,22 +324,20 @@ protected:
 	const Graphics::Font *_font;
 
 	WidgetDrawData *_widgets[kDrawDataMAX];
+	Common::FixedStack<Dialog *, kMaxDialogDepth> _dialogStack;
+	Common::Rect _dirtyScreen;
 
 	bool _initOk;
 	bool _themeOk;
 	bool _caching;
+	bool _needThemeLoad;
+	bool _enabled;
 
-	static const char *_defaultXML;
-};
-
-struct WidgetDrawData {
-	Common::Array<Graphics::DrawStep*> _steps;
-
-	bool _cached;
-	Graphics::Surface *_surfaceCache;
-	uint32 _cachedW, _cachedH;
-
-	InterfaceManager::DrawData _type;
+	struct {
+		int16 x, y;	// Position of mouse when the click occured
+		uint32 time;	// Time
+		int count;	// How often was it already pressed?
+	} _lastClick;
 };
 
 } // end of namespace GUI.

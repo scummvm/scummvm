@@ -70,7 +70,8 @@ const char *InterfaceManager::kDrawDataStrings[] = {
 
 InterfaceManager::InterfaceManager() : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
-	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false) {
+	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false),
+	_needThemeLoad(false), _enabled(false) {
 	_system = g_system;
 	_parser = new ThemeParser();
 
@@ -78,7 +79,11 @@ InterfaceManager::InterfaceManager() :
 		_widgets[i] = 0;
 	}
 
-	setGraphicsMode(kGfxStandard16bit);
+	_graphicsMode = kGfxAntialias16bit; // default GFX mode
+	// TODO: load this from a config file
+
+//	setGraphicsMode(kGfxStandard16bit);
+//	printf("Singleton init!");
 }
 
 template<typename PixelType> 
@@ -91,11 +96,6 @@ void InterfaceManager::screenInit() {
 }
 
 void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
-	if (mode == _graphicsMode)
-		return;
-
-	_graphicsMode = mode;
-
 	switch (mode) {
 	case kGfxStandard16bit:
 	case kGfxAntialias16bit:
@@ -127,7 +127,6 @@ bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
 
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
-	_widgets[data_id]->_type = data_id;
 
 	return true;
 }
@@ -174,8 +173,15 @@ bool InterfaceManager::loadThemeXML(Common::String themeName) {
 	return parser()->parse();
 }
 
-bool InterfaceManager::init() {
-	return false;
+void InterfaceManager::init() {
+	if (!_screen || _system->getOverlayWidth() != _screen->w ||
+		_system->getOverlayHeight() != _screen->h )
+		setGraphicsMode(_graphicsMode);
+
+	if (needThemeReload())
+		loadTheme();
+
+	_initOk = true;
 }
 
 bool InterfaceManager::isWidgetCached(DrawData type, const Common::Rect &r) {
@@ -199,7 +205,7 @@ void InterfaceManager::drawDD(DrawData type, const Common::Rect &r) {
 }
 
 void InterfaceManager::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
-	if (!_initOk)
+	if (!ready())
 		return;
 
 	if (state == kStateEnabled)
@@ -213,7 +219,7 @@ void InterfaceManager::drawButton(const Common::Rect &r, const Common::String &s
 }
 
 void InterfaceManager::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
-	if (!_initOk)
+	if (!ready())
 		return;
 
 	drawDD(kDDSeparator, r);
@@ -221,7 +227,7 @@ void InterfaceManager::drawLineSeparator(const Common::Rect &r, WidgetStateInfo 
 }
 
 void InterfaceManager::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
-	if (!_initOk)
+	if (!ready())
 		return;
 
 	drawDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r);
@@ -236,7 +242,7 @@ void InterfaceManager::drawCheckbox(const Common::Rect &r, const Common::String 
 }
 
 void InterfaceManager::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
-	if (!_initOk)
+	if (!ready())
 		return;
 
 	drawDD(kDDSliderEmpty, r);
@@ -250,20 +256,27 @@ void InterfaceManager::drawSlider(const Common::Rect &r, int width, WidgetStateI
 }
 
 void InterfaceManager::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
-	if (!_initOk)
+	if (!ready())
 		return;
 }
 
 int InterfaceManager::runGUI() {
-	Common::EventManager *eventMan = _system->getEventManager();
-
-	if (!loadTheme("modern_theme.xml"))
+	if (!ready())
 		return 0;
 
-	_system->showOverlay();
+	Common::EventManager *eventMan = _system->getEventManager();
+	Dialog *activeDialog = getTopDialog();
 
+	if (!activeDialog)
+		return 0;
+
+	bool didSaveState = false;
 	bool running = true;
-	while (running) { // draw!!
+
+	int button;
+	uint32 time;
+
+	while (!_dialogStack.empty() && activeDialog == getTopDialog()) { // draw!!
 
 		drawDD(kDDMainDialogBackground, Common::Rect());
 		drawDD(kDDButtonIdle, Common::Rect(32, 32, 128, 128));
@@ -272,10 +285,74 @@ int InterfaceManager::runGUI() {
 
 		Common::Event event;
 		_system->delayMillis(100);
+
 		while (eventMan->pollEvent(event)) {
-			if (event.type == Common::EVENT_QUIT)
-				running = false;
+
+			if (activeDialog != getTopDialog() && 
+				event.type != Common::EVENT_QUIT && 
+				event.type != Common::EVENT_SCREEN_CHANGED)
+				continue;
+
+			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				activeDialog->handleKeyDown(event.kbd);
+				break;
+
+			case Common::EVENT_KEYUP:
+				activeDialog->handleKeyUp(event.kbd);
+				break;
+
+			case Common::EVENT_MOUSEMOVE:
+				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
+				time = _system->getMillis();
+				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
+							&& ABS(_lastClick.x - event.mouse.x) < 3
+							&& ABS(_lastClick.y - event.mouse.y) < 3) {
+					_lastClick.count++;
+				} else {
+					_lastClick.x = event.mouse.x;
+					_lastClick.y = event.mouse.y;
+					_lastClick.count = 1;
+				}
+				_lastClick.time = time;
+				activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
+				break;
+
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
+				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
+				break;
+
+			case Common::EVENT_WHEELUP:
+				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
+				break;
+
+			case Common::EVENT_WHEELDOWN:
+				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
+				break;
+
+			case Common::EVENT_QUIT:
+				_system->quit();
+				return 1;
+
+			case Common::EVENT_SCREEN_CHANGED:
+				screenChange();
+				break;
+
+			default:
+				break;
+			}
 		}
+
+		_system->delayMillis(10);
 	}
 
 	_system->hideOverlay();
