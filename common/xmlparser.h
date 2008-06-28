@@ -306,7 +306,7 @@ protected:
 	 * @returns True if the parsing succeeded.
 	 */
 	virtual bool parseIntegerKey(const char *key, int count, ...) {
-		char *parseEnd = 0;
+		char *parseEnd;
 		int *num_ptr;
 
 		va_list args;
@@ -319,17 +319,17 @@ protected:
 			num_ptr = va_arg(args, int*);
 			*num_ptr = strtol(key, &parseEnd, 10);
 
-			while (isspace(*parseEnd))
-				parseEnd++;
-
-			if (count && *parseEnd++ != ',')
-				return false;
-
 			key = parseEnd;
+
+			while (isspace(*key))
+				key++;
+
+			if (count && *key++ != ',')
+				return false;
 		}
 
 		va_end(args);
-		return (*parseEnd == 0);
+		return (*key == 0);
 	}
 
 	int _pos; /** Current position on the XML buffer. */
