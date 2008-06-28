@@ -911,7 +911,7 @@ public:
 	 *
 	 * @return FilesystemFactory* The specific factory for the current architecture.
 	 */
-	virtual FilesystemFactory *getFilesystemFactory();
+	virtual FilesystemFactory *getFilesystemFactory() = 0;
 
 
 	/**
