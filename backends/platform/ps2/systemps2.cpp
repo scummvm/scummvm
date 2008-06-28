@@ -727,7 +727,6 @@ void OSystem_PS2::quit(void) {
 			driveStandby();
 			fio.umount("pfs0:");
 		}
-		//clearSoundCallback();
 		//setTimerCallback(NULL, 0);
 		_screen->wantAnim(false);
 		_systemQuit = true;

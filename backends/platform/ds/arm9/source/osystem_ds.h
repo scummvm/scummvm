@@ -114,7 +114,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
 
 	virtual bool openCD(int drive);

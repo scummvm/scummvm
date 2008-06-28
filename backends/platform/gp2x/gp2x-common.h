@@ -132,8 +132,6 @@ public:
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
 	virtual Audio::Mixer *getMixer();
 
-	void clearSoundCallback();
-
 	// Poll CD status
 	// Returns true if cd audio is playing
 	bool pollCD();

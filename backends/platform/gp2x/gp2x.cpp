@@ -478,10 +478,6 @@ bool OSystem_GP2X::setSoundCallback(SoundProc proc, void *param) {
 	return true;
 }
 
-void OSystem_GP2X::clearSoundCallback() {
-	SDL_CloseAudio();
-}
-
 int OSystem_GP2X::getOutputSampleRate() const {
 	return _samplesPerSec;
 }

@@ -1128,10 +1128,6 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 	return true;
 }
 
-void OSystem_IPHONE::clearSoundCallback() {
-	debug("clearSoundCallback()\n");
-}
-
 int OSystem_IPHONE::getOutputSampleRate() const {
 	return AUDIO_SAMPLE_RATE;
 }

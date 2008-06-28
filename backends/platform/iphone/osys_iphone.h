@@ -153,7 +153,6 @@ public:
 	virtual void deleteMutex(MutexRef mutex);
 
 	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
 

@@ -433,13 +433,7 @@ void OSystem_DS::unlockMutex(MutexRef mutex) {
 void OSystem_DS::deleteMutex(MutexRef mutex) {
 }
 
-void OSystem_DS::clearSoundCallback() {
-//	consolePrintf("Clearing sound callback");
-//	DS::setSoundProc(NULL, NULL);
-}
-
-int OSystem_DS::getOutputSampleRate() const
-{
+int OSystem_DS::getOutputSampleRate() const {
 	return DS::getSoundFrequency();
 }
 

@@ -626,16 +626,12 @@ bool OSystem_PSP::setSoundCallback(SoundProc proc, void *param) {
 	return true;
 }
 
-void OSystem_PSP::clearSoundCallback() {
-	SDL_CloseAudio();
-}
-
 int OSystem_PSP::getOutputSampleRate() const {
 	return _samplesPerSec;
 }
 
 void OSystem_PSP::quit() {
-	clearSoundCallback();
+	SDL_CloseAudio();
 	SDL_Quit();
 	sceGuTerm();
 	sceKernelExitGame();

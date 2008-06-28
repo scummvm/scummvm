@@ -283,9 +283,6 @@ bool OSystem_NULL::setSoundCallback(SoundProc proc, void *param) {
 	return true;
 }
 
-void OSystem_NULL::clearSoundCallback() {
-}
-
 int OSystem_NULL::getOutputSampleRate() const {
 	return 22050;
 }

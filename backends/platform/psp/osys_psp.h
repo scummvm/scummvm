@@ -131,7 +131,6 @@ public:
 
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
 
 	Common::SaveFileManager *getSavefileManager() { return _savefile; }
