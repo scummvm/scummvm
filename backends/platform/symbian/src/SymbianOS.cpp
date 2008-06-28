@@ -173,11 +173,8 @@ void OSystem_SDL_Symbian::quit() {
 	OSystem_SDL::quit();
 }
 
-bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_SDL_Symbian::setupMixer() {
 
-	// First save the proc and param
-	_sound_proc_param = param;
-	_sound_proc = proc;
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
@@ -207,48 +204,53 @@ bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;
-#ifdef S60
 	desired.callback = symbianMixCallback;
 	desired.userdata = this;
-#else
-	desired.callback = proc;
-	desired.userdata = param;
-#endif
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		return false;
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		_channels = obtained.channels;
+	
+		// Need to create mixbuffer for stereo mix to downmix
+		if (_channels != 2) {
+			_stereo_mix_buffer = new byte [obtained.size*2];//*2 for stereo values
+		}
+	
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+		SDL_PauseAudio(0);
 	}
-	// Note: This should be the obtained output rate, but it seems that at
-	// least on some platforms SDL will lie and claim it did get the rate
-	// even if it didn't. Probably only happens for "weird" rates, though.
-	_samplesPerSec = obtained.freq;
-	_channels = obtained.channels;
-
-	// Need to create mixbuffer for stereo mix to downmix
-	if (_channels != 2) {
-		_stereo_mix_buffer = new byte [obtained.size*2];//*2 for stereo values
-	}
-
-	SDL_PauseAudio(0);
-	return true;
 }
 
 /**
  * The mixer callback function, passed on to OSystem::setSoundCallback().
  * This simply calls the mix() method.
  */
-void OSystem_SDL_Symbian::symbianMixCallback(void *s, byte *samples, int len) {
-	static_cast <OSystem_SDL_Symbian*>(s)->symbianMix(samples,len);
-}
+void OSystem_SDL_Symbian::symbianMixCallback(void *sys, byte *samples, int len) {
+	OSystem_SDL_Symbian *this_ = (OSystem_SDL_Symbian *)sys;
+	assert(this_);
 
+	if (!this_->_mixer)
+		return;
 
-/**
- * Actual mixing implementation
- */
-void OSystem_SDL_Symbian::symbianMix(byte *samples, int len) {
+#ifdef S60
 	// If not stereo then we need to downmix
 	if (_channels != 2) {
-		_sound_proc(_sound_proc_param, _stereo_mix_buffer, len * 2);
+		this_->_mixer->mixCallback(_stereo_mix_buffer, len * 2);
+
 		int16 *bitmixDst = (int16 *)samples;
 		int16 *bitmixSrc = (int16 *)_stereo_mix_buffer;
 
@@ -258,8 +260,11 @@ void OSystem_SDL_Symbian::symbianMix(byte *samples, int len) {
 			bitmixSrc += 2;
 		}
 	} else
-		_sound_proc(_sound_proc_param, samples, len);
+#else
+	this_->_mixer->mixCallback(samples, len);
+#endif
 }
+
 
 /**
  * This is an implementation by the remapKey function

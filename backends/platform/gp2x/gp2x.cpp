@@ -40,7 +40,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h" // for getFilesystemFactory()
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -225,8 +225,7 @@ void OSystem_GP2X::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
-		_mixer = new Audio::Mixer();
-		setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+		setupMixer();
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for
@@ -445,7 +444,7 @@ void OSystem_GP2X::deleteMutex(MutexRef mutex) {
 #pragma mark --- Audio ---
 #pragma mark -
 
-bool OSystem_GP2X::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_GP2X::setupMixer() {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 

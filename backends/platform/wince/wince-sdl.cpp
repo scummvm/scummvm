@@ -35,7 +35,7 @@
 #include "base/main.h"
 #include "base/plugins.h"
 
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 #include "sound/fmopl.h"
 
 #include "backends/timer/default/default-timer.h"
@@ -404,7 +404,7 @@ void OSystem_WINCE3::initBackend()
 	// Instantiate our own sound mixer
 	// mixer init is postponed until a game engine is selected.
 	if (_mixer == 0) {
-		_mixer = new Audio::Mixer();
+		_mixer = new Audio::Mixer(this);
 	}
 
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
@@ -770,7 +770,7 @@ void OSystem_WINCE3::create_toolbar() {
 	_toolbarHandler.setVisible(false);
 }
 
-bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_WINCE3::setupMixer(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
 	int thread_priority;
 
@@ -785,12 +785,16 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 	desired.channels = 2;
 	desired.samples = 128;
 	desired.callback = private_sound_proc;
-	desired.userdata = param;
+	desired.userdata = this;
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
 
 	// Add sound thread priority
-	if (!ConfMan.hasKey("sound_thread_priority")) {
+	if (!ConfMan.hasKey("sound_thread_priority"))
 		thread_priority = THREAD_PRIORITY_NORMAL;
-	}
 	else
 		thread_priority = ConfMan.getInt("sound_thread_priority");
 
@@ -799,16 +803,24 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 	SDL_CloseAudio();
 	if (SDL_OpenAudio(&desired, NULL) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		return false;
-	}
-	else
+		_mixer->setReady(false);
+
+	} else {
 		debug(1, "Sound opened OK, mixing at %d Hz", _sampleRate);
-	SDL_PauseAudio(0);
-	return true;
+
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_sampleRate);
+		_mixer->setReady(true);
+		SDL_PauseAudio(0);
+	}
 }
 
 void OSystem_WINCE3::private_sound_proc(void *param, byte *buf, int len) {
-	(*_originalSoundProc)(param, buf, len);
+	OSystem_WINCE3 *this_ = (OSystem_WINCE3 *)param;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(buf, len);
 	if (!_soundMaster)
 		memset(buf, 0, len);
 }
@@ -838,7 +850,7 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
 }
 #endif
 
-void OSystem_WINCE3::get_sample_rate() {
+void OSystem_WINCE3::compute_sample_rate() {
 	// Force at least medium quality FM synthesis for FOTAQ
 	Common::String gameid(ConfMan.get("gameid"));
 	if (gameid == "queen") {
@@ -875,9 +887,8 @@ void OSystem_WINCE3::setWindowCaption(const char *caption) {
 
 	//update_game_settings();
 	// finalize mixer init
-	get_sample_rate();
-	bool result = setSoundCallback(Audio::Mixer::mixCallback, _mixer);
-	_mixer->setReady(result);
+	compute_sample_rate();
+	setupMixer();
 
 	// handle the actual event
 	OSystem_SDL::setWindowCaption(caption);
@@ -1050,7 +1061,7 @@ void OSystem_WINCE3::update_game_settings() {
 		}
 	}
 
-	get_sample_rate();
+	compute_sample_rate();
 }
 
 void OSystem_WINCE3::initSize(uint w, uint h) {

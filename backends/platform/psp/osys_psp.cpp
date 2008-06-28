@@ -34,7 +34,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "graphics/surface.h"
 #include "graphics/scaler.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 #include <pspgu.h>
 
@@ -99,7 +99,7 @@ OSystem_PSP::~OSystem_PSP() {
 
 void OSystem_PSP::initBackend() {
 	_savefile = new DefaultSaveFileManager();
-	_mixer = new Audio::Mixer();
+	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
 	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
 	setTimerCallback(&timer_handler, 10);

@@ -37,7 +37,7 @@
 #include <SDL_gp2x.h>
 
 namespace Audio {
-	class Mixer;
+	class MixerImpl;
 }
 
 namespace Common {
@@ -367,7 +367,7 @@ protected:
 	Common::SaveFileManager *_savefile;
 	FilesystemFactory *getFilesystemFactory();
 
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
