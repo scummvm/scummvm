@@ -2770,7 +2770,6 @@ bool SoundTownsPC98_v2::init() {
 		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
 		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
 			_musicEnabled = 2;
-	_musicEnabled = 1;
 	return _driver->init();
 }
 
