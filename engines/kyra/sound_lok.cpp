@@ -57,12 +57,12 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 			_sound->haltTrack();
 		}
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		
-		//////////////
-		//// TODO ////
-		//////////////
-		_sound->playTrack(command);
-		
+		if (command == 1)
+			_sound->beginFadeOut();
+		else if (command >= 2)
+			_sound->playTrack(command);	
+		else
+			_sound->haltTrack();
 	} else {
 		KyraEngine_v1::snd_playWanderScoreViaMap(command, restart);
 	}

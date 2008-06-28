@@ -1273,6 +1273,8 @@ void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *feedbuf, int &out)
 		o = &feedbuf[0];
 		i = &feedbuf[1];
 		phaseShift = _feedbackLevel ? ((feedbuf[0] + feedbuf[1]) << _feedbackLevel) : 0;
+		if (phasebuf == -1)
+			*i = 0;
 		*o = *i;
 	} else {
 		phaseShift = phasebuf << 15;
@@ -1796,7 +1798,7 @@ void TownsPC98_OpnDriver::nextTick(int16 *buffer, uint32 bufferSize) {
 					break;
 				case 5:
 					*del = feed[1];
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf1);
+					_channels[i]->opr[0]->generateOutput(-1, feed, phbuf1);
 					_channels[i]->opr[2]->generateOutput(*del, 0, output);
 					_channels[i]->opr[1]->generateOutput(*del, 0, output);
 					_channels[i]->opr[3]->generateOutput(*del, 0, output);
@@ -2707,6 +2709,9 @@ bool SoundPC98::init() {
 }
 
 void SoundPC98::playTrack(uint8 track) {
+	if (--track >= 56)
+		track -= 55;
+ 
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
@@ -2715,9 +2720,7 @@ void SoundPC98::playTrack(uint8 track) {
 	char musicfile[13];
 	sprintf(musicfile, fileListEntry(0), track);
 	delete[] _musicTrackData;
-	// This is just for testing purposes atm since we haven't found a way
-	// to determine the correct file yet
-	_musicTrackData = _vm->resource()->fileData("kyram40.dat"/*musicfile*/, 0);
+	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
 	if (_musicEnabled)
 		_driver->loadData(_musicTrackData);
 
@@ -2767,6 +2770,7 @@ bool SoundTownsPC98_v2::init() {
 		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
 		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
 			_musicEnabled = 2;
+	_musicEnabled = 1;
 	return _driver->init();
 }
 
