@@ -2168,7 +2168,7 @@ bool TownsPC98_OpnChannel::control_fb_incOutLevelSSG(uint8 para) {
 		return true;
 
 	_totalLevel--;
-	if ((int8)_totalLevel < 0);
+	if ((int8)_totalLevel < 0)
 		_totalLevel = 0;
 
 	return true;
