@@ -1100,7 +1100,7 @@ public:
 	void frequency(int freq);
 	void updatePhaseIncrement();
 	void recalculateRates();
-	void generateOutput(int phasebuf, int *feedbuf, int &out);
+	void generateOutput(int phasebuf, int *_feedbuf, int &out);
 
 	void feedbackLevel(int32 level) {_feedbackLevel = level ? level + 6 : 0; }
 	void detune(int value) { _detn = &_detnTbl[value << 5]; }
@@ -1209,7 +1209,7 @@ void TownsPC98_OpnOperator::recalculateRates() {
 	fs_r.shift = _rshiftTbl[r + k];
 }
 
-void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *feedbuf, int &out) {
+void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *_feedbuf, int &out) {
 	if (_state == s_ready)
 		return;
 
@@ -1269,10 +1269,10 @@ void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *feedbuf, int &out)
 	int *i = &outp, *o = &outp;
 	int phaseShift = 0;
 
-	if (feedbuf) {
-		o = &feedbuf[0];
-		i = &feedbuf[1];
-		phaseShift = _feedbackLevel ? ((feedbuf[0] + feedbuf[1]) << _feedbackLevel) : 0;
+	if (_feedbuf) {
+		o = &_feedbuf[0];
+		i = &_feedbuf[1];
+		phaseShift = _feedbackLevel ? ((_feedbuf[0] + _feedbuf[1]) << _feedbackLevel) : 0;
 		if (phasebuf == -1)
 			*i = 0;
 		*o = *i;
@@ -1329,7 +1329,121 @@ bool TownsPC98_OpnOperator::scaleRate(uint8 value) {
 	return false;
 }
 
+class TownsPC98_OpnDriver;
+class TownsPC98_OpnChannel {
+public:
+	TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 regOffs, uint8 flgs, uint8 num,
+		uint8 key, uint8 prt, uint8 id);
+	~TownsPC98_OpnChannel();
+	virtual void init();
+
+	typedef bool (TownsPC98_OpnChannel::*ControlEventFunc)(uint8 para);
+
+	typedef enum channelState {
+		CHS_RECALCFREQ		=	0x01,
+		CHS_KEYOFF			=	0x02,
+		CHS_SSG				=	0x04,
+		CHS_PITCHWHEELOFF	=	0x08,
+		CHS_ALL_BUT_EOT		=	0x0f,
+		CHS_EOT				=	0x80
+	} ChannelState;
+
+	void loadData(uint8 *data);
+	virtual void processEvents();
+	virtual void processFrequency();
+	bool processControlEvent(uint8 cmd);
+	void writeReg(uint8 regAdress, uint8 value);
+
+	virtual void keyOn();
+	virtual void keyOff();	
+	
+	void setOutputLevel();
+	void fadeStep();
+	void reset();
+
+	void updateEnv();
+	void generateOutput(int16 &leftSample, int16 &rightSample, int *del, int *feed);
+
+	bool _enableLeft;
+	bool _enableRight;
+	bool _fading;
+	bool _updateEnvelopes;
+	const uint8 _idFlag;
+	int _feedbuf[3];
+
+protected:
+	bool control_dummy(uint8 para);
+	bool control_f0_setPatch(uint8 para);
+	bool control_f1_presetOutputLevel(uint8 para);
+	bool control_f2_setKeyOffTime(uint8 para);
+	bool control_f3_setFreqLSB(uint8 para);
+	bool control_f4_setOutputLevel(uint8 para);
+	bool control_f5_setTempo(uint8 para);
+	bool control_f6_repeatSection(uint8 para);
+	bool control_f7_setupPitchWheel(uint8 para);
+	bool control_f8_togglePitchWheel(uint8 para);
+	bool control_fa_writeReg(uint8 para);
+	bool control_fb_incOutLevel(uint8 para);
+	bool control_fc_decOutLevel(uint8 para);
+	bool control_fd_jump(uint8 para);
+	bool control_ff_endOfTrack(uint8 para);
+
+	bool control_f0_setPatchSSG(uint8 para);
+	bool control_f1_setTotalLevel(uint8 para);
+	bool control_f4_setAlgorithm(uint8 para);
+	bool control_f9_unkSSG(uint8 para);
+	bool control_fb_incOutLevelSSG(uint8 para);
+	bool control_fc_decOutLevelSSG(uint8 para);
+	bool control_ff_endOfTrackSSG(uint8 para);
+
+	uint8 _ticksLeft;
+	uint8 _algorithm;
+	uint8 _instrID;
+	uint8 _totalLevel;
+	uint8 _frqBlockMSB;
+	int8 _frqLSB;
+	uint8 _keyOffTime;
+	bool _protect;
+	uint8 *_dataPtr;
+	uint8 _unk15, _unk16;
+	uint8 _ptchWhlInitDelayLo;
+	uint8 _ptchWhlInitDelayHi;
+	int16 _ptchWhlModInitVal;
+	uint8 _ptchWhlDuration;
+	uint8 _ptchWhlCurDelay;
+	int16 _ptchWhlModCurVal;
+	uint8 _ptchWhlDurLeft;
+	uint16 frequency;
+	uint8 _unk28, _unk29;
+	uint8 _regOffset;
+	uint8 _flags;
+	const uint8 _chanNum;
+	const uint8 _keyNum;
+	const uint8 _part;
+
+	TownsPC98_OpnDriver *_drv;
+	TownsPC98_OpnOperator **_opr;
+	uint16 _frqTemp;
+
+	const ControlEventFunc *controlEvents;
+};
+
+class TownsPC98_OpnChannelSSG : public TownsPC98_OpnChannel {
+public:
+	TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs,
+		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
+	void init();
+
+	void processEvents();
+	void processFrequency();
+
+	void keyOn();
+	void keyOff();
+};
+
 class TownsPC98_OpnDriver : public Audio::AudioStream {
+friend class TownsPC98_OpnChannel;
+friend class TownsPC98_OpnChannelSSG;
 public:
 	enum OpnType {
 		OD_TOWNS,
@@ -1362,92 +1476,23 @@ public:
 protected:
 	void generateTables();
 
-	typedef enum channelState {
-		CHS_RECALCFREQ		=	0x01,
-		CHS_KEYOFF			=	0x02,
-		CHS_PITCHWHEELOFF	=	0x08,
-		CHS_ALL_BUT_EOT		=	0x0f,
-		CHS_EOT				=	0x80
-	} ChannelState;
+	TownsPC98_OpnChannel **_channels;
+	TownsPC98_OpnChannelSSG **_ssgChannels;
+	//TownsPC98_OpnChannel *_adpcmChannel;
 
-	struct TwnChannel {
-		uint8 ticksLeft;
-		uint8 unk1, unk2, unk3;
-		uint8 algorithm;
-		uint8 instrID;
-		uint8 totalLevel;
-		uint8 frqBlockMSB;
-		int8 frqLSB;
-		uint8 keyOffTime;
-		bool protect;
-		uint8 *dataPtr;
-		uint8 unk15, unk16;
-		uint8 ptchWhlInitDelayLo;
-		uint8 ptchWhlInitDelayHi;
-		int16 ptchWhlModInitVal;
-		uint8 ptchWhlDuration;
-		uint8 ptchWhlCurDelay;
-		int16 ptchWhlModCurVal;
-		uint8 ptchWhlDurLeft;
-		uint16 frequency;
-		uint8 unk28, unk29;
-		uint8 regOffset;
-		uint8 flags;
-		uint8 chanNum;
-		uint8 keyNum;
-		uint8 part;
-		uint8 idFlag;
-
-		TownsPC98_OpnOperator *opr[4];
-		uint16 frqTemp;
-		bool enableLeft;
-		bool enableRight;
-		bool updateEnvelopes;
-		int feedbuf[3];
-	} **_channels;
-
-	void processEvents(TwnChannel *chan);
-	void processFrequency(TwnChannel *chan);
-	bool processControlEvent(TwnChannel *chan, uint8 cmd);
-
-	void setOutputLevel(TwnChannel *chan);
 	void setTempo(uint8 tempo);
-
-	void keyOn(TwnChannel *chan);
-	void keyOff(TwnChannel *chan);
-	void writeReg(TwnChannel *chan, uint8 regAdress, uint8 value);
 
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
 
-	bool control_f0_setPatch(TwnChannel *chan, uint8 para);
-	bool control_f1_presetOutputLevel(TwnChannel *chan, uint8 para);
-	bool control_f2_setKeyOffTime(TwnChannel *chan, uint8 para);
-	bool control_f3_setFreqLSB(TwnChannel *chan, uint8 para);
-	bool control_f4_setOutputLevel(TwnChannel *chan, uint8 para);
-	bool control_f5_setTempo(TwnChannel *chan, uint8 para);
-	bool control_f6_repeatSection(TwnChannel *chan, uint8 para);
-	bool control_f7_setupPitchWheel(TwnChannel *chan, uint8 para);
-	bool control_f8_togglePitchWheel(TwnChannel *chan, uint8 para);
-	bool control_f9_unk(TwnChannel *chan, uint8 para);
-	bool control_fa_writeReg(TwnChannel *chan, uint8 para);
-	bool control_fb_incOutLevel(TwnChannel *chan, uint8 para);
-	bool control_fc_decOutLevel(TwnChannel *chan, uint8 para);
-	bool control_fd_jump(TwnChannel *chan, uint8 para);
-	bool control_fe_unk(TwnChannel *chan, uint8 para);
-	bool control_ff_endOfTrack(TwnChannel *chan, uint8 para);
-
-	typedef bool (TownsPC98_OpnDriver::*ControlEventFunc)(TwnChannel * chan, uint8 para);
-
 	Audio::Mixer *_mixer;
-	TownsPC98_OpnOperator **_operators;
 	Common::Mutex _mutex;
 	Audio::SoundHandle _soundHandle;
 
-	const uint8 *_twnCarrier;
-	const uint8 *_twnFreqTable;
-	const uint8 *_twnFxCmdLen;
-	const uint8 *_twnLvlPresets;
+	const uint8 *_opnCarrier;
+	const uint8 *_opnFreqTable;
+	const uint8 *_opnFxCmdLen;
+	const uint8 *_opnLvlPresets;
 
 	uint8 *_oprRates;
 	uint8 *_oprRateshift;
@@ -1465,11 +1510,10 @@ protected:
 	uint8 _finishedChannelsFlag;
 	uint16 _tempo;
 	bool _playing;
-	bool _fading;
 	uint8 _looping;
 	uint32 _tickCounter;
 
-	bool _updateEnvelopes;
+	bool __updateEnvelopes;
 
 	int32 _samplesTillCallback;
 	int32 _samplesTillCallbackRemainder;
@@ -1484,15 +1528,820 @@ protected:
 	double _baserate;
 	static const uint8 _drvTables[];
 	static const uint32 _adtStat[];
+	bool _ready;
 };
 
+TownsPC98_OpnChannel::TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 regOffs, uint8 flgs, uint8 num,
+	uint8 key, uint8 prt, uint8 id) : _drv(driver), _regOffset(regOffs), _flags(flgs), _chanNum(num), _keyNum(key),
+	_part(prt), _idFlag(id) {
+
+	_ticksLeft = _algorithm = _instrID = _totalLevel = _frqBlockMSB = _keyOffTime = _unk15 = _unk16 = 0;
+	_ptchWhlInitDelayLo = _ptchWhlInitDelayHi = _ptchWhlDuration = _ptchWhlCurDelay = _ptchWhlDurLeft = _unk28 = _unk29 = 0;
+	_frqLSB = 0;
+	_protect = _updateEnvelopes = _fading = false;
+	_enableLeft = _enableRight = true;
+	_dataPtr = 0;		
+	_ptchWhlModInitVal = _ptchWhlModCurVal = 0;
+	frequency = _frqTemp = 0;
+	memset(&_feedbuf, 0, sizeof(int) * 3);
+	_opr = 0;
+}
+
+TownsPC98_OpnChannel::~TownsPC98_OpnChannel() {
+	if (_opr) {
+		for (int i = 0; i < 4; i++)
+			delete _opr[i];
+		delete [] _opr;
+	}
+}
+
+void TownsPC98_OpnChannel::init() {
+	
+	_opr = new TownsPC98_OpnOperator*[4];
+	for (int i = 0; i < 4; i++)
+		_opr[i] = new TownsPC98_OpnOperator(_drv->_baserate, _drv->_oprRates, _drv->_oprRateshift,
+			_drv->_oprAttackDecay, _drv->_oprFrq, _drv->_oprSinTbl, _drv->_oprLevelOut, _drv->_oprDetune);
+
+	#define Control(x)	&TownsPC98_OpnChannel::control_##x
+	static const ControlEventFunc ctrlEvents[] = {
+		Control(f0_setPatch),
+		Control(f1_presetOutputLevel),
+		Control(f2_setKeyOffTime),
+		Control(f3_setFreqLSB),
+		Control(f4_setOutputLevel),
+		Control(f5_setTempo),
+		Control(f6_repeatSection),
+		Control(f7_setupPitchWheel),
+		Control(f8_togglePitchWheel),
+		Control(dummy),
+		Control(fa_writeReg),
+		Control(fb_incOutLevel),
+		Control(fc_decOutLevel),
+		Control(fd_jump),
+		Control(dummy),
+		Control(ff_endOfTrack)
+	};
+	#undef Control
+
+	controlEvents = ctrlEvents;
+}
+
+void TownsPC98_OpnChannel::keyOff() {
+	// all operators off
+	uint8 value = _keyNum & 0x0f;
+	uint8 regAdress = 0x28;
+	writeReg(regAdress, value);
+	_flags |= CHS_KEYOFF;
+}
+
+void TownsPC98_OpnChannel::keyOn() {
+	// all operators on
+	uint8 value = _keyNum | 0xf0;
+	uint8 regAdress = 0x28;
+	writeReg(regAdress, value);
+}
+
+
+void TownsPC98_OpnChannel::loadData(uint8 *data) {
+	_flags = (_flags & ~CHS_EOT) | CHS_ALL_BUT_EOT;
+	_ticksLeft = 1;
+	_dataPtr = data;
+	_totalLevel = 0x7F;
+
+	uint8 *src_b = _dataPtr;
+	int loop = 1;
+	uint8 cmd = 0;
+	while (loop) {
+		if (loop == 1) {
+			cmd = *src_b++;
+			if (cmd < 0xf0) {
+				src_b++;
+				loop = 1;
+			} else {
+				if (cmd == 0xff) {
+					loop = *src_b ? 2 : 0;
+					if (READ_LE_UINT16(src_b))
+						_drv->_looping |= _idFlag;
+				} else if (cmd == 0xf6) {
+					loop = 3;
+				} else {
+					loop = 2;
+				}
+			}
+		} else if (loop == 2) {
+			src_b += _drv->_opnFxCmdLen[cmd - 240];
+			loop = 1;
+		} else if (loop == 3) {
+			src_b[0] = src_b[1];
+			src_b += 4;
+			loop = 1;
+		}
+	}
+}
+
+void TownsPC98_OpnChannel::processEvents() {
+	if (_flags & CHS_EOT)
+		return;
+
+	if (_protect == false && _ticksLeft == _keyOffTime)
+		keyOff();
+
+	if (--_ticksLeft)
+		return;
+
+	if (_protect == false)
+		keyOff();
+
+	uint8 cmd = 0;
+	bool loop = true;
+
+	while (loop) {
+		cmd = *_dataPtr++;
+		if (cmd < 0xf0)
+			loop = false;
+		else if (!processControlEvent(cmd))
+			return;
+	}
+
+	uint8 para = *_dataPtr++;
+
+	if (cmd == 0x80) {
+		keyOff();
+		_protect = false;
+	} else {
+		keyOn();
+
+		if (_protect == false || cmd != _frqBlockMSB)
+			_flags |= CHS_RECALCFREQ;
+	
+		_protect = (para & 0x80) ? true : false;
+		_frqBlockMSB = cmd;
+	}
+
+	_ticksLeft = para & 0x7f;
+}
+
+void TownsPC98_OpnChannel::processFrequency() {
+	if (_flags & CHS_RECALCFREQ) {
+		uint8 block = (_frqBlockMSB & 0x70) >> 1;
+		uint16 bfreq = ((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f];
+		frequency = (bfreq + _frqLSB) | (block << 8);
+
+		writeReg(_regOffset + 0xa4, (frequency >> 8));
+		writeReg(_regOffset + 0xa0, (frequency & 0xff));
+
+		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
+		if (_flags & CHS_KEYOFF) {
+			_ptchWhlModCurVal = _ptchWhlModInitVal;
+			_ptchWhlCurDelay += _ptchWhlInitDelayLo;
+		}
+
+		_ptchWhlDurLeft = (_ptchWhlDuration >> 1);
+		_flags &= ~(CHS_KEYOFF | CHS_RECALCFREQ);
+	}
+
+	if (!(_flags & CHS_PITCHWHEELOFF)) {
+		if (--_ptchWhlCurDelay)
+			return;
+		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
+		frequency += _ptchWhlModCurVal;
+
+		writeReg(_regOffset + 0xa4, (frequency >> 8));
+		writeReg(_regOffset + 0xa0, (frequency & 0xff));
+
+		if(!--_ptchWhlDurLeft) {
+			_ptchWhlDurLeft = _ptchWhlDuration;
+			_ptchWhlModCurVal = -_ptchWhlModCurVal;
+		}
+	}
+}
+
+bool TownsPC98_OpnChannel::processControlEvent(uint8 cmd) {
+	uint8 para = *_dataPtr++;
+	return (this->*controlEvents[cmd & 0x0f])(para);
+}
+
+void TownsPC98_OpnChannel::setOutputLevel() {
+	uint8 outopr = _drv->_opnCarrier[_algorithm];
+	uint8 reg = 0x40 + _regOffset;
+
+	for (int i = 0; i < 4; i++) {
+		if (outopr & 1)
+			writeReg(reg, _totalLevel);
+		outopr >>= 1;
+		reg += 4;
+	}
+}
+
+void TownsPC98_OpnChannel::fadeStep() {
+	_totalLevel += 3;
+	if (_totalLevel > 0x7f)
+		_totalLevel = 0x7f;
+	setOutputLevel();
+}
+
+void TownsPC98_OpnChannel::reset() {
+	for (int i = 0; i < 4; i++)
+		_opr[i]->reset();
+
+	_fading = _updateEnvelopes = false;
+	_enableLeft = _enableRight = true;
+	memset(&_feedbuf, 0, sizeof(int) * 3);
+}
+
+void TownsPC98_OpnChannel::updateEnv() {
+	for (int i = 0; i < 4 ; i++)
+		_opr[i]->updatePhaseIncrement();
+}
+
+void TownsPC98_OpnChannel::generateOutput(int16 &leftSample, int16 &rightSample, int *del, int *feed) {
+	int phbuf1, phbuf2, output;
+	phbuf1 = phbuf2 = output = 0;
+	
+	switch (_algorithm) {
+		case 0:
+			_opr[0]->generateOutput(0, feed, phbuf1);
+			_opr[2]->generateOutput(*del, 0, phbuf2);
+			*del = 0;
+			_opr[1]->generateOutput(phbuf1, 0, *del);
+			_opr[3]->generateOutput(phbuf2, 0, output);
+			break;
+		case 1:
+			_opr[0]->generateOutput(0, feed, phbuf1);
+			_opr[2]->generateOutput(*del, 0, phbuf2);
+			_opr[1]->generateOutput(0, 0, phbuf1);					
+			_opr[3]->generateOutput(phbuf2, 0, output);
+			*del = phbuf1;
+			break;
+		case 2:
+			_opr[0]->generateOutput(0, feed, phbuf2);
+			_opr[2]->generateOutput(*del, 0, phbuf2);
+			_opr[1]->generateOutput(0, 0, phbuf1);
+			_opr[3]->generateOutput(phbuf2, 0, output);
+			*del = phbuf1;
+			break;
+		case 3:
+			_opr[0]->generateOutput(0, feed, phbuf2);
+			_opr[2]->generateOutput(0, 0, *del);
+			_opr[1]->generateOutput(phbuf2, 0, phbuf1);
+			_opr[3]->generateOutput(*del, 0, output);
+			*del = phbuf1;
+			break;
+		case 4:
+			_opr[0]->generateOutput(0, feed, phbuf1);
+			_opr[2]->generateOutput(0, 0, phbuf2);
+			_opr[1]->generateOutput(phbuf1, 0, output);					
+			_opr[3]->generateOutput(phbuf2, 0, output);
+			*del = 0;
+			break;
+		case 5:
+			*del = feed[1];
+			_opr[0]->generateOutput(-1, feed, phbuf1);
+			_opr[2]->generateOutput(*del, 0, output);
+			_opr[1]->generateOutput(*del, 0, output);
+			_opr[3]->generateOutput(*del, 0, output);
+			break;
+		case 6:
+			_opr[0]->generateOutput(0, feed, phbuf1);
+			_opr[2]->generateOutput(0, 0, output);
+			_opr[1]->generateOutput(phbuf1, 0, output);
+			_opr[3]->generateOutput(0, 0, output);
+			*del = 0;
+			break;
+		case 7:
+			_opr[0]->generateOutput(0, feed, output);
+			_opr[2]->generateOutput(0, 0, output);
+			_opr[1]->generateOutput(0, 0, output);
+			_opr[3]->generateOutput(0, 0, output);
+			*del = 0;
+			break;
+		};
+
+	if (_enableLeft) {
+		int l = output + leftSample;
+		if (l > 32767)
+			l = 32767;
+		if (l < -32767)
+			l = -32767;
+		leftSample = (int16) l;
+	}
+
+	if (_enableRight) {
+		int r = output + rightSample;
+		if (r > 32767)
+			r = 32767;
+		if (r < -32767)
+			r = -32767;
+		rightSample = (int16) r;
+	}
+}
+
+void TownsPC98_OpnChannel::writeReg(uint8 regAdress, uint8 value) {
+	uint8 h = regAdress & 0xf0;
+	uint8 l = (regAdress & 0x0f);
+	static const uint8 oprOrdr[] = { 0, 2, 1, 3 };
+	uint8 o = oprOrdr[(l - _regOffset) >> 2];
+	
+	switch (h) {
+		case 0x00:
+			// ssg
+			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
+			break;
+		case 0x10:
+			// adpcm
+			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
+			break;
+		case 0x20:
+			if (l == 8) {
+				// Key on/off
+				for (int i = 0; i < 4; i++) {
+					if ((value >> (4 + i)) & 1)
+						_opr[i]->keyOn();
+					else
+						_opr[i]->keyOff();
+				}
+			} else if (l == 2) {
+				// LFO
+				warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
+			} else if (l == 7) {
+				// Timers; Ch 3/6 special mode
+				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE (NOT SUPPORTED)");
+			} else if (l == 4 || l == 5) {
+				// Timer A
+				warning("TownsPC98_OpnDriver: TRYING TO USE TIMER_A (NOT SUPPORTED)");
+			} else if (l == 6) {
+				// Timer B
+				warning("TownsPC98_OpnDriver: TRYING TO USE TIMER_B (NOT SUPPORTED)");
+			} else if (l == 10 || l == 11) {
+				// DAC
+				warning("TownsPC98_OpnDriver: TRYING TO USE DAC (NOT SUPPORTED)");
+			}
+			break;
+
+		case 0x30:
+			// detune, multiple
+			_opr[o]->detune((value >> 4) & 7);
+			_opr[o]->multiple(value & 0x0f);
+			_updateEnvelopes = true;
+			break;
+
+		case 0x40:
+			// total level
+			_opr[o]->totalLevel(value & 0x7f);
+			break;
+
+		case 0x50:
+			// rate scaling, attack rate
+			_opr[o]->attackRate(value & 0x1f);
+			if (_opr[o]->scaleRate(value >> 6))
+				_updateEnvelopes = true;
+			break;
+
+		case 0x60:
+			// first decay rate, amplitude modulation
+			_opr[o]->decayRate(value & 0x1f);
+			if (value & 0x80)
+				warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION (NOT SUPPORTED)");
+
+			break;
+
+		case 0x70:
+			// secondary decay rate
+			_opr[o]->sustainRate(value & 0x1f);
+			break;
+
+		case 0x80:
+			// secondary amplitude, release rate;
+			_opr[o]->sustainLevel(value >> 4);
+			_opr[o]->releaseRate(value & 0x0f);
+			break;
+
+		case 0x90:
+			// ssg
+			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
+			break;
+
+		case 0xa0:
+			// frequency
+			l -= _regOffset;
+			if (l == 0) {
+				_frqTemp = (_frqTemp & 0xff00) | value;
+				_updateEnvelopes = true;
+				for (int i = 0; i < 4; i++)
+					_opr[i]->frequency(_frqTemp);
+			} else if (l == 4) {
+				_frqTemp = (_frqTemp & 0xff) | (value << 8);
+			} else if (l == 8) {
+				// Ch 3/6 special mode frq
+				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
+			} else if (l == 12) {
+				// Ch 3/6 special mode frq
+				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
+			}
+			break;
+
+		case 0xb0:
+			l -= _regOffset;
+			if (l == 0) {
+				// feedback, _algorithm
+				_opr[0]->feedbackLevel((value >> 3) & 7);
+				_opr[1]->feedbackLevel(0);
+				_opr[2]->feedbackLevel(0);
+				_opr[3]->feedbackLevel(0);
+			} else if (l == 4) {
+				// stereo, LFO sensitivity
+				_enableLeft = value & 0x80 ? true : false;
+				_enableRight = value & 0x40 ? true : false;
+				uint8 ams = (value & 0x3F) >> 3;
+				if (ams)
+					warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION SENSITIVITY (NOT SUPPORTED)");
+				uint8 fms = value & 3;
+				if (fms)
+					warning("TownsPC98_OpnDriver: TRYING TO USE FREQ MODULATION SENSITIVITY (NOT SUPPORTED)");
+			}
+			break;
+
+		default:
+			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
+			break;
+	}
+}
+
+bool TownsPC98_OpnChannel::control_f0_setPatch(uint8 para) {
+	_instrID = para;
+	uint8 reg = _regOffset + 0x80;
+
+	for (int i = 0; i < 4; i++) {
+		// set release rate for each operator
+		writeReg(reg, 0x0f);
+		reg += 4;
+	}
+
+	const uint8 *tptr = _drv->_patches + ((uint32)_instrID << 5);
+	reg = _regOffset + 0x30;
+
+	// write registers 0x30 to 0x8f
+	for (int i = 0; i < 6; i++) {
+		writeReg(reg, tptr[0]);
+		reg += 4;
+		writeReg(reg, tptr[2]);
+		reg += 4;
+		writeReg(reg, tptr[1]);
+		reg += 4;
+		writeReg(reg, tptr[3]);
+		reg += 4;
+		tptr += 4;
+	}
+
+	reg = _regOffset + 0xB0;
+	_algorithm = tptr[0] & 7;
+	// set feedback and algorithm
+	writeReg(reg, tptr[0]);
+
+	setOutputLevel();
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f1_presetOutputLevel(uint8 para) {
+	if (_fading)
+		return true;
+
+	_totalLevel = _drv->_opnLvlPresets[para];
+	setOutputLevel();
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f2_setKeyOffTime(uint8 para) {
+	_keyOffTime = para;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f3_setFreqLSB(uint8 para) {
+	_frqLSB = (int8) para;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f4_setOutputLevel(uint8 para) {
+	if (_fading)
+		return true;
+
+	_totalLevel = para;
+	setOutputLevel();
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f5_setTempo(uint8 para) {
+	_drv->setTempo(para);
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f6_repeatSection(uint8 para) {
+	_dataPtr--;
+	_dataPtr[0]--;
+
+	if (*_dataPtr) {
+		// repeat section until counter has reached zero
+		_dataPtr = _drv->_trackData + READ_LE_UINT16(_dataPtr + 2);
+	} else {
+		// reset counter, advance to next section
+		_dataPtr[0] = _dataPtr[1];
+		_dataPtr += 4;
+	}
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f7_setupPitchWheel(uint8 para) {
+	_ptchWhlInitDelayLo = _dataPtr[0];
+	_ptchWhlInitDelayHi = para;
+	_ptchWhlModInitVal = (int16) READ_LE_UINT16(_dataPtr + 1);
+	_ptchWhlDuration = _dataPtr[3];
+	_dataPtr += 4;
+	_flags = (_flags & ~CHS_PITCHWHEELOFF) | CHS_KEYOFF | CHS_RECALCFREQ;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f8_togglePitchWheel(uint8 para) {
+	if (para == 0x10) {
+		if (*_dataPtr++) {
+			_flags = (_flags & ~CHS_PITCHWHEELOFF) | CHS_KEYOFF;
+		} else {
+			_flags |= CHS_PITCHWHEELOFF;
+		}
+	} else {
+		//uint8 skipChannels = para / 36;
+		//uint8 entry = para % 36;
+		//TownsPC98_OpnDriver::TownsPC98_OpnChannel *t = &chan[skipChannels];
+		////// NOT IMPLEMENTED
+		//t->unnamedEntries[entry] = *_dataPtr++;
+	}
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_fa_writeReg(uint8 para) {
+	writeReg(para, *_dataPtr++);
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_fb_incOutLevel(uint8 para) {
+	_dataPtr--;
+	if (_fading)
+		return true;
+
+	uint8 val = (_totalLevel + 3);
+	if (val > 0x7f)
+		val = 0x7f;
+
+	_totalLevel = val;
+	setOutputLevel();
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_fc_decOutLevel(uint8 para) {
+	_dataPtr--;
+	if (_fading)
+		return true;
+
+	int8 val = (int8) (_totalLevel - 3);
+	if (val < 0)
+		val = 0;
+
+	_totalLevel = (uint8) val;
+	setOutputLevel();
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_fd_jump(uint8 para) {
+	uint8 *tmp = _drv->_trackData + READ_LE_UINT16(_dataPtr - 1);
+	_dataPtr = (tmp[1] == 1) ? tmp : ++_dataPtr;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_dummy(uint8 para) {
+	_dataPtr--;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_ff_endOfTrack(uint8 para) {
+	uint16 val = READ_LE_UINT16(--_dataPtr);
+	if (val) {
+		// loop
+		_dataPtr = _drv->_trackData + val;
+		return true;
+	} else {
+		// quit parsing for active channel
+		--_dataPtr;
+		_flags |= CHS_EOT;
+		_drv->_finishedChannelsFlag |= _idFlag;
+		keyOff();
+		return false;
+	}
+}
+
+bool TownsPC98_OpnChannel::control_f0_setPatchSSG(uint8 para) {
+	_instrID = para << 4;
+	para = (para >> 3) & 0x1e;
+	if (para)
+		return control_f4_setAlgorithm(para | 0x40);
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f1_setTotalLevel(uint8 para) {
+	if (!_fading)
+		_totalLevel = para;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f4_setAlgorithm(uint8 para) {
+	_algorithm = para;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_f9_unkSSG(uint8 para) {
+	_dataPtr += 5;
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_fb_incOutLevelSSG(uint8 para) {
+	_dataPtr--;
+	if (_fading)
+		return true;
+
+	_totalLevel--;
+	if ((int8)_totalLevel < 0);
+		_totalLevel = 0;
+
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_fc_decOutLevelSSG(uint8 para) {
+	_dataPtr--;
+	if (_fading)
+		return true;
+
+	if(_totalLevel + 1 < 0x10)
+		_totalLevel++;
+
+	return true;
+}
+
+bool TownsPC98_OpnChannel::control_ff_endOfTrackSSG(uint8 para) {
+	uint16 val = READ_LE_UINT16(--_dataPtr);
+	if (val) {
+		// loop
+		_dataPtr = _drv->_trackData + val;
+		return true;
+	} else {
+		// quit parsing for active channel
+		--_dataPtr;
+		_flags |= CHS_EOT;
+		//_finishedChannelsFlag |= _idFlag;
+		keyOff();
+		return false;
+	}
+}
+
+TownsPC98_OpnChannelSSG::TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs, 
+		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
+		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id) {
+}
+
+void TownsPC98_OpnChannelSSG::init() {
+	_algorithm = 0x80;
+	
+	_opr = new TownsPC98_OpnOperator*[4];
+	for (int i = 0; i < 4; i++)
+		_opr[i] = new TownsPC98_OpnOperator(_drv->_baserate, _drv->_oprRates, _drv->_oprRateshift,
+			_drv->_oprAttackDecay, _drv->_oprFrq, _drv->_oprSinTbl, _drv->_oprLevelOut, _drv->_oprDetune);
+
+	#define Control(x)	&TownsPC98_OpnChannelSSG::control_##x
+	static const ControlEventFunc ctrlEventsSSG[] = {
+		Control(f0_setPatchSSG),
+		Control(f1_setTotalLevel),
+		Control(f2_setKeyOffTime),
+		Control(f3_setFreqLSB),
+		Control(f4_setOutputLevel),
+		Control(f5_setTempo),
+		Control(f6_repeatSection),
+		Control(f7_setupPitchWheel),
+		Control(f8_togglePitchWheel),
+		Control(f9_unkSSG),
+		Control(fa_writeReg),
+		Control(fb_incOutLevelSSG),
+		Control(fc_decOutLevelSSG),
+		Control(fd_jump),
+		Control(dummy),
+		Control(ff_endOfTrackSSG)
+	};
+	#undef Control
+
+	controlEvents = ctrlEventsSSG;
+}
+
+void TownsPC98_OpnChannelSSG::processEvents() {
+	if (_flags & CHS_EOT)
+		return;
+
+	int _ssgUnk = (_flags & CHS_SSG) ? -1 : 0;
+
+	if (_protect == false && _ticksLeft == _keyOffTime)
+		keyOff();
+
+	if (--_ticksLeft)
+		return;
+
+	if (_protect == false)
+		keyOff();
+
+	uint8 cmd = 0;
+	bool loop = true;
+
+	while (loop) {
+		cmd = *_dataPtr++;
+		if (cmd < 0xf0)
+			loop = false;
+		else if (!processControlEvent(cmd))
+			return;
+	}
+
+	uint8 para = *_dataPtr++;
+
+	if (cmd == 0x80) {
+		keyOff();
+		_protect = false;
+	} else {
+		keyOn();
+
+		if (_protect == false || cmd != _frqBlockMSB)
+			_flags |= CHS_RECALCFREQ;
+	
+		_protect = (para & 0x80) ? true : false;
+		_frqBlockMSB = cmd;
+	}
+
+	_ticksLeft = para & 0x7f;
+
+	if (!(_flags & CHS_SSG)) {
+
+	}
+}
+
+void TownsPC98_OpnChannelSSG::processFrequency() {
+	if (_flags & CHS_RECALCFREQ) {
+		uint8 block = (_frqBlockMSB & 0x70) >> 1;
+		uint16 bfreq = ((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f];
+		frequency = (bfreq + _frqLSB) | (block << 8);
+
+		writeReg(_regOffset + 0xa4, (frequency >> 8));
+		writeReg(_regOffset + 0xa0, (frequency & 0xff));
+
+		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
+		if (_flags & CHS_KEYOFF) {
+			_ptchWhlModCurVal = _ptchWhlModInitVal;
+			_ptchWhlCurDelay += _ptchWhlInitDelayLo;
+		}
+
+		_ptchWhlDurLeft = (_ptchWhlDuration >> 1);
+		_flags &= ~(CHS_KEYOFF | CHS_RECALCFREQ);
+	}
+
+	if (!(_flags & CHS_PITCHWHEELOFF)) {
+		if (--_ptchWhlCurDelay)
+			return;
+		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
+		frequency += _ptchWhlModCurVal;
+
+		writeReg(_regOffset + 0xa4, (frequency >> 8));
+		writeReg(_regOffset + 0xa0, (frequency & 0xff));
+
+		if(!--_ptchWhlDurLeft) {
+			_ptchWhlDurLeft = _ptchWhlDuration;
+			_ptchWhlModCurVal = -_ptchWhlModCurVal;
+		}
+	}
+}
+
+void TownsPC98_OpnChannelSSG::keyOff() {
+	// all operators off
+	uint8 value = _keyNum & 0x0f;
+	uint8 regAdress = 0x28;
+	writeReg(regAdress, value);
+	_flags |= CHS_KEYOFF;
+}
+
+void TownsPC98_OpnChannelSSG::keyOn() {
+	// all operators on
+	uint8 value = _keyNum | 0xf0;
+	uint8 regAdress = 0x28;
+	writeReg(regAdress, value);
+}
+
 TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
-	_mixer(mixer), _trackData(0), _playing(false), _fading(false), _channels(0),
-	_operators(0), _looping(0), _twnCarrier(_drvTables + 76), _twnFreqTable(_drvTables + 84),
-	_twnFxCmdLen(_drvTables + 36), _twnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 220)) ,
+	_mixer(mixer), _trackData(0), _playing(false), _channels(0), _ssgChannels(0),
+	_looping(0), _opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 84),
+	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 220)) ,
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0),	_oprSinTbl(0), _oprLevelOut(0),
 	_oprDetune(0), _cbCounter(4), _tickCounter(0), _updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F),
-	_finishedChannelsFlag(0), _samplesTillCallback(0), _samplesTillCallbackRemainder(0),
+	_finishedChannelsFlag(0), _samplesTillCallback(0), _samplesTillCallbackRemainder(0), _ready(false),
 	_numSSG(type == OD_TOWNS ? 0 : 3), _hasADPCM(type == OD_TYPE86 ? true : false),
 	_numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true) {	
 	setTempo(84);
@@ -1502,16 +2351,16 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
 	_mixer->stopHandle(_soundHandle);
 
-	if (_operators) {
-		for (int i = 0; i < (_numChan << 2); i++)
-			delete _operators[i];
-		delete [] _operators;
-	}
-
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)
 			delete _channels[i];
 		delete [] _channels;
+	}
+
+	if (_ssgChannels) {
+		for (int i = 0; i < _numSSG; i++)
+			delete _ssgChannels[i];
+		delete [] _ssgChannels;
 	}
 
 	delete [] _oprRates;
@@ -1524,21 +2373,12 @@ TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
 }
 
 bool TownsPC98_OpnDriver::init() {
-	generateTables();
-
-	if (_operators) {
-		for (int i = 0; i < (_numChan << 2); i++) {
-			if (_operators[i]) {
-				delete _operators[i];
-			}
-		}
-		delete [] _operators;
+	if (_ready) {
+		reset();
+		return true;
 	}
 
-	_operators = new TownsPC98_OpnOperator*[(_numChan << 2)];
-	for (int i = 0; i < (_numChan << 2); i++)
-		_operators[i] = new TownsPC98_OpnOperator(_baserate, _oprRates,
-			_oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
+	generateTables();
 
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++) {
@@ -1547,29 +2387,35 @@ bool TownsPC98_OpnDriver::init() {
 		}
 		delete [] _channels;
 	}
-	_channels = new TwnChannel*[_numChan];
+	_channels = new TownsPC98_OpnChannel*[_numChan];
 	for (int i = 0; i < _numChan; i++) {
-		_channels[i] = new TwnChannel;
-		for (int ii = 0; ii < 4; ii++) {
-			_channels[i]->opr[ii] = _operators[(i << 2) + ii];
-			_channels[i]->updateEnvelopes = false;
-		}
+		int ii = i * 6;
+		_channels[i] = new TownsPC98_OpnChannel(this, _drvTables[ii], _drvTables[ii + 1],
+			_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+		_channels[i]->init();
 	}
 
-	for (int i = 0; i < _numChan; i++) {
-		int ix = i * 6;
-		memset(_channels[i], 0, sizeof(TwnChannel));
-		_channels[i]->regOffset = _drvTables[ix];
-		_channels[i]->flags = _drvTables[ix + 1];
-		_channels[i]->chanNum = _drvTables[ix + 2];
-		_channels[i]->keyNum = _drvTables[ix + 3];
-		_channels[i]->part = _drvTables[ix + 4];
-		_channels[i]->idFlag = _drvTables[ix + 5];
+	if (_ssgChannels) {
+		for (int i = 0; i < _numSSG; i++) {
+			if (_ssgChannels[i])
+				delete _ssgChannels[i];
+		}
+		delete [] _ssgChannels;
+	}
+	if (_numSSG) {
+		_ssgChannels = new TownsPC98_OpnChannelSSG*[_numSSG];
+		for (int i = 0; i < _numSSG; i++) {
+			int ii = i * 6;
+			_ssgChannels[i] = new TownsPC98_OpnChannelSSG(this, _drvTables[ii], _drvTables[ii + 1],
+				_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+			_ssgChannels[i]->init();
+		}
 	}
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
 		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
+	_ready = true;
 	return true;
 }
 
@@ -1604,82 +2450,31 @@ int inline TownsPC98_OpnDriver::readBuffer(int16 *buffer, const int numSamples) 
 	return numSamples;
 }
 
-void TownsPC98_OpnDriver::loadData(uint8 * data, bool loadPaused) {
+void TownsPC98_OpnDriver::loadData(uint8 *data, bool loadPaused) {
+	if (!_ready) {
+		warning("TownsPC98_OpnDriver: Driver must be initialized before loading data");
+		return;
+	}
+
+	if (!data) {
+		warning("TownsPC98_OpnDriver: Invalid music file data");
+		return;
+	}
 
 	lock();
 	_trackData = data;
 
 	reset();
-
-	for (uint8 i = 0; i < _numChan; i++) {
-		uint8 tmp1 = _channels[i]->regOffset;
-		uint8 tmp2 = _channels[i]->flags;
-		uint8 tmp3 = _channels[i]->chanNum;
-		uint8 tmp4 = _channels[i]->keyNum;
-		uint8 tmp5 = _channels[i]->part;
-		uint8 tmp6 = _channels[i]->idFlag;
-		memset(_channels[i], 0, sizeof(TwnChannel));
-		_channels[i]->regOffset = tmp1;
-		_channels[i]->flags = tmp2;
-		_channels[i]->chanNum = tmp3;
-		_channels[i]->keyNum = tmp4;
-		_channels[i]->part = tmp5;
-		_channels[i]->idFlag = tmp6;
-		_channels[i]->enableLeft = _channels[i]->enableRight = true;
-		for (int ii = 0; ii < 4; ii++)
-			_channels[i]->opr[ii] = _operators[(i << 2) + ii];
-	}
-
+	
 	uint8 *src_a = data;
-	uint8 bl = 0;
 
 	for (uint8 i = 0; i < _numChan; i++) {
-		_channels[i]->flags = (_channels[i]->flags & ~CHS_EOT) | CHS_ALL_BUT_EOT;
-		_channels[i]->ticksLeft = 1;
-		_channels[i]->dataPtr = data + READ_LE_UINT16(src_a);
+		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
 		src_a += 2;
-		_channels[i]->totalLevel = 0x7F;
-		if (bl > 2)
-			bl -= 3;
-		_channels[i]->regOffset = bl++;
-
-		uint8 * src_b = _channels[i]->dataPtr;
-		int loop = 1;
-		uint8 cmd = 0;
-		while (loop) {
-			if (loop == 1) {
-				cmd = *src_b++;
-				if (cmd < 0xf0) {
-					src_b++;
-					loop = 1;
-				} else {
-					if (cmd == 0xff) {
-						loop = *src_b ? 2 : 0;
-						if (READ_LE_UINT16(src_b))
-							_looping |= _channels[i]->idFlag;
-					} else if (cmd == 0xf6) {
-						loop = 3;
-					} else {
-						loop = 2;
-					}
-				}
-			} else if (loop == 2) {
-				src_b += _twnFxCmdLen[cmd - 240];
-				loop = 1;
-			} else if (loop == 3) {
-				src_b[0] = src_b[1];
-				src_b += 4;
-				loop = 1;
-			}
-		}
 	}
 
 	for (int i = 0; i < _numSSG; i++) {
-		// TODO
-		//_channels[i]->flags = (_channels[i]->flags & ~CHS_EOT) | CHS_ALL_BUT_EOT;
-		//_channels[i]->ticksLeft = 1;
-		//_channels[i]->dataPtr = data + READ_LE_UINT16(src_a);
-		//uint8 *tmp = data + READ_LE_UINT16(src_a);
+		_ssgChannels[i]->loadData(data + READ_LE_UINT16(src_a));
 		src_a += 2;
 	}
 
@@ -1698,8 +2493,10 @@ void TownsPC98_OpnDriver::loadData(uint8 * data, bool loadPaused) {
 }
 
 void TownsPC98_OpnDriver::reset() {
-	for (int i = 0; i < (_numChan << 2); i++)
-		_operators[i]->reset();
+	for (int i = 0; i < (_numChan); i++)
+		_channels[i]->reset();
+	for (int i = 0; i < (_numSSG); i++)
+		_ssgChannels[i]->reset();
 
 	_playing = false;
 	_looping = 0;
@@ -1710,21 +2507,21 @@ void TownsPC98_OpnDriver::fadeOut() {
 	if (!_playing)
 		return;
 
-	_fading = true;
+	for (int j = 0; j < _numChan; j++)
+		_channels[j]->_fading = true;
+	for (int j = 0; j < _numSSG; j++)
+			_ssgChannels[j]->_fading = true;
 
-	for (int i = 0; i < 20; i++) {
-		
+	for (int i = 0; i < 20; i++) {		
 		lock();
 		uint32 dTime = _tickCounter + 2;
 		for (int j = 0; j < _numChan; j++) {
-			if (_updateChannelsFlag & _channels[j]->idFlag) {
-				uint8 tmp = _channels[j]->totalLevel + 3;
-				if (tmp > 0x7f)
-					tmp = 0x7f;
-				_channels[j]->totalLevel = tmp;
-				setOutputLevel(_channels[j]);
-			}
+			if (_updateChannelsFlag & _channels[j]->_idFlag)
+				_channels[j]->fadeStep();
 		}
+		for (int j = 0; j < _numSSG; j++)
+			_ssgChannels[j]->fadeStep();
+
 		unlock();
 
 		while (_playing) {
@@ -1733,7 +2530,10 @@ void TownsPC98_OpnDriver::fadeOut() {
 		}
 	}
 
-	_fading = false;
+	for (int j = 0; j < _numChan; j++)
+		_channels[j]->_fading = false;
+	for (int j = 0; j < _numSSG; j++)
+			_ssgChannels[j]->_fading = false;
 
 	reset();
 }
@@ -1746,12 +2546,21 @@ void TownsPC98_OpnDriver::callback() {
 	_tickCounter++;
 
 	lock();
+
 	for (int i = 0; i < _numChan; i++) {
-		if (_updateChannelsFlag & _channels[i]->idFlag) {
-			processEvents(_channels[i]);
-			processFrequency(_channels[i]);
+		if (_updateChannelsFlag & _channels[i]->_idFlag) {
+			_channels[i]->processEvents();
+			_channels[i]->processFrequency();
 		}
 	}
+
+	if (_numSSG) {
+		for (int i = 0; i < _numSSG; i++) {
+			_ssgChannels[i]->processEvents();
+			_ssgChannels[i]->processFrequency();
+		}
+	}
+
 	unlock();
 
 	if (_finishedChannelsFlag == _updateChannelsFlag)
@@ -1763,96 +2572,25 @@ void TownsPC98_OpnDriver::nextTick(int16 *buffer, uint32 bufferSize) {
 		return;	
 
 	for (int i = 0; i < _numChan ; i++) {
-		if (_channels[i]->updateEnvelopes) {
-			_channels[i]->updateEnvelopes = false;
-			for (int ii = 0; ii < 4 ; ii++)
-				_channels[i]->opr[ii]->updatePhaseIncrement();
+		if (_channels[i]->_updateEnvelopes) {
+			_channels[i]->_updateEnvelopes = false;
+			_channels[i]->updateEnv();
 		}
-
-		int phbuf1, phbuf2, output;
-		int *feed = _channels[i]->feedbuf;
-		int *del = &feed[2];
 		
-		for (uint32 ii = 0; ii < bufferSize ; ii++) {	
-			phbuf1 = phbuf2 = output = 0;
+		for (uint32 ii = 0; ii < bufferSize ; ii++)
+			_channels[i]->generateOutput(buffer[ii * 2],
+			buffer[ii * 2 + 1],	&_channels[i]->_feedbuf[2], _channels[i]->_feedbuf);
+	}
 
-			switch (_channels[i]->algorithm) {
-				case 0:
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf1);
-					_channels[i]->opr[2]->generateOutput(*del, 0, phbuf2);
-					*del = 0;
-					_channels[i]->opr[1]->generateOutput(phbuf1, 0, *del);
-					_channels[i]->opr[3]->generateOutput(phbuf2, 0, output);
-					break;
-				case 1:
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf1);
-					_channels[i]->opr[2]->generateOutput(*del, 0, phbuf2);
-					_channels[i]->opr[1]->generateOutput(0, 0, phbuf1);					
-					_channels[i]->opr[3]->generateOutput(phbuf2, 0, output);
-					*del = phbuf1;
-					break;
-				case 2:
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf2);
-					_channels[i]->opr[2]->generateOutput(*del, 0, phbuf2);
-					_channels[i]->opr[1]->generateOutput(0, 0, phbuf1);
-					_channels[i]->opr[3]->generateOutput(phbuf2, 0, output);
-					*del = phbuf1;
-					break;
-				case 3:
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf2);
-					_channels[i]->opr[2]->generateOutput(0, 0, *del);
-					_channels[i]->opr[1]->generateOutput(phbuf2, 0, phbuf1);
-					_channels[i]->opr[3]->generateOutput(*del, 0, output);
-					*del = phbuf1;
-					break;
-				case 4:
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf1);
-					_channels[i]->opr[2]->generateOutput(0, 0, phbuf2);
-					_channels[i]->opr[1]->generateOutput(phbuf1, 0, output);					
-					_channels[i]->opr[3]->generateOutput(phbuf2, 0, output);
-					*del = 0;
-					break;
-				case 5:
-					*del = feed[1];
-					_channels[i]->opr[0]->generateOutput(-1, feed, phbuf1);
-					_channels[i]->opr[2]->generateOutput(*del, 0, output);
-					_channels[i]->opr[1]->generateOutput(*del, 0, output);
-					_channels[i]->opr[3]->generateOutput(*del, 0, output);
-					break;
-				case 6:
-					_channels[i]->opr[0]->generateOutput(0, feed, phbuf1);
-					_channels[i]->opr[2]->generateOutput(0, 0, output);
-					_channels[i]->opr[1]->generateOutput(phbuf1, 0, output);
-					_channels[i]->opr[3]->generateOutput(0, 0, output);
-					*del = 0;
-					break;
-				case 7:
-					_channels[i]->opr[0]->generateOutput(0, feed, output);
-					_channels[i]->opr[2]->generateOutput(0, 0, output);
-					_channels[i]->opr[1]->generateOutput(0, 0, output);
-					_channels[i]->opr[3]->generateOutput(0, 0, output);
-					*del = 0;
-					break;
-			};
-
-			if (_channels[i]->enableLeft) {
-				int l = output + buffer[ii * 2];
-				if (l > 32767)
-					l = 32767;
-				if (l < -32767)
-					l = -32767;
-				buffer[ii * 2] = (int16) l;
-			}
-
-			if (_channels[i]->enableRight) {
-				int r = output + buffer[ii * 2 + 1];
-				if (r > 32767)
-					r = 32767;
-				if (r < -32767)
-					r = -32767;
-				buffer[ii * 2 + 1] = (int16) r;
-			}
+	for (int i = 0; i < _numSSG ; i++) {
+		if (_ssgChannels[i]->_updateEnvelopes) {
+			_ssgChannels[i]->_updateEnvelopes = false;
+			_ssgChannels[i]->updateEnv();
 		}
+		
+		for (uint32 ii = 0; ii < bufferSize ; ii++)
+			_ssgChannels[i]->generateOutput(buffer[ii * 2],
+			buffer[ii * 2 + 1],	&_ssgChannels[i]->_feedbuf[2], _ssgChannels[i]->_feedbuf);
 	}
 }
 
@@ -1860,7 +2598,7 @@ void TownsPC98_OpnDriver::generateTables() {
 	delete [] _oprRates;
 	_oprRates = new uint8[128];
 	memset(_oprRates, 0x90, 32);
-	uint8 * dst = (uint8*) _oprRates + 32;
+	uint8 *dst = (uint8*) _oprRates + 32;
 	for (int i = 0; i < 48; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
 	dst += 48;
@@ -1913,7 +2651,7 @@ void TownsPC98_OpnDriver::generateTables() {
 		}
 	}
 
-	uint8 * dtt = new uint8[128];
+	uint8 *dtt = new uint8[128];
 	memset(dtt, 0, 36);
 	memset(dtt + 36, 1, 8);
 	memcpy(dtt + 44, _drvTables + 144, 84);
@@ -1928,446 +2666,10 @@ void TownsPC98_OpnDriver::generateTables() {
 	delete [] dtt;
 }
 
-void TownsPC98_OpnDriver::processEvents(TwnChannel *chan) {
-	if (chan->flags & CHS_EOT)
-		return;
-
-	if (chan->protect == false && chan->ticksLeft == chan->keyOffTime)
-		keyOff(chan);
-
-	if (--chan->ticksLeft)
-		return;
-
-	if (chan->protect == false)
-		keyOff(chan);
-
-	uint8 cmd = 0;
-	bool loop = true;
-
-	while (loop) {
-		cmd = *chan->dataPtr++;
-		if (cmd < 0xf0)
-			loop = false;
-		else if (!processControlEvent(chan, cmd))
-			return;
-	}
-
-	uint8 para = *chan->dataPtr++;
-
-	if (cmd == 0x80) {
-		keyOff(chan);
-		chan->protect = false;
-	} else {
-		keyOn(chan);
-
-		if (chan->protect == false || cmd != chan->frqBlockMSB)
-			chan->flags |= CHS_RECALCFREQ;
-	
-		chan->protect = (para & 0x80) ? true : false;
-		chan->frqBlockMSB = cmd;
-	}
-
-	chan->ticksLeft = para & 0x7f;
-}
-
-void TownsPC98_OpnDriver::processFrequency(TwnChannel *chan) {
-	if (chan->flags & CHS_RECALCFREQ) {
-		uint8 block = (chan->frqBlockMSB & 0x70) >> 1;
-		uint16 bfreq = ((const uint16*)_twnFreqTable)[chan->frqBlockMSB & 0x0f];
-		chan->frequency = (bfreq + chan->frqLSB) | (block << 8);
-
-		writeReg(chan, (chan->regOffset + 0xa4), (chan->frequency >> 8));
-		writeReg(chan, (chan->regOffset + 0xa0), (chan->frequency & 0xff));
-
-		chan->ptchWhlCurDelay = chan->ptchWhlInitDelayHi;
-		if (chan->flags & CHS_KEYOFF) {
-			chan->ptchWhlModCurVal = chan->ptchWhlModInitVal;
-			chan->ptchWhlCurDelay += chan->ptchWhlInitDelayLo;
-		}
-
-		chan->ptchWhlDurLeft = (chan->ptchWhlDuration >> 1);
-		chan->flags &= ~(CHS_KEYOFF | CHS_RECALCFREQ);
-	}
-
-	if (!(chan->flags & CHS_PITCHWHEELOFF)) {
-		if (--chan->ptchWhlCurDelay)
-			return;
-		chan->ptchWhlCurDelay = chan->ptchWhlInitDelayHi;
-		chan->frequency += chan->ptchWhlModCurVal;
-
-		writeReg(chan, (chan->regOffset + 0xa4), (chan->frequency >> 8));
-		writeReg(chan, (chan->regOffset + 0xa0), (chan->frequency & 0xff));
-
-		if(!--chan->ptchWhlDurLeft) {
-			chan->ptchWhlDurLeft = chan->ptchWhlDuration;
-			chan->ptchWhlModCurVal = -chan->ptchWhlModCurVal;
-		}
-	}
-}
-
-bool TownsPC98_OpnDriver::processControlEvent(TwnChannel *chan, uint8 cmd) {
-	#define Control(x)	&TownsPC98_OpnDriver::control_##x
-	static const ControlEventFunc twnFxCommands[] = {
-		Control(f0_setPatch),
-		Control(f1_presetOutputLevel),
-		Control(f2_setKeyOffTime),
-		Control(f3_setFreqLSB),
-		Control(f4_setOutputLevel),
-		Control(f5_setTempo),
-		Control(f6_repeatSection),
-		Control(f7_setupPitchWheel),
-		Control(f8_togglePitchWheel),
-		Control(f9_unk),
-		Control(fa_writeReg),
-		Control(fb_incOutLevel),
-		Control(fc_decOutLevel),
-		Control(fd_jump),
-		Control(fe_unk),
-		Control(ff_endOfTrack)
-	};
-	#undef Control
-
-	uint8 para = *chan->dataPtr++;
-	return (this->*twnFxCommands[cmd & 0x0f])(chan, para);
-}
-
-void TownsPC98_OpnDriver::setOutputLevel(TwnChannel *chan) {
-	uint8 outopr = _twnCarrier[chan->algorithm];
-	uint8 reg = 0x40 + chan->regOffset;
-
-	for (int i = 0; i < 4; i++) {
-		if (outopr & 1)
-			writeReg(chan, reg, chan->totalLevel);
-		outopr >>= 1;
-		reg += 4;
-	}
-}
-
 void TownsPC98_OpnDriver::setTempo(uint8 tempo) {
 	_tempo = tempo;
 	_samplesPerCallback = getRate() / _tempo;
 	_samplesPerCallbackRemainder = getRate() % _tempo;
-}
-
-bool TownsPC98_OpnDriver::control_f0_setPatch(TwnChannel *chan, uint8 para) {
-	chan->instrID = para;
-	uint8 reg = chan->regOffset + 0x80;
-
-	for (int i = 0; i < 4; i++) {
-		// set release rate for each operator
-		writeReg(chan, reg, 0x0f);
-		reg += 4;
-	}
-
-	const uint8 *tptr = _patches + ((uint32)chan->instrID << 5);
-	reg = chan->regOffset + 0x30;
-
-	// write registers 0x30 to 0x8f
-	for (int i = 0; i < 6; i++) {
-		writeReg(chan, reg, tptr[0]);
-		reg += 4;
-		writeReg(chan, reg, tptr[2]);
-		reg += 4;
-		writeReg(chan, reg, tptr[1]);
-		reg += 4;
-		writeReg(chan, reg, tptr[3]);
-		reg += 4;
-		tptr += 4;
-	}
-
-	reg = chan->regOffset + 0xB0;
-	chan->algorithm = tptr[0] & 7;
-	// set feedback and algorithm
-	writeReg(chan, reg, tptr[0]);
-
-	setOutputLevel(chan);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f1_presetOutputLevel(TwnChannel *chan, uint8 para) {
-	if (_fading)
-		return true;
-
-	chan->totalLevel = _twnLvlPresets[para];
-	setOutputLevel(chan);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f2_setKeyOffTime(TwnChannel *chan, uint8 para) {
-	chan->keyOffTime = para;
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f3_setFreqLSB(TwnChannel *chan, uint8 para) {
-	chan->frqLSB = (int8) para;
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f4_setOutputLevel(TwnChannel *chan, uint8 para) {
-	if (_fading)
-		return true;
-
-	chan->totalLevel = para;
-	setOutputLevel(chan);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f5_setTempo(TwnChannel *chan, uint8 para) {
-	setTempo(para);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f6_repeatSection(TwnChannel *chan, uint8 para) {
-	chan->dataPtr--;
-	chan->dataPtr[0]--;
-
-	if (*chan->dataPtr) {
-		// repeat section until counter has reached zero
-		chan->dataPtr = _trackData + READ_LE_UINT16(chan->dataPtr + 2);
-	} else {
-		// reset counter, advance to next section
-		chan->dataPtr[0] = chan->dataPtr[1];
-		chan->dataPtr += 4;
-	}
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f7_setupPitchWheel(TwnChannel *chan, uint8 para) {
-	chan->ptchWhlInitDelayLo = chan->dataPtr[0];
-	chan->ptchWhlInitDelayHi = para;
-	chan->ptchWhlModInitVal = (int16) READ_LE_UINT16(chan->dataPtr + 1);
-	chan->ptchWhlDuration = chan->dataPtr[3];
-	chan->dataPtr += 4;
-	chan->flags = (chan->flags & ~CHS_PITCHWHEELOFF) | CHS_KEYOFF | CHS_RECALCFREQ;
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f8_togglePitchWheel(TwnChannel *chan, uint8 para) {
-	if (para == 0x10) {
-		if (*chan->dataPtr++) {
-			chan->flags = (chan->flags & ~CHS_PITCHWHEELOFF) | CHS_KEYOFF;
-		} else {
-			chan->flags |= CHS_PITCHWHEELOFF;
-		}
-	} else {
-		//uint8 skipChannels = para / 36;
-		//uint8 entry = para % 36;
-		//TownsPC98_OpnDriver::TwnChannel *t = &chan[skipChannels];
-		////// NOT IMPLEMENTED
-		//t->unnamedEntries[entry] = *chan->dataPtr++;
-	}
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_f9_unk(TwnChannel *chan, uint8 para) {
-	//chan->dataPtr += 5;
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_fa_writeReg(TwnChannel *chan, uint8 para) {
-	writeReg(chan, para, *chan->dataPtr++);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_fb_incOutLevel(TwnChannel *chan, uint8 para) {
-	chan->dataPtr--;
-	if (_fading)
-		return true;
-
-	uint8 val = (chan->totalLevel + 3);
-	if (val > 0x7f)
-		val = 0x7f;
-
-	chan->totalLevel = val;
-	setOutputLevel(chan);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_fc_decOutLevel(TwnChannel *chan, uint8 para) {
-	chan->dataPtr--;
-	if (_fading)
-		return true;
-
-	int8 val = (int8) (chan->totalLevel - 3);
-	if (val < 0)
-		val = 0;
-
-	chan->totalLevel = (uint8) val;
-	setOutputLevel(chan);
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_fd_jump(TwnChannel *chan, uint8 para) {
-	uint8 *tmp = _trackData + READ_LE_UINT16(chan->dataPtr - 1);
-	chan->dataPtr = (tmp[1] == 1) ? tmp : ++chan->dataPtr;
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_fe_unk(TwnChannel *chan, uint8 para) {
-	chan->dataPtr--;
-	return true;
-}
-
-bool TownsPC98_OpnDriver::control_ff_endOfTrack(TwnChannel *chan, uint8 para) {
-	uint16 val = READ_LE_UINT16(--chan->dataPtr);
-	if (val) {
-		// loop
-		chan->dataPtr = _trackData + val;
-		return true;
-	} else {
-		// quit parsing for active channel
-		--chan->dataPtr;
-		chan->flags |= CHS_EOT;
-		_finishedChannelsFlag |= chan->idFlag;
-		keyOff(chan);
-		return false;
-	}
-}
-
-void TownsPC98_OpnDriver::keyOff(TwnChannel *chan) {
-	// all operators off
-	uint8 value = chan->keyNum & 0x0f;
-	uint8 regAdress = 0x28;
-	writeReg(chan, regAdress, value);
-	chan->flags |= CHS_KEYOFF;
-}
-
-void TownsPC98_OpnDriver::keyOn(TwnChannel *chan) {
-	// all operators on
-	uint8 value = chan->keyNum | 0xf0;
-	uint8 regAdress = 0x28;
-	writeReg(chan, regAdress, value);
-}
-
-void TownsPC98_OpnDriver::writeReg(TwnChannel *chan, uint8 regAdress, uint8 value) {
-	uint8 h = regAdress & 0xf0;
-	uint8 l = (regAdress & 0x0f);
-	static const uint8 opr[] = { 0, 2, 1, 3 };
-	uint8 o = opr[(l - chan->regOffset) >> 2];
-	
-	switch (h) {
-		case 0x00:
-			// ssg
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-		case 0x10:
-			// adpcm
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-		case 0x20:
-			if (l == 8) {
-				// Key on/off
-				for (int i = 0; i < 4; i++) {
-					if ((value >> (4 + i)) & 1)
-						chan->opr[i]->keyOn();
-					else
-						chan->opr[i]->keyOff();
-				}
-			} else if (l == 2) {
-				// LFO
-				warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
-			} else if (l == 7) {
-				// Timers; Ch 3/6 special mode
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE (NOT SUPPORTED)");
-			} else if (l == 4 || l == 5) {
-				// Timer A
-				warning("TownsPC98_OpnDriver: TRYING TO USE TIMER_A (NOT SUPPORTED)");
-			} else if (l == 6) {
-				// Timer B
-				warning("TownsPC98_OpnDriver: TRYING TO USE TIMER_B (NOT SUPPORTED)");
-			} else if (l == 10 || l == 11) {
-				// DAC
-				warning("TownsPC98_OpnDriver: TRYING TO USE DAC (NOT SUPPORTED)");
-			}
-			break;
-
-		case 0x30:
-			// detune, multiple
-			chan->opr[o]->detune((value >> 4) & 7);
-			chan->opr[o]->multiple(value & 0x0f);
-			chan->updateEnvelopes = true;
-			break;
-
-		case 0x40:
-			// total level
-			chan->opr[o]->totalLevel(value & 0x7f);
-			break;
-
-		case 0x50:
-			// rate scaling, attack rate
-			chan->opr[o]->attackRate(value & 0x1f);
-			if (chan->opr[o]->scaleRate(value >> 6))
-				chan->updateEnvelopes = true;
-			break;
-
-		case 0x60:
-			// first decay rate, amplitude modulation
-			chan->opr[o]->decayRate(value & 0x1f);
-			if (value & 0x80)
-				warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION (NOT SUPPORTED)");
-
-			break;
-
-		case 0x70:
-			// secondary decay rate
-			chan->opr[o]->sustainRate(value & 0x1f);
-			break;
-
-		case 0x80:
-			// secondary amplitude, release rate;
-			chan->opr[o]->sustainLevel(value >> 4);
-			chan->opr[o]->releaseRate(value & 0x0f);
-			break;
-
-		case 0x90:
-			// ssg
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-
-		case 0xa0:
-			// frequency
-			l -= chan->regOffset;
-			if (l == 0) {
-				chan->frqTemp = (chan->frqTemp & 0xff00) | value;
-				chan->updateEnvelopes = true;
-				for (int i = 0; i < 4; i++)
-					chan->opr[i]->frequency(chan->frqTemp);
-			} else if (l == 4) {
-				chan->frqTemp = (chan->frqTemp & 0xff) | (value << 8);
-			} else if (l == 8) {
-				// Ch 3/6 special mode frq
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
-			} else if (l == 12) {
-				// Ch 3/6 special mode frq
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
-			}
-			break;
-
-		case 0xb0:
-			l -= chan->regOffset;
-			if (l == 0) {
-				// feedback, algorithm
-				chan->opr[0]->feedbackLevel((value >> 3) & 7);
-				chan->opr[1]->feedbackLevel(0);
-				chan->opr[2]->feedbackLevel(0);
-				chan->opr[3]->feedbackLevel(0);
-			} else if (l == 4) {
-				// stereo, LFO sensitivity
-				chan->enableLeft = value & 0x80 ? true : false;
-				chan->enableRight = value & 0x40 ? true : false;
-				uint8 ams = (value & 0x3F) >> 3;
-				if (ams)
-					warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION SENSITIVITY (NOT SUPPORTED)");
-				uint8 fms = value & 3;
-				if (fms)
-					warning("TownsPC98_OpnDriver: TRYING TO USE FREQ MODULATION SENSITIVITY (NOT SUPPORTED)");
-			}
-			break;
-
-		default:
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-	}
 }
 
 const uint8 TownsPC98_OpnDriver::_drvTables[] = {
@@ -2474,7 +2776,7 @@ void SoundTowns::playTrack(uint8 track) {
 		return;
 	track -= 2;
 
-	const int32 * const tTable = (const int32 * const) cdaData();
+	const int32 *const tTable = (const int32 *const) cdaData();
 	int tTableIndex = 3 * track;
 
 	int trackNum = (int) READ_LE_UINT32(&tTable[tTableIndex + 2]);
@@ -2545,12 +2847,12 @@ void SoundTowns::playSoundEffect(uint8 track) {
 		}
 	}
 
-	uint8 * fileBody = _sfxFileData + 0x01b8;
+	uint8 *fileBody = _sfxFileData + 0x01b8;
 	int32 offset = (int32)READ_LE_UINT32(_sfxFileData + (track - 0x0b) * 4);
 	if (offset == -1)
 		return;
 
-	uint32 * sfxHeader = (uint32*)(fileBody + offset);
+	uint32 *sfxHeader = (uint32*)(fileBody + offset);
 
 	uint32 sfxHeaderID = READ_LE_UINT32(sfxHeader);
 	uint32 sfxHeaderInBufferSize = READ_LE_UINT32(&sfxHeader[1]);
@@ -2570,7 +2872,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	} else if (sfxHeaderID == 1) {
 		Screen::decodeFrame4(sfxBody, sfxPlaybackBuffer, playbackBufferSize);
 	} else if (_sfxWDTable) {
-		uint8 * tgt = sfxPlaybackBuffer;
+		uint8 *tgt = sfxPlaybackBuffer;
 		uint32 sfx_BtTable_Offset = 0;
 		uint32 sfx_WdTable_Offset = 0;
 		uint32 sfx_WdTable_Number = 5;
@@ -2635,7 +2937,7 @@ uint32 SoundTowns::getBaseTempo(void) {
 }
 
 bool SoundTowns::loadInstruments() {
-	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
+	uint8 *twm = _vm->resource()->fileData("twmusic.pak", 0);
 	if (!twm)
 		return false;
 	_driver->queue()->loadDataToCurrentPosition(twm, 0x8BF0);
@@ -2650,7 +2952,7 @@ bool SoundTowns::loadInstruments() {
 }
 
 void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
-	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
+	uint8 *twm = _vm->resource()->fileData("twmusic.pak", 0);
 	Common::StackLock lock(_mutex);
 
 	if (!_parser) {
@@ -2665,7 +2967,7 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	delete[] twm;
 }
 
-void SoundTowns::onTimer(void * data) {
+void SoundTowns::onTimer(void *data) {
 	SoundTowns *music = (SoundTowns *)data;
 	Common::StackLock lock(music->_mutex);
 	if (music->_parser)
@@ -2763,7 +3065,7 @@ void SoundPC98::playSoundEffect(uint8) {
 //	KYRA 2
 
 SoundTownsPC98_v2::SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _currentSFX(0), _musicTrackData(0), _lastTrack(-1), _driver(0) {
+	Sound(vm, mixer), _currentSFX(0), _musicTrackData(0), _lastTrack(-1), _driver(0), _useFmSfx(false) {
 }
 
 SoundTownsPC98_v2::~SoundTownsPC98_v2() {
@@ -2774,6 +3076,7 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 bool SoundTownsPC98_v2::init() {
 	_driver = new TownsPC98_OpnDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
 		TownsPC98_OpnDriver::OD_TYPE86 : TownsPC98_OpnDriver::OD_TOWNS);
+	_useFmSfx = _vm->gameFlags().platform == Common::kPlatformPC98 ? true : false;
 	_vm->checkCD();
 	// FIXME: While checking for 'track1.XXX(X)' looks like
 	// a good idea, we should definitely not be doing this
@@ -2786,7 +3089,6 @@ bool SoundTownsPC98_v2::init() {
 		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
 		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
 			_musicEnabled = 2;
-	_musicEnabled = 1;
 	return _driver->init();
 }
 
@@ -2798,7 +3100,7 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
-	const uint16 * const cdaTracks = (const uint16 * const) cdaData();
+	const uint16 *const cdaTracks = (const uint16 *const) cdaData();
 
 	int trackNum = -1;
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
@@ -2815,6 +3117,7 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	char musicfile[13];
 	sprintf(musicfile, fileListEntry(0), track);
 	delete[] _musicTrackData;
+	
 	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
 	_driver->loadData(_musicTrackData, true);
 
@@ -2854,8 +3157,8 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, bool) {
 	char filename[13];
 	sprintf(filename, "%s.PCM", file);
 
-	uint8 * data = _vm->resource()->fileData(filename, 0);
-	uint8 * src = data;
+	uint8 *data = _vm->resource()->fileData(filename, 0);
+	uint8 *src = data;
 
 	uint16 sfxRate = rates[READ_LE_UINT16(src)];
 	src += 2;
@@ -2906,6 +3209,18 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, bool) {
 
 	delete[] data;
 	return 1;
+}
+
+void SoundTownsPC98_v2::playSoundEffect(uint8 track) {
+	if (!_useFmSfx)
+		return;
+
+	uint8 *sd = _vm->resource()->fileData("sound.dat", 0);
+
+
+	//TODO
+
+	delete [] sd;
 }
 
 } // end of namespace Kyra

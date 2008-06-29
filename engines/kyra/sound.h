@@ -486,11 +486,13 @@ public:
 	void beginFadeOut();
 
 	int32 voicePlay(const char *file, bool isSfx = false);
-	void playSoundEffect(uint8) {}
+	void playSoundEffect(uint8 track);
 
 protected:
 	Audio::AudioStream *_currentSFX;
 	int _lastTrack;
+	bool _useFmSfx;
+
 	uint8 *_musicTrackData;
 	TownsPC98_OpnDriver *_driver;	
 };

@@ -346,7 +346,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_FLOPPY_CMP_FLAGS
 	},
 
-	{ // // Floppy version extracted
+	{ // Floppy version extracted
 		{
 			"kyra2",
 			"Extracted",
