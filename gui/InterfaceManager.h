@@ -175,7 +175,11 @@ public:
 	~InterfaceManager() {
 		freeRenderer();
 		freeScreen();
+		unloadTheme();
 		delete _parser;
+
+		while (!_dialogStack.empty())
+			delete _dialogStack.pop();
 	}
 
 	void setGraphicsMode(Graphics_Mode mode);
@@ -269,6 +273,10 @@ protected:
 		return _dialogStack.top();
 	}
 
+	void openDialog(Dialog *dlg) {
+		_dialogStack.push(dlg);
+	}
+
 	bool needThemeReload() {
 		return (_themeOk == false || _needThemeLoad == true);
 	}
@@ -293,7 +301,6 @@ protected:
 	GUI::ThemeParser *_parser;
 
 	Graphics::Surface *_screen;
-	Graphics::Surface *_screenCache;
 
 	int _bytesPerPixel;
 	Graphics_Mode _graphicsMode;
