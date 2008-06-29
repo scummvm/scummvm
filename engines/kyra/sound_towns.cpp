@@ -1334,7 +1334,7 @@ class TownsPC98_OpnChannel {
 public:
 	TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 regOffs, uint8 flgs, uint8 num,
 		uint8 key, uint8 prt, uint8 id);
-	~TownsPC98_OpnChannel();
+	virtual ~TownsPC98_OpnChannel();
 	virtual void init();
 
 	typedef bool (TownsPC98_OpnChannel::*ControlEventFunc)(uint8 para);
@@ -1366,7 +1366,6 @@ public:
 
 	bool _enableLeft;
 	bool _enableRight;
-	bool _fading;
 	bool _updateEnvelopes;
 	const uint8 _idFlag;
 	int _feedbuf[3];
@@ -1432,6 +1431,7 @@ class TownsPC98_OpnChannelSSG : public TownsPC98_OpnChannel {
 public:
 	TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs,
 		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
+	~TownsPC98_OpnChannelSSG() {}
 	void init();
 
 	void processEvents();
@@ -1510,6 +1510,7 @@ protected:
 	uint8 _finishedChannelsFlag;
 	uint16 _tempo;
 	bool _playing;
+	bool _fading;
 	uint8 _looping;
 	uint32 _tickCounter;
 
@@ -1538,7 +1539,7 @@ TownsPC98_OpnChannel::TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 re
 	_ticksLeft = _algorithm = _instrID = _totalLevel = _frqBlockMSB = _keyOffTime = _unk15 = _unk16 = 0;
 	_ptchWhlInitDelayLo = _ptchWhlInitDelayHi = _ptchWhlDuration = _ptchWhlCurDelay = _ptchWhlDurLeft = _unk28 = _unk29 = 0;
 	_frqLSB = 0;
-	_protect = _updateEnvelopes = _fading = false;
+	_protect = _updateEnvelopes = false;
 	_enableLeft = _enableRight = true;
 	_dataPtr = 0;		
 	_ptchWhlModInitVal = _ptchWhlModCurVal = 0;
@@ -1744,7 +1745,7 @@ void TownsPC98_OpnChannel::reset() {
 	for (int i = 0; i < 4; i++)
 		_opr[i]->reset();
 
-	_fading = _updateEnvelopes = false;
+	_updateEnvelopes = false;
 	_enableLeft = _enableRight = true;
 	memset(&_feedbuf, 0, sizeof(int) * 3);
 }
@@ -2003,7 +2004,7 @@ bool TownsPC98_OpnChannel::control_f0_setPatch(uint8 para) {
 }
 
 bool TownsPC98_OpnChannel::control_f1_presetOutputLevel(uint8 para) {
-	if (_fading)
+	if (_drv->_fading)
 		return true;
 
 	_totalLevel = _drv->_opnLvlPresets[para];
@@ -2022,7 +2023,7 @@ bool TownsPC98_OpnChannel::control_f3_setFreqLSB(uint8 para) {
 }
 
 bool TownsPC98_OpnChannel::control_f4_setOutputLevel(uint8 para) {
-	if (_fading)
+	if (_drv->_fading)
 		return true;
 
 	_totalLevel = para;
@@ -2084,7 +2085,7 @@ bool TownsPC98_OpnChannel::control_fa_writeReg(uint8 para) {
 
 bool TownsPC98_OpnChannel::control_fb_incOutLevel(uint8 para) {
 	_dataPtr--;
-	if (_fading)
+	if (_drv->_fading)
 		return true;
 
 	uint8 val = (_totalLevel + 3);
@@ -2098,7 +2099,7 @@ bool TownsPC98_OpnChannel::control_fb_incOutLevel(uint8 para) {
 
 bool TownsPC98_OpnChannel::control_fc_decOutLevel(uint8 para) {
 	_dataPtr--;
-	if (_fading)
+	if (_drv->_fading)
 		return true;
 
 	int8 val = (int8) (_totalLevel - 3);
@@ -2146,7 +2147,7 @@ bool TownsPC98_OpnChannel::control_f0_setPatchSSG(uint8 para) {
 }
 
 bool TownsPC98_OpnChannel::control_f1_setTotalLevel(uint8 para) {
-	if (!_fading)
+	if (!_drv->_fading)
 		_totalLevel = para;
 	return true;
 }
@@ -2163,7 +2164,7 @@ bool TownsPC98_OpnChannel::control_f9_unkSSG(uint8 para) {
 
 bool TownsPC98_OpnChannel::control_fb_incOutLevelSSG(uint8 para) {
 	_dataPtr--;
-	if (_fading)
+	if (_drv->_fading)
 		return true;
 
 	_totalLevel--;
@@ -2175,7 +2176,7 @@ bool TownsPC98_OpnChannel::control_fb_incOutLevelSSG(uint8 para) {
 
 bool TownsPC98_OpnChannel::control_fc_decOutLevelSSG(uint8 para) {
 	_dataPtr--;
-	if (_fading)
+	if (_drv->_fading)
 		return true;
 
 	if(_totalLevel + 1 < 0x10)
@@ -2241,7 +2242,7 @@ void TownsPC98_OpnChannelSSG::processEvents() {
 	if (_flags & CHS_EOT)
 		return;
 
-	int _ssgUnk = (_flags & CHS_SSG) ? -1 : 0;
+	//int _ssgUnk = (_flags & CHS_SSG) ? -1 : 0;
 
 	if (_protect == false && _ticksLeft == _keyOffTime)
 		keyOff();
@@ -2336,7 +2337,7 @@ void TownsPC98_OpnChannelSSG::keyOn() {
 }
 
 TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
-	_mixer(mixer), _trackData(0), _playing(false), _channels(0), _ssgChannels(0),
+	_mixer(mixer), _trackData(0), _playing(false), _fading(false), _channels(0), _ssgChannels(0),
 	_looping(0), _opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 84),
 	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 220)) ,
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0),	_oprSinTbl(0), _oprLevelOut(0),
@@ -2498,7 +2499,7 @@ void TownsPC98_OpnDriver::reset() {
 	for (int i = 0; i < (_numSSG); i++)
 		_ssgChannels[i]->reset();
 
-	_playing = false;
+	_playing = _fading = false;
 	_looping = 0;
 	_tickCounter = 0;
 }
@@ -2507,10 +2508,7 @@ void TownsPC98_OpnDriver::fadeOut() {
 	if (!_playing)
 		return;
 
-	for (int j = 0; j < _numChan; j++)
-		_channels[j]->_fading = true;
-	for (int j = 0; j < _numSSG; j++)
-			_ssgChannels[j]->_fading = true;
+	_fading = true;
 
 	for (int i = 0; i < 20; i++) {		
 		lock();
@@ -2530,10 +2528,7 @@ void TownsPC98_OpnDriver::fadeOut() {
 		}
 	}
 
-	for (int j = 0; j < _numChan; j++)
-		_channels[j]->_fading = false;
-	for (int j = 0; j < _numSSG; j++)
-			_ssgChannels[j]->_fading = false;
+	_fading = false;
 
 	reset();
 }
