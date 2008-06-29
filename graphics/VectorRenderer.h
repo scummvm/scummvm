@@ -406,7 +406,7 @@ public:
 	 *
 	 * @param sys Pointer to the global System class
 	 */
-	virtual void copyFrame(OSystem *sys) = 0;
+	virtual void copyFrame(OSystem *sys, Common::Rect &r) = 0;
 
 	/**
 	 * Blits a given graphics surface on top of the current drawing surface.
@@ -533,15 +533,14 @@ public:
 	/**
 	 * @see VectorRenderer::copyFrame()
 	 */
-	virtual void copyFrame(OSystem *sys) {
-#ifdef OVERLAY_MULTIPLE_DEPTHS
-		sys->copyRectToOverlay((const PixelType*)_activeSurface->getBasePtr(0, 0), 
-			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->w);
+	virtual void copyFrame(OSystem *sys, Common::Rect &r) {
+#ifdef OVERLAY_MULTIPLE_DEPTHS // TODO: change OSystem to support templated copyRectToOverlay
+		sys->copyRectToOverlay((const PixelType*)_activeSurface->pixels, 
+			_activeSurface->pitch, r.top, r.left, r.width(), r.height());
 #else
-		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->getBasePtr(0, 0), 
-			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->w);
+		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->pixels, 
+			_activeSurface->pitch, r.top, r.left, r.width(), r.height());
 #endif
-		sys->updateScreen();
 	}
 
 	/**

@@ -81,9 +81,6 @@ InterfaceManager::InterfaceManager() :
 
 	_graphicsMode = kGfxAntialias16bit; // default GFX mode
 	// TODO: load this from a config file
-
-//	setGraphicsMode(kGfxStandard16bit);
-//	printf("Singleton init!");
 }
 
 template<typename PixelType> 
@@ -96,6 +93,15 @@ void InterfaceManager::screenInit() {
 }
 
 void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
+
+	// FIXME: reload theme everytime we change resolution...
+	// what if we change the renderer too?
+	// ...We may need to reload it to re-cache the widget
+	// surfaces
+	if (_system->getOverlayWidth() != _screen->w ||
+		_system->getOverlayHeight() != _screen->h)
+		_needThemeLoad = true;
+
 	switch (mode) {
 	case kGfxStandard16bit:
 	case kGfxAntialias16bit:
@@ -132,6 +138,8 @@ bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
 }
 
 bool InterfaceManager::loadTheme(Common::String themeName) {
+	unloadTheme();
+
 	if (!loadThemeXML(themeName)) {
 		warning("Could not parse custom theme '%s'.\nFalling back to default theme", themeName.c_str());
 		
@@ -150,6 +158,7 @@ bool InterfaceManager::loadTheme(Common::String themeName) {
 		}
 	}
 
+	_needThemeLoad = false;
 	_themeOk = true;
 	return true;
 }
@@ -260,38 +269,52 @@ void InterfaceManager::drawScrollbar(const Common::Rect &r, int sliderY, int sli
 		return;
 }
 
+void InterfaceManager::redrawDialogStack() {
+	_vectorRenderer->clearSurface();
+
+	for (int i = 0; i < _dialogStack.size(); ++i)
+		_dialogStack[i]->draw();
+}
+
 int InterfaceManager::runGUI() {
+	init();
+
 	if (!ready())
 		return 0;
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	Dialog *activeDialog = getTopDialog();
+	Dialog *lastDialog = 0;
 
 	if (!activeDialog)
 		return 0;
 
 	bool didSaveState = false;
-	bool running = true;
+	bool stackChange = true;
 
 	int button;
 	uint32 time;
 
-	while (!_dialogStack.empty() && activeDialog == getTopDialog()) { // draw!!
+	_system->showOverlay();
 
-		drawDD(kDDMainDialogBackground, Common::Rect());
-		drawDD(kDDButtonIdle, Common::Rect(32, 32, 128, 128));
+	while (activeDialog) { // draw!!
+		stackChange = (activeDialog != lastDialog);
+		lastDialog = activeDialog;
 
-		_vectorRenderer->copyFrame(_system);
+		if (stackChange || needRedraw())
+			redrawDialogStack();
+
+		if (!_dirtyScreen.empty()) {
+			for (uint i = 0; i < _dirtyScreen.size(); ++i)
+				_vectorRenderer->copyFrame(_system, _dirtyScreen[i]);
+			_system->updateScreen();
+			_dirtyScreen.clear();
+		}
 
 		Common::Event event;
-		_system->delayMillis(100);
 
 		while (eventMan->pollEvent(event)) {
-
-			if (activeDialog != getTopDialog() && 
-				event.type != Common::EVENT_QUIT && 
-				event.type != Common::EVENT_SCREEN_CHANGED)
-				continue;
+			activeDialog->handleTickle();
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 
@@ -352,6 +375,7 @@ int InterfaceManager::runGUI() {
 			}
 		}
 
+		activeDialog = getTopDialog();
 		_system->delayMillis(10);
 	}
 

@@ -220,33 +220,6 @@ public:
 		return _initOk && _themeOk;
 	}
 
-	void refresh() {
-		init();
-		if (_enabled) {
-			_system->showOverlay();
-//			CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
-//			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
-		}
-	}
-
-	void enable() {
-		init();
-		_system->showOverlay();
-		_enabled = true;
-	}
-
-	void disable() {
-		_system->hideOverlay();
-		_enabled = false;
-	}
-
-	void deinit() {
-		if (_initOk) {
-			_system->hideOverlay();
-			_initOk = false;
-		}
-	}
-
 	bool loadTheme() {
 		ConfMan.registerDefault("gui_theme", "default");
 		Common::String style(ConfMan.get("gui_theme"));
@@ -300,6 +273,11 @@ protected:
 		return (_themeOk == false || _needThemeLoad == true);
 	}
 
+	bool needRedraw() {
+		return true;
+	}
+
+	void redrawDialogStack();
 
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 	void drawCached(DrawData type, const Common::Rect &r);
@@ -307,7 +285,7 @@ protected:
 	inline void drawDD(DrawData type, const Common::Rect &r);
 
 	void addDirtyRect(const Common::Rect &r) {
-		_dirtyScreen.extend(r);
+		_dirtyScreen.push_back(r);
 	}
 
 	OSystem *_system;
@@ -325,7 +303,7 @@ protected:
 
 	WidgetDrawData *_widgets[kDrawDataMAX];
 	Common::FixedStack<Dialog *, kMaxDialogDepth> _dialogStack;
-	Common::Rect _dirtyScreen;
+	Common::Array<Common::Rect> _dirtyScreen;
 
 	bool _initOk;
 	bool _themeOk;
