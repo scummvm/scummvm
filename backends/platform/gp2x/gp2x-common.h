@@ -128,8 +128,8 @@ public:
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
 	// Set function that generates samples
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
+	void setupMixer();
+	static void mixCallback(void *s, byte *samples, int len);
 	virtual Audio::Mixer *getMixer();
 
 	// Poll CD status
@@ -179,7 +179,6 @@ public:
 	int getGraphicsMode() const;
 
 	bool openCD(int drive);
-	int getOutputSampleRate() const;
 
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
