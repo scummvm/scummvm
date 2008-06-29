@@ -94,7 +94,6 @@ static char stdout_fname[MAX_PATH], stderr_fname[MAX_PATH];
 // Static member inits
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 bool OSystem_WINCE3::_soundMaster = true;
-SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 
 bool _isSmartphone = false;
 bool _hasSmartphoneResolution = false;
@@ -403,9 +402,8 @@ void OSystem_WINCE3::initBackend()
 {
 	// Instantiate our own sound mixer
 	// mixer init is postponed until a game engine is selected.
-	if (_mixer == 0) {
-		_mixer = new Audio::Mixer(this);
-	}
+	if (_mixer == 0)
+		_mixer = new Audio::MixerImpl(this);
 
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
@@ -770,7 +768,7 @@ void OSystem_WINCE3::create_toolbar() {
 	_toolbarHandler.setVisible(false);
 }
 
-void OSystem_WINCE3::setupMixer(SoundProc proc, void *param) {
+void OSystem_WINCE3::setupMixer() {
 	SDL_AudioSpec desired;
 	int thread_priority;
 
@@ -779,7 +777,6 @@ void OSystem_WINCE3::setupMixer(SoundProc proc, void *param) {
 
 	memset(&desired, 0, sizeof(desired));
 
-	_originalSoundProc = proc;
 	desired.freq = _sampleRate;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
@@ -788,9 +785,8 @@ void OSystem_WINCE3::setupMixer(SoundProc proc, void *param) {
 	desired.userdata = this;
 
 	// Create the mixer instance
-	assert(!_mixer);
-	_mixer = new Audio::MixerImpl(this);
-	assert(_mixer);
+	if (_mixer == 0)
+		_mixer = new Audio::MixerImpl(this);
 
 	// Add sound thread priority
 	if (!ConfMan.hasKey("sound_thread_priority"))
@@ -808,7 +804,9 @@ void OSystem_WINCE3::setupMixer(SoundProc proc, void *param) {
 	} else {
 		debug(1, "Sound opened OK, mixing at %d Hz", _sampleRate);
 
-		// Tell the mixer that we are ready and start the sound processing
+		// Re-create mixer to match the output rate
+		delete(_mixer);
+		_mixer = new Audio::MixerImpl(this);
 		_mixer->setOutputRate(_sampleRate);
 		_mixer->setReady(true);
 		SDL_PauseAudio(0);
