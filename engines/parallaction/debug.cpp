@@ -191,14 +191,12 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 				"| name               |  x  |  y  |  z  |  f  |  type  |  flag  |\n"
 				"+--------------------+-----+-----+-----+-----+--------+--------+\n");
 
-	for (uint i = 0; i < 3; i++) {
-		GfxObjList::iterator b = _vm->_gfx->_gfxobjList[i].begin();
-		GfxObjList::iterator e = _vm->_gfx->_gfxobjList[i].end();
+	GfxObjList::iterator b = _vm->_gfx->_gfxobjList.begin();
+	GfxObjList::iterator e = _vm->_gfx->_gfxobjList.end();
 
-		for ( ; b != e; b++) {
-			GfxObj *obj = *b;
-			DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->frame, objType[obj->type], 6 );
-		}
+	for ( ; b != e; b++) {
+		GfxObj *obj = *b;
+		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->frame, objType[obj->type], 6 );
 	}
 
 	DebugPrintf("+--------------------+-----+-----+-----+-----+--------+--------+\n");

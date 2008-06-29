@@ -360,6 +360,11 @@ enum {
 	kGfxObjTypeAnim = 2
 };
 
+enum {
+	kGfxObjDoorZ = -200,
+	kGfxObjGetZ = -100
+};
+
 class GfxObj {
 	char *_name;
 	Frames *_frames;
@@ -369,7 +374,10 @@ class GfxObj {
 
 public:
 	int16 x, y;
-	uint16 z;
+
+	int32 z;
+
+
 	uint type;
 	uint frame;
 	uint layer;
@@ -461,7 +469,7 @@ public:
 	Disk *_disk;
 	VarMap _vars;
 
-	GfxObjList _gfxobjList[3];
+	GfxObjList _gfxobjList;
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);

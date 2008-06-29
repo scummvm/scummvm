@@ -89,6 +89,8 @@ GfxObj* Gfx::loadAnim(const char *name) {
 	GfxObj *obj = _disk->loadFrames(name);
 	assert(obj);
 
+	// animation Z is not set here, but controlled by game scripts and user interaction.
+	// it is always >=0 and <screen height
 	obj->type = kGfxObjTypeAnim;
 	return obj;
 }
@@ -98,6 +100,7 @@ GfxObj* Gfx::loadGet(const char *name) {
 	GfxObj *obj = _disk->loadStatic(name);
 	assert(obj);
 
+	obj->z = kGfxObjGetZ;	// this preset Z value ensures that get zones are drawn after doors but before animations
 	obj->type = kGfxObjTypeGet;
 	return obj;
 }
@@ -106,14 +109,13 @@ GfxObj* Gfx::loadDoor(const char *name) {
 	GfxObj *obj = _disk->loadFrames(name);
 	assert(obj);
 
+	obj->z = kGfxObjDoorZ;	// this preset Z value ensures that doors are drawn first
 	obj->type = kGfxObjTypeDoor;
 	return obj;
 }
 
 void Gfx::clearGfxObjects() {
-	_gfxobjList[0].clear();
-	_gfxobjList[1].clear();
-	_gfxobjList[2].clear();
+	_gfxobjList.clear();
 }
 
 void Gfx::showGfxObj(GfxObj* obj, bool visible) {
@@ -123,25 +125,25 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 
 	if (visible) {
 		obj->setFlags(kGfxObjVisible);
-		_gfxobjList[obj->type].push_back(obj);
+		_gfxobjList.push_back(obj);
 	} else {
 		obj->clearFlags(kGfxObjVisible);
-		_gfxobjList[obj->type].remove(obj);
+		_gfxobjList.remove(obj);
 	}
 
 }
 
 
 
-bool compareAnimationZ(const GfxObj* a1, const GfxObj* a2) {
+bool compareZ(const GfxObj* a1, const GfxObj* a2) {
 	return a1->z < a2->z;
 }
 
 void Gfx::sortAnimations() {
-	GfxObjList::iterator first = _gfxobjList[kGfxObjTypeAnim].begin();
-	GfxObjList::iterator last = _gfxobjList[kGfxObjTypeAnim].end();
+	GfxObjList::iterator first = _gfxobjList.begin();
+	GfxObjList::iterator last = _gfxobjList.end();
 
-	Common::sort(first, last, compareAnimationZ);
+	Common::sort(first, last, compareZ);
 }
 
 void Gfx::drawGfxObjects(Graphics::Surface &surf) {
@@ -154,22 +156,19 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 	// TODO: Dr.Ki is not visible inside the club
 
 
-	for (uint i = 0; i < 3; i++) {
+	GfxObjList::iterator b = _gfxobjList.begin();
+	GfxObjList::iterator e = _gfxobjList.end();
 
-		GfxObjList::iterator b = _gfxobjList[i].begin();
-		GfxObjList::iterator e = _gfxobjList[i].end();
-
-		for (; b != e; b++) {
-			GfxObj *obj = *b;
-			if (obj->isVisible()) {
-				obj->getRect(obj->frame, rect);
-				rect.translate(obj->x - _varScrollX, obj->y);
-				data = obj->getData(obj->frame);
-				if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
-					blt(rect, data, &surf, obj->layer, 0);
-				} else {
-					unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, 0);
-				}
+	for (; b != e; b++) {
+		GfxObj *obj = *b;
+		if (obj->isVisible()) {
+			obj->getRect(obj->frame, rect);
+			rect.translate(obj->x - _varScrollX, obj->y);
+			data = obj->getData(obj->frame);
+			if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
+				blt(rect, data, &surf, obj->layer, 0);
+			} else {
+				unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, 0);
 			}
 		}
 	}
