@@ -86,27 +86,27 @@ void GfxObj::clearFlags(uint32 flags) {
 }
 
 GfxObj* Gfx::loadAnim(const char *name) {
-	Frames *frames = _disk->loadFrames(name);
-	GfxObj *obj = new GfxObj(kGfxObjTypeAnim, frames, name);
+	GfxObj *obj = _disk->loadFrames(name);
 	assert(obj);
 
+	obj->type = kGfxObjTypeAnim;
 	return obj;
 }
 
 
 GfxObj* Gfx::loadGet(const char *name) {
-	Frames *frames = _disk->loadStatic(name);
-	GfxObj *obj = new GfxObj(kGfxObjTypeGet, frames, name);
+	GfxObj *obj = _disk->loadStatic(name);
 	assert(obj);
 
+	obj->type = kGfxObjTypeGet;
 	return obj;
 }
 
 GfxObj* Gfx::loadDoor(const char *name) {
-	Frames *frames = _disk->loadFrames(name);
-	GfxObj *obj = new GfxObj(kGfxObjTypeDoor, frames, name);
+	GfxObj *obj = _disk->loadFrames(name);
 	assert(obj);
 
+	obj->type = kGfxObjTypeDoor;
 	return obj;
 }
 

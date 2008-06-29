@@ -157,11 +157,11 @@ struct SurfaceToMultiFrames : public Frames {
 		r.setHeight(_height);
 	}
 	uint	getRawSize(uint16 index) {
-		assert(index == 0);
+		assert(index < _num);
 		return getSize(index);
 	}
 	uint	getSize(uint16 index) {
-		assert(index == 0);
+		assert(index < _num);
 		return _width * _height;
 	}
 
@@ -487,7 +487,7 @@ public:
 	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// other items
-	int setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor = 0);
+	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
 	void freeBalloons();
@@ -549,7 +549,7 @@ protected:
 	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
 
-protected:
+public:
 	static int16 _dialogueBalloonX[5];
 
 	struct Balloon {
@@ -567,7 +567,7 @@ protected:
 		uint16 x;
 		uint16 y;
 		uint16 frame;
-		Frames *data;
+		GfxObj *data;
 
 		byte transparentColor;
 		Common::Rect rect;

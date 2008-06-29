@@ -202,9 +202,9 @@ struct Character {
 
 
 	AnimationPtr	_ani;
-	Frames			*_head;
-	Frames			*_talk;
-	Frames			*_objs;
+	GfxObj			*_head;
+	GfxObj			*_talk;
+	GfxObj			*_objs;
 	PathBuilder		_builder;
 	WalkNodeList	*_walkPath;
 

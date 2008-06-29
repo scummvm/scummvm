@@ -122,7 +122,7 @@ int Parallaction_br::guiShowMenu() {
 	// TODO: filter menu entries according to progress in game
 
 	#define NUM_MENULINES	7
-	Frames *_lines[NUM_MENULINES];
+	GfxObj *_lines[NUM_MENULINES];
 
 	const char *menuStrings[NUM_MENULINES] = {
 		"SEE INTRO",
@@ -157,7 +157,7 @@ int Parallaction_br::guiShowMenu() {
 
 	int i;
 	for (i = 0; i < availItems; i++) {
-		_lines[i] = guiRenderMenuItem(menuStrings[i]);
+		_lines[i] = new GfxObj(0, guiRenderMenuItem(menuStrings[i]), "MenuItem");
 		uint id = _gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
 		_gfx->setItemFrame(id, 0);
 	}

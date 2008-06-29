@@ -209,7 +209,7 @@ struct SpeakData {	// size = 36
 	}
 };
 struct ExamineData {	// size = 28
-	Frames	*_cnv;
+	GfxObj	*_cnv;
 	uint16		_opBase;		   // unused
 	uint16		field_12;			// unused
 	char*		_description;

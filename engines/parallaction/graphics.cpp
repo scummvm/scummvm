@@ -356,7 +356,17 @@ void Gfx::drawItems() {
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
-		blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
+		GfxObj *obj = _items[i].data;
+
+		Common::Rect rect;
+		obj->getRect(obj->frame, rect);
+		rect.translate(obj->x, obj->y);
+
+		if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
+			blt(rect, obj->getData(obj->frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
+		} else {
+			unpackBlt(rect, obj->getData(obj->frame), obj->getRawSize(obj->frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
+		}
 	}
 	g_system->unlockScreen();
 }
@@ -949,7 +959,7 @@ Gfx::~Gfx() {
 
 
 
-int Gfx::setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor) {
+int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
 	int id = _numItems;
 
 	_items[id].data = frames;
@@ -965,9 +975,9 @@ int Gfx::setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor) {
 
 void Gfx::setItemFrame(uint item, uint16 f) {
 	assert(item < _numItems);
-	_items[item].frame = f;
-	_items[item].data->getRect(f, _items[item].rect);
-	_items[item].rect.moveTo(_items[item].x, _items[item].y);
+	_items[item].data->frame = f;
+	_items[item].data->x = _items[item].x;
+	_items[item].data->y = _items[item].y;
 }
 
 Gfx::Balloon* Gfx::getBalloon(uint id) {

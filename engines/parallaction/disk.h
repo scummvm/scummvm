@@ -55,13 +55,13 @@ public:
 
 	virtual Script* loadLocation(const char *name) = 0;
 	virtual Script* loadScript(const char* name) = 0;
-	virtual Frames* loadTalk(const char *name) = 0;
-	virtual Frames* loadObjects(const char *name) = 0;
+	virtual GfxObj* loadTalk(const char *name) = 0;
+	virtual GfxObj* loadObjects(const char *name) = 0;
 	virtual Frames* loadPointer(const char *name) = 0;
-	virtual Frames* loadHead(const char* name) = 0;
+	virtual GfxObj* loadHead(const char* name) = 0;
 	virtual Font* loadFont(const char* name) = 0;
-	virtual Frames* loadStatic(const char* name) = 0;
-	virtual Frames* loadFrames(const char* name) = 0;
+	virtual GfxObj* loadStatic(const char* name) = 0;
+	virtual GfxObj* loadFrames(const char* name) = 0;
 	virtual void loadSlide(BackgroundInfo& info, const char *filename) = 0;
 	virtual void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) = 0;
 	virtual Table* loadTable(const char* name) = 0;
@@ -147,13 +147,13 @@ public:
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Frames* loadTalk(const char *name);
-	Frames* loadObjects(const char *name);
+	GfxObj* loadTalk(const char *name);
+	GfxObj* loadObjects(const char *name);
 	Frames* loadPointer(const char *name);
-	Frames* loadHead(const char* name);
+	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
-	Frames* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
+	GfxObj* loadStatic(const char* name);
+	GfxObj* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -181,13 +181,13 @@ public:
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Frames* loadTalk(const char *name);
-	Frames* loadObjects(const char *name);
+	GfxObj* loadTalk(const char *name);
+	GfxObj* loadObjects(const char *name);
 	Frames* loadPointer(const char *name);
-	Frames* loadHead(const char* name);
+	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
-	Frames* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
+	GfxObj* loadStatic(const char* name);
+	GfxObj* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -220,13 +220,13 @@ public:
 	void setLanguage(uint16 language);
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Frames* loadTalk(const char *name);
-	Frames* loadObjects(const char *name);
+	GfxObj* loadTalk(const char *name);
+	GfxObj* loadObjects(const char *name);
 	Frames* loadPointer(const char *name);
-	Frames* loadHead(const char* name);
+	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
-	Frames* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
+	GfxObj* loadStatic(const char* name);
+	GfxObj* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -248,10 +248,10 @@ public:
 	AmigaDisk_br(Parallaction *vm);
 	virtual ~AmigaDisk_br();
 
-	Frames* loadTalk(const char *name);
+	GfxObj* loadTalk(const char *name);
 	Font* loadFont(const char* name);
-	Frames* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
+	GfxObj* loadStatic(const char* name);
+	GfxObj* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 };

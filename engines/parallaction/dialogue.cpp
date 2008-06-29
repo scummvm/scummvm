@@ -51,8 +51,8 @@ class DialogueManager {
 	bool			_askPassword;
 
 	bool			isNpc;
-	Frames			*_questioner;
-	Frames			*_answerer;
+	GfxObj			*_questioner;
+	GfxObj			*_answerer;
 
 	Question		*_q;
 
@@ -229,7 +229,7 @@ void DialogueManager::run() {
 		answer = 0;
 
 		displayQuestion();
-		
+
 		if (_engineFlags & kEngineQuit)
 			return;
 
