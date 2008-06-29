@@ -19,6 +19,8 @@
 ## Enable whichever engines you want here
 
 ENABLE_SCUMM = STATIC_PLUGIN
+ENABLE_SCUMM_7_8 = 1
+ENABLE_HE = 1
 ENABLE_SKY = STATIC_PLUGIN
 ENABLE_QUEEN = STATIC_PLUGIN
 ENABLE_GOB = STATIC_PLUGIN
@@ -163,7 +165,8 @@ endif
 EXECUTABLE = scummvm.exe
 CXXFLAGS := $(CFLAGS)
 OBJS :=
-MODULE_DIRS += .
+MODULE_DIRS += ./
+DEPDIR = .deps
 
 OBJS += CEActionsPocket.o CEDevice.o CEScaler.o \
         CEActionsSmartphone.o CELauncherDialog.o wince-sdl.o
