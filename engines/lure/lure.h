@@ -70,6 +70,7 @@ public:
 	virtual int init();
 	virtual int go();
 	virtual void pauseEngineIntern(bool pause);
+	virtual void syncSoundSettings();
 
 	Disk &disk() { return *_disk; }
 

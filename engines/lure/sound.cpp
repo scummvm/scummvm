@@ -220,10 +220,12 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	newEntry->channel = channelCtr;
 	newEntry->numChannels = numChannels;
 	newEntry->flags = rec.flags;
-	if (_isRoland)
-		newEntry->volume = rec.volume;
-	else /* resource volumes do not seem to work well with our adlib emu */
-		newEntry->volume = 240; /* 255 causes clipping with adlib */
+
+	if (newEntry->soundNumber & 0x80)	
+		newEntry->volume = ConfMan.getInt("music_volume");
+	else
+		newEntry->volume = ConfMan.getInt("sfx_volume");
+
 	_activeSounds.push_back(SoundList::value_type(newEntry));
 
 	musicInterface_Play(rec.soundNumber, channelCtr, numChannels);
@@ -278,6 +280,21 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 	}
 
 	return 0xff;   // Couldn't find entry
+}
+
+// Used to sync the volume for all channels with the Config Manager
+//
+void SoundManager::syncSounds(uint8 musicVol, uint8 sfxVol) {
+	MusicListIterator i;
+
+	musicInterface_TidySounds();
+
+	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+		if ((*i)->isMusic())
+			(*i)->setVolume(musicVol);
+		else
+			(*i)->setVolume(sfxVol);
+	}
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
@@ -402,9 +419,8 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 		return;
 
 	bool isMusic = (soundNumber & 0x80) != 0;
-	uint8 volume = isMusic ? game.musicVolume() : game.sfxVolume();
-
-	if (!game.soundFlag() || (volume == 0))
+	
+	if (!game.soundFlag())
 		// Don't play sounds if sound is turned off
 		return;
 
@@ -576,7 +592,11 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		/* 90 is power on default for midi compliant devices */
 		_channels[_channelNumber + i].volume = 90;
 	}
-	setVolume(240); /* 255 causes clipping with mastervol 192 and adlib */
+
+	if (isMusic)
+		setVolume(ConfMan.getInt("music_volume"));
+	else
+		setVolume(ConfMan.getInt("sfx_volume"));		
 
 	_passThrough = false;
 
@@ -634,14 +654,9 @@ void MidiMusic::setVolume(int volume) {
 
 	_volume = volume;
 
-	Game &game = Game::getReference();
-	volume *= _isMusic ? game.musicVolume() : game.sfxVolume();
-
 	for (int i = 0; i < _numChannels; ++i) {
 		if (_channels[_channelNumber + i].midiChannel != NULL)
-			_channels[_channelNumber + i].midiChannel->volume(
-				_channels[_channelNumber + i].volume *
-				volume / 65025);
+			_channels[_channelNumber + i].midiChannel->volume(volume);
 	}
 }
 

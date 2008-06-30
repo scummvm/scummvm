@@ -246,6 +246,10 @@ void LureEngine::GUIError(const char *msg, ...) {
 	Engine::GUIErrorMessage(buffer);
 }
 
+void LureEngine::syncSoundSettings() {	
+	Sound.syncSounds(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
+}
+
 Common::String *LureEngine::detectSave(int slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
 		generateSaveName(slotNumber));

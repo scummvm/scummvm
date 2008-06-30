@@ -128,7 +128,7 @@ public:
 
 	/** Run the Global Main Menu Dialog
 	 */
-	void mainMenuDialog();
+	virtual void mainMenuDialog();
 
 	/** Sync the engine's sound settings with the config manager
 	 */
