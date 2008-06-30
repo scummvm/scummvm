@@ -1682,78 +1682,6 @@ uint16 computeMove2(SeqListElement &element) {
 	return returnVar;
 }
 
-// sort all the gfx stuff...
-
-void resetGfxEntityEntry(uint16 objIdx) {
-#if 0
-	overlayHeadElement* tempHead = &overlayHead;
-	byte* var_16 = NULL;
-	uint16 var_10 = 0;
-	uint16 var_12 = 0;
-	overlayHeadElement* currentHead = tempHead->next;
-	byte* var_1A = NULL;
-	overlayHeadElement* var1E = &overlayHead;
-
-	while (currentHead) {
-		tempHead2 = currentHead->next;
-
-		if (currentHead->objIdx == objIdx && currentHead->type!=2 && currentHead->type!=3 && currentHead->type!=0x14) {
-			tempHead->next = tempHead2;
-
-			if (tempHead2) {
-				tempHead2->previous = currentHead->previous;
-			} else {
-				seqVar0 = currentHead->previous;
-			}
-
-			var_22 = var_16;
-
-			if (!var_22) {
-				// todo: goto?
-			}
-
-			var_22->previous = currentHead;
-		} else {
-		}
-
-		if (currentHead->type == 0x14) {
-		} else {
-		}
-
-		if (currentHead->type == 0x2 || currentHead->type == 0x3) {
-			si = 10000;
-		} else {
-			si = objectTable[currentHead->objIdx];
-		}
-
-		if (objectTable[objIdx]>si) {
-			var1E = currentHead;
-		}
-
-		tempHead = tempHead->next;
-
-	}
-
-	if (var_1A) {
-		currentHead = var_16;
-		var_22 = var_1E->next;
-		var_1E->next = currentHead;
-		var_1A->next = var_22;
-
-		if (var_1E != &gfxEntityHead) {
-			currentHead->previous = var_1E;
-		}
-
-		if (!var_22) {
-			seqVar0 = var_1A;
-		} else {
-			var_22->previous = var_1A;
-		}
-
-	}
-#endif
-}
-
 uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptr, SeqListElement &element, uint16 param3, int16 *param4) {
 	const byte *currentPtr = ptr;
 	const byte *ptrData;
@@ -1793,6 +1721,52 @@ uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptr, SeqListElement &ele
 	}
 
 	return 1;
+}
+
+/*! 
+ * Permutates the overlay list into a different order according to some logic.
+ * \todo Check this function for correctness (Wasn't very easy to reverse engineer so there may be errors)
+ */
+void resetGfxEntityEntry(uint16 objIdx) {
+	Common::List<overlay>::iterator it, bObjsCutPoint;
+	Common::List<overlay> aReverseObjs, bObjs;
+	bool foundCutPoint = false;	
+
+	// Go through the overlay list and partition the whole list into two categories (Type A and type B objects)
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		if (it->objIdx == objIdx && it->type != 2 && it->type != 3) { // Type A object
+			aReverseObjs.push_front(*it);
+		} else { // Type B object
+			bObjs.push_back(*it);
+			uint16 objectMask;
+			if (it->type == 2 || it->type == 3) {
+				objectMask = 10000;
+			} else {
+				objectMask = objectTable[it->objIdx].mask;
+			}
+	
+			if (objectTable[objIdx].mask > objectMask) { // Check for B objects' cut point
+				bObjsCutPoint = bObjs.reverse_begin();
+				foundCutPoint = true;
+			}
+		}
+	}
+	
+	// Recreate the overlay list in a different order.
+	overlayList.clear();
+	if (foundCutPoint) {
+		// If a cut point was found the order is:
+		// B objects before the cut point, the cut point, A objects in reverse order, B objects after cut point.
+		++bObjsCutPoint; // Include the cut point in the first list insertion
+		overlayList.insert(overlayList.end(), bObjs.begin(), bObjsCutPoint);
+		overlayList.insert(overlayList.end(), aReverseObjs.begin(), aReverseObjs.end());
+		overlayList.insert(overlayList.end(), bObjsCutPoint, bObjs.end());
+	} else {
+		// If no cut point was found the order is:
+		// A objects in reverse order, B objects.
+		overlayList.insert(overlayList.end(), aReverseObjs.begin(), aReverseObjs.end());
+		overlayList.insert(overlayList.end(), bObjs.begin(), bObjs.end());
+	}
 }
 
 void processSeqListElement(SeqListElement &element) {

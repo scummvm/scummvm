@@ -179,8 +179,12 @@ void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint1
 	objectTable[objIdx].mask = param3;
 	objectTable[objIdx].frame = param4;
 
-	if (removeOverlay(objIdx, 0)) {
-		addOverlay(objIdx, 0);
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		resetGfxEntityEntry(objIdx);
+	} else { // Future Wars
+		if (removeOverlay(objIdx, 0)) {
+			addOverlay(objIdx, 0);
+		}
 	}
 }
 
@@ -208,9 +212,12 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	case 3:
 		objectTable[objIdx].mask = newValue;
 
-		// TODO: Check this part against disassembly
-		if (removeOverlay(objIdx, 0)) {
-			addOverlay(objIdx, 0);
+		if (g_cine->getGameType() == Cine::GType_OS) { // Operation Stealth specific
+			resetGfxEntityEntry(objIdx);
+		} else { // Future Wars specific
+			if (removeOverlay(objIdx, 0)) {
+				addOverlay(objIdx, 0);
+			}
 		}
 		break;
 	case 4:

@@ -142,6 +142,8 @@ void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, i
 void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 param2, int16 param3, int16 param4);
 void processSeqList(void);
 
+void resetGfxEntityEntry(uint16 objIdx);
+
 bool makeTextEntryMenu(const char *caption, char *string, int strLen, int y);
 
 } // End of namespace Cine
