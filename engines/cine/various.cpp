@@ -1682,33 +1682,49 @@ uint16 computeMove2(SeqListElement &element) {
 	return returnVar;
 }
 
-uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptr, SeqListElement &element, uint16 param3, int16 *param4) {
-	const byte *currentPtr = ptr;
-	const byte *ptrData;
-	const byte *ptr2;
+uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptrByte, SeqListElement &element, uint16 param3, int16 *param4) {
+	const int8 *ptr = (const int8 *)ptrByte;
+	const int8 *ptrData;
+	const int8 *ptr2;
 	int16 di;
 
+	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(ptr);
-	assert(param4);
 
-	dummyU16 = READ_BE_UINT16((currentPtr + param1 * 2) + 8);
-
+	// We probably could just use a local variable here instead of the dummyU16 but
+	// haven't checked if this has any side-effects so keeping it this way still.
+	dummyU16 = READ_BE_UINT16(ptr + param1 * 2 + 8);
 	ptrData = ptr + dummyU16;
 
+	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(*ptrData);
 
 	di = (objectTable[objIdx].costume + 1) % (*ptrData);
-	ptr2 = (ptrData + (di * 8)) + 1;
+	++ptrData; // Jump over the just read byte
+	// Here ptr2 seems to be indexing a table of structs (8 bytes per struct):
+	//	struct {
+	//		int8 x;			// 0 (Used with checkCollision)
+	//		int8 y;			// 1 (Used with checkCollision)
+	//		int8 numZones;	// 2 (Used with checkCollision)
+	//		int8 var3;		// 3 (Not used in this function)
+	//		int8 xAdd;		// 4 (Used with an object)
+	//		int8 yAdd;		// 5 (Used with an object)
+	//		int8 maskAdd;	// 6 (Used with an object)
+	//		int8 frameAdd;	// 7 (Used with an object)
+	//	};
+	ptr2 = ptrData + di * 8;
 
+	// We might probably safely discard the AND by 1 here because
+	// at least in the original checkCollision returns always 0 or 1.
 	if ((checkCollision(objIdx, ptr2[0], ptr2[1], ptr2[2], ptr[0]) & 1)) {
 		return 0;
 	}
 
-	objectTable[objIdx].x += (int8)ptr2[4];
-	objectTable[objIdx].y += (int8)ptr2[5];
-	objectTable[objIdx].mask += (int8)ptr2[6];
+	objectTable[objIdx].x += ptr2[4];
+	objectTable[objIdx].y += ptr2[5];
+	objectTable[objIdx].mask += ptr2[6];
 
-	if (objectTable[objIdx].frame) {
+	if (ptr2[6]) {
 		resetGfxEntityEntry(objIdx);
 	}
 
@@ -1717,6 +1733,7 @@ uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptr, SeqListElement &ele
 	if (param3 || !element.var14) {
 		objectTable[objIdx].costume = di;
 	} else {
+		assert(param4);
 		*param4 = di;
 	}
 
