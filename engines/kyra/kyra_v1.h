@@ -46,11 +46,12 @@ struct GameFlags {
 	Common::Language lang;
 	Common::Platform platform;
 
-	bool isDemo				: 1;
-	bool useAltShapeHeader	: 1;	// alternative shape header (uses 2 bytes more, those are unused though)
-	bool isTalkie			: 1;
-	bool useHiResOverlay	: 1;
-	bool useDigSound		: 1;
+	bool isDemo					: 1;
+	bool useAltShapeHeader		: 1;	// alternative shape header (uses 2 bytes more, those are unused though)
+	bool isTalkie				: 1;
+	bool useHiResOverlay		: 1;
+	bool useDigSound			: 1;
+	bool useInstallerPackage	: 1;
 
 	byte gameID;
 };
@@ -108,6 +109,8 @@ public:
 	virtual ~KyraEngine_v1();
 
 	::GUI::Debugger *getDebugger();
+
+	virtual void pauseEngineIntern(bool pause);
 
 	bool quit() const { return _quitFlag; }
 
@@ -262,6 +265,11 @@ protected:
 
 	static const int8 _addXPosTable[];
 	static const int8 _addYPosTable[];
+
+	// Character
+	
+	static const int8 _charAddXPosTable[];
+	static const int8 _charAddYPosTable[];
 
 	// save/load
 	int _gameToLoad;

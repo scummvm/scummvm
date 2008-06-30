@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 #ifndef _SCUMMHELP_H_
 #define _SCUMMHELP_H_
 
@@ -30,7 +30,7 @@ namespace DS {
 
 void updateStrings(byte gameId, byte version, Common::Platform platform,
 			int page, Common::String &title, Common::String *&key, Common::String *&dsc);
-
+			
 }
 
 #endif

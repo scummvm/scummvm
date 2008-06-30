@@ -80,6 +80,14 @@ public:
 	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
 
 	/**
+	 * Pop all of the cursors and cursor palettes from their respective stacks.
+	 * The purpose is to ensure that all unecessary cursors are removed from the 
+	 * stack when returning to the launcher from an engine.
+	 *
+	 */
+	void popAllCursors();
+
+	/**
 	 * Enable/Disable the current cursor palette.
 	 *
 	 * @param disable

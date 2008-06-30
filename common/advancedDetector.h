@@ -46,6 +46,8 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_KEEPMATCH = (1 << 27), // this entry is kept even when there are matched
+								// entries with more files
 	ADGF_DROPLANGUAGE = (1 << 28), // don't add language to gameid
 	ADGF_CD = (1 << 29),    // add "-cd" to gameid
 	ADGF_DEMO = (1 << 30)   // add "-demo" to gameid
@@ -219,7 +221,7 @@ public:
 	 * @note The fslist parameter may be 0 -- in that case, it is assumed
 	 *       that the callback searchs the current directory.
 	 */
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const {
+	virtual const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const {
 		return 0;
 	}
 };

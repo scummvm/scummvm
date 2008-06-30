@@ -54,7 +54,7 @@ void Map_v4::loadMapObjects(const char *avjFile) {
 	uint32 passPos;
 
 	var = _vm->_parse->parseVarIndex();
-	variables = _vm->_global->_inter_variables + var;
+	variables = _vm->_inter->_variables->getAddressOff8(var, 0);
 
 	id = _vm->_inter->load16();
 
@@ -62,7 +62,7 @@ void Map_v4::loadMapObjects(const char *avjFile) {
 		warning("Woodruff Stub: loadMapObjects ID >= 65520");
 		return;
 	} else if (id == -1) {
-		_passMap = (int8 *)(_vm->_global->_inter_variables + var);
+		_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var, 0);
 		return;
 	}
 
@@ -113,25 +113,24 @@ void Map_v4::loadMapObjects(const char *avjFile) {
 	}
 
 	if (_widthByte == 4)
-		_mapWidth = (int16) READ_VARO_UINT16(68);
+		_mapWidth = VAR(17);
 
 	_passWidth = _mapWidth;
 
 	// In the original asm, this writes byte-wise into the variables-array
 	tmpPos = mapData.pos();
 	mapData.seek(passPos);
-	if (variables != _vm->_global->_inter_variables) {
-		byte *sizes;
+	if ((variables != 0) &&
+	    (variables != _vm->_inter->_variables->getAddressOff8(0, 0))) {
 
 		_passMap = (int8 *) variables;
 		mapHeight = _screenHeight / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
-		sizes = _vm->_global->_inter_variablesSizes +
-			(((byte *) _passMap) - _vm->_global->_inter_variables);
+
 		for (int i = 0; i < mapHeight; i++) {
 			for (int j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());
-			memset(sizes + i * _passWidth, 0, mapWidth);
+			_vm->_inter->_variables->getAddressOff8(var + i * _passWidth, mapWidth);
 		}
 	}
 	mapData.seek(tmpPos);

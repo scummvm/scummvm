@@ -181,6 +181,9 @@ struct Question {
 
 struct Dialogue {
 	Question	*_questions[NUM_QUESTIONS];
+
+	Dialogue();
+	~Dialogue();
 };
 
 struct GetData {	// size = 24
@@ -206,7 +209,7 @@ struct SpeakData {	// size = 36
 	}
 };
 struct ExamineData {	// size = 28
-	Frames	*_cnv;
+	GfxObj	*_cnv;
 	uint16		_opBase;		   // unused
 	uint16		field_12;			// unused
 	char*		_description;

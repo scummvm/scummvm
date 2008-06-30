@@ -31,6 +31,7 @@
 #include "gob/global.h"
 #include "gob/game.h"
 #include "gob/draw.h"
+#include "gob/inter.h"
 
 namespace Gob {
 
@@ -279,10 +280,8 @@ bool SaveLoad_v3::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		memcpy(_vm->_global->_inter_variables + dataVar,
-				_propBuffer + offset, size);
-		memcpy(_vm->_global->_inter_variablesSizes + dataVar,
-				_propBuffer + offset + 500, size);
+		_vm->_inter->_variables->copyFrom(dataVar,
+				_propBuffer + offset, _propBuffer + offset + 500, size);
 
 	} else if (offset == 500) {
 		debugC(3, kDebugSaveLoad, "Loading save index");
@@ -294,9 +293,8 @@ bool SaveLoad_v3::loadGame(SaveFile &saveFile,
 
 		int slot = saveFile.slot;
 
-		SaveLoad::buildIndex(_vm->_global->_inter_variables + dataVar,
+		SaveLoad::buildIndex(_vm->_inter->_variables->getAddressOff8(dataVar, 1200),
 				saveFile.destName, 30, 40, 1000);
-		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, 1200);
 
 		setCurrentSlot(saveFile.destName, slot);
 
@@ -314,8 +312,7 @@ bool SaveLoad_v3::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		if (!_save.load(dataVar, size, 540, saveFile.destName,
-					_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes))
+		if (!_save.load(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
 			return false;
 	}
 
@@ -356,8 +353,7 @@ bool SaveLoad_v3::loadNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Loading the notes");
 
-	return _notes.load(dataVar, size, offset, saveFile.destName,
-			_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes);
+	return _notes.load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
 }
 
 bool SaveLoad_v3::loadScreenshot(SaveFile &saveFile,
@@ -383,8 +379,7 @@ bool SaveLoad_v3::loadScreenshot(SaveFile &saveFile,
 		buildScreenshotIndex(buffer, saveFile.destName, 30);
 		setCurrentSlot(saveFile.destName, slot);
 
-		memcpy(_vm->_global->_inter_variables + dataVar, buffer, 40);
-		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, 40);
+		memcpy(_vm->_inter->_variables->getAddressOff8(dataVar, 40), buffer, 40);
 
 	} else {
 		saveFile.slot = (offset - _screenshotOffset) / _screenshotSize;
@@ -453,10 +448,8 @@ bool SaveLoad_v3::saveGame(SaveFile &saveFile,
 			return false;
 		}
 
-		memcpy(_propBuffer + offset,
-				_vm->_global->_inter_variables + dataVar, size);
-		memcpy(_propBuffer + offset + 500,
-				_vm->_global->_inter_variablesSizes + dataVar, size);
+		_vm->_inter->_variables->copyTo(dataVar,
+				_propBuffer + offset, _propBuffer + offset + 500, size);
 
 	} else if (offset == 500) {
 		debugC(3, kDebugSaveLoad, "Saving save index");
@@ -466,7 +459,7 @@ bool SaveLoad_v3::saveGame(SaveFile &saveFile,
 			return false;
 		}
 
-		memcpy(_indexBuffer, _vm->_global->_inter_variables + dataVar, size);
+		_vm->_inter->_variables->copyTo(dataVar, _indexBuffer, 0, size);
 		_hasIndex = true;
 
 	} else {
@@ -496,8 +489,7 @@ bool SaveLoad_v3::saveGame(SaveFile &saveFile,
 		if(!_save.save(0, 40, 500, saveFile.destName, _indexBuffer + (saveFile.slot * 40), 0))
 			return false;
 
-		if (!_save.save(dataVar, size, 540, saveFile.destName,
-					_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes))
+		if (!_save.save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
 			return false;
 
 	}
@@ -531,8 +523,7 @@ bool SaveLoad_v3::saveNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Saving the notes");
 
-	return _notes.save(dataVar, size - 160, offset, saveFile.destName,
-			_vm->_global->_inter_variables, _vm->_global->_inter_variablesSizes);
+	return _notes.save(dataVar, size - 160, offset, saveFile.destName, _vm->_inter->_variables);
 	return false;
 }
 

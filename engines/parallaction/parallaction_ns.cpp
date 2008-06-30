@@ -137,13 +137,17 @@ int Parallaction_ns::init() {
 	initCursors();
 	initOpcodes();
 	_locationParser = new LocationParser_ns(this);
+	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
+	_programParser->init();
 
 	_introSarcData1 = 0;
 	_introSarcData2 = 1;
 	_introSarcData3 = 200;
 
 	num_foglie = 0;
+
+	_inTestResult = false;
 
 	_location._animations.push_front(_char._ani);
 
@@ -155,6 +159,8 @@ int Parallaction_ns::init() {
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
 
+	delete _locationParser;
+	delete _programParser;
 	delete _mouseComposedArrow;
 
 	_location._animations.remove(_char._ani);
@@ -172,18 +178,8 @@ void Parallaction_ns::freeFonts() {
 }
 
 void Parallaction_ns::initCursors() {
-
 	_mouseComposedArrow = _disk->loadPointer("pointer");
-
-	byte temp[MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT];
-	memcpy(temp, _mouseArrow, MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT);
-
-	uint16 k = 0;
-	for (uint16 i = 0; i < 4; i++) {
-		for (uint16 j = 0; j < 64; j++) _mouseArrow[k++] = temp[i + j * 4];
-	}
-
-	return;
+	_mouseArrow = _resMouseArrow;
 }
 
 void Parallaction_ns::setArrowCursor() {
@@ -242,7 +238,13 @@ int Parallaction_ns::go() {
 
 	guiStart();
 
+	if (_engineFlags & kEngineQuit)
+		return 0;
+
 	changeLocation(_location._name);
+
+	if (_engineFlags & kEngineQuit)
+		return 0;
 
 	_input->_inputMode = Input::kInputModeGame;
 	while ((_engineFlags & kEngineQuit) == 0) {
@@ -299,7 +301,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setFloatingLabel(0);
 	_gfx->freeLabels();
 
-	_input->_hoverZone = nullZonePtr;
+	_input->stopHovering();
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
 	}

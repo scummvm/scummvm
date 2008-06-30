@@ -63,6 +63,8 @@ protected:
 	const mad_timer_t _endTime;
 	mad_timer_t _totalTime;
 
+	int32 _totalPlayTime;
+
 	mad_stream _stream;
 	mad_frame _frame;
 	mad_synth _synth;
@@ -87,6 +89,7 @@ public:
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
 	bool isStereo() const		{ return MAD_NCHANNELS(&_frame.header) == 2; }
 	int getRate() const			{ return _frame.header.samplerate; }
+	int32 getTotalPlayTime() const { return _totalPlayTime; }
 
 protected:
 	void decodeMP3Data();
@@ -110,6 +113,73 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 	// for this is that the Layer III Huffman decoder of libMAD
 	// may read a few bytes beyond the end of the input buffer).
 	memset(_buf + BUFFER_SIZE, 0, MAD_BUFFER_GUARD);
+
+	// Calculate play time
+	mad_timer_t length;
+
+	mad_timer_set(&length, 0, 0, 1000);	
+	mad_timer_add(&length, start);
+	mad_timer_negate(&length);
+
+	if (mad_timer_sign(end) != 0) {
+		mad_timer_add(&length, end);
+	} else {
+		mad_stream_init(&_stream);
+		mad_frame_init(&_frame);
+
+		// Reset the stream data
+		_inStream->seek(0, SEEK_SET);
+
+		// Update state
+		_state = MP3_STATE_READY;
+
+		// Read the first few sample bytes
+		readMP3Data();
+
+		do {
+			// If necessary, load more data into the stream decoder
+			if (_stream.error == MAD_ERROR_BUFLEN)
+				readMP3Data();
+
+			while (_state == MP3_STATE_READY) {
+				_stream.error = MAD_ERROR_NONE;
+
+				// Decode the next header. Note: mad_frame_decode would do this for us, too.
+				// However, for seeking we don't want to decode the full frame (else it would
+				// be far too slow).
+				if (mad_header_decode(&_frame.header, &_stream) == -1) {
+					if (_stream.error == MAD_ERROR_BUFLEN) {
+						break; // Read more data
+					} else if (MAD_RECOVERABLE(_stream.error)) {
+						debug(6, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+						continue;
+					} else {
+						warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+						break;
+					}
+				}
+
+				// Sum up the total playback time so far
+				mad_timer_add(&length, _frame.header.duration);
+			}
+		} while (_state != MP3_STATE_EOS);
+
+		mad_synth_finish(&_synth);
+		mad_frame_finish(&_frame);
+
+		// Reinit stream
+		_state = MP3_STATE_INIT;
+
+		// Reset the stream data
+		_inStream->seek(0, SEEK_SET);
+	}
+
+	_totalPlayTime = mad_timer_count(length, MAD_UNITS_MILLISECONDS);
+	
+	if (numLoops && mad_timer_sign(length) >= 0)
+		_totalPlayTime *= numLoops;
+	else
+		_totalPlayTime = kUnknownPlayTime;
 
 	// Decode the first chunk of data. This is necessary so that _frame
 	// is setup and isStereo() and getRate() return correct results.

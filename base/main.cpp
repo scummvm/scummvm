@@ -92,17 +92,20 @@ static const EnginePlugin *detectPlugin() {
 	ConfMan.set("gameid", gameid);
 
 	// Query the plugins and find one that will handle the specified gameid
-	printf("Looking for %s\n", gameid.c_str());
+	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
+	printf("  Looking for a plugin supporting this gameid... ");
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
-		printf("Failed game detection\n");
+		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 		return 0;
+	} else {
+		printf("%s\n", plugin->getName());
 	}
 
 	// FIXME: Do we really need this one?
-	printf("Trying to start game '%s'\n", game.description().c_str());
+	printf("  Starting '%s'\n", game.description().c_str());
 
 	return plugin;
 }
@@ -275,6 +278,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
+	EngineMan.getPlugins();
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.

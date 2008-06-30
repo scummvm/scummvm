@@ -65,6 +65,7 @@ static const PlainGameDescriptor madeGames[] = {
 	{"manhole", "The Manhole"},
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
+	{"rodney", "Rodney's Funscreen"},
 	{0, 0}
 };
 
@@ -276,6 +277,22 @@ static const MadeGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		// Rodney's Funscreen
+		{
+			"rodney",
+			"",
+			AD_ENTRY1("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_RODNEY,
+		0,
+		GF_FLOPPY,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
@@ -356,7 +373,8 @@ const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const FSList *fs
 	Made::g_fallbackDesc.features = 0;
 	Made::g_fallbackDesc.version = 0;
 
-	return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	//return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	return NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)

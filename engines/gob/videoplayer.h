@@ -83,6 +83,8 @@ public:
 	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
 
+	void notifyPaused(uint32 duration);
+
 private:
 	class Video {
 		public:
@@ -127,6 +129,8 @@ private:
 	bool findFile(char *fileName, Type &which);
 
 	const Video *getVideoBySlot(int slot = -1) const;
+
+	int getNextFreeSlot();
 
 	void copyPalette(CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,

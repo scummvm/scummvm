@@ -45,11 +45,13 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_workScreenDrawCtx.destSurface = _workScreen;
 	_clipArea.destSurface = _workScreen;
 
-	// FIXME: Screen mask is only needed in v2 games
-	_screenMask = new Graphics::Surface();
-	_screenMask->create(320, 200, 1);
-	_maskDrawCtx.clipRect = Common::Rect(320, 200);
-	_maskDrawCtx.destSurface = _screenMask;
+	// Screen mask is only needed in v2 games
+	if (_vm->getGameID() != GID_RTZ) {
+		_screenMask = new Graphics::Surface();
+		_screenMask->create(320, 200, 1);
+		_maskDrawCtx.clipRect = Common::Rect(320, 200);
+		_maskDrawCtx.destSurface = _screenMask;
+	}
 
 	for (int i = 0; i <= 3; i++)
 		_excludeClipAreaEnabled[i] = false;
@@ -90,14 +92,16 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 Screen::~Screen() {
 	delete _backgroundScreen;
 	delete _workScreen;
-	delete _screenMask;
+	if (_vm->getGameID() != GID_RTZ)
+		delete _screenMask;
 	delete _fx;
 }
 
 void Screen::clearScreen() {
 	_backgroundScreen->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_workScreen->fillRect(Common::Rect(0, 0, 320, 200), 0);
-	_screenMask->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	if (_vm->getGameID() != GID_RTZ)
+		_screenMask->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_mask = 0;
 	_needPalette = true;
 }
@@ -139,7 +143,7 @@ void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
 
-	byte *source, *dest, *maskp;
+	byte *source, *dest, *maskp = 0;
 	int startX = 0;
 	int startY = 0;
 	int clipWidth = sourceSurface->w;
@@ -167,7 +171,8 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 
 	source = (byte*)sourceSurface->getBasePtr(startX, startY);
 	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
-	maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
+	if (_vm->getGameID() != GID_RTZ)
+		maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
 
 	int32 sourcePitch, linePtrAdd;
 	byte *linePtr;
@@ -192,7 +197,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 			linePtr = source;
 		}
 		for (int16 xc = 0; xc < clipWidth; xc++) {
-			if (*linePtr && (mask == 0 || maskp[xc] == 0)) {
+			if (*linePtr && (_vm->getGameID() == GID_RTZ || (mask == 0 || maskp[xc] == 0))) {
 				if (*linePtr)
 					dest[xc] = *linePtr;
 			}
@@ -200,7 +205,8 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 		}
 		source += sourcePitch;
 		dest += clipInfo.destSurface->pitch;
-		maskp += _maskDrawCtx.destSurface->pitch;
+		if (_vm->getGameID() != GID_RTZ)
+			maskp += _maskDrawCtx.destSurface->pitch;
 	}
 
 }
@@ -260,7 +266,6 @@ uint16 Screen::setChannelLocation(uint16 channelIndex, int16 x, int16 y) {
 uint16 Screen::setChannelContent(uint16 channelIndex, uint16 index) {
 	if (channelIndex < 1 || channelIndex >= 100 || _channels[channelIndex - 1].type == 0)
 		return 0;
-	//debug(2, "setChannelContent(%d, %04X)\n", channelIndex, index); fflush(stdout); g_system->delayMillis(5000);
 	_channels[channelIndex - 1].index = index;
 	return updateChannel(channelIndex - 1) + 1;
 }
@@ -269,20 +274,6 @@ void Screen::setChannelUseMask(uint16 channelIndex) {
 	if (channelIndex < 1 || channelIndex >= 100)
 		return;
 	_channels[channelIndex - 1].mask = _mask;
-}
-
-void Screen::setChannelOffsets(uint16 channelIndex, int16 xofs, int16 yofs) {
-	if (channelIndex < 1 || channelIndex >= 100)
-		return;
-	_channels[channelIndex - 1].xofs = xofs;
-	_channels[channelIndex - 1].yofs = yofs;
-}
-
-void Screen::getChannelOffsets(uint16 channelIndex, int16 &xofs, int16 &yofs) {
-	if (channelIndex < 1 || channelIndex >= 100)
-		return;
-	xofs = _channels[channelIndex - 1].xofs;
-	yofs = _channels[channelIndex - 1].yofs;
 }
 
 void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask) {
@@ -337,7 +328,7 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 				break;
 
 			case 4: // drawMenuText
-				// TODO
+				// Never used in any game
 				break;
 				
 			default:
@@ -360,6 +351,8 @@ void Screen::updateSprites() {
 	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
 	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	
+	_vm->_system->updateScreen();
 	
 }
 
@@ -437,7 +430,7 @@ uint16 Screen::drawSprite(uint16 flexIndex, int16 x, int16 y) {
 
 uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16 y) {
 
-	debug(2, "placeSprite(%d, %04X, %d, %d)\n", channelIndex, flexIndex, x, y); fflush(stdout);
+	debug(2, "placeSprite(%d, %04X, %d, %d)\n", channelIndex, flexIndex, x, y);
 
 	if (channelIndex < 1 || channelIndex >= 100)
 		return 0;
@@ -475,8 +468,6 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 		_channels[channelIndex].x2 = x2;
 		_channels[channelIndex].y2 = y2;
 		_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
-		_channels[channelIndex].xofs = 0;
-		_channels[channelIndex].yofs = 0;
 
 		if (_channelsUsedCount <= channelIndex)
 			_channelsUsedCount = channelIndex + 1;
@@ -697,7 +688,7 @@ void Screen::printText(const char *text) {
 	
 	for (int textPos = 0; textPos < textLen; textPos++) {
 	
-		uint c = text[textPos];
+		uint c = ((byte*)text)[textPos];
 		int charWidth = _font->getCharWidth(c);
 
 		if (c == 9) {
@@ -816,6 +807,33 @@ void Screen::showWorkScreen() {
 void Screen::updateScreenAndWait(int delay) {
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(delay);
+}
+
+int16 Screen::addToSpriteList(int16 index, int16 xofs, int16 yofs) {
+	SpriteListItem item;
+	item.index = index;
+	item.xofs = xofs;
+	item.yofs = yofs;
+	_spriteList.push_back(item);
+	return _spriteList.size();
+}
+
+SpriteListItem Screen::getFromSpriteList(int16 index) {
+	if (((uint) index) > _spriteList.size()) {
+		SpriteListItem emptyItem;
+		emptyItem.index = 0;
+		return emptyItem;
+	} else {
+		return _spriteList[index - 1];
+	}
+}
+
+void Screen::clearSpriteList() {
+	_spriteList.clear();
+}
+
+void Screen::setDefaultMouseCursor() {
+	CursorMan.replaceCursor(defaultMouseCursor, 16, 16, 9, 2, 0);
 }
 
 } // End of namespace Made

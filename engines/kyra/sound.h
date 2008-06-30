@@ -73,7 +73,8 @@ public:
 		kAdlib,
 		kMidiMT32,
 		kMidiGM,
-		kTowns
+		kTowns,
+		kPC98
 	};
 
 	virtual kType getMusicType() const = 0;
@@ -174,9 +175,9 @@ public:
 	 *
 	 * @param file	file to be played
 	 * @param isSfx marks file as sfx instead of voice
-	 * @return channel the voice file is played on
+	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual bool voicePlay(const char *file, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
@@ -184,6 +185,13 @@ public:
 	 * @return true when playing, else false
 	 */
 	bool voiceIsPlaying(const char *file = 0);
+
+	/**
+	 * Checks how long a voice has been playing
+	 *
+	 * @return time in milliseconds
+	 */
+	uint32 voicePlayedTime(const char *file);
 
 	/**
 	 * Stops playback of the current voice.
@@ -225,7 +233,7 @@ private:
 			uint numLoops);
 	};
 
-	static const SpeechCodecs _supportedCodes[];
+	static const SpeechCodecs _supportedCodecs[];
 };
 
 class AdlibDriver;
@@ -375,7 +383,9 @@ private:
 	Common::Mutex _mutex;
 };
 
-class SoundTowns_EuphonyDriver;
+class Towns_EuphonyDriver;
+class TownsPC98_OpnDriver;
+
 class SoundTowns : public MidiDriver, public Sound {
 public:
 	SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer);
@@ -410,6 +420,7 @@ public:
 
 	static float semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiToneRootkey,
 		uint32 sampleRate, uint32 outputRate, int32 pitchWheel);
+
 private:
 	bool loadInstruments();
 	void playEuphonyTrack(uint32 offset, int loop);
@@ -423,7 +434,7 @@ private:
 	uint _sfxFileIndex;
 	uint8 *_sfxFileData;
 
-	SoundTowns_EuphonyDriver * _driver;
+	Towns_EuphonyDriver * _driver;
 	MidiParser * _parser;
 
 	Common::Mutex _mutex;
@@ -432,13 +443,38 @@ private:
 	const uint8 *_sfxWDTable;
 };
 
-//class SoundTowns_v2_TwnDriver;
-class SoundTowns_v2 : public Sound {
+class SoundPC98 : public Sound {
 public:
-	SoundTowns_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	~SoundTowns_v2();
+	SoundPC98(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundPC98();
 
-	kType getMusicType() const { return kTowns; }
+	virtual kType getMusicType() const { return kPC98; }
+
+	bool init();
+	
+	void process() {}
+	void loadSoundFile(uint file) {}
+
+	void playTrack(uint8 track);
+	void haltTrack();
+	void beginFadeOut();
+
+	int32 voicePlay(const char *file, bool isSfx = false) { return -1; }
+	void playSoundEffect(uint8);
+
+protected:
+	int _lastTrack;
+	uint8 *_musicTrackData;
+	uint8 *_sfxTrackData;
+	TownsPC98_OpnDriver *_driver;
+};
+
+class SoundTownsPC98_v2 : public Sound {
+public:
+	SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundTownsPC98_v2();
+
+	kType getMusicType() const { return _vm->gameFlags().platform == Common::kPlatformFMTowns ? kTowns : kPC98; }
 
 	bool init();
 	void process();
@@ -449,16 +485,16 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	bool voicePlay(const char *file, bool isSfx = false);
-	void playSoundEffect(uint8) {}
+	int32 voicePlay(const char *file, bool isSfx = false);
+	void playSoundEffect(uint8 track);
 
-private:
-	int _lastTrack;
-
+protected:
 	Audio::AudioStream *_currentSFX;
+	int _lastTrack;
+	bool _useFmSfx;
 
-	//SoundTowns_v2_TwnDriver *_driver;
-	uint8 *_twnTrackData;
+	uint8 *_musicTrackData;
+	TownsPC98_OpnDriver *_driver;	
 };
 
 class MixedSoundDriver : public Sound {
@@ -491,6 +527,7 @@ private:
 
 // Digital Audio
 class AUDStream;
+class KyraAudioStream;
 class KyraEngine_MR;
 
 /**
@@ -557,8 +594,20 @@ private:
 
 		char filename[16];
 		uint8 priority;
-		AUDStream *stream;
+		KyraAudioStream *stream;
 	} _sounds[4];
+
+	struct AudioCodecs {
+		const char *fileext;
+		Audio::AudioStream *(*streamFunc)(
+			Common::SeekableReadStream *stream,
+			bool disposeAfterUse,
+			uint32 startTime,
+			uint32 duration,
+			uint numLoops);
+	};
+
+	static const AudioCodecs _supportedCodecs[];
 };
 
 } // end of namespace Kyra

@@ -58,7 +58,7 @@ public:
 	// This function is overridden by the symbian port in order to provide MONO audio
 	// downmix is done by supplying our own audiocallback
 	//
-	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
+	virtual void setupMixer(); // overloaded by CE backend
 
 	// Overloaded from SDL_Commmon
 	void quit();
@@ -69,11 +69,6 @@ protected:
 	// and then does downmixing for symbian if needed
 	//
 	static void symbianMixCallback(void *s, byte *samples, int len);
-
-	//
-	// Actual mixing implementation
-	//
-	void symbianMix(byte *samples, int len);
 
 	virtual FilesystemFactory *getFilesystemFactory();
 public:
@@ -121,8 +116,6 @@ protected:
 	// Audio
 	int _channels;
 
-	SoundProc _sound_proc;
-	void *_sound_proc_param;
 	byte *_stereo_mix_buffer;
 
 	// Used to handle joystick navi zones

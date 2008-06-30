@@ -123,8 +123,6 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_inter_resStr[0] = 0;
 	_inter_resVal = 0;
 
-	_inter_variablesSizes = 0;
-	_inter_variables = 0;
 	_inter_execPtr = 0;
 	_inter_animDataSize = 10;
 

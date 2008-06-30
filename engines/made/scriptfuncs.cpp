@@ -26,8 +26,8 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/events.h"
-
 #include "graphics/cursorman.h"
+#include "sound/audiocd.h"
 
 #include "made/made.h"
 #include "made/resource.h"
@@ -94,7 +94,7 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfSetSpriteGround);
 	External(sfLoadResText);
 	
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
 	} else if (_vm->getGameID() == GID_RTZ) {
@@ -106,7 +106,7 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfStopSound);
 	External(sfPlayVoice);
 
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RODNEY) {
 		External(sfPlayCd);
 		External(sfStopCd);
 		External(sfGetCdStatus);
@@ -183,72 +183,27 @@ int16 ScriptFunctions::sfDrawPicture(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
+	if (_vm->_screen->isScreenLocked())
+		return 0;
+	if (_vm->_autoStopSound) {
+		_vm->_mixer->stopHandle(_audioStreamHandle);
+		_vm->_autoStopSound = false;
+	}
  	_vm->_screen->clearScreen();
 	return 0;
 }
 
 int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
-	_vm->_mixer->stopHandle(_audioStreamHandle);
 	_vm->_screen->show();
 	return 0;
 }
 
 int16 ScriptFunctions::sfPollEvent(int16 argc, int16 *argv) {
 
-	Common::Event event;
-	Common::EventManager *eventMan = g_system->getEventManager();
-
-	int16 eventNum = 0;
-
-	if (eventMan->pollEvent(event)) {
-		switch (event.type) {
-
-		case Common::EVENT_MOUSEMOVE:
-			_vm->_eventMouseX = event.mouse.x;
-			_vm->_eventMouseY = event.mouse.y;
-			break;
-			
-		case Common::EVENT_LBUTTONDOWN:
-			eventNum = 1;
-			break;
-
-		/*
-		case Common::EVENT_LBUTTONUP:
-			eventNum = 2; // TODO: Is this correct?
-			break;
-		*/
-
-		case Common::EVENT_RBUTTONDOWN:
-			eventNum = 3;
-			break;
-
-		/*
-		case Common::EVENT_RBUTTONUP:
-			eventNum = 4; // TODO: Is this correct?
-			break;
-		*/
-
-		case Common::EVENT_KEYDOWN:
-			_vm->_eventKey = event.kbd.ascii;
-			// For unknown reasons, the game accepts ASCII code
-			// 9 as backspace
-			if (_vm->_eventKey == Common::KEYCODE_BACKSPACE)
-				_vm->_eventKey = 9;
-			eventNum = 5;
-			break;
-
-		case Common::EVENT_QUIT:
-			_vm->_quit = true;
-			break;
-
-		default:
-			break;
-
-		}
-	}
-
 	_vm->_system->updateScreen();
 
+	int16 eventNum = _vm->_eventNum;
+	_vm->_eventNum = 0;
 	return eventNum;
 }
 
@@ -270,21 +225,17 @@ int16 ScriptFunctions::sfSetVisualEffect(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
-	int soundNum = argv[0];
-	bool loop = false;
-
+	int16 soundNum = argv[0];
+	_vm->_autoStopSound = false;
+	_vm->_mixer->stopHandle(_audioStreamHandle);
 	if (argc > 1) {
 		soundNum = argv[1];
-		loop = (argv[0] == 1);
+		_vm->_autoStopSound = (argv[0] == 1);
 	}
-
 	if (soundNum > 0) {
-		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
-			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
-										 _vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, loop));
-		}
+		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
+			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
 	}
-
 	return 0;
 }
 
@@ -318,9 +269,11 @@ int16 ScriptFunctions::sfIsMusicPlaying(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetTextPos(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfSetTextPos");
+	// Used in Manhole:NE
+	//warning("Unimplemented opcode: sfSetTextPos");
 	// This seems to be some kind of low-level opcode.
 	// The original engine calls int 10h to set the VGA cursor position.
+	// Since this seems to be used for debugging purposes only it's left out.
 	return 0;
 }
 
@@ -330,21 +283,25 @@ int16 ScriptFunctions::sfFlashScreen(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfPlayNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopNote(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfStopNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayTele(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfPlayTele");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopTele(int16 argc, int16 *argv) {
+	// TODO: Used in Manhole:NE
 	warning("Unimplemented opcode: sfStopTele");
 	return 0;
 }
@@ -373,10 +330,10 @@ int16 ScriptFunctions::sfSetScreenLock(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
-		warning("Unimplemented opcode: sfAddSprite");
+		// Unused in RTZ
 		return 0;
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
-		return argv[2];
+	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+		return _vm->_screen->addToSpriteList(argv[2], argv[1], argv[0]);
 	} else {
 		return 0;
 	}
@@ -384,15 +341,19 @@ int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfFreeAnim(int16 argc, int16 *argv) {
 	_vm->_screen->clearChannels();
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+		_vm->_screen->clearSpriteList();
+	}
 	return 0;
 }
 
 int16 ScriptFunctions::sfDrawSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
 		return _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
-		int16 channel = _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
-		_vm->_screen->setChannelUseMask(channel);
+	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+		SpriteListItem item = _vm->_screen->getFromSpriteList(argv[2]);
+		int16 channelIndex = _vm->_screen->drawSprite(item.index, argv[1] - item.xofs, argv[0] - item.yofs);
+		_vm->_screen->setChannelUseMask(channelIndex);
 		return 0;
 	} else {
 		return 0;
@@ -447,9 +408,8 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 	const char *text = NULL;
 
 	if (_vm->getGameID() == GID_RTZ) {
-		Object *obj = _vm->_dat->getObject(argv[argc - 1]);
-		text = obj->getString();
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE) {
+		text = _vm->_dat->getObjectString(argv[argc - 1]);
+	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
 		text = _vm->_dat->getString(argv[argc - 1]);
 	}
 
@@ -482,7 +442,7 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfHomeText(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfHomeText");
+	_vm->_screen->homeText();
 	return 0;
 }
 
@@ -529,7 +489,6 @@ int16 ScriptFunctions::sfLoadMouseCursor(int16 argc, int16 *argv) {
 	if (flex) {
 		Graphics::Surface *surf = flex->getPicture();
 		CursorMan.replaceCursor((const byte *)surf->pixels, surf->w, surf->h, argv[1], argv[0], 0);
-		CursorMan.showMouse(true);
 		_vm->_res->freeResource(flex);
 	}
 	return 0;
@@ -541,6 +500,7 @@ int16 ScriptFunctions::sfSetSpriteGround(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfLoadResText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfLoadResText");
 	return 0;
 }
@@ -574,54 +534,60 @@ int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
 	_vm->_mixer->stopHandle(_audioStreamHandle);
+	_vm->_autoStopSound = false;
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
-	if (argv[0] > 0) {
-		_vm->_mixer->stopHandle(_audioStreamHandle);
+	int16 soundNum = argv[0];
+	_vm->_mixer->stopHandle(_audioStreamHandle);
+	if (soundNum > 0) {
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			_vm->_res->getSound(argv[0])->getAudioStream(_vm->_soundRate, false));
+			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
+		_vm->_autoStopSound = true;
 	}
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayCd(int16 argc, int16 *argv) {
-	// This one is called loads of times, so it has been commented out to reduce spam
-	//warning("Unimplemented opcode: sfPlayCd");
+	AudioCD.play(argv[0], -1, 0, 0);
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopCd(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfStopCd");
-	return 0;
+	if (AudioCD.isPlaying()) {
+		AudioCD.stop();
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 int16 ScriptFunctions::sfGetCdStatus(int16 argc, int16 *argv) {
-	// This one is called loads of times, so it has been commented out to reduce spam
-	//warning("Unimplemented opcode: sfGetCdStatus");
-	return 0;
+	return AudioCD.isPlaying() ? 1 : 0;
 }
 
 int16 ScriptFunctions::sfGetCdTime(int16 argc, int16 *argv) {
 	// This one is called loads of times, so it has been commented out to reduce spam
 	//warning("Unimplemented opcode: sfGetCdTime");
+	// TODO
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayCdSegment(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfPlayCdSegment");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPrintf(int16 argc, int16 *argv) {
-	Object *obj = _vm->_dat->getObject(argv[argc - 1]);
-	const char *text = obj->getString();
+	const char *text = _vm->_dat->getObjectString(argv[argc - 1]);
 	debug(4, "--> text = %s", text);
 	return 0;
 }
 
 int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfClearMono");
 	return 0;
 }
@@ -636,11 +602,13 @@ int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfClearText");
 	return 1;
 }
 
 int16 ScriptFunctions::sfAnimText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfAnimText");
 	return 0;
 }
@@ -648,15 +616,14 @@ int16 ScriptFunctions::sfAnimText(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfGetTextWidth(int16 argc, int16 *argv) {
 	int16 width = 0;
 	if (argv[1] > 0) {
-		Object *obj = _vm->_dat->getObject(argv[1]);
-		const char *text = obj->getString();
+		const char *text = _vm->_dat->getObjectString(argv[1]);
 		width = _vm->_screen->getTextWidth(argv[0], text);
 	}
 	return width;
 }
 
 int16 ScriptFunctions::sfPlayMovie(int16 argc, int16 *argv) {
-	const char *movieName = _vm->_dat->getObject(argv[1])->getString();
+	const char *movieName = _vm->_dat->getObjectString(argv[1]);
 	_vm->_system->showMouse(false);
 	_vm->_pmvPlayer->play(movieName);
 	_vm->_system->showMouse(true);
@@ -691,12 +658,16 @@ int16 ScriptFunctions::sfLoadPicture(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetMusicVolume(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfSetMusicVolume");
 	return 0;
 }
 
 int16 ScriptFunctions::sfRestartEvents(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfRestartEvents");
+	// Used in RTZ
+	//warning("Unimplemented opcode: sfRestartEvents");
+	// This is used to reset the event recording/queue.
+	// Since we don't use either it's left out.
 	return 0;
 }
 
@@ -723,11 +694,13 @@ int16 ScriptFunctions::sfSetChannelState(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetChannelLocation(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfSetChannelLocation");
 	return 0;
 }
 
 int16 ScriptFunctions::sfSetChannelContent(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfSetChannelContent");
 	return 0;
 }
@@ -795,8 +768,7 @@ int16 ScriptFunctions::sfSetSoundRate(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfDrawAnimPic(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfDrawAnimPic");
-	return 0;
+	return _vm->_screen->drawAnimPic(argv[5], argv[4], argv[3], argv[2], argv[1], argv[0]);
 }
 
 int16 ScriptFunctions::sfLoadAnim(int16 argc, int16 *argv) {
@@ -809,6 +781,7 @@ int16 ScriptFunctions::sfLoadAnim(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfReadText(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfReadText");
 	return 0;
 }
@@ -822,11 +795,12 @@ int16 ScriptFunctions::sfReadMenu(int16 argc, int16 *argv) {
 	if (menu) {
 		const char *text = menu->getString(textIndex);
 		debug(4, "objectIndex = %04X; text = %s\n", objectIndex, text);
-		Object *obj = _vm->_dat->getObject(objectIndex);
-		obj->setString(text);
+		_vm->_dat->setObjectString(objectIndex, text);
 		_vm->_res->freeResource(menu);
 		if (text)
 			length = strlen(text);
+	} else {
+		_vm->_dat->setObjectString(objectIndex, "");
 	}
 	return length;
 }
@@ -864,11 +838,8 @@ int16 ScriptFunctions::sfSaveGame(int16 argc, int16 *argv) {
 	if (saveNum > 999)
 		return 6;
 
-	Object *obj = _vm->_dat->getObject(descObjectIndex);
-	const char *description = obj->getString();
-
+	const char *description = _vm->_dat->getObjectString(descObjectIndex);
 	Common::String filename = _vm->getSavegameFilename(saveNum);
-
 	return _vm->_dat->savegame(filename.c_str(), description, version);
 	
 }
@@ -882,7 +853,6 @@ int16 ScriptFunctions::sfLoadGame(int16 argc, int16 *argv) {
 		return 1;
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
-
 	return _vm->_dat->loadgame(filename.c_str(), version);
 	
 }
@@ -899,24 +869,24 @@ int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 
-	Object *obj = _vm->_dat->getObject(descObjectIndex);
-
 	if (_vm->_dat->getSavegameDescription(filename.c_str(), description)) {
-		obj->setString(description.c_str());
+		_vm->_dat->setObjectString(descObjectIndex, description.c_str());
 		return 0;
 	} else {
-		obj->setString("");
+		_vm->_dat->setObjectString(descObjectIndex, "");
 		return 1;
 	}
 
 }
 
 int16 ScriptFunctions::sfShakeScreen(int16 argc, int16 *argv) {
+	// TODO: Used in RTZ
 	warning("Unimplemented opcode: sfShakeScreen");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlaceMenu(int16 argc, int16 *argv) {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented opcode: sfPlaceMenu");
 	return 0;
 }

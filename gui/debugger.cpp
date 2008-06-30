@@ -406,7 +406,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
-	const Common::Array<Common::EngineDebugLevel> &debugLevels = Common::listSpecialDebugLevels();
+	const Common::DebugLevelContainer &debugLevels = Common::listSpecialDebugLevels();
 
 	DebugPrintf("Engine debug levels:\n");
 	DebugPrintf("--------------------\n");
@@ -414,8 +414,8 @@ bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 		DebugPrintf("No engine debug levels\n");
 		return true;
 	}
-	for (uint i = 0; i < debugLevels.size(); ++i) {
-		DebugPrintf("'%s' - Description: %s\n", debugLevels[i].option.c_str(), debugLevels[i].description.c_str());
+	for (Common::DebugLevelContainer::const_iterator i = debugLevels.begin(); i != debugLevels.end(); ++i) {
+		DebugPrintf("'%s' - Description: %s\n", i->option.c_str(), i->description.c_str());
 	}
 	DebugPrintf("\n");
 	return true;

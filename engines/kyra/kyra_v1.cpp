@@ -87,6 +87,11 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	return _debugger;
 }
 
+void KyraEngine_v1::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	_timer->pause(pause);
+}
+
 int KyraEngine_v1::init() {
 	registerDefaultSettings();
 
@@ -102,14 +107,16 @@ int KyraEngine_v1::init() {
 		// "KYRA1: Crash on exceeded polyphony" for more information).
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
-		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-			// TODO: currently we don't support the PC98 sound data,
-			// but since it has the FM-Towns data files, we just use the
-			// FM-Towns driver
+		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
 				_sound = new SoundTowns(this, _mixer);
 			else
-				_sound = new SoundTowns_v2(this, _mixer);
+				_sound = new SoundTownsPC98_v2(this, _mixer);
+		} else if (_flags.platform == Common::kPlatformPC98) {
+			if (_flags.gameID == GI_KYRA1)
+				_sound = new SoundPC98(this, _mixer);
+			else
+				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
 			_sound = new SoundAdlibPC(this, _mixer);
 			assert(_sound);

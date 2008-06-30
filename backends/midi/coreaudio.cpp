@@ -24,9 +24,20 @@
 
 #ifdef MACOSX
 
+// HACK to disable deprecated warnings under Mac OS X 10.5.
+// Apple depracted the AUGraphNewNode & AUGraphGetNodeInfo APIs
+// in favor of the new AUGraphAddNode & AUGraphNodeInfo APIs.
+// While it would be trivial to switch to those, this would break
+// binary compatibility with all pre-10.5 systems, so we don't want
+// to do that just now. Maybe when 10.6 comes... :)
+#include <AvailabilityMacros.h>
+#undef DEPRECATED_ATTRIBUTE
+#define DEPRECATED_ATTRIBUTE
+
+
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <AudioToolbox/AUGraph.h>
@@ -196,24 +207,29 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class CoreAudioMidiPlugin : public MidiPluginObject {
+class CoreAudioMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "CoreAudio";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "core";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError CoreAudioMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices CoreAudioMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
+
+PluginError CoreAudioMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_CORE();
 
 	return kNoError;
@@ -222,16 +238,16 @@ PluginError CoreAudioMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver 
 MidiDriver *MidiDriver_CORE_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	CoreAudioMidiPlugin p;
+	CoreAudioMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(COREAUDIO)
-	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MIDI, CoreAudioMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MIDI, CoreAudioMidiPlugin);
+	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#endif
 
 #endif // MACOSX

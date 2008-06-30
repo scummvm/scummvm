@@ -166,6 +166,8 @@ void Parallaction_ns::guiStart() {
 }
 
 void Parallaction_ns::selectStartLocation() {
+	_inTestResult = false;
+
 	int character = guiSelectCharacter();
 	if (character == -1)
 		error("invalid character selected from menu screen");
@@ -213,11 +215,7 @@ int Parallaction_ns::guiNewGame() {
 
 	_input->waitForButtonEvent(kMouseLeftUp | kMouseRightUp);
 	uint32 event = _input->getLastButtonEvent();
-/*
-	do {
-		_input->readInput();
-	} while (_mouseButtons != kMouseLeftUp && _mouseButtons != kMouseRightUp);
-*/
+
 	_input->showCursor(true);
 
 	_gfx->freeLabels();

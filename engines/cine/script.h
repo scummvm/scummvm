@@ -155,8 +155,8 @@ protected:
 	int o1_getObjectParam();
 	int o1_addObjectParam();
 	int o1_subObjectParam();
-	int o1_add2ObjectParam();
-	int o1_sub2ObjectParam();
+	int o1_mulObjectParam();
+	int o1_divObjectParam();
 	int o1_compareObjectParam();
 	int o1_setupObject();
 	int o1_checkCollision();
@@ -230,13 +230,14 @@ protected:
 	int o1_unloadMask5();
 
 	// pointers to member functions in C++ suck...
+	int o2_loadCt();
 	int o2_loadPart();
 	int o2_addSeqListElement();
 	int o2_removeSeq();
 	int o2_playSample();
 	int o2_playSampleAlt();
 	int o2_op81();
-	int o2_op82();
+	int o2_modifySeqListElement();
 	int o2_isSeqRunning();
 	int o2_gotoIfSupNearest();
 	int o2_gotoIfSupEquNearest();
@@ -257,10 +258,10 @@ protected:
 	int o2_useBgScroll();
 	int o2_setAdditionalBgVScroll();
 	int o2_op9F();
-	int o2_addGfxElementA0();
-	int o2_removeGfxElementA0();
-	int o2_opA2();
-	int o2_opA3();
+	int o2_addGfxElementType20();
+	int o2_removeGfxElementType20();
+	int o2_addGfxElementType21();
+	int o2_removeGfxElementType21();
 	int o2_loadMask22();
 	int o2_unloadMask22();
 
@@ -362,7 +363,7 @@ extern ScriptVars globalVars;
 
 void setupOpcodes();
 
-void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx);
+void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
 #define OP_loadPart                     0x3F

@@ -268,7 +268,10 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	return kNoError;
 }
 
-static void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {
+typedef HashMap<String, bool> StringSet;
+typedef HashMap<String, int32> IntMap;
+
+static void reportUnknown(StringMap &filesMD5, IntMap &filesSize) {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -285,11 +288,8 @@ static void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::Ca
 }
 
 static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
-	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
-	typedef StringMap StringMap;
-	typedef HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
 	StringMap filesMD5;
 	IntMap filesSize;
 	IntMap allFiles;
@@ -428,7 +428,13 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			if (curFilesMatched > maxFilesMatched) {
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
-				matched.clear();
+
+				for (uint j = 0; j < matched.size();) {
+					if (matched[j]->flags & ADGF_KEEPMATCH)
+						 ++j;
+					else
+						matched.remove_at(j);
+				}
 				matched.push_back(g);
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back(g);

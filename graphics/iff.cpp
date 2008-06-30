@@ -139,6 +139,7 @@ void ILBMDecoder::readBODY(Common::IFFChunk& chunk) {
 
 			out += _bitmapHeader.width;
 		}
+		free(scan);
 		break;
 	}
 

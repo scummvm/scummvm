@@ -218,7 +218,7 @@ void M3SD_writesector(u16 * p,u32 sectorn)
 		}
 
 	} while ((verify > 0) && (tries < 16));
-
+	
 	free(data);
 	free(check);
 }	// */
@@ -356,7 +356,7 @@ bool M3SD_Shutdown(void)
 bool M3SD_StartUp(void)
 {
 	vu16* waitCr = (vu16*)0x4000204;
-
+	
 	*waitCr |= 0x6000;
 //	*(vu16*)0x4000204=0x6000;
 	// Try unlocking 3 times, because occationally it fails to detect the reader.

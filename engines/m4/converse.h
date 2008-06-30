@@ -171,7 +171,7 @@ public:
 	ConvEntry *getNode(int32 index) { return _convNodes[index]; }
 
 	void setValue(int32 offset, int32 value);
-	const int32 getValue(int32 offset);
+	int32 getValue(int32 offset);
 	bool evaluateCondition(int32 leftVal, int32 op, int32 rightVal);
 	bool performAction(EntryAction *action);
 	/*

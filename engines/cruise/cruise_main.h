@@ -28,7 +28,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <assert.h>	// FIXME: WINCE: this is not needed/not portable (probably applies to all above includes)
 
 
 #include "common/scummsys.h"
@@ -45,7 +45,6 @@
 #include "cruise/stack.h"
 #include "cruise/script.h"
 #include "cruise/various.h"
-#include "cruise/stringSupport.h"
 #include "cruise/function.h"
 #include "cruise/saveload.h"
 #include "cruise/linker.h"

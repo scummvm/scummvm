@@ -47,6 +47,7 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 
 AdlibMusic::~AdlibMusic(void) {
 
+	OPLDestroy(_opl);
 	_mixer->stopHandle(_soundHandle);
 }
 

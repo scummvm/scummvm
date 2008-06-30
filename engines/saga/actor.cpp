@@ -31,7 +31,6 @@
 #include "saga/events.h"
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
-#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
@@ -997,7 +996,7 @@ void Actor::createDrawOrderList() {
 }
 
 bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList) {
-	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+	if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 		if (!(commonObjectData->_flags & kProtagonist)){
 //			warning("not protagonist");
 			return false;

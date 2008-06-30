@@ -106,7 +106,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 			re = &_resourceTable[cur];
 			break;
 		}
-	} while (cur++ < _resourceEntries);
+	} while (++cur < _resourceEntries);
 #endif
 	return re;
 }

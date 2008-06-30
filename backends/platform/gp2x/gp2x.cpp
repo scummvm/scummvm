@@ -40,7 +40,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h" // for getFilesystemFactory()
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -225,8 +225,7 @@ void OSystem_GP2X::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
-		_mixer = new Audio::Mixer();
-		setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+		setupMixer();
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for
@@ -445,45 +444,69 @@ void OSystem_GP2X::deleteMutex(MutexRef mutex) {
 #pragma mark --- Audio ---
 #pragma mark -
 
-bool OSystem_GP2X::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_GP2X::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_GP2X *this_ = (OSystem_GP2X *)sys;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(samples, len);
+}
+
+void OSystem_GP2X::setupMixer() {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
-	memset(&desired, 0, sizeof(desired));
+	//memset(&desired, 0, sizeof(desired));
 
+	// Determine the desired output sampling frequency.
 	_samplesPerSec = 0;
-
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
-
 	if (_samplesPerSec <= 0)
 		_samplesPerSec = SAMPLES_PER_SEC;
+
 
 	//Quick EVIL Hack - DJWillis
 	_samplesPerSec = 11025;
 
+	// Determine the sample buffer size. We want it to store enough data for
+	// about 1/16th of a second. Note that it must be a power of two.
+	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
+	int samples = 8192;
+	while (16 * samples >= _samplesPerSec) {
+		samples >>= 1;
+	}
+
+	memset(&desired, 0, sizeof(desired));
 	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	//desired.samples = (uint16)samples;
 	desired.samples = 128; // Samples hack
-	desired.callback = proc;
-	desired.userdata = param;
+	desired.callback = mixCallback;
+	desired.userdata = this;
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		return false;
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
+
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+		SDL_PauseAudio(0);
 	}
-	_samplesPerSec = obtained.freq;
-	SDL_PauseAudio(0);
-	return true;
-}
-
-void OSystem_GP2X::clearSoundCallback() {
-	SDL_CloseAudio();
-}
-
-int OSystem_GP2X::getOutputSampleRate() const {
-	return _samplesPerSec;
 }
 
 Audio::Mixer *OSystem_GP2X::getMixer() {

@@ -157,6 +157,8 @@ private:
 	KyraEngine_LoK *_vm;
 	Screen_LoK *_screen;
 
+	uint32 _lastScreenUpdate;
+
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;
 	int _savegameOffset;

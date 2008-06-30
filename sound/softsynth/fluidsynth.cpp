@@ -27,7 +27,7 @@
 #ifdef USE_FLUIDSYNTH
 
 #include "common/config-manager.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 #include "sound/softsynth/emumidi.h"
 
@@ -219,24 +219,27 @@ void MidiDriver_FluidSynth::generateSamples(int16 *data, int len) {
 
 // Plugin interface
 
-class FluidSynthMidiPlugin : public MidiPluginObject {
+class FluidSynthMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "FluidSynth";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "fluidsynth";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError FluidSynthMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices FluidSynthMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
+
+PluginError FluidSynthMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_FluidSynth(mixer);
 
 	return kNoError;
@@ -245,16 +248,16 @@ PluginError FluidSynthMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver
 MidiDriver *MidiDriver_FluidSynth_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	FluidSynthMidiPlugin p;
+	FluidSynthMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(FLUIDSYNTH)
-	//REGISTER_PLUGIN_DYNAMIC(FLUIDSYNTH, PLUGIN_TYPE_MIDI, FluidSynthMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(FLUIDSYNTH, PLUGIN_TYPE_MUSIC, FluidSynthMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(FLUIDSYNTH, PLUGIN_TYPE_MIDI, FluidSynthMidiPlugin);
+	REGISTER_PLUGIN_STATIC(FLUIDSYNTH, PLUGIN_TYPE_MUSIC, FluidSynthMusicPlugin);
 //#endif
 
 #endif

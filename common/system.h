@@ -662,7 +662,7 @@ public:
 	 * Move ("warp") the mouse cursor to the specified position in virtual
 	 * screen coordinates.
 	 * @param x		the new x position of the mouse
-	 * @param y		the new x position of the mouse
+	 * @param y		the new y position of the mouse
 	 */
 	virtual void warpMouse(int x, int y) = 0;
 
@@ -727,8 +727,12 @@ public:
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;
 
-	/** Get the current time and date. Correspond to time()+localtime(). */
-	virtual void getTimeAndDate(struct tm &t) const;
+	/**
+	 * Get the current time and date, in the local timezone.
+	 * Corresponds on many systems to the combination of time()
+	 * and localtime().
+	 */
+	virtual void getTimeAndDate(struct tm &t) const = 0;
 
 	/**
 	 * Return the timer manager singleton. For more information, refer
@@ -809,15 +813,6 @@ public:
 	 * Audio::Mixer documentation.
 	 */
 	virtual Audio::Mixer *getMixer() = 0;
-
-	/**
-	 * Determine the output sample rate. Audio data provided by the sound
-	 * callback will be played using this rate.
-	 * @note Client code other than the sound mixer should _not_ use this
-	 *       method. Instead, call Mixer::getOutputRate()!
-	 * @return the output sample rate
-	 */
-	virtual int getOutputSampleRate() const = 0;
 
 	//@}
 
@@ -907,7 +902,7 @@ public:
 	 *
 	 * @return FilesystemFactory* The specific factory for the current architecture.
 	 */
-	virtual FilesystemFactory *getFilesystemFactory();
+	virtual FilesystemFactory *getFilesystemFactory() = 0;
 
 
 	/**

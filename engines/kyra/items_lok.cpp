@@ -39,7 +39,7 @@
 namespace Kyra {
 
 int KyraEngine_LoK::findDuplicateItemShape(int shape) {
-	static uint8 dupTable[] = {
+	static const uint8 dupTable[] = {
 		0x48, 0x46, 0x49, 0x47, 0x4a, 0x46, 0x4b, 0x47,
 		0x4c, 0x46, 0x4d, 0x47, 0x5b, 0x5a, 0x5c, 0x5a,
 		0x5d, 0x5a, 0x5e, 0x5a, 0xFF, 0xFF
@@ -176,7 +176,7 @@ void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 }
 
 void KyraEngine_LoK::setHandItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setHandItem(%d)", item);
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setHandItem(%u)", item);
 	_screen->hideMouse();
 	setMouseItem(item);
 	_itemInHand = item;
@@ -191,8 +191,8 @@ void KyraEngine_LoK::removeHandItem() {
 	_screen->showMouse();
 }
 
-void KyraEngine_LoK::setMouseItem(int item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setMouseItem(%d)", item);
+void KyraEngine_LoK::setMouseItem(uint16 item) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setMouseItem(%u)", item);
 	if (item == 0xFFFF)
 		_screen->setMouseCursor(1, 1, _shapes[6]);
 	else

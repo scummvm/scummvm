@@ -28,7 +28,6 @@
 #include "saga/saga.h"
 
 #include "saga/itedata.h"
-#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"
@@ -42,6 +41,9 @@
 #include "sound/audiostream.h"
 
 namespace Saga {
+
+#define RID_IHNM_SFX_LUT 265
+#define RID_IHNMDEMO_SFX_LUT 222
 
 SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	// Load sound module resource file contexts
@@ -259,11 +261,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	switch (resourceType) {
 	case kSoundPCM:
-		buffer.frequency = soundInfo->frequency;
+		buffer.frequency = 22050;
 		buffer.isSigned = soundInfo->isSigned;
 		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.size = soundResourceLength;
-		buffer.stereo = soundInfo->stereo;
+		buffer.stereo = false;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
 			free(soundResource);
@@ -273,11 +275,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		result = true;
 		break;
 	case kSoundMacPCM:
-		buffer.frequency = soundInfo->frequency;
+		buffer.frequency = 22050;
 		buffer.isSigned = soundInfo->isSigned;
 		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.size = soundResourceLength - 36;
-		buffer.stereo = soundInfo->stereo;
+		buffer.stereo = false;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
 		} else {
@@ -288,10 +290,10 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		result = true;
 		break;
 	case kSoundVOX:
-		buffer.frequency = soundInfo->frequency;
+		buffer.frequency = 22050;
 		buffer.isSigned = soundInfo->isSigned;
 		buffer.sampleBits = soundInfo->sampleBits;
-		buffer.stereo = soundInfo->stereo;
+		buffer.stereo = false;
 		buffer.size = soundResourceLength * 4;
 		if (onlyHeader) {
 			buffer.buffer = NULL;

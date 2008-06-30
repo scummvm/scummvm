@@ -52,7 +52,7 @@ struct ResFileEntry {
 	enum kType {
 		kRaw = 0,
 		kPak = 1,
-		kIns = 2,
+		kInsMal = 2,
 		kTlk = 3,
 		kAutoDetect
 	};
@@ -60,7 +60,13 @@ struct ResFileEntry {
 	uint32 offset;
 };
 
+struct CompFileEntry {
+	uint32 size;
+	uint8 *data;
+};
+
 typedef Common::HashMap<Common::String, ResFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResFileMap;
+typedef Common::HashMap<Common::String, CompFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CompFileMap;
 class Resource;
 
 class ResArchiveLoader {
@@ -68,6 +74,10 @@ public:
 	struct File {
 		File() : filename(), entry() {}
 		File(const Common::String &f, const ResFileEntry &e) : filename(f), entry(e) {}
+
+		bool operator ==(const Common::String &r) const {
+			return filename.equalsIgnoreCase(r);
+		}
 
 		Common::String filename;
 		ResFileEntry entry;
@@ -84,6 +94,14 @@ public:
 
 	virtual ResFileEntry::kType getType() const = 0;
 protected:
+};
+
+class CompArchiveLoader {
+public:
+	virtual ~CompArchiveLoader() {}
+
+	virtual bool checkForFiles() const = 0;
+	virtual bool loadFile(CompFileMap &loadTo) const = 0;
 };
 
 class Resource {
@@ -121,6 +139,15 @@ protected:
 	typedef LoaderList::const_iterator CLoaderIterator;
 	LoaderList _loaders;
 	ResFileMap _map;
+
+	typedef Common::List<Common::SharedPtr<CompArchiveLoader> > CompLoaderList;
+	typedef CompLoaderList::iterator CompLoaderIterator;
+	typedef CompLoaderList::const_iterator CCompLoaderIterator;
+	CompLoaderList _compLoaders;
+	CompFileMap _compFiles;
+
+	void tryLoadCompFiles();
+	void clearCompFileList();
 
 	KyraEngine_v1 *_vm;
 };
@@ -271,7 +298,7 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
-	void outputError();
+	void outputError(const Common::String &error);
 
 	KyraEngine_v1 *_vm;
 
@@ -359,6 +386,7 @@ private:
 } // end of namespace Kyra
 
 #endif
+
 
 
 

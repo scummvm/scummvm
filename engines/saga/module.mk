@@ -11,11 +11,11 @@ MODULE_OBJS := \
 	font.o \
 	font_map.o \
 	gfx.o \
-	ihnm_introproc.o \
 	image.o \
 	interface.o \
+	introproc_ihnm.o \
+	introproc_ite.o \
 	isomap.o \
-	ite_introproc.o \
 	itedata.o \
 	objectmap.o \
 	puzzle.o \

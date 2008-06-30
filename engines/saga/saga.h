@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 
 #include "common/stream.h"
+#include "sound/mididrv.h"
 
 #include "saga/gfx.h"
 #include "saga/list.h"
@@ -82,11 +83,11 @@ using Common::MemoryReadStreamEndian;
 #define OBJECT_TYPE_MASK ((1 << OBJECT_TYPE_SHIFT) - 1)
 
 #define OBJ_SPRITE_BASE 9
+#define IHNM_OBJ_PROFILE 0x4000
 
 #define memoryError(Place) error("%s Memory allocation error.", Place)
 
 enum ERRORCODE {
-	MEM = -2,//todo: remove
 	FAILURE = -1,
 	SUCCESS = 0
 };
@@ -303,15 +304,17 @@ struct GameResourceDescription {
 	uint32 mainPanelResourceId;
 	uint32 conversePanelResourceId;
 	uint32 optionPanelResourceId;
-	uint32 warningPanelResourceId;
-	uint32 warningPanelSpritesResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
-	uint32 optionPanelSpritesResourceId;
-	uint32 defaultPortraitsResourceId;
-	uint32 psychicProfileResourceId;
 	uint32 mainStringsResourceId;
+	// ITE specific resources
 	uint32 actorsStringsResourceId;
+	uint32 defaultPortraitsResourceId;
+	// IHNM specific resources
+	uint32 optionPanelSpritesResourceId;
+	uint32 warningPanelResourceId;
+	uint32 warningPanelSpritesResourceId;
+	uint32 psychicProfileResourceId;
 };
 
 struct GameFontDescription {
@@ -322,9 +325,7 @@ struct GameDisplayInfo;
 
 struct GameSoundInfo {
 	GameSoundTypes resourceType;
-	long frequency;
 	int sampleBits;
-	bool stereo;
 	bool isBigEndian;
 	bool isSigned;
 };
@@ -531,6 +532,7 @@ public:
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;
+	MidiDriver *_driver;
 	Anim *_anim;
 	Render *_render;
 	IsoMap *_isoMap;
@@ -580,15 +582,15 @@ public:
 		_mouseClickCount = 0;
 	}
 
-	const bool leftMouseButtonPressed() const {
+	bool leftMouseButtonPressed() const {
 		return _leftMouseButtonPressed;
 	}
 
-	const bool rightMouseButtonPressed() const {
+	bool rightMouseButtonPressed() const {
 		return _rightMouseButtonPressed;
 	}
 
-	const bool mouseButtonPressed() const {
+	bool mouseButtonPressed() const {
 		return _leftMouseButtonPressed || _rightMouseButtonPressed;
 	}
 
@@ -622,8 +624,8 @@ public:
 public:
 	bool initGame(void);
 
-	const bool isBigEndian() const;
-	const bool isMacResources() const;
+	bool isBigEndian() const;
+	bool isMacResources() const;
 	const GameResourceDescription *getResourceDescription();
 	const GameSoundInfo *getVoiceInfo() const;
 	const GameSoundInfo *getSfxInfo() const;

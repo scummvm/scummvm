@@ -27,7 +27,6 @@ MODULE_OBJS := \
 	saveload.o \
 	script.o \
 	stack.o \
-	stringSupport.o \
 	various.o \
 	vars.o \
 	volume.o

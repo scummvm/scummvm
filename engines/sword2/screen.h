@@ -187,7 +187,7 @@ struct Parallax {
 	// The dimensions are followed by an offset table, but we don't know in
 	// advance how big it is. See initializeBackgroundLayer().
 
-	static const int size() {
+	static int size() {
 		return 4;
 	}
 
@@ -350,6 +350,8 @@ private:
 
 	uint16 _layer;
 
+	bool _dimPalette;
+
 public:
 	Screen(Sword2Engine *vm, int16 width, int16 height);
 	~Screen();
@@ -400,11 +402,12 @@ public:
 
 	void setFullPalette(int32 palRes);
 	void setPalette(int16 startEntry, int16 noEntries, byte *palette, uint8 setNow);
+	void setSystemPalette(const byte *colors, uint start, uint num);
 	uint8 quickMatch(uint8 r, uint8 g, uint8 b);
 	int32 fadeUp(float time = 0.75);
 	int32 fadeDown(float time = 0.75);
 	uint8 getFadeStatus();
-	void dimPalette();
+	void dimPalette(bool dim);
 	void waitForFade();
 	void fadeServer();
 

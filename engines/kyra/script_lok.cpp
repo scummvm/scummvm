@@ -35,6 +35,7 @@
 #include "kyra/animator_lok.h"
 #include "kyra/text.h"
 #include "kyra/timer.h"
+#include "kyra/sound.h"
 
 namespace Kyra {
 int KyraEngine_LoK::o1_magicInMouseItem(EMCState *script) {
@@ -320,9 +321,20 @@ int KyraEngine_LoK::o1_setBrandonStatusBit(EMCState *script) {
 }
 
 int KyraEngine_LoK::o1_delaySecs(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
-	if (stackPos(0) > 0 && !_skipFlag)
-		delay(stackPos(0)*1000, true);
+	if (_flags.isTalkie && speechEnabled()) {
+		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_voiceDelay(%p) (%d)", (const void *)script, stackPos(0));
+		if (stackPos(0) == 0) {
+			snd_voiceWaitForFinish(true);
+		} else if (stackPos(0) < 0) {
+			uint32 time = ABS(stackPos(0)) * _tickLength;
+			delay(time, true);
+		}
+	} else {
+		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
+		if (stackPos(0) >= 0 && !_skipFlag)
+			delay(stackPos(0)*1000, true);
+	}
+
 	_skipFlag = false;
 	return 0;
 }
@@ -700,7 +712,10 @@ int KyraEngine_LoK::o1_displayWSAFrameOnHidPage(EMCState *script) {
 }
 
 int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_displayWSASequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
+	if (_flags.isTalkie)
+		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_displayWSASequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	else
+		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_displayWSASequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
 	int startFrame = stackPos(0);
 	int endFrame = stackPos(1);
 	int xpos = stackPos(2);
@@ -708,6 +723,40 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	int waitTime = stackPos(4);
 	int wsaIndex = stackPos(5);
 	int maxTime = stackPos(6);
+
+	if (_flags.isTalkie) {
+		int specialTime = stackPos(7);
+		if (specialTime) {
+			uint32 voiceTime = snd_getVoicePlayTime();
+			if (voiceTime) {
+				int displayFrames = ABS(endFrame-startFrame)+1;
+				displayFrames *= maxTime;
+				assert(displayFrames != 0);
+
+				bool voiceSync = false;
+
+				if (specialTime < 0) {
+					voiceSync = true;
+					specialTime = ABS(specialTime);
+				}
+
+				voiceTime *= specialTime;
+				voiceTime /= 100;
+
+				if (voiceSync) {
+					uint32 voicePlayedTime = _sound->voicePlayedTime(_speechFile.c_str());
+					if (voicePlayedTime >= voiceTime)
+						voiceTime = 0;
+					else
+						voiceTime -= voicePlayedTime;
+				}
+
+				waitTime = voiceTime / displayFrames;
+				waitTime /= _tickLength;
+			}
+		}
+	}
+
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
 
@@ -734,7 +783,8 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			while (endFrame >= frame) {
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame);
-				_animator->_updateScreen = true;
+				if (waitTime)
+					_animator->_updateScreen = true;
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
@@ -751,7 +801,8 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			while (endFrame <= frame) {
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame);
-				_animator->_updateScreen = true;
+				if (waitTime)
+					_animator->_updateScreen = true;
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
@@ -1691,7 +1742,7 @@ int KyraEngine_LoK::o1_pauseMusicSeconds(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_pauseMusicSeconds(%p) ()", (const void *)script);
 	// if music disabled
 	//     return
-	o1_delaySecs(script);
+	delay(stackPos(0)*1000, true);
 	return 0;
 }
 

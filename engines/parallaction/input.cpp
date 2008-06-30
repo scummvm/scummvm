@@ -80,11 +80,8 @@ uint16 Input::readInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-			// TODO: don't quit() here, just have caller routines to check
-			// on kEngineQuit and exit gracefully to allow the engine to shut down
 			_engineFlags |= kEngineQuit;
-			g_system->quit();
-			break;
+			return KeyDown;
 
 		default:
 			break;
@@ -101,17 +98,26 @@ uint16 Input::readInput() {
 }
 
 // FIXME: see comment for readInput()
-void Input::waitForButtonEvent(uint32 buttonEventMask) {
+void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 
 	if (buttonEventMask == kMouseNone) {
 		_mouseButtons = kMouseNone;	// don't wait on nothing
 		return;
 	}
 
-	do {
-		readInput();
-		g_system->delayMillis(30);
-	} while ((_mouseButtons & buttonEventMask) == 0);
+	const int32 LOOP_RESOLUTION = 30;
+	if (timeout <= 0) {
+		do {
+			readInput();
+			_vm->_system->delayMillis(LOOP_RESOLUTION);
+		} while ((_mouseButtons & buttonEventMask) == 0);
+	} else {
+		do {
+			readInput();
+			_vm->_system->delayMillis(LOOP_RESOLUTION);
+			timeout -= LOOP_RESOLUTION;
+		} while ((timeout > 0) && (_mouseButtons & buttonEventMask) == 0);
+	}
 
 }
 
@@ -121,38 +127,12 @@ void Input::waitUntilLeftClick() {
 	do {
 		readInput();
 		_vm->_gfx->updateScreen();
-		g_system->delayMillis(30);
+		_vm->_system->delayMillis(30);
 	} while (_mouseButtons != kMouseLeftUp);
 
 	return;
 }
 
-void Parallaction::runGame() {
-
-	InputData *data = _input->updateInput();
-	if (data->_event != kEvNone) {
-		processInput(data);
-	}
-
-	runPendingZones();
-
-	if (_engineFlags & kEngineChangeLocation) {
-		changeLocation(_location._name);
-	}
-
-
-	_gfx->beginFrame();
-
-	if (_input->_inputMode == Input::kInputModeGame) {
-		runScripts();
-		walk();
-		drawAnimations();
-	}
-
-	// change this to endFrame?
-	updateView();
-
-}
 
 void Input::updateGameInput() {
 

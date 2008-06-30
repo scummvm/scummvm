@@ -188,6 +188,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 #pragma mark -
 
 GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI(vm), _vm(vm), _screen(screen) {
+	_lastScreenUpdate = 0;
 	_menu = 0;
 	initStaticResource();
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
@@ -337,6 +338,8 @@ void GUI_LoK::setGUILabels() {
 	} else if (_vm->gameFlags().lang == Common::ES_ESP) {
 		offsetOn = offsetMainMenu = offsetOptions = offset = -4;
 		menuLabelGarbageOffset = 72;
+	} else if (_vm->gameFlags().lang == Common::IT_ITA) {
+		offsetOn = offsetMainMenu = offsetOptions = offset = 32;
 	} else if (_vm->gameFlags().lang == Common::DE_DEU) {
 		offset = offsetMainMenu = offsetOn = offsetOptions = 24;
 	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) {
@@ -477,7 +480,6 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 
 void GUI_LoK::getInput() {
 	Common::Event event;
-	static uint32 lastScreenUpdate = 0;
 	uint32 now = _vm->_system->getMillis();
 
 	_mouseWheel = 0;
@@ -494,7 +496,7 @@ void GUI_LoK::getInput() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_vm->_system->updateScreen();
-			lastScreenUpdate = now;
+			_lastScreenUpdate = now;
 			break;
 		case Common::EVENT_WHEELUP:
 			_mouseWheel = -1;
@@ -510,9 +512,9 @@ void GUI_LoK::getInput() {
 		}
 	}
 
-	if (now - lastScreenUpdate > 50) {
+	if (now - _lastScreenUpdate > 50) {
 		_vm->_system->updateScreen();
-		lastScreenUpdate = now;
+		_lastScreenUpdate = now;
 	}
 
 	_vm->_system->delayMillis(3);
@@ -1054,7 +1056,7 @@ void GUI_LoK::fadePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
-	static int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
+	static const int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
 	int index = 0;
 
 	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);

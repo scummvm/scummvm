@@ -30,6 +30,7 @@
 #include "common/stream.h"
 
 #include "gob/video.h"
+#include "gob/variables.h"
 
 namespace Gob {
 
@@ -68,6 +69,11 @@ public:
 	~PlainSave();
 
 	bool save(int16 dataVar, int32 size, int32 offset, const char *name,
+			const Variables *variables);
+	bool load(int16 dataVar, int32 size, int32 offset, const char *name,
+			Variables *variables);
+
+	bool save(int16 dataVar, int32 size, int32 offset, const char *name,
 			const byte *variables, const byte *variableSizes) const;
 	bool load(int16 dataVar, int32 size, int32 offset, const char *name,
 			byte *variables, byte *variableSizes) const;
@@ -79,6 +85,11 @@ public:
 	~StagedSave();
 
 	void addStage(int32 size, bool endianed = true);
+
+	bool save(int16 dataVar, int32 size, int32 offset, const char *name,
+			const Variables *variables);
+	bool load(int16 dataVar, int32 size, int32 offset, const char *name,
+			Variables *variables);
 
 	bool save(int16 dataVar, int32 size, int32 offset, const char *name,
 			const byte *variables, const byte *variableSizes);

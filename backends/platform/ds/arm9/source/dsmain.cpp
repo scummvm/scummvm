@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 
 // - Remove scummconsole.c
 // - Delete files
@@ -55,6 +55,11 @@
 // - Alternative controls?
 
 
+// - Fix 512x256 backbuffer to 320x240 - Done
+// - Fix keyboard appearing on wrong screen - Done
+// - Volume amplify option
+// - Make save/restore game screen use scaler buffer
+
 
 
 //#define USE_LIBCARTRESET
@@ -66,12 +71,11 @@
 #include <stdlib.h>
 #include "dsmain.h"
 #include "string.h"
-#include "system.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"
-#include "gba_nds_fat.h"
-#include "disc_io.h"
-#include "config-manager.h"
+#include "fat/gba_nds_fat.h"
+#include "fat/disc_io.h"
+#include "common/config-manager.h"
 #include "engines/scumm/scumm.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
@@ -84,14 +88,13 @@
 #include "user_debugger.h"
 #endif
 #include "ramsave.h"
-#include "disc_io.h"
 #include "blitters.h"
 #include "cartreset_nolibfat.h"
 #include "keys.h"
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
 #endif
-#include "ds-fs.h"
+#include "backends/fs/ds/ds-fs.h"
 
 namespace DS {
 
@@ -158,7 +161,6 @@ bool bufferFirstHalf;
 bool bufferSecondHalf;
 
 // Saved buffers
-u8* savedBuffer = NULL;
 bool highBuffer;
 bool displayModeIs8Bit = false;
 
@@ -211,36 +213,41 @@ int gameHeight = 200;
 // Scale
 bool twoHundredPercentFixedScale = false;
 bool cpuScalerEnable = false;
-#define NUM_SUPPORTED_GAMES 17
+#define NUM_SUPPORTED_GAMES 20
 
 #ifdef USE_PROFILER
 int hBlankCount = 0;
 #endif
 
+u8* scalerBackBuffer = NULL;
+
 
 gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	// Unknown game - use normal SCUMM controls
-	{"unknown",	CONT_SCUMM_ORIGINAL},
-
+	{"unknown", 	CONT_SCUMM_ORIGINAL},
+	
 	// SCUMM games
 	{"maniac",		CONT_SCUMM_ORIGINAL},
 	{"zak",			CONT_SCUMM_ORIGINAL},
 	{"loom",		CONT_SCUMM_ORIGINAL},
 	{"indy3",		CONT_SCUMM_ORIGINAL},
-	{"atlantis",	CONT_SCUMM_ORIGINAL},
+	{"atlantis",		CONT_SCUMM_ORIGINAL},
 	{"monkey",		CONT_SCUMM_ORIGINAL},
 	{"monkey2",		CONT_SCUMM_ORIGINAL},
-	{"tentacle",	CONT_SCUMM_ORIGINAL},
+	{"tentacle",		CONT_SCUMM_ORIGINAL},
 	{"samnmax",		CONT_SCUMM_SAMNMAX},
-
+	
 	// Non-SCUMM games
 	{"sky",			CONT_SKY},
 	{"simon1",		CONT_SIMON},
 	{"simon2",		CONT_SIMON},
-	{"gob",		CONT_GOBLINS},
+	{"gob",			CONT_GOBLINS},
 	{"queen",		CONT_SCUMM_ORIGINAL},
 	{"cine",		CONT_FUTURE_WARS},
-	{"agi",			CONT_AGI}
+	{"agi",			CONT_AGI},
+	{"elvira2",		CONT_SIMON},
+	{"elvira1",		CONT_SIMON},
+	{"waxworks",		CONT_SIMON},
 };
 
 gameListType* currentGame = NULL;
@@ -277,13 +284,14 @@ void updateStatus();
 void triggerIcon(int imageNum);
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
+void uploadSpriteGfx();
 
 TransferSound soundControl;
 
 
 bool isCpuScalerEnabled()
 {
-	return cpuScalerEnable;
+	return cpuScalerEnable || !displayModeIs8Bit;
 }
 
 
@@ -298,11 +306,11 @@ void setCpuScalerEnable(bool enable) {
 //plays an 8 bit mono sample at 11025Hz
 void playSound(const void* data, u32 length, bool loop, bool adpcm, int rate)
 {
-
+	
 	if (!IPC->soundData) {
 		soundControl.count = 0;
 	}
-
+	
 	soundControl.data[soundControl.count].data = data;
 	soundControl.data[soundControl.count].len = length | (loop? 0x80000000: 0x00000000);
 	soundControl.data[soundControl.count].rate = rate;		// 367 samples per frame
@@ -322,8 +330,14 @@ void stopSound(int channel) {
 
 void updateOAM() {
 	DC_FlushAll();
-    dmaCopy(sprites, OAM_SUB, 128 * sizeof(SpriteEntry));
-    dmaCopy(spritesMain, OAM, 128 * sizeof(SpriteEntry));
+
+	if (gameScreenSwap) {
+		dmaCopy(sprites, OAM, 128 * sizeof(SpriteEntry));
+		dmaCopy(spritesMain, OAM_SUB, 128 * sizeof(SpriteEntry));
+	} else {
+		dmaCopy(sprites, OAM_SUB, 128 * sizeof(SpriteEntry));
+		dmaCopy(spritesMain, OAM, 128 * sizeof(SpriteEntry));
+	}
 }
 
 void setGameSize(int width, int height) {
@@ -344,67 +358,31 @@ void initSprites() {
 	   sprites[i].attribute[0] = ATTR0_DISABLED;
 	   sprites[i].attribute[1] = 0;
 	   sprites[i].attribute[2] = 0;
-	   sprites[i].attribute[3] = 0;
+	   sprites[i].filler = 0;
     }
-
+	
 	for (int i = 0; i < 128; i++) {
 	   spritesMain[i].attribute[0] = ATTR0_DISABLED;
 	   spritesMain[i].attribute[1] = 0;
 	   spritesMain[i].attribute[2] = 0;
-	   spritesMain[i].attribute[3] = 0;
+	   spritesMain[i].filler = 0;
     }
-
+	
 	updateOAM();
 }
 
 
 void saveGameBackBuffer() {
-#ifndef ENABLE_SCUMM
-    if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
-    for (int r = 0; r < gameHeight; r++) {
 
-		u16* dst = (u16 *) (savedBuffer + (r * gameWidth));
-		u16* src = BG_GFX_SUB + (r * 256);
-
-		for (int x = 0; x < gameWidth >> 1; x++)
-		{
-			*dst++ = *src++;
-		}
-	}
-#endif
+	// Sometimes the only copy of the game screen is in video memory.
+	// So, I lock the video memory here, as if I'm going to modify it.  This
+	// forces OSystem_DS to create a system memory copy if one doesn't exist.
+	// This will be automatially resotred by OSystem_DS::updateScreen().
+	
+	OSystem_DS::instance()->lockScreen();
+	OSystem_DS::instance()->unlockScreen();
 }
 
-void restoreGameBackBuffer() {
-#ifndef ENABLE_SCUMM
-	if (savedBuffer) {
-		for (int r = 0; r < gameHeight; r++) {
-
-			u16* dst = get8BitBackBuffer() + (r * 256);
-			u16* dst2 = BG_GFX_SUB + (r * 256);
-			u16* src = ((u16 *) (savedBuffer)) + (r * (gameWidth >> 1));
-
-			for (int x = 0; x < gameWidth >> 1; x++)
-			{
-				*dst++ = *src;
-				*dst2++ = *src++;
-			}
-
-		}
-
-		delete savedBuffer;
-		savedBuffer = NULL;
-	}
-#else
-    memset(get8BitBackBuffer(), 0, 512 * 256);
-    memset(BG_GFX_SUB, 0, 512 * 256);
-	if (Scumm::g_scumm) {
-		Scumm::g_scumm->markRectAsDirty(Scumm::kMainVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
-		Scumm::g_scumm->markRectAsDirty(Scumm::kTextVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
-		Scumm::g_scumm->markRectAsDirty(Scumm::kVerbVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
-	}
-#endif
-
-}
 
 
 void startSound(int freq, int buffer) {
@@ -414,22 +392,22 @@ void startSound(int freq, int buffer) {
 
 	bufferFirstHalf = false;
 	bufferSecondHalf = true;
-
+	
 	int bytes = (2 * (bufferSamples)) + 100;
-
+	
 	soundBuffer = (s16 *) malloc(bytes * 2);
 	if (!soundBuffer)
 		consolePrintf("Sound buffer alloc failed\n");
 
 
 	soundHiPart = true;
-
+	
 	for (int r = 0; r < bytes; r++) {
 		soundBuffer[r] = 0;
 	}
 
 	soundFrequency = freq;
-
+	
 
 	swiWaitForVBlank();
 	swiWaitForVBlank();
@@ -461,14 +439,14 @@ void initGame() {
 	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
 
 	currentGame = &gameList[0];		// Default game
-
+	
 	for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
 		if (!stricmp(gameName, gameList[r].gameId)) {
 			currentGame = &gameList[r];
 //			consolePrintf("Game list num: %d\n", currentGame);
 		}
 	}
-
+		
 	if (firstTime) {
 		firstTime = false;
 
@@ -515,7 +493,7 @@ void displayMode8Bit() {
 	consolePrintf("displayMode8Bit...");
 #endif
 	u16 buffer[32 * 32];
-
+	
 	setKeyboardEnable(false);
 
 	if (!displayModeIs8Bit) {
@@ -524,49 +502,62 @@ void displayMode8Bit() {
 		}
 	}
 
+	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
+	consolePrintSet(0, 23);
+	
+	if (!displayModeIs8Bit) {
+		for (int r = 0; r < 32 * 32; r++) {
+			((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
+		}
+//		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
+	}
+
+	displayModeIs8Bit = true;
+	
 	if (isCpuScalerEnabled())
 	{
-		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
-
+	
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
-
+	
 		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
-
+		vramSetBankD(VRAM_D_SUB_SPRITE);
+		
 		vramSetBankH(VRAM_H_LCD);
-
+	
 		BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = 256;
 	    BG3_XDY = 0;
 	    BG3_YDX = 0;
 	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+
 	}
 	else
 	{
-		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
-
+	
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
-
+	
 		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
-
+		vramSetBankD(VRAM_D_SUB_SPRITE);
+		
 		vramSetBankH(VRAM_H_LCD);
-
+	
 		BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
-
+		
 		BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
 	    BG3_XDY = 0;
 	    BG3_YDX = 0;
 	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
-	}
-
+	}	
+	
 	SUB_BG3_CR = BG_BMP8_512x256;
-
+	
 	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
     SUB_BG3_XDY = 0;
     SUB_BG3_YDX = 0;
@@ -578,35 +569,29 @@ void displayMode8Bit() {
 
 	BG0_CR = BG_MAP_BASE(2) | BG_TILE_BASE(0);
 	BG0_Y0 = 0;
-
-	// Restore palette entry used by text in the front-end
+	
+	// Restore palette entry used by text in the front-end	
 //	PALETTE_SUB[255] = savedPalEntry255;
 
 
-
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
-	consolePrintSet(0, 23);
-
-	if (!displayModeIs8Bit) {
-		for (int r = 0; r < 32 * 32; r++) {
-			((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
-		}
-//		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
-	}
-
+	
+	
 	initGame();
-
-	if (!displayModeIs8Bit) restoreGameBackBuffer();
-	displayModeIs8Bit = true;
+	
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
 
+	if (gameScreenSwap) {
+		POWER_CR |= POWER_SWAP_LCDS;
+	} else {
+		POWER_CR &= ~POWER_SWAP_LCDS;
+	}
 
-	POWER_CR &= ~POWER_SWAP_LCDS;
-
+	uploadSpriteGfx();
+	
 	keyboardEnable = false;
-
+	
 }
 
 void setGameID(int id) {
@@ -619,22 +604,22 @@ void dummyHandler() {
 
 void checkSleepMode() {
 	if (IPC->performArm9SleepMode) {
-
+	
 		consolePrintf("ARM9 Entering sleep mode\n");
-
+		
 		int intSave = REG_IE;
 		irqSet(IRQ_VBLANK, dummyHandler);
 //		int irqHandlerSave = (int) IRQ_HANDLER;
 		REG_IE = IRQ_VBLANK;
 		//IRQ_HANDLER = dummyHandler;
-
+		
 		int powerSave = POWER_CR;
 		POWER_CR &= ~POWER_ALL;
-
+		
 		while (IPC->performArm9SleepMode) {
 			swiWaitForVBlank();
 		}
-
+		
 		POWER_CR = powerSave;
 //		IRQ_HANDLER = (void (*)()) irqHandlerSave;
 		irqSet(IRQ_VBLANK, VBlankHandler);
@@ -671,47 +656,57 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 
 	{
 		int off = 128*64;
-
-
+	
+	
 		memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
-
+		memset(SPRITE_GFX_SUB + off, 0, 32 * 32 * 2);
+	
 		for (uint y=0; y<h; y++) {
 			for (uint x=0; x<w; x++) {
 				int color = icon[y*w+x];
-
+	
 				if (color == keycolor) {
 					SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
+					SPRITE_GFX_SUB[off+(y)*32+x] = 0x0000; // black background
 				} else {
 					SPRITE_GFX[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
+					SPRITE_GFX_SUB[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
 				}
 			}
 		}
-
+	
 	}
 
 	if (currentGame->control != CONT_SCUMM_SAMNMAX)
 		return;
 
 	uint16 border = RGB15(24,24,24) | 0x8000;
-
-
-	int off = 48*64;
+	
+	
+	int off = 176*64;
 	memset(SPRITE_GFX_SUB+off, 0, 64*64*2);
-
+	memset(SPRITE_GFX+off, 0, 64*64*2);
+	
 	int pos = 190 - (w+2);
+	
 
-
-
+	
 	// make border
 	for (uint i=0; i<w+2; i++) {
+		SPRITE_GFX[off+i] = border;
+		SPRITE_GFX[off+(31)*64+i] = border;
+
 		SPRITE_GFX_SUB[off+i] = border;
 		SPRITE_GFX_SUB[off+(31)*64+i] = border;
 	}
 	for (uint i=1; i<31; i++) {
+		SPRITE_GFX[off+(i*64)] = border;
+		SPRITE_GFX[off+(i*64)+(w+1)] = border;
+
 		SPRITE_GFX_SUB[off+(i*64)] = border;
 		SPRITE_GFX_SUB[off+(i*64)+(w+1)] = border;
 	}
-
+	
 	int offset = (32 - h) >> 1;
 
 	for (uint y=0; y<h; y++) {
@@ -719,23 +714,24 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 			int color = icon[y*w+x];
 
 			if (color == keycolor) {
+				SPRITE_GFX[off+(y+1+offset)*64+(x+1)] = 0x8000; // black background
 				SPRITE_GFX_SUB[off+(y+1+offset)*64+(x+1)] = 0x8000; // black background
 			} else {
+				SPRITE_GFX[off+(y+1+offset)*64+(x+1)] = BG_PALETTE[color] | 0x8000;
 				SPRITE_GFX_SUB[off+(y+1+offset)*64+(x+1)] = BG_PALETTE[color] | 0x8000;
 			}
 		}
 	}
-
-
-	if ((cursorEnable))
-	{
+	
+	
+	if ((cursorEnable)) {
 		sprites[1].attribute[0] = ATTR0_BMP | 150;
 		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
-		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 176;
 	} else {
 		sprites[1].attribute[0] = ATTR0_DISABLED | 150;
 		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
-		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 176;
 	}
 }
 
@@ -751,6 +747,8 @@ void displayMode16Bit() {
 
 
 	if (displayModeIs8Bit) {
+//		static int test = 0;
+//		consolePrintf("saving buffer... %d\n", test++);
 		saveGameBackBuffer();
 		for (int r = 0; r < 32 * 32; r++) {
 			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
@@ -758,7 +756,7 @@ void displayMode16Bit() {
 	}
 
 
-	videoSetMode(MODE_5_2D | /*DISPLAY_BG0_ACTIVE |*/ DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	videoSetMode(MODE_5_2D | /*DISPLAY_BG0_ACTIVE |*/ DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE |/* DISPLAY_BG1_ACTIVE |*/ DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
 	vramSetBankA(VRAM_A_MAIN_BG);
@@ -769,14 +767,10 @@ void displayMode16Bit() {
 
 	BG3_CR = BG_BMP16_512x256;
 	highBuffer = false;
-
-	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
-    BG3_XDY = 0;
-    BG3_YDX = 0;
-    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+	
 
 	memset(BG_GFX, 0, 512 * 256 * 2);
-
+	
 	savedPalEntry255 = PALETTE_SUB[255];
 	PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
@@ -795,14 +789,20 @@ void displayMode16Bit() {
 
 	consolePrintSet(0, 23);
 	consolePrintf("\n");
-
+	
 	// Show keyboard
 	SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(12);
 	//drawKeyboard(1, 12);
-
+	
 	POWER_CR &= ~POWER_SWAP_LCDS;
 
 	displayModeIs8Bit = false;
+
+	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
+    BG3_XDY = 0;
+    BG3_YDX = 0;
+    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
@@ -816,13 +816,13 @@ void displayMode16BitFlipBuffer() {
 	#endif
 	if (!displayModeIs8Bit) {
 		u16* back = get16BitBackBuffer();
-
+	
 //		highBuffer = !highBuffer;
 //		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer? 1: 0);
-
+		
 		if (isCpuScalerEnabled())
 		{
-            Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
+			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
 		}
 		else
 		{
@@ -841,12 +841,14 @@ void displayMode16BitFlipBuffer() {
         #endif
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
-		Rescale_320x256xPAL8_To_256x256x1555( base,
-											  back,
-                                              256,
-											  512,
-                                              BG_PALETTE );
-
+		Rescale_320x256xPAL8_To_256x256x1555( 
+			base,
+			back,
+			256,
+			get8BitBackBufferStride(),
+			BG_PALETTE, 
+			getGameHeight() );
+        
         #ifdef SCALER_PROFILE
         // 10 pixels : 1ms
         u16 t1 = TIMER1_DATA;
@@ -875,9 +877,24 @@ u16* get16BitBackBuffer() {
 	return BG_GFX + 0x20000;
 }
 
+s32 get8BitBackBufferStride() {
+	// When the CPU scaler is enabled, the back buffer is in system RAM and is 320 pixels wide
+	// When the CPU scaler is disabled, the back buffer is in video memory and therefore must have a 512 pixel stride
+
+	if (isCpuScalerEnabled()){
+		return 320;
+	} else {
+		return 512;
+	}
+}
+
+u16* getScalerBuffer() {
+	return (u16 *) scalerBackBuffer;
+}
+
 u16* get8BitBackBuffer() {
 	if (isCpuScalerEnabled())
-		return BG_GFX + 0x60000;
+		return (u16 *) scalerBackBuffer;
 	else
 		return BG_GFX + 0x10000;		// 16bit qty!
 }
@@ -899,10 +916,10 @@ void doSoundCallback() {
 
 	if (soundCallback) {
 		lastCallbackFrame = frameCount;
-
+		
 		for (int r = IPC->playingSection; r < IPC->playingSection + 4; r++) {
 			int chunk = r & 3;
-
+			
 			if (IPC->fillNeeded[chunk]) {
 				IPC->fillNeeded[chunk] = false;
 				DC_FlushAll();
@@ -910,9 +927,9 @@ void doSoundCallback() {
 				IPC->fillNeeded[chunk] = false;
 				DC_FlushAll();
 			}
-
+		
 		}
-
+		
 	}
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
@@ -924,7 +941,7 @@ void doTimerCallback() {
 		if (callbackTimer <= 0) {
 			callbackTimer += callbackInterval;
 			callback(callbackInterval);
-		}
+		}	
 	}
 }
 
@@ -933,15 +950,15 @@ void soundUpdate() {
 //		playSound(soundBuffer, (bufferSamples * 2), true);
 	}
 //	consolePrintf("%x\n", IPC->test);
-
-
+	
+	
 	if (bufferFrame == 0) {
 //		bufferFirstHalf = true;
-	}
+	}	
 	if (bufferFrame == bufferSize >> 1) {
 	//bufferSecondHalf = true;
-	}
-
+	}	
+	
 	bufferFrame++;
 	if (bufferFrame == bufferSize) {
 		bufferFrame = 0;
@@ -954,20 +971,20 @@ void memoryReport() {
 	do {
 		p = (int *) malloc(r * 8192);
 		free(p);
-		r++;
+		r++;		
 	} while ((p) && (r < 512));
-
+	
 	int t = -1;
 	void* block[1024];
 	do {
 		t++;
 		block[t] = (int *) malloc(4096);
-	} while ((t < 1024) && (block[t]));
-
+	} while ((t < 1024) && (block[t]));		
+	
 	for (int q = 0; q < t; q++) {
 		free(block[q]);
 	}
-
+	
 	consolePrintf("Free: %dK, Largest: %dK\n", t * 4, r * 8);
 }
 
@@ -978,7 +995,7 @@ void addIndyFightingKeys() {
 
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.flags = 0;
-
+	
 //	consolePrintf("Fight keys\n");
 
 	if ((getKeysDown() & KEY_L)) {
@@ -1008,16 +1025,16 @@ void addIndyFightingKeys() {
 		event.kbd.keycode = Common::KEYCODE_6;
 		event.kbd.ascii = '6';
 		system->addEvent(event);
-	}
+	}	
 	if ((getKeysChanged() & KEY_DOWN)) {
 		event.type = getKeyEvent(KEY_DOWN);
 		event.kbd.keycode = Common::KEYCODE_2;
 		event.kbd.ascii = '2';
 		system->addEvent(event);
 	}
-
+	
 	if (indyFightRight) {
-
+	
 		if ((getKeysChanged() & KEY_X)) {
 			event.type = getKeyEvent(KEY_X);
 			event.kbd.keycode = Common::KEYCODE_9;
@@ -1035,7 +1052,7 @@ void addIndyFightingKeys() {
 			event.kbd.keycode = Common::KEYCODE_3;
 			event.kbd.ascii = '3';
 			system->addEvent(event);
-		}
+		}	
 
 	} else {
 
@@ -1056,18 +1073,18 @@ void addIndyFightingKeys() {
 			event.kbd.keycode = Common::KEYCODE_1;
 			event.kbd.ascii = '1';
 			system->addEvent(event);
-		}
-
+		}	
+	
 	}
-
-
+	
+	
 	if ((getKeysChanged() & KEY_Y)) {
 		event.type = getKeyEvent(KEY_Y);
 		event.kbd.keycode = Common::KEYCODE_5;
 		event.kbd.ascii = '5';
 		system->addEvent(event);
 	}
-}
+} 			
 
 
 void setKeyboardEnable(bool en) {
@@ -1079,8 +1096,8 @@ void setKeyboardEnable(bool en) {
 
 
 		DS::drawKeyboard(1, 15, backupBank);
-
-
+		
+		
 		SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(15);
 
 		if (displayModeIs8Bit) {
@@ -1090,7 +1107,11 @@ void setKeyboardEnable(bool en) {
 			SUB_DISPLAY_CR |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
 			SUB_DISPLAY_CR &= ~DISPLAY_BG0_ACTIVE;	// Turn off console layer
 		}
-		lcdSwap();
+
+		// Ensure the keyboard is on the lower screen
+		POWER_CR |= POWER_SWAP_LCDS;
+
+
 	} else {
 
 
@@ -1098,26 +1119,38 @@ void setKeyboardEnable(bool en) {
 		for (int r = 0; r < 256; r++) {
 			BG_PALETTE_SUB[r] = BG_PALETTE[r];
 		}
-
-
+		
+		
 		//restoreVRAM(1, 12, backupBank);
-
+		
 		if (displayModeIs8Bit) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
 			u16* buffer = get8BitBackBuffer();
+			s32 stride = get8BitBackBufferStride();
 
+			for (int y = 0; y < gameHeight; y++) {
+				for (int x = 0; x < gameWidth; x++) {
+					BG_GFX_SUB[y * 256 + x] = buffer[(y * (stride / 2)) + x];
+				}
+			}
+/*            
             for (int r = 0; r < (512 * 256) >> 1; r++)
                 BG_GFX_SUB[r] = buffer[r];
-
+  */              
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG0_ACTIVE;	// Turn on console layer
 		}
-
-		lcdSwap();
+		
+		// Restore the screens so they're the right way round
+		if (gameScreenSwap) {
+			POWER_CR |= POWER_SWAP_LCDS;
+		} else {
+			POWER_CR &= ~POWER_SWAP_LCDS;
+		}
 	}
 }
 
@@ -1136,7 +1169,7 @@ void addEventsToQueue() {
 	OSystem_DS* system = OSystem_DS::instance();
 	Common::Event event;
 
-
+	
 #ifdef USE_PROFILER
 	if (keysDown() & KEY_R) {
 		cygprofile_begin();
@@ -1148,7 +1181,7 @@ void addEventsToQueue() {
 	}
 #endif
 
-
+	
 	if (system->isEventQueueEmpty()) {
 
 /*
@@ -1157,7 +1190,7 @@ void addEventsToQueue() {
 			consolePrintf("Tweak: %d\n", tweak);
 			IPC->tweakChanged = true;
 		}
-
+		
 
 		if (getKeysDown() & KEY_R) {
 			tweak++;
@@ -1173,14 +1206,14 @@ void addEventsToQueue() {
 
 			if (!indyFightState) {
 
-				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_B)) {
+				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_B)) {	
 					if (currentGame->control == CONT_AGI) {
 						event.kbd.keycode = Common::KEYCODE_RETURN;
 						event.kbd.ascii = 13;
 						event.kbd.flags = 0;
 					} else {
-						event.kbd.keycode = Common::KEYCODE_ESCAPE;
-						event.kbd.ascii = 27;
+						event.kbd.keycode = Common::KEYCODE_ESCAPE;		
+						event.kbd.ascii = 27;		
 						event.kbd.flags = 0;
 					}
 
@@ -1190,11 +1223,11 @@ void addEventsToQueue() {
 					event.type = Common::EVENT_KEYUP;
 					system->addEvent(event);
 				}
-
+		
 			}
-
-
-
+			
+		
+			
 			if ((!getIndyFightState()) && (getKeysDown() & KEY_Y)) {
 				consoleEnable = !consoleEnable;
 				if (displayModeIs8Bit) {
@@ -1203,7 +1236,7 @@ void addEventsToQueue() {
 					displayMode16Bit();
 				}
 			}
-
+	
 			if ((getKeyboardEnable())) {
 				event.kbd.flags = 0;
 
@@ -1211,30 +1244,30 @@ void addEventsToQueue() {
 				bool release = getKeysReleased() & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
 				bool shoulders = getKeysHeld() & (KEY_L | KEY_R);
 
-				if ( (down && (!shoulders)) || release)
+				if ( (down && (!shoulders)) || release) 
 				{
-
+	
 					if (getKeysChanged() & KEY_LEFT) {
 						event.kbd.keycode = Common::KEYCODE_LEFT;
 						event.kbd.ascii = 0;
 						event.type = getKeyEvent(KEY_LEFT);
 						system->addEvent(event);
 					}
-
+	
 					if (getKeysChanged() & KEY_RIGHT) {
 						event.kbd.keycode = Common::KEYCODE_RIGHT;
 						event.kbd.ascii = 0;
 						event.type = getKeyEvent(KEY_RIGHT);
 						system->addEvent(event);
 					}
-
+	
 					if (getKeysChanged() & KEY_UP) {
 						event.kbd.keycode = Common::KEYCODE_UP;
 						event.kbd.ascii = 0;
 						event.type = getKeyEvent(KEY_UP);
 						system->addEvent(event);
 					}
-
+	
 					if (getKeysChanged() & KEY_DOWN) {
 						event.kbd.keycode = Common::KEYCODE_DOWN;
 						event.kbd.ascii = 0;
@@ -1242,15 +1275,22 @@ void addEventsToQueue() {
 						system->addEvent(event);
 					}
 				}
-
+					
 			}
-
+	
 			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState()) && (!getKeyboardEnable())) {
 
 				if ((getKeysDown() & KEY_A) && (!indyFightState)) {
 					gameScreenSwap = !gameScreenSwap;
-				}
 
+					if (gameScreenSwap) {
+						POWER_CR |= POWER_SWAP_LCDS;
+					} else {
+						POWER_CR &= ~POWER_SWAP_LCDS;
+					}
+
+				}
+	
 				if (!getPenHeld() || (mouseMode != MOUSE_HOVER)) {
 					if (getKeysDown() & KEY_LEFT) {
 						mouseMode = MOUSE_LEFT;
@@ -1264,7 +1304,7 @@ void addEventsToQueue() {
 						system->addEvent(event);
 						rightButtonDown = false;
 					}
-
+						
 
 					if (getKeysDown() & KEY_RIGHT) {
 						if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS) && (currentGame->control != CONT_GOBLINS)) {
@@ -1281,13 +1321,13 @@ void addEventsToQueue() {
 							} else {
 								event.mouse = Common::Point(getPenX(), getPenY());
 							}
-
+							
 							rightButtonDown = true;
 
-
+		
 							event.type = Common::EVENT_RBUTTONDOWN;
 							system->addEvent(event);
-
+		
 							//event.type = Common::EVENT_RBUTTONUP;
 							//system->addEvent(event);
 						}
@@ -1299,9 +1339,9 @@ void addEventsToQueue() {
 						mouseMode = MOUSE_HOVER;
 					}
 				}
-
-
-
+	
+					
+				
 			}
 
 			if ((getKeysDown() & KEY_SELECT)) {
@@ -1310,18 +1350,18 @@ void addEventsToQueue() {
 				showOptionsDialog();
 			}
 
-
+			
 		}
-
+	
 		if (!getIndyFightState() && !((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_X)) {
 			setKeyboardEnable(!keyboardEnable);
 		}
-
-		updateStatus();
-
+		
+		updateStatus();			
+		
 		Common::Event event;
 
-
+	
 		if (!keyboardEnable) {
 
 			if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
@@ -1332,12 +1372,12 @@ void addEventsToQueue() {
 			}
 
 			if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
-					if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
+					if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
 						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: Common::EVENT_RBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
-
+					
 					if (getPenReleased()) {
 						event.type = mouseMode == MOUSE_LEFT? Common::EVENT_LBUTTONUP: Common::EVENT_RBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
@@ -1345,36 +1385,37 @@ void addEventsToQueue() {
 					}
 			} else {
 				// In hover mode, D-pad left and right click the mouse when the pen is on the screen
-
+	
 				if (getPenHeld()) {
 					if (getKeysDown() & KEY_LEFT) {
 						event.type = Common::EVENT_LBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
-				/*	if (getKeysReleased() & KEY_LEFT) {
+					if (getKeysReleased() & KEY_LEFT) {
 						event.type = Common::EVENT_LBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
-					}*/
+					}
+
 
 					if (getKeysDown() & KEY_RIGHT) {
 						event.type = Common::EVENT_RBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
-					/*if (getKeysReleased() & KEY_RIGHT) {
+					if (getKeysReleased() & KEY_RIGHT) {
 						event.type = Common::EVENT_RBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
-					}*/
+					}
 				}
 			}
-
+			
 			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState))  && (displayModeIs8Bit)) {
 				// Controls specific to the control method
-
-
+			
+			
 				if (currentGame->control == CONT_SKY) {
 					// Extra controls for Beneath a Steel Sky
 					if ((getKeysDown() & KEY_DOWN)) {
@@ -1387,7 +1428,7 @@ void addEventsToQueue() {
 					// Extra controls for Simon the Sorcerer
 					if ((getKeysDown() & KEY_DOWN)) {
 						Common::Event event;
-
+					
 						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = Common::KEYCODE_F10;		// F10 or # - show hotspots
 						event.kbd.ascii = Common::ASCII_F10;
@@ -1400,13 +1441,13 @@ void addEventsToQueue() {
 					}
 				}
 
-
-
+	
+	
 				if (currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
 					if ((getKeysDown() & KEY_DOWN)) {
 						Common::Event event;
-
+					
 						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = Common::KEYCODE_PERIOD;		// Full stop - skips current dialogue line
 						event.kbd.ascii = '.';
@@ -1416,19 +1457,19 @@ void addEventsToQueue() {
 						event.type = Common::EVENT_KEYUP;
 						system->addEvent(event);
 					}
-
+					
 					if (indyFightState) {
 						addIndyFightingKeys();
 					}
-
+					
 				}
-
+				
 			}
 		}
-
+		
 		if (!displayModeIs8Bit) {
 			// Front end controls
-
+			
 			if (leftHandedSwap(getKeysChanged()) & KEY_UP) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_UP));
 				event.kbd.keycode = Common::KEYCODE_UP;
@@ -1455,10 +1496,10 @@ void addEventsToQueue() {
 				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 			}
-
+		
 		}
 
-
+		
 		if ((getKeysChanged() & KEY_START)) {
 			event.type = getKeyEvent(KEY_START);
 			if (currentGame->control == CONT_FUTURE_WARS) {
@@ -1477,38 +1518,37 @@ void addEventsToQueue() {
 //				consolePrintf("!!!!!F5!!!!!");
 			}
 			event.kbd.flags = 0;
-			consolePrintf("!!!!!F5!!!!!");
 			system->addEvent(event);
 		}
 
-
+		
 		if (keyboardEnable) {
 			DS::addKeyboardEvents();
 		}
-
+		
 		consumeKeys();
-
+		
 		consumePenEvents();
 
 	}
 }
 
 
-
+		
 void triggerIcon(int imageNum) {
 	triggeredIcon = imageNum;
-	triggeredIconTimeout = 120;
+	triggeredIconTimeout = 120;	
 }
-
+	
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
-	sprites[num].attribute[0] = ATTR0_BMP | (enable? y: 192) | (!enable? ATTR0_DISABLED: 0);
+	sprites[num].attribute[0] = ATTR0_BMP | (enable? y: 192) | (!enable? ATTR0_DISABLED: 0); 
 	sprites[num].attribute[1] = ATTR1_SIZE_32 | x | flags;
 	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
 
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable) {
-	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0xFF) | (!enable? ATTR0_DISABLED: 0);
+	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0xFF) | (!enable? ATTR0_DISABLED: 0); 
 	spritesMain[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
 	spritesMain[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
@@ -1536,16 +1576,16 @@ void updateStatus() {
 				break;
 			}
 		}
-
+	
 		setIcon(0, 208, 150, offs, 0, true);
-
+	
 		if (indyFightState) {
 			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
 //			consolePrintf("%d\n", indyFightRight);
 		} else {
 //			setIcon(1, 0, 0, 0, 0, false);
 		}
-
+		
 		if (triggeredIconTimeout > 0) {
 			triggeredIconTimeout--;
 			setIcon(4, 16, 150, triggeredIcon, 0, true);
@@ -1570,7 +1610,7 @@ void updateStatus() {
 //		spritesMain[0].attribute[0] = ATTR0_DISABLED;
 //		spritesMain[0].attribute[1] = 0;
 //		spritesMain[0].attribute[2] = 0;
-//		spritesMain[0].attribute[3] = 0;
+//		spritesMain[0].filler = 0;
 		setIconMain(0, 0, 0, 0, 0, false);
 	}
 
@@ -1584,30 +1624,32 @@ void soundBufferEmptyHandler() {
 	} else {
 //		bufferFirstHalf = true;
 	}
-
+	
 	soundHiPart = !soundHiPart;
 }
 
 void setMainScreenScroll(int x, int y) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		SUB_BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
 		SUB_BG3_CY = y;
-	} else {
+	} else */{
 		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
 		BG3_CY = y;
-
-		touchX = x >> 8;
-		touchY = y >> 8;
+		
+		if (!gameScreenSwap) {
+			touchX = x >> 8;
+			touchY = y >> 8;
+		}
 	}
 }
 
 void setMainScreenScale(int x, int y) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		SUB_BG3_XDX = x;
 		SUB_BG3_XDY = 0;
 		SUB_BG3_YDX = 0;
 		SUB_BG3_YDY = y;
-	} else {
+	} else*/ {
 		if (isCpuScalerEnabled() && (x==320))
 		{
 			BG3_XDX = 256;
@@ -1616,41 +1658,54 @@ void setMainScreenScale(int x, int y) {
 			BG3_YDY = y;
 		}
 		else
-		{
+		{	
 			BG3_XDX = x;
 			BG3_XDY = 0;
 			BG3_YDX = 0;
 			BG3_YDY = y;
 		}
-
-		touchScX = x;
-		touchScY = y;
+		
+		if (!gameScreenSwap) {		
+			touchScX = x;
+			touchScY = y;
+		}
 	}
 }
 
 void setZoomedScreenScroll(int x, int y, bool shake) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		BG3_CX = x + ((shake && ((frameCount & 1) == 0))? 64: 0);
 		BG3_CY = y;
-
+		
 		touchX = x >> 8;
 		touchY = y >> 8;
-	} else {
+	} else */{
+
+		if (gameScreenSwap) {
+			touchX = x >> 8;
+			touchY = y >> 8;
+		}
+
+
 		SUB_BG3_CX = x + ((shake && (frameCount & 1) == 0)? 64: 0);
 		SUB_BG3_CY = y;
 	}
 }
 
 void setZoomedScreenScale(int x, int y) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		BG3_XDX = x;
 		BG3_XDY = 0;
 		BG3_YDX = 0;
 		BG3_YDY = y;
 
-		touchScX = x;
-		touchScY = y;
-	} else {
+	} else */{
+
+		if (gameScreenSwap) {
+			touchScX = x;
+			touchScY = y;
+		}
+
 		SUB_BG3_XDX = x;
 		SUB_BG3_XDY = 0;
 		SUB_BG3_YDX = 0;
@@ -1684,7 +1739,7 @@ void VBlankHandler(void) {
 	soundUpdate();
 
 
-
+	
 
 	if ((!gameScreenSwap) && (!(getKeysHeld() & KEY_L) && !(getKeysHeld() & KEY_R))) {
 		if (currentGame) {
@@ -1699,14 +1754,14 @@ void VBlankHandler(void) {
 			}
 		}
 	}
-
+	
 
 	penUpdate();
 	keysUpdate();
 
 
 	frameCount++;
-
+	
 	if ((cursorEnable) && (mouseCursorVisible))
 	{
 		if (!keyboardEnable) {
@@ -1725,31 +1780,31 @@ void VBlankHandler(void) {
 	if (callback) {
 		callbackTimer -= FRAME_TIME;
 	}
-
+	
 	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
-
+	
 		if ((!dragging) && (getPenHeld()) && (penDownFrames > 5)) {
 			dragging = true;
 			dragStartX = penX;
 			dragStartY = penY;
-
+			
 			if (gameScreenSwap) {
 				dragScX = subScTargetX;
 				dragScY = subScTargetY;
 			} else {
 				dragScX = scX;
-				dragScY = scY;
-			}
-
-
+				dragScY = scY;				
+			}	
+			
+			
 		}
-
+		
 		if ((dragging) && (!getPenHeld())) {
 			dragging = false;
 		}
-
+		
 		if (dragging) {
-
+		
 			if (gameScreenSwap) {
 				subScTargetX = dragScX + ((dragStartX - penX) << 8);
 				subScTargetY = dragScY + ((dragStartY - penY) << 8);
@@ -1757,18 +1812,18 @@ void VBlankHandler(void) {
 				scX = dragScX + ((dragStartX - penX));
 				scY = dragScY + ((dragStartY - penY));
 			}
-
+			
 //			consolePrintf("X:%d Y:%d\n", dragStartX - penX, dragStartY - penY);
 		}
-	}
-
-
+	}	
+	
+	
 /*	if ((frameCount & 1) == 0) {
 		SUB_BG3_CX = subScX;
 	} else {
 		SUB_BG3_CX = subScX + 64;
 	}
-
+	
 	SUB_BG3_CY = subScY + (shakePos << 8);*/
 
 	/*SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
@@ -1777,40 +1832,40 @@ void VBlankHandler(void) {
     SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
 
 	static int ratio = ( 320 << 8) / SCUMM_GAME_WIDTH;
-
+	
 	bool zooming = false;
-
+	
 	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
 		if ((getKeysHeld() & KEY_A) && (subScreenScale < ratio)) {
 			subScreenScale += 1;
 			zooming = true;
 		}
-
+		
 		if ((getKeysHeld() & KEY_B) && (subScreenScale > 128)) {
 			subScreenScale -=1;
 			zooming = true;
 		}
 	}
 
-
+	
 	int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
 	int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
 
-
+	
 	if (twoHundredPercentFixedScale) {
 		subScreenWidth = 256 >> 1;
 		subScreenHeight = 192 >> 1;
 	} else {
 		subScreenWidth = (((SCUMM_GAME_HEIGHT * 256) / 192) * subScreenScale) >> 8;
 		subScreenHeight = SCUMM_GAME_HEIGHT * subScreenScale >> 8;
-
+		
 		if ( ((subScreenWidth) > 256 - 8) && ((subScreenWidth) < 256 + 8) ) {
 			subScreenWidth = 256;
 			subScreenHeight = 192;
 			if (zooming) {
 				subScX = subScTargetX;
 				subScY = subScTargetY;
-				triggerIcon(5);
+			 	triggerIcon(5);
 			}
 		} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
 			subScreenWidth = 128;
@@ -1832,13 +1887,13 @@ void VBlankHandler(void) {
 			//triggerIcon(-1);
 		}
 	}
-
+	
 
 	subScTargetX = xCenter - ((subScreenWidth >> 1) << 8);
 	subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
+	
 
-
-
+	
 
 	if (subScTargetX < 0) subScTargetX = 0;
 	if (subScTargetX > (gameWidth - subScreenWidth) << 8) subScTargetX = (gameWidth - subScreenWidth) << 8;
@@ -1850,30 +1905,30 @@ void VBlankHandler(void) {
 
 	subScX += (subScTargetX - subScX) >> 2;
 	subScY += (subScTargetY - subScY) >> 2;
-
+	
 	if (displayModeIs8Bit) {
-
+	
 		if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
-
+			
 			int offsX = 0, offsY = 0;
 
 
 			if (getKeysHeld() & KEY_LEFT) {
 				offsX -= 1;
 			}
-
+			
 			if (getKeysHeld() & KEY_RIGHT) {
 				offsX += 1;
 			}
-
+	
 			if (getKeysHeld() & KEY_UP) {
 				offsY -= 1;
 			}
-
+	
 			if (getKeysHeld() & KEY_DOWN) {
 				offsY += 1;
 			}
-
+			
 			if (((gameScreenSwap) && (getKeysHeld() & KEY_L)) || ((!gameScreenSwap) && (getKeysHeld() & KEY_R))) {
 				subScTargetX += offsX << 8;
 				subScTargetY += offsY << 8;
@@ -1884,32 +1939,32 @@ void VBlankHandler(void) {
 		}
 
 		if (!scaledMode) {
-
+			
 			if (scX + 256 > gameWidth - 1) {
 				scX = gameWidth - 1 - 256;
 			}
-
+	
 			if (scX < 0) {
 				scX = 0;
 			}
-
+	
 			if (scY + 192 > gameHeight - 1) {
 				scY = gameHeight - 1 - 192;
 			}
-
+	
 			if (scY < 0) {
 				scY = 0;
 			}
-
+			
 			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
 			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
-
-
+	
+		
 			setMainScreenScroll(scX << 8, (scY << 8) + (shakePos << 8));
 			setMainScreenScale(256, 256);		// 1:1 scale
-
+	
 		} else {
-
+		
 			if (scY > gameHeight - 192 - 1) {
 				scY = gameHeight - 192 - 1;
 			}
@@ -1917,13 +1972,13 @@ void VBlankHandler(void) {
 			if (scY < 0) {
 				scY = 0;
 			}
-
+		
 			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
 			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
-
+	
 			setMainScreenScroll(64, (scY << 8) + (shakePos << 8));
 			setMainScreenScale(320, 256);		// 1:1 scale
-
+			
 		}
 	} else {
 		setZoomedScreenScroll(0, 0, true);
@@ -1932,12 +1987,12 @@ void VBlankHandler(void) {
 		setMainScreenScroll(0, 0);
 		setMainScreenScale(320, 256);		// 1:1 scale
 	}
-
+	
 	// Enable on screen keyboard when pen taps icon
 	if ((keyboardIcon) && (penX < 32) && (penY > 160) && (penHeld)) {
 		setKeyboardEnable(true);
 	}
-
+	
 	if (keyboardEnable) {
 		if (DS::getKeyboardClosed()) {
 			setKeyboardEnable(false);
@@ -1987,7 +2042,7 @@ void setTopScreenTarget(int x, int y) {
 
 	if (subScTargetY < 0) subScTargetY = 0;
 	if (subScTargetY > gameHeight - subScreenHeight) subScTargetY = gameHeight - subScreenHeight;
-
+	
 	subScTargetX <<=8;
 	subScTargetY <<=8;
 }
@@ -2000,6 +2055,19 @@ void hBlankHandler() {
 }
 #endif
 
+void uploadSpriteGfx() {
+	vramSetBankD(VRAM_D_SUB_SPRITE); 
+	vramSetBankE(VRAM_E_MAIN_SPRITE); 
+
+	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
+	u8* srcTex = (u8 *) icons_raw;
+	for (int r = 32 * 256 ; r >= 0; r--) {
+		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
+		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
+	}
+	
+}
+
 void initHardware() {
 	// Guard band
 //((int *) (0x023FFF00)) = 0xBEEFCAFE;
@@ -2008,12 +2076,12 @@ void initHardware() {
 	penInit();
 
 	powerON(POWER_ALL);
-/*	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankB(VRAM_B_MAIN_BG);
+/*	vramSetBankA(VRAM_A_MAIN_BG); 
+	vramSetBankB(VRAM_B_MAIN_BG); 
 	vramSetBankC(VRAM_C_SUB_BG); */
-	vramSetBankI(VRAM_I_SUB_SPRITE);
-	vramSetBankE(VRAM_E_MAIN_SPRITE);
-
+	vramSetBankD(VRAM_D_SUB_SPRITE); 
+	vramSetBankE(VRAM_E_MAIN_SPRITE); 
+	
 	currentTimeMillis = 0;
 
 
@@ -2041,8 +2109,8 @@ void initHardware() {
 	// Allocate save buffer for game screen
 //	savedBuffer = new u8[320 * 200];
 	displayMode16Bit();
-
-	memset(BG_GFX, 0, 512 * 256 * 2);
+	
+	memset(BG_GFX, 0, 512 * 256 * 2);	
 	scaledMode = true;
 	scX = 0;
 	scY = 0;
@@ -2050,33 +2118,33 @@ void initHardware() {
 	subScY = 0;
 	subScTargetX = 0;
 	subScTargetY = 0;
-
+	
 	//lcdSwap();
 	POWER_CR &= ~POWER_SWAP_LCDS;
-
+	
 	frameCount = 0;
 	callback = NULL;
-
-//	vramSetBankH(VRAM_H_SUB_BG);
-
+	
+//	vramSetBankH(VRAM_H_SUB_BG); 
+	
 
 //	// Do text stuff
 	//BG0_CR = BG_MAP_BASE(0) | BG_TILE_BASE(1);
 //	BG0_Y0 = 48;
-
+	
 	PALETTE[255] = RGB15(31,31,31);//by default font will be rendered with color 255
-
+	
 	//consoleInit() is a lot more flexible but this gets you up and running quick
 //	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(0), (u16*)CHAR_BASE_BLOCK(1), 16);
 	//consolePrintSet(0, 6);
-
+	
 	//irqs are nice
 	irqInit();
 //	irqInitHandler();
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqSet(IRQ_TIMER0, timerTickHandler);
 	irqSet(IRQ_TIMER2, soundBufferEmptyHandler);
-
+	
 	irqEnable(IRQ_VBLANK);
 	irqEnable(IRQ_TIMER0);
 	irqEnable(IRQ_TIMER2);
@@ -2085,15 +2153,15 @@ void initHardware() {
 	irqSet(IRQ_HBLANK, hBlankHandler);
 	irqEnable(IRQ_HBLANK);
 #endif
-
-
+	
+	
 	// Set up a millisecond timer
 	#ifdef HEAVY_LOGGING
 	consolePrintf("Setting up timer...");
 	#endif
 	TIMER0_CR = 0;
 	TIMER0_DATA = (u32) TIMER_FREQ(1000);
-	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;
+	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;	
 	REG_IME = 1;
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
@@ -2102,28 +2170,25 @@ void initHardware() {
 	PALETTE[255] = RGB15(0,0,31);
 
 	initSprites();
-
+	
 //	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
-	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
-	u8* srcTex = (u8 *) icons_raw;
-	for (int r = 32 * 256 ; r >= 0; r--) {
-		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
-		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
-	}
-
-
-
+	// If the software scaler's back buffer has not been allocated, do it now
+	scalerBackBuffer = (u8 *) malloc(320 * 256);
 
 
 	WAIT_CR &= ~(0x0080);
 //	REG_WRAM_CNT = 0;
+
+	uploadSpriteGfx();
 
 	// This is a bodge to get around the fact that the cursor is turned on before it's image is set
 	// during startup in Sam & Max.  This bodge moves the cursor offscreen so it is not seen.
 	sprites[1].attribute[1] = ATTR1_SIZE_64 | 192;
 
 }
+
+
 
 
 void setKeyboardIcon(bool enable) {
@@ -2199,27 +2264,27 @@ void penUpdate() {
 		penDownLastFrame = false;
 		penDownFrames = 0;
 	}
-
+	
 }
 
 int leftHandedSwap(int keys) {
 	// Start and select are unchanged
 	if (leftHandedMode) {
 		int result = keys & (~(KEY_R | KEY_L | KEY_Y | KEY_A | KEY_B | KEY_X | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN));
-
+		
 		if (keys & KEY_L) result |= KEY_R;
 		if (keys & KEY_R) result |= KEY_L;
-
+	
 		if (keys & KEY_LEFT) result |= KEY_Y;
 		if (keys & KEY_RIGHT) result |= KEY_A;
 		if (keys & KEY_DOWN) result |= KEY_B;
 		if (keys & KEY_UP) result |= KEY_X;
-
+	
 		if (keys & KEY_Y) result |= KEY_LEFT;
 		if (keys & KEY_A) result |= KEY_RIGHT;
 		if (keys & KEY_B) result |= KEY_DOWN;
 		if (keys & KEY_X) result |= KEY_UP;
-
+	
 		return result;
 	} else {
 		return keys;
@@ -2310,28 +2375,28 @@ int getPenY() {
 
 GLvector getPenPos() {
 	GLvector v;
-
+	
 	v.x = (penX * inttof32(1)) / SCREEN_WIDTH;
 	v.y = (penY * inttof32(1)) / SCREEN_HEIGHT;
-
+	
 	return v;
 }
 
 void formatSramOption() {
 	consolePrintf("The following files are present in save RAM:\n");
 	DSSaveFileManager::instance()->listFiles();
-
+	
 	consolePrintf("\nAre you sure you want to\n");
 	consolePrintf("DELETE all files?\n");
 	consolePrintf("A = Yes, X = No\n");
-
+	
 	while (true) {
 		if (keysHeld() & KEY_A) {
 			DSSaveFileManager::instance()->formatSram();
 			consolePrintf("SRAM cleared!\n");
 			return;
 		}
-
+	
 		if (keysHeld() & KEY_X) {
 			consolePrintf("Whew, that was close!\n");
 			return;
@@ -2366,7 +2431,11 @@ void* fastRamAlloc(int size) {
 //	return malloc(size);
 	void* result = (void *) fastRamPointer;
 	fastRamPointer += size;
-	return (void *) (result);
+	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
+		consolePrintf("FastRam (ITCM) allocation failed!\n");
+		return NULL;
+	}		
+	return result;
 }
 
 void fastRamReset() {
@@ -2380,7 +2449,7 @@ void fastRamReset() {
 
 bool GBAMPAvail = false;
 
-bool initGBAMP(int mode) {
+bool initGBAMP(int mode) {	
 	if (FAT_InitFiles()) {
 		if (mode == 2)	{
 			disc_IsInserted();
@@ -2405,14 +2474,14 @@ void initDebugger() {
 	set_verbosity(VERBOSE_INFO | VERBOSE_ERROR);
 	wireless_init(0);
 	wireless_connect();
-
+	
 	// This is where the address of the computer running the Java
 	// stub goes.
 	debugger_connect_tcp(192, 168, 0, 1);
-	debugger_init();
-
+	debugger_init();	
+	
 	// Update function - should really call every frame
-	user_debugger_update();
+	user_debugger_update();	
 }
 
 
@@ -2447,7 +2516,7 @@ cardTranslate cardReaderTable[] = {
 void reboot() {
 	int deviceType = -1;
 
-
+	
 	if (disc_getDeviceId() == DEVICE_DLDI) {
 
 		char id[6];
@@ -2525,13 +2594,13 @@ int main(void)
 		initDebugger();
 	}
 #endif
-
+	
 	// Let arm9 read cartridge
 	*((u16 *) (0x04000204)) &= ~0x0080;
-
+	
 	lastCallbackFrame = 0;
 	tweak = 0;
-
+	
 	indyFightState = false;
 	indyFightRight = true;
 
@@ -2544,25 +2613,25 @@ int main(void)
 
 //	bufferSize = 10;
 
-
+	
 	/*bufferRate = 44100;
 	bufferFrame = 0;
 	bufferSamples = 8192;
 
 	bufferFirstHalf = false;
 	bufferSecondHalf = true;
-
+	
 	int bytes = (2 * (bufferSamples)) + 100;
-
+	
 	soundBuffer = (s16 *) malloc(bytes * 2);
 
 
 	soundHiPart = true;
-
+	
 	for (int r = 0; r < bytes; r++) {
 		soundBuffer[r] = 0;
 	}
-
+	
 
 	swiWaitForVBlank();
 	swiWaitForVBlank();
@@ -2571,35 +2640,35 @@ int main(void)
 	swiWaitForVBlank();
 	swiWaitForVBlank();
 */
-
+	
 
 	lastEventFrame = 0;
 	mouseMode = MOUSE_LEFT;
-
+	
 
 /*
 	TIMER1_CR = 0;
 	TIMER1_DATA = TIMER_FREQ(bufferRate);
 	TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1;
-
+	
 	TIMER2_CR = 0;
 	TIMER2_DATA = 0xFFFF - (bufferSamples / 2);
 	TIMER2_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_CASCADE;
 	*/
 	// 2945 - 2947
+	
 
-
-
+	
 //	for (int r = 2946; r < 3000; r++) {
 //		soundBuffer[r] = 30000;
 //	}
-
+	
 
 	//2372
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.11.0 beta1 ");
+	consolePrintf("Version 0.11.1 beta2");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -2610,7 +2679,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
-	consolePrintf("Simon/Elvira (AGOS)\n");
+	consolePrintf("Simon/Elvira/Waxworks (AGOS)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_D)
 	consolePrintf("build D\n");
@@ -2618,7 +2687,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_E)
 	consolePrintf("build E\n");
-	consolePrintf("ITE/IHNM (SAGA)\n");
+	consolePrintf("Inherit the Earth (SAGA)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_F)
 	consolePrintf("build F\n");
@@ -2649,7 +2718,7 @@ int main(void)
 	consolePrintf("\n");
 #endif
 
-
+	
 #ifdef USE_BUILT_IN_DRIVER_SELECTION
 	// Do M3 detection selectioon
 	int extraData = DSSaveFileManager::getExtraData();
@@ -2688,7 +2757,7 @@ int main(void)
 	disc_setEnable(mode);
 	DSSaveFileManager::setExtraData(mode);
 #else
-
+	
 	int mode = 0;
 
 #endif
@@ -2734,11 +2803,11 @@ int main(void)
 	}
 	delete node;
 
-
+	
 
 	updateStatus();
-
-
+	
+	
 //	OSystem_DS::instance();
 
 	g_system = new OSystem_DS();
@@ -2754,33 +2823,25 @@ int main(void)
 	//printf("'%s'", Common::ConfigManager::kApplicationDomain.c_str());
 
 #if defined(DS_BUILD_A)
-	char* argv[2] = {"/scummvmds", "--config=scummvm.ini"};
+	const char *argv[] = {"/scummvmds"};
 #elif defined(DS_BUILD_B)
-	char* argv[2] = {"/scummvmds", "--config=scummvmb.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmb.ini"};
 #elif defined(DS_BUILD_C)
-	char* argv[2] = {"/scummvmds", "--config=scummvmc.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmc.ini"};
 #elif defined(DS_BUILD_D)
-	char* argv[3] = {"/scummvmds", "--config=scummvmd.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmd.ini"};
 #elif defined(DS_BUILD_E)
-	char* argv[3] = {"/scummvmds", "--config=scummvme.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvme.ini"};
 #elif defined(DS_BUILD_F)
-	char* argv[3] = {"/scummvmds", "--config=scummvmf.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
 #elif defined(DS_BUILD_G)
-	char* argv[3] = {"/scummvmds", "--config=scummvmg.ini"};
+	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
 #endif
 
-#ifdef DS_NON_SCUMM_BUILD
-
 	while (1) {
-		scummvm_main(2, (char **) &argv);
+		scummvm_main(ARRAYSIZE(argv), (char **) &argv);
 		powerOff();
 	}
-#else
-	while (1) {
-		scummvm_main(1, (char **) &argv);
-		powerOff();
-	}
-#endif
 
 	return 0;
 }

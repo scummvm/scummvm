@@ -25,17 +25,18 @@
 
 #include <common/scummsys.h>
 #include "engines/engine.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 #include "dc.h"
 
 EXTERN_C void *memcpy4s(void *s1, const void *s2, unsigned int n);
 
-void initSound()
+uint OSystem_Dreamcast::initSound()
 {
   stop_sound();
   do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
   do_sound_command(CMD_SET_STEREO(1));
   do_sound_command(CMD_SET_BUFFER(SOUND_BUFFER_SHIFT));
+  return read_sound_int(&SOUNDSTATUS->freq);
 }
 
 void OSystem_Dreamcast::checkSound()
@@ -61,8 +62,8 @@ void OSystem_Dreamcast::checkSound()
   if (n<100)
     return;
 
-  Audio::Mixer::mixCallback(_mixer, (byte*)temp_sound_buffer,
-			    2*SAMPLES_TO_BYTES(n));
+  _mixer->mixCallback((byte*)temp_sound_buffer,
+		      2*SAMPLES_TO_BYTES(n));
 
   if (fillpos+n > curr_ring_buffer_samples) {
     int r = curr_ring_buffer_samples - fillpos;
@@ -77,8 +78,4 @@ void OSystem_Dreamcast::checkSound()
     fillpos = 0;
 }
 
-int OSystem_Dreamcast::getOutputSampleRate() const
-{
-  return read_sound_int(&SOUNDSTATUS->freq);
-}
 

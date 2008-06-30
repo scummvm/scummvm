@@ -498,25 +498,24 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
-	Common::Array<Common::EngineDebugLevel> lvls = Common::listSpecialDebugLevels();
+	const Common::DebugLevelContainer &lvls = Common::listSpecialDebugLevels();
 
 	bool setFlag = false;	// Remove or add debug channel?
 
 	if ((argc == 1) && (Common::getEnabledSpecialDebugLevels() == 0)) {
 		DebugPrintf("No debug flags are enabled\n");
 		DebugPrintf("Available Channels: ");
-		for (uint i = 0; i < lvls.size(); i++) {
-			DebugPrintf("%s, ", lvls[i].option.c_str());
+		for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+			DebugPrintf("%s, ", i->option.c_str());
 		}
 		DebugPrintf("\n");
 		return true;
 	}
 
 	if ((argc == 1) && (Common::getEnabledSpecialDebugLevels() > 0)) {
-		for (uint i = 0; i < lvls.size(); i++) {
-			if (lvls[i].enabled)
-				DebugPrintf("%s - %s\n", lvls[i].option.c_str(),
-							 lvls[i].description.c_str());
+		for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+			if (i->enabled)
+				DebugPrintf("%s - %s\n", i->option.c_str(), i->description.c_str());
 		}
 		return true;
 	}
@@ -529,25 +528,24 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Syntax: Debug +CHANNEL, or Debug -CHANNEL\n");
 		DebugPrintf("Available Channels: ");
-		for (uint i = 0; i < lvls.size(); i++) {
-			DebugPrintf("%s, ", lvls[i].option.c_str());
-			DebugPrintf("\n");
+		for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+			DebugPrintf("%s\n", i->option.c_str());
 		}
 	}
 
 	// Identify flag
 	const char *realFlag = argv[1] + 1;
-	for (uint i = 0; i < lvls.size(); i++) {
-		if ((scumm_stricmp(lvls[i].option.c_str(), realFlag)) == 0) {
+	for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+		if (i->option.equalsIgnoreCase(realFlag)) {
 			if (setFlag) {
-				enableSpecialDebugLevel(lvls[i].option);
+				enableSpecialDebugLevel(i->option);
 				DebugPrintf("Enable ");
 			} else {
-				disableSpecialDebugLevel(lvls[i].option);
+				disableSpecialDebugLevel(i->option);
 				DebugPrintf("Disable ");
 			}
 
-			DebugPrintf("%s\n", lvls[i].description.c_str());
+			DebugPrintf("%s\n", i->description.c_str());
 			return true;
 		}
 	}

@@ -30,8 +30,7 @@ namespace Parallaction {
 
 char			_tokens[20][MAX_TOKEN_LEN];
 
-Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {
-}
+Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {}
 
 Script::~Script() {
 	if (_disposeSource)

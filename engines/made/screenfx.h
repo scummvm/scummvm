@@ -51,10 +51,17 @@ private:
 	int16 vfxX1, vfxY1, vfxWidth, vfxHeight;
 	void setPalette(byte *palette);
 	void setBlendedPalette(byte *palette, byte *newPalette, int colorCount, int16 value, int16 maxValue);
+	void copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2);
 	void copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2);
 	void vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx02(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx09(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx10(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx11(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx12(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx13(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx14(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx15(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx17(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 };
 

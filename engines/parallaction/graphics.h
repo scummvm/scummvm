@@ -95,6 +95,7 @@ public:
 	}
 
 	~SurfaceToFrames() {
+		_surf->free();
 		delete _surf;
 	}
 
@@ -156,11 +157,11 @@ struct SurfaceToMultiFrames : public Frames {
 		r.setHeight(_height);
 	}
 	uint	getRawSize(uint16 index) {
-		assert(index == 0);
+		assert(index < _num);
 		return getSize(index);
 	}
 	uint	getSize(uint16 index) {
-		assert(index == 0);
+		assert(index < _num);
 		return _width * _height;
 	}
 
@@ -359,6 +360,11 @@ enum {
 	kGfxObjTypeAnim = 2
 };
 
+enum {
+	kGfxObjDoorZ = -200,
+	kGfxObjGetZ = -100
+};
+
 class GfxObj {
 	char *_name;
 	Frames *_frames;
@@ -368,7 +374,10 @@ class GfxObj {
 
 public:
 	int16 x, y;
-	uint16 z;
+
+	int32 z;
+
+
 	uint type;
 	uint frame;
 	uint layer;
@@ -452,12 +461,15 @@ enum {
 	kBackgroundSlide = 2
 };
 
+typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
+
 class Gfx {
 
 public:
 	Disk *_disk;
+	VarMap _vars;
 
-	GfxObjList _gfxobjList[3];
+	GfxObjList _gfxobjList;
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);
@@ -483,7 +495,7 @@ public:
 	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// other items
-	int setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor = 0);
+	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
 	void freeBalloons();
@@ -545,7 +557,7 @@ protected:
 	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
 
-protected:
+public:
 	static int16 _dialogueBalloonX[5];
 
 	struct Balloon {
@@ -560,10 +572,8 @@ protected:
 	uint	_numBalloons;
 
 	struct Item {
-		uint16 x;
-		uint16 y;
 		uint16 frame;
-		Frames *data;
+		GfxObj *data;
 
 		byte transparentColor;
 		Common::Rect rect;

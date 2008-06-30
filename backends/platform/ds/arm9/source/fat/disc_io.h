@@ -7,7 +7,7 @@
 // Use DMA to read the card, remove this line to use normal reads/writes
 // #define _CF_USE_DMA
 
-// Allow buffers not aligned to 16 bits when reading files.
+// Allow buffers not aligned to 16 bits when reading files. 
 // Note that this will slow down access speed, so only use if you have to.
 // It is also incompatible with DMA
 #define _CF_ALLOW_UNALIGNED
@@ -43,7 +43,7 @@
 
 // This allows the code to build on an earlier version of libnds, before the register was renamed
 #ifndef REG_EXMEMCNT
-#define REG_EXMEMCNT REG_EXEMEMCNT
+#define REG_EXMEMCNT REG_EXEMEMCNT 
 #endif
 
 #ifndef REG_EXEMEMCNT
@@ -53,7 +53,7 @@
 //----------------------------------------------------------------------
 
 #if defined _CF_USE_DMA && defined _CF_ALLOW_UNALIGNED
- #error You can't use both DMA and unaligned memory
+ #error You can not use both DMA and unaligned memory
 #endif
 
 // When compiling for NDS, make sure NDS is defined
@@ -70,7 +70,7 @@
 #endif
 
 // Disable NDS specific hardware and features if running on a GBA
-#ifndef NDS
+#ifndef NDS 
  #undef SUPPORT_NMMC
  #undef DISC_CACHE
 #endif

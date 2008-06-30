@@ -62,7 +62,8 @@
 
 enum PluginType {
 	PLUGIN_TYPE_ENGINE = 0,
-	PLUGIN_TYPE_MIDI,
+	PLUGIN_TYPE_MUSIC,
+	/* PLUGIN_TYPE_SCALER, */	// TODO: Add graphics scaler plugins
 
 	PLUGIN_TYPE_MAX
 };
@@ -70,7 +71,7 @@ enum PluginType {
 // TODO: Make the engine API version depend on ScummVM's version
 // because of the backlinking (posibly from the SVN revision)
 #define PLUGIN_TYPE_ENGINE_VERSION 1
-#define PLUGIN_TYPE_MIDI_VERSION 1
+#define PLUGIN_TYPE_MUSIC_VERSION 1
 
 extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
@@ -80,17 +81,17 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #define STATIC_PLUGIN 1
 #define DYNAMIC_PLUGIN 2
 
-#define PLUGIN_ENABLED_STATIC(ID) \
-	(defined(ENABLE_##ID) && !PLUGIN_ENABLED_DYNAMIC(ID))
+// Note: The spaces around ENABLE_##ID have been added on purpose for
+// MSVC. For some reason, MSVC tries to add the parenthesis after
+// ENABLE_##ID to the check, thus making it false all the time.
+// Please do NOT remove them, otherwise no engine plugins will be
+// registered under MSVC
 
-// HACK for MSVC
-#if defined(_MSC_VER)
-	#undef PLUGIN_ENABLED_STATIC
-	#define PLUGIN_ENABLED_STATIC(ID) 1
-#endif
+#define PLUGIN_ENABLED_STATIC(ID) \
+	(defined( ENABLE_##ID ) && !PLUGIN_ENABLED_DYNAMIC(ID))
 
 #define PLUGIN_ENABLED_DYNAMIC(ID) \
-	(defined(ENABLE_##ID) && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
+	(defined( ENABLE_##ID ) && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
 
 /**
  * REGISTER_PLUGIN_STATIC is a convenience macro which is used to declare
@@ -192,7 +193,7 @@ public:
 		return (PO_t *)_pluginObject;
 	}
 
-	typedef Common::Array<PluginSubclass *> list;
+	typedef Common::Array<PluginSubclass *> List;
 };
 
 /**
@@ -245,7 +246,7 @@ protected:
 	 * @param filename	the name of the loadable code module
 	 * @return	a pointer to a Plugin instance, or 0 if an error occurred.
 	 */
-	virtual Plugin* createPlugin(const Common::String &filename) const = 0;
+	virtual Plugin *createPlugin(const Common::String &filename) const = 0;
 
 	/**
 	 * Check if the supplied filename corresponds to a loadable plugin file in

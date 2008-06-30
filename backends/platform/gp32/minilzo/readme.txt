@@ -1,1 +1,0 @@
-You may put libminlzo.a and the header files in this directory when you build with MINILZO library.

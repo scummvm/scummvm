@@ -611,65 +611,49 @@ void freePoldatDat() {
 	fontParamTable = 0;
 }
 
-uint16 computeMessageLength(const byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
-	const byte *localPtr = ptr;
+/*! \brief Fit a substring of text into one line of fixed width text box
+ * \param str Text to fit
+ * \param maxWidth Text box width
+ * \param[out] words Number of words that fit
+ * \param[out] width Total width of nonblank characters that fit
+ * \return Length of substring which fits
+ */
+int fitLine(const char *str, int maxWidth, int &words, int &width) {
+	int i, bkpWords = 0, bkpWidth = 0, bkpLen = 0;
+	int charWidth = 0, fullWidth = 0;
 
-	uint16 var_2 = 0;
-	uint16 localLineResult = 0;
-	uint16 var_6 = 0;
-	uint16 var_8 = 0;
-	uint16 localMessageWidth = 0;
-	uint16 var_16 = 0;
-	uint16 finished = 0;
-	uint16 si = 0;
-	uint16 di = 0;
+	words = 0;
+	width = 0;
 
-	while (!finished) {
-		byte character = *(localPtr++);
-
-		if (character == ' ') {
-			var_8 = var_16;
-			var_6 = localMessageWidth;
-			localLineResult = si;
-			var_2 = di;
-
-			if (si + 5 < width) {
-				var_16++;
-				si += 5;
-			} else {
-				finished = 1;
-			}
-		} else if (character == 0x7C || character == 0) {
-			finished = 1;
-			si = 0;
+	for (i = 0; str[i]; i++) {
+		if (str[i] == 0x7C) {
+			i++;
+			break;
+		} else if (str[i] == ' ') {
+			charWidth = 5;
+			bkpWords = words++;
+			bkpWidth = width;
+			bkpLen = i + 1;
 		} else {
-			if (fontParamTable[character].characterWidth) {
-				uint16 var_C = fontParamTable[character].characterWidth + 1;
-
-				if (si + var_C < width) {
-					si += var_C;
-					localMessageWidth += var_C;
-				} else {
-					finished = 1;
-
-					if (localLineResult) {
-						var_16 = var_8;
-						localMessageWidth = var_6;
-						si = localLineResult;
-						di = var_2;
-					}
-				}
-			}
+			charWidth = fontParamTable[(unsigned char)str[i]].characterWidth + 1;
+			width += charWidth;
 		}
 
-		di++;
+		if (!charWidth) {
+			continue;
+		}
+
+		if (fullWidth + charWidth < maxWidth) {
+			fullWidth += charWidth;
+		} else if (fullWidth) {
+			words = bkpWords;
+			width = bkpWidth;
+			i = bkpLen;
+			break;
+		}
 	}
 
-	*numWords = var_16;
-	*messageWidth = localMessageWidth;
-	*lineResult = si;
-
-	return di;
+	return i;
 }
 
 } // End of namespace Cine

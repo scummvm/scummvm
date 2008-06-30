@@ -385,12 +385,12 @@ Cnv* DosDisk_ns::loadCnv(const char *filename) {
 	return new Cnv(numFrames, width, height, data);
 }
 
-Frames* DosDisk_ns::loadTalk(const char *name) {
+GfxObj* DosDisk_ns::loadTalk(const char *name) {
 
 	const char *ext = strstr(name, ".talk");
 	if (ext != NULL) {
 		// npc talk
-		return loadCnv(name);
+		return new GfxObj(0, loadCnv(name), name);
 
 	}
 
@@ -401,7 +401,7 @@ Frames* DosDisk_ns::loadTalk(const char *name) {
 		sprintf(v20, "%stal", name);
 	}
 
-	return loadExternalCnv(v20);
+	return new GfxObj(0, loadExternalCnv(v20), name);
 }
 
 Script* DosDisk_ns::loadLocation(const char *name) {
@@ -434,14 +434,14 @@ Script* DosDisk_ns::loadScript(const char* name) {
 	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
-Frames* DosDisk_ns::loadHead(const char* name) {
+GfxObj* DosDisk_ns::loadHead(const char* name) {
 
 	char path[PATH_LEN];
 
 	sprintf(path, "%shead", name);
 	path[8] = '\0';
 
-	return loadExternalStaticCnv(path);
+	return new GfxObj(0, loadExternalStaticCnv(path));
 }
 
 
@@ -457,15 +457,15 @@ Font* DosDisk_ns::loadFont(const char* name) {
 }
 
 
-Frames* DosDisk_ns::loadObjects(const char *name) {
+GfxObj* DosDisk_ns::loadObjects(const char *name) {
 
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
-	return loadExternalCnv(path);
+	return new GfxObj(0, loadExternalCnv(path), name);
 }
 
 
-Frames* DosDisk_ns::loadStatic(const char* name) {
+GfxObj* DosDisk_ns::loadStatic(const char* name) {
 
 	char path[PATH_LEN];
 
@@ -487,11 +487,11 @@ Frames* DosDisk_ns::loadStatic(const char* name) {
 	Graphics::PackBitsReadStream decoder(_resArchive);
 	decoder.read(cnv->pixels, w*h);
 
-	return new SurfaceToFrames(cnv);
+	return new GfxObj(0, new SurfaceToFrames(cnv), name);
 }
 
-Frames* DosDisk_ns::loadFrames(const char* name) {
-	return loadCnv(name);
+GfxObj* DosDisk_ns::loadFrames(const char* name) {
+	return new GfxObj(0, loadCnv(name), name);
 }
 
 //
@@ -1025,7 +1025,7 @@ Frames* AmigaDisk_ns::loadPointer(const char* name) {
 	return makeStaticCnv(stream);
 }
 
-Frames* AmigaDisk_ns::loadStatic(const char* name) {
+GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadStatic '%s'", name);
 
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
@@ -1033,7 +1033,7 @@ Frames* AmigaDisk_ns::loadStatic(const char* name) {
 
 	delete s;
 
-	return cnv;
+	return new GfxObj(0, cnv, name);
 }
 
 Common::SeekableReadStream *AmigaDisk_ns::openArchivedFile(const char* name, bool errorOnFileNotFound) {
@@ -1258,7 +1258,7 @@ void AmigaDisk_ns::loadSlide(BackgroundInfo& info, const char *name) {
 	return;
 }
 
-Frames* AmigaDisk_ns::loadFrames(const char* name) {
+GfxObj* AmigaDisk_ns::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadFrames '%s'", name);
 
 	Common::SeekableReadStream *s;
@@ -1273,10 +1273,10 @@ Frames* AmigaDisk_ns::loadFrames(const char* name) {
 	Cnv *cnv = makeCnv(*s);
 	delete s;
 
-	return cnv;
+	return new GfxObj(0, cnv, name);
 }
 
-Frames* AmigaDisk_ns::loadHead(const char* name) {
+GfxObj* AmigaDisk_ns::loadHead(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadHead '%s'", name);
 
 	char path[PATH_LEN];
@@ -1287,11 +1287,11 @@ Frames* AmigaDisk_ns::loadHead(const char* name) {
 
 	delete s;
 
-	return cnv;
+	return new GfxObj(0, cnv, name);
 }
 
 
-Frames* AmigaDisk_ns::loadObjects(const char *name) {
+GfxObj* AmigaDisk_ns::loadObjects(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadObjects");
 
 	char path[PATH_LEN];
@@ -1305,11 +1305,11 @@ Frames* AmigaDisk_ns::loadObjects(const char *name) {
 	Cnv *cnv = makeCnv(*s);
 	delete s;
 
-	return cnv;
+	return new GfxObj(0, cnv, name);
 }
 
 
-Frames* AmigaDisk_ns::loadTalk(const char *name) {
+GfxObj* AmigaDisk_ns::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadTalk '%s'", name);
 
 	Common::SeekableReadStream *s;
@@ -1328,7 +1328,7 @@ Frames* AmigaDisk_ns::loadTalk(const char *name) {
 	Cnv *cnv = makeCnv(*s);
 	delete s;
 
-	return cnv;
+	return new GfxObj(0, cnv, name);
 }
 
 Table* AmigaDisk_ns::loadTable(const char* name) {
@@ -1395,9 +1395,7 @@ Common::ReadStream* AmigaDisk_ns::loadSound(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.snd", name);
 
-	openArchivedFile(path);
-
-	return new DummyArchiveStream(_resArchive);
+	return openArchivedFile(path);
 }
 
 } // namespace Parallaction

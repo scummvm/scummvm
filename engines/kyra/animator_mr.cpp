@@ -205,11 +205,7 @@ void KyraEngine_MR::updateItemAnimations() {
 
 	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
 	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
-
-	if (++_nextAnimItem == 11) {
-		_nextAnimItem = 0;
-		return;
-	}
+	_nextAnimItem = ++_nextAnimItem % 10;
 
 	uint32 ctime = _system->getMillis();
 	if (ctime < a->nextFrame)

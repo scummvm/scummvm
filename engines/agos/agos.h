@@ -269,6 +269,7 @@ protected:
 
 	uint16 _marks;
 
+	bool _quit;
 	bool _scriptVar2;
 	bool _runScriptReturn1;
 	bool _runScriptCondition[40];
@@ -523,6 +524,7 @@ protected:
 	byte _lettersToPrintBuf[80];
 
 	MidiPlayer _midi;
+	MidiDriver *_driver;
 	bool _midiEnabled;
 	bool _nativeMT32;
 
@@ -1205,6 +1207,7 @@ protected:
 	void checkTimerCallback();
 	void delay(uint delay);
 	void pause();
+	virtual void pauseEngineIntern(bool pause);
 
 	void waitForMark(uint i);
 	void scrollScreen();

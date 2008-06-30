@@ -34,11 +34,17 @@ struct PalEntry {
 	byte pal2[16];
 };
 
+extern PalEntry *palPtr;
+
 void loadPal(const char *fileName);
 
-extern uint16 tempPalette[256];
-
 void loadRelatedPalette(const char *fileName);
+
+void palRotate(uint16 *pal, byte a, byte b, byte c);
+void palRotate(byte *pal, byte a, byte b, byte c);
+uint16 transformColor(uint16 baseColor, int r, int g, int b);
+void transformPaletteRange(uint16 *srcPal, uint16 *dstPal, int startColor, int stopColor, int r, int g, int b);
+void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopColor, int r, int g, int b);
 
 } // End of namespace Cine
 

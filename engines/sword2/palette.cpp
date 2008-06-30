@@ -156,22 +156,17 @@ void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, ui
 	memcpy(&_palette[4 * startEntry], colourTable, noEntries * 4);
 
 	if (fadeNow == RDPAL_INSTANT) {
-		_vm->_system->setPalette(_palette, startEntry, noEntries);
+		setSystemPalette(_palette, startEntry, noEntries);
 		setNeedFullRedraw();
 	}
 }
 
-void Screen::dimPalette() {
-	byte *p = _palette;
-
-	for (int i = 0; i < 256; i++) {
-		p[i * 4 + 0] /= 2;
-		p[i * 4 + 1] /= 2;
-		p[i * 4 + 2] /= 2;
+void Screen::dimPalette(bool dim) {
+	if (dim != _dimPalette) {
+		_dimPalette = dim;
+		setSystemPalette(_palette, 0, 256);
+		setNeedFullRedraw();
 	}
-
-	_vm->_system->setPalette(p, 0, 256);
-	setNeedFullRedraw();
 }
 
 /**
@@ -269,8 +264,24 @@ void Screen::fadeServer() {
 		}
 	}
 
-	_vm->_system->setPalette(newPalette, 0, 256);
+	setSystemPalette(newPalette, 0, 256);
 	setNeedFullRedraw();
+}
+
+void Screen::setSystemPalette(const byte *colors, uint start, uint num) {
+	const byte *palette;
+
+	if (_dimPalette) {
+		byte pal[256 * 4];
+
+		for (uint i = start * 4; i < 4 * (start + num); i++)
+			pal[i] = colors[i] / 2;
+
+		palette = pal;
+	} else
+		palette = colors;
+
+	_vm->_system->setPalette(palette, start, num);
 }
 
 } // End of namespace Sword2

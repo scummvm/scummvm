@@ -84,21 +84,23 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 
 Parallaction::~Parallaction() {
+	clearSet(_commandOpcodes);
+	clearSet(_instructionOpcodes);
+
 	delete _debugger;
-
 	delete _globalTable;
-
 	delete _callableNames;
-	delete _localFlagNames;
 
 	freeLocation();
 
 	freeCharacter();
 	destroyInventory();
 
+	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
 	delete _disk;
+	delete _input;
 }
 
 
@@ -136,9 +138,11 @@ int Parallaction::init() {
 }
 
 
-
-
-
+void Parallaction::clearSet(OpcodeSet &opcodes) {
+	for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+		delete *i;
+	opcodes.clear();
+}
 
 
 void Parallaction::updateView() {
@@ -152,29 +156,6 @@ void Parallaction::updateView() {
 	g_system->delayMillis(30);
 }
 
-
-uint32 Parallaction::getElapsedTime() {
-	return g_system->getMillis() - _baseTime;
-}
-
-void Parallaction::resetTimer() {
-	_baseTime = g_system->getMillis();
-	return;
-}
-
-
-void Parallaction::waitTime(uint32 t) {
-
-	uint32 v4 = 0;
-
-	while (v4 < t * (1000 / 18.2)) {
-		v4 = getElapsedTime();
-	}
-
-	resetTimer();
-
-	return;
-}
 
 
 void Parallaction::freeCharacter() {
@@ -212,6 +193,9 @@ AnimationPtr Parallaction::findAnimation(const char *name) {
 }
 
 void Parallaction::freeAnimations() {
+	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
+		(*it)->_commands.clear();	// See comment for freeZones(), about circular references.
+	}
 	_location._animations.clear();
 	return;
 }
@@ -370,6 +354,41 @@ void Parallaction::processInput(InputData *data) {
 	return;
 }
 
+void Parallaction::runGame() {
+
+	InputData *data = _input->updateInput();
+	if (data->_event != kEvNone) {
+		processInput(data);
+	}
+
+	if (_engineFlags & kEngineQuit)
+		return;
+
+	runPendingZones();
+
+	if (_engineFlags & kEngineQuit)
+		return;
+
+	if (_engineFlags & kEngineChangeLocation) {
+		changeLocation(_location._name);
+	}
+
+	if (_engineFlags & kEngineQuit)
+		return;
+
+	_gfx->beginFrame();
+
+	if (_input->_inputMode == Input::kInputModeGame) {
+		runScripts();
+		walk();
+		drawAnimations();
+	}
+
+	// change this to endFrame?
+	updateView();
+
+}
+
 
 
 
@@ -409,8 +428,8 @@ void Parallaction::doLocationEnterTransition() {
 	for (uint16 _si = 0; _si<6; _si++) {
 		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
-		waitTime( 1 );
 		_gfx->updateScreen();
+		g_system->delayMillis(20);
 	}
 
 	_gfx->setPalette(_gfx->_palette);
@@ -463,6 +482,9 @@ void Parallaction::freeZones() {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
+			(*it)->_commands.clear();	// Since commands may reference zones, and both commands and zones are kept stored into
+										// SharedPtr's, we need to kill commands explicitly to destroy any potential circular
+										// reference.
 			it = _location._zones.erase(it);
 		}
 	}
@@ -518,11 +540,12 @@ void Character::free() {
 	delete _talk;
 	delete _head;
 	delete _objs;
+	delete _ani->gfxobj;
 
-	_ani->gfxobj = NULL;
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
+	_ani->gfxobj = NULL;
 
 	return;
 }

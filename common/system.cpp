@@ -35,8 +35,6 @@
 #include "gui/message.h"
 #include "sound/mixer.h"
 
-#include <time.h>
-
 OSystem *g_system = 0;
 
 OSystem::OSystem() {
@@ -122,45 +120,4 @@ void OSystem::clearScreen() {
 	Graphics::Surface *screen = lockScreen();
 	memset(screen->pixels, 0, screen->h * screen->pitch);
 	unlockScreen();
-}
-
-void OSystem::getTimeAndDate(struct tm &t) const {
-#ifndef __PLAYSTATION2__
-	// PS2SDK doesn't provide localtime, so this code doesn't compile
-	time_t curTime = time(0);
-	t = *localtime(&curTime);
-#endif
-}
-
-/*
- * Include header files needed for the getFilesystemFactory() method.
- *
- * TODO: Remove these gradually and move the getFilesystemFactory() implementations
- * to the respective backends. Then turn it into a pure virtual method of OSystem.
- */
-#if defined(__DS__)
-	#include "backends/fs/ds/ds-fs-factory.h"
-#elif defined(__GP32__)
-	#include "backends/fs/gp32/gp32-fs-factory.h"
-#elif defined(PALMOS_MODE)
-	#include "backends/fs/palmos/palmos-fs-factory.h"
-#elif defined(__PLAYSTATION2__)
-	#include "backends/fs/ps2/ps2-fs-factory.h"
-#endif
-
-FilesystemFactory *OSystem::getFilesystemFactory() {
-	#if defined(__amigaos4__) || defined(__DC__) || defined(__SYMBIAN32__) || defined(UNIX) || defined(WIN32) || defined(__PSP__)
-		// These ports already implement this function, so it should never be called.
-		return 0;
-	#elif defined(__DS__)
-		return &DSFilesystemFactory::instance();
-	#elif defined(__GP32__)
-		return &GP32FilesystemFactory::instance();
-	#elif defined(PALMOS_MODE)
-		return &PalmOSFilesystemFactory::instance();
-	#elif defined(__PLAYSTATION2__)
-		return &Ps2FilesystemFactory::instance();
-	#else
-		#error Unknown and unsupported backend in OSystem::getFilesystemFactory
-	#endif
 }

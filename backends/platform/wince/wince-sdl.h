@@ -82,7 +82,7 @@ public:
 	// Overloaded from SDL_Commmon
 	void quit();
 	// Overloaded from SDL_Commmon (master volume and sample rate subtleties)
-	bool setSoundCallback(SoundProc proc, void *param);
+	void setupMixer();
 	// Overloaded from OSystem
 	//void engineInit();
 	void getTimeAndDate(struct tm &t) const;
@@ -160,13 +160,12 @@ private:
 #endif
 
 	static void private_sound_proc(void *param, byte *buf, int len);
-	static SoundProc _originalSoundProc;
 
 	bool update_scalers();
 	void create_toolbar();
 	void update_game_settings();
 	void check_mappings();
-	void get_sample_rate();
+	void compute_sample_rate();
 
 	void retrieve_mouse_location(int &x, int &y);
 

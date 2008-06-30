@@ -91,83 +91,87 @@ int16 *ScriptStack::getStackPtr() {
 /* ScriptInterpreter */
 
 ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
-#define COMMAND(x) { &ScriptInterpreter::x, #x }
+#ifdef DUMP_SCRIPTS
+#define COMMAND(x, sig) { &ScriptInterpreter::x, #x, sig }
+#else
+#define COMMAND(x, sig) { &ScriptInterpreter::x, #x}
+#endif
 	static CommandEntry commandProcs[] = {
 		/* 01 */
-		COMMAND(cmd_branchTrue),
-		COMMAND(cmd_branchFalse),
-		COMMAND(cmd_branch),
-		COMMAND(cmd_true),
+		COMMAND(cmd_branchTrue, "W"),
+		COMMAND(cmd_branchFalse, "W"),
+		COMMAND(cmd_branch, "W"),
+		COMMAND(cmd_true, ""),
 		/* 05 */
-		COMMAND(cmd_false),
-		COMMAND(cmd_push),
-		COMMAND(cmd_not),
-		COMMAND(cmd_add),
+		COMMAND(cmd_false, ""),
+		COMMAND(cmd_push, ""),
+		COMMAND(cmd_not, ""),
+		COMMAND(cmd_add, ""),
 		/* 09 */
-		COMMAND(cmd_sub),
-		COMMAND(cmd_mul),
-		COMMAND(cmd_div),
-		COMMAND(cmd_mod),
+		COMMAND(cmd_sub, ""),
+		COMMAND(cmd_mul, ""),
+		COMMAND(cmd_div, ""),
+		COMMAND(cmd_mod, ""),
 		/* 13 */
-		COMMAND(cmd_band),
-		COMMAND(cmd_bor),
-		COMMAND(cmd_bnot),
-		COMMAND(cmd_lt),
+		COMMAND(cmd_band, ""),
+		COMMAND(cmd_bor, ""),
+		COMMAND(cmd_bnot, ""),
+		COMMAND(cmd_lt, ""),
 		/* 17 */
-		COMMAND(cmd_eq),
-		COMMAND(cmd_gt),
-		COMMAND(cmd_loadConstant),
-		COMMAND(cmd_loadVariable),
+		COMMAND(cmd_eq, ""),
+		COMMAND(cmd_gt, ""),
+		COMMAND(cmd_loadConstant, "w"),
+		COMMAND(cmd_loadVariable, "w"),
 		/* 21 */
-		COMMAND(cmd_getObjectProperty),
-		COMMAND(cmd_setObjectProperty),
-		COMMAND(cmd_set),
-		COMMAND(cmd_print),
+		COMMAND(cmd_getObjectProperty, ""),
+		COMMAND(cmd_setObjectProperty, ""),
+		COMMAND(cmd_set, "w"),
+		COMMAND(cmd_print, ""),
 		/* 25 */
-		COMMAND(cmd_terpri),
-		COMMAND(cmd_printNumber),
-		COMMAND(cmd_vref),
-		COMMAND(cmd_vset),
+		COMMAND(cmd_terpri, ""),
+		COMMAND(cmd_printNumber, ""),
+		COMMAND(cmd_vref, ""),
+		COMMAND(cmd_vset, ""),
 		/* 29 */
-		COMMAND(cmd_vsize),
-		COMMAND(cmd_exit),
-		COMMAND(cmd_return),
-		COMMAND(cmd_call),
+		COMMAND(cmd_vsize, ""),
+		COMMAND(cmd_exit, ""),
+		COMMAND(cmd_return, ""),
+		COMMAND(cmd_call, "b"),
 		/* 33 */
-		COMMAND(cmd_svar),
-		COMMAND(cmd_sset),
-		COMMAND(cmd_split),
-		COMMAND(cmd_snlit),
+		COMMAND(cmd_svar, ""),
+		COMMAND(cmd_sset, ""),
+		COMMAND(cmd_split, ""),
+		COMMAND(cmd_snlit, ""),
 		/* 37 */
-		COMMAND(cmd_yorn),
-		COMMAND(cmd_save),
-		COMMAND(cmd_restore),
-		COMMAND(cmd_arg),
+		COMMAND(cmd_yorn, ""),
+		COMMAND(cmd_save, ""),
+		COMMAND(cmd_restore, ""),
+		COMMAND(cmd_arg, "b"),
 		/* 41 */
-		COMMAND(cmd_aset),
-		COMMAND(cmd_tmp),
-		COMMAND(cmd_tset),
-		COMMAND(cmd_tspace),
+		COMMAND(cmd_aset, "b"),
+		COMMAND(cmd_tmp, "b"),
+		COMMAND(cmd_tset, "b"),
+		COMMAND(cmd_tspace, "b"),
 		/* 45 */
-		COMMAND(cmd_class),
-		COMMAND(cmd_objectp),
-		COMMAND(cmd_vectorp),
-		COMMAND(cmd_restart),
+		COMMAND(cmd_class, ""),
+		COMMAND(cmd_objectp, ""),
+		COMMAND(cmd_vectorp, ""),
+		COMMAND(cmd_restart, ""),
 		/* 49 */
-		COMMAND(cmd_rand),
-		COMMAND(cmd_randomize),
-		COMMAND(cmd_send),
-		COMMAND(cmd_extend),
+		COMMAND(cmd_rand, ""),
+		COMMAND(cmd_randomize, ""),
+		COMMAND(cmd_send, "b"),
+		COMMAND(cmd_extend, "Eb"),
 		/* 53 */
-		COMMAND(cmd_catch),
-		COMMAND(cmd_cdone),
-		COMMAND(cmd_throw),
-		COMMAND(cmd_functionp),
+		COMMAND(cmd_catch, ""),
+		COMMAND(cmd_cdone, ""),
+		COMMAND(cmd_throw, ""),
+		COMMAND(cmd_functionp, ""),
 		/* 57 */
-		COMMAND(cmd_le),
-		COMMAND(cmd_ge),
-		COMMAND(cmd_varx),
-		COMMAND(cmd_setx)
+		COMMAND(cmd_le, ""),
+		COMMAND(cmd_ge, ""),
+		COMMAND(cmd_varx, ""),
+		COMMAND(cmd_setx, "")
 	};
 	_commands = commandProcs;
 	_commandsMax = ARRAYSIZE(commandProcs) + 1;
@@ -183,7 +187,6 @@ ScriptInterpreter::~ScriptInterpreter() {
 }
 
 void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
-
 	_vm->_quit = false;
 	_runningScriptObjectIndex = scriptObjectIndex;
 
@@ -193,15 +196,18 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 	_codeIp = _codeBase;
 	
 	while (!_vm->_quit) {
+
+		_vm->handleEvents();
+
 		byte opcode = readByte();
 		if (opcode >= 1 && opcode <= _commandsMax) {
-			debug(4, "[%04X:%04X] opcode = %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
+			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
 		} else {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
 		}
+		
 	}
-
 }
 
 byte ScriptInterpreter::readByte() {
@@ -357,8 +363,7 @@ void ScriptInterpreter::cmd_set() {
 
 void ScriptInterpreter::cmd_print() {
 	// TODO: This opcode was used for printing debug messages
-	Object *obj = _vm->_dat->getObject(_stack.top());
-	const char *text = obj->getString();
+	const char *text = _vm->_dat->getObjectString(_stack.top());
 	debug(4, "%s", text);
 	_stack.setTop(0);
 }
@@ -436,6 +441,7 @@ void ScriptInterpreter::cmd_return() {
 void ScriptInterpreter::cmd_call() {
 	debug(4, "\nENTER: stackPtr = %d; _localStackPos = %d", _stack.getStackPos(), _localStackPos);
 	byte argc = readByte();
+
 	_stack.push(argc);
 	_stack.push(_codeIp - _codeBase);
 	_stack.push(_runningScriptObjectIndex);
@@ -448,22 +454,27 @@ void ScriptInterpreter::cmd_call() {
 }
 
 void ScriptInterpreter::cmd_svar() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_svar");
 }
 
 void ScriptInterpreter::cmd_sset() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_sset");
 }
 
 void ScriptInterpreter::cmd_split() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_split");
 }
 
 void ScriptInterpreter::cmd_snlit() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_snlit");
 }
 
 void ScriptInterpreter::cmd_yorn() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_yorn");
 }
 
@@ -514,6 +525,7 @@ void ScriptInterpreter::cmd_tspace() {
 }
 
 void ScriptInterpreter::cmd_class() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_class");
 }
 
@@ -526,10 +538,12 @@ void ScriptInterpreter::cmd_objectp() {
 }
 
 void ScriptInterpreter::cmd_vectorp() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_vectorp");
 }
 
 void ScriptInterpreter::cmd_restart() {
+	// TODO: Used in RTZ
 	warning("Unimplemented command: cmd_restart");
 }
 
@@ -592,8 +606,7 @@ void ScriptInterpreter::cmd_extend() {
 	byte argc = readByte();
 	int16 *argv = _stack.getStackPtr();
 
-	//debug(4, "func = %d (%s); argc = %d", func, extendFuncNames[func], argc);
-	debug(2, "func = %d; argc = %d", func, argc);
+	debug(4, "func = %d (%s); argc = %d", func, _functions->getFuncName(func), argc);
 	for (int i = 0; i < argc; i++)
 		debug(2, "argv[%02d] = %04X (%d)", i, argv[i], argv[i]);
 
@@ -607,18 +620,22 @@ void ScriptInterpreter::cmd_extend() {
 }
 
 void ScriptInterpreter::cmd_catch() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_catch");
 }
 
 void ScriptInterpreter::cmd_cdone() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_cdone");
 }
 
 void ScriptInterpreter::cmd_throw() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_throw");
 }
 
 void ScriptInterpreter::cmd_functionp() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_functionp");
 }
 
@@ -639,11 +656,133 @@ void ScriptInterpreter::cmd_ge() {
 }
 
 void ScriptInterpreter::cmd_varx() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_varx");
 }
 
 void ScriptInterpreter::cmd_setx() {
+	// Never used in LGOP2, RTZ, Manhole:NE
 	warning("Unimplemented command: cmd_setx");
 }
+
+#ifdef DUMP_SCRIPTS
+void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *externStats) {
+
+	debug(1, "Dumping code for object %04X", objectIndex);
+
+	Object *obj = _vm->_dat->getObject(objectIndex);
+	byte *code = obj->getData(), *codeStart = code, *codeEnd = code + obj->getSize();
+	
+	while (code < codeEnd) {
+		byte opcode = *code++;
+		if (opcode >= 1 && opcode <= _commandsMax) {
+			Common::String codeLine;
+			const char *desc = _commands[opcode - 1].desc;
+			const char *sig = _commands[opcode - 1].sig;
+			int valueType; /* 0: dec; 1: hex; 2: extended function */
+			int16 value;
+			char tempStr[32];
+			opcodeStats[opcode - 1]++;
+			snprintf(tempStr, 32, "[%04X] ", (uint16)(code - codeStart - 1));
+			codeLine += tempStr;
+			codeLine += desc;
+			for (; *sig != '\0'; sig++) {
+				codeLine += " ";
+				switch (*sig) {
+				case 'b':
+					valueType = 0;
+	 				value = *code++;
+					break;
+				case 'B':
+	 				valueType = 1;
+	 				value = *code++;
+					break;
+				case 'w':
+					valueType = 0;
+	 				value = READ_LE_UINT16(code);
+	 				code += 2;
+					break;
+				case 'W':
+	 				valueType = 1;
+	 				value = READ_LE_UINT16(code);
+	 				code += 2;
+					break;
+				case 'E':
+	 				valueType = 2;
+	 				value = *code++;
+					break;
+				}
+				switch (valueType) {
+				case 0:
+					snprintf(tempStr, 32, "%d", value);
+					break;
+				case 1:
+					snprintf(tempStr, 32, "0x%X", value);
+					break;
+				case 2:
+					if (value < _functions->getCount()) {
+						snprintf(tempStr, 32, "%s", _functions->getFuncName(value));
+						externStats[value]++;
+					} else {
+						snprintf(tempStr, 32, "invalid: %d", value);
+	 				}
+					break;
+				}
+				codeLine += tempStr;
+			}
+			debug(1, "%s", codeLine.c_str());
+		} else {
+			error("ScriptInterpreter::dumpScript(%d) Unknown opcode %02X", objectIndex, opcode);
+		}
+	}
+	debug(1, "-------------------------------------------");
+}
+
+void ScriptInterpreter::dumpAllScripts() {
+	int *opcodeStats = new int[_commandsMax - 1];
+	int *externStats = new int[_functions->getCount()];
+
+	for (int i = 0; i < _commandsMax; i++)
+		opcodeStats[i] = 0;
+	for (int i = 0; i < _functions->getCount(); i++)
+		externStats[i] = 0;
+
+	for (uint objectIndex = 1; objectIndex <= _vm->_dat->getObjectCount(); objectIndex++) {
+		Object *obj = _vm->_dat->getObject(objectIndex);
+		// Check if it's a byte array which might contain code
+		if (obj->getClass() != 0x7FFF)
+			continue;
+		// Code objects aren't excplicitly marked as such, we need to check if
+		// the last byte is a cmd_return opcode.
+		byte *retByte = obj->getData() + obj->getSize() - 1;
+		if (*retByte == 0x1F) {
+			dumpScript(objectIndex, opcodeStats, externStats);
+		}
+	}
+
+	debug(1, "OPCODE statistics:");
+	for (int i = 0; i < _commandsMax - 1; i++)
+		if (opcodeStats[i] > 0)
+			debug(1, "%-30s: %d", _commands[i].desc, opcodeStats[i]);
+	debug(1, "UNUSED OPCODE statistics:");
+	for (int i = 0; i < _commandsMax - 1; i++)
+		if (opcodeStats[i] == 0)
+			debug(1, "%-30s: %d", _commands[i].desc, opcodeStats[i]);
+	debug(1, ".");
+
+	debug(1, "EXTERN statistics (%d):", _functions->getCount());
+	for (int i = 0; i < _functions->getCount(); i++)
+		if (externStats[i] > 0)
+			debug(1, "%-30s: %d", _functions->getFuncName(i), externStats[i]);
+	debug(1, "UNUSED EXTERN statistics (%d):", _functions->getCount());
+	for (int i = 0; i < _functions->getCount(); i++)
+		if (externStats[i] == 0)
+			debug(1, "%-30s: %d", _functions->getFuncName(i), externStats[i]);
+	debug(1, ".");
+
+	delete[] opcodeStats;
+	delete[] externStats;
+}
+#endif
 
 } // End of namespace Made

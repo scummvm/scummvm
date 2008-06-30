@@ -251,8 +251,8 @@ xLoop3:
 	@                                      const u8   *src,
 	@                                      int         dstStride,
 	@                                      int         srcStride,
-	@                                      const u16  *pal);
-	@
+	@                                      const u16  *pal,
+	@                                      u32         numLines);
 Rescale_320x256xPAL8_To_256x256x1555:
 	@ r0 = dst
 	@ r1 = src
@@ -263,6 +263,7 @@ Rescale_320x256xPAL8_To_256x256x1555:
 	ORR	r8, r8,#0x0000FC00
 	ORR	r8, r8,#0x03E00000	@ r8 = mask
 	LDR	r9, [r13,#9*4]		@ r9 = palette
+	LDR	r7, [r13,#10*4]		@ r7 = numLines
 
 	SUB	r13,r13,#256*4		@ r13 = 1K of space on the stack.
 	MOV	r5, r13			@ r5 points to this space
@@ -280,7 +281,7 @@ palLoop:
 	SUB	r3,r3,#64*5		@ dstStride -= line length
 
 	MOV	r14,#0xFF		@ r14= 255
-	MOV	r5,#200			@ r5 = y
+	MOV	r5,r7			@ r5 = numLines
 yLoop4:
 	MOV	r4,#16			@ r4 = x
 xLoop4:
@@ -292,7 +293,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src0]
 	AND	r9, r14,r10,LSR #16	@ r9 = src2
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src2]
-	MOV	r10,r10,LSR #24		@ r10= src3
+ 	MOV	r10,r10,LSR #24		@ r10= src3
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src3]
 	ADD	r6, r6, r7		@ r6 = dst0<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst0 (split)
@@ -322,7 +323,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src5]
 	MOV	r9, r11,LSR #24		@ r9 = src7
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src7]
-	AND	r10,r14,r12		@ r10= src8
+ 	AND	r10,r14,r12		@ r10= src8
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src8]
 	ADD	r6, r6, r7		@ r6 = dst4<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst4 (split)
@@ -354,7 +355,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src10]
 	AND	r9, r14,r10		@ r9 = src12
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src12]
-	AND	r12,r14,r10,LSR #8	@ r11= src13
+ 	AND	r12,r14,r10,LSR #8	@ r11= src13
 	LDR	r12,[r13,r12,LSL #2]	@ r11= pal[src13]
 	ADD	r6, r6, r7		@ r6 = dst8<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst8 (split)
@@ -384,7 +385,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src15]
 	AND	r9, r14,r11,LSR #8	@ r9 = src17
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src17]
-	AND	r12,r14,r11,LSR #16	@ r11= src18
+ 	AND	r12,r14,r11,LSR #16	@ r11= src18
 	LDR	r12,[r13,r12,LSL #2]	@ r11= pal[src18]
 	ADD	r6, r6, r7		@ r6 = dst12<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst12 (split)

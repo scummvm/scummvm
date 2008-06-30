@@ -57,11 +57,12 @@ struct IgnoreCase_Hash {
 
 
 
-typedef HashMap<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringMap;
-
-
-#if 0
 // Specalization of the Hash functor for String objects.
+// We do case sensitve hashing here, because that is what
+// the default EqualTo is compatible with. If one wants to use
+// case insensitve hashing, then only because one wants to use
+// IgnoreCase_EqualTo, and then one has to specify a custom
+// hash anyway.
 template <>
 struct Hash<String> {
 	uint operator()(const String& s) const {
@@ -75,7 +76,10 @@ struct Hash<const char *> {
 		return hashit(s);
 	}
 };
-#endif
+
+// String map -- by default case insensitive
+typedef HashMap<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringMap;
+
 
 
 }	// End of namespace Common

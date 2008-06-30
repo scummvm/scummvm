@@ -345,14 +345,14 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 		if (isSmartphone()) {
 			if (_keyPressed.keycode) {
 				if (_keyPressed.keycode == Common::KEYCODE_RETURN)
-					shutdown();
+					_quit = true;
 				else
 					break;
 			}
 		}
 #endif
 		if (_keyPressed.keycode == keyYes)
-			shutdown();
+			_quit = true;
 		else if (_keyPressed.keycode == keyNo)
 			break;
 	}

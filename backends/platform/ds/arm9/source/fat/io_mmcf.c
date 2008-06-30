@@ -74,14 +74,14 @@ static bool cf_block_ready(void)
   do
   {
     while (!(CF_RD_STATUS & 0x40));
-  } while (CF_RD_STATUS & 0x80);
+  } while (CF_RD_STATUS & 0x80); 
   */
 
   do
   {
     i++;
-    while ( (!(CF_RD_STATUS & 0x40)) && (i < CARD_TIMEOUT) ) i++;
-  } while ( (CF_RD_STATUS & 0x80) && (i < CARD_TIMEOUT) );
+    while ( (!(CF_RD_STATUS & 0x40)) && (i < CARD_TIMEOUT) ) i++;    
+  } while ( (CF_RD_STATUS & 0x80) && (i < CARD_TIMEOUT) ); 
 
   if (i >= CARD_TIMEOUT) {
 	return false;
@@ -110,7 +110,7 @@ MMCF_IsInserted
 Is a compact flash card inserted?
 bool return OUT:  true if a CF card is inserted
 -----------------------------------------------------------------*/
-bool MMCF_IsInserted (void)
+bool MMCF_IsInserted (void) 
 {
   if ( !cf_set_features(0xAA) ) return false;
 
@@ -123,7 +123,7 @@ MMCF_ClearStatus
 Tries to make the CF card go back to idle mode
 bool return OUT:  true if a CF card is idle
 -----------------------------------------------------------------*/
-bool MMCF_ClearStatus (void)
+bool MMCF_ClearStatus (void) 
 {
 	return true;
 }
@@ -185,7 +185,7 @@ bool MMCF_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 			}
 		} else {
 		while(i--)
-			*buff++ = *MP_DATA;
+			*buff++ = *MP_DATA; 
 		}
 #else
 		i=256;
@@ -222,15 +222,15 @@ bool MMCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	u8 *buff_u8 = (u8*)buffer;
 	int temp;
 #endif
-
+	
 #if defined _CF_USE_DMA && defined NDS && defined ARM9
 	DC_FlushRange( buffer, j * BYTE_PER_READ);
 #endif
 
-	if (numSecs > 1)
+	if (numSecs > 1) 
 	{
 		int r = 0;
-
+		
 		for (r = 0; r < numSecs; r++)
 		{
 			MMCF_WriteSectors(sector + r, 1, ((unsigned char *) (buffer)) + 512);
@@ -270,12 +270,12 @@ bool MMCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 			}
 		} else {
 		while(i--)
-			*MP_DATA = *buff++;
+			*MP_DATA = *buff++; 
 		}
 #else
 		i=256;
 		while(i--)
-			*MP_DATA = *buff++;
+			*MP_DATA = *buff++; 
 #endif
 
   }
@@ -283,7 +283,7 @@ bool MMCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 #if defined _CF_USE_DMA && defined NDS
 	// Wait for end of transfer before returning
 	while(DMA3_CR & DMA_BUSY);
-#endif
+#endif  
 
 //#define _CF_VERIFY
 
@@ -312,7 +312,7 @@ bool MMCF_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 MMCF_Shutdown
 unload the GBAMP CF interface
 -----------------------------------------------------------------*/
-bool MMCF_Shutdown(void)
+bool MMCF_Shutdown(void) 
 {
 	return MMCF_ClearStatus() ;
 }

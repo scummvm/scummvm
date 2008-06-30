@@ -207,6 +207,16 @@ uint16 Zone::height() const {
 	return _bottom - _top;
 }
 
+Dialogue::Dialogue() {
+	memset(_questions, 0, sizeof(_questions));
+}
+
+Dialogue::~Dialogue() {
+	for (int i = 0; i < NUM_QUESTIONS; i++) {
+		delete _questions[i];
+	}
+}
+
 Answer::Answer() {
 	_text = NULL;
 	_mood = 0;

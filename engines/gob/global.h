@@ -123,8 +123,6 @@ public:
 	char _inter_resStr[200];
 	int32 _inter_resVal;
 
-	byte *_inter_variablesSizes; // 0: single byte, 1: two bytes, 3: four bytes
-	byte *_inter_variables;
 	byte *_inter_execPtr;
 	int16 _inter_animDataSize;
 
@@ -134,73 +132,11 @@ public:
 	// Can be 1, 2 or 3 for normal, double and triple speed, respectively
 	uint8 _speedFactor;
 
-	void clearVars(uint32 count) {
-		uint32 size = count * 4;
-
-		memset(_inter_variables, 0, size);
-		memset(_inter_variablesSizes, 0, size);
-		for (uint32 i = 0; i < size; i += 4)
-			_inter_variablesSizes[i] = 3;
-	}
-
-	void writeVarSizeStr(uint32 offset, uint32 len) {
-		uint32 i;
-		uint32 inVar;
-		uint32 varOff;
-
-		inVar = offset % 4;
-		varOff = (offset >> 2) << 2;
-		for (i = 0; i < 4; i++) {
-			if (_inter_variablesSizes[varOff + i] == 3)
-				_inter_variablesSizes[varOff + i] = 0;
-			else if ((inVar == (i+1)) && (_inter_variablesSizes[varOff + i] == 1))
-				_inter_variablesSizes[varOff + i] = 0;
-		}
-		memset(_inter_variablesSizes + offset, 0, len);
-	}
-
-	void writeVar(uint32 offset, uint32 val) {
-		WRITE_UINT32(_inter_variables + offset, val);
-		writeVarSize(offset, 3);
-	}
-	void writeVar(uint32 offset, uint16 val) {
-		WRITE_UINT16(_inter_variables + offset, val);
-		writeVarSize(offset, 1);
-	}
-	void writeVar(uint32 offset, uint8 val) {
-		(*(uint8 *)(_inter_variables + offset)) = val;
-		writeVarSize(offset, 0);
-	}
-	void writeVar(uint32 offset, const char *str) {
-		writeVarSizeStr(offset, strlen(str));
-		strcpy((char *) (_inter_variables + offset), str);
-	}
-
 	Global(GobEngine *vm);
 	~Global();
 
 protected:
 	GobEngine *_vm;
-
-	void writeVarSize(uint32 offset, byte n) {
-		uint32 i;
-		uint32 inVar;
-		uint32 varOff;
-
-		inVar = offset % 4;
-		varOff = (offset >> 2) << 2;
-		for (i = 0; i < 4; i++) {
-			if (_inter_variablesSizes[varOff + i] == 3)
-				_inter_variablesSizes[varOff + i] = 0;
-			else if ((inVar == (i+1)) && (_inter_variablesSizes[varOff + i] == 1))
-				_inter_variablesSizes[varOff + i] = 0;
-		}
-
-		_inter_variablesSizes[offset] = n;
-		for (; n > 0; n--)
-			_inter_variablesSizes[offset + n] = 0;
-	}
-
 };
 
 } // End of namespace Gob

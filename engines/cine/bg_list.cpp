@@ -40,62 +40,20 @@ Common::List<BGIncrust> bgIncrustList;
 
 /*! \brief Add masked sprite to the background
  * \param objIdx Sprite description
- * \param addList Add sprite to incrust list if true
- * \todo Fix incrust objects on CT background. Always drawing incrust elements
- * on CT background breaks game zones
  */
-void addToBGList(int16 objIdx, bool addList) {
-	int16 x = objectTable[objIdx].x;
-	int16 y = objectTable[objIdx].y;
-	int16 width = animDataTable[objectTable[objIdx].frame]._var1;
-	int16 height = animDataTable[objectTable[objIdx].frame]._height;
-	const byte *data = animDataTable[objectTable[objIdx].frame].data();
-	const byte *mask = animDataTable[objectTable[objIdx].frame].mask();
-//	int16 part = objectTable[objIdx].part;
+void addToBGList(int16 objIdx) {
+	renderer->incrustSprite(objectTable[objIdx]);
 
-	// Operation Stealth may switch among multiple backgrounds
-	if (g_cine->getGameType() == GType_OS) {
-		for (int i = 0; i < 8; i++) {
-			if (additionalBgTable[i]) {
-				drawSpriteRaw2(data, objectTable[objIdx].part, width, height, additionalBgTable[i], x, y);
-			}
-		}
-	} else {
-		drawSpriteRaw(data, mask, width, height, page2Raw, x, y);
-	}
-
-	if (addList)
-		createBgIncrustListElement(objIdx, 0);
+	createBgIncrustListElement(objIdx, 0);
 }
 
 /*! \brief Add filled sprite to the background
  * \param objIdx Sprite description
- * \param addList Add sprite to incrust list if true
- * \todo Fix incrust objects on CT background. Always drawing incrust elements
- * on CT background breaks game zones
  */
-void addSpriteFilledToBGList(int16 objIdx, bool addList) {
-	int16 x = objectTable[objIdx].x;
-	int16 y = objectTable[objIdx].y;
-	int16 width = animDataTable[objectTable[objIdx].frame]._realWidth;
-	int16 height = animDataTable[objectTable[objIdx].frame]._height;
-	const byte *data = animDataTable[objectTable[objIdx].frame].data();
+void addSpriteFilledToBGList(int16 objIdx) {
+	renderer->incrustMask(objectTable[objIdx]);
 
-	if (data) {
-		// Operation Stealth may switch among multiple backgrounds
-		if (g_cine->getGameType() == GType_OS) {
-			for (int i = 0; i < 8; i++) {
-				if (additionalBgTable[i]) {
-					gfxFillSprite(data, width, height, additionalBgTable[i], x, y);
-				}
-			}
-		} else {
-			gfxFillSprite(data, width, height, page2Raw, x, y);
-		}
-	}
-
-	if (addList)
-		createBgIncrustListElement(objIdx, 1);
+	createBgIncrustListElement(objIdx, 1);
 }
 
 /*! \brief Add new element to incrust list
@@ -115,7 +73,7 @@ void createBgIncrustListElement(int16 objIdx, int16 param) {
 	bgIncrustList.push_back(tmp);
 }
 
-/*! \brief Reset var8 (probably something related to bgIncrustList
+/*! \brief Reset var8 (probably something related to bgIncrustList)
  */
 void resetBgIncrustList(void) {
 	var8 = 0;
@@ -142,9 +100,9 @@ void loadBgIncrustFromSave(Common::InSaveFile &fHandle) {
 		bgIncrustList.push_back(tmp);
 
 		if (tmp.param == 0) {
-			addToBGList(tmp.objIdx, false);
+			renderer->incrustSprite(objectTable[tmp.objIdx]);
 		} else {
-			addSpriteFilledToBGList(tmp.objIdx, false);
+			renderer->incrustMask(objectTable[tmp.objIdx]);
 		}
 	}
 }

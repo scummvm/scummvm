@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+ 
 #include "dsoptions.h"
 #include "dsmain.h"
 #include "gui/dialog.h"
@@ -28,6 +28,7 @@
 #include "osystem_ds.h"
 #include "engines/scumm/scumm.h"
 #include "touchkeyboard.h"
+#include "gui/PopUpWidget.h"
 
 #define ALLOW_CPU_SCALER
 
@@ -40,28 +41,39 @@ namespace Scumm {
 
 namespace DS {
 
-DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
+DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(5, 0, 320 - 5, 230 - 20) {
 	addButton(this, 10, 175, "Close", GUI::kCloseCmd, 'C');
 
+	_radioButtonMode = false;
+	
 #ifdef DS_SCUMM_BUILD
 	if (!DS::isGBAMPAvailable()) {
 //		addButton(this, 100, 140, "Delete Save", 'dels', 'D');
 	}
 #endif
 
-	new GUI::StaticTextWidget(this, 80, 10, 130, 15, "ScummVM DS Options", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", GUI::kTextAlignCenter);
 
-	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 20, 25, 200, 20, "Left handed mode", 0, 'L');
-	_indyFightCheckbox = new GUI::CheckboxWidget(this, 20, 40, 200, 20, "Indy fighting controls", 0, 'I');
-	_unscaledCheckbox = new GUI::CheckboxWidget(this, 20, 55, 200, 20, "Unscaled main screen", 0, 'S');
-	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 70, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
-	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 85, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
-	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
-	_showCursorCheckbox = new GUI::CheckboxWidget(this, 20, 115, 130, 20, "Show mouse cursor", 0, 'T');
-#ifdef ALLOW_CPU_SCALER
-	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
-#endif
-	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 20, 130, 250, 20, "Snap to border", 0, 'T');
+	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 5, 70, 130, 20, "Left handed mode", 0, 'L');
+	_indyFightCheckbox = new GUI::CheckboxWidget(this, 5, 40, 200, 20, "Indy fighting controls", 0, 'I');
+	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 5, 55, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
+	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 5, 25, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
+	_disablePowerOff = new GUI::CheckboxWidget(this, 5, 85, 130, 20, "Disable power off", 0, 'T');
+	_showCursorCheckbox = new GUI::CheckboxWidget(this, 5, 100, 130, 20, "Show mouse cursor", 0, 'T');
+
+//#ifdef ALLOW_CPU_SCALER
+//	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
+//#endif
+
+	new GUI::StaticTextWidget(this, 180, 70, 130, 15, "Main screen:", GUI::kTextAlignLeft);
+
+	_hardScaler = new GUI::CheckboxWidget(this, 140, 85, 170, 20, "Hardware scale (fast)", 0x10000001, 'T');
+	_cpuScaler = new GUI::CheckboxWidget(this, 140, 100, 170, 20, "Software scale (quality)", 0x10000002, 'S');
+	_unscaledCheckbox = new GUI::CheckboxWidget(this, 140, 115, 170, 20, "Unscaled", 0x10000003, 'S');
+	
+
+
+	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 5, 115, 120, 20, "Snap to border", 0, 'T');
 
 	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
 	_touchX = new GUI::SliderWidget(this, 130, 145, 130, 12, 1);
@@ -153,6 +165,11 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 		_touchY->setValue(0);
 	}
 
+	if (!_cpuScaler->getState() && !_unscaledCheckbox->getState()) {
+		_hardScaler->setState(true);
+	}
+		
+	_radioButtonMode = true;
 }
 
 DSOptionsDialog::~DSOptionsDialog() {
@@ -177,16 +194,49 @@ void DSOptionsDialog::updateConfigManager() {
 }
 
 void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+
+	static bool guard = false;
+
+	if ((!guard) && (_radioButtonMode))
+	{
+		guard = true;
+
+		if ((cmd & 0xFF000000) == 0x10000000)
+		{
+			_cpuScaler->setState(false);
+			_hardScaler->setState(false);
+			_unscaledCheckbox->setState(false);
+		
+			if ((sender == _cpuScaler) && (cmd == 0x10000002))
+			{
+				_cpuScaler->setState(true);
+			}
+		
+			if ((sender == _hardScaler) && (cmd == 0x10000001))
+			{
+				_hardScaler->setState(true);
+			}
+	
+			if ((sender == _unscaledCheckbox) && (cmd == 0x10000003))
+			{
+				_unscaledCheckbox->setState(true);
+			}
+		}
+
+		guard = false;
+
+	}
+
 	if (cmd == GUI::kCloseCmd) {
 		updateConfigManager();
 		close();
 	}
-
+	
 #ifdef DS_SCUMM_BUILD
 /*	if (cmd == 'dels') {
 		_delDialog->setList(Scumm::generateSavegameList(Scumm::g_scumm, false));
 		_delDialog->handleCommand(NULL, GUI::kListSelectionChangedCmd, 0);
-
+		
 		Common::Event event;
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.ascii = 0;
@@ -195,9 +245,9 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 		event.type = Common::EVENT_KEYUP;
 		OSystem_DS::instance()->addEvent(event);
-
+				
 		int idx = _delDialog->runModal();
-
+		
 		if (idx >= 0) {
 			char name[256];
 			Scumm::g_scumm->makeSavegameName(name, idx, false);
@@ -205,10 +255,10 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 				((DSSaveFileManager *) (OSystem_DS::instance()->getSavefileManager()))->deleteFile(name);
 			}
 		}
-
+		
 	}*/
 #endif
-
+	
 
 }
 
@@ -220,11 +270,11 @@ void togglePause() {
 		OSystem_DS* system = OSystem_DS::instance();
 
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_p;
+		event.kbd.keycode = Common::KEYCODE_p;		
 		event.kbd.ascii = 'p';
 		event.kbd.flags = 0;
 		system->addEvent(event);
-
+	
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 	}
@@ -235,14 +285,12 @@ void showOptionsDialog() {
 	togglePause();
 
 	DS::displayMode16Bit();
-
+	
 
 	DSOptionsDialog* d = new DSOptionsDialog();
 	d->runModal();
-	consolePrintf("deleting dialog\n");
 	delete d;
-
-	consolePrintf("going to 8 bit\n");
+	
 	DS::displayMode8Bit();
 
 	togglePause();
@@ -303,7 +351,8 @@ void setOptions() {
 	} else {
 		DS::setCpuScalerEnable(false);
 	}
-#endif
+#endif	
+
 }
 
 }

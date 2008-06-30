@@ -59,31 +59,7 @@ public:
 };
 
 
-
-class Opcode {
-
-public:
-	virtual void operator()() const = 0;
-	virtual ~Opcode() { }
-};
-
-template <class T>
-class OpcodeImpl : public Opcode {
-
-	typedef void (T::*Fn)();
-
-	T*	_instance;
-	Fn	_fn;
-
-public:
-	OpcodeImpl(T* instance, const Fn &fn) : _instance(instance), _fn(fn) { }
-
-	void operator()() const {
-		(_instance->*_fn)();
-	}
-
-};
-
+typedef Common::Functor0<void> Opcode;
 typedef Common::Array<const Opcode*>	OpcodeSet;
 
 
@@ -155,6 +131,7 @@ protected:
 		char *bgName;
 		char *maskName;
 		char *pathName;
+		char *characterName;
 	} ctxt;
 
 	void warning_unexpected();
@@ -231,18 +208,31 @@ protected:
 	} _forwardedCommands[MAX_FORWARDS];
 	uint		_numForwardedCommands;
 
-	void init();
+	void clearSet(OpcodeSet &opcodes) {
+		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+			delete *i;
+		opcodes.clear();
+	}
 
 public:
 	LocationParser_ns(Parallaction_ns *vm) : _vm(vm) {
-		init();
 	}
 
+	virtual void init();
+
 	virtual ~LocationParser_ns() {
+		delete _parser;
 		delete _commandsNames;
 		delete _locationStmt;
+		delete _locationZoneStmt;
+		delete _locationAnimStmt;
 		delete _zoneTypeNames;
 		delete _zoneFlagNames;
+
+		clearSet(_commandParsers);
+		clearSet(_locationAnimParsers);
+		clearSet(_locationZoneParsers);
+		clearSet(_locationParsers);
 	}
 
 	void parse(Script *script);
@@ -294,12 +284,11 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
-	void init();
-
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {
-		init();
 	}
+
+	virtual void init();
 
 	virtual ~LocationParser_br() {
 		delete _commandsNames;
@@ -355,15 +344,23 @@ protected:
 	void		parseLValue(ScriptVar &var, const char *str);
 	virtual void	parseRValue(ScriptVar &var, const char *str);
 
-	void init();
+	void clearSet(OpcodeSet &opcodes) {
+		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+			delete *i;
+		opcodes.clear();
+	}
 
 public:
 	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm) {
-		init();
 	}
 
+	virtual void init();
+
 	virtual ~ProgramParser_ns() {
+		delete _parser;
 		delete _instructionNames;
+
+		clearSet(_instructionParsers);
 	}
 
 	void parse(Script *script, ProgramPtr program);
@@ -386,15 +383,16 @@ protected:
 
 	virtual void parseRValue(ScriptVar &var, const char *str);
 
-	void init();
-
 public:
 	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm) {
-		init();
 	}
+
+	virtual void init();
 
 	virtual ~ProgramParser_br() {
 		delete _instructionNames;
+		delete _parser;
+
 	}
 
 };

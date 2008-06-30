@@ -26,6 +26,8 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
+#include "gob/variables.h"
+
 namespace Gob {
 
 class Game {
@@ -200,9 +202,8 @@ protected:
 	ExtTable *_extTableArray[5];
 	int16 _extHandleArray[5];
 	byte *_imFileDataArray[5];
-	byte *_variablesArray[5];
+	Variables *_variablesArray[5];
 	char _curTotFileArray[5][14];
-	byte *_variablesSizesArray[5];
 
 	GobEngine *_vm;
 

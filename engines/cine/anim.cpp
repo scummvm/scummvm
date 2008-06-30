@@ -53,6 +53,7 @@ AnimData animDataTable[NUM_MAX_ANIMDATA];
 
 static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
+	{"TITRE", 0xF},
 	{"TITRE2", 0xF},
 	{"ET", 0xC},
 	{"L311", 0x3},
@@ -729,7 +730,7 @@ void loadResource(const char *resourceName) {
 	} else if (strstr(resourceName, ".SEQ")) {
 		loadSeq(resourceName, -1);
 		return;
-	} else if (strstr(resourceName, "ECHEC")) {
+	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
 		exitEngine = 1;
 		return;
 	}

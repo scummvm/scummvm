@@ -288,6 +288,20 @@ const char *_instructionNamesRes_br[] = {
 };
 
 
+#define SetOpcodeTable(x) table = &x;
+
+typedef Common::Functor0Mem<void, ProgramParser_br> OpcodeV1;
+#define INSTRUCTION_PARSER(sig) table->push_back(new OpcodeV1(this, &ProgramParser_br::instParse_##sig))
+
+typedef Common::Functor0Mem<void, LocationParser_br> OpcodeV2;
+#define ZONE_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::locZoneParse_##sig))
+#define ANIM_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::locAnimParse_##sig))
+#define LOCATION_PARSER(sig)	table->push_back(new OpcodeV2(this, &LocationParser_br::locParse_##sig))
+#define COMMAND_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::cmdParse_##sig))
+
+#define WARNING_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::warning_##sig))
+
+
 #define DECLARE_ZONE_PARSER(sig) void LocationParser_br::locZoneParse_##sig()
 #define DECLARE_ANIM_PARSER(sig) void LocationParser_br::locAnimParse_##sig()
 #define DECLARE_COMMAND_PARSER(sig) void LocationParser_br::cmdParse_##sig()
@@ -428,7 +442,7 @@ DECLARE_LOCATION_PARSER(redundant)  {
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
 
-//	changeCharacter(character);
+	ctxt.characterName = strdup(_tokens[0]);
 }
 
 
@@ -940,16 +954,6 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 
 }
 
-typedef OpcodeImpl<LocationParser_br> OpcodeV2;
-#define ZONE_PARSER(sig)		OpcodeV2(this, &LocationParser_br::locZoneParse_##sig)
-#define ANIM_PARSER(sig)		OpcodeV2(this, &LocationParser_br::locAnimParse_##sig)
-#define LOCATION_PARSER(sig)	OpcodeV2(this, &LocationParser_br::locParse_##sig)
-#define COMMAND_PARSER(sig)		OpcodeV2(this, &LocationParser_br::cmdParse_##sig)
-#define WARNING_PARSER(sig)		OpcodeV2(this, &LocationParser_br::warning_##sig)
-
-typedef OpcodeImpl<ProgramParser_br> OpcodeV3;
-#define INSTRUCTION_PARSER(sig) OpcodeV3(this, &ProgramParser_br::instParse_##sig)
-
 
 void LocationParser_br::init() {
 
@@ -963,118 +967,101 @@ void LocationParser_br::init() {
 	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
 	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
 
+	Common::Array<const Opcode*> *table = 0;
 
-	int i;
+	SetOpcodeTable(_commandParsers);
+	WARNING_PARSER(unexpected);
+	COMMAND_PARSER(flags);		// set
+	COMMAND_PARSER(flags);		// clear
+	COMMAND_PARSER(zone);	// start
+	COMMAND_PARSER(zone);		// speak
+	COMMAND_PARSER(zone);		// get
+	COMMAND_PARSER(location);
+	COMMAND_PARSER(zone);		// open
+	COMMAND_PARSER(zone);		// close
+	COMMAND_PARSER(zone);		// on
+	COMMAND_PARSER(zone);		// off
+	COMMAND_PARSER(call);
+	COMMAND_PARSER(flags);		// toggle
+	COMMAND_PARSER(drop);
+	COMMAND_PARSER(simple);		// quit
+	COMMAND_PARSER(move);
+	COMMAND_PARSER(zone);	// stop
+	COMMAND_PARSER(string);		// character
+	COMMAND_PARSER(string);		// followme
+	COMMAND_PARSER(simple);		// onmouse
+	COMMAND_PARSER(simple);		// offmouse
+	COMMAND_PARSER(drop);		// add
+	COMMAND_PARSER(zone);		// leave
+	COMMAND_PARSER(math);		// inc
+	COMMAND_PARSER(math);		// dec
+	COMMAND_PARSER(test);		// test
+	WARNING_PARSER(unexpected);
+	WARNING_PARSER(unexpected);
+	COMMAND_PARSER(math);		// let
+	COMMAND_PARSER(music);
+	COMMAND_PARSER(zone);		// fix
+	COMMAND_PARSER(zone);		// unfix
+	COMMAND_PARSER(zeta);
+	COMMAND_PARSER(unary);		// scroll
+	COMMAND_PARSER(string);		// swap
+	COMMAND_PARSER(give);
+	COMMAND_PARSER(text);
+	COMMAND_PARSER(unary);		// part
+	WARNING_PARSER(unexpected);
+	COMMAND_PARSER(simple);		// return
+	COMMAND_PARSER(simple);		// onsave
+	COMMAND_PARSER(simple);		// offsave
+	COMMAND_PARSER(endcommands);	// endcommands
+	COMMAND_PARSER(ifchar);
+	COMMAND_PARSER(endif);
 
-	static const OpcodeV2 op2[] = {
-		WARNING_PARSER(unexpected),
-		COMMAND_PARSER(flags),		// set
-		COMMAND_PARSER(flags),		// clear
-		COMMAND_PARSER(zone),	// start
-		COMMAND_PARSER(zone),		// speak
-		COMMAND_PARSER(zone),		// get
-		COMMAND_PARSER(location),
-		COMMAND_PARSER(zone),		// open
-		COMMAND_PARSER(zone),		// close
-		COMMAND_PARSER(zone),		// on
-		COMMAND_PARSER(zone),		// off
-		COMMAND_PARSER(call),
-		COMMAND_PARSER(flags),		// toggle
-		COMMAND_PARSER(drop),
-		COMMAND_PARSER(simple),		// quit
-		COMMAND_PARSER(move),
-		COMMAND_PARSER(zone),	// stop
-		COMMAND_PARSER(string),		// character
-		COMMAND_PARSER(string),		// followme
-		COMMAND_PARSER(simple),		// onmouse
-		COMMAND_PARSER(simple),		// offmouse
-		COMMAND_PARSER(drop),		// add
-		COMMAND_PARSER(zone),		// leave
-		COMMAND_PARSER(math),		// inc
-		COMMAND_PARSER(math),		// dec
-		COMMAND_PARSER(test),		// test
-		WARNING_PARSER(unexpected),
-		WARNING_PARSER(unexpected),
-		COMMAND_PARSER(math),		// let
-		COMMAND_PARSER(music),
-		COMMAND_PARSER(zone),		// fix
-		COMMAND_PARSER(zone),		// unfix
-		COMMAND_PARSER(zeta),
-		COMMAND_PARSER(unary),		// scroll
-		COMMAND_PARSER(string),		// swap
-		COMMAND_PARSER(give),
-		COMMAND_PARSER(text),
-		COMMAND_PARSER(unary),		// part
-		WARNING_PARSER(unexpected),
-		COMMAND_PARSER(simple),		// return
-		COMMAND_PARSER(simple),		// onsave
-		COMMAND_PARSER(simple),		// offsave
-		COMMAND_PARSER(endcommands),	// endcommands
-		COMMAND_PARSER(ifchar),
-		COMMAND_PARSER(endif)
-	};
+	SetOpcodeTable(_locationParsers);
+	WARNING_PARSER(unexpected);
+	LOCATION_PARSER(character);
+	LOCATION_PARSER(endlocation);
+	LOCATION_PARSER(ifchar);
+	LOCATION_PARSER(null);			// endif
+	LOCATION_PARSER(location);
+	LOCATION_PARSER(mask);
+	LOCATION_PARSER(path);
+	LOCATION_PARSER(null);			// disk
+	LOCATION_PARSER(localflags);
+	LOCATION_PARSER(commands);
+	LOCATION_PARSER(escape);
+	LOCATION_PARSER(acommands);
+	LOCATION_PARSER(flags);
+	LOCATION_PARSER(comment);
+	LOCATION_PARSER(endcomment);
+	LOCATION_PARSER(zone);
+	LOCATION_PARSER(animation);
+	LOCATION_PARSER(zeta);
+	LOCATION_PARSER(music);
+	LOCATION_PARSER(sound);
 
-	for (i = 0; i < ARRAYSIZE(op2); i++)
-		_commandParsers.push_back(&op2[i]);
+	SetOpcodeTable(_locationZoneParsers);
+	WARNING_PARSER(unexpected);
+	ZONE_PARSER(endzone);
+	ZONE_PARSER(limits);
+	ZONE_PARSER(moveto);
+	ZONE_PARSER(type);
+	ZONE_PARSER(commands);
+	ZONE_PARSER(label);
+	ZONE_PARSER(flags);
 
-	static const OpcodeV2 op4[] = {
-		WARNING_PARSER(unexpected),
-		LOCATION_PARSER(character),
-		LOCATION_PARSER(endlocation),
-		LOCATION_PARSER(ifchar),
-		LOCATION_PARSER(null),			// endif
-		LOCATION_PARSER(location),
-		LOCATION_PARSER(mask),
-		LOCATION_PARSER(path),
-		LOCATION_PARSER(null),			// disk
-		LOCATION_PARSER(localflags),
-		LOCATION_PARSER(commands),
-		LOCATION_PARSER(escape),
-		LOCATION_PARSER(acommands),
-		LOCATION_PARSER(flags),
-		LOCATION_PARSER(comment),
-		LOCATION_PARSER(endcomment),
-		LOCATION_PARSER(zone),
-		LOCATION_PARSER(animation),
-		LOCATION_PARSER(zeta),
-		LOCATION_PARSER(music),
-		LOCATION_PARSER(sound)
-	};
 
-	for (i = 0; i < ARRAYSIZE(op4); i++)
-		_locationParsers.push_back(&op4[i]);
-
-	static const OpcodeV2 op5[] = {
-		WARNING_PARSER(unexpected),
-		ZONE_PARSER(endzone),
-		ZONE_PARSER(limits),
-		ZONE_PARSER(moveto),
-		ZONE_PARSER(type),
-		ZONE_PARSER(commands),
-		ZONE_PARSER(label),
-		ZONE_PARSER(flags)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op5); i++)
-		_locationZoneParsers.push_back(&op5[i]);
-
-	static const OpcodeV2 op6[] = {
-		WARNING_PARSER(unexpected),
-		ANIM_PARSER(endanimation),
-		ANIM_PARSER(endanimation),		// endzone
-		ANIM_PARSER(script),
-		ANIM_PARSER(commands),
-		ANIM_PARSER(type),
-		ANIM_PARSER(label),
-		ANIM_PARSER(flags),
-		ANIM_PARSER(file),
-		ANIM_PARSER(position),
-		ANIM_PARSER(moveto)
-	};
-
-	for (i = 0; i < ARRAYSIZE(op6); i++)
-		_locationAnimParsers.push_back(&op6[i]);
-
+	SetOpcodeTable(_locationAnimParsers);
+	WARNING_PARSER(unexpected);
+	ANIM_PARSER(endanimation);
+	ANIM_PARSER(endanimation);		// endzone
+	ANIM_PARSER(script);
+	ANIM_PARSER(commands);
+	ANIM_PARSER(type);
+	ANIM_PARSER(label);
+	ANIM_PARSER(flags);
+	ANIM_PARSER(file);
+	ANIM_PARSER(position);
+	ANIM_PARSER(moveto);
 }
 
 void ProgramParser_br::init() {
@@ -1083,45 +1070,41 @@ void ProgramParser_br::init() {
 
 	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 
-	static const OpcodeV3 op0[] = {
-		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition
-		INSTRUCTION_PARSER(zone),		// on
-		INSTRUCTION_PARSER(zone),		// off
-		INSTRUCTION_PARSER(x),
-		INSTRUCTION_PARSER(y),
-		INSTRUCTION_PARSER(z),
-		INSTRUCTION_PARSER(f),
-		INSTRUCTION_PARSER(loop),
-		INSTRUCTION_PARSER(null),		// endloop
-		INSTRUCTION_PARSER(null),		// show
-		INSTRUCTION_PARSER(inc),
-		INSTRUCTION_PARSER(inc),		// dec
-		INSTRUCTION_PARSER(set),
-		INSTRUCTION_PARSER(put),
-		INSTRUCTION_PARSER(call),
-		INSTRUCTION_PARSER(null),		// wait
-		INSTRUCTION_PARSER(zone),		// start
-		INSTRUCTION_PARSER(zone),		// process
-		INSTRUCTION_PARSER(move),
-		INSTRUCTION_PARSER(color),
-		INSTRUCTION_PARSER(zone),		// sound
-		INSTRUCTION_PARSER(mask),
-		INSTRUCTION_PARSER(print),
-		INSTRUCTION_PARSER(text),
-		INSTRUCTION_PARSER(inc),		// mul
-		INSTRUCTION_PARSER(inc),		// div
-		INSTRUCTION_PARSER(if_op),
-		INSTRUCTION_PARSER(null),
-		INSTRUCTION_PARSER(null),
-		INSTRUCTION_PARSER(endif),
-		INSTRUCTION_PARSER(zone),		// stop
-		INSTRUCTION_PARSER(endscript)
-	};
+	Common::Array<const Opcode*> *table = 0;
 
-	uint i;
-	for (i = 0; i < ARRAYSIZE(op0); i++)
-		_instructionParsers.push_back(&op0[i]);
-
+	SetOpcodeTable(_instructionParsers);
+	INSTRUCTION_PARSER(defLocal);	// invalid opcode -> local definition
+	INSTRUCTION_PARSER(zone);		// on
+	INSTRUCTION_PARSER(zone);		// off
+	INSTRUCTION_PARSER(x);
+	INSTRUCTION_PARSER(y);
+	INSTRUCTION_PARSER(z);
+	INSTRUCTION_PARSER(f);
+	INSTRUCTION_PARSER(loop);
+	INSTRUCTION_PARSER(null);		// endloop
+	INSTRUCTION_PARSER(null);		// show
+	INSTRUCTION_PARSER(inc);
+	INSTRUCTION_PARSER(inc);		// dec
+	INSTRUCTION_PARSER(set);
+	INSTRUCTION_PARSER(put);
+	INSTRUCTION_PARSER(call);
+	INSTRUCTION_PARSER(null);		// wait
+	INSTRUCTION_PARSER(zone);		// start
+	INSTRUCTION_PARSER(zone);		// process
+	INSTRUCTION_PARSER(move);
+	INSTRUCTION_PARSER(color);
+	INSTRUCTION_PARSER(zone);		// sound
+	INSTRUCTION_PARSER(mask);
+	INSTRUCTION_PARSER(print);
+	INSTRUCTION_PARSER(text);
+	INSTRUCTION_PARSER(inc);		// mul
+	INSTRUCTION_PARSER(inc);		// div
+	INSTRUCTION_PARSER(if_op);
+	INSTRUCTION_PARSER(null);
+	INSTRUCTION_PARSER(null);
+	INSTRUCTION_PARSER(endif);
+	INSTRUCTION_PARSER(zone);		// stop
+	INSTRUCTION_PARSER(endscript);
 }
 
 void LocationParser_br::parse(Script *script) {
@@ -1130,15 +1113,21 @@ void LocationParser_br::parse(Script *script) {
 	ctxt.bgName = 0;
 	ctxt.maskName = 0;
 	ctxt.pathName = 0;
+	ctxt.characterName = 0;
 
 	LocationParser_ns::parse(script);
 
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.bgName, ctxt.maskName, ctxt.pathName);
 	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo.path;
 
+	if (ctxt.characterName) {
+		_vm->changeCharacter(ctxt.characterName);
+	}
+
 	free(ctxt.bgName);
 	free(ctxt.maskName);
 	free(ctxt.pathName);
+	free(ctxt.characterName);
 
 }
 

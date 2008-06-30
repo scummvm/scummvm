@@ -28,7 +28,7 @@
 
 #include "CELauncherDialog.h"
 
-#include "engines/engine.h"
+#include "engines/metaengine.h"
 
 #include "gui/newgui.h"
 #include "gui/widget.h"

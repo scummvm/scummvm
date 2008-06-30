@@ -32,6 +32,7 @@
 #include "gob/util.h"
 #include "gob/game.h"
 #include "gob/scenery.h"
+#include "gob/inter.h"
 #include "gob/video.h"
 
 namespace Gob {
@@ -247,10 +248,7 @@ void Draw_v2::printTotText(int16 id) {
 	if (_renderFlags & RENDERFLAG_FROMSPLIT) {
 		int16 start;
 
-		if (_vm->_video->_splitHeight1 < _vm->_height)
-			start = _vm->_video->_splitHeight1;
-		else
-			start = _vm->_video->_splitStart;
+		start = _vm->_video->_splitStart;
 
 		destY = start;
 		spriteBottom = READ_LE_UINT16(ptr + 6) - READ_LE_UINT16(ptr + 2);
@@ -654,22 +652,23 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 destSurface = _destSurface;
 	int16 sourceSurface = _sourceSurface;
 
-	if ((_destSpriteY >= _vm->_video->_splitHeight1) &&
-	    ((_destSurface == 20) || (_destSurface == 21))) {
-
-		if (_vm->_video->_splitHeight1 < _vm->_height) {
-			_destSpriteY = (_destSpriteY - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
+	if (_vm->_video->_splitSurf && ((_destSurface == 20) || (_destSurface == 21))) {
+		if ((_destSpriteY >= _vm->_video->_splitStart)) {
+			_destSpriteY -= _vm->_video->_splitStart;
 			if ((operation == DRAW_DRAWLINE) ||
 				 ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
-				_spriteBottom = (_spriteBottom - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
+				_spriteBottom -= _vm->_video->_splitStart;
+
+			_destSurface += 4;
+		}
+
+		if ((_spriteTop >= _vm->_video->_splitStart) && (operation == DRAW_BLITSURF)) {
+			_spriteTop -= _vm->_video->_splitStart;
+			if (_destSurface < 24)
+				_destSurface += 4;
 		}
 
 	}
-
-	if ((_spriteTop >= _vm->_video->_splitHeight1) && (operation == DRAW_BLITSURF) &&
-	    ((_destSurface == 20) || (_destSurface == 21)))
-		if (_vm->_video->_splitHeight1 < _vm->_height)
-			_spriteTop = (_spriteTop - _vm->_video->_splitHeight1) + _vm->_video->_splitStart;
 
 	adjustCoords(0, &_destSpriteX, &_destSpriteY);
 	if ((operation != DRAW_LOADSPRITE) && (_needAdjust != 2)) {

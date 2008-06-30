@@ -41,28 +41,54 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define FLAGS(x, y, z, a, b, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, id }
+#define FLAGS(x, y, z, a, b, c, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_KYRA1)
+#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, Kyra::GI_KYRA2)
-#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, true, true, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
 			0,
+			AD_ENTRY1("DISK1.EXE", "c8641d0414d6c966d0a3dad79db07bf4"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA1_FLOPPY_CMP_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			0,
+			AD_ENTRY1("DISK1.EXE", "5d5cee4c3d0b68d586788b74243d254a"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA1_FLOPPY_CMP_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -73,7 +99,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -84,7 +110,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
@@ -95,7 +121,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -106,7 +132,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // from Arne.F
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -117,7 +143,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // from VooD
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -128,7 +154,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // floppy 1.8 from clemmy
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -139,7 +165,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // from gourry
 		{
 			"kyra1",
-			0,
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"),
 			Common::IT_ITA,
 			Common::kPlatformPC,
@@ -279,7 +305,7 @@ const KYRAGameDescription adGameDescs[] = {
 			AD_ENTRY1("GEMCUT.PAK", "d8327fc4b7a72b23c900fa13aef4093a"),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA1_CD_FLAGS
 	},
@@ -294,6 +320,66 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::ADGF_DEMO
 		},
 		KYRA1_DEMO_FLAGS
+	},
+
+	{ // Floppy version
+		{
+			"kyra2",
+			0,
+			AD_ENTRY1("WESTWOOD.001", "3f52dda68c4f7696c8309038be9f4151"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_CMP_FLAGS
+	},
+
+	{ // Floppy version
+		{
+			"kyra2",
+			0,
+			AD_ENTRY1("WESTWOOD.001", "d787b9559afddfe058b84c0b3a787224"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_CMP_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("FATE.PAK", "1ba18be685ad8e5a0ab5d46a0ce4d345"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("FATE.PAK", "262fb69dd8e52e596c7aefc6456f7c1b"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("FATE.PAK", "f7de11506b4c8fdf64bc763206c3e4e7"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_FLAGS
 	},
 
 	{ // CD version
@@ -400,6 +486,28 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
+	{ // PC-9821
+		{
+			"kyra2",
+			0,
+			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
+			Common::EN_ANY,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_TOWNS_FLAGS
+	},
+	{
+		{
+			"kyra2",
+			0,
+			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_TOWNS_SJIS_FLAGS
+	},
 
 	// Kyra3
 	
@@ -417,7 +525,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_FLAGS
+		KYRA3_CD_INS_FLAGS
 	},
 	{
 		{
@@ -432,7 +540,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_FLAGS
+		KYRA3_CD_INS_FLAGS
 	},
 	{
 		{
@@ -447,7 +555,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_FLAGS
+		KYRA3_CD_INS_FLAGS
 	},
 
 	// installed version
@@ -497,7 +605,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FLAGS
 	},
 
-	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

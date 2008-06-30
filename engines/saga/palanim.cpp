@@ -66,12 +66,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 	debug(3, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entryCount);
 
-	test_p = calloc(_entryCount, sizeof(PalanimEntry));
-	if (test_p == NULL) {
-		warning("PalAnim::loadPalAnim(): Allocation failure");
-		return MEM;
-	}
-
+	test_p = malloc(_entryCount * sizeof(PalanimEntry));
 	_entries = (PalanimEntry *)test_p;
 
 	for (i = 0; i < _entryCount; i++) {
@@ -87,22 +82,12 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 		debug(2, "PalAnim::loadPalAnim(): Entry %d: Loading %d palette indices.\n", i, pal_count);
 
-		test_p = calloc(1, sizeof(char) * pal_count);
-		if (test_p == NULL) {
-			warning("PalAnim::loadPalAnim(): Allocation failure");
-			return MEM;
-		}
-
+		test_p = malloc(sizeof(char) * pal_count);
 		_entries[i].pal_index = (byte *)test_p;
 
 		debug(2, "PalAnim::loadPalAnim(): Entry %d: Loading %d SAGA_COLOR structures.", i, color_count);
 
-		test_p = calloc(1, sizeof(Color) * color_count);
-		if (test_p == NULL) {
-			warning("PalAnim::loadPalAnim(): Allocation failure");
-			return MEM;
-		}
-
+		test_p = malloc(sizeof(Color) * color_count);
 		_entries[i].colors = (Color *)test_p;
 
 		for (p = 0; p < pal_count; p++) {

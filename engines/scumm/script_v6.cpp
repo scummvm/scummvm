@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>	// for ScummEngine_v6::o6_getDateTime()
+
 #include "common/config-manager.h"
 #include "common/system.h"
 
@@ -43,8 +45,6 @@
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
-
-#include <time.h>	// for ScummEngine_v6::o6_getDateTime()
 
 namespace Scumm {
 

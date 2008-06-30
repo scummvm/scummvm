@@ -21,8 +21,9 @@
  */
 
 #include "gbampsave.h"
-#include "gba_nds_fat.h"
-#include "ds-fs.h"
+#include "fat/gba_nds_fat.h"
+#include "backends/fs/ds/ds-fs.h"
+#include "common/config-manager.h"
 
 /////////////////////////
 // GBAMP Save File
@@ -30,7 +31,7 @@
 
 GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
-	consolePrintf("%s handle is %d\n", name, handle);
+//	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
 	bufferPos = 0;
 	saveSize = 0;
@@ -92,40 +93,40 @@ uint32 GBAMPSaveFile::write(const void *buf, uint32 size) {
 
 		memcpy(buffer + bufferPos, buf, size);
 		bufferPos += size;
-
+		
 		saveSize += size;
 
 
 /*		int pos = 0;
-
+		
 		int rest = SAVE_BUFFER_SIZE - bufferPos;
 		memcpy(buffer + bufferPos, buf, rest);
 		bufferPos = 512;
 		pos += rest;
-		flushSaveBuffer();
+		flushSaveBuffer();		
 		size -= rest;
 //		consolePrintf("First section: %d\n", rest);
-
+		
 		while (size >= 512) {
 			DS::std_fwrite(((char *) (buf)) + pos, 1, 512, handle);
 			size -= 512;
 			pos += 512;
 //			consolePrintf("Full chunk, %d left ", size);
 		}
-
+		
 		bufferPos = 0;
 		memcpy(buffer + bufferPos, ((char *) (buf)) + pos, size);
 		bufferPos += size;
 //		consolePrintf("%d left in buffer ", bufferPos);*/
-
+		
 	} else {
-
+	
 		memcpy(buffer + bufferPos, buf, size);
 		bufferPos += size;
-
+		
 		saveSize += size;
 	}
-
+	
 //	if ((size > 100) || (size <= 0)) consolePrintf("Write %d bytes\n", size);
 	return size;
 }
@@ -145,40 +146,62 @@ GBAMPSaveFileManager::~GBAMPSaveFileManager() {
 
 GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrLoad) {
 	char fileSpec[128];
-
-	strcpy(fileSpec, getSavePath().c_str());
-
+	
+	strcpy(fileSpec, getSavePath());
+	
 	if (fileSpec[strlen(fileSpec) - 1] == '/') {
 		sprintf(fileSpec, "%s%s", getSavePath(), name);
 	} else {
 		sprintf(fileSpec, "%s/%s", getSavePath(), name);
 	}
-
+	
 //	consolePrintf(fileSpec);
 	GBAMPSaveFile* sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
 	if (sf->isOpen()) {
-		return sf;
+		return sf;	
 	} else {
 		delete sf;
-		return NULL;
+		return NULL;	
 	}
 }
 
-Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
+// This method copied from an old version of the savefile.cpp, since it's been removed from there and
+// placed in default-saves.cpp, where I cannot call it.
+const char *GBAMPSaveFileManager::getSavePath() const {
+	const char *dir = NULL;
+
+	// Try to use game specific savepath from config
+	dir = ConfMan.get("savepath").c_str();
+
+	// Work around a bug (#999122) in the original 0.6.1 release of
+	// ScummVM, which would insert a bad savepath value into config files.
+	if (0 == strcmp(dir, "None")) {
+		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
+		ConfMan.flushToDisk();
+		dir = ConfMan.get("savepath").c_str();
+	}
+
+
+	assert(dir);
+
+	return dir;
+}
+
+Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) { 
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
-
-	DS::std_cwd((char*)getSavePath().c_str()); //TODO : Check this suspicious const-cast
+	
+	DS::std_cwd((char*)getSavePath()); //TODO : Check this suspicious const-cast
 //	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(),pattern);
 
-
+	
 	int fileType = FAT_FindFirstFileLFN(name);
 
 	Common::StringList list;
 
 	do {
-
+	
 		if (fileType == TYPE_FILE) {
 
 			FAT_GetLongFilename(name);
@@ -186,18 +209,18 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 			for (int r = 0; r < strlen(name); r++) {
 				name[r] = tolower(name[r]);
 			}
-
-
+			
+			
 			if (Common::matchString(name, pattern)) {
 				list.push_back(name);
 			}
 		}
 
 	} while ((fileType = FAT_FindNextFileLFN(name)));
-
+	
 	FAT_chdir("/");
 
 	return list;
-}
+}	
 
 

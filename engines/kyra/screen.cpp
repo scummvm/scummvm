@@ -92,9 +92,19 @@ bool Screen::init() {
 
 		if (_useSJIS) {
 			if (!_sjisFontData) {
-				_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
-				if (!_sjisFontData)
-					error("missing font rom ('FMT_FNT.ROM') required for this version");
+				// we use the FM-Towns font rom for PC-98, too, until we feel
+				// like adding support for the PC-98 font
+				//if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+					// FM-Towns
+					_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
+					if (!_sjisFontData)
+						error("missing font rom ('FMT_FNT.ROM') required for this version");
+				/*} else {
+					// PC-98
+					_sjisFontData = _vm->resource()->fileData("FONT.ROM", 0);
+					if (!_sjisFontData)
+						error("missing font rom ('FONT.ROM') required for this version");
+				}*/
 			}
 
 			if (!_sjisTempPage) {

@@ -31,7 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
 #include <dmedia/midi.h>
@@ -178,24 +178,29 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 
 // Plugin interface
 
-class DMediaMidiPlugin : public MidiPluginObject {
+class DMediaMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "DMedia";
 	}
 
-	virtual const char *getId() const {
+	const char *getId() const {
 		return "dmedia";
 	}
 
-	virtual int getCapabilities() const {
-		return MDT_MIDI;
-	}
-
-	virtual PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	MusicDevices getDevices() const;
+	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
-PluginError DMediaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+MusicDevices DMediaMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
+}
+
+PluginError DMediaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_DMEDIA();
 
 	return kNoError;
@@ -204,16 +209,16 @@ PluginError DMediaMidiPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **m
 MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
-	DMediaMidiPlugin p;
+	DMediaMusicPlugin p;
 	p.createInstance(mixer, &mididriver);
 
 	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(DMEDIA)
-	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MIDI, DMediaMidiPlugin);
+	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
 //#endif
 
 #endif

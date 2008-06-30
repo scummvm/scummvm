@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -151,9 +151,6 @@
 			RelativePath="..\..\engines\saga\gfx.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\ihnm_introproc.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\saga\image.cpp">
 		</File>
 		<File
@@ -166,13 +163,16 @@
 			RelativePath="..\..\engines\saga\interface.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\introproc_ihnm.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\introproc_ite.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\isomap.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\isomap.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\ite_introproc.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\itedata.cpp">
@@ -224,9 +224,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\saga.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sagaresnames.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\saveload.cpp">

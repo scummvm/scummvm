@@ -27,6 +27,7 @@
 #define GOB_INTER_H
 
 #include "gob/goblin.h"
+#include "gob/variables.h"
 
 namespace Gob {
 
@@ -48,6 +49,8 @@ public:
 	uint32 _soundEndTimeKey;
 	int16 _soundStopVal;
 
+	Variables *_variables;
+
 	void initControlVars(char full);
 	int16 load16();
 	char evalExpr(int16 *pRes);
@@ -59,11 +62,14 @@ public:
 	void funcBlock(int16 retFlag);
 	void callSub(int16 retFlag);
 
+	void allocateVars(uint32 count);
+	void delocateVars();
+
 	virtual int16 loadSound(int16 slot) = 0;
 	virtual void animPalette() = 0;
 
 	Inter(GobEngine *vm);
-	virtual ~Inter() {}
+	virtual ~Inter();
 
 protected:
 	struct OpFuncParams {
@@ -83,7 +89,7 @@ protected:
 	int16 _animPalHighIndex[8];
 	int16 _animPalDir[8];
 
-	char _pasteBuf[300];
+	byte _pasteBuf[300];
 	byte _pasteSizeBuf[300];
 	int16 _pastePos;
 
@@ -519,6 +525,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 
+	void o4_initScreen();
 	void o4_playVmdOrMusic();
 };
 

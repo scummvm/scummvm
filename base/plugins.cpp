@@ -25,6 +25,8 @@
 
 #include "base/plugins.h"
 
+#include "common/func.h"
+
 #ifdef DYNAMIC_MODULES
 #include "common/config-manager.h"
 #endif
@@ -33,7 +35,7 @@
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
-	PLUGIN_TYPE_MIDI_VERSION,
+	PLUGIN_TYPE_MUSIC_VERSION,
 };
 
 
@@ -142,7 +144,7 @@ public:
 		LINK_PLUGIN(TOUCHE)
 		#endif
 
-		// MIDI plugins
+		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(NULL)
@@ -284,10 +286,8 @@ void PluginManager::loadPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
 	                            ++pp) {
-		PluginList pl((**pp).getPlugins());
-		for (PluginList::iterator plugin = pl.begin(); plugin != pl.end(); ++plugin) {
-			tryLoadPlugin(*plugin);
-		}
+		PluginList pl((*pp)->getPlugins());
+		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
 
 }
@@ -303,7 +303,7 @@ void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin) {
 		if (*p == plugin) {
 			found = *p;
 		} else {
-			(**p).unloadPlugin();
+			(*p)->unloadPlugin();
 			delete *p;
 		}
 	}
@@ -355,13 +355,13 @@ DECLARE_SINGLETON(EngineManager);
 
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	// Find the GameDescriptor for this target
-	const EnginePlugin::list &plugins = getPlugins();
+	const EnginePlugin::List &plugins = getPlugins();
 	GameDescriptor result;
 
 	if (plugin)
 		*plugin = 0;
 
-	EnginePlugin::list::const_iterator iter = plugins.begin();
+	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (**iter)->findGame(gameName.c_str());
 		if (!result.gameid().empty()) {
@@ -376,11 +376,11 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 GameList EngineManager::detectGames(const FSList &fslist) const {
 	GameList candidates;
 
-	const EnginePlugin::list &plugins = getPlugins();
+	const EnginePlugin::List &plugins = getPlugins();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	EnginePlugin::list::const_iterator iter;
+	EnginePlugin::List::const_iterator iter;
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		candidates.push_back((**iter)->detectGames(fslist));
 	}
@@ -388,17 +388,17 @@ GameList EngineManager::detectGames(const FSList &fslist) const {
 	return candidates;
 }
 
-const EnginePlugin::list &EngineManager::getPlugins() const {
-	return (const EnginePlugin::list&)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+const EnginePlugin::List &EngineManager::getPlugins() const {
+	return (const EnginePlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
 
 
-// MIDI plugins
+// Music plugins
 
-#include "sound/midiplugin.h"
+#include "sound/musicplugin.h"
 
-DECLARE_SINGLETON(MidiManager);
+DECLARE_SINGLETON(MusicManager);
 
-const MidiPlugin::list &MidiManager::getPlugins() const {
-	return (const MidiPlugin::list&)PluginManager::instance().getPlugins(PLUGIN_TYPE_MIDI);
+const MusicPlugin::List &MusicManager::getPlugins() const {
+	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }

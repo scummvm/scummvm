@@ -25,7 +25,7 @@
 //
 // Changelog:
 //   0.1: First version
-//	 0.2: Fixed sprite mapping bug.  1D mapping should work now.
+//	 0.2: Fixed sprite mapping bug.  1D mapping should work now.  
 //			Changed some register defines for consistency.
 //
 //////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ u16* fontMap;
 u8 row, col;
 
 //font may not start on a character base boundry
-u16 fontOffset;
+u16 fontOffset; 
 
 //the first character in the set (0 if you have a full set)
 u16 fontStart;
@@ -65,7 +65,7 @@ u16 fontPal;
 
 ///////////////////////////////////////////////////////////
 //consoleInit
-// param:
+// param: 
 //		font: 16 color font
 //		charBase: the location the font data will be loaded to
 //		numCharacters: count of characters in the font
@@ -79,7 +79,7 @@ void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16*
 	int i;
 
 	row = col = 0;
-
+	
 	fontStart = charStart;
 
 	fontOffset = 0;
@@ -111,9 +111,9 @@ void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16*
 					temp |= 0xF00;
 				if(font[i] & 0xF000)
 					temp |= 0xF000;
-
+	
 				charBase[i] = temp;
-			}
+			}	
 		}
 	}//end if bitdepth
 	else
@@ -140,7 +140,7 @@ void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16*
 
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth)
 {
-	consoleInit((u16 *) default_font_bin, charBase, 128, 0, map, CONSOLE_USE_COLOR255, bitDepth);
+	consoleInit((u16 *) default_font_bin, charBase, 128, 0, map, CONSOLE_USE_COLOR255, bitDepth); 	
 }
 
 void consolePrintSet(int x, int y)
@@ -164,9 +164,9 @@ void consolePrintChar(char c)
 	{
 		col = 0;
 
-		row++;
+		row++;		
 	}
-
+	
 	if(row >= CONSOLE_HEIGHT)
 	{
 		row--;
@@ -178,7 +178,7 @@ void consolePrintChar(char c)
 
 
 	}
-
+	
 	switch(c)
 	{
 
@@ -199,7 +199,7 @@ void consolePrintChar(char c)
 
 	}
 
-
+	
 }
 
 
@@ -207,16 +207,16 @@ void printX(int w, unsigned d)
 {
 	int loop = 0;
 	int i = 0;
-
+	
 	char buf[20] = {0};
 
 
 	while(d > 0)
 	{
 		buf[loop++] =  d & 0xF;
-		d = d>>4;
+		d = d>>4; 
 	}
-
+	
 	for (i = 7; i >= 0; i--)
 	{
 		if(buf[i] || i < loop)
@@ -235,15 +235,15 @@ void printx(int w, unsigned int d)
 {
 	int loop = 0;
 	int i = 0;
-
+	
 	char buf[20] = {0};
 
 	while(d > 0)
 	{
 		buf[loop++] =  d & 0xF;
-		d = d>>4;
+		d = d>>4; 
 	}
-
+	
 	for (i = 7; i >= 0; i--)
 	{
 		if(buf[i] || i < loop)
@@ -262,8 +262,8 @@ void printInt(int w, int d)
 {
 	int loop = 0;
 	int i = 0;
-
-	char buf[20] = {0};
+	
+	char buf[20] = {0}; 
 
 	if(d < 0)
 	{
@@ -276,9 +276,9 @@ void printInt(int w, int d)
 	else while (d > 0)
 	{
 		buf[loop++] =  d % 10;
-		d /= 10;
+		d /= 10; 
 	}
-
+	
 	for (i = 7; i >= 0; i--)
 	{
 		if(buf[i] || i < loop)
@@ -310,16 +310,16 @@ void print0X(int w, unsigned d)
 {
 	int loop = 0;
 	int i = 0;
-
+	
 	char buf[] = {0,0,0,0,0,0,0,0}; //set to zero cause I may add formatted output someday
-
+	
 
 	while(d > 0)
 	{
 		buf[loop++] =  d & 0xF;
-		d = d>>4;
+		d = d>>4; 
 	}
-
+	
 	for (i = 7; i >= 0; i--)
 	{
 		if(buf[i] || i < w  || i < loop)
@@ -336,16 +336,16 @@ void print0x(int w, unsigned int d)
 {
 	int loop = 0;
 	int i = 0;
-
+	
 	char buf[] = {0,0,0,0,0,0,0,0}; //set to zero cause I may add formatted output someday
-
+	
 
 	while(d > 0)
 	{
 		buf[loop++] =  d & 0xF;
-		d = d>>4;
+		d = d>>4; 
 	}
-
+	
 	for (i = 7; i >= 0; i--)
 	{
 		if(buf[i] || i < w  || i < loop)
@@ -362,9 +362,9 @@ void print0Int(int w, int d)
 {
 	int loop = 0;
 	int i = 0;
-
+	
 	char buf[] = {0,0,0,0,0,0,0,0,0,0,0,0,0}; //set to zero cause I may add formatted output someday
-
+	
 	if(d < 0)
 	{
 		consolePrintChar('-');
@@ -374,9 +374,9 @@ void print0Int(int w, int d)
 	while(d > 0)
 	{
 		buf[loop++] =  d % 10;
-		d /= 10;
+		d /= 10;  
 	}
-
+	
 	for (i = 15; i >= 0; i--)
 		if(buf[i] || i < w  || i < loop)
 			consolePrintChar(buf[i] + '0');
@@ -414,14 +414,14 @@ void printF(int w, float f)
 
 	if(*t & BIT(31))
 		consolePrintChar('-');
-
+	
 
 	print0Bin(32, fraction);
-
+	
 	printInt(1, fraction);
 	consolePrintChar('e');
 	printInt(1, exp - 127);
-
+	
 	/*
 	if(exp == 0 && fraction == 0)
 	{
@@ -447,7 +447,7 @@ void consolePrintf(const char* s, ...)
 	va_list argp;
 
 	va_start(argp, s);
-
+	
 
 	while(*s)
 	{
@@ -474,7 +474,7 @@ void consolePrintf(const char* s, ...)
 			case 'I':
 			case 'd':
 			case 'D':
-				if(z)print0Int(w, va_arg(argp, int));
+				if(z)print0Int(w, va_arg(argp, int)); 
 				else printInt(w, va_arg(argp, int));
 				s++;
 				break;

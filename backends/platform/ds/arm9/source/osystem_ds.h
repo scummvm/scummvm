@@ -19,8 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
-
+ 
+ 
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 #include "common/system.h"
@@ -33,10 +33,10 @@
 #include "sound/mixer.h"
 #include "graphics/surface.h"
 
-class DSAudioMixer : public Audio::Mixer {
+class DSAudioMixer : public Audio::Mixer {	
 };
 
-class DSTimerManager : public DefaultTimerManager {
+class DSTimerManager : public DefaultTimerManager {	
 };
 
 
@@ -45,10 +45,10 @@ protected:
 
 	int eventNum;
 	int lastPenFrame;
-
+	
 	Common::Event eventQueue[96];
 	int queuePos;
-
+	
 	DSSaveFileManager saveManager;
 	GBAMPSaveFileManager mpSaveManager;
 	DSAudioMixer* _mixer;
@@ -58,7 +58,7 @@ protected:
 
 
 	static OSystem_DS* _instance;
-
+	
 	Graphics::Surface* createTempFrameBuffer();
 
 public:
@@ -98,7 +98,7 @@ public:
 
 	inline virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 	inline virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
+	
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -114,7 +114,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
 
 	virtual bool openCD(int drive);
@@ -131,21 +130,21 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 	virtual Common::SaveFileManager *getSavefileManager();
-
+	
 	void addEvent(Common::Event& e);
 	bool isEventQueueEmpty() { return queuePos == 0; }
-
+	
 	virtual bool grabRawScreen(Graphics::Surface* surf);
-
+	
 	virtual void setFocusRectangle(const Common::Rect& rect);
-
+	
 	virtual void clearFocusRectangle();
-
+	
 	virtual void initBackend();
-
+	
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-
+	
 	virtual Audio::Mixer* getMixer() { return _mixer; }
 	virtual Common::TimerManager* getTimerManager() { return _timer; }
 	static int timerHandler(int t);
@@ -155,8 +154,7 @@ public:
 	virtual void clearAutoComplete();
 	virtual void setCharactersEntered(int count);
 
-
-
+	FilesystemFactory *getFilesystemFactory();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

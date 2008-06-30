@@ -417,6 +417,13 @@ void Parallaction_ns::_c_ridux(void *parm) {
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
+	if (_inTestResult) {		// NOTE: _inTestResult has been added because the scripts call _c_testResult multiple times to cope with
+								// the multiple buffering that was used in the original engine. _inTestResult now prevents the engine
+								// from crashing when the scripts are executed.
+		return;
+	}
+	_inTestResult = true;
+
 	_gfx->updateScreen();
 
 	_disk->selectArchive("disk1");
@@ -468,7 +475,6 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 	debugC(1, kDebugExec, "endIntro()");
 
-	uint32 event;
 	uint id[2];
 	for (uint16 _si = 0; _si < 6; _si++) {
 		id[0] = _gfx->createLabel(_menuFont, _credits[_si]._role, 1);
@@ -479,14 +485,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		_gfx->updateScreen();
 
-		for (uint16 v2 = 0; v2 < 100; v2++) {
-			_input->readInput();
-			event = _input->getLastButtonEvent();
-			if (event == kMouseLeftUp)
-				break;
-
-			waitTime( 1 );
-		}
+		_input->waitForButtonEvent(kMouseLeftUp, 5500);
 
 		_gfx->freeLabels();
 	}

@@ -96,9 +96,9 @@ int KyraEngine_v1::o1_playWanderScoreViaMap(EMCState *script) {
 	return 0;
 }
 
-int	KyraEngine_v1::o1_fillRect(EMCState *script) {
+int KyraEngine_v1::o1_fillRect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	screen()->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
+	screen()->fillRect(stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(0));
 	return 0;
 }
 

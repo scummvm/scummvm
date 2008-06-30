@@ -29,13 +29,17 @@
 
 #include "saga/gfx.h"
 #include "saga/scene.h"
-#include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/font.h"
 
 #include "saga/sprite.h"
 
 namespace Saga {
+
+#define RID_IHNM_ARROW_SPRITES 13
+#define RID_IHNM_SAVEREMINDER_SPRITES 14
+#define RID_IHNMDEMO_ARROW_SPRITES 8
+#define RID_IHNMDEMO_SAVEREMINDER_SPRITES 9
 
 Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 	debug(8, "Initializing sprite subsystem...");
@@ -70,6 +74,9 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 Sprite::~Sprite(void) {
 	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
+	_inventorySprites.freeMem();
+	_arrowSprites.freeMem();
+	_saveReminderSprites.freeMem();
 	free(_decodeBuf);
 }
 

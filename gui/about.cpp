@@ -128,8 +128,8 @@ AboutDialog::AboutDialog()
 	_lines.push_back("");
 
 	addLine("\\C\\c1""Available engines:");
-	const EnginePlugin::list &plugins = EngineMan.getPlugins();
-	EnginePlugin::list::const_iterator iter = plugins.begin();
+	const EnginePlugin::List &plugins = EngineMan.getPlugins();
+	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 	  Common::String str;
 	  str = "\\C";

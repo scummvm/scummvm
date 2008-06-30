@@ -380,7 +380,7 @@ void ViewManager::updateState() {
 }
 
 void ViewManager::refreshAll() {
-	_vm->_screen->empty();
+	_vm->_screen->clear();
 
 	for (ListIterator i = _views.begin(); i != _views.end(); ++i) {
 		View *v = *i;

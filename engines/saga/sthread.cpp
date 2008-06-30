@@ -34,9 +34,11 @@
 #include "saga/script.h"
 
 #include "saga/scene.h"
-#include "saga/sagaresnames.h"
 
 namespace Saga {
+
+#define RID_SCENE1_VOICE_START 57
+#define RID_SCENE1_VOICE_END 186
 
 ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber) {
 	ScriptThread *newThread;
@@ -653,8 +655,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 				if (_vm->getGameId() == GID_ITE_DISK_G) { // special ITE dos
 					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
-						(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_138 - RID_SCENE1_VOICE_009 + 288))) {
-						sampleResourceId = RID_SCENE1_VOICE_009 + iparam1 - 288;
+						(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
+						sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - 288;
 					}
 				} else {
 					if (thread->_voiceLUT->voicesCount > first) {

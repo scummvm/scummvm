@@ -1462,19 +1462,19 @@ void Mouse::checkPlayerActivity(uint32 seconds) {
 		_vm->_logic->writeVar(RESULT, 0);
 }
 
-void Mouse::pauseGame() {
-	// Make the mouse cursor normal. This is the only place where we are
-	// allowed to clear the luggage this way.
+void Mouse::pauseEngine(bool pause) {
+	if (pause) {
+		// Make the mouse cursor normal. This is the only place where
+		// we are allowed to clear the luggage this way.
 
-	clearPointerText();
-	setLuggageAnim(NULL, 0);
-	setMouse(0);
-	setMouseTouching(1);
-}
-
-void Mouse::unpauseGame() {
-	if (_vm->_logic->readVar(OBJECT_HELD) && _realLuggageItem)
-		setLuggage(_realLuggageItem);
+		clearPointerText();
+		setLuggageAnim(NULL, 0);
+		setMouse(0);
+		setMouseTouching(1);
+	} else {
+		if (_vm->_logic->readVar(OBJECT_HELD) && _realLuggageItem)
+			setLuggage(_realLuggageItem);
+	}
 }
 
 #define MOUSEFLASHFRAME 6

@@ -1,8 +1,8 @@
 /*
 	io_scsd.c by SaTa.
 	based on io_sccf.c
-
-
+	
+	
 */
 
 /*
@@ -43,7 +43,7 @@ extern void InitSCMode(void);	//	CF‚Æ“¯‚¶
 extern void ReadSector(u16 *buff,u32 sector,u8 ReadNumber);
 extern void WriteSector(u16 *buff,u32 sector,u8 writeNumber);
 extern bool MemoryCard_IsInserted(void);	//	CF‚Æˆá‚¤
-//
+//	
 
 /*-----------------------------------------------------------------
 SCSD_Unlock
@@ -55,7 +55,7 @@ bool SCSD_Unlock(void)
 {
 	InitSCMode();
 	return MemoryCard_IsInserted();
-}
+} 
 
 bool SCSD_Shutdown(void) {
 	return MPCF_ClearStatus() ;

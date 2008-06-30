@@ -202,9 +202,9 @@ struct Character {
 
 
 	AnimationPtr	_ani;
-	Frames			*_head;
-	Frames			*_talk;
-	Frames			*_objs;
+	GfxObj			*_head;
+	GfxObj			*_talk;
+	GfxObj			*_objs;
 	PathBuilder		_builder;
 	WalkNodeList	*_walkPath;
 
@@ -258,8 +258,6 @@ public:
 	virtual bool saveGame() = 0;
 
 	Input	*_input;
-
-	void		waitTime(uint32 t);
 
 	OpcodeSet	_commandOpcodes;
 
@@ -368,8 +366,6 @@ protected:		// members
 	void		initGlobals();
 	void		runGame();
 	void		updateView();
-	uint32		getElapsedTime();
-	void		resetTimer();
 
 	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();
@@ -389,6 +385,9 @@ protected:		// members
 
 	int16		pickupItem(ZonePtr z);
 
+	void 		clearSet(OpcodeSet &opcodes);
+
+
 public:
 	virtual	void callFunction(uint index, void* parm) { }
 
@@ -404,6 +403,7 @@ public:
 	virtual void drawAnimations() = 0;
 
 	void		beep();
+
 
 public:
 //	const char **_zoneFlagNamesRes;
@@ -526,8 +526,9 @@ private:
 	void initCursors();
 	void initParsers();
 
-	static byte			_mouseArrow[256];
-	Frames			*_mouseComposedArrow;
+	static byte _resMouseArrow[256];
+	byte	*_mouseArrow;
+	Frames	*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -546,6 +547,9 @@ private:
 	ZonePtr _moveSarcZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
+
+	bool	_inTestResult;
+
 
 	// common callables
 	void _c_play_boogie(void*);
@@ -657,6 +661,7 @@ public:
 public:
 	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
+	void		changeCharacter(const char *name);
 
 public:
 	Table		*_countersNames;
@@ -691,7 +696,6 @@ private:
 	void setInventoryCursor(int pos);
 
 	void		changeLocation(char *location);
-	void		changeCharacter(const char *name);
 	void 		runPendingZones();
 
 	void		initPart();
@@ -726,6 +730,7 @@ private:
 	const Callable *_callables;
 
 	void parseLocation(const char* name);
+	void loadProgram(AnimationPtr a, const char *filename);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);

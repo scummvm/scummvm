@@ -760,7 +760,7 @@ int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 
 int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_isAnySoundPlaying(%p) ()", (const void *)script);
-	return _sound->voiceIsPlaying();
+	return _sound->voiceIsPlaying() ? 1 : 0;
 }
 
 int KyraEngine_HoF::o2_setDrawNoShapeFlag(EMCState *script) {
@@ -799,10 +799,14 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 
 	_screen->fadeToBlack(0x14);
 	
-	sprintf(filename, "LETTER%.1d.", letter);
-	strcat(filename, _languageExtension[_lang]);
-
+	sprintf(filename, "LETTER%.1d.%s", letter, _languageExtension[_lang]);
 	uint8 *letterBuffer = _res->fileData(filename, 0);
+	if (!letterBuffer) {
+		// some floppy versions use a TXT extension
+		sprintf(filename, "LETTER%.1d.TXT", letter);
+		letterBuffer = _res->fileData(filename, 0);
+	}
+
 	if (letterBuffer) {
 		bookDecodeText(letterBuffer);
 		bookPrintText(2, letterBuffer, 0xC, 0xA, 0x20);

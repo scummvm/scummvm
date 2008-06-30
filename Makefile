@@ -24,7 +24,7 @@ CXXFLAGS:= -Wall $(CXXFLAGS)
 # Turn off some annoying and not-so-useful warnings
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 # Enable even more warnings...
-CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
+CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wcast-align
 CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor -Wwrite-strings
 
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"

@@ -27,7 +27,10 @@
 
 #include "gui/dialog.h"
 #include "common/fs.h"
+#include "common/hashmap.h"
 #include "common/stack.h"
+#include "common/str.h"
+#include "common/hash-str.h"
 
 namespace GUI {
 
@@ -44,6 +47,13 @@ public:
 private:
 	Common::Stack<FilesystemNode>  _scanStack;
 	GameList _games;
+
+	/**
+	 * Map each path occuring in the config file to the target(s) using that path.
+	 * Used to detect whether a potential new target is already present in the
+	 * config manager.
+	 */
+	Common::HashMap<Common::String, Common::StringList>	_pathToTargets;
 
 	int _dirsScanned;
 

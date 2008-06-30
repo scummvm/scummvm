@@ -75,6 +75,8 @@ public:
 	KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc);
 	~KyraEngine_v2();
 
+	virtual void pauseEngineIntern(bool pause);
+
 	virtual Screen_v2 *screen_v2() const = 0;
 	virtual GUI *gui_v2() const = 0;
 
@@ -85,6 +87,7 @@ protected:
 	EngineDesc _desc;
 
 	// run
+	uint32 _pauseStart;
 	bool _runFlag;
 	bool _showOutro;
 
@@ -355,8 +358,6 @@ protected:
 	void updateCharPosWithUpdate();
 
 	uint32 _updateCharPosNextUpdate;
-	static const int8 _updateCharPosXTable[];
-	static const int8 _updateCharPosYTable[];
 
 	virtual int getCharacterWalkspeed() const = 0;
 	virtual void updateCharAnimFrame(int num, int *table) = 0;

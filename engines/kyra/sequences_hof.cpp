@@ -231,7 +231,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_seqFrameDelay = cseq.frameDelay;
 			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 			while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
-				uint32 starttime = _system->getMillis();
+				_seqSubFrameStartTime = _system->getMillis();
 				seq_processWSAs();
 				if (cb)
 					(this->*cb)(0, 0, 0, 0);
@@ -246,8 +246,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				if (now >= _seqEndTime && !_seqSubframePlaying)
 					break;
 
-				uint32 tdiff = _seqEndTime - starttime;
-				int32 dly = _tickLength - (now - starttime);
+				uint32 tdiff = _seqEndTime - _seqSubFrameStartTime;
+				int32 dly = _tickLength - (now - _seqSubFrameStartTime);
 				if (dly > 0)
 					delay(MIN<uint32>(dly, tdiff));
 			}
@@ -263,7 +263,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		_seqEndTime = _system->getMillis() + dl;
 
 		while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
-			uint32 starttime = _system->getMillis();
+			_seqSubFrameStartTime = _system->getMillis();
 			seq_processWSAs();
 
 			_screen->copyPage(2, 0);
@@ -275,8 +275,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				break;
 			}
 
-			uint32 tdiff = _seqEndTime - starttime;
-			int32 dly = _tickLength - (now - starttime);
+			uint32 tdiff = _seqEndTime - _seqSubFrameStartTime;
+			int32 dly = _tickLength - (now - _seqSubFrameStartTime);
 			if (dly > 0)
 				delay(MIN<uint32>(dly, tdiff));
 		}
@@ -289,13 +289,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_sound->voiceStop();
 		}
 
-		if (_flags.isDemo && !_flags.isTalkie) {
-			if (seqNum == kSequenceDemoFisher) {
-				_abortIntroFlag = false;
-				resetSkipFlag();
-				seqNum = kSequenceDemoVirgin;
-			}
-		} else {
+		if (!_flags.isDemo || _flags.isTalkie) {
 			if ((seqNum != kSequenceTitle && seqNum < kSequenceZanfaun &&
 			(_abortIntroFlag || skipFlag())) || seqNum == kSequenceZanfaun) {
 				_abortIntroFlag = false;
@@ -306,6 +300,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				_eventList.clear();
 				seqNum = kSequenceFirates;
 			}
+		} else if (seqNum == kSequenceDemoFisher && !(_abortIntroFlag || skipFlag())) {
+			seqNum = kSequenceDemoVirgin;
 		}
 
 		if (_menuChoice) {
@@ -319,8 +315,13 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		}
 	}
 
+	if (_flags.isDemo && !_flags.isTalkie) {
+		_eventList.clear();
+		_screen->fadeToBlack();
+	}
+	
 	if (!_menuChoice)
-		delay(1000);
+		delay(1200);
 
 	_screen->setCurPage(oldPage);
 	_screen->showMouse();
@@ -375,13 +376,14 @@ int KyraEngine_HoF::seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm
 
 	uint8 *tmpPal = &(_screen->getPalette(3)[0x101]);
 	memset(tmpPal, 0, 256);
-	uint32 endtime = 0, now = 0;
+	_seqSubFrameEndTimeInternal = 0;
+	uint32 now = 0;
 
 	switch (_seqFrameCounter) {
 	case 0:
 		_seqSubframePlaying = true;
 		_sound->playTrack(4);
-		endtime = _system->getMillis() + 60 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 60 * _tickLength;
 
 		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
 		memset(_seqTextColorMap, _seqTextColor[1], 16);
@@ -390,8 +392,8 @@ int KyraEngine_HoF::seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		_screen->setTextColorMap(_seqTextColorMap);
 
 		now = _system->getMillis();
-		if (endtime > now)
-			delay(endtime - now);
+		if (_seqSubFrameEndTimeInternal > now)
+			delay(_seqSubFrameEndTimeInternal - now);
 		break;
 
 	case 1:
@@ -830,7 +832,7 @@ int KyraEngine_HoF::seq_introHand3(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int KyraEngine_HoF::seq_finaleFunters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -851,12 +853,12 @@ int KyraEngine_HoF::seq_finaleFunters(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
 		_screen->setTextColorMap(_seqTextColorMap);
 
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 		seq_printCreditsString(81, 240, 70, _seqTextColorMap, 252);
 		seq_printCreditsString(82, 240, 90, _seqTextColorMap, _seqTextColor[0]);
 		_screen->copyPage(2, 12);
-		delay(endtime - _system->getMillis());
 		seq_playTalkText(_flags.isTalkie ? 28 : 24);
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqTextColor[0] = 1;
 
 		if (_flags.isTalkie) {
@@ -914,7 +916,7 @@ int KyraEngine_HoF::seq_finaleFunters(WSAMovie_v2 *wsaObj, int x, int y, int frm
 }
 
 int KyraEngine_HoF::seq_finaleFerb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -925,7 +927,7 @@ int KyraEngine_HoF::seq_finaleFerb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case -2:
 		seq_sequenceCommand(9);
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 		seq_printCreditsString(34, 240, _flags.isTalkie ? 60 : 40, _seqTextColorMap, 252);
 		seq_printCreditsString(35, 240, _flags.isTalkie ? 70 : 50, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(36, 240, _flags.isTalkie ? 90 : 70, _seqTextColorMap, 252);
@@ -934,7 +936,7 @@ int KyraEngine_HoF::seq_finaleFerb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		seq_printCreditsString(39, 240, _flags.isTalkie ? 130 : 120, _seqTextColorMap, _seqTextColor[0]);
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			seq_printCreditsString(103, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-		delay(endtime - _system->getMillis());
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqEndTime = 0;
 		break;
 
@@ -998,7 +1000,7 @@ int KyraEngine_HoF::seq_finaleFerb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int KyraEngine_HoF::seq_finaleFish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -1007,7 +1009,7 @@ int KyraEngine_HoF::seq_finaleFish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case -2:
 		seq_sequenceCommand(9);
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 
 		seq_printCreditsString(40, 240, _flags.isTalkie ? 55 : 40, _seqTextColorMap, 252);
 		seq_printCreditsString(41, 240, _flags.isTalkie ? 65 : 50, _seqTextColorMap, _seqTextColor[0]);
@@ -1016,7 +1018,7 @@ int KyraEngine_HoF::seq_finaleFish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		seq_printCreditsString(44, 240, _flags.isTalkie ? 105 : 90, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(93, 240, _flags.isTalkie ? 125 : 110, _seqTextColorMap, 252);
 		seq_printCreditsString(94, 240, _flags.isTalkie ? 135 : 120, _seqTextColorMap, _seqTextColor[0]);
-		delay(endtime - _system->getMillis());
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqEndTime = 0;
 		break;
 
@@ -1075,7 +1077,7 @@ int KyraEngine_HoF::seq_finaleFish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int KyraEngine_HoF::seq_finaleFheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -1089,7 +1091,7 @@ int KyraEngine_HoF::seq_finaleFheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		seq_sequenceCommand(9);
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 		seq_printCreditsString(49, 240, 20, _seqTextColorMap, 252);
 		seq_printCreditsString(50, 240, 30, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(51, 240, 40, _seqTextColorMap, _seqTextColor[0]);
@@ -1106,7 +1108,7 @@ int KyraEngine_HoF::seq_finaleFheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 		seq_printCreditsString(63, 240, 150, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(64, 240, 160, _seqTextColorMap, _seqTextColor[0]);
 
-		delay(endtime - _system->getMillis());
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqEndTime = 0;
 		break;
 
@@ -1157,7 +1159,7 @@ int KyraEngine_HoF::seq_finaleFheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 }
 
 int KyraEngine_HoF::seq_finaleFarmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -1169,7 +1171,7 @@ int KyraEngine_HoF::seq_finaleFarmer(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		seq_sequenceCommand(9);
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 		seq_printCreditsString(45, 240, 40, _seqTextColorMap, 252);
 		seq_printCreditsString(46, 240, 50, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(47, 240, 60, _seqTextColorMap, _seqTextColor[0]);
@@ -1182,7 +1184,7 @@ int KyraEngine_HoF::seq_finaleFarmer(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 		seq_printCreditsString(69, 240, 150, _seqTextColorMap, _seqTextColor[0]);
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			seq_printCreditsString(104, 240, 160, _seqTextColorMap, _seqTextColor[0]);
-		delay(endtime - _system->getMillis());
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqEndTime = 0;
 		break;
 
@@ -1227,7 +1229,7 @@ int KyraEngine_HoF::seq_finaleFarmer(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 }
 
 int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -1240,7 +1242,7 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 	switch (frm) {
 	case -2:
 		seq_sequenceCommand(9);
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 		seq_printCreditsString(70, 240, 20, _seqTextColorMap, 252);
 		seq_printCreditsString(71, 240, 30, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(72, 240, 40, _seqTextColorMap, _seqTextColor[0]);
@@ -1255,7 +1257,7 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 		seq_printCreditsString(90, 240, 130, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(91, 240, 140, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(92, 240, 150, _seqTextColorMap, _seqTextColor[0]);
-		delay(endtime - _system->getMillis());
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqEndTime = 0;
 		break;
 
@@ -1327,7 +1329,7 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 }
 
 int KyraEngine_HoF::seq_finaleFirates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint32 endtime = 0;
+	_seqSubFrameEndTimeInternal = 0;
 	int chatX = 0;
 	int chatY = 0;
 	int chatW = 0;
@@ -1339,7 +1341,7 @@ int KyraEngine_HoF::seq_finaleFirates(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		seq_sequenceCommand(9);
-		endtime = _system->getMillis() + 480 * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + 480 * _tickLength;
 		seq_printCreditsString(76, 240, 40, _seqTextColorMap, 252);
 		seq_printCreditsString(77, 240, 50, _seqTextColorMap, 252);
 		seq_printCreditsString(78, 240, 60, _seqTextColorMap, _seqTextColor[0]);
@@ -1349,7 +1351,7 @@ int KyraEngine_HoF::seq_finaleFirates(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		seq_printCreditsString(85, 240, 110, _seqTextColorMap, _seqTextColor[0]);
 		seq_printCreditsString(99, 240, 130, _seqTextColorMap, 252);
 		seq_printCreditsString(100, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-		delay(endtime - _system->getMillis());
+		delay(_seqSubFrameEndTimeInternal - _system->getMillis());
 		_seqEndTime = 0;
 		break;
 
@@ -1811,7 +1813,7 @@ uint32 KyraEngine_HoF::seq_activeTextsTimeLeft() {
 }
 
 void KyraEngine_HoF::seq_processWSAs() {
-	for (int i = 0; i <  8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (_activeWSA[i].flags != -1) {
 			if (seq_processNextSubFrame(i))
 				seq_resetActiveWSA(i);
@@ -2334,13 +2336,16 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 	int dur = int(strlen(_sequenceStrings[strIndex])) * (_flags.isTalkie ? 7 : 15);
 	int entry = textEnabled() ? seq_setTextEntry(strIndex, x, y, dur, width) : strIndex;
 	_activeText[entry].textcolor = textColor;
-	uint32 chatTimeout = _system->getMillis() + dur * _tickLength;
+	_seqWsaChatTimeout = _system->getMillis() + dur * _tickLength;
 	int curframe = firstframe;
 
-	if (vocIndex && speechEnabled())
+	if (vocIndex && speechEnabled()) {
+		while (_sound->voiceIsPlaying() && !skipFlag())
+			delay(4);
 		seq_playTalkText(vocIndex);
+	}
 
-	while (_system->getMillis() < chatTimeout && !(_abortIntroFlag || skipFlag())) {
+	while (_system->getMillis() < _seqWsaChatTimeout && !(_abortIntroFlag || skipFlag())) {
 		if (lastframe < 0) {
 			int t = ABS(lastframe);
 			if (t < curframe)
@@ -2350,7 +2355,7 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 		if (ABS(lastframe) < curframe)
 			curframe = firstframe;
 
-		uint32 frameTimeout = _seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
+		_seqWsaChatFrameTimeout = _seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 		if (wsa) {
 			wsa->setDrawPage(2);
 			wsa->setX(wsaXpos);
@@ -2363,8 +2368,8 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 		seq_processText();
 
 		uint32 tm = _system->getMillis();
-		if (frameTimeout > tm && chatTimeout > tm)
-			delay(MIN(frameTimeout - tm, chatTimeout - tm));
+		if (_seqWsaChatFrameTimeout > tm && _seqWsaChatTimeout > tm)
+			delay(MIN(_seqWsaChatFrameTimeout - tm, _seqWsaChatTimeout - tm));
 
 		if (speechEnabled() && !textEnabled() && !snd_voiceIsPlaying())
 			break;
@@ -2377,11 +2382,8 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 	if (_abortIntroFlag || skipFlag())
 		_sound->voiceStop();
 
-	if (lastframe < 0) {
-		int t = ABS(lastframe);
-		if (t < curframe)
-			curframe = t;
-	}
+	if (ABS(lastframe) < curframe)
+		curframe = ABS(lastframe);
 
 	if (curframe == firstframe)
 		curframe++;
@@ -2395,27 +2397,46 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 	if (!data)
 		return;
 
-	static const char mark[] = { 5, 13, 0};
+	static const char mark[] = { 5, 13, 0 };
 
 	_screen->clearPage(tempPage1);
 	_screen->clearPage(tempPage2);
 	_screen->copyRegion(d->sx << 3, d->sy, d->sx << 3, d->sy, d->w << 3, d->h, 0, tempPage1);
 
-	uint8 *tmp = new uint8[397];
-	memset(tmp, 0, 397);
-	uint8 **tmpStringTable = new uint8*[35];
+	struct ScrollTextData {
+		int16	x;
+		int16	y;
+		uint8	*text;
+		byte	unk1;
+		byte	height;
+		byte	adjust;
+
+		ScrollTextData() {
+			x = 0;      // 0  11
+			y = 0;		// 2  13
+			text = 0;	// 4  15
+			unk1 = 0;   // 8  19
+			height = 0; // 9  20
+			adjust = 0; // 10 21
+		}
+	};
+
+	ScrollTextData *textData = new ScrollTextData[36];
 	uint8 *ptr = data;
-	int strTblIndex = 0;
 
 	bool loop = true;
 	int cnt = 0;
 
 	while (loop) {
-		uint32 endTime = _system->getMillis() + speed * _tickLength;
+		_seqSubFrameEndTimeInternal = _system->getMillis() + speed * _tickLength;
 
 		while (cnt < 35 && *ptr) {
-			int m = cnt * 11;
-			uint16 cH = cnt ? READ_LE_UINT16(&tmp[m + 2]) + tmp[m + 9] + (tmp[m + 9] >> 3) : d->h;
+			uint16 cH;
+
+			if (cnt)
+				cH = textData[cnt].y + textData[cnt].height + (textData[cnt].height >> 3);
+			else
+				cH = d->h;
 
 			char *str = (char*)ptr;
 
@@ -2423,12 +2444,15 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			if (!ptr)
 				ptr = (uint8*)strchr(str, 0);
 
-			tmp[m + 19] = *ptr;
+			textData[cnt + 1].unk1 = *ptr;
 			*ptr = 0;
-			if (tmp[m + 19])
+			if (textData[cnt + 1].unk1)
 				ptr++;
 
-			tmp[m + 21] = (*str == 3 || *str == 4) ? tmp[m + 21] = *str++ : 0;
+			if (*str == 3 || *str == 4)
+				textData[cnt + 1].adjust = *str++;
+			else
+				textData[cnt + 1].adjust = 0;
 
 			_screen->setFont(fid1);
 
@@ -2439,18 +2463,25 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 				str++;
 			}
 
-			tmp[m + 20] = _screen->getFontHeight();
+			textData[cnt + 1].height = _screen->getFontHeight();
 
-			WRITE_LE_UINT16(&tmp[m + 11], (tmp[m + 21] == 3) ? 157 - _screen->getTextWidth(str) :
-				((tmp[m + 21] == 4) ? 161 : (((d->w << 3) - _screen->getTextWidth(str)) >> 1) + 1));
+			switch (textData[cnt + 1].adjust) {
+			case 3:
+				textData[cnt + 1].x = 157 - _screen->getTextWidth(str);
+				break;
+			case 4:
+				textData[cnt + 1].x = 161;
+				break;
+			default:
+				textData[cnt + 1].x = (((d->w << 3) - _screen->getTextWidth(str)) >> 1) + 1;
+				break;
+			}
 
-			if (tmp[m + 8] == 5)
-				cH -= (tmp[m + 9] + (tmp[m + 9] >> 3));
+			if (textData[cnt].unk1 == 5)
+				cH -= (textData[cnt].height + (textData[cnt].height >> 3));
 
-			WRITE_LE_UINT16(&tmp[m + 13], cH);
-			WRITE_LE_UINT32(&tmp[m + 15], strTblIndex);
-			tmpStringTable[strTblIndex] = (uint8*) str;
-			strTblIndex = (strTblIndex + 1) % 35;
+			textData[cnt + 1].y = cH;
+			textData[cnt + 1].text = (uint8*) str;
 			cnt++;
 		}
 
@@ -2460,11 +2491,10 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 		bool palCycle = 0;
 
 		while (cnt2 < cnt) {
-			int m = cnt2 * 11;
-			const char *str = (const char*)tmpStringTable[READ_LE_UINT32(&tmp[m + 15])];
+			const char *str = (const char*)textData[cnt2 + 1].text;
 			const char *str2 = str;
-			uint16 cW = READ_LE_UINT16(&tmp[m + 11]) - 10;
-			uint16 cH = READ_LE_UINT16(&tmp[m + 13]);
+			int16 cW = textData[cnt2 + 1].x - 10;
+			int16 cH = textData[cnt2 + 1].y;
 			int x = (d->sx << 3) + cW;
 			int y = d->sy + cH;
 			int col1 = 255;
@@ -2472,7 +2502,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			if (cH < d->h) {
 				_screen->setCurPage(tempPage2);
 				_screen->setFont(fid1);
-				if (tmp[m + 20] != _screen->getFontHeight())
+				if (textData[cnt2 + 1].height != _screen->getFontHeight())
 					_screen->setFont(fid2);
 
 				if (specialData) {
@@ -2503,18 +2533,18 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 				_screen->setCurPage(0);
 			}
 
-			WRITE_LE_UINT16(&tmp[m + 13], READ_LE_UINT16(&tmp[m + 13]) - step);
+			textData[cnt2 + 1].y -= step;
 			cnt2++;
 		}
 
 		_screen->copyRegion(d->sx << 3, d->sy, d->sx << 3, d->sy, d->w << 3, d->h, tempPage2, 0);
 		_screen->updateScreen();
 
-		if ((int16)READ_LE_UINT16(&tmp[13]) < -10) {
-			tmpStringTable[tmp[15]] += strlen((char*)tmpStringTable[tmp[15]]);
-			tmpStringTable[tmp[15]][0] = tmp[19];
+		if (textData[1].y < -10) {
+			textData[1].text += strlen((char*)textData[1].text);
+			textData[1].text[0] = textData[1].unk1;
 			cnt--;
-			memcpy(&tmp[11], &tmp[22], cnt * 11);
+			memcpy(&textData[1], &textData[2], cnt * sizeof(ScrollTextData));
 		}
 
 		if (palCycle) {
@@ -2524,9 +2554,9 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			_screen->setScreenPalette(_screen->_currentPalette);
 		}
 
-		delayUntil(endTime);
+		delayUntil(_seqSubFrameEndTimeInternal);
 
-		if ((cnt < 36) && ((d->sy + d->h) > (READ_LE_UINT16(&tmp[cnt * 11 + 2]) + tmp[cnt * 11 + 9])) && !skipFlag()) {
+		if ((cnt < 36) && ((d->sy + d->h) > (textData[cnt].y + textData[cnt].height)) && !skipFlag()) {
 			resetSkipFlag();
 			delay(_tickLength * 500);
 			cnt = 0;
@@ -2542,8 +2572,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 	_abortIntroFlag= false;
 	resetSkipFlag();
 
-	delete[] tmp;
-	delete[] tmpStringTable;
+	delete[] textData;
 }
 
 void KyraEngine_HoF::seq_scrollPage() {
@@ -2594,20 +2623,20 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	for (int i = 1; i < endframe; i++) {
-		uint32 endTime = _system->getMillis() + 50;
+		_seqEndTime = _system->getMillis() + 50;
 		if (skipFlag())
 			break;
 		ci->displayFrame(i, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
-		delay(endTime - _system->getMillis());
+		delay(_seqEndTime - _system->getMillis());
 	}
 	if(!skipFlag()) {
-		uint32 endTime = _system->getMillis() + 50;
+		_seqEndTime = _system->getMillis() + 50;
 		ci->displayFrame(0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
-		delay(endTime - _system->getMillis());
+		delay(_seqEndTime - _system->getMillis());
 	}
 	_screen->fadeToBlack();
 	_screen->showMouse();
@@ -2782,4 +2811,5 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 }
 
 } // end of namespace Kyra
+
 

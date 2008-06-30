@@ -59,7 +59,7 @@ asmDrawStripToScreen:
 	CMP	r1,#4			@ If width<4
 	BLT	end			@    return
 
-	@ Width &= ~4 ? What's that about then? Width &= ~3 I could have
+	@ Width &= ~4 ? What''s that about then? Width &= ~3 I could have
 	@ understood...
 	BIC	r1,r1,#4
 

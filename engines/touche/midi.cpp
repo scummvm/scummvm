@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/stream.h"
 
 #include "sound/midiparser.h"
@@ -31,9 +32,8 @@
 
 namespace Touche {
 
-MidiPlayer::MidiPlayer(MidiDriver *driver, bool nativeMT32)
-	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0), _nativeMT32(nativeMT32) {
-	assert(_driver);
+MidiPlayer::MidiPlayer()
+	: _driver(0), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
 	open();
@@ -92,6 +92,9 @@ void MidiPlayer::setVolume(int volume) {
 }
 
 int MidiPlayer::open() {
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	_driver = MidiDriver::createMidi(midiDriver);
 	int ret = _driver->open();
 	if (ret == 0) {
 		_parser = MidiParser::createParser_SMF();
@@ -107,6 +110,7 @@ void MidiPlayer::close() {
 	_mutex.lock();
 	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
+	delete _driver;
 	_driver = 0;
 	_parser->setMidiDriver(NULL);
 	delete _parser;

@@ -98,10 +98,10 @@ void loadPrc(const char *pPrcName) {
 		char buffer[256];
 
 		for (s = 0; s < numScripts; s++) {
-			if (scriptTable[s].size) {
+			if (scriptTable[s]->_size) {
 				sprintf(buffer, "%s_%03d.txt", pPrcName, s);
 
-				decompileScript(scriptTable[s].ptr, scriptTable[s].stack, scriptTable[s].size, s);
+				decompileScript((const byte *)scriptTable[s]->getString(0), scriptTable[s]->_size, s);
 				dumpScript(buffer);
 			}
 		}
