@@ -1760,12 +1760,6 @@ int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 	return zoneVar;
 }
 
-/*!
- * \todo Check whether updating the zoneQuery table is appropriate every time
- *       this function is called because this function is called also from elsewhere
- *       than simply o1_checkCollision (e.g. from addAni). In Operation Stealth's
- *       disassembly this probably isn't the case, so there may be weird side-effects.
- */
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
 	int16 lx = objectTable[objIdx].x + x;
 	int16 ly = objectTable[objIdx].y + y;
