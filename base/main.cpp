@@ -43,6 +43,8 @@
 #include "common/system.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
+#include "sound/mods/tfmx.h"
+
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -282,6 +284,17 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
 	system.initBackend();
+	
+	Audio::Tfmx _aTfmx;
+	_aTfmx.load();
+
+
+
+	system.delayMillis( 999999 );
+
+
+
+/*
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain()) {
@@ -332,6 +345,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	}
 	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
+
+*/
 	Common::ConfigManager::destroy();
 	GUI::NewGui::destroy();
 
