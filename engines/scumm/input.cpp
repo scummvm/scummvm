@@ -514,7 +514,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			vol = Audio::Mixer::kMaxMixerVolume;
 
 		ConfMan.setInt("music_volume", vol);
-		updateSoundSettings();
+		syncSoundSettings();
 
 	} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
 		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)

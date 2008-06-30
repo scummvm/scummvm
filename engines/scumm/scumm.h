@@ -462,7 +462,7 @@ protected:
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-	void updateSoundSettings();
+	virtual void syncSoundSettings();
 	void setTalkspeed(int talkspeed);
 	int getTalkspeed();
 

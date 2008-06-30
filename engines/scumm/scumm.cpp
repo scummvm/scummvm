@@ -1108,7 +1108,7 @@ int ScummEngine::init() {
 	if (_game.version >= 5 && _game.version <= 7)
 		_sound->setupSound();
 
-	updateSoundSettings();
+	syncSoundSettings();
 
 	return 0;
 }
@@ -1667,7 +1667,7 @@ void ScummEngine::setupMusic(int midi) {
 	}
 }
 
-void ScummEngine::updateSoundSettings() {
+void ScummEngine::syncSoundSettings() {
 
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
@@ -2309,7 +2309,7 @@ void ScummEngine::mainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
-	updateSoundSettings();
+	syncSoundSettings();
 }
 
 void ScummEngine::confirmExitDialog() {
