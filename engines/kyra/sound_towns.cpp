@@ -1348,7 +1348,7 @@ public:
 		CHS_EOT				=	0x80
 	} ChannelState;
 
-	void loadData(uint8 *data);
+	virtual void loadData(uint8 *data);
 	virtual void processEvents();
 	virtual void processFrequency();
 	bool processControlEvent(uint8 cmd);
@@ -1404,7 +1404,6 @@ protected:
 	uint8 _keyOffTime;
 	bool _protect;
 	uint8 *_dataPtr;
-	uint8 _unk15, _unk16;
 	uint8 _ptchWhlInitDelayLo;
 	uint8 _ptchWhlInitDelayHi;
 	int16 _ptchWhlModInitVal;
@@ -1413,9 +1412,11 @@ protected:
 	int16 _ptchWhlModCurVal;
 	uint8 _ptchWhlDurLeft;
 	uint16 frequency;
-	uint8 _unk28, _unk29;
 	uint8 _regOffset;
 	uint8 _flags;
+	uint8 _ssg1;
+	uint8 _ssg2;
+
 	const uint8 _chanNum;
 	const uint8 _keyNum;
 	const uint8 _part;
@@ -1439,7 +1440,12 @@ public:
 
 	void keyOn();
 	void keyOff();
+	void loadData(uint8 *data);
+
+private:
+	void opn_SSG_UNK(uint8 a);
 };
+
 
 class TownsPC98_OpnDriver : public Audio::AudioStream {
 friend class TownsPC98_OpnChannel;
@@ -1514,7 +1520,8 @@ protected:
 	uint8 _looping;
 	uint32 _tickCounter;
 
-	bool __updateEnvelopes;
+	bool _updateEnvelopes;
+	int _ssgFlag;
 
 	int32 _samplesTillCallback;
 	int32 _samplesTillCallbackRemainder;
@@ -1536,8 +1543,8 @@ TownsPC98_OpnChannel::TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 re
 	uint8 key, uint8 prt, uint8 id) : _drv(driver), _regOffset(regOffs), _flags(flgs), _chanNum(num), _keyNum(key),
 	_part(prt), _idFlag(id) {
 
-	_ticksLeft = _algorithm = _instrID = _totalLevel = _frqBlockMSB = _keyOffTime = _unk15 = _unk16 = 0;
-	_ptchWhlInitDelayLo = _ptchWhlInitDelayHi = _ptchWhlDuration = _ptchWhlCurDelay = _ptchWhlDurLeft = _unk28 = _unk29 = 0;
+	_ticksLeft = _algorithm = _instrID = _totalLevel = _frqBlockMSB = _keyOffTime = _ssg1 = _ssg2 = 0;
+	_ptchWhlInitDelayLo = _ptchWhlInitDelayHi = _ptchWhlDuration = _ptchWhlCurDelay = _ptchWhlDurLeft = 0;
 	_frqLSB = 0;
 	_protect = _updateEnvelopes = false;
 	_enableLeft = _enableRight = true;
@@ -1601,7 +1608,6 @@ void TownsPC98_OpnChannel::keyOn() {
 	uint8 regAdress = 0x28;
 	writeReg(regAdress, value);
 }
-
 
 void TownsPC98_OpnChannel::loadData(uint8 *data) {
 	_flags = (_flags & ~CHS_EOT) | CHS_ALL_BUT_EOT;
@@ -2242,7 +2248,7 @@ void TownsPC98_OpnChannelSSG::processEvents() {
 	if (_flags & CHS_EOT)
 		return;
 
-	//int _ssgUnk = (_flags & CHS_SSG) ? -1 : 0;
+	_drv->_ssgFlag = (_flags & CHS_SSG) ? -1 : 0;
 
 	if (_protect == false && _ticksLeft == _keyOffTime)
 		keyOff();
@@ -2334,6 +2340,22 @@ void TownsPC98_OpnChannelSSG::keyOn() {
 	uint8 value = _keyNum | 0xf0;
 	uint8 regAdress = 0x28;
 	writeReg(regAdress, value);
+}
+
+void TownsPC98_OpnChannelSSG::loadData(uint8 *data) {
+	_drv->_ssgFlag = (_flags & CHS_SSG) ? -1 : 0;
+	opn_SSG_UNK(0);
+	TownsPC98_OpnChannel::loadData(data);
+	_algorithm = 0x80;
+}
+
+void TownsPC98_OpnChannelSSG::opn_SSG_UNK(uint8 a) {
+	_ssg1 = a;
+	uint16 h = (_totalLevel + 1) * a;
+	if ((h >> 8) == _ssg2)
+		return;
+	_ssg2 = (h >> 8);
+	writeReg(8 + _regOffset, _ssg2);
 }
 
 TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
@@ -2469,7 +2491,7 @@ void TownsPC98_OpnDriver::loadData(uint8 *data, bool loadPaused) {
 	
 	uint8 *src_a = data;
 
-	for (uint8 i = 0; i < _numChan; i++) {
+	for (uint8 i = 0; i < 3; i++) {
 		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
 		src_a += 2;
 	}
@@ -2479,10 +2501,17 @@ void TownsPC98_OpnDriver::loadData(uint8 *data, bool loadPaused) {
 		src_a += 2;
 	}
 
-	if (_hasADPCM) {
-		// TODO
+	for (uint8 i = 3; i < _numChan; i++) {
+		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
 		src_a += 2;
 	}
+
+	if (_hasADPCM) {
+		//_adpcmChannel->loadData(data + READ_LE_UINT16(src_a));
+		src_a += 2;
+	}
+
+	_ssgFlag = 0;
 
 	_patches = src_a + 4;
 	_cbCounter = 4;
@@ -2555,6 +2584,8 @@ void TownsPC98_OpnDriver::callback() {
 			_ssgChannels[i]->processFrequency();
 		}
 	}
+	
+	_ssgFlag = 0;
 
 	unlock();
 
