@@ -579,12 +579,12 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMusic, uint8 numChannels, void *soundData, uint32 size) {
+					 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size) {
 	_driver = driver;
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
-	_isMusic = isMusic;
+	_isMusic = isMus;
 
 	_numChannels = numChannels;
 	_volume = 0;
@@ -593,7 +593,7 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		_channels[_channelNumber + i].volume = 90;
 	}
 
-	if (isMusic)
+	if (_isMusic)
 		setVolume(ConfMan.getInt("music_volume"));
 	else
 		setVolume(ConfMan.getInt("sfx_volume"));		

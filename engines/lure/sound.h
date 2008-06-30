@@ -66,7 +66,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMusic, uint8 numChannels, void *soundData, uint32 size);
+		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
 	int getVolume() { return _volume; }

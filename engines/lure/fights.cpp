@@ -113,7 +113,6 @@ void FightsManager::fightLoop() {
 	Resources &res = Resources::getReference();
 	Game &game = Game::getReference();
 	Room &room = Room::getReference();
-	Events &events = Events::getReference();
 	FighterRecord &playerFight = getDetails(PLAYER_ID);
 	uint32 timerVal = g_system->getMillis();
 

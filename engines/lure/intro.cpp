@@ -55,7 +55,6 @@ static const AnimRecord anim_screens[] = {
 
 bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
 	Screen &screen = Screen::getReference();
-	Events &events = Events::getReference();
 	bool isEGA = LureEngine::getReference().isEGA();
 	screen.screen().loadScreen(screenId);
 	screen.update();
