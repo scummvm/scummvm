@@ -607,7 +607,7 @@ sub BuildVariation()
 	$UnlinkFile = $SDK_RootDirs{$SDK}."/epoc32/release/$TargetDir/urel/ScummVM.exe";
 	if (-e $UnlinkFile) { unlink($UnlinkFile) or PrintErrorMessage("Removing $UnlinkFile"); }
 	# remove all libs here, note they are in another dir!
-	system("rm ".$SDK_RootDirs{$SDK}."/epoc32/release/$TargetName/urel/scummvm_*.lib");
+	system("del ".$SDK_RootDirs{$SDK}."/epoc32/release/$TargetName/urel/scummvm_*.lib");
 
 	system("bldmake bldfiles 2> NUL > NUL");
 	PrintErrorMessage("'bldmake bldfiles' exited with value " . ($? >> 8)) if ($? >> 8);
