@@ -188,7 +188,7 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 	const char *objType[] = { "DOOR", "GET", "ANIM" };
 
 	DebugPrintf("+--------------------+-----+-----+-----+-----+--------+--------+\n"
-				"| name               |  x  |  y  |  z  |  f  |  type  |  flag  |\n"
+				"| name               |  x  |  y  |  z  |  f  |  type  |  visi  |\n"
 				"+--------------------+-----+-----+-----+-----+--------+--------+\n");
 
 	GfxObjList::iterator b = _vm->_gfx->_gfxobjList.begin();
@@ -196,7 +196,7 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 
 	for ( ; b != e; b++) {
 		GfxObj *obj = *b;
-		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->frame, objType[obj->type], 6 );
+		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->frame, objType[obj->type], obj->isVisible() );
 	}
 
 	DebugPrintf("+--------------------+-----+-----+-----+-----+--------+--------+\n");

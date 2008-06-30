@@ -531,145 +531,6 @@ void Gfx::invertBackground(const Common::Rect& r) {
 
 }
 
-// this is the maximum size of an unpacked frame in BRA
-byte _unpackedBitmap[640*401];
-
-#if 0
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	byte *d = _unpackedBitmap;
-
-	while (size > 0) {
-
-		uint8 p = *data++;
-		size--;
-		uint8 color = p & 0xF;
-		uint8 repeat = (p & 0xF0) >> 4;
-		if (repeat == 0) {
-			repeat = *data++;
-			size--;
-		}
-
-		memset(d, color, repeat);
-		d += repeat;
-	}
-
-	blt(r, _unpackedBitmap, surf, z, transparentColor);
-}
-#endif
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	byte *d = _unpackedBitmap;
-	uint pixelsLeftInLine = r.width();
-
-	while (size > 0) {
-		uint8 p = *data++;
-		size--;
-		uint8 color = p & 0xF;
-		uint8 repeat = (p & 0xF0) >> 4;
-		if (repeat == 0) {
-			repeat = *data++;
-			size--;
-		}
-		if (repeat == 0) {
-			// end of line
-			repeat = pixelsLeftInLine;
-			pixelsLeftInLine = r.width();
-		} else {
-			pixelsLeftInLine -= repeat;
-		}
-
-		memset(d, color, repeat);
-		d += repeat;
-	}
-
-	blt(r, _unpackedBitmap, surf, z, transparentColor);
-}
-
-
-void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	Common::Point dp;
-	Common::Rect q(r);
-
-	Common::Rect clipper(surf->w, surf->h);
-
-	q.clip(clipper);
-	if (!q.isValidRect()) return;
-
-	dp.x = q.left;
-	dp.y = q.top;
-
-	q.translate(-r.left, -r.top);
-
-	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
-
-	uint sPitch = r.width() - q.width();
-	uint dPitch = surf->w - q.width();
-
-
-	if (_varRenderMode == 2) {
-
-		for (uint16 i = 0; i < q.height(); i++) {
-
-			for (uint16 j = 0; j < q.width(); j++) {
-				if (*s != transparentColor) {
-					if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
-						if (z >= v) *d = 5;
-					} else {
-						*d = 5;
-					}
-				}
-
-				s++;
-				d++;
-			}
-
-			s += sPitch;
-			d += dPitch;
-		}
-
-    } else {
-		if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-
-			for (uint16 i = 0; i < q.height(); i++) {
-
-				for (uint16 j = 0; j < q.width(); j++) {
-					if (*s != transparentColor) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
-						if (z >= v) *d = *s;
-					}
-
-					s++;
-					d++;
-				}
-
-				s += sPitch;
-				d += dPitch;
-			}
-
-		} else {
-
-			for (uint16 i = q.top; i < q.bottom; i++) {
-				for (uint16 j = q.left; j < q.right; j++) {
-					if (*s != transparentColor)
-						*d = *s;
-
-					s++;
-					d++;
-				}
-
-				s += sPitch;
-				d += dPitch;
-			}
-
-		}
-	}
-
-}
-
 
 
 
@@ -963,8 +824,8 @@ int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
 	int id = _numItems;
 
 	_items[id].data = frames;
-	_items[id].x = x;
-	_items[id].y = y;
+	_items[id].data->x = x;
+	_items[id].data->y = y;
 
 	_items[id].transparentColor = transparentColor;
 
@@ -976,8 +837,6 @@ int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
 void Gfx::setItemFrame(uint item, uint16 f) {
 	assert(item < _numItems);
 	_items[item].data->frame = f;
-	_items[item].data->x = _items[item].x;
-	_items[item].data->y = _items[item].y;
 }
 
 Gfx::Balloon* Gfx::getBalloon(uint id) {
@@ -1110,69 +969,6 @@ void Gfx::freeItems() {
 void Gfx::hideDialogueStuff() {
 	freeItems();
 	freeBalloons();
-}
-
-void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = (byte*)surf->getBasePtr(x, y);
-	font->setColor(color);
-	font->drawString(dst, surf->w, text);
-}
-
-void Gfx::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
-
-	uint16 lines = 0;
-	uint16 linewidth = 0;
-
-	uint16 rx = 10;
-	uint16 ry = 4;
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	char token[MAX_TOKEN_LEN];
-
-	if (wrapwidth == -1)
-		wrapwidth = _vm->_screenWidth;
-
-	while (strlen(text) > 0) {
-
-		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
-
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-			rx = 10;
-			ry = 4 + lines*10;	// y
-
-			strcpy(token, "> .......");
-			strncpy(token+2, _password, strlen(_password));
-			tokenWidth = font->getStringWidth(token);
-		} else {
-			tokenWidth = font->getStringWidth(token);
-
-			linewidth += tokenWidth;
-
-			if (linewidth > wrapwidth) {
-				// wrap line
-				lines++;
-				rx = 10;			// x
-				ry = 4 + lines*10;	// y
-				linewidth = tokenWidth;
-			}
-
-			if (!scumm_stricmp(token, "%s")) {
-				sprintf(token, "%d", _score);
-			}
-
-		}
-
-		drawText(font, surf, rx, ry, token, color);
-
-		rx += tokenWidth + blankWidth;
-		linewidth += blankWidth;
-
-		text = Common::ltrim(text);
-	}
-
 }
 
 void Gfx::freeBackground() {

@@ -572,8 +572,6 @@ public:
 	uint	_numBalloons;
 
 	struct Item {
-		uint16 x;
-		uint16 y;
 		uint16 frame;
 		GfxObj *data;
 
