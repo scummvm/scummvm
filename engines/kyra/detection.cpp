@@ -61,8 +61,8 @@ namespace {
 #define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_KYRA2)
 
 #define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, true, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, true, true, Kyra::GI_KYRA3)
-#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
 	{
