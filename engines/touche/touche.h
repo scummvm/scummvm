@@ -356,6 +356,7 @@ public:
 
 	virtual int init();
 	virtual int go();
+	virtual void syncSoundSettings();
 
 protected:
 
