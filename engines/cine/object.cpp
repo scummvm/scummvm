@@ -125,6 +125,10 @@ void addOverlay(uint16 objIdx, uint16 type) {
 
 	tmp.objIdx = objIdx;
 	tmp.type = type;
+	tmp.x = 0;
+	tmp.y = 0;
+	tmp.width = 0;
+	tmp.color = 0;
 
 	overlayList.insert(it, tmp);
 }

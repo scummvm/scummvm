@@ -133,6 +133,7 @@ void runObjectScript(int16 entryIdx) {
  */
 void addPlayerCommandMessage(int16 cmd) {
 	overlay tmp;
+	memset(&tmp, 0, sizeof(tmp));
 	tmp.objIdx = cmd;
 	tmp.type = 3;
 

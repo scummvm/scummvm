@@ -822,6 +822,8 @@ SpriteListItem Screen::getFromSpriteList(int16 index) {
 	if (((uint) index) > _spriteList.size()) {
 		SpriteListItem emptyItem;
 		emptyItem.index = 0;
+		emptyItem.xofs = 0;
+		emptyItem.yofs = 0;
 		return emptyItem;
 	} else {
 		return _spriteList[index - 1];
