@@ -47,7 +47,7 @@ public:
 		bool play();
 		
 protected:
-		byte *_data;      //buffer
+		uint8 *_data;      //buffer
 		uint32 _dataSize; //buffer size
 
 		uint32 _trackTableOffset;
@@ -84,11 +84,11 @@ protected:
 			uint16 data;
 			uint8 patternNumber;
 			uint8 patternTranspose;
+			uint16 tempo; //can be changed by track command
 			bool updateFlag;
-			//empty
+			bool activeFlag;
 			//should setup as 8-track array 
 			//each track gets updated as trackstep progresses at predefined speed
-			uint8 crap2;
 		}_tracks[8];
 
 		//functions used in playback (in order by relationship)

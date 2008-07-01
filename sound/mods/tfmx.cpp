@@ -103,10 +103,10 @@ void Tfmx::load() {
 	}
 	
 	//trackstep read test
-	readTrackstep( 0 );
+	//readTrackstep( 0 );
 
 	//pattern read test
-	//readPattern(12);
+	readPattern(0);
 }
 bool Tfmx::load(Common::SeekableReadStream &stream) {
 	return true;
@@ -124,7 +124,7 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 	uint32 startPosition;   //offset into file from start for trackstart
 	uint32 endPosition;     //offset into file from start for trackend
 	int32 numCommands;		//number of 1 word track commands or patterns
-	int32 numSteps;         //number of tracksteps; not yet useful
+	int32 numSteps;         //number of lines in track
 	startPosition = (_songs[songNumber].startPosition * 16) + _trackTableOffset;
 	//the file specifies the start position of the last line, so you need to add 16
 	//to get to the actual position where the track ends
@@ -139,10 +139,13 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 		                                 //updates the _tracks[] array through each pass
 	
 		for(int i = 0; i < 8; i++) { //load current line in _tracks[] , can maybe implement checks here to update track or not?
+			if (!_tracks[i].updateFlag) {
 			_tracks[i].data = trackSubStream.readUint16BE();
 			_tracks[i].patternNumber = 0;
 			_tracks[i].patternTranspose = 0;
-			_tracks[i].updateFlag = true; 
+			_tracks[i].updateFlag = false; 
+			_tracks[i].activeFlag = true;
+			}
 		}
 
 		if (_tracks[0].data == 61438) { //you have a line of trackstep commands
@@ -174,11 +177,17 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 		} else { //you have a line of patterns, readPattern()
 			//each tracks[].data is 16 bits; first 8 bits is pattern number, second 8 bits is transpose number
 			for (int i = 0; i < 8; i++) {
+				if (_tracks[i].data == 65280) {    //kill channel command
+					_tracks[i].activeFlag = false; //should also kill channel
+				}
+				
+				if (_tracks[i].activeFlag) {
 				_tracks[i].patternNumber = _tracks[i].data >> 8;
 				_tracks[i].patternTranspose = _tracks[i].data & 0x00FF;
-			}
-			//
-		}
+				//readPattern(_tracks[i].patternNumber); //this should modify settings on track or channel as needed
+				}
+			}//end pattern loop
+		}//end else
 
 	}
 }
@@ -207,12 +216,76 @@ void Tfmx::readPattern(uint8 patternNumber) {
 	// Commands will be processed as nessecary. 
 	// Notes will be read as note structures and then passes to a seperate function for processing.
 
+	//Can potentially change this loop to stop when it finds the pattern end flag
+	for (int i = 0; i < numCommands; i++) {
+		//masks to isolate each byte of each pattern - temporary method. likely only first one is needed
+		uint8 byte1 = (pattern[i] & 0xFF000000) >> 24;
+		uint8 byte2 = (pattern[i] & 0x00FF0000) >> 16;
+		uint8 byte3 = (pattern[i] & 0x0000FF00) >> 8;
+		uint8 byte4 = (pattern[i] & 0x000000FF);
+		uint16 bytes34 = (pattern[i] & 0x0000FFFF);
+		
+		if (byte1 >= 0xF0) {
+			//you have a command. do something
+			//quick test to dump commands to terminal
+			warning("Command #: %X", i+1);
+			warning("Byte 1: %X", byte1);
+
+			switch (byte1) {
+				case 0xF0: //end pattern + advance track
+					//end pattern? also needs to know the track this is playing on
+					//_tracks[i].updateFlag = true; 
+					break;
+				case 0xF1: //repeat block/loop
+					break;
+				case 0xF2: //pattern jump
+					//readPattern(byte2) at offset in bytes34
+					break;
+				case 0xF3:
+					//waits byte2 + 1 jiffies
+					break;
+				case 0xF4: //kills track until new pointer is loaded
+					//need to know track this pattern is on, then needs to stop reading proceeding cmds
+					//_tracks[i].activeFlag = false;
+					break;
+				case 0xF5: //Key up
+					break;
+				case 0xF6: //Vibrato
+					break;
+				case 0xF7: //Envelope
+					break;
+				case 0xF8: //same as 0xF2 except it saves current pattern address for return
+					break;
+				case 0xF9: //return to saved address
+					break;
+				case 0xFA: //master volume slide
+					break;
+				case 0xFB: 
+					break;
+				case 0xFC: //Portamento
+					break;
+				case 0xFD: //Channel lock
+					//locks the channel specified in byte2 for bytes34 ticks
+					break;
+				case 0xFE: //disable track, same as F4 apparently
+					break;
+				case 0xFF: //Do nothing - advance pattern pointer
+					break;
+				default:
+					//invalid cmd
+					break;
+			}
+		} else { //you have a note
+			//readnote
+		}
+	}
 }
 void Tfmx::readNote(Note _aNote) {
 }
 void Tfmx::readMacro(int _macroNumber) {
 }
 void Tfmx::stopPlayer() {
+	stopPaula();
 }
 void Tfmx::playSelection() {
 }
