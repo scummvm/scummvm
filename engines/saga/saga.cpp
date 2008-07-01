@@ -193,14 +193,9 @@ int SagaEngine::init() {
 	if (native_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(this, _mixer, _driver, _musicVolume);
+	_music = new Music(this, _mixer, _driver);
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
-
-	if (!_musicVolume) {
-		debug(1, "Music disabled.");
-	}
-
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return FAILURE;
@@ -208,14 +203,11 @@ int SagaEngine::init() {
 
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, _soundVolume);
-	if (!_soundVolume) {
-		debug(1, "Sound disabled.");
-	}
-
+	
 	_interface->converseInit();
 	_script->setVerb(_script->getVerbType(kVerbWalkTo));
 
-	_music->setVolume(-1, 1);
+	_music->setVolume(_musicVolume, 1);
 
 	_gfx->initPalette();
 
@@ -517,6 +509,20 @@ void SagaEngine::setTalkspeed(int talkspeed) {
 
 int SagaEngine::getTalkspeed() {
 	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
+}
+
+void SagaEngine::syncSoundSettings() {
+	_soundVolume = ConfMan.getInt("sfx_volume");
+	_musicVolume = ConfMan.getInt("music_volume");
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_readingSpeed = getTalkspeed();
+
+	if (_readingSpeed > 3)
+		_readingSpeed = 0;
+
+	_music->setVolume(_musicVolume, 1);
+	_sound->setVolume(_soundVolume);
+
 }
 
 } // End of namespace Saga

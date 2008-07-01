@@ -512,6 +512,8 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
+	virtual void syncSoundSettings();
+	
 	int16 _framesEsc;
 
 	uint32 _globalFlags;

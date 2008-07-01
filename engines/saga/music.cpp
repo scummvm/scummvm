@@ -346,7 +346,7 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _vm(vm), _mixer(mixer), _enabled(enabled), _adlib(false) {
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm), _mixer(mixer), _adlib(false) {
 	_player = new MusicPlayer(driver);
 	_currentVolume = 0;
 
@@ -432,11 +432,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	uint32 loopStart;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
-
-	if (!_enabled) {
-		return;
-	}
-
+	
 	if (isPlaying() && _trackNumber == resourceId) {
 		return;
 	}
@@ -444,11 +440,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_trackNumber = resourceId;
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
-
-	if (!_vm->_musicVolume) {
-		return;
-	}
-
+	
 	int realTrackNumber;
 
 	if (_vm->getGameType() == GType_ITE) {
