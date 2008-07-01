@@ -57,6 +57,8 @@ protected:
 		uint32 _patternPointers[128];
 		uint32 _macroPointers[128]; 
 
+		static const uint16 notes[]; //note table , needs verification
+
 		struct Note {
 			uint8 noteValue;
 			uint8 macroNumber;
@@ -73,8 +75,17 @@ protected:
 
 		struct Channel {
 			//empty 
+			//need to implement channel structure properly
+			//will have data to send to Paula via interrupt()
 			uint8 crap;
 		}_channels[4];
+
+		struct Track {
+			//empty
+			//should setup as 8-track array 
+			//each track gets updated as trackstep progresses at predefined speed
+			uint8 crap2;
+		}_trackz[8];
 
 		//functions used in playback (in order by relationship)
 		void loadSongs();

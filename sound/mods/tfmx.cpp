@@ -28,6 +28,14 @@
 
 namespace Audio {
 
+const uint16 Tfmx::notes[] =
+	{0x06AE,0x064E,0x05F4,0x059E,0x054D,0x0501,
+	 0x04B9,0x0475,0x0435,0x03F9,0x03C0,0x038C,0x0358,0x032A,0x02FC,0x02D0,0x02A8,0x0282,
+	 0x025E,0x023B,0x021B,0x01FD,0x01E0,0x01C6,0x001AC,0x0194,0x017D,0x0168,0x0154,0x0140,
+	 0x012F,0x011E,0x010E,0x00FE,0x00F0,0x00E3,0x00D6,0x00CA,0x00BF,0x00B4,0x00AA,0x00A0,
+	 0x0097,0x008F,0x0087,0x007F,0x0078,0x0071,0x00D6,0x00CA,0x00BF,0x00B4,0x00AA,0x00A0,
+	 0x0097,0x008F,0x0087,0x007F,0x0078,0x0071,0x00D6,0x00CA,0x00BF,0x00B4};
+
 Tfmx::Tfmx(bool stereo, int rate, int interruptFreq)
 	: Paula(stereo, rate, interruptFreq) {
 	//blank now
@@ -95,7 +103,10 @@ void Tfmx::load() {
 	}
 	
 	//trackstep read test
-	readTrackstep( 0 );
+	//readTrackstep( 0 );
+
+	//pattern read test
+	readPattern(12);
 }
 bool Tfmx::load(Common::SeekableReadStream &stream) {
 	return true;
@@ -112,7 +123,7 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 
 	uint32 startPosition;   //offset into file from start for trackstart
 	uint32 endPosition;     //offset into file from start for trackend
-	int32 numCommands;		//number of 1 word track commands
+	int32 numCommands;		//number of 1 word track commands or patterns
 	int32 numSteps;         //number of tracksteps; not yet useful
 	startPosition = (_songs[songNumber].startPosition * 16) + _trackTableOffset;
 	//the file specifies the start position of the last line, so you need to add 16
@@ -124,7 +135,7 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 	Common::MemoryReadStream dataStream(_data, _dataSize);
 	Common::SeekableSubReadStream trackSubStream(&dataStream, startPosition, endPosition);
 
-	//read entire track by each 1 word command
+	//read entire track by each 1 word command into an array - could just directly manipulate stream
 	//can then read to determine if it is a pattern or a command
 	//temporary solution - will need to organize by the 8-track per trackstep structure
 	uint16 *tracks;
@@ -133,7 +144,7 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 		tracks[i] = trackSubStream.readUint16BE();
 	}
 	//you can now read track[] command by command. Maybe trackSubStream can be deleted?
-	
+
 	//start track reading
 	//need to implement tempo/timing system here
 	for (int i = 0; i < numCommands; i++) {
@@ -174,13 +185,35 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 			//could just skip the masking for patternNumber and shift it 8 bits to the right
 			uint8 patternNumber = (tracks[i] & 0xFF00) >> 8;
 			uint8 patternTranspose = (tracks[i] & 0x00FF);
-			readPattern(patternNumber);
+			//readPattern(patternNumber);
 		}
 	}
 }
 void Tfmx::readPattern(uint8 patternNumber) {
 	//TODO: setup lookup routine which reads pattern number and then finds corresponding address
 	//maybe a stream containing the pattern should be created in same way it was done in readTrackstep()
+
+	uint32 startPosition;
+	uint32 endPosition;
+	int32 numCommands;		//number of longword pattern commands or notes
+	startPosition = _patternPointers[patternNumber];
+	endPosition = _patternPointers[patternNumber + 1];
+	numCommands = (endPosition - startPosition) / 4;
+
+	Common::MemoryReadStream dataStream(_data, _dataSize);
+	Common::SeekableSubReadStream patternSubStream(&dataStream, startPosition, endPosition);
+
+	uint32 *pattern;
+	pattern = new uint32[numCommands];
+	for (int i = 0; i < numCommands; i++) {
+		pattern[i] = patternSubStream.readUint32BE();
+	}
+	//pattern[] should now have each command or note ready for processing
+
+	//TODO: read pattern[] and determine if it is a command or note.
+	// Commands will be processed as nessecary. 
+	// Notes will be read as note structures and then passes to a seperate function for processing.
+
 }
 void Tfmx::readNote(Note _aNote) {
 }
