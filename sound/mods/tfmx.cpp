@@ -103,10 +103,10 @@ void Tfmx::load() {
 	}
 	
 	//trackstep read test
-	//readTrackstep( 0 );
+	readTrackstep( 0 );
 
 	//pattern read test
-	readPattern(12);
+	//readPattern(12);
 }
 bool Tfmx::load(Common::SeekableReadStream &stream) {
 	return true;
@@ -135,24 +135,18 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 	Common::MemoryReadStream dataStream(_data, _dataSize);
 	Common::SeekableSubReadStream trackSubStream(&dataStream, startPosition, endPosition);
 
-	//read entire track by each 1 word command into an array - could just directly manipulate stream
-	//can then read to determine if it is a pattern or a command
-	//temporary solution - will need to organize by the 8-track per trackstep structure
-	uint16 *tracks;
-	tracks = new uint16[numCommands];
-	for (int i = 0; i < numCommands; i++) {
-		tracks[i] = trackSubStream.readUint16BE();
-	}
-	//you can now read track[] command by command. Maybe trackSubStream can be deleted?
+	for (int i = 0; i < numSteps; i++) { //reads trackstep line by line
+		                                 //updates the _tracks[] array through each pass
+	
+		for(int i = 0; i < 8; i++) { //load current line in _tracks[] , can maybe implement checks here to update track or not?
+			_tracks[i].data = trackSubStream.readUint16BE();
+			_tracks[i].patternNumber = 0;
+			_tracks[i].patternTranspose = 0;
+			_tracks[i].updateFlag = true; 
+		}
 
-	//start track reading
-	//need to implement tempo/timing system here
-	for (int i = 0; i < numCommands; i++) {
-
-		//flag for trackstep function is only found at the start of each line (every 8th tracks[] )
-		if (i == 0 || i % 8 == 0 && tracks[i] == 61438) {
-			//trackstep functions
-			switch (tracks[i+1]) {
+		if (_tracks[0].data == 61438) { //you have a line of trackstep commands
+			switch (_tracks[1].data) {
 			case 0: // EFFE0000 Stop player
 				stopPlayer();
 				break;
@@ -177,16 +171,15 @@ void Tfmx::readTrackstep(uint8 songNumber) {
 				//TODO: error
 				break;
 			}		
-			i += 7; //skips to end of line, loop then terminates and moves to i += 8, the start of next line
-		} else {
-			//it is a pattern, readPattern for tracks[]
-			
-			//each track[] is 16 bits; first 8 bits is pattern number, second 8 bits is transpose number
-			//could just skip the masking for patternNumber and shift it 8 bits to the right
-			uint8 patternNumber = (tracks[i] & 0xFF00) >> 8;
-			uint8 patternTranspose = (tracks[i] & 0x00FF);
-			//readPattern(patternNumber);
+		} else { //you have a line of patterns, readPattern()
+			//each tracks[].data is 16 bits; first 8 bits is pattern number, second 8 bits is transpose number
+			for (int i = 0; i < 8; i++) {
+				_tracks[i].patternNumber = _tracks[i].data >> 8;
+				_tracks[i].patternTranspose = _tracks[i].data & 0x00FF;
+			}
+			//
 		}
+
 	}
 }
 void Tfmx::readPattern(uint8 patternNumber) {

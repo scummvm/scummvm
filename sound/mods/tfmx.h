@@ -81,11 +81,15 @@ protected:
 		}_channels[4];
 
 		struct Track {
+			uint16 data;
+			uint8 patternNumber;
+			uint8 patternTranspose;
+			bool updateFlag;
 			//empty
 			//should setup as 8-track array 
 			//each track gets updated as trackstep progresses at predefined speed
 			uint8 crap2;
-		}_trackz[8];
+		}_tracks[8];
 
 		//functions used in playback (in order by relationship)
 		void loadSongs();
