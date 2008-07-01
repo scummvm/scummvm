@@ -39,7 +39,7 @@ namespace GUI {
 using namespace Graphics;
 using namespace Common;
 
-ThemeParser::ThemeParser() : XMLParser() {
+ThemeParser::ThemeParser(InterfaceManager *parent) : XMLParser() {
 	_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
 	_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
 	_callbacks["palette"] = &ThemeParser::parserCallback_palette;
@@ -59,6 +59,7 @@ ThemeParser::ThemeParser() : XMLParser() {
 
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
+	_GUI = parent;
 }
 
 bool ThemeParser::keyCallback(Common::String keyName) {
@@ -212,7 +213,7 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	if (!parseDrawStep(stepNode, drawstep, true))
 		return false;
 
-	g_InterfaceManager.addDrawStep(drawdataNode->values["id"], drawstep);
+	_GUI->addDrawStep(drawdataNode->values["id"], drawstep);
 	return true;
 }
 
@@ -228,7 +229,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	if (drawdataNode->values.contains("id") == false)
 		return parserError("DrawData keys must contain an identifier.");
 
-	InterfaceManager::DrawData id = g_InterfaceManager.getDrawDataId(drawdataNode->values["id"]);
+	InterfaceManager::DrawData id = _GUI->getDrawDataId(drawdataNode->values["id"]);
 
 	if (id == -1)
 		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
@@ -251,7 +252,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 		}
 	}*/
 
-	if (g_InterfaceManager.addDrawData(id, cached) == false)
+	if (_GUI->addDrawData(id, cached) == false)
 		return parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
 
 	if (_defaultStepLocal) {

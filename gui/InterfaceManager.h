@@ -39,8 +39,6 @@
 
 namespace GUI {
 
-#define g_InterfaceManager	(GUI::InterfaceManager::instance())
-
 struct WidgetDrawData;
 class InterfaceManager;
 
@@ -64,14 +62,13 @@ struct WidgetDrawData {
 	}
 };
 
-class InterfaceManager : public Common::Singleton<InterfaceManager> {
+class InterfaceManager {
 
 	typedef Common::String String;
 	typedef GUI::Dialog Dialog;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
-	friend class Common::Singleton<SingletonBaseType>;
 
 	static const char *kDrawDataStrings[];
 	static const int kMaxDialogDepth = 4;
@@ -81,6 +78,11 @@ public:
 		kGfxDisabled = 0,
 		kGfxStandard16bit,
 		kGfxAntialias16bit
+	};
+	
+	enum Dialogs {
+		kDialogLauncher,
+		kDialogMAX
 	};
 
 	enum {
@@ -235,6 +237,12 @@ public:
 	}
 
 	bool loadTheme(Common::String themeName);
+	void openDialog(Dialogs dname, Dialog *parent);
+	
+	void closeTopDialog() {
+		assert(_dialogStack.empty() == false);
+		delete _dialogStack.pop();
+	}
 
 protected:
 	template<typename PixelType> void screenInit();
@@ -271,10 +279,6 @@ protected:
 		if (_dialogStack.empty())
 			return 0;
 		return _dialogStack.top();
-	}
-
-	void openDialog(Dialog *dlg) {
-		_dialogStack.push(dlg);
 	}
 
 	bool needThemeReload() {

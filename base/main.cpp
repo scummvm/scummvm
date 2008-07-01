@@ -72,8 +72,10 @@ static bool launcherDialog(OSystem &system) {
 
 #if defined LOL
 
-	g_InterfaceManager.runGUI();
-	return true;
+//	g_InterfaceManager.runGUI();
+	InterfaceManager *manager = new InterfaceManager();
+	manager->openDialog(kDialogLauncher);
+	return (manager.runGUI() != -1);
 
 #else
 

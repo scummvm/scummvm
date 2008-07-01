@@ -30,6 +30,8 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 
+#include "gui/launcher.h"
+
 #include "gui/InterfaceManager.h"
 #include "graphics/VectorRenderer.h"
 
@@ -73,7 +75,7 @@ InterfaceManager::InterfaceManager() :
 	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false),
 	_needThemeLoad(false), _enabled(false) {
 	_system = g_system;
-	_parser = new ThemeParser();
+	_parser = new ThemeParser(this);
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		_widgets[i] = 0;
@@ -276,6 +278,22 @@ void InterfaceManager::redrawDialogStack() {
 		_dialogStack[i]->draw();
 }
 
+void InterfaceManager::openDialog(Dialogs dname, Dialog *parent) {
+	Dialog *dlg = 0;
+	switch (dname) {
+		case kDialogLauncher:
+			dlg = new GUI::LauncherDialog;
+			break;
+			
+		default:
+			error("Unhandled dialog opening");
+			break;
+	}
+	
+	if (dlg)
+		_dialogStack.push(dlg);
+}
+
 int InterfaceManager::runGUI() {
 	init();
 
@@ -289,8 +307,7 @@ int InterfaceManager::runGUI() {
 	if (!activeDialog)
 		return 0;
 
-	bool didSaveState = false;
-	bool stackChange = true;
+	bool stackChange;
 
 	int button;
 	uint32 time;

@@ -29,6 +29,7 @@ namespace GUI {
 
 class CommandReceiver;
 class CommandSender;
+class InterfaceManager;
 
 class CommandReceiver {
 	friend class CommandSender;
@@ -65,6 +66,7 @@ protected:
 	Common::String _name;
 
 	Widget		*_firstWidget;
+	InterfaceManager *_GUI;
 
 public:
 	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _name(""), _firstWidget(0)  { }
@@ -83,6 +85,7 @@ public:
 	virtual void	draw() = 0;
 
 	virtual void	reflowLayout();
+	virtual void setInterfaceManager(InterfaceManager *manager) { _GUI = manager; }
 
 protected:
 	virtual void	releaseFocus() = 0;
