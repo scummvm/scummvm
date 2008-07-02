@@ -32,7 +32,7 @@
 
 #include "gui/ThemeRenderer.h"
 #include "gui/ThemeParser.h"
-#include "gui/NewGui.h"
+#include "gui/newgui.h"
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
