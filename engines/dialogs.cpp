@@ -108,11 +108,14 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_aboutDialog->runModal();
 		break;
 	case kRTLCmd:
+		//g_system->getEventManager()->setQuit();
+		//g_system->getEventManager()->setRTL();
 		_engine->_quit = true;
 		_engine->_rtl = true;
 		close();
 		break;
 	case kQuitCmd:
+		//g_system->getEventManager()->setQuit();
 		_engine->_quit = true;
 		close();
 		break;

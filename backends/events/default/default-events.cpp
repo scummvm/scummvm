@@ -93,7 +93,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_boss(boss),
 	_buttonState(0),
 	_modifierState(0),
-	_shouldQuit(false) {
+	_shouldQuit(false),
+	_shouldRTL(false) {
 
 	assert(_boss);
 
@@ -383,16 +384,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
-
 			// Global Main Menu
 			if (event.kbd.keycode == Common::KEYCODE_F11)
 				if (g_engine && !g_engine->isPaused())
 					g_engine->mainMenuDialog();
-			
-			if (!g_engine->_quit)
-				break;
-			else
+
+			if (g_engine->_quit)
 				event.type = Common::EVENT_QUIT;
+			else
+				break;
 
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
@@ -429,7 +429,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		case Common::EVENT_MAINMENU:
 			if (g_engine && !g_engine->isPaused())
 				g_engine->mainMenuDialog();
-			break;
+
+			if (g_engine->_quit)
+				event.type = Common::EVENT_QUIT;
+			else 
+				break;
 
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
@@ -441,6 +445,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					g_engine->pauseEngine(false);
 			} else
 				_shouldQuit = true;
+
+			g_engine->_quit = true;
 			break;
 
 		default:

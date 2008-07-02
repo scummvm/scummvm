@@ -46,6 +46,7 @@ class MainMenuDialog : public GlobalDialog {
 public:
 	MainMenuDialog(Engine *engine);
 	~MainMenuDialog();
+
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:

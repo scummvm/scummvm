@@ -168,6 +168,26 @@ public:
 	 */
 	virtual int shouldQuit() const = 0;
 
+	/**
+	 * Should we return to the launcher?
+	 */
+	virtual int shouldRTL() const = 0;
+
+	/** 
+	 * Sets the quit variable to true
+	 */
+	virtual void setQuit() = 0;
+
+	/**
+	 * Set the RTL flag, we should return to the launcher
+	 */
+	virtual void setRTL() = 0;
+
+	/**
+	 * We have returned to the launcher, and the RTL should be reset to false
+	 */
+	virtual void resetRTL() = 0;
+
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 
