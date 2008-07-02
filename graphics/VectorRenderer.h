@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
-#include "gui/InterfaceManager.h"
+#include "gui/ThemeRenderer.h"
 
 
 namespace Graphics {

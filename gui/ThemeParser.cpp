@@ -30,8 +30,9 @@
 #include "common/hash-str.h"
 #include "common/xmlparser.h"
 
-#include "gui/InterfaceManager.h"
+#include "gui/ThemeRenderer.h"
 #include "gui/ThemeParser.h"
+#include "gui/NewGui.h"
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -39,7 +40,7 @@ namespace GUI {
 using namespace Graphics;
 using namespace Common;
 
-ThemeParser::ThemeParser(InterfaceManager *parent) : XMLParser() {
+ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
 	_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
 	_callbacks["palette"] = &ThemeParser::parserCallback_palette;
@@ -59,7 +60,7 @@ ThemeParser::ThemeParser(InterfaceManager *parent) : XMLParser() {
 
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
-	_GUI = parent;
+	_theme = parent;
 }
 
 bool ThemeParser::keyCallback(Common::String keyName) {
@@ -213,7 +214,7 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	if (!parseDrawStep(stepNode, drawstep, true))
 		return false;
 
-	_GUI->addDrawStep(drawdataNode->values["id"], drawstep);
+	_theme->addDrawStep(drawdataNode->values["id"], drawstep);
 	return true;
 }
 
@@ -229,7 +230,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	if (drawdataNode->values.contains("id") == false)
 		return parserError("DrawData keys must contain an identifier.");
 
-	InterfaceManager::DrawData id = _GUI->getDrawDataId(drawdataNode->values["id"]);
+	ThemeRenderer::DrawData id = _theme->getDrawDataId(drawdataNode->values["id"]);
 
 	if (id == -1)
 		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
@@ -252,7 +253,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 		}
 	}*/
 
-	if (_GUI->addDrawData(id, cached) == false)
+	if (_theme->addDrawData(id, cached) == false)
 		return parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
 
 	if (_defaultStepLocal) {

@@ -1105,14 +1105,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\InterfaceManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\InterfaceManager.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\Key.cpp"
 				>
 			</File>
@@ -1246,6 +1238,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeRenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeRenderer.h"
+				>
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp"

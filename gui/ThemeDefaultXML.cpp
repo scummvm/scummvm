@@ -24,11 +24,11 @@
  */
 
 #include "common/system.h"
-#include "gui/InterfaceManager.h"
+#include "gui/ThemeRenderer.h"
 
 namespace GUI {
 
-bool InterfaceManager::loadDefaultXML() {
+bool ThemeRenderer::loadDefaultXML() {
 	const char *defaultXML =
 /**
  * Default theme description file. Work in progress.

@@ -62,7 +62,7 @@ struct WidgetDrawData {
 	}
 };
 
-class InterfaceManager {
+class ThemeRenderer : public Theme {
 
 	typedef Common::String String;
 	typedef GUI::Dialog Dialog;
@@ -78,16 +78,6 @@ public:
 		kGfxDisabled = 0,
 		kGfxStandard16bit,
 		kGfxAntialias16bit
-	};
-	
-	enum Dialogs {
-		kDialogLauncher,
-		kDialogMAX
-	};
-
-	enum {
-		kDoubleClickDelay = 500, // milliseconds
-		kCursorAnimateDelay = 250
 	};
 
 	enum DrawData {
@@ -120,61 +110,9 @@ public:
 		kDrawDataMAX
 	};
 
-	enum FontStyle {
-		kFontStyleBold = 0,			//! A bold font. This is also the default font.
-		kFontStyleNormal = 1,		//! A normal font.
-		kFontStyleItalic = 2,		//! Italic styled font.
-		kFontStyleFixedNormal = 3,	//! Fixed size font.
-		kFontStyleFixedBold = 4,	//! Fixed size bold font.
-		kFontStyleFixedItalic = 5,	//! Fixed size italic font.
-		kFontStyleMax
-	};
+	ThemeRenderer();
 
-	enum State {
-		kStateDisabled,		//! Indicates that the widget is disabled, that does NOT include that it is invisible
-		kStateEnabled,		//! Indicates that the widget is enabled
-		kStateHighlight		//! Indicates that the widget is highlighted by the user
-	};
-
-	//! Widget background type
-	enum WidgetBackground {
-		kWidgetBackgroundNo,			//! No background at all
-		kWidgetBackgroundPlain,			//! Simple background, this may not include borders
-		kWidgetBackgroundBorder,		//! Same as kWidgetBackgroundPlain just with a border
-		kWidgetBackgroundBorderSmall,	//! Same as kWidgetBackgroundPlain just with a small border
-		kWidgetBackgroundEditText,		//! Background used for edit text fields
-		kWidgetBackgroundSlider			//! Background used for sliders
-	};
-
-	typedef State WidgetStateInfo;
-
-	//! State of the scrollbar
-	enum ScrollbarState {
-		kScrollbarStateNo,
-		kScrollbarStateUp,
-		kScrollbarStateDown,
-		kScrollbarStateSlider,
-		kScrollbarStateSinglePage
-	};
-
-	//! Defined the align of the text
-	enum TextAlign {
-		kTextAlignLeft,		//! Text should be aligned to the left
-		kTextAlignCenter,	//! Text should be centered
-		kTextAlignRight		//! Text should be aligned to the right
-	};
-
-	//! Function used to process areas other than the current dialog
-	enum ShadingStyle {
-		kShadingNone,		//! No special post processing
-		kShadingDim,		//! Dimming unused areas
-		kShadingLuminance	//! Converting colors to luminance for unused areas
-	};
-
-
-	InterfaceManager();
-
-	~InterfaceManager() {
+	~ThemeRenderer() {
 		freeRenderer();
 		freeScreen();
 		unloadTheme();
@@ -184,10 +122,22 @@ public:
 			delete _dialogStack.pop();
 	}
 
-	void setGraphicsMode(Graphics_Mode mode);
-	int runGUI();
+	// virtual methods from Theme
+	bool init();
+	void deinit() {}
+	void refresh() {}
+	void enable() {}
+	void disable() {}
+	void openDialog() {}
+	void closeAllDialogs() {}
+	void clearAll() {}
+	void updateScreen() {}
+	void resetDrawArea() {}
+	void openDialog(bool top) {}
 
-	void init();
+	virtual bool isDynamic() {
+		return true;
+	}
 
 	/** Font management */
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
@@ -207,6 +157,16 @@ public:
 	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled) {}
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {}
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {}
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {}
+
+	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
+		_dirtyScreen.push_back(r);
+		return true;
+	}
+
+	// custom stuff - tanoku
 	DrawData getDrawDataId(Common::String &name) {
 		for (int i = 0; i < kDrawDataMAX; ++i)
 			if (name.compareToIgnoreCase(kDrawDataStrings[i]) == 0)
@@ -237,12 +197,13 @@ public:
 	}
 
 	bool loadTheme(Common::String themeName);
-	void openDialog(Dialogs dname, Dialog *parent);
 	
 	void closeTopDialog() {
 		assert(_dialogStack.empty() == false);
 		delete _dialogStack.pop();
 	}
+
+	void setGraphicsMode(Graphics_Mode mode);
 
 protected:
 	template<typename PixelType> void screenInit();
@@ -261,6 +222,7 @@ protected:
 	}
 
 	void screenChange() {}
+	void renderDirtyScreen();
 
 	void freeRenderer() {
 		delete _vectorRenderer;
@@ -296,8 +258,15 @@ protected:
 
 	inline void drawDD(DrawData type, const Common::Rect &r);
 
-	void addDirtyRect(const Common::Rect &r) {
-		_dirtyScreen.push_back(r);
+	// TODO
+	void restoreBackground(Common::Rect r, bool special = false) {}
+
+	int getTabSpacing() const {
+		return 0;
+	}
+
+	int getTabPadding() const {
+		return 3;
 	}
 
 	OSystem *_system;
@@ -321,12 +290,6 @@ protected:
 	bool _caching;
 	bool _needThemeLoad;
 	bool _enabled;
-
-	struct {
-		int16 x, y;	// Position of mouse when the click occured
-		uint32 time;	// Time
-		int count;	// How often was it already pressed?
-	} _lastClick;
 };
 
 } // end of namespace GUI.

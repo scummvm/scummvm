@@ -348,6 +348,10 @@ public:
 	const Common::String &getStylefileName() const { return _stylefile; }
 	const Common::String &getThemeName() const { return _stylename; }
 
+	virtual bool isDynamic() {
+		return false;
+	}	
+
 	/**
 	 * Checks if the theme renderer supports drawing of images.
 	 *

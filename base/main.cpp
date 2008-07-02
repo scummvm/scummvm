@@ -43,7 +43,7 @@
 #include "common/system.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
-#include "gui/InterfaceManager.h"
+#include "gui/ThemeRenderer.h"
 #include "gui/ThemeParser.h"
 
 #if defined(_WIN32_WCE)
@@ -69,6 +69,8 @@ static bool launcherDialog(OSystem &system) {
 
 	// Clear the main screen
 	system.clearScreen();
+
+	GUI::ThemeRenderer *test = new GUI::ThemeRenderer;
 
 #if defined LOL
 

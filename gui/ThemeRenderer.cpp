@@ -32,16 +32,14 @@
 
 #include "gui/launcher.h"
 
-#include "gui/InterfaceManager.h"
+#include "gui/ThemeRenderer.h"
 #include "graphics/VectorRenderer.h"
-
-DECLARE_SINGLETON(GUI::InterfaceManager);
 
 namespace GUI {
 
 using namespace Graphics;
 
-const char *InterfaceManager::kDrawDataStrings[] = {
+const char *ThemeRenderer::kDrawDataStrings[] = {
 	"mainmenu_bg",
 	"special_bg",
 	"plain_bg",
@@ -70,7 +68,7 @@ const char *InterfaceManager::kDrawDataStrings[] = {
 	"separator"
 };
 
-InterfaceManager::InterfaceManager() : 
+ThemeRenderer::ThemeRenderer() : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
 	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false),
 	_needThemeLoad(false), _enabled(false) {
@@ -86,7 +84,7 @@ InterfaceManager::InterfaceManager() :
 }
 
 template<typename PixelType> 
-void InterfaceManager::screenInit() {
+void ThemeRenderer::screenInit() {
 	freeScreen();
 
 	_screen = new Surface;
@@ -94,7 +92,7 @@ void InterfaceManager::screenInit() {
 	_system->clearOverlay();
 }
 
-void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
+void ThemeRenderer::setGraphicsMode(Graphics_Mode mode) {
 
 	// FIXME: reload theme everytime we change resolution...
 	// what if we change the renderer too?
@@ -120,14 +118,14 @@ void InterfaceManager::setGraphicsMode(Graphics_Mode mode) {
 	_vectorRenderer->setSurface(_screen);
 }
 
-void InterfaceManager::addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step) {
+void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step) {
 	DrawData id = getDrawDataId(drawDataId);
 	
 	assert(_widgets[id] != 0);
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
+bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 	assert(data_id >= 0 && data_id < kDrawDataMAX);
 
 	if (_widgets[data_id] != 0)
@@ -139,7 +137,7 @@ bool InterfaceManager::addDrawData(DrawData data_id, bool cached) {
 	return true;
 }
 
-bool InterfaceManager::loadTheme(Common::String themeName) {
+bool ThemeRenderer::loadTheme(Common::String themeName) {
 	unloadTheme();
 
 	if (!loadThemeXML(themeName)) {
@@ -165,7 +163,7 @@ bool InterfaceManager::loadTheme(Common::String themeName) {
 	return true;
 }
 
-bool InterfaceManager::loadThemeXML(Common::String themeName) {
+bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	assert(_parser);
 
 	if (ConfMan.hasKey("themepath"))
@@ -184,7 +182,7 @@ bool InterfaceManager::loadThemeXML(Common::String themeName) {
 	return parser()->parse();
 }
 
-void InterfaceManager::init() {
+bool ThemeRenderer::init() {
 	if (!_screen || _system->getOverlayWidth() != _screen->w ||
 		_system->getOverlayHeight() != _screen->h )
 		setGraphicsMode(_graphicsMode);
@@ -193,20 +191,21 @@ void InterfaceManager::init() {
 		loadTheme();
 
 	_initOk = true;
+	return true;
 }
 
-bool InterfaceManager::isWidgetCached(DrawData type, const Common::Rect &r) {
+bool ThemeRenderer::isWidgetCached(DrawData type, const Common::Rect &r) {
 	return _widgets[type] && _widgets[type]->_cached &&
 		_widgets[type]->_surfaceCache->w == r.width() && 
 		_widgets[type]->_surfaceCache->h == r.height();
 }
 
-void InterfaceManager::drawCached(DrawData type, const Common::Rect &r) {
+void ThemeRenderer::drawCached(DrawData type, const Common::Rect &r) {
 	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen->bytesPerPixel);
 	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
 }
 
-void InterfaceManager::drawDD(DrawData type, const Common::Rect &r) {
+void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
 	if (isWidgetCached(type, r)) {
 		drawCached(type, r);
 	} else {
@@ -215,7 +214,7 @@ void InterfaceManager::drawDD(DrawData type, const Common::Rect &r) {
 	}
 }
 
-void InterfaceManager::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
+void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
 	if (!ready())
 		return;
 
@@ -229,7 +228,7 @@ void InterfaceManager::drawButton(const Common::Rect &r, const Common::String &s
 	addDirtyRect(r);
 }
 
-void InterfaceManager::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
+void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
@@ -237,7 +236,7 @@ void InterfaceManager::drawLineSeparator(const Common::Rect &r, WidgetStateInfo 
 	addDirtyRect(r);
 }
 
-void InterfaceManager::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
@@ -252,7 +251,7 @@ void InterfaceManager::drawCheckbox(const Common::Rect &r, const Common::String 
 	addDirtyRect(r);
 }
 
-void InterfaceManager::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
+void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
@@ -266,140 +265,22 @@ void InterfaceManager::drawSlider(const Common::Rect &r, int width, WidgetStateI
 	addDirtyRect(r);
 }
 
-void InterfaceManager::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
+void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
 	if (!ready())
 		return;
 }
 
-void InterfaceManager::redrawDialogStack() {
-	_vectorRenderer->clearSurface();
+void ThemeRenderer::renderDirtyScreen() {
+	// TODO: This isn't really optimized. Check dirty squares for collisions
+	// and all that.
+	if (_dirtyScreen.empty())
+		return;
 
-	for (int i = 0; i < _dialogStack.size(); ++i)
-		_dialogStack[i]->draw();
+	for (uint i = 0; i < _dirtyScreen.size(); ++i)
+		_vectorRenderer->copyFrame(_system, _dirtyScreen[i]);
+
+	_system->updateScreen();
+	_dirtyScreen.clear();
 }
-
-void InterfaceManager::openDialog(Dialogs dname, Dialog *parent) {
-	Dialog *dlg = 0;
-	switch (dname) {
-		case kDialogLauncher:
-			dlg = new GUI::LauncherDialog;
-			break;
-			
-		default:
-			error("Unhandled dialog opening");
-			break;
-	}
-	
-	if (dlg)
-		_dialogStack.push(dlg);
-}
-
-int InterfaceManager::runGUI() {
-	init();
-
-	if (!ready())
-		return 0;
-
-	Common::EventManager *eventMan = _system->getEventManager();
-	Dialog *activeDialog = getTopDialog();
-	Dialog *lastDialog = 0;
-
-	if (!activeDialog)
-		return 0;
-
-	bool stackChange;
-
-	int button;
-	uint32 time;
-
-	_system->showOverlay();
-
-	while (activeDialog) { // draw!!
-		stackChange = (activeDialog != lastDialog);
-		lastDialog = activeDialog;
-
-		if (stackChange || needRedraw())
-			redrawDialogStack();
-
-		if (!_dirtyScreen.empty()) {
-			for (uint i = 0; i < _dirtyScreen.size(); ++i)
-				_vectorRenderer->copyFrame(_system, _dirtyScreen[i]);
-			_system->updateScreen();
-			_dirtyScreen.clear();
-		}
-
-		Common::Event event;
-
-		while (eventMan->pollEvent(event)) {
-			activeDialog->handleTickle();
-
-			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
-
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				activeDialog->handleKeyDown(event.kbd);
-				break;
-
-			case Common::EVENT_KEYUP:
-				activeDialog->handleKeyUp(event.kbd);
-				break;
-
-			case Common::EVENT_MOUSEMOVE:
-				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
-				break;
-
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_RBUTTONDOWN:
-				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
-				time = _system->getMillis();
-				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-							&& ABS(_lastClick.x - event.mouse.x) < 3
-							&& ABS(_lastClick.y - event.mouse.y) < 3) {
-					_lastClick.count++;
-				} else {
-					_lastClick.x = event.mouse.x;
-					_lastClick.y = event.mouse.y;
-					_lastClick.count = 1;
-				}
-				_lastClick.time = time;
-				activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
-				break;
-
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONUP:
-				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
-				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
-				break;
-
-			case Common::EVENT_WHEELUP:
-				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
-				break;
-
-			case Common::EVENT_WHEELDOWN:
-				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
-				break;
-
-			case Common::EVENT_QUIT:
-				_system->quit();
-				return 1;
-
-			case Common::EVENT_SCREEN_CHANGED:
-				screenChange();
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		activeDialog = getTopDialog();
-		_system->delayMillis(10);
-	}
-
-	_system->hideOverlay();
-	return 1;
-}
-
-
 
 } // end of namespace GUI.

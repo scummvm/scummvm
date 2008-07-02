@@ -36,7 +36,7 @@
 #include "common/xmlparser.h"
 
 #include "graphics/VectorRenderer.h"
-#include "gui/InterfaceManager.h"
+#include "gui/ThemeRenderer.h"
 
 /**
  *********************************************
@@ -308,7 +308,7 @@ namespace GUI {
 
 using namespace Graphics;
 using namespace Common;
-class InterfaceManager;
+class ThemeRenderer;
 
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
@@ -316,10 +316,10 @@ class ThemeParser : public XMLParser {
 	typedef GUI::InterfaceManager InterfaceManager;
 
 public:
-	ThemeParser(InterfaceManager *parent);
+	ThemeParser(GUI::ThemeRenderer *parent);
 
 protected:
-	InterfaceManager *_GUI;
+	ThemeRenderer *_theme;
 	bool keyCallback(Common::String keyName);
 
 	bool parserCallback_DRAWSTEP();
