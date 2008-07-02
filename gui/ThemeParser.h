@@ -313,7 +313,6 @@ class ThemeRenderer;
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
 	typedef bool (ThemeParser::*ParserCallback)();
-	typedef GUI::InterfaceManager InterfaceManager;
 
 public:
 	ThemeParser(GUI::ThemeRenderer *parent);

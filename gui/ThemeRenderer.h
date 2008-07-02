@@ -40,7 +40,6 @@
 namespace GUI {
 
 struct WidgetDrawData;
-class InterfaceManager;
 
 struct WidgetDrawData {
 	Common::Array<Graphics::DrawStep*> _steps;

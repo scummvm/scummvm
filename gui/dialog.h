@@ -44,7 +44,6 @@ enum {
 class Dialog : public GuiObject {
 	// TANOKU-TODO: remove newgui from here
 	friend class NewGui;
-	friend class InterfaceManager;
 protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
