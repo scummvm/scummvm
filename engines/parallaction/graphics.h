@@ -326,20 +326,6 @@ public:
 #define CENTER_LABEL_HORIZONTAL	-1
 #define CENTER_LABEL_VERTICAL	-1
 
-struct Label {
-	Graphics::Surface	_cnv;
-
-	Common::Point		_pos;
-	bool				_visible;
-
-	Label();
-	~Label();
-
-	void free();
-	void resetPosition();
-};
-
-
 
 
 #define MAX_BALLOON_WIDTH 130
@@ -357,7 +343,8 @@ enum {
 
 	kGfxObjTypeDoor = 0,
 	kGfxObjTypeGet = 1,
-	kGfxObjTypeAnim = 2
+	kGfxObjTypeAnim = 2,
+	kGfxObjTypeLabel = 3
 };
 
 enum {
@@ -381,6 +368,7 @@ public:
 	uint type;
 	uint frame;
 	uint layer;
+	uint transparentKey;
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
@@ -478,9 +466,12 @@ public:
 	void clearGfxObjects();
 	void sortAnimations();
 
+
 	// labels
-	void setFloatingLabel(Label *label);
-	Label *renderFloatingLabel(Font *font, char *text);
+	void showFloatingLabel(uint label);
+	void hideFloatingLabel();
+
+	uint renderFloatingLabel(Font *font, char *text);
 	uint createLabel(Font *font, const char *text, byte color);
 	void showLabel(uint id, int16 x, int16 y);
 	void hideLabel(uint id);
@@ -572,19 +563,18 @@ public:
 	uint	_numBalloons;
 
 	struct Item {
-		uint16 frame;
 		GfxObj *data;
-
-		byte transparentColor;
-		Common::Rect rect;
 	} _items[14];
 
 	uint	_numItems;
 
-	#define MAX_NUM_LABELS	5
-	Label*	_labels[MAX_NUM_LABELS];
-	uint	_numLabels;
-	Label	*_floatingLabel;
+	#define MAX_NUM_LABELS	20
+	#define NO_FLOATING_LABEL	1000
+
+	typedef Common::Array<GfxObj*> GfxObjArray;
+	GfxObjArray	_labels;
+
+	uint _floatingLabel;
 
 	void drawInventory();
 	void updateFloatingLabel();
@@ -601,6 +591,7 @@ public:
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
+	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };

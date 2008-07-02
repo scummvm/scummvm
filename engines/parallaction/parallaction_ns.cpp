@@ -187,7 +187,7 @@ void Parallaction_ns::setArrowCursor() {
 	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_gfx->setFloatingLabel(0);
+	_gfx->hideFloatingLabel();
 	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
@@ -298,7 +298,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_soundMan->playLocationMusic(location);
 
-	_gfx->setFloatingLabel(0);
+	_gfx->hideFloatingLabel();
 	_gfx->freeLabels();
 
 	_input->stopHovering();

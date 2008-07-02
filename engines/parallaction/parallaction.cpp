@@ -290,12 +290,12 @@ void Parallaction::processInput(InputData *data) {
 	switch (data->_event) {
 	case kEvEnterZone:
 		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->setFloatingLabel(data->_label);
+		_gfx->showFloatingLabel(data->_label);
 		break;
 
 	case kEvExitZone:
 		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		_gfx->setFloatingLabel(0);
+		_gfx->hideFloatingLabel();
 		break;
 
 	case kEvAction:
@@ -308,7 +308,7 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvOpenInventory:
 		_input->stopHovering();
-		_gfx->setFloatingLabel(0);
+		_gfx->hideFloatingLabel();
 		if (hitZone(kZoneYou, data->_mousePos.x, data->_mousePos.y) == 0) {
 			setArrowCursor();
 		}
