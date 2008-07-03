@@ -86,8 +86,6 @@ public:
  * @see XMLParser::keyCallback()
  */
 class XMLParser {
-	/** Maximum depth for nested keys that the parser supports */
-	static const int kParserMaxDepth = 4;
 
 public:
 	/**
@@ -144,6 +142,7 @@ public:
 	 * from memory if no themes can be found.
 	 *
 	 * @param buffer Pointer to the buffer.
+	 * @param size Size of the buffer
 	 * @param disposable Sets if the XMLParser owns the buffer,
 	 *                   i.e. if it can be freed safely after it's
 	 *                   no longer needed by the parser.
@@ -341,7 +340,7 @@ protected:
 	Common::String _error; /** Current error message */
 	Common::String _token; /** Current text token */
 
-	Common::FixedStack<ParserNode*, kParserMaxDepth> _activeKey; /** Node stack of the parsed keys */
+	Common::Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
 };
 
 }
