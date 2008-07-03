@@ -86,8 +86,6 @@ public:
  * @see XMLParser::keyCallback()
  */
 class XMLParser {
-	/** Maximum depth for nested keys that the parser supports */
-	static const int kParserMaxDepth = 4;
 
 public:
 	/**
@@ -333,14 +331,6 @@ protected:
 		return (*key == 0);
 	}
 
-	/**
-	 * Internal state cleanup. Overload this if your parser needs
-	 * to clean itself up before doing a second parse.
-	 * E.g. the Theme Parser cleans the color palette after parsing
-	 * a theme.
-	 */
-	virtual void cleanup() {}
-
 	int _pos; /** Current position on the XML buffer. */
 	XMLStream _text; /** Buffer with the text being parsed */
 	Common::String _fileName;
@@ -350,7 +340,7 @@ protected:
 	Common::String _error; /** Current error message */
 	Common::String _token; /** Current text token */
 
-	Common::FixedStack<ParserNode*, kParserMaxDepth> _activeKey; /** Node stack of the parsed keys */
+	Common::Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
 };
 
 }
