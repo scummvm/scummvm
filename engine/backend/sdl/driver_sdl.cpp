@@ -34,6 +34,8 @@
 #include <windows.h>
 #endif
 
+#include "icons/residual.xpm"
+
 #define SAMPLES_PER_SEC 22050
 
 // NOTE: This is not a complete driver, it needs to be subclassed
@@ -309,6 +311,10 @@ DriverSDL::~DriverSDL() {
 void DriverSDL::init() {
 	_timer = new DefaultTimerManager();
 	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+
+#if !defined(MACOSX)
+	setupIcon();
+#endif
 }
 
 char *DriverSDL::getVideoDeviceName() {
@@ -482,6 +488,52 @@ void DriverSDL::quit() {
 		error("Unable to push exit event!");
 }
 
+void DriverSDL::setupIcon() {
+	int w, h, ncols, nbytes, i;
+	unsigned int rgba[256], icon[32 * 32];
+	unsigned char mask[32][4];
+
+	sscanf(residual_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
+	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
+		return;
+	}
+        for (i = 0; i < ncols; i++) {                                                                                                                       
+		unsigned char code;                                                                                                                         
+		char color[32];
+		unsigned int col;
+
+		sscanf(residual_icon[1 + i], "%c c %s", &code, color);
+		if (!strcmp(color, "None"))
+			col = 0x00000000;
+		else if (!strcmp(color, "black"))
+			col = 0xFF000000;
+		else if (color[0] == '#') {
+			sscanf(color + 1, "%06x", &col);
+			col |= 0xFF000000;
+		} else {
+			warning("Could not load the icon (%d %s - %s) ", code, color, residual_icon[1 + i]);
+			return;
+		}
+
+		rgba[code] = col;
+	}
+	memset(mask, 0, sizeof(mask));
+	for (h = 0; h < 32; h++) {
+		const char *line = residual_icon[1 + ncols + h];
+		for (w = 0; w < 32; w++) {
+			icon[w + 32 * h] = rgba[(int)line[w]];
+			if (rgba[(int)line[w]] & 0xFF000000) {
+				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
+			}
+		}
+	}
+
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	SDL_WM_SetIcon(sdl_surf, (unsigned char *)mask);
+	SDL_FreeSurface(sdl_surf);
+}
+
 #if defined (WIN32)
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
@@ -494,4 +546,3 @@ int main(int argc, char *argv[]) {
 
 	return res;
 }
-

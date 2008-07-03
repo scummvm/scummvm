@@ -50,7 +50,9 @@ public:
 	DriverSDL();
 	virtual ~DriverSDL();
 
-	virtual void init();
+	void init();
+
+	void setupIcon();
 
 	char *getVideoDeviceName();
 
