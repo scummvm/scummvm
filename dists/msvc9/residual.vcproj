@@ -957,6 +957,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\mixer\mixer_intern.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\mixer\rate.cpp"
 				>
 			</File>
