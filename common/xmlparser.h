@@ -148,8 +148,8 @@ public:
 	 *                   i.e. if it can be freed safely after it's
 	 *                   no longer needed by the parser.
 	 */
-	virtual bool loadBuffer(const char *buffer, bool disposable = false) {
-		_text.loadStream(new MemoryReadStream((const byte*)buffer, strlen(buffer), disposable));
+	virtual bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
+		_text.loadStream(new MemoryReadStream(buffer, size, disposable));
 		_fileName = "Memory Stream";
 		return true;
 	}
