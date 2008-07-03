@@ -63,6 +63,15 @@ ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_theme = parent;
 }
 
+void ThemeParser::cleanup() {
+	delete _defaultStepGlobal;
+	delete _defaultStepLocal;
+
+	_defaultStepGlobal = defaultDrawStep();
+	_defaultStepLocal = 0;
+	_palette.clear();
+}
+
 bool ThemeParser::keyCallback(Common::String keyName) {
 	// automatically handle with a function from the hash table.
 	if (!_callbacks.contains(_activeKey.top()->name))

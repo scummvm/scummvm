@@ -73,7 +73,7 @@ class ThemeRenderer : public Theme {
 	static const int kMaxDialogDepth = 4;
 
 public:
-	enum Graphics_Mode {
+	enum GraphicsMode {
 		kGfxDisabled = 0,
 		kGfxStandard16bit,
 		kGfxAntialias16bit
@@ -109,34 +109,31 @@ public:
 		kDrawDataMAX
 	};
 
-	ThemeRenderer();
+	ThemeRenderer(Common::String themeName, GraphicsMode mode);
 
 	~ThemeRenderer() {
 		freeRenderer();
 		freeScreen();
 		unloadTheme();
 		delete _parser;
-
-		while (!_dialogStack.empty())
-			delete _dialogStack.pop();
 	}
 
 	// virtual methods from Theme
 	bool init();
-	void deinit() {}
+	void deinit();
+	void clearAll();
+
 	void refresh() {}
 	void enable() {}
 	void disable() {}
 	void openDialog() {}
 	void closeAllDialogs() {}
-	void clearAll() {}
+	
+
 	void updateScreen() {}
 	void resetDrawArea() {}
-	void openDialog(bool top) {}
 
-	virtual bool isDynamic() {
-		return true;
-	}
+	void openDialog(bool top) {}
 
 	/** Font management */
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
@@ -185,7 +182,8 @@ public:
 		return _initOk && _themeOk;
 	}
 
-	bool loadTheme() {
+	// REMOVED: theme name is looked up in NewGUI and passed to the constructor
+/*	bool loadTheme() {
 		ConfMan.registerDefault("gui_theme", "default");
 		Common::String style(ConfMan.get("gui_theme"));
 
@@ -193,16 +191,10 @@ public:
 			style = "modern";
 
 		return loadTheme(style);
-	}
+	} */
 
 	bool loadTheme(Common::String themeName);
-	
-	void closeTopDialog() {
-		assert(_dialogStack.empty() == false);
-		delete _dialogStack.pop();
-	}
-
-	void setGraphicsMode(Graphics_Mode mode);
+	void setGraphicsMode(GraphicsMode mode);
 
 protected:
 	template<typename PixelType> void screenInit();
@@ -236,16 +228,6 @@ protected:
 		}
 	}
 
-	Dialog *getTopDialog() const {
-		if (_dialogStack.empty())
-			return 0;
-		return _dialogStack.top();
-	}
-
-	bool needThemeReload() {
-		return (_themeOk == false || _needThemeLoad == true);
-	}
-
 	bool needRedraw() {
 		return true;
 	}
@@ -275,20 +257,19 @@ protected:
 	Graphics::Surface *_screen;
 
 	int _bytesPerPixel;
-	Graphics_Mode _graphicsMode;
+	GraphicsMode _graphicsMode;
 
 	Common::String _fontName;
 	const Graphics::Font *_font;
 
 	WidgetDrawData *_widgets[kDrawDataMAX];
-	Common::FixedStack<Dialog *, kMaxDialogDepth> _dialogStack;
 	Common::Array<Common::Rect> _dirtyScreen;
 
 	bool _initOk;
 	bool _themeOk;
 	bool _caching;
-	bool _needThemeLoad;
-	bool _enabled;
+
+	Common::String _themeName;
 };
 
 } // end of namespace GUI.

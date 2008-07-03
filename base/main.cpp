@@ -70,7 +70,7 @@ static bool launcherDialog(OSystem &system) {
 	// Clear the main screen
 	system.clearScreen();
 
-	GUI::ThemeRenderer *test = new GUI::ThemeRenderer;
+//	GUI::ThemeRenderer *test = new GUI::ThemeRenderer("modern", GUI::ThemeRenderer::kGfxAntialias16bit);
 
 #if defined LOL
 

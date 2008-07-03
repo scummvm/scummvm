@@ -68,10 +68,9 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 	"separator"
 };
 
-ThemeRenderer::ThemeRenderer() : 
+ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
-	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false),
-	_needThemeLoad(false), _enabled(false) {
+	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
 
@@ -79,8 +78,50 @@ ThemeRenderer::ThemeRenderer() :
 		_widgets[i] = 0;
 	}
 
-	_graphicsMode = kGfxAntialias16bit; // default GFX mode
-	// TODO: load this from a config file
+	_graphicsMode = mode;
+	setGraphicsMode(_graphicsMode);
+
+	if (isThemeLoadingRequired())
+		loadTheme(themeName);
+
+	_initOk = true;
+	_themeName = themeName;
+}
+
+bool ThemeRenderer::init() {
+	// reset everything and reload the graphics
+	deinit();
+	setGraphicsMode(_graphicsMode);
+
+	if (_screen->pixels) {
+		_initOk = true;
+		clearAll();
+		resetDrawArea();
+	}
+
+	if (isThemeLoadingRequired())
+		loadTheme(_themeName);
+
+	return true;
+}
+
+void ThemeRenderer::deinit() {
+	if (_initOk) {
+		_system->hideOverlay();
+		freeRenderer();
+		freeScreen();
+		unloadTheme();
+		_initOk = false;
+	}
+}
+
+void ThemeRenderer::clearAll() {
+	if (!_initOk)
+		return;
+
+	_vectorRenderer->clearSurface();
+	_vectorRenderer->copyWholeFrame(_system);
+	_system->updateScreen();
 }
 
 template<typename PixelType> 
@@ -92,16 +133,7 @@ void ThemeRenderer::screenInit() {
 	_system->clearOverlay();
 }
 
-void ThemeRenderer::setGraphicsMode(Graphics_Mode mode) {
-
-	// FIXME: reload theme everytime we change resolution...
-	// what if we change the renderer too?
-	// ...We may need to reload it to re-cache the widget
-	// surfaces
-	if (_system->getOverlayWidth() != _screen->w ||
-		_system->getOverlayHeight() != _screen->h)
-		_needThemeLoad = true;
-
+void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
 	switch (mode) {
 	case kGfxStandard16bit:
 	case kGfxAntialias16bit:
@@ -133,6 +165,7 @@ bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
+	_widgets[data_id]->_surfaceCache = 0;
 
 	return true;
 }
@@ -158,7 +191,6 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 		}
 	}
 
-	_needThemeLoad = false;
 	_themeOk = true;
 	return true;
 }
@@ -180,18 +212,6 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 		return false;
 	
 	return parser()->parse();
-}
-
-bool ThemeRenderer::init() {
-	if (!_screen || _system->getOverlayWidth() != _screen->w ||
-		_system->getOverlayHeight() != _screen->h )
-		setGraphicsMode(_graphicsMode);
-
-	if (needThemeReload())
-		loadTheme();
-
-	_initOk = true;
-	return true;
 }
 
 bool ThemeRenderer::isWidgetCached(DrawData type, const Common::Rect &r) {

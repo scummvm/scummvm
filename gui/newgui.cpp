@@ -31,6 +31,7 @@
 #include "gui/eval.h"
 #include "gui/ThemeModern.h"
 #include "gui/ThemeClassic.h"
+#include "gui/ThemeRenderer.h"
 
 #include "common/config-manager.h"
 
@@ -142,7 +143,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	delete _theme;
 	_theme = 0;
 
-	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
+/*	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
 		style.compareToIgnoreCase("classic") == 0) {
 		_theme = new ThemeClassic(_system, style);
 	} else {
@@ -159,7 +160,9 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 			warning("Config '%s' is NOT usable for themes or not found", style.c_str());
 		}
 	}
-	cfg.clear();
+	cfg.clear(); */
+
+	_theme = new ThemeRenderer(style, GUI::ThemeRenderer::kGfxAntialias16bit);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);

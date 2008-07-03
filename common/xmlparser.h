@@ -332,6 +332,14 @@ protected:
 		return (*key == 0);
 	}
 
+	/**
+	 * Internal state cleanup. Overload this if your parser needs
+	 * to clean itself up before doing a second parse.
+	 * E.g. the Theme Parser cleans the color palette after parsing
+	 * a theme.
+	 */
+	virtual void cleanup() {}
+
 	int _pos; /** Current position on the XML buffer. */
 	XMLStream _text; /** Buffer with the text being parsed */
 	Common::String _fileName;

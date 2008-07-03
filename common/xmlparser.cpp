@@ -134,6 +134,8 @@ bool XMLParser::parse() {
 	if (_text.ready() == false)
 		return parserError("XML stream not ready for reading.");
 
+	cleanup();
+
 	bool activeClosure = false;
 	bool selfClosure = false;
 

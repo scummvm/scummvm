@@ -329,6 +329,8 @@ protected:
 	bool parserCallback_layoutInfo();
 	bool parserCallback_defaultSet();
 
+	void cleanup();
+
 	Graphics::DrawStep *newDrawStep();
 	Graphics::DrawStep *defaultDrawStep();
 	bool parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific);
