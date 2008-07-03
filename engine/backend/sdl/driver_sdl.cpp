@@ -498,8 +498,8 @@ void DriverSDL::setupIcon() {
 		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
 	}
-        for (i = 0; i < ncols; i++) {                                                                                                                       
-		unsigned char code;                                                                                                                         
+	for (i = 0; i < ncols; i++) {
+		unsigned char code;
 		char color[32];
 		unsigned int col;
 
