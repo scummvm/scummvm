@@ -33,11 +33,11 @@ bool Polygon::contains(int16 x, int16 y) const {
 	bool inside_flag = false;
 	unsigned int pt;
 
-	const Point *vtx0 = &points[points.size() - 1];
-	const Point *vtx1 = &points[0];
+	const Point *vtx0 = &_points[_points.size() - 1];
+	const Point *vtx1 = &_points[0];
 
 	yflag0 = (vtx0->y >= y);
-	for (pt = 0; pt < points.size(); pt++, vtx1++) {
+	for (pt = 0; pt < _points.size(); pt++, vtx1++) {
 		yflag1 = (vtx1->y >= y);
 		if (yflag0 != yflag1) {
 			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=

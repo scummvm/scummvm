@@ -31,7 +31,7 @@
 
 namespace Common {
 
-class Rect;
+struct Rect;
 
 /*!		@brief simple class for handling both 2D position and size
 

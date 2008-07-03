@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	RootNamespace="scummvm"
@@ -335,6 +335,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\imageMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\imageMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\keyboard.h"
 				>
 			</File>
@@ -379,6 +387,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\polygon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\polygon.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\ptr.h"
 				>
 			</File>
@@ -392,6 +408,10 @@
 			</File>
 			<File
 				RelativePath="..\..\common\scummsys.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\shape.h"
 				>
 			</File>
 			<File
@@ -452,6 +472,14 @@
 			</File>
 			<File
 				RelativePath="..\..\common\util.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\xmlparser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\xmlparser.h"
 				>
 			</File>
 			<File
@@ -1215,6 +1243,22 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\ThemeModern.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\virtualKeyboard.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\virtualKeyboard.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\virtualKeyboardParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\virtualKeyboardParser.h"
 				>
 			</File>
 			<File

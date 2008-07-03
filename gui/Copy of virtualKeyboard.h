@@ -28,6 +28,8 @@
 
 class OSystem;
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/imagemap.h"
 #include "common/singleton.h"
 #include "common/str.h"
@@ -35,25 +37,54 @@ class OSystem;
 
 namespace GUI {
 
+class VirtualKeyboardParser;
+
+
+
 class VirtualKeyboard : public Common::Singleton<VirtualKeyboard> {
+private:
+	/** Type of key event */
+	enum EventType {
+		kEventKey,
+		kEventSwitchMode,
+
+		kEventMax
+	};
+
+	struct Event {
+		Common::String name;
+		EventType type;
+		void *data;
+	};
+	
+	typedef Common::HashMap<Common::String, Event, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> EventMap; 
+
+	struct Mode {
+		Common::String     name;
+		Common::String     resolution;
+		Common::String     bitmapName;
+		Graphics::Surface *image;
+		Common::ImageMap   imageMap;
+		EventMap           events;
+	};
 
 public:
-
 	VirtualKeyboard();
 	virtual ~VirtualKeyboard();
 
+	bool loadKeyboardPack(Common::String packName);
 	void show();
 
 private:
 	OSystem	*_system;
+	
+	friend class VirtualKeyboardParser;
+	VirtualKeyboardParser *_parser;
 
 	void runLoop();
 	void draw();
 
-	Common::String *_stateNames;
-	const Graphics::Surface **_images;
-	Common::ImageMap *_imageMaps;
-
+	Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _modes;
 };
 
 

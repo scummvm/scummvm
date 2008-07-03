@@ -34,15 +34,14 @@ namespace Common {
 
 struct Polygon : public Shape {
 
-	Array<Point> points;
 
 	Polygon() {}
-	Polygon(const Polygon& p) : Shape(), points(p.points), bound(p.bound) {}
-	Polygon(Array<Point> p) : points(p) {
+	Polygon(const Polygon& p) : Shape(), _points(p._points), _bound(p._bound) {}
+	Polygon(Array<Point> p) : _points(p) {
 		if (p.empty()) return;
-		bound = Rect(p[0].x, p[0].y, p[0].x, p[0].y);
+		_bound = Rect(p[0].x, p[0].y, p[0].x, p[0].y);
 		for (uint i = 1; i < p.size(); i++) {
-			bound.extend(Rect(p[i].x, p[i].y, p[i].x, p[i].y));
+			_bound.extend(Rect(p[i].x, p[i].y, p[i].x, p[i].y));
 		}
 	}
 	Polygon(Point *p, int n) {
@@ -53,12 +52,16 @@ struct Polygon : public Shape {
 	virtual ~Polygon() {}
 
 	void addPoint(const Point& p) {
-		points.push_back(p);
-		bound.extend(Rect(p.x, p.y, p.x, p.y));
+		_points.push_back(p);
+		_bound.extend(Rect(p.x, p.y, p.x, p.y));
 	}
 
 	void addPoint(int16 x, int16 y) {
 		addPoint(Point(x,y));
+	}
+
+	uint getPointCount() {
+		return _points.size();
 	}
 
 	/*!	@brief check if given position is inside this polygon
@@ -81,8 +84,8 @@ struct Polygon : public Shape {
 	}
 
 	virtual void moveTo(int16 x, int16 y) {
-		int16 dx = x - ((bound.right + bound.left) / 2);
-		int16 dy = y - ((bound.bottom + bound.top) / 2);
+		int16 dx = x - ((_bound.right + _bound.left) / 2);
+		int16 dy = y - ((_bound.bottom + _bound.top) / 2);
 		translate(dx, dy);
 	}
 
@@ -92,18 +95,19 @@ struct Polygon : public Shape {
 
 	virtual void translate(int16 dx, int16 dy) {
 		Array<Point>::iterator it;
-		for (it = points.begin(); it != points.end(); it++) {
+		for (it = _points.begin(); it != _points.end(); it++) {
 			it->x += dx;
 			it->y += dy;
 		}
 	}
 
 	virtual Rect getBoundingRect() const {
-		return bound;
+		return _bound;
 	}
 
 private:
-	Rect bound;
+	Array<Point> _points;
+	Rect _bound;
 };
 
 } // end of namespace Common

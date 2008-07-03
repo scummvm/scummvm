@@ -63,7 +63,7 @@ public:
 
 		_pos = idx;
 
-		return _stream->readSByte();
+		return _stream->readByte();
 	}
 
 	void loadStream(SeekableReadStream *s) {
@@ -330,6 +330,13 @@ protected:
 		va_end(args);
 		return (*key == 0);
 	}
+
+	/**
+	 * Overload if your parser needs to support parsing the same file
+	 * several times, so you can clean up the internal state of the 
+	 * parser before each parse.
+	 */
+	virtual void cleanup() {}
 
 	int _pos; /** Current position on the XML buffer. */
 	XMLStream _text; /** Buffer with the text being parsed */

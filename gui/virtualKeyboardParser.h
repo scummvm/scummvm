@@ -41,7 +41,22 @@ public:
 
 protected:
 	VirtualKeyboard *_keyboard;
+	VirtualKeyboard::Mode *_currentMode;
+
+	bool _kbdParsed;
+
 	bool keyCallback(Common::String keyName);
+	void cleanup() {
+		_currentMode = 0;
+		_kbdParsed = false;
+	}
+
+	bool parserCallback_Keyboard();
+	bool parserCallback_Mode();
+	bool parserCallback_Event();
+	bool parserCallback_Layout();
+	bool parserCallback_Map();
+	bool parserCallback_Area();
 
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 };
