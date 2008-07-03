@@ -126,6 +126,7 @@
 		2862A6900E0198B200DCA546 /* str.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = str.cpp; sourceTree = "<group>"; };
 		2862A6910E0198B200DCA546 /* str.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = str.h; sourceTree = "<group>"; };
 		2862A6920E0198B200DCA546 /* util.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		289BDDBE0E1D08E100A6B8BA /* mixer_intern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = mixer_intern.h; sourceTree = "<group>"; };
 		289EEE0B0D8921CA00521A80 /* audiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = audiostream.cpp; sourceTree = "<group>"; };
 		289EEE0C0D8921CA00521A80 /* audiostream.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = audiostream.h; sourceTree = "<group>"; };
 		289EEE0D0D8921CA00521A80 /* mixer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = mixer.cpp; sourceTree = "<group>"; };
@@ -341,6 +342,7 @@
 		289EEE0A0D8921CA00521A80 /* mixer */ = {
 			isa = PBXGroup;
 			children = (
+				289BDDBE0E1D08E100A6B8BA /* mixer_intern.h */,
 				289EEE0B0D8921CA00521A80 /* audiostream.cpp */,
 				289EEE0C0D8921CA00521A80 /* audiostream.h */,
 				289EEE0D0D8921CA00521A80 /* mixer.cpp */,
