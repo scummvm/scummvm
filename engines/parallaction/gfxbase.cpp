@@ -86,12 +86,14 @@ void GfxObj::clearFlags(uint32 flags) {
 }
 
 GfxObj* Gfx::loadAnim(const char *name) {
-	GfxObj *obj = _disk->loadFrames(name);
+	Frames* frames = _disk->loadFrames(name);
+	assert(frames);
+
+	GfxObj *obj = new GfxObj(kGfxObjTypeAnim, frames, name);
 	assert(obj);
 
 	// animation Z is not set here, but controlled by game scripts and user interaction.
 	// it is always >=0 and <screen height
-	obj->type = kGfxObjTypeAnim;
 	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;
@@ -110,11 +112,13 @@ GfxObj* Gfx::loadGet(const char *name) {
 }
 
 GfxObj* Gfx::loadDoor(const char *name) {
-	GfxObj *obj = _disk->loadFrames(name);
+	Frames *frames = _disk->loadFrames(name);
+	assert(frames);
+
+	GfxObj *obj = new GfxObj(kGfxObjTypeDoor, frames, name);
 	assert(obj);
 
 	obj->z = kGfxObjDoorZ;	// this preset Z value ensures that doors are drawn first
-	obj->type = kGfxObjTypeDoor;
 	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;

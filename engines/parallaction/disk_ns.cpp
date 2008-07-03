@@ -490,8 +490,8 @@ GfxObj* DosDisk_ns::loadStatic(const char* name) {
 	return new GfxObj(0, new SurfaceToFrames(cnv), name);
 }
 
-GfxObj* DosDisk_ns::loadFrames(const char* name) {
-	return new GfxObj(0, loadCnv(name), name);
+Frames* DosDisk_ns::loadFrames(const char* name) {
+	return loadCnv(name);
 }
 
 //
@@ -1258,7 +1258,7 @@ void AmigaDisk_ns::loadSlide(BackgroundInfo& info, const char *name) {
 	return;
 }
 
-GfxObj* AmigaDisk_ns::loadFrames(const char* name) {
+Frames* AmigaDisk_ns::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadFrames '%s'", name);
 
 	Common::SeekableReadStream *s;
@@ -1273,7 +1273,7 @@ GfxObj* AmigaDisk_ns::loadFrames(const char* name) {
 	Cnv *cnv = makeCnv(*s);
 	delete s;
 
-	return new GfxObj(0, cnv, name);
+	return cnv;
 }
 
 GfxObj* AmigaDisk_ns::loadHead(const char* name) {

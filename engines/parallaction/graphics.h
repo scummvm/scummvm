@@ -344,7 +344,8 @@ enum {
 	kGfxObjTypeDoor = 0,
 	kGfxObjTypeGet = 1,
 	kGfxObjTypeAnim = 2,
-	kGfxObjTypeLabel = 3
+	kGfxObjTypeLabel = 3,
+	kGfxObjTypeBalloon = 4
 };
 
 enum {
@@ -484,6 +485,7 @@ public:
 	void setBalloonText(uint id, char *text, byte textColor);
 	int hitTestDialogueBalloon(int x, int y);
 	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
+	GfxObj* registerBalloon(Frames *frames, const char *text);
 
 	// other items
 	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
@@ -552,13 +554,11 @@ public:
 	static int16 _dialogueBalloonX[5];
 
 	struct Balloon {
-		uint16 x;
-		uint16 y;
 		Common::Rect outerBox;
 		Common::Rect innerBox;
-		uint16 winding;
-		Graphics::Surface surface;
-	} _balloons[5];
+		Graphics::Surface *surface;
+		GfxObj	*obj;
+	} _intBalloons[5];
 
 	uint	_numBalloons;
 
@@ -573,6 +573,7 @@ public:
 
 	typedef Common::Array<GfxObj*> GfxObjArray;
 	GfxObjArray	_labels;
+	GfxObjArray _balloons;
 
 	uint _floatingLabel;
 

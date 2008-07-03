@@ -280,7 +280,7 @@ Sprites* DosDisk_br::createSprites(Common::ReadStream &stream) {
 	return sprites;
 }
 
-GfxObj* DosDisk_br::loadFrames(const char* name) {
+Frames* DosDisk_br::loadFrames(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
 
 	char path[PATH_LEN];
@@ -291,7 +291,7 @@ GfxObj* DosDisk_br::loadFrames(const char* name) {
 		errorFileNotFound(path);
 
 
-	return new GfxObj(0, createSprites(stream), name);
+	return createSprites(stream);
 }
 
 // Slides in Nippon Safes are basically screen-sized pictures with valid
@@ -600,13 +600,13 @@ Sprites* AmigaDisk_br::createSprites(const char *path) {
 	return sprites;
 }
 
-GfxObj* AmigaDisk_br::loadFrames(const char* name) {
+Frames* AmigaDisk_br::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadFrames '%s'", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%s/anims/%s", _partPath, name);
 
-	return new GfxObj(0, createSprites(path));
+	return createSprites(path);
 }
 
 GfxObj* AmigaDisk_br::loadTalk(const char *name) {

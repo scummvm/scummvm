@@ -61,7 +61,7 @@ public:
 	virtual GfxObj* loadHead(const char* name) = 0;
 	virtual Font* loadFont(const char* name) = 0;
 	virtual GfxObj* loadStatic(const char* name) = 0;
-	virtual GfxObj* loadFrames(const char* name) = 0;
+	virtual Frames* loadFrames(const char* name) = 0;
 	virtual void loadSlide(BackgroundInfo& info, const char *filename) = 0;
 	virtual void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) = 0;
 	virtual Table* loadTable(const char* name) = 0;
@@ -153,7 +153,7 @@ public:
 	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	GfxObj* loadStatic(const char* name);
-	GfxObj* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -187,7 +187,7 @@ public:
 	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	GfxObj* loadStatic(const char* name);
-	GfxObj* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -226,7 +226,7 @@ public:
 	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	GfxObj* loadStatic(const char* name);
-	GfxObj* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -251,7 +251,7 @@ public:
 	GfxObj* loadTalk(const char *name);
 	Font* loadFont(const char* name);
 	GfxObj* loadStatic(const char* name);
-	GfxObj* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 };
