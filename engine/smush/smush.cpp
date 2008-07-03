@@ -90,11 +90,11 @@ void Smush::init() {
 	_externalBuffer = new byte[_width * _height * 2];
 
 	vimaInit(smushDestTable);
-	g_timer->installTimerProc(&timerCallback, _speed, NULL);
+	g_driver->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
-	g_timer->removeTimerProc(&timerCallback);
+	g_driver->getTimerManager()->removeTimerProc(&timerCallback);
 
 	if (_internalBuffer) {
 		delete[] _internalBuffer;
@@ -112,7 +112,7 @@ void Smush::deinit() {
 	if (_stream) {
 		_stream->finish();
 		_stream = NULL;
-		g_mixer->stopHandle(_soundHandle);
+		g_driver->getMixer()->stopHandle(_soundHandle);
 	}
 	_videoLooping = false;
 	_videoFinished = true;
@@ -130,9 +130,9 @@ void Smush::handleWave(const byte *src, uint32 size) {
 
 	if (!_stream) {
 		_stream = Audio::makeAppendableAudioStream(_freq, flags);
-		g_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
+		g_driver->getMixer()->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
 	}
-	if (g_mixer->isReady()) {
+	if (g_driver->getMixer()->isReady()) {
 		_stream->queueBuffer((byte *)dst, size * _channels * 2);
 	} else {
 		delete[] dst;

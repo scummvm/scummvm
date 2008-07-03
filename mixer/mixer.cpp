@@ -1,7 +1,7 @@
 /* Residual - Virtual machine to run LucasArts' 3D adventure games
- *                                                                                                                                                          
+ *
  * Residual is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -23,15 +23,14 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/util.h"
 #include "common/debug.h"
 
-#include "engine/backend/driver.h"
-
-#include "mixer/mixer.h"
+#include "mixer/mixer_intern.h"
 #include "mixer/rate.h"
 #include "mixer/audiostream.h"
+
+#include "engine/backend/driver.h"
 
 namespace Audio {
 
@@ -104,30 +103,38 @@ public:
 #pragma mark -
 
 
-Mixer::Mixer() {
-	_handleSeed = 0;
+MixerImpl::MixerImpl()
+	: _sampleRate(0), _mixerReady(false), _handleSeed(0) {
 
-	int i = 0;
+	int i;
 
 	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
 		_volumeForSoundType[i] = kMaxMixerVolume;
 
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
-
-	_mixerReady = false;
 }
 
-Mixer::~Mixer() {
+MixerImpl::~MixerImpl() {
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		delete _channels[i];
 }
 
-uint Mixer::getOutputRate() const {
-	return (uint)g_driver->getOutputSampleRate();
+void MixerImpl::setReady(bool ready) {
+	_mixerReady = ready;
 }
 
-void Mixer::insertChannel(SoundHandle *handle, Channel *chan) {
+uint MixerImpl::getOutputRate() const {
+	return _sampleRate;
+}
+
+void MixerImpl::setOutputRate(uint sampleRate) {
+	if (_sampleRate != 0 && _sampleRate != sampleRate)
+		error("Changing the Audio::Mixer output sample rate is not supported");
+	_sampleRate = sampleRate;
+}
+
+void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 
 	int index = -1;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
@@ -137,7 +144,7 @@ void Mixer::insertChannel(SoundHandle *handle, Channel *chan) {
 		}
 	}
 	if (index == -1) {
-		warning("Mixer::out of mixer slots");
+		warning("MixerImpl::out of mixer slots");
 		delete chan;
 		return;
 	}
@@ -150,7 +157,7 @@ void Mixer::insertChannel(SoundHandle *handle, Channel *chan) {
 	}
 }
 
-void Mixer::playRaw(
+void MixerImpl::playRaw(
 			SoundType type,
 			SoundHandle *handle,
 			void *sound,
@@ -165,7 +172,7 @@ void Mixer::playRaw(
 	playInputStream(type, handle, input, id, volume, balance, true, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));
 }
 
-void Mixer::playInputStream(
+void MixerImpl::playInputStream(
 			SoundType type,
 			SoundHandle *handle,
 			AudioStream *input,
@@ -197,8 +204,13 @@ void Mixer::playInputStream(
 	insertChannel(handle, chan);
 }
 
-void Mixer::mix(int16 *buf, uint len) {
+void MixerImpl::mixCallback(byte *samples, uint len) {
+	assert(samples);
+
 	Common::StackLock lock(_mutex);
+	
+	int16 *buf = (int16 *)samples;
+	len >>= 2;
 
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
@@ -217,15 +229,7 @@ void Mixer::mix(int16 *buf, uint len) {
 		}
 }
 
-void Mixer::mixCallback(void *s, byte *samples, int len) {
-	assert(s);
-	assert(samples);
-	// Len is the number of bytes in the buffer; we divide it by
-	// four to get the number of samples (stereo 16 bit).
-	((Mixer *)s)->mix((int16 *)samples, len >> 2);
-}
-
-void Mixer::stopAll() {
+void MixerImpl::stopAll() {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0 && !_channels[i]->isPermanent()) {
@@ -235,7 +239,7 @@ void Mixer::stopAll() {
 	}
 }
 
-void Mixer::stopID(int id) {
+void MixerImpl::stopID(int id) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0 && _channels[i]->getId() == id) {
@@ -245,7 +249,7 @@ void Mixer::stopID(int id) {
 	}
 }
 
-void Mixer::stopHandle(SoundHandle handle) {
+void MixerImpl::stopHandle(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore stop requests for handles of sounds that already terminated
@@ -257,7 +261,7 @@ void Mixer::stopHandle(SoundHandle handle) {
 	_channels[index] = 0;
 }
 
-void Mixer::setChannelVolume(SoundHandle handle, byte volume) {
+void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -267,7 +271,7 @@ void Mixer::setChannelVolume(SoundHandle handle, byte volume) {
 	_channels[index]->setVolume(volume);
 }
 
-void Mixer::setChannelBalance(SoundHandle handle, int8 balance) {
+void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -277,7 +281,7 @@ void Mixer::setChannelBalance(SoundHandle handle, int8 balance) {
 	_channels[index]->setBalance(balance);
 }
 
-uint32 Mixer::getSoundElapsedTime(SoundHandle handle) {
+uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -287,7 +291,7 @@ uint32 Mixer::getSoundElapsedTime(SoundHandle handle) {
 	return _channels[index]->getElapsedTime();
 }
 
-void Mixer::pauseAll(bool paused) {
+void MixerImpl::pauseAll(bool paused) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0) {
@@ -296,7 +300,7 @@ void Mixer::pauseAll(bool paused) {
 	}
 }
 
-void Mixer::pauseID(int id, bool paused) {
+void MixerImpl::pauseID(int id, bool paused) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0 && _channels[i]->getId() == id) {
@@ -306,7 +310,7 @@ void Mixer::pauseID(int id, bool paused) {
 	}
 }
 
-void Mixer::pauseHandle(SoundHandle handle, bool paused) {
+void MixerImpl::pauseHandle(SoundHandle handle, bool paused) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore (un)pause requests for sounds that already terminated
@@ -317,7 +321,7 @@ void Mixer::pauseHandle(SoundHandle handle, bool paused) {
 	_channels[index]->pause(paused);
 }
 
-bool Mixer::isSoundIDActive(int id) {
+bool MixerImpl::isSoundIDActive(int id) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getId() == id)
@@ -325,7 +329,7 @@ bool Mixer::isSoundIDActive(int id) {
 	return false;
 }
 
-int Mixer::getSoundID(SoundHandle handle) {
+int MixerImpl::getSoundID(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
 	if (_channels[index] && _channels[index]->_handle._val == handle._val)
@@ -333,13 +337,13 @@ int Mixer::getSoundID(SoundHandle handle) {
 	return 0;
 }
 
-bool Mixer::isSoundHandleActive(SoundHandle handle) {
+bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
 	return _channels[index] && _channels[index]->_handle._val == handle._val;
 }
 
-bool Mixer::hasActiveChannelOfType(SoundType type) {
+bool MixerImpl::hasActiveChannelOfType(SoundType type) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->_type == type)
@@ -347,7 +351,7 @@ bool Mixer::hasActiveChannelOfType(SoundType type) {
 	return false;
 }
 
-void Mixer::setVolumeForSoundType(SoundType type, int volume) {
+void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
 
 	// Check range
@@ -362,7 +366,7 @@ void Mixer::setVolumeForSoundType(SoundType type, int volume) {
 	_volumeForSoundType[type] = volume;
 }
 
-int Mixer::getVolumeForSoundType(SoundType type) const {
+int MixerImpl::getVolumeForSoundType(SoundType type) const {
 	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
 
 	return _volumeForSoundType[type];
@@ -442,7 +446,7 @@ uint32 Channel::getElapsedTime() {
 	// Convert the number of samples into a time duration. To avoid
 	// overflow, this has to be done in a somewhat non-obvious way.
 
-	uint rate = _mixer->getOutputRate();
+	uint32 rate = _mixer->getOutputRate();
 
 	uint32 seconds = _samplesConsumed / rate;
 	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;

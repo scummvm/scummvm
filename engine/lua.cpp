@@ -33,6 +33,8 @@
 #include "common/util.h"
 #include "common/debug.h"
 
+#include "mixer/mixer.h"
+
 #include "engine/lua.h"
 #include "engine/resource.h"
 #include "engine/actor.h"
@@ -51,8 +53,6 @@
 #include "engine/lipsynch.h"
 
 #include "engine/imuse/imuse.h"
-
-#include "mixer/mixer.h"
 
 #include <cstdio>
 #include <cmath>
@@ -1959,32 +1959,32 @@ static void ImSetVoiceEffect() {
 
 static void ImSetMusicVol() {
 	DEBUG_FUNCTION();
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, check_int(1));
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, check_int(1));
 }
 
 static void ImGetMusicVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+	lua_pushnumber(g_driver->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
 static void ImSetVoiceVol() {
 	DEBUG_FUNCTION();
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, check_int(1));
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, check_int(1));
 }
 
 static void ImGetVoiceVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
+	lua_pushnumber(g_driver->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 }
 
 static void ImSetSfxVol() {
 	DEBUG_FUNCTION();
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, check_int(1));
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, check_int(1));
 }
 
 static void ImGetSfxVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
+	lua_pushnumber(g_driver->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 }
 
 static void ImSetParam() {

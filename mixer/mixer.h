@@ -1,7 +1,7 @@
 /* Residual - Virtual machine to run LucasArts' 3D adventure games
- *                                                                                                                                                          
+ *
  * Residual is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -29,11 +29,13 @@
 #include "common/sys.h"
 #include "common/mutex.h"
 
+
 namespace Audio {
 
 class AudioStream;
 class Channel;
 class Mixer;
+class MixerImpl;
 
 /**
  * A SoundHandle instances corresponds to a specific sound
@@ -43,7 +45,7 @@ class Mixer;
  */
 class SoundHandle {
 	friend class Channel;
-	friend class Mixer;
+	friend class MixerImpl;
 	uint32 _val;
 public:
 	inline SoundHandle() : _val(0xFFFFFFFF) {}
@@ -100,23 +102,9 @@ public:
 		kMaxMixerVolume = 256
 	};
 
-private:
-	enum {
-		NUM_CHANNELS = 32
-	};
-
-	Common::Mutex _mutex;
-
-	int _volumeForSoundType[4];
-
-	uint32 _handleSeed;
-	Channel *_channels[NUM_CHANNELS];
-
-	bool _mixerReady;
-
 public:
-	Mixer();
-	~Mixer();
+	Mixer() {}
+	virtual ~Mixer() {}
 
 
 
@@ -127,8 +115,10 @@ public:
 	 * sync with an audio stream. In particular, the Adlib MIDI emulation...
 	 *
 	 * @return whether the mixer is ready and setup
+	 *
+	 * @todo get rid of this?
 	 */
-	bool isReady() const { return _mixerReady; }
+	virtual bool isReady() const = 0;
 
 
 
@@ -138,12 +128,12 @@ public:
 	 * (using the makeLinearInputStream factory function), which is then
 	 * passed on to playInputStream.
 	 */
-	void playRaw(
+	virtual void playRaw(
 		SoundType type,
 		SoundHandle *handle,
 		void *sound, uint32 size, uint rate, byte flags,
-		int id = -1, byte volume = 255, int8 balance = 0,
-		uint32 loopStart = 0, uint32 loopEnd = 0);
+		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
+		uint32 loopStart = 0, uint32 loopEnd = 0) = 0;
 
 	/**
 	 * Start playing the given audio input stream.
@@ -165,35 +155,35 @@ public:
 	 *                  not stop this particular stream
 	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
 	 */
-	void playInputStream(
+	virtual void playInputStream(
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,
-		int id = -1, byte volume = 255, int8 balance = 0,
+		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
 		bool autofreeStream = true,
 		bool permanent = false,
-		bool reverseStereo = false);
+		bool reverseStereo = false) = 0;
 
 
 
 	/**
 	 * Stop all currently playing sounds.
 	 */
-	void stopAll();
+	virtual void stopAll() = 0;
 
 	/**
 	 * Stop playing the sound with given ID.
 	 *
 	 * @param id the ID of the sound to affect
 	 */
-	void stopID(int id);
+	virtual void stopID(int id) = 0;
 
 	/**
 	 * Stop playing the sound corresponding to the given handle.
 	 *
 	 * @param handle the sound to affect
 	 */
-	void stopHandle(SoundHandle handle);
+	virtual void stopHandle(SoundHandle handle) = 0;
 
 
 
@@ -203,7 +193,7 @@ public:
 	 *
 	 * @param paused true to pause everything, false to unpause
 	 */
-	void pauseAll(bool paused);
+	virtual void pauseAll(bool paused) = 0;
 
 	/**
 	 * Pause/unpause the sound with the given ID.
@@ -211,7 +201,7 @@ public:
 	 * @param id the ID of the sound to affect
 	 * @param paused true to pause the sound, false to unpause it
 	 */
-	void pauseID(int id, bool paused);
+	virtual void pauseID(int id, bool paused) = 0;
 
 	/**
 	 * Pause/unpause the sound corresponding to the given handle.
@@ -219,7 +209,7 @@ public:
 	 * @param handle the sound to affect
 	 * @param paused true to pause the sound, false to unpause it
 	 */
-	void pauseHandle(SoundHandle handle, bool paused);
+	virtual void pauseHandle(SoundHandle handle, bool paused) = 0;
 
 
 
@@ -229,7 +219,7 @@ public:
 	 * @param id the ID of the sound to query
 	 * @return true if the sound is active
 	 */
-	bool isSoundIDActive(int id);
+	virtual bool isSoundIDActive(int id) = 0;
 
 	/**
 	 * Get the sound ID of handle sound
@@ -237,7 +227,7 @@ public:
 	 * @param handle sound to query
 	 * @return sound ID if active
 	 */
-	int getSoundID(SoundHandle handle);
+	virtual int getSoundID(SoundHandle handle) = 0;
 
 	/**
 	 * Check if a sound with the given handle is active.
@@ -245,7 +235,7 @@ public:
 	 * @param handle sound to query
 	 * @return true if the sound is active
 	 */
-	bool isSoundHandleActive(SoundHandle handle);
+	virtual bool isSoundHandleActive(SoundHandle handle) = 0;
 
 
 
@@ -253,9 +243,9 @@ public:
 	 * Set the channel volume for the given handle.
 	 *
 	 * @param handle the sound to affect
-	 * @param volume the new channel volume (0 - 255)
+	 * @param volume the new channel volume (0 - kMaxChannelVolume)
 	 */
-	void setChannelVolume(SoundHandle handle, byte volume);
+	virtual void setChannelVolume(SoundHandle handle, byte volume) = 0;
 
 	/**
 	 * Set the channel balance for the given handle.
@@ -264,12 +254,12 @@ public:
 	 * @param balance the new channel balance:
 	 *        (-127 ... 0 ... 127) corresponds to (left ... center ... right)
 	 */
-	void setChannelBalance(SoundHandle handle, int8 balance);
+	virtual void setChannelBalance(SoundHandle handle, int8 balance) = 0;
 
 	/**
 	 * Get approximation of for how long the channel has been playing.
 	 */
-	uint32 getSoundElapsedTime(SoundHandle handle);
+	virtual uint32 getSoundElapsedTime(SoundHandle handle) = 0;
 
 	/**
 	 * Check whether any channel of the given sound type is active.
@@ -279,23 +269,23 @@ public:
 	 * @param  type the sound type to look for
 	 * @return true if any channels of the specified type are active.
 	 */
-	bool hasActiveChannelOfType(SoundType type);
+	virtual bool hasActiveChannelOfType(SoundType type) = 0;
 
 	/**
 	 * Set the volume for the given sound type.
 	 *
 	 * @param type the sound type
-	 * @param volume the new global volume, 0-kMaxMixerVolume
+	 * @param volume the new global volume, 0 - kMaxMixerVolume
 	 */
-	void setVolumeForSoundType(SoundType type, int volume);
+	virtual void setVolumeForSoundType(SoundType type, int volume) = 0;
 
 	/**
 	 * Query the global volume.
 	 *
 	 * @param type the sound type
-	 * @return the global music volume, 0-kMaxMixerVolume
+	 * @return the global music volume, 0 - kMaxMixerVolume
 	 */
-	int getVolumeForSoundType(SoundType type) const;
+	virtual int getVolumeForSoundType(SoundType type) const = 0;
 
 	/**
 	 * Query the system's audio output sample rate. This returns
@@ -303,26 +293,7 @@ public:
 	 *
 	 * @return the output sample rate in Hz
 	 */
-	uint getOutputRate() const;
-
-protected:
-	void insertChannel(SoundHandle *handle, Channel *chan);
-
-	/**
-	 * Internal main method -- all the actual mixing work is done from here.
-	 */
-	void mix(int16 * buf, uint len);
-
-	// FIXME: temporary "public" to allow access to mixCallback
-	// from within OSystem::makeMixer()
-public:
-	/**
-	 * The mixer callback function, passed on to OSystem::setSoundCallback().
-	 * This simply calls the mix() method.
-	 */
-	static void mixCallback(void *s, byte *samples, int len);
-
-	void setReady(bool ready) { _mixerReady = ready; }
+	virtual uint getOutputRate() const = 0;
 };
 
 

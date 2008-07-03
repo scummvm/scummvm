@@ -40,10 +40,17 @@
 // NOTE: This is not a complete driver, it needs to be subclassed
 //       to provide rendering functionality.
 
+namespace Audio {
+	class MixerImpl;
+	class Mixer;
+}
+
 class DriverSDL : public Driver {
 public:
-	DriverSDL() : _samplesPerSec(22050) { ; }
-	virtual ~DriverSDL() { ; }
+	DriverSDL();
+	virtual ~DriverSDL();
+
+	virtual void init();
 
 	char *getVideoDeviceName();
 
@@ -55,22 +62,28 @@ public:
 	bool pollEvent(Event &event);
 	uint32 getMillis();
 	void delayMillis(uint msecs);
-	void setTimerCallback();
-	void clearTimerCallback();
+	Common::TimerManager *getTimerManager();
 
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);
 	void unlockMutex(MutexRef mutex);
 	void deleteMutex(MutexRef mutex);
 
-	bool setSoundCallback(SoundProc proc, void *param);
-	void clearSoundCallback();
-	int getOutputSampleRate() const;
+	void setupMixer();
+	static void mixCallback(void *s, byte *samples, int len);
+	Audio::Mixer *getMixer();
 
 	void quit();
 
 private:
+
 	int _samplesPerSec;
+	Common::TimerManager *_timer;
+	SDL_TimerID _timerID;
+
+protected:
+
+	Audio::MixerImpl *_mixer;
 };
 
 #endif

@@ -44,6 +44,7 @@ class Bitmap;
 class Timer;
 
 namespace Audio {
+	class MixerImpl;
 	class Mixer;
 }
 
@@ -51,12 +52,6 @@ class Driver {
 public:
 	Driver() { ; }
 	virtual ~Driver() { ; }
-	Driver(int screenW, int screenH, int screenBPP, bool fullscreen = false) {
-		_screenWidth = screenW;
-		_screenHeight = screenH;
-		_screenBPP = screenBPP;
-		_isFullscreen = fullscreen;
-	}
 
 	struct TextObjectHandle {
 		uint16 *bitmapData;
@@ -66,6 +61,8 @@ public:
 		int width;
 		int height;
 	};
+
+	virtual void init() = 0;
 
 	virtual void toggleFullscreenMode() = 0;
 
@@ -231,27 +228,7 @@ public:
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;
 
-	/**
-	 * Set the timer callback, a function which is periodically invoked by the
-	 * driver. This can for example be done via a background thread.
-	 * There is at most one active timer; if this method is called while there
-	 * is already an active timer, then the new timer callback should replace
-	 * the previous one. In particular, passing a callback pointer value of 0
-	 * is legal and can be used to clear the current timer callback.
-	 * @see Timer
-	 * @note The implementation of this method must be 'atomic' in the sense
-	 *       that when the method returns, the previously set callback must
-	 *       not be in use anymore (in particular, if timers are implemented
-	 *       via threads, then it must be ensured that the timer thread is
-	 *       not using the old callback function anymore).
-	 *
-	 * @param callback	pointer to the callback. May be 0 to reset the timer
-	 * @param interval	the interval (in milliseconds) between invocations
-	 *                  of the callback
-	 */
-	virtual void setTimerCallback() = 0;
-
-	virtual void clearTimerCallback() = 0;
+	virtual Common::TimerManager *getTimerManager() = 0;
 
 	//@}
 
@@ -301,31 +278,9 @@ public:
 
 	/** @name Sound */
 	//@{
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
+	virtual void setupMixer() = 0;
 
-	/**
-	 * Set the audio callback which is invoked whenever samples need to be generated.
-	 * Currently, only the 16-bit signed mode is ever used for GF
-	 * @param proc		pointer to the callback.
-	 * @param param		an arbitrary parameter which is stored and passed to proc.
-	 */
-	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
-
-	/**
-	 * Remove any audio callback previously set via setSoundCallback, thus effectively
-	 * stopping all audio output immediately.
-	 * @see setSoundCallback
-	 */
-	virtual void clearSoundCallback() = 0;
-
-	/**
-	 * Determine the output sample rate. Audio data provided by the sound
-	 * callback will be played using this rate.
-	 * @note Client code other than the sound mixer should _not_ use this
-	 *       method. Instead, call Mixer::getOutputRate()!
-	 * @return the output sample rate
-	 */
-	virtual int getOutputSampleRate() const = 0;
+	virtual Audio::Mixer *getMixer() = 0;
 
 	//@}
 
@@ -342,7 +297,5 @@ protected:
 };
 
 extern Driver *g_driver;
-extern DefaultTimerManager *g_timer;
-extern Audio::Mixer *g_mixer;
 
 #endif

@@ -25,11 +25,16 @@
 
 #include "common/debug.h"
 
+#include "mixer/mixer_intern.h"
+
 #include "engine/backend/sdl/driver_sdl.h"
+#include "engine/backend/default-timer.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
+#define SAMPLES_PER_SEC 22050
 
 // NOTE: This is not a complete driver, it needs to be subclassed
 //       to provide rendering functionality.
@@ -278,6 +283,34 @@ static byte SDLModToDriverKeyFlags(SDLMod mod) {
 	return b;
 }
 
+static Uint32 timer_handler(Uint32 interval, void *param) {
+	((DefaultTimerManager *)param)->handler();
+	return interval;
+}
+
+Common::TimerManager *DriverSDL::getTimerManager() {
+	assert(_timer);
+	return _timer;
+}
+
+DriverSDL::DriverSDL() {
+	_mixer = NULL;
+	_timer = NULL;
+}
+
+DriverSDL::~DriverSDL() {
+	SDL_RemoveTimer(_timerID);
+	SDL_CloseAudio();
+
+	delete _mixer;
+	delete _timer;
+}
+
+void DriverSDL::init() {
+	_timer = new DefaultTimerManager();
+	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+}
+
 char *DriverSDL::getVideoDeviceName() {
 	return "SDL Video Device";
 }
@@ -366,21 +399,6 @@ void DriverSDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-static SDL_TimerID _timerID = NULL;
-
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
-}
-
-void DriverSDL::setTimerCallback() {
-	_timerID = SDL_AddTimer(10, &timer_handler, g_timer);
-}
-
-void DriverSDL::clearTimerCallback() {
-	SDL_RemoveTimer(_timerID);
-}
-
 Common::MutexRef DriverSDL::createMutex() {
 	return (MutexRef)SDL_CreateMutex();
 }
@@ -397,40 +415,60 @@ void DriverSDL::deleteMutex(MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *)mutex);
 }
 
-bool DriverSDL::setSoundCallback(SoundProc proc, void *param) {
+void DriverSDL::mixCallback(void *sys, byte *samples, int len) {
+	DriverSDL *this_ = (DriverSDL *)sys;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(samples, len);
+}
+
+void DriverSDL::setupMixer() {
 	SDL_AudioSpec desired;
+	SDL_AudioSpec obtained;
+
+	// Determine the desired output sampling frequency.
+	_samplesPerSec = 0;
+
+	if (_samplesPerSec <= 0)
+		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/10th of a second. Note that it must be a power of two.
+	// about 1/16th of a second. Note that it must be a power of two.
 	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
-	int samples = 0x8000;
-	while (10 * samples >= _samplesPerSec) {
+	int samples = 8192;
+	while (16 * samples >= _samplesPerSec) {
 		samples >>= 1;
 	}
 
 	memset(&desired, 0, sizeof(desired));
-
 	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;
-	desired.callback = proc;
-	desired.userdata = param;
+	desired.callback = mixCallback;
+	desired.userdata = this;
 
-	if (SDL_OpenAudio(&desired, NULL) != 0) {
-		return false;
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl();
+	assert(_mixer);
+
+	if (SDL_OpenAudio(&desired, &obtained) != 0) {
+		warning("Could not open audio device: %s", SDL_GetError());
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		_samplesPerSec = obtained.freq;
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+		SDL_PauseAudio(0);
 	}
-
-	SDL_PauseAudio(0);
-	return true;
 }
 
-void DriverSDL::clearSoundCallback() {
-	SDL_CloseAudio();
-}
-
-int DriverSDL::getOutputSampleRate() const {
-	return _samplesPerSec;
+Audio::Mixer *DriverSDL::getMixer() {
+	assert(_mixer);
+	return _mixer;
 }
 
 /* This function sends the SDL signal to

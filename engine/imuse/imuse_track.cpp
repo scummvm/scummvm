@@ -63,7 +63,7 @@ int Imuse::allocSlot(int priority) {
 			Track *track = _track[trackId];
 
 			// Stop the track immediately
-			g_mixer->stopHandle(track->handle);
+			g_driver->getMixer()->stopHandle(track->handle);
 			if (track->soundDesc) {
 				_sound->closeSound(track->soundDesc);
 			}
@@ -146,7 +146,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	}
 
 	track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
-	g_mixer->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(), track->getPan());
+	g_driver->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(), track->getPan());
 	track->used = true;
 
 	return true;
@@ -362,7 +362,7 @@ Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	if (fadeTrack->used) {
 		flushTrack(fadeTrack);
-		g_mixer->stopHandle(fadeTrack->handle);
+		g_driver->getMixer()->stopHandle(fadeTrack->handle);
 	}
 
 	// Clone the settings of the given track
@@ -383,7 +383,7 @@ Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	// Create an appendable output buffer
 	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
-	g_mixer->playInputStream(track->getType(), &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
+	g_driver->getMixer()->playInputStream(track->getType(), &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
 	fadeTrack->used = true;
 
 	return fadeTrack;

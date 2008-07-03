@@ -52,8 +52,6 @@ enDebugLevels debugLevel = DEBUG_NONE;
 
 static bool g_lua_initialized = false;
 Driver *g_driver = NULL;
-DefaultTimerManager *g_timer = NULL;
-Audio::Mixer *g_mixer = NULL;
 
 static bool parseBoolStr(const char *val) {
 	if (val == NULL || val[0] == 0)
@@ -165,15 +163,12 @@ needshelp:
 		g_driver = new DriverTinyGL(640, 480, 16, fullscreen);
 	else
 		g_driver = new DriverGL(640, 480, 24, fullscreen);
-	g_timer = new DefaultTimerManager();
-	g_driver->setTimerCallback();
-	g_mixer = new Audio::Mixer();
-	g_driver->setSoundCallback(Audio::Mixer::mixCallback, g_mixer);
-	g_mixer->setReady(true);
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
-	g_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+	g_driver->init();
+	g_driver->setupMixer();
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
+	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_engine = new Engine();
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
@@ -213,6 +208,7 @@ needshelp:
 	g_engine->setMode(ENGINE_MODE_NORMAL);
 	g_engine->mainLoop();
 
+
 	quit();
 
 	return 0;
@@ -229,8 +225,6 @@ void quit() {
 		delete g_registry;
 		g_registry = NULL;
 	}
-	if (g_driver)
-		g_driver->clearTimerCallback();
 	delete g_smush;
 	g_smush = NULL;
 	delete g_imuse;
@@ -241,10 +235,6 @@ void quit() {
 	g_engine = NULL;
 	delete g_resourceloader;
 	g_resourceloader = NULL;
-	delete g_timer;
-	g_timer = NULL;
-	delete g_mixer;
-	g_mixer = NULL;
 	delete g_driver;
 	g_driver = NULL;
 
