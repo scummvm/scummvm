@@ -87,6 +87,7 @@ public:
 
 		kDDButtonIdle,
 		kDDButtonHover,
+		kDDButtonDisabled,
 
 		kDDSurface,
 
@@ -124,13 +125,13 @@ public:
 	void clearAll();
 
 	void refresh() {}
-	void enable() {}
-	void disable() {}
+	void enable();
+	void disable();
 	void openDialog() {}
 	void closeAllDialogs() {}
 	
 
-	void updateScreen() {}
+	void updateScreen(); //{}
 	void resetDrawArea() {}
 
 	void openDialog(bool top) {}
@@ -210,6 +211,8 @@ protected:
 			delete _widgets[i];
 			_widgets[i] = 0;
 		}
+
+		_themeOk = false;
 	}
 
 	void screenChange() {}
@@ -268,6 +271,7 @@ protected:
 	bool _initOk;
 	bool _themeOk;
 	bool _caching;
+	bool _enabled;
 
 	Common::String _themeName;
 };

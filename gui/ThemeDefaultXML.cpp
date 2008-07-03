@@ -58,7 +58,7 @@ bool ThemeRenderer::loadDefaultXML() {
 "<layout_info>"
 "</layout_info>";
 
-	if (!parser()->loadBuffer(defaultXML, false))
+	if (!parser()->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
 		return false;
 
 	return parser()->parse();

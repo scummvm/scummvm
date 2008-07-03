@@ -242,7 +242,7 @@ void NewGui::runLoop() {
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		if (_needRedraw) {
 			redraw();
-			_needRedraw = false;
+//			_needRedraw = false;
 		}
 
 		// Don't "tickle" the dialog until the theme has had a chance

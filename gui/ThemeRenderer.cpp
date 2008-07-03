@@ -47,6 +47,7 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 
 	"button_idle",
 	"button_hover",
+	"button_disabled",
 
 	"surface",
 
@@ -70,7 +71,7 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 
 ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
-	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false) {
+	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false), _enabled(false) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
 
@@ -81,8 +82,7 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	_graphicsMode = mode;
 	setGraphicsMode(_graphicsMode);
 
-	if (isThemeLoadingRequired())
-		loadTheme(themeName);
+	loadConfigFile("classic");
 
 	_initOk = true;
 	_themeName = themeName;
@@ -99,8 +99,20 @@ bool ThemeRenderer::init() {
 		resetDrawArea();
 	}
 
-	if (isThemeLoadingRequired())
+	if (!_themeOk || isThemeLoadingRequired()) {
 		loadTheme(_themeName);
+
+		Theme::loadTheme(_defaultConfig);
+		Theme::loadTheme(_configFile, false, true);
+	}
+
+	if (_fontName.empty()) {
+		if (_screen->w >= 400 && _screen->h >= 300) {
+			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		} else {
+			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		}
+	}
 
 	return true;
 }
@@ -110,7 +122,6 @@ void ThemeRenderer::deinit() {
 		_system->hideOverlay();
 		freeRenderer();
 		freeScreen();
-		unloadTheme();
 		_initOk = false;
 	}
 }
@@ -119,9 +130,21 @@ void ThemeRenderer::clearAll() {
 	if (!_initOk)
 		return;
 
-	_vectorRenderer->clearSurface();
-	_vectorRenderer->copyWholeFrame(_system);
-	_system->updateScreen();
+	_system->clearOverlay();
+	_system->grabOverlay((OverlayColor*)_screen->pixels, _screen->w);
+}
+
+void ThemeRenderer::enable() {
+	init();
+	resetDrawArea();
+	_system->showOverlay();
+	clearAll();
+	_enabled = true;
+}
+
+void ThemeRenderer::disable() {
+	_system->hideOverlay();
+	_enabled = false;
 }
 
 template<typename PixelType> 
@@ -228,7 +251,7 @@ void ThemeRenderer::drawCached(DrawData type, const Common::Rect &r) {
 void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
 	if (isWidgetCached(type, r)) {
 		drawCached(type, r);
-	} else {
+	} else if (_widgets[type] != 0) {
 		for (uint i = 0; i < _widgets[type]->_steps.size(); ++i)
 			_vectorRenderer->drawStep(r, *_widgets[type]->_steps[i]);
 	}
@@ -242,6 +265,8 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 		drawDD(kDDButtonIdle, r);
 	else if (state == kStateHighlight)
 		drawDD(kDDButtonHover, r);
+	else if (state == kStateDisabled)
+		drawDD(kDDButtonDisabled, r);
 
 	// TODO: Add text drawing.
 
@@ -290,6 +315,11 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 		return;
 }
 
+void ThemeRenderer::updateScreen() {
+//	renderDirtyScreen();
+	_vectorRenderer->copyWholeFrame(_system);
+}
+
 void ThemeRenderer::renderDirtyScreen() {
 	// TODO: This isn't really optimized. Check dirty squares for collisions
 	// and all that.
@@ -299,7 +329,7 @@ void ThemeRenderer::renderDirtyScreen() {
 	for (uint i = 0; i < _dirtyScreen.size(); ++i)
 		_vectorRenderer->copyFrame(_system, _dirtyScreen[i]);
 
-	_system->updateScreen();
+//	_system->updateScreen();
 	_dirtyScreen.clear();
 }
 

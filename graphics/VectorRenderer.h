@@ -536,11 +536,11 @@ public:
 	 */
 	virtual void copyFrame(OSystem *sys, const Common::Rect &r) {
 #ifdef OVERLAY_MULTIPLE_DEPTHS // TODO: change OSystem to support templated copyRectToOverlay
-		sys->copyRectToOverlay((const PixelType*)_activeSurface->pixels, 
-			_activeSurface->pitch, r.top, r.left, r.width(), r.height());
+		sys->copyRectToOverlay((const PixelType*)_activeSurface->getBasePtr(r.left, r.top), 
+			_activeSurface->w, r.top, r.left, r.width(), r.height());
 #else
-		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->pixels, 
-			_activeSurface->pitch, r.top, r.left, r.width(), r.height());
+		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->getBasePtr(r.left, r.top), 
+			_activeSurface->w, r.top, r.left, r.width(), r.height());
 #endif
 	}
 
