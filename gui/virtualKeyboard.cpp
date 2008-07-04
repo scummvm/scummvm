@@ -62,10 +62,10 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
 			byte *buffer = new byte[fileInfo.uncompressed_size+1];
 			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(byte));
 			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
 			unzCloseCurrentFile(zipFile);
-			if (!_parser->loadBuffer(buffer, true)) {
+			if (!_parser->loadBuffer(buffer, fileInfo.uncompressed_size+1, true)) {
 				unzClose(zipFile);
 				return false;
 			}

@@ -52,6 +52,12 @@
 #include "gui/launcher.h"
 #endif
 
+#define ___VK_TEST
+
+#if defined(___VK_TEST)
+#include "gui/virtualKeyboard.h"
+#endif
+
 
 static bool launcherDialog(OSystem &system) {
 
@@ -67,6 +73,13 @@ static bool launcherDialog(OSystem &system) {
 
 	// Clear the main screen
 	system.clearScreen();
+
+#if defined(___VK_TEST)
+	GUI::VirtualKeyboard *vk = new GUI::VirtualKeyboard();
+	if (vk->loadKeyboardPack("test"))
+		printf("Successfully parsed test keyboard pack\n");
+
+#endif
 
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;

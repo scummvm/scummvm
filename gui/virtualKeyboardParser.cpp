@@ -90,13 +90,13 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	Common::StringTokenizer tok(resolutions, " ,");
 
 	uint16 scrX = g_system->getOverlayWidth(), scrY = g_system->getOverlayHeight();
-	uint16 diff = 0xFFFF;
+	uint32 diff = 0xFFFFFFFF;
 
 	for (Common::String res = tok.nextToken(); res.size() > 0; res = tok.nextToken()) {
-		uint16 resX, resY;
-		if (sscanf(res.c_str(), "%dx%d", &resX, &resY) != 2)
+		int resX, resY;
+		if (sscanf(res.c_str(), "%dx%d", &resX, &resY) != 2) {
 			parserError("Invalid resolution specification");
-		else {
+		} else {
 			if (resX == scrX && resY == scrY) {
 				_currentMode->resolution = res;
 				break;
@@ -232,7 +232,7 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 
 	Common::String shape = areaNode->values["shape"];
 	if (shape == "rect") {
-		int16 x1, y1, x2, y2;
+		int x1, y1, x2, y2;
 		if (!parseIntegerKey(areaNode->values["coords"].c_str(), 4, &x1, &y1, &x2, &y2))
 			return parserError("Invalid coords for rect area");
 
@@ -242,7 +242,7 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 		Common::StringTokenizer tok (areaNode->values["coords"], ", ");
 		Common::Polygon poly;
 		for (Common::String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
-			int16 x, y;
+			int x, y;
 			if (sscanf(st.c_str(), "%d", &x) != 1)
 				return parserError("Invalid coords for polygon area");
 			st = tok.nextToken();

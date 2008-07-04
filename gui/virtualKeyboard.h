@@ -31,7 +31,6 @@ class OSystem;
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/imagemap.h"
-#include "common/singleton.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 
@@ -41,7 +40,7 @@ class VirtualKeyboardParser;
 
 
 
-class VirtualKeyboard : public Common::Singleton<VirtualKeyboard> {
+class VirtualKeyboard {
 private:
 	/** Type of key event */
 	enum EventType {
