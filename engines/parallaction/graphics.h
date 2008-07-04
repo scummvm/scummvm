@@ -450,6 +450,20 @@ enum {
 	kBackgroundSlide = 2
 };
 
+
+class BalloonManager {
+public:
+	virtual ~BalloonManager() { }
+
+	virtual void freeBalloons() = 0;
+	virtual int setLocationBalloon(char *text, bool endGame) = 0;
+	virtual int setDialogueBalloon(char *text, uint16 winding, byte textColor) = 0;
+	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) = 0;
+	virtual void setBalloonText(uint id, char *text, byte textColor) = 0;
+	virtual int hitTestDialogueBalloon(int x, int y) = 0;
+};
+
+
 typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
 
 class Gfx {
@@ -479,13 +493,9 @@ public:
 	void freeLabels();
 
 	// dialogue balloons
-	int setLocationBalloon(char *text, bool endGame);
-	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
-	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
-	void setBalloonText(uint id, char *text, byte textColor);
-	int hitTestDialogueBalloon(int x, int y);
 	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
 	GfxObj* registerBalloon(Frames *frames, const char *text);
+	void destroyBalloons();
 
 	// other items
 	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
@@ -551,16 +561,6 @@ protected:
 	int32 				getRenderMode(const char *type);
 
 public:
-	static int16 _dialogueBalloonX[5];
-
-	struct Balloon {
-		Common::Rect outerBox;
-		Common::Rect innerBox;
-		Graphics::Surface *surface;
-		GfxObj	*obj;
-	} _intBalloons[5];
-
-	uint	_numBalloons;
 
 	struct Item {
 		GfxObj *data;
@@ -584,9 +584,6 @@ public:
 	void drawBalloons();
 
 	void copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst);
-
-	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
-	Balloon *getBalloon(uint id);
 
 	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);

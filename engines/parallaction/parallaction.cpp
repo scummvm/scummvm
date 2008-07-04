@@ -134,6 +134,8 @@ int Parallaction::init() {
 
 	_debugger = new Debugger(this);
 
+	setupBalloonManager();
+
 	return 0;
 }
 
@@ -281,7 +283,7 @@ void Parallaction::setBackground(const char* name, const char* mask, const char*
 }
 
 void Parallaction::showLocationComment(const char *text, bool end) {
-	_gfx->setLocationBalloon(const_cast<char*>(text), end);
+	_balloonMan->setLocationBalloon(const_cast<char*>(text), end);
 }
 
 
@@ -422,7 +424,7 @@ void Parallaction::doLocationEnterTransition() {
 
 	showLocationComment(_location._comment, false);
 	_input->waitUntilLeftClick();
-	_gfx->freeBalloons();
+	_balloonMan->freeBalloons();
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {

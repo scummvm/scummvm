@@ -429,6 +429,15 @@ public:
 	Inventory *_inventory;
 	InventoryRenderer *_inventoryRenderer;
 
+	BalloonManager *_balloonMan;
+
+	void setupBalloonManager();
+
+	void hideDialogueStuff() {
+		_gfx->freeItems();
+		_balloonMan->freeBalloons();
+	}
+
 };
 
 

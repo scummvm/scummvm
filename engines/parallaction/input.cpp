@@ -174,7 +174,7 @@ void Input::updateGameInput() {
 void Input::updateCommentInput() {
 	waitUntilLeftClick();
 
-	_vm->_gfx->hideDialogueStuff();
+	_vm->hideDialogueStuff();
 	_vm->_gfx->setHalfbriteMode(false);
 
 	_inputMode = kInputModeGame;

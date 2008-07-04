@@ -80,6 +80,9 @@ int Parallaction_br::init() {
 
 	_part = -1;
 
+	_subtitle[0] = -1;
+	_subtitle[1] = -1;
+
 	Parallaction::init();
 
 	return 0;
