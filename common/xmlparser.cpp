@@ -194,6 +194,11 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyName:
 				if (activeClosure) {
+					if (!closedKeyCallback(_activeKey.top()->name)) {
+						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str()); 
+						break;
+					}
+
 					activeClosure = false;
 					delete _activeKey.pop();
 

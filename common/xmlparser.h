@@ -204,6 +204,20 @@ protected:
 	}
 
 	/**
+	 * The closed key callback function must be overloaded by inheriting classes to
+	 * implement parser-specific functions.
+	 *
+	 * The closedKeyCallback is issued once a key has been finished parsing, to let
+	 * the parser verify that all the required subkeys, etc, were included.
+	 *
+	 * Returns true if the key was properly closed, false otherwise.
+	 * By default, all keys are properly closed.
+	 */
+	virtual bool closedKeyCallback(Common::String keyName) {
+		return true;
+	}
+
+	/**
 	 * Parses the value of a given key. There's no reason to overload this.
 	 */
 	virtual bool parseKeyValue(Common::String keyName);
