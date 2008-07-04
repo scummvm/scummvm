@@ -31,6 +31,7 @@ class OSystem;
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/imagemap.h"
+#include "common/keyboard.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 
@@ -46,6 +47,7 @@ private:
 	enum EventType {
 		kEventKey,
 		kEventSwitchMode,
+		kEventClose,
 
 		kEventMax
 	};
@@ -65,6 +67,21 @@ private:
 		Graphics::Surface *image;
 		Common::ImageMap   imageMap;
 		EventMap           events;
+		Mode() : image(0) {}
+	};
+	
+	typedef Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ModeMap;
+
+	enum HorizontalAlignment {
+		kAlignLeft,
+		kAlignCentre,
+		kAlignRight
+	};
+
+	enum VerticalAlignment {
+		kAlignTop,
+		kAlignMiddle,
+		kAlignBottom
 	};
 
 public:
@@ -80,10 +97,26 @@ private:
 	friend class VirtualKeyboardParser;
 	VirtualKeyboardParser *_parser;
 
+	// TODO : sort order of all this stuff
+	void reset();
+	void reposition();
+	void switchMode(const Common::String& newMode);
+	void processClick(int16 x, int16 y);
 	void runLoop();
 	void draw();
 
-	Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _modes;
+	bool _displaying;
+
+	ModeMap _modes;
+	Mode *_initialMode;
+	Mode *_currentMode;
+
+	Common::Point _pos;
+	HorizontalAlignment  _hAlignment;
+	VerticalAlignment    _vAlignment;
+
+	Common::Array<Common::KeyState> _keyQueue;
+
 };
 
 

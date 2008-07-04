@@ -35,7 +35,7 @@ void ImageMap::addPolygonMapArea(const Polygon& poly, const String& target) {
 	areas.push_back(MapArea(poly, target));
 }
 
-MapArea *ImageMap::findMapArea(int x, int y) {
+MapArea *ImageMap::findMapArea(int16 x, int16 y) {
 	Array<MapArea>::iterator it;
 	for (it = areas.begin(); it != areas.end(); it++) {
 		if (it->contains(x, y))

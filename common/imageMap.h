@@ -49,7 +49,7 @@ public:
 		return _shape->contains(x, y);
 	}
 
-	const String& getTarget() { return _target; }
+	String getTarget() { return _target; }
 
 protected:
 	/* shape defining the MapArea's boundary */
@@ -66,7 +66,7 @@ public:
 	void addRectMapArea(const Rect& rect, const String& target);
 	void addPolygonMapArea(const Polygon& poly, const String& target);
 
-	MapArea *findMapArea(int x, int y);
+	MapArea *findMapArea(int16 x, int16 y);
 
 protected:
 	Array<MapArea> areas;

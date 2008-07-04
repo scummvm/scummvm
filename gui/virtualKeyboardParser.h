@@ -41,14 +41,18 @@ public:
 
 protected:
 	VirtualKeyboard *_keyboard;
-	VirtualKeyboard::Mode *_currentMode;
 
+	/** internal state variables of parser */
+	VirtualKeyboard::Mode *_mode; // pointer to mode currently being parsed
+	bool _modeParsed;
+	Common::String _initialModeName;  // name of initial keyboard mode
 	bool _kbdParsed;
 
 	bool keyCallback(Common::String keyName);
 	void cleanup() {
-		_currentMode = 0;
-		_kbdParsed = false;
+		_mode = 0;
+		_kbdParsed = _modeParsed = false;
+		_initialModeName.clear();
 	}
 
 	bool parserCallback_Keyboard();

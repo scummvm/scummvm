@@ -59,8 +59,32 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 
 	if (_kbdParsed)
 		return parserError("Only a single keyboard element is allowed");
-
 	_kbdParsed = true;
+
+	if (!kbdNode->values.contains("initial_mode"))
+		return parserError("Keyboard element must contain initial_mode attribute");
+
+	_initialModeName = kbdNode->values["initial_mode"];
+
+	if (kbdNode->values.contains("h_align")) {
+		Common::String h = kbdNode->values["h_align"];
+		if (h == "left")
+			_keyboard->_hAlignment = VirtualKeyboard::kAlignLeft;
+		else if (h == "centre" || h == "center")
+			_keyboard->_hAlignment = VirtualKeyboard::kAlignCentre;
+		else if (h == "right")
+			_keyboard->_hAlignment = VirtualKeyboard::kAlignRight;
+	}
+
+	if (kbdNode->values.contains("v_align")) {
+		Common::String v = kbdNode->values["h_align"];
+		if (v == "top")
+			_keyboard->_vAlignment = VirtualKeyboard::kAlignTop;
+		else if (v == "middle" || v == "center")
+			_keyboard->_vAlignment = VirtualKeyboard::kAlignMiddle;
+		else if (v == "bottom")
+			_keyboard->_vAlignment = VirtualKeyboard::kAlignBottom;
+	}
 
 	return true;
 }
@@ -81,10 +105,16 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	if (_keyboard->_modes.contains(name))
 		return parserError("Mode '%s' has already been defined", name);
 
+	// create new mode
 	VirtualKeyboard::Mode mode;
 	mode.name = name;
 	_keyboard->_modes[name] = mode;
-	_currentMode = &(_keyboard->_modes[name]);
+	_mode = &(_keyboard->_modes[name]);
+	
+	// if this is the keyboard's initial mode
+	// then set it to be the current mode
+	if (name == _initialModeName)
+		_keyboard->_initialMode = _mode;
 
 	Common::String resolutions = modeNode->values["resolutions"];
 	Common::StringTokenizer tok(resolutions, " ,");
@@ -98,19 +128,19 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 			parserError("Invalid resolution specification");
 		} else {
 			if (resX == scrX && resY == scrY) {
-				_currentMode->resolution = res;
+				_mode->resolution = res;
 				break;
 			} else if (resX < scrX && resY < scrY) {
 				uint16 newDiff = (scrX - resX) + (scrY - resY);
 				if (newDiff < diff) {
 					diff = newDiff;
-					_currentMode->resolution = res;
+					_mode->resolution = res;
 				}
 			}
 		}
 	}
 
-	if (_currentMode->resolution.empty())
+	if (_mode->resolution.empty())
 		return parserError("No acceptable resolution was found");
 
 	return true;
@@ -127,10 +157,10 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 	if (!evtNode->values.contains("name") || !evtNode->values.contains("type"))
 		return parserError("Event element must contain name and type attributes");
 
-	assert(_currentMode);
+	assert(_mode);
 
 	Common::String name = evtNode->values["name"];
-	if (_currentMode->events.contains(name))
+	if (_mode->events.contains(name))
 		return parserError("Event '%s' has already been defined", name);
 
 	VirtualKeyboard::Event evt;
@@ -170,7 +200,7 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 	} else
 		return parserError("Event type '%s' not known", type);
 
-	_currentMode->events[name] = evt;
+	_mode->events[name] = evt;
 
 	return true;
 }
@@ -186,24 +216,24 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 	if (!layoutNode->values.contains("resolution") || !layoutNode->values.contains("bitmap"))
 		return parserError("Layout element must contain resolution and bitmap attributes");
 
-	assert(!_currentMode->resolution.empty());
+	assert(!_mode->resolution.empty());
 
 	Common::String res = layoutNode->values["resolution"];
 
-	if (res != _currentMode->resolution) {
+	if (res != _mode->resolution) {
 		layoutNode->ignore = true;
 		return true;
 	}
 
-	_currentMode->bitmapName = layoutNode->values["bitmap"];
+	_mode->bitmapName = layoutNode->values["bitmap"];
 
 	
-	if (!ImageMan.registerSurface(_currentMode->bitmapName, 0))
-		return parserError("Error loading bitmap '%s'", _currentMode->bitmapName.c_str());
+	if (!ImageMan.registerSurface(_mode->bitmapName, 0))
+		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 
-	_currentMode->image = ImageMan.getSurface(_currentMode->bitmapName);
-	if (!_currentMode->image)
-		return parserError("Error loading bitmap '%s'", _currentMode->bitmapName.c_str());
+	_mode->image = ImageMan.getSurface(_mode->bitmapName);
+	if (!_mode->image)
+		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 
 	return true;
 }
@@ -237,7 +267,7 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 			return parserError("Invalid coords for rect area");
 
 		Common::Rect rect(x1, y1, x2, y2);
-		_currentMode->imageMap.addRectMapArea(rect, areaNode->values["target"]);
+		_mode->imageMap.addRectMapArea(rect, areaNode->values["target"]);
 	} else if (shape == "poly") {
 		Common::StringTokenizer tok (areaNode->values["coords"], ", ");
 		Common::Polygon poly;
@@ -252,7 +282,7 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 		}
 		if (poly.getPointCount() < 3)
 			return parserError("Invalid coords for polygon area");
-		_currentMode->imageMap.addPolygonMapArea(poly, areaNode->values["target"]);
+		_mode->imageMap.addPolygonMapArea(poly, areaNode->values["target"]);
 	} else
 		return parserError("Area shape '%s' not known", shape);
 
