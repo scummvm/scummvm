@@ -42,16 +42,13 @@ namespace GUI {
 struct WidgetDrawData;
 
 struct WidgetDrawData {
-	Common::Array<Graphics::DrawStep*> _steps;
+	Common::List<Graphics::DrawStep> _steps;
 
 	bool _cached;
 	Graphics::Surface *_surfaceCache;
 	uint32 _cachedW, _cachedH;
 
 	~WidgetDrawData() {
-		for (uint i = 0; i < _steps.size(); ++i)
-			delete _steps[i];
-
 		_steps.clear();
 
 		if (_surfaceCache) {
@@ -69,8 +66,11 @@ class ThemeRenderer : public Theme {
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
 
+	/** Strings representing each value in the DrawData enum */
 	static const char *kDrawDataStrings[];
-	static const int kMaxDialogDepth = 4;
+
+	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
+	static const int kDirtyRectangleThreshold = 2;
 
 public:
 	enum GraphicsMode {
@@ -159,6 +159,7 @@ public:
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {}
 
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
+		r.grow(kDirtyRectangleThreshold);
 		_dirtyScreen.push_back(r);
 		return true;
 	}
@@ -172,7 +173,7 @@ public:
 		return (DrawData)-1;
 	}
 
-	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step);
+	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep step);
 	bool addDrawData(DrawData data_id, bool cached);
 
 	ThemeParser *parser() {

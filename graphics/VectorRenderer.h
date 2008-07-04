@@ -535,22 +535,17 @@ public:
 	 * @see VectorRenderer::copyFrame()
 	 */
 	virtual void copyFrame(OSystem *sys, const Common::Rect &r) {
-#ifdef OVERLAY_MULTIPLE_DEPTHS // TODO: change OSystem to support templated copyRectToOverlay
-		sys->copyRectToOverlay((const PixelType*)_activeSurface->getBasePtr(r.left, r.top), 
-			_activeSurface->w, r.top, r.left, r.width(), r.height());
-#else
-		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->getBasePtr(r.left, r.top), 
-			_activeSurface->w, r.top, r.left, r.width(), r.height());
-#endif
+		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->getBasePtr(r.left, r.top),
+			_activeSurface->w, r.left, r.top, r.width(), r.height());
 	}
 
 	virtual void copyWholeFrame(OSystem *sys) {
 #ifdef OVERLAY_MULTIPLE_DEPTHS
 		sys->copyRectToOverlay((const PixelType*)_activeSurface->getBasePtr(0, 0),
-		_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->h);
+			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->h);
 #else
 		sys->copyRectToOverlay((const OverlayColor*)_activeSurface->getBasePtr(0, 0),
-		_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->h);
+			_activeSurface->w, 0, 0, _activeSurface->w, _activeSurface->h);
 #endif
 	}
 

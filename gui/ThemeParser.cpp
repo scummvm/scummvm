@@ -223,7 +223,9 @@ bool ThemeParser::parserCallback_DRAWSTEP() {
 	if (!parseDrawStep(stepNode, drawstep, true))
 		return false;
 
-	_theme->addDrawStep(drawdataNode->values["id"], drawstep);
+	_theme->addDrawStep(drawdataNode->values["id"], *drawstep);
+	delete drawstep;
+
 	return true;
 }
 

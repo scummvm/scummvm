@@ -99,7 +99,7 @@ bool ThemeRenderer::init() {
 		resetDrawArea();
 	}
 
-	if (!_themeOk || isThemeLoadingRequired()) {
+	if (isThemeLoadingRequired() || !_themeOk) {
 		loadTheme(_themeName);
 
 		Theme::loadTheme(_defaultConfig);
@@ -173,7 +173,7 @@ void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
 	_vectorRenderer->setSurface(_screen);
 }
 
-void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep *step) {
+void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep step) {
 	DrawData id = getDrawDataId(drawDataId);
 	
 	assert(_widgets[id] != 0);
@@ -252,8 +252,9 @@ void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
 	if (isWidgetCached(type, r)) {
 		drawCached(type, r);
 	} else if (_widgets[type] != 0) {
-		for (uint i = 0; i < _widgets[type]->_steps.size(); ++i)
-			_vectorRenderer->drawStep(r, *_widgets[type]->_steps[i]);
+		for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
+			 step != _widgets[type]->_steps.end(); ++step)
+			_vectorRenderer->drawStep(r, *step);
 	}
 }
 
@@ -316,8 +317,7 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 }
 
 void ThemeRenderer::updateScreen() {
-//	renderDirtyScreen();
-	_vectorRenderer->copyWholeFrame(_system);
+	renderDirtyScreen();
 }
 
 void ThemeRenderer::renderDirtyScreen() {
@@ -329,7 +329,6 @@ void ThemeRenderer::renderDirtyScreen() {
 	for (uint i = 0; i < _dirtyScreen.size(); ++i)
 		_vectorRenderer->copyFrame(_system, _dirtyScreen[i]);
 
-//	_system->updateScreen();
 	_dirtyScreen.clear();
 }
 

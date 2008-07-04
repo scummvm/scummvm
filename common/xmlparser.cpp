@@ -143,10 +143,7 @@ bool XMLParser::parse() {
 	_pos = 0;
 	_activeKey.clear();
 	
-	while (_text[_pos]) {
-		if (_state == kParserError)
-			break;
-
+	while (_text[_pos] && _state != kParserError) {
 		if (skipSpaces())
 			continue;
 
