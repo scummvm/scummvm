@@ -26,7 +26,5 @@
 	<string>@VERSION@</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyrights information are in Credits.rtf file</string>
 </dict>
 </plist>
