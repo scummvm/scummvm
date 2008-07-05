@@ -915,7 +915,7 @@ Model::HierNode *Costume::getModelNodes()
 				continue;
 			// Needs to handle Main Models (pigeons) and normal Models
 			// (when Manny climbs the rope)
-			if (_components[i]->tag() == MKID_BE('MMDL'))
+			if (FROM_BE_32(_components[i]->tag()) == MKID_BE('MMDL'))
 				return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
 		}
 		return NULL;
