@@ -108,7 +108,7 @@ iphone: $(OBJS)
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf
-osxsnap: bundle credits
+osxsnap: bundle
 	mkdir Residual-snapshot
 	cp $(srcdir)/AUTHORS ./Residual-snapshot/Authors
 	cp $(srcdir)/COPYING.LGPL ./Residual-snapshot/License.LGPL
