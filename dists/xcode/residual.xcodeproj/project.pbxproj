@@ -10,6 +10,8 @@
 		2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68B0E0198B200DCA546 /* hashmap.cpp */; };
 		2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68D0E0198B200DCA546 /* memorypool.cpp */; };
 		2862A6970E0198B200DCA546 /* str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A6900E0198B200DCA546 /* str.cpp */; };
+		289917E40E1F6D7C006704AC /* version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289917E20E1F6D7C006704AC /* version.cpp */; };
+		289917E60E1F6D91006704AC /* ztriangle_shadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289917E50E1F6D91006704AC /* ztriangle_shadow.cpp */; };
 		289EEE110D8921CA00521A80 /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0B0D8921CA00521A80 /* audiostream.cpp */; };
 		289EEE120D8921CA00521A80 /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0D0D8921CA00521A80 /* mixer.cpp */; };
 		289EEE130D8921CA00521A80 /* rate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0F0D8921CA00521A80 /* rate.cpp */; };
@@ -126,6 +128,10 @@
 		2862A6900E0198B200DCA546 /* str.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = str.cpp; sourceTree = "<group>"; };
 		2862A6910E0198B200DCA546 /* str.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = str.h; sourceTree = "<group>"; };
 		2862A6920E0198B200DCA546 /* util.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		289917E10E1F6D67006704AC /* internal_version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = internal_version.h; sourceTree = "<group>"; };
+		289917E20E1F6D7C006704AC /* version.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = version.cpp; sourceTree = "<group>"; };
+		289917E30E1F6D7C006704AC /* version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		289917E50E1F6D91006704AC /* ztriangle_shadow.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ztriangle_shadow.cpp; sourceTree = "<group>"; };
 		289BDDBE0E1D08E100A6B8BA /* mixer_intern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = mixer_intern.h; sourceTree = "<group>"; };
 		289EEE0B0D8921CA00521A80 /* audiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = audiostream.cpp; sourceTree = "<group>"; };
 		289EEE0C0D8921CA00521A80 /* audiostream.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = audiostream.h; sourceTree = "<group>"; };
@@ -391,6 +397,9 @@
 		289EEE280D8921F600521A80 /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				289917E20E1F6D7C006704AC /* version.cpp */,
+				289917E30E1F6D7C006704AC /* version.h */,
+				289917E10E1F6D67006704AC /* internal_version.h */,
 				289EEE290D8921F600521A80 /* actor.cpp */,
 				289EEE2A0D8921F600521A80 /* actor.h */,
 				289EEE2B0D8921F600521A80 /* backend */,
@@ -558,6 +567,7 @@
 		289EEEB20D8921F600521A80 /* tinygl */ = {
 			isa = PBXGroup;
 			children = (
+				289917E50E1F6D91006704AC /* ztriangle_shadow.cpp */,
 				289EEEB30D8921F600521A80 /* api.cpp */,
 				289EEEB40D8921F600521A80 /* arrays.cpp */,
 				289EEEB50D8921F600521A80 /* clear.cpp */,
@@ -730,6 +740,8 @@
 				2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */,
 				2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */,
 				2862A6970E0198B200DCA546 /* str.cpp in Sources */,
+				289917E40E1F6D7C006704AC /* version.cpp in Sources */,
+				289917E60E1F6D91006704AC /* ztriangle_shadow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
