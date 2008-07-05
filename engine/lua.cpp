@@ -849,6 +849,7 @@ static void GetActorNodeLocation() {
 		lua_pushnil();
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("GetActorNodeLocation() when actor has no nodes!");
+		return;
 	}
 	lua_pushnumber(allNodes[node]._pos.x());
 	lua_pushnumber(allNodes[node]._pos.y());
