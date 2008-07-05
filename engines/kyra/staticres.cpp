@@ -1980,6 +1980,13 @@ const char *KyraEngine_MR::_languageExtension[] = {
 	"TRS"*/
 };
 
+const char * const KyraEngine_MR::_mainMenuSpanishFan[] = {
+	"Nouvelle Partie",
+	"Ver Intro",
+	"Restaurar",
+	"Finalizar"
+};
+
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {

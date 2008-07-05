@@ -184,8 +184,10 @@ private:
 
 private:
 	// main menu
-	const char *const *_mainMenuStrings;
+	const char * const *_mainMenuStrings;
 	int _mainMenuStringsSize;
+
+	static const char * const _mainMenuSpanishFan[];
 
 	// animator
 	uint8 *_gamePlayBuffer;

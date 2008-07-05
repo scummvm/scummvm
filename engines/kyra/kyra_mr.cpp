@@ -343,6 +343,11 @@ void KyraEngine_MR::initMainMenu() {
 		0x80, 0xFF
 	};
 
+	if (_flags.lang == Common::ES_ESP) {
+		for (int i = 0; i < 4; ++i)
+			data.strings[i] = _mainMenuSpanishFan[i];
+	}
+
 	MainMenu::Animation anim;
 	anim.anim = _menuAnim;
 	anim.startFrame = 29;
