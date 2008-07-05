@@ -57,8 +57,12 @@ public:
 
 	void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
 	void finishActorDraw();
-	void setupShadower(Shadow *shadow);
-	
+	void setShadow(Shadow *shadow);
+	void drawShadowPlanes();
+	void setShadowMode();
+	void clearShadowMode();
+	void setShadowColor(byte r, byte g, byte b);
+
 	void set3DMode();
 
 	void translateViewpoint(Vector3d pos, float pitch, float yaw, float roll);

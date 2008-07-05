@@ -219,6 +219,7 @@ void Scene::setSetup(int num) {
 		return;
 	}
 	_currSetup = _setups + num;
+	g_engine->flagRefreshShadowMask(true);
 }
 
 void Scene::drawBitmaps(ObjectState::Position stage) {

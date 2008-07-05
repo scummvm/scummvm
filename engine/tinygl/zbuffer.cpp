@@ -14,7 +14,7 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 
 	zb = (ZBuffer *)gl_malloc(sizeof(ZBuffer));
 	if (zb == NULL)
-	return NULL;
+		return NULL;
 
 	zb->xsize = xsize;
 	zb->ysize = ysize;
@@ -55,6 +55,7 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 	}
 
 	zb->current_texture = NULL;
+	zb->shadow_mask_buf = NULL;
 
 	return zb;
 error:
@@ -182,7 +183,7 @@ void ZB_clear(ZBuffer *zb, int clear_z, int z,
 		memset_s(zb->zbuf, z, zb->xsize * zb->ysize);
 	}
 	if (clear_z) {
-		memset_l(zb->zbuf, z, zb->xsize * zb->ysize);
+		memset_l(zb->zbuf2, z, zb->xsize * zb->ysize);
 	}
 	if (clear_color) {
 		pp = zb->pbuf;

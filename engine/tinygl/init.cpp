@@ -164,6 +164,9 @@ void tglInit(void *zbuffer1) {
 	// opengl 1.1 polygon offset
 	c->offset_states = 0;
 
+	// shadow mode
+	c->shadow_mode = 0;
+
 	// clear the resize callback function pointer
 	c->gl_resize_viewport = NULL;
 

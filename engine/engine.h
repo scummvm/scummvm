@@ -69,7 +69,6 @@ public:
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
 	void drawPrimitives();
-	void setShadowColor(Color c);
 
 	void mainLoop();
 	unsigned frameStart() const { return _frameStart; }
@@ -104,6 +103,13 @@ public:
 	void registerScene(Scene *a) { _scenes.push_back(a); }
 	void removeScene(Scene *a) {
 		_scenes.remove(a);
+	}
+
+	void flagRefreshShadowMask(bool flag) {
+		_refreshShadowMask = flag;
+	}
+	bool getFlagRefreshShadowMask() {
+		return _refreshShadowMask;
 	}
 
 	// Actor registration
@@ -187,7 +193,7 @@ private:
 	bool _refreshDrawNeeded;
 	char _fps[8];
 	bool _doFlip;
-	Color _shadowColor;
+	bool _refreshShadowMask;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	unsigned int _frameTimeCollection;

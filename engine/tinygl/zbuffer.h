@@ -29,12 +29,16 @@ typedef unsigned short PIXEL;
 #define PSZSH 4 
 
 typedef struct {
-	int xsize,ysize;
+	int xsize, ysize;
 	int linesize; // line size, in bytes
 	int mode;
 
 	unsigned short *zbuf;
 	unsigned long *zbuf2;
+	unsigned char *shadow_mask_buf;
+	int shadow_color_r;
+	int shadow_color_g;
+	int shadow_color_b;
 	PIXEL *pbuf;
 	int frame_buffer_allocated;
 
@@ -59,6 +63,7 @@ void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize);
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b);
 // linesize is in BYTES
 void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize);
+//void ZB_setShadowMaskBuf(
 
 // zline.c
 
@@ -70,6 +75,10 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
 
 void ZB_setTexture(ZBuffer *zb, PIXEL *texture);
 void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1, 
+						 ZBufferPoint *p2, ZBufferPoint *p3);
+void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1, 
+						 ZBufferPoint *p2, ZBufferPoint *p3);
+void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p1, 
 						 ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,
 						   ZBufferPoint *p2, ZBufferPoint *p3);

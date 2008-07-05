@@ -46,6 +46,7 @@ struct Shadow {
 	std::string name;
 	Vector3d pos;
 	SectorListType planeList;
+	byte *shadowMask;
 	bool active;
 };
 
@@ -132,8 +133,8 @@ public:
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
-	void setupDrawShadow();
-	void finishDrawShadow();
+	void setShadowValid(int);
+	void setActivateShadow(int, bool);
 
 	void setConstrain(bool constrain) {
 		_constrain = constrain;

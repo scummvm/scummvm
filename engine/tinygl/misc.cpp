@@ -82,6 +82,18 @@ void glopEnableDisable(GLContext *c, TGLParam *p) {
 		else
 			c->offset_states &= ~TGL_OFFSET_LINE;
 		break; 
+	case TGL_SHADOW_MASK_MODE:
+		if (v)
+			c->shadow_mode |= 1;
+		else
+			c->shadow_mode &= ~1;
+		break; 
+	case TGL_SHADOW_MODE:
+		if (v)
+			c->shadow_mode |= 2;
+		else
+			c->shadow_mode &= ~2;
+		break; 
 	default:
 		if (code>=TGL_LIGHT0 && code<TGL_LIGHT0+MAX_LIGHTS) {
 			gl_enable_disable_light(c,code - TGL_LIGHT0, v);

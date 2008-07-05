@@ -260,7 +260,9 @@ typedef struct GLContext {
   float offset_factor;
   float offset_units;
   int offset_states;
-  
+
+  int shadow_mode;
+
   /* specular buffer. could probably be shared between contexts, 
     but that wouldn't be 100% thread safe */
   GLSpecBuf *specbuf_first;

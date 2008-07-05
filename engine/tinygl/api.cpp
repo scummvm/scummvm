@@ -604,3 +604,15 @@ void tglDebug(int mode) {
 	GLContext *c = gl_get_context();
 	c->print_flag = mode;
 }
+
+void tglSetShadowMaskBuf(unsigned char *buf) {
+	GLContext *c = gl_get_context();
+	c->zb->shadow_mask_buf = buf;
+}
+
+void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b) {
+	GLContext *c = gl_get_context();
+	c->zb->shadow_color_r = r << 8;
+	c->zb->shadow_color_g = g << 8;
+	c->zb->shadow_color_b = b << 8;
+}

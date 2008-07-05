@@ -125,6 +125,8 @@ enum {
 	TGL_POLYGON_OFFSET_POINT		= 0x2A01,
 	TGL_POLYGON_OFFSET_LINE			= 0x2A02,
 	TGL_POLYGON_OFFSET_FILL			= 0x8037,
+	TGL_SHADOW_MASK_MODE			= 0x0C40,
+	TGL_SHADOW_MODE					= 0x0C41,
 
 	// Display Lists
 	TGL_COMPILE						= 0x1300,
@@ -782,6 +784,9 @@ void tglHint(int target, int mode);
 void tglGetIntegerv(int pname, int *params);
 void tglGetFloatv(int pname, float *v);
 void tglFrontFace(int mode);
+
+void tglSetShadowMaskBuf(unsigned char *buf);
+void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);
 
 // opengl 1.2 arrays
 void tglEnableClientState(TGLenum array);

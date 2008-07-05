@@ -578,6 +578,9 @@
 				<File
 					RelativePath="..\..\engine\tinygl\ztriangle.h">
 				</File>
+				<File
+					RelativePath="..\..\engine\tinygl\ztriangle_shadow.cpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="imuse">

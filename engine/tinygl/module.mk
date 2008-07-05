@@ -22,7 +22,8 @@ MODULE_OBJS := \
 	zbuffer.o \
 	zline.o \
 	zmath.o \
-	ztriangle.o
+	ztriangle.o \
+	ztriangle_shadow.o
 
 # Include common rules
 include $(srcdir)/rules.mk

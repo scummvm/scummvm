@@ -388,7 +388,13 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 	}
 #endif
     
-	if (c->texture_2d_enabled) {
+	if (c->shadow_mode & 1) {
+		assert(c->zb->shadow_mask_buf);
+		ZB_fillTriangleFlatShadowMask(c->zb, &p0->zp, &p1->zp, &p2->zp);
+	} else if (c->shadow_mode & 2) {
+		assert(c->zb->shadow_mask_buf);
+		ZB_fillTriangleFlatShadow(c->zb, &p0->zp, &p1->zp, &p2->zp);
+	} else if (c->texture_2d_enabled) {
 #ifdef PROFILE
 		count_triangles_textured++;
 #endif

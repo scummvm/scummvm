@@ -78,7 +78,11 @@ public:
 
 	virtual void startActorDraw(Vector3d pos, float yaw, float pitch, float roll) = 0;
 	virtual void finishActorDraw() = 0;
-	virtual void setupShadower(Shadow *shadow) = 0;
+	virtual void setShadow(Shadow *shadow) = 0;
+	virtual void drawShadowPlanes() = 0;
+	virtual void setShadowMode() = 0;
+	virtual void clearShadowMode() = 0;
+	virtual void setShadowColor(byte r, byte g, byte b) = 0;
 
 	virtual void set3DMode() = 0;
 
@@ -296,6 +300,9 @@ protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;
 	Shadow *_currentShadowArray;
+	unsigned char _shadowColorR;
+	unsigned char _shadowColorG;
+	unsigned char _shadowColorB;
 };
 
 extern Driver *g_driver;

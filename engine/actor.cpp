@@ -62,7 +62,8 @@ Actor::Actor(const char *name) :
 	_shadowArray = new Shadow[5];
 
 	for (int i = 0; i < 5; i++) {
-		_shadowArray[i].active = true;
+		_shadowArray[i].active = false;
+		_shadowArray[i].shadowMask = NULL;
 	}
 
 	for (int i = 0; i < 10; i++) {
@@ -599,12 +600,36 @@ void Actor::draw() {
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
+	if (!g_driver->isHardwareAccelerated()/* && g_engine->getFlagRefreshShadowMask()*/) {
+		for (int l = 0; l < 5; l++) {
+			if (!_shadowArray[l].active)
+				continue;
+			g_driver->setShadow(&_shadowArray[l]);
+			g_driver->drawShadowPlanes();
+			g_driver->setShadow(NULL);
+		}
+	}
+
 	if (!_costumeStack.empty()) {
-		setupDrawShadow();
+		Costume *costume = _costumeStack.back();
+		if (!g_driver->isHardwareAccelerated()) {
+			for (int l = 0; l < 5; l++) {
+				if (!_shadowArray[l].active)
+					continue;
+				g_driver->setShadow(&_shadowArray[l]);
+				g_driver->setShadowMode();
+				g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+				costume->draw();
+				g_driver->finishActorDraw();
+				g_driver->setShadow(NULL);
+				g_driver->clearShadowMode();
+			}
+		}
+
+		// normal draw actor
 		g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
-		_costumeStack.back()->draw();
+		costume->draw();
 		g_driver->finishActorDraw();
-		finishDrawShadow();
 	}
 }
 
@@ -640,6 +665,20 @@ void Actor::setActiveShadow(int shadowId) {
 	assert(shadowId >= 0 && shadowId <= 4);
 
 	_activeShadowSlot = shadowId;
+	_shadowArray[_activeShadowSlot].active = true;
+}
+
+void Actor::setShadowValid(int valid) {
+/*	if (valid == -1)
+		_shadowArray[_activeShadowSlot].active = false;
+	else
+		_shadowArray[_activeShadowSlot].active = true;*/
+}
+
+void Actor::setActivateShadow(int shadowId, bool state) {
+	assert(shadowId >= 0 && shadowId <= 4);
+
+	_shadowArray[shadowId].active = state;
 }
 
 void Actor::setShadowPoint(Vector3d pos) {
@@ -654,16 +693,9 @@ void Actor::clearShadowPlanes() {
 		while (!shadow->planeList.empty()) {
 			shadow->planeList.pop_back();
 		}
+		delete[] shadow->shadowMask;
+		shadow->shadowMask = NULL;
+		shadow->active = false;
 	}
 }
 
-void Actor::setupDrawShadow() {
-	if (_activeShadowSlot == -1)
-		return;
-
-	g_driver->setupShadower(_shadowArray);
-}
-
-void Actor::finishDrawShadow() {
-	g_driver->setupShadower(NULL);
-}

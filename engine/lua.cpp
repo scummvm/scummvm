@@ -1431,7 +1431,7 @@ static void SetShadowColor() {
 	int g = check_int(2);
 	int b = check_int(3);
 
-	g_engine->setShadowColor(Color(r, g, b));
+	g_driver->setShadowColor(r, g, b);
 }
 
 static void KillActorShadows() {
@@ -1483,20 +1483,22 @@ static void AddShadowPlane() {
 static void ActivateActorShadow() {
 	DEBUG_FUNCTION();
 
-	/*Actor *act = */check_actor(1);
-	/*int shadowId = */check_int(2);
-	/*bool state = */getbool(3);
+	Actor *act = check_actor(1);
+	int shadowId = check_int(2);
+	bool state = getbool(3);
 
-	//act->setActivateShadow(shadowId, state);
+	act->setActivateShadow(shadowId, state);
 }
 
 static void SetActorShadowValid() {
 	DEBUG_FUNCTION();
 
-	/*Actor *act = */check_actor(1);
-	/*int valid = */check_int(2);
+	Actor *act = check_actor(1);
+	int valid = check_int(2);
 
-	//act->setShadowValid(valid);
+	warning("SetActorShadowValid(%d) unknown purpose", valid);
+
+	act->setShadowValid(valid);
 }
 
 // 0 - translate from '/msgId/'

@@ -26,6 +26,7 @@
 #include "common/sys.h"
 #include "common/endian.h"
 #include "common/debug.h"
+#include "common/vector3d.h"
 
 #include "engine/colormap.h"
 #include "engine/material.h"
@@ -184,10 +185,61 @@ bool DriverTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
+void tglShadowProjection(Vector3d *light, Vector3d *plane, Vector3d *normal) {
+	// Based on GPL shadow projection example by
+	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
+	float d, c;
+	float mat[16];
+	float nx, ny, nz, lx, ly, lz, px, py, pz;
+
+	nx = normal->x();
+	ny = normal->y();
+	nz = -normal->z(); // for some unknown for me reason it need negate
+	lx = light->x();
+	ly = light->y();
+	lz = light->z();
+	px = plane->x();
+	py = plane->y();
+	pz = plane->z();
+
+	d = nx * lx + ny * ly + nz * lz;
+	c = px * nx + py * ny + pz * nz - d;
+
+	mat[0] = lx * nx + c;
+	mat[4] = ny * lx;
+	mat[8] = nz * lx;
+	mat[12] = -lx * c - lx * d;
+
+	mat[1] = nx * ly;
+	mat[5] = ly * ny + c;
+	mat[9] = nz * ly;
+	mat[13] = -ly * c - ly * d;
+
+	mat[2] = nx * lz;
+	mat[6] = ny * lz;
+	mat[10] = lz * nz + c;
+	mat[14] = -lz * c - lz * d;
+
+	mat[3] = nx;
+	mat[7] = ny;
+	mat[11] = nz;
+	mat[15] = -d;
+
+	tglMultMatrixf(mat);
+}
+
 void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
+	if (_currentShadowArray) {
+		assert(_currentShadowArray->shadowMask);
+		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
+		SectorListType::iterator i = _currentShadowArray->planeList.begin();
+		Sector *shadowSector = *i;
+		tglShadowProjection(&_currentShadowArray->pos, &shadowSector->getVertices()[1], &shadowSector->getNormal());
+	}
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(yaw, 0, 0, 1);
 	tglRotatef(pitch, 1, 0, 0);
@@ -199,24 +251,38 @@ void DriverTinyGL::finishActorDraw() {
 	tglPopMatrix();
 	tglDisable(TGL_TEXTURE_2D);
 
-/*	// enable to draw shadow planes (Special Sectors)
-	int k, r;
-	if (!_currentShadowArray)
-		return;
+	if (_currentShadowArray) {
+		tglSetShadowMaskBuf(NULL);
+	}
+}
 
-	tglColor3f(0.8,0.8,0.8);
-	for (r = 0; r < 5; r++) {
-		_currentShadowArray[r].planeList.begin();
-		for (SectorListType::iterator i = _currentShadowArray[r].planeList.begin(); i != _currentShadowArray[r].planeList.end(); i++) {
-			Sector *shadowSector = *i;
-			tglBegin(TGL_POLYGON);
-			tglNormal3f(shadowSector->getNormal().x(), shadowSector->getNormal().y(), shadowSector->getNormal().z());
-			for (k = 0; k < shadowSector->getNumVertices(); k++) {
-				tglVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
-			}
-			tglEnd();
+void DriverTinyGL::drawShadowPlanes() {
+	tglEnable(TGL_SHADOW_MASK_MODE);
+	if (_currentShadowArray->shadowMask)
+		memset(_currentShadowArray->shadowMask, 0, _screenWidth * _screenHeight);
+	else
+		_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
+
+	tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
+	_currentShadowArray->planeList.begin();
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+		Sector *shadowSector = *i;
+		tglBegin(TGL_POLYGON);
+		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
+			tglVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
 		}
-	}*/
+		tglEnd();
+	}
+	tglSetShadowMaskBuf(NULL);
+	tglDisable(TGL_SHADOW_MASK_MODE);
+}
+
+void DriverTinyGL::setShadowMode() {
+	tglEnable(TGL_SHADOW_MODE);
+}
+
+void DriverTinyGL::clearShadowMode() {
+	tglDisable(TGL_SHADOW_MODE);
 }
 
 void DriverTinyGL::set3DMode() {
@@ -224,8 +290,18 @@ void DriverTinyGL::set3DMode() {
 	tglEnable(TGL_DEPTH_TEST);
 }
 
-void DriverTinyGL::setupShadower(Shadow *shadow) {
+void DriverTinyGL::setShadow(Shadow *shadow) {
 	_currentShadowArray = shadow;
+	if (shadow)
+		tglDisable(TGL_LIGHTING);
+	else
+		tglEnable(TGL_LIGHTING);
+}
+
+void DriverTinyGL::setShadowColor(byte r, byte g, byte b) {
+	_shadowColorR = r;
+	_shadowColorG = g;
+	_shadowColorB = b;
 }
 
 void DriverTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {

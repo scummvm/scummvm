@@ -10,3 +10,4 @@ The changes made from the original version of TinyGL 0.4 are:
 * Removed unneeded code.
 * Introduced second 32-bit z-buffer for 3d objects only,
   and kept 16-bit only for static z-buffer bitmaps.
+* Added support for drawing in shadow mode (generate mask and polygon shadow).

@@ -358,6 +358,7 @@ void Engine::updateDisplayScene() {
 				a->draw();
 			a->undraw(a->inSet(_currScene->name()) && a->visible());
 		}
+		flagRefreshShadowMask(false);
 
 		// Draw overlying scene components
 		// The overlay objects should be drawn on top of everything else,
@@ -413,6 +414,7 @@ void Engine::mainLoop() {
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
 	_savegameFileName = NULL;
+	_refreshShadowMask = false;
 
 	for (;;) {
 		if (_savegameLoadRequest) {
@@ -644,6 +646,7 @@ void Engine::setScene(const char *name) {
 	if (b == NULL)
 		warning("Could not find scene file %s\n", name);
 	_currScene = new Scene(name, b->data(), b->len());
+	flagRefreshShadowMask(true);
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after creating the new one
@@ -672,8 +675,4 @@ void Engine::setTextSpeed(int speed) {
 	if (speed > 10)
 		_textSpeed = 10;
 	_textSpeed = speed;
-}
-
-void Engine::setShadowColor(Color c) {
-	_shadowColor = c;
 }

@@ -131,7 +131,19 @@ void DriverGL::finishActorDraw() {
 	glDisable(GL_TEXTURE_2D);
 }
 
-void DriverGL::setupShadower(Shadow *shadow) {
+void DriverGL::setShadow(Shadow *shadow) {
+}
+
+void DriverGL::drawShadowPlanes() {
+}
+
+void DriverGL::setShadowMode() {
+}
+
+void DriverGL::clearShadowMode() {
+}
+
+void DriverGL::setShadowColor(byte r, byte g, byte b) {
 }
 
 void DriverGL::set3DMode() {
