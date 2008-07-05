@@ -97,6 +97,7 @@ public:
 	void checkOptionSettings();
 	void readOptionSettings();
 	void writeOptionSettings();
+	virtual void syncSoundSettings();
 
 	int talkSpeed() const { return _talkSpeed; }
 	void talkSpeed(int speed) { _talkSpeed = speed; }

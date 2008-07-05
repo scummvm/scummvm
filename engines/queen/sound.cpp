@@ -224,8 +224,7 @@ void PCSound::playSpeech(const char *base) {
 
 void PCSound::setVolume(int vol) {
 	Sound::setVolume(vol);
-	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
 	_music->setVolume(vol);
 }
 

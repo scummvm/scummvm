@@ -180,6 +180,10 @@ void QueenEngine::checkOptionSettings() {
 	}
 }
 
+void QueenEngine::syncSoundSettings() {
+	_sound->setVolume(ConfMan.getInt("music_volume"));
+}
+
 void QueenEngine::readOptionSettings() {
 	_sound->setVolume(ConfMan.getInt("music_volume"));
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
