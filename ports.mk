@@ -86,6 +86,9 @@ ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(OSXOPT)/lib/libmpeg2.a
 endif
 
+BUILD_DATE := `date +%y%m%d`
+#BUILD_DATE := rev`svn info | grep '^Revision' | sed -e 's/Revision: *//'`
+
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
@@ -124,8 +127,8 @@ osxsnap: bundle
 	#/Developer/Tools/SetFile -a V ./Residual-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder Residual-snapshot \
-					-volname "Residual snapshot" \
-					Residual-snapshot.dmg
+					-volname "Residual snapshot $(BUILD_DATE)" \
+					Residual-svn-$(BUILD_DATE).dmg
 	rm -rf Residual-snapshot
 
 #
