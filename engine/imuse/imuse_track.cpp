@@ -308,7 +308,7 @@ int Imuse::getCurMusicPan() {
 			return track->pan / 1000;
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 int Imuse::getCurMusicVol() {
@@ -319,7 +319,7 @@ int Imuse::getCurMusicVol() {
 			return track->vol / 1000;
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 void Imuse::fadeOutMusic(int duration) {

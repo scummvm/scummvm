@@ -122,21 +122,21 @@ static void LoadConstants(TProtoFunc* tf, ZIO* Z)
   ttype(o)=(lua_Type)-ezgetc(Z);
   switch ((unsigned)ttype(o))
   {
-   case -'N':
+   case (unsigned int)-'N':
         ttype(o)=LUA_T_NUMBER;
-   case LUA_T_NUMBER:
+   case (unsigned int)LUA_T_NUMBER:
 	doLoadNumber(nvalue(o),Z);
 	break;
-   case -'S':
+   case (unsigned int)-'S':
 	ttype(o)=LUA_T_STRING;
-   case LUA_T_STRING:
+   case (unsigned int)LUA_T_STRING:
 	tsvalue(o)=LoadTString(Z);
 	break;
-   case -'F':
+   case (unsigned int)-'F':
 	ttype(o)=LUA_T_PROTO;
-   case LUA_T_PROTO:
+   case (unsigned int)LUA_T_PROTO:
 	break;
-   case LUA_T_NIL:
+   case (unsigned int)LUA_T_NIL:
 	break;
    default:
 	luaL_verror("bad constant #%d in %s: type=%d [%s]",

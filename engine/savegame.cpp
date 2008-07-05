@@ -98,7 +98,7 @@ void SaveGame::endSection() {
 		gzwrite(_fileHandle, _sectionBuffer, _sectionSize);
 	}
 	delete[] _sectionBuffer;
-	_currentSection = NULL;
+	_sectionBuffer = NULL;
 }
 
 void SaveGame::read(void *data, int size) {
