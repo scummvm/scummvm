@@ -192,9 +192,10 @@ void tglShadowProjection(Vector3d *light, Vector3d *plane, Vector3d *normal) {
 	float mat[16];
 	float nx, ny, nz, lx, ly, lz, px, py, pz;
 
-	nx = normal->x();
-	ny = normal->y();
-	nz = -normal->z(); // for some unknown for me reason it need negate
+	// for some unknown for me reason normal need negation
+	nx = -normal->x();
+	ny = -normal->y();
+	nz = -normal->z();
 	lx = light->x();
 	ly = light->y();
 	lz = light->z();
@@ -238,7 +239,7 @@ void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float ro
 		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
 		Sector *shadowSector = *i;
-		tglShadowProjection(&_currentShadowArray->pos, &shadowSector->getVertices()[1], &shadowSector->getNormal());
+		tglShadowProjection(&_currentShadowArray->pos, &shadowSector->getVertices()[0], &shadowSector->getNormal());
 	}
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(yaw, 0, 0, 1);
