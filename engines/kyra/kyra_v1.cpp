@@ -247,8 +247,14 @@ void KyraEngine_v1::delayWithTicks(int ticks) {
 void KyraEngine_v1::registerDefaultSettings() {
 	if (_flags.gameID != GI_KYRA3)
 		ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
-	if (_flags.fanLang != Common::UNK_LANG)
-		ConfMan.registerDefault("subtitles", true);
+	if (_flags.fanLang != Common::UNK_LANG) {
+		// HACK/WORKAROUND: Since we can't use registerDefault here to overwrite
+		// the global subtitles settings, we're using this hack to enable subtitles
+		// for fan translations
+		const Common::ConfigManager::Domain *cur = ConfMan.getActiveDomain();
+		if (!cur || (cur && cur->get("subtitles").empty()))
+			ConfMan.setBool("subtitles", true);
+	}
 }
 
 void KyraEngine_v1::readSettings() {

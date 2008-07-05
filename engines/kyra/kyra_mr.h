@@ -188,6 +188,7 @@ private:
 	int _mainMenuStringsSize;
 
 	static const char * const _mainMenuSpanishFan[];
+	static const char * const _mainMenuItalianFan[];
 
 	// animator
 	uint8 *_gamePlayBuffer;

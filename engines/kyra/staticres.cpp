@@ -1987,6 +1987,13 @@ const char * const KyraEngine_MR::_mainMenuSpanishFan[] = {
 	"Finalizar"
 };
 
+const char * const KyraEngine_MR::_mainMenuItalianFan[] = {
+	"Nuova Partita",
+	"Introduzione",
+	"Carica una partita",
+	"Esci dal gioco"
+};
+
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {

@@ -346,6 +346,9 @@ void KyraEngine_MR::initMainMenu() {
 	if (_flags.lang == Common::ES_ESP) {
 		for (int i = 0; i < 4; ++i)
 			data.strings[i] = _mainMenuSpanishFan[i];
+	} else if (_flags.lang == Common::IT_ITA) {
+		for (int i = 0; i < 4; ++i)
+			data.strings[i] = _mainMenuItalianFan[i];
 	}
 
 	MainMenu::Animation anim;
