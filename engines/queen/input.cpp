@@ -121,6 +121,8 @@ void Input::delay(uint amount) {
 
 			case Common::EVENT_QUIT:
 				_vm->quitGame();
+				if (_cutawayRunning)
+					_cutawayQuit = true;
 				return;
 
 			default:
