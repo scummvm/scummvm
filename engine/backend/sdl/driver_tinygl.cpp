@@ -185,7 +185,7 @@ bool DriverTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
-void tglShadowProjection(Vector3d *light, Vector3d *plane, Vector3d *normal) {
+void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -193,15 +193,15 @@ void tglShadowProjection(Vector3d *light, Vector3d *plane, Vector3d *normal) {
 	float nx, ny, nz, lx, ly, lz, px, py, pz;
 
 	// for some unknown for me reason normal need negation
-	nx = -normal->x();
-	ny = -normal->y();
-	nz = -normal->z();
-	lx = light->x();
-	ly = light->y();
-	lz = light->z();
-	px = plane->x();
-	py = plane->y();
-	pz = plane->z();
+	nx = -normal.x();
+	ny = -normal.y();
+	nz = -normal.z();
+	lx = light.x();
+	ly = light.y();
+	lz = light.z();
+	px = plane.x();
+	py = plane.y();
+	pz = plane.z();
 
 	d = nx * lx + ny * ly + nz * lz;
 	c = px * nx + py * ny + pz * nz - d;
@@ -239,7 +239,7 @@ void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float ro
 		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
 		Sector *shadowSector = *i;
-		tglShadowProjection(&_currentShadowArray->pos, &shadowSector->getVertices()[0], &shadowSector->getNormal());
+		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal());
 	}
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(yaw, 0, 0, 1);
