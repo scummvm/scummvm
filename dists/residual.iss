@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Residual
-AppVerName=Residual SVN snapshott version
+AppVerName=Residual SVN snapshot version
 DefaultDirName={pf}\Residual
 DefaultGroupName=Residual
 UninstallDisplayIcon={app}\residual.exe
