@@ -104,14 +104,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 
 		if (info.basic.param1 == 0x74) {
 			// XMIDI_CONTROLLER_FOR_LOOP
-			byte *pos = _position._play_pos - 3;
-			if (_loopCount < 0 || _loop[_loopCount].pos != pos) {
-				if (_loopCount < ARRAYSIZE(_loop) - 1)
-					_loopCount++;
+			byte *pos = _position._play_pos;
+			if (_loopCount < ARRAYSIZE(_loop) - 1)
+				_loopCount++;
 
-				_loop[_loopCount].pos = pos;
-				_loop[_loopCount].repeat = info.basic.param2;
-			}
+			_loop[_loopCount].pos = pos;
+			_loop[_loopCount].repeat = info.basic.param2;
 		} else if (info.basic.param1 == 0x75) {
 			// XMIDI_CONTROLLER_NEXT_BREAK
 			if (_loopCount >= 0) {
