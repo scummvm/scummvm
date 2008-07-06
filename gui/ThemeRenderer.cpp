@@ -196,6 +196,9 @@ bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 bool ThemeRenderer::loadTheme(Common::String themeName) {
 	unloadTheme();
 
+	if (themeName == "builtin" && !loadDefaultXML())
+		error("Could not load default embeded theme.");
+
 	if (!loadThemeXML(themeName)) {
 		warning("Could not parse custom theme '%s'.\nFalling back to default theme", themeName.c_str());
 		
