@@ -95,6 +95,9 @@ public:
 	bool isDisplaying() { 
 		return _displaying;
 	}
+	bool isLoaded() {
+		return _loaded;
+	}
 
 	/**
 	  * Get the next virtual key event in the event queue.
@@ -118,6 +121,7 @@ private:
 	void runLoop();
 	void redraw();
 
+	bool _loaded;
 	bool _displaying;
 	bool _needRedraw;
 

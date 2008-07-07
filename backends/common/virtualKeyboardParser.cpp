@@ -23,7 +23,7 @@
  *
  */
 
-#include "gui/virtualKeyboardParser.h"
+#include "backends/common/virtualKeyboardParser.h"
 
 #include "common/keyboard.h"
 #include "graphics/imageman.h"

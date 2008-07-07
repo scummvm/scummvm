@@ -1049,6 +1049,62 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="common"
+				>
+				<File
+					RelativePath="..\..\backends\common\virtualKeyboard.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\virtualKeyboard.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\virtualKeyboardParser.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\virtualKeyboardParser.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="gui"
@@ -1243,22 +1299,6 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\ThemeModern.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\virtualKeyboard.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\virtualKeyboard.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\virtualKeyboardParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\virtualKeyboardParser.h"
 				>
 			</File>
 			<File

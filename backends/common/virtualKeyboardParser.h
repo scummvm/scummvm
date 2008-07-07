@@ -27,7 +27,7 @@
 #define GUI_VIRTUAL_KEYBOARD_PARSER
 
 #include "common/xmlparser.h"
-#include "gui/virtualKeyboard.h"
+#include "backends/common/virtualKeyboard.h"
 
 namespace GUI {
 

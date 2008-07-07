@@ -193,7 +193,6 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	}
 
 	_vk = new GUI::VirtualKeyboard();
-	_vk->loadKeyboardPack("test");
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -396,6 +395,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				if (_vk->isDisplaying()) {
 					_vk->hide();
 				} else {
+					if (!_vk->isLoaded()) _vk->loadKeyboardPack("test");
 					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
 					if (!isPaused) g_engine->pauseEngine(true);
 					_vk->show();

@@ -28,7 +28,7 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
-#include "gui/virtualKeyboard.h"
+#include "backends/common/virtualKeyboard.h"
 
 /*
 At some point we will remove pollEvent from OSystem and change

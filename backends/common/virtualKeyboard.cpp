@@ -23,8 +23,8 @@
  *
  */
 
-#include "gui/virtualKeyboard.h"
-#include "gui/virtualKeyboardParser.h"
+#include "backends/common/virtualKeyboard.h"
+#include "backends/common/virtualKeyboardParser.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "graphics/imageman.h"
@@ -37,6 +37,7 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
 	_system = g_system;
 
 	_parser = new VirtualKeyboardParser(this);
+	_loaded = _displaying = false;
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
@@ -116,6 +117,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 		}
 	}
 
+	_loaded = true;
 	return true;
 }
 
