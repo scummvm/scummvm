@@ -649,6 +649,7 @@ void Gfx::freeLabels() {
 		delete _labels[i];
 	}
 	_labels.clear();
+	_floatingLabel = NO_FLOATING_LABEL;
 }
 
 void Gfx::drawLabels() {
