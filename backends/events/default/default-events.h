@@ -28,6 +28,7 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
+#include "gui/virtualKeyboard.h"
 
 /*
 At some point we will remove pollEvent from OSystem and change
@@ -43,6 +44,8 @@ use a subclass of EventProvider.
 
 class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
+
+	GUI::VirtualKeyboard *_vk;
 
 	Common::Point _mousePos;
 	int _buttonState;

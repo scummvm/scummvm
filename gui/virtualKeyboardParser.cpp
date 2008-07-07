@@ -130,8 +130,8 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 			if (resX == scrX && resY == scrY) {
 				_mode->resolution = res;
 				break;
-			} else if (resX < scrX && resY < scrY) {
-				uint16 newDiff = (scrX - resX) + (scrY - resY);
+			} else {
+				uint16 newDiff = ABS(scrX - resX) + ABS(scrY - resY);
 				if (newDiff < diff) {
 					diff = newDiff;
 					_mode->resolution = res;

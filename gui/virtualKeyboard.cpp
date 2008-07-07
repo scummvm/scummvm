@@ -26,12 +26,13 @@
 #include "gui/virtualKeyboard.h"
 #include "gui/virtualKeyboardParser.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "graphics/imageman.h"
 #include "common/unzip.h"
 
 namespace GUI {
 
-VirtualKeyboard::VirtualKeyboard() : _currentMode(0) {
+VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
 	assert(g_system);
 	_system = g_system;
 
@@ -51,8 +52,8 @@ void VirtualKeyboard::reset() {
 	_hAlignment = kAlignCentre;
 	_vAlignment = kAlignBottom;
 	_keyQueue.clear();
+	_keyDown = 0;
 	_displaying = false;
-
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
@@ -115,8 +116,6 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 		}
 	}
 
-	reposition();
-
 	return true;
 }
 
@@ -175,29 +174,86 @@ void VirtualKeyboard::processClick(int16 x, int16 y)
 	}
 }
 
+void VirtualKeyboard::switchMode(Mode *newMode) {
+	_currentMode = newMode;
+	reposition();
+	_needRedraw = true;
+}
+
 void VirtualKeyboard::switchMode(const Common::String& newMode) {
-	if (!_modes.contains(newMode)) return;
+	if (!_modes.contains(newMode)) {
+		warning("Keyboard mode '%s' unknown", newMode.c_str());
+		return;
+	}
 	_currentMode = &_modes[newMode];
 	reposition();
-	draw();
+	_needRedraw = true;
 }
 
 void VirtualKeyboard::show() {
+	switchMode(_initialMode);
 	_displaying = true;
 	runLoop();
 }
 
-void VirtualKeyboard::runLoop() {
-
-	while (_displaying) {
-
-	}
+void VirtualKeyboard::hide() {
+	_displaying = false;
 }
 
-void VirtualKeyboard::draw() {
+void VirtualKeyboard::runLoop() {
+	Common::EventManager *eventMan = _system->getEventManager();
+	
+	_system->showOverlay();
+	// capture mouse clicks
+	while (_displaying) {
+		if (_needRedraw) redraw();
+
+		Common::Event event;
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				_mouseDown = event.mouse;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (ABS(_mouseDown.x - event.mouse.x) < 5
+				 && ABS(_mouseDown.y - event.mouse.y) < 5)
+					processClick(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_QUIT:
+				_system->quit();
+				return;
+			}
+		}
+	}
+	// clear keyboard from overlay
+	_system->hideOverlay();
+}
+
+void VirtualKeyboard::redraw() {
+	_needRedraw = false;
+	_system->clearOverlay();
 	_system->copyRectToOverlay((OverlayColor*)_currentMode->image->pixels, 
-		_currentMode->image->pitch, _pos.x, _pos.y, 
+		_currentMode->image->w, _pos.x, _pos.y, 
 		_currentMode->image->w, _currentMode->image->h);
+	_system->updateScreen();
+}
+
+bool VirtualKeyboard::pollEvent(Common::Event &event) {
+	if (_displaying || (_keyQueue.empty() && !_keyDown))
+		return false;
+
+	event.synthetic = false; // ???
+	if (_keyDown) {
+		event.type = Common::EVENT_KEYUP;
+		event.kbd = *_keyDown;
+		_keyQueue.remove_at(0);
+		_keyDown = 0;
+	} else {
+		_keyDown = _keyQueue.begin();
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd = *_keyDown;
+	}
+	return true;
 }
 
 } // end of namespace GUI

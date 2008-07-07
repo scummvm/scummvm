@@ -28,6 +28,7 @@
 
 class OSystem;
 
+#include "common/events.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/imagemap.h"
@@ -42,7 +43,7 @@ class VirtualKeyboardParser;
 
 
 class VirtualKeyboard {
-private:
+
 	/** Type of key event */
 	enum EventType {
 		kEventKey,
@@ -90,6 +91,17 @@ public:
 
 	bool loadKeyboardPack(Common::String packName);
 	void show();
+	void hide();
+	bool isDisplaying() { 
+		return _displaying;
+	}
+
+	/**
+	  * Get the next virtual key event in the event queue.
+	  * @param event	point to an Event struct, which will be filled with the event data.
+	  * @return true if an event was retrieved.
+	  */
+	bool pollEvent(Common::Event &event);
 
 private:
 	OSystem	*_system;
@@ -100,12 +112,14 @@ private:
 	// TODO : sort order of all this stuff
 	void reset();
 	void reposition();
+	void switchMode(Mode *newMode);
 	void switchMode(const Common::String& newMode);
 	void processClick(int16 x, int16 y);
 	void runLoop();
-	void draw();
+	void redraw();
 
 	bool _displaying;
+	bool _needRedraw;
 
 	ModeMap _modes;
 	Mode *_initialMode;
@@ -115,7 +129,10 @@ private:
 	HorizontalAlignment  _hAlignment;
 	VerticalAlignment    _vAlignment;
 
+	Common::Point _mouseDown;
+
 	Common::Array<Common::KeyState> _keyQueue;
+	Common::KeyState *_keyDown;
 
 };
 

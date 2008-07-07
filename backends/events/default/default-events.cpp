@@ -191,6 +191,9 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 
 		_hasPlaybackEvent = false;
 	}
+
+	_vk = new GUI::VirtualKeyboard();
+	_vk->loadKeyboardPack("test");
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -349,7 +352,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
 
-	result = _boss->pollEvent(event);
+	// poll virtual keyboard
+	result = _vk->pollEvent(event);
+	// if no vk event, then poll backend
+	if (!result) result = _boss->pollEvent(event);
 
 	if (_recordMode != kPassthrough)  {
 
@@ -384,6 +390,19 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
+
+			// quick hack to show/hide keyboard
+			if (event.kbd.keycode == Common::KEYCODE_F6 && event.kbd.flags == 0) {
+				if (_vk->isDisplaying()) {
+					_vk->hide();
+				} else {
+					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
+					if (!isPaused) g_engine->pauseEngine(true);
+					_vk->show();
+					if (!isPaused) g_engine->pauseEngine(false);
+				}
+			}
+
 			break;
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
