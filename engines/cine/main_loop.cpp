@@ -62,7 +62,7 @@ static void processEvent(Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_QUIT:
-		g_cine->_quit = 1;
+		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 		break;
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
@@ -292,7 +292,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			if ("quit"[menuCommandLen] == (char)di) {
 				++menuCommandLen;
 				if (menuCommandLen == 4) {
-				g_cine->_quit = 1;
+				g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 				}
 			} else {
 				menuCommandLen = 0;
@@ -301,7 +301,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		manageEvents();
 
-	} while (!g_cine->_quit && _danKeysPressed != 7);
+	} while (!_eventMan->shouldQuit() && _danKeysPressed != 7);
 
 	hideMouse();
 	g_sound->stopMusic();

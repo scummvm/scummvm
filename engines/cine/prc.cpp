@@ -25,6 +25,7 @@
 
 
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"
@@ -53,7 +54,7 @@ void loadPrc(const char *pPrcName) {
 
 	// This is copy protection. Used to hang the machine
 	if (!scumm_stricmp(pPrcName, "L201.ANI")) {
-		g_cine->_quit = 1;
+		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 		return;
 	}
 

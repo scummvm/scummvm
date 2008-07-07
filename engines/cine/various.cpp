@@ -756,7 +756,7 @@ void CineEngine::makeSystemMenu(void) {
 			{
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-					_quit = 1;
+					g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 				}
 				break;
 			}
