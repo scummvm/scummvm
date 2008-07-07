@@ -335,11 +335,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\imageMap.cpp"
+				RelativePath="..\..\common\image-map.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\imageMap.h"
+				RelativePath="..\..\common\image-map.h"
 				>
 			</File>
 			<File
@@ -1053,55 +1053,19 @@
 				Name="common"
 				>
 				<File
-					RelativePath="..\..\backends\common\virtualKeyboard.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\backends\common\virtualKeyboard.h"
+					RelativePath="..\..\backends\common\virtual-keyboard-parser.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtualKeyboardParser.cpp"
+					RelativePath="..\..\backends\common\virtual-keyboard-parser.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtualKeyboardParser.h"
+					RelativePath="..\..\backends\common\virtual-keyboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\virtual-keyboard.h"
 					>
 				</File>
 			</Filter>

@@ -23,8 +23,8 @@
  *
  */
 
-#include "backends/common/virtualKeyboard.h"
-#include "backends/common/virtualKeyboardParser.h"
+#include "backends/common/virtual-keyboard.h"
+#include "backends/common/virtual-keyboard-parser.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "graphics/imageman.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/imageMap.h"
+#include "common/image-map.h"
 
 namespace Common {
 

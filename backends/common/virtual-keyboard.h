@@ -31,7 +31,7 @@ class OSystem;
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/imagemap.h"
+#include "common/image-map.h"
 #include "common/keyboard.h"
 #include "common/str.h"
 #include "graphics/surface.h"
