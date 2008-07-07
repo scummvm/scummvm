@@ -39,6 +39,16 @@ namespace Graphics {
 class VectorRenderer;
 struct DrawStep;
 
+struct TextStep {
+	struct { 
+		uint8 r, g, b;
+		bool set;
+	}
+	color; /** text color */
+
+	GUI::Theme::TextAlign align;
+};
+
 struct DrawStep {
 	struct { 
 		uint8 r, g, b;
@@ -294,7 +304,7 @@ public:
 	 * @see shadowDisable()
 	 */
 	virtual void shadowEnable(int offset) {
-		if (offset > 0)
+		if (offset >= 0)
 			_shadowOffset = offset;
 	}
 
@@ -346,13 +356,30 @@ public:
 		}
 	}
 
+	int stepGetRadius(const DrawStep &step, const Common::Rect &area) {
+		int radius = 0;
+
+		if (step.radius == 0xFF)
+			radius = MIN(area.width(), area.height()) / 2;
+		else
+			radius = step.radius;
+
+		if (step.scale != (1 << 16) && step.scale != 0)
+			radius = (radius * step.scale) >> 16;
+
+		return radius;
+	}
+
 	/**
 	 * DrawStep callback functions for each drawing feature 
 	 */
 	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step) {
-		uint16 x, y, w, h;
+		uint16 x, y, w, h, radius;
+
+		radius = stepGetRadius(step, area);
 		stepGetPositions(step, area, x, y, w, h);
-		drawCircle(x, y, (step.radius * step.scale) >> 16);
+
+		drawCircle(x + radius, y + radius, radius);
 	}
 
 	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step) {
@@ -370,8 +397,7 @@ public:
 	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		/* HACK! Radius of the rounded squares isn't scaled */
-		drawRoundedSquare(x, y, step.radius, w, h);
+		drawRoundedSquare(x, y, stepGetRadius(step, area), w, h);
 	}
 
 	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step) {

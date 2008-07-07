@@ -95,6 +95,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	step->scale = (1 << 16);
 	step->shadow = 0;
 	step->stroke = 1;
+	step->radius = 0xFF;
 
 	return step;
 }
@@ -341,7 +342,11 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		Common::String functionName = stepNode->values["func"];
 
 		if (functionName == "roundedsq" || functionName == "circle") {
-			__PARSER_ASSIGN_INT(radius, "radius", true)
+			if (stepNode->values.contains("radius") && stepNode->values["radius"] == "auto") {
+				drawstep->radius = 0xFF;
+			} else {
+				__PARSER_ASSIGN_INT(radius, "radius", true);
+			}
 		}
 
 		if (functionName == "bevelsq") {

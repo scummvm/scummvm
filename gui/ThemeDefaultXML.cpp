@@ -57,6 +57,15 @@ bool ThemeRenderer::loadDefaultXML() {
 	"<drawdata id = 'button_hover' cache = false>"
 		"<drawstep func = 'roundedsq' radius = '8' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 3 />"
 	"</drawdata>"
+
+	"<drawdata id = 'checkbox_disabled' cache = false>"
+		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 0 />"
+	"</drawdata>"
+
+	"<drawdata id = 'checkbox_enabled' cache = false>"
+		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 0 />"
+		"<drawstep func = 'circle' radius = 'auto' fill = 'foreground' />"
+	"</drawdata>"
 "</render_info>"
 
 "<layout_info>"

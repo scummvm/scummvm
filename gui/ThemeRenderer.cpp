@@ -275,6 +275,7 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 	// TODO: Add text drawing.
 
 	addDirtyRect(r);
+	debugWidgetPosition(r);
 }
 
 void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
@@ -283,21 +284,30 @@ void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo sta
 
 	drawDD(kDDSeparator, r);
 	addDirtyRect(r);
+
+	debugWidgetPosition(r);
 }
 
 void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
-	drawDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r);
-
 	Common::Rect r2 = r;
-	r2.left += 16; // TODO: add variable for checkbox text offset.
+	int checkBoxSize = getFontHeight();
+
+	if (checkBoxSize > r.height())
+		checkBoxSize = r.height();
+
+	r2.bottom = r2.top + checkBoxSize;
+	r2.right = r2.left + checkBoxSize;
+
+	drawDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2);
 
 	// TODO: text drawing
 //	getFont()->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, false);
 
 	addDirtyRect(r);
+	debugWidgetPosition(r);
 }
 
 void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -312,15 +322,68 @@ void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo
 	drawDD(kDDSliderFull, r2);
 
 	addDirtyRect(r);
+	debugWidgetPosition(r);
 }
 
 void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
 	if (!ready())
 		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
+	if (!ready())
+		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
+	if (!ready())
+		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	debugWidgetPosition(r);
+}
+
+void ThemeRenderer::debugWidgetPosition(const Common::Rect &r) {
+	_screen->hLine(r.left, r.top, r.right, 0xFFFF);
+	_screen->hLine(r.left, r.bottom, r.right, 0xFFFF);
+	_screen->vLine(r.left, r.top, r.bottom, 0xFFFF);
+	_screen->vLine(r.right, r.top, r.bottom, 0xFFFF);
 }
 
 void ThemeRenderer::updateScreen() {
-	renderDirtyScreen();
+//	renderDirtyScreen();
+	_vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {

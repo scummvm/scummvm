@@ -143,18 +143,18 @@ public:
 	int getCharWidth(byte c, FontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
 	/** Widget drawing */
-	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled) {}
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
 	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false) {}
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false);
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled);
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state = kStateEnabled);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state = kStateEnabled) {}
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state = kStateEnabled);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, WidgetStateInfo state = kStateEnabled);
-	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft) {}
-	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled) {}
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft);
+	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled);
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
-	void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {}
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state);
 	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {}
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {}
 
@@ -183,17 +183,6 @@ public:
 	bool ready() {
 		return _initOk && _themeOk;
 	}
-
-	// REMOVED: theme name is looked up in NewGUI and passed to the constructor
-/*	bool loadTheme() {
-		ConfMan.registerDefault("gui_theme", "default");
-		Common::String style(ConfMan.get("gui_theme"));
-
-		if (style.compareToIgnoreCase("default") == 0)
-			style = "modern";
-
-		return loadTheme(style);
-	} */
 
 	bool loadTheme(Common::String themeName);
 	void setGraphicsMode(GraphicsMode mode);
@@ -242,6 +231,7 @@ protected:
 	void drawCached(DrawData type, const Common::Rect &r);
 
 	inline void drawDD(DrawData type, const Common::Rect &r);
+	inline void ThemeRenderer::debugWidgetPosition(const Common::Rect &r);
 
 	// TODO
 	void restoreBackground(Common::Rect r, bool special = false) {}
