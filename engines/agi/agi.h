@@ -753,6 +753,8 @@ public:
 		return _gameId;
 	}
 
+	virtual void syncSoundSettings();
+
 private:
 
 	int _keyQueue[KEY_QUEUE_SIZE];

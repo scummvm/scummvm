@@ -622,6 +622,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("music_volume"));
 
 	const GameSettings *g;
 
@@ -810,6 +811,17 @@ int AgiEngine::go() {
 	runGame();
 
 	return _rtl;
+}
+
+void AgiEngine::syncSoundSettings() {
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("music_volume");
+	int soundVolumeSpeech = ConfMan.getInt("music_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 } // End of namespace Agi
