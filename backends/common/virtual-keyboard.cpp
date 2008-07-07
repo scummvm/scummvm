@@ -112,7 +112,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 		// if no image then it means layout tag for the 
 		// required resolution was missing from the mode tag.
 		if (!it->_value.image) {
-			warning("'%s' layout missing from '%s' mode", it->_value.resolution, it->_value.name);
+			warning("'%s' layout missing from '%s' mode", it->_value.resolution.c_str(), it->_value.name.c_str());
 			return false;
 		}
 	}
@@ -134,6 +134,8 @@ void VirtualKeyboard::reposition()
 		case kAlignRight:
 			_pos.x = scrW - keyW;
 			break;
+		default:
+			break;
 		}
 	}
 	if (scrH != keyH) {
@@ -143,6 +145,8 @@ void VirtualKeyboard::reposition()
 			break;
 		case kAlignBottom:
 			_pos.y = scrH - keyH;
+			break;
+		default:
 			break;
 		}
 	}
@@ -224,6 +228,8 @@ void VirtualKeyboard::runLoop() {
 			case Common::EVENT_QUIT:
 				_system->quit();
 				return;
+			default:
+				break;
 			}
 		}
 	}

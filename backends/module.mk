@@ -27,7 +27,9 @@ MODULE_OBJS := \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/compressed/compressed-saves.o \
-	timer/default/default-timer.o
+	timer/default/default-timer.o \
+	common/virtual-keyboard.o \
+	common/virtual-keyboard-parser.o
 
 # Include common rules
 include $(srcdir)/rules.mk

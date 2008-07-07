@@ -25,9 +25,7 @@ MODULE_OBJS := \
 	theme.o \
 	ThemeClassic.o \
 	ThemeModern.o \
-	theme-config.o \
-	virtualKeyboard.o \
-	virtualKeyboardParser.o
+	theme-config.o
 
 # Include common rules
 include $(srcdir)/rules.mk

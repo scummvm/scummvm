@@ -6,7 +6,7 @@ MODULE_OBJS := \
 	config-manager.o \
 	file.o \
 	fs.o \
-	imageMap.o \
+	image-map.o \
 	hashmap.o \
 	memorypool.o \
 	md5.o \

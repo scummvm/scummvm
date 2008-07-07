@@ -103,7 +103,7 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	Common::String name = modeNode->values["name"];
 
 	if (_keyboard->_modes.contains(name))
-		return parserError("Mode '%s' has already been defined", name);
+		return parserError("Mode '%s' has already been defined", name.c_str());
 
 	// create new mode
 	VirtualKeyboard::Mode mode;
@@ -161,7 +161,7 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 
 	Common::String name = evtNode->values["name"];
 	if (_mode->events.contains(name))
-		return parserError("Event '%s' has already been defined", name);
+		return parserError("Event '%s' has already been defined", name.c_str());
 
 	VirtualKeyboard::Event evt;
 	evt.name = name;
@@ -198,7 +198,7 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		evt.type = VirtualKeyboard::kEventSwitchMode;
 		evt.data = new Common::String(evtNode->values["mode"]);
 	} else
-		return parserError("Event type '%s' not known", type);
+		return parserError("Event type '%s' not known", type.c_str());
 
 	_mode->events[name] = evt;
 
@@ -284,7 +284,7 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 			return parserError("Invalid coords for polygon area");
 		_mode->imageMap.addPolygonMapArea(poly, areaNode->values["target"]);
 	} else
-		return parserError("Area shape '%s' not known", shape);
+		return parserError("Area shape '%s' not known", shape.c_str());
 
 	return true;
 }

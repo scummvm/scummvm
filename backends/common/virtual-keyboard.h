@@ -48,9 +48,7 @@ class VirtualKeyboard {
 	enum EventType {
 		kEventKey,
 		kEventSwitchMode,
-		kEventClose,
-
-		kEventMax
+		kEventClose
 	};
 
 	struct Event {
