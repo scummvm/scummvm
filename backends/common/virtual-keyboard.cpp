@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "graphics/imageman.h"
+#include "graphics/surface-keycolored.h"
 #include "common/unzip.h"
 
 namespace Common {
@@ -101,24 +102,10 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 		return false;
 	}
 
-	if (!_parser->parse())
-		return false;
-
-	if (!_initialMode)
-		warning("Initial mode of keyboard pack not defined");
-
-	ModeMap::iterator it;
-	for (it = _modes.begin(); it != _modes.end(); it++) {
-		// if no image then it means layout tag for the 
-		// required resolution was missing from the mode tag.
-		if (!it->_value.image) {
-			warning("'%s' layout missing from '%s' mode", it->_value.resolution.c_str(), it->_value.name.c_str());
-			return false;
-		}
-	}
-
-	_loaded = true;
-	return true;
+	_loaded = _parser->parse();
+	if (_loaded)
+		printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
+	return _loaded;
 }
 
 void VirtualKeyboard::reposition()
@@ -159,10 +146,11 @@ void VirtualKeyboard::processClick(int16 x, int16 y)
 	if (x < 0 || x > _currentMode->image->w) return;
 	if (y < 0 || y > _currentMode->image->h) return;
 
-	Common::MapArea *area = _currentMode->imageMap.findMapArea(x, y);
-	if (!area) return;
-	if (!_currentMode->events.contains(area->getTarget())) return;
-	Event evt = _currentMode->events[area->getTarget()];
+	Common::String area = _currentMode->imageMap.findMapArea(x, y);
+	if (area.empty()) return;
+	printf("Map area found! - %s\n", area.c_str());
+	if (!_currentMode->events.contains(area)) return;
+	Event evt = _currentMode->events[area];
 	
 	switch (evt.type) {
 	case kEventKey:
@@ -214,6 +202,7 @@ void VirtualKeyboard::runLoop() {
 	while (_displaying) {
 		if (_needRedraw) redraw();
 
+		_system->updateScreen();
 		Common::Event event;
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
@@ -238,12 +227,18 @@ void VirtualKeyboard::runLoop() {
 }
 
 void VirtualKeyboard::redraw() {
+	Graphics::SurfaceKeyColored surf;
+
+	surf.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
+
+	_system->grabOverlay((OverlayColor*)surf.pixels, surf.w);
+
+	surf.blit(_currentMode->image, _pos.x, _pos.y, _system->RGBToColor(0xff, 0, 0xff));
+	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 0, 0, surf.w, surf.h);
+
+	surf.free();
+
 	_needRedraw = false;
-	_system->clearOverlay();
-	_system->copyRectToOverlay((OverlayColor*)_currentMode->image->pixels, 
-		_currentMode->image->w, _pos.x, _pos.y, 
-		_currentMode->image->w, _currentMode->image->h);
-	_system->updateScreen();
 }
 
 bool VirtualKeyboard::pollEvent(Common::Event &event) {

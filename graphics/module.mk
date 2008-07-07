@@ -16,7 +16,8 @@ MODULE_OBJS := \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail.o \
-	surface.o
+	surface.o \
+	surface-keycolored.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \

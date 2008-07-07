@@ -49,6 +49,7 @@ protected:
 	bool _kbdParsed;
 
 	bool keyCallback(Common::String keyName);
+	bool closedKeyCallback(Common::String keyName);
 	void cleanup() {
 		_mode = 0;
 		_kbdParsed = _modeParsed = false;
@@ -62,7 +63,11 @@ protected:
 	bool parserCallback_Map();
 	bool parserCallback_Area();
 
+	bool parserCallback_KeyboardClosed();
+	bool parserCallback_ModeClosed();
+
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
+	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _closedCallbacks;
 };
 
 } // end of namespace GUI

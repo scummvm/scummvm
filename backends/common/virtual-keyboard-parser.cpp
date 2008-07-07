@@ -40,6 +40,9 @@ VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd) : XMLParser()
 	_callbacks["layout"]   = &VirtualKeyboardParser::parserCallback_Layout;
 	_callbacks["map"]	   = &VirtualKeyboardParser::parserCallback_Map;
 	_callbacks["area"]     = &VirtualKeyboardParser::parserCallback_Area;
+
+	_closedCallbacks["keyboard"] = &VirtualKeyboardParser::parserCallback_KeyboardClosed;
+	_closedCallbacks["mode"]     = &VirtualKeyboardParser::parserCallback_ModeClosed;
 }
 
 bool VirtualKeyboardParser::keyCallback(Common::String keyName) {
@@ -47,6 +50,13 @@ bool VirtualKeyboardParser::keyCallback(Common::String keyName) {
 		return parserError("%s is not a valid key name.", keyName.c_str());
 
 	return (this->*(_callbacks[_activeKey.top()->name]))();
+}
+
+bool VirtualKeyboardParser::closedKeyCallback(Common::String keyName) {
+	if (!_closedCallbacks.contains(_activeKey.top()->name))
+		return true;
+	
+	return (this->*(_closedCallbacks[_activeKey.top()->name]))();
 }
 
 bool VirtualKeyboardParser::parserCallback_Keyboard() {
@@ -59,7 +69,6 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 
 	if (_kbdParsed)
 		return parserError("Only a single keyboard element is allowed");
-	_kbdParsed = true;
 
 	if (!kbdNode->values.contains("initial_mode"))
 		return parserError("Keyboard element must contain initial_mode attribute");
@@ -86,6 +95,13 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 			_keyboard->_vAlignment = VirtualKeyboard::kAlignBottom;
 	}
 
+	return true;
+}
+
+bool VirtualKeyboardParser::parserCallback_KeyboardClosed() {
+	_kbdParsed = true;
+	if (!_keyboard->_initialMode)
+		return parserError("Initial mode of keyboard pack not defined");
 	return true;
 }
 
@@ -143,6 +159,12 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	if (_mode->resolution.empty())
 		return parserError("No acceptable resolution was found");
 
+	return true;
+}
+
+bool VirtualKeyboardParser::parserCallback_ModeClosed() {
+	if (!_mode->image)
+		return parserError("'%s' layout missing from '%s' mode", _mode->resolution.c_str(), _mode->name.c_str());
 	return true;
 }
 
@@ -262,15 +284,14 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 
 	Common::String shape = areaNode->values["shape"];
 	if (shape == "rect") {
+		Common::Rect *rect = _mode->imageMap.createRectArea(areaNode->values["target"]);
 		int x1, y1, x2, y2;
 		if (!parseIntegerKey(areaNode->values["coords"].c_str(), 4, &x1, &y1, &x2, &y2))
 			return parserError("Invalid coords for rect area");
-
-		Common::Rect rect(x1, y1, x2, y2);
-		_mode->imageMap.addRectMapArea(rect, areaNode->values["target"]);
+		rect->left = x1; rect->top = y1; rect->right = x2; rect->bottom = y2;
 	} else if (shape == "poly") {
 		Common::StringTokenizer tok (areaNode->values["coords"], ", ");
-		Common::Polygon poly;
+		Common::Polygon *poly = _mode->imageMap.createPolygonArea(areaNode->values["target"]);
 		for (Common::String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
 			int x, y;
 			if (sscanf(st.c_str(), "%d", &x) != 1)
@@ -278,11 +299,10 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 			st = tok.nextToken();
 			if (sscanf(st.c_str(), "%d", &y) != 1)
 				return parserError("Invalid coords for polygon area");
-			poly.addPoint(x, y);
+			poly->addPoint(x, y);
 		}
-		if (poly.getPointCount() < 3)
+		if (poly->getPointCount() < 3)
 			return parserError("Invalid coords for polygon area");
-		_mode->imageMap.addPolygonMapArea(poly, areaNode->values["target"]);
 	} else
 		return parserError("Area shape '%s' not known", shape.c_str());
 

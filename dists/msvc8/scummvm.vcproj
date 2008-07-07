@@ -1362,6 +1362,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\surface-keycolored.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\surface-keycolored.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\surface.cpp"
 				>
 			</File>

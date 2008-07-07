@@ -26,7 +26,8 @@
 #ifndef COMMON_IMAGEMAP_H
 #define COMMON_IMAGEMAP_H
 
-#include "common/array.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/rect.h"
 #include "common/polygon.h"
 
@@ -54,8 +55,7 @@ public:
 protected:
 	/* shape defining the MapArea's boundary */
 	Shape *_shape;
-	/* generalised flags for the area
-	 * TODO: change this */
+	/* string describing the target of MapArea */
 	String _target;
 };
 
@@ -63,13 +63,19 @@ class ImageMap {
 
 public:
 
-	void addRectMapArea(const Rect& rect, const String& target);
-	void addPolygonMapArea(const Polygon& poly, const String& target);
+	~ImageMap();
+	
+	Rect *createRectArea(const String& id);
+	Polygon *createPolygonArea(const String& id);
 
-	MapArea *findMapArea(int16 x, int16 y);
+	//void addMapArea(Shape *shape, const String& target);
+	/*void addRectMapArea(const Rect& rect, const String& target);
+	void addPolygonMapArea(const Polygon& poly, const String& target);
+*/
+	String findMapArea(int16 x, int16 y);
 
 protected:
-	Array<MapArea> areas;
+	HashMap<String, Shape*> _areas;
 };
 
 
