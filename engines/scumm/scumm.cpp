@@ -109,7 +109,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
+	  _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
 
 	if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
@@ -145,7 +145,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	memset(&vm, 0, sizeof(vm));
 	_quit = false;
 	_pauseDialog = NULL;
-	_mainMenuDialog = NULL;
+	_scummMenuDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
@@ -561,7 +561,7 @@ ScummEngine::~ScummEngine() {
 	delete _2byteFontPtr;
 	delete _charset;
 	delete _pauseDialog;
-	delete _mainMenuDialog;
+	delete _scummMenuDialog;
 	delete _versionDialog;
 	delete _fileHandle;
 
@@ -2306,10 +2306,10 @@ void ScummEngine::versionDialog() {
 	runDialog(*_versionDialog);
 }
 
-void ScummEngine::mainMenuDialog() {
-	if (!_mainMenuDialog)
-		_mainMenuDialog = new MainMenuDialog(this);
-	runDialog(*_mainMenuDialog);
+void ScummEngine::scummMenuDialog() {
+	if (!_scummMenuDialog)
+		_scummMenuDialog = new ScummMenuDialog(this);
+	runDialog(*_scummMenuDialog);
 	syncSoundSettings();
 }
 

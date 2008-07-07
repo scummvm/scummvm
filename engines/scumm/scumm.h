@@ -501,14 +501,14 @@ public:
 protected:
 	Dialog *_pauseDialog;
 	Dialog *_versionDialog;
-	Dialog *_mainMenuDialog;
+	Dialog *_scummMenuDialog;
 
 	virtual int runDialog(Dialog &dialog);
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
 	void versionDialog();
-	void mainMenuDialog();
+	void scummMenuDialog();
 
 	char displayMessage(const char *altButton, const char *message, ...);
 

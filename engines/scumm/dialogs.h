@@ -82,10 +82,10 @@ public:
 	virtual void reflowLayout();
 };
 
-class MainMenuDialog : public ScummDialog {
+class ScummMenuDialog : public ScummDialog {
 public:
-	MainMenuDialog(ScummEngine *scumm);
-	~MainMenuDialog();
+	ScummMenuDialog(ScummEngine *scumm);
+	~ScummMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:

@@ -475,7 +475,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
-		mainMenuDialog();		// Display NewGui
+		scummMenuDialog();		// Display NewGui
 
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
