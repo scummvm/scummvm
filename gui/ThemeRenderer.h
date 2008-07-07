@@ -231,7 +231,7 @@ protected:
 	void drawCached(DrawData type, const Common::Rect &r);
 
 	inline void drawDD(DrawData type, const Common::Rect &r);
-	inline void ThemeRenderer::debugWidgetPosition(const Common::Rect &r);
+	inline void debugWidgetPosition(const Common::Rect &r);
 
 	// TODO
 	void restoreBackground(Common::Rect r, bool special = false) {}
