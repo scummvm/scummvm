@@ -24,6 +24,7 @@
  */
 
 
+#include "common/events.h"
 
 #include "agi/agi.h"
 #include "agi/sprite.h"
@@ -116,7 +117,7 @@ void AgiEngine::interpretCycle() {
 	oldSound = getflag(fSoundOn);
 
 	_game.exitAllLogics = false;
-	while (runLogic(0) == 0 && !_quit) {
+	while (runLogic(0) == 0 && !_eventMan->shouldQuit()) {
 		_game.vars[vWordNotFound] = 0;
 		_game.vars[vBorderTouchObj] = 0;
 		_game.vars[vBorderCode] = 0;
@@ -353,10 +354,10 @@ int AgiEngine::playGame() {
 			_game.vars[vKey] = 0;
 		}
 
-		if (_quit == 0xff)
+		if (_eventMan->shouldQuit() == 0xff)
 			ec = errRestartGame;
 
-	} while (_quit == 0);
+	} while (_eventMan->shouldQuit() == 0);
 
 	_sound->stopSound();
 

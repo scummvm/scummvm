@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "engines/engine.h"
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
@@ -313,7 +314,8 @@ void NewGui::runLoop() {
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
 			case Common::EVENT_QUIT:
-				_system->quit();
+				if (!g_engine)
+					_system->quit();
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();

@@ -26,6 +26,8 @@
 
 #include "base/version.h"
 
+#include "common/events.h"
+
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
@@ -1213,11 +1215,11 @@ cmd(quit) {
 
 	g_sound->stopSound();
 	if (p0) {
-		g_agi->_quit = true;
+		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 	} else {
 		if (g_agi->selectionBox
 				(" Quit the game, or continue? \n\n\n", buttons) == 0) {
-			g_agi->_quit = true;
+			g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 		}
 	}
 }
@@ -1231,7 +1233,7 @@ cmd(restart_game) {
 		g_agi->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
-		g_agi->_quit = 0xff;
+		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 		g_agi->setflag(fRestartGame, true);
 		g_agi->_menu->enableAll();
 	}
@@ -1739,7 +1741,7 @@ int AgiEngine::runLogic(int n) {
 	curLogic->cIP = curLogic->sIP;
 
 	timerHack = 0;
-	while (ip < _game.logics[n].size && !g_agi->_quit) {
+	while (ip < _game.logics[n].size && !_eventMan->shouldQuit()) {
 		if (_debug.enabled) {
 			if (_debug.steps > 0) {
 				if (_debug.logic0 || n) {

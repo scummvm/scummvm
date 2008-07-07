@@ -24,6 +24,7 @@
  */
 
 
+#include "common/events.h"
 
 #include "agi/agi.h"
 #include "agi/keyboard.h"
@@ -232,7 +233,7 @@ int AgiEngine::testIfCode(int lognum) {
 	uint8 p[16] = { 0 };
 	bool end_test = false;
 
-	while (retval && !_quit && !end_test) {
+	while (retval && !_eventMan->shouldQuit() && !end_test) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 

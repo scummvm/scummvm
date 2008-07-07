@@ -61,9 +61,6 @@ void AgiEngine::processEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quit = true;
-			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
 			if (_predictiveDialogRunning)
 				break;
@@ -810,7 +807,7 @@ int AgiEngine::go() {
 
 	runGame();
 
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 void AgiEngine::syncSoundSettings() {
