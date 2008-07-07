@@ -24,7 +24,7 @@
  */
 
 
-
+#include "common/events.h"
 #include "common/system.h"
 
 #include "agos/agos.h"
@@ -345,14 +345,14 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 		if (isSmartphone()) {
 			if (_keyPressed.keycode) {
 				if (_keyPressed.keycode == Common::KEYCODE_RETURN)
-					_quit = true;
+					_eventMan->pushEvent(Common::EVENT_QUIT);
 				else
 					break;
 			}
 		}
 #endif
 		if (_keyPressed.keycode == keyYes)
-			_quit = true;
+			_eventMan->pushEvent(Common::EVENT_QUIT);
 		else if (_keyPressed.keycode == keyNo)
 			break;
 	}

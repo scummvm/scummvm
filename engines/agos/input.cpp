@@ -26,6 +26,7 @@
 
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 
 #include "agos/intern.h"
@@ -189,12 +190,12 @@ void AGOSEngine::waitForInput() {
 		resetVerbs();
 	}
 
-	while (!_quit) {
+	while (!_eventMan->shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 		_dragAccept = 1;
 
-		while (!_quit) {
+		while (!_eventMan->shouldQuit()) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 					_keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();

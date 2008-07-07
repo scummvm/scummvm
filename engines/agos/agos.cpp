@@ -947,7 +947,7 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 void AGOSEngine::pause() {
 	pauseEngine(true);
 
-	while (_pause && !_quit) {
+	while (_pause && !_eventMan->shouldQuit()) {
 		delay(1);
 		if (_keyPressed.keycode == Common::KEYCODE_p)
 			pauseEngine(false);
@@ -984,7 +984,7 @@ int AGOSEngine::go() {
 		(getFeatures() & GF_DEMO)) {
 		int i;
 
-		while (!_quit) {
+		while (!_eventMan->shouldQuit()) {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
@@ -1013,13 +1013,13 @@ int AGOSEngine::go() {
 	runSubroutine101();
 	permitInput();
 
-	while (!_quit) {
+	while (!_eventMan->shouldQuit()) {
 		waitForInput();
 		handleVerbClicked(_verbHitArea);
 		delay(100);
 	}
 
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 

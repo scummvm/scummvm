@@ -38,6 +38,7 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
@@ -315,6 +316,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// TODO: We should keep running if starting the selected game failed
 			// (so instead of just quitting, show a nice error dialog to the
 			// user and let him pick another game).
+		 	
+			// Reset RTL and Quit flags in case we want to load another engine
+			g_system->getEventManager()->resetRTL();		
+			g_system->getEventManager()->resetQuit();
+
 			if (result == 0)
 				break;
 

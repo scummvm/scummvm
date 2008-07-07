@@ -28,6 +28,7 @@
 
 
 #include "common/system.h"
+#include "common/events.h"
 
 #include "agos/animation.h"
 #include "agos/agos.h"
@@ -410,7 +411,7 @@ void AGOSEngine::o_msg() {
 
 void AGOSEngine::o_end() {
 	// 68: exit interpreter
-	_quit = true;
+	_eventMan->pushEvent(Common::EVENT_QUIT);
 }
 
 void AGOSEngine::o_done() {
@@ -965,7 +966,7 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 int AGOSEngine::runScript() {
 	bool flag;
 
-	if (_quit)
+	if (_eventMan->shouldQuit())
 		return 1;
 
 	do {
@@ -1010,7 +1011,7 @@ int AGOSEngine::runScript() {
 			error("Invalid opcode '%d' encountered", _opcode);
 
 		executeOpcode(_opcode);
-	} while  (getScriptCondition() != flag && !getScriptReturn() && !_quit);
+	} while  (getScriptCondition() != flag && !getScriptReturn() && !_eventMan->shouldQuit());
 
 	return getScriptReturn();
 }
@@ -1066,7 +1067,7 @@ void AGOSEngine::waitForSync(uint a) {
 	_exitCutscene = false;
 	_rightButtonDown = false;
 
-	while (_vgaWaitFor != 0 && !_quit) {
+	while (_vgaWaitFor != 0 && !_eventMan->shouldQuit()) {
 		if (_rightButtonDown) {
 			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
 				skipSpeech();

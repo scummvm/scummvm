@@ -201,6 +201,9 @@ DefaultEventManager::~DefaultEventManager() {
 	_boss->unlockMutex(_timeMutex);
 	_boss->unlockMutex(_recorderMutex);
 
+	if (!artificialEventQueue.empty())
+		artificialEventQueue.clear();
+
 	if (_playbackFile != NULL) {
 		delete _playbackFile;
 	}
@@ -350,7 +353,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
 
-	result = _boss->pollEvent(event);
+	if (!artificialEventQueue.empty()) {
+		event.type = artificialEventQueue.pop();
+		result = true;
+	} else 	
+		result = _boss->pollEvent(event);
 
 	if (_recordMode != kPassthrough)  {
 
@@ -387,12 +394,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// Global Main Menu
 			if (event.kbd.keycode == Common::KEYCODE_F11)
 				if (g_engine && !g_engine->isPaused())
-					g_engine->mainMenuDialog();
-
-			if (g_engine->_quit)
-				event.type = Common::EVENT_QUIT;
-			else
-				break;
+					pushEvent(Common::EVENT_MAINMENU);
+			break;
 
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
@@ -429,11 +432,12 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		case Common::EVENT_MAINMENU:
 			if (g_engine && !g_engine->isPaused())
 				g_engine->mainMenuDialog();
+			break;
 
-			if (g_engine->_quit)
-				event.type = Common::EVENT_QUIT;
-			else 
-				break;
+		case Common::EVENT_RTL:
+			_shouldRTL = true;
+			_shouldQuit = true;
+			break;
 
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
@@ -446,7 +450,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			} else
 				_shouldQuit = true;
 
-			g_engine->_quit = true;
 			break;
 
 		default:
@@ -467,6 +470,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	return result;
+}
+
+void DefaultEventManager::pushEvent(Common::EventType eventType) {
+	artificialEventQueue.push(eventType);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

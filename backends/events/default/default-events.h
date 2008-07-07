@@ -108,6 +108,7 @@ public:
 	~DefaultEventManager();
 
 	virtual bool pollEvent(Common::Event &event);
+	virtual void pushEvent(Common::EventType eventType);
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
 	virtual void processMillis(uint32 &millis);
 
@@ -116,8 +117,7 @@ public:
 	virtual int getModifierState() const { return _modifierState; }
 	virtual int shouldQuit() const { return _shouldQuit; }
 	virtual int shouldRTL() const { return _shouldRTL; }
-	virtual void setQuit() { _shouldQuit = true; }
-	virtual void setRTL() { _shouldRTL = true; }
+	virtual void resetQuit() { _shouldQuit = false; }
 	virtual void resetRTL() { _shouldRTL = false; }
 };
 

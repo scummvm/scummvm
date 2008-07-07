@@ -279,9 +279,6 @@ void MoviePlayer::handleNextFrame() {
 		case Common::EVENT_RBUTTONUP:
 			_rightButtonDown = false;
 			break;
-		case Common::EVENT_QUIT:
-			_vm->_quit = true;
-			break;
 		default:
 			break;
 		}
