@@ -285,16 +285,17 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 // Used to sync the volume for all channels with the Config Manager
 //
 void SoundManager::syncSounds(uint8 musicVol, uint8 sfxVol) {
-	MusicListIterator i;
-
 	musicInterface_TidySounds();
 
+	g_system->lockMutex(_soundMutex);
+	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->isMusic())
 			(*i)->setVolume(musicVol);
 		else
 			(*i)->setVolume(sfxVol);
 	}
+	g_system->unlockMutex(_soundMutex);
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
