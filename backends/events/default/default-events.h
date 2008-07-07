@@ -45,7 +45,7 @@ use a subclass of EventProvider.
 class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
 
-	GUI::VirtualKeyboard *_vk;
+	Common::VirtualKeyboard *_vk;
 
 	Common::Point _mousePos;
 	int _buttonState;

@@ -23,13 +23,13 @@
  *
  */
 
-#ifndef GUI_VIRTUAL_KEYBOARD_PARSER
-#define GUI_VIRTUAL_KEYBOARD_PARSER
+#ifndef COMMON_VIRTUAL_KEYBOARD_PARSER
+#define COMMON_VIRTUAL_KEYBOARD_PARSER
 
 #include "common/xmlparser.h"
 #include "backends/common/virtual-keyboard.h"
 
-namespace GUI {
+namespace Common {
 
 class VirtualKeyboardParser : public Common::XMLParser {
 

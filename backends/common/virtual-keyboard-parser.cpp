@@ -29,7 +29,7 @@
 #include "graphics/imageman.h"
 #include "common/util.h"
 
-namespace GUI {
+namespace Common {
 
 VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd) : XMLParser() {
 	_keyboard = kbd;

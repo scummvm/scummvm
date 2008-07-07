@@ -192,7 +192,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 		_hasPlaybackEvent = false;
 	}
 
-	_vk = new GUI::VirtualKeyboard();
+	_vk = new Common::VirtualKeyboard();
 }
 
 DefaultEventManager::~DefaultEventManager() {

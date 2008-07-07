@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GUI_VIRTUAL_KEYBOARD_H
-#define GUI_VIRTUAL_KEYBOARD_H
+#ifndef COMMON_VIRTUAL_KEYBOARD_H
+#define COMMON_VIRTUAL_KEYBOARD_H
 
 class OSystem;
 
@@ -36,7 +36,7 @@ class OSystem;
 #include "common/str.h"
 #include "graphics/surface.h"
 
-namespace GUI {
+namespace Common {
 
 class VirtualKeyboardParser;
 

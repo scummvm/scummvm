@@ -30,7 +30,7 @@
 #include "graphics/imageman.h"
 #include "common/unzip.h"
 
-namespace GUI {
+namespace Common {
 
 VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
 	assert(g_system);

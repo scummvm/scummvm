@@ -143,10 +143,7 @@ bool XMLParser::parse() {
 	_pos = 0;
 	_activeKey.clear();
 	
-	while (_text[_pos]) {
-		if (_state == kParserError)
-			break;
-
+	while (_text[_pos] && _state != kParserError) {
 		if (skipSpaces())
 			continue;
 
@@ -197,6 +194,11 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyName:
 				if (activeClosure) {
+					if (!closedKeyCallback(_activeKey.top()->name)) {
+						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str()); 
+						break;
+					}
+
 					activeClosure = false;
 					delete _activeKey.pop();
 
