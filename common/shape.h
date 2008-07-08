@@ -72,6 +72,7 @@ struct Point {
 */
 struct Shape {
 
+	virtual ~Shape() {}
 	/*!	@brief check if given position is inside this shape
 
 		@param x the horizontal position to check

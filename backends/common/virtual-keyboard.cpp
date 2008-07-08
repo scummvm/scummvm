@@ -38,7 +38,9 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
 	_system = g_system;
 
 	_parser = new VirtualKeyboardParser(this);
-	_loaded = _displaying = false;
+	_loaded = _displaying = _drag = false;
+	_screenWidth = _system->getOverlayWidth();
+	_screenHeight = _system->getOverlayHeight();
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
@@ -50,12 +52,16 @@ void VirtualKeyboard::reset() {
 	// TODO: clean up event data pointers
 	_modes.clear();
 	_initialMode = _currentMode = 0;
-	_pos.x = _pos.y = 0;
+	_kbdBound.left = _kbdBound.top
+		= _kbdBound.right = _kbdBound.bottom = 0;
 	_hAlignment = kAlignCentre;
 	_vAlignment = kAlignBottom;
 	_keyQueue.clear();
 	_keyDown = 0;
-	_displaying = false;
+	_displaying = _drag = false;
+	_firstRun = true;
+	_screenWidth = _system->getOverlayWidth();
+	_screenHeight = _system->getOverlayHeight();
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
@@ -105,53 +111,78 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 	_loaded = _parser->parse();
 	if (_loaded)
 		printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
+
 	return _loaded;
 }
 
-void VirtualKeyboard::reposition()
+void VirtualKeyboard::setDefaultPosition()
 {
-	// calculate keyboard co-ordinates
-	int16 scrW = _system->getOverlayWidth(), scrH = _system->getOverlayHeight();
-	int16 keyW = _currentMode->image->w, keyH = _currentMode->image->h;
-	if (scrW != keyW) {
+	int16 kbdW = _kbdBound.width(), kbdH = _kbdBound.height();
+	int16 posX = 0, posY = 0;
+	if (_screenWidth != kbdW) {
 		switch (_hAlignment) {
+		case kAlignLeft:
+			posX = 0;
+			break;
 		case kAlignCentre:
-			_pos.x = (scrW - keyW) / 2;
+			posX = (_screenWidth - kbdW) / 2;
 			break;
 		case kAlignRight:
-			_pos.x = scrW - keyW;
-			break;
-		default:
+			posX = _screenWidth - kbdW;
 			break;
 		}
 	}
-	if (scrH != keyH) {
+	if (_screenHeight != kbdH) {
 		switch (_vAlignment) {
+		case kAlignTop:
+			posY = 0;
+			break;
 		case kAlignMiddle:
-			_pos.y = (scrH - keyH) / 2;
+			posY = (_screenHeight - kbdH) / 2;
 			break;
 		case kAlignBottom:
-			_pos.y = scrH - keyH;
-			break;
-		default:
+			posY = _screenHeight - kbdH;
 			break;
 		}
 	}
+	_kbdBound.moveTo(posX, posY);
 }
 
-void VirtualKeyboard::processClick(int16 x, int16 y)
+void VirtualKeyboard::checkResolution()
 {
-	x -= _pos.x;
-	y -= _pos.y;
-	if (x < 0 || x > _currentMode->image->w) return;
-	if (y < 0 || y > _currentMode->image->h) return;
+	// check if there is a more suitable resolution
+	// in the keyboard pack than the current one
+	// based on the _screenWidth & _screenHeight
+}
+	
+void VirtualKeyboard::move(int16 x, int16 y) {
+	// snap to edge of screen
+	if (ABS(x) < SNAP_WIDTH)
+		x = 0;
+	int16 x2 = _system->getOverlayWidth() - _kbdBound.width();
+	if (ABS(x - x2) < SNAP_WIDTH)
+		x = x2;
+	if (ABS(y) < SNAP_WIDTH)
+		y = 0;
+	int16 y2 = _system->getOverlayHeight() - _kbdBound.height();
+	if (ABS(y - y2) < SNAP_WIDTH)
+		y = y2;
 
-	Common::String area = _currentMode->imageMap.findMapArea(x, y);
-	if (area.empty()) return;
-	printf("Map area found! - %s\n", area.c_str());
+	_kbdBound.moveTo(x, y);
+}
+
+Common::String VirtualKeyboard::findArea(int16 x, int16 y) {
+	x -= _kbdBound.left;
+	y -= _kbdBound.top;
+	if (x < 0 || x > _kbdBound.width()) return "";
+	if (y < 0 || y > _kbdBound.height()) return "";
+	return _currentMode->imageMap.findMapArea(x, y);
+}
+
+void VirtualKeyboard::processClick(const Common::String& area) {
 	if (!_currentMode->events.contains(area)) return;
 	Event evt = _currentMode->events[area];
-	
+
 	switch (evt.type) {
 	case kEventKey:
 		// add virtual keypress to queue
@@ -170,7 +201,8 @@ void VirtualKeyboard::processClick(int16 x, int16 y)
 
 void VirtualKeyboard::switchMode(Mode *newMode) {
 	_currentMode = newMode;
-	reposition();
+	_kbdBound.setWidth(_currentMode->image->w);
+	_kbdBound.setHeight(_currentMode->image->h);
 	_needRedraw = true;
 }
 
@@ -179,14 +211,20 @@ void VirtualKeyboard::switchMode(const Common::String& newMode) {
 		warning("Keyboard mode '%s' unknown", newMode.c_str());
 		return;
 	}
-	_currentMode = &_modes[newMode];
-	reposition();
-	_needRedraw = true;
+	switchMode(&_modes[newMode]);
 }
 
 void VirtualKeyboard::show() {
+	if (_screenWidth != _system->getOverlayWidth() || _screenHeight != _system->getOverlayHeight()) {
+		_screenWidth = _system->getOverlayWidth();
+		_screenHeight = _system->getOverlayHeight();
+	}
 	switchMode(_initialMode);
 	_displaying = true;
+	if (_firstRun) {
+		_firstRun = false;
+		setDefaultPosition();
+	}
 	runLoop();
 }
 
@@ -198,7 +236,7 @@ void VirtualKeyboard::runLoop() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	
 	_system->showOverlay();
-	// capture mouse clicks
+
 	while (_displaying) {
 		if (_needRedraw) redraw();
 
@@ -207,12 +245,34 @@ void VirtualKeyboard::runLoop() {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
-				_mouseDown = event.mouse;
+				if (_kbdBound.contains(event.mouse)) {
+					_areaDown = findArea(event.mouse.x, event.mouse.y);
+					if (_areaDown.empty()) {
+						_drag = true;
+						_dragPoint.x = event.mouse.x - _kbdBound.left;
+						_dragPoint.y = event.mouse.y - _kbdBound.top;
+					}
+				} else
+					_areaDown.clear();
 				break;
 			case Common::EVENT_LBUTTONUP:
-				if (ABS(_mouseDown.x - event.mouse.x) < 5
-				 && ABS(_mouseDown.y - event.mouse.y) < 5)
-					processClick(event.mouse.x, event.mouse.y);
+				if (_drag) _drag = false;
+				if (!_areaDown.empty() && _areaDown == findArea(event.mouse.x, event.mouse.y)) {
+					processClick(_areaDown);
+					_areaDown.clear();
+				}
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				if (_drag) {
+					move(event.mouse.x - _dragPoint.x, 
+						 event.mouse.y - _dragPoint.y);
+					_needRedraw = true;
+				}
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_screenWidth = _system->getOverlayWidth();
+				_screenHeight = _system->getOverlayHeight();
+				checkResolution();
 				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
@@ -231,9 +291,10 @@ void VirtualKeyboard::redraw() {
 
 	surf.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
 
+	_system->clearOverlay();
 	_system->grabOverlay((OverlayColor*)surf.pixels, surf.w);
 
-	surf.blit(_currentMode->image, _pos.x, _pos.y, _system->RGBToColor(0xff, 0, 0xff));
+	surf.blit(_currentMode->image, _kbdBound.left, _kbdBound.top, _system->RGBToColor(0xff, 0, 0xff));
 	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 0, 0, surf.w, surf.h);
 
 	surf.free();

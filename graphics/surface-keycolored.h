@@ -8,7 +8,7 @@ namespace Graphics {
 
 struct SurfaceKeyColored : Surface {
 
-	void blit(Surface *surf_src, int16 x, int16 y, OverlayColor trans);
+	void blit(Surface *surf_src, int16 x, int16 y, OverlayColor transparent);
 };
 
 

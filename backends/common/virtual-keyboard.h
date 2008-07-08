@@ -104,34 +104,44 @@ public:
 	  */
 	bool pollEvent(Common::Event &event);
 
-private:
+protected:
 	OSystem	*_system;
+
+	static const int SNAP_WIDTH = 10;
 	
 	friend class VirtualKeyboardParser;
 	VirtualKeyboardParser *_parser;
 
 	// TODO : sort order of all this stuff
 	void reset();
-	void reposition();
+	void checkResolution();
+	void setDefaultPosition();
+	void move(int16 x, int16 y);
 	void switchMode(Mode *newMode);
 	void switchMode(const Common::String& newMode);
-	void processClick(int16 x, int16 y);
+	Common::String findArea(int16 x, int16 y);
+	void processClick(const Common::String &area);
 	void runLoop();
 	void redraw();
 
 	bool _loaded;
 	bool _displaying;
 	bool _needRedraw;
+	bool _firstRun;
 
 	ModeMap _modes;
 	Mode *_initialMode;
 	Mode *_currentMode;
 
-	Common::Point _pos;
+	int16 _screenWidth, _screenHeight;
+	Common::Rect _kbdBound;
+
 	HorizontalAlignment  _hAlignment;
 	VerticalAlignment    _vAlignment;
 
-	Common::Point _mouseDown;
+	Common::String _areaDown;
+	Common::Point _dragPoint;
+	bool _drag;
 
 	Common::Array<Common::KeyState> _keyQueue;
 	Common::KeyState *_keyDown;

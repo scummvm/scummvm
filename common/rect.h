@@ -40,7 +40,7 @@ namespace Common {
 	Another very wide spread approach to rectangle classes treats (bottom,right)
 	also as a part of the rectangle.
 
-	Coneptually, both are sound, but the approach we use saves many intermediate
+	Conceptually, both are sound, but the approach we use saves many intermediate
 	computations (like computing the height in our case is done by doing this:
 	  height = bottom - top;
 	while in the alternate system, it would be
@@ -57,6 +57,8 @@ struct Rect : public Shape {
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
+	virtual ~Rect() {}
+
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
 
