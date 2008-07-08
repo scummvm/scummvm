@@ -89,6 +89,8 @@ OBJS := psp_main.o \
 	kbd_l_c.o \
 	trace.o
 
+DEPDIR = .deps
+
 include $(srcdir)/Makefile.common
 
 PSP_EBOOT_SFO = param.sfo
