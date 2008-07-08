@@ -122,11 +122,11 @@ void PreAgiEngine::printStrXOR(char *szMsg) {
 int PreAgiEngine::getSelection(SelectionTypes type) {
 	Common::Event event;
 
-	for (;;) {
+	while (!_eventMan->shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
-				_system->quit();
+				return 0;
 			case Common::EVENT_RBUTTONUP:
 				return 0;
 			case Common::EVENT_LBUTTONUP:

@@ -228,7 +228,7 @@ FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
 		error("Unknown preagi engine");
 		break;
 	}
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 } // End of namespace Agi

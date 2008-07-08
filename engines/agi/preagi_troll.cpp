@@ -58,11 +58,11 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 
 	drawMenu(szMenu, *iSel);
 
-	for (;;) {
+	while (!_vm->_system->getEventManager()->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
-				_vm->_system->quit();
+				return 0;
 			case Common::EVENT_MOUSEMOVE:
 				y = event.mouse.y / 8;
 
@@ -206,7 +206,6 @@ void Troll::waitAnyKeyIntro() {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
-				_vm->_system->quit();
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_KEYDOWN:
 				return;
@@ -269,7 +268,7 @@ void Troll::tutorial() {
 	int iSel = 0;
 	//char szTreasure[16] = {0};
 
-	for (;;) {
+	while (!_vm->_system->getEventManager()->shouldQuit()) {
 		_vm->clearScreen(0xFF);
 
 		_vm->printStr(IDS_TRO_TUTORIAL_0);

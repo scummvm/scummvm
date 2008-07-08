@@ -27,6 +27,7 @@
 #include "agi/lzw.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/fs.h"
 
 namespace Agi {
@@ -231,7 +232,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");
 
-			g_system->quit();
+			g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 		}
 
 		agid->len = READ_LE_UINT16((uint8 *) x + 3);	/* uncompressed size */
