@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/events.h"
+
 #include "gob/videoplayer.h"
 #include "gob/global.h"
 #include "gob/util.h"
@@ -568,7 +570,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 
 	_vm->_util->processInput();
 
-	if (_vm->_quit) {
+	if (g_system->getEventManager()->shouldQuit()) {
 		_primaryVideo->getVideo()->disableSound();
 		return true;
 	}

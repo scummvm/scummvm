@@ -111,11 +111,11 @@ GobEngine::~GobEngine() {
 int GobEngine::go() {
 	_init->initGame(0);
 
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 void GobEngine::shutdown() {
-	_quit = true;
+	g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {

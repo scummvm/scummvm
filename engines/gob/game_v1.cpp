@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/stream.h"
 
 #include "gob/gob.h"
@@ -63,7 +64,7 @@ void Game_v1::playTot(int16 skipPlay) {
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay <= 0) {
-		while (!_vm->_quit) {
+		while (!g_system->getEventManager()->shouldQuit()) {
 			for (int i = 0; i < 4; i++) {
 				_vm->_draw->_fontToSprite[i].sprite = -1;
 				_vm->_draw->_fontToSprite[i].base = -1;
@@ -997,7 +998,7 @@ void Game_v1::collisionsBlock(void) {
 		WRITE_VAR(16, 0);
 		_activeCollResId = 0;
 	}
-	while ((_activeCollResId == 0) && !_vm->_inter->_terminate && !_vm->_quit);
+	while ((_activeCollResId == 0) && !_vm->_inter->_terminate && !g_system->getEventManager()->shouldQuit());
 
 	if (((uint16) _activeCollResId & ~0x8000) == collResId) {
 		collStackPos = 0;

@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/stream.h"
 
 #include "gob/gob.h"
@@ -70,7 +71,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay <= 0) {
-		while (!_vm->_quit) {
+		while (!g_system->getEventManager()->shouldQuit()) {
 			if (_vm->_inter->_variables)
 				_vm->_draw->animateCursor(4);
 
@@ -438,7 +439,7 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 
 	timeKey = _vm->_util->getTimeKey();
 	while (1) {
-		if (_vm->_inter->_terminate || _vm->_quit) {
+		if (_vm->_inter->_terminate || g_system->getEventManager()->shouldQuit()) {
 			if (handleMouse)
 				_vm->_draw->blitCursor();
 			return 0;
@@ -1043,7 +1044,7 @@ void Game_v2::collisionsBlock(void) {
 		WRITE_VAR(16, 0);
 		_activeCollResId = 0;
 	}
-	while ((_activeCollResId == 0) && !_vm->_inter->_terminate && !_vm->_quit);
+	while ((_activeCollResId == 0) && !_vm->_inter->_terminate && !g_system->getEventManager()->shouldQuit());
 
 	if ((_activeCollResId & 0xFFF) == collResId) {
 		collStackPos = 0;
@@ -1465,7 +1466,7 @@ int16 Game_v2::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			key = checkCollisions(handleMouse, -300, collResId, collIndex);
 
 			if ((key != 0) || (*collResId != 0) ||
-					_vm->_inter->_terminate || _vm->_quit)
+					_vm->_inter->_terminate || g_system->getEventManager()->shouldQuit())
 				break;
 
 			if (*pTotTime > 0) {
@@ -1479,7 +1480,7 @@ int16 Game_v2::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 		}
 
 		if ((key == 0) || (*collResId != 0) ||
-				_vm->_inter->_terminate || _vm->_quit)
+				_vm->_inter->_terminate || g_system->getEventManager()->shouldQuit())
 			return 0;
 
 		switch (key) {

@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/mult.h"
@@ -197,7 +198,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		_frame++;
 		_vm->_util->waitEndFrame();
-	} while (!stop && !stopNoClear && !_vm->_quit);
+	} while (!stop && !stopNoClear && !g_system->getEventManager()->shouldQuit());
 
 	if (!stopNoClear) {
 		if (_animDataAllocated) {

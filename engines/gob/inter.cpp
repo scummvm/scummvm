@@ -26,6 +26,7 @@
 #include <time.h>	// FIXME: for Inter::renewTimeInVars()
 
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
@@ -249,7 +250,7 @@ void Inter::funcBlock(int16 retFlag) {
 		if (executeFuncOpcode(cmd2, cmd, params))
 			return;
 
-		if (_vm->_quit)
+		if (g_system->getEventManager()->shouldQuit())
 			break;
 
 		if (_break) {
@@ -269,7 +270,7 @@ void Inter::funcBlock(int16 retFlag) {
 void Inter::callSub(int16 retFlag) {
 	byte block;
 
-	while (!_vm->_quit && _vm->_global->_inter_execPtr &&
+	while (!g_system->getEventManager()->shouldQuit() && _vm->_global->_inter_execPtr &&
 			(_vm->_global->_inter_execPtr != _vm->_game->_totFileData)) {
 
 		block = *_vm->_global->_inter_execPtr;
