@@ -72,7 +72,7 @@ const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 };
 
 
-OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0) {
+OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
 
 	memset(_palette, 0, sizeof(_palette));
 
@@ -99,10 +99,10 @@ OSystem_PSP::~OSystem_PSP() {
 
 void OSystem_PSP::initBackend() {
 	_savefile = new DefaultSaveFileManager();
-	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
-	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
 	setTimerCallback(&timer_handler, 10);
+
+	setupMixer();
 
 	OSystem::initBackend();
 }
@@ -586,7 +586,15 @@ void OSystem_PSP::deleteMutex(MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *)mutex);
 }
 
-bool OSystem_PSP::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_PSP::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_PSP *this_ = (OSystem_PSP *)sys;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(samples, len);
+}
+
+void OSystem_PSP::setupMixer(void) {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
@@ -613,21 +621,29 @@ bool OSystem_PSP::setSoundCallback(SoundProc proc, void *param) {
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = samples;
-	desired.callback = proc;
-	desired.userdata = param;
-	if (SDL_OpenAudio(&desired, &obtained) != 0) {
-		return false;
-	}
-	// Note: This should be the obtained output rate, but it seems that at
-	// least on some platforms SDL will lie and claim it did get the rate
-	// even if it didn't. Probably only happens for "weird" rates, though.
-	_samplesPerSec = obtained.freq;
-	SDL_PauseAudio(0);
-	return true;
-}
+	desired.callback = mixCallback;
+	desired.userdata = this;
 
-int OSystem_PSP::getOutputSampleRate() const {
-	return _samplesPerSec;
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
+	if (SDL_OpenAudio(&desired, &obtained) != 0) {
+		warning("Could not open audio: %s", SDL_GetError());
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+
+		SDL_PauseAudio(0);
+	}
 }
 
 void OSystem_PSP::quit() {
