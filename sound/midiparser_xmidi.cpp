@@ -114,10 +114,9 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 			// XMIDI_CONTROLLER_NEXT_BREAK
 			if (_loopCount >= 0) {
 				if (info.basic.param2 < 64) {
+					// End the current loop.
 					_loopCount--;
-				}
-
-				if (_loopCount >= 0) {
+				} else {
 					_position._play_pos = _loop[_loopCount].pos;
 					// Repeat 0 means "loop forever".
 					if (_loop[_loopCount].repeat) {
