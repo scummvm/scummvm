@@ -310,7 +310,7 @@ const char *MADSResourceManager::getResourceFilename(const char *resourceName) {
 
 Common::SeekableReadStream *MADSResourceManager::loadResource(const char *resourceName, bool loadFlag) {
 	Common::File hagFile;
-	uint32 offset, size = 0;
+	uint32 offset = 0, size = 0;
 
 	// If the first character is a '@' then look for an external file
 	
