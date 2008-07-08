@@ -112,8 +112,6 @@ public:
 
 	virtual void pauseEngineIntern(bool pause);
 
-	bool quit() const { return _eventMan->shouldQuit(); }
-
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
 

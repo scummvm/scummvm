@@ -263,7 +263,7 @@ int KyraEngine_MR::go() {
 		running = false;
 	}
 
-	while (running && !_eventMan->shouldQuit()) {
+	while (running && !quit()) {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
@@ -272,14 +272,14 @@ int KyraEngine_MR::go() {
 		// XXX
 		playMenuAudioFile();
 
-		for (int i = 0; i < 64 && !_eventMan->shouldQuit(); ++i) {
+		for (int i = 0; i < 64 && !quit(); ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			_menuAnim->displayFrame(i, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
-		for (int i = 64; i > 29 && !_eventMan->shouldQuit(); --i) {
+		for (int i = 64; i > 29 && !quit(); --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			_menuAnim->displayFrame(i, 0);
 			_screen->updateScreen();
@@ -987,7 +987,7 @@ void KyraEngine_MR::runLoop() {
 	_eventList.clear();
 
 	_runFlag = true;
-	while (_runFlag && !_eventMan->shouldQuit()) {
+	while (_runFlag && !quit()) {
 		if (_deathHandler >= 0) {
 			removeHandItem();
 			delay(5);
