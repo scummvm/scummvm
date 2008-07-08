@@ -500,7 +500,7 @@ void KyraEngine_HoF::bookLoop() {
 
 	showBookPage();
 	_bookShown = true;
-	while (_bookShown && !_quit) {
+	while (_bookShown && !_eventMan->shouldQuit()) {
 		checkInput(buttonList);
 		removeInputTop();
 

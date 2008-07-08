@@ -300,8 +300,8 @@ int KyraEngine_LoK::go() {
 		if (_gameToLoad == -1) {
 			setGameFlag(0xEF);
 			seq_intro();
-			if (_quit)
-				return _rtl;
+			if (_eventMan->shouldQuit())
+				return _eventMan->shouldRTL();
 			if (_skipIntroFlag && _abortIntroFlag)
 				resetGameFlag(0xEF);
 		}
@@ -309,7 +309,7 @@ int KyraEngine_LoK::go() {
 		resetGameFlag(0xEF);
 		mainLoop();
 	}
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 
@@ -399,7 +399,7 @@ void KyraEngine_LoK::startup() {
 void KyraEngine_LoK::mainLoop() {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::mainLoop()");
 
-	while (!_quit) {
+	while (!_eventMan->shouldQuit()) {
 		int32 frameTime = (int32)_system->getMillis();
 		_skipFlag = false;
 
@@ -444,7 +444,7 @@ void KyraEngine_LoK::mainLoop() {
 }
 
 void KyraEngine_LoK::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !_quit) {
+	while (_system->getMillis() < timestamp && !_eventMan->shouldQuit()) {
 		if (updateTimers)
 			_timer->update();
 
@@ -476,7 +476,7 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 					if (event.kbd.keycode == 'd')
 						_debugger->attach();
 					else if (event.kbd.keycode == 'q')
-						_quit = true;
+						quitGame();
 				} else if (event.kbd.keycode == '.') {
 					_skipFlag = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -487,9 +487,6 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_animator->_updateScreen = true;
-				break;
-			case Common::EVENT_QUIT:
-				quitGame();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mousePressFlag = true;
@@ -529,26 +526,23 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 		if (_skipFlag && !_abortIntroFlag && !queryGameFlag(0xFE))
 			_skipFlag = false;
 
-		if (amount > 0 && !_skipFlag && !_quit)
+		if (amount > 0 && !_skipFlag && !_eventMan->shouldQuit())
 			_system->delayMillis(10);
 
 		if (_skipFlag)
 			_sound->voiceStop();
-	} while (!_skipFlag && _system->getMillis() < start + amount && !_quit);
+	} while (!_skipFlag && _system->getMillis() < start + amount && !_eventMan->shouldQuit());
 }
 
 void KyraEngine_LoK::waitForEvent() {
 	bool finished = false;
 	Common::Event event;
 
-	while (!finished && !_quit) {
+	while (!finished && !_eventMan->shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				finished = true;
-				break;
-			case Common::EVENT_QUIT:
-				quitGame();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				finished = true;

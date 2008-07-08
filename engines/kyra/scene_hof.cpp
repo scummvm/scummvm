@@ -277,7 +277,7 @@ int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	int changedScene = 0;
 	const int *moveTableStart = moveTable;
 	_unk4 = 0;
-	while (running && !_quit) {
+	while (running && !_eventMan->shouldQuit()) {
 		if (*moveTable >= 0 && *moveTable <= 7) {
 			_mainCharacter.facing = getOppositeFacingDirection(*moveTable);
 			unkFlag = true;

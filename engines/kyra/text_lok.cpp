@@ -121,7 +121,6 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 						_skipFlag = true;
 					break;
 				case Common::EVENT_QUIT:
-					quitGame();
 					runLoop = false;
 					break;
 				case Common::EVENT_LBUTTONDOWN:

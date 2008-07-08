@@ -218,7 +218,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 void KyraEngine_v1::quitGame() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::quitGame()");
-	_quit = true;
+	_eventMan->pushEvent(Common::EVENT_QUIT);
 	// Nothing to do here
 }
 
@@ -256,7 +256,7 @@ int KyraEngine_v1::resetGameFlag(int flag) {
 }
 
 void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !_quit) {
+	while (_system->getMillis() < timestamp && !_eventMan->shouldQuit()) {
 		if (timestamp - _system->getMillis() >= 10)
 			delay(10, update, isMainLoop);
 	}

@@ -164,7 +164,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 
-	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag) || _quit) {
+	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag) || _eventMan->shouldQuit()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -176,14 +176,14 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->setScreenPalette(_screen->_currentPalette);
 	}
 
-	if ((_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence()) || _quit) {
+	if ((_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence()) || _eventMan->shouldQuit()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
 	_screen->fillRect(0, 179, 319, 199, 0);
 
-	if (_quit)
+	if (_eventMan->shouldQuit())
 		return;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
@@ -223,10 +223,10 @@ void KyraEngine_LoK::seq_introLogos() {
 
 			oldDistance = distance;
 			delay(10);
-		} while (!doneFlag && !_quit && !_abortIntroFlag);
+		} while (!doneFlag && !_eventMan->shouldQuit() && !_abortIntroFlag);
 	}
 
-	if (_quit)
+	if (_eventMan->shouldQuit())
 		return;
 
 	_seq->playSequence(_seq_Forest, true);
@@ -1030,7 +1030,7 @@ void KyraEngine_LoK::seq_brandonToStone() {
 
 void KyraEngine_LoK::seq_playEnding() {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_playEnding()");
-	if (_quit)
+	if (_eventMan->shouldQuit())
 		return;
 	_screen->hideMouse();
 	_screen->_curPage = 0;
@@ -1187,7 +1187,6 @@ void KyraEngine_LoK::seq_playCredits() {
 				finished = true;
 				break;
 			case Common::EVENT_QUIT:
-				quitGame();
 				finished = true;
 				break;
 			default:
@@ -1211,7 +1210,7 @@ void KyraEngine_LoK::seq_playCredits() {
 
 bool KyraEngine_LoK::seq_skipSequence() const {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::seq_skipSequence()");
-	return _quit || _abortIntroFlag;
+	return _eventMan->shouldQuit() || _abortIntroFlag;
 }
 
 int KyraEngine_LoK::handleMalcolmFlag() {

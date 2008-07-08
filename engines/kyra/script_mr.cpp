@@ -786,7 +786,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	_screen->_curPage = curPageBackUp;
 	_screen->showMouse();
 
-	while (!_quit) {
+	while (!_eventMan->shouldQuit()) {
 		int keys = checkInput(0);
 		removeInputTop();
 

@@ -349,7 +349,7 @@ void KyraEngine_MR::objectChatWaitToFinish() {
 	const uint32 endTime = _chatEndTime;
 	resetSkipFlag();
 
-	while (running && !_quit) {
+	while (running && !_eventMan->shouldQuit()) {
 		if (!_emc->isValid(&_chatScriptState))
 			_emc->start(&_chatScriptState, 1);
 
@@ -367,7 +367,7 @@ void KyraEngine_MR::objectChatWaitToFinish() {
 
 		uint32 nextFrame = _system->getMillis() + delayTime * _tickLength;
 
-		while (_system->getMillis() < nextFrame && !_quit) {
+		while (_system->getMillis() < nextFrame && !_eventMan->shouldQuit()) {
 			updateWithText();
 
 			const uint32 curTime = _system->getMillis();
@@ -419,7 +419,7 @@ void KyraEngine_MR::badConscienceChatWaitToFinish() {
 	uint32 nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(4, 8) * _tickLength;
 
 	int frame = _badConscienceFrameTable[_badConscienceAnim+24];
-	while (running && !_quit) {
+	while (running && !_eventMan->shouldQuit()) {
 		if (nextFrame < _system->getMillis()) {
 			++frame;
 			if (_badConscienceFrameTable[_badConscienceAnim+32] < frame)
@@ -477,7 +477,7 @@ void KyraEngine_MR::goodConscienceChatWaitToFinish() {
 	uint32 nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(3, 6) * _tickLength;
 
 	int frame = _goodConscienceFrameTable[_goodConscienceAnim+15];
-	while (running && !_quit) {
+	while (running && !_eventMan->shouldQuit()) {
 		if (nextFrame < _system->getMillis()) {
 			++frame;
 			if (_goodConscienceFrameTable[_goodConscienceAnim+20] < frame)
@@ -597,7 +597,7 @@ void KyraEngine_MR::albumChatWaitToFinish() {
 
 	uint32 nextFrame = 0;
 	int frame = 12;
-	while (running && !_quit) {
+	while (running && !_eventMan->shouldQuit()) {
 		if (nextFrame < _system->getMillis()) {
 			++frame;
 			if (frame > 22)

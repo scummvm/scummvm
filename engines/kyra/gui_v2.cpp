@@ -821,13 +821,9 @@ void GUI_v2::checkTextfieldInput() {
 	int keys = 0;
 	while (_vm->_eventMan->pollEvent(event) && running) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_vm->_quit = true;
-			break;
-
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				_vm->_quit = true;
+				_vm->_eventMan->pushEvent(Common::EVENT_QUIT);
 			else
 				_keyPressed = event.kbd; 
 			running = false;

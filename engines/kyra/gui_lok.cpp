@@ -459,7 +459,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		updateAllMenuButtons();
 	}
 
-	while (_displayMenu && !_vm->_quit) {
+	while (_displayMenu && !_vm->_eventMan->shouldQuit()) {
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[_toplevelMenu], mouse.x, mouse.y);
 		processButtonList(_menuButtonList, 0, 0);
@@ -485,9 +485,6 @@ void GUI_LoK::getInput() {
 	_mouseWheel = 0;
 	while (_vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_vm->quitGame();
-			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_vm->_mousePressFlag = true;
 			break;
@@ -582,7 +579,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu && !_vm->_quit) {
+	while (_displaySubMenu && !_vm->_eventMan->shouldQuit()) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[2], mouse.x, mouse.y);
@@ -631,7 +628,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 
 	_vm->_gameToLoad = -1;
 
-	while (_displaySubMenu && !_vm->_quit) {
+	while (_displaySubMenu && !_vm->_eventMan->shouldQuit()) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[2], mouse.x, mouse.y);
@@ -719,7 +716,7 @@ int GUI_LoK::saveGame(Button *button) {
 	}
 	redrawTextfield();
 
-	while (_displaySubMenu && !_vm->_quit) {
+	while (_displaySubMenu && !_vm->_eventMan->shouldQuit()) {
 		getInput();
 		updateSavegameString();
 		Common::Point mouse = _vm->getMousePos();
@@ -773,7 +770,7 @@ int GUI_LoK::quitPlaying(Button *button) {
 	updateMenuButton(button);
 
 	if (quitConfirm(_vm->_guiStrings[14])) { // Are you sure you want to quit playing?
-		_vm->quitGame();
+		_vm->_eventMan->pushEvent(Common::EVENT_QUIT);
 	} else {
 		initMenu(_menu[_toplevelMenu]);
 		updateAllMenuButtons();
@@ -795,7 +792,7 @@ bool GUI_LoK::quitConfirm(const char *str) {
 	_displaySubMenu = true;
 	_cancelSubMenu = true;
 
-	while (_displaySubMenu && !_vm->_quit) {
+	while (_displaySubMenu && !_vm->_eventMan->shouldQuit()) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[1], mouse.x, mouse.y);
@@ -861,7 +858,7 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
-	while (_displaySubMenu && !_vm->_quit) {
+	while (_displaySubMenu && !_vm->_eventMan->shouldQuit()) {
 		getInput();
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_menu[5], mouse.x, mouse.y);
