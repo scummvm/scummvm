@@ -25,6 +25,7 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/events.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -50,11 +51,7 @@ public:
 	Audio::Mixer *_mixer;
 	Common::TimerManager * _timer;
 
-	/** We keep running until this is set to true. */
-	bool _quit;
-
-	/** This is used when returning from go() to specifiy if we return to the launcher (true), or quit (false). */
-	bool _rtl;
+	bool _quit, _rtl;
 
 protected:
 	Common::EventManager *_eventMan;
@@ -121,10 +118,19 @@ public:
 	void pauseEngine(bool pause);
 
 	/**
+	 * Quit the engine, sends a Quit event to the Event Manager
+	 */
+	void quitGame() { _eventMan->pushEvent(Common::EVENT_QUIT); };
+
+	/**
 	 * Return whether the engine is currently paused or not.
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
 
+	/**
+	 * Return whether or not the engine should quit
+	 */
+	bool quit() const { return _eventMan->shouldQuit(); }
 
 	/** Run the Global Main Menu Dialog
 	 */
