@@ -67,10 +67,12 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	_mixer = new DSAudioMixer;
-	_timer = new DSTimerManager;
-	DS::setSoundProc(Audio::Mixer::mixCallback, _mixer);
-    DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+	_mixer = new DSAudioMixer(this);
+	_timer = new DSTimerManager();
+    	DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+
+	_mixer->setOutputRate(11025 /*DS::getSoundFrequency()*/);
+	_mixer->setReady(true);
     
 	OSystem::initBackend();
 }
@@ -139,7 +141,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 		
-//		if (r != 255)
+		if (r != 255)
 		{		
 			BG_PALETTE[r] = red | (green << 5) | (blue << 10);
 			if (!DS::getKeyboardEnable()) {
