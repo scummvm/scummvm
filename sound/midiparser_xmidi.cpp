@@ -86,9 +86,17 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		}
 		break;
 
-	case 0xC: case 0xD:
+	case 0xC:
+	case 0xD:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
+		break;
+
+	case 0x8:
+	case 0xA:
+	case 0xE:
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = *(_position._play_pos++);
 		break;
 
 	case 0xB:
@@ -128,11 +136,6 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		}
 		break;
 
-	case 0x8: case 0xA: case 0xE:
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = *(_position._play_pos++);
-		break;
-
 	case 0xF: // Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
@@ -145,7 +148,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 			info.basic.param2 = 0;
 			break;
 
-		case 0x6: case 0x8: case 0xA: case 0xB: case 0xC: case 0xE:
+		case 0x6:
+		case 0x8:
+		case 0xA:
+		case 0xB:
+		case 0xC:
+		case 0xE:
 			info.basic.param1 = info.basic.param2 = 0;
 			break;
 
