@@ -767,6 +767,7 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	freeBackground();
+	freeLabels();
 
 	return;
 }

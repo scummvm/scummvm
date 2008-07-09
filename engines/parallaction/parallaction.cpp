@@ -93,6 +93,7 @@ Parallaction::~Parallaction() {
 
 	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
 	hideDialogueStuff();
+	delete _balloonMan;
 	freeLocation();
 
 	freeCharacter();
