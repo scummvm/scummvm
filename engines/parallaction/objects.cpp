@@ -54,6 +54,7 @@ Animation::Animation() {
 
 Animation::~Animation() {
 	free(_scriptName);
+	gfxobj->release();
 }
 
 uint16 Animation::width() const {
@@ -182,6 +183,8 @@ Zone::~Zone() {
 		break;
 	}
 
+
+	free(_linkedName);
 }
 
 void Zone::getRect(Common::Rect& r) const {

@@ -111,6 +111,9 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\parallaction\balloons.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\callables_br.cpp">
 		</File>
 		<File

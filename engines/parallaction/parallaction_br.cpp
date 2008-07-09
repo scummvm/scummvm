@@ -80,6 +80,9 @@ int Parallaction_br::init() {
 
 	_part = -1;
 
+	_subtitle[0] = -1;
+	_subtitle[1] = -1;
+
 	Parallaction::init();
 
 	return 0;
@@ -221,7 +224,7 @@ void Parallaction_br::changeLocation(char *location) {
 	// free open location stuff
 	clearSubtitles();
 	freeBackground();
-	_gfx->clearGfxObjects();
+	_gfx->clearGfxObjects(kGfxObjNormal | kGfxObjCharacter);
 	_location._programs.clear();
 	freeZones();
 	freeAnimations();

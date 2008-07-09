@@ -16,6 +16,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added CAMD MIDI driver for AmigaOS4.
    - Revived the PS2 port (was already in 0.11.1 but was forgotten in the
      release notes).
+   - Plugged numerous memory leaks in all engines (part of GSoC'08 task)
 
  AGOS:
    - Fixed palette issues in Amiga versions of Simon the Sorcerer 1.

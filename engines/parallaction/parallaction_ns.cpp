@@ -306,6 +306,7 @@ void Parallaction_ns::changeLocation(char *location) {
 		setArrowCursor();
 	}
 
+	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);
 
 	freeLocation();
@@ -327,6 +328,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	}
 
 	_location._animations.push_front(_char._ani);
+	_gfx->showGfxObj(_char._ani->gfxobj, true);
 
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
@@ -411,6 +413,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
+	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
 
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {

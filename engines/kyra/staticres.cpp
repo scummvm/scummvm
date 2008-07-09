@@ -1976,11 +1976,25 @@ const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
-	"TRI",		Italian and Spanish were never included
-	"TRS"*/
+	"TRI",		Italian and Spanish were never included, the supported fan translations are using
+	"TRS"		English/French extensions thus overwriting these languages */		
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
+
+const char * const KyraEngine_MR::_mainMenuSpanishFan[] = {
+	"Nueva Partida",
+	"Ver Intro",
+	"Restaurar",
+	"Finalizar"
+};
+
+const char * const KyraEngine_MR::_mainMenuItalianFan[] = {
+	"Nuova Partita",
+	"Introduzione",
+	"Carica una partita",
+	"Esci dal gioco"
+};
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 	{ 57, 91, -31, -82 },

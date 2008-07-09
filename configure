@@ -741,6 +741,10 @@ for ac_option in $@; do
 	--enable-release)
 		DEBFLAGS="-O2 -Wuninitialized"
 		;;
+	--enable-profiling)
+		CXXFLAGS="$CXXFLAGS -pg"
+		LDFLAGS="$LDFLAGS -pg"
+		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_sdlpath="$arg:$arg/bin"

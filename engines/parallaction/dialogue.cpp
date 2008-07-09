@@ -93,7 +93,7 @@ uint16 DialogueManager::askPassword() {
 	uint16 passwordLen = 0;
 	_password[0] = '\0';
 
-	_vm->_gfx->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
+	_vm->_balloonMan->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
 	int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
 	_vm->_gfx->setItemFrame(id, 0);
 
@@ -118,7 +118,7 @@ uint16 DialogueManager::askPassword() {
 		}
 
 		if (changed) {
-			_vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 3);
+			_vm->_balloonMan->setBalloonText(0, _q->_answers[0]->_text, 3);
 			_vm->_gfx->updateScreen();
 			changed = false;
 		}
@@ -143,7 +143,7 @@ uint16 DialogueManager::askPassword() {
 
 	}
 
-	_vm->_gfx->hideDialogueStuff();
+	_vm->hideDialogueStuff();
 
 	return 0;
 
@@ -162,7 +162,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 	// display suitable answers
 	if (((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags)) {
 
-		int id = _vm->_gfx->setDialogueBalloon(a->_text, 1, 3);
+		int id = _vm->_balloonMan->setDialogueBalloon(a->_text, 1, 3);
 		assert(id >= 0);
 		_visAnswers[id] = i;
 
@@ -190,13 +190,13 @@ void DialogueManager::displayQuestion() {
 
 	if (!scumm_stricmp(_q->_text, "NULL")) return;
 
-	_vm->_gfx->setSingleBalloon(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, _q->_mood & 0x10, 0);
+	_vm->_balloonMan->setSingleBalloon(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, _q->_mood & 0x10, 0);
 	int id = _vm->_gfx->setItem(_questioner, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y);
 	_vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
 
 	_vm->_gfx->updateScreen();
 	_vm->_input->waitUntilLeftClick();
-	_vm->_gfx->hideDialogueStuff();
+	_vm->hideDialogueStuff();
 
 	return;
 }
@@ -261,9 +261,9 @@ int16 DialogueManager::selectAnswer() {
 	_vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
 
 	if (numAvailableAnswers == 1) {
-		_vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 0);
+		_vm->_balloonMan->setBalloonText(0, _q->_answers[0]->_text, 0);
 		_vm->_input->waitUntilLeftClick();
-		_vm->_gfx->hideDialogueStuff();
+		_vm->hideDialogueStuff();
 		return 0;
 	}
 
@@ -277,15 +277,15 @@ int16 DialogueManager::selectAnswer() {
 		_vm->_input->readInput();
 		_vm->_input->getCursorPos(p);
 		event = _vm->_input->getLastButtonEvent();
-		selection = _vm->_gfx->hitTestDialogueBalloon(p.x, p.y);
+		selection = _vm->_balloonMan->hitTestDialogueBalloon(p.x, p.y);
 
 		if (selection != oldSelection) {
 			if (oldSelection != -1) {
-				_vm->_gfx->setBalloonText(oldSelection, _q->_answers[_visAnswers[oldSelection]]->_text, 3);
+				_vm->_balloonMan->setBalloonText(oldSelection, _q->_answers[_visAnswers[oldSelection]]->_text, 3);
 			}
 
 			if (selection != -1) {
-				_vm->_gfx->setBalloonText(selection, _q->_answers[_visAnswers[selection]]->_text, 0);
+				_vm->_balloonMan->setBalloonText(selection, _q->_answers[_visAnswers[selection]]->_text, 0);
 				_vm->_gfx->setItemFrame(0, _q->_answers[_visAnswers[selection]]->_mood & 0xF);
 			}
 		}
@@ -300,7 +300,7 @@ int16 DialogueManager::selectAnswer() {
 		oldSelection = selection;
 	}
 
-	_vm->_gfx->hideDialogueStuff();
+	_vm->hideDialogueStuff();
 
 	return _visAnswers[selection];
 }

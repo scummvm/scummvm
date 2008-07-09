@@ -32,7 +32,7 @@
 
 namespace Parallaction {
 
-GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(0), frame(0), layer(3), _flags(0), _keep(true) {
+GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(0), frame(0), layer(3), _flags(kGfxObjNormal), _keep(true) {
 	if (name) {
 		_name = strdup(name);
 	} else {
@@ -86,12 +86,14 @@ void GfxObj::clearFlags(uint32 flags) {
 }
 
 GfxObj* Gfx::loadAnim(const char *name) {
-	GfxObj *obj = _disk->loadFrames(name);
+	Frames* frames = _disk->loadFrames(name);
+	assert(frames);
+
+	GfxObj *obj = new GfxObj(kGfxObjTypeAnim, frames, name);
 	assert(obj);
 
 	// animation Z is not set here, but controlled by game scripts and user interaction.
 	// it is always >=0 and <screen height
-	obj->type = kGfxObjTypeAnim;
 	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;
@@ -110,34 +112,43 @@ GfxObj* Gfx::loadGet(const char *name) {
 }
 
 GfxObj* Gfx::loadDoor(const char *name) {
-	GfxObj *obj = _disk->loadFrames(name);
+	Frames *frames = _disk->loadFrames(name);
+	assert(frames);
+
+	GfxObj *obj = new GfxObj(kGfxObjTypeDoor, frames, name);
 	assert(obj);
 
 	obj->z = kGfxObjDoorZ;	// this preset Z value ensures that doors are drawn first
-	obj->type = kGfxObjTypeDoor;
 	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;
 }
 
-void Gfx::clearGfxObjects() {
-	_gfxobjList.clear();
+void Gfx::clearGfxObjects(uint filter) {
+
+	GfxObjList::iterator b = _gfxobjList.begin();
+	GfxObjList::iterator e = _gfxobjList.end();
+
+	for ( ; b != e; ) {
+		if (((*b)->_flags & filter) != 0) {
+			b = _gfxobjList.erase(b);
+		} else {
+			b++;
+		}
+	}
+
 }
 
 void Gfx::showGfxObj(GfxObj* obj, bool visible) {
-//	if (!obj || obj->isVisible() == visible) {
-//		return;
-//	}
-
-	assert(obj);
+	if (!obj) {
+		return;
+	}
 
 	if (visible) {
 		obj->setFlags(kGfxObjVisible);
 	} else {
 		obj->clearFlags(kGfxObjVisible);
-//		_gfxobjList.remove(obj);
 	}
-
 }
 
 
@@ -181,8 +192,6 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 
 	sortAnimations();
 	// TODO: some zones don't appear because of wrong masking (3 or 0?)
-	// TODO: Dr.Ki is not visible inside the club
-
 
 	GfxObjList::iterator b = _gfxobjList.begin();
 	GfxObjList::iterator e = _gfxobjList.end();

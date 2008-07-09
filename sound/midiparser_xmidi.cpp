@@ -38,6 +38,14 @@ protected:
 	NoteTimer _notes_cache[32];
 	uint32 _inserted_delta; // Track simulated deltas for note-off events
 
+	struct Loop {
+		byte *pos;
+		byte repeat;
+	};
+
+	Loop _loop[4];
+	int _loopCount;
+
 protected:
 	uint32 readVLQ2(byte * &data);
 	void resetTracking();
@@ -78,14 +86,54 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		}
 		break;
 
-	case 0xC: case 0xD:
+	case 0xC:
+	case 0xD:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		break;
 
-	case 0x8: case 0xA: case 0xB: case 0xE:
+	case 0x8:
+	case 0xA:
+	case 0xE:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
+		break;
+
+	case 0xB:
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = *(_position._play_pos++);
+
+		// Simplified XMIDI looping.
+		//
+		// I would really like to turn the loop events into some sort
+		// of NOP event (perhaps a dummy META event?), but for now we
+		// just pass them on to the MIDI driver. That has worked in the
+		// past, so it shouldn't cause any actual damage...
+
+		if (info.basic.param1 == 0x74) {
+			// XMIDI_CONTROLLER_FOR_LOOP
+			byte *pos = _position._play_pos;
+			if (_loopCount < ARRAYSIZE(_loop) - 1)
+				_loopCount++;
+
+			_loop[_loopCount].pos = pos;
+			_loop[_loopCount].repeat = info.basic.param2;
+		} else if (info.basic.param1 == 0x75) {
+			// XMIDI_CONTROLLER_NEXT_BREAK
+			if (_loopCount >= 0) {
+				if (info.basic.param2 < 64) {
+					// End the current loop.
+					_loopCount--;
+				} else {
+					_position._play_pos = _loop[_loopCount].pos;
+					// Repeat 0 means "loop forever".
+					if (_loop[_loopCount].repeat) {
+						if (--_loop[_loopCount].repeat == 0)
+							_loopCount--;
+					}
+				}
+			}
+		}
 		break;
 
 	case 0xF: // Meta or SysEx event
@@ -100,7 +148,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 			info.basic.param2 = 0;
 			break;
 
-		case 0x6: case 0x8: case 0xA: case 0xB: case 0xC: case 0xE:
+		case 0x6:
+		case 0x8:
+		case 0xA:
+		case 0xB:
+		case 0xC:
+		case 0xE:
 			info.basic.param1 = info.basic.param2 = 0;
 			break;
 
@@ -135,6 +188,8 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 	uint32 len;
 	uint32 chunk_len;
 	char buf[32];
+
+	_loopCount = -1;
 
 	unloadMusic();
 	byte *pos = data;

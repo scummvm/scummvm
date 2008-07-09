@@ -85,16 +85,26 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 
 	_position._running_status = info.event;
 	switch (info.command()) {
-	case 0xC: case 0xD:
+	case 0x9: // Note On
+		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param2 = *(_position._play_pos++);
+		if (info.basic.param2 == 0)
+			info.event = info.channel() | 0x80;
+		info.length = 0;
+		break;
+
+	case 0xC:
+	case 0xD:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		break;
 
-	case 0x8: case 0x9: case 0xA: case 0xB: case 0xE:
+	case 0x8:
+	case 0xA:
+	case 0xB:
+	case 0xE:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
-		if (info.command() == 0x9 && info.basic.param2 == 0)
-			info.event = info.channel() | 0x80;
 		info.length = 0;
 		break;
 
@@ -110,7 +120,12 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 			info.basic.param2 = 0;
 			break;
 
-		case 0x6: case 0x8: case 0xA: case 0xB: case 0xC: case 0xE:
+		case 0x6:
+		case 0x8:
+		case 0xA:
+		case 0xB:
+		case 0xC:
+		case 0xE:
 			info.basic.param1 = info.basic.param2 = 0;
 			break;
 

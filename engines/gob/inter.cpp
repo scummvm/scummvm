@@ -212,25 +212,35 @@ void Inter::funcBlock(int16 retFlag) {
 			break;
 
 		// WORKAROUND:
-		// The EGA version of gob1 doesn't add a delay after showing
+		// The EGA and Mac versions of gob1 doesn't add a delay after showing
 		// images between levels. We manually add it here.
-		if ((_vm->getGameType() == kGameTypeGob1) && _vm->isEGA()) {
+		if ((_vm->getGameType() == kGameTypeGob1) &&
+		   (_vm->isEGA() || (_vm->getPlatform() == Common::kPlatformMacintosh))) {
+
 			int addr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
-			if ((startaddr == 0x18B4 && addr == 0x1A7F && // Zombie
+
+			if ((startaddr == 0x18B4 && addr == 0x1A7F && // Zombie, EGA
+				 !strncmp(_vm->_game->_curTotFile, "avt005.tot", 10)) ||
+			  (startaddr == 0x188D && addr == 0x1A58 && // Zombie, Mac
 				 !strncmp(_vm->_game->_curTotFile, "avt005.tot", 10)) ||
 				(startaddr == 0x1299 && addr == 0x139A && // Dungeon
 				 !strncmp(_vm->_game->_curTotFile, "avt006.tot", 10)) ||
-				(startaddr == 0x11C0 && addr == 0x12C9 && // Cauldron
+				(startaddr == 0x11C0 && addr == 0x12C9 && // Cauldron, EGA
+				 !strncmp(_vm->_game->_curTotFile, "avt012.tot", 10)) ||
+				(startaddr == 0x11C8 && addr == 0x1341 && // Cauldron, Mac
 				 !strncmp(_vm->_game->_curTotFile, "avt012.tot", 10)) ||
 				(startaddr == 0x09F2 && addr == 0x0AF3 && // Statue
 				 !strncmp(_vm->_game->_curTotFile, "avt016.tot", 10)) ||
 				(startaddr == 0x0B92 && addr == 0x0C93 && // Castle
 				 !strncmp(_vm->_game->_curTotFile, "avt019.tot", 10)) ||
-				(startaddr == 0x17D9 && addr == 0x18DA && // Finale
+				(startaddr == 0x17D9 && addr == 0x18DA && // Finale, EGA
+				 !strncmp(_vm->_game->_curTotFile, "avt022.tot", 10)) ||
+				(startaddr == 0x17E9 && addr == 0x19A8 && // Finale, Mac
 				 !strncmp(_vm->_game->_curTotFile, "avt022.tot", 10))) {
 
 				_vm->_util->longDelay(5000);
 			}
+
 		} // End of workaround
 
 		cmd = *_vm->_global->_inter_execPtr;

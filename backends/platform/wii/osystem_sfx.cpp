@@ -36,9 +36,6 @@ static bool sfx_thread_quit = false;
 static u8 sb = 0;
 static u8 *sound_buffer[2];
 
-static OSystem_Wii::SoundProc sound_proc = NULL;
-static void *proc_param = NULL;
-
 static void audio_switch_buffers() {
 	AUDIO_StopDMA();
 	AUDIO_InitDMA((u32) sound_buffer[sb], SFX_THREAD_FRAG_SIZE);
@@ -48,6 +45,7 @@ static void audio_switch_buffers() {
 }
 
 static void * sfx_thread_func(void *arg) {
+	Audio::MixerImpl *mixer = (Audio::MixerImpl *) arg;
 	u8 next_sb;
 
 	while (true) {
@@ -57,7 +55,7 @@ static void * sfx_thread_func(void *arg) {
 			break;
 
 		next_sb = sb ^ 1;
-		sound_proc(proc_param, sound_buffer[next_sb], SFX_THREAD_FRAG_SIZE);
+		mixer->mixCallback(sound_buffer[next_sb], SFX_THREAD_FRAG_SIZE);
 		DCFlushRange(sound_buffer[next_sb], SFX_THREAD_FRAG_SIZE);
 
 		sb = next_sb;
@@ -75,7 +73,7 @@ void OSystem_Wii::initSfx() {
 
 	LWP_InitQueue(&sfx_queue);
 
-	s32 res = LWP_CreateThread(&sfx_thread, sfx_thread_func, NULL, sfx_stack,
+	s32 res = LWP_CreateThread(&sfx_thread, sfx_thread_func, _mixer, sfx_stack,
 								SFX_THREAD_STACKSIZE, SFX_THREAD_PRIO);
 
 	if (res) {
@@ -95,9 +93,7 @@ void OSystem_Wii::initSfx() {
 	DCFlushRange(sound_buffer[0], SFX_THREAD_FRAG_SIZE);
 	DCFlushRange(sound_buffer[1], SFX_THREAD_FRAG_SIZE);
 
-	sound_proc = Audio::Mixer::mixCallback;
-	proc_param = _mixer;
-
+	_mixer->setOutputRate(48000);
 	_mixer->setReady(true);
 
 	AUDIO_SetDSPSampleRate(AI_SAMPLERATE_48KHZ);
@@ -125,9 +121,5 @@ void OSystem_Wii::deinitSfx() {
 		free(sound_buffer[0]);
 		free(sound_buffer[1]);
 	}
-}
-
-int OSystem_Wii::getOutputSampleRate() const {
-	return 48000;
 }
 

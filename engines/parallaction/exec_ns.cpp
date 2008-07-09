@@ -469,7 +469,7 @@ void Parallaction::displayComment(ExamineData *data) {
 		}
 
 		_gfx->setHalfbriteMode(true);
-		_gfx->setSingleBalloon(data->_description, 0, 90, 0, 0);
+		_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, 0);
 		Common::Rect r;
 		data->_cnv->getRect(0, r);
 		id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
@@ -477,7 +477,7 @@ void Parallaction::displayComment(ExamineData *data) {
 		id = _gfx->setItem(_char._head, 100, 152);
 		_gfx->setItemFrame(id, 0);
 	} else {
-		_gfx->setSingleBalloon(data->_description, 140, 10, 0, 0);
+		_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, 0);
 		id = _gfx->setItem(_char._talk, 190, 80);
 		_gfx->setItemFrame(id, 0);
 	}

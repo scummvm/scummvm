@@ -969,6 +969,7 @@ void OSRenderer::drawBackground() {
 
 /*! \brief Draw one overlay
  * \param it Overlay info
+ * \todo Add handling of type 22 overlays
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int len;
@@ -979,6 +980,9 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
+		if (objectTable[it->objIdx].frame < 0) {
+			break;
+		}
 		sprite = animDataTable + objectTable[it->objIdx].frame;
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
@@ -986,6 +990,13 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		remaskSprite(mask, it);
 		drawMaskedSprite(objectTable[it->objIdx], mask);
 		delete[] mask;
+		break;
+
+	// bitmap
+	case 4:
+		if (objectTable[it->objIdx].frame >= 0) {
+			FWRenderer::renderOverlay(it);
+		}
 		break;
 
 	// masked background
