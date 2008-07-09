@@ -114,7 +114,7 @@ protected:
 
 	// TODO : sort order of all this stuff
 	void reset();
-	void checkResolution();
+	bool checkModeResolutions();
 	void setDefaultPosition();
 	void move(int16 x, int16 y);
 	void switchMode(Mode *newMode);

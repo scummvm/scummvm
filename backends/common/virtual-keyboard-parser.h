@@ -31,30 +31,35 @@
 
 namespace Common {
 
+enum ParseMode {
+	kParseFull,				// when loading keyboard pack for first time
+	kParseCheckResolutions  // when re-parsing following a change in screen size
+};
+
 class VirtualKeyboardParser : public Common::XMLParser {
 
 	typedef bool (VirtualKeyboardParser::*ParserCallback)();
 
 public:
 
+
 	VirtualKeyboardParser(VirtualKeyboard *kbd);
+	void setParseMode(ParseMode m) {
+		_parseMode = m;
+	}
 
 protected:
 	VirtualKeyboard *_keyboard;
 
 	/** internal state variables of parser */
+	ParseMode _parseMode;
 	VirtualKeyboard::Mode *_mode; // pointer to mode currently being parsed
-	bool _modeParsed;
 	Common::String _initialModeName;  // name of initial keyboard mode
 	bool _kbdParsed;
 
 	bool keyCallback(Common::String keyName);
 	bool closedKeyCallback(Common::String keyName);
-	void cleanup() {
-		_mode = 0;
-		_kbdParsed = _modeParsed = false;
-		_initialModeName.clear();
-	}
+	void cleanup();
 
 	bool parserCallback_Keyboard();
 	bool parserCallback_Mode();

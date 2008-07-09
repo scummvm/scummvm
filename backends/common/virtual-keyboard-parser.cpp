@@ -45,6 +45,16 @@ VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd) : XMLParser()
 	_closedCallbacks["mode"]     = &VirtualKeyboardParser::parserCallback_ModeClosed;
 }
 
+void VirtualKeyboardParser::cleanup() {
+	_mode = 0;
+	_kbdParsed = false;
+	_initialModeName.clear();
+	if (_parseMode == kParseFull) {
+		// reset keyboard to remove existing config
+		_keyboard->reset();
+	}
+}
+
 bool VirtualKeyboardParser::keyCallback(Common::String keyName) {
 	if (!_callbacks.contains(_activeKey.top()->name))
 		return parserError("%s is not a valid key name.", keyName.c_str());
@@ -69,6 +79,10 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 
 	if (_kbdParsed)
 		return parserError("Only a single keyboard element is allowed");
+
+	// if not full parse then we're done
+	if (_parseMode == kParseCheckResolutions)
+		return true;
 
 	if (!kbdNode->values.contains("initial_mode"))
 		return parserError("Keyboard element must contain initial_mode attribute");
@@ -118,47 +132,67 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 
 	Common::String name = modeNode->values["name"];
 
-	if (_keyboard->_modes.contains(name))
-		return parserError("Mode '%s' has already been defined", name.c_str());
+	if (_parseMode == kParseFull) {
+		// if full parse then add new mode to keyboard
 
-	// create new mode
-	VirtualKeyboard::Mode mode;
-	mode.name = name;
-	_keyboard->_modes[name] = mode;
-	_mode = &(_keyboard->_modes[name]);
-	
-	// if this is the keyboard's initial mode
-	// then set it to be the current mode
-	if (name == _initialModeName)
-		_keyboard->_initialMode = _mode;
+		if (_keyboard->_modes.contains(name))
+			return parserError("Mode '%s' has already been defined", name.c_str());
+
+		VirtualKeyboard::Mode mode;
+		mode.name = name;
+		_keyboard->_modes[name] = mode;
+		_mode = &(_keyboard->_modes[name]);
+
+		// if this is the keyboard's initial mode
+		// then set it to be the current mode
+		if (name == _initialModeName)
+			_keyboard->_initialMode = _mode;
+	} else
+		_mode = &(_keyboard->_modes[name]);
 
 	Common::String resolutions = modeNode->values["resolutions"];
-	Common::StringTokenizer tok(resolutions, " ,");
+	Common::StringTokenizer tok (resolutions, " ,");
 
-	uint16 scrX = g_system->getOverlayWidth(), scrY = g_system->getOverlayHeight();
+	uint16 scrW = _keyboard->_screenWidth, scrH = _keyboard->_screenHeight;
 	uint32 diff = 0xFFFFFFFF;
-
+	Common::String newResolution;
 	for (Common::String res = tok.nextToken(); res.size() > 0; res = tok.nextToken()) {
-		int resX, resY;
-		if (sscanf(res.c_str(), "%dx%d", &resX, &resY) != 2) {
-			parserError("Invalid resolution specification");
+		// TODO: improve the resolution selection
+		int resW, resH;
+		if (sscanf(res.c_str(), "%dx%d", &resW, &resH) != 2) {
+			return parserError("Invalid resolution specification");
 		} else {
-			if (resX == scrX && resY == scrY) {
-				_mode->resolution = res;
+			if (resW == scrW && resH == scrH) {
+				newResolution = res;
 				break;
 			} else {
-				uint16 newDiff = ABS(scrX - resX) + ABS(scrY - resY);
+				uint16 newDiff = ABS(scrW - resW) + ABS(scrH - resH);
 				if (newDiff < diff) {
 					diff = newDiff;
-					_mode->resolution = res;
+					newResolution = res;
 				}
 			}
 		}
 	}
 
-	if (_mode->resolution.empty())
+	if (newResolution.empty())
 		return parserError("No acceptable resolution was found");
 
+	if (_parseMode == kParseCheckResolutions) {
+		if (_mode->resolution == newResolution) {
+			modeNode->ignore = true;
+			return true;
+		} else {
+			// remove data relating to old resolution
+			ImageMan.unregisterSurface(_mode->bitmapName);
+			_mode->bitmapName.clear();
+			_mode->image = 0;
+			_mode->imageMap.removeAllAreas();
+		}
+	}
+
+	_mode->resolution = newResolution;
+	
 	return true;
 }
 
@@ -180,6 +214,10 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		return parserError("Event element must contain name and type attributes");
 
 	assert(_mode);
+
+	// if just checking resolutions we're done
+	if (_parseMode == kParseCheckResolutions)
+		return true;
 
 	Common::String name = evtNode->values["name"];
 	if (_mode->events.contains(name))

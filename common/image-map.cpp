@@ -28,10 +28,7 @@
 namespace Common {
 
 ImageMap::~ImageMap() {
-	HashMap<String, Shape*>::iterator it;
-	for (it = _areas.begin(); it != _areas.end(); it++) {
-		delete it->_value;
-	}
+	removeAllAreas();
 }
 
 Rect *ImageMap::createRectArea(const String& id) {
@@ -54,22 +51,21 @@ Polygon *ImageMap::createPolygonArea(const String& id) {
 	return p;
 }
 
-/*
-void ImageMap::addMapArea(Shape *shape, const String& target) {
-	if (_areas.contains(target)) {
-		warning("Image map already contains an area with target of '%s'");
+void ImageMap::removeArea(const String& id) {
+	if (!_areas.contains(id))
 		return;
-	}
-	_areas[target] = shape;
-}
-void ImageMap::addRectMapArea(const Rect& rect, const String& target) {
-	areas.push_back(MapArea(rect, target));
+	delete _areas[id];
+	_areas.erase(id);
 }
 
-void ImageMap::addPolygonMapArea(const Polygon& poly, const String& target) {
-	areas.push_back(MapArea(poly, target));
+void ImageMap::removeAllAreas() {
+	HashMap<String, Shape*>::iterator it;
+	for (it = _areas.begin(); it != _areas.end(); it++) {
+		delete it->_value;
+	}
+	_areas.clear();
 }
-*/
+
 String ImageMap::findMapArea(int16 x, int16 y) {
 	HashMap<String, Shape*>::iterator it;
 	for (it = _areas.begin(); it != _areas.end(); it++) {

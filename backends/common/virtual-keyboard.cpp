@@ -65,8 +65,6 @@ void VirtualKeyboard::reset() {
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
-	// reset to default settings
-	reset();
 
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
@@ -108,6 +106,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 		return false;
 	}
 
+	_parser->setParseMode(kParseFull);
 	_loaded = _parser->parse();
 	if (_loaded)
 		printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
@@ -148,11 +147,11 @@ void VirtualKeyboard::setDefaultPosition()
 	_kbdBound.moveTo(posX, posY);
 }
 
-void VirtualKeyboard::checkResolution()
+bool VirtualKeyboard::checkModeResolutions()
 {
-	// check if there is a more suitable resolution
-	// in the keyboard pack than the current one
-	// based on the _screenWidth & _screenHeight
+	_parser->setParseMode(kParseCheckResolutions);
+	_loaded = _parser->parse();
+	return _loaded;
 }
 	
 void VirtualKeyboard::move(int16 x, int16 y) {
@@ -215,9 +214,14 @@ void VirtualKeyboard::switchMode(const Common::String& newMode) {
 }
 
 void VirtualKeyboard::show() {
+	if (!_loaded) {
+		warning("Keyboard not loaded therefore can't be shown");
+		return;
+	}
 	if (_screenWidth != _system->getOverlayWidth() || _screenHeight != _system->getOverlayHeight()) {
 		_screenWidth = _system->getOverlayWidth();
 		_screenHeight = _system->getOverlayHeight();
+		if (!checkModeResolutions()) return;
 	}
 	switchMode(_initialMode);
 	_displaying = true;
@@ -272,7 +276,8 @@ void VirtualKeyboard::runLoop() {
 			case Common::EVENT_SCREEN_CHANGED:
 				_screenWidth = _system->getOverlayWidth();
 				_screenHeight = _system->getOverlayHeight();
-				checkResolution();
+				if (!checkModeResolutions())
+					_displaying = false;
 				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
@@ -280,6 +285,8 @@ void VirtualKeyboard::runLoop() {
 			default:
 				break;
 			}
+			// TODO - remove this line ?
+			if (!_displaying) break;
 		}
 	}
 	// clear keyboard from overlay

@@ -33,32 +33,6 @@
 
 namespace Common {
 
-class MapArea {
-public:
-	MapArea() : _shape(0), _target() {}
-	MapArea(const Rect& r, const String& t) : _target(t) {
-		_shape = new Rect(r);
-	}
-	MapArea(const Polygon& p, const String& t) : _target(t) {
-		_shape = new Polygon(p);
-	}
-	virtual ~MapArea() {
-		delete _shape;
-	}
-
-	virtual bool contains(int x, int y) {
-		return _shape->contains(x, y);
-	}
-
-	String getTarget() { return _target; }
-
-protected:
-	/* shape defining the MapArea's boundary */
-	Shape *_shape;
-	/* string describing the target of MapArea */
-	String _target;
-};
-
 class ImageMap {
 
 public:
@@ -67,6 +41,8 @@ public:
 	
 	Rect *createRectArea(const String& id);
 	Polygon *createPolygonArea(const String& id);
+	void removeArea(const String& id);
+	void removeAllAreas();
 
 	//void addMapArea(Shape *shape, const String& target);
 	/*void addRectMapArea(const Rect& rect, const String& target);
