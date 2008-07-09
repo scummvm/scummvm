@@ -340,12 +340,15 @@ class Disk;
 enum {
 	kGfxObjVisible = 1,
 
+	kGfxObjNormal = 2,
+	kGfxObjCharacter = 4,
 
 	kGfxObjTypeDoor = 0,
 	kGfxObjTypeGet = 1,
 	kGfxObjTypeAnim = 2,
 	kGfxObjTypeLabel = 3,
-	kGfxObjTypeBalloon = 4
+	kGfxObjTypeBalloon = 4,
+	kGfxObjTypeCharacter = 8
 };
 
 enum {
@@ -356,7 +359,6 @@ enum {
 class GfxObj {
 	char *_name;
 	Frames *_frames;
-	uint32 _flags;
 
 	bool _keep;
 
@@ -365,6 +367,7 @@ public:
 
 	int32 z;
 
+	uint32 _flags;
 
 	uint type;
 	uint frame;
@@ -478,7 +481,7 @@ public:
 	GfxObj* loadDoor(const char *name);
 	void drawGfxObjects(Graphics::Surface &surf);
 	void showGfxObj(GfxObj* obj, bool visible);
-	void clearGfxObjects();
+	void clearGfxObjects(uint filter);
 	void sortAnimations();
 
 

@@ -91,6 +91,8 @@ Parallaction::~Parallaction() {
 	delete _globalTable;
 	delete _callableNames;
 
+	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
+	hideDialogueStuff();
 	freeLocation();
 
 	freeCharacter();
@@ -165,6 +167,8 @@ void Parallaction::freeCharacter() {
 
 	delete _objectsNames;
 	_objectsNames = 0;
+
+	_gfx->clearGfxObjects(kGfxObjCharacter);
 
 	_char.free();
 
@@ -248,7 +252,7 @@ void Parallaction::freeLocation() {
 
 	_location._walkNodes.clear();
 
-	_gfx->clearGfxObjects();
+	_gfx->clearGfxObjects(kGfxObjNormal);
 	freeBackground();
 
 	_location._programs.clear();
@@ -569,10 +573,14 @@ void Character::setName(const char *name) {
 	const char *end = begin + strlen(name);
 
 	_prefix = _empty;
+	_suffix = _empty;
 
 	_dummy = IS_DUMMY_CHARACTER(name);
 
 	if (!_dummy) {
+		if (!strstr(name, "donna")) {
+			_engineFlags &= ~kEngineTransformedDonna;
+		} else
 		if (_engineFlags & kEngineTransformedDonna) {
 			_suffix = _suffixTras;
 		} else {
@@ -581,8 +589,6 @@ void Character::setName(const char *name) {
 				_engineFlags |= kEngineTransformedDonna;
 				_suffix = _suffixTras;
 				end = s;
-			} else {
-				_suffix = _empty;
 			}
 		}
 		if (IS_MINI_CHARACTER(name)) {

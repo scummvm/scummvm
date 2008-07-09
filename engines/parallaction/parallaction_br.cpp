@@ -224,7 +224,7 @@ void Parallaction_br::changeLocation(char *location) {
 	// free open location stuff
 	clearSubtitles();
 	freeBackground();
-	_gfx->clearGfxObjects();
+	_gfx->clearGfxObjects(kGfxObjNormal | kGfxObjCharacter);
 	_location._programs.clear();
 	freeZones();
 	freeAnimations();
