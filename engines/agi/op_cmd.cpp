@@ -1215,11 +1215,11 @@ cmd(quit) {
 
 	g_sound->stopSound();
 	if (p0) {
-		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+		g_agi->quitGame();
 	} else {
 		if (g_agi->selectionBox
 				(" Quit the game, or continue? \n\n\n", buttons) == 0) {
-			g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+			g_agi->quitGame();
 		}
 	}
 }
@@ -1233,7 +1233,7 @@ cmd(restart_game) {
 		g_agi->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
-		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+		g_agi->quitGame();
 		g_agi->setflag(fRestartGame, true);
 		g_agi->_menu->enableAll();
 	}
@@ -1741,7 +1741,7 @@ int AgiEngine::runLogic(int n) {
 	curLogic->cIP = curLogic->sIP;
 
 	timerHack = 0;
-	while (ip < _game.logics[n].size && !_eventMan->shouldQuit()) {
+	while (ip < _game.logics[n].size && !quit()) {
 		if (_debug.enabled) {
 			if (_debug.steps > 0) {
 				if (_debug.logic0 || n) {

@@ -246,3 +246,10 @@ void Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
+
+void Engine::quitGame() {
+	Common::Event event;
+
+	event.type = Common::EVENT_QUIT;
+	_eventMan->pushEvent(event);
+}

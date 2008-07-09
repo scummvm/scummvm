@@ -61,9 +61,6 @@ static void processEvent(Common::Event &event) {
 		break;
 	case Common::EVENT_MOUSEMOVE:
 		break;
-	case Common::EVENT_QUIT:
-		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
-		break;
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_RETURN:
@@ -292,7 +289,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			if ("quit"[menuCommandLen] == (char)di) {
 				++menuCommandLen;
 				if (menuCommandLen == 4) {
-				g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+					quitGame();
 				}
 			} else {
 				menuCommandLen = 0;
@@ -301,7 +298,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		manageEvents();
 
-	} while (!_eventMan->shouldQuit() && _danKeysPressed != 7);
+	} while (!quit() && _danKeysPressed != 7);
 
 	hideMouse();
 	g_sound->stopMusic();

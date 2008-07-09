@@ -149,7 +149,7 @@ public:
 	/**
 	 * Pushes a "fake" event of the specified type into the event queue
 	 */
-	virtual void pushEvent(Common::EventType eventType) = 0;
+	virtual void pushEvent(Common::Event event) = 0;
 
 	/** Register random source so it can be serialized in game test purposes **/
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
@@ -200,7 +200,7 @@ public:
 	// replacing it by a generic getScreenChangeID method here
 protected:
 
-	Common::Queue<Common::EventType> artificialEventQueue;
+	Common::Queue<Common::Event> artificialEventQueue;
 };
 
 } // End of namespace Common

@@ -354,7 +354,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	bool result;
 
 	if (!artificialEventQueue.empty()) {
-		event.type = artificialEventQueue.pop();
+		event = artificialEventQueue.pop();
 		result = true;
 	} else 	
 		result = _boss->pollEvent(event);
@@ -393,8 +393,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 #endif
 			// Global Main Menu
 			if (event.kbd.keycode == Common::KEYCODE_F11)
-				if (g_engine && !g_engine->isPaused())
-					pushEvent(Common::EVENT_MAINMENU);
+				if (g_engine && !g_engine->isPaused()) {
+					Common::Event menuEvent;
+					menuEvent.type = Common::EVENT_MAINMENU;
+					pushEvent(menuEvent);
+				}
 			break;
 
 		case Common::EVENT_KEYUP:
@@ -472,8 +475,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	return result;
 }
 
-void DefaultEventManager::pushEvent(Common::EventType eventType) {
-	artificialEventQueue.push(eventType);
+void DefaultEventManager::pushEvent(Common::Event event) {
+	artificialEventQueue.push(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

@@ -120,7 +120,7 @@ public:
 	/**
 	 * Quit the engine, sends a Quit event to the Event Manager
 	 */
-	void quitGame() { _eventMan->pushEvent(Common::EVENT_QUIT); };
+	void quitGame();
 
 	/**
 	 * Return whether the engine is currently paused or not.

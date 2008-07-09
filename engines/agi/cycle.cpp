@@ -117,7 +117,7 @@ void AgiEngine::interpretCycle() {
 	oldSound = getflag(fSoundOn);
 
 	_game.exitAllLogics = false;
-	while (runLogic(0) == 0 && !_eventMan->shouldQuit()) {
+	while (runLogic(0) == 0 && !quit()) {
 		_game.vars[vWordNotFound] = 0;
 		_game.vars[vBorderTouchObj] = 0;
 		_game.vars[vBorderCode] = 0;
@@ -354,10 +354,10 @@ int AgiEngine::playGame() {
 			_game.vars[vKey] = 0;
 		}
 
-		if (_eventMan->shouldQuit() == 0xff)
+		if (quit() == 0xff)
 			ec = errRestartGame;
 
-	} while (_eventMan->shouldQuit() == 0);
+	} while (quit() == 0);
 
 	_sound->stopSound();
 

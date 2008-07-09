@@ -241,7 +241,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 	// extract header from buffer
 	parseRoomHeader(&hdr, buffer, sizeof(WTP_ROOM_HDR));
 
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		pc = startpc;
 
 		// check if block is to be run
@@ -797,7 +797,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	// Show the mouse cursor for the menu
 	CursorMan.showMouse(true);
 
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
@@ -1013,7 +1013,7 @@ phase2:
 		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
 			goto phase1;
 	}
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 			switch(parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
 			case IDI_WTP_PAR_GOTO:

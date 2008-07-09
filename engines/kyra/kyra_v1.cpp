@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/events.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -218,7 +219,10 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 void KyraEngine_v1::quitGame() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::quitGame()");
-	_eventMan->pushEvent(Common::EVENT_QUIT);
+	Common::Event event;
+
+	event.type = Common::EVENT_QUIT;
+	_eventMan->pushEvent(event);
 	// Nothing to do here
 }
 

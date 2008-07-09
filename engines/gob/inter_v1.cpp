@@ -1226,7 +1226,7 @@ bool Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 		funcBlock(1);
 		_vm->_global->_inter_execPtr = blockPtr + size + 1;
 		flag = evalBoolResult();
-	} while (!flag && !_break && !_terminate && !g_system->getEventManager()->shouldQuit());
+	} while (!flag && !_break && !_terminate && !_vm->quit());
 
 	_nestLevel[0]--;
 
@@ -1261,7 +1261,7 @@ bool Inter_v1::o1_whileDo(OpFuncParams &params) {
 		} else
 			_vm->_global->_inter_execPtr += size;
 
-		if (_break || _terminate || g_system->getEventManager()->shouldQuit()) {
+		if (_break || _terminate || _vm->quit()) {
 			_vm->_global->_inter_execPtr = blockPtr;
 			_vm->_global->_inter_execPtr += size;
 			break;

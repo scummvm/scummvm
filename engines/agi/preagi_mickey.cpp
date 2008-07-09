@@ -343,7 +343,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 
 	drawMenu(menu, *sel0, *sel1);
 
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
@@ -2151,7 +2151,7 @@ void Mickey::run() {
 	intro();
 
 	// Game loop
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		drawRoom();
 
 		if (_game.fIntro) {

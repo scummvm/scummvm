@@ -233,7 +233,7 @@ int AgiEngine::testIfCode(int lognum) {
 	uint8 p[16] = { 0 };
 	bool end_test = false;
 
-	while (retval && !_eventMan->shouldQuit() && !end_test) {
+	while (retval && !quit() && !end_test) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 

@@ -565,7 +565,7 @@ void AGOSEngine_Elvira1::oe1_look() {
 		lobjFunc(l, "You can see ");	/* Show objects */
 	}
 	if (r && (r->flags & 4) && levelOf(i) < 10000) {
-		_eventMan->pushEvent(Common::EVENT_QUIT);
+		quitGame();
 	}
 }
 
@@ -944,7 +944,7 @@ restart:
 			windowPutChar(window, *message2);
 
 		if (confirmYesOrNo(120, 62) == 0x7FFF) {
-			_eventMan->pushEvent(Common::EVENT_QUIT);
+			quitGame();
 		} else {
 			goto restart;
 		}

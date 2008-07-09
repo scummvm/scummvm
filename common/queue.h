@@ -26,7 +26,7 @@
 #define COMMON_QUEUE_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
+#include "common/list.h"
 
 namespace Common {
 
@@ -36,10 +36,10 @@ namespace Common {
 template<class T>
 class Queue {
 protected:
-	Array<T>	_queue;
+	List<T>		_queue;
 public:
 	Queue<T>() {}
-	Queue<T>(const Array<T> &queueContent) : _queue(queueContent) {}
+	Queue<T>(const List<T> &queueContent) : _queue(queueContent) {}
 
 	bool empty() const {
 		return _queue.empty();
@@ -51,22 +51,18 @@ public:
 		_queue.push_back(x);
 	}
 	T back() const {
-		const int s = size();
-		return _queue[s - 1];
+		return _queue.reverse_begin().operator*();
 	}
 	T front() const {
-		return _queue[0];
+		return _queue.begin().operator*();
 	}
 	T pop() {
 		T tmp = front();
-		_queue.remove_at(0);
+		_queue.pop_front();
 		return tmp;
 	}
 	int size() const {
 		return _queue.size();
-	}
-	T operator[](int i) {
-		return _queue[i];
 	}
 };
 

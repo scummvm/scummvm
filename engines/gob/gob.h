@@ -223,8 +223,6 @@ public:
 	SaveLoad *_saveLoad;
 	VideoPlayer *_vidPlayer;
 
-	void shutdown();
-
 	const char *getLangDesc(int16 language) const;
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);

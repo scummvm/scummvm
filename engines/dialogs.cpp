@@ -107,13 +107,19 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kAboutCmd:
 		_aboutDialog->runModal();
 		break;
-	case kRTLCmd:
-		g_system->getEventManager()->pushEvent(Common::EVENT_RTL);
+	case kRTLCmd: {
+		Common::Event eventRTL;
+		eventRTL.type = Common::EVENT_RTL;
+		g_system->getEventManager()->pushEvent(eventRTL);
 		close();
+		}	
 		break;
-	case kQuitCmd:
-		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+	case kQuitCmd: {
+		Common::Event eventQ;
+		eventQ.type = Common::EVENT_QUIT;
+		g_system->getEventManager()->pushEvent(eventQ);
 		close();
+		}
 		break;
 	default:
 		GlobalDialog::handleCommand(sender, cmd, data);

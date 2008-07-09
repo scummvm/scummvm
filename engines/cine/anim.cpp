@@ -732,7 +732,7 @@ void loadResource(const char *resourceName) {
 		loadSeq(resourceName, -1);
 		return;
 	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
-		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+		g_cine->quitGame();
 		return;
 	}
 

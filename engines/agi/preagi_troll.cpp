@@ -58,7 +58,7 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 
 	drawMenu(szMenu, *iSel);
 
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
@@ -268,7 +268,7 @@ void Troll::tutorial() {
 	int iSel = 0;
 	//char szTreasure[16] = {0};
 
-	while (!_vm->_system->getEventManager()->shouldQuit()) {
+	while (!_vm->quit()) {
 		_vm->clearScreen(0xFF);
 
 		_vm->printStr(IDS_TRO_TUTORIAL_0);

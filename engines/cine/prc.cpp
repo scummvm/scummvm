@@ -54,7 +54,7 @@ void loadPrc(const char *pPrcName) {
 
 	// This is copy protection. Used to hang the machine
 	if (!scumm_stricmp(pPrcName, "L201.ANI")) {
-		g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
+		g_cine->quitGame();
 		return;
 	}
 

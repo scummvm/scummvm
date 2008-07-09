@@ -114,10 +114,6 @@ int GobEngine::go() {
 	return _eventMan->shouldRTL();
 }
 
-void GobEngine::shutdown() {
-	g_system->getEventManager()->pushEvent(Common::EVENT_QUIT);
-}
-
 const char *GobEngine::getLangDesc(int16 language) const {
 	if ((language < 0) || (language > 8))
 		language = 2;
