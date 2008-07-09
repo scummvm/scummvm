@@ -296,9 +296,9 @@ void VirtualKeyboard::runLoop() {
 			default:
 				break;
 			}
-			// TODO - remove this line ?
-			//if (!_displaying) break;
 		}
+		// Delay for a moment
+		_system->delayMillis(10);
 	}
 
 	// push keydown & keyup events into the event manager

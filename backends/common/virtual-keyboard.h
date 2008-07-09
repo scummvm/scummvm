@@ -41,8 +41,6 @@ namespace Common {
 
 class VirtualKeyboardParser;
 
-
-
 class VirtualKeyboard {
 
 	/** Type of key event */
