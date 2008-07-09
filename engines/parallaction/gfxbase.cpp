@@ -133,7 +133,9 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 //		return;
 //	}
 
-	assert(obj);
+	if (!obj) {
+		return;
+	}
 
 	if (visible) {
 		obj->setFlags(kGfxObjVisible);
