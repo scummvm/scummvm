@@ -142,6 +142,11 @@ public:
 	 */
 	virtual bool pollEvent(Common::Event &event) = 0;
 
+	/**
+	 * Pushes a "fake" event into the event queue
+	 */
+	virtual void pushEvent(Common::Event event) = 0;
+
 	/** Register random source so it can be serialized in game test purposes **/
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
 

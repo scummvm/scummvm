@@ -27,6 +27,7 @@
 #define BACKEND_EVENTS_DEFAULT_H
 
 #include "common/events.h"
+#include "common/queue.h"
 #include "common/savefile.h"
 #include "backends/common/virtual-keyboard.h"
 
@@ -46,6 +47,8 @@ class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
 
 	Common::VirtualKeyboard *_vk;
+
+	Common::Queue<Common::Event> _artificialEventQueue;
 
 	Common::Point _mousePos;
 	int _buttonState;
@@ -110,6 +113,7 @@ public:
 	~DefaultEventManager();
 
 	virtual bool pollEvent(Common::Event &event);
+	virtual void pushEvent(Common::Event event);
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
 	virtual void processMillis(uint32 &millis);
 

@@ -153,7 +153,7 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	Common::String resolutions = modeNode->values["resolutions"];
 	Common::StringTokenizer tok (resolutions, " ,");
 
-	uint16 scrW = _keyboard->_screenWidth, scrH = _keyboard->_screenHeight;
+	uint16 scrW = g_system->getOverlayWidth(), scrH = g_system->getOverlayHeight();
 	uint32 diff = 0xFFFFFFFF;
 	Common::String newResolution;
 	for (Common::String res = tok.nextToken(); res.size() > 0; res = tok.nextToken()) {

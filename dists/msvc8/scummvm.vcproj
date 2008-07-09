@@ -399,6 +399,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\queue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\rect.h"
 				>
 			</File>

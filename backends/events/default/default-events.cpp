@@ -31,6 +31,7 @@
 
 #include "engines/engine.h"
 #include "gui/message.h"
+#include "gui/newgui.h"
 
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
@@ -196,6 +197,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 }
 
 DefaultEventManager::~DefaultEventManager() {
+	delete _vk;
 	_boss->lockMutex(_timeMutex);
 	_boss->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
@@ -351,10 +353,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
 
-	// poll virtual keyboard
-	result = _vk->pollEvent(event);
-	// if no vk event, then poll backend
-	if (!result) result = _boss->pollEvent(event);
+	if (!_artificialEventQueue.empty()) {
+		event = _artificialEventQueue.pop();
+		result = true;
+	} else 	
+		result = _boss->pollEvent(event);
 
 	if (_recordMode != kPassthrough)  {
 
@@ -390,16 +393,17 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 
-			// quick hack to show/hide keyboard
+			// HACK to show/hide keyboard (keyboard is not shown if gui is active)
 			if (event.kbd.keycode == Common::KEYCODE_F6 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
 					_vk->hide();
-				} else {
+				} else if (!g_gui.isActive()) {
 					if (!_vk->isLoaded()) _vk->loadKeyboardPack("test");
 					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
 					if (!isPaused) g_engine->pauseEngine(true);
 					_vk->show();
 					if (!isPaused) g_engine->pauseEngine(false);
+					result = false;
 				}
 			}
 
@@ -464,6 +468,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	return result;
+}
+
+void DefaultEventManager::pushEvent(Common::Event event) {
+	_artificialEventQueue.push(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

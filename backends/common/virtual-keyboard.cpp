@@ -39,17 +39,18 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
 
 	_parser = new VirtualKeyboardParser(this);
 	_loaded = _displaying = _drag = false;
-	_screenWidth = _system->getOverlayWidth();
-	_screenHeight = _system->getOverlayHeight();
+	_lastScreenChanged = _system->getScreenChangeID();
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
 	// TODO: clean up event data pointers
+	deleteEventData();
 	delete _parser;
 }
 
 void VirtualKeyboard::reset() {
 	// TODO: clean up event data pointers
+	deleteEventData();
 	_modes.clear();
 	_initialMode = _currentMode = 0;
 	_kbdBound.left = _kbdBound.top
@@ -60,8 +61,17 @@ void VirtualKeyboard::reset() {
 	_keyDown = 0;
 	_displaying = _drag = false;
 	_firstRun = true;
-	_screenWidth = _system->getOverlayWidth();
-	_screenHeight = _system->getOverlayHeight();
+	_lastScreenChanged = _system->getScreenChangeID();
+}
+
+void VirtualKeyboard::deleteEventData() {
+	ModeMap::iterator it_m;
+	EventMap::iterator it_e;
+	for (it_m = _modes.begin(); it_m != _modes.end(); it_m++) {
+		EventMap *evt = &(it_m->_value.events);
+		for (it_e = evt->begin(); it_e != evt->end(); it_e++)
+			delete it_e->_value.data;
+	}
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
@@ -116,31 +126,32 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 
 void VirtualKeyboard::setDefaultPosition()
 {
+	int16 scrW = _system->getOverlayWidth(), scrH = _system->getOverlayHeight(); 
 	int16 kbdW = _kbdBound.width(), kbdH = _kbdBound.height();
 	int16 posX = 0, posY = 0;
-	if (_screenWidth != kbdW) {
+	if (scrW != kbdW) {
 		switch (_hAlignment) {
 		case kAlignLeft:
 			posX = 0;
 			break;
 		case kAlignCentre:
-			posX = (_screenWidth - kbdW) / 2;
+			posX = (scrW - kbdW) / 2;
 			break;
 		case kAlignRight:
-			posX = _screenWidth - kbdW;
+			posX = scrW - kbdW;
 			break;
 		}
 	}
-	if (_screenHeight != kbdH) {
+	if (scrH != kbdH) {
 		switch (_vAlignment) {
 		case kAlignTop:
 			posY = 0;
 			break;
 		case kAlignMiddle:
-			posY = (_screenHeight - kbdH) / 2;
+			posY = (scrH - kbdH) / 2;
 			break;
 		case kAlignBottom:
-			posY = _screenHeight - kbdH;
+			posY = scrH - kbdH;
 			break;
 		}
 	}
@@ -185,7 +196,7 @@ void VirtualKeyboard::processClick(const Common::String& area) {
 	switch (evt.type) {
 	case kEventKey:
 		// add virtual keypress to queue
-		_keyQueue.push_back(*(Common::KeyState*)evt.data);
+		_keyQueue.push(*(Common::KeyState*)evt.data);
 		break;
 	case kEventSwitchMode:
 		// switch to new mode
@@ -218,28 +229,31 @@ void VirtualKeyboard::show() {
 		warning("Keyboard not loaded therefore can't be shown");
 		return;
 	}
-	if (_screenWidth != _system->getOverlayWidth() || _screenHeight != _system->getOverlayHeight()) {
-		_screenWidth = _system->getOverlayWidth();
-		_screenHeight = _system->getOverlayHeight();
-		if (!checkModeResolutions()) return;
-	}
+	if (_lastScreenChanged != _system->getScreenChangeID())
+		screenChanged();
 	switchMode(_initialMode);
 	_displaying = true;
 	if (_firstRun) {
 		_firstRun = false;
 		setDefaultPosition();
 	}
+	_system->showOverlay();
 	runLoop();
+	_system->hideOverlay();
 }
 
 void VirtualKeyboard::hide() {
 	_displaying = false;
 }
 
+void VirtualKeyboard::screenChanged() {
+	_lastScreenChanged = _system->getScreenChangeID();
+	if (!checkModeResolutions())
+		_displaying = false;
+}
+
 void VirtualKeyboard::runLoop() {
 	Common::EventManager *eventMan = _system->getEventManager();
-	
-	_system->showOverlay();
 
 	while (_displaying) {
 		if (_needRedraw) redraw();
@@ -274,10 +288,7 @@ void VirtualKeyboard::runLoop() {
 				}
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
-				_screenWidth = _system->getOverlayWidth();
-				_screenHeight = _system->getOverlayHeight();
-				if (!checkModeResolutions())
-					_displaying = false;
+				screenChanged();
 				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
@@ -286,11 +297,20 @@ void VirtualKeyboard::runLoop() {
 				break;
 			}
 			// TODO - remove this line ?
-			if (!_displaying) break;
+			//if (!_displaying) break;
 		}
 	}
-	// clear keyboard from overlay
-	_system->hideOverlay();
+
+	// push keydown & keyup events into the event manager
+	Common::Event evt;
+	evt.synthetic = false;
+	while (!_keyQueue.empty()) {
+		evt.kbd = _keyQueue.pop();
+		evt.type = Common::EVENT_KEYDOWN;
+		eventMan->pushEvent(evt);
+		evt.type = Common::EVENT_KEYUP;
+		eventMan->pushEvent(evt);
+	}
 }
 
 void VirtualKeyboard::redraw() {
@@ -300,31 +320,13 @@ void VirtualKeyboard::redraw() {
 
 	_system->clearOverlay();
 	_system->grabOverlay((OverlayColor*)surf.pixels, surf.w);
-
 	surf.blit(_currentMode->image, _kbdBound.left, _kbdBound.top, _system->RGBToColor(0xff, 0, 0xff));
+
 	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 0, 0, surf.w, surf.h);
 
 	surf.free();
 
 	_needRedraw = false;
-}
-
-bool VirtualKeyboard::pollEvent(Common::Event &event) {
-	if (_displaying || (_keyQueue.empty() && !_keyDown))
-		return false;
-
-	event.synthetic = false; // ???
-	if (_keyDown) {
-		event.type = Common::EVENT_KEYUP;
-		event.kbd = *_keyDown;
-		_keyQueue.remove_at(0);
-		_keyDown = 0;
-	} else {
-		_keyDown = _keyQueue.begin();
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd = *_keyDown;
-	}
-	return true;
 }
 
 } // end of namespace GUI

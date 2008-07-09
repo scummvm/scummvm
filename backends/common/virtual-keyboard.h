@@ -33,6 +33,7 @@ class OSystem;
 #include "common/hash-str.h"
 #include "common/image-map.h"
 #include "common/keyboard.h"
+#include "common/queue.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 
@@ -97,13 +98,6 @@ public:
 		return _loaded;
 	}
 
-	/**
-	  * Get the next virtual key event in the event queue.
-	  * @param event	point to an Event struct, which will be filled with the event data.
-	  * @return true if an event was retrieved.
-	  */
-	bool pollEvent(Common::Event &event);
-
 protected:
 	OSystem	*_system;
 
@@ -114,6 +108,8 @@ protected:
 
 	// TODO : sort order of all this stuff
 	void reset();
+	void deleteEventData();
+	void screenChanged();
 	bool checkModeResolutions();
 	void setDefaultPosition();
 	void move(int16 x, int16 y);
@@ -133,7 +129,7 @@ protected:
 	Mode *_initialMode;
 	Mode *_currentMode;
 
-	int16 _screenWidth, _screenHeight;
+	int _lastScreenChanged;
 	Common::Rect _kbdBound;
 
 	HorizontalAlignment  _hAlignment;
@@ -143,7 +139,7 @@ protected:
 	Common::Point _dragPoint;
 	bool _drag;
 
-	Common::Array<Common::KeyState> _keyQueue;
+	Common::Queue<Common::KeyState> _keyQueue;
 	Common::KeyState *_keyDown;
 
 };
