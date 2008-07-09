@@ -2024,6 +2024,9 @@ void KyraEngine_HoF::writeSettings() {
 		break;
 	}
 
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
+		_flags.lang = _flags.fanLang;
+
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
 	KyraEngine_v1::writeSettings();

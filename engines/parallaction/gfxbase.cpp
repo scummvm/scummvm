@@ -92,6 +92,7 @@ GfxObj* Gfx::loadAnim(const char *name) {
 	// animation Z is not set here, but controlled by game scripts and user interaction.
 	// it is always >=0 and <screen height
 	obj->type = kGfxObjTypeAnim;
+	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;
 }
@@ -103,6 +104,7 @@ GfxObj* Gfx::loadGet(const char *name) {
 
 	obj->z = kGfxObjGetZ;	// this preset Z value ensures that get zones are drawn after doors but before animations
 	obj->type = kGfxObjTypeGet;
+	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;
 }
@@ -113,6 +115,7 @@ GfxObj* Gfx::loadDoor(const char *name) {
 
 	obj->z = kGfxObjDoorZ;	// this preset Z value ensures that doors are drawn first
 	obj->type = kGfxObjTypeDoor;
+	obj->transparentKey = 0;
 	_gfxobjList.push_back(obj);
 	return obj;
 }
@@ -150,10 +153,31 @@ void Gfx::sortAnimations() {
 	Common::sort(first, last, compareZ);
 }
 
-void Gfx::drawGfxObjects(Graphics::Surface &surf) {
+
+void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene) {
+	if (!obj->isVisible()) {
+		return;
+	}
 
 	Common::Rect rect;
 	byte *data;
+
+	uint scrollX = (scene) ? -_varScrollX : 0;
+
+	obj->getRect(obj->frame, rect);
+	rect.translate(obj->x + scrollX, obj->y);
+	data = obj->getData(obj->frame);
+
+	if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
+		blt(rect, data, &surf, obj->layer, obj->transparentKey);
+	} else {
+		unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, obj->transparentKey);
+	}
+
+}
+
+
+void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 
 	sortAnimations();
 	// TODO: some zones don't appear because of wrong masking (3 or 0?)
@@ -164,17 +188,7 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 	GfxObjList::iterator e = _gfxobjList.end();
 
 	for (; b != e; b++) {
-		GfxObj *obj = *b;
-		if (obj->isVisible()) {
-			obj->getRect(obj->frame, rect);
-			rect.translate(obj->x - _varScrollX, obj->y);
-			data = obj->getData(obj->frame);
-			if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
-				blt(rect, data, &surf, obj->layer, 0);
-			} else {
-				unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, 0);
-			}
-		}
+		drawGfxObject(*b, surf, true);
 	}
 }
 

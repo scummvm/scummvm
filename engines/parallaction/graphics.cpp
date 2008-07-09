@@ -356,17 +356,7 @@ void Gfx::drawItems() {
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
-		GfxObj *obj = _items[i].data;
-
-		Common::Rect rect;
-		obj->getRect(obj->frame, rect);
-		rect.translate(obj->x, obj->y);
-
-		if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
-			blt(rect, obj->getData(obj->frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
-		} else {
-			unpackBlt(rect, obj->getData(obj->frame), obj->getRawSize(obj->frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
-		}
+		drawGfxObject(_items[i].data, *surf, false);
 	}
 	g_system->unlockScreen();
 }
@@ -540,10 +530,9 @@ void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
 }
 
-Label *Gfx::renderFloatingLabel(Font *font, char *text) {
+uint Gfx::renderFloatingLabel(Font *font, char *text) {
 
-	Label *label = new Label;
-	Graphics::Surface *cnv = &label->_cnv;
+	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
 
@@ -569,14 +558,74 @@ Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 		drawText(font, cnv, 0, 0, text, 0);
 	}
 
-	return label;
+	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "floatingLabel");
+	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
+	obj->layer = LAYER_FOREGROUND;
+
+	uint id = _labels.size();
+	_labels.insert_at(id, obj);
+
+	return id;
 }
 
-uint Gfx::createLabel(Font *font, const char *text, byte color) {
-	assert(_numLabels < MAX_NUM_LABELS);
+void Gfx::showFloatingLabel(uint label) {
+	assert(label < _labels.size());
 
-	Label *label = new Label;
-	Graphics::Surface *cnv = &label->_cnv;
+	hideFloatingLabel();
+
+	_labels[label]->x = -1000;
+	_labels[label]->y = -1000;
+	_labels[label]->setFlags(kGfxObjVisible);
+
+	_floatingLabel = label;
+}
+
+void Gfx::hideFloatingLabel() {
+	if (_floatingLabel != NO_FLOATING_LABEL) {
+		_labels[_floatingLabel]->clearFlags(kGfxObjVisible);
+	}
+	_floatingLabel = NO_FLOATING_LABEL;
+}
+
+
+void Gfx::updateFloatingLabel() {
+	if (_floatingLabel == NO_FLOATING_LABEL) {
+		return;
+	}
+
+	int16 _si, _di;
+
+	Common::Point	cursor;
+	_vm->_input->getCursorPos(cursor);
+
+	Common::Rect r;
+	_labels[_floatingLabel]->getRect(0, r);
+
+	if (_vm->_input->_activeItem._id != 0) {
+		_si = cursor.x + 16 - r.width()/2;
+		_di = cursor.y + 34;
+	} else {
+		_si = cursor.x + 8 - r.width()/2;
+		_di = cursor.y + 21;
+	}
+
+	if (_si < 0) _si = 0;
+	if (_di > 190) _di = 190;
+
+	if (r.width() + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - r.width();
+
+	_labels[_floatingLabel]->x = _si;
+	_labels[_floatingLabel]->y = _di;
+}
+
+
+
+
+uint Gfx::createLabel(Font *font, const char *text, byte color) {
+	assert(_labels.size() < MAX_NUM_LABELS);
+
+	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
 
@@ -597,120 +646,62 @@ uint Gfx::createLabel(Font *font, const char *text, byte color) {
 		drawText(font, cnv, 0, 0, text, color);
 	}
 
-	uint id = _numLabels;
-	_labels[id] = label;
-	_numLabels++;
+	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "label");
+	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
+	obj->layer = LAYER_FOREGROUND;
+
+	int id = _labels.size();
+
+	_labels.insert_at(id, obj);
 
 	return id;
 }
 
 void Gfx::showLabel(uint id, int16 x, int16 y) {
-	assert(id < _numLabels);
-	_labels[id]->_visible = true;
+	assert(id < _labels.size());
+	_labels[id]->setFlags(kGfxObjVisible);
+
+	Common::Rect r;
+	_labels[id]->getRect(0, r);
 
 	if (x == CENTER_LABEL_HORIZONTAL) {
-		x = CLIP<int16>((_vm->_screenWidth - _labels[id]->_cnv.w) / 2, 0, _vm->_screenWidth/2);
+		x = CLIP<int16>((_vm->_screenWidth - r.width()) / 2, 0, _vm->_screenWidth/2);
 	}
 
 	if (y == CENTER_LABEL_VERTICAL) {
-		y = CLIP<int16>((_vm->_screenHeight - _labels[id]->_cnv.h) / 2, 0, _vm->_screenHeight/2);
+		y = CLIP<int16>((_vm->_screenHeight - r.height()) / 2, 0, _vm->_screenHeight/2);
 	}
 
-	_labels[id]->_pos.x = x;
-	_labels[id]->_pos.y = y;
+	_labels[id]->x = x;
+	_labels[id]->y = y;
 }
 
 void Gfx::hideLabel(uint id) {
-	assert(id < _numLabels);
-	_labels[id]->_visible = false;
+	assert(id < _labels.size());
+	_labels[id]->clearFlags(kGfxObjVisible);
 }
 
 void Gfx::freeLabels() {
-	for (uint i = 0; i < _numLabels; i++) {
+	for (uint i = 0; i < _labels.size(); i++) {
 		delete _labels[i];
 	}
-	_numLabels = 0;
-}
-
-
-void Gfx::setFloatingLabel(Label *label) {
-	_floatingLabel = label;
-
-	if (_floatingLabel) {
-		_floatingLabel->resetPosition();
-	}
-}
-
-void Gfx::updateFloatingLabel() {
-	if (!_floatingLabel) {
-		return;
-	}
-
-	int16 _si, _di;
-
-	Common::Point	cursor;
-	_vm->_input->getCursorPos(cursor);
-
-	if (_vm->_input->_activeItem._id != 0) {
-		_si = cursor.x + 16 - _floatingLabel->_cnv.w/2;
-		_di = cursor.y + 34;
-	} else {
-		_si = cursor.x + 8 - _floatingLabel->_cnv.w/2;
-		_di = cursor.y + 21;
-	}
-
-	if (_si < 0) _si = 0;
-	if (_di > 190) _di = 190;
-
-	if (_floatingLabel->_cnv.w + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - _floatingLabel->_cnv.w;
-
-	_floatingLabel->_pos.x = _si;
-	_floatingLabel->_pos.y = _di;
+	_labels.clear();
 }
 
 void Gfx::drawLabels() {
-	if ((!_floatingLabel) && (_numLabels == 0)) {
+	if (_labels.size() == 0) {
 		return;
 	}
+
 	updateFloatingLabel();
 
 	Graphics::Surface* surf = g_system->lockScreen();
 
-	for (uint i = 0; i < _numLabels; i++) {
-		if (_labels[i]->_visible) {
-			Common::Rect r(_labels[i]->_cnv.w, _labels[i]->_cnv.h);
-			r.moveTo(_labels[i]->_pos);
-			blt(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, LAYER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
-		}
-	}
-
-	if (_floatingLabel) {
-		Common::Rect r(_floatingLabel->_cnv.w, _floatingLabel->_cnv.h);
-		r.moveTo(_floatingLabel->_pos);
-        blt(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, LAYER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
+	for (uint i = 0; i < _labels.size(); i++) {
+		drawGfxObject(_labels[i], *surf, false);
 	}
 
 	g_system->unlockScreen();
-}
-
-Label::Label() {
-	resetPosition();
-	_visible = false;
-}
-
-Label::~Label() {
-	free();
-}
-
-void Label::free() {
-	_cnv.free();
-	resetPosition();
-}
-
-void Label::resetPosition() {
-	_pos.x = -1000;
-	_pos.y = -1000;
 }
 
 
@@ -790,8 +781,7 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_numBalloons = 0;
 	_numItems = 0;
-	_numLabels = 0;
-	_floatingLabel = 0;
+	_floatingLabel = NO_FLOATING_LABEL;
 
 	_screenX = 0;
 	_screenY = 0;
@@ -826,8 +816,8 @@ int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
 	_items[id].data = frames;
 	_items[id].data->x = x;
 	_items[id].data->y = y;
-
-	_items[id].transparentColor = transparentColor;
+	_items[id].data->layer = LAYER_FOREGROUND;
+	_items[id].data->transparentKey = transparentColor;
 
 	_numItems++;
 
@@ -837,6 +827,7 @@ int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
 void Gfx::setItemFrame(uint item, uint16 f) {
 	assert(item < _numItems);
 	_items[item].data->frame = f;
+	_items[item].data->setFlags(kGfxObjVisible);
 }
 
 Gfx::Balloon* Gfx::getBalloon(uint id) {

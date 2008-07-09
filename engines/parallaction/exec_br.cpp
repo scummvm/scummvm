@@ -100,8 +100,8 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 }
 
 void Parallaction_br::clearSubtitles() {
-	_gfx->freeLabels();
-	_subtitle[0] = _subtitle[1] = -1;
+	_gfx->hideLabel(_subtitle[0]);
+	_gfx->hideLabel(_subtitle[1]);
 }
 
 

@@ -95,6 +95,9 @@ int16 saveVar2;
 
 byte isInPause = 0;
 
+// TODO: Implement inputVar0's changes in the program
+// Currently inputVar0 isn't updated anywhere even though it's used at least in processSeqListElement.
+uint16 inputVar0 = 0;
 byte inputVar1 = 0;
 uint16 inputVar2 = 0, inputVar3 = 0;
 
@@ -133,6 +136,7 @@ void runObjectScript(int16 entryIdx) {
  */
 void addPlayerCommandMessage(int16 cmd) {
 	overlay tmp;
+	memset(&tmp, 0, sizeof(tmp));
 	tmp.objIdx = cmd;
 	tmp.type = 3;
 
@@ -1682,8 +1686,7 @@ uint16 computeMove2(SeqListElement &element) {
 	return returnVar;
 }
 
-uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptrByte, SeqListElement &element, uint16 param3, int16 *param4) {
-	const int8 *ptr = (const int8 *)ptrByte;
+uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &element, uint16 param3, int16 *param4) {
 	const int8 *ptrData;
 	const int8 *ptr2;
 	int16 di;
@@ -1789,7 +1792,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 void processSeqListElement(SeqListElement &element) {
 	int16 x = objectTable[element.objIdx].x;
 	int16 y = objectTable[element.objIdx].y;
-	const byte *ptr1 = animDataTable[element.frame].data();
+	const int8 *ptr1 = (const int8 *) animDataTable[element.frame].data();
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;
@@ -1802,22 +1805,44 @@ void processSeqListElement(SeqListElement &element) {
 	element.var12 = 0;
 
 	if (ptr1) {
-		uint16 param1 = ptr1[1];
-		uint16 param2 = ptr1[2];
+		int16 param1 = ptr1[1];
+		int16 param2 = ptr1[2];
 
 		if (element.varC != 255) {
-			// FIXME: Why is this here? Fingolfin gets lots of these
-			// in his copy of Operation Stealth (value 0 or 236) under
-			// Mac OS X. Maybe it's a endian issue? At least the graphics
-			// in the copy protection screen are partially messed up.
-			warning("processSeqListElement: varC = %d", element.varC);
-		}
-
-		if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
-			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
+			int16 x2 = element.var18;
+			int16 y2 = element.var1A;
+			if (element.varC) {
+				x2 += objectTable[element.varC].x;
+				y2 += objectTable[element.varC].y;
+			}
+			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, x2, y2);
 		} else {
-			element.var16 = 0;
-			element.var14 = 0;
+			if (inputVar0 && allowPlayerInput) {
+				int16 adder = param1 + 1;
+				if (inputVar0 != 1) {
+					adder = -adder;
+				}
+				// FIXME: In Operation Stealth's disassembly global variable 251 is used here
+				//        but it's named as VAR_MOUSE_Y_MODE in ScummVM. Is it correct or a
+				//        left over from Future Wars's reverse engineering?
+				globalVars[VAR_MOUSE_X_POS] = globalVars[251] = ptr1[4] + x + adder;
+			}
+
+			if (inputVar1 && allowPlayerInput) {
+				int16 adder = param2 + 1;
+				if (inputVar1 != 1) {
+					adder = -adder;
+				}
+				// TODO: Name currently unnamed global variable 252
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[252] = ptr1[5] + y + adder;
+			}
+
+			if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
+				computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
+			} else {
+				element.var16 = 0;
+				element.var14 = 0;
+			}
 		}
 
 		var_10 = computeMove2(element);
@@ -1858,14 +1883,14 @@ void processSeqListElement(SeqListElement &element) {
 			}
 		}
 
-		if (element.var16 + element.var14) {
+		if (element.var16 + element.var14 == 0) {
 			if (element.var1C) {
 				if (element.var1E) {
 					objectTable[element.objIdx].costume = 0;
 					element.var1E = 0;
 				}
 
-				addAni(element.var1C + 3, element.objIdx, ptr1, element, 1, (int16 *) & var2);
+				addAni(element.var1C + 3, element.objIdx, ptr1, element, 1, &var_2);
 
 			}
 		}

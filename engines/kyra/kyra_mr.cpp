@@ -1543,6 +1543,9 @@ void KyraEngine_MR::writeSettings() {
 		break;
 	}
 
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
+		_flags.lang = _flags.fanLang;
+
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
 	ConfMan.setBool("studio_audience", _configStudio);

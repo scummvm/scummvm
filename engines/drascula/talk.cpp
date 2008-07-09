@@ -60,7 +60,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	int x_talk1[8] = {  56,  86, 116, 146, 176, 206, 236, 266 };
 	int x_talk3[4] = {  80, 102, 124, 146 };
 	int x_talk4[4] = { 119, 158, 197, 236 };
-	int face;
+	int face = 0;
 	int length = strlen(said);
 
 	color_abc(kColorWhite);

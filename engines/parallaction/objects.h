@@ -287,7 +287,7 @@ struct Zone {
 	int16			_bottom;
 	uint32			_type;
 	uint32			_flags;
-	Label			*_label;
+	uint			_label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	TypeData		u;

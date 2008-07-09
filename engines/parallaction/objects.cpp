@@ -182,7 +182,6 @@ Zone::~Zone() {
 		break;
 	}
 
-	delete _label;
 }
 
 void Zone::getRect(Common::Rect& r) const {

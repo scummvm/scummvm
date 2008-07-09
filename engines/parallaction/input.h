@@ -44,7 +44,7 @@ struct InputData {
 	Common::Point	_mousePos;
 	int16		_inventoryIndex;
 	ZonePtr		_zone;
-	Label*			_label;
+	uint		_label;
 };
 
 class Input {

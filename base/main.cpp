@@ -291,6 +291,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	
 	Audio::Tfmx _aTfmx;
 	_aTfmx.load();
+//	_aTfmx.
 
 
 
