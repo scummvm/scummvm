@@ -492,7 +492,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			// Note that GF_OLD_BUNDLE is true if and only if GF_OLD256 is false.
 			// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
 
-			if (g->version != 2 && g->version != 3  || (g->features & GF_OLD256))
+			if ((g->version != 2 && g->version != 3)  || (g->features & GF_OLD256))
 				return false;
 
 			/* We distinguish the games by the presence/absence of
