@@ -263,7 +263,7 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 	uint16 opcode = *param++;
 	if (opcode > _currentTim->opcodes->size()) {
-		warning("Calling unimplemented TIM opcode(0x%.02X/%d) form file '%s'", opcode, opcode, _currentTim->filename);
+		warning("Calling unimplemented TIM opcode(0x%.02X/%d) from file '%s'", opcode, opcode, _currentTim->filename);
 		return 0;
 	}
 
