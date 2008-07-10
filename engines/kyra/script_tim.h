@@ -37,6 +37,8 @@ struct TIM;
 typedef Common::Functor2<const TIM*, const uint16*, int> TIMOpcode;
 
 struct TIM {
+	char filename[13];
+
 	int16 procFunc;
 	uint16 procParam;
 
