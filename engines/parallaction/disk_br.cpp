@@ -58,7 +58,7 @@ struct Sprites : public Frames {
 	}
 
 	~Sprites() {
-		delete _sprites;
+		delete[] _sprites;
 	}
 
 	uint16 getNum() {
