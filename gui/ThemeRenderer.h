@@ -238,6 +238,7 @@ protected:
 	void drawCached(DrawData type, const Common::Rect &r);
 
 	inline void drawDD(DrawData type, const Common::Rect &r);
+	inline void drawDDText(DrawData type, const Common::Rect &r, const Common::String &text);
 	inline void debugWidgetPosition(const Common::Rect &r);
 
 	// TODO

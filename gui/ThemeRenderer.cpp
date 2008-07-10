@@ -188,6 +188,7 @@ bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep s
 		return false;
 		
 	_widgets[id]->_textStep = step;
+	_widgets[id]->_textStep.font = 0;
 	_widgets[id]->_hasText = true;
 
 	return true;
@@ -278,11 +279,20 @@ void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
 	}
 }
 
+void ThemeRenderer::drawDDText(DrawData type, const Common::Rect &r, const Common::String &text) {
+	if (hasWidgetText(type)) {
+		if (_widgets[type]->_textStep.font == 0)
+			_widgets[type]->_textStep.font = _font;
+
+		_vectorRenderer->textStep(text, r, _widgets[type]->_textStep);
+	}
+}
+
 void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
 	if (!ready())
 		return;
 		
-	DrawData dd;
+	DrawData dd = kDDButtonIdle;
 
 	if (state == kStateEnabled)
 		dd = kDDButtonIdle;
@@ -292,6 +302,7 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 		dd = kDDButtonDisabled;
 
 	drawDD(dd, r);
+	drawDDText(dd, r, str);
 	if (hasWidgetText(dd))
 		_vectorRenderer->textStep(str, r, _widgets[dd]->_textStep);
 		
