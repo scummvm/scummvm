@@ -34,6 +34,7 @@ namespace Kyra {
 TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, OSystem *system) : _vm(vm), _system(system), _currentTim(0) {
 #define COMMAND(x) { &TIMInterpreter::x, #x }
 #define COMMAND_UNIMPL() { 0, 0 }
+#define cmd_return(n) cmd_return_##n
 	static const CommandEntry commandProcs[] = {
 		// 0x00
 		COMMAND(cmd_initFunc0),
@@ -66,15 +67,16 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, OSystem *system) : _vm(vm), _s
 		COMMAND_UNIMPL(),
 		COMMAND(cmd_resetAllRuntimes),
 		// 0x18
-		COMMAND(cmd_return<1>),
+		COMMAND(cmd_return(1)),
 		COMMAND(cmd_execOpcode),
 		COMMAND(cmd_initFuncNow),
 		COMMAND(cmd_stopFuncNow),
 		// 0x1C
-		COMMAND(cmd_return<1>),
-		COMMAND(cmd_return<1>),
-		COMMAND(cmd_return<-1>)
+		COMMAND(cmd_return(1)),
+		COMMAND(cmd_return(1)),
+		COMMAND(cmd_return(n1))
 	};
+#undef cmd_return
 
 	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
