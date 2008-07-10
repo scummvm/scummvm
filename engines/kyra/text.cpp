@@ -29,7 +29,6 @@
 #include "kyra/screen.h"
 #include "kyra/text.h"
 
-#include "common/events.h"
 #include "common/system.h"
 #include "common/endian.h"
 

@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"

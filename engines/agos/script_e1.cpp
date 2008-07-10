@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 
 #include "agos/agos.h"
 #include "agos/vga.h"

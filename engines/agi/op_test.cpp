@@ -24,8 +24,6 @@
  */
 
 
-#include "common/events.h"
-
 #include "agi/agi.h"
 #include "agi/keyboard.h"
 #include "agi/opcodes.h"

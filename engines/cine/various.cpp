@@ -25,7 +25,6 @@
 
 
 #include "common/endian.h"
-#include "common/events.h"
 #include "common/savefile.h"
 
 #include "cine/cine.h"

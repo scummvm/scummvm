@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 
 #include "gob/videoplayer.h"
 #include "gob/global.h"

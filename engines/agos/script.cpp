@@ -28,7 +28,6 @@
 
 
 #include "common/system.h"
-#include "common/events.h"
 
 #include "agos/animation.h"
 #include "agos/agos.h"

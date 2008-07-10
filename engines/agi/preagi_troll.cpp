@@ -30,8 +30,6 @@
 
 #include "graphics/cursorman.h"
 
-#include "common/events.h"
-
 namespace Agi {
 
 Troll::Troll(PreAgiEngine* vm) : _vm(vm) {

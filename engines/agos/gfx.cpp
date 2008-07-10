@@ -26,7 +26,6 @@
 
 
 #include "common/system.h"
-#include "common/events.h"
 
 #include "graphics/surface.h"
 

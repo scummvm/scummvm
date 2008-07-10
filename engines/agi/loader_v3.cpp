@@ -27,7 +27,6 @@
 #include "agi/lzw.h"
 
 #include "common/config-manager.h"
-#include "common/events.h"
 #include "common/fs.h"
 
 namespace Agi {

@@ -32,7 +32,6 @@
 // The jung2.vqa movie does work, but only thanks to a grotesque hack.
 
 
-#include "common/events.h"
 #include "common/system.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"

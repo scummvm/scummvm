@@ -26,7 +26,6 @@
 #include <time.h>	// FIXME: for Inter::renewTimeInVars()
 
 #include "common/endian.h"
-#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"

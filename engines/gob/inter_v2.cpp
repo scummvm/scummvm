@@ -24,7 +24,6 @@
  */
 
 #include "common/endian.h"
-#include "common/events.h"
 
 #include "sound/mixer.h"
 #include "sound/mods/infogrames.h"

@@ -24,7 +24,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/events.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

@@ -26,8 +26,6 @@
 
 #include "base/version.h"
 
-#include "common/events.h"
-
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"

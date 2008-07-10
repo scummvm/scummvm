@@ -28,7 +28,6 @@
  */
 
 #include "common/endian.h"
-#include "common/events.h"
 #include "common/stream.h"
 
 #include "cine/cine.h"

@@ -26,7 +26,6 @@
 #include "kyra/kyra_lok.h"
 
 #include "common/file.h"
-#include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
 

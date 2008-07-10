@@ -24,7 +24,6 @@
  */
 
 
-#include "common/events.h"
 #include "common/system.h"
 
 #include "agos/agos.h"

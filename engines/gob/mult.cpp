@@ -24,7 +24,6 @@
  */
 
 #include "common/endian.h"
-#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/mult.h"
