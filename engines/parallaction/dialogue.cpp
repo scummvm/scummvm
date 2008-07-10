@@ -104,11 +104,6 @@ uint16 DialogueManager::askPassword() {
 		e.kbd.ascii = 0;
 
 		if (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_QUIT) {
-				_vm->_quit = true;
-				break;
-			}
-
 			if ((e.type == Common::EVENT_KEYDOWN) && isdigit(e.kbd.ascii)) {
 				_password[passwordLen] = e.kbd.ascii;
 				passwordLen++;
@@ -230,7 +225,7 @@ void DialogueManager::run() {
 
 		displayQuestion();
 		
-		if (_vm->_quit)
+		if (_vm->quit())
 			return;
 
 		if (_q->_answers[0] == NULL) break;
@@ -239,7 +234,7 @@ void DialogueManager::run() {
 			if (!displayAnswers()) break;
 			answer = getAnswer();
 
-			if (_vm->_quit)
+			if (_vm->quit())
 				return;
 
 			cmdlist = &_q->_answers[answer]->_commands;
@@ -272,7 +267,7 @@ int16 DialogueManager::selectAnswer() {
 
 	uint32 event;
 	Common::Point p;
-	while (!_vm->_quit) {
+	while (!_vm->quit()) {
 
 		_vm->_input->readInput();
 		_vm->_input->getCursorPos(p);

@@ -256,6 +256,11 @@ public:
 	virtual bool loadGame() = 0;
 	virtual bool saveGame() = 0;
 
+	bool _quit;   /* The only reason this flag exists is for freeZones() to properly 
+		       * delete all zones when necessary. THIS FLAG IS NOT THE ENGINE QUIT FLAG, 
+		       * use _eventMan->shouldQuit() for that.
+		       */
+
 	Input	*_input;
 
 	OpcodeSet	_commandOpcodes;

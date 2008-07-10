@@ -118,6 +118,8 @@ int Parallaction::init() {
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
+	_quit = false;
+	
 	_pathBuffer = 0;
 
 	_screenSize = _screenWidth * _screenHeight;
@@ -331,7 +333,8 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvQuitGame:
-		_vm->_quit = true;
+		_quit = true;
+		_vm->quitGame();
 		break;
 
 	case kEvSaveGame:
@@ -358,19 +361,19 @@ void Parallaction::runGame() {
 		processInput(data);
 	}
 
-	if (_vm->_quit)
+	if (_vm->quit())
 		return;
 
 	runPendingZones();
 
-	if (_vm->_quit)
+	if (_vm->quit())
 		return;
 
 	if (_engineFlags & kEngineChangeLocation) {
 		changeLocation(_location._name);
 	}
 
-	if (_vm->_quit)
+	if (_vm->quit())
 		return;
 
 	_gfx->beginFrame();

@@ -297,7 +297,8 @@ DECLARE_COMMAND_OPCODE(drop){
 
 
 DECLARE_COMMAND_OPCODE(quit) {
-	_vm->_quit = true;
+	_quit = true;
+	_vm->quitGame();
 }
 
 
@@ -427,7 +428,7 @@ void Parallaction::runCommands(CommandList& list, ZonePtr z) {
 		CommandPtr cmd = *it;
 		uint32 v8 = getLocationFlags();
 
-		if (_vm->_quit)
+		if (_vm->quit())
 			break;
 
 		if (cmd->_flagsOn & kFlagsGlobal) {
@@ -519,7 +520,7 @@ uint16 Parallaction::runZone(ZonePtr z) {
 
 	case kZoneSpeak:
 		runDialogue(z->u.speak);
-		if (_vm->_quit)
+		if (_vm->quit())
 			return 0;
 		break;
 

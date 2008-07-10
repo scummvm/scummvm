@@ -236,20 +236,20 @@ int Parallaction_ns::go() {
 
 	guiStart();
 	
-	if (_vm->_quit)
-		return _rtl;
+	if (quit())
+		return _eventMan->shouldRTL();
 	
 	changeLocation(_location._name);
 
-	if (_vm->_quit)
-		return _rtl;
+	if (quit())
+		return _eventMan->shouldRTL();
 
 	_input->_inputMode = Input::kInputModeGame;
-	while (!_vm->_quit) {
+	while (!quit()) {
 		runGame();
 	}
 
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 void Parallaction_ns::switchBackground(const char* background, const char* mask) {
