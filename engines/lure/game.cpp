@@ -143,7 +143,7 @@ void Game::execute() {
 	setState(GS_RESTART);
 	bool initialRestart = true;
 
-	while (!engine._quit) {
+	while (!engine.quit()) {
 
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
@@ -163,7 +163,7 @@ void Game::execute() {
 		mouse.cursorOn();
 
 		// Main game loop
-		while (!engine._quit && ((_state & GS_RESTART) == 0)) {
+		while (!engine.quit() && ((_state & GS_RESTART) == 0)) {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
@@ -292,10 +292,7 @@ void Game::execute() {
 
 			if (restartFlag)
 				setState(GS_RESTART);
-
-		} else if ((_state & GS_RESTART) == 0)
-			// Exiting game
-			engine._quit = true;
+		}
 	}
 }
 
@@ -893,7 +890,7 @@ void Game::doShowCredits() {
 void Game::doQuit() {
 	Sound.pause();
 	if (getYN())
-		LureEngine::getReference()._quit = true;
+		LureEngine::getReference().quitGame();
 	Sound.resume();
 }
 
@@ -1020,7 +1017,7 @@ bool Game::getYN() {
 		}
 
 		g_system->delayMillis(10);
-	} while (!engine._quit && !breakFlag);
+	} while (!engine.quit() && !breakFlag);
 
 	screen.update();
 	if (!vKbdFlag)

@@ -131,7 +131,7 @@ uint8 Menu::execute() {
 
 	while (mouse.lButton() || mouse.rButton()) {
 		while (events.pollEvent()) {
-			if (engine._quit) return MENUITEM_NONE;
+			if (engine.quit()) return MENUITEM_NONE;
 
 			if (mouse.y() < MENUBAR_Y_SIZE) {
 				MenuRecord *p = getMenuAt(mouse.x());
@@ -547,7 +547,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 		}
 
 		while (e.pollEvent()) {
-			if (engine._quit) {
+			if (engine.quit()) {
 				selectedIndex = 0xffff;
 				goto bail_out;
 

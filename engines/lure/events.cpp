@@ -141,9 +141,9 @@ void Mouse::waitForRelease() {
 	LureEngine &engine = LureEngine::getReference();
 
 	do {
-		while (e.pollEvent() && !engine._quit) ;
+		while (e.pollEvent() && !engine.quit()) ;
 		g_system->delayMillis(20);
-	} while (!engine._quit && (lButton() || rButton() || mButton()));
+	} while (!engine.quit() && (lButton() || rButton() || mButton()));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -166,10 +166,6 @@ bool Events::pollEvent() {
 
 	// Handle keypress
 	switch (_event.type) {
-	case Common::EVENT_QUIT:
-		engine._quit = true;
-		break;
-
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
@@ -217,7 +213,7 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 	uint32 delayCtr = g_system->getMillis() + milliseconds;
 
 	while (g_system->getMillis() < delayCtr) {
-		if (engine._quit) return true;
+		if (engine.quit()) return true;
 
 		if (events.pollEvent()) {
 			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||

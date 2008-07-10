@@ -221,7 +221,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	anim->show();
 	if (!events.interruptableDelay(30000)) {
 		// No key yet pressed, so keep waiting
-		while (Sound.musicInterface_CheckPlaying(6) && !engine._quit) {
+		while (Sound.musicInterface_CheckPlaying(6) && !engine.quit()) {
 			if (events.interruptableDelay(20))
 				break;
 		}
@@ -229,7 +229,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	delete anim;
 
 	screen.paletteFadeOut();
-	engine._quit = true;
+	engine.quitGame();
 }
 
 // Setup the pig fight in the cave

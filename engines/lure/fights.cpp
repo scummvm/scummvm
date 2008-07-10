@@ -117,7 +117,7 @@ void FightsManager::fightLoop() {
 	uint32 timerVal = g_system->getMillis();
 
 	// Loop for the duration of the battle
-	while (!engine._quit && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
+	while (!engine.quit() && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
 		checkEvents();
 
 		if (g_system->getMillis() > timerVal + GAME_FRAME_DELAY) {
@@ -198,7 +198,7 @@ void FightsManager::checkEvents() {
 		if (events.type() == Common::EVENT_KEYDOWN) {
 			switch (events.event().kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				engine._quit = true;
+				engine.quitGame();
 				return;
 
 			case Common::KEYCODE_d:
