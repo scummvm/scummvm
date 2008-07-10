@@ -80,6 +80,7 @@ uint16 Input::readInput() {
 			break;
 
 		case Common::EVENT_QUIT:
+			_quit = true;
 			return KeyDown;
 
 		default:
