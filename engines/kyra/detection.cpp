@@ -527,7 +527,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FLAGS
 	},
 	{
 		{
@@ -542,7 +542,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FLAGS
 	},
 	{
 		{
@@ -557,7 +557,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FLAGS
 	},
 
 	// installed version
@@ -574,7 +574,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_FLAGS
+		KYRA3_CD_INS_FLAGS
 	},
 	{
 		{
@@ -589,7 +589,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_FLAGS
+		KYRA3_CD_INS_FLAGS
 	},
 	{
 		{
@@ -604,7 +604,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DROPLANGUAGE
 		},
-		KYRA3_CD_FLAGS
+		KYRA3_CD_INS_FLAGS
 	},
 
 	// Spanish fan translation, see fr#1994040 "KYRA3: Add support for Spanish fan translation"
