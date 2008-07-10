@@ -243,8 +243,10 @@ int SoundMidiPC::open() {
 }
 
 void SoundMidiPC::close() {
-	if (_driver)
+	if (_driver) {
 		_driver->close();
+		delete _driver;
+	}
 	_driver = 0;
 }
 
