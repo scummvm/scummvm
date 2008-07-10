@@ -75,7 +75,7 @@ void VectorRenderer::textStep(const Common::String &text, const Common::Rect &ar
 	if (step.color.set)
 		setFgColor(step.color.r, step.color.g, step.color.b);
 		
-	drawString(step.font, text.c_str(), area, step.align);
+	drawString(step.font, text.c_str(), area, step.alignHorizontal, step.alignVertical);
 }
 
 /********************************************************************
@@ -185,8 +185,24 @@ inline uint32 fp_sqroot(uint32 x) {
  ********************************************************************/
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign align) {
-	font->drawString(_activeSurface, text, area.left, area.top, area.width(), _fgColor, (Graphics::TextAlignment)align, 0, false);
+drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, 
+			GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) {
+
+	int offset = 0;
+	
+	switch (alignV) {
+		case GUI::Theme::kTextAlignVCenter:
+			offset = area.top + (area.height() - font->getFontHeight()) / 2;
+			break;
+		case GUI::Theme::kTextAlignVBottom:
+			offset = area.bottom - font->getFontHeight();
+			break;
+		case GUI::Theme::kTextAlignVTop:
+			offset = area.top;
+			break;
+	}
+	
+	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, (Graphics::TextAlignment)alignH, 0, false);
 }
 
 /** LINES **/

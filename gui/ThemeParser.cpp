@@ -146,17 +146,24 @@ bool ThemeParser::parserCallback_text() {
 		
 	Graphics::TextStep step;
 	
-	if (tNode->values.contains("align") == false)
-		return parserError("Text inside widgets requires an alignement key.");
+	if (tNode->values.contains("horizontal_align") == false || tNode->values.contains("vertical_align") == false)
+		return parserError("Text inside widgets requires proper alignment keys.");
 		
-	if (tNode->values["align"] == "left")
-		step.align = GUI::Theme::kTextAlignLeft;
-	else if (tNode->values["align"] == "right")
-		step.align = GUI::Theme::kTextAlignRight;
-	else if (tNode->values["align"] == "center")
-		step.align = GUI::Theme::kTextAlignCenter;
+	if (tNode->values["horizontal_align"] == "left")
+		step.alignHorizontal = GUI::Theme::kTextAlignLeft;
+	else if (tNode->values["horizontal_align"] == "right")
+		step.alignHorizontal = GUI::Theme::kTextAlignRight;
+	else if (tNode->values["horizontal_align"] == "center")
+		step.alignHorizontal = GUI::Theme::kTextAlignCenter;
 	else return parserError("Invalid value for text alignment.");
 	
+	if (tNode->values["vertical_align"] == "top")
+		step.alignVertical = GUI::Theme::kTextAlignVTop;
+	else if (tNode->values["vertical_align"] == "center")
+		step.alignVertical = GUI::Theme::kTextAlignVCenter;
+	else if (tNode->values["vertical_align"] == "bottom")
+		step.alignVertical = GUI::Theme::kTextAlignVBottom;
+	else return parserError("Invalid value for text alignment.");
 	
 	if (tNode->values.contains("color")) {
 		int red, green, blue;

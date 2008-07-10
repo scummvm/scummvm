@@ -92,6 +92,13 @@ public:
 		kTextAlignCenter,	//! Text should be centered
 		kTextAlignRight		//! Text should be aligned to the right
 	};
+	
+	//! Vertical alignment of the text.
+	enum TextAlignVertical {
+		kTextAlignVBottom,
+		kTextAlignVCenter,
+		kTextAlignVTop
+	};
 
 	//! Widget background type
 	enum WidgetBackground {

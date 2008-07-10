@@ -302,10 +302,7 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 		dd = kDDButtonDisabled;
 
 	drawDD(dd, r);
-	drawDDText(dd, r, str);
-	if (hasWidgetText(dd))
-		_vectorRenderer->textStep(str, r, _widgets[dd]->_textStep);
-		
+	drawDDText(dd, r, str);	
 
 	addDirtyRect(r);
 	debugWidgetPosition(r);

@@ -46,7 +46,8 @@ struct TextStep {
 	}
 	color; /** text color */
 
-	GUI::Theme::TextAlign align;
+	GUI::Theme::TextAlign alignHorizontal;
+	GUI::Theme::TextAlignVertical alignVertical;
 	char *text;
 	const Graphics::Font *font;
 };
@@ -446,7 +447,7 @@ public:
 	 */
 	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
 	
-	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign align) = 0;
+	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) = 0;
 
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -513,7 +514,9 @@ public:
 		drawBevelSquareAlg(x, y, w, h, bevel, _fgColor, _bgColor);
 	}
 	
-	void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign align);
+	void drawString(const Graphics::Font *font, const Common::String &text, 
+					const Common::Rect &area, GUI::Theme::TextAlign alignH,
+					GUI::Theme::TextAlignVertical alignV);
 
 	/**
 	 * @see VectorRenderer::setFgColor()
