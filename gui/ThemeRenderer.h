@@ -43,6 +43,8 @@ struct WidgetDrawData;
 
 struct WidgetDrawData {
 	Common::List<Graphics::DrawStep> _steps;
+	Graphics::TextStep _textStep;
+	bool _hasText;
 
 	bool _cached;
 	Graphics::Surface *_surfaceCache;
@@ -175,6 +177,7 @@ public:
 
 	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep step);
 	bool addDrawData(DrawData data_id, bool cached);
+	bool addTextStep(Common::String &drawDataId, Graphics::TextStep step);
 
 	ThemeParser *parser() {
 		return _parser;
@@ -227,6 +230,10 @@ protected:
 
 	void redrawDialogStack();
 
+	bool hasWidgetText(DrawData type) {
+		return (_widgets[type] != 0 && _widgets[type]->_hasText);
+	}
+	
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 	void drawCached(DrawData type, const Common::Rect &r);
 

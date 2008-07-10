@@ -47,6 +47,8 @@ struct TextStep {
 	color; /** text color */
 
 	GUI::Theme::TextAlign align;
+	char *text;
+	Graphics::Font *font;
 };
 
 struct DrawStep {
@@ -426,6 +428,7 @@ public:
 	 * @param step Pointer to a DrawStep struct.
 	 */
 	virtual void drawStep(const Common::Rect &area, const DrawStep &step);
+	virtual void textStep(const Common::String &text, const Common::Rect &area, const TextStep &step);
 
 	/**
 	 * Copies the current surface to the system overlay 
@@ -442,6 +445,8 @@ public:
 	 * @param r Position in the active drawing surface to do the blitting.
 	 */
 	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
+	
+	virtual void drawString(Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign align) = 0;
 
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -507,6 +512,8 @@ public:
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
 		drawBevelSquareAlg(x, y, w, h, bevel, _fgColor, _bgColor);
 	}
+	
+	void drawString(Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign align);
 
 	/**
 	 * @see VectorRenderer::setFgColor()

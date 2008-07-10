@@ -328,6 +328,7 @@ protected:
 	bool parserCallback_renderInfo();
 	bool parserCallback_layoutInfo();
 	bool parserCallback_defaultSet();
+	bool parserCallback_text();
 
 	void cleanup();
 

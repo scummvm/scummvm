@@ -71,6 +71,14 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
 	(this->*(step.drawingCall))(area, step);	
 }
 
+void VectorRenderer::textStep(const Common::String &text, const Common::Rect &area, const TextStep &step) {
+	if (step.color.set)
+		setFgColor(step.color.r, step.color.g, step.color.b);
+		
+	assert(step.font);
+	drawString(step.font, text.c_str(), area, step.align);
+}
+
 /********************************************************************
  * MISCELANEOUS functions
  ********************************************************************/
@@ -176,6 +184,12 @@ inline uint32 fp_sqroot(uint32 x) {
 /********************************************************************
  * Primitive shapes drawing - Public API calls - VectorRendererSpec
  ********************************************************************/
+template <typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawString(Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign align) {
+	font->drawString(_activeSurface, text, area.left, area.top, area.width(), _fgColor, (Graphics::TextAlignment)align, 0, false);
+}
+
 /** LINES **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::

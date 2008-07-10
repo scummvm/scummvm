@@ -180,6 +180,19 @@ void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep s
 	_widgets[id]->_steps.push_back(step);
 }
 
+bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep step) {
+	DrawData id = getDrawDataId(drawDataId);
+	
+	assert(_widgets[id] != 0);
+	if (_widgets[id]->_hasText == true)
+		return false;
+		
+	_widgets[id]->_textStep = step;
+	_widgets[id]->_hasText = true;
+
+	return true;
+}
+
 bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 	assert(data_id >= 0 && data_id < kDrawDataMAX);
 
@@ -189,6 +202,7 @@ bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
 	_widgets[data_id]->_surfaceCache = 0;
+	_widgets[data_id]->_hasText = false;
 
 	return true;
 }
@@ -252,9 +266,12 @@ void ThemeRenderer::drawCached(DrawData type, const Common::Rect &r) {
 }
 
 void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
+	if (_widgets[type] == 0)
+		return;
+		
 	if (isWidgetCached(type, r)) {
 		drawCached(type, r);
-	} else if (_widgets[type] != 0) {
+	} else {
 		for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
 			 step != _widgets[type]->_steps.end(); ++step)
 			_vectorRenderer->drawStep(r, *step);
@@ -264,15 +281,20 @@ void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
 void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
 	if (!ready())
 		return;
+		
+	DrawData dd;
 
 	if (state == kStateEnabled)
-		drawDD(kDDButtonIdle, r);
+		dd = kDDButtonIdle;
 	else if (state == kStateHighlight)
-		drawDD(kDDButtonHover, r);
+		dd = kDDButtonHover;
 	else if (state == kStateDisabled)
-		drawDD(kDDButtonDisabled, r);
+		dd = kDDButtonDisabled;
 
-	// TODO: Add text drawing.
+	drawDD(dd, r);
+	if (hasWidgetText(dd))
+		_vectorRenderer->textStep(str, r, _widgets[dd]->_textStep);
+		
 
 	addDirtyRect(r);
 	debugWidgetPosition(r);

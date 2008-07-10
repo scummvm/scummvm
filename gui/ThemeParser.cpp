@@ -48,7 +48,8 @@ ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_callbacks["render_info"] = &ThemeParser::parserCallback_renderInfo;
 	_callbacks["layout_info"] = &ThemeParser::parserCallback_layoutInfo;
 	_callbacks["default"] = &ThemeParser::parserCallback_defaultSet;
-
+	_callbacks["text"] = &ThemeParser::parserCallback_text;
+	
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
 	_drawFunctions["roundedsq"]  = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
@@ -134,6 +135,56 @@ bool ThemeParser::parserCallback_defaultSet() {
 	}
 
 	return parseDrawStep(defNode, step, false);
+}
+
+bool ThemeParser::parserCallback_text() {
+	ParserNode *tNode = getActiveNode();
+	ParserNode *parentNode = getParentNode(tNode);
+	
+	if (parentNode == 0 || parentNode->name != "drawdata")
+		return parserError("Text Steps must be contained inside <drawdata> keys.");
+		
+	Graphics::TextStep step;
+	
+	if (tNode->values.contains("align") == false)
+		return parserError("Text inside widgets requires an alignement key.");
+		
+	if (tNode->values["align"] == "left")
+		step.align = GUI::Theme::kTextAlignLeft;
+	else if (tNode->values["align"] == "right")
+		step.align = GUI::Theme::kTextAlignRight;
+	else if (tNode->values["align"] == "center")
+		step.align = GUI::Theme::kTextAlignCenter;
+	else return parserError("Invalid value for text alignment.");
+	
+	
+	if (tNode->values.contains("color")) {
+		int red, green, blue;
+
+		if (parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue) == false ||
+			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
+			return parserError("Error when parsing color value for text definition");
+			
+		step.color.r = red;
+		step.color.g = green;
+		step.color.b = blue;
+		step.color.set = true;
+	} else if (_defaultStepLocal && _defaultStepLocal->fgColor.set) {
+		step.color.r = _defaultStepLocal->fgColor.r;
+		step.color.g = _defaultStepLocal->fgColor.g;
+		step.color.b = _defaultStepLocal->fgColor.b;
+		step.color.set = true;
+	} 	else if (_defaultStepGlobal && _defaultStepGlobal->fgColor.set) {
+		step.color.r = _defaultStepGlobal->fgColor.r;
+		step.color.g = _defaultStepGlobal->fgColor.g;
+		step.color.b = _defaultStepGlobal->fgColor.b;
+		step.color.set = true;
+	} else {
+		return parserError("Cannot assign color for text drawing.");
+	}
+
+	_theme->addTextStep(parentNode->values["id"], step);
+	return true;
 }
 
 bool ThemeParser::parserCallback_renderInfo() {
