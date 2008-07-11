@@ -287,9 +287,12 @@ Frames* DosDisk_br::loadFrames(const char* name) {
 	sprintf(path, "%s/ani/%s", _partPath, name);
 
 	Common::File stream;
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
+	if (!stream.open(path)) {
+		sprintf(path, "%s/ani/%s.ani", _partPath, name);
+		if (!stream.open(path)) {
+			errorFileNotFound(path);
+		}
+	}
 
 	return createSprites(stream);
 }

@@ -84,12 +84,11 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 
 Parallaction::~Parallaction() {
-	clearSet(_commandOpcodes);
-	clearSet(_instructionOpcodes);
-
 	delete _debugger;
 	delete _globalTable;
 	delete _callableNames;
+	delete _cmdExec;
+	delete _programExec;
 
 	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
 	hideDialogueStuff();
@@ -386,7 +385,11 @@ void Parallaction::runGame() {
 	_gfx->beginFrame();
 
 	if (_input->_inputMode == Input::kInputModeGame) {
-		runScripts();
+		_programExec->runScripts(_location._programs.begin(), _location._programs.end());
+		_char._ani->_z = _char._ani->height() + _char._ani->_top;
+		if (_char._ani->gfxobj) {
+			_char._ani->gfxobj->z = _char._ani->_z;
+		}
 		walk();
 		drawAnimations();
 	}
@@ -422,7 +425,7 @@ void Parallaction::doLocationEnterTransition() {
 	pal.makeGrayscale();
 	_gfx->setPalette(pal);
 
-	runScripts();
+	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
 	drawAnimations();
 
 	_gfx->updateScreen();

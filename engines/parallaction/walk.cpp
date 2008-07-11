@@ -347,7 +347,7 @@ uint16 Parallaction::checkDoor() {
 			_zoneTrap = nullZonePtr;
 
 		} else {
-			runCommands(z->_commands, z);
+			_cmdExec->run(z->_commands, z);
 		}
 	}
 
@@ -356,13 +356,13 @@ uint16 Parallaction::checkDoor() {
 
 	if (z) {
 		setLocationFlags(kFlagsEnter);
-		runCommands(z->_commands, z);
+		_cmdExec->run(z->_commands, z);
 		clearLocationFlags(kFlagsEnter);
 		_zoneTrap = z;
 	} else
 	if (_zoneTrap) {
 		setLocationFlags(kFlagsExit);
-		runCommands(_zoneTrap->_commands, _zoneTrap);
+		_cmdExec->run(_zoneTrap->_commands, _zoneTrap);
 		clearLocationFlags(kFlagsExit);
 		_zoneTrap = nullZonePtr;
 	}

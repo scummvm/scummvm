@@ -135,11 +135,15 @@ int Parallaction_ns::init() {
 	initResources();
 	initFonts();
 	initCursors();
-	initOpcodes();
 	_locationParser = new LocationParser_ns(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
 	_programParser->init();
+
+	_cmdExec = new CommandExec_ns(this);
+	_cmdExec->init();
+	_programExec = new ProgramExec_ns(this);
+	_programExec->init();
 
 	_introSarcData1 = 0;
 	_introSarcData2 = 1;
@@ -353,11 +357,11 @@ void Parallaction_ns::changeLocation(char *location) {
 	// and acommands are executed, so that it can be set again if needed.
 	_engineFlags &= ~kEngineChangeLocation;
 
-	runCommands(_location._commands);
+	_cmdExec->run(_location._commands);
 
 	doLocationEnterTransition();
 
-	runCommands(_location._aCommands);
+	_cmdExec->run(_location._aCommands);
 
 	if (_location._hasSound)
 		_soundMan->playSfx(_location._soundFile, 0, true);
