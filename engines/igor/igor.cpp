@@ -404,7 +404,7 @@ void IgorEngine::playSound(int num, int type) {
 	debugC(9, kDebugEngine, "playSound() %d", num);
 	--num;
 	int soundOffset = -1;
-	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+	Audio::Mixer::SoundType soundType;
 	Audio::SoundHandle *soundHandle = 0;
 	if (type == 1) {
 		if (_mixer->isSoundHandleActive(_sfxHandle)) {
