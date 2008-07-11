@@ -201,6 +201,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\exec.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\exec_br.cpp"
 			>
 		</File>
