@@ -43,11 +43,6 @@ public:
 	Polygon *createPolygonArea(const String& id);
 	void removeArea(const String& id);
 	void removeAllAreas();
-
-	//void addMapArea(Shape *shape, const String& target);
-	/*void addRectMapArea(const Rect& rect, const String& target);
-	void addPolygonMapArea(const Polygon& poly, const String& target);
-*/
 	String findMapArea(int16 x, int16 y);
 
 protected:

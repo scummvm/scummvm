@@ -31,7 +31,6 @@
 
 #include "engines/engine.h"
 #include "gui/message.h"
-#include "gui/newgui.h"
 
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
@@ -397,8 +396,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (event.kbd.keycode == Common::KEYCODE_F6 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
 					_vk->hide();
-				} else if (!g_gui.isActive()) {
-					if (!_vk->isLoaded()) _vk->loadKeyboardPack("test");
+				} else {
 					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
 					if (!isPaused) g_engine->pauseEngine(true);
 					_vk->show();

@@ -27,9 +27,11 @@
 #include "backends/common/virtual-keyboard-parser.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/unzip.h"
+#include "graphics/cursorman.h"
 #include "graphics/imageman.h"
 #include "graphics/surface-keycolored.h"
-#include "common/unzip.h"
+#include "gui/newgui.h"
 
 namespace Common {
 
@@ -40,6 +42,8 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
 	_parser = new VirtualKeyboardParser(this);
 	_loaded = _displaying = _drag = false;
 	_lastScreenChanged = _system->getScreenChangeID();
+
+	memset(_cursor, 0xFF, sizeof(_cursor));
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
@@ -76,9 +80,6 @@ void VirtualKeyboard::deleteEventData() {
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-
 	if (Common::File::exists(packName + ".xml")) {
 		// uncompressed keyboard pack
 		if (!_parser->loadFile(packName + ".xml"))
@@ -102,6 +103,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 				return false;
 			}
 		} else {
+			warning("Could not find %s.xml file in %s.zip keyboard pack\n", packName.c_str(), packName.c_str());
 			unzClose(zipFile);
 			return false;
 		}
@@ -210,9 +212,9 @@ void VirtualKeyboard::processClick(const Common::String& area) {
 }
 
 void VirtualKeyboard::switchMode(Mode *newMode) {
+	_kbdBound.setWidth(newMode->image->w);
+	_kbdBound.setHeight(newMode->image->h);
 	_currentMode = newMode;
-	_kbdBound.setWidth(_currentMode->image->w);
-	_kbdBound.setHeight(_currentMode->image->h);
 	_needRedraw = true;
 }
 
@@ -226,8 +228,11 @@ void VirtualKeyboard::switchMode(const Common::String& newMode) {
 
 void VirtualKeyboard::show() {
 	if (!_loaded) {
-		warning("Keyboard not loaded therefore can't be shown");
-		return;
+		// if not loaded then load default "vkeybd" pack
+		if (!loadKeyboardPack("vkeybd")) {
+			warning("Keyboard not loaded therefore can't be shown");
+			return;
+		}
 	}
 	if (_lastScreenChanged != _system->getScreenChangeID())
 		screenChanged();
@@ -237,9 +242,22 @@ void VirtualKeyboard::show() {
 		_firstRun = false;
 		setDefaultPosition();
 	}
-	_system->showOverlay();
+
+	if (!g_gui.isActive()) {
+		_system->showOverlay();
+		_system->clearOverlay();
+	}
+
+	_overlayBackup.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
+	_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
+	setupCursor();
+
 	runLoop();
-	_system->hideOverlay();
+
+	removeCursor();
+	_system->copyRectToOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w, 0, 0, _overlayBackup.w, _overlayBackup.h);
+	if (!g_gui.isActive()) _system->hideOverlay();
+	_overlayBackup.free();
 }
 
 void VirtualKeyboard::hide() {
@@ -258,6 +276,7 @@ void VirtualKeyboard::runLoop() {
 	while (_displaying) {
 		if (_needRedraw) redraw();
 
+		animateCursor();
 		_system->updateScreen();
 		Common::Event event;
 		while (eventMan->pollEvent(event)) {
@@ -317,10 +336,9 @@ void VirtualKeyboard::redraw() {
 	Graphics::SurfaceKeyColored surf;
 
 	surf.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
-
-	_system->clearOverlay();
-	_system->grabOverlay((OverlayColor*)surf.pixels, surf.w);
-	surf.blit(_currentMode->image, _kbdBound.left, _kbdBound.top, _system->RGBToColor(0xff, 0, 0xff));
+	
+	memcpy(surf.pixels, _overlayBackup.pixels, surf.w * surf.h * sizeof(OverlayColor));
+	surf.blit(_currentMode->image, _kbdBound.left, _kbdBound.top, _currentMode->transparentColor);
 
 	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 0, 0, surf.w, surf.h);
 
@@ -329,4 +347,39 @@ void VirtualKeyboard::redraw() {
 	_needRedraw = false;
 }
 
-} // end of namespace GUI
+void VirtualKeyboard::setupCursor() {
+	const byte palette[] = {
+		255, 255, 255, 0,
+		255, 255, 255, 0,
+		171, 171, 171, 0,
+		87,  87,  87, 0
+	};
+
+	CursorMan.pushCursorPalette(palette, 0, 4);
+	CursorMan.pushCursor(NULL, 0, 0, 0, 0);
+	CursorMan.showMouse(true);
+}
+
+void VirtualKeyboard::animateCursor() {
+	int time = _system->getMillis();
+	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
+		for (int i = 0; i < 15; i++) {
+			if ((i < 6) || (i > 8)) {
+				_cursor[16 * 7 + i] = _cursorAnimateCounter;
+				_cursor[16 * i + 7] = _cursorAnimateCounter;
+			}
+		}
+
+		CursorMan.replaceCursor(_cursor, 16, 16, 7, 7);
+
+		_cursorAnimateTimer = time;
+		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
+	}
+}
+
+void VirtualKeyboard::removeCursor() {
+	CursorMan.popCursor();
+	CursorMan.popCursorPalette();
+}
+
+} // end of namespace Common

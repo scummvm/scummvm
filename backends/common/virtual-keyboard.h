@@ -43,7 +43,6 @@ class VirtualKeyboardParser;
 
 class VirtualKeyboard {
 
-	/** Type of key event */
 	enum EventType {
 		kEventKey,
 		kEventSwitchMode,
@@ -53,6 +52,7 @@ class VirtualKeyboard {
 	struct Event {
 		Common::String name;
 		EventType type;
+		Graphics::Surface *rollOverImage;
 		void *data;
 	};
 	
@@ -63,6 +63,7 @@ class VirtualKeyboard {
 		Common::String     resolution;
 		Common::String     bitmapName;
 		Graphics::Surface *image;
+		OverlayColor	   transparentColor;
 		Common::ImageMap   imageMap;
 		EventMap           events;
 		Mode() : image(0) {}
@@ -85,13 +86,38 @@ class VirtualKeyboard {
 public:
 	VirtualKeyboard();
 	virtual ~VirtualKeyboard();
-
+	
+	/**
+	  * Loads the keyboard pack with the given name.
+	  * The system first looks for an uncompressed keyboard pack by searching 
+	  * for packName.xml in the filesystem, if this does not exist then it 
+	  * searches for a compressed keyboard pack by looking for packName.zip.
+	  * @param packName name of the keyboard pack
+	  */
 	bool loadKeyboardPack(Common::String packName);
+
+	/**
+	  * Shows the keyboard, starting an event loop that will intercept all
+	  * user input (like a modal GUI dialog).
+	  * It is assumed that the game has been paused, before this is called
+	  */
 	void show();
+
+	/**
+	  * Hides the keyboard, ending the event loop.
+	  */
 	void hide();
+
+	/**
+	  * Returns true if the keyboard is currently being shown
+	  */
 	bool isDisplaying() { 
 		return _displaying;
 	}
+
+	/**
+	  * Returns true if the keyboard is loaded and ready to be shown
+	  */
 	bool isLoaded() {
 		return _loaded;
 	}
@@ -118,6 +144,8 @@ protected:
 	void runLoop();
 	void redraw();
 
+	Graphics::Surface _overlayBackup;
+
 	bool _loaded;
 	bool _displaying;
 	bool _needRedraw;
@@ -139,6 +167,14 @@ protected:
 
 	Common::Queue<Common::KeyState> _keyQueue;
 	Common::KeyState *_keyDown;
+
+	static const int kCursorAnimateDelay = 250;
+	int		_cursorAnimateCounter;
+	int		_cursorAnimateTimer;
+	byte		_cursor[2048];
+	void setupCursor();
+	void removeCursor();
+	void animateCursor();
 
 };
 

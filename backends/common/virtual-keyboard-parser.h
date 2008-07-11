@@ -54,8 +54,9 @@ protected:
 	/** internal state variables of parser */
 	ParseMode _parseMode;
 	VirtualKeyboard::Mode *_mode; // pointer to mode currently being parsed
-	Common::String _initialModeName;  // name of initial keyboard mode
+	Common::String _initialModeName;
 	bool _kbdParsed;
+	bool _layoutParsed;
 
 	bool keyCallback(Common::String keyName);
 	bool closedKeyCallback(Common::String keyName);

@@ -143,8 +143,6 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 		_keyboard->_modes[name] = mode;
 		_mode = &(_keyboard->_modes[name]);
 
-		// if this is the keyboard's initial mode
-		// then set it to be the current mode
 		if (name == _initialModeName)
 			_keyboard->_initialMode = _mode;
 	} else
@@ -153,11 +151,14 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	Common::String resolutions = modeNode->values["resolutions"];
 	Common::StringTokenizer tok (resolutions, " ,");
 
+	// select best resolution simply by minimising the difference between the 
+	// overlay size and the resolution dimensions.
+	// TODO: improve this by giving preference to a resolution that is smaller
+	// than the overlay res (so the keyboard can't be too big for the screen)
 	uint16 scrW = g_system->getOverlayWidth(), scrH = g_system->getOverlayHeight();
 	uint32 diff = 0xFFFFFFFF;
 	Common::String newResolution;
 	for (Common::String res = tok.nextToken(); res.size() > 0; res = tok.nextToken()) {
-		// TODO: improve the resolution selection
 		int resW, resH;
 		if (sscanf(res.c_str(), "%dx%d", &resW, &resH) != 2) {
 			return parserError("Invalid resolution specification");
@@ -166,7 +167,7 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 				newResolution = res;
 				break;
 			} else {
-				uint16 newDiff = ABS(scrW - resW) + ABS(scrH - resH);
+				uint32 newDiff = ABS(scrW - resW) + ABS(scrH - resH);
 				if (newDiff < diff) {
 					diff = newDiff;
 					newResolution = res;
@@ -192,13 +193,15 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	}
 
 	_mode->resolution = newResolution;
-	
+	_layoutParsed = false;
+
 	return true;
 }
 
 bool VirtualKeyboardParser::parserCallback_ModeClosed() {
-	if (!_mode->image)
+	if (!_layoutParsed) {
 		return parserError("'%s' layout missing from '%s' mode", _mode->resolution.c_str(), _mode->name.c_str());
+	}
 	return true;
 }
 
@@ -287,13 +290,22 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 
 	_mode->bitmapName = layoutNode->values["bitmap"];
 
-	
 	if (!ImageMan.registerSurface(_mode->bitmapName, 0))
 		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 
 	_mode->image = ImageMan.getSurface(_mode->bitmapName);
 	if (!_mode->image)
 		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
+	
+	if (layoutNode->values.contains("transparent_color")) {
+		int r, g, b;
+		if (!parseIntegerKey(layoutNode->values["transparent_color"].c_str(), 3, &r, &g, &b))
+			return parserError("Could not parse color value");
+		_mode->transparentColor = g_system->RGBToColor(r, g, b);
+	} else
+		_mode->transparentColor = g_system->RGBToColor(255, 0, 255); // default to purple
+
+	_layoutParsed = true;
 
 	return true;
 }
