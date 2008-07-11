@@ -47,7 +47,7 @@ protected:
 	struct ParallactionStruct1 {
 		CommandPtr cmd;
 		ZonePtr	z;
-	} _cmdRunCtxt;
+	} _ctxt;
 
 	OpcodeSet	_opcodes;
 
@@ -153,14 +153,16 @@ protected:
 		InstructionList::iterator inst;
 		uint16		modCounter;
 		bool		suspend;
-	} _instRunCtxt;
+	} _ctxt;
 
 	OpcodeSet	_opcodes;
+
+	uint16	_modCounter;
 
 public:
 	virtual void init() = 0;
 	virtual void runScripts(ProgramList::iterator first, ProgramList::iterator last);
-	ProgramExec() {
+	ProgramExec() : _modCounter(0) {
 	}
 	virtual ~ProgramExec() {
 		for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)

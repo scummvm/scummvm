@@ -116,7 +116,7 @@ DECLARE_COMMAND_OPCODE(location) {
 	warning("Parallaction_br::cmdOp_location command not yet implemented");
 
 	// TODO: handle startPos and startPos2
-	_vm->scheduleLocationSwitch(_cmdRunCtxt.cmd->u._string);
+	_vm->scheduleLocationSwitch(_ctxt.cmd->u._string);
 }
 
 
@@ -131,7 +131,7 @@ DECLARE_COMMAND_OPCODE(close) {
 
 
 DECLARE_COMMAND_OPCODE(on) {
-	CommandData *data = &_cmdRunCtxt.cmd->u;
+	CommandData *data = &_ctxt.cmd->u;
 	ZonePtr z = data->_zone;
 
 	if (z) {
@@ -146,7 +146,7 @@ DECLARE_COMMAND_OPCODE(on) {
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	CommandData *data = &_cmdRunCtxt.cmd->u;
+	CommandData *data = &_ctxt.cmd->u;
 	ZonePtr z = data->_zone;
 
 	if (z) {
@@ -160,7 +160,7 @@ DECLARE_COMMAND_OPCODE(off) {
 
 
 DECLARE_COMMAND_OPCODE(call) {
-	_vm->callFunction(_cmdRunCtxt.cmd->u._callable, &_cmdRunCtxt.z);
+	_vm->callFunction(_ctxt.cmd->u._callable, &_ctxt.z);
 }
 
 
@@ -174,17 +174,17 @@ DECLARE_COMMAND_OPCODE(move) {
 }
 
 DECLARE_COMMAND_OPCODE(start) {
-	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActing;
+	_ctxt.cmd->u._zone->_flags |= kFlagsActing;
 }
 
 DECLARE_COMMAND_OPCODE(stop) {
-	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsActing;
+	_ctxt.cmd->u._zone->_flags &= ~kFlagsActing;
 }
 
 
 DECLARE_COMMAND_OPCODE(character) {
-	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", _cmdRunCtxt.cmd->u._string);
-	_vm->changeCharacter(_cmdRunCtxt.cmd->u._string);
+	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", _ctxt.cmd->u._string);
+	_vm->changeCharacter(_ctxt.cmd->u._string);
 }
 
 
@@ -214,17 +214,17 @@ DECLARE_COMMAND_OPCODE(leave) {
 
 
 DECLARE_COMMAND_OPCODE(inc) {
-	_vm->_counters[_cmdRunCtxt.cmd->u._lvalue] += _cmdRunCtxt.cmd->u._rvalue;
+	_vm->_counters[_ctxt.cmd->u._lvalue] += _ctxt.cmd->u._rvalue;
 }
 
 
 DECLARE_COMMAND_OPCODE(dec) {
-	_vm->_counters[_cmdRunCtxt.cmd->u._lvalue] -= _cmdRunCtxt.cmd->u._rvalue;
+	_vm->_counters[_ctxt.cmd->u._lvalue] -= _ctxt.cmd->u._rvalue;
 }
 
 
 DECLARE_COMMAND_OPCODE(ifeq) {
-	if (_vm->_counters[_cmdRunCtxt.cmd->u._lvalue] == _cmdRunCtxt.cmd->u._rvalue) {
+	if (_vm->_counters[_ctxt.cmd->u._lvalue] == _ctxt.cmd->u._rvalue) {
 		_vm->setLocationFlags(kFlagsTestTrue);
 	} else {
 		_vm->clearLocationFlags(kFlagsTestTrue);
@@ -232,7 +232,7 @@ DECLARE_COMMAND_OPCODE(ifeq) {
 }
 
 DECLARE_COMMAND_OPCODE(iflt) {
-	if (_vm->_counters[_cmdRunCtxt.cmd->u._lvalue] < _cmdRunCtxt.cmd->u._rvalue) {
+	if (_vm->_counters[_ctxt.cmd->u._lvalue] < _ctxt.cmd->u._rvalue) {
 		_vm->setLocationFlags(kFlagsTestTrue);
 	} else {
 		_vm->clearLocationFlags(kFlagsTestTrue);
@@ -240,7 +240,7 @@ DECLARE_COMMAND_OPCODE(iflt) {
 }
 
 DECLARE_COMMAND_OPCODE(ifgt) {
-	if (_vm->_counters[_cmdRunCtxt.cmd->u._lvalue] > _cmdRunCtxt.cmd->u._rvalue) {
+	if (_vm->_counters[_ctxt.cmd->u._lvalue] > _ctxt.cmd->u._rvalue) {
 		_vm->setLocationFlags(kFlagsTestTrue);
 	} else {
 		_vm->clearLocationFlags(kFlagsTestTrue);
@@ -249,7 +249,7 @@ DECLARE_COMMAND_OPCODE(ifgt) {
 
 
 DECLARE_COMMAND_OPCODE(let) {
-	_vm->_counters[_cmdRunCtxt.cmd->u._lvalue] = _cmdRunCtxt.cmd->u._rvalue;
+	_vm->_counters[_ctxt.cmd->u._lvalue] = _ctxt.cmd->u._rvalue;
 }
 
 
@@ -259,25 +259,25 @@ DECLARE_COMMAND_OPCODE(music) {
 
 
 DECLARE_COMMAND_OPCODE(fix) {
-	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsFixed;
+	_ctxt.cmd->u._zone->_flags |= kFlagsFixed;
 }
 
 
 DECLARE_COMMAND_OPCODE(unfix) {
-	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsFixed;
+	_ctxt.cmd->u._zone->_flags &= ~kFlagsFixed;
 }
 
 
 DECLARE_COMMAND_OPCODE(zeta) {
-	_vm->_location._zeta0 = _cmdRunCtxt.cmd->u._zeta0;
-	_vm->_location._zeta1 = _cmdRunCtxt.cmd->u._zeta1;
-	_vm->_location._zeta2 = _cmdRunCtxt.cmd->u._zeta2;
+	_vm->_location._zeta0 = _ctxt.cmd->u._zeta0;
+	_vm->_location._zeta1 = _ctxt.cmd->u._zeta1;
+	_vm->_location._zeta2 = _ctxt.cmd->u._zeta2;
 }
 
 
 DECLARE_COMMAND_OPCODE(scroll) {
 	warning("Parallaction_br::cmdOp_scroll not yet implemented");
-	_vm->_gfx->setVar("scroll_x", _cmdRunCtxt.cmd->u._rvalue );
+	_vm->_gfx->setVar("scroll_x", _ctxt.cmd->u._rvalue );
 }
 
 
@@ -292,7 +292,7 @@ DECLARE_COMMAND_OPCODE(give) {
 
 
 DECLARE_COMMAND_OPCODE(text) {
-	CommandData *data = &_cmdRunCtxt.cmd->u;
+	CommandData *data = &_ctxt.cmd->u;
 	_vm->setupSubtitles(data->_string, data->_string2, data->_zeta0);
 }
 
@@ -326,7 +326,7 @@ DECLARE_COMMAND_OPCODE(offsave) {
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	InstructionPtr inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_ctxt.inst;
 	ZonePtr z = inst->_z;
 
 	if (z) {
@@ -341,7 +341,7 @@ DECLARE_INSTRUCTION_OPCODE(on) {
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	InstructionPtr inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_ctxt.inst;
 	ZonePtr z = inst->_z;
 
 	if (z) {
@@ -355,7 +355,7 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	InstructionPtr inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_ctxt.inst;
 
 	int16 rvalue = inst->_opB.getRValue();
 	int16* lvalue = inst->_opA.getLValue();
@@ -366,21 +366,21 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
-	InstructionPtr inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_ctxt.inst;
 
-	_instRunCtxt.program->_loopCounter = inst->_opB.getRValue();
-	_instRunCtxt.program->_loopStart = _instRunCtxt.inst;
+	_ctxt.program->_loopCounter = inst->_opB.getRValue();
+	_ctxt.program->_loopStart = _ctxt.inst;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
-	InstructionPtr inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_ctxt.inst;
 
 	int16 rvalue = inst->_opB.getRValue();
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (rvalue > 0 ? rvalue : -rvalue);
-		if (_instRunCtxt.modCounter % _bx != 0) return;
+		if (_ctxt.modCounter % _bx != 0) return;
 
 		rvalue = (rvalue > 0 ?  1 : -1);
 	}
@@ -427,12 +427,12 @@ DECLARE_INSTRUCTION_OPCODE(wait) {
 
 
 DECLARE_INSTRUCTION_OPCODE(start) {
-	(*_instRunCtxt.inst)->_z->_flags |= kFlagsActing;
+	(*_ctxt.inst)->_z->_flags |= kFlagsActing;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(process) {
-	_vm->_activeZone2 = (*_instRunCtxt.inst)->_z;
+	_vm->_activeZone2 = (*_ctxt.inst)->_z;
 }
 
 
@@ -442,7 +442,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 
 
 DECLARE_INSTRUCTION_OPCODE(color) {
-	InstructionPtr inst = *_instRunCtxt.inst;
+	InstructionPtr inst = *_ctxt.inst;
 
 	int16 entry = inst->_opB.getRValue();
 
@@ -453,7 +453,7 @@ DECLARE_INSTRUCTION_OPCODE(color) {
 
 DECLARE_INSTRUCTION_OPCODE(mask) {
 #if 0
-	Instruction *inst = *_instRunCtxt.inst;
+	Instruction *inst = *_ctxt.inst;
 	_gfx->_bgLayers[0] = inst->_opA.getRValue();
 	_gfx->_bgLayers[1] = inst->_opB.getRValue();
 	_gfx->_bgLayers[2] = inst->_opC.getRValue();
@@ -466,7 +466,7 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(text) {
-	InstructionPtr inst = (*_instRunCtxt.inst);
+	InstructionPtr inst = (*_ctxt.inst);
 	_vm->setupSubtitles(inst->_text, inst->_text2, inst->_y);
 }
 
@@ -496,14 +496,14 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
-	if ((_instRunCtxt.anim->_flags & kFlagsLooping) == 0) {
-		_instRunCtxt.anim->_flags &= ~kFlagsActing;
-		_vm->_cmdExec->run(_instRunCtxt.anim->_commands, _instRunCtxt.anim);
-		_instRunCtxt.program->_status = kProgramDone;
+	if ((_ctxt.anim->_flags & kFlagsLooping) == 0) {
+		_ctxt.anim->_flags &= ~kFlagsActing;
+		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
+		_ctxt.program->_status = kProgramDone;
 	}
-	_instRunCtxt.program->_ip = _instRunCtxt.program->_instructions.begin();
+	_ctxt.program->_ip = _ctxt.program->_instructions.begin();
 
-	_instRunCtxt.suspend = true;
+	_ctxt.suspend = true;
 }
 
 void CommandExec_br::init() {
