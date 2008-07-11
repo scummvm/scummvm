@@ -103,8 +103,7 @@ public:
 	void talkSpeed(int speed) { _talkSpeed = speed; }
 	bool subtitles() const { return _subtitles; }
 	void subtitles(bool enable) { _subtitles = enable; }
-	void quitGame() { _quit = true; }
-
+	
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;

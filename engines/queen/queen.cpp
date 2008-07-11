@@ -386,7 +386,7 @@ int QueenEngine::go() {
 	}
 	_lastSaveTime = _lastUpdateTime = _system->getMillis();
 
-	while (!_quit) {
+	while (!quit()) {
 		if (_logic->newRoom() > 0) {
 			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());
@@ -404,7 +404,7 @@ int QueenEngine::go() {
 			update(true);
 		}
 	}
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 int QueenEngine::init() {
