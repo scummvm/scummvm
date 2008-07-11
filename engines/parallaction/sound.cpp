@@ -175,6 +175,7 @@ void MidiPlayer::close() {
 	_mutex.lock();
 	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
+	delete _driver;
 	_driver = 0;
 	_parser->setMidiDriver(NULL);
 	delete _parser;
