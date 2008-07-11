@@ -192,10 +192,6 @@ void ScummEngine::parseEvents() {
 				_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
 			break;
 
-		case Common::EVENT_QUIT:
-			_quit = true;
-			break;
-
 		default:
 			break;
 		}

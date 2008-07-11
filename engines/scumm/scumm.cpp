@@ -143,7 +143,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = NULL;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
-	_quit = false;
 	_pauseDialog = NULL;
 	_scummMenuDialog = NULL;
 	_versionDialog = NULL;
@@ -815,7 +814,6 @@ ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) 
 	_syst = syst;
 	_game = dr.game;
 	_filenamePattern = dr.fp,
-	_quit = false;
 
 	_cupPlayer = new CUP_Player(syst, this, _mixer);
 }
@@ -846,9 +844,6 @@ void ScummEngine_vCUPhe::parseEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quit = true;
-			break;
 
 		default:
 			break;
@@ -1722,7 +1717,7 @@ int ScummEngine::go() {
 
 	int diff = 0;	// Duration of one loop iteration
 
-	while (!_quit) {
+	while (!quit()) {
 
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -1755,12 +1750,12 @@ int ScummEngine::go() {
 		diff = _system->getMillis() - diff;
 
 
-		if (_quit) {
+		if (quit()) {
 			// TODO: Maybe perform an autosave on exit?
 		}
 	}
 
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {
@@ -1773,7 +1768,7 @@ void ScummEngine::waitForTimer(int msec_delay) {
 
 	start_time = _system->getMillis();
 
-	while (!_quit) {
+	while (!quit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
 		_system->updateScreen();
@@ -1896,7 +1891,7 @@ load_game:
 	checkExecVerbs();
 	checkAndRunSentenceScript();
 
-	if (_quit)
+	if (quit())
 		return;
 
 	// HACK: If a load was requested, immediately perform it. This avoids
@@ -2161,10 +2156,6 @@ void ScummEngine::pauseGame() {
 	pauseDialog();
 }
 
-void ScummEngine::shutDown() {
-	_quit = true;
-}
-
 void ScummEngine::restart() {
 // TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
 //	 this leaks memory like a sieve
@@ -2317,7 +2308,7 @@ void ScummEngine::confirmExitDialog() {
 	ConfirmDialog d(this, 6);
 
 	if (runDialog(d)) {
-		_quit = true;
+		quitGame();
 	}
 }
 

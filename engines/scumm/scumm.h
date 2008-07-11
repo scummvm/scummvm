@@ -496,7 +496,6 @@ protected:
 public:
 	void pauseGame();
 	void restart();
-	void shutDown();
 
 protected:
 	Dialog *_pauseDialog;

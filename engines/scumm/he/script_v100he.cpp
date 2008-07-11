@@ -2147,10 +2147,10 @@ void ScummEngine_v100he::o100_systemOps() {
 		break;
 	case 71:
 		// Confirm shutdown
-		shutDown();
+		quitGame();
 		break;
 	case 72:
-		shutDown();
+		quitGame();
 		break;
 	case 73:
 		copyScriptString(string, sizeof(string));

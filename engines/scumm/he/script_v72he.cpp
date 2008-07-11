@@ -1485,10 +1485,10 @@ void ScummEngine_v72he::o72_systemOps() {
 		break;
 	case 160:
 		// Confirm shutdown
-		shutDown();
+		quitGame();
 		break;
 	case 244:
-		shutDown();
+		quitGame();
 		break;
 	case 251:
 		copyScriptString(string, sizeof(string));

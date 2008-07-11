@@ -634,10 +634,10 @@ void ScummEngine_v70he::o70_systemOps() {
 		break;
 	case 160:
 		// Confirm shutdown
-		shutDown();
+		quitGame();
 		break;
 	case 244:
-		shutDown();
+		quitGame();
 		break;
 	case 250:
 		id = pop();

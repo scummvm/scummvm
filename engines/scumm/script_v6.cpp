@@ -2310,7 +2310,7 @@ void ScummEngine_v6::o6_systemOps() {
 		pauseGame();
 		break;
 	case 160:		// SO_QUIT
-		shutDown();
+		quitGame();
 		break;
 	default:
 		error("o6_systemOps invalid case %d", subOp);

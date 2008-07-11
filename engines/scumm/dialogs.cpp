@@ -496,7 +496,7 @@ void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 #endif
 	case kQuitCmd:
-		_vm->_quit = true;
+		_vm->quitGame();
 		close();
 		break;
 	default:
