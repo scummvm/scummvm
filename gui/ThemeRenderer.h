@@ -85,7 +85,7 @@ public:
 		kDDMainDialogBackground,
 		kDDSpecialColorBackground,
 		kDDPlainColorBackground,
-		kDDDefaulBackground,
+		kDDDefaultBackground,
 
 		kDDButtonIdle,
 		kDDButtonHover,

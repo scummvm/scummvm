@@ -323,18 +323,17 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 		return;
 
 	Common::Rect r2 = r;
-	int checkBoxSize = getFontHeight();
-
-	if (checkBoxSize > r.height())
-		checkBoxSize = r.height();
+	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
 	r2.bottom = r2.top + checkBoxSize;
 	r2.right = r2.left + checkBoxSize;
 
 	drawDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2);
-
-	// TODO: text drawing
-//	getFont()->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, false);
+	
+	r2.left = r2.right + checkBoxSize;
+	r2.right = r.right;
+	
+	drawDDText(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2, str);
 
 	addDirtyRect(r);
 	debugWidgetPosition(r);
@@ -365,7 +364,16 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 void ThemeRenderer::drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {
 	if (!ready())
 		return;
-
+		
+	if (hints & THEME_HINT_MAIN_DIALOG)
+		drawDD(kDDMainDialogBackground, r);
+	else if (hints & THEME_HINT_SPECIAL_COLOR) 
+		drawDD(kDDSpecialColorBackground, r);
+	else if (hints & THEME_HINT_PLAIN_COLOR)
+		drawDD(kDDPlainColorBackground, r);	
+	else
+		drawDD(kDDDefaultBackground, r);
+	
 	debugWidgetPosition(r);
 }
 
