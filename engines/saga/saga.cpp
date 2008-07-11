@@ -261,7 +261,7 @@ int SagaEngine::go() {
 
 	uint32 currentTicks;
 
-	while (!_quit) {
+	while (!quit()) {
 		if (_console->isAttached())
 			_console->onFrame();
 
@@ -301,7 +301,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {

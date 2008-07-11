@@ -491,7 +491,6 @@ protected:
 public:
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	virtual ~SagaEngine();
-	void shutDown() { _quit = true; }
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);

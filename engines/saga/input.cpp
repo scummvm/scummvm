@@ -141,9 +141,6 @@ int SagaEngine::processInput() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			break;
-		case Common::EVENT_QUIT:
-			shutDown();
-			break;
 		default:
 			break;
 		}

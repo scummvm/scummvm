@@ -688,7 +688,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			setMode(kPanelMain);
 			_vm->_script->setNoPendingVerb();
 		} else if (ascii == 'q' || ascii == 'Q') {
-			_vm->shutDown();
+			_vm->quitGame();
 		}
 		break;
 	case kPanelBoss:
@@ -1081,7 +1081,7 @@ void Interface::setQuit(PanelButton *panelButton) {
 			if (_vm->getGameId() == GID_IHNM_DEMO)
 				_vm->_scene->creditsScene();	// display sales info for IHNM demo
 			else
-				_vm->shutDown();
+				_vm->quitGame();
 			break;
 	}
 }
