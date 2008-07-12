@@ -49,6 +49,10 @@ class DefaultEventManager : public Common::EventManager {
 	Common::VirtualKeyboard *_vk;
 
 	Common::Queue<Common::Event> _artificialEventQueue;
+	int _artificialEventCounter;
+	enum {
+		kArtificialEventDelay = 10
+	};
 
 	Common::Point _mousePos;
 	int _buttonState;

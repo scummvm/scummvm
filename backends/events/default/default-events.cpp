@@ -193,6 +193,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	}
 
 	_vk = new Common::VirtualKeyboard();
+	_artificialEventCounter = 0;
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -351,10 +352,15 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
-
+	
 	if (!_artificialEventQueue.empty()) {
-		event = _artificialEventQueue.pop();
-		result = true;
+		// delay the feeding of artificial events
+		if (++_artificialEventCounter % kArtificialEventDelay == 0) {
+			event = _artificialEventQueue.pop();
+			result = true;
+			_artificialEventCounter = 0; 
+		} else
+			result = _boss->pollEvent(event);
 	} else 	
 		result = _boss->pollEvent(event);
 

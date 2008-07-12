@@ -260,6 +260,9 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 
 		evt.type = VirtualKeyboard::kEventSwitchMode;
 		evt.data = new Common::String(evtNode->values["mode"]);
+	} else if (type == "close") {
+		evt.type = VirtualKeyboard::kEventClose;
+		evt.data = 0;
 	} else
 		return parserError("Event type '%s' not known", type.c_str());
 
