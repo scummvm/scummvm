@@ -50,28 +50,33 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<drawstep func = 'fill' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
 	"</drawdata>"
 	
+	"<drawdata id = 'popup' cache = false>"
+		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 size = 'auto' />"
+		"/*<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground'  orientation = 'bottom' /> */"
+	"</drawdata>"
+	
 	"<drawdata id = 'default_bg' cache = false>"
-	"<drawstep func = 'roundedsq' radius = 12 stroke = 8 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '255, 231, 140' gradient_end = '255, 243, 206' shadow = 3 size = 'auto' />"
+		"<drawstep func = 'roundedsq' radius = 12 stroke = 4 fg_color = '206, 121, 99' fill = 'gradient' gradient_start = '255, 231, 140' gradient_end = '255, 243, 206' shadow = 3 size = 'auto' />"
 	"</drawdata>"
 
 	"<drawdata id = 'button_idle' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
-		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 3 />"
+		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'button_hover' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
-		"<drawstep func = 'roundedsq' radius = '8' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 3 />"
+		"<drawstep func = 'roundedsq' radius = '8' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_disabled' cache = false>"
 		"<text vertical_align = 'top' horizontal_align = 'left' color = '255, 255, 255' />"
-		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 0 />"
+		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_enabled' cache = false>"
 		"<text vertical_align = 'top' horizontal_align = 'left' color = '255, 255, 255' />"
-		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' size = 'auto' shadow = 0 />"
+		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 		"<drawstep func = 'circle' radius = 'auto' fill = 'foreground' />"
 	"</drawdata>"
 "</render_info>"

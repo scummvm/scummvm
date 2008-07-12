@@ -62,15 +62,9 @@ struct DrawStep {
 	gradColor1, /** gradient start*/
 	gradColor2; /** gradient end */
 
-	bool fillArea; /** If enabled, the draw step occupies the whole drawing area */
-
-	struct {
-		uint16 pos;
-		bool relative;
-	} x, y; /** Horizontal and vertical coordinates. Relative specifies if they are
-			    measured from the opposite direction of the drawing area */
-
-	uint16 w, h; /** width and height */
+	bool autoWidth, autoHeight;
+	int16 x, y, w, h; /** width, height and position, if not measured automatically.
+	 					  negative values mean counting from the opposite direction */
 
 	uint8 shadow, stroke, factor, radius; /** Misc options... */
 
@@ -332,23 +326,22 @@ public:
 	}
 
 	void stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
-		if (step.fillArea) {
-			in_x = area.left;
-			in_y = area.top;
-			in_w = area.width();
-			in_h = area.height();
+		if (!step.autoWidth) {
+			in_w = step.w;
+			if (step.x >= 0) in_x = area.left + step.x; 
+			else in_x = area.left + area.width() + step.x; // value relative to the opposite corner.
 		} else {
-			if (!step.x.relative) in_x = area.left + step.x.pos; 
-			else in_x = area.left + area.width() - step.x.pos;
-
-			if (!step.y.relative) in_y = area.top + step.y.pos;
-			else in_y = area.top + area.height() - step.y.pos;
-
-			if (in_x + step.w > area.right) in_w = area.right - in_x;
-			else in_w = step.w;
-
-			if (in_y + step.h > area.bottom) in_h = area.bottom - in_y;
-			else in_h = step.h;
+			in_x = area.left;
+			in_w = area.width();
+		}
+		
+		if (!step.autoHeight) {
+			in_h = step.h;
+			if (step.y >= 0) in_y = area.top + step.y;
+			else in_y = area.top + area.height() + step.y; // relative
+		} else {
+			in_y = area.top;
+			in_h = area.height();
 		}
 
 		if (step.scale != (1 << 16) && step.scale != 0) {

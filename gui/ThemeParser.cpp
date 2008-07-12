@@ -91,7 +91,8 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 
 	step->extraData = 0;
 	step->factor = 1;
-	step->fillArea = true;
+	step->autoWidth = true;
+	step->autoHeight = true;
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
 	step->shadow = 0;
@@ -335,7 +336,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 }
 
 bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific) {
-	int red, green, blue, w, h, x;
+	int red, green, blue, x;
 	Common::String val;
 
 /**
@@ -361,8 +362,6 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 /**
  * Helper macro to sanitize and assign a RGB value from a key to the draw
  * step. RGB values have the following syntax: "R, G, B".
- *
- * TODO: Handle also specific name colors such as "red", "green", etc.
  *
  * @param struct_name Name of the field of a DrawStep struct that must be
  *                    assigned.
@@ -431,16 +430,21 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		}
 
 		if (stepNode->values.contains("size")) {
-			if (stepNode->values["size"] == "auto") {
-				drawstep->fillArea = true;
-			} else if (sscanf(stepNode->values["size"].c_str(), "%d, %d", &w, &h) == 2) {
-				drawstep->fillArea = false;
-				drawstep->w = w;
-				drawstep->h = h;
-			} else {
-				return parserError("Invalid value in 'size' subkey: Valid options are 'auto' or 'X, X' to define width and height.");
-			}
+			warning("The <size> keyword has been deprecated. Use <width> and <height> instead");
 		}
+		
+		if (stepNode->values.contains("width")) {
+			drawstep->autoWidth = false;
+			__PARSER_ASSIGN_INT(x, "xpos", true);
+		}
+		
+		if (stepNode->values.contains("height")) {
+			drawstep->autoHeight = false;
+			__PARSER_ASSIGN_INT(y, "ypos", true);
+		}
+			
+		__PARSER_ASSIGN_INT(w, "width", false);
+		__PARSER_ASSIGN_INT(h, "height", false);
 	}
 
 	if (stepNode->values.contains("fill")) {
