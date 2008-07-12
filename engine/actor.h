@@ -48,6 +48,7 @@ struct Shadow {
 	SectorListType planeList;
 	byte *shadowMask;
 	bool active;
+	bool dontNegate;
 };
 
 class Actor {

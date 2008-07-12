@@ -63,6 +63,7 @@ Actor::Actor(const char *name) :
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
+		_shadowArray[i].dontNegate = false;
 		_shadowArray[i].shadowMask = NULL;
 	}
 
@@ -669,10 +670,10 @@ void Actor::setActiveShadow(int shadowId) {
 }
 
 void Actor::setShadowValid(int valid) {
-/*	if (valid == -1)
-		_shadowArray[_activeShadowSlot].active = false;
+	if (valid == -1)
+		_shadowArray[_activeShadowSlot].dontNegate = true;
 	else
-		_shadowArray[_activeShadowSlot].active = true;*/
+		_shadowArray[_activeShadowSlot].dontNegate = false;
 }
 
 void Actor::setActivateShadow(int shadowId, bool state) {
