@@ -239,7 +239,7 @@ protected:
 
 	inline void drawDD(DrawData type, const Common::Rect &r);
 	inline void drawDDText(DrawData type, const Common::Rect &r, const Common::String &text);
-	inline void debugWidgetPosition(const Common::Rect &r);
+	inline void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 	// TODO
 	void restoreBackground(Common::Rect r, bool special = false) {}

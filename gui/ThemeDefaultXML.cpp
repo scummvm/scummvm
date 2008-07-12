@@ -49,6 +49,10 @@ bool ThemeRenderer::loadDefaultXML() {
 	"<drawdata id = 'mainmenu_bg' cache = false>"
 		"<drawstep func = 'fill' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
 	"</drawdata>"
+	
+	"<drawdata id = 'default_bg' cache = false>"
+	"<drawstep func = 'roundedsq' radius = 12 stroke = 8 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '255, 231, 140' gradient_end = '255, 243, 206' shadow = 3 size = 'auto' />"
+	"</drawdata>"
 
 	"<drawdata id = 'button_idle' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
