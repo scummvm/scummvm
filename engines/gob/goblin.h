@@ -28,6 +28,7 @@
 
 #include "gob/util.h"
 #include "gob/mult.h"
+#include "gob/variables.h"
 #include "gob/sound/sounddesc.h"
 
 namespace Gob {
@@ -115,57 +116,57 @@ public:
 	char _pathExistence;
 
 	// Pointers to interpreter variables
-	int32 *_some0ValPtr;
+	VariableReference _some0ValPtr;
 
-	int32 *_gobRetVarPtr;
-	int32 *_curGobVarPtr;
-	int32 *_curGobXPosVarPtr;
-	int32 *_curGobYPosVarPtr;
-	int32 *_itemInPocketVarPtr;
+	VariableReference _gobRetVarPtr;
+	VariableReference _curGobVarPtr;
+	VariableReference _curGobXPosVarPtr;
+	VariableReference _curGobYPosVarPtr;
+	VariableReference _itemInPocketVarPtr;
 
-	int32 *_curGobStateVarPtr;
-	int32 *_curGobFrameVarPtr;
-	int32 *_curGobMultStateVarPtr;
-	int32 *_curGobNextStateVarPtr;
-	int32 *_curGobScrXVarPtr;
-	int32 *_curGobScrYVarPtr;
-	int32 *_curGobLeftVarPtr;
-	int32 *_curGobTopVarPtr;
-	int32 *_curGobRightVarPtr;
-	int32 *_curGobBottomVarPtr;
-	int32 *_curGobDoAnimVarPtr;
-	int32 *_curGobOrderVarPtr;
-	int32 *_curGobNoTickVarPtr;
-	int32 *_curGobTypeVarPtr;
-	int32 *_curGobMaxTickVarPtr;
-	int32 *_curGobTickVarPtr;
-	int32 *_curGobActStartStateVarPtr;
-	int32 *_curGobLookDirVarPtr;
-	int32 *_curGobPickableVarPtr;
-	int32 *_curGobRelaxVarPtr;
-	int32 *_curGobMaxFrameVarPtr;
+	VariableReference _curGobStateVarPtr;
+	VariableReference _curGobFrameVarPtr;
+	VariableReference _curGobMultStateVarPtr;
+	VariableReference _curGobNextStateVarPtr;
+	VariableReference _curGobScrXVarPtr;
+	VariableReference _curGobScrYVarPtr;
+	VariableReference _curGobLeftVarPtr;
+	VariableReference _curGobTopVarPtr;
+	VariableReference _curGobRightVarPtr;
+	VariableReference _curGobBottomVarPtr;
+	VariableReference _curGobDoAnimVarPtr;
+	VariableReference _curGobOrderVarPtr;
+	VariableReference _curGobNoTickVarPtr;
+	VariableReference _curGobTypeVarPtr;
+	VariableReference _curGobMaxTickVarPtr;
+	VariableReference _curGobTickVarPtr;
+	VariableReference _curGobActStartStateVarPtr;
+	VariableReference _curGobLookDirVarPtr;
+	VariableReference _curGobPickableVarPtr;
+	VariableReference _curGobRelaxVarPtr;
+	VariableReference _curGobMaxFrameVarPtr;
 
-	int32 *_destItemStateVarPtr;
-	int32 *_destItemFrameVarPtr;
-	int32 *_destItemMultStateVarPtr;
-	int32 *_destItemNextStateVarPtr;
-	int32 *_destItemScrXVarPtr;
-	int32 *_destItemScrYVarPtr;
-	int32 *_destItemLeftVarPtr;
-	int32 *_destItemTopVarPtr;
-	int32 *_destItemRightVarPtr;
-	int32 *_destItemBottomVarPtr;
-	int32 *_destItemDoAnimVarPtr;
-	int32 *_destItemOrderVarPtr;
-	int32 *_destItemNoTickVarPtr;
-	int32 *_destItemTypeVarPtr;
-	int32 *_destItemMaxTickVarPtr;
-	int32 *_destItemTickVarPtr;
-	int32 *_destItemActStartStVarPtr;
-	int32 *_destItemLookDirVarPtr;
-	int32 *_destItemPickableVarPtr;
-	int32 *_destItemRelaxVarPtr;
-	int32 *_destItemMaxFrameVarPtr;
+	VariableReference _destItemStateVarPtr;
+	VariableReference _destItemFrameVarPtr;
+	VariableReference _destItemMultStateVarPtr;
+	VariableReference _destItemNextStateVarPtr;
+	VariableReference _destItemScrXVarPtr;
+	VariableReference _destItemScrYVarPtr;
+	VariableReference _destItemLeftVarPtr;
+	VariableReference _destItemTopVarPtr;
+	VariableReference _destItemRightVarPtr;
+	VariableReference _destItemBottomVarPtr;
+	VariableReference _destItemDoAnimVarPtr;
+	VariableReference _destItemOrderVarPtr;
+	VariableReference _destItemNoTickVarPtr;
+	VariableReference _destItemTypeVarPtr;
+	VariableReference _destItemMaxTickVarPtr;
+	VariableReference _destItemTickVarPtr;
+	VariableReference _destItemActStartStVarPtr;
+	VariableReference _destItemLookDirVarPtr;
+	VariableReference _destItemPickableVarPtr;
+	VariableReference _destItemRelaxVarPtr;
+	VariableReference _destItemMaxFrameVarPtr;
 
 	int16 _destItemType;
 	int16 _destItemState;
