@@ -46,6 +46,29 @@ Tfmx::~Tfmx() {
 		delete[] _data;
 	if (_trackData)
 		delete[] _trackData;
+	if (_sampleData)
+		delete[] _sampleData;
+}
+void Tfmx::loadSamples() {
+	// FIXME: temporary loader - just creates seekablereadstream from c:\mk.smpl
+	Common::SeekableReadStream *stream = NULL;
+	Common::File myfile;
+	myfile.addDefaultDirectory("C:");
+	myfile.open("mk.smpl");
+	stream = myfile.readStream(myfile.size());
+	myfile.close();
+	//FIXME: end temporary loader. normally the seekablereadstream will be function parameter
+
+	_sampleSize = stream->size();
+	_sampleData = new uint8[_sampleSize];
+	stream->seek(0);
+	stream->read(_sampleData, _sampleSize);
+
+	//sample data should now be initialized
+}
+
+bool Tfmx::loadSamples(Common::SeekableReadStream &stream) {
+	return true;
 }
 
 void Tfmx::load() {
@@ -165,6 +188,12 @@ Then each interrupt, updateTracks() is called and track data is reloaded.
 			
 	}
 
+	if (_tempo >= 0x10) {
+	setInterruptFreq( (int)( getRate() / (_tempo * 0.4)));
+	}
+	else {
+	setInterruptFreq( (int)( getRate() / (1 / _tempo * 24)));
+	}
 	//StartPaula()
 	// and trigger updateTrackstep() cycle, called at each interrupt
 
@@ -349,7 +378,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		_tracks[trackNumber].pattern.note.channelNumber = (byte3 & 0xF0) >> 4;
 		_tracks[trackNumber].pattern.note.volume = (byte3 & 0x0F);
 		_tracks[trackNumber].pattern.note.wait = byte4; //should set pattern wait to this
-		//updateNote();
+		//doMacros(trackNumber);
 	}
 
 	_tracks[trackNumber].pattern.data++;

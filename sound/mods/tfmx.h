@@ -40,9 +40,12 @@ public:
 
 		//temporary loader function, will be moved to one below
 		void load();
+		void loadSamples();
+
 		//load function loads file from stream, performs checks, initializes some variables
 		bool load(Common::SeekableReadStream &stream);
-		
+		bool loadSamples(Common::SeekableReadStream &stream);
+
 		//generic function to start playback
 		//will likely change to playSong(uint8 songNumber)
 		bool play();
@@ -51,6 +54,10 @@ protected:
 		//uint8 stream for whole MDAT file
 		uint8 *_data;      
 		uint32 _dataSize; 
+
+		//uint8 stream for sample data from SMPL file
+		uint8 *_sampleData;
+		uint32 _sampleSize;
 
 		//addresses of tables in MDAT file
 		uint32 _trackTableOffset;
@@ -85,6 +92,7 @@ protected:
 			uint8 channelNumber;
 			uint8 volume;
 			uint8 wait;
+			uint8 type; //4 types of notes
 		};
 
 		//Pattern structure; contains note
@@ -105,12 +113,21 @@ protected:
 		//	uint16 loopCount;
 		};
 
+		//Sample structure; initialized by macro commands
+		struct Sample {
+			int8 *data;
+			uint32 offset; //offset into sample file
+			uint32 length; //length of sample
+
+		};
+
 		//Track structure; contains pattern
 		//Setup as 8-track array, each track gets updated on interrupt
 		struct Track {
 			uint16 data;
 			bool updateFlag;
 			bool activeFlag;
+			Sample sample;
 			Pattern pattern;
 		//	uint16 volume;
 		//	bool loopFlag;
@@ -128,7 +145,7 @@ protected:
 
 		//functions used in playback (in order by relationship)
 		void playSong(uint8 songNumber);
-		void updateTrackstep( );
+		void updateTrackstep();
 		void updatePattern(uint8 trackNumber);
 		void updateNote(uint8 trackNumber);
 		void doMacros(uint8 trackNumber);
