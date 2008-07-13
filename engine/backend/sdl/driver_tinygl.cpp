@@ -523,11 +523,12 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 			for (int x = 0; x < material->_width; x++) {
 				int col = *(uint8 *)(data);
 				if (col == 0)
-					memset(texdatapos, 0, 3); // transparent
+					memset(texdatapos, 0, 4); // transparent
 				else {
 					memcpy(texdatapos, cmap->_colors + 3 * (*(uint8 *)(data)), 3);
+					texdatapos[3] = '\xff'; // fully opaque
 				}
-				texdatapos += 3;
+				texdatapos += 4;
 				data++;
 			}
 		}
@@ -537,7 +538,7 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-		tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, TGL_RGB, TGL_UNSIGNED_BYTE, texdata);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
 		data += 24;
 	}
 	delete[] texdata;

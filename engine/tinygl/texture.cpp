@@ -120,50 +120,50 @@ void glopBindTexture(GLContext *c,TGLParam *p)
   c->current_texture=t;
 }
 
-void glopTexImage2D(GLContext *c,TGLParam *p)
-{
-  int target=p[1].i;
-  int level=p[2].i;
-  int components=p[3].i;
-  int width=p[4].i;
-  int height=p[5].i;
-  int border=p[6].i;
-  int format=p[7].i;
-  int type=p[8].i;
-  void *pixels=p[9].p;
-  GLImage *im;
-  unsigned char *pixels1;
-  int do_free;
+void glopTexImage2D(GLContext *c, TGLParam *p) {
+	int target = p[1].i;
+	int level = p[2].i;
+	int components = p[3].i;
+	int width = p[4].i;
+	int height = p[5].i;
+	int border = p[6].i;
+	int format = p[7].i;
+	int type = p[8].i;
+	void *pixels = p[9].p;
+	GLImage *im;
+	unsigned char *pixels1;
+	int do_free;
 
-  if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && 
-        border == 0 && format == TGL_RGB &&
-        type == TGL_UNSIGNED_BYTE)) {
-    gl_fatal_error("glTexImage2D: combinaison of parameters not handled");
-  }
+	if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && 
+			border == 0 && format == TGL_RGBA &&
+			type == TGL_UNSIGNED_BYTE)) {
+		gl_fatal_error("glTexImage2D: combination of parameters not handled");
+	}
   
-  do_free=0;
-  if (width != 256 || height != 256) {
-    pixels1 = (unsigned char *)gl_malloc(256 * 256 * 3);
-    /* no interpolation is done here to respect the original image aliasing ! */
-    //gl_resizeImageNoInterpolate(pixels1,256,256,(unsigned char *)pixels,width,height);
-    // used interpolation anyway, it look much better :) --- aquadran
-	gl_resizeImage(pixels1,256,256,(unsigned char *)pixels,width,height);
-    do_free=1;
-    width=256;
-    height=256;
+	do_free = 0;
+	if (width != 256 || height != 256) {
+		pixels1 = (unsigned char *)gl_malloc(256 * 256 * 4);
+		// no interpolation is done here to respect the original image aliasing !
+		//gl_resizeImageNoInterpolate(pixels1, 256, 256, (unsigned char *)pixels, width, height);
+		// used interpolation anyway, it look much better :) --- aquadran
+		gl_resizeImage(pixels1, 256, 256, (unsigned char *)pixels, width, height);
+		do_free = 1;
+		width = 256;
+		height = 256;
   } else {
-    pixels1=(unsigned char *)pixels;
+		pixels1 = (unsigned char *)pixels;
   }
 
-  im=&c->current_texture->images[level];
-  im->xsize=width;
-  im->ysize=height;
-  if (im->pixmap!=NULL) gl_free(im->pixmap);
-  im->pixmap=gl_malloc(width*height*2);
-  if(im->pixmap) {
-      gl_convertRGB_to_5R6G5B((unsigned short *)im->pixmap,pixels1,width,height);
-  }
-  if (do_free) gl_free(pixels1);
+  im = &c->current_texture->images[level];
+  im->xsize = width;
+  im->ysize = height;
+  if (im->pixmap)
+	  gl_free(im->pixmap);
+  im->pixmap = gl_malloc(width * height * 3);
+  if (im->pixmap)
+		gl_convertRGB_to_5R6G5B8A((unsigned short *)im->pixmap, pixels1, width, height);
+  if (do_free)
+		gl_free(pixels1);
 }
 
 

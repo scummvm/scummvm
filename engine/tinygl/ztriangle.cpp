@@ -371,22 +371,25 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
 					for (int _a = 0; _a < 8; _a++) {
 						zz = z >> ZB_POINT_Z_FRAC_BITS;
 						if ((ZCMP(zz, pz[_a])) && (ZCMP(z, pz_2[_a]))) {
-							tmp = rgb & 0xF81F07E0;
-							unsigned int light = tmp | (tmp >> 16);
-							PIXEL pixel = *(PIXEL *)((char *)texture +
-									(((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));
-							unsigned int c_r = (pixel & 0xF800) >> 8;
-							unsigned int c_g = (pixel & 0x07E0) >> 3;
-							unsigned int c_b = (pixel & 0x001F) << 3;
-							unsigned int l_r = (light & 0xF800) >> 8;
-							unsigned int l_g = (light & 0x07E0) >> 3;
-							unsigned int l_b = (light & 0x001F) << 3;
-							c_r = (c_r * l_r) / 256;
-							c_g = (c_g * l_g) / 256;
-							c_b = (c_b * l_b) / 256;
-							pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3);
-							pp[_a] = pixel;
-							pz_2[_a] = z;
+							char *ptr = (char *)(texture) + (((((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)) >> 1) * 3);
+							PIXEL pixel = *(PIXEL *)ptr;
+							char alpha = *(ptr + 2);
+							if (alpha == '\xff') {
+								tmp = rgb & 0xF81F07E0;
+								unsigned int light = tmp | (tmp >> 16);
+								unsigned int c_r = (pixel & 0xF800) >> 8;
+								unsigned int c_g = (pixel & 0x07E0) >> 3;
+								unsigned int c_b = (pixel & 0x001F) << 3;
+								unsigned int l_r = (light & 0xF800) >> 8;
+								unsigned int l_g = (light & 0x07E0) >> 3;
+								unsigned int l_b = (light & 0x001F) << 3;
+								c_r = (c_r * l_r) / 256;
+								c_g = (c_g * l_g) / 256;
+								c_b = (c_b * l_b) / 256;
+								pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3);
+								pp[_a] = pixel;
+								pz_2[_a] = z;
+							}
 						}
 						z += dzdx;
 						s += dsdx;
@@ -416,22 +419,25 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
 					{
 						zz = z >> ZB_POINT_Z_FRAC_BITS;
 						if ((ZCMP(zz, pz[0])) && (ZCMP(z, pz_2[0]))) {
-							tmp = rgb & 0xF81F07E0;
-							unsigned int light = tmp | (tmp >> 16);
-							PIXEL pixel = *(PIXEL *)((char *)texture +
-									(((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));
-							unsigned int c_r = (pixel & 0xF800) >> 8;
-							unsigned int c_g = (pixel & 0x07E0) >> 3;
-							unsigned int c_b = (pixel & 0x001F) << 3;
-							unsigned int l_r = (light & 0xF800) >> 8;
-							unsigned int l_g = (light & 0x07E0) >> 3;
-							unsigned int l_b = (light & 0x001F) << 3;
-							c_r = (c_r * l_r) / 256;
-							c_g = (c_g * l_g) / 256;
-							c_b = (c_b * l_b) / 256;
-							pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3);
-							pp[0] = pixel;
-							pz_2[0] = z;
+							char *ptr = (char *)(texture) + (((((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)) >> 1) * 3);
+							PIXEL pixel = *(PIXEL *)ptr;
+							char alpha = *(ptr + 2);
+							if (alpha == '\xff') {
+								tmp = rgb & 0xF81F07E0;
+								unsigned int light = tmp | (tmp >> 16);
+								unsigned int c_r = (pixel & 0xF800) >> 8;
+								unsigned int c_g = (pixel & 0x07E0) >> 3;
+								unsigned int c_b = (pixel & 0x001F) << 3;
+								unsigned int l_r = (light & 0xF800) >> 8;
+								unsigned int l_g = (light & 0x07E0) >> 3;
+								unsigned int l_b = (light & 0x001F) << 3;
+								c_r = (c_r * l_r) / 256;
+								c_g = (c_g * l_g) / 256;
+								c_b = (c_b * l_b) / 256;
+								pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3);
+								pp[0] = pixel;
+								pz_2[0] = z;
+							}
 						}
 						z += dzdx;
 						s += dsdx;

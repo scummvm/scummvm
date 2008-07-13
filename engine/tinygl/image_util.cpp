@@ -3,16 +3,19 @@
 
 // image conversion
 
-void gl_convertRGB_to_5R6G5B(unsigned short *pixmap, unsigned char *rgb,
-                             int xsize, int ysize) {
+void gl_convertRGB_to_5R6G5B8A(unsigned short *pixmap, unsigned char *rgba, int xsize, int ysize) {
 	int i, n;
-	unsigned char *p;
+	unsigned char *p, *p2;
 
-	p = rgb;
+	p = rgba;
 	n = xsize * ysize;
+	p2 = (unsigned char *)pixmap;
 	for (i = 0; i < n; i++) {
-		pixmap[i] = ((p[0] & 0xF8) << 8) | ((p[1] & 0xFC) << 3) | ((p[2] & 0xF8) >> 3); 
-		p += 3;
+		unsigned short pixel = ((p[0] & 0xF8) << 8) | ((p[1] & 0xFC) << 3) | ((p[2] & 0xF8) >> 3);
+		p2[3 * i + 1] = pixel >> 8;
+		p2[3 * i + 0] = pixel & 0xff;
+		p2[3 * i + 2] = p[3];
+		p += 4;
 	}
 }
 
@@ -30,6 +33,7 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
                     unsigned char *src, int xsize_src, int ysize_src) {
 	unsigned char *pix, *pix_src;
+	int point1_offset, point2_offset, point3_offset;
 	float x1, y1, x1inc, y1inc;
 	int xi, yi, j, xf, yf, x, y;
 
@@ -50,22 +54,47 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 
 			if ((xf + yf) <= INTERP_NORM) {
 				for (j = 0; j < 3; j++) {
-					pix[j] = interpolate(pix_src[(yi * xsize_src + xi) * 3 + j],
-								pix_src[(yi * xsize_src + xi + 1) * 3 + j],
-								pix_src[((yi + 1) * xsize_src + xi) * 3 + j],
-								xf, yf);
+					point1_offset = (yi * xsize_src + xi) * 4 + j;
+					if ((xi + 1) < xsize_src)
+						point2_offset = (yi * xsize_src + xi + 1) * 4 + j;
+					else
+						point2_offset = point1_offset;
+					if ((yi + 1) < ysize_src)
+						point3_offset = ((yi + 1) * xsize_src + xi) * 4 + j;
+					else
+						point3_offset = point1_offset;
+					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
 				}
+				pix[3] = pix_src[(yi * xsize_src + xi) * 4 + 3];
 			} else {
-					xf = INTERP_NORM - xf;
-					yf = INTERP_NORM - yf;
-					for (j = 0; j < 3; j++) {
-						pix[j] = interpolate(pix_src[((yi + 1) * xsize_src + xi + 1) * 3 + j],
-						pix_src[((yi + 1) * xsize_src + xi) * 3 + j],
-						pix_src[(yi * xsize_src + xi + 1) * 3 + j],
-						xf, yf);
+				xf = INTERP_NORM - xf;
+				yf = INTERP_NORM - yf;
+				for (j = 0; j < 3; j++) {
+					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
+					if ((xi + 1) < xsize_src) {
+						if ((yi + 1) < ysize_src)
+							point1_offset = ((yi + 1) * xsize_src + xi + 1) * 4 + j;
+						else
+							point1_offset = (yi * xsize_src + xi + 1) * 4 + j;
+					} else {
+						if ((yi + 1) < ysize_src)
+							point1_offset = ((yi + 1) * xsize_src + xi) * 4 + j;
+						else
+							point1_offset = (yi * xsize_src + xi) * 4 + j;
 					}
+					if ((yi + 1) < ysize_src)
+						point2_offset = ((yi + 1) * xsize_src + xi) * 4 + j;
+					else
+						point2_offset = (yi * xsize_src + xi) * 4 + j;
+					if ((xi + 1) < xsize_src)
+						point3_offset = (yi * xsize_src + xi + 1) * 4 + j;
+					else
+						point3_offset = (yi * xsize_src + xi) * 4 + j;
+					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
+				}
+				pix[3] = pix_src[(yi * xsize_src + xi) * 4 + 3];
 			}
-			pix += 3;
+			pix += 4;
 			x1 += x1inc;
 		}
 		y1 += y1inc;
@@ -93,13 +122,14 @@ void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_
 		for (x = 0; x < xsize_dest; x++) {
 			xi = x1 >> FRAC_BITS;
 			yi = y1 >> FRAC_BITS;
-			pix1 = pix_src + (yi * xsize_src + xi) * 3;
+			pix1 = pix_src + (yi * xsize_src + xi) * 4;
 
 			pix[0] = pix1[0];
 			pix[1] = pix1[1];
 			pix[2] = pix1[2];
+			pix[3] = pix1[3];
 
-			pix += 3;
+			pix += 4;
 			x1 += x1inc;
 		}
 		y1 += y1inc;
