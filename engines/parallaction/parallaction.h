@@ -229,12 +229,17 @@ protected:
 	static const char _suffixTras[];
 	static const char _empty[];
 
+	int16		_direction, _step;
+
 public:
 	void setName(const char *name);
 	const char *getName() const;
 	const char *getBaseName() const;
 	const char *getFullName() const;
 	bool dummy() const;
+
+	void updateDirection(const Common::Point& pos, const Common::Point& to);
+
 };
 
 
@@ -263,7 +268,7 @@ public:
 
 	void		finalizeWalk(Character &character);
 	int16		selectWalkFrame(Character &character, const Common::Point& pos, const WalkNodePtr to);
-	void		clipMove(Common::Point& pos, const WalkNodePtr to);
+	void		clipMove(Common::Point& pos, const Common::Point& to);
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
@@ -357,7 +362,7 @@ protected:		// members
 
 	void		displayComment(ExamineData *data);
 
-	void		checkDoor(Character &character);
+	void		checkDoor(const Common::Point &foot);
 
 	void		freeCharacter();
 
@@ -384,6 +389,7 @@ public:
 
 	void		beep();
 
+	ZonePtr		_zoneTrap;
 
 public:
 //	const char **_zoneFlagNamesRes;

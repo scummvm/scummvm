@@ -305,6 +305,8 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->hideFloatingLabel();
 	_gfx->freeLabels();
 
+	_zoneTrap = nullZonePtr;
+
 	_input->stopHovering();
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
