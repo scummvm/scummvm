@@ -310,7 +310,6 @@ int SwordEngine::init() {
 	_systemVars.controlPanelMode = CP_NEWGAME;
 	_systemVars.forceRestart = false;
 	_systemVars.wantFade = true;
-	_systemVars.engineQuit = false;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::DE_DEU:
@@ -645,7 +644,7 @@ int SwordEngine::go() {
 			_systemVars.controlPanelMode = CP_NEWGAME;
 			if (_control->runPanel() == CONTROL_GAME_RESTORED)
 				_control->doRestore();
-			else if (!_systemVars.engineQuit)
+			else if (!quit())
 				_logic->startPositions(0);
 		} else {
 			// no savegames, start new game.
@@ -654,10 +653,10 @@ int SwordEngine::go() {
 	}
 	_systemVars.controlPanelMode = CP_NORMAL;
 
-	while (!_systemVars.engineQuit) {
+	while (!quit()) {
 		uint8 action = mainLoop();
 
-		if (!_systemVars.engineQuit) {
+		if (!quit()) {
 			// the mainloop was left, we have to reinitialize.
 			reinitialize();
 			if (action == CONTROL_GAME_RESTORED)
@@ -669,7 +668,7 @@ int SwordEngine::go() {
 		}
 	}
 
-	return 0;
+	return _eventMan->shouldQuit();
 }
 
 void SwordEngine::checkCd(void) {
@@ -698,7 +697,7 @@ uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
 	_keyPressed.reset();
 
-	while ((retCode == 0) && (!_systemVars.engineQuit)) {
+	while ((retCode == 0) && (!quit())) {
 		// do we need the section45-hack from sword.c here?
 		checkCd();
 
@@ -747,9 +746,9 @@ uint8 SwordEngine::mainLoop(void) {
 			}
 			_mouseState = 0;
 			_keyPressed.reset();
-		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!_systemVars.engineQuit));
+		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!quit()));
 
-		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!_systemVars.engineQuit)) {
+		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!quit())) {
 			_screen->fadeDownPalette();
 			int32 relDelay = (int32)_system->getMillis();
 			while (_screen->stillFading()) {
@@ -795,9 +794,6 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 			case Common::EVENT_RBUTTONUP:
 				_mouseState |= BS1R_BUTTON_UP;
 				_mouseCoord = event.mouse;
-				break;
-			case Common::EVENT_QUIT:
-				_systemVars.engineQuit = true;
 				break;
 			default:
 				break;
