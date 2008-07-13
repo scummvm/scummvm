@@ -75,8 +75,8 @@ protected:
 		uint32 _trackLength;
 		uint16 _tempo; //current value for tempo
 
-		//note table , needs verification
-		static const uint16 notes[]; 
+		//note table
+		static const uint16 periods[]; 
 
 		//Song structure
 		struct Song {
@@ -94,7 +94,7 @@ protected:
 			uint8 channelNumber;
 			uint8 volume;
 			uint8 wait;
-			uint8 type; //4 types of notes
+			uint8 type; //3 types of notes
 		};
 
 		//Pattern structure; contains note
@@ -127,7 +127,6 @@ protected:
 			int8 *data;
 			uint32 offset; //offset into sample file
 			uint32 length; //length of sample
-
 		};
 
 		//Track structure; contains pattern
@@ -149,9 +148,6 @@ protected:
 		struct Channel {
 			uint8 period;
 		}_channels[4];
-
-		//TODO: Will likely need to add more data members to structures
-		//for effects and macro proccessing. 
 
 		//functions used in playback (in order by relationship)
 		void playSong(uint8 songNumber);

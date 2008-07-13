@@ -28,7 +28,7 @@
 
 namespace Audio {
 
-const uint16 Tfmx::notes[] =
+const uint16 Tfmx::periods[] =
 	{0x06AE,0x064E,0x05F4,0x059E,0x054D,0x0501,
 	 0x04B9,0x0475,0x0435,0x03F9,0x03C0,0x038C,0x0358,0x032A,0x02FC,0x02D0,0x02A8,0x0282,
 	 0x025E,0x023B,0x021B,0x01FD,0x01E0,0x01C6,0x001AC,0x0194,0x017D,0x0168,0x0154,0x0140,
@@ -68,6 +68,7 @@ void Tfmx::loadSamples() {
 }
 
 bool Tfmx::loadSamples(Common::SeekableReadStream &stream) {
+	//TODO: Setup loading from input stream
 	return true;
 }
 
@@ -131,6 +132,7 @@ void Tfmx::load() {
 	//playSong(0);
 }
 bool Tfmx::load(Common::SeekableReadStream &stream) {
+	//TODO: Setup loading from input stream
 	return true;
 }
 bool Tfmx::play() {
@@ -225,12 +227,12 @@ void Tfmx::updateTrackstep() {
 			//uint16 selectionPosition = tracks[2]; 
 			//uint16 selectionLoops = tracks[3];    
 			break;
-		case 2: //EFFE002 Set the tempo
+		case 2: //EFFE002: SAFE TO IGNORE FOR NOW
 			//MI uses this command but it seems broken - it sets both parameters to 0 only. 
 			//Might be safe to ignore for now and just use tempo set in header.
 			//uint16 tempoDivisor = tracks[2];    
 			//uint16 tempoBPM = tracks[3];        
-			setTempo(); //TODO: will accept tempoDivisor & tempoBPM as parameters
+			//setTempo(); //TODO: will accept tempoDivisor & tempoBPM as parameters
 			break;
 		case 3: //EFFE0003: NOT USED IN MI. 
 			//Purpose not clear. Flagged as multimode/7 channel setting in other players.
@@ -386,6 +388,10 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 }
 
 void Tfmx::updateNote(uint8 trackNumber) {
+	//TODO: Should determine the type of note (3 kinds) so it can apply effects
+	//00 & 01 : detune
+	//10 : wait
+	//11 : portamento
 }
 void Tfmx::doMacros(uint8 trackNumber) {
 	//Quick copy and paste: will load macro in similiar fashion as pattern data and then be able to cycle through it
@@ -403,10 +409,8 @@ void Tfmx::doMacros(uint8 trackNumber) {
 	for (int i = 0; i < numCommands; i++) {
 		_tracks[trackNumber].macro.data[i] = macroSubStream.readUint32BE();
 	}
-	//
 
-	//now macro data is accessible
-	//IMPORTANT CASES TO SETUP FOR SAMPLE LOADING
+	//TODO: IMPORTANT CASES TO SETUP FOR SAMPLE LOADING
 	//00 : DMA Reset
 	//01 : DMA Start
 	//02 : Sample Offset
@@ -414,6 +418,14 @@ void Tfmx::doMacros(uint8 trackNumber) {
 	//04 : Wait
 	//07 : End Macro
 	//13 : DMA Off
+
+	//MASKING for uint32 pattern data 
+	//First byte is OPCODE
+	//TODO: Might only need to read OPCODE initially and then use other masks as needed in each case
+	uint8 byte1 = *(_tracks[trackNumber].macro.data) & 0xFF000000 >> 24;
+	uint8 byte2 = *(_tracks[trackNumber].macro.data) & 0x00FF0000 >> 16;
+	uint8 byte3 = *(_tracks[trackNumber].macro.data) & 0x0000FF00 >> 8;
+	uint8 byte4 = *(_tracks[trackNumber].macro.data) & 0x000000FF;
 
 }
 void Tfmx::stopPlayer() {
@@ -423,10 +435,16 @@ void Tfmx::stopPlayer() {
 	stopPaula();
 }
 void Tfmx::setTempo() {
+	//Safe to ignore for now
 }
 void Tfmx::volumeSlide() {
 }
 void Tfmx::interrupt() {
+	//TODO:
+	//updateTracks(); (-> reads patterns, notes, macros, samples for each track)
+	//Now tracks should be properly initialized with sample data
+	//setChannelPeriod( lookup number in period table );
+	//setChannelData(read track sample data);
 }
 void Tfmx::dumpTracks() {
 	for (int i = 0; i < 8; i++) {
