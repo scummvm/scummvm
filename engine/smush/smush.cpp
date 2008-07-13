@@ -451,7 +451,7 @@ void zlibFile::close() {
 	}
 
 	if (_inBuf) {
- 		delete[] _inBuf;
+		free(_inBuf);
  		_inBuf = NULL;
 	}
 }
