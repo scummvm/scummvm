@@ -86,6 +86,8 @@ protected:
 		}_songs[32];
 		
 		//Note structure
+		//Will eliminate after revision and read these properties directly 
+		//into Macro structure and Channel structure
 		struct Note {
 			uint8 noteNumber;
 			uint8 macroNumber;
@@ -113,6 +115,13 @@ protected:
 		//	uint16 loopCount;
 		};
 
+		//Macro structure for macro data; very similiar to pattern data
+		struct Macro {
+			uint32 *data;
+			//uint8 number;
+			//will need some other properties here
+		};
+
 		//Sample structure; initialized by macro commands
 		struct Sample {
 			int8 *data;
@@ -127,8 +136,9 @@ protected:
 			uint16 data;
 			bool updateFlag;
 			bool activeFlag;
-			Sample sample;
 			Pattern pattern;
+			Macro macro;
+			Sample sample;
 		//	uint16 volume;
 		//	bool loopFlag;
 		//	uint16 loopCount;

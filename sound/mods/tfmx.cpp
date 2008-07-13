@@ -388,6 +388,33 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 void Tfmx::updateNote(uint8 trackNumber) {
 }
 void Tfmx::doMacros(uint8 trackNumber) {
+	//Quick copy and paste: will load macro in similiar fashion as pattern data and then be able to cycle through it
+	uint32 startPosition;
+	uint32 endPosition;
+	int32 numCommands;		//number of longword pattern commands or notes
+	startPosition = _macroPointers[_tracks[trackNumber].pattern.note.macroNumber]; // -> might need this for jump commands: + _tracks[trackNumber].pattern.note.macroOffset;
+	endPosition = _macroPointers[_tracks[trackNumber].pattern.note.macroNumber + 1];
+	numCommands = (endPosition - startPosition) / 4; //long word commands also - so 4 per line
+
+	Common::MemoryReadStream dataStream(_data, _dataSize);
+	Common::SeekableSubReadStream macroSubStream(&dataStream, startPosition, endPosition);
+
+	_tracks[trackNumber].macro.data = new uint32[numCommands];
+	for (int i = 0; i < numCommands; i++) {
+		_tracks[trackNumber].macro.data[i] = macroSubStream.readUint32BE();
+	}
+	//
+
+	//now macro data is accessible
+	//IMPORTANT CASES TO SETUP FOR SAMPLE LOADING
+	//00 : DMA Reset
+	//01 : DMA Start
+	//02 : Sample Offset
+	//03 : Sample Length
+	//04 : Wait
+	//07 : End Macro
+	//13 : DMA Off
+
 }
 void Tfmx::stopPlayer() {
 	for(int i = 0; i < 8; i++) {
