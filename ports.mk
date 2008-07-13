@@ -138,7 +138,7 @@ osxsnap: bundle
 residualico.o: $(srcdir)/icons/residual.ico
 	$(WINDRES) -I$(srcdir) $(srcdir)/dists/residual.rc residualico.o
 
-# Special target to create a win32 snapshot binary
+# Special target to create a win32 snapshot binary under Windows
 win32dist: residual$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip residual.exe -o $(WIN32PATH)/residual$(EXEEXT)
@@ -151,6 +151,24 @@ win32dist: residual$(EXEEXT)
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
+
+# Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain
+crosswin32dist: residual$(EXEEXT)
+	mkdir -p ResidualWin32
+	i586-mingw32msvc-strip residual.exe -o ResidualWin32/residual$(EXEEXT)
+	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
+	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
+	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
+	cp $(srcdir)/NEWS ResidualWin32/NEWS.txt
+	cp $(srcdir)/README ResidualWin32/README.txt
+	cp $(srcdir)/TODO ResidualWin32/TODO.txt
+	cp $(srcdir)/dists/residual.ini.example ResidualWin32
+	cp $(srcdir)/dists/residual.iss ResidualWin32
+	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualWin32
+	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualWin32
+	toms ResidualWin32/*.txt
+	toms ResidualWin32/residual.ini.example
+	toms ResidualWin32/residual.iss
 
 #
 # AmigaOS specific
