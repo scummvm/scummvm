@@ -16,8 +16,8 @@ Source: "AUTHORS.txt"; DestDir: "{app}"
 Source: "COPYING_GPL.txt"; DestDir: "{app}"
 Source: "COPYING_LGPL.txt"; DestDir: "{app}"
 Source: "NEWS.txt"; DestDir: "{app}"
-Source: "README.txt"; DestDir: "{app}"
-Source: "README-SDL.txt"; DestDir: "{app}"; Flags: isreadme
+Source: "README.txt"; DestDir: "{app}"; Flags: isreadme
+Source: "README-SDL.txt"; DestDir: "{app}"
 Source: "residual.exe"; DestDir: "{app}"
 Source: "residual.ini.example"; DestDir: "{app}"
 Source: "SDL.dll"; DestDir: "{app}"
