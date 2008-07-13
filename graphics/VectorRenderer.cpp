@@ -33,6 +33,8 @@
 #include "gui/ThemeRenderer.h"
 #include "graphics/VectorRenderer.h"
 
+#define VECTOR_RENDERER_FAST_TRIANGLES
+
 namespace Graphics {
 
 VectorRenderer *createRenderer(int mode) {
@@ -391,6 +393,12 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
+	// Awesome hack: the AA messes up the last pixel triangles if their width is even
+	// ...fix the width instead of fixing the AA :p
+	if (w % 2 == 0) {
+		w++; h++;
+	}
+	
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
 		return;
 
@@ -643,7 +651,8 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType,PixelFormat>::
 drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
 	int pitch = Base::surfacePitch();
-	int hstep = 0;
+	int hstep = 0, dy = size;
+	bool grad = (fill_m == kFillGradient);
 	
 	PixelType *ptr_right = 0, *ptr_left = 0;
 	
@@ -656,15 +665,28 @@ drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, Vecto
 		pitch = -pitch;
 	}
 	
-	while (ptr_left != ptr_right) {
-		colorFill(ptr_left, ptr_right, color);
-		ptr_left += pitch;
-		ptr_right += pitch;
-		if (hstep++ % 3) {
-			ptr_left++;
-			ptr_right--;
-		}	
-	}	
+	if (fill_m == kFillDisabled) {
+		while (ptr_left < ptr_right) {
+			*ptr_left = color;
+			*ptr_right = color;
+			ptr_left += pitch;
+			ptr_right += pitch;
+			if (hstep++ % 2) {
+				ptr_left++;
+				ptr_right--;
+			}
+		}
+	} else {
+		while (ptr_left < ptr_right) {
+			colorFill(ptr_left, ptr_right, grad ? calcGradient(dy--, size) : color);
+			ptr_left += pitch;
+			ptr_right += pitch;
+			if (hstep++ % 2) {
+				ptr_left++;
+				ptr_right--;
+			}	
+		}
+	}
 }
 
 /** ROUNDED SQUARE ALGORITHM **/

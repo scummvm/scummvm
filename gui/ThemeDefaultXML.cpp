@@ -70,12 +70,12 @@ bool ThemeRenderer::loadDefaultXML() {
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_disabled' cache = false>"
-		"<text vertical_align = 'top' horizontal_align = 'left' color = '255, 255, 255' />"
+		"<text vertical_align = 'top' horizontal_align = 'left' color = '0,0,0' />"
 		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_enabled' cache = false>"
-		"<text vertical_align = 'top' horizontal_align = 'left' color = '255, 255, 255' />"
+		"<text vertical_align = 'top' horizontal_align = 'left' color = '0,0,0' />"
 		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 		"<drawstep func = 'circle' radius = 'auto' fill = 'foreground' />"
 	"</drawdata>"
