@@ -254,27 +254,34 @@ DECLARE_COMMAND_OPCODE(close) {
 	}
 }
 
+void CommandExec_ns::updateGetZone(ZonePtr z, bool visible) {
+	if (!z) {
+		return;
+	}
+
+	if ((z->_type & 0xFFFF) == kZoneGet) {
+		_vm->_gfx->showGfxObj(z->u.get->gfxobj, visible);
+	}
+}
 
 DECLARE_COMMAND_OPCODE(on) {
 	ZonePtr z = _ctxt.cmd->u._zone;
-	// WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
-	// the pointer to get structure members, thus leading to crashes in systems with memory
-	// protection.
-	// As a side note, the overwritten address is the 5th entry in the DOS interrupt table
-	// (print screen handler): this suggests that a system would hang when the print screen
-	// key is pressed after playing Nippon Safes, provided that this code path is taken.
+
 	if (z) {
 		z->_flags &= ~kFlagsRemove;
 		z->_flags |= kFlagsActive;
-		if ((z->_type & 0xFFFF) == kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, true);
-		}
+		updateGetZone(z, true);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	_ctxt.cmd->u._zone->_flags |= kFlagsRemove;
+	ZonePtr z = _ctxt.cmd->u._zone;
+
+	if (z) {
+		_ctxt.cmd->u._zone->_flags |= kFlagsRemove;
+		updateGetZone(z, false);
+	}
 }
 
 
