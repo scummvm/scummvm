@@ -79,6 +79,10 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 		"<drawstep func = 'circle' radius = 'auto' fill = 'foreground' />"
 	"</drawdata>"
+	
+	"<drawdata id = 'widget_default' cache = false>"
+		"<drawstep func = 'roundedsq' gradient_factor = 6 radius = '4' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
+	"</drawdata>"
 "</render_info>"
 
 "<layout_info>"

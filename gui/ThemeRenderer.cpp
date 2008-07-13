@@ -44,12 +44,15 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 	"special_bg",
 	"plain_bg",
 	"default_bg",
+	
+	"widget_default",
+	"widget_small",
+	"widget_textedit",
+	"widget_slider",
 
 	"button_idle",
 	"button_hover",
 	"button_disabled",
-
-	"surface",
 
 	"slider_full",
 	"slider_empty",
@@ -60,8 +63,6 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 	"tab",
 
 	"scrollbar_base",
-	"scrollbar_top",
-	"scrollbar_bottom",
 	"scrollbar_handle",
 
 	"popup",
@@ -404,7 +405,25 @@ void ThemeRenderer::drawSurface(const Common::Rect &r, const Graphics::Surface &
 void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
 	if (!ready())
 		return;
-
+		
+	switch (background) {
+	case kWidgetBackgroundBorderSmall:
+		drawDD(kDDWidgetBackgroundSmall, r);
+		break;
+		
+	case kWidgetBackgroundEditText:
+		drawDD(kDDWidgetBackgroundEditText, r);
+		break;
+		
+	case kWidgetBackgroundSlider:
+		drawDD(kDDWidgetBackgroundSlider, r);
+		break;
+		
+	default:
+		drawDD(kDDWidgetBackgroundDefault, r);
+		break;
+	}
+	
 	debugWidgetPosition("Widget Background", r);
 }
 

@@ -86,12 +86,15 @@ public:
 		kDDSpecialColorBackground,
 		kDDPlainColorBackground,
 		kDDDefaultBackground,
+		
+		kDDWidgetBackgroundDefault,
+		kDDWidgetBackgroundSmall,
+		kDDWidgetBackgroundEditText,
+		kDDWidgetBackgroundSlider,
 
 		kDDButtonIdle,
 		kDDButtonHover,
 		kDDButtonDisabled,
-
-		kDDSurface,
 
 		kDDSliderFull,
 		kDDSliderEmpty,
@@ -102,8 +105,6 @@ public:
 		kDDTab,
 
 		kDDScrollbarBase,
-		kDDScrollbarButtonTop,
-		kDDScrollbarButtonBottom,
 		kDDScrollbarHandle,
 
 		kDDPopUp,
