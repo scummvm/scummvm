@@ -70,17 +70,6 @@ static bool launcherDialog(OSystem &system) {
 	// Clear the main screen
 	system.clearScreen();
 
-//	GUI::ThemeRenderer *test = new GUI::ThemeRenderer("modern", GUI::ThemeRenderer::kGfxAntialias16bit);
-
-#if defined LOL
-
-//	g_InterfaceManager.runGUI();
-	InterfaceManager *manager = new InterfaceManager();
-	manager->openDialog(kDialogLauncher);
-	return (manager.runGUI() != -1);
-
-#else
-
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;
 #elif defined(__DC__)
@@ -89,8 +78,6 @@ static bool launcherDialog(OSystem &system) {
 	GUI::LauncherDialog dlg;
 #endif
 	return (dlg.runModal() != -1);
-
-#endif // vector renderer debug
 }
 
 static const EnginePlugin *detectPlugin() {

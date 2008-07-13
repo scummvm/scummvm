@@ -51,12 +51,12 @@ bool ThemeRenderer::loadDefaultXML() {
 	"</drawdata>"
 	
 	"<drawdata id = 'popup' cache = false>"
-		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 size = 'auto' />"
-		"/*<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground'  orientation = 'bottom' /> */"
+		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'default_bg' cache = false>"
-		"<drawstep func = 'roundedsq' radius = 12 stroke = 4 fg_color = '206, 121, 99' fill = 'gradient' gradient_start = '255, 231, 140' gradient_end = '255, 243, 206' shadow = 3 size = 'auto' />"
+		"<drawstep func = 'roundedsq' radius = 12 stroke = 4 fg_color = '206, 121, 99' fill = 'gradient' gradient_start = '255, 231, 140' gradient_end = '255, 243, 206' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'button_idle' cache = false>"

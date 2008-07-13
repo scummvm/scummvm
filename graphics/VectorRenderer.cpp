@@ -399,7 +399,12 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	switch(orient) {
 		case kTriangleUp:
 		case kTriangleDown:
-			drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
+#ifdef VECTOR_RENDERER_FAST_TRIANGLES
+			if (w == h)
+				drawTriangleFast(x, y, w, (orient == kTriangleDown), color, Base::_fillMode);
+			else
+#endif
+				drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
 			break;
 
 		case kTriangleLeft:
@@ -408,8 +413,14 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	}
 
 	if (Base::_strokeWidth > 0)
-		if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillGradient)
-			drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), _fgColor, kFillDisabled);
+		if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillGradient) {
+#ifdef VECTOR_RENDERER_FAST_TRIANGLES
+			if (w == h)
+				drawTriangleFast(x, y, w, (orient == kTriangleDown), _fgColor, kFillDisabled);
+			else
+#endif
+				drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), _fgColor, kFillDisabled);
+		}
 }
 
 /********************************************************************
@@ -615,6 +626,35 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 	}
 }
 
+
+/** VERTICAL TRIANGLE DRAWING - FAST VERSION FOR SQUARED TRIANGLES */
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType,PixelFormat>::
+drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	int pitch = Base::surfacePitch();
+	int hstep = 0;
+	
+	PixelType *ptr_right = 0, *ptr_left = 0;
+	
+	if (inverted) {
+		ptr_left = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+		ptr_right = (PixelType *)_activeSurface->getBasePtr(x1 + size, y1);
+	} else {
+		ptr_left = (PixelType *)_activeSurface->getBasePtr(x1, y1 + size);
+		ptr_right = (PixelType *)_activeSurface->getBasePtr(x1 + size, y1 + size);
+		pitch = -pitch;
+	}
+	
+	while (ptr_left != ptr_right) {
+		colorFill(ptr_left, ptr_right, color);
+		ptr_left += pitch;
+		ptr_right += pitch;
+		if (hstep++ % 3) {
+			ptr_left++;
+			ptr_right--;
+		}	
+	}	
+}
 
 /** ROUNDED SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>

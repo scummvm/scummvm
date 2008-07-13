@@ -89,6 +89,13 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	step->gradColor1.set = false;
 	step->gradColor2.set = false;
 
+	step->xAlign = Graphics::DrawStep::kVectorAlignManual;
+	step->yAlign = Graphics::DrawStep::kVectorAlignManual;
+	step->x = 0;
+	step->y = 0;
+	step->w = 0;
+	step->h = 0;
+	
 	step->extraData = 0;
 	step->factor = 1;
 	step->autoWidth = true;
@@ -433,18 +440,64 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			warning("The <size> keyword has been deprecated. Use <width> and <height> instead");
 		}
 		
-		if (stepNode->values.contains("width")) {
+		if (stepNode->values.contains("width") && stepNode->values["width"] != "auto") {
 			drawstep->autoWidth = false;
-			__PARSER_ASSIGN_INT(x, "xpos", true);
+			
+			val = stepNode->values["width"];
+			if (parseIntegerKey(val.c_str(), 1, &x))
+				drawstep->w = x;
+			else if (val == "height")
+				drawstep->w = -1;
+			else return parserError("Invalid value for vector width.");
+			
+			if (stepNode->values.contains("xpos")) {
+				val = stepNode->values["xpos"];
+				
+				if (parseIntegerKey(val.c_str(), 1, &x))
+					drawstep->x = x;
+				else if (val == "center")
+					drawstep->xAlign = Graphics::DrawStep::kVectorAlignCenter;
+				else if (val == "left")
+					drawstep->xAlign = Graphics::DrawStep::kVectorAlignLeft;
+				else if (val == "right")
+					drawstep->xAlign = Graphics::DrawStep::kVectorAlignRight;
+				else 
+					return parserError("Invalid value for X Position");
+			} else {
+				return parserError("When width is not set to 'auto', a <xpos> tag must be included.");
+			}
 		}
 		
-		if (stepNode->values.contains("height")) {
+		if (stepNode->values.contains("height") && stepNode->values["height"] != "auto") {
 			drawstep->autoHeight = false;
-			__PARSER_ASSIGN_INT(y, "ypos", true);
-		}
 			
-		__PARSER_ASSIGN_INT(w, "width", false);
-		__PARSER_ASSIGN_INT(h, "height", false);
+			val = stepNode->values["height"];
+			if (parseIntegerKey(val.c_str(), 1, &x))
+				drawstep->h = x;
+			else if (val == "width")
+				drawstep->h = -1;
+			else return parserError("Invalid value for vector height.");
+
+			if (stepNode->values.contains("ypos")) {
+				val = stepNode->values["ypos"];
+				
+				if (parseIntegerKey(val.c_str(), 1, &x))
+					drawstep->y = x;
+				else if (val == "center")
+					drawstep->yAlign = Graphics::DrawStep::kVectorAlignCenter;
+				else if (val == "top")
+					drawstep->yAlign = Graphics::DrawStep::kVectorAlignTop;
+				else if (val == "bottom")
+					drawstep->yAlign = Graphics::DrawStep::kVectorAlignBottom;
+				else 
+					return parserError("Invalid value for Y Position");
+			} else {
+				return parserError("When height is not set to 'auto', a <ypos> tag must be included.");
+			}
+		}
+		
+		if (drawstep->h == -1 && drawstep->w == -1)
+			return parserError("Cross-reference in Vector Size: Height is set to width and width is set to height.");
 	}
 
 	if (stepNode->values.contains("fill")) {

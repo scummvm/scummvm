@@ -65,6 +65,15 @@ struct DrawStep {
 	bool autoWidth, autoHeight;
 	int16 x, y, w, h; /** width, height and position, if not measured automatically.
 	 					  negative values mean counting from the opposite direction */
+	
+	enum VectorAlignment {
+		kVectorAlignManual,
+		kVectorAlignLeft,
+		kVectorAlignRight,
+		kVectorAlignBottom,
+		kVectorAlignTop,
+		kVectorAlignCenter
+	} xAlign, yAlign;
 
 	uint8 shadow, stroke, factor, radius; /** Misc options... */
 
@@ -327,18 +336,58 @@ public:
 
 	void stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
 		if (!step.autoWidth) {
-			in_w = step.w;
-			if (step.x >= 0) in_x = area.left + step.x; 
-			else in_x = area.left + area.width() + step.x; // value relative to the opposite corner.
+			in_w = step.w == -1 ? area.height() : step.w;
+			
+			switch(step.xAlign) {
+				case Graphics::DrawStep::kVectorAlignManual:
+					if (step.x >= 0) in_x = area.left + step.x;
+					else in_x = area.left + area.width() + step.x; // value relative to the opposite corner.
+					break;
+					
+				case Graphics::DrawStep::kVectorAlignCenter:
+					in_x = area.left + (area.width() / 2) - (in_w / 2); 
+					break;
+					
+				case Graphics::DrawStep::kVectorAlignLeft:
+					in_x = area.left;
+					break;
+					
+				case Graphics::DrawStep::kVectorAlignRight:
+					in_x = area.left + area.width() - in_w;
+					break;
+					
+				default:
+					error("Vertical alignment in horizontal data.");
+			}
 		} else {
 			in_x = area.left;
 			in_w = area.width();
 		}
 		
 		if (!step.autoHeight) {
-			in_h = step.h;
-			if (step.y >= 0) in_y = area.top + step.y;
-			else in_y = area.top + area.height() + step.y; // relative
+			in_h = step.h == -1 ? area.width() : step.h;
+			
+			switch(step.yAlign) {
+				case Graphics::DrawStep::kVectorAlignManual:
+					if (step.y >= 0) in_y = area.top + step.y;
+					else in_y = area.top + area.height() + step.y; // relative
+					break;
+					
+				case Graphics::DrawStep::kVectorAlignCenter:
+					in_y = area.top + (area.height() / 2) - (in_h / 2); 
+					break;
+					
+				case Graphics::DrawStep::kVectorAlignTop:
+					in_y = area.top;
+					break;
+					
+				case Graphics::DrawStep::kVectorAlignBottom:
+					in_y = area.top + area.height() - in_h;
+					break;
+					
+				default:
+					error("Horizontal alignment in vertical data.");
+			}
 		} else {
 			in_y = area.top;
 			in_h = area.height();
@@ -682,6 +731,7 @@ protected:
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h, bool inverted, PixelType color, FillMode fill_m);
+	virtual void drawTriangleFast(int x, int y, int size, bool inverted, PixelType color, FillMode fill_m);
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color);
 
 	/**

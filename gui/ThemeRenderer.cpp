@@ -416,11 +416,11 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 }
 
 void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r) {
-	_font->drawString(_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
-	_screen->hLine(r.left, r.top, r.right, 0xFFFF);
-	_screen->hLine(r.left, r.bottom, r.right, 0xFFFF);
-	_screen->vLine(r.left, r.top, r.bottom, 0xFFFF);
-	_screen->vLine(r.right, r.top, r.bottom, 0xFFFF);
+	// _font->drawString(_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
+	// _screen->hLine(r.left, r.top, r.right, 0xFFFF);
+	// _screen->hLine(r.left, r.bottom, r.right, 0xFFFF);
+	// _screen->vLine(r.left, r.top, r.bottom, 0xFFFF);
+	// _screen->vLine(r.right, r.top, r.bottom, 0xFFFF);
 }
 
 void ThemeRenderer::updateScreen() {
