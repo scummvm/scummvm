@@ -1212,7 +1212,7 @@ void Mickey::gameOver() {
 	}
 
 	waitAnyKey();
-	exit(0);
+	_vm->quitGame();
 }
 
 void Mickey::flipSwitch() {
