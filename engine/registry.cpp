@@ -37,6 +37,8 @@ Registry::Registry() : _dirty(false) {
 #ifndef __DC__
 #ifdef WIN32
 	std::string filename = "residual.ini";
+#elif defined __amigaos4__
+	std::string filename = "/PROGDIR/residual.ini";
 #else
 	std::string filename = std::string(std::getenv("HOME")) + "/.residualrc";
 #endif
@@ -89,6 +91,8 @@ void Registry::save() {
 #ifndef __DC__
 #ifdef WIN32
 	std::string filename = "residual.ini";
+#elif defined __amigaos4__
+	std::string filename = "/PROGDIR/residual.ini";
 #else
 	std::string filename = std::string(std::getenv("HOME")) + "/.residualrc";
 #endif

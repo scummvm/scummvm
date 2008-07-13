@@ -710,7 +710,8 @@ case $_host_os in
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
 	amigaos*)
-		# TODO: anything to be added here?
+		DEFINES="$DEFINES -DMINIGL"
+		LIBS="$LIBS -lGL -lGLU"
 		;;
 	# given this is a shell script assume some type of unix
 	*)
