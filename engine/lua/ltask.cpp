@@ -71,7 +71,7 @@ void start_script (void) {
 void stop_script (void) {
 	struct lua_Task *prev, *t;
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
-	int match;
+	int match = 0;
 
 	if ((f == LUA_NOOBJECT) || (ttype(f) != LUA_T_CLOSURE && ttype(f) != LUA_T_PROTO && ttype(f) != LUA_T_TASK))
 		lua_error("Bad argument to stop_script");
@@ -110,7 +110,7 @@ void stop_script (void) {
 }
 
 void next_script (void) {
-	struct lua_Task *t, *prev;
+	struct lua_Task *t = NULL, *prev;
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
 
 	if (f == LUA_NOOBJECT)
@@ -165,7 +165,7 @@ void identify_script (void) {
 }
 
 void find_script (void) {
-	struct lua_Task *t, *foundTask = NULL;
+	struct lua_Task *t = NULL, *foundTask = NULL;
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
 	int countTasks = 0, taskId;
 

@@ -178,7 +178,7 @@ void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 as
 }
 
 void Engine::handleDebugLoadResource() {
-	void *resource;
+	void *resource = NULL;
 	int c, i = 0;
 	char buf[512];
 

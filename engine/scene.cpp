@@ -242,7 +242,7 @@ Sector *Scene::findPointSector(Vector3d p, int flags) {
 void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
 	Sector *resultSect = NULL;
 	Vector3d resultPt = p;
-	float minDist;
+	float minDist = 0.0;
 
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors + i;

@@ -130,7 +130,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
 
 #define NB_INTERP 8
 
-	ZBufferPoint *t, *pr1, *pr2, *l1, *l2;
+	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned short *pz1;
 	unsigned long *pz2;
@@ -139,19 +139,19 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
 
 	int nb_lines, dx1, dy1, tmp, dx2, dy2;
 
-	int error, derror;
-	int x1, dxdy_min, dxdy_max;
+	int error = 0, derror = 0;
+	int x1 = 0, dxdy_min = 0, dxdy_max = 0;
 	// warning: x2 is multiplied by 2^16
-	int x2, dx2dy2;  
+	int x2 = 0, dx2dy2 = 0;
 
-	int z1, dzdx, dzdy, dzdl_min, dzdl_max;
+	int z1 = 0, dzdx, dzdy, dzdl_min = 0, dzdl_max = 0;
 
-	int r1, drdx, drdy, drdl_min, drdl_max;
-	int g1, dgdx, dgdy, dgdl_min, dgdl_max;
-	int b1, dbdx, dbdy, dbdl_min, dbdl_max;
+	int r1 = 0, drdx, drdy, drdl_min = 0, drdl_max = 0;
+	int g1 = 0, dgdx, dgdy, dgdl_min = 0, dgdl_max = 0;
+	int b1 = 0, dbdx, dbdy, dbdl_min = 0, dbdl_max = 0;
 
-	float sz1, dszdx, dszdy, dszdl_min, dszdl_max;
-	float tz1, dtzdx, dtzdy, dtzdl_min, dtzdl_max;
+	float sz1 = 0.0, dszdx, dszdy, dszdl_min = 0.0, dszdl_max = 0.0;
+	float tz1 = 0.0, dtzdx, dtzdy, dtzdl_min = 0.0, dtzdl_max = 0.0;
 
 	// we sort the vertex with increasing y
 	if (p1->y < p0->y) {

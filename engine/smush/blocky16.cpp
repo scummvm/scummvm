@@ -429,7 +429,7 @@ void Blocky16::level3(byte *d_dst) {
 
 void Blocky16::level2(byte *d_dst) {
 	int32 tmp2;
-	uint32 t, val;
+	uint32 t = 0, val;
 	byte code = *_d_src++;
 	int i;
 
@@ -510,7 +510,7 @@ void Blocky16::level2(byte *d_dst) {
 
 void Blocky16::level1(byte *d_dst) {
 	int32 tmp2;
-	uint32 t, val;
+	uint32 t = 0, val;
 	byte code = *_d_src++;
 	int i;
 

@@ -2,7 +2,7 @@
 // We draw a triangle with various interpolations
 
 {
-	ZBufferPoint *t, *pr1, *pr2, *l1, *l2;
+	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned short *pz1;
 	unsigned long *pz2;
@@ -11,22 +11,22 @@
 
 	int nb_lines, dx1, dy1, tmp, dx2, dy2;
 
-	int error, derror;
-	int x1, dxdy_min, dxdy_max;
+	int error = 0, derror = 0;
+	int x1 = 0, dxdy_min = 0, dxdy_max = 0;
 	// warning: x2 is multiplied by 2^16
-	int x2, dx2dy2;  
+	int x2 = 0, dx2dy2 = 0;
 
 #ifdef INTERP_Z
-	int z1, dzdx, dzdy, dzdl_min, dzdl_max;
+	int z1 = 0, dzdx, dzdy, dzdl_min = 0, dzdl_max = 0;
 #endif
 #ifdef INTERP_RGB
-	int r1, drdx, drdy, drdl_min, drdl_max;
-	int g1, dgdx, dgdy, dgdl_min, dgdl_max;
-	int b1, dbdx, dbdy, dbdl_min, dbdl_max;
+	int r1 = 0, drdx, drdy, drdl_min = 0, drdl_max = 0;
+	int g1 = 0, dgdx, dgdy, dgdl_min = 0, dgdl_max = 0;
+	int b1 = 0, dbdx, dbdy, dbdl_min = 0, dbdl_max = 0;
 #endif
 #ifdef INTERP_ST
-	int s1, dsdx, dsdy, dsdl_min, dsdl_max;
-	int t1, dtdx, dtdy, dtdl_min, dtdl_max;
+	int s1 = 0, dsdx, dsdy, dsdl_min = 0, dsdl_max = 0;
+	int t1 = 0, dtdx, dtdy, dtdl_min = 0, dtdl_max = 0;
 #endif
 #ifdef INTERP_STZ
 	float sz1, dszdx, dszdy, dszdl_min, dszdl_max;

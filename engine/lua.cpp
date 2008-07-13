@@ -422,7 +422,7 @@ static void GetCameraActor() {
 static void SetSayLineDefaults() {
 	char *key_text = NULL;
 	lua_Object table_obj;
-	lua_Object key;
+	lua_Object key = LUA_NOOBJECT;
 
 	DEBUG_FUNCTION();
 	table_obj = lua_getparam(1);
@@ -2326,7 +2326,7 @@ static void BlastImage() {
 
 void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	char *key_text = NULL;
-	lua_Object key;
+	lua_Object key = LUA_NOOBJECT;
 	
 	DEBUG_FUNCTION();
 	for (;;) {
@@ -2640,7 +2640,7 @@ static void PurgePrimitiveQueue() {
 
 static void DrawPolygon() {
 	lua_Object tableObj1, tableObj2, pointObj;
-	int x1, y1, x2, y2, x3, y3, x4, y4;
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, x4 = 0, y4 = 0;
 	Color color;
 
 	color._vals[0] = 255;
@@ -3918,7 +3918,7 @@ lua_Object getTableFunction(lua_Object table, char *name) {
 
 lua_Object getTableValue(lua_Object table, char *name) {
 	char *key_text = NULL;
-	lua_Object key;
+	lua_Object key = LUA_NOOBJECT;
 
 	if (!lua_istable(table)) {
 		error("getTableValue(): Parameter not a table!\n");

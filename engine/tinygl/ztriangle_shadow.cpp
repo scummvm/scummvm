@@ -4,17 +4,17 @@
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
 void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	ZBufferPoint *t, *pr1, *pr2, *l1, *l2;
+	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz;
 	unsigned char *pm1;
 	int part, update_left, update_right;
 
 	int nb_lines, dx1, dy1, tmp, dx2, dy2;
 
-	int error, derror;
-	int x1, dxdy_min, dxdy_max;
+	int error = 0, derror = 0;
+	int x1 = 0, dxdy_min = 0, dxdy_max = 0;
 	// warning: x2 is multiplied by 2^16
-	int x2, dx2dy2;  
+	int x2 = 0, dx2dy2 = 0;
 
 	// we sort the vertex with increasing y
 	if (p1->y < p0->y) {
@@ -160,7 +160,7 @@ void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 
 void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color;
-	ZBufferPoint *t, *pr1, *pr2, *l1, *l2;
+	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned char *pm1;
 	unsigned short *pz1;
@@ -170,12 +170,12 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 
 	int nb_lines, dx1, dy1, tmp, dx2, dy2;
 
-	int error, derror;
-	int x1, dxdy_min, dxdy_max;
+	int error = 0, derror = 0;
+	int x1 = 0, dxdy_min = 0, dxdy_max = 0;
 	// warning: x2 is multiplied by 2^16
-	int x2, dx2dy2;  
+	int x2 = 0, dx2dy2 = 0;
 
-	int z1, dzdx, dzdy, dzdl_min, dzdl_max;
+	int z1 = 0, dzdx, dzdy, dzdl_min = 0, dzdl_max = 0;
 
 	// we sort the vertex with increasing y
 	if (p1->y < p0->y) {
