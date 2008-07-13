@@ -601,7 +601,7 @@ void Actor::draw() {
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
-	if (!g_driver->isHardwareAccelerated()/* && g_engine->getFlagRefreshShadowMask()*/) {
+	if (!g_driver->isHardwareAccelerated() && g_engine->getFlagRefreshShadowMask()) {
 		for (int l = 0; l < 5; l++) {
 			if (!_shadowArray[l].active)
 				continue;
@@ -657,6 +657,7 @@ void Actor::addShadowPlane(const char *name) {
 		Sector *sector = g_engine->currScene()->getSectorBase(i);
 		if (strmatch(sector->name(), name)) {
 			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
+			g_engine->flagRefreshShadowMask(true);
 			return;
 		}
 	}
@@ -697,6 +698,7 @@ void Actor::clearShadowPlanes() {
 		delete[] shadow->shadowMask;
 		shadow->shadowMask = NULL;
 		shadow->active = false;
+		shadow->dontNegate = false;
 	}
 }
 

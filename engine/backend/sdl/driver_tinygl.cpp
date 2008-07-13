@@ -264,10 +264,10 @@ void DriverTinyGL::finishActorDraw() {
 
 void DriverTinyGL::drawShadowPlanes() {
 	tglEnable(TGL_SHADOW_MASK_MODE);
-	if (_currentShadowArray->shadowMask)
-		memset(_currentShadowArray->shadowMask, 0, _screenWidth * _screenHeight);
-	else
+	if (!_currentShadowArray->shadowMask) {
 		_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
+		memset(_currentShadowArray->shadowMask, 0, _screenWidth * _screenHeight);
+	}
 
 	tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 	_currentShadowArray->planeList.begin();

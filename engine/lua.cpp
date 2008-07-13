@@ -1489,6 +1489,7 @@ static void ActivateActorShadow() {
 	bool state = getbool(3);
 
 	act->setActivateShadow(shadowId, state);
+	g_engine->flagRefreshShadowMask(true);
 }
 
 static void SetActorShadowValid() {

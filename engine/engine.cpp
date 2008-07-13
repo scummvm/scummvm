@@ -646,7 +646,6 @@ void Engine::setScene(const char *name) {
 	if (b == NULL)
 		warning("Could not find scene file %s\n", name);
 	_currScene = new Scene(name, b->data(), b->len());
-	flagRefreshShadowMask(true);
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after creating the new one
