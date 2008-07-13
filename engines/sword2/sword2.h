@@ -208,7 +208,6 @@ public:
 
 	void startGame();
 	void gameCycle();
-	void closeGame();
 	void restartGame();
 
 	void sleepUntil(uint32 time);

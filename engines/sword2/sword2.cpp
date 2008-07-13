@@ -370,7 +370,7 @@ int Sword2Engine::init() {
 		// player will kill the music for us. Otherwise, the restore
 		// will either have killed the music, or done a crossfade.
 
-		if (_quit)
+		if (quit())
 			return 0;
 
 		if (result)
@@ -442,7 +442,7 @@ int Sword2Engine::go() {
 		// because we want the break to happen before updating the
 		// screen again.
 
-		if (_quit)
+		if (quit())
 			break;
 
 		// creates the debug text blocks
@@ -459,11 +459,7 @@ int Sword2Engine::go() {
 #endif
 	}
 
-	return _rtl;
-}
-
-void Sword2Engine::closeGame() {
-	_quit = true;
+	return _eventMan->shouldRTL();
 }
 
 void Sword2Engine::restartGame() {
@@ -608,9 +604,6 @@ void Sword2Engine::parseInputEvents() {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_WHEELDOWN;
 			}
-			break;
-		case Common::EVENT_QUIT:
-			closeGame();
 			break;
 		default:
 			break;

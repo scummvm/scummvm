@@ -358,7 +358,6 @@ bool MoviePlayer::userInterrupt() {
 			handleScreenChanged();
 			break;
 		case Common::EVENT_QUIT:
-			_vm->closeGame();
 			terminate = true;
 			break;
 		case Common::EVENT_KEYDOWN:
@@ -379,7 +378,7 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 	bool startNextText = false;
 
 	// This happens if the user quits during the "eye" cutscene.
-	if (_vm->_quit)
+	if (_vm->quit())
 		return;
 
 	_numSpeechLines = numLines;

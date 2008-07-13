@@ -396,7 +396,7 @@ int Dialog::runModal() {
 
 		_vm->_system->delayMillis(20);
 
-		if (_vm->_quit)
+		if (_vm->quit())
 			setResult(0);
 	}
 
@@ -842,7 +842,7 @@ int StartDialog::runModal() {
 		if (startDialog.runModal())
 			return 1;
 
-		if (_vm->_quit)
+		if (_vm->quit())
 			return 0;
 
 		RestoreDialog restoreDialog(_vm);
@@ -850,7 +850,7 @@ int StartDialog::runModal() {
 		if (restoreDialog.runModal())
 			return 0;
 
-		if (_vm->_quit)
+		if (_vm->quit())
 			return 0;
 	}
 
@@ -882,7 +882,7 @@ int QuitDialog::runModal() {
 	int result = MiniDialog::runModal();
 
 	if (result)
-		_vm->closeGame();
+		_vm->quitGame();
 
 	return result;
 }
