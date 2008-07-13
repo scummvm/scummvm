@@ -256,7 +256,7 @@ void NewGui::runLoop() {
 		Common::Event event;
 
 		while (eventMan->pollEvent(event)) {
-			if (activeDialog != getTopDialog() && event.type != Common::EVENT_QUIT && event.type != Common::EVENT_SCREEN_CHANGED)
+			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);

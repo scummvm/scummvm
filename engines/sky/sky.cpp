@@ -353,7 +353,7 @@ int SkyEngine::go() {
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
 		}
 
-		if (!_quit) {
+		if (!quit()) {
 			_skyLogic->initScreen0();
 			if (introSkipped)
 				_skyControl->restartGame();
@@ -363,7 +363,7 @@ int SkyEngine::go() {
 	_lastSaveTime = _system->getMillis();
 
 	uint32 delayCount = _system->getMillis();
-	while (!_quit) {
+	while (!quit()) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
@@ -414,7 +414,7 @@ int SkyEngine::go() {
 	_skyMusic->stopMusic();
 	ConfMan.flushToDisk();
 	delay(1500);
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 int SkyEngine::init() {
@@ -609,9 +609,6 @@ void SkyEngine::delay(int32 amount) {
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(1);
-				break;
-			case Common::EVENT_QUIT:
-				_quit = true;
 				break;
 			default:
 				break;

@@ -478,7 +478,13 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 }
 
 void DefaultEventManager::pushEvent(Common::Event event) {
-	artificialEventQueue.push(event);
+
+	// If already received an EVENT_QUIT, don't add another one
+	if (event.type == Common::EVENT_QUIT) {
+		if (!_shouldQuit)
+			artificialEventQueue.push(event);
+	} else 
+		artificialEventQueue.push(event);	
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)
