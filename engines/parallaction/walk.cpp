@@ -27,9 +27,11 @@
 
 namespace Parallaction {
 
+// should be reset on location switch
 static uint16 _doorData1 = 1000;
 static ZonePtr _zoneTrap;
 
+// should be reset on character switch
 static uint16	walkData1 = 0;
 static uint16	walkData2 = 0;	// next walk frame
 
@@ -259,30 +261,30 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 	return 1;
 }
 
-void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr from) {
+void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr to) {
 
-	if ((pos.x < from->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
-		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
+	if ((pos.x < to->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
+		pos.x = (pos.x + 2 < to->_x) ? pos.x + 2 : to->_x;
 	}
 
-	if ((pos.x > from->_x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
-		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
+	if ((pos.x > to->_x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
+		pos.x = (pos.x - 2 > to->_x) ? pos.x - 2 : to->_x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
-		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
+	if ((pos.y < to->_y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
+		pos.y = (pos.y + 2 <= to->_y) ? pos.y + 2 : to->_y;
 	}
 
-	if ((pos.y > from->_y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
-		pos.y = (pos.y - 2 >= from->_y) ? pos.y - 2 :from->_y;
+	if ((pos.y > to->_y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
+		pos.y = (pos.y - 2 >= to->_y) ? pos.y - 2 : to->_y;
 	}
 
 	return;
 }
 
-int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr from) {
+int16 Parallaction::selectWalkFrame(Character &character, const Common::Point& pos, const WalkNodePtr to) {
 
-	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
+	Common::Point dist(to->_x - pos.x, to->_y - pos.y);
 
 	if (dist.x < 0)
 		dist.x = -dist.x;
@@ -293,14 +295,14 @@ int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr 
 
 	// walk frame selection
 	int16 v16;
-	if (_char._ani->getFrameNum() == 20) {
+	if (character._ani->getFrameNum() == 20) {
 
 		if (dist.x > dist.y) {
-			walkData2 = (from->_x > pos.x) ? 0 : 7;
+			walkData2 = (to->_x > pos.x) ? 0 : 7;
 			walkData1 %= 12;
 			v16 = walkData1 / 2;
 		} else {
-			walkData2 = (from->_y > pos.y) ? 14 : 17;
+			walkData2 = (to->_y > pos.y) ? 14 : 17;
 			walkData1 %= 8;
 			v16 = walkData1 / 4;
 		}
@@ -308,11 +310,11 @@ int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr 
 	} else {
 
 		if (dist.x > dist.y) {
-			walkData2 = (from->_x > pos.x) ? 0 : 9;
+			walkData2 = (to->_x > pos.x) ? 0 : 9;
 			walkData1 %= 16;
 			v16 = walkData1 / 2;
 		} else {
-			walkData2 = (from->_y > pos.y) ? 18 : 21;
+			walkData2 = (to->_y > pos.y) ? 18 : 21;
 			walkData1 %= 8;
 			v16 = walkData1 / 4;
 		}
@@ -322,9 +324,7 @@ int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr 
 	return v16;
 }
 
-uint16 Parallaction::checkDoor() {
-//	printf("checkDoor()...");
-
+void Parallaction::checkDoor(Character &character) {
 	if (_currentLocationIndex != _doorData1) {
 		_doorData1 = _currentLocationIndex;
 		_zoneTrap = nullZonePtr;
@@ -334,7 +334,7 @@ uint16 Parallaction::checkDoor() {
 
 	Common::Point foot;
 
-	_char.getFoot(foot);
+	character.getFoot(foot);
 	ZonePtr z = hitZone(kZoneDoor, foot.x, foot.y);
 
 	if (z) {
@@ -351,7 +351,7 @@ uint16 Parallaction::checkDoor() {
 		}
 	}
 
-	_char.getFoot(foot);
+	character.getFoot(foot);
 	z = hitZone(kZoneTrap, foot.x, foot.y);
 
 	if (z) {
@@ -367,61 +367,51 @@ uint16 Parallaction::checkDoor() {
 		_zoneTrap = nullZonePtr;
 	}
 
-//	printf("done\n");
-
-	_char._ani->_frame = walkData2;
-	return _char._ani->_frame;
 }
 
 
-void Parallaction::finalizeWalk(WalkNodeList *list) {
-	checkDoor();
-	delete list;
+void Parallaction::finalizeWalk(Character &character) {
+	checkDoor(character);
+	delete character._walkPath;
+	character._walkPath = 0;
+
+	character._ani->_frame = walkData2;
 }
 
-void Parallaction_ns::walk() {
+void Parallaction_ns::walk(Character &character) {
 	if ((_engineFlags & kEngineWalking) == 0) {
 		return;
 	}
 
-	WalkNodeList *list = _char._walkPath;
+	Common::Point curPos;
+	character.getFoot(curPos);
 
-	_char._ani->_oldPos.x = _char._ani->_left;
-	_char._ani->_oldPos.y = _char._ani->_top;
+	WalkNodeList::iterator it = character._walkPath->begin();
 
-	Common::Point pos;
-	_char.getFoot(pos);
-
-	WalkNodeList::iterator it = list->begin();
-
-	if (it != list->end()) {
-		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
+	if (it != character._walkPath->end()) {
+		if ((*it)->_x == curPos.x && (*it)->_y == curPos.y) {
 			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it)->_x, (*it)->_y);
-			it = list->erase(it);
+			it = character._walkPath->erase(it);
 		}
 	}
-	if (it == list->end()) {
+	if (it == character._walkPath->end()) {
 		debugC(1, kDebugWalk, "walk reached last node");
-//		j->_finished = 1;
-		finalizeWalk(list);
+		finalizeWalk(character);
 		return;
 	}
-	_char._walkPath = list;
 
 	// selectWalkFrame must be performed before position is changed by clipMove
-	int16 v16 = selectWalkFrame(pos, *it);
-	clipMove(pos, *it);
+	int16 walkFrame = selectWalkFrame(character, curPos, *it);
 
-	_char.setFoot(pos);
+	Common::Point newPos(curPos);
+	clipMove(newPos, *it);
+	character.setFoot(newPos);
 
-	Common::Point newpos(_char._ani->_left, _char._ani->_top);
-
-	if (newpos == _char._ani->_oldPos) {
+	if (newPos == curPos) {
 		debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
-//		j->_finished = 1;
-		finalizeWalk(list);
+		finalizeWalk(character);
 	} else {
-		_char._ani->_frame = v16 + walkData2 + 1;
+		character._ani->_frame = walkFrame + walkData2 + 1;
 	}
 
 	return;

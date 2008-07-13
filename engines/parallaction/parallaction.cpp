@@ -390,7 +390,7 @@ void Parallaction::runGame() {
 		if (_char._ani->gfxobj) {
 			_char._ani->gfxobj->z = _char._ani->_z;
 		}
-		walk();
+		walk(_char);
 		drawAnimations();
 	}
 

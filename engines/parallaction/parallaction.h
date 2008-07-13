@@ -261,9 +261,9 @@ public:
 	void		pauseJobs();
 	void		resumeJobs();
 
-	void		finalizeWalk(WalkNodeList *list);
-	int16		selectWalkFrame(const Common::Point& pos, const WalkNodePtr from);
-	void		clipMove(Common::Point& pos, const WalkNodePtr from);
+	void		finalizeWalk(Character &character);
+	int16		selectWalkFrame(Character &character, const Common::Point& pos, const WalkNodePtr to);
+	void		clipMove(Common::Point& pos, const WalkNodePtr to);
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
@@ -357,7 +357,7 @@ protected:		// members
 
 	void		displayComment(ExamineData *data);
 
-	uint16		checkDoor();
+	void		checkDoor(Character &character);
 
 	void		freeCharacter();
 
@@ -379,7 +379,7 @@ public:
 
 	void updateDoor(ZonePtr z);
 
-	virtual void walk() = 0;
+	virtual void walk(Character &character) = 0;
 	virtual void drawAnimations() = 0;
 
 	void		beep();
@@ -575,7 +575,7 @@ private:
 	const Callable *_callables;
 
 protected:
-	void walk();
+	void walk(Character &character);
 	void drawAnimations();
 
 	void		parseLocation(const char *filename);
