@@ -129,6 +129,17 @@ inline uint32 fp_sqroot(uint32 x) {
 	*(ptr4 + (y) + (px)) = color; \
 }
 
+#define __BE_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+	*(ptr1 + (y) - (px)) = color1; \
+	*(ptr1 + (x) - (py)) = color2; \
+	*(ptr2 - (x) - (py)) = color2; \
+	*(ptr2 - (y) - (px)) = color1; \
+	*(ptr3 - (y) + (px)) = color3; \
+	*(ptr3 - (x) + (py)) = color4; \
+	*(ptr4 + (x) + (py)) = color4; \
+	*(ptr4 + (y) + (px)) = color3; \
+}
+
 #define __BE_RESET() { \
 	f = 1 - r; \
 	ddF_x = 0; ddF_y = -2 * r; \
@@ -703,17 +714,24 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 		}
 	} else {
 		__BE_RESET();
-
+		PixelType color1, color2, color3, color4;
+		
 		if (fill_m == kFillGradient) {
 			while (x++ < y) {
 				__BE_ALGORITHM();
-				colorFill(ptr_tl - x - py, ptr_tr + x - py, calcGradient(real_radius - y, long_h));
-				colorFill(ptr_tl - y - px, ptr_tr + y - px, calcGradient(real_radius - x, long_h));
-
-				colorFill(ptr_bl - x + py, ptr_br + x + py, calcGradient(long_h - r + y, long_h));
-				colorFill(ptr_bl - y + px, ptr_br + y + px, calcGradient(long_h - r + x, long_h));
 				
-//				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+				color1 = calcGradient(real_radius - x, long_h);
+				color2 = calcGradient(real_radius - y, long_h);
+				color3 = calcGradient(long_h - r + x, long_h);
+				color4 = calcGradient(long_h - r + y, long_h);
+				
+				colorFill(ptr_tl - x - py, ptr_tr + x - py, color2);
+				colorFill(ptr_tl - y - px, ptr_tr + y - px, color1);
+
+				colorFill(ptr_bl - x + py, ptr_br + x + py, color4);
+				colorFill(ptr_bl - y + px, ptr_br + y + px, color3);
+				
+				__BE_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
 		} else {
 			while (x++ < y) {
@@ -725,8 +743,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				colorFill(ptr_bl - x + py, ptr_br + x + py, color);
 				colorFill(ptr_bl - y + px, ptr_br + y + px, color);
 
-				// FIXME: maybe not needed at all?
-//				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+				// do not remove - messes up the drawing at lower resolutions
+				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
 		}
 

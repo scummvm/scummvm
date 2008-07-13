@@ -60,7 +60,7 @@ bool ThemeRenderer::loadDefaultXML() {
 	"</drawdata>"
 
 	"<drawdata id = 'button_idle' cache = false>"
-		"<text vertical_align = 'center' horizontal_align = 'center' color = '128, 128, 128' />"
+		"<text vertical_align = 'center' horizontal_align = 'center' color = '173, 40, 8' />"
 		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'foreground' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
 	"</drawdata>"
 
