@@ -192,7 +192,7 @@ void TextObject::destroyBitmap() {
 	if (_textObjectHandle) {
 		for (int i = 0; i < _numberLines; i++) {
 			g_driver->destroyTextBitmap(_textObjectHandle[i]);
-			delete[] _textObjectHandle[i];
+			delete _textObjectHandle[i];
 		}
 		free(_textObjectHandle);
 		_textObjectHandle = NULL;
