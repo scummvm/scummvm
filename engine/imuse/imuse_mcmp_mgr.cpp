@@ -100,7 +100,7 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	}
 	fseek(_file, sizeCodecs, SEEK_CUR);
 	// hack: one more byte at the end of input buffer
-	_compInput = new byte[maxSize + ];
+	_compInput = new byte[maxSize + 1];
 	fread(_compInput, 1, headerSize, _file);
 	*resPtr = _compInput;
 	offsetData = headerSize;
