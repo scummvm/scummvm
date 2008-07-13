@@ -115,7 +115,7 @@ int ToucheEngine::go() {
 
 	res_deallocateTables();
 	res_closeDataFile();
-	return _rtl;
+	return _eventMan->shouldRTL();
 }
 
 void ToucheEngine::restart() {
@@ -269,7 +269,7 @@ void ToucheEngine::mainLoop() {
 	}
 
 	uint32 frameTimeStamp = _system->getMillis();
-	for (uint32 cycleCounter = 0; _quit == 0; ++cycleCounter) {
+	for (uint32 cycleCounter = 0; !quit(); ++cycleCounter) {
 		if ((cycleCounter % 3) == 0) {
 			runCycle();
 		}
@@ -298,9 +298,6 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quit = 1;
-			break;
 		case Common::EVENT_KEYDOWN:
 			if (!handleKeyEvents) {
 				break;
@@ -308,7 +305,8 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			_flagsTable[600] = event.kbd.keycode;
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				if (_displayQuitDialog) {
-					_quit = displayQuitDialog();
+					if (displayQuitDialog())
+						quitGame();
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
@@ -1839,7 +1837,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	_menuRedrawCounter = 2;
 	Common::Rect rect(0, y, kScreenWidth, y + h);
 	i = -1;
-	while (_inp_rightMouseButtonPressed && _quit == 0) {
+	while (_inp_rightMouseButtonPressed && !quit()) {
 		Common::Point mousePos = getMousePos();
 		if (rect.contains(mousePos)) {
 			int c = (mousePos.y - y) / kTextHeight;
@@ -2702,10 +2700,10 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 		const int md2 = _programWalkTable[num1].point2;
 		_programPointsTable[md2].order = 0;
 	}
-	bool quit = false;
+	bool quitLoop = false;
 	int order = 1;
-	while (!quit) {
-		quit = true;
+	while (!quitLoop) {
+		quitLoop = true;
 		for (uint i = 0; i < _programWalkTable.size(); ++i) {
 			const int md1 = _programWalkTable[i].point1;
 			const int md2 = _programWalkTable[i].point2;
@@ -2713,11 +2711,11 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 				assert((md2 & 0x4000) == 0);
 				if (_programPointsTable[md1].order == order - 1 && _programPointsTable[md2].order > order) {
 					_programPointsTable[md2].order = order;
-					quit = false;
+					quitLoop = false;
 				}
 				if (_programPointsTable[md2].order == order - 1 && _programPointsTable[md1].order > order) {
 					_programPointsTable[md1].order = order;
-					quit = false;
+					quitLoop = false;
 				}
 			}
 		}
@@ -2949,9 +2947,9 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 	resetPointsData(0);
 	if (pointsDataNum != -1) {
 		_programPointsTable[pointsDataNum].order = 1;
-		bool quit = false;
-		while (!quit) {
-			quit = true;
+		bool quitLoop = false;
+		while (!quitLoop) {
+			quitLoop = true;
 			for (uint i = 0; i < _programWalkTable.size(); ++i) {
 				int16 md1 = _programWalkTable[i].point1;
 				int16 md2 = _programWalkTable[i].point2;
@@ -2959,11 +2957,11 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 					assert((md2 & 0x4000) == 0);
 					if (_programPointsTable[md1].order != 0 && _programPointsTable[md2].order == 0) {
 						_programPointsTable[md2].order = 1;
-						quit = false;
+						quitLoop = false;
 					}
 					if (_programPointsTable[md2].order != 0 && _programPointsTable[md1].order == 0) {
 						_programPointsTable[md1].order = 1;
-						quit = false;
+						quitLoop = false;
 					}
 				}
 			}

@@ -297,7 +297,7 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		menuData->quit = true;
 		break;
 	case kActionQuitGame:
-		_quit = 1;
+		quitGame();
 		menuData->quit = true;
 		break;
 	case kActionTextOnly:
@@ -398,7 +398,6 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				case Common::EVENT_QUIT:
 					menuData.quit = true;
 					menuData.exit = true;
-					_quit = 1;
 					break;
 				case Common::EVENT_LBUTTONDOWN:
 					button = menuData.findButtonUnderCursor(event.mouse.x, event.mouse.y);
@@ -433,8 +432,9 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 			_system->delayMillis(10);
 		}
 		_fullRedrawCounter = 2;
-		if (!menuData.exit && _quit != 0) {
-			_quit = displayQuitDialog();
+		if (!menuData.exit && quit()) {
+			if (displayQuitDialog())
+				quitGame();
 		}
 	}
 }
