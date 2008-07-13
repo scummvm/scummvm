@@ -339,7 +339,7 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
-		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0 || r > 128)
+		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0 || r > 128 || (r << 1) > w || (r << 1) > h)
 		return;
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
@@ -712,6 +712,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 				colorFill(ptr_bl - x + py, ptr_br + x + py, calcGradient(long_h - r + y, long_h));
 				colorFill(ptr_bl - y + px, ptr_br + y + px, calcGradient(long_h - r + x, long_h));
+				
+//				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
 		} else {
 			while (x++ < y) {
@@ -724,7 +726,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				colorFill(ptr_bl - y + px, ptr_br + y + px, color);
 
 				// FIXME: maybe not needed at all?
-				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+//				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
 		}
 

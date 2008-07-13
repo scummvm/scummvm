@@ -103,7 +103,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
 	step->shadow = 0;
-	step->stroke = 1;
+	step->stroke = 0;
 	step->radius = 0xFF;
 
 	return step;
