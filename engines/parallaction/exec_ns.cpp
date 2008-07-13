@@ -418,28 +418,38 @@ label1:
 
 
 void CommandExec::run(CommandList& list, ZonePtr z) {
-	if (list.size() == 0)
+	if (list.size() == 0) {
+		debugC(3, kDebugExec, "runCommands: nothing to do");
 		return;
+	}
 
-	debugC(3, kDebugExec, "runCommands");
+	debugC(3, kDebugExec, "runCommands starting");
+
+	uint32 useFlags = 0;
+	bool useLocalFlags;
 
 	CommandList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
-
-		CommandPtr cmd = *it;
-		uint32 v8 = _vm->getLocationFlags();
-
 		if (_engineFlags & kEngineQuit)
 			break;
 
+		CommandPtr cmd = *it;
+
 		if (cmd->_flagsOn & kFlagsGlobal) {
-			v8 = _commandFlags | kFlagsGlobal;
+			useFlags = _commandFlags | kFlagsGlobal;
+			useLocalFlags = false;
+		} else {
+			useFlags = _vm->getLocationFlags();
+			useLocalFlags = true;
 		}
 
-		debugC(3, kDebugExec, "runCommands[%i] (on: %x, off: %x)", cmd->_id,  cmd->_flagsOn, cmd->_flagsOff);
+		bool onMatch = (cmd->_flagsOn & useFlags) == cmd->_flagsOn;
+		bool offMatch = (cmd->_flagsOff & ~useFlags) == cmd->_flagsOff;
 
-		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
-		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
+		debugC(3, kDebugExec, "runCommands[%i] (on: %x, off: %x), (%s = %x)", cmd->_id,  cmd->_flagsOn, cmd->_flagsOff,
+			useLocalFlags ? "LOCALFLAGS" : "GLOBALFLAGS", useFlags);
+
+		if (!onMatch || !offMatch) continue;
 
 		_ctxt.z = z;
 		_ctxt.cmd = cmd;
