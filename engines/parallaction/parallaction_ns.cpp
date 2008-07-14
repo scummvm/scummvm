@@ -420,6 +420,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
 	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
+	_char._ani->gfxobj->clearFlags(kGfxObjNormal);
 
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {
