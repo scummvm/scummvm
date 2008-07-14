@@ -31,6 +31,8 @@
 
 #include "graphics/scaler.h"
 
+#include "valgrind/memcheck.h"
+
 #ifdef __DS__
 #include "scummhelp.h"
 #endif
@@ -297,7 +299,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	case GUI::kListSelectionChangedCmd: {
 		if (_gfxWidget) {
-			updateInfos();
+			updateInfos(true);
 		}
 
 		if (_saveMode) {
@@ -326,6 +328,10 @@ void SaveLoadChooser::reflowLayout() {
 
 		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
 
+		VALGRIND_CHECK_VALUE_IS_DEFINED(thumbX);
+		VALGRIND_CHECK_VALUE_IS_DEFINED(thumbY);
+		VALGRIND_CHECK_VALUE_IS_DEFINED(thumbH);
+
 		// Add the thumbnail display
 		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
 
@@ -350,7 +356,7 @@ void SaveLoadChooser::reflowLayout() {
 		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
 		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
-		updateInfos();
+		updateInfos(false);
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
@@ -362,7 +368,7 @@ void SaveLoadChooser::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-void SaveLoadChooser::updateInfos() {
+void SaveLoadChooser::updateInfos(bool draw) {
 	int selItem = _list->getSelected();
 	Graphics::Surface *thumb;
 	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
@@ -376,7 +382,8 @@ void SaveLoadChooser::updateInfos() {
 	}
 
 	delete thumb;
-	_gfxWidget->draw();
+	if (draw)
+		_gfxWidget->draw();
 
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
@@ -386,12 +393,14 @@ void SaveLoadChooser::updateInfos() {
 			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
 			infos.date & 0xFFFF);
 		_date->setLabel(buffer);
-		_date->draw();
+		if (draw)
+			_date->draw();
 
 		snprintf(buffer, 32, "Time: %.2d:%.2d",
 			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
 		_time->setLabel(buffer);
-		_time->draw();
+		if (draw)
+			_time->draw();
 
 		int minutes = infos.playtime / 60;
 		int hours = minutes / 60;
@@ -400,19 +409,23 @@ void SaveLoadChooser::updateInfos() {
 		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
 			hours & 0xFF, minutes & 0xFF);
 		_playtime->setLabel(buffer);
-		_playtime->draw();
+		if (draw)
+			_playtime->draw();
 	} else {
 		snprintf(buffer, 32, "No date saved");
 		_date->setLabel(buffer);
-		_date->draw();
+		if (draw)
+			_date->draw();
 
 		snprintf(buffer, 32, "No time saved");
 		_time->setLabel(buffer);
-		_time->draw();
+		if (draw)
+			_time->draw();
 
 		snprintf(buffer, 32, "No playtime saved");
 		_playtime->setLabel(buffer);
-		_playtime->draw();
+		if (draw)
+			_playtime->draw();
 	}
 }
 
