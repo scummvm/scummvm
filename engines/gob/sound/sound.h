@@ -144,4 +144,4 @@ private:
 
 } // End of namespace Gob
 
-#endif // GOB_SOUND_H
+#endif // GOB_SOUND_SOUND_H

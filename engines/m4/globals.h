@@ -177,7 +177,7 @@ public:
 
 	void loadMadsMessagesInfo();
 	uint32 getMessagesSize() { return _madsMessages.size(); }
-	char* loadMessage(uint32 index);
+	char* loadMessage(uint index);
 };
 
 #define PLAYER_FIELD_LENGTH 40

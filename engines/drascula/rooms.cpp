@@ -1672,8 +1672,8 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	getIntFromLine(buffer, size, &floorY2);
 
 	if (currentChapter != 2) {
-		getIntFromLine(buffer, size, &far);
-		getIntFromLine(buffer, size, &near);
+		getIntFromLine(buffer, size, &upperLimit);
+		getIntFromLine(buffer, size, &lowerLimit);
 	}
 	_arj.close();
 
@@ -1732,27 +1732,27 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	if (currentChapter != 2) {
 		for (l = 0; l <= floorY1; l++)
-			factor_red[l] = far;
+			factor_red[l] = upperLimit;
 		for (l = floorY1; l <= 201; l++)
-			factor_red[l] = near;
+			factor_red[l] = lowerLimit;
 
-		chiquez = (float)(near - far) / (float)(floorY2 - floorY1);
+		chiquez = (float)(lowerLimit - upperLimit) / (float)(floorY2 - floorY1);
 		for (l = floorY1; l <= floorY2; l++) {
-			factor_red[l] = (int)(far + pequegnez);
+			factor_red[l] = (int)(upperLimit + pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
 	if (roomNumber == 24) {
 		for (l = floorY1 - 1; l > 74; l--) {
-			factor_red[l] = (int)(far - pequegnez);
+			factor_red[l] = (int)(upperLimit - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
 	if (currentChapter == 5 && roomNumber == 54) {
 		for (l = floorY1 - 1; l > 84; l--) {
-			factor_red[l] = (int)(far - pequegnez);
+			factor_red[l] = (int)(upperLimit - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}

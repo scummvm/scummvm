@@ -799,10 +799,14 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 
 	_screen->fadeToBlack(0x14);
 	
-	sprintf(filename, "LETTER%.1d.", letter);
-	strcat(filename, (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _lang) ? _languageExtension[_lang] : "TXT");
-
+	sprintf(filename, "LETTER%.1d.%s", letter, _languageExtension[_lang]);
 	uint8 *letterBuffer = _res->fileData(filename, 0);
+	if (!letterBuffer) {
+		// some floppy versions use a TXT extension
+		sprintf(filename, "LETTER%.1d.TXT", letter);
+		letterBuffer = _res->fileData(filename, 0);
+	}
+
 	if (letterBuffer) {
 		bookDecodeText(letterBuffer);
 		bookPrintText(2, letterBuffer, 0xC, 0xA, 0x20);

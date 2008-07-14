@@ -229,7 +229,6 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
-
 	// If result=1 return to the launcher, else quit ScummVM
     return result;
 }
@@ -279,6 +278,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
+	EngineMan.getPlugins();
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.

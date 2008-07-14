@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
 #include "kyra/debugger.h"
@@ -70,6 +72,36 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	memset(&_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
 
 	_pauseStart = 0;
+
+	_lang = 0;
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
+		lang = _flags.replacedLang;
+
+	switch (lang) {
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+		_lang = 0;
+		break;
+
+	case Common::FR_FRA:
+		_lang = 1;
+		break;
+
+	case Common::DE_DEU:
+		_lang = 2;
+		break;
+
+	case Common::JA_JPN:
+		_lang = 3;
+		break;
+
+	default:
+		warning("unsupported language, switching back to English");
+		_lang = 0;
+		break;
+	}
 }
 
 KyraEngine_v2::~KyraEngine_v2() {

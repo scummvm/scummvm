@@ -296,6 +296,9 @@ int KyraEngine_HoF::go() {
 			_res->loadFileList("FILEDATA.FDT");
 		else
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
+
+		if (_flags.platform == Common::kPlatformPC98)
+			_res->loadPakFile("AUDIO.PAK");
 	}
 
 	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
@@ -1560,7 +1563,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
 		_sound->voicePlay(_ingameSoundList[vocIndex], true);
-	else if (_flags.platform == Common::kPlatformPC)
+	else if (_flags.platform != Common::kPlatformFMTowns)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
 		KyraEngine_v1::snd_playSoundEffect(track);
@@ -2019,6 +2022,9 @@ void KyraEngine_HoF::writeSettings() {
 		_flags.lang = Common::EN_ANY;
 		break;
 	}
+
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
+		_flags.lang = _flags.fanLang;
 
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 

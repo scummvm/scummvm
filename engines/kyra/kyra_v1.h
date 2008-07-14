@@ -44,6 +44,11 @@ namespace Kyra {
 
 struct GameFlags {
 	Common::Language lang;
+
+	// language overwrites of fan translations (only needed for multilingual games)
+	Common::Language fanLang;
+	Common::Language replacedLang;
+
 	Common::Platform platform;
 
 	bool isDemo					: 1;
@@ -207,7 +212,6 @@ protected:
 
 	// detection
 	GameFlags _flags;
-	int _lang;
 
 	// opcode
 	virtual void setupOpcodeTable() = 0;

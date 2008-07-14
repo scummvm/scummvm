@@ -329,8 +329,8 @@ void Mult_v2::freeMultKeys() {
 	if (_animDataAllocated) {
 		freeMult();
 
-		delete[] _animArrayX;
-		delete[] _animArrayY;
+		delete _animArrayX;
+		delete _animArrayY;
 		delete[] _animArrayData;
 
 		_animArrayX = 0;
@@ -510,6 +510,13 @@ void Mult_v2::playMultInit() {
 	if (!_animSurf) {
 		int16 width, height;
 
+		for (int i = 0; i < _objCount; i++) {
+			delete _objects[i].pPosX;
+			delete _objects[i].pPosY;
+		}
+
+		delete[] _objects;
+	
 		_vm->_util->setFrameRate(_multData->frameRate);
 		_animTop = 0;
 		_animLeft = 0;
@@ -517,33 +524,30 @@ void Mult_v2::playMultInit() {
 		_animHeight = _vm->_video->_surfHeight;
 		_objCount = 4;
 
-		delete[] _objects;
 		delete[] _orderArray;
 		delete[] _renderObjs;
-		delete[] _animArrayX;
-		delete[] _animArrayY;
+		delete _animArrayX;
+		delete _animArrayY;
 		delete[] _animArrayData;
 
 		_objects = new Mult_Object[_objCount];
 		_orderArray = new int8[_objCount];
 		_renderObjs = new Mult_Object*[_objCount];
-		_animArrayX = new int32[_objCount];
-		_animArrayY = new int32[_objCount];
+		_animArrayX = new VariablesLE(_objCount * 4);
+		_animArrayY = new VariablesLE(_objCount * 4);
 		_animArrayData = new Mult_AnimData[_objCount];
 
 		memset(_objects, 0, _objCount * sizeof(Mult_Object));
 		memset(_orderArray, 0, _objCount * sizeof(int8));
 		memset(_renderObjs, 0, _objCount * sizeof(Mult_Object *));
-		memset(_animArrayX, 0, _objCount * sizeof(int32));
-		memset(_animArrayY, 0, _objCount * sizeof(int32));
 		memset(_animArrayData, 0, _objCount * sizeof(Mult_AnimData));
 
 		for (_counter = 0; _counter < _objCount; _counter++) {
 			Mult_Object &multObj = _objects[_counter];
 			Mult_AnimData &animData = _animArrayData[_counter];
 
-			multObj.pPosX = (int32 *) &_animArrayX[_counter];
-			multObj.pPosY = (int32 *) &_animArrayY[_counter];
+			multObj.pPosX = new VariableReference(*_animArrayX, _counter * 4);
+			multObj.pPosY = new VariableReference(*_animArrayY, _counter * 4);
 			multObj.pAnimData = &animData;
 
 			animData.isStatic = 1;

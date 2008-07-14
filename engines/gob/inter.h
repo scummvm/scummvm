@@ -79,7 +79,7 @@ protected:
 	};
 	struct OpGobParams {
 		int16 extraData;
-		int32 *retVarPtr;
+		VariableReference retVarPtr;
 		Goblin::Gob_Object *objDesc;
 	};
 

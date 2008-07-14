@@ -372,7 +372,11 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 
-		playMusic(2);
+		if (_lang == kSpanish)
+			playMusic(31);
+		else
+			playMusic(2);
+
 		pause(5);
 		playFLI("intro.bin", 12);
 		term_int = 1;

@@ -127,7 +127,7 @@ _srcdir=`dirname $0`
 
 # Determine a tmp file name, using mktemp(1) when available.
 if type mktemp > /dev/null 2>&1 ; then
-	TMPO=`mktemp`
+	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
 else
 	TMPO=${_srcdir}/scummvm-conf
 fi
@@ -740,6 +740,10 @@ for ac_option in $@; do
 		;;
 	--enable-release)
 		DEBFLAGS="-O2 -Wuninitialized"
+		;;
+	--enable-profiling)
+		CXXFLAGS="$CXXFLAGS -pg"
+		LDFLAGS="$LDFLAGS -pg"
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`

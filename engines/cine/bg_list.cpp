@@ -63,6 +63,7 @@ void addSpriteFilledToBGList(int16 objIdx) {
 void createBgIncrustListElement(int16 objIdx, int16 param) {
 	BGIncrust tmp;
 
+	tmp.unkPtr = 0;
 	tmp.objIdx = objIdx;
 	tmp.param = param;
 	tmp.x = objectTable[objIdx].x;
@@ -90,6 +91,7 @@ void loadBgIncrustFromSave(Common::InSaveFile &fHandle) {
 		fHandle.readUint32BE();
 		fHandle.readUint32BE();
 
+		tmp.unkPtr = 0;
 		tmp.objIdx = fHandle.readUint16BE();
 		tmp.param = fHandle.readUint16BE();
 		tmp.x = fHandle.readUint16BE();

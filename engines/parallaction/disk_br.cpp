@@ -58,7 +58,7 @@ struct Sprites : public Frames {
 	}
 
 	~Sprites() {
-		delete _sprites;
+		delete[] _sprites;
 	}
 
 	uint16 getNum() {
@@ -138,7 +138,7 @@ DosDisk_br::DosDisk_br(Parallaction* vm) : _vm(vm) {
 DosDisk_br::~DosDisk_br() {
 }
 
-Frames* DosDisk_br::loadTalk(const char *name) {
+GfxObj* DosDisk_br::loadTalk(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTalk(%s)", name);
 
 	Common::File stream;
@@ -151,7 +151,7 @@ Frames* DosDisk_br::loadTalk(const char *name) {
 			errorFileNotFound(path);
 	}
 
-	return createSprites(stream);
+	return new GfxObj(0, createSprites(stream), name);
 }
 
 Script* DosDisk_br::loadLocation(const char *name) {
@@ -184,7 +184,7 @@ Script* DosDisk_br::loadScript(const char* name) {
 }
 
 //	there are no Head resources in Big Red Adventure
-Frames* DosDisk_br::loadHead(const char* name) {
+GfxObj* DosDisk_br::loadHead(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadHead");
 	return 0;
 }
@@ -235,7 +235,7 @@ Font* DosDisk_br::loadFont(const char* name) {
 }
 
 
-Frames* DosDisk_br::loadObjects(const char *name) {
+GfxObj* DosDisk_br::loadObjects(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadObjects");
 	return 0;
 }
@@ -244,7 +244,7 @@ void genSlidePath(char *path, const char* name) {
 	sprintf(path, "%s.bmp", name);
 }
 
-Frames* DosDisk_br::loadStatic(const char* name) {
+GfxObj* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
 
 	char path[PATH_LEN];
@@ -256,7 +256,7 @@ Frames* DosDisk_br::loadStatic(const char* name) {
 
 	Graphics::Surface *surf = new Graphics::Surface;
 	loadBitmap(stream, *surf, 0);
-	return new SurfaceToFrames(surf);
+	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
 
 Sprites* DosDisk_br::createSprites(Common::ReadStream &stream) {
@@ -287,9 +287,12 @@ Frames* DosDisk_br::loadFrames(const char* name) {
 	sprintf(path, "%s/ani/%s", _partPath, name);
 
 	Common::File stream;
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
+	if (!stream.open(path)) {
+		sprintf(path, "%s/ani/%s.ani", _partPath, name);
+		if (!stream.open(path)) {
+			errorFileNotFound(path);
+		}
+	}
 
 	return createSprites(stream);
 }
@@ -552,7 +555,7 @@ void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	return;
 }
 
-Frames* AmigaDisk_br::loadStatic(const char* name) {
+GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadStatic '%s'", name);
 
 	char path[PATH_LEN];
@@ -570,7 +573,7 @@ Frames* AmigaDisk_br::loadStatic(const char* name) {
 
 	free(pal);
 
-	return new SurfaceToFrames(surf);
+	return new GfxObj(0, new SurfaceToFrames(surf));
 }
 
 Sprites* AmigaDisk_br::createSprites(const char *path) {
@@ -609,13 +612,13 @@ Frames* AmigaDisk_br::loadFrames(const char* name) {
 	return createSprites(path);
 }
 
-Frames* AmigaDisk_br::loadTalk(const char *name) {
+GfxObj* AmigaDisk_br::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadTalk '%s'", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%s/talks/%s.tal", _partPath, name);
 
-	return createSprites(path);
+	return new GfxObj(0, createSprites(path));
 }
 
 Font* AmigaDisk_br::loadFont(const char* name) {

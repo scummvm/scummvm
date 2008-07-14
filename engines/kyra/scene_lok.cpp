@@ -1144,11 +1144,11 @@ void KyraEngine_LoK::setCharactersInDefaultScene() {
 }
 
 void KyraEngine_LoK::setCharactersPositions(int character) {
-	static uint16 initXPosTable[] = {
+	static const uint16 initXPosTable[] = {
 		0x3200, 0x0024, 0x2230, 0x2F00, 0x0020, 0x002B,
 		0x00CA, 0x00F0, 0x0082, 0x00A2, 0x0042
 	};
-	static uint8 initYPosTable[] = {
+	static const uint8 initYPosTable[] = {
 		0x00, 0xA2, 0x00, 0x42, 0x00,
 		0x67, 0x67, 0x60, 0x5A, 0x71,
 		0x76

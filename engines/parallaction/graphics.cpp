@@ -64,10 +64,6 @@ int32 Gfx::getVar(const Common::String &name) {
 
 
 #define	LABEL_TRANSPARENT_COLOR 0xFF
-#define	BALLOON_TRANSPARENT_COLOR 2
-
-
-int16 Gfx::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
 void halfbritePixel(int x, int y, int color, void *data) {
 	byte *buffer = (byte*)data;
@@ -238,37 +234,6 @@ void Palette::rotate(uint first, uint last, bool forward) {
 }
 
 
-#define BALLOON_TAIL_WIDTH	12
-#define BALLOON_TAIL_HEIGHT	10
-
-
-byte _resBalloonTail[2][BALLOON_TAIL_WIDTH*BALLOON_TAIL_HEIGHT] = {
-	{
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x00, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x00, 0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	},
-	{
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x02, 0x02
-	}
-};
-
 
 void Gfx::setPalette(Palette pal) {
 	byte sysPal[256*4];
@@ -356,21 +321,19 @@ void Gfx::drawItems() {
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
-		blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
+		drawGfxObject(_items[i].data, *surf, false);
 	}
 	g_system->unlockScreen();
 }
 
 void Gfx::drawBalloons() {
-	if (_numBalloons == 0) {
+	if (_balloons.size() == 0) {
 		return;
 	}
 
 	Graphics::Surface *surf = g_system->lockScreen();
-	for (uint i = 0; i < _numBalloons; i++) {
-		Common::Rect r(_balloons[i].surface.w, _balloons[i].surface.h);
-		r.moveTo(_balloons[i].x, _balloons[i].y);
-		blt(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
+	for (uint i = 0; i < _balloons.size(); i++) {
+		drawGfxObject(_balloons[i], *surf, false);
 	}
 	g_system->unlockScreen();
 }
@@ -521,145 +484,6 @@ void Gfx::invertBackground(const Common::Rect& r) {
 
 }
 
-// this is the maximum size of an unpacked frame in BRA
-byte _unpackedBitmap[640*401];
-
-#if 0
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	byte *d = _unpackedBitmap;
-
-	while (size > 0) {
-
-		uint8 p = *data++;
-		size--;
-		uint8 color = p & 0xF;
-		uint8 repeat = (p & 0xF0) >> 4;
-		if (repeat == 0) {
-			repeat = *data++;
-			size--;
-		}
-
-		memset(d, color, repeat);
-		d += repeat;
-	}
-
-	blt(r, _unpackedBitmap, surf, z, transparentColor);
-}
-#endif
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	byte *d = _unpackedBitmap;
-	uint pixelsLeftInLine = r.width();
-
-	while (size > 0) {
-		uint8 p = *data++;
-		size--;
-		uint8 color = p & 0xF;
-		uint8 repeat = (p & 0xF0) >> 4;
-		if (repeat == 0) {
-			repeat = *data++;
-			size--;
-		}
-		if (repeat == 0) {
-			// end of line
-			repeat = pixelsLeftInLine;
-			pixelsLeftInLine = r.width();
-		} else {
-			pixelsLeftInLine -= repeat;
-		}
-
-		memset(d, color, repeat);
-		d += repeat;
-	}
-
-	blt(r, _unpackedBitmap, surf, z, transparentColor);
-}
-
-
-void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	Common::Point dp;
-	Common::Rect q(r);
-
-	Common::Rect clipper(surf->w, surf->h);
-
-	q.clip(clipper);
-	if (!q.isValidRect()) return;
-
-	dp.x = q.left;
-	dp.y = q.top;
-
-	q.translate(-r.left, -r.top);
-
-	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
-
-	uint sPitch = r.width() - q.width();
-	uint dPitch = surf->w - q.width();
-
-
-	if (_varRenderMode == 2) {
-
-		for (uint16 i = 0; i < q.height(); i++) {
-
-			for (uint16 j = 0; j < q.width(); j++) {
-				if (*s != transparentColor) {
-					if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
-						if (z >= v) *d = 5;
-					} else {
-						*d = 5;
-					}
-				}
-
-				s++;
-				d++;
-			}
-
-			s += sPitch;
-			d += dPitch;
-		}
-
-    } else {
-		if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-
-			for (uint16 i = 0; i < q.height(); i++) {
-
-				for (uint16 j = 0; j < q.width(); j++) {
-					if (*s != transparentColor) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
-						if (z >= v) *d = *s;
-					}
-
-					s++;
-					d++;
-				}
-
-				s += sPitch;
-				d += dPitch;
-			}
-
-		} else {
-
-			for (uint16 i = q.top; i < q.bottom; i++) {
-				for (uint16 j = q.left; j < q.right; j++) {
-					if (*s != transparentColor)
-						*d = *s;
-
-					s++;
-					d++;
-				}
-
-				s += sPitch;
-				d += dPitch;
-			}
-
-		}
-	}
-
-}
-
 
 
 
@@ -669,10 +493,9 @@ void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
 }
 
-Label *Gfx::renderFloatingLabel(Font *font, char *text) {
+uint Gfx::renderFloatingLabel(Font *font, char *text) {
 
-	Label *label = new Label;
-	Graphics::Surface *cnv = &label->_cnv;
+	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
 
@@ -698,14 +521,74 @@ Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 		drawText(font, cnv, 0, 0, text, 0);
 	}
 
-	return label;
+	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "floatingLabel");
+	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
+	obj->layer = LAYER_FOREGROUND;
+
+	uint id = _labels.size();
+	_labels.insert_at(id, obj);
+
+	return id;
 }
 
-uint Gfx::createLabel(Font *font, const char *text, byte color) {
-	assert(_numLabels < MAX_NUM_LABELS);
+void Gfx::showFloatingLabel(uint label) {
+	assert(label < _labels.size());
 
-	Label *label = new Label;
-	Graphics::Surface *cnv = &label->_cnv;
+	hideFloatingLabel();
+
+	_labels[label]->x = -1000;
+	_labels[label]->y = -1000;
+	_labels[label]->setFlags(kGfxObjVisible);
+
+	_floatingLabel = label;
+}
+
+void Gfx::hideFloatingLabel() {
+	if (_floatingLabel != NO_FLOATING_LABEL) {
+		_labels[_floatingLabel]->clearFlags(kGfxObjVisible);
+	}
+	_floatingLabel = NO_FLOATING_LABEL;
+}
+
+
+void Gfx::updateFloatingLabel() {
+	if (_floatingLabel == NO_FLOATING_LABEL) {
+		return;
+	}
+
+	int16 _si, _di;
+
+	Common::Point	cursor;
+	_vm->_input->getCursorPos(cursor);
+
+	Common::Rect r;
+	_labels[_floatingLabel]->getRect(0, r);
+
+	if (_vm->_input->_activeItem._id != 0) {
+		_si = cursor.x + 16 - r.width()/2;
+		_di = cursor.y + 34;
+	} else {
+		_si = cursor.x + 8 - r.width()/2;
+		_di = cursor.y + 21;
+	}
+
+	if (_si < 0) _si = 0;
+	if (_di > 190) _di = 190;
+
+	if (r.width() + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - r.width();
+
+	_labels[_floatingLabel]->x = _si;
+	_labels[_floatingLabel]->y = _di;
+}
+
+
+
+
+uint Gfx::createLabel(Font *font, const char *text, byte color) {
+	assert(_labels.size() < MAX_NUM_LABELS);
+
+	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
 
@@ -726,120 +609,63 @@ uint Gfx::createLabel(Font *font, const char *text, byte color) {
 		drawText(font, cnv, 0, 0, text, color);
 	}
 
-	uint id = _numLabels;
-	_labels[id] = label;
-	_numLabels++;
+	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "label");
+	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
+	obj->layer = LAYER_FOREGROUND;
+
+	int id = _labels.size();
+
+	_labels.insert_at(id, obj);
 
 	return id;
 }
 
 void Gfx::showLabel(uint id, int16 x, int16 y) {
-	assert(id < _numLabels);
-	_labels[id]->_visible = true;
+	assert(id < _labels.size());
+	_labels[id]->setFlags(kGfxObjVisible);
+
+	Common::Rect r;
+	_labels[id]->getRect(0, r);
 
 	if (x == CENTER_LABEL_HORIZONTAL) {
-		x = CLIP<int16>((_vm->_screenWidth - _labels[id]->_cnv.w) / 2, 0, _vm->_screenWidth/2);
+		x = CLIP<int16>((_vm->_screenWidth - r.width()) / 2, 0, _vm->_screenWidth/2);
 	}
 
 	if (y == CENTER_LABEL_VERTICAL) {
-		y = CLIP<int16>((_vm->_screenHeight - _labels[id]->_cnv.h) / 2, 0, _vm->_screenHeight/2);
+		y = CLIP<int16>((_vm->_screenHeight - r.height()) / 2, 0, _vm->_screenHeight/2);
 	}
 
-	_labels[id]->_pos.x = x;
-	_labels[id]->_pos.y = y;
+	_labels[id]->x = x;
+	_labels[id]->y = y;
 }
 
 void Gfx::hideLabel(uint id) {
-	assert(id < _numLabels);
-	_labels[id]->_visible = false;
+	assert(id < _labels.size());
+	_labels[id]->clearFlags(kGfxObjVisible);
 }
 
 void Gfx::freeLabels() {
-	for (uint i = 0; i < _numLabels; i++) {
+	for (uint i = 0; i < _labels.size(); i++) {
 		delete _labels[i];
 	}
-	_numLabels = 0;
-}
-
-
-void Gfx::setFloatingLabel(Label *label) {
-	_floatingLabel = label;
-
-	if (_floatingLabel) {
-		_floatingLabel->resetPosition();
-	}
-}
-
-void Gfx::updateFloatingLabel() {
-	if (!_floatingLabel) {
-		return;
-	}
-
-	int16 _si, _di;
-
-	Common::Point	cursor;
-	_vm->_input->getCursorPos(cursor);
-
-	if (_vm->_input->_activeItem._id != 0) {
-		_si = cursor.x + 16 - _floatingLabel->_cnv.w/2;
-		_di = cursor.y + 34;
-	} else {
-		_si = cursor.x + 8 - _floatingLabel->_cnv.w/2;
-		_di = cursor.y + 21;
-	}
-
-	if (_si < 0) _si = 0;
-	if (_di > 190) _di = 190;
-
-	if (_floatingLabel->_cnv.w + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - _floatingLabel->_cnv.w;
-
-	_floatingLabel->_pos.x = _si;
-	_floatingLabel->_pos.y = _di;
+	_labels.clear();
+	_floatingLabel = NO_FLOATING_LABEL;
 }
 
 void Gfx::drawLabels() {
-	if ((!_floatingLabel) && (_numLabels == 0)) {
+	if (_labels.size() == 0) {
 		return;
 	}
+
 	updateFloatingLabel();
 
 	Graphics::Surface* surf = g_system->lockScreen();
 
-	for (uint i = 0; i < _numLabels; i++) {
-		if (_labels[i]->_visible) {
-			Common::Rect r(_labels[i]->_cnv.w, _labels[i]->_cnv.h);
-			r.moveTo(_labels[i]->_pos);
-			blt(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, LAYER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
-		}
-	}
-
-	if (_floatingLabel) {
-		Common::Rect r(_floatingLabel->_cnv.w, _floatingLabel->_cnv.h);
-		r.moveTo(_floatingLabel->_pos);
-        blt(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, LAYER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
+	for (uint i = 0; i < _labels.size(); i++) {
+		drawGfxObject(_labels[i], *surf, false);
 	}
 
 	g_system->unlockScreen();
-}
-
-Label::Label() {
-	resetPosition();
-	_visible = false;
-}
-
-Label::~Label() {
-	free();
-}
-
-void Label::free() {
-	_cnv.free();
-	resetPosition();
-}
-
-void Label::resetPosition() {
-	_pos.x = -1000;
-	_pos.y = -1000;
 }
 
 
@@ -917,10 +743,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setPalette(_palette);
 
-	_numBalloons = 0;
 	_numItems = 0;
-	_numLabels = 0;
-	_floatingLabel = 0;
+	_floatingLabel = NO_FLOATING_LABEL;
 
 	_screenX = 0;
 	_screenY = 0;
@@ -943,20 +767,21 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	freeBackground();
+	freeLabels();
 
 	return;
 }
 
 
 
-int Gfx::setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor) {
+int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
 	int id = _numItems;
 
 	_items[id].data = frames;
-	_items[id].x = x;
-	_items[id].y = y;
-
-	_items[id].transparentColor = transparentColor;
+	_items[id].data->x = x;
+	_items[id].data->y = y;
+	_items[id].data->layer = LAYER_FOREGROUND;
+	_items[id].data->transparentKey = transparentColor;
 
 	_numItems++;
 
@@ -965,204 +790,33 @@ int Gfx::setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor) {
 
 void Gfx::setItemFrame(uint item, uint16 f) {
 	assert(item < _numItems);
-	_items[item].frame = f;
-	_items[item].data->getRect(f, _items[item].rect);
-	_items[item].rect.moveTo(_items[item].x, _items[item].y);
+	_items[item].data->frame = f;
+	_items[item].data->setFlags(kGfxObjVisible);
 }
 
-Gfx::Balloon* Gfx::getBalloon(uint id) {
-	assert(id < _numBalloons);
-	return &_balloons[id];
+
+GfxObj* Gfx::registerBalloon(Frames *frames, const char *text) {
+
+	GfxObj *obj = new GfxObj(kGfxObjTypeBalloon, frames, text);
+
+	obj->layer = LAYER_FOREGROUND;
+	obj->frame = 0;
+	obj->setFlags(kGfxObjVisible);
+
+	_balloons.push_back(obj);
+
+	return obj;
 }
 
-int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) {
-	assert(_numBalloons < 5);
-
-	int id = _numBalloons;
-
-	Gfx::Balloon *balloon = &_balloons[id];
-
-	int16 real_h = (winding == -1) ? h : h + 9;
-	balloon->surface.create(w, real_h, 1);
-	balloon->surface.fillRect(Common::Rect(w, real_h), BALLOON_TRANSPARENT_COLOR);
-
-	Common::Rect r(w, h);
-	balloon->surface.fillRect(r, 0);
-	balloon->outerBox = r;
-
-	r.grow(-borderThickness);
-	balloon->surface.fillRect(r, 1);
-	balloon->innerBox = r;
-
-	if (winding != -1) {
-		// draws tail
-		// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
-		winding = (winding == 0 ? 1 : 0);
-		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
-		s.moveTo(r.width()/2 - 5, r.bottom - 1);
-		blt(s, _resBalloonTail[winding], &balloon->surface, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
+void Gfx::destroyBalloons() {
+	for (uint i = 0; i < _balloons.size(); i++) {
+		delete _balloons[i];
 	}
-
-	_numBalloons++;
-
-	return id;
-}
-
-int Gfx::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) {
-
-	int16 w, h;
-
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
-
-	int id = createBalloon(w+5, h, winding, 1);
-	Gfx::Balloon *balloon = &_balloons[id];
-
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
-
-	balloon->x = x;
-	balloon->y = y;
-
-	return id;
-}
-
-int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
-
-	int16 w, h;
-
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
-
-	int id = createBalloon(w+5, h, winding, 1);
-	Gfx::Balloon *balloon = &_balloons[id];
-
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
-
-	balloon->x = _dialogueBalloonX[id];
-	balloon->y = 10;
-
-	if (id > 0) {
-		balloon->y += _balloons[id - 1].y + _balloons[id - 1].outerBox.height();
-	}
-
-
-	return id;
-}
-
-void Gfx::setBalloonText(uint id, char *text, byte textColor) {
-	Gfx::Balloon *balloon = getBalloon(id);
-	balloon->surface.fillRect(balloon->innerBox, 1);
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
-}
-
-
-int Gfx::setLocationBalloon(char *text, bool endGame) {
-
-	int16 w, h;
-
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
-
-	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR);
-	Gfx::Balloon *balloon = &_balloons[id];
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, 0, MAX_BALLOON_WIDTH);
-
-	balloon->x = 5;
-	balloon->y = 5;
-
-	return id;
-}
-
-int Gfx::hitTestDialogueBalloon(int x, int y) {
-
-	Common::Point p;
-
-	for (uint i = 0; i < _numBalloons; i++) {
-		p.x = x - _balloons[i].x;
-		p.y = y - _balloons[i].y;
-
-		if (_balloons[i].innerBox.contains(p))
-			return i;
-	}
-
-	return -1;
-}
-
-
-void Gfx::freeBalloons() {
-	for (uint i = 0; i < _numBalloons; i++) {
-		_balloons[i].surface.free();
-	}
-	_numBalloons = 0;
+	_balloons.clear();
 }
 
 void Gfx::freeItems() {
 	_numItems = 0;
-}
-
-void Gfx::hideDialogueStuff() {
-	freeItems();
-	freeBalloons();
-}
-
-void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = (byte*)surf->getBasePtr(x, y);
-	font->setColor(color);
-	font->drawString(dst, surf->w, text);
-}
-
-void Gfx::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
-
-	uint16 lines = 0;
-	uint16 linewidth = 0;
-
-	uint16 rx = 10;
-	uint16 ry = 4;
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	char token[MAX_TOKEN_LEN];
-
-	if (wrapwidth == -1)
-		wrapwidth = _vm->_screenWidth;
-
-	while (strlen(text) > 0) {
-
-		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
-
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-			rx = 10;
-			ry = 4 + lines*10;	// y
-
-			strcpy(token, "> .......");
-			strncpy(token+2, _password, strlen(_password));
-			tokenWidth = font->getStringWidth(token);
-		} else {
-			tokenWidth = font->getStringWidth(token);
-
-			linewidth += tokenWidth;
-
-			if (linewidth > wrapwidth) {
-				// wrap line
-				lines++;
-				rx = 10;			// x
-				ry = 4 + lines*10;	// y
-				linewidth = tokenWidth;
-			}
-
-			if (!scumm_stricmp(token, "%s")) {
-				sprintf(token, "%d", _score);
-			}
-
-		}
-
-		drawText(font, surf, rx, ry, token, color);
-
-		rx += tokenWidth + blankWidth;
-		linewidth += blankWidth;
-
-		text = Common::ltrim(text);
-	}
-
 }
 
 void Gfx::freeBackground() {

@@ -27,6 +27,7 @@
 #define GOB_MULT_H
 
 #include "gob/video.h"
+#include "gob/variables.h"
 
 namespace Gob {
 
@@ -77,8 +78,8 @@ public:
 	} PACKED_STRUCT;
 
 	struct Mult_Object {
-		int32 *pPosX;
-		int32 *pPosY;
+		VariableReference *pPosX;
+		VariableReference *pPosY;
 		Mult_AnimData *pAnimData;
 		int16 tick;
 		int16 lastLeft;
@@ -267,8 +268,8 @@ protected:
 
 	bool _doPalSubst;
 
-	int32 *_animArrayX;
-	int32 *_animArrayY;
+	Variables *_animArrayX;
+	Variables *_animArrayY;
 	Mult_AnimData *_animArrayData;
 
 	int16 _palKeyIndex;

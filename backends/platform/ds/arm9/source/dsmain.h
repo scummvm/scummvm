@@ -88,7 +88,6 @@ int 	getMillis();													// Return the current runtime in milliseconds
 void 	doTimerCallback();												// Call callback function if required
 
 // Sound
-void 	setSoundProc(OSystem_DS::SoundProc proc, void* param);			// Setup a callback function for sound
 void 	doSoundCallback();												// Call function if sound buffers need more data
 void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
 void 	stopSound(int channel);

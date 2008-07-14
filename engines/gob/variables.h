@@ -30,6 +30,12 @@ namespace Gob {
 
 class Variables {
 public:
+	enum Type {
+		kVariableType8,
+		kVariableType16,
+		kVariableType32
+	};
+
 	Variables(uint32 size);
 	virtual ~Variables();
 
@@ -140,6 +146,26 @@ protected:
 	uint8 read8(const byte *buf) const;
 	uint16 read16(const byte *buf) const;
 	uint32 read32(const byte *buf) const;
+};
+
+class VariableReference {
+	public:
+		VariableReference();
+		VariableReference(Variables &vars, uint32 offset,
+				Variables::Type type = Variables::kVariableType32);
+		~VariableReference();
+
+		void set(Variables &vars, uint32 offset, Variables::Type type = Variables::kVariableType32);
+
+		VariableReference &operator=(uint32 value);
+		VariableReference &operator+=(uint32 value);
+		VariableReference &operator*=(uint32 value);
+		operator uint32();
+
+	private:
+		Variables *_vars;
+		uint32 _offset;
+		Variables::Type _type;
 };
 
 } // End of namespace Gob

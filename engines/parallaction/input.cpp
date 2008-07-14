@@ -174,7 +174,7 @@ void Input::updateGameInput() {
 void Input::updateCommentInput() {
 	waitUntilLeftClick();
 
-	_vm->_gfx->hideDialogueStuff();
+	_vm->hideDialogueStuff();
 	_vm->_gfx->setHalfbriteMode(false);
 
 	_inputMode = kInputModeGame;
@@ -302,7 +302,7 @@ bool Input::translateInventoryInput() {
 			_vm->dropItem(z->u.merge->_obj1);
 			_vm->dropItem(z->u.merge->_obj2);
 			_vm->addInventoryItem(z->u.merge->_obj3);
-			_vm->runCommands(z->_commands);
+			_vm->_cmdExec->run(z->_commands);
 		}
 
 		return true;

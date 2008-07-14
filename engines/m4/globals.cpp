@@ -75,7 +75,7 @@ bool Kernel::sendTrigger(int32 triggerNum) {
 
 bool Kernel::handleTrigger(int32 triggerNum) {
 
-	printf("betweenRooms = %d; triggerNum = %08X\n", betweenRooms, triggerNum);
+	printf("betweenRooms = %d; triggerNum = %08X\n", betweenRooms, (uint)triggerNum);
 
 	if (betweenRooms)
 		return true;
@@ -271,11 +271,13 @@ Globals::Globals(M4Engine *vm): _vm(vm) {
 }
 
 Globals::~Globals() {
-	for(uint32 i = 0; i < _madsVocab.size(); i++)
+	uint32 i;
+
+	for(i = 0; i < _madsVocab.size(); i++)
 		free(_madsVocab[i]);
 	_madsVocab.clear();
 
-	for(uint32 i = 0; i < _madsQuotes.size(); i++)
+	for(i = 0; i < _madsQuotes.size(); i++)
 		free(_madsQuotes[i]);
 	_madsQuotes.clear();
 
@@ -351,7 +353,7 @@ void Globals::loadMadsMessagesInfo() {
 	_vm->res()->toss("messages.dat");
 }
 
-char* Globals::loadMessage(uint32 index) {
+char* Globals::loadMessage(uint index) {
 	if (index > _madsMessages.size() - 1) {
 		warning("Invalid message index: %i", index);
 		return NULL;

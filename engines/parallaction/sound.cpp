@@ -175,6 +175,7 @@ void MidiPlayer::close() {
 	_mutex.lock();
 	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
+	delete _driver;
 	_driver = 0;
 	_parser->setMidiDriver(NULL);
 	delete _parser;
@@ -249,6 +250,9 @@ void DosSoundMan::stopMusic() {
 }
 
 void DosSoundMan::playCharacterMusic(const char *character) {
+	if (character == NULL) {
+		return;
+	}
 
 	if (!scumm_stricmp(_vm->_location._name, "night") ||
 		!scumm_stricmp(_vm->_location._name, "intsushi")) {

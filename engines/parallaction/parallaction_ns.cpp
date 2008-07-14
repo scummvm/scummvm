@@ -135,17 +135,23 @@ int Parallaction_ns::init() {
 	initResources();
 	initFonts();
 	initCursors();
-	initOpcodes();
 	_locationParser = new LocationParser_ns(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
 	_programParser->init();
+
+	_cmdExec = new CommandExec_ns(this);
+	_cmdExec->init();
+	_programExec = new ProgramExec_ns(this);
+	_programExec->init();
 
 	_introSarcData1 = 0;
 	_introSarcData2 = 1;
 	_introSarcData3 = 200;
 
 	num_foglie = 0;
+
+	_inTestResult = false;
 
 	_location._animations.push_front(_char._ani);
 
@@ -156,7 +162,7 @@ int Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
-	
+
 	delete _locationParser;
 	delete _programParser;
 	delete _mouseComposedArrow;
@@ -185,7 +191,7 @@ void Parallaction_ns::setArrowCursor() {
 	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_gfx->setFloatingLabel(0);
+	_gfx->hideFloatingLabel();
 	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
@@ -235,10 +241,10 @@ int Parallaction_ns::go() {
 	_globalTable = _disk->loadTable("global");
 
 	guiStart();
-	
+
 	if (quit())
 		return _eventMan->shouldRTL();
-	
+
 	changeLocation(_location._name);
 
 	if (quit())
@@ -296,14 +302,17 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_soundMan->playLocationMusic(location);
 
-	_gfx->setFloatingLabel(0);
+	_gfx->hideFloatingLabel();
 	_gfx->freeLabels();
+
+	_zoneTrap = nullZonePtr;
 
 	_input->stopHovering();
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
 	}
 
+	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);
 
 	freeLocation();
@@ -325,6 +334,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	}
 
 	_location._animations.push_front(_char._ani);
+	_gfx->showGfxObj(_char._ani->gfxobj, true);
 
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
@@ -349,11 +359,11 @@ void Parallaction_ns::changeLocation(char *location) {
 	// and acommands are executed, so that it can be set again if needed.
 	_engineFlags &= ~kEngineChangeLocation;
 
-	runCommands(_location._commands);
+	_cmdExec->run(_location._commands);
 
 	doLocationEnterTransition();
 
-	runCommands(_location._aCommands);
+	_cmdExec->run(_location._aCommands);
 
 	if (_location._hasSound)
 		_soundMan->playSfx(_location._soundFile, 0, true);
@@ -409,6 +419,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
+	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
 
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {

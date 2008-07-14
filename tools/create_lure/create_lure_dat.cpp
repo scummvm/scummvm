@@ -1312,14 +1312,14 @@ const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
 
 const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
 	"Prendi", NULL,	"Spingi", "Tira", "Aziona", "Apri", "Chiudi", "Blocca",
-	"Sblocca", "Usa", "Dai", "Parla con", "Ordina a", "Buy", "Guarda", "Osserva",
-	"Guarda tra", "Chiedi", NULL,  "Bevi", "Stato", "Vai a", "Ritorna",
+	"Sblocca", "Usa", "Dai", "Parla con", "Ordina a", "Compra", "Guarda", "Osserva",
+	"Guarda attraverso", "Chiedi", NULL,  "Bevi", "Stato", "Vai a", "Ritorna",
 	"Corrompi", "Esamina",
-	"Inform", "Reavvia", "Salva gioco", "Ripristina", "Abbandona", "Testo lento\x8B",
+	"Crediti", "Ricomincia", "Salva gioco", "Ripristina", "Abbandona", "Testo lento\x8B",
 	"Testo veloce\x8B",  "Sonoro acceso", "Sonoro spento",
 	"(niente)", " per ", " a ", " su ",
 	"e poi", "finito", "Sei sicuro (s/n)?",
-	"Stai portando ", "niente", "e hai ", "soldi", "soldis",
+	"Stai portando ", "niente", "Hai ", "soldo", "soldi",
 	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL, NULL, NULL
 };
 

@@ -54,6 +54,7 @@
 		#pragma warning( disable : 4505 ) // turn off "unreferenced local function has been removed"
 		#pragma warning( disable : 4510 ) // turn off "default constructor could not be generated"
 		#pragma warning( disable : 4610 ) // turn off "struct can never be instantiated - user defined constructor required"
+		#pragma warning( disable : 4800 ) // turn off "forcing value to bool 'true' or 'false' (performance warning)"
 
 		// vsnprintf is already defined in Visual Studio 2008
 		#if (_MSC_VER < 1500)

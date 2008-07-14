@@ -91,11 +91,7 @@ int ToucheEngine::init() {
 
 	setupOpcodes();
 
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	_midiPlayer = new MidiPlayer(driver, native_mt32);
-
+	_midiPlayer = new MidiPlayer;
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));

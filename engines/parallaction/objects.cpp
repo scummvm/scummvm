@@ -54,6 +54,7 @@ Animation::Animation() {
 
 Animation::~Animation() {
 	free(_scriptName);
+	gfxobj->release();
 }
 
 uint16 Animation::width() const {
@@ -182,7 +183,8 @@ Zone::~Zone() {
 		break;
 	}
 
-	delete _label;
+
+	free(_linkedName);
 }
 
 void Zone::getRect(Common::Rect& r) const {
@@ -205,6 +207,16 @@ uint16 Zone::width() const {
 
 uint16 Zone::height() const {
 	return _bottom - _top;
+}
+
+Dialogue::Dialogue() {
+	memset(_questions, 0, sizeof(_questions));
+}
+
+Dialogue::~Dialogue() {
+	for (int i = 0; i < NUM_QUESTIONS; i++) {
+		delete _questions[i];
+	}
 }
 
 Answer::Answer() {

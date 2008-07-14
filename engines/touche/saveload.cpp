@@ -200,9 +200,6 @@ static void saveOrLoad(S &s, ProgramPointData &data) {
 	saveOrLoad(s, data.order);
 }
 
-template <class S, class A>
-static void saveOrLoadCommonArray(S &s, A &array);
-
 template <class A>
 static void saveOrLoadCommonArray(Common::WriteStream &stream, A &array) {
 	uint count = array.size();

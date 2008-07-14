@@ -565,19 +565,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\sound\musicplugin.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\sound\musicplugin.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\sound\mixer.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\sound\mixer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\mixer_intern.h"
 				>
 			</File>
 			<File
@@ -594,6 +590,14 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\mpu401.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\musicplugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\musicplugin.h"
 				>
 			</File>
 			<File

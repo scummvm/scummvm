@@ -522,12 +522,13 @@ int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base,
 
 	/* get a list of all resources at this level */
 	wr = list_resources(fi, base, &rescnt);
-	if (wr == NULL)
+	if (wr == NULL) {
 		if (size != 0)
 			return size;
 		else
 			return 0;
-
+	}
+	
 	/* process each resource listed */
 	for (c = 0 ; c < rescnt ; c++) {
 		/* (over)write the corresponding WinResource holder with the current */

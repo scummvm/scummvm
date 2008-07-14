@@ -105,14 +105,16 @@ int KyraEngine_v1::init() {
 		// "KYRA1: Crash on exceeded polyphony" for more information).
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
-		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-			// TODO: currently we don't support the PC98 sound data,
-			// but since it has the FM-Towns data files, we just use the
-			// FM-Towns driver
+		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
 				_sound = new SoundTowns(this, _mixer);
 			else
-				_sound = new SoundTowns_v2(this, _mixer);
+				_sound = new SoundTownsPC98_v2(this, _mixer);
+		} else if (_flags.platform == Common::kPlatformPC98) {
+			if (_flags.gameID == GI_KYRA1)
+				_sound = new SoundPC98(this, _mixer);
+			else
+				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
 			_sound = new SoundAdlibPC(this, _mixer);
 			assert(_sound);
@@ -167,36 +169,6 @@ int KyraEngine_v1::init() {
 		_gameToLoad = ConfMan.getInt("save_slot");
 		if (!saveFileLoadable(_gameToLoad))
 			_gameToLoad = -1;
-	}
-
-	_lang = 0;
-	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-
-	if (_flags.gameID == GI_KYRA2 || _flags.gameID == GI_KYRA3) {
-		switch (lang) {
-		case Common::EN_ANY:
-		case Common::EN_USA:
-		case Common::EN_GRB:
-			_lang = 0;
-			break;
-
-		case Common::FR_FRA:
-			_lang = 1;
-			break;
-
-		case Common::DE_DEU:
-			_lang = 2;
-			break;
-
-		case Common::JA_JPN:
-			_lang = 3;
-			break;
-
-		default:
-			warning("unsupported language, switching back to English");
-			_lang = 0;
-			break;
-		}
 	}
 
 	return 0;
@@ -276,6 +248,14 @@ void KyraEngine_v1::delayWithTicks(int ticks) {
 void KyraEngine_v1::registerDefaultSettings() {
 	if (_flags.gameID != GI_KYRA3)
 		ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
+	if (_flags.fanLang != Common::UNK_LANG) {
+		// HACK/WORKAROUND: Since we can't use registerDefault here to overwrite
+		// the global subtitles settings, we're using this hack to enable subtitles
+		// for fan translations
+		const Common::ConfigManager::Domain *cur = ConfMan.getActiveDomain();
+		if (!cur || (cur && cur->get("subtitles").empty()))
+			ConfMan.setBool("subtitles", true);
+	}
 }
 
 void KyraEngine_v1::readSettings() {

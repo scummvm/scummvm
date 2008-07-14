@@ -912,12 +912,21 @@ void Inter_v1::o1_initMult() {
 	animDataVar = _vm->_parse->parseVarIndex();
 
 	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
+
 		warning("Initializing new objects without having "
 				"cleaned up the old ones at first");
+
+		for (int i = 0; i < _vm->_mult->_objCount; i++) {
+			delete _vm->_mult->_objects[i].pPosX;
+			delete _vm->_mult->_objects[i].pPosY;
+		}
+
 		delete[] _vm->_mult->_objects;
 		delete[] _vm->_mult->_renderData;
+
 		_vm->_mult->_objects = 0;
 		_vm->_mult->_renderObjs = 0;
+
 	}
 
 	if (_vm->_mult->_objects == 0) {
@@ -933,8 +942,8 @@ void Inter_v1::o1_initMult() {
 			uint32 offPosY = i * 4 + (posYVar / 4) * 4;
 			uint32 offAnim = animDataVar + i * 4 * _vm->_global->_inter_animDataSize;
 
-			_vm->_mult->_objects[i].pPosX = (int32 *) _variables->getAddressOff32(offPosX);
-			_vm->_mult->_objects[i].pPosY = (int32 *) _variables->getAddressOff32(offPosY);
+			_vm->_mult->_objects[i].pPosX = new VariableReference(*_vm->_inter->_variables, offPosX);
+			_vm->_mult->_objects[i].pPosY = new VariableReference(*_vm->_inter->_variables, offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
 				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
@@ -1774,7 +1783,7 @@ bool Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 
 	gobParams.extraData = 0;
 	gobParams.objDesc = 0;
-	gobParams.retVarPtr = (int32 *) VAR_ADDRESS(59);
+	gobParams.retVarPtr.set(*_vm->_inter->_variables, 236);
 
 	cmd = load16();
 	_vm->_global->_inter_execPtr += 2;
@@ -2268,49 +2277,49 @@ bool Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 void Inter_v1::o1_setState(OpGobParams &params) {
 	params.objDesc->state = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemStateVarPtr = params.extraData;
+		_vm->_goblin->_destItemStateVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setCurFrame(OpGobParams &params) {
 	params.objDesc->curFrame = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemFrameVarPtr = params.extraData;
+		_vm->_goblin->_destItemFrameVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setNextState(OpGobParams &params) {
 	params.objDesc->nextState = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemNextStateVarPtr = params.extraData;
+		_vm->_goblin->_destItemNextStateVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setMultState(OpGobParams &params) {
 	params.objDesc->multState = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemMultStateVarPtr = params.extraData;
+		_vm->_goblin->_destItemMultStateVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setOrder(OpGobParams &params) {
 	params.objDesc->order = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemOrderVarPtr = params.extraData;
+		_vm->_goblin->_destItemOrderVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setActionStartState(OpGobParams &params) {
 	params.objDesc->actionStartState = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemActStartStVarPtr = params.extraData;
+		_vm->_goblin->_destItemActStartStVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setCurLookDir(OpGobParams &params) {
 	params.objDesc->curLookDir = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemLookDirVarPtr = params.extraData;
+		_vm->_goblin->_destItemLookDirVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setType(OpGobParams &params) {
 	params.objDesc->type = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemTypeVarPtr = params.extraData;
+		_vm->_goblin->_destItemTypeVarPtr = (uint32) params.extraData;
 
 	if (params.extraData == 0)
 		params.objDesc->toRedraw = 1;
@@ -2319,107 +2328,107 @@ void Inter_v1::o1_setType(OpGobParams &params) {
 void Inter_v1::o1_setNoTick(OpGobParams &params) {
 	params.objDesc->noTick = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemNoTickVarPtr = params.extraData;
+		_vm->_goblin->_destItemNoTickVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setPickable(OpGobParams &params) {
 	params.objDesc->pickable = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemPickableVarPtr = params.extraData;
+		_vm->_goblin->_destItemPickableVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setXPos(OpGobParams &params) {
 	params.objDesc->xPos = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemScrXVarPtr = params.extraData;
+		_vm->_goblin->_destItemScrXVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setYPos(OpGobParams &params) {
 	params.objDesc->yPos = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemScrYVarPtr = params.extraData;
+		_vm->_goblin->_destItemScrYVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setDoAnim(OpGobParams &params) {
 	params.objDesc->doAnim = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemDoAnimVarPtr = params.extraData;
+		_vm->_goblin->_destItemDoAnimVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setRelaxTime(OpGobParams &params) {
 	params.objDesc->relaxTime = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemRelaxVarPtr = params.extraData;
+		_vm->_goblin->_destItemRelaxVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_setMaxTick(OpGobParams &params) {
 	params.objDesc->maxTick = params.extraData;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc)
-		*_vm->_goblin->_destItemMaxTickVarPtr = params.extraData;
+		_vm->_goblin->_destItemMaxTickVarPtr = (uint32) params.extraData;
 }
 
 void Inter_v1::o1_getState(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->state;
+	params.retVarPtr = (uint32) params.objDesc->state;
 }
 
 void Inter_v1::o1_getCurFrame(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->curFrame;
+	params.retVarPtr = (uint32) params.objDesc->curFrame;
 }
 
 void Inter_v1::o1_getNextState(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->nextState;
+	params.retVarPtr = (uint32) params.objDesc->nextState;
 }
 
 void Inter_v1::o1_getMultState(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->multState;
+	params.retVarPtr = (uint32) params.objDesc->multState;
 }
 
 void Inter_v1::o1_getOrder(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->order;
+	params.retVarPtr = (uint32) params.objDesc->order;
 }
 
 void Inter_v1::o1_getActionStartState(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->actionStartState;
+	params.retVarPtr = (uint32) params.objDesc->actionStartState;
 }
 
 void Inter_v1::o1_getCurLookDir(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->curLookDir;
+	params.retVarPtr = (uint32) params.objDesc->curLookDir;
 }
 
 void Inter_v1::o1_getType(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->type;
+	params.retVarPtr = (uint32) params.objDesc->type;
 }
 
 void Inter_v1::o1_getNoTick(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->noTick;
+	params.retVarPtr = (uint32) params.objDesc->noTick;
 }
 
 void Inter_v1::o1_getPickable(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->pickable;
+	params.retVarPtr = (uint32) params.objDesc->pickable;
 }
 
 void Inter_v1::o1_getObjMaxFrame(OpGobParams &params) {
-	*params.retVarPtr = _vm->_goblin->getObjMaxFrame(params.objDesc);
+	params.retVarPtr = (uint32) _vm->_goblin->getObjMaxFrame(params.objDesc);
 }
 
 void Inter_v1::o1_getXPos(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->xPos;
+	params.retVarPtr = (uint32) params.objDesc->xPos;
 }
 
 void Inter_v1::o1_getYPos(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->yPos;
+	params.retVarPtr = (uint32) params.objDesc->yPos;
 }
 
 void Inter_v1::o1_getDoAnim(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->doAnim;
+	params.retVarPtr = (uint32) params.objDesc->doAnim;
 }
 
 void Inter_v1::o1_getRelaxTime(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->relaxTime;
+	params.retVarPtr = (uint32) params.objDesc->relaxTime;
 }
 
 void Inter_v1::o1_getMaxTick(OpGobParams &params) {
-	*params.retVarPtr = params.objDesc->maxTick;
+	params.retVarPtr = (uint32) params.objDesc->maxTick;
 }
 
 void Inter_v1::o1_manipulateMap(OpGobParams &params) {
@@ -2435,9 +2444,9 @@ void Inter_v1::o1_getItem(OpGobParams &params) {
 	int16 yPos = load16();
 
 	if ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0)
-		*params.retVarPtr = (_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) >> 8;
+		params.retVarPtr = (uint32) ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) >> 8);
 	else
-		*params.retVarPtr = _vm->_map->_itemsMap[yPos][xPos];
+		params.retVarPtr = (uint32) _vm->_map->_itemsMap[yPos][xPos];
 }
 
 void Inter_v1::o1_manipulateMapIndirect(OpGobParams &params) {
@@ -2460,9 +2469,9 @@ void Inter_v1::o1_getItemIndirect(OpGobParams &params) {
 	yPos = VAR(yPos);
 
 	if ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0)
-		*params.retVarPtr = (_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) >> 8;
+		params.retVarPtr = (uint32) ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) >> 8);
 	else
-		*params.retVarPtr = _vm->_map->_itemsMap[yPos][xPos];
+		params.retVarPtr = (uint32) _vm->_map->_itemsMap[yPos][xPos];
 }
 
 void Inter_v1::o1_setPassMap(OpGobParams &params) {
@@ -2500,11 +2509,11 @@ void Inter_v1::o1_setGoblinPosH(OpGobParams &params) {
 	params.objDesc->curFrame = 0;
 	params.objDesc->state = 21;
 	if (_vm->_goblin->_currentGoblin == item) {
-		*_vm->_goblin->_curGobScrXVarPtr = params.objDesc->xPos;
-		*_vm->_goblin->_curGobScrYVarPtr = params.objDesc->yPos;
+		_vm->_goblin->_curGobScrXVarPtr = (uint32) params.objDesc->xPos;
+		_vm->_goblin->_curGobScrYVarPtr = (uint32) params.objDesc->yPos;
 
-		*_vm->_goblin->_curGobFrameVarPtr = 0;
-		*_vm->_goblin->_curGobStateVarPtr = 18;
+		_vm->_goblin->_curGobFrameVarPtr = 0;
+		_vm->_goblin->_curGobStateVarPtr = 18;
 		_vm->_goblin->_pressedMapX = _vm->_goblin->_gobPositions[item].x;
 		_vm->_goblin->_pressedMapY = _vm->_goblin->_gobPositions[item].y;
 	}
@@ -2512,12 +2521,12 @@ void Inter_v1::o1_setGoblinPosH(OpGobParams &params) {
 
 void Inter_v1::o1_getGoblinPosXH(OpGobParams &params) {
 	int16 item = load16();
-	*params.retVarPtr = _vm->_goblin->_gobPositions[item].x >> 1;
+	params.retVarPtr = (uint32) (_vm->_goblin->_gobPositions[item].x >> 1);
 }
 
 void Inter_v1::o1_getGoblinPosYH(OpGobParams &params) {
 	int16 item = load16();
-	*params.retVarPtr = _vm->_goblin->_gobPositions[item].y >> 1;
+	params.retVarPtr = (uint32) (_vm->_goblin->_gobPositions[item].y >> 1);
 }
 
 void Inter_v1::o1_setGoblinMultState(OpGobParams &params) {
@@ -2539,14 +2548,14 @@ void Inter_v1::o1_setGoblinMultState(OpGobParams &params) {
 		params.objDesc->xPos = animLayer->posX;
 		params.objDesc->yPos = animLayer->posY;
 
-		*_vm->_goblin->_curGobScrXVarPtr = params.objDesc->xPos;
-		*_vm->_goblin->_curGobScrYVarPtr = params.objDesc->yPos;
-		*_vm->_goblin->_curGobFrameVarPtr = 0;
-		*_vm->_goblin->_curGobStateVarPtr = params.objDesc->state;
-		*_vm->_goblin->_curGobNextStateVarPtr = params.objDesc->nextState;
-		*_vm->_goblin->_curGobMultStateVarPtr = params.objDesc->multState;
-		*_vm->_goblin->_curGobMaxFrameVarPtr =
-				_vm->_goblin->getObjMaxFrame(params.objDesc);
+		_vm->_goblin->_curGobScrXVarPtr = (uint32) params.objDesc->xPos;
+		_vm->_goblin->_curGobScrYVarPtr = (uint32) params.objDesc->yPos;
+		_vm->_goblin->_curGobFrameVarPtr = 0;
+		_vm->_goblin->_curGobStateVarPtr = (uint32) params.objDesc->state;
+		_vm->_goblin->_curGobNextStateVarPtr = (uint32) params.objDesc->nextState;
+		_vm->_goblin->_curGobMultStateVarPtr = (uint32) params.objDesc->multState;
+		_vm->_goblin->_curGobMaxFrameVarPtr =
+				(uint32) _vm->_goblin->getObjMaxFrame(params.objDesc);
 		_vm->_goblin->_noPick = 1;
 		return;
 	}
@@ -2573,12 +2582,12 @@ void Inter_v1::o1_setGoblinMultState(OpGobParams &params) {
 	_vm->_goblin->_pressedMapY = yPos;
 	_vm->_map->_curGoblinY = yPos;
 
-	*_vm->_goblin->_curGobScrXVarPtr = params.objDesc->xPos;
-	*_vm->_goblin->_curGobScrYVarPtr = params.objDesc->yPos;
-	*_vm->_goblin->_curGobFrameVarPtr = 0;
-	*_vm->_goblin->_curGobStateVarPtr = 21;
-	*_vm->_goblin->_curGobNextStateVarPtr = 21;
-	*_vm->_goblin->_curGobMultStateVarPtr = -1;
+	_vm->_goblin->_curGobScrXVarPtr = (uint32) params.objDesc->xPos;
+	_vm->_goblin->_curGobScrYVarPtr = (uint32) params.objDesc->yPos;
+	_vm->_goblin->_curGobFrameVarPtr = 0;
+	_vm->_goblin->_curGobStateVarPtr = 21;
+	_vm->_goblin->_curGobNextStateVarPtr = 21;
+	_vm->_goblin->_curGobMultStateVarPtr = (uint32) -1;
 	_vm->_goblin->_noPick = 0;
 }
 
@@ -2598,11 +2607,11 @@ void Inter_v1::o1_setItemIndInPocket(OpGobParams &params) {
 }
 
 void Inter_v1::o1_getItemIdInPocket(OpGobParams &params) {
-	*params.retVarPtr = _vm->_goblin->_itemIdInPocket;
+	params.retVarPtr = (uint32) _vm->_goblin->_itemIdInPocket;
 }
 
 void Inter_v1::o1_getItemIndInPocket(OpGobParams &params) {
-	*params.retVarPtr = _vm->_goblin->_itemIndInPocket;
+	params.retVarPtr = (uint32) _vm->_goblin->_itemIndInPocket;
 }
 
 void Inter_v1::o1_setGoblinPos(OpGobParams &params) {
@@ -2632,10 +2641,10 @@ void Inter_v1::o1_setGoblinPos(OpGobParams &params) {
 	params.objDesc->state = 21;
 
 	if (_vm->_goblin->_currentGoblin == item) {
-		*_vm->_goblin->_curGobScrXVarPtr = params.objDesc->xPos;
-		*_vm->_goblin->_curGobScrYVarPtr = params.objDesc->yPos;
-		*_vm->_goblin->_curGobFrameVarPtr = 0;
-		*_vm->_goblin->_curGobStateVarPtr = 18;
+		_vm->_goblin->_curGobScrXVarPtr = (uint32) params.objDesc->xPos;
+		_vm->_goblin->_curGobScrYVarPtr = (uint32) params.objDesc->yPos;
+		_vm->_goblin->_curGobFrameVarPtr = 0;
+		_vm->_goblin->_curGobStateVarPtr = 18;
 
 		_vm->_goblin->_pressedMapX = _vm->_goblin->_gobPositions[item].x;
 		_vm->_goblin->_pressedMapY = _vm->_goblin->_gobPositions[item].y;
@@ -2659,11 +2668,11 @@ void Inter_v1::o1_setGoblinState(OpGobParams &params) {
 	params.objDesc->yPos = animLayer->posY;
 
 	if (item == _vm->_goblin->_currentGoblin) {
-		*_vm->_goblin->_curGobScrXVarPtr = params.objDesc->xPos;
-		*_vm->_goblin->_curGobScrYVarPtr = params.objDesc->yPos;
-		*_vm->_goblin->_curGobFrameVarPtr = 0;
-		*_vm->_goblin->_curGobStateVarPtr = params.objDesc->state;
-		*_vm->_goblin->_curGobMultStateVarPtr = params.objDesc->multState;
+		_vm->_goblin->_curGobScrXVarPtr = (uint32) params.objDesc->xPos;
+		_vm->_goblin->_curGobScrYVarPtr = (uint32) params.objDesc->yPos;
+		_vm->_goblin->_curGobFrameVarPtr = 0;
+		_vm->_goblin->_curGobStateVarPtr = (uint32) params.objDesc->state;
+		_vm->_goblin->_curGobMultStateVarPtr = (uint32) params.objDesc->multState;
 	}
 }
 
@@ -2686,13 +2695,13 @@ void Inter_v1::o1_setGoblinStateRedraw(OpGobParams &params) {
 	params.objDesc->toRedraw = 1;
 	params.objDesc->type = 0;
 	if (params.objDesc == _vm->_goblin->_actDestItemDesc) {
-		*_vm->_goblin->_destItemScrXVarPtr = params.objDesc->xPos;
-		*_vm->_goblin->_destItemScrYVarPtr = params.objDesc->yPos;
+		_vm->_goblin->_destItemScrXVarPtr = (uint32) params.objDesc->xPos;
+		_vm->_goblin->_destItemScrYVarPtr = (uint32) params.objDesc->yPos;
 
-		*_vm->_goblin->_destItemStateVarPtr = params.objDesc->state;
-		*_vm->_goblin->_destItemNextStateVarPtr = -1;
-		*_vm->_goblin->_destItemMultStateVarPtr = -1;
-		*_vm->_goblin->_destItemFrameVarPtr = 0;
+		_vm->_goblin->_destItemStateVarPtr = (uint32) params.objDesc->state;
+		_vm->_goblin->_destItemNextStateVarPtr = (uint32) -1;
+		_vm->_goblin->_destItemMultStateVarPtr = (uint32) -1;
+		_vm->_goblin->_destItemFrameVarPtr = 0;
 	}
 }
 
@@ -2712,12 +2721,12 @@ void Inter_v1::o1_decRelaxTime(OpGobParams &params) {
 
 void Inter_v1::o1_getGoblinPosX(OpGobParams &params) {
 	int16 item = load16();
-	*params.retVarPtr = _vm->_goblin->_gobPositions[item].x;
+	params.retVarPtr = (uint32) _vm->_goblin->_gobPositions[item].x;
 }
 
 void Inter_v1::o1_getGoblinPosY(OpGobParams &params) {
 	int16 item = load16();
-	*params.retVarPtr = _vm->_goblin->_gobPositions[item].y;
+	params.retVarPtr = (uint32) _vm->_goblin->_gobPositions[item].y;
 }
 
 void Inter_v1::o1_clearPathExistence(OpGobParams &params) {
@@ -2741,9 +2750,9 @@ void Inter_v1::o1_getObjectIntersect(OpGobParams &params) {
 	params.objDesc = _vm->_goblin->_objects[params.extraData];
 	if (_vm->_goblin->objIntersected(params.objDesc,
 				_vm->_goblin->_goblins[item]))
-		*params.retVarPtr = 1;
+		params.retVarPtr = 1;
 	else
-		*params.retVarPtr = 0;
+		params.retVarPtr = 0;
 }
 
 void Inter_v1::o1_getGoblinIntersect(OpGobParams &params) {
@@ -2753,9 +2762,9 @@ void Inter_v1::o1_getGoblinIntersect(OpGobParams &params) {
 	params.objDesc = _vm->_goblin->_goblins[params.extraData];
 	if (_vm->_goblin->objIntersected(params.objDesc,
 				_vm->_goblin->_goblins[item]))
-		*params.retVarPtr = 1;
+		params.retVarPtr = 1;
 	else
-		*params.retVarPtr = 0;
+		params.retVarPtr = 0;
 }
 
 void Inter_v1::o1_setItemPos(OpGobParams &params) {
@@ -2886,7 +2895,7 @@ void Inter_v1::o1_initGoblin(OpGobParams &params) {
 		_vm->_map->_destY = _vm->_goblin->_gobPositions[0].y;
 		_vm->_goblin->_gobDestY = _vm->_goblin->_gobPositions[0].y;
 
-		*_vm->_goblin->_curGobVarPtr = 0;
+		_vm->_goblin->_curGobVarPtr = 0;
 		_vm->_goblin->_pathExistence = 0;
 		_vm->_goblin->_readyToAct = 0;
 	}

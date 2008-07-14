@@ -1764,18 +1764,32 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 	int16 lx = objectTable[objIdx].x + x;
 	int16 ly = objectTable[objIdx].y + y;
 	int16 idx;
+	int16 result = 0;
 
 	for (int16 i = 0; i < numZones; i++) {
 		idx = getZoneFromPositionRaw(page3Raw, lx + i, ly, 320);
 
-		assert(idx >= 0 && idx <= NUM_MAX_ZONE);
+		assert(idx >= 0 && idx < NUM_MAX_ZONE);
+
+		// The zoneQuery table is updated here only in Operation Stealth
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			if (zoneData[idx] < NUM_MAX_ZONE) {
+				zoneQuery[zoneData[idx]]++;
+			}
+		}
 
 		if (zoneData[idx] == zoneIdx) {
-			return 1;
+			result = 1;
+			// Future Wars breaks out early on the first match, but
+			// Operation Stealth doesn't because it needs to update
+			// the zoneQuery table for the whole loop's period.
+			if (g_cine->getGameType() == Cine::GType_FW) {
+				break;
+			}
 		}
 	}
 
-	return 0;
+	return result;
 }
 
 uint16 compareVars(int16 a, int16 b) {

@@ -94,6 +94,9 @@ protected:
 	virtual void update() = 0;
 	virtual void updateWithText() = 0;
 
+	// detection
+	int _lang;
+
 	// MainMenu
 	MainMenu *_menu;
 

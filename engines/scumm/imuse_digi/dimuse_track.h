@@ -85,13 +85,15 @@ struct Track {
 	int getPan() const { return (pan != 64) ? 2 * pan - 127 : 0; }
 	int getVol() const { return vol / 1000; }
 	Audio::Mixer::SoundType getType() const {
-		Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
+		Audio::Mixer::SoundType type;
 		if (volGroupId == 1)
 			type = Audio::Mixer::kSpeechSoundType;
 		else if (volGroupId == 2)
 			type = Audio::Mixer::kSFXSoundType;
 		else if (volGroupId == 3)
 			type = Audio::Mixer::kMusicSoundType;
+		else
+			error("Track::getType(): invalid sound type");
 		return type;
 	}
 };

@@ -28,18 +28,37 @@
 
 #if defined(USE_NULL_DRIVER)
 
+#ifdef UNIX
+#include <unistd.h>
+#include <sys/time.h>
+#endif
+
 #include "common/rect.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
+
+/*
+ * Include header files needed for the getFilesystemFactory() method.
+ */
+#if defined(__amigaos4__)
+	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#elif defined(UNIX)
+	#include "backends/fs/posix/posix-fs-factory.h"
+#elif defined(WIN32)
+	#include "backends/fs/windows/windows-fs-factory.h"
+#endif
+
+
 
 class OSystem_NULL : public OSystem {
 protected:
 	Common::SaveFileManager *_savefile;
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
 
+	timeval _startTime;
 public:
 
 	OSystem_NULL();
@@ -93,8 +112,6 @@ public:
 
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual void clearSoundCallback();
-	virtual int getOutputSampleRate() const;
 
 	virtual void quit();
 
@@ -104,6 +121,8 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(struct tm &t) const;
 	virtual Common::TimerManager *getTimerManager();
+	FilesystemFactory *getFilesystemFactory();
+
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -124,8 +143,13 @@ OSystem_NULL::~OSystem_NULL() {
 
 void OSystem_NULL::initBackend() {
 	_savefile = new DefaultSaveFileManager();
-	_mixer = new Audio::Mixer();
+	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
+
+	_mixer->setOutputRate(22050);
+	_mixer->setReady(false);
+
+	gettimeofday(&_startTime, NULL);
 
 	// Note that both the mixer and the timer manager are useless
 	// this way; they need to be hooked into the system somehow to
@@ -245,10 +269,20 @@ bool OSystem_NULL::pollEvent(Common::Event &event) {
 }
 
 uint32 OSystem_NULL::getMillis() {
+#ifdef UNIX
+	timeval curTime;
+	gettimeofday(&curTime, NULL);
+	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) + \
+			((curTime.tv_usec - _startTime.tv_usec) / 1000));
+#else
 	return 0;
+#endif
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
+#ifdef UNIX
+	usleep(msecs * 1000);
+#endif
 }
 
 OSystem::MutexRef OSystem_NULL::createMutex(void) {
@@ -266,13 +300,6 @@ void OSystem_NULL::deleteMutex(MutexRef mutex) {
 
 bool OSystem_NULL::setSoundCallback(SoundProc proc, void *param) {
 	return true;
-}
-
-void OSystem_NULL::clearSoundCallback() {
-}
-
-int OSystem_NULL::getOutputSampleRate() const {
-	return 22050;
 }
 
 void OSystem_NULL::quit() {
@@ -298,6 +325,19 @@ Common::TimerManager *OSystem_NULL::getTimerManager() {
 
 void OSystem_NULL::getTimeAndDate(struct tm &t) const {
 }
+
+FilesystemFactory *OSystem_NULL::getFilesystemFactory() {
+	#if defined(__amigaos4__)
+		return &AmigaOSFilesystemFactory::instance();
+	#elif defined(UNIX)
+		return &POSIXFilesystemFactory::instance();
+	#elif defined(WIN32)
+		return &WindowsFilesystemFactory::instance();
+	#else
+		#error Unknown and unsupported backend in OSystem_NULL::getFilesystemFactory
+	#endif
+}
+
 
 OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();

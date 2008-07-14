@@ -97,6 +97,9 @@
 	</Configurations>
 	<Files>
 		<File
+			RelativePath="..\..\engines\parallaction\balloons.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\callables_br.cpp">
 		</File>
 		<File
@@ -122,6 +125,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\disk_ns.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\exec.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\exec_br.cpp">

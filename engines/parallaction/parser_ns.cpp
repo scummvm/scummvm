@@ -1059,7 +1059,7 @@ DECLARE_LOCATION_PARSER(flags)  {
 
 	if ((_vm->getLocationFlags() & kFlagsVisited) == 0) {
 		// only for 1st visit
-		_vm->clearLocationFlags(kFlagsAll);
+		_vm->clearLocationFlags((uint32)kFlagsAll);
 		int _si = 1;
 
 		do {

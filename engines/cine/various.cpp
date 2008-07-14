@@ -94,6 +94,9 @@ int16 saveVar2;
 
 byte isInPause = 0;
 
+// TODO: Implement inputVar0's changes in the program
+// Currently inputVar0 isn't updated anywhere even though it's used at least in processSeqListElement.
+uint16 inputVar0 = 0;
 byte inputVar1 = 0;
 uint16 inputVar2 = 0, inputVar3 = 0;
 
@@ -110,6 +113,7 @@ CommandeType objectListCommand[20];
 int16 objListTab[20];
 
 uint16 zoneData[NUM_MAX_ZONE];
+uint16 zoneQuery[NUM_MAX_ZONE]; //!< Only exists in Operation Stealth
 
 
 void stopMusicAfterFadeOut(void) {
@@ -130,6 +134,7 @@ void runObjectScript(int16 entryIdx) {
  */
 void addPlayerCommandMessage(int16 cmd) {
 	overlay tmp;
+	memset(&tmp, 0, sizeof(tmp));
 	tmp.objIdx = cmd;
 	tmp.type = 3;
 
@@ -389,6 +394,7 @@ bool brokenSave(Common::InSaveFile &fHandle) {
 }
 
 /*! \todo Implement Operation Stealth loading, this is obviously Future Wars only
+ * \todo Add support for loading the zoneQuery table (Operation Stealth specific)
  */
 bool CineEngine::makeLoad(char *saveName) {
 	int16 i;
@@ -586,6 +592,8 @@ bool CineEngine::makeLoad(char *saveName) {
 	return true;
 }
 
+/*! \todo Add support for saving the zoneQuery table (Operation Stealth specific)
+ */
 void makeSave(char *saveFileName) {
 	int16 i;
 	Common::OutSaveFile *fHandle;
@@ -1580,16 +1588,19 @@ void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
 	}
 }
 
-uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
+bool isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
 	Common::List<SeqListElement>::iterator it;
 
 	for (it = seqList.begin(); it != seqList.end(); ++it) {
 		if (it->objIdx == param1 && it->var4 == param2 && it->varE == param3) {
-			return 1;
+			// Just to be on the safe side there's a restriction of the
+			// addition's result to 16-bit arithmetic here like in the
+			// original. It's possible that it's not strictly needed.
+			return ((it->var14 + it->var16) & 0xFFFF) == 0;
 		}
 	}
 
-	return 0;
+	return true;
 }
 
 void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
@@ -1614,6 +1625,19 @@ void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, i
 	tmp.var1E = 0;
 
 	seqList.insert(it, tmp);
+}
+
+void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 param2, int16 param3, int16 param4) {
+	// Find a suitable list element and modify it
+	for (Common::List<SeqListElement>::iterator it = seqList.begin(); it != seqList.end(); ++it) {
+		if (it->objIdx == objIdx && it->var4 == var4Test) {
+			it->varC  = param1;
+			it->var18 = param2;
+			it->var1A = param3;
+			it->var10 = it->var12 = param4;
+			break;
+		}
+	}
 }
 
 void computeMove1(SeqListElement &element, int16 x, int16 y, int16 param1,
@@ -1660,105 +1684,48 @@ uint16 computeMove2(SeqListElement &element) {
 	return returnVar;
 }
 
-// sort all the gfx stuff...
-
-void resetGfxEntityEntry(uint16 objIdx) {
-#if 0
-	overlayHeadElement* tempHead = &overlayHead;
-	byte* var_16 = NULL;
-	uint16 var_10 = 0;
-	uint16 var_12 = 0;
-	overlayHeadElement* currentHead = tempHead->next;
-	byte* var_1A = NULL;
-	overlayHeadElement* var1E = &overlayHead;
-
-	while (currentHead) {
-		tempHead2 = currentHead->next;
-
-		if (currentHead->objIdx == objIdx && currentHead->type!=2 && currentHead->type!=3 && currentHead->type!=0x14) {
-			tempHead->next = tempHead2;
-
-			if (tempHead2) {
-				tempHead2->previous = currentHead->previous;
-			} else {
-				seqVar0 = currentHead->previous;
-			}
-
-			var_22 = var_16;
-
-			if (!var_22) {
-				// todo: goto?
-			}
-
-			var_22->previous = currentHead;
-		} else {
-		}
-
-		if (currentHead->type == 0x14) {
-		} else {
-		}
-
-		if (currentHead->type == 0x2 || currentHead->type == 0x3) {
-			si = 10000;
-		} else {
-			si = objectTable[currentHead->objIdx];
-		}
-
-		if (objectTable[objIdx]>si) {
-			var1E = currentHead;
-		}
-
-		tempHead = tempHead->next;
-
-	}
-
-	if (var_1A) {
-		currentHead = var_16;
-		var_22 = var_1E->next;
-		var_1E->next = currentHead;
-		var_1A->next = var_22;
-
-		if (var_1E != &gfxEntityHead) {
-			currentHead->previous = var_1E;
-		}
-
-		if (!var_22) {
-			seqVar0 = var_1A;
-		} else {
-			var_22->previous = var_1A;
-		}
-
-	}
-#endif
-}
-
-uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptr, SeqListElement &element, uint16 param3, int16 *param4) {
-	const byte *currentPtr = ptr;
-	const byte *ptrData;
-	const byte *ptr2;
+uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &element, uint16 param3, int16 *param4) {
+	const int8 *ptrData;
+	const int8 *ptr2;
 	int16 di;
 
+	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(ptr);
-	assert(param4);
 
-	dummyU16 = READ_BE_UINT16((currentPtr + param1 * 2) + 8);
-
+	// We probably could just use a local variable here instead of the dummyU16 but
+	// haven't checked if this has any side-effects so keeping it this way still.
+	dummyU16 = READ_BE_UINT16(ptr + param1 * 2 + 8);
 	ptrData = ptr + dummyU16;
 
+	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(*ptrData);
 
 	di = (objectTable[objIdx].costume + 1) % (*ptrData);
-	ptr2 = (ptrData + (di * 8)) + 1;
+	++ptrData; // Jump over the just read byte
+	// Here ptr2 seems to be indexing a table of structs (8 bytes per struct):
+	//	struct {
+	//		int8 x;			// 0 (Used with checkCollision)
+	//		int8 y;			// 1 (Used with checkCollision)
+	//		int8 numZones;	// 2 (Used with checkCollision)
+	//		int8 var3;		// 3 (Not used in this function)
+	//		int8 xAdd;		// 4 (Used with an object)
+	//		int8 yAdd;		// 5 (Used with an object)
+	//		int8 maskAdd;	// 6 (Used with an object)
+	//		int8 frameAdd;	// 7 (Used with an object)
+	//	};
+	ptr2 = ptrData + di * 8;
 
+	// We might probably safely discard the AND by 1 here because
+	// at least in the original checkCollision returns always 0 or 1.
 	if ((checkCollision(objIdx, ptr2[0], ptr2[1], ptr2[2], ptr[0]) & 1)) {
 		return 0;
 	}
 
-	objectTable[objIdx].x += (int8)ptr2[4];
-	objectTable[objIdx].y += (int8)ptr2[5];
-	objectTable[objIdx].mask += (int8)ptr2[6];
+	objectTable[objIdx].x += ptr2[4];
+	objectTable[objIdx].y += ptr2[5];
+	objectTable[objIdx].mask += ptr2[6];
 
-	if (objectTable[objIdx].frame) {
+	if (ptr2[6]) {
 		resetGfxEntityEntry(objIdx);
 	}
 
@@ -1767,16 +1734,63 @@ uint16 addAni(uint16 param1, uint16 objIdx, const byte *ptr, SeqListElement &ele
 	if (param3 || !element.var14) {
 		objectTable[objIdx].costume = di;
 	} else {
+		assert(param4);
 		*param4 = di;
 	}
 
 	return 1;
 }
 
+/*! 
+ * Permutates the overlay list into a different order according to some logic.
+ * \todo Check this function for correctness (Wasn't very easy to reverse engineer so there may be errors)
+ */
+void resetGfxEntityEntry(uint16 objIdx) {
+	Common::List<overlay>::iterator it, bObjsCutPoint;
+	Common::List<overlay> aReverseObjs, bObjs;
+	bool foundCutPoint = false;	
+
+	// Go through the overlay list and partition the whole list into two categories (Type A and type B objects)
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		if (it->objIdx == objIdx && it->type != 2 && it->type != 3) { // Type A object
+			aReverseObjs.push_front(*it);
+		} else { // Type B object
+			bObjs.push_back(*it);
+			uint16 objectMask;
+			if (it->type == 2 || it->type == 3) {
+				objectMask = 10000;
+			} else {
+				objectMask = objectTable[it->objIdx].mask;
+			}
+	
+			if (objectTable[objIdx].mask > objectMask) { // Check for B objects' cut point
+				bObjsCutPoint = bObjs.reverse_begin();
+				foundCutPoint = true;
+			}
+		}
+	}
+	
+	// Recreate the overlay list in a different order.
+	overlayList.clear();
+	if (foundCutPoint) {
+		// If a cut point was found the order is:
+		// B objects before the cut point, the cut point, A objects in reverse order, B objects after cut point.
+		++bObjsCutPoint; // Include the cut point in the first list insertion
+		overlayList.insert(overlayList.end(), bObjs.begin(), bObjsCutPoint);
+		overlayList.insert(overlayList.end(), aReverseObjs.begin(), aReverseObjs.end());
+		overlayList.insert(overlayList.end(), bObjsCutPoint, bObjs.end());
+	} else {
+		// If no cut point was found the order is:
+		// A objects in reverse order, B objects.
+		overlayList.insert(overlayList.end(), aReverseObjs.begin(), aReverseObjs.end());
+		overlayList.insert(overlayList.end(), bObjs.begin(), bObjs.end());
+	}
+}
+
 void processSeqListElement(SeqListElement &element) {
 	int16 x = objectTable[element.objIdx].x;
 	int16 y = objectTable[element.objIdx].y;
-	const byte *ptr1 = animDataTable[element.frame].data();
+	const int8 *ptr1 = (const int8 *) animDataTable[element.frame].data();
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;
@@ -1789,22 +1803,44 @@ void processSeqListElement(SeqListElement &element) {
 	element.var12 = 0;
 
 	if (ptr1) {
-		uint16 param1 = ptr1[1];
-		uint16 param2 = ptr1[2];
+		int16 param1 = ptr1[1];
+		int16 param2 = ptr1[2];
 
 		if (element.varC != 255) {
-			// FIXME: Why is this here? Fingolfin gets lots of these
-			// in his copy of Operation Stealth (value 0 or 236) under
-			// Mac OS X. Maybe it's a endian issue? At least the graphics
-			// in the copy protection screen are partially messed up.
-			warning("processSeqListElement: varC = %d", element.varC);
-		}
-
-		if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
-			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
+			int16 x2 = element.var18;
+			int16 y2 = element.var1A;
+			if (element.varC) {
+				x2 += objectTable[element.varC].x;
+				y2 += objectTable[element.varC].y;
+			}
+			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, x2, y2);
 		} else {
-			element.var16 = 0;
-			element.var14 = 0;
+			if (inputVar0 && allowPlayerInput) {
+				int16 adder = param1 + 1;
+				if (inputVar0 != 1) {
+					adder = -adder;
+				}
+				// FIXME: In Operation Stealth's disassembly global variable 251 is used here
+				//        but it's named as VAR_MOUSE_Y_MODE in ScummVM. Is it correct or a
+				//        left over from Future Wars's reverse engineering?
+				globalVars[VAR_MOUSE_X_POS] = globalVars[251] = ptr1[4] + x + adder;
+			}
+
+			if (inputVar1 && allowPlayerInput) {
+				int16 adder = param2 + 1;
+				if (inputVar1 != 1) {
+					adder = -adder;
+				}
+				// TODO: Name currently unnamed global variable 252
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[252] = ptr1[5] + y + adder;
+			}
+
+			if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
+				computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
+			} else {
+				element.var16 = 0;
+				element.var14 = 0;
+			}
 		}
 
 		var_10 = computeMove2(element);
@@ -1845,14 +1881,14 @@ void processSeqListElement(SeqListElement &element) {
 			}
 		}
 
-		if (element.var16 + element.var14) {
+		if (element.var16 + element.var14 == 0) {
 			if (element.var1C) {
 				if (element.var1E) {
 					objectTable[element.objIdx].costume = 0;
 					element.var1E = 0;
 				}
 
-				addAni(element.var1C + 3, element.objIdx, ptr1, element, 1, (int16 *) & var2);
+				addAni(element.var1C + 3, element.objIdx, ptr1, element, 1, &var_2);
 
 			}
 		}

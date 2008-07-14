@@ -157,11 +157,11 @@ struct SurfaceToMultiFrames : public Frames {
 		r.setHeight(_height);
 	}
 	uint	getRawSize(uint16 index) {
-		assert(index == 0);
+		assert(index < _num);
 		return getSize(index);
 	}
 	uint	getSize(uint16 index) {
-		assert(index == 0);
+		assert(index < _num);
 		return _width * _height;
 	}
 
@@ -326,20 +326,6 @@ public:
 #define CENTER_LABEL_HORIZONTAL	-1
 #define CENTER_LABEL_VERTICAL	-1
 
-struct Label {
-	Graphics::Surface	_cnv;
-
-	Common::Point		_pos;
-	bool				_visible;
-
-	Label();
-	~Label();
-
-	void free();
-	void resetPosition();
-};
-
-
 
 
 #define MAX_BALLOON_WIDTH 130
@@ -354,25 +340,39 @@ class Disk;
 enum {
 	kGfxObjVisible = 1,
 
+	kGfxObjNormal = 2,
+	kGfxObjCharacter = 4,
 
 	kGfxObjTypeDoor = 0,
 	kGfxObjTypeGet = 1,
-	kGfxObjTypeAnim = 2
+	kGfxObjTypeAnim = 2,
+	kGfxObjTypeLabel = 3,
+	kGfxObjTypeBalloon = 4,
+	kGfxObjTypeCharacter = 8
+};
+
+enum {
+	kGfxObjDoorZ = -200,
+	kGfxObjGetZ = -100
 };
 
 class GfxObj {
 	char *_name;
 	Frames *_frames;
-	uint32 _flags;
 
 	bool _keep;
 
 public:
 	int16 x, y;
-	uint16 z;
+
+	int32 z;
+
+	uint32 _flags;
+
 	uint type;
 	uint frame;
 	uint layer;
+	uint transparentKey;
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
@@ -453,6 +453,20 @@ enum {
 	kBackgroundSlide = 2
 };
 
+
+class BalloonManager {
+public:
+	virtual ~BalloonManager() { }
+
+	virtual void freeBalloons() = 0;
+	virtual int setLocationBalloon(char *text, bool endGame) = 0;
+	virtual int setDialogueBalloon(char *text, uint16 winding, byte textColor) = 0;
+	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) = 0;
+	virtual void setBalloonText(uint id, char *text, byte textColor) = 0;
+	virtual int hitTestDialogueBalloon(int x, int y) = 0;
+};
+
+
 typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
 
 class Gfx {
@@ -461,33 +475,33 @@ public:
 	Disk *_disk;
 	VarMap _vars;
 
-	GfxObjList _gfxobjList[3];
+	GfxObjList _gfxobjList;
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);
 	void drawGfxObjects(Graphics::Surface &surf);
 	void showGfxObj(GfxObj* obj, bool visible);
-	void clearGfxObjects();
+	void clearGfxObjects(uint filter);
 	void sortAnimations();
 
+
 	// labels
-	void setFloatingLabel(Label *label);
-	Label *renderFloatingLabel(Font *font, char *text);
+	void showFloatingLabel(uint label);
+	void hideFloatingLabel();
+
+	uint renderFloatingLabel(Font *font, char *text);
 	uint createLabel(Font *font, const char *text, byte color);
 	void showLabel(uint id, int16 x, int16 y);
 	void hideLabel(uint id);
 	void freeLabels();
 
 	// dialogue balloons
-	int setLocationBalloon(char *text, bool endGame);
-	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
-	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
-	void setBalloonText(uint id, char *text, byte textColor);
-	int hitTestDialogueBalloon(int x, int y);
 	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
+	GfxObj* registerBalloon(Frames *frames, const char *text);
+	void destroyBalloons();
 
 	// other items
-	int setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor = 0);
+	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
 	void freeBalloons();
@@ -549,36 +563,22 @@ protected:
 	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
 
-protected:
-	static int16 _dialogueBalloonX[5];
-
-	struct Balloon {
-		uint16 x;
-		uint16 y;
-		Common::Rect outerBox;
-		Common::Rect innerBox;
-		uint16 winding;
-		Graphics::Surface surface;
-	} _balloons[5];
-
-	uint	_numBalloons;
+public:
 
 	struct Item {
-		uint16 x;
-		uint16 y;
-		uint16 frame;
-		Frames *data;
-
-		byte transparentColor;
-		Common::Rect rect;
+		GfxObj *data;
 	} _items[14];
 
 	uint	_numItems;
 
-	#define MAX_NUM_LABELS	5
-	Label*	_labels[MAX_NUM_LABELS];
-	uint	_numLabels;
-	Label	*_floatingLabel;
+	#define MAX_NUM_LABELS	20
+	#define NO_FLOATING_LABEL	1000
+
+	typedef Common::Array<GfxObj*> GfxObjArray;
+	GfxObjArray	_labels;
+	GfxObjArray _balloons;
+
+	uint _floatingLabel;
 
 	void drawInventory();
 	void updateFloatingLabel();
@@ -588,13 +588,11 @@ protected:
 
 	void copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst);
 
-	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
-	Balloon *getBalloon(uint id);
-
 	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
+	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };

@@ -33,7 +33,7 @@
 #include <common/config-manager.h>
 
 #include "backends/plugins/dc/dc-provider.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 
 Icon icon;
@@ -54,8 +54,10 @@ OSystem_Dreamcast::OSystem_Dreamcast()
 void OSystem_Dreamcast::initBackend()
 {
   _savefile = createSavefileManager();
-  _mixer = new Audio::Mixer();
+  _mixer = new Audio::MixerImpl(this);
   _timer = new DefaultTimerManager();
+  _mixer->setOutputRate(initSound());
+  _mixer->setReady(true);
 }
 
 
@@ -216,7 +218,6 @@ int main()
   static int argc = 1;
 
   dc_init_hardware();
-  initSound();
 
   g_system = new OSystem_Dreamcast();
   assert(g_system);

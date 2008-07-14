@@ -80,7 +80,7 @@ level1codeFD:
 	LDRB	r9,[r8,#384]		@ r9 = l = tmp_ptr[384]
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++
 	ADD	r12,r8,#384		@ r12= &tmp_ptr[384]
-	@ I don't really believe the next 2 lines are necessary, but...
+	@ I don''t really believe the next 2 lines are necessary, but...
 	CMP	r9,#0
 	BEQ	level1codeFD_over1
 level1codeFD_loop1:
@@ -94,7 +94,7 @@ level1codeFD_over1:
 	LDRB	r9,[r12,#1]		@ r9 = l = tmp_ptr[385]
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++
 	SUB	r12,r12,#256		@ r12= &tmp_ptr[128] (256 = 384-128)
-	@ I don't really believe the next 2 lines are necessary, but...
+	@ I don''t really believe the next 2 lines are necessary, but...
 	CMP	r9,#0
 	BEQ	level1codeFD_over2
 level1codeFD_loop2:
@@ -219,7 +219,7 @@ level2codeFD:
 	LDRB	r9,[r8,#96]		@ r9 = l = tmp_ptr[96]
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++
 	ADD	r12,r8,#32		@ r12 = tmp_ptr + 32
-	@ I don't really believe the next 2 lines are necessary, but...
+	@ I don''t really believe the next 2 lines are necessary, but...
 	CMP	r9,#0
 	BEQ	level2codeFD_over1
 level2codeFD_loop1:
@@ -232,7 +232,7 @@ level2codeFD_loop1:
 level2codeFD_over1:
 	LDRB	r9,[r12,#65]		@ r9 = l = tmp_ptr[97] (65 = 97-32)
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++
-	@ I don't really believe the next 2 lines are necessary, but...
+	@ I don''t really believe the next 2 lines are necessary, but...
 	CMP	r9,#0
 	MOVEQ	PC,R14
 level2codeFD_loop2:

@@ -91,7 +91,7 @@ void OSystem_Wii::initBackend() {
 	_startup_time = gettime();
 
 	_savefile = new DefaultSaveFileManager();
-	_mixer = new Audio::Mixer();
+	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
 
 	initGfx();

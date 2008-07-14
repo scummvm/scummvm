@@ -30,7 +30,7 @@
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 #include "icons/scummvm.xpm"
 
@@ -131,9 +131,7 @@ void OSystem_SDL::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
-		_mixer = new Audio::Mixer();
-		bool result = setSoundCallback(Audio::Mixer::mixCallback, _mixer);
-		_mixer->setReady(result);
+		setupMixer();
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for
@@ -391,7 +389,15 @@ void OSystem_SDL::deleteMutex(MutexRef mutex) {
 #pragma mark --- Audio ---
 #pragma mark -
 
-bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_SDL *this_ = (OSystem_SDL *)sys;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(samples, len);
+}
+
+void OSystem_SDL::setupMixer() {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
@@ -403,7 +409,7 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/32th of a second. Note that it must be a power of two.
+	// about 1/16th of a second. Note that it must be a power of two.
 	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
 	int samples = 8192;
 	while (16 * samples >= _samplesPerSec) {
@@ -415,23 +421,30 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;
-	desired.callback = proc;
-	desired.userdata = param;
+	desired.callback = mixCallback;
+	desired.userdata = this;
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		return false;
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
+	
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+		SDL_PauseAudio(0);
 	}
-	// Note: This should be the obtained output rate, but it seems that at
-	// least on some platforms SDL will lie and claim it did get the rate
-	// even if it didn't. Probably only happens for "weird" rates, though.
-	_samplesPerSec = obtained.freq;
-	debug(1, "Output sample rate: %d Hz", _samplesPerSec);
-	SDL_PauseAudio(0);
-	return true;
-}
-
-int OSystem_SDL::getOutputSampleRate() const {
-	return _samplesPerSec;
 }
 
 Audio::Mixer *OSystem_SDL::getMixer() {

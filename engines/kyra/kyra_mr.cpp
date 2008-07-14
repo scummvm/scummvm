@@ -343,6 +343,14 @@ void KyraEngine_MR::initMainMenu() {
 		0x80, 0xFF
 	};
 
+	if (_flags.lang == Common::ES_ESP) {
+		for (int i = 0; i < 4; ++i)
+			data.strings[i] = _mainMenuSpanishFan[i];
+	} else if (_flags.lang == Common::IT_ITA) {
+		for (int i = 0; i < 4; ++i)
+			data.strings[i] = _mainMenuItalianFan[i];
+	}
+
 	MainMenu::Animation anim;
 	anim.anim = _menuAnim;
 	anim.startFrame = 29;
@@ -1542,6 +1550,9 @@ void KyraEngine_MR::writeSettings() {
 		_flags.lang = Common::EN_ANY;
 		break;
 	}
+
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
+		_flags.lang = _flags.fanLang;
 
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 

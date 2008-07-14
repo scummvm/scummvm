@@ -99,21 +99,36 @@ int removeOverlay(uint16 objIdx, uint16 param) {
 
 /*! \brief Add new overlay sprite to the list
  * \param objIdx Associate the overlay with this object
- * \param param Type of new overlay
+ * \param type Type of new overlay
  * \todo Why are x, y, width and color left uninitialized?
  */
-void addOverlay(uint16 objIdx, uint16 param) {
+void addOverlay(uint16 objIdx, uint16 type) {
 	Common::List<overlay>::iterator it;
 	overlay tmp;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		// This is done for both Future Wars and Operation Stealth
 		if (objectTable[it->objIdx].mask >= objectTable[objIdx].mask) {
+			break;
+		}
+
+		// There are additional checks in Operation Stealth's implementation
+		if (g_cine->getGameType() == Cine::GType_OS && (it->type == 2 || it->type == 3)) {
 			break;
 		}
 	}
 
+	// In Operation Stealth's implementation we might bail out early
+	if (g_cine->getGameType() == Cine::GType_OS && it != overlayList.end() && it->objIdx == objIdx && it->type == type) {
+		return;
+	}
+
 	tmp.objIdx = objIdx;
-	tmp.type = param;
+	tmp.type = type;
+	tmp.x = 0;
+	tmp.y = 0;
+	tmp.width = 0;
+	tmp.color = 0;
 
 	overlayList.insert(it, tmp);
 }
@@ -122,24 +137,22 @@ void addOverlay(uint16 objIdx, uint16 param) {
  * \param objIdx Associate the overlay with this object
  * \param param source background index
  */
-void addGfxElementA0(int16 objIdx, int16 param) {
+void addGfxElement(int16 objIdx, int16 param, int16 type) {
 	Common::List<overlay>::iterator it;
 	overlay tmp;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
-		// wtf?!
-		if (objectTable[it->objIdx].mask == objectTable[objIdx].mask &&
-			(it->type == 2 || it->type == 3)) {
+		if (objectTable[it->objIdx].mask >= objectTable[objIdx].mask || it->type == 2 || it->type == 3) {
 			break;
 		}
 	}
 
-	if (it != overlayList.end() && it->objIdx == objIdx && it->type == 20 && it->x == param) {
+	if (it != overlayList.end() && it->objIdx == objIdx && it->type == type && it->x == param) {
 		return;
 	}
 
 	tmp.objIdx = objIdx;
-	tmp.type = 20;
+	tmp.type = type;
 	tmp.x = param;
 	tmp.y = 0;
 	tmp.width = 0;
@@ -153,11 +166,11 @@ void addGfxElementA0(int16 objIdx, int16 param) {
  * \param param Remove overlay using this background
  * \todo Check that it works
  */
-void removeGfxElementA0(int16 objIdx, int16 param) {
+void removeGfxElement(int16 objIdx, int16 param, int16 type) {
 	Common::List<overlay>::iterator it;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
-		if (it->objIdx == objIdx && it->type == 20 && it->x == param) {
+		if (it->objIdx == objIdx && it->type == type && it->x == param) {
 			overlayList.erase(it);
 			return;
 		}
@@ -170,8 +183,12 @@ void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint1
 	objectTable[objIdx].mask = param3;
 	objectTable[objIdx].frame = param4;
 
-	if (removeOverlay(objIdx, 0)) {
-		addOverlay(objIdx, 0);
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		resetGfxEntityEntry(objIdx);
+	} else { // Future Wars
+		if (removeOverlay(objIdx, 0)) {
+			addOverlay(objIdx, 0);
+		}
 	}
 }
 
@@ -199,9 +216,12 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	case 3:
 		objectTable[objIdx].mask = newValue;
 
-		// TODO: Check this part against disassembly
-		if (removeOverlay(objIdx, 0)) {
-			addOverlay(objIdx, 0);
+		if (g_cine->getGameType() == Cine::GType_OS) { // Operation Stealth specific
+			resetGfxEntityEntry(objIdx);
+		} else { // Future Wars specific
+			if (removeOverlay(objIdx, 0)) {
+				addOverlay(objIdx, 0);
+			}
 		}
 		break;
 	case 4:
@@ -218,6 +238,29 @@ void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	case 6:
 		objectTable[objIdx].part = newValue;
 		break;
+	}
+}
+
+/**
+ * Check if at least one of the range B's endpoints is inside range A,
+ * not counting the starting and ending points of range A.
+ * Used at least by Operation Stealth's opcode 0x8D i.e. 141.
+ */
+bool compareRanges(uint16 aStart, uint16 aEnd, uint16 bStart, uint16 bEnd) {
+	return (bStart > aStart && bStart < aEnd) || (bEnd > aStart && bEnd < aEnd);
+}
+
+uint16 compareObjectParamRanges(uint16 objIdx1, uint16 xAdd1, uint16 yAdd1, uint16 maskAdd1, uint16 objIdx2, uint16 xAdd2, uint16 yAdd2, uint16 maskAdd2) {
+	assert(objIdx1 < NUM_MAX_OBJECT && objIdx2 < NUM_MAX_OBJECT);
+	const objectStruct &obj1 = objectTable[objIdx1];
+	const objectStruct &obj2 = objectTable[objIdx2];
+
+	if (compareRanges(obj1.x,    obj1.x    + xAdd1,    obj2.x,    obj2.x    + xAdd2) &&
+		compareRanges(obj1.y,    obj1.y    + yAdd1,    obj2.y,    obj2.y    + yAdd2) &&
+		compareRanges(obj1.mask, obj1.mask + maskAdd1, obj2.mask, obj2.mask + maskAdd2)) {
+		return kCmpEQ;
+	} else {
+		return 0;
 	}
 }
 

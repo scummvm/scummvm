@@ -38,7 +38,7 @@
 
 
 namespace Audio {
-	class Mixer;
+	class MixerImpl;
 }
 
 namespace Common {
@@ -134,8 +134,9 @@ public:
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
 	// Set function that generates samples
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
+	virtual void setupMixer();
+	static void mixCallback(void *s, byte *samples, int len);
+
 	virtual Audio::Mixer *getMixer();
 
 	// Poll CD status
@@ -186,7 +187,6 @@ public:
 
 	virtual void setWindowCaption(const char *caption);
 	virtual bool openCD(int drive);
-	virtual int getOutputSampleRate() const;
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -371,7 +371,7 @@ protected:
 
 
 	Common::SaveFileManager *_savefile;
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;

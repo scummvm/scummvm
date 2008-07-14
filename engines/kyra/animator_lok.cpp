@@ -665,7 +665,7 @@ void Animator_LoK::animRefreshNPC(int character) {
 
 void Animator_LoK::setCharacterDefaultFrame(int character) {
 	debugC(9, kDebugLevelAnimator, "Animator_LoK::setCharacterDefaultFrame()");
-	static uint16 initFrameTable[] = {
+	static const uint16 initFrameTable[] = {
 		7, 41, 77, 0, 0
 	};
 	assert(character < ARRAYSIZE(initFrameTable));
@@ -678,7 +678,7 @@ void Animator_LoK::setCharacterDefaultFrame(int character) {
 
 void Animator_LoK::setCharactersHeight() {
 	debugC(9, kDebugLevelAnimator, "Animator_LoK::setCharactersHeight()");
-	static int8 initHeightTable[] = {
+	static const int8 initHeightTable[] = {
 		48, 40, 48, 47, 56,
 		44, 42, 47, 38, 35,
 		40

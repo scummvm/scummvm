@@ -227,6 +227,13 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	do {
 		stopMusicAfterFadeOut();
 		di = executePlayerInput();
+		
+		// Clear the zoneQuery table (Operation Stealth specific)
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			for (uint i = 0; i < NUM_MAX_ZONE; i++) {
+				zoneQuery[i] = 0;
+			}
+		}
 
 		processSeqList();
 		executeList1();
