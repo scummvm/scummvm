@@ -249,7 +249,7 @@ void DialogueManager::run() {
 	}
 
 	if (cmdlist)
-		_vm->runCommands(*cmdlist);
+		_vm->_cmdExec->run(*cmdlist);
 
 }
 

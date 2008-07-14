@@ -456,6 +456,8 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeSint16LE(startY);
 	stream->writeUint16LE(roomNumber);
 	stream->writeByte(layer);
+	stream->writeUint16LE(walkX);
+	stream->writeUint16LE(walkY);
 
 	stream->writeUint16LE(width);
 	stream->writeUint16LE(height);
@@ -503,6 +505,10 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	uint8 saveVersion = LureEngine::getReference().saveVersion();
 	if (saveVersion >= 29)
 		layer = stream->readByte();
+	if (saveVersion >= 33) {
+		walkX = stream->readUint16LE();
+		walkY = stream->readUint16LE();
+	}
 
 	width = stream->readUint16LE();
 	height = stream->readUint16LE();

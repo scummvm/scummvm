@@ -37,7 +37,7 @@ namespace Gob {
 
 class SoundMixer : public Audio::AudioStream {
 public:
-	SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType);
+	SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type);
 	~SoundMixer();
 
 	virtual void play(SoundDesc &sndDesc, int16 repCount,

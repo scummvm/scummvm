@@ -160,13 +160,13 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
 
-	u16* image = (u16 *) DS::get8BitBackBuffer();
+	const u16* image = (const u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
 		DC_FlushRange(image + (y << 8), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[(y << 8) + x];
 		}
 	}
 
@@ -279,7 +279,7 @@ void OSystem_DS::grabOverlay (OverlayColor *buf, int pitch) {
 
 void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	u16* bg = (u16 *) DS::get16BitBackBuffer();
-	u16* src = (u16 *) buf;
+	const u16* src = (const u16 *) buf;
 		
 //	if (x + w > 256) w = 256 - x;
 	//if (x + h > 256) h = 256 - y;

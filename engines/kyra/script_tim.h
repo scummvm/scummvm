@@ -37,6 +37,8 @@ struct TIM;
 typedef Common::Functor2<const TIM*, const uint16*, int> TIMOpcode;
 
 struct TIM {
+	char filename[13];
+
 	int16 procFunc;
 	uint16 procParam;
 
@@ -102,8 +104,12 @@ private:
 	int cmd_execOpcode(const uint16 *param);
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);
-	template<int T>
-	int cmd_return(const uint16 *) { return T; }
+#define cmd_return(n, v) \
+	int cmd_return_##n(const uint16 *) { return v; }
+
+	cmd_return( 1,  1);
+	cmd_return(n1, -1);
+#undef cmd_return
 };
 
 } // end of namespace Kyra

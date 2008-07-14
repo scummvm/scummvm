@@ -302,7 +302,7 @@ bool Input::translateInventoryInput() {
 			_vm->dropItem(z->u.merge->_obj1);
 			_vm->dropItem(z->u.merge->_obj2);
 			_vm->addInventoryItem(z->u.merge->_obj3);
-			_vm->runCommands(z->_commands);
+			_vm->_cmdExec->run(z->_commands);
 		}
 
 		return true;

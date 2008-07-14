@@ -36,6 +36,8 @@ struct EMCState;
 typedef Common::Functor1<EMCState*, int> Opcode;
 
 struct EMCData {
+	char filename[13];
+
 	byte *text;
 	uint16 *data;
 	uint16 *ordr;

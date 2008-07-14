@@ -84,12 +84,11 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 
 Parallaction::~Parallaction() {
-	clearSet(_commandOpcodes);
-	clearSet(_instructionOpcodes);
-
 	delete _debugger;
 	delete _globalTable;
 	delete _callableNames;
+	delete _cmdExec;
+	delete _programExec;
 
 	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
 	hideDialogueStuff();
@@ -386,8 +385,12 @@ void Parallaction::runGame() {
 	_gfx->beginFrame();
 
 	if (_input->_inputMode == Input::kInputModeGame) {
-		runScripts();
-		walk();
+		_programExec->runScripts(_location._programs.begin(), _location._programs.end());
+		_char._ani->_z = _char._ani->height() + _char._ani->_top;
+		if (_char._ani->gfxobj) {
+			_char._ani->gfxobj->z = _char._ani->_z;
+		}
+		walk(_char);
 		drawAnimations();
 	}
 
@@ -422,7 +425,7 @@ void Parallaction::doLocationEnterTransition() {
 	pal.makeGrayscale();
 	_gfx->setPalette(pal);
 
-	runScripts();
+	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
 	drawAnimations();
 
 	_gfx->updateScreen();
@@ -500,6 +503,34 @@ void Parallaction::freeZones() {
 }
 
 
+enum {
+	WALK_LEFT = 0,
+	WALK_RIGHT = 1,
+	WALK_DOWN = 2,
+	WALK_UP = 3
+};
+
+struct WalkFrames {
+	int16 stillFrame[4];
+	int16 firstWalkFrame[4];
+	int16 numWalkFrames[4];
+	int16 frameRepeat[4];
+};
+
+WalkFrames _char20WalkFrames = {
+	{  0,  7, 14, 17 },
+	{  1,  8, 15, 18 },
+	{  6,  6,  2,  2 },
+	{  2,  2,  4,  4 }
+};
+
+WalkFrames _char24WalkFrames = {
+	{  0,  9, 18, 21 },
+	{  1, 10, 19, 22 },
+	{  8,  8,  2,  2 },
+	{  2,  2,  4,  4 }
+};
+
 const char Character::_prefixMini[] = "mini";
 const char Character::_suffixTras[] = "tras";
 const char Character::_empty[] = "\0";
@@ -509,6 +540,9 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation), _builder(
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
+
+	_direction = WALK_DOWN;
+	_step = 0;
 
 	_dummy = false;
 
@@ -627,6 +661,31 @@ void Parallaction::beep() {
 void Parallaction::scheduleLocationSwitch(const char *location) {
 	strcpy(_location._name, location);
 	_engineFlags |= kEngineChangeLocation;
+}
+
+
+
+
+
+void Character::updateDirection(const Common::Point& pos, const Common::Point& to) {
+
+	Common::Point dist(to.x - pos.x, to.y - pos.y);
+	WalkFrames *frames = (_ani->getFrameNum() == 20) ? &_char20WalkFrames : &_char24WalkFrames;
+
+	_step++;
+
+	if (dist.x == 0 && dist.y == 0) {
+		_ani->_frame = frames->stillFrame[_direction];
+		return;
+	}
+
+	if (dist.x < 0)
+		dist.x = -dist.x;
+	if (dist.y < 0)
+		dist.y = -dist.y;
+
+	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
+	_ani->_frame = frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction];
 }
 
 

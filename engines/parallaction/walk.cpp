@@ -27,12 +27,6 @@
 
 namespace Parallaction {
 
-static uint16 _doorData1 = 1000;
-static ZonePtr _zoneTrap;
-
-static uint16	walkData1 = 0;
-static uint16	walkData2 = 0;	// next walk frame
-
 
 inline byte PathBuffer::getValue(uint16 x, uint16 y) {
 	byte m = data[(x >> 3) + y * internalWidth];
@@ -259,172 +253,118 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 	return 1;
 }
 
-void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr from) {
+void Parallaction::clipMove(Common::Point& pos, const Common::Point& to) {
 
-	if ((pos.x < from->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
-		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
+	if ((pos.x < to.x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
+		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
-	if ((pos.x > from->_x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
-		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
+	if ((pos.x > to.x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
+		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
-		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
+	if ((pos.y < to.y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
+		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 
-	if ((pos.y > from->_y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
-		pos.y = (pos.y - 2 >= from->_y) ? pos.y - 2 :from->_y;
+	if ((pos.y > to.y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
+		pos.y = (pos.y - 2 >= to.y) ? pos.y - 2 : to.y;
 	}
 
 	return;
 }
 
-int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr from) {
 
-	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
+void Parallaction::checkDoor(const Common::Point &foot) {
 
-	if (dist.x < 0)
-		dist.x = -dist.x;
-	if (dist.y < 0)
-		dist.y = -dist.y;
-
-	walkData1++;
-
-	// walk frame selection
-	int16 v16;
-	if (_char._ani->getFrameNum() == 20) {
-
-		if (dist.x > dist.y) {
-			walkData2 = (from->_x > pos.x) ? 0 : 7;
-			walkData1 %= 12;
-			v16 = walkData1 / 2;
-		} else {
-			walkData2 = (from->_y > pos.y) ? 14 : 17;
-			walkData1 %= 8;
-			v16 = walkData1 / 4;
-		}
-
-	} else {
-
-		if (dist.x > dist.y) {
-			walkData2 = (from->_x > pos.x) ? 0 : 9;
-			walkData1 %= 16;
-			v16 = walkData1 / 2;
-		} else {
-			walkData2 = (from->_y > pos.y) ? 18 : 21;
-			walkData1 %= 8;
-			v16 = walkData1 / 4;
-		}
-
-	}
-
-	return v16;
-}
-
-uint16 Parallaction::checkDoor() {
-//	printf("checkDoor()...");
-
-	if (_currentLocationIndex != _doorData1) {
-		_doorData1 = _currentLocationIndex;
-		_zoneTrap = nullZonePtr;
-	}
-
-	_engineFlags &= ~kEngineWalking;
-
-	Common::Point foot;
-
-	_char.getFoot(foot);
 	ZonePtr z = hitZone(kZoneDoor, foot.x, foot.y);
-
 	if (z) {
-
 		if ((z->_flags & kFlagsClosed) == 0) {
 			_location._startPosition = z->u.door->_startPos;
 			_location._startFrame = z->u.door->_startFrame;
-
 			scheduleLocationSwitch(z->u.door->_location);
 			_zoneTrap = nullZonePtr;
-
 		} else {
-			runCommands(z->_commands, z);
+			_cmdExec->run(z->_commands, z);
 		}
 	}
 
-	_char.getFoot(foot);
 	z = hitZone(kZoneTrap, foot.x, foot.y);
-
 	if (z) {
 		setLocationFlags(kFlagsEnter);
-		runCommands(z->_commands, z);
+		_cmdExec->run(z->_commands, z);
 		clearLocationFlags(kFlagsEnter);
 		_zoneTrap = z;
 	} else
 	if (_zoneTrap) {
 		setLocationFlags(kFlagsExit);
-		runCommands(_zoneTrap->_commands, _zoneTrap);
+		_cmdExec->run(_zoneTrap->_commands, _zoneTrap);
 		clearLocationFlags(kFlagsExit);
 		_zoneTrap = nullZonePtr;
 	}
 
-//	printf("done\n");
-
-	_char._ani->_frame = walkData2;
-	return _char._ani->_frame;
 }
 
 
-void Parallaction::finalizeWalk(WalkNodeList *list) {
-	checkDoor();
-	delete list;
+void Parallaction::finalizeWalk(Character &character) {
+	_engineFlags &= ~kEngineWalking;
+
+	Common::Point foot;
+	character.getFoot(foot);
+	checkDoor(foot);
+
+	delete character._walkPath;
+	character._walkPath = 0;
 }
 
-void Parallaction_ns::walk() {
+void Parallaction_ns::walk(Character &character) {
 	if ((_engineFlags & kEngineWalking) == 0) {
 		return;
 	}
 
-	WalkNodeList *list = _char._walkPath;
+	Common::Point curPos;
+	character.getFoot(curPos);
 
-	_char._ani->_oldPos.x = _char._ani->_left;
-	_char._ani->_oldPos.y = _char._ani->_top;
-
-	Common::Point pos;
-	_char.getFoot(pos);
-
-	WalkNodeList::iterator it = list->begin();
-
-	if (it != list->end()) {
-		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
+	// update target, if previous was reached
+	WalkNodeList::iterator it = character._walkPath->begin();
+	if (it != character._walkPath->end()) {
+		if ((*it)->_x == curPos.x && (*it)->_y == curPos.y) {
 			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it)->_x, (*it)->_y);
-			it = list->erase(it);
+			it = character._walkPath->erase(it);
 		}
 	}
-	if (it == list->end()) {
+
+	// advance character towards the target
+	Common::Point targetPos;
+	if (it == character._walkPath->end()) {
 		debugC(1, kDebugWalk, "walk reached last node");
-//		j->_finished = 1;
-		finalizeWalk(list);
-		return;
-	}
-	_char._walkPath = list;
-
-	// selectWalkFrame must be performed before position is changed by clipMove
-	int16 v16 = selectWalkFrame(pos, *it);
-	clipMove(pos, *it);
-
-	_char.setFoot(pos);
-
-	Common::Point newpos(_char._ani->_left, _char._ani->_top);
-
-	if (newpos == _char._ani->_oldPos) {
-		debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
-//		j->_finished = 1;
-		finalizeWalk(list);
+		finalizeWalk(character);
+		targetPos = curPos;
 	} else {
-		_char._ani->_frame = v16 + walkData2 + 1;
+		if (*it) {
+			// targetPos is saved to help setting character direction
+			targetPos.x = (*it)->_x;
+			targetPos.y = (*it)->_y;
+		}
+
+		Common::Point newPos(curPos);
+		clipMove(newPos, targetPos);
+		character.setFoot(newPos);
+
+		if (newPos == curPos) {
+			debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
+			finalizeWalk(character);
+			targetPos = newPos;	// when walking is interrupted, targetPos must be hacked so that a still frame can be selected
+		}
 	}
 
-	return;
+	// targetPos is used to select the direction (and the walkFrame) of a character,
+	// since it doesn't cause the sudden changes in orientation that newPos would.
+	// Since newPos is 'adjusted' according to walkable areas, an imaginary line drawn
+	// from curPos to newPos is prone to abrutply change in direction, thus making the
+	// code select 'too different' frames when walking diagonally against obstacles,
+	// and yielding an annoying shaking effect in the character.
+	character.updateDirection(curPos, targetPos);
 }
 
 

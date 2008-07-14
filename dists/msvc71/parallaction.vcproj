@@ -141,6 +141,9 @@
 			RelativePath="..\..\engines\parallaction\disk_ns.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\exec.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\exec_br.cpp">
 		</File>
 		<File
