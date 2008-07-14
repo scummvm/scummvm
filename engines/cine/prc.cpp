@@ -40,8 +40,9 @@ ScriptList objectScripts;
 
 /*! \todo Is script size of 0 valid?
  * \todo Fix script dump code
+ * @return Was the loading successful?
  */
-void loadPrc(const char *pPrcName) {
+bool loadPrc(const char *pPrcName) {
 	byte i;
 	uint16 numScripts;
 	byte *scriptPtr, *dataPtr;
@@ -52,9 +53,9 @@ void loadPrc(const char *pPrcName) {
 	scriptTable.clear();
 
 	// This is copy protection. Used to hang the machine
-	if (!scumm_stricmp(pPrcName, "L201.ANI")) {
+	if (!scumm_stricmp(pPrcName, COPY_PROT_FAIL_PRC_NAME)) {
 		exitEngine = 1;
-		return;
+		return false;
 	}
 
 	checkDataDisk(-1);
@@ -107,6 +108,8 @@ void loadPrc(const char *pPrcName) {
 		}
 	}
 #endif
+
+	return true;
 }
 
 } // End of namespace Cine

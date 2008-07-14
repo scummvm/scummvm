@@ -1518,12 +1518,22 @@ void mainLoopSub6(void) {
 
 void checkForPendingDataLoad(void) {
 	if (newPrcName[0] != 0) {
-		loadPrc(newPrcName);
+		bool loadPrcOk = loadPrc(newPrcName);
 
 		strcpy(currentPrcName, newPrcName);
 		strcpy(newPrcName, "");
 
-		addScriptToList0(1);
+		// Check that the loading of the script file was successful before
+		// trying to add script 1 from it to the global scripts list. This
+		// fixes a crash when failing copy protection in Amiga or Atari ST
+		// versions of Future Wars.
+		if (loadPrcOk) {
+			addScriptToList0(1);
+		} else if (scumm_stricmp(currentPrcName, COPY_PROT_FAIL_PRC_NAME)) {
+			// We only show an error here for other files than the file that
+			// is loaded if copy protection fails (i.e. L201.ANI).
+			warning("checkForPendingDataLoad: loadPrc(%s) failed", currentPrcName);
+		}
 	}
 
 	if (newRelName[0] != 0) {
