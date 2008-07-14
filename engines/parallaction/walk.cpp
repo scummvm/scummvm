@@ -354,6 +354,7 @@ void Parallaction_ns::walk(Character &character) {
 		if (newPos == curPos) {
 			debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
 			finalizeWalk(character);
+			targetPos = newPos;	// when walking is interrupted, targetPos must be hacked so that a still frame can be selected
 		}
 	}
 
