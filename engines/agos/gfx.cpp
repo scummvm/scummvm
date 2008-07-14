@@ -744,10 +744,6 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 }
 
 void AGOSEngine::drawBackGroundImage(VC10_state *state) {
-	const byte *src;
-	byte *dst;
-	uint h, i;
-
 	state->width = _screenWidth;
 	if (_window3Flag == 1) {
 		state->width = 0;
@@ -755,15 +751,19 @@ void AGOSEngine::drawBackGroundImage(VC10_state *state) {
 		state->y_skip = 0;
 	}
 
-	src = state->srcPtr + (state->width * state->y_skip) + (state->x_skip * 8);
-	dst = state->surf_addr;
+	const byte* src = state->srcPtr + (state->width * state->y_skip) + (state->x_skip * 8);
+	byte* dst = state->surf_addr;
 
 	state->draw_width *= 2;
 
-	h = state->draw_height;
+	uint h = state->draw_height;
+	const uint w = state->draw_width;
+	const byte paletteMod = state->paletteMod;
 	do {
-		for (i = 0; i != state->draw_width; i++)
-			dst[i] = src[i] + state->paletteMod;
+		for (uint i = 0; i != w; i+=2) {
+			dst[i] = src[i] + paletteMod;
+			dst[i+1] = src[i+1] + paletteMod;
+		}
 		dst += state->surf_pitch;
 		src += state->width;
 	} while (--h);
