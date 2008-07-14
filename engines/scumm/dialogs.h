@@ -69,7 +69,7 @@ protected:
 
 	uint8 _fillR, _fillG, _fillB;
 
-	void updateInfos(bool draw);
+	void updateInfos(bool redraw);
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
 	~SaveLoadChooser();
