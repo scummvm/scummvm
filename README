@@ -29,23 +29,43 @@ How do I run Residual?
 As Residual is still under heavy development, it is not yet stable, easy
 to use, nor complete. Some technical ability is required.
 
-UNIX:
-     Create a ~/.residualrc file, containing the following lines:
-       DataDir=[path to all the .lab files]
-       good_times=TRUE
-
-Win32:
-     Copy 'residual.exe' into the directory containing your .lab files, and
-create a file in this directory called 'residual.ini'. This file should contain
-the lines:
-       DataDir=.
-       good_times=TRUE
+See the Configuation File section, to see how to create the configulatun file.
 
 Residual understands command-line options: 
 '-fps' display fps information.
 '-fullscreen' switch to full screen
 '-soft' switch to software 3d renderering.
 '-zbuffer' enables masking for hardware 3d rendering.
+
+Configuration file:
+---- -------------------
+By default, the configuration file is saved in, and loaded from:
+
+        Windows Vista:
+        \Users\username\AppData\Roaming\Residual\residual.ini,
+
+        Windows 2000/XP:
+        \Documents and Settings\username\Application Data\Residual\residual.ini,
+
+        Windows NT4:
+        <windir>\Profiles\username\Application Data\Residual\residual.ini,
+
+        Windows 95/98/ME:
+       <windir>\residual.ini,
+
+        Unix:
+        ~/.residualrc
+
+        Mac OS X:
+        ~/Library/Preferences/Residual Preferences
+
+        Others:
+        residual.ini in the current directory
+
+An example config file looks as follows:
+
+       DataDir=[path to all the .lab files]
+       good_times=TRUE
 
 It runs really slow when using -zbuffer!
 ----------------------------------------

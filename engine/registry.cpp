@@ -23,6 +23,10 @@
  *
  */
 
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
 #include "common/sys.h"
 #include "common/debug.h"
 
@@ -31,19 +35,59 @@
 #include <cstdlib>
 #include <cstring>
 
+#if defined(UNIX)
+#ifdef MACOSX
+#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
+#else
+#define DEFAULT_CONFIG_FILE ".residualrc"
+#endif
+#else
+#define DEFAULT_CONFIG_FILE "residual.ini"
+#endif
+
 Registry *g_registry = NULL;
 
 Registry::Registry() : _dirty(false) {
+	char configFile[MAXPATHLEN];
 #ifndef __DC__
 #ifdef WIN32
-	std::string filename = "residual.ini";
+	OSVERSIONINFO win32OsVersion;
+	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&win32OsVersion);
+	// Check for non-9X version of Windows.
+	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+		// Use the Application Data directory of the user profile.
+		if (win32OsVersion.dwMajorVersion >= 5) {
+			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
+				error("Unable to access application data directory");
+		} else {
+			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
+				error("Unable to access user profile directory");
+
+			strcat(configFile, "\\Application Data");
+			CreateDirectory(configFile, NULL);
+		}
+
+		strcat(configFile, "\\Residual");
+		CreateDirectory(configFile, NULL);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+	} else {
+		// Check windows directory
+		GetWindowsDirectory(configFile, MAXPATHLEN);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+	}
 #elif defined __amigaos4__
-	std::string filename = "/PROGDIR/residual.ini";
+	strcpy(configFile,"/PROGDIR/residual.ini");
 #else
-	std::string filename = std::string(std::getenv("HOME")) + "/.residualrc";
+	const char *home = getenv("HOME");
+	if (home != NULL && strlen(home) < MAXPATHLEN)
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
+	else
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
 #endif
 
-	std::FILE *f = fopen(filename.c_str(), "r");
+	std::FILE *f = fopen(configFile, "r");
 	if (f != NULL) {
 		char line[1024];
 		while (!feof(f) && fgets(line, sizeof(line), f) != NULL) {
