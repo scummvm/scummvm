@@ -36,7 +36,7 @@ namespace Lure {
 #define LURE_DAT_MAJOR 1
 #define LURE_DAT_MINOR 29
 #define LURE_MIN_SAVEGAME_MINOR 25
-#define LURE_SAVEGAME_MINOR 32
+#define LURE_SAVEGAME_MINOR 33
 
 #define LURE_DEBUG 1
 
