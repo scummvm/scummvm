@@ -572,7 +572,7 @@ int AGOSEngine::init() {
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
 
-		_midi.setVolume(ConfMan.getInt("music_volume"));
+		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 
 
 		_midiEnabled = true;
@@ -1083,7 +1083,8 @@ uint32 AGOSEngine::getTime() const {
 void AGOSEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_midi.setVolume(ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 }
 
 } // End of namespace AGOS

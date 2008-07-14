@@ -1673,7 +1673,6 @@ void ScummEngine::syncSoundSettings() {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
 	}
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
