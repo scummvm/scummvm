@@ -65,7 +65,9 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 	"scrollbar_base",
 	"scrollbar_handle",
 
-	"popup",
+	"popup_idle",
+	"popup_hover",
+	
 	"caret",
 	"separator"
 };
@@ -390,8 +392,15 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 	if (!ready())
 		return;
 		
-	drawDD(kDDPopUp, r);
-
+	DrawData dd = (state == kStateHighlight) ? kDDPopUpHover : kDDPopUpIdle;
+	
+	drawDD(dd, r);
+	
+	if (!sel.empty()) {
+		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
+		drawDDText(dd, text, sel);
+	}	
+	
 	debugWidgetPosition("Popup Widget", r);
 }
 

@@ -107,7 +107,9 @@ public:
 		kDDScrollbarBase,
 		kDDScrollbarHandle,
 
-		kDDPopUp,
+		kDDPopUpIdle,
+		kDDPopUpHover,
+		
 		kDDCaret,
 		kDDSeparator,
 		kDrawDataMAX

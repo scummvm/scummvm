@@ -50,9 +50,21 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<drawstep func = 'fill' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
 	"</drawdata>"
 	
-	"<drawdata id = 'popup' cache = false>"
+	"<drawdata id = 'separator' cache = false>"
+		"<drawstep func = 'square' fill = 'foreground' height = '3' ypos = 'center' fg_color = '0, 0, 0' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'popup_idle' cache = false>"
 		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
 		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
+		"<text vertical_align = 'center' horizontal_align = 'right' color = '0, 0, 0' />"
+	"</drawdata>"
+	
+	
+	"<drawdata id = 'popup_hover' cache = false>"
+		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
+		"<text vertical_align = 'center' horizontal_align = 'right' color = '255, 255, 255' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'default_bg' cache = false>"
