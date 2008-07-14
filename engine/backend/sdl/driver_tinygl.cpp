@@ -185,7 +185,7 @@ bool DriverTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
-void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, bool dontNegate) {
+static void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;

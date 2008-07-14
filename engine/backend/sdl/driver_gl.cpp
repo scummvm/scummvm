@@ -105,7 +105,7 @@ void DriverGL::positionCamera(Vector3d pos, Vector3d interest) {
 }
 
 void DriverGL::clearScreen() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void DriverGL::flipBuffer() {
@@ -116,10 +116,67 @@ bool DriverGL::isHardwareAccelerated() {
 	return true;
 }
 
+static void glShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, bool dontNegate) {
+	// Based on GPL shadow projection example by
+	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
+	float d, c;
+	float mat[16];
+	float nx, ny, nz, lx, ly, lz, px, py, pz;
+
+	// for some unknown for me reason normal need negation
+	nx = -normal.x();
+	ny = -normal.y();
+	nz = -normal.z();
+	if (dontNegate) {
+		nx = -nx;
+		ny = -ny;
+		nz = -nz;
+	}
+	lx = light.x();
+	ly = light.y();
+	lz = light.z();
+	px = plane.x();
+	py = plane.y();
+	pz = plane.z();
+
+	d = nx * lx + ny * ly + nz * lz;
+	c = px * nx + py * ny + pz * nz - d;
+
+	mat[0] = lx * nx + c;
+	mat[4] = ny * lx;
+	mat[8] = nz * lx;
+	mat[12] = -lx * c - lx * d;
+
+	mat[1] = nx * ly;
+	mat[5] = ly * ny + c;
+	mat[9] = nz * ly;
+	mat[13] = -ly * c - ly * d;
+
+	mat[2] = nx * lz;
+	mat[6] = ny * lz;
+	mat[10] = lz * nz + c;
+	mat[14] = -lz * c - lz * d;
+
+	mat[3] = nx;
+	mat[7] = ny;
+	mat[11] = nz;
+	mat[15] = -d;
+
+	glMultMatrixf(mat);
+}
+
 void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+	if (_currentShadowArray) {
+		SectorListType::iterator i = _currentShadowArray->planeList.begin();
+		Sector *shadowSector = *i;
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glDisable(GL_LIGHTING);
+		glColor3i(_shadowColorR, _shadowColorG, _shadowColorB);
+		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glRotatef(yaw, 0, 0, 1);
 	glRotatef(pitch, 1, 0, 0);
@@ -127,11 +184,16 @@ void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) 
 }
 
 void DriverGL::finishActorDraw() {
+	if (_currentShadowArray) {
+		glEnable(GL_LIGHTING);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 }
 
 void DriverGL::setShadow(Shadow *shadow) {
+	_currentShadowArray = shadow;
 }
 
 void DriverGL::drawShadowPlanes() {
@@ -144,6 +206,9 @@ void DriverGL::clearShadowMode() {
 }
 
 void DriverGL::setShadowColor(byte r, byte g, byte b) {
+	_shadowColorR = r;
+	_shadowColorG = g;
+	_shadowColorB = b;
 }
 
 void DriverGL::set3DMode() {
