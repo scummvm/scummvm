@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	mods/paula.o \
 	mods/rjp1.o \
 	mods/soundfx.o \
+	mods/tfmx.o \
 	softsynth/adlib.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
