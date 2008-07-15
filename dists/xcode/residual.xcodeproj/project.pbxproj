@@ -786,6 +786,7 @@
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-DUNIX",
+					"-DMACOSX",
 					"-I../../",
 					"-I/sw/include",
 					"-I/sw/include/SDL",
@@ -825,6 +826,7 @@
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-DUNIX",
+					"-DMACOSX",
 					"-I../../",
 					"-I/sw/include",
 					"-I/sw/include/SDL",
