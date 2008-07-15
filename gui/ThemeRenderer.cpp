@@ -69,7 +69,8 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 	"popup_hover",
 	
 	"caret",
-	"separator"
+	"separator",
+	"default_text"
 };
 
 ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
@@ -234,7 +235,20 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 			// draw the cached widget to the cache surface
 		}
 	}
+	
+	int r, g, b;
+	
+#define __LOAD_COLOR(id, name) { \
+	if (parser()->getPaletteColor(name, r, g, b))\
+		_textColors[id] = _vectorRenderer->buildColor(r, g, b); \
+}
+	
+	__LOAD_COLOR(kTextColorDefault, "text_default");
+	__LOAD_COLOR(kTextColorHover, "text_hover");
+	__LOAD_COLOR(kTextColorDisabled, "text_disabled");
 
+#undef __LOAD_COLOR
+	
 	_themeOk = true;
 	return true;
 }
@@ -360,6 +374,9 @@ void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo
 void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
 	if (!ready())
 		return;
+		
+	drawDD(kDDScrollbarBase, r);
+	
 
 	debugWidgetPosition("SCB", r);
 }
@@ -399,7 +416,7 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
 		drawDDText(dd, text, sel);
-	}	
+	}
 	
 	debugWidgetPosition("Popup Widget", r);
 }
@@ -442,6 +459,15 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 
 	debugWidgetPosition("Tab widget", r);
 }
+
+void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+	if (!_initOk)
+		return;
+
+	getFont(font)->drawString(_screen, str, r.left, r.top, r.width(), getTextColor(state), convertAligment(align), deltax, useEllipsis);
+	addDirtyRect(r);
+}
+
 
 void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	// _font->drawString(_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);

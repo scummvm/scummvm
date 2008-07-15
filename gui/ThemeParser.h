@@ -316,6 +316,17 @@ class ThemeParser : public XMLParser {
 
 public:
 	ThemeParser(GUI::ThemeRenderer *parent);
+	
+	bool getPaletteColor(const Common::String &name, int &r, int &g, int &b) {
+		if (!_palette.contains(name))
+			return false;
+			
+		r = _palette[name].r;
+		g = _palette[name].g;
+		b = _palette[name].b;
+		
+		return true;
+	}
 
 protected:
 	ThemeRenderer *_theme;

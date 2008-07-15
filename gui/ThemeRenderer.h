@@ -112,7 +112,16 @@ public:
 		
 		kDDCaret,
 		kDDSeparator,
+		kDDDefaultText,
 		kDrawDataMAX
+	};
+	
+	enum TextColor {
+		kTextColorDefault,
+		kTextColorHover,
+		kTextColorDisabled,
+		kTextColorInverted,
+		kTextColorMAX
 	};
 
 	ThemeRenderer(Common::String themeName, GraphicsMode mode);
@@ -160,7 +169,7 @@ public:
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state);
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {}
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {}
 
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
@@ -254,6 +263,19 @@ protected:
 	int getTabPadding() const {
 		return 3;
 	}
+	
+	uint32 getTextColor(WidgetStateInfo state) {
+		switch (state) {
+			case kStateDisabled:
+				return _textColors[kTextColorDisabled];
+			
+			case kStateHighlight:
+				return _textColors[kTextColorHover];
+			
+			default:
+				return _textColors[kTextColorDefault];
+		}
+	}
 
 	OSystem *_system;
 	Graphics::VectorRenderer *_vectorRenderer;
@@ -266,6 +288,7 @@ protected:
 
 	Common::String _fontName;
 	const Graphics::Font *_font;
+	uint32 _textColors[kTextColorMAX];
 
 	WidgetDrawData *_widgets[kDrawDataMAX];
 	Common::Array<Common::Rect> _dirtyScreen;

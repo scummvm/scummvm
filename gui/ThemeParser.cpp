@@ -173,30 +173,32 @@ bool ThemeParser::parserCallback_text() {
 		step.alignVertical = GUI::Theme::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
 	
+	Common::String paletteColor = "text_default";
+	int red, green, blue;
+	
+	if (tNode->name.contains("hover"))
+		paletteColor = "text_hover";
+	
+	if (tNode->name.contains("disabled"))
+		paletteColor = "text_disabled";
+	
 	if (tNode->values.contains("color")) {
-		int red, green, blue;
 
-		if (parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue) == false ||
-			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
-			return parserError("Error when parsing color value for text definition");
+		if (_palette.contains(tNode->values["color"]))
+			getPaletteColor(tNode->values["color"], red, green, blue);
+		else if (!parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue))
+			return parserError("Error when parsing color value for text definition");		
 			
-		step.color.r = red;
-		step.color.g = green;
-		step.color.b = blue;
-		step.color.set = true;
-	} else if (_defaultStepLocal && _defaultStepLocal->fgColor.set) {
-		step.color.r = _defaultStepLocal->fgColor.r;
-		step.color.g = _defaultStepLocal->fgColor.g;
-		step.color.b = _defaultStepLocal->fgColor.b;
-		step.color.set = true;
-	} 	else if (_defaultStepGlobal && _defaultStepGlobal->fgColor.set) {
-		step.color.r = _defaultStepGlobal->fgColor.r;
-		step.color.g = _defaultStepGlobal->fgColor.g;
-		step.color.b = _defaultStepGlobal->fgColor.b;
-		step.color.set = true;
+	} else if (_palette.contains(paletteColor)) {
+		getPaletteColor(paletteColor, red, green, blue);
 	} else {
 		return parserError("Cannot assign color for text drawing.");
 	}
+	
+	step.color.r = red;
+	step.color.g = green;
+	step.color.b = blue;
+	step.color.set = true;
 
 	_theme->addTextStep(parentNode->values["id"], step);
 	return true;

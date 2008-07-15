@@ -12,7 +12,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU General Public License for more details.	
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
@@ -41,7 +41,10 @@ bool ThemeRenderer::loadDefaultXML() {
 	"<palette>"
 		"<color name = 'red' rgb = '255, 0, 0' />"
 		"<color name = 'green' rgb = '0, 255, 0' />"
-		"<color name = 'blue' rgb = '0, 0, 255' />"
+		"<color name = 'blue' rgb = '0, 255, 255' />"
+		"<color name = 'text_default' rgb = '0, 0, 0' />"
+		"<color name = 'text_hover' rgb = '255, 255, 255' />"
+		"<color name = 'text_disabled' rgb = '128, 128, 128' />"
 	"</palette>"
 
 	"<default fill = 'gradient' fg_color = '255, 255, 255' />"
@@ -52,6 +55,10 @@ bool ThemeRenderer::loadDefaultXML() {
 	
 	"<drawdata id = 'separator' cache = false>"
 		"<drawstep func = 'square' fill = 'foreground' height = '3' ypos = 'center' fg_color = '0, 0, 0' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'scrollbar_base' cache = false>"
+		"<drawstep func = 'roundedsq' stroke = 1 radius = 4 fill = 'none' fg_color = '255, 255, 255' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'popup_idle' cache = false>"

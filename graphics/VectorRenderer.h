@@ -489,6 +489,8 @@ public:
 	 */
 	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
 	
+	virtual uint32 buildColor(uint8 r, uint8 g, uint8 b) = 0;
+	
 	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) = 0;
 
 protected:
@@ -649,6 +651,10 @@ public:
 			dst_ptr += dst_pitch;
 			src_ptr += src_pitch;
 		}
+	}
+	
+	virtual uint32 buildColor(uint8 r, uint8 g, uint8 b) {
+		return RGBToColor<PixelFormat>(r, g, b);
 	}
 
 protected:
