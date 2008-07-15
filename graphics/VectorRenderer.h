@@ -192,6 +192,19 @@ public:
 	 * @param bevel Amount of bevel. Must be positive.
 	 */
 	virtual void drawBeveledSquare(int x, int y, int w, int h, int bevel) = 0;
+	
+	/**
+	 * Draws a tab-like shape, specially thought for the Tab widget.
+	 * If a radius is given, the tab will have rounded corners. Otherwise,
+	 * the tab will be squared.
+	 *
+	 * @param x Horizontal (X) coordinate for the tab
+	 * @param y Vertical (Y) coordinate for the tab
+	 * @param w Width of the tab
+	 * @param h Height of the tab
+	 * @param r Radius of the corners of the tab (0 for squared tabs).
+	 */
+	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -460,6 +473,12 @@ public:
 		stepGetPositions(step, area, x, y, w, h);
 		drawBeveledSquare(x, y, w, h, step.extraData);
 	}
+	
+	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step) {
+		uint16 x, y, w, h;
+		stepGetPositions(step, area, x, y, w, h);
+		drawTab(x, y, stepGetRadius(step, area), w, h);
+	}
 
 	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}
 
@@ -553,6 +572,11 @@ public:
 	 * @see VectorRenderer::drawTriangle()
 	 */
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
+	
+	/**
+	 * @see VectorRenderer::drawTab()
+	 */
+	void drawTab(int x, int y, int r, int w, int h);
 
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
 		drawBevelSquareAlg(x, y, w, h, bevel, _fgColor, _bgColor);
@@ -739,6 +763,7 @@ protected:
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h, bool inverted, PixelType color, FillMode fill_m);
 	virtual void drawTriangleFast(int x, int y, int size, bool inverted, PixelType color, FillMode fill_m);
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color);
+	virtual void drawTabAlg(int x, int y, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS

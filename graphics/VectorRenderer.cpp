@@ -352,7 +352,7 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
-		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0 || r > 128 || (r << 1) > w || (r << 1) > h)
+		w <= 0 || h <= 0 || x < 0 || y < 0 || (r << 1) > w || (r << 1) > h)
 		return;
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
@@ -392,6 +392,25 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
+drawTab(int x, int y, int r, int w, int h) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
+		w <= 0 || h <= 0 || x < 0 || y < 0 || (r << 1) > w || (r << 1) > h)
+		return;
+	
+	switch (Base::_fillMode) {
+		case kFillDisabled:
+			return;
+		
+		case kFillGradient:
+		case kFillForeground:
+		case kFillBackground:
+			drawTabAlg(x, y, w, h, r, (Base::_fillMode == kFillBackground) ? _bgColor : _fgColor, Base::_fillMode);
+			break;
+	}
+}
+
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
 drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	// Awesome hack: the AA messes up the last pixel triangles if their width is even
 	// ...fix the width instead of fixing the AA :p
@@ -421,7 +440,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 #ifdef VECTOR_RENDERER_FAST_TRIANGLES
 			if (w == h)
 				drawTriangleFast(x, y, w, (orient == kTriangleDown), color, Base::_fillMode);
-			else
+			else 
 #endif
 				drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
 			break;
@@ -445,6 +464,54 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 /********************************************************************
  * Aliased Primitive drawing ALGORITHMS - VectorRendererSpec
  ********************************************************************/
+/** TAB ALGORITHM - NON AA */
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = Base::surfacePitch();
+	
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	int real_radius = r;
+	int short_h = h - (r) + 2;
+	int long_h = h;
+
+	__BE_RESET();
+	PixelType color1, color2;
+	
+	if (fill_m == kFillForeground || fill_m == kFillBackground)
+		color1 = color2 = color;
+	
+	while (x++ < y) {
+		__BE_ALGORITHM();
+		
+		if (fill_m == kFillGradient) {
+			color1 = calcGradient(real_radius - x, long_h);
+			color2 = calcGradient(real_radius - y, long_h);
+		}
+		
+		colorFill(ptr_tl - x - py, ptr_tr + x - py, color2);
+		colorFill(ptr_tl - y - px, ptr_tr + y - px, color1);
+		
+		*(ptr_tr + (y) - (px)) = color;
+		*(ptr_tr + (x) - (py)) = color;
+		*(ptr_tl - (x) - (py)) = color;
+		*(ptr_tl - (y) - (px)) = color;
+	}
+		
+	ptr_fill += pitch * r;
+	while (short_h--) {
+		if (fill_m == kFillGradient)
+			color = calcGradient(real_radius++, long_h);
+		colorFill(ptr_fill, ptr_fill + w + 1, color);
+		ptr_fill += pitch;
+	}
+}
+
 /** SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::

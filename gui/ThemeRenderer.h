@@ -102,7 +102,8 @@ public:
 		kDDCheckboxEnabled,
 		kDDCheckboxDisabled,
 
-		kDDTab,
+		kDDTabActive,
+		kDDTabInactive,
 
 		kDDScrollbarBase,
 		kDDScrollbarHandle,

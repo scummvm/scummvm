@@ -61,6 +61,24 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<drawstep func = 'roundedsq' stroke = 1 radius = 4 fill = 'none' fg_color = '255, 255, 255' />"
 	"</drawdata>"
 	
+	"<drawdata id = 'tab_active' cache = false>"
+		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
+		"<drawstep func = 'tab' radius = '8' stroke = '0' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
+	"</drawdata>"
+	
+	"<drawdata id = 'tab_inactive' cache = false>"
+		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
+		"<drawstep func = 'tab' radius = '8' stroke = '0' fill = 'foreground' fg_color = '206, 121, 99' shadow = 3 />"
+	"</drawdata>"
+	
+	"<drawdata id = 'slider_empty' cache = false>"
+		"<drawstep func = 'roundedsq' stroke = 1 radius = 8 fill = 'none' fg_color = '0, 0, 0' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'slider_full' cache = false>"
+		"<drawstep func = 'roundedsq' stroke = 1 radius = 8 fill = 'gradient' fg_color = '0, 0, 0' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
+	"</drawdata>"
+	
 	"<drawdata id = 'popup_idle' cache = false>"
 		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
 		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"

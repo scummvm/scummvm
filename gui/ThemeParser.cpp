@@ -57,6 +57,7 @@ ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_drawFunctions["line"]  = &Graphics::VectorRenderer::drawCallback_LINE;
 	_drawFunctions["triangle"]  = &Graphics::VectorRenderer::drawCallback_TRIANGLE;
 	_drawFunctions["fill"]  = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
+	_drawFunctions["tab"]  = &Graphics::VectorRenderer::drawCallback_TAB;
 	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
 
 	_defaultStepGlobal = defaultDrawStep();
@@ -199,7 +200,7 @@ bool ThemeParser::parserCallback_text() {
 	step.color.g = green;
 	step.color.b = blue;
 	step.color.set = true;
-
+	
 	_theme->addTextStep(parentNode->values["id"], step);
 	return true;
 }
@@ -407,7 +408,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		assert(stepNode->values.contains("func"));
 		Common::String functionName = stepNode->values["func"];
 
-		if (functionName == "roundedsq" || functionName == "circle") {
+		if (functionName == "roundedsq" || functionName == "circle" || functionName == "tab") {
 			if (stepNode->values.contains("radius") && stepNode->values["radius"] == "auto") {
 				drawstep->radius = 0xFF;
 			} else {
