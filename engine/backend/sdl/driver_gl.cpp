@@ -564,6 +564,8 @@ void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 		glBitmap(0, 0, 0, 0, 0, -1, NULL);
 	} else
 		glRasterPos2i(x, y + h);
+
+	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
