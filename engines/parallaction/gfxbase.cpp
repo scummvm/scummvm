@@ -267,9 +267,6 @@ void Gfx::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte 
 }
 
 
-// this is the maximum size of an unpacked frame in BRA
-byte _unpackedBitmap[640*401];
-
 #if 0
 void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 

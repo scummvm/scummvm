@@ -547,6 +547,8 @@ public:
 	uint				_screenX;		// scrolling position
 	uint				_screenY;
 
+	byte				*_unpackedBitmap;
+
 protected:
 	Parallaction*		_vm;
 	bool				_halfbrite;
