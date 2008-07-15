@@ -143,7 +143,6 @@ public:
 	void setVolume(int vol);
 
 protected:
-	void waitFinished(bool isSpeech);
 	void playSound(const char *base, bool isSpeech);
 
 	virtual void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) = 0;

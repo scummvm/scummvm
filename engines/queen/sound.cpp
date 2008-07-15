@@ -229,11 +229,6 @@ void PCSound::setVolume(int vol) {
 	_music->setVolume(vol);
 }
 
-void PCSound::waitFinished(bool isSpeech) {
-	while (_mixer->isSoundHandleActive(isSpeech ? _speechHandle : _sfxHandle))
-		_vm->input()->delay(10);
-}
-
 void PCSound::playSound(const char *base, bool isSpeech) {
 	char name[13];
 	strcpy(name, base);
@@ -243,7 +238,13 @@ void PCSound::playSound(const char *base, bool isSpeech) {
 			name[i] = '0';
 	}
 	strcat(name, ".SB");
-	waitFinished(isSpeech);
+	if (isSpeech) {
+		while (_mixer->isSoundHandleActive(_speechHandle)) {
+			_vm->input()->delay(10);
+		}
+	} else {
+		_mixer->stopHandle(_sfxHandle);
+	}
 	uint32 size;
 	Common::File *f = _vm->resource()->findSound(name, &size);
 	if (f) {
