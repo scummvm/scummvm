@@ -174,7 +174,8 @@ void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) 
 		Sector *shadowSector = *i;
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
-		//glColor3i(_shadowColorR, _shadowColorG, _shadowColorB);
+		glDisable(GL_TEXTURE_2D);
+		glColor3f(_shadowColorR / 255.0, _shadowColorG / 255.0, _shadowColorB / 255.0);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
@@ -187,6 +188,7 @@ void DriverGL::finishActorDraw() {
 	if (_currentShadowArray) {
 		glEnable(GL_LIGHTING);
 		glDisable(GL_POLYGON_OFFSET_FILL);
+		glColor3f(1.0, 1.0, 1.0);
 	}
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
