@@ -256,6 +256,8 @@ void PCSound::playSound(const char *base, bool isSpeech) {
 }
 
 void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	// In order to simplify the code, we don't parse the .sb header but hard-code the
+	// values. Refer to tracker item #1876741 for details on the format/fields.
 	int headerSize;
 	f->seek(2, SEEK_CUR);
 	uint16 version = f->readUint16LE();
@@ -277,7 +279,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11025, flags);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11840, flags);
 	}
 }
 
