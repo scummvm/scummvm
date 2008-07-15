@@ -119,7 +119,7 @@ int32 Imuse::getPosIn60HzTicks(const char *soundName) {
 		return false;
 	}
 
-	int32 pos = (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 200);
+	int32 pos = (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 12);
 	return pos;
 }
 

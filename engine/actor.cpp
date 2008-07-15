@@ -622,25 +622,33 @@ void Actor::draw() {
 				g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
 				costume->draw();
 				g_driver->finishActorDraw();
-				g_driver->setShadow(NULL);
 				g_driver->clearShadowMode();
+				g_driver->setShadow(NULL);
 			}
+			// normal draw actor
+			g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+			costume->draw();
+			g_driver->finishActorDraw();
 		} else {
+			// normal draw actor
+			g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+			costume->draw();
+			g_driver->finishActorDraw();
+
 			for (int l = 0; l < 5; l++) {
 				if (!_shadowArray[l].active)
 					continue;
 				g_driver->setShadow(&_shadowArray[l]);
+				g_driver->setShadowMode();
+				g_driver->drawShadowPlanes();
 				g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
 				costume->draw();
 				g_driver->finishActorDraw();
+				g_driver->clearShadowMode();
 				g_driver->setShadow(NULL);
 			}
 		}
 
-		// normal draw actor
-		g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
-		costume->draw();
-		g_driver->finishActorDraw();
 	}
 }
 
