@@ -143,7 +143,7 @@ public:
 	void stopSound(uint8 soundIndex);
 	void killSound(uint8 soundNumber);
 	void setVolume(uint8 soundNumber, uint8 volume);
-	void syncSounds(uint8 musicVol, uint8 sfxVol);
+	void syncSounds();
 	void tidySounds();
 	uint8 descIndexOf(uint8 soundNumber);
 	SoundDescResource *findSound(uint8 soundNumber);

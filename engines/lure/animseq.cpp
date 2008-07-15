@@ -45,6 +45,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 		while (events.pollEvent()) {
 			if ((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) {
 				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE) return ABORT_END_INTRO;
+				else if (events.event().kbd.keycode == Common::KEYCODE_MAINMENU) return ABORT_NONE;
 				else return ABORT_NEXT_SCENE;
 			} else if (events.type() == Common::EVENT_LBUTTONDOWN)
 				return ABORT_NEXT_SCENE;

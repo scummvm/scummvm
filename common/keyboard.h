@@ -178,7 +178,10 @@ enum KeyCode {
 	KEYCODE_MENU        = 319,
 	KEYCODE_POWER       = 320,      // Power Macintosh power key
 	KEYCODE_EURO        = 321,      // Some european keyboards
-	KEYCODE_UNDO        = 322       // Atari keyboard has Undo
+	KEYCODE_UNDO        = 322,      // Atari keyboard has Undo
+
+	// Global Main Menu key
+	KEYCODE_MAINMENU    = KEYCODE_F11
 };
 
 /**

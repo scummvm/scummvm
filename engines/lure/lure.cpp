@@ -247,7 +247,7 @@ void LureEngine::GUIError(const char *msg, ...) {
 }
 
 void LureEngine::syncSoundSettings() {	
-	Sound.syncSounds(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
+	Sound.syncSounds();
 }
 
 Common::String *LureEngine::detectSave(int slotNumber) {

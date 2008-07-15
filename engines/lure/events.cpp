@@ -160,8 +160,6 @@ Events &Events::getReference() {
 
 
 bool Events::pollEvent() {
-	LureEngine &engine = LureEngine::getReference();
-	
 	if (!g_system->getEventManager()->pollEvent(_event)) return false;
 
 	// Handle keypress
@@ -216,7 +214,8 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 		if (engine.quit()) return true;
 
 		if (events.pollEvent()) {
-			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||
+			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0) && 
+			      	events.event().kbd.keycode != KEYCODE_MAINMENU) ||
 				(events.type() == Common::EVENT_LBUTTONDOWN))
 				return true;
 		}

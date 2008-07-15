@@ -392,7 +392,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 			// Global Main Menu
-			if (event.kbd.keycode == Common::KEYCODE_F11)
+			if (event.kbd.keycode == Common::KEYCODE_MAINMENU)
 				if (g_engine && !g_engine->isPaused()) {
 					Common::Event menuEvent;
 					menuEvent.type = Common::EVENT_MAINMENU;
