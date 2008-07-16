@@ -63,7 +63,7 @@ bool ThemeRenderer::loadDefaultXML() {
 	
 	"<drawdata id = 'tab_active' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
-		"<drawstep func = 'tab' radius = '8' stroke = '0' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
+		"<drawstep func = 'tab' radius = '8' stroke = '2' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
 	"</drawdata>"
 	
 	"<drawdata id = 'tab_inactive' cache = false>"

@@ -73,6 +73,9 @@ class ThemeRenderer : public Theme {
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
 	static const int kDirtyRectangleThreshold = 2;
+	
+	/** Sets whether backcaching is enabled */
+	static const bool kEnableBackCaching = true;
 
 public:
 	enum GraphicsMode {
@@ -204,7 +207,7 @@ public:
 	void setGraphicsMode(GraphicsMode mode);
 
 protected:
-	template<typename PixelType> void screenInit();
+	template<typename PixelType> void screenInit(bool backBuffer);
 
 	bool loadThemeXML(Common::String themeName);
 	bool loadDefaultXML();
@@ -227,6 +230,14 @@ protected:
 	void freeRenderer() {
 		delete _vectorRenderer;
 		_vectorRenderer = 0;
+	}
+	
+	void freeBackbuffer() {
+		if (_backBuffer != 0) {
+			_backBuffer->free();
+			delete _backBuffer;
+			_backBuffer = 0;
+		}
 	}
 
 	void freeScreen() {
@@ -283,6 +294,7 @@ protected:
 	GUI::ThemeParser *_parser;
 
 	Graphics::Surface *_screen;
+	Graphics::Surface *_backBuffer;
 
 	int _bytesPerPixel;
 	GraphicsMode _graphicsMode;

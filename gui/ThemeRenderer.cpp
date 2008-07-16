@@ -76,7 +76,7 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 
 ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
-	_screen(0), _bytesPerPixel(0), _initOk(false), _themeOk(false), _enabled(false) {
+	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), _themeOk(false), _enabled(false) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
 
@@ -153,9 +153,15 @@ void ThemeRenderer::disable() {
 }
 
 template<typename PixelType> 
-void ThemeRenderer::screenInit() {
+void ThemeRenderer::screenInit(bool backBuffer) {
 	freeScreen();
-
+	freeBackbuffer();
+	
+	if (backBuffer) {
+		_backBuffer = new Surface;
+		_backBuffer->create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(PixelType));
+	}
+	
 	_screen = new Surface;
 	_screen->create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(PixelType));
 	_system->clearOverlay();
@@ -166,7 +172,7 @@ void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
 	case kGfxStandard16bit:
 	case kGfxAntialias16bit:
 		_bytesPerPixel = sizeof(uint16);
-		screenInit<uint16>();
+		screenInit<uint16>(kEnableBackCaching);
 		break;
 
 	default:
