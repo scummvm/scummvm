@@ -181,12 +181,6 @@ public:
 	virtual int shouldRTL() const = 0;
 
 	/**
-	 * We have returned to the launcher, and _shouldQuit should be reset to false
-	 */
-
-	virtual void resetQuit() = 0;
-
-	/**
 	 * We have returned to the launcher, and the _shouldRTL should be reset to false
 	 */
 	virtual void resetRTL() = 0;

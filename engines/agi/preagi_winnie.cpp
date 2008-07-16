@@ -799,6 +799,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return;
 			case Common::EVENT_MOUSEMOVE:

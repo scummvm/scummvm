@@ -435,13 +435,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		case Common::EVENT_MAINMENU:
 			if (g_engine && !g_engine->isPaused())
 				g_engine->mainMenuDialog();
+
 			if (_shouldQuit)
 				event.type = Common::EVENT_QUIT;
+			else if (_shouldRTL)
+				event.type = Common::EVENT_RTL;
 			break;
 
 		case Common::EVENT_RTL:
 			_shouldRTL = true;
-			_shouldQuit = true;
 			break;
 
 		case Common::EVENT_QUIT:

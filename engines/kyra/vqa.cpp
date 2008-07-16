@@ -670,6 +670,7 @@ void VQAMovie::play() {
 					if (event.kbd.ascii == 27)
 						return;
 					break;
+				case Common::EVENT_RTL:
 				case Common::EVENT_QUIT:
 					return;
 				default:

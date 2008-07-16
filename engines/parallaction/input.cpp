@@ -78,7 +78,7 @@ uint16 Input::readInput() {
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = e.mouse;
 			break;
-
+		case Common::EVENT_RTL:
 		case Common::EVENT_QUIT:
 			_vm->_quit = true;
 			return KeyDown;

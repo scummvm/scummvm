@@ -1185,6 +1185,7 @@ void KyraEngine_LoK::seq_playCredits() {
 			case Common::EVENT_KEYDOWN:
 				finished = true;
 				break;
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				finished = true;
 				break;

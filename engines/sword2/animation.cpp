@@ -357,6 +357,7 @@ bool MoviePlayer::userInterrupt() {
 		case Common::EVENT_SCREEN_CHANGED:
 			handleScreenChanged();
 			break;
+		case Common::EVENT_RTL:
 		case Common::EVENT_QUIT:
 			terminate = true;
 			break;

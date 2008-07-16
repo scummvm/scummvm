@@ -49,7 +49,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 				else return ABORT_NEXT_SCENE;
 			} else if (events.type() == Common::EVENT_LBUTTONDOWN)
 				return ABORT_NEXT_SCENE;
-			else if (events.type() == Common::EVENT_QUIT)
+			else if ((events.type() == Common::EVENT_QUIT) || (events.type() == Common::EVENT_RTL))
 				return ABORT_END_INTRO;
 		}
 

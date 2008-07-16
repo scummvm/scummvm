@@ -520,6 +520,7 @@ void AGOSEngine::delay(uint amount) {
 					setBitFlag(92, false);
 				_rightButtonDown++;
 				break;
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return;
 			default:

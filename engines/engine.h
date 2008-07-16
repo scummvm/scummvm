@@ -128,9 +128,9 @@ public:
 	bool isPaused() const { return _pauseLevel != 0; }
 
 	/**
-	 * Return whether or not the engine should quit
+	 * Return whether or not the ENGINE should quit
 	 */
-	bool quit() const { return _eventMan->shouldQuit(); }
+	bool quit() const { return (_eventMan->shouldQuit() || _eventMan->shouldRTL()); }
 
 	/** Run the Global Main Menu Dialog
 	 */

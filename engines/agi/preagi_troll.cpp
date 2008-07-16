@@ -59,6 +59,7 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return 0;
 			case Common::EVENT_MOUSEMOVE:
@@ -203,6 +204,7 @@ void Troll::waitAnyKeyIntro() {
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_KEYDOWN:

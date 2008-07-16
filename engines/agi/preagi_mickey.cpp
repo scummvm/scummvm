@@ -345,6 +345,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return 0;
 			case Common::EVENT_MOUSEMOVE:
@@ -639,6 +640,7 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 			if (iSound == IDI_MSA_SND_THEME) {
 				while (_vm->_system->getEventManager()->pollEvent(event)) {
 					switch(event.type) {
+					case Common::EVENT_RTL:
 					case Common::EVENT_QUIT:
 					case Common::EVENT_LBUTTONUP:
 					case Common::EVENT_RBUTTONUP:
@@ -2051,6 +2053,7 @@ void Mickey::waitAnyKey(bool anim) {
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_LBUTTONUP:

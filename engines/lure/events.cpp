@@ -187,7 +187,7 @@ void Events::waitForPress() {
 	bool keyButton = false;
 	while (!keyButton) {
 		while (pollEvent()) {
-			if (_event.type == Common::EVENT_QUIT) return;
+			if ((_event.type == Common::EVENT_QUIT) || (_event.type == Common::EVENT_RTL)) return;
 			else if ((_event.type == Common::EVENT_KEYDOWN) && (_event.kbd.ascii != 0))
 				keyButton = true;
 			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||

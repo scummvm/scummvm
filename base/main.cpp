@@ -317,9 +317,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// (so instead of just quitting, show a nice error dialog to the
 			// user and let him pick another game).
 		 	
-			// Reset RTL and Quit flags in case we want to load another engine
+			// Reset RTL flag in case we want to load another engine
 			g_system->getEventManager()->resetRTL();		
-			g_system->getEventManager()->resetQuit();
 
 			if (result == 0)
 				break;

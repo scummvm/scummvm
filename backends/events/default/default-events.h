@@ -117,7 +117,6 @@ public:
 	virtual int getModifierState() const { return _modifierState; }
 	virtual int shouldQuit() const { return _shouldQuit; }
 	virtual int shouldRTL() const { return _shouldRTL; }
-	virtual void resetQuit() { _shouldQuit = false; }
 	virtual void resetRTL() { _shouldRTL = false; }
 };
 
