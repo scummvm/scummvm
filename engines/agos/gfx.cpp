@@ -771,63 +771,74 @@ void AGOSEngine::drawBackGroundImage(VC10_state *state) {
 
 void AGOSEngine::drawVertImage(VC10_state *state) {
 	if (state->flags & kDFCompressed) {
-		uint w, h;
-		byte *src, *dst, *dstPtr;
-
-		state->x_skip *= 4;				/* reached */
-
-		state->dl = state->width;
-		state->dh = state->height;
-
-		vc10_skip_cols(state);
-
-		dstPtr = state->surf_addr;
-		if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
-			dstPtr += vcReadVar(252);
-		}
-		w = 0;
-		do {
-			byte color;
-
-			src = vc10_depackColumn(state);
-			dst = dstPtr;
-
-			h = 0;
-			do {
-				color = (*src / 16);
-				if ((state->flags & kDFNonTrans) || color != 0)
-					dst[0] = color | state->palette;
-				color = (*src & 15);
-				if ((state->flags & kDFNonTrans) || color != 0)
-					dst[1] = color | state->palette;
-				dst += state->surf_pitch;
-				src++;
-			} while (++h != state->draw_height);
-			dstPtr += 2;
-		} while (++w != state->draw_width);
+		drawVertImageCompressed(state);
 	} else {
-		const byte *src;
-		byte *dst;
-		uint count;
-
-		src = state->srcPtr + (state->width * state->y_skip) * 8;
-		dst = state->surf_addr;
-		state->x_skip *= 4;
-
-		do {
-			for (count = 0; count != state->draw_width; count++) {
-				byte color;
-				color = (src[count + state->x_skip] / 16) + state->paletteMod;
-				if ((state->flags & kDFNonTrans) || color)
-					dst[count * 2] = color | state->palette;
-				color = (src[count + state->x_skip] & 15) + state->paletteMod;
-				if ((state->flags & kDFNonTrans) || color)
-					dst[count * 2 + 1] = color | state->palette;
-			}
-			dst += state->surf_pitch;
-			src += state->width * 8;
-		} while (--state->draw_height);
+		drawVertImageUncompressed(state);
 	}
+}
+
+void AGOSEngine::drawVertImageUncompressed(VC10_state *state) {
+	assert ((state->flags & kDFCompressed) == 0) ;
+
+	const byte *src;
+	byte *dst;
+	uint count;
+
+	src = state->srcPtr + (state->width * state->y_skip) * 8;
+	dst = state->surf_addr;
+	state->x_skip *= 4;
+
+	do {
+		for (count = 0; count != state->draw_width; count++) {
+			byte color;
+			color = (src[count + state->x_skip] / 16) + state->paletteMod;
+			if ((state->flags & kDFNonTrans) || color)
+				dst[count * 2] = color | state->palette;
+			color = (src[count + state->x_skip] & 15) + state->paletteMod;
+			if ((state->flags & kDFNonTrans) || color)
+				dst[count * 2 + 1] = color | state->palette;
+		}
+		dst += state->surf_pitch;
+		src += state->width * 8;
+	} while (--state->draw_height);
+}
+
+void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
+	assert (state->flags & kDFCompressed) ;
+	uint w, h;
+	byte *src, *dst, *dstPtr;
+
+	state->x_skip *= 4;				/* reached */
+
+	state->dl = state->width;
+	state->dh = state->height;
+
+	vc10_skip_cols(state);
+
+	dstPtr = state->surf_addr;
+	if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
+		dstPtr += vcReadVar(252);
+	}
+	w = 0;
+	do {
+		byte color;
+
+		src = vc10_depackColumn(state);
+		dst = dstPtr;
+
+		h = 0;
+		do {
+			color = (*src / 16);
+			if ((state->flags & kDFNonTrans) || color != 0)
+				dst[0] = color | state->palette;
+			color = (*src & 15);
+			if ((state->flags & kDFNonTrans) || color != 0)
+				dst[1] = color | state->palette;
+			dst += state->surf_pitch;
+			src++;
+		} while (++h != state->draw_height);
+		dstPtr += 2;
+	} while (++w != state->draw_width);
 }
 
 void AGOSEngine::drawImage(VC10_state *state) {
