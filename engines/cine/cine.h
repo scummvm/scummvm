@@ -94,6 +94,7 @@ public:
 
 	Common::StringList _volumeResourceFiles;
 	StringPtrHashMap _volumeEntriesMap;
+	TextHandler _textHandler;
 
 private:
 	void initialize(void);
