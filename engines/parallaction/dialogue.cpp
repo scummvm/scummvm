@@ -166,7 +166,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 		assert(id >= 0);
 		_visAnswers[id] = i;
 
-		_askPassword = (strstr(a->_text, "%p") != NULL);
+		_askPassword = (strstr(a->_text, "%P") != NULL);
 		_numVisAnswers++;
 
 		return true;
