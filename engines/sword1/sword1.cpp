@@ -247,8 +247,6 @@ int SwordEngine::init() {
 	_resMan = new ResMan("swordres.rif", _systemVars.isMac);
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
 	_screen = new Screen(_system, _resMan, _objectMan);
 	_music = new Music(_mixer);
@@ -257,53 +255,7 @@ int SwordEngine::init() {
 	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
-	uint musicVol = ConfMan.getInt("music_volume");
-	uint speechVol = ConfMan.getInt("speech_volume");
-	uint sfxVol = ConfMan.getInt("sfx_volume");
-	uint musicBal = 50;
-	if (ConfMan.hasKey("music_balance")) {
-		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
-	}
-	uint speechBal = 50;
-	if (ConfMan.hasKey("speech_balance")) {
-		speechBal = CLIP(ConfMan.getInt("speech_balance"), 0, 100);
-	}
-	uint sfxBal = 50;
-	if (ConfMan.hasKey("sfx_balance")) {
-		sfxBal = CLIP(ConfMan.getInt("sfx_balance"), 0, 100);
-	}
-
-	uint musicVolL = 2 * musicVol * musicBal / 100;
-	uint musicVolR = 2 * musicVol - musicVolL;
-
-	uint speechVolL = 2 * speechVol * speechBal / 100;
-	uint speechVolR = 2 * speechVol - speechVolL;
-
-	uint sfxVolL = 2 * sfxVol * sfxBal / 100;
-	uint sfxVolR = 2 * sfxVol - sfxVolL;
-
-	if (musicVolR > 255) {
-		musicVolR = 255;
-	}
-	if (musicVolL > 255) {
-		musicVolL = 255;
-	}
-	if (speechVolR > 255) {
-		speechVolR = 255;
-	}
-	if (speechVolL > 255) {
-		speechVolL = 255;
-	}
-	if (sfxVolR > 255) {
-		sfxVolR = 255;
-	}
-	if (sfxVolL > 255) {
-		sfxVolL = 255;
-	}
-
-	_music->setVolume(musicVolL, musicVolR);
-	_sound->setSpeechVol(speechVolL, speechVolR);
-	_sound->setSfxVol(sfxVolL, sfxVolR);
+	syncSoundSettings();
 
 	_systemVars.justRestoredGame = 0;
 	_systemVars.currentCD = 0;
@@ -358,20 +310,32 @@ void SwordEngine::reinitialize(void) {
 }
 
 void SwordEngine::syncSoundSettings() {
-	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
-	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
-	
 	uint musicVol = ConfMan.getInt("music_volume");
+	uint sfxVol = ConfMan.getInt("sfx_volume");
+	uint speechVol = ConfMan.getInt("speech_volume");
+
 	uint musicBal = 50;
 	if (ConfMan.hasKey("music_balance")) {
 		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
 	}
 
+	uint speechBal = 50;
+	if (ConfMan.hasKey("speech_balance")) {
+		speechBal = CLIP(ConfMan.getInt("speech_balance"), 0, 100);
+	}
+	uint sfxBal = 50;
+	if (ConfMan.hasKey("sfx_balance")) {
+		sfxBal = CLIP(ConfMan.getInt("sfx_balance"), 0, 100);
+	}
+
 	uint musicVolL = 2 * musicVol * musicBal / 100;
 	uint musicVolR = 2 * musicVol - musicVolL;
+
+	uint speechVolL = 2 * speechVol * speechBal / 100;
+	uint speechVolR = 2 * speechVol - speechVolL;
+
+	uint sfxVolL = 2 * sfxVol * sfxBal / 100;
+	uint sfxVolR = 2 * sfxVol - sfxVolL;
 
 	if (musicVolR > 255) {
 		musicVolR = 255;
@@ -380,7 +344,25 @@ void SwordEngine::syncSoundSettings() {
 		musicVolL = 255;
 	}
 
+	if (speechVolR > 255) {
+		speechVolR = 255;
+	}
+	if (speechVolL > 255) {
+		speechVolL = 255;
+	}
+	if (sfxVolR > 255) {
+		sfxVolR = 255;
+	}
+	if (sfxVolL > 255) {
+		sfxVolL = 255;
+	}
+
 	_music->setVolume(musicVolL, musicVolR);
+	_sound->setSpeechVol(speechVolL, speechVolR);
+	_sound->setSfxVol(sfxVolL, sfxVolR);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 }
 
 void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
