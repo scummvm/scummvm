@@ -77,6 +77,7 @@ public:
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
+	virtual void syncSoundSettings();
 
 	uint32 _features;
 protected:

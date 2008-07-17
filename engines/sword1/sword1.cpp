@@ -357,6 +357,32 @@ void SwordEngine::reinitialize(void) {
 	_systemVars.wantFade = true;
 }
 
+void SwordEngine::syncSoundSettings() {
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+	
+	uint musicVol = ConfMan.getInt("music_volume");
+	uint musicBal = 50;
+	if (ConfMan.hasKey("music_balance")) {
+		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
+	}
+
+	uint musicVolL = 2 * musicVol * musicBal / 100;
+	uint musicVolR = 2 * musicVol - musicVolL;
+
+	if (musicVolR > 255) {
+		musicVolR = 255;
+	}
+	if (musicVolL > 255) {
+		musicVolL = 255;
+	}
+
+	_music->setVolume(musicVolL, musicVolR);
+}
+
 void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 	uint8 bitPos = 0;
 	while (flags) {
