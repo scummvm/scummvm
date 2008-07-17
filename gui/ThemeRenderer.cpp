@@ -290,7 +290,7 @@ void ThemeRenderer::drawCached(DrawData type, const Common::Rect &r) {
 	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
 }
 
-void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
+void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r, uint32 dynamicData) {
 	if (_widgets[type] == 0)
 		return;
 		
@@ -299,7 +299,7 @@ void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r) {
 	} else {
 		for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
 			 step != _widgets[type]->_steps.end(); ++step)
-			_vectorRenderer->drawStep(r, *step);
+			_vectorRenderer->drawStep(r, *step, dynamicData);
 	}
 }
 
@@ -473,7 +473,9 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 	
 	if (active >= 0) {
 		Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
-		drawDD(kDDTabActive, tabRect);
+		const uint16 tabLeft = active * (tabWidth + tabOffset);
+		const uint16 tabRight =  r.right - tabRect.right;
+		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
 		drawDDText(kDDTabActive, tabRect, tabs[active]);
 	}
 }

@@ -78,7 +78,7 @@ struct DrawStep {
 	uint8 shadow, stroke, factor, radius; /** Misc options... */
 
 	uint8 fillMode; /** active fill mode */
-	uint8 extraData; /** Generic parameter for extra options (orientation/bevel) */
+	uint32 extraData; /** Generic parameter for extra options (orientation/bevel) */
 
 	uint32 scale; /** scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
@@ -489,7 +489,7 @@ public:
 	 * @param area Zone to paint on
 	 * @param step Pointer to a DrawStep struct.
 	 */
-	virtual void drawStep(const Common::Rect &area, const DrawStep &step);
+	virtual void drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra = 0);
 	virtual void textStep(const Common::String &text, const Common::Rect &area, const TextStep &step);
 
 	/**
@@ -519,6 +519,7 @@ protected:
 	
 	int _shadowOffset; /** offset for drawn shadows */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
+	uint32 _dynamicData; /** Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 
 	int _gradientFactor; /** Multiplication factor of the active gradient */
 	int _gradientBytes[3]; /** Color bytes of the active gradient, used to speed up calculation */
@@ -763,7 +764,7 @@ protected:
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h, bool inverted, PixelType color, FillMode fill_m);
 	virtual void drawTriangleFast(int x, int y, int size, bool inverted, PixelType color, FillMode fill_m);
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color);
-	virtual void drawTabAlg(int x, int y, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m);
+	virtual void drawTabAlg(int x, int y, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft = 0, int baseRight = 0);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS

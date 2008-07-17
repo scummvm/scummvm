@@ -261,7 +261,7 @@ protected:
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 	void drawCached(DrawData type, const Common::Rect &r);
 
-	inline void drawDD(DrawData type, const Common::Rect &r);
+	inline void drawDD(DrawData type, const Common::Rect &r, uint32 dynamicData = 0);
 	inline void drawDDText(DrawData type, const Common::Rect &r, const Common::String &text);
 	inline void debugWidgetPosition(const char *name, const Common::Rect &r);
 

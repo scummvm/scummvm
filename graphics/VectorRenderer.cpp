@@ -53,7 +53,7 @@ VectorRenderer *createRenderer(int mode) {
 /********************************************************************
  * DRAWSTEP handling functions
  ********************************************************************/
-void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
+void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra) {
 
 	if (step.bgColor.set)
 		setBgColor(step.bgColor.r, step.bgColor.g, step.bgColor.b);
@@ -69,8 +69,10 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step) {
 	setGradientFactor(step.factor);
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
+	
+	_dynamicData = extra;
 
-	(this->*(step.drawingCall))(area, step);	
+	(this->*(step.drawingCall))(area, step);
 }
 
 void VectorRenderer::textStep(const Common::String &text, const Common::Rect &area, const TextStep &step) {
@@ -405,7 +407,7 @@ drawTab(int x, int y, int r, int w, int h) {
 		case kFillBackground:
 			drawTabAlg(x, y, w, h, r, (Base::_fillMode == kFillBackground) ? _bgColor : _fgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
-				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled);
+				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
 			break;
 			
 		case kFillForeground:
@@ -472,7 +474,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 /** TAB ALGORITHM - NON AA */
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m) {
+drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = Base::surfacePitch();
@@ -507,10 +509,6 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 				*(ptr_tl - (y) - (px)) = color;
 
 				if (Base::_strokeWidth > 1) {
-					*(ptr_tr + (y) - (px)) = color;
-					*(ptr_tr + (x - 1) - (py)) = color;
-					*(ptr_tl - (x - 1) - (py)) = color;
-					*(ptr_tl - (y) - (px)) = color;
 					*(ptr_tr + (y) - (px - pitch)) = color;
 					*(ptr_tr + (x) - (py)) = color;
 					*(ptr_tl - (x) - (py)) = color;
@@ -521,9 +519,27 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 
 		ptr_fill += pitch * real_radius;
 		while (short_h--) {
-			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth, color);
-			colorFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
+			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth - 1, color);
+			colorFill(ptr_fill + w - Base::_strokeWidth + 2, ptr_fill + w, color);
 			ptr_fill += pitch;
+		}
+		
+		if (baseLeft) {
+			sw = 0;
+			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h);
+			while (sw++ < Base::_strokeWidth) {
+				colorFill(ptr_fill - baseLeft, ptr_fill, color);
+				ptr_fill += pitch;
+			}
+		}
+		
+		if (baseRight) {
+			sw = 0;
+			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w, y1 + h);
+			while (sw++ < Base::_strokeWidth) {
+				colorFill(ptr_fill, ptr_fill + baseRight, color);
+				ptr_fill += pitch;
+			}
 		}
 	} else {
 		__BE_RESET();
