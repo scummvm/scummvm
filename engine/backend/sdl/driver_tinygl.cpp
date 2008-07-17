@@ -122,6 +122,8 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 
 	_storedDisplay = new byte[640 * 480 * 2];
 	memset(_storedDisplay, 0, 640 * 480 * 2);
+
+	_currentShadowArray = 0;
 }
 
 DriverTinyGL::~DriverTinyGL() {

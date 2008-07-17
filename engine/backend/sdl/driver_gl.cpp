@@ -60,6 +60,8 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	_storedDisplay = new byte[_screenWidth * _screenHeight * 4];
 	memset(_storedDisplay, 0, _screenWidth * _screenHeight * 4);
 	_smushNumTex = 0;
+
+	_currentShadowArray = 0;
 }
 
 DriverGL::~DriverGL() {
