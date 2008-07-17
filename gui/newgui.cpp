@@ -81,7 +81,7 @@ void GuiObject::reflowLayout() {
 }
 
 // Constructor
-NewGui::NewGui() : _needRedraw(false),
+NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
 	_useStdCursor = false;
@@ -187,29 +187,48 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 void NewGui::redraw() {
 	int i;
 
-	// Restore the overlay to its initial state, then draw all dialogs.
-	// This is necessary to get the blending right.
-	_theme->clearAll();
+	if (_redrawStatus == kRedrawDisabled)
+		return;
 
-	_theme->closeAllDialogs();
-	//for (i = 0; i < _dialogStack.size(); ++i)
-	//	_theme->closeDialog();
+	switch (_redrawStatus) {
+		case kRedrawCloseDialog:
+			printf("Dialog closed!\n");
+			if (_theme->closeDialog())
+				break;
 
-	for (i = 0; i < _dialogStack.size(); i++) {
-		// Special treatment when topmost dialog has dimsInactive() set to false
-		// This is the case for PopUpWidget which should not dim a dialog
-		// which it belongs to
-		if ((i == _dialogStack.size() - 2) && !_dialogStack[i + 1]->dimsInactive())
+		case kRedrawFull:
+			_theme->clearAll();
+			_theme->closeAllDialogs();
+
+			for (i = 0; i < _dialogStack.size(); i++) {
+				if ((i == _dialogStack.size() - 2) && !_dialogStack[i + 1]->dimsInactive())
+					_theme->openDialog(true);
+				else if ((i != (_dialogStack.size() - 1)) || !_dialogStack[i]->dimsInactive())
+					_theme->openDialog(false);
+				else
+					_theme->openDialog(true);
+
+				_dialogStack[i]->drawDialog();
+			}
+			break;
+
+		case kRedrawTopDialog:
+			_dialogStack.top()->drawDialog();
+			printf("Top dialog redraw!\n");
+			break;
+
+		case kRedrawOpenDialog:
 			_theme->openDialog(true);
-		else if ((i != (_dialogStack.size() - 1)) || !_dialogStack[i]->dimsInactive())
-			_theme->openDialog(false);
-		else
-			_theme->openDialog(true);
+			_dialogStack.top()->drawDialog();
+			printf("Dialog opened!\n");
+			break;
 
-		_dialogStack[i]->drawDialog();
+		default:
+			return;
 	}
 
 	_theme->updateScreen();
+	_redrawStatus = kRedrawDisabled;
 }
 
 Dialog *NewGui::getTopDialog() const {
@@ -240,10 +259,7 @@ void NewGui::runLoop() {
 	Common::EventManager *eventMan = _system->getEventManager();
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
-		if (_needRedraw) {
-			redraw();
-			_needRedraw = false;
-		}
+		redraw();
 
 		// Don't "tickle" the dialog until the theme has had a chance
 		// to re-allocate buffers in case of a scaler change.
@@ -274,6 +290,7 @@ void NewGui::runLoop() {
 				_theme->refresh();
 
 				_themeChange = false;
+				_redrawStatus = kRedrawFull;
 				redraw();
 			}
 
@@ -330,11 +347,6 @@ void NewGui::runLoop() {
 		_system->delayMillis(10);
 	}
 
-	// HACK: since we reopen all dialogs anyway on redraw
-	// we for now use Theme::closeAllDialogs here, until
-	// we properly add (and implement) Theme::closeDialog
-	_theme->closeAllDialogs();
-
 	if (didSaveState) {
 		_theme->disable();
 		restoreState();
@@ -366,7 +378,7 @@ void NewGui::restoreState() {
 
 void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
-	_needRedraw = true;
+	_redrawStatus = kRedrawOpenDialog;
 
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
@@ -393,7 +405,7 @@ void NewGui::closeTopDialog() {
 
 	// Remove the dialog from the stack
 	_dialogStack.pop();
-	_needRedraw = true;
+	_redrawStatus = kRedrawCloseDialog;
 }
 
 void NewGui::setupCursor() {
@@ -451,6 +463,7 @@ void NewGui::screenChange() {
 	// We need to redraw immediately. Otherwise
 	// some other event may cause a widget to be
 	// redrawn before redraw() has been called.
+	_redrawStatus = kRedrawFull;
 	redraw();
 }
 

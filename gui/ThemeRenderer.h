@@ -42,13 +42,23 @@ namespace GUI {
 struct WidgetDrawData;
 
 struct WidgetDrawData {
+	/** List of all the steps needed to draw this widget */
 	Common::List<Graphics::DrawStep> _steps;
+	
+	/** Single step that defines the text shown inside the widget */
 	Graphics::TextStep _textStep;
 	bool _hasText;
 
+	/** Extra space that the widget occupies when it's drawn.
+	    E.g. when taking into account rounded corners, drop shadows, etc 
+		Used when restoring the widget background */
+	uint16 _backgroundOffset;
+
+	/** Sets whether the widget is cached beforehand. */
 	bool _cached;
+
+	/** Texture where the cached widget is stored. */
 	Graphics::Surface *_surfaceCache;
-	uint32 _cachedW, _cachedH;
 
 	~WidgetDrawData() {
 		_steps.clear();
@@ -145,14 +155,18 @@ public:
 	void refresh() {}
 	void enable();
 	void disable();
-	void openDialog() {}
-	void closeAllDialogs() {}
+
+	void closeAllDialogs() {
+		_dialogCount = 0;
+		_cachedDialog = 0;
+	}
 	
 
 	void updateScreen(); //{}
 	void resetDrawArea() {}
 
-	void openDialog(bool top) {}
+	void openDialog(bool top);// {}
+	bool closeDialog();// {}
 
 	/** Font management */
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
@@ -177,7 +191,7 @@ public:
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {}
 
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
-		r.grow(kDirtyRectangleThreshold);
+//		r.grow(kDirtyRectangleThreshold);
 		_dirtyScreen.push_back(r);
 		return true;
 	}
@@ -260,13 +274,14 @@ protected:
 	
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 	void drawCached(DrawData type, const Common::Rect &r);
+	void calcBackgroundOffset(DrawData type);
 
 	inline void drawDD(DrawData type, const Common::Rect &r, uint32 dynamicData = 0);
 	inline void drawDDText(DrawData type, const Common::Rect &r, const Common::String &text);
 	inline void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 	// TODO
-	void restoreBackground(Common::Rect r, bool special = false) {}
+	void restoreBackground(Common::Rect r, bool special = false);
 
 	int getTabSpacing() const {
 		return 0;
@@ -295,6 +310,8 @@ protected:
 
 	Graphics::Surface *_screen;
 	Graphics::Surface *_backBuffer;
+	uint32 _dialogCount;
+	uint32 _cachedDialog;
 
 	int _bytesPerPixel;
 	GraphicsMode _graphicsMode;

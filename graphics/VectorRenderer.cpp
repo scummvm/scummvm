@@ -487,11 +487,7 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 	int real_radius = r;
 	int short_h = h - r + 2;
 	int long_h = h;
-	PixelType color1, color2;
-	
-	if (fill_m == kFillForeground || fill_m == kFillBackground)
-		color1 = color2 = color;
-		
+
 	if (fill_m == kFillDisabled) {
 		while (sw++ < Base::_strokeWidth) {
 			colorFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
@@ -543,6 +539,9 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 		}
 	} else {
 		__BE_RESET();
+
+		PixelType color1, color2;
+		color1 = color2 = color;
 		
 		while (x++ < y) {
 			__BE_ALGORITHM();

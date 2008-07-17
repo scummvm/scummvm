@@ -90,12 +90,21 @@ public:
 
 	void screenChange();
 
+	enum RedrawStatus {
+		kRedrawDisabled = 0,
+		kRedrawOpenDialog,
+		kRedrawCloseDialog,
+		kRedrawTopDialog,
+		kRedrawFull
+	};
+
 protected:
 	OSystem			*_system;
 
 	Theme		*_theme;
 
-	bool		_needRedraw;
+//	bool		_needRedraw;
+	RedrawStatus _redrawStatus;
 	int			_lastScreenChangeID;
 	DialogStack	_dialogStack;
 

@@ -239,6 +239,20 @@ public:
 	virtual void closeAllDialogs() = 0;
 
 	/**
+	 * Closes the topmost dialog, and redraws the screen
+	 * accordingly.
+	 *
+	 * TODO: Make this purely virtual by making ThemeClassic
+	 * and ThemeModern implement it too.
+	 *
+	 * @returns True if the dialog was sucessfully closed.
+	 *          If we weren't able to restore the screen after closing
+	 *          the dialog, we return false, which means we need to redraw
+	 *          the dialog stack from scratch.
+	 */
+	virtual bool closeDialog() { return false; }
+
+	/**
 	 * Clear the complete GUI screen.
 	 */
 	virtual void clearAll() = 0;
