@@ -470,7 +470,7 @@ void DriverGL::createBitmap(Bitmap *bitmap) {
 				uint16 *ptr1 = zbufPtr + y * bitmap->_width;
 				uint16 *ptr2 = zbufPtr + (bitmap->_height - 1 - y) * bitmap->_width;
 				for (int x = 0; x < bitmap->_width; x++, ptr1++, ptr2++) {
-					uint32 tmp = *ptr1;
+					uint16 tmp = *ptr1;
 					*ptr1 = *ptr2;
 					*ptr2 = tmp;
 				}
