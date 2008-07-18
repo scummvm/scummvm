@@ -34,7 +34,7 @@ typedef struct {
 	int mode;
 
 	unsigned short *zbuf;
-	unsigned long *zbuf2;
+	unsigned int *zbuf2;
 	unsigned char *shadow_mask_buf;
 	int shadow_color_r;
 	int shadow_color_g;

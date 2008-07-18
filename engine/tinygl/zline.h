@@ -10,7 +10,7 @@
 #endif
 #ifdef INTERP_Z
 	register unsigned short *pz;
-	register unsigned long *pz_2;
+	register unsigned int *pz_2;
 	int zinc;
 	register unsigned int z, zz;
 #endif

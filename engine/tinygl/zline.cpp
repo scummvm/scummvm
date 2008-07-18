@@ -6,7 +6,7 @@
 
 void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
 	unsigned short *pz;
-	unsigned long *pz_2;
+	unsigned int *pz_2;
 	PIXEL *pp;
 	unsigned int zz;
 

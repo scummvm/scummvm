@@ -58,7 +58,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0,
 
 #define DRAW_LINE()	{								\
 	register unsigned short *pz;					\
-	register unsigned long *pz_2;					\
+	register unsigned int *pz_2;					\
 	register PIXEL *pp;								\
 	register unsigned int tmp, z, zz, rgb, drgbdx;	\
 	register int n;									\
@@ -133,7 +133,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
 	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned short *pz1;
-	unsigned long *pz2;
+	unsigned int *pz2;
 	PIXEL *pp1;
 	int part, update_left, update_right;
 
@@ -338,7 +338,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
 			nb_lines--;
 			{
 				register unsigned short *pz;
-				register unsigned long *pz_2;
+				register unsigned int *pz_2;
 				register PIXEL *pp;
 				register unsigned int s, t, z, zz, rgb, drgbdx;
 				register int n, dsdx, dtdx;

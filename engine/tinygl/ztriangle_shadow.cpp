@@ -164,7 +164,7 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned char *pm1;
 	unsigned short *pz1;
-	unsigned long *pz2;
+	unsigned int *pz2;
 	PIXEL *pp1;
 	int part, update_left, update_right;
 
@@ -302,7 +302,7 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 				register unsigned char *pm;
 				register int n;
 				register unsigned short *pz;
-				register unsigned long *pz_2;
+				register unsigned int *pz_2;
 				register unsigned int z, zz;
 
 				n = (x2 >> 16) - x1;
