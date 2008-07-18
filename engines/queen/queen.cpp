@@ -181,7 +181,7 @@ void QueenEngine::checkOptionSettings() {
 }
 
 void QueenEngine::syncSoundSettings() {
-	_sound->setVolume(ConfMan.getInt("music_volume"));
+	readOptionSettings();
 }
 
 void QueenEngine::readOptionSettings() {
@@ -431,10 +431,6 @@ int QueenEngine::init() {
 	} else {
 		_logic = new LogicGame(this);
 	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 
 	_sound = Sound::makeSoundInstance(_mixer, this, _resource->getCompression());
 	_walk = new Walk(this);

@@ -224,7 +224,6 @@ void PCSound::playSpeech(const char *base) {
 
 void PCSound::setVolume(int vol) {
 	Sound::setVolume(vol);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
 	_music->setVolume(vol);
 }
 
@@ -275,7 +274,10 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11025, flags);
+		if (soundHandle == &_speechHandle)
+			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, soundHandle, sound, size, 11025, flags);
+		else 	
+			_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11025, flags);
 	}
 }
 
