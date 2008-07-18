@@ -550,10 +550,11 @@ void OSystem_SDL::setupMixer() {
 void OSystem_SDL::closeMixer() {
 	if (_mixer)
 		_mixer->setReady(false);
-	delete _mixer;
-	_mixer = 0;
 
 	SDL_CloseAudio();
+
+	delete _mixer;
+	_mixer = 0;
 
 #ifdef MIXER_DOUBLE_BUFFERING
 	deinitThreadedMixer();
