@@ -123,7 +123,7 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 	_storedDisplay = new byte[640 * 480 * 2];
 	memset(_storedDisplay, 0, 640 * 480 * 2);
 
-	_currentShadowArray = 0;
+	_currentShadowArray = NULL;
 }
 
 DriverTinyGL::~DriverTinyGL() {
@@ -242,6 +242,7 @@ void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float ro
 	tglPushMatrix();
 	if (_currentShadowArray) {
 		assert(_currentShadowArray->shadowMask);
+		//tglSetShadowColor(255, 255, 255);
 		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
 		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();

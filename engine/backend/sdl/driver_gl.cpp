@@ -50,6 +50,9 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	_screenHeight = screenH;
 	_screenBPP = screenBPP;
 	_isFullscreen = fullscreen;
+	int depth;
+	SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depth);
+	warning("ZBuffer Depth bits: %d", depth);
 
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	SDL_WM_SetCaption(GLDriver, "Residual");
@@ -61,7 +64,9 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	memset(_storedDisplay, 0, _screenWidth * _screenHeight * 4);
 	_smushNumTex = 0;
 
-	_currentShadowArray = 0;
+	_currentShadowArray = NULL;
+
+	glPolygonOffset(-6.0, -6.0);
 }
 
 DriverGL::~DriverGL() {
@@ -107,7 +112,7 @@ void DriverGL::positionCamera(Vector3d pos, Vector3d interest) {
 }
 
 void DriverGL::clearScreen() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void DriverGL::flipBuffer() {
@@ -164,7 +169,7 @@ static void glShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, 
 	mat[11] = nz;
 	mat[15] = -d;
 
-	glMultMatrixf(mat);
+	glMultMatrixf((GLfloat *)mat);
 }
 
 void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
@@ -177,6 +182,7 @@ void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) 
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
+		//glColor3f(0.0f, 1.0f, 0.0f);
 		glColor3f(_shadowColorR / 255.0, _shadowColorG / 255.0, _shadowColorB / 255.0);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
@@ -187,13 +193,13 @@ void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) 
 }
 
 void DriverGL::finishActorDraw() {
-	if (_currentShadowArray) {
-		glEnable(GL_LIGHTING);
-		glDisable(GL_POLYGON_OFFSET_FILL);
-		glColor3f(1.0, 1.0, 1.0);
-	}
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
+	if (_currentShadowArray) {
+		glEnable(GL_LIGHTING);
+		glColor3f(1.0, 1.0, 1.0);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
 }
 
 void DriverGL::setShadow(Shadow *shadow) {
@@ -201,12 +207,46 @@ void DriverGL::setShadow(Shadow *shadow) {
 }
 
 void DriverGL::drawShadowPlanes() {
+/*	glColor3f(1.0f, 1.0f, 1.0f);
+	_currentShadowArray->planeList.begin();
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+		Sector *shadowSector = *i;
+		glBegin(GL_POLYGON);
+		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
+			glVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
+		}
+		glEnd();
+	}
+*/
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glClearStencil(1);
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, 1);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE);
+	_currentShadowArray->planeList.begin();
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+		Sector *shadowSector = *i;
+		glBegin(GL_POLYGON);
+		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
+			glVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
+		}
+		glEnd();
+	}
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
 void DriverGL::setShadowMode() {
 }
 
 void DriverGL::clearShadowMode() {
+	glDisable(GL_STENCIL_TEST);
 }
 
 void DriverGL::setShadowColor(byte r, byte g, byte b) {
@@ -430,7 +470,7 @@ void DriverGL::createBitmap(Bitmap *bitmap) {
 				uint16 *ptr1 = zbufPtr + y * bitmap->_width;
 				uint16 *ptr2 = zbufPtr + (bitmap->_height - 1 - y) * bitmap->_width;
 				for (int x = 0; x < bitmap->_width; x++, ptr1++, ptr2++) {
-					uint16 tmp = *ptr1;
+					uint32 tmp = *ptr1;
 					*ptr1 = *ptr2;
 					*ptr2 = tmp;
 				}
