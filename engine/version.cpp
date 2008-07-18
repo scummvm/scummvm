@@ -43,16 +43,8 @@ const char *gResidualFeatures = ""
 	"MP3 "
 #endif
 
-#ifdef USE_ALSA
-	"ALSA "
-#endif
-
 #ifdef USE_ZLIB
 	"zLib "
-#endif
-
-#ifdef USE_MPEG2
-	"MPEG2 "
 #endif
 	;
 

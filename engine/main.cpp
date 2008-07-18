@@ -84,7 +84,7 @@ void quit();
 extern "C" int residual_main(int argc, char *argv[]) {
 	int i;
 
-	printf("%s Version\n", gResidualFullVersion);
+	printf("%s\n", gResidualFullVersion);
 	printf("------------------------------------------------\n");
 
 	g_registry = new Registry();
