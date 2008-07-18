@@ -42,9 +42,21 @@
   #define SAMPLES_PER_SEC 16000
 #endif
 
+#define KInputBufferLength 128
+// Symbian libc file functionality in order to provide shared file handles
+struct TSymbianFileEntry {
+	RFile iFileHandle;
+	char iInputBuffer[KInputBufferLength];
+	TInt iInputBufferLen;
+	TInt iInputPos;
+};
+
+#define FILE void
 
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
+
+
 
 // Show a simple Symbian Info win with Msg & exit
 void FatalError(const char *msg) {
@@ -443,15 +455,9 @@ void OSystem_SDL_Symbian::initZones() {
 	}
 }
 
-// Symbian libc file functionality in order to provide shared file handles
-struct TSymbianFileEntry {
-	RFile iFileHandle;
-};
-
-#define FILE void
-
 FILE*	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
+	fileEntry->iInputPos = KErrNotFound;
 
 	if (fileEntry != NULL) {
 		TInt modeLen = strlen(mode);
@@ -509,9 +515,71 @@ void symbian_fclose(FILE* handle) {
 }
 
 size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
-	TPtr8 pointer( (unsigned char*) ptr, size*numItems);
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
+	TUint32 totsize = size*numItems;
+	TPtr8 pointer ( (unsigned char*) ptr, totsize);
 
-	((TSymbianFileEntry*)(handle))->iFileHandle.Read(pointer);
+	// Nothing cached and we want to load at least KInputBufferLength bytes
+	if(totsize >= KInputBufferLength) {	
+		TUint32 totLength = 0;
+		if(entry->iInputPos != KErrNotFound)
+		{
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer+entry->iInputPos, entry->iInputBufferLen - entry->iInputPos, KInputBufferLength);
+			pointer.Append(cacheBuffer);
+			entry->iInputPos = KErrNotFound;
+			totLength+=pointer.Length();
+			pointer.Set(totLength+(unsigned char*) ptr, 0, totsize-totLength);
+		}
+
+		entry->iFileHandle.Read(pointer);
+		totLength+=pointer.Length();
+
+		pointer.Set((unsigned char*) ptr, totLength, totsize);
+
+	}
+	else {
+		// Nothing in buffer	
+		if(entry->iInputPos == KErrNotFound) {
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, KInputBufferLength);
+			entry->iFileHandle.Read(cacheBuffer);
+
+			if(cacheBuffer.Length() >= totsize) {
+				pointer.Copy(cacheBuffer.Left(totsize));
+				entry->iInputPos = totsize;
+				entry->iInputBufferLen = cacheBuffer.Length();
+			}
+			else {
+				pointer.Copy(cacheBuffer);
+				entry->iInputPos = KErrNotFound;
+			}
+
+		}
+		else {
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, KInputBufferLength, entry->iInputBufferLen);
+
+			if(entry->iInputPos+totsize < entry->iInputBufferLen) {
+				pointer.Copy(cacheBuffer.Mid(entry->iInputPos, totsize));
+				entry->iInputPos+=totsize;
+			}
+			else {
+			
+			pointer.Copy(cacheBuffer.Mid(entry->iInputPos, entry->iInputBufferLen-entry->iInputPos));
+			cacheBuffer.SetLength(0);
+			entry->iFileHandle.Read(cacheBuffer);
+
+			if(cacheBuffer.Length() >= totsize-pointer.Length()) {
+					TUint32 restSize = totsize-pointer.Length();
+					pointer.Append(cacheBuffer.Left(restSize));
+					entry->iInputPos = restSize;
+					entry->iInputBufferLen = cacheBuffer.Length();
+				}
+				else {
+					pointer.Append(cacheBuffer);
+					entry->iInputPos = KErrNotFound;
+				}
+			}
+		}
+	}	
 
 	return pointer.Length()/size;
 }
@@ -519,6 +587,7 @@ size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle
 size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 	TPtrC8 pointer( (unsigned char*) ptr, size*numItems);
 
+	((TSymbianFileEntry*)(handle))->iInputPos = KErrNotFound;
 	if (((TSymbianFileEntry*)(handle))->iFileHandle.Write(pointer) == KErrNone) {
 		return numItems;
 	}
@@ -528,6 +597,7 @@ size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handl
 
 bool symbian_feof(FILE* handle) {
 	TInt pos = 0;
+
 	if (((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
 
 		TInt size = 0;
@@ -549,6 +619,7 @@ long int symbian_ftell(FILE* handle) {
 }
 
 int symbian_fseek(FILE* handle, long int offset, int whence) {
+
 	TSeek seekMode = ESeekStart;
 	TInt pos = offset;
 
@@ -564,6 +635,8 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 		break;
 
 	}
+	
+	((TSymbianFileEntry*)(handle))->iInputPos = KErrNotFound;
 
 	return ((TSymbianFileEntry*)(handle))->iFileHandle.Seek(seekMode, pos);
 }
