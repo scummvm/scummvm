@@ -265,8 +265,15 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 		result = NULL;
 	} else {
 		result = new LipSynch(filename, b->data(), b->len());
-		delete b;
-		_cache[fname] = result;
+		
+		// Some lipsynch files have no data
+		if (result->isValid()) {
+			delete b;
+			_cache[fname] = result;
+		} else {
+			delete result;
+			result = NULL;
+		}
 	}	
 
 	return result;

@@ -43,6 +43,7 @@ public:
 	};
 
 	int getAnim(int pos);
+	bool isValid() { return _numEntries > 0; }
 
 private:
 	LipEntry *_entries;
