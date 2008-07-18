@@ -555,7 +555,7 @@ size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle
 
 		}
 		else {
-			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, KInputBufferLength, entry->iInputBufferLen);
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, entry->iInputBufferLen, KInputBufferLength);
 
 			if(entry->iInputPos+totsize < entry->iInputBufferLen) {
 				pointer.Copy(cacheBuffer.Mid(entry->iInputPos, totsize));
