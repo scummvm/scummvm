@@ -251,6 +251,7 @@ public:
 	 *          the dialog stack from scratch.
 	 */
 	virtual bool closeDialog() { return false; }
+	virtual void finishBuffering() {}
 
 	/**
 	 * Clear the complete GUI screen.

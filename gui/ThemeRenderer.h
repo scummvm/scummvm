@@ -56,6 +56,7 @@ struct WidgetDrawData {
 
 	/** Sets whether the widget is cached beforehand. */
 	bool _cached;
+	bool _buffer;
 
 	/** Texture where the cached widget is stored. */
 	Graphics::Surface *_surfaceCache;
@@ -156,17 +157,12 @@ public:
 	void enable();
 	void disable();
 
-	void closeAllDialogs() {
-		_dialogCount = 0;
-		_cachedDialog = 0;
-	}
+	void closeAllDialogs() {}
 	
-
-	void updateScreen(); //{}
+	void updateScreen();
 	void resetDrawArea() {}
 
-	void openDialog(bool top);// {}
-	bool closeDialog();// {}
+	void openDialog(bool top);
 
 	/** Font management */
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
@@ -219,6 +215,10 @@ public:
 
 	bool loadTheme(Common::String themeName);
 	void setGraphicsMode(GraphicsMode mode);
+
+	void finishBuffering() {
+		_buffering = false;
+	}
 
 protected:
 	template<typename PixelType> void screenInit(bool backBuffer);
@@ -310,8 +310,7 @@ protected:
 
 	Graphics::Surface *_screen;
 	Graphics::Surface *_backBuffer;
-	uint32 _dialogCount;
-	uint32 _cachedDialog;
+	bool _buffering;
 
 	int _bytesPerPixel;
 	GraphicsMode _graphicsMode;

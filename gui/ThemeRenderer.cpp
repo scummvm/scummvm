@@ -77,7 +77,7 @@ const char *ThemeRenderer::kDrawDataStrings[] = {
 ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
 	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), 
-	_themeOk(false), _enabled(false), _dialogCount(0), _cachedDialog(0) {
+	_themeOk(false), _enabled(false), _buffering(false) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
 
@@ -214,8 +214,15 @@ bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
+	_widgets[data_id]->_buffer = false;
 	_widgets[data_id]->_surfaceCache = 0;
 	_widgets[data_id]->_hasText = false;
+
+	// TODO: set this only when needed
+	// possibly add an option to the parser to set this
+	// on each drawdata...
+	if (data_id >= kDDMainDialogBackground && data_id <= kDDWidgetBackgroundSlider)
+		_widgets[data_id]->_buffer = true;
 
 	return true;
 }
@@ -303,7 +310,11 @@ void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r, uint32 dynamicD
 	extendedRect.right += _widgets[type]->_backgroundOffset;
 	extendedRect.bottom += _widgets[type]->_backgroundOffset;
 
-	restoreBackground(extendedRect);
+	if (_buffering && _widgets[type]->_buffer)
+		_vectorRenderer->setSurface(_backBuffer);
+	else
+		restoreBackground(extendedRect);
+
 	addDirtyRect(extendedRect);
 		
 	if (isWidgetCached(type, r)) {
@@ -312,6 +323,11 @@ void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r, uint32 dynamicD
 		for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
 			 step != _widgets[type]->_steps.end(); ++step)
 			_vectorRenderer->drawStep(r, *step, dynamicData);
+	}
+
+	if (_buffering && _widgets[type]->_buffer) {
+		_vectorRenderer->setSurface(_screen);
+		memcpy(_screen->pixels, _backBuffer->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
 	}
 }
 
@@ -336,7 +352,7 @@ void ThemeRenderer::calcBackgroundOffset(DrawData type) {
 }
 
 void ThemeRenderer::restoreBackground(Common::Rect r, bool special) {
-/*	const OverlayColor *src = (const OverlayColor*)_backBuffer->getBasePtr(r.left, r.top);
+	const OverlayColor *src = (const OverlayColor*)_backBuffer->getBasePtr(r.left, r.top);
 	OverlayColor *dst = (OverlayColor*)_screen->getBasePtr(r.left, r.top);
 
 	int h = r.height();
@@ -345,10 +361,10 @@ void ThemeRenderer::restoreBackground(Common::Rect r, bool special) {
 		memcpy(dst, src, w * sizeof(OverlayColor));
 		src += _backBuffer->w;
 		dst += _screen->w;
-	}*/
+	}
 
-	debugWidgetPosition("", r);
-	printf(" BG_RESTORE ");
+//	debugWidgetPosition("", r);
+//	printf(" BG_RESTORE ");
 }
 
 void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
@@ -537,24 +553,11 @@ void ThemeRenderer::renderDirtyScreen() {
 	_dirtyScreen.clear();
 }
 
-void ThemeRenderer::openDialog(bool top) {
-	if (_dialogCount++ == 0)
-		return;
+void ThemeRenderer::openDialog(bool doBuffer) {
+	if (doBuffer)
+		_buffering = true;
 
-	_cachedDialog = _dialogCount - 1;
 	memcpy(_backBuffer->pixels, _screen->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
-}
-
-bool ThemeRenderer::closeDialog() {
-	assert(_dialogCount);
-
-	_dialogCount--;
-
-	if (_dialogCount != _cachedDialog)
-		return false;
-
-	memcpy(_screen->pixels, _backBuffer->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
-	return true;
 }
 
 } // end of namespace GUI.
