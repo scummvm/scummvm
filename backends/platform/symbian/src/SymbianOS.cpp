@@ -33,7 +33,7 @@
 #include "gui/Actions.h"
 #include "gui/Key.h"
 #include "gui/message.h"
-
+#include "sound/mixer_intern.h"
 #include "..\..\sdl\main.cpp"
 
 #ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
@@ -246,9 +246,9 @@ void OSystem_SDL_Symbian::symbianMixCallback(void *sys, byte *samples, int len) 
 	if (!this_->_mixer)
 		return;
 
-#ifdef S60
+#if defined (S60) && !defined(S60V3)
 	// If not stereo then we need to downmix
-	if (_channels != 2) {
+	if (this_->_mixer->_channels != 2) {
 		this_->_mixer->mixCallback(_stereo_mix_buffer, len * 2);
 
 		int16 *bitmixDst = (int16 *)samples;
