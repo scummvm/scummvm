@@ -106,7 +106,7 @@ private:
 	void refill();
 
 	inline bool eosIntern() const {
-		return _pos >= _bufferEnd;
+		return !_file->isOpen() || _pos >= _bufferEnd;
 	}
 
 public:
