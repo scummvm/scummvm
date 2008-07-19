@@ -38,8 +38,9 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	uint32 flags = SDL_OPENGL;
 	if (fullscreen)
@@ -50,9 +51,13 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	_screenHeight = screenH;
 	_screenBPP = screenBPP;
 	_isFullscreen = fullscreen;
-	int depth;
-	SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depth);
-	warning("ZBuffer Depth bits: %d", depth);
+	int flag;
+	SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &flag);
+	warning("GL Z buffer depth bits: %d", flag);
+	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &flag);
+	warning("GL Stencil buffer bits: %d", flag);
+	SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &flag);
+	warning("GL Double Buffer: %d", flag);
 
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	SDL_WM_SetCaption(GLDriver, "Residual");
@@ -219,11 +224,11 @@ void DriverGL::drawShadowPlanes() {
 	}
 */
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glClearStencil(1);
+	glClearStencil(~0);
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS, 1, 1);
+	glStencilFunc(GL_ALWAYS, 1, ~0);
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE);
@@ -238,7 +243,7 @@ void DriverGL::drawShadowPlanes() {
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilFunc(GL_EQUAL, 1, ~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
