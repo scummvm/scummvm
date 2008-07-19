@@ -1057,6 +1057,26 @@
 				Name="common"
 				>
 				<File
+					RelativePath="..\..\backends\common\keymap-manager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\keymap-manager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\keymap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\keymap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\keymapper.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\common\virtual-keyboard-parser.cpp"
 					>
 				</File>
