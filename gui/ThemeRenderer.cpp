@@ -39,40 +39,41 @@ namespace GUI {
 
 using namespace Graphics;
 
-const char *ThemeRenderer::kDrawDataStrings[] = {
-	"mainmenu_bg",
-	"special_bg",
-	"plain_bg",
-	"default_bg",
-	
-	"widget_default",
-	"widget_small",
-	"widget_textedit",
-	"widget_slider",
+const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawData[] = {
+	{kDDMainDialogBackground, "mainmenu_bg", true},
+	{kDDSpecialColorBackground, "special_bg", true},
+	{kDDPlainColorBackground, "plain_bg", true},
+	{kDDDefaultBackground, "default_bg", true},
 
-	"button_idle",
-	"button_hover",
-	"button_disabled",
+	{kDDWidgetBackgroundDefault, "widget_default", true},
+	{kDDWidgetBackgroundSmall, "widget_small", true},
+	{kDDWidgetBackgroundEditText, "widget_textedit", true},
+	{kDDWidgetBackgroundSlider, "widget_slider", true},
 
-	"slider_full",
-	"slider_empty",
+	{kDDButtonIdle, "button_idle", true},
+	{kDDButtonHover, "button_hover", false},
+	{kDDButtonDisabled, "button_disabled", true},
 
-	"checkbox_enabled",
-	"checkbox_disabled",
+	{kDDSliderFull,"slider_full", false},
+	{kDDSliderEmpty, "slider_empty", true},
 
-	"tab_active",
-	"tab_inactive",
+	{kDDCheckboxEnabled, "checkbox_enabled", false},
+	{kDDCheckboxDisabled, "checkbox_disabled", true},
 
-	"scrollbar_base",
-	"scrollbar_handle",
+	{kDDTabActive, "tab_active", false},
+	{kDDTabInactive, "tab_inactive", true},
 
-	"popup_idle",
-	"popup_hover",
-	
-	"caret",
-	"separator",
-	"default_text"
+	{kDDScrollbarBase, "scrollbar_base", true},
+	{kDDScrollbarHandle, "scrollbar_handle", false},
+
+	{kDDPopUpIdle, "popup_idle", true},
+	{kDDPopUpHover, "popup_hover", false},
+
+	{kDDCaret, "caret", false},
+	{kDDSeparator, "separator", true},
+	{kDDDefaultText, "default_text", false}
 };
+
 
 ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
@@ -523,6 +524,7 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 	if (!_initOk)
 		return;
 
+	restoreBackground(r);
 	getFont(font)->drawString(_screen, str, r.left, r.top, r.width(), getTextColor(state), convertAligment(align), deltax, useEllipsis);
 	addDirtyRect(r);
 }

@@ -40,6 +40,7 @@
 namespace GUI {
 
 struct WidgetDrawData;
+struct DrawDataInfo;
 
 struct WidgetDrawData {
 	/** List of all the steps needed to draw this widget */
@@ -80,7 +81,6 @@ class ThemeRenderer : public Theme {
 	friend class GUI::GuiObject;
 
 	/** Strings representing each value in the DrawData enum */
-	static const char *kDrawDataStrings[];
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
 	static const int kDirtyRectangleThreshold = 2;
@@ -138,7 +138,14 @@ public:
 		kTextColorInverted,
 		kTextColorMAX
 	};
-
+	
+	struct DrawDataInfo {
+		DrawData id;
+		const char *name;
+		bool buffer;
+	};
+	
+	static const DrawDataInfo kDrawData[];
 	ThemeRenderer(Common::String themeName, GraphicsMode mode);
 
 	~ThemeRenderer() {
@@ -195,8 +202,8 @@ public:
 	// custom stuff - tanoku
 	DrawData getDrawDataId(Common::String &name) {
 		for (int i = 0; i < kDrawDataMAX; ++i)
-			if (name.compareToIgnoreCase(kDrawDataStrings[i]) == 0)
-				return (DrawData)i;
+			if (name.compareToIgnoreCase(kDrawData[i].name) == 0)
+				return kDrawData[i].id;
 
 		return (DrawData)-1;
 	}
