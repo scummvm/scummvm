@@ -597,13 +597,18 @@ size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handl
 
 bool symbian_feof(FILE* handle) {
 	TInt pos = 0;
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
 
-	if (((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
+	if (entry->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
 
 		TInt size = 0;
-		if (((TSymbianFileEntry*)(handle))->iFileHandle.Size(size) == KErrNone) {
-			if (pos == size)
+		if (entry->iFileHandle.Size(size) == KErrNone) {
+			if(entry->iInputPos == KErrNotFound && pos == size) 			
 				return true;
+
+			if(entry->iInputPos != KErrNotFound && pos == size && entry->iInputPos == entry->iInputBufferLen)
+				return true;
+
 			return false;
 		}
 	}
