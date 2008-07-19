@@ -148,6 +148,7 @@ void DriverTinyGL::toggleFullscreenMode() {
 	if (_screen == NULL)
 		error("Could not change fullscreen mode");
 
+	_zb->pbuf = (PIXEL *)_screen->pixels;
 	_isFullscreen = !_isFullscreen;
 }
 
