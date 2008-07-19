@@ -10,14 +10,17 @@ public:
 
 	Keymapper();
 
-	
+	void addHardwareKey(const HardwareKey& key);
+	void addGlobalKeyMap(const String& name, Keymap& keymap);
 
 private:
 
 	KeymapManager _manager;
 
-	List<HardwareKey> _hardwareKeys;
+	List<HardwareKey*> _hardwareKeys;
 
 };
 
 } // end of namespace Common
+
+#endif

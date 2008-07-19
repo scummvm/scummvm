@@ -3,16 +3,23 @@
 namespace Common {
 
 Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap() {
+	init();
 	for (uint i = 0; i < _actions.size(); i++) {
-		if (_actions[i]._hwKey) {
-			_keymap[_actions[i]._hwKey->key] = &_actions[i];
+		if (_actions[i].hwKey) {
+			_keymap[_actions[i].hwKey->key] = &_actions[i];
 		}
 	}
 }
 
+void Keymap::init() {
+	_actions.reserve(20);
+}
+
 void Keymap::addAction(const UserAction& action) {
+	if (findUserAction(action.id))
+		error("UserAction with id %d already in KeyMap!\n", action.id);
 	_actions.push_back(action);
-	_actions[_actions.size()-1]._hwKey = 0;
+	_actions[_actions.size()-1].hwKey = 0;
 }
 
 void Keymap::mapKeyToAction(UserAction *action, HardwareKey *key) {
@@ -25,10 +32,10 @@ void Keymap::mapKeyToAction(UserAction *action, HardwareKey *key) {
 	error("UserAction not contained in KeyMap\n");
 }
 
-void Keymap::mapKeyToAction(uint idx, HardwareKey *key) {
-	if (idx >= _actions.size())
-		error("Key map index out of bounds!\n");
-	internalMapKey(&_actions[idx], key);
+void Keymap::mapKeyToAction(int32 id, HardwareKey *key) {
+	UserAction *act = findUserAction(id);
+	if (act)
+		internalMapKey(act, key);
 }
 
 void Keymap::internalMapKey(UserAction *action, HardwareKey *hwKey) {
@@ -36,13 +43,35 @@ void Keymap::internalMapKey(UserAction *action, HardwareKey *hwKey) {
 	it = _keymap.find(hwKey->key);
 	// if key is already mapped to an action then un-map it
 	if (it != _keymap.end())
-		it->_value->_hwKey = 0;
+		it->_value->hwKey = 0;
 
-	action->_hwKey = hwKey;
+	action->hwKey = hwKey;
 	_keymap[hwKey->key] = action;
 }
 
-UserAction *Keymap::getMappedAction(KeyState ks) {
+const UserAction *Keymap::getUserAction(int32 id) const {
+	return findUserAction(id);
+}
+
+UserAction *Keymap::findUserAction(int32 id) {
+	Array<UserAction>::iterator it;
+	for (it = _actions.begin(); it != _actions.end(); it++) {
+		if (it->id == id)
+			return &*it;
+	}
+	return 0;
+}
+
+const UserAction *Keymap::findUserAction(int32 id) const {
+	Array<UserAction>::const_iterator it;
+	for (it = _actions.begin(); it != _actions.end(); it++) {
+		if (it->id == id)
+			return &*it;
+	}
+	return 0;
+}
+
+UserAction *Keymap::getMappedAction(KeyState ks) const {
 	HashMap<KeyState, UserAction*>::iterator it;
 	it = _keymap.find(ks);
 	if (it == _keymap.end())
