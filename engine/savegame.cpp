@@ -32,7 +32,7 @@ Common::SaveFileManager *g_saveFileMan;
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
-#define SAVEGAME_VERSION		2
+#define SAVEGAME_VERSION		1
 
 // Constructor. Should create/open a saved game
 SaveGame::SaveGame(const char *filename, bool saving) :
