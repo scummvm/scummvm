@@ -74,6 +74,7 @@ int stat(const char *fname, struct stat *ss)
 
 	MultiByteToWideChar(CP_ACP, 0, fname, -1, fnameUnc, MAX_PATH);
 	handle = FindFirstFile(fnameUnc, &wfd);
+	FindClose(handle);
 	if (handle == INVALID_HANDLE_VALUE)
 		return -1;
 	else
@@ -83,8 +84,6 @@ int stat(const char *fname, struct stat *ss)
 		ss->st_size = wfd.nFileSizeLow;
 		if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			ss->st_mode |= S_IFDIR;
-
-		FindClose(handle);
 	}
 	return 0;
 }
@@ -158,14 +157,22 @@ int _access(const char *path, int mode) {
 
 	WIN32_FIND_DATA ffd;
 	HANDLE h=FindFirstFile(fname, &ffd);
+	FindClose(h);
 
 	if (h == INVALID_HANDLE_VALUE)
 		return -1;  //Can't find file
-	FindClose(h);
 
-	if (ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
+	if (ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
+		// WORKAROUND: WinCE (or the emulator) sometimes returns bogus direcotry
+		// hits for files that don't exist. Checking for the same fname twice
+		// seems to weed out those false positives.
+		HANDLE h=FindFirstFile(fname, &ffd);
+		FindClose(h);
+		if (h == INVALID_HANDLE_VALUE)
+			return -1;  //Can't find file
+
 		return 0; //Always return success if target is directory and exists
-
+	}
 	switch (mode) {
 		case 00: //Check existence
 			return 0;
