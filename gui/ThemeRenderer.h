@@ -111,7 +111,6 @@ public:
 		kDDButtonDisabled,
 
 		kDDSliderFull,
-		kDDSliderEmpty,
 
 		kDDCheckboxEnabled,
 		kDDCheckboxDisabled,
@@ -127,11 +126,12 @@ public:
 		
 		kDDCaret,
 		kDDSeparator,
-		kDDDefaultText,
-		kDrawDataMAX
+		kDrawDataMAX,
+		kDDNone = -1
 	};
 	
 	enum TextColor {
+		kTextColorNone = -1,
 		kTextColorDefault,
 		kTextColorHover,
 		kTextColorDisabled,
@@ -143,6 +143,21 @@ public:
 		DrawData id;
 		const char *name;
 		bool buffer;
+		DrawData parent;
+	};
+	
+	struct DrawQueue {
+		DrawData type;
+		Common::Rect area;
+		uint32 dynData;
+	};
+	
+	struct DrawQueueText {
+		DrawData type;
+		Common::Rect area;
+		Common::String text;
+		TextColor colorId;
+		TextAlign align;
 	};
 	
 	static const DrawDataInfo kDrawData[];
@@ -205,7 +220,7 @@ public:
 			if (name.compareToIgnoreCase(kDrawData[i].name) == 0)
 				return kDrawData[i].id;
 
-		return (DrawData)-1;
+		return kDDNone;
 	}
 
 	void addDrawStep(Common::String &drawDataId, Graphics::DrawStep step);
@@ -283,8 +298,12 @@ protected:
 	void drawCached(DrawData type, const Common::Rect &r);
 	void calcBackgroundOffset(DrawData type);
 
-	inline void drawDD(DrawData type, const Common::Rect &r, uint32 dynamicData = 0);
-	inline void drawDDText(DrawData type, const Common::Rect &r, const Common::String &text);
+	inline void drawDD(const DrawQueue &q, bool draw = true, bool restore = false);
+	inline void drawDDText(const DrawQueueText &q);
+	inline void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
+	inline void queueDDText(DrawData type, const Common::Rect &r, const Common::String &text, 
+							TextColor colorId = kTextColorNone, TextAlign align = kTextAlignLeft);
+	
 	inline void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 	// TODO
@@ -298,16 +317,16 @@ protected:
 		return 3;
 	}
 	
-	uint32 getTextColor(WidgetStateInfo state) {
+	TextColor getTextColor(WidgetStateInfo state) {
 		switch (state) {
 			case kStateDisabled:
-				return _textColors[kTextColorDisabled];
+			return kTextColorDisabled;
 			
 			case kStateHighlight:
-				return _textColors[kTextColorHover];
+			return kTextColorHover;
 			
 			default:
-				return _textColors[kTextColorDefault];
+			return kTextColorDefault;
 		}
 	}
 
@@ -324,10 +343,14 @@ protected:
 
 	Common::String _fontName;
 	const Graphics::Font *_font;
-	uint32 _textColors[kTextColorMAX];
 
 	WidgetDrawData *_widgets[kDrawDataMAX];
+	Graphics::TextStep _texts[kTextColorMAX];
 	Common::Array<Common::Rect> _dirtyScreen;
+	
+	Common::List<DrawQueue> _bufferQueue;
+	Common::List<DrawQueue> _screenQueue;
+	Common::List<DrawQueueText> _textQueue;
 
 	bool _initOk;
 	bool _themeOk;

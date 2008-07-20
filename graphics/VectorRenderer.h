@@ -48,6 +48,7 @@ struct TextStep {
 
 	GUI::Theme::TextAlign alignHorizontal;
 	GUI::Theme::TextAlignVertical alignVertical;
+	bool hasAlign;
 	char *text;
 	const Graphics::Font *font;
 };
@@ -105,7 +106,7 @@ VectorRenderer *createRenderer(int mode);
 class VectorRenderer {
 public:
 	VectorRenderer() : _shadowOffset(0), _fillMode(kFillDisabled), 
-		_activeSurface(NULL), _strokeWidth(1), _gradientFactor(1) {
+		_activeSurface(NULL), _strokeWidth(1), _gradientFactor(1), _disableShadows(false) {
 	
 	}
 
@@ -317,23 +318,13 @@ public:
 	 * Enables adding shadows to all drawn primitives.
 	 * Shadows are drawn automatically under the shapes. The given offset
 	 * controls their intensity and size (the higher the offset, the
-	 * bigger the shadows).
+	 * bigger the shadows). If the offset is 0, no shadows are drawn.
 	 *
 	 * @param offset Shadow offset.
-	 * @see shadowDisable()
 	 */
-	virtual void shadowEnable(int offset) {
+	virtual void setShadowOffset(int offset) {
 		if (offset >= 0)
 			_shadowOffset = offset;
-	}
-
-	/**
-	 * Disables adding shadows to all drawn primitives.
-	 *
-	 * @see shadowEnable()
-	 */
-	virtual void shadowDisable() {
-		_shadowOffset = 0;
 	}
 
 	/**
@@ -490,7 +481,7 @@ public:
 	 * @param step Pointer to a DrawStep struct.
 	 */
 	virtual void drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra = 0);
-	virtual void textStep(const Common::String &text, const Common::Rect &area, const TextStep &step);
+	virtual void textStep(const Common::String &text, const Common::Rect &area, const TextStep &step, GUI::Theme::TextAlign alignH = GUI::Theme::kTextAlignLeft);
 
 	/**
 	 * Copies the current surface to the system overlay 
@@ -511,6 +502,9 @@ public:
 	virtual uint32 buildColor(uint8 r, uint8 g, uint8 b) = 0;
 	
 	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) = 0;
+	
+	virtual void disableShadows() { _disableShadows = true; }
+	virtual void enableShadows() { _disableShadows = false; }
 
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -518,6 +512,7 @@ protected:
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
 	int _shadowOffset; /** offset for drawn shadows */
+	bool _disableShadows; /** Disables temporarily shadow drawing for overlayed images. */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
 	uint32 _dynamicData; /** Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 

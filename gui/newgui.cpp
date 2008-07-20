@@ -193,25 +193,22 @@ void NewGui::redraw() {
 	switch (_redrawStatus) {
 		case kRedrawCloseDialog:
 		case kRedrawFull:
+		case kRedrawTopDialog:
+			warning("Full screen redraw. Oops");
 			_theme->clearAll();
 			_theme->closeAllDialogs();
 
-			for (i = 0; i < _dialogStack.size(); i++) {
-				_theme->openDialog(true);
+			for (i = 0; i < _dialogStack.size() - 1; i++) {
 				_dialogStack[i]->drawDialog();
 			}
-			break;
 
 		case kRedrawOpenDialog:
 			_theme->openDialog(true);
+			//_theme->startBuffering();
 			_dialogStack.top()->drawDialog();
 			_theme->finishBuffering();
-			printf("Dialog opened!\n");
-			break;
-
-		case kRedrawTopDialog:
-			_dialogStack.top()->drawDialog();
-			printf("Top dialog redraw!\n");
+			
+			warning("Dialog opened");
 			break;
 
 		default:

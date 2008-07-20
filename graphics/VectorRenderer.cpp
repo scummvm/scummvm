@@ -65,7 +65,7 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b, 
 						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
-	shadowEnable(step.shadow);
+	setShadowOffset(_disableShadows ? 0 : step.shadow);
 	setGradientFactor(step.factor);
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
@@ -75,11 +75,13 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 	(this->*(step.drawingCall))(area, step);
 }
 
-void VectorRenderer::textStep(const Common::String &text, const Common::Rect &area, const TextStep &step) {
+void VectorRenderer::textStep(const Common::String &text, const Common::Rect &area, const TextStep &step, GUI::Theme::TextAlign alignH) {
 	if (step.color.set)
 		setFgColor(step.color.r, step.color.g, step.color.b);
 		
-	drawString(step.font, text.c_str(), area, step.alignHorizontal, step.alignVertical);
+	drawString(step.font, text.c_str(), area, 
+		!step.hasAlign ? alignH : step.alignHorizontal, 
+		!step.hasAlign ? GUI::Theme::kTextAlignVTop : step.alignVertical);
 }
 
 /********************************************************************

@@ -340,6 +340,8 @@ protected:
 	bool parserCallback_layoutInfo();
 	bool parserCallback_defaultSet();
 	bool parserCallback_text();
+	bool parserCallback_fonts();
+	bool parserCallback_font();
 
 	void cleanup();
 

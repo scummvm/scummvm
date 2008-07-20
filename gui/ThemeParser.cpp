@@ -47,8 +47,10 @@ ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_callbacks["color"] = &ThemeParser::parserCallback_color;
 	_callbacks["render_info"] = &ThemeParser::parserCallback_renderInfo;
 	_callbacks["layout_info"] = &ThemeParser::parserCallback_layoutInfo;
-	_callbacks["default"] = &ThemeParser::parserCallback_defaultSet;
+	_callbacks["defaults"] = &ThemeParser::parserCallback_defaultSet;
 	_callbacks["text"] = &ThemeParser::parserCallback_text;
+	_callbacks["fonts"] = &ThemeParser::parserCallback_fonts;
+	_callbacks["font"] = &ThemeParser::parserCallback_font;
 	
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
@@ -146,6 +148,60 @@ bool ThemeParser::parserCallback_defaultSet() {
 	return parseDrawStep(defNode, step, false);
 }
 
+bool ThemeParser::parserCallback_font() {
+	ParserNode *tNode = getActiveNode();
+	ParserNode *parentNode = getParentNode(tNode);
+	
+	if (parentNode == 0 || parentNode->name != "fonts")
+		return parserError("Text Steps must be contained inside <fonts> keys.");
+		
+	if (!tNode->values.contains("id"))
+		return parserError("Font definitions need a valid identifier.");
+	
+	if (!tNode->values.contains("type"))
+		return parserError("Font definitions need a valid typename.");
+		
+	// TODO: set typename on the drawstep.
+	
+	Graphics::TextStep step;
+	
+	if (tNode->values.contains("horizontal_align") || tNode->values.contains("vertical_align"))
+		return parserError("Font definitions cannot contain alignments.");
+		
+	int red, green, blue;
+
+	if (tNode->values.contains("color")) {
+
+		if (_palette.contains(tNode->values["color"]))
+			getPaletteColor(tNode->values["color"], red, green, blue);
+		else if (!parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue))
+			return parserError("Error when parsing color value for font definition.");
+
+	} else {
+		return parserError("Cannot assign color in font definition.");
+	}
+	
+	step.color.r = red;
+	step.color.g = green;
+	step.color.b = blue;
+	step.color.set = true;
+	step.hasAlign = false;
+	
+	if (!_theme->addTextStep(tNode->values["id"], step))
+		return parserError("Error when loading Font in theme engine.");
+		
+	return true;
+}
+
+bool ThemeParser::parserCallback_fonts() {
+	ParserNode *tNode = getActiveNode();
+	
+	if (getParentNode(tNode) == 0 || getParentNode(tNode)->name != "render_info")
+		return parserError("Font definition keys must be contained inside a <render_info> section.");
+		
+	return true;	
+}
+
 bool ThemeParser::parserCallback_text() {
 	ParserNode *tNode = getActiveNode();
 	ParserNode *parentNode = getParentNode(tNode);
@@ -174,24 +230,15 @@ bool ThemeParser::parserCallback_text() {
 		step.alignVertical = GUI::Theme::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
 	
-	Common::String paletteColor = "text_default";
 	int red, green, blue;
-	
-	if (tNode->name.contains("hover"))
-		paletteColor = "text_hover";
-	
-	if (tNode->name.contains("disabled"))
-		paletteColor = "text_disabled";
 	
 	if (tNode->values.contains("color")) {
 
 		if (_palette.contains(tNode->values["color"]))
 			getPaletteColor(tNode->values["color"], red, green, blue);
 		else if (!parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue))
-			return parserError("Error when parsing color value for text definition");		
+			return parserError("Error when parsing color value for text definition");
 			
-	} else if (_palette.contains(paletteColor)) {
-		getPaletteColor(paletteColor, red, green, blue);
 	} else {
 		return parserError("Cannot assign color for text drawing.");
 	}
@@ -200,9 +247,9 @@ bool ThemeParser::parserCallback_text() {
 	step.color.g = green;
 	step.color.b = blue;
 	step.color.set = true;
+	step.hasAlign = true;
 	
-	_theme->addTextStep(parentNode->values["id"], step);
-	return true;
+	return _theme->addTextStep(parentNode->values["id"], step);
 }
 
 bool ThemeParser::parserCallback_renderInfo() {

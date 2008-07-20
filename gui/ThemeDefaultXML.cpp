@@ -46,8 +46,14 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<color name = 'text_hover' rgb = '255, 255, 255' />"
 		"<color name = 'text_disabled' rgb = '128, 128, 128' />"
 	"</palette>"
+	
+	"<fonts>"
+		"<font id = 'default' type = 'default' color = 'text_default' />"
+		"<font id = 'hover' type = 'default' color = 'text_hover' />"
+		"<font id = 'disabled' type = 'default' color = 'text_disabled' />"
+	"</fonts>"
 
-	"<default fill = 'gradient' fg_color = '255, 255, 255' />"
+	"<defaults fill = 'gradient' fg_color = '255, 255, 255' />"
 
 	"<drawdata id = 'mainmenu_bg' cache = false>"
 		"<drawstep func = 'fill' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
@@ -71,7 +77,7 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<drawstep func = 'tab' radius = '4' stroke = '0' fill = 'foreground' fg_color = '206, 121, 99' shadow = 3 />"
 	"</drawdata>"
 	
-	"<drawdata id = 'slider_empty' cache = false>"
+	"<drawdata id = 'widget_slider' cache = false>"
 		"<drawstep func = 'roundedsq' stroke = 1 radius = 8 fill = 'none' fg_color = '0, 0, 0' />"
 	"</drawdata>"
 	
@@ -98,12 +104,17 @@ bool ThemeRenderer::loadDefaultXML() {
 
 	"<drawdata id = 'button_idle' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '173, 40, 8' />"
-		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'foreground' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
+		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'foreground' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'button_hover' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
 		"<drawstep func = 'roundedsq' radius = '8' stroke = '1' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
+	"</drawdata>"
+	
+	"<drawdata id = 'button_disabled' cache = false>"
+		"<text vertical_align = 'center' horizontal_align = 'center' color = '128, 128, 128' />"
+		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'foreground' fg_color = '200, 200, 200' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_disabled' cache = false>"

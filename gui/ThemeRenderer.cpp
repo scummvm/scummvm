@@ -40,38 +40,36 @@ namespace GUI {
 using namespace Graphics;
 
 const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawData[] = {
-	{kDDMainDialogBackground, "mainmenu_bg", true},
-	{kDDSpecialColorBackground, "special_bg", true},
-	{kDDPlainColorBackground, "plain_bg", true},
-	{kDDDefaultBackground, "default_bg", true},
+	{kDDMainDialogBackground, "mainmenu_bg", true, kDDNone},
+	{kDDSpecialColorBackground, "special_bg", true, kDDNone},
+	{kDDPlainColorBackground, "plain_bg", true, kDDNone},
+	{kDDDefaultBackground, "default_bg", true, kDDNone},
 
-	{kDDWidgetBackgroundDefault, "widget_default", true},
-	{kDDWidgetBackgroundSmall, "widget_small", true},
-	{kDDWidgetBackgroundEditText, "widget_textedit", true},
-	{kDDWidgetBackgroundSlider, "widget_slider", true},
+	{kDDWidgetBackgroundDefault, "widget_default", true, kDDNone},
+	{kDDWidgetBackgroundSmall, "widget_small", true, kDDNone},
+	{kDDWidgetBackgroundEditText, "widget_textedit", true, kDDNone},
+	{kDDWidgetBackgroundSlider, "widget_slider", true, kDDNone},
 
-	{kDDButtonIdle, "button_idle", true},
-	{kDDButtonHover, "button_hover", false},
-	{kDDButtonDisabled, "button_disabled", true},
+	{kDDButtonIdle, "button_idle", true, kDDNone},
+	{kDDButtonHover, "button_hover", false, kDDButtonIdle},
+	{kDDButtonDisabled, "button_disabled", true, kDDNone},
 
-	{kDDSliderFull,"slider_full", false},
-	{kDDSliderEmpty, "slider_empty", true},
+	{kDDSliderFull, "slider_full", false, kDDWidgetBackgroundSlider},
 
-	{kDDCheckboxEnabled, "checkbox_enabled", false},
-	{kDDCheckboxDisabled, "checkbox_disabled", true},
+	{kDDCheckboxEnabled, "checkbox_enabled", false, kDDCheckboxDisabled},
+	{kDDCheckboxDisabled, "checkbox_disabled", true, kDDNone},
 
-	{kDDTabActive, "tab_active", false},
-	{kDDTabInactive, "tab_inactive", true},
+	{kDDTabActive, "tab_active", false, kDDTabInactive},
+	{kDDTabInactive, "tab_inactive", true, kDDNone},
 
-	{kDDScrollbarBase, "scrollbar_base", true},
-	{kDDScrollbarHandle, "scrollbar_handle", false},
+	{kDDScrollbarBase, "scrollbar_base", true, kDDNone},
+	{kDDScrollbarHandle, "scrollbar_handle", false, kDDScrollbarBase},
 
-	{kDDPopUpIdle, "popup_idle", true},
-	{kDDPopUpHover, "popup_hover", false},
+	{kDDPopUpIdle, "popup_idle", true, kDDNone},
+	{kDDPopUpHover, "popup_hover", false, kDDPopUpIdle},
 
-	{kDDCaret, "caret", false},
-	{kDDSeparator, "separator", true},
-	{kDDDefaultText, "default_text", false}
+	{kDDCaret, "caret", false, kDDNone},
+	{kDDSeparator, "separator", true, kDDNone},
 };
 
 
@@ -196,13 +194,23 @@ void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep s
 bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep step) {
 	DrawData id = getDrawDataId(drawDataId);
 	
-	assert(_widgets[id] != 0);
-	if (_widgets[id]->_hasText == true)
-		return false;
-		
-	_widgets[id]->_textStep = step;
-	_widgets[id]->_textStep.font = 0;
-	_widgets[id]->_hasText = true;
+	if (id != -1) {
+		assert(_widgets[id] != 0);
+		if (_widgets[id]->_hasText == true)
+			return false;
+
+		_widgets[id]->_textStep = step;
+		_widgets[id]->_textStep.font = 0;
+		_widgets[id]->_hasText = true;
+	} else {
+		if (drawDataId == "default") {
+			_texts[kTextColorDefault] = step;
+		} else if (drawDataId == "hover") {
+			_texts[kTextColorHover] = step;
+		} else if (drawDataId == "disabled") {
+			_texts[kTextColorDisabled] = step;
+		} else return false;
+	}
 
 	return true;
 }
@@ -215,15 +223,15 @@ bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
-	_widgets[data_id]->_buffer = false;
+	_widgets[data_id]->_buffer = kDrawData[data_id].buffer;
 	_widgets[data_id]->_surfaceCache = 0;
 	_widgets[data_id]->_hasText = false;
 
 	// TODO: set this only when needed
 	// possibly add an option to the parser to set this
 	// on each drawdata...
-	if (data_id >= kDDMainDialogBackground && data_id <= kDDWidgetBackgroundSlider)
-		_widgets[data_id]->_buffer = true;
+//	if (data_id >= kDDMainDialogBackground && data_id <= kDDWidgetBackgroundSlider)
+//		_widgets[data_id]->_buffer = true;
 
 	return true;
 }
@@ -254,19 +262,6 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 			if (_widgets[i]->_cached) {}
 		}
 	}
-	
-	int r, g, b;
-	
-#define __LOAD_COLOR(id, name) { \
-	if (parser()->getPaletteColor(name, r, g, b))\
-		_textColors[id] = _vectorRenderer->buildColor(r, g, b); \
-}
-	
-	__LOAD_COLOR(kTextColorDefault, "text_default");
-	__LOAD_COLOR(kTextColorHover, "text_hover");
-	__LOAD_COLOR(kTextColorDisabled, "text_disabled");
-
-#undef __LOAD_COLOR
 	
 	_themeOk = true;
 	return true;
@@ -302,42 +297,82 @@ void ThemeRenderer::drawCached(DrawData type, const Common::Rect &r) {
 	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
 }
 
-void ThemeRenderer::drawDD(DrawData type, const Common::Rect &r, uint32 dynamicData) {
+void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) {
 	if (_widgets[type] == 0)
 		return;
-
-	Common::Rect extendedRect = r;
-	extendedRect.grow(kDirtyRectangleThreshold);
-	extendedRect.right += _widgets[type]->_backgroundOffset;
-	extendedRect.bottom += _widgets[type]->_backgroundOffset;
-
-	if (_buffering && _widgets[type]->_buffer)
-		_vectorRenderer->setSurface(_backBuffer);
-	else
-		restoreBackground(extendedRect);
-
-	addDirtyRect(extendedRect);
 		
-	if (isWidgetCached(type, r)) {
-		drawCached(type, r);
-	} else {
-		for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
-			 step != _widgets[type]->_steps.end(); ++step)
-			_vectorRenderer->drawStep(r, *step, dynamicData);
-	}
+	DrawQueue q;	
+	q.type = type;
+	q.area = r;
+	q.dynData = dynamic;
+	
+	if (_buffering) {
+		warning("Queued up a '%s' for the %s", kDrawData[type].name, _widgets[type]->_buffer ? "buffer" : "screen");
+		
+		if (_widgets[type]->_buffer)
+			_bufferQueue.push_back(q);
+		else {
+			if (kDrawData[type].parent != kDDNone)
+				queueDD(kDrawData[type].parent, r);
 
-	if (_buffering && _widgets[type]->_buffer) {
-		_vectorRenderer->setSurface(_screen);
-		memcpy(_screen->pixels, _backBuffer->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
+			_screenQueue.push_back(q);
+		}
+	} else {
+		warning("Drawing a '%s' directly!", kDrawData[type].name);
+		drawDD(q, !_widgets[type]->_buffer, _widgets[type]->_buffer);
 	}
 }
 
-void ThemeRenderer::drawDDText(DrawData type, const Common::Rect &r, const Common::String &text) {
-	if (hasWidgetText(type)) {
-		if (_widgets[type]->_textStep.font == 0)
-			_widgets[type]->_textStep.font = _font;
+void ThemeRenderer::queueDDText(DrawData type, const Common::Rect &r, const Common::String &text, TextColor colorId, TextAlign align) {
+	if (!hasWidgetText(type))
+		return;
+		
+	DrawQueueText q;
+	q.type = type;
+	q.area = r;
+	q.text = text;
+	q.colorId = colorId;
+	q.align = align;
+	
+	if (_buffering) {		
+		_textQueue.push_back(q);
+	} else {
+		drawDDText(q);
+	}
+}
 
-		_vectorRenderer->textStep(text, r, _widgets[type]->_textStep);
+void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
+	Common::Rect extendedRect = q.area;
+	extendedRect.grow(kDirtyRectangleThreshold);
+	extendedRect.right += _widgets[q.type]->_backgroundOffset;
+	extendedRect.bottom += _widgets[q.type]->_backgroundOffset;
+
+	if (restore)
+		restoreBackground(extendedRect);
+		
+	if (draw) {
+		if (isWidgetCached(q.type, q.area)) {
+			drawCached(q.type, q.area);
+		} else {
+			for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[q.type]->_steps.begin(); 
+				 step != _widgets[q.type]->_steps.end(); ++step)
+				_vectorRenderer->drawStep(q.area, *step, q.dynData);
+		}
+	}
+	
+	addDirtyRect(extendedRect);
+}
+
+void ThemeRenderer::drawDDText(const DrawQueueText &q) {
+	restoreBackground(q.area);
+	
+	if (q.type == kDDNone) {
+		_vectorRenderer->textStep(q.text, q.area, _texts[q.colorId], q.align);
+	} else {
+		if (_widgets[q.type]->_textStep.font == 0)
+			_widgets[q.type]->_textStep.font = _font;
+
+		_vectorRenderer->textStep(q.text, q.area, _widgets[q.type]->_textStep);
 	}
 }
 
@@ -381,15 +416,15 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 	else if (state == kStateDisabled)
 		dd = kDDButtonDisabled;
 
-	drawDD(dd, r);
-	drawDDText(dd, r, str);	
+	queueDD(dd, r);
+	queueDDText(dd, r, str);	
 }
 
 void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
-	drawDD(kDDSeparator, r);
+	queueDD(kDDSeparator, r);
 }
 
 void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
@@ -402,31 +437,29 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 	r2.bottom = r2.top + checkBoxSize;
 	r2.right = r2.left + checkBoxSize;
 
-	drawDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2);
+	queueDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2);
 	
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 	
-	drawDDText(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2, str);
+	queueDDText(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2, str);
 }
 
 void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
-	drawDD(kDDSliderEmpty, r);
-
 	Common::Rect r2 = r;
 	r2.setWidth(MIN((int16)width, r.width()));
 
-	drawDD(kDDSliderFull, r2);
+	queueDD(kDDSliderFull, r2);
 }
 
 void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
-	drawDD(kDDScrollbarBase, r);
+	queueDD(kDDScrollbarBase, r);
 	// TODO: Need to find a scrollbar in the GUI for testing... :p
 }
 
@@ -435,13 +468,13 @@ void ThemeRenderer::drawDialogBackground(const Common::Rect &r, uint16 hints, Wi
 		return;
 		
 	if (hints & THEME_HINT_MAIN_DIALOG) {
-		drawDD(kDDMainDialogBackground, r);
+		queueDD(kDDMainDialogBackground, r);
 	} else if (hints & THEME_HINT_SPECIAL_COLOR) { 
-		drawDD(kDDSpecialColorBackground, r);
+		queueDD(kDDSpecialColorBackground, r);
 	} else if (hints & THEME_HINT_PLAIN_COLOR) {
-		drawDD(kDDPlainColorBackground, r);	
+		queueDD(kDDPlainColorBackground, r);	
 	} else {
-		drawDD(kDDDefaultBackground, r);
+		queueDD(kDDDefaultBackground, r);
 	}
 }
 
@@ -458,11 +491,11 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 		
 	DrawData dd = (state == kStateHighlight) ? kDDPopUpHover : kDDPopUpIdle;
 	
-	drawDD(dd, r);
+	queueDD(dd, r);
 	
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
-		drawDDText(dd, text, sel);
+		queueDDText(dd, text, sel);
 	}
 }
 
@@ -479,19 +512,19 @@ void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, Wi
 		
 	switch (background) {
 	case kWidgetBackgroundBorderSmall:
-		drawDD(kDDWidgetBackgroundSmall, r);
+		queueDD(kDDWidgetBackgroundSmall, r);
 		break;
 		
 	case kWidgetBackgroundEditText:
-		drawDD(kDDWidgetBackgroundEditText, r);
+		queueDD(kDDWidgetBackgroundEditText, r);
 		break;
 		
 	case kWidgetBackgroundSlider:
-		drawDD(kDDWidgetBackgroundSlider, r);
+		queueDD(kDDWidgetBackgroundSlider, r);
 		break;
 		
 	default:
-		drawDD(kDDWidgetBackgroundDefault, r);
+		queueDD(kDDWidgetBackgroundDefault, r);
 		break;
 	}
 }
@@ -507,16 +540,16 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 			continue;
 
 		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
-		drawDD(kDDTabInactive, tabRect);
-		drawDDText(kDDTabInactive, tabRect, tabs[i]);
+		queueDD(kDDTabInactive, tabRect);
+		queueDDText(kDDTabInactive, tabRect, tabs[i]);
 	}
 	
 	if (active >= 0) {
 		Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		const uint16 tabLeft = active * (tabWidth + tabOffset);
 		const uint16 tabRight =  r.right - tabRect.right;
-		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
-		drawDDText(kDDTabActive, tabRect, tabs[active]);
+		queueDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
+		queueDDText(kDDTabActive, tabRect, tabs[active]);
 	}
 }
 
@@ -524,11 +557,13 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 	if (!_initOk)
 		return;
 
-	restoreBackground(r);
-	getFont(font)->drawString(_screen, str, r.left, r.top, r.width(), getTextColor(state), convertAligment(align), deltax, useEllipsis);
-	addDirtyRect(r);
+	// TODO: Queue this up too!
+	// restoreBackground(r);
+	// getFont(font)->drawString(_screen, str, r.left, r.top, r.width(), getTextColor(state), convertAligment(align), deltax, useEllipsis);
+	// addDirtyRect(r);
+	
+	queueDDText(kDDNone, r, str, getTextColor(state), align);
 }
-
 
 void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	_font->drawString(_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
@@ -540,6 +575,34 @@ void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r)
 
 void ThemeRenderer::updateScreen() {
 //	renderDirtyScreen();
+	
+	if (!_bufferQueue.empty()) {
+		_vectorRenderer->setSurface(_backBuffer);
+		
+		for (Common::List<DrawQueue>::const_iterator q = _bufferQueue.begin(); q != _bufferQueue.end(); ++q)
+			drawDD(*q, true, false);
+			
+		_vectorRenderer->setSurface(_screen);
+		_bufferQueue.clear();
+		memcpy(_screen->pixels, _backBuffer->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
+	}
+	
+	if (!_screenQueue.empty()) {
+		_vectorRenderer->disableShadows();
+		for (Common::List<DrawQueue>::const_iterator q = _screenQueue.begin(); q != _screenQueue.end(); ++q)
+			drawDD(*q, true, false);
+			
+		_vectorRenderer->enableShadows();
+		_screenQueue.clear();
+	}
+	
+	if (!_textQueue.empty()) {
+		for (Common::List<DrawQueueText>::const_iterator q = _textQueue.begin(); q != _textQueue.end(); ++q)
+			drawDDText(*q);
+			
+		_textQueue.clear();
+	}
+		
 	_vectorRenderer->copyWholeFrame(_system);
 }
 
