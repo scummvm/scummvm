@@ -228,7 +228,7 @@ void DriverGL::drawShadowPlanes() {
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS, 1, ~0);
+	glStencilFunc(GL_ALWAYS, 1, (GLuint) ~0);
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE);
@@ -243,7 +243,7 @@ void DriverGL::drawShadowPlanes() {
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-	glStencilFunc(GL_EQUAL, 1, ~0);
+	glStencilFunc(GL_EQUAL, 1, (GLuint) ~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
