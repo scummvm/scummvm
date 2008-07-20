@@ -208,7 +208,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\file.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\file.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\frac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\fs.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\fs.h"
 				>
 			</File>
 			<File
@@ -256,6 +272,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\module.mk"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\mutex.cpp"
 				>
 			</File>
@@ -268,11 +288,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\ptr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\singleton.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\str.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\common\str.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\stream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\stream.h"
 				>
 			</File>
 			<File
@@ -933,6 +969,30 @@
 						RelativePath="..\..\engine\backend\sdl\driver_tinygl.h"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="fs"
+					>
+					<File
+						RelativePath="..\..\engine\backend\fs\abstract-fs.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\engine\backend\fs\fs-factory.h"
+						>
+					</File>
+					<Filter
+						Name="windows"
+						>
+						<File
+							RelativePath="..\..\engine\backend\fs\windows\windows-fs-factory.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\fs\windows\windows-fs-factory.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
