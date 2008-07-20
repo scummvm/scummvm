@@ -4,8 +4,6 @@
 ** See Copyright Notice in lua.h
 */
 
-#include <stdlib.h>
-
 #include "lobject.h"
 #include "lua.h"
 
