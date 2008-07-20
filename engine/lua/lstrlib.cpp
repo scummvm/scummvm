@@ -342,7 +342,7 @@ static void str_find (void)
   luaL_arg_check(0 <= init && init <= l, 3, "out of range");
   if (lua_getparam(4) != LUA_NOOBJECT ||
       strpbrk(p, SPECIALS) == NULL) {  /* no special characters? */
-    char *s2 = strstr(s+init, p);
+    const char *s2 = strstr(s+init, p);
     if (s2) {
       lua_pushnumber(s2-s+1);
       lua_pushnumber(s2-s+strlen(p));
