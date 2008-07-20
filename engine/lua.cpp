@@ -81,8 +81,8 @@ extern DIR *g_searchFile;
 #define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 #define DEBUG_FUNCTION()       debugFunction("Function", __FUNCTION__)
 
-static void debugFunction(char *debugMessage, const char *funcName);
-static void stubWarning(char *funcName);
+static void debugFunction(const char *debugMessage, const char *funcName);
+static void stubWarning(const char *funcName);
 
 static inline bool isObject(int num) {
 	lua_Object param = lua_getparam(num);
@@ -222,7 +222,7 @@ static inline void pushbool(bool val) {
 		lua_pushnil();
 }
 
-static Costume *get_costume(Actor *a, int param, char *called_from) {
+static Costume *get_costume(Actor *a, int param, const char *called_from) {
 	Costume *result;
 	if (lua_isnil(lua_getparam(param))) {
 		result = a->currentCostume();
@@ -239,7 +239,7 @@ static Costume *get_costume(Actor *a, int param, char *called_from) {
 // Lua interface to bundle_dofile
 
 static void new_dofile() {
-	char *fname_str = luaL_check_string(1);
+	const char *fname_str = luaL_check_string(1);
 	bundle_dofile(fname_str);
 }
 
@@ -278,9 +278,9 @@ static void PrintWarning() {
 }
 
 static void FunctionName() {
-	char *name;
+	const char *name;
 	char buf[256];
-	char *filename;
+	const char *filename;
 	int line;
 
 	DEBUG_FUNCTION();
@@ -321,7 +321,7 @@ static void FunctionName() {
 // File functions
 
 static void CheckForFile() {
-	char *filename = luaL_check_string(1);
+	const char *filename = luaL_check_string(1);
 	
 	DEBUG_FUNCTION();
 	pushbool(g_resourceloader->fileExists(filename));
@@ -359,7 +359,7 @@ static void GetColorComponents() {
 // Registry functions
 
 static void ReadRegistryValue() {
-	char *key;
+	const char *key;
 	const char *val;
 	
 	DEBUG_FUNCTION();
@@ -369,8 +369,8 @@ static void ReadRegistryValue() {
 }
 
 static void WriteRegistryValue() {
-	char *key;
-	char *val;
+	const char *key;
+	const char *val;
 	
 	DEBUG_FUNCTION();
 	key = luaL_check_string(1);
@@ -420,7 +420,7 @@ static void GetCameraActor() {
 }
 
 static void SetSayLineDefaults() {
-	char *key_text = NULL;
+	const char *key_text = NULL;
 	lua_Object table_obj;
 	lua_Object key = LUA_NOOBJECT;
 
@@ -892,7 +892,7 @@ static void SetActorWalkDominate() {
 }
 
 static void SetActorColormap() {
-	char *mapname;
+	const char *mapname;
 	CMap *_cmap;
 	Actor *act;
 	
@@ -1467,7 +1467,7 @@ static void SetActorShadowPlane() {
 	DEBUG_FUNCTION();
 
 	Actor *act = check_actor(1);
-	char *name = lua_getstring(lua_getparam(2));
+	const char *name = lua_getstring(lua_getparam(2));
 
 	act->setShadowPlane(name);
 }
@@ -1476,7 +1476,7 @@ static void AddShadowPlane() {
 	DEBUG_FUNCTION();
 
 	Actor *act = check_actor(1);
-	char *name = lua_getstring(lua_getparam(2));
+	const char *name = lua_getstring(lua_getparam(2));
 
 	act->addShadowPlane(name);
 }
@@ -1534,7 +1534,7 @@ std::string parseMsgText(const char *msg, char *msgId) {
 static void TextFileGetLine() {
 	char textBuf[512];
 	textBuf[0] = 0;
-	char *filename;
+	const char *filename;
 	FILE *file;
 	
 	DEBUG_FUNCTION();
@@ -1555,7 +1555,7 @@ static void TextFileGetLine() {
 
 static void TextFileGetLineCount() {
 	char textBuf[512];
-	char *filename;
+	const char *filename;
 	FILE *file;
 	
 	DEBUG_FUNCTION();
@@ -1592,8 +1592,8 @@ static void TextFileGetLineCount() {
 // Localization function
 
 static void LocalizeString() {
-	char msgId[32], buf[640], *str;
-	char *result;
+	char msgId[32], buf[640];
+	const char *str, *result;
 	
 	DEBUG_FUNCTION();
 	str = luaL_check_string(1);
@@ -1607,7 +1607,7 @@ static void LocalizeString() {
 	} else {
 		result = str;
 	}
-	lua_pushstring(const_cast<char *>(result));
+	lua_pushstring(result);
 }
 
 static void SayLine() {
@@ -1623,7 +1623,7 @@ static void SayLine() {
 	if (!lua_isnil(param2)) {
 		do {
 			if (lua_isstring(param2)) {
-				char *tmpstr = lua_getstring(param2);
+				const char *tmpstr = lua_getstring(param2);
 				msg = parseMsgText(tmpstr, msgId);
 			} else if (lua_isnumber(param2)) {
 				pan = 64;
@@ -1774,7 +1774,7 @@ static void MakeSectorActive(void) {
 	numSectors = g_engine->currScene()->getSectorCount();
 
 	if (lua_isstring(sectorName)) {
-		char *name = luaL_check_string(1);
+		const char *name = luaL_check_string(1);
 
 		for (i = 0; i < numSectors; i++) {
 			Sector *sector = g_engine->currScene()->getSectorBase(i);
@@ -1906,7 +1906,7 @@ enum ImuseParam {
 
 static void ImStartSound() {
 	int priority, group;
-	char *soundName;
+	const char *soundName;
 
 	DEBUG_FUNCTION();
 	soundName = luaL_check_string(1);
@@ -1930,7 +1930,7 @@ static void ImStartSound() {
 }
 
 static void ImStopSound() {
-	char *soundName;
+	const char *soundName;
 	
 	DEBUG_FUNCTION();
 	soundName = luaL_check_string(1);
@@ -1953,7 +1953,7 @@ static void ImResume() {
 }
 
 static void ImSetVoiceEffect() {
-	char *effectName;
+	const char *effectName;
 	
 	DEBUG_FUNCTION();
 	effectName = luaL_check_string(1);
@@ -1993,7 +1993,7 @@ static void ImGetSfxVol() {
 
 static void ImSetParam() {
 	int param, value;
-	char *soundName;
+	const char *soundName;
 
 	DEBUG_FUNCTION();
 	soundName = luaL_check_string(1);
@@ -2014,7 +2014,7 @@ static void ImSetParam() {
 }
 
 void ImGetParam() {
-	char *soundName;
+	const char *soundName;
 	int param;
 
 	DEBUG_FUNCTION();
@@ -2036,7 +2036,7 @@ void ImGetParam() {
 
 static void ImFadeParam() {
 	int opcode, value, duration;
-	char *soundName;
+	const char *soundName;
 
 	DEBUG_FUNCTION();
 	soundName = luaL_check_string(1);
@@ -2093,7 +2093,7 @@ static void SetSoundPosition() {
 		g_engine->currScene()->getSoundParameters(&minVolume, &maxVolume);
 	}
 
-	char *soundName = lua_getstring(lua_getresult(1));
+	const char *soundName = lua_getstring(lua_getresult(1));
 
 	if (isActor(lua_getparam(2))) {
 		Actor *act = check_actor(2);
@@ -2197,7 +2197,7 @@ static void luaFileFindNext() {
 }
 
 static void luaFileFindFirst() {
-	char *path, *extension;
+	const char *path, *extension;
 	lua_Object pathObj;
 
 	DEBUG_FUNCTION();
@@ -2291,7 +2291,7 @@ static void killBitmapPrimitives(Bitmap *bitmap)
 }
 
 static void GetImage() {
-	char *bitmapName;
+	const char *bitmapName;
 	
 	DEBUG_FUNCTION();
 	bitmapName = luaL_check_string(1);
@@ -2326,7 +2326,7 @@ static void BlastImage() {
 }
 
 void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
-	char *key_text = NULL;
+	const char *key_text = NULL;
 	lua_Object key = LUA_NOOBJECT;
 	
 	DEBUG_FUNCTION();
@@ -2481,7 +2481,7 @@ static void SetTextSpeed() {
 static void MakeTextObject() {
 	TextObject *textObject = new TextObject();
 	lua_Object tableObj;
-	char *line;
+	const char *line;
 
 	DEBUG_FUNCTION();
 	line = lua_getstring(lua_getparam(1));
@@ -2538,7 +2538,7 @@ static void BlastText() {
 	DEBUG_FUNCTION();
 	TextObject *textObject = new TextObject();
 	lua_Object tableObj;
-	char *line;
+	const char *line;
 
 	DEBUG_FUNCTION();
 	line = lua_getstring(lua_getparam(1));
@@ -2894,7 +2894,7 @@ static void GetDiskFreeSpace() {
 static void NewObjectState() {
 	ObjectState *state = NULL;
 	ObjectState::Position pos;
-	char *bitmap, *zbitmap;
+	const char *bitmap, *zbitmap;
 	bool visible;
 	int setupID;
 
@@ -2986,7 +2986,8 @@ static void ScreenShot() {
  */
 static void GetSaveGameImage() {
 	int width = 250, height = 188;
-	char *filename, *data;
+	const char *filename;
+	char *data;
 	Bitmap *screenshot;
 	int dataSize;
 	
@@ -3013,7 +3014,7 @@ static void SubmitSaveGameData() {
 	lua_Object table, table2;
 	SaveGame *savedState;
 	int count = 0;
-	char *str;
+	const char *str;
 	
 	printf("SubmitSaveGameData() started.\n");
 	DEBUG_FUNCTION();
@@ -3042,7 +3043,7 @@ static void SubmitSaveGameData() {
 
 static void GetSaveGameData() {
 	lua_Object result;
-	char *filename;
+	const char *filename;
 	int dataSize;
 	
 	printf("GetSaveGameData() started.\n");
@@ -3127,7 +3128,7 @@ static void LockFont() {
 	DEBUG_FUNCTION();
 	param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
-		char *fontName = lua_getstring(param1);
+		const char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
 			result->luaRef();
@@ -3243,7 +3244,7 @@ static void LoadBundle() {
  * generate warnings about missing functions when the debug flag 
  * is set to "Stub", warnings, or everything.
  */
-static void debugFunction(char *debugMessage, const char *funcName) {
+static void debugFunction(const char *debugMessage, const char *funcName) {
 	bool stubFn = strcmp(debugMessage, "WARNING: Stub function") == 0;
 	FILE *output;
 	
@@ -3289,7 +3290,7 @@ static void debugFunction(char *debugMessage, const char *funcName) {
 }
 
 // Stub function for builtin functions not yet implemented
-static void stubWarning(char *funcName) {
+static void stubWarning(const char *funcName) {
 	// If the user doesn't want these debug messages then don't print them
 	if (debugLevel != DEBUG_WARN && debugLevel != DEBUG_STUB && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
 		return;
@@ -3454,7 +3455,7 @@ static void dummyHandler() {
 
 // Entries in the system table
 static struct {
-	char *name;
+	const char *name;
 	int key;
 } system_defaults[] = {
 	{ "frameTime", 0 },
@@ -3891,7 +3892,7 @@ int bundle_dofile(const char *filename) {
 	return result;
 }
 
-lua_Object getTableFunction(lua_Object table, char *name) {
+lua_Object getTableFunction(lua_Object table, const char *name) {
 	lua_pushobject(table);
 	lua_pushstring(const_cast<char *>(name));
 	lua_Object handler = lua_gettable();
@@ -3917,8 +3918,8 @@ lua_Object getTableFunction(lua_Object table, char *name) {
 	return handler;
 }
 
-lua_Object getTableValue(lua_Object table, char *name) {
-	char *key_text = NULL;
+lua_Object getTableValue(lua_Object table, const char *name) {
+	const char *key_text = NULL;
 	lua_Object key = LUA_NOOBJECT;
 
 	if (!lua_istable(table)) {
@@ -3978,14 +3979,14 @@ lua_Object getIndexedTableValue(lua_Object table, int index) {
 	return lua_getresult(2);
 }
 
-void setTableValue(lua_Object table, char *name, int newvalue) {
+void setTableValue(lua_Object table, const char *name, int newvalue) {
 	lua_pushobject(table);
 	lua_pushstring(name);
 	lua_pushnumber(newvalue);
 	lua_settable();
 }
 
-void setTableValue(lua_Object table, char *name, lua_Object newvalue) {
+void setTableValue(lua_Object table, const char *name, lua_Object newvalue) {
 	lua_pushobject(table);
 	lua_pushstring(name);
 	if (newvalue == 0)
@@ -4019,5 +4020,5 @@ Vector3d tableToVector(lua_Object table) {
 
 lua_Object getEventHandler(const char *name) {
 	lua_Object system_table = lua_getglobal("system");
-	return getTableFunction(system_table, (char *)name);
+	return getTableFunction(system_table, name);
 }

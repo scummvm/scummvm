@@ -124,7 +124,7 @@ public:
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
 
-	virtual char *getVideoDeviceName() = 0;
+	virtual const char *getVideoDeviceName() = 0;
 
 	/** @name Events and Time */
 	//@{
@@ -192,7 +192,7 @@ public:
 	 *
 	 */
 	struct ControlDescriptor {
-		char *name;
+		const char *name;
 		int key;
 	};
 

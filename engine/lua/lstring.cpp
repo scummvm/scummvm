@@ -37,7 +37,7 @@ void luaS_init (void)
 }
 
 
-static unsigned long hash_s (char *s, long l)
+static unsigned long hash_s (const char *s, long l)
 {
   unsigned long h = 0;
   while (l--)
@@ -86,7 +86,7 @@ static void grow (stringtable *tb)
 }
 
 
-static TaggedString *newone_s (char *str, long l, unsigned long h)
+static TaggedString *newone_s (const char *str, long l, unsigned long h)
 {
   TaggedString *ts = (TaggedString *)luaM_malloc(sizeof(TaggedString)+l);
   memcpy(ts->str, str, l);
@@ -114,7 +114,7 @@ static TaggedString *newone_u (char *buff, int tag, unsigned long h)
   return ts;
 }
 
-static TaggedString *insert_s (char *str, long l, stringtable *tb)
+static TaggedString *insert_s (const char *str, long l, stringtable *tb)
 {
   TaggedString *ts;
   unsigned long h = hash_s(str, l);
@@ -130,8 +130,7 @@ static TaggedString *insert_s (char *str, long l, stringtable *tb)
       j = i;
     else if (ts->constindex >= 0 &&
              ts->u.s.len == l &&
-             (memcmp(str, ts->str, l) == 0))
-      return ts;
+             (memcmp(str, ts->str, l) == 0)) return ts;
     if (++i == size) i=0;
   }
   /* not found */
@@ -177,18 +176,18 @@ TaggedString *luaS_createudata (void *udata, int tag)
   return insert_u(udata, tag, &L->string_root[(unsigned long)udata%NUM_HASHS]);
 }
 
-TaggedString *luaS_newlstr (char *str, long l)
+TaggedString *luaS_newlstr (const char *str, long l)
 {
   int i = (l==0)?0:(unsigned char)str[0];
   return insert_s(str, l, &L->string_root[i%NUM_HASHS]);
 }
 
-TaggedString *luaS_new (char *str)
+TaggedString *luaS_new (const char *str)
 {
   return luaS_newlstr(str, strlen(str));
 }
 
-TaggedString *luaS_newfixedstring (char *str)
+TaggedString *luaS_newfixedstring (const char *str)
 {
   TaggedString *ts = luaS_new(str);
   if (ts->head.marked == 0)
@@ -305,7 +304,7 @@ char *luaS_travsymbol (int (*fn)(TObject *))
 }
 
 
-int luaS_globaldefined (char *name)
+int luaS_globaldefined (const char *name)
 {
   TaggedString *ts = luaS_new(name);
   return ts->u.s.globalval.ttype != LUA_T_NIL;

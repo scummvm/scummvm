@@ -31,7 +31,7 @@
 #define SAVEGAME_VERSION		2
 
 // Constructor. Should create/open a saved game
-SaveGame::SaveGame(char *filename, bool saving) :
+SaveGame::SaveGame(const char *filename, bool saving) :
 		_saving(saving), _currentSection(0) {
 	if (_saving) {
 		uint32 tag = SAVEGAME_HEADERTAG;
@@ -99,6 +99,7 @@ void SaveGame::endSection() {
 	}
 	delete[] _sectionBuffer;
 	_sectionBuffer = NULL;
+	_currentSection = 0;
 }
 
 void SaveGame::read(void *data, int size) {
@@ -110,7 +111,7 @@ void SaveGame::read(void *data, int size) {
 	_sectionPtr += size;
 }
 
-void SaveGame::write(void *data, int size) {
+void SaveGame::write(const void *data, int size) {
 	if (!_saving)
 		error("SaveGame::writeBlock called when restoring a savegame!");
 	if (_currentSection == 0)

@@ -604,7 +604,7 @@ void DriverRonin::drawSmushFrame(int offsetX, int offsetY)
 	_polyCount++;
 }
 
-char *DriverRonin::getVideoDeviceName()
+const char *DriverRonin::getVideoDeviceName()
 {
 	return "Dreamcast PowerVR Video Device";
 }

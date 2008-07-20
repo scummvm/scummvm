@@ -22,9 +22,9 @@
 
 typedef struct zio ZIO;
 
-ZIO* zFopen (ZIO* z, FILE* f, char *name);		/* open FILEs */
-ZIO* zsopen (ZIO* z, char* s, char *name);		/* string */
-ZIO* zmopen (ZIO* z, char* b, int size, char *name);	/* memory */
+ZIO* zFopen (ZIO* z, FILE* f, const char *name);		/* open FILEs */
+ZIO* zsopen (ZIO* z, const char* s, const char *name);		/* string */
+ZIO* zmopen (ZIO* z, const char* b, int size, const char *name);	/* memory */
 
 int zread (ZIO* z, void* b, int n);	/* read next n bytes */
 
@@ -39,10 +39,10 @@ int zread (ZIO* z, void* b, int n);	/* read next n bytes */
 
 struct zio {
  int n;					/* bytes still unread */
- unsigned char* p;			/* current position in buffer */
+ const unsigned char* p;			/* current position in buffer */
  int (*filbuf)(ZIO* z);
  void* u;				/* additional data */
- char *name;
+ const char *name;
  unsigned char buffer[ZBSIZE];		/* buffer */
 };
 

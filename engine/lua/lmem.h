@@ -22,7 +22,7 @@
 
 void *luaM_realloc (void *oldblock, unsigned long size);
 int luaM_growaux (void **block, unsigned long nelems, int size,
-                       char *errormsg, unsigned long limit);
+                       const char *errormsg, unsigned long limit);
 
 #define luaM_free(b)	free((b))
 #define luaM_malloc(t)	malloc((t))

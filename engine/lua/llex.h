@@ -54,8 +54,8 @@ typedef struct LexState {
 void luaX_init (void);
 void luaX_setinput (LexState *LS, ZIO *z);
 int luaX_lex (LexState *LS);
-void luaX_syntaxerror (LexState *ls, char *s, char *token);
-void luaX_error (LexState *ls, char *s);
+void luaX_syntaxerror (LexState *ls, const char *s, const char *token);
+void luaX_error (LexState *ls, const char *s);
 void luaX_token2str (LexState *ls, int token, char *s);
 
 

@@ -14,7 +14,7 @@
 
 
 int luaM_growaux (void **block, unsigned long nelems, int size,
-                       char *errormsg, unsigned long limit)
+                       const char *errormsg, unsigned long limit)
 {
   if (nelems >= limit)
     lua_error(errormsg);

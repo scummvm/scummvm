@@ -119,7 +119,7 @@ static void foreach (void)
 static void internaldostring (void)
 {
   long l;
-  char *s = luaL_check_lstr(1, &l);
+  const char *s = luaL_check_lstr(1, &l);
   if (*s == ID_CHUNK)
     lua_error("`dostring' cannot run pre-compiled code");
   if (lua_dobuffer(s, l, luaL_opt_string(2, NULL)) == 0)
@@ -130,7 +130,7 @@ static void internaldostring (void)
 
 static void internaldofile (void)
 {
-  char *fname = luaL_opt_string(1, NULL);
+  const char *fname = luaL_opt_string(1, NULL);
   if (lua_dofile(fname) == 0)
     if (luaA_passresults() == 0)
       lua_pushuserdata(NULL);  /* at least one result to signal no errors */
@@ -216,12 +216,13 @@ static void tonumber (void)
       lua_pushnumber(lua_getnumber(o));
   }
   else {
-    char *s = luaL_check_string(1);
+    const char *s = luaL_check_string(1);
+		char *e;
     unsigned long n;
     luaL_arg_check(0 <= base && base <= 36, 2, "base out of range");
-    n = strtol(s, &s, base);
-    while (isspace(*s)) s++;  /* skip trailing spaces */
-    if (*s) lua_pushnil();  /* invalid format: return nil */
+    n = strtol(s, &e, base);
+    while (isspace(*e)) e++;  /* skip trailing spaces */
+    if (*e) lua_pushnil();  /* invalid format: return nil */
     else lua_pushnumber(n);
   }
 }
@@ -243,7 +244,7 @@ static void luaI_assert (void)
 
 static void setglobal (void)
 {
-  char *n = luaL_check_string(1);
+  const char *n = luaL_check_string(1);
   lua_Object value = luaL_nonnullarg(2);
   lua_pushobject(value);
   lua_setglobal(n);
@@ -252,7 +253,7 @@ static void setglobal (void)
 
 static void rawsetglobal (void)
 {
-  char *n = luaL_check_string(1);
+  const char *n = luaL_check_string(1);
   lua_Object value = luaL_nonnullarg(2);
   lua_pushobject(value);
   lua_rawsetglobal(n);
@@ -287,7 +288,7 @@ static void luaI_call (void)
 {
   lua_Object f = luaL_nonnullarg(1);
   lua_Object arg = luaL_tablearg(2);
-  char *options = luaL_opt_string(3, "");
+  const char *options = luaL_opt_string(3, "");
   lua_Object err = lua_getparam(4);
   int narg = getnarg(arg);
   int i, status;

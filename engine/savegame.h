@@ -38,13 +38,13 @@
 
 class SaveGame {
 public:
-	SaveGame(char *filename, bool saving);
+	SaveGame(const char *filename, bool saving);
 	~SaveGame();
 
 	uint32 beginSection(uint32 sectionTag);
 	void endSection();
 	void read(void *data, int size);
-	void write(void *data, int size);
+	void write(const void *data, int size);
 
 protected:
 	bool _saving;

@@ -136,13 +136,13 @@ int lua_callfunction (lua_Object function)
 }
 
 
-lua_Object lua_gettagmethod (int tag, char *event)
+lua_Object lua_gettagmethod (int tag, const char *event)
 {
   return put_luaObject(luaT_gettagmethod(tag, event));
 }
 
 
-lua_Object lua_settagmethod (int tag, char *event)
+lua_Object lua_settagmethod (int tag, const char *event)
 {
   checkCparams(1);
   luaT_settagmethod(tag, event, L->stack.top-1);
@@ -208,7 +208,7 @@ lua_Object lua_createtable (void)
 }
 
 
-lua_Object lua_getglobal (char *name)
+lua_Object lua_getglobal (const char *name)
 {
   luaD_checkstack(2);  /* may need that to call T.M. */
   luaV_getglobal(luaS_new(name));
@@ -216,14 +216,14 @@ lua_Object lua_getglobal (char *name)
 }
 
 
-lua_Object lua_rawgetglobal (char *name)
+lua_Object lua_rawgetglobal (const char *name)
 {
   TaggedString *ts = luaS_new(name);
   return put_luaObject(&ts->u.s.globalval);
 }
 
 
-void lua_setglobal (char *name)
+void lua_setglobal (const char *name)
 {
   checkCparams(1);
   luaD_checkstack(2);  /* may need that to call T.M. */
@@ -231,7 +231,7 @@ void lua_setglobal (char *name)
 }
 
 
-void lua_rawsetglobal (char *name)
+void lua_rawsetglobal (const char *name)
 {
   TaggedString *ts = luaS_new(name);
   checkCparams(1);
@@ -285,7 +285,7 @@ double lua_getnumber (lua_Object object)
  else return (nvalue(Address(object)));
 }
 
-char *lua_getstring (lua_Object object)
+const char *lua_getstring (lua_Object object)
 {
   luaC_checkGC();  /* "tostring" may create a new string */
   if (object == LUA_NOOBJECT || tostring(Address(object)))
@@ -329,7 +329,7 @@ void lua_pushnumber (double n)
   incr_top;
 }
 
-void lua_pushlstring (char *s, long len)
+void lua_pushlstring (const char *s, long len)
 {
   tsvalue(L->stack.top) = luaS_newlstr(s, len);
   ttype(L->stack.top) = LUA_T_STRING;
@@ -337,7 +337,7 @@ void lua_pushlstring (char *s, long len)
   luaC_checkGC();
 }
 
-void lua_pushstring (char *s)
+void lua_pushstring (const char *s)
 {
   if (s == NULL)
     lua_pushnil();
@@ -508,7 +508,7 @@ int lua_setlocal (lua_Function func, int local_number)
 }
 
 
-void lua_funcinfo (lua_Object func, char **filename, int *linedefined)
+void lua_funcinfo (lua_Object func, const char **filename, int *linedefined)
 {
   if (!lua_isfunction(func))
     lua_error("API - `funcinfo' called with a non-function value");
@@ -532,7 +532,7 @@ static int checkfunc (TObject *o)
 }
 
 
-char *lua_getobjname (lua_Object o, char **name)
+const char *lua_getobjname (lua_Object o, const char **name)
 { /* try to find a name for given function */
   set_normalized(L->stack.top, Address(o)); /* to be accessed by "checkfunc */
   if ((*name = luaT_travtagmethods(checkfunc)) != NULL)

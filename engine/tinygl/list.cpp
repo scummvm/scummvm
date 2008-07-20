@@ -1,7 +1,7 @@
 
 #include "engine/tinygl/zgl.h"
 
-static char *op_table_str[] = {
+static const char *op_table_str[] = {
 #define ADD_OP(a, b, c) "gl" #a " " #c,
 
 #include "engine/tinygl/opinfo.h"
@@ -64,7 +64,7 @@ static GLList *alloc_list(GLContext *c, int list) {
 
 void gl_print_op(FILE *f, TGLParam *p) {
 	int op;
-	char *s;
+	const char *s;
 
 	op = p[0].op;
 	p++;

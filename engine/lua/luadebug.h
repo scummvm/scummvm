@@ -14,12 +14,12 @@
 typedef lua_Object lua_Function;
 
 typedef void (*lua_LHFunction) (int line);
-typedef void (*lua_CHFunction) (lua_Function func, char *file, int line);
+typedef void (*lua_CHFunction) (lua_Function func, const char *file, int line);
 
 lua_Function lua_stackedfunction (int level);
-void lua_funcinfo (lua_Object func, char **filename, int *linedefined);
+void lua_funcinfo (lua_Object func, const char **filename, int *linedefined);
 int lua_currentline (lua_Function func);
-char *lua_getobjname (lua_Object o, char **name);
+const char *lua_getobjname (lua_Object o, const char **name);
 
 lua_Object lua_getlocal (lua_Function func, int local_number, char **name);
 int lua_setlocal (lua_Function func, int local_number);

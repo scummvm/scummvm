@@ -342,7 +342,7 @@ void luaD_travstack (int (*fn)(TObject *))
 
 
 
-static void message (char *s)
+static void message (const char *s)
 {
   TObject im = L->errorim;
   if (ttype(&im) != LUA_T_NIL) {
@@ -354,7 +354,7 @@ static void message (char *s)
 /*
 ** Reports an error, and jumps up to the available recover label
 */
-void lua_error (char *s)
+void lua_error (const char *s)
 {
   if (s) message(s);
   if (L->errorJmp)
@@ -465,7 +465,7 @@ void luaD_gcIM (TObject *o)
 }
 
 
-int lua_dofile (char *filename)
+int lua_dofile (const char *filename)
 {
   ZIO z;
   int status;
@@ -493,7 +493,7 @@ int lua_dofile (char *filename)
 #define SSIZE_PREF "20"
 
 
-static void build_name (char *str, char *name) {
+static void build_name (const char *str, char *name) {
   if (str == NULL || *str == ID_CHUNK)
     strcpy(name, "(buffer)");
   else {
@@ -508,12 +508,12 @@ static void build_name (char *str, char *name) {
 }
 
 
-int lua_dostring (char *str) {
+int lua_dostring (const char *str) {
   return lua_dobuffer(str, strlen(str), NULL);
 }
 
 
-int lua_dobuffer (char *buff, int size, char *name) {
+int lua_dobuffer (const char *buff, int size, const char *name) {
   char newname[SIZE_PREF+25];
   ZIO z;
   int status;

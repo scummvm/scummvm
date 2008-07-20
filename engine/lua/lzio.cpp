@@ -20,11 +20,11 @@ static int zmfilbuf (ZIO* /*z*/)
  return EOZ;
 }
 
-ZIO* zmopen (ZIO* z, char* b, int size, char *name)
+ZIO* zmopen (ZIO* z, const char* b, int size, const char *name)
 {
  if (b==NULL) return NULL;
  z->n=size;
- z->p= (unsigned char *)b;
+ z->p= (const unsigned char *)b;
  z->filbuf=zmfilbuf;
  z->u=NULL;
  z->name=name;
@@ -33,7 +33,7 @@ ZIO* zmopen (ZIO* z, char* b, int size, char *name)
 
 /* ------------------------------------------------------------ strings --- */
 
-ZIO* zsopen (ZIO* z, char* s, char *name)
+ZIO* zsopen (ZIO* z, const char* s, const char *name)
 {
  if (s==NULL) return NULL;
  return zmopen(z,s,strlen(s),name);
@@ -51,7 +51,7 @@ static int zffilbuf (ZIO* z)
 }
 
 
-ZIO* zFopen (ZIO* z, FILE* f, char *name)
+ZIO* zFopen (ZIO* z, FILE* f, const char *name)
 {
  if (f==NULL) return NULL;
  z->n=0;

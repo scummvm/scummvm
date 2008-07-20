@@ -16,14 +16,14 @@
 #include "ltm.h"
 
 
-char *luaT_eventname[] = {  /* ORDER IM */
+const char *luaT_eventname[] = {  /* ORDER IM */
   "gettable", "settable", "index", "getglobal", "setglobal", "add",
   "sub", "mul", "div", "pow", "unm", "lt", "le", "gt", "ge",
   "concat", "gc", "function", NULL
 };
 
 
-static int luaI_checkevent (char *name, char *list[])
+static int luaI_checkevent (const char *name, const char *list[])
 {
   int e = luaL_findstring(name, list);
   if (e < 0)
@@ -133,7 +133,7 @@ int luaT_efectivetag (TObject *o)
 }
 
 
-TObject *luaT_gettagmethod (int t, char *event)
+TObject *luaT_gettagmethod (int t, const char *event)
 {
   int e = luaI_checkevent(event, luaT_eventname);
   checktag(t);
@@ -144,7 +144,7 @@ TObject *luaT_gettagmethod (int t, char *event)
 }
 
 
-void luaT_settagmethod (int t, char *event, TObject *func)
+void luaT_settagmethod (int t, const char *event, TObject *func)
 {
   TObject temp = *func;
   int e = luaI_checkevent(event, luaT_eventname);
@@ -157,7 +157,7 @@ void luaT_settagmethod (int t, char *event, TObject *func)
 }
 
 
-char *luaT_travtagmethods (int (*fn)(TObject *))
+const char *luaT_travtagmethods (int (*fn)(TObject *))
 {
   int e;
   if (fn(&L->errorim))

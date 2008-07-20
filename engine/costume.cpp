@@ -954,7 +954,7 @@ void Costume::stopChores() {
 		_chores[i].stop();
 }
 
-int Costume::isChoring(char *name, bool excludeLooping) {
+int Costume::isChoring(const char *name, bool excludeLooping) {
 	for (int i = 0; i < _numChores; i++) {
 		if (!strcmp(_chores[i]._name, name) && _chores[i]._playing && !(excludeLooping && _chores[i]._looping))
 			return i;

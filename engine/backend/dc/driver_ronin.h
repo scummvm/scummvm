@@ -97,7 +97,7 @@ public:
 	void prepareSmushFrame(int width, int height, byte *bitmap);
 	void drawSmushFrame(int offsetX, int offsetY);
 
-	char *getVideoDeviceName();
+	const char *getVideoDeviceName();
 
 	const ControlDescriptor *listControls();
 	int getNumControls();

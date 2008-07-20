@@ -181,7 +181,7 @@ static TProtoFunc* LoadFunction(ZIO* Z)
 
 static void LoadSignature(ZIO* Z)
 {
- char* s=SIGNATURE;
+ const char* s=SIGNATURE;
  while (*s!=0 && ezgetc(Z)==*s)
   ++s;
  if (*s!=0) luaL_verror("bad signature in %s",zname(Z));

@@ -43,8 +43,8 @@ public:
 	void setVisible(bool visible);
 
 	const char *name() const { return _name.c_str(); }
-	const int id() const { return _id; }
-	const int type() const { return _type; } // FIXME: Implement type de-masking
+	int id() const { return _id; }
+	int type() const { return _type; } // FIXME: Implement type de-masking
 	bool visible() const { return _visible; }
 	bool isPointInSector(Vector3d point) const;
 

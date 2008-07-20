@@ -206,7 +206,7 @@ void luaV_setglobal (TaggedString *ts)
 }
 
 
-static void call_binTM (IMS event, char *msg)
+static void call_binTM (IMS event, const char *msg)
 {
   TObject *im = luaT_getimbyObj(L->stack.top-2, event);/* try first operand */
   if (ttype(im) == LUA_T_NIL) {

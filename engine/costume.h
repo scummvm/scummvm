@@ -54,7 +54,7 @@ public:
 	Model::HierNode *getModelNodes();
 	void setColormap(char *map);
 	void stopChores();
-	int isChoring(char *name, bool excludeLooping);
+	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
 

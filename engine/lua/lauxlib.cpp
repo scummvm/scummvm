@@ -20,7 +20,7 @@
 #include "lmem.h"
 
 
-int luaL_findstring (char *name, char *list[]) {
+int luaL_findstring (const char *name, const char *list[]) {
   int i;
   for (i=0; list[i]; i++)
     if (strcmp(list[i], name) == 0)
@@ -28,9 +28,9 @@ int luaL_findstring (char *name, char *list[]) {
   return -1;  /* name not found */
 }
 
-void luaL_argerror (int numarg, char *extramsg)
+void luaL_argerror (int numarg, const char *extramsg)
 {
-  char *funcname;
+  const char *funcname;
   lua_getobjname(lua_stackedfunction(0), &funcname);
   if (funcname == NULL)
     funcname = "???";
@@ -41,7 +41,7 @@ void luaL_argerror (int numarg, char *extramsg)
                     numarg, funcname, extramsg);
 }
 
-char *luaL_check_lstr (int numArg, long *len)
+const char *luaL_check_lstr (int numArg, long *len)
 {
   lua_Object o = lua_getparam(numArg);
   luaL_arg_check(lua_isstring(o), numArg, "string expected");
@@ -49,7 +49,7 @@ char *luaL_check_lstr (int numArg, long *len)
   return lua_getstring(o);
 }
 
-char *luaL_opt_lstr (int numArg, char *def, long *len)
+const char *luaL_opt_lstr (int numArg, const char *def, long *len)
 {
   return (lua_getparam(numArg) == LUA_NOOBJECT) ? def :
                               luaL_check_lstr(numArg, len);
@@ -120,7 +120,7 @@ void luaL_openlib (struct luaL_reg *l, int n)
 }
 
 
-void luaL_verror (char *fmt, ...)
+void luaL_verror (const char *fmt, ...)
 {
   char buff[500];
   va_list argp;

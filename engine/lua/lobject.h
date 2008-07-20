@@ -191,7 +191,7 @@ typedef struct Hash {
 } Hash;
 
 
-extern char *luaO_typenames[];
+extern const char *luaO_typenames[];
 
 extern TObject luaO_nilobject;
 

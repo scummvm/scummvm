@@ -174,7 +174,7 @@ public:
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
-	char *_savegameFileName;
+	const char *_savegameFileName;
 	SaveGame *_savedState;
 
 	Engine();

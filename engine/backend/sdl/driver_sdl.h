@@ -54,7 +54,7 @@ public:
 
 	void setupIcon();
 
-	char *getVideoDeviceName();
+	const char *getVideoDeviceName();
 
 	const ControlDescriptor *listControls();
 	int getNumControls();

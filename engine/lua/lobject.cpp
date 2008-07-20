@@ -10,7 +10,7 @@
 #include "lua.h"
 
 
-char *luaO_typenames[] = { /* ORDER LUA_T */
+const char *luaO_typenames[] = { /* ORDER LUA_T */
     "userdata", "number", "string", "table", "function", "function", "task",
     "nil", "function", "mark", "mark", "mark", "line", NULL
 };

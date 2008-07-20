@@ -317,7 +317,7 @@ void DriverSDL::init() {
 #endif
 }
 
-char *DriverSDL::getVideoDeviceName() {
+const char *DriverSDL::getVideoDeviceName() {
 	return "SDL Video Device";
 }
 

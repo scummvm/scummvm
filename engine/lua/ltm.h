@@ -48,15 +48,15 @@ struct IM {
 #define luaT_getim(tag,event) (&L->IMtable[-(tag)].int_method[event])
 #define luaT_getimbyObj(o,e)  (luaT_getim(luaT_efectivetag(o),(e)))
 
-extern char *luaT_eventname[];
+extern const char *luaT_eventname[];
 
 
 void luaT_init (void);
 void luaT_realtag (int tag);
 int luaT_efectivetag (TObject *o);
-void luaT_settagmethod (int t, char *event, TObject *func);
-TObject *luaT_gettagmethod (int t, char *event);
-char *luaT_travtagmethods (int (*fn)(TObject *));
+void luaT_settagmethod (int t, const char *event, TObject *func);
+TObject *luaT_gettagmethod (int t, const char *event);
+const char *luaT_travtagmethods (int (*fn)(TObject *));
 
 void luaT_setfallback (void);  /* only if LUA_COMPAT2_5 */
 

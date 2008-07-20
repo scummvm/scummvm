@@ -30,7 +30,7 @@ int lua_debug=0;
 #define save_and_next(LS)  (save(LS->current), next(LS))
 
 
-char *reserved [] = {"and", "do", "else", "elseif", "end", "function",
+const char *reserved [] = {"and", "do", "else", "elseif", "end", "function",
     "if", "local", "nil", "not", "or", "repeat", "return", "then",
     "until", "while"};
 
@@ -45,7 +45,7 @@ void luaX_init (void)
 }
 
 
-void luaX_syntaxerror (LexState *ls, char *s, char *token) {
+void luaX_syntaxerror (LexState *ls, const char *s, const char *token) {
   if (token[0] == 0)
     token = "<eof>";
   luaL_verror("%.100s;\n  last token read: `%.50s' at line %d in chunk `%.50s'",
@@ -53,7 +53,7 @@ void luaX_syntaxerror (LexState *ls, char *s, char *token) {
 }
 
 
-void luaX_error (LexState *ls, char *s) {
+void luaX_error (LexState *ls, const char *s) {
   save(0);
   luaX_syntaxerror(ls, s, luaL_buffer());
 }
@@ -117,7 +117,7 @@ static void skipspace (LexState *LS)
 
 static int checkcond (LexState *LS, char *buff)
 {
-  static char *opts[] = {"nil", "1", NULL};
+  static const char *opts[] = {"nil", "1", NULL};
   int i = luaL_findstring(buff, opts);
   if (i >= 0) return i;
   else if (isalpha((unsigned char)buff[0]) || buff[0] == '_')
@@ -162,7 +162,7 @@ static void ifskip (LexState *LS)
 
 static void inclinenumber (LexState *LS)
 {
-  static char *pragmas [] =
+  static const char *pragmas [] =
     {"debug", "nodebug", "endinput", "end", "ifnot", "if", "else", NULL};
   next(LS);  /* skip '\n' */
   ++LS->linenumber;
