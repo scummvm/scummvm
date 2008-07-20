@@ -38,27 +38,24 @@ Common::SaveFileManager *g_saveFileMan;
 SaveGame::SaveGame(const char *filename, bool saving) :
 		_saving(saving), _currentSection(0) {
 	if (_saving) {
-		uint32 tag = SAVEGAME_HEADERTAG;
-		uint32 version = SAVEGAME_VERSION;
-		
-		_fileHandle = gzopen(filename, "wb");
-		if (_fileHandle == NULL) {
+		_outSaveFile = g_saveFileMan->openForSaving(filename);
+		if (!_outSaveFile) {
 			warning("SaveGame::SaveGame() Error creating savegame file");
 			return;
 		}
-		gzwrite(_fileHandle, &tag, 4);
-		gzwrite(_fileHandle, &version, 4);
+		_outSaveFile->writeUint32LE(SAVEGAME_HEADERTAG);
+		_outSaveFile->writeUint32LE(SAVEGAME_VERSION);
 	} else {
 		uint32 tag, version;
-		
-		_fileHandle = gzopen(filename, "rb");
-		if (_fileHandle == NULL) {
+
+		_inSaveFile = g_saveFileMan->openForLoading(filename);
+		if (!_inSaveFile) {
 			warning("SaveGame::SaveGame() Error opening savegame file");
 			return;
 		}
-		gzread(_fileHandle, &tag, 4);
+		tag = _inSaveFile->readUint32LE();
 		assert(tag == SAVEGAME_HEADERTAG);
-		gzread(_fileHandle, &version, 4);
+		version = _inSaveFile->readUint32LE();
 		assert(version == SAVEGAME_VERSION);
 	}
 }
@@ -66,8 +63,14 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 SaveGame::~SaveGame() {
 	uint32 tag = SAVEGAME_FOOTERTAG;
 	
-	gzwrite(_fileHandle, &tag, 4);
-	gzclose(_fileHandle);
+	if (_saving) {
+		_outSaveFile->writeUint32LE(SAVEGAME_FOOTERTAG);
+		_outSaveFile->finalize();
+		if (_outSaveFile->ioFailed())
+			warning("SaveGame::~SaveGame()Can't write file. (Disk full?)");
+		delete _outSaveFile;
+	} else
+		delete _inSaveFile;
 }
 
 uint32 SaveGame::beginSection(uint32 sectionTag) {
@@ -75,18 +78,18 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 		error("Tried to begin a new save game section with ending old section!");
 	_currentSection = sectionTag;
 	_sectionSize = 0;
-	_sectionBuffer = new char[_sectionSize];
+	_sectionBuffer = (byte *)malloc(_sectionSize);
 	if (!_saving) {
 		uint32 tag = 0;
 		
 		while (tag != sectionTag) {
-			delete[] _sectionBuffer;
-			gzread(_fileHandle, &tag, sizeof(uint32));
+			free(_sectionBuffer);
+			tag = _inSaveFile->readUint32LE();
 			if (tag == SAVEGAME_FOOTERTAG)
 				error("Unable to find requested section of savegame!");
-			gzread(_fileHandle, &_sectionSize, sizeof(uint32));
-			_sectionBuffer = new char[_sectionSize];
-			gzread(_fileHandle, _sectionBuffer, _sectionSize);
+			_sectionSize = _inSaveFile->readUint32LE();
+			_sectionBuffer = (byte *)malloc(_sectionSize);
+			_inSaveFile->read(_sectionBuffer, _sectionSize);
 		}
 	}
 	_sectionPtr = 0;
@@ -96,12 +99,12 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 void SaveGame::endSection() {
 	if (_currentSection == 0)
 		error("Tried to end a save game section without starting a section!");
-	if(_saving) {
-		gzwrite(_fileHandle, &_currentSection, sizeof(uint32));
-		gzwrite(_fileHandle, &_sectionSize, sizeof(uint32));
-		gzwrite(_fileHandle, _sectionBuffer, _sectionSize);
+	if (_saving) {
+		_outSaveFile->writeUint32LE(_currentSection);
+		_outSaveFile->writeUint32LE(_sectionSize);
+		_outSaveFile->write(_sectionBuffer, _sectionSize);
 	}
-	delete[] _sectionBuffer;
+	free(_sectionBuffer);
 	_sectionBuffer = NULL;
 	_currentSection = 0;
 }
@@ -120,8 +123,8 @@ void SaveGame::write(const void *data, int size) {
 		error("SaveGame::writeBlock called when restoring a savegame!");
 	if (_currentSection == 0)
 		error("Tried to write a block without starting a section!");
-	_sectionBuffer = (char *)realloc(_sectionBuffer, _sectionSize + size);
-	if (_sectionBuffer == NULL)
+	_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionSize + size);
+	if (!_sectionBuffer)
 		error("Failed to allocate space for buffer!");
 	memcpy(&_sectionBuffer[_sectionSize], data, size);
 	_sectionSize += size;

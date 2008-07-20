@@ -38,6 +38,8 @@
 
 namespace Common {
 	class SaveFileManager;
+	class InSaveFile;
+	class OutSaveFile;
 }
 
 extern Common::SaveFileManager *g_saveFileMan;
@@ -54,11 +56,12 @@ public:
 
 protected:
 	bool _saving;
-	gzFile _fileHandle;
+	Common::InSaveFile *_inSaveFile;
+	Common::OutSaveFile *_outSaveFile;
 	uint32 _currentSection;
 	uint32 _sectionSize;
 	uint32 _sectionPtr;
-	char *_sectionBuffer;
+	byte *_sectionBuffer;
 };
 
 #endif
