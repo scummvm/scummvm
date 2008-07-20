@@ -19,6 +19,7 @@ RM 	= rm -f
 srcdir = ../../..
 VPATH = $(srcdir)
 INCDIR = ../../../
+DEPDIR = .deps
 
 DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_MPEG2 -DUSE_ZLIB -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
