@@ -1,8 +1,34 @@
-/* MISSING.C
-   Implementation for standard and semi-standard C library calls missing in WinCE
-   environment.
-   by Vasyl Tsvirkunov
-*/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+/* Original code:
+ * Implementation for standard and semi-standard C library calls missing in WinCE
+ * environment.
+ * by Vasyl Tsvirkunov
+ */
+
 
 #include <windows.h>
 #include <tchar.h>
@@ -17,18 +43,7 @@
 #include "time.h"
 #include "dirent.h"
 
-/* forward declaration */
-
-#if _WIN32_WCE < 300
-
-#define _STDAFX_H
-#include "portdefs.h"
-
-#else
-
 char *strdup(const char *strSource);
-
-#endif
 
 #ifdef __GNUC__
 #define EXT_C extern "C"
@@ -60,9 +75,7 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 
 static WIN32_FIND_DATA wfd;
 
-/* Very limited implementation of stat. Used by UI.C, MEMORY-P.C (latter is not critical) */
-int stat(const char *fname, struct stat *ss)
-{
+int stat(const char *fname, struct stat *ss) {
 	TCHAR fnameUnc[MAX_PATH+1];
 	HANDLE handle;
 	int len;
@@ -73,8 +86,7 @@ int stat(const char *fname, struct stat *ss)
 	/* Special case (dummy on WinCE) */
 	len = strlen(fname);
 	if (len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
-		(len == 2 || fname[len-3] == '\\'))
-	{
+		(len == 2 || fname[len-3] == '\\')) {
 		/* That's everything implemented so far */
 		memset(ss, 0, sizeof(struct stat));
 		ss->st_size = 1024;
@@ -99,13 +111,11 @@ int stat(const char *fname, struct stat *ss)
 }
 
 char cwd[MAX_PATH+1] = "";
-EXT_C char *getcwd(char *buffer, int maxlen)
-{
+EXT_C char *getcwd(char *buffer, int maxlen) {
 	TCHAR fileUnc[MAX_PATH+1];
 	char* plast;
 
-	if (cwd[0] == 0)
-	{
+	if (cwd[0] == 0) {
 		GetModuleFileName(NULL, fileUnc, MAX_PATH);
 		WideCharToMultiByte(CP_ACP, 0, fileUnc, -1, cwd, MAX_PATH, NULL, NULL);
 		plast = strrchr(cwd, '\\');
@@ -123,8 +133,7 @@ EXT_C char *getcwd(char *buffer, int maxlen)
 #ifdef __GNUC__
 #undef GetCurrentDirectory
 #endif
-EXT_C void GetCurrentDirectory(int len, char *buf)
-{
+EXT_C void GetCurrentDirectory(int len, char *buf) {
 	getcwd(buf,len);
 };
 
@@ -134,26 +143,22 @@ fully qualified paths refer to root folder rather
 than current folder (concept not implemented in CE).
 */
 #undef fopen
-EXT_C FILE *wce_fopen(const char* fname, const char* fmode)
-{
+EXT_C FILE *wce_fopen(const char* fname, const char* fmode) {
 	char fullname[MAX_PATH+1];
 
 	if (!fname || fname[0] == '\0')
 		return NULL;
-	if (fname[0] != '\\' && fname[0] != '/')
-	{
+	if (fname[0] != '\\' && fname[0] != '/') {
 		getcwd(fullname, MAX_PATH);
 		strncat(fullname, "\\", MAX_PATH-strlen(fullname)-1);
 		strncat(fullname, fname, MAX_PATH-strlen(fullname)-strlen(fname));
 		return fopen(fullname, fmode);
-	}
-	else
+	} else
 		return fopen(fname, fmode);
 }
 
 /* Remove file by name */
-int remove(const char* path)
-{
+int remove(const char* path) {
 	TCHAR pathUnc[MAX_PATH+1];
 	MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
 	return !DeleteFile(pathUnc);
@@ -200,8 +205,7 @@ int _access(const char *path, int mode) {
 #ifndef __GNUC__
 
 /* Limited dirent implementation. Used by UI.C and DEVICES.C */
-DIR* opendir(const char* fname)
-{
+DIR* opendir(const char* fname) {
 	DIR* pdir;
 	char fnameMask[MAX_PATH+1];
 	TCHAR fnameUnc[MAX_PATH+1];
@@ -226,13 +230,10 @@ DIR* opendir(const char* fname)
 	strcpy(pdir->dd_name, fname); /* it has exactly enough space for fname and nul char */
 
 	MultiByteToWideChar(CP_ACP, 0, fnameMask, -1, fnameUnc, MAX_PATH);
-	if ((pdir->dd_handle = (long)FindFirstFile(fnameUnc, &wfd)) == (long)INVALID_HANDLE_VALUE)
-	{
+	if ((pdir->dd_handle = (long)FindFirstFile(fnameUnc, &wfd)) == (long)INVALID_HANDLE_VALUE) {
 		free(pdir);
 		return NULL;
-	}
-	else
-	{
+	} else {
 		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
 
 		pdir->dd_dir.d_name = strdup(nameFound);
@@ -241,34 +242,25 @@ DIR* opendir(const char* fname)
 	return pdir;
 }
 
-struct dirent*	readdir(DIR* dir)
-{
+struct dirent* readdir(DIR* dir) {
 	char nameFound[MAX_PATH+1];
 	static struct dirent dummy;
 
-	if (dir->dd_stat == 0)
-	{
+	if (dir->dd_stat == 0) {
 		dummy.d_name = ".";
 		dummy.d_namlen = 1;
 		dir->dd_stat ++;
 		return &dummy;
-	}
-	else if (dir->dd_stat == 1)
-	{
+	} else if (dir->dd_stat == 1) {
 		dummy.d_name = "..";
 		dummy.d_namlen = 2;
 		dir->dd_stat ++;
 		return &dummy;
-	}
-	else if (dir->dd_stat == 2)
-	{
+	} else if (dir->dd_stat == 2) {
 		dir->dd_stat++;
 		return &dir->dd_dir;
-	}
-	else
-	{
-		if (FindNextFile((HANDLE)dir->dd_handle, &wfd) == 0)
-		{
+	} else {
+		if (FindNextFile((HANDLE)dir->dd_handle, &wfd) == 0) {
 			dir->dd_stat = -1;
 			return NULL;
 		}
@@ -310,10 +302,8 @@ void mkdir(char* dirname, int mode)
 	if (*path == '/')
 		*path = '\\';
 	/* Run through the string and attempt creating all subdirs on the path */
-	for (ptr = path+1; *ptr; ptr ++)
-	{
-		if (*ptr == '\\' || *ptr == '/')
-		{
+	for (ptr = path+1; *ptr; ptr ++) {
+		if (*ptr == '\\' || *ptr == '/') {
 			*ptr = 0;
 			MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
 			CreateDirectory(pathUnc, 0);
