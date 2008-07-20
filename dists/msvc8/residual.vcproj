@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\error.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\file.cpp"
 				>
 			</File>
@@ -289,6 +293,10 @@
 			</File>
 			<File
 				RelativePath="..\..\common\ptr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\savefile.h"
 				>
 			</File>
 			<File
