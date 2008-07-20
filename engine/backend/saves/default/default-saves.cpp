@@ -27,6 +27,7 @@
 
 #include "common/savefile.h"
 #include "common/util.h"
+#include "common/debug.h"
 #include "common/fs.h"
 #include "common/file.h"
 //#include "common/config-manager.h"
