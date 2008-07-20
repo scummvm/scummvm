@@ -77,10 +77,12 @@ public:
 
 	void quit();
 	FilesystemFactory *getFilesystemFactory();
+	Common::SaveFileManager *getSavefileManager();
 
 private:
 
 	int _samplesPerSec;
+	Common::SaveFileManager *_savefile;
 	Common::TimerManager *_timer;
 	SDL_TimerID _timerID;
 

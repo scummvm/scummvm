@@ -36,6 +36,12 @@
 
 #include "engine/lua.h"
 
+namespace Common {
+	class SaveFileManager;
+}
+
+extern Common::SaveFileManager *g_saveFileMan;
+
 class SaveGame {
 public:
 	SaveGame(const char *filename, bool saving);

@@ -174,6 +174,7 @@ needshelp:
 	g_localizer = new Localizer();
 	g_smush = new Smush();
 	g_imuse = new Imuse(20);
+	g_saveFileMan = g_driver->getSavefileManager();
 
 	Bitmap *splash_bm = NULL;
 	if (!(g_flags & GF_DEMO))

@@ -44,6 +44,10 @@ class Bitmap;
 class Timer;
 class FilesystemFactory;
 
+namespace Common {
+	class SaveFileManager;
+}
+
 namespace Audio {
 	class MixerImpl;
 	class Mixer;
@@ -301,6 +305,8 @@ public:
 	 * @return FilesystemFactory* The specific factory for the current architecture.
 	 */
 	virtual FilesystemFactory *getFilesystemFactory() = 0;
+
+	virtual Common::SaveFileManager *getSavefileManager() = 0;
 	//@}
 
 protected:

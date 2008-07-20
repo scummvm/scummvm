@@ -29,6 +29,7 @@
 
 #include "engine/backend/sdl/driver_sdl.h"
 #include "engine/backend/default-timer.h"
+#include "engine/backend/saves/default/default-saves.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -324,6 +325,10 @@ void DriverSDL::init() {
 	_timer = new DefaultTimerManager();
 	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 
+	if (!_savefile) {
+		_savefile = new DefaultSaveFileManager();
+	}
+
 #if !defined(MACOSX)
 	setupIcon();
 #endif
@@ -512,6 +517,11 @@ FilesystemFactory *DriverSDL::getFilesystemFactory() {
 	#else
 		#error Unknown and unsupported backend in Driver_SDL::getFilesystemFactory
 	#endif
+}
+
+Common::SaveFileManager *DriverSDL::getSavefileManager() {
+	assert(_savefile);
+	return _savefile;
 }
 
 void DriverSDL::setupIcon() {

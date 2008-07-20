@@ -24,7 +24,11 @@
  */
 
 #include "common/debug.h"
+#include "common/savefile.h"
+
 #include "engine/savegame.h"
+
+Common::SaveFileManager *g_saveFileMan;
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
