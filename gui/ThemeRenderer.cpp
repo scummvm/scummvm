@@ -193,6 +193,8 @@ void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep s
 
 bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep step) {
 	DrawData id = getDrawDataId(drawDataId);
+
+	step.font = 0;
 	
 	if (id != -1) {
 		assert(_widgets[id] != 0);
@@ -200,7 +202,6 @@ bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep s
 			return false;
 
 		_widgets[id]->_textStep = step;
-		_widgets[id]->_textStep.font = 0;
 		_widgets[id]->_hasText = true;
 	} else {
 		if (drawDataId == "default") {
@@ -324,9 +325,6 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 }
 
 void ThemeRenderer::queueDDText(DrawData type, const Common::Rect &r, const Common::String &text, TextColor colorId, TextAlign align) {
-	if (!hasWidgetText(type))
-		return;
-		
 	DrawQueueText q;
 	q.type = type;
 	q.area = r;
@@ -363,10 +361,12 @@ void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
 	addDirtyRect(extendedRect);
 }
 
-void ThemeRenderer::drawDDText(const DrawQueueText &q) {
-	restoreBackground(q.area);
-	
+void ThemeRenderer::drawDDText(const DrawQueueText &q) {	
 	if (q.type == kDDNone) {
+		restoreBackground(q.area);
+		if (_texts[q.colorId].font == 0)
+			_texts[q.colorId].font = _font;
+
 		_vectorRenderer->textStep(q.text, q.area, _texts[q.colorId], q.align);
 	} else {
 		if (_widgets[q.type]->_textStep.font == 0)
@@ -622,7 +622,7 @@ void ThemeRenderer::openDialog(bool doBuffer) {
 	if (doBuffer)
 		_buffering = true;
 
-	memcpy(_backBuffer->pixels, _screen->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
+//	memcpy(_backBuffer->pixels, _screen->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
 }
 
 } // end of namespace GUI.
