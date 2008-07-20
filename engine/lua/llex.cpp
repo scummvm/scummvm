@@ -34,7 +34,7 @@ const char *reserved [] = {"and", "do", "else", "elseif", "end", "function",
 
 void luaX_init (void)
 {
-  int32 i;
+  uint32 i;
   for (i=0; i<(sizeof(reserved)/sizeof(reserved[0])); i++) {
     TaggedString *ts = luaS_new(reserved[i]);
     ts->head.marked = FIRST_RESERVED+i;  /* reserved word  (always > 255) */

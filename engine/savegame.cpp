@@ -61,7 +61,7 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 }
 
 SaveGame::~SaveGame() {
-	uint32 tag = SAVEGAME_FOOTERTAG;
+	//uint32 tag = SAVEGAME_FOOTERTAG;
 	
 	if (_saving) {
 		_outSaveFile->writeUint32BE(SAVEGAME_FOOTERTAG);

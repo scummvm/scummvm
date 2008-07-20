@@ -412,7 +412,7 @@ static void openwithtags (void)
 {
   int32 iotag = lua_newtag();
   int32 closedtag = lua_newtag();
-  int32 i;
+  uint32 i;
   for (i=0; i<sizeof(iolibtag)/sizeof(iolibtag[0]); i++) {
     /* put both tags as upvalues for these functions */
     lua_pushnumber(iotag);
