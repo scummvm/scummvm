@@ -7,7 +7,7 @@
 #ifndef lmem_h
 #define lmem_h
 
-#include "common\sys.h"
+#include "common/sys.h"
 
 
 #ifndef NULL

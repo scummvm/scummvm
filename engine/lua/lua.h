@@ -7,7 +7,7 @@
 ** See Copyright Notice at the end of this file
 */
 
-#include "common\sys.h"
+#include "common/sys.h"
 
 #ifndef lua_h
 #define lua_h

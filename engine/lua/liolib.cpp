@@ -11,6 +11,7 @@
 #include "lualib.h"
 
 #include <time.h>
+#include <errno.h>
 
 #ifdef LUA_ADD_CUSTOM_FOPEN
 #include "../resource.h"
