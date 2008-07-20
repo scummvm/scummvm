@@ -43,8 +43,8 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 			warning("SaveGame::SaveGame() Error creating savegame file");
 			return;
 		}
-		_outSaveFile->writeUint32LE(SAVEGAME_HEADERTAG);
-		_outSaveFile->writeUint32LE(SAVEGAME_VERSION);
+		_outSaveFile->writeUint32BE(SAVEGAME_HEADERTAG);
+		_outSaveFile->writeUint32BE(SAVEGAME_VERSION);
 	} else {
 		uint32 tag, version;
 
@@ -53,9 +53,9 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 			warning("SaveGame::SaveGame() Error opening savegame file");
 			return;
 		}
-		tag = _inSaveFile->readUint32LE();
+		tag = _inSaveFile->readUint32BE();
 		assert(tag == SAVEGAME_HEADERTAG);
-		version = _inSaveFile->readUint32LE();
+		version = _inSaveFile->readUint32BE();
 		assert(version == SAVEGAME_VERSION);
 	}
 }
@@ -64,7 +64,7 @@ SaveGame::~SaveGame() {
 	uint32 tag = SAVEGAME_FOOTERTAG;
 	
 	if (_saving) {
-		_outSaveFile->writeUint32LE(SAVEGAME_FOOTERTAG);
+		_outSaveFile->writeUint32BE(SAVEGAME_FOOTERTAG);
 		_outSaveFile->finalize();
 		if (_outSaveFile->ioFailed())
 			warning("SaveGame::~SaveGame()Can't write file. (Disk full?)");
@@ -84,10 +84,10 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 		
 		while (tag != sectionTag) {
 			free(_sectionBuffer);
-			tag = _inSaveFile->readUint32LE();
+			tag = _inSaveFile->readUint32BE();
 			if (tag == SAVEGAME_FOOTERTAG)
 				error("Unable to find requested section of savegame!");
-			_sectionSize = _inSaveFile->readUint32LE();
+			_sectionSize = _inSaveFile->readUint32BE();
 			_sectionBuffer = (byte *)malloc(_sectionSize);
 			_inSaveFile->read(_sectionBuffer, _sectionSize);
 		}
@@ -100,8 +100,8 @@ void SaveGame::endSection() {
 	if (_currentSection == 0)
 		error("Tried to end a save game section without starting a section!");
 	if (_saving) {
-		_outSaveFile->writeUint32LE(_currentSection);
-		_outSaveFile->writeUint32LE(_sectionSize);
+		_outSaveFile->writeUint32BE(_currentSection);
+		_outSaveFile->writeUint32BE(_sectionSize);
 		_outSaveFile->write(_sectionBuffer, _sectionSize);
 	}
 	free(_sectionBuffer);
