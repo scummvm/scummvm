@@ -83,6 +83,7 @@ Engine::Engine() :
 	_refreshDrawNeeded = true;
 	g_searchFile = NULL;
 	_savedState = NULL;
+	_fps[0] = 0;
 
 	textObjectDefaults.x = 0;
 	textObjectDefaults.y = 200;
@@ -392,7 +393,7 @@ void Engine::doFlip() {
 	// don't kill CPU
 	g_driver->delayMillis(10);
 
-	if (SHOWFPS_GLOBAL && _doFlip) {
+	if (SHOWFPS_GLOBAL && _doFlip && _mode != ENGINE_MODE_DRAW) {
 		_frameCounter++;
 		_timeAccum += _frameTime;
 		if (_timeAccum > 1000) {
