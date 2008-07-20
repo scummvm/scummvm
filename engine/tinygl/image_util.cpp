@@ -33,7 +33,7 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
                     unsigned char *src, int xsize_src, int ysize_src) {
 	unsigned char *pix, *pix_src;
-	int point1_offset, point2_offset, point3_offset;
+	int point1_offset = 0, point2_offset = 0, point3_offset = 0;
 	float x1, y1, x1inc, y1inc;
 	int xi, yi, j, xf, yf, x, y;
 
