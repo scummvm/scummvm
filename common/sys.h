@@ -46,6 +46,7 @@ extern "C" int residual_main(int argc, char *argv[]);
 #pragma once
 #pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
+#pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
 #endif
 
 #ifndef LOCAL_PI

@@ -8,52 +8,40 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
 
-#ifndef COMMON_UTIL_H
-#define COMMON_UTIL_H
-
-#include "common/sys.h"
-
-#ifdef MIN
-#undef MIN
-#endif
-
-#ifdef MAX
-#undef MAX
-#endif
-
-template<typename T> inline T ABS (T x)		{ return (x>=0) ? x : -x; }
-template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
-template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
-template<typename T> inline T CLIP (T v, T amin, T amax)
-		{ if (v < amin) return amin; else if (v > amax) return amax; else return v; }
+#ifndef COMMON_ERROR_H
+#define COMMON_ERROR_H
 
 /**
- * Template method which swaps the vaulues of its two parameters.
+ * This file contains enums with error codes commonly used.
  */
-template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
-#if defined(ARRAYSIZE)
-// VS2005beta2 introduces new stuff in winnt.h
-#undef ARRAYSIZE
-#endif
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+/**
+ * Errors used in the SaveFileManager class.
+ */
+enum SFMError {
+	SFM_NO_ERROR,			//Default state, indicates no error has been recorded
+	SFM_DIR_ACCESS,			//stat(), mkdir()::EACCES: Search or write permission denied
+	SFM_DIR_LINKMAX,		//mkdir()::EMLINK: The link count of the parent directory would exceed {LINK_MAX}
+	SFM_DIR_LOOP,			//stat(), mkdir()::ELOOP: Too many symbolic links encountered while traversing the path
+	SFM_DIR_NAMETOOLONG,	//stat(), mkdir()::ENAMETOOLONG: The path name is too long
+	SFM_DIR_NOENT,			//stat(), mkdir()::ENOENT: A component of the path path does not exist, or the path is an empty string
+	SFM_DIR_NOTDIR,			//stat(), mkdir()::ENOTDIR: A component of the path prefix is not a directory
+	SFM_DIR_ROFS			//mkdir()::EROFS: The parent directory resides on a read-only file system
+};
 
-#ifndef round
-#define round(x) ((x > 0.0) ? floor((x) + 0.5) : ceil((x) - 0.5))
-#endif
-
-#endif
+#endif //COMMON_ERROR_H
