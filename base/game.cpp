@@ -32,10 +32,10 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 	const PlainGameDescriptor *g = list;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
+			return g;
 		g++;
 	}
-	return g;
+	return 0;
 }
 
 void GameDescriptor::updateDesc(const char *extra) {
