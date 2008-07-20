@@ -42,6 +42,7 @@
 class Material;
 class Bitmap;
 class Timer;
+class FilesystemFactory;
 
 namespace Audio {
 	class MixerImpl;
@@ -294,6 +295,12 @@ public:
 	//@{
 	/** Quit (exit) the application. */
 	virtual void quit() = 0;
+	/**
+	 * Returns the FilesystemFactory object, depending on the current architecture.
+	 *
+	 * @return FilesystemFactory* The specific factory for the current architecture.
+	 */
+	virtual FilesystemFactory *getFilesystemFactory() = 0;
 	//@}
 
 protected:

@@ -38,6 +38,18 @@
 
 #define SAMPLES_PER_SEC 22050
 
+/*
+ * Include header files needed for the getFilesystemFactory() method.
+ */
+#if defined(__amigaos4__)
+	#include "engine/backend/fs/amigaos4/amigaos4-fs-factory.h"
+#elif defined(UNIX)
+	#include "engine/backend/fs/posix/posix-fs-factory.h"
+#elif defined(WIN32)
+	#include "engine/backend/fs/windows/windows-fs-factory.h"
+#endif
+
+
 // NOTE: This is not a complete driver, it needs to be subclassed
 //       to provide rendering functionality.
 
@@ -486,6 +498,20 @@ void DriverSDL::quit() {
 	event.type = SDL_QUIT;
 	if (SDL_PushEvent(&event) != 0)
 		error("Unable to push exit event!");
+}
+
+FilesystemFactory *DriverSDL::getFilesystemFactory() {
+	#if defined(__amigaos4__)
+		return &AmigaOSFilesystemFactory::instance();	
+	#elif defined(UNIX)
+		return &POSIXFilesystemFactory::instance();
+	#elif defined(WIN32)
+		return &WindowsFilesystemFactory::instance();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
+	#else
+		#error Unknown and unsupported backend in Driver_SDL::getFilesystemFactory
+	#endif
 }
 
 void DriverSDL::setupIcon() {

@@ -76,6 +76,7 @@ public:
 	Audio::Mixer *getMixer();
 
 	void quit();
+	FilesystemFactory *getFilesystemFactory();
 
 private:
 
