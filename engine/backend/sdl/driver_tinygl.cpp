@@ -586,7 +586,7 @@ void DriverTinyGL::drawEmergString(int x, int y, const char *text, const Color &
 	uint16 color = ((fgColor.red() & 0xF8) << 8) | ((fgColor.green() & 0xFC) << 3) | (fgColor.blue() >> 3);
 
 	for (int l = 0; l < (int)strlen(text); l++) {
-		char c = text[l];
+		int c = text[l];
 		assert(c >= 32 && c <= 127);
 		const uint8 *ptr = Font::emerFont[c - 32];
 		for (int py = 0; py < 13; py++) {
