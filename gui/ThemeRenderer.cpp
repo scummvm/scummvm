@@ -622,7 +622,7 @@ void ThemeRenderer::openDialog(bool doBuffer) {
 	if (doBuffer)
 		_buffering = true;
 
-//	memcpy(_backBuffer->pixels, _screen->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
+	memcpy(_backBuffer->pixels, _screen->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
 }
 
 } // end of namespace GUI.
