@@ -75,7 +75,7 @@ SCUMMVM.BIN : scummvm.bin
 
 plugin_dist :
 	for p in plugins/*.plg; do \
-	  sh-elf-strip -g -o "`basename \"$$p\" | tr '[:lower:]' '[:upper:]'`" "$$p"; \
+	  sh-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
 
 dist : SCUMMVM.BIN plugins plugin_dist
