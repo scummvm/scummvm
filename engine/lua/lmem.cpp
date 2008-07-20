@@ -36,16 +36,13 @@ int32 luaM_growaux (void **block, int32 nelems, int32 size,
 */
 void *luaM_realloc (void *block, int32 size)
 {
-  size_t s = (size_t)size;
-  if (s != ((unsigned) size))
-    lua_error("Allocation Error: Block too big");
   if (size == 0) {
     if (block) {
       free(block);
     }
     return NULL;
   }
-  block = block ? realloc(block, s) : malloc(s);
+  block = block ? realloc(block, size) : malloc(size);
   if (block == NULL)
     lua_error(memEM);
   return block;
