@@ -311,6 +311,7 @@ Common::TimerManager *DriverSDL::getTimerManager() {
 DriverSDL::DriverSDL() {
 	_mixer = NULL;
 	_timer = NULL;
+	_savefile = NULL;
 }
 
 DriverSDL::~DriverSDL() {
@@ -319,6 +320,7 @@ DriverSDL::~DriverSDL() {
 
 	delete _mixer;
 	delete _timer;
+	delete _savefile;
 }
 
 void DriverSDL::init() {
