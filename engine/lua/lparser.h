@@ -11,7 +11,7 @@
 #include "lzio.h"
 
 
-void luaY_codedebugline (int line);
+void luaY_codedebugline (int32 line);
 TProtoFunc *luaY_parser (ZIO *z);
 void luaY_error (char *s);
 void luaY_syntaxerror (char *s, char *token);

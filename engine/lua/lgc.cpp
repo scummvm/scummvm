@@ -18,7 +18,7 @@
 
 
 
-static int markobject (TObject *o);
+static int32 markobject (TObject *o);
 
 
 
@@ -29,9 +29,9 @@ static int markobject (TObject *o);
 */
 
 
-int luaC_ref (TObject *o, int lock)
+int32 luaC_ref (TObject *o, int32 lock)
 {
-  int ref;
+  int32 ref;
   if (ttype(o) == LUA_T_NIL)
     ref = -1;   /* special ref for nil */
   else {
@@ -39,7 +39,7 @@ int luaC_ref (TObject *o, int lock)
       if (L->refArray[ref].status == FREE)
         goto found;
     /* no more empty spaces */ {
-      int oldSize = L->refSize;
+      int32 oldSize = L->refSize;
       L->refSize = luaM_growvector(&L->refArray, L->refSize, struct ref,
                                    refEM, MAX_INT);
       for (ref=oldSize; ref<L->refSize; ref++)
@@ -53,14 +53,14 @@ int luaC_ref (TObject *o, int lock)
 }
 
 
-void lua_unref (int ref)
+void lua_unref (int32 ref)
 {
   if (ref >= 0 && ref < L->refSize)
     L->refArray[ref].status = FREE;
 }
 
 
-TObject* luaC_getref (int ref)
+TObject* luaC_getref (int32 ref)
 {
   if (ref == -1)
     return &luaO_nilobject;
@@ -74,14 +74,14 @@ TObject* luaC_getref (int ref)
 
 static void travlock (void)
 {
-  int i;
+  int32 i;
   for (i=0; i<L->refSize; i++)
     if (L->refArray[i].status == LOCK)
       markobject(&L->refArray[i].o);
 }
 
 
-static int ismarked (TObject *o)
+static int32 ismarked (TObject *o)
 {
   /* valid only for locked objects */
   switch (o->ttype) {
@@ -106,7 +106,7 @@ static int ismarked (TObject *o)
 
 static void invalidaterefs (void)
 {
-  int i;
+  int32 i;
   for (i=0; i<L->refSize; i++)
     if (L->refArray[i].status == HOLD && !ismarked(&L->refArray[i].o))
       L->refArray[i].status = COLLECTED;
@@ -167,7 +167,7 @@ static void protomark (TProtoFunc *f)
 {
   if (!f->head.marked) {
     LocVar *v = f->locvars;
-    int i;
+    int32 i;
     f->head.marked = 1;
     if (f->fileName)
       strmark(f->fileName);
@@ -185,7 +185,7 @@ static void protomark (TProtoFunc *f)
 static void closuremark (Closure *f)
 {
   if (!f->head.marked) {
-    int i;
+    int32 i;
     f->head.marked = 1;
     for (i=f->nelems; i>=0; i--)
       markobject(&f->consts[i]);
@@ -196,7 +196,7 @@ static void closuremark (Closure *f)
 static void hashmark (Hash *h)
 {
   if (!h->head.marked) {
-    int i;
+    int32 i;
     h->head.marked = 1;
     for (i=0; i<nhash(h); i++) {
       Node *n = node(h,i);
@@ -222,7 +222,7 @@ static void globalmark (void)
 }
 
 
-static int markobject (TObject *o)
+static int32 markobject (TObject *o)
 {
   switch (ttype(o)) {
     case LUA_T_USERDATA:  case LUA_T_STRING:
@@ -253,9 +253,9 @@ static void markall (void)
 }
 
 
-long lua_collectgarbage (long limit)
+int32 lua_collectgarbage (int32 limit)
 {
-  unsigned long recovered = L->nblocks;  /* to subtract nblocks after gc */
+  int32 recovered = L->nblocks;  /* to subtract nblocks after gc */
   Hash *freetable;
   TaggedString *freestr;
   TProtoFunc *freefunc;

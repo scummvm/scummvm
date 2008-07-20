@@ -5,34 +5,16 @@
 */
 
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
 #include "lauxlib.h"
 #include "lua.h"
 #include "luadebug.h"
 #include "lualib.h"
 
+#include <time.h>
+
 #ifdef LUA_ADD_CUSTOM_FOPEN
 #include "../resource.h"
 #endif
-
-#ifndef OLD_ANSI
-#include <locale.h>
-#else
-#define setlocale(a,b)	0
-#define LC_ALL		0
-#define LC_COLLATE	0
-#define LC_CTYPE	0
-#define LC_MONETARY	0
-#define LC_NUMERIC	0
-#define LC_TIME		0
-#define strerror(e)	"(no error message provided by operating system)"
-#endif
-
 
 #define CLOSEDTAG	2
 #define IOTAG		1
@@ -43,21 +25,16 @@
 #define FOUTPUT		"_OUTPUT"
 
 
-#ifdef POPEN
-FILE *popen();
-int pclose();
-#else
 #define popen(x,y) NULL  /* that is, popen always fails */
 #define pclose(x)  (-1)
-#endif
 
-static int gettag (int i)
+static int32 gettag (int32 i)
 {
-  return (int)lua_getnumber(lua_getparam(i));
+  return (int32)lua_getnumber(lua_getparam(i));
 }
 
 
-static void pushresult (int i)
+static void pushresult (int32 i)
 {
   if (i)
     lua_pushuserdata(NULL);
@@ -68,7 +45,7 @@ static void pushresult (int i)
 }
 
 
-static int ishandler (lua_Object f)
+static int32 ishandler (lua_Object f)
 {
   if (lua_isuserdata(f)) {
     if (lua_tag(f) == gettag(CLOSEDTAG))
@@ -87,7 +64,7 @@ static FILE *getfile (const char *name)
 }
 
 
-static FILE *getfileparam (const char *name, int *arg)
+static FILE *getfileparam (const char *name, int32 *arg)
 {
   lua_Object f = lua_getparam(*arg);
   if (ishandler(f)) {
@@ -110,7 +87,7 @@ static void closefile (const char *name)
 }
 
 
-static void setfile (FILE *f, const char *name, int tag)
+static void setfile (FILE *f, const char *name, int32 tag)
 {
   lua_pushusertag(f, tag);
   lua_setglobal(name);
@@ -119,7 +96,7 @@ static void setfile (FILE *f, const char *name, int tag)
 
 static void setreturn (FILE *f, const char *name)
 {
-  int tag = gettag(IOTAG);
+  int32 tag = gettag(IOTAG);
   setfile(f, name, tag);
   lua_pushusertag(f, tag);
 }
@@ -191,9 +168,9 @@ static void io_appendto (void)
 #define NEED_OTHER (EOF-1)  /* just some flag different from EOF */
 
 
-static void read_until (FILE *f, int lim) {
-  int l = 0;
-  int c;
+static void read_until (FILE *f, int32 lim) {
+  int32 l = 0;
+  int32 c;
   for (c = getc(f); c != EOF && c != lim; c = getc(f)) {
     luaL_addchar(c);
     l++;
@@ -203,7 +180,7 @@ static void read_until (FILE *f, int lim) {
 }
 
 static void io_read (void) {
-  int arg = FIRSTARG;
+  int32 arg = FIRSTARG;
   FILE *f = getfileparam(FINPUT, &arg);
   const char *p = luaL_opt_string(arg, NULL);
   luaL_resetbuffer();
@@ -212,9 +189,9 @@ static void io_read (void) {
   else if (p[0] == '.' && p[1] == '*' && p[2] == 0)  /* p = ".*" */
     read_until(f, EOF);
   else {
-    int l = 0;  /* number of chars read in buffer */
-    int inskip = 0;  /* to control {skips} */
-    int c = NEED_OTHER;
+    int32 l = 0;  /* number of chars read in buffer */
+    int32 inskip = 0;  /* to control {skips} */
+    int32 c = NEED_OTHER;
     while (*p) {
       switch (*p) {
         case '{':
@@ -229,7 +206,7 @@ static void io_read (void) {
           continue;
         default: {
           const char *ep;  /* get what is next */
-          int m;  /* match result */
+          int32 m;  /* match result */
           if (c == NEED_OTHER) c = getc(f);
           if (c == EOF) {
             luaI_singlematch(0, p, &ep);  /* to set "ep" */
@@ -270,13 +247,13 @@ static void io_read (void) {
 
 static void io_write (void)
 {
-  int arg = FIRSTARG;
+  int32 arg = FIRSTARG;
   FILE *f = getfileparam(FOUTPUT, &arg);
-  int status = 1;
+  int32 status = 1;
   const char *s;
-  long l;
+  int32 l;
   while ((s = luaL_opt_lstr(arg++, NULL, &l)) != NULL)
-    status = status && (fwrite(s, 1, l, f) == (unsigned long)l);
+    status = status && (fwrite(s, 1, l, f) == (size_t)l);
   pushresult(status);
 }
 
@@ -334,11 +311,11 @@ static void io_date (void)
 
 static void setloc (void)
 {
-  static int cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY, LC_NUMERIC,
+  static int32 cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY, LC_NUMERIC,
                       LC_TIME};
   static const char *catnames[] = {"all", "collate", "ctype", "monetary",
      "numeric", "time", NULL};
-  int op = luaL_findstring(luaL_opt_string(2, "all"), catnames);
+  int32 op = luaL_findstring(luaL_opt_string(2, "all"), catnames);
   luaL_arg_check(op != -1, 2, "invalid option");
   lua_pushstring(setlocale(cat[op], luaL_check_string(1)));
 }
@@ -347,7 +324,7 @@ static void setloc (void)
 static void io_exit (void)
 {
   lua_Object o = lua_getparam(1);
-  exit(lua_isnumber(o) ? (int)lua_getnumber(o) : 1);
+  exit((int)lua_isnumber(o) ? (int)lua_getnumber(o) : 1);
 }
 
 
@@ -365,13 +342,13 @@ static void io_debug (void)
 
 static void lua_printstack (FILE *f)
 {
-  int level = 1;  /* skip level 0 (it's this function) */
+  int32 level = 1;  /* skip level 0 (it's this function) */
   lua_Object func;
   while ((func = lua_stackedfunction(level++)) != LUA_NOOBJECT) {
     const char *name;
-    int currentline;
+    int32 currentline;
     const char *filename;
-    int linedefined;
+    int32 linedefined;
     lua_funcinfo(func, &filename, &linedefined);
     fprintf(f, (level==2) ? "Active Stack:\n\t" : "\t");
     switch (*lua_getobjname(func, &name)) {
@@ -432,9 +409,9 @@ static struct luaL_reg iolibtag[] = {
 
 static void openwithtags (void)
 {
-  int iotag = lua_newtag();
-  int closedtag = lua_newtag();
-  unsigned int i;
+  int32 iotag = lua_newtag();
+  int32 closedtag = lua_newtag();
+  int32 i;
   for (i=0; i<sizeof(iolibtag)/sizeof(iolibtag[0]); i++) {
     /* put both tags as upvalues for these functions */
     lua_pushnumber(iotag);

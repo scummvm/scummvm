@@ -21,15 +21,15 @@ TObject luaO_nilobject = {LUA_T_NIL, {NULL}};
 
 
 /* hash dimensions values */
-static long dimensions[] =
- {5L, 11L, 23L, 47L, 97L, 197L, 397L, 797L, 1597L, 3203L, 6421L,
-  12853L, 25717L, 51437L, 102811L, 205619L, 411233L, 822433L,
-  1644817L, 3289613L, 6579211L, 13158023L, MAX_INT};
+static int32 dimensions[] =
+ {5, 11, 23, 47, 97, 197, 397, 797, 1597, 3203, 6421,
+  12853, 25717, 51437, 102811, 205619, 411233, 822433,
+  1644817, 3289613, 6579211, 13158023, MAX_INT};
 
 
-int luaO_redimension (int oldsize)
+int32 luaO_redimension (int32 oldsize)
 {
-  int i;
+  int32 i;
   for (i=0; dimensions[i]<MAX_INT; i++) {
     if (dimensions[i] > oldsize)
       return dimensions[i];
@@ -39,7 +39,7 @@ int luaO_redimension (int oldsize)
 }
 
 
-int luaO_equalObj (TObject *t1, TObject *t2)
+int32 luaO_equalObj (TObject *t1, TObject *t2)
 {
   if (ttype(t1) != ttype(t2)) return 0;
   switch (ttype(t1)) {
@@ -64,21 +64,3 @@ void luaO_insertlist (GCnode *root, GCnode *node)
   root->next = node;
   node->marked = 0;
 }
-
-#ifdef OLD_ANSI
-void luaO_memup (void *dest, void *src, int size)
-{
-  char *d = dest;
-  char *s = src;
-  while (size--) d[size]=s[size];
-}
-
-void luaO_memdown (void *dest, void *src, int size)
-{
-  char *d = dest;
-  char *s = src;
-  int i;
-  for (i=0; i<size; i++) d[i]=s[i];
-}
-#endif
-

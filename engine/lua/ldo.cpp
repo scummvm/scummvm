@@ -5,11 +5,6 @@
 */
 
 
-#include <setjmp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "ldo.h"
 #include "lfunc.h"
 #include "lgc.h"
@@ -74,12 +69,12 @@ void luaD_initthr (void)
 }
 
 
-void luaD_checkstack (int n)
+void luaD_checkstack (int32 n)
 {
   struct Stack *S = &L->stack;
   if (S->last-S->top <= n) {
     StkId top = S->top-S->stack;
-    int stacksize = (S->last-S->stack)+1+STACK_UNIT+n;
+    int32 stacksize = (S->last-S->stack)+1+STACK_UNIT+n;
     S->stack = luaM_reallocvector(S->stack, stacksize, TObject);
     S->last = S->stack+(stacksize-1);
     S->top = S->stack + top;
@@ -98,7 +93,7 @@ void luaD_checkstack (int n)
 */
 void luaD_adjusttop (StkId newtop)
 {
-  int diff = newtop-(L->stack.top-L->stack.stack);
+  int32 diff = newtop-(L->stack.top-L->stack.stack);
   if (diff <= 0)
     L->stack.top += diff;
   else {
@@ -112,7 +107,7 @@ void luaD_adjusttop (StkId newtop)
 /*
 ** Open a hole below "nelems" from the L->stack.top.
 */
-void luaD_openstack (int nelems)
+void luaD_openstack (int32 nelems)
 {
   luaO_memup(L->stack.top-nelems+1, L->stack.top-nelems,
              nelems*sizeof(TObject));
@@ -120,7 +115,7 @@ void luaD_openstack (int nelems)
 }
 
 
-void luaD_lineHook (int line)
+void luaD_lineHook (int32 line)
 {
   struct C_Lua_Stack oldCLS = L->Cstack;
   StkId old_top = L->Cstack.lua2C = L->Cstack.base = L->stack.top-L->stack.stack;
@@ -131,7 +126,7 @@ void luaD_lineHook (int line)
 }
 
 
-void luaD_callHook (StkId base, TProtoFunc *tf, int isreturn)
+void luaD_callHook (StkId base, TProtoFunc *tf, int32 isreturn)
 {
   struct C_Lua_Stack oldCLS = L->Cstack;
   StkId old_top = L->Cstack.lua2C = L->Cstack.base = L->stack.top-L->stack.stack;
@@ -160,7 +155,7 @@ static StkId callC (lua_CFunction f, StkId base)
   struct C_Lua_Stack *CS = &L->Cstack;
   struct C_Lua_Stack oldCLS = *CS;
   StkId firstResult;
-  int numarg = (L->stack.top-L->stack.stack) - base;
+  int32 numarg = (L->stack.top-L->stack.stack) - base;
   CS->num = numarg;
   CS->lua2C = base;
   CS->base = base+numarg;  /* == top-stack */
@@ -178,7 +173,7 @@ static StkId callC (lua_CFunction f, StkId base)
 static StkId callCclosure (struct Closure *cl, lua_CFunction f, StkId base)
 {
   TObject *pbase;
-  int nup = cl->nelems;  /* number of upvalues */
+  int32 nup = cl->nelems;  /* number of upvalues */
   luaD_checkstack(nup);
   pbase = L->stack.stack+base;  /* care: previous call may change this */
   /* open space for upvalues as extra arguments */
@@ -190,7 +185,7 @@ static StkId callCclosure (struct Closure *cl, lua_CFunction f, StkId base)
 }
 
 
-void luaD_callTM (TObject *f, int nParams, int nResults)
+void luaD_callTM (TObject *f, int32 nParams, int32 nResults)
 {
   luaD_openstack(nParams);
   *(L->stack.top-nParams-1) = *f;
@@ -211,13 +206,13 @@ static void adjust_varargs (StkId first_extra_arg)
 /*
 ** Prepare the stack for calling a Lua function.
 */
-void luaD_precall (TObject *f, StkId base, int nResults)
+void luaD_precall (TObject *f, StkId base, int32 nResults)
 {
   /* Create a new CallInfo record */
   if (L->ci+1 == L->end_ci) {
-    int size_ci = L->end_ci - L->base_ci;
-    int index_ci = L->ci - L->base_ci;
-    int new_ci_size = size_ci * 2 * sizeof(CallInfo);
+    int32 size_ci = L->end_ci - L->base_ci;
+    int32 index_ci = L->ci - L->base_ci;
+    int32 new_ci_size = size_ci * 2 * sizeof(CallInfo);
     CallInfo *new_ci = (CallInfo *)luaM_malloc(new_ci_size);
     memcpy(new_ci, L->base_ci, L->base_ci_size);
     memset(new_ci + (L->base_ci_size / sizeof(CallInfo)), 0, (new_ci_size) - L->base_ci_size);
@@ -260,9 +255,9 @@ void luaD_precall (TObject *f, StkId base, int nResults)
 ** Adjust the stack to the desired number of results
 */
 void luaD_postret (StkId firstResult) {
-  int i;
+  int32 i;
   StkId base = L->ci->base;
-  int nResults = L->ci->nResults;
+  int32 nResults = L->ci->nResults;
   if (L->ci == L->base_ci)
     lua_error("call stack underflow");
   /* adjust the number of results */
@@ -284,7 +279,7 @@ void luaD_postret (StkId firstResult) {
 ** When returns, the results are on the L->stack.stack, between [L->stack.stack+base-1,L->stack.top).
 ** The number of results is nResults, unless nResults=MULT_RET.
 */
-void luaD_call (StkId base, int nResults)
+void luaD_call (StkId base, int32 nResults)
 {
   StkId firstResult;
   TObject *func = L->stack.stack+base-1;
@@ -322,7 +317,7 @@ void luaD_call (StkId base, int nResults)
 }
 
 
-static void travstack (struct Stack *S, int (*fn)(TObject *)) {
+static void travstack (struct Stack *S, int32 (*fn)(TObject *)) {
   StkId i;
   for (i = (S->top-1)-S->stack; i>=0; i--)
     fn(S->stack+i);
@@ -331,7 +326,7 @@ static void travstack (struct Stack *S, int (*fn)(TObject *)) {
 /*
 ** Traverse all objects on L->stack.stack, and all other active stacks
 */
-void luaD_travstack (int (*fn)(TObject *))
+void luaD_travstack (int32 (*fn)(TObject *))
 {
   struct lua_Task *t;
   travstack(&L->stack, fn);
@@ -369,7 +364,7 @@ void lua_error (const char *s)
 ** Call the function at L->Cstack.base, and incorporate results on
 ** the Lua2C structure.
 */
-static void do_callinc (int nResults)
+static void do_callinc (int32 nResults)
 {
   StkId base = L->Cstack.base;
   luaD_call(base+1, nResults);
@@ -383,13 +378,13 @@ static void do_callinc (int nResults)
 ** Execute a protected call. Assumes that function is at L->Cstack.base and
 ** parameters are on top of it. Leave nResults on the stack.
 */
-int luaD_protectedrun (int nResults)
+int32 luaD_protectedrun (int32 nResults)
 {
   jmp_buf myErrorJmp;
-  int status;
+  int32 status;
   struct C_Lua_Stack oldCLS = L->Cstack;
   jmp_buf *oldErr = L->errorJmp;
-  int ci_len = L->ci - L->base_ci;
+  int32 ci_len = L->ci - L->base_ci;
   L->errorJmp = &myErrorJmp;
   if (setjmp(myErrorJmp) == 0) {
     do_callinc(nResults);
@@ -409,9 +404,9 @@ int luaD_protectedrun (int nResults)
 /*
 ** returns 0 = chunk loaded; 1 = error; 2 = no more chunks to load
 */
-static int protectedparser (ZIO *z, int bin)
+static int32 protectedparser (ZIO *z, int32 bin)
 {
-  volatile int status;
+  volatile int32 status;
   TProtoFunc *volatile tf;
   jmp_buf myErrorJmp;
   jmp_buf *volatile oldErr = L->errorJmp;
@@ -435,16 +430,16 @@ static int protectedparser (ZIO *z, int bin)
 }
 
 
-static int do_main (ZIO *z, int bin)
+static int32 do_main (ZIO *z, int32 bin)
 {
-  int status;
+  int32 status;
   do {
-    long old_blocks = (luaC_checkGC(), L->nblocks);
+    int32 old_blocks = (luaC_checkGC(), L->nblocks);
     status = protectedparser(z, bin);
     if (status == 1) return 1;  /* error */
     else if (status == 2) return 0;  /* 'natural' end */
     else {
-      unsigned long newelems2 = 2*(L->nblocks-old_blocks);
+      int32 newelems2 = 2*(L->nblocks-old_blocks);
       L->GCthreshold += newelems2;
       status = luaD_protectedrun(MULT_RET);
       L->GCthreshold -= newelems2;
@@ -465,12 +460,12 @@ void luaD_gcIM (TObject *o)
 }
 
 
-int lua_dofile (const char *filename)
+int32 lua_dofile (const char *filename)
 {
   ZIO z;
-  int status;
-  int c;
-  int bin;
+  int32 status;
+  int32 c;
+  int32 bin;
   FILE *f = (filename == NULL) ? stdin : fopen(filename, "r");
   if (f == NULL)
     return 2;
@@ -508,15 +503,15 @@ static void build_name (const char *str, char *name) {
 }
 
 
-int lua_dostring (const char *str) {
+int32 lua_dostring (const char *str) {
   return lua_dobuffer(str, strlen(str), NULL);
 }
 
 
-int lua_dobuffer (const char *buff, int size, const char *name) {
+int32 lua_dobuffer (const char *buff, int32 size, const char *name) {
   char newname[SIZE_PREF+25];
   ZIO z;
-  int status;
+  int32 status;
   if (name==NULL) {
     build_name(buff, newname);
     name = newname;

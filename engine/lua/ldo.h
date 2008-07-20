@@ -33,17 +33,17 @@
 void luaD_init (void);
 void luaD_initthr (void);
 void luaD_adjusttop (StkId newtop);
-void luaD_openstack (int nelems);
-void luaD_lineHook (int line);
-void luaD_callHook (StkId base, TProtoFunc *tf, int isreturn);
-void luaD_precall (TObject *f, StkId base, int nResults);
+void luaD_openstack (int32 nelems);
+void luaD_lineHook (int32 line);
+void luaD_callHook (StkId base, TProtoFunc *tf, int32 isreturn);
+void luaD_precall (TObject *f, StkId base, int32 nResults);
 void luaD_postret (StkId firstResult);
-void luaD_call (StkId base, int nResults);
-void luaD_callTM (TObject *f, int nParams, int nResults);
-int luaD_protectedrun (int nResults);
+void luaD_call (StkId base, int32 nResults);
+void luaD_callTM (TObject *f, int32 nParams, int32 nResults);
+int32 luaD_protectedrun (int32 nResults);
 void luaD_gcIM (TObject *o);
-void luaD_travstack (int (*fn)(TObject *));
-void luaD_checkstack (int n);
+void luaD_travstack (int32 (*fn)(TObject *));
+void luaD_checkstack (int32 n);
 
 
 #endif

@@ -5,7 +5,6 @@
 */
 
 
-#include <stdlib.h>
 
 #include "lfunc.h"
 #include "lmem.h"
@@ -16,7 +15,7 @@
 
 
 
-Closure *luaF_newclosure (int nelems)
+Closure *luaF_newclosure (int32 nelems)
 {
   Closure *c = (Closure *)luaM_malloc(sizeof(Closure)+nelems*sizeof(TObject));
   luaO_insertlist(&(L->rootcl), (GCnode *)c);
@@ -77,9 +76,9 @@ void luaF_freeclosure (Closure *l)
 ** Look for n-th local variable at line "line" in function "func".
 ** Returns NULL if not found.
 */
-char *luaF_getlocalname (TProtoFunc *func, int local_number, int line)
+char *luaF_getlocalname (TProtoFunc *func, int32 local_number, int32 line)
 {
-  int count = 0;
+  int32 count = 0;
   char *varname = NULL;
   LocVar *lv = func->locvars;
   if (lv == NULL)

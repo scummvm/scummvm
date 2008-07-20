@@ -5,7 +5,6 @@
 */
 
 
-#include <stdlib.h>
 #include "lbuiltin.h"
 #include "ldo.h"
 #include "lauxlib.h"
@@ -22,7 +21,7 @@
 
 lua_State *lua_state = NULL;
 
-int globalTaskSerialId;
+int32 globalTaskSerialId;
 
 void stderrorim (void);
 

@@ -28,7 +28,7 @@ void lua_mathlibopen (void);
 
 /* Auxiliary functions (private) */
 
-int luaI_singlematch (int c, const char *p, const char **ep);
+int32 luaI_singlematch (int32 c, const char *p, const char **ep);
 
 #endif
 

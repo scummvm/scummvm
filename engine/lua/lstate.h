@@ -18,7 +18,7 @@
 #define GARBAGE_BLOCK 150
 
 
-typedef int StkId;  /* index to stack elements */
+typedef int32 StkId;  /* index to stack elements */
 
 struct Stack {
   TObject *top;
@@ -30,13 +30,13 @@ struct C_Lua_Stack {
   StkId base;  /* when Lua calls C or C calls Lua, points to */
                /* the first slot after the last parameter. */
   StkId lua2C; /* points to first element of "array" lua2C */
-  int num;     /* size of "array" lua2C */
+  int32 num;     /* size of "array" lua2C */
 };
 
 
 typedef struct {
-  int size;
-  int nuse;  /* number of elements (including EMPTYs) */
+  int32 size;
+  int32 nuse;  /* number of elements (including EMPTYs) */
   TaggedString **hash;
 } stringtable;
 
@@ -54,7 +54,7 @@ struct CallInfo {
   TProtoFunc *tf;  /* Set to NULL for C function */
   StkId base;
   Byte *pc;
-  int nResults;
+  int32 nResults;
 };
 
 
@@ -66,17 +66,17 @@ struct lua_Task {
   jmp_buf *errorJmp;
   struct CallInfo *ci;
   struct CallInfo *base_ci;
-  int base_ci_size;
+  int32 base_ci_size;
   struct CallInfo *end_ci;
   char *Mbuffer;
   char *Mbuffbase;
-  int Mbuffsize;
-  int Mbuffnext;
+  int32 Mbuffsize;
+  int32 Mbuffnext;
   struct C_Lua_Stack Cblocks[MAX_C_BLOCKS];
-  int numCblocks;
+  int32 numCblocks;
   enum TaskState Tstate;
   struct lua_Task *next;
-  int id;
+  int32 id;
 };
 
 struct lua_State {
@@ -86,14 +86,14 @@ struct lua_State {
   jmp_buf *errorJmp;  /* current error recover point */
   struct CallInfo *ci;  /* call info for current function */
   struct CallInfo *base_ci;  /* array of CallInfo's */
-  int base_ci_size;
+  int32 base_ci_size;
   struct CallInfo *end_ci;  /* points after end of ci array */
   char *Mbuffer;  /* global buffer */
   char *Mbuffbase;  /* current first position of Mbuffer */
-  int Mbuffsize;  /* size of Mbuffer */
-  int Mbuffnext;  /* next position to fill in Mbuffer */
+  int32 Mbuffsize;  /* size of Mbuffer */
+  int32 Mbuffnext;  /* next position to fill in Mbuffer */
   struct C_Lua_Stack Cblocks[MAX_C_BLOCKS];
-  int numCblocks;  /* number of nested Cblocks */
+  int32 numCblocks;  /* number of nested Cblocks */
   enum TaskState Tstate;  /* state of current thread */
   /* global state */
   struct lua_Task *root_task;  /* first task created */
@@ -106,18 +106,18 @@ struct lua_State {
   GCnode rootglobal;  /* list of strings with global values */
   stringtable *string_root;  /* array of hash tables for strings and udata */
   struct IM *IMtable;  /* table for tag methods */
-  int IMtable_size;  /* size of IMtable */
-  int last_tag;  /* last used tag in IMtable */
+  int32 IMtable_size;  /* size of IMtable */
+  int32 last_tag;  /* last used tag in IMtable */
   struct ref *refArray;  /* locked objects */
-  int refSize;  /* size of refArray */
-  unsigned long GCthreshold;
-  unsigned long nblocks;  /* number of 'blocks' currently allocated */
+  int32 refSize;  /* size of refArray */
+  int32 GCthreshold;
+  int32 nblocks;  /* number of 'blocks' currently allocated */
 };
 
 
 extern lua_State *lua_state;
 
-extern int globalTaskSerialId;
+extern int32 globalTaskSerialId;
 
 #define L	lua_state
 

@@ -44,7 +44,7 @@ void start_script (void) {
 	new_task = luaI_newtask();
 
 	/* Put the function and arguments onto the new task's stack */
-	for (int i = 0; i < old_task->Cstack.num; i++) {
+	for (int32 i = 0; i < old_task->Cstack.num; i++) {
 		*(L->stack.top) = *(old_task->stack.stack + old_task->Cstack.lua2C + i);
 		incr_top;
 	}
@@ -71,7 +71,7 @@ void start_script (void) {
 void stop_script (void) {
 	struct lua_Task *prev, *t;
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
-	int match = 0;
+	int32 match = 0;
 
 	if ((f == LUA_NOOBJECT) || (ttype(f) != LUA_T_CLOSURE && ttype(f) != LUA_T_PROTO && ttype(f) != LUA_T_TASK))
 		lua_error("Bad argument to stop_script");
@@ -86,7 +86,7 @@ void stop_script (void) {
 			match = (ttype(t->stack.stack) == LUA_T_PMARK && tfvalue(t->stack.stack) == tfvalue(f));
 			break;
 		case LUA_T_TASK:
-			match = (t->id == (int)nvalue(f));
+			match = (t->id == (int32)nvalue(f));
 			break;
 		default:  /* Shut up gcc */
 			break;
@@ -120,7 +120,7 @@ void next_script (void) {
 	if (ttype(f) == LUA_T_NIL) {
 		t = L->root_task;
 	} else if (ttype(f) == LUA_T_TASK) {
-		int taskId = (int)nvalue(f);
+		int32 taskId = (int32)nvalue(f);
 		for (t = L->root_task->next; t != NULL; t = t->next) {
 			if (t->id == taskId)
 				break;
@@ -150,7 +150,7 @@ void identify_script (void) {
 		lua_error("Bad argument to identify_script");
 	}
 
-	int taskId = (int)nvalue(f);
+	int32 taskId = (int32)nvalue(f);
 	for (t = L->root_task->next; t != NULL; t = t->next) {
 		if (t->id == taskId)
 			break;
@@ -167,7 +167,7 @@ void identify_script (void) {
 void find_script (void) {
 	struct lua_Task *t = NULL, *foundTask = NULL;
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
-	int countTasks = 0, taskId;
+	int32 countTasks = 0, taskId;
 
 	switch (ttype(f)) {
 	case LUA_T_CLOSURE:
@@ -189,7 +189,7 @@ void find_script (void) {
 		t = foundTask;
 		break;
 	case LUA_T_TASK:
-		taskId = (int)nvalue(f);
+		taskId = (int32)nvalue(f);
 		for (t = L->root_task->next; t != NULL; t = t->next) {
 			if ((t->id == taskId) && (t->Tstate != DONE)) {
 				ttype(L->stack.top) = LUA_T_TASK;

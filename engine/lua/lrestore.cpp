@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-
 #include "ltask.h"
 #include "lauxlib.h"
 #include "lmem.h"
@@ -17,10 +13,10 @@ SaveRestoreCallback restoreCallback = NULL;
 
 struct ArrayIDObj {
 	void *object;
-	unsigned int idObj;
+	int32 idObj;
 };
 
-static int sortCallback(const void *id1, const void *id2) {
+static int32 sortCallback(const void *id1, const void *id2) {
 	if (((ArrayIDObj *)id1)->idObj > ((ArrayIDObj *)id2)->idObj) {
 		return 1;
 	} else if (((ArrayIDObj *)id1)->idObj < ((ArrayIDObj *)id2)->idObj) {
@@ -30,10 +26,10 @@ static int sortCallback(const void *id1, const void *id2) {
 	}
 }
 
-int arrayHashTablesCount = 0;
-int arrayProtoFuncsCount = 0;
-int arrayClosuresCount = 0;
-int arrayStringsCount = 0;
+int32 arrayHashTablesCount = 0;
+int32 arrayProtoFuncsCount = 0;
+int32 arrayClosuresCount = 0;
+int32 arrayStringsCount = 0;
 ArrayIDObj *arrayStrings = NULL;
 ArrayIDObj *arrayHashTables = NULL;
 ArrayIDObj *arrayClosures = NULL;
@@ -113,33 +109,33 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	L = luaM_new(lua_State);
 	lua_resetglobals();
 
-	restoreFunc(&arrayStringsCount, sizeof(int));
-	restoreFunc(&arrayClosuresCount, sizeof(int));
-	restoreFunc(&arrayHashTablesCount, sizeof(int));
-	restoreFunc(&arrayProtoFuncsCount, sizeof(int));
-	int rootGlobalCount;
-	restoreFunc(&rootGlobalCount, sizeof(int));
+	restoreFunc(&arrayStringsCount, sizeof(int32));
+	restoreFunc(&arrayClosuresCount, sizeof(int32));
+	restoreFunc(&arrayHashTablesCount, sizeof(int32));
+	restoreFunc(&arrayProtoFuncsCount, sizeof(int32));
+	int32 rootGlobalCount;
+	restoreFunc(&rootGlobalCount, sizeof(int32));
 
 	arrayStrings = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayStringsCount);
 	ArrayIDObj *arraysObj = arrayStrings;
-	int maxStringsLength;
-	restoreFunc(&maxStringsLength, sizeof(int));
+	int32 maxStringsLength;
+	restoreFunc(&maxStringsLength, sizeof(int32));
 	char *tempStringBuffer = (char *)luaM_malloc(maxStringsLength);
 
-	int i;
+	int32 i;
 	for (i = 0; i < arrayStringsCount; i++) {
-		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
-		int constIndex;
-		restoreFunc(&constIndex, sizeof(int));
+		restoreFunc(&arraysObj->idObj, sizeof(int32));
+		int32 constIndex;
+		restoreFunc(&constIndex, sizeof(int32));
 		lua_Type tag;
-		restoreFunc(&tag, sizeof(int));
+		restoreFunc(&tag, sizeof(int32));
 		void *value;
 		restoreFunc(&value, sizeof(void *));
 
 		TaggedString *tempString;
 		if (constIndex != -1) {
-			long length;
-			restoreFunc(&length, sizeof(long));
+			int32 length;
+			restoreFunc(&length, sizeof(int32));
 			restoreFunc(tempStringBuffer, length);
 			tempString = luaS_newlstr(tempStringBuffer, length);
 			tempString->u.s.globalval.ttype = tag;
@@ -159,14 +155,14 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	}
 	luaM_free(tempStringBuffer);
 
-	int l;
+	int32 l;
 	Closure *tempClosure;
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayClosuresCount);
 	arrayClosures = arraysObj;
 	for (i = 0; i < arrayClosuresCount; i++) {
-		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
-		int countElements;
-		restoreFunc(&countElements, sizeof(int));
+		restoreFunc(&arraysObj->idObj, sizeof(int32));
+		int32 countElements;
+		restoreFunc(&countElements, sizeof(int32));
 		tempClosure = (Closure *)luaM_malloc((countElements * sizeof(TObject)) + sizeof(Closure));
 		luaO_insertlist(&L->rootcl, (GCnode *)tempClosure);
 
@@ -183,11 +179,11 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayHashTablesCount);
 	arrayHashTables = arraysObj;
 	for (i = 0; i < arrayHashTablesCount; i++) {
-		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
+		restoreFunc(&arraysObj->idObj, sizeof(int32));
 		tempHash = luaM_new(Hash);
-		restoreFunc(&tempHash->nhash, sizeof(int));
-		restoreFunc(&tempHash->nuse, sizeof(int));
-		restoreFunc(&tempHash->htag, sizeof(int));
+		restoreFunc(&tempHash->nhash, sizeof(int32));
+		restoreFunc(&tempHash->nuse, sizeof(int32));
+		restoreFunc(&tempHash->htag, sizeof(int32));
 		tempHash->node = hashnodecreate(tempHash->nhash);
 		luaO_insertlist(&L->roottable, (GCnode *)tempHash);
 
@@ -205,12 +201,12 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	arrayProtoFuncs = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayProtoFuncsCount);
 	arraysObj = arrayProtoFuncs;
 	for (i = 0; i < arrayProtoFuncsCount; i++) {
-		restoreFunc(&arraysObj->idObj, sizeof(unsigned int));
+		restoreFunc(&arraysObj->idObj, sizeof(int32));
 		tempProtoFunc = luaM_new(TProtoFunc);
 		luaO_insertlist(&L->rootproto, (GCnode *)tempProtoFunc);
 		restoreFunc(&tempProtoFunc->fileName, sizeof(TaggedString *));
-		restoreFunc(&tempProtoFunc->lineDefined, sizeof(int));
-		restoreFunc(&tempProtoFunc->nconsts, sizeof(int));
+		restoreFunc(&tempProtoFunc->lineDefined, sizeof(int32));
+		restoreFunc(&tempProtoFunc->nconsts, sizeof(int32));
 		tempProtoFunc->consts = (TObject *)luaM_malloc(tempProtoFunc->nconsts * sizeof(TObject));
 
 		for (l = 0; l < tempProtoFunc->nconsts; l++) {
@@ -218,8 +214,8 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 			restoreFunc(&tempProtoFunc->consts[l].value, sizeof(Value));
 		}
 
-		int countVariables;
-		restoreFunc(&countVariables, sizeof(int));
+		int32 countVariables;
+		restoreFunc(&countVariables, sizeof(int32));
 		if (countVariables != 0) {
 			tempProtoFunc->locvars = (LocVar *)luaM_malloc(countVariables * sizeof(LocVar));
 		} else {
@@ -228,11 +224,11 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 
 		for (l = 0; l < countVariables; l++) {
 			restoreFunc(&tempProtoFunc->locvars[l].varname, sizeof(TaggedString *));
-			restoreFunc(&tempProtoFunc->locvars[l].line, sizeof(int));
+			restoreFunc(&tempProtoFunc->locvars[l].line, sizeof(int32));
 		}
 
-		int codeSize;
-		restoreFunc(&codeSize, sizeof(int));
+		int32 codeSize;
+		restoreFunc(&codeSize, sizeof(int32));
 		tempProtoFunc->code = (lua_Byte *)luaM_malloc(codeSize);
 		restoreFunc(tempProtoFunc->code, codeSize);
 		arraysObj->object = tempProtoFunc;
@@ -318,7 +314,7 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	restoreFunc(&L->errorim.value, sizeof(Value));
 	recreateObj(&L->errorim);
 
-	restoreFunc(&L->IMtable_size, sizeof(int));
+	restoreFunc(&L->IMtable_size, sizeof(int32));
 	L->IMtable = (IM *)luaM_malloc(L->IMtable_size * sizeof(IM));
 	for (i = 0; i < L->IMtable_size; i++) {
 		IM *im = &L->IMtable[i];
@@ -329,8 +325,8 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 		}
 	}
 
-	restoreFunc(&L->last_tag, sizeof(int));
-	restoreFunc(&L->refSize, sizeof(int));
+	restoreFunc(&L->last_tag, sizeof(int32));
+	restoreFunc(&L->refSize, sizeof(int32));
 	L->refArray = (ref *)luaM_malloc(L->refSize * sizeof(ref));
 	for (i = 0; i < L->refSize; i++) {
 		restoreFunc(&L->refArray[i].o.ttype, sizeof(lua_Type));
@@ -339,22 +335,22 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 		restoreFunc(&L->refArray[i].status, sizeof(Status));
 	}
 
-	restoreFunc(&L->GCthreshold, sizeof(unsigned long));
-	restoreFunc(&L->nblocks, sizeof(unsigned long));
+	restoreFunc(&L->GCthreshold, sizeof(int32));
+	restoreFunc(&L->nblocks, sizeof(int32));
 
-	restoreFunc(&L->Mbuffsize, sizeof(int));
+	restoreFunc(&L->Mbuffsize, sizeof(int32));
 	L->Mbuffer = (char *)luaM_malloc(L->Mbuffsize);
 	restoreFunc(L->Mbuffer, L->Mbuffsize);
-	int MbaseOffset;
-	restoreFunc(&MbaseOffset, sizeof(int));
+	int32 MbaseOffset;
+	restoreFunc(&MbaseOffset, sizeof(int32));
 	L->Mbuffbase = MbaseOffset + L->Mbuffer;
-	restoreFunc(&L->Mbuffnext, sizeof(int));
+	restoreFunc(&L->Mbuffnext, sizeof(int32));
 
-	restoreFunc(&globalTaskSerialId, sizeof(int));
+	restoreFunc(&globalTaskSerialId, sizeof(int32));
 
-	int countTasks;
+	int32 countTasks;
 	lua_Task *tempTask = NULL;
-	restoreFunc(&countTasks, sizeof(int));
+	restoreFunc(&countTasks, sizeof(int32));
 	lua_Task *prevTask = L->root_task;
 	for (l = 0; l < countTasks; l++) {
 		tempTask = luaM_new(lua_Task);
@@ -362,13 +358,13 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 		prevTask->next = tempTask;
 		prevTask = tempTask;
 
-		int stackLastSize;
-		restoreFunc(&stackLastSize, sizeof(int));
+		int32 stackLastSize;
+		restoreFunc(&stackLastSize, sizeof(int32));
 		tempTask->stack.stack = (TObject *)luaM_malloc(stackLastSize * sizeof(TObject));
 		tempTask->stack.last = tempTask->stack.stack + stackLastSize - 1;
 
-		int stackTopSize;
-		restoreFunc(&stackTopSize, sizeof(int));
+		int32 stackTopSize;
+		restoreFunc(&stackTopSize, sizeof(int32));
 		tempTask->stack.top = tempTask->stack.stack + stackTopSize;
 		for (i = 0; i < stackTopSize; i++) {
 			restoreFunc(&tempTask->stack.stack[i].ttype, sizeof(lua_Type));
@@ -378,21 +374,21 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 
 		restoreFunc(&tempTask->Cstack.base, sizeof(StkId));
 		restoreFunc(&tempTask->Cstack.lua2C, sizeof(StkId));
-		restoreFunc(&tempTask->Cstack.num, sizeof(int));
+		restoreFunc(&tempTask->Cstack.num, sizeof(int32));
 
-		restoreFunc(&tempTask->numCblocks, sizeof(int));
+		restoreFunc(&tempTask->numCblocks, sizeof(int32));
 		for (i = 0; i < tempTask->numCblocks; i++) {
 			restoreFunc(&tempTask->Cblocks[i].base,	sizeof(StkId));
 			restoreFunc(&tempTask->Cblocks[i].lua2C, sizeof(StkId));
-			restoreFunc(&tempTask->Cblocks[i].num, sizeof(int));
+			restoreFunc(&tempTask->Cblocks[i].num, sizeof(int32));
 		}
 
-		int pcOffset, taskCi;
-		restoreFunc(&tempTask->base_ci_size, sizeof(int));
+		int32 pcOffset, taskCi;
+		restoreFunc(&tempTask->base_ci_size, sizeof(int32));
 		tempTask->base_ci = (CallInfo *)luaM_malloc(tempTask->base_ci_size * sizeof(CallInfo));
 		memset(tempTask->base_ci, 0, sizeof(CallInfo) * tempTask->base_ci_size);
 		CallInfo *tempCi = tempTask->base_ci;
-		int countCi = tempTask->base_ci_size / sizeof(CallInfo);
+		int32 countCi = tempTask->base_ci_size / sizeof(CallInfo);
 		for (i = 0; i < countCi; i++) {
 			TObject tempObj;
 			tempObj.ttype = LUA_T_CLOSURE;
@@ -404,27 +400,27 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 			recreateObj(&tempObj);
 			tempCi->tf = (TProtoFunc *)tempObj.value.tf;
 
-			restoreFunc(&pcOffset, sizeof(int));
+			restoreFunc(&pcOffset, sizeof(int32));
 			if (pcOffset != 0)
 				tempCi->pc = tempCi->tf->code + pcOffset;
 			else
 				tempCi->pc = NULL;
 
 			restoreFunc(&tempCi->base, sizeof(StkId));
-			restoreFunc(&tempCi->nResults, sizeof(int));
+			restoreFunc(&tempCi->nResults, sizeof(int32));
 			tempCi++;
 		}
-		restoreFunc(&taskCi, sizeof(int));
+		restoreFunc(&taskCi, sizeof(int32));
 		tempTask->ci = tempTask->base_ci + taskCi;
 		tempTask->end_ci = tempTask->base_ci + countCi;
 
-		int Mbasepos;
-		restoreFunc(&Mbasepos, sizeof(int));
+		int32 Mbasepos;
+		restoreFunc(&Mbasepos, sizeof(int32));
 		tempTask->Mbuffbase = Mbasepos + tempTask->Mbuffer;
-		restoreFunc(&tempTask->Mbuffnext, sizeof(int));
+		restoreFunc(&tempTask->Mbuffnext, sizeof(int32));
 
 		restoreFunc(&tempTask->Tstate, sizeof(TaskState));
-		restoreFunc(&tempTask->id, sizeof(int));
+		restoreFunc(&tempTask->id, sizeof(int32));
 	}
 	L->last_task = tempTask;
 

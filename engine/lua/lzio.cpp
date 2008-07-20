@@ -15,16 +15,16 @@
 
 /* ----------------------------------------------------- memory buffers --- */
 
-static int zmfilbuf (ZIO* /*z*/)
+static int32 zmfilbuf (ZIO* /*z*/)
 {
  return EOZ;
 }
 
-ZIO* zmopen (ZIO* z, const char* b, int size, const char *name)
+ZIO* zmopen (ZIO* z, const char* b, int32 size, const char *name)
 {
  if (b==NULL) return NULL;
  z->n=size;
- z->p= (const unsigned char *)b;
+ z->p= (const byte *)b;
  z->filbuf=zmfilbuf;
  z->u=NULL;
  z->name=name;
@@ -41,9 +41,9 @@ ZIO* zsopen (ZIO* z, const char* s, const char *name)
 
 /* -------------------------------------------------------------- FILEs --- */
 
-static int zffilbuf (ZIO* z)
+static int32 zffilbuf (ZIO* z)
 {
- int n=fread(z->buffer,1,ZBSIZE,(FILE *)z->u);
+ int32 n=fread(z->buffer,1,ZBSIZE,(FILE *)z->u);
  if (n==0) return EOZ;
  z->n=n-1;
  z->p=z->buffer;
@@ -64,10 +64,10 @@ ZIO* zFopen (ZIO* z, FILE* f, const char *name)
 
 
 /* --------------------------------------------------------------- read --- */
-int zread (ZIO *z, void *b, int n)
+int32 zread (ZIO *z, void *b, int n)
 {
   while (n) {
-    int m;
+    int32 m;
     if (z->n == 0) {
       if (z->filbuf(z) == EOZ)
         return n;  /* retorna quantos faltaram ler */

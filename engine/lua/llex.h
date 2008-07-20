@@ -30,33 +30,33 @@ enum RESERVED {
 /* "ifstate" keeps the state of each nested $if the lexical is dealing with. */
 
 struct ifState {
-  int elsepart;  /* true if its in the $else part */
-  int condition;  /* true if $if condition is true */
-  int skip;  /* true if part must be skipped */
+  int32 elsepart;  /* true if its in the $else part */
+  int32 condition;  /* true if $if condition is true */
+  int32 skip;  /* true if part must be skipped */
 };
 
 
 typedef struct LexState {
-  int current;  /* look ahead character */
-  int token;  /* look ahead token */
+  int32 current;  /* look ahead character */
+  int32 token;  /* look ahead token */
   struct FuncState *fs;  /* 'FuncState' is private for the parser */
   union {
     real r;
     TaggedString *ts;
   } seminfo;  /* semantics information */
   struct zio *lex_z;  /* input stream */
-  int linenumber;  /* input line counter */
-  int iflevel;  /* level of nested $if's (for lexical analysis) */
+  int32 linenumber;  /* input line counter */
+  int32 iflevel;  /* level of nested $if's (for lexical analysis) */
   struct ifState ifstate[MAX_IFS];
 } LexState;
 
 
 void luaX_init (void);
 void luaX_setinput (LexState *LS, ZIO *z);
-int luaX_lex (LexState *LS);
+int32 luaX_lex (LexState *LS);
 void luaX_syntaxerror (LexState *ls, const char *s, const char *token);
 void luaX_error (LexState *ls, const char *s);
-void luaX_token2str (LexState *ls, int token, char *s);
+void luaX_token2str (LexState *ls, int32 token, char *s);
 
 
 #endif

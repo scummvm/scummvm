@@ -15,6 +15,6 @@
 TObject *luaA_Address (lua_Object o);
 void luaA_pushobject (TObject *o);
 void luaA_packresults (void);
-int luaA_passresults (void);
+int32 luaA_passresults (void);
 
 #endif

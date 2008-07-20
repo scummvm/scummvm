@@ -5,9 +5,6 @@
 */
 
 
-#include <stdlib.h>
-#include <math.h>
-
 #include "lauxlib.h"
 #include "lua.h"
 #include "lualib.h"
@@ -114,20 +111,20 @@ static void math_rad (void)
 }
 
 static void math_frexp (void) {
-  int e;
+  int32 e;
   lua_pushnumber(frexp(luaL_check_number(1), &e));
   lua_pushnumber(e);
 }
 
 static void math_ldexp (void) {
-  lua_pushnumber(ldexp(luaL_check_number(1), (int)luaL_check_number(2)));
+  lua_pushnumber(ldexp(luaL_check_number(1), (int32)luaL_check_number(2)));
 }
 
 
 
 static void math_min (void)
 {
-  int i = 1;
+  int32 i = 1;
   double dmin = luaL_check_number(i);
   while (lua_getparam(++i) != LUA_NOOBJECT) {
     double d = luaL_check_number(i);
@@ -140,7 +137,7 @@ static void math_min (void)
 
 static void math_max (void)
 {
-  int i = 1;
+  int32 i = 1;
   double dmax = luaL_check_number(i);
   while (lua_getparam(++i) != LUA_NOOBJECT) {
     double d = luaL_check_number(i);
@@ -160,7 +157,7 @@ static void math_random (void)
   if (l == 0)
     lua_pushnumber(r);
   else
-    lua_pushnumber((int)(r*l)+1);
+    lua_pushnumber((int32)(r*l)+1);
 }
 
 

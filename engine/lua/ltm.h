@@ -35,7 +35,7 @@ typedef enum {
   IM_GC,
   IM_FUNCTION
 } eIMS;
-typedef int IMS;
+typedef int32 IMS;
 
 #define IM_N 18
 
@@ -52,11 +52,11 @@ extern const char *luaT_eventname[];
 
 
 void luaT_init (void);
-void luaT_realtag (int tag);
-int luaT_efectivetag (TObject *o);
-void luaT_settagmethod (int t, const char *event, TObject *func);
-TObject *luaT_gettagmethod (int t, const char *event);
-const char *luaT_travtagmethods (int (*fn)(TObject *));
+void luaT_realtag (int32 tag);
+int32 luaT_efectivetag (TObject *o);
+void luaT_settagmethod (int32 t, const char *event, TObject *func);
+TObject *luaT_gettagmethod (int32 t, const char *event);
+const char *luaT_travtagmethods (int32 (*fn)(TObject *));
 
 void luaT_setfallback (void);  /* only if LUA_COMPAT2_5 */
 

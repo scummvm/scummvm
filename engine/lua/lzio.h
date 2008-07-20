@@ -8,7 +8,7 @@
 #ifndef lzio_h
 #define lzio_h
 
-#include <stdio.h>
+#include <common/sys.h>
 
 
 
@@ -24,11 +24,11 @@ typedef struct zio ZIO;
 
 ZIO* zFopen (ZIO* z, FILE* f, const char *name);		/* open FILEs */
 ZIO* zsopen (ZIO* z, const char* s, const char *name);		/* string */
-ZIO* zmopen (ZIO* z, const char* b, int size, const char *name);	/* memory */
+ZIO* zmopen (ZIO* z, const char* b, int32 size, const char *name);	/* memory */
 
-int zread (ZIO* z, void* b, int n);	/* read next n bytes */
+int32 zread (ZIO* z, void* b, int32 n);	/* read next n bytes */
 
-#define zgetc(z)	(--(z)->n>=0 ? ((int)*(z)->p++): (z)->filbuf(z))
+#define zgetc(z)	(--(z)->n>=0 ? ((int32)*(z)->p++): (z)->filbuf(z))
 #define zungetc(z)	(++(z)->n,--(z)->p)
 #define zname(z)	((z)->name)
 
@@ -38,12 +38,12 @@ int zread (ZIO* z, void* b, int n);	/* read next n bytes */
 #define ZBSIZE	256			/* buffer size */
 
 struct zio {
- int n;					/* bytes still unread */
- const unsigned char* p;			/* current position in buffer */
- int (*filbuf)(ZIO* z);
+ int32 n;					/* bytes still unread */
+ const byte* p;			/* current position in buffer */
+ int32 (*filbuf)(ZIO* z);
  void* u;				/* additional data */
  const char *name;
- unsigned char buffer[ZBSIZE];		/* buffer */
+ byte buffer[ZBSIZE];		/* buffer */
 };
 
 

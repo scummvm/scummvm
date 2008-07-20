@@ -8,8 +8,6 @@
 #define lobject_h
 
 
-#include <limits.h>
-
 #include "lua.h"
 
 
@@ -40,17 +38,11 @@
 typedef LUA_NUM_TYPE real;
 
 #define Byte lua_Byte	/* some systems have Byte as a predefined type */
-typedef unsigned char  Byte;  /* unsigned 8 bits */
+typedef byte Byte;  /* unsigned 8 bits */
 
 
-#define MAX_INT   (INT_MAX-2)  /* maximum value of an int (-2 for safety) */
-
-/* maximum value of a word of 2 bytes (-2 for safety); must fit in an "int" */
-#if MAX_INT < 65534
-#define MAX_WORD	MAX_INT
-#else
-#define MAX_WORD	65534
-#endif
+#define MAX_INT   (2147483647-2)  /* maximum value of an int (-2 for safety) */
+#define MAX_WORD        65534
 
 typedef unsigned long IntPoint; /* unsigned with same size as a pointer (for hashing) */
 
@@ -87,7 +79,7 @@ typedef union {
   struct TProtoFunc *tf;  /* LUA_T_PROTO, LUA_T_PMARK */
   struct Closure *cl;  /* LUA_T_CLOSURE, LUA_T_CLMARK */
   struct Hash *a;  /* LUA_T_ARRAY */
-  int i;  /* LUA_T_LINE */
+  int32 i;  /* LUA_T_LINE */
 } Value;
 
 
@@ -103,7 +95,7 @@ typedef struct TObject {
 */
 typedef struct GCnode {
   struct GCnode *next;
-  int marked;
+  int32 marked;
 } GCnode;
 
 
@@ -114,14 +106,14 @@ typedef struct GCnode {
 typedef struct TaggedString {
   GCnode head;
   unsigned long hash;
-  int constindex;  /* hint to reuse constants (= -1 if this is a userdata) */
+  int32 constindex;  /* hint to reuse constants (= -1 if this is a userdata) */
   union {
     struct {
       TObject globalval;
-      long len;  /* if this is a string, here is its length */
+      int32 len;  /* if this is a string, here is its length */
     } s;
     struct {
-      int tag;
+      int32 tag;
       void *v;  /* if this is a userdata, here is its value */
     } d;
   } u;
@@ -137,16 +129,16 @@ typedef struct TaggedString {
 typedef struct TProtoFunc {
   GCnode head;
   struct TObject *consts;
-  int nconsts;
+  int32 nconsts;
   Byte *code;  /* ends with opcode ENDCODE */
-  int lineDefined;
+  int32 lineDefined;
   TaggedString  *fileName;
   struct LocVar *locvars;  /* ends with line = -1 */
 } TProtoFunc;
 
 typedef struct LocVar {
   TaggedString *varname;           /* NULL signals end of scope */
-  int line;
+  int32 line;
 } LocVar;
 
 
@@ -171,7 +163,7 @@ typedef struct LocVar {
 */
 typedef struct Closure {
   GCnode head;
-  int nelems;  /* not included the first one (always the prototype) */
+  int32 nelems;  /* not included the first one (always the prototype) */
   TObject consts[1];  /* at least one for prototype */
 } Closure;
 
@@ -185,9 +177,9 @@ typedef struct node {
 typedef struct Hash {
   GCnode head;
   Node *node;
-  int nhash;
-  int nuse;
-  int htag;
+  int32 nhash;
+  int32 nuse;
+  int32 htag;
 } Hash;
 
 
@@ -195,17 +187,11 @@ extern const char *luaO_typenames[];
 
 extern TObject luaO_nilobject;
 
-int luaO_equalObj (TObject *t1, TObject *t2);
-int luaO_redimension (int oldsize);
+int32 luaO_equalObj (TObject *t1, TObject *t2);
+int32 luaO_redimension (int32 oldsize);
 void luaO_insertlist (GCnode *root, GCnode *node);
 
-#ifdef OLD_ANSI
-void luaO_memup (void *dest, void *src, int size);
-void luaO_memdown (void *dest, void *src, int size);
-#else
-#include <string.h>
 #define luaO_memup(d,s,n)	memmove(d,s,n)
 #define luaO_memdown(d,s,n)	memmove(d,s,n)
-#endif
 
 #endif

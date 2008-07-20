@@ -5,10 +5,6 @@
 */
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "lauxlib.h"
 #include "lmem.h"
 #include "lobject.h"
@@ -23,9 +19,9 @@ const char *luaT_eventname[] = {  /* ORDER IM */
 };
 
 
-static int luaI_checkevent (const char *name, const char *list[])
+static int32 luaI_checkevent (const char *name, const char *list[])
 {
-  int e = luaL_findstring(name, list);
+  int32 e = luaL_findstring(name, list);
   if (e < 0)
     luaL_verror("`%.50s' is not a valid event name", name);
   return e;
@@ -48,15 +44,15 @@ static char validevents[NUM_TAGS][IM_N] = { /* ORDER LUA_T, ORDER IM */
 };
 
 
-static int validevent (int t, int e)
+static int32 validevent (int32 t, int32 e)
 { /* ORDER LUA_T */
   return (t < LUA_T_NIL) ?  1 : validevents[-t][e];
 }
 
 
-static void init_entry (int tag)
+static void init_entry (int32 tag)
 {
-  int i;
+  int32 i;
   for (i=0; i<IM_N; i++)
     ttype(luaT_getim(tag, i)) = LUA_T_NIL;
 }
@@ -64,7 +60,7 @@ static void init_entry (int tag)
 
 void luaT_init (void)
 {
-  int t;
+  int32 t;
   L->IMtable_size = NUM_TAGS*2;
   L->last_tag = -(NUM_TAGS-1);
   L->IMtable = luaM_newvector(L->IMtable_size, struct IM);
@@ -73,7 +69,7 @@ void luaT_init (void)
 }
 
 
-int lua_newtag (void)
+int32 lua_newtag (void)
 {
   --L->last_tag;
   if ((-L->last_tag) >= L->IMtable_size)
@@ -84,22 +80,22 @@ int lua_newtag (void)
 }
 
 
-static void checktag (int tag)
+static void checktag (int32 tag)
 {
   if (!(L->last_tag <= tag && tag <= 0))
     luaL_verror("%d is not a valid tag", tag);
 }
 
-void luaT_realtag (int tag)
+void luaT_realtag (int32 tag)
 {
   if (!(L->last_tag <= tag && tag < LUA_T_NIL))
     luaL_verror("tag %d is not result of `newtag'", tag);
 }
 
 
-int lua_copytagmethods (int tagto, int tagfrom)
+int32 lua_copytagmethods (int32 tagto, int32 tagfrom)
 {
-  int e;
+  int32 e;
   checktag(tagto);
   checktag(tagfrom);
   for (e=0; e<IM_N; e++) {
@@ -110,14 +106,14 @@ int lua_copytagmethods (int tagto, int tagfrom)
 }
 
 
-int luaT_efectivetag (TObject *o)
+int32 luaT_efectivetag (TObject *o)
 {
-  int t;
+  int32 t;
   switch (t = ttype(o)) {
     case LUA_T_ARRAY:
       return o->value.a->htag;
     case LUA_T_USERDATA: {
-      int tag = o->value.ts->u.d.tag;
+      int32 tag = o->value.ts->u.d.tag;
       return (tag >= 0) ? LUA_T_USERDATA : tag;
     }
     case LUA_T_CLOSURE:
@@ -133,9 +129,9 @@ int luaT_efectivetag (TObject *o)
 }
 
 
-TObject *luaT_gettagmethod (int t, const char *event)
+TObject *luaT_gettagmethod (int32 t, const char *event)
 {
-  int e = luaI_checkevent(event, luaT_eventname);
+  int32 e = luaI_checkevent(event, luaT_eventname);
   checktag(t);
   if (validevent(t, e))
     return luaT_getim(t,e);
@@ -144,10 +140,10 @@ TObject *luaT_gettagmethod (int t, const char *event)
 }
 
 
-void luaT_settagmethod (int t, const char *event, TObject *func)
+void luaT_settagmethod (int32 t, const char *event, TObject *func)
 {
   TObject temp = *func;
-  int e = luaI_checkevent(event, luaT_eventname);
+  int32 e = luaI_checkevent(event, luaT_eventname);
   checktag(t);
   if (!validevent(t, e))
     luaL_verror("settagmethod: cannot change tag method `%.20s' for tag %d",
@@ -157,13 +153,13 @@ void luaT_settagmethod (int t, const char *event, TObject *func)
 }
 
 
-const char *luaT_travtagmethods (int (*fn)(TObject *))
+const char *luaT_travtagmethods (int32 (*fn)(TObject *))
 {
-  int e;
+  int32 e;
   if (fn(&L->errorim))
     return "error";
   for (e=IM_GETTABLE; e<=IM_FUNCTION; e++) {  /* ORDER IM */
-    int t;
+    int32 t;
     for (t=0; t>=L->last_tag; t--)
       if (fn(luaT_getim(t,e)))
         return luaT_eventname[e];
@@ -201,7 +197,7 @@ void typeFB (void)
 
 static void fillvalids (IMS e, TObject *func)
 {
-  int t;
+  int32 t;
   for (t=LUA_T_NIL; t<=LUA_T_USERDATA; t++)
     if (validevent(t, e))
       *luaT_getim(t, e) = *func;
@@ -228,7 +224,7 @@ void luaT_setfallback (void)
       replace = nilFB;
       break;
     case 2: {  /* old arith fallback */
-      int i;
+      int32 i;
       oldfunc = *luaT_getim(LUA_T_NUMBER, IM_POW);
       for (i=IM_ADD; i<=IM_UNM; i++)  /* ORDER IM */
         fillvalids(i, luaA_Address(func));
@@ -236,7 +232,7 @@ void luaT_setfallback (void)
       break;
     }
     case 3: {  /* old order fallback */
-      int i;
+      int32 i;
       oldfunc = *luaT_getim(LUA_T_NIL, IM_LT);
       for (i=IM_LT; i<=IM_GE; i++)  /* ORDER IM */
         fillvalids(i, luaA_Address(func));
@@ -244,7 +240,7 @@ void luaT_setfallback (void)
       break;
     }
     default: {
-      int e;
+      int32 e;
       if ((e = luaL_findstring(name, luaT_eventname)) >= 0) {
         oldfunc = *luaT_getim(LUA_T_NIL, e);
         fillvalids(e, luaA_Address(func));

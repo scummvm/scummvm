@@ -5,9 +5,6 @@
 */
 
 
-#include <stdio.h>
-#include <string.h>
-
 #include "lauxlib.h"
 #include "ldo.h"
 #include "lfunc.h"
@@ -20,10 +17,6 @@
 #include "ltm.h"
 #include "luadebug.h"
 #include "lvm.h"
-
-#ifdef OLD_ANSI
-#define strcoll(a,b)	strcmp(a,b)
-#endif
 
 
 #define skip_word(pc)	(pc+=2)
@@ -44,7 +37,7 @@ static TaggedString *strconc (TaggedString *l, TaggedString *r)
 }
 
 
-int luaV_tonumber (TObject *obj)
+int32 luaV_tonumber (TObject *obj)
 {  /* LUA_NUMBER */
   double t;
   char c;
@@ -60,7 +53,7 @@ int luaV_tonumber (TObject *obj)
 }
 
 
-int luaV_tostring (TObject *obj)
+int32 luaV_tostring (TObject *obj)
 { /* LUA_NUMBER */
   /* The Lua scripts for Grim Fandango sometimes end up executing
      str..nil.  The nil shows up in the original engine as "(nil)"... */
@@ -74,8 +67,8 @@ int luaV_tostring (TObject *obj)
   else {
     char s[60];
     real f = nvalue(obj);
-    int i;
-    if ((real)(-MAX_INT) <= f && f <= (real)MAX_INT && (real)(i=(int)f) == f)
+    int32 i;
+    if ((real)(-MAX_INT) <= f && f <= (real)MAX_INT && (real)(i=(int32)f) == f)
       sprintf (s, "%d", i);
     else
       sprintf (s, NUMBER_FMT, nvalue(obj));
@@ -86,7 +79,7 @@ int luaV_tostring (TObject *obj)
 }
 
 
-void luaV_closure (int nelems)
+void luaV_closure (int32 nelems)
 {
   if (nelems > 0) {
     struct Stack *S = &L->stack;
@@ -111,7 +104,7 @@ void luaV_gettable (void)
   if (ttype(S->top-2) != LUA_T_ARRAY)  /* not a table, get "gettable" method */
     im = luaT_getimbyObj(S->top-2, IM_GETTABLE);
   else {  /* object is a table... */
-    int tg = (S->top-2)->value.a->htag;
+    int32 tg = (S->top-2)->value.a->htag;
     im = luaT_getim(tg, IM_GETTABLE);
     if (ttype(im) == LUA_T_NIL) {  /* and does not have a "gettable" method */
       TObject *h = luaH_get(avalue(S->top-2), S->top-1);
@@ -143,7 +136,7 @@ void luaV_gettable (void)
 ** mode = 1: normal store (with tag methods)
 ** mode = 2: "deep L->stack.stack" store (with tag methods)
 */
-void luaV_settable (TObject *t, int mode)
+void luaV_settable (TObject *t, int32 mode)
 {
   struct Stack *S = &L->stack;
   TObject *im = (mode == 0) ? NULL : luaT_getimbyObj(t, IM_SETTABLE);
@@ -228,10 +221,10 @@ static void call_arith (IMS event)
 }
 
 
-static int strcomp (char *l, long ll, char *r, long lr)
+static int32 strcomp (char *l, int32 ll, char *r, int32 lr)
 {
   for (;;) {
-    long temp = strcoll(l, r);
+    int32 temp = (int32)strcoll(l, r);
     if (temp != 0) return temp;
     /* strings are equal up to a '\0' */
     temp = strlen(l);  /* index of first '\0' in both strings */
@@ -251,11 +244,11 @@ static void comparison (lua_Type ttype_less, lua_Type ttype_equal,
   struct Stack *S = &L->stack;
   TObject *l = S->top-2;
   TObject *r = S->top-1;
-  int result;
+  int32 result;
   if (ttype(l) == LUA_T_NUMBER && ttype(r) == LUA_T_NUMBER)
     result = (nvalue(l) < nvalue(r)) ? -1 : (nvalue(l) == nvalue(r)) ? 0 : 1;
   else if (ttype(l) == LUA_T_STRING && ttype(r) == LUA_T_STRING)
-    result = strcomp(svalue(l), tsvalue(l)->u.s.len,
+    result = (int32)strcomp(svalue(l), tsvalue(l)->u.s.len,
                      svalue(r), tsvalue(r)->u.s.len);
   else {
     call_binTM(op, "unexpected type in comparison");
@@ -268,10 +261,10 @@ static void comparison (lua_Type ttype_less, lua_Type ttype_equal,
 }
 
 
-void luaV_pack (StkId firstel, int nvararg, TObject *tab)
+void luaV_pack (StkId firstel, int32 nvararg, TObject *tab)
 {
   TObject *firstelem = L->stack.stack+firstel;
-  int i;
+  int32 i;
   if (nvararg < 0) nvararg = 0;
   avalue(tab)  = luaH_new(nvararg+1);  /* +1 for field 'n' */
   ttype(tab) = LUA_T_ARRAY;
@@ -300,7 +293,7 @@ void luaV_pack (StkId firstel, int nvararg, TObject *tab)
 StkId luaV_execute (struct CallInfo *ci)
 {
   /* Save index in case CallInfo array is realloc'd */
-  int ci_index = ci - L->base_ci;
+  int32 ci_index = ci - L->base_ci;
   struct Stack *S = &L->stack;  /* to optimize */
   Closure *cl;
   TProtoFunc *tf;
@@ -316,7 +309,7 @@ StkId luaV_execute (struct CallInfo *ci)
   pc = L->ci->pc;
   consts = tf->consts;
   while (1) {
-    int aux;
+    int32 aux;
     switch ((OpCode)(aux = *pc++)) {
 
       case PUSHNIL0:
@@ -465,7 +458,7 @@ StkId luaV_execute (struct CallInfo *ci)
       case SETLIST0:
         aux = 0;
       setlist: {
-        int n = *(pc++);
+        int32 n = *(pc++);
         TObject *arr = S->top-n-1;
         for (; n; n--) {
           ttype(S->top) = LUA_T_NUMBER;
@@ -515,7 +508,7 @@ StkId luaV_execute (struct CallInfo *ci)
         break;
 
       case EQOP: case NEQOP: {
-        int res = luaO_equalObj(S->top-2, S->top-1);
+        int32 res = luaO_equalObj(S->top-2, S->top-1);
         S->top--;
         if (aux == NEQOP) res = !res;
         ttype(S->top-1) = res ? LUA_T_NUMBER : LUA_T_NIL;

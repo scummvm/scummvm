@@ -4,7 +4,7 @@
 #include "lua.h"
 #include "lstate.h"
 
-extern int task_tag;
+extern int32 task_tag;
 
 void start_script (void);
 void stop_script (void);
