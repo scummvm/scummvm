@@ -1060,7 +1060,7 @@ void KyraEngine_LoK::initStaticResource() {
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_PC98;
+		_soundData = soundData_TOWNS/*soundData_PC98*/;
 
 }
 
@@ -1286,7 +1286,7 @@ void KyraEngine_HoF::initStaticResource() {
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_PC98;
+		_soundData = soundData_TOWNS/*soundData_PC98*/;
 
 	// setup sequence data
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);

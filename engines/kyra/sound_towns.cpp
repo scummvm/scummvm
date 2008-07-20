@@ -2363,7 +2363,7 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_numSSG(type == OD_TOWNS ? 0 : 3), _hasADPCM(type == OD_TYPE86 ? true : false),
 	_numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true) {	
 	setTempo(84);
-	_baserate = (3579545.0 / (double)getRate()) / 144.0;
+	_baserate = (double)getRate() / 10368.0;
 }
 
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
@@ -3095,8 +3095,8 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 }
 
 bool SoundTownsPC98_v2::init() {
-	_driver = new TownsPC98_OpnDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
-		TownsPC98_OpnDriver::OD_TYPE86 : TownsPC98_OpnDriver::OD_TOWNS);
+	_driver = new TownsPC98_OpnDriver(_mixer, /*_vm->gameFlags().platform == Common::kPlatformPC98 ?
+		TownsPC98_OpnDriver::OD_TYPE86 :*/ TownsPC98_OpnDriver::OD_TOWNS);
 	_useFmSfx = _vm->gameFlags().platform == Common::kPlatformPC98 ? true : false;
 	_vm->checkCD();
 	// FIXME: While checking for 'track1.XXX(X)' looks like
