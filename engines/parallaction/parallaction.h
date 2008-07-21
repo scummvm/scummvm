@@ -270,6 +270,8 @@ public:
 	void		pauseJobs();
 	void		resumeJobs();
 
+	virtual void 	syncSoundSettings();
+
 	void		finalizeWalk(Character &character);
 	int16		selectWalkFrame(Character &character, const Common::Point& pos, const WalkNodePtr to);
 	void		clipMove(Common::Point& pos, const Common::Point& to);

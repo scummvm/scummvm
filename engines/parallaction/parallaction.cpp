@@ -139,6 +139,7 @@ int Parallaction::init() {
 	_debugger = new Debugger(this);
 
 	setupBalloonManager();
+	syncSoundSettings();
 
 	return 0;
 }
@@ -505,6 +506,11 @@ void Parallaction::freeZones() {
 	return;
 }
 
+void Parallaction::syncSoundSettings() {
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume") / 6);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+}
 
 enum {
 	WALK_LEFT = 0,

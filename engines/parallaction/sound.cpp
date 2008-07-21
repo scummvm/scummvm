@@ -387,7 +387,8 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 		rate = ch->header.samplesPerSec;
 	}
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, rate, flags, -1, volume, 0, loopStart, loopEnd);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, rate, flags, -1, 
+			Audio::Mixer::kMaxChannelVolume, 0, loopStart, loopEnd);
 }
 
 void AmigaSoundMan::stopSfx(uint channel) {
