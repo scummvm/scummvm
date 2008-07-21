@@ -1631,8 +1631,8 @@ void Interface::setOption(PanelButton *panelButton) {
 		break;
 	case kTextSound:
 		_vm->_soundVolume = (_vm->_soundVolume + 1) % 11;
-		_vm->_sound->setVolume(_vm->_soundVolume == 10 ? 255 : _vm->_soundVolume * 25);
 		ConfMan.setInt("sfx_volume", _vm->_soundVolume * 25);
+		_vm->_sound->setVolume();
 		break;
 	case kTextVoices:
 		if (_vm->_voiceFilesExist) {
@@ -1650,6 +1650,10 @@ void Interface::setOption(PanelButton *panelButton) {
 			_vm->_subtitlesEnabled = true;								// Set it to "Text"
 			_vm->_voicesEnabled = false;
 		}
+		
+		_vm->_speechVolume = (_vm->_speechVolume + 1) % 11;
+		ConfMan.setInt("speech_volume", _vm->_speechVolume * 25);
+		_vm->_sound->setVolume();
 
 		ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		ConfMan.setBool("voices", _vm->_voicesEnabled);

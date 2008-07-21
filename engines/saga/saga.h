@@ -521,6 +521,7 @@ public:
 
 	int _soundVolume;
 	int _musicVolume;
+	int _speechVolume;
 	bool _subtitlesEnabled;
 	bool _voicesEnabled;
 	bool _voiceFilesExist;

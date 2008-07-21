@@ -71,7 +71,7 @@ struct SndHandle {
 class Sound {
 public:
 
-	Sound(SagaEngine *vm, Audio::Mixer *mixer, int volume);
+	Sound(SagaEngine *vm, Audio::Mixer *mixer);
 	~Sound();
 
 	void playSound(SoundBuffer &buffer, int volume, bool loop);
@@ -86,11 +86,12 @@ public:
 
 	void stopAll();
 
-	void setVolume(int volume);
+	void setVolume();
 
  private:
 
-	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop);
+	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, 
+				sndHandleType handleType, bool loop);
 
 	SndHandle *getHandle();
 

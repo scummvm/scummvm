@@ -181,7 +181,7 @@ enum KeyCode {
 	KEYCODE_UNDO        = 322,      // Atari keyboard has Undo
 
 	// Global Main Menu key
-	KEYCODE_MAINMENU    = KEYCODE_F11
+	KEYCODE_MAINMENU    = KEYCODE_F6
 };
 
 /**

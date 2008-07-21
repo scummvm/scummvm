@@ -141,8 +141,7 @@ SagaEngine::~SagaEngine() {
 }
 
 int SagaEngine::init() {
-	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
-	_musicVolume = ConfMan.getInt("music_volume") / 25;
+	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
@@ -202,7 +201,7 @@ int SagaEngine::init() {
 	}
 
 	// Initialize system specific sound
-	_sound = new Sound(this, _mixer, _soundVolume);
+	_sound = new Sound(this, _mixer);
 	
 	_interface->converseInit();
 	_script->setVerb(_script->getVerbType(kVerbWalkTo));
@@ -223,6 +222,8 @@ int SagaEngine::init() {
 			_voicesEnabled = true;
 		}
 	}
+
+	syncSoundSettings();
 
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for
@@ -512,17 +513,15 @@ int SagaEngine::getTalkspeed() {
 }
 
 void SagaEngine::syncSoundSettings() {
-	_soundVolume = ConfMan.getInt("sfx_volume");
-	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
 
+	_musicVolume = ConfMan.getInt("music_volume");
 	_music->setVolume(_musicVolume, 1);
-	_sound->setVolume(_soundVolume);
-
+	_sound->setVolume();
 }
 
 } // End of namespace Saga
