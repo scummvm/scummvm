@@ -1014,29 +1014,23 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 	// there are 4 pixels on each circle which are drawn twice.
 	// this is ok on filled circles, but when blending on surfaces,
 	// we cannot let it blend twice. awful.
-	bool *hb = new bool[r];
-
-	int i = 0;
-	while (i < r)
-		hb[i++] = false;
+	uint32 hb = 0;
 
 	while (x++ < y) {
 		__BE_ALGORITHM();
 
-		if (!hb[x]) {
+		if ((1 << x) & hb == 0) {
 			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
 			blendFill(ptr_bl - y + px, ptr_br + y + px, 0, alpha);
-			hb[x] = true;
+			hb |= (1 << x);
 		}
 
-		if (!hb[y]) {
+		if ((1 << y) & hb == 0) {
 			blendFill(ptr_tr - r - py, ptr_tr + x - py, 0, alpha);
 			blendFill(ptr_bl - x + py, ptr_br + x + py, 0, alpha);
-			hb[y] = true;
+			hb |= (1 << y);
 		}
 	}
-
-	delete[] hb;
 
 	while (short_h--) {
 		blendFill(ptr_fill - r, ptr_fill + blur, 0, alpha);
