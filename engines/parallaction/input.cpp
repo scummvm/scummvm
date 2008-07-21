@@ -42,12 +42,14 @@ uint16 Input::readInput() {
 	uint16 KeyDown = 0;
 
 	_mouseButtons = kMouseNone;
+	_lastKeyDownAscii = -1;
 
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(e)) {
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
+			_lastKeyDownAscii = e.kbd.ascii;
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_vm->_debugger->attach();
 			if (_vm->getFeatures() & GF_DEMO) break;
@@ -95,6 +97,11 @@ uint16 Input::readInput() {
 
 	return KeyDown;
 
+}
+
+bool Input::getLastKeyDown(uint16 &ascii) {
+	ascii = _lastKeyDownAscii;
+	return (_lastKeyDownAscii != -1);
 }
 
 // FIXME: see comment for readInput()
@@ -192,10 +199,37 @@ InputData* Input::updateInput() {
 	case kInputModeGame:
 		updateGameInput();
 		break;
+
+	case kInputModeDialogue:
+		readInput();
+		break;
 	}
 
 	return &_inputData;
 }
+
+void Input::trackMouse(ZonePtr z) {
+	if ((z != _hoverZone) && (_hoverZone)) {
+		stopHovering();
+		return;
+	}
+
+	if (!z) {
+		return;
+	}
+
+	if ((!_hoverZone) && ((z->_flags & kFlagsNoName) == 0)) {
+		_hoverZone = z;
+		_vm->_gfx->showFloatingLabel(_hoverZone->_label);
+		return;
+	}
+}
+
+void Input::stopHovering() {
+	_hoverZone = nullZonePtr;
+	_vm->_gfx->hideFloatingLabel();
+}
+
 
 bool Input::translateGameInput() {
 
@@ -231,23 +265,10 @@ bool Input::translateGameInput() {
 		return true;
 	}
 
-	if ((z != _hoverZone) && (_hoverZone)) {
-		_hoverZone = nullZonePtr;
-		_inputData._event = kEvExitZone;
-		return true;
-	}
-
-	if (!z) {
-		_inputData._event = kEvNone;
-		return true;
-	}
-
-	if ((!_hoverZone) && ((z->_flags & kFlagsNoName) == 0)) {
-		_hoverZone = z;
-		_inputData._event = kEvEnterZone;
-		_inputData._label = z->_label;
-		return true;
-	}
+	trackMouse(z);
+ 	if (!z) {
+ 		return true;
+ 	}
 
 	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
 

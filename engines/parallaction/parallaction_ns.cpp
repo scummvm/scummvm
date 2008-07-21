@@ -191,7 +191,7 @@ void Parallaction_ns::setArrowCursor() {
 	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_gfx->hideFloatingLabel();
+	_input->stopHovering();
 	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
@@ -302,12 +302,11 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_soundMan->playLocationMusic(location);
 
-	_gfx->hideFloatingLabel();
+	_input->stopHovering();
 	_gfx->freeLabels();
 
 	_zoneTrap = nullZonePtr;
 
-	_input->stopHovering();
 	if (_engineFlags & kEngineBlockInput) {
 		setArrowCursor();
 	}
@@ -420,6 +419,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
 	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
+	_char._ani->gfxobj->clearFlags(kGfxObjNormal);
 
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {

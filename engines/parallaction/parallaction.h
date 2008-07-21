@@ -113,8 +113,6 @@ enum EngineFlags {
 
 enum {
 	kEvNone			= 0,
-	kEvEnterZone		= 1,
-	kEvExitZone		= 2,
 	kEvAction		= 3,
 	kEvOpenInventory	= 4,
 	kEvCloseInventory	= 5,
@@ -164,6 +162,7 @@ class Debugger;
 class Gfx;
 class SoundMan;
 class Input;
+class DialogueManager;
 
 struct Location {
 
@@ -280,8 +279,6 @@ public:
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	uint16		runZone(ZonePtr z);
 	void		freeZones();
-
-	void		runDialogue(SpeakData*);
 
 	AnimationPtr findAnimation(const char *name);
 	void		freeAnimations();
@@ -425,10 +422,11 @@ public:
 
 	void setupBalloonManager();
 
-	void hideDialogueStuff() {
-		_gfx->freeItems();
-		_balloonMan->freeBalloons();
-	}
+	void hideDialogueStuff();
+	DialogueManager	*_dialogueMan;
+	void enterDialogueMode(ZonePtr z);
+	void exitDialogueMode();
+	void runDialogueFrame();
 
 };
 

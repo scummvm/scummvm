@@ -164,6 +164,11 @@ void Parallaction::updateView() {
 }
 
 
+void Parallaction::hideDialogueStuff() {
+	_gfx->freeItems();
+	_balloonMan->freeBalloons();
+}
+
 
 void Parallaction::freeCharacter() {
 	debugC(1, kDebugExec, "freeCharacter()");
@@ -297,16 +302,6 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
-	case kEvEnterZone:
-		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->showFloatingLabel(data->_label);
-		break;
-
-	case kEvExitZone:
-		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		_gfx->hideFloatingLabel();
-		break;
-
 	case kEvAction:
 		debugC(2, kDebugInput, "processInput: kEvAction");
 		_input->stopHovering();
@@ -317,7 +312,6 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvOpenInventory:
 		_input->stopHovering();
-		_gfx->hideFloatingLabel();
 		if (hitZone(kZoneYou, data->_mousePos.x, data->_mousePos.y) == 0) {
 			setArrowCursor();
 		}
@@ -367,24 +361,28 @@ void Parallaction::processInput(InputData *data) {
 void Parallaction::runGame() {
 
 	InputData *data = _input->updateInput();
-	if (data->_event != kEvNone) {
-		processInput(data);
+	if (_vm->quit())
+		return;
+
+	if (_input->_inputMode == Input::kInputModeDialogue) {
+		runDialogueFrame();
+	} else {
+		if (data->_event != kEvNone) {
+			processInput(data);
+		}
+
+		if (_vm->quit())
+			return;
+
+		runPendingZones();
+
+	if (_vm->quit())
+		return;
+
+		if (_engineFlags & kEngineChangeLocation) {
+			changeLocation(_location._name);
+		}
 	}
-
-	if (_vm->quit())
-		return;
-
-	runPendingZones();
-
-	if (_vm->quit())
-		return;
-
-	if (_engineFlags & kEngineChangeLocation) {
-		changeLocation(_location._name);
-	}
-
-	if (_vm->quit())
-		return;
 
 	_gfx->beginFrame();
 
@@ -400,7 +398,6 @@ void Parallaction::runGame() {
 
 	// change this to endFrame?
 	updateView();
-
 }
 
 
@@ -668,6 +665,7 @@ void Parallaction::beep() {
 }
 
 void Parallaction::scheduleLocationSwitch(const char *location) {
+	debugC(9, kDebugExec, "scheduleLocationSwitch(%s)\n", location);
 	strcpy(_location._name, location);
 	_engineFlags |= kEngineChangeLocation;
 }

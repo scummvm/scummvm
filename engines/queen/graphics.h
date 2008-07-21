@@ -248,10 +248,6 @@ public:
 		F_REQ_STOP = 2
 	};
 
-	enum {
-		SFX_SKIP = 8
-	};
-
 	uint16 _flag, _index;
 
 private:

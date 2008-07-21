@@ -51,6 +51,15 @@ namespace Common {
 #define USE_OSD	1
 #endif
 
+#if defined(MACOSX)
+// On Mac OS X, we need to double buffer the audio buffer, else anything
+// which produces sampled data with high latency (like the MT-32 emulator)
+// will sound terribly.
+// This could be enabled for more / most ports in the future, but needs some
+// testing.
+#define MIXER_DOUBLE_BUFFERING 1
+#endif
+
 
 enum {
 	GFX_NORMAL = 0,
@@ -136,6 +145,8 @@ public:
 	// Set function that generates samples
 	virtual void setupMixer();
 	static void mixCallback(void *s, byte *samples, int len);
+
+	virtual void closeMixer();
 
 	virtual Audio::Mixer *getMixer();
 
@@ -369,6 +380,23 @@ protected:
 	 */
 	MutexRef _graphicsMutex;
 
+#ifdef MIXER_DOUBLE_BUFFERING
+	SDL_mutex *_soundMutex;
+	SDL_cond *_soundCond;
+	SDL_Thread *_soundThread;
+	bool _soundThreadIsRunning;
+	bool _soundThreadShouldQuit;
+	
+	byte _activeSoundBuf;
+	uint _soundBufSize;
+	byte *_soundBuffers[2];
+
+	void mixerProducerThread();
+	static int SDLCALL mixerProducerThreadEntry(void *arg);
+	void initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize);
+	void deinitThreadedMixer();
+#endif
+
 
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
@@ -377,7 +405,7 @@ protected:
 	Common::TimerManager *_timer;
 
 
-
+protected:
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
 

@@ -48,7 +48,7 @@ struct PlainGameDescriptor {
 /**
  * Given a list of PlainGameDescriptors, returns the first PlainGameDescriptor
  * matching the given gameid. If not match is found return 0.
- * The end of the list marked by a PlainGameDescriptor with gameid equal to 0.
+ * The end of the list must marked by a PlainGameDescriptor with gameid equal to 0.
  */
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
 

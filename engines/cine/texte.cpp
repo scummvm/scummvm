@@ -31,8 +31,6 @@ namespace Cine {
 
 byte *textDataPtr;
 
-byte textTable[256][2][16 * 8];
-
 const char **failureMessages;
 const CommandeType *defaultActionCommand;
 const CommandeType *systemMenu;
@@ -77,14 +75,14 @@ void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
 		loadRelatedPalette(pFileName);
 
 		for (i = 0; i < numCharacters; i++) {
-			gfxConvertSpriteToRaw(textTable[i][0], tempBuffer, 16, 8);
-			generateMask(textTable[i][0], textTable[i][1], 16 * 8, 0);
+			gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], tempBuffer, 16, 8);
+			generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], 16 * 8, 0);
 			tempBuffer += dataSize;
 		}
 	} else {
 		for (i = 0; i < 90; i++) {
-			gfxConvertSpriteToRaw(textTable[i][0], tempBuffer, 8, 8);
-			generateMask(textTable[i][0], textTable[i][1], 8 * 8, 0);
+			gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], tempBuffer, 8, 8);
+			generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], 8 * 8, 0);
 			tempBuffer += 0x40;
 		}
 	}

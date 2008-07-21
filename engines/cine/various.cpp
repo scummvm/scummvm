@@ -464,17 +464,26 @@ bool CineEngine::makeLoad(char *saveName) {
 
 	broken = brokenSave(*fHandle);
 
+	// At savefile position 0x0000:
 	currentDisk = fHandle->readUint16BE();
 
+	// At 0x0002:
 	fHandle->read(currentPartName, 13);
+	// At 0x000F:
 	fHandle->read(currentDatName, 13);
 
+	// At 0x001C:
 	saveVar2 = fHandle->readSint16BE();
 
+	// At 0x001E:
 	fHandle->read(currentPrcName, 13);
+	// At 0x002B:
 	fHandle->read(currentRelName, 13);
+	// At 0x0038:
 	fHandle->read(currentMsgName, 13);
+	// At 0x0045:
 	fHandle->read(bgName, 13);
+	// At 0x0052:
 	fHandle->read(currentCtName, 13);
 
 	checkDataDisk(currentDisk);
@@ -499,52 +508,84 @@ bool CineEngine::makeLoad(char *saveName) {
 		loadCtFW(currentCtName);
 	}
 
+	// At 0x005F:
 	fHandle->readUint16BE();
+	// At 0x0061:
 	fHandle->readUint16BE();
 
+	// At 0x0063:
 	for (i = 0; i < 255; i++) {
+		// At 0x0063 + i * 32 + 0:
 		objectTable[i].x = fHandle->readSint16BE();
+		// At 0x0063 + i * 32 + 2:
 		objectTable[i].y = fHandle->readSint16BE();
+		// At 0x0063 + i * 32 + 4:
 		objectTable[i].mask = fHandle->readUint16BE();
+		// At 0x0063 + i * 32 + 6:
 		objectTable[i].frame = fHandle->readSint16BE();
+		// At 0x0063 + i * 32 + 8:
 		objectTable[i].costume = fHandle->readSint16BE();
+		// At 0x0063 + i * 32 + 10:
 		fHandle->read(objectTable[i].name, 20);
+		// At 0x0063 + i * 32 + 30:
 		objectTable[i].part = fHandle->readUint16BE();
 	}
 
+	// At 0x2043 (i.e. 0x0063 + 255 * 32):
 	renderer->restorePalette(*fHandle);
 
+	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
 	globalVars.load(*fHandle, NUM_MAX_VAR - 1);
 
+	// At 0x2281 (i.e. 0x2083 + 255 * 2):
 	for (i = 0; i < 16; i++) {
+		// At 0x2281 + i * 2:
 		zoneData[i] = fHandle->readUint16BE();
 	}
 
+	// At 0x22A1 (i.e. 0x2281 + 16 * 2):
 	for (i = 0; i < 4; i++) {
+		// At 0x22A1 + i * 2:
 		commandVar3[i] = fHandle->readUint16BE();
 	}
 
+	// At 0x22A9 (i.e. 0x22A1 + 4 * 2):
 	fHandle->read(commandBuffer, 0x50);
 	renderer->setCommand(commandBuffer);
 
+	// At 0x22F9 (i.e. 0x22A9 + 0x50):
 	renderer->_cmdY = fHandle->readUint16BE();
 
+	// At 0x22FB:
 	bgVar0 = fHandle->readUint16BE();
+	// At 0x22FD:
 	allowPlayerInput = fHandle->readUint16BE();
+	// At 0x22FF:
 	playerCommand = fHandle->readSint16BE();
+	// At 0x2301:
 	commandVar1 = fHandle->readSint16BE();
+	// At 0x2303:
 	isDrawCommandEnabled = fHandle->readUint16BE();
+	// At 0x2305:
 	var5 = fHandle->readUint16BE();
+	// At 0x2307:
 	var4 = fHandle->readUint16BE();
+	// At 0x2309:
 	var3 = fHandle->readUint16BE();
+	// At 0x230B:
 	var2 = fHandle->readUint16BE();
+	// At 0x230D:
 	commandVar2 = fHandle->readSint16BE();
 
+	// At 0x230F:
 	renderer->_messageBg = fHandle->readUint16BE();
 
+	// At 0x2311:
 	fHandle->readUint16BE();
+	// At 0x2313:
 	fHandle->readUint16BE();
 
+	// At 0x2315:
 	loadResourcesFromSave(*fHandle, broken);
 
 	// TODO: handle screen params (really required ?)
@@ -1516,12 +1557,22 @@ void mainLoopSub6(void) {
 
 void checkForPendingDataLoad(void) {
 	if (newPrcName[0] != 0) {
-		loadPrc(newPrcName);
+		bool loadPrcOk = loadPrc(newPrcName);
 
 		strcpy(currentPrcName, newPrcName);
 		strcpy(newPrcName, "");
 
-		addScriptToList0(1);
+		// Check that the loading of the script file was successful before
+		// trying to add script 1 from it to the global scripts list. This
+		// fixes a crash when failing copy protection in Amiga or Atari ST
+		// versions of Future Wars.
+		if (loadPrcOk) {
+			addScriptToList0(1);
+		} else if (scumm_stricmp(currentPrcName, COPY_PROT_FAIL_PRC_NAME)) {
+			// We only show an error here for other files than the file that
+			// is loaded if copy protection fails (i.e. L201.ANI).
+			warning("checkForPendingDataLoad: loadPrc(%s) failed", currentPrcName);
+		}
 	}
 
 	if (newRelName[0] != 0) {

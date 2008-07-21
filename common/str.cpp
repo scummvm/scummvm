@@ -43,32 +43,43 @@ static int computeCapacity(int len) {
 	return ((len + 32 - 1) & ~0x1F) - 1;
 }
 
-String::String(const char *str, uint32 len)
-: _len(0), _str(_storage) {
+String::String(const char *str) : _len(0), _str(_storage) {
+	if (str == 0) {
+		_storage[0] = 0;
+		_len = 0;
+	} else
+		initWithCStr(str, strlen(str));
+}
+
+String::String(const char *str, uint32 len) : _len(0), _str(_storage) {
+	initWithCStr(str, len);
+}
+
+String::String(const char *beginP, const char *endP) : _len(0), _str(_storage) {
+	assert(endP >= beginP);
+	initWithCStr(beginP, endP - beginP);
+}
+
+void String::initWithCStr(const char *str, uint32 len) {
+	assert(str);
 
 	// Init _storage member explicitly (ie. without calling its constructor)
 	// for GCC 2.95.x compatibility (see also tracker item #1602879).
 	_storage[0] = 0;
 
-	if (str && *str) {
-		const uint32 tmp = strlen(str);
-		assert(len <= tmp);
-		if (len <= 0)
-			len = tmp;
-		_len = len;
+	_len = len;
 
-		if (len >= _builtinCapacity) {
-			// Not enough internal storage, so allocate more
-			_extern._capacity = computeCapacity(len);
-			_extern._refCount = 0;
-			_str = (char *)malloc(_extern._capacity+1);
-			assert(_str != 0);
-		}
-
-		// Copy the string into the storage area
-		memcpy(_str, str, len);
-		_str[len] = 0;
+	if (len >= _builtinCapacity) {
+		// Not enough internal storage, so allocate more
+		_extern._capacity = computeCapacity(len);
+		_extern._refCount = 0;
+		_str = (char *)malloc(_extern._capacity+1);
+		assert(_str != 0);
 	}
+
+	// Copy the string into the storage area
+	memmove(_str, str, len);
+	_str[len] = 0;
 }
 
 String::String(const String &str)
@@ -91,6 +102,8 @@ String::String(char c)
 	_storage[0] = c;
 	_storage[1] = 0;
 
+	// TODO/FIXME: There is no reason for the following check -- we *do*
+	// allow strings to contain 0 bytes!
 	_len = (c == 0) ? 0 : 1;
 }
 
@@ -130,11 +143,14 @@ String& String::operator  =(const char *str) {
 	uint32 len = strlen(str);
 	ensureCapacity(len, false);
 	_len = len;
-	memcpy(_str, str, len + 1);
+	memmove(_str, str, len + 1);
 	return *this;
 }
 
 String &String::operator  =(const String &str) {
+	if (&str == this)
+		return *this;
+
 	if (str.isStorageIntern()) {
 		decRefCount(_extern._refCount);
 		_len = str._len;

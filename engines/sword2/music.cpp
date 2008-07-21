@@ -52,9 +52,11 @@ namespace Sword2 {
 static Audio::AudioStream *makeCLUStream(Common::File *fp, int size);
 
 static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
-	debug(3, "Playing %s from CD %d", base, cd);
+	bool alreadyOpen;
 
 	if (!fh->file.isOpen()) {
+		alreadyOpen = false;
+
 		struct {
 			const char *ext;
 			int mode;
@@ -75,16 +77,14 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		char filename[20];
 
 		for (int i = 0; i < ARRAYSIZE(file_types); i++) {
-			Common::File f;
-
 			sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
-			if (f.open(filename)) {
+			if (Common::File::exists(filename)) {
 				soundMode = file_types[i].mode;
 				break;
 			}
 
 			sprintf(filename, "%s.%s", base, file_types[i].ext);
-			if (f.open(filename)) {
+			if (Common::File::exists(filename)) {
 				soundMode = file_types[i].mode;
 				break;
 			}
@@ -105,7 +105,8 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 				fh->idxTab = NULL;
 			}
 		}
-	}
+	} else
+		alreadyOpen = true;
 
 	uint32 entrySize = (fh->fileType == kCLUMode) ? 2 : 3;
 
@@ -134,7 +135,13 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		*numSamples = len;
 
 	if (!pos || !len) {
-		fh->file.close();
+		// We couldn't find the sound. Possibly as a result of a bad
+		// installation (e.g. using the music file from CD 2 as the
+		// first music file). Don't close the file if it was already
+		// open though, because something is playing from it.
+		warning("getAudioStream: Could not find %s ID %d! Possibly the wrong file", base, id);
+		if (!alreadyOpen)
+			fh->file.close();
 		return NULL;
 	}
 

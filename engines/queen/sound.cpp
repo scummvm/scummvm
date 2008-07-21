@@ -227,11 +227,6 @@ void PCSound::setVolume(int vol) {
 	_music->setVolume(vol);
 }
 
-void PCSound::waitFinished(bool isSpeech) {
-	while (_mixer->isSoundHandleActive(isSpeech ? _speechHandle : _sfxHandle))
-		_vm->input()->delay(10);
-}
-
 void PCSound::playSound(const char *base, bool isSpeech) {
 	char name[13];
 	strcpy(name, base);
@@ -241,7 +236,13 @@ void PCSound::playSound(const char *base, bool isSpeech) {
 			name[i] = '0';
 	}
 	strcat(name, ".SB");
-	waitFinished(isSpeech);
+	if (isSpeech) {
+		while (_mixer->isSoundHandleActive(_speechHandle)) {
+			_vm->input()->delay(10);
+		}
+	} else {
+		_mixer->stopHandle(_sfxHandle);
+	}
 	uint32 size;
 	Common::File *f = _vm->resource()->findSound(name, &size);
 	if (f) {
@@ -253,6 +254,8 @@ void PCSound::playSound(const char *base, bool isSpeech) {
 }
 
 void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	// In order to simplify the code, we don't parse the .sb header but hard-code the
+	// values. Refer to tracker item #1876741 for details on the format/fields.
 	int headerSize;
 	f->seek(2, SEEK_CUR);
 	uint16 version = f->readUint16LE();

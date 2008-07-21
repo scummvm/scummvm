@@ -33,6 +33,11 @@
 
 namespace Parallaction {
 
+// this is the size of the receiving buffer for unpacked frames,
+// since BRA uses some insanely big animations.
+#define MAXIMUM_UNPACKED_BITMAP_SIZE	640*401
+
+
 void Gfx::registerVar(const Common::String &name, int32 initialValue) {
 	if (_vars.contains(name)) {
 		warning("Variable '%s' already registered, ignoring initial value.\n", name.c_str());
@@ -752,6 +757,9 @@ Gfx::Gfx(Parallaction* vm) :
 	_halfbrite = false;
 	_hbCircleRadius = 0;
 
+	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
+	assert(_unpackedBitmap);
+
 	registerVar("background_mode", 1);
 	_varBackgroundMode = 1;
 
@@ -768,6 +776,8 @@ Gfx::~Gfx() {
 
 	freeBackground();
 	freeLabels();
+
+	delete []_unpackedBitmap;
 
 	return;
 }
