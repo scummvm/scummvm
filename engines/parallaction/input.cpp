@@ -42,12 +42,14 @@ uint16 Input::readInput() {
 	uint16 KeyDown = 0;
 
 	_mouseButtons = kMouseNone;
+	_lastKeyDownAscii = -1;
 
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(e)) {
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
+			_lastKeyDownAscii = e.kbd.ascii;
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_vm->_debugger->attach();
 			if (_vm->getFeatures() & GF_DEMO) break;
@@ -95,6 +97,11 @@ uint16 Input::readInput() {
 
 	return KeyDown;
 
+}
+
+bool Input::getLastKeyDown(uint16 &ascii) {
+	ascii = _lastKeyDownAscii;
+	return (_lastKeyDownAscii != -1);
 }
 
 // FIXME: see comment for readInput()
@@ -191,6 +198,10 @@ InputData* Input::updateInput() {
 
 	case kInputModeGame:
 		updateGameInput();
+		break;
+
+	case kInputModeDialogue:
+		readInput();
 		break;
 	}
 

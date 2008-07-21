@@ -66,6 +66,7 @@ class Input {
 
 	Common::Point	_mousePos;
 	uint16	_mouseButtons;
+	int32	_lastKeyDownAscii;
 
 	bool		_mouseHidden;
 	ZonePtr			_hoverZone;
@@ -73,7 +74,8 @@ class Input {
 public:
 	enum {
 		kInputModeGame = 0,
-		kInputModeComment = 1
+		kInputModeComment = 1,
+		kInputModeDialogue = 2
 	};
 
 
@@ -102,6 +104,7 @@ public:
 	void 	waitUntilLeftClick();
 	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
+	bool  	getLastKeyDown(uint16 &ascii);
 
 	void stopHovering() {
 		_hoverZone = nullZonePtr;

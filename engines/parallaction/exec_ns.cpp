@@ -224,7 +224,11 @@ DECLARE_COMMAND_OPCODE(start) {
 
 
 DECLARE_COMMAND_OPCODE(speak) {
-	_vm->_activeZone = _ctxt.cmd->u._zone;
+	if ((_ctxt.cmd->u._zone->_type & 0xFFFF) == kZoneSpeak) {
+		_vm->enterDialogueMode(_ctxt.cmd->u._zone);
+	} else {
+		_vm->_activeZone = _ctxt.cmd->u._zone;
+	}
 }
 
 
@@ -321,6 +325,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 
 void Parallaction_ns::drawAnimations() {
+	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations()\n");
 
 	uint16 layer = 0;
 
@@ -360,6 +365,8 @@ void Parallaction_ns::drawAnimations() {
 			}
 		}
 	}
+
+	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations done()\n");
 
 	return;
 }
@@ -415,7 +422,6 @@ label1:
 
 	return;
 }
-
 
 void CommandExec::run(CommandList& list, ZonePtr z) {
 	if (list.size() == 0) {
@@ -537,11 +543,8 @@ uint16 Parallaction::runZone(ZonePtr z) {
 		break;
 
 	case kZoneSpeak:
-		runDialogue(z->u.speak);
-		if (_engineFlags & kEngineQuit)
-			return 0;
-		break;
-
+		enterDialogueMode(z);
+		return 0;
 	}
 
 	debugC(3, kDebugExec, "runZone completed");

@@ -161,6 +161,11 @@ void Parallaction::updateView() {
 }
 
 
+void Parallaction::hideDialogueStuff() {
+	_gfx->freeItems();
+	_balloonMan->freeBalloons();
+}
+
 
 void Parallaction::freeCharacter() {
 	debugC(1, kDebugExec, "freeCharacter()");
@@ -363,24 +368,28 @@ void Parallaction::processInput(InputData *data) {
 void Parallaction::runGame() {
 
 	InputData *data = _input->updateInput();
-	if (data->_event != kEvNone) {
-		processInput(data);
+	if (_engineFlags & kEngineQuit)
+		return;
+
+	if (_input->_inputMode == Input::kInputModeDialogue) {
+		runDialogueFrame();
+	} else {
+		if (data->_event != kEvNone) {
+			processInput(data);
+		}
+
+		if (_engineFlags & kEngineQuit)
+			return;
+
+		runPendingZones();
+
+		if (_engineFlags & kEngineQuit)
+			return;
+
+		if (_engineFlags & kEngineChangeLocation) {
+			changeLocation(_location._name);
+		}
 	}
-
-	if (_engineFlags & kEngineQuit)
-		return;
-
-	runPendingZones();
-
-	if (_engineFlags & kEngineQuit)
-		return;
-
-	if (_engineFlags & kEngineChangeLocation) {
-		changeLocation(_location._name);
-	}
-
-	if (_engineFlags & kEngineQuit)
-		return;
 
 	_gfx->beginFrame();
 
@@ -396,7 +405,6 @@ void Parallaction::runGame() {
 
 	// change this to endFrame?
 	updateView();
-
 }
 
 
@@ -659,6 +667,7 @@ void Parallaction::beep() {
 }
 
 void Parallaction::scheduleLocationSwitch(const char *location) {
+	debugC(9, kDebugExec, "scheduleLocationSwitch(%s)\n", location);
 	strcpy(_location._name, location);
 	_engineFlags |= kEngineChangeLocation;
 }
