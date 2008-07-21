@@ -2,35 +2,48 @@
 #define COMMON_KEYMAP_MANAGER
 
 #include "backends/common/keymap.h"
-#include "common/list.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 
 namespace Common {
 
 class KeymapManager {
 public:
 
-	KeymapManager();
+	class Domain {
+	public:
+		Domain() : _defaultKeymap(0) {}
 
-	bool registerSuperGlobalKeymap(const Keymap& map);
-	bool registerGlobalKeymap(const String& name, const Keymap& map);
-	bool registerKeymap(const String& name, const String& domain, const Keymap& map);
+		void addDefaultKeymap(Keymap *map);
+		void addKeymap(const String& name, Keymap *map);
 
-	bool unregisterSuperGlobalKeymap();
-	bool unregisterGlobalKeymap(const String& name);
-	bool unregisterKeymap(const String& name, const String& domain);
+		void deleteAllKeyMaps();
+
+		Keymap *getDefaultKeymap();
+		Keymap *getKeymap(const String& name);
+
+	private:
+		typedef HashMap<String, Keymap*, 
+			IgnoreCase_Hash, IgnoreCase_EqualTo> KeymapMap;
+
+		Keymap *_defaultKeymap;
+		KeymapMap _keymaps;
+	};
+
+	void registerDefaultGlobalKeymap(Keymap *map);
+	void registerGlobalKeymap(const String& name, Keymap *map);
+
+	void registerDefaultGameKeymap(Keymap *map);
+	void registerGameKeymap(const String& name, Keymap *map);
+
+	void unregisterAllGameKeymaps();
+
+	Keymap *KeymapManager::getKeymap(const String& name);
 
 private:
 
-	struct Entry {
-		String _name;
-		String _domain;
-		Keymap *_keymap;
-	};
-	typedef List<Entry*>::iterator Iterator;
-
-	Iterator findEntry(const String& name, const String& domain);
-
-	List<Entry*> _keymaps;
+	Domain _globalDomain;
+	Domain _gameDomain;
 };
 
 } // end of namespace Common

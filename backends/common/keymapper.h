@@ -14,9 +14,17 @@ public:
 	Keymapper(EventManager *eventMan);
 
 	void registerHardwareKeySet(HardwareKeySet *keys);
-	const HardwareKeySet *getHardwareKeySet();
-	void addGlobalKeyMap(const String& name, Keymap& keymap);
-	void addGameKeyMap(const String& gameid, const String& name, Keymap& keymap);
+
+	const HardwareKeySet *getHardwareKeySet() const;
+
+	void addGlobalKeyMap(const String& name, Keymap *keymap);
+
+	void addGameKeyMap(const String& name, Keymap *keymap);
+
+	void initGame();
+	void deInitGame();
+
+	bool switchKeymap(const String& name);
 
 private:
 
@@ -24,6 +32,8 @@ private:
 
 	EventManager *_eventMan;
 	KeymapManager *_keymapMan;
+
+	String _gameId;
 
 	Keymap *_currentMap;
 

@@ -4,56 +4,62 @@
 
 namespace Common {
 
-KeymapManager::KeymapManager() {
 
+void KeymapManager::Domain::addDefaultKeymap(Keymap *map) {
+	_defaultKeymap = map;
 }
 
-bool KeymapManager::registerSuperGlobalKeymap(const Keymap& map) {
-	return registerKeymap(GLOBAL_ID_STR, GLOBAL_ID_STR, map);
+void KeymapManager::Domain::addKeymap(const String& name, Keymap *map) {
+	if (_keymaps.contains(name))
+		delete _keymaps[name];
+	_keymaps[name] = map;
 }
 
-bool KeymapManager::registerGlobalKeymap(const String& name, const Keymap& map) {
-	return registerKeymap(name, GLOBAL_ID_STR, map);
+void KeymapManager::Domain::deleteAllKeyMaps() {
+	KeymapMap::iterator it;
+	for (it = _keymaps.begin(); it != _keymaps.end(); it++)
+		delete it->_value;
+	_keymaps.clear();
 }
 
-bool KeymapManager::registerKeymap(const String& name, const String& domain, const Keymap& map) {
-	if (findEntry(name, domain) != _keymaps.end()) {
-		warning("Keymap with given name and domain already exists\n");
-		return false;
-	}
-	Entry *ent = new Entry;
-	ent->_name = name;
-	ent->_domain = domain;
-	ent->_keymap = new Keymap(map);
-	_keymaps.push_back(ent);
-	return true;
+Keymap *KeymapManager::Domain::getDefaultKeymap() {
+	return _defaultKeymap;
 }
 
-bool KeymapManager::unregisterSuperGlobalKeymap() {
-	return unregisterKeymap(GLOBAL_ID_STR, GLOBAL_ID_STR);
+Keymap *KeymapManager::Domain::getKeymap(const String& name) {
+	KeymapMap::iterator it = _keymaps.find(name);
+	if (it != _keymaps.end())
+		return it->_value;
+	else
+		return 0;
 }
 
-bool KeymapManager::unregisterGlobalKeymap(const String& name) {
-	return unregisterKeymap(name, GLOBAL_ID_STR);
+
+void KeymapManager::registerDefaultGlobalKeymap(Keymap *map) {
+	_globalDomain.addDefaultKeymap(map);
 }
 
-bool KeymapManager::unregisterKeymap(const String& name, const String& domain) {
-	Iterator it = findEntry(name, domain);
-	if (it == _keymaps.end())
-		return true;
-	delete (*it)->_keymap;
-	delete *it;
-	_keymaps.erase(it);
-	return true;
+void KeymapManager::registerGlobalKeymap(const String& name, Keymap *map) {
+	_globalDomain.addKeymap(name, map);
 }
 
-KeymapManager::Iterator KeymapManager::findEntry(const String& name, const String& domain) {
-	Iterator it;
-	for (it = _keymaps.begin(); it != _keymaps.end(); it++) {
-		if ((*it)->_name == name && (*it)->_domain == domain)
-			break;
-	}
-	return it;
+void KeymapManager::registerDefaultGameKeymap(Keymap *map) {
+	_gameDomain.addDefaultKeymap(map);
 }
- 
+
+void KeymapManager::registerGameKeymap(const String& name, Keymap *map) {
+	_gameDomain.addKeymap(name, map);
+}
+
+void KeymapManager::unregisterAllGameKeymaps() {
+	_gameDomain.deleteAllKeyMaps();
+}
+
+Keymap *KeymapManager::getKeymap(const String& name) {
+	Keymap *keymap = _gameDomain.getKeymap(name);
+	if (!keymap)
+		_globalDomain.getKeymap(name);
+	return keymap;
+}
+
 } // end of namespace Common
