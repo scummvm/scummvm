@@ -117,7 +117,7 @@ public:
 	~DefaultEventManager();
 
 	virtual bool pollEvent(Common::Event &event);
-	virtual void pushEvent(Common::Event event);
+	virtual void pushEvent(const Common::Event &event);
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
 	virtual void processMillis(uint32 &millis);
 

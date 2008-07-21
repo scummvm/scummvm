@@ -474,7 +474,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	return result;
 }
 
-void DefaultEventManager::pushEvent(Common::Event event) {
+void DefaultEventManager::pushEvent(const Common::Event &event) {
 	_artificialEventQueue.push(event);
 }
 
