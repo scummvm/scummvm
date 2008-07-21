@@ -152,7 +152,7 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 	assert(buf != 0 && bufSize > 1);
 	char *p = buf;
 	size_t len = 0;
-	char c;
+	char c = 0;
 
 	// If end-of-file occurs before any characters are read, return NULL
 	// and the buffer contents remain unchanged. 
