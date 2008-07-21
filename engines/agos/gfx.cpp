@@ -8,7 +8,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-d
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -836,8 +836,7 @@ void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
 				dst += state->surf_pitch;
 				src++;
 			} while (++h != state->draw_height);
-		}
-		else {
+		} else {
 			do {
 				byte colors = *src;
 				color = (colors / 16);
