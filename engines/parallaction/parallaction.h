@@ -114,8 +114,6 @@ enum EngineFlags {
 
 enum {
 	kEvNone			= 0,
-	kEvEnterZone		= 1,
-	kEvExitZone		= 2,
 	kEvAction		= 3,
 	kEvOpenInventory	= 4,
 	kEvCloseInventory	= 5,

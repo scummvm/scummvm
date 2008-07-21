@@ -299,16 +299,6 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
-	case kEvEnterZone:
-		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->showFloatingLabel(data->_label);
-		break;
-
-	case kEvExitZone:
-		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		_gfx->hideFloatingLabel();
-		break;
-
 	case kEvAction:
 		debugC(2, kDebugInput, "processInput: kEvAction");
 		_input->stopHovering();
@@ -319,7 +309,6 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvOpenInventory:
 		_input->stopHovering();
-		_gfx->hideFloatingLabel();
 		if (hitZone(kZoneYou, data->_mousePos.x, data->_mousePos.y) == 0) {
 			setArrowCursor();
 		}
