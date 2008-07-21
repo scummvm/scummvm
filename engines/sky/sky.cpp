@@ -435,7 +435,7 @@ int SkyEngine::init() {
 	_floppyIntro = ConfMan.getBool("alt_intro");
 
 	_skyDisk = new Disk();
-	_skySound = new Sound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
+	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
 
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
