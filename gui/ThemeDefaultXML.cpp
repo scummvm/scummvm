@@ -93,7 +93,7 @@ bool ThemeRenderer::loadDefaultXML() {
 	
 	
 	"<drawdata id = 'popup_hover' cache = false>"
-		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
+		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 0 />"
 		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
 		"<text vertical_align = 'center' horizontal_align = 'right' color = '255, 255, 255' />"
 	"</drawdata>"
@@ -109,7 +109,7 @@ bool ThemeRenderer::loadDefaultXML() {
 
 	"<drawdata id = 'button_hover' cache = false>"
 		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
-		"<drawstep func = 'roundedsq' radius = '8' stroke = '1' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 3 />"
+		"<drawstep func = 'roundedsq' radius = '8' stroke = '1' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 	"</drawdata>"
 	
 	"<drawdata id = 'button_disabled' cache = false>"

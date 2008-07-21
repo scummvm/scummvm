@@ -194,7 +194,6 @@ void NewGui::redraw() {
 		case kRedrawCloseDialog:
 		case kRedrawFull:
 		case kRedrawTopDialog:
-			warning("Full screen redraw. Oops");
 			_theme->clearAll();
 			_theme->closeAllDialogs();
 
@@ -207,8 +206,6 @@ void NewGui::redraw() {
 			//_theme->startBuffering();
 			_dialogStack.top()->drawDialog();
 			_theme->finishBuffering();
-			
-			warning("Dialog opened");
 			break;
 
 		default:

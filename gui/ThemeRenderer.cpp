@@ -54,7 +54,7 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawData[] = {
 	{kDDButtonHover, "button_hover", false, kDDButtonIdle},
 	{kDDButtonDisabled, "button_disabled", true, kDDNone},
 
-	{kDDSliderFull, "slider_full", false, kDDWidgetBackgroundSlider},
+	{kDDSliderFull, "slider_full", false, kDDNone},
 
 	{kDDCheckboxEnabled, "checkbox_enabled", false, kDDCheckboxDisabled},
 	{kDDCheckboxDisabled, "checkbox_disabled", true, kDDNone},
@@ -306,18 +306,15 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 	q.dynData = dynamic;
 	
 	if (_buffering) {
-		warning("Queued up a '%s' for the %s", kDrawData[type].name, _widgets[type]->_buffer ? "buffer" : "screen");
-		
-		if (_widgets[type]->_buffer)
-			_bufferQueue.push_back(q);
-		else {
-			if (kDrawData[type].parent != kDDNone)
+		if (_widgets[type]->_buffer) {
+			_bufferQueue.push_back(q);	
+		} else {
+			if (kDrawData[type].parent != kDDNone && kDrawData[type].parent != type)
 				queueDD(kDrawData[type].parent, r);
 
 			_screenQueue.push_back(q);
 		}
 	} else {
-		warning("Drawing a '%s' directly!", kDrawData[type].name);
 		drawDD(q, !_widgets[type]->_buffer, _widgets[type]->_buffer);
 	}
 }
@@ -439,6 +436,7 @@ void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo
 	Common::Rect r2 = r;
 	r2.setWidth(MIN((int16)width, r.width()));
 
+	drawWidgetBackground(r, 0, kWidgetBackgroundSlider, kStateEnabled);
 	queueDD(kDDSliderFull, r2);
 }
 
