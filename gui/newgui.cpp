@@ -195,15 +195,17 @@ void NewGui::redraw() {
 		case kRedrawFull:
 		case kRedrawTopDialog:
 			_theme->clearAll();
-			_theme->closeAllDialogs();
+			_theme->openDialog(true);
 
 			for (i = 0; i < _dialogStack.size() - 1; i++) {
-				_dialogStack[i]->drawDialog();
+				_dialogStack[i]->drawDialog();	
 			}
+
+			_theme->finishBuffering();
+			_theme->updateScreen();
 
 		case kRedrawOpenDialog:
 			_theme->openDialog(true);
-			//_theme->startBuffering();
 			_dialogStack.top()->drawDialog();
 			_theme->finishBuffering();
 			break;

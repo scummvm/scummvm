@@ -440,8 +440,8 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		w <= 0 || h <= 0 || x < 0 || y < 0)
 		return;
 		
-	while ((r << 1) > w || (r << 1) > h)
-		r <<= 1;
+	if ((r << 1) > w || (r << 1) > h)
+		r = MIN(w >> 1, h >> 1);
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
