@@ -388,19 +388,7 @@ void ThemeRenderer::calcBackgroundOffset(DrawData type) {
 }
 
 void ThemeRenderer::restoreBackground(Common::Rect r, bool special) {
-	const OverlayColor *src = (const OverlayColor*)_backBuffer->getBasePtr(r.left, r.top);
-	OverlayColor *dst = (OverlayColor*)_screen->getBasePtr(r.left, r.top);
-
-	int h = r.height();
-	int w = r.width();
-	while (h--) {
-		memcpy(dst, src, w * sizeof(OverlayColor));
-		src += _backBuffer->w;
-		dst += _screen->w;
-	}
-
-//	debugWidgetPosition("", r);
-//	printf(" BG_RESTORE ");
+	_vectorRenderer->blitSurface(_backBuffer, r);
 }
 
 void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {

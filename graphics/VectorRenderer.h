@@ -658,8 +658,8 @@ public:
 	 * @see VectorRenderer::blitSurface()
 	 */
 	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) {
-		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(r.top, r.left);
-		PixelType *src_ptr = (PixelType *)source->getBasePtr(0, 0);
+		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(r.left, r.top);
+		PixelType *src_ptr = (PixelType *)source->getBasePtr(r.left, r.top);
 
 		int dst_pitch = surfacePitch();
 		int src_pitch = source->pitch / source->bytesPerPixel;

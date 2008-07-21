@@ -1019,13 +1019,13 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 	while (x++ < y) {
 		__BE_ALGORITHM();
 
-		if ((1 << x) & hb == 0) {
+		if (((1 << x) & hb) == 0) {
 			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
 			blendFill(ptr_bl - y + px, ptr_br + y + px, 0, alpha);
 			hb |= (1 << x);
 		}
 
-		if ((1 << y) & hb == 0) {
+		if (((1 << y) & hb) == 0) {
 			blendFill(ptr_tr - r - py, ptr_tr + x - py, 0, alpha);
 			blendFill(ptr_bl - x + py, ptr_br + x + py, 0, alpha);
 			hb |= (1 << y);
