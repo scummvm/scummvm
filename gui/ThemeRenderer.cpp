@@ -39,7 +39,7 @@ namespace GUI {
 
 using namespace Graphics;
 
-const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawData[] = {
+const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDMainDialogBackground, "mainmenu_bg", true, kDDNone},
 	{kDDSpecialColorBackground, "special_bg", true, kDDNone},
 	{kDDPlainColorBackground, "plain_bg", true, kDDNone},
@@ -188,14 +188,14 @@ void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
 	_vectorRenderer->setSurface(_screen);
 }
 
-void ThemeRenderer::addDrawStep(Common::String &drawDataId, Graphics::DrawStep step) {
+void ThemeRenderer::addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step) {
 	DrawData id = getDrawDataId(drawDataId);
 	
 	assert(_widgets[id] != 0);
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep step) {
+bool ThemeRenderer::addTextStep(const Common::String &drawDataId, Graphics::TextStep step) {
 	DrawData id = getDrawDataId(drawDataId);
 
 	step.font = 0;
@@ -220,15 +220,15 @@ bool ThemeRenderer::addTextStep(Common::String &drawDataId, Graphics::TextStep s
 	return true;
 }
 
-bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
-	assert(data_id >= 0 && data_id < kDrawDataMAX);
+bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
+	DrawData data_id = getDrawDataId(data);
 
-	if (_widgets[data_id] != 0)
+	if (data_id == -1 || _widgets[data_id] != 0)
 		return false;
 
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
-	_widgets[data_id]->_buffer = kDrawData[data_id].buffer;
+	_widgets[data_id]->_buffer = kDrawDataDefaults[data_id].buffer;
 	_widgets[data_id]->_surfaceCache = 0;
 	_widgets[data_id]->_hasText = false;
 
@@ -309,8 +309,8 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 		if (_widgets[type]->_buffer) {
 			_bufferQueue.push_back(q);	
 		} else {
-			if (kDrawData[type].parent != kDDNone && kDrawData[type].parent != type)
-				queueDD(kDrawData[type].parent, r);
+			if (kDrawDataDefaults[type].parent != kDDNone && kDrawDataDefaults[type].parent != type)
+				queueDD(kDrawDataDefaults[type].parent, r);
 
 			_screenQueue.push_back(q);
 		}

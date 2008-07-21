@@ -358,11 +358,6 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 	if (drawdataNode->values.contains("id") == false)
 		return parserError("DrawData keys must contain an identifier.");
 
-	ThemeRenderer::DrawData id = _theme->getDrawDataId(drawdataNode->values["id"]);
-
-	if (id == -1)
-		return parserError("%s is not a valid DrawData set identifier.", drawdataNode->values["id"].c_str());
-
 	if (drawdataNode->values.contains("cache")) {
 		if (drawdataNode->values["cache"] == "true") 
 			cached = true;
@@ -381,8 +376,8 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 		}
 	}*/
 
-	if (_theme->addDrawData(id, cached) == false)
-		return parserError("Repeated DrawData: Only one set of Drawing Data for a widget may be specified on each platform.");
+	if (_theme->addDrawData(drawdataNode->values["id"], cached) == false)
+		return parserError("Error when adding Draw Data set: Invalid DrawData name.");
 
 	if (_defaultStepLocal) {
 		delete _defaultStepLocal;
