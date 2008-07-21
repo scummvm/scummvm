@@ -98,7 +98,7 @@ bool ThemeRenderer::init() {
 	deinit();
 	setGraphicsMode(_graphicsMode);
 
-	if (_screen->pixels) {
+	if (_screen->pixels && _backBuffer->pixels) {
 		_initOk = true;
 		clearAll();
 		resetDrawArea();
@@ -127,6 +127,7 @@ void ThemeRenderer::deinit() {
 		_system->hideOverlay();
 		freeRenderer();
 		freeScreen();
+		freeBackbuffer();
 		_initOk = false;
 	}
 }
@@ -156,14 +157,17 @@ template<typename PixelType>
 void ThemeRenderer::screenInit(bool backBuffer) {
 	freeScreen();
 	freeBackbuffer();
+
+	uint32 width = _system->getOverlayWidth();
+	uint32 height = _system->getOverlayHeight();
 	
 	if (backBuffer) {
 		_backBuffer = new Surface;
-		_backBuffer->create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(PixelType));
+		_backBuffer->create(width, height, sizeof(PixelType));
 	}
 	
 	_screen = new Surface;
-	_screen->create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(PixelType));
+	_screen->create(width, height, sizeof(PixelType));
 	_system->clearOverlay();
 }
 
@@ -227,12 +231,6 @@ bool ThemeRenderer::addDrawData(DrawData data_id, bool cached) {
 	_widgets[data_id]->_buffer = kDrawData[data_id].buffer;
 	_widgets[data_id]->_surfaceCache = 0;
 	_widgets[data_id]->_hasText = false;
-
-	// TODO: set this only when needed
-	// possibly add an option to the parser to set this
-	// on each drawdata...
-//	if (data_id >= kDDMainDialogBackground && data_id <= kDDWidgetBackgroundSlider)
-//		_widgets[data_id]->_buffer = true;
 
 	return true;
 }
@@ -388,6 +386,7 @@ void ThemeRenderer::calcBackgroundOffset(DrawData type) {
 }
 
 void ThemeRenderer::restoreBackground(Common::Rect r, bool special) {
+	r.clip(_screen->w, _screen->h); // AHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA... Oh god. :(
 	_vectorRenderer->blitSurface(_backBuffer, r);
 }
 
@@ -544,11 +543,6 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!_initOk)
 		return;
-
-	// TODO: Queue this up too!
-	// restoreBackground(r);
-	// getFont(font)->drawString(_screen, str, r.left, r.top, r.width(), getTextColor(state), convertAligment(align), deltax, useEllipsis);
-	// addDirtyRect(r);
 	
 	queueDDText(kDDNone, r, str, getTextColor(state), align);
 }
@@ -571,8 +565,8 @@ void ThemeRenderer::updateScreen() {
 			drawDD(*q, true, false);
 			
 		_vectorRenderer->setSurface(_screen);
+		_vectorRenderer->blitSurface(_backBuffer, Common::Rect(0, 0, _screen->w, _screen->h));
 		_bufferQueue.clear();
-		memcpy(_screen->pixels, _backBuffer->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
 	}
 	
 	if (!_screenQueue.empty()) {
@@ -610,7 +604,9 @@ void ThemeRenderer::openDialog(bool doBuffer) {
 	if (doBuffer)
 		_buffering = true;
 
-	memcpy(_backBuffer->pixels, _screen->pixels, _screen->w * _screen->h * _screen->bytesPerPixel);
+	_vectorRenderer->setSurface(_backBuffer);
+	_vectorRenderer->blitSurface(_screen, Common::Rect(0, 0, _screen->w, _screen->h));
+	_vectorRenderer->setSurface(_screen);
 }
 
 } // end of namespace GUI.
