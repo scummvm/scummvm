@@ -2,6 +2,7 @@
 #define COMMON_KEYMAP_MANAGER
 
 #include "backends/common/keymap.h"
+#include "common/list.h"
 
 namespace Common {
 

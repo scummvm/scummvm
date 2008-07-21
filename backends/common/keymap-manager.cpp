@@ -1,15 +1,19 @@
 #include "backends/common/keymap-manager.h"
 
-#define GLOBAL_ID "GLOBAL"
+#define GLOBAL_ID_STR "___GLOBAL"
 
 namespace Common {
 
+KeymapManager::KeymapManager() {
+
+}
+
 bool KeymapManager::registerSuperGlobalKeymap(const Keymap& map) {
-	return registerKeymap(GLOBAL_ID, GLOBAL_ID, map);
+	return registerKeymap(GLOBAL_ID_STR, GLOBAL_ID_STR, map);
 }
 
 bool KeymapManager::registerGlobalKeymap(const String& name, const Keymap& map) {
-	return registerKeymap(name, GLOBAL_ID, map);
+	return registerKeymap(name, GLOBAL_ID_STR, map);
 }
 
 bool KeymapManager::registerKeymap(const String& name, const String& domain, const Keymap& map) {
@@ -26,11 +30,11 @@ bool KeymapManager::registerKeymap(const String& name, const String& domain, con
 }
 
 bool KeymapManager::unregisterSuperGlobalKeymap() {
-	return unregisterKeymap(GLOBAL_ID, GLOBAL_ID);
+	return unregisterKeymap(GLOBAL_ID_STR, GLOBAL_ID_STR);
 }
 
 bool KeymapManager::unregisterGlobalKeymap(const String& name) {
-	return unregisterKeymap(name, GLOBAL_ID);
+	return unregisterKeymap(name, GLOBAL_ID_STR);
 }
 
 bool KeymapManager::unregisterKeymap(const String& name, const String& domain) {

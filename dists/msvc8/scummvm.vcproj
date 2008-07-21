@@ -1057,6 +1057,10 @@
 				Name="common"
 				>
 				<File
+					RelativePath="..\..\backends\common\hardware-key.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\common\keymap-manager.cpp"
 					>
 				</File>
@@ -1073,7 +1077,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\backends\common\keymapper.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\common\keymapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\user-action.h"
 					>
 				</File>
 				<File

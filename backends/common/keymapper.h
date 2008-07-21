@@ -1,23 +1,33 @@
 #ifndef COMMON_KEYMAPPER
 #define COMMON_KEYMAPPER
 
-#include "backends/common/keymap-manager.h"
+#include "backends/common/keymap.h"
+#include "common/list.h"
 
 namespace Common {
+
+class KeymapManager;
 
 class Keymapper {
 public:
 
-	Keymapper();
+	Keymapper(EventManager *eventMan);
 
-	void addHardwareKey(const HardwareKey& key);
+	void registerHardwareKeySet(HardwareKeySet *keys);
+	const HardwareKeySet *getHardwareKeySet();
 	void addGlobalKeyMap(const String& name, Keymap& keymap);
+	void addGameKeyMap(const String& gameid, const String& name, Keymap& keymap);
 
 private:
 
-	KeymapManager _manager;
+	typedef List<HardwareKey*>::iterator Iterator;
 
-	List<HardwareKey*> _hardwareKeys;
+	EventManager *_eventMan;
+	KeymapManager *_keymapMan;
+
+	Keymap *_currentMap;
+
+	const HardwareKeySet *_hardwareKeys;
 
 };
 
