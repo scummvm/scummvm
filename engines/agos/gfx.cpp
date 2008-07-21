@@ -8,7 +8,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+d
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -806,7 +806,6 @@ void AGOSEngine::drawVertImageUncompressed(VC10_state *state) {
 void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
 	assert (state->flags & kDFCompressed) ;
 	uint w, h;
-	byte *src, *dst, *dstPtr;
 
 	state->x_skip *= 4;				/* reached */
 
@@ -815,7 +814,7 @@ void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
 
 	vc10_skip_cols(state);
 
-	dstPtr = state->surf_addr;
+	byte *dstPtr = state->surf_addr;
 	if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
 		dstPtr += vcReadVar(252);
 	}
@@ -823,20 +822,34 @@ void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
 	do {
 		byte color;
 
-		src = vc10_depackColumn(state);
-		dst = dstPtr;
+		const byte *src = vc10_depackColumn(state);
+		byte *dst = dstPtr;
 
 		h = 0;
-		do {
-			color = (*src / 16);
-			if ((state->flags & kDFNonTrans) || color != 0)
+		if (state->flags & kDFNonTrans)  {
+			do {
+				byte colors = *src;
+				color = (colors / 16);
 				dst[0] = color | state->palette;
-			color = (*src & 15);
-			if ((state->flags & kDFNonTrans) || color != 0)
+				color = (colors & 15);
 				dst[1] = color | state->palette;
-			dst += state->surf_pitch;
-			src++;
-		} while (++h != state->draw_height);
+				dst += state->surf_pitch;
+				src++;
+			} while (++h != state->draw_height);
+		}
+		else {
+			do {
+				byte colors = *src;
+				color = (colors / 16);
+				if (color != 0)
+					dst[0] = color | state->palette;
+				color = (colors & 15);
+				if (color != 0)
+					dst[1] = color | state->palette;
+				dst += state->surf_pitch;
+				src++;
+			} while (++h != state->draw_height);
+		}
 		dstPtr += 2;
 	} while (++w != state->draw_width);
 }
