@@ -223,7 +223,10 @@ public:
 
 	/** Since the rendering pipeline changes, closing all dialogs causes no effect 
 		TODO: remove this from the original GUI::Theme API */
-	void closeAllDialogs() {}
+	void closeAllDialogs() {
+		memset(_backBuffer->pixels, 0, _backBuffer->w * _backBuffer->h * _backBuffer->bytesPerPixel);
+		
+	}
 	
 	/** Drawing area has been removed: it was too hackish. A workaround is on the works.
 	 	TODO: finish the workaround for the credits dialog
