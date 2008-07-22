@@ -153,7 +153,7 @@ void lua_Save(SaveRestoreFunc saveFunc) {
 		saveFunc(&tempHash->htag, sizeof(int32));
 		for (i = 0; i < tempHash->nhash; i++) {
 			Node *newNode = &tempHash->node[i];
-			if ((newNode->val.ttype != LUA_T_NIL) && (newNode->ref.ttype != LUA_T_NIL)) {
+			if ((newNode->ref.ttype != LUA_T_NIL) && (newNode->val.ttype != LUA_T_NIL)) {
 				saveObjectValue(&tempHash->node[i].ref, saveFunc);
 				saveObjectValue(&tempHash->node[i].val, saveFunc);
 			}
