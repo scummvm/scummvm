@@ -307,25 +307,6 @@ void Parallaction::processInput(InputData *data) {
 		resumeJobs();
 		break;
 
-	case kEvOpenInventory:
-		_input->stopHovering();
-		if (hitZone(kZoneYou, data->_mousePos.x, data->_mousePos.y) == 0) {
-			setArrowCursor();
-		}
-		pauseJobs();
-		openInventory();
-		break;
-
-	case kEvCloseInventory: // closes inventory and possibly select item
-		closeInventory();
-		setInventoryCursor(data->_inventoryIndex);
-		resumeJobs();
-		break;
-
-	case kEvHoverInventory:
-		highlightInventoryItem(data->_inventoryIndex);						// enable
-		break;
-
 	case kEvWalk:
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_input->stopHovering();

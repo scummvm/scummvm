@@ -70,6 +70,9 @@ class Input {
 	bool		_mouseHidden;
 	ZonePtr			_hoverZone;
 
+	void	enterInventoryMode();
+	void 	exitInventoryMode();
+
 public:
 	enum {
 		kInputModeGame = 0,

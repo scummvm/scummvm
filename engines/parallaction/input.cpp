@@ -235,14 +235,7 @@ bool Input::translateGameInput() {
 
 	if (_mouseButtons == kMouseRightDown) {
 		// right button down shows inventory
-
-		if (_vm->hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
-			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
-			_engineFlags |= kEngineDragging;
-		}
-
-		_inputData._event = kEvOpenInventory;
-		_transCurrentHoverItem = -1;
+		enterInventoryMode();
 		return true;
 	}
 
@@ -282,7 +275,51 @@ bool Input::translateGameInput() {
 	}
 
 	return true;
+}
 
+
+void Input::enterInventoryMode() {
+	bool hitCharacter = _vm->hitZone(kZoneYou, _mousePos.x, _mousePos.y);
+
+	if (hitCharacter) {
+		if (_activeItem._id != 0) {
+			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
+			_engineFlags |= kEngineDragging;
+		} else {
+			_vm->setArrowCursor();
+		}
+	}
+
+	stopHovering();
+	_vm->pauseJobs();
+	_vm->openInventory();
+
+	_transCurrentHoverItem = -1;
+}
+
+void Input::exitInventoryMode() {
+	// right up hides inventory
+
+	int item = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	_vm->highlightInventoryItem(-1);			// disable
+
+	if ((_engineFlags & kEngineDragging)) {
+
+		_engineFlags &= ~kEngineDragging;
+		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(item));
+
+		if (z) {
+			_vm->dropItem(z->u.merge->_obj1);
+			_vm->dropItem(z->u.merge->_obj2);
+			_vm->addInventoryItem(z->u.merge->_obj3);
+			_vm->_cmdExec->run(z->_commands);
+		}
+
+	}
+
+	_vm->closeInventory();
+	_vm->setInventoryCursor(item);
+	_vm->resumeJobs();
 }
 
 bool Input::translateInventoryInput() {
@@ -295,37 +332,15 @@ bool Input::translateInventoryInput() {
 	int16 _si = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
 
 	if (_mouseButtons == kMouseRightUp) {
-		// right up hides inventory
-
-		_inputData._event = kEvCloseInventory;
-		_inputData._inventoryIndex = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
-		_vm->highlightInventoryItem(-1);			// disable
-
-		if ((_engineFlags & kEngineDragging) == 0) {
-			return true;
-		}
-
-		_engineFlags &= ~kEngineDragging;
-		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(_inputData._inventoryIndex));
-
-		if (z) {
-			_vm->dropItem(z->u.merge->_obj1);
-			_vm->dropItem(z->u.merge->_obj2);
-			_vm->addInventoryItem(z->u.merge->_obj3);
-			_vm->_cmdExec->run(z->_commands);
-		}
-
+		exitInventoryMode();
 		return true;
 	}
 
-	if (_si == _transCurrentHoverItem) {
-		_inputData._event = kEvNone;
-		return true;
+	if (_si != _transCurrentHoverItem) {
+		_transCurrentHoverItem = _si;
+		_vm->highlightInventoryItem(_si);						// enable
 	}
 
-	_transCurrentHoverItem = _si;
-	_inputData._event = kEvHoverInventory;
-	_inputData._inventoryIndex = _si;
 	return true;
 
 }
