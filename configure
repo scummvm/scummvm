@@ -1011,6 +1011,7 @@ else
 	echo "zlib library support required"
 	exit 1
 fi
+add_to_config_mk_if_yes "$_zlib" 'USE_ZLIB = 1'
 echo "$_zlib"
 
 
@@ -1084,6 +1085,7 @@ $_def_vorbis
 $_def_tremor
 $_def_flac
 $_def_mad
+$_def_zlib
 
 #endif /* CONFIG_H */
 EOF
