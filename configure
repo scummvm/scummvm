@@ -129,10 +129,10 @@ _srcdir=`dirname $0`
 if type mktemp > /dev/null 2>&1 ; then
 	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
 else
-	TMPO=${_srcdir}/scummvm-conf
+	TMPO=scummvm-conf
 fi
 TMPC=${TMPO}.cpp
-TMPLOG=${_srcdir}/config.log
+TMPLOG=config.log
 
 # For cross compiling
 _host=""
@@ -740,6 +740,10 @@ for ac_option in $@; do
 		;;
 	--enable-release)
 		DEBFLAGS="-O2 -Wuninitialized"
+		;;
+	--enable-profiling)
+		CXXFLAGS="$CXXFLAGS -pg"
+		LDFLAGS="$LDFLAGS -pg"
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`

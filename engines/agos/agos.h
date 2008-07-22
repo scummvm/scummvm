@@ -1075,6 +1075,8 @@ protected:
 	virtual void drawImage(VC10_state *state);
 	void drawBackGroundImage(VC10_state *state);
 	void drawVertImage(VC10_state *state);
+	void drawVertImageCompressed(VC10_state *state);
+	void drawVertImageUncompressed(VC10_state *state);
 
 	void setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height);
 

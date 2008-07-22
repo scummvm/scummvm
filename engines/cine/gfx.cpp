@@ -337,7 +337,7 @@ int FWRenderer::drawChar(char character, int x, int y) {
 		x += 5;
 	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
 		idx = fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw(textTable[idx][0], textTable[idx][1], 16, 8, _backBuffer, x, y);
+		drawSpriteRaw(g_cine->_textHandler.textTable[idx][0], g_cine->_textHandler.textTable[idx][1], 16, 8, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -938,7 +938,7 @@ int OSRenderer::drawChar(char character, int x, int y) {
 		x += 5;
 	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
 		idx = fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw2(textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
+		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -969,6 +969,7 @@ void OSRenderer::drawBackground() {
 
 /*! \brief Draw one overlay
  * \param it Overlay info
+ * \todo Add handling of type 22 overlays
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int len;
@@ -979,6 +980,9 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
+		if (objectTable[it->objIdx].frame < 0) {
+			break;
+		}
 		sprite = animDataTable + objectTable[it->objIdx].frame;
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
@@ -986,6 +990,13 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		remaskSprite(mask, it);
 		drawMaskedSprite(objectTable[it->objIdx], mask);
 		delete[] mask;
+		break;
+
+	// bitmap
+	case 4:
+		if (objectTable[it->objIdx].frame >= 0) {
+			FWRenderer::renderOverlay(it);
+		}
 		break;
 
 	// masked background

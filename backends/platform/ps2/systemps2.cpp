@@ -54,9 +54,11 @@
 #include "graphics/surface.h"
 #include "graphics/font.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 #include "common/events.h"
 #include "backends/platform/ps2/ps2debug.h"
+#include "backends/fs/ps2/ps2-fs-factory.h"
+
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
 
 extern void *_gp;
@@ -309,7 +311,9 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 void OSystem_PS2::init(void) {
 	sioprintf("Timer...\n");
 	_scummTimerManager = new DefaultTimerManager();
-	_scummMixer = new Audio::Mixer();
+	_scummMixer = new Audio::MixerImpl(this);
+	_scummMixer->setOutputRate(44100);
+	_scummMixer->setReady(true);
 	initTimer();
 
 	sioprintf("Starting SavefileManager\n");
@@ -410,7 +414,8 @@ void OSystem_PS2::soundThread(void) {
 			// we have to produce more samples, call sound mixer
 			// the scratchpad at 0x70000000 is used as temporary soundbuffer
 			//_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
-			Audio::Mixer::mixCallback(_scummMixer, (byte*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+			// Audio::Mixer::mixCallback(_scummMixer, (byte*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+			_scummMixer->mixCallback((byte*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
 
 			// demux data into 2 buffers, L and R
 			 __asm__ (
@@ -534,16 +539,16 @@ Common::TimerManager *OSystem_PS2::getTimerManager() {
 	return _scummTimerManager;
 }
 
-int OSystem_PS2::getOutputSampleRate(void) const {
-	return 48000;
-}
-
 Audio::Mixer *OSystem_PS2::getMixer() {
 	return _scummMixer;
 }
 
 Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
 	return _saveManager;
+}
+
+FilesystemFactory *OSystem_PS2::getFilesystemFactory() {
+	return &Ps2FilesystemFactory::instance();
 }
 
 void OSystem_PS2::setShakePos(int shakeOffset) {

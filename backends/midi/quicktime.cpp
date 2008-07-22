@@ -132,8 +132,7 @@ bail:
 	return MERR_DEVICE_NOT_AVAILABLE;
 }
 
-void MidiDriver_QT::close()
-{
+void MidiDriver_QT::close() {
 	MidiDriver_MPU401::close();
 	dispose();
 }
@@ -248,8 +247,7 @@ void MidiDriver_QT::setPitchBendRange (byte channel, uint range) {
 	NASetController(qtNoteAllocator, qtNoteChannel[channel], kControllerPitchBend, theBend);
 }
 
-void MidiDriver_QT::dispose()
-{
+void MidiDriver_QT::dispose() {
 	for (int i = 0; i < 16; i++) {
 		if (qtNoteChannel[i] != 0)
 			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);

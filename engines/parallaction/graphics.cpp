@@ -33,6 +33,11 @@
 
 namespace Parallaction {
 
+// this is the size of the receiving buffer for unpacked frames,
+// since BRA uses some insanely big animations.
+#define MAXIMUM_UNPACKED_BITMAP_SIZE	640*401
+
+
 void Gfx::registerVar(const Common::String &name, int32 initialValue) {
 	if (_vars.contains(name)) {
 		warning("Variable '%s' already registered, ignoring initial value.\n", name.c_str());
@@ -64,10 +69,6 @@ int32 Gfx::getVar(const Common::String &name) {
 
 
 #define	LABEL_TRANSPARENT_COLOR 0xFF
-#define	BALLOON_TRANSPARENT_COLOR 2
-
-
-int16 Gfx::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
 void halfbritePixel(int x, int y, int color, void *data) {
 	byte *buffer = (byte*)data;
@@ -238,37 +239,6 @@ void Palette::rotate(uint first, uint last, bool forward) {
 }
 
 
-#define BALLOON_TAIL_WIDTH	12
-#define BALLOON_TAIL_HEIGHT	10
-
-
-byte _resBalloonTail[2][BALLOON_TAIL_WIDTH*BALLOON_TAIL_HEIGHT] = {
-	{
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x00, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x00, 0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	},
-	{
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x02, 0x02
-	}
-};
-
 
 void Gfx::setPalette(Palette pal) {
 	byte sysPal[256*4];
@@ -362,15 +332,13 @@ void Gfx::drawItems() {
 }
 
 void Gfx::drawBalloons() {
-	if (_numBalloons == 0) {
+	if (_balloons.size() == 0) {
 		return;
 	}
 
 	Graphics::Surface *surf = g_system->lockScreen();
-	for (uint i = 0; i < _numBalloons; i++) {
-		Common::Rect r(_balloons[i].surface.w, _balloons[i].surface.h);
-		r.moveTo(_balloons[i].x, _balloons[i].y);
-		blt(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
+	for (uint i = 0; i < _balloons.size(); i++) {
+		drawGfxObject(_balloons[i], *surf, false);
 	}
 	g_system->unlockScreen();
 }
@@ -686,6 +654,7 @@ void Gfx::freeLabels() {
 		delete _labels[i];
 	}
 	_labels.clear();
+	_floatingLabel = NO_FLOATING_LABEL;
 }
 
 void Gfx::drawLabels() {
@@ -779,7 +748,6 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setPalette(_palette);
 
-	_numBalloons = 0;
 	_numItems = 0;
 	_floatingLabel = NO_FLOATING_LABEL;
 
@@ -788,6 +756,9 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_halfbrite = false;
 	_hbCircleRadius = 0;
+
+	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
+	assert(_unpackedBitmap);
 
 	registerVar("background_mode", 1);
 	_varBackgroundMode = 1;
@@ -804,6 +775,9 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	freeBackground();
+	freeLabels();
+
+	delete []_unpackedBitmap;
 
 	return;
 }
@@ -830,136 +804,29 @@ void Gfx::setItemFrame(uint item, uint16 f) {
 	_items[item].data->setFlags(kGfxObjVisible);
 }
 
-Gfx::Balloon* Gfx::getBalloon(uint id) {
-	assert(id < _numBalloons);
-	return &_balloons[id];
+
+GfxObj* Gfx::registerBalloon(Frames *frames, const char *text) {
+
+	GfxObj *obj = new GfxObj(kGfxObjTypeBalloon, frames, text);
+
+	obj->layer = LAYER_FOREGROUND;
+	obj->frame = 0;
+	obj->setFlags(kGfxObjVisible);
+
+	_balloons.push_back(obj);
+
+	return obj;
 }
 
-int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) {
-	assert(_numBalloons < 5);
-
-	int id = _numBalloons;
-
-	Gfx::Balloon *balloon = &_balloons[id];
-
-	int16 real_h = (winding == -1) ? h : h + 9;
-	balloon->surface.create(w, real_h, 1);
-	balloon->surface.fillRect(Common::Rect(w, real_h), BALLOON_TRANSPARENT_COLOR);
-
-	Common::Rect r(w, h);
-	balloon->surface.fillRect(r, 0);
-	balloon->outerBox = r;
-
-	r.grow(-borderThickness);
-	balloon->surface.fillRect(r, 1);
-	balloon->innerBox = r;
-
-	if (winding != -1) {
-		// draws tail
-		// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
-		winding = (winding == 0 ? 1 : 0);
-		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
-		s.moveTo(r.width()/2 - 5, r.bottom - 1);
-		blt(s, _resBalloonTail[winding], &balloon->surface, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
+void Gfx::destroyBalloons() {
+	for (uint i = 0; i < _balloons.size(); i++) {
+		delete _balloons[i];
 	}
-
-	_numBalloons++;
-
-	return id;
-}
-
-int Gfx::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) {
-
-	int16 w, h;
-
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
-
-	int id = createBalloon(w+5, h, winding, 1);
-	Gfx::Balloon *balloon = &_balloons[id];
-
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
-
-	balloon->x = x;
-	balloon->y = y;
-
-	return id;
-}
-
-int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
-
-	int16 w, h;
-
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
-
-	int id = createBalloon(w+5, h, winding, 1);
-	Gfx::Balloon *balloon = &_balloons[id];
-
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
-
-	balloon->x = _dialogueBalloonX[id];
-	balloon->y = 10;
-
-	if (id > 0) {
-		balloon->y += _balloons[id - 1].y + _balloons[id - 1].outerBox.height();
-	}
-
-
-	return id;
-}
-
-void Gfx::setBalloonText(uint id, char *text, byte textColor) {
-	Gfx::Balloon *balloon = getBalloon(id);
-	balloon->surface.fillRect(balloon->innerBox, 1);
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
-}
-
-
-int Gfx::setLocationBalloon(char *text, bool endGame) {
-
-	int16 w, h;
-
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
-
-	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR);
-	Gfx::Balloon *balloon = &_balloons[id];
-	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, 0, MAX_BALLOON_WIDTH);
-
-	balloon->x = 5;
-	balloon->y = 5;
-
-	return id;
-}
-
-int Gfx::hitTestDialogueBalloon(int x, int y) {
-
-	Common::Point p;
-
-	for (uint i = 0; i < _numBalloons; i++) {
-		p.x = x - _balloons[i].x;
-		p.y = y - _balloons[i].y;
-
-		if (_balloons[i].innerBox.contains(p))
-			return i;
-	}
-
-	return -1;
-}
-
-
-void Gfx::freeBalloons() {
-	for (uint i = 0; i < _numBalloons; i++) {
-		_balloons[i].surface.free();
-	}
-	_numBalloons = 0;
+	_balloons.clear();
 }
 
 void Gfx::freeItems() {
 	_numItems = 0;
-}
-
-void Gfx::hideDialogueStuff() {
-	freeItems();
-	freeBalloons();
 }
 
 void Gfx::freeBackground() {

@@ -34,6 +34,7 @@ namespace Kyra {
 TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, OSystem *system) : _vm(vm), _system(system), _currentTim(0) {
 #define COMMAND(x) { &TIMInterpreter::x, #x }
 #define COMMAND_UNIMPL() { 0, 0 }
+#define cmd_return(n) cmd_return_##n
 	static const CommandEntry commandProcs[] = {
 		// 0x00
 		COMMAND(cmd_initFunc0),
@@ -66,15 +67,16 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, OSystem *system) : _vm(vm), _s
 		COMMAND_UNIMPL(),
 		COMMAND(cmd_resetAllRuntimes),
 		// 0x18
-		COMMAND(cmd_return<1>),
+		COMMAND(cmd_return(1)),
 		COMMAND(cmd_execOpcode),
 		COMMAND(cmd_initFuncNow),
 		COMMAND(cmd_stopFuncNow),
 		// 0x1C
-		COMMAND(cmd_return<1>),
-		COMMAND(cmd_return<1>),
-		COMMAND(cmd_return<-1>)
+		COMMAND(cmd_return(1)),
+		COMMAND(cmd_return(1)),
+		COMMAND(cmd_return(n1))
 	};
+#undef cmd_return
 
 	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
@@ -121,6 +123,8 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
 		tim->func[i].avtl = tim->avtl + tim->avtl[i];	
+
+	strncpy(tim->filename, filename, 13);
 
 	return tim;
 }
@@ -199,12 +203,12 @@ void TIMInterpreter::refreshTimersAfterPause(uint32 elapsedTime) {
 
 int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 	if (cmd < 0 || cmd >= _commandsSize) {
-		warning("Calling unimplemented TIM command %d", cmd);
+		warning("Calling unimplemented TIM command %d from file '%s'", cmd, _currentTim->filename);
 		return 0;
 	}
 
 	if (_commands[cmd].proc == 0) {
-		warning("Calling unimplemented TIM command %d", cmd);
+		warning("Calling unimplemented TIM command %d from file '%s'", cmd, _currentTim->filename);
 		return 0;
 	}
 
@@ -259,7 +263,7 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 	uint16 opcode = *param++;
 	if (opcode > _currentTim->opcodes->size()) {
-		warning("Calling unimplemented TIM opcode(0x%.02X/%d)", opcode, opcode);
+		warning("Calling unimplemented TIM opcode(0x%.02X/%d) from file '%s'", opcode, opcode, _currentTim->filename);
 		return 0;
 	}
 

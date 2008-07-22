@@ -226,28 +226,31 @@
 			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
 	
 		# now one for each ready-for-release engine
-	
+		if (0)
+		{
 			foreach (@WorkingEngines)
 			{
 				$VariationSets{'ALL'}{$_} = "$DefaultFeatures $_";
 			}
 			# for scumm, we need to add 2 features:
-			$VariationSets{'ALL'}{'scumm'} .= " scumm_7_8 he";
-	
+			#$VariationSets{'ALL'}{'scumm'} .= " scumm_7_8 he";
+		}
+
 		# now one for each not-ready-for-release-or-testing engine
-	
+		if (0)
+		{
 			foreach (@TestingEngines)
 			{
 				$VariationSets{'ALL'}{"test_$_"} = "$DefaultFeatures $_";
 			}
-	
+		}
 		# below here you could specify weird & experimental combinations, non-ready engines
 	
 			# a small version of the saga engine, because it is so big (no tremor,mad,zlib)
-			$VariationSets{'ALL'}{'saga_mini'} = "saga";
+			#$VariationSets{'ALL'}{'saga_mini'} = "saga";
 		
 			# a smaller version of scumm without support for v7, v8 and HE games
-			$VariationSets{'ALL'}{'scumm_no78he'} = "$DefaultFeatures scumm";
+			#$VariationSets{'ALL'}{'scumm_no78he'} = "$DefaultFeatures scumm";
 	
 			# maybe you feel lucky and want to test the sword engines? :P
 			#$VariationSets{'S60v2'}{'test_sword'} = "$DefaultFeatures mpeg2 sword1 sword2";

@@ -452,10 +452,12 @@ bool File::isOpen() const {
 }
 
 bool File::ioFailed() const {
+	// TODO/FIXME: Just use ferror() here?
 	return _ioFailed != 0;
 }
 
 void File::clearIOFailed() {
+	// TODO/FIXME: Just use clearerr() here?
 	_ioFailed = false;
 }
 

@@ -43,7 +43,7 @@ IrxFile irxFiles[] = {
 	{ "PADMAN",  BIOS, NOTHING, NULL, 0 },
 	{ "LIBSD",   BIOS, NOTHING, NULL, 0 },
 
-	{ "IOMANX.IRX",   SYSTEM | NOT_HOST, NOTHING, NULL, 0 }, // already loaded by ps2link
+	{ "IOMANX.IRX",   SYSTEM /*| NOT_HOST*/, NOTHING, NULL, 0 }, // already loaded by ps2link
 	{ "FILEXIO.IRX",  SYSTEM, NOTHING, NULL, 0 },
 	{ "CODYVDFS.IRX", SYSTEM, NOTHING, NULL, 0 },
 	{ "SJPCM.IRX",    SYSTEM, NOTHING, NULL, 0 },

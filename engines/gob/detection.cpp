@@ -277,6 +277,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+	{ // Supplied by raina in the forums
+		{
+			"gob1",
+			"",
+			AD_ENTRY1s("intro.stk", "6d837c6380d8f4d984c9f6cc0026df4f", 192712),
+			EN_ANY,
+			kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob1,
+		kFeaturesNone,
+		"intro"
+	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
 			"gob1",

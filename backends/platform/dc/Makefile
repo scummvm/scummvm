@@ -33,7 +33,32 @@ ifdef DYNAMIC_MODULES
 DEFINES += -DDYNAMIC_MODULES
 PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
+ENABLED=DYNAMIC_PLUGIN
+else
+ENABLED=STATIC_PLUGIN
 endif
+
+ENABLE_SCUMM = $(ENABLED)
+ENABLE_SCUMM_7_8 = $(ENABLED)
+ENABLE_HE = $(ENABLED)
+ENABLE_AGI = $(ENABLED)
+ENABLE_AGOS = $(ENABLED)
+ENABLE_CINE = $(ENABLED)
+ENABLE_CRUISE = $(ENABLED)
+ENABLE_DRASCULA = $(ENABLED)
+ENABLE_GOB = $(ENABLED)
+ENABLE_IGOR = $(ENABLED)
+ENABLE_KYRA = $(ENABLED)
+ENABLE_LURE = $(ENABLED)
+ENABLE_M4 = $(ENABLED)
+ENABLE_MADE = $(ENABLED)
+ENABLE_PARALLACTION = $(ENABLED)
+ENABLE_QUEEN = $(ENABLED)
+ENABLE_SAGA = $(ENABLED)
+ENABLE_SKY = $(ENABLED)
+ENABLE_SWORD1 = $(ENABLED)
+ENABLE_SWORD2 = $(ENABLED)
+ENABLE_TOUCHE = $(ENABLED)
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 	label.o vmsave.o softkbd.o dcloader.o cache.o dc-fs.o
@@ -50,7 +75,7 @@ SCUMMVM.BIN : scummvm.bin
 
 plugin_dist :
 	for p in plugins/*.plg; do \
-	  sh-elf-strip -g -o "`basename \"$$p\" | tr '[:lower:]' '[:upper:]'`" "$$p"; \
+	  sh-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
 
 dist : SCUMMVM.BIN plugins plugin_dist

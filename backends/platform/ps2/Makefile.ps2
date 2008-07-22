@@ -19,16 +19,17 @@ RM 	= rm -f
 srcdir = ../../..
 VPATH = $(srcdir)
 INCDIR = ../../../
+DEPDIR = .deps
 
 DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_MPEG2 -DUSE_ZLIB -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
 # PS2SDK-Ports from ps2dev.org's SVN repository for libmad, zlib and ucl
-PS2SDK_PORTS = /home/robby/libStuffNew/ps2sdk-ports
+PS2SDK_PORTS = /mnt/winxp/scummvm/ports
 PS2SDK_PORTS_INCS = /ucl /zlib/include /libmad/ee/include
 PS2SDK_PORTS_LIBS = /ucl /zlib/lib /libmad/ee/lib
 
 # we also need SjPcm, Tremor and libmpeg2
-MORE_LIBS_DIR = /home/robby/libStuff
+MORE_LIBS_DIR = /mnt/winxp/scummvm/ports
 MORE_LIBS_INCS = /SjPcm/ee/src /mpeg2dec/include /tremor
 MORE_LIBS_LIBS = /SjPcm/ee/lib /mpeg2dec/libmpeg2 /tremor/tremor
 

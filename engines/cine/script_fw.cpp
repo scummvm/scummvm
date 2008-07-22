@@ -1019,6 +1019,20 @@ int FWScript::o1_divVar() {
 }
 
 int FWScript::o1_compareVar() {
+	// WORKAROUND: A workaround for a script bug in script file CODE2.PRC
+	// in at least some of the Amiga and Atari ST versions of Future Wars.
+	// Fixes bug #2016647 (FW: crash with italian amiga version). A local
+	// variable 251 is compared against value 0 although it's quite apparent
+	// from the context in the script that instead global variable 251 should
+	// be compared against value 0. So looks like someone made a typo when
+	// making the scripts. Therefore we change that particular comparison
+	// from using the local variable 251 to using the global variable 251.
+	if (g_cine->getGameType() == Cine::GType_FW && scumm_stricmp(currentPrcName, "CODE2.PRC") == 0 &&
+		(g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) &&
+		_script.getByte(_pos) == 251 && _script.getByte(_pos + 1) == 0 && _script.getWord(_pos + 2) == 0) {
+		return o1_compareGlobalVar();
+	}
+
 	byte varIdx = getNextByte();
 	byte varType = getNextByte();
 

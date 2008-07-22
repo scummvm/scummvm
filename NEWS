@@ -3,19 +3,23 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.12.0 (????-??-??)
  New Games:
-   - Added support for The Legend of Kyrandia: Book Two: Hand of Fate
-   - Added support for The Legend of Kyrandia: Book Three: Malcolm's Revenge
-   - Added support for Lost in Time
-   - Added support for The Bizarre Adventures of Woodruff and the Schnibble
-   - Added support for the PC version of Waxworks
+   - Added support for The Legend of Kyrandia: Book Two: Hand of Fate.
+   - Added support for The Legend of Kyrandia: Book Three: Malcolm's Revenge.
+   - Added support for Lost in Time.
+   - Added support for The Bizarre Adventures of Woodruff and the Schnibble.
+   - Added support for the PC version of Waxworks.
    - Added support for the Macintosh version of I Have no Mouth, and I
-     must Scream
-   - Added support for Drascula: The Vampire Strikes Back
+     must Scream.
+   - Added support for Drascula: The Vampire Strikes Back.
    
  General:
    - Added CAMD MIDI driver for AmigaOS4.
    - Revived the PS2 port (was already in 0.11.1 but was forgotten in the
      release notes).
+   - Plugged numerous memory leaks in all engines (part of GSoC'08 task),
+   - Added audio double buffering to the SDL backend, which fixes the 
+     problems with the MT-32 emulator on Mac OS X (for now only enabled
+     on Mac OS X).
 
  AGOS:
    - Fixed palette issues in Amiga versions of Simon the Sorcerer 1.

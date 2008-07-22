@@ -341,7 +341,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	}
 
 	_input->waitUntilLeftClick();
-	_gfx->freeBalloons();
+	_balloonMan->freeBalloons();
 
 	return;
 }
@@ -424,6 +424,7 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	}
 	_inTestResult = true;
 
+	_gfx->freeLabels();
 	_gfx->updateScreen();
 
 	_disk->selectArchive("disk1");

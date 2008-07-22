@@ -195,7 +195,7 @@ int Parallaction_br::guiShowMenu() {
 	}
 
 	_system->showMouse(false);
-	_gfx->hideDialogueStuff();
+	hideDialogueStuff();
 
 	for (i = 0; i < availItems; i++) {
 		delete _lines[i];

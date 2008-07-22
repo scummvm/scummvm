@@ -216,10 +216,16 @@ void Mult_v1::freeMultKeys() {
 	if (_animDataAllocated) {
 		clearObjectVideos();
 
+		if (_objects)
+			for (int i = 0; i < _objCount; i++) {
+				delete _objects[i].pPosX;
+				delete _objects[i].pPosY;
+			}
+
 		delete[] _objects;
 		delete[] _renderData;
-		delete[] _animArrayX;
-		delete[] _animArrayY;
+		delete _animArrayX;
+		delete _animArrayY;
 		delete[] _animArrayData;
 
 		_objects = 0;
@@ -263,6 +269,14 @@ void Mult_v1::playMultInit() {
 	_oldPalette = _vm->_global->_pPaletteDesc->vgaPal;
 
 	if (!_animSurf) {
+		if (_objects)
+			for (int i = 0; i < _objCount; i++) {
+				delete _objects[i].pPosX;
+				delete _objects[i].pPosY;
+			}
+
+		delete[] _objects;
+
 		_vm->_util->setFrameRate(_multData->frameRate);
 		_animTop = 0;
 		_animLeft = 0;
@@ -270,30 +284,27 @@ void Mult_v1::playMultInit() {
 		_animHeight = 200;
 		_objCount = 4;
 
-		delete[] _objects;
 		delete[] _renderData;
-		delete[] _animArrayX;
-		delete[] _animArrayY;
+		delete _animArrayX;
+		delete _animArrayY;
 		delete[] _animArrayData;
 
 		_objects = new Mult_Object[_objCount];
 		_renderData = new int16[9 * _objCount];
-		_animArrayX = new int32[_objCount];
-		_animArrayY = new int32[_objCount];
+		_animArrayX = new VariablesLE(_objCount * 4);
+		_animArrayY = new VariablesLE(_objCount * 4);
 		_animArrayData = new Mult_AnimData[_objCount];
 
 		memset(_objects, 0, _objCount * sizeof(Mult_Object));
 		memset(_renderData, 0, _objCount * 9 * sizeof(int16));
-		memset(_animArrayX, 0, _objCount * sizeof(int32));
-		memset(_animArrayY, 0, _objCount * sizeof(int32));
 		memset(_animArrayData, 0, _objCount * sizeof(Mult_AnimData));
 
 		for (_counter = 0; _counter < _objCount; _counter++) {
 			Mult_Object &multObj = _objects[_counter];
 			Mult_AnimData &animData = _animArrayData[_counter];
 
-			multObj.pPosX = (int32 *) &_animArrayX[_counter];
-			multObj.pPosY = (int32 *) &_animArrayY[_counter];
+			multObj.pPosX = new VariableReference(*_animArrayX, _counter * 4);
+			multObj.pPosY = new VariableReference(*_animArrayY, _counter * 4);
 			multObj.pAnimData = &animData;
 
 			animData.isStatic = 1;

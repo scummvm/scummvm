@@ -67,10 +67,12 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	_mixer = new DSAudioMixer;
-	_timer = new DSTimerManager;
-	DS::setSoundProc(Audio::Mixer::mixCallback, _mixer);
-    DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+	_mixer = new DSAudioMixer(this);
+	_timer = new DSTimerManager();
+    	DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+
+	_mixer->setOutputRate(11025 /*DS::getSoundFrequency()*/);
+	_mixer->setReady(true);
     
 	OSystem::initBackend();
 }
@@ -139,7 +141,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 		
-//		if (r != 255)
+		if (r != 255)
 		{		
 			BG_PALETTE[r] = red | (green << 5) | (blue << 10);
 			if (!DS::getKeyboardEnable()) {
@@ -158,13 +160,13 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
 
-	u16* image = (u16 *) DS::get8BitBackBuffer();
+	const u16* image = (const u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
 		DC_FlushRange(image + (y << 8), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[(y << 8) + x];
 		}
 	}
 
@@ -277,7 +279,7 @@ void OSystem_DS::grabOverlay (OverlayColor *buf, int pitch) {
 
 void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	u16* bg = (u16 *) DS::get16BitBackBuffer();
-	u16* src = (u16 *) buf;
+	const u16* src = (const u16 *) buf;
 		
 //	if (x + w > 256) w = 256 - x;
 	//if (x + h > 256) h = 256 - y;

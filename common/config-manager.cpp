@@ -176,7 +176,6 @@ void ConfigManager::loadFile(const String &filename) {
 	if (!cfg_file.open(filename)) {
 		printf("Creating configuration file: %s\n", filename.c_str());
 	} else {
-		char buf[MAXLINELEN];
 		String domain;
 		String comment;
 		int lineno = 0;
@@ -184,20 +183,28 @@ void ConfigManager::loadFile(const String &filename) {
 		// TODO: Detect if a domain occurs multiple times (or likewise, if
 		// a key occurs multiple times inside one domain).
 
-		while (!cfg_file.eof()) {
+		while (!cfg_file.eof() && !cfg_file.ioFailed()) {
 			lineno++;
-			if (!cfg_file.readLine(buf, MAXLINELEN))
-				break;
 
-			if (buf[0] == '#') {
+			// Read a line
+			String line;
+			while (line.lastChar() != '\n') {
+				char buf[MAXLINELEN];
+				if (!cfg_file.readLine_NEW(buf, MAXLINELEN))
+					break;
+				line += buf;
+			}
+
+			if (line.size() == 0) {
+				// Do nothing
+			} else if (line[0] == '#') {
 				// Accumulate comments here. Once we encounter either the start
 				// of a new domain, or a key-value-pair, we associate the value
 				// of the 'comment' variable with that entity.
-				comment += buf;
-				comment += '\n';
-			} else if (buf[0] == '[') {
+				comment += line;
+			} else if (line[0] == '[') {
 				// It's a new domain which begins here.
-				char *p = buf + 1;
+				const char *p = line.c_str() + 1;
 				// Get the domain name, and check whether it's valid (that
 				// is, verify that it only consists of alphanumerics,
 				// dashes and underscores).
@@ -209,8 +216,8 @@ void ConfigManager::loadFile(const String &filename) {
 					error("Config file buggy: missing ] in line %d", lineno);
 					break;
 				case ']':
-					*p = 0;
-					domain = buf + 1;
+					domain = String(line.c_str() + 1, p - (line.c_str() + 1));
+					//domain = String(line.c_str() + 1, p);	// TODO: Pending Common::String changes
 					break;
 				default:
 					error("Config file buggy: Invalid character '%c' occured in domain name in line %d", *p, lineno);
@@ -226,10 +233,14 @@ void ConfigManager::loadFile(const String &filename) {
 
 				_domainSaveOrder.push_back(domain);
 			} else {
-				// Skip leading & trailing whitespaces
-				char *t = rtrim(ltrim(buf));
+				// This line should be a line with a 'key=value' pair, or an empty one.
+				
+				// Skip leading whitespaces
+				const char *t = line.c_str();
+				while (isspace(*t))
+					t++;
 
-				// Skip empty lines
+				// Skip empty lines / lines with only whitespace
 				if (*t == 0)
 					continue;
 
@@ -238,13 +249,30 @@ void ConfigManager::loadFile(const String &filename) {
 					error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
 				}
 
-				// Split string at '=' into 'key' and 'value'.
-				char *p = strchr(t, '=');
+				// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
+				const char *p = strchr(t, '=');
 				if (!p)
 					error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
-				*p = 0;
-				String key = rtrim(t);
-				String value = ltrim(p + 1);
+
+				// Trim spaces before the '=' to obtain the key
+				const char *p2 = p;
+				while (p2 > t && isspace(*(p2-1)))
+					p2--;
+				String key(t, p2 - t);
+				
+				// Skip spaces after the '='
+				t = p + 1;
+				while (isspace(*t))
+					t++;
+
+				// Trim trailing spaces
+				p2 = t + strlen(t);
+				while (p2 > t && isspace(*(p2-1)))
+					p2--;
+
+				String value(t, p2 - t);
+
+				// Finally, store the key/value pair in the active domain
 				set(key, value, domain);
 
 				// Store comment

@@ -34,11 +34,6 @@
 
 #include "common/util.h"
 
-#ifdef _MSC_VER
-#define	_USE_MATH_DEFINES
-#endif
-#include <math.h>
-
 #define		EUPHONY_FADEOUT_TICKS		600
 
 namespace Kyra {
@@ -2368,7 +2363,7 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_numSSG(type == OD_TOWNS ? 0 : 3), _hasADPCM(type == OD_TYPE86 ? true : false),
 	_numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true) {	
 	setTempo(84);
-	_baserate = (3579545.0 / (double)getRate()) / 144.0;
+	_baserate = (double)getRate() / 10368.0;
 }
 
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
@@ -2657,7 +2652,7 @@ void TownsPC98_OpnDriver::generateTables() {
 	delete [] _oprSinTbl;
 	_oprSinTbl = new uint32[1024];
 	for (int i = 0; i < 1024; i++) {
-		double val = sin((double) (((i << 1) + 1) * M_PI / 1024.0));
+		double val = sin((double) (((i << 1) + 1) * PI / 1024.0));
 		double d_dcb = log(1.0 / (double)ABS(val)) / log(2.0) * 256.0;
 		int32 i_dcb = (int32)(2.0 * d_dcb);
 		i_dcb = (i_dcb & 1) ? (i_dcb >> 1) + 1 : (i_dcb >> 1);
@@ -3100,8 +3095,8 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 }
 
 bool SoundTownsPC98_v2::init() {
-	_driver = new TownsPC98_OpnDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
-		TownsPC98_OpnDriver::OD_TYPE86 : TownsPC98_OpnDriver::OD_TOWNS);
+	_driver = new TownsPC98_OpnDriver(_mixer, /*_vm->gameFlags().platform == Common::kPlatformPC98 ?
+		TownsPC98_OpnDriver::OD_TYPE86 :*/ TownsPC98_OpnDriver::OD_TOWNS);
 	_useFmSfx = _vm->gameFlags().platform == Common::kPlatformPC98 ? true : false;
 	_vm->checkCD();
 	// FIXME: While checking for 'track1.XXX(X)' looks like

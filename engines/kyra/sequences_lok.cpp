@@ -1083,7 +1083,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	_screen->_charWidth = -1;
 
 	// we only need this for the fm-towns version
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+	if (_flags.platform == Common::kPlatformFMTowns && _configMusic == 1)
 		snd_playWanderScoreViaMap(53, 1);
 
 	uint8 *buffer = 0;

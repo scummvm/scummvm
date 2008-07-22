@@ -112,7 +112,7 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	if ((width < 1) || (height < 1))
 		return;
 
-	byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
+	const byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
 	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;
 
 	uint32 size = width * height;

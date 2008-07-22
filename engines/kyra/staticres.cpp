@@ -1034,8 +1034,10 @@ void KyraEngine_LoK::initStaticResource() {
 	}
 
 	// audio data tables
+#if 0
 	static const char *tIntro98[] = { "intro%d.dat" };
 	static const char *tIngame98[] = { "kyram%d.dat" };
+#endif
 
 	static const AudioDataStruct soundData_PC[] = {
 		{ _soundFilesIntro, _soundFilesIntroSize, 0, 0 },
@@ -1049,18 +1051,20 @@ void KyraEngine_LoK::initStaticResource() {
 		{ 0, 0, 0, 0}
 	};
 
+#if 0
 	static const AudioDataStruct soundData_PC98[] = {
 		{ tIntro98, 1, 0, 0 },
 		{ tIngame98, 1, 0, 0 },
 		{ 0, 0, 0, 0}
 	};
+#endif
 
 	if (_flags.platform == Common::kPlatformPC)
 		_soundData = soundData_PC;
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_PC98;
+		_soundData = soundData_TOWNS/*soundData_PC98*/;
 
 }
 
@@ -1259,9 +1263,11 @@ void KyraEngine_HoF::initStaticResource() {
 	static const char *fmtMusicFileListFinale[] = { "finale%d.twn" };
 	static const char *fmtMusicFileListIngame[] = { "km%02d.twn" };
 
+#if 0
 	static const char *pc98MusicFileListIntro[] = { "intro%d.86" };
 	static const char *pc98MusicFileListFinale[] = { "finale%d.86" };
 	static const char *pc98MusicFileListIngame[] = { "km%02d.86" };
+#endif
 
 	static const AudioDataStruct soundData_PC[] = {
 		{ _musicFileListIntro, _musicFileListIntroSize, 0, 0 },
@@ -1275,18 +1281,20 @@ void KyraEngine_HoF::initStaticResource() {
 		{ fmtMusicFileListFinale, 1, _cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1 }
 	};
 
+#if 0
 	static const AudioDataStruct soundData_PC98[] = {
 		{ pc98MusicFileListIntro, 1, 0, 0 },
 		{ pc98MusicFileListIngame, 1, 0, 0 },
 		{ pc98MusicFileListFinale, 1, 0, 0 }		
 	};
+#endif
 
 	if (_flags.platform == Common::kPlatformPC)
 		_soundData = soundData_PC;
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_PC98;
+		_soundData = soundData_TOWNS/*soundData_PC98*/;
 
 	// setup sequence data
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
@@ -1976,11 +1984,25 @@ const char *KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
-	"TRI",		Italian and Spanish were never included
-	"TRS"*/
+	"TRI",		Italian and Spanish were never included, the supported fan translations are using
+	"TRS"		English/French extensions thus overwriting these languages */		
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
+
+const char * const KyraEngine_MR::_mainMenuSpanishFan[] = {
+	"Nueva Partida",
+	"Ver Intro",
+	"Restaurar",
+	"Finalizar"
+};
+
+const char * const KyraEngine_MR::_mainMenuItalianFan[] = {
+	"Nuova Partita",
+	"Introduzione",
+	"Carica una partita",
+	"Esci dal gioco"
+};
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 	{ 57, 91, -31, -82 },

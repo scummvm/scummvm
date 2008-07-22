@@ -308,4 +308,62 @@ uint32 VariablesBE::read32(const byte *buf) const {
 	return READ_BE_UINT32(buf);
 }
 
+VariableReference::VariableReference() {
+	_vars = 0;
+	_offset = 0;
+}
+
+VariableReference::VariableReference(Variables &vars, uint32 offset, Variables::Type type) {
+	set(vars, offset, type);
+}
+
+VariableReference::~VariableReference() {
+}
+
+void VariableReference::set(Variables &vars, uint32 offset, Variables::Type type) {
+	_vars = &vars;
+	_offset = offset;
+	_type = type;
+}
+
+VariableReference &VariableReference::operator=(uint32 value) {
+	if (_vars) {
+		switch (_type) {
+			case Variables::kVariableType8:
+				_vars->writeOff8(_offset, (uint8) value);
+				break;
+			case Variables::kVariableType16:
+				_vars->writeOff16(_offset, (uint16) value);
+				break;
+			case Variables::kVariableType32:
+				_vars->writeOff32(_offset, value);
+				break;
+		}
+	}
+	return *this;
+}
+
+VariableReference::operator uint32() {
+	if (_vars) {
+		switch (_type) {
+			case Variables::kVariableType8:
+				return (uint32) _vars->readOff8(_offset);
+			case Variables::kVariableType16:
+				return (uint32) _vars->readOff16(_offset);
+			case Variables::kVariableType32:
+				return _vars->readOff32(_offset);
+		}
+	}
+
+	return 0;
+}
+
+VariableReference &VariableReference::operator+=(uint32 value) {
+	return (*this = (*this + value));
+}
+
+VariableReference &VariableReference::operator*=(uint32 value) {
+	return (*this = (*this * value));
+}
+
 } // End of namespace Gob

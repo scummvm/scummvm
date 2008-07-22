@@ -168,7 +168,7 @@ bool displayModeIs8Bit = false;
 u8 gameID;
 
 bool snapToBorder = false;
-bool consoleEnable = false;
+bool consoleEnable = true;
 bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
@@ -899,12 +899,6 @@ u16* get8BitBackBuffer() {
 		return BG_GFX + 0x10000;		// 16bit qty!
 }
 
-void setSoundProc(OSystem_DS::SoundProc proc, void* param) {
-//	consolePrintf("Set sound callback");
-	soundCallback = proc;
-	soundParam = param;
-}
-
 // The sound system in ScummVM seems to always return stereo interleaved samples.
 // Here, I'm treating an 11Khz stereo stream as a 22Khz mono stream, which works sorta ok, but is
 // a horrible bodge.  Any advice on how to change the engine to output mono would be greatly
@@ -914,7 +908,8 @@ void doSoundCallback() {
 	consolePrintf("doSoundCallback...");
 	#endif
 
-	if (soundCallback) {
+	if (OSystem_DS::instance())
+	if (OSystem_DS::instance()->getMixerImpl()) {
 		lastCallbackFrame = frameCount;
 		
 		for (int r = IPC->playingSection; r < IPC->playingSection + 4; r++) {
@@ -923,7 +918,7 @@ void doSoundCallback() {
 			if (IPC->fillNeeded[chunk]) {
 				IPC->fillNeeded[chunk] = false;
 				DC_FlushAll();
-				soundCallback(soundParam, (byte *) (soundBuffer + ((bufferSamples >> 2) * chunk)), bufferSamples >> 1);
+				OSystem_DS::instance()->getMixerImpl()->mixCallback((byte *) (soundBuffer + ((bufferSamples >> 2) * chunk)), bufferSamples >> 1);
 				IPC->fillNeeded[chunk] = false;
 				DC_FlushAll();
 			}

@@ -94,6 +94,7 @@ public:
 
 	Common::StringList _volumeResourceFiles;
 	StringPtrHashMap _volumeEntriesMap;
+	TextHandler _textHandler;
 
 private:
 	void initialize(void);
@@ -107,6 +108,7 @@ private:
 extern CineEngine *g_cine;
 
 #define BOOT_PRC_NAME "AUTO00.PRC"
+#define COPY_PROT_FAIL_PRC_NAME "L201.ANI"
 
 enum {
 	VAR_MOUSE_X_MODE = 253,

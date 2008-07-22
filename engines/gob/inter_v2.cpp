@@ -880,9 +880,15 @@ void Inter_v2::o2_initMult() {
 
 		_vm->_mult->clearObjectVideos();
 
+		for (int i = 0; i < _vm->_mult->_objCount; i++) {
+			delete _vm->_mult->_objects[i].pPosX;
+			delete _vm->_mult->_objects[i].pPosY;
+		}
+
 		delete[] _vm->_mult->_objects;
 		delete[] _vm->_mult->_renderObjs;
 		delete[] _vm->_mult->_orderArray;
+
 		_vm->_mult->_objects = 0;
 		_vm->_mult->_renderObjs = 0;
 		_vm->_mult->_orderArray = 0;
@@ -907,8 +913,8 @@ void Inter_v2::o2_initMult() {
 			uint32 offPosY = i * 4 + (posYVar / 4) * 4;
 			uint32 offAnim = animDataVar + i * 4 * _vm->_global->_inter_animDataSize;
 
-			_vm->_mult->_objects[i].pPosX = (int32 *) _variables->getAddressOff32(offPosX);
-			_vm->_mult->_objects[i].pPosY = (int32 *) _variables->getAddressOff32(offPosY);
+			_vm->_mult->_objects[i].pPosX = new VariableReference(*_vm->_inter->_variables, offPosX);
+			_vm->_mult->_objects[i].pPosY = new VariableReference(*_vm->_inter->_variables, offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
 				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
@@ -1046,7 +1052,7 @@ void Inter_v2::o2_loadMultObject() {
 
 	} else if ((objAnim.animType != 100) && (objAnim.animType != 101)) {
 
-		if ((*(obj.pPosX) == -1234) && (*(obj.pPosY) == -4321)) {
+		if ((((int32) *(obj.pPosX)) == -1234) && (((int32) *(obj.pPosY)) == -4321)) {
 
 			if (obj.videoSlot > 0)
 				_vm->_vidPlayer->slotClose(obj.videoSlot - 1);

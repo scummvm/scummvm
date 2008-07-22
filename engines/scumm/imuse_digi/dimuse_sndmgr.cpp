@@ -102,10 +102,10 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	int32 version = file->readUint32BE();
 	if (version != 3) {
 		if (version == 2) {
-			warning("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version of compressed *.bun file, expected 3, but it's 2.");
-			warning("Suggested to recompress with latest tool from daily builds.");
+			warning("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version of compressed *.bun file, expected 3, but it's 2");
+			warning("Suggested to recompress with latest tool from daily builds");
 		} else
-			error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's: %d.", version);
+			error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's: %d", version);
 	}
 	sound->bits = file->readUint32BE();
 	sound->freq = file->readUint32BE();

@@ -93,12 +93,18 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 }
 
 Mult::~Mult() {
+	if (_objects)
+		for (int i = 0; i < _objCount; i++) {
+			delete _objects[i].pPosX;
+			delete _objects[i].pPosY;
+		}
+
 	delete[] _objects;
 	delete[] _orderArray;
 	delete[] _renderData;
 	delete[] _renderObjs;
-	delete[] _animArrayX;
-	delete[] _animArrayY;
+	delete _animArrayX;
+	delete _animArrayY;
 	delete[] _animArrayData;
 	delete _multData;
 }
@@ -122,6 +128,12 @@ void Mult::freeAll(void) {
 
 void Mult::freeMult() {
 	clearObjectVideos();
+
+	if (_objects)
+		for (int i = 0; i < _objCount; i++) {
+			delete _objects[i].pPosX;
+			delete _objects[i].pPosY;
+		}
 
 	delete[] _objects;
 	delete[] _renderData;
@@ -203,11 +215,17 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (_animDataAllocated) {
 			clearObjectVideos();
 
+			if (_objects)
+				for (int i = 0; i < _objCount; i++) {
+					delete _objects[i].pPosX;
+					delete _objects[i].pPosY;
+				}
+
 			delete[] _objects;
 			delete[] _renderData;
 			delete[] _renderObjs;
-			delete[] _animArrayX;
-			delete[] _animArrayY;
+			delete _animArrayX;
+			delete _animArrayY;
 			delete[] _animArrayData;
 			delete[] _orderArray;
 

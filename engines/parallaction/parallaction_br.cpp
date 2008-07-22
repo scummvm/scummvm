@@ -72,13 +72,20 @@ int Parallaction_br::init() {
 	initResources();
 	initFonts();
 	initCursors();
-	initOpcodes();
 	_locationParser = new LocationParser_br(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_br(this);
 	_programParser->init();
 
+	_cmdExec = new CommandExec_br(this);
+	_cmdExec->init();
+	_programExec = new ProgramExec_br(this);
+	_programExec->init();
+
 	_part = -1;
+
+	_subtitle[0] = -1;
+	_subtitle[1] = -1;
 
 	Parallaction::init();
 
@@ -205,13 +212,21 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;
-		runZone(z);			// FIXME: BRA doesn't handle sound yet
+		if ((z->_type & 0xFFFF) == kZoneSpeak) {
+			enterDialogueMode(z);
+		} else {
+			runZone(z);			// FIXME: BRA doesn't handle sound yet
+		}
 	}
 
 	if (_activeZone2) {
 		z = _activeZone2;	// speak Zone or sound
 		_activeZone2 = nullZonePtr;
-		runZone(z);
+		if ((z->_type & 0xFFFF) == kZoneSpeak) {
+			enterDialogueMode(z);
+		} else {
+			runZone(z);			// FIXME: BRA doesn't handle sound yet
+		}
 	}
 }
 
@@ -221,10 +236,16 @@ void Parallaction_br::changeLocation(char *location) {
 	// free open location stuff
 	clearSubtitles();
 	freeBackground();
-	_gfx->clearGfxObjects();
+	_gfx->clearGfxObjects(kGfxObjNormal | kGfxObjCharacter);
 	_location._programs.clear();
+
+	_location._animations.remove(_char._ani);
+
 	freeZones();
 	freeAnimations();
+
+	_location._animations.push_front(_char._ani);
+
 //	free(_location._comment);
 //	_location._comment = 0;
 //	_location._commands.clear();
@@ -233,9 +254,9 @@ void Parallaction_br::changeLocation(char *location) {
 
 	// load new location
 	parseLocation(location);
-	runCommands(_location._commands);
+	_cmdExec->run(_location._commands);
 //	doLocationEnterTransition();
-	runCommands(_location._aCommands);
+	_cmdExec->run(_location._aCommands);
 
 	_engineFlags &= ~kEngineChangeLocation;
 }
@@ -284,12 +305,16 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 
 void Parallaction_br::changeCharacter(const char *name) {
+	printf("changeCharacter(%s)\n", name);
+
 	const char *charName = _char.getName();
 	if (!scumm_stricmp(charName, name)) {
 		return;
 	}
 
 	_char.setName(name);
+	_char._ani->gfxobj = _gfx->loadAnim(name);
+	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
 	_char._talk = _disk->loadTalk(name);
 }
 

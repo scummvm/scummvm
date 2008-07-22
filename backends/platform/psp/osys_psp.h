@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/surface.h"
+#include "sound/mixer_intern.h"
 #include "backends/fs/psp/psp-fs-factory.h"
 
 
@@ -71,7 +72,7 @@ protected:
 	SceCtrlData pad;
 
 	Common::SaveFileManager *_savefile;
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
 
 public:
@@ -129,9 +130,8 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual int getOutputSampleRate() const;
+	static void mixCallback(void *sys, byte *samples, int len);
+	virtual void setupMixer(void);
 
 	Common::SaveFileManager *getSavefileManager() { return _savefile; }
 	Audio::Mixer *getMixer() { return _mixer; }

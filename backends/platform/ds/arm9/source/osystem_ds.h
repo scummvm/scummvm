@@ -30,10 +30,13 @@
 #include "gbampsave.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 #include "graphics/surface.h"
 
-class DSAudioMixer : public Audio::Mixer {	
+class DSAudioMixer : public Audio::MixerImpl {	
+
+public:
+	DSAudioMixer(OSystem* system) : Audio::MixerImpl(system) { }
 };
 
 class DSTimerManager : public DefaultTimerManager {	
@@ -62,7 +65,7 @@ protected:
 	Graphics::Surface* createTempFrameBuffer();
 
 public:
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
+	typedef void (*SoundProc)(byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);
 
 	OSystem_DS();
@@ -146,6 +149,8 @@ public:
 	virtual void unlockScreen();
 	
 	virtual Audio::Mixer* getMixer() { return _mixer; }
+	Audio::MixerImpl* getMixerImpl() { return _mixer; }
+
 	virtual Common::TimerManager* getTimerManager() { return _timer; }
 	static int timerHandler(int t);
 
