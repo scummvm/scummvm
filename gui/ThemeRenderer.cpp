@@ -589,31 +589,17 @@ void ThemeRenderer::updateScreen() {
 void ThemeRenderer::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
-		
+
 	Common::List<Common::Rect>::iterator cur;
 	for (Common::List<Common::Rect>::iterator d = _dirtyScreen.begin(); d != _dirtyScreen.end(); ++d) {
-		cur = d;
+		cur = d++;
+
 		do {
-			++d;
 			if (cur->intersects(*d))
-				_dirtyScreen.erase(d);
+				d = _dirtyScreen.erase(d);
+			else ++d;
 		} while (d != _dirtyScreen.end());
-		
-		
-		// FIXME: this square-merging algorithm can be rather slow, and I don't think it
-		// benefits us *that* much. Maybe we should just stick to finding dirty squares that overlap.
-		
-		// d = cur;
-		// 
-		// do {
-		// 	++d;
-		// 	if ((cur->top == d->top && cur->bottom == d->bottom && (ABS(cur->left - d->right) < 10 || ABS(cur->right - d->left) < 10)) ||
-		// 		(cur->left == d->left && cur->right == d->right && (ABS(cur->top - d->bottom) < 10 || ABS(cur->bottom - d->top) < 10))) {
-		// 		cur->extend(*d);
-		// 		_dirtyScreen.erase(d);
-		// 	}
-		// } while (d != _dirtyScreen.end());
-		
+
 		d = cur;
 		_vectorRenderer->copyFrame(_system, *d);
 	}
