@@ -603,7 +603,7 @@ protected:
 	Graphics::TextStep _texts[kTextColorMAX];
 	
 	/** List of all the dirty screens that must be blitted to the overlay. */
-	Common::Array<Common::Rect> _dirtyScreen;
+	Common::List<Common::Rect> _dirtyScreen;
 	
 	/** Queue with all the drawing that must be done to the Back Buffer */
 	Common::List<DrawQueue> _bufferQueue;
