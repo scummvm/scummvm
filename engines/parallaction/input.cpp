@@ -178,14 +178,6 @@ void Input::updateGameInput() {
 
 }
 
-void Input::updateCommentInput() {
-/*	waitUntilLeftClick();
-
-	_vm->hideDialogueStuff();
-	_vm->_gfx->setHalfbriteMode(false);
-
-	_inputMode = kInputModeGame;
-*/}
 
 InputData* Input::updateInput() {
 
@@ -193,15 +185,12 @@ InputData* Input::updateInput() {
 
 	switch (_inputMode) {
 	case kInputModeComment:
+	case kInputModeDialogue:
 		readInput();
 		break;
 
 	case kInputModeGame:
 		updateGameInput();
-		break;
-
-	case kInputModeDialogue:
-		readInput();
 		break;
 	}
 

@@ -49,7 +49,6 @@ struct InputData {
 
 class Input {
 	void updateGameInput();
-	void updateCommentInput();
 
 	// input-only
 	InputData	_inputData;
