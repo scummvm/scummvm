@@ -586,6 +586,7 @@ void ThemeRenderer::updateScreen() {
 	}
 		
 	renderDirtyScreen();
+//	_vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {
@@ -595,7 +596,7 @@ void ThemeRenderer::renderDirtyScreen() {
 	Common::List<Common::Rect>::const_iterator i, j;
 	for (i = _dirtyScreen.begin(); i != _dirtyScreen.end(); ++i) {
 		for (j = i; j != _dirtyScreen.end(); ++j)
-			if (j != i && i->intersects(*j))
+			if (j != i && i->contains(*j))
 				j = _dirtyScreen.reverse_erase(j);
 
 		_vectorRenderer->copyFrame(_system, *i);

@@ -379,8 +379,8 @@ void Converse::loadConversation(const char *convName) {
 	uint32 header = convS->readUint32LE();
 	uint32 size;
 	uint32 chunk;
-	uint32 data;
-	uint32 i;
+	uint32 data = 0;
+	uint32 i = 0;
 	ConvEntry* curEntry = NULL;
 	ConvEntry* replyEntry = NULL;
 	int32 currentWeightedEntry = -1;

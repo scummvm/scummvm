@@ -94,7 +94,7 @@ enum ZoneFlags {
 
 
 enum CommandFlags {
-	kFlagsAll			= 0xFFFFFFFFU,
+	kFlagsAll			= 0x7FFFFFFFU,
 
 	kFlagsVisited		= 1,
 	kFlagsExit			= 0x10000000,
