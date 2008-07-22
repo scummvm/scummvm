@@ -262,6 +262,14 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	}
 }
 
+#ifdef UNIX
+#ifdef MACOSX
+#define DEFAULT_SAVE_PATH "Documents/Residual Savegames"
+#else
+#define DEFAULT_SAVE_PATH ".residual"
+#endif
+#endif
+
 Common::String DefaultSaveFileManager::getSavePath() const {
 
 	Common::String dir;
@@ -282,6 +290,17 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 		dir = ConfMan.get("path");
 #endif
 */
+#ifdef DEFAULT_SAVE_PATH
+	char savePath[MAXPATHLEN];
+#if defined(UNIX)
+	const char *home = getenv("HOME");
+	if (home && *home && strlen(home) < MAXPATHLEN) {
+		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
+		dir = savePath;
+	}
+#endif
+#endif
+
 	return dir;
 }
 
