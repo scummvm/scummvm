@@ -592,18 +592,13 @@ void ThemeRenderer::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
 
-	Common::List<Common::Rect>::iterator cur;
-	for (Common::List<Common::Rect>::iterator d = _dirtyScreen.begin(); d != _dirtyScreen.end(); ++d) {
-		cur = d;
+	Common::List<Common::Rect>::const_iterator i, j;
+	for (i = _dirtyScreen.begin(); i != _dirtyScreen.end(); ++i) {
+		for (j = i; j != _dirtyScreen.end(); ++j)
+			if (j != i && i->intersects(*j))
+				j = _dirtyScreen.reverse_erase(j);
 
-		do {
-			++d;
-			if (cur->intersects(*d))
-				d = _dirtyScreen.reverse_erase(d);
-		} while (d != _dirtyScreen.end());
-
-		d = cur;
-		_vectorRenderer->copyFrame(_system, *d);
+		_vectorRenderer->copyFrame(_system, *i);
 	}
 		
 	_dirtyScreen.clear();
