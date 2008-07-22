@@ -16,6 +16,12 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( str == "str" );
 	}
 
+	void test_trim(void) {
+		Common::String str("  This is a s tring with spaces  ");
+		str.trim();
+		TS_ASSERT( str == "This is a s tring with spaces" );
+	}
+
 	void test_empty_clear(void) {
 		Common::String str("test");
 		TS_ASSERT( !str.empty() );

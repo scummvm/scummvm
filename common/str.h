@@ -177,6 +177,8 @@ public:
 	void toLowercase();
 	void toUppercase();
 	
+	void trim();
+
 	uint hash() const;
 
 public:

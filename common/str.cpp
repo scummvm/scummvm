@@ -363,6 +363,26 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 	}
 }
 
+void String::trim() {
+	if (_len == 0)
+		return;
+
+	// Trim trailing whitespace
+	while (_len >= 1 && isspace(_str[_len-1]))
+		_len--;
+	_str[_len] = 0;
+
+	// Trim leading whitespace
+	char *t = _str;
+	while (isspace(*t))
+		t++;
+
+	if (t != _str) {
+		_len -= t - _str;
+		memmove(_str, t, _len + 1);
+	}
+}
+
 uint String::hash() const {
 	return hashit(c_str());
 }
