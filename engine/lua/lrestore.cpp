@@ -98,7 +98,7 @@ static void recreateObj(TObject *obj) {
 			return;
 		}
 
-		obj->value.i = (int32)found->object;
+		//obj->value.i = (int32)found->object;
 	}
 }
 
