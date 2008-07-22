@@ -303,6 +303,7 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 	DrawQueue q;	
 	q.type = type;
 	q.area = r;
+	q.area.clip(_screen->w, _screen->h);
 	q.dynData = dynamic;
 	
 	if (_buffering) {
@@ -323,6 +324,7 @@ void ThemeRenderer::queueDDText(DrawData type, const Common::Rect &r, const Comm
 	DrawQueueText q;
 	q.type = type;
 	q.area = r;
+	q.area.clip(_screen->w, _screen->h);
 	q.text = text;
 	q.colorId = colorId;
 	q.align = align;

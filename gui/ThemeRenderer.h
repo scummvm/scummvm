@@ -429,9 +429,6 @@ protected:
 	 *	Handles all the dirty squares in the list, merges and optimizes
 	 *	them when possible and draws them to the screen.
 	 *	Called from updateScreen()
-	 *
-	 *	TODO: This function is partly implemented, but currently not used.
-	 *		  Currently the whole frame is drawn to the screen.
 	 */
 	void renderDirtyScreen();
 
