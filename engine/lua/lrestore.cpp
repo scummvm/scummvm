@@ -98,7 +98,7 @@ static void recreateObj(TObject *obj) {
 			return;
 		}
 
-		obj->value.i = (long)found->object;
+		obj->value.i = (int32)found->object;
 	}
 }
 
@@ -146,7 +146,7 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 			else
 				tempString = luaS_createudata(value, tag);
 			if (restoreCallback != NULL) {
-				tempString->u.s.globalval.value.ts = (TaggedString *)restoreCallback(tempString->u.s.globalval.ttype, (long)tempString->u.s.globalval.value.ts, restoreFunc);
+				tempString->u.s.globalval.value.ts = (TaggedString *)restoreCallback(tempString->u.s.globalval.ttype, (int32)tempString->u.s.globalval.value.ts, restoreFunc);
 			}
 		}
 		tempString->constindex = constIndex;

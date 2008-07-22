@@ -120,7 +120,7 @@ void lua_Save(SaveRestoreFunc saveFunc) {
 					saveFunc(tempString->str, tempString->u.s.len);
 				}  else {
 					if (saveCallback != NULL) {
-						tempString->u.s.globalval.value.ts = (TaggedString *)saveCallback(tempString->u.s.globalval.ttype, (long)tempString->u.s.globalval.value.ts, saveFunc);
+						tempString->u.s.globalval.value.ts = (TaggedString *)saveCallback(tempString->u.s.globalval.ttype, (int32)tempString->u.s.globalval.value.ts, saveFunc);
 					}
 					saveObjectValue(&tempString->u.s.globalval, saveFunc);
 				}
