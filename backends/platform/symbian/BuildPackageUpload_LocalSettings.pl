@@ -2,12 +2,11 @@
 ##################################################################################################################
 
 	@WorkingEngines = qw(
-		scumm agos sky queen gob saga 
-		kyra lure agi 
+		scumm agos sky queen gob saga drascula 
+		kyra lure agi touche parallaction 
 	);
 	@TestingEngines = qw(
-		cine cruise touche parallaction 
-		drascula igor made m4
+		cruise igor made m4 cine 		
 	);
 	@BrokenEngines = qw(
 		sword1
@@ -29,7 +28,7 @@
 	);
 	
 	# these are normally enabled for each variation
-	$DefaultFeatures = qw(zlib tremor);
+	$DefaultFeatures = qw(zlib mad tremor);
 	#$DefaultFeatures = qw(zlib mad tremor);
 
 	
