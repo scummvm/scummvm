@@ -359,9 +359,6 @@ void DialogueManager::run() {
 		break;
 
 	case DIALOGUE_OVER:
-		if (_cmdList) {
-			_vm->_cmdExec->run(*_cmdList);
-		}
 		break;
 
 	default:
@@ -380,6 +377,10 @@ void Parallaction::enterDialogueMode(ZonePtr z) {
 void Parallaction::exitDialogueMode() {
 	debugC(1, kDebugDialogue, "Parallaction::exitDialogueMode()");
 	_input->_inputMode = Input::kInputModeGame;
+
+	if (_dialogueMan->_cmdList) {
+		_vm->_cmdExec->runList(*_dialogueMan->_cmdList);
+	}
 
 	// The current instance of _dialogueMan must be destroyed before the zone commands
 	// are executed, because they may create another instance of _dialogueMan that
