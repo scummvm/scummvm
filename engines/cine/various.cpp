@@ -265,7 +265,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 	static const uint animEntriesCount = 255;
 	static const uint oldAnimEntrySize = 23;
 	static const uint newAnimEntrySize = 30;
-	static const uint defaultAnimEntrySize = newAnimEntrySize;
+//	static const uint defaultAnimEntrySize = newAnimEntrySize;
 	static const uint animEntrySizeChoices[] = {oldAnimEntrySize, newAnimEntrySize};
 	Common::Array<uint> animEntrySizeMatches;
 	const uint32 prevStreamPos = fHandle.pos();
@@ -338,7 +338,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 				fHandle.seek(animDataTableStart + i * animEntrySize + relativeDataPos);
 				uint32 data = fHandle.readUint32BE();
 				uint32 mask = fHandle.readUint32BE();
-				if (data != NULL || mask != NULL) {
+				if ((data != 0) || (mask != 0)) {
 					pointersIntact = true;
 					break;
 				}
