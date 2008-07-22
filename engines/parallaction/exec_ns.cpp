@@ -481,7 +481,15 @@ CommandExec_ns::~CommandExec_ns() {
 //	ZONE TYPE: EXAMINE
 //
 
-void Parallaction::displayComment(ExamineData *data) {
+void Parallaction::enterCommentMode(ZonePtr z) {
+	if (z == nullZonePtr) {
+		return;
+	}
+
+	_commentZone = z;
+
+	ExamineData *data = _commentZone->u.examine;
+
 	if (!data->_description) {
 		return;
 	}
@@ -510,6 +518,25 @@ void Parallaction::displayComment(ExamineData *data) {
 	_input->_inputMode = Input::kInputModeComment;
 }
 
+void Parallaction::exitCommentMode() {
+	_input->_inputMode = Input::kInputModeGame;
+
+	hideDialogueStuff();
+	_gfx->setHalfbriteMode(false);
+
+	_cmdExec->run(_commentZone->_commands, _commentZone);
+	_commentZone = nullZonePtr;
+}
+
+void Parallaction::runCommentFrame() {
+	if (_input->_inputMode != Input::kInputModeComment) {
+		return;
+	}
+
+	if (_input->getLastButtonEvent() == kMouseLeftUp) {
+		exitCommentMode();
+	}
+}
 
 
 uint16 Parallaction::runZone(ZonePtr z) {
@@ -521,8 +548,8 @@ uint16 Parallaction::runZone(ZonePtr z) {
 	switch(subtype) {
 
 	case kZoneExamine:
-		displayComment(z->u.examine);
-		break;
+		enterCommentMode(z);
+		return 0;
 
 	case kZoneGet:
 		if (z->_flags & kFlagsFixed) break;

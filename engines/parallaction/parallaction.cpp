@@ -360,9 +360,10 @@ void Parallaction::runGame() {
 	if (_engineFlags & kEngineQuit)
 		return;
 
-	if (_input->_inputMode == Input::kInputModeDialogue) {
-		runDialogueFrame();
-	} else {
+	runDialogueFrame();
+	runCommentFrame();
+
+	if (_input->_inputMode == Input::kInputModeGame) {
 		if (data->_event != kEvNone) {
 			processInput(data);
 		}

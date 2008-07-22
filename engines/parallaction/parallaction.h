@@ -422,6 +422,11 @@ public:
 	void exitDialogueMode();
 	void runDialogueFrame();
 
+	ZonePtr	_commentZone;
+	void enterCommentMode(ZonePtr z);
+	void exitCommentMode();
+	void runCommentFrame();
+
 };
 
 
