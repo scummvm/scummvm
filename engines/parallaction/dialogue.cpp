@@ -379,7 +379,7 @@ void Parallaction::exitDialogueMode() {
 	_input->_inputMode = Input::kInputModeGame;
 
 	if (_dialogueMan->_cmdList) {
-		_vm->_cmdExec->runList(*_dialogueMan->_cmdList);
+		_vm->_cmdExec->run(*_dialogueMan->_cmdList);
 	}
 
 	// The current instance of _dialogueMan must be destroyed before the zone commands
