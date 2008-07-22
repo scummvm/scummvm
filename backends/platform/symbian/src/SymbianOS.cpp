@@ -627,6 +627,7 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 
 	TSeek seekMode = ESeekStart;
 	TInt pos = offset;
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
 
 	switch(whence) {
 	case SEEK_SET:
@@ -634,6 +635,9 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 		break;
 	case SEEK_CUR:
 		seekMode = ESeekCurrent;
+		if(entry->iInputPos != KErrNotFound) {
+			pos+=(entry->iInputPos - entry->iInputBufferLen);
+		}
 		break;
 	case SEEK_END:
 		seekMode = ESeekEnd;
@@ -641,9 +645,9 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 
 	}
 	
-	((TSymbianFileEntry*)(handle))->iInputPos = KErrNotFound;
+	entry->iInputPos = KErrNotFound;
 
-	return ((TSymbianFileEntry*)(handle))->iFileHandle.Seek(seekMode, pos);
+	return entry->iFileHandle.Seek(seekMode, pos);
 }
 
 void symbian_clearerr(FILE* /*handle*/) {
