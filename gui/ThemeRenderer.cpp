@@ -534,7 +534,7 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 	if (active >= 0) {
 		Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		const uint16 tabLeft = active * (tabWidth + tabOffset);
-		const uint16 tabRight =  r.right - tabRect.right;
+		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
 		queueDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
 		queueDDText(kDDTabActive, tabRect, tabs[active]);
 	}
@@ -592,12 +592,12 @@ void ThemeRenderer::renderDirtyScreen() {
 
 	Common::List<Common::Rect>::iterator cur;
 	for (Common::List<Common::Rect>::iterator d = _dirtyScreen.begin(); d != _dirtyScreen.end(); ++d) {
-		cur = d++;
+		cur = d;
 
 		do {
+			++d;
 			if (cur->intersects(*d))
-				d = _dirtyScreen.erase(d);
-			else ++d;
+				d = _dirtyScreen.reverse_erase(d);
 		} while (d != _dirtyScreen.end());
 
 		d = cur;
