@@ -246,21 +246,130 @@ bool CineEngine::loadSaveDirectory(void) {
 	return true;
 }
 
+/*! \brief Savegame format detector
+ * \param fHandle Savefile to check
+ * \return Savegame format on success, ANIMSIZE_UNKNOWN on failure
+ *
+ * This function seeks through the savefile and tries to determine the
+ * savegame format it uses. There's a miniscule chance that the detection
+ * algorithm could get confused and think that the file uses both the older
+ * and the newer format but that is such a remote possibility that I wouldn't
+ * worry about it at all.
+ */
+enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle) {
+	// The animDataTable begins at savefile position 0x2315.
+	// Each animDataTable entry takes 23 bytes in older saves (Revisions 21772-31443)
+	// and 30 bytes in the save format after that (Revision 31444 and onwards).
+	// There are 255 entries in the animDataTable in both of the savefile formats.
+	static const uint animDataTableStart = 0x2315;
+	static const uint animEntriesCount = 255;
+	static const uint oldAnimEntrySize = 23;
+	static const uint newAnimEntrySize = 30;
+	static const uint defaultAnimEntrySize = newAnimEntrySize;
+	static const uint animEntrySizeChoices[] = {oldAnimEntrySize, newAnimEntrySize};
+	Common::Array<uint> animEntrySizeMatches;
+	const uint32 prevStreamPos = fHandle.pos();
+
+	// Try to walk through the savefile using different animDataTable entry sizes
+	// and make a list of all the successful entry sizes.
+	for (uint i = 0; i < ARRAYSIZE(animEntrySizeChoices); i++) {
+		// 206 = 2 * 50 * 2 + 2 * 3 (Size of global and object script entries)
+		// 20 = 4 * 2 + 2 * 6 (Size of overlay and background incrust entries)
+		static const uint sizeofScreenParams = 2 * 6;
+		static const uint globalScriptEntrySize = 206;
+		static const uint objectScriptEntrySize = 206;
+		static const uint overlayEntrySize = 20;
+		static const uint bgIncrustEntrySize = 20;
+		static const uint chainEntrySizes[] = {
+			globalScriptEntrySize,
+			objectScriptEntrySize,
+			overlayEntrySize,
+			bgIncrustEntrySize
+		};
+		
+		uint animEntrySize = animEntrySizeChoices[i];
+		// Jump over the animDataTable entries and the screen parameters
+		uint32 newPos = animDataTableStart + animEntrySize * animEntriesCount + sizeofScreenParams;
+		// Check that there's data left after the point we're going to jump to
+		if (newPos >= fHandle.size()) {
+			continue;
+		}
+		fHandle.seek(newPos);
+
+		// Jump over the remaining items in the savegame file
+		// (i.e. the global scripts, object scripts, overlays and background incrusts).
+		bool chainWalkSuccess = true;
+		for (uint chainIndex = 0; chainIndex < ARRAYSIZE(chainEntrySizes); chainIndex++) {
+			// Read entry count and jump over the entries
+			int entryCount = fHandle.readSint16BE();
+			newPos = fHandle.pos() + chainEntrySizes[chainIndex] * entryCount;
+			// Check that we didn't go past the end of file.
+			// Note that getting exactly to the end of file is acceptable.
+			if (newPos > fHandle.size()) {
+				chainWalkSuccess = false;
+				break;
+			}
+			fHandle.seek(newPos);
+		}
+		
+		// If we could walk the chain successfully and
+		// got exactly to the end of file then we've got a match.
+		if (chainWalkSuccess && fHandle.pos() == fHandle.size()) {
+			// We found a match, let's save it
+			animEntrySizeMatches.push_back(animEntrySize);
+		}
+	}
+
+	// Check that we got only one entry size match.
+	// If we didn't, then return an error.
+	enum CineSaveGameFormat result = ANIMSIZE_UNKNOWN;
+	if (animEntrySizeMatches.size() == 1) {
+		const uint animEntrySize = animEntrySizeMatches[0];
+		assert(animEntrySize == oldAnimEntrySize || animEntrySize == newAnimEntrySize);
+		if (animEntrySize == oldAnimEntrySize) {
+			result = ANIMSIZE_23;
+		} else { // animEntrySize == newAnimEntrySize		
+			// Check data and mask pointers in all of the animDataTable entries
+			// to see whether we've got the version with the broken data and mask pointers or not.
+			// In the broken format all data and mask pointers were always zero.
+			static const uint relativeDataPos = 2 * 4;
+			bool pointersIntact = false;
+			for (uint i = 0; i < animEntriesCount; i++) {
+				fHandle.seek(animDataTableStart + i * animEntrySize + relativeDataPos);
+				uint32 data = fHandle.readUint32BE();
+				uint32 mask = fHandle.readUint32BE();
+				if (data != NULL || mask != NULL) {
+					pointersIntact = true;
+					break;
+				}
+			}
+			result = (pointersIntact ? ANIMSIZE_30_PTRS_INTACT : ANIMSIZE_30_PTRS_BROKEN);
+		}
+	} else if (animEntrySizeMatches.size() > 1) {
+		warning("Savegame format detector got confused by input data. Detecting savegame to be using an unknown format");
+	} else { // animEtrySizeMatches.size() == 0
+		debug(3, "Savegame format detector was unable to detect savegame's format");
+	}
+
+	fHandle.seek(prevStreamPos);
+	return result;
+}
+
 /*! \brief Restore script list item from savefile
- * \param fHandle Savefile handlem open for reading
+ * \param fHandle Savefile handle open for reading
  * \param isGlobal Restore object or global script?
  */
-void loadScriptFromSave(Common::InSaveFile *fHandle, bool isGlobal) {
+void loadScriptFromSave(Common::SeekableReadStream &fHandle, bool isGlobal) {
 	ScriptVars localVars, labels;
 	uint16 compare, pos;
 	int16 idx;
 
-	labels.load(*fHandle);
-	localVars.load(*fHandle);
+	labels.load(fHandle);
+	localVars.load(fHandle);
 
-	compare = fHandle->readUint16BE();
-	pos = fHandle->readUint16BE();
-	idx = fHandle->readUint16BE();
+	compare = fHandle.readUint16BE();
+	pos = fHandle.readUint16BE();
+	idx = fHandle.readUint16BE();
 
 	// no way to reinitialize these
 	if (idx < 0) {
@@ -283,7 +392,7 @@ void loadScriptFromSave(Common::InSaveFile *fHandle, bool isGlobal) {
 /*! \brief Restore overlay sprites from savefile
  * \param fHandle Savefile open for reading
  */
-void loadOverlayFromSave(Common::InSaveFile &fHandle) {
+void loadOverlayFromSave(Common::SeekableReadStream &fHandle) {
 	overlay tmp;
 
 	fHandle.readUint32BE();
@@ -299,121 +408,63 @@ void loadOverlayFromSave(Common::InSaveFile &fHandle) {
 	overlayList.push_back(tmp);
 }
 
-/*! \brief Savefile format tester
- * \param fHandle Savefile to check
- *
- * This function seeks through savefile and tries to guess if it's the original
- * savegame format or broken format from ScummVM 0.10/0.11
- * The test is incomplete but this should cover 99.99% of cases.
- * If anyone makes a savefile which could confuse this test, assert will
- * report it
- */
-bool brokenSave(Common::InSaveFile &fHandle) {
-	// Backward seeking not supported in compressed savefiles
-	// if you really want it, finish it yourself
-	return false;
-
-	// fixed size part: 14093 bytes (12308 bytes in broken save)
-	// animDataTable begins at byte 6431
-
-	int filesize = fHandle.size();
-	int startpos = fHandle.pos();
-	int pos, tmp;
-	bool correct = false, broken = false;
-
-	// check for correct format
-	while (filesize > 14093) {
-		pos = 14093;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 206;
-		if (pos >= filesize) break;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 206;
-		if (pos >= filesize) break;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 20;
-		if (pos >= filesize) break;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 20;
-
-		if (pos == filesize) correct = true;
-		break;
-	}
-	debug(5, "brokenSave: correct format check %s: size=%d, pos=%d",
-		correct ? "passed" : "failed", filesize, pos);
-
-	// check for broken format
-	while (filesize > 12308) {
-		pos = 12308;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 206;
-		if (pos >= filesize) break;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 206;
-		if (pos >= filesize) break;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 20;
-		if (pos >= filesize) break;
-
-		fHandle.seek(pos);
-		tmp = fHandle.readUint16BE();
-		pos += 2 + tmp * 20;
-
-		if (pos == filesize) broken = true;
-		break;
-	}
-	debug(5, "brokenSave: broken format check %s: size=%d, pos=%d",
-		broken ? "passed" : "failed", filesize, pos);
-
-	// there's a very small chance that both cases will match
-	// if anyone runs into it, you'll have to walk through
-	// the animDataTable and try to open part file for each entry
-	if (!correct && !broken) {
-		error("brokenSave: file format check failed");
-	} else if (correct && broken) {
-		error("brokenSave: both file formats seem to apply");
-	}
-
-	fHandle.seek(startpos);
-	debug(5, "brokenSave: detected %s file format",
-		correct ? "correct" : "broken");
-
-	return broken;
-}
-
 /*! \todo Implement Operation Stealth loading, this is obviously Future Wars only
  * \todo Add support for loading the zoneQuery table (Operation Stealth specific)
  */
 bool CineEngine::makeLoad(char *saveName) {
 	int16 i;
 	int16 size;
-	bool broken;
-	Common::InSaveFile *fHandle;
 	char bgName[13];
 
-	fHandle = g_saveFileMan->openForLoading(saveName);
+	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
 
-	if (!fHandle) {
+	if (!saveFile) {
 		drawString(otherMessages[0], 0);
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);
 		return false;
 	}
+
+	uint32 saveSize = saveFile->size();
+	if (saveSize == 0) { // Savefile's compressed using zlib format can't tell their unpacked size, test for it
+		// Can't get information about the savefile's size so let's try
+		// reading as much as we can from the file up to a predefined upper limit.
+		//
+		// Some estimates for maximum savefile sizes (All with 255 animDataTable entries of 30 bytes each):
+		// With 256 global scripts, object scripts, overlays and background incrusts:
+		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 256 = ~129kB
+		// With 512 global scripts, object scripts, overlays and background incrusts:
+		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 512 = ~242kB
+		//
+		// I think it extremely unlikely that there would be over 512 global scripts, object scripts,
+		// overlays and background incrusts so 256kB seems like quite a safe upper limit.		
+		// NOTE: If the savegame format is changed then this value might have to be re-evaluated!
+		// Hopefully devices with more limited memory can also cope with this memory allocation.
+		saveSize = 256 * 1024;
+	}
+	Common::SharedPtr<Common::MemoryReadStream> fHandle(saveFile->readStream(saveSize));
+
+	// Try to detect the used savegame format
+	enum CineSaveGameFormat saveGameFormat = detectSaveGameFormat(*fHandle);
+
+	// Handle problematic savegame formats
+	if (saveGameFormat == ANIMSIZE_30_PTRS_BROKEN) {
+		// One might be able to load the ANIMSIZE_30_PTRS_BROKEN format but
+		// that's not implemented here because it was never used in a stable
+		// release of ScummVM but only during development (From revision 31453,
+		// which introduced the problem, until revision 32073, which fixed it).
+		// Therefore be bail out if we detect this particular savegame format.
+		warning("Detected a known broken savegame format, not loading savegame");
+		return false;
+	} else if (saveGameFormat == ANIMSIZE_UNKNOWN) {
+		// If we can't detect the savegame format
+		// then let's try the default format and hope for the best.
+		warning("Couldn't detect the used savegame format, trying default savegame format. Things may break");
+		saveGameFormat = ANIMSIZE_30_PTRS_INTACT;
+	}
+	// Now we should have either of these formats
+	assert(saveGameFormat == ANIMSIZE_23 || saveGameFormat == ANIMSIZE_30_PTRS_INTACT);
 
 	g_sound->stopMusic();
 	freeAnimDataTable();
@@ -464,7 +515,6 @@ bool CineEngine::makeLoad(char *saveName) {
 
 	checkForPendingDataLoadSwitch = 0;
 
-	broken = brokenSave(*fHandle);
 
 	// At savefile position 0x0000:
 	currentDisk = fHandle->readUint16BE();
@@ -588,7 +638,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	fHandle->readUint16BE();
 
 	// At 0x2315:
-	loadResourcesFromSave(*fHandle, broken);
+	loadResourcesFromSave(*fHandle, saveGameFormat);
 
 	// TODO: handle screen params (really required ?)
 	fHandle->readUint16BE();
@@ -600,12 +650,12 @@ bool CineEngine::makeLoad(char *saveName) {
 
 	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadScriptFromSave(fHandle, true);
+		loadScriptFromSave(*fHandle, true);
 	}
 
 	size = fHandle->readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadScriptFromSave(fHandle, false);
+		loadScriptFromSave(*fHandle, false);
 	}
 
 	size = fHandle->readSint16BE();
@@ -614,8 +664,6 @@ bool CineEngine::makeLoad(char *saveName) {
 	}
 
 	loadBgIncrustFromSave(*fHandle);
-
-	delete fHandle;
 
 	if (strlen(currentMsgName)) {
 		loadMsg(currentMsgName);

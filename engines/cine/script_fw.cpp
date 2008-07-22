@@ -230,7 +230,7 @@ ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
  * \param fHandle Savefile open for reading
  * \param len Size of array
  */
-ScriptVars::ScriptVars(Common::InSaveFile &fHandle, unsigned int len)
+ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
 	: _size(len), _vars(new int16[len]) {
 
 	assert(_vars);
@@ -306,7 +306,7 @@ void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) const {
 /*! \brief Restore array from savefile
  * \param fHandle Savefile open for reading
  */
-void ScriptVars::load(Common::InSaveFile &fHandle) {
+void ScriptVars::load(Common::SeekableReadStream &fHandle) {
 	load(fHandle, _size);
 }
 
@@ -314,7 +314,7 @@ void ScriptVars::load(Common::InSaveFile &fHandle) {
  * \param fHandle Savefile open for reading
  * \param len Length of data to be read
  */
-void ScriptVars::load(Common::InSaveFile &fHandle, unsigned int len) {
+void ScriptVars::load(Common::SeekableReadStream &fHandle, unsigned int len) {
 	debug(6, "assert(%d <= %d)", len, _size);
 	assert(len <= _size);
 	for (unsigned int i = 0; i < len; i++) {

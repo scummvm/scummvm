@@ -113,7 +113,7 @@ public:
 
 	virtual void refreshPalette();
 	virtual void reloadPalette();
-	void restorePalette(Common::InSaveFile &fHandle);
+	void restorePalette(Common::SeekableReadStream &fHandle);
 	void savePalette(Common::OutSaveFile &fHandle);
 	virtual void rotatePalette(int a, int b, int c);
 	virtual void transformPalette(int first, int last, int r, int g, int b);

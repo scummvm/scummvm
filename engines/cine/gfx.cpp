@@ -614,7 +614,7 @@ void FWRenderer::saveBg(Common::OutSaveFile &fHandle) {
 /*! \brief Restore active and backup palette from save
  * \param fHandle Savefile open for reading
  */
-void FWRenderer::restorePalette(Common::InSaveFile &fHandle) {
+void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
 	int i;
 
 	if (!_palette) {

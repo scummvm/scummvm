@@ -101,7 +101,7 @@ void freeAnimDataTable(void);
 void freeAnimDataRange(byte startIdx, byte numIdx);
 void loadResource(const char *resourceName);
 void loadAbs(const char *resourceName, uint16 idx);
-void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken);
+void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat);
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
 } // End of namespace Cine

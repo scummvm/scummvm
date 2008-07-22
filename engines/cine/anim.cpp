@@ -769,19 +769,18 @@ void loadAbs(const char *resourceName, uint16 idx) {
 
 /*! \brief Load animDataTable from save
  * \param fHandle Savefile open for reading
- * \param broken Broken/correct file format switch
+ * \param saveGameFormat The used savegame format
  * \todo Add Operation Stealth savefile support
  *
  * Unlike the old code, this one actually rebuilds the table one frame
  * at a time.
  */
-void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken) {
+void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat) {
 	int16 currentAnim, foundFileIdx;
 	int8 isMask = 0, isSpl = 0;
 	byte *dataPtr, *ptr;
 	char *animName, part[256];
 	byte transparentColor = 0;
-	AnimData *currentPtr;
 	AnimHeaderStruct animHeader;
 
 	uint16 width, height, bpp, var1;
@@ -791,30 +790,46 @@ void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken) {
 
 	strcpy(part, currentPartName);
 
-	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim++) {
-		currentPtr = &animDataTable[currentAnim];
+	// We only support these variations of the savegame format at the moment.
+	assert(saveGameFormat == ANIMSIZE_23 || saveGameFormat == ANIMSIZE_30_PTRS_INTACT);
 
+	const int entrySize = ((saveGameFormat == ANIMSIZE_23) ? 23 : 30);
+	const int fileStartPos = fHandle.pos();
+	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim += animHeader.numFrames) {
+		// Initialize the number of frames variable to a sane number.
+		// This is needed when using continue later in this function.
+		animHeader.numFrames = 1;
+
+		// Seek to the start of the current animation's entry
+		fHandle.seek(fileStartPos + currentAnim * entrySize);
+		// Read in the current animation entry
 		width = fHandle.readUint16BE();
 		var1 = fHandle.readUint16BE();
 		bpp = fHandle.readUint16BE();
 		height = fHandle.readUint16BE();
 
-		if (!broken) {
-			if (!fHandle.readUint32BE()) {
-				fHandle.skip(18);
-				continue;
-			}
-			fHandle.readUint32BE();
+		bool validPtr = false;
+		// Handle variables only present in animation entries of size 30
+		if (entrySize == 30) {
+			validPtr = (fHandle.readUint32BE() != 0); // Read data pointer
+			fHandle.readUint32BE(); // Discard mask pointer
 		}
 
 		foundFileIdx = fHandle.readSint16BE();
 		frame = fHandle.readSint16BE();
 		fHandle.read(name, 10);
 
-		if (foundFileIdx < 0 || (broken && !fHandle.readByte())) {
+		// Handle variables only present in animation entries of size 23
+		if (entrySize == 23) {
+			validPtr = (fHandle.readByte() != 0);
+		}
+
+		// Don't try to load invalid entries.
+		if (foundFileIdx < 0 || !validPtr) {
 			continue;
 		}
 
+		// Alright, the animation entry looks to be valid so let's start handling it...
 		if (strcmp(currentPartName, name)) {
 			closePart();
 			loadPart(name);
@@ -823,13 +838,14 @@ void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken) {
 		animName = partBuffer[foundFileIdx].partName;
 		ptr = dataPtr = readBundleFile(foundFileIdx);
 
+		// isSpl and isMask are mutually exclusive cases
 		isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;
 		isMask = (strstr(animName, ".MSK")) ? 1 : 0;
 
 		if (isSpl) {
 			width = (uint16) partBuffer[foundFileIdx].unpackedSize;
 			height = 1;
-			frame = 0;
+			animHeader.numFrames = 1;
 			type = ANIM_RAW;
 		} else {
 			Common::MemoryReadStream readS(ptr, 0x16);
@@ -843,25 +859,35 @@ void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken) {
 				type = ANIM_MASK;
 			} else {
 				type = ANIM_MASKSPRITE;
-
-				loadRelatedPalette(animName);
-				transparentColor = getAnimTransparentColor(animName);
-
-				// special case transparency handling
-				if (!strcmp(animName, "L2202.ANI")) {
-					transparentColor = (frame < 2) ? 0 : 7;
-				} else if (!strcmp(animName, "L4601.ANI")) {
-					transparentColor = (frame < 1) ? 0xE : 0;
-				}
 			}
 		}
 
-		ptr += frame * width * height;
-		currentPtr->load(ptr, type, width, height, foundFileIdx, frame, name, transparentColor);
+		loadRelatedPalette(animName);
+		transparentColor = getAnimTransparentColor(animName);
+		// Make sure we load at least one frame and also that we
+		// don't overflow the animDataTable by writing beyond its end.
+		animHeader.numFrames = CLIP<uint16>(animHeader.numFrames, 1, NUM_MAX_ANIMDATA - currentAnim);
+
+		// Load the frames
+		for (frame = 0; frame < animHeader.numFrames; frame++) {
+			// special case transparency handling
+			if (!strcmp(animName, "L2202.ANI")) {
+				transparentColor = (frame < 2) ? 0 : 7;
+			} else if (!strcmp(animName, "L4601.ANI")) {
+				transparentColor = (frame < 1) ? 0xE : 0;
+			}
+
+			// Load a single frame
+			animDataTable[currentAnim + frame].load(ptr + frame * width * height, type, width, height, foundFileIdx, frame, name, transparentColor);
+		}
+
 		free(dataPtr);
 	}
 
 	loadPart(part);
+
+	// Make sure we jump over all the animation entries
+	fHandle.seek(fileStartPos + NUM_MAX_ANIMDATA * entrySize);
 }
 
 } // End of namespace Cine
