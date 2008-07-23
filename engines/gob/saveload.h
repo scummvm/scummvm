@@ -65,7 +65,7 @@ private:
 
 class PlainSave {
 public:
-	PlainSave();
+	PlainSave(Endianness endianness);
 	~PlainSave();
 
 	bool save(int16 dataVar, int32 size, int32 offset, const char *name,
@@ -77,11 +77,14 @@ public:
 			const byte *variables, const byte *variableSizes) const;
 	bool load(int16 dataVar, int32 size, int32 offset, const char *name,
 			byte *variables, byte *variableSizes) const;
+
+private:
+	Endianness _endianness;
 };
 
 class StagedSave {
 public:
-	StagedSave();
+	StagedSave(Endianness endianness);
 	~StagedSave();
 
 	void addStage(int32 size, bool endianed = true);
@@ -113,6 +116,8 @@ private:
 		kModeSave,
 		kModeLoad
 	};
+
+	Endianness _endianness;
 
 	Common::Array<Stage> _stages;
 	enum Mode _mode;
@@ -178,17 +183,19 @@ public:
 
 	static const char *stripPath(const char *fileName);
 
-	static bool fromEndian(byte *buf, const byte *sizes, uint32 count);
-	static bool toEndian(byte *buf, const byte *sizes, uint32 count);
+	static bool fromEndian(byte *buf, const byte *sizes, uint32 count, Endianness endianness);
+	static bool toEndian(byte *buf, const byte *sizes, uint32 count, Endianness endianness);
 	static uint32 read(Common::ReadStream &in,
 			byte *buf, byte *sizes, uint32 count);
 	static uint32 write(Common::WriteStream &out,
 			const byte *buf, const byte *sizes, uint32 count);
 
 	static bool loadDataEndian(Common::ReadStream &in,
-			int16 dataVar, uint32 size, byte *variables, byte *variableSizes);
+			int16 dataVar, uint32 size,
+			byte *variables, byte *variableSizes, Endianness endianness);
 	static bool saveDataEndian(Common::WriteStream &out,
-			int16 dataVar, uint32 size, const byte *variables, const byte *variableSizes);
+			int16 dataVar, uint32 size,
+			const byte *variables, const byte *variableSizes, Endianness endianness);
 
 protected:
 	GobEngine *_vm;
@@ -228,8 +235,8 @@ protected:
 	int32 _varSize;
 
 	TempSprite _tmpSprite;
-	PlainSave _notes;
-	StagedSave _save;
+	PlainSave *_notes;
+	StagedSave *_save;
 
 	byte _indexBuffer[600];
 	bool _hasIndex;
@@ -306,8 +313,8 @@ protected:
 
 	TempSprite _screenshot;
 	TempSprite _tmpSprite;
-	PlainSave _notes;
-	StagedSave _save;
+	PlainSave *_notes;
+	StagedSave *_save;
 
 	byte _propBuffer[1000];
 	byte _indexBuffer[1200];
@@ -370,7 +377,7 @@ protected:
 
 	int32 _varSize;
 
-	StagedSave _save;
+	StagedSave *_save;
 
 	byte _propBuffer[1000];
 	byte _indexBuffer[1200];

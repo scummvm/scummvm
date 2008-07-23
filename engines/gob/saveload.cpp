@@ -153,7 +153,7 @@ bool TempSprite::fromBuffer(const byte *buffer, int32 size, bool palette) {
 }
 
 
-PlainSave::PlainSave() {
+PlainSave::PlainSave(Endianness endianness) : _endianness(endianness) {
 }
 
 PlainSave::~PlainSave() {
@@ -230,7 +230,8 @@ bool PlainSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
 	}
 
 	bool retVal;
-	retVal = SaveLoad::saveDataEndian(*out, dataVar, size, variables, variableSizes);
+	retVal = SaveLoad::saveDataEndian(*out, dataVar, size,
+			variables, variableSizes, _endianness);
 
 	out->finalize();
 	if (out->ioFailed()) {
@@ -258,13 +259,14 @@ bool PlainSave::load(int16 dataVar, int32 size, int32 offset, const char *name,
 		return false;
 	}
 
-	bool retVal = SaveLoad::loadDataEndian(*in, dataVar, size, variables, variableSizes);
+	bool retVal = SaveLoad::loadDataEndian(*in, dataVar, size,
+			variables, variableSizes, _endianness);
 	delete in;
 	return retVal;
 }
 
 
-StagedSave::StagedSave() {
+StagedSave::StagedSave(Endianness endianness) : _endianness(endianness) {
 	_mode = kModeNone;
 	_name = 0;
 	_loaded = false;
@@ -487,7 +489,7 @@ bool StagedSave::write() const {
 
 		} else
 			result = SaveLoad::saveDataEndian(*out, 0, _stages[i].size,
-					_stages[i].bufVar, _stages[i].bufVarSizes);
+					_stages[i].bufVar, _stages[i].bufVarSizes, _endianness);
 	}
 
 	if (result) {
@@ -533,7 +535,7 @@ bool StagedSave::read() {
 			_stages[i].bufVarSizes = new byte[_stages[i].size];
 
 			result = SaveLoad::loadDataEndian(*in, 0, _stages[i].size,
-					_stages[i].bufVar, _stages[i].bufVarSizes);
+					_stages[i].bufVar, _stages[i].bufVarSizes, _endianness);
 		}
 	}
 
@@ -734,12 +736,14 @@ void SaveLoad::buildIndex(byte *buffer, char *name, int n, int32 size, int32 off
 	}
 }
 
-bool SaveLoad::fromEndian(byte *buf, const byte *sizes, uint32 count) {
+bool SaveLoad::fromEndian(byte *buf, const byte *sizes, uint32 count, Endianness endianness) {
+	bool LE = (endianness == kEndiannessLE);
+
 	while (count-- > 0) {
 		if (*sizes == 3)
-			*((uint32 *) buf) = READ_LE_UINT32(buf);
+			*((uint32 *) buf) = LE ? READ_LE_UINT32(buf) : READ_BE_UINT32(buf);
 		else if (*sizes == 1)
-			*((uint16 *) buf) = READ_LE_UINT16(buf);
+			*((uint16 *) buf) = LE ? READ_LE_UINT16(buf) : READ_BE_UINT16(buf);
 		else if (*sizes != 0) {
 			warning("SaveLoad::fromEndian(): Corrupted variables sizes");
 			return false;
@@ -753,12 +757,19 @@ bool SaveLoad::fromEndian(byte *buf, const byte *sizes, uint32 count) {
 	return true;
 }
 
-bool SaveLoad::toEndian(byte *buf, const byte *sizes, uint32 count) {
+bool SaveLoad::toEndian(byte *buf, const byte *sizes, uint32 count, Endianness endianness) {
 	while (count-- > 0) {
-		if (*sizes == 3)
-			WRITE_LE_UINT32(buf, *((uint32 *) buf));
-		else if (*sizes == 1)
-			WRITE_LE_UINT16(buf, *((uint16 *) buf));
+		if (*sizes == 3) {
+			if (endianness == kEndiannessLE)
+				WRITE_LE_UINT32(buf, *((uint32 *) buf));
+			else
+				WRITE_BE_UINT32(buf, *((uint32 *) buf));
+		} else if (*sizes == 1) {
+			if (endianness == kEndiannessLE)
+				WRITE_LE_UINT16(buf, *((uint16 *) buf));
+			else
+				WRITE_BE_UINT16(buf, *((uint16 *) buf));
+		}
 		else if (*sizes != 0) {
 			warning("SaveLoad::toEndian(): Corrupted variables sizes");
 			return false;
@@ -811,7 +822,8 @@ uint32 SaveLoad::write(Common::WriteStream &out,
 }
 
 bool SaveLoad::loadDataEndian(Common::ReadStream &in,
-		int16 dataVar, uint32 size, byte *variables, byte *variableSizes) {
+		int16 dataVar, uint32 size,
+		byte *variables, byte *variableSizes, Endianness endianness) {
 
 	bool retVal = false;
 
@@ -821,7 +833,7 @@ bool SaveLoad::loadDataEndian(Common::ReadStream &in,
 	assert(varBuf && sizeBuf);
 
 	if (read(in, varBuf, sizeBuf, size) == size) {
-		if (fromEndian(varBuf, sizeBuf, size)) {
+		if (fromEndian(varBuf, sizeBuf, size, endianness)) {
 			memcpy(variables + dataVar, varBuf, size);
 			memcpy(variableSizes + dataVar, sizeBuf, size);
 			retVal = true;
@@ -835,7 +847,8 @@ bool SaveLoad::loadDataEndian(Common::ReadStream &in,
 }
 
 bool SaveLoad::saveDataEndian(Common::WriteStream &out,
-		int16 dataVar, uint32 size, const byte *variables, const byte *variableSizes) {
+		int16 dataVar, uint32 size,
+		const byte *variables, const byte *variableSizes, Endianness endianness) {
 
 	bool retVal = false;
 
@@ -847,7 +860,7 @@ bool SaveLoad::saveDataEndian(Common::WriteStream &out,
 	memcpy(varBuf, variables + dataVar, size);
 	memcpy(sizeBuf, variableSizes + dataVar, size);
 
-	if (toEndian(varBuf, sizeBuf, size))
+	if (toEndian(varBuf, sizeBuf, size, endianness))
 		if (write(out, varBuf, sizeBuf, size) == size)
 			retVal = true;
 

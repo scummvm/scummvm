@@ -50,6 +50,8 @@ SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
 SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
 	SaveLoad(vm, targetName) {
 
+	_save = new StagedSave(_vm->getEndianness());
+
 	_firstSizeGame = true;
 
 	_saveFiles[0].destName = 0;
@@ -76,6 +78,8 @@ SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
 }
 
 SaveLoad_v4::~SaveLoad_v4() {
+	delete _save;
+
 	delete[] _screenProps;
 	delete[] _saveFiles[1].destName;
 }
@@ -297,7 +301,7 @@ bool SaveLoad_v4::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		if (!_save.load(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
+		if (!_save->load(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
 			return false;
 	}
 
@@ -314,7 +318,7 @@ bool SaveLoad_v4::loadGameScreenProps(SaveFile &saveFile,
 
 	setCurrentSlot(saveFile.destName, saveFile.sourceName[4] - '0');
 
-	if (!_save.load(0, 256000, _varSize + 540, saveFile.destName,
+	if (!_save->load(0, 256000, _varSize + 540, saveFile.destName,
 	                _screenProps, _screenProps + 256000))
 		return false;
 
@@ -393,13 +397,13 @@ bool SaveLoad_v4::saveGame(SaveFile &saveFile,
 
 		_hasIndex = false;
 
-		if(!_save.save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
+		if(!_save->save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
 			return false;
 
-		if(!_save.save(0, 40, 500, saveFile.destName, _indexBuffer + (slot * 40), 0))
+		if(!_save->save(0, 40, 500, saveFile.destName, _indexBuffer + (slot * 40), 0))
 			return false;
 
-		if (!_save.save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
+		if (!_save->save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
 			return false;
 
 	}
@@ -417,7 +421,7 @@ bool SaveLoad_v4::saveGameScreenProps(SaveFile &saveFile,
 
 	setCurrentSlot(saveFile.destName, saveFile.sourceName[4] - '0');
 
-	if (!_save.save(0, 256000, _varSize + 540, saveFile.destName,
+	if (!_save->save(0, 256000, _varSize + 540, saveFile.destName,
 	                _screenProps, _screenProps + 256000))
 		return false;
 
@@ -430,10 +434,10 @@ void SaveLoad_v4::assertInited() {
 
 	_varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 
-	_save.addStage(500);
-	_save.addStage(40, false);
-	_save.addStage(_varSize);
-	_save.addStage(256000);
+	_save->addStage(500);
+	_save->addStage(40, false);
+	_save->addStage(_varSize);
+	_save->addStage(256000);
 }
 
 } // End of namespace Gob
