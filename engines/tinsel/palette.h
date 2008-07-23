@@ -67,18 +67,6 @@ enum {
 #define	CYAN	(RGB(0, MAX_INTENSITY, MAX_INTENSITY))
 
 
-/** video DAC transfer Q structure */
-struct VIDEO_DAC_Q {
-	union {
-		SCNHANDLE hRGBarray;	//!< handle of palette or
-		COLORREF *pRGBarray;	//!< list of palette colours
-	} pal;
-	bool bHandle;		//!< when set - use handle of palette
-	int destDACindex;	//!< start index of palette in video DAC
-	int numColours;		//!< number of colours in "hRGBarray"
-};
-typedef VIDEO_DAC_Q *PVIDEO_DAC_Q;
-
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 /** hardware palette structure */
@@ -97,7 +85,6 @@ struct PALQ {
 	int posInDAC;		//!< palette position in the video DAC
 	int numColours;		//!< number of colours in the palette
 };
-typedef PALQ *PPALQ;
 
 
 #define	PALETTE_MOVED	0x8000	// when this bit is set in the "posInDAC"
@@ -129,21 +116,21 @@ void UpdateDACqueue(		// places a palette in the video DAC queue
 	int numColours,		// number of colours in palette
 	COLORREF *pColours);	// list of RGB tripples
 
-PPALQ AllocPalette(		// allocate a new palette
+PALQ *AllocPalette(		// allocate a new palette
 	SCNHANDLE hNewPal);	// palette to allocate
 
 void FreePalette(		// free a palette allocated with "AllocPalette"
-	PPALQ pFreePal);	// palette queue entry to free
+	PALQ *pFreePal);	// palette queue entry to free
 
-PPALQ FindPalette(		// find a palette in the palette queue
+PALQ *FindPalette(		// find a palette in the palette queue
 	SCNHANDLE hSrchPal);	// palette to search for
 
 void SwapPalette(		// swaps palettes at the specified palette queue position
-	PPALQ pPalQ,		// palette queue position
+	PALQ *pPalQ,		// palette queue position
 	SCNHANDLE hNewPal);	// new palette
 
-PPALQ GetNextPalette(		// returns the next palette in the queue
-	PPALQ pStrtPal);	// queue position to start from - when NULL will start from beginning of queue
+PALQ *GetNextPalette(		// returns the next palette in the queue
+	PALQ *pStrtPal);	// queue position to start from - when NULL will start from beginning of queue
 
 COLORREF GetBgndColour(void);	// returns current background colour
 

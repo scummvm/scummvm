@@ -633,7 +633,7 @@ void MActorProcess(CORO_PARAM) {
 
 void MActorProcessCreate(int X, int Y, int id, PMACTOR pActor) {
 	MActorProcessHelper(X, Y, id, pActor);
-	pActor->pProc = CoroutineInstall(PID_MACTOR, MActorProcess, &pActor, sizeof(PMACTOR));
+	pActor->pProc = ProcessCreate(PID_MACTOR, MActorProcess, &pActor, sizeof(PMACTOR));
 }
 
 

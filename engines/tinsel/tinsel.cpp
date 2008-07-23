@@ -386,8 +386,8 @@ void MouseProcess(CORO_PARAM) {
 void EventsInstall(void) {
 	lastLeftClick = lastRightClick = DwGetCurrentTime();
 
-	pMouseProcess = CoroutineInstall(PID_MOUSE, MouseProcess, NULL, 0);	
-	pKeyboardProcess = CoroutineInstall(PID_KEYBOARD, KeyboardProcess, NULL, 0);	
+	pMouseProcess = ProcessCreate(PID_MOUSE, MouseProcess, NULL, 0);	
+	pKeyboardProcess = ProcessCreate(PID_KEYBOARD, KeyboardProcess, NULL, 0);	
 }
 
 /**
@@ -498,11 +498,11 @@ static void RestoredProcess(CORO_PARAM) {
 }
 
 void RestoreProcess(PINT_CONTEXT pic) {
-	CoroutineInstall(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
+	ProcessCreate(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
 }
 
 void RestoreMasterProcess(PINT_CONTEXT pic) {
-	CoroutineInstall(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
+	ProcessCreate(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
 }
 
 // FIXME: CountOut is used by ChangeScene
@@ -868,11 +868,11 @@ bool TinselEngine::pollEvent() {
 
 void TinselEngine::CreateConstProcesses(void) {
 	// Process to run the master script
-	CoroutineInstall(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
+	ProcessCreate(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
 
 	// Processes to run the cursor and inventory,
-	CoroutineInstall(PID_CURSOR, CursorProcess, NULL, 0);
-	CoroutineInstall(PID_INVENTORY, InventoryProcess, NULL, 0);
+	ProcessCreate(PID_CURSOR, CursorProcess, NULL, 0);
+	ProcessCreate(PID_INVENTORY, InventoryProcess, NULL, 0);
 }
 
 /**

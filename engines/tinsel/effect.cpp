@@ -102,7 +102,7 @@ static void FettleEffectPolys(int x, int y, int index, PMACTOR pActor) {
 			epi.hEpoly = hPoly;
 			epi.pActor = pActor;
 			epi.index = index;
-			CoroutineInstall(PID_TCODE, EffectProcess, &epi, sizeof(epi));
+			ProcessCreate(PID_TCODE, EffectProcess, &epi, sizeof(epi));
 		}
 	}
 }

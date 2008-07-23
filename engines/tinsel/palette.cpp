@@ -34,6 +34,22 @@
 
 namespace Tinsel {
 
+//----------------- LOCAL DEFINES --------------------
+
+/** video DAC transfer Q structure */
+struct VIDEO_DAC_Q {
+	union {
+		SCNHANDLE hRGBarray;	//!< handle of palette or
+		COLORREF *pRGBarray;	//!< list of palette colours
+	} pal;
+	bool bHandle;		//!< when set - use handle of palette
+	int destDACindex;	//!< start index of palette in video DAC
+	int numColours;		//!< number of colours in "hRGBarray"
+};
+
+
+//----------------- LOCAL GLOBAL DATA --------------------
+
 /** background colour */
 static COLORREF bgndColour = BLACK;
 
@@ -67,8 +83,8 @@ static int maxDACQ = 0;
  * Transfer palettes in the palette Q to Video DAC.
  */
 void PalettesToVideoDAC(void) {
-	PPALQ pPalQ;				// palette Q iterator
-	PVIDEO_DAC_Q pDACtail = vidDACdata;	// set tail pointer
+	PALQ *pPalQ;				// palette Q iterator
+	VIDEO_DAC_Q *pDACtail = vidDACdata;	// set tail pointer
 	bool needUpdate = false;
 
 	// while Q is not empty
@@ -198,10 +214,10 @@ void UpdateDACqueue(int posInDAC, int numColours, COLORREF *pColours) {
  * Allocate a palette.
  * @param hNewPal			Palette to allocate
  */
-PPALQ AllocPalette(SCNHANDLE hNewPal) {
-	PPALQ pPrev, p;		// walks palAllocData
+PALQ *AllocPalette(SCNHANDLE hNewPal) {
+	PALQ *pPrev, *p;		// walks palAllocData
 	int iDAC;		// colour index in video DAC
-	PPALQ pNxtPal;		// next PALQ struct in palette allocator
+	PALQ *pNxtPal;		// next PALQ struct in palette allocator
 	PALETTE *pNewPal;
 
 	// get pointer to new palette
@@ -274,7 +290,7 @@ PPALQ AllocPalette(SCNHANDLE hNewPal) {
  * Free a palette allocated with "AllocPalette".
  * @param pFreePal			Palette queue entry to free
  */
-void FreePalette(PPALQ pFreePal) {
+void FreePalette(PALQ *pFreePal) {
 	// validate palette Q pointer
 	assert(pFreePal >= palAllocData && pFreePal <= palAllocData + NUM_PALETTES - 1);
 
@@ -299,8 +315,8 @@ void FreePalette(PPALQ pFreePal) {
  * Find the specified palette.
  * @param hSrchPal			Hardware palette to search for
  */
-PPALQ FindPalette(SCNHANDLE hSrchPal) {
-	PPALQ pPal;		// palette allocator iterator
+PALQ *FindPalette(SCNHANDLE hSrchPal) {
+	PALQ *pPal;		// palette allocator iterator
 
 	// search all structs in palette allocator
 	for (pPal = palAllocData; pPal < palAllocData + NUM_PALETTES; pPal++) {
@@ -318,7 +334,7 @@ PPALQ FindPalette(SCNHANDLE hSrchPal) {
  * @param pPalQ			Palette queue position
  * @param hNewPal		New palette
  */
-void SwapPalette(PPALQ pPalQ, SCNHANDLE hNewPal) {
+void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 	// convert handle to palette pointer
 	PALETTE *pNewPal = (PALETTE *)LockMem(hNewPal);
 
@@ -336,7 +352,7 @@ void SwapPalette(PPALQ pPalQ, SCNHANDLE hNewPal) {
 	} else {
 		// # colours are different - will have to update all following palette entries
 
-		PPALQ pNxtPalQ;		// next palette queue position
+		PALQ *pNxtPalQ;		// next palette queue position
 
 		for (pNxtPalQ = pPalQ + 1; pNxtPalQ < palAllocData + NUM_PALETTES; pNxtPalQ++) {
 			if (pNxtPalQ->posInDAC >= pPalQ->posInDAC + pPalQ->numColours)
@@ -362,7 +378,7 @@ void SwapPalette(PPALQ pPalQ, SCNHANDLE hNewPal) {
  * Statless palette iterator. Returns the next palette in the list
  * @param pStrtPal			Palette to start from - when NULL will start from beginning of list
  */
-PPALQ GetNextPalette(PPALQ pStrtPal) {
+PALQ *GetNextPalette(PALQ *pStrtPal) {
 	if (pStrtPal == NULL) {
 		// start of palette iteration - return 1st palette
 		return (palAllocData[0].objCount) ? palAllocData : NULL;

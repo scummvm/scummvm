@@ -176,7 +176,7 @@ void startupBackground(SCNHANDLE bfilm) {
 
 	// Start display process for each reel in the film
 	assert(FROM_LE_32(pfilm->numreels) == 1); // Multi-reeled backgrounds withdrawn
-	CoroutineInstall(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
+	ProcessCreate(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
 }
 
 /**

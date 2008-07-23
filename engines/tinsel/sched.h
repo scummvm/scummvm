@@ -69,7 +69,7 @@ void ProcessStats(void);	// Shows the maximum number of process used at once
 
 void Scheduler(void);		// called to start process dispatching
 
-PROCESS *CoroutineInstall(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
+PROCESS *ProcessCreate(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 
 void ProcessKill(		// kill a process
 	PROCESS *pKillProc);	// which process to kill (must be different from current one)

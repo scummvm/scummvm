@@ -154,7 +154,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		for (i = 0; i < FROM_LE_32(ss->numEntrance); i++, es++) {
 			if (FROM_LE_32(es->eNumber) == (uint)entry) {
 				if (es->hScript)
-					CoroutineInstall(PID_TCODE, SceneTinselProcess, &es->hScript, sizeof(es->hScript));
+					ProcessCreate(PID_TCODE, SceneTinselProcess, &es->hScript, sizeof(es->hScript));
 				break;
 			}
 		}
@@ -163,7 +163,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 			error("Non-existant scene entry number");
 
 		if (ss->hSceneScript)
-			CoroutineInstall(PID_TCODE, SceneTinselProcess, &ss->hSceneScript, sizeof(ss->hSceneScript));
+			ProcessCreate(PID_TCODE, SceneTinselProcess, &ss->hSceneScript, sizeof(ss->hSceneScript));
 	}
 
 	// Default refer type
@@ -257,16 +257,16 @@ void PrimeScene(void) {
 	RestartCursor();	// Restart the cursor
 	EnableTags();		// Next scene with tags enabled
 
-	CoroutineInstall(PID_SCROLL, ScrollProcess, NULL, 0);
-	CoroutineInstall(PID_SCROLL, EffectPolyProcess, NULL, 0);
+	ProcessCreate(PID_SCROLL, ScrollProcess, NULL, 0);
+	ProcessCreate(PID_SCROLL, EffectPolyProcess, NULL, 0);
 
 #ifdef DEBUG
 	if (ShowPosition)
-		CoroutineInstall(PID_POSITION, CursorPositionProcess, NULL, 0);
+		ProcessCreate(PID_POSITION, CursorPositionProcess, NULL, 0);
 #endif
 
-	CoroutineInstall(PID_TAG, TagProcess, NULL, 0);
-	CoroutineInstall(PID_TAG, PointProcess, NULL, 0);
+	ProcessCreate(PID_TAG, TagProcess, NULL, 0);
+	ProcessCreate(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
 	PrimeBackground();

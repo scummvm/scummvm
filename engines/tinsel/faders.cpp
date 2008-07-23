@@ -35,7 +35,7 @@ namespace Tinsel {
 /** structure used by the "FadeProcess" process */
 struct FADE {
 	const long *pColourMultTable;	// list of fixed point colour multipliers - terminated with negative entry
-	PPALQ pPalQ;		// palette queue entry to fade
+	PALQ *pPalQ;		// palette queue entry to fade
 };
 
 // fixed point fade multiplier tables
@@ -120,7 +120,7 @@ static void FadeProcess(CORO_PARAM) {
  * @param noFadeTable		List of palettes not to fade
  */
 static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
-	PPALQ pPal;	// palette manager iterator
+	PALQ *pPal;	// palette manager iterator
 
 	// create a process for each palette in the palette queue
 	for (pPal = GetNextPalette(NULL); pPal != NULL; pPal = GetNextPalette(pPal)) {
@@ -149,7 +149,7 @@ static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
 			fade.pPalQ		= pPal;
 
 			// create a fader process for this palette
-			CoroutineInstall(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
+			ProcessCreate(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
 		}
 	}
 }

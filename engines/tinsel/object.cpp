@@ -365,7 +365,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 	// get pointer to image
 	if (pInitTbl->hObjImg) {
 		int aniX, aniY;		// objects animation offsets
-		PPALQ pPalQ;		// palette queue pointer
+		PALQ *pPalQ;		// palette queue pointer
 		const IMAGE *pImg = (const IMAGE *)LockMem(pInitTbl->hObjImg);	// handle to image
 
 		// allocate a palette for this object
@@ -477,7 +477,7 @@ void AnimateObject(OBJECT *pAniObj, SCNHANDLE hNewImg) {
 OBJECT *RectangleObject(SCNHANDLE hPal, int colour, int width, int height) {
 	// template for initialising the rectangle object
 	static const OBJ_INIT rectObj = {0, DMA_CONST, OID_EFFECTS, 0, 0, 0};
-	PPALQ pPalQ;		// palette queue pointer
+	PALQ *pPalQ;		// palette queue pointer
 
 	// allocate and init a new object
 	OBJECT *pRect = InitObject(&rectObj);

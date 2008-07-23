@@ -980,7 +980,7 @@ void RunInvTinselCode(PINV_OBJECT pinvo, USER_EVENT event, BUTEVENT be, int inde
 		return;
 
 	GlitterIndex = index;
-	CoroutineInstall(PID_TCODE, InvTinselProcess, &to, sizeof(to));
+	ProcessCreate(PID_TCODE, InvTinselProcess, &to, sizeof(to));
 }
 
 /**************************************************************************/
@@ -3938,7 +3938,7 @@ void InvPickup(int index) {
 
 			else if (!(invObj->attribute & IO_ONLYINV1 && ino !=INV_1)
 			     && !(invObj->attribute & IO_ONLYINV2 && ino !=INV_2))
-				CoroutineInstall(PID_TCODE, InvPdProcess, &index, sizeof(index));
+				ProcessCreate(PID_TCODE, InvPdProcess, &index, sizeof(index));
 		}
 	}
 }

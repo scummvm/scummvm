@@ -147,7 +147,7 @@ void Scheduler(void) {
  * @param pParam	process specific info
  * @param sizeParam	size of process specific info
  */
-PROCESS *CoroutineInstall(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
+PROCESS *ProcessCreate(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc;
 
 	// get a free process

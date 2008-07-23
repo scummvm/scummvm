@@ -230,7 +230,7 @@ static void ActorRestoredProcess(CORO_PARAM) {
 void RestoreActorProcess(int id, PINT_CONTEXT pic) {
 	RATP_INIT r = { pic, id };
 
-	CoroutineInstall(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
+	ProcessCreate(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
 }
 
 /**
@@ -247,7 +247,7 @@ void actorEvent(int ano, USER_EVENT event, BUTEVENT be) {
 		atp.id = ano;
 		atp.event = event;
 		atp.bev = be;
-		CoroutineInstall(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
+		ProcessCreate(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
 	}
 }
 

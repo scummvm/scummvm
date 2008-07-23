@@ -184,13 +184,13 @@ static void PolyTinselProcess(CORO_PARAM) {
 void RunPolyTinselCode(HPOLYGON hPoly, USER_EVENT event, BUTEVENT be, bool tc) {
 	TP_INIT to = { hPoly, event, be, tc, 0 };
 
-	CoroutineInstall(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+	ProcessCreate(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 void effRunPolyTinselCode(HPOLYGON hPoly, USER_EVENT event, int actor) {
 	TP_INIT to = { hPoly, event, BE_NONE, false, actor };
 
-	CoroutineInstall(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+	ProcessCreate(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 //-----------------------------------------------------------------------
@@ -233,7 +233,7 @@ static void WalkProcess(CORO_PARAM) {
 void walkto(int x, int y) {
 	WP_INIT to = { x, y };
 
-	CoroutineInstall(PID_TCODE, WalkProcess, &to, sizeof(to));
+	ProcessCreate(PID_TCODE, WalkProcess, &to, sizeof(to));
 }
 
 /**
