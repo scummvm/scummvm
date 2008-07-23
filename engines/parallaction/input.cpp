@@ -333,7 +333,11 @@ void Input::exitInventoryMode() {
 	}
 
 	_vm->closeInventory();
-	_vm->setInventoryCursor(item);
+	if (item == -1) {
+		_vm->setArrowCursor();
+	} else {
+		_vm->setInventoryCursor(item);
+	}
 	_vm->resumeJobs();
 }
 
