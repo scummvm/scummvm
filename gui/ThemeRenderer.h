@@ -180,6 +180,7 @@ protected:
 		GUI::Theme::TextAlign alignH;
 		GUI::Theme::TextAlignVertical alignV;
 		bool elipsis;
+		bool restoreBg;
 	};
 	
 public:
@@ -548,7 +549,7 @@ protected:
 	 *	This function is called from all the Widget Drawing methods.
 	 */
 	inline void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
-	inline void queueDDText(TextData type, const Common::Rect &r, const Common::String &text,
+	inline void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop);
 	
 	/**

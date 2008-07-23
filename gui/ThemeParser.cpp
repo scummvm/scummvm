@@ -204,6 +204,9 @@ bool ThemeParser::parserCallback_text() {
 	
 	if (tNode->values.contains("horizontal_align") == false || tNode->values.contains("vertical_align") == false)
 		return parserError("Text inside widgets requires proper alignment keys.");
+
+	if (tNode->values.contains("font") == false)
+		return parserError("Text definitions must include a valid Font identifier.");
 		
 	if (tNode->values["horizontal_align"] == "left")
 		alignH = GUI::Theme::kTextAlignLeft;
@@ -221,7 +224,10 @@ bool ThemeParser::parserCallback_text() {
 		alignV = GUI::Theme::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
 	
-	return _theme->addTextData(parentNode->values["id"], tNode->values["font"], alignH, alignV);
+	if (!_theme->addTextData(parentNode->values["id"], tNode->values["font"], alignH, alignV))
+		return parserError("Error when adding Text Data for '%s'.", parentNode->values["id"].c_str());
+
+	return true;
 }
 
 bool ThemeParser::parserCallback_renderInfo() {

@@ -101,6 +101,12 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 
 	loadConfigFile("classic");
 
+	if (_screen->w >= 400 && _screen->h >= 300) {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+
 	_initOk = true;
 	_themeName = themeName;
 }
@@ -225,11 +231,7 @@ bool ThemeRenderer::addFont(const Common::String &fontId, int r, int g, int b) {
 	_texts[textId] = new TextDrawData;
 	
 	// TODO: Allow the user to specify the font he wants, instead of choosing based on resolution
-	if (_screen->w >= 400 && _screen->h >= 300) {
-		_texts[textId]->_fontPtr = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	} else {
-		_texts[textId]->_fontPtr = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	}
+	_texts[textId]->_fontPtr = _font;
 	
 	_texts[textId]->_color.r = r;
 	_texts[textId]->_color.g = g;
@@ -338,7 +340,7 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 	}
 }
 
-void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Common::String &text,
+void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 	bool elipsis, TextAlign alignH, TextAlignVertical alignV) {
 		
 	if (_texts[type] == 0)
@@ -351,6 +353,7 @@ void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Comm
 	q.text = text;
 	q.alignH = alignH;
 	q.alignV = alignV;
+	q.restoreBg = restoreBg;
 	
 	if (_buffering) {		
 		_textQueue.push_back(q);
@@ -382,7 +385,7 @@ void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
 }
 
 void ThemeRenderer::drawDDText(const DrawQueueText &q) {	
-	if (q.type != kTextDataInverted)
+	if (q.restoreBg)
 		restoreBackground(q.area);
 	
 	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
@@ -420,7 +423,7 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 		dd = kDDButtonDisabled;
 
 	queueDD(dd, r);
-	queueDDText(getTextData(dd), r, str, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
@@ -446,7 +449,7 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 	
-	queueDDText(getTextData(dd), r2, str, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), r2, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -500,7 +503,7 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 	
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
-		queueDDText(getTextData(dd), text, sel, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+		queueDDText(getTextData(dd), text, sel, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 	}
 }
 
@@ -546,7 +549,7 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 
 		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
-		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
+		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
 	
 	if (active >= 0) {
@@ -554,28 +557,31 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 		const uint16 tabLeft = active * (tabWidth + tabOffset);
 		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
 		queueDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
-		queueDDText(getTextData(kDDTabActive), tabRect, tabs[active], false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
+		queueDDText(getTextData(kDDTabActive), tabRect, tabs[active], false, false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
 	}
 }
 
 void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
-	if (!_initOk)
+	if (!ready())
 		return;
 		
-	if (inverted)
+	if (inverted) {
 		queueDD(kDDTextSelectionBackground, r);
-		
+		queueDDText(kTextDataInverted, r, str, false, useEllipsis);
+		return;
+	}
+
 	switch (state) {
 		case kStateDisabled:
-			queueDDText(inverted ? kTextDataInverted : kTextDataDisabled, r, str, useEllipsis);
+			queueDDText(kTextDataDisabled, r, str, true, useEllipsis);
 			break;
 			
 		case kStateHighlight:
-			queueDDText(inverted ? kTextDataInverted : kTextDataHover, r, str, useEllipsis);
+			queueDDText(kTextDataHover, r, str, true, useEllipsis);
 			break;
 		
 		case kStateEnabled:
-			queueDDText(inverted ? kTextDataInverted : kTextDataDefault, r, str, useEllipsis);
+			queueDDText(kTextDataDefault, r, str, true, useEllipsis);
 			break;
 	}
 }

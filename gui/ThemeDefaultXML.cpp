@@ -48,13 +48,13 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<font id = 'text_default' type = 'default' color = '0, 0, 0' />"
 		"<font id = 'text_hover' type = 'default' color = '255, 255, 255' />"
 		"<font id = 'text_disabled' type = 'default' color = '128, 128, 128' />"
-		"<font id = 'text_inverted' type = 'default' color = '255, 0, 0' />"
+		"<font id = 'text_inverted' type = 'default' color = '173, 40, 8' />"
 	"</fonts>"
 
 	"<defaults fill = 'gradient' fg_color = '255, 255, 255' />"
 	
 	"<drawdata id = 'text_selection' cache = false>"
-		"<drawstep func = 'square' fill = 'foreground' fg_color = '0, 255, 0' />"
+		"<drawstep func = 'square' fill = 'foreground' fg_color = '255, 255, 255' />"
 	"</drawdata>"
 
 	"<drawdata id = 'mainmenu_bg' cache = false>"
@@ -90,7 +90,7 @@ bool ThemeRenderer::loadDefaultXML() {
 	"<drawdata id = 'popup_idle' cache = false>"
 		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
 		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
-		"<text vertical_align = 'center' horizontal_align = 'right' color = '0, 0, 0' />"
+		"<text font = 'text_default' vertical_align = 'center' horizontal_align = 'right'/>"
 	"</drawdata>"
 	
 	
