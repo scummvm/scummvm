@@ -151,7 +151,7 @@ void Parallaction::clearSet(OpcodeSet &opcodes) {
 
 void Parallaction::updateView() {
 
-	if ((_engineFlags & kEnginePauseJobs) && (_engineFlags & kEngineInventory) == 0) {
+	if ((_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
 		return;
 	}
 

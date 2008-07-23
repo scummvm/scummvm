@@ -171,9 +171,7 @@ void Input::updateGameInput() {
 	} else {
 		_inputData._mousePos = _mousePos;
 		_inputData._event = kEvNone;
-		if (!translateGameInput()) {
-			translateInventoryInput();
-		}
+		translateGameInput();
 	}
 
 }
@@ -191,6 +189,11 @@ InputData* Input::updateInput() {
 
 	case kInputModeGame:
 		updateGameInput();
+		break;
+
+	case kInputModeInventory:
+		readInput();
+		updateInventoryInput();
 		break;
 	}
 
@@ -234,7 +237,7 @@ void Input::walkTo(const Common::Point &dest) {
 
 bool Input::translateGameInput() {
 
-	if ((_engineFlags & kEnginePauseJobs) || (_engineFlags & kEngineInventory)) {
+	if (_engineFlags & kEnginePauseJobs) {
 		return false;
 	}
 
@@ -310,6 +313,8 @@ void Input::enterInventoryMode() {
 	_vm->openInventory();
 
 	_transCurrentHoverItem = -1;
+
+	_inputMode = kInputModeInventory;
 }
 
 void Input::exitInventoryMode() {
@@ -339,22 +344,17 @@ void Input::exitInventoryMode() {
 		_vm->setInventoryCursor(item);
 	}
 	_vm->resumeJobs();
+
+	_inputMode = kInputModeGame;
 }
 
-bool Input::translateInventoryInput() {
-
-	if ((_engineFlags & kEngineInventory) == 0) {
-		return false;
-	}
-
-	// in inventory
-	int16 _si = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
-
+bool Input::updateInventoryInput() {
 	if (_mouseButtons == kMouseRightUp) {
 		exitInventoryMode();
 		return true;
 	}
 
+	int16 _si = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
 	if (_si != _transCurrentHoverItem) {
 		_transCurrentHoverItem = _si;
 		_vm->highlightInventoryItem(_si);						// enable

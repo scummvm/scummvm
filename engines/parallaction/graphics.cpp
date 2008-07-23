@@ -307,8 +307,12 @@ void Gfx::setProjectorProgram(int16 *data) {
 }
 
 void Gfx::drawInventory() {
-
+/*
 	if ((_engineFlags & kEngineInventory) == 0) {
+		return;
+	}
+*/
+	if (_vm->_input->_inputMode != Input::kInputModeInventory) {
 		return;
 	}
 

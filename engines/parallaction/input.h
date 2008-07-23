@@ -60,7 +60,7 @@ class Input {
 
 	InputData	*translateInput();
 	bool		translateGameInput();
-	bool		translateInventoryInput();
+	bool		updateInventoryInput();
 	void 		takeAction(ZonePtr z);
 	void 		walkTo(const Common::Point &dest);
 
@@ -80,7 +80,8 @@ public:
 	enum {
 		kInputModeGame = 0,
 		kInputModeComment = 1,
-		kInputModeDialogue = 2
+		kInputModeDialogue = 2,
+		kInputModeInventory = 3
 	};
 
 

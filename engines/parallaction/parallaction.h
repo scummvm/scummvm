@@ -101,7 +101,7 @@ enum {
 enum EngineFlags {
 	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
-	kEngineInventory	= (1 << 2),
+//	kEngineInventory	= (1 << 2),
 	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
 	kEngineBlockInput	= (1 << 5),

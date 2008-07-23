@@ -131,7 +131,7 @@ void InventoryRenderer::showInventory() {
 	if (!_inv)
 		error("InventoryRenderer not bound to inventory");
 
-	_engineFlags |= kEngineInventory;
+//	_engineFlags |= kEngineInventory;
 
 	uint16 lines = getNumLines();
 
@@ -147,8 +147,6 @@ void InventoryRenderer::showInventory() {
 void InventoryRenderer::hideInventory() {
 	if (!_inv)
 		error("InventoryRenderer not bound to inventory");
-
-	_engineFlags &= ~kEngineInventory;
 }
 
 void InventoryRenderer::getRect(Common::Rect& r) const {
