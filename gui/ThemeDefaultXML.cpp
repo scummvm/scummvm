@@ -42,18 +42,20 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<color name = 'red' rgb = '255, 0, 0' />"
 		"<color name = 'green' rgb = '0, 255, 0' />"
 		"<color name = 'blue' rgb = '0, 255, 255' />"
-		"<color name = 'text_default' rgb = '0, 0, 0' />"
-		"<color name = 'text_hover' rgb = '255, 255, 255' />"
-		"<color name = 'text_disabled' rgb = '128, 128, 128' />"
 	"</palette>"
 	
 	"<fonts>"
-		"<font id = 'default' type = 'default' color = 'text_default' />"
-		"<font id = 'hover' type = 'default' color = 'text_hover' />"
-		"<font id = 'disabled' type = 'default' color = 'text_disabled' />"
+		"<font id = 'text_default' type = 'default' color = '0, 0, 0' />"
+		"<font id = 'text_hover' type = 'default' color = '255, 255, 255' />"
+		"<font id = 'text_disabled' type = 'default' color = '128, 128, 128' />"
+		"<font id = 'text_inverted' type = 'default' color = '255, 0, 0' />"
 	"</fonts>"
 
 	"<defaults fill = 'gradient' fg_color = '255, 255, 255' />"
+	
+	"<drawdata id = 'text_selection' cache = false>"
+		"<drawstep func = 'square' fill = 'foreground' fg_color = '0, 255, 0' />"
+	"</drawdata>"
 
 	"<drawdata id = 'mainmenu_bg' cache = false>"
 		"<drawstep func = 'fill' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' />"
@@ -68,12 +70,12 @@ bool ThemeRenderer::loadDefaultXML() {
 	"</drawdata>"
 	
 	"<drawdata id = 'tab_active' cache = false>"
-		"<text vertical_align = 'center' horizontal_align = 'center' color = '0, 0, 0' />"
+		"<text font = 'text_default' vertical_align = 'center' horizontal_align = 'center' />"
 		"<drawstep func = 'tab' radius = '4' stroke = '2' fill = 'gradient' gradient_end = '255, 231, 140' gradient_start = '255, 243, 206' shadow = 3 />"
 	"</drawdata>"
 	
 	"<drawdata id = 'tab_inactive' cache = false>"
-		"<text vertical_align = 'center' horizontal_align = 'center' color = '128, 128, 128' />"
+		"<text font = 'text_disabled' vertical_align = 'center' horizontal_align = 'center' />"
 		"<drawstep func = 'tab' radius = '4' stroke = '0' fill = 'foreground' fg_color = '206, 121, 99' shadow = 3 />"
 	"</drawdata>"
 	
@@ -95,7 +97,7 @@ bool ThemeRenderer::loadDefaultXML() {
 	"<drawdata id = 'popup_hover' cache = false>"
 		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 0 />"
 		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
-		"<text vertical_align = 'center' horizontal_align = 'right' color = '255, 255, 255' />"
+		"<text font = 'text_hover' vertical_align = 'center' horizontal_align = 'right' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'default_bg' cache = false>"
@@ -103,27 +105,27 @@ bool ThemeRenderer::loadDefaultXML() {
 	"</drawdata>"
 
 	"<drawdata id = 'button_idle' cache = false>"
-		"<text vertical_align = 'center' horizontal_align = 'center' color = '173, 40, 8' />"
+		"<text font = 'text_default' vertical_align = 'center' horizontal_align = 'center' />"
 		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'foreground' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'button_hover' cache = false>"
-		"<text vertical_align = 'center' horizontal_align = 'center' color = '255, 255, 255' />"
+		"<text font = 'text_hover' vertical_align = 'center' horizontal_align = 'center' />"
 		"<drawstep func = 'roundedsq' radius = '8' stroke = '1' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 	"</drawdata>"
 	
 	"<drawdata id = 'button_disabled' cache = false>"
-		"<text vertical_align = 'center' horizontal_align = 'center' color = '128, 128, 128' />"
+		"<text font = 'text_disabled' vertical_align = 'center' horizontal_align = 'center' />"
 		"<drawstep func = 'roundedsq' radius = '8' stroke = 0 fill = 'foreground' fg_color = '200, 200, 200' shadow = 3 />"
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_disabled' cache = false>"
-		"<text vertical_align = 'top' horizontal_align = 'left' color = '0,0,0' />"
+		"<text font = 'text_disabled' vertical_align = 'top' horizontal_align = 'left' />"
 		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 	"</drawdata>"
 
 	"<drawdata id = 'checkbox_enabled' cache = false>"
-		"<text vertical_align = 'top' horizontal_align = 'left' color = '0,0,0' />"
+		"<text font = 'text_default' vertical_align = 'top' horizontal_align = 'left' />"
 		"<drawstep func = 'square' fill = 'gradient' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' shadow = 0 />"
 		"<drawstep func = 'circle' radius = 'auto' fill = 'foreground' />"
 	"</drawdata>"

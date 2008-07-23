@@ -39,20 +39,6 @@ namespace Graphics {
 class VectorRenderer;
 struct DrawStep;
 
-struct TextStep {
-	struct { 
-		uint8 r, g, b;
-		bool set;
-	}
-	color; /** text color */
-
-	GUI::Theme::TextAlign alignHorizontal;
-	GUI::Theme::TextAlignVertical alignVertical;
-	bool hasAlign;
-	char *text;
-	const Graphics::Font *font;
-};
-
 struct DrawStep {
 	struct { 
 		uint8 r, g, b;
@@ -404,7 +390,6 @@ public:
 	 * @param step Pointer to a DrawStep struct.
 	 */
 	virtual void drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra = 0);
-	virtual void textStep(const Common::String &text, const Common::Rect &area, const TextStep &step, GUI::Theme::TextAlign alignH = GUI::Theme::kTextAlignLeft);
 
 	/**
 	 * Copies the current surface to the system overlay 
@@ -421,8 +406,6 @@ public:
 	 * @param r Position in the active drawing surface to do the blitting.
 	 */
 	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
-	
-	virtual uint32 buildColor(uint8 r, uint8 g, uint8 b) = 0;
 	
 	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) = 0;
 	
@@ -594,10 +577,6 @@ public:
 			dst_ptr += dst_pitch;
 			src_ptr += src_pitch;
 		}
-	}
-	
-	virtual uint32 buildColor(uint8 r, uint8 g, uint8 b) {
-		return RGBToColor<PixelFormat>(r, g, b);
 	}
 
 protected:

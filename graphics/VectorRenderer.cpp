@@ -75,15 +75,6 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 	(this->*(step.drawingCall))(area, step);
 }
 
-void VectorRenderer::textStep(const Common::String &text, const Common::Rect &area, const TextStep &step, GUI::Theme::TextAlign alignH) {
-	if (step.color.set)
-		setFgColor(step.color.r, step.color.g, step.color.b);
-		
-	drawString(step.font, text.c_str(), area, 
-		!step.hasAlign ? alignH : step.alignHorizontal, 
-		!step.hasAlign ? GUI::Theme::kTextAlignVTop : step.alignVertical);
-}
-
 int VectorRenderer::stepGetRadius(const DrawStep &step, const Common::Rect &area) {
 	int radius = 0;
 

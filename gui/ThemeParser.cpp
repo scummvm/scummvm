@@ -160,10 +160,6 @@ bool ThemeParser::parserCallback_font() {
 	
 	if (!tNode->values.contains("type"))
 		return parserError("Font definitions need a valid typename.");
-		
-	// TODO: set typename on the drawstep.
-	
-	Graphics::TextStep step;
 	
 	if (tNode->values.contains("horizontal_align") || tNode->values.contains("vertical_align"))
 		return parserError("Font definitions cannot contain alignments.");
@@ -181,13 +177,7 @@ bool ThemeParser::parserCallback_font() {
 		return parserError("Cannot assign color in font definition.");
 	}
 	
-	step.color.r = red;
-	step.color.g = green;
-	step.color.b = blue;
-	step.color.set = true;
-	step.hasAlign = false;
-	
-	if (!_theme->addTextStep(tNode->values["id"], step))
+	if (!_theme->addFont(tNode->values["id"], red, green, blue))
 		return parserError("Error when loading Font in theme engine.");
 		
 	return true;
@@ -209,47 +199,29 @@ bool ThemeParser::parserCallback_text() {
 	if (parentNode == 0 || parentNode->name != "drawdata")
 		return parserError("Text Steps must be contained inside <drawdata> keys.");
 		
-	Graphics::TextStep step;
+	GUI::Theme::TextAlign alignH;
+	GUI::Theme::TextAlignVertical alignV;
 	
 	if (tNode->values.contains("horizontal_align") == false || tNode->values.contains("vertical_align") == false)
 		return parserError("Text inside widgets requires proper alignment keys.");
 		
 	if (tNode->values["horizontal_align"] == "left")
-		step.alignHorizontal = GUI::Theme::kTextAlignLeft;
+		alignH = GUI::Theme::kTextAlignLeft;
 	else if (tNode->values["horizontal_align"] == "right")
-		step.alignHorizontal = GUI::Theme::kTextAlignRight;
+		alignH = GUI::Theme::kTextAlignRight;
 	else if (tNode->values["horizontal_align"] == "center")
-		step.alignHorizontal = GUI::Theme::kTextAlignCenter;
+		alignH = GUI::Theme::kTextAlignCenter;
 	else return parserError("Invalid value for text alignment.");
 	
 	if (tNode->values["vertical_align"] == "top")
-		step.alignVertical = GUI::Theme::kTextAlignVTop;
+		alignV = GUI::Theme::kTextAlignVTop;
 	else if (tNode->values["vertical_align"] == "center")
-		step.alignVertical = GUI::Theme::kTextAlignVCenter;
+		alignV = GUI::Theme::kTextAlignVCenter;
 	else if (tNode->values["vertical_align"] == "bottom")
-		step.alignVertical = GUI::Theme::kTextAlignVBottom;
+		alignV = GUI::Theme::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
 	
-	int red, green, blue;
-	
-	if (tNode->values.contains("color")) {
-
-		if (_palette.contains(tNode->values["color"]))
-			getPaletteColor(tNode->values["color"], red, green, blue);
-		else if (!parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue))
-			return parserError("Error when parsing color value for text definition");
-			
-	} else {
-		return parserError("Cannot assign color for text drawing.");
-	}
-	
-	step.color.r = red;
-	step.color.g = green;
-	step.color.b = blue;
-	step.color.set = true;
-	step.hasAlign = true;
-	
-	return _theme->addTextStep(parentNode->values["id"], step);
+	return _theme->addTextData(parentNode->values["id"], tNode->values["font"], alignH, alignV);
 }
 
 bool ThemeParser::parserCallback_renderInfo() {

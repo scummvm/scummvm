@@ -44,6 +44,7 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDSpecialColorBackground, "special_bg", true, kDDNone},
 	{kDDPlainColorBackground, "plain_bg", true, kDDNone},
 	{kDDDefaultBackground, "default_bg", true, kDDNone},
+	{kDDTextSelectionBackground, "text_selection", false, kDDNone},
 
 	{kDDWidgetBackgroundDefault, "widget_default", true, kDDNone},
 	{kDDWidgetBackgroundSmall, "widget_small", true, kDDNone},
@@ -72,6 +73,13 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDSeparator, "separator", true, kDDNone},
 };
 
+const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
+	{kTextDataDefault, "text_default"},
+	{kTextDataHover, "text_hover"},
+	{kTextDataDisabled, "text_disabled"},
+	{kTextDataInverted, "text_inverted"}
+};
+
 
 ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
@@ -82,6 +90,10 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		_widgets[i] = 0;
+	}
+	
+	for (int i = 0; i < kTextDataMAX; ++i) {
+		_texts[i] = 0;
 	}
 
 	_graphicsMode = mode;
@@ -109,14 +121,6 @@ bool ThemeRenderer::init() {
 
 		Theme::loadTheme(_defaultConfig);
 		Theme::loadTheme(_configFile, false, true);
-	}
-
-	if (_fontName.empty()) {
-		if (_screen->w >= 400 && _screen->h >= 300) {
-			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		} else {
-			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		}
 	}
 
 	return true;
@@ -195,29 +199,43 @@ void ThemeRenderer::addDrawStep(const Common::String &drawDataId, Graphics::Draw
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeRenderer::addTextStep(const Common::String &drawDataId, Graphics::TextStep step) {
+bool ThemeRenderer::addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV) {
 	DrawData id = getDrawDataId(drawDataId);
+	TextData textId = getTextDataId(textDataId);
 
-	step.font = 0;
+	if (id == -1 || textId == -1 || !_widgets[id])
+		return false;
 	
-	if (id != -1) {
-		assert(_widgets[id] != 0);
-		if (_widgets[id]->_hasText == true)
-			return false;
-
-		_widgets[id]->_textStep = step;
-		_widgets[id]->_hasText = true;
-	} else {
-		if (drawDataId == "default") {
-			_texts[kTextColorDefault] = step;
-		} else if (drawDataId == "hover") {
-			_texts[kTextColorHover] = step;
-		} else if (drawDataId == "disabled") {
-			_texts[kTextColorDisabled] = step;
-		} else return false;
-	}
+	_widgets[id]->_textDataId = textId;
+	_widgets[id]->_textAlignH = alignH;
+	_widgets[id]->_textAlignV = alignV;	
 
 	return true;
+}
+
+bool ThemeRenderer::addFont(const Common::String &fontId, int r, int g, int b) {
+	TextData textId = getTextDataId(fontId);
+	
+	if (textId == -1)
+		return false;
+		
+	if (_texts[textId] != 0)
+		return false;
+		
+	_texts[textId] = new TextDrawData;
+	
+	// TODO: Allow the user to specify the font he wants, instead of choosing based on resolution
+	if (_screen->w >= 400 && _screen->h >= 300) {
+		_texts[textId]->_fontPtr = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		_texts[textId]->_fontPtr = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	}
+	
+	_texts[textId]->_color.r = r;
+	_texts[textId]->_color.g = g;
+	_texts[textId]->_color.b = b;
+	return true;
+	
 }
 
 bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
@@ -230,7 +248,7 @@ bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
 	_widgets[data_id]->_cached = cached;
 	_widgets[data_id]->_buffer = kDrawDataDefaults[data_id].buffer;
 	_widgets[data_id]->_surfaceCache = 0;
-	_widgets[data_id]->_hasText = false;
+	_widgets[data_id]->_textDataId = -1;
 
 	return true;
 }
@@ -320,14 +338,19 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 	}
 }
 
-void ThemeRenderer::queueDDText(DrawData type, const Common::Rect &r, const Common::String &text, TextColor colorId, TextAlign align) {
+void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Common::String &text,
+	bool elipsis, TextAlign alignH, TextAlignVertical alignV) {
+		
+	if (_texts[type] == 0)
+		return;
+		
 	DrawQueueText q;
 	q.type = type;
 	q.area = r;
 	q.area.clip(_screen->w, _screen->h);
 	q.text = text;
-	q.colorId = colorId;
-	q.align = align;
+	q.alignH = alignH;
+	q.alignV = alignV;
 	
 	if (_buffering) {		
 		_textQueue.push_back(q);
@@ -359,19 +382,11 @@ void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
 }
 
 void ThemeRenderer::drawDDText(const DrawQueueText &q) {	
-	if (q.type == kDDNone) {
+	if (q.type != kTextDataInverted)
 		restoreBackground(q.area);
-		if (_texts[q.colorId].font == 0)
-			_texts[q.colorId].font = _font;
-
-		_vectorRenderer->textStep(q.text, q.area, _texts[q.colorId], q.align);
-	} else {
-		if (_widgets[q.type]->_textStep.font == 0)
-			_widgets[q.type]->_textStep.font = _font;
-
-		_vectorRenderer->textStep(q.text, q.area, _widgets[q.type]->_textStep);
-	}
 	
+	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
+	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV);
 	addDirtyRect(q.area);
 }
 
@@ -405,7 +420,7 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 		dd = kDDButtonDisabled;
 
 	queueDD(dd, r);
-	queueDDText(dd, r, str);	
+	queueDDText(getTextData(dd), r, str, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
@@ -420,17 +435,18 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 		return;
 
 	Common::Rect r2 = r;
+	DrawData dd = checked ? kDDCheckboxEnabled : kDDCheckboxDisabled;
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
 	r2.bottom = r2.top + checkBoxSize;
 	r2.right = r2.left + checkBoxSize;
 
-	queueDD(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2);
+	queueDD(dd, r2);
 	
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 	
-	queueDDText(checked ? kDDCheckboxEnabled : kDDCheckboxDisabled, r2, str);
+	queueDDText(getTextData(dd), r2, str, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -484,7 +500,7 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 	
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
-		queueDDText(dd, text, sel);
+		queueDDText(getTextData(dd), text, sel, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 	}
 }
 
@@ -530,7 +546,7 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 
 		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
-		queueDDText(kDDTabInactive, tabRect, tabs[i]);
+		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
 	
 	if (active >= 0) {
@@ -538,15 +554,30 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 		const uint16 tabLeft = active * (tabWidth + tabOffset);
 		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
 		queueDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
-		queueDDText(kDDTabActive, tabRect, tabs[active]);
+		queueDDText(getTextData(kDDTabActive), tabRect, tabs[active], false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
 	}
 }
 
 void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!_initOk)
 		return;
-	
-	queueDDText(kDDNone, r, str, getTextColor(state), align);
+		
+	if (inverted)
+		queueDD(kDDTextSelectionBackground, r);
+		
+	switch (state) {
+		case kStateDisabled:
+			queueDDText(inverted ? kTextDataInverted : kTextDataDisabled, r, str, useEllipsis);
+			break;
+			
+		case kStateHighlight:
+			queueDDText(inverted ? kTextDataInverted : kTextDataHover, r, str, useEllipsis);
+			break;
+		
+		case kStateEnabled:
+			queueDDText(inverted ? kTextDataInverted : kTextDataDefault, r, str, useEllipsis);
+			break;
+	}
 }
 
 void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r) {

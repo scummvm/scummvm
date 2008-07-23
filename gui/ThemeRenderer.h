@@ -42,13 +42,21 @@ namespace GUI {
 struct WidgetDrawData;
 struct DrawDataInfo;
 
+struct TextDrawData {
+	const Graphics::Font *_fontPtr;
+	
+	struct { 
+		uint8 r, g, b;
+	} _color;
+};
+
 struct WidgetDrawData {
 	/** List of all the steps needed to draw this widget */
 	Common::List<Graphics::DrawStep> _steps;
 	
-	/** Single step that defines the text shown inside the widget */
-	Graphics::TextStep _textStep;
-	bool _hasText;
+	int _textDataId;
+	GUI::Theme::TextAlign _textAlignH;
+	GUI::Theme::TextAlignVertical _textAlignV;
 
 	/** Extra space that the widget occupies when it's drawn.
 	    E.g. when taking into account rounded corners, drop shadows, etc 
@@ -97,6 +105,7 @@ protected:
 		kDDSpecialColorBackground,
 		kDDPlainColorBackground,
 		kDDDefaultBackground,
+		kDDTextSelectionBackground,
 		
 		kDDWidgetBackgroundDefault,
 		kDDWidgetBackgroundSmall,
@@ -149,21 +158,28 @@ protected:
 		uint32 dynData;		/** Dynamic data which modifies the DrawData item (optional)*/
 	};
 	
-	enum TextColor {
-		kTextColorNone = -1,
-		kTextColorDefault,
-		kTextColorHover,
-		kTextColorDisabled,
-		kTextColorInverted,
-		kTextColorMAX
+	enum TextData {
+		kTextDataNone = -1,
+		kTextDataDefault = 0,
+		kTextDataHover,
+		kTextDataDisabled,
+		kTextDataInverted,
+		kTextDataMAX
 	};
 	
+	static const struct TextDataInfo {
+		TextData id;
+		const char *name;
+	} kTextDataDefaults[];
+	
 	struct DrawQueueText {
-		DrawData type;
+		TextData type;
 		Common::Rect area;
 		Common::String text;
-		TextColor colorId;
-		TextAlign align;
+		
+		GUI::Theme::TextAlign alignH;
+		GUI::Theme::TextAlignVertical alignV;
+		bool elipsis;
 	};
 	
 public:
@@ -312,6 +328,14 @@ public:
 
 		return kDDNone;
 	}
+	
+	TextData getTextDataId(const Common::String &name) {
+		for (int i = 0; i < kTextDataMAX; ++i)
+			if (name.compareToIgnoreCase(kTextDataDefaults[i].name) == 0)
+				return kTextDataDefaults[i].id;
+
+		return kTextDataNone;
+	}
 
 	/**
 	 *	Interface for ThemeParser class: Parsed DrawSteps are added via this function.
@@ -334,12 +358,13 @@ public:
 	 *	@param cached Whether this DD set will be cached beforehand.
 	 */ 
 	bool addDrawData(const Common::String &data, bool cached);
+	bool addFont(const Common::String &fontName, int r, int g, int b);
 	
 	/**
 	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the 
 	 *	new Font API is in place.
 	 */
-	bool addTextStep(const Common::String &drawDataId, Graphics::TextStep step);
+	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV);
 
 	/** Interface to the new Theme XML parser */
 	ThemeParser *parser() {
@@ -414,6 +439,11 @@ protected:
 			delete _widgets[i];
 			_widgets[i] = 0;
 		}
+		
+		for (int i = 0; i < kTextDataMAX; ++i) {
+			delete _texts[i];
+			_texts[i] = 0;
+		}
 
 		_themeOk = false;
 	}
@@ -461,14 +491,9 @@ protected:
 			_screen = 0;
 		}
 	}
-
-	/**
-	 *	Checks if the given widget type has a Text drawing step associated to it.
-	 *
-	 *	@param type DrawData type of the widget.
-	 */
-	bool hasWidgetText(DrawData type) {
-		return (_widgets[type] != 0 && _widgets[type]->_hasText);
+	
+	TextData getTextData(DrawData ddId) {
+		return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 	}
 	
 	/**
@@ -523,8 +548,8 @@ protected:
 	 *	This function is called from all the Widget Drawing methods.
 	 */
 	inline void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
-	inline void queueDDText(DrawData type, const Common::Rect &r, const Common::String &text, 
-							TextColor colorId = kTextColorNone, TextAlign align = kTextAlignLeft);
+	inline void queueDDText(TextData type, const Common::Rect &r, const Common::String &text,
+		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop);
 	
 	/**
 	 *	DEBUG: Draws a white square around the given position and writes the given next to it.
@@ -547,22 +572,6 @@ protected:
 	 */
 	int getTabSpacing() const { return 0; }
 	int getTabPadding() const { return 3; }
-	
-	/**
-	 *	Translates a WidgetStateInfo of a Text widget to the actual font color value.
-	 */
-	TextColor getTextColor(WidgetStateInfo state) {
-		switch (state) {
-			case kStateDisabled:
-			return kTextColorDisabled;
-			
-			case kStateHighlight:
-			return kTextColorHover;
-			
-			default:
-			return kTextColorDefault;
-		}
-	}
 
 	OSystem *_system; /** Global system object. */
 	
@@ -597,7 +606,7 @@ protected:
 	WidgetDrawData *_widgets[kDrawDataMAX];
 	
 	/** Array of all the text fonts that can be drawn. */
-	Graphics::TextStep _texts[kTextColorMAX];
+	TextDrawData *_texts[kTextDataMAX];
 	
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
