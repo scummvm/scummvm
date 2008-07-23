@@ -135,7 +135,7 @@ const Opcode FWScript::_opcodeTable[] = {
 	{ &FWScript::o1_transformPaletteRange, "bbwww" },
 	/* 48 */
 	{ 0, 0 },
-	{ &FWScript::o1_setDefaultMenuColor2, "b" },
+	{ &FWScript::o1_setDefaultMenuBgColor, "b" },
 	{ &FWScript::o1_palRotate, "bbb" },
 	{ 0, 0 },
 	/* 4C */
@@ -174,7 +174,7 @@ const Opcode FWScript::_opcodeTable[] = {
 	{ &FWScript::o1_setZoneDataEntry, "bw" },
 	{ &FWScript::o1_getZoneDataEntry, "bb" },
 	/* 68 */
-	{ &FWScript::o1_setDefaultMenuColor, "b" },
+	{ &FWScript::o1_setPlayerCommandPosY, "b" },
 	{ &FWScript::o1_allowPlayerInput, "" },
 	{ &FWScript::o1_disallowPlayerInput, "" },
 	{ &FWScript::o1_changeDataDisk, "b" },
@@ -1399,10 +1399,11 @@ int FWScript::o1_transformPaletteRange() {
 	return 0;
 }
 
-int FWScript::o1_setDefaultMenuColor2() {
+/** Set the default background color used for message boxes. */
+int FWScript::o1_setDefaultMenuBgColor() {
 	byte param = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _line, param);
+	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuBgColor(%d)", _line, param);
 
 	renderer->_messageBg = param;
 	return 0;
@@ -1568,10 +1569,11 @@ int FWScript::o1_getZoneDataEntry() {
 	return 0;
 }
 
-int FWScript::o1_setDefaultMenuColor() {
+/** Set the player command string's vertical position on-screen. */
+int FWScript::o1_setPlayerCommandPosY() {
 	byte param = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _line, param);
+	debugC(5, kCineDebugScript, "Line: %d: setPlayerCommandPosY(%d)", _line, param);
 
 	renderer->_cmdY = param;
 	return 0;
@@ -2380,7 +2382,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param = *(localScriptPtr + position);
 				position++;
 
-				sprintf(lineBuffer, "setDefaultMenuColor2(%d)\n", param);
+				sprintf(lineBuffer, "setDefaultMenuBgColor(%d)\n", param);
 
 				break;
 			}
@@ -2530,7 +2532,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param = *(localScriptPtr + position);
 				position++;
 
-				sprintf(lineBuffer, "setDefaultMenuBoxColor(%d)\n", param);
+				sprintf(lineBuffer, "setPlayerCommandPosY(%d)\n", param);
 
 				break;
 			}

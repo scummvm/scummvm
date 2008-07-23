@@ -198,7 +198,7 @@ protected:
 	int o1_blitAndFade();
 	int o1_fadeToBlack();
 	int o1_transformPaletteRange();
-	int o1_setDefaultMenuColor2();
+	int o1_setDefaultMenuBgColor();
 	int o1_palRotate();
 	int o1_break();
 	int o1_endScript();
@@ -213,7 +213,7 @@ protected:
 	int o1_initializeZoneData();
 	int o1_setZoneDataEntry();
 	int o1_getZoneDataEntry();
-	int o1_setDefaultMenuColor();
+	int o1_setPlayerCommandPosY();
 	int o1_allowPlayerInput();
 	int o1_disallowPlayerInput();
 	int o1_changeDataDisk();

@@ -131,7 +131,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_transformPaletteRange, "bbwww" },
 	/* 48 */
 	{ 0, 0 },
-	{ &FWScript::o1_setDefaultMenuColor2, "b" },
+	{ &FWScript::o1_setDefaultMenuBgColor, "b" },
 	{ &FWScript::o1_palRotate, "bbb" },
 	{ 0, 0 },
 	/* 4C */
@@ -170,7 +170,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_setZoneDataEntry, "bw" },
 	{ &FWScript::o1_getZoneDataEntry, "bb" },
 	/* 68 */
-	{ &FWScript::o1_setDefaultMenuColor, "b" },
+	{ &FWScript::o1_setPlayerCommandPosY, "b" },
 	{ &FWScript::o1_allowPlayerInput, "" },
 	{ &FWScript::o1_disallowPlayerInput, "" },
 	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x95 and 0xA9. */
