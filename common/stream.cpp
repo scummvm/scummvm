@@ -148,6 +148,61 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 	return buf;
 }
 
+char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
+	assert(buf != 0 && bufSize > 1);
+	char *p = buf;
+	size_t len = 0;
+	char c = 0;
+
+	// If end-of-file occurs before any characters are read, return NULL
+	// and the buffer contents remain unchanged. 
+	if (eos() || ioFailed()) {
+		return 0;
+	}
+
+	// Loop as long as the stream has not ended, there is still free
+	// space in the buffer, and the line has not ended
+	while (!eos() && len + 1 < bufSize && c != LF) {
+		c = readByte();
+		
+		// If end-of-file occurs before any characters are read, return
+		// NULL and the buffer contents remain unchanged. If an error
+		/// occurs, return NULL and the buffer contents are indeterminate.
+		if (ioFailed() || (len == 0 && eos()))
+			return 0;
+
+		// Check for CR or CR/LF
+		// * DOS and Windows use CRLF line breaks
+		// * Unix and OS X use LF line breaks
+		// * Macintosh before OS X used CR line breaks
+		if (c == CR) {
+			// Look at the next char -- is it LF? If not, seek back
+			c = readByte();
+			if (c != LF && !eos())
+				seek(-1, SEEK_CUR);
+			// Treat CR & CR/LF as plain LF
+			c = LF;
+		}
+		
+		*p++ = c;
+		len++;
+	}
+
+	// FIXME:
+	// This should fix a bug while using readLine with Common::File
+	// it seems that it sets the eos flag after an invalid read
+	// and at the same time the ioFailed flag
+	// the config file parser fails out of that reason for the new themes
+	if (eos()) {
+		clearIOFailed();
+	}
+
+	// We always terminate the buffer if no error occured
+	*p = 0;
+	return buf;
+}
+
+
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
 	dataSize = MIN(dataSize, _end - _pos);
 

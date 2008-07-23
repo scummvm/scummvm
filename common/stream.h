@@ -304,13 +304,40 @@ public:
 	 * Read one line of text from a CR or CR/LF terminated plain text file.
 	 * This method is a rough analog of the (f)gets function.
 	 *
+	 * @bug A main difference (and flaw) in this function is that there is no
+	 * way to detect that a line exceeeds the length of the buffer.
+	 * Code which needs this should use the new readLine_NEW() method instead.
+	 *
 	 * @param buf	the buffer to store into
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occurred
+	 *
 	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
 	 *       into the buffer.
 	 */
 	virtual char *readLine(char *buf, size_t bufSize);
+
+	/**
+	 * Reads at most one less than the number of characters specified
+	 * by bufSize from the and stores them in the string buf. Reading
+	 * stops when the end of a line is reached (CR, CR/LF or LF), at
+	 * end-of-file or error.  The newline, if any, is retained (CR and
+	 * CR/LF are translated to LF = 0xA = '\n').  If any characters are
+	 * read and there is no error, a `\0' character is appended to end
+	 * the string.
+	 *
+	 * Upon successful completion, return a pointer to the string. If
+	 * end-of-file occurs before any characters are read, returns NULL
+	 * and the buffer contents remain unchanged.  If an error occurs,
+	 * returns NULL and the buffer contents are indeterminate.
+	 * This method does not distinguish between end-of-file and error;
+	 * callers muse use ioFailed() or eos() to determine which occurred.
+	 *
+	 * @param buf	the buffer to store into
+	 * @param bufSize	the size of the buffer
+	 * @return a pointer to the read string, or NULL if an error occurred
+	 */
+	virtual char *readLine_NEW(char *s, size_t bufSize);
 };
 
 /**
