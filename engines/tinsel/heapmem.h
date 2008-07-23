@@ -41,7 +41,6 @@ struct MEM_NODE {
 	uint32 lruTime;		// time when memory object was last accessed
 	int flags;		// allocation attributes
 };
-typedef MEM_NODE *PMEM_NODE;
 
 // allocation flags for the MemoryAlloc function
 #define	DWM_FIXED	0x0001	// allocates fixed memory
@@ -71,35 +70,35 @@ void MemoryInit(void);		// initialises the memory manager
 void MemoryStats(void);		// Shows the maximum number of mnodes used at once
 #endif
 
-PMEM_NODE MemoryAlloc(		// allocates the specified number of bytes from the heap
+MEM_NODE *MemoryAlloc(		// allocates the specified number of bytes from the heap
 	int flags,		// allocation attributes
 	long size);		// number of bytes to allocate
 
 void MemoryDiscard(		// discards the specified memory object
-	PMEM_NODE pMemNode);	// node of the memory object
+	MEM_NODE *pMemNode);	// node of the memory object
 
 int MemoryFlags(		// returns information about the specified memory object
-	PMEM_NODE pMemNode);	// node of the memory object
+	MEM_NODE *pMemNode);	// node of the memory object
 
 void MemoryFree(		// frees the specified memory object and invalidates its node
-	PMEM_NODE pMemNode);	// node of the memory object
+	MEM_NODE *pMemNode);	// node of the memory object
 
-PMEM_NODE MemoryHandle(		// Retrieves the mnode associated with the specified pointer to a memory object
+MEM_NODE *MemoryHandle(		// Retrieves the mnode associated with the specified pointer to a memory object
 	void *pMem);		// address of memory object
 
 void *MemoryLock(		// locks a memory object and returns a pointer to the first byte of the objects memory block
-	PMEM_NODE pMemNode);	// node of the memory object
+	MEM_NODE *pMemNode);	// node of the memory object
 
-PMEM_NODE MemoryReAlloc(	// changes the size or attributes of a specified memory object
-	PMEM_NODE pMemNode,	// node of the memory object
+MEM_NODE *MemoryReAlloc(	// changes the size or attributes of a specified memory object
+	MEM_NODE *pMemNode,	// node of the memory object
 	long size,		// new size of block
 	int flags);		// how to reallocate the object
 
 long MemorySize(		// returns the size, in bytes, of the specified memory object
-	PMEM_NODE pMemNode);	// node of the memory object
+	MEM_NODE *pMemNode);	// node of the memory object
 
 void MemoryUnlock(		// unlocks a memory object
-	PMEM_NODE pMemNode);	// node of the memory object
+	MEM_NODE *pMemNode);	// node of the memory object
 
 bool HeapCompact(		// Allocates the specified number of bytes from the specified heap
 	long size,		// number of bytes to free up

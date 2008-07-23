@@ -50,7 +50,7 @@ bool bNoScroll;
 
 void InitBackground(BACKGND *pBgnd) {
 	int i;			// playfield counter
-	PPLAYFIELD pPlayfield;	// pointer to current playfield
+	PLAYFIELD *pPlayfield;	// pointer to current playfield
 
 	// set current background
 	pCurBgnd = pBgnd;
@@ -87,7 +87,7 @@ void InitBackground(BACKGND *pBgnd) {
  */
 
 void PlayfieldSetPos(int which, int newXpos, int newYpos) {
-	PPLAYFIELD pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
 	assert(pCurBgnd != NULL);
@@ -114,7 +114,7 @@ void PlayfieldSetPos(int which, int newXpos, int newYpos) {
  */
 
 void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
-	PPLAYFIELD pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
 	assert(pCurBgnd != NULL);
@@ -136,7 +136,7 @@ void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
  */
 
 OBJECT *GetPlayfieldList(int which) {
-	PPLAYFIELD pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
 	assert(pCurBgnd != NULL);
@@ -159,7 +159,7 @@ OBJECT *GetPlayfieldList(int which) {
 
 void DrawBackgnd(void) {
 	int i;			// playfield counter
-	PPLAYFIELD pPlay;	// playfield pointer
+	PLAYFIELD *pPlay;	// playfield pointer
 	int prevX, prevY;	// save interger part of position
 	Common::Point ptWin;	// window top left
 

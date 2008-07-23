@@ -111,9 +111,8 @@ struct SAVED_ACTOR {
 	short		presRnum;	//!< the present reel number
 	short		presX, presY;
 };
-typedef SAVED_ACTOR *PSAVED_ACTOR;
 
-int SaveActors(PSAVED_ACTOR sActorInfo);
+int SaveActors(SAVED_ACTOR *sActorInfo);
 
 	
 void RestoreActorProcess(int id, INT_CONTEXT *pic);

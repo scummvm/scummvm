@@ -53,8 +53,6 @@ struct BLOCK {
 	short blkHeight;	//!< block height
 	SCNHANDLE hBlkBits;	//!< block bitmap handle
 };
-typedef BLOCK *PBLOCK;
-
 
 /** structure to define position of blocks, which block and which palette */
 struct BLK_INFO {
@@ -65,8 +63,6 @@ struct BLK_INFO {
 	uint8 byBlkPal;		//!< which palette - index into "blkPals" for this block
 	int32 blkIndex;		//!< which block - index into "blocks"
 };
-typedef BLK_INFO *PBLK_INFO;
-
 
 /** background module structure - a module is a container for blocks */
 struct MODULE {
@@ -78,8 +74,6 @@ struct MODULE {
 	BLK_INFO *blkInfo;	//!< pointer to array of which block goes where
 						//!< NOTE: This array must be sorted on x position
 };
-typedef MODULE *PMODULE;
-
 
 /**
  * background module node structure - links a playfields modules together
@@ -92,8 +86,6 @@ struct MOD_NODE {
 	char *onDispList;	//!< pointer to modules (block on object list) flags - should alloc 1 byte per block
 	Common::Point ptModPos;		//!< module world start position
 };
-typedef MOD_NODE *PMOD_NODE;
-
 
 /** background playfield structure - a playfield is a container for modules */
 struct PLAYFIELD {
@@ -106,7 +98,6 @@ struct PLAYFIELD {
 	Common::Rect rcClip;	//!< clip rectangle for this playfield
 	bool bMoved;		//!< set when playfield has moved
 };
-typedef PLAYFIELD *PPLAYFIELD;
 
 /** multi-playfield background structure - a backgnd is a container of playfields */
 struct BACKGND {

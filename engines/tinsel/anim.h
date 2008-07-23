@@ -41,7 +41,6 @@ struct ANIM {
 	uint32 hScript;		//!< animation script handle
 	int scriptIndex;	//!< current position in animation script
 };
-typedef ANIM *PANIM;
 
 
 /*----------------------------------------------------------------------*\

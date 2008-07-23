@@ -847,7 +847,7 @@ COLORREF getActorTcol(int ano) {
 /**
  * Store relevant information pertaining to currently existing actors.
  */
-int SaveActors(PSAVED_ACTOR sActorInfo) {
+int SaveActors(SAVED_ACTOR *sActorInfo) {
 	int	i, j;
 
 	for (i = 0, j = 0; i < NumActors; i++) {

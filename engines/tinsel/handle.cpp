@@ -57,7 +57,7 @@ bool bLockedScene = 0;
 struct MEMHANDLE {
 	char szName[12];	//!< 00 - file name of graphics file
 	int32 filesize;		//!< 12 - file size and flags
-	PMEM_NODE pNode;	//!< 16 - memory node for the graphics
+	MEM_NODE *pNode;	//!< 16 - memory node for the graphics
 };
 
 

@@ -36,7 +36,7 @@ namespace Tinsel {
 MEM_NODE mnodeList[NUM_MNODES];
 
 // pointer to the linked list of free mnodes
-static PMEM_NODE pFreeMemNodes;
+static MEM_NODE *pFreeMemNodes;
 
 #ifdef DEBUG
 // diagnostic mnode counters
@@ -48,14 +48,14 @@ static int maxNodes;
 static MEM_NODE heapSentinel;
 
 //
-static PMEM_NODE AllocMemNode(void);
+static MEM_NODE *AllocMemNode(void);
 
 
 /**
  * Initialises the memory manager.
  */
 void MemoryInit(void) {
-	PMEM_NODE pNode;
+	MEM_NODE *pNode;
 
 #ifdef DEBUG
 	// clear number of nodes in use
@@ -117,9 +117,9 @@ void MemoryStats(void) {
 /**
  * Allocate a mnode from the free list.
  */
-static PMEM_NODE AllocMemNode(void) {
+static MEM_NODE *AllocMemNode(void) {
 	// get the first free mnode
-	PMEM_NODE pMemNode = pFreeMemNodes;
+	MEM_NODE *pMemNode = pFreeMemNodes;
 
 	// make sure a mnode is available
 	assert(pMemNode); // Out of memory nodes
@@ -144,7 +144,7 @@ static PMEM_NODE AllocMemNode(void) {
  * Return a mnode back to the free list.
  * @param pMemNode			Node of the memory object
  */
-void FreeMemNode(PMEM_NODE pMemNode) {
+void FreeMemNode(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
@@ -168,8 +168,8 @@ void FreeMemNode(PMEM_NODE pMemNode) {
  * @param bDiscard		When set - will discard blocks to fullfill the request
  */
 bool HeapCompact(long size, bool bDiscard) {
-	PMEM_NODE pHeap = &heapSentinel;
-	PMEM_NODE pPrev, pCur, pOldest;
+	MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pPrev, *pCur, *pOldest;
 	long largest;		// size of largest free block
 	uint32 oldest;		// time of the oldest discardable block
 
@@ -268,9 +268,9 @@ bool HeapCompact(long size, bool bDiscard) {
  * @param flags			Allocation attributes
  * @param size			Number of bytes to allocate
  */
-PMEM_NODE MemoryAlloc(int flags, long size) {
-	PMEM_NODE pHeap = &heapSentinel;
-	PMEM_NODE pNode;
+MEM_NODE *MemoryAlloc(int flags, long size) {
+	MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pNode;
 	bool bCompacted = true;	// set when heap has been compacted
 
 	// compact the heap if we are allocating fixed memory
@@ -297,13 +297,13 @@ PMEM_NODE MemoryAlloc(int flags, long size) {
 
 					if (flags & DWM_FIXED)
 						// lock the memory
-						return (PMEM_NODE)MemoryLock(pNode);
+						return (MEM_NODE *)MemoryLock(pNode);
 					else
 						// just return the node
 						return pNode;
 				} else {
 					// allocate a node for the remainder of the free block
-					PMEM_NODE pTemp = AllocMemNode();
+					MEM_NODE *pTemp = AllocMemNode();
 
 					// calc size of the free block
 					long freeSize = pNode->size - size;
@@ -326,7 +326,7 @@ PMEM_NODE MemoryAlloc(int flags, long size) {
 						if (flags & DWM_ZEROINIT)
 							memset(pNode->pBaseAddr, 0, size);
 
-						return (PMEM_NODE)MemoryLock(pNode);
+						return (MEM_NODE *)MemoryLock(pNode);
 					} else {
 						// place the free node before pNode
 						pTemp->pBaseAddr = pNode->pBaseAddr;
@@ -375,7 +375,7 @@ PMEM_NODE MemoryAlloc(int flags, long size) {
  * Discards the specified memory object.
  * @param pMemNode			Node of the memory object
  */
-void MemoryDiscard(PMEM_NODE pMemNode) {
+void MemoryDiscard(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
@@ -387,7 +387,7 @@ void MemoryDiscard(PMEM_NODE pMemNode) {
 
 	if ((pMemNode->flags & DWM_DISCARDED) == 0) {
 		// allocate a free node to replace this node
-		PMEM_NODE pTemp = AllocMemNode();
+		MEM_NODE *pTemp = AllocMemNode();
 
 		// copy node data
 		memcpy(pTemp, pMemNode, sizeof(MEM_NODE));
@@ -423,8 +423,8 @@ void MemoryDiscard(PMEM_NODE pMemNode) {
  * Frees the specified memory object and invalidates its node.
  * @param pMemNode			Node of the memory object
  */
-void MemoryFree(PMEM_NODE pMemNode) {
-	PMEM_NODE pPrev, pNext;
+void MemoryFree(MEM_NODE *pMemNode) {
+	MEM_NODE *pPrev, *pNext;
 
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
@@ -469,7 +469,7 @@ void MemoryFree(PMEM_NODE pMemNode) {
  * of the objects memory block.
  * @param pMemNode			Node of the memory object
  */
-void *MemoryLock(PMEM_NODE pMemNode) {
+void *MemoryLock(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
@@ -493,8 +493,8 @@ void *MemoryLock(PMEM_NODE pMemNode) {
  * @param size			New size of block
  * @param flags			How to reallocate the object
  */
-PMEM_NODE MemoryReAlloc(PMEM_NODE pMemNode, long size, int flags) {
-	PMEM_NODE pNew;
+MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
+	MEM_NODE *pNew;
 
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
@@ -550,7 +550,7 @@ PMEM_NODE MemoryReAlloc(PMEM_NODE pMemNode, long size, int flags) {
 
 	if (flags & DWM_FIXED)
 		// lock the memory
-		return (PMEM_NODE)MemoryLock(pMemNode);
+		return (MEM_NODE *)MemoryLock(pMemNode);
 	else
 		// just return the node
 		return pMemNode;
@@ -560,7 +560,7 @@ PMEM_NODE MemoryReAlloc(PMEM_NODE pMemNode, long size, int flags) {
  * Unlocks a memory object.
  * @param pMemNode		Node of the memory object
  */
-void MemoryUnlock(PMEM_NODE pMemNode) {
+void MemoryUnlock(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
@@ -578,8 +578,8 @@ void MemoryUnlock(PMEM_NODE pMemNode) {
  * Retrieves the mnode associated with the specified pointer to a memory object.
  * @param pMem			Address of memory object
  */
-PMEM_NODE MemoryHandle(void *pMem) {
-	PMEM_NODE pNode;
+MEM_NODE *MemoryHandle(void *pMem) {
+	MEM_NODE *pNode;
 	// search the DOS heap
 	for (pNode = heapSentinel.pNext; pNode != &heapSentinel; pNode = pNode->pNext) {
 		if (pNode->pBaseAddr == pMem)

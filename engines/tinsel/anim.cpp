@@ -59,7 +59,7 @@ union ANI_SCRIPT {
  * Advance to next frame routine.
  * @param pAnim			Animation data structure
  */
-SCRIPTSTATE DoNextFrame(PANIM pAnim) {
+SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 	// get a pointer to the script
 	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
 
@@ -227,7 +227,7 @@ SCRIPTSTATE DoNextFrame(PANIM pAnim) {
  * @param hNewScript		Script of multipart frames
  * @param aniSpeed			Sets speed of animation in frames
  */
-void InitStepAnimScript(PANIM pAnim, OBJECT *pAniObj, SCNHANDLE hNewScript, int aniSpeed) {
+void InitStepAnimScript(ANIM *pAnim, OBJECT *pAniObj, SCNHANDLE hNewScript, int aniSpeed) {
 	OBJECT *pObj;			// multi-object list iterator
 
 	pAnim->aniDelta = 1;		// will animate on next call to NextAnimRate
@@ -247,7 +247,7 @@ void InitStepAnimScript(PANIM pAnim, OBJECT *pAniObj, SCNHANDLE hNewScript, int 
  * Execute the next command in a animation script.
  * @param pAnim			Animation data structure
  */
-SCRIPTSTATE StepAnimScript(PANIM pAnim) {
+SCRIPTSTATE StepAnimScript(ANIM *pAnim) {
 	SCRIPTSTATE state;
 
 	if (--pAnim->aniDelta == 0) {
@@ -270,7 +270,7 @@ SCRIPTSTATE StepAnimScript(PANIM pAnim) {
  * @param pAnim			Animation data structure
  * @param numFrames		Number of frames to skip
  */
-void SkipFrames(PANIM pAnim, int numFrames) {
+void SkipFrames(ANIM *pAnim, int numFrames) {
 	// get a pointer to the script
 	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
 
