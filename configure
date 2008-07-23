@@ -811,6 +811,10 @@ iphone)
 	_host_os=iphone
 	_host_cpu=arm
 	;;
+neuros)
+	_host_os=linux
+	_host_cpu=arm
+	;;
 *)
 	if test -z "$_host"; then
 		guessed_host=`$_srcdir/config.guess`
@@ -1122,6 +1126,19 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2x"
 			_build_hq_scalers="no"
+			;;
+		neuros)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_h "#define NEUROS"
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend='null'
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1629,7 +1646,7 @@ for engine in $_engines; do
 	fi
 
 	# Save the settings
-	defname="ENABLE_`echo $engine | tr [a-z] [A-Z]`"
+	defname="ENABLE_`echo $engine | tr '[a-z]' '[A-Z]'`"
 	if test "$isbuilt" = "no" ; then
 		add_line_to_config_mk "# $defname"
 	else
