@@ -61,42 +61,60 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_refCount(void) {
+		// using internal storage
 		Common::String foo1("foo");
-		Common::String foo2("foo");
+		Common::String foo2(foo1);
 		Common::String foo3(foo2);
 		foo3 += 'X';
-		TS_ASSERT_EQUALS(foo2, foo1);
+		TS_ASSERT_EQUALS(foo1, "foo");
 		TS_ASSERT_EQUALS(foo2, "foo");
+		TS_ASSERT_EQUALS(foo3, "foo""X");
+		foo2 = 'x';
+		TS_ASSERT_EQUALS(foo1, "foo");
+		TS_ASSERT_EQUALS(foo2, "x");
 		TS_ASSERT_EQUALS(foo3, "foo""X");
 	}
 
 	void test_refCount2(void) {
+		// using external storage
 		Common::String foo1("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
-		Common::String foo2("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		Common::String foo2(foo1);
 		Common::String foo3(foo2);
 		foo3 += 'X';
-		TS_ASSERT_EQUALS(foo2, foo1);
+		TS_ASSERT_EQUALS(foo1, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		TS_ASSERT_EQUALS(foo2, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""X");
+		foo2 = 'x';
+		TS_ASSERT_EQUALS(foo1, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		TS_ASSERT_EQUALS(foo2, "x");
 		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""X");
 	}
 
 	void test_refCount3(void) {
 		Common::String foo1("0123456789abcdefghijk");
-		Common::String foo2("0123456789abcdefghijk");
+		Common::String foo2(foo1);
 		Common::String foo3(foo2);
 		foo3 += "0123456789abcdefghijk";
-		TS_ASSERT_EQUALS(foo2, foo1);
+		TS_ASSERT_EQUALS(foo1, foo2);
 		TS_ASSERT_EQUALS(foo2, "0123456789abcdefghijk");
+		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk""0123456789abcdefghijk");
+		foo2 = 'x';
+		TS_ASSERT_EQUALS(foo1, "0123456789abcdefghijk");
+		TS_ASSERT_EQUALS(foo2, "x");
 		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk""0123456789abcdefghijk");
 	}
 
 	void test_refCount4(void) {
 		Common::String foo1("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
-		Common::String foo2("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		Common::String foo2(foo1);
 		Common::String foo3(foo2);
 		foo3 += "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd";
-		TS_ASSERT_EQUALS(foo2, foo1);
+		TS_ASSERT_EQUALS(foo1, foo2);
 		TS_ASSERT_EQUALS(foo2, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		foo2 = 'x';
+		TS_ASSERT_EQUALS(foo1, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		TS_ASSERT_EQUALS(foo2, "x");
 		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 	}
 

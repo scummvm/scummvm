@@ -170,7 +170,8 @@ String &String::operator  =(const String &str) {
 }
 
 String& String::operator  =(char c) {
-	ensureCapacity(1, false);
+	decRefCount(_extern._refCount);
+	_str = _storage;
 	_len = 1;
 	_str[0] = c;
 	_str[1] = 0;
@@ -256,7 +257,7 @@ void String::deleteChar(uint32 p) {
 	// Call ensureCapacity to make sure we actually *own* the storage
 	// to which _str points to -- we wouldn't want to modify a storage
 	// which other string objects are sharing, after all.
-	ensureCapacity(_len, true);
+	makeUnique();
 	while (p++ < _len)
 		_str[p-1] = _str[p];
 	_len--;
@@ -273,7 +274,7 @@ void String::clear() {
 void String::setChar(char c, uint32 p) {
 	assert(p <= _len);
 
-	ensureCapacity(_len, true);
+	makeUnique();
 	_str[p] = c;
 }
 
@@ -289,16 +290,20 @@ void String::insertChar(char c, uint32 p) {
 
 void String::toLowercase() {
 	// Ensure that the string is not shared
-	ensureCapacity(_len, true);
+	makeUnique();
 	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = tolower(_str[i]);
 }
 
 void String::toUppercase() {
 	// Ensure that the string is not shared
-	ensureCapacity(_len, true);
+	makeUnique();
 	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = toupper(_str[i]);
+}
+
+void String::makeUnique() {
+	ensureCapacity(_len, true);
 }
 
 /**
@@ -370,7 +375,7 @@ void String::trim() {
 		return;
 
 	// Ensure that the string is not shared
-	ensureCapacity(_len, true);
+	makeUnique();
 
 	// Trim trailing whitespace
 	while (_len >= 1 && isspace(_str[_len-1]))
