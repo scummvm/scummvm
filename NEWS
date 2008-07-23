@@ -22,11 +22,15 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      on Mac OS X).
 
  AGOS:
+   - Fixed crashes during certain music in Amiga versions of Elvira 1 and
+     Simon the Sorcerer 1.
    - Fixed palette issues in Amiga versions of Simon the Sorcerer 1.
 
  SCUMM:
    - Rewrote parts of Digital iMUSE, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
+   - Improved support for sound effects in Amiga version of Zak McKracken.
+   - Added support for mixed Adlib/MIDI mode in Monkey Island 1 (Floppy).
 
 0.11.1 (2008-02-29)
  SCUMM:
@@ -678,9 +682,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
   OS X.
 - Loading COMI savegames for disk 2 doesn't anymore require disk 1 first.
 - Rewritten iMUSE engine, and many Music fixes (exp. Monkey Island 2).
-- Support for music in Humongous games and simon2dos/simon2talkie (XMIDI
+- Support for music in DOS versions of Humongous Entertainment games and
+  Simon the Sorcerer 2 (XMIDI format).
+- Support for music in floppy demo of Simon the Sorcerer 1 (Proprietary
   format).
-- Support for music in simon1demo (Proprietary format).
 - Complete music support for Simon the Sorcerer 2.
 - Improved music and sound support in Zak256.
 - Added Aspect Ratio option.
