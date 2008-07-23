@@ -288,12 +288,14 @@ void String::insertChar(char c, uint32 p) {
 }
 
 void String::toLowercase() {
+	// Ensure that the string is not shared
 	ensureCapacity(_len, true);
 	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = tolower(_str[i]);
 }
 
 void String::toUppercase() {
+	// Ensure that the string is not shared
 	ensureCapacity(_len, true);
 	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = toupper(_str[i]);
@@ -366,6 +368,9 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 void String::trim() {
 	if (_len == 0)
 		return;
+
+	// Ensure that the string is not shared
+	ensureCapacity(_len, true);
 
 	// Trim trailing whitespace
 	while (_len >= 1 && isspace(_str[_len-1]))
