@@ -230,7 +230,7 @@ echo_n()
 #
 find_type_with_size ()
 {
-for datatype in int short char long unknown; do
+for datatype in int short char long 'long long' unknown; do
 cat <<EOF >tmp_find_type_with_size.cpp
 typedef $datatype ac__type_sizeof_;
 int main() {
@@ -650,6 +650,15 @@ type_4_byte=`find_type_with_size 4`
 TMP="$?"
 echo "$type_4_byte"
 test $TMP -eq 0 || exit 1	# check exit code of subshell
+
+echo_n "Type with 8 bytes... "
+type_8_byte=`find_type_with_size 8`
+TMP="$?"
+echo "$type_8_byte"
+if test $TMP -eq 0; then
+	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
+	_def_64bit_type_unsigned="typedef unsigned $type_8_byte int64;"
+fi
 
 #
 # Check whether we can use x86 asm routines
@@ -1076,9 +1085,11 @@ typedef unsigned int uint;
 typedef unsigned $type_1_byte uint8;
 typedef unsigned $type_2_byte uint16;
 typedef unsigned $type_4_byte uint32;
+$_def_64bit_type_signed
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
+$_def_64bit_type_unsigned
 
 /* Libs */
 $_def_vorbis
