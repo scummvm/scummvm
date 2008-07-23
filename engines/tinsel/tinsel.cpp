@@ -288,7 +288,7 @@ void MouseProcess(CORO_PARAM) {
 	_ctx->lastRWasDouble = false;
 
 	while (true) {
-		// FIXME: I'm still keeping the ctrl/Alt handling in the KeyProcess method.
+		// FIXME: I'm still keeping the ctrl/Alt handling in the ProcessKeyEvent method.
 		// Need to make sure that this works correctly
 		//DragKeys();
 
@@ -829,11 +829,13 @@ void TinselEngine::NextGameCycle(void) {
 
 
 bool TinselEngine::pollEvent() {
-	if (!g_system->getEventManager()->pollEvent(_event)) 
+	Common::Event event;
+	
+	if (!g_system->getEventManager()->pollEvent(event)) 
 		return false;
 
 	// Handle the various kind of events
-	switch (_event.type) {
+	switch (event.type) {
 	case Common::EVENT_QUIT:
 		quitFlag = true;
 		break;
@@ -843,16 +845,16 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
 		// Add button to queue for the mouse process
-		mouseButtons.push_back(_event.type);
+		mouseButtons.push_back(event.type);
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
-		_mousePos = _event.mouse;
+		_mousePos = event.mouse;
 		break;
 
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
-		KeyProcess();
+		ProcessKeyEvent(event);
 		break;
 			
 	default:
@@ -952,12 +954,12 @@ void TinselEngine::ChopDrivers(void) {
  * Process a keyboard event
  */
 
-void TinselEngine::KeyProcess(void) {
+void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 
 	// Handle any special keys immediately
-	switch (_event.kbd.keycode) {
+	switch (event.kbd.keycode) {
 	case Common::KEYCODE_d:
-		if ((_event.kbd.flags == Common::KBD_CTRL) && (_event.type == Common::EVENT_KEYDOWN)) {
+		if ((event.kbd.flags == Common::KBD_CTRL) && (event.type == Common::EVENT_KEYDOWN)) {
 			// Activate the debugger
 			assert(_console);
 			_console->attach();
@@ -970,7 +972,7 @@ void TinselEngine::KeyProcess(void) {
 
 	// Check for movement keys
 	int idx = 0;
-	switch (_event.kbd.keycode) {
+	switch (event.kbd.keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
 		idx = MSK_UP;
@@ -991,7 +993,7 @@ void TinselEngine::KeyProcess(void) {
 		break;
 	}
 	if (idx != 0) {
-		if (_event.type == Common::EVENT_KEYDOWN)
+		if (event.type == Common::EVENT_KEYDOWN)
 			_dosPlayerDir |= idx;
 		else
 			_dosPlayerDir &= ~idx;
@@ -999,7 +1001,7 @@ void TinselEngine::KeyProcess(void) {
 	}
 
 	// All other keypresses add to the queue for processing in KeyboardProcess 
-	keypresses.push_back(_event);
+	keypresses.push_back(event);
 }
 
 } // End of namespace Tinsel

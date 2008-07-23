@@ -76,7 +76,6 @@ class TinselEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 	Common::RandomSource _random;
 	Surface _screenSurface;
-	Common::Event _event;
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
 	Console *_console;
@@ -113,7 +112,9 @@ private:
 	void RestartGame(void);
 	void RestartDrivers(void);
 	void ChopDrivers(void);
-	void KeyProcess(void);
+	void ProcessKeyEvent(const Common::Event &event);
+	bool pollEvent();
+
 public:
 	const Common::String getTargetName() const { return _targetName; }
 	Common::String getSavegamePattern() const;
@@ -121,8 +122,6 @@ public:
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	Surface &screen() { return _screenSurface; }
 
-	bool pollEvent();
-	Common::Event event() { return _event; }
 	Common::Point getMousePosition() const { return _mousePos; }
 	void setMousePosition(const Common::Point &pt) {
 		g_system->warpMouse(pt.x, pt.y);
