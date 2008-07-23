@@ -657,7 +657,7 @@ TMP="$?"
 echo "$type_8_byte"
 if test $TMP -eq 0; then
 	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
-	_def_64bit_type_unsigned="typedef unsigned $type_8_byte int64;"
+	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
 fi
 
 #
