@@ -1628,7 +1628,7 @@ for engine in $_engines; do
 	fi
 
 	# Save the settings
-	defname="ENABLE_`echo $engine | tr [a-z] [A-Z]`"
+	defname="ENABLE_`echo $engine | tr '[a-z]' '[A-Z]'`"
 	if test "$isbuilt" = "no" ; then
 		add_line_to_config_mk "# $defname"
 	else
