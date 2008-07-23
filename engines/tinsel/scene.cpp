@@ -211,7 +211,6 @@ void PrimeBackground(void)
 	// structure for playfields
 	static PLAYFIELD playfield[] = {
 		{	// FIELD WORLD
-			NULL,		// no modules
 			NULL,		// display list
 			0,			// init field x
 			0,			// init field y
@@ -221,7 +220,6 @@ void PrimeBackground(void)
 			false		// moved flag
 		},
 		{	// FIELD STATUS
-			NULL,		// no modules
 			NULL,		// display list
 			0,			// init field x
 			0,			// init field y

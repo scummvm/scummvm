@@ -46,50 +46,8 @@ enum {
 /** When module BLK_INFO list is this long, switch from a binary to linear search */
 #define	LINEAR_SEARCH	5
 
-
-/** structure of each individual background block */
-struct BLOCK {
-	short blkWidth;		//!< block width
-	short blkHeight;	//!< block height
-	SCNHANDLE hBlkBits;	//!< block bitmap handle
-};
-
-/** structure to define position of blocks, which block and which palette */
-struct BLK_INFO {
-	uint16 wBlkX;		//!< x position of this block
-	uint16 wBlkY;		//!< y position of this block
-	uint16 wBlkZ;		//!< z position of this block
-	uint8 byBlkFlags;	//!< block flags used for drawing object associated with this block
-	uint8 byBlkPal;		//!< which palette - index into "blkPals" for this block
-	int32 blkIndex;		//!< which block - index into "blocks"
-};
-
-/** background module structure - a module is a container for blocks */
-struct MODULE {
-	int modWidth;		//!< width of module
-	int modHeight;		//!< height of module
-	int numBlocks;		//!< number of blocks in this module
-	BLOCK *blocks;		//!< pointer to array of all blocks used by this module
-	uint32 *blkPals;		//!< pointer to array of all palette handles used by the blocks in this module
-	BLK_INFO *blkInfo;	//!< pointer to array of which block goes where
-						//!< NOTE: This array must be sorted on x position
-};
-
-/**
- * background module node structure - links a playfields modules together
- * and specifies each module position. It is done this way so that modules
- * are position independent and can be reused within a playfield
- */
-struct MOD_NODE {
-	MOD_NODE *pNext;	//!< next module node
-	MODULE *pModule;	//!< pointer to actual module definition
-	char *onDispList;	//!< pointer to modules (block on object list) flags - should alloc 1 byte per block
-	Common::Point ptModPos;		//!< module world start position
-};
-
 /** background playfield structure - a playfield is a container for modules */
 struct PLAYFIELD {
-	MOD_NODE *pModNode;	//!< head of module node chain for this playfield
 	OBJECT *pDispList;	//!< object display list for this playfield
 	frac_t fieldX;		//!< current world x position of playfield
 	frac_t fieldY;		//!< current world y position of playfield
