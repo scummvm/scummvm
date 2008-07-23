@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="tinsel"
 	ProjectGUID="{22AA7760-2C91-11DD-BD0B-0800200C9A66}"
 	RootNamespace="tinsel"
@@ -161,18 +161,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="libcoro"
-			>
-			<File
-				RelativePath="..\..\engines\tinsel\libcoro\coro.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\tinsel\libcoro\coro.h"
-				>
-			</File>
-		</Filter>
 		<File
 			RelativePath="..\..\engines\tinsel\actors.cpp"
 			>
@@ -218,6 +206,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\tinsel\coroutine.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\tinsel\cursor.cpp"
 			>
 		</File>
@@ -238,15 +230,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\dos_hand.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\tinsel\dw.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\tinsel\dwtypes.h"
 			>
 		</File>
 		<File
@@ -270,10 +254,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\fileio.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\tinsel\film.h"
 			>
 		</File>
@@ -291,6 +271,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\graphics.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\handle.cpp"
 			>
 		</File>
 		<File
