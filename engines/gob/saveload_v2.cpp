@@ -45,6 +45,9 @@ SaveLoad_v2::SaveFile SaveLoad_v2::_saveFiles[] = {
 SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) :
 		SaveLoad(vm, targetName) {
 
+	_notes = new PlainSave(_vm->getEndianness());
+	_save = new StagedSave(_vm->getEndianness());
+
 	_saveFiles[0].destName = new char[strlen(targetName) + 5];
 	_saveFiles[1].destName = _saveFiles[0].destName;
 	_saveFiles[2].destName = 0;
@@ -58,6 +61,9 @@ SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) :
 }
 
 SaveLoad_v2::~SaveLoad_v2() {
+	delete _notes;
+	delete _save;
+
 	delete[] _saveFiles[0].destName;
 	delete[] _saveFiles[3].destName;
 }
@@ -227,7 +233,7 @@ bool SaveLoad_v2::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		if (!_save.load(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))
+		if (!_save->load(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))
 			return false;
 	}
 
@@ -268,7 +274,7 @@ bool SaveLoad_v2::loadNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Loading the notes");
 
-	return _notes.load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
+	return _notes->load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
 }
 
 bool SaveLoad_v2::saveGame(SaveFile &saveFile,
@@ -313,10 +319,10 @@ bool SaveLoad_v2::saveGame(SaveFile &saveFile,
 
 		byte sizes[40];
 		memset(sizes, 0, 40);
-		if(!_save.save(0, 40, 0, saveFile.destName, _indexBuffer + (slot * 40), sizes))
+		if(!_save->save(0, 40, 0, saveFile.destName, _indexBuffer + (slot * 40), sizes))
 			return false;
 
-		if (!_save.save(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))
+		if (!_save->save(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))
 			return false;
 
 	}
@@ -350,7 +356,7 @@ bool SaveLoad_v2::saveNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Saving the notes");
 
-	return _notes.save(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
+	return _notes->save(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
 	return false;
 }
 
@@ -360,8 +366,8 @@ void SaveLoad_v2::assertInited() {
 
 	_varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 
-	_save.addStage(40);
-	_save.addStage(_varSize);
+	_save->addStage(40);
+	_save->addStage(_varSize);
 }
 
 } // End of namespace Gob
