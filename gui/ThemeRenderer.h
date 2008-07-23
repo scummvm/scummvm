@@ -181,6 +181,7 @@ protected:
 		GUI::Theme::TextAlignVertical alignV;
 		bool elipsis;
 		bool restoreBg;
+		int deltax;
 	};
 	
 public:
@@ -550,7 +551,7 @@ protected:
 	 */
 	inline void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
 	inline void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
-		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop);
+		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
 	
 	/**
 	 *	DEBUG: Draws a white square around the given position and writes the given next to it.

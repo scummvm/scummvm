@@ -407,7 +407,7 @@ public:
 	 */
 	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
 	
-	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) = 0;
+	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax) = 0;
 	
 	virtual void disableShadows() { _disableShadows = true; }
 	virtual void enableShadows() { _disableShadows = false; }
@@ -486,7 +486,7 @@ public:
 	
 	void drawString(const Graphics::Font *font, const Common::String &text, 
 					const Common::Rect &area, GUI::Theme::TextAlign alignH,
-					GUI::Theme::TextAlignVertical alignV);
+					GUI::Theme::TextAlignVertical alignV, int deltax);
 
 	/**
 	 * @see VectorRenderer::setFgColor()

@@ -275,7 +275,7 @@ inline uint32 fp_sqroot(uint32 x) {
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, 
-			GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV) {
+			GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax) {
 
 	int offset = 0;
 	
@@ -291,7 +291,7 @@ drawString(const Graphics::Font *font, const Common::String &text, const Common:
 			break;
 	}
 	
-	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, (Graphics::TextAlignment)alignH, 0, false);
+	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, (Graphics::TextAlignment)alignH, deltax, false);
 }
 
 /** LINES **/

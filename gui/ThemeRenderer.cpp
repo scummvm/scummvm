@@ -270,10 +270,7 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		if (_widgets[i] == 0) {
-#ifdef REQUIRE_ALL_DD_SETS
-			warning("Error when parsing custom theme '%s': Missing data assets.", themeName.c_str());
-			return false;
-#endif
+			warning("Missing data asset: '%s'", kDrawDataDefaults[i].name);
 		} else {
 			calcBackgroundOffset((DrawData)i);
 
@@ -341,7 +338,7 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 }
 
 void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
-	bool elipsis, TextAlign alignH, TextAlignVertical alignV) {
+	bool elipsis, TextAlign alignH, TextAlignVertical alignV, int deltax) {
 		
 	if (_texts[type] == 0)
 		return;
@@ -354,6 +351,7 @@ void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Comm
 	q.alignH = alignH;
 	q.alignV = alignV;
 	q.restoreBg = restoreBg;
+	q.deltax = deltax;
 	
 	if (_buffering) {		
 		_textQueue.push_back(q);
@@ -389,7 +387,7 @@ void ThemeRenderer::drawDDText(const DrawQueueText &q) {
 		restoreBackground(q.area);
 	
 	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
-	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV);
+	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax);
 	addDirtyRect(q.area);
 }
 
@@ -567,21 +565,21 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 		
 	if (inverted) {
 		queueDD(kDDTextSelectionBackground, r);
-		queueDDText(kTextDataInverted, r, str, false, useEllipsis);
+		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align);
 		return;
 	}
 
 	switch (state) {
 		case kStateDisabled:
-			queueDDText(kTextDataDisabled, r, str, true, useEllipsis);
+			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align);
 			break;
 			
 		case kStateHighlight:
-			queueDDText(kTextDataHover, r, str, true, useEllipsis);
+			queueDDText(kTextDataHover, r, str, true, useEllipsis, align);
 			break;
 		
 		case kStateEnabled:
-			queueDDText(kTextDataDefault, r, str, true, useEllipsis);
+			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align);
 			break;
 	}
 }
