@@ -913,7 +913,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
-	{
+/*	{
 		{
 			"ajworld",
 			"",
@@ -925,7 +925,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeGob2,
 		kFeaturesAdlib,
 		"intro"
-	},
+	},*/
 	{
 		{
 			"lostintime",
@@ -1346,7 +1346,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
-	{
+/*	{
 		{
 			"inca2",
 			"",
@@ -1449,7 +1449,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeInca2,
 		kFeaturesAdlib,
 		"intro"
-	},
+	},*/
 	{
 		{
 			"woodruff",
@@ -1762,7 +1762,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
-	{
+/*	{
 		{
 			"dynasty",
 			"",
@@ -1787,7 +1787,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeWoodruff,
 		kFeatures640,
 		"intro"
-	},
+	},*/
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
 
