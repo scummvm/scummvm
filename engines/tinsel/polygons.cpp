@@ -37,10 +37,70 @@ namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------
 
+
+// Note 7/10/94, with adjacency reduction ANKHMAP max is 3, UNSEEN max is 4
+// so reduced this back to 6 (from 12) for now.
+#define MAXADJ	6	// Max number of known adjacent paths
+
+struct POLYGON {
+
+	PTYPE	polytype;	// Polygon type
+
+	int	subtype;	// refer type in REFER polygons
+				// NODE/NORMAL in PATH polygons
+
+	int	pIndex;		// Index into compiled polygon data
+
+	/*
+	 * Data duplicated from compiled polygon data
+	 */
+	short	cx[4];		// Corners (clockwise direction)
+	short	cy[4];
+	int	polyID;
+
+	/* For TAG and EXIT (and EFFECT in future?) polygons only   */
+	TSTATE	tagState;
+	PSTATE	pointState;
+	SCNHANDLE oTagHandle;	// Override tag.
+
+	/* For Path polygons only  */
+	bool	tried;
+
+	/*
+	 * Internal derived data for speed and conveniance
+	 * set up by FiddlyBit()
+	 */
+	short	ptop;		//
+	short	pbottom;	// Enclosing external rectangle
+	short	pleft;		//
+	short	pright;		//
+
+	short	ltop[4];	//
+	short	lbottom[4];	// Rectangles enclosing each side
+	short	lleft[4];	//
+	short	lright[4];	//
+
+	int	a[4];		// y1-y2       }
+	int	b[4];		// x2-x1       } See IsInPolygon()
+	long	c[4];		// y1x2 - x1y2 }
+      
+	/*
+	 * Internal derived data for speed and conveniance
+	 * set up by PseudoCentre()
+	 */
+	int	pcentrex;	// Pseudo-centre
+	int	pcentrey;	//
+
+	/**
+	 * List of adjacent polygons. For Path polygons only.
+	 * set up by SetPathAdjacencies()
+	 */
+	POLYGON *adjpaths[MAXADJ];
+
+};
+
+
 #define MAXONROUTE 40
-
-typedef POLYGON *PPOLYGON;
-
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -97,7 +157,7 @@ static int MaxPolys = MAX_POLY;
 
 static POLYGON *Polys[MAX_POLY+1];
 
-static PPOLYGON Polygons = 0;
+static POLYGON *Polygons = 0;
 
 static SCNHANDLE pHandle = 0;	// } Set at start of each scene
 static int noofPolys = 0;		// }
@@ -105,9 +165,9 @@ static int noofPolys = 0;		// }
 static POLYGON extraBlock;	// Used for dynamic blocking
 
 static int pathsOnRoute = 0;
-static PPOLYGON RoutePaths[MAXONROUTE];
+static const POLYGON *RoutePaths[MAXONROUTE];
 
-static PPOLYGON RouteEnd = 0;
+static POLYGON *RouteEnd = 0;
 
 #ifdef DEBUG
 int highestYet = 0;
@@ -121,7 +181,7 @@ int highestYet = 0;
 #define CHECK_HP_OR(mvar, str) assert((mvar >= 0 && mvar <= noofPolys) || mvar == MAX_POLY);
 #define CHECK_HP(mvar, str)	assert(mvar >= 0 && mvar <= noofPolys);
 
-static HPOLYGON PolyIndex(PPOLYGON pp) {
+static HPOLYGON PolyIndex(const POLYGON *pp) {
 	for (int j = 0; j <= MAX_POLY; j++) {
 		if (Polys[j] == pp)
 			return j;
@@ -159,7 +219,7 @@ static HPOLYGON PolyIndex(PPOLYGON pp) {
  * have two polygon corners above it and two corners to the left of it.
  */
 bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
-	PPOLYGON pp;
+	const POLYGON *pp;
 	int	i;
 	bool BeenTested = false;
 	int	pl = 0, pa = 0;
@@ -234,7 +294,7 @@ HPOLYGON InPolygon(int xt, int yt, PTYPE type) {
  */
 
 void BlockingCorner(HPOLYGON hp, int *x, int *y, int tarx, int tary) {
-	PPOLYGON pp;
+	const POLYGON *pp;
 	int	i;
 	int	xd, yd;		// distance per axis
 	int	ThisD, SmallestD = 1000;
@@ -365,7 +425,7 @@ void BlockingCorner(HPOLYGON hp, int *x, int *y, int tarx, int tary) {
  * The shortest of these gives the best point in the node path.
 */
 void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
-	PPOLYGON pp;
+	const POLYGON *pp;
 
 	uint8	*pps;		// Compiled polygon data
 	const POLY *ptp;		// Compiled polygon data
@@ -501,7 +561,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
  * Returns TRUE if two paths are asdjacent.
  */
 bool IsAdjacentPath(HPOLYGON hPath1, HPOLYGON hPath2) {
-	PPOLYGON pp1, pp2;
+	const POLYGON *pp1, *pp2;
 
 	CHECK_HP(hPath1, "Out of range polygon handle (4)");
 	CHECK_HP(hPath2, "Out of range polygon handle (500)");
@@ -519,8 +579,8 @@ bool IsAdjacentPath(HPOLYGON hPath1, HPOLYGON hPath2) {
 	return false;
 }
 
-static POLYGON *TryPath(POLYGON *last, POLYGON *whereto, POLYGON *current) {
-	PPOLYGON x;
+static const POLYGON *TryPath(POLYGON *last, POLYGON *whereto, POLYGON *current) {
+	POLYGON *x;
 
 	// For each path adjacent to this one
 	for (int j = 0; j < MAXADJ; j++) {
@@ -565,7 +625,6 @@ static HPOLYGON PathOnTheWay(HPOLYGON from, HPOLYGON to) {
 	// Also, the overhead of computing a DFS again and again could be avoided
 	// by computing a path matrix (like we do in the SCUMM engine).
 	int	i;
-	PPOLYGON p;
 
 	CHECK_HP(from, "Out of range polygon handle (501a)");
 	CHECK_HP(to, "Out of range polygon handle (501b)");
@@ -574,14 +633,14 @@ static HPOLYGON PathOnTheWay(HPOLYGON from, HPOLYGON to) {
 		return to;
 
 	for (i = 0; i < MAX_POLY; i++) {		// For each polygon..
-		p = Polys[i];
+		POLYGON *p = Polys[i];
 		if (p && p->polytype == PATH)	//...if it's a path 
 			p->tried = false;
 	}
 	Polys[from]->tried = true;
 	pathsOnRoute = 0;
 
-	p = TryPath(Polys[from], Polys[to], Polys[from]);
+	const POLYGON *p = TryPath(Polys[from], Polys[to], Polys[from]);
 
 	assert(p != NULL); // Trying to find route between unconnected paths
 
@@ -622,7 +681,7 @@ HPOLYGON getPathOnTheWay(HPOLYGON hFrom, HPOLYGON hTo) {
  */
 
 int NearestEndNode(HPOLYGON hPath, int x, int y) {
-	PPOLYGON pp;
+	const POLYGON *pp;
 
 	int	d1, d2;
 	uint8	*pps;		// Compiled polygon data
@@ -654,7 +713,7 @@ int NearestEndNode(HPOLYGON hPath, int x, int y) {
  */
 
 int NearEndNode(HPOLYGON hSpath, HPOLYGON hDpath) {
-	PPOLYGON pSpath, pDpath;
+	const POLYGON *pSpath, *pDpath;
 
 	int	ns, nd;		// 'top' nodes in each path
 	int	dist, NearDist;
@@ -747,7 +806,7 @@ int NearestNodeWithin(HPOLYGON hNpath, int x, int y) {
  * destination path which falls within the source path.
  */
 void NearestCorner(int *x, int *y, HPOLYGON hStartPoly, HPOLYGON hDestPoly) {
-	PPOLYGON psp, pdp;
+	const POLYGON *psp, *pdp;
 	int	j;	
 	int	ncorn = 0;			// nearest corner
 	HPOLYGON hNpath = NOPOLY;	// path containing nearest corner
@@ -976,7 +1035,6 @@ struct TAGSTATE	{
 	int tid;
 	bool enabled;
 };
-typedef TAGSTATE *PTAGSTATE;
 
 #define MAX_SCENES	256
 #define MAX_TAGS	2048
@@ -1087,7 +1145,7 @@ void EnableBlock(int blockno) {
  * Convert a TAG to an EX_TAG poly.
  */
 void DisableTag(int tagno) {
-	PTAGSTATE pts;
+	TAGSTATE *pts;
 
 	for (int i = 0; i < MAX_POLY; i++) {
 		if (Polys[i] && Polys[i]->polytype == TAG && Polys[i]->polyID == tagno) {
@@ -1116,7 +1174,7 @@ void EnableTag(int tagno) {
 		}
 	}
 
-	PTAGSTATE pts;
+	TAGSTATE *pts;
 	pts = &TagStates[SceneTags[currentTScene].offset];
 	for (int j = 0; j < SceneTags[currentTScene].nooftags; j++, pts++) {
 		if (pts->tid == tagno) {
@@ -1136,7 +1194,7 @@ void EnableExit(int exitno) {
 		}
 	}
 
-	PTAGSTATE pts;
+	TAGSTATE *pts;
 	pts = &ExitStates[SceneExits[currentEScene].offset];
 	for (int j = 0; j < SceneExits[currentEScene].nooftags; j++, pts++) {
 		if (pts->tid == exitno) {
@@ -1150,7 +1208,7 @@ void EnableExit(int exitno) {
  * Convert a EXIT to an EX_EXIT poly.
  */
 void DisableExit(int exitno) {
-	PTAGSTATE pts;
+	TAGSTATE *pts;
 
 	for (int i = 0; i < MAX_POLY; i++) {
 		if (Polys[i] && Polys[i]->polytype == EXIT && Polys[i]->polyID == exitno) {
@@ -1195,7 +1253,7 @@ HPOLYGON GetPolyHandle(int i) {
  * initialised, to work out which paths are adjacent to which.
  */
 static int DistinctCorners(HPOLYGON hp1, HPOLYGON hp2) {
-	PPOLYGON pp1, pp2;
+	const POLYGON *pp1, *pp2;
 	int	i, j;
 	int	retval = 0;
 
@@ -1223,7 +1281,7 @@ static int DistinctCorners(HPOLYGON hp1, HPOLYGON hp2) {
 }
 
 static void SetPathAdjacencies() {
-	PPOLYGON	p1, p2;		// Polygon pointers
+	POLYGON *p1, *p2;		// Polygon pointers
 
 	// For each polygon..
 	for (int i1 = 0; i1 < MAX_POLY-1; i1++) {
@@ -1276,7 +1334,7 @@ static void SetPathAdjacencies() {
 #ifdef DEBUG
 void CheckNPathIntegrity() {
 	uint8		*pps;	// Compiled polygon data
-	PPOLYGON	rp;	// Run-time polygon structure
+	const POLYGON *rp;	// Run-time polygon structure
 	HPOLYGON	hp;
 	const POLY *cp;	// Compiled polygon structure
 	int		i, j;	// Loop counters
@@ -1346,7 +1404,7 @@ static void SetExBlocks() {
  * Called at the start of a scene, nobbles TAG polygons which should be dead.
  */
 static void SetExTags(SCNHANDLE ph) {
-	PTAGSTATE pts;
+	TAGSTATE *pts;
 	int i, j;
 
 	for (i = 0; i < numScenesT; i++) {
@@ -1388,7 +1446,7 @@ void SetExExits(SCNHANDLE ph) {
 #else
 static void SetExExits(SCNHANDLE ph) {
 #endif
-	PTAGSTATE pts;
+	TAGSTATE *pts;
 	int i, j;
 
 	for (i = 0; i < numScenesE; i++) {
@@ -1549,7 +1607,7 @@ static void InitPath(const POLY *pp, bool NodePath, int pno) {
 	}
 
 	// Clear out ajacent path pointers
-	memset(p->adjpaths, 0, MAXADJ*sizeof(PPOLYGON));
+	memset(p->adjpaths, 0, MAXADJ*sizeof(POLYGON *));
 
 	FiddlyBit(p);
 	PseudoCentre(p);
@@ -1637,7 +1695,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 
 	if (Polygons == NULL) {
 		// first time - allocate memory for process list
-		Polygons = (PPOLYGON)calloc(MaxPolys, sizeof(POLYGON));
+		Polygons = (POLYGON *)calloc(MaxPolys, sizeof(POLYGON));
 
 		// make sure memory allocated
 		if (Polygons == NULL) {

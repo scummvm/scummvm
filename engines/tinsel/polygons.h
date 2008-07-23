@@ -32,10 +32,6 @@
 
 namespace Tinsel {
 
-// Note 7/10/94, with adjacency reduction ANKHMAP max is 3, UNSEEN max is 4
-// so reduced this back to 6 (from 12) for now.
-#define MAXADJ	6	// Max number of known adjacent paths
-
 
 // Polygon Types
 enum PTYPE {
@@ -44,8 +40,10 @@ enum PTYPE {
 };
 
 // subtype
-#define NORMAL          0
-#define NODE            1       // For paths
+enum {
+	NORMAL = 0,
+	NODE   = 1       // For paths
+};
 
 // tagState
 enum TSTATE {
@@ -55,65 +53,6 @@ enum TSTATE {
 // pointState
 enum PSTATE {
 	NO_POINT, NOT_POINTING, POINTING
-};
-
-
-
-struct POLYGON {
-
-	PTYPE	polytype;	// Polygon type
-
-	int	subtype;	// refer type in REFER polygons
-				// NODE/NORMAL in PATH polygons
-
-	int	pIndex;		// Index into compiled polygon data
-
-	/*
-	 * Data duplicated from compiled polygon data
-	 */
-	short	cx[4];		// Corners (clockwise direction)
-	short	cy[4];
-	int	polyID;
-
-	/* For TAG and EXIT (and EFFECT in future?) polygons only   */
-	TSTATE	tagState;
-	PSTATE	pointState;
-	SCNHANDLE oTagHandle;	// Override tag.
-
-	/* For Path polygons only  */
-	bool	tried;
-
-	/*
-	 * Internal derived data for speed and conveniance
-	 * set up by FiddlyBit()
-	 */
-	short	ptop;		//
-	short	pbottom;	// Enclosing external rectangle
-	short	pleft;		//
-	short	pright;		//
-
-	short	ltop[4];	//
-	short	lbottom[4];	// Rectangles enclosing each side
-	short	lleft[4];	//
-	short	lright[4];	//
-
-	int	a[4];		// y1-y2       }
-	int	b[4];		// x2-x1       } See IsInPolygon()
-	long	c[4];		// y1x2 - x1y2 }
-      
-	/*
-	 * Internal derived data for speed and conveniance
-	 * set up by PseudoCentre()
-	 */
-	int	pcentrex;	// Pseudo-centre
-	int	pcentrey;	//
-
-	/**
-	 * List of adjacent polygons. For Path polygons only.
-	 * set up by SetPathAdjacencies()
-	 */
-	POLYGON *adjpaths[MAXADJ];
-
 };
 
 
