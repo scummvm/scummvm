@@ -2,6 +2,7 @@
 #define COMMON_KEYMAP_MANAGER
 
 #include "backends/common/keymap.h"
+#include "common/config-manager.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 
@@ -13,6 +14,7 @@ public:
 	class Domain {
 	public:
 		Domain() : _defaultKeymap(0) {}
+		~Domain() { deleteAllKeyMaps(); }
 
 		void addDefaultKeymap(Keymap *map);
 		void addKeymap(const String& name, Keymap *map);
@@ -41,6 +43,11 @@ public:
 	Keymap *KeymapManager::getKeymap(const String& name);
 
 private:
+
+	void initKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
+	bool loadKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
+	void saveKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
+	void automaticMap(Keymap *map);
 
 	Domain _globalDomain;
 	Domain _gameDomain;

@@ -107,6 +107,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_eventCount = 0;
 	_lastEventCount = 0;
 	_lastMillis = 0;
+	_artificialEventCounter = 0;
 
 	Common::String recordModeString = ConfMan.get("record_mode");
 	if (recordModeString.compareToIgnoreCase("record") == 0) {
@@ -193,7 +194,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	}
 
 	_vk = new Common::VirtualKeyboard();
-	_artificialEventCounter = 0;
+	_keyMapper = new Common::Keymapper(this);
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -351,18 +352,32 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
-	bool result;
+	bool result = false;
 	
+	// poll for pushed events
 	if (!_artificialEventQueue.empty()) {
 		// delay the feeding of artificial events
 		if (++_artificialEventCounter % kArtificialEventDelay == 0) {
 			event = _artificialEventQueue.pop();
 			result = true;
 			_artificialEventCounter = 0; 
-		} else
-			result = _boss->pollEvent(event);
-	} else 	
+		}
+	}
+	
+	// poll for event from backend
+	if (!result) {
 		result = _boss->pollEvent(event);
+		if (result) {
+			// send key press events to keymapper
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (_keyMapper->mapKeyDown(event.kbd))
+					result = false;
+			} else if (event.type == Common::EVENT_KEYUP) {
+				if (_keyMapper->mapKeyUp(event.kbd))
+					result = false;
+			}
+		}
+	}
 
 	if (_recordMode != kPassthrough)  {
 

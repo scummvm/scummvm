@@ -1,7 +1,5 @@
 #include "backends/common/keymap-manager.h"
 
-#define GLOBAL_ID_STR "___GLOBAL"
-
 namespace Common {
 
 
@@ -36,19 +34,59 @@ Keymap *KeymapManager::Domain::getKeymap(const String& name) {
 
 
 void KeymapManager::registerDefaultGlobalKeymap(Keymap *map) {
+	ConfigManager::Domain *dom = ConfMan.getDomain(ConfigManager::kApplicationDomain);
+	assert(dom);
+	initKeymap(dom, "default", map);
 	_globalDomain.addDefaultKeymap(map);
 }
 
 void KeymapManager::registerGlobalKeymap(const String& name, Keymap *map) {
+	ConfigManager::Domain *dom = ConfMan.getDomain(ConfigManager::kApplicationDomain);
+	assert(dom);
+
+	initKeymap(dom, name, map);
 	_globalDomain.addKeymap(name, map);
 }
 
 void KeymapManager::registerDefaultGameKeymap(Keymap *map) {
+	ConfigManager::Domain *dom = ConfMan.getActiveDomain();
+	assert(dom);
+
+	initKeymap(dom, "default", map);
 	_gameDomain.addDefaultKeymap(map);
 }
 
 void KeymapManager::registerGameKeymap(const String& name, Keymap *map) {
+	ConfigManager::Domain *dom = ConfMan.getActiveDomain();
+	assert(dom);
+
+	initKeymap(dom, name, map);
 	_gameDomain.addKeymap(name, map);
+}
+
+void KeymapManager::initKeymap(ConfigManager::Domain *domain, 
+							   const String& name, 
+							   Keymap *map) {
+	if (!loadKeymap(domain, name, map))
+		return;
+	automaticMap(map);
+}
+
+bool KeymapManager::loadKeymap(ConfigManager::Domain *domain, 
+							   const String& name, 
+							   Keymap *map) {
+	return false;
+}
+
+void KeymapManager::saveKeymap(ConfigManager::Domain *domain, 
+							   const String& name, 
+							   Keymap *map) {
+
+}
+
+
+void KeymapManager::automaticMap(Keymap *map) {
+
 }
 
 void KeymapManager::unregisterAllGameKeymaps() {

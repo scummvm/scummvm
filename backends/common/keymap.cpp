@@ -71,7 +71,7 @@ const UserAction *Keymap::findUserAction(int32 id) const {
 	return 0;
 }
 
-UserAction *Keymap::getMappedAction(KeyState ks) const {
+UserAction *Keymap::getMappedAction(const KeyState& ks) const {
 	HashMap<KeyState, UserAction*>::iterator it;
 	it = _keymap.find(ks);
 	if (it == _keymap.end())

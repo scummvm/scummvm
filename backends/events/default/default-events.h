@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/queue.h"
 #include "common/savefile.h"
+#include "backends/common/keymapper.h"
 #include "backends/common/virtual-keyboard.h"
 
 /*
@@ -47,11 +48,12 @@ class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
 
 	Common::VirtualKeyboard *_vk;
+	Common::Keymapper *_keyMapper;
 
 	Common::Queue<Common::Event> _artificialEventQueue;
 	int _artificialEventCounter;
 	enum {
-		kArtificialEventDelay = 10
+		kArtificialEventDelay = 5
 	};
 
 	Common::Point _mousePos;

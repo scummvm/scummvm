@@ -69,7 +69,7 @@ public:
 	 * @param key the key that is mapped to the required UserAction
 	 * @return a pointer to the UserAction or 0 if no
 	 */
-	UserAction *getMappedAction(KeyState key) const;
+	UserAction *getMappedAction(const KeyState& ks) const;
 
 private:
 	
