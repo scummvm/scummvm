@@ -566,9 +566,19 @@ begin_credits("Credits");
 
 	  begin_section("SAGA");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Sven Hesse", "DrMcCoy", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
 		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
+	  begin_section("Tinsel;");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Sven Hesse", "DrMcCoy", "");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
 	  begin_section("Touch&eacute;");
