@@ -25,7 +25,7 @@
  */
 
 #include "tinsel/object.h"
-#include "tinsel/background.h"	// for rcScreen definition
+#include "tinsel/background.h"
 #include "tinsel/cliprect.h"	// object clip rect defs
 #include "tinsel/graphics.h"	// low level interface
 #include "tinsel/handle.h"
@@ -33,6 +33,9 @@
 #define	OID_EFFECTS	0x2000			// generic special effects object id
 
 namespace Tinsel {
+
+/** screen clipping rectangle */
+static const Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 // list of all objects
 OBJECT *objectList = 0;

@@ -71,13 +71,6 @@ struct BACKGND {
 };
 
 
-/** screen clipping rect */
-extern Common::Rect rcScreen;
-
-/** scroll flag - when set scrolling and velocity additions are paused */
-extern bool bNoScroll;
-
-
 /*----------------------------------------------------------------------*\
 |*			Background Function Prototypes			*|
 \*----------------------------------------------------------------------*/

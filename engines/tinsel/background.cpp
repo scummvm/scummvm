@@ -34,14 +34,8 @@
 
 namespace Tinsel {
 
-// screen clipping rectangle
-Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
 // current background
 BACKGND *pCurBgnd = NULL;
-
-// scroll flag - when set scrolling and velocity additions are paused
-bool bNoScroll;
 
 /**
  * Called to initialise a background.
@@ -175,26 +169,24 @@ void DrawBackgnd(void) {
 		prevX = fracToInt(pPlay->fieldX);
 		prevY = fracToInt(pPlay->fieldY);
 
-		if (!bNoScroll) {
-			// update scrolling
-			pPlay->fieldX += pPlay->fieldXvel;
-			pPlay->fieldY += pPlay->fieldYvel;
+		// update scrolling
+		pPlay->fieldX += pPlay->fieldXvel;
+		pPlay->fieldY += pPlay->fieldYvel;
 
-			// convert fixed point window pos to a int
-			ptWin.x = fracToInt(pPlay->fieldX);
-			ptWin.y = fracToInt(pPlay->fieldY);
+		// convert fixed point window pos to a int
+		ptWin.x = fracToInt(pPlay->fieldX);
+		ptWin.y = fracToInt(pPlay->fieldY);
 
-			// set the moved flag if the playfield has moved
-			if (prevX != ptWin.x || prevY != ptWin.y)
-				pPlay->bMoved = true;
-		}
+		// set the moved flag if the playfield has moved
+		if (prevX != ptWin.x || prevY != ptWin.y)
+			pPlay->bMoved = true;
 
 		// sort the display list for this background - just in case somebody has changed object Z positions
 		SortObjectList((OBJECT *)&pPlay->pDispList);
 
 		// generate clipping rects for all objects that have moved etc.
 		FindMovingObjects((OBJECT *)&pPlay->pDispList, &ptWin,
-			&pPlay->rcClip,	bNoScroll, pPlay->bMoved);
+			&pPlay->rcClip,	false, pPlay->bMoved);
 
 		// clear playfield moved flag
 		pPlay->bMoved = false;
