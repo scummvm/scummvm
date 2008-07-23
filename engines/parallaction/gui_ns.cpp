@@ -271,15 +271,22 @@ uint16 Parallaction_ns::guiChooseLanguage() {
 	Common::Point p;
 
 	int selection = -1;
+	int event;
 	while (selection == -1) {
-		_input->waitUntilLeftClick();
-		_input->getCursorPos(p);
-		for (uint16 i = 0; i < 4; i++) {
-			if (blocks[i].contains(p)) {
-				selection = i;
-				break;
+		_input->readInput();
+		event = _input->getLastButtonEvent();
+
+		if (event == kMouseLeftUp) {
+			_input->getCursorPos(p);
+			for (uint16 i = 0; i < 4; i++) {
+				if (blocks[i].contains(p)) {
+					selection = i;
+					break;
+				}
 			}
 		}
+
+		_gfx->updateScreen();
 	}
 
 	beep();
@@ -305,9 +312,7 @@ uint16 Parallaction_ns::guiSelectGame() {
 
 	Common::Point p;
 
-	_input->readInput();
-	uint32 event = _input->getLastButtonEvent();
-
+	uint32 event = kMouseNone;
 	while (event != kMouseLeftUp) {
 
 		_input->readInput();
@@ -432,37 +437,41 @@ int Parallaction_ns::guiSelectCharacter() {
 		_gfx->showLabel(id[0], 60, 30);
 
 		_di = 0;
+		int event;
 		while (_di < PASSWORD_LEN) {
+			_input->readInput();
+			event = _input->getLastButtonEvent();
+			if (event == kMouseLeftUp) {
 
-			_input->waitUntilLeftClick();
-			_input->getCursorPos(p);
+				_input->getCursorPos(p);
 
-			int _si = guiGetSelectedBlock(p);
+				int _si = guiGetSelectedBlock(p);
 
-			if (_si != -1) {
-				_gfx->grabBackground(codeTrueBlocks[_si], block);
-				_gfx->patchBackground(block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
+				if (_si != -1) {
+					_gfx->grabBackground(codeTrueBlocks[_si], block);
+					_gfx->patchBackground(block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
 
-				if (keys[0][_di] == _si) {
-					points[0]++;
-				} else
-				if (keys[1][_di] == _si) {
-					points[1]++;
-				} else
-				if (keys[2][_di] == _si) {
-					points[2]++;
-				} else {
-					fail = true;
+					if (keys[0][_di] == _si) {
+						points[0]++;
+					} else
+					if (keys[1][_di] == _si) {
+						points[1]++;
+					} else
+					if (keys[2][_di] == _si) {
+						points[2]++;
+					} else {
+						fail = true;
+					}
+
+					// build user preference
+					points[0] += (keys[0][_di] == _si);
+					points[1] += (keys[1][_di] == _si);
+					points[2] += (keys[2][_di] == _si);
+
+					_di++;
 				}
-
-				// build user preference
-				points[0] += (keys[0][_di] == _si);
-				points[1] += (keys[1][_di] == _si);
-				points[2] += (keys[2][_di] == _si);
-
-				_di++;
 			}
-
+			_gfx->updateScreen();
 		}
 
 		if (!fail) {

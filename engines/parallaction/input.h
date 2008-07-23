@@ -113,7 +113,6 @@ public:
 	void	readInput();
 	InputData* 	updateInput();
 	void	trackMouse(ZonePtr z);
-	void 	waitUntilLeftClick();
 	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
 	bool  	getLastKeyDown(uint16 &ascii);

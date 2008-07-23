@@ -126,18 +126,6 @@ void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 
 }
 
-// FIXME: see comment for readInput()
-void Input::waitUntilLeftClick() {
-
-	do {
-		readInput();
-		_vm->_gfx->updateScreen();
-		_vm->_system->delayMillis(30);
-	} while (_mouseButtons != kMouseLeftUp);
-
-	return;
-}
-
 
 void Input::updateGameInput() {
 

@@ -384,11 +384,10 @@ void Parallaction::doLocationEnterTransition() {
 
 	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
 	drawAnimations();
-
+	showLocationComment(_location._comment, false);
 	_gfx->updateScreen();
 
-	showLocationComment(_location._comment, false);
-	_input->waitUntilLeftClick();
+	_input->waitForButtonEvent(kMouseLeftUp);
 	_balloonMan->freeBalloons();
 
 	// fades maximum intensity palette towards approximation of main palette

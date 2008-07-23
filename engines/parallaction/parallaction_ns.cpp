@@ -323,7 +323,9 @@ void Parallaction_ns::changeLocation(char *location) {
 		showSlide(locname.slide());
 		uint id = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
-		_input->waitUntilLeftClick();
+		_gfx->updateScreen();
+
+		_input->waitForButtonEvent(kMouseLeftUp);
 		_gfx->freeLabels();
 		freeBackground();
 	}

@@ -340,7 +340,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 		g_system->delayMillis(20);
 	}
 
-	_input->waitUntilLeftClick();
+	_input->waitForButtonEvent(kMouseLeftUp);
 	_balloonMan->freeBalloons();
 
 	return;
@@ -396,7 +396,9 @@ void Parallaction_ns::_c_finito(void *parm) {
 	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
 	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 130);
 	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 160);
-	_input->waitUntilLeftClick();
+
+	_gfx->updateScreen();
+	_input->waitForButtonEvent(kMouseLeftUp);
 
 	_gfx->freeLabels();
 
@@ -498,18 +500,15 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		id[0] = _gfx->createLabel(_menuFont, "CLICK MOUSE BUTTON TO START", 1);
 		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
-
-		_input->waitUntilLeftClick();
-
+		_gfx->updateScreen();
+		_input->waitForButtonEvent(kMouseLeftUp);
 		_gfx->freeLabels();
-
 		_engineFlags &= ~kEngineBlockInput;
 		selectStartLocation();
-
 		cleanupGame();
-
 	} else {
-		_input->waitUntilLeftClick();
+		_gfx->updateScreen();
+		_input->waitForButtonEvent(kMouseLeftUp);
 	}
 
 	return;
