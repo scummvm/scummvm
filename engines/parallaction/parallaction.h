@@ -114,12 +114,6 @@ enum EngineFlags {
 
 enum {
 	kEvNone			= 0,
-	kEvAction		= 3,
-	kEvOpenInventory	= 4,
-	kEvCloseInventory	= 5,
-	kEvHoverInventory	= 6,
-	kEvWalk			= 7,
-	kEvQuitGame		= 1000,
 	kEvSaveGame		= 2000,
 	kEvLoadGame		= 4000
 };

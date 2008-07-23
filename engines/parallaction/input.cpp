@@ -36,25 +36,23 @@ namespace Parallaction {
 // loops which could possibly be merged into this one with some effort in changing
 // caller code, i.e. adding condition checks.
 //
-uint16 Input::readInput() {
+void Input::readInput() {
 
 	Common::Event e;
-	uint16 KeyDown = 0;
 
 	_mouseButtons = kMouseNone;
-	_lastKeyDownAscii = -1;
+	_hasKeyPressEvent = false;
 
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(e)) {
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
-			_lastKeyDownAscii = e.kbd.ascii;
+			_hasKeyPressEvent = true;
+			_keyPressed = e.kbd;
+
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_vm->_debugger->attach();
-			if (_vm->getFeatures() & GF_DEMO) break;
-			if (e.kbd.keycode == Common::KEYCODE_l) KeyDown = kEvLoadGame;
-			if (e.kbd.keycode == Common::KEYCODE_s) KeyDown = kEvSaveGame;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -83,7 +81,7 @@ uint16 Input::readInput() {
 
 		case Common::EVENT_QUIT:
 			_engineFlags |= kEngineQuit;
-			return KeyDown;
+			return;
 
 		default:
 			break;
@@ -95,13 +93,13 @@ uint16 Input::readInput() {
 	if (_vm->_debugger->isAttached())
 		_vm->_debugger->onFrame();
 
-	return KeyDown;
+	return;
 
 }
 
 bool Input::getLastKeyDown(uint16 &ascii) {
-	ascii = _lastKeyDownAscii;
-	return (_lastKeyDownAscii != -1);
+	ascii = _keyPressed.ascii;
+	return (_hasKeyPressEvent);
 }
 
 // FIXME: see comment for readInput()
@@ -143,7 +141,7 @@ void Input::waitUntilLeftClick() {
 
 void Input::updateGameInput() {
 
-	int16 keyDown = readInput();
+	readInput();
 
 	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
 		!_mouseHidden,
@@ -160,17 +158,13 @@ void Input::updateGameInput() {
 		return;
 	}
 
-	if (keyDown == kEvQuitGame) {
-		_inputData._event = kEvQuitGame;
-	} else
-	if (keyDown == kEvSaveGame) {
-		_inputData._event = kEvSaveGame;
-	} else
-	if (keyDown == kEvLoadGame) {
-		_inputData._event = kEvLoadGame;
-	} else {
+	if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
+		if (_keyPressed.keycode == Common::KEYCODE_l) _inputData._event = kEvLoadGame;
+		if (_keyPressed.keycode == Common::KEYCODE_s) _inputData._event = kEvSaveGame;
+	}
+
+	if (_inputData._event == kEvNone) {
 		_inputData._mousePos = _mousePos;
-		_inputData._event = kEvNone;
 		translateGameInput();
 	}
 

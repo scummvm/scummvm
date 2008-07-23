@@ -26,6 +26,8 @@
 #ifndef PARALLACTION_INPUT_H
 #define PARALLACTION_INPUT_H
 
+#include "common/keyboard.h"
+
 #include "parallaction/objects.h"
 #include "parallaction/inventory.h"
 
@@ -53,6 +55,9 @@ class Input {
 	// input-only
 	InputData	_inputData;
 
+	bool		_hasKeyPressEvent;
+	Common::KeyState _keyPressed;
+
 	bool		_hasDelayedAction;  // actived when the character needs to move before taking an action
 	ZonePtr		_delayedActionZone;
 
@@ -68,7 +73,6 @@ class Input {
 
 	Common::Point	_mousePos;
 	uint16	_mouseButtons;
-	int32	_lastKeyDownAscii;
 
 	bool		_mouseHidden;
 	ZonePtr			_hoverZone;
@@ -106,7 +110,7 @@ public:
 	int				_inputMode;
 	InventoryItem	_activeItem;
 
-	uint16	readInput();
+	void	readInput();
 	InputData* 	updateInput();
 	void	trackMouse(ZonePtr z);
 	void 	waitUntilLeftClick();

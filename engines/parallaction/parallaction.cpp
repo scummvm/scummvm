@@ -297,6 +297,9 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 
 
 void Parallaction::processInput(InputData *data) {
+	if (!data) {
+		return;
+	}
 
 	switch (data->_event) {
 	case kEvSaveGame:
@@ -326,13 +329,7 @@ void Parallaction::runGame() {
 	runCommentFrame();
 
 	if (_input->_inputMode == Input::kInputModeGame) {
-		if (data->_event != kEvNone) {
-			processInput(data);
-		}
-
-		if (_engineFlags & kEngineQuit)
-			return;
-
+		processInput(data);
 		runPendingZones();
 
 		if (_engineFlags & kEngineQuit)
