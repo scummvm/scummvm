@@ -52,14 +52,17 @@ class Input {
 
 	// input-only
 	InputData	_inputData;
-	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
-	// these two could/should be merged as they carry on the same duty in two member functions,
-	// respectively processInput and translateInput
+
+	bool		_hasDelayedAction;  // actived when the character needs to move before taking an action
+	ZonePtr		_delayedActionZone;
+
 	int16		_transCurrentHoverItem;
 
 	InputData	*translateInput();
 	bool		translateGameInput();
 	bool		translateInventoryInput();
+	void 		takeAction(ZonePtr z);
+	void 		walkTo(const Common::Point &dest);
 
 	Parallaction	*_vm;
 
@@ -83,11 +86,12 @@ public:
 
 	Input(Parallaction *vm) : _vm(vm) {
 		_transCurrentHoverItem = 0;
-		_actionAfterWalk = false;  // actived when the character needs to move before taking an action
+		_hasDelayedAction = false;  // actived when the character needs to move before taking an action
 		_mouseHidden = false;
 		_activeItem._index = 0;
 		_activeItem._id = 0;
 		_mouseButtons = 0;
+		_delayedActionZone = nullZonePtr;
 	}
 
 	virtual ~Input() { }

@@ -299,25 +299,6 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
-	case kEvAction:
-		debugC(2, kDebugInput, "processInput: kEvAction");
-		_input->stopHovering();
-		pauseJobs();
-		runZone(data->_zone);
-		resumeJobs();
-		break;
-
-	case kEvWalk:
-		debugC(2, kDebugInput, "processInput: kEvWalk");
-		_input->stopHovering();
-		setArrowCursor();
-		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
-		break;
-
-	case kEvQuitGame:
-		_engineFlags |= kEngineQuit;
-		break;
-
 	case kEvSaveGame:
 		_input->stopHovering();
 		saveGame();

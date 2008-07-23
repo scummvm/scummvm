@@ -219,6 +219,18 @@ void Input::stopHovering() {
 	_vm->_gfx->hideFloatingLabel();
 }
 
+void Input::takeAction(ZonePtr z) {
+	stopHovering();
+	_vm->pauseJobs();
+	_vm->runZone(z);
+	_vm->resumeJobs();
+}
+
+void Input::walkTo(const Common::Point &dest) {
+	stopHovering();
+	_vm->setArrowCursor();
+	_vm->_char.scheduleWalk(dest.x, dest.y);
+}
 
 bool Input::translateGameInput() {
 
@@ -226,10 +238,11 @@ bool Input::translateGameInput() {
 		return false;
 	}
 
-	if (_actionAfterWalk) {
+	if (_hasDelayedAction) {
 		// if walking is over, then take programmed action
-		_inputData._event = kEvAction;
-		_actionAfterWalk = false;
+		takeAction(_delayedActionZone);
+		_hasDelayedAction = false;
+		_delayedActionZone = nullZonePtr;
 		return true;
 	}
 
@@ -241,9 +254,10 @@ bool Input::translateGameInput() {
 
 	// test if mouse is hovering on an interactive zone for the currently selected inventory item
 	ZonePtr z = _vm->hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
+	Common::Point dest(_mousePos);
 
 	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || ((z->_type & 0xFFFF) != kZoneCommand))) {
-		_inputData._event = kEvWalk;
+		walkTo(dest);
 		return true;
 	}
 
@@ -257,16 +271,17 @@ bool Input::translateGameInput() {
 		_inputData._zone = z;
 		if (z->_flags & kFlagsNoWalk) {
 			// character doesn't need to walk to take specified action
-			_inputData._event = kEvAction;
-
+			takeAction(z);
 		} else {
 			// action delayed: if Zone defined a moveto position the character is programmed to move there,
 			// else it will move to the mouse position
-			_inputData._event = kEvWalk;
-			_actionAfterWalk = true;
+			_delayedActionZone = z;
+			_hasDelayedAction = true;
 			if (z->_moveTo.y != 0) {
-				_inputData._mousePos = z->_moveTo;
+				dest = z->_moveTo;
 			}
+
+			walkTo(dest);
 		}
 
 		_vm->beep();
