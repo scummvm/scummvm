@@ -111,6 +111,74 @@ String::~String() {
 	decRefCount(_extern._refCount);
 }
 
+void String::makeUnique() {
+	ensureCapacity(_len, true);
+}
+
+/**
+ * Ensure that enough storage is available to store at least new_len
+ * characters plus a null byte. In addition, if we currently share
+ * the storage with another string, unshare it, so that we can safely
+ * write to the storage.
+ */
+void String::ensureCapacity(uint32 new_len, bool keep_old) {
+	bool isShared;
+	uint32 curCapacity, newCapacity;
+	char *newStorage;
+	int *oldRefCount = _extern._refCount;
+
+	if (isStorageIntern()) {
+		isShared = false;
+		curCapacity = _builtinCapacity - 1;
+	} else {
+		isShared = (oldRefCount && *oldRefCount > 1);
+		curCapacity = _extern._capacity;
+	}
+
+	// Special case: If there is enough space, and we do not share
+	// the storage, then there is nothing to do.
+	if (!isShared && new_len <= curCapacity)
+		return;
+
+	if (isShared && new_len <= _builtinCapacity - 1) {
+		// We share the storage, but there is enough internal storage: Use that.
+		newStorage = _storage;
+		newCapacity = _builtinCapacity - 1;
+	} else {
+		// We need to allocate storage on the heap!
+
+		// Compute a suitable new capacity limit
+		newCapacity = computeCapacity(new_len);
+
+		// Allocate new storage
+		newStorage = (char *)malloc(newCapacity+1);
+		assert(newStorage);
+	}
+
+	// Copy old data if needed, elsewise reset the new storage.
+	if (keep_old) {
+		assert(_len <= newCapacity);
+		memcpy(newStorage, _str, _len + 1);
+	} else {
+		_len = 0;
+		newStorage[0] = 0;
+	}
+
+	// Release hold on the old storage ...
+	decRefCount(oldRefCount);
+
+	// ... in favor of the new storage
+	_str = newStorage;
+
+	if (!isStorageIntern()) {
+		// Set the ref count & capacity if we use an external storage.
+		// It is important to do this *after* copying any old content,
+		// else we would override data that has not yet been copied!
+		_extern._refCount = 0;
+		_extern._capacity = newCapacity;
+	}
+}
+
 void String::incRefCount() const {
 	assert(!isStorageIntern());
 	if (_extern._refCount == 0) {
@@ -254,9 +322,6 @@ void String::deleteLastChar() {
 void String::deleteChar(uint32 p) {
 	assert(p < _len);
 
-	// Call ensureCapacity to make sure we actually *own* the storage
-	// to which _str points to -- we wouldn't want to modify a storage
-	// which other string objects are sharing, after all.
 	makeUnique();
 	while (p++ < _len)
 		_str[p-1] = _str[p];
@@ -289,92 +354,21 @@ void String::insertChar(char c, uint32 p) {
 }
 
 void String::toLowercase() {
-	// Ensure that the string is not shared
 	makeUnique();
 	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = tolower(_str[i]);
 }
 
 void String::toUppercase() {
-	// Ensure that the string is not shared
 	makeUnique();
 	for (uint32 i = 0; i < _len; ++i)
 		_str[i] = toupper(_str[i]);
-}
-
-void String::makeUnique() {
-	ensureCapacity(_len, true);
-}
-
-/**
- * Ensure that enough storage is available to store at least new_len
- * characters plus a null byte. In addition, if we currently share
- * the storage with another string, unshare it, so that we can safely
- * write to the storage.
- */
-void String::ensureCapacity(uint32 new_len, bool keep_old) {
-	bool isShared;
-	uint32 curCapacity, newCapacity;
-	char *newStorage;
-	int *oldRefCount = _extern._refCount;
-
-	if (isStorageIntern()) {
-		isShared = false;
-		curCapacity = _builtinCapacity - 1;
-	} else {
-		isShared = (oldRefCount && *oldRefCount > 1);
-		curCapacity = _extern._capacity;
-	}
-
-	// Special case: If there is enough space, and we do not share
-	// the storage, then there is nothing to do.
-	if (!isShared && new_len <= curCapacity)
-		return;
-
-	if (isShared && new_len <= _builtinCapacity - 1) {
-		// We share the storage, but there is enough internal storage: Use that.
-		newStorage = _storage;
-		newCapacity = _builtinCapacity - 1;
-	} else {
-		// We need to allocate storage on the heap!
-
-		// Compute a suitable new capacity limit
-		newCapacity = computeCapacity(new_len);
-
-		// Allocate new storage
-		newStorage = (char *)malloc(newCapacity+1);
-		assert(newStorage);
-	}
-
-	// Copy old data if needed, elsewise reset the new storage.
-	if (keep_old) {
-		assert(_len <= newCapacity);
-		memcpy(newStorage, _str, _len + 1);
-	} else {
-		_len = 0;
-		newStorage[0] = 0;
-	}
-
-	// Release hold on the old storage ...
-	decRefCount(oldRefCount);
-
-	// ... in favor of the new storage
-	_str = newStorage;
-
-	if (!isStorageIntern()) {
-		// Set the ref count & capacity if we use an external storage.
-		// It is important to do this *after* copying any old content,
-		// else we would override data that has not yet been copied!
-		_extern._refCount = 0;
-		_extern._capacity = newCapacity;
-	}
 }
 
 void String::trim() {
 	if (_len == 0)
 		return;
 
-	// Ensure that the string is not shared
 	makeUnique();
 
 	// Trim trailing whitespace
