@@ -1,12 +1,16 @@
 #ifndef COMMON_KEYMAPPER
 #define COMMON_KEYMAPPER
 
-#include "backends/common/keymap.h"
+#include "common/events.h"
 #include "common/list.h"
+
 
 namespace Common {
 
+struct HardwareKey;
+class HardwareKeySet;
 class KeymapManager;
+class Keymap;
 
 class Keymapper {
 public:
@@ -18,11 +22,6 @@ public:
 	 * @note should only be called once (during backend initialisation)
 	 */
 	void registerHardwareKeySet(HardwareKeySet *keys);
-
-	/**
-	 * Get the HardwareKeySet that is registered with the Keymapper
-	 */
-	const HardwareKeySet *getHardwareKeySet() const;
 
 	/**
 	 * Add a keymap to the global domain.
@@ -87,8 +86,6 @@ private:
 	String _gameId;
 
 	Keymap *_currentMap;
-
-	const HardwareKeySet *_hardwareKeys;
 
 };
 

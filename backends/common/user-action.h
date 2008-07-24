@@ -8,6 +8,8 @@
 namespace Common {
 
 struct HardwareKey;
+class Keymap;
+
 
 enum UserActionType {
 	kGenericUserActionType,
@@ -48,21 +50,22 @@ struct UserAction {
 	int group;
 	int flags;
 
+private:
 	/** Hardware key that is mapped to this UserAction */
-	HardwareKey *hwKey;
+	const HardwareKey *_hwKey;
+	Keymap *_parent;
 
+public:
 	UserAction(	String des = "", 
 		UserActionCategory cat = kGenericUserActionCategory,
 		UserActionType ty = kGenericUserActionType,
-		int pr = 0, int gr = 0, int fl = 0 ) {
-			description = des;
-			category = cat;
-			type = ty;
-			priority = pr;
-			group = gr;
-			flags = fl;
-			hwKey = 0;
-	}
+		int pr = 0, int gr = 0, int fl = 0 );
+
+	void setParent(Keymap *parent);
+
+	void mapKey(const HardwareKey *key);
+
+	const HardwareKey *getMappedKey() const;
 };
 
 } // end of namespace Common

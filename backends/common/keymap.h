@@ -1,14 +1,15 @@
 #ifndef COMMON_KEYMAP
 #define COMMON_KEYMAP
 
-#include "backends/common/hardware-key.h"
-#include "backends/common/user-action.h"
 #include "common/array.h"
 #include "common/keyboard.h"
 #include "common/func.h"
 #include "common/hashmap.h"
+#include "backends/common/user-action.h"
 
 namespace Common {
+
+struct HardwareKey;
 
 /**
  * Hash function for KeyState
@@ -34,30 +35,14 @@ public:
 	 * adding it at the back of the internal array
 	 * @param action the UserAction to add
 	 */
-	void addAction(const UserAction& action);
-
-	/**
-	* Maps a HardwareKey to the given UserAction
-	* @param action must point to a UserAction in this Keymap
-	* @param key pointer to HardwareKey to map
-	* @note if action does not point to a UserAction in this Keymap a
-	*       fatal error will occur
-	*/
-	void mapKeyToAction(UserAction *action, HardwareKey *key);
-
-	/**
-	 * Maps a HardwareKey to the UserAction of the given id
-	 * @param id id of the UserAction to map to
-	 * @param key pointer to HardwareKey to map
-	 */
-	void mapKeyToAction(int32 id, HardwareKey *key);
+	void addAction(UserAction& action);
 
 	/**
 	 * Retrieves the UserAction with the given id
 	 * @param id id of UserAction to retrieve
 	 * @return Pointer to the UserAction or 0 if not found
 	 */
-	const UserAction *getUserAction(int32 id) const;
+	UserAction *getUserAction(int32 id);
 
 	/**
 	 * Get a read-only array of all the UserActions contained in this Keymap
@@ -72,7 +57,22 @@ public:
 	UserAction *getMappedAction(const KeyState& ks) const;
 
 private:
-	
+	friend struct UserAction;
+	/**
+	* Registers a HardwareKey to the given UserAction
+	* @param action UserAction in this Keymap
+	* @param key pointer to HardwareKey to map
+	* @see UserAction::mapKey
+	*/
+	void registerMapping(UserAction *action, const HardwareKey *key);
+
+	/**
+	* Unregisters a HardwareKey from the given UserAction (if one is mapped)
+	* @param action UserAction in this Keymap
+	* @see UserAction::mapKey
+	*/
+	void unregisterMapping(UserAction *action);
+
 	UserAction *findUserAction(int32 id);
 	const UserAction *findUserAction(int32 id) const;
 

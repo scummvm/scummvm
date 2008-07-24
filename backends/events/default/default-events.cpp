@@ -28,6 +28,8 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "backends/events/default/default-events.h"
+#include "backends/common/keymapper.h"
+#include "backends/common/virtual-keyboard.h"
 
 #include "engines/engine.h"
 #include "gui/message.h"

@@ -1085,6 +1085,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\backends\common\user-action.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\common\user-action.h"
 					>
 				</File>

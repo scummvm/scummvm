@@ -80,9 +80,9 @@ private:
 		List<HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->id == key->id)
-				error("HardwareKey with id %d already given!\n", key->id);
+				error("HardwareKey with id %d already given!", key->id);
 			else if ((*it)->key == key->key)
-				error("HardwareKey with same KeyState already given!\n");
+				error("HardwareKey with same KeyState already given!");
 		}
 	}
 

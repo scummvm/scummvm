@@ -103,7 +103,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 				return false;
 			}
 		} else {
-			warning("Could not find %s.xml file in %s.zip keyboard pack\n", packName.c_str(), packName.c_str());
+			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
 			unzClose(zipFile);
 			return false;
 		}

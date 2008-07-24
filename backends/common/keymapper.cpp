@@ -7,17 +7,10 @@ Keymapper::Keymapper(EventManager *evtMgr) {
 	_eventMan = evtMgr;
 	_keymapMan = new KeymapManager();
 	_currentMap = 0;
-	_hardwareKeys = 0;
 }
 
 void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
-	if (_hardwareKeys)
-		error("Hardware key set already registered!\n");
-	_hardwareKeys = keys;
-}
-
-const HardwareKeySet *Keymapper::getHardwareKeySet() const {
-	return _hardwareKeys;
+	_keymapMan->registerHardwareKeySet(keys);
 }
 
 void Keymapper::addGlobalKeyMap(const String& name, Keymap *keymap) {
@@ -35,7 +28,7 @@ void Keymapper::addGameKeyMap(const String& name, Keymap *keymap) {
 
 void Keymapper::initGame() {
 	if (ConfMan.getActiveDomain() == 0)
-		error("Call to Keymapper::initGame when no game loaded\n");
+		error("Call to Keymapper::initGame when no game loaded");
 
 	if (_gameId.size() > 0)
 		cleanupGame();
@@ -51,7 +44,7 @@ void Keymapper::cleanupGame() {
 bool Keymapper::switchKeymap(const String& name) {
 	Keymap *new_map = _keymapMan->getKeymap(name);
 	if (!new_map) {
-		warning("Keymap '%s' not registered\n", name.c_str());
+		warning("Keymap '%s' not registered", name.c_str());
 		return false;
 	}
 	_currentMap = new_map;
