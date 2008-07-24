@@ -202,8 +202,8 @@ bool SoundMidiPC::init() {
 }
 
 void SoundMidiPC::updateVolumeSettings() {
-	_musicVolume = ConfMan.getInt("music_volume");
-	_sfxVolume = ConfMan.getInt("sfx_volume");
+	_musicVolume = CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	_sfxVolume = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
 
 	updateChannelVolume(_musicVolume);
 }
