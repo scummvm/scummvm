@@ -553,6 +553,8 @@ protected:
 	Parallaction*		_vm;
 	bool				_halfbrite;
 
+	bool 				_skipBackground;
+
 	Common::Point		_hbCirclePos;
 	int				_hbCircleRadius;
 

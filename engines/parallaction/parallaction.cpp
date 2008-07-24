@@ -98,6 +98,8 @@ Parallaction::~Parallaction() {
 	freeCharacter();
 	destroyInventory();
 
+	cleanupGui();
+
 	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
@@ -135,6 +137,8 @@ int Parallaction::init() {
 	_gfx = new Gfx(this);
 
 	_debugger = new Debugger(this);
+
+	_menuHelper = 0;
 
 	setupBalloonManager();
 
@@ -325,6 +329,7 @@ void Parallaction::runGame() {
 	if (_engineFlags & kEngineQuit)
 		return;
 
+	runGuiFrame();
 	runDialogueFrame();
 	runCommentFrame();
 

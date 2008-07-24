@@ -85,7 +85,8 @@ public:
 		kInputModeGame = 0,
 		kInputModeComment = 1,
 		kInputModeDialogue = 2,
-		kInputModeInventory = 3
+		kInputModeInventory = 3,
+		kInputModeMenu = 4
 	};
 
 

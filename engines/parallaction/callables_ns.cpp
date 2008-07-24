@@ -37,18 +37,6 @@
 
 namespace Parallaction {
 
-// part completion messages
-static const char *endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
-static const char *endMsg1[] = {"HAI FINITO QUESTA PARTE", "TU AS COMPLETE' CETTE AVENTURE", "YOU HAVE COMPLETED THIS PART", "DU HAST EIN ABENTEUER ERFOLGREICH"};
-static const char *endMsg2[] = {"ORA COMPLETA IL RESTO ", "AVEC SUCCES.",  "NOW GO ON WITH THE REST OF", "ZU ENDE GEFUHRT"};
-static const char *endMsg3[] = {"DELL' AVVENTURA",  "CONTINUE AVEC LES AUTRES", "THIS ADVENTURE", "MACH' MIT DEN ANDEREN WEITER"};
-// game completion messages
-static const char *endMsg4[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
-static const char *endMsg5[] = {"HAI FINITO LE TRE PARTI", "TU AS COMPLETE' LES TROIS PARTIES", "YOU HAVE COMPLETED THE THREE PARTS", "DU HAST DREI ABENTEURE ERFOLGREICH"};
-static const char *endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE", "OF THIS ADVENTURE", "ZU ENDE GEFUHRT"};
-static const char *endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
-
-
 /*
 	intro callables data members
 */
@@ -141,18 +129,6 @@ static uint16 _rightHandPositions[684] = {
 	0x00e0, 0x0090, 0x00e0, 0x008c, 0x00e2, 0x008b, 0x00e1, 0x0085,
 	0x00e0, 0x0084, 0x00e0, 0x0080, 0x00e1, 0x007f, 0x00e1, 0x007c,
 	0x00e0, 0x007b, 0x00e0, 0x0077
-};
-
-struct Credit {
-	const char *_role;
-	const char *_name;
-} _credits[] = {
-	{"Music and Sound Effects", "MARCO CAPRELLI"},
-	{"PC Version", "RICCARDO BALLARINO"},
-	{"Project Manager", "LOVRANO CANEPA"},
-	{"Production", "BRUNO BOZ"},
-	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
-	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
 };
 
 /*
@@ -376,39 +352,12 @@ void Parallaction_ns::_c_finito(void *parm) {
 	setPartComplete(_char);
 
 	cleanInventory();
+	cleanupGame();
+
 	_gfx->setPalette(_gfx->_palette);
 
-	uint id[4];
+	startEndPartSequence();
 
-	if (allPartsComplete()) {
-		id[0] = _gfx->createLabel(_menuFont, endMsg4[_language], 1);
-		id[1] = _gfx->createLabel(_menuFont, endMsg5[_language], 1);
-		id[2] = _gfx->createLabel(_menuFont, endMsg6[_language], 1);
-		id[3] = _gfx->createLabel(_menuFont, endMsg7[_language], 1);
-	} else {
-		id[0] = _gfx->createLabel(_menuFont, endMsg0[_language], 1);
-		id[1] = _gfx->createLabel(_menuFont, endMsg1[_language], 1);
-		id[2] = _gfx->createLabel(_menuFont, endMsg2[_language], 1);
-		id[3] = _gfx->createLabel(_menuFont, endMsg3[_language], 1);
-	}
-
-	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 70);
-	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
-	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 130);
-	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 160);
-
-	_gfx->updateScreen();
-	_input->waitForButtonEvent(kMouseLeftUp);
-
-	_gfx->freeLabels();
-
-	if (allPartsComplete()) {
-		scheduleLocationSwitch("estgrotta.drki");
-	} else {
-		selectStartLocation();
-	}
-
-	cleanupGame();
 
 	return;
 }
@@ -475,43 +424,7 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 }
 
 void Parallaction_ns::_c_endIntro(void *parm) {
-
-	debugC(1, kDebugExec, "endIntro()");
-
-	uint id[2];
-	for (uint16 _si = 0; _si < 6; _si++) {
-		id[0] = _gfx->createLabel(_menuFont, _credits[_si]._role, 1);
-		id[1] = _gfx->createLabel(_menuFont, _credits[_si]._name, 1);
-
-		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
-		_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
-
-		_gfx->updateScreen();
-
-		_input->waitForButtonEvent(kMouseLeftUp, 5500);
-
-		_gfx->freeLabels();
-	}
-	debugC(1, kDebugExec, "endIntro(): done showing credits");
-
-	_soundMan->stopMusic();
-
-	if ((getFeatures() & GF_DEMO) == 0) {
-
-		id[0] = _gfx->createLabel(_menuFont, "CLICK MOUSE BUTTON TO START", 1);
-		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
-		_gfx->updateScreen();
-		_input->waitForButtonEvent(kMouseLeftUp);
-		_gfx->freeLabels();
-		_engineFlags &= ~kEngineBlockInput;
-		selectStartLocation();
-		cleanupGame();
-	} else {
-		_gfx->updateScreen();
-		_input->waitForButtonEvent(kMouseLeftUp);
-	}
-
-	return;
+	startCreditSequence();
 }
 
 void Parallaction_ns::_c_moveSheet(void *parm) {

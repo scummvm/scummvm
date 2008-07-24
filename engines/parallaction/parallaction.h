@@ -158,6 +158,7 @@ class Gfx;
 class SoundMan;
 class Input;
 class DialogueManager;
+class MenuInputHelper;
 
 struct Location {
 
@@ -416,10 +417,17 @@ public:
 	void exitDialogueMode();
 	void runDialogueFrame();
 
+	MenuInputHelper *_menuHelper;
+	void runGuiFrame();
+	void cleanupGui();
+
 	ZonePtr	_commentZone;
 	void enterCommentMode(ZonePtr z);
 	void exitCommentMode();
 	void runCommentFrame();
+
+	void setInternLanguage(uint id);
+	uint getInternLanguage();
 
 };
 
@@ -485,6 +493,13 @@ public:
 	bool saveGame();
 
 	void		switchBackground(const char* background, const char* mask);
+	void		showSlide(const char *name);
+	void 		setArrowCursor();
+
+	// TODO: this should be private!!!!!!!
+	bool	_inTestResult;
+	void cleanupGame();
+	bool allPartsComplete();
 
 private:
 	LocationParser_ns		*_locationParser;
@@ -496,16 +511,13 @@ private:
 	Common::String genSaveFileName(uint slot, bool oldStyle = false);
 	Common::InSaveFile *getInSaveFile(uint slot);
 	Common::OutSaveFile *getOutSaveFile(uint slot);
-	bool allPartsComplete();
 	void setPartComplete(const Character& character);
 
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
 	void runPendingZones();
-	void cleanupGame();
 
-	void setArrowCursor();
 	void setInventoryCursor(int pos);
 
 
@@ -538,9 +550,6 @@ private:
 	ZonePtr _moveSarcZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
-
-	bool	_inTestResult;
-
 
 	// common callables
 	void _c_play_boogie(void*);
@@ -586,15 +595,9 @@ protected:
 
 	void		selectStartLocation();
 
-	void		guiStart();
-	int			guiSelectCharacter();
-	void		guiSplash();
-	int			guiNewGame();
-	uint16		guiChooseLanguage();
-	uint16		guiSelectGame();
-	int			guiGetSelectedBlock(const Common::Point &p);
-
-	void		showSlide(const char *name);
+	void		startGui();
+	void		startCreditSequence();
+	void		startEndPartSequence();
 };
 
 

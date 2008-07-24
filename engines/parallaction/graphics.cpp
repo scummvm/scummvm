@@ -352,29 +352,30 @@ void Gfx::clearScreen() {
 }
 
 void Gfx::beginFrame() {
+	_skipBackground = (_backgroundInfo.bg.pixels == 0);	// don't render frame if background is missing
 
-	int32 oldBackgroundMode = _varBackgroundMode;
-	_varBackgroundMode = getVar("background_mode");
-
-	if (oldBackgroundMode != _varBackgroundMode) {
-		switch (_varBackgroundMode) {
-		case 1:
-			_bitmapMask.free();
-			break;
-		case 2:
-			_bitmapMask.create(_backgroundInfo.width, _backgroundInfo.height, 1);
-			byte *data = (byte*)_bitmapMask.pixels;
-			for (uint y = 0; y < _bitmapMask.h; y++) {
-				for (uint x = 0; x < _bitmapMask.w; x++) {
-					*data++ = _backgroundInfo.mask.getValue(x, y);
+	if (!_skipBackground) {
+		int32 oldBackgroundMode = _varBackgroundMode;
+		_varBackgroundMode = getVar("background_mode");
+		if (oldBackgroundMode != _varBackgroundMode) {
+			switch (_varBackgroundMode) {
+			case 1:
+				_bitmapMask.free();
+				break;
+			case 2:
+				_bitmapMask.create(_backgroundInfo.width, _backgroundInfo.height, 1);
+				byte *data = (byte*)_bitmapMask.pixels;
+				for (uint y = 0; y < _bitmapMask.h; y++) {
+					for (uint x = 0; x < _bitmapMask.w; x++) {
+						*data++ = _backgroundInfo.mask.getValue(x, y);
+					}
 				}
+				break;
 			}
-			break;
 		}
 	}
 
-
-	if (_vm->_screenWidth >= _backgroundInfo.width) {
+	if (_skipBackground || (_vm->_screenWidth >= _backgroundInfo.width)) {
 		_varScrollX = 0;
 	} else {
 		_varScrollX = getVar("scroll_x");
@@ -399,24 +400,25 @@ int32 Gfx::getRenderMode(const char *type) {
 
 void Gfx::updateScreen() {
 
-	// background may not cover the whole screen, so adjust bulk update size
-	uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
-	uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
+	if (!_skipBackground) {
+		// background may not cover the whole screen, so adjust bulk update size
+		uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
+		uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
 
-	byte *backgroundData = 0;
-	uint16 backgroundPitch = 0;
-	switch (_varBackgroundMode) {
-	case 1:
-		backgroundData = (byte*)_backgroundInfo.bg.getBasePtr(_varScrollX, 0);
-		backgroundPitch = _backgroundInfo.bg.pitch;
-		break;
-	case 2:
-		backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
-		backgroundPitch = _bitmapMask.pitch;
-		break;
+		byte *backgroundData = 0;
+		uint16 backgroundPitch = 0;
+		switch (_varBackgroundMode) {
+		case 1:
+			backgroundData = (byte*)_backgroundInfo.bg.getBasePtr(_varScrollX, 0);
+			backgroundPitch = _backgroundInfo.bg.pitch;
+			break;
+		case 2:
+			backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
+			backgroundPitch = _bitmapMask.pitch;
+			break;
+		}
+		g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
 	}
-	g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
-
 
 	_varRenderMode = _varAnimRenderMode;
 
@@ -847,6 +849,8 @@ void Gfx::setBackground(uint type, const char* name, const char* mask, const cha
 		_palette.clone(_backgroundInfo.palette);
 	} else {
 		_disk->loadSlide(_backgroundInfo, name);
+		for (uint i = 0; i < 6; i++)
+			_backgroundInfo.ranges[i]._flags = 0;	// disable palette cycling for slides
 		setPalette(_backgroundInfo.palette);
 	}
 

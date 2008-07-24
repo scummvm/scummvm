@@ -166,6 +166,7 @@ InputData* Input::updateInput() {
 	switch (_inputMode) {
 	case kInputModeComment:
 	case kInputModeDialogue:
+	case kInputModeMenu:
 		readInput();
 		break;
 
