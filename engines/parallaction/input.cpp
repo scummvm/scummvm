@@ -188,7 +188,7 @@ void Input::trackMouse(ZonePtr z) {
 		return;
 	}
 
-	if (!z) {
+	if (z == nullZonePtr) {
 		return;
 	}
 
