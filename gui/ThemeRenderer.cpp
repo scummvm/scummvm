@@ -64,7 +64,12 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDTabInactive, "tab_inactive", true, kDDNone},
 
 	{kDDScrollbarBase, "scrollbar_base", true, kDDNone},
-	{kDDScrollbarHandle, "scrollbar_handle", false, kDDScrollbarBase},
+	
+	{kDDScrollbarButtonIdle, "scrollbar_button_idle", true, kDDNone},
+	{kDDScrollbarButtonHover, "scrollbar_button_hover", false, kDDScrollbarButtonIdle},
+		
+	{kDDScrollbarHandleIdle, "scrollbar_handle_idle", false, kDDNone},
+	{kDDScrollbarHandleHover, "scrollbar_handle_hover", false, kDDScrollbarBase},
 
 	{kDDPopUpIdle, "popup_idle", true, kDDNone},
 	{kDDPopUpHover, "popup_hover", false, kDDPopUpIdle},
@@ -461,12 +466,27 @@ void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo
 	queueDD(kDDSliderFull, r2);
 }
 
-void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState sb_state, WidgetStateInfo state) {
+void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
 	queueDD(kDDScrollbarBase, r);
-	// TODO: Need to find a scrollbar in the GUI for testing... :p
+	
+	Common::Rect r2 = r;
+	const int buttonExtra = (r.width() * 120) / 100;
+	
+	r2.bottom = r2.top + buttonExtra;
+	queueDD(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2);
+	
+	r2.translate(0, r.height() - r2.height());
+	queueDD(scrollState == kScrollbarStateDown ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2);
+	
+	r2 = r;
+	r2.left += 1;
+	r2.right -= 1;
+	r2.top += sliderY;
+	r2.bottom = r2.top + sliderHeight - 1;
+	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
 void ThemeRenderer::drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {

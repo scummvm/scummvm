@@ -54,7 +54,7 @@ bool ThemeRenderer::loadDefaultXML() {
 	"<defaults fill = 'gradient' fg_color = '255, 255, 255' />"
 	
 	"<drawdata id = 'text_selection' cache = false>"
-		"<drawstep func = 'square' fill = 'foreground' fg_color = '255, 255, 255' />"
+		"<drawstep func = 'roundedsq' radius = 4 fill = 'foreground' fg_color = '255, 255, 255' />"
 	"</drawdata>"
 
 	"<drawdata id = 'mainmenu_bg' cache = false>"
@@ -66,7 +66,25 @@ bool ThemeRenderer::loadDefaultXML() {
 	"</drawdata>"
 	
 	"<drawdata id = 'scrollbar_base' cache = false>"
-		"<drawstep func = 'roundedsq' stroke = 1 radius = 4 fill = 'none' fg_color = '255, 255, 255' />"
+		"<drawstep func = 'roundedsq' stroke = 1 radius = 6 fill = 'background' fg_color = '120, 120, 120' bg_color = '255, 243, 206' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'scrollbar_handle_hover' cache = false>"
+		"<drawstep func = 'roundedsq' stroke = 1 radius = 6 fill = 'gradient' fg_color = '255, 255, 255' gradient_start = '206, 121, 99' gradient_end = '173, 40, 8' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'scrollbar_handle_idle' cache = false>"
+		"<drawstep func = 'roundedsq' stroke = 1 radius = 6 fill = 'background' fg_color = '120, 120, 120' bg_color = '255, 255, 255' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'scrollbar_button_idle' cache = false>"
+		"<drawstep func = 'roundedsq' radius = '4' fill = 'none' fg_color = '120, 120, 120' stroke = 1 />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '9' height = '7' xpos = 'center' ypos = 'center' orientation = 'top' />"
+	"</drawdata>"
+	
+	"<drawdata id = 'scrollbar_button_hover' cache = false>"
+	"<drawstep func = 'roundedsq' radius = '4' fill = 'background' fg_color = '120, 120, 120' bg_color = '206, 121, 99' stroke = 1 />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '9' height = '7' xpos = 'center' ypos = 'center' orientation = 'top' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'tab_active' cache = false>"

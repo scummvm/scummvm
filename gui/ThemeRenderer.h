@@ -125,7 +125,10 @@ protected:
 		kDDTabInactive,
 
 		kDDScrollbarBase,
-		kDDScrollbarHandle,
+		kDDScrollbarButtonIdle,
+		kDDScrollbarButtonHover,
+		kDDScrollbarHandleIdle,
+		kDDScrollbarHandleHover,
 
 		kDDPopUpIdle,
 		kDDPopUpHover,
