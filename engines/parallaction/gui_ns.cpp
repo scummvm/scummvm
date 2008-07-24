@@ -501,6 +501,11 @@ public:
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 	}
 
+	~SelectCharacterInputState() {
+		_block.free();
+		_emptySlots.free();
+	}	
+
 	void cleanup() {
 		_points[0] = _points[1] = _points[2] = 0;
 		_vm->_gfx->hideLabel(_labels[1]);
