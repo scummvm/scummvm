@@ -914,8 +914,13 @@ void TinselEngine::RestartDrivers(void) {
 	pMouseProcess = _scheduler->createProcess(PID_MOUSE, MouseProcess, NULL, 0);	
 	pKeyboardProcess = _scheduler->createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);	
 
-	// install sound driver
-	SoundInit();
+	// open MIDI files
+	OpenMidiFiles();
+
+	// open sample files (only if mixer is ready)
+	if (_mixer->isReady()) {
+		_sound->openSampleFiles();
+	}
 
 	// Set midi volume
 	SetMidiVolume(volMidi);
@@ -927,7 +932,9 @@ void TinselEngine::RestartDrivers(void) {
 
 void TinselEngine::ChopDrivers(void) {
 	// remove sound driver
-	SoundDeinit();
+	StopMidi();
+	_sound->stopAllSamples();
+	DeleteMidiBuffer();
 
 	// remove event drivers
 	_scheduler->killProcess(pMouseProcess);

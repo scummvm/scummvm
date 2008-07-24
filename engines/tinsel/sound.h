@@ -75,9 +75,6 @@ public:
 	void openSampleFiles(void);
 };
 
-bool SoundInit(void);		// Initialises the sound driver
-bool SoundDeinit(void);		// De-initialises the sound driver
-
 } // end of namespace Tinsel
 
 #endif	// TINSEL_SOUND_H

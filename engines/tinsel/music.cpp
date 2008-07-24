@@ -58,8 +58,8 @@ static uint32 dwMidiIndex = 0;
 // MIDI buffer
 static SOUND_BUFFER midiBuffer = { 0, 0 };
 
-static SCNHANDLE	currentMidi;
-static bool		currentLoop;
+static SCNHANDLE	currentMidi = 0;
+static bool		currentLoop = false;
 
 const SCNHANDLE midiOffsetsGRAVersion[] = {
 		 4,	  4534,	 14298,	 18828,	 23358,	 38888,	 54418,	 57172,	 59926,	 62450,
@@ -149,7 +149,6 @@ SCNHANDLE GetTrackOffset(int trackNumber) {
  * @param dwFileOffset		File offset of MIDI sequence data
  * @param bLoop				Whether to loop the sequence
  */
-
 bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	currentMidi = dwFileOffset;
 	currentLoop = bLoop;
@@ -234,7 +233,6 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 /**
  * Returns TRUE if a Midi tune is currently playing.
  */
-
 bool MidiPlaying(void) {
 	if (AudioCD.isPlaying()) return true;
 	return _vm->_music->isPlaying();
@@ -243,7 +241,6 @@ bool MidiPlaying(void) {
 /**
  * Stops any currently playing midi.
  */
-
 bool StopMidi(void) {
 	currentMidi = 0;
 	currentLoop = false;

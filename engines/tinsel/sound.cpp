@@ -43,9 +43,6 @@ namespace Tinsel {
 
 //--------------------------- General data ----------------------------------
 
-// get set when music/sample driver is installed
-static bool bInstalled = false;
-
 SoundManager::SoundManager(TinselEngine *vm) :
 	//_vm(vm),	// TODO: Enable this once global _vm var is gone
 	_sampleIndex(0), _sampleIndexLen(0) {
@@ -209,49 +206,6 @@ void SoundManager::openSampleFiles(void) {
 	if (_sampleStream.ioFailed())
 		error("File %s is corrupt", SAMPLE_FILE);
 */
-}
-
-/**
- * Initialises the sound driver.
- */
-
-bool SoundInit(void) {
-	if (!bInstalled) {
-//		if (mDriver != NULL) {
-		if (true) {		// TODO: Check that a MIDI music output device is available
-			// open MIDI files
-			OpenMidiFiles();
-		}
-
-		if (_vm->_mixer->isReady()) {
-			// open sample files
-			_vm->_sound->openSampleFiles();
-		}
-		bInstalled = true;
-		return true;
-	} else {
-		// already installed
-		return false;
-	}
-}
-
-
-/**
- * De-initialises the sound driver.
- */
-
-bool SoundDeinit(void) {
-	if (bInstalled) {
-		bInstalled = false;
-		AudioCD.stop();
-		StopMidi();
-		_vm->_sound->stopAllSamples();
-		DeleteMidiBuffer();
-		return true;
-	} else {
-		// not installed
-		return false;
-	}
 }
 
 } // end of namespace Tinsel
