@@ -53,7 +53,7 @@ static void TerminateProcess(PROCESS *tProc) {
 	}
 
 	// Kill the process
-	ProcessKill(tProc);
+	g_scheduler->killProcess(tProc);
 }
 
 /**
@@ -63,7 +63,7 @@ void GetControlToken() {
 	const int which = TOKEN_CONTROL;
 
 	if (tokens[which].proc == NULL) {
-		tokens[which].proc = CurrentProcess();
+		tokens[which].proc = g_scheduler->getCurrentProcess();
 	}
 }
 
@@ -88,11 +88,11 @@ void GetToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
 	if (tokens[which].proc != NULL) {
-		assert(tokens[which].proc != CurrentProcess());
+		assert(tokens[which].proc != g_scheduler->getCurrentProcess());
 		TerminateProcess(tokens[which].proc);
 	}
 
-	tokens[which].proc = CurrentProcess();
+	tokens[which].proc = g_scheduler->getCurrentProcess();
 }
 
 /**
@@ -102,7 +102,7 @@ void GetToken(int which) {
 void FreeToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
-	assert(tokens[which].proc == CurrentProcess());	// we'd have been killed if some other proc had taken this token
+	assert(tokens[which].proc == g_scheduler->getCurrentProcess());	// we'd have been killed if some other proc had taken this token
 
 	tokens[which].proc = NULL;
 }

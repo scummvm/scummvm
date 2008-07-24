@@ -38,62 +38,72 @@ namespace Tinsel {
 // the maximum number of processes
 #define	NUM_PROCESS	64
 
-typedef void (*CORO_ADDR)(CoroContext &);
+typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
 
-// process structure
+struct PROCESS;
 
-struct PROCESS {
-	PROCESS *pNext;	// pointer to next process in active or free list
+/**
+ * Create and manage "processes" (really coroutines).
+ */
+class Scheduler {
+public:
+	/** Pointer to a function of the form "void function(PPROCESS)" */
+	typedef void (*VFPTRPP)(PROCESS *);
+	
+private:
+	
+	/** list of all processes */
+	PROCESS *processList;
+	
+	/** active process list - also saves scheduler state */
+	PROCESS *active;
+	
+	/** pointer to free process list */
+	PROCESS *pFreeProcesses;
+	
+	/** the currently active process */
+	PROCESS *pCurrent;
+	
+#ifdef DEBUG
+	// diagnostic process counters
+	int numProcs;
+	int maxProcs;
+#endif
+	
+	/**
+	 * Called from killProcess() to enable other resources
+	 * a process may be allocated to be released.
+	 */
+	VFPTRPP pRCfunction;
 
-	CoroContext state;		// the state of the coroutine
-	CORO_ADDR  coroAddr;	// the entry point of the coroutine 
 
-	int sleepTime;		// number of scheduler cycles to sleep
-	int pid;		// process ID
-	char param[PARAM_SIZE];	// process specific info
+public:
+
+	Scheduler();
+	~Scheduler();
+
+	void reset();
+	
+	#ifdef	DEBUG
+	void printStats();
+	#endif
+	
+	void schedule();
+	
+	PROCESS *createProcess(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
+	void killProcess(PROCESS *pKillProc);
+	
+	PROCESS *getCurrentProcess();
+	int getCurrentPID() const;
+	int killMatchingProcess(int pidKill, int pidMask);
+	
+	
+	void setResourceCallback(VFPTRPP pFunc);
+
 };
 
-
-/*----------------------------------------------------------------------*\
-|*			Scheduler Function Prototypes			*|
-\*----------------------------------------------------------------------*/
-
-void InitScheduler(void);	// called to init scheduler - kills all processes and places them on free list
-
-void FreeProcessList(void);
-
-#ifdef	DEBUG
-void ProcessStats(void);	// Shows the maximum number of process used at once
-#endif
-
-void Scheduler(void);		// called to start process dispatching
-
-PROCESS *ProcessCreate(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
-
-void ProcessKill(		// kill a process
-	PROCESS *pKillProc);	// which process to kill (must be different from current one)
-
-PROCESS *CurrentProcess(void);	// Returns a pointer to the currently running process
-
-int ProcessGetPID(		// Returns the process identifier of the specified process
-	PROCESS *pProc);	// which process
-
-char *ProcessGetParamsSelf();
-
-int KillMatchingProcess(	// kill any process matching the pid parameters
-	int pidKill,		// process identifier of process to kill
-	int pidMask);		// mask to apply to process identifiers before comparison
-
-
-// Pointer to a function of the form "void function(PPROCESS)"
-typedef void (*VFPTRPP)(PROCESS *);
-
-void SetResourceCallback(VFPTRPP pFunc);	// May be called by a resource allocator,
-				// the function supplied is called by ProcessKill()
-				// to allow the resource allocator to free resources
-				// allocated to the dying process.
-
+extern Scheduler *g_scheduler;	// FIXME: Temporary global var, to be used until everything has been OOifyied
 
 } // end of namespace Tinsel
 

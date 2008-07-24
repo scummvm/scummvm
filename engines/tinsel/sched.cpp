@@ -30,36 +30,51 @@
 
 namespace Tinsel {
 
+Scheduler *g_scheduler = 0;
 
-/** list of all processes */
-static PROCESS *processList = 0;
+/** process structure */
+struct PROCESS {
+	PROCESS *pNext;	//!< pointer to next process in active or free list
 
-/** active process list - also saves scheduler state */
-static PROCESS active;
+	CoroContext state;		//!< the state of the coroutine
+	CORO_ADDR  coroAddr;	//!< the entry point of the coroutine 
 
-/** pointer to free process list */
-static PROCESS *pFreeProcesses = 0;
+	int sleepTime;		//!< number of scheduler cycles to sleep
+	int pid;		//!< process ID
+	char param[PARAM_SIZE];	//!< process specific info
+};
 
-/** the currently active process */
-static PROCESS *pCurrent = 0;
+
+Scheduler::Scheduler() {
+	processList = 0;
+	pFreeProcesses = 0;
+	pCurrent = 0;
 
 #ifdef DEBUG
-// diagnostic process counters
-static int numProcs = 0;
-static int maxProcs = 0;
+	// diagnostic process counters
+	numProcs = 0;
+	maxProcs = 0;
 #endif
 
-/**
- * Called from ProcessKill() to enable other resources
- * a process may be allocated to be released.
- */
-static VFPTRPP pRCfunction = 0;
+	pRCfunction = 0;
+	
+	active = new PROCESS;
+	
+	g_scheduler = this;	// FIXME HACK
+}
 
+Scheduler::~Scheduler() {
+	free(processList);
+	processList = NULL;
+	
+	delete active;
+	active = 0;
+}
 
 /**
  * Kills all processes and places them on the free list.
  */
-void InitScheduler(void) {
+void Scheduler::reset() {
 
 #ifdef DEBUG
 	// clear number of process in use
@@ -80,7 +95,7 @@ void InitScheduler(void) {
 	}
 
 	// no active processes
-	pCurrent = active.pNext = NULL;
+	pCurrent = active->pNext = NULL;
 
 	// place first process on free list
 	pFreeProcesses = processList;
@@ -94,19 +109,12 @@ void InitScheduler(void) {
 	processList[NUM_PROCESS - 1].pNext = NULL;
 }
 
-void FreeProcessList(void) {
-	if (processList) {
-		free(processList);
-		processList = NULL;
-	}
-}
-
 
 #ifdef	DEBUG
 /**
  * Shows the maximum number of process used at once.
  */
-void ProcessStats(void) {
+void Scheduler::printStats(void) {
 	printf("%i process of %i used.\n", maxProcs, NUM_PROCESS);
 }
 #endif
@@ -115,19 +123,19 @@ void ProcessStats(void) {
 /**
  * Give all active processes a chance to run
  */
-void Scheduler(void) {
+void Scheduler::schedule(void) {
 	// start dispatching active process list
-	PROCESS *pPrevProc = &active;
-	PROCESS *pProc = active.pNext;
+	PROCESS *pPrevProc = active;
+	PROCESS *pProc = active->pNext;
 	while (pProc != NULL) {
 		if (--pProc->sleepTime <= 0) {
 			// process is ready for dispatch, activate it
 			pCurrent = pProc;
-			pProc->coroAddr(pProc->state);
+			pProc->coroAddr(pProc->state, pProc->param);
 			pCurrent = NULL;
 			if (!pProc->state || pProc->state->_sleep <= 0) {
 				// Coroutine finished
-				ProcessKill(pProc);
+				killProcess(pProc);
 				pProc = pPrevProc;
 			} else {
 				pProc->sleepTime = pProc->state->_sleep;
@@ -147,7 +155,7 @@ void Scheduler(void) {
  * @param pParam	process specific info
  * @param sizeParam	size of process specific info
  */
-PROCESS *ProcessCreate(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
+PROCESS *Scheduler::createProcess(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc;
 
 	// get a free process
@@ -172,8 +180,8 @@ PROCESS *ProcessCreate(int pid, CORO_ADDR coroAddr, const void *pParam, int size
 		// make this new process the next active process
 		pCurrent->pNext = pProc;
 	} else {	// no active processes, place process at head of list
-		pProc->pNext = active.pNext;
-		active.pNext = pProc;
+		pProc->pNext = active->pNext;
+		active->pNext = pProc;
 	}
 
 	// set coroutine entry point
@@ -206,13 +214,13 @@ PROCESS *ProcessCreate(int pid, CORO_ADDR coroAddr, const void *pParam, int size
  *
  * @param pKillProc	which process to kill
  */
-void ProcessKill(PROCESS *pKillProc) {
+void Scheduler::killProcess(PROCESS *pKillProc) {
 	PROCESS *pProc, *pPrev;	// process list pointers
 
 	// make sure a valid process pointer
 	assert(pKillProc >= processList && pKillProc <= processList + NUM_PROCESS - 1);
 	
-	// can not kill the current process using ProcessKill !
+	// can not kill the current process using killProcess !
 	assert(pCurrent != pKillProc);
 
 #ifdef DEBUG
@@ -222,7 +230,7 @@ void ProcessKill(PROCESS *pKillProc) {
 #endif
 
 	// search the active list for the process
-	for (pProc = active.pNext, pPrev = &active; pProc != NULL; pPrev = pProc, pProc = pProc->pNext) {
+	for (pProc = active->pNext, pPrev = active; pProc != NULL; pPrev = pProc, pProc = pProc->pNext) {
 		if (pProc == pKillProc) {
 			// found process in active list
 
@@ -246,7 +254,7 @@ void ProcessKill(PROCESS *pKillProc) {
 	}
 
 	// process not found in active list if we get to here
-	error("ProcessKill(): tried to kill a process not in the list of active processes");
+	error("killProcess(): tried to kill a process not in the list of active processes");
 }
 
 
@@ -254,17 +262,8 @@ void ProcessKill(PROCESS *pKillProc) {
 /**
  * Returns a pointer to the currently running process.
  */
-PROCESS *CurrentProcess(void) {
+PROCESS *Scheduler::getCurrentProcess(void) {
 	return pCurrent;
-}
-
-char *ProcessGetParamsSelf() {
-	PROCESS *pProc = pCurrent;
-
-	// make sure a valid process pointer
-	assert(pProc >= processList && pProc <= processList + NUM_PROCESS - 1);
-
-	return pProc->param;
 }
 
 /**
@@ -272,7 +271,9 @@ char *ProcessGetParamsSelf() {
  *
  * @param pProc	which process
  */
-int ProcessGetPID(PROCESS *pProc) {
+int Scheduler::getCurrentPID() const {
+	PROCESS *pProc = pCurrent;
+
 	// make sure a valid process pointer
 	assert(pProc >= processList && pProc <= processList + NUM_PROCESS - 1);
 
@@ -288,11 +289,11 @@ int ProcessGetPID(PROCESS *pProc) {
  * @param pidMask	mask to apply to process identifiers before comparison
  * @return The number of processes killed is returned.
  */
-int KillMatchingProcess(int pidKill, int pidMask) {
+int Scheduler::killMatchingProcess(int pidKill, int pidMask) {
 	int numKilled = 0;
 	PROCESS *pProc, *pPrev;	// process list pointers
 
-	for (pProc = active.pNext, pPrev = &active; pProc != NULL; pPrev = pProc, pProc = pProc->pNext) {
+	for (pProc = active->pNext, pPrev = active; pProc != NULL; pPrev = pProc, pProc = pProc->pNext) {
 		if ((pProc->pid & pidMask) == pidKill) {
 			// found a matching process
 
@@ -329,15 +330,15 @@ int KillMatchingProcess(int pidKill, int pidMask) {
 
 
 /**
- * Set pointer to a function to be called by ProcessKill().
+ * Set pointer to a function to be called by killProcess().
  * 
  * May be called by a resource allocator, the function supplied is
- * called by ProcessKill() to allow the resource allocator to free
+ * called by killProcess() to allow the resource allocator to free
  * resources allocated to the dying process.
  *
- * @param pFunc	Function to be called by ProcessKill()
+ * @param pFunc	Function to be called by killProcess()
  */
-void SetResourceCallback(VFPTRPP pFunc) {
+void Scheduler::setResourceCallback(VFPTRPP pFunc) {
 	pRCfunction = pFunc;
 }
 

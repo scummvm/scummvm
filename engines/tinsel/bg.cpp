@@ -93,7 +93,7 @@ int BackgroundHeight(void) {
 /**
  * Run main animation that comprises the scene background.
  */
-static void BGmainProcess(CORO_PARAM) {
+static void BGmainProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -104,7 +104,7 @@ static void BGmainProcess(CORO_PARAM) {
 	const MULTI_INIT *pmi;
 
 	// get the stuff copied to process when it was created
-	pfr = (const FREEL *)ProcessGetParamsSelf();
+	pfr = (const FREEL *)param;
 
 	if (pBG == NULL) {
 		/*** At start of scene ***/
@@ -176,7 +176,7 @@ void startupBackground(SCNHANDLE bfilm) {
 
 	// Start display process for each reel in the film
 	assert(FROM_LE_32(pfilm->numreels) == 1); // Multi-reeled backgrounds withdrawn
-	ProcessCreate(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
+	g_scheduler->createProcess(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
 }
 
 /**

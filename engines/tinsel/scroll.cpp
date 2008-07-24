@@ -352,7 +352,7 @@ static void MonitorScroll(void) {
 /**
  * Decide when to scroll and scroll when decided to.
  */
-void ScrollProcess(CORO_PARAM) {
+void ScrollProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);

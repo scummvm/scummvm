@@ -80,7 +80,7 @@ static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColours, uint32 
  * A pointer to a 'FADE' structure must be passed to this process when
  * it is created.
  */
-static void FadeProcess(CORO_PARAM) {
+static void FadeProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		COLORREF fadeRGB[MAX_COLOURS];	// local copy of palette
@@ -89,7 +89,7 @@ static void FadeProcess(CORO_PARAM) {
 	CORO_END_CONTEXT(_ctx);
 
 	// get the fade data structure - copied to process when it was created
-	FADE *pFade = (FADE *)ProcessGetParamsSelf();
+	FADE *pFade = (FADE *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -149,7 +149,7 @@ static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
 			fade.pPalQ		= pPal;
 
 			// create a fader process for this palette
-			ProcessCreate(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
+			g_scheduler->createProcess(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
 		}
 	}
 }

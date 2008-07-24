@@ -126,13 +126,13 @@ static PINT_CONTEXT AllocateInterpretContext(GSORT gsort) {
 
 	for (i = 0, pic = icList; i < MAX_INTERPRET; i++, pic++) {
 		if (pic->GSort == GS_NONE) {
-			pic->pProc = CurrentProcess();
+			pic->pProc = g_scheduler->getCurrentProcess();
 			pic->GSort = gsort;
 			return pic;
 		}
 #ifdef DEBUG
 		else {
-			if (pic->pProc == CurrentProcess())
+			if (pic->pProc == g_scheduler->getCurrentProcess())
 				error("Found unreleased interpret context");
 		}
 #endif
@@ -241,7 +241,7 @@ PINT_CONTEXT RestoreInterpretContext(PINT_CONTEXT ric) {
 	ic = AllocateInterpretContext(GS_NONE);	// Sort will soon be overridden
 
 	memcpy(ic, ric, sizeof(INT_CONTEXT));
-	ic->pProc = CurrentProcess();
+	ic->pProc = g_scheduler->getCurrentProcess();
 	ic->resumeState = RES_1;
 
 	LockCode(ic);
@@ -268,7 +268,7 @@ void RegisterGlobals(int num) {
 			error("Cannot allocate memory for interpret contexts");
 		}
 
-		SetResourceCallback(FreeInterpretContextPr);
+		g_scheduler->setResourceCallback(FreeInterpretContextPr);
 	} else {
 		// Check size is still the same
 		assert(numGlobals == num);
@@ -279,15 +279,11 @@ void RegisterGlobals(int num) {
 }
 
 void FreeGlobals(void) {
-	if (pGlobals) {
-		free(pGlobals);
-		pGlobals = NULL;
-	}
+	free(pGlobals);
+	pGlobals = NULL;
 
-	if (icList) {
-		free(icList);
-		icList = NULL;
-	}
+	free(icList);
+	icList = NULL;
 }
 
 /**

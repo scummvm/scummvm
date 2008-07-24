@@ -62,7 +62,7 @@ void DoScrollCursor(void);
 void SetNoScroll(int x1, int y1, int x2, int y2);
 void DropNoScrolls(void);
 
-void ScrollProcess(CORO_PARAM);
+void ScrollProcess(CORO_PARAM, const void *);
 
 void ScrollFocus(int actor);
 void ScrollTo(int x, int y, int iter);

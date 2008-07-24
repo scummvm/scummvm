@@ -932,7 +932,7 @@ struct ITP_INIT {
 /**
  * Run inventory item's Glitter code
  */
-static void InvTinselProcess(CORO_PARAM) {
+static void InvTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
@@ -940,7 +940,7 @@ static void InvTinselProcess(CORO_PARAM) {
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
-	ITP_INIT *to = (ITP_INIT *)ProcessGetParamsSelf();
+	ITP_INIT *to = (ITP_INIT *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -980,7 +980,7 @@ void RunInvTinselCode(PINV_OBJECT pinvo, USER_EVENT event, BUTEVENT be, int inde
 		return;
 
 	GlitterIndex = index;
-	ProcessCreate(PID_TCODE, InvTinselProcess, &to, sizeof(to));
+	g_scheduler->createProcess(PID_TCODE, InvTinselProcess, &to, sizeof(to));
 }
 
 /**************************************************************************/
@@ -3005,7 +3005,7 @@ void CloseInventory(void) {
 /**
  * Redraws the icons if appropriate. Also handle button press/toggle effects
  */
-void InventoryProcess(CORO_PARAM) {
+void InventoryProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -3901,7 +3901,7 @@ void InvPutDown(int index) {
 	InvCursor(IC_DROP, aniX, aniY);
 }
 
-void InvPdProcess(CORO_PARAM) {
+void InvPdProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -3913,7 +3913,7 @@ void InvPdProcess(CORO_PARAM) {
 	FreeToken(TOKEN_LEFT_BUT);
 
 	// get the stuff copied to process when it was created
-	int	*pindex = (int *)ProcessGetParamsSelf();
+	int	*pindex = (int *)param;
 
 	InvPutDown(*pindex);
 
@@ -3938,7 +3938,7 @@ void InvPickup(int index) {
 
 			else if (!(invObj->attribute & IO_ONLYINV1 && ino !=INV_1)
 			     && !(invObj->attribute & IO_ONLYINV2 && ino !=INV_2))
-				ProcessCreate(PID_TCODE, InvPdProcess, &index, sizeof(index));
+				g_scheduler->createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
 		}
 	}
 }

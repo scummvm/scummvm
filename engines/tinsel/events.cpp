@@ -135,14 +135,14 @@ struct TP_INIT {
 /**
  * Runs glitter code associated with a polygon.
  */
-static void PolyTinselProcess(CORO_PARAM) {
+static void PolyTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
 		bool took_control;	// Set if this function takes control
 	CORO_END_CONTEXT(_ctx);
 
-	TP_INIT *to = (TP_INIT *)ProcessGetParamsSelf();	// get the stuff copied to process when it was created
+	TP_INIT *to = (TP_INIT *)param;	// get the stuff copied to process when it was created
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -184,13 +184,13 @@ static void PolyTinselProcess(CORO_PARAM) {
 void RunPolyTinselCode(HPOLYGON hPoly, USER_EVENT event, BUTEVENT be, bool tc) {
 	TP_INIT to = { hPoly, event, be, tc, 0 };
 
-	ProcessCreate(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+	g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 void effRunPolyTinselCode(HPOLYGON hPoly, USER_EVENT event, int actor) {
 	TP_INIT to = { hPoly, event, BE_NONE, false, actor };
 
-	ProcessCreate(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+	g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 //-----------------------------------------------------------------------
@@ -203,13 +203,13 @@ struct WP_INIT {
 /**
  * Perform a walk directly initiated by a click.
  */
-static void WalkProcess(CORO_PARAM) {
+static void WalkProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PMACTOR pActor;
 	CORO_END_CONTEXT(_ctx);
 
-	WP_INIT *to = (WP_INIT *)ProcessGetParamsSelf();	// get the co-ordinates - copied to process when it was created
+	WP_INIT *to = (WP_INIT *)param;	// get the co-ordinates - copied to process when it was created
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -233,7 +233,7 @@ static void WalkProcess(CORO_PARAM) {
 void walkto(int x, int y) {
 	WP_INIT to = { x, y };
 
-	ProcessCreate(PID_TCODE, WalkProcess, &to, sizeof(to));
+	g_scheduler->createProcess(PID_TCODE, WalkProcess, &to, sizeof(to));
 }
 
 /**

@@ -361,9 +361,9 @@ void PlayReel(CORO_PARAM, const PPINIT *ppi) {
 /**
  * Run all animations that comprise the play film.
  */
-static void playProcess(CORO_PARAM) {
+static void playProcess(CORO_PARAM, const void *param) {
 	// get the stuff copied to process when it was created
-	PPINIT *ppi = (PPINIT *)ProcessGetParamsSelf();
+	PPINIT *ppi = (PPINIT *)param;
 
 	PlayReel(coroParam, ppi);
 }
@@ -417,7 +417,7 @@ void playFilm(SCNHANDLE film, int x, int y, int actorid, bool splay, int sfact, 
 		newestFilm(film, &pfilm->reels[i]);
 
 		ppi.column = i;
-		ProcessCreate(PID_REEL, playProcess, &ppi, sizeof(ppi));
+		g_scheduler->createProcess(PID_REEL, playProcess, &ppi, sizeof(ppi));
 	}
 }
 
@@ -459,7 +459,7 @@ void playFilmc(CORO_PARAM, SCNHANDLE film, int x, int y, int actorid, bool splay
 		newestFilm(film, &pfilm->reels[i]);
 
 		_ctx->ppi.column = i;
-		ProcessCreate(PID_REEL, playProcess, &_ctx->ppi, sizeof(PPINIT));
+		g_scheduler->createProcess(PID_REEL, playProcess, &_ctx->ppi, sizeof(PPINIT));
 	}
 
 	newestFilm(film, &pfilm->reels[0]);
@@ -501,7 +501,7 @@ void playThisReel(SCNHANDLE film, short reelnum, short z, int x, int y) {
 	newestFilm(film, &pfilm->reels[reelnum]);
 
 	// Start display process for the reel
-	ProcessCreate(PID_REEL, playProcess, &ppi, sizeof(ppi));
+	g_scheduler->createProcess(PID_REEL, playProcess, &ppi, sizeof(ppi));
 }
 
 } // end of namespace Tinsel

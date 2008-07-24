@@ -181,7 +181,7 @@ void sortActors(SAVED_DATA *rsd) {
 void ResumeInterprets(SAVED_DATA *rsd) {
 	// Master script only affected on restore game, not restore scene
 	if (rsd == &sgData) {
-		KillMatchingProcess(PID_MASTER_SCR, -1);
+		g_scheduler->killMatchingProcess(PID_MASTER_SCR, -1);
 		FreeMasterInterpretContext();
 	}
 

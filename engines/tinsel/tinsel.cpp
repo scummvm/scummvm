@@ -71,13 +71,13 @@ extern void SetDoFadeIn(bool tf);
 extern void DropBackground(void);
 
 // In CURSOR.CPP
-extern void CursorProcess(CORO_PARAM);
+extern void CursorProcess(CORO_PARAM, const void *);
 
 // In INVENTORY.CPP
-extern void InventoryProcess(CORO_PARAM);
+extern void InventoryProcess(CORO_PARAM, const void *);
 
 // In SCENE.CPP
-extern void PrimeBackground( void );
+extern void PrimeBackground();
 extern void NewScene(SCNHANDLE scene, int entry);
 extern SCNHANDLE GetSceneHandle(void);
 
@@ -111,8 +111,6 @@ static Scene DelayedScene = { 0, 0, 0 };
 
 static bool bHookSuspend = false;
 
-static uint32 lastLeftClick = 0, lastRightClick = 0;
-
 static PROCESS *pMouseProcess = 0;
 static PROCESS *pKeyboardProcess = 0;
 
@@ -127,7 +125,7 @@ Common::List<Common::Event> keypresses;
 /**
  * Process to handle keypresses
  */
-void KeyboardProcess(CORO_PARAM) {
+void KeyboardProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -275,17 +273,19 @@ void KeyboardProcess(CORO_PARAM) {
 /**
  * Process to handle changes in the mouse buttons.
  */
-void MouseProcess(CORO_PARAM) {
+void MouseProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		bool lastLWasDouble;
 		bool lastRWasDouble;
+		uint32 lastLeftClick, lastRightClick;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->lastLWasDouble = false;
 	_ctx->lastRWasDouble = false;
+	_ctx->lastLeftClick = _ctx->lastRightClick = DwGetCurrentTime();
 
 	while (true) {
 		// FIXME: I'm still keeping the ctrl/Alt handling in the ProcessKeyEvent method.
@@ -305,7 +305,7 @@ void MouseProcess(CORO_PARAM) {
 		switch (type) {
 		case Common::EVENT_LBUTTONDOWN:
 			// left button press
-			if (DwGetCurrentTime() - lastLeftClick < (uint32)dclickSpeed) {
+			if (DwGetCurrentTime() - _ctx->lastLeftClick < (uint32)dclickSpeed) {
 				// signal left drag start
 				ProcessButEvent(BE_LDSTART);
 
@@ -329,9 +329,9 @@ void MouseProcess(CORO_PARAM) {
 
 			// update click timer
 			if (_ctx->lastLWasDouble == false)
-				lastLeftClick = DwGetCurrentTime();
+				_ctx->lastLeftClick = DwGetCurrentTime();
 			else
-				lastLeftClick -= dclickSpeed;
+				_ctx->lastLeftClick -= dclickSpeed;
 
 			// signal left drag end
 			ProcessButEvent(BE_LDEND);
@@ -340,7 +340,7 @@ void MouseProcess(CORO_PARAM) {
 		case Common::EVENT_RBUTTONDOWN:
 			// right button press
 
-			if (DwGetCurrentTime() - lastRightClick < (uint32)dclickSpeed) {
+			if (DwGetCurrentTime() - _ctx->lastRightClick < (uint32)dclickSpeed) {
 				// signal right drag start
 				ProcessButEvent(BE_RDSTART);
 
@@ -364,9 +364,9 @@ void MouseProcess(CORO_PARAM) {
 
 			// update click timer
 			if (_ctx->lastRWasDouble == false)
-				lastRightClick = DwGetCurrentTime();
+				_ctx->lastRightClick = DwGetCurrentTime();
 			else
-				lastRightClick -= dclickSpeed;
+				_ctx->lastRightClick -= dclickSpeed;
 
 			// signal right drag end
 			ProcessButEvent(BE_RDEND);
@@ -380,30 +380,10 @@ void MouseProcess(CORO_PARAM) {
 }
 
 /**
- * Installs the event driver processes
- */
-
-void EventsInstall(void) {
-	lastLeftClick = lastRightClick = DwGetCurrentTime();
-
-	pMouseProcess = ProcessCreate(PID_MOUSE, MouseProcess, NULL, 0);	
-	pKeyboardProcess = ProcessCreate(PID_KEYBOARD, KeyboardProcess, NULL, 0);	
-}
-
-/**
- * Removes the event driver processes
- */
-
-void EventsUninstall(void) {
-	ProcessKill(pMouseProcess);
-	ProcessKill(pKeyboardProcess);
-}
-
-/**
  * Run the master script.
  * Continues between scenes, or until Interpret() returns.
  */
-static void MasterScriptProcess(CORO_PARAM) {
+static void MasterScriptProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
@@ -480,7 +460,7 @@ void syncSCdata(Serializer &s) {
 
 //-----------------------------------------------------------------------
 
-static void RestoredProcess(CORO_PARAM) {
+static void RestoredProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
@@ -489,7 +469,7 @@ static void RestoredProcess(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// get the stuff copied to process when it was created
-	_ctx->pic = *((PINT_CONTEXT *)ProcessGetParamsSelf());
+	_ctx->pic = *((PINT_CONTEXT *)param);
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
 	CORO_INVOKE_1(Interpret, _ctx->pic);
@@ -498,11 +478,11 @@ static void RestoredProcess(CORO_PARAM) {
 }
 
 void RestoreProcess(PINT_CONTEXT pic) {
-	ProcessCreate(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
+	g_scheduler->createProcess(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
 }
 
 void RestoreMasterProcess(PINT_CONTEXT pic) {
-	ProcessCreate(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
+	g_scheduler->createProcess(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
 }
 
 // FIXME: CountOut is used by ChangeScene
@@ -670,7 +650,7 @@ TinselEngine::~TinselEngine() {
 	FreeActors();
 	FreeObjectList();
 	FreeGlobals();
-	FreeProcessList();
+	delete _scheduler;
 }
 
 int TinselEngine::init() {
@@ -685,6 +665,8 @@ int TinselEngine::init() {
 	g_system->getEventManager()->registerRandomSource(_random, "tinsel");
 
 	_console = new Console();
+	
+	_scheduler = new Scheduler();
 
 	// init memory manager
 	MemoryInit();
@@ -818,7 +800,7 @@ void TinselEngine::NextGameCycle(void) {
 	ResetEcount();
 
 	// schedule process
-	Scheduler();
+	_scheduler->schedule();
 
 	// redraw background
 	DrawBackgnd();
@@ -870,11 +852,11 @@ bool TinselEngine::pollEvent() {
 
 void TinselEngine::CreateConstProcesses(void) {
 	// Process to run the master script
-	ProcessCreate(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
+	_scheduler->createProcess(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
 
 	// Processes to run the cursor and inventory,
-	ProcessCreate(PID_CURSOR, CursorProcess, NULL, 0);
-	ProcessCreate(PID_INVENTORY, InventoryProcess, NULL, 0);
+	_scheduler->createProcess(PID_CURSOR, CursorProcess, NULL, 0);
+	_scheduler->createProcess(PID_INVENTORY, InventoryProcess, NULL, 0);
 }
 
 /**
@@ -926,10 +908,11 @@ void TinselEngine::RestartDrivers(void) {
 	KillAllObjects();
 
 	// init the process scheduler
-	InitScheduler();
+	_scheduler->reset();
 
 	// init the event handlers
-	EventsInstall();
+	pMouseProcess = _scheduler->createProcess(PID_MOUSE, MouseProcess, NULL, 0);	
+	pKeyboardProcess = _scheduler->createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);	
 
 	// install sound driver
 	SoundInit();
@@ -947,7 +930,8 @@ void TinselEngine::ChopDrivers(void) {
 	SoundDeinit();
 
 	// remove event drivers
-	EventsUninstall();
+	_scheduler->killProcess(pMouseProcess);
+	_scheduler->killProcess(pKeyboardProcess);
 }
 
 /**

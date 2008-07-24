@@ -56,12 +56,12 @@ struct EP_INIT {
  * actor to leave that polygon. Then runs the polygon's Glitter code
  * with LEAVE event.
  */
-static void EffectProcess(CORO_PARAM) {
+static void EffectProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	EP_INIT *to = (EP_INIT *)ProcessGetParamsSelf();		// get the stuff copied to process when it was created
+	EP_INIT *to = (EP_INIT *)param;		// get the stuff copied to process when it was created
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -102,7 +102,7 @@ static void FettleEffectPolys(int x, int y, int index, PMACTOR pActor) {
 			epi.hEpoly = hPoly;
 			epi.pActor = pActor;
 			epi.index = index;
-			ProcessCreate(PID_TCODE, EffectProcess, &epi, sizeof(epi));
+			g_scheduler->createProcess(PID_TCODE, EffectProcess, &epi, sizeof(epi));
 		}
 	}
 }
@@ -110,7 +110,7 @@ static void FettleEffectPolys(int x, int y, int index, PMACTOR pActor) {
 /**
  * Just calls FettleEffectPolys() every clock tick.
  */
-void EffectPolyProcess(CORO_PARAM) {
+void EffectPolyProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);

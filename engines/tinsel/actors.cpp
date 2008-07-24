@@ -174,14 +174,14 @@ struct ATP_INIT {
 /**
  * Runs actor's glitter code.
  */
-static void ActorTinselProcess(CORO_PARAM) {
+static void ActorTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
-	ATP_INIT *atp = (ATP_INIT *)ProcessGetParamsSelf();
+	ATP_INIT *atp = (ATP_INIT *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -207,14 +207,14 @@ struct RATP_INIT {
 	int		id;		// Actor number
 };
 
-static void ActorRestoredProcess(CORO_PARAM) {
+static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
-	RATP_INIT *r = (RATP_INIT *)ProcessGetParamsSelf();
+	RATP_INIT *r = (RATP_INIT *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -230,7 +230,7 @@ static void ActorRestoredProcess(CORO_PARAM) {
 void RestoreActorProcess(int id, PINT_CONTEXT pic) {
 	RATP_INIT r = { pic, id };
 
-	ProcessCreate(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
+	g_scheduler->createProcess(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
 }
 
 /**
@@ -247,7 +247,7 @@ void actorEvent(int ano, USER_EVENT event, BUTEVENT be) {
 		atp.id = ano;
 		atp.event = event;
 		atp.bev = be;
-		ProcessCreate(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
+		g_scheduler->createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
 	}
 }
 

@@ -768,7 +768,7 @@ void newscene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 #endif
 
 	// Prevent code subsequent to this call running before scene changes
-	if (ProcessGetPID(CurrentProcess()) != PID_MASTER_SCR)
+	if (g_scheduler->getCurrentPID() != PID_MASTER_SCR)
 		CORO_KILL_SELF();
 	CORO_END_CODE;
 }

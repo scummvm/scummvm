@@ -54,14 +54,14 @@ namespace Tinsel {
 extern void DropBackground(void);
 
 // in EFFECT.C
-extern void EffectPolyProcess(CORO_PARAM);
+extern void EffectPolyProcess(CORO_PARAM, const void *);
 
 // in PDISPLAY.C
 #ifdef DEBUG
-extern void CursorPositionProcess(CORO_PARAM);
+extern void CursorPositionProcess(CORO_PARAM, const void *);
 #endif
-extern void TagProcess(CORO_PARAM);
-extern void PointProcess(CORO_PARAM);
+extern void TagProcess(CORO_PARAM, const void *);
+extern void PointProcess(CORO_PARAM, const void *);
 extern void EnableTags(void);
 
 
@@ -102,14 +102,14 @@ static SCNHANDLE SceneHandle = 0;	// Current scene handle - stored in case of Sa
 /**
  * Started up for scene script and entrance script.
  */
-static void SceneTinselProcess(CORO_PARAM) {
+static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		PINT_CONTEXT pic;
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
-	SCNHANDLE *ss = (SCNHANDLE *)ProcessGetParamsSelf();
+	SCNHANDLE *ss = (SCNHANDLE *)param;
 	assert(*ss);		// Must have some code to run
 
 	CORO_BEGIN_CODE(_ctx);
@@ -154,7 +154,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		for (i = 0; i < FROM_LE_32(ss->numEntrance); i++, es++) {
 			if (FROM_LE_32(es->eNumber) == (uint)entry) {
 				if (es->hScript)
-					ProcessCreate(PID_TCODE, SceneTinselProcess, &es->hScript, sizeof(es->hScript));
+					g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &es->hScript, sizeof(es->hScript));
 				break;
 			}
 		}
@@ -163,7 +163,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 			error("Non-existant scene entry number");
 
 		if (ss->hSceneScript)
-			ProcessCreate(PID_TCODE, SceneTinselProcess, &ss->hSceneScript, sizeof(ss->hSceneScript));
+			g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &ss->hSceneScript, sizeof(ss->hSceneScript));
 	}
 
 	// Default refer type
@@ -200,14 +200,13 @@ void EndScene(void) {
 	KillAllObjects();
 
 	// kill all destructable process
-	KillMatchingProcess(PID_DESTROY, PID_DESTROY);
+	g_scheduler->killMatchingProcess(PID_DESTROY, PID_DESTROY);
 }
 
 /**
  *
  */
-void PrimeBackground(void)
-{
+void PrimeBackground(void) {
 	// structure for playfields
 	static PLAYFIELD playfield[] = {
 		{	// FIELD WORLD
@@ -257,16 +256,16 @@ void PrimeScene(void) {
 	RestartCursor();	// Restart the cursor
 	EnableTags();		// Next scene with tags enabled
 
-	ProcessCreate(PID_SCROLL, ScrollProcess, NULL, 0);
-	ProcessCreate(PID_SCROLL, EffectPolyProcess, NULL, 0);
+	g_scheduler->createProcess(PID_SCROLL, ScrollProcess, NULL, 0);
+	g_scheduler->createProcess(PID_SCROLL, EffectPolyProcess, NULL, 0);
 
 #ifdef DEBUG
 	if (ShowPosition)
-		ProcessCreate(PID_POSITION, CursorPositionProcess, NULL, 0);
+		g_scheduler->createProcess(PID_POSITION, CursorPositionProcess, NULL, 0);
 #endif
 
-	ProcessCreate(PID_TAG, TagProcess, NULL, 0);
-	ProcessCreate(PID_TAG, PointProcess, NULL, 0);
+	g_scheduler->createProcess(PID_TAG, TagProcess, NULL, 0);
+	g_scheduler->createProcess(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
 	PrimeBackground();

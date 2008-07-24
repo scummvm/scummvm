@@ -522,7 +522,7 @@ static void CursorStoppedCheck(CORO_PARAM) {
 /**
  * The main cursor process.
  */
-void CursorProcess(CORO_PARAM) {
+void CursorProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);

@@ -43,6 +43,7 @@
 namespace Tinsel {
 
 class MusicPlayer;
+class Scheduler;
 class SoundManager;
 
 enum TinselGameID {
@@ -79,6 +80,8 @@ class TinselEngine : public ::Engine {
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
 	Console *_console;
+	Scheduler *_scheduler;
+
 protected:
 
 	int init();

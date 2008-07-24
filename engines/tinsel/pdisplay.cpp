@@ -92,7 +92,7 @@ static enum { TAGS_OFF, TAGS_ON } TagsActive = TAGS_ON;
  * This process is only started up if a Glitter showpos() call is made.
  * Obviously, this is for testing purposes only...
  */
-void CursorPositionProcess(CORO_PARAM) {
+void CursorPositionProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		int prevsX, prevsY;	// Last screen top left
@@ -503,7 +503,7 @@ static bool PolyTag(SCNHANDLE *pTag, OBJECT **ppText) {
  * Handle display of tagged actor and polygon tags.
  * Tagged actor's get priority over polygons.
  */
-void TagProcess(CORO_PARAM) {
+void TagProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		OBJECT	*pText;	// text object pointer
@@ -577,7 +577,7 @@ static void leavingpoly(HPOLYGON hp) {
  * Maintain the polygons' pointState and tagState flags accordingly.
  * Also run the polygon's Glitter code when the cursor enters.
  */
-void PointProcess(CORO_PARAM) {
+void PointProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);

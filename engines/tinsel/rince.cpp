@@ -142,8 +142,8 @@ void KillMActor(PMACTOR pActor) {
 		pActor->MActorState = NO_MACTOR;
 		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), pActor->actorObj);
 		pActor->actorObj = NULL;
-		assert(CurrentProcess() != pActor->pProc);
-		ProcessKill(pActor->pProc);
+		assert(g_scheduler->getCurrentProcess() != pActor->pProc);
+		g_scheduler->killProcess(pActor->pProc);
 	}
 }
 
@@ -604,12 +604,12 @@ static void MActorProcessHelper(int X, int Y, int id, PMACTOR pActor) {
 /**
  * Moving actor process - 1 per moving actor in current scene.
  */
-void MActorProcess(CORO_PARAM) {
+void MActorProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	PMACTOR pActor = *(PMACTOR *)ProcessGetParamsSelf();
+	PMACTOR pActor = *(PMACTOR *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 	
@@ -633,7 +633,7 @@ void MActorProcess(CORO_PARAM) {
 
 void MActorProcessCreate(int X, int Y, int id, PMACTOR pActor) {
 	MActorProcessHelper(X, Y, id, pActor);
-	pActor->pProc = ProcessCreate(PID_MACTOR, MActorProcess, &pActor, sizeof(PMACTOR));
+	pActor->pProc = g_scheduler->createProcess(PID_MACTOR, MActorProcess, &pActor, sizeof(PMACTOR));
 }
 
 
