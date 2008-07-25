@@ -40,7 +40,7 @@ typedef Common::List<Common::Rect> RectList;
 |*			Clip Rect Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void ResetClipRect(void);	// Resets the clipping rectangle allocator
+void ResetClipRect();	// Resets the clipping rectangle allocator
 
 void AddClipRect(		// Allocate a clipping rectangle from the free list
 	const Common::Rect &pClip);		// clip rectangle dimensions to allocate
@@ -64,7 +64,7 @@ void FindMovingObjects(		// Creates clipping rectangles for all the objects that
 	bool bVelocity,		// when set, objects pos is updated with velocity
 	bool bScrolled);	// when set, playfield has scrolled
 
-void MergeClipRect(void);	// Merges any clipping rectangles that overlap
+void MergeClipRect();	// Merges any clipping rectangles that overlap
 
 void UpdateClipRect(		// Redraws all objects within this clipping rectangle
 	OBJECT *pObjList,	// object list to draw
