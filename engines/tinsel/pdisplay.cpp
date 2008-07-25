@@ -70,8 +70,11 @@ extern int BackgroundHeight(void);
 
 #define POSY	0		// Y-co-ord of these position displays
 
-#define ACTOR_TAG 0xffffffff
-
+enum HotSpotTag {
+	NO_HOTSPOT_TAG,
+	POLY_HOTSPOT_TAG,
+	ACTOR_HOTSPOT_TAG
+};
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
@@ -337,7 +340,7 @@ static bool InHotSpot(int ano, int aniX, int aniY, int *pxtext, int *pytext) {
  * the tag or, if tag already displayed, maintain the tag's position on
  * the screen.
  */
-static bool ActorTag(int curX, int curY, SCNHANDLE *pTag, OBJECT **ppText) {
+static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 	static int Loffset = 0, Toffset = 0;	// Values when tag was displayed
 	int	nLoff, nToff;		// new values, to keep tag in place
 	int	ano;
@@ -349,7 +352,7 @@ static bool ActorTag(int curX, int curY, SCNHANDLE *pTag, OBJECT **ppText) {
 	while ((ano = NextTaggedActor()) != 0) {
 		if (InHotSpot(ano, curX, curY, &xtext, &ytext)) {
 			// Put up or maintain actor tag
-			if (*pTag != ACTOR_TAG)
+			if (*pTag != ACTOR_HOTSPOT_TAG)
 				newActor = true;
 			else if (ano != GetTaggedActor())
 				newActor = true;	// Different actor
@@ -362,7 +365,7 @@ static bool ActorTag(int curX, int curY, SCNHANDLE *pTag, OBJECT **ppText) {
 				if (*ppText)
 					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
 
-				*pTag = ACTOR_TAG;
+				*pTag = ACTOR_HOTSPOT_TAG;
 				SaveTaggedActor(ano);	// This actor tagged
 				SaveTaggedPoly(NOPOLY);	// No tagged polygon
 
@@ -387,8 +390,8 @@ static bool ActorTag(int curX, int curY, SCNHANDLE *pTag, OBJECT **ppText) {
 	}
 
 	// No tagged actor
-	if (*pTag == ACTOR_TAG) {
-		*pTag = 0;
+	if (*pTag == ACTOR_HOTSPOT_TAG) {
+		*pTag = NO_HOTSPOT_TAG;
 		SaveTaggedActor(0);
 	}
 	return false;
@@ -401,7 +404,7 @@ static bool ActorTag(int curX, int curY, SCNHANDLE *pTag, OBJECT **ppText) {
  * EXIT polygon, its pointState flag is set to POINTING. If its Glitter
  * code contains a printtag() call, its tagState flag gets set to TAG_ON.
  */
-static bool PolyTag(SCNHANDLE *pTag, OBJECT **ppText) {
+static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 	static int	Loffset = 0, Toffset = 0;	// Values when tag was displayed
 	int		nLoff, nToff;		// new values, to keep tag in place
 	HPOLYGON	hp;
@@ -423,14 +426,14 @@ static bool PolyTag(SCNHANDLE *pTag, OBJECT **ppText) {
 					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
 					*ppText = NULL;
 				}
-				*pTag = POLY_TAG;
+				*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
 				SaveTaggedPoly(hp);	// This polygon tagged
 			}
 			return true;
 		} else if (hp != NOPOLY && PolyTagState(hp) == TAG_ON) {
 			// Put up or maintain polygon tag
-			if (*pTag != POLY_TAG)
+			if (*pTag != POLY_HOTSPOT_TAG)
 				newPoly = true;		// A new polygon (no current)
 			else if (hp != GetTaggedPoly())
 				newPoly = true;		// Different polygon
@@ -441,7 +444,7 @@ static bool PolyTag(SCNHANDLE *pTag, OBJECT **ppText) {
 				if (*ppText)
 					MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), *ppText);
 
-				*pTag = POLY_TAG;
+				*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
 				SaveTaggedPoly(hp);	// This polygon tagged
 
@@ -492,8 +495,8 @@ static bool PolyTag(SCNHANDLE *pTag, OBJECT **ppText) {
 	}
 
 	// No tagged polygon
-	if (*pTag == POLY_TAG) {
-		*pTag = 0;
+	if (*pTag == POLY_HOTSPOT_TAG) {
+		*pTag = NO_HOTSPOT_TAG;
 		SaveTaggedPoly(NOPOLY);
 	}
 	return false;
@@ -507,13 +510,13 @@ void TagProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		OBJECT	*pText;	// text object pointer
-		SCNHANDLE Tag;
+		HotSpotTag Tag;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 	
 	_ctx->pText = NULL;
-	_ctx->Tag = 0;
+	_ctx->Tag = NO_HOTSPOT_TAG;
 
 	SaveTaggedActor(0);		// No tagged actor yet
 	SaveTaggedPoly(NOPOLY);		// No tagged polygon yet
@@ -541,7 +544,7 @@ void TagProcess(CORO_PARAM, const void *) {
 				// kill current text objects
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 				_ctx->pText = NULL;
-				_ctx->Tag = 0;
+				_ctx->Tag = NO_HOTSPOT_TAG;
 			}
 		}
 
