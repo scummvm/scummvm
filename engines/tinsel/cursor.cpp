@@ -368,8 +368,8 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 	assert(BackPal()); // no background palette
 	pim->hImgPal = TO_LE_32(BackPal());			// Poke in the background palette
 
-	ACoX = (short)(FROM_LE_16(pim->imgWidth)/2 - FROM_LE_16(pim->anioffX));
-	ACoY = (short)(FROM_LE_16(pim->imgHeight)/2 - FROM_LE_16(pim->anioffY));
+	ACoX = (short)(FROM_LE_16(pim->imgWidth)/2 - ((int16) FROM_LE_16(pim->anioffX)));
+	ACoY = (short)(FROM_LE_16(pim->imgHeight)/2 - ((int16) FROM_LE_16(pim->anioffY)));
 
 	// Initialise and insert the auxillary cursor object
 	AcurObj = MultiInitObject(pmi);

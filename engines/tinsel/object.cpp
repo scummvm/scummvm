@@ -297,10 +297,10 @@ void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
 		const IMAGE *pImg = (const IMAGE *)LockMem(hImg);
 
 		// set ani X
-		*pAniX = FROM_LE_16(pImg->anioffX);
+		*pAniX = (int16) FROM_LE_16(pImg->anioffX);
 
 		// set ani Y
-		*pAniY = FROM_LE_16(pImg->anioffY);
+		*pAniY = (int16) FROM_LE_16(pImg->anioffY);
 
 		if (flags & DMA_FLIPH) {
 			// we are flipped horizontally
