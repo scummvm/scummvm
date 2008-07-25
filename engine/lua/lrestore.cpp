@@ -118,14 +118,15 @@ struct ArrayIDObj {
 
 static int32 sortCallback(const void *id1, const void *id2) {
 #ifdef TARGET_64BITS
-	uint64 p1 = ((ArrayIDObj *)id1)->idObj.low | (uint64)(((ArrayIDObj *)id1)->idObj.hi << 32)
-	uint64 p2 = ((ArrayIDObj *)id1)->idObj.low | (uint64)(((ArrayIDObj *)id1)->idObj.hi << 32)
+	uint64 p1 = ((ArrayIDObj *)id1)->idObj.low | ((uint64)(((ArrayIDObj *)id1)->idObj.hi)) << 32;
+	uint64 p2 = ((ArrayIDObj *)id2)->idObj.low | ((uint64)(((ArrayIDObj *)id2)->idObj.hi)) << 32;
 	if (p1 > p2) {
 		return 1;
 	} else if (p1 < p2) {
 		return -1;
 	} else {
 		return 0;
+	}
 #else
 	if (((ArrayIDObj *)id1)->idObj.low > ((ArrayIDObj *)id2)->idObj.low) {
 		return 1;
