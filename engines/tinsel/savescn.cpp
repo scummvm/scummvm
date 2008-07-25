@@ -35,6 +35,7 @@
 #include "tinsel/inventory.h"
 #include "tinsel/music.h"
 #include "tinsel/pid.h"
+#include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/savescn.h"
 #include "tinsel/sched.h"
@@ -53,10 +54,10 @@ extern SCNHANDLE GetBgroundHandle(void);
 extern void SetDoFadeIn(bool tf);
 
 // In DOS_DW.C
-void RestoreMasterProcess(PINT_CONTEXT pic);
+void RestoreMasterProcess(INT_CONTEXT *pic);
 
 // in EVENTS.C (declared here and not in events.h because of strange goings-on)
-void RestoreProcess(PINT_CONTEXT pic);
+void RestoreProcess(INT_CONTEXT *pic);
 
 // in PLAY.C
 extern void playThisReel(SCNHANDLE film, short reelnum, short z, int x, int y);
@@ -227,7 +228,7 @@ static int DoRestoreScene(SAVED_DATA *rsd, int n) {
 
 	case RS_COUNT:
 		_vm->_sound->stopAllSamples();
-		ClearScreen(0L);
+		ClearScreen();
 		RestoreDeadPolys(rsd->SavedDeadPolys);
 		NewScene(rsd->SavedSceneHandle, NO_ENTRY_NUM);
 		SetDoFadeIn(!bNoFade);
