@@ -135,6 +135,7 @@ public:
 	}
 
 	virtual void enter() {
+		_vm->_input->setMouseState(MOUSE_DISABLED);
 		_vm->showSlide(_slideName.c_str());
 		_startTime = g_system->getMillis();
 	}
@@ -247,6 +248,8 @@ public:
 			return;
 		}
 
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
+
 		// user can choose language in this version
 		_vm->showSlide("lingua");
 
@@ -320,6 +323,7 @@ public:
 
 	virtual void enter() {
 		_vm->showSlide("restore");
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 
 		_labels[0] = _vm->_gfx->createLabel(_vm->_introFont, newGameMsg[_vm->getInternLanguage()], 1);
 		_labels[1] = _vm->_gfx->createLabel(_vm->_introFont, loadGameMsg[_vm->getInternLanguage()], 1);
@@ -377,7 +381,7 @@ public:
 		int event = _vm->_input->getLastButtonEvent();
 
 		if (event == kMouseLeftUp || event == kMouseRightUp) {
-			_vm->_input->showCursor(true);
+			_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 			_vm->_gfx->freeLabels();
 
 			if (event == kMouseLeftUp) {
@@ -394,7 +398,7 @@ public:
 	virtual void enter() {
 		_vm->_disk->selectArchive("disk1");
 		_vm->setBackground("test", NULL, NULL);
-		_vm->_input->showCursor(false);
+		_vm->_input->setMouseState(MOUSE_ENABLED_HIDE);
 
 		uint id[4];
 		id[0] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[0], 1);
@@ -429,7 +433,9 @@ public:
 		return 0;
 	}
 
-	virtual void enter() {	}
+	virtual void enter() {
+		_vm->_input->setMouseState(MOUSE_DISABLED);
+	}
 };
 
 class SelectCharacterInputState : public MenuInputState {
@@ -504,7 +510,7 @@ public:
 	~SelectCharacterInputState() {
 		_block.free();
 		_emptySlots.free();
-	}	
+	}
 
 	void cleanup() {
 		_points[0] = _points[1] = _points[2] = 0;
@@ -614,7 +620,6 @@ public:
 	}
 
 	virtual void enter() {
-		_vm->setArrowCursor();
 		_vm->_soundMan->stopMusic();
 		_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 		_vm->showSlide("password");
@@ -627,6 +632,9 @@ public:
 		_labels[1] = _vm->_gfx->createLabel(_vm->_introFont, introMsg2[_vm->getInternLanguage()], 1);
 
 		cleanup();
+
+		_vm->setArrowCursor();
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		_state = CHOICE;
 	}
 };
@@ -741,6 +749,7 @@ public:
 
 	virtual void enter() {
 		_current = -1;
+		_vm->_input->setMouseState(MOUSE_DISABLED);
 	}
 };
 
@@ -775,12 +784,12 @@ public:
 		}
 
 		_vm->_gfx->freeLabels();
-		_engineFlags &= ~kEngineBlockInput;
 		return _helper->getState("selectcharacter");
 	}
 
 	virtual void enter() {
 		_vm->_soundMan->stopMusic();
+		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		if (!_isDemo) {
 			int label = _vm->_gfx->createLabel(_vm->_menuFont, "CLICK MOUSE BUTTON TO START", 1);
@@ -828,6 +837,7 @@ public:
 
 	virtual void enter() {
 		_allPartsComplete = _vm->allPartsComplete();
+		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		uint id[4];
 		if (_allPartsComplete) {

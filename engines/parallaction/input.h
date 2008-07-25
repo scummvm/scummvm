@@ -49,6 +49,12 @@ struct InputData {
 	uint		_label;
 };
 
+enum MouseTriState {
+	MOUSE_ENABLED_SHOW,
+	MOUSE_ENABLED_HIDE,
+	MOUSE_DISABLED
+};
+
 class Input {
 	void updateGameInput();
 
@@ -74,7 +80,6 @@ class Input {
 	Common::Point	_mousePos;
 	uint16	_mouseButtons;
 
-	bool		_mouseHidden;
 	ZonePtr			_hoverZone;
 
 	void	enterInventoryMode();
@@ -93,7 +98,7 @@ public:
 	Input(Parallaction *vm) : _vm(vm) {
 		_transCurrentHoverItem = 0;
 		_hasDelayedAction = false;  // actived when the character needs to move before taking an action
-		_mouseHidden = false;
+		_mouseState = MOUSE_DISABLED;
 		_activeItem._index = 0;
 		_activeItem._id = 0;
 		_mouseButtons = 0;
@@ -103,7 +108,6 @@ public:
 	virtual ~Input() { }
 
 
-	void		showCursor(bool visible);
 	void			getCursorPos(Common::Point& p) {
 		p = _mousePos;
 	}
@@ -119,6 +123,12 @@ public:
 	bool  	getLastKeyDown(uint16 &ascii);
 
 	void stopHovering();
+
+	MouseTriState _mouseState;
+
+	void setMouseState(MouseTriState state);
+	MouseTriState getMouseState();
+	bool isMouseEnabled();
 };
 
 } // namespace Parallaction

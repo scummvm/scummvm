@@ -195,8 +195,6 @@ void Parallaction_ns::setArrowCursor() {
 	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-	_system->showMouse(true);
-
 }
 
 void Parallaction_ns::setInventoryCursor(int pos) {
@@ -291,6 +289,9 @@ void Parallaction_ns::runPendingZones() {
 void Parallaction_ns::changeLocation(char *location) {
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
+	MouseTriState oldMouseState = _input->getMouseState();
+	_input->setMouseState(MOUSE_DISABLED);
+
 	_soundMan->playLocationMusic(location);
 
 	_input->stopHovering();
@@ -298,9 +299,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_zoneTrap = nullZonePtr;
 
-	if (_engineFlags & kEngineBlockInput) {
-		setArrowCursor();
-	}
+	setArrowCursor();
 
 	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);
@@ -360,10 +359,9 @@ void Parallaction_ns::changeLocation(char *location) {
 	if (_location._hasSound)
 		_soundMan->playSfx(_location._soundFile, 0, true);
 
+	_input->setMouseState(oldMouseState);
+
 	debugC(1, kDebugExec, "changeLocation() done");
-
-	return;
-
 }
 
 

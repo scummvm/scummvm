@@ -131,17 +131,15 @@ void Input::updateGameInput() {
 
 	readInput();
 
-	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
-		!_mouseHidden,
-		(_engineFlags & kEngineBlockInput) == 0,
-		(_engineFlags & kEngineWalking) == 0,
-		(_engineFlags & kEngineChangeLocation) == 0
-	);
-
-	if ((_mouseHidden) ||
-		(_engineFlags & kEngineBlockInput) ||
+	if (!isMouseEnabled() ||
 		(_engineFlags & kEngineWalking) ||
 		(_engineFlags & kEngineChangeLocation)) {
+
+		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, walking: %i, changeloc: %i)",
+			isMouseEnabled(),
+			(_engineFlags & kEngineWalking) == 0,
+			(_engineFlags & kEngineChangeLocation) == 0
+		);
 
 		return;
 	}
@@ -347,10 +345,28 @@ bool Input::updateInventoryInput() {
 
 }
 
-void Input::showCursor(bool visible) {
-	_mouseHidden = !visible;
-	_vm->_system->showMouse(visible);
+void Input::setMouseState(MouseTriState state) {
+	assert(state == MOUSE_ENABLED_SHOW || state == MOUSE_ENABLED_HIDE || state == MOUSE_DISABLED);
+	_mouseState = state;
+
+	switch (_mouseState) {
+	case MOUSE_ENABLED_HIDE:
+	case MOUSE_DISABLED:
+		_vm->_system->showMouse(false);
+		break;
+
+	case MOUSE_ENABLED_SHOW:
+		_vm->_system->showMouse(true);
+		break;
+	}
 }
 
+MouseTriState Input::getMouseState() {
+	return _mouseState;
+}
+
+bool Input::isMouseEnabled() {
+	return (_mouseState == MOUSE_ENABLED_SHOW) || (_mouseState == MOUSE_ENABLED_HIDE);
+}
 
 } // namespace Parallaction

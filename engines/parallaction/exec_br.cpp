@@ -194,12 +194,12 @@ DECLARE_COMMAND_OPCODE(followme) {
 
 
 DECLARE_COMMAND_OPCODE(onmouse) {
-	_vm->_input->showCursor(true);
+	_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
 
 
 DECLARE_COMMAND_OPCODE(offmouse) {
-	_vm->_input->showCursor(false);
+	_vm->_input->setMouseState(MOUSE_DISABLED);
 }
 
 
