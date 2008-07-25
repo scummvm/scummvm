@@ -55,12 +55,6 @@ enum MASK_TYPE{
 	ACT_ALWAYS = -2
 };
 
-/** different types of polygon */
-enum POLY_TYPE {
-	POLY_PATH, POLY_NPATH, POLY_BLOCK, POLY_REFER, POLY_EFFECT,
-	POLY_EXIT, POLY_TAG
-};
-
 /** different scales */
 enum SCALE {
 	SCALE_DEFAULT, SCALE_LARGE, SCALE_MEDIUM, SCALE_SMALL,

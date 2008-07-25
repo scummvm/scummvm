@@ -67,7 +67,7 @@ struct MACTOR {
 
 	IND	InDifficulty;
 
-/* For use in 'follow nodes' polygons   */
+	/* For use in 'follow nodes' polygons   */
 	HPOLYGON hFnpath;
 	NPS	npstatus;
 	int     line;
@@ -77,7 +77,7 @@ struct MACTOR {
 	bool	TagReelRunning;
 
 
-   /* Used internally */
+	/* Used internally */
 	DIRREEL	dirn;		// Current reel
 	int	scale;		// Current scale
 	int	scount;		// Step count for walking reel synchronisation

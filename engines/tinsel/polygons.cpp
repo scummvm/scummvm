@@ -37,6 +37,12 @@ namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------
 
+/** different types of polygon */
+enum POLY_TYPE {
+	POLY_PATH, POLY_NPATH, POLY_BLOCK, POLY_REFER, POLY_EFFECT,
+	POLY_EXIT, POLY_TAG
+};
+
 
 // Note 7/10/94, with adjacency reduction ANKHMAP max is 3, UNSEEN max is 4
 // so reduced this back to 6 (from 12) for now.
@@ -1142,29 +1148,6 @@ void EnableBlock(int blockno) {
 }
 
 /**
- * Convert a TAG to an EX_TAG poly.
- */
-void DisableTag(int tagno) {
-	TAGSTATE *pts;
-
-	for (int i = 0; i < MAX_POLY; i++) {
-		if (Polys[i] && Polys[i]->polytype == TAG && Polys[i]->polyID == tagno) {
-			Polys[i]->polytype = EX_TAG;
-			Polys[i]->tagState = TAG_OFF;
-			Polys[i]->pointState = NOT_POINTING;
-		}
-	}
-
-	pts = &TagStates[SceneTags[currentTScene].offset];
-	for (int j = 0; j < SceneTags[currentTScene].nooftags; j++, pts++) {
-		if (pts->tid == tagno) {
-			pts->enabled = false;
-			break;
-		}
-	}
-}
-
-/**
  * Convert an EX_TAG to a TAG poly.
  */
 void EnableTag(int tagno) {
@@ -1199,6 +1182,29 @@ void EnableExit(int exitno) {
 	for (int j = 0; j < SceneExits[currentEScene].nooftags; j++, pts++) {
 		if (pts->tid == exitno) {
 			pts->enabled = true;
+			break;
+		}
+	}
+}
+
+/**
+ * Convert a TAG to an EX_TAG poly.
+ */
+void DisableTag(int tagno) {
+	TAGSTATE *pts;
+
+	for (int i = 0; i < MAX_POLY; i++) {
+		if (Polys[i] && Polys[i]->polytype == TAG && Polys[i]->polyID == tagno) {
+			Polys[i]->polytype = EX_TAG;
+			Polys[i]->tagState = TAG_OFF;
+			Polys[i]->pointState = NOT_POINTING;
+		}
+	}
+
+	pts = &TagStates[SceneTags[currentTScene].offset];
+	for (int j = 0; j < SceneTags[currentTScene].nooftags; j++, pts++) {
+		if (pts->tid == tagno) {
+			pts->enabled = false;
 			break;
 		}
 	}
@@ -1419,6 +1425,7 @@ static void SetExTags(SCNHANDLE ph) {
 			return;
 		}
 	}
+	
 	i = numScenesT++;
 	currentTScene = i;
 	assert(numScenesT < MAX_SCENES); // Dead tag remembering: scene limit
@@ -1441,11 +1448,7 @@ static void SetExTags(SCNHANDLE ph) {
 /**
  * Called at the start of a scene, nobbles EXIT polygons which should be dead.
  */
-#ifdef DEBUG
-void SetExExits(SCNHANDLE ph) {
-#else
 static void SetExExits(SCNHANDLE ph) {
-#endif
 	TAGSTATE *pts;
 	int i, j;
 
@@ -1488,29 +1491,29 @@ static void FiddlyBit(POLYGON *p) {
 	int	t1, t2;		// General purpose temp. variables
 
 	// Enclosing external rectangle
-	t1 = p->cx[0] > p->cx[1] ? p->cx[0] : p->cx[1];
-	t2 = p->cx[2] > p->cx[3] ? p->cx[2] : p->cx[3];
-	p->pright = (short)(t1 > t2 ? t1 : t2);
+	t1 = MAX(p->cx[0], p->cx[1]);
+	t2 = MAX(p->cx[2], p->cx[3]);
+	p->pright = MAX(t1, t2);
 
-	t1 = p->cx[0] < p->cx[1] ? p->cx[0] : p->cx[1];
-	t2 = p->cx[2] < p->cx[3] ? p->cx[2] : p->cx[3];
-	p->pleft = (short)(t1 < t2 ? t1 : t2);
+	t1 = MIN(p->cx[0], p->cx[1]);
+	t2 = MIN(p->cx[2], p->cx[3]);
+	p->pleft = MIN(t1, t2);
 
-	t1 = p->cy[0] > p->cy[1] ? p->cy[0] : p->cy[1];
-	t2 = p->cy[2] > p->cy[3] ? p->cy[2] : p->cy[3];
-	p->pbottom = (short)(t1 > t2 ? t1 : t2);
+	t1 = MAX(p->cy[0], p->cy[1]);
+	t2 = MAX(p->cy[2], p->cy[3]);
+	p->pbottom = MAX(t1, t2);
 
-	t1 = p->cy[0] < p->cy[1] ? p->cy[0] : p->cy[1];
-	t2 = p->cy[2] < p->cy[3] ? p->cy[2] : p->cy[3];
-	p->ptop = (short)(t1 < t2 ? t1 : t2);
+	t1 = MIN(p->cy[0], p->cy[1]);
+	t2 = MIN(p->cy[2], p->cy[3]);
+	p->ptop = MIN(t1, t2);
 
 	// Rectangles enclosing each side and each side's magic numbers
 	for (t1 = 0; t1 < 4; t1++) {
-		p->lright[t1]   = p->cx[t1] > p->cx[(t1+1)%4] ? p->cx[t1] : p->cx[(t1+1)%4];
-		p->lleft[t1]    = p->cx[t1] < p->cx[(t1+1)%4] ? p->cx[t1] : p->cx[(t1+1)%4];
+		p->lright[t1]   = MAX(p->cx[t1], p->cx[(t1+1)%4]);
+		p->lleft[t1]    = MIN(p->cx[t1], p->cx[(t1+1)%4]);
 
-		p->ltop[t1]     = p->cy[t1] < p->cy[(t1+1)%4] ? p->cy[t1] : p->cy[(t1+1)%4];    
-		p->lbottom[t1]  = p->cy[t1] > p->cy[(t1+1)%4] ? p->cy[t1] : p->cy[(t1+1)%4];
+		p->ltop[t1]     = MIN(p->cy[t1], p->cy[(t1+1)%4]);    
+		p->lbottom[t1]  = MAX(p->cy[t1], p->cy[(t1+1)%4]);
 
 		p->a[t1] = p->cy[t1] - p->cy[(t1+1)%4];
 		p->b[t1] = p->cx[(t1+1)%4] - p->cx[t1];
@@ -1522,11 +1525,7 @@ static void FiddlyBit(POLYGON *p) {
  * Calculate a point approximating to the centre of a polygon.
  * Not very sophisticated.
  */
-#ifdef DEBUG
-void PseudoCentre(POLYGON *p) {
-#else
 static void PseudoCentre(POLYGON *p) {
-#endif
 	p->pcentrex = (p->cx[0] + p->cx[1] + p->cx[2] + p->cx[3])/4;
 	p->pcentrey = (p->cy[0] + p->cy[1] + p->cy[2] + p->cy[3])/4;
 

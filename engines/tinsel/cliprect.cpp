@@ -61,12 +61,12 @@ const RectList &GetClipRects() {
  * @param pSrc2			Pointer to a source rectangle
  */
 bool IntersectRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
-	pDest.left   = (pSrc1.left > pSrc2.left) ? pSrc1.left : pSrc2.left;
-	pDest.top    = (pSrc1.top > pSrc2.top) ? pSrc1.top : pSrc2.top;
-	pDest.right  = (pSrc1.right < pSrc2.right) ? pSrc1.right : pSrc2.right;
-	pDest.bottom = (pSrc1.bottom < pSrc2.bottom) ? pSrc1.bottom : pSrc2.bottom;
+	pDest.left   = MAX(pSrc1.left, pSrc2.left);
+	pDest.top    = MAX(pSrc1.top, pSrc2.top);
+	pDest.right  = MIN(pSrc1.right, pSrc2.right);
+	pDest.bottom = MIN(pSrc1.bottom, pSrc2.bottom);
 
-	return (pDest.right > pDest.left && pDest.bottom > pDest.top);
+	return !pDest.isEmpty();
 }
 
 /**
@@ -77,12 +77,12 @@ bool IntersectRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Co
  * @param pSrc2			a source rectangle
  */
 bool UnionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
-	pDest.left   = (pSrc1.left < pSrc2.left) ? pSrc1.left : pSrc2.left;
-	pDest.top    = (pSrc1.top < pSrc2.top) ? pSrc1.top : pSrc2.top;
-	pDest.right  = (pSrc1.right > pSrc2.right) ? pSrc1.right : pSrc2.right;
-	pDest.bottom = (pSrc1.bottom > pSrc2.bottom) ? pSrc1.bottom : pSrc2.bottom;
+	pDest.left   = MIN(pSrc1.left, pSrc2.left);
+	pDest.top    = MIN(pSrc1.top, pSrc2.top);
+	pDest.right  = MAX(pSrc1.right, pSrc2.right);
+	pDest.bottom = MAX(pSrc1.bottom, pSrc2.bottom);
 
-	return (pDest.right > pDest.left && pDest.bottom > pDest.top);
+	return !pDest.isEmpty();
 }
 
 /**
@@ -93,12 +93,12 @@ bool UnionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common
 static bool LooseIntersectRectangle(const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
 	Common::Rect pDest;
 
-	pDest.left   = (pSrc1.left > pSrc2.left) ? pSrc1.left : pSrc2.left;
-	pDest.top    = (pSrc1.top > pSrc2.top) ? pSrc1.top : pSrc2.top;
-	pDest.right  = (pSrc1.right < pSrc2.right) ? pSrc1.right : pSrc2.right;
-	pDest.bottom = (pSrc1.bottom < pSrc2.bottom) ? pSrc1.bottom : pSrc2.bottom;
+	pDest.left   = MAX(pSrc1.left, pSrc2.left);
+	pDest.top    = MAX(pSrc1.top, pSrc2.top);
+	pDest.right  = MIN(pSrc1.right, pSrc2.right);
+	pDest.bottom = MIN(pSrc1.bottom, pSrc2.bottom);
 
-	return (pDest.right >= pDest.left && pDest.bottom >= pDest.top);
+	return pDest.isValidRect();
 }
 
 /**
@@ -174,26 +174,27 @@ void FindMovingObjects(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pCli
  * Merges any clipping rectangles that overlap to try and reduce
  * the total number of clip rectangles.
  */
-void MergeClipRect(void) {
-	if (s_rectList.size() > 1) {
-		RectList::iterator rOuter, rInner;
+void MergeClipRect() {
+	if (s_rectList.size() <= 1)
+		return;
 
-		for (rOuter = s_rectList.begin(); rOuter != s_rectList.end(); ++rOuter) {
-			rInner = rOuter;
-			while (++rInner != s_rectList.end()) {
+	RectList::iterator rOuter, rInner;
 
-				if (LooseIntersectRectangle(*rOuter, *rInner)) {
-					// these two rectangles overlap or
-					// are next to each other - merge them
+	for (rOuter = s_rectList.begin(); rOuter != s_rectList.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != s_rectList.end()) {
 
-					UnionRectangle(*rOuter, *rOuter, *rInner);
+			if (LooseIntersectRectangle(*rOuter, *rInner)) {
+				// these two rectangles overlap or
+				// are next to each other - merge them
 
-					// remove the inner rect from the list
-					s_rectList.erase(rInner);
+				UnionRectangle(*rOuter, *rOuter, *rInner);
 
-					// move back to beginning of list
-					rInner = rOuter;
-				}
+				// remove the inner rect from the list
+				s_rectList.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
 			}
 		}
 	}
@@ -298,8 +299,8 @@ void UpdateClipRect(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pClip) 
 		// copy objects properties to local object
 		currentObj.width    = pObj->width;
 		currentObj.height   = pObj->height;
-		currentObj.xPos     = (short) x;
-		currentObj.yPos     = (short) y;
+		currentObj.xPos     = (short)x;
+		currentObj.yPos     = (short)y;
 		currentObj.pPal     = pObj->pPal;
 		currentObj.constant = pObj->constant;
 		currentObj.hBits    = pObj->hBits;
