@@ -43,31 +43,6 @@ struct PALQ;
 #define	SCRN_CENTRE_X	((SCREEN_WIDTH  - 1) / 2)	// screen centre x
 #define	SCRN_CENTRE_Y	((SCREEN_HEIGHT - 1) / 2)	// screen centre y
 
-/** Class representing either a buffered surface or the physical screen. */
-class Surface : public Graphics::Surface {
-private:
-	bool _isScreen;
-public:
-	Surface(bool isScreen = false) { _isScreen = isScreen; }
-	Surface(int Width, int Height) { create(Width, Height, 1); _isScreen = false; }
-
-	// Surface methods
-	byte *getData() { return (byte *)pixels; }
-	byte *getBasePtr(int x, int y) { return (byte *)Graphics::Surface::getBasePtr(x, y); }
-
-	void update() { 
-		if (_isScreen) {
-			g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
-			g_system->updateScreen(); 
-		}
-	}
-	void updateRect(const Common::Rect &r) {
-		g_system->copyRectToScreen(getBasePtr(r.left, r.top), pitch, r.left, r.top, r.width(), r.height());
-		g_system->updateScreen(); 
-	}
-
-};
-
 /** draw object structure - only used when drawing objects */
 struct DRAWOBJECT {
 	char *charBase;		// character set base address
@@ -92,7 +67,7 @@ struct DRAWOBJECT {
 |*			    Function Prototypes				*|
 \*----------------------------------------------------------------------*/
 
-void ClearScreen(uint32 val);
+void ClearScreen();
 void DrawObject(DRAWOBJECT *pObj);
 
 // called to update a rectangle on the video screen from a video page

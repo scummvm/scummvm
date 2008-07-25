@@ -369,17 +369,20 @@ static void DemoWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool app
 /**
  * Clears both the screen surface buffer and screen to the specified value
  */
-void ClearScreen(uint32 val) {
-	uint32 *pDest = (uint32 *)_vm->screen().getData();
-	Common::set_to(pDest, (uint32 *)((byte *)pDest + SCREEN_WIDTH * SCREEN_HEIGHT), val);
-	_vm->screen().update();
+void ClearScreen() {
+	void *pDest = _vm->screen().getBasePtr(0, 0);
+	memset(pDest, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+	g_system->clearScreen();
+	g_system->updateScreen(); 
 }
 
 /**
  * Updates the screen surface within the following rectangle
  */
 void UpdateScreenRect(const Common::Rect &pClip) {
-	_vm->screen().updateRect(pClip);
+	byte *pDest = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
+	g_system->copyRectToScreen(pDest, _vm->screen().pitch, pClip.left, pClip.top, pClip.width(), pClip.height());
+	g_system->updateScreen(); 
 }
 
 /**
@@ -403,7 +406,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 	}
 
 	// Get destination starting point
-	destPtr = _vm->screen().getBasePtr(pObj->xPos, pObj->yPos);
+	destPtr = (byte *)_vm->screen().getBasePtr(pObj->xPos, pObj->yPos);
 	
 	// Handle various draw types
 	uint8 typeId = pObj->flags & 0xff;

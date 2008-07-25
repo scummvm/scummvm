@@ -54,6 +54,7 @@
 #include "tinsel/music.h"
 #include "tinsel/object.h"
 #include "tinsel/pid.h"
+#include "tinsel/polygons.h"
 #include "tinsel/savescn.h"
 #include "tinsel/scn.h"
 #include "tinsel/serializer.h"
@@ -386,7 +387,7 @@ void MouseProcess(CORO_PARAM, const void *) {
 static void MasterScriptProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -463,13 +464,13 @@ void syncSCdata(Serializer &s) {
 static void RestoredProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	// get the stuff copied to process when it was created
-	_ctx->pic = *((PINT_CONTEXT *)param);
+	_ctx->pic = *((INT_CONTEXT **)param);
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
 	CORO_INVOKE_1(Interpret, _ctx->pic);
@@ -477,11 +478,11 @@ static void RestoredProcess(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-void RestoreProcess(PINT_CONTEXT pic) {
+void RestoreProcess(INT_CONTEXT *pic) {
 	g_scheduler->createProcess(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
 }
 
-void RestoreMasterProcess(PINT_CONTEXT pic) {
+void RestoreMasterProcess(INT_CONTEXT *pic) {
 	g_scheduler->createProcess(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
 }
 
@@ -516,7 +517,7 @@ void ChangeScene() {
 				break;
 			}
 		} else if (--CountOut == 0) {
-			ClearScreen(0L);
+			ClearScreen();
 			
 			NewScene(NextScene.scene, NextScene.entry);
 			NextScene.scene = 0;
@@ -599,7 +600,7 @@ static const GameSettings tinselSettings[] = {
 };
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) : 
-		Engine(syst), _gameDescription(gameDesc), _screenSurface(true) {
+		Engine(syst), _gameDescription(gameDesc) {
 	_vm = this;
 
 	// Setup mixer

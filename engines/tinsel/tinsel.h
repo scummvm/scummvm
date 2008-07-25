@@ -76,7 +76,7 @@ class TinselEngine : public ::Engine {
 	int _gameId;
 	Common::KeyState _keyPressed;
 	Common::RandomSource _random;
-	Surface _screenSurface;
+	Graphics::Surface _screenSurface;
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
 	Console *_console;
@@ -123,7 +123,7 @@ public:
 	Common::String getSavegamePattern() const;
 	Common::String getSavegameFilename(int16 saveNum) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
-	Surface &screen() { return _screenSurface; }
+	Graphics::Surface &screen() { return _screenSurface; }
 
 	Common::Point getMousePosition() const { return _mousePos; }
 	void setMousePosition(const Common::Point &pt) {
