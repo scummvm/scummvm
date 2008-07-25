@@ -162,6 +162,12 @@
 			RelativePath="..\..\engines\parallaction\graphics.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\gui.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\gui.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\gui_br.cpp">
 		</File>
 		<File
