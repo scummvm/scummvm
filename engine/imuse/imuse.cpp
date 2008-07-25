@@ -88,33 +88,35 @@ void Imuse::restoreState(SaveGame *savedState) {
 	printf("Imuse::restoreState() started.\n");
 
 	savedState->beginSection('IMUS');
-	savedState->read(&_curMusicState, sizeof(int32));
-	savedState->read(&_curMusicSeq, sizeof(int32));
-	savedState->read(_attributes, sizeof(int32) * 185);
+	_curMusicState = savedState->readLESint32();
+	_curMusicSeq = savedState->readLESint32();
+	for (int r = 0; r < 185; r++) {
+		_attributes[r] = savedState->readLESint32();
+	}
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
 		memset(track, 0, sizeof(Track));
 		track->trackId = l;
-		savedState->read(&track->pan, sizeof(int32));
-		savedState->read(&track->panFadeDest, sizeof(int32));
-		savedState->read(&track->panFadeDelay, sizeof(int32));
-		savedState->read(&track->panFadeUsed, sizeof(bool));
-		savedState->read(&track->vol, sizeof(int32));
-		savedState->read(&track->volFadeDest, sizeof(int32));
-		savedState->read(&track->volFadeDelay, sizeof(int32));
-		savedState->read(&track->volFadeUsed, sizeof(bool));
+		track->pan = savedState->readLESint32();
+		track->panFadeDest = savedState->readLESint32();
+		track->panFadeDelay = savedState->readLESint32();
+		track->panFadeUsed = savedState->readLEBool();
+		track->vol = savedState->readLESint32();
+		track->volFadeDest = savedState->readLESint32();
+		track->volFadeDelay = savedState->readLESint32();
+		track->volFadeUsed = savedState->readLEBool();
 		savedState->read(track->soundName, 32);
-		savedState->read(&track->used, sizeof(bool));
-		savedState->read(&track->toBeRemoved, sizeof(bool));
-		savedState->read(&track->priority, sizeof(int32));
-		savedState->read(&track->regionOffset, sizeof(int32));
-		savedState->read(&track->dataOffset, sizeof(int32));
-		savedState->read(&track->curRegion, sizeof(int32));
-		savedState->read(&track->curHookId, sizeof(int32));
-		savedState->read(&track->volGroupId, sizeof(int32));
-		savedState->read(&track->feedSize, sizeof(int32));
-		savedState->read(&track->mixerFlags, sizeof(int32));
+		track->used = savedState->readLEBool();
+		track->toBeRemoved = savedState->readLEBool();
+		track->priority = savedState->readLESint32();
+		track->regionOffset = savedState->readLESint32();
+		track->dataOffset = savedState->readLESint32();
+		track->curRegion = savedState->readLESint32();
+		track->curHookId = savedState->readLESint32();
+		track->volGroupId = savedState->readLESint32();
+		track->feedSize = savedState->readLESint32();
+		track->mixerFlags = savedState->readLESint32();
 
 		if (!track->used)
 			continue;
@@ -152,31 +154,33 @@ void Imuse::saveState(SaveGame *savedState) {
 	printf("Imuse::saveState() started.\n");
 
 	savedState->beginSection('IMUS');
-	savedState->write(&_curMusicState, sizeof(int32));
-	savedState->write(&_curMusicSeq, sizeof(int32));
-	savedState->write(_attributes, sizeof(int32) * 185);
+	savedState->writeLESint32(_curMusicState);
+	savedState->writeLESint32(_curMusicSeq);
+	for (int r = 0; r < 185; r++) {
+		savedState->writeLESint32(_attributes[r]);
+	}
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
-		savedState->write(&track->pan, sizeof(int32));
-		savedState->write(&track->panFadeDest, sizeof(int32));
-		savedState->write(&track->panFadeDelay, sizeof(int32));
-		savedState->write(&track->panFadeUsed, sizeof(bool));
-		savedState->write(&track->vol, sizeof(int32));
-		savedState->write(&track->volFadeDest, sizeof(int32));
-		savedState->write(&track->volFadeDelay, sizeof(int32));
-		savedState->write(&track->volFadeUsed, sizeof(bool));
+		savedState->writeLESint32(track->pan);
+		savedState->writeLESint32(track->panFadeDest);
+		savedState->writeLESint32(track->panFadeDelay);
+		savedState->writeLEBool(track->panFadeUsed);
+		savedState->writeLESint32(track->vol);
+		savedState->writeLESint32(track->volFadeDest);
+		savedState->writeLESint32(track->volFadeDelay);
+		savedState->writeLEBool(track->volFadeUsed);
 		savedState->write(track->soundName, 32);
-		savedState->write(&track->used, sizeof(bool));
-		savedState->write(&track->toBeRemoved, sizeof(bool));
-		savedState->write(&track->priority, sizeof(int32));
-		savedState->write(&track->regionOffset, sizeof(int32));
-		savedState->write(&track->dataOffset, sizeof(int32));
-		savedState->write(&track->curRegion, sizeof(int32));
-		savedState->write(&track->curHookId, sizeof(int32));
-		savedState->write(&track->volGroupId, sizeof(int32));
-		savedState->write(&track->feedSize, sizeof(int32));
-		savedState->write(&track->mixerFlags, sizeof(int32));
+		savedState->writeLEBool(track->used);
+		savedState->writeLEBool(track->toBeRemoved);
+		savedState->writeLESint32(track->priority);
+		savedState->writeLESint32(track->regionOffset);
+		savedState->writeLESint32(track->dataOffset);
+		savedState->writeLESint32(track->curRegion);
+		savedState->writeLESint32(track->curHookId);
+		savedState->writeLESint32(track->volGroupId);
+		savedState->writeLESint32(track->feedSize);
+		savedState->writeLESint32(track->mixerFlags);
 	}
 	savedState->endSection();
 	printf("Imuse::saveState() finished.\n");

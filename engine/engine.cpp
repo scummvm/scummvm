@@ -464,12 +464,28 @@ void Engine::mainLoop() {
 	}
 }
 
-void Engine::savegameRead(void *data, int size) {
+void Engine::savegameReadStream(void *data, int32 size) {
 	g_engine->_savedState->read(data, size);
 }
 
-void Engine::savegameWrite(void *data, int size) {
+void Engine::savegameWriteStream(void *data, int32 size) {
 	g_engine->_savedState->write(data, size);
+}
+
+int32 Engine::savegameReadSint32() {
+	return g_engine->_savedState->readLESint32();
+}
+
+void Engine::savegameWriteSint32(int32 val) {
+	g_engine->_savedState->writeLESint32(val);
+}
+
+uint32 Engine::savegameReadUint32() {
+	return g_engine->_savedState->readLEUint32();
+}
+
+void Engine::savegameWriteUint32(uint32 val) {
+	g_engine->_savedState->writeLEUint32(val);
 }
 
 void Engine::savegameRestore() {
@@ -502,7 +518,7 @@ void Engine::savegameRestore() {
 	//Smush_Restore(_savedState);
 	g_imuse->restoreState(_savedState);
 	_savedState->beginSection('LUAS');
-	lua_Restore(savegameRead);
+	lua_Restore(savegameReadStream, savegameReadSint32, savegameReadUint32);
 	_savedState->endSection();
 	//  unlock resources
 	delete _savedState;
@@ -566,7 +582,7 @@ void Engine::savegameSave() {
 	//Smush_Save(_savedState);
 	g_imuse->saveState(_savedState);
 	_savedState->beginSection('LUAS');
-	lua_Save(savegameWrite);
+	lua_Save(savegameWriteStream, savegameWriteSint32, savegameWriteUint32);
 	_savedState->endSection();
 
 	delete _savedState;

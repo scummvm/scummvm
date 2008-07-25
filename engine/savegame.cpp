@@ -25,6 +25,7 @@
 
 #include "common/debug.h"
 #include "common/savefile.h"
+#include "common/endian.h"
 
 #include "engine/savegame.h"
 
@@ -79,7 +80,7 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 	_sectionBuffer = (byte *)malloc(_sectionSize);
 	if (!_saving) {
 		uint32 tag = 0;
-		
+
 		while (tag != sectionTag) {
 			free(_sectionBuffer);
 			tag = _inSaveFile->readUint32BE();
@@ -116,6 +117,46 @@ void SaveGame::read(void *data, int size) {
 	_sectionPtr += size;
 }
 
+uint32 SaveGame::readLEUint32() {
+	if (_saving)
+		error("SaveGame::readBlock called when storing a savegame!");
+	if (_currentSection == 0)
+		error("Tried to read a block without starting a section!");
+	uint32 data = READ_LE_UINT32(&_sectionBuffer[_sectionPtr]);
+	_sectionPtr += 4;
+	return data;
+}
+
+int32 SaveGame::readLESint32() {
+	if (_saving)
+		error("SaveGame::readBlock called when storing a savegame!");
+	if (_currentSection == 0)
+		error("Tried to read a block without starting a section!");
+	int32 data = (int32)READ_LE_UINT32(&_sectionBuffer[_sectionPtr]);
+	_sectionPtr += 4;
+	return data;
+}
+
+byte SaveGame::readByte() {
+	if (_saving)
+		error("SaveGame::readBlock called when storing a savegame!");
+	if (_currentSection == 0)
+		error("Tried to read a block without starting a section!");
+	byte data = _sectionBuffer[_sectionPtr];
+	_sectionPtr++;
+	return data;
+}
+
+bool SaveGame::readLEBool() {
+	if (_saving)
+		error("SaveGame::readBlock called when storing a savegame!");
+	if (_currentSection == 0)
+		error("Tried to read a block without starting a section!");
+	uint32 data = READ_LE_UINT32(&_sectionBuffer[_sectionPtr]);
+	_sectionPtr += 4;
+	return data != 0;
+}
+
 void SaveGame::write(const void *data, int size) {
 	if (!_saving)
 		error("SaveGame::writeBlock called when restoring a savegame!");
@@ -126,4 +167,56 @@ void SaveGame::write(const void *data, int size) {
 		error("Failed to allocate space for buffer!");
 	memcpy(&_sectionBuffer[_sectionSize], data, size);
 	_sectionSize += size;
+}
+
+void SaveGame::writeLEUint32(uint32 data) {
+	if (!_saving)
+		error("SaveGame::writeBlock called when restoring a savegame!");
+	if (_currentSection == 0)
+		error("Tried to write a block without starting a section!");
+	_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionSize + 4);
+	if (!_sectionBuffer)
+		error("Failed to allocate space for buffer!");
+
+	WRITE_LE_UINT32(&_sectionBuffer[_sectionSize], data);
+	_sectionSize += 4;
+}
+
+void SaveGame::writeLESint32(int32 data) {
+	if (!_saving)
+		error("SaveGame::writeBlock called when restoring a savegame!");
+	if (_currentSection == 0)
+		error("Tried to write a block without starting a section!");
+	_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionSize + 4);
+	if (!_sectionBuffer)
+		error("Failed to allocate space for buffer!");
+
+	WRITE_LE_UINT32(&_sectionBuffer[_sectionSize], (uint32)data);
+	_sectionSize += 4;
+}
+
+void SaveGame::writeLEBool(bool data) {
+	if (!_saving)
+		error("SaveGame::writeBlock called when restoring a savegame!");
+	if (_currentSection == 0)
+		error("Tried to write a block without starting a section!");
+	_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionSize + 4);
+	if (!_sectionBuffer)
+		error("Failed to allocate space for buffer!");
+
+	WRITE_LE_UINT32(&_sectionBuffer[_sectionSize], (uint32)data);
+	_sectionSize += 4;
+}
+
+void SaveGame::writeByte(byte data) {
+	if (!_saving)
+		error("SaveGame::writeBlock called when restoring a savegame!");
+	if (_currentSection == 0)
+		error("Tried to write a block without starting a section!");
+	_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionSize + 1);
+	if (!_sectionBuffer)
+		error("Failed to allocate space for buffer!");
+
+	_sectionBuffer[_sectionSize] = data;
+	_sectionSize++;
 }

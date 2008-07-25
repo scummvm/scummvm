@@ -26,14 +26,28 @@ typedef uint32 lua_Object;
 typedef struct lua_State lua_State;
 extern lua_State *lua_state;
 
-typedef void (*SaveRestoreFunc)(void *, int32);
-typedef int32 (*SaveRestoreCallback)(int32, int32, SaveRestoreFunc);
+struct PointerId {
+	uint32	low;
+	uint32	hi;
+};
 
-extern SaveRestoreCallback saveCallback;
-extern SaveRestoreCallback restoreCallback;
+PointerId makeIdFromPointer(void *ptr);
+void *makePointerFromId(PointerId ptr);
 
-void lua_Save(SaveRestoreFunc);
-void lua_Restore(SaveRestoreFunc);
+typedef void (*SaveStream)(void *, int32);
+typedef void (*SaveSint32)(int32);
+typedef void (*SaveUint32)(uint32);
+typedef void (*RestoreStream)(void *, int32);
+typedef int32 (*RestoreSint32)();
+typedef uint32 (*RestoreUint32)();
+typedef PointerId (*SaveCallback)(int32, PointerId, SaveSint32);
+typedef PointerId (*RestoreCallback)(int32, PointerId, RestoreSint32);
+
+extern SaveCallback saveCallbackPtr;
+extern RestoreCallback restoreCallbackPtr;
+
+void lua_Save(SaveStream, SaveSint32, SaveUint32);
+void lua_Restore(RestoreStream, RestoreSint32, RestoreUint32);
 
 void lua_removelibslists(void);
 

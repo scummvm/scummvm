@@ -53,6 +53,14 @@ public:
 	void endSection();
 	void read(void *data, int size);
 	void write(const void *data, int size);
+	uint32 readLEUint32();
+	int32 readLESint32();
+	bool readLEBool();
+	byte readByte();
+	void writeLEUint32(uint32 data);
+	void writeLESint32(int32 data);
+	void writeLEBool(bool data);
+	void writeByte(byte data);
 
 protected:
 	bool _saving;

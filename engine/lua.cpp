@@ -3112,14 +3112,14 @@ static void Save() {
 	g_engine->_savegameSaveRequest = true;
 }
 
-static int SaveCallback(int /*tag*/, int value, SaveRestoreFunc /*savedState*/) {
+static PointerId saveCallback(int32 /*tag*/, PointerId ptr, SaveSint32 /*savedState*/) {
 	DEBUG_FUNCTION();
-	return value;
+	return ptr;
 }
 
-static int RestoreCallback(int /*tag*/, int value, SaveRestoreFunc /*savedState*/) {
+static PointerId restoreCallback(int32 /*tag*/, PointerId ptr, RestoreSint32 /*savedState*/) {
 	DEBUG_FUNCTION();
-	return value;
+	return ptr;
 }
 
 static void LockFont() {
@@ -3871,8 +3871,8 @@ void register_lua() {
 	lua_pushnumber(0x8000);
 	lua_setglobal("HOT");
 
-	saveCallback = SaveCallback;
-	restoreCallback = RestoreCallback;
+	saveCallbackPtr = saveCallback;
+	restoreCallbackPtr = restoreCallback;
 }
 
 int bundle_dofile(const char *filename) {
