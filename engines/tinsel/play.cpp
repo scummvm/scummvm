@@ -93,18 +93,18 @@ int32 NoNameFunc(int actorID, bool bNewMover) {
 
 struct PPINIT {
 	SCNHANDLE hFilm;	// The 'film'
-	short	x;			// } Co-ordinates from the play()
-	short	y;			// } - set to (-1, -1) if none.
-	short	z;			// normally 0, set if from restore
-	short	speed;		// Film speed
-	short 	actorid;	// Set if called from an actor code block
-	bool	splay;		// Set if called from splay()
-	bool	bTop;		// Set if called from topplay()
-	short	sf;			// SlowFactor - only used for moving actors
-	short	column;		// Column number, first column = 0
+	int16	x;			// } Co-ordinates from the play()
+	int16	y;			// } - set to (-1, -1) if none.
+	int16	z;			// normally 0, set if from restore
+	int16	speed;		// Film speed
+	int16 	actorid;	// Set if called from an actor code block
+	uint8	splay;		// Set if called from splay()
+	uint8	bTop;		// Set if called from topplay()
+	int16	sf;			// SlowFactor - only used for moving actors
+	int16	column;		// Column number, first column = 0
 
-	bool	escOn;
-	int	myescEvent;
+	uint8	escOn;
+	int32	myescEvent;
 };
 
 
@@ -417,7 +417,7 @@ void playFilm(SCNHANDLE film, int x, int y, int actorid, bool splay, int sfact, 
 		newestFilm(film, &pfilm->reels[i]);
 
 		ppi.column = i;
-		g_scheduler->createProcess(PID_REEL, playProcess, &ppi, sizeof(ppi));
+		g_scheduler->createProcess(PID_REEL, playProcess, &ppi, sizeof(PPINIT));
 	}
 }
 
