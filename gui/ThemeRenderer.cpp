@@ -476,10 +476,10 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 	const int buttonExtra = (r.width() * 120) / 100;
 	
 	r2.bottom = r2.top + buttonExtra;
-	queueDD(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2);
+	queueDD(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2, Graphics::VectorRenderer::kTriangleUp);
 	
 	r2.translate(0, r.height() - r2.height());
-	queueDD(scrollState == kScrollbarStateDown ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2);
+	queueDD(scrollState == kScrollbarStateDown ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2, Graphics::VectorRenderer::kTriangleDown);
 	
 	r2 = r;
 	r2.left += 1;

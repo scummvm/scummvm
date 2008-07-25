@@ -498,9 +498,9 @@ void VectorRendererSpec<PixelType, PixelFormat>::
 drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	// Awesome hack: the AA messes up the last pixel triangles if their width is even
 	// ...fix the width instead of fixing the AA :p
-	if (w % 2 == 0) {
-		w++; h++;
-	}
+	// if (w % 2 == 0) {
+	// 	w++; h++;
+	// }
 	
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
 		return;
@@ -517,16 +517,22 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 			return;
 		color = _fgColor;
 	}
+	
+	if (Base::_dynamicData != 0)
+		orient = (TriangleOrientation)Base::_dynamicData;
+		
+	int newW = w * 3 / 4;
+	if (newW % 2) newW++;
 
 	switch(orient) {
 		case kTriangleUp:
 		case kTriangleDown:
-#ifdef VECTOR_RENDERER_FAST_TRIANGLES
-			if (w == h)
-				drawTriangleFast(x, y, w, (orient == kTriangleDown), color, Base::_fillMode);
-			else 
-#endif
-				drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
+// #ifdef VECTOR_RENDERER_FAST_TRIANGLES
+			// if (w == h)
+				drawTriangleFast(x + (w / 2) - w * 3 / 8, y + w / 4, newW, (orient == kTriangleDown), color, Base::_fillMode);
+			// else 
+// #endif
+				// drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
 			break;
 
 		case kTriangleLeft:

@@ -107,6 +107,7 @@ public:
 	};
 
 	enum TriangleOrientation {
+		kTriangleAuto = 0,
 		kTriangleUp,
 		kTriangleDown,
 		kTriangleLeft,

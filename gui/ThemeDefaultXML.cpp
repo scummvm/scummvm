@@ -79,12 +79,12 @@ bool ThemeRenderer::loadDefaultXML() {
 	
 	"<drawdata id = 'scrollbar_button_idle' cache = false>"
 		"<drawstep func = 'roundedsq' radius = '4' fill = 'none' fg_color = '120, 120, 120' stroke = 1 />"
-		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '9' height = '7' xpos = 'center' ypos = 'center' orientation = 'top' />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = 'auto' height = 'auto' xpos = 'center' ypos = 'center' orientation = 'top' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'scrollbar_button_hover' cache = false>"
 	"<drawstep func = 'roundedsq' radius = '4' fill = 'background' fg_color = '120, 120, 120' bg_color = '206, 121, 99' stroke = 1 />"
-		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '9' height = '7' xpos = 'center' ypos = 'center' orientation = 'top' />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = 'auto' height = 'auto' xpos = 'center' ypos = 'center' orientation = 'top' />"
 	"</drawdata>"
 	
 	"<drawdata id = 'tab_active' cache = false>"
