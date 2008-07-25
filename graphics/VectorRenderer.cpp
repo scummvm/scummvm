@@ -537,6 +537,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 
 		case kTriangleLeft:
 		case kTriangleRight:
+		case kTriangleAuto:
 			break;
 	}
 
