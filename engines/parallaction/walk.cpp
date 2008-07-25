@@ -97,16 +97,15 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 
 	while (true) {
 
-		WalkNodeList::iterator nearest = _vm->_location._walkNodes.end();
-		WalkNodeList::iterator locNode = _vm->_location._walkNodes.begin();
+		PointList::iterator nearest = _vm->_location._walkNodes.end();
+		PointList::iterator locNode = _vm->_location._walkNodes.begin();
 
 		// scans location path nodes searching for the nearest Node
 		// which can't be farther than the target position
 		// otherwise no _closest_node is selected
 		while (locNode != _vm->_location._walkNodes.end()) {
 
-			Common::Point v8;
-			(*locNode)->getPoint(v8);
+			Common::Point v8 = *locNode;
 			v2C = v8.sqrDist(stop);
 			v28 = v8.sqrDist(v20);
 
@@ -120,10 +119,10 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 
 		if (nearest == _vm->_location._walkNodes.end()) break;
 
-		(*nearest)->getPoint(v20);
+		v20 = *nearest;
 		v34 = v30 = v20.sqrDist(stop);
 
-		_subPath.push_back(WalkNodePtr(new WalkNode(**nearest)));
+		_subPath.push_back(*nearest);
 	}
 
 	return v34;
@@ -141,34 +140,34 @@ void printNodes(WalkNodeList *list, const char* text) {
 //
 //	x, y: mouse click (foot) coordinates
 //
-WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
+PointList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
 
 	Common::Point to(x, y);
 	correctPathPoint(to);
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
-	WalkNodePtr v48(new WalkNode(to.x, to.y));
-	WalkNodePtr v44 = v48;
+	Common::Point v48(to);
+	Common::Point v44(to);
 
 	uint16 v38 = walkFunc1(to.x, to.y, v44);
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
 
-		_list = new WalkNodeList;
+		_list = new PointList;
 		_list->push_back(v48);
 		return _list;
 	}
 
 	// path is obstructed: look for alternative
-	_list = new WalkNodeList;
+	_list = new PointList;
 	_list->push_back(v48);
 #if 0
 	printNodes(_list, "start");
 #endif
 
-	Common::Point stop(v48->_x, v48->_y);
+	Common::Point stop(v48.x, v48.y);
 	Common::Point pos;
 	_vm->_char.getFoot(pos);
 
@@ -184,7 +183,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	printNodes(_list, "first segment");
 #endif
 
-	(*_list->begin())->getPoint(stop);
+	stop = *_list->begin();
 	buildSubPath(pos, stop);
 	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
 #if 0
@@ -202,7 +201,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
+uint16 PathBuilder::walkFunc1(int16 x, int16 y, Common::Point& node) {
 
 	Common::Point arg(x, y);
 
@@ -239,9 +238,7 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 				v8 = foot;
 			}
 
-			Node->_x = v4.x;
-			Node->_y = v4.y;
-
+			node = v4;
 			return (x - v4.x) * (x - v4.x) + (y - v4.y) * (y - v4.y);
 		}
 
@@ -326,10 +323,10 @@ void Parallaction_ns::walk(Character &character) {
 	character.getFoot(curPos);
 
 	// update target, if previous was reached
-	WalkNodeList::iterator it = character._walkPath->begin();
+	PointList::iterator it = character._walkPath->begin();
 	if (it != character._walkPath->end()) {
-		if ((*it)->_x == curPos.x && (*it)->_y == curPos.y) {
-			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it)->_x, (*it)->_y);
+		if ((*it).x == curPos.x && (*it).y == curPos.y) {
+			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
 			it = character._walkPath->erase(it);
 		}
 	}
@@ -341,11 +338,9 @@ void Parallaction_ns::walk(Character &character) {
 		finalizeWalk(character);
 		targetPos = curPos;
 	} else {
-		if (*it) {
-			// targetPos is saved to help setting character direction
-			targetPos.x = (*it)->_x;
-			targetPos.y = (*it)->_y;
-		}
+		// targetPos is saved to help setting character direction
+		targetPos.x = (*it).x;
+		targetPos.y = (*it).y;
 
 		Common::Point newPos(curPos);
 		clipMove(newPos, targetPos);
@@ -368,19 +363,6 @@ void Parallaction_ns::walk(Character &character) {
 }
 
 
-WalkNode::WalkNode() : _x(0), _y(0) {
-}
-
-WalkNode::WalkNode(int16 x, int16 y) : _x(x), _y(y) {
-}
-
-WalkNode::WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {
-}
-
-void WalkNode::getPoint(Common::Point &p) const {
-	p.x = _x;
-	p.y = _y;
-}
 
 PathBuilder::PathBuilder(AnimationPtr anim) : _anim(anim), _list(0) {
 }

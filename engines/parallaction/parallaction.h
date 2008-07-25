@@ -177,7 +177,7 @@ struct Location {
 	char		_soundFile[50];
 
 	// NS specific
-	WalkNodeList	_walkNodes;
+	PointList	_walkNodes;
 	char _slideText[2][MAX_TOKEN_LEN];
 
 	// BRA specific
@@ -199,7 +199,7 @@ struct Character {
 	GfxObj			*_talk;
 	GfxObj			*_objs;
 	PathBuilder		_builder;
-	WalkNodeList	*_walkPath;
+	PointList		*_walkPath;
 
 	Character(Parallaction *vm);
 	void getFoot(Common::Point &foot);
@@ -259,7 +259,6 @@ public:
 	void		resumeJobs();
 
 	void		finalizeWalk(Character &character);
-	int16		selectWalkFrame(Character &character, const Common::Point& pos, const WalkNodePtr to);
 	void		clipMove(Common::Point& pos, const Common::Point& to);
 
 	ZonePtr		findZone(const char *name);

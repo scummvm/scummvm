@@ -1124,20 +1124,14 @@ void LocationParser_ns::parse(Script *script) {
 	resolveCommandForwards();
 }
 
-void LocationParser_ns::parseWalkNodes(WalkNodeList &list) {
+void LocationParser_ns::parseWalkNodes(PointList &list) {
 	debugC(5, kDebugParser, "parseWalkNodes()");
 
 	_script->readLineToken(true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
-
-			WalkNodePtr v4(new WalkNode(
-				atoi(_tokens[1]),
-				atoi(_tokens[2])
-			));
-
-			list.push_front(v4);
+			list.push_front(Common::Point(atoi(_tokens[1]), atoi(_tokens[2])));
 		}
 
 		_script->readLineToken(true);
@@ -1397,7 +1391,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	list.push_front(z);
 
 	_parser->pushTables(&_locationZoneParsers, _locationZoneStmt);
-	
+
 	return;
 }
 
