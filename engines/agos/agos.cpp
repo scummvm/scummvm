@@ -578,6 +578,8 @@ int AGOSEngine::init() {
 
 
 		_midiEnabled = true;
+	} else {
+		_driver = NULL;
 	}
 
 	// allocate buffers
@@ -881,7 +883,8 @@ AGOSEngine::~AGOSEngine() {
 		delete _gameFile;
 
 	_midi.close();
-	delete _driver;
+	if (_driver)
+		delete _driver;
 
 	AudioCD.destroy();
 
