@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/hashmap.h"
 
+#include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
@@ -33,86 +34,7 @@
 
 namespace Parallaction {
 
-
-class MenuInputState;
-
-class MenuInputHelper {
-	typedef	Common::HashMap<Common::String, MenuInputState*> StateMap;
-
-	StateMap	_map;
-	MenuInputState	*_state;
-	MenuInputState *_newState;
-
-public:
-	MenuInputHelper() : _state(0) {
-	}
-
-	~MenuInputHelper();
-
-	void setState(const Common::String &name) {
-		// bootstrap routine
-		_newState = getState(name);
-		assert(_newState);
-	}
-
-	void addState(const Common::String &name, MenuInputState *state) {
-		_map.setVal(name, state);
-	}
-
-	MenuInputState *getState(const Common::String &name) {
-		return _map[name];
-	}
-
-	bool run();
-};
-
-class MenuInputState {
-
-protected:
-	MenuInputHelper *_helper;
-
-public:
-	MenuInputState(const Common::String &name, MenuInputHelper *helper) : _helper(helper), _name(name) {
-		debugC(3, kDebugExec, "MenuInputState(%s)", name.c_str());
-		_helper->addState(name, this);
-	}
-
-	Common::String	_name;
-
-	virtual ~MenuInputState() { }
-
-	virtual MenuInputState* run() = 0;
-	virtual void enter() = 0;
-};
-
-bool MenuInputHelper::run() {
-	if (_newState == 0) {
-		debugC(3, kDebugExec, "MenuInputHelper has set NULL state");
-		return false;
-	}
-
-	if (_newState != _state) {
-		debugC(3, kDebugExec, "MenuInputHelper changing state to '%s'", _newState->_name.c_str());
-
-		_newState->enter();
-		_state = _newState;
-	}
-
-	_newState = _state->run();
-
-	return true;
-}
-
-MenuInputHelper::~MenuInputHelper() {
-	StateMap::iterator b = _map.begin();
-	for ( ; b != _map.end(); b++) {
-		delete b->_value;
-	}
-	_map.clear();
-}
-
-
-class SplashInputState : public MenuInputState {
+class SplashInputState_NS : public MenuInputState {
 protected:
 	Common::String _slideName;
 	uint32 _timeOut;
@@ -122,7 +44,7 @@ protected:
 	Parallaction_ns *_vm;
 
 public:
-	SplashInputState(Parallaction_ns *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	SplashInputState_NS(Parallaction_ns *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
 	}
 
 	virtual MenuInputState* run() {
@@ -141,20 +63,20 @@ public:
 	}
 };
 
-class SplashInputState0 : public SplashInputState {
+class SplashInputState0_NS : public SplashInputState_NS {
 
 public:
-	SplashInputState0(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState(vm, "intro0", helper)  {
+	SplashInputState0_NS(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro0", helper)  {
 		_slideName = "intro";
 		_timeOut = 2000;
 		_nextState = "intro1";
 	}
 };
 
-class SplashInputState1 : public SplashInputState {
+class SplashInputState1_NS : public SplashInputState_NS {
 
 public:
-	SplashInputState1(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState(vm, "intro1", helper) {
+	SplashInputState1_NS(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro1", helper) {
 		_slideName = "minintro";
 		_timeOut = 2000;
 		_nextState = "chooselanguage";
@@ -162,7 +84,7 @@ public:
 };
 
 
-class ChooseLanguageInputState : public MenuInputState {
+class ChooseLanguageInputState_NS : public MenuInputState {
 	#define BLOCK_WIDTH		16
 	#define BLOCK_HEIGHT	24
 
@@ -192,7 +114,7 @@ class ChooseLanguageInputState : public MenuInputState {
 	Parallaction_ns *_vm;
 
 public:
-	ChooseLanguageInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
+	ChooseLanguageInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
 		_allowChoice = false;
 		_nextState = "selectgame";
 
@@ -260,21 +182,21 @@ public:
 	}
 };
 
-const Common::Rect ChooseLanguageInputState::_dosLanguageSelectBlocks[4] = {
+const Common::Rect ChooseLanguageInputState_NS::_dosLanguageSelectBlocks[4] = {
 	Common::Rect(  80, 110, 128, 180 ),	// Italian
 	Common::Rect( 129,  85, 177, 155 ),	// French
 	Common::Rect( 178,  60, 226, 130 ),	// English
 	Common::Rect( 227,  35, 275, 105 )	// German
 };
 
-const Common::Rect ChooseLanguageInputState::_amigaLanguageSelectBlocks[4] = {
+const Common::Rect ChooseLanguageInputState_NS::_amigaLanguageSelectBlocks[4] = {
 	Common::Rect(  -1,  -1,  -1,  -1 ),	// Italian: not supported by Amiga multi-lingual version
 	Common::Rect( 129,  85, 177, 155 ),	// French
 	Common::Rect( 178,  60, 226, 130 ),	// English
 	Common::Rect( 227,  35, 275, 105 )	// German
 };
 
-class SelectGameInputState : public MenuInputState {
+class SelectGameInputState_NS : public MenuInputState {
 
 	int _choice, _oldChoice;
 	Common::String _nextState[2];
@@ -287,7 +209,7 @@ class SelectGameInputState : public MenuInputState {
 	static const char *loadGameMsg[4];
 
 public:
-	SelectGameInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectgame", helper), _vm(vm) {
+	SelectGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectgame", helper), _vm(vm) {
 		_choice = 0;
 		_oldChoice = -1;
 
@@ -331,14 +253,14 @@ public:
 
 };
 
-const char *SelectGameInputState::newGameMsg[4] = {
+const char *SelectGameInputState_NS::newGameMsg[4] = {
 	"NUOVO GIOCO",
 	"NEUF JEU",
 	"NEW GAME",
 	"NEUES SPIEL"
 };
 
-const char *SelectGameInputState::loadGameMsg[4] = {
+const char *SelectGameInputState_NS::loadGameMsg[4] = {
 	"GIOCO SALVATO",
 	"JEU SAUVE'",
 	"SAVED GAME",
@@ -347,12 +269,12 @@ const char *SelectGameInputState::loadGameMsg[4] = {
 
 
 
-class LoadGameInputState : public MenuInputState {
+class LoadGameInputState_NS : public MenuInputState {
 	bool _result;
 	Parallaction_ns *_vm;
 
 public:
-	LoadGameInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
+	LoadGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
 
 	virtual MenuInputState* run() {
 		if (!_result) {
@@ -368,13 +290,13 @@ public:
 
 
 
-class NewGameInputState : public MenuInputState {
+class NewGameInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
 
 	static const char *introMsg3[4];
 
 public:
-	NewGameInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
+	NewGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
@@ -412,7 +334,7 @@ public:
 	}
 };
 
-const char *NewGameInputState::introMsg3[4] = {
+const char *NewGameInputState_NS::introMsg3[4] = {
 	"PRESS LEFT MOUSE BUTTON",
 	"TO SEE INTRO",
 	"PRESS RIGHT MOUSE BUTTON",
@@ -421,11 +343,11 @@ const char *NewGameInputState::introMsg3[4] = {
 
 
 
-class StartDemoInputState : public MenuInputState {
+class StartDemoInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
 
 public:
-	StartDemoInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
+	StartDemoInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
@@ -438,7 +360,7 @@ public:
 	}
 };
 
-class SelectCharacterInputState : public MenuInputState {
+class SelectCharacterInputState_NS : public MenuInputState {
 
 	#define PASSWORD_LEN	6
 
@@ -502,12 +424,12 @@ class SelectCharacterInputState : public MenuInputState {
 
 
 public:
-	SelectCharacterInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
+	SelectCharacterInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
 		_keys = (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 	}
 
-	~SelectCharacterInputState() {
+	~SelectCharacterInputState_NS() {
 		_block.free();
 		_emptySlots.free();
 	}
@@ -639,40 +561,40 @@ public:
 	}
 };
 
-const char *SelectCharacterInputState::introMsg1[4] = {
+const char *SelectCharacterInputState_NS::introMsg1[4] = {
 	"INSERISCI IL CODICE",
 	"ENTREZ CODE",
 	"ENTER CODE",
 	"GIB DEN KODE EIN"
 };
 
-const char *SelectCharacterInputState::introMsg2[4] = {
+const char *SelectCharacterInputState_NS::introMsg2[4] = {
 	"CODICE ERRATO",
 	"CODE ERRONE",
 	"WRONG CODE",
 	"GIB DEN KODE EIN"
 };
 
-const uint16 SelectCharacterInputState::_amigaKeys[][PASSWORD_LEN] = {
+const uint16 SelectCharacterInputState_NS::_amigaKeys[][PASSWORD_LEN] = {
 	{ 5, 3, 6, 2, 2, 7 },		// dino
 	{ 0, 3, 6, 2, 2, 6 },		// donna
 	{ 1, 3 ,7, 2, 4, 6 }		// dough
 };
 
-const uint16 SelectCharacterInputState::_pcKeys[][PASSWORD_LEN] = {
+const uint16 SelectCharacterInputState_NS::_pcKeys[][PASSWORD_LEN] = {
 	{ 5, 3, 6, 1, 4, 7 },		// dino
 	{ 0, 2, 8, 5, 5, 1 },		// donna
 	{ 1, 7 ,7, 2, 2, 6 }		// dough
 };
 
-const char *SelectCharacterInputState::_charStartLocation[] = {
+const char *SelectCharacterInputState_NS::_charStartLocation[] = {
 	"test.dino",
 	"test.donna",
 	"test.dough"
 };
 
 
-const Common::Rect SelectCharacterInputState::codeSelectBlocks[9] = {
+const Common::Rect SelectCharacterInputState_NS::codeSelectBlocks[9] = {
 	Common::Rect( 111, 129, 127, 153 ),		// na
 	Common::Rect( 128, 120, 144, 144 ),		// wa
 	Common::Rect( 145, 111, 161, 135 ),		// ra
@@ -684,7 +606,7 @@ const Common::Rect SelectCharacterInputState::codeSelectBlocks[9] = {
 	Common::Rect( 247, 57, 263, 81 )		// ka
 };
 
-const Common::Rect SelectCharacterInputState::codeTrueBlocks[9] = {
+const Common::Rect SelectCharacterInputState_NS::codeTrueBlocks[9] = {
 	Common::Rect( 112, 130, 128, 154 ),
 	Common::Rect( 129, 121, 145, 145 ),
 	Common::Rect( 146, 112, 162, 136 ),
@@ -697,7 +619,7 @@ const Common::Rect SelectCharacterInputState::codeTrueBlocks[9] = {
 };
 
 
-class ShowCreditsInputState : public MenuInputState {
+class ShowCreditsInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
 	int	_current;
 	uint32 _startTime;
@@ -710,7 +632,7 @@ class ShowCreditsInputState : public MenuInputState {
 	static const Credit _credits[6];
 
 public:
-	ShowCreditsInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("showcredits", helper), _vm(vm) {
+	ShowCreditsInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("showcredits", helper), _vm(vm) {
 	}
 
 	void drawCurrentLabel() {
@@ -753,7 +675,7 @@ public:
 	}
 };
 
-const ShowCreditsInputState::Credit ShowCreditsInputState::_credits[6] = {
+const ShowCreditsInputState_NS::Credit ShowCreditsInputState_NS::_credits[6] = {
 	{"Music and Sound Effects", "MARCO CAPRELLI"},
 	{"PC Version", "RICCARDO BALLARINO"},
 	{"Project Manager", "LOVRANO CANEPA"},
@@ -762,12 +684,12 @@ const ShowCreditsInputState::Credit ShowCreditsInputState::_credits[6] = {
 	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
 };
 
-class EndIntroInputState : public MenuInputState {
+class EndIntroInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
 	bool _isDemo;
 
 public:
-	EndIntroInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
+	EndIntroInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
 		_isDemo = (_vm->getFeatures() & GF_DEMO) != 0;
 	}
 
@@ -799,7 +721,7 @@ public:
 };
 
 
-class EndPartInputState : public MenuInputState {
+class EndPartInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
 	bool _allPartsComplete;
 
@@ -816,7 +738,7 @@ class EndPartInputState : public MenuInputState {
 
 
 public:
-	EndPartInputState(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endpart", helper), _vm(vm) {
+	EndPartInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endpart", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
@@ -860,15 +782,15 @@ public:
 };
 
 // part completion messages
-const char *EndPartInputState::endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
-const char *EndPartInputState::endMsg1[] = {"HAI FINITO QUESTA PARTE", "TU AS COMPLETE' CETTE AVENTURE", "YOU HAVE COMPLETED THIS PART", "DU HAST EIN ABENTEUER ERFOLGREICH"};
-const char *EndPartInputState::endMsg2[] = {"ORA COMPLETA IL RESTO ", "AVEC SUCCES.",  "NOW GO ON WITH THE REST OF", "ZU ENDE GEFUHRT"};
-const char *EndPartInputState::endMsg3[] = {"DELL' AVVENTURA",  "CONTINUE AVEC LES AUTRES", "THIS ADVENTURE", "MACH' MIT DEN ANDEREN WEITER"};
+const char *EndPartInputState_NS::endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
+const char *EndPartInputState_NS::endMsg1[] = {"HAI FINITO QUESTA PARTE", "TU AS COMPLETE' CETTE AVENTURE", "YOU HAVE COMPLETED THIS PART", "DU HAST EIN ABENTEUER ERFOLGREICH"};
+const char *EndPartInputState_NS::endMsg2[] = {"ORA COMPLETA IL RESTO ", "AVEC SUCCES.",  "NOW GO ON WITH THE REST OF", "ZU ENDE GEFUHRT"};
+const char *EndPartInputState_NS::endMsg3[] = {"DELL' AVVENTURA",  "CONTINUE AVEC LES AUTRES", "THIS ADVENTURE", "MACH' MIT DEN ANDEREN WEITER"};
 // game completion messages
-const char *EndPartInputState::endMsg4[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
-const char *EndPartInputState::endMsg5[] = {"HAI FINITO LE TRE PARTI", "TU AS COMPLETE' LES TROIS PARTIES", "YOU HAVE COMPLETED THE THREE PARTS", "DU HAST DREI ABENTEURE ERFOLGREICH"};
-const char *EndPartInputState::endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE", "OF THIS ADVENTURE", "ZU ENDE GEFUHRT"};
-const char *EndPartInputState::endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
+const char *EndPartInputState_NS::endMsg4[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
+const char *EndPartInputState_NS::endMsg5[] = {"HAI FINITO LE TRE PARTI", "TU AS COMPLETE' LES TROIS PARTIES", "YOU HAVE COMPLETED THE THREE PARTS", "DU HAST DREI ABENTEURE ERFOLGREICH"};
+const char *EndPartInputState_NS::endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE", "OF THIS ADVENTURE", "ZU ENDE GEFUHRT"};
+const char *EndPartInputState_NS::endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
 
 void Parallaction_ns::startGui() {
 	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
@@ -876,14 +798,14 @@ void Parallaction_ns::startGui() {
 	_menuHelper = new MenuInputHelper;
 	assert(_menuHelper);
 
-	new SelectGameInputState(this, _menuHelper);
-	new LoadGameInputState(this, _menuHelper);
-	new NewGameInputState(this, _menuHelper);
-	new StartDemoInputState(this, _menuHelper);
-	new SelectCharacterInputState(this, _menuHelper);
-	new ChooseLanguageInputState(this, _menuHelper);
-	new SplashInputState1(this, _menuHelper);
-	new SplashInputState0(this, _menuHelper);
+	new SelectGameInputState_NS(this, _menuHelper);
+	new LoadGameInputState_NS(this, _menuHelper);
+	new NewGameInputState_NS(this, _menuHelper);
+	new StartDemoInputState_NS(this, _menuHelper);
+	new SelectCharacterInputState_NS(this, _menuHelper);
+	new ChooseLanguageInputState_NS(this, _menuHelper);
+	new SplashInputState1_NS(this, _menuHelper);
+	new SplashInputState0_NS(this, _menuHelper);
 	_menuHelper->setState("intro0");
 
 	_input->_inputMode = Input::kInputModeMenu;
@@ -893,9 +815,9 @@ void Parallaction_ns::startCreditSequence() {
 	_menuHelper = new MenuInputHelper;
 	assert(_menuHelper);
 
-	new ShowCreditsInputState(this, _menuHelper);
-	new EndIntroInputState(this, _menuHelper);
-	new SelectCharacterInputState(this, _menuHelper);
+	new ShowCreditsInputState_NS(this, _menuHelper);
+	new EndIntroInputState_NS(this, _menuHelper);
+	new SelectCharacterInputState_NS(this, _menuHelper);
 	_menuHelper->setState("showcredits");
 
 	_input->_inputMode = Input::kInputModeMenu;
@@ -905,46 +827,12 @@ void Parallaction_ns::startEndPartSequence() {
 	_menuHelper = new MenuInputHelper;
 	assert(_menuHelper);
 
-	new EndPartInputState(this, _menuHelper);
-	new SelectCharacterInputState(this, _menuHelper);
+	new EndPartInputState_NS(this, _menuHelper);
+	new SelectCharacterInputState_NS(this, _menuHelper);
 	_menuHelper->setState("endpart");
 
 	_input->_inputMode = Input::kInputModeMenu;
 }
 
-
-void Parallaction::runGuiFrame() {
-	if (_input->_inputMode != Input::kInputModeMenu) {
-		return;
-	}
-
-	if (!_menuHelper) {
-		error("No menu helper defined!");
-	}
-
-	bool res = _menuHelper->run();
-
-	if (!res) {
-		cleanupGui();
-		_input->_inputMode = Input::kInputModeGame;
-	}
-
-}
-
-void Parallaction::cleanupGui() {
-	delete _menuHelper;
-	_menuHelper = 0;
-}
-
-void Parallaction::setInternLanguage(uint id) {
-	//TODO: assert id!
-
-	_language = id;
-	_disk->setLanguage(id);
-}
-
-uint Parallaction::getInternLanguage() {
-	return _language;
-}
 
 } // namespace Parallaction

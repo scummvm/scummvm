@@ -109,15 +109,9 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 
 int Parallaction_br::go() {
 
-	guiSplash("dyna");
-	guiSplash("core");
+	startGui();
 
 	while ((_engineFlags & kEngineQuit) == 0) {
-
-		guiStart();
-
-		if (_engineFlags & kEngineQuit)
-			return 0;
 
 //		initCharacter();
 
@@ -195,7 +189,9 @@ void Parallaction_br::freePart() {
 	_countersNames = 0;
 }
 
-void Parallaction_br::startPart() {
+void Parallaction_br::startPart(uint part) {
+	_part = part;
+	_disk->selectArchive(_partNames[_part]);
 
 	initPart();
 
@@ -320,9 +316,9 @@ void Parallaction_br::changeCharacter(const char *name) {
 
 
 void Parallaction_br::setArrowCursor() {
-
-
-
+	// TODO: choose the pointer depending on the active character
+	// For now, defaults to 0, that corresponds to the default in the original
+	setMousePointer(0);
 }
 
 void Parallaction_br::setInventoryCursor(int pos) {

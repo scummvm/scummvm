@@ -638,7 +638,8 @@ public:
 	int32		_counters[32];
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
-
+	void		startPart(uint part);
+	void 		setArrowCursor();
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
@@ -647,7 +648,6 @@ private:
 	void		initFonts();
 	void		freeFonts();
 
-	void setArrowCursor();
 	void setInventoryCursor(int pos);
 
 	void		changeLocation(char *location);
@@ -655,7 +655,6 @@ private:
 
 	void		initPart();
 	void		freePart();
-	void		startPart();
 
 	void setMousePointer(int16 index);
 	void initCursors();
@@ -668,10 +667,7 @@ private:
 
 	static const char *_partNames[];
 
-	void guiStart();
-	int guiShowMenu();
-	void guiSplash(const char *name);
-	Frames* guiRenderMenuItem(const char *text);
+	void startGui();
 
 	static const Callable _dosCallables[6];
 
