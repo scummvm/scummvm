@@ -253,6 +253,24 @@ rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
 echo $datatype
 }
 
+#
+# Determine a size of pointer type
+#
+find_pointer_size ()
+{
+cat <<EOF >tmp_find_pointer_size.cpp
+int main() {
+	void *p;
+	int v = (int)p;
+	return 0;
+}
+EOF
+$CXX $CXXFLAGS -c -o tmp_find_pointer_size$EXEEXT tmp_find_pointer_size.cpp 2>/dev/null
+status=$?
+rm -f tmp_find_pointer_size$EXEEXT tmp_find_pointer_size.cpp
+return $status
+}
+
 # Show the configure help line for an option
 option_help() {
         tmpopt=`echo $1 | sed 's/_/-/g'`
@@ -658,6 +676,16 @@ echo "$type_8_byte"
 if test $TMP -eq 0; then
 	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
 	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
+fi
+
+echo_n "Target 64 bits... "
+find_pointer_size
+if test $? -eq 0; then
+	echo "no"
+	add_line_to_config_h "/* #define TARGET_64BITS */"
+else
+	echo "yes"
+	add_line_to_config_h "#define TARGET_64BITS"
 fi
 
 #
