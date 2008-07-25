@@ -107,14 +107,14 @@ bool ThemeRenderer::loadDefaultXML() {
 	
 	"<drawdata id = 'popup_idle' cache = false>"
 		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 3 />"
-		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = 'height' height = 'auto' xpos = 'right' ypos = 'center' orientation = 'bottom' />"
 		"<text font = 'text_default' vertical_align = 'center' horizontal_align = 'right'/>"
 	"</drawdata>"
 	
 	
 	"<drawdata id = 'popup_hover' cache = false>"
 		"<drawstep func = 'square' stroke = 0 fg_color = '0, 0, 0' fill = 'gradient' gradient_start = '214, 113, 8' gradient_end = '240, 200, 25' shadow = 0 />"
-		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = '12' height = '12' xpos = '-16' ypos = 'center' orientation = 'bottom' />"
+		"<drawstep func = 'triangle' fg_color = '0, 0, 0' fill = 'foreground' width = 'height' height = 'auto' xpos = 'right' ypos = 'center' orientation = 'bottom' />"
 		"<text font = 'text_hover' vertical_align = 'center' horizontal_align = 'right' />"
 	"</drawdata>"
 	

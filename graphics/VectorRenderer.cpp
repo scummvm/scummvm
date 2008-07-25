@@ -521,18 +521,13 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	if (Base::_dynamicData != 0)
 		orient = (TriangleOrientation)Base::_dynamicData;
 		
-	int newW = w * 3 / 4;
+	int newW = w / 2;
 	if (newW % 2) newW++;
 
 	switch(orient) {
 		case kTriangleUp:
 		case kTriangleDown:
-// #ifdef VECTOR_RENDERER_FAST_TRIANGLES
-			// if (w == h)
-				drawTriangleFast(x + (w / 2) - w * 3 / 8, y + w / 4, newW, (orient == kTriangleDown), color, Base::_fillMode);
-			// else 
-// #endif
-				// drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), color, Base::_fillMode);
+			drawTriangleFast(x + (newW / 2), y + (h / 2) - (newW / 2), newW, (orient == kTriangleDown), color, Base::_fillMode);
 			break;
 
 		case kTriangleLeft:
@@ -543,12 +538,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 
 	if (Base::_strokeWidth > 0)
 		if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillGradient) {
-#ifdef VECTOR_RENDERER_FAST_TRIANGLES
-			if (w == h)
-				drawTriangleFast(x, y, w, (orient == kTriangleDown), _fgColor, kFillDisabled);
-			else
-#endif
-				drawTriangleVertAlg(x, y, w, h, (orient == kTriangleDown), _fgColor, kFillDisabled);
+			drawTriangleFast(x + (newW / 2), y + (h / 2) - (newW / 2), newW, (orient == kTriangleDown), _fgColor, kFillDisabled);
 		}
 }
 
