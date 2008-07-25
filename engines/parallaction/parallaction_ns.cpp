@@ -240,7 +240,21 @@ int Parallaction_ns::go() {
 
 	_globalTable = _disk->loadTable("global");
 
-	guiStart();
+	// If requested, load a savegame instead of showing the intro
+	if (ConfMan.hasKey("save_slot")) {
+		_gameToLoad = ConfMan.getInt("save_slot");
+		if (_gameToLoad < 0 || _gameToLoad > 99)
+			_gameToLoad = -1;
+	}
+	if (_gameToLoad == -1) {
+		guiStart();
+	} else { 
+		_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+		_language = guiChooseLanguage();
+		_disk->setLanguage(_language);
+		doLoadGame(_gameToLoad);
+	}
+
 
 	if (quit())
 		return _eventMan->shouldRTL();

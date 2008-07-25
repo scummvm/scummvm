@@ -345,6 +345,7 @@ protected:		// data
 	uint32		_baseTime;
 	char		_characterName1[50];	// only used in changeCharacter
 
+	int		_gameToLoad;
 	Common::String	_saveFileName;
 
 

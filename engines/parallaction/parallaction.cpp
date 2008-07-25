@@ -114,6 +114,7 @@ int Parallaction::init() {
 	_location._hasSound = false;
 	_baseTime = 0;
 	_numLocations = 0;
+	_gameToLoad = -1;
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
