@@ -133,7 +133,7 @@ void PalettesToVideoDAC(void) {
 		pPalQ->posInDAC &= ~PALETTE_MOVED;
 
 	if (needUpdate)
-		_vm->screen().update();
+		g_system->updateScreen();
 }
 
 /**
