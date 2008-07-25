@@ -1065,13 +1065,13 @@ void print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, int hold, bool es
 }
 
 
-static void printobjPointed(CORO_PARAM, const SCNHANDLE text, const PINV_OBJECT pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
+static void printobjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
 static void printobjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *pText);
 
 /**
  * Print the given inventory object's name or whatever.
  */
-void printobj(CORO_PARAM, const SCNHANDLE text, const PINV_OBJECT pinvo, const int event) {
+void printobj(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, const int event) {
 	CORO_BEGIN_CONTEXT;
 		OBJECT *pText;		// text object pointer
 		int	textx, texty;
@@ -1142,7 +1142,7 @@ void printobj(CORO_PARAM, const SCNHANDLE text, const PINV_OBJECT pinvo, const i
 	CORO_END_CODE;
 }
 
-static void printobjPointed(CORO_PARAM, const SCNHANDLE text, const PINV_OBJECT pinvo, OBJECT *&pText, const int textx, const int texty, const int item) {
+static void printobjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -2404,7 +2404,7 @@ int whichinventory(void) {
  * @param operand			Library function
  * @param pp				Top of parameter stack
  */
-int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const PINT_CONTEXT pic, RESUME_STATE *pResumeState) {
+int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState) {
 	debug(7, "CallLibraryRoutine op %d (escOn %d, myescEvent %d)", operand, pic->escOn, pic->myescEvent);
 	switch (operand) {
 	case ACTORATTR:

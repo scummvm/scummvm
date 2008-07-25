@@ -52,7 +52,6 @@ struct INV_OBJECT {
 	SCNHANDLE hScript;	// inventory objects event handling script
 	int32 attribute;		// inventory object's attribute
 };
-typedef INV_OBJECT *PINV_OBJECT;
 
 void PopUpInventory(int invno);
 

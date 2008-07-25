@@ -224,7 +224,7 @@ static SCNHANDLE winPartsf = 0;	// Window members and cursors' graphic data
 static SCNHANDLE flagFilm = 0;	// Window members and cursors' graphic data
 static SCNHANDLE configStrings[20];
 
-static PINV_OBJECT pio = 0;		// Inventory objects' data
+static INV_OBJECT *pio = 0;		// Inventory objects' data
 static int numObjects = 0;		// Number of inventory objects
 
 
@@ -267,7 +267,6 @@ struct INV_DEF {
 	bool bMax;		// Maximised last time open?
 
 };
-typedef INV_DEF *PINV_DEF;
 
 static INV_DEF InvD[NUM_INV];		// Conversation + 2 inventories + ...
 
@@ -362,24 +361,27 @@ static int lX = 0;							// used by SlideMSlider() - last x-coordinate
 // AATBUT	Action always, text box
 // AAGBUT	Action always, graphic button
 // SLIDER	Not a button at all
-typedef enum {RGROUP, ARSBUT, AABUT, AATBUT, ARSGBUT, AAGBUT, SLIDER,
-		TOGGLE, DCTEST, FLIP, FRGROUP, NOTHING} BTYPE;
+enum BTYPE {
+	RGROUP, ARSBUT, AABUT, AATBUT, ARSGBUT, AAGBUT, SLIDER,
+	TOGGLE, DCTEST, FLIP, FRGROUP, NOTHING
+};
 
-typedef enum {NOFUNC, SAVEGAME, LOADGAME, IQUITGAME, CLOSEWIN,
-		OPENLOAD, OPENSAVE, OPENREST,
-		OPENSOUND, OPENCONT,
+enum BFUNC {
+	NOFUNC, SAVEGAME, LOADGAME, IQUITGAME, CLOSEWIN,
+	OPENLOAD, OPENSAVE, OPENREST,
+	OPENSOUND, OPENCONT,
 #ifndef JAPAN
-		OPENSUBT,
+	OPENSUBT,
 #endif
-		OPENQUIT,
-		INITGAME, MIDIVOL,
-		CLANG, RLANG
+	OPENQUIT,
+	INITGAME, MIDIVOL,
+	CLANG, RLANG
 #ifdef MAC_OPTIONS
-		, MASTERVOL, SAMPVOL 
+	, MASTERVOL, SAMPVOL 
 #endif
-		} BFUNC;
+};
 
-typedef struct {
+struct CONFBOX {
 	BTYPE	boxType;
 	BFUNC	boxFunc;
 	char	*boxText;
@@ -390,7 +392,7 @@ typedef struct {
 	int	h;		// Doubles as iteration size for SLIDERs
 	int	*ival;
 	int	bi;		// Base index for AAGBUTs
-} CONFBOX, *PCONFBOX;
+};
 
 
 #define NO_HEADING		(-1)
@@ -624,40 +626,40 @@ CONFBOX topwinBox[] = {
 
 
 
-typedef struct {
+struct CONFINIT {
 	int	h;
 	int	v;
 	int	x;
 	int	y;
 	bool bExtraWin;
-	PCONFBOX Box;
+	CONFBOX *Box;
 	int	NumBoxes;
 	int	ixHeading;
-} CONFINIT, *PCONFINIT;
+};
 
-CONFINIT ciOption	= { 6, 5, 72, 23, false, optionBox,	sizeof(optionBox)/sizeof(CONFBOX),	NO_HEADING };
+CONFINIT ciOption	= { 6, 5, 72, 23, false, optionBox,	ARRAYSIZE(optionBox),	NO_HEADING };
 
-CONFINIT ciLoad		= { 10, 6, 20, 16, true, loadBox,	sizeof(loadBox)/sizeof(CONFBOX),	SIX_LOAD_HEADING };
-CONFINIT ciSave		= { 10, 6, 20, 16, true, saveBox,	sizeof(saveBox)/sizeof(CONFBOX),	SIX_SAVE_HEADING };
+CONFINIT ciLoad		= { 10, 6, 20, 16, true, loadBox,	ARRAYSIZE(loadBox),	SIX_LOAD_HEADING };
+CONFINIT ciSave		= { 10, 6, 20, 16, true, saveBox,	ARRAYSIZE(saveBox),	SIX_SAVE_HEADING };
 #ifdef JAPAN
-CONFINIT ciRestart	= { 6, 2, 72, 53, false, restartBox,	sizeof(restartBox)/sizeof(CONFBOX),	SIX_RESTART_HEADING };
+CONFINIT ciRestart	= { 6, 2, 72, 53, false, restartBox,	ARRAYSIZE(restartBox),	SIX_RESTART_HEADING };
 #else
-CONFINIT ciRestart	= { 4, 2, 98, 53, false, restartBox,	sizeof(restartBox)/sizeof(CONFBOX),	SIX_RESTART_HEADING };
+CONFINIT ciRestart	= { 4, 2, 98, 53, false, restartBox,	ARRAYSIZE(restartBox),	SIX_RESTART_HEADING };
 #endif
-CONFINIT ciSound	= { 10, 5, 20, 16, false, soundBox,	sizeof(soundBox)/sizeof(CONFBOX),	NO_HEADING };
+CONFINIT ciSound	= { 10, 5, 20, 16, false, soundBox,	ARRAYSIZE(soundBox),	NO_HEADING };
 #ifdef MAC_OPTIONS
-	CONFINIT ciControl	= { 10, 3, 20, 40, false, controlBox,	sizeof(controlBox)/sizeof(CONFBOX),	NO_HEADING };
+	CONFINIT ciControl	= { 10, 3, 20, 40, false, controlBox,	ARRAYSIZE(controlBox),	NO_HEADING };
 #else
-	CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	sizeof(controlBox)/sizeof(CONFBOX),	NO_HEADING };
+	CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	ARRAYSIZE(controlBox),	NO_HEADING };
 #endif
 #ifndef JAPAN
 #if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
-CONFINIT ciSubtitles	= { 10, 6, 20, 16, false, subtitlesBox,	sizeof(subtitlesBox)/sizeof(CONFBOX),	NO_HEADING };
+CONFINIT ciSubtitles	= { 10, 6, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
 #else
-CONFINIT ciSubtitles	= { 10, 3, 20, 16, false, subtitlesBox,	sizeof(subtitlesBox)/sizeof(CONFBOX),	NO_HEADING };
+CONFINIT ciSubtitles	= { 10, 3, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
 #endif
 #endif
-CONFINIT ciQuit		= { 4, 2, 98, 53, false, quitBox,	sizeof(quitBox)/sizeof(CONFBOX),	SIX_QUIT_HEADING };
+CONFINIT ciQuit		= { 4, 2, 98, 53, false, quitBox,	ARRAYSIZE(quitBox),	SIX_QUIT_HEADING };
 
 CONFINIT ciTopWin	= { 6, 5, 72, 23, false, topwinBox,	0,					NO_HEADING };
 
@@ -665,7 +667,7 @@ CONFINIT ciTopWin	= { 6, 5, 72, 23, false, topwinBox,	0,					NO_HEADING };
 
 // Conf window globals
 static struct {
-	PCONFBOX Box;
+	CONFBOX *Box;
 	int	NumBoxes;
 	bool bExtraWin;
 	int	ixHeading;
@@ -693,7 +695,7 @@ char sedit[SG_DESC_LEN+2];
 // Data for button press/toggle effects
 static struct {
 	bool bButAnim;
-	PCONFBOX box;
+	CONFBOX *box;
 	bool press;		// true = button press; false = button toggle
 } g_buttonEffect = { false, 0, false };
 
@@ -838,8 +840,8 @@ static void DumpObjArray(void) {
  * Convert item ID number to pointer to item's compiled data
  * i.e. Image data and Glitter code.
  */
-PINV_OBJECT findInvObject(int num) {
-	PINV_OBJECT	retval = pio;
+INV_OBJECT *findInvObject(int num) {
+	INV_OBJECT *retval = pio;
 
 	for (int i = 0; i < numObjects; i++, retval++) {
 		if (retval->id == num)
@@ -895,7 +897,7 @@ int WhichItemHeld(void) {
  */
 
 void InventoryIconCursor(void) {
-	PINV_OBJECT invObj;
+	INV_OBJECT *invObj;
 
 	if (HeldItem != INV_NOICON) {
 		invObj = findInvObject(HeldItem);
@@ -924,7 +926,7 @@ int WhichInventoryOpen(void) {
 /**************************************************************************/
 
 struct ITP_INIT {
-	PINV_OBJECT	pinvo;
+	INV_OBJECT *pinvo;
 	USER_EVENT	event;
 	BUTEVENT	bev;
 };
@@ -935,7 +937,7 @@ struct ITP_INIT {
 static void InvTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 		int	ThisPointedWait;			//	Fix the 'repeated pressing bug'
 	CORO_END_CONTEXT(_ctx);
 
@@ -973,7 +975,7 @@ static void InvTinselProcess(CORO_PARAM, const void *param) {
 /**
  * Run inventory item's Glitter code
  */
-void RunInvTinselCode(PINV_OBJECT pinvo, USER_EVENT event, BUTEVENT be, int index) {
+void RunInvTinselCode(INV_OBJECT *pinvo, USER_EVENT event, BUTEVENT be, int index) {
 	ITP_INIT to = { pinvo, event, be };
 	
 	if (InventoryHidden)
@@ -1238,7 +1240,7 @@ void Select(int i, bool force) {
  */
 
 void HoldItem(int item) {
-	PINV_OBJECT	invObj;
+	INV_OBJECT *invObj;
 
 	if (HeldItem != item) {
 		if (item == INV_NOICON && HeldItem != INV_NOICON)
@@ -1279,7 +1281,7 @@ void AddToInventory(int invno, int icon, bool hold) {
 	int	i;
 	bool	bOpen;
 #ifdef DEBUG
-	PINV_OBJECT	invObj;
+	INV_OBJECT *invObj;
 #endif
 
 	assert((invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_OPEN)); // Trying to add to illegal inventory
@@ -1674,7 +1676,7 @@ void InvBoxes(bool InBody, int curX, int curY) {
 	}
 }
 
-static void ButtonPress(CORO_PARAM, PCONFBOX box) {
+static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1722,7 +1724,7 @@ static void ButtonPress(CORO_PARAM, PCONFBOX box) {
 	CORO_END_CODE;
 }
 
-static void ButtonToggle(CORO_PARAM, PCONFBOX box) {
+static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1801,7 +1803,7 @@ static void ButtonToggle(CORO_PARAM, PCONFBOX box) {
 
 void InvLabels(bool InBody, int aniX, int aniY) {
 	int	index;				// Icon pointed to on this call
-	PINV_OBJECT invObj;
+	INV_OBJECT *invObj;
 
 	// Find out which icon is currently pointed to
 	if (!InBody)
@@ -1904,10 +1906,10 @@ void AdjustTop(void) {
  */
 
 OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
-	PINV_OBJECT	invObj;		// Icon data
+	INV_OBJECT *invObj;		// Icon data
 	const MULTI_INIT *pmi;		// Its INIT structure - from the reel
-	PIMAGE		pim;		// ... you get the picture
-	OBJECT	*	pPlayObj;	// The object we insert
+	IMAGE *pim;		// ... you get the picture
+	OBJECT *pPlayObj;	// The object we insert
 
 	invObj = findInvObject(num);
 
@@ -2011,8 +2013,8 @@ void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV, int te
 
 static OBJECT *AddObject(const FREEL *pfreel, int num) {
 	const MULTI_INIT *pmi;	// Get the MULTI_INIT structure
-	PIMAGE		pim;
-	OBJECT	*	pPlayObj;
+	IMAGE *pim;
+	OBJECT *pPlayObj;
 
 	// Get pointer to image
 	pim = GetImageFromReel(pfreel, &pmi);
@@ -2564,7 +2566,7 @@ bool RePosition(void) {
  */
 void AlterCursor(int num) {
 	const FREEL *pfreel;
-	PIMAGE	pim;
+	IMAGE *pim;
 
 	// Get pointer to image
 	pim = GetImageFromFilm(winPartsf, num, &pfreel);
@@ -2833,7 +2835,7 @@ void PopUpInventory(int invno) {
 	}
 }
 
-void SetConfGlobals(PCONFINIT ci) {
+void SetConfGlobals(CONFINIT *ci) {
 	InvD[INV_CONF].MinHicons = InvD[INV_CONF].MaxHicons = InvD[INV_CONF].NoofHicons = ci->h;
 	InvD[INV_CONF].MaxVicons = InvD[INV_CONF].MinVicons = InvD[INV_CONF].NoofVicons = ci->v;
 	InvD[INV_CONF].inventoryX = ci->x;
@@ -3921,7 +3923,7 @@ void InvPdProcess(CORO_PARAM, const void *param) {
 }
 
 void InvPickup(int index) {
-	PINV_OBJECT invObj;
+	INV_OBJECT *invObj;
 
 	if (index != INV_NOICON) {
 		if (HeldItem == INV_NOICON && InvD[ino].ItemOrder[index] && InvD[ino].ItemOrder[index] != HeldItem) {
@@ -4028,7 +4030,7 @@ void InvSLClick(void) {
 
 void InvAction(void) {
 	int index;
-	PINV_OBJECT invObj;
+	INV_OBJECT *invObj;
 	int aniX, aniY;
 	int i;
 
@@ -4109,7 +4111,7 @@ void InvAction(void) {
 
 void InvLook(void) {
 	int index;
-	PINV_OBJECT invObj;
+	INV_OBJECT *invObj;
 	int aniX, aniY;
 
 	GetCursorXY(&aniX, &aniY, false);
@@ -4283,7 +4285,7 @@ void KeyToInventory(KEYEVENT ke) {
  */
 
 void invObjectFilm(int object, SCNHANDLE hFilm) {
-	PINV_OBJECT	invObj;
+	INV_OBJECT *invObj;
 
 	invObj = findInvObject(object);
 	invObj->hFilm = hFilm;
@@ -4334,7 +4336,7 @@ void syncInvInfo(Serializer &s) {
 // Note: the SCHANDLE type here has been changed to a void*
 void RegisterIcons(void *cptr, int num) {
 	numObjects = num;
-	pio = (PINV_OBJECT) cptr;
+	pio = (INV_OBJECT *) cptr;
 }
 
 /**

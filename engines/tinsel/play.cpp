@@ -45,14 +45,14 @@ namespace Tinsel {
  */
 static void PokeInPalette(SCNHANDLE hMulFrame) {
 	const FRAME *pFrame;		// Pointer to frame
-	PIMAGE	pim;		// Pointer to image
+	IMAGE *pim;		// Pointer to image
 
 	// Could be an empty column
 	if (hMulFrame) {
 		pFrame = (const FRAME *)LockMem(hMulFrame);
 
 		// get pointer to image
-		pim = (PIMAGE)LockMem(READ_LE_UINT32(pFrame));	// handle to image
+		pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
 
 		pim->hImgPal = TO_LE_32(BackPal());
 	}

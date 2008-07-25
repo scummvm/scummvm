@@ -37,6 +37,7 @@
 #include "tinsel/object.h"
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"
+#include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
 #include "tinsel/timers.h"
@@ -550,7 +551,7 @@ static void MActorProcessHelper(int X, int Y, int id, PMACTOR pActor) {
 	const FILM *pfilm;
 	const MULTI_INIT *pmi;
 	const FRAME *pFrame;
-	PIMAGE		pim;
+	IMAGE *pim;
 
 
 	assert(BackPal()); // Can't start actor without a background palette
@@ -566,7 +567,7 @@ static void MActorProcessHelper(int X, int Y, int id, PMACTOR pActor) {
 	pFrame = (const FRAME *)LockMem(FROM_LE_32(pmi->hMulFrame));
 
 	// get pointer to image
-	pim = (PIMAGE)LockMem(READ_LE_UINT32(pFrame));	// handle to image
+	pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
 	pim->hImgPal = TO_LE_32(BackPal());
 //---
 	pActor->actorObj = MultiInitObject(pmi);

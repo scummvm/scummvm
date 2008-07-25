@@ -43,6 +43,7 @@
 #include "tinsel/object.h"
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"	// process IDs
+#include "tinsel/polygons.h"
 #include "tinsel/token.h"
 
 
@@ -105,7 +106,7 @@ static SCNHANDLE SceneHandle = 0;	// Current scene handle - stored in case of Sa
 static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created

@@ -34,6 +34,7 @@
 #include "tinsel/object.h"	// for POBJECT
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"
+#include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
 #include "tinsel/serializer.h"
@@ -177,7 +178,7 @@ struct ATP_INIT {
 static void ActorTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
@@ -203,14 +204,14 @@ static void ActorTinselProcess(CORO_PARAM, const void *param) {
 //---------------------------------------------------------------------------
 
 struct RATP_INIT {
-	PINT_CONTEXT	pic;
+	INT_CONTEXT *pic;
 	int		id;		// Actor number
 };
 
 static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
@@ -227,7 +228,7 @@ static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-void RestoreActorProcess(int id, PINT_CONTEXT pic) {
+void RestoreActorProcess(int id, INT_CONTEXT *pic) {
 	RATP_INIT r = { pic, id };
 
 	g_scheduler->createProcess(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));

@@ -39,7 +39,7 @@ namespace Tinsel {
 
 //----------------- EXTERN FUNCTIONS --------------------
 
-extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const PINT_CONTEXT pic, RESUME_STATE *pResumeState);
+extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState);
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -105,12 +105,12 @@ static int32 *pGlobals = 0;		// global vars
 
 static int numGlobals = 0;		// How many global variables to save/restore
 
-static PINT_CONTEXT icList = 0;
+static INT_CONTEXT *icList = 0;
 
 /**
  * Keeps the code array pointer up to date.
  */
-void LockCode(PINT_CONTEXT ic) {
+void LockCode(INT_CONTEXT *ic) {
 	if (ic->GSort == GS_MASTER)
 		ic->code = (byte *)FindChunk(MASTER_SCNHANDLE, CHUNK_PCODE);
 	else
@@ -120,8 +120,8 @@ void LockCode(PINT_CONTEXT ic) {
 /**
  * Find a free interpret context and allocate it to the calling process.
  */
-static PINT_CONTEXT AllocateInterpretContext(GSORT gsort) {
-	PINT_CONTEXT pic;
+static INT_CONTEXT *AllocateInterpretContext(GSORT gsort) {
+	INT_CONTEXT *pic;
 	int	i;
 
 	for (i = 0, pic = icList; i < MAX_INTERPRET; i++, pic++) {
@@ -145,7 +145,7 @@ static PINT_CONTEXT AllocateInterpretContext(GSORT gsort) {
  * Normal release of an interpret context.
  * Called from the end of Interpret().
  */
-static void FreeInterpretContextPi(PINT_CONTEXT pic) {
+static void FreeInterpretContextPi(INT_CONTEXT *pic) {
 	pic->GSort = GS_NONE;
 }
 
@@ -155,7 +155,7 @@ static void FreeInterpretContextPi(PINT_CONTEXT pic) {
  * call doesn't complete.
  */
 void FreeInterpretContextPr(PROCESS *pProc) {
-	PINT_CONTEXT pic;
+	INT_CONTEXT *pic;
 	int	i;
 
 	for (i = 0, pic = icList; i < MAX_INTERPRET; i++, pic++) {
@@ -170,7 +170,7 @@ void FreeInterpretContextPr(PROCESS *pProc) {
  * Free all interpret contexts except for the master script's
  */
 void FreeMostInterpretContexts(void) {
-	PINT_CONTEXT pic;
+	INT_CONTEXT *pic;
 	int	i;
 
 	for (i = 0, pic = icList; i < MAX_INTERPRET; i++, pic++) {
@@ -184,7 +184,7 @@ void FreeMostInterpretContexts(void) {
  * Free the master script's interpret context.
  */
 void FreeMasterInterpretContext(void) {
-	PINT_CONTEXT pic;
+	INT_CONTEXT *pic;
 	int	i;
 
 	for (i = 0, pic = icList; i < MAX_INTERPRET; i++, pic++) 	{
@@ -205,9 +205,9 @@ void FreeMasterInterpretContext(void) {
  * @param actorId		Associated actor (if any)
  * @param pinvo			Associated inventory object
  */
-PINT_CONTEXT InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	USER_EVENT event, 
-		HPOLYGON hpoly, int actorid, PINV_OBJECT pinvo) {
-	PINT_CONTEXT ic;
+INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	USER_EVENT event, 
+		HPOLYGON hpoly, int actorid, INV_OBJECT *pinvo) {
+	INT_CONTEXT *ic;
 
 	ic = AllocateInterpretContext(gsort);
 
@@ -235,8 +235,8 @@ PINT_CONTEXT InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	USER_EVENT event
 /**
  * Allocate and initialise an interpret context with restored data.
  */
-PINT_CONTEXT RestoreInterpretContext(PINT_CONTEXT ric) {
-	PINT_CONTEXT ic;
+INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric) {
+	INT_CONTEXT *ic;
 
 	ic = AllocateInterpretContext(GS_NONE);	// Sort will soon be overridden
 
@@ -263,7 +263,7 @@ void RegisterGlobals(int num) {
 		}
 
 		// Allocate RAM for interpret contexts and make sure it's allocated
-		icList = (PINT_CONTEXT)calloc(MAX_INTERPRET, sizeof(INT_CONTEXT));
+		icList = (INT_CONTEXT *)calloc(MAX_INTERPRET, sizeof(INT_CONTEXT));
 		if (icList == NULL) {
 			error("Cannot allocate memory for interpret contexts");
 		}
@@ -326,7 +326,7 @@ void INT_CONTEXT::syncWithSerializer(Serializer &s) {
 /**
  * Return pointer to and size of global data for save/restore game.
  */
-void SaveInterpretContexts(PINT_CONTEXT sICInfo) {
+void SaveInterpretContexts(INT_CONTEXT *sICInfo) {
 	memcpy(sICInfo, icList, MAX_INTERPRET * sizeof(INT_CONTEXT));
 }
 
@@ -355,7 +355,7 @@ static int32 Fetch(byte opcode, byte *code, int &ip) {
 /**
  * Interprets the PCODE instructions in the code array.
  */
-void Interpret(CORO_PARAM, PINT_CONTEXT ic) {
+void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 	do {
 		int tmp, tmp2;
 		int ip = ic->ip;

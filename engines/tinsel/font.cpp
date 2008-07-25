@@ -78,18 +78,18 @@ void TalkFontHandle(SCNHANDLE hf) {
  */
 void fettleFontPal(SCNHANDLE fontPal) {
 	const FONT *pFont;
-	PIMAGE	pImg;
+	IMAGE *pImg;
 
 	assert(fontPal);
 	assert(hTagFont); // Tag font not declared
 	assert(hTalkFont); // Talk font not declared
 
 	pFont = (const FONT *)LockMem(hTagFont);
-	pImg = (PIMAGE)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
 	pImg->hImgPal = TO_LE_32(fontPal);
 
 	pFont = (const FONT *)LockMem(hTalkFont);
-	pImg = (PIMAGE)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
 	pImg->hImgPal = TO_LE_32(fontPal);
 }
 

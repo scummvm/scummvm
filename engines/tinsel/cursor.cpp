@@ -105,7 +105,7 @@ static void MoveCursor(void);
  */
 static void InitCurTrailObj(int i, int x, int y) {
 	const FREEL *pfr;		// pointer to reel
-	PIMAGE		pim;		// pointer to image
+	IMAGE *pim;		// pointer to image
 	const MULTI_INIT *pmi;		// MULTI_INIT structure
 
 	const FILM *pfilm;
@@ -354,7 +354,7 @@ void DelAuxCursor(void) {
  * Save animation offsets from the image if required.
  */
 void SetAuxCursor(SCNHANDLE hFilm) {
-	PIMAGE	pim;		// Pointer to auxillary cursor's image
+	IMAGE *pim;		// Pointer to auxillary cursor's image
 	const FREEL *pfr;
 	const MULTI_INIT *pmi;
 	const FILM *pfilm;
@@ -461,7 +461,7 @@ static void InitCurObj(void) {
 	const FILM *pfilm;
 	const FREEL *pfr;
 	const MULTI_INIT *pmi;
-	PIMAGE	pim;
+	IMAGE *pim;
 
 	pim = GetImageFromFilm(CursorHandle, 0, &pfr, &pmi, &pfilm);// Get pointer to image
 	assert(BackPal()); // no background palette

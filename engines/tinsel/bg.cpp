@@ -161,7 +161,7 @@ void ChangePalette(SCNHANDLE hPal) {
  */
 void startupBackground(SCNHANDLE bfilm) {
 	const FILM *pfilm;
-	PIMAGE	pim;
+	IMAGE *pim;
 
 	BgroundHandle = bfilm;		// Save handle in case of Save_Scene()
 

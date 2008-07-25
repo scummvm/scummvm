@@ -28,8 +28,6 @@
 #define TINSEL_PCODE_H
 
 #include "tinsel/events.h"	// for USER_EVENT
-//#include "tinsel/inventory.h"	// for PINV_OBJECT
-#include "tinsel/polygons.h"	// for PPOLYGON
 #include "tinsel/sched.h"	// for PROCESS
 
 namespace Tinsel {
@@ -77,7 +75,6 @@ struct INT_CONTEXT {
 
 	void syncWithSerializer(Serializer &s);
 };
-typedef INT_CONTEXT *PINT_CONTEXT;
 
 
 /*----------------------------------------------------------------------*\
@@ -86,7 +83,7 @@ typedef INT_CONTEXT *PINT_CONTEXT;
 
 void Interpret(CORO_PARAM, INT_CONTEXT *ic);	// Interprets the PCODE instructions in the code array
 
-PINT_CONTEXT InitInterpretContext(
+INT_CONTEXT *InitInterpretContext(
 	GSORT		gsort,
 	SCNHANDLE	hCode,		// code to execute
 	USER_EVENT	event,		// causal event

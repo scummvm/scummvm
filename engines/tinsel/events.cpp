@@ -138,7 +138,7 @@ struct TP_INIT {
 static void PolyTinselProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT pic;
+		INT_CONTEXT *pic;
 		bool took_control;	// Set if this function takes control
 	CORO_END_CONTEXT(_ctx);
 

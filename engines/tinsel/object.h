@@ -65,7 +65,6 @@ struct IMAGE {
 	SCNHANDLE hImgBits;	//!< image bitmap handle
 	SCNHANDLE hImgPal;	//!< image palette handle
 };
-typedef IMAGE *PIMAGE;
 
 
 /** a multi-object animation frame is a list of multi-image handles */
