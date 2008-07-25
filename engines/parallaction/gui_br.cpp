@@ -283,6 +283,8 @@ void Parallaction_br::startGui() {
 
 	delete _menuHelper;
 	_menuHelper = 0;
+
+	_input->_inputMode = Input::kInputModeGame;
 }
 
 

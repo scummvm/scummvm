@@ -232,7 +232,7 @@ void Parallaction_br::changeLocation(char *location) {
 	// free open location stuff
 	clearSubtitles();
 	freeBackground();
-	_gfx->clearGfxObjects(kGfxObjNormal | kGfxObjCharacter);
+	_gfx->clearGfxObjects(kGfxObjNormal);
 	_location._programs.clear();
 
 	_location._animations.remove(_char._ani);
@@ -244,12 +244,17 @@ void Parallaction_br::changeLocation(char *location) {
 
 //	free(_location._comment);
 //	_location._comment = 0;
-//	_location._commands.clear();
-//	_location._aCommands.clear();
-
+	_location._commands.clear();
+	_location._aCommands.clear();
 
 	// load new location
 	parseLocation(location);
+
+	// kFlagsRemove is cleared because the character defaults to visible on new locations
+	// script command can hide the character, anyway, so that's why the flag is cleared
+	// before _location._commands are executed
+	_char._ani->_flags &= ~kFlagsRemove;
+
 	_cmdExec->run(_location._commands);
 //	doLocationEnterTransition();
 	_cmdExec->run(_location._aCommands);
@@ -301,17 +306,19 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 
 void Parallaction_br::changeCharacter(const char *name) {
-	printf("changeCharacter(%s)\n", name);
-
 	const char *charName = _char.getName();
-	if (!scumm_stricmp(charName, name)) {
-		return;
+
+	if (scumm_stricmp(charName, name)) {
+		debugC(1, kDebugExec, "changeCharacter(%s)", name);
+
+		_char.setName(name);
+		_char._ani->gfxobj = _gfx->loadAnim(name);
+		_char._ani->gfxobj->setFlags(kGfxObjCharacter);
+		_char._ani->gfxobj->clearFlags(kGfxObjNormal);
+		_char._talk = _disk->loadTalk(name);
 	}
 
-	_char.setName(name);
-	_char._ani->gfxobj = _gfx->loadAnim(name);
-	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
-	_char._talk = _disk->loadTalk(name);
+	_char._ani->_flags |= kFlagsActive;
 }
 
 
