@@ -47,7 +47,7 @@ enum {
 
 // tagState
 enum TSTATE {
-	NO_TAG, TAG_OFF, TAG_ON
+	TAG_OFF, TAG_ON
 };
 
 // pointState
