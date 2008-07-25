@@ -259,7 +259,7 @@ void Parallaction::freeLocation() {
 
 	_localFlagNames->clear();
 
-	_location._walkNodes.clear();
+	_location._walkPoints.clear();
 
 	_gfx->clearGfxObjects(kGfxObjNormal);
 	freeBackground();

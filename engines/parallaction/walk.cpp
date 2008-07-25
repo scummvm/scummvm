@@ -97,13 +97,13 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 
 	while (true) {
 
-		PointList::iterator nearest = _vm->_location._walkNodes.end();
-		PointList::iterator locNode = _vm->_location._walkNodes.begin();
+		PointList::iterator nearest = _vm->_location._walkPoints.end();
+		PointList::iterator locNode = _vm->_location._walkPoints.begin();
 
 		// scans location path nodes searching for the nearest Node
 		// which can't be farther than the target position
 		// otherwise no _closest_node is selected
-		while (locNode != _vm->_location._walkNodes.end()) {
+		while (locNode != _vm->_location._walkPoints.end()) {
 
 			Common::Point v8 = *locNode;
 			v2C = v8.sqrDist(stop);
@@ -117,7 +117,7 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 			locNode++;
 		}
 
-		if (nearest == _vm->_location._walkNodes.end()) break;
+		if (nearest == _vm->_location._walkPoints.end()) break;
 
 		v20 = *nearest;
 		v34 = v30 = v20.sqrDist(stop);

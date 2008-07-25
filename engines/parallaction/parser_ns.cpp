@@ -1011,7 +1011,7 @@ DECLARE_LOCATION_PARSER(disk)  {
 DECLARE_LOCATION_PARSER(nodes)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(nodes) ");
 
-	parseWalkNodes(_vm->_location._walkNodes);
+	parsePointList(_vm->_location._walkPoints);
 }
 
 
@@ -1124,8 +1124,8 @@ void LocationParser_ns::parse(Script *script) {
 	resolveCommandForwards();
 }
 
-void LocationParser_ns::parseWalkNodes(PointList &list) {
-	debugC(5, kDebugParser, "parseWalkNodes()");
+void LocationParser_ns::parsePointList(PointList &list) {
+	debugC(5, kDebugParser, "parsePointList()");
 
 	_script->readLineToken(true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
@@ -1137,7 +1137,7 @@ void LocationParser_ns::parseWalkNodes(PointList &list) {
 		_script->readLineToken(true);
 	}
 
-	debugC(5, kDebugParser, "parseWalkNodes() done");
+	debugC(5, kDebugParser, "parsePointList() done");
 
 	return;
 }

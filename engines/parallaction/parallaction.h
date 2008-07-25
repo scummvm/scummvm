@@ -177,7 +177,7 @@ struct Location {
 	char		_soundFile[50];
 
 	// NS specific
-	PointList	_walkNodes;
+	PointList	_walkPoints;
 	char _slideText[2][MAX_TOKEN_LEN];
 
 	// BRA specific

@@ -193,7 +193,7 @@ protected:
 
 	void		parseZone(ZoneList &list, char *name);
 	void		parseZoneTypeBlock(ZonePtr z);
-	void		parseWalkNodes(PointList &list);
+	void		parsePointList(PointList &list);
 	void		parseAnimation(AnimationList &list, char *name);
 	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
