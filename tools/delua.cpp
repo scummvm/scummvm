@@ -146,8 +146,8 @@ public:
     return true;
   }
   void print(std::ostream &os) const {
-    static char *specials = "\a\b\f\n\r\t\v\\\"";
-    static char *special_text[] = {
+    static const char *specials = "\a\b\f\n\r\t\v\\\"";
+    static const char *special_text[] = {
       "\\a", "\\b", "\\f", "\\n", "\\r", "\\t", "\\v", "\\\\", "\\\""
     };
 
