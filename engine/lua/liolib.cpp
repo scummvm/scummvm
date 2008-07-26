@@ -265,12 +265,9 @@ static void io_date () {
 }
 
 
-static void io_exit (void)
-{
-  // verify if it's really used
-  assert(0);
-  lua_Object o = lua_getparam(1);
-  exit((int)lua_isnumber(o) ? (int)lua_getnumber(o) : 1);
+static void io_exit () {
+    lua_Object o = lua_getparam(1);
+    exit((int)lua_isnumber(o) ? (int)lua_getnumber(o) : 1);
 }
 
 
