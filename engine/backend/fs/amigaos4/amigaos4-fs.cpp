@@ -151,7 +151,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 	ENTER();
 
-	int len = 0, offset = p.size();
+	int offset = p.size();
 
 	//assert(offset > 0);
 

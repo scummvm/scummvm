@@ -68,7 +68,7 @@ void luaX_token2str (LexState * /*ls*/, int32 token, char *s) {
 
 static void luaX_invalidchar (LexState *ls, int32 c) {
   char buff[10];
-  sprintf(buff, "0x%X", c);
+  sprintf(buff, "0x%X", (int)c);
   luaX_syntaxerror(ls, "invalid control char", buff);
 }
 

@@ -69,7 +69,7 @@ int32 luaV_tostring (TObject *obj)
     real f = nvalue(obj);
     int32 i;
     if ((real)(-MAX_INT) <= f && f <= (real)MAX_INT && (real)(i=(int32)f) == f)
-      sprintf (s, "%d", i);
+      sprintf (s, "%d", (int)i);
     else
       sprintf (s, NUMBER_FMT, nvalue(obj));
     tsvalue(obj) = luaS_new(s);

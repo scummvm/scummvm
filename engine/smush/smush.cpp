@@ -302,7 +302,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	// does not quite do it.
 	// TODO: Find out what needs to go on here.
 	if (SMUSH_ALTSPEED(flags)) {
-		printf("Bad time: %d, suggested: %d\n", _speed, 2 * _speed);
+		printf("Bad time: %d, suggested: %d\n", (int)_speed, (int)(2 * _speed));
 		_speed = 66667;
 	}
 	_videoLooping = SMUSH_LOOPMOVIE(flags);

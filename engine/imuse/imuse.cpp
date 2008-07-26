@@ -370,7 +370,7 @@ void Imuse::switchToNextRegion(Track *track) {
 	}
 
 	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
-		printf("Imuse::switchToNextRegion(): REGION %d: soundName:%s\n", track->curRegion, track->soundName);
+		printf("Imuse::switchToNextRegion(): REGION %d: soundName:%s\n", (int)track->curRegion, track->soundName);
 	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;
 }

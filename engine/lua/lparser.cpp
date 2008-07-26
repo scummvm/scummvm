@@ -592,7 +592,7 @@ static void error_unmatched (LexState *ls, int32 what, int32 who, int32 where) {
     luaX_token2str(ls, what, t_what);
     luaX_token2str(ls, who, t_who);
     sprintf(buff, "`%s' expected (to close `%s' at line %d)",
-            t_what, t_who, where);
+            t_what, t_who, (int)where);
     luaX_error(ls, buff);
   }
 }

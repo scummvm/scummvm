@@ -361,12 +361,12 @@ static void lua_printstack (FILE *f)
         else if (linedefined < 0)
           fprintf(f, "%s", filename);
         else
-          fprintf(f, "function (%s:%d)", filename, linedefined);
+          fprintf(f, "function (%s:%d)", filename, (int)linedefined);
         filename = NULL;
       }
     }
     if ((currentline = lua_currentline(func)) > 0)
-      fprintf(f, " at line %d", currentline);
+      fprintf(f, " at line %d", (int)currentline);
     if (filename)
       fprintf(f, " [in file %s]", filename);
     fprintf(f, "\n");
