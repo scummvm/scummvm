@@ -43,7 +43,9 @@
 #include "common/system.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
+
 #include "sound/mods/tfmx.h"
+#include "sound/mixer.h"
 
 
 #if defined(_WIN32_WCE)
@@ -289,14 +291,15 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 	
+	Audio::SoundHandle _handle;
 	Audio::Tfmx _aTfmx;
 	_aTfmx.load();
-//	_aTfmx.
+	
 
 
-
+	system.getMixer()->playInputStream( Audio::Mixer::kMusicSoundType, &_handle, &_aTfmx );
 	system.delayMillis( 999999 );
-
+	
 
 
 /*

@@ -60,11 +60,18 @@ void Tfmx::loadSamples() {
 	//FIXME: end temporary loader. normally the seekablereadstream will be function parameter
 
 	_sampleSize = stream->size();
-	_sampleData = new uint8[_sampleSize];
+	_sampleDataU = new uint8[_sampleSize];
 	stream->seek(0);
-	stream->read(_sampleData, _sampleSize);
+	stream->read(_sampleDataU, _sampleSize);
 
-	//sample data should now be initialized
+	for (uint32 i = 0; i < _sampleSize; i++) {
+		_sampleDataU[i] ^= 0x80;
+	}
+	
+	_sampleData = new int8[_sampleSize];
+	for (uint32 i = 0; i < _sampleSize; i++) {
+		_sampleData[i] = _sampleDataU[i];
+	}
 }
 
 bool Tfmx::loadSamples(Common::SeekableReadStream &stream) {
@@ -129,7 +136,8 @@ void Tfmx::load() {
 	}
 	
 	//test
-	//playSong(0);
+	loadSamples();
+	playSong(0);
 }
 bool Tfmx::load(Common::SeekableReadStream &stream) {
 	//TODO: Setup loading from input stream
@@ -187,7 +195,20 @@ Then each interrupt, updateTracks() is called and track data is reloaded.
 			_tracks[i].pattern.returnFlag = false;
 			_tracks[i].pattern.count = 0;
 			_tracks[i].pattern.offset = 0;
+
+			_tracks[i].sample.length = 0;
+			_tracks[i].sample.offset = 0;
+			_tracks[i].sample.onFlag = true;
+
+			_tracks[i].macro.data = 0;
+			_tracks[i].macro.count = 0;
+			_tracks[i].macro.newFlag = true;
 			
+	}
+
+	for (int i = 0; i < 4; i++) {
+		_channels[i].period = 0;
+		_channels[i].volume = 0;
 	}
 
 	if (_tempo >= 0x10) {
@@ -196,7 +217,8 @@ Then each interrupt, updateTracks() is called and track data is reloaded.
 	else {
 	setInterruptFreq( (int)( getRate() / (1 / _tempo * 24)));
 	}
-	//StartPaula()
+
+	startPaula();
 	// and trigger updateTrackstep() cycle, called at each interrupt
 
 /*//Test loop. Update and dump to console i times.
@@ -296,6 +318,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		numCommands = (endPosition - startPosition) / 4;
 		_tracks[trackNumber].pattern.offset = 0;
 		_tracks[trackNumber].pattern.count = 0;
+		_tracks[trackNumber].pattern.length = numCommands;
 
 		Common::MemoryReadStream dataStream(_data, _dataSize);
 		Common::SeekableSubReadStream patternSubStream(&dataStream, startPosition, endPosition);
@@ -379,12 +402,17 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		_tracks[trackNumber].pattern.note.macroNumber = byte2;
 		_tracks[trackNumber].pattern.note.channelNumber = (byte3 & 0xF0) >> 4;
 		_tracks[trackNumber].pattern.note.volume = (byte3 & 0x0F);
-		_tracks[trackNumber].pattern.note.wait = byte4; //should set pattern wait to this
-		//doMacros(trackNumber);
+		_tracks[trackNumber].pattern.note.wait = byte4; //should set pattern wait to this	
+		updateNote(trackNumber);
+		doMacros(trackNumber);
 	}
 
 	_tracks[trackNumber].pattern.data++;
 	_tracks[trackNumber].pattern.count++;
+
+	if (_tracks[trackNumber].pattern.count == _tracks[trackNumber].pattern.length) {
+		_tracks[trackNumber].pattern.newFlag = true;
+	}
 }
 
 void Tfmx::updateNote(uint8 trackNumber) {
@@ -392,15 +420,22 @@ void Tfmx::updateNote(uint8 trackNumber) {
 	//00 & 01 : detune
 	//10 : wait
 	//11 : portamento
+	
+	//quick solution
+	_channels[_tracks[trackNumber].pattern.note.channelNumber].period = periods[_tracks[trackNumber].pattern.note.noteNumber & 0x3F];
+	_channels[_tracks[trackNumber].pattern.note.channelNumber].volume = _tracks[trackNumber].pattern.note.volume;
 }
 void Tfmx::doMacros(uint8 trackNumber) {
-	//Quick copy and paste: will load macro in similiar fashion as pattern data and then be able to cycle through it
+	if (_tracks[trackNumber].macro.newFlag) {
 	uint32 startPosition;
 	uint32 endPosition;
 	int32 numCommands;		//number of longword pattern commands or notes
 	startPosition = _macroPointers[_tracks[trackNumber].pattern.note.macroNumber]; // -> might need this for jump commands: + _tracks[trackNumber].pattern.note.macroOffset;
 	endPosition = _macroPointers[_tracks[trackNumber].pattern.note.macroNumber + 1];
 	numCommands = (endPosition - startPosition) / 4; //long word commands also - so 4 per line
+	_tracks[trackNumber].macro.newFlag = false;
+	_tracks[trackNumber].macro.length = numCommands;
+	_tracks[trackNumber].macro.count = 0;
 
 	Common::MemoryReadStream dataStream(_data, _dataSize);
 	Common::SeekableSubReadStream macroSubStream(&dataStream, startPosition, endPosition);
@@ -409,7 +444,15 @@ void Tfmx::doMacros(uint8 trackNumber) {
 	for (int i = 0; i < numCommands; i++) {
 		_tracks[trackNumber].macro.data[i] = macroSubStream.readUint32BE();
 	}
-
+	}
+	
+	//MASKING for uint32 pattern data 
+	//First byte is OPCODE
+	//TODO: Might only need to read OPCODE initially and then use other masks as needed in each case
+	uint8 byte1 = *(_tracks[trackNumber].macro.data) >> 24;
+	uint8 byte2 = *(_tracks[trackNumber].macro.data) & 0x00FF0000 >> 16;
+	uint8 byte3 = *(_tracks[trackNumber].macro.data) & 0x0000FF00 >> 8;
+	uint8 byte4 = *(_tracks[trackNumber].macro.data) & 0x000000FF;
 	//TODO: IMPORTANT CASES TO SETUP FOR SAMPLE LOADING
 	//00 : DMA Reset
 	//01 : DMA Start
@@ -419,32 +462,71 @@ void Tfmx::doMacros(uint8 trackNumber) {
 	//07 : End Macro
 	//13 : DMA Off
 
-	//MASKING for uint32 pattern data 
-	//First byte is OPCODE
-	//TODO: Might only need to read OPCODE initially and then use other masks as needed in each case
-	uint8 byte1 = *(_tracks[trackNumber].macro.data) & 0xFF000000 >> 24;
-	uint8 byte2 = *(_tracks[trackNumber].macro.data) & 0x00FF0000 >> 16;
-	uint8 byte3 = *(_tracks[trackNumber].macro.data) & 0x0000FF00 >> 8;
-	uint8 byte4 = *(_tracks[trackNumber].macro.data) & 0x000000FF;
+	switch (byte1) {
+	case 0x00: //DMAoff reset
+		_tracks[trackNumber].sample.onFlag = false;
+		_tracks[trackNumber].sample.offset = 0;
+		_tracks[trackNumber].sample.length = 0;
+		break;
+	case 0x01:
+		_tracks[trackNumber].sample.onFlag = true;
+		break;
+	case 0x02: //set sample offset
+		_tracks[trackNumber].sample.offset = *(_tracks[trackNumber].macro.data) & 0x00FFFFFF;
+		break;
+	case 0x03: //set sample length
+		_tracks[trackNumber].sample.length = ( *(_tracks[trackNumber].macro.data) & 0x0000FFFF ) * 2;
+		break;
+	case 0x07:
+		_tracks[trackNumber].macro.newFlag = true;
+		break;
+	case 0x0D: //add volume to channel;.
+		if (byte3 != 0xFE) {
+			uint8 channelNumber = _tracks[trackNumber].pattern.note.channelNumber;
+			_channels[channelNumber].volume = (_tracks[trackNumber].pattern.note.volume * 3) + byte4;
 
+			if (_channels[channelNumber].volume > 0x40) {
+				_channels[channelNumber].volume = 0x40;
+			}
+			break;
+		}
+		break;
+	case 0x0E: //set volume
+		if (byte3 != 0xFE) {
+			uint8 channelNumber = _tracks[trackNumber].pattern.note.channelNumber;
+			_channels[channelNumber].volume = byte4;
+			break;
+		}
+		break;
+
+
+	}//end switch
+
+	_tracks[trackNumber].macro.count++;
+	_tracks[trackNumber].macro.data++;
+
+	if (_tracks[trackNumber].macro.count == _tracks[trackNumber].macro.length) {
+		_tracks[trackNumber].macro.newFlag = true;
+	}
+}
+void Tfmx::interrupt(void) {
+
+	updateTrackstep(); 
+
+	for (int i = 0; i < 4; i++)
+	{
+		setChannelPeriod(i,_channels[i].period);
+		setChannelVolume(i,_channels[i].volume);
+		if (_tracks[i].sample.onFlag) {
+			setChannelData(i, _sampleData + _tracks[i].sample.offset, 0, _tracks[i].sample.length, 0);
+		}	
+	}
 }
 void Tfmx::stopPlayer() {
 	for(int i = 0; i < 8; i++) {
 	_tracks[i].activeFlag = false;
 	}
 	stopPaula();
-}
-void Tfmx::setTempo() {
-	//Safe to ignore for now
-}
-void Tfmx::volumeSlide() {
-}
-void Tfmx::interrupt() {
-	//TODO:
-	//updateTracks(); (-> reads patterns, notes, macros, samples for each track)
-	//Now tracks should be properly initialized with sample data
-	//setChannelPeriod( lookup number in period table );
-	//setChannelData(read track sample data);
 }
 void Tfmx::dumpTracks() {
 	for (int i = 0; i < 8; i++) {
@@ -457,6 +539,10 @@ void Tfmx::dumpTracks() {
 		}
 	}
 }
-
+void Tfmx::setTempo() {
+	//Safe to ignore for now
+}
+void Tfmx::volumeSlide() {
+}
 } // End of namespace Audio
 

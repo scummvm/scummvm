@@ -56,7 +56,8 @@ protected:
 		uint32 _dataSize; 
 
 		//uint8 stream for sample data from SMPL file
-		uint8 *_sampleData;
+		uint8 *_sampleDataU;
+		int8 *_sampleData;
 		uint32 _sampleSize;
 
 		//addresses of tables in MDAT file
@@ -66,7 +67,7 @@ protected:
 
 		//addresses of patterns and macros in MDAT file
 		uint32 _patternPointers[128];
-		uint32 _macroPointers[128]; 
+		uint32 _macroPointers[128];  
 
 		//uint16 stream for current song trackstep
 		//need count and length to keep running tally
@@ -111,6 +112,7 @@ protected:
 			uint16 offset;
 			uint8 saveNumber1;
 			uint8 saveNumber2;
+			uint32 length;
 		//	bool loopFlag;
 		//	uint16 loopCount;
 		};
@@ -118,15 +120,19 @@ protected:
 		//Macro structure for macro data; very similiar to pattern data
 		struct Macro {
 			uint32 *data;
+			uint32 count;
+			uint32 length;
+			bool newFlag;
 			//uint8 number;
 			//will need some other properties here
 		};
 
 		//Sample structure; initialized by macro commands
 		struct Sample {
-			int8 *data;
+			//int8 *data;
 			uint32 offset; //offset into sample file
-			uint32 length; //length of sample
+			uint32 length; //length of sample /number of bytes
+			bool onFlag;
 		};
 
 		//Track structure; contains pattern
@@ -147,6 +153,7 @@ protected:
 		//TODO: Need to setup the nessecary information in channel to pass to PAULA via interrupt()
 		struct Channel {
 			uint8 period;
+			int8 volume;
 		}_channels[4];
 
 		//functions used in playback (in order by relationship)
@@ -162,7 +169,7 @@ protected:
 		void volumeSlide();
 
 		//PAULA Interrupt override
-		virtual void interrupt();
+		virtual void interrupt(void);
 
 		//Debugging function to dump information to console
 		void dumpTracks();
