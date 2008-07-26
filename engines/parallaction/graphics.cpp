@@ -375,6 +375,13 @@ void Gfx::beginFrame() {
 		}
 	}
 
+	_varDrawPathZones = getVar("draw_path_zones");
+	if (_varDrawPathZones == 1 && _vm->getGameType() != GType_BRA) {
+		setVar("draw_path_zones", 0);
+		_varDrawPathZones = 0;
+		warning("Path zones are supported only in Big Red Adventure");
+	}
+
 	if (_skipBackground || (_vm->_screenWidth >= _backgroundInfo.width)) {
 		_varScrollX = 0;
 	} else {
@@ -418,6 +425,19 @@ void Gfx::updateScreen() {
 			break;
 		}
 		g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
+	}
+
+	if (_varDrawPathZones == 1) {
+		Graphics::Surface *surf = g_system->lockScreen();
+		ZoneList::iterator b = _vm->_location._zones.begin();
+		ZoneList::iterator e = _vm->_location._zones.end();
+		for (; b != e; b++) {
+			ZonePtr z = *b;
+			if (z->_type & kZonePath) {
+				surf->frameRect(Common::Rect(z->_left, z->_top, z->_right, z->_bottom), 2);
+			}
+		}
+		g_system->unlockScreen();
 	}
 
 	_varRenderMode = _varAnimRenderMode;
@@ -774,6 +794,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 	registerVar("anim_render_mode", 1);
 	registerVar("misc_render_mode", 1);
+
+	registerVar("draw_path_zones", 0);
 
 	return;
 }

@@ -29,12 +29,9 @@
 #include "common/ptr.h"
 #include "common/list.h"
 
+#include "parallaction/objects.h"
+
 namespace Parallaction {
-
-struct Animation;
-
-typedef Common::List<Common::Point> PointList;
-
 
 class PathBuilder {
 

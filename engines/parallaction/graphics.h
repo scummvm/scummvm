@@ -564,6 +564,7 @@ protected:
 	int32				_varAnimRenderMode;	// 1 = normal, 2 = flat
 	int32				_varMiscRenderMode;	// 1 = normal, 2 = flat
 	int32				_varRenderMode;
+	int32				_varDrawPathZones;	// 0 = don't draw, 1 = draw
 	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
 

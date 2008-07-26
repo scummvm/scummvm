@@ -192,7 +192,7 @@ protected:
 	Question	*parseQuestion();
 
 	void		parseZone(ZoneList &list, char *name);
-	void		parseZoneTypeBlock(ZonePtr z);
+	virtual void parseZoneTypeBlock(ZonePtr z);
 	void		parsePointList(PointList &list);
 	void		parseAnimation(AnimationList &list, char *name);
 	void		parseCommands(CommandList&);
@@ -284,6 +284,9 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
+	virtual void	parseZoneTypeBlock(ZonePtr z);
+	void			parsePathData(ZonePtr z);
+
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {
 	}
@@ -306,6 +309,7 @@ class ProgramParser_ns {
 protected:
 	Parser	*_parser;
 	Parallaction_ns *_vm;
+
 
 	Script	*_script;
 	ProgramPtr	_program;

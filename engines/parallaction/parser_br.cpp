@@ -750,6 +750,67 @@ DECLARE_ZONE_PARSER(type)  {
 	_parser->popTables();
 }
 
+void LocationParser_br::parsePathData(ZonePtr z) {
+
+	PathData *data = new PathData;
+
+	do {
+
+		if (!scumm_stricmp("zone", _tokens[0])) {
+			int id = atoi(_tokens[1]);
+			parsePointList(data->_lists[id]);
+			data->_numLists++;
+		}
+
+		_script->readLineToken(true);
+	} while (scumm_stricmp("endzone", _tokens[0]));
+
+	z->u.path = data;
+}
+
+void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
+	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
+
+	switch (z->_type & 0xFFFF) {
+	case kZoneExamine:	// examine Zone alloc
+		parseExamineData(z);
+		break;
+
+	case kZoneDoor: // door Zone alloc
+		parseDoorData(z);
+		break;
+
+	case kZoneGet:	// get Zone alloc
+		parseGetData(z);
+		break;
+
+	case kZoneMerge:	// merge Zone alloc
+		parseMergeData(z);
+		break;
+
+	case kZoneHear: // hear Zone alloc
+		parseHearData(z);
+		break;
+
+	case kZoneSpeak:	// speak Zone alloc
+		parseSpeakData(z);
+		break;
+
+	// BRA specific zone
+	case kZonePath:
+		parsePathData(z);
+		break;
+
+	default:
+		// eats up 'ENDZONE' line for unprocessed zone types
+		_script->readLineToken(true);
+		break;
+	}
+
+	debugC(7, kDebugParser, "parseZoneTypeBlock() done");
+
+	return;
+}
 
 DECLARE_ANIM_PARSER(file)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(file) ");
