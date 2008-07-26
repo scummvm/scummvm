@@ -25,6 +25,8 @@
 
 #include "common/sys.h"
 #include "common/endian.h"
+#include "common/file.h"
+
 #include "engine/lab.h"
 
 #include <algorithm>
@@ -96,14 +98,15 @@ Block *Lab::getFileBlock(const char *filename) const {
 	return new Block(data, i->second.len);
 }
 
-std::FILE *Lab::openNewStream(const char *filename) const {
+Common::File *Lab::openNewStream(const char *filename) const {
+	Common::File *file;
 	FileMapType::const_iterator i = findFilename(filename);
 	if (i == _fileMap.end())
 		return NULL;
 
-	FILE *file = std::fopen(_labFileName.c_str(), "rb");
-	assert(file);
-	std::fseek(file, i->second.offset, SEEK_SET);
+	file = new Common::File();
+	file->open(_labFileName.c_str());
+	file->seek(i->second.offset, SEEK_SET);
 
 	return file;
 }

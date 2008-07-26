@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/debug.h"
 #include "common/timer.h"
+#include "common/file.h"
 
 #include "engine/smush/smush.h"
 #include "engine/resource.h"
@@ -170,7 +171,7 @@ void Smush::handleFrame() {
 		data = new byte[size];
 		_file.read(data, size);
 		anno = (char *)data;
-		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER)-1) == 0) {
+		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER) - 1) == 0) {
 			//char *annoData = anno + sizeof(ANNO_HEADER);
 
 			// Examples:
@@ -277,7 +278,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	_nbframes = READ_LE_UINT32(s_header + 2);
 	int width = READ_LE_UINT16(s_header + 8);
 	int height = READ_LE_UINT16(s_header + 10);
-	if ((_width != width) || (_height != height)) {
+	if (_width != width || _height != height) {
 		_blocky16.init(width, height);
 	}
 
@@ -291,7 +292,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	// Output information for checking out the flags
 	if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
 		printf("SMUSH Flags:");
-		for(int i = 0; i < 16; i++)
+		for (int i = 0; i < 16; i++)
 			printf(" %d", (flags & (1 << i)) != 0);
 		printf("\n");
 	}
@@ -345,8 +346,8 @@ zlibFile::~zlibFile() {
 
 struct SavePos *zlibFile::getPos() { 
 	struct SavePos *pos;
-	long position = std::ftell(_handle);
-	
+	uint32 position = _handle->pos();
+
 	if (position == -1) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("zlibFile::open() unable to find start position! %m");
@@ -355,24 +356,22 @@ struct SavePos *zlibFile::getPos() {
 	pos = new SavePos;
 	pos->filePos = position;
 	inflateCopy(&pos->streamBuf, &_stream);
-	pos->tmpBuf = new char[BUFFER_SIZE];
+	pos->tmpBuf = new byte[BUFFER_SIZE];
 	memcpy(pos->tmpBuf, _inBuf, BUFFER_SIZE);
 	return pos;
 }
 
 bool zlibFile::setPos(struct SavePos *pos) { 
-	int ret;
-	
 	if (pos == NULL) {
 		warning("Unable to rewind SMUSH movie (no position passed)!");
 		return false;
 	}
-	if (_handle == NULL) {
+	if (!_handle || !_handle->isOpen()) {
 		warning("Unable to rewind SMUSH movie (invalid handle)!");
 		return false;
 	}
-	ret = std::fseek(_handle, pos->filePos, SEEK_SET);
-	if (ret == -1) {
+	_handle->seek(pos->filePos, SEEK_SET);
+	if (_handle->ioFailed()) {
 		warning("Unable to rewind SMUSH movie (seek failed)! %m");
 		return false;
 	}
@@ -387,7 +386,7 @@ bool zlibFile::setPos(struct SavePos *pos) {
 
 bool zlibFile::open(const char *filename) {
 	char flags = 0;
-	_inBuf = (char *)calloc(1, BUFFER_SIZE);
+	_inBuf = (byte *)calloc(1, BUFFER_SIZE);
 
 	if (_handle) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -395,38 +394,39 @@ bool zlibFile::open(const char *filename) {
 		return false;
 	}
 
-	if (filename == NULL || *filename == 0)
+	if (!filename || *filename == 0)
 		return false;
 
 	_handle = g_resourceloader->openNewStream(filename);
-	if (!_handle) {
+	if (!_handle->isOpen()) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("zlibFile::open() zlibFile %s not found", filename);
 		return false;
 	}
 
 	// Read in the GZ header
-	fread(_inBuf, 2, sizeof(char), _handle);				// Header
-	fread(_inBuf, 1, sizeof(char), _handle);				// Method
-	fread(_inBuf, 1, sizeof(char), _handle); flags = _inBuf[0];		// Flags
-	fread(_inBuf, 6, sizeof(char), _handle);				// XFlags
+	_handle->read(_inBuf, 2); // Header
+	_handle->read(_inBuf, 1); // Method
+	_handle->read(_inBuf, 1); // Flags
+	flags = _inBuf[0];
+	_handle->read(_inBuf, 6); // XFlags
 
 	// Xtra & Comment
-	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0)) {
+	if (flags & 0x04 || flags & 0x10) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
 			error("zlibFile::open() Unsupported header flag");
 		}
 		return false;
 	}
 
-	if ((flags & 0x08) != 0) {					// Orig. Name
+	if (flags & 0x08) { // Orig. Name
 		do {
-			fread(_inBuf, 1, sizeof(char), _handle);
-		} while(_inBuf[0] != 0);
+			_handle->read(_inBuf, 1);
+		} while(_inBuf[0]);
 	}
 
-	if ((flags & 0x02) != 0) // CRC
-		fread(_inBuf, 2, sizeof(char), _handle);
+	if (flags & 0x02) // CRC
+		_handle->read(_inBuf, 2);
 
 	memset(_inBuf, 0, BUFFER_SIZE - 1); // Zero buffer (debug)
 	_stream.zalloc = NULL;
@@ -439,14 +439,15 @@ bool zlibFile::open(const char *filename) {
 	_stream.next_in = NULL;
 	_stream.next_out = NULL;
 	_stream.avail_in = 0;
-	_stream.avail_out = BUFFER_SIZE-1;
+	_stream.avail_out = BUFFER_SIZE - 1;
 
 	return true;
 }
 
 void zlibFile::close() {
 	if (_handle) {
-		fclose(_handle);
+		_handle->close();
+		delete _handle;
 		_handle = NULL;
 	}
 
@@ -457,14 +458,14 @@ void zlibFile::close() {
 }
 
 bool zlibFile::isOpen() {
-	return _handle != NULL;
+	return _handle->isOpen();
 }
 
 uint32 zlibFile::read(void *ptr, uint32 len) {
 	int result = Z_OK;
 	bool fileEOF = false;
 
-	if (_handle == NULL) {
+	if (!_handle->isOpen()) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 			error("zlibFile::read() File is not open!");
 		return 0;
@@ -477,9 +478,9 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	_stream.avail_out = len;
 
 	_fileDone = false;
-	while (_stream.avail_out != 0) {
-		if (_stream.avail_in == 0) {	// !eof
-			_stream.avail_in = fread(_inBuf, 1, BUFFER_SIZE-1, _handle);
+	while (_stream.avail_out) {
+		if (_stream.avail_in == 0) { // !EOF
+			_stream.avail_in = _handle->read(_inBuf, BUFFER_SIZE - 1);
 			if (_stream.avail_in == 0) {
 				fileEOF = true;
 				break;
@@ -488,7 +489,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 		}
 
 		result = inflate(&_stream, Z_NO_FLUSH);
-		if (result == Z_STREAM_END) {	// EOF
+		if (result == Z_STREAM_END) { // EOF
 			// "Stream end" is zlib's way of saying that it's done after the current call,
 			// so as long as no calls are made after we've received this message we're OK
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)

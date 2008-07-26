@@ -42,17 +42,21 @@
 
 #include <cstring>
 
+namespace Common {
+	class File;
+}
+
 struct SavePos {
-	long filePos;
+	uint32 filePos;
 	z_stream streamBuf;
-	char *tmpBuf;
+	byte *tmpBuf;
 };
 
 class zlibFile {
 private:
-	FILE *_handle;
+	Common::File *_handle;
 	z_stream _stream;	// Zlib stream
-	char *_inBuf;		// Buffer for decompression
+	byte *_inBuf;		// Buffer for decompression
 	bool _fileDone;
 
 public:

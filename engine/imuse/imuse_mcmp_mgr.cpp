@@ -26,6 +26,7 @@
 #include "common/sys.h"
 #include "common/endian.h"
 #include "common/debug.h"
+#include "common/file.h"
 
 #include "engine/resource.h"
 #include "engine/engine.h"
@@ -46,8 +47,7 @@ McmpMgr::McmpMgr() {
 }
 
 McmpMgr::~McmpMgr() {
-	if (_file)
-		fclose(_file);
+	delete _file;
 	delete[] _compTable;
 	delete[] _compInput;
 }
@@ -55,53 +55,46 @@ McmpMgr::~McmpMgr() {
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	_file = g_resourceloader->openNewStream(filename);
 
-	if (!_file) {
+	if (!_file || !_file->isOpen()) {
 		warning("McmpMgr::openSound() Can't open sound MCMP file: %s", filename);
 		return false;
 	}
 
-	uint32 tag;
-	fread(&tag, 1, 4, _file);
-	if (READ_BE_UINT32(&tag) != MKID_BE('MCMP')) {
+	uint32 tag = _file->readUint32BE();
+	if (tag != 'MCMP') {
 		error("McmpMgr::openSound() Expected MCMP tag");
 		return false;
 	}
 
-	fread(&_numCompItems, 1, 2, _file);
-	_numCompItems = READ_BE_UINT16(&_numCompItems);
+	_numCompItems = _file->readSint16BE();
 	assert(_numCompItems > 0);
 
-	int offset = ftell(_file) + (_numCompItems * 9) + 2;
+	int32 offset = _file->pos() + (_numCompItems * 9) + 2;
 	_numCompItems--;
 	_compTable = new CompTable[_numCompItems];
-	fseek(_file, 5, SEEK_CUR);
-	fread(&_compTable[0].decompSize, 1, 4, _file);
-	int headerSize = _compTable[0].decompSize = READ_BE_UINT32(&_compTable[0].decompSize);
-	int maxSize = headerSize;
+	_file->seek(5, SEEK_CUR);
+	int32 headerSize = _compTable[0].decompSize = _file->readSint32BE();
+	int32 maxSize = headerSize;
 	offset += headerSize;
 
 	int i;
 	for (i = 0; i < _numCompItems; i++) {
-		fread(&_compTable[i].codec, 1, 1, _file);
-		fread(&_compTable[i].decompSize, 1, 4, _file);
-		_compTable[i].decompSize = READ_BE_UINT32(&_compTable[i].decompSize);
-		fread(&_compTable[i].compSize, 1, 4, _file);
-		_compTable[i].compSize = READ_BE_UINT32(&_compTable[i].compSize);
+		_compTable[i].codec = _file->readByte();
+		_compTable[i].decompSize = _file->readSint32BE();
+		_compTable[i].compSize = _file->readSint32BE();
 		_compTable[i].offset = offset;
 		offset += _compTable[i].compSize;
 		if (_compTable[i].compSize > maxSize)
 			maxSize = _compTable[i].compSize;
 	}
-	int16 sizeCodecs;
-	fread(&sizeCodecs, 1, 2, _file);
-	sizeCodecs = READ_BE_UINT16(&sizeCodecs);
+	int16 sizeCodecs = _file->readSint16BE();
 	for (i = 0; i < _numCompItems; i++) {
 		_compTable[i].offset += sizeCodecs;
 	}
-	fseek(_file, sizeCodecs, SEEK_CUR);
+	_file->seek(sizeCodecs, SEEK_CUR);
 	// hack: one more byte at the end of input buffer
 	_compInput = new byte[maxSize + 1];
-	fread(_compInput, 1, headerSize, _file);
+	_file->read(_compInput, headerSize);
 	*resPtr = _compInput;
 	offsetData = headerSize;
 	return true;
@@ -111,7 +104,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 	int32 i, final_size, output_size;
 	int skip, first_block, last_block;
 
-	if (!_file) {
+	if (!_file || !_file->isOpen()) {
 		error("McmpMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}
@@ -132,8 +125,8 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 		if (_lastBlock != i) {
 			// hack: one more zero byte at the end of input buffer
 			_compInput[_compTable[i].compSize] = 0;
-			fseek(_file, _compTable[i].offset, SEEK_SET);
-			fread(_compInput, 1, _compTable[i].compSize, _file);
+			_file->seek(_compTable[i].offset, SEEK_SET);
+			_file->read(_compInput, _compTable[i].compSize);
 			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable);
 			_outputSize = _compTable[i].decompSize;
 			if (_outputSize > 0x2000) {

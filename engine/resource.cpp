@@ -147,7 +147,7 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 		return l->getFileBlock(filename);
 }
 
-std::FILE *ResourceLoader::openNewStream(const char *filename) const {
+Common::File *ResourceLoader::openNewStream(const char *filename) const {
 	const Lab *l = findFile(filename);
 
 	if (l == NULL)
@@ -158,10 +158,10 @@ std::FILE *ResourceLoader::openNewStream(const char *filename) const {
 
 int ResourceLoader::fileLength(const char *filename) const {
 	const Lab *l = findFile(filename);
-	if (l == NULL)
-		return 0;
-	else
+	if (l)
 		return l->fileLength(filename);
+	else
+		return 0;
 }
 
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {

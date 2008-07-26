@@ -96,7 +96,7 @@ class ResourceLoader {
 public:
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
-	std::FILE *openNewStream(const char *filename) const;
+	Common::File *openNewStream(const char *filename) const;
 	int fileLength(const char *filename) const;
 
 	bool exportResource(const char *filename);

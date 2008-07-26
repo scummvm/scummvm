@@ -35,6 +35,10 @@
 
 #include "engine/imuse/imuse_sndmgr.h"
 
+namespace Common {
+	class File;
+}
+
 class McmpMgr {
 private:
 
@@ -48,7 +52,7 @@ private:
 	CompTable *_compTable;
 	int16 _numCompItems;
 	int _curSample;
-	FILE *_file;
+	Common::File *_file;
 	byte _compOutput[0x2000];
 	byte *_compInput;
 	int _outputSize;

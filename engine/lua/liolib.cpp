@@ -120,8 +120,8 @@ static void io_readfrom (void)
 	else {
       current = fopen(s, "r");
 #ifdef LUA_ADD_CUSTOM_FOPEN
-      if (current == NULL)
-	    current = g_resourceloader->openNewStream(s);
+//      if (current == NULL)
+//	    current = g_resourceloader->openNewStream(s);
 #endif
 	}
     if (current == NULL) {
