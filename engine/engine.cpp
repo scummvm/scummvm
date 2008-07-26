@@ -24,6 +24,7 @@
  */
 
 #include "common/sys.h"
+#include "common/fs.h"
 
 #include "engine/engine.h"
 #include "engine/scene.h"
@@ -50,20 +51,9 @@ extern Imuse *g_imuse;
 int g_imuseState = -1;
 int g_flags = 0;
 
-#ifdef _WIN32
-
-#include <windows.h>
-
-WIN32_FIND_DATAA g_find_file_data;
-HANDLE g_searchFile;
-bool g_firstFind;
-
-#else
-
-char g_find_file_data[100];
-DIR *g_searchFile;
-
-#endif
+FilesystemNode *g_fsdir;
+FSList *g_fslist;
+FSList::const_iterator g_findfile;
 
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
@@ -81,7 +71,8 @@ Engine::Engine() :
 	_flipEnable = true;
 	_lastUpdateTime = 0;
 	_refreshDrawNeeded = true;
-	g_searchFile = NULL;
+	g_fslist = NULL;
+	g_fsdir = NULL;
 	_savedState = NULL;
 	_fps[0] = 0;
 

@@ -23,15 +23,13 @@
  *
  */
 
-#ifdef _WIN32
-#include <windows.h>
-#undef ARRAYSIZE
-#endif
-
 #include "common/sys.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/savefile.h"
 
 #include "mixer/mixer.h"
 
@@ -65,18 +63,9 @@
 
 extern Imuse *g_imuse;
 
-#ifdef _WIN32
-
-extern WIN32_FIND_DATAA g_find_file_data;
-extern HANDLE g_searchFile;
-extern bool g_firstFind;
-
-#else
-
-extern char g_find_file_data[100];
-extern DIR *g_searchFile;
-
-#endif                                                                                                                                                      
+extern FilesystemNode *g_fsdir;
+extern FSList *g_fslist;
+extern FSList::const_iterator g_findfile;
 
 #define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 #define DEBUG_FUNCTION()       debugFunction("Function", __FUNCTION__)
@@ -364,8 +353,11 @@ static void ReadRegistryValue() {
 	
 	DEBUG_FUNCTION();
 	key = luaL_check_string(1);
-	val = g_registry->get(key, NULL);
-	lua_pushstring(const_cast<char *>(val));
+	val = g_registry->get(key, "");
+	if (val[0] == 0)
+		lua_pushnil();
+	else
+		lua_pushstring(const_cast<char *>(val));
 }
 
 static void WriteRegistryValue() {
@@ -1535,20 +1527,20 @@ static void TextFileGetLine() {
 	char textBuf[512];
 	textBuf[0] = 0;
 	const char *filename;
-	FILE *file;
+	Common::File file;
 	
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	file = fopen(filename, "r");
-	if (!file) {
+	file.open(filename);
+	if (!file.isOpen()) {
 		lua_pushnil();
 		return;
 	}
 
 	int pos = check_int(2);
-	fseek(file, pos, SEEK_SET);
-	fgets(textBuf, 512, file);
-	fclose(file);
+	file.seek(pos, SEEK_SET);
+	file.readLine(textBuf, 512);
+	file.close();
 
 	lua_pushstring(textBuf);
 }
@@ -1556,12 +1548,12 @@ static void TextFileGetLine() {
 static void TextFileGetLineCount() {
 	char textBuf[512];
 	const char *filename;
-	FILE *file;
+	Common::File file;
 	
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	file = fopen(filename, "r");
-	if (!file) {
+	file.open(filename);
+	if (!file.isOpen()) {
 		lua_pushnil();
 		return;
 	}
@@ -1570,17 +1562,17 @@ static void TextFileGetLineCount() {
 
 	int line = 0;
 	for (;;) {
-		if (feof(file))
+		if (file.eof())
 			break;
 		lua_pushobject(result);
 		lua_pushnumber(line);
-		int pos = ftell(file);
+		int pos = file.pos();
 		lua_pushnumber(pos);
 		lua_settable();
-		fgets(textBuf, 512, file);
+		file.readLine(textBuf, 512);
 		line++;
 	}
-	fclose(file);
+	file.close();
 
 	lua_pushobject(result);
 	lua_pushstring("count");
@@ -2080,7 +2072,7 @@ static void RestoreIMuse() {
 	g_imuse->resetState();
 	g_imuse->restoreState(savedIMuse);
 	delete savedIMuse;
-	unlink("grim.tmp");
+	g_saveFileMan->removeSavefile("grim.tmp");
 }
 
 static void SetSoundPosition() {
@@ -2128,73 +2120,35 @@ static void PlaySoundAt() {
 
 static void FileFindDispose() {
 	DEBUG_FUNCTION();
-	if (g_searchFile) {
-#ifdef _WIN32
-		FindClose(g_searchFile);
-#else
-		closedir(g_searchFile);
-#endif
-		g_searchFile = NULL;
+
+	if (g_fslist) {
+		delete g_fslist;
+		g_fslist = NULL;
+	}
+
+	if (g_fsdir) {
+		delete g_fsdir;
+		g_fsdir = NULL;
 	}
 }
 
 static void luaFileFindNext() {
-	bool found = false;
-#ifndef _WIN32
-	dirent *de;
-#endif
-	
-	DEBUG_FUNCTION();
-	if (g_searchFile) {
-#ifdef _WIN32
-		if (g_firstFind) {
-			g_firstFind = false;
-			found = true;
-		} else {
-			do {
-				if (FindNextFile(g_searchFile, &g_find_file_data) != 0)
-					found = true;
-			} while (found && (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY));
-		}
-#else
-		do {
-			de = readdir(g_searchFile);
-			if (de) {
-				// If the 'extension' is a wildcard pattern then check only the extensions,
-				// otherwise check the entire filename
-				if (g_find_file_data[0] == '*' && g_find_file_data[1] == '.') {
-					char *c = strrchr(de->d_name, '.');
-					
-					if (c != NULL && !strcasecmp(c, &g_find_file_data[1])) {
-						found = true;
-						break;
-					}
-				} else if (!strcasecmp(de->d_name, g_find_file_data)) {
-					found = true;
-					break;
-				}
-			}
-		} while (de);
-#endif
-
-#ifdef _WIN32
-		if (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-#else
-		if (!de)
-#endif
-			found = false;
-	}
-
-	if (found) {
-#ifdef _WIN32
-		lua_pushstring(g_find_file_data.cFileName);
-#else
-		lua_pushstring(de->d_name);
-#endif
+	if (g_findfile != g_fslist->end()) {
+		lua_pushstring(g_findfile->getPath().c_str());
+		g_findfile++;
 	} else {
 		lua_pushnil();
+		FileFindDispose();
 	}
 }
+
+#ifdef UNIX
+#ifdef MACOSX
+#define DEFAULT_SAVE_PATH "Documents/Residual Savegames"
+#else
+#define DEFAULT_SAVE_PATH ".residual"
+#endif
+#endif
 
 static void luaFileFindFirst() {
 	const char *path, *extension;
@@ -2205,29 +2159,28 @@ static void luaFileFindFirst() {
 	pathObj = lua_getparam(2);
 	FileFindDispose();
 
-	if (lua_isnil(pathObj))
-		path = ".";
-	else
-		path = lua_getstring(pathObj);
-	
-#ifdef _WIN32
-	std::string dir_strWin32 = path;
-	dir_strWin32 += "/";
-	dir_strWin32 += extension;
-	g_searchFile = FindFirstFile(dir_strWin32.c_str(), &g_find_file_data);
-	g_firstFind = true;
-	if (g_searchFile == INVALID_HANDLE_VALUE)
-		g_searchFile = NULL;
-#else
-	g_searchFile = opendir(path);
-	strcpy(g_find_file_data, extension);
+	if (lua_isnil(pathObj)) {
+		path = "";
+#ifdef DEFAULT_SAVE_PATH
+#if defined(UNIX)
+		const char *home = getenv("HOME");
+		if (home && *home && strlen(home) < MAXPATHLEN) {
+			snprintf(path, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
+		}
 #endif
+#endif
+	} else
+		path = lua_getstring(pathObj);
 
-	if (g_searchFile) {
-		luaFileFindNext();
-	} else {
+	g_fslist = new FSList();
+	g_fsdir = new FilesystemNode(path);
+	g_fsdir->lookupFile(*g_fslist, extension, false, true, 0);
+	if (g_fslist->empty())
 		lua_pushnil();
-	}
+
+	g_findfile = g_fslist->begin();
+
+	luaFileFindNext();
 }
 
 void setFrameTime(float frameTime) {
@@ -3112,6 +3065,15 @@ static void Save() {
 	g_engine->_savegameSaveRequest = true;
 }
 
+static void lua_remove() {
+	if (g_saveFileMan->removeSavefile(luaL_check_string(1)))
+		lua_pushuserdata(NULL);
+	else {
+	    lua_pushnil();
+		lua_pushstring(g_saveFileMan->getErrorDesc().c_str());
+	}
+}
+
 static PointerId saveCallback(int32 /*tag*/, PointerId ptr, SaveSint32 /*savedState*/) {
 	DEBUG_FUNCTION();
 	return ptr;
@@ -3467,6 +3429,7 @@ struct luaL_reg mainOpcodes[] = {
 	{ "CheckForFile", CheckForFile },
 	{ "Load", Load },
 	{ "Save", Save },
+	{ "remove", lua_remove },
 	{ "SetActorColormap", SetActorColormap },
 	{ "GetActorCostume", GetActorCostume },
 	{ "SetActorCostume", SetActorCostume },

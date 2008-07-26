@@ -389,7 +389,7 @@ static void errorfb (void)
 static struct luaL_reg iolib[] = {
 {"setlocale", setloc},
 {"execute",  io_execute},
-{"remove",   io_remove},
+//{"remove",   io_remove},
 {"rename",   io_rename},
 {"tmpname",   io_tmpname},
 {"getenv",   io_getenv},
