@@ -28,15 +28,29 @@
 namespace Parallaction {
 
 
+
 inline byte PathBuffer::getValue(uint16 x, uint16 y) {
 	byte m = data[(x >> 3) + y * internalWidth];
-	uint n = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
-	return ((1 << n) & m) >> n;
+	uint bit = 0;
+	switch (_vm->getGameType()) {
+	case GType_Nippon:
+		bit = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
+		break;
+
+	case GType_BRA:
+		// Amiga and PC versions pack the path bits the same way in BRA
+		bit = 7 - (x & 7);
+		break;
+
+	default:
+		error("path mask not yet implemented for this game type");
+	}
+	return ((1 << bit) & m) >> bit;
 }
 
 // adjusts position towards nearest walkable point
 //
-void PathBuilder::correctPathPoint(Common::Point &to) {
+void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 
 	if (_vm->_pathBuffer->getValue(to.x, to.y)) return;
 
@@ -84,7 +98,7 @@ void PathBuilder::correctPathPoint(Common::Point &to) {
 
 }
 
-uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
+uint32 PathBuilder_NS::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
 
 	uint32 v28 = 0;
 	uint32 v2C = 0;
@@ -128,19 +142,11 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 	return v34;
 
 }
-#if 0
-void printNodes(WalkNodeList *list, const char* text) {
-	printf("%s\n-------------------\n", text);
-	for (WalkNodeList::iterator it = list->begin(); it != list->end(); it++)
-		printf("node [%p] (%i, %i)\n", *it, (*it)->_x, (*it)->_y);
 
-	return;
-}
-#endif
 //
 //	x, y: mouse click (foot) coordinates
 //
-PointList *PathBuilder::buildPath(uint16 x, uint16 y) {
+PointList *PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
 
 	Common::Point to(x, y);
@@ -169,7 +175,7 @@ PointList *PathBuilder::buildPath(uint16 x, uint16 y) {
 
 	Common::Point stop(v48.x, v48.y);
 	Common::Point pos;
-	_vm->_char.getFoot(pos);
+	_ch->getFoot(pos);
 
 	uint32 v34 = buildSubPath(pos, stop);
 	if (v38 != 0 && v34 > v38) {
@@ -201,14 +207,14 @@ PointList *PathBuilder::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder::walkFunc1(int16 x, int16 y, Common::Point& node) {
+uint16 PathBuilder_NS::walkFunc1(int16 x, int16 y, Common::Point& node) {
 
 	Common::Point arg(x, y);
 
 	Common::Point v4(0, 0);
 
 	Common::Point foot;
-	_vm->_char.getFoot(foot);
+	_ch->getFoot(foot);
 
 	Common::Point v8(foot);
 
@@ -364,8 +370,85 @@ void Parallaction_ns::walk(Character &character) {
 
 
 
-PathBuilder::PathBuilder(AnimationPtr anim) : _anim(anim), _list(0) {
+PathBuilder_NS::PathBuilder_NS(Character *ch) : PathBuilder(ch), _list(0) {
 }
 
+#define isPositionOnPath(x,y) _vm->_pathBuffer->getValue((x), (y))
+
+
+bool PathBuilder_BR::directPathExists(const Common::Point &from, const Common::Point &to) {
+
+	Common::Point copy(from);
+	Common::Point p(copy);
+
+	while (p != to) {
+
+		if (p.x < to.x && isPositionOnPath(p.x + 1, p.y)) p.x++;
+		if (p.x > to.x && isPositionOnPath(p.x - 1, p.y)) p.x--;
+		if (p.y < to.y && isPositionOnPath(p.x, p.y + 1)) p.y++;
+		if (p.y > to.y && isPositionOnPath(p.x, p.y - 1)) p.y--;
+
+		if (p == copy && p != to) {
+			return false;
+		}
+
+		copy = p;
+	}
+
+	return true;
+}
+
+PointList* PathBuilder_BR::buildPath(uint16 x, uint16 y) {
+	Common::Point foot;
+	_ch->getFoot(foot);
+
+	debugC(1, kDebugWalk, "buildPath: from (%i, %i) to (%i, %i)", foot.x, foot.y, x, y);
+
+	PointList *list = new PointList;
+
+	// look for easy path first
+	Common::Point dest(x, y);
+	if (directPathExists(foot, dest)) {
+		list->push_back(dest);
+		debugC(3, kDebugWalk, "buildPath: direct path found");
+		return list;
+	}
+
+	// look for short circuit cases
+	ZonePtr z0 = _vm->hitZone(kZonePath, x, y);
+	if (z0 == nullZonePtr) {
+		list->push_back(dest);
+		debugC(3, kDebugWalk, "buildPath: corner case 0");
+		return list;
+	}
+	ZonePtr z1 = _vm->hitZone(kZonePath, foot.x, foot.y);
+	if (z1 == nullZonePtr || z1 == z0) {
+		list->push_back(dest);
+		debugC(3, kDebugWalk, "buildPath: corner case 1");
+		return list;
+	}
+
+	// build complex path
+	int id = atoi(z0->_name);
+
+	if (z1->u.path->_lists[id].empty()) {
+		list->clear();
+		debugC(3, kDebugWalk, "buildPath: no path");
+		return list;
+	}
+
+	PointList::iterator b = z1->u.path->_lists[id].begin();
+	PointList::iterator e = z1->u.path->_lists[id].end();
+	for ( ; b != e; b++) {
+		list->push_front(*b);
+	}
+	list->push_back(dest);
+	debugC(3, kDebugWalk, "buildPath: complex path");
+
+	return list;
+}
+
+PathBuilder_BR::PathBuilder_BR(Character *ch) : PathBuilder(ch) {
+}
 
 } // namespace Parallaction

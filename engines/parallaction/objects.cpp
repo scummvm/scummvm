@@ -60,14 +60,14 @@ Animation::~Animation() {
 uint16 Animation::width() const {
 	if (!gfxobj) return 0;
 	Common::Rect r;
-	gfxobj->getRect(0, r);
+	gfxobj->getRect(_frame, r);
 	return r.width();
 }
 
 uint16 Animation::height() const {
 	if (!gfxobj) return 0;
 	Common::Rect r;
-	gfxobj->getRect(0, r);
+	gfxobj->getRect(_frame, r);
 	return r.height();
 }
 

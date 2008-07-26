@@ -198,10 +198,12 @@ struct Character {
 	GfxObj			*_head;
 	GfxObj			*_talk;
 	GfxObj			*_objs;
-	PathBuilder		_builder;
+	PathBuilder		*_builder;
 	PointList		*_walkPath;
 
 	Character(Parallaction *vm);
+	~Character();
+
 	void getFoot(Common::Point &foot);
 	void setFoot(const Common::Point &foot);
 	void scheduleWalk(int16 x, int16 y);
@@ -379,6 +381,7 @@ public:
 	void		beep();
 
 	ZonePtr		_zoneTrap;
+	PathBuilder* getPathBuilder(Character *ch);
 
 public:
 //	const char **_zoneFlagNamesRes;

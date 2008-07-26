@@ -497,7 +497,7 @@ const char Character::_suffixTras[] = "tras";
 const char Character::_empty[] = "\0";
 
 
-Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation), _builder(_ani) {
+Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
@@ -516,25 +516,63 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation), _builder(
 	_ani->_flags = kFlagsActive | kFlagsNoName;
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
+
+	// TODO: move creation into Parallaction. Needs to make Character a pointer first.
+	if (_vm->getGameType() == GType_Nippon)
+		_builder = new PathBuilder_NS(this);
+	else
+		_builder = new PathBuilder_BR(this);
+}
+
+Character::~Character() {
+	delete _builder;
+	_builder = 0;
+
+	free();
 }
 
 void Character::getFoot(Common::Point &foot) {
-	foot.x = _ani->_left + _ani->width() / 2;
-	foot.y = _ani->_top + _ani->height();
+	Common::Rect rect;
+	_ani->gfxobj->getRect(_ani->_frame, rect);
+
+	foot.x = _ani->_left + (rect.left + rect.width() / 2);
+	foot.y = _ani->_top + (rect.top + rect.height());
 }
 
 void Character::setFoot(const Common::Point &foot) {
-	_ani->_left = foot.x - _ani->width() / 2;
-	_ani->_top = foot.y - _ani->height();
+	Common::Rect rect;
+	_ani->gfxobj->getRect(_ani->_frame, rect);
+
+	_ani->_left = foot.x - (rect.left + rect.width() / 2);
+	_ani->_top = foot.y - (rect.top + rect.height());
 }
+
+#if 0
+void dumpPath(PointList *list, const char* text) {
+	for (PointList::iterator it = list->begin(); it != list->end(); it++)
+		printf("node (%i, %i)\n", it->x, it->y);
+
+	return;
+}
+#endif
 
 void Character::scheduleWalk(int16 x, int16 y) {
 	if ((_ani->_flags & kFlagsRemove) || (_ani->_flags & kFlagsActive) == 0) {
 		return;
 	}
 
-	_walkPath = _builder.buildPath(x, y);
-	_engineFlags |= kEngineWalking;
+	_walkPath = _builder->buildPath(x, y);
+#if 0
+	dumpPath(_walkPath, _name);
+#endif
+
+	if (_vm->getGameType() == GType_Nippon) {
+		_engineFlags |= kEngineWalking;
+	} else {
+		// BRA can't walk yet!
+		delete _walkPath;
+		_walkPath = 0;
+	}
 }
 
 void Character::free() {

@@ -31,11 +31,25 @@
 
 #include "parallaction/objects.h"
 
+
 namespace Parallaction {
+
+struct Character;
 
 class PathBuilder {
 
-	AnimationPtr	_anim;
+protected:
+	Character *_ch;
+
+public:
+	PathBuilder(Character *ch) : _ch(ch) { }
+	virtual ~PathBuilder() { }
+
+	virtual PointList* buildPath(uint16 x, uint16 y) = 0;
+};
+
+
+class PathBuilder_NS : public PathBuilder {
 
 	PointList	*_list;
 	PointList	_subPath;
@@ -45,9 +59,18 @@ class PathBuilder {
 	uint16 walkFunc1(int16 x, int16 y, Common::Point& node);
 
 public:
-	PathBuilder(AnimationPtr anim);
+	PathBuilder_NS(Character *ch);
 	PointList* buildPath(uint16 x, uint16 y);
+};
 
+
+class PathBuilder_BR : public PathBuilder {
+
+	bool directPathExists(const Common::Point &from, const Common::Point &to);
+
+public:
+	PathBuilder_BR(Character *ch);
+	PointList* buildPath(uint16 x, uint16 y);
 };
 
 
