@@ -348,7 +348,7 @@ struct SavePos *zlibFile::getPos() {
 	struct SavePos *pos;
 	uint32 position = _handle->pos();
 
-	if (position == -1) {
+	if (position == ((uint32)  -1)) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("zlibFile::open() unable to find start position! %m");
 		return NULL;
