@@ -43,9 +43,6 @@
 
 #include "engine/imuse/imuse.h"
 
-#include <SDL.h>
-#include <SDL_video.h>
-
 // Hacky global toggles for experimental/debug code
 bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
 enDebugLevels debugLevel = DEBUG_NONE;
