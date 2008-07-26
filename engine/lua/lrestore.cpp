@@ -31,7 +31,7 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 				udata[2] = b[1];
 				udata[3] = b[0];
 #else
-				memcpy(&udata, v, 4);
+				memcpy(&udata, &v, 4);
 #endif
 			}
 			break;
@@ -116,7 +116,7 @@ struct ArrayIDObj {
 	PointerId idObj;
 };
 
-static int32 sortCallback(const void *id1, const void *id2) {
+static int sortCallback(const void *id1, const void *id2) {
 #ifdef TARGET_64BITS
 	uint64 p1 = ((ArrayIDObj *)id1)->idObj.low | ((uint64)(((ArrayIDObj *)id1)->idObj.hi)) << 32;
 	uint64 p2 = ((ArrayIDObj *)id2)->idObj.low | ((uint64)(((ArrayIDObj *)id2)->idObj.hi)) << 32;
