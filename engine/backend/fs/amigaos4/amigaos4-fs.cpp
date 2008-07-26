@@ -123,7 +123,7 @@ const char *lastPathComponent(const Common::String &str) {
 	int offset = str.size();
 
 	if (offset <= 0) {
-		debug(6, "Bad offset");
+		//debug(6, "Bad offset");
 		return 0;
 	}
 
@@ -156,7 +156,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 	//assert(offset > 0);
 
 	if (offset <= 0) {
-		debug(6, "Bad offset");
+		//debug(6, "Bad offset");
 		return;
 	}
 
@@ -167,7 +167,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		debug(6, "FileInfoBlock is NULL");
+		//debug(6, "FileInfoBlock is NULL");
 		LEAVE();
 		return;
 	}
@@ -215,7 +215,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		if (IDOS->IoErr() != ERROR_LINE_TOO_LONG) {
 			_bIsValid = false;
-			debug(6, "IoErr() != ERROR_LINE_TOO_LONG");
+			//debug(6, "IoErr() != ERROR_LINE_TOO_LONG");
 			LEAVE();
 			delete[] n;
 			return;
@@ -230,7 +230,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 	struct FileInfoBlock *fib = (struct	FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		debug(6, "FileInfoBlock is NULL");
+		//debug(6, "FileInfoBlock is NULL");
 		LEAVE();
 		return;
 	}
@@ -282,7 +282,7 @@ bool AmigaOSFilesystemNode::exists() const {
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		debug(6, "FileInfoBlock is NULL");
+		//debug(6, "FileInfoBlock is NULL");
 		LEAVE();
 		return false;
 	}
@@ -302,7 +302,7 @@ bool AmigaOSFilesystemNode::exists() const {
 AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
 	ENTER();
 	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
+		//debug(6, "Not a directory");
 		return 0;
 	}
 
@@ -315,7 +315,7 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
 	BPTR lock = IDOS->Lock(newPath.c_str(), SHARED_LOCK);
 
 	if (!lock) {
-		debug(6, "Bad path");
+		//debug(6, "Bad path");
 		return 0;
 	}
 
@@ -331,19 +331,19 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	//TODO: honor the hidden flag
 
 	if (!_bIsValid) {
-		debug(6, "Invalid node");
+		//debug(6, "Invalid node");
 		LEAVE();
 		return false; // Empty list
 	}
 
 	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
+		//debug(6, "Not a directory");
 		LEAVE();
 		return false; // Empty list
 	}
 
 	if (_pFileLock == 0) {
-		debug(6, "Root node");
+		//debug(6, "Root node");
 		LEAVE();
 		myList = listVolumes();
 		return true;
@@ -412,7 +412,7 @@ int AmigaOSFilesystemNode::getFibProtection() const {
 	int fibProt = -1;
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		debug(6, "FileInfoBlock is NULL");
+		//debug(6, "FileInfoBlock is NULL");
 		LEAVE();
 		return fibProt;
 	}
@@ -434,13 +434,13 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
 	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
+		//debug(6, "Not a directory");
 		LEAVE();
 		return 0;
 	}
 
 	if (_pFileLock == 0) {
-		debug(6, "Root node");
+		//debug(6, "Root node");
 		LEAVE();
 		return new AmigaOSFilesystemNode(*this);
 	}
@@ -502,7 +502,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
-		debug(6, "Cannot lock the DOS list");
+		//debug(6, "Cannot lock the DOS list");
 		LEAVE();
 		return myList;
 	}
