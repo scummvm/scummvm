@@ -56,7 +56,7 @@ class PathBuilder_NS : public PathBuilder {
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
-	uint16 walkFunc1(int16 x, int16 y, Common::Point& node);
+	uint16 walkFunc1(const Common::Point &to, Common::Point& node);
 
 public:
 	PathBuilder_NS(Character *ch);

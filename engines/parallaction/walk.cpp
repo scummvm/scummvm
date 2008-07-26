@@ -29,6 +29,8 @@ namespace Parallaction {
 
 
 
+#define IS_PATH_CLEAR(x,y) _vm->_pathBuffer->getValue((x), (y))
+
 inline byte PathBuffer::getValue(uint16 x, uint16 y) {
 	byte m = data[(x >> 3) + y * internalWidth];
 	uint bit = 0;
@@ -52,16 +54,16 @@ inline byte PathBuffer::getValue(uint16 x, uint16 y) {
 //
 void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 
-	if (_vm->_pathBuffer->getValue(to.x, to.y)) return;
+	if (IS_PATH_CLEAR(to.x, to.y)) return;
 
 	int16 right = to.x;
 	int16 left = to.x;
 	do {
 		right++;
-	} while ((_vm->_pathBuffer->getValue(right, to.y) == 0) && (right < _vm->_pathBuffer->w));
+	} while (!IS_PATH_CLEAR(right, to.y) && (right < _vm->_pathBuffer->w));
 	do {
 		left--;
-	} while ((_vm->_pathBuffer->getValue(left, to.y) == 0) && (left > 0));
+	} while (!IS_PATH_CLEAR(left, to.y) && (left > 0));
 	right = (right == _vm->_pathBuffer->w) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
@@ -70,10 +72,10 @@ void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 	int16 bottom = to.y;
 	do {
 		top--;
-	} while ((_vm->_pathBuffer->getValue(to.x, top) == 0) && (top > 0));
+	} while (!IS_PATH_CLEAR(to.x, top) && (top > 0));
 	do {
 		bottom++;
-	} while ((_vm->_pathBuffer->getValue(to.x, bottom) == 0) && (bottom < _vm->_pathBuffer->h));
+	} while (!IS_PATH_CLEAR(to.x, bottom) && (bottom < _vm->_pathBuffer->h));
 	top = (top == 0) ? 1000 : to.y - top;
 	bottom = (bottom == _vm->_pathBuffer->h) ? 1000 : bottom - to.y;
 
@@ -156,7 +158,7 @@ PointList *PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 	Common::Point v48(to);
 	Common::Point v44(to);
 
-	uint16 v38 = walkFunc1(to.x, to.y, v44);
+	uint16 v38 = walkFunc1(to, v44);
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
@@ -207,11 +209,11 @@ PointList *PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder_NS::walkFunc1(int16 x, int16 y, Common::Point& node) {
+uint16 PathBuilder_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
-	Common::Point arg(x, y);
+	Common::Point arg(to);
 
-	Common::Point v4(0, 0);
+	Common::Point v4;
 
 	Common::Point foot;
 	_ch->getFoot(foot);
@@ -220,10 +222,10 @@ uint16 PathBuilder_NS::walkFunc1(int16 x, int16 y, Common::Point& node) {
 
 	while (foot != arg) {
 
-		if (foot.x < x && _vm->_pathBuffer->getValue(foot.x + 1, foot.y) != 0) foot.x++;
-		if (foot.x > x && _vm->_pathBuffer->getValue(foot.x - 1, foot.y) != 0) foot.x--;
-		if (foot.y < y && _vm->_pathBuffer->getValue(foot.x, foot.y + 1) != 0) foot.y++;
-		if (foot.y > y && _vm->_pathBuffer->getValue(foot.x, foot.y - 1) != 0) foot.y--;
+		if (foot.x < to.x && IS_PATH_CLEAR(foot.x + 1, foot.y)) foot.x++;
+		if (foot.x > to.x && IS_PATH_CLEAR(foot.x - 1, foot.y)) foot.x--;
+		if (foot.y < to.y && IS_PATH_CLEAR(foot.x, foot.y + 1)) foot.y++;
+		if (foot.y > to.y && IS_PATH_CLEAR(foot.x, foot.y - 1)) foot.y--;
 
 
 		if (foot == v8 && foot != arg) {
@@ -233,10 +235,10 @@ uint16 PathBuilder_NS::walkFunc1(int16 x, int16 y, Common::Point& node) {
 
 			while (foot != arg) {
 
-				if (foot.x < x && _vm->_pathBuffer->getValue(foot.x + 1, foot.y) == 0) foot.x++;
-				if (foot.x > x && _vm->_pathBuffer->getValue(foot.x - 1, foot.y) == 0) foot.x--;
-				if (foot.y < y && _vm->_pathBuffer->getValue(foot.x, foot.y + 1) == 0) foot.y++;
-				if (foot.y > y && _vm->_pathBuffer->getValue(foot.x, foot.y - 1) == 0) foot.y--;
+				if (foot.x < to.x && !IS_PATH_CLEAR(foot.x + 1, foot.y)) foot.x++;
+				if (foot.x > to.x && !IS_PATH_CLEAR(foot.x - 1, foot.y)) foot.x--;
+				if (foot.y < to.y && !IS_PATH_CLEAR(foot.x, foot.y + 1)) foot.y++;
+				if (foot.y > to.y && !IS_PATH_CLEAR(foot.x, foot.y - 1)) foot.y--;
 
 				if (foot == v8 && foot != arg)
 					return 0;
@@ -245,7 +247,7 @@ uint16 PathBuilder_NS::walkFunc1(int16 x, int16 y, Common::Point& node) {
 			}
 
 			node = v4;
-			return (x - v4.x) * (x - v4.x) + (y - v4.y) * (y - v4.y);
+			return v4.sqrDist(to);
 		}
 
 		v8 = foot;
@@ -258,19 +260,19 @@ uint16 PathBuilder_NS::walkFunc1(int16 x, int16 y, Common::Point& node) {
 
 void Parallaction::clipMove(Common::Point& pos, const Common::Point& to) {
 
-	if ((pos.x < to.x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
+	if ((pos.x < to.x) && (pos.x < _pathBuffer->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
 		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
-	if ((pos.x > to.x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
+	if ((pos.x > to.x) && (pos.x > 0) && IS_PATH_CLEAR(pos.x - 2, pos.y)) {
 		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < to.y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
+	if ((pos.y < to.y) && (pos.y < _pathBuffer->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
 		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 
-	if ((pos.y > to.y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
+	if ((pos.y > to.y) && (pos.y > 0) && IS_PATH_CLEAR(pos.x, pos.y - 2)) {
 		pos.y = (pos.y - 2 >= to.y) ? pos.y - 2 : to.y;
 	}
 
@@ -331,7 +333,7 @@ void Parallaction_ns::walk(Character &character) {
 	// update target, if previous was reached
 	PointList::iterator it = character._walkPath->begin();
 	if (it != character._walkPath->end()) {
-		if ((*it).x == curPos.x && (*it).y == curPos.y) {
+		if (*it == curPos) {
 			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
 			it = character._walkPath->erase(it);
 		}
@@ -345,8 +347,7 @@ void Parallaction_ns::walk(Character &character) {
 		targetPos = curPos;
 	} else {
 		// targetPos is saved to help setting character direction
-		targetPos.x = (*it).x;
-		targetPos.y = (*it).y;
+		targetPos = *it;
 
 		Common::Point newPos(curPos);
 		clipMove(newPos, targetPos);
@@ -373,8 +374,6 @@ void Parallaction_ns::walk(Character &character) {
 PathBuilder_NS::PathBuilder_NS(Character *ch) : PathBuilder(ch), _list(0) {
 }
 
-#define isPositionOnPath(x,y) _vm->_pathBuffer->getValue((x), (y))
-
 
 bool PathBuilder_BR::directPathExists(const Common::Point &from, const Common::Point &to) {
 
@@ -383,10 +382,10 @@ bool PathBuilder_BR::directPathExists(const Common::Point &from, const Common::P
 
 	while (p != to) {
 
-		if (p.x < to.x && isPositionOnPath(p.x + 1, p.y)) p.x++;
-		if (p.x > to.x && isPositionOnPath(p.x - 1, p.y)) p.x--;
-		if (p.y < to.y && isPositionOnPath(p.x, p.y + 1)) p.y++;
-		if (p.y > to.y && isPositionOnPath(p.x, p.y - 1)) p.y--;
+		if (p.x < to.x && IS_PATH_CLEAR(p.x + 1, p.y)) p.x++;
+		if (p.x > to.x && IS_PATH_CLEAR(p.x - 1, p.y)) p.x--;
+		if (p.y < to.y && IS_PATH_CLEAR(p.x, p.y + 1)) p.y++;
+		if (p.y > to.y && IS_PATH_CLEAR(p.x, p.y - 1)) p.y--;
 
 		if (p == copy && p != to) {
 			return false;
