@@ -10,10 +10,10 @@
 #include "luadebug.h"
 #include "lualib.h"
 
-#include <time.h>
-#include <errno.h>
-
 #include "engine/resource.h"
+#include "engine/backend/driver.h"
+
+#include <errno.h>
 
 #define CLOSEDTAG	2
 #define IOTAG		1
@@ -255,85 +255,22 @@ static void io_write (void)
 }
 
 
-static void io_execute (void)
-{
-  lua_pushnumber(system(luaL_check_string(1)));
-}
+static void io_date () {
+    tm t;
+    char b[BUFSIZ];
 
-
-static void io_remove  (void)
-{
-  pushresult(remove(luaL_check_string(1)) == 0);
-}
-
-
-static void io_rename (void)
-{
-  pushresult(rename(luaL_check_string(1),
-                    luaL_check_string(2)) == 0);
-}
-
-
-static void io_tmpname (void)
-{
-  lua_pushstring(tmpnam(NULL));
-}
-
-
-
-static void io_getenv (void)
-{
-  lua_pushstring(getenv(luaL_check_string(1)));  /* if NULL push nil */
-}
-
-
-static void io_clock (void) {
-  lua_pushnumber(((double)clock())/CLOCKS_PER_SEC);
-}
-
-
-static void io_date (void)
-{
-  time_t t;
-  struct tm *tm;
-  const char *s = luaL_opt_string(1, "%c");
-  char b[BUFSIZ];
-  time(&t); tm = localtime(&t);
-  if (strftime(b,sizeof(b),s,tm))
+    g_driver->getTimeAndDate(t);
+    sprintf(b, "%02d.%02d.%d %02d:%02d.%02d", t.tm_mday, t.tm_mon + 1, 1900 + t.tm_year, t.tm_hour, t.tm_min, t.tm_sec);
     lua_pushstring(b);
-  else
-    lua_error("invalid `date' format");
-}
-
-
-static void setloc (void)
-{
-  static int32 cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY, LC_NUMERIC,
-                      LC_TIME};
-  static const char *catnames[] = {"all", "collate", "ctype", "monetary",
-     "numeric", "time", NULL};
-  int32 op = luaL_findstring(luaL_opt_string(2, "all"), catnames);
-  luaL_arg_check(op != -1, 2, "invalid option");
-  lua_pushstring(setlocale(cat[op], luaL_check_string(1)));
 }
 
 
 static void io_exit (void)
 {
+  // verify if it's really used
+  assert(0);
   lua_Object o = lua_getparam(1);
   exit((int)lua_isnumber(o) ? (int)lua_getnumber(o) : 1);
-}
-
-
-static void io_debug (void)
-{
-  while (1) {
-    char buffer[250];
-    fprintf(stderr, "lua_debug> ");
-    if (fgets(buffer, sizeof(buffer), stdin) == 0) return;
-    if (strcmp(buffer, "cont\n") == 0) return;
-    lua_dostring(buffer);
-  }
 }
 
 
@@ -383,16 +320,8 @@ static void errorfb (void)
 
 
 static struct luaL_reg iolib[] = {
-{"setlocale", setloc},
-{"execute",  io_execute},
-//{"remove",   io_remove},
-{"rename",   io_rename},
-{"tmpname",   io_tmpname},
-{"getenv",   io_getenv},
 {"date",     io_date},
-{"clock",     io_clock},
 {"exit",     io_exit},
-{"debug",    io_debug},
 {"print_stack", errorfb}
 };
 

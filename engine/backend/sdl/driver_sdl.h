@@ -37,6 +37,8 @@
 
 #include <SDL.h>
 
+#include <time.h>
+
 // NOTE: This is not a complete driver, it needs to be subclassed
 //       to provide rendering functionality.
 
@@ -65,6 +67,7 @@ public:
 	uint32 getMillis();
 	void delayMillis(uint msecs);
 	Common::TimerManager *getTimerManager();
+	void getTimeAndDate(struct tm &t) const;
 
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);

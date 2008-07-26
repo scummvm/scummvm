@@ -136,6 +136,8 @@ public:
 
 	typedef unsigned int (*TimerProc)(unsigned int interval, void *param);
 
+	virtual void getTimeAndDate(struct tm &t) const = 0;
+
 	/**
 	 * The types of events backends may generate.
 	 * @see Event

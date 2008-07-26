@@ -308,6 +308,11 @@ Common::TimerManager *DriverSDL::getTimerManager() {
 	return _timer;
 }
 
+void DriverSDL::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
+}
+
 DriverSDL::DriverSDL() {
 	_mixer = NULL;
 	_timer = NULL;
