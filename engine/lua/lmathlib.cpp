@@ -111,7 +111,7 @@ static void math_rad (void)
 }
 
 static void math_frexp (void) {
-  int32 e;
+  int e;
   lua_pushnumber(frexp(luaL_check_number(1), &e));
   lua_pushnumber(e);
 }
