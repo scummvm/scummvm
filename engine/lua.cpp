@@ -270,7 +270,7 @@ static void FunctionName() {
 	const char *name;
 	char buf[256];
 	const char *filename;
-	int line;
+	int32 line;
 
 	DEBUG_FUNCTION();
 	if (!lua_isfunction(lua_getparam(1))) {
@@ -294,7 +294,7 @@ static void FunctionName() {
 			else if (line < 0)
 				sprintf(buf, "%.100s", filename);
 			else {
-				sprintf(buf, "function (%.100s:%d)", filename, line);
+				sprintf(buf, "function (%.100s:%d)", filename, (int)line);
 				filename = NULL;
 			}
 		}
