@@ -60,7 +60,7 @@ ZIO* zFopen (ZIO* z, FILE* f, const char *name)
 
 
 /* --------------------------------------------------------------- read --- */
-int32 zread (ZIO *z, void *b, int n)
+int32 zread (ZIO *z, void *b, int32 n)
 {
   while (n) {
     int32 m;
