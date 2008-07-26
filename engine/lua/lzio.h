@@ -16,7 +16,6 @@
 #define zFopen	luaZ_Fopen
 #define zsopen	luaZ_sopen
 #define zmopen	luaZ_mopen
-#define zread	luaZ_read
 
 #define EOZ	(-1)			/* end of stream */
 
