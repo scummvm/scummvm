@@ -45,7 +45,7 @@ public:
 	PathBuilder(Character *ch) : _ch(ch) { }
 	virtual ~PathBuilder() { }
 
-	virtual PointList* buildPath(uint16 x, uint16 y) = 0;
+	virtual void buildPath(uint16 x, uint16 y) = 0;
 };
 
 
@@ -60,7 +60,7 @@ class PathBuilder_NS : public PathBuilder {
 
 public:
 	PathBuilder_NS(Character *ch);
-	PointList* buildPath(uint16 x, uint16 y);
+	void buildPath(uint16 x, uint16 y);
 };
 
 
@@ -70,7 +70,7 @@ class PathBuilder_BR : public PathBuilder {
 
 public:
 	PathBuilder_BR(Character *ch);
-	PointList* buildPath(uint16 x, uint16 y);
+	void buildPath(uint16 x, uint16 y);
 };
 
 

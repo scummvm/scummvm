@@ -548,8 +548,8 @@ void Character::setFoot(const Common::Point &foot) {
 }
 
 #if 0
-void dumpPath(PointList *list, const char* text) {
-	for (PointList::iterator it = list->begin(); it != list->end(); it++)
+void dumpPath(const PointList &list, const char* text) {
+	for (PointList::iterator it = list.begin(); it != list.end(); it++)
 		printf("node (%i, %i)\n", it->x, it->y);
 
 	return;
@@ -561,7 +561,7 @@ void Character::scheduleWalk(int16 x, int16 y) {
 		return;
 	}
 
-	_walkPath = _builder->buildPath(x, y);
+	_builder->buildPath(x, y);
 #if 0
 	dumpPath(_walkPath, _name);
 #endif
@@ -570,8 +570,7 @@ void Character::scheduleWalk(int16 x, int16 y) {
 		_engineFlags |= kEngineWalking;
 	} else {
 		// BRA can't walk yet!
-		delete _walkPath;
-		_walkPath = 0;
+		_walkPath.clear();
 	}
 }
 

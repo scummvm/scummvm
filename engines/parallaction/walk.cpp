@@ -148,8 +148,10 @@ uint32 PathBuilder_NS::buildSubPath(const Common::Point& pos, const Common::Poin
 //
 //	x, y: mouse click (foot) coordinates
 //
-PointList *PathBuilder_NS::buildPath(uint16 x, uint16 y) {
+void PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
+
+	_ch->_walkPath.clear();
 
 	Common::Point to(x, y);
 	correctPathPoint(to);
@@ -162,43 +164,32 @@ PointList *PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
-
-		_list = new PointList;
-		_list->push_back(v48);
-		return _list;
+		_ch->_walkPath.push_back(v48);
+		return;
 	}
 
 	// path is obstructed: look for alternative
-	_list = new PointList;
-	_list->push_back(v48);
+	_ch->_walkPath.push_back(v48);
 #if 0
 	printNodes(_list, "start");
 #endif
 
-	Common::Point stop(v48.x, v48.y);
 	Common::Point pos;
 	_ch->getFoot(pos);
 
-	uint32 v34 = buildSubPath(pos, stop);
+	uint32 v34 = buildSubPath(pos, v48);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
-		_list->clear();
-		_list->push_back(v44);
-		return _list;
+		_ch->_walkPath.clear();
+		_ch->_walkPath.push_back(v44);
+		return;
 	}
-	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
-#if 0
-	printNodes(_list, "first segment");
-#endif
+	_ch->_walkPath.insert(_ch->_walkPath.begin(), _subPath.begin(), _subPath.end());
 
-	stop = *_list->begin();
-	buildSubPath(pos, stop);
-	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
-#if 0
-	printNodes(_list, "complete");
-#endif
+	buildSubPath(pos, *_ch->_walkPath.begin());
+	_ch->_walkPath.insert(_ch->_walkPath.begin(), _subPath.begin(), _subPath.end());
 
-	return _list;
+	return;
 }
 
 
@@ -318,8 +309,7 @@ void Parallaction::finalizeWalk(Character &character) {
 	character.getFoot(foot);
 	checkDoor(foot);
 
-	delete character._walkPath;
-	character._walkPath = 0;
+	character._walkPath.clear();
 }
 
 void Parallaction_ns::walk(Character &character) {
@@ -331,17 +321,17 @@ void Parallaction_ns::walk(Character &character) {
 	character.getFoot(curPos);
 
 	// update target, if previous was reached
-	PointList::iterator it = character._walkPath->begin();
-	if (it != character._walkPath->end()) {
+	PointList::iterator it = character._walkPath.begin();
+	if (it != character._walkPath.end()) {
 		if (*it == curPos) {
 			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
-			it = character._walkPath->erase(it);
+			it = character._walkPath.erase(it);
 		}
 	}
 
 	// advance character towards the target
 	Common::Point targetPos;
-	if (it == character._walkPath->end()) {
+	if (it == character._walkPath.end()) {
 		debugC(1, kDebugWalk, "walk reached last node");
 		finalizeWalk(character);
 		targetPos = curPos;
@@ -397,54 +387,53 @@ bool PathBuilder_BR::directPathExists(const Common::Point &from, const Common::P
 	return true;
 }
 
-PointList* PathBuilder_BR::buildPath(uint16 x, uint16 y) {
+void PathBuilder_BR::buildPath(uint16 x, uint16 y) {
 	Common::Point foot;
 	_ch->getFoot(foot);
 
 	debugC(1, kDebugWalk, "buildPath: from (%i, %i) to (%i, %i)", foot.x, foot.y, x, y);
-
-	PointList *list = new PointList;
+	_ch->_walkPath.clear();
 
 	// look for easy path first
 	Common::Point dest(x, y);
 	if (directPathExists(foot, dest)) {
-		list->push_back(dest);
+		_ch->_walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: direct path found");
-		return list;
+		return;
 	}
 
 	// look for short circuit cases
 	ZonePtr z0 = _vm->hitZone(kZonePath, x, y);
 	if (z0 == nullZonePtr) {
-		list->push_back(dest);
+		_ch->_walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: corner case 0");
-		return list;
+		return;
 	}
 	ZonePtr z1 = _vm->hitZone(kZonePath, foot.x, foot.y);
 	if (z1 == nullZonePtr || z1 == z0) {
-		list->push_back(dest);
+		_ch->_walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: corner case 1");
-		return list;
+		return;
 	}
 
 	// build complex path
 	int id = atoi(z0->_name);
 
 	if (z1->u.path->_lists[id].empty()) {
-		list->clear();
+		_ch->_walkPath.clear();
 		debugC(3, kDebugWalk, "buildPath: no path");
-		return list;
+		return;
 	}
 
 	PointList::iterator b = z1->u.path->_lists[id].begin();
 	PointList::iterator e = z1->u.path->_lists[id].end();
 	for ( ; b != e; b++) {
-		list->push_front(*b);
+		_ch->_walkPath.push_front(*b);
 	}
-	list->push_back(dest);
+	_ch->_walkPath.push_back(dest);
 	debugC(3, kDebugWalk, "buildPath: complex path");
 
-	return list;
+	return;
 }
 
 PathBuilder_BR::PathBuilder_BR(Character *ch) : PathBuilder(ch) {

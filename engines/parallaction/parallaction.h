@@ -199,7 +199,7 @@ struct Character {
 	GfxObj			*_talk;
 	GfxObj			*_objs;
 	PathBuilder		*_builder;
-	PointList		*_walkPath;
+	PointList		_walkPath;
 
 	Character(Parallaction *vm);
 	~Character();
