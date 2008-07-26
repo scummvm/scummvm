@@ -58,7 +58,7 @@ void tglInit(void *zbuffer1) {
 	c->in_begin=0;
 
 	// lights
-	for (i = 0; i < MAX_LIGHTS; i++) {
+	for (i = 0; i < T_MAX_LIGHTS; i++) {
 		GLLight *l = &c->lights[i];
 		l->ambient = gl_V4_New(0, 0, 0, 1);
 		l->diffuse = gl_V4_New(1, 1, 1, 1);

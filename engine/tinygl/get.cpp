@@ -18,7 +18,7 @@ void glGetIntegerv(int pname,int *params) {
     *params = MAX_PROJECTION_STACK_DEPTH;
     break;
   case TGL_MAX_LIGHTS:
-    *params = MAX_LIGHTS;
+    *params = T_MAX_LIGHTS;
     break;
   case TGL_MAX_TEXTURE_SIZE:
     *params = 256; /* not completely true, but... */

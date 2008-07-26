@@ -37,7 +37,7 @@ enum {
 #define MAX_TEXTURE_STACK_DEPTH    8
 #define MAX_NAME_STACK_DEPTH       64
 #define MAX_TEXTURE_LEVELS         11
-#define MAX_LIGHTS                 16
+#define T_MAX_LIGHTS                 16
 
 #define VERTEX_HASH_SIZE 1031
 
@@ -160,7 +160,7 @@ typedef struct GLContext {
   ZBuffer *zb;
 
   /* lights */
-  GLLight lights[MAX_LIGHTS];
+  GLLight lights[T_MAX_LIGHTS];
   GLLight *first_light;
   V4 ambient_light_model;
   int local_light_model;

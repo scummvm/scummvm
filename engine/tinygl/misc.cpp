@@ -95,7 +95,7 @@ void glopEnableDisable(GLContext *c, TGLParam *p) {
 			c->shadow_mode &= ~2;
 		break; 
 	default:
-		if (code>=TGL_LIGHT0 && code<TGL_LIGHT0+MAX_LIGHTS) {
+		if (code>=TGL_LIGHT0 && code<TGL_LIGHT0+T_MAX_LIGHTS) {
 			gl_enable_disable_light(c,code - TGL_LIGHT0, v);
 		} else {
 			//fprintf(stderr, "glEnableDisable: 0x%X not supported.\n", code);

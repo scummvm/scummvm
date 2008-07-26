@@ -66,7 +66,7 @@ void glopLight(GLContext *c, TGLParam *p) {
 	GLLight *l;
 	int i;
   
-	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0+MAX_LIGHTS );
+	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0+T_MAX_LIGHTS );
 
 	l = &c->lights[light - TGL_LIGHT0];
 
