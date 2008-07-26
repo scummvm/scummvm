@@ -113,6 +113,22 @@ public:
 		kTriangleLeft,
 		kTriangleRight
 	};
+	
+	enum ConvolutionData {
+		kConvolutionSoftBlur,
+		kConvolutionHardBlur,
+		kConvolutionGaussianBlur,
+		kConvolutionEmboss,
+		kConvolutionSharpen,
+		kConvolutionEdgeDetect,
+		kConvolutionMAX
+	};
+	
+	struct ConvolutionDataSet {
+		int matrix[3][3];
+		int divisor;
+		int offset;
+	};
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -412,6 +428,12 @@ public:
 	
 	virtual void disableShadows() { _disableShadows = true; }
 	virtual void enableShadows() { _disableShadows = false; }
+	
+	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) = 0;
+	
+	virtual void applyConvolutionMatrix(const ConvolutionData id, const Common::Rect &area) {
+		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
+	}
 
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -425,6 +447,8 @@ protected:
 
 	int _gradientFactor; /** Multiplication factor of the active gradient */
 	int _gradientBytes[3]; /** Color bytes of the active gradient, used to speed up calculation */
+	
+	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
 };
 
 /**
@@ -776,6 +800,8 @@ protected:
 				} while (--n > 0);
 		}
 	}
+	
+	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
 
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /** Background color currently being used to draw on the renderer */

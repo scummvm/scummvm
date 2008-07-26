@@ -50,6 +50,15 @@ VectorRenderer *createRenderer(int mode) {
 	}
 }
 
+const VectorRenderer::ConvolutionDataSet VectorRenderer::_convolutionData[VectorRenderer::kConvolutionMAX] = {
+	{ {{1, 1, 1}, {1, 8, 1}, {1, 1, 1}}, 16, 0 }, // soft blur matrix
+	{ {{2, 2, 2}, {2, 2, 2}, {2, 2, 2}}, 18, 0 }, // hard blur matrix
+	{ {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}}, 16, 0 }, // gaussian blur matrix
+	{ {{2, 0, 0}, {0, -1, 0}, {0, 0, -1}}, 1, 127}, // emboss matrix
+	{ {{-1, -1, -1}, {-1, 9, -1}, {-1, -1, -1}}, 1, 0}, // sharpen matrix
+	{ {{1, 1, 1}, {1, -7, 1}, {1, 1, 1}}, 1, 0} // edge find matrix
+};
+
 /********************************************************************
  * DRAWSTEP handling functions
  ********************************************************************/
@@ -159,6 +168,39 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 /********************************************************************
  * MISCELANEOUS functions
  ********************************************************************/
+template <typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) {
+	PixelType *ptr = 0;
+	int newR, newG, newB;
+	uint8 r, g, b;
+	int yVal;
+	
+	for (int y = area.top; y < area.bottom; ++y) {
+		for (int x = area.left; x < area.right; ++x) {
+			for (int j = 0; j < 3; ++j) {
+				yVal = MIN(MAX(y - 1 + j, 0), area.bottom - 1);
+				
+				for (int i = 0; i < 3; ++i) {
+					ptr = (PixelType *)Base::_activeSurface->getBasePtr(MIN(MAX(x - 1 + j, 0), area.right - 1), yVal);
+					colorToRGB<PixelFormat>((uint32)*ptr, r, g, b);
+					
+					newR += r * filter[j][i];
+					newG += g * filter[j][i];
+					newB += b * filter[j][i];
+				}
+			}
+			
+			newR = (newR / filterDiv) + offset;
+			newG = (newG / filterDiv) + offset;
+			newB = (newB / filterDiv) + offset;
+			
+			ptr = (PixelType *)Base::_activeSurface->getBasePtr(x, y);
+			*ptr = RGBToColor<PixelFormat>(CLIP(newR, 0, 255), CLIP(newG, 0, 255), CLIP(newB, 0, 255));
+		}		
+	}
+}
+	
 /** Fixed point SQUARE ROOT **/
 inline uint32 fp_sqroot(uint32 x) {
 	register uint32 root, remHI, remLO, testDIV, count;
