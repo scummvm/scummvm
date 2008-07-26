@@ -203,6 +203,10 @@ protected:
 	bool parserCallback_KeyboardClosed();
 	bool parserCallback_ModeClosed();
 
+	byte parseFlags(const String& flags);
+	bool parseRect(Common::Rect *rect, const String& coords);
+	bool parsePolygon(Common::Polygon *poly, const String& coords);
+
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _closedCallbacks;
 };

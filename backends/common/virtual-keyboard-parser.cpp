@@ -240,19 +240,19 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		uint16 ascii = atoi(evtNode->values["ascii"].c_str());
 
 		byte flags = 0;
-		if (evtNode->values.contains("flags")) {
-			Common::StringTokenizer tok(evtNode->values["flags"], ", ");
-			for (Common::String fl = tok.nextToken(); !fl.empty(); fl = tok.nextToken()) {
-				if (fl == "ctrl" || fl == "control")
-					flags &= Common::KBD_CTRL;
-				else if (fl == "alt")
-					flags &= Common::KBD_ALT;
-				else if (fl == "shift")
-					flags &= Common::KBD_SHIFT;
-			}
-		}
+		if (evtNode->values.contains("flags"))
+			flags = parseFlags(evtNode->values["flags"]);
 
 		evt.data = new Common::KeyState(code, ascii, flags);
+
+	} else if (type == "modifier") {
+		if (!evtNode->values.contains("flags"))
+			return parserError("Key modifier element must contain modifier attributes");
+		
+		evt.type = VirtualKeyboard::kEventModifier;
+		byte *flags = new byte;
+		*(flags) = parseFlags(evtNode->values["flags"]);
+		evt.data = flags;
 
 	} else if (type == "switch_mode") {
 		if (!evtNode->values.contains("mode"))
@@ -335,29 +335,62 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 	if (!areaNode->values.contains("shape") || !areaNode->values.contains("coords") || !areaNode->values.contains("target"))
 		return parserError("Area element must contain shape, coords and target attributes");
 
-	Common::String shape = areaNode->values["shape"];
-	if (shape == "rect") {
-		Common::Rect *rect = _mode->imageMap.createRectArea(areaNode->values["target"]);
-		int x1, y1, x2, y2;
-		if (!parseIntegerKey(areaNode->values["coords"].c_str(), 4, &x1, &y1, &x2, &y2))
-			return parserError("Invalid coords for rect area");
-		rect->left = x1; rect->top = y1; rect->right = x2; rect->bottom = y2;
+	Common::String& shape = areaNode->values["shape"];
+	Common::String& target = areaNode->values["target"];
+	Common::String& coords = areaNode->values["coords"];
+
+	if (target == "preview_area") {
+		if (shape != "rect")
+			return parserError("preview_area must be a rect area");
+		_mode->previewArea = new Common::Rect();
+		return parseRect(_mode->previewArea, coords);
+	} else if (shape == "rect") {
+		Common::Rect *rect = _mode->imageMap.createRectArea(target);
+		return parseRect(rect, coords);
 	} else if (shape == "poly") {
-		Common::StringTokenizer tok (areaNode->values["coords"], ", ");
-		Common::Polygon *poly = _mode->imageMap.createPolygonArea(areaNode->values["target"]);
-		for (Common::String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
-			int x, y;
-			if (sscanf(st.c_str(), "%d", &x) != 1)
-				return parserError("Invalid coords for polygon area");
-			st = tok.nextToken();
-			if (sscanf(st.c_str(), "%d", &y) != 1)
-				return parserError("Invalid coords for polygon area");
-			poly->addPoint(x, y);
-		}
-		if (poly->getPointCount() < 3)
+		Common::Polygon *poly = _mode->imageMap.createPolygonArea(target);
+		return parsePolygon(poly, coords);
+	}
+	return parserError("Area shape '%s' not known", shape.c_str());
+}
+
+byte VirtualKeyboardParser::parseFlags(const String& flags) {
+	Common::StringTokenizer tok(flags, ", ");
+	byte val = 0;
+	for (Common::String fl = tok.nextToken(); !fl.empty(); fl = tok.nextToken()) {
+		if (fl == "ctrl" || fl == "control")
+			val &= Common::KBD_CTRL;
+		else if (fl == "alt")
+			val &= Common::KBD_ALT;
+		else if (fl == "shift")
+			val &= Common::KBD_SHIFT;
+	}
+	return val;
+}
+
+bool VirtualKeyboardParser::parseRect(Common::Rect *rect, const String& coords) {
+	int x1, y1, x2, y2;
+	if (!parseIntegerKey(coords.c_str(), 4, &x1, &y1, &x2, &y2))
+		return parserError("Invalid coords for rect area");
+	rect->left = x1; rect->top = y1; rect->right = x2; rect->bottom = y2;
+	if (!rect->isValidRect())
+		return parserError("Rect area is not a valid rectangle");
+	return true;
+}
+
+bool VirtualKeyboardParser::parsePolygon(Common::Polygon *poly, const String& coords) {
+	Common::StringTokenizer tok (coords, ", ");
+	for (Common::String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
+		int x, y;
+		if (sscanf(st.c_str(), "%d", &x) != 1)
 			return parserError("Invalid coords for polygon area");
-	} else
-		return parserError("Area shape '%s' not known", shape.c_str());
+		st = tok.nextToken();
+		if (sscanf(st.c_str(), "%d", &y) != 1)
+			return parserError("Invalid coords for polygon area");
+		poly->addPoint(x, y);
+	}
+	if (poly->getPointCount() < 3)
+		return parserError("Invalid coords for polygon area");
 
 	return true;
 }

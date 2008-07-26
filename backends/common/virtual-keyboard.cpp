@@ -63,6 +63,7 @@ void VirtualKeyboard::reset() {
 	_vAlignment = kAlignBottom;
 	_keyQueue.clear();
 	_keyDown = 0;
+	_keyFlags = 0;
 	_displaying = _drag = false;
 	_firstRun = true;
 	_lastScreenChanged = _system->getScreenChangeID();
@@ -196,13 +197,23 @@ void VirtualKeyboard::processClick(const Common::String& area) {
 	Event evt = _currentMode->events[area];
 
 	switch (evt.type) {
-	case kEventKey:
+	case kEventKey: {
 		// add virtual keypress to queue
-		_keyQueue.push(*(Common::KeyState*)evt.data);
+		Common::KeyState key = *(Common::KeyState*)evt.data;
+		key.flags ^= _keyFlags;
+		if ((key.keycode >= Common::KEYCODE_a) && (key.keycode <= Common::KEYCODE_z))
+			key.ascii = (key.flags & Common::KBD_SHIFT) ? key.keycode - 32 : key.keycode;
+		_keyQueue.insertKey(key);
+		_keyFlags = 0;
+		break;
+	}
+	case kEventModifier:
+		_keyFlags ^= *(byte*)(evt.data);
 		break;
 	case kEventSwitchMode:
 		// switch to new mode
 		switchMode(*(Common::String *)evt.data);
+		_keyFlags = 0;
 		break;
 	case kEventClose:
 		// close virtual keyboard
@@ -247,7 +258,6 @@ void VirtualKeyboard::show() {
 		_system->showOverlay();
 		_system->clearOverlay();
 	}
-
 	_overlayBackup.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
 	_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
 	setupCursor();
@@ -380,6 +390,96 @@ void VirtualKeyboard::animateCursor() {
 void VirtualKeyboard::removeCursor() {
 	CursorMan.popCursor();
 	CursorMan.popCursorPalette();
+}
+
+VirtualKeyboard::Queue::Queue() {
+	_keyPos = _keys.begin();
+	_strPos = 0;
+}
+
+void VirtualKeyboard::Queue::insertKey(KeyState key) {
+	switch (key.keycode) {
+	case KEYCODE_LEFT:
+		moveLeft();
+		return;
+	case KEYCODE_RIGHT:
+		moveRight();
+		return;
+	case KEYCODE_BACKSPACE:
+		deleteKey();
+		return;
+	}
+
+	String keyStr;
+	if (key.keycode >= 32 && key.keycode <= 126) {
+		if (key.flags & KBD_CTRL)
+			keyStr += "Ctrl+";
+		if (key.flags & KBD_ALT)
+			keyStr += "Alt+";
+		if (key.flags & KBD_SHIFT && (key.ascii < 65 || key.ascii > 90))
+			keyStr += "Shift+";
+		keyStr += (char)key.ascii;
+	}
+
+	const char *k = keyStr.c_str();
+	while (char ch = *k++)
+		_str.insertChar(ch, _strPos++);
+
+	VirtualKeyPress kp;
+	kp.key = key;
+	kp.strLen = keyStr.size();
+	_keys.insert(_keyPos, kp);
+	_keyPos++;
+}
+
+void VirtualKeyboard::Queue::deleteKey() {
+	if (_keyPos == _keys.begin())
+		return;
+	List<VirtualKeyPress>::iterator it = _keyPos;
+	it--;
+	_strPos -= it->strLen;
+	while((it->strLen)-- > 0)
+		_str.deleteChar(_strPos);
+	_keys.erase(it);
+}
+
+void VirtualKeyboard::Queue::moveLeft() {
+	if (_keyPos == _keys.begin())
+		return;
+	_keyPos--;
+	_strPos -= _keyPos->strLen;
+}
+
+void VirtualKeyboard::Queue::moveRight() {
+	List<VirtualKeyPress>::iterator it = _keyPos;
+	it++;
+	if (it == _keys.end())
+		return;
+	_strPos += _keyPos->strLen;
+	_keyPos	= it;
+}
+
+KeyState VirtualKeyboard::Queue::pop() {
+	KeyState ret = _keys.begin()->key;
+	_keys.pop_front();
+	return ret;
+}
+
+void VirtualKeyboard::Queue::clear() {
+	_keys.clear();
+	_keyPos = _keys.begin();
+	_str.clear();
+	_strPos = 0;
+}
+
+bool VirtualKeyboard::Queue::empty()
+{ 
+	return _keys.empty();
+}
+
+String VirtualKeyboard::Queue::getString()
+{
+	return _str;
 }
 
 } // end of namespace Common

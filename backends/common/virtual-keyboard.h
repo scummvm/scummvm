@@ -33,7 +33,7 @@ class OSystem;
 #include "common/hash-str.h"
 #include "common/image-map.h"
 #include "common/keyboard.h"
-#include "common/queue.h"
+#include "common/list.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 
@@ -42,9 +42,10 @@ namespace Common {
 class VirtualKeyboardParser;
 
 class VirtualKeyboard {
-
+protected:
 	enum EventType {
 		kEventKey,
+		kEventModifier,
 		kEventSwitchMode,
 		kEventClose
 	};
@@ -59,14 +60,16 @@ class VirtualKeyboard {
 	typedef Common::HashMap<Common::String, Event, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> EventMap; 
 
 	struct Mode {
-		Common::String     name;
-		Common::String     resolution;
-		Common::String     bitmapName;
-		Graphics::Surface *image;
-		OverlayColor	   transparentColor;
-		Common::ImageMap   imageMap;
-		EventMap           events;
-		Mode() : image(0) {}
+		Common::String		name;
+		Common::String		resolution;
+		Common::String		bitmapName;
+		Graphics::Surface	*image;
+		OverlayColor		transparentColor;
+		Common::ImageMap	imageMap;
+		EventMap			events;
+		Common::Rect		*previewArea;
+
+		Mode() : image(0), previewArea(0) {}
 	};
 	
 	typedef Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ModeMap;
@@ -81,6 +84,31 @@ class VirtualKeyboard {
 		kAlignTop,
 		kAlignMiddle,
 		kAlignBottom
+	};
+
+	struct VirtualKeyPress {
+		Common::KeyState key;
+		uint strLen;
+	};
+
+	class Queue {
+	public:
+		Queue();
+		void insertKey(KeyState key);
+		void deleteKey();
+		void moveLeft();
+		void moveRight();
+		KeyState pop();
+		void clear();
+		bool empty();
+		String getString();
+
+	private:
+		List<VirtualKeyPress> _keys;
+		List<VirtualKeyPress>::iterator _keyPos;
+
+		String _str;
+		uint _strPos;
 	};
 
 public:
@@ -122,15 +150,19 @@ public:
 		return _loaded;
 	}
 
-protected:
+protected:	// TODO : clean up all this stuff
 	OSystem	*_system;
+
+	byte _keyFlags;
+	Queue _keyQueue;
+	KeyState *_keyDown;
+
 
 	static const int SNAP_WIDTH = 10;
 	
 	friend class VirtualKeyboardParser;
 	VirtualKeyboardParser *_parser;
 
-	// TODO : sort order of all this stuff
 	void reset();
 	void deleteEventData();
 	void screenChanged();
@@ -139,7 +171,7 @@ protected:
 	void move(int16 x, int16 y);
 	void switchMode(Mode *newMode);
 	void switchMode(const Common::String& newMode);
-	Common::String findArea(int16 x, int16 y);
+	String findArea(int16 x, int16 y);
 	void processClick(const Common::String &area);
 	void runLoop();
 	void redraw();
@@ -156,17 +188,14 @@ protected:
 	Mode *_currentMode;
 
 	int _lastScreenChanged;
-	Common::Rect _kbdBound;
+	Rect _kbdBound;
 
 	HorizontalAlignment  _hAlignment;
 	VerticalAlignment    _vAlignment;
 
-	Common::String _areaDown;
-	Common::Point _dragPoint;
+	String _areaDown;
+	Point _dragPoint;
 	bool _drag;
-
-	Common::Queue<Common::KeyState> _keyQueue;
-	Common::KeyState *_keyDown;
 
 	static const int kCursorAnimateDelay = 250;
 	int		_cursorAnimateCounter;
