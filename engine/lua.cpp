@@ -2152,6 +2152,7 @@ static void luaFileFindNext() {
 
 static void luaFileFindFirst() {
 	const char *path, *extension;
+	char tmpPath[MAXPATHLEN];
 	lua_Object pathObj;
 
 	DEBUG_FUNCTION();
@@ -2165,7 +2166,8 @@ static void luaFileFindFirst() {
 #if defined(UNIX)
 		const char *home = getenv("HOME");
 		if (home && *home && strlen(home) < MAXPATHLEN) {
-			snprintf(path, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
+			snprintf(tmpPath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
+			path = tmpPath;
 		}
 #endif
 #endif
