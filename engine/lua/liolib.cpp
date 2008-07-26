@@ -13,9 +13,7 @@
 #include <time.h>
 #include <errno.h>
 
-#ifdef LUA_ADD_CUSTOM_FOPEN
-#include "../resource.h"
-#endif
+#include "engine/resource.h"
 
 #define CLOSEDTAG	2
 #define IOTAG		1
@@ -119,10 +117,8 @@ static void io_readfrom (void)
       current = popen(s+1, "r");
 	else {
       current = fopen(s, "r");
-#ifdef LUA_ADD_CUSTOM_FOPEN
 //      if (current == NULL)
 //	    current = g_resourceloader->openNewStream(s);
-#endif
 	}
     if (current == NULL) {
       pushresult(0);
