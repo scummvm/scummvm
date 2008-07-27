@@ -535,7 +535,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	renderer->restorePalette(in);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
-	globalVars.load(in, NUM_MAX_VAR - 1);
+	globalVars.load(in, NUM_MAX_VAR);
 
 	// At 0x2281 (i.e. 0x2083 + 255 * 2):
 	for (i = 0; i < 16; i++) {
@@ -733,7 +733,7 @@ void makeSave(char *saveFileName) {
 
 	renderer->savePalette(*fHandle);
 
-	globalVars.save(*fHandle, NUM_MAX_VAR - 1);
+	globalVars.save(*fHandle, NUM_MAX_VAR);
 
 	for (i = 0; i < 16; i++) {
 		fHandle->writeUint16BE(zoneData[i]);
