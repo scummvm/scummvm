@@ -75,7 +75,7 @@ int AGOSEngine::countSaveGames() {
 }
 
 char *AGOSEngine::genSaveName(int slot) {
-	static char buf[15];
+	static char buf[20];
 
 	if (getGameId() == GID_DIMP) {
 		sprintf(buf, "dimp.sav");
@@ -111,7 +111,7 @@ void AGOSEngine::quickLoadOrSave() {
 	}
 
 	bool success;
-	char buf[50];
+	char buf[60];
 
 	char *filename = genSaveName(_saveLoadSlot);
 	if (_saveLoadType == 2) {
