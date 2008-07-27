@@ -89,10 +89,12 @@ public:
 	enum FontId {
 		FID_6_FNT = 0,
 		FID_8_FNT,
+		FID_9_FNT,
 		FID_CRED6_FNT,
 		FID_CRED8_FNT,
 		FID_BOOKFONT_FNT,
 		FID_GOLDFONT_FNT,
+		FID_INTRO_FNT,
 		FID_NUM
 	};
 
@@ -145,6 +147,8 @@ public:
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 
 	void fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc = 0);
+	virtual void getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff);
+	int fadePalStep(const uint8 *palette, int diff);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	void setScreenPalette(const uint8 *palData);
@@ -189,7 +193,7 @@ public:
 	void hideMouse();
 	void showMouse();
 	bool isMouseVisible() const;
-	void setMouseCursor(int x, int y, byte *shape);
+	void setMouseCursor(int x, int y, const byte *shape);
 
 	// rect handling
 	virtual int getRectSize(int w, int h) = 0;
