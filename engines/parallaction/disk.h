@@ -239,7 +239,7 @@ class AmigaDisk_br : public DosDisk_br {
 protected:
 	BackgroundInfo	_backgroundTemp;
 
-	Sprites*	createSprites(const char *name);
+	Sprites*	createSprites(Common::ReadStream &stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(BackgroundInfo& info, const char *name);
 	void loadBackground(BackgroundInfo& info, const char *name);

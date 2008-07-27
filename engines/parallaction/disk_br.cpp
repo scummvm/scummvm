@@ -576,13 +576,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	return new GfxObj(0, new SurfaceToFrames(surf));
 }
 
-Sprites* AmigaDisk_br::createSprites(const char *path) {
-
-	Common::File	stream;
-	if (!stream.open(path)) {
-		errorFileNotFound(path);
-	}
-
+Sprites* AmigaDisk_br::createSprites(Common::ReadStream &stream) {
 	uint16 num = stream.readUint16BE();
 
 	Sprites *sprites = new Sprites(num);
@@ -609,16 +603,44 @@ Frames* AmigaDisk_br::loadFrames(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s/anims/%s", _partPath, name);
 
-	return createSprites(path);
+	Common::File stream;
+	if (!stream.open(path)) {
+		sprintf(path, "%s/anims/%s.ani", _partPath, name);
+		if (!stream.open(path)) {
+			sprintf(path, "common/anims/%s", name);
+			if (!stream.open(path)) {
+				sprintf(path, "common/anims/%s.ani", name);
+				if (!stream.open(path)) {
+					errorFileNotFound(path);
+				}
+			}
+		}
+	}
+
+	return createSprites(stream);
 }
 
 GfxObj* AmigaDisk_br::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadTalk '%s'", name);
 
-	char path[PATH_LEN];
-	sprintf(path, "%s/talks/%s.tal", _partPath, name);
+	Common::File stream;
 
-	return new GfxObj(0, createSprites(path));
+	char path[PATH_LEN];
+	sprintf(path, "%s/talks/%s", _partPath, name);
+	if (!stream.open(path)) {
+		sprintf(path, "%s/talks/%s.tal", _partPath, name);
+		if (!stream.open(path)) {
+			sprintf(path, "common/talks/%s", name);
+			if (!stream.open(path)) {
+				sprintf(path, "common/talks/%s.tal", name);
+				if (!stream.open(path)) {
+					errorFileNotFound(path);
+				}
+			}
+		}
+	}
+
+	return new GfxObj(0, createSprites(stream));
 }
 
 Font* AmigaDisk_br::loadFont(const char* name) {
