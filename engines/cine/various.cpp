@@ -408,70 +408,13 @@ void loadOverlayFromSave(Common::SeekableReadStream &fHandle) {
 	overlayList.push_back(tmp);
 }
 
-/*! \todo Implement Operation Stealth loading, this is obviously Future Wars only
- * \todo Add support for loading the zoneQuery table (Operation Stealth specific)
- */
-bool CineEngine::makeLoad(char *saveName) {
-	int16 i;
-	int16 size;
-	char bgName[13];
-
-	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
-
-	if (!saveFile) {
-		drawString(otherMessages[0], 0);
-		waitPlayerInput();
-		// restoreScreen();
-		checkDataDisk(-1);
-		return false;
-	}
-
-	uint32 saveSize = saveFile->size();
-	if (saveSize == 0) { // Savefile's compressed using zlib format can't tell their unpacked size, test for it
-		// Can't get information about the savefile's size so let's try
-		// reading as much as we can from the file up to a predefined upper limit.
-		//
-		// Some estimates for maximum savefile sizes (All with 255 animDataTable entries of 30 bytes each):
-		// With 256 global scripts, object scripts, overlays and background incrusts:
-		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 256 = ~129kB
-		// With 512 global scripts, object scripts, overlays and background incrusts:
-		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 512 = ~242kB
-		//
-		// I think it extremely unlikely that there would be over 512 global scripts, object scripts,
-		// overlays and background incrusts so 256kB seems like quite a safe upper limit.		
-		// NOTE: If the savegame format is changed then this value might have to be re-evaluated!
-		// Hopefully devices with more limited memory can also cope with this memory allocation.
-		saveSize = 256 * 1024;
-	}
-	Common::SharedPtr<Common::MemoryReadStream> fHandle(saveFile->readStream(saveSize));
-
-	// Try to detect the used savegame format
-	enum CineSaveGameFormat saveGameFormat = detectSaveGameFormat(*fHandle);
-
-	// Handle problematic savegame formats
-	if (saveGameFormat == ANIMSIZE_30_PTRS_BROKEN) {
-		// One might be able to load the ANIMSIZE_30_PTRS_BROKEN format but
-		// that's not implemented here because it was never used in a stable
-		// release of ScummVM but only during development (From revision 31453,
-		// which introduced the problem, until revision 32073, which fixed it).
-		// Therefore be bail out if we detect this particular savegame format.
-		warning("Detected a known broken savegame format, not loading savegame");
-		return false;
-	} else if (saveGameFormat == ANIMSIZE_UNKNOWN) {
-		// If we can't detect the savegame format
-		// then let's try the default format and hope for the best.
-		warning("Couldn't detect the used savegame format, trying default savegame format. Things may break");
-		saveGameFormat = ANIMSIZE_30_PTRS_INTACT;
-	}
-	// Now we should have either of these formats
-	assert(saveGameFormat == ANIMSIZE_23 || saveGameFormat == ANIMSIZE_30_PTRS_INTACT);
-
+void CineEngine::resetEngine() {
 	g_sound->stopMusic();
 	freeAnimDataTable();
 	overlayList.clear();
-	// if (g_cine->getGameType() == Cine::GType_OS) {
-	//	freeUnkList();
-	// }
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		seqList.clear();
+	}
 	bgIncrustList.clear();
 	closePart();
 
@@ -481,7 +424,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	scriptTable.clear();
 	messageTable.clear();
 
-	for (i = 0; i < NUM_MAX_OBJECT; i++) {
+	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
 		objectTable[i].part = 0;
 		objectTable[i].name[0] = 0;
 		objectTable[i].frame = 0;
@@ -514,29 +457,34 @@ bool CineEngine::makeLoad(char *saveName) {
 	renderer->clear();
 
 	checkForPendingDataLoadSwitch = 0;
+}
 
+bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat) {
+	int16 i;
+	int16 size;
+	char bgName[13];
 
 	// At savefile position 0x0000:
-	currentDisk = fHandle->readUint16BE();
+	currentDisk = in.readUint16BE();
 
 	// At 0x0002:
-	fHandle->read(currentPartName, 13);
+	in.read(currentPartName, 13);
 	// At 0x000F:
-	fHandle->read(currentDatName, 13);
+	in.read(currentDatName, 13);
 
 	// At 0x001C:
-	saveVar2 = fHandle->readSint16BE();
+	saveVar2 = in.readSint16BE();
 
 	// At 0x001E:
-	fHandle->read(currentPrcName, 13);
+	in.read(currentPrcName, 13);
 	// At 0x002B:
-	fHandle->read(currentRelName, 13);
+	in.read(currentRelName, 13);
 	// At 0x0038:
-	fHandle->read(currentMsgName, 13);
+	in.read(currentMsgName, 13);
 	// At 0x0045:
-	fHandle->read(bgName, 13);
+	in.read(bgName, 13);
 	// At 0x0052:
-	fHandle->read(currentCtName, 13);
+	in.read(currentCtName, 13);
 
 	checkDataDisk(currentDisk);
 
@@ -561,109 +509,109 @@ bool CineEngine::makeLoad(char *saveName) {
 	}
 
 	// At 0x005F:
-	fHandle->readUint16BE();
+	in.readUint16BE();
 	// At 0x0061:
-	fHandle->readUint16BE();
+	in.readUint16BE();
 
 	// At 0x0063:
 	for (i = 0; i < 255; i++) {
 		// At 0x0063 + i * 32 + 0:
-		objectTable[i].x = fHandle->readSint16BE();
+		objectTable[i].x = in.readSint16BE();
 		// At 0x0063 + i * 32 + 2:
-		objectTable[i].y = fHandle->readSint16BE();
+		objectTable[i].y = in.readSint16BE();
 		// At 0x0063 + i * 32 + 4:
-		objectTable[i].mask = fHandle->readUint16BE();
+		objectTable[i].mask = in.readUint16BE();
 		// At 0x0063 + i * 32 + 6:
-		objectTable[i].frame = fHandle->readSint16BE();
+		objectTable[i].frame = in.readSint16BE();
 		// At 0x0063 + i * 32 + 8:
-		objectTable[i].costume = fHandle->readSint16BE();
+		objectTable[i].costume = in.readSint16BE();
 		// At 0x0063 + i * 32 + 10:
-		fHandle->read(objectTable[i].name, 20);
+		in.read(objectTable[i].name, 20);
 		// At 0x0063 + i * 32 + 30:
-		objectTable[i].part = fHandle->readUint16BE();
+		objectTable[i].part = in.readUint16BE();
 	}
 
 	// At 0x2043 (i.e. 0x0063 + 255 * 32):
-	renderer->restorePalette(*fHandle);
+	renderer->restorePalette(in);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
-	globalVars.load(*fHandle, NUM_MAX_VAR - 1);
+	globalVars.load(in, NUM_MAX_VAR - 1);
 
 	// At 0x2281 (i.e. 0x2083 + 255 * 2):
 	for (i = 0; i < 16; i++) {
 		// At 0x2281 + i * 2:
-		zoneData[i] = fHandle->readUint16BE();
+		zoneData[i] = in.readUint16BE();
 	}
 
 	// At 0x22A1 (i.e. 0x2281 + 16 * 2):
 	for (i = 0; i < 4; i++) {
 		// At 0x22A1 + i * 2:
-		commandVar3[i] = fHandle->readUint16BE();
+		commandVar3[i] = in.readUint16BE();
 	}
 
 	// At 0x22A9 (i.e. 0x22A1 + 4 * 2):
-	fHandle->read(commandBuffer, 0x50);
+	in.read(commandBuffer, 0x50);
 	renderer->setCommand(commandBuffer);
 
 	// At 0x22F9 (i.e. 0x22A9 + 0x50):
-	renderer->_cmdY = fHandle->readUint16BE();
+	renderer->_cmdY = in.readUint16BE();
 
 	// At 0x22FB:
-	bgVar0 = fHandle->readUint16BE();
+	bgVar0 = in.readUint16BE();
 	// At 0x22FD:
-	allowPlayerInput = fHandle->readUint16BE();
+	allowPlayerInput = in.readUint16BE();
 	// At 0x22FF:
-	playerCommand = fHandle->readSint16BE();
+	playerCommand = in.readSint16BE();
 	// At 0x2301:
-	commandVar1 = fHandle->readSint16BE();
+	commandVar1 = in.readSint16BE();
 	// At 0x2303:
-	isDrawCommandEnabled = fHandle->readUint16BE();
+	isDrawCommandEnabled = in.readUint16BE();
 	// At 0x2305:
-	var5 = fHandle->readUint16BE();
+	var5 = in.readUint16BE();
 	// At 0x2307:
-	var4 = fHandle->readUint16BE();
+	var4 = in.readUint16BE();
 	// At 0x2309:
-	var3 = fHandle->readUint16BE();
+	var3 = in.readUint16BE();
 	// At 0x230B:
-	var2 = fHandle->readUint16BE();
+	var2 = in.readUint16BE();
 	// At 0x230D:
-	commandVar2 = fHandle->readSint16BE();
+	commandVar2 = in.readSint16BE();
 
 	// At 0x230F:
-	renderer->_messageBg = fHandle->readUint16BE();
+	renderer->_messageBg = in.readUint16BE();
 
 	// At 0x2311:
-	fHandle->readUint16BE();
+	in.readUint16BE();
 	// At 0x2313:
-	fHandle->readUint16BE();
+	in.readUint16BE();
 
 	// At 0x2315:
-	loadResourcesFromSave(*fHandle, saveGameFormat);
+	loadResourcesFromSave(in, saveGameFormat);
 
 	// TODO: handle screen params (really required ?)
-	fHandle->readUint16BE();
-	fHandle->readUint16BE();
-	fHandle->readUint16BE();
-	fHandle->readUint16BE();
-	fHandle->readUint16BE();
-	fHandle->readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
 
-	size = fHandle->readSint16BE();
+	size = in.readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadScriptFromSave(*fHandle, true);
+		loadScriptFromSave(in, true);
 	}
 
-	size = fHandle->readSint16BE();
+	size = in.readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadScriptFromSave(*fHandle, false);
+		loadScriptFromSave(in, false);
 	}
 
-	size = fHandle->readSint16BE();
+	size = in.readSint16BE();
 	for (i = 0; i < size; i++) {
-		loadOverlayFromSave(*fHandle);
+		loadOverlayFromSave(in);
 	}
 
-	loadBgIncrustFromSave(*fHandle);
+	loadBgIncrustFromSave(in);
 
 	if (strlen(currentMsgName)) {
 		loadMsg(currentMsgName);
@@ -681,6 +629,67 @@ bool CineEngine::makeLoad(char *saveName) {
 	}
 
 	return true;
+}
+
+/*! \todo Implement Operation Stealth loading, this is obviously Future Wars only
+ * \todo Add support for loading the zoneQuery table (Operation Stealth specific)
+ */
+bool CineEngine::makeLoad(char *saveName) {
+	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
+
+	if (!saveFile) {
+		drawString(otherMessages[0], 0);
+		waitPlayerInput();
+		// restoreScreen();
+		checkDataDisk(-1);
+		return false;
+	}
+
+	uint32 saveSize = saveFile->size();
+	if (saveSize == 0) { // Savefile's compressed using zlib format can't tell their unpacked size, test for it
+		// Can't get information about the savefile's size so let's try
+		// reading as much as we can from the file up to a predefined upper limit.
+		//
+		// Some estimates for maximum savefile sizes (All with 255 animDataTable entries of 30 bytes each):
+		// With 256 global scripts, object scripts, overlays and background incrusts:
+		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 256 = ~129kB
+		// With 512 global scripts, object scripts, overlays and background incrusts:
+		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 512 = ~242kB
+		//
+		// I think it extremely unlikely that there would be over 512 global scripts, object scripts,
+		// overlays and background incrusts so 256kB seems like quite a safe upper limit.		
+		// NOTE: If the savegame format is changed then this value might have to be re-evaluated!
+		// Hopefully devices with more limited memory can also cope with this memory allocation.
+		saveSize = 256 * 1024;
+	}
+	Common::SharedPtr<Common::MemoryReadStream> in(saveFile->readStream(saveSize));
+
+	// Try to detect the used savegame format
+	enum CineSaveGameFormat saveGameFormat = detectSaveGameFormat(*in);
+
+	// Handle problematic savegame formats
+	if (saveGameFormat == ANIMSIZE_30_PTRS_BROKEN) {
+		// One might be able to load the ANIMSIZE_30_PTRS_BROKEN format but
+		// that's not implemented here because it was never used in a stable
+		// release of ScummVM but only during development (From revision 31453,
+		// which introduced the problem, until revision 32073, which fixed it).
+		// Therefore be bail out if we detect this particular savegame format.
+		warning("Detected a known broken savegame format, not loading savegame");
+		return false;
+	} else if (saveGameFormat == ANIMSIZE_UNKNOWN) {
+		// If we can't detect the savegame format
+		// then let's try the default format and hope for the best.
+		warning("Couldn't detect the used savegame format, trying default savegame format. Things may break");
+		saveGameFormat = ANIMSIZE_30_PTRS_INTACT;
+	}
+	// Now we should have either of these formats
+	assert(saveGameFormat == ANIMSIZE_23 || saveGameFormat == ANIMSIZE_30_PTRS_INTACT);
+
+	// Reset the engine's state
+	resetEngine();
+
+	// Load the plain Future Wars savegame format
+	return loadPlainSaveFW(*in, saveGameFormat);
 }
 
 /*! \todo Add support for saving the zoneQuery table (Operation Stealth specific)

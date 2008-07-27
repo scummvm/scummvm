@@ -98,6 +98,8 @@ public:
 
 private:
 	void initialize(void);
+	void resetEngine();
+	bool loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat);
 	bool makeLoad(char *saveName);
 	void mainLoop(int bootScriptIdx);
 	void readVolCnf();
