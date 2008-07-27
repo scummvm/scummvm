@@ -617,9 +617,13 @@ bool symbian_feof(FILE* handle) {
 
 long int symbian_ftell(FILE* handle) {
 	TInt pos = 0;
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
 
-	((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos);
-
+	entry->iFileHandle.Seek(ESeekCurrent, pos);
+	if(entry->iInputPos != KErrNotFound)
+		{
+		pos+=(entry->iInputPos - entry->iInputBufferLen);
+		}
 	return pos;
 }
 
