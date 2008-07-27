@@ -50,21 +50,14 @@ protected:
 
 	virtual VoidFunc findSymbol(const char *symbol) {
 		#ifndef _WIN32_WCE
-		void *func = (void *)GetProcAddress((HMODULE)_dlHandle, symbol);
+		FARPROC func = GetProcAddress((HMODULE)_dlHandle, symbol);
 		#else
-		void *func = (void *)GetProcAddress((HMODULE)_dlHandle, toUnicode(symbol));
+		FARPROC func = GetProcAddress((HMODULE)_dlHandle, toUnicode(symbol));
 		#endif
 		if (!func)
 			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 
-		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
-		// standard and POSIX: ISO C++ disallows casting between function pointers
-		// and data pointers, but dlsym always returns a void pointer. For details,
-		// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
-		assert(sizeof(VoidFunc) == sizeof(func));
-		VoidFunc tmp;
-		memcpy(&tmp, &func, sizeof(VoidFunc));
-		return tmp;
+		return (void (*)())func;
 	}
 
 public:
