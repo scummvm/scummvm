@@ -29,6 +29,8 @@
 #include "iphone_common.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "sound/mixer_intern.h"
+#include "backends/fs/posix/posix-fs-factory.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -62,7 +64,7 @@ protected:
 	static bool s_is113OrHigher;
 
 	Common::SaveFileManager *_savefile;
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
 
 	Graphics::Surface _framebuffer;
@@ -152,11 +154,15 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual bool setSoundCallback(SoundProc proc, void *param);
+	static void mixCallback(void *sys, byte *samples, int len);
+	virtual void setupMixer(void);
 	virtual int getOutputSampleRate() const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
 
 	virtual void quit();
+
+	FilesystemFactory *getFilesystemFactory() { return &POSIXFilesystemFactory::instance(); }
+	virtual void getTimeAndDate(struct tm &t) const;
 
 	virtual void setWindowCaption(const char *caption);
 
