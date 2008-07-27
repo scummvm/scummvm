@@ -109,7 +109,7 @@ private:
 
 class WSAMovie_v2 : public WSAMovie_v1 {
 public:
-	WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *scren);
+	WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *screen);
 
 	int open(const char *filename, int unk1, uint8 *palette);
 
