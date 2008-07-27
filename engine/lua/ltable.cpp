@@ -4,8 +4,6 @@
 ** See Copyright Notice in lua.h
 */
 
-#include <stdlib.h>
-
 #include "lauxlib.h"
 #include "lmem.h"
 #include "lobject.h"
