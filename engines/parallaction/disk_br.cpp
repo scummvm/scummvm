@@ -656,4 +656,31 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 	return createFont(name, stream);
 }
 
+Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
+	debugC(5, kDebugDisk, "AmigaDisk_br::loadMusic");
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/msc/%s", _partPath, name);
+
+	Common::File *stream = new Common::File;
+	if (!stream->open(path))
+		return 0;
+
+	return stream;
+}
+
+
+Common::ReadStream* AmigaDisk_br::loadSound(const char* name) {
+	debugC(5, kDebugDisk, "AmigaDisk_br::loadSound");
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/sfx/%s", _partPath, name);
+
+	Common::File *stream = new Common::File;
+	if (!stream->open(path))
+		errorFileNotFound(path);
+
+	return stream;
+}
+
 } // namespace Parallaction
