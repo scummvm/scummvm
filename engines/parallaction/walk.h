@@ -104,6 +104,8 @@ class PathWalker_BR : public PathWalker {
 	bool		_first;
 	int			_step;
 
+	int			_dirFrame;
+
 	void finalizeWalk();
 
 public:

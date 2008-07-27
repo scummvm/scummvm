@@ -439,6 +439,57 @@ void PathWalker_BR::finalizeWalk() {
 	_engineFlags &= ~kEngineWalking;
 	_first = true;
 	_fieldC = 1;
+
+	Common::Point foot;
+	_ch->getFoot(foot);
+
+	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
+	if (z != nullZonePtr && (z->_flags & kFlagsClosed) == 0) {
+		_vm->_location._startPosition = z->u.door->_startPos; // foot pos
+		_vm->_location._startFrame = z->u.door->_startFrame;
+
+#if 0
+		// TODO: implement working follower. Must find out a location in which the code is
+		// used and which is stable enough.
+		_followerFootInit.x = -1;
+		if (_follower && z->u.door->startPos2.x != -1) {
+			_followerFootInit.x = z->u.door->startPos2.x;	// foot pos
+			_followerFootInit.y = z->u.door->startPos2.y;	// foot pos
+		}
+		_followerFootInit.z = -1;
+		if (_follower && z->u.door->startPos2.z != -1) {
+			_followerFootInit.z = z->u.door->startPos2.z;	// foot pos
+		}
+#endif
+
+		_vm->scheduleLocationSwitch(z->u.door->_location);
+		_vm->_cmdExec->run(z->_commands, z);
+	}
+
+#if 0
+	// TODO: Input::walkTo must be extended to support destination frame in addition to coordinates
+	// TODO: the frame argument must be passed to PathWalker through PathBuilder, so probably
+	// a merge between the two Path managers is the right solution
+	if (_engineFlags & FINAL_WALK_FRAME) {	// this flag is set in readInput()
+		_engineFlags &= ~FINAL_WALK_FRAME;
+		_char.ani->_frame = _moveToF; 	// from readInput()...
+	} else {
+		_char.ani->_frame = _dirFrame;	// from walk()
+	}
+	_char.setFoot(foot);
+#endif
+
+	_ch->_ani->_frame = _dirFrame;	// temporary solution
+
+#if 0
+	// TODO: support scrolling ;)
+	if (foot.x > _gfx->hscroll + 600) _gfx->scrollRight(78);
+	if (foot.x < _gfx->hscroll + 40) _gfx->scrollLeft(78);
+	if (foot.y > 350) _gfx->scrollDown(100);
+	if (foot.y < 80) _gfx->scrollUp(100);
+#endif
+
+	return;
 }
 
 
@@ -447,7 +498,8 @@ void PathWalker_BR::walk() {
 		return;
 	}
 
-/*
+#if 0
+	// TODO: support delays in walking. This requires extending Input::walkIo().
 	if (ch._walkDelay > 0) {
 		ch._walkDelay--;
 		if (ch._walkDelay == 0 && _ch._ani->_scriptName) {
@@ -458,7 +510,8 @@ void PathWalker_BR::walk() {
 		}
 		return;
 	}
-*/
+#endif
+
 	GfxObj *obj = _ch->_ani->gfxobj;
 
 	Common::Rect rect;
@@ -477,12 +530,7 @@ void PathWalker_BR::walk() {
 	int yStep = (scale * 10) / 100 + 1;
 
 	debugC(9, kDebugWalk, "calculated step: (%i, %i)\n", xStep, yStep);
-/*
-	if (_first) {
-		_ch->getFoot(_startFoot);
-		_first = false;
-	}
-*/
+
 	if (_fieldC == 0) {
 		_ch->_walkPath.erase(_ch->_walkPath.begin());
 
@@ -491,7 +539,6 @@ void PathWalker_BR::walk() {
 			debugC(3, kDebugWalk, "PathWalker_BR::walk, case 0\n");
 			return;
 		} else {
-//			_ch->getFoot(_startFoot);
 			debugC(3, kDebugWalk, "PathWalker_BR::walk, moving to next node\n");
 		}
 	}
@@ -503,7 +550,7 @@ void PathWalker_BR::walk() {
 	_step %= 8;
 
 	int walkFrame = _step;
-	int dirFrame = 0;
+	_dirFrame = 0;
 	Common::Point newpos(_startFoot), delta;
 
 	Common::Point p(*_ch->_walkPath.begin());
@@ -517,7 +564,7 @@ void PathWalker_BR::walk() {
 			delta.y = p.y - _startFoot.y;
 			newpos.y = p.y;
 		}
-		dirFrame = 9;
+		_dirFrame = 9;
 	} else
 	if (_startFoot.y > p.y && _startFoot.y > 0 && IS_PATH_CLEAR(_startFoot.x, _startFoot.y - yStep)) {
 		if (_startFoot.y - yStep >= p.y) {
@@ -528,7 +575,7 @@ void PathWalker_BR::walk() {
 			delta.y = _startFoot.y - p.y;
 			newpos.y = p.y;
 		}
-		dirFrame = 0;
+		_dirFrame = 0;
 	}
 
 	if (_startFoot.x < p.x && _startFoot.x < 640 && IS_PATH_CLEAR(_startFoot.x + xStep, _startFoot.y)) {
@@ -541,7 +588,7 @@ void PathWalker_BR::walk() {
 			newpos.x = p.x;
 		}
 		if (delta.y < delta.x) {
-			dirFrame = 18;	// right
+			_dirFrame = 18;	// right
 		}
 	} else
 	if (_startFoot.x > p.x && _startFoot.x > 0 && IS_PATH_CLEAR(_startFoot.x - xStep, _startFoot.y)) {
@@ -554,7 +601,7 @@ void PathWalker_BR::walk() {
 			newpos.x = p.x;
 		}
 		if (delta.y < delta.x) {
-			dirFrame = 27;	// left
+			_dirFrame = 27;	// left
 		}
 	}
 
@@ -562,11 +609,11 @@ void PathWalker_BR::walk() {
 
 	if (_fieldC) {
 		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)\n", _startFoot.x, _startFoot.y, newpos.x, newpos.y);
-		_ch->_ani->_frame = walkFrame + dirFrame + 1;
+		_ch->_ani->_frame = walkFrame + _dirFrame + 1;
 		_startFoot.x = newpos.x;
 		_startFoot.y = newpos.y;
 		_ch->setFoot(_startFoot);
-	//	_ch->_z = ch._startFoot.y;
+		_ch->_ani->_z = newpos.y;
 	}
 
 	if (_fieldC || !_ch->_walkPath.empty()) {
