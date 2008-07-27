@@ -211,6 +211,7 @@ protected:
 	Font *createFont(const char *name, Common::ReadStream &stream);
 	Sprites*	createSprites(Common::ReadStream &stream);
 	void loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette);
+	GfxObj* createInventoryObjects(Common::SeekableReadStream &stream);
 
 public:
 	DosDisk_br(Parallaction *vm);

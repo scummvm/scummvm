@@ -35,6 +35,7 @@ extern byte _amigaTopazFont[];
 
 class BraFont : public Font {
 
+protected:
 	byte	*_cp;
 	uint	_bufPitch;
 
@@ -172,6 +173,42 @@ byte BraFont::_charMap[] = {
 	0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34
 };
 
+
+class BraInventoryObjects : public BraFont, public Frames {
+
+public:
+	BraInventoryObjects(Common::ReadStream &stream) : BraFont(stream) {
+	}
+
+	// Frames implementation
+	uint16	getNum() {
+		return _numGlyphs;
+	}
+
+	byte*	getData(uint16 index) {
+		assert(index < _numGlyphs);
+		return _data + _height * index + _widths[index];
+	}
+
+	void	getRect(uint16 index, Common::Rect &r) {
+		assert(index < _numGlyphs);
+		r.left = 0;
+		r.top = 0;
+		r.setWidth(_widths[index]);
+		r.setHeight(_height);
+	}
+
+	uint	getRawSize(uint16 index) {
+		assert(index < _numGlyphs);
+		return _widths[index] * _height;
+	}
+
+	uint	getSize(uint16 index) {
+		assert(index < _numGlyphs);
+		return _widths[index] * _height;
+	}
+
+};
 
 class DosFont : public Font {
 
@@ -544,6 +581,12 @@ Font *AmigaDisk_br::createFont(const char *name, Common::SeekableReadStream &str
 	// TODO: implement AmigaLabelFont for labels
 	return new AmigaFont(stream);
 }
+
+GfxObj* DosDisk_br::createInventoryObjects(Common::SeekableReadStream &stream) {
+	Frames *frames = new BraInventoryObjects(stream);
+	return new GfxObj(0, frames, "inventoryobjects");
+}
+
 
 void Parallaction_ns::initFonts() {
 

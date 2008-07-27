@@ -174,7 +174,7 @@ void Parallaction_br::initPart() {
 	_objectsNames = _disk->loadTable("objects");
 	_countersNames = _disk->loadTable("counters");
 
-//	_disk->loadObjects("icone.ico");
+	_char._objs = _disk->loadObjects("icone.ico");
 
 }
 

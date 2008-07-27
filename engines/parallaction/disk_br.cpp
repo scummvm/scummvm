@@ -237,7 +237,15 @@ Font* DosDisk_br::loadFont(const char* name) {
 
 GfxObj* DosDisk_br::loadObjects(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadObjects");
-	return 0;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/%s", _partPath, name);
+
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	return createInventoryObjects(stream);
 }
 
 void genSlidePath(char *path, const char* name) {
