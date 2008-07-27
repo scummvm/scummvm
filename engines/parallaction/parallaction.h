@@ -199,6 +199,7 @@ struct Character {
 	GfxObj			*_talk;
 	GfxObj			*_objs;
 	PathBuilder		*_builder;
+	PathWalker		*_walker;
 	PointList		_walkPath;
 
 	Character(Parallaction *vm);
@@ -259,9 +260,6 @@ public:
 
 	void		pauseJobs();
 	void		resumeJobs();
-
-	void		finalizeWalk(Character &character);
-	void		clipMove(Common::Point& pos, const Common::Point& to);
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
@@ -353,8 +351,6 @@ protected:		// members
 
 	void		displayComment(ExamineData *data);
 
-	void		checkDoor(const Common::Point &foot);
-
 	void		freeCharacter();
 
 	int16		pickupItem(ZonePtr z);
@@ -375,7 +371,6 @@ public:
 
 	void updateDoor(ZonePtr z);
 
-	virtual void walk(Character &character) = 0;
 	virtual void drawAnimations() = 0;
 
 	void		beep();
@@ -586,7 +581,6 @@ private:
 	const Callable *_callables;
 
 protected:
-	void walk(Character &character);
 	void drawAnimations();
 
 	void		parseLocation(const char *filename);

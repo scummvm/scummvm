@@ -73,6 +73,43 @@ public:
 	void buildPath(uint16 x, uint16 y);
 };
 
+class PathWalker {
+protected:
+	Character	*_ch;
+public:
+	PathWalker(Character *ch) : _ch(ch) { }
+	virtual ~PathWalker() { }
+	virtual void walk() = 0;
+};
+
+class PathWalker_NS : public PathWalker {
+
+
+	void finalizeWalk();
+	void clipMove(Common::Point& pos, const Common::Point& to);
+	void checkDoor(const Common::Point &foot);
+
+public:
+	PathWalker_NS(Character *ch) : PathWalker(ch) { }
+	void walk();
+};
+
+
+class PathWalker_BR : public PathWalker {
+
+
+	int			_walkDelay;
+	int			_fieldC;
+	Common::Point _startFoot;
+	bool		_first;
+	int			_step;
+
+	void finalizeWalk();
+
+public:
+	PathWalker_BR(Character *ch);
+	void walk();
+};
 
 }
 

@@ -353,7 +353,7 @@ void Parallaction::runGame() {
 		if (_char._ani->gfxobj) {
 			_char._ani->gfxobj->z = _char._ani->_z;
 		}
-		walk(_char);
+		_char._walker->walk();
 		drawAnimations();
 	}
 
@@ -518,15 +518,21 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
 
 	// TODO: move creation into Parallaction. Needs to make Character a pointer first.
-	if (_vm->getGameType() == GType_Nippon)
+	if (_vm->getGameType() == GType_Nippon) {
 		_builder = new PathBuilder_NS(this);
-	else
+		_walker = new PathWalker_NS(this);
+	} else {
 		_builder = new PathBuilder_BR(this);
+		_walker = new PathWalker_BR(this);
+	}
 }
 
 Character::~Character() {
 	delete _builder;
 	_builder = 0;
+
+	delete _walker;
+	_walker = 0;
 
 	free();
 }
@@ -565,13 +571,7 @@ void Character::scheduleWalk(int16 x, int16 y) {
 #if 0
 	dumpPath(_walkPath, _name);
 #endif
-
-	if (_vm->getGameType() == GType_Nippon) {
-		_engineFlags |= kEngineWalking;
-	} else {
-		// BRA can't walk yet!
-		_walkPath.clear();
-	}
+	_engineFlags |= kEngineWalking;
 }
 
 void Character::free() {

@@ -170,10 +170,6 @@ void PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 
 	// path is obstructed: look for alternative
 	_ch->_walkPath.push_back(v48);
-#if 0
-	printNodes(_list, "start");
-#endif
-
 	Common::Point pos;
 	_ch->getFoot(pos);
 
@@ -249,9 +245,9 @@ uint16 PathBuilder_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 	return 1;
 }
 
-void Parallaction::clipMove(Common::Point& pos, const Common::Point& to) {
+void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
 
-	if ((pos.x < to.x) && (pos.x < _pathBuffer->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
+	if ((pos.x < to.x) && (pos.x < _vm->_pathBuffer->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
 		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
@@ -259,7 +255,7 @@ void Parallaction::clipMove(Common::Point& pos, const Common::Point& to) {
 		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < to.y) && (pos.y < _pathBuffer->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
+	if ((pos.y < to.y) && (pos.y < _vm->_pathBuffer->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
 		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 
@@ -271,69 +267,69 @@ void Parallaction::clipMove(Common::Point& pos, const Common::Point& to) {
 }
 
 
-void Parallaction::checkDoor(const Common::Point &foot) {
+void PathWalker_NS::checkDoor(const Common::Point &foot) {
 
-	ZonePtr z = hitZone(kZoneDoor, foot.x, foot.y);
+	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
 	if (z) {
 		if ((z->_flags & kFlagsClosed) == 0) {
-			_location._startPosition = z->u.door->_startPos;
-			_location._startFrame = z->u.door->_startFrame;
-			scheduleLocationSwitch(z->u.door->_location);
-			_zoneTrap = nullZonePtr;
+			_vm->_location._startPosition = z->u.door->_startPos;
+			_vm->_location._startFrame = z->u.door->_startFrame;
+			_vm->scheduleLocationSwitch(z->u.door->_location);
+			_vm->_zoneTrap = nullZonePtr;
 		} else {
-			_cmdExec->run(z->_commands, z);
+			_vm->_cmdExec->run(z->_commands, z);
 		}
 	}
 
-	z = hitZone(kZoneTrap, foot.x, foot.y);
+	z = _vm->hitZone(kZoneTrap, foot.x, foot.y);
 	if (z) {
-		setLocationFlags(kFlagsEnter);
-		_cmdExec->run(z->_commands, z);
-		clearLocationFlags(kFlagsEnter);
-		_zoneTrap = z;
+		_vm->setLocationFlags(kFlagsEnter);
+		_vm->_cmdExec->run(z->_commands, z);
+		_vm->clearLocationFlags(kFlagsEnter);
+		_vm->_zoneTrap = z;
 	} else
-	if (_zoneTrap) {
-		setLocationFlags(kFlagsExit);
-		_cmdExec->run(_zoneTrap->_commands, _zoneTrap);
-		clearLocationFlags(kFlagsExit);
-		_zoneTrap = nullZonePtr;
+	if (_vm->_zoneTrap) {
+		_vm->setLocationFlags(kFlagsExit);
+		_vm->_cmdExec->run(_vm->_zoneTrap->_commands, _vm->_zoneTrap);
+		_vm->clearLocationFlags(kFlagsExit);
+		_vm->_zoneTrap = nullZonePtr;
 	}
 
 }
 
 
-void Parallaction::finalizeWalk(Character &character) {
+void PathWalker_NS::finalizeWalk() {
 	_engineFlags &= ~kEngineWalking;
 
 	Common::Point foot;
-	character.getFoot(foot);
+	_ch->getFoot(foot);
 	checkDoor(foot);
 
-	character._walkPath.clear();
+	_ch->_walkPath.clear();
 }
 
-void Parallaction_ns::walk(Character &character) {
+void PathWalker_NS::walk() {
 	if ((_engineFlags & kEngineWalking) == 0) {
 		return;
 	}
 
 	Common::Point curPos;
-	character.getFoot(curPos);
+	_ch->getFoot(curPos);
 
 	// update target, if previous was reached
-	PointList::iterator it = character._walkPath.begin();
-	if (it != character._walkPath.end()) {
+	PointList::iterator it = _ch->_walkPath.begin();
+	if (it != _ch->_walkPath.end()) {
 		if (*it == curPos) {
 			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
-			it = character._walkPath.erase(it);
+			it = _ch->_walkPath.erase(it);
 		}
 	}
 
 	// advance character towards the target
 	Common::Point targetPos;
-	if (it == character._walkPath.end()) {
+	if (it == _ch->_walkPath.end()) {
 		debugC(1, kDebugWalk, "walk reached last node");
-		finalizeWalk(character);
+		finalizeWalk();
 		targetPos = curPos;
 	} else {
 		// targetPos is saved to help setting character direction
@@ -341,11 +337,11 @@ void Parallaction_ns::walk(Character &character) {
 
 		Common::Point newPos(curPos);
 		clipMove(newPos, targetPos);
-		character.setFoot(newPos);
+		_ch->setFoot(newPos);
 
 		if (newPos == curPos) {
 			debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
-			finalizeWalk(character);
+			finalizeWalk();
 			targetPos = newPos;	// when walking is interrupted, targetPos must be hacked so that a still frame can be selected
 		}
 	}
@@ -356,7 +352,7 @@ void Parallaction_ns::walk(Character &character) {
 	// from curPos to newPos is prone to abrutply change in direction, thus making the
 	// code select 'too different' frames when walking diagonally against obstacles,
 	// and yielding an annoying shaking effect in the character.
-	character.updateDirection(curPos, targetPos);
+	_ch->updateDirection(curPos, targetPos);
 }
 
 
@@ -438,5 +434,155 @@ void PathBuilder_BR::buildPath(uint16 x, uint16 y) {
 
 PathBuilder_BR::PathBuilder_BR(Character *ch) : PathBuilder(ch) {
 }
+
+void PathWalker_BR::finalizeWalk() {
+	_engineFlags &= ~kEngineWalking;
+	_first = true;
+	_fieldC = 1;
+}
+
+
+void PathWalker_BR::walk() {
+	if ((_engineFlags & kEngineWalking) == 0) {
+		return;
+	}
+
+/*
+	if (ch._walkDelay > 0) {
+		ch._walkDelay--;
+		if (ch._walkDelay == 0 && _ch._ani->_scriptName) {
+			// stop script and reset
+			_ch._ani->_flags &= ~kFlagsActing;
+			Script *script = findScript(_ch._ani->_scriptName);
+			script->_nextCommand = script->firstCommand;
+		}
+		return;
+	}
+*/
+	GfxObj *obj = _ch->_ani->gfxobj;
+
+	Common::Rect rect;
+	obj->getRect(_ch->_ani->_frame, rect);
+
+	uint scale;
+	if (rect.bottom > _vm->_location._zeta0) {
+		scale = 100;
+	} else
+	if (rect.bottom < _vm->_location._zeta1) {
+		scale = _vm->_location._zeta2;
+	} else {
+		scale = _vm->_location._zeta2 + ((rect.bottom - _vm->_location._zeta1) * (100 - _vm->_location._zeta2)) / (_vm->_location._zeta0 - _vm->_location._zeta1);
+	}
+	int xStep = (scale * 16) / 100 + 1;
+	int yStep = (scale * 10) / 100 + 1;
+
+	debugC(9, kDebugWalk, "calculated step: (%i, %i)\n", xStep, yStep);
+/*
+	if (_first) {
+		_ch->getFoot(_startFoot);
+		_first = false;
+	}
+*/
+	if (_fieldC == 0) {
+		_ch->_walkPath.erase(_ch->_walkPath.begin());
+
+		if (_ch->_walkPath.empty()) {
+			finalizeWalk();
+			debugC(3, kDebugWalk, "PathWalker_BR::walk, case 0\n");
+			return;
+		} else {
+//			_ch->getFoot(_startFoot);
+			debugC(3, kDebugWalk, "PathWalker_BR::walk, moving to next node\n");
+		}
+	}
+
+	_ch->getFoot(_startFoot);
+
+	_fieldC = 0;
+	_step++;
+	_step %= 8;
+
+	int walkFrame = _step;
+	int dirFrame = 0;
+	Common::Point newpos(_startFoot), delta;
+
+	Common::Point p(*_ch->_walkPath.begin());
+
+	if (_startFoot.y < p.y && _startFoot.y < 400 && IS_PATH_CLEAR(_startFoot.x, yStep + _startFoot.y)) {
+		if (yStep + _startFoot.y <= p.y) {
+			_fieldC = 1;
+			delta.y = yStep;
+			newpos.y = yStep + _startFoot.y;
+		} else {
+			delta.y = p.y - _startFoot.y;
+			newpos.y = p.y;
+		}
+		dirFrame = 9;
+	} else
+	if (_startFoot.y > p.y && _startFoot.y > 0 && IS_PATH_CLEAR(_startFoot.x, _startFoot.y - yStep)) {
+		if (_startFoot.y - yStep >= p.y) {
+			_fieldC = 1;
+			delta.y = yStep;
+			newpos.y = _startFoot.y - yStep;
+		} else {
+			delta.y = _startFoot.y - p.y;
+			newpos.y = p.y;
+		}
+		dirFrame = 0;
+	}
+
+	if (_startFoot.x < p.x && _startFoot.x < 640 && IS_PATH_CLEAR(_startFoot.x + xStep, _startFoot.y)) {
+		if (_startFoot.x + xStep <= p.x) {
+			_fieldC = 1;
+			delta.x = xStep;
+			newpos.x = xStep + _startFoot.x;
+		} else {
+			delta.x = p.x - _startFoot.x;
+			newpos.x = p.x;
+		}
+		if (delta.y < delta.x) {
+			dirFrame = 18;	// right
+		}
+	} else
+	if (_startFoot.x > p.x && _startFoot.x > 0 && IS_PATH_CLEAR(_startFoot.x - xStep, _startFoot.y)) {
+		if (_startFoot.x - xStep >= p.x) {
+			_fieldC = 1;
+			delta.x = xStep;
+			newpos.x = _startFoot.x - xStep;
+		} else {
+			delta.x = _startFoot.x - p.x;
+			newpos.x = p.x;
+		}
+		if (delta.y < delta.x) {
+			dirFrame = 27;	// left
+		}
+	}
+
+	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i \n", _startFoot.x, _startFoot.y, p.x, p.y, delta.x, delta.y);
+
+	if (_fieldC) {
+		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)\n", _startFoot.x, _startFoot.y, newpos.x, newpos.y);
+		_ch->_ani->_frame = walkFrame + dirFrame + 1;
+		_startFoot.x = newpos.x;
+		_startFoot.y = newpos.y;
+		_ch->setFoot(_startFoot);
+	//	_ch->_z = ch._startFoot.y;
+	}
+
+	if (_fieldC || !_ch->_walkPath.empty()) {
+//		checkTrap();
+		debugC(3, kDebugWalk, "PathWalker_BR::walk, case 1\n");
+		return;
+	}
+
+	debugC(3, kDebugWalk, "PathWalker_BR::walk, case 2\n");
+	finalizeWalk();
+	return;
+}
+
+PathWalker_BR::PathWalker_BR(Character *ch) : PathWalker(ch), _fieldC(1), _first(true) {
+
+}
+
 
 } // namespace Parallaction
