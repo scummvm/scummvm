@@ -45,10 +45,12 @@
 
 #include <engine/localize.h>
 #include <engine/resource.h>
+#include <engine/backend/driver.h>
 
 //hack below: shutup linker
 int g_flags = 0;
 ResourceLoader *g_resourceloader = 0;
+Driver *g_driver = 0;
 Common::File *ResourceLoader::openNewStream(const char *filename) const { return NULL; }
 
 // Provide debug.cpp functions which don't call SDL_Quit.
