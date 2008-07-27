@@ -228,7 +228,7 @@ void registerDefaults() {
 #elif defined(__SYMBIAN32__)
 	strcpy(savePath, Symbian::GetExecutablePath());
 	strcat(savePath, DEFAULT_SAVE_PATH);
-	strcat(savePath, '\\');
+	strcat(savePath, "\\");
 	ConfMan.registerDefault("savepath", savePath);
 #elif defined (IPHONE)
 	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
