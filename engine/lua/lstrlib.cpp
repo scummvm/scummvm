@@ -87,27 +87,6 @@ static void str_rep (void)
 }
 
 
-static void str_byte (void)
-{
-  int32 l;
-  const char *s = luaL_check_lstr(1, &l);
-  int32 pos = posrelat((int32)luaL_opt_number(2, 1), l);
-  luaL_arg_check(0<pos && pos<=l, 2,  "out of range");
-  lua_pushnumber((byte)s[pos-1]);
-}
-
-static void str_char (void) {
-  int32 i = 0;
-  luaL_resetbuffer();
-  while (lua_getparam(++i) != LUA_NOOBJECT) {
-    double c = luaL_check_number(i);
-    luaL_arg_check((byte)c == c, i, "invalid value");
-    luaL_addchar((int32)c);
-  }
-  closeandpush();
-}
-
-
 /*
 ** =======================================================
 ** PATTERN MATCHING
@@ -517,10 +496,7 @@ static struct luaL_reg strlib[] = {
 {"strsub", str_sub},
 {"strlower", str_lower},
 {"strupper", str_upper},
-{"strchar", str_char},
 {"strrep", str_rep},
-{"ascii", str_byte},  /* for compatibility */
-{"strbyte", str_byte},
 {"format", str_format},
 {"strfind", str_find},
 {"gsub", str_gsub}

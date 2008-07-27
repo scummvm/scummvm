@@ -55,11 +55,6 @@ static void math_atan (void)
   lua_pushnumber(FROMRAD(atan(luaL_check_number(1))));
 }
 
-static void math_atan2 (void)
-{
-  lua_pushnumber(FROMRAD(atan2(luaL_check_number(1), luaL_check_number(2))));
-}
-
 static void math_ceil (void)
 {
   lua_pushnumber(ceil(luaL_check_number(1)));
@@ -85,43 +80,16 @@ static void math_pow (void)
   lua_pushnumber(pow(luaL_check_number(1), luaL_check_number(2)));
 }
 
-static void math_log (void)
-{
-  lua_pushnumber(log(luaL_check_number(1)));
-}
-
-static void math_log10 (void)
-{
-  lua_pushnumber(log10(luaL_check_number(1)));
-}
-
-static void math_exp (void)
-{
-  lua_pushnumber(exp(luaL_check_number(1)));
-}
-
 static void math_deg (void)
 {
   lua_pushnumber(luaL_check_number(1)*(180.0/LOCAL_PI));
 }
-
+  
 static void math_rad (void)
 {
   lua_pushnumber(luaL_check_number(1)*(LOCAL_PI/180.0));
 }
-
-static void math_frexp (void) {
-  int e;
-  lua_pushnumber(frexp(luaL_check_number(1), &e));
-  lua_pushnumber(e);
-}
-
-static void math_ldexp (void) {
-  lua_pushnumber(ldexp(luaL_check_number(1), (int32)luaL_check_number(2)));
-}
-
-
-
+    
 static void math_min (void)
 {
   int32 i = 1;
@@ -133,7 +101,6 @@ static void math_min (void)
   }
   lua_pushnumber(dmin);
 }
-
 
 static void math_max (void)
 {
@@ -147,7 +114,6 @@ static void math_max (void)
   lua_pushnumber(dmax);
 }
 
-
 static void math_random (void)
 {
   /* the '%' is needed because on some systems (SunOS!) "rand()" may */
@@ -159,7 +125,6 @@ static void math_random (void)
   else
     lua_pushnumber((int32)(r*l)+1);
 }
-
 
 static void math_randomseed (void)
 {
@@ -175,18 +140,12 @@ static struct luaL_reg mathlib[] = {
 {"asin",  math_asin},
 {"acos",  math_acos},
 {"atan",  math_atan},
-{"atan2", math_atan2},
 {"ceil",  math_ceil},
 {"floor", math_floor},
 {"mod",   math_mod},
-{"frexp", math_frexp},
-{"ldexp", math_ldexp},
 {"sqrt",  math_sqrt},
 {"min",   math_min},
 {"max",   math_max},
-{"log",   math_log},
-{"log10", math_log10},
-{"exp",   math_exp},
 {"deg",   math_deg},
 {"rad",   math_rad},
 {"random",     math_random},

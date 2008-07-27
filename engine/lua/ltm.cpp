@@ -206,10 +206,10 @@ static void fillvalids (IMS e, TObject *func)
 
 void luaT_setfallback (void)
 {
-  static char *oldnames [] = {"error", "getglobal", "arith", "order", NULL};
+  static const char *oldnames [] = {"error", "getglobal", "arith", "order", NULL};
   TObject oldfunc;
   lua_CFunction replace;
-  char *name = luaL_check_string(1);
+  const char *name = luaL_check_string(1);
   lua_Object func = lua_getparam(2);
   luaL_arg_check(lua_isfunction(func), 2, "function expected");
   switch (luaL_findstring(name, oldnames)) {
