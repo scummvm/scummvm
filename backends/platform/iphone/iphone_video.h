@@ -27,12 +27,11 @@
 #define _IPHONE_VIDEO__H
 
 #import <UIKit/UIKit.h>
-#import <UIKit/UIView-Geometry.h>
 #import <GraphicsServices/GraphicsServices.h>
 #import <Foundation/Foundation.h>
 #import <CoreSurface/CoreSurface.h>
-#import <LayerKit/LKLayer.h>
 
+#import <QuartzCore/QuartzCore.h>
 #import "iphone_keyboard.h"
 
 @interface iPhoneView : UIView
@@ -41,7 +40,7 @@
 	NSMutableArray* _events;
 	NSLock* _lock;
 	SoftKeyboard* _keyboardView;
-	LKLayer* _screenLayer;
+	CALayer* _screenLayer;
 
 	int _fullWidth;
 	int _fullHeight;

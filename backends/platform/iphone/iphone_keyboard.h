@@ -26,11 +26,7 @@
 #import <UIKit/UIKit.h>
 #import <UIKit/UITextView.h>
 
-@protocol KeyboardInputProtocol
-- (void)handleKeyPress:(unichar)c;
-@end
-
-@interface SoftKeyboard : UIKeyboard<KeyboardInputProtocol> {
+@interface SoftKeyboard : UIView {
 	id inputDelegate;
 	UITextView* inputView;
 }

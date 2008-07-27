@@ -25,19 +25,6 @@
 
 #import "iphone_keyboard.h"
 
-// Override settings of the default keyboard implementation
-@implementation UIKeyboardImpl (DisableFeatures)
-
-- (BOOL)autoCapitalizationPreference {
-	return false;
-}
-
-- (BOOL)autoCorrectionPreference {
-	return false;
-}
-
-@end
-
 @implementation TextInputHandler
 
 - (id)initWithKeyboard:(SoftKeyboard*)keyboard; {
@@ -67,7 +54,8 @@
 @implementation SoftKeyboard
 
 - (id)initWithFrame:(CGRect)frame {
-	self = [super initWithFrame:frame];
+	//self = [super initWithFrame:frame];
+	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
 	return self;
