@@ -1492,7 +1492,7 @@ typedef Common::Functor1Mem<EMCState*, int, KyraEngine_HoF> OpcodeV2;
 
 typedef Common::Functor2Mem<const TIM*, const uint16*, int, KyraEngine_HoF> TIMOpcodeV2;
 #define OpcodeTim(x) _timOpcodes.push_back(new TIMOpcodeV2(this, &KyraEngine_HoF::x))
-#define OpcodeTimUnImpl() _timOpcodes.push_back(TIMOpcodeV2(this, 0))
+#define OpcodeTimUnImpl() _timOpcodes.push_back(new TIMOpcodeV2(this, 0))
 
 void KyraEngine_HoF::setupOpcodeTable() {
 	Common::Array<const Opcode*> *table = 0;
