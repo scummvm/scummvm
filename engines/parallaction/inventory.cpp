@@ -38,6 +38,10 @@ namespace Parallaction {
 //	but only 24x24 pixels are actually copied to graphic memory
 //
 
+#define INVENTORYITEM_PITCH			32
+#define INVENTORYITEM_WIDTH			24
+#define INVENTORYITEM_HEIGHT		24
+
 #define INVENTORY_MAX_ITEMS			30
 #define INVENTORY_FIRST_ITEM		4		// first four entries are used up by verbs
 
@@ -220,6 +224,16 @@ void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 
 }
 
+void InventoryRenderer::drawItem(ItemName name, byte *buffer, uint pitch) {
+	byte* s = _vm->_char._objs->getData(name);
+	byte* d = buffer;
+	for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		s += INVENTORYITEM_PITCH;
+		d += pitch;
+	}
+}
 
 
 Inventory::Inventory(uint16 maxItems) : _maxItems(maxItems), _numItems(0) {

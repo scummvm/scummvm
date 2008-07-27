@@ -38,10 +38,6 @@ struct InventoryItem {
 	uint16		_index;			// index to frame in objs file
 };
 
-#define INVENTORYITEM_PITCH			32
-#define INVENTORYITEM_WIDTH			24
-#define INVENTORYITEM_HEIGHT		24
-
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
 
 typedef int16 ItemPosition;
@@ -97,6 +93,7 @@ public:
 
 	ItemPosition hitTest(const Common::Point &p) const;
 	void highlightItem(ItemPosition pos, byte color);
+	void drawItem(ItemName name, byte *buffer, uint pitch);
 
 	byte*	getData() const { return (byte*)_surf.pixels; }
 

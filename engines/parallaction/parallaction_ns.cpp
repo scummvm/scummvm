@@ -211,18 +211,8 @@ void Parallaction_ns::setInventoryCursor(int pos) {
 	byte *v8 = _mouseComposedArrow->getData(0);
 
 	// FIXME: destination offseting is not clear
-	byte* s = _char._objs->getData(item->_index);
-	byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
-
-	for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		s += INVENTORYITEM_PITCH;
-		d += MOUSECOMBO_WIDTH;
-	}
-
+	_inventoryRenderer->drawItem(item->_index, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
 	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
-
 }
 
 
