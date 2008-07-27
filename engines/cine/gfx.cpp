@@ -607,7 +607,7 @@ void FWRenderer::removeBg(unsigned int idx) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-void FWRenderer::saveBg(Common::OutSaveFile &fHandle) {
+void FWRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	fHandle.write(_bgName, 13);
 }
 
@@ -653,6 +653,49 @@ void FWRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	for (i = 0; i < _lowPalSize; i++) {
 		fHandle.writeUint16BE(_palette[i]);
 	}
+}
+
+/*! \brief Write active and backup palette to save
+ * \param fHandle Savefile open for writing
+ */
+void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
+	int i;
+
+	assert(_activeHiPal);
+
+	// Write the active 256 color palette.
+	for (i = 0; i < _hiPalSize; i++) {
+		fHandle.writeByte(_activeHiPal[i]);
+	}
+
+	// Write the active 256 color palette a second time.
+	// FIXME: The backup 256 color palette should be saved here instead of the active one.
+	for (i = 0; i < _hiPalSize; i++) {
+		fHandle.writeByte(_activeHiPal[i]);
+	}
+}
+
+/*! \brief Restore active and backup palette from save
+ * \param fHandle Savefile open for reading
+ */
+void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
+	int i;
+
+	if (!_activeHiPal) {
+		_activeHiPal = new byte[_hiPalSize];
+	}
+
+	assert(_activeHiPal);
+
+	for (i = 0; i < _hiPalSize; i++) {
+		_activeHiPal[i] = fHandle.readByte();
+	}
+
+	// Jump over the backup 256 color palette.
+	// FIXME: Load the backup 256 color palette and use it properly.
+	fHandle.seek(_hiPalSize, SEEK_CUR);
+
+	_changePal = 1;
 }
 
 /*! \brief Rotate active palette
@@ -1268,6 +1311,12 @@ void OSRenderer::removeBg(unsigned int idx) {
 	_bgTable[idx].lowPal = NULL;
 	_bgTable[idx].hiPal = NULL;
 	memset(_bgTable[idx].name, 0, sizeof (_bgTable[idx].name));
+}
+
+void OSRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
+	for (int i = 0; i < 8; i++) {
+		fHandle.write(_bgTable[i].name, 13);
+	}
 }
 
 /*! \brief Fade to black

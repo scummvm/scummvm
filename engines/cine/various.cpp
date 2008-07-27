@@ -229,6 +229,129 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	return -1;
 }
 
+void saveObjectTable(Common::OutSaveFile &out) {
+	out.writeUint16BE(NUM_MAX_OBJECT); // Entry count
+	out.writeUint16BE(0x20); // Entry size
+
+	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
+		out.writeUint16BE(objectTable[i].x);
+		out.writeUint16BE(objectTable[i].y);
+		out.writeUint16BE(objectTable[i].mask);
+		out.writeUint16BE(objectTable[i].frame);
+		out.writeUint16BE(objectTable[i].costume);
+		out.write(objectTable[i].name, 20);
+		out.writeUint16BE(objectTable[i].part);
+	}
+}
+
+void saveZoneData(Common::OutSaveFile &out) {
+	for (int i = 0; i < 16; i++) {
+		out.writeUint16BE(zoneData[i]);
+	}
+}
+
+void saveCommandVariables(Common::OutSaveFile &out) {
+	for (int i = 0; i < 4; i++) {
+		out.writeUint16BE(commandVar3[i]);
+	}
+}
+
+void saveAnimDataTable(Common::OutSaveFile &out) {
+	out.writeUint16BE(NUM_MAX_ANIMDATA); // Entry count
+	out.writeUint16BE(0x1E); // Entry size
+
+	for (int i = 0; i < NUM_MAX_ANIMDATA; i++) {
+		animDataTable[i].save(out);
+	}
+}
+
+void saveScreenParams(Common::OutSaveFile &out) {
+	// Screen parameters, unhandled
+	out.writeUint16BE(0);
+	out.writeUint16BE(0);
+	out.writeUint16BE(0);
+	out.writeUint16BE(0);
+	out.writeUint16BE(0);
+	out.writeUint16BE(0);
+}
+
+void saveGlobalScripts(Common::OutSaveFile &out) {
+	ScriptList::const_iterator it;
+	out.writeUint16BE(globalScripts.size());
+	for (it = globalScripts.begin(); it != globalScripts.end(); ++it) {
+		(*it)->save(out);
+	}
+}
+
+void saveObjectScripts(Common::OutSaveFile &out) {
+	ScriptList::const_iterator it;
+	out.writeUint16BE(objectScripts.size());
+	for (it = objectScripts.begin(); it != objectScripts.end(); ++it) {
+		(*it)->save(out);
+	}
+}
+
+void saveOverlayList(Common::OutSaveFile &out) {
+	Common::List<overlay>::const_iterator it;
+
+	out.writeUint16BE(overlayList.size());
+
+	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+		out.writeUint32BE(0); // next
+		out.writeUint32BE(0); // previous?
+		out.writeUint16BE(it->objIdx);
+		out.writeUint16BE(it->type);
+		out.writeSint16BE(it->x);
+		out.writeSint16BE(it->y);
+		out.writeSint16BE(it->width);
+		out.writeSint16BE(it->color);
+	}
+}
+
+void saveBgIncrustList(Common::OutSaveFile &out) {
+	Common::List<BGIncrust>::const_iterator it;
+	out.writeUint16BE(bgIncrustList.size());
+
+	for (it = bgIncrustList.begin(); it != bgIncrustList.end(); ++it) {
+		out.writeUint32BE(0); // next
+		out.writeUint32BE(0); // previous?
+		out.writeUint16BE(it->objIdx);
+		out.writeUint16BE(it->param);
+		out.writeUint16BE(it->x);
+		out.writeUint16BE(it->y);
+		out.writeUint16BE(it->frame);
+		out.writeUint16BE(it->part);
+	}
+}
+
+void saveZoneQuery(Common::OutSaveFile &out) {
+	for (int i = 0; i < 16; i++) {
+		out.writeUint16BE(zoneQuery[i]);
+	}
+}
+
+void saveSeqList(Common::OutSaveFile &out) {
+	Common::List<SeqListElement>::const_iterator it;
+	out.writeUint16BE(seqList.size());
+
+	for (it = seqList.begin(); it != seqList.end(); ++it) {
+		out.writeSint16BE(it->var4);
+		out.writeUint16BE(it->objIdx);
+		out.writeSint16BE(it->var8);
+		out.writeSint16BE(it->frame);
+		out.writeSint16BE(it->varC);
+		out.writeSint16BE(it->varE);
+		out.writeSint16BE(it->var10);
+		out.writeSint16BE(it->var12);
+		out.writeSint16BE(it->var14);
+		out.writeSint16BE(it->var16);
+		out.writeSint16BE(it->var18);
+		out.writeSint16BE(it->var1A);
+		out.writeSint16BE(it->var1C);
+		out.writeSint16BE(it->var1E);
+	}
+}
+
 bool CineEngine::loadSaveDirectory(void) {
 	Common::InSaveFile *fHandle;
 	char tmp[80];
@@ -692,133 +815,63 @@ bool CineEngine::makeLoad(char *saveName) {
 	return loadPlainSaveFW(*in, saveGameFormat);
 }
 
-/*! \todo Add support for saving the zoneQuery table (Operation Stealth specific)
- */
-void makeSave(char *saveFileName) {
-	int16 i;
-	Common::OutSaveFile *fHandle;
+void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
+	out.writeUint16BE(currentDisk);
+	out.write(currentPartName, 13);
+	out.write(currentDatName, 13);
+	out.writeUint16BE(saveVar2);
+	out.write(currentPrcName, 13);
+	out.write(currentRelName, 13);
+	out.write(currentMsgName, 13);
+	renderer->saveBgNames(out);
+	out.write(currentCtName, 13);
 
-	fHandle = g_saveFileMan->openForSaving(saveFileName);
+	saveObjectTable(out);
+	renderer->savePalette(out);
+	globalVars.save(out, NUM_MAX_VAR);
+	saveZoneData(out);
+	saveCommandVariables(out);
+	out.write(commandBuffer, 0x50);
+
+	out.writeUint16BE(renderer->_cmdY);
+	out.writeUint16BE(bgVar0);
+	out.writeUint16BE(allowPlayerInput);
+	out.writeUint16BE(playerCommand);
+	out.writeUint16BE(commandVar1);
+	out.writeUint16BE(isDrawCommandEnabled);
+	out.writeUint16BE(var5);
+	out.writeUint16BE(var4);
+	out.writeUint16BE(var3);
+	out.writeUint16BE(var2);
+	out.writeUint16BE(commandVar2);
+	out.writeUint16BE(renderer->_messageBg);
+
+	saveAnimDataTable(out);
+	saveScreenParams(out);
+
+	saveGlobalScripts(out);
+	saveObjectScripts(out);
+	saveOverlayList(out);
+	saveBgIncrustList(out);
+}
+
+void CineEngine::makeSave(char *saveFileName) {
+	Common::SharedPtr<Common::OutSaveFile> fHandle(g_saveFileMan->openForSaving(saveFileName));
+
+	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	if (!fHandle) {
 		drawString(otherMessages[1], 0);
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);
-		return;
-	}
-
-	fHandle->writeUint16BE(currentDisk);
-	fHandle->write(currentPartName, 13);
-	fHandle->write(currentDatName, 13);
-	fHandle->writeUint16BE(saveVar2);
-	fHandle->write(currentPrcName, 13);
-	fHandle->write(currentRelName, 13);
-	fHandle->write(currentMsgName, 13);
-	renderer->saveBg(*fHandle);
-	fHandle->write(currentCtName, 13);
-
-	fHandle->writeUint16BE(0xFF);
-	fHandle->writeUint16BE(0x20);
-
-	for (i = 0; i < 255; i++) {
-		fHandle->writeUint16BE(objectTable[i].x);
-		fHandle->writeUint16BE(objectTable[i].y);
-		fHandle->writeUint16BE(objectTable[i].mask);
-		fHandle->writeUint16BE(objectTable[i].frame);
-		fHandle->writeUint16BE(objectTable[i].costume);
-		fHandle->write(objectTable[i].name, 20);
-		fHandle->writeUint16BE(objectTable[i].part);
-	}
-
-	renderer->savePalette(*fHandle);
-
-	globalVars.save(*fHandle, NUM_MAX_VAR);
-
-	for (i = 0; i < 16; i++) {
-		fHandle->writeUint16BE(zoneData[i]);
-	}
-
-	for (i = 0; i < 4; i++) {
-		fHandle->writeUint16BE(commandVar3[i]);
-	}
-
-	fHandle->write(commandBuffer, 0x50);
-
-	fHandle->writeUint16BE(renderer->_cmdY);
-
-	fHandle->writeUint16BE(bgVar0);
-	fHandle->writeUint16BE(allowPlayerInput);
-	fHandle->writeUint16BE(playerCommand);
-	fHandle->writeUint16BE(commandVar1);
-	fHandle->writeUint16BE(isDrawCommandEnabled);
-	fHandle->writeUint16BE(var5);
-	fHandle->writeUint16BE(var4);
-	fHandle->writeUint16BE(var3);
-	fHandle->writeUint16BE(var2);
-	fHandle->writeUint16BE(commandVar2);
-
-	fHandle->writeUint16BE(renderer->_messageBg);
-
-	fHandle->writeUint16BE(0xFF);
-	fHandle->writeUint16BE(0x1E);
-
-	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].save(*fHandle);
-	}
-
-	fHandle->writeUint16BE(0);  // Screen params, unhandled
-	fHandle->writeUint16BE(0);
-	fHandle->writeUint16BE(0);
-	fHandle->writeUint16BE(0);
-	fHandle->writeUint16BE(0);
-	fHandle->writeUint16BE(0);
-
-	{
-		ScriptList::iterator it;
-		fHandle->writeUint16BE(globalScripts.size());
-		for (it = globalScripts.begin(); it != globalScripts.end(); ++it) {
-			(*it)->save(*fHandle);
-		}
-
-		fHandle->writeUint16BE(objectScripts.size());
-		for (it = objectScripts.begin(); it != objectScripts.end(); ++it) {
-			(*it)->save(*fHandle);
+	} else {
+		if (g_cine->getGameType() == GType_FW) {
+			makeSaveFW(*fHandle);
+		} else {
+			makeSaveOS(*fHandle);
 		}
 	}
-
-	{
-		Common::List<overlay>::iterator it;
-
-		fHandle->writeUint16BE(overlayList.size());
-
-		for (it = overlayList.begin(); it != overlayList.end(); ++it) {
-			fHandle->writeUint32BE(0);
-			fHandle->writeUint32BE(0);
-			fHandle->writeUint16BE(it->objIdx);
-			fHandle->writeUint16BE(it->type);
-			fHandle->writeSint16BE(it->x);
-			fHandle->writeSint16BE(it->y);
-			fHandle->writeSint16BE(it->width);
-			fHandle->writeSint16BE(it->color);
-		}
-	}
-
-	Common::List<BGIncrust>::iterator it;
-	fHandle->writeUint16BE(bgIncrustList.size());
-
-	for (it = bgIncrustList.begin(); it != bgIncrustList.end(); ++it) {
-		fHandle->writeUint32BE(0); // next
-		fHandle->writeUint32BE(0); // unkPtr
-		fHandle->writeUint16BE(it->objIdx);
-		fHandle->writeUint16BE(it->param);
-		fHandle->writeUint16BE(it->x);
-		fHandle->writeUint16BE(it->y);
-		fHandle->writeUint16BE(it->frame);
-		fHandle->writeUint16BE(it->part);
-	}
-
-	delete fHandle;
 
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }
@@ -958,6 +1011,88 @@ void CineEngine::makeSystemMenu(void) {
 
 		inMenu = false;
 	}
+}
+
+/**
+ * Save an Operation Stealth type savegame. WIP! Not yet enabled by default!
+ *
+ * TODO: Add some kind of a header to the Operation Stealth's savegame file
+ *       that differentiates it from any of the plain data savegame formats used by
+ *       the already officially supported Future Wars.
+ * NOTE: This is going to be very much a work in progress so the Operation Stealth's
+ *       savegame formats that are going to be tried are extremely probably not going
+ *       to be supported at all after Operation Stealth becomes officially supported.
+ *       This means that the savegame format will hopefully change to something nicer
+ *       when official support for Operation Stealth begins.
+ */
+void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
+	int i;
+
+	// TODO: Enable saving in Operation Stealth after adding a header and possibly some testing
+	warning("makeSaveOS: Saving in Operation Stealth not yet enabled. Not saving game");
+	return;
+
+	out.writeUint16BE(currentDisk);
+	out.write(currentPartName, 13);
+	out.write(currentPrcName, 13);
+	out.write(currentRelName, 13);
+	out.write(currentMsgName, 13);
+	renderer->saveBgNames(out);
+	out.write(currentCtName, 13);
+
+	saveObjectTable(out);
+	renderer->savePalette(out);
+	globalVars.save(out, NUM_MAX_VAR);
+	saveZoneData(out);
+	saveCommandVariables(out);
+	out.write(commandBuffer, 0x50);
+	saveZoneQuery(out);
+
+	// FIXME: Save a proper name here, saving an empty string currently.
+	// 0x2925: Current music name (String, 13 bytes).
+	for (i = 0; i < 13; i++) {
+		out.writeByte(0);
+	}
+	// FIXME: Save proper value for this variable, currently writing zero
+	// 0x2932: Is music loaded? (Uint16BE, Boolean).
+	out.writeUint16BE(0);
+	// FIXME: Save proper value for this variable, currently writing zero
+	// 0x2934: Is music playing? (Uint16BE, Boolean).
+	out.writeUint16BE(0);
+
+	out.writeUint16BE(renderer->_cmdY);	
+	out.writeUint16BE(0); // Some unknown variable that seems to always be zero
+	out.writeUint16BE(allowPlayerInput);
+	out.writeUint16BE(playerCommand);
+	out.writeUint16BE(commandVar1);
+	out.writeUint16BE(isDrawCommandEnabled);
+	out.writeUint16BE(var5);
+	out.writeUint16BE(var4);
+	out.writeUint16BE(var3);
+	out.writeUint16BE(var2);
+	out.writeUint16BE(commandVar2);
+	out.writeUint16BE(renderer->_messageBg);
+	
+	// FIXME: Save proper value for this variable, currently writing zero.
+	// An unknown variable at 0x295E: adBgVar1 (Uint16BE).
+	out.writeUint16BE(0);
+	out.writeUint16BE(currentAdditionalBgIdx);
+	out.writeUint16BE(currentAdditionalBgIdx2);
+	// FIXME: Save proper value for this variable, currently writing zero.
+	// 0x2954: additionalBgVScroll (Uint16BE). This probably means renderer->_bgShift.
+	out.writeUint16BE(0);
+	// FIXME: Save proper value for this variable, currently writing zero.
+	// An unknown variable at 0x2956: adBgVar0 (Uint16BE). Maybe this means bgVar0?
+	out.writeUint16BE(0);
+	out.writeUint16BE(disableSystemMenu);
+
+	saveAnimDataTable(out);
+	saveScreenParams(out);
+	saveGlobalScripts(out);
+	saveObjectScripts(out);
+	saveSeqList(out);
+	saveOverlayList(out);
+	saveBgIncrustList(out);
 }
 
 void drawMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 offset, int16 color, byte* page) {

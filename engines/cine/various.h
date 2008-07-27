@@ -44,7 +44,7 @@ extern bool inMenu;
 
 struct SeqListElement {
 	int16 var4;
-	uint16 objIdx;
+	uint16 objIdx; ///< Is this really unsigned?
 	int16 var8;
 	int16 frame;
 	int16 varC;
