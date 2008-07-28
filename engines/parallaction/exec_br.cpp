@@ -122,11 +122,19 @@ DECLARE_COMMAND_OPCODE(location) {
 
 DECLARE_COMMAND_OPCODE(open) {
 	warning("Parallaction_br::cmdOp_open command not yet implemented");
+	_ctxt.cmd->u._zone->_flags &= ~kFlagsClosed;
+	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
+		_vm->updateDoor(_ctxt.cmd->u._zone);
+	}
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
 	warning("Parallaction_br::cmdOp_close not yet implemented");
+	_ctxt.cmd->u._zone->_flags |= kFlagsClosed;
+	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
+		_vm->updateDoor(_ctxt.cmd->u._zone);
+	}
 }
 
 
@@ -165,7 +173,7 @@ DECLARE_COMMAND_OPCODE(call) {
 
 
 DECLARE_COMMAND_OPCODE(drop) {
-	warning("Parallaction_br::cmdOp_drop not yet implemented");
+	_vm->dropItem(_ctxt.cmd->u._object);
 }
 
 
@@ -204,7 +212,7 @@ DECLARE_COMMAND_OPCODE(offmouse) {
 
 
 DECLARE_COMMAND_OPCODE(add) {
-	warning("Parallaction_br::cmdOp_add not yet implemented");
+	_vm->addInventoryItem(_ctxt.cmd->u._object);
 }
 
 
