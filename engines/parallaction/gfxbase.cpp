@@ -204,10 +204,6 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 
 
 void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
-	// TODO: Add support for difference in font data
-	if (_vm->getGameType() == GType_BRA && _vm->getPlatform() == Common::kPlatformPC && (_vm->getFeatures() & GF_DEMO))
-		return;
-
 	byte *dst = (byte*)surf->getBasePtr(x, y);
 	font->setColor(color);
 	font->drawString(dst, surf->w, text);
