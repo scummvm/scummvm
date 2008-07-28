@@ -487,7 +487,7 @@ CommandExec_ns::~CommandExec_ns() {
 //
 
 void Parallaction::enterCommentMode(ZonePtr z) {
-	if (z == nullZonePtr) {
+	if (!z) {
 		return;
 	}
 

@@ -400,13 +400,13 @@ void PathBuilder_BR::buildPath(uint16 x, uint16 y) {
 
 	// look for short circuit cases
 	ZonePtr z0 = _vm->hitZone(kZonePath, x, y);
-	if (z0 == nullZonePtr) {
+	if (!z0) {
 		_ch->_walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: corner case 0");
 		return;
 	}
 	ZonePtr z1 = _vm->hitZone(kZonePath, foot.x, foot.y);
-	if (z1 == nullZonePtr || z1 == z0) {
+	if (!z1 || z1 == z0) {
 		_ch->_walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: corner case 1");
 		return;
@@ -444,7 +444,7 @@ void PathWalker_BR::finalizeWalk() {
 	_ch->getFoot(foot);
 
 	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
-	if (z != nullZonePtr && (z->_flags & kFlagsClosed) == 0) {
+	if (z && ((z->_flags & kFlagsClosed) == 0)) {
 		_vm->_location._startPosition = z->u.door->_startPos; // foot pos
 		_vm->_location._startFrame = z->u.door->_startFrame;
 
