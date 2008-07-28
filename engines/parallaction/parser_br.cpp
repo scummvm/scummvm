@@ -1044,7 +1044,7 @@ void LocationParser_br::init() {
 	COMMAND_PARSER(zone);		// off
 	COMMAND_PARSER(call);
 	COMMAND_PARSER(flags);		// toggle
-	COMMAND_PARSER(drop);
+	COMMAND_PARSER(invObject);	// drop
 	COMMAND_PARSER(simple);		// quit
 	COMMAND_PARSER(move);
 	COMMAND_PARSER(zone);	// stop
@@ -1052,7 +1052,7 @@ void LocationParser_br::init() {
 	COMMAND_PARSER(string);		// followme
 	COMMAND_PARSER(simple);		// onmouse
 	COMMAND_PARSER(simple);		// offmouse
-	COMMAND_PARSER(drop);		// add
+	COMMAND_PARSER(invObject);		// add
 	COMMAND_PARSER(zone);		// leave
 	COMMAND_PARSER(math);		// inc
 	COMMAND_PARSER(math);		// dec

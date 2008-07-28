@@ -659,7 +659,7 @@ DECLARE_COMMAND_PARSER(location)  {
 }
 
 
-DECLARE_COMMAND_PARSER(drop)  {
+DECLARE_COMMAND_PARSER(invObject)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(drop) ");
 
 	createCommand(_parser->_lookup);
@@ -1198,7 +1198,7 @@ void LocationParser_ns::init() {
 	COMMAND_PARSER(zone);			// off
 	COMMAND_PARSER(call);			// call
 	COMMAND_PARSER(flags);			// toggle
-	COMMAND_PARSER(drop);			// drop
+	COMMAND_PARSER(invObject);			// drop
 	COMMAND_PARSER(simple);			// quit
 	COMMAND_PARSER(move);			// move
 	COMMAND_PARSER(zone);		// stop
