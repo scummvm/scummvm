@@ -582,6 +582,11 @@ void CineEngine::resetEngine() {
 	checkForPendingDataLoadSwitch = 0;
 }
 
+bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
+	warning("loadTempSaveOS: This is a stub. Temporary Operation Stealth savegame loading not yet implemented");
+	return false;
+}
+
 bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat) {
 	int16 i;
 	int16 size;
@@ -740,8 +745,6 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 		loadMsg(currentMsgName);
 	}
 
-	setMouseCursor(MOUSE_CURSOR_NORMAL);
-
 	if (strlen(currentDatName)) {
 /*		i = saveVar2;
 		saveVar2 = 0;
@@ -768,6 +771,8 @@ bool CineEngine::makeLoad(char *saveName) {
 		return false;
 	}
 
+	setMouseCursor(MOUSE_CURSOR_DISK);
+
 	uint32 saveSize = saveFile->size();
 	if (saveSize == 0) { // Savefile's compressed using zlib format can't tell their unpacked size, test for it
 		// Can't get information about the savefile's size so let's try
@@ -791,6 +796,8 @@ bool CineEngine::makeLoad(char *saveName) {
 	enum CineSaveGameFormat saveGameFormat = detectSaveGameFormat(*in);
 
 	// Handle problematic savegame formats
+	bool load = true; // Should we try to load the savegame?
+	bool result = false;
 	if (saveGameFormat == ANIMSIZE_30_PTRS_BROKEN) {
 		// One might be able to load the ANIMSIZE_30_PTRS_BROKEN format but
 		// that's not implemented here because it was never used in a stable
@@ -798,21 +805,30 @@ bool CineEngine::makeLoad(char *saveName) {
 		// which introduced the problem, until revision 32073, which fixed it).
 		// Therefore be bail out if we detect this particular savegame format.
 		warning("Detected a known broken savegame format, not loading savegame");
-		return false;
+		load = false; // Don't load the savegame
 	} else if (saveGameFormat == ANIMSIZE_UNKNOWN) {
 		// If we can't detect the savegame format
 		// then let's try the default format and hope for the best.
 		warning("Couldn't detect the used savegame format, trying default savegame format. Things may break");
 		saveGameFormat = ANIMSIZE_30_PTRS_INTACT;
 	}
-	// Now we should have either of these formats
-	assert(saveGameFormat == ANIMSIZE_23 || saveGameFormat == ANIMSIZE_30_PTRS_INTACT);
 
-	// Reset the engine's state
-	resetEngine();
+	if (load) {
+		// Reset the engine's state
+		resetEngine();
+		
+		if (saveGameFormat == TEMP_OS_FORMAT) {
+			// Load the temporary Operation Stealth savegame format
+			result = loadTempSaveOS(*in);
+		} else {
+			// Load the plain Future Wars savegame format
+			result = loadPlainSaveFW(*in, saveGameFormat);
+		}
+	}
 
-	// Load the plain Future Wars savegame format
-	return loadPlainSaveFW(*in, saveGameFormat);
+	setMouseCursor(MOUSE_CURSOR_NORMAL);
+
+	return result;
 }
 
 void CineEngine::makeSaveFW(Common::OutSaveFile &out) {

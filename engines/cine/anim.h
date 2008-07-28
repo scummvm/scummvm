@@ -53,12 +53,19 @@ namespace Cine {
  *   but don't try using them for anything else, it won't work.
  * - Introduced in revision 31444, got broken in revision 31453,
  *   got fixed in revision 32073 and used after that.
+ *
+ * TEMP_OS_FORMAT:
+ * - Temporary Operation Stealth savegame format.
+ * - NOT backward compatible and NOT to be supported in the future.
+ *   This format should ONLY be used during development and abandoned
+ *   later in favor of a better format!
  */
 enum CineSaveGameFormat {
 	ANIMSIZE_UNKNOWN,
 	ANIMSIZE_23,
 	ANIMSIZE_30_PTRS_BROKEN,
-	ANIMSIZE_30_PTRS_INTACT
+	ANIMSIZE_30_PTRS_INTACT,
+	TEMP_OS_FORMAT
 };
 
 struct AnimHeaderStruct {

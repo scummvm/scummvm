@@ -100,6 +100,7 @@ private:
 	void initialize(void);
 	void resetEngine();
 	bool loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat);
+	bool loadTempSaveOS(Common::SeekableReadStream &in);
 	bool makeLoad(char *saveName);
 	void makeSaveFW(Common::OutSaveFile &out);
 	void makeSaveOS(Common::OutSaveFile &out);
