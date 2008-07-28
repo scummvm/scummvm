@@ -442,7 +442,7 @@ DECLARE_LOCATION_PARSER(redundant)  {
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
 
-	ctxt.characterName = strdup(_tokens[0]);
+	ctxt.characterName = strdup(_tokens[1]);
 }
 
 
