@@ -609,14 +609,78 @@ void CineEngine::resetEngine() {
 	checkForPendingDataLoadSwitch = 0;
 }
 
+bool loadObjectTable(Common::SeekableReadStream &in) {
+	in.readUint16BE(); // Entry count
+	in.readUint16BE(); // Entry size
+
+	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
+		objectTable[i].x = in.readSint16BE();
+		objectTable[i].y = in.readSint16BE();
+		objectTable[i].mask = in.readUint16BE();
+		objectTable[i].frame = in.readSint16BE();
+		objectTable[i].costume = in.readSint16BE();
+		in.read(objectTable[i].name, 20);
+		objectTable[i].part = in.readUint16BE();
+	}
+	return !in.ioFailed();
+}
+
+bool loadZoneData(Common::SeekableReadStream &in) {
+	for (int i = 0; i < 16; i++) {
+		zoneData[i] = in.readUint16BE();
+	}
+	return !in.ioFailed();
+}
+
+bool loadCommandVariables(Common::SeekableReadStream &in) {
+	for (int i = 0; i < 4; i++) {
+		commandVar3[i] = in.readUint16BE();
+	}
+	return !in.ioFailed();
+}
+
+bool loadScreenParams(Common::SeekableReadStream &in) {
+	// TODO: handle screen params (really required ?)
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	in.readUint16BE();
+	return !in.ioFailed();
+}
+
+bool loadGlobalScripts(Common::SeekableReadStream &in) {
+	int size = in.readSint16BE();
+	for (int i = 0; i < size; i++) {
+		loadScriptFromSave(in, true);
+	}
+	return !in.ioFailed();
+}
+
+bool loadObjectScripts(Common::SeekableReadStream &in) {
+	int size = in.readSint16BE();
+	for (int i = 0; i < size; i++) {
+		loadScriptFromSave(in, false);
+	}
+	return !in.ioFailed();
+}
+
+bool loadOverlayList(Common::SeekableReadStream &in) {
+	int size = in.readSint16BE();
+	for (int i = 0; i < size; i++) {
+		loadOverlayFromSave(in);
+	}
+	return !in.ioFailed();
+}
+
+// TODO: Implement this function
 bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	warning("loadTempSaveOS: This is a stub. Temporary Operation Stealth savegame loading not yet implemented");
 	return false;
 }
 
 bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat) {
-	int16 i;
-	int16 size;
 	char bgName[13];
 
 	// At savefile position 0x0000:
@@ -664,45 +728,19 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	}
 
 	// At 0x005F:
-	in.readUint16BE();
-	// At 0x0061:
-	in.readUint16BE();
+	loadObjectTable(in);
 
-	// At 0x0063:
-	for (i = 0; i < 255; i++) {
-		// At 0x0063 + i * 32 + 0:
-		objectTable[i].x = in.readSint16BE();
-		// At 0x0063 + i * 32 + 2:
-		objectTable[i].y = in.readSint16BE();
-		// At 0x0063 + i * 32 + 4:
-		objectTable[i].mask = in.readUint16BE();
-		// At 0x0063 + i * 32 + 6:
-		objectTable[i].frame = in.readSint16BE();
-		// At 0x0063 + i * 32 + 8:
-		objectTable[i].costume = in.readSint16BE();
-		// At 0x0063 + i * 32 + 10:
-		in.read(objectTable[i].name, 20);
-		// At 0x0063 + i * 32 + 30:
-		objectTable[i].part = in.readUint16BE();
-	}
-
-	// At 0x2043 (i.e. 0x0063 + 255 * 32):
+	// At 0x2043 (i.e. 0x005F + 2 * 2 + 255 * 32):
 	renderer->restorePalette(in);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
 	globalVars.load(in, NUM_MAX_VAR);
 
 	// At 0x2281 (i.e. 0x2083 + 255 * 2):
-	for (i = 0; i < 16; i++) {
-		// At 0x2281 + i * 2:
-		zoneData[i] = in.readUint16BE();
-	}
+	loadZoneData(in);
 
 	// At 0x22A1 (i.e. 0x2281 + 16 * 2):
-	for (i = 0; i < 4; i++) {
-		// At 0x22A1 + i * 2:
-		commandVar3[i] = in.readUint16BE();
-	}
+	loadCommandVariables(in);
 
 	// At 0x22A9 (i.e. 0x22A1 + 4 * 2):
 	in.read(commandBuffer, 0x50);
@@ -743,29 +781,10 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	// At 0x2315:
 	loadResourcesFromSave(in, saveGameFormat);
 
-	// TODO: handle screen params (really required ?)
-	in.readUint16BE();
-	in.readUint16BE();
-	in.readUint16BE();
-	in.readUint16BE();
-	in.readUint16BE();
-	in.readUint16BE();
-
-	size = in.readSint16BE();
-	for (i = 0; i < size; i++) {
-		loadScriptFromSave(in, true);
-	}
-
-	size = in.readSint16BE();
-	for (i = 0; i < size; i++) {
-		loadScriptFromSave(in, false);
-	}
-
-	size = in.readSint16BE();
-	for (i = 0; i < size; i++) {
-		loadOverlayFromSave(in);
-	}
-
+	loadScreenParams(in);
+	loadGlobalScripts(in);
+	loadObjectScripts(in);
+	loadOverlayList(in);
 	loadBgIncrustFromSave(in);
 
 	if (strlen(currentMsgName)) {
