@@ -674,6 +674,36 @@ bool loadOverlayList(Common::SeekableReadStream &in) {
 	return !in.ioFailed();
 }
 
+bool loadSeqList(Common::SeekableReadStream &in) {
+	uint size = in.readUint16BE();
+	SeqListElement tmp;
+	for (uint i = 0; i < size; i++) {
+		tmp.var4   = in.readSint16BE();
+		tmp.objIdx = in.readUint16BE();
+		tmp.var8   = in.readSint16BE();
+		tmp.frame  = in.readSint16BE();
+		tmp.varC   = in.readSint16BE();
+		tmp.varE   = in.readSint16BE();
+		tmp.var10  = in.readSint16BE();
+		tmp.var12  = in.readSint16BE();
+		tmp.var14  = in.readSint16BE();
+		tmp.var16  = in.readSint16BE();
+		tmp.var18  = in.readSint16BE();
+		tmp.var1A  = in.readSint16BE();
+		tmp.var1C  = in.readSint16BE();
+		tmp.var1E  = in.readSint16BE();
+		seqList.push_back(tmp);
+	}
+	return !in.ioFailed();
+}
+
+bool loadZoneQuery(Common::SeekableReadStream &in) {
+	for (int i = 0; i < 16; i++) {
+		zoneQuery[i] = in.readUint16BE();
+	}
+	return !in.ioFailed();
+}
+
 // TODO: Implement this function
 bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	warning("loadTempSaveOS: This is a stub. Temporary Operation Stealth savegame loading not yet implemented");
