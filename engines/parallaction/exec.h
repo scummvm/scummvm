@@ -143,10 +143,6 @@ public:
 	~CommandExec_br();
 };
 
-
-
-
-
 class ProgramExec {
 protected:
 	struct ParallactionStruct2 {
@@ -156,6 +152,8 @@ protected:
 		uint16		modCounter;
 		bool		suspend;
 	} _ctxt;
+
+	const char **_instructionNames;
 
 	OpcodeSet	_opcodes;
 

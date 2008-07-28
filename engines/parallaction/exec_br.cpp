@@ -61,8 +61,6 @@ namespace Parallaction {
 #define INST_STOP		30
 #define INST_ENDSCRIPT	31
 
-
-
 #define SetOpcodeTable(x) table = &x;
 
 typedef Common::Functor0Mem<void, CommandExec_br> OpcodeV1;
@@ -72,6 +70,8 @@ typedef Common::Functor0Mem<void, CommandExec_br> OpcodeV1;
 typedef Common::Functor0Mem<void, ProgramExec_br> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_br::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_br::instOp_##op()
+
+extern const char *_instructionNamesRes_br[];
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
@@ -602,6 +602,7 @@ void ProgramExec_br::init() {
 }
 
 ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : ProgramExec_ns(vm), _vm(vm) {
+	_instructionNames = _instructionNamesRes_br;
 }
 
 ProgramExec_br::~ProgramExec_br() {

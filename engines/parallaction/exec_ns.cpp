@@ -61,7 +61,7 @@ typedef Common::Functor0Mem<void, ProgramExec_ns> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_ns::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_ns::instOp_##op()
 
-
+extern const char *_instructionNamesRes_ns[];
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
@@ -394,7 +394,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 
 			(*it)->_status = kProgramRunning;
 
-			debugC(9, kDebugExec, "Animation: %s, instruction: %i", a->_name, (*inst)->_index); //_instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "anim: %s, inst[%02i]: %s", a->_name, (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
 
 			_ctxt.inst = inst;
 			_ctxt.anim = AnimationPtr(a);
@@ -755,6 +755,7 @@ void ProgramExec_ns::init() {
 }
 
 ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
+	_instructionNames = _instructionNamesRes_ns;
 }
 
 ProgramExec_ns::~ProgramExec_ns() {
