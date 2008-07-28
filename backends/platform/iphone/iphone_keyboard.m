@@ -54,8 +54,7 @@
 @implementation SoftKeyboard
 
 - (id)initWithFrame:(CGRect)frame {
-	//self = [super initWithFrame:frame];
-	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
+	self = [super initWithFrame:frame];
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
 	return self;

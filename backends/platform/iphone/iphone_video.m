@@ -169,10 +169,6 @@ bool getLocalMouseCoords(CGPoint *point) {
 		nil
 	];
 
-	if (_screenSurface != nil) {
-		//[[sharedInstance _layer] removeSublayer: screenLayer];
-	}
-
 	//("Allocating surface: %d\n", allocSize);
 	_screenSurface = CoreSurfaceBufferCreate((CFDictionaryRef)dict);
 	//printf("Surface created.\n");

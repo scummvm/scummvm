@@ -35,7 +35,7 @@
 #include <AudioToolbox/AudioQueue.h>
 
 #define AUDIO_BUFFERS 3
-#define WAVE_BUFFER_SIZE 8192
+#define WAVE_BUFFER_SIZE 2048
 #define AUDIO_SAMPLE_RATE 44100
 
 #define SCUMMVM_ROOT_PATH "/var/mobile/Library/ScummVM"
@@ -97,6 +97,9 @@ protected:
 	long _lastSecondaryTap;
 	int _gestureStartX, _gestureStartY;
 	bool _mouseClickAndDragEnabled;
+	bool _touchpadModeEnabled;
+	int _lastPadX;
+	int _lastPadY;
 
 	int _timerCallbackNext;
 	int _timerCallbackTimer;
@@ -170,7 +173,9 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
 
-	static void migrateApp();
+	void startSoundsystem();
+	void stopSoundsystem();
+
 	static const char* getConfigPath();
 	static const char* getSavePath();	
 

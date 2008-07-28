@@ -79,10 +79,7 @@ int main(int argc, char** argv) {
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	// hide the status bar
 	[UIHardware _setStatusBarHeight:0.0f];
-	//[self setStatusBarMode:2 orientation:0 duration:0.0f fenceID:0];
-
-	//[self setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
-	[self setStatusBarHidden:YES animated:YES];
+	[self setStatusBarHidden:YES animated:NO];
 
 	_window = [[UIWindow alloc] initWithContentRect:  [UIHardware fullScreenApplicationContentRect]];
 	[_window retain];
@@ -103,9 +100,13 @@ int main(int argc, char** argv) {
 
 - (void)applicationResume:(GSEventRef)event {
 	[self removeApplicationBadge];
-	[UIHardware _setStatusBarHeight:0.0f];
-	[self setStatusBarHidden:YES animated:YES];
 	[_view applicationResume];
+	
+	// Workaround, need to "hide" and unhide the statusbar to properly remove it,
+	// since the Springboard has put it back without apparently flagging our application.
+	[self setStatusBarHidden:NO animated:NO]; // hide status bar
+	[UIHardware _setStatusBarHeight:0.0f];
+	[self setStatusBarHidden:YES animated:NO]; // hide status bar
 }
 
 - (void)deviceOrientationChanged:(GSEvent *)event {

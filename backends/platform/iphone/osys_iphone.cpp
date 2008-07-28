@@ -63,7 +63,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_overlayVisible(false), _overlayBuffer(NULL), _fullscreen(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0),
 	_secondaryTapped(false), _lastSecondaryTap(0), _screenOrientation(kScreenOrientationFlippedLandscape),
-	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false),
+	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false), _touchpadModeEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0)
 {
@@ -665,8 +665,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	float xUnit, yUnit;
 
 	if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit)) {
-		int x;
-		int y;
+		int x = 0;
+		int y = 0;
 		switch (_screenOrientation) {
 			case kScreenOrientationPortrait:
 				x = (int)(xUnit * _screenWidth);
@@ -690,7 +690,12 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				// secondary finger is lifted. Need to make sure we get out of that mode.
 				_secondaryTapped = false;
 
-				warpMouse(x, y);
+				if (_touchpadModeEnabled) {
+					_lastPadX = x;
+					_lastPadY = y;
+				} else
+					warpMouse(x, y);
+
 				// event.type = Common::EVENT_MOUSEMOVE;
 				// event.mouse.x = _mouseX;
 				// event.mouse.y = _mouseY;
@@ -769,15 +774,19 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 							GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 							dialog.runModal();
 							return false;
+
 						} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe right
-							// _secondaryTapped = !_secondaryTapped;
-							// _gestureStartX = x;
-							// _gestureStartY = y;
-							//
-							// GUI::TimedMessageDialog dialog("Forcing toggle of pressed state.", 1500);
-							// dialog.runModal();
+							_touchpadModeEnabled = !_touchpadModeEnabled;
+							const char *dialogMsg;
+							if (_touchpadModeEnabled)
+								dialogMsg = "Touchpad mode enabled.";
+							else
+								dialogMsg = "Touchpad mode disabled.";
+							GUI::TimedMessageDialog dialog(dialogMsg, 1500);
+							dialog.runModal();
 							return false;
+
 						} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe left
 							return false;
@@ -786,10 +795,36 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					} else
 						return false;
 				} else {
+					int mouseNewPosX;
+					int mouseNewPosY;
+					if (_touchpadModeEnabled ) {
+						int deltaX = _lastPadX - x;
+						int deltaY = _lastPadY - y;	
+						_lastPadX = x;
+						_lastPadY = y;
+						
+						mouseNewPosX = (int)(_mouseX - deltaX / 0.5f);
+						mouseNewPosY = (int)(_mouseY - deltaY / 0.5f);
+						
+						if (mouseNewPosX < 0)
+							mouseNewPosX = 0;
+						else if (mouseNewPosX > _screenWidth)
+							mouseNewPosX = _screenWidth;
+
+						if (mouseNewPosY < 0)
+							mouseNewPosY = 0;
+						else if (mouseNewPosY > _screenHeight)
+							mouseNewPosY = _screenHeight;
+							
+					} else {
+						mouseNewPosX = x;
+						mouseNewPosY = y;
+					}
+					
 					event.type = Common::EVENT_MOUSEMOVE;
-					event.mouse.x = x;
-					event.mouse.y = y;
-					warpMouse(x, y);
+					event.mouse.x = mouseNewPosX;
+					event.mouse.y = mouseNewPosY;
+					warpMouse(mouseNewPosX, mouseNewPosY);
 				}
 				break;
 			case kInputMouseSecondToggled:
@@ -811,8 +846,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					else
 						return false;
 				} else {
-					if (curTime - _lastSecondaryDown < 250 ) {
-						if (curTime - _lastSecondaryTap < 250 && !_overlayVisible) {
+					if (curTime - _lastSecondaryDown < 400 ) {
+						if (curTime - _lastSecondaryTap < 400 && !_overlayVisible) {
 							event.type = Common::EVENT_KEYDOWN;
 							_queuedInputEvent.type = Common::EVENT_KEYUP;
 
@@ -1020,16 +1055,17 @@ void OSystem_IPHONE::suspendLoop() {
 	float xUnit, yUnit;
 	uint32 startTime = getMillis();
 
-	AudioQueueStop(s_AudioQueue.queue, true);
-
+	stopSoundsystem();
+	
 	while (!done) {
 		if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit))
 			if ((InputEvent)eventType == kInputApplicationResumed)
 				done = true;
 		usleep(100000);
 	}
+	
+	startSoundsystem();
 
-	AudioQueueStart(s_AudioQueue.queue, NULL);
 	_timeSuspended += getMillis() - startTime;
 }
 
@@ -1107,7 +1143,10 @@ void OSystem_IPHONE::setupMixer() {
 	s_soundCallback = mixCallback;
 	s_soundParam = this;
 
+	startSoundsystem();
+}
 
+void OSystem_IPHONE::startSoundsystem() {
 	s_AudioQueue.dataFormat.mSampleRate = AUDIO_SAMPLE_RATE;
 	s_AudioQueue.dataFormat.mFormatID = kAudioFormatLinearPCM;
 	s_AudioQueue.dataFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
@@ -1145,6 +1184,17 @@ void OSystem_IPHONE::setupMixer() {
 	
 	_mixer->setOutputRate(AUDIO_SAMPLE_RATE);
 	_mixer->setReady(true);
+}
+
+void OSystem_IPHONE::stopSoundsystem() {
+	AudioQueueStop(s_AudioQueue.queue, true);
+
+	for (int i = 0; i < AUDIO_BUFFERS; i++) {
+		AudioQueueFreeBuffer(s_AudioQueue.queue, s_AudioQueue.buffers[i]);
+	}
+
+	AudioQueueDispose(s_AudioQueue.queue, true);
+	_mixer->setReady(false);
 }
 
 int OSystem_IPHONE::getOutputSampleRate() const {
@@ -1200,29 +1250,6 @@ const char* OSystem_IPHONE::getSavePath() {
 	return SCUMMVM_SAVE_PATH;
 }
 
-void OSystem_IPHONE::migrateApp() {
-	// Migrate to the new 1.1.3 directory structure, if needed.
-	
-	FilesystemNode file("/var/mobile");
-	if (file.exists() && file.isDirectory()) {
-		// We have 1.1.3 or above.
-		s_is113OrHigher = true;
-		file = FilesystemNode(SCUMMVM_ROOT_PATH);
-		if (!file.exists()) {
-			system("mkdir " SCUMMVM_ROOT_PATH);
-			system("mkdir " SCUMMVM_SAVE_PATH);
-			
-			// Copy over the prefs file
-			system("cp " SCUMMVM_OLD_PREFS_PATH " " SCUMMVM_PREFS_PATH);
-
-			file = FilesystemNode(SCUMMVM_OLD_SAVE_PATH);
-			// Copy over old savegames to the new directory.
-			if (file.exists() && file.isDirectory())			
-				system("cp " SCUMMVM_OLD_SAVE_PATH "/* " SCUMMVM_SAVE_PATH "/");
-		}
-	}
-}
-
 void iphone_main(int argc, char *argv[]) {
 
 	//OSystem_IPHONE::migrateApp();
@@ -1242,6 +1269,8 @@ void iphone_main(int argc, char *argv[]) {
 
 	system("mkdir " SCUMMVM_ROOT_PATH);
 	system("mkdir " SCUMMVM_SAVE_PATH);
+
+	chdir("/var/mobile/");
 
 	g_system = OSystem_IPHONE_create();
 	assert(g_system);
