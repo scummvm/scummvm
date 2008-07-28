@@ -331,35 +331,34 @@ void Parallaction_ns::drawAnimations() {
 
 	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
 
-		AnimationPtr v18 = *it;
-		GfxObj *obj = v18->gfxobj;
+		AnimationPtr anim = *it;
+		GfxObj *obj = anim->gfxobj;
 
-		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
+		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
 
-			int16 frame = CLIP((int)v18->_frame, 0, v18->getFrameNum()-1);
-			if (v18->_flags & kFlagsNoMasked)
+			if (anim->_flags & kFlagsNoMasked)
 				layer = 3;
 			else
-				layer = _gfx->_backgroundInfo.getLayer(v18->_top + v18->height());
+				layer = _gfx->_backgroundInfo.getLayer(anim->_top + anim->height());
 
 			if (obj) {
 				_gfx->showGfxObj(obj, true);
-				obj->frame = frame;
-				obj->x = v18->_left;
-				obj->y = v18->_top;
-				obj->z = v18->_z;
+				obj->frame =  anim->_frame;
+				obj->x = anim->_left;
+				obj->y = anim->_top;
+				obj->z = anim->_z;
 				obj->layer = layer;
 			}
 		}
 
-		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
-			v18->_flags &= ~kFlagsRemove;
-			v18->_oldPos.x = -1000;
+		if (((anim->_flags & kFlagsActive) == 0) && (anim->_flags & kFlagsRemove))   {
+			anim->_flags &= ~kFlagsRemove;
+			anim->_oldPos.x = -1000;
 		}
 
-		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
-			v18->_flags &= ~kFlagsActive;
-			v18->_flags |= kFlagsRemove;
+		if ((anim->_flags & kFlagsActive) && (anim->_flags & kFlagsRemove))	{
+			anim->_flags &= ~kFlagsActive;
+			anim->_flags |= kFlagsRemove;
 			if (obj) {
 				_gfx->showGfxObj(obj, false);
 			}
@@ -416,6 +415,8 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 label1:
 		if (a->_flags & kFlagsCharacter)
 			a->_z = a->_top + a->height();
+
+		a->validateScriptVars();
 	}
 
 	_modCounter++;

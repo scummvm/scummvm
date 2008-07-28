@@ -448,6 +448,8 @@ struct Animation : public Zone {
 	virtual uint16 height() const;
 	uint16 getFrameNum() const;
 	byte* getFrameData(uint32 index) const;
+
+	void validateScriptVars();
 };
 
 class Table {
