@@ -558,8 +558,8 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		stream.close();
 	}
 
-	if (mask) {
-		filepath = Common::String(name) + ".msk";
+	if (mask && _mskDir.exists()) {
+		filepath = Common::String(mask) + ".msk";
 		node = _mskDir.getChild(filepath);
 		if (!node.exists()) {
 			errorFileNotFound(_mskDir, filepath);
@@ -569,8 +569,8 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		stream.close();
 	}
 
-	if (path) {
-		filepath = Common::String(name) + ".pth";
+	if (path && _pthDir.exists()) {
+		filepath = Common::String(path) + ".pth";
 		node = _pthDir.getChild(filepath);
 		if (!node.exists()) {
 			errorFileNotFound(_pthDir, filepath);
