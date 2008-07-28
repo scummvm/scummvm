@@ -174,7 +174,12 @@ void Parallaction_br::initPart() {
 	_objectsNames = _disk->loadTable("objects");
 	_countersNames = _disk->loadTable("counters");
 
-	_char._objs = _disk->loadObjects("icone.ico");
+	// TODO: maybe handle this into Disk
+	if (getPlatform() == Common::kPlatformPC) {
+		_char._objs = _disk->loadObjects("icone.ico");
+	} else {
+		_char._objs = _disk->loadObjects("icons.ico");
+	}
 
 }
 

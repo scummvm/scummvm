@@ -187,7 +187,7 @@ public:
 
 	byte*	getData(uint16 index) {
 		assert(index < _numGlyphs);
-		return _data + _height * index + _widths[index];
+		return _data + (_height * _widths[index]) * index;;
 	}
 
 	void	getRect(uint16 index, Common::Rect &r) {
@@ -616,8 +616,8 @@ void Parallaction_br::initFonts() {
 		// fonts/sonya/18
 		// fonts/vanya/16
 
-		_menuFont = _disk->loadFont("fonts/natasha/16");
-		_dialogueFont = _disk->loadFont("fonts/sonya/18");
+		_menuFont = _disk->loadFont("natasha");
+		_dialogueFont = _disk->loadFont("sonya");
 		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
 		_labelFont = new AmigaFont(stream);
 	}
