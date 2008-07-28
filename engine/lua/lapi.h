@@ -8,13 +8,12 @@
 #define lapi_h
 
 
-#include "lua.h"
-#include "lobject.h"
+#include "engine/lua/lua.h"
+#include "engine/lua/lobject.h"
 
-
-TObject *luaA_Address (lua_Object o);
-void luaA_pushobject (TObject *o);
-void luaA_packresults (void);
-int32 luaA_passresults (void);
+TObject *luaA_Address(lua_Object o);
+void luaA_pushobject(TObject *o);
+void luaA_packresults();
+int32 luaA_passresults();
 
 #endif
