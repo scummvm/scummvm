@@ -724,7 +724,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	} else if (hdr.version > CURRENT_OS_SAVE_VER) {
 		warning("loadTempSaveOS: Detected newer format version. Not loading savegame");
 		return false;		
-	} else if (hdr.version < CURRENT_OS_SAVE_VER) {
+	} else if ((int)hdr.version < (int)CURRENT_OS_SAVE_VER) {
 		warning("loadTempSaveOS: Detected older format version. Trying to load nonetheless. Things may break");
 	} else { // hdr.id == TEMP_OS_FORMAT_ID && hdr.version == CURRENT_OS_SAVE_VER
 		debug(3, "loadTempSaveOS: Found correct header (Both the identifier and version number match).");
