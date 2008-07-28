@@ -8,3 +8,4 @@ The major changes made from the original version of Lua 3.1 are:
 * Added save/restore Lua state.
 * Unified types like int -> int32 and similiars
 * Removed few unused library funcs by games
+* formatting code

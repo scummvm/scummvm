@@ -7,24 +7,24 @@
 #ifndef lundump_h
 #define lundump_h
 
-#include "lobject.h"
-#include "lzio.h"
+#include "engine/lua/lobject.h"
+#include "engine/lua/lzio.h"
 
-TProtoFunc* luaU_undump1(ZIO* Z);	/* load one chunk */
+TProtoFunc *luaU_undump1(ZIO *Z);	// load one chunk
 
 #define	SIGNATURE	"Lua"
-#define	VERSION		0x31		/* last format change was in 3.1 */
-#define	VERSION0	0x31		/* last major  change was in 3.1 */
-#define ID_CHUNK	27		/* ESC */
+#define	VERSION		0x31		// last format change was in 3.1
+#define	VERSION0	0x31		// last major  change was in 3.1
+#define ID_CHUNK	27			// ESC
 
-#define IsMain(f)	(f->lineDefined==0)
+#define IsMain(f)			(f->lineDefined == 0)
 #define luaO_typename(o)	luaO_typenames[-ttype(o)]
 
-/* number representation */
-#define ID_INT4		'l'		/* 4-byte integers */
-#define ID_REAL4	'F'		/* 4-byte reals */
-#define ID_REAL8	'd'		/* 8-byte reals */
-#define ID_NATIVE	'?'		/* whatever your machine uses */
+// number representation
+#define ID_INT4		'l'		// 4-byte integers
+#define ID_REAL4	'F'		// 4-byte reals
+#define ID_REAL8	'd'		// 8-byte reals
+#define ID_NATIVE	'?'		// whatever your machine uses
 
 /*
 * use a multiple of PI for testing number representation.
@@ -46,9 +46,10 @@ TProtoFunc* luaU_undump1(ZIO* Z);	/* load one chunk */
 
 #define	ID_NUMBER	ID_REAL4
 
+#define	DumpNumber		DumpFloat
+#define LoadNumber		LoadFloat
+#define SIZEOF_NUMBER	4
+
 #endif
 
-#define	DumpNumber	DumpFloat
-#define LoadNumber      LoadFloat
-#define SIZEOF_NUMBER	4
 
