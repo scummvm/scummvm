@@ -443,6 +443,43 @@ Common::ReadStream* DosDisk_br::loadSound(const char* name) {
 
 
 
+DosDemo_br::DosDemo_br(Parallaction *vm) : DosDisk_br(vm) {
+
+}
+
+
+DosDemo_br::~DosDemo_br() {
+
+}
+
+Common::String DosDemo_br::selectArchive(const Common::String& name) {
+	debugC(5, kDebugDisk, "DosDemo_br::selectArchive");
+
+	Common::String oldPath;
+	if (_partDir.exists()) {
+		oldPath = _partDir.getDisplayName();
+	}
+
+	_partDir = _baseDir;
+
+	_aniDir = _partDir.getChild("ani");
+	_bkgDir = _partDir.getChild("bkg");
+	_mscDir = _partDir.getChild("msc");
+	_mskDir = _partDir.getChild("msk");
+	_pthDir = _partDir.getChild("pth");
+	_rasDir = _partDir.getChild("ras");
+	_scrDir = _partDir.getChild("scripts");
+	_sfxDir = _partDir.getChild("sfx");
+	_talDir = _partDir.getChild("tal");
+
+	return oldPath;
+}
+
+
+
+
+
+
 AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 	_fntDir = _baseDir.getChild("fonts");
 

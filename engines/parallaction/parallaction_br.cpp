@@ -56,7 +56,11 @@ int Parallaction_br::init() {
 
 	if (getGameType() == GType_BRA) {
 		if (getPlatform() == Common::kPlatformPC) {
-			_disk = new DosDisk_br(this);
+			if (getFeatures() & GF_DEMO) {
+				_disk = new DosDemo_br(this);
+			} else {
+				_disk = new DosDisk_br(this);
+			}
 			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
 			_soundMan = new DummySoundMan(this);
 		} else {
@@ -109,7 +113,11 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 
 int Parallaction_br::go() {
 
-	startGui();
+	if (getFeatures() & GF_DEMO) {
+		startPart(1);
+	} else {
+		startGui();
+	}
 
 	while ((_engineFlags & kEngineQuit) == 0) {
 
@@ -200,7 +208,11 @@ void Parallaction_br::startPart(uint part) {
 
 	initPart();
 
-	strcpy(_location._name, partFirstLocation[_part]);
+	if (getFeatures() & GF_DEMO) {
+		strcpy(_location._name, "camalb");
+	} else {
+		strcpy(_location._name, partFirstLocation[_part]);
+	}
 
 	parseLocation("common");
 	changeLocation(_location._name);

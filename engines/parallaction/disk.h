@@ -250,6 +250,16 @@ public:
 	Common::ReadStream* loadSound(const char* name);
 };
 
+class DosDemo_br : public DosDisk_br {
+
+public:
+	DosDemo_br(Parallaction *vm);
+	virtual ~DosDemo_br();
+
+	Common::String selectArchive(const Common::String& name);
+
+};
+
 class AmigaDisk_br : public DosDisk_br {
 
 protected:
