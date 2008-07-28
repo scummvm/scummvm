@@ -265,6 +265,9 @@ void Parallaction_br::changeLocation(char *location) {
 	clearSubtitles();
 	freeBackground();
 	_gfx->clearGfxObjects(kGfxObjNormal);
+	_gfx->freeLabels();
+	_subtitle[0] = _subtitle[1] = -1;
+
 	_location._programs.clear();
 
 	_location._animations.remove(_char._ani);
