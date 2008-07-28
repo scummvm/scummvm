@@ -38,6 +38,21 @@ struct InventoryItem {
 	uint16		_index;			// index to frame in objs file
 };
 
+struct InventoryProperties {
+	uint _itemPitch;
+	uint _itemWidth;
+	uint _itemHeight;
+
+	int _maxItems;
+	int _firstItem;
+
+	int _itemsPerLine;
+	int _maxLines;
+
+	int _width;
+	int _height;
+};
+
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
 
 typedef int16 ItemPosition;
@@ -47,11 +62,11 @@ class Inventory {
 
 protected:
 	InventoryItem	*_items;
-	uint16			_maxItems;
 	uint16			_numItems;
+	InventoryProperties *_props;
 
 public:
-	Inventory(uint16 maxItems);
+	Inventory(InventoryProperties *props);
 	virtual ~Inventory();
 
 	ItemPosition addItem(ItemName name, uint32 value);
@@ -71,6 +86,8 @@ public:
 
 class InventoryRenderer {
 	Parallaction	*_vm;
+	InventoryProperties *_props;
+
 	Inventory		*_inv;
 	Common::Point	_pos;
 
@@ -83,7 +100,7 @@ protected:
 	void refresh();
 
 public:
-	InventoryRenderer(Parallaction *vm);
+	InventoryRenderer(Parallaction *vm, InventoryProperties *props);
 	virtual ~InventoryRenderer();
 
 	void bindInventory(Inventory *inv) { _inv = inv; }

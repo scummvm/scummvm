@@ -261,6 +261,7 @@ public:
 
 	void makeBlack();
 	void setEntries(byte* data, uint first, uint num);
+	void getEntry(uint index, int &red, int &green, int &blue);
 	void setEntry(uint index, int red, int green, int blue);
 	void makeGrayscale();
 	void fadeTo(const Palette& target, uint step);
@@ -557,6 +558,9 @@ protected:
 
 	Common::Point		_hbCirclePos;
 	int				_hbCircleRadius;
+
+	// BRA specific
+	Palette				_backupPal;
 
 	// frame data stored in programmable variables
 	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask

@@ -153,6 +153,13 @@ void Palette::setEntry(uint index, int red, int green, int blue) {
 		_data[index*3+2] = blue & 0xFF;
 }
 
+void Palette::getEntry(uint index, int &red, int &green, int &blue) {
+	assert(index < _colors);
+	red   = _data[index*3];
+	green = _data[index*3+1];
+	blue  = _data[index*3+2];
+}
+
 void Palette::makeGrayscale() {
 	byte v;
 	for (uint16 i = 0; i < _colors; i++) {
@@ -797,6 +804,14 @@ Gfx::Gfx(Parallaction* vm) :
 
 	registerVar("draw_path_zones", 0);
 
+	if ((_vm->getGameType() == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+	// this loads the backup palette needed by the PC version of BRA (see setBackground()).
+		BackgroundInfo	paletteInfo;
+		_disk->loadSlide(paletteInfo, "pointer");
+		_backupPal.clone(paletteInfo.palette);
+		paletteInfo.free();
+	}
+
 	return;
 }
 
@@ -867,6 +882,18 @@ void Gfx::setBackground(uint type, const char* name, const char* mask, const cha
 
 	if (type == kBackgroundLocation) {
 		_disk->loadScenery(_backgroundInfo, name, mask, path);
+
+		// The PC version of BRA needs the entries 20-31 of the palette to be constant, but
+		// the background resource files are screwed up. The right colors come from an unused
+		// bitmap (pointer.bmp). Nothing is known about the Amiga version so far.
+		if ((_vm->getGameType() == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+			int r, g, b;
+			for (uint i = 16; i < 32; i++) {
+				_backupPal.getEntry(i, r, g, b);
+				_backgroundInfo.palette.setEntry(i, r, g, b);
+			}
+		}
+
 		setPalette(_backgroundInfo.palette);
 		_palette.clone(_backgroundInfo.palette);
 	} else {
