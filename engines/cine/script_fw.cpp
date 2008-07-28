@@ -38,7 +38,13 @@
 
 namespace Cine {
 
-ScriptVars globalVars(NUM_MAX_VAR);
+/**
+ * Global variables.
+ * 255 of these are saved, but there's one more that's used for bypassing the copy protection.
+ * In CineEngine::mainLoop(int bootScriptIdx) there's this code: globalVars[VAR_BYPASS_PROTECTION] = 0;
+ * And as VAR_BYPASS_PROTECTION is 255 that's why we're allocating one more than we otherwise would.
+ */
+ScriptVars globalVars(NUM_MAX_VAR + 1);
 
 uint16 compareVars(int16 a, int16 b);
 
