@@ -2123,7 +2123,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
+	virtual SaveStateList listSaves(const char *target) const;
 	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
 };
 
@@ -2145,6 +2145,37 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 	}
 
 	return res;
+}
+
+SaveStateList AgiMetaEngine::listSaves(const char *target) const {
+	const uint32 AGIflag = MKID_BE('AGI:');
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[260];
+	Common::String pattern = target;
+	pattern += ".???";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				uint32 type = in->readUint32BE();
+				if (type == AGIflag)
+					in->read(saveDesc, 31);
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fslist) const {
