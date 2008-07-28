@@ -334,6 +334,12 @@ void Parallaction_ns::drawAnimations() {
 		AnimationPtr anim = *it;
 		GfxObj *obj = anim->gfxobj;
 
+		// Validation is performed here, so that every animation is affected, instead that only the ones
+		// who *own* a script. In fact, some scripts can change values in other animations.
+		// The right way to do this would be to enforce validation when any variable is modified from
+		// a script.
+		anim->validateScriptVars();
+
 		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
 
 			if (anim->_flags & kFlagsNoMasked)
@@ -415,8 +421,6 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 label1:
 		if (a->_flags & kFlagsCharacter)
 			a->_z = a->_top + a->height();
-
-		a->validateScriptVars();
 	}
 
 	_modCounter++;
