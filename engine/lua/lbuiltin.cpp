@@ -122,16 +122,6 @@ static void internaldostring (void)
       lua_pushuserdata(NULL);  /* at least one result to signal no errors */
 }
 
-
-static void internaldofile (void)
-{
-  const char *fname = luaL_opt_string(1, NULL);
-  if (lua_dofile(fname) == 0)
-    if (luaA_passresults() == 0)
-      lua_pushuserdata(NULL);  /* at least one result to signal no errors */
-}
-
-
 static void to_string (void) {
   lua_Object obj = lua_getparam(1);
   char *buff = luaL_openspace(30);
@@ -485,7 +475,6 @@ static struct luaL_reg int_funcs[] = {
   {"assert", luaI_assert},
   {"call", luaI_call},
   {"collectgarbage", luaI_collectgarbage},
-  {"dofile", internaldofile},
   {"copytagmethods", copytagmethods},
   {"dostring", internaldostring},
   {"error", luaI_error},

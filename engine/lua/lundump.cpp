@@ -161,6 +161,7 @@ static TProtoFunc *LoadFunction(ZIO *Z) {
 	LoadConstants(tf, Z);
 	LoadLocals(tf, Z);
 	LoadSubfunctions(tf, Z);
+
 	return tf;
 }
 
@@ -176,7 +177,8 @@ static void LoadSignature(ZIO *Z) {
 static void LoadHeader(ZIO *Z) {
 	int32 version, id, sizeofR;
 #if 0
-	real f = (real)-TEST_NUMBER, tf = (real)TEST_NUMBER;
+	real f = (real)-TEST_NUMBER;
+	real tf = (real)TEST_NUMBER;
 #endif
 	LoadSignature(Z);
 	version = ezgetc(Z);

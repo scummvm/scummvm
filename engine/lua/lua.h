@@ -64,7 +64,6 @@ int32            lua_copytagmethods	(int32 tagto, int32 tagfrom);
 void           lua_settag		(int32 tag); /* In: object */
 
 void           lua_error		(const char *s);
-int32            lua_dofile 		(const char *filename); /* Out: returns */
 int32            lua_dostring 		(const char *string); /* Out: returns */
 int32            lua_dobuffer		(const char *buff, int32 size, const char *name);
 					  /* Out: returns */
