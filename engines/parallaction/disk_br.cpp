@@ -193,6 +193,7 @@ GfxObj* DosDisk_br::loadHead(const char* name) {
 void DosDisk_br::loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette) {
 	stream.skip(4);
 	uint width = stream.readUint32BE();
+	if (width & 1) width++;
 	uint height = stream.readUint32BE();
 	stream.skip(20);
 
