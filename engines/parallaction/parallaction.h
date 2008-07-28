@@ -325,6 +325,7 @@ public:
 	Common::RandomSource _rnd;
 
 	Debugger	*_debugger;
+	Frames	*_comboArrow;
 
 
 protected:		// data
@@ -365,7 +366,7 @@ public:
 	virtual	void callFunction(uint index, void* parm) { }
 
 	virtual void setArrowCursor() = 0;
-	virtual void setInventoryCursor(int pos) = 0;
+	virtual void setInventoryCursor(ItemName name) = 0;
 
 	virtual void parseLocation(const char* name) = 0;
 
@@ -481,7 +482,6 @@ public:
 	typedef void (Parallaction_ns::*Callable)(void*);
 
 	virtual	void callFunction(uint index, void* parm);
-	void setMousePointer(uint32 value);
 
 	bool loadGame();
 	bool saveGame();
@@ -512,7 +512,7 @@ private:
 	void changeCharacter(const char *name);
 	void runPendingZones();
 
-	void setInventoryCursor(int pos);
+	void setInventoryCursor(ItemName name);
 
 
 	void doLoadGame(uint16 slot);
@@ -525,7 +525,6 @@ private:
 
 	static byte _resMouseArrow[256];
 	byte	*_mouseArrow;
-	Frames	*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -644,7 +643,7 @@ private:
 	void		initFonts();
 	void		freeFonts();
 
-	void setInventoryCursor(int pos);
+	void setInventoryCursor(ItemName name);
 
 	void		changeLocation(char *location);
 	void 		runPendingZones();
@@ -652,7 +651,6 @@ private:
 	void		initPart();
 	void		freePart();
 
-	void setMousePointer(int16 index);
 	void initCursors();
 
 	Frames	*_dinoCursor;

@@ -34,6 +34,7 @@
 
 namespace Parallaction {
 
+
 #define MOUSEARROW_WIDTH		16
 #define MOUSEARROW_HEIGHT		16
 
@@ -165,7 +166,6 @@ Parallaction_ns::~Parallaction_ns() {
 
 	delete _locationParser;
 	delete _programParser;
-	delete _mouseComposedArrow;
 
 	_location._animations.remove(_char._ani);
 
@@ -182,7 +182,7 @@ void Parallaction_ns::freeFonts() {
 }
 
 void Parallaction_ns::initCursors() {
-	_mouseComposedArrow = _disk->loadPointer("pointer");
+	_comboArrow = _disk->loadPointer("pointer");
 	_mouseArrow = _resMouseArrow;
 }
 
@@ -197,21 +197,13 @@ void Parallaction_ns::setArrowCursor() {
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
 }
 
-void Parallaction_ns::setInventoryCursor(int pos) {
+void Parallaction_ns::setInventoryCursor(ItemName name) {
+	assert(name > 0);
 
-	if (pos == -1)
-		return;
-
-	const InventoryItem *item = getInventoryItem(pos);
-	if (item->_index == 0)
-		return;
-
-	_input->_activeItem._id = item->_id;
-
-	byte *v8 = _mouseComposedArrow->getData(0);
+	byte *v8 = _comboArrow->getData(0);
 
 	// FIXME: destination offseting is not clear
-	_inventoryRenderer->drawItem(item->_index, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
+	_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
 	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
 }
 

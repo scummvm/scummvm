@@ -301,13 +301,13 @@ void Input::enterInventoryMode() {
 void Input::exitInventoryMode() {
 	// right up hides inventory
 
-	int item = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	int pos = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
 	_vm->highlightInventoryItem(-1);			// disable
 
 	if ((_engineFlags & kEngineDragging)) {
 
 		_engineFlags &= ~kEngineDragging;
-		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(item));
+		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(pos));
 
 		if (z) {
 			_vm->dropItem(z->u.merge->_obj1);
@@ -319,10 +319,14 @@ void Input::exitInventoryMode() {
 	}
 
 	_vm->closeInventory();
-	if (item == -1) {
+	if (pos == -1) {
 		_vm->setArrowCursor();
 	} else {
-		_vm->setInventoryCursor(item);
+		const InventoryItem *item = _vm->getInventoryItem(pos);
+		if (item->_index != 0) {
+			_activeItem._id = item->_id;
+			_vm->setInventoryCursor(item->_index);
+		}
 	}
 	_vm->resumeJobs();
 

@@ -100,6 +100,8 @@ Parallaction::~Parallaction() {
 
 	cleanupGui();
 
+	delete _comboArrow;
+
 	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
