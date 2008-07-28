@@ -93,6 +93,7 @@ enum ZoneFlags {
 	kFlagsYourself		= 0x1000,
 	kFlagsScaled		= 0x2000,
 	kFlagsSelfuse		= 0x4000,
+	kFlagsIsAnimation	= 0x1000000,		// BRA: used in walk code (trap check), to tell is a Zone is an Animation
 	kFlagsAnimLinked	= 0x2000000
 };
 

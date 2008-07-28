@@ -299,6 +299,7 @@ void LocationParser_ns::parseAnimation(AnimationList &list, char *name) {
 	AnimationPtr a(new Animation);
 
 	strncpy(a->_name, name, ZONENAME_LENGTH);
+	a->_flags |= kFlagsIsAnimation;
 
 	list.push_front(AnimationPtr(a));
 
