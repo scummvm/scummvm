@@ -26,6 +26,8 @@
 #ifndef CINE_ANIM_H
 #define CINE_ANIM_H
 
+#include "common/endian.h"
+
 namespace Cine {
 
 /**
@@ -66,6 +68,19 @@ enum CineSaveGameFormat {
 	ANIMSIZE_30_PTRS_BROKEN,
 	ANIMSIZE_30_PTRS_INTACT,
 	TEMP_OS_FORMAT
+};
+
+/** Identifier for the temporary Operation Stealth savegame format. */
+static const uint32 TEMP_OS_FORMAT_ID = MKID_BE('TEMP');
+
+/** The current version number of Operation Stealth's savegame format. */
+static const uint32 CURRENT_OS_SAVE_VER = 0;
+
+/** Chunk header used by the temporary Operation Stealth savegame format. */
+struct ChunkHeader {
+	uint32 id;      ///< Identifier (e.g. MKID_BE('TEMP'))
+	uint32 version; ///< Version number
+	uint32 size;    ///< Size of the chunk after this header in bytes
 };
 
 struct AnimHeaderStruct {

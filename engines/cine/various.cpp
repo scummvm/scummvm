@@ -229,6 +229,20 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	return -1;
 }
 
+bool writeChunkHeader(Common::OutSaveFile &out, const ChunkHeader &header) {
+	out.writeUint32BE(header.id);
+	out.writeUint32BE(header.version);
+	out.writeUint32BE(header.size);
+	return !out.ioFailed();
+}
+
+bool loadChunkHeader(Common::SeekableReadStream &in, ChunkHeader &header) {
+	header.id      = in.readUint32BE();
+	header.version = in.readUint32BE();
+	header.size    = in.readUint32BE();
+	return !in.ioFailed();
+}
+
 void saveObjectTable(Common::OutSaveFile &out) {
 	out.writeUint16BE(NUM_MAX_OBJECT); // Entry count
 	out.writeUint16BE(0x20); // Entry size
@@ -378,8 +392,23 @@ bool CineEngine::loadSaveDirectory(void) {
  * algorithm could get confused and think that the file uses both the older
  * and the newer format but that is such a remote possibility that I wouldn't
  * worry about it at all.
+ *
+ * Also detects the temporary Operation Stealth savegame format now.
  */
 enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle) {
+	const uint32 prevStreamPos = fHandle.pos();
+
+	// First check for the temporary Operation Stealth savegame format.
+	fHandle.seek(0);
+	ChunkHeader hdr;
+	loadChunkHeader(fHandle, hdr);
+	fHandle.seek(prevStreamPos);
+	if (hdr.id == TEMP_OS_FORMAT_ID) {
+		return TEMP_OS_FORMAT;
+	}
+
+	// Ok, so the savegame isn't using the temporary Operation Stealth savegame format.
+	// Let's check for the plain Future Wars savegame format and its different versions then.
 	// The animDataTable begins at savefile position 0x2315.
 	// Each animDataTable entry takes 23 bytes in older saves (Revisions 21772-31443)
 	// and 30 bytes in the save format after that (Revision 31444 and onwards).
@@ -388,10 +417,8 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 	static const uint animEntriesCount = 255;
 	static const uint oldAnimEntrySize = 23;
 	static const uint newAnimEntrySize = 30;
-//	static const uint defaultAnimEntrySize = newAnimEntrySize;
 	static const uint animEntrySizeChoices[] = {oldAnimEntrySize, newAnimEntrySize};
 	Common::Array<uint> animEntrySizeMatches;
-	const uint32 prevStreamPos = fHandle.pos();
 
 	// Try to walk through the savefile using different animDataTable entry sizes
 	// and make a list of all the successful entry sizes.
@@ -774,6 +801,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	uint32 saveSize = saveFile->size();
+	// TODO: Evaluate the maximum savegame size for the temporary Operation Stealth savegame format.
 	if (saveSize == 0) { // Savefile's compressed using zlib format can't tell their unpacked size, test for it
 		// Can't get information about the savefile's size so let's try
 		// reading as much as we can from the file up to a predefined upper limit.
@@ -1044,10 +1072,14 @@ void CineEngine::makeSystemMenu(void) {
 void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	int i;
 
-	// TODO: Enable saving in Operation Stealth after adding a header and possibly some testing
-	warning("makeSaveOS: Saving in Operation Stealth not yet enabled. Not saving game");
-	return;
+	// Make a temporary Operation Stealth savegame format chunk header and save it.	
+	ChunkHeader header;
+	header.id = TEMP_OS_FORMAT_ID;
+	header.version = CURRENT_OS_SAVE_VER;
+	header.size = 0; // No data is currently put inside the chunk, all the plain data comes right after it.
+	writeChunkHeader(out, header);
 
+	// Start outputting the plain savegame data right after the chunk header.
 	out.writeUint16BE(currentDisk);
 	out.write(currentPartName, 13);
 	out.write(currentPrcName, 13);
