@@ -35,8 +35,8 @@ void addBackground(const char *bgName, uint16 bgIdx);
 
 extern uint16 bgVar0;
 
-extern byte currentAdditionalBgIdx;
-extern byte currentAdditionalBgIdx2;
+extern int16 currentAdditionalBgIdx;
+extern int16 currentAdditionalBgIdx2;
 
 } // End of namespace Cine
 

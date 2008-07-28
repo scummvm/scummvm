@@ -562,9 +562,6 @@ void CineEngine::resetEngine() {
 	g_sound->stopMusic();
 	freeAnimDataTable();
 	overlayList.clear();
-	if (g_cine->getGameType() == Cine::GType_OS) {
-		seqList.clear();
-	}
 	bgIncrustList.clear();
 	closePart();
 
@@ -607,6 +604,16 @@ void CineEngine::resetEngine() {
 	renderer->clear();
 
 	checkForPendingDataLoadSwitch = 0;
+
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		seqList.clear();
+		currentAdditionalBgIdx = 0;
+		currentAdditionalBgIdx2 = 0;
+		// TODO: Add resetting of the following variables
+		// adBgVar1 = 0;
+		// adBgVar0 = 0;		
+		// gfxFadeOutCompleted = 0;
+	}
 }
 
 bool loadObjectTable(Common::SeekableReadStream &in) {
@@ -704,10 +711,137 @@ bool loadZoneQuery(Common::SeekableReadStream &in) {
 	return !in.ioFailed();
 }
 
-// TODO: Implement this function
 bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
-	warning("loadTempSaveOS: This is a stub. Temporary Operation Stealth savegame loading not yet implemented");
-	return false;
+	char musicName[13];
+	char bgNames[8][13];
+
+	// First check the temporary Operation Stealth savegame format header.
+	ChunkHeader hdr;
+	loadChunkHeader(in, hdr);
+	if (hdr.id != TEMP_OS_FORMAT_ID) {
+		warning("loadTempSaveOS: File has incorrect identifier. Not loading savegame");
+		return false;
+	} else if (hdr.version > CURRENT_OS_SAVE_VER) {
+		warning("loadTempSaveOS: Detected newer format version. Not loading savegame");
+		return false;		
+	} else if (hdr.version < CURRENT_OS_SAVE_VER) {
+		warning("loadTempSaveOS: Detected older format version. Trying to load nonetheless. Things may break");
+	} else { // hdr.id == TEMP_OS_FORMAT_ID && hdr.version == CURRENT_OS_SAVE_VER
+		debug(3, "loadTempSaveOS: Found correct header (Both the identifier and version number match).");
+	}
+
+	// There shouldn't be any data in the header's chunk currently so it's an error if there is.
+	if (hdr.size > 0) {
+		warning("loadTempSaveOS: Format header's chunk seems to contain data so format is incorrect. Not loading savegame");
+		return false;
+	}
+
+	// Ok, so we've got a correct header for a temporary Operation Stealth savegame.
+	// Let's start loading the plain savegame data then.
+	currentDisk = in.readUint16BE();	
+	in.read(currentPartName, 13);
+	in.read(currentPrcName, 13);
+	in.read(currentRelName, 13);
+	in.read(currentMsgName, 13);
+
+	// Load the 8 background names.
+	for (uint i = 0; i < 8; i++) {
+		in.read(bgNames[i], 13);
+	}
+	
+	in.read(currentCtName, 13);
+
+	loadObjectTable(in);
+	renderer->restorePalette(in);
+	globalVars.load(in, NUM_MAX_VAR);
+	loadZoneData(in);
+	loadCommandVariables(in);
+	in.read(commandBuffer, 0x50);
+	loadZoneQuery(in);
+
+	// TODO: Use the loaded string (Current music name (String, 13 bytes)).
+	in.read(musicName, 13);
+
+	// TODO: Use the loaded value (Is music loaded? (Uint16BE, Boolean)).
+	in.readUint16BE();
+
+	// TODO: Use the loaded value (Is music playing? (Uint16BE, Boolean)).
+	in.readUint16BE();
+
+	renderer->_cmdY      = in.readUint16BE();	
+	in.readUint16BE(); // Some unknown variable that seems to always be zero
+	allowPlayerInput     = in.readUint16BE();
+	playerCommand        = in.readUint16BE();
+	commandVar1          = in.readUint16BE();
+	isDrawCommandEnabled = in.readUint16BE();
+	var5                 = in.readUint16BE();
+	var4                 = in.readUint16BE();
+	var3                 = in.readUint16BE();
+	var2                 = in.readUint16BE();
+	commandVar2          = in.readUint16BE();
+	renderer->_messageBg = in.readUint16BE();
+	
+	// TODO: Use the loaded value (adBgVar1 (Uint16BE)).
+	in.readUint16BE();
+
+	currentAdditionalBgIdx = in.readSint16BE();
+	currentAdditionalBgIdx2 = in.readSint16BE();
+
+	// TODO: Check whether the scroll value really gets used correctly after this.
+	// Note that the backgrounds are loaded only later than this value is set.
+	renderer->setScroll(in.readUint16BE());
+
+	// TODO: Use the loaded value (adBgVar0 (Uint16BE). Maybe this means bgVar0?).
+	in.readUint16BE();
+
+	disableSystemMenu = in.readUint16BE();
+
+	// TODO: adBgVar1 = 1 here
+
+	// Load the animDataTable entries
+	in.readUint16BE(); // Entry count (255 in the PC version of Operation Stealth).
+	in.readUint16BE(); // Entry size (36 in the PC version of Operation Stealth).
+	loadResourcesFromSave(in, ANIMSIZE_30_PTRS_INTACT);
+
+	loadScreenParams(in);
+	loadGlobalScripts(in);
+	loadObjectScripts(in);
+	loadSeqList(in);
+	loadOverlayList(in);
+	loadBgIncrustFromSave(in);
+
+	if (strlen(currentPrcName)) {
+		loadPrc(currentPrcName);
+	}
+
+	if (strlen(currentRelName)) {
+		loadRel(currentRelName);
+	}
+
+	if (strlen(currentMsgName)) {
+		loadMsg(currentMsgName);
+	}
+
+	// Load first background (Uses loadBg)
+	if (strlen(bgNames[0])) {
+		loadBg(bgNames[0]);
+	}
+
+	// Add backgrounds 1-7 (Uses addBackground)
+	for (int i = 1; i < 8; i++) {
+		if (strlen(bgNames[i])) {
+			addBackground(bgNames[i], i);
+		}
+	}
+
+	if (strlen(currentCtName)) {
+		loadCtOS(currentCtName);
+	}
+
+	// TODO: Add current music loading and playing here
+	// TODO: Palette handling?
+
+	return !in.ioFailed();
 }
 
 bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat) {
@@ -830,12 +964,9 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 		}*/
 	}
 
-	return true;
+	return !in.ioFailed();
 }
 
-/*! \todo Implement Operation Stealth loading, this is obviously Future Wars only
- * \todo Add support for loading the zoneQuery table (Operation Stealth specific)
- */
 bool CineEngine::makeLoad(char *saveName) {
 	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
 
@@ -1107,11 +1238,8 @@ void CineEngine::makeSystemMenu(void) {
 }
 
 /**
- * Save an Operation Stealth type savegame. WIP! Not yet enabled by default!
+ * Save an Operation Stealth type savegame. WIP!
  *
- * TODO: Add some kind of a header to the Operation Stealth's savegame file
- *       that differentiates it from any of the plain data savegame formats used by
- *       the already officially supported Future Wars.
  * NOTE: This is going to be very much a work in progress so the Operation Stealth's
  *       savegame formats that are going to be tried are extremely probably not going
  *       to be supported at all after Operation Stealth becomes officially supported.
@@ -1173,8 +1301,8 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	// FIXME: Save proper value for this variable, currently writing zero.
 	// An unknown variable at 0x295E: adBgVar1 (Uint16BE).
 	out.writeUint16BE(0);
-	out.writeUint16BE(currentAdditionalBgIdx);
-	out.writeUint16BE(currentAdditionalBgIdx2);
+	out.writeSint16BE(currentAdditionalBgIdx);
+	out.writeSint16BE(currentAdditionalBgIdx2);
 	// FIXME: Save proper value for this variable, currently writing zero.
 	// 0x2954: additionalBgVScroll (Uint16BE). This probably means renderer->_bgShift.
 	out.writeUint16BE(0);

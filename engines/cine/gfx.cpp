@@ -601,6 +601,12 @@ void FWRenderer::setScroll(unsigned int shift) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
+/*! \brief Future Wars has no scrolling backgrounds so scroll value is always zero.
+ */
+uint FWRenderer::getScroll() const {
+	return 0;
+}
+
 /*! \brief Placeholder for Operation Stealth implementation
  */
 void FWRenderer::removeBg(unsigned int idx) {
@@ -1288,6 +1294,13 @@ void OSRenderer::setScroll(unsigned int shift) {
 	assert(shift <= 200);
 
 	_bgShift = shift;
+}
+
+/*! \brief Get background scroll
+ * \return Background scroll in pixels
+ */
+uint OSRenderer::getScroll() const {
+	return _bgShift;
 }
 
 /*! \brief Unload background from renderer

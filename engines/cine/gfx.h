@@ -108,6 +108,7 @@ public:
 	virtual void selectBg(unsigned int idx);
 	virtual void selectScrollBg(unsigned int idx);
 	virtual void setScroll(unsigned int shift);
+	virtual uint getScroll() const;
 	virtual void removeBg(unsigned int idx);
 	virtual void saveBgNames(Common::OutSaveFile &fHandle);
 
@@ -164,6 +165,7 @@ public:
 	void selectBg(unsigned int idx);
 	void selectScrollBg(unsigned int idx);
 	void setScroll(unsigned int shift);
+	uint getScroll() const;
 	void removeBg(unsigned int idx);
 	void saveBgNames(Common::OutSaveFile &fHandle);
 

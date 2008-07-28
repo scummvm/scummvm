@@ -35,7 +35,7 @@ namespace Cine {
 
 uint16 bgVar0;
 byte *additionalBgTable[9];
-byte currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
+int16 currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
 
 byte loadCtFW(const char *ctName) {
 	uint16 header[32];
