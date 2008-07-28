@@ -279,7 +279,7 @@ public:
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
-	GfxObj* AmigaDisk_br::loadObjects(const char *name);
+	GfxObj* loadObjects(const char *name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 	Common::String selectArchive(const Common::String& name);
