@@ -305,8 +305,8 @@ private:
  * add the opcode implementations like this:
  *
  * Common::Array<Functor1<ScriptState, void> *> opcodeTable;
- * opcodeTable[0] = new Functor1Mem<ScriptState, void, MyEngine>(&myEngine, &MyEngine_v1::o1_foo);
- * opcodeTable[1] = new Functor1Mem<ScriptState, void, MyEngine>(&myEngine, &MyEngine_v2::o2_foo);
+ * opcodeTable[0] = new Functor1Mem<ScriptState, void, MyEngine_v1>(&myEngine, &MyEngine_v1::o1_foo);
+ * opcodeTable[1] = new Functor1Mem<ScriptState, void, MyEngine_v2>(&myEngine, &MyEngine_v2::o2_foo);
  * // unimplemented/unused opcode
  * opcodeTable[2] = 0;
  * etc.
