@@ -11,11 +11,11 @@
 #include "lobject.h"
 
 
-void luaC_checkGC (void);
-TObject* luaC_getref (int32 ref);
-int32 luaC_ref (TObject *o, int32 lock);
-void luaC_hashcallIM (Hash *l);
-void luaC_strcallIM (TaggedString *l);
+void luaC_checkGC();
+TObject* luaC_getref(int32 ref);
+int32 luaC_ref(TObject *o, int32 lock);
+void luaC_hashcallIM(Hash *l);
+void luaC_strcallIM(TaggedString *l);
 
 
 #endif
