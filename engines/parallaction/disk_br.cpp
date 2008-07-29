@@ -598,7 +598,11 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		filepath = Common::String(name) + ".bkg";
 		node = _bkgDir.getChild(filepath);
 		if (!node.exists()) {
-			errorFileNotFound(_bkgDir, filepath);
+			filepath = Common::String(name) + ".bkg";
+			node = _commonBkgDir.getChild(filepath);
+			if (!node.exists()) {
+				errorFileNotFound(_bkgDir, filepath);
+			}
 		}
 		stream.open(node);
 		loadBackground(info, stream);
@@ -609,7 +613,11 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		filepath = Common::String(mask) + ".msk";
 		node = _mskDir.getChild(filepath);
 		if (!node.exists()) {
-			errorFileNotFound(_mskDir, filepath);
+			filepath = Common::String(mask) + ".msk";
+			node = _commonMskDir.getChild(filepath);
+			if (!node.exists()) {
+				errorFileNotFound(_mskDir, filepath);
+			}
 		}
 		stream.open(node);
 		loadMask(info, stream);
@@ -620,7 +628,11 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		filepath = Common::String(path) + ".pth";
 		node = _pthDir.getChild(filepath);
 		if (!node.exists()) {
-			errorFileNotFound(_pthDir, filepath);
+			filepath = Common::String(path) + ".pth";
+			node = _commonPthDir.getChild(filepath);
+			if (!node.exists()) {
+				errorFileNotFound(_pthDir, filepath);
+			}
 		}
 		stream.open(node);
 		// NOTE: info.width and info.height are only valid if the background graphics
