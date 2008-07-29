@@ -71,7 +71,8 @@ enum ZoneTypes {
 	kZoneCommand	   = 0x800,
 
 	// BRA specific
-	kZonePath          = 0x1000				// defines nodes for assisting walk calculation routines
+	kZonePath          = 0x1000,			// defines nodes for assisting walk calculation routines
+	kZoneBox           = 0x2000
 };
 
 

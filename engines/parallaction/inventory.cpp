@@ -30,20 +30,13 @@
 
 namespace Parallaction {
 
-//
-//	inventory is a grid made of (at most) 30 cells, 24x24 pixels each,
-//	arranged in 6 lines
-//
-//	inventory items are stored in cnv files in a 32x24 grid
-//	but only 24x24 pixels are actually copied to graphic memory
-//
+
 /*
 #define INVENTORYITEM_PITCH			32
 #define INVENTORYITEM_WIDTH			24
 #define INVENTORYITEM_HEIGHT		24
 
 #define INVENTORY_MAX_ITEMS			30
-#define INVENTORY_FIRST_ITEM		4		// first four entries are used up by verbs
 
 #define INVENTORY_ITEMS_PER_LINE	5
 #define INVENTORY_LINES				6
@@ -52,12 +45,27 @@ namespace Parallaction {
 #define INVENTORY_HEIGHT			(INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 */
 
+InventoryItem _verbs_NS[] = {
+	{ 1, kZoneDoor },
+	{ 3, kZoneExamine },
+	{ 2, kZoneGet },
+	{ 4, kZoneSpeak },
+	{ 0, 0 }
+};
+
+InventoryItem _verbs_BR[] = {
+	{ 1, kZoneBox },
+	{ 2, kZoneGet },
+	{ 3, kZoneExamine },
+	{ 4, kZoneSpeak },
+	{ 0, 0 }
+};
+
 InventoryProperties	_invProps_NS = {
 	32, 		// INVENTORYITEM_PITCH
 	24, 		// INVENTORYITEM_WIDTH
 	24, 		// INVENTORYITEM_HEIGHT
 	30, 		// INVENTORY_MAX_ITEMS
-	4, 			// INVENTORY_FIRST_ITEM		// first four entries are used up by verbs
 	5, 			// INVENTORY_ITEMS_PER_LINE
 	6, 			// INVENTORY_LINES
 	5 * 24, 	// INVENTORY_WIDTH =(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
@@ -69,7 +77,6 @@ InventoryProperties	_invProps_BR = {
 	51, 		// INVENTORYITEM_WIDTH
 	51, 		// INVENTORYITEM_HEIGHT
 	48, 		// INVENTORY_MAX_ITEMS
-	4, 			// INVENTORY_FIRST_ITEM		// first four entries are used up by verbs
 	6, 			// INVENTORY_ITEMS_PER_LINE
 	8, 			// INVENTORY_LINES
 	6 * 51, 		// INVENTORY_WIDTH =(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
@@ -120,14 +127,17 @@ int16 Parallaction::getInventoryItemIndex(int16 pos) {
 
 void Parallaction::initInventory() {
 	InventoryProperties *props;
+	InventoryItem *verbs;
 
 	if (getGameType() == GType_Nippon) {
 		props = &_invProps_NS;
+		verbs = _verbs_NS;
 	} else {
 		props = &_invProps_BR;
+		verbs = _verbs_BR;
 	}
 
-	_inventory = new Inventory(props);
+	_inventory = new Inventory(props, verbs);
 	_inventoryRenderer = new InventoryRenderer(this, props);
 	_inventoryRenderer->bindInventory(_inventory);
 }
@@ -255,13 +265,14 @@ void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 
 }
 
-Inventory::Inventory(InventoryProperties *props) : _numItems(0), _props(props) {
+Inventory::Inventory(InventoryProperties *props, InventoryItem *verbs) : _numItems(0), _props(props) {
 	_items = (InventoryItem*)calloc(_props->_maxItems, sizeof(InventoryItem));
 
-	addItem(1, kZoneDoor);
-	addItem(3, kZoneExamine);
-	addItem(2, kZoneGet);
-	addItem(4, kZoneSpeak);
+	int i = 0;
+	for ( ; verbs[i]._id; i++) {
+		addItem(verbs[i]._id, verbs[i]._index);
+	}
+	_numVerbs = i;
 }
 
 
@@ -331,9 +342,9 @@ void Inventory::removeItem(ItemName name) {
 void Inventory::clear(bool keepVerbs) {
 	debugC(1, kDebugInventory, "clearInventory()");
 
-	uint first = (keepVerbs ? _props->_firstItem : 0);
+	uint first = (keepVerbs ? _numVerbs : 0);
 
-	for (uint16 slot = first; slot < _props->_maxItems; slot++) {
+	for (uint16 slot = first; slot < _numVerbs; slot++) {
 		_items[slot]._id = 0;
 		_items[slot]._index = 0;
 	}

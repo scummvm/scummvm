@@ -44,7 +44,6 @@ struct InventoryProperties {
 	uint _itemHeight;
 
 	int _maxItems;
-	int _firstItem;
 
 	int _itemsPerLine;
 	int _maxLines;
@@ -61,12 +60,14 @@ typedef uint16 ItemName;
 class Inventory {
 
 protected:
+	uint16			_numVerbs;
+
 	InventoryItem	*_items;
 	uint16			_numItems;
 	InventoryProperties *_props;
 
 public:
-	Inventory(InventoryProperties *props);
+	Inventory(InventoryProperties *props, InventoryItem *verbs);
 	virtual ~Inventory();
 
 	ItemPosition addItem(ItemName name, uint32 value);
