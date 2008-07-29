@@ -31,11 +31,6 @@
 
 namespace Touche {
 
-enum {
-	kCurrentGameStateVersion = 6,
-	kGameStateDescriptionLen = 32
-};
-
 static void saveOrLoad(Common::WriteStream &stream, uint16 &i) {
 	stream.writeUint16LE(i);
 }
