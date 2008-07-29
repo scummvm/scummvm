@@ -170,6 +170,10 @@ OSystem_SDL::OSystem_SDL()
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+#ifdef MIXER_DOUBLE_BUFFERING
+	_soundMutex(0), _soundCond(0), _soundThread(0),
+	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
+#endif
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
