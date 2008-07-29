@@ -615,13 +615,13 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		if (!node.exists()) {
 			filepath = Common::String(mask) + ".msk";
 			node = _commonMskDir.getChild(filepath);
-			if (!node.exists()) {
-				errorFileNotFound(_mskDir, filepath);
-			}
 		}
-		stream.open(node);
-		loadMask(info, stream);
-		stream.close();
+
+		if (node.exists()) {
+			stream.open(node);
+			loadMask(info, stream);
+			stream.close();
+		}
 	}
 
 	if (path && _pthDir.exists()) {
