@@ -7,8 +7,6 @@
 #ifndef lbuiltin_h
 #define lbuiltin_h
 
-
-void luaB_predefine (void);
-
+void luaB_predefine();
 
 #endif
