@@ -172,7 +172,7 @@ public:
 };
 
 template<class Result, class T>
-class ConstMemFunc0 : public UnaryFunction<T*, Result> {
+class ConstMemFunc0 : public UnaryFunction<T *, Result> {
 private:
 	Result (T::*_func)() const;
 public:
@@ -185,7 +185,7 @@ public:
 };
 
 template<class Result, class Arg, class T>
-class MemFunc1 : public BinaryFunction<T*, Arg, Result> {
+class MemFunc1 : public BinaryFunction<T *, Arg, Result> {
 private:
 	Result (T::*_func)(Arg);
 public:
@@ -198,7 +198,7 @@ public:
 };
 
 template<class Result, class Arg, class T>
-class ConstMemFunc1 : public BinaryFunction<T*, Arg, Result> {
+class ConstMemFunc1 : public BinaryFunction<T *, Arg, Result> {
 private:
 	Result (T::*_func)(Arg) const;
 public:
@@ -286,7 +286,7 @@ public:
 
 	Functor0Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0; }
+	bool isValid() const { return _func != 0 && _t != 0; }
 	Res operator()() const {
 		return (_t->*_func)();
 	}
@@ -349,7 +349,7 @@ public:
 
 	Functor1Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0; }
+	bool isValid() const { return _func != 0 && _t != 0; }
 	Res operator()(Arg v1) const {
 		return (_t->*_func)(v1);
 	}
@@ -385,7 +385,7 @@ public:
 
 	Functor2Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0; }
+	bool isValid() const { return _func != 0 && _t != 0; }
 	Res operator()(Arg1 v1, Arg2 v2) const {
 		return (_t->*_func)(v1, v2);
 	}
