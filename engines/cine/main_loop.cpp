@@ -257,13 +257,17 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			}
 		}
 
-		processSeqList();
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			processSeqList();
+		}
 		executeObjectScripts();
 		executeGlobalScripts();
 
 		purgeObjectScripts();
 		purgeGlobalScripts();
-		purgeSeqList();
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			purgeSeqList();
+		}
 
 		if (playerCommand == -1) {
 			setMouseCursor(MOUSE_CURSOR_NORMAL);
