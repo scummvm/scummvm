@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		281E11180E3FA94F004A8255 /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11160E3FA94F004A8255 /* default-saves.cpp */; };
+		281E111B0E3FA960004A8255 /* compressed-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11190E3FA960004A8255 /* compressed-saves.cpp */; };
+		281E111D0E3FA96D004A8255 /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E111C0E3FA96D004A8255 /* savefile.cpp */; };
+		281E11290E3FA9DA004A8255 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11270E3FA9DA004A8255 /* file.cpp */; };
+		281E112C0E3FA9E8004A8255 /* fs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E112A0E3FA9E8004A8255 /* fs.cpp */; };
+		281E11320E3FAA09004A8255 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11300E3FAA09004A8255 /* stream.cpp */; };
+		281E11450E3FAABB004A8255 /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11440E3FAABB004A8255 /* posix-fs-factory.cpp */; };
 		2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68B0E0198B200DCA546 /* hashmap.cpp */; };
 		2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68D0E0198B200DCA546 /* memorypool.cpp */; };
 		2862A6970E0198B200DCA546 /* str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A6900E0198B200DCA546 /* str.cpp */; };
@@ -116,6 +123,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		281E11160E3FA94F004A8255 /* default-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-saves.cpp"; path = "saves/default/default-saves.cpp"; sourceTree = "<group>"; };
+		281E11170E3FA94F004A8255 /* default-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-saves.h"; path = "saves/default/default-saves.h"; sourceTree = "<group>"; };
+		281E11190E3FA960004A8255 /* compressed-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "compressed-saves.cpp"; path = "saves/compressed/compressed-saves.cpp"; sourceTree = "<group>"; };
+		281E111A0E3FA960004A8255 /* compressed-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "compressed-saves.h"; path = "saves/compressed/compressed-saves.h"; sourceTree = "<group>"; };
+		281E111C0E3FA96D004A8255 /* savefile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = savefile.cpp; path = saves/savefile.cpp; sourceTree = "<group>"; };
+		281E111E0E3FA97D004A8255 /* abstract-fs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "abstract-fs.h"; path = "fs/abstract-fs.h"; sourceTree = "<group>"; };
+		281E111F0E3FA98C004A8255 /* fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "fs-factory.h"; path = "fs/fs-factory.h"; sourceTree = "<group>"; };
+		281E11210E3FA998004A8255 /* posix-fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "posix-fs-factory.h"; path = "fs/posix/posix-fs-factory.h"; sourceTree = "<group>"; };
+		281E11260E3FA9DA004A8255 /* error.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		281E11270E3FA9DA004A8255 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = file.cpp; sourceTree = "<group>"; };
+		281E11280E3FA9DA004A8255 /* file.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		281E112A0E3FA9E8004A8255 /* fs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = fs.cpp; sourceTree = "<group>"; };
+		281E112B0E3FA9E8004A8255 /* fs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fs.h; sourceTree = "<group>"; };
+		281E112D0E3FA9F8004A8255 /* ptr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ptr.h; sourceTree = "<group>"; };
+		281E112E0E3FA9F8004A8255 /* savefile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = savefile.h; sourceTree = "<group>"; };
+		281E112F0E3FA9F8004A8255 /* singleton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = singleton.h; sourceTree = "<group>"; };
+		281E11300E3FAA09004A8255 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
+		281E11310E3FAA09004A8255 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
+		281E11440E3FAABB004A8255 /* posix-fs-factory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "posix-fs-factory.cpp"; path = "fs/posix/posix-fs-factory.cpp"; sourceTree = "<group>"; };
 		2862A6860E0198B200DCA546 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = algorithm.h; sourceTree = "<group>"; };
 		2862A6870E0198B200DCA546 /* array.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		2862A6880E0198B200DCA546 /* endian.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
@@ -345,6 +371,53 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		281E11110E3FA907004A8255 /* fs */ = {
+			isa = PBXGroup;
+			children = (
+				281E111F0E3FA98C004A8255 /* fs-factory.h */,
+				281E111E0E3FA97D004A8255 /* abstract-fs.h */,
+				281E11130E3FA91A004A8255 /* posix */,
+			);
+			name = fs;
+			sourceTree = "<group>";
+		};
+		281E11120E3FA90E004A8255 /* saves */ = {
+			isa = PBXGroup;
+			children = (
+				281E111C0E3FA96D004A8255 /* savefile.cpp */,
+				281E11150E3FA92F004A8255 /* default */,
+				281E11140E3FA928004A8255 /* compressed */,
+			);
+			name = saves;
+			sourceTree = "<group>";
+		};
+		281E11130E3FA91A004A8255 /* posix */ = {
+			isa = PBXGroup;
+			children = (
+				281E11440E3FAABB004A8255 /* posix-fs-factory.cpp */,
+				281E11210E3FA998004A8255 /* posix-fs-factory.h */,
+			);
+			name = posix;
+			sourceTree = "<group>";
+		};
+		281E11140E3FA928004A8255 /* compressed */ = {
+			isa = PBXGroup;
+			children = (
+				281E11190E3FA960004A8255 /* compressed-saves.cpp */,
+				281E111A0E3FA960004A8255 /* compressed-saves.h */,
+			);
+			name = compressed;
+			sourceTree = "<group>";
+		};
+		281E11150E3FA92F004A8255 /* default */ = {
+			isa = PBXGroup;
+			children = (
+				281E11160E3FA94F004A8255 /* default-saves.cpp */,
+				281E11170E3FA94F004A8255 /* default-saves.h */,
+			);
+			name = default;
+			sourceTree = "<group>";
+		};
 		289EEE0A0D8921CA00521A80 /* mixer */ = {
 			isa = PBXGroup;
 			children = (
@@ -363,6 +436,16 @@
 		289EEE140D8921E400521A80 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				281E11300E3FAA09004A8255 /* stream.cpp */,
+				281E11310E3FAA09004A8255 /* stream.h */,
+				281E112D0E3FA9F8004A8255 /* ptr.h */,
+				281E112E0E3FA9F8004A8255 /* savefile.h */,
+				281E112F0E3FA9F8004A8255 /* singleton.h */,
+				281E112A0E3FA9E8004A8255 /* fs.cpp */,
+				281E112B0E3FA9E8004A8255 /* fs.h */,
+				281E11260E3FA9DA004A8255 /* error.h */,
+				281E11270E3FA9DA004A8255 /* file.cpp */,
+				281E11280E3FA9DA004A8255 /* file.h */,
 				2862A6860E0198B200DCA546 /* algorithm.h */,
 				2862A6870E0198B200DCA546 /* array.h */,
 				2862A6880E0198B200DCA546 /* endian.h */,
@@ -458,6 +541,8 @@
 		289EEE2B0D8921F600521A80 /* backend */ = {
 			isa = PBXGroup;
 			children = (
+				281E11120E3FA90E004A8255 /* saves */,
+				281E11110E3FA907004A8255 /* fs */,
 				289EEE380D8921F600521A80 /* default-timer.cpp */,
 				289EEE390D8921F600521A80 /* default-timer.h */,
 				289EEE3A0D8921F600521A80 /* driver.h */,
@@ -742,6 +827,13 @@
 				2862A6970E0198B200DCA546 /* str.cpp in Sources */,
 				289917E40E1F6D7C006704AC /* version.cpp in Sources */,
 				289917E60E1F6D91006704AC /* ztriangle_shadow.cpp in Sources */,
+				281E11180E3FA94F004A8255 /* default-saves.cpp in Sources */,
+				281E111B0E3FA960004A8255 /* compressed-saves.cpp in Sources */,
+				281E111D0E3FA96D004A8255 /* savefile.cpp in Sources */,
+				281E11290E3FA9DA004A8255 /* file.cpp in Sources */,
+				281E112C0E3FA9E8004A8255 /* fs.cpp in Sources */,
+				281E11320E3FAA09004A8255 /* stream.cpp in Sources */,
+				281E11450E3FAABB004A8255 /* posix-fs-factory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
