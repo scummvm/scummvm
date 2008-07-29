@@ -121,7 +121,7 @@ public:
 
 	~SharedPtr() { decRef(); }
 
-	SharedPtr &operator =(const SharedPtr &r) {
+	SharedPtr &operator=(const SharedPtr &r) {
 		if (r._refCount)
 			++(*r._refCount);
 		decRef();
@@ -134,7 +134,7 @@ public:
 	}
 
 	template<class T2>
-	SharedPtr &operator =(const SharedPtr<T2> &r) {
+	SharedPtr &operator=(const SharedPtr<T2> &r) {
 		if (r._refCount)
 			++(*r._refCount);
 		decRef();
@@ -146,8 +146,8 @@ public:
 		return *this;
 	}
 
-	ValueType &operator *() const { assert(_pointer); return *_pointer; }
-	Pointer operator ->() const { assert(_pointer); return _pointer; }
+	ValueType &operator*() const { assert(_pointer); return *_pointer; }
+	Pointer operator->() const { assert(_pointer); return _pointer; }
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -209,12 +209,12 @@ private:
 } // end of namespace Common
 
 template<class T1, class T2>
-bool operator ==(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
+bool operator==(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
 	return l.get() == r.get();
 }
 
 template<class T1, class T2>
-bool operator !=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
+bool operator!=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
 	return l.get() != r.get();
 }
 
