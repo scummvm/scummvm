@@ -499,6 +499,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
 };
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -507,6 +508,41 @@ bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		*engine = new Cine::CineEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+SaveStateList CineMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SaveStateList saveList;
+	Common::String filename = target;
+	filename += ".dir";
+	Common::InSaveFile *in = saveFileMan->openForLoading(filename.c_str());
+	if (in) {
+		int8 ch;
+		int slotNum = 0;
+		char saveDesc[20];
+		do {
+			uint pos = 0;
+			do {
+				ch = in->readByte();
+				if (pos < (sizeof(saveDesc) - 1)) {
+					if (ch < 32 || in->eos()) {
+						saveDesc[pos++] = '\0';
+					} 
+					else if (ch >= 32) {
+						saveDesc[pos++] = ch;
+					}
+				}
+			} while (ch >= 32 && !in->eos());
+			if (saveDesc[0] != 0) {
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), filename));
+				slotNum++;
+			}
+		} while (!in->eos());
+	}
+
+	delete in;
+
+	return saveList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)
