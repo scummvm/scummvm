@@ -2013,7 +2013,7 @@ void checkForPendingDataLoad(void) {
 		// fixes a crash when failing copy protection in Amiga or Atari ST
 		// versions of Future Wars.
 		if (loadPrcOk) {
-			addScriptToList0(1);
+			addScriptToGlobalScripts(1);
 		} else if (scumm_stricmp(currentPrcName, COPY_PROT_FAIL_PRC_NAME)) {
 			// We only show an error here for other files than the file that
 			// is loaded if copy protection fails (i.e. L201.ANI).

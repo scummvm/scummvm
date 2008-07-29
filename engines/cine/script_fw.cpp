@@ -1279,7 +1279,7 @@ int FWScript::o1_startGlobalScript() {
 	assert(param < NUM_MAX_SCRIPT);
 
 	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _line, param);
-	addScriptToList0(param);
+	addScriptToGlobalScripts(param);
 	return 0;
 }
 
@@ -1754,7 +1754,7 @@ int FWScript::o1_unloadMask5() {
 
 //-----------------------------------------------------------------------
 
-void addScriptToList0(uint16 idx) {
+void addScriptToGlobalScripts(uint16 idx) {
 	ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx));
 	assert(tmp);
 	globalScripts.push_back(tmp);
@@ -1828,7 +1828,7 @@ uint16 compareVars(int16 a, int16 b) {
 	return flag;
 }
 
-void executeList1(void) {
+void executeObjectScripts(void) {
 	ScriptList::iterator it = objectScripts.begin();
 	for (; it != objectScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
@@ -1839,7 +1839,7 @@ void executeList1(void) {
 	}
 }
 
-void executeList0(void) {
+void executeGlobalScripts(void) {
 	ScriptList::iterator it = globalScripts.begin();
 	for (; it != globalScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
@@ -1850,12 +1850,16 @@ void executeList0(void) {
 	}
 }
 
-/*! \todo objectScripts.clear()?
+/*! \todo Remove object scripts with script index of -1 (Not script position, but script index!).
+ *        This would seem to be valid for both Future Wars and Operation Stealth.
  */
-void purgeList1(void) {
+void purgeObjectScripts(void) {
 }
 
-void purgeList0(void) {
+/*! \todo Remove global scripts with script index of -1 (Not script position, but script index!).
+ *        This would seem to be valid for both Future Wars and Operation Stealth.
+ */
+void purgeGlobalScripts(void) {
 }
 
 ////////////////////////////////////

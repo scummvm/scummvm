@@ -371,16 +371,16 @@ void dumpScript(char *dumpName);
 #define OP_requestCheckPendingDataLoad  0x42
 #define OP_endScript                    0x50
 
-void addScriptToList0(uint16 idx);
+void addScriptToGlobalScripts(uint16 idx);
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);
 
 void runObjectScript(int16 entryIdx);
 
-void executeList1(void);
-void executeList0(void);
+void executeObjectScripts(void);
+void executeGlobalScripts(void);
 
-void purgeList1(void);
-void purgeList0(void);
+void purgeObjectScripts(void);
+void purgeGlobalScripts(void);
 
 } // End of namespace Cine
 
