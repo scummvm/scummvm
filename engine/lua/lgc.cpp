@@ -83,7 +83,7 @@ static int32 ismarked(TObject *o) {
 		return o->value.cl->head.marked;
 	case LUA_T_PROTO:
 		return o->value.tf->head.marked;
-#ifdef DEBUG
+#ifdef LUA_DEBUG
 	case LUA_T_LINE:
 	case LUA_T_CLMARK:
 	case LUA_T_CMARK:
