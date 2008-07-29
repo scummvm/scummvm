@@ -62,11 +62,6 @@ struct ScummNESFile::Resource {
 ScummNESFile::ScummNESFile() : _stream(0), _buf(0), _ROMset(kROMsetNum) {
 }
 
-uint32 ScummNESFile::write(const void *, uint32) {
-	error("ScummNESFile does not support writing!");
-	return 0;
-}
-
 void ScummNESFile::setEnc(byte enc) {
 	_stream->setEnc(enc);
 }
@@ -1234,7 +1229,7 @@ bool ScummNESFile::generateIndex() {
 	return true;
 }
 
-bool ScummNESFile::open(const Common::String &filename, AccessMode mode) {
+bool ScummNESFile::open(const Common::String &filename) {
 
 	if (_ROMset == kROMsetNum) {
 		char md5str[32+1];
@@ -1267,9 +1262,8 @@ bool ScummNESFile::open(const Common::String &filename, AccessMode mode) {
 		}
 	}
 
-	if (File::open(filename, mode)) {
-		if (_stream)
-			delete _stream;
+	if (File::open(filename)) {
+		delete _stream;
 		_stream = 0;
 
 		free(_buf);
@@ -1282,8 +1276,7 @@ bool ScummNESFile::open(const Common::String &filename, AccessMode mode) {
 }
 
 void ScummNESFile::close() {
-	if (_stream)
-		delete _stream;
+	delete _stream;
 	_stream = 0;
 
 	free(_buf);

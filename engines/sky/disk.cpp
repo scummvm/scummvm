@@ -326,14 +326,14 @@ void Disk::fnFlushBuffers(void) {
 
 void Disk::dumpFile(uint16 fileNr) {
 	char buf[128];
-	Common::File out;
+	Common::DumpFile out;
 	byte* filePtr;
 
 	filePtr = loadFile(fileNr);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 
 	if (!Common::File::exists(buf)) {
-		if (out.open(buf, Common::File::kFileWriteMode))
+		if (out.open(buf))
 			out.write(filePtr, _lastLoadedFileSize);
 	}
 	free(filePtr);

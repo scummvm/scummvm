@@ -2957,10 +2957,10 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 }
 
 void dumpScript(char *dumpName) {
-    Common::File fHandle;
+    Common::DumpFile fHandle;
 	uint16 i;
 
-	fHandle.open(dumpName, Common::File::kFileWriteMode);
+	fHandle.open(dumpName);
 
 	for (i = 0; i < decompileBufferPosition; i++) {
 		fHandle.writeString(Common::String(decompileBuffer[i]));

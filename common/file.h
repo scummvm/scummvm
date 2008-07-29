@@ -27,6 +27,7 @@
 #define COMMON_FILE_H
 
 #include "common/scummsys.h"
+#include "common/noncopyable.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -34,7 +35,10 @@ class FilesystemNode;
 
 namespace Common {
 
-class File : public SeekableReadStream, public WriteStream {
+/**
+ * TODO: vital to document this core class properly!!! For both users and implementors
+ */
+class File : public SeekableReadStream, public NonCopyable {
 protected:
 	/** File handle to the actual file; 0 if no file is open. */
 	void *_handle;
@@ -45,19 +49,7 @@ protected:
 	/** The name of this file, for debugging. */
 	String _name;
 
-private:
-	// Disallow copying File objects. There is not strict reason for this,
-	// except that so far we never had real need for such a feature, and
-	// code that accidentally copied File objects tended to break in strange
-	// ways.
-	File(const File &f);
-	File &operator =(const File &f);
-
 public:
-	enum AccessMode {
-		kFileReadMode = 1,
-		kFileWriteMode = 2
-	};
 
 	static void addDefaultDirectory(const String &directory);
 	static void addDefaultDirectoryRecursive(const String &directory, int level = 4, const String &prefix = "");
@@ -80,8 +72,8 @@ public:
 	 */
 	static bool exists(const String &filename);
 
-	virtual bool open(const String &filename, AccessMode mode = kFileReadMode);
-	virtual bool open(const FilesystemNode &node, AccessMode mode = kFileReadMode);
+	virtual bool open(const String &filename);
+	virtual bool open(const FilesystemNode &node);
 
 	virtual void close();
 
@@ -114,8 +106,51 @@ public:
 	virtual uint32 size() const;
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+
+/**
+ * TODO: document this class
+ *
+ * Some design ideas:
+ *  - automatically drop all files into dumps/ dir? Might not be desired in all cases
+ */
+class DumpFile : public WriteStream, public NonCopyable {
+protected:
+	/** File handle to the actual file; 0 if no file is open. */
+	void *_handle;
+
+public:
+	DumpFile();
+	virtual ~DumpFile();
+
+	virtual bool open(const String &filename);
+	//virtual bool open(const FilesystemNode &node);
+
+	virtual void close();
+
+	/**
+	 * Checks if the object opened a file successfully.
+	 *
+	 * @return: true if any file is opened, false otherwise.
+	 */
+	bool isOpen() const;
+
+
+	bool ioFailed() const;
+	void clearIOFailed();
+	bool eos() const { return eof(); }
+
+	/**
+	 * Checks for end of file.
+	 *
+	 * @return: true if the end of file is reached, false otherwise.
+	 */
+	virtual bool eof() const;
+
 	uint32 write(const void *dataPtr, uint32 dataSize);
 };
+
 
 } // End of namespace Common
 

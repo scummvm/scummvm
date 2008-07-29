@@ -58,7 +58,7 @@ void ConfigFile::clear() {
 
 bool ConfigFile::loadFromFile(const String &filename) {
 	File file;
-	if (file.open(filename, File::kFileReadMode))
+	if (file.open(filename))
 		return loadFromStream(file);
 	else
 		return false;
@@ -171,8 +171,8 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 }
 
 bool ConfigFile::saveToFile(const String &filename) {
-	File file;
-	if (file.open(filename, File::kFileWriteMode))
+	DumpFile file;
+	if (file.open(filename))
 		return saveToStream(file);
 	else
 		return false;

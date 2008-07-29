@@ -80,37 +80,41 @@ public:
 };
 
 class MT32File : public MT32Emu::File {
-	Common::File file;
+	Common::File _in;
+	Common::DumpFile _out;
 public:
 	bool open(const char *filename, OpenMode mode) {
-		Common::File::AccessMode accessMode = mode == OpenMode_read ? Common::File::kFileReadMode : Common::File::kFileWriteMode;
-		return file.open(filename, accessMode);
+		if (mode == OpenMode_read)
+			return _in.open(filename);
+		else
+			return _out.open(filename);
 	}
 	void close() {
-		return file.close();
+		_in.close();
+		_out.close();
 	}
 	size_t read(void *in, size_t size) {
-		return file.read(in, size);
+		return _in.read(in, size);
 	}
 	bool readLine(char *in, size_t size) {
-		return file.readLine(in, size) != NULL;
+		return _in.readLine(in, size) != NULL;
 	}
 	bool readBit8u(MT32Emu::Bit8u *in) {
-		byte b = file.readByte();
-		if (file.eof())
+		byte b = _in.readByte();
+		if (_in.eof())
 			return false;
 		*in = b;
 		return true;
 	}
 	size_t write(const void *in, size_t size) {
-		return file.write(in, size);
+		return _out.write(in, size);
 	}
 	bool writeBit8u(MT32Emu::Bit8u out) {
-		file.writeByte(out);
-		return !file.ioFailed();
+		_out.writeByte(out);
+		return !_out.ioFailed();
 	}
 	bool isEOF() {
-		return file.eof();
+		return _in.isOpen() ? _in.eof() : _out.eof();
 	}
 };
 

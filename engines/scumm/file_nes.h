@@ -64,7 +64,7 @@ public:
 	ScummNESFile();
 	void setEnc(byte value);
 
-	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
 	void close();
@@ -73,7 +73,6 @@ public:
 	uint32 size() { return _stream->size(); }
 	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
 	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 } // End of namespace Scumm

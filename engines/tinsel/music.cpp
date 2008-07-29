@@ -507,7 +507,7 @@ void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 // Dumps all of the game's music in external XMIDI *.xmi files
 void dumpMusic() {
 	Common::File midiFile;
-	Common::File outFile;
+	Common::DumpFile outFile;
 	char outName[20];
 	midiFile.open(MIDI_FILE);
 	int outFileSize = 0;
@@ -519,7 +519,7 @@ void dumpMusic() {
 
 	for (int i = 0; i < total; i++) {
 		sprintf(outName, "track%03d.xmi", i + 1);
-		outFile.open(outName, Common::File::kFileWriteMode);
+		outFile.open(outName);
 
 		if (_vm->getFeatures() & GF_SCNFILES) {
 			if (i < total - 1)

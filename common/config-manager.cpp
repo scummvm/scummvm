@@ -289,13 +289,9 @@ void ConfigManager::loadFile(const String &filename) {
 
 void ConfigManager::flushToDisk() {
 #ifndef __DC__
-	File cfg_file;
+	DumpFile cfg_file;
 
-// TODO
-//	if (!willwrite)
-//		return;
-
-	if (!cfg_file.open(_filename, File::kFileWriteMode)) {
+	if (!cfg_file.open(_filename)) {
 		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
 		// First write the domains in _domainSaveOrder, in that order.

@@ -456,8 +456,8 @@ int16 readVolCnf(void) {
 			sprintf(nameBuffer, "%s", buffer[j].name);
 
 			if (buffer[j].size == buffer[j].extSize) {
-				Common::File fout;
-				fout.open(nameBuffer, Common::File::kFileWriteMode);
+				Common::DumpFile fout;
+				fout.open(nameBuffer);
 				if(fout.isOpen())
 					fout.write(bufferLocal, buffer[j].size);
 			} else {
