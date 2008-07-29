@@ -29,7 +29,11 @@ MODULE_OBJS := \
 	saves/compressed/compressed-saves.o \
 	timer/default/default-timer.o \
 	common/virtual-keyboard.o \
-	common/virtual-keyboard-parser.o
+	common/virtual-keyboard-parser.o \
+	common/keymap.o \
+	common/keymap-manager.o \
+	common/keymapper.o \
+	common/user-action.o \
 
 # Include common rules
 include $(srcdir)/rules.mk

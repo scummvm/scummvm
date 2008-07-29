@@ -43,7 +43,7 @@ public:
 
 	void unregisterAllGameKeymaps();
 
-	Keymap *KeymapManager::getKeymap(const String& name);
+	Keymap *getKeymap(const String& name);
 
 private:
 
