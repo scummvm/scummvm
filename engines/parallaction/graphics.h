@@ -497,7 +497,6 @@ public:
 	void freeLabels();
 
 	// dialogue balloons
-	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
 	GfxObj* registerBalloon(Frames *frames, const char *text);
 	void destroyBalloons();
 
@@ -599,7 +598,6 @@ public:
 
 	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
-	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
 	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);

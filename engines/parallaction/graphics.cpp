@@ -707,49 +707,6 @@ void Gfx::drawLabels() {
 }
 
 
-void Gfx::getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height) {
-
-	uint16 lines = 0;
-	uint16 w = 0;
-	*width = 0;
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	char token[MAX_TOKEN_LEN];
-
-	while (strlen(text) != 0) {
-
-		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
-		tokenWidth = font->getStringWidth(token);
-
-		w += tokenWidth;
-
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-		} else {
-			if (w > maxwidth) {
-				w -= tokenWidth;
-				lines++;
-				if (w > *width)
-					*width = w;
-
-				w = tokenWidth;
-			}
-		}
-
-		w += blankWidth;
-		text = Common::ltrim(text);
-	}
-
-	if (*width < w) *width = w;
-	*width += 10;
-
-	*height = lines * 10 + 20;
-
-	return;
-}
-
 
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
 
