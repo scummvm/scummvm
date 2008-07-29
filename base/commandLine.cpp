@@ -685,9 +685,9 @@ static void runDetectorTest() {
 			failure++;
 		} else if (candidates.size() > 1) {
 			if (gameidDiffers) {
-				printf(" FAILURE: Multiple games detected, some/all with wrong gameid\n");
+				printf(" WARNING: Multiple games detected, some/all with wrong gameid\n");
 			} else {
-				printf(" FAILURE: Multiple games detected, but all have the same gameid\n");
+				printf(" WARNING: Multiple games detected, but all have the same gameid\n");
 			}
 			failure++;
 		} else if (gameidDiffers) {
