@@ -171,6 +171,16 @@ public:
 	bool unique() const { return refCount() == 1; }
 
 	/**
+	 * Resets the SharedPtr object to a NULL pointer.
+	 */
+	void reset() {
+		decRef();
+		_deletion = 0;
+		_refCount = 0;
+		_pointer = 0;
+	}
+
+	/**
 	 * Returns the number of references to the assigned pointer.
 	 * This should just be used for debugging purposes.
 	 */

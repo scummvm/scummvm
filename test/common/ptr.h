@@ -61,6 +61,9 @@ class PtrTestSuite : public CxxTest::TestSuite
 
 		TS_ASSERT(p1 != 0);
 		TS_ASSERT(p2 == 0);
+
+		p1.reset();
+		TS_ASSERT(!p1);
 	}
 
 	struct A {
