@@ -638,6 +638,10 @@ void ConfigManager::addGameDomain(const String &domName) {
 	// the given name already exists?
 
 	_gameDomains[domName];
+
+	// Add it to the _domainSaveOrder, if it's not already in there
+	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), domName) == _domainSaveOrder.end())
+		_domainSaveOrder.push_back(domName);
 }
 
 void ConfigManager::removeGameDomain(const String &domName) {
