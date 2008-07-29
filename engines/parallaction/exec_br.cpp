@@ -178,7 +178,8 @@ DECLARE_COMMAND_OPCODE(drop) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	warning("Parallaction_br::cmdOp_move not yet implemented");
+	_vm->_char.scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y);
+	_ctxt.suspend = true;
 }
 
 DECLARE_COMMAND_OPCODE(start) {

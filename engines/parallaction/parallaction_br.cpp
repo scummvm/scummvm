@@ -237,6 +237,8 @@ void Parallaction_br::startPart(uint part) {
 void Parallaction_br::runPendingZones() {
 	ZonePtr z;
 
+	_cmdExec->runSuspended();
+
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;

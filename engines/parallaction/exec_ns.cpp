@@ -428,23 +428,18 @@ label1:
 	return;
 }
 
-void CommandExec::run(CommandList& list, ZonePtr z) {
-	if (list.size() == 0) {
-		debugC(3, kDebugExec, "runCommands: nothing to do");
-		return;
-	}
-
-	debugC(3, kDebugExec, "runCommands starting");
+void CommandExec::runList(CommandList::iterator first, CommandList::iterator last) {
 
 	uint32 useFlags = 0;
 	bool useLocalFlags;
 
-	CommandList::iterator it = list.begin();
-	for ( ; it != list.end(); it++) {
+	_ctxt.suspend = false;
+
+	for ( ; first != last; first++) {
 		if (_engineFlags & kEngineQuit)
 			break;
 
-		CommandPtr cmd = *it;
+		CommandPtr cmd = *first;
 
 		if (cmd->_flagsOn & kFlagsGlobal) {
 			useFlags = _commandFlags | kFlagsGlobal;
@@ -462,16 +457,65 @@ void CommandExec::run(CommandList& list, ZonePtr z) {
 
 		if (!onMatch || !offMatch) continue;
 
-		_ctxt.z = z;
+		_ctxt.z = _execZone;
 		_ctxt.cmd = cmd;
 
 		(*_opcodes[cmd->_id])();
+
+		if (_ctxt.suspend) {
+			createSuspendList(++first, last);
+			return;
+		}
 	}
 
+}
+
+void CommandExec::run(CommandList& list, ZonePtr z) {
+	if (list.size() == 0) {
+		debugC(3, kDebugExec, "runCommands: nothing to do");
+		return;
+	}
+
+	_execZone = z;
+
+	debugC(3, kDebugExec, "runCommands starting");
+	runList(list.begin(), list.end());
 	debugC(3, kDebugExec, "runCommands completed");
+}
 
-	return;
+void CommandExec::createSuspendList(CommandList::iterator first, CommandList::iterator last) {
+	if (first == last) {
+		return;
+	}
 
+	debugC(3, kDebugExec, "CommandExec::createSuspendList()");
+
+	_suspendedCtxt.valid = true;
+	_suspendedCtxt.first = first;
+	_suspendedCtxt.last = last;
+	_suspendedCtxt.zone = _execZone;
+}
+
+void CommandExec::cleanSuspendedList() {
+	debugC(3, kDebugExec, "CommandExec::cleanSuspended()");
+
+	_suspendedCtxt.valid = false;
+	_suspendedCtxt.first = _suspendedCtxt.last;
+	_suspendedCtxt.zone = nullZonePtr;
+}
+
+void CommandExec::runSuspended() {
+	if (_engineFlags & kEngineWalking) {
+		return;
+	}
+
+	if (_suspendedCtxt.valid) {
+		debugC(3, kDebugExec, "CommandExec::runSuspended()");
+
+		_execZone = _suspendedCtxt.zone;
+		runList(_suspendedCtxt.first, _suspendedCtxt.last);
+		cleanSuspendedList();
+	}
 }
 
 CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : _vm(vm) {
