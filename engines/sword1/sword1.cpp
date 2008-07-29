@@ -32,6 +32,7 @@
 #include "common/fs.h"
 #include "common/timer.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "engines/metaengine.h"
@@ -97,6 +98,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
+	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -185,6 +187,39 @@ PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	assert(engine);
 	*engine = new SwordEngine(syst);
 	return kNoError;
+}
+
+SaveStateList SwordMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SaveStateList saveList;
+	Common::InSaveFile *in = saveFileMan->openForLoading("SAVEGAME.INF");
+	if (in) {
+		uint8 stop;
+		char saveDesc[32];
+		int slotNum = 0;
+		do {
+			uint pos = 0;
+			do {
+				stop = in->readByte();
+				if (pos < (sizeof(saveDesc) - 1)) { 	
+					if ((stop == 10) || (stop == 255) || (in->eos())) {
+						saveDesc[pos++] = '\0';
+					}
+					else if (stop >= 32) {
+						saveDesc[pos++] = stop;
+					}
+				}
+			} while ((stop != 10) && (stop != 255) && (!in->eos()));
+			if (saveDesc[0] != 0) {
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, "SAVEGAME.INF"));
+				slotNum++;
+			}
+		} while ((stop != 255) && (!in->eos()));
+	}
+	
+	delete in;
+		
+	return saveList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD1)
