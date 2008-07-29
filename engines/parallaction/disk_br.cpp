@@ -144,7 +144,16 @@ GfxObj* DosDisk_br::loadTalk(const char *name) {
 
 	Common::File stream;
 	stream.open(node);
-	return new GfxObj(0, createSprites(stream), name);
+
+	// talk position is set to (0,0), because talks are always displayed at
+	// absolute coordinates, set in the dialogue manager. The original used
+	// to null out coordinates every time they were needed. We do it better!
+	Sprites *spr = createSprites(stream);
+	for (int i = 0; i < spr->getNum(); i++) {
+		spr->_sprites[i].x = 0;
+		spr->_sprites[i].y = 0;
+	}
+	return new GfxObj(0, spr, name);
 }
 
 Script* DosDisk_br::loadLocation(const char *name) {

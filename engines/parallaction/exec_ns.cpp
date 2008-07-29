@@ -499,24 +499,31 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 		return;
 	}
 
-	int id;
+	// TODO: move this balloons stuff into DialogueManager and BalloonManager
+	if (getGameType() == GType_Nippon) {
+		int id;
+		if (data->_filename) {
+			if (data->_cnv == 0) {
+				data->_cnv = _disk->loadStatic(data->_filename);
+			}
 
-	if (data->_filename) {
-		if (data->_cnv == 0) {
-			data->_cnv = _disk->loadStatic(data->_filename);
+			_gfx->setHalfbriteMode(true);
+			_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, 0);
+			Common::Rect r;
+			data->_cnv->getRect(0, r);
+			id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
+			_gfx->setItemFrame(id, 0);
+			id = _gfx->setItem(_char._head, 100, 152);
+			_gfx->setItemFrame(id, 0);
+		} else {
+			_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, 0);
+			id = _gfx->setItem(_char._talk, 190, 80);
+			_gfx->setItemFrame(id, 0);
 		}
-
-		_gfx->setHalfbriteMode(true);
-		_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, 0);
-		Common::Rect r;
-		data->_cnv->getRect(0, r);
-		id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
-		_gfx->setItemFrame(id, 0);
-		id = _gfx->setItem(_char._head, 100, 152);
-		_gfx->setItemFrame(id, 0);
-	} else {
-		_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, 0);
-		id = _gfx->setItem(_char._talk, 190, 80);
+	} else
+	if (getGameType() == GType_BRA) {
+		_balloonMan->setSingleBalloon(data->_description, 0, 0, 1, 0);
+		int id = _gfx->setItem(_char._talk, 10, 80);
 		_gfx->setItemFrame(id, 0);
 	}
 

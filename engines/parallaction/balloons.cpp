@@ -315,11 +315,11 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	Balloon *balloon = &_intBalloons[id];
 
 	if (winding == 0) {
-		src = _leftBalloon;
+		src = _rightBalloon;
 		srcFrame = 0;
 	} else
 	if (winding == 1) {
-		src = _rightBalloon;
+		src = _leftBalloon;
 		srcFrame = 0;
 	}
 
@@ -332,9 +332,11 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
-	balloon->obj->x = x;
-	balloon->obj->y = y;
+	balloon->obj->x = x + balloon->box.left;
+	balloon->obj->y = y + balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
+
+	printf("balloon (%i, %i)\n", balloon->obj->x, balloon->obj->y);
 
 	_numBalloons++;
 
@@ -351,11 +353,11 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 	Balloon *balloon = &_intBalloons[id];
 
 	if (winding == 0) {
-		src = _leftBalloon;
+		src = _rightBalloon;
 		srcFrame = id;
 	} else
 	if (winding == 1) {
-		src = _rightBalloon;
+		src = _leftBalloon;
 		srcFrame = 0;
 	}
 
@@ -368,8 +370,8 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
-	balloon->obj->x = 0;
-	balloon->obj->y = 10;
+	balloon->obj->x = balloon->box.left;
+	balloon->obj->y = balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
 
 	if (id > 0) {
