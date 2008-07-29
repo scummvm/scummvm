@@ -350,15 +350,17 @@ public:
 class SubReadStream : virtual public ReadStream {
 protected:
 	ReadStream *_parentStream;
+	bool _disposeParentStream;
 	uint32 _pos;
 	uint32 _end;
-	bool _disposeParentStream;
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
 		: _parentStream(parentStream),
 		  _pos(0),
 		  _end(end),
-		  _disposeParentStream(disposeParentStream) {}
+		  _disposeParentStream(disposeParentStream) {
+		assert(parentStream);
+	}
 	~SubReadStream() {
 		if (_disposeParentStream) delete _parentStream;
 	}
@@ -413,6 +415,47 @@ public:
 		return (int32)readUint32();
 	}
 };
+
+/**
+ * Wrapper class which adds buffering to any given ReadStream.
+ * Users can specify how big the buffer should be, and whether the
+ * wrapped stream should be disposed when the wrapper is disposed.
+ */
+class BufferedReadStream : virtual public ReadStream {
+protected:
+	ReadStream *_parentStream;
+	bool _disposeParentStream;
+	byte *_buf;
+	uint32 _pos;
+	uint32 _bufSize;
+
+public:
+	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+	~BufferedReadStream();
+
+	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
+	virtual bool ioFailed() const { return _parentStream->ioFailed(); }
+	virtual void clearIOFailed() { _parentStream->clearIOFailed(); }
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+/**
+ * Wrapper class which adds buffering to any given SeekableReadStream.
+ * @see BufferedReadStream
+ */
+class BufferedSeekableReadStream : public BufferedReadStream, public SeekableReadStream {
+protected:
+	SeekableReadStream *_parentStream;
+public:
+	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+
+	virtual uint32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual uint32 size() const { return _parentStream->size(); }
+
+	virtual void seek(int32 offset, int whence = SEEK_SET);
+};
+
 
 
 /**

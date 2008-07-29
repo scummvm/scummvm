@@ -242,4 +242,85 @@ void SeekableSubReadStream::seek(int32 offset, int whence) {
 	_parentStream->seek(_pos);
 }
 
+BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream)
+	: _parentStream(parentStream),
+	_bufSize(bufSize),
+	_disposeParentStream(disposeParentStream) {
+
+	assert(parentStream);
+	_buf = new byte[_bufSize];
+	assert(_buf);
+	_pos = _bufSize = bufSize;
+}
+BufferedReadStream::~BufferedReadStream() {
+	if (_disposeParentStream)
+		delete _parentStream;
+	delete _buf;
+}
+
+uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
+	uint32 alreadyRead = 0;
+	const uint32 bufBytesLeft = _bufSize - _pos;
+
+	// Check whether the data left in the buffer suffices....
+	if (dataSize > bufBytesLeft) {
+		// Nope, we need to read more data
+
+		// First, flush the buffer, if it is non-empty
+		if (0 < bufBytesLeft) {
+			memcpy(dataPtr, _buf + _pos, bufBytesLeft);
+			_pos = _bufSize;
+			alreadyRead += bufBytesLeft;
+			dataPtr = (byte *)dataPtr + bufBytesLeft;
+			dataSize -= bufBytesLeft;
+		}
+			
+		// At this point the buffer is empty. Now if the read request
+		// exceeds the buffer size, just satisfy it directly.
+		if (dataSize > _bufSize)
+			return alreadyRead + _parentStream->read(dataPtr, dataSize);
+
+		// Refill the buffer.
+		uint32 bytesRead = _parentStream->read(_buf, _bufSize);
+		_pos = 0;
+		
+		// If we didn't read as many bytes as requested, the reason
+		// is EOF or an error. In that case we truncate the buffer
+		// size, as well as the number of  bytes we are going to
+		// return to the caller.
+		if (_bufSize > bytesRead) {
+			_bufSize = bytesRead;
+			if (dataSize > bytesRead)
+				dataSize = bytesRead;
+		}
+	}
+
+	// Satisfy the request from the buffer
+	memcpy(dataPtr, _buf + _pos, dataSize);
+	_pos += dataSize;
+	return alreadyRead + dataSize;
+}
+
+BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream)
+	: BufferedReadStream(parentStream, bufSize, disposeParentStream),
+	_parentStream(parentStream) {
+}
+
+void BufferedSeekableReadStream::seek(int32 offset, int whence) {
+	// If it is a "local" seek, we may get away with "seeking" around
+	// in the buffer only.
+	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
+	// since they are rarely used, it seems not worth the effort.
+	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
+		_pos += offset;
+	} else {
+		// Seek was not local enough, so we reset the buffer and
+		// just seeks normally in the parent stream.
+		if (whence == SEEK_CUR)
+			offset -= (_bufSize - _pos);
+		_pos = _bufSize;
+		_parentStream->seek(offset, whence);
+	}
+}
+
 }	// End of namespace Common
