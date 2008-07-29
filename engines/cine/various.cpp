@@ -751,6 +751,45 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	
 	in.read(currentCtName, 13);
 
+	// Moved the loading of current procedure, relation,
+	// backgrounds and Ct here because if they were at the
+	// end of this function then the global scripts loading
+	// made an array out of bounds access. In the original
+	// game's disassembly these aren't here but at the end.
+	// The difference is probably in how we handle loading
+	// the global scripts and some other things (i.e. the
+	// loading routines aren't exactly the same and subtle
+	// semantic differences result in having to do things
+	// in a different order).
+	{
+		// Not sure if this is needed with Operation Stealth...
+		checkDataDisk(currentDisk);
+
+		if (strlen(currentPrcName)) {
+			loadPrc(currentPrcName);
+		}
+
+		if (strlen(currentRelName)) {
+			loadRel(currentRelName);
+		}
+
+		// Load first background (Uses loadBg)
+		if (strlen(bgNames[0])) {
+			loadBg(bgNames[0]);
+		}
+
+		// Add backgrounds 1-7 (Uses addBackground)
+		for (int i = 1; i < 8; i++) {
+			if (strlen(bgNames[i])) {
+				addBackground(bgNames[i], i);
+			}
+		}
+
+		if (strlen(currentCtName)) {
+			loadCtOS(currentCtName);
+		}
+	}
+
 	loadObjectTable(in);
 	renderer->restorePalette(in);
 	globalVars.load(in, NUM_MAX_VAR);
@@ -810,32 +849,12 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	loadOverlayList(in);
 	loadBgIncrustFromSave(in);
 
-	if (strlen(currentPrcName)) {
-		loadPrc(currentPrcName);
-	}
-
-	if (strlen(currentRelName)) {
-		loadRel(currentRelName);
-	}
-
+	// Left this here instead of moving it earlier in this function with
+	// the other current value loadings (e.g. loading of current procedure,
+	// current backgrounds etc). Mostly emulating the way we've handled
+	// Future Wars savegames and hoping that things work out.
 	if (strlen(currentMsgName)) {
 		loadMsg(currentMsgName);
-	}
-
-	// Load first background (Uses loadBg)
-	if (strlen(bgNames[0])) {
-		loadBg(bgNames[0]);
-	}
-
-	// Add backgrounds 1-7 (Uses addBackground)
-	for (int i = 1; i < 8; i++) {
-		if (strlen(bgNames[i])) {
-			addBackground(bgNames[i], i);
-		}
-	}
-
-	if (strlen(currentCtName)) {
-		loadCtOS(currentCtName);
 	}
 
 	// TODO: Add current music loading and playing here
