@@ -23,7 +23,9 @@
  */
 
 #include "engines/metaengine.h"
+#include "common/algorithm.h"
 #include "common/events.h"
+#include "common/func.h"
 #include "common/config-manager.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
@@ -113,10 +115,19 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 	}
 }
 
+struct GameDescLess {
+	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
+		return x.preferredtarget().compareToIgnoreCase(y.preferredtarget()) < 0;
+	}
+};
+
 
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
+		// Sort the detected games. This is not strictly necessary, but nice for
+		// people who want to edit their config file by hand after a mass add.
+		sort(_games.begin(), _games.end(), GameDescLess());
 		// Add all the detected games to the config
 		for (GameList::const_iterator iter = _games.begin(); iter != _games.end(); ++iter) {
 			printf("  Added gameid '%s', desc '%s'\n",
