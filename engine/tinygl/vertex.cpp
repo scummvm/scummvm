@@ -155,14 +155,10 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 		// projection coordinates
 		m = &c->matrix_stack_ptr[1]->m[0][0];
-		v->pc.X = (v->ec.X * m[0] + v->ec.Y * m[1] +
-				v->ec.Z * m[2] + v->ec.W * m[3]);
-		v->pc.Y = (v->ec.X * m[4] + v->ec.Y * m[5] +
-				v->ec.Z * m[6] + v->ec.W * m[7]);
-		v->pc.Z = (v->ec.X * m[8] + v->ec.Y * m[9] +
-				v->ec.Z * m[10] + v->ec.W * m[11]);
-		v->pc.W = (v->ec.X * m[12] + v->ec.Y * m[13] +
-				v->ec.Z * m[14] + v->ec.W * m[15]);
+		v->pc.X = (v->ec.X * m[0] + v->ec.Y * m[1] + v->ec.Z * m[2] + v->ec.W * m[3]);
+		v->pc.Y = (v->ec.X * m[4] + v->ec.Y * m[5] + v->ec.Z * m[6] + v->ec.W * m[7]);
+		v->pc.Z = (v->ec.X * m[8] + v->ec.Y * m[9] + v->ec.Z * m[10] + v->ec.W * m[11]);
+		v->pc.W = (v->ec.X * m[12] + v->ec.Y * m[13] + v->ec.Z * m[14] + v->ec.W * m[15]);
 
 		m = &c->matrix_model_view_inv.m[0][0];
 		n = &c->current_normal;
@@ -179,17 +175,13 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		// NOTE: W = 1 is assumed
 		m = &c->matrix_model_projection.m[0][0];
 
-		v->pc.X = (v->coord.X * m[0] + v->coord.Y * m[1] +
-				v->coord.Z * m[2] + m[3]);
-		v->pc.Y = (v->coord.X * m[4] + v->coord.Y * m[5] +
-				v->coord.Z * m[6] + m[7]);
-		v->pc.Z = (v->coord.X * m[8] + v->coord.Y * m[9] +
-				v->coord.Z * m[10] + m[11]);
+		v->pc.X = (v->coord.X * m[0] + v->coord.Y * m[1] + v->coord.Z * m[2] + m[3]);
+		v->pc.Y = (v->coord.X * m[4] + v->coord.Y * m[5] + v->coord.Z * m[6] + m[7]);
+		v->pc.Z = (v->coord.X * m[8] + v->coord.Y * m[9] + v->coord.Z * m[10] + m[11]);
 		if (c->matrix_model_projection_no_w_transform) {
 			v->pc.W = m[15];
 		} else {
-			v->pc.W = (v->coord.X * m[12] + v->coord.Y * m[13] +
-			       v->coord.Z * m[14] + m[15]);
+			v->pc.W = (v->coord.X * m[12] + v->coord.Y * m[13] + v->coord.Z * m[14] + m[15]);
 		}
 	}
 

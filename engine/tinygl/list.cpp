@@ -154,7 +154,7 @@ void glopCallList(GLContext *c, TGLParam *p) {
 
 	list = p[1].ui;
 	l = find_list(c, list);
-	if (l == NULL)
+	if (!l)
 		gl_fatal_error("list %d not defined", list);
 	p = l->first_op_buffer->ops;
 
@@ -179,7 +179,7 @@ void glNewList(unsigned int list, int mode) {
 	assert(c->compile_flag == 0);
 
 	l = find_list(c, list);
-	if (l != NULL)
+	if (l)
 		delete_list(c, list);
 	l = alloc_list(c, list);
 
@@ -219,7 +219,7 @@ unsigned int glGenLists(int range) {
 	lists = c->shared_state.lists;
 	count = 0;
 	for (i = 0; i < MAX_DISPLAY_LISTS; i++) {
-		if (lists[i] == NULL) {
+		if (!lists[i]) {
 			count++;
 			if (count == range) {
 				list = i - range + 1;

@@ -5,8 +5,7 @@
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
-void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0,
-						 ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color;
 
 #define INTERP_Z
@@ -30,8 +29,7 @@ void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0,
 // Smooth filled triangle.
 // The code below is very tricky :)
 
-void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0,
-						   ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int _drgbdx;
 
 #define INTERP_Z
@@ -97,8 +95,7 @@ void ZB_setTexture(ZBuffer *zb, PIXEL *texture) {
 	zb->current_texture=texture;
 }
 
-void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0,
-							ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	PIXEL *texture;
 
 #define INTERP_Z
@@ -122,8 +119,7 @@ void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0,
 #include "engine/tinygl/ztriangle.h"
 }
 
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
-									   ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	PIXEL *texture;
 	float fdzdx, fndzdx, ndszdx, ndtzdx;
 	int _drgbdx;

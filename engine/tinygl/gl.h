@@ -677,7 +677,7 @@ void tglCullFace(int mode);
 void tglPolygonMode(int face,int mode);
 
 void tglBegin(int type);
-void tglEnd(void);
+void tglEnd();
 
 #define PROTO_GL1(name)				\
 void tgl ## name ## 1f(float);		\
@@ -722,10 +722,10 @@ void tglEdgeFlag(int flag);
 // matrix
 void tglMatrixMode(int mode);
 void tglLoadMatrixf(const float *m);
-void tglLoadIdentity(void);
+void tglLoadIdentity();
 void tglMultMatrixf(const float *m);
-void tglPushMatrix(void);
-void tglPopMatrix(void);
+void tglPushMatrix();
+void tglPopMatrix();
 void tglRotatef(float angle, float x, float y, float z);
 void tglTranslatef(float x, float y, float z);
 void tglScalef(float x, float y, float z);
@@ -750,7 +750,7 @@ void tglClearDepth(double depth);
 int tglRenderMode(int mode);
 void tglSelectBuffer(int size, unsigned int *buf);
 
-void tglInitNames(void);
+void tglInitNames();
 void tglPushName(unsigned int name);
 void tglPopName(void);
 void tglLoadName(unsigned int name);
@@ -779,7 +779,7 @@ void tglLightModelfv(int pname, float *param);
 
 // misc
 
-void tglFlush(void);
+void tglFlush();
 void tglHint(int target, int mode);
 void tglGetIntegerv(int pname, int *params);
 void tglGetFloatv(int pname, float *v);
@@ -792,14 +792,10 @@ void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);
 void tglEnableClientState(TGLenum array);
 void tglDisableClientState(TGLenum array);
 void tglArrayElement(TGLint i);
-void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride,
-                     const TGLvoid *pointer);
-void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride,
-                     const TGLvoid *pointer);
-void tglNormalPointer(TGLenum type, TGLsizei stride,
-                      const TGLvoid *pointer);
-void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride,
-                       const TGLvoid *pointer);
+void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
+void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
+void tglNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer);
+void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 
 // opengl 1.2 polygon offset
 void tglPolygonOffset(TGLfloat factor, TGLfloat units);
@@ -807,6 +803,6 @@ void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 void tglDebug(int mode);
 
 void tglInit(void *zbuffer);
-void tglClose(void);
+void tglClose();
 
 #endif

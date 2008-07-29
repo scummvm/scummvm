@@ -12,16 +12,13 @@ void glopViewport(GLContext *c, TGLParam *p) {
 
 	// we may need to resize the zbuffer
 
-	if (c->viewport.xmin != xmin ||
-			c->viewport.ymin != ymin ||
-			c->viewport.xsize != xsize ||
-			c->viewport.ysize != ysize) {
+	if (c->viewport.xmin != xmin || c->viewport.ymin != ymin ||
+			c->viewport.xsize != xsize || c->viewport.ysize != ysize) {
 
 		xsize_req = xmin + xsize;
 		ysize_req = ymin + ysize;
 
-		if (c->gl_resize_viewport &&
-				c->gl_resize_viewport(c, &xsize_req, &ysize_req) != 0) {
+		if (c->gl_resize_viewport && c->gl_resize_viewport(c, &xsize_req, &ysize_req) != 0) {
 			gl_fatal_error("glViewport: error while resizing display");
 		}
 
@@ -95,8 +92,8 @@ void glopEnableDisable(GLContext *c, TGLParam *p) {
 			c->shadow_mode &= ~2;
 		break; 
 	default:
-		if (code>=TGL_LIGHT0 && code<TGL_LIGHT0+T_MAX_LIGHTS) {
-			gl_enable_disable_light(c,code - TGL_LIGHT0, v);
+		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
+			gl_enable_disable_light(c, code - TGL_LIGHT0, v);
 		} else {
 			//fprintf(stderr, "glEnableDisable: 0x%X not supported.\n", code);
 		}

@@ -63,7 +63,6 @@ void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize);
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b);
 // linesize is in BYTES
 void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize);
-//void ZB_setShadowMaskBuf(
 
 // zline.c
 

@@ -21,13 +21,13 @@ static void free_texture(GLContext *c, int h) {
 	int i;
 
 	t = find_texture(c, h);
-	if (t->prev == NULL) {
+	if (!t->prev) {
 		ht = &c->shared_state.texture_hash_table[t->handle % TEXTURE_HASH_TABLE_SIZE];
 		*ht = t->next;
 	} else {
 		t->prev->next = t->next;
 	}
-	if (t->next != NULL)
+	if (t->next)
 		t->next->prev = t->prev;
 
 	for (i = 0; i < MAX_TEXTURE_LEVELS; i++) {
@@ -39,85 +39,77 @@ static void free_texture(GLContext *c, int h) {
 	gl_free(t);
 }
 
-GLTexture *alloc_texture(GLContext *c,int h)
-{
-  GLTexture *t,**ht;
-  
-  t=(GLTexture *)gl_zalloc(sizeof(GLTexture));
+GLTexture *alloc_texture(GLContext *c, int h) {
+	GLTexture *t, **ht;
 
-  ht=&c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
+	t = (GLTexture *)gl_zalloc(sizeof(GLTexture));
 
-  t->next=*ht;
-  t->prev=NULL;
-  if (t->next != NULL) t->next->prev=t;
-  *ht=t;
+	ht = &c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
 
-  t->handle=h;
-  
-  return t;
+	t->next = *ht;
+	t->prev = NULL;
+	if (t->next)
+		t->next->prev = t;
+	*ht = t;
+
+	t->handle = h;
+
+	return t;
 }
 
-
-void glInitTextures(GLContext *c)
-{
-  /* textures */
-
-  c->texture_2d_enabled=0;
-  c->current_texture=find_texture(c,0);
+void glInitTextures(GLContext *c) {
+	// textures
+	c->texture_2d_enabled = 0;
+	c->current_texture = find_texture(c, 0);
 }
 
-void tglGenTextures(int n, unsigned int *textures)
-{
-  GLContext *c=gl_get_context();
-  int max,i;
-  GLTexture *t;
+void tglGenTextures(int n, unsigned int *textures) {
+	GLContext *c = gl_get_context();
+	int max, i;
+	GLTexture *t;
 
-  max=0;
-  for(i=0;i<TEXTURE_HASH_TABLE_SIZE;i++) {
-    t=c->shared_state.texture_hash_table[i];
-    while (t!=NULL) {
-      if (t->handle>max) max=t->handle;
-      t=t->next;
-    }
-
-  }
-  for(i=0;i<n;i++) {
-    textures[i]=max+i+1;
-  }
+	max = 0;
+	for (i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
+		t = c->shared_state.texture_hash_table[i];
+		while (t) {
+			if (t->handle > max)
+				max = t->handle;
+			t = t->next;
+		}
+	}
+	for(i = 0; i < n; i++) {
+		textures[i] = max + i + 1;
+	}
 }
 
+void tglDeleteTextures(int n, const unsigned int *textures) {
+	GLContext *c = gl_get_context();
+	int i;
+	GLTexture *t;
 
-void tglDeleteTextures(int n, const unsigned int *textures)
-{
-  GLContext *c=gl_get_context();
-  int i;
-  GLTexture *t;
-
-  for(i=0;i<n;i++) {
-    t=find_texture(c,textures[i]);
-    if (t!=NULL && t!=0) {
-      if (t==c->current_texture) {
-	tglBindTexture(TGL_TEXTURE_2D,0);
-      }
-      free_texture(c,textures[i]);
-    }
-  }
+	for (i = 0; i < n; i++) {
+		t = find_texture(c, textures[i]);
+		if (t) {
+			if (t == c->current_texture) {
+				tglBindTexture(TGL_TEXTURE_2D, 0);
+			}
+			free_texture(c, textures[i]);
+		}
+	}
 }
 
+void glopBindTexture(GLContext *c, TGLParam *p) {
+	int target = p[1].i;
+	int texture = p[2].i;
+	GLTexture *t;
 
-void glopBindTexture(GLContext *c,TGLParam *p)
-{
-  int target=p[1].i;
-  int texture=p[2].i;
-  GLTexture *t;
+	assert(target == TGL_TEXTURE_2D && texture >= 0);
 
-  assert(target == TGL_TEXTURE_2D && texture >= 0);
-
-  t=find_texture(c,texture);
-  if (t==NULL) {
-    t=alloc_texture(c,texture);
-  }
-  c->current_texture=t;
+	t = find_texture(c, texture);
+	if (!t) {
+		t = alloc_texture(c, texture);
+	}
+	c->current_texture = t;
 }
 
 void glopTexImage2D(GLContext *c, TGLParam *p) {
@@ -134,12 +126,11 @@ void glopTexImage2D(GLContext *c, TGLParam *p) {
 	unsigned char *pixels1;
 	int do_free;
 
-	if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && 
-			border == 0 && format == TGL_RGBA &&
-			type == TGL_UNSIGNED_BYTE)) {
+	if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0
+				&& format == TGL_RGBA && type == TGL_UNSIGNED_BYTE)) {
 		gl_fatal_error("glTexImage2D: combination of parameters not handled");
 	}
-  
+
 	do_free = 0;
 	if (width != 256 || height != 256) {
 		pixels1 = (unsigned char *)gl_malloc(256 * 256 * 4);
@@ -150,67 +141,67 @@ void glopTexImage2D(GLContext *c, TGLParam *p) {
 		do_free = 1;
 		width = 256;
 		height = 256;
-  } else {
+	} else {
 		pixels1 = (unsigned char *)pixels;
-  }
+	}
 
-  im = &c->current_texture->images[level];
-  im->xsize = width;
-  im->ysize = height;
-  if (im->pixmap)
-	  gl_free(im->pixmap);
-  im->pixmap = gl_malloc(width * height * 3);
-  if (im->pixmap)
+	im = &c->current_texture->images[level];
+	im->xsize = width;
+	im->ysize = height;
+	if (im->pixmap)
+		gl_free(im->pixmap);
+	im->pixmap = gl_malloc(width * height * 3);
+	if (im->pixmap)
 		gl_convertRGB_to_5R6G5B8A((unsigned short *)im->pixmap, pixels1, width, height);
-  if (do_free)
+	if (do_free)
 		gl_free(pixels1);
 }
 
+// TODO: not all tests are done
+void glopTexEnv(GLContext *, TGLParam *p) {
+	int target = p[1].i;
+	int pname = p[2].i;
+	int param = p[3].i;
 
-/* TODO: not all tests are done */
-void glopTexEnv(GLContext *,TGLParam *p)
-{
-  int target=p[1].i;
-  int pname=p[2].i;
-  int param=p[3].i;
+	if (target != TGL_TEXTURE_ENV) {
+error:
+		gl_fatal_error("glTexParameter: unsupported option");
+	}
 
-  if (target != TGL_TEXTURE_ENV) {
-  error:
-    gl_fatal_error("glTexParameter: unsupported option");
-  }
+	if (pname != TGL_TEXTURE_ENV_MODE)
+		goto error;
 
-  if (pname != TGL_TEXTURE_ENV_MODE) goto error;
-
-  if (param != TGL_DECAL) goto error;
+	if (param != TGL_DECAL)
+		goto error;
 }
 
-/* TODO: not all tests are done */
-void glopTexParameter(GLContext *,TGLParam *p)
-{
-  int target=p[1].i;
-  int pname=p[2].i;
-  int param=p[3].i;
-  
-  if (target != TGL_TEXTURE_2D) {
-  error:
-    gl_fatal_error("glTexParameter: unsupported option");
-  }
+// TODO: not all tests are done
+void glopTexParameter(GLContext *, TGLParam *p) {
+	int target = p[1].i;
+	int pname = p[2].i;
+	int param = p[3].i;
 
-  switch(pname) {
-  case TGL_TEXTURE_WRAP_S:
-  case TGL_TEXTURE_WRAP_T:
-    if (param != TGL_REPEAT) goto error;
-    break;
-  }
+	if (target != TGL_TEXTURE_2D) {
+error:
+		gl_fatal_error("glTexParameter: unsupported option");
+	}
+
+	switch (pname) {
+	case TGL_TEXTURE_WRAP_S:
+	case TGL_TEXTURE_WRAP_T:
+		if (param != TGL_REPEAT)
+			goto error;
+		break;
+	default:
+		;
+	}
 }
 
-void glopPixelStore(GLContext *,TGLParam *p)
-{
-  int pname=p[1].i;
-  int param=p[2].i;
+void glopPixelStore(GLContext *, TGLParam *p) {
+	int pname = p[1].i;
+	int param = p[2].i;
 
-  if (pname != TGL_UNPACK_ALIGNMENT ||
-      param != 1) {
-    gl_fatal_error("glPixelStore: unsupported option");
-  }
+	if (pname != TGL_UNPACK_ALIGNMENT || param != 1) {
+		gl_fatal_error("glPixelStore: unsupported option");
+	}
 }

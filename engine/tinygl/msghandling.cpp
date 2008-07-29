@@ -1,19 +1,15 @@
-#include <stdarg.h>
-#include <stdio.h>
 
-#ifndef NDEBUG
-#define NDEBUG
-#endif
+#include "engine/tinygl/zgl.h"
 
-#ifdef NDEBUG
-#define NO_DEBUG_OUTPUT
+#ifndef TINYGL_DEBUG
+//#define TINYGL_DEBUG
 #endif
 
 // Use this function to output messages when something unexpected
 // happens (which might be an indication of an error). *Don't* use it
 // when there's internal errors in the code - these should be handled
 // by asserts.
-#ifndef NO_DEBUG_OUTPUT
+#ifndef TINYGL_DEBUG
 void tgl_warning(const char *, ...) { }
 #else
 void tgl_warning(const char *format, ...) {
@@ -23,10 +19,10 @@ void tgl_warning(const char *format, ...) {
 	vfprintf(stderr, format, args);
 	va_end(args);
 }
-#endif // !NO_DEBUG_OUTPUT
+#endif
 
 // This function should be used for debug output only.
-#ifndef NO_DEBUG_OUTPUT
+#ifndef TINYGL_DEBUG
 void tgl_trace(const char *, ...) { }
 #else
 void tgl_trace(const char *format, ...) {
@@ -36,12 +32,12 @@ void tgl_trace(const char *format, ...) {
 	vfprintf(stderr, format, args);
 	va_end(args);
 }
-#endif // !NO_DEBUG_OUTPUT
+#endif
 
 // Use this function to output info about things in the code which
 // should be fixed (missing handling of special cases, important
 // features not implemented, known bugs/buglets, ...).
-#ifndef NO_DEBUG_OUTPUT
+#ifndef TINYGL_DEBUG
 void tgl_fixme(const char *, ...) { }
 #else
 void tgl_fixme(const char *format, ...) {
@@ -51,4 +47,5 @@ void tgl_fixme(const char *format, ...) {
 	vfprintf(stderr, format, args);
 	va_end(args);
 }
-#endif // !NO_DEBUG_OUTPUT
+#endif
+

@@ -2,7 +2,7 @@
 #include "engine/tinygl/zgl.h"
 
 // fill triangle profile
-// #define PROFILE
+// #define TINYGL_PROFILE
 
 #define CLIP_XMIN	(1 << 0)
 #define CLIP_XMAX	(1 << 1)
@@ -366,12 +366,12 @@ void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1,GLVertex *
 	gl_add_select1(c, p0->zp.z, p1->zp.z, p2->zp.z);
 }
 
-#ifdef PROFILE
+#ifdef TINYGL_PROFILE
 int count_triangles, count_triangles_textured, count_pixels;
 #endif
 
 void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
-#ifdef PROFILE
+#ifdef TINYGL_PROFILE
 	{
 		int norm;
 		assert(p0->zp.x >= 0 && p0->zp.x < c->zb->xsize);
@@ -395,7 +395,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 		assert(c->zb->shadow_mask_buf);
 		ZB_fillTriangleFlatShadow(c->zb, &p0->zp, &p1->zp, &p2->zp);
 	} else if (c->texture_2d_enabled) {
-#ifdef PROFILE
+#ifdef TINYGL_PROFILE
 		count_triangles_textured++;
 #endif
 		ZB_setTexture(c->zb, (PIXEL *)c->current_texture->images[0].pixmap);

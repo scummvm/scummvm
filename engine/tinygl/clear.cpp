@@ -20,6 +20,5 @@ void glopClear(GLContext *c,TGLParam *p) {
 	int b = (int)(c->clear_color.v[2] * 65535);
 
 	// TODO : correct value of Z
-	ZB_clear(c->zb,mask & TGL_DEPTH_BUFFER_BIT, z,
-			mask & TGL_COLOR_BUFFER_BIT, r, g, b);
+	ZB_clear(c->zb,mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b);
 }

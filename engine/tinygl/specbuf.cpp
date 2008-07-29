@@ -2,9 +2,6 @@
 #include "engine/tinygl/zgl.h"
 #include "engine/tinygl/msghandling.h"
 
-#include <math.h>
-#include <stdlib.h>
-
 static void calc_buf(GLSpecBuf *buf, const float shininess) {
 	int i;
 	float val, inc;
@@ -29,7 +26,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 		found->last_used = c->specbuf_used_counter++;
 		return found;
 	}
-	if (oldest == NULL || c->specbuf_num_buffers < MAX_SPECULAR_BUFFERS) {
+	if (!oldest || c->specbuf_num_buffers < MAX_SPECULAR_BUFFERS) {
 		// create new buffer
 		GLSpecBuf *buf = (GLSpecBuf *)gl_malloc(sizeof(GLSpecBuf));
 		if (!buf)

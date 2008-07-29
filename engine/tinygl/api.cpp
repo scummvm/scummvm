@@ -1,8 +1,6 @@
 
 #include "engine/tinygl/zgl.h"
 
-#include <stdio.h>
-
 // glVertex
 
 void tglVertex4f(float x, float y, float z, float w) {
@@ -312,8 +310,7 @@ void tglViewport(int x, int y, int width, int height) {
 	gl_add_op(p);
 }
 
-void tglFrustum(double left, double right, double bottom, double top,
-               double nearv, double farv) {
+void tglFrustum(double left, double right, double bottom, double top, double nearv, double farv) {
 	TGLParam p[7];
 
 	p[0].op = OP_Frustum;

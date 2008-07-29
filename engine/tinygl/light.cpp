@@ -239,7 +239,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			// diffuse light
 			lR += dot * l->diffuse.v[0] * m->diffuse.v[0];
 			lG += dot * l->diffuse.v[1] * m->diffuse.v[1];
-			lB+= dot * l->diffuse.v[2] * m->diffuse.v[2];
+			lB += dot * l->diffuse.v[2] * m->diffuse.v[2];
 
 			// spot light
 			if (l->spot_cutoff != 180) {

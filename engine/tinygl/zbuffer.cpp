@@ -13,7 +13,7 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 	int size;
 
 	zb = (ZBuffer *)gl_malloc(sizeof(ZBuffer));
-	if (zb == NULL)
+	if (!zb)
 		return NULL;
 
 	zb->xsize = xsize;
@@ -173,8 +173,7 @@ void memset_l(void *adr, int val, int count) {
 	*p++ = val;
 }
 
-void ZB_clear(ZBuffer *zb, int clear_z, int z, 
-			  int clear_color, int r, int g, int b) {
+void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b) {
 	int color;
 	int y;
 	PIXEL *pp;

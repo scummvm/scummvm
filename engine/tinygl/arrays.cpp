@@ -1,9 +1,6 @@
 
 #include "engine/tinygl/zgl.h"
 
-#include <assert.h>
-#include <stdio.h>
-
 #define VERTEX_ARRAY	0x0001
 #define COLOR_ARRAY		0x0002
 #define NORMAL_ARRAY	0x0004
@@ -120,8 +117,7 @@ void glopVertexPointer(GLContext *c, TGLParam *p) {
 	c->vertex_array = (float *)p[3].p;
 }
 
-void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride,
-					  const TGLvoid *pointer) {
+void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TGLParam p[4];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_VertexPointer;
@@ -137,8 +133,7 @@ void glopColorPointer(GLContext *c, TGLParam *p) {
 	c->color_array = (float *)p[3].p;  
 }
 
-void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, 
-					 const TGLvoid *pointer) {
+void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TGLParam p[4];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_ColorPointer;
@@ -167,8 +162,7 @@ void glopTexCoordPointer(GLContext *c, TGLParam *p) {
 	c->texcoord_array = (float *)p[3].p;
 }
 
-void glTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride,
-					   const TGLvoid *pointer) {
+void glTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TGLParam p[4];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_TexCoordPointer;
