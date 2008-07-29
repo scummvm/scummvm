@@ -1,13 +1,13 @@
-#include "ltask.h"
-#include "lauxlib.h"
-#include "lmem.h"
-#include "ldo.h"
-#include "ltm.h"
-#include "ltable.h"
-#include "lvm.h"
-#include "lopcodes.h"
-#include "lstring.h"
-#include "lua.h"
+#include "engine/lua/ltask.h"
+#include "engine/lua/lauxlib.h"
+#include "engine/lua/lmem.h"
+#include "engine/lua/ldo.h"
+#include "engine/lua/ltm.h"
+#include "engine/lua/ltable.h"
+#include "engine/lua/lvm.h"
+#include "engine/lua/lopcodes.h"
+#include "engine/lua/lstring.h"
+#include "engine/lua/lua.h"
 
 #include "common/endian.h"
 
@@ -307,8 +307,8 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 			saveSint32(tempProtoFunc->locvars[i].line);
 		}
 
-		Byte *codePtr = tempProtoFunc->code + 2;
-		Byte *tmpPtr = codePtr;
+		byte *codePtr = tempProtoFunc->code + 2;
+		byte *tmpPtr = codePtr;
 		int32 opcodeId;
 		do {
 			opcodeId = *tmpPtr;

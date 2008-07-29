@@ -26,7 +26,7 @@ int32 zread(ZIO *z, void *b, int32 n);	// read next n bytes
 int32 zgeteoz(ZIO *);
 
 #define zgetc(z)	(--(z)->n >= 0 ? ((int32)*(z)->p++): zgeteoz(z))
-#define zungetc(z)	(++(z)->n,--(z)->p)
+#define zungetc(z)	(++(z)->n, --(z)->p)
 #define zname(z)	((z)->name)
 
 

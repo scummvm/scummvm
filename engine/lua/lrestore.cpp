@@ -1,13 +1,13 @@
-#include "ltask.h"
-#include "lauxlib.h"
-#include "lmem.h"
-#include "ldo.h"
-#include "ltm.h"
-#include "ltable.h"
-#include "lvm.h"
-#include "lopcodes.h"
-#include "lstring.h"
-#include "lua.h"
+#include "engine/lua/ltask.h"
+#include "engine/lua/lauxlib.h"
+#include "engine/lua/lmem.h"
+#include "engine/lua/ldo.h"
+#include "engine/lua/ltm.h"
+#include "engine/lua/ltable.h"
+#include "engine/lua/lvm.h"
+#include "engine/lua/lopcodes.h"
+#include "engine/lua/lstring.h"
+#include "engine/lua/lua.h"
 
 #include "common/endian.h"
 
@@ -366,7 +366,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		}
 
 		int32 codeSize = restoreSint32();
-		tempProtoFunc->code = (lua_Byte *)luaM_malloc(codeSize);
+		tempProtoFunc->code = (byte *)luaM_malloc(codeSize);
 		restoreStream(tempProtoFunc->code, codeSize);
 		arraysObj->object = tempProtoFunc;
 		arraysObj++;

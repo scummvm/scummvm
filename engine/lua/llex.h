@@ -7,8 +7,8 @@
 #ifndef llex_h
 #define llex_h
 
-#include "lobject.h"
-#include "lzio.h"
+#include "engine/lua/lobject.h"
+#include "engine/lua/lzio.h"
 
 #define FIRST_RESERVED	260
 

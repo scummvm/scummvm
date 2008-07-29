@@ -8,27 +8,21 @@
 #ifndef lualib_h
 #define lualib_h
 
-#include "lua.h"
+#include "engine/lua/lua.h"
 
+void lua_iolibopen();
+void lua_strlibopen();
+void lua_mathlibopen();
 
-void lua_iolibopen   (void);
-void lua_strlibopen  (void);
-void lua_mathlibopen (void);
+// To keep compatibility with old versions
 
-
-
-
-/* To keep compatibility with old versions */
-
-#define iolib_open	lua_iolibopen
-#define strlib_open	lua_strlibopen
+#define iolib_open		lua_iolibopen
+#define strlib_open		lua_strlibopen
 #define mathlib_open	lua_mathlibopen
 
+// Auxiliary functions (private)
 
-
-/* Auxiliary functions (private) */
-
-int32 luaI_singlematch (int32 c, const char *p, const char **ep);
+int32 luaI_singlematch(int32 c, const char *p, const char **ep);
 
 #endif
 

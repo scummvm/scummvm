@@ -66,7 +66,7 @@ static byte *LoadCode(ZIO *Z) {
 		luaL_verror("code too long (%ld bytes) in %s", size, zname(Z));
 	b = luaM_malloc(size);
 	LoadBlock(b, size, Z);
-	return (Byte *)b;
+	return (byte *)b;
 }
 
 static TaggedString *LoadTString(ZIO *Z) {

@@ -205,7 +205,7 @@ void luaD_precall(TObject *f, StkId base, int32 nResults) {
 		L->ci->tf = NULL;
 		L->ci->pc = NULL;
 	} else {
-		Byte *pc = tfvalue(f)->code;
+		byte *pc = tfvalue(f)->code;
 		if (lua_callhook)
 			luaD_callHook(base, tfvalue(f), 0);
 		luaD_checkstack((*pc++) + EXTRA_STACK);
