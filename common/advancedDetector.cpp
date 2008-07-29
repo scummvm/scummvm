@@ -48,7 +48,7 @@ using namespace AdvancedDetector;
  * @param platform	restrict results to specified platform only
  * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
  */
-static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra);
+static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra);
 
 
 /**
@@ -194,7 +194,7 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 }
 
 GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
-	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
+	ADGameDescList matches = detectGame(fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
 
 	// Use fallback detector if there were no matches by other means
@@ -233,7 +233,21 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	ADGameDescList matches = detectGame(0, params, language, platform, extra);
+	Common::String path;
+	if (ConfMan.hasKey("path")) {
+		path = ConfMan.get("path");
+	} else {
+		path = ".";
+		warning("No path was provided. Assuming the data files are in the current directory");
+	}
+	FilesystemNode dir(path);
+	FSList files;
+	if (!dir.isDirectory() || !dir.getChildren(files, FilesystemNode::kListAll)) {
+		warning("Game data path does not exist or is not a directory (%s)", path.c_str());
+		return kNoGameDataFoundError;
+	}
+
+	ADGameDescList matches = detectGame(files, params, language, platform, extra);
 
 	if (params.singleid == NULL) {
 		for (uint i = 0; i < matches.size(); i++) {
@@ -287,7 +301,7 @@ static void reportUnknown(StringMap &filesMD5, IntMap &filesSize) {
 	printf("\n");
 }
 
-static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
+static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
 	StringSet filesList;
 
 	StringMap filesMD5;
@@ -319,56 +333,34 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 	}
 
-	// TODO/FIXME: Fingolfin says: It's not good that we have two different code paths here,
-	// one using a FSList, one using File::open, as that will lead to discrepancies and subtle
-	// problems caused by those.
-	if (fslist != 0) {
-		// Get the information of the existing files
-		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
-			if (file->isDirectory()) continue;
-			tstr = file->getName();
-			tstr.toLowercase();
+	// Get the information of the existing files
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory()) continue;
+		tstr = file->getName();
+		tstr.toLowercase();
 
-			// Strip any trailing dot
-			if (tstr.lastChar() == '.')
-				tstr.deleteLastChar();
+		// Strip any trailing dot
+		if (tstr.lastChar() == '.')
+			tstr.deleteLastChar();
 
-			allFiles[tstr] = true;
+		allFiles[tstr] = true;
 
-			debug(3, "+ %s", tstr.c_str());
+		debug(3, "+ %s", tstr.c_str());
 
-			if (!filesList.contains(tstr)) continue;
+		if (!filesList.contains(tstr)) continue;
 
-			if (!md5_file_string(*file, md5str, params.md5Bytes))
-				continue;
-			filesMD5[tstr] = md5str;
+		if (!md5_file_string(*file, md5str, params.md5Bytes))
+			continue;
+		filesMD5[tstr] = md5str;
 
-			debug(3, "> %s: %s", tstr.c_str(), md5str);
+		debug(3, "> %s: %s", tstr.c_str(), md5str);
 
-			if (testFile.open(file->getPath())) {
-				filesSize[tstr] = (int32)testFile.size();
-				testFile.close();
-			}
-		}
-	} else {
-		// Get the information of the requested files
-		for (StringSet::const_iterator file = filesList.begin(); file != filesList.end(); ++file) {
-			tstr = file->_key;
-
-			debug(3, "+ %s", tstr.c_str());
-			if (!filesMD5.contains(tstr)) {
-				if (testFile.open(tstr) || testFile.open(tstr + ".")) {
-					filesSize[tstr] = (int32)testFile.size();
-					testFile.close();
-
-					if (md5_file_string(file->_key.c_str(), md5str, params.md5Bytes)) {
-						filesMD5[tstr] = md5str;
-						debug(3, "> %s: %s", tstr.c_str(), md5str);
-					}
-				}
-			}
+		if (testFile.open(file->getPath())) {
+			filesSize[tstr] = (int32)testFile.size();
+			testFile.close();
 		}
 	}
+
 
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
