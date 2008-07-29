@@ -63,6 +63,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
+	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -119,6 +120,36 @@ GameList QueenMetaEngine::detectGames(const FSList &fslist) const {
 		}
 	}
 	return detectedGames;
+}
+
+SaveStateList QueenMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[32];
+	Common::String pattern = target;
+	pattern += ".s??";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+		
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				for (int i = 0; i < 4; i++)
+					in->readUint32BE();
+				in->read(saveDesc, 32);	
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 PluginError QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
