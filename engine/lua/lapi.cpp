@@ -444,9 +444,9 @@ static int32 checkfunc (TObject *o) {
 const char *lua_getobjname (lua_Object o, const char **name) {
 	// try to find a name for given function
 	set_normalized(L->stack.top, Address(o)); // to be accessed by "checkfunc
-	if (*name = luaT_travtagmethods(checkfunc))
+	if ((*name = luaT_travtagmethods(checkfunc)))
 		return "tag-method";
-	else if (*name = luaS_travsymbol(checkfunc))
+	else if ((*name = luaS_travsymbol(checkfunc)))
 		return "global";
 	else
 		return "";

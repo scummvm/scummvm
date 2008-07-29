@@ -292,7 +292,7 @@ static void singlevar(LexState *ls, TaggedString *n, vardesc *var, int32 prev) {
 		var->info = i;
 	} else {  // check shadowing
 		FuncState *level = fs;
-		while (level = level->prev)
+		while ((level = level->prev))
 			if (aux_localname(level, n) >= 0)
 				luaX_syntaxerror(ls, "cannot access a variable in outer scope", n->str);
 		var->k = VGLOBAL;
