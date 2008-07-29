@@ -572,6 +572,8 @@ void CineEngine::resetEngine() {
 	messageTable.clear();
 
 	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
+		objectTable[i].x = 0;
+		objectTable[i].y = 0;
 		objectTable[i].part = 0;
 		objectTable[i].name[0] = 0;
 		objectTable[i].frame = 0;
@@ -859,6 +861,12 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 
 	// TODO: Add current music loading and playing here
 	// TODO: Palette handling?
+
+	if (in.pos() == in.size()) {
+		debug(3, "loadTempSaveOS: Loaded the whole savefile.");		
+	} else {
+		warning("loadTempSaveOS: Loaded the savefile but didn't exhaust it completely. Something was left over");
+	}
 
 	return !in.ioFailed();
 }
