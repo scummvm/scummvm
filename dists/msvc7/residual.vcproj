@@ -118,6 +118,18 @@
 				RelativePath="..\..\common\array.h">
 			</File>
 			<File
+				RelativePath="..\..\common\config-file.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\config-file.h">
+			</File>
+			<File
+				RelativePath="..\..\common\config-manager.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\config-manager.h">
+			</File>
+			<File
 				RelativePath="..\..\common\debug.cpp">
 			</File>
 			<File

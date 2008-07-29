@@ -115,6 +115,7 @@ extern "C" int residual_main(int argc, char *argv[]);
 #elif defined(_WIN32_WCE)
 
 	#define strcasecmp stricmp
+	#define snprintf _snprintf
 
 	#define SYSTEM_LITTLE_ENDIAN
 	#define SYSTEM_NEED_ALIGNMENT
@@ -129,6 +130,7 @@ extern "C" int residual_main(int argc, char *argv[]);
 #elif defined(_MSC_VER)
 
 	#define strcasecmp stricmp
+	#define snprintf _snprintf
 
 	#define SYSTEM_LITTLE_ENDIAN
 
