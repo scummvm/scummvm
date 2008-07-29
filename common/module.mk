@@ -1,6 +1,8 @@
 MODULE := common
 
 MODULE_OBJS := \
+	config-file.o \
+	config-manager.o \
 	debug.o \
 	file.o \
 	fs.o \
