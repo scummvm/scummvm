@@ -29,6 +29,11 @@
 
 namespace Common {
 
+/**
+ * Copies data from the range [first, last) to [dst, dst + (last - first)).
+ * It requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ */
 template<class In, class Out>
 Out copy(In first, In last, Out dst) {
 	while (first != last)
@@ -36,6 +41,13 @@ Out copy(In first, In last, Out dst) {
 	return dst;
 }
 
+/**
+ * Copies data from the range [first, last) to [dst - (last - first), dst).
+ * It requires the range [dst - (last - first), dst) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ * 
+ * Unlike copy copy_backward copies the data from the end to the beginning.
+ */
 template<class In, class Out>
 Out copy_backward(In first, In last, Out dst) {
 	while (first != last)
@@ -43,6 +55,15 @@ Out copy_backward(In first, In last, Out dst) {
 	return dst;
 }
 
+/**
+ * Copies data from the range [first, last) to [dst, dst + (last - first)).
+ * It requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ *
+ * Unlike copy or copy_backward it does not copy all data. It only copies
+ * a data element when operator() of the op parameter returns true for the
+ * passed data element.
+ */
 template<class In, class Out, class Op>
 Out copy_if(In first, In last, Out dst, Op op) {
 	while (first != last) {
@@ -76,6 +97,9 @@ char *set_to(char *first, char *last, Value val) {
 	return last;
 }
 
+/**
+ * Sets all elements in the range [first, last) to val.
+ */
 template<class In, class Value>
 In set_to(In first, In last, Value val) {
 	while (first != last)
@@ -83,6 +107,10 @@ In set_to(In first, In last, Value val) {
 	return first;
 }
 
+/**
+ * Finds the first data value in the range [first, last) matching v.
+ * For data comperance it uses operator == of the data elements.
+ */
 template<class In, class T>
 In find(In first, In last, const T &v) {
 	while (first != last) {
@@ -93,6 +121,10 @@ In find(In first, In last, const T &v) {
 	return last;
 }
 
+/**
+ * Finds the first data value in the range [first, last) for which
+ * the specified predicate p returns true.
+ */
 template<class In, class Pred>
 In find_if(In first, In last, Pred p) {
 	while (first != last) {
@@ -103,15 +135,22 @@ In find_if(In first, In last, Pred p) {
 	return last;
 }
 
+/**
+ * Applies the function f on all elements of the range [first, last).
+ * The processing order is from beginning to end.
+ */
 template<class In, class Op>
 Op for_each(In first, In last, Op f) {
 	while (first != last) f(*first++);
 	return f;
 }
 
-// Simple sort function, modeled after std::sort.
-// Use it like this:  sort(container.begin(), container.end()).
-// Also work on plain old int arrays etc.
+/**
+ * Simple sort function, modeled after std::sort.
+ * Use it like this: sort(container.begin(), container.end()).
+ * Also works on plain old i.e. int arrays etc. For comperance
+ * operator < is used.
+ */
 template<class T>
 void sort(T first, T last) {
 	if (first == last)
@@ -131,8 +170,13 @@ void sort(T first, T last) {
 	}
 }
 
-// Using this with: Common::Less from common/func.h
-// will give the same results as the function above.
+/**
+ * Simple sort function, modeled after std::sort.
+ * It compares data with the given comparator object comp.
+ *
+ * Note: Using this with: Common::Less from common/func.h
+ * will give the same results as the plain sort function.
+ */
 template<class T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
 	if (first == last)
