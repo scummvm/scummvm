@@ -2186,6 +2186,8 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	const int8 *ptr2;
 	int16 di;
 
+	debug(5, "addAni: param1 = %d, objIdx = %d, ptr = %p, param3 = %d", param1, objIdx, ptr, param3);
+
 	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(ptr);
 
@@ -2291,6 +2293,19 @@ void processSeqListElement(SeqListElement &element) {
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;
+	
+	// Initial interpretations for variables addressed through ptr1 (8-bit addressing):
+	// These may be inaccurate!
+	// 0: ?
+	// 1: xRadius
+	// 2: yRadius
+	// 3: ?
+	// 4: xAdd
+	// 5: yAdd
+	// 6: ?
+	// 7: ?
+	// After this come (At least at positions 0, 1 and 3 in 16-bit addressing)
+	// 16-bit big-endian values used for addressing through ptr1.
 
 	if (element.var12 < element.var10) {
 		element.var12++;
