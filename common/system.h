@@ -44,6 +44,8 @@ namespace Common {
 	class EventManager;
 	class SaveFileManager;
 	class TimerManager;
+	class SeekableReadStream;
+	class WriteStream;
 }
 
 class FilesystemFactory;
@@ -916,6 +918,10 @@ public:
 		return "";
 	}
 	//@}
+
+
+	Common::SeekableReadStream *openConfigFileForReading();
+	Common::WriteStream *openConfigFileForWriting();
 };
 
 

@@ -128,7 +128,7 @@ FIXME: The config file loading code below needs to be cleaned up.
  Port specific variants should be pushed into the respective ports.
 
  Ideally, the default OSystem::openConfigFileForReading/Writing methods
- should be removed completely. 
+ should be removed completely.
 */
 
 #include "common/file.h"
@@ -139,6 +139,12 @@ FIXME: The config file loading code below needs to be cleaned up.
 
 #ifdef IPHONE
 #include "backends/platform/iphone/osys_iphone.h"
+#endif
+
+#if defined(WIN32)
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
 #endif
 
 
@@ -152,104 +158,8 @@ FIXME: The config file loading code below needs to be cleaned up.
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
-
-			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
-		}
-
-		strcat(configFile, "\\ScummVM");
-		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-
-		if (fopen(configFile, "r") == NULL) {
-			// Check windows directory
-			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if (fopen(oldConfigFile, "r")) {
-				printf("The default location of the config file (scummvm.ini) in ScummVM has changed,\n");
-				printf("under Windows NT4/2000/XP/Vista. You may want to consider moving your config\n");
-				printf("file from the old default location:\n");
-				printf("%s\n", oldConfigFile);
-				printf("to the new default location:\n");
-				printf("%s\n\n", configFile);
-				strcpy(configFile, oldConfigFile);
-			}
-		}
-	} else {
-		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	}
-
-#elif defined(PALMOS_MODE)
-	strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
-#elif defined(IPHONE)
-	strcpy(configFile, OSystem_IPHONE::getConfigPath());	
-#elif defined(__PLAYSTATION2__)
-	((OSystem_PS2*)g_system)->makeConfigPath(configFile);
-#elif defined(__PSP__)
-	strcpy(configFile, "ms0:/" DEFAULT_CONFIG_FILE);
-#elif defined (__SYMBIAN32__)
-	strcpy(configFile, Symbian::GetExecutablePath());
-	strcat(configFile, DEFAULT_CONFIG_FILE);
-#elif defined(UNIX) && !defined(GP2X) && !defined(IPHONE)
-	// On UNIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	//	
-	// GP2X is Linux based but Home dir can be read only so do not use
-	// it and put the config in the executable dir.
-	//
-	// On the iPhone, the home dir of the user when you launch the app
-	// from the Springboard, is /. Which we don't want.
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-
-#else
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-#endif
 
 
-	return configFile;
-}
-
-Common::SeekableReadStream *OSystem::openConfigFileForReading() {
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	confFile->open(getDefaultConfigFileName());
-	return confFile;
-}
-
-Common::WriteStream *OSystem::openConfigFileForWriting() {
-#ifdef __DC__
-	return 0;
-#else
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	confFile->open(getDefaultConfigFileName());
-	return confFile;
-#endif
-}
 
 
 /*
@@ -257,7 +167,7 @@ FIXME: The config file loading code below needs to be cleaned up.
  Port specific variants should be pushed into the respective ports.
 
  Ideally, the default OSystem::openConfigFileForReading/Writing methods
- should be removed completely. 
+ should be removed completely.
 */
 
 #include "common/file.h"
@@ -286,7 +196,7 @@ static Common::String getDefaultConfigFileName() {
 #if defined(UNIX) && !defined(GP2X) && !defined(IPHONE)
 	// On UNIX type systems, by default we store the config file inside
 	// to the HOME directory of the user.
-	//	
+	//
 	// GP2X is Linux based but Home dir can be read only so do not use
 	// it and put the config in the executable dir.
 	//
@@ -345,7 +255,7 @@ static Common::String getDefaultConfigFileName() {
 	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(IPHONE)
-		strcpy(configFile, OSystem_IPHONE::getConfigPath());	
+		strcpy(configFile, OSystem_IPHONE::getConfigPath());
 	#elif defined(__PLAYSTATION2__)
 		((OSystem_PS2*)g_system)->makeConfigPath(configFile);
 	#elif defined(__PSP__)
