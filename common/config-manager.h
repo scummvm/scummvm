@@ -36,7 +36,7 @@
 namespace Common {
 
 class WriteStream;
-
+class SeekableReadStream;
 
 /**
  * The (singleton) configuration manager, used to query & set configuration
@@ -156,7 +156,7 @@ private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
-	void			loadFile(const String &filename);
+	void			loadStream(SeekableReadStream &stream);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
 
 	Domain			_transientDomain;

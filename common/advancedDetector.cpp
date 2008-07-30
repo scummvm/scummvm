@@ -305,13 +305,14 @@ static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
 	printf("\n");
 }
 
-static ADGameDescList detectGameFilebased(const FSList &fslist, const Common::ADParams &params, IntMap &allFiles);
+static ADGameDescList detectGameFilebased(const StringMap &allFiles, const Common::ADParams &params);
 
 static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
-	StringSet filesList;
+	StringMap allFiles;
+
+	StringSet detectFiles;
 	StringMap filesMD5;
 	IntMap filesSize;
-	IntMap allFiles;
 
 	const ADGameFileDescription *fileDesc;
 	const ADGameDescription *g;
@@ -319,16 +320,8 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 	debug(3, "Starting detection");
 
-	// First we compose list of files which we need MD5s for
-	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize) {
-		g = (const ADGameDescription *)descPtr;
-
-		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			filesList[String(fileDesc->fileName)] = true;
-		}
-	}
-
-	// Get the information of the existing files
+	// First we compose an efficient to query set of all files in  fslist.
+	// Includes nifty stuff like removing trailing dots and ignoring case.
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
 			continue;
@@ -339,23 +332,37 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		if (tstr.lastChar() == '.')
 			tstr.deleteLastChar();
 
-		allFiles[tstr] = true;	// Record the presence of this file
+		allFiles[tstr] = file->getPath();	// Record the presence of this file
+	}
 
-		debug(3, "+ %s", tstr.c_str());
+	// Compute the set of files for which we need MD5s for. I.e. files which are
+	// included in some ADGameDescription *and* present in fslist.
+	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize) {
+		g = (const ADGameDescription *)descPtr;
 
-		if (!filesList.contains(tstr))
-			continue;
+		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			String tstr = fileDesc->fileName;
+			if (allFiles.contains(tstr))
+				detectFiles[tstr] = true;
+		}
+	}
+
+	// Get the information for all detection files, if they exist
+	for (StringSet::const_iterator file = detectFiles.begin(); file != detectFiles.end(); ++file) {
+		String fname = file->_key;
+
+		debug(3, "+ %s", fname.c_str());
 
 		char md5str[32+1];
-		if (!md5_file_string(*file, md5str, params.md5Bytes))
+		if (!md5_file_string(allFiles[fname].c_str(), md5str, params.md5Bytes))
 			continue;
-		filesMD5[tstr] = md5str;
+		filesMD5[fname] = md5str;
 
-		debug(3, "> %s: %s", tstr.c_str(), md5str);
+		debug(3, "> %s: %s", fname.c_str(), md5str);
 
 		File testFile;
-		if (testFile.open(file->getPath())) {
-			filesSize[tstr] = (int32)testFile.size();
+		if (testFile.open(allFiles[fname])) {
+			filesSize[fname] = (int32)testFile.size();
 			testFile.close();
 		}
 	}
@@ -443,31 +450,15 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 	
 		// Filename based fallback
 		if (params.fileBasedFallback != 0)
-			matched = detectGameFilebased(fslist, params, allFiles);
+			matched = detectGameFilebased(allFiles, params);
 	}
 
 	return matched;
 }
 
-static ADGameDescList detectGameFilebased(const FSList &fslist, const Common::ADParams &params, IntMap &allFiles) {
+static ADGameDescList detectGameFilebased(const StringMap &allFiles, const Common::ADParams &params) {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
-
-	// First we create list of files required for detection.
-	// The filenames can be different than the MD5 based match ones.
-	for (ptr = params.fileBasedFallback; ptr->desc; ++ptr) {
-		for (filenames = ptr->filenames; *filenames; ++filenames) {
-			String tstr = String(*filenames);
-
-			if (!allFiles.contains(tstr)) {
-				File testFile;
-				if (testFile.open(tstr) || testFile.open(tstr + ".")) {
-					allFiles[tstr] = true;
-					testFile.close();
-				}
-			}
-		}
-	}
 
 	// Then we perform the actual filename matching. If there are
 	// several matches, only the one with the maximum numbers of
