@@ -40,17 +40,7 @@ namespace GUI {
 using namespace Graphics;
 using namespace Common;
 
-ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
-	_callbacks["drawstep"] = &ThemeParser::parserCallback_DRAWSTEP;
-	_callbacks["drawdata"] = &ThemeParser::parserCallback_DRAWDATA;
-	_callbacks["palette"] = &ThemeParser::parserCallback_palette;
-	_callbacks["color"] = &ThemeParser::parserCallback_color;
-	_callbacks["render_info"] = &ThemeParser::parserCallback_renderInfo;
-	_callbacks["layout_info"] = &ThemeParser::parserCallback_layoutInfo;
-	_callbacks["defaults"] = &ThemeParser::parserCallback_defaultSet;
-	_callbacks["text"] = &ThemeParser::parserCallback_text;
-	_callbacks["fonts"] = &ThemeParser::parserCallback_fonts;
-	_callbacks["font"] = &ThemeParser::parserCallback_font;
+ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {	
 	
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
@@ -74,14 +64,6 @@ void ThemeParser::cleanup() {
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
 	_palette.clear();
-}
-
-bool ThemeParser::keyCallback(Common::String keyName) {
-	// automatically handle with a function from the hash table.
-	if (!_callbacks.contains(_activeKey.top()->name))
-		return parserError("%s is not a valid key name.", keyName.c_str());
-
-	return (this->*(_callbacks[_activeKey.top()->name]))();
 }
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
@@ -125,13 +107,9 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 	return step;
 }
 
-bool ThemeParser::parserCallback_defaultSet() {
-	ParserNode *defNode = getActiveNode();
-	ParserNode *parentNode = getParentNode(defNode);
+bool ThemeParser::parserCallback_defaults(ParserNode *node) {
+	ParserNode *parentNode = getParentNode(node);
 	Graphics::DrawStep *step = 0;
-
-	if (parentNode == 0)
-		return parserError("The <default> key must be contained inside <render_info> keys.");
 
 	if (parentNode->name == "render_info") {
 		step = _defaultStepGlobal;
@@ -145,143 +123,76 @@ bool ThemeParser::parserCallback_defaultSet() {
 		return parserError("<default> key out of scope. Must be inside <drawdata> or <render_info> keys.");
 	}
 
-	return parseDrawStep(defNode, step, false);
+	return parseDrawStep(node, step, false);
 }
 
-bool ThemeParser::parserCallback_font() {
-	ParserNode *tNode = getActiveNode();
-	ParserNode *parentNode = getParentNode(tNode);
-	
-	if (parentNode == 0 || parentNode->name != "fonts")
-		return parserError("Text Steps must be contained inside <fonts> keys.");
-		
-	if (!tNode->values.contains("id"))
-		return parserError("Font definitions need a valid identifier.");
-	
-	if (!tNode->values.contains("type"))
-		return parserError("Font definitions need a valid typename.");
-	
-	if (tNode->values.contains("horizontal_align") || tNode->values.contains("vertical_align"))
-		return parserError("Font definitions cannot contain alignments.");
-		
+bool ThemeParser::parserCallback_font(ParserNode *node) {		
 	int red, green, blue;
 
-	if (tNode->values.contains("color")) {
-
-		if (_palette.contains(tNode->values["color"]))
-			getPaletteColor(tNode->values["color"], red, green, blue);
-		else if (!parseIntegerKey(tNode->values["color"].c_str(), 3, &red, &green, &blue))
-			return parserError("Error when parsing color value for font definition.");
-
-	} else {
-		return parserError("Cannot assign color in font definition.");
-	}
+	if (_palette.contains(node->values["color"]))
+		getPaletteColor(node->values["color"], red, green, blue);
+	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
+		return parserError("Error when parsing color value for font definition.");
 	
-	if (!_theme->addFont(tNode->values["id"], red, green, blue))
+	if (!_theme->addFont(node->values["id"], red, green, blue))
 		return parserError("Error when loading Font in theme engine.");
 		
 	return true;
 }
 
-bool ThemeParser::parserCallback_fonts() {
-	ParserNode *tNode = getActiveNode();
-	
-	if (getParentNode(tNode) == 0 || getParentNode(tNode)->name != "render_info")
-		return parserError("Font definition keys must be contained inside a <render_info> section.");
-		
+bool ThemeParser::parserCallback_fonts(ParserNode *node) {		
 	return true;	
 }
 
-bool ThemeParser::parserCallback_text() {
-	ParserNode *tNode = getActiveNode();
-	ParserNode *parentNode = getParentNode(tNode);
-	
-	if (parentNode == 0 || parentNode->name != "drawdata")
-		return parserError("Text Steps must be contained inside <drawdata> keys.");
-		
+bool ThemeParser::parserCallback_text(ParserNode *node) {		
 	GUI::Theme::TextAlign alignH;
 	GUI::Theme::TextAlignVertical alignV;
-	
-	if (tNode->values.contains("horizontal_align") == false || tNode->values.contains("vertical_align") == false)
-		return parserError("Text inside widgets requires proper alignment keys.");
-
-	if (tNode->values.contains("font") == false)
-		return parserError("Text definitions must include a valid Font identifier.");
 		
-	if (tNode->values["horizontal_align"] == "left")
+	if (node->values["horizontal_align"] == "left")
 		alignH = GUI::Theme::kTextAlignLeft;
-	else if (tNode->values["horizontal_align"] == "right")
+	else if (node->values["horizontal_align"] == "right")
 		alignH = GUI::Theme::kTextAlignRight;
-	else if (tNode->values["horizontal_align"] == "center")
+	else if (node->values["horizontal_align"] == "center")
 		alignH = GUI::Theme::kTextAlignCenter;
 	else return parserError("Invalid value for text alignment.");
 	
-	if (tNode->values["vertical_align"] == "top")
+	if (node->values["vertical_align"] == "top")
 		alignV = GUI::Theme::kTextAlignVTop;
-	else if (tNode->values["vertical_align"] == "center")
+	else if (node->values["vertical_align"] == "center")
 		alignV = GUI::Theme::kTextAlignVCenter;
-	else if (tNode->values["vertical_align"] == "bottom")
+	else if (node->values["vertical_align"] == "bottom")
 		alignV = GUI::Theme::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
 	
-	if (!_theme->addTextData(parentNode->values["id"], tNode->values["font"], alignH, alignV))
-		return parserError("Error when adding Text Data for '%s'.", parentNode->values["id"].c_str());
+	if (!_theme->addTextData(getParentNode(node)->values["id"], node->values["font"], alignH, alignV))
+		return parserError("Error when adding Text Data for '%s'.", getParentNode(node)->values["id"].c_str());
 
 	return true;
 }
 
-bool ThemeParser::parserCallback_renderInfo() {
-	ParserNode *infoNode = getActiveNode();
-
-	assert(infoNode->name == "render_info");
-
-	if (getParentNode(infoNode) != 0)
-		return parserError("<render_info> keys must be root elements.");
-
+bool ThemeParser::parserCallback_render_info(ParserNode *node) {
 	// TODO: Skip key if it's not for this platform.
-
 	return true;
 }
 
-bool ThemeParser::parserCallback_layoutInfo() {
-	ParserNode *layoutNode = getActiveNode();
-
-	assert(layoutNode->name == "layout_info");
-
-	if (getParentNode(layoutNode) != 0)
-		return parserError("<layout_info> keys must be root elements.");
-
+bool ThemeParser::parserCallback_layout_info(ParserNode *node) {
+	// TODO: skip key
 	return true;
 }
 
-bool ThemeParser::parserCallback_palette() {
-	ParserNode *paletteNode = getActiveNode();
-
-	assert(paletteNode->name == "palette");
-
-	if (getParentNode(paletteNode) == 0 || getParentNode(paletteNode)->name != "render_info")
-		return parserError("Palette keys must be contained inside a <render_info> section.");
-
+bool ThemeParser::parserCallback_palette(ParserNode *node) {
 	return true;
 }
 
-bool ThemeParser::parserCallback_color() {
-	ParserNode *colorNode = getActiveNode();
-
-	if (getParentNode(colorNode) == 0 || getParentNode(colorNode)->name != "palette")
-		return parserError("Colors must be specified inside <palette> tags.");
-
-	if (!colorNode->values.contains("name") || !colorNode->values.contains("rgb"))
-		return parserError("Color keys must contain 'name' and 'rgb' values for the color.");
-
-	Common::String name = colorNode->values["name"];
+bool ThemeParser::parserCallback_color(ParserNode *node) {
+	Common::String name = node->values["name"];
 
 	if (_palette.contains(name))
 		return parserError("Color '%s' has already been defined.", name.c_str());
 
 	int red, green, blue;
 
-	if (parseIntegerKey(colorNode->values["rgb"].c_str(), 3, &red, &green, &blue) == false ||
+	if (parseIntegerKey(node->values["rgb"].c_str(), 3, &red, &green, &blue) == false ||
 		red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
 		return parserError("Error when parsing RGB values for palette color '%s'", name.c_str());\
 
@@ -293,53 +204,32 @@ bool ThemeParser::parserCallback_color() {
 }
 
 
-bool ThemeParser::parserCallback_DRAWSTEP() {
-	ParserNode *stepNode = _activeKey.top();
-	ParserNode *drawdataNode = getParentNode(stepNode);
-
-	if (!drawdataNode || drawdataNode->name != "drawdata")
-		return parserError("DrawStep keys must be located inside a DrawData set.");
-
-	assert(stepNode->name == "drawstep");
-	assert(drawdataNode->values.contains("id"));
-
+bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 	Graphics::DrawStep *drawstep = newDrawStep();
 
-	if (!stepNode->values.contains("func"))
-		return parserError("All Draw Steps must contain a 'func' definition.");
-
-	Common::String functionName = stepNode->values["func"]; 
+	Common::String functionName = node->values["func"]; 
 
 	if (_drawFunctions.contains(functionName) == false)
 		return parserError("%s is not a valid drawing function name", functionName.c_str());
 
 	drawstep->drawingCall = _drawFunctions[functionName];
 
-	if (!parseDrawStep(stepNode, drawstep, true))
+	if (!parseDrawStep(node, drawstep, true))
 		return false;
 
-	_theme->addDrawStep(drawdataNode->values["id"], *drawstep);
+	_theme->addDrawStep(getParentNode(node)->values["id"], *drawstep);
 	delete drawstep;
 
 	return true;
 }
 
-bool ThemeParser::parserCallback_DRAWDATA() {
-	ParserNode *drawdataNode = _activeKey.top();
+bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	bool cached = false;
 
-	assert(drawdataNode->name == "drawdata");
-
-	if (getParentNode(drawdataNode) == 0 || getParentNode(drawdataNode)->name != "render_info")
-		return parserError("DrawData keys must be contained inside a <render_info> section.");
-
-	if (drawdataNode->values.contains("id") == false)
-		return parserError("DrawData keys must contain an identifier.");
-
-	if (drawdataNode->values.contains("cache")) {
-		if (drawdataNode->values["cache"] == "true") 
+	if (node->values.contains("cache")) {
+		if (node->values["cache"] == "true") 
 			cached = true;
-		else if (drawdataNode->values["cache"] == "false")
+		else if (node->values["cache"] == "false")
 			cached = false;
 		else return parserError("'Parsed' value must be either true or false.");
 	}
@@ -354,7 +244,7 @@ bool ThemeParser::parserCallback_DRAWDATA() {
 		}
 	}*/
 
-	if (_theme->addDrawData(drawdataNode->values["id"], cached) == false)
+	if (_theme->addDrawData(node->values["id"], cached) == false)
 		return parserError("Error when adding Draw Data set: Invalid DrawData name.");
 
 	if (_defaultStepLocal) {

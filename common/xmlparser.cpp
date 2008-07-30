@@ -84,6 +84,27 @@ bool XMLParser::parserError(const char *errorString, ...) {
 
 bool XMLParser::parseActiveKey(bool closed) {
 	bool ignore = false;
+	assert(_activeKey.empty() == false);
+
+	ParserNode *key = _activeKey.top();
+	XMLKeyLayout *layout = (_activeKey.size() == 1) ? _XMLkeys : getParentNode(key)->layout;
+	
+	if (layout->children.contains(key->name) == false)
+		return parserError("Unexpected key in the active scope: '%s'.", key->name.c_str());
+		
+	key->layout = layout->children[key->name];
+	
+	Common::StringMap localMap = key->values;
+	
+	for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
+		if (localMap.contains(i->name))
+			localMap.erase(i->name);
+		else if (i->required)
+			return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
+	}
+	
+	if (localMap.empty() == false)
+		return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
 
 	// check if any of the parents must be ignored.
 	// if a parent is ignored, all children are too.
@@ -92,7 +113,13 @@ bool XMLParser::parseActiveKey(bool closed) {
 			ignore = true;
 	}
 
-	if (ignore == false && keyCallback(_activeKey.top()->name) == false) {
+	if (ignore == false && keyCallback(key) == false) {
+		// HACK:  People may be stupid and overlook the fact that
+		// when keyCallback() fails, a parserError() must be set.
+		// We set it manually in that case.
+		if (_state != kParserError)
+			parserError("Unhandled exception when parsing '%s' key.", key->name.c_str());
+			
 		return false;
 	}
 	
@@ -133,6 +160,9 @@ bool XMLParser::parse() {
 
 	if (_text.ready() == false)
 		return parserError("XML stream not ready for reading.");
+		
+	if (_XMLkeys == 0)
+		buildLayout();
 
 	cleanup();
 
@@ -186,6 +216,7 @@ bool XMLParser::parse() {
 					node->name = _token;
 					node->ignore = false;
 					node->depth = _activeKey.size();
+					node->layout = 0;
 					_activeKey.push(node);
 				}
 
@@ -194,7 +225,7 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyName:
 				if (activeClosure) {
-					if (!closedKeyCallback(_activeKey.top()->name)) {
+					if (!closedKeyCallback(_activeKey.top())) {
 						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str()); 
 						break;
 					}

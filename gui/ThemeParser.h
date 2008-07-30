@@ -312,7 +312,6 @@ class ThemeRenderer;
 
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
-	typedef bool (ThemeParser::*ParserCallback)();
 
 public:
 	ThemeParser(GUI::ThemeRenderer *parent);
@@ -330,19 +329,98 @@ public:
 
 protected:
 	ThemeRenderer *_theme;
-	bool keyCallback(Common::String keyName);
+	
+	CUSTOM_XML_PARSER(ThemeParser) {
+		
+		XML_KEY(render_info)
+			XML_KEY(palette)
+				XML_KEY(color)
+					XML_PROP(name, true)
+					XML_PROP(rgb, true)
+				KEY_END()
+			KEY_END()
 
-	bool parserCallback_DRAWSTEP();
-	bool parserCallback_DRAWDATA();
-	bool parserCallback_palette();
-	bool parserCallback_color();
-	bool parserCallback_renderInfo();
-	bool parserCallback_layoutInfo();
-	bool parserCallback_defaultSet();
-	bool parserCallback_text();
-	bool parserCallback_fonts();
-	bool parserCallback_font();
+			XML_KEY(fonts)
+				XML_KEY(font)
+					XML_PROP(id, true)
+					XML_PROP(type, true)
+					XML_PROP(color, true)
+				KEY_END()
+			KEY_END()
 
+			XML_KEY(defaults)
+				XML_PROP(stroke, false)
+				XML_PROP(shadow, false)
+				XML_PROP(factor, false)
+				XML_PROP(fg_color, false)
+				XML_PROP(bg_color, false)
+				XML_PROP(gradient_start, false)
+				XML_PROP(gradient_end, false)
+				XML_PROP(gradient_factor, false)
+				XML_PROP(fill, false)
+			KEY_END()
+
+			XML_KEY(drawdata)
+				XML_PROP(id, true)
+				XML_PROP(cache, false)
+
+				XML_KEY(defaults)
+					XML_PROP(stroke, false)
+					XML_PROP(shadow, false)
+					XML_PROP(factor, false)
+					XML_PROP(fg_color, false)
+					XML_PROP(bg_color, false)
+					XML_PROP(gradient_start, false)
+					XML_PROP(gradient_end, false)
+					XML_PROP(gradient_factor, false)
+					XML_PROP(fill, false)
+				KEY_END()
+
+				XML_KEY(drawstep)
+					XML_PROP(func, true)
+					XML_PROP(stroke, false)
+					XML_PROP(shadow, false)
+					XML_PROP(factor, false)
+					XML_PROP(fg_color, false)
+					XML_PROP(bg_color, false)
+					XML_PROP(gradient_start, false)
+					XML_PROP(gradient_end, false)
+					XML_PROP(gradient_factor, false)
+					XML_PROP(fill, false)
+					XML_PROP(bevel, false)
+					XML_PROP(radius, false)
+					XML_PROP(width, false)
+					XML_PROP(height, false)
+					XML_PROP(xpos, false)
+					XML_PROP(ypos, false)
+					XML_PROP(orientation, false)
+				KEY_END()
+
+				XML_KEY(text)
+					XML_PROP(font, true)
+					XML_PROP(vertical_align, true)
+					XML_PROP(horizontal_align, true)
+				KEY_END()
+			KEY_END()
+
+		KEY_END() // render_info end
+
+		XML_KEY(layout_info)
+		KEY_END()
+		
+	} PARSER_END();
+	
+	bool parserCallback_defaults(ParserNode *node);
+	bool parserCallback_font(ParserNode *node);
+	bool parserCallback_fonts(ParserNode *node);
+	bool parserCallback_text(ParserNode *node);
+	bool parserCallback_render_info(ParserNode *node);
+	bool parserCallback_layout_info(ParserNode *node);
+	bool parserCallback_palette(ParserNode *node);
+	bool parserCallback_color(ParserNode *node);
+	bool parserCallback_drawstep(ParserNode *node);
+	bool parserCallback_drawdata(ParserNode *node);
+	
 	void cleanup();
 
 	Graphics::DrawStep *newDrawStep();
@@ -353,7 +431,6 @@ protected:
 	Graphics::DrawStep *_defaultStepLocal;
 
 	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;
-	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
 
 	struct PaletteColor {
 		uint8 r, g, b;
@@ -361,6 +438,8 @@ protected:
 
 	Common::HashMap<Common::String, PaletteColor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _palette;
 };
+
+
 
 }
 
