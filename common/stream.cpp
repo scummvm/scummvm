@@ -244,14 +244,16 @@ void SeekableSubReadStream::seek(int32 offset, int whence) {
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream)
 	: _parentStream(parentStream),
-	_bufSize(bufSize),
-	_disposeParentStream(disposeParentStream) {
+	_disposeParentStream(disposeParentStream),
+	_pos(0),
+	_bufSize(0),
+	_realBufSize(bufSize) {
 
 	assert(parentStream);
-	_buf = new byte[_bufSize];
+	_buf = new byte[bufSize];
 	assert(_buf);
-	_pos = _bufSize = bufSize;
 }
+
 BufferedReadStream::~BufferedReadStream() {
 	if (_disposeParentStream)
 		delete _parentStream;
@@ -281,18 +283,14 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 			return alreadyRead + _parentStream->read(dataPtr, dataSize);
 
 		// Refill the buffer.
-		uint32 bytesRead = _parentStream->read(_buf, _bufSize);
-		_pos = 0;
-		
 		// If we didn't read as many bytes as requested, the reason
 		// is EOF or an error. In that case we truncate the buffer
 		// size, as well as the number of  bytes we are going to
 		// return to the caller.
-		if (_bufSize > bytesRead) {
-			_bufSize = bytesRead;
-			if (dataSize > bytesRead)
-				dataSize = bytesRead;
-		}
+		_bufSize = _parentStream->read(_buf, _realBufSize);
+		_pos = 0;
+		if (dataSize > _bufSize)
+			dataSize = _bufSize;
 	}
 
 	// Satisfy the request from the buffer

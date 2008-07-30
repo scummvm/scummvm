@@ -428,6 +428,7 @@ protected:
 	byte *_buf;
 	uint32 _pos;
 	uint32 _bufSize;
+	uint32 _realBufSize;
 
 public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
