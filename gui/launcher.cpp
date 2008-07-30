@@ -61,7 +61,9 @@ enum {
 	kAddGameCmd = 'ADDG',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
+	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
+	kChooseCmd = 'CHOS',
 
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
@@ -465,6 +467,122 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
+class SaveLoadChooser : public GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	bool _saveMode;
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::ContainerWidget	*_container;
+
+	uint8 _fillR, _fillG, _fillB;
+
+	void updateInfos(bool redraw);
+public:
+	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
+	~SaveLoadChooser();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;
+	void setList(const StringList& list);
+	int runModal();
+
+	virtual void reflowLayout();
+};
+
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
+	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0)  {
+
+	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+
+	new StaticTextWidget(this, "scummsaveload_title", title);
+
+	// Add choice list
+	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list->setEditable(saveMode);
+	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+
+	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
+
+	// Buttons
+	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	_chooseButton->setEnabled(false);
+}
+
+SaveLoadChooser::~SaveLoadChooser() {
+}
+
+const Common::String &SaveLoadChooser::getResultString() const {
+	return _list->getSelectedString();
+}
+
+void SaveLoadChooser::setList(const StringList& list) {
+	_list->setList(list);
+}
+
+int SaveLoadChooser::runModal() {
+	if (_gfxWidget)
+		_gfxWidget->setGfx(0);
+	int ret = Dialog::runModal();
+	return ret;
+}
+
+void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	int selItem = _list->getSelected();
+	switch (cmd) {
+	case GUI::kListItemActivatedCmd:
+	case GUI::kListItemDoubleClickedCmd:
+		if (selItem >= 0) {
+			if (_saveMode || !getResultString().empty()) {
+				_list->endEditMode();
+				setResult(selItem);
+				close();
+			}
+		}
+		break;
+	case kChooseCmd:
+		_list->endEditMode();
+		setResult(selItem);
+		close();
+		break;
+	case GUI::kListSelectionChangedCmd: {
+		if (_gfxWidget) {
+			updateInfos(true);
+		}
+
+		if (_saveMode) {
+			_list->startEditMode();
+		}
+		// Disable button if nothing is selected, or (in load mode) if an empty
+		// list item is selected. We allow choosing an empty item in save mode
+		// because we then just assign a default name.
+		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().empty()));
+		_chooseButton->draw();
+	} break;
+	case kCloseCmd:
+		setResult(-1);
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void SaveLoadChooser::reflowLayout() {
+	_container->setFlags(GUI::WIDGET_INVISIBLE);
+	_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+	Dialog::reflowLayout();
+}
+
+void SaveLoadChooser::updateInfos(bool redraw) {
+	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	if (redraw)
+		_gfxWidget->draw();
+}
 
 #pragma mark -
 
@@ -498,6 +616,8 @@ LauncherDialog::LauncherDialog()
 	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');
 	_startButton =
 			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
+	
+	new ButtonWidget(this, "launcher_loadGame_button", "Load", kLoadGameCmd, 'L');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
@@ -526,6 +646,9 @@ LauncherDialog::LauncherDialog()
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory with game data", true);
+
+	// Create SaveLoad dialog
+	_loadDialog = new SaveLoadChooser("Load game:", "Load", false);
 }
 
 void LauncherDialog::selectGame(const String &name) {
@@ -797,6 +920,38 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
+void LauncherDialog::loadGame(int item) {
+	int idx;
+	_loadDialog->setList(generateSavegameList(item));
+	idx = _loadDialog->runModal();
+	if (idx >= 0) {
+		ConfMan.setInt("save_slot", idx);
+		ConfMan.setActiveDomain(_domains[item]);
+		close();
+	}	
+}
+
+Common::StringList LauncherDialog::generateSavegameList(int item) {
+	String gameId = ConfMan.get("gameid", _domains[item]);
+	if (gameId.empty())
+		gameId = _domains[item];
+	
+	String description = _domains[item];
+	description.toLowercase();
+	
+	const EnginePlugin *plugin = 0;
+	GameDescriptor game = EngineMan.findGame(gameId, &plugin);
+	
+	SaveStateList saveList = (*plugin)->listSaves(description.c_str());
+	StringList saveNames;
+
+	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
+		saveNames.push_back(x->description().c_str());
+	}
+
+	return saveNames;
+}
+
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
 	Dialog::handleKeyDown(state);
 	updateButtons();
@@ -819,6 +974,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kEditGameCmd:
 		editGame(item);
+		break;
+	case kLoadGameCmd:
+		loadGame(item);
 		break;
 	case kOptionsCmd: {
 		GlobalOptionsDialog options;

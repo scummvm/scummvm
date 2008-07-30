@@ -2151,7 +2151,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	const uint32 AGIflag = MKID_BE('AGI:');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringList filenames;
-	char saveDesc[260];
+	char saveDesc[31];
 	Common::String pattern = target;
 	pattern += ".???";
 
