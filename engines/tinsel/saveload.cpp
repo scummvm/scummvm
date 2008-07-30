@@ -136,6 +136,7 @@ static bool syncSaveGameHeader(Serializer &s, SaveGameHeader &hdr) {
 	s.syncAsUint32LE(hdr.ver);
 
 	s.syncBytes((byte *)hdr.desc, SG_DESC_LEN);
+	hdr.desc[SG_DESC_LEN - 1] = 0;
 
 	syncTime(s, hdr.dateTime);
 
@@ -291,6 +292,7 @@ int getList(void) {
 
 		strncpy(savedFiles[i].name, fname.c_str(), FNAMELEN);
 		strncpy(savedFiles[i].desc, hdr.desc, SG_DESC_LEN);
+		savedFiles[i].desc[SG_DESC_LEN - 1] = 0;
 		savedFiles[i].dateTime = hdr.dateTime;
 
 		++numSfiles;
@@ -405,6 +407,7 @@ static void DoSave(void) {
 	hdr.size = SAVEGAME_HEADER_SIZE;
 	hdr.ver = CURRENT_VER;
 	memcpy(hdr.desc, SaveSceneDesc, SG_DESC_LEN);
+	hdr.desc[SG_DESC_LEN - 1] = 0;
 	g_system->getTimeAndDate(hdr.dateTime);
 	if (!syncSaveGameHeader(s, hdr) || f->ioFailed()) {
 		goto save_failure;
