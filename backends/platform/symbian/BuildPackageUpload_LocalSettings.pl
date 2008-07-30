@@ -29,7 +29,7 @@
 	);
 	
 	# these are normally enabled for each variation
-	$DefaultFeatures = qw(zlib tremor);
+	$DefaultFeatures = qw(zlib mad tremor);
 	#$DefaultFeatures = qw(zlib mad tremor);
 
 	

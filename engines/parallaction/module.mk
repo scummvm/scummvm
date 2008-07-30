@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	font.o \
 	gfxbase.o \
 	graphics.o \
+	gui.o \
 	gui_br.o \
 	gui_ns.o \
 	input.o \

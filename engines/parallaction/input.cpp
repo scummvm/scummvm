@@ -36,25 +36,23 @@ namespace Parallaction {
 // loops which could possibly be merged into this one with some effort in changing
 // caller code, i.e. adding condition checks.
 //
-uint16 Input::readInput() {
+void Input::readInput() {
 
 	Common::Event e;
-	uint16 KeyDown = 0;
 
 	_mouseButtons = kMouseNone;
-	_lastKeyDownAscii = -1;
+	_hasKeyPressEvent = false;
 
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(e)) {
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
-			_lastKeyDownAscii = e.kbd.ascii;
+			_hasKeyPressEvent = true;
+			_keyPressed = e.kbd;
+
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_vm->_debugger->attach();
-			if (_vm->getFeatures() & GF_DEMO) break;
-			if (e.kbd.keycode == Common::KEYCODE_l) KeyDown = kEvLoadGame;
-			if (e.kbd.keycode == Common::KEYCODE_s) KeyDown = kEvSaveGame;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -83,7 +81,7 @@ uint16 Input::readInput() {
 
 		case Common::EVENT_QUIT:
 			_engineFlags |= kEngineQuit;
-			return KeyDown;
+			return;
 
 		default:
 			break;
@@ -95,13 +93,13 @@ uint16 Input::readInput() {
 	if (_vm->_debugger->isAttached())
 		_vm->_debugger->onFrame();
 
-	return KeyDown;
+	return;
 
 }
 
 bool Input::getLastKeyDown(uint16 &ascii) {
-	ascii = _lastKeyDownAscii;
-	return (_lastKeyDownAscii != -1);
+	ascii = _keyPressed.ascii;
+	return (_hasKeyPressEvent);
 }
 
 // FIXME: see comment for readInput()
@@ -128,64 +126,36 @@ void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 
 }
 
-// FIXME: see comment for readInput()
-void Input::waitUntilLeftClick() {
-
-	do {
-		readInput();
-		_vm->_gfx->updateScreen();
-		_vm->_system->delayMillis(30);
-	} while (_mouseButtons != kMouseLeftUp);
-
-	return;
-}
-
 
 void Input::updateGameInput() {
 
-	int16 keyDown = readInput();
+	readInput();
 
-	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
-		!_mouseHidden,
-		(_engineFlags & kEngineBlockInput) == 0,
-		(_engineFlags & kEngineWalking) == 0,
-		(_engineFlags & kEngineChangeLocation) == 0
-	);
-
-	if ((_mouseHidden) ||
-		(_engineFlags & kEngineBlockInput) ||
+	if (!isMouseEnabled() ||
 		(_engineFlags & kEngineWalking) ||
 		(_engineFlags & kEngineChangeLocation)) {
+
+		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, walking: %i, changeloc: %i)",
+			isMouseEnabled(),
+			(_engineFlags & kEngineWalking) == 0,
+			(_engineFlags & kEngineChangeLocation) == 0
+		);
 
 		return;
 	}
 
-	if (keyDown == kEvQuitGame) {
-		_inputData._event = kEvQuitGame;
-	} else
-	if (keyDown == kEvSaveGame) {
-		_inputData._event = kEvSaveGame;
-	} else
-	if (keyDown == kEvLoadGame) {
-		_inputData._event = kEvLoadGame;
-	} else {
+	if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
+		if (_keyPressed.keycode == Common::KEYCODE_l) _inputData._event = kEvLoadGame;
+		if (_keyPressed.keycode == Common::KEYCODE_s) _inputData._event = kEvSaveGame;
+	}
+
+	if (_inputData._event == kEvNone) {
 		_inputData._mousePos = _mousePos;
-		_inputData._event = kEvNone;
-		if (!translateGameInput()) {
-			translateInventoryInput();
-		}
+		translateGameInput();
 	}
 
 }
 
-void Input::updateCommentInput() {
-	waitUntilLeftClick();
-
-	_vm->hideDialogueStuff();
-	_vm->_gfx->setHalfbriteMode(false);
-
-	_inputMode = kInputModeGame;
-}
 
 InputData* Input::updateInput() {
 
@@ -193,15 +163,18 @@ InputData* Input::updateInput() {
 
 	switch (_inputMode) {
 	case kInputModeComment:
-		updateCommentInput();
+	case kInputModeDialogue:
+	case kInputModeMenu:
+		readInput();
 		break;
 
 	case kInputModeGame:
 		updateGameInput();
 		break;
 
-	case kInputModeDialogue:
+	case kInputModeInventory:
 		readInput();
+		updateInventoryInput();
 		break;
 	}
 
@@ -230,38 +203,45 @@ void Input::stopHovering() {
 	_vm->_gfx->hideFloatingLabel();
 }
 
+void Input::takeAction(ZonePtr z) {
+	stopHovering();
+	_vm->pauseJobs();
+	_vm->runZone(z);
+	_vm->resumeJobs();
+}
+
+void Input::walkTo(const Common::Point &dest) {
+	stopHovering();
+	_vm->setArrowCursor();
+	_vm->_char.scheduleWalk(dest.x, dest.y);
+}
 
 bool Input::translateGameInput() {
 
-	if ((_engineFlags & kEnginePauseJobs) || (_engineFlags & kEngineInventory)) {
+	if (_engineFlags & kEnginePauseJobs) {
 		return false;
 	}
 
-	if (_actionAfterWalk) {
+	if (_hasDelayedAction) {
 		// if walking is over, then take programmed action
-		_inputData._event = kEvAction;
-		_actionAfterWalk = false;
+		takeAction(_delayedActionZone);
+		_hasDelayedAction = false;
+		_delayedActionZone = nullZonePtr;
 		return true;
 	}
 
 	if (_mouseButtons == kMouseRightDown) {
 		// right button down shows inventory
-
-		if (_vm->hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
-			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
-			_engineFlags |= kEngineDragging;
-		}
-
-		_inputData._event = kEvOpenInventory;
-		_transCurrentHoverItem = -1;
+		enterInventoryMode();
 		return true;
 	}
 
 	// test if mouse is hovering on an interactive zone for the currently selected inventory item
 	ZonePtr z = _vm->hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
+	Common::Point dest(_mousePos);
 
 	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || ((z->_type & 0xFFFF) != kZoneCommand))) {
-		_inputData._event = kEvWalk;
+		walkTo(dest);
 		return true;
 	}
 
@@ -275,16 +255,17 @@ bool Input::translateGameInput() {
 		_inputData._zone = z;
 		if (z->_flags & kFlagsNoWalk) {
 			// character doesn't need to walk to take specified action
-			_inputData._event = kEvAction;
-
+			takeAction(z);
 		} else {
 			// action delayed: if Zone defined a moveto position the character is programmed to move there,
 			// else it will move to the mouse position
-			_inputData._event = kEvWalk;
-			_actionAfterWalk = true;
+			_delayedActionZone = z;
+			_hasDelayedAction = true;
 			if (z->_moveTo.y != 0) {
-				_inputData._mousePos = z->_moveTo;
+				dest = z->_moveTo;
 			}
+
+			walkTo(dest);
 		}
 
 		_vm->beep();
@@ -293,31 +274,40 @@ bool Input::translateGameInput() {
 	}
 
 	return true;
-
 }
 
-bool Input::translateInventoryInput() {
 
-	if ((_engineFlags & kEngineInventory) == 0) {
-		return false;
+void Input::enterInventoryMode() {
+	bool hitCharacter = _vm->hitZone(kZoneYou, _mousePos.x, _mousePos.y);
+
+	if (hitCharacter) {
+		if (_activeItem._id != 0) {
+			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
+			_engineFlags |= kEngineDragging;
+		} else {
+			_vm->setArrowCursor();
+		}
 	}
 
-	// in inventory
-	int16 _si = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	stopHovering();
+	_vm->pauseJobs();
+	_vm->openInventory();
 
-	if (_mouseButtons == kMouseRightUp) {
-		// right up hides inventory
+	_transCurrentHoverItem = -1;
 
-		_inputData._event = kEvCloseInventory;
-		_inputData._inventoryIndex = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
-		_vm->highlightInventoryItem(-1);			// disable
+	_inputMode = kInputModeInventory;
+}
 
-		if ((_engineFlags & kEngineDragging) == 0) {
-			return true;
-		}
+void Input::exitInventoryMode() {
+	// right up hides inventory
+
+	int pos = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	_vm->highlightInventoryItem(-1);			// disable
+
+	if ((_engineFlags & kEngineDragging)) {
 
 		_engineFlags &= ~kEngineDragging;
-		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(_inputData._inventoryIndex));
+		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(pos));
 
 		if (z) {
 			_vm->dropItem(z->u.merge->_obj1);
@@ -326,25 +316,61 @@ bool Input::translateInventoryInput() {
 			_vm->_cmdExec->run(z->_commands);
 		}
 
+	}
+
+	_vm->closeInventory();
+	if (pos == -1) {
+		_vm->setArrowCursor();
+	} else {
+		const InventoryItem *item = _vm->getInventoryItem(pos);
+		if (item->_index != 0) {
+			_activeItem._id = item->_id;
+			_vm->setInventoryCursor(item->_index);
+		}
+	}
+	_vm->resumeJobs();
+
+	_inputMode = kInputModeGame;
+}
+
+bool Input::updateInventoryInput() {
+	if (_mouseButtons == kMouseRightUp) {
+		exitInventoryMode();
 		return true;
 	}
 
-	if (_si == _transCurrentHoverItem) {
-		_inputData._event = kEvNone;
-		return true;
+	int16 _si = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	if (_si != _transCurrentHoverItem) {
+		_transCurrentHoverItem = _si;
+		_vm->highlightInventoryItem(_si);						// enable
 	}
 
-	_transCurrentHoverItem = _si;
-	_inputData._event = kEvHoverInventory;
-	_inputData._inventoryIndex = _si;
 	return true;
 
 }
 
-void Input::showCursor(bool visible) {
-	_mouseHidden = !visible;
-	_vm->_system->showMouse(visible);
+void Input::setMouseState(MouseTriState state) {
+	assert(state == MOUSE_ENABLED_SHOW || state == MOUSE_ENABLED_HIDE || state == MOUSE_DISABLED);
+	_mouseState = state;
+
+	switch (_mouseState) {
+	case MOUSE_ENABLED_HIDE:
+	case MOUSE_DISABLED:
+		_vm->_system->showMouse(false);
+		break;
+
+	case MOUSE_ENABLED_SHOW:
+		_vm->_system->showMouse(true);
+		break;
+	}
 }
 
+MouseTriState Input::getMouseState() {
+	return _mouseState;
+}
+
+bool Input::isMouseEnabled() {
+	return (_mouseState == MOUSE_ENABLED_SHOW) || (_mouseState == MOUSE_ENABLED_HIDE);
+}
 
 } // namespace Parallaction

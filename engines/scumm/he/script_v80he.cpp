@@ -409,7 +409,7 @@ void ScummEngine_v80he::o80_getFileSize() {
 	Common::SeekableReadStream *f = _saveFileMan->openForLoading((const char *)filename);
 	if (!f) {
 		Common::File *file = new Common::File();
-		file->open((const char *)filename, Common::File::kFileReadMode);
+		file->open((const char *)filename);
 		if (!file->isOpen())
 			delete f;
 		else

@@ -57,8 +57,8 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
 		assert(_track[l]);
+		memset(_track[l], 0, sizeof(Track));
 		_track[l]->trackId = l;
-		_track[l]->used = false;
 	}
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
 

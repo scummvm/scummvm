@@ -154,7 +154,23 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_BRA,
-		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
+	},
+
+	{
+		{
+			"bra",
+			"Demo",
+			{
+				{ "russia.fnt",	0, "0dd55251d2886d6783718df2b184bf97", 10649 },
+				{ NULL, 0, NULL, 0}
+			},
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GType_BRA,
+		GF_LANG_EN | GF_DEMO,
 	},
 
 	// TODO: Base the detection of Amiga BRA on actual data file, not executable file.
@@ -171,9 +187,25 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_BRA,
-		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
 	},
 
+	// TODO: Base the detection of Amiga BRA demo on actual data file, not executable file.
+	{
+		{
+			"bra",
+			"Demo",
+			{
+				{ "bigred",	0, "b62a7b589fb5e9071f021227640893bf", 97004 },
+				{ NULL, 0, NULL, 0}
+			},
+			Common::UNK_LANG,
+			Common::kPlatformAmiga,
+			Common::ADGF_DEMO
+		},
+		GType_BRA,
+		GF_LANG_EN | GF_DEMO,
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };

@@ -46,9 +46,14 @@ int main(int argc, char** argv) {
 	gArgc = argc;
 	gArgv = argv;
 
-	[[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *autoreleasePool = [ 
+        [ NSAutoreleasePool alloc ] init
+    ];
 
-    return UIApplicationMain(argc, argv, [iPhoneMain class]);
+    UIApplicationUseLegacyEvents(1);
+    int returnCode = UIApplicationMain(argc, argv, [iPhoneMain class]);
+    [ autoreleasePool release ];
+    return returnCode;
 }
 
 @implementation iPhoneMain
@@ -74,7 +79,10 @@ int main(int argc, char** argv) {
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	// hide the status bar
 	[UIHardware _setStatusBarHeight:0.0f];
-	[self setStatusBarMode:2 orientation:0 duration:0.0f fenceID:0];
+	//[self setStatusBarMode:2 orientation:0 duration:0.0f fenceID:0];
+
+	//[self setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
+	[self setStatusBarHidden:YES animated:YES];
 
 	_window = [[UIWindow alloc] initWithContentRect:  [UIHardware fullScreenApplicationContentRect]];
 	[_window retain];
@@ -96,7 +104,7 @@ int main(int argc, char** argv) {
 - (void)applicationResume:(GSEventRef)event {
 	[self removeApplicationBadge];
 	[UIHardware _setStatusBarHeight:0.0f];
-	[self setStatusBarMode:2 orientation:0 duration:0.0f fenceID:0];
+	[self setStatusBarHidden:YES animated:YES];
 	[_view applicationResume];
 }
 

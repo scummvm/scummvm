@@ -28,6 +28,8 @@
 
 #define PATH_LEN 200
 
+#include "common/fs.h"
+
 #include "common/file.h"
 #include "graphics/surface.h"
 
@@ -202,15 +204,29 @@ public:
 class DosDisk_br : public Disk {
 
 protected:
+	uint16			_language;
+
 	Parallaction	*_vm;
-	char			_partPath[PATH_LEN];
-	char			_languageDir[2];
+
+	FilesystemNode	_baseDir;
+	FilesystemNode	_partDir;
+
+	FilesystemNode	_aniDir;
+	FilesystemNode	_bkgDir;
+	FilesystemNode	_mscDir;
+	FilesystemNode	_mskDir;
+	FilesystemNode	_pthDir;
+	FilesystemNode	_rasDir;
+	FilesystemNode	_scrDir;
+	FilesystemNode	_sfxDir;
+	FilesystemNode	_talDir;
 
 protected:
-	void errorFileNotFound(const char *s);
+	void errorFileNotFound(const FilesystemNode &dir, const Common::String &filename);
 	Font *createFont(const char *name, Common::ReadStream &stream);
 	Sprites*	createSprites(Common::ReadStream &stream);
 	void loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette);
+	GfxObj* createInventoryObjects(Common::SeekableReadStream &stream);
 
 public:
 	DosDisk_br(Parallaction *vm);
@@ -234,15 +250,34 @@ public:
 	Common::ReadStream* loadSound(const char* name);
 };
 
+class DosDemo_br : public DosDisk_br {
+
+public:
+	DosDemo_br(Parallaction *vm);
+	virtual ~DosDemo_br();
+
+	Common::String selectArchive(const Common::String& name);
+
+};
+
 class AmigaDisk_br : public DosDisk_br {
 
 protected:
 	BackgroundInfo	_backgroundTemp;
 
-	Sprites*	createSprites(const char *name);
+	Sprites*	createSprites(Common::ReadStream &stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
-	void loadMask(BackgroundInfo& info, const char *name);
-	void loadBackground(BackgroundInfo& info, const char *name);
+	void loadMask(BackgroundInfo& info, Common::SeekableReadStream &stream);
+	void loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
+
+	FilesystemNode	_baseBkgDir;
+	FilesystemNode	_fntDir;
+	FilesystemNode	_commonAniDir;
+	FilesystemNode	_commonBkgDir;
+	FilesystemNode	_commonMscDir;
+	FilesystemNode	_commonMskDir;
+	FilesystemNode	_commonPthDir;
+	FilesystemNode	_commonTalDir;
 
 public:
 	AmigaDisk_br(Parallaction *vm);
@@ -254,6 +289,11 @@ public:
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
+	GfxObj* loadObjects(const char *name);
+	Common::SeekableReadStream* loadMusic(const char* name);
+	Common::ReadStream* loadSound(const char* name);
+	Common::String selectArchive(const Common::String& name);
+
 };
 
 } // namespace Parallaction

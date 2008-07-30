@@ -51,7 +51,7 @@ void addSpriteFilledToBGList(int16 idx);
 
 void createBgIncrustListElement(int16 objIdx, int16 param);
 void resetBgIncrustList(void);
-void loadBgIncrustFromSave(Common::InSaveFile &fHandle);
+void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle);
 
 } // End of namespace Cine
 

@@ -289,13 +289,9 @@ void ConfigManager::loadFile(const String &filename) {
 
 void ConfigManager::flushToDisk() {
 #ifndef __DC__
-	File cfg_file;
+	DumpFile cfg_file;
 
-// TODO
-//	if (!willwrite)
-//		return;
-
-	if (!cfg_file.open(_filename, File::kFileWriteMode)) {
+	if (!cfg_file.open(_filename)) {
 		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
 		// First write the domains in _domainSaveOrder, in that order.
@@ -642,6 +638,10 @@ void ConfigManager::addGameDomain(const String &domName) {
 	// the given name already exists?
 
 	_gameDomains[domName];
+
+	// Add it to the _domainSaveOrder, if it's not already in there
+	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), domName) == _domainSaveOrder.end())
+		_domainSaveOrder.push_back(domName);
 }
 
 void ConfigManager::removeGameDomain(const String &domName) {

@@ -38,9 +38,19 @@ struct InventoryItem {
 	uint16		_index;			// index to frame in objs file
 };
 
-#define INVENTORYITEM_PITCH			32
-#define INVENTORYITEM_WIDTH			24
-#define INVENTORYITEM_HEIGHT		24
+struct InventoryProperties {
+	uint _itemPitch;
+	uint _itemWidth;
+	uint _itemHeight;
+
+	int _maxItems;
+
+	int _itemsPerLine;
+	int _maxLines;
+
+	int _width;
+	int _height;
+};
 
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
 
@@ -50,12 +60,14 @@ typedef uint16 ItemName;
 class Inventory {
 
 protected:
+	uint16			_numVerbs;
+
 	InventoryItem	*_items;
-	uint16			_maxItems;
 	uint16			_numItems;
+	InventoryProperties *_props;
 
 public:
-	Inventory(uint16 maxItems);
+	Inventory(InventoryProperties *props, InventoryItem *verbs);
 	virtual ~Inventory();
 
 	ItemPosition addItem(ItemName name, uint32 value);
@@ -75,6 +87,8 @@ public:
 
 class InventoryRenderer {
 	Parallaction	*_vm;
+	InventoryProperties *_props;
+
 	Inventory		*_inv;
 	Common::Point	_pos;
 
@@ -87,7 +101,7 @@ protected:
 	void refresh();
 
 public:
-	InventoryRenderer(Parallaction *vm);
+	InventoryRenderer(Parallaction *vm, InventoryProperties *props);
 	virtual ~InventoryRenderer();
 
 	void bindInventory(Inventory *inv) { _inv = inv; }
@@ -97,6 +111,7 @@ public:
 
 	ItemPosition hitTest(const Common::Point &p) const;
 	void highlightItem(ItemPosition pos, byte color);
+	void drawItem(ItemName name, byte *buffer, uint pitch);
 
 	byte*	getData() const { return (byte*)_surf.pixels; }
 

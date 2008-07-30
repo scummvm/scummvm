@@ -111,6 +111,30 @@ int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *p
 	return r;
 }
 
+void Screen_v2::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
+	debugC(9, kDebugLevelScreen, "Screen_v2::getFadeParams(%p, %d, %p, %p)", (const void *)palette, delay, (const void *)&delayInc, (const void *)&diff);
+
+	int maxDiff = 0;
+	diff = 0;
+	for (int i = 0; i < 768; ++i) {
+		diff = ABS(palette[i] - _screenPalette[i]);
+		maxDiff = MAX(maxDiff, diff);
+	}
+
+	delayInc = delay << 8;
+	if (maxDiff != 0) {
+		delayInc /= maxDiff;
+		delayInc = MIN(delayInc, 0x7FFF);
+	}
+
+	delay = delayInc;
+	for (diff = 1; diff <= maxDiff; ++diff) {
+		if (delayInc >= 256)
+			break;
+		delayInc += delay;
+	}
+}
+
 void Screen_v2::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
 							int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2) {
 	uint8 *dstPtr = getPagePtr(_curPage);
@@ -369,7 +393,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 		int t = (nb * h1) / h2;
 		if (t != u) {
 			u = t;
-			const uint8 *s = src + (x1 + t) * 320;
+			const uint8 *s = src + x1 + t * 320;
 			uint8 *dt = (uint8 *)_wsaFrameAnimBuffer;
 
 			t = w2 - w1;

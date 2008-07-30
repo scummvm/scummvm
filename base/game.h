@@ -92,6 +92,10 @@ public:
 	const Common::String &description() const { return getVal("description"); }
 	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
 	Common::Platform platform() const { return contains("platform") ? Common::parsePlatform(getVal("platform")) : Common::kPlatformUnknown; }
+	
+	const Common::String &preferredtarget() const {
+		return contains("preferredtarget") ? getVal("preferredtarget") : getVal("gameid");
+	}
 };
 
 /** List of games. */

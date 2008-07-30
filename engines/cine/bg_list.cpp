@@ -83,7 +83,7 @@ void resetBgIncrustList(void) {
 /*! \brief Restore incrust list from savefile
  * \param fHandle Savefile open for reading
  */
-void loadBgIncrustFromSave(Common::InSaveFile &fHandle) {
+void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle) {
 	BGIncrust tmp;
 	int size = fHandle.readSint16BE();
 

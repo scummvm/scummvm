@@ -289,8 +289,8 @@ void dumpBundle(const char *fileName) {
 
 		debug(0, "%s", partBuffer[i].partName);
 
-		Common::File out;
-		if (out.open(Common::String("dumps/") + partBuffer[i].partName, Common::File::kFileWriteMode)) {
+		Common::DumpFile out;
+		if (out.open(Common::String("dumps/") + partBuffer[i].partName)) {
 			out.write(data, partBuffer[i].unpackedSize);
 			out.close();
 		}

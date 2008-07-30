@@ -47,14 +47,30 @@ protected:
 	struct ParallactionStruct1 {
 		CommandPtr cmd;
 		ZonePtr	z;
+		bool suspend;
 	} _ctxt;
 
 	OpcodeSet	_opcodes;
 
+	struct SuspendedContext {
+		bool valid;
+		CommandList::iterator first;
+		CommandList::iterator last;
+		ZonePtr	zone;
+	} _suspendedCtxt;
+
+	ZonePtr	_execZone;
+	void runList(CommandList::iterator first, CommandList::iterator last);
+	void createSuspendList(CommandList::iterator first, CommandList::iterator last);
+	void cleanSuspendedList();
+
 public:
 	virtual void init() = 0;
 	virtual void run(CommandList &list, ZonePtr z = nullZonePtr);
+	void runSuspended();
+
 	CommandExec() {
+		_suspendedCtxt.valid = false;
 	}
 	virtual ~CommandExec() {
 		for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
@@ -143,23 +159,23 @@ public:
 	~CommandExec_br();
 };
 
-
-
-
-
 class ProgramExec {
 protected:
 	struct ParallactionStruct2 {
 		AnimationPtr	anim;
 		ProgramPtr		program;
 		InstructionList::iterator inst;
+		InstructionList::iterator ip;
 		uint16		modCounter;
 		bool		suspend;
 	} _ctxt;
 
+	const char **_instructionNames;
+
 	OpcodeSet	_opcodes;
 
 	uint16	_modCounter;
+	void runScript(ProgramPtr script, AnimationPtr a);
 
 public:
 	virtual void init() = 0;
@@ -183,7 +199,7 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endloop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(null);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(show);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(call);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
@@ -208,7 +224,6 @@ class ProgramExec_br : public ProgramExec_ns {
 protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
  	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(dec);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
@@ -228,7 +243,6 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifgt);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
 public:
 	void init();

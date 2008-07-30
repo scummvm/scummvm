@@ -147,6 +147,15 @@ void GobEngine::validateVideoMode(int16 videoMode) {
 		error("Video mode 0x%X is not supported!", videoMode);
 }
 
+Endianness GobEngine::getEndianness() const {
+	if ((_vm->getPlatform() == Common::kPlatformAmiga) ||
+	    (_vm->getPlatform() == Common::kPlatformMacintosh) ||
+	    (_vm->getPlatform() == Common::kPlatformAtariST))
+		return kEndiannessBE;
+
+	return kEndiannessLE;
+}
+
 Common::Platform GobEngine::getPlatform() const {
 	return _platform;
 }

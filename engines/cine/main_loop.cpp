@@ -179,6 +179,20 @@ int getKeyData() {
 	return k;
 }
 
+/** Removes elements from seqList that have their member variable var4 set to value -1. */
+void purgeSeqList() {
+	Common::List<SeqListElement>::iterator it = seqList.begin();
+	while (it != seqList.end()) {
+		if (it->var4 == -1) {
+			// Erase the element and jump to the next element
+			it = seqList.erase(it);
+		} else {
+			// Let the element be and jump to the next element
+			it++;
+		}
+	}
+}
+
 void CineEngine::mainLoop(int bootScriptIdx) {
 	bool playerAction;
 	uint16 quitFlag;
@@ -195,7 +209,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		errorVar = 0;
 
-		addScriptToList0(bootScriptIdx);
+		addScriptToGlobalScripts(bootScriptIdx);	
 
 		menuVar = 0;
 
@@ -243,12 +257,17 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			}
 		}
 
-		processSeqList();
-		executeList1();
-		executeList0();
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			processSeqList();
+		}
+		executeObjectScripts();
+		executeGlobalScripts();
 
-		purgeList1();
-		purgeList0();
+		purgeObjectScripts();
+		purgeGlobalScripts();
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			purgeSeqList();
+		}
 
 		if (playerCommand == -1) {
 			setMouseCursor(MOUSE_CURSOR_NORMAL);

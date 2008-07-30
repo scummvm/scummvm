@@ -393,11 +393,11 @@ static const byte bmp_hdr[] = {
 };
 
 void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32 *palette) {
-	Common::File out;
+	Common::DumpFile out;
 	byte my_hdr[sizeof(bmp_hdr)];
 	int i;
 
-	out.open(filename, Common::File::kFileWriteMode);
+	out.open(filename);
 	if (!out.isOpen())
 		return;
 

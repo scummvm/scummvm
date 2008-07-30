@@ -48,6 +48,9 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName,
 		uint32 screenshotSize, int32 indexOffset, int32 screenshotOffset) :
 	SaveLoad(vm, targetName) {
 
+	_notes = new PlainSave(_vm->getEndianness());
+	_save = new StagedSave(_vm->getEndianness());
+
 	_screenshotSize = screenshotSize;
 	_indexOffset = indexOffset;
 	_screenshotOffset = screenshotOffset;
@@ -71,6 +74,9 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName,
 }
 
 SaveLoad_v3::~SaveLoad_v3() {
+	delete _notes;
+	delete _save;
+
 	delete[] _saveFiles[0].destName;
 	delete[] _saveFiles[3].destName;
 }
@@ -243,7 +249,7 @@ int32 SaveLoad_v3::getSizeNotes(SaveFile &saveFile) {
 int32 SaveLoad_v3::getSizeScreenshot(SaveFile &saveFile) {
 	if (!_useScreenshots) {
 		_useScreenshots = true;
-		_save.addStage(_screenshotSize, false);
+		_save->addStage(_screenshotSize, false);
 	}
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
@@ -312,7 +318,7 @@ bool SaveLoad_v3::loadGame(SaveFile &saveFile,
 			return false;
 		}
 
-		if (!_save.load(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
+		if (!_save->load(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
 			return false;
 	}
 
@@ -353,7 +359,7 @@ bool SaveLoad_v3::loadNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Loading the notes");
 
-	return _notes.load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
+	return _notes->load(dataVar, size, offset, saveFile.destName, _vm->_inter->_variables);
 }
 
 bool SaveLoad_v3::loadScreenshot(SaveFile &saveFile,
@@ -363,7 +369,7 @@ bool SaveLoad_v3::loadScreenshot(SaveFile &saveFile,
 
 	if (!_useScreenshots) {
 		_useScreenshots = true;
-		_save.addStage(_screenshotSize, false);
+		_save->addStage(_screenshotSize, false);
 	}
 
 	if (offset == _indexOffset) {
@@ -395,7 +401,7 @@ bool SaveLoad_v3::loadScreenshot(SaveFile &saveFile,
 
 		byte *buffer = new byte[_screenshotSize];
 
-		if (!_save.load(0, _screenshotSize, _varSize + 540, saveFile.destName, buffer, 0)) {
+		if (!_save->load(0, _screenshotSize, _varSize + 540, saveFile.destName, buffer, 0)) {
 			delete[] buffer;
 			return false;
 		}
@@ -483,13 +489,13 @@ bool SaveLoad_v3::saveGame(SaveFile &saveFile,
 
 		_hasIndex = false;
 
-		if(!_save.save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
+		if(!_save->save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
 			return false;
 
-		if(!_save.save(0, 40, 500, saveFile.destName, _indexBuffer + (saveFile.slot * 40), 0))
+		if(!_save->save(0, 40, 500, saveFile.destName, _indexBuffer + (saveFile.slot * 40), 0))
 			return false;
 
-		if (!_save.save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
+		if (!_save->save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))
 			return false;
 
 	}
@@ -523,7 +529,7 @@ bool SaveLoad_v3::saveNotes(SaveFile &saveFile,
 
 	debugC(2, kDebugSaveLoad, "Saving the notes");
 
-	return _notes.save(dataVar, size - 160, offset, saveFile.destName, _vm->_inter->_variables);
+	return _notes->save(dataVar, size - 160, offset, saveFile.destName, _vm->_inter->_variables);
 	return false;
 }
 
@@ -534,7 +540,7 @@ bool SaveLoad_v3::saveScreenshot(SaveFile &saveFile,
 
 	if (!_useScreenshots) {
 		_useScreenshots = true;
-		_save.addStage(_screenshotSize, false);
+		_save->addStage(_screenshotSize, false);
 	}
 
 	if (offset >= _screenshotOffset) {
@@ -571,7 +577,7 @@ bool SaveLoad_v3::saveScreenshot(SaveFile &saveFile,
 			return false;
 		}
 
-		if (!_save.save(0, _screenshotSize, _varSize + 540, saveFile.destName, buffer, 0)) {
+		if (!_save->save(0, _screenshotSize, _varSize + 540, saveFile.destName, buffer, 0)) {
 			delete[] buffer;
 			return false;
 		}
@@ -588,9 +594,9 @@ void SaveLoad_v3::assertInited() {
 
 	_varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 
-	_save.addStage(500);
-	_save.addStage(40, false);
-	_save.addStage(_varSize);
+	_save->addStage(500);
+	_save->addStage(40, false);
+	_save->addStage(_varSize);
 }
 
 void SaveLoad_v3::buildScreenshotIndex(byte *buffer, char *name, int n) {

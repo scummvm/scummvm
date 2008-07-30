@@ -38,7 +38,13 @@
 
 namespace Cine {
 
-ScriptVars globalVars(NUM_MAX_VAR);
+/**
+ * Global variables.
+ * 255 of these are saved, but there's one more that's used for bypassing the copy protection.
+ * In CineEngine::mainLoop(int bootScriptIdx) there's this code: globalVars[VAR_BYPASS_PROTECTION] = 0;
+ * And as VAR_BYPASS_PROTECTION is 255 that's why we're allocating one more than we otherwise would.
+ */
+ScriptVars globalVars(NUM_MAX_VAR + 1);
 
 uint16 compareVars(int16 a, int16 b);
 
@@ -135,7 +141,7 @@ const Opcode FWScript::_opcodeTable[] = {
 	{ &FWScript::o1_transformPaletteRange, "bbwww" },
 	/* 48 */
 	{ 0, 0 },
-	{ &FWScript::o1_setDefaultMenuColor2, "b" },
+	{ &FWScript::o1_setDefaultMenuBgColor, "b" },
 	{ &FWScript::o1_palRotate, "bbb" },
 	{ 0, 0 },
 	/* 4C */
@@ -174,7 +180,7 @@ const Opcode FWScript::_opcodeTable[] = {
 	{ &FWScript::o1_setZoneDataEntry, "bw" },
 	{ &FWScript::o1_getZoneDataEntry, "bb" },
 	/* 68 */
-	{ &FWScript::o1_setDefaultMenuColor, "b" },
+	{ &FWScript::o1_setPlayerCommandPosY, "b" },
 	{ &FWScript::o1_allowPlayerInput, "" },
 	{ &FWScript::o1_disallowPlayerInput, "" },
 	{ &FWScript::o1_changeDataDisk, "b" },
@@ -230,7 +236,7 @@ ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
  * \param fHandle Savefile open for reading
  * \param len Size of array
  */
-ScriptVars::ScriptVars(Common::InSaveFile &fHandle, unsigned int len)
+ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
 	: _size(len), _vars(new int16[len]) {
 
 	assert(_vars);
@@ -306,7 +312,7 @@ void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) const {
 /*! \brief Restore array from savefile
  * \param fHandle Savefile open for reading
  */
-void ScriptVars::load(Common::InSaveFile &fHandle) {
+void ScriptVars::load(Common::SeekableReadStream &fHandle) {
 	load(fHandle, _size);
 }
 
@@ -314,7 +320,7 @@ void ScriptVars::load(Common::InSaveFile &fHandle) {
  * \param fHandle Savefile open for reading
  * \param len Length of data to be read
  */
-void ScriptVars::load(Common::InSaveFile &fHandle, unsigned int len) {
+void ScriptVars::load(Common::SeekableReadStream &fHandle, unsigned int len) {
 	debug(6, "assert(%d <= %d)", len, _size);
 	assert(len <= _size);
 	for (unsigned int i = 0; i < len; i++) {
@@ -1273,7 +1279,7 @@ int FWScript::o1_startGlobalScript() {
 	assert(param < NUM_MAX_SCRIPT);
 
 	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _line, param);
-	addScriptToList0(param);
+	addScriptToGlobalScripts(param);
 	return 0;
 }
 
@@ -1399,10 +1405,11 @@ int FWScript::o1_transformPaletteRange() {
 	return 0;
 }
 
-int FWScript::o1_setDefaultMenuColor2() {
+/** Set the default background color used for message boxes. */
+int FWScript::o1_setDefaultMenuBgColor() {
 	byte param = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor2(%d)", _line, param);
+	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuBgColor(%d)", _line, param);
 
 	renderer->_messageBg = param;
 	return 0;
@@ -1568,10 +1575,11 @@ int FWScript::o1_getZoneDataEntry() {
 	return 0;
 }
 
-int FWScript::o1_setDefaultMenuColor() {
+/** Set the player command string's vertical position on-screen. */
+int FWScript::o1_setPlayerCommandPosY() {
 	byte param = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: setDefaultMenuColor(%d)", _line, param);
+	debugC(5, kCineDebugScript, "Line: %d: setPlayerCommandPosY(%d)", _line, param);
 
 	renderer->_cmdY = param;
 	return 0;
@@ -1746,7 +1754,7 @@ int FWScript::o1_unloadMask5() {
 
 //-----------------------------------------------------------------------
 
-void addScriptToList0(uint16 idx) {
+void addScriptToGlobalScripts(uint16 idx) {
 	ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx));
 	assert(tmp);
 	globalScripts.push_back(tmp);
@@ -1820,7 +1828,7 @@ uint16 compareVars(int16 a, int16 b) {
 	return flag;
 }
 
-void executeList1(void) {
+void executeObjectScripts(void) {
 	ScriptList::iterator it = objectScripts.begin();
 	for (; it != objectScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
@@ -1831,7 +1839,7 @@ void executeList1(void) {
 	}
 }
 
-void executeList0(void) {
+void executeGlobalScripts(void) {
 	ScriptList::iterator it = globalScripts.begin();
 	for (; it != globalScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
@@ -1842,12 +1850,16 @@ void executeList0(void) {
 	}
 }
 
-/*! \todo objectScripts.clear()?
+/*! \todo Remove object scripts with script index of -1 (Not script position, but script index!).
+ *        This would seem to be valid for both Future Wars and Operation Stealth.
  */
-void purgeList1(void) {
+void purgeObjectScripts(void) {
 }
 
-void purgeList0(void) {
+/*! \todo Remove global scripts with script index of -1 (Not script position, but script index!).
+ *        This would seem to be valid for both Future Wars and Operation Stealth.
+ */
+void purgeGlobalScripts(void) {
 }
 
 ////////////////////////////////////
@@ -2380,7 +2392,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param = *(localScriptPtr + position);
 				position++;
 
-				sprintf(lineBuffer, "setDefaultMenuColor2(%d)\n", param);
+				sprintf(lineBuffer, "setDefaultMenuBgColor(%d)\n", param);
 
 				break;
 			}
@@ -2530,7 +2542,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param = *(localScriptPtr + position);
 				position++;
 
-				sprintf(lineBuffer, "setDefaultMenuBoxColor(%d)\n", param);
+				sprintf(lineBuffer, "setPlayerCommandPosY(%d)\n", param);
 
 				break;
 			}
@@ -2945,10 +2957,10 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 }
 
 void dumpScript(char *dumpName) {
-    Common::File fHandle;
+    Common::DumpFile fHandle;
 	uint16 i;
 
-	fHandle.open(dumpName, Common::File::kFileWriteMode);
+	fHandle.open(dumpName);
 
 	for (i = 0; i < decompileBufferPosition; i++) {
 		fHandle.writeString(Common::String(decompileBuffer[i]));

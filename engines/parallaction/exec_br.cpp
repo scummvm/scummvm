@@ -61,8 +61,6 @@ namespace Parallaction {
 #define INST_STOP		30
 #define INST_ENDSCRIPT	31
 
-
-
 #define SetOpcodeTable(x) table = &x;
 
 typedef Common::Functor0Mem<void, CommandExec_br> OpcodeV1;
@@ -72,6 +70,8 @@ typedef Common::Functor0Mem<void, CommandExec_br> OpcodeV1;
 typedef Common::Functor0Mem<void, ProgramExec_br> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_br::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_br::instOp_##op()
+
+extern const char *_instructionNamesRes_br[];
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
@@ -122,11 +122,19 @@ DECLARE_COMMAND_OPCODE(location) {
 
 DECLARE_COMMAND_OPCODE(open) {
 	warning("Parallaction_br::cmdOp_open command not yet implemented");
+	_ctxt.cmd->u._zone->_flags &= ~kFlagsClosed;
+	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
+		_vm->updateDoor(_ctxt.cmd->u._zone);
+	}
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
 	warning("Parallaction_br::cmdOp_close not yet implemented");
+	_ctxt.cmd->u._zone->_flags |= kFlagsClosed;
+	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
+		_vm->updateDoor(_ctxt.cmd->u._zone);
+	}
 }
 
 
@@ -165,12 +173,13 @@ DECLARE_COMMAND_OPCODE(call) {
 
 
 DECLARE_COMMAND_OPCODE(drop) {
-	warning("Parallaction_br::cmdOp_drop not yet implemented");
+	_vm->dropItem(_ctxt.cmd->u._object);
 }
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	warning("Parallaction_br::cmdOp_move not yet implemented");
+	_vm->_char.scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y);
+	_ctxt.suspend = true;
 }
 
 DECLARE_COMMAND_OPCODE(start) {
@@ -194,17 +203,17 @@ DECLARE_COMMAND_OPCODE(followme) {
 
 
 DECLARE_COMMAND_OPCODE(onmouse) {
-	_vm->_input->showCursor(true);
+	_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
 
 
 DECLARE_COMMAND_OPCODE(offmouse) {
-	_vm->_input->showCursor(false);
+	_vm->_input->setMouseState(MOUSE_DISABLED);
 }
 
 
 DECLARE_COMMAND_OPCODE(add) {
-	warning("Parallaction_br::cmdOp_add not yet implemented");
+	_vm->addInventoryItem(_ctxt.cmd->u._object);
 }
 
 
@@ -365,13 +374,6 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 }
 
 
-DECLARE_INSTRUCTION_OPCODE(loop) {
-	InstructionPtr inst = *_ctxt.inst;
-
-	_ctxt.program->_loopCounter = inst->_opB.getRValue();
-	_ctxt.program->_loopStart = _ctxt.inst;
-}
-
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = *_ctxt.inst;
@@ -495,16 +497,6 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 	warning("Parallaction_br::instOp_stop not yet implemented");
 }
 
-DECLARE_INSTRUCTION_OPCODE(endscript) {
-	if ((_ctxt.anim->_flags & kFlagsLooping) == 0) {
-		_ctxt.anim->_flags &= ~kFlagsActing;
-		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
-		_ctxt.program->_status = kProgramDone;
-	}
-	_ctxt.program->_ip = _ctxt.program->_instructions.begin();
-
-	_ctxt.suspend = true;
-}
 
 void CommandExec_br::init() {
 	Common::Array<const Opcode*> *table = 0;
@@ -576,7 +568,7 @@ void ProgramExec_br::init() {
 	INSTRUCTION_OPCODE(set);		// f
 	INSTRUCTION_OPCODE(loop);
 	INSTRUCTION_OPCODE(endloop);
-	INSTRUCTION_OPCODE(null);		// show
+	INSTRUCTION_OPCODE(show);		// show
 	INSTRUCTION_OPCODE(inc);
 	INSTRUCTION_OPCODE(inc);		// dec
 	INSTRUCTION_OPCODE(set);
@@ -602,6 +594,7 @@ void ProgramExec_br::init() {
 }
 
 ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : ProgramExec_ns(vm), _vm(vm) {
+	_instructionNames = _instructionNamesRes_br;
 }
 
 ProgramExec_br::~ProgramExec_br() {
