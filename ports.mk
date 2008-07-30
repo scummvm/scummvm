@@ -139,7 +139,7 @@ osxsnap: bundle credits
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ScummVM-snapshot \
-					-volname "ScummVM snapshot" \
+					-volname "ScummVM 0.12.0" \
 					ScummVM-snapshot.dmg
 	rm -rf ScummVM-snapshot
 
