@@ -51,7 +51,7 @@ static bool g_lua_initialized = false;
 Driver *g_driver = NULL;
 
 static bool parseBoolStr(const char *val) {
-	if (val == NULL || val[0] == 0)
+	if (!val || val[0] == 0)
 		return false;
 
 	switch (val[0]) {

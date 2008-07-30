@@ -228,7 +228,7 @@ void DriverGL::drawShadowPlanes() {
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS, 1, (GLuint) ~0);
+	glStencilFunc(GL_ALWAYS, 1, (GLuint)~0);
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE);
@@ -243,7 +243,7 @@ void DriverGL::drawShadowPlanes() {
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-	glStencilFunc(GL_EQUAL, 1, (GLuint) ~0);
+	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
@@ -276,7 +276,7 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
 	for (int i = 0; i < face->_numVertices; i++) {
 		glNormal3fv(vertNormals + 3 * face->_vertices[i]);
 
-		if (face->_texVertices != NULL)
+		if (face->_texVertices)
 			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
 
 		glVertex3fv(vertices + 3 * face->_vertices[i]);
@@ -303,7 +303,7 @@ void DriverGL::translateViewpoint() {
 void DriverGL::drawHierachyNode(const Model::HierNode *node) {
 	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
-		if (node->_mesh != NULL && node->_meshVisible) {
+		if (node->_mesh && node->_meshVisible) {
 			glPushMatrix();
 			glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
 			node->_mesh->draw();
@@ -311,14 +311,14 @@ void DriverGL::drawHierachyNode(const Model::HierNode *node) {
 			glPopMatrix();
 		}
 
-		if (node->_child != NULL) {
+		if (node->_child) {
 			node->_child->draw();
 			glMatrixMode(GL_MODELVIEW);
 		}
 	}
 	translateViewpoint();
 
-	if (node->_sibling != NULL)
+	if (node->_sibling)
 		node->_sibling->draw();
 }
 
@@ -739,7 +739,6 @@ void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgCo
 	glRasterPos2i(x, y);
 
 	glListBase(_emergFont);
-	//glCallLists(strlen(strrchr(text, '/')) - 1, GL_UNSIGNED_BYTE, strrchr(text, '/') + 1);
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *) text);
 
 	glEnable(GL_LIGHTING);

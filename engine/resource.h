@@ -64,8 +64,8 @@ template <class T>
 class ResPtr {
 public:
 	ResPtr() { _ptr = NULL; }
-	ResPtr(const ResPtr &p) { _ptr = p._ptr; if (_ptr != NULL) _ptr->ref(); }
-	ResPtr(T* ptr) { _ptr = ptr; if (_ptr != NULL) _ptr->ref(); }
+	ResPtr(const ResPtr &p) { _ptr = p._ptr; if (_ptr) _ptr->ref(); }
+	ResPtr(T* ptr) { _ptr = ptr; if (_ptr) _ptr->ref(); }
 	operator T*() { return _ptr; }
 	operator const T*() const { return _ptr; }
 	T& operator *() { return *_ptr; }
@@ -74,19 +74,19 @@ public:
 	const T* operator ->() const { return _ptr; }
 	ResPtr& operator =(T* ptr) {
 		if (_ptr == ptr) return *this;
-		if (_ptr != NULL) _ptr->deref();
+		if (_ptr) _ptr->deref();
 		_ptr = ptr;
-		if (_ptr != NULL) _ptr->ref();
+		if (_ptr) _ptr->ref();
 		return *this;
 	}
 	ResPtr& operator =(const ResPtr& p) {
 	if (this == &p || _ptr == p._ptr) return *this;
-		if (_ptr != NULL) _ptr->deref();
+		if (_ptr) _ptr->deref();
 		_ptr = p._ptr;
-		if (_ptr != NULL) _ptr->ref();
+		if (_ptr) _ptr->ref();
 		return *this;
 	}
-	~ResPtr() { if (_ptr != NULL) _ptr->deref(); }
+	~ResPtr() { if (_ptr) _ptr->deref(); }
 
 private:
 	T* _ptr;
@@ -118,8 +118,6 @@ private:
 
 	typedef std::list<Lab *> LabList;
 	LabList _labs;
-
-//	const Lab *findFile(const char *filename) const;
 
 	typedef std::map<std::string, Resource *> CacheType;
 	CacheType _cache;

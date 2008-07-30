@@ -629,8 +629,7 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 		} else if (pixel == 0x80) {
 			*texDataPtr = 0;
 		} else if (pixel == 0xFF) {
-			WRITE_LE_UINT16(texDataPtr, ((r & 0xF8) << 8) |
-				((g & 0xFC) << 3) | (b >> 3));
+			WRITE_LE_UINT16(texDataPtr, ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3));
 		}
 	}
 

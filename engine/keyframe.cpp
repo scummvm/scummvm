@@ -150,7 +150,7 @@ void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, in
 		frame = _numFrames;
 
 	for (int i = 0; i < _numJoints; i++) {
-		if (_nodes[i] != NULL)
+		if (_nodes[i])
 			_nodes[i]->animate(nodes[i], frame, ((_type & nodes[i]._type) != 0 ? priority2 : priority1));
 	}
 }
@@ -253,5 +253,5 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int
 		node._animRoll += roll;
 	}
 
-	//  node
+	// node
 }

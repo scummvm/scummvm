@@ -67,15 +67,15 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	char *line, *tmpData;
 	int i;
 	
-	tmpData = new char[len+1];
+	tmpData = new char[len + 1];
 	std::memcpy(tmpData, data, len);
 	tmpData[len] = '\0';
 	// Find out how many lines of text there are
 	_numLines = _lineIndex = 0;
 	line = (char *) tmpData;
-	while (line != NULL) {
+	while (line) {
 		line = std::strchr(line, '\n');
-		if (line != NULL) {
+		if (line) {
 			_numLines++;
 			line++;
 		}
@@ -83,7 +83,7 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	// Allocate an array of the lines
 	_lines = new TextLines[_numLines];
 	line = (char *) tmpData;
-	for (i=0;i<_numLines;i++) {
+	for (i = 0; i < _numLines;i++) {
 		char *lastLine = line;
 		
 		line = std::strchr(lastLine, '\n');
@@ -98,7 +98,7 @@ TextSplitter::TextSplitter(const char *data, int len) {
 bool TextSplitter::checkString(const char *needle) {
 	// checkString also needs to check for extremely optional
 	// components like "object_art" which can be missing entirely
-	if (currentLine() == NULL)
+	if (!currentLine())
 		return false;
 	else if (std::strstr(currentLine(), needle))
 		return true;
@@ -107,7 +107,7 @@ bool TextSplitter::checkString(const char *needle) {
 }
 
 void TextSplitter::expectString(const char *expected) {
-	if (_currLine == NULL)
+	if (!_currLine)
 		error("Expected `%s', got EOF\n", expected);
 	if (std::strcmp(currentLine(), expected) != 0)
 		error("Expected `%s', got `%s'\n", expected, currentLine());
@@ -115,7 +115,7 @@ void TextSplitter::expectString(const char *expected) {
 }
 
 void TextSplitter::scanString(const char *fmt, int field_count, ...) {
-	if (_currLine == NULL)
+	if (!_currLine)
 		error("Expected line of format `%s', got EOF\n", fmt);
 
 	std::va_list va;
@@ -141,7 +141,7 @@ void TextSplitter::processLine() {
 
 	// Cut off comments
 	char *comment_start = std::strchr(_currLine, '#');
-	if (comment_start != NULL)
+	if (comment_start)
 		*comment_start = '\0';
 
 	// Cut off trailing whitespace (including '\r')

@@ -388,8 +388,7 @@ bool DriverSDL::pollEvent(Event &event) {
 			event.kbd.flags = SDLModToDriverKeyFlags(SDL_GetModState());
 
 			// Alt-Return and Alt-Enter toggle full screen mode
-			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
-			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
+			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
 				toggleFullscreenMode();
 				break;
 			}

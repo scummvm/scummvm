@@ -47,10 +47,10 @@ Localizer::Localizer() {
 		std::string fname = (datadir != NULL ? datadir : ".");
 		fname += namesToTry[i];
 		f = std::fopen(fname.c_str(), "rb");
-		if (f != NULL)
+		if (f)
 			break;
 	}
-	if (f == NULL) {
+	if (!f) {
 		error("Localizer::Localizer: Unable to find localization information (grim.tab)!");
 		return;
 	}
@@ -77,14 +77,14 @@ Localizer::Localizer() {
 	for (char *line = data + 4; line != NULL && *line != '\0'; line = nextline) {
 		nextline = std::strchr(line, '\n');
 
-		if (nextline != NULL) {
+		if (nextline) {
 			if (nextline[-1] == '\r')
 				nextline[-1] = '\0';
 			nextline++;
 		}
 		char *tab = std::strchr(line, '\t');
 
-		if (tab == NULL)
+		if (!tab)
 			continue;
 
 		std::string key(line, tab - line);
@@ -102,7 +102,7 @@ std::string Localizer::localize(const char *str) const {
 		return str;
 
 	const char *slash2 = std::strchr(str + 1, '/');
-	if (slash2 == NULL)
+	if (!slash2)
 		return str;
 
 	std::string key(str + 1, slash2 - str - 1);

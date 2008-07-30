@@ -67,10 +67,10 @@ ResourceLoader::ResourceLoader() {
 	DIR *d = opendir(dir_str.c_str());
 #endif
 
-	if (directory == NULL)
+	if (!directory)
 		error("Cannot find DataDir registry entry - check configuration file");
 
-	if (d == NULL)
+	if (!d)
 		error("Cannot open DataDir (%s)- check configuration file", dir_str.c_str());
 
 #ifdef _WIN32
@@ -95,7 +95,7 @@ ResourceLoader::ResourceLoader() {
 	FindClose(d);
 #else
 	dirent *de;
-	while ((de = readdir(d)) != NULL) {
+	while ((de = readdir(d))) {
 		int namelen = strlen(de->d_name);
 		if (namelen > 4 && ((strcasecmp(de->d_name + namelen - 4, ".lab") == 0) || (strcasecmp(de->d_name + namelen - 4, ".mus") == 0))) {
 			std::string fullname = dir_str + de->d_name;
@@ -141,7 +141,7 @@ bool ResourceLoader::fileExists(const char *filename) const {
 
 Block *ResourceLoader::getFileBlock(const char *filename) const {
 	const Lab *l = findFile(filename);
-	if (l == NULL)
+	if (!l)
 		return NULL;
 	else
 		return l->getFileBlock(filename);
@@ -150,7 +150,7 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 Common::File *ResourceLoader::openNewStream(const char *filename) const {
 	const Lab *l = findFile(filename);
 
-	if (l == NULL)
+	if (!l)
 		return NULL;
 	else
 		return l->openNewStream(filename);
@@ -173,7 +173,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
+	if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Could not find bitmap %s\n", filename);
 		return NULL;
@@ -195,7 +195,7 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL)
+	if (!b)
 		error("Could not find colormap %s\n", filename);
 	CMap *result = new CMap(filename, b->data(), b->len());
 	delete b;
@@ -207,7 +207,7 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 	std::string fname = filename;
 	makeLower(fname);
 	Block *b = getFileBlock(filename);
-	if (b == NULL)
+	if (!b)
 		error("Could not find costume %s\n", filename);
 	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
 	delete b;
@@ -223,7 +223,7 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL)
+	if (!b)
 		error("Could not find font file %s\n", filename);
 	Font *result = new Font(filename, b->data(), b->len());
 	delete b;
@@ -240,7 +240,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL)
+	if (!b)
 		error("Could not find keyframe file %s\n", filename);
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
@@ -259,7 +259,7 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL) {
+	if (!b) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Could not find lipsynch file %s\n", filename);
 		result = NULL;
@@ -288,7 +288,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL)
+	if (!b)
 		error("Could not find material %s\n", filename);
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
 	delete b;
@@ -305,7 +305,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	}
 
 	Block *b = getFileBlock(filename);
-	if (b == NULL)
+	if (!b)
 		error("Could not find model %s\n", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
 	delete b;
@@ -317,7 +317,7 @@ bool ResourceLoader::exportResource(const char *filename) {
 	FILE *myFile = fopen(filename, "w");
 	Block *b = getFileBlock(filename);
 	
-	if (b == NULL)
+	if (!b)
 		return false;
 	fwrite(b->data(), b->len(), 1, myFile);
 	fclose(myFile);

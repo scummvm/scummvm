@@ -174,8 +174,7 @@ Vector3d Sector::closestPoint(Vector3d point) const {
 		Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Vector3d delta = point - _vertices[i];
 		float scalar = dot(delta, edge) / dot(edge, edge);
-		if (scalar >= 0 && scalar <= 1 &&
-		    delta.x() * edge.y() > delta.y() * edge.x())
+		if (scalar >= 0 && scalar <= 1 && delta.x() * edge.y() > delta.y() * edge.x())
 			// That last test is just whether the z-component
 			// of delta cross edge is positive; we don't
 			// want to return opposite edges.
@@ -196,7 +195,7 @@ Vector3d Sector::closestPoint(Vector3d point) const {
 }
 
 void Sector::getExitInfo(Vector3d start, Vector3d dir,
-			 struct ExitInfo *result) {
+			struct ExitInfo *result) {
 	start = projectToPlane(start);
 	dir = projectToPuckVector(dir);
 
@@ -226,6 +225,5 @@ void Sector::getExitInfo(Vector3d start, Vector3d dir,
 	result->angleWithEdge = angle(dir, result->edgeDir);
 
 	Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
-	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) /
-				     dot(dir, edgeNormal)) * dir;
+	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / dot(dir, edgeNormal)) * dir;
 }

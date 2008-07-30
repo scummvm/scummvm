@@ -128,7 +128,7 @@ void Scene::Setup::load(TextSplitter &ts) {
 
 	ts.scanString(" background %256s", 1, buf);
 	_bkgndBm = g_resourceloader->loadBitmap(buf);
-	if (_bkgndBm == NULL) {
+	if (!_bkgndBm) {
 		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 			printf("Unable to load scene bitmap: %s\n", buf);
 	} else {
@@ -257,10 +257,10 @@ void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
 		}
 	}
 
-	if (sect != NULL)
+	if (sect)
 		*sect = resultSect;
 
-	if (closestPt != NULL)
+	if (closestPt)
 		*closestPt = resultPt;
 }
 

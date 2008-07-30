@@ -206,7 +206,7 @@ void Engine::handleDebugLoadResource() {
 	} else {
 		warning("Resource type not understood!");
 	}
-	if (resource == NULL)
+	if (!resource)
 		warning("Requested resouce (%s) not found!");
 }
 
@@ -287,7 +287,7 @@ void Engine::updateDisplayScene() {
 		}
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_NORMAL) {
-		if (_currScene == NULL)
+		if (!_currScene)
 			return;
 
 		// Update actor costumes & sets
@@ -483,7 +483,7 @@ void Engine::savegameRestore() {
 	printf("Engine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
 	char filename[200];
-	if (_savegameFileName == NULL) {
+	if (!_savegameFileName) {
 		strcpy(filename, "grim.sav");
 	} else {
 		strcpy(filename, _savegameFileName);
@@ -549,7 +549,7 @@ void Engine::savegameSave() {
 	printf("Engine::savegameSave() started.\n");
 	_savegameSaveRequest = false;
 	char filename[200];
-	if (_savegameFileName == NULL) {
+	if (!_savegameFileName) {
 		strcpy(filename, "grim.sav");
 	} else {
 		strcpy(filename, _savegameFileName);
@@ -632,7 +632,7 @@ Scene *Engine::findScene(const char *name) {
 void Engine::setSceneLock(const char *name, bool lockStatus) {
 	Scene *scene = findScene(name);
 	
-	if (scene == NULL) {
+	if (!scene) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Scene object '%s' not found in list!", name);
 		return;
@@ -646,18 +646,18 @@ void Engine::setScene(const char *name) {
 	Scene *lastScene = _currScene;
 	
 	// If the scene already exists then use the existing data
-	if (scene != NULL) {
+	if (scene) {
 		setScene(scene);
 		return;
 	}
 	Block *b = g_resourceloader->getFileBlock(name);
-	if (b == NULL)
+	if (!b)
 		warning("Could not find scene file %s\n", name);
 	_currScene = new Scene(name, b->data(), b->len());
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after creating the new one
-	if (lastScene != NULL && !lastScene->_locked) {
+	if (lastScene && !lastScene->_locked) {
 		removeScene(lastScene);
 		delete lastScene;
 	}
@@ -670,7 +670,7 @@ void Engine::setScene(Scene *scene) {
 	_currScene = scene;
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after setting the new one
-	if (lastScene != NULL && !lastScene->_locked) {
+	if (lastScene && !lastScene->_locked) {
 		removeScene(lastScene);
 		delete lastScene;
 	}

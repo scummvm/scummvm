@@ -41,7 +41,7 @@ public:
 		OBJSTATE_UNDERLAY = 1,
 		OBJSTATE_OVERLAY = 2,
 		OBJSTATE_STATE = 3
-// TODO: Find out what ObjectState 6 is supposed to be
+//		TODO: Find out what ObjectState 6 is supposed to be
 //		OBJSTATE_UNKNOWN = 6
 	};
 

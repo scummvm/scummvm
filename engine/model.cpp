@@ -36,7 +36,7 @@
 #include <cstring>
 
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
-	Resource(filename), _numMaterials(0), _numGeosets(0) {
+		Resource(filename), _numMaterials(0), _numGeosets(0) {
 
 	if (len >= 4 && std::memcmp(data, "LDOM", 4) == 0)
 		loadBinary(data, cmap);
@@ -274,7 +274,7 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 	for (int i = 0; i < _numMaterials; i++) {
 		char materialName[32];
 		int num;
-		
+
 		ts.scanString("%d: %32s", 2, &num, materialName);
 		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap);
 		strcpy(_materialNames[num], materialName);
@@ -459,7 +459,7 @@ void Model::HierNode::draw() const {
 
 void Model::HierNode::addChild(HierNode *child) {
 	HierNode **childPos = &_child;
-	while (*childPos != NULL)
+	while (*childPos)
 		childPos = &(*childPos)->_sibling;
 	*childPos = child;
 	child->_parent = this;
@@ -467,9 +467,9 @@ void Model::HierNode::addChild(HierNode *child) {
 
 void Model::HierNode::removeChild(HierNode *child) {
 	HierNode **childPos = &_child;
-	while (*childPos != NULL && *childPos != child)
+	while (*childPos && *childPos != child)
 		childPos = &(*childPos)->_sibling;
-	if (*childPos != NULL) {
+	if (*childPos) {
 		*childPos = child->_sibling;
 		child->_parent = NULL;
 	}
@@ -492,11 +492,11 @@ void Model::HierNode::update() {
 
 	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z());
 
-	if (_mesh != NULL ) {
+	if (_mesh) {
 		_mesh->_matrix = _pivotMatrix;
 	}
 
-	if (_child != NULL) {
+	if (_child) {
 		_child->setMatrix(_matrix);
 		_child->update();
 	}

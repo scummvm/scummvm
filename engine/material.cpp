@@ -41,7 +41,7 @@ Material::Material(const char *filename, const char *data, int len, const CMap &
 	_width = READ_LE_UINT32(data + 76 + _numImages * 40);
 	_height = READ_LE_UINT32(data + 80 + _numImages * 40);
 
-	if ((_width == 0) || (_height == 0)) {
+	if (_width == 0 || _height == 0) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("skip load texture: bad texture size (%dx%d) for texture %s\n", _width, _height, filename);
 		return;
@@ -53,13 +53,13 @@ Material::Material(const char *filename, const char *data, int len, const CMap &
 }
 
 void Material::select() const {
-	if ((_width == 0) || (_height == 0))
-	    return;
+	if (_width == 0 || _height == 0)
+		return;
 	g_driver->selectMaterial(this);
 }
 
 Material::~Material() {
-	if ((_width == 0) || (_height == 0))
-	    return;
+	if (_width == 0 || _height == 0)
+		return;
 	g_driver->destroyMaterial(this);
 }

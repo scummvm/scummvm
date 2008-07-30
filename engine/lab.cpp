@@ -126,7 +126,7 @@ Lab::FileMapType::const_iterator Lab::findFilename(const char *filename) const {
 }
 
 void Lab::close() {
-	if (_f != NULL)
+	if (_f)
 		std::fclose(_f);
 	_f = NULL;
 	_fileMap.clear();

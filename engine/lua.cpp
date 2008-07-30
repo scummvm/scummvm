@@ -67,8 +67,8 @@ extern FilesystemNode *g_fsdir;
 extern FSList *g_fslist;
 extern FSList::const_iterator g_findfile;
 
-#define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
-#define DEBUG_FUNCTION()       debugFunction("Function", __FUNCTION__)
+#define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
+#define DEBUG_FUNCTION()		debugFunction("Function", __FUNCTION__)
 
 static void debugFunction(const char *debugMessage, const char *funcName);
 static void stubWarning(const char *funcName);
@@ -201,7 +201,7 @@ static inline ObjectState::Position check_objstate_pos(int num) {
 }
 
 static inline bool getbool(int num) {
-	return ! lua_isnil(lua_getparam(num));
+	return !lua_isnil(lua_getparam(num));
 }
 
 static inline void pushbool(bool val) {
@@ -215,11 +215,11 @@ static Costume *get_costume(Actor *a, int param, const char *called_from) {
 	Costume *result;
 	if (lua_isnil(lua_getparam(param))) {
 		result = a->currentCostume();
-		if (result == NULL && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!result && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume [%s]\n", a->name(), called_from);
 	} else {
 		result = a->findCostume(luaL_check_string(param));
-		if (result == NULL && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!result && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume %s [%s]\n", a->name(), lua_getstring(lua_getparam(param)), called_from);
 	}
 	return result;
@@ -494,7 +494,7 @@ static void SetActorWalkChore() {
 			warning("SetActorWalkChore() could not find the requested costume, attempting to load...");
 		act->pushCostume(lua_getstring(lua_getparam(3)));
 		costume = get_costume(act, 3, "SetActorWalkChore");
-		if (costume == NULL) {
+		if (!costume) {
 			if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 				error("SetActorWalkChore() could not find the requested costume!");
 			return;
@@ -826,7 +826,7 @@ static void GetActorNodeLocation() {
 	act = check_actor(1);
 	node = check_int(2);
 	c = act->currentCostume();
-	if (c == NULL) {
+	if (!c) {
 		lua_pushnil();
 		lua_pushnil();
 		lua_pushnil();
@@ -835,7 +835,7 @@ static void GetActorNodeLocation() {
 		return;
 	}
 	allNodes = c->getModelNodes();
-	if (allNodes == NULL) {
+	if (!allNodes) {
 		lua_pushnil();
 		lua_pushnil();
 		lua_pushnil();
@@ -935,7 +935,7 @@ static void GetActorCostume() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	c = act->currentCostume();
-	if (c == NULL) {
+	if (!c) {
 		lua_pushnil();
 		if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 			printf("GetActorCostume() on '%s' when actor has no costume!\n", act->name());
@@ -985,9 +985,9 @@ static void CompleteActorChore() {
 	// CompleteActorChore appears to be an alias for PlayActorChore
 	// Except that we should jump to the last frame of the chore
 	//
-  // Example: When Manny puts the message tube back in his office
-  // the animation automatically puts the tube back into place
-  // and then calls this function to show the closed graphic
+	// Example: When Manny puts the message tube back in his office
+	// the animation automatically puts the tube back into place
+	// and then calls this function to show the closed graphic
 	//
 	// Note: This does not appear to function entirely as it should
 	// TODO: Make this operation work better
@@ -1246,7 +1246,7 @@ static void WalkActorVector() {
 	if (yaw >= 360.0f)
 		yaw -= 360.0f;
 	// set the new direction or walk forward
-  if (act->yaw() != yaw)
+	if (act->yaw() != yaw)
 		act->turnTo(0, yaw, 0);
 	else
 		act->walkForward();
@@ -1504,9 +1504,9 @@ std::string parseMsgText(const char *msg, char *msgId) {
 	std::string translation = g_localizer->localize(msg);
 	const char *secondSlash = NULL;
 
-	if ((msg[0] == '/') && (msgId)) {
+	if (msg[0] == '/' && msgId) {
 		secondSlash = std::strchr(msg + 1, '/');
-		if (secondSlash != NULL) {
+		if (secondSlash) {
 		 	strncpy(msgId, msg + 1, secondSlash - msg - 1);
 			msgId[secondSlash - msg - 1] = 0;
 		} else {
@@ -1692,7 +1692,7 @@ static void GetPointSector(void) {
 	} else {
 		result = NULL;
 	}
-	if (result == NULL) {
+	if (!result) {
 		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 			error("GetPointSector() passed an unhandled type or failed to find any matching sector!");
 		lua_pushnil();
@@ -1713,7 +1713,7 @@ static void GetActorSector(void) {
 	act = check_actor(1);
 	sectorType = check_int(2);
 	Sector *result = g_engine->currScene()->findPointSector(act->pos(), sectorType);
-	if (result != NULL) {
+	if (result) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
 		lua_pushnumber(result->type());
@@ -2121,15 +2121,11 @@ static void PlaySoundAt() {
 static void FileFindDispose() {
 	DEBUG_FUNCTION();
 
-	if (g_fslist) {
-		delete g_fslist;
-		g_fslist = NULL;
-	}
+	delete g_fslist;
+	g_fslist = NULL;
 
-	if (g_fsdir) {
-		delete g_fsdir;
-		g_fsdir = NULL;
-	}
+	delete g_fsdir;
+	g_fsdir = NULL;
 }
 
 static void luaFileFindNext() {
@@ -2234,8 +2230,7 @@ void GetControlState() {
 		pushbool(g_driver->getControlState(num));
 }
 
-static void killBitmapPrimitives(Bitmap *bitmap)
-{
+static void killBitmapPrimitives(Bitmap *bitmap) {
 	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
@@ -2365,7 +2360,7 @@ TextObject *TextObjectExists(char *name) {
  */
 static void KillTextObject() {
 	TextObject *textObjectParm, *delText;
-	
+
 	DEBUG_FUNCTION();
 	if (lua_isnil(lua_getparam(1))) {
 		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
@@ -2375,7 +2370,7 @@ static void KillTextObject() {
 
 	textObjectParm = check_textobject(1);
 
-	delText = TextObjectExists((char *) textObjectParm->name());        
+	delText = TextObjectExists((char *) textObjectParm->name());
 	if (delText != NULL)
 		g_engine->killTextObject(delText);
 }
@@ -2443,11 +2438,11 @@ static void MakeTextObject() {
 	std::string text = line;
 	tableObj = lua_getparam(2);
 	textObject->setDefaults(&textObjectDefaults);
-         
+
 	if (lua_istable(tableObj))
 		getTextObjectParams(textObject, tableObj);
-         
-	while (TextObjectExists((char *)text.c_str()) != NULL)
+
+	while (TextObjectExists((char *)text.c_str()))
 		text += TEXT_NULL;
 
 	//printf("Make: %s\n", (char *)text.c_str());
@@ -2455,7 +2450,7 @@ static void MakeTextObject() {
 	textObject->setText((char *)text.c_str());
 	textObject->createBitmap();
 	g_engine->registerTextObject(textObject);
-         
+
 	lua_pushusertag(textObject, MKID_BE('TEXT'));
 	lua_pushnumber(textObject->getBitmapWidth());
 	lua_pushnumber(textObject->getBitmapHeight());
@@ -2500,7 +2495,7 @@ static void BlastText() {
 	std::string text = line;
 	tableObj = lua_getparam(2);
 	textObject->setDefaults(&textObjectDefaults);
-         
+
 	if (lua_istable(tableObj))
 		getTextObjectParams(textObject, tableObj);
 
@@ -2523,15 +2518,15 @@ static void SetSpeechMode() {
 	DEBUG_FUNCTION();
 	mode = check_int(1);
 	if ((mode >= 1) && (mode <= 3))
- 		g_engine->setSpeechMode(mode);
+		g_engine->setSpeechMode(mode);
 }
 
 static void GetSpeechMode() {
 	int mode;
-	
+
 	DEBUG_FUNCTION();
 	mode = g_engine->getSpeechMode();
- 	lua_pushnumber(mode);
+	lua_pushnumber(mode);
 }
 
 static void StartFullscreenMovie() {
@@ -3000,7 +2995,7 @@ static void GetSaveGameData() {
 	lua_Object result;
 	const char *filename;
 	int dataSize;
-	
+
 	printf("GetSaveGameData() started.\n");
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
@@ -3071,7 +3066,7 @@ static void lua_remove() {
 	if (g_saveFileMan->removeSavefile(luaL_check_string(1)))
 		lua_pushuserdata(NULL);
 	else {
-	    lua_pushnil();
+		lua_pushnil();
 		lua_pushstring(g_saveFileMan->getErrorDesc().c_str());
 	}
 }
@@ -3088,7 +3083,7 @@ static PointerId restoreCallback(int32 /*tag*/, PointerId ptr, RestoreSint32 /*s
 
 static void LockFont() {
 	lua_Object param1;
-	
+
 	DEBUG_FUNCTION();
 	param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
@@ -3113,15 +3108,15 @@ static void LightMgrSetChange() {
 
 static void SetAmbientLight() {
 	int mode;
-	
+
 	DEBUG_FUNCTION();
 	mode = check_int(1);
 	if (mode == 0) {
-		if (g_engine->currScene() != NULL) {
+		if (g_engine->currScene()) {
 			g_engine->currScene()->setLightEnableState(true);
 		}
 	} else if (mode == 1) {
-		if (g_engine->currScene() != NULL) {
+		if (g_engine->currScene()) {
 			g_engine->currScene()->setLightEnableState(false);
 		}
 	} else {
@@ -3211,7 +3206,7 @@ static void LoadBundle() {
 static void debugFunction(const char *debugMessage, const char *funcName) {
 	bool stubFn = strcmp(debugMessage, "WARNING: Stub function") == 0;
 	FILE *output;
-	
+
 	if (!stubFn && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
 		return;
 	
@@ -3842,7 +3837,7 @@ void register_lua() {
 
 int bundle_dofile(const char *filename) {
 	Block *b = g_resourceloader->getFileBlock(filename);
-	if (b == NULL) {
+	if (!b) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
@@ -3902,7 +3897,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 		// If getTableValue is called against a bad value
 		// that it doesn't understand then an infinite loop
 		// will be set up repeating the same error.
-		if(lua_call("next") != 0) {
+		if (lua_call("next") != 0) {
 			error("getTableValue could not find the next key!\n");
 			return 0;
 		}
@@ -3922,7 +3917,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 		if (strmatch(key_text, name))
 			return lua_getresult(2);
 	}
-	
+
 	return 0;
 }
 

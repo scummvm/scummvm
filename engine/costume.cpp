@@ -157,7 +157,7 @@ public:
 	void init();
 	CMap *cmap() {
 		ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-		if (mc == NULL)
+		if (!mc)
 			return NULL;
 		return mc->cmap();
 	}
@@ -185,7 +185,7 @@ void BitmapComponent::setKey(int val) {
 	const char *bitmap = _filename.c_str();
 	ObjectState *state = g_engine->currScene()->findState(bitmap);
 
-	if (state != NULL) {
+	if (state) {
 		state->setNumber(val);
 		return;
 	}
@@ -219,16 +219,16 @@ ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const c
 	// the use for this parameter is currently unknown
 	// Example: At the "scrimshaw parlor" in Rubacava the object
 	// "manny_cafe.3do,1" is requested
-	if (comma != NULL) {
+	if (comma) {
 		_filename = std::string(filename, comma);
 		warning("Comma in model components not supported: %s", filename);
 	} else {
 		_filename = filename;
 	}
-	if (prevComponent != NULL) {
+	if (prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 		
-		if (mmc != NULL)
+		if (mmc)
 			_previousCmap = mmc->cmap();
 	}
 }
@@ -237,7 +237,7 @@ void ModelComponent::init() {
 	// Skip loading if it was initialized
 	// by the sharing MainModelComponent
 	// constructor before
-	if (_obj == NULL) {
+	if (!_obj) {
 		CMap *cmap = this->cmap();
 		
 		// Get the default colormap if we haven't found
@@ -252,7 +252,7 @@ void ModelComponent::init() {
 		_hier = _obj->copyHierarchy();
 		// Use parent availablity to decide whether to default the
 		// component to being visible
-		if (_parent == NULL || !_parent->visible())
+		if (!_parent || !_parent->visible())
 			setKey(1);
 		else
 			setKey(0);
@@ -260,10 +260,10 @@ void ModelComponent::init() {
 
 	// If we're the child of a mesh component, put our nodes in the
 	// parent object's tree.
-	if (_parent != NULL) {
+	if (_parent) {
 		MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
 		
-		if (mc != NULL)
+		if (mc)
 			mc->node()->addChild(_hier);
 		else if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Parent of model %s wasn't a mesh\n", _filename.c_str());
@@ -297,22 +297,22 @@ void ModelComponent::resetColormap() {
 	CMap *cmap;
 	
 	cmap = this->cmap();
-	if (_obj != NULL && cmap != NULL)
+	if (_obj && cmap)
 		_obj->reload(*cmap);
 }
 
 ModelComponent::~ModelComponent() {
-	if (_hier != NULL && _hier->_parent != NULL)
+	if (_hier && _hier->_parent)
 		_hier->_parent->removeChild(_hier);
 
 	delete[] _hier;
 }
 
 void translateObject(Model::HierNode *node, bool reset) {
-	if (node->_parent != NULL)
+	if (node->_parent)
 		translateObject(node->_parent, reset);
 
-	if(reset)
+	if (reset)
 		g_driver->translateViewpoint();
 	else
 		g_driver->translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
@@ -321,24 +321,24 @@ void translateObject(Model::HierNode *node, bool reset) {
 void ModelComponent::draw() {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
-	if (_parent != NULL && _parent->visible())
+	if (_parent && _parent->visible())
 			return;
 	// Need to translate object to be in accordance
 	// with the setup of the parent
-	if (_hier->_parent != NULL)
+	if (_hier->_parent)
 		translateObject(_hier->_parent, false);
 	_hier->draw();
 	// Need to un-translate when done
-	if (_hier->_parent != NULL)
+	if (_hier->_parent)
 		translateObject(_hier->_parent, true);
 }
 
 MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag) :
 		ModelComponent(parent, parentID, filename, prevComponent, tag), _hierShared(false) {
-	if (parentID == -2 && prevComponent != NULL) {
+	if (parentID == -2 && prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 		
-		if (mmc != NULL && mmc->_filename == filename) {
+		if (mmc && mmc->_filename == filename) {
 			_obj = mmc->_obj;
 			_hier = mmc->_hier;
 			_hierShared = true;
@@ -390,7 +390,7 @@ ColormapComponent::ColormapComponent(Costume::Component *parent, int parentID, c
 		Costume::Component(parent, parentID, tag) {
 	_cmap = g_resourceloader->loadColormap(filename);
 	
-	if (parent != NULL)
+	if (parent)
 		parent->setColormap(_cmap);
 	else
 		warning("No parent to apply colormap object on.");
@@ -420,7 +420,7 @@ private:
 KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
 	const char *comma = std::strchr(filename, ',');
-	if (comma != NULL) {
+	if (comma) {
 		std::string realName(filename, comma);
 		_keyf = g_resourceloader->loadKeyframe(realName.c_str());
 		std::sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
@@ -488,7 +488,7 @@ void KeyframeComponent::update() {
 
 void KeyframeComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc != NULL)
+	if (mc)
 		_hier = mc->hierarchy();
 	else {
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -506,7 +506,7 @@ MeshComponent::MeshComponent(Costume::Component *parent, int parentID, const cha
 
 void MeshComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc != NULL)
+	if (mc)
 		_node = mc->hierarchy() + _num;
 	else {
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -539,7 +539,7 @@ MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, c
 void MaterialComponent::init() {
 	CMap *cmap = this->cmap();
 	
-	if (cmap == NULL) {
+	if (!cmap) {
 		// Use the default colormap if we're still drawing a blank
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("MaterialComponent::init on %s\n", _filename.c_str());
@@ -597,7 +597,7 @@ private:
 SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag) {
 	const char *comma = std::strchr(filename, ',');
-	if (comma != NULL) {
+	if (comma) {
 		_soundName = std::string(filename, comma);
 	} else {
 		_soundName = filename;
@@ -629,7 +629,7 @@ void SoundComponent::setKey(int val) {
 
 void SoundComponent::reset() {
 	// A lot of the sound components this gets called against aren't actually running
-	if(g_imuse->getSoundStatus(_soundName.c_str()))
+	if (g_imuse->getSoundStatus(_soundName.c_str()))
 		g_imuse->stopSound(_soundName.c_str());
 }
 
@@ -668,7 +668,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 
 		// A Parent ID of "-1" indicates that the component should
 		// use the properties of the previous costume as a base
-		if (parentID == -1 && prevCost != NULL) {
+		if (parentID == -1 && prevCost) {
 			MainModelComponent *mmc;
 			
 			// However, only the first item can actually share the
@@ -679,7 +679,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 			prevComponent = prevCost->_components[0];
 			mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 			// Make sure that the component is valid 
-			if (mmc == NULL)
+			if (!mmc)
 				prevComponent = NULL;
 		}
 		// Actually load the appropriate component
@@ -687,14 +687,14 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 	}
 
 	for (int i = 0; i < _numComponents; i++) {
-		if (_components[i] != NULL)
+		if (_components[i])
 			_components[i]->setCostume(this);
 	}
 
 	delete[] tags;
 
 	for (int i = 0; i < _numComponents; i++)
-		if (_components[i] != NULL)
+		if (_components[i])
 			_components[i]->init();
 
 	ts.expectString("section chores");
@@ -723,7 +723,7 @@ Costume::~Costume() {
 	stopChores();
 	for (int i = _numComponents - 1; i >= 0; i--) {
 		// The "Sprite" component can be NULL
-		if (_components[i] != NULL)
+		if (_components[i])
 			delete _components[i];
 	}
 	delete[] _chores;
@@ -743,24 +743,24 @@ Costume::Component::Component(Component *parent, int parentID, tag32 tag) {
 void Costume::Component::setColormap(CMap *c) {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(this);
 	
-	if (c != NULL)
+	if (c)
 		_cmap = c;
-	if (mc != NULL && this->cmap() != NULL)
+	if (mc && this->cmap())
 		mc->resetColormap();
 }
 
 bool Costume::Component::visible() {
-	if (_visible && _parent != NULL)
+	if (_visible && _parent)
 		return _parent->visible();
 	return _visible;
 }
 
 CMap *Costume::Component::cmap() {
-	if (_cmap == NULL && _previousCmap != NULL)
+	if (!_cmap && _previousCmap)
 		return _previousCmap;
-	else if (_cmap == NULL && _parent != NULL)
+	else if (!_cmap && _parent)
 		return _parent->cmap();
-	else if (_cmap == NULL && _parent == NULL && _cost != NULL)
+	else if (!_cmap && !_parent && _cost)
 		return _cost->_cmap;
 	else
 		return _cmap;
@@ -770,9 +770,9 @@ void Costume::Component::setParent(Component *newParent) {
 	_parent = newParent;
 	_child = NULL;
 	_sibling = NULL;
-	if (_parent != NULL) {
+	if (_parent) {
 		Component **lastChildPos = &_parent->_child;
-		while (*lastChildPos != NULL)
+		while (*lastChildPos)
 			lastChildPos = &((*lastChildPos)->_sibling);
 		*lastChildPos = this;
 	}
@@ -821,7 +821,7 @@ void Costume::Chore::stop() {
 
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
-		if (comp != NULL)
+		if (comp)
 			comp->reset();
 	}
 }
@@ -829,7 +829,7 @@ void Costume::Chore::stop() {
 void Costume::Chore::setKeys(int startTime, int stopTime) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
-		if (comp == NULL)
+		if (!comp)
 			continue;
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
@@ -910,15 +910,15 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 
 Model::HierNode *Costume::getModelNodes()
 {
-		for(int i=0;i<_numComponents;i++) {
-			if (_components[i] == NULL)
-				continue;
-			// Needs to handle Main Models (pigeons) and normal Models
-			// (when Manny climbs the rope)
-			if (FROM_BE_32(_components[i]->tag()) == MKID_BE('MMDL'))
-				return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
-		}
-		return NULL;
+	for(int i = 0; i < _numComponents; i++) {
+		if (!_components[i])
+			continue;
+		// Needs to handle Main Models (pigeons) and normal Models
+		// (when Manny climbs the rope)
+		if (FROM_BE_32(_components[i]->tag()) == MKID_BE('MMDL'))
+			return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
+	}
+	return NULL;
 }
 
 void Costume::playChoreLooping(int num) {
@@ -942,7 +942,8 @@ void Costume::playChore(int num) {
 void Costume::setColormap(char *map) {
 	// Sometimes setColormap is called on a null costume,
 	// see where raoul is gone in hh.set
-	if (this == NULL || map == NULL)
+	// ??? this == null - aquadran
+	if (this == NULL || !map)
 		return;
 	_cmap = g_resourceloader->loadColormap(map);
 	for (int i = 0; i < _numComponents; i++)
@@ -979,13 +980,13 @@ int Costume::isChoring(bool excludeLooping) {
 
 void Costume::setupTextures() {
 	for (int i = 0; i < _numComponents; i++)
-		if (_components[i] != NULL)
+		if (_components[i])
 			_components[i]->setupTexture();
 }
 
 void Costume::draw() {
 	for (int i = 0; i < _numComponents; i++)
-		if (_components[i] != NULL)
+		if (_components[i])
 			_components[i]->draw();
 }
 
@@ -994,7 +995,7 @@ void Costume::update() {
 		_chores[i].update();
 
 	for (int i = 0; i < _numComponents; i++) {
-		if (_components[i] != NULL) {
+		if (_components[i]) {
 			_components[i]->setMatrix(_matrix);
 			_components[i]->update();
 		}
