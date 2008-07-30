@@ -108,6 +108,8 @@
 		289EEF2D0D8921F600521A80 /* zmath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED00D8921F600521A80 /* zmath.cpp */; };
 		289EEF2E0D8921F600521A80 /* ztriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED20D8921F600521A80 /* ztriangle.cpp */; };
 		289EEF2F0D8921F600521A80 /* walkplane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED40D8921F600521A80 /* walkplane.cpp */; };
+		28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF890E403EA3003543B4 /* config-file.cpp */; };
+		28F8DF8D0E403EB2003543B4 /* config-manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF8C0E403EB2003543B4 /* config-manager.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -330,6 +332,10 @@
 		289EEED30D8921F600521A80 /* ztriangle.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ztriangle.h; sourceTree = "<group>"; };
 		289EEED40D8921F600521A80 /* walkplane.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = walkplane.cpp; sourceTree = "<group>"; };
 		289EEED50D8921F600521A80 /* walkplane.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = walkplane.h; sourceTree = "<group>"; };
+		28F8DF890E403EA3003543B4 /* config-file.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "config-file.cpp"; sourceTree = "<group>"; };
+		28F8DF8B0E403EAB003543B4 /* config-file.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "config-file.h"; sourceTree = "<group>"; };
+		28F8DF8C0E403EB2003543B4 /* config-manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "config-manager.cpp"; sourceTree = "<group>"; };
+		28F8DF8E0E403EBC003543B4 /* config-manager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "config-manager.h"; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* residual */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = residual; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -436,6 +442,10 @@
 		289EEE140D8921E400521A80 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				28F8DF8E0E403EBC003543B4 /* config-manager.h */,
+				28F8DF8C0E403EB2003543B4 /* config-manager.cpp */,
+				28F8DF8B0E403EAB003543B4 /* config-file.h */,
+				28F8DF890E403EA3003543B4 /* config-file.cpp */,
 				281E11300E3FAA09004A8255 /* stream.cpp */,
 				281E11310E3FAA09004A8255 /* stream.h */,
 				281E112D0E3FA9F8004A8255 /* ptr.h */,
@@ -834,6 +844,8 @@
 				281E112C0E3FA9E8004A8255 /* fs.cpp in Sources */,
 				281E11320E3FAA09004A8255 /* stream.cpp in Sources */,
 				281E11450E3FAABB004A8255 /* posix-fs-factory.cpp in Sources */,
+				28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */,
+				28F8DF8D0E403EB2003543B4 /* config-manager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
