@@ -456,13 +456,16 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 	return matched;
 }
 
+/**
+ * Check for each ADFileBasedFallback record whether all files listed
+ * in it  are present. If multiple pass this test, we pick the one with
+ * the maximal number of matching files. In case of a tie, the entry
+ * coming first in the list is chosen.
+ */
 static ADGameDescList detectGameFilebased(const StringMap &allFiles, const Common::ADParams &params) {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
-	// Then we perform the actual filename matching. If there are
-	// several matches, only the one with the maximum numbers of
-	// files is considered.
 	int maxNumMatchedFiles = 0;
 	const ADGameDescription *matchedDesc = 0;
 
@@ -472,26 +475,24 @@ static ADGameDescList detectGameFilebased(const StringMap &allFiles, const Commo
 		bool fileMissing = false;
 
 		for (filenames = ptr->filenames; *filenames; ++filenames) {
-			if (fileMissing)
-				continue;
-
 			debug(3, "++ %s", *filenames);
 			if (!allFiles.contains(*filenames)) {
 				fileMissing = true;
-				continue;
+				break;
 			}
 
 			numMatchedFiles++;
 		}
 
-		if (!fileMissing)
+		if (!fileMissing) {
 			debug(4, "Matched: %s", agdesc->gameid);
-
-		if (!fileMissing && numMatchedFiles > maxNumMatchedFiles) {
-			matchedDesc = agdesc;
-			maxNumMatchedFiles = numMatchedFiles;
-
-			debug(4, "and overriden");
+	
+			if (numMatchedFiles > maxNumMatchedFiles) {
+				matchedDesc = agdesc;
+				maxNumMatchedFiles = numMatchedFiles;
+	
+				debug(4, "and overriden");
+			}
 		}
 	}
 
