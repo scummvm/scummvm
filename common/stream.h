@@ -356,9 +356,9 @@ protected:
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
 		: _parentStream(parentStream),
+		  _disposeParentStream(disposeParentStream),
 		  _pos(0),
-		  _end(end),
-		  _disposeParentStream(disposeParentStream) {
+		  _end(end) {
 		assert(parentStream);
 	}
 	~SubReadStream() {
@@ -558,9 +558,9 @@ public:
 	uint32 size() const { return _bufSize; }
 };
 
-/** 
+/**
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
- * that grows as it's written to. 
+ * that grows as it's written to.
  */
 class MemoryWriteStreamDynamic : public Common::WriteStream {
 private:
