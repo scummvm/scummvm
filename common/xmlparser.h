@@ -55,12 +55,14 @@ namespace Common {
 	parsing layout of the XML file.
 	
 	Declaring the XML layout is done with the help of the CUSTOM_XML_PARSER()
-	macro: this macro must appear once inside the Custom Parser Class declaration,
-	and takes a single parameter, the name of the Custom Parser Class.
+	macro: this macro must appear once inside the Custom Parser Class 
+	declaration, and takes a single parameter, the name of the Custom Parser
+	Class.
 	
-	The macro must be followed by the actual layout of the XML files to be parsed,
-	and closed with the PARSER_END() macro. The layout of XML files is defined by
-	the use of 3 helper macros: XML_KEY(), KEY_END() and XML_PROP().
+	The macro must be followed by the actual layout of the XML files to be 
+	parsed, and closed with the PARSER_END() macro. The layout of XML files
+	is defined by the use of 3 helper macros: XML_KEY(), KEY_END() and 
+	XML_PROP().
 	
 	Here's a sample of its usage:
 	
@@ -101,9 +103,9 @@ namespace Common {
 	
 	The XML_KEY() macro takes a single argument, the name of the expected key.
 	Inside the scope of each key, you may define properties for the given key
-	with the XML_PROP() macro, which takes as parameters the name of the property
-	and whether it's optional or required. You might also define the contained
-	children keys, using the XML_KEY() macro again.
+	with the XML_PROP() macro, which takes as parameters the name of the 
+	property and whether it's optional or required. You might also define the 
+	contained children keys, using the XML_KEY() macro again.
 	The scope of a XML key is closed with the KEY_END() macro.
 	
 	As an example, the following XML layout:
@@ -123,10 +125,55 @@ namespace Common {
 			<color name = "blue" rgb = "0, 0, 255" optional_param = "565" />
 		</palette>
 		
-	TODO: documentation on callbacks
+	Once a layout has been defined, everytime a XML node (that is, a key and
+	all its properties) has been parsed, a specific callback funcion is called,
+	which should take care of managing the parsed data for the node.
 	
-	Note that the XML parser doesn't take into account the actual order of the keys and
-	properties in the XML layout definition, only its layout and relationships.
+	Callback functions must be explicitly declared with the following syntax:
+	
+		bool parserCallback_KEYNAME(ParserNode *node);
+		
+	A callback function is needed for each key that can be parsed, since they
+	are called automatically; the function will receive a pointer to the XML
+	Node that has been parsed. This XML Node has the following properties:
+	
+		- It's assured to be expected in the layout of the XML file (i.e. 
+		  has the proper position and depth in the XML tree).
+		
+		- It's assured to contain all the required Properties that have 
+		  been declared in the XML layout.
+		
+		- It's assured to contain NO unexpected properties (i.e. properties
+		  which haven't been declared in the XML layout).
+		
+	Further validation of the Node's data may be performed inside the callback
+	function. Once the node has been validated and its data has been parsed/
+	managed, the callback function is expected to return true.
+	
+	If the data in the XML Node is corrupted or there was a problem when 
+	parsing it, the callback function is expected to return false or, 
+	preferably, to throw a parserError() using the following syntax:
+	
+		return parserError("There was a problem in key '%s'.", arg1, ...);
+	
+	Also, note that the XML parser doesn't take into account the actual order
+	of the keys and properties in the XML layout definition, only its layout 
+	and relationships.
+	
+	Lastly, when defining your own Custom XML Parser, further customization 
+	may be accomplished _optionally_ by overloading several virtual functions
+	of the XMLParser class.
+	
+	Check the API documentation of the following functions for more info:
+		
+		virtual bool closedKeyCallback(ParserNode *node);
+		virtual bool skipComments();
+		virtual bool isValidNameChar(char c);
+		virtual void cleanup();
+		
+	Check the sample implementation of the GUI::ThemeParser custom parser
+	for a working sample of a Custom XML Parser.
+		
 */
 	
 #define XML_KEY(keyName) {\
@@ -215,6 +262,8 @@ public:
 	virtual ~XMLParser() {
 		while (!_activeKey.empty())
 			delete _activeKey.pop();
+		
+		delete _XMLkeys;
 	}
 
 	/** Active state for the parser */
@@ -243,6 +292,12 @@ public:
 		
 		Common::List<XMLKeyProperty> properties;
 		ChildMap children;
+		
+		~XMLKeyLayout() {
+			properties.clear();
+			children.clear();
+//			delete custom;
+		}
 	} *_XMLkeys;
 
 	/** Struct representing a parsed node */
@@ -261,7 +316,7 @@ public:
 	 *
 	 * @param filename Name of the file to load.
 	 */
-	virtual bool loadFile(Common::String filename) {
+	bool loadFile(Common::String filename) {
 		Common::File *f = new Common::File;
 
 		if (!f->open(filename, Common::File::kFileReadMode))
@@ -283,7 +338,7 @@ public:
 	 *                   i.e. if it can be freed safely after it's
 	 *                   no longer needed by the parser.
 	 */
-	virtual bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
+	bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
 		_text.loadStream(new MemoryReadStream(buffer, size, disposable));
 		_fileName = "Memory Stream";
 		return true;
@@ -293,7 +348,7 @@ public:
 	 * The actual parsing function.
 	 * Parses the loaded data stream, returns true if successful.
 	 */
-	virtual bool parse();
+	bool parse();
 
 	/**
 	 * Returns the active node being parsed (the one on top of
@@ -378,10 +433,8 @@ protected:
 
 	/**
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
-	 * Overload this if you want to make your parser depend on newlines or
-	 * whatever.
 	 */
-	virtual bool skipSpaces() {
+	bool skipSpaces() {
 		if (!isspace(_text[_pos]))
 			return false;
 
@@ -492,6 +545,8 @@ protected:
 	 */
 	virtual void cleanup() {}
 
+
+private:
 	int _pos; /** Current position on the XML buffer. */
 	XMLStream _text; /** Buffer with the text being parsed */
 	Common::String _fileName;
