@@ -128,7 +128,7 @@ public:
 	virtual bool loadFile(Common::String filename) {
 		Common::File *f = new Common::File;
 
-		if (!f->open(filename, Common::File::kFileReadMode))
+		if (!f->open(filename))
 			return false;
 
 		_fileName = filename;
