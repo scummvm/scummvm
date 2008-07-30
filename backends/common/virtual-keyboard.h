@@ -35,10 +35,10 @@ class OSystem;
 #include "common/keyboard.h"
 #include "common/list.h"
 #include "common/str.h"
-#include "graphics/surface.h"
 
 namespace Common {
 
+class VirtualKeyboardGUI;
 class VirtualKeyboardParser;
 
 class VirtualKeyboard {
@@ -53,11 +53,29 @@ protected:
 	struct Event {
 		Common::String name;
 		EventType type;
-		Graphics::Surface *rollOverImage;
 		void *data;
+		
+		Event() : data(0) {}
+		~Event() {
+			if (data) {
+				switch (type) {
+				case kEventKey:
+					delete (KeyState*)data;
+					break;
+				case kEventModifier:
+					delete (byte*)data;
+					break;
+				case kEventSwitchMode:
+					delete (String*)data;
+					break;
+				case kEventClose:
+					break;
+				}
+			}
+		}
 	};
 	
-	typedef Common::HashMap<Common::String, Event, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> EventMap; 
+	typedef Common::HashMap<Common::String, Event*> EventMap; 
 
 	struct Mode {
 		Common::String		name;
@@ -91,9 +109,9 @@ protected:
 		uint strLen;
 	};
 
-	class Queue {
+	class KeyPressQueue {
 	public:
-		Queue();
+		KeyPressQueue();
 		void insertKey(KeyState key);
 		void deleteKey();
 		void moveLeft();
@@ -101,13 +119,13 @@ protected:
 		KeyState pop();
 		void clear();
 		bool empty();
-		String getString();
+		const String& getString();
 
 	private:
 		List<VirtualKeyPress> _keys;
-		List<VirtualKeyPress>::iterator _keyPos;
-
 		String _str;
+
+		List<VirtualKeyPress>::iterator _keyPos;
 		uint _strPos;
 	};
 
@@ -139,9 +157,7 @@ public:
 	/**
 	  * Returns true if the keyboard is currently being shown
 	  */
-	bool isDisplaying() { 
-		return _displaying;
-	}
+	bool isDisplaying();
 
 	/**
 	  * Returns true if the keyboard is loaded and ready to be shown
@@ -151,59 +167,39 @@ public:
 	}
 
 protected:	// TODO : clean up all this stuff
-	OSystem	*_system;
+
+	OSystem *_system;
+
+	friend class VirtualKeyboardGUI;
+	VirtualKeyboardGUI	*_kbdGUI;
 
 	byte _keyFlags;
-	Queue _keyQueue;
+	KeyPressQueue _keyQueue;
 	KeyState *_keyDown;
-
-
-	static const int SNAP_WIDTH = 10;
 	
 	friend class VirtualKeyboardParser;
 	VirtualKeyboardParser *_parser;
 
 	void reset();
-	void deleteEventData();
-	void screenChanged();
+	void deleteEvents();
 	bool checkModeResolutions();
-	void setDefaultPosition();
-	void move(int16 x, int16 y);
 	void switchMode(Mode *newMode);
 	void switchMode(const Common::String& newMode);
+	void handleMouseDown(int16 x, int16 y);
+	void handleMouseUp(int16 x, int16 y);
 	String findArea(int16 x, int16 y);
-	void processClick(const Common::String &area);
-	void runLoop();
-	void redraw();
-
-	Graphics::Surface _overlayBackup;
+	void processAreaClick(const Common::String &area);
 
 	bool _loaded;
-	bool _displaying;
-	bool _needRedraw;
-	bool _firstRun;
 
 	ModeMap _modes;
 	Mode *_initialMode;
 	Mode *_currentMode;
 
-	int _lastScreenChanged;
-	Rect _kbdBound;
-
 	HorizontalAlignment  _hAlignment;
 	VerticalAlignment    _vAlignment;
 
 	String _areaDown;
-	Point _dragPoint;
-	bool _drag;
-
-	static const int kCursorAnimateDelay = 250;
-	int		_cursorAnimateCounter;
-	int		_cursorAnimateTimer;
-	byte		_cursor[2048];
-	void setupCursor();
-	void removeCursor();
-	void animateCursor();
 
 };
 

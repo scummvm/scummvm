@@ -1093,6 +1093,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\backends\common\virtual-keyboard-gui.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\virtual-keyboard-gui.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\common\virtual-keyboard-parser.cpp"
 					>
 				</File>

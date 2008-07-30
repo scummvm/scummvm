@@ -226,45 +226,53 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 	if (_mode->events.contains(name))
 		return parserError("Event '%s' has already been defined", name.c_str());
 
-	VirtualKeyboard::Event evt;
-	evt.name = name;
+	VirtualKeyboard::Event *evt = new VirtualKeyboard::Event();
+	evt->name = name;
 
 	Common::String type = evtNode->values["type"];
 	if (type == "key") {
-		if (!evtNode->values.contains("code") || !evtNode->values.contains("ascii"))
+		if (!evtNode->values.contains("code") || !evtNode->values.contains("ascii")) {
+			delete evt;
 			return parserError("Key event element must contain code and ascii attributes");
+		}
 
-		evt.type = VirtualKeyboard::kEventKey;
+		evt->type = VirtualKeyboard::kEventKey;
 
 		Common::KeyCode code = (Common::KeyCode)atoi(evtNode->values["code"].c_str());
 		uint16 ascii = atoi(evtNode->values["ascii"].c_str());
 
 		byte flags = 0;
-		if (evtNode->values.contains("flags"))
-			flags = parseFlags(evtNode->values["flags"]);
+		if (evtNode->values.contains("modifiers"))
+			flags = parseFlags(evtNode->values["modifiers"]);
 
-		evt.data = new Common::KeyState(code, ascii, flags);
+		evt->data = new Common::KeyState(code, ascii, flags);
 
 	} else if (type == "modifier") {
-		if (!evtNode->values.contains("flags"))
+		if (!evtNode->values.contains("modifiers")) {
+			delete evt;
 			return parserError("Key modifier element must contain modifier attributes");
+		}
 		
-		evt.type = VirtualKeyboard::kEventModifier;
+		evt->type = VirtualKeyboard::kEventModifier;
 		byte *flags = new byte;
-		*(flags) = parseFlags(evtNode->values["flags"]);
-		evt.data = flags;
+		*(flags) = parseFlags(evtNode->values["modifiers"]);
+		evt->data = flags;
 
 	} else if (type == "switch_mode") {
-		if (!evtNode->values.contains("mode"))
+		if (!evtNode->values.contains("mode")) {
+			delete evt;
 			return parserError("Switch mode event element must contain mode attribute");
+		}
 
-		evt.type = VirtualKeyboard::kEventSwitchMode;
-		evt.data = new Common::String(evtNode->values["mode"]);
+		evt->type = VirtualKeyboard::kEventSwitchMode;
+		evt->data = new Common::String(evtNode->values["mode"]);
 	} else if (type == "close") {
-		evt.type = VirtualKeyboard::kEventClose;
-		evt.data = 0;
-	} else
+		evt->type = VirtualKeyboard::kEventClose;
+		evt->data = 0;
+	} else {
+		delete evt;
 		return parserError("Event type '%s' not known", type.c_str());
+	}
 
 	_mode->events[name] = evt;
 
@@ -355,15 +363,18 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 }
 
 byte VirtualKeyboardParser::parseFlags(const String& flags) {
+	if (flags.empty())
+		return 0;
+
 	Common::StringTokenizer tok(flags, ", ");
 	byte val = 0;
 	for (Common::String fl = tok.nextToken(); !fl.empty(); fl = tok.nextToken()) {
 		if (fl == "ctrl" || fl == "control")
-			val &= Common::KBD_CTRL;
+			val |= Common::KBD_CTRL;
 		else if (fl == "alt")
-			val &= Common::KBD_ALT;
+			val |= Common::KBD_ALT;
 		else if (fl == "shift")
-			val &= Common::KBD_SHIFT;
+			val |= Common::KBD_SHIFT;
 	}
 	return val;
 }
