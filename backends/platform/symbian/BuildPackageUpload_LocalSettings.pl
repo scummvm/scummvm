@@ -32,17 +32,17 @@
 	#$DefaultFeatures = qw(zlib mad tremor);
 
 	
-														# you can use these below for speed & clarity or override with custom settings
-														$DefaultTopMacros = "
-															MACRO			USE_ZLIB			// LIB:zlib.lib
-															//MACRO			USE_MAD				// LIB:libmad.lib
-															MACRO			USE_TREMOR			// LIB:libtremor.lib
-														";
+	# you can use these below for speed & clarity or override with custom settings
+	$DefaultTopMacros = "
+		MACRO			USE_ZLIB			// LIB:zlib.lib
+		MACRO			USE_MAD				// LIB:libmad.lib
+		MACRO			USE_TREMOR			// LIB:libtremor.lib
+	";
 													
-														$DefaultBottomMacros = "
-															MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
-															MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
-														";
+	$DefaultBottomMacros = "
+		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
+		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+	";
 													
 ##################################################################################################################
 	##
