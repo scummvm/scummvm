@@ -359,10 +359,11 @@ class BalloonManager_br : public BalloonManager {
 
 	uint	_numBalloons;
 
-	Frames *_leftBalloon;
-	Frames *_rightBalloon;
 	Disk *_disk;
 	Gfx *_gfx;
+
+	Frames *_leftBalloon;
+	Frames *_rightBalloon;
 
 	void cacheAnims();
 	void getStringExtent(Font *font, const char *text, uint16 maxwidth, int16* width, int16* height);

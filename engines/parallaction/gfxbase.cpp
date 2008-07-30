@@ -32,7 +32,7 @@
 
 namespace Parallaction {
 
-GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(0), frame(0), layer(3), _flags(kGfxObjNormal), _keep(true) {
+GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : _frames(frames), _keep(true), x(0), y(0), z(0), _flags(kGfxObjNormal), type(objType), frame(0), layer(3)  {
 	if (name) {
 		_name = strdup(name);
 	} else {

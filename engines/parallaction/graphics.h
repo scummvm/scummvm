@@ -472,6 +472,9 @@ typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::
 
 class Gfx {
 
+protected:
+	Parallaction*		_vm;
+
 public:
 	Disk *_disk;
 	VarMap _vars;
@@ -550,7 +553,6 @@ public:
 	byte				*_unpackedBitmap;
 
 protected:
-	Parallaction*		_vm;
 	bool				_halfbrite;
 
 	bool 				_skipBackground;
