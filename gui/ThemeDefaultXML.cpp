@@ -154,6 +154,16 @@ bool ThemeRenderer::loadDefaultXML() {
 "</render_info>"
 
 "<layout_info>"
+	"<definitions>"
+		"<def widgetSize = '30' />"
+		"<def buttonWidth = '120' buttonHeight = '25' />"
+		"<def sliderWidth = '' sliderHeight = '' />"
+		"<def lineHeight = 16 fontHeight = 14 />"
+		"<def />"
+	"</definitions>"
+	"<widgets>"
+		"<widget id = 'scrollbar' />"
+	"</widgets>"
 "</layout_info>";
 
 	if (!parser()->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
