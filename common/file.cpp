@@ -306,13 +306,13 @@ bool File::open(const String &filename, AccessMode mode) {
 		_handle = fopenNoCase(filename, "", modeStr);
 	} else if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
-		//debug(3, "Opening hashed: %s", fname.c_str());
+		debug(3, "Opening hashed: %s", fname.c_str());
 		_handle = fopen(fname.c_str(), modeStr);
 	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		fname = (*_filesMap)[fname + "."];
-		//debug(3, "Opening hashed: %s", fname.c_str());
+		debug(3, "Opening hashed: %s", fname.c_str());
 		_handle = fopen(fname.c_str(), modeStr);
 	} else {
 
@@ -347,10 +347,10 @@ bool File::open(const String &filename, AccessMode mode) {
 	}
 
 	if (_handle == NULL) {
-/*		if (mode == kFileReadMode)
+		if (mode == kFileReadMode)
 			debug(2, "File %s not found", filename.c_str());
 		else
-			debug(2, "File %s not opened", filename.c_str());*/
+			debug(2, "File %s not opened", filename.c_str());
 		return false;
 	}
 
@@ -395,10 +395,10 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 	_handle = fopen(node.getPath().c_str(), modeStr);
 
 	if (_handle == NULL) {
-/*		if (mode == kFileReadMode)
+		if (mode == kFileReadMode)
 			debug(2, "File %s not found", filename.c_str());
 		else
-			debug(2, "File %s not opened", filename.c_str());*/
+			debug(2, "File %s not opened", filename.c_str());
 		return false;
 	}
 

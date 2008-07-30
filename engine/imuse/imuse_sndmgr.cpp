@@ -25,8 +25,9 @@
 
 #include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
+#include "common/util.h"
 #include "common/timer.h"
+#include "common/str.h"
 
 #include "engine/resource.h"
 
@@ -70,7 +71,7 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 		default:
-			error("ImuseSndMgr::countElements() Unknown MAP tag '%s'", tag2str(tag));
+			error("ImuseSndMgr::countElements() Unknown MAP tag '%s'", tag2string(tag).c_str());
 		}
 	} while (tag != MKID_BE('DATA'));
 }
@@ -133,7 +134,7 @@ void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize)
 				ptr += 4;
 				break;
 			default:
-				error("ImuseSndMgr::prepareSound(%s) Unknown MAP tag '%s'", sound->name, tag2str(tag));
+				error("ImuseSndMgr::prepareSound(%s) Unknown MAP tag '%s'", sound->name, tag2string(tag).c_str());
 			}
 		} while (tag != MKID_BE('DATA'));
 		headerSize = ptr - s_ptr;

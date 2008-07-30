@@ -25,6 +25,10 @@
 
 #include "common/sys.h"
 
+namespace Common {
+	class String;
+}
+
 #ifndef COMMON_DEBUG_H
 #define COMMON_DEBUG_H
 
@@ -51,8 +55,11 @@ extern bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
 
 void warning(const char *fmt, ...);
 void error(const char *fmt, ...);
+void CDECL debug(int level, const char *s, ...);
+void CDECL debug(const char *s, ...);
 
-const char *tag2str(uint32 tag);
 void hexdump(const byte * data, int len, int bytesPerLine);
+
+Common::String tag2string(uint32 tag);
 
 #endif
