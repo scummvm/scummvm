@@ -34,7 +34,11 @@
 
 namespace Common {
 
-using namespace AdvancedDetector;
+/**
+ * A list of pointers to ADGameDescription structs (or subclasses thereof).
+ */
+typedef Array<const ADGameDescription*> ADGameDescList;
+
 
 /**
  * Detect games in specified directory.
@@ -282,10 +286,10 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	return kNoError;
 }
 
-typedef HashMap<String, bool> StringSet;
-typedef HashMap<String, int32> IntMap;
+typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
+typedef HashMap<String, int32, IgnoreCase_Hash, IgnoreCase_EqualTo> IntMap;
 
-static void reportUnknown(StringMap &filesMD5, IntMap &filesSize) {
+static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -301,21 +305,14 @@ static void reportUnknown(StringMap &filesMD5, IntMap &filesSize) {
 	printf("\n");
 }
 
+static ADGameDescList detectGameFilebased(const FSList &fslist, const Common::ADParams &params, IntMap &allFiles);
+
 static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
 	StringSet filesList;
-
 	StringMap filesMD5;
 	IntMap filesSize;
 	IntMap allFiles;
 
-	File testFile;
-
-	String tstr;
-
-	uint i;
-	char md5str[32+1];
-
-	bool fileMissing;
 	const ADGameFileDescription *fileDesc;
 	const ADGameDescription *g;
 	const byte *descPtr;
@@ -327,34 +324,36 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			tstr = String(fileDesc->fileName);
-			tstr.toLowercase();
-			filesList[tstr] = true;
+			filesList[String(fileDesc->fileName)] = true;
 		}
 	}
 
 	// Get the information of the existing files
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) continue;
-		tstr = file->getName();
-		tstr.toLowercase();
+		if (file->isDirectory())
+			continue;
+
+		String tstr = file->getName();
 
 		// Strip any trailing dot
 		if (tstr.lastChar() == '.')
 			tstr.deleteLastChar();
 
-		allFiles[tstr] = true;
+		allFiles[tstr] = true;	// Record the presence of this file
 
 		debug(3, "+ %s", tstr.c_str());
 
-		if (!filesList.contains(tstr)) continue;
+		if (!filesList.contains(tstr))
+			continue;
 
+		char md5str[32+1];
 		if (!md5_file_string(*file, md5str, params.md5Bytes))
 			continue;
 		filesMD5[tstr] = md5str;
 
 		debug(3, "> %s: %s", tstr.c_str(), md5str);
 
+		File testFile;
 		if (testFile.open(file->getPath())) {
 			filesSize[tstr] = (int32)testFile.size();
 			testFile.close();
@@ -366,9 +365,10 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 	int maxFilesMatched = 0;
 
 	// MD5 based matching
+	uint i;
 	for (i = 0, descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize, ++i) {
 		g = (const ADGameDescription *)descPtr;
-		fileMissing = false;
+		bool fileMissing = false;
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
@@ -377,32 +377,28 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 			continue;
 		}
 
-		if ((params.flags & kADFlagUseExtraAsHint) && extra != "" && g->extra != extra)
+		if ((params.flags & kADFlagUseExtraAsHint) && !extra.empty() && g->extra != extra)
 			continue;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			tstr = fileDesc->fileName;
-			tstr.toLowercase();
+			String tstr = fileDesc->fileName;
 
 			if (!filesMD5.contains(tstr)) {
 				fileMissing = true;
 				break;
 			}
-			if (fileDesc->md5 != NULL) {
-				if (fileDesc->md5 != filesMD5[tstr]) {
-					debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
-					fileMissing = true;
-					break;
-				}
+
+			if (fileDesc->md5 != NULL && fileDesc->md5 != filesMD5[tstr]) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
+				fileMissing = true;
+				break;
 			}
 
-			if (fileDesc->fileSize != -1) {
-				if (fileDesc->fileSize != filesSize[tstr]) {
-					debug(3, "Size Mismatch. Skipping");
-					fileMissing = true;
-					break;
-				}
+			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSize[tstr]) {
+				debug(3, "Size Mismatch. Skipping");
+				fileMissing = true;
+				break;
 			}
 
 			debug(3, "Matched file: %s", tstr.c_str());
@@ -440,85 +436,83 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		}
 	}
 
-	// We've found a match
-	if (!matched.empty())
-		return matched;
+	// We didn't find a match
+	if (matched.empty()) {
+		if (!filesMD5.empty())
+			reportUnknown(filesMD5, filesSize);
+	
+		// Filename based fallback
+		if (params.fileBasedFallback != 0)
+			matched = detectGameFilebased(fslist, params, allFiles);
+	}
 
-	if (!filesMD5.empty())
-		reportUnknown(filesMD5, filesSize);
+	return matched;
+}
 
-	// Filename based fallback
-	if (params.fileBasedFallback != 0) {
-		const ADFileBasedFallback *ptr = params.fileBasedFallback;
-		const char* const* filenames = 0;
+static ADGameDescList detectGameFilebased(const FSList &fslist, const Common::ADParams &params, IntMap &allFiles) {
+	const ADFileBasedFallback *ptr;
+	const char* const* filenames;
 
-		// First we create list of files required for detection.
-		// The filenames can be different than the MD5 based match ones.
-		for (; ptr->desc; ptr++) {
-			filenames = ptr->filenames;
-			for (; *filenames; filenames++) {
-				tstr = String(*filenames);
-				tstr.toLowercase();
+	// First we create list of files required for detection.
+	// The filenames can be different than the MD5 based match ones.
+	for (ptr = params.fileBasedFallback; ptr->desc; ++ptr) {
+		for (filenames = ptr->filenames; *filenames; ++filenames) {
+			String tstr = String(*filenames);
 
-				if (!allFiles.contains(tstr)) {
-					if (testFile.open(tstr) || testFile.open(tstr + ".")) {
-						allFiles[tstr] = true;
-						testFile.close();
-					}
+			if (!allFiles.contains(tstr)) {
+				File testFile;
+				if (testFile.open(tstr) || testFile.open(tstr + ".")) {
+					allFiles[tstr] = true;
+					testFile.close();
 				}
 			}
 		}
+	}
 
-		// Then we perform the actual filename matching. If there are
-		// several matches, only the one with the maximum numbers of
-		// files is considered.
-		int maxNumMatchedFiles = 0;
-		const ADGameDescription *matchedDesc = 0;
+	// Then we perform the actual filename matching. If there are
+	// several matches, only the one with the maximum numbers of
+	// files is considered.
+	int maxNumMatchedFiles = 0;
+	const ADGameDescription *matchedDesc = 0;
 
-		ptr = params.fileBasedFallback;
+	for (ptr = params.fileBasedFallback; ptr->desc; ++ptr) {
+		const ADGameDescription *agdesc = (const ADGameDescription *)ptr->desc;
+		int numMatchedFiles = 0;
+		bool fileMissing = false;
 
-		for (; ptr->desc; ptr++) {
-			const ADGameDescription *agdesc = (const ADGameDescription *)ptr->desc;
-			int numMatchedFiles = 0;
-			fileMissing = false;
+		for (filenames = ptr->filenames; *filenames; ++filenames) {
+			if (fileMissing)
+				continue;
 
-			filenames = ptr->filenames;
-			for (; *filenames; filenames++) {
-				if (fileMissing) {
-					continue;
-				}
-
-				tstr = String(*filenames);
-				tstr.toLowercase();
-
-				debug(3, "++ %s", *filenames);
-				if (!allFiles.contains(tstr)) {
-					fileMissing = true;
-					continue;
-				}
-
-				numMatchedFiles++;
+			debug(3, "++ %s", *filenames);
+			if (!allFiles.contains(*filenames)) {
+				fileMissing = true;
+				continue;
 			}
 
-			if (!fileMissing)
-				debug(4, "Matched: %s", agdesc->gameid);
-
-			if (!fileMissing && numMatchedFiles > maxNumMatchedFiles) {
-				matchedDesc = agdesc;
-				maxNumMatchedFiles = numMatchedFiles;
-
-				debug(4, "and overriden");
-			}
+			numMatchedFiles++;
 		}
 
-		if (matchedDesc) { // We got a match
-			matched.push_back(matchedDesc);
-			if (params.flags & kADFlagPrintWarningOnFileBasedFallback) {
-				printf("Your game version has been detected using filename matching as a\n");
-				printf("variant of %s.\n", matchedDesc->gameid);
-				printf("If this is an original and unmodified version, please report any\n");
-				printf("information previously printed by ScummVM to the team.\n");
-			}
+		if (!fileMissing)
+			debug(4, "Matched: %s", agdesc->gameid);
+
+		if (!fileMissing && numMatchedFiles > maxNumMatchedFiles) {
+			matchedDesc = agdesc;
+			maxNumMatchedFiles = numMatchedFiles;
+
+			debug(4, "and overriden");
+		}
+	}
+
+	ADGameDescList matched;
+
+	if (matchedDesc) { // We got a match
+		matched.push_back(matchedDesc);
+		if (params.flags & kADFlagPrintWarningOnFileBasedFallback) {
+			printf("Your game version has been detected using filename matching as a\n");
+			printf("variant of %s.\n", matchedDesc->gameid);
+			printf("If this is an original and unmodified version, please report any\n");
+			printf("information previously printed by ScummVM to the team.\n");
 		}
 	}
 
