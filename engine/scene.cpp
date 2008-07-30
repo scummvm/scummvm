@@ -32,7 +32,7 @@
 #include "engine/resource.h"
 #include "engine/bitmap.h"
 #include "engine/colormap.h"
-#include "engine/backend/driver.h"
+#include "engine/backend/platform/driver.h"
 #include "engine/engine.h"
 
 #include "engine/imuse/imuse.h"

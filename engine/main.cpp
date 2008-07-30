@@ -36,8 +36,8 @@
 #include "engine/version.h"
 #include "engine/smush/smush.h"
 
-#include "engine/backend/sdl/driver_gl.h"
-#include "engine/backend/sdl/driver_tinygl.h"
+#include "engine/backend/platform/sdl/driver_gl.h"
+#include "engine/backend/platform/sdl/driver_tinygl.h"
 
 #include "mixer/mixer.h"
 

@@ -29,7 +29,7 @@
 #include "engine/colormap.h"
 #include "engine/material.h"
 
-#include "engine/backend/sdl/driver_gl.h"
+#include "engine/backend/platform/sdl/driver_gl.h"
 
 // Constructor. Should create the driver and open screens, etc.
 DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {

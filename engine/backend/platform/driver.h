@@ -37,7 +37,7 @@
 #include "engine/font.h"
 #include "engine/primitives.h"
 #include "engine/actor.h"
-#include "engine/backend/default-timer.h"
+#include "engine/backend/timer/default/default-timer.h"
 
 class Material;
 class Bitmap;

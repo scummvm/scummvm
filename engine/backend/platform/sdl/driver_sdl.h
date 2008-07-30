@@ -33,7 +33,7 @@
 #include "engine/model.h"
 #include "engine/colormap.h"
 #include "engine/bitmap.h"
-#include "engine/backend/driver.h"
+#include "engine/backend/platform/driver.h"
 
 #include <SDL.h>
 

@@ -27,7 +27,7 @@
 #include "common/debug.h"
 #include "common/str.h"
 
-#include "engine/backend/driver.h"
+#include "engine/backend/platform/driver.h"
 
 Common::String tag2string(uint32 tag) {
 	char str[5];

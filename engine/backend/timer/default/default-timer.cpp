@@ -25,8 +25,8 @@
 
 #include "common/sys.h"
 
-#include "engine/backend/driver.h"
-#include "engine/backend/default-timer.h"
+#include "engine/backend/platform/driver.h"
+#include "engine/backend/timer/default/default-timer.h"
 
 struct TimerSlot {
 	Common::TimerManager::TimerProc callback;

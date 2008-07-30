@@ -31,7 +31,7 @@
 #include "engine/colormap.h"
 #include "engine/material.h"
 #include "engine/font.h"
-#include "engine/backend/sdl/driver_tinygl.h"
+#include "engine/backend/platform/sdl/driver_tinygl.h"
 
 #include "engine/tinygl/gl.h"
 #include "engine/tinygl/zgl.h"

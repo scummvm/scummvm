@@ -27,8 +27,8 @@
 
 #include "mixer/mixer_intern.h"
 
-#include "engine/backend/sdl/driver_sdl.h"
-#include "engine/backend/default-timer.h"
+#include "engine/backend/platform/sdl/driver_sdl.h"
+#include "engine/backend/timer/default/default-timer.h"
 #include "engine/backend/saves/default/default-saves.h"
 
 #ifdef _WIN32

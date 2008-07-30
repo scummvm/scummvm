@@ -33,7 +33,7 @@
 #include "engine/actor.h"
 #include "engine/textobject.h"
 #include "engine/smush/smush.h"
-#include "engine/backend/driver.h"
+#include "engine/backend/platform/driver.h"
 #include "engine/savegame.h"
 #include "engine/lipsynch.h"
 

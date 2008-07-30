@@ -27,7 +27,7 @@
 #include "common/debug.h"
 #include "common/mutex.h"
 
-#include "engine/backend/driver.h"
+#include "engine/backend/platform/driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"

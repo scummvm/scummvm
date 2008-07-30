@@ -950,45 +950,21 @@
 			<Filter
 				Name="backend"
 				>
-				<File
-					RelativePath="..\..\engine\backend\default-timer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engine\backend\default-timer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engine\backend\driver.h"
-					>
-				</File>
 				<Filter
-					Name="sdl"
+					Name="timer"
 					>
-					<File
-						RelativePath="..\..\engine\backend\sdl\driver_gl.cpp"
+					<Filter
+						Name="default"
 						>
-					</File>
-					<File
-						RelativePath="..\..\engine\backend\sdl\driver_gl.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\engine\backend\sdl\driver_sdl.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\engine\backend\sdl\driver_sdl.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\engine\backend\sdl\driver_tinygl.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\engine\backend\sdl\driver_tinygl.h"
-						>
-					</File>
+						<File
+							RelativePath="..\..\engine\backend\timer\default\default-timer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\timer\default\default-timer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="fs"
@@ -1042,6 +1018,42 @@
 						</File>
 						<File
 							RelativePath="..\..\engine\backend\saves\default\default-saves.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="platform"
+					>
+					<File
+						RelativePath="..\..\engine\backend\platform\driver.h"
+						>
+					</File>
+					<Filter
+						Name="sdl"
+						>
+						<File
+							RelativePath="..\..\engine\backend\platform\sdl\driver_gl.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\platform\sdl\driver_gl.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\platform\sdl\driver_sdl.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\platform\sdl\driver_sdl.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\platform\sdl\driver_tinygl.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\engine\backend\platform\sdl\driver_tinygl.h"
 							>
 						</File>
 					</Filter>
