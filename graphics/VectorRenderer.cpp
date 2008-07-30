@@ -178,6 +178,8 @@ areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv,
 	
 	for (int y = area.top; y < area.bottom; ++y) {
 		for (int x = area.left; x < area.right; ++x) {
+			newR = newG = newB = 0;
+
 			for (int j = 0; j < 3; ++j) {
 				yVal = MIN(MAX(y - 1 + j, 0), area.bottom - 1);
 				
