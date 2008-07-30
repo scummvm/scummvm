@@ -81,13 +81,13 @@ DECLARE_INSTRUCTION_OPCODE(loop) {
 	InstructionPtr inst = *_ctxt.inst;
 
 	_ctxt.program->_loopCounter = inst->_opB.getRValue();
-	_ctxt.program->_loopStart = _ctxt.inst;
+	_ctxt.program->_loopStart = _ctxt.ip;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(endloop) {
 	if (--_ctxt.program->_loopCounter > 0) {
-		_ctxt.inst = _ctxt.program->_loopStart;
+		_ctxt.ip = _ctxt.program->_loopStart;
 	}
 }
 
@@ -97,7 +97,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (_si > 0 ? _si : -_si);
-		if (_modCounter % _bx != 0) return;
+		if (_ctxt.modCounter % _bx != 0) return;
 
 		_si = (_si > 0 ?  1 : -1);
 	}
@@ -142,8 +142,8 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	_vm->_gfx->patchBackground(v18, x, y, mask);
 }
 
-DECLARE_INSTRUCTION_OPCODE(null) {
-
+DECLARE_INSTRUCTION_OPCODE(show) {
+	_ctxt.suspend = true;
 }
 
 DECLARE_INSTRUCTION_OPCODE(invalid) {
@@ -156,8 +156,10 @@ DECLARE_INSTRUCTION_OPCODE(call) {
 
 
 DECLARE_INSTRUCTION_OPCODE(wait) {
-	if (_engineFlags & kEngineWalking)
+	if (_engineFlags & kEngineWalking) {
+		_ctxt.ip--;
 		_ctxt.suspend = true;
+	}
 }
 
 
@@ -186,8 +188,8 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
 		_ctxt.program->_status = kProgramDone;
 	}
-	_ctxt.program->_ip = _ctxt.program->_instructions.begin();
 
+	_ctxt.ip = _ctxt.program->_instructions.begin();
 	_ctxt.suspend = true;
 }
 
@@ -376,13 +378,40 @@ void Parallaction_ns::drawAnimations() {
 	return;
 }
 
+void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
+	debugC(9, kDebugExec, "runScript(Animation = %s)", a->_name);
+
+	_ctxt.ip = script->_ip;
+	_ctxt.anim = a;
+	_ctxt.program = script;
+	_ctxt.suspend = false;
+	_ctxt.modCounter = _modCounter;
+
+	InstructionList::iterator inst;
+	for ( ; (a->_flags & kFlagsActing) ; ) {
+
+		inst = _ctxt.ip;
+		_ctxt.inst = inst;
+		_ctxt.ip++;
+
+		debugC(9, kDebugExec, "inst [%02i] %s\n", (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
+
+		script->_status = kProgramRunning;
+
+		(*_opcodes[(*inst)->_index])();
+
+		if (_ctxt.suspend)
+			break;
+
+	}
+	script->_ip = _ctxt.ip;
+
+}
 
 void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator last) {
 	if (_engineFlags & kEnginePauseJobs) {
 		return;
 	}
-
-	debugC(9, kDebugExec, "runScripts");
 
 	for (ProgramList::iterator it = first; it != last; it++) {
 
@@ -394,31 +423,8 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
 
-		InstructionList::iterator inst = (*it)->_ip;
-		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
+		runScript(*it, a);
 
-			(*it)->_status = kProgramRunning;
-
-			debugC(9, kDebugExec, "anim: %s, inst[%02i]: %s", a->_name, (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
-
-			_ctxt.inst = inst;
-			_ctxt.anim = AnimationPtr(a);
-			_ctxt.program = *it;
-			_ctxt.suspend = false;
-
-			(*_opcodes[(*inst)->_index])();
-
-			inst = _ctxt.inst;		// handles endloop correctly
-
-			if (_ctxt.suspend)
-				goto label1;
-
-			inst++;
-		}
-
-		(*it)->_ip = ++inst;
-
-label1:
 		if (a->_flags & kFlagsCharacter)
 			a->_z = a->_top + a->height();
 	}
@@ -796,7 +802,7 @@ void ProgramExec_ns::init() {
 	INSTRUCTION_OPCODE(set);		// f
 	INSTRUCTION_OPCODE(loop);
 	INSTRUCTION_OPCODE(endloop);
-	INSTRUCTION_OPCODE(null);
+	INSTRUCTION_OPCODE(show);
 	INSTRUCTION_OPCODE(inc);
 	INSTRUCTION_OPCODE(inc);		// dec
 	INSTRUCTION_OPCODE(set);

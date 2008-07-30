@@ -165,6 +165,7 @@ protected:
 		AnimationPtr	anim;
 		ProgramPtr		program;
 		InstructionList::iterator inst;
+		InstructionList::iterator ip;
 		uint16		modCounter;
 		bool		suspend;
 	} _ctxt;
@@ -174,6 +175,7 @@ protected:
 	OpcodeSet	_opcodes;
 
 	uint16	_modCounter;
+	void runScript(ProgramPtr script, AnimationPtr a);
 
 public:
 	virtual void init() = 0;
@@ -197,7 +199,7 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endloop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(null);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(show);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(call);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
@@ -222,7 +224,6 @@ class ProgramExec_br : public ProgramExec_ns {
 protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
  	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(dec);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
@@ -242,7 +243,6 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifgt);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
 public:
 	void init();

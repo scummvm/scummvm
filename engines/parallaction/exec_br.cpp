@@ -374,13 +374,6 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 }
 
 
-DECLARE_INSTRUCTION_OPCODE(loop) {
-	InstructionPtr inst = *_ctxt.inst;
-
-	_ctxt.program->_loopCounter = inst->_opB.getRValue();
-	_ctxt.program->_loopStart = _ctxt.inst;
-}
-
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = *_ctxt.inst;
@@ -504,16 +497,6 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 	warning("Parallaction_br::instOp_stop not yet implemented");
 }
 
-DECLARE_INSTRUCTION_OPCODE(endscript) {
-	if ((_ctxt.anim->_flags & kFlagsLooping) == 0) {
-		_ctxt.anim->_flags &= ~kFlagsActing;
-		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
-		_ctxt.program->_status = kProgramDone;
-	}
-	_ctxt.program->_ip = _ctxt.program->_instructions.begin();
-
-	_ctxt.suspend = true;
-}
 
 void CommandExec_br::init() {
 	Common::Array<const Opcode*> *table = 0;
@@ -585,7 +568,7 @@ void ProgramExec_br::init() {
 	INSTRUCTION_OPCODE(set);		// f
 	INSTRUCTION_OPCODE(loop);
 	INSTRUCTION_OPCODE(endloop);
-	INSTRUCTION_OPCODE(null);		// show
+	INSTRUCTION_OPCODE(show);		// show
 	INSTRUCTION_OPCODE(inc);
 	INSTRUCTION_OPCODE(inc);		// dec
 	INSTRUCTION_OPCODE(set);
