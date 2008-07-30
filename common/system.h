@@ -44,8 +44,6 @@ namespace Common {
 	class EventManager;
 	class SaveFileManager;
 	class TimerManager;
-	class SeekableReadStream;
-	class WriteStream;
 }
 
 class FilesystemFactory;
@@ -902,25 +900,10 @@ public:
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.
 	 *
-	 * @return the FSNode factory for the current architecture
+	 * @return FilesystemFactory* The specific factory for the current architecture.
 	 */
 	virtual FilesystemFactory *getFilesystemFactory() = 0;
 
-	/**
-	 * Open the default config file for reading, by returning a suitable
-	 * ReadStream instance. It is the callers responsiblity to delete
-	 * the stream after use.
-	 */
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-
-	/**
-	 * Open the default config file for writing, by returning a suitable
-	 * WriteStream instance. It is the callers responsiblity to delete
-	 * the stream after use.
-	 *
-	 * May return 0 to indicate that writing to config file is not possible.
-	 */
-	virtual Common::WriteStream *openConfigFileForWriting();
 
 	/**
 	 * Return String which is used for backend-specific addition to theme
