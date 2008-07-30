@@ -1674,7 +1674,7 @@ static void ShutUpActor() {
 /* Find the sector (of any type) which contains
  * the requested coordinate (x,y,z).
  */
-static void GetPointSector(void) {
+static void GetPointSector() {
 	lua_Object xparam, yparam, zparam;
 	Sector *result;
 	float x = 0.0f, y = 0.0f, z = 0.0f;
@@ -1705,7 +1705,7 @@ static void GetPointSector(void) {
 	lua_pushnumber(result->type());
 }
 
-static void GetActorSector(void) {
+static void GetActorSector() {
 	Actor *act;
 	int sectorType;
 
@@ -1724,7 +1724,7 @@ static void GetActorSector(void) {
 	}
 }
 
-static void IsActorInSector(void) {
+static void IsActorInSector() {
 	int i, numSectors;
 	const char *name;
 	Actor *act;
@@ -1749,7 +1749,7 @@ static void IsActorInSector(void) {
 	lua_pushnil();
 }
 
-static void MakeSectorActive(void) {
+static void MakeSectorActive() {
 	lua_Object sectorName;
 	bool visible;
 	int i = 0, numSectors;

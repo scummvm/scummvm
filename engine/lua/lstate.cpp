@@ -22,7 +22,7 @@ lua_State *lua_state = NULL;
 
 int32 globalTaskSerialId;
 
-void stderrorim (void);
+void stderrorim();
 
 static luaL_reg stdErrorRimFunc[] = {
 	{ "stderrorim", stderrorim }

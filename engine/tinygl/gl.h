@@ -738,7 +738,7 @@ void tglFrustum(double left, double right, double bottom, double top,
 unsigned int tglGenLists(int range);
 int tglIsList(unsigned int list);
 void tglNewList(unsigned int list, int mode);
-void tglEndList(void);
+void tglEndList();
 void tglCallList(unsigned int list);
 
 // clear
@@ -752,7 +752,7 @@ void tglSelectBuffer(int size, unsigned int *buf);
 
 void tglInitNames();
 void tglPushName(unsigned int name);
-void tglPopName(void);
+void tglPopName();
 void tglLoadName(unsigned int name);
 
 // textures

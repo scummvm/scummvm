@@ -145,7 +145,7 @@ static void read_until(FILE *f, int32 lim) {
 		lua_pushlstring(luaL_buffer(), l);
 }
 
-static void io_read (void) {
+static void io_read() {
 	int32 arg = FIRSTARG;
 	FILE *f = getfileparam(FINPUT, &arg);
 	const char *p = luaL_opt_string(arg, NULL);
