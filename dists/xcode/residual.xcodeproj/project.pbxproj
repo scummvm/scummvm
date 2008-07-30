@@ -27,10 +27,6 @@
 		289EEE260D8921E400521A80 /* matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE1B0D8921E400521A80 /* matrix4.cpp */; };
 		289EEE270D8921E400521A80 /* mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE1D0D8921E400521A80 /* mutex.cpp */; };
 		289EEED60D8921F600521A80 /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE290D8921F600521A80 /* actor.cpp */; };
-		289EEEDF0D8921F600521A80 /* default-timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE380D8921F600521A80 /* default-timer.cpp */; };
-		289EEEE00D8921F600521A80 /* driver_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE3C0D8921F600521A80 /* driver_gl.cpp */; };
-		289EEEE10D8921F600521A80 /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE3E0D8921F600521A80 /* driver_sdl.cpp */; };
-		289EEEE20D8921F600521A80 /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE400D8921F600521A80 /* driver_tinygl.cpp */; };
 		289EEEE30D8921F600521A80 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE420D8921F600521A80 /* bitmap.cpp */; };
 		289EEEE40D8921F600521A80 /* costume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE460D8921F600521A80 /* costume.cpp */; };
 		289EEEE50D8921F600521A80 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE480D8921F600521A80 /* engine.cpp */; };
@@ -108,6 +104,10 @@
 		289EEF2D0D8921F600521A80 /* zmath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED00D8921F600521A80 /* zmath.cpp */; };
 		289EEF2E0D8921F600521A80 /* ztriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED20D8921F600521A80 /* ztriangle.cpp */; };
 		289EEF2F0D8921F600521A80 /* walkplane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED40D8921F600521A80 /* walkplane.cpp */; };
+		28D6AC3D0E4081B100B1DE57 /* driver_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC370E4081B100B1DE57 /* driver_gl.cpp */; };
+		28D6AC3E0E4081B100B1DE57 /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */; };
+		28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */; };
+		28D6AC430E4081CC00B1DE57 /* default-timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC410E4081CC00B1DE57 /* default-timer.cpp */; };
 		28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF890E403EA3003543B4 /* config-file.cpp */; };
 		28F8DF8D0E403EB2003543B4 /* config-manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF8C0E403EB2003543B4 /* config-manager.cpp */; };
 /* End PBXBuildFile section */
@@ -183,15 +183,6 @@
 		289EEE230D8921E400521A80 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = vector3d.h; sourceTree = "<group>"; };
 		289EEE290D8921F600521A80 /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
 		289EEE2A0D8921F600521A80 /* actor.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
-		289EEE380D8921F600521A80 /* default-timer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = "default-timer.cpp"; sourceTree = "<group>"; };
-		289EEE390D8921F600521A80 /* default-timer.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "default-timer.h"; sourceTree = "<group>"; };
-		289EEE3A0D8921F600521A80 /* driver.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = driver.h; sourceTree = "<group>"; };
-		289EEE3C0D8921F600521A80 /* driver_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = driver_gl.cpp; sourceTree = "<group>"; };
-		289EEE3D0D8921F600521A80 /* driver_gl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = driver_gl.h; sourceTree = "<group>"; };
-		289EEE3E0D8921F600521A80 /* driver_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = driver_sdl.cpp; sourceTree = "<group>"; };
-		289EEE3F0D8921F600521A80 /* driver_sdl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = driver_sdl.h; sourceTree = "<group>"; };
-		289EEE400D8921F600521A80 /* driver_tinygl.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = driver_tinygl.cpp; sourceTree = "<group>"; };
-		289EEE410D8921F600521A80 /* driver_tinygl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = driver_tinygl.h; sourceTree = "<group>"; };
 		289EEE420D8921F600521A80 /* bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = bitmap.cpp; sourceTree = "<group>"; };
 		289EEE430D8921F600521A80 /* bitmap.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = bitmap.h; sourceTree = "<group>"; };
 		289EEE440D8921F600521A80 /* color.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
@@ -332,6 +323,15 @@
 		289EEED30D8921F600521A80 /* ztriangle.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ztriangle.h; sourceTree = "<group>"; };
 		289EEED40D8921F600521A80 /* walkplane.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = walkplane.cpp; sourceTree = "<group>"; };
 		289EEED50D8921F600521A80 /* walkplane.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = walkplane.h; sourceTree = "<group>"; };
+		28D6AC370E4081B100B1DE57 /* driver_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_gl.cpp; path = platform/sdl/driver_gl.cpp; sourceTree = "<group>"; };
+		28D6AC380E4081B100B1DE57 /* driver_gl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_gl.h; path = platform/sdl/driver_gl.h; sourceTree = "<group>"; };
+		28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_sdl.cpp; path = platform/sdl/driver_sdl.cpp; sourceTree = "<group>"; };
+		28D6AC3A0E4081B100B1DE57 /* driver_sdl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_sdl.h; path = platform/sdl/driver_sdl.h; sourceTree = "<group>"; };
+		28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_tinygl.cpp; path = platform/sdl/driver_tinygl.cpp; sourceTree = "<group>"; };
+		28D6AC3C0E4081B100B1DE57 /* driver_tinygl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_tinygl.h; path = platform/sdl/driver_tinygl.h; sourceTree = "<group>"; };
+		28D6AC400E4081BE00B1DE57 /* driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver.h; path = platform/driver.h; sourceTree = "<group>"; };
+		28D6AC410E4081CC00B1DE57 /* default-timer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-timer.cpp"; path = "timer/default/default-timer.cpp"; sourceTree = "<group>"; };
+		28D6AC420E4081CC00B1DE57 /* default-timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-timer.h"; path = "timer/default/default-timer.h"; sourceTree = "<group>"; };
 		28F8DF890E403EA3003543B4 /* config-file.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "config-file.cpp"; sourceTree = "<group>"; };
 		28F8DF8B0E403EAB003543B4 /* config-file.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "config-file.h"; sourceTree = "<group>"; };
 		28F8DF8C0E403EB2003543B4 /* config-manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "config-manager.cpp"; sourceTree = "<group>"; };
@@ -551,27 +551,12 @@
 		289EEE2B0D8921F600521A80 /* backend */ = {
 			isa = PBXGroup;
 			children = (
+				28D6AC340E40814900B1DE57 /* timer */,
+				28D6AC330E40813F00B1DE57 /* platform */,
 				281E11120E3FA90E004A8255 /* saves */,
 				281E11110E3FA907004A8255 /* fs */,
-				289EEE380D8921F600521A80 /* default-timer.cpp */,
-				289EEE390D8921F600521A80 /* default-timer.h */,
-				289EEE3A0D8921F600521A80 /* driver.h */,
-				289EEE3B0D8921F600521A80 /* sdl */,
 			);
 			path = backend;
-			sourceTree = "<group>";
-		};
-		289EEE3B0D8921F600521A80 /* sdl */ = {
-			isa = PBXGroup;
-			children = (
-				289EEE3C0D8921F600521A80 /* driver_gl.cpp */,
-				289EEE3D0D8921F600521A80 /* driver_gl.h */,
-				289EEE3E0D8921F600521A80 /* driver_sdl.cpp */,
-				289EEE3F0D8921F600521A80 /* driver_sdl.h */,
-				289EEE400D8921F600521A80 /* driver_tinygl.cpp */,
-				289EEE410D8921F600521A80 /* driver_tinygl.h */,
-			);
-			path = sdl;
 			sourceTree = "<group>";
 		};
 		289EEE4C0D8921F600521A80 /* imuse */ = {
@@ -700,6 +685,45 @@
 			path = tinygl;
 			sourceTree = "<group>";
 		};
+		28D6AC330E40813F00B1DE57 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				28D6AC400E4081BE00B1DE57 /* driver.h */,
+				28D6AC360E40816700B1DE57 /* sdl */,
+			);
+			name = platform;
+			sourceTree = "<group>";
+		};
+		28D6AC340E40814900B1DE57 /* timer */ = {
+			isa = PBXGroup;
+			children = (
+				28D6AC350E40814E00B1DE57 /* default */,
+			);
+			name = timer;
+			sourceTree = "<group>";
+		};
+		28D6AC350E40814E00B1DE57 /* default */ = {
+			isa = PBXGroup;
+			children = (
+				28D6AC410E4081CC00B1DE57 /* default-timer.cpp */,
+				28D6AC420E4081CC00B1DE57 /* default-timer.h */,
+			);
+			name = default;
+			sourceTree = "<group>";
+		};
+		28D6AC360E40816700B1DE57 /* sdl */ = {
+			isa = PBXGroup;
+			children = (
+				28D6AC370E4081B100B1DE57 /* driver_gl.cpp */,
+				28D6AC380E4081B100B1DE57 /* driver_gl.h */,
+				28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */,
+				28D6AC3A0E4081B100B1DE57 /* driver_sdl.h */,
+				28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */,
+				28D6AC3C0E4081B100B1DE57 /* driver_tinygl.h */,
+			);
+			name = sdl;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -751,10 +775,6 @@
 				289EEE260D8921E400521A80 /* matrix4.cpp in Sources */,
 				289EEE270D8921E400521A80 /* mutex.cpp in Sources */,
 				289EEED60D8921F600521A80 /* actor.cpp in Sources */,
-				289EEEDF0D8921F600521A80 /* default-timer.cpp in Sources */,
-				289EEEE00D8921F600521A80 /* driver_gl.cpp in Sources */,
-				289EEEE10D8921F600521A80 /* driver_sdl.cpp in Sources */,
-				289EEEE20D8921F600521A80 /* driver_tinygl.cpp in Sources */,
 				289EEEE30D8921F600521A80 /* bitmap.cpp in Sources */,
 				289EEEE40D8921F600521A80 /* costume.cpp in Sources */,
 				289EEEE50D8921F600521A80 /* engine.cpp in Sources */,
@@ -846,6 +866,10 @@
 				281E11450E3FAABB004A8255 /* posix-fs-factory.cpp in Sources */,
 				28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */,
 				28F8DF8D0E403EB2003543B4 /* config-manager.cpp in Sources */,
+				28D6AC3D0E4081B100B1DE57 /* driver_gl.cpp in Sources */,
+				28D6AC3E0E4081B100B1DE57 /* driver_sdl.cpp in Sources */,
+				28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */,
+				28D6AC430E4081CC00B1DE57 /* default-timer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
