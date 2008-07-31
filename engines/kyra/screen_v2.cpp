@@ -485,5 +485,27 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 	return (w1 == -1) ? false : true;
 }
 
+void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {
+	debugC(9, kDebugLevelScreen, "Screen_v2::checkedPageUpdate(%d, %d)", srcPage, dstPage);
+	
+	const uint32 *src = (const uint32 *)getPagePtr(srcPage);
+	uint32 *dst = (uint32 *)getPagePtr(dstPage);
+	uint32 *page0 = (uint32 *)getPagePtr(0);
+	
+	bool updated = false;
+	
+	for (int y = 0; y < 200; ++y) {
+		for (int x = 0; x < 80; ++x, ++src, ++dst, ++page0) {
+			if (*src != *dst) {
+				updated = true;
+				*dst = *page0 = *src;
+			}
+		}
+	}
+
+	if (updated)
+		addDirtyRect(0, 0, 320, 200);
+}
+
 } // end of namespace Kyra
 

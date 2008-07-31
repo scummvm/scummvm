@@ -55,10 +55,12 @@ bool Resource::reset() {
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
-	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
-		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
-		_vm->GUIErrorMessage(errorMessage);
-		error(errorMessage.c_str());
+	if (_vm->game() != GI_LOL) {
+		if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
+			Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
+			_vm->GUIErrorMessage(errorMessage);
+			error(errorMessage.c_str());
+		}
 	}
 
 	if (_vm->game() == GI_KYRA1) {
@@ -98,6 +100,8 @@ bool Resource::reset() {
 
 		loadFileList("FILEDATA.FDT");
 
+		return true;
+	} else if (_vm->game() == GI_LOL) {
 		return true;
 	}
 
@@ -1120,7 +1124,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 
 void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt) {
 	const uint8 *tbl1 = _tables[srcIndex];
-	const uint8 *tbl2 = _tables[dstIndex];
+	uint8 *tbl2 = _tables[dstIndex];
 	const uint8 *tbl3 = dstIndex2 == 0xff ? 0 : _tables[dstIndex2];
 
 	if (!cnt)
@@ -1185,7 +1189,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 		}		
 	}
 
-	memset((void*) tbl2, 0, 512);
+	memset(tbl2, 0, 512);
 
 	cnt--;
 	s = tbl1 + cnt;

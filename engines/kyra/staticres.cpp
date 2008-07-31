@@ -23,16 +23,17 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
+#include "kyra/lol.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_lok.h"
+#include "kyra/screen_lol.h"
 #include "kyra/screen_hof.h"
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
@@ -287,8 +288,10 @@ bool StaticResource::init() {
 	} else if (_vm->game() == GI_KYRA3) {
 		_builtIn = 0;
 		_filenameTable = kyra3StaticRes;
+	} else if (_vm->game() == GI_LOL) {
+		return true;
 	} else {
-		error("unknown game ID");
+		error("StaticResource: Unknown game ID");
 	}
 
 	char errorBuffer[100];
@@ -2234,6 +2237,106 @@ const int8 KyraEngine_MR::_albumWSAX[] = {
 const int8 KyraEngine_MR::_albumWSAY[] = {
 	 0, -1, 3, 0, -1,  0, -2, 0,
 	-1, -2, 2, 2, -6, -6, -6, 0
+};
+
+// lands of lore static res
+
+const ScreenDim Screen_LoL::_screenDimTable[] = {
+	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 }
+};
+
+const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable);
+
+const char * const LoLEngine::_languageExt[] = {
+	"ENG",
+	"FRE",
+	"GER"
+};
+
+const LoLEngine::CharacterPrev LoLEngine::_charPreviews[] = {
+	{ "Ak\'shel", 0x060, 0x7F, { 0x0F, 0x08, 0x05 } },
+	{  "Michael", 0x09A, 0x7F, { 0x06, 0x0A, 0x0F } },
+	{   "Kieran", 0x0D4, 0x7F, { 0x08, 0x06, 0x08 } },
+	{   "Conrad", 0x10F, 0x7F, { 0x0A, 0x0C, 0x0A } }
+};
+
+const uint8 LoLEngine::_chargenFrameTable[] = {
+	0x00, 0x01, 0x02, 0x03, 0x04,
+	0x05, 0x04, 0x03, 0x02, 0x01,
+	0x00, 0x00, 0x01, 0x02, 0x03,
+	0x04, 0x05, 0x06, 0x07, 0x08,
+	0x09, 0x0A, 0x0B, 0x0C, 0x0D,
+	0x0E, 0x0F, 0x10, 0x11, 0x12
+};
+
+const uint16 LoLEngine::_selectionPosTable[] = {
+	0x6F, 0x00, 0x8F, 0x00, 0xAF, 0x00,  0xCF, 0x00,
+	0xEF, 0x00, 0x6F, 0x20, 0x8F, 0x20,  0xAF, 0x20,
+	0xCF, 0x20, 0xEF, 0x20, 0x6F, 0x40,  0x8F, 0x40,
+	0xAF, 0x40, 0xCF, 0x40, 0xEF, 0x40, 0x10F, 0x00
+};
+
+const uint8 LoLEngine::_selectionChar1IdxTable[] = {
+	0, 0, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 0, 0, 5, 5, 5,
+	5, 5, 5, 5, 0, 0, 5, 5,
+	5, 5, 5
+};
+
+const uint8 LoLEngine::_selectionChar2IdxTable[] = {
+	1, 1, 6, 6, 1, 1, 6, 6,
+	6, 6, 6, 6, 6, 1, 1, 6,
+	6, 6, 1, 1, 6, 6, 6, 6,
+	6, 6, 6
+};
+
+const uint8 LoLEngine::_selectionChar3IdxTable[] = {
+	2, 2, 7, 7, 7, 7, 2, 2,
+	7, 7, 7, 7, 7, 7, 7, 2,
+	2, 7, 7, 7, 7, 2, 2, 7,
+	7, 7, 7
+};
+
+const uint8 LoLEngine::_selectionChar4IdxTable[] = {
+	3, 3, 8, 8, 8, 8, 3, 3,
+	8, 8, 3, 3, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 3, 3, 8,
+	8, 8, 8
+};
+
+const uint8 LoLEngine::_reminderChar1IdxTable[] = {
+	4, 4, 4, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	5
+};
+
+const uint8 LoLEngine::_reminderChar2IdxTable[] = {
+	9, 9, 9, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 6, 6,
+	6
+};
+
+const uint8 LoLEngine::_reminderChar3IdxTable[] = {
+	0xE, 0xE, 0xE, 0x7, 0x7, 0x7, 0x7, 0x7,
+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
+	0x7
+};
+
+const uint8 LoLEngine::_reminderChar4IdxTable[] = {
+	0xF, 0xF, 0xF, 0x8, 0x8, 0x8, 0x8, 0x8,
+	0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8,
+	0x8
+};
+
+const uint8 LoLEngine::_selectionAnimIndexTable[] = {
+	0, 5, 1, 6, 2, 7, 3, 8
+};
+
+const uint8 LoLEngine::_charInfoFrameTable[] = {
+	0x0, 0x7, 0x8, 0x9, 0xA, 0xB, 0xA, 0x9,
+	0x8, 0x7, 0x0, 0x0, 0x7, 0x8, 0x9, 0xA,
+	0xB, 0xA, 0x9, 0x8, 0x7, 0x0, 0x0, 0x7,
+	0x8, 0x9, 0xA, 0xB, 0xA, 0x9, 0x8, 0x7
 };
 
 } // End of namespace Kyra

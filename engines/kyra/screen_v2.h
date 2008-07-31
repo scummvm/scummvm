@@ -40,6 +40,8 @@ public:
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
 					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
 
+	void checkedPageUpdate(int srcPage, int dstPage);
+
 	// palette handling
 	uint8 *generateOverlay(const uint8 *palette, uint8 *buffer, int color, uint16 factor);
 	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);

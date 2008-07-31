@@ -230,7 +230,7 @@ int KyraEngine_HoF::init() {
 	_gui = new GUI_HoF(this);
 	assert(_gui);
 	_gui->initStaticData();
-	_tim = new TIMInterpreter(this, _system);
+	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
 
 	if (_flags.isDemo && !_flags.isTalkie) {

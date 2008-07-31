@@ -64,7 +64,8 @@ struct GameFlags {
 enum {
 	GI_KYRA1 = 0,
 	GI_KYRA2 = 1,
-	GI_KYRA3 = 2
+	GI_KYRA3 = 2,
+	GI_LOL = 4
 };
 
 struct AudioDataStruct {

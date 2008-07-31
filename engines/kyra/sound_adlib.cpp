@@ -235,6 +235,10 @@ private:
 	// * One for instruments, starting at offset 500.
 
 	uint8 *getProgram(int progId) {
+		uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
+		//TODO: Check in LoL CD Adlib driver
+		if (offset == 0xFFFF)
+			return 0;
 		return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
 	}
 
@@ -1282,6 +1286,9 @@ int AdlibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 		return 0;
 
 	uint8 *ptr = getProgram(value);
+	//TODO: Check in LoL CD Adlib driver
+	if (!ptr)
+		return 0;
 	uint8 chan = *ptr++;
 	uint8 priority = *ptr++;
 
@@ -2213,7 +2220,7 @@ const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1S
 SoundAdlibPC::SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
-	_v2 = (_vm->gameFlags().gameID == GI_KYRA2);
+	_v2 = (_vm->gameFlags().gameID == GI_KYRA2) || (_vm->gameFlags().gameID == GI_LOL);
 	_driver = new AdlibDriver(mixer, _v2);
 	assert(_driver);
 

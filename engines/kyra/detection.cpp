@@ -26,6 +26,7 @@
 #include "kyra/kyra_lok.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
+#include "kyra/lol.h"
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
@@ -63,6 +64,8 @@ namespace {
 #define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, true, Kyra::GI_KYRA3)
 #define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, true, false, Kyra::GI_KYRA3)
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
+
+#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_LOL)
 
 const KYRAGameDescription adGameDescs[] = {
 	{
@@ -700,6 +703,56 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
+	
+	// Lands of Lore CD
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+	
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+	
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+	
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
 };
 
@@ -707,6 +760,7 @@ const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
 	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
+	{ "lol", "Lands of Lore: The Throne of Chaos" },
 	{ 0, 0 }
 };
 
@@ -778,6 +832,9 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		break;
 	case Kyra::GI_KYRA3:
 		*engine = new Kyra::KyraEngine_MR(syst, flags);
+		break;
+	case Kyra::GI_LOL:
+		*engine = new Kyra::LoLEngine(syst, flags);
 		break;
 	default:
 		res = false;
