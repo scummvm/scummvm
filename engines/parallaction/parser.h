@@ -128,6 +128,7 @@ protected:
 
 		// BRA specific
 		int numZones;
+		BackgroundInfo	*info;
 		char *bgName;
 		char *maskName;
 		char *pathName;

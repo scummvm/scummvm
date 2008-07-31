@@ -293,7 +293,7 @@ void Parallaction::setBackground(const char* name, const char* mask, const char*
 	_disk->loadScenery(*info, name, mask, path);
 
 	_gfx->setBackground(kBackgroundLocation, info);
-	_pathBuffer = &_gfx->_backgroundInfo->path;
+	_pathBuffer = &info->path;
 
 	return;
 }
