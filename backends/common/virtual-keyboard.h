@@ -85,9 +85,11 @@ protected:
 		OverlayColor		transparentColor;
 		Common::ImageMap	imageMap;
 		EventMap			events;
-		Common::Rect		*previewArea;
+		Common::Rect		*displayArea;
+		OverlayColor		displayFontColor;
 
-		Mode() : image(0), previewArea(0) {}
+		Mode() : image(0), displayArea(0) {}
+		~Mode() { if (displayArea) delete displayArea; }
 	};
 	
 	typedef Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ModeMap;
@@ -122,6 +124,7 @@ protected:
 		void clear();
 		bool empty();
 		String getString();
+		uint getInsertIndex();
 		bool hasStringChanged();
 
 	private:

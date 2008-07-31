@@ -24,9 +24,7 @@
 */
 
 #include "backends/common/virtual-keyboard-gui.h"
-#include "backends/common/virtual-keyboard.h"
 #include "graphics/cursorman.h"
-#include "graphics/surface-keycolored.h"
 #include "gui/newgui.h"
 
 namespace Common {
@@ -43,18 +41,45 @@ VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd) {
 
 	_displaying = _needRedraw = _drag = false;
 	_firstRun = true;
+
+	_displayEnabled = false;
 }
 
-void VirtualKeyboardGUI::setKeyboardSurface(Graphics::Surface *sur, OverlayColor trans_color) {
-	_kbdSurface = sur;
-	_kbdTransparentColor = trans_color;
-	_kbdBound.setWidth(_kbdSurface->w);
-	_kbdBound.setHeight(_kbdSurface->h);
+void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
+	_kbdSurface = mode->image;
+	_kbdTransparentColor = mode->transparentColor;
+	_kbdBound.setWidth(_kbdSurface->w + 1);
+	_kbdBound.setHeight(_kbdSurface->h + 1);
 	_needRedraw = true;
+
+	_displayEnabled = false;
+	if (!mode->displayArea)
+		return;
+	Rect r = *(mode->displayArea);
+
+	// choose font
+	_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	if (!fontIsSuitable(_dispFont, r)) {
+		_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		if (!fontIsSuitable(_dispFont, r))
+			return;
+	}
+	_dispX = r.left;
+	_dispY = r.top + (_dispFont->getFontHeight() - r.height() + 1) / 2;
+	_dispSurface.free();
+	_dispSurface.create(r.width() + 1, _dispFont->getFontHeight(), sizeof(OverlayColor));
+	_dispI = 0;
+	_dispForeColor = mode->displayFontColor;
+	_dispBackColor = _dispForeColor + 0xFF;
+	_displayEnabled = true;
+}
+
+bool VirtualKeyboardGUI::fontIsSuitable(const Graphics::Font *font, const Rect& rect) {
+	return (font->getMaxCharWidth() < rect.width() &&
+			font->getFontHeight() < rect.height());
 }
 
 void VirtualKeyboardGUI::run() {
-
 	if (_lastScreenChanged != _system->getScreenChangeID())
 		screenChanged();
 
@@ -70,14 +95,18 @@ void VirtualKeyboardGUI::run() {
 	}
 	_overlayBackup.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
 	_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
+	resetDirtyRect();
+
 	setupCursor();
 
 	_displaying = true;
 	mainLoop();
 
 	removeCursor();
+
 	_system->copyRectToOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w, 0, 0, _overlayBackup.w, _overlayBackup.h);
 	if (!g_gui.isActive()) _system->hideOverlay();
+
 	_overlayBackup.free();
 }
 
@@ -129,6 +158,10 @@ void VirtualKeyboardGUI::setDefaultPosition()
 }
 
 void VirtualKeyboardGUI::move(int16 x, int16 y) {
+	// add old position to dirty area
+	extendDirtyRect(_kbdBound);
+	_needRedraw = true;
+
 	// snap to edge of screen
 	if (ABS(x) < SNAP_WIDTH)
 		x = 0;
@@ -155,8 +188,13 @@ void VirtualKeyboardGUI::mainLoop() {
 	Common::EventManager *eventMan = _system->getEventManager();
 
 	while (_displaying) {
+		if (_displayEnabled) {
+			if (_kbd->_keyQueue.hasStringChanged())
+				_refreshDisplay = true;
+			animateCaret();
+			if (_refreshDisplay) updateDisplay();;
+		}
 		if (_needRedraw) redraw();
-
 		animateCursor();
 		_system->updateScreen();
 		Common::Event event;
@@ -175,11 +213,9 @@ void VirtualKeyboardGUI::mainLoop() {
 				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				if (_drag) {
+				if (_drag)
 					move(event.mouse.x - _dragPoint.x, 
 						event.mouse.y - _dragPoint.y);
-					_needRedraw = true;
-				}
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChanged();
@@ -206,21 +242,99 @@ void VirtualKeyboardGUI::endDrag() {
 	_drag = false;
 }
 
+void VirtualKeyboardGUI::extendDirtyRect(const Rect &r) {
+	if (_dirtyRect.isValidRect()) {
+		_dirtyRect.extend(r);
+	} else {
+		_dirtyRect = r;
+	}
+	_dirtyRect.clip(Rect(0, 0, _overlayBackup.w, _overlayBackup.h));
+}
+
+void VirtualKeyboardGUI::resetDirtyRect() {
+	_dirtyRect.setWidth(-1);
+}
 
 void VirtualKeyboardGUI::redraw() {
-	Graphics::SurfaceKeyColored surf;
 	assert(_kbdSurface);
 
-	surf.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
+	extendDirtyRect(_kbdBound);
 
-	memcpy(surf.pixels, _overlayBackup.pixels, surf.w * surf.h * sizeof(OverlayColor));
-	surf.blit(_kbdSurface, _kbdBound.left, _kbdBound.top, _kbdTransparentColor);
+	Graphics::SurfaceKeyColored surf;
+	surf.create(_dirtyRect.width()+1, _dirtyRect.height()+1, sizeof(OverlayColor));
 
-	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 0, 0, surf.w, surf.h);
+	OverlayColor *scr = (OverlayColor *)surf.pixels;
+	const OverlayColor *ove = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
+	int16 h = surf.h;
+	while (h-- > 0) {
+		memcpy(scr, ove, surf.w * sizeof(OverlayColor));
+		scr += surf.w;
+		ove += _overlayBackup.w;
+	}
+
+	int16 keyX = _kbdBound.left - _dirtyRect.left;
+	int16 keyY = _kbdBound.top - _dirtyRect.top;
+	surf.blit(_kbdSurface, keyX, keyY, _kbdTransparentColor);
+	if (_displayEnabled) surf.blit(&_dispSurface, keyX + _dispX, keyY + _dispY, _dispBackColor);
+	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w,
+		_dirtyRect.left, _dirtyRect.top, surf.w, surf.h);
 
 	surf.free();
 
 	_needRedraw = false;
+	
+	resetDirtyRect();
+}
+
+uint VirtualKeyboardGUI::calculateEndIndex(const String& str, uint startIndex) {
+	int16 w = 0;
+	while (w <= _dispSurface.w && startIndex < str.size()) {
+		w += _dispFont->getCharWidth(str[startIndex++]);
+	}
+	if (w > _dispSurface.w) startIndex--;
+	return startIndex;
+}
+
+void VirtualKeyboardGUI::animateCaret() {
+	if (_system->getMillis() % kCaretBlinkTime < kCaretBlinkTime / 2) {
+		if (!_drawCaret) {
+			_drawCaret = true;
+			_refreshDisplay = true;
+		}
+	} else {
+		if (_drawCaret) {
+			_drawCaret = false;
+			_refreshDisplay = true;
+		}
+	}
+}
+
+void VirtualKeyboardGUI::updateDisplay() {
+	if (!_displayEnabled) return;
+
+	// calculate the text to display
+	uint cursorPos = _kbd->_keyQueue.getInsertIndex();
+	String wholeText = _kbd->_keyQueue.getString();
+	uint dispTextEnd;
+	if (_dispI > cursorPos)
+		_dispI = cursorPos;
+	
+	dispTextEnd = calculateEndIndex(wholeText, _dispI);
+	while (cursorPos > dispTextEnd)
+		dispTextEnd = calculateEndIndex(wholeText, ++_dispI);
+	
+	String dispText = String(wholeText.c_str() + _dispI, wholeText.c_str() + dispTextEnd);
+
+	// draw to display surface
+	_dispSurface.fillRect(Rect(0, 0, _dispSurface.w, _dispSurface.h), _dispBackColor);
+	_dispFont->drawString(&_dispSurface, dispText, 0, 0, _dispSurface.w, _dispForeColor);
+	if (_drawCaret) {
+		String beforeCaret(wholeText.c_str() + _dispI, wholeText.c_str() + cursorPos);
+		int16 caretX = _dispFont->getStringWidth(beforeCaret);
+		_dispSurface.drawLine(caretX, 0, caretX, _dispSurface.h, _dispForeColor);
+	}
+
+	_needRedraw = true;
 }
 
 void VirtualKeyboardGUI::setupCursor() {

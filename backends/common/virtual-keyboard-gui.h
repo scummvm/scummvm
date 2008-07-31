@@ -26,20 +26,20 @@
 #ifndef COMMON_VIRTUAL_KEYBOARD_GUI
 #define COMMON_VIRTUAL_KEYBOARD_GUI
 
+#include "backends/common/virtual-keyboard.h"
 #include "common/rect.h"
 #include "common/system.h"
-#include "graphics/surface.h"
+#include "graphics/fontman.h"
+#include "graphics/surface-keycolored.h"
 
 namespace Common {
-
-class VirtualKeyboard;
 
 class VirtualKeyboardGUI {
 
 public:
 
 	VirtualKeyboardGUI(VirtualKeyboard *kbd);
-	void setKeyboardSurface(Graphics::Surface *sur, OverlayColor trans_color);
+	void initMode(VirtualKeyboard::Mode *mode);
 	void run();
 	void hide();
 	bool isDisplaying() { return _displaying; }
@@ -58,6 +58,16 @@ private:
 
 	Graphics::Surface _overlayBackup;
 
+	Rect _dirtyRect;
+
+	bool _displayEnabled;
+	bool _refreshDisplay;
+	Graphics::Surface _dispSurface;
+	const Graphics::Font *_dispFont;
+	int16 _dispX, _dispY;
+	uint _dispI;
+	OverlayColor _dispForeColor, _dispBackColor;
+
 	Rect _kbdBound;
 
 	Point _dragPoint;
@@ -72,8 +82,17 @@ private:
 	void move(int16 x, int16 y);
 	void screenChanged();
 	void mainLoop();
+	void extendDirtyRect(const Rect &r);
+	void resetDirtyRect();
 	void redraw();
-	
+	void updateDisplay();
+	bool fontIsSuitable(const Graphics::Font *font, const Rect& rect);
+	uint calculateEndIndex(const String& str, uint startIndex);
+
+	bool _drawCaret;
+	static const int kCaretBlinkTime = 500;
+	void animateCaret();
+
 	static const int kCursorAnimateDelay = 250;
 	int _cursorAnimateCounter;
 	int	_cursorAnimateTimer;

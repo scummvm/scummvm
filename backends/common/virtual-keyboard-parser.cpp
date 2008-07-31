@@ -318,6 +318,14 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 	} else
 		_mode->transparentColor = g_system->RGBToColor(255, 0, 255); // default to purple
 
+	if (layoutNode->values.contains("display_font_color")) {
+		int r, g, b;
+		if (!parseIntegerKey(layoutNode->values["display_font_color"].c_str(), 3, &r, &g, &b))
+			return parserError("Could not parse color value");
+		_mode->displayFontColor = g_system->RGBToColor(r, g, b);
+	} else
+		_mode->displayFontColor = g_system->RGBToColor(0, 0, 0); // default to black
+
 	_layoutParsed = true;
 
 	return true;
@@ -352,8 +360,8 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 	if (target == "display_area") {
 		if (shape != "rect")
 			return parserError("display_area must be a rect area");
-		_mode->previewArea = new Common::Rect();
-		return parseRect(_mode->previewArea, coords);
+		_mode->displayArea = new Common::Rect();
+		return parseRect(_mode->displayArea, coords);
 	} else if (shape == "rect") {
 		Common::Rect *rect = _mode->imageMap.createRectArea(target);
 		return parseRect(rect, coords);

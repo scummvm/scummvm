@@ -151,7 +151,7 @@ void VirtualKeyboard::processAreaClick(const Common::String& area) {
 }
 
 void VirtualKeyboard::switchMode(Mode *newMode) {
-	_kbdGUI->setKeyboardSurface(newMode->image, newMode->transparentColor);
+	_kbdGUI->initMode(newMode);
 	_currentMode = newMode;
 }
 
@@ -267,8 +267,6 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	kp.key = key;
 	kp.strLen = keyStr.size();
 	_keys.insert(_keyPos, kp);
-
-	
 }
 
 void VirtualKeyboard::KeyPressQueue::deleteKey() {
@@ -335,6 +333,10 @@ String VirtualKeyboard::KeyPressQueue::getString()
 	if (_keyFlags & KBD_SHIFT)
 		flags += "Shift+";
 	return _str + flags;
+}
+
+uint VirtualKeyboard::KeyPressQueue::getInsertIndex() {
+	return _strPos;
 }
 
 bool VirtualKeyboard::KeyPressQueue::hasStringChanged() {
