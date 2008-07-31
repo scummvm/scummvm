@@ -267,7 +267,6 @@ protected:
 
 	Sprites*	createSprites(Common::ReadStream &stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
-	void loadMask(BackgroundInfo& info, Common::SeekableReadStream &stream);
 	void loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
 
 	FilesystemNode	_baseBkgDir;
