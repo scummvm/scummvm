@@ -253,8 +253,14 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 }
 
 
-void Parallaction_ns::showSlide(const char *name) {
-	_gfx->setBackground(kBackgroundSlide, name, 0, 0);
+void Parallaction_ns::showSlide(const char *name, int x, int y) {
+	BackgroundInfo *info = new BackgroundInfo;
+	_disk->loadSlide(*info, name);
+
+	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_vm->_screenWidth - info->width) >> 1) : x;
+	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_vm->_screenHeight - info->height) >> 1) : y;
+
+	_gfx->setBackground(kBackgroundSlide, info);
 }
 
 void Parallaction_ns::runPendingZones() {

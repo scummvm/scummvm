@@ -831,15 +831,11 @@ void Gfx::freeItems() {
 	_numItems = 0;
 }
 
-
-void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
-
+void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	delete _backgroundInfo;
-	_backgroundInfo = new BackgroundInfo;
+	_backgroundInfo = info;
 
 	if (type == kBackgroundLocation) {
-		_disk->loadScenery(*_backgroundInfo, name, mask, path);
-
 		// The PC version of BRA needs the entries 20-31 of the palette to be constant, but
 		// the background resource files are screwed up. The right colors come from an unused
 		// bitmap (pointer.bmp). Nothing is known about the Amiga version so far.
@@ -854,12 +850,10 @@ void Gfx::setBackground(uint type, const char* name, const char* mask, const cha
 		setPalette(_backgroundInfo->palette);
 		_palette.clone(_backgroundInfo->palette);
 	} else {
-		_disk->loadSlide(*_backgroundInfo, name);
 		for (uint i = 0; i < 6; i++)
 			_backgroundInfo->ranges[i]._flags = 0;	// disable palette cycling for slides
 		setPalette(_backgroundInfo->palette);
 	}
-
 }
 
 } // namespace Parallaction

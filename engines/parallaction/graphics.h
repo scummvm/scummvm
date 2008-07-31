@@ -512,7 +512,7 @@ public:
 
 	// background surface
 	BackgroundInfo	*_backgroundInfo;
-	void setBackground(uint type, const char* name, const char* mask, const char* path);
+	void setBackground(uint type, BackgroundInfo *info);
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
 	void fillBackground(const Common::Rect& r, byte color);

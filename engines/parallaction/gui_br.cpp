@@ -72,9 +72,7 @@ public:
 
 	virtual void enter() {
 		_vm->_gfx->clearScreen();
-		_vm->_gfx->setBackground(kBackgroundSlide, _slideName.c_str(), 0, 0);
-		_vm->_gfx->_backgroundInfo->x = (_vm->_screenWidth - _vm->_gfx->_backgroundInfo->width) >> 1;
-		_vm->_gfx->_backgroundInfo->y = (_vm->_screenHeight - _vm->_gfx->_backgroundInfo->height) >> 1;
+		_vm->showSlide(_slideName.c_str(), CENTER_LABEL_HORIZONTAL, CENTER_LABEL_VERTICAL);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		_startTime = g_system->getMillis();
@@ -215,11 +213,12 @@ public:
 
 	virtual void enter() {
 		_vm->_gfx->clearScreen();
-		_vm->_gfx->setBackground(kBackgroundSlide, "tbra", 0, 0);
+		int x = 0, y = 0;
 		if (_vm->getPlatform() == Common::kPlatformPC) {
-			_vm->_gfx->_backgroundInfo->x = 20;
-			_vm->_gfx->_backgroundInfo->y = 50;
+			x = 20;
+			y = 50;
 		}
+		_vm->showSlide("tbra", x, y);
 
 		// TODO: load progress from savefile
 		int progress = 3;

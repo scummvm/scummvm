@@ -1178,8 +1178,7 @@ void LocationParser_br::parse(Script *script) {
 
 	LocationParser_ns::parse(script);
 
-	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.bgName, ctxt.maskName, ctxt.pathName);
-	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo->path;
+	_vm->setBackground(ctxt.bgName, ctxt.maskName, ctxt.pathName);
 
 	if (ctxt.characterName) {
 		_vm->changeCharacter(ctxt.characterName);

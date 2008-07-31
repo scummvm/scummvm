@@ -487,7 +487,7 @@ public:
 	bool saveGame();
 
 	void		switchBackground(const char* background, const char* mask);
-	void		showSlide(const char *name);
+	void		showSlide(const char *name, int x = 0, int y = 0);
 	void 		setArrowCursor();
 
 	// TODO: this should be private!!!!!!!
