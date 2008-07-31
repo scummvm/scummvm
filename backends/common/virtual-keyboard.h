@@ -112,6 +112,8 @@ protected:
 	class KeyPressQueue {
 	public:
 		KeyPressQueue();
+		void toggleFlags(byte fl);
+		void clearFlags();
 		void insertKey(KeyState key);
 		void deleteKey();
 		void moveLeft();
@@ -119,11 +121,16 @@ protected:
 		KeyState pop();
 		void clear();
 		bool empty();
-		const String& getString();
+		String getString();
+		bool hasStringChanged();
 
 	private:
+		byte _keyFlags;
+
 		List<VirtualKeyPress> _keys;
 		String _str;
+
+		bool _strChanged;
 
 		List<VirtualKeyPress>::iterator _keyPos;
 		uint _strPos;
@@ -173,9 +180,7 @@ protected:	// TODO : clean up all this stuff
 	friend class VirtualKeyboardGUI;
 	VirtualKeyboardGUI	*_kbdGUI;
 
-	byte _keyFlags;
 	KeyPressQueue _keyQueue;
-	KeyState *_keyDown;
 	
 	friend class VirtualKeyboardParser;
 	VirtualKeyboardParser *_parser;

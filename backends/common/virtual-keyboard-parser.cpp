@@ -300,13 +300,15 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 	}
 
 	_mode->bitmapName = layoutNode->values["bitmap"];
-
-	if (!ImageMan.registerSurface(_mode->bitmapName, 0))
-		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
-
 	_mode->image = ImageMan.getSurface(_mode->bitmapName);
-	if (!_mode->image)
-		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
+	if (!_mode->image) {
+		if (!ImageMan.registerSurface(_mode->bitmapName, 0))
+			return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
+
+		_mode->image = ImageMan.getSurface(_mode->bitmapName);
+		if (!_mode->image)
+			return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
+	}
 	
 	if (layoutNode->values.contains("transparent_color")) {
 		int r, g, b;
@@ -347,9 +349,9 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 	Common::String& target = areaNode->values["target"];
 	Common::String& coords = areaNode->values["coords"];
 
-	if (target == "preview_area") {
+	if (target == "display_area") {
 		if (shape != "rect")
-			return parserError("preview_area must be a rect area");
+			return parserError("display_area must be a rect area");
 		_mode->previewArea = new Common::Rect();
 		return parseRect(_mode->previewArea, coords);
 	} else if (shape == "rect") {

@@ -30,7 +30,7 @@
 
 namespace Common {
 
-VirtualKeyboard::VirtualKeyboard() : _currentMode(0), _keyDown(0) {
+VirtualKeyboard::VirtualKeyboard() : _currentMode(0) {
 	assert(g_system);
 	_system = g_system;
 
@@ -62,8 +62,6 @@ void VirtualKeyboard::reset() {
 	_hAlignment = kAlignCentre;
 	_vAlignment = kAlignBottom;
 	_keyQueue.clear();
-	_keyDown = 0;
-	_keyFlags = 0;
 	_loaded = false;
 	_kbdGUI->reset();
 }
@@ -134,21 +132,16 @@ void VirtualKeyboard::processAreaClick(const Common::String& area) {
 	switch (evt->type) {
 	case kEventKey: {
 		// add virtual keypress to queue
-		Common::KeyState key = *(Common::KeyState*)evt->data;
-		key.flags ^= _keyFlags;
-		if ((key.keycode >= Common::KEYCODE_a) && (key.keycode <= Common::KEYCODE_z))
-			key.ascii = (key.flags & Common::KBD_SHIFT) ? key.keycode - 32 : key.keycode;
-		_keyQueue.insertKey(key);
-		_keyFlags = 0;
+		_keyQueue.insertKey(*(Common::KeyState*)evt->data);
 		break;
 	}
 	case kEventModifier:
-		_keyFlags ^= *(byte*)(evt->data);
+		_keyQueue.toggleFlags(*(byte*)(evt->data));
 		break;
 	case kEventSwitchMode:
 		// switch to new mode
 		switchMode(*(Common::String *)evt->data);
-		_keyFlags = 0;
+		_keyQueue.clearFlags();
 		break;
 	case kEventClose:
 		// close virtual keyboard
@@ -224,7 +217,18 @@ VirtualKeyboard::KeyPressQueue::KeyPressQueue() {
 	_strPos = 0;
 }
 
+void VirtualKeyboard::KeyPressQueue::toggleFlags(byte fl) {
+	_keyFlags ^= fl;
+	_strChanged = true;
+}
+
+void VirtualKeyboard::KeyPressQueue::clearFlags() {
+	_keyFlags = 0;
+	_strChanged = true;
+}
+
 void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
+	_strChanged = true;
 	switch (key.keycode) {
 	case KEYCODE_LEFT:
 		moveLeft();
@@ -238,6 +242,11 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	default:
 		;
 	}
+
+	key.flags ^= _keyFlags;
+	if ((key.keycode >= Common::KEYCODE_a) && (key.keycode <= Common::KEYCODE_z))
+		key.ascii = (key.flags & Common::KBD_SHIFT) ? key.keycode - 32 : key.keycode;
+	clearFlags();
 
 	String keyStr;
 	if (key.keycode >= 32 && key.keycode <= 126) {
@@ -259,7 +268,7 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	kp.strLen = keyStr.size();
 	_keys.insert(_keyPos, kp);
 
-	printf("%s %d\n", _str.c_str(), kp.strLen);
+	
 }
 
 void VirtualKeyboard::KeyPressQueue::deleteKey() {
@@ -308,6 +317,7 @@ void VirtualKeyboard::KeyPressQueue::clear() {
 	_keyPos = _keys.end();
 	_str.clear();
 	_strPos = 0;
+	_keyFlags = 0;
 }
 
 bool VirtualKeyboard::KeyPressQueue::empty()
@@ -315,9 +325,22 @@ bool VirtualKeyboard::KeyPressQueue::empty()
 	return _keys.empty();
 }
 
-const String& VirtualKeyboard::KeyPressQueue::getString()
+String VirtualKeyboard::KeyPressQueue::getString()
 {
-	return _str;
+	String flags;
+	if (_keyFlags & KBD_CTRL)
+		flags += "Ctrl+";
+	if (_keyFlags & KBD_ALT)
+		flags += "Alt+";
+	if (_keyFlags & KBD_SHIFT)
+		flags += "Shift+";
+	return _str + flags;
+}
+
+bool VirtualKeyboard::KeyPressQueue::hasStringChanged() {
+	bool ret = _strChanged;
+	_strChanged = false;
+	return ret;
 }
 
 } // end of namespace Common
