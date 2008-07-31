@@ -24,7 +24,6 @@
  */
 
 #include "common/sys.h"
-#include "common/debug.h"
 #include "common/timer.h"
 
 #include "engine/bitmap.h"
@@ -34,6 +33,7 @@
 #include "engine/localize.h"
 #include "engine/engine.h"
 #include "engine/version.h"
+#include "engine/cmd_line.h"
 #include "engine/smush/smush.h"
 
 #include "engine/backend/platform/sdl/driver_gl.h"
@@ -50,106 +50,56 @@ enDebugLevels debugLevel = DEBUG_NONE;
 static bool g_lua_initialized = false;
 Driver *g_driver = NULL;
 
-static bool parseBoolStr(const char *val) {
-	if (!val || val[0] == 0)
-		return false;
-
-	switch (val[0]) {
-	case 'y': case 'Y':	// yes
-	case 't': case 'T':	// true
-	case '1':
-		return true;
-	case 'n': case 'N':	// no
-	case 'f': case 'F':	// false
-	case '0':
-		return false;
-	case 'o':
-		switch (val[1]) {
-		case 'n': case 'N': // on
-			return true;
-		case 'f': case 'F': // off
-			return false;
-		}
-	}
-
-	error("Unrecognized boolean value %s\n", val);
-	return false;
-}
-
 void quit();
 
 extern "C" int residual_main(int argc, char *argv[]) {
-	int i;
+	Common::String specialDebug;
+	Common::String command;
 
 	printf("%s\n", gResidualFullVersion);
 	printf("------------------------------------------------\n");
 
+	registerDefaults();
+
+	// Parse the command line
+	Common::StringMap settings;
+	command = parseCommandLine(settings, argc, argv);
+
+	// Load the config file (possibly overriden via command line):
+	if (settings.contains("config")) {
+		ConfMan.loadConfigFile(settings["config"]);
+		settings.erase("config");
+	} else {
+		ConfMan.loadDefaultConfigFile();
+	}
+
+	// Update the config file
+	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
+
+	// Load and setup the debuglevel and the debug flags. We do this at the
+	// soonest possible moment to ensure debug output starts early on, if
+	// requested.
+	if (settings.contains("debuglevel")) {
+		debugLevel = (enDebugLevels)strtol(settings["debuglevel"].c_str(), 0, 10);
+		printf("Debuglevel (from command line): %d\n", debugLevel);
+		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
+	} else if (ConfMan.hasKey("debuglevel"))
+		debugLevel = (enDebugLevels)ConfMan.getInt("debuglevel");
+
+	if (settings.contains("debugflags")) {
+		specialDebug = settings["debugflags"];
+		settings.erase("debugflags");
+	}
+
+	if (!processSettings(command, settings))
+		return 0;
+
 	g_registry = new Registry();
 
-	// Parse command line
-	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer", "TRUE"));
-	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps", "FALSE"));
-	TINYGL_GLOBAL = parseBoolStr(g_registry->get("soft", "FALSE"));
-	bool fullscreen = parseBoolStr(g_registry->get("fullscreen", "FALSE"));
-	for (i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "-zbuffer") == 0)
-			ZBUFFER_GLOBAL = true;
-		else if (strcmp(argv[i], "-nozbuffer") == 0)
-			ZBUFFER_GLOBAL = false;
-		else if (strcmp(argv[i], "-fps") == 0)
-			SHOWFPS_GLOBAL = true;
-		else if (strcmp(argv[i], "-nofps") == 0)
-			SHOWFPS_GLOBAL = false;
-		else if (strcmp(argv[i], "-fullscreen") == 0)
-			fullscreen = true;
-		else if (strcmp(argv[i], "-nofullscreen") == 0)
-			fullscreen = false;
-		else if (strcmp(argv[i], "-soft") == 0)
-			TINYGL_GLOBAL = true;
-		else if (strcmp(argv[i], "-nosoft") == 0)
-			TINYGL_GLOBAL = false;
-		else if (strncmp(argv[i], "-debug=", 7) == 0) {
-			bool numeric = true;
-			char debugtxt[20];
-			unsigned int j;
-			int level;
-			
-			sscanf(argv[i], "%*[^=]%*1s%s", debugtxt);
-			for (j = 0;j < strlen(debugtxt); j++) {
-				if (!isdigit(debugtxt[j]))
-					numeric = false;
-			}
-			if (numeric) {
-				sscanf(debugtxt, "%d", &level);
-				if (level < 0 || level > DEBUG_ALL)
-					goto needshelp;
-			} else {
-				level = -1;
-				for (j = 0; j <= DEBUG_ALL; j++) {
-					if (!strcasecmp(debugtxt, debug_levels[j])) {
-						level = j;
-						break;
-					}
-				}
-				if (level == -1)
-					goto needshelp;
-			}
-			debugLevel = (enDebugLevels) level;
-			printf("Debug level set to: %s\n", debug_levels[debugLevel]);
-		} else {
-			int j;
-needshelp:
-			printf("Recognised options:\n");
-			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
-			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
-			printf("\t-[no]fullscreen\t\tEnable/disable fullscreen mode at startup\n");
-			printf("\t-[no]soft\t\tEnable/disable software renderer\n");
-			printf("\t-debug=[level]\t\tSet debug to [level], valid levels:\n");
-			for (j = 0;j <= DEBUG_ALL; j++)
-				printf("\t\t%-8s (%d): %s.\n", debug_levels[j], j, debug_descriptions[j]);
-			exit(-1);
-		}
-	}
+	SHOWFPS_GLOBAL = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
+	TINYGL_GLOBAL = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
+	ZBUFFER_GLOBAL = (tolower(g_registry->get("gl_zbuffer", "FALSE")[0]) == 't');
+	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return 1;
@@ -176,7 +126,7 @@ needshelp:
 	Bitmap *splash_bm = NULL;
 	if (!(g_flags & GF_DEMO))
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
-	if (splash_bm != NULL)
+	if (splash_bm)
 		splash_bm->ref();
 
 	g_driver->clearScreen();
@@ -186,7 +136,7 @@ needshelp:
 
 	g_driver->flipBuffer();
 
-	if (splash_bm != NULL)
+	if (splash_bm)
 		splash_bm->deref();
 
 	lua_iolibopen();

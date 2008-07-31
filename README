@@ -63,9 +63,11 @@ By default, the configuration file is saved in, and loaded from:
         residual.ini in the current directory
 
 An example config file looks as follows:
+	[residual]
 
-       DataDir=[path to all the .lab files]
-       good_times=TRUE
+	[grim]
+	path=[path to all the .lab files]
+	game_devel_mode=TRUE
 
 It runs really slow when using -zbuffer!
 ----------------------------------------

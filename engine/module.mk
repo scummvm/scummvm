@@ -3,6 +3,7 @@ MODULE := engine
 MODULE_OBJS := \
 	actor.o \
 	bitmap.o \
+	cmd_line.o \
 	costume.o \
 	engine.o \
 	font.o \

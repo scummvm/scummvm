@@ -32,7 +32,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/util.h"
-#include "common/debug.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
 
@@ -173,7 +172,11 @@ void ConfigManager::loadFile(const String &filename) {
 
 			// Read a line
 			String line;
+#ifdef _WIN32
+			while (line.lastChar() != 0x0a) {
+#else
 			while (line.lastChar() != '\n') {
+#endif
 				char buf[MAXLINELEN];
 				if (!cfg_file.readLine_NEW(buf, MAXLINELEN))
 					break;
@@ -324,7 +327,12 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 	stream.writeByte('[');
 	stream.writeString(name);
 	stream.writeByte(']');
+#ifdef _WIN32
+	stream.writeByte(0x0d);
+	stream.writeByte(0x0a);
+#else
 	stream.writeByte('\n');
+#endif
 
 	// Write all key/value pairs in this domain, including comments
 	Domain::const_iterator x;
@@ -339,10 +347,20 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 			stream.writeString(x->_key);
 			stream.writeByte('=');
 			stream.writeString(x->_value);
+#ifdef _WIN32
+			stream.writeByte(0x0d);
+			stream.writeByte(0x0a);
+#else
 			stream.writeByte('\n');
+#endif
 		}
 	}
+#ifdef _WIN32
+	stream.writeByte(0x0d);
+	stream.writeByte(0x0a);
+#else
 	stream.writeByte('\n');
+#endif
 }
 
 

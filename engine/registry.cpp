@@ -23,99 +23,96 @@
  *
  */
 
-#if defined(WIN32)
-#include <windows.h>
-#endif
-
 #include "common/sys.h"
 #include "common/debug.h"
+#include "common/str.h"
 
 #include "engine/registry.h"
-
-#include <cstdlib>
-#include <cstring>
-
-#if defined(UNIX)
-#ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
-#else
-#define DEFAULT_CONFIG_FILE ".residualrc"
-#endif
-#else
-#define DEFAULT_CONFIG_FILE "residual.ini"
-#endif
+#include "engine/cmd_line.h"
 
 Registry *g_registry = NULL;
 
-Registry::Registry() : _dirty(false) {
-	char configFile[MAXPATHLEN];
-#ifndef __DC__
-#ifdef WIN32
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
+// SpewOnError
+// GrimLastSet
+// JoystickEnabled
+// MovementMode
+// SpeechMode
+// GammaCorrection, Gamma
+// GrimDeveloper
+// SfxVolume
+// MusicVolume
+// VoiceVolume
+// TextSpeed
+// VoiceEffects
+// LastSavedGame
+// good_times
 
-			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
-		}
+// fps
+// gl_zbuffer
+// soft_renderer
+// fullscreen
 
-		strcat(configFile, "\\Residual");
-		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	} else {
-		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	}
-#elif defined __amigaos4__
-	strcpy(configFile,"/PROGDIR/residual.ini");
-#else
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-#endif
-
-	std::FILE *f = fopen(configFile, "r");
-	if (f != NULL) {
-		char line[1024];
-		while (!feof(f) && fgets(line, sizeof(line), f) != NULL) {
-			char *equals = std::strchr(line, '=');
-			char *newline = std::strchr(line, '\n');
-			if (newline != NULL)
-				*newline = '\0';
-			if (equals != NULL) {
-				std::string key = std::string(line, equals - line);
-				std::string val = std::string(equals + 1);
-				_settings[key] = val;
-			}
-		}
-		std::fclose(f);
-	}
-#endif
+Registry::Registry() : _dirty(true) {
+	_develMode = ConfMan.get("game_devel_mode");
+	_dataPath = ConfMan.get("path");
+	_lastSet = ConfMan.get("last_set");
+	_musicVolume = ConfMan.get("music_volume");
+	_sfxVolume = ConfMan.get("sfx_volume");
+	_voiceVolume = ConfMan.get("voice_volume");
+	_lastSavedGame = ConfMan.get("last_saved_game");
+	_gamma = ConfMan.get("gamma");
+	_voiceEffects = ConfMan.get("voice_effects");
+	_textSpeed = ConfMan.get("text_speed");
+	_speechMode = ConfMan.get("speech_mode");
+	_movement = ConfMan.get("movement");
+	_joystick = ConfMan.get("joystick");
+	_spewOnError = ConfMan.get("spew_on_error");
+	_showFps = ConfMan.get("show_fps");
+	_softRenderer = ConfMan.get("soft_renderer");
+	_glZbuffer = ConfMan.get("gl_zbuffer");
+	_fullscreen = ConfMan.get("fullscreen");
 }
 
 const char *Registry::get(const char *key, const char *defval) const {
-	// GrimDataDir is an alias for DataDir for our purposes
-	if (!strcmp(key, "GrimDataDir"))
-		key = "DataDir";
-	
-	Group::const_iterator i = _settings.find(key);
-	if (i == _settings.end())
-		return defval;
-	else
-		return i->second.c_str();
+	if (strcasecmp("good_times", key) == 0 || strcasecmp("GrimDeveloper", key) == 0) {
+		return _develMode.c_str();
+	} else if (strcasecmp("GrimDataDir", key) == 0) {
+		return _dataPath.c_str();
+	} else if (strcasecmp("GrimLastSet", key) == 0) {
+		return _lastSet.c_str();
+	} else if (strcasecmp("MusicVolume", key) == 0) {
+		return _musicVolume.c_str();
+	} else if (strcasecmp("SfxVolume", key) == 0) {
+		return _sfxVolume.c_str();
+	} else if (strcasecmp("VoiceVolume", key) == 0) {
+		return _voiceVolume.c_str();
+	} else if (strcasecmp("LastSavedGame", key) == 0) {
+		return _lastSavedGame.c_str();
+	} else if (strcasecmp("Gamma", key) == 0 || strcasecmp("GammaCorrection", key) == 0) {
+		return "";//_gamma.c_str();
+	} else if (strcasecmp("VoiceEffects", key) == 0) {
+		return _voiceEffects.c_str();
+	} else if (strcasecmp("TextSpeed", key) == 0) {
+		return _textSpeed.c_str();
+	} else if (strcasecmp("SpeechMode", key) == 0) {
+		return _speechMode.c_str();
+	} else if (strcasecmp("MovementMode", key) == 0) {
+		return _movement.c_str();
+	} else if (strcasecmp("JoystickEnabled", key) == 0) {
+		return _joystick.c_str();
+	} else if (strcasecmp("SpewOnError", key) == 0) {
+		return _spewOnError.c_str();
+	} else if (strcasecmp("show_fps", key) == 0) {
+		return _showFps.c_str();
+	} else if (strcasecmp("soft_renderer", key) == 0) {
+		return _softRenderer.c_str();
+	} else if (strcasecmp("gl_zbuffer", key) == 0) {
+		return _glZbuffer.c_str();
+	} else if (strcasecmp("fullscreen", key) == 0) {
+		return _fullscreen.c_str();
+	}
+
+	return defval;
 }
 
 void Registry::set(const char *key, const char *val) {
@@ -124,34 +121,90 @@ void Registry::set(const char *key, const char *val) {
 	if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
 		return;
 
-	_settings[key] = val;
 	_dirty = true;
+	assert(val);
+
+	if (strcasecmp("good_times", key) == 0 || strcasecmp("GrimDeveloper", key) == 0) {
+		_develMode = val;
+		return;
+	} else if (strcasecmp("GrimDataDir", key) == 0) {
+		_dataPath = val;
+		return;
+	} else if (strcasecmp("GrimLastSet", key) == 0) {
+		_lastSet = val;
+		return;
+	} else if (strcasecmp("MusicVolume", key) == 0) {
+		_musicVolume = val;
+		return;
+	} else if (strcasecmp("SfxVolume", key) == 0) {
+		_sfxVolume = val;
+		return;
+	} else if (strcasecmp("VoiceVolume", key) == 0) {
+		_voiceVolume = val;
+		return;
+	} else if (strcasecmp("LastSavedGame", key) == 0) {
+		_lastSavedGame = val;
+		return;
+	} else if (strcasecmp("Gamma", key) == 0 || strcasecmp("GammaCorrection", key) == 0) {
+		_gamma = "";//val;
+		return;
+	} else if (strcasecmp("VoiceEffects", key) == 0) {
+		_voiceEffects = val;
+		return;
+	} else if (strcasecmp("TextSpeed", key) == 0) {
+		_textSpeed = val;
+		return;
+	} else if (strcasecmp("SpeechMode", key) == 0) {
+		_speechMode = val;
+		return;
+	} else if (strcasecmp("MovementMode", key) == 0) {
+		_movement = val;
+		return;
+	} else if (strcasecmp("JoystickEnabled", key) == 0) {
+		_joystick = val;
+		return;
+	} else if (strcasecmp("SpewOnError", key) == 0) {
+		_spewOnError = val;
+		return;
+	} else if (strcasecmp("show_fps", key) == 0) {
+		_showFps = val;
+		return;
+	} else if (strcasecmp("soft_renderer", key) == 0) {
+		_softRenderer = val;
+		return;
+	} else if (strcasecmp("gl_zbuffer", key) == 0) {
+		_glZbuffer = val;
+		return;
+	} else if (strcasecmp("fullscreen", key) == 0) {
+		_fullscreen = val;
+		return;
+	}
 }
 
 void Registry::save() {
 	if (!_dirty)
 		return;
 
-#ifndef __DC__
-#ifdef WIN32
-	std::string filename = "residual.ini";
-#elif defined __amigaos4__
-	std::string filename = "/PROGDIR/residual.ini";
-#else
-	std::string filename = std::string(std::getenv("HOME")) + "/.residualrc";
-#endif
+	ConfMan.set("game_devel_mode", _develMode);
+	ConfMan.set("path", _dataPath);
+	ConfMan.set("last_set", _lastSet);
+	ConfMan.set("music_volume", _musicVolume);
+	ConfMan.set("sfx_volume", _sfxVolume);
+	ConfMan.set("voice_volume", _voiceVolume);
+	ConfMan.set("last_saved_game", _lastSavedGame);
+	ConfMan.set("gamma", _gamma);
+	ConfMan.set("voice_effects", _voiceEffects);
+	ConfMan.set("text_speed", _textSpeed);
+	ConfMan.set("speech_mode", _speechMode);
+	ConfMan.set("movement", _movement);
+	ConfMan.set("joystick", _joystick);
+	ConfMan.set("spew_on_error", _spewOnError);
+	ConfMan.set("show_fps", _showFps);
+	ConfMan.set("soft_renderer", _softRenderer);
+	ConfMan.set("gl_zbuffer", _glZbuffer);
+	ConfMan.set("fullscreen", _fullscreen);
 
-	std::FILE *f = std::fopen(filename.c_str(), "w");
-	if (f == NULL) {
-		warning("Could not open registry file %s for writing\n",
-			filename.c_str());
-		return;
-	}
+	ConfMan.flushToDisk();
 
-	for (Group::iterator i = _settings.begin(); i != _settings.end(); i++)
-		std::fprintf(f, "%s=%s\n", i->first.c_str(), i->second.c_str());
-
-	std::fclose(f);
-#endif
 	_dirty = false;
 }

@@ -43,7 +43,7 @@ Localizer::Localizer() {
 		return;
 
 	for (unsigned i = 0; i < sizeof(namesToTry) / sizeof(namesToTry[0]); i++) {
-		const char *datadir = g_registry->get("DataDir", NULL);
+		const char *datadir = g_registry->get("GrimDataDir", ".");
 		std::string fname = (datadir != NULL ? datadir : ".");
 		fname += namesToTry[i];
 		f = std::fopen(fname.c_str(), "rb");

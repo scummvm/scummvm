@@ -1,2 +1,6 @@
-DataDir=C:\Games\Grim
-good_times=TRUE
+[residual]
+
+[grim]
+path=C:\Games\Grim
+show_fps=TRUE
+game_devel_mode=TRUE

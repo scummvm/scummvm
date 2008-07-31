@@ -752,10 +752,9 @@ static void SetHardwareState() {
 	DEBUG_FUNCTION();
 	accel = getbool(1);
 	if (accel)
-		g_registry->set("soft", "FALSE");
+		g_registry->set("soft_renderer", "FALSE");
 	else
-		g_registry->set("soft", "TRUE");
-	g_registry->save();
+		g_registry->set("soft_renderer", "TRUE");
 }
 
 static void SetVideoDevices() {

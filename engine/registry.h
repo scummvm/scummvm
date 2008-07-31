@@ -26,8 +26,7 @@
 #ifndef REGISTRY_HH
 #define REGISTRY_HH
 
-#include <string>
-#include <map>
+#include "common/str.h"
 
 class Registry {
 public:
@@ -42,8 +41,25 @@ private:
 
 	static Registry *_instance;
 
-	typedef std::map<std::string, std::string> Group;
-	Group _settings;
+	Common::String _develMode;
+	Common::String _dataPath;
+	Common::String _lastSet;
+	Common::String _musicVolume;
+	Common::String _sfxVolume;
+	Common::String _voiceVolume;
+	Common::String _lastSavedGame;
+	Common::String _gamma;
+	Common::String _voiceEffects;
+	Common::String _textSpeed;
+	Common::String _speechMode;
+	Common::String _movement;
+	Common::String _joystick;
+	Common::String _spewOnError;
+	Common::String _showFps;
+	Common::String _softRenderer;
+	Common::String _glZbuffer;
+	Common::String _fullscreen;
+
 	bool _dirty;
 };
 

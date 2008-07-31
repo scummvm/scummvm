@@ -54,7 +54,7 @@ static void makeLower(std::string& s) {
 ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
-	const char *directory = g_registry->get("DataDir", NULL);
+	const char *directory = g_registry->get("GrimDataDir", ".");
 	std::string dir_str = (directory != NULL ? directory : ".");
 	dir_str += '/';
 	int lab_counter = 0;

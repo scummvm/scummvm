@@ -267,6 +267,12 @@
 				RelativePath="..\..\engine\bitmap.h">
 			</File>
 			<File
+				RelativePath="..\..\engine\cmd_line.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engine\cmd_line.h">
+			</File>
+			<File
 				RelativePath="..\..\engine\color.h">
 			</File>
 			<File

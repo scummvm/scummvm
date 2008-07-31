@@ -203,7 +203,12 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 		stream.writeByte('[');
 		stream.writeString(i->name);
 		stream.writeByte(']');
+#ifdef _WIN32
+		stream.writeByte(0x0d);
+		stream.writeByte(0x0a);
+#else
 		stream.writeByte('\n');
+#endif
 
 		// Write out the key/value pairs
 		for (List<KeyValue>::iterator kv = i->keys.begin(); kv != i->keys.end(); ++kv) {
@@ -215,7 +220,12 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 			stream.writeString(kv->key);
 			stream.writeByte('=');
 			stream.writeString(kv->value);
+#ifdef _WIN32
+			stream.writeByte(0x0d);
+			stream.writeByte(0x0a);
+#else
 			stream.writeByte('\n');
+#endif
 		}
 	}
 
