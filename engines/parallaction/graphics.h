@@ -436,7 +436,7 @@ struct BackgroundInfo {
 		return LAYER_FOREGROUND;
 	}
 
-	void free() {
+	~BackgroundInfo() {
 		bg.free();
 		mask.free();
 		path.free();
@@ -511,7 +511,7 @@ public:
 	void freeItems();
 
 	// background surface
-	BackgroundInfo	_backgroundInfo;
+	BackgroundInfo	*_backgroundInfo;
 	void setBackground(uint type, const char* name, const char* mask, const char* path);
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);

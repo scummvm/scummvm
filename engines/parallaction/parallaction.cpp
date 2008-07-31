@@ -264,7 +264,6 @@ void Parallaction::freeLocation() {
 	_location._walkPoints.clear();
 
 	_gfx->clearGfxObjects(kGfxObjNormal);
-	freeBackground();
 
 	_location._programs.clear();
 	freeZones();
@@ -284,7 +283,6 @@ void Parallaction::freeLocation() {
 
 void Parallaction::freeBackground() {
 
-	_gfx->freeBackground();
 	_pathBuffer = 0;
 
 }
@@ -292,7 +290,7 @@ void Parallaction::freeBackground() {
 void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
 
 	_gfx->setBackground(kBackgroundLocation, name, mask, path);
-	_pathBuffer = &_gfx->_backgroundInfo.path;
+	_pathBuffer = &_gfx->_backgroundInfo->path;
 
 	return;
 }

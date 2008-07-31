@@ -291,8 +291,8 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 
 			for (uint16 j = 0; j < q.width(); j++) {
 				if (*s != transparentColor) {
-					if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
+					if (_backgroundInfo->mask.data && (z < LAYER_FOREGROUND)) {
+						byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
 						if (z >= v) *d = 5;
 					} else {
 						*d = 5;
@@ -308,13 +308,13 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 		}
 
     } else {
-		if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
+		if (_backgroundInfo->mask.data && (z < LAYER_FOREGROUND)) {
 
 			for (uint16 i = 0; i < q.height(); i++) {
 
 				for (uint16 j = 0; j < q.width(); j++) {
 					if (*s != transparentColor) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
+						byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
 						if (z >= v) *d = *s;
 					}
 

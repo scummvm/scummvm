@@ -65,7 +65,7 @@ public:
 		uint32 curTime = _vm->_system->getMillis();
 		if (curTime - _startTime > _timeOut) {
 			_fadeSteps = 64;
-			pal.clone(_vm->_gfx->_backgroundInfo.palette);
+			pal.clone(_vm->_gfx->_backgroundInfo->palette);
 		}
 		return this;
 	}
@@ -73,8 +73,8 @@ public:
 	virtual void enter() {
 		_vm->_gfx->clearScreen();
 		_vm->_gfx->setBackground(kBackgroundSlide, _slideName.c_str(), 0, 0);
-		_vm->_gfx->_backgroundInfo.x = (_vm->_screenWidth - _vm->_gfx->_backgroundInfo.width) >> 1;
-		_vm->_gfx->_backgroundInfo.y = (_vm->_screenHeight - _vm->_gfx->_backgroundInfo.height) >> 1;
+		_vm->_gfx->_backgroundInfo->x = (_vm->_screenWidth - _vm->_gfx->_backgroundInfo->width) >> 1;
+		_vm->_gfx->_backgroundInfo->y = (_vm->_screenHeight - _vm->_gfx->_backgroundInfo->height) >> 1;
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		_startTime = g_system->getMillis();
@@ -217,8 +217,8 @@ public:
 		_vm->_gfx->clearScreen();
 		_vm->_gfx->setBackground(kBackgroundSlide, "tbra", 0, 0);
 		if (_vm->getPlatform() == Common::kPlatformPC) {
-			_vm->_gfx->_backgroundInfo.x = 20;
-			_vm->_gfx->_backgroundInfo.y = 50;
+			_vm->_gfx->_backgroundInfo->x = 20;
+			_vm->_gfx->_backgroundInfo->y = 50;
 		}
 
 		// TODO: load progress from savefile

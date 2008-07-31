@@ -464,9 +464,9 @@ DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
 	ctxt.maskName = strdup(_tokens[1]);
-	_vm->_gfx->_backgroundInfo.layers[0] = atoi(_tokens[2]);
-	_vm->_gfx->_backgroundInfo.layers[1] = atoi(_tokens[3]);
-	_vm->_gfx->_backgroundInfo.layers[2] = atoi(_tokens[4]);
+	_vm->_gfx->_backgroundInfo->layers[0] = atoi(_tokens[2]);
+	_vm->_gfx->_backgroundInfo->layers[1] = atoi(_tokens[3]);
+	_vm->_gfx->_backgroundInfo->layers[2] = atoi(_tokens[4]);
 }
 
 
@@ -1179,7 +1179,7 @@ void LocationParser_br::parse(Script *script) {
 	LocationParser_ns::parse(script);
 
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.bgName, ctxt.maskName, ctxt.pathName);
-	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo.path;
+	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo->path;
 
 	if (ctxt.characterName) {
 		_vm->changeCharacter(ctxt.characterName);
