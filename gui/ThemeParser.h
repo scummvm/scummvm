@@ -406,20 +406,62 @@ protected:
 		KEY_END() // render_info end
 
 		XML_KEY(layout_info)
-		KEY_END()
+			XML_KEY(globals)
+				XML_PROP(resolution, false)
+				XML_KEY(def)
+					XML_PROP(var, true)
+					XML_PROP(value, true)
+				KEY_END()
+				
+				XML_KEY(widget)
+					XML_PROP(name, true)
+					XML_PROP(size, false)
+					XML_PROP(pos, false)
+					XML_PROP(padding, false)
+					
+					XML_KEY(child)
+						XML_PROP(name, true)
+						XML_PROP(size, false)
+						XML_PROP(padding, false)
+					KEY_END()
+				KEY_END()
+			KEY_END()
+			
+			XML_KEY(dialog)
+				XML_PROP(name, true)
+				XML_PROP(size, false)
+				XML_PROP(pos, false)
+				XML_PROP(resolution, false)
+				
+				XML_KEY(widget)
+					XML_PROP(name, true)
+					XML_PROP(size, false)
+					XML_PROP(pos, false)
+					XML_PROP(padding, false)
+				KEY_END()
+			KEY_END()
+		KEY_END() 
 		
 	} PARSER_END();
 	
+	/** Render info callbacks */
+	bool parserCallback_render_info(ParserNode *node);
 	bool parserCallback_defaults(ParserNode *node);
 	bool parserCallback_font(ParserNode *node);
 	bool parserCallback_fonts(ParserNode *node);
 	bool parserCallback_text(ParserNode *node);
-	bool parserCallback_render_info(ParserNode *node);
-	bool parserCallback_layout_info(ParserNode *node);
 	bool parserCallback_palette(ParserNode *node);
 	bool parserCallback_color(ParserNode *node);
 	bool parserCallback_drawstep(ParserNode *node);
 	bool parserCallback_drawdata(ParserNode *node);
+	
+	/** Layout info callbacks */
+	bool parserCallback_layout_info(ParserNode *node);
+	bool parserCallback_globals(ParserNode *node) { return true; }
+	bool parserCallback_def(ParserNode *node);
+	bool parserCallback_widget(ParserNode *node);
+	bool parserCallback_dialog(ParserNode *node) { return true; }
+	bool parserCallback_child(ParserNode *node) { return true; }
 	
 	void cleanup();
 

@@ -433,5 +433,55 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	return true;
 }
 
+bool ThemeParser::parserCallback_def(ParserNode *node) {
+	Common::String var = "Globals." + node->values["var"];
+	int value;
+	
+	if (!parseIntegerKey(node->values["value"].c_str(), 1, &value))
+		return parserError("Invalid definition for '%s'.", var.c_str());
+		
+	_theme->themeEval()->setVar(var, value);
+	return true;	
 }
 
+bool ThemeParser::parserCallback_widget(ParserNode *node) {
+	Common::String var;
+	int width, height, x, y, paddingL, paddingR, paddingT, paddingB;
+	
+	if (getParentNode(node)->name == "globals")
+		var = "Globals." + node->values["name"] + ".";
+	else if (getParentNode(node)->name == "dialog")
+		var = "Dialog." + getParentNode(node)->values["name"] + "." + node->values["name"] + ".";
+	else 
+		assert(!"Corruption in XML parser.");
+	
+	if (node->values.contains("size")) {
+		if (!parseIntegerKey(node->values["size"].c_str(), 2, &width, &height))
+			return parserError("Invalid definition for '%sSize'.", var.c_str());
+		
+		_theme->themeEval()->setVar(var + "Width", width);
+		_theme->themeEval()->setVar(var + "Height", height);
+	}
+	
+	if (node->values.contains("pos")) {
+		if (!parseIntegerKey(node->values["pos"].c_str(), 2, &x, &y))
+			return parserError("Invalid definition for '%sPosition'.", var.c_str());
+		
+		_theme->themeEval()->setVar(var + "X", x);
+		_theme->themeEval()->setVar(var + "Y", y);
+	}
+	
+	if (node->values.contains("padding")) {
+		if (!parseIntegerKey(node->values["padding"].c_str(), 4, &paddingL, &paddingR, &paddingT, &paddingB))
+			return parserError("Invalid definition for '%sPadding'.", var.c_str());
+		
+		_theme->themeEval()->setVar(var + "Padding.Left", paddingL);
+		_theme->themeEval()->setVar(var + "Padding.Right", paddingR);
+		_theme->themeEval()->setVar(var + "Padding.Top", paddingT);
+		_theme->themeEval()->setVar(var + "Padding.Bottom", paddingB);
+	}
+	
+	return true;
+}
+
+}

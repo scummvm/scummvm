@@ -41,25 +41,34 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	int lineCount = 1;
 	int lineStart = 0;
 
-	do {
-		if (_text[pos] == '\n' || _text[pos] == '\r') {
-			lineCount++;
-			
-			if (lineStart == 0)
-				lineStart = MAX(pos + 1, _pos - 60);
-		}
-	} while (pos-- > 0);
+	if (_fileName == "Memory Stream") {
+		lineStart = MAX(0, _pos - 35);
+		lineCount = 0;
+	} else {
+		do {
+			if (_text[pos] == '\n' || _text[pos] == '\r') {
+				lineCount++;
+		
+				if (lineStart == 0)
+					lineStart = MAX(pos + 1, _pos - 60);
+			}
+		} while (pos-- > 0);
+	}
 
 	char lineStr[70];
 	_text.stream()->seek(lineStart, SEEK_SET);
 	_text.stream()->readLine(lineStr, 70);
+	
+	for (int i = 0; i < 70; ++i)
+		if (lineStr[i] == '\n')
+			lineStr[i] = ' ';
 
-	printf("  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
+	printf("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 
 	bool startFull = lineStr[0] == '<';
 	bool endFull = lineStr[strlen(lineStr) - 1] == '>';
 
-	printf("%s%s%s\n", startFull ? "" : "...", endFull ? "" : "...", lineStr);
+	printf("%s%s%s\n", startFull ? "" : "...", lineStr, endFull ? "" : "...");
 
 	int cursor = MIN(_pos - lineStart, 70);
 
@@ -77,7 +86,7 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	vprintf(errorString, args);
 	va_end(args);
 
-	printf("\n");
+	printf("\n\n");
 
 	return false;
 }
@@ -123,9 +132,8 @@ bool XMLParser::parseActiveKey(bool closed) {
 		return false;
 	}
 	
-	if (closed) {
+	if (closed)
 		delete _activeKey.pop();
-	}
 
 	return true;
 }

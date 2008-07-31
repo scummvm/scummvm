@@ -33,6 +33,7 @@
 #include "gui/launcher.h"
 
 #include "gui/ThemeRenderer.h"
+#include "gui/ThemeEval.h"
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -92,6 +93,7 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	_themeOk(false), _enabled(false), _buffering(false) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
+	_themeEval = new GUI::ThemeEval();
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		_widgets[i] = 0;
@@ -283,6 +285,9 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 			if (_widgets[i]->_cached) {}
 		}
 	}
+	
+	// Debug print all the parsed variables. remove
+	_themeEval->debugPrint();
 	
 	_themeOk = true;
 	return true;

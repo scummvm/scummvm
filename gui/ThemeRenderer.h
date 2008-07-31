@@ -35,6 +35,7 @@
 
 #include "gui/dialog.h"
 #include "gui/ThemeParser.h"
+#include "gui/ThemeEval.h"
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -208,6 +209,8 @@ public:
 		unloadTheme();
 		delete _parser;
 	}
+	
+	GUI::ThemeEval *themeEval() { return _themeEval; }
 
 	/**
 	 *	VIRTUAL METHODS
@@ -585,6 +588,9 @@ protected:
 	
 	/** XML Parser, does the Theme parsing instead of the default parser */
 	GUI::ThemeParser *_parser;
+	
+	/** Theme evaluator (changed from GUI::Eval to add functionality) */
+	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
 	Graphics::Surface *_screen;

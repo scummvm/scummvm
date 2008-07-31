@@ -154,16 +154,29 @@ bool ThemeRenderer::loadDefaultXML() {
 "</render_info>"
 
 "<layout_info>"
-	"<definitions>"
-		"<def widgetSize = '30' />"
-		"<def buttonWidth = '120' buttonHeight = '25' />"
-		"<def sliderWidth = '' sliderHeight = '' />"
-		"<def lineHeight = 16 fontHeight = 14 />"
-		"<def />"
-	"</definitions>"
-	"<widgets>"
-		"<widget id = 'scrollbar' />"
-	"</widgets>"
+	"<globals>"
+		"<def var = 'Widget.Size' value = '30' />"
+		"<def var = 'Line.Height' value = '16' />"
+		"<def var = 'Font.Height' value = '16' />"
+		
+		"<widget name = 'Inset' pos = '23, 94' size = '666, 666' />"
+		"<widget name = 'Button' size = '120, 25' />"
+		"<widget name = 'Slider' size = '666, 666' />"
+		
+		"<widget name = 'ListWidget' padding = '7, 5, 5, 5' />"
+		"<widget name = 'PopUpWidget' padding = '7, 5, 0, 0' />"
+		"<widget name = 'EditTextWidget' padding = '7, 5, 0, 0' />"
+		"<widget name = 'Console' padding = '7, 5, 5, 5' />"
+		
+		"<widget name = 'TabWidget'>"
+			"<child name = 'Tab' size = '75, 27' />"
+			"<child name = 'NavButton' size = '15, 18' padding = '0, 3, 4, 0' />"
+		"</widget>"
+	"</globals>"
+	
+	"<dialog name = 'GlobalOptions'>"
+		"<widget name = 'scrollbar' />"
+	"</dialog>"
 "</layout_info>";
 
 	if (!parser()->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
