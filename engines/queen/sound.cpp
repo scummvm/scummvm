@@ -35,6 +35,7 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
+#include "sound/audiostream.h"
 #include "sound/flac.h"
 #include "sound/mididrv.h"
 #include "sound/mp3.h"
@@ -44,6 +45,42 @@
 #define	SB_HEADER_SIZE_V110 122
 
 namespace Queen {
+
+// The sounds in the PC versions are all played at 11840 Hz. Unfortunately, we
+// did not know that at the time, so there are plenty of compressed versions
+// which claim that they should be played at 11025 Hz. This "wrapper" class
+// works around that.
+
+class AudioStreamWrapper : public Audio::AudioStream {
+protected:
+	Audio::AudioStream *_stream;
+
+public:
+	AudioStreamWrapper(Audio::AudioStream *stream) {
+		_stream = stream;
+	}
+	~AudioStreamWrapper() {
+		delete _stream;
+	}
+	int readBuffer(int16 *buffer, const int numSamples) {
+		return _stream->readBuffer(buffer, numSamples);
+	}
+	bool isStereo() const {
+		return _stream->isStereo();
+	}
+	bool endOfData() const {
+		return _stream->endOfData();
+	}
+	bool endOfStream() {
+		return _stream->endOfStream();
+	}
+	int getRate() const {
+		return 11840;
+	}
+	int32 getTotalPlayTime() {
+		return _stream->getTotalPlayTime();
+	}
+};
 
 class SilentSound : public PCSound {
 public:
@@ -69,7 +106,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(tmp, true));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeMP3Stream(tmp, true)));
 	}
 };
 #endif
@@ -82,7 +119,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(tmp, true));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeVorbisStream(tmp, true)));
 	}
 };
 #endif
@@ -95,7 +132,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(tmp, true));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFlacStream(tmp, true)));
 	}
 };
 #endif // #ifdef USE_FLAC

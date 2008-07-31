@@ -26,6 +26,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      Simon the Sorcerer 1.
    - Fixed palette issues in Amiga versions of Simon the Sorcerer 1.
 
+ Queen:
+   - Speech is played at the correct sample rate. (It used to be pitched a bit
+     too low.)
+
  SCUMM:
    - Rewrote parts of Digital iMUSE, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
