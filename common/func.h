@@ -78,7 +78,7 @@ private:
 	Op _op;
 	typename Op::FirstArgumentType _arg1;
 public:
-	Binder1st(const Op &op, const typename Op::FirstArgumentType &arg1) : _op(op), _arg1(arg1) {}
+	Binder1st(const Op &op, typename Op::FirstArgumentType arg1) : _op(op), _arg1(arg1) {}
 
 	typename Op::ResultType operator()(typename Op::SecondArgumentType v) const {
 		return _op(_arg1, v);
@@ -89,8 +89,8 @@ public:
  * Transforms a binary function object into an unary function object.
  * To achieve that the first parameter is bound to the passed value t.
  */
-template<class Op, class T>
-inline Binder1st<Op> bind1st(const Op &op, const T &t) {
+template<class Op>
+inline Binder1st<Op> bind1st(const Op &op, typename Op::FirstArgumentType t) {
 	return Binder1st<Op>(op, t);
 }
 
@@ -100,7 +100,7 @@ private:
 	Op _op;
 	typename Op::SecondArgumentType _arg2;
 public:
-	Binder2nd(const Op &op, const typename Op::SecondArgumentType &arg2) : _op(op), _arg2(arg2) {}
+	Binder2nd(const Op &op, typename Op::SecondArgumentType arg2) : _op(op), _arg2(arg2) {}
 
 	typename Op::ResultType operator()(typename Op::FirstArgumentType v) const {
 		return _op(v, _arg2);
@@ -109,10 +109,10 @@ public:
 
 /**
  * Transforms a binary function object into an unary function object.
- * To achieve that the second parameter is bound to the passed value t.
+ * To achieve that the first parameter is bound to the passed value t.
  */
-template<class Op, class T>
-inline Binder2nd<Op> bind2nd(const Op &op, const T &t) {
+template<class Op>
+inline Binder2nd<Op> bind2nd(const Op &op, typename Op::SecondArgumentType t) {
 	return Binder2nd<Op>(op, t);
 }
 
@@ -159,7 +159,7 @@ inline PointerToBinaryFunc<Arg1, Arg2, Result> ptr_fun(Result (*func)(Arg1, Arg2
 }
 
 template<class Result, class T>
-class MemFunc0 : public UnaryFunction<T*, Result> {
+class MemFunc0 : public UnaryFunction<T *, Result> {
 private:
 	Result (T::*_func)();
 public:
@@ -179,7 +179,7 @@ public:
 	typedef Result (T::*FuncType)() const;
 
 	ConstMemFunc0(const FuncType &func) : _func(func) {}
-	Result operator()(T *v) const {
+	Result operator()(const T *v) const {
 		return (v->*_func)();
 	}
 };
@@ -205,7 +205,7 @@ public:
 	typedef Result (T::*FuncType)(Arg) const;
 
 	ConstMemFunc1(const FuncType &func) : _func(func) {}
-	Result operator()(T *v1, Arg v2) const {
+	Result operator()(const T *v1, Arg v2) const {
 		return (v1->*_func)(v2);
 	}
 };
@@ -250,6 +250,105 @@ inline MemFunc1<Result, Arg, T> mem_fun(Result (T::*f)(Arg)) {
 template<class Result, class Arg, class T>
 inline ConstMemFunc1<Result, Arg, T> mem_fun(Result (T::*f)(Arg) const) {
 	return ConstMemFunc1<Result, Arg, T>(f);
+}
+
+template<class Result, class T>
+class MemFuncRef0 : public UnaryFunction<T &, Result> {
+private:
+	Result (T::*_func)();
+public:
+	typedef Result (T::*FuncType)();
+
+	MemFuncRef0(const FuncType &func) : _func(func) {}
+	Result operator()(T &v) const {
+		return (v.*_func)();
+	}
+};
+
+template<class Result, class T>
+class ConstMemFuncRef0 : public UnaryFunction<T &, Result> {
+private:
+	Result (T::*_func)() const;
+public:
+	typedef Result (T::*FuncType)() const;
+
+	ConstMemFuncRef0(const FuncType &func) : _func(func) {}
+	Result operator()(const T &v) const {
+		return (v.*_func)();
+	}
+};
+
+template<class Result, class Arg, class T>
+class MemFuncRef1 : public BinaryFunction<T &, Arg, Result> {
+private:
+	Result (T::*_func)(Arg);
+public:
+	typedef Result (T::*FuncType)(Arg);
+
+	MemFuncRef1(const FuncType &func) : _func(func) {}
+	Result operator()(T &v1, Arg v2) const {
+		return (v1.*_func)(v2);
+	}
+};
+
+template<class Result, class Arg, class T>
+class ConstMemFuncRef1 : public BinaryFunction<T &, Arg, Result> {
+private:
+	Result (T::*_func)(Arg) const;
+public:
+	typedef Result (T::*FuncType)(Arg) const;
+
+	ConstMemFuncRef1(const FuncType &func) : _func(func) {}
+	Result operator()(const T &v1, Arg v2) const {
+		return (v1.*_func)(v2);
+	}
+};
+
+/**
+ * Creates a unary function object from a class member function pointer.
+ * The parameter passed to the function object is the object instance to
+ * be used for the function call. Note unlike mem_fun, it takes a reference
+ * as parameter. Note unlike mem_fun, it takes a reference
+ * as parameter.
+ */
+template<class Result, class T>
+inline MemFuncRef0<Result, T> mem_fun_ref(Result (T::*f)()) {
+	return MemFuncRef0<Result, T>(f);
+}
+
+/**
+ * Creates a unary function object from a class member function pointer.
+ * The parameter passed to the function object is the object instance to
+ * be used for the function call. Note unlike mem_fun, it takes a reference
+ * as parameter.
+ */
+template<class Result, class T>
+inline ConstMemFuncRef0<Result, T> mem_fun_Ref(Result (T::*f)() const) {
+	return ConstMemFuncRef0<Result, T>(f);
+}
+
+/**
+ * Creates a binary function object from a class member function pointer.
+ * The first parameter passed to the function object is the object instance to
+ * be used for the function call. Note unlike mem_fun, it takes a reference
+ * as parameter.
+ * The second one is the parameter passed to the member function.
+ */
+template<class Result, class Arg, class T>
+inline MemFuncRef1<Result, Arg, T> mem_fun_ref(Result (T::*f)(Arg)) {
+	return MemFuncRef1<Result, Arg, T>(f);
+}
+
+/**
+ * Creates a binary function object from a class member function pointer.
+ * The first parameter passed to the function object is the object instance to
+ * be used for the function call. Note unlike mem_fun, it takes a reference
+ * as parameter.
+ * The second one is the parameter passed to the member function.
+ */
+template<class Result, class Arg, class T>
+inline ConstMemFuncRef1<Result, Arg, T> mem_fun_ref(Result (T::*f)(Arg) const) {
+	return ConstMemFuncRef1<Result, Arg, T>(f);
 }
 
 // functor code
