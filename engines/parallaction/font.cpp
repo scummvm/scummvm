@@ -698,7 +698,7 @@ void Parallaction_br::initFonts() {
 		// fonts/vanya/16
 
 		_menuFont = _disk->loadFont("natasha");
-		_dialogueFont = _disk->loadFont("sonya");
+		_dialogueFont = _disk->loadFont("vanya");
 		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
 		_labelFont = new AmigaFont(stream);
 	}
