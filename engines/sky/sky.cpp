@@ -343,8 +343,11 @@ int SkyEngine::go() {
 	_keyPressed.reset();
 
 	uint16 result = 0;
-	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
-		result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999)
+			result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
+	}
 
 	if (result != GAME_RESTORED) {
 		bool introSkipped = false;

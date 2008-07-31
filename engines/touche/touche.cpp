@@ -252,10 +252,13 @@ void ToucheEngine::mainLoop() {
 	_inp_rightMouseButtonPressed = false;
 
 	if (ConfMan.hasKey("save_slot")) {
-		loadGameState(ConfMan.getInt("save_slot"));
-		_newEpisodeNum = 0;
-		resetSortedKeyCharsTable();
-		showCursor(true);
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 99) {
+			loadGameState(saveSlot);
+			_newEpisodeNum = 0;
+			resetSortedKeyCharsTable();
+			showCursor(true);
+		}
 	} else {
 		_newEpisodeNum = ConfMan.getInt("boot_param");
 		if (_newEpisodeNum == 0) {
