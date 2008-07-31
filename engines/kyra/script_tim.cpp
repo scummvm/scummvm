@@ -617,7 +617,6 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 	if (!_currentTim->opcodes) {
 		warning("Trying to execute TIM opcode %d without opcode list (file '%s')", opcode, _currentTim->filename);
-		fflush(stderr); fflush(stdout);
 		return 0;
 	}
 
@@ -628,7 +627,6 @@ int TIMInterpreter::cmd_execOpcode(const uint16 *param) {
 
 	if (!(*_currentTim->opcodes)[opcode]->isValid()) {
 		warning("Calling unimplemented TIM opcode(0x%.02X/%d) from file '%s'", opcode, opcode, _currentTim->filename);
-		fflush(stderr);
 		return 0;
 	}
 
