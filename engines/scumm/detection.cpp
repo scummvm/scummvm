@@ -492,7 +492,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			// Note that GF_OLD_BUNDLE is true if and only if GF_OLD256 is false.
 			// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
 
-			if (g->version != 2 && g->version != 3  || (g->features & GF_OLD256))
+			if ((g->version != 2 && g->version != 3)  || (g->features & GF_OLD256))
 				return false;
 
 			/* We distinguish the games by the presence/absence of
@@ -949,7 +949,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 		

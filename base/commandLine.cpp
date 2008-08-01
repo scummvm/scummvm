@@ -228,6 +228,7 @@ void registerDefaults() {
 #elif defined(__SYMBIAN32__)
 	strcpy(savePath, Symbian::GetExecutablePath());
 	strcat(savePath, DEFAULT_SAVE_PATH);
+	strcat(savePath, "\\");
 	ConfMan.registerDefault("savepath", savePath);
 #elif defined (IPHONE)
 	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
@@ -684,9 +685,9 @@ static void runDetectorTest() {
 			failure++;
 		} else if (candidates.size() > 1) {
 			if (gameidDiffers) {
-				printf(" FAILURE: Multiple games detected, some/all with wrong gameid\n");
+				printf(" WARNING: Multiple games detected, some/all with wrong gameid\n");
 			} else {
-				printf(" FAILURE: Multiple games detected, but all have the same gameid\n");
+				printf(" WARNING: Multiple games detected, but all have the same gameid\n");
 			}
 			failure++;
 		} else if (gameidDiffers) {

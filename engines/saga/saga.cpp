@@ -79,6 +79,7 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_scene = NULL;
 	_isoMap = NULL;
 	_gfx = NULL;
+	_driver = NULL;
 	_console = NULL;
 	_render = NULL;
 	_music = NULL;
@@ -133,6 +134,7 @@ SagaEngine::~SagaEngine() {
 	delete _render;
 	delete _music;
 	delete _sound;
+	delete _driver;
 	delete _gfx;
 	delete _console;
 
@@ -188,11 +190,11 @@ int SagaEngine::init() {
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	bool adlib = (midiDriver == MD_ADLIB);
 
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_driver = MidiDriver::createMidi(midiDriver);
 	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(this, _mixer, driver, _musicVolume);
+	_music = new Music(this, _mixer, _driver, _musicVolume);
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
 

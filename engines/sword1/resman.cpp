@@ -212,8 +212,8 @@ void *ResMan::openFetchRes(uint32 id) {
 void ResMan::dumpRes(uint32 id) {
 	char outn[30];
 	sprintf(outn, "DUMP%08X.BIN", id);
-	Common::File outf;
-	if (outf.open(outn, Common::File::kFileWriteMode)) {
+	Common::DumpFile outf;
+	if (outf.open(outn)) {
 		resOpen(id);
 		MemHandle *memHandle = resHandle(id);
 		outf.write(memHandle->data, memHandle->size);

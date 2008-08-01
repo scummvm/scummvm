@@ -269,6 +269,7 @@ protected:
 
 	uint16 _marks;
 
+	bool _quit;
 	bool _scriptVar2;
 	bool _runScriptReturn1;
 	bool _runScriptCondition[40];
@@ -523,6 +524,7 @@ protected:
 	byte _lettersToPrintBuf[80];
 
 	MidiPlayer _midi;
+	MidiDriver *_driver;
 	bool _midiEnabled;
 	bool _nativeMT32;
 
@@ -1073,6 +1075,8 @@ protected:
 	virtual void drawImage(VC10_state *state);
 	void drawBackGroundImage(VC10_state *state);
 	void drawVertImage(VC10_state *state);
+	void drawVertImageCompressed(VC10_state *state);
+	void drawVertImageUncompressed(VC10_state *state);
 
 	void setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height);
 

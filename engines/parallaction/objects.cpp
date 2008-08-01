@@ -54,19 +54,20 @@ Animation::Animation() {
 
 Animation::~Animation() {
 	free(_scriptName);
+	gfxobj->release();
 }
 
 uint16 Animation::width() const {
 	if (!gfxobj) return 0;
 	Common::Rect r;
-	gfxobj->getRect(0, r);
+	gfxobj->getRect(_frame, r);
 	return r.width();
 }
 
 uint16 Animation::height() const {
 	if (!gfxobj) return 0;
 	Common::Rect r;
-	gfxobj->getRect(0, r);
+	gfxobj->getRect(_frame, r);
 	return r.height();
 }
 
@@ -80,6 +81,12 @@ byte* Animation::getFrameData(uint32 index) const {
 	return gfxobj->getData(index);
 }
 
+void Animation::validateScriptVars() {
+	// this is used to clip values of _frame, _left and _top
+	// which can be screwed up by buggy scripts.
+
+	_frame = CLIP(_frame, (int16)0, (int16)(getFrameNum() - 1));
+}
 
 #define NUM_LOCALS	10
 char	_localNames[NUM_LOCALS][10];
@@ -182,7 +189,8 @@ Zone::~Zone() {
 		break;
 	}
 
-	delete _label;
+
+	free(_linkedName);
 }
 
 void Zone::getRect(Common::Rect& r) const {
@@ -205,6 +213,16 @@ uint16 Zone::width() const {
 
 uint16 Zone::height() const {
 	return _bottom - _top;
+}
+
+Dialogue::Dialogue() {
+	memset(_questions, 0, sizeof(_questions));
+}
+
+Dialogue::~Dialogue() {
+	for (int i = 0; i < NUM_QUESTIONS; i++) {
+		delete _questions[i];
+	}
 }
 
 Answer::Answer() {

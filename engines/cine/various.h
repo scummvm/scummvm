@@ -44,7 +44,7 @@ extern bool inMenu;
 
 struct SeqListElement {
 	int16 var4;
-	uint16 objIdx;
+	uint16 objIdx; ///< Is this really unsigned?
 	int16 var8;
 	int16 frame;
 	int16 varC;
@@ -130,15 +130,19 @@ struct SelectedObjStruct {
 
 #define NUM_MAX_ZONE 16
 extern uint16 zoneData[NUM_MAX_ZONE];
+extern uint16 zoneQuery[NUM_MAX_ZONE];
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
 
 void removeMessages();
 
 void removeSeq(uint16 param1, uint16 param2, uint16 param3);
-uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
+bool isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
 void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
+void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 param2, int16 param3, int16 param4);
 void processSeqList(void);
+
+void resetGfxEntityEntry(uint16 objIdx);
 
 bool makeTextEntryMenu(const char *caption, char *string, int strLen, int y);
 

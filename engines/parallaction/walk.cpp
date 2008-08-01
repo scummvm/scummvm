@@ -27,33 +27,43 @@
 
 namespace Parallaction {
 
-static uint16 _doorData1 = 1000;
-static ZonePtr _zoneTrap;
 
-static uint16	walkData1 = 0;
-static uint16	walkData2 = 0;	// next walk frame
 
+#define IS_PATH_CLEAR(x,y) _vm->_pathBuffer->getValue((x), (y))
 
 inline byte PathBuffer::getValue(uint16 x, uint16 y) {
 	byte m = data[(x >> 3) + y * internalWidth];
-	uint n = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
-	return ((1 << n) & m) >> n;
+	uint bit = 0;
+	switch (_vm->getGameType()) {
+	case GType_Nippon:
+		bit = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
+		break;
+
+	case GType_BRA:
+		// Amiga and PC versions pack the path bits the same way in BRA
+		bit = 7 - (x & 7);
+		break;
+
+	default:
+		error("path mask not yet implemented for this game type");
+	}
+	return ((1 << bit) & m) >> bit;
 }
 
 // adjusts position towards nearest walkable point
 //
-void PathBuilder::correctPathPoint(Common::Point &to) {
+void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 
-	if (_vm->_pathBuffer->getValue(to.x, to.y)) return;
+	if (IS_PATH_CLEAR(to.x, to.y)) return;
 
 	int16 right = to.x;
 	int16 left = to.x;
 	do {
 		right++;
-	} while ((_vm->_pathBuffer->getValue(right, to.y) == 0) && (right < _vm->_pathBuffer->w));
+	} while (!IS_PATH_CLEAR(right, to.y) && (right < _vm->_pathBuffer->w));
 	do {
 		left--;
-	} while ((_vm->_pathBuffer->getValue(left, to.y) == 0) && (left > 0));
+	} while (!IS_PATH_CLEAR(left, to.y) && (left > 0));
 	right = (right == _vm->_pathBuffer->w) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
@@ -62,10 +72,10 @@ void PathBuilder::correctPathPoint(Common::Point &to) {
 	int16 bottom = to.y;
 	do {
 		top--;
-	} while ((_vm->_pathBuffer->getValue(to.x, top) == 0) && (top > 0));
+	} while (!IS_PATH_CLEAR(to.x, top) && (top > 0));
 	do {
 		bottom++;
-	} while ((_vm->_pathBuffer->getValue(to.x, bottom) == 0) && (bottom < _vm->_pathBuffer->h));
+	} while (!IS_PATH_CLEAR(to.x, bottom) && (bottom < _vm->_pathBuffer->h));
 	top = (top == 0) ? 1000 : to.y - top;
 	bottom = (bottom == _vm->_pathBuffer->h) ? 1000 : bottom - to.y;
 
@@ -90,7 +100,7 @@ void PathBuilder::correctPathPoint(Common::Point &to) {
 
 }
 
-uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
+uint32 PathBuilder_NS::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
 
 	uint32 v28 = 0;
 	uint32 v2C = 0;
@@ -103,16 +113,15 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 
 	while (true) {
 
-		WalkNodeList::iterator nearest = _vm->_location._walkNodes.end();
-		WalkNodeList::iterator locNode = _vm->_location._walkNodes.begin();
+		PointList::iterator nearest = _vm->_location._walkPoints.end();
+		PointList::iterator locNode = _vm->_location._walkPoints.begin();
 
 		// scans location path nodes searching for the nearest Node
 		// which can't be farther than the target position
 		// otherwise no _closest_node is selected
-		while (locNode != _vm->_location._walkNodes.end()) {
+		while (locNode != _vm->_location._walkPoints.end()) {
 
-			Common::Point v8;
-			(*locNode)->getPoint(v8);
+			Common::Point v8 = *locNode;
 			v2C = v8.sqrDist(stop);
 			v28 = v8.sqrDist(v20);
 
@@ -124,80 +133,59 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 			locNode++;
 		}
 
-		if (nearest == _vm->_location._walkNodes.end()) break;
+		if (nearest == _vm->_location._walkPoints.end()) break;
 
-		(*nearest)->getPoint(v20);
+		v20 = *nearest;
 		v34 = v30 = v20.sqrDist(stop);
 
-		_subPath.push_back(WalkNodePtr(new WalkNode(**nearest)));
+		_subPath.push_back(*nearest);
 	}
 
 	return v34;
 
 }
-#if 0
-void printNodes(WalkNodeList *list, const char* text) {
-	printf("%s\n-------------------\n", text);
-	for (WalkNodeList::iterator it = list->begin(); it != list->end(); it++)
-		printf("node [%p] (%i, %i)\n", *it, (*it)->_x, (*it)->_y);
 
-	return;
-}
-#endif
 //
 //	x, y: mouse click (foot) coordinates
 //
-WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
+void PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
+
+	_ch->_walkPath.clear();
 
 	Common::Point to(x, y);
 	correctPathPoint(to);
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
-	WalkNodePtr v48(new WalkNode(to.x, to.y));
-	WalkNodePtr v44 = v48;
+	Common::Point v48(to);
+	Common::Point v44(to);
 
-	uint16 v38 = walkFunc1(to.x, to.y, v44);
+	uint16 v38 = walkFunc1(to, v44);
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
-
-		_list = new WalkNodeList;
-		_list->push_back(v48);
-		return _list;
+		_ch->_walkPath.push_back(v48);
+		return;
 	}
 
 	// path is obstructed: look for alternative
-	_list = new WalkNodeList;
-	_list->push_back(v48);
-#if 0
-	printNodes(_list, "start");
-#endif
-
-	Common::Point stop(v48->_x, v48->_y);
+	_ch->_walkPath.push_back(v48);
 	Common::Point pos;
-	_vm->_char.getFoot(pos);
+	_ch->getFoot(pos);
 
-	uint32 v34 = buildSubPath(pos, stop);
+	uint32 v34 = buildSubPath(pos, v48);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
-		_list->clear();
-		_list->push_back(v44);
-		return _list;
+		_ch->_walkPath.clear();
+		_ch->_walkPath.push_back(v44);
+		return;
 	}
-	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
-#if 0
-	printNodes(_list, "first segment");
-#endif
+	_ch->_walkPath.insert(_ch->_walkPath.begin(), _subPath.begin(), _subPath.end());
 
-	(*_list->begin())->getPoint(stop);
-	buildSubPath(pos, stop);
-	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
-#if 0
-	printNodes(_list, "complete");
-#endif
+	buildSubPath(pos, *_ch->_walkPath.begin());
+	_ch->_walkPath.insert(_ch->_walkPath.begin(), _subPath.begin(), _subPath.end());
 
-	return _list;
+	return;
 }
 
 
@@ -208,23 +196,23 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
+uint16 PathBuilder_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
-	Common::Point arg(x, y);
+	Common::Point arg(to);
 
-	Common::Point v4(0, 0);
+	Common::Point v4;
 
 	Common::Point foot;
-	_vm->_char.getFoot(foot);
+	_ch->getFoot(foot);
 
 	Common::Point v8(foot);
 
 	while (foot != arg) {
 
-		if (foot.x < x && _vm->_pathBuffer->getValue(foot.x + 1, foot.y) != 0) foot.x++;
-		if (foot.x > x && _vm->_pathBuffer->getValue(foot.x - 1, foot.y) != 0) foot.x--;
-		if (foot.y < y && _vm->_pathBuffer->getValue(foot.x, foot.y + 1) != 0) foot.y++;
-		if (foot.y > y && _vm->_pathBuffer->getValue(foot.x, foot.y - 1) != 0) foot.y--;
+		if (foot.x < to.x && IS_PATH_CLEAR(foot.x + 1, foot.y)) foot.x++;
+		if (foot.x > to.x && IS_PATH_CLEAR(foot.x - 1, foot.y)) foot.x--;
+		if (foot.y < to.y && IS_PATH_CLEAR(foot.x, foot.y + 1)) foot.y++;
+		if (foot.y > to.y && IS_PATH_CLEAR(foot.x, foot.y - 1)) foot.y--;
 
 
 		if (foot == v8 && foot != arg) {
@@ -234,10 +222,10 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 
 			while (foot != arg) {
 
-				if (foot.x < x && _vm->_pathBuffer->getValue(foot.x + 1, foot.y) == 0) foot.x++;
-				if (foot.x > x && _vm->_pathBuffer->getValue(foot.x - 1, foot.y) == 0) foot.x--;
-				if (foot.y < y && _vm->_pathBuffer->getValue(foot.x, foot.y + 1) == 0) foot.y++;
-				if (foot.y > y && _vm->_pathBuffer->getValue(foot.x, foot.y - 1) == 0) foot.y--;
+				if (foot.x < to.x && !IS_PATH_CLEAR(foot.x + 1, foot.y)) foot.x++;
+				if (foot.x > to.x && !IS_PATH_CLEAR(foot.x - 1, foot.y)) foot.x--;
+				if (foot.y < to.y && !IS_PATH_CLEAR(foot.x, foot.y + 1)) foot.y++;
+				if (foot.y > to.y && !IS_PATH_CLEAR(foot.x, foot.y - 1)) foot.y--;
 
 				if (foot == v8 && foot != arg)
 					return 0;
@@ -245,10 +233,8 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 				v8 = foot;
 			}
 
-			Node->_x = v4.x;
-			Node->_y = v4.y;
-
-			return (x - v4.x) * (x - v4.x) + (y - v4.y) * (y - v4.y);
+			node = v4;
+			return v4.sqrDist(to);
 		}
 
 		v8 = foot;
@@ -259,190 +245,390 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNodePtr Node) {
 	return 1;
 }
 
-void Parallaction::clipMove(Common::Point& pos, const WalkNodePtr from) {
+void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
 
-	if ((pos.x < from->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
-		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
+	if ((pos.x < to.x) && (pos.x < _vm->_pathBuffer->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
+		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
-	if ((pos.x > from->_x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
-		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
+	if ((pos.x > to.x) && (pos.x > 0) && IS_PATH_CLEAR(pos.x - 2, pos.y)) {
+		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
-		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
+	if ((pos.y < to.y) && (pos.y < _vm->_pathBuffer->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
+		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 
-	if ((pos.y > from->_y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
-		pos.y = (pos.y - 2 >= from->_y) ? pos.y - 2 :from->_y;
+	if ((pos.y > to.y) && (pos.y > 0) && IS_PATH_CLEAR(pos.x, pos.y - 2)) {
+		pos.y = (pos.y - 2 >= to.y) ? pos.y - 2 : to.y;
 	}
 
 	return;
 }
 
-int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNodePtr from) {
 
-	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
+void PathWalker_NS::checkDoor(const Common::Point &foot) {
 
-	if (dist.x < 0)
-		dist.x = -dist.x;
-	if (dist.y < 0)
-		dist.y = -dist.y;
-
-	walkData1++;
-
-	// walk frame selection
-	int16 v16;
-	if (_char._ani->getFrameNum() == 20) {
-
-		if (dist.x > dist.y) {
-			walkData2 = (from->_x > pos.x) ? 0 : 7;
-			walkData1 %= 12;
-			v16 = walkData1 / 2;
+	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
+	if (z) {
+		if ((z->_flags & kFlagsClosed) == 0) {
+			_vm->_location._startPosition = z->u.door->_startPos;
+			_vm->_location._startFrame = z->u.door->_startFrame;
+			_vm->scheduleLocationSwitch(z->u.door->_location);
+			_vm->_zoneTrap = nullZonePtr;
 		} else {
-			walkData2 = (from->_y > pos.y) ? 14 : 17;
-			walkData1 %= 8;
-			v16 = walkData1 / 4;
+			_vm->_cmdExec->run(z->_commands, z);
 		}
-
-	} else {
-
-		if (dist.x > dist.y) {
-			walkData2 = (from->_x > pos.x) ? 0 : 9;
-			walkData1 %= 16;
-			v16 = walkData1 / 2;
-		} else {
-			walkData2 = (from->_y > pos.y) ? 18 : 21;
-			walkData1 %= 8;
-			v16 = walkData1 / 4;
-		}
-
 	}
 
-	return v16;
+	z = _vm->hitZone(kZoneTrap, foot.x, foot.y);
+	if (z) {
+		_vm->setLocationFlags(kFlagsEnter);
+		_vm->_cmdExec->run(z->_commands, z);
+		_vm->clearLocationFlags(kFlagsEnter);
+		_vm->_zoneTrap = z;
+	} else
+	if (_vm->_zoneTrap) {
+		_vm->setLocationFlags(kFlagsExit);
+		_vm->_cmdExec->run(_vm->_zoneTrap->_commands, _vm->_zoneTrap);
+		_vm->clearLocationFlags(kFlagsExit);
+		_vm->_zoneTrap = nullZonePtr;
+	}
+
 }
 
-uint16 Parallaction::checkDoor() {
-//	printf("checkDoor()...");
 
-	if (_currentLocationIndex != _doorData1) {
-		_doorData1 = _currentLocationIndex;
-		_zoneTrap = nullZonePtr;
-	}
-
+void PathWalker_NS::finalizeWalk() {
 	_engineFlags &= ~kEngineWalking;
 
 	Common::Point foot;
+	_ch->getFoot(foot);
+	checkDoor(foot);
 
-	_char.getFoot(foot);
-	ZonePtr z = hitZone(kZoneDoor, foot.x, foot.y);
-
-	if (z) {
-
-		if ((z->_flags & kFlagsClosed) == 0) {
-			_location._startPosition = z->u.door->_startPos;
-			_location._startFrame = z->u.door->_startFrame;
-
-			scheduleLocationSwitch(z->u.door->_location);
-			_zoneTrap = nullZonePtr;
-
-		} else {
-			runCommands(z->_commands, z);
-		}
-	}
-
-	_char.getFoot(foot);
-	z = hitZone(kZoneTrap, foot.x, foot.y);
-
-	if (z) {
-		setLocationFlags(kFlagsEnter);
-		runCommands(z->_commands, z);
-		clearLocationFlags(kFlagsEnter);
-		_zoneTrap = z;
-	} else
-	if (_zoneTrap) {
-		setLocationFlags(kFlagsExit);
-		runCommands(_zoneTrap->_commands, _zoneTrap);
-		clearLocationFlags(kFlagsExit);
-		_zoneTrap = nullZonePtr;
-	}
-
-//	printf("done\n");
-
-	_char._ani->_frame = walkData2;
-	return _char._ani->_frame;
+	_ch->_walkPath.clear();
 }
 
-
-void Parallaction::finalizeWalk(WalkNodeList *list) {
-	checkDoor();
-	delete list;
-}
-
-void Parallaction_ns::walk() {
+void PathWalker_NS::walk() {
 	if ((_engineFlags & kEngineWalking) == 0) {
 		return;
 	}
 
-	WalkNodeList *list = _char._walkPath;
+	Common::Point curPos;
+	_ch->getFoot(curPos);
 
-	_char._ani->_oldPos.x = _char._ani->_left;
-	_char._ani->_oldPos.y = _char._ani->_top;
-
-	Common::Point pos;
-	_char.getFoot(pos);
-
-	WalkNodeList::iterator it = list->begin();
-
-	if (it != list->end()) {
-		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
-			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it)->_x, (*it)->_y);
-			it = list->erase(it);
+	// update target, if previous was reached
+	PointList::iterator it = _ch->_walkPath.begin();
+	if (it != _ch->_walkPath.end()) {
+		if (*it == curPos) {
+			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
+			it = _ch->_walkPath.erase(it);
 		}
 	}
-	if (it == list->end()) {
+
+	// advance character towards the target
+	Common::Point targetPos;
+	if (it == _ch->_walkPath.end()) {
 		debugC(1, kDebugWalk, "walk reached last node");
-//		j->_finished = 1;
-		finalizeWalk(list);
+		finalizeWalk();
+		targetPos = curPos;
+	} else {
+		// targetPos is saved to help setting character direction
+		targetPos = *it;
+
+		Common::Point newPos(curPos);
+		clipMove(newPos, targetPos);
+		_ch->setFoot(newPos);
+
+		if (newPos == curPos) {
+			debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
+			finalizeWalk();
+			targetPos = newPos;	// when walking is interrupted, targetPos must be hacked so that a still frame can be selected
+		}
+	}
+
+	// targetPos is used to select the direction (and the walkFrame) of a character,
+	// since it doesn't cause the sudden changes in orientation that newPos would.
+	// Since newPos is 'adjusted' according to walkable areas, an imaginary line drawn
+	// from curPos to newPos is prone to abrutply change in direction, thus making the
+	// code select 'too different' frames when walking diagonally against obstacles,
+	// and yielding an annoying shaking effect in the character.
+	_ch->updateDirection(curPos, targetPos);
+}
+
+
+
+PathBuilder_NS::PathBuilder_NS(Character *ch) : PathBuilder(ch), _list(0) {
+}
+
+
+bool PathBuilder_BR::directPathExists(const Common::Point &from, const Common::Point &to) {
+
+	Common::Point copy(from);
+	Common::Point p(copy);
+
+	while (p != to) {
+
+		if (p.x < to.x && IS_PATH_CLEAR(p.x + 1, p.y)) p.x++;
+		if (p.x > to.x && IS_PATH_CLEAR(p.x - 1, p.y)) p.x--;
+		if (p.y < to.y && IS_PATH_CLEAR(p.x, p.y + 1)) p.y++;
+		if (p.y > to.y && IS_PATH_CLEAR(p.x, p.y - 1)) p.y--;
+
+		if (p == copy && p != to) {
+			return false;
+		}
+
+		copy = p;
+	}
+
+	return true;
+}
+
+void PathBuilder_BR::buildPath(uint16 x, uint16 y) {
+	Common::Point foot;
+	_ch->getFoot(foot);
+
+	debugC(1, kDebugWalk, "buildPath: from (%i, %i) to (%i, %i)", foot.x, foot.y, x, y);
+	_ch->_walkPath.clear();
+
+	// look for easy path first
+	Common::Point dest(x, y);
+	if (directPathExists(foot, dest)) {
+		_ch->_walkPath.push_back(dest);
+		debugC(3, kDebugWalk, "buildPath: direct path found");
 		return;
 	}
-	_char._walkPath = list;
 
-	// selectWalkFrame must be performed before position is changed by clipMove
-	int16 v16 = selectWalkFrame(pos, *it);
-	clipMove(pos, *it);
-
-	_char.setFoot(pos);
-
-	Common::Point newpos(_char._ani->_left, _char._ani->_top);
-
-	if (newpos == _char._ani->_oldPos) {
-		debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
-//		j->_finished = 1;
-		finalizeWalk(list);
-	} else {
-		_char._ani->_frame = v16 + walkData2 + 1;
+	// look for short circuit cases
+	ZonePtr z0 = _vm->hitZone(kZonePath, x, y);
+	if (!z0) {
+		_ch->_walkPath.push_back(dest);
+		debugC(3, kDebugWalk, "buildPath: corner case 0");
+		return;
 	}
+	ZonePtr z1 = _vm->hitZone(kZonePath, foot.x, foot.y);
+	if (!z1 || z1 == z0) {
+		_ch->_walkPath.push_back(dest);
+		debugC(3, kDebugWalk, "buildPath: corner case 1");
+		return;
+	}
+
+	// build complex path
+	int id = atoi(z0->_name);
+
+	if (z1->u.path->_lists[id].empty()) {
+		_ch->_walkPath.clear();
+		debugC(3, kDebugWalk, "buildPath: no path");
+		return;
+	}
+
+	PointList::iterator b = z1->u.path->_lists[id].begin();
+	PointList::iterator e = z1->u.path->_lists[id].end();
+	for ( ; b != e; b++) {
+		_ch->_walkPath.push_front(*b);
+	}
+	_ch->_walkPath.push_back(dest);
+	debugC(3, kDebugWalk, "buildPath: complex path");
+
+	return;
+}
+
+PathBuilder_BR::PathBuilder_BR(Character *ch) : PathBuilder(ch) {
+}
+
+void PathWalker_BR::finalizeWalk() {
+	_engineFlags &= ~kEngineWalking;
+	_first = true;
+	_fieldC = 1;
+
+	Common::Point foot;
+	_ch->getFoot(foot);
+
+	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
+	if (z && ((z->_flags & kFlagsClosed) == 0)) {
+		_vm->_location._startPosition = z->u.door->_startPos; // foot pos
+		_vm->_location._startFrame = z->u.door->_startFrame;
+
+#if 0
+		// TODO: implement working follower. Must find out a location in which the code is
+		// used and which is stable enough.
+		_followerFootInit.x = -1;
+		if (_follower && z->u.door->startPos2.x != -1) {
+			_followerFootInit.x = z->u.door->startPos2.x;	// foot pos
+			_followerFootInit.y = z->u.door->startPos2.y;	// foot pos
+		}
+		_followerFootInit.z = -1;
+		if (_follower && z->u.door->startPos2.z != -1) {
+			_followerFootInit.z = z->u.door->startPos2.z;	// foot pos
+		}
+#endif
+
+		_vm->scheduleLocationSwitch(z->u.door->_location);
+		_vm->_cmdExec->run(z->_commands, z);
+	}
+
+#if 0
+	// TODO: Input::walkTo must be extended to support destination frame in addition to coordinates
+	// TODO: the frame argument must be passed to PathWalker through PathBuilder, so probably
+	// a merge between the two Path managers is the right solution
+	if (_engineFlags & FINAL_WALK_FRAME) {	// this flag is set in readInput()
+		_engineFlags &= ~FINAL_WALK_FRAME;
+		_char.ani->_frame = _moveToF; 	// from readInput()...
+	} else {
+		_char.ani->_frame = _dirFrame;	// from walk()
+	}
+	_char.setFoot(foot);
+#endif
+
+	_ch->_ani->_frame = _dirFrame;	// temporary solution
+
+#if 0
+	// TODO: support scrolling ;)
+	if (foot.x > _gfx->hscroll + 600) _gfx->scrollRight(78);
+	if (foot.x < _gfx->hscroll + 40) _gfx->scrollLeft(78);
+	if (foot.y > 350) _gfx->scrollDown(100);
+	if (foot.y < 80) _gfx->scrollUp(100);
+#endif
 
 	return;
 }
 
 
-WalkNode::WalkNode() : _x(0), _y(0) {
+void PathWalker_BR::walk() {
+	if ((_engineFlags & kEngineWalking) == 0) {
+		return;
+	}
+
+#if 0
+	// TODO: support delays in walking. This requires extending Input::walkIo().
+	if (ch._walkDelay > 0) {
+		ch._walkDelay--;
+		if (ch._walkDelay == 0 && _ch._ani->_scriptName) {
+			// stop script and reset
+			_ch._ani->_flags &= ~kFlagsActing;
+			Script *script = findScript(_ch._ani->_scriptName);
+			script->_nextCommand = script->firstCommand;
+		}
+		return;
+	}
+#endif
+
+	GfxObj *obj = _ch->_ani->gfxobj;
+
+	Common::Rect rect;
+	obj->getRect(_ch->_ani->_frame, rect);
+
+	uint scale;
+	if (rect.bottom > _vm->_location._zeta0) {
+		scale = 100;
+	} else
+	if (rect.bottom < _vm->_location._zeta1) {
+		scale = _vm->_location._zeta2;
+	} else {
+		scale = _vm->_location._zeta2 + ((rect.bottom - _vm->_location._zeta1) * (100 - _vm->_location._zeta2)) / (_vm->_location._zeta0 - _vm->_location._zeta1);
+	}
+	int xStep = (scale * 16) / 100 + 1;
+	int yStep = (scale * 10) / 100 + 1;
+
+	debugC(9, kDebugWalk, "calculated step: (%i, %i)\n", xStep, yStep);
+
+	if (_fieldC == 0) {
+		_ch->_walkPath.erase(_ch->_walkPath.begin());
+
+		if (_ch->_walkPath.empty()) {
+			finalizeWalk();
+			debugC(3, kDebugWalk, "PathWalker_BR::walk, case 0\n");
+			return;
+		} else {
+			debugC(3, kDebugWalk, "PathWalker_BR::walk, moving to next node\n");
+		}
+	}
+
+	_ch->getFoot(_startFoot);
+
+	_fieldC = 0;
+	_step++;
+	_step %= 8;
+
+	int walkFrame = _step;
+	_dirFrame = 0;
+	Common::Point newpos(_startFoot), delta;
+
+	Common::Point p(*_ch->_walkPath.begin());
+
+	if (_startFoot.y < p.y && _startFoot.y < 400 && IS_PATH_CLEAR(_startFoot.x, yStep + _startFoot.y)) {
+		if (yStep + _startFoot.y <= p.y) {
+			_fieldC = 1;
+			delta.y = yStep;
+			newpos.y = yStep + _startFoot.y;
+		} else {
+			delta.y = p.y - _startFoot.y;
+			newpos.y = p.y;
+		}
+		_dirFrame = 9;
+	} else
+	if (_startFoot.y > p.y && _startFoot.y > 0 && IS_PATH_CLEAR(_startFoot.x, _startFoot.y - yStep)) {
+		if (_startFoot.y - yStep >= p.y) {
+			_fieldC = 1;
+			delta.y = yStep;
+			newpos.y = _startFoot.y - yStep;
+		} else {
+			delta.y = _startFoot.y - p.y;
+			newpos.y = p.y;
+		}
+		_dirFrame = 0;
+	}
+
+	if (_startFoot.x < p.x && _startFoot.x < 640 && IS_PATH_CLEAR(_startFoot.x + xStep, _startFoot.y)) {
+		if (_startFoot.x + xStep <= p.x) {
+			_fieldC = 1;
+			delta.x = xStep;
+			newpos.x = xStep + _startFoot.x;
+		} else {
+			delta.x = p.x - _startFoot.x;
+			newpos.x = p.x;
+		}
+		if (delta.y < delta.x) {
+			_dirFrame = 18;	// right
+		}
+	} else
+	if (_startFoot.x > p.x && _startFoot.x > 0 && IS_PATH_CLEAR(_startFoot.x - xStep, _startFoot.y)) {
+		if (_startFoot.x - xStep >= p.x) {
+			_fieldC = 1;
+			delta.x = xStep;
+			newpos.x = _startFoot.x - xStep;
+		} else {
+			delta.x = _startFoot.x - p.x;
+			newpos.x = p.x;
+		}
+		if (delta.y < delta.x) {
+			_dirFrame = 27;	// left
+		}
+	}
+
+	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i \n", _startFoot.x, _startFoot.y, p.x, p.y, delta.x, delta.y);
+
+	if (_fieldC) {
+		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)\n", _startFoot.x, _startFoot.y, newpos.x, newpos.y);
+		_ch->_ani->_frame = walkFrame + _dirFrame + 1;
+		_startFoot.x = newpos.x;
+		_startFoot.y = newpos.y;
+		_ch->setFoot(_startFoot);
+		_ch->_ani->_z = newpos.y;
+	}
+
+	if (_fieldC || !_ch->_walkPath.empty()) {
+//		checkTrap();
+		debugC(3, kDebugWalk, "PathWalker_BR::walk, case 1\n");
+		return;
+	}
+
+	debugC(3, kDebugWalk, "PathWalker_BR::walk, case 2\n");
+	finalizeWalk();
+	return;
 }
 
-WalkNode::WalkNode(int16 x, int16 y) : _x(x), _y(y) {
-}
+PathWalker_BR::PathWalker_BR(Character *ch) : PathWalker(ch), _fieldC(1), _first(true) {
 
-WalkNode::WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {
-}
-
-void WalkNode::getPoint(Common::Point &p) const {
-	p.x = _x;
-	p.y = _y;
-}
-
-PathBuilder::PathBuilder(AnimationPtr anim) : _anim(anim), _list(0) {
 }
 
 

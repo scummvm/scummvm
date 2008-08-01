@@ -85,20 +85,28 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 Parallaction::~Parallaction() {
 	delete _debugger;
-
 	delete _globalTable;
-
 	delete _callableNames;
-	delete _localFlagNames;
+	delete _cmdExec;
+	delete _programExec;
 
+	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
+	hideDialogueStuff();
+	delete _balloonMan;
 	freeLocation();
 
 	freeCharacter();
 	destroyInventory();
 
+	cleanupGui();
+
+	delete _comboArrow;
+
+	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
 	delete _disk;
+	delete _input;
 }
 
 
@@ -132,18 +140,24 @@ int Parallaction::init() {
 
 	_debugger = new Debugger(this);
 
+	_menuHelper = 0;
+
+	setupBalloonManager();
+
 	return 0;
 }
 
 
-
-
-
+void Parallaction::clearSet(OpcodeSet &opcodes) {
+	for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+		delete *i;
+	opcodes.clear();
+}
 
 
 void Parallaction::updateView() {
 
-	if ((_engineFlags & kEnginePauseJobs) && (_engineFlags & kEngineInventory) == 0) {
+	if ((_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
 		return;
 	}
 
@@ -153,12 +167,19 @@ void Parallaction::updateView() {
 }
 
 
+void Parallaction::hideDialogueStuff() {
+	_gfx->freeItems();
+	_balloonMan->freeBalloons();
+}
+
 
 void Parallaction::freeCharacter() {
 	debugC(1, kDebugExec, "freeCharacter()");
 
 	delete _objectsNames;
 	_objectsNames = 0;
+
+	_gfx->clearGfxObjects(kGfxObjCharacter);
 
 	_char.free();
 
@@ -189,6 +210,9 @@ AnimationPtr Parallaction::findAnimation(const char *name) {
 }
 
 void Parallaction::freeAnimations() {
+	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
+		(*it)->_commands.clear();	// See comment for freeZones(), about circular references.
+	}
 	_location._animations.clear();
 	return;
 }
@@ -237,10 +261,9 @@ void Parallaction::freeLocation() {
 
 	_localFlagNames->clear();
 
-	_location._walkNodes.clear();
+	_location._walkPoints.clear();
 
-	_gfx->clearGfxObjects();
-	freeBackground();
+	_gfx->clearGfxObjects(kGfxObjNormal);
 
 	_location._programs.clear();
 	freeZones();
@@ -260,76 +283,32 @@ void Parallaction::freeLocation() {
 
 void Parallaction::freeBackground() {
 
-	_gfx->freeBackground();
 	_pathBuffer = 0;
 
 }
 
 void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
 
-	_gfx->setBackground(kBackgroundLocation, name, mask, path);
-	_pathBuffer = &_gfx->_backgroundInfo.path;
+	BackgroundInfo *info = new BackgroundInfo;
+	_disk->loadScenery(*info, name, mask, path);
+
+	_gfx->setBackground(kBackgroundLocation, info);
+	_pathBuffer = &info->path;
 
 	return;
 }
 
 void Parallaction::showLocationComment(const char *text, bool end) {
-	_gfx->setLocationBalloon(const_cast<char*>(text), end);
+	_balloonMan->setLocationBalloon(const_cast<char*>(text), end);
 }
 
 
 void Parallaction::processInput(InputData *data) {
+	if (!data) {
+		return;
+	}
 
 	switch (data->_event) {
-	case kEvEnterZone:
-		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->setFloatingLabel(data->_label);
-		break;
-
-	case kEvExitZone:
-		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		_gfx->setFloatingLabel(0);
-		break;
-
-	case kEvAction:
-		debugC(2, kDebugInput, "processInput: kEvAction");
-		_input->stopHovering();
-		pauseJobs();
-		runZone(data->_zone);
-		resumeJobs();
-		break;
-
-	case kEvOpenInventory:
-		_input->stopHovering();
-		_gfx->setFloatingLabel(0);
-		if (hitZone(kZoneYou, data->_mousePos.x, data->_mousePos.y) == 0) {
-			setArrowCursor();
-		}
-		pauseJobs();
-		openInventory();
-		break;
-
-	case kEvCloseInventory: // closes inventory and possibly select item
-		closeInventory();
-		setInventoryCursor(data->_inventoryIndex);
-		resumeJobs();
-		break;
-
-	case kEvHoverInventory:
-		highlightInventoryItem(data->_inventoryIndex);						// enable
-		break;
-
-	case kEvWalk:
-		debugC(2, kDebugInput, "processInput: kEvWalk");
-		_input->stopHovering();
-		setArrowCursor();
-		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
-		break;
-
-	case kEvQuitGame:
-		_engineFlags |= kEngineQuit;
-		break;
-
 	case kEvSaveGame:
 		_input->stopHovering();
 		saveGame();
@@ -350,28 +329,39 @@ void Parallaction::processInput(InputData *data) {
 void Parallaction::runGame() {
 
 	InputData *data = _input->updateInput();
-	if (data->_event != kEvNone) {
+	if (_engineFlags & kEngineQuit)
+		return;
+
+	runGuiFrame();
+	runDialogueFrame();
+	runCommentFrame();
+
+	if (_input->_inputMode == Input::kInputModeGame) {
 		processInput(data);
+		runPendingZones();
+
+		if (_engineFlags & kEngineQuit)
+			return;
+
+		if (_engineFlags & kEngineChangeLocation) {
+			changeLocation(_location._name);
+		}
 	}
-
-	runPendingZones();
-
-	if (_engineFlags & kEngineChangeLocation) {
-		changeLocation(_location._name);
-	}
-
 
 	_gfx->beginFrame();
 
 	if (_input->_inputMode == Input::kInputModeGame) {
-		runScripts();
-		walk();
+		_programExec->runScripts(_location._programs.begin(), _location._programs.end());
+		_char._ani->_z = _char._ani->height() + _char._ani->_top;
+		if (_char._ani->gfxobj) {
+			_char._ani->gfxobj->z = _char._ani->_z;
+		}
+		_char._walker->walk();
 		drawAnimations();
 	}
 
 	// change this to endFrame?
 	updateView();
-
 }
 
 
@@ -400,14 +390,13 @@ void Parallaction::doLocationEnterTransition() {
 	pal.makeGrayscale();
 	_gfx->setPalette(pal);
 
-	runScripts();
+	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
 	drawAnimations();
-
+	showLocationComment(_location._comment, false);
 	_gfx->updateScreen();
 
-	showLocationComment(_location._comment, false);
-	_input->waitUntilLeftClick();
-	_gfx->freeBalloons();
+	_input->waitForButtonEvent(kMouseLeftUp);
+	_balloonMan->freeBalloons();
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
@@ -467,6 +456,9 @@ void Parallaction::freeZones() {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
+			(*it)->_commands.clear();	// Since commands may reference zones, and both commands and zones are kept stored into
+										// SharedPtr's, we need to kill commands explicitly to destroy any potential circular
+										// reference.
 			it = _location._zones.erase(it);
 		}
 	}
@@ -475,15 +467,46 @@ void Parallaction::freeZones() {
 }
 
 
+enum {
+	WALK_LEFT = 0,
+	WALK_RIGHT = 1,
+	WALK_DOWN = 2,
+	WALK_UP = 3
+};
+
+struct WalkFrames {
+	int16 stillFrame[4];
+	int16 firstWalkFrame[4];
+	int16 numWalkFrames[4];
+	int16 frameRepeat[4];
+};
+
+WalkFrames _char20WalkFrames = {
+	{  0,  7, 14, 17 },
+	{  1,  8, 15, 18 },
+	{  6,  6,  2,  2 },
+	{  2,  2,  4,  4 }
+};
+
+WalkFrames _char24WalkFrames = {
+	{  0,  9, 18, 21 },
+	{  1, 10, 19, 22 },
+	{  8,  8,  2,  2 },
+	{  2,  2,  4,  4 }
+};
+
 const char Character::_prefixMini[] = "mini";
 const char Character::_suffixTras[] = "tras";
 const char Character::_empty[] = "\0";
 
 
-Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation), _builder(_ani) {
+Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
+
+	_direction = WALK_DOWN;
+	_step = 0;
 
 	_dummy = false;
 
@@ -496,24 +519,61 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation), _builder(
 	_ani->_flags = kFlagsActive | kFlagsNoName;
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
+
+	// TODO: move creation into Parallaction. Needs to make Character a pointer first.
+	if (_vm->getGameType() == GType_Nippon) {
+		_builder = new PathBuilder_NS(this);
+		_walker = new PathWalker_NS(this);
+	} else {
+		_builder = new PathBuilder_BR(this);
+		_walker = new PathWalker_BR(this);
+	}
+}
+
+Character::~Character() {
+	delete _builder;
+	_builder = 0;
+
+	delete _walker;
+	_walker = 0;
+
+	free();
 }
 
 void Character::getFoot(Common::Point &foot) {
-	foot.x = _ani->_left + _ani->width() / 2;
-	foot.y = _ani->_top + _ani->height();
+	Common::Rect rect;
+	_ani->gfxobj->getRect(_ani->_frame, rect);
+
+	foot.x = _ani->_left + (rect.left + rect.width() / 2);
+	foot.y = _ani->_top + (rect.top + rect.height());
 }
 
 void Character::setFoot(const Common::Point &foot) {
-	_ani->_left = foot.x - _ani->width() / 2;
-	_ani->_top = foot.y - _ani->height();
+	Common::Rect rect;
+	_ani->gfxobj->getRect(_ani->_frame, rect);
+
+	_ani->_left = foot.x - (rect.left + rect.width() / 2);
+	_ani->_top = foot.y - (rect.top + rect.height());
 }
+
+#if 0
+void dumpPath(const PointList &list, const char* text) {
+	for (PointList::iterator it = list.begin(); it != list.end(); it++)
+		printf("node (%i, %i)\n", it->x, it->y);
+
+	return;
+}
+#endif
 
 void Character::scheduleWalk(int16 x, int16 y) {
 	if ((_ani->_flags & kFlagsRemove) || (_ani->_flags & kFlagsActive) == 0) {
 		return;
 	}
 
-	_walkPath = _builder.buildPath(x, y);
+	_builder->buildPath(x, y);
+#if 0
+	dumpPath(_walkPath, _name);
+#endif
 	_engineFlags |= kEngineWalking;
 }
 
@@ -522,11 +582,12 @@ void Character::free() {
 	delete _talk;
 	delete _head;
 	delete _objs;
+	delete _ani->gfxobj;
 
-	_ani->gfxobj = NULL;
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;
+	_ani->gfxobj = NULL;
 
 	return;
 }
@@ -548,10 +609,14 @@ void Character::setName(const char *name) {
 	const char *end = begin + strlen(name);
 
 	_prefix = _empty;
+	_suffix = _empty;
 
 	_dummy = IS_DUMMY_CHARACTER(name);
 
 	if (!_dummy) {
+		if (!strstr(name, "donna")) {
+			_engineFlags &= ~kEngineTransformedDonna;
+		} else
 		if (_engineFlags & kEngineTransformedDonna) {
 			_suffix = _suffixTras;
 		} else {
@@ -560,8 +625,6 @@ void Character::setName(const char *name) {
 				_engineFlags |= kEngineTransformedDonna;
 				_suffix = _suffixTras;
 				end = s;
-			} else {
-				_suffix = _empty;
 			}
 		}
 		if (IS_MINI_CHARACTER(name)) {
@@ -597,8 +660,34 @@ void Parallaction::beep() {
 }
 
 void Parallaction::scheduleLocationSwitch(const char *location) {
+	debugC(9, kDebugExec, "scheduleLocationSwitch(%s)\n", location);
 	strcpy(_location._name, location);
 	_engineFlags |= kEngineChangeLocation;
+}
+
+
+
+
+
+void Character::updateDirection(const Common::Point& pos, const Common::Point& to) {
+
+	Common::Point dist(to.x - pos.x, to.y - pos.y);
+	WalkFrames *frames = (_ani->getFrameNum() == 20) ? &_char20WalkFrames : &_char24WalkFrames;
+
+	_step++;
+
+	if (dist.x == 0 && dist.y == 0) {
+		_ani->_frame = frames->stillFrame[_direction];
+		return;
+	}
+
+	if (dist.x < 0)
+		dist.x = -dist.x;
+	if (dist.y < 0)
+		dist.y = -dist.y;
+
+	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
+	_ani->_frame = frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction];
 }
 
 

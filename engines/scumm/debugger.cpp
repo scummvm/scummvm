@@ -298,7 +298,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 	// FIXME add bounds check
 
 	if (!strncmp(argv[1], "scr", 3)) {
-		file.open(argv[2], Common::File::kFileReadMode);
+		file.open(argv[2]);
 		if (file.isOpen() == false) {
 			DebugPrintf("Could not open file %s\n", argv[2]);
 			return true;

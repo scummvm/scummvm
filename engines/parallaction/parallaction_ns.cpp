@@ -34,6 +34,7 @@
 
 namespace Parallaction {
 
+
 #define MOUSEARROW_WIDTH		16
 #define MOUSEARROW_HEIGHT		16
 
@@ -135,17 +136,23 @@ int Parallaction_ns::init() {
 	initResources();
 	initFonts();
 	initCursors();
-	initOpcodes();
 	_locationParser = new LocationParser_ns(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
 	_programParser->init();
+
+	_cmdExec = new CommandExec_ns(this);
+	_cmdExec->init();
+	_programExec = new ProgramExec_ns(this);
+	_programExec->init();
 
 	_introSarcData1 = 0;
 	_introSarcData2 = 1;
 	_introSarcData3 = 200;
 
 	num_foglie = 0;
+
+	_inTestResult = false;
 
 	_location._animations.push_front(_char._ani);
 
@@ -157,7 +164,8 @@ int Parallaction_ns::init() {
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
 
-	delete _mouseComposedArrow;
+	delete _locationParser;
+	delete _programParser;
 
 	_location._animations.remove(_char._ani);
 
@@ -174,7 +182,7 @@ void Parallaction_ns::freeFonts() {
 }
 
 void Parallaction_ns::initCursors() {
-	_mouseComposedArrow = _disk->loadPointer("pointer");
+	_comboArrow = _disk->loadPointer("pointer");
 	_mouseArrow = _resMouseArrow;
 }
 
@@ -183,40 +191,20 @@ void Parallaction_ns::setArrowCursor() {
 	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_gfx->setFloatingLabel(0);
+	_input->stopHovering();
 	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-	_system->showMouse(true);
-
 }
 
-void Parallaction_ns::setInventoryCursor(int pos) {
+void Parallaction_ns::setInventoryCursor(ItemName name) {
+	assert(name > 0);
 
-	if (pos == -1)
-		return;
-
-	const InventoryItem *item = getInventoryItem(pos);
-	if (item->_index == 0)
-		return;
-
-	_input->_activeItem._id = item->_id;
-
-	byte *v8 = _mouseComposedArrow->getData(0);
+	byte *v8 = _comboArrow->getData(0);
 
 	// FIXME: destination offseting is not clear
-	byte* s = _char._objs->getData(item->_index);
-	byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
-
-	for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		s += INVENTORYITEM_PITCH;
-		d += MOUSECOMBO_WIDTH;
-	}
-
+	_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
 	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
-
 }
 
 
@@ -232,11 +220,8 @@ int Parallaction_ns::go() {
 
 	_globalTable = _disk->loadTable("global");
 
-	guiStart();
+	startGui();
 
-	changeLocation(_location._name);
-
-	_input->_inputMode = Input::kInputModeGame;
 	while ((_engineFlags & kEngineQuit) == 0) {
 		runGame();
 	}
@@ -268,8 +253,14 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 }
 
 
-void Parallaction_ns::showSlide(const char *name) {
-	_gfx->setBackground(kBackgroundSlide, name, 0, 0);
+void Parallaction_ns::showSlide(const char *name, int x, int y) {
+	BackgroundInfo *info = new BackgroundInfo;
+	_disk->loadSlide(*info, name);
+
+	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_vm->_screenWidth - info->width) >> 1) : x;
+	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_vm->_screenHeight - info->height) >> 1) : y;
+
+	_gfx->setBackground(kBackgroundSlide, info);
 }
 
 void Parallaction_ns::runPendingZones() {
@@ -286,16 +277,19 @@ void Parallaction_ns::runPendingZones() {
 void Parallaction_ns::changeLocation(char *location) {
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
+	MouseTriState oldMouseState = _input->getMouseState();
+	_input->setMouseState(MOUSE_DISABLED);
+
 	_soundMan->playLocationMusic(location);
 
-	_gfx->setFloatingLabel(0);
+	_input->stopHovering();
 	_gfx->freeLabels();
 
-	_input->stopHovering();
-	if (_engineFlags & kEngineBlockInput) {
-		setArrowCursor();
-	}
+	_zoneTrap = nullZonePtr;
 
+	setArrowCursor();
+
+	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);
 
 	freeLocation();
@@ -307,7 +301,9 @@ void Parallaction_ns::changeLocation(char *location) {
 		showSlide(locname.slide());
 		uint id = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
-		_input->waitUntilLeftClick();
+		_gfx->updateScreen();
+
+		_input->waitForButtonEvent(kMouseLeftUp);
 		_gfx->freeLabels();
 		freeBackground();
 	}
@@ -317,6 +313,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	}
 
 	_location._animations.push_front(_char._ani);
+	_gfx->showGfxObj(_char._ani->gfxobj, true);
 
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
@@ -341,19 +338,18 @@ void Parallaction_ns::changeLocation(char *location) {
 	// and acommands are executed, so that it can be set again if needed.
 	_engineFlags &= ~kEngineChangeLocation;
 
-	runCommands(_location._commands);
+	_cmdExec->run(_location._commands);
 
 	doLocationEnterTransition();
 
-	runCommands(_location._aCommands);
+	_cmdExec->run(_location._aCommands);
 
 	if (_location._hasSound)
 		_soundMan->playSfx(_location._soundFile, 0, true);
 
+	_input->setMouseState(oldMouseState);
+
 	debugC(1, kDebugExec, "changeLocation() done");
-
-	return;
-
 }
 
 
@@ -401,6 +397,8 @@ void Parallaction_ns::changeCharacter(const char *name) {
 
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
+	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
+	_char._ani->gfxobj->clearFlags(kGfxObjNormal);
 
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {

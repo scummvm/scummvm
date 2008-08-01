@@ -25,8 +25,6 @@
 
 #if defined(IPHONE_BACKEND)
 
-#include <CoreGraphics/CGDirectDisplay.h>
-#include <CoreSurface/CoreSurface.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -41,10 +39,15 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 #include "gui/message.h"
 
 #include "osys_iphone.h"
 #include "blit_arm.h"
+#include <sys/time.h>
+
+#include <CoreGraphics/CGDirectDisplay.h>
+#include <CoreSurface/CoreSurface.h>
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{0, 0, 0}
@@ -86,12 +89,12 @@ int OSystem_IPHONE::timerHandler(int t) {
 
 void OSystem_IPHONE::initBackend() {
 	_savefile = new DefaultSaveFileManager();
-	_mixer = new Audio::Mixer();
 	_timer = new DefaultTimerManager();
 
 	gettimeofday(&_startTime, NULL);
 
-	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	setupMixer();
+
 	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
 	OSystem::initBackend();
@@ -871,7 +874,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				suspendLoop();
 				break;
 
-			case kInputKeyPressed:
+			case kInputKeyPressed: {
 				int keyPressed = (int)xUnit;
 				int ascii = keyPressed;
 				//printf("key: %i\n", keyPressed);
@@ -932,6 +935,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
 				_needEventRestPeriod = true;
 				break;
+			}
 
 			case kInputSwipe: {
 				Common::KeyCode keycode = Common::KEYCODE_INVALID;
@@ -1088,10 +1092,21 @@ void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBuf
 		AudioQueueStop(s_AudioQueue.queue, false);
 }
 
-bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_IPHONE *this_ = (OSystem_IPHONE *)sys;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(samples, len);
+}
+
+void OSystem_IPHONE::setupMixer() {
 	//printf("setSoundCallback()\n");
-	s_soundCallback = proc;
-	s_soundParam = param;
+	_mixer = new Audio::MixerImpl(this);
+
+	s_soundCallback = mixCallback;
+	s_soundParam = this;
+
 
 	s_AudioQueue.dataFormat.mSampleRate = AUDIO_SAMPLE_RATE;
 	s_AudioQueue.dataFormat.mFormatID = kAudioFormatLinearPCM;
@@ -1105,7 +1120,8 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 
 	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, 0, kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
 		printf("Couldn't set the AudioQueue callback!\n");
-		return false;
+		_mixer->setReady(false);
+		return;
 	}
 
 	uint32 bufferBytes = s_AudioQueue.frameCount * s_AudioQueue.dataFormat.mBytesPerFrame;
@@ -1113,7 +1129,8 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 	for (int i = 0; i < AUDIO_BUFFERS; i++) {
 		if (AudioQueueAllocateBuffer(s_AudioQueue.queue, bufferBytes, &s_AudioQueue.buffers[i])) {
 			printf("Error allocating AudioQueue buffer!\n");
-			return false;
+			_mixer->setReady(false);		
+			return;
 		}
 
 		AQBufferCallback(&s_AudioQueue, s_AudioQueue.queue, s_AudioQueue.buffers[i]);
@@ -1122,14 +1139,12 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 	AudioQueueSetParameter(s_AudioQueue.queue, kAudioQueueParam_Volume, 1.0);
 	if (AudioQueueStart(s_AudioQueue.queue, NULL)) {
 		printf("Error starting the AudioQueue!\n");
-		return false;
+		_mixer->setReady(false);		
+		return;
 	}
-
-	return true;
-}
-
-void OSystem_IPHONE::clearSoundCallback() {
-	debug("clearSoundCallback()\n");
+	
+	_mixer->setOutputRate(AUDIO_SAMPLE_RATE);
+	_mixer->setReady(true);
 }
 
 int OSystem_IPHONE::getOutputSampleRate() const {
@@ -1148,6 +1163,11 @@ void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
 }
 
 void OSystem_IPHONE::quit() {
+}
+
+void OSystem_IPHONE::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
 }
 
 void OSystem_IPHONE::setWindowCaption(const char *caption) {
@@ -1173,17 +1193,11 @@ OSystem *OSystem_IPHONE_create() {
 }
 
 const char* OSystem_IPHONE::getConfigPath() {
-	if (s_is113OrHigher)
-		return SCUMMVM_PREFS_PATH;
-	else
-		return SCUMMVM_OLD_PREFS_PATH;
+	return SCUMMVM_PREFS_PATH;
 }
 
 const char* OSystem_IPHONE::getSavePath() {
-	if (s_is113OrHigher)
-		return SCUMMVM_SAVE_PATH;
-	else
-		return SCUMMVM_OLD_SAVE_PATH;
+	return SCUMMVM_SAVE_PATH;
 }
 
 void OSystem_IPHONE::migrateApp() {
@@ -1197,7 +1211,7 @@ void OSystem_IPHONE::migrateApp() {
 		if (!file.exists()) {
 			system("mkdir " SCUMMVM_ROOT_PATH);
 			system("mkdir " SCUMMVM_SAVE_PATH);
-
+			
 			// Copy over the prefs file
 			system("cp " SCUMMVM_OLD_PREFS_PATH " " SCUMMVM_PREFS_PATH);
 
@@ -1211,23 +1225,23 @@ void OSystem_IPHONE::migrateApp() {
 
 void iphone_main(int argc, char *argv[]) {
 
-	OSystem_IPHONE::migrateApp();
+	//OSystem_IPHONE::migrateApp();
 
-	// Redirect stdout and stderr if we're launching from the Springboard.
-	if (argc == 2 && strcmp(argv[1], "--launchedFromSB") == 0) {
-		FILE *newfp = fopen("/tmp/scummvm.log", "a");
-		if (newfp != NULL) {
-			fclose(stdout);
-			fclose(stderr);
-			*stdout = *newfp;
-			*stderr = *newfp;
-			setbuf(stdout, NULL);
-			setbuf(stderr, NULL);
+	FILE *newfp = fopen("/var/mobile/.scummvm.log", "a");
+	if (newfp != NULL) {
+		fclose(stdout);
+		fclose(stderr);
+		*stdout = *newfp;
+		*stderr = *newfp;
+		setbuf(stdout, NULL);
+		setbuf(stderr, NULL);
 
-			//extern int gDebugLevel;
-			//gDebugLevel = 10;
-		}
+		//extern int gDebugLevel;
+		//gDebugLevel = 10;
 	}
+
+	system("mkdir " SCUMMVM_ROOT_PATH);
+	system("mkdir " SCUMMVM_SAVE_PATH);
 
 	g_system = OSystem_IPHONE_create();
 	assert(g_system);

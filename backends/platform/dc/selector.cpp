@@ -25,7 +25,9 @@
 
 #include <common/scummsys.h>
 #include <engines/engine.h>
+#include <engines/metaengine.h>
 #include <base/plugins.h>
+#include <base/game.h>
 #include <common/fs.h>
 #include <common/events.h>
 #include "dc.h"
@@ -149,15 +151,6 @@ struct Dir
 
 static Game the_game;
 
-static void detectGames(FSList &files, GameList &candidates)
-{
-  const EnginePluginList &plugins = EngineMan.getPlugins();
-  EnginePluginList::const_iterator iter = plugins.begin();
-  for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-    candidates.push_back((*iter)->detectGames(files));
-  }
-}
-
 static bool isIcon(const FilesystemNode &entry)
 {
   int l = entry.getDisplayName().size();
@@ -227,8 +220,7 @@ static int findGames(Game *games, int max)
 	  files.push_back(*entry);
     }
 
-    GameList candidates;
-    detectGames(files, candidates);
+    GameList candidates = EngineMan.detectGames(files);
 
     for (GameList::const_iterator ge = candidates.begin();
 	ge != candidates.end(); ++ge)

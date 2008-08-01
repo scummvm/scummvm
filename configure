@@ -100,6 +100,7 @@ add_engine saga "SAGA" yes
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
 add_engine sword2 "Broken Sword 2" yes
+add_engine tinsel "Tinsel" no
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 
 _endian=unknown
@@ -127,12 +128,12 @@ _srcdir=`dirname $0`
 
 # Determine a tmp file name, using mktemp(1) when available.
 if type mktemp > /dev/null 2>&1 ; then
-	TMPO=`mktemp`
+	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
 else
-	TMPO=${_srcdir}/scummvm-conf
+	TMPO=scummvm-conf
 fi
 TMPC=${TMPO}.cpp
-TMPLOG=${_srcdir}/config.log
+TMPLOG=config.log
 
 # For cross compiling
 _host=""
@@ -741,6 +742,10 @@ for ac_option in $@; do
 	--enable-release)
 		DEBFLAGS="-O2 -Wuninitialized"
 		;;
+	--enable-profiling)
+		CXXFLAGS="$CXXFLAGS -pg"
+		LDFLAGS="$LDFLAGS -pg"
+		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_sdlpath="$arg:$arg/bin"
@@ -804,6 +809,10 @@ i586-mingw32msvc)
 	;;
 iphone)
 	_host_os=iphone
+	_host_cpu=arm
+	;;
+neuros)
+	_host_os=linux
 	_host_cpu=arm
 	;;
 *)
@@ -1117,6 +1126,19 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2x"
 			_build_hq_scalers="no"
+			;;
+		neuros)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_h "#define NEUROS"
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend='null'
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1624,7 +1646,7 @@ for engine in $_engines; do
 	fi
 
 	# Save the settings
-	defname="ENABLE_`echo $engine | tr [a-z] [A-Z]`"
+	defname="ENABLE_`echo $engine | tr '[a-z]' '[A-Z]'`"
 	if test "$isbuilt" = "no" ; then
 		add_line_to_config_mk "# $defname"
 	else

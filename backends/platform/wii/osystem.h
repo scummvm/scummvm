@@ -31,7 +31,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/surface.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 #include <gctypes.h>
 #include <gccore.h>
@@ -96,7 +96,7 @@ private:
 
 protected:
 	Common::SaveFileManager *_savefile;
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 	DefaultTimerManager *_timer;
 
 public:
@@ -159,7 +159,6 @@ public:
 	virtual void deleteMutex(MutexRef mutex);
 
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	virtual int getOutputSampleRate() const;
 
 	virtual void quit();
 

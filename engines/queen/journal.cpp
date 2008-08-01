@@ -85,8 +85,8 @@ void Journal::use() {
 				handleMouseWheel(1);
 				break;
 			case Common::EVENT_QUIT:
-				_system->quit();
-				break;
+				_vm->quitGame();
+				return;
 			default:
 				break;
 			}

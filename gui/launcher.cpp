@@ -44,6 +44,7 @@
 #include "gui/ListWidget.h"
 #include "gui/TabWidget.h"
 #include "gui/PopUpWidget.h"
+#include "graphics/cursorman.h"
 
 #include "sound/mididrv.h"
 
@@ -549,6 +550,8 @@ void LauncherDialog::open() {
 	// failure to launch a game. Otherwise, pressing ESC will attempt to
 	// re-launch the same game again.
 	ConfMan.setActiveDomain("");
+
+	CursorMan.popAllCursors();
 	Dialog::open();
 
 	updateButtons();
@@ -711,12 +714,7 @@ Common::String addGameToConf(const GameDescriptor &result) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	String domain;
-
-	if (result.contains("preferredtarget"))
-		domain = result["preferredtarget"];
-	else
-		domain = result.gameid();
+	String domain = result.preferredtarget();
 
 	assert(!domain.empty());
 	if (ConfMan.hasGameDomain(domain)) {

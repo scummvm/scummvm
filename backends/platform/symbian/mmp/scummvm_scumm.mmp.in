@@ -30,7 +30,7 @@ TARGET          scummvm_scumm.lib
 TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
-OPTION			GCCE -Wno-multichar -Wno-reorder -fsigned-char
+OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
 ALWAYS_BUILD_AS_ARM
 
 //START_AUTO_MACROS_SLAVE//
@@ -43,23 +43,34 @@ ALWAYS_BUILD_AS_ARM
 
 SOURCEPATH ..\..\..\..\engines\scumm
 
+
 //START_AUTO_OBJECTS_SCUMM_//
 
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_SCUMM_//
+#if !defined (WINS)
+SOURCE gfxARM.s					// ARM version: add ASM routines
+SOURCE proc3ARM.s				// ARM version: add ASM routines
+#endif
 
-//START_AUTO_OBJECTS_SCUMM_DISABLE_SCUMM_7_8//
+
+//START_AUTO_OBJECTS_SCUMM_ENABLE_SCUMM_7_8//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_SCUMM_DISABLE_SCUMM_7_8//
+//STOP_AUTO_OBJECTS_SCUMM_ENABLE_SCUMM_7_8//
+#if !defined (WINS)
+SOURCE smush/codec47ARM.s		// ARM version: add ASM routines
+#endif
 
-//START_AUTO_OBJECTS_SCUMM_DISABLE_HE//
+
+//START_AUTO_OBJECTS_SCUMM_ENABLE_HE//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_SCUMM_DISABLE_HE//
+//STOP_AUTO_OBJECTS_SCUMM_ENABLE_HE//
+
 
 // *** Include paths
 

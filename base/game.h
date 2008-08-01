@@ -48,7 +48,7 @@ struct PlainGameDescriptor {
 /**
  * Given a list of PlainGameDescriptors, returns the first PlainGameDescriptor
  * matching the given gameid. If not match is found return 0.
- * The end of the list marked by a PlainGameDescriptor with gameid equal to 0.
+ * The end of the list must marked by a PlainGameDescriptor with gameid equal to 0.
  */
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
 
@@ -92,6 +92,10 @@ public:
 	const Common::String &description() const { return getVal("description"); }
 	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
 	Common::Platform platform() const { return contains("platform") ? Common::parsePlatform(getVal("platform")) : Common::kPlatformUnknown; }
+	
+	const Common::String &preferredtarget() const {
+		return contains("preferredtarget") ? getVal("preferredtarget") : getVal("gameid");
+	}
 };
 
 /** List of games. */

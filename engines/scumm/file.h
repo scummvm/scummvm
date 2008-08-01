@@ -36,7 +36,7 @@ class BaseScummFile : public Common::File {
 public:
 	virtual void setEnc(byte value) = 0;
 
-	virtual bool open(const Common::String &filename, AccessMode mode = kFileReadMode) = 0;
+	virtual bool open(const Common::String &filename) = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
 
 	virtual bool eof() = 0;
@@ -44,7 +44,6 @@ public:
 	virtual uint32 size() = 0;
 	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
 	virtual uint32 read(void *dataPtr, uint32 dataSize) = 0;
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) = 0;
 };
 
 class ScummFile : public BaseScummFile {
@@ -59,7 +58,7 @@ public:
 	void setSubfileRange(uint32 start, uint32 len);
 	void resetSubfile();
 
-	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
 	bool eof();
@@ -67,7 +66,6 @@ public:
 	uint32 size();
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
-	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 class ScummDiskImage : public BaseScummFile {
@@ -104,7 +102,7 @@ public:
 	ScummDiskImage(const char *disk1, const char *disk2, GameSettings game);
 	void setEnc(byte value);
 
-	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
 	void close();
@@ -113,7 +111,6 @@ public:
 	uint32 size() { return _stream->size(); }
 	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
 	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 } // End of namespace Scumm

@@ -54,6 +54,7 @@ typedef Common::SharedPtr<Instruction> InstructionPtr;
 typedef Common::List<InstructionPtr> InstructionList;
 extern InstructionPtr nullInstructionPtr;
 
+typedef Common::List<Common::Point> PointList;
 
 enum ZoneTypes {
 	kZoneExamine	   = 1,					// zone displays comment if activated
@@ -67,7 +68,11 @@ enum ZoneTypes {
 	kZoneNone		   = 0x100,				// used to prevent parsing on peculiar Animations
 	kZoneTrap		   = 0x200,				// zone activated when character enters
 	kZoneYou		   = 0x400,				// marks the character
-	kZoneCommand	   = 0x800
+	kZoneCommand	   = 0x800,
+
+	// BRA specific
+	kZonePath          = 0x1000,			// defines nodes for assisting walk calculation routines
+	kZoneBox           = 0x2000
 };
 
 
@@ -89,6 +94,7 @@ enum ZoneFlags {
 	kFlagsYourself		= 0x1000,
 	kFlagsScaled		= 0x2000,
 	kFlagsSelfuse		= 0x4000,
+	kFlagsIsAnimation	= 0x1000000,		// BRA: used in walk code (trap check), to tell is a Zone is an Animation
 	kFlagsAnimLinked	= 0x2000000
 };
 
@@ -181,6 +187,9 @@ struct Question {
 
 struct Dialogue {
 	Question	*_questions[NUM_QUESTIONS];
+
+	Dialogue();
+	~Dialogue();
 };
 
 struct GetData {	// size = 24
@@ -206,7 +215,7 @@ struct SpeakData {	// size = 36
 	}
 };
 struct ExamineData {	// size = 28
-	Frames	*_cnv;
+	GfxObj	*_cnv;
 	uint16		_opBase;		   // unused
 	uint16		field_12;			// unused
 	char*		_description;
@@ -253,6 +262,15 @@ struct MergeData {	// size = 12
 		_obj1 = _obj2 = _obj3 = 0;
 	}
 };
+#define MAX_WALKPOINT_LISTS 20
+struct PathData {
+	int	_numLists;
+	PointList	_lists[MAX_WALKPOINT_LISTS];
+
+	PathData() {
+		_numLists = 0;
+	}
+};
 
 struct TypeData {
 	GetData		*get;
@@ -261,6 +279,8 @@ struct TypeData {
 	DoorData	*door;
 	HearData	*hear;
 	MergeData	*merge;
+	// BRA specific field
+	PathData	*path;
 
 	TypeData() {
 		get = NULL;
@@ -269,6 +289,7 @@ struct TypeData {
 		door = NULL;
 		hear = NULL;
 		merge = NULL;
+		path = NULL;
 	}
 };
 
@@ -284,7 +305,7 @@ struct Zone {
 	int16			_bottom;
 	uint32			_type;
 	uint32			_flags;
-	Label			*_label;
+	uint			_label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	TypeData		u;
@@ -429,6 +450,8 @@ struct Animation : public Zone {
 	virtual uint16 height() const;
 	uint16 getFrameNum() const;
 	byte* getFrameData(uint32 index) const;
+
+	void validateScriptVars();
 };
 
 class Table {

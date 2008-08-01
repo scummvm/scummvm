@@ -187,6 +187,10 @@ struct Rect {
 		clip(Rect(0, 0, maxw, maxh));
 	}
 
+	bool isEmpty() const {
+		return (left >= right || top >= bottom);
+	}
+
 	bool isValidRect() const {
 		return (left <= right && top <= bottom);
 	}

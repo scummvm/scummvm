@@ -500,7 +500,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	debugC(9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(%p, %d)", (const void *)seqData, skipSeq);
 	assert(seqData);
 
-	static SeqEntry floppySeqProcs[] = {
+	static const SeqEntry floppySeqProcs[] = {
 		// 0x00
 		SEQOP(3, s1_wsaOpen),
 		SEQOP(2, s1_wsaClose),
@@ -541,7 +541,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(1, s1_endOfScript)
 	};
 
-	static SeqEntry cdromSeqProcs[] = {
+	static const SeqEntry cdromSeqProcs[] = {
 		// 0x00
 		SEQOP(3, s1_wsaOpen),
 		SEQOP(2, s1_wsaClose),

@@ -585,8 +585,8 @@ NewFont *NewFont::loadFont(Common::SeekableReadStream &stream) {
 }
 
 bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename) {
-	Common::File cacheFile;
-	if (!cacheFile.open(filename, Common::File::kFileWriteMode)) {
+	Common::DumpFile cacheFile;
+	if (!cacheFile.open(filename)) {
 		warning("Couldn't open file '%s' for writing", filename.c_str());
 		return false;
 	}

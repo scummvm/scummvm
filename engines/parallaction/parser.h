@@ -128,6 +128,7 @@ protected:
 
 		// BRA specific
 		int numZones;
+		BackgroundInfo	*info;
 		char *bgName;
 		char *maskName;
 		char *pathName;
@@ -171,7 +172,7 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(animation);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(drop);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(invObject);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(call);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(simple);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
@@ -192,8 +193,8 @@ protected:
 	Question	*parseQuestion();
 
 	void		parseZone(ZoneList &list, char *name);
-	void		parseZoneTypeBlock(ZonePtr z);
-	void		parseWalkNodes(WalkNodeList &list);
+	virtual void parseZoneTypeBlock(ZonePtr z);
+	void		parsePointList(PointList &list);
 	void		parseAnimation(AnimationList &list, char *name);
 	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
@@ -221,12 +222,13 @@ public:
 	virtual void init();
 
 	virtual ~LocationParser_ns() {
+		delete _parser;
 		delete _commandsNames;
 		delete _locationStmt;
+		delete _locationZoneStmt;
+		delete _locationAnimStmt;
 		delete _zoneTypeNames;
 		delete _zoneFlagNames;
-
-		delete _parser;
 
 		clearSet(_commandParsers);
 		clearSet(_locationAnimParsers);
@@ -283,6 +285,9 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
+	virtual void	parseZoneTypeBlock(ZonePtr z);
+	void			parsePathData(ZonePtr z);
+
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {
 	}
@@ -305,6 +310,7 @@ class ProgramParser_ns {
 protected:
 	Parser	*_parser;
 	Parallaction_ns *_vm;
+
 
 	Script	*_script;
 	ProgramPtr	_program;
@@ -356,7 +362,9 @@ public:
 	virtual void init();
 
 	virtual ~ProgramParser_ns() {
+		delete _parser;
 		delete _instructionNames;
+
 		clearSet(_instructionParsers);
 	}
 

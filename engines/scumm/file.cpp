@@ -58,8 +58,8 @@ void ScummFile::resetSubfile() {
 	seek(0, SEEK_SET);
 }
 
-bool ScummFile::open(const Common::String &filename, AccessMode mode) {
-	if (File::open(filename, mode)) {
+bool ScummFile::open(const Common::String &filename) {
+	if (File::open(filename)) {
 		resetSubfile();
 		return true;
 	} else {
@@ -187,11 +187,6 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 	return realLen;
 }
 
-uint32 ScummFile::write(const void *, uint32) {
-	error("ScummFile does not support writing!");
-	return 0;
-}
-
 #pragma mark -
 #pragma mark --- ScummDiskImage ---
 #pragma mark -
@@ -250,11 +245,6 @@ ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSetting
 	}
 }
 
-uint32 ScummDiskImage::write(const void *, uint32) {
-	error("ScummDiskImage does not support writing!");
-	return 0;
-}
-
 void ScummDiskImage::setEnc(byte enc) {
 	_stream->setEnc(enc);
 }
@@ -300,7 +290,7 @@ bool ScummDiskImage::openDisk(char num) {
 	return true;
 }
 
-bool ScummDiskImage::open(const Common::String &filename, AccessMode mode) {
+bool ScummDiskImage::open(const Common::String &filename) {
 	uint16 signature;
 
 	// check signature

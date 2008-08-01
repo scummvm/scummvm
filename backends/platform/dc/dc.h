@@ -28,6 +28,7 @@
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
 #include "backends/fs/fs-factory.h"
+#include "sound/mixer_intern.h"
 
 #define NUM_BUFFERS 4
 #define SOUND_BUFFER_SHIFT 3
@@ -195,7 +196,7 @@ class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
  private:
 
   Common::SaveFileManager *_savefile;
-  Audio::Mixer *_mixer;
+  Audio::MixerImpl *_mixer;
   DefaultTimerManager *_timer;
   SoftKeyboard _softkbd;
 
@@ -223,6 +224,7 @@ class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
 
   int temp_sound_buffer[RING_BUFFER_SAMPLES>>SOUND_BUFFER_SHIFT];
 
+  uint initSound();
   void checkSound();
 
   void drawMouse(int xdraw, int ydraw, int w, int h,
@@ -237,6 +239,5 @@ class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
 extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
 		       byte &shiftFlags, Interactive *inter = NULL);
-extern void initSound();
 extern bool selectGame(char *&, char *&, class Icon &);
 

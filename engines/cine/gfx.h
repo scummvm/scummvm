@@ -108,13 +108,14 @@ public:
 	virtual void selectBg(unsigned int idx);
 	virtual void selectScrollBg(unsigned int idx);
 	virtual void setScroll(unsigned int shift);
+	virtual uint getScroll() const;
 	virtual void removeBg(unsigned int idx);
-	void saveBg(Common::OutSaveFile &fHandle);
+	virtual void saveBgNames(Common::OutSaveFile &fHandle);
 
 	virtual void refreshPalette();
 	virtual void reloadPalette();
-	void restorePalette(Common::InSaveFile &fHandle);
-	void savePalette(Common::OutSaveFile &fHandle);
+	virtual void restorePalette(Common::SeekableReadStream &fHandle);
+	virtual void savePalette(Common::OutSaveFile &fHandle);
 	virtual void rotatePalette(int a, int b, int c);
 	virtual void transformPalette(int first, int last, int r, int g, int b);
 
@@ -128,6 +129,7 @@ public:
  */
 class OSRenderer : public FWRenderer {
 private:
+	// FIXME: Background table's size is probably 8 instead of 9. Check to make sure and correct if necessary.
 	palBg _bgTable[9]; ///< Table of backgrounds loaded into renderer
 	byte *_activeHiPal; ///< Active 256 color palette
 	unsigned int _currentBg; ///< Current background
@@ -163,10 +165,14 @@ public:
 	void selectBg(unsigned int idx);
 	void selectScrollBg(unsigned int idx);
 	void setScroll(unsigned int shift);
+	uint getScroll() const;
 	void removeBg(unsigned int idx);
+	void saveBgNames(Common::OutSaveFile &fHandle);
 
 	void refreshPalette();
 	void reloadPalette();
+	void restorePalette(Common::SeekableReadStream &fHandle);
+	void savePalette(Common::OutSaveFile &fHandle);
 	void rotatePalette(int a, int b, int c);
 	void transformPalette(int first, int last, int r, int g, int b);
 

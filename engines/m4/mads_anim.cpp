@@ -61,9 +61,9 @@ TextviewView::TextviewView(M4Engine *vm):
 
 	_vm->_font->setColors(5, 6, 4);
 
-	empty();
-	_bgSurface.empty();
-	_textSurface.empty();
+	clear();
+	_bgSurface.clear();
+	_textSurface.clear();
 
 	int y = (height() - MADS_SURFACE_HEIGHT) / 2;
 	setColor(2);
@@ -83,8 +83,8 @@ TextviewView::~TextviewView() {
 }
 
 void TextviewView::reset() {
-	_bgSurface.empty();
-	_textSurface.empty();
+	_bgSurface.clear();
+	_textSurface.clear();
 	_animating = false;
 	_panX = 0;
 	_panY = 0;
@@ -456,8 +456,8 @@ AnimviewView::AnimviewView(M4Engine *vm):
 	// Set up system palette colors
 	_vm->_palette->setMadsSystemPalette();
 
-	empty();
-	_bgSurface.empty();
+	clear();
+	_bgSurface.clear();
 
 	int y = (height() - MADS_SURFACE_HEIGHT) / 2;
 	setColor(2);
@@ -471,7 +471,7 @@ AnimviewView::~AnimviewView() {
 }
 
 void AnimviewView::reset() {
-	_bgSurface.empty();
+	_bgSurface.clear();
 	_soundDriverLoaded = false;
 }
 

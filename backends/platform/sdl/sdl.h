@@ -38,7 +38,7 @@
 
 
 namespace Audio {
-	class Mixer;
+	class MixerImpl;
 }
 
 namespace Common {
@@ -49,6 +49,15 @@ namespace Common {
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
+#endif
+
+#if defined(MACOSX)
+// On Mac OS X, we need to double buffer the audio buffer, else anything
+// which produces sampled data with high latency (like the MT-32 emulator)
+// will sound terribly.
+// This could be enabled for more / most ports in the future, but needs some
+// testing.
+#define MIXER_DOUBLE_BUFFERING 1
 #endif
 
 
@@ -134,8 +143,11 @@ public:
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
 	// Set function that generates samples
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
+	virtual void setupMixer();
+	static void mixCallback(void *s, byte *samples, int len);
+
+	virtual void closeMixer();
+
 	virtual Audio::Mixer *getMixer();
 
 	// Poll CD status
@@ -186,7 +198,6 @@ public:
 
 	virtual void setWindowCaption(const char *caption);
 	virtual bool openCD(int drive);
-	virtual int getOutputSampleRate() const;
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -369,15 +380,32 @@ protected:
 	 */
 	MutexRef _graphicsMutex;
 
+#ifdef MIXER_DOUBLE_BUFFERING
+	SDL_mutex *_soundMutex;
+	SDL_cond *_soundCond;
+	SDL_Thread *_soundThread;
+	bool _soundThreadIsRunning;
+	bool _soundThreadShouldQuit;
+	
+	byte _activeSoundBuf;
+	uint _soundBufSize;
+	byte *_soundBuffers[2];
+
+	void mixerProducerThread();
+	static int SDLCALL mixerProducerThreadEntry(void *arg);
+	void initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize);
+	void deinitThreadedMixer();
+#endif
+
 
 	Common::SaveFileManager *_savefile;
-	Audio::Mixer *_mixer;
+	Audio::MixerImpl *_mixer;
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
 
 
-
+protected:
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
 

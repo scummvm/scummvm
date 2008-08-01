@@ -304,13 +304,40 @@ public:
 	 * Read one line of text from a CR or CR/LF terminated plain text file.
 	 * This method is a rough analog of the (f)gets function.
 	 *
+	 * @bug A main difference (and flaw) in this function is that there is no
+	 * way to detect that a line exceeeds the length of the buffer.
+	 * Code which needs this should use the new readLine_NEW() method instead.
+	 *
 	 * @param buf	the buffer to store into
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occurred
+	 *
 	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
 	 *       into the buffer.
 	 */
 	virtual char *readLine(char *buf, size_t bufSize);
+
+	/**
+	 * Reads at most one less than the number of characters specified
+	 * by bufSize from the and stores them in the string buf. Reading
+	 * stops when the end of a line is reached (CR, CR/LF or LF), at
+	 * end-of-file or error.  The newline, if any, is retained (CR and
+	 * CR/LF are translated to LF = 0xA = '\n').  If any characters are
+	 * read and there is no error, a `\0' character is appended to end
+	 * the string.
+	 *
+	 * Upon successful completion, return a pointer to the string. If
+	 * end-of-file occurs before any characters are read, returns NULL
+	 * and the buffer contents remain unchanged.  If an error occurs,
+	 * returns NULL and the buffer contents are indeterminate.
+	 * This method does not distinguish between end-of-file and error;
+	 * callers muse use ioFailed() or eos() to determine which occurred.
+	 *
+	 * @param buf	the buffer to store into
+	 * @param bufSize	the size of the buffer
+	 * @return a pointer to the read string, or NULL if an error occurred
+	 */
+	virtual char *readLine_NEW(char *s, size_t bufSize);
 };
 
 /**
@@ -323,15 +350,17 @@ public:
 class SubReadStream : virtual public ReadStream {
 protected:
 	ReadStream *_parentStream;
+	bool _disposeParentStream;
 	uint32 _pos;
 	uint32 _end;
-	bool _disposeParentStream;
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
 		: _parentStream(parentStream),
+		  _disposeParentStream(disposeParentStream),
 		  _pos(0),
-		  _end(end),
-		  _disposeParentStream(disposeParentStream) {}
+		  _end(end) {
+		assert(parentStream);
+	}
 	~SubReadStream() {
 		if (_disposeParentStream) delete _parentStream;
 	}
@@ -386,6 +415,48 @@ public:
 		return (int32)readUint32();
 	}
 };
+
+/**
+ * Wrapper class which adds buffering to any given ReadStream.
+ * Users can specify how big the buffer should be, and whether the
+ * wrapped stream should be disposed when the wrapper is disposed.
+ */
+class BufferedReadStream : virtual public ReadStream {
+protected:
+	ReadStream *_parentStream;
+	bool _disposeParentStream;
+	byte *_buf;
+	uint32 _pos;
+	uint32 _bufSize;
+	uint32 _realBufSize;
+
+public:
+	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+	~BufferedReadStream();
+
+	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
+	virtual bool ioFailed() const { return _parentStream->ioFailed(); }
+	virtual void clearIOFailed() { _parentStream->clearIOFailed(); }
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+/**
+ * Wrapper class which adds buffering to any given SeekableReadStream.
+ * @see BufferedReadStream
+ */
+class BufferedSeekableReadStream : public BufferedReadStream, public SeekableReadStream {
+protected:
+	SeekableReadStream *_parentStream;
+public:
+	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+
+	virtual uint32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual uint32 size() const { return _parentStream->size(); }
+
+	virtual void seek(int32 offset, int whence = SEEK_SET);
+};
+
 
 
 /**
@@ -487,9 +558,9 @@ public:
 	uint32 size() const { return _bufSize; }
 };
 
-/** 
+/**
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
- * that grows as it's written to. 
+ * that grows as it's written to.
  */
 class MemoryWriteStreamDynamic : public Common::WriteStream {
 private:

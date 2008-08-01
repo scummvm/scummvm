@@ -1012,7 +1012,7 @@ void ScummEngine_v60he::o60_openFile() {
 			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			if (_hInFileTable[slot] == 0) {
 				Common::File *f = new Common::File();
-				f->open(filename, Common::File::kFileReadMode);
+				f->open(filename);
 				if (!f->isOpen())
 					delete f;
 				else

@@ -202,8 +202,8 @@ bool SoundMidiPC::init() {
 }
 
 void SoundMidiPC::updateVolumeSettings() {
-	_musicVolume = ConfMan.getInt("music_volume");
-	_sfxVolume = ConfMan.getInt("sfx_volume");
+	_musicVolume = CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	_sfxVolume = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
 
 	updateChannelVolume(_musicVolume);
 }
@@ -243,27 +243,14 @@ int SoundMidiPC::open() {
 }
 
 void SoundMidiPC::close() {
-	if (_driver)
+	if (_driver) {
 		_driver->close();
+		delete _driver;
+	}
 	_driver = 0;
 }
 
 void SoundMidiPC::send(uint32 b) {
-	// HACK: For Kyrandia, we make the simplifying assumption that a song
-	// either loops in its entirety, or not at all. So if we see a FOR_LOOP
-	// controller event, we turn on looping even if there isn't any
-	// corresponding NEXT_BREAK event.
-	//
-	// This is a gross over-simplification of how XMIDI handles loops. If
-	// anyone feels like doing a proper implementation, please refer to
-	// the Exult project, and do it in midiparser_xmidi.cpp
-
-	if ((b & 0xFFF0) == 0x74B0 && _eventFromMusic) {
-		debugC(9, kDebugLevelMain | kDebugLevelSound, "SoundMidiPC: Looping song");
-		_musicParser->property(MidiParser::mpAutoLoop, true);
-		return;
-	}
-
 	if (_passThrough) {
 		if ((b & 0xFFF0) == 0x007BB0)
 			return;

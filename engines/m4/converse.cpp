@@ -153,7 +153,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 void ConversationView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	//if (!this->isVisible())
 	//	return;
-	empty();
+	clear();
 
 	if (_entriesShown) {
 		// Write out the conversation options

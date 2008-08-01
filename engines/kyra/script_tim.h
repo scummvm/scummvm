@@ -30,13 +30,18 @@
 
 #include "common/array.h"
 #include "common/func.h"
+#include "common/str.h"
 
 namespace Kyra {
 
+class WSAMovie_v2;
+class Screen_v2;
 struct TIM;
 typedef Common::Functor2<const TIM*, const uint16*, int> TIMOpcode;
 
 struct TIM {
+	char filename[13];
+
 	int16 procFunc;
 	uint16 procParam;
 
@@ -50,8 +55,22 @@ struct TIM {
 		uint32 lastTime;
 		uint32 nextTime;
 
+		const uint16 *loopIp;
+
 		const uint16 *avtl;
 	} func[kCountFuncs];
+
+	enum {
+		kWSASlots = 10
+	};
+
+	struct WSASlot {
+		void *anim;
+
+		int16 x, y;
+		uint16 wsaFlags;
+		uint16 offscreen;
+	} wsa[kWSASlots];
 
 	uint16 *avtl;
 	uint8 *text;
@@ -61,10 +80,22 @@ struct TIM {
 
 class TIMInterpreter {
 public:
-	TIMInterpreter(KyraEngine_v1 *vm, OSystem *system);
+	struct Animation {
+		WSAMovie_v2 *wsa;
+		int16 x, y;
+		uint16 wsaCopyParams;
+	};
+
+	TIMInterpreter(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system);
+	~TIMInterpreter();
 
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
+	
+	void setLangData(const char *filename);
+	void clearLangData() { delete[] _langData; _langData = 0; }
+	
+	const char *getCTableEntry(uint idx) const;
 
 	void resetFinishedFlag() { _finished = false; }
 	bool finished() const { return _finished; }
@@ -72,10 +103,15 @@ public:
 	void exec(TIM *tim, bool loop);
 	void stopCurFunc() { if (_currentTim) cmd_stopCurFunc(0); }
 
-	void play(const char *filename);
 	void refreshTimersAfterPause(uint32 elapsedTime);
+	
+	void displayText(uint16 textId, int16 flags);
+	void setupTextPalette(uint index, int fadePalette);
+
+	int _palDelayInc, _palDiff, _palDelayAcc;
 private:
 	KyraEngine_v1 *_vm;
+	Screen_v2 *_screen;
 	OSystem *_system;
 
 	TIM *_currentTim;
@@ -83,6 +119,19 @@ private:
 
 	bool _finished;
 	
+	Common::String _vocFiles[120];
+	
+	Animation _animations[TIM::kWSASlots];
+	
+	Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
+	
+	char _audioFilename[32];
+	
+	uint8 *_langData;
+	char *getTableEntry(uint idx);
+	bool _textDisplayed;
+	uint8 *_textAreaBuffer;
+
 	int execCommand(int cmd, const uint16 *param);
 
 	typedef int (TIMInterpreter::*CommandProc)(const uint16 *);
@@ -96,14 +145,30 @@ private:
 
 	int cmd_initFunc0(const uint16 *param);
 	int cmd_stopCurFunc(const uint16 *param);
+	int cmd_initWSA(const uint16 *param);
+	int cmd_uninitWSA(const uint16 *param);
 	int cmd_initFunc(const uint16 *param);
 	int cmd_stopFunc(const uint16 *param);
+	int cmd_wsaDisplayFrame(const uint16 *param);
+	int cmd_displayText(const uint16 *param);
+	int cmd_loadVocFile(const uint16 *param);
+	int cmd_unloadVocFile(const uint16 *param);
+	int cmd_playVocFile(const uint16 *param);
+	int cmd_loadSoundFile(const uint16 *param);
+	int cmd_playMusicTrack(const uint16 *param);
+	int cmd_setLoopIp(const uint16 *param);
+	int cmd_continueLoop(const uint16 *param);
+	int cmd_resetLoopIp(const uint16 *param);
 	int cmd_resetAllRuntimes(const uint16 *param);
 	int cmd_execOpcode(const uint16 *param);
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);
-	template<int T>
-	int cmd_return(const uint16 *) { return T; }
+#define cmd_return(n, v) \
+	int cmd_return_##n(const uint16 *) { return v; }
+
+	cmd_return( 1,  1);
+	cmd_return(n1, -1);
+#undef cmd_return
 };
 
 } // end of namespace Kyra

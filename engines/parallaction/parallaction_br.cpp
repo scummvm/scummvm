@@ -32,6 +32,27 @@
 
 namespace Parallaction {
 
+struct MouseComboProperties {
+	int	_xOffset;
+	int	_yOffset;
+	int	_width;
+	int	_height;
+};
+/*
+// TODO: improve NS's handling of normal cursor before merging cursor code.
+MouseComboProperties	_mouseComboProps_NS = {
+	7,	// combo x offset (the icon from the inventory will be rendered from here)
+	7,	// combo y offset (ditto)
+	32,	// combo (arrow + icon) width
+	32	// combo (arrow + icon) height
+};
+*/
+MouseComboProperties	_mouseComboProps_BR = {
+	8,	// combo x offset (the icon from the inventory will be rendered from here)
+	8,	// combo y offset (ditto)
+	68,	// combo (arrow + icon) width
+	68	// combo (arrow + icon) height
+};
 
 const char *Parallaction_br::_partNames[] = {
 	"PART0",
@@ -56,7 +77,11 @@ int Parallaction_br::init() {
 
 	if (getGameType() == GType_BRA) {
 		if (getPlatform() == Common::kPlatformPC) {
-			_disk = new DosDisk_br(this);
+			if (getFeatures() & GF_DEMO) {
+				_disk = new DosDemo_br(this);
+			} else {
+				_disk = new DosDisk_br(this);
+			}
 			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
 			_soundMan = new DummySoundMan(this);
 		} else {
@@ -72,13 +97,20 @@ int Parallaction_br::init() {
 	initResources();
 	initFonts();
 	initCursors();
-	initOpcodes();
 	_locationParser = new LocationParser_br(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_br(this);
 	_programParser->init();
 
+	_cmdExec = new CommandExec_br(this);
+	_cmdExec->init();
+	_programExec = new ProgramExec_br(this);
+	_programExec->init();
+
 	_part = -1;
+
+	_subtitle[0] = -1;
+	_subtitle[1] = -1;
 
 	Parallaction::init();
 
@@ -92,6 +124,7 @@ Parallaction_br::~Parallaction_br() {
 	delete _dougCursor;
 	delete _donnaCursor;
 
+	delete _mouseArrow;
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {
@@ -102,12 +135,13 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 
 int Parallaction_br::go() {
 
-	guiSplash("dyna");
-	guiSplash("core");
+	if (getFeatures() & GF_DEMO) {
+		startPart(1);
+	} else {
+		startGui();
+	}
 
 	while ((_engineFlags & kEngineQuit) == 0) {
-
-		guiStart();
 
 //		initCharacter();
 
@@ -142,23 +176,16 @@ void Parallaction_br::initCursors() {
 		_dougCursor = _disk->loadPointer("pointer2");
 		_donnaCursor = _disk->loadPointer("pointer3");
 
+		Graphics::Surface *surf = new Graphics::Surface;
+		surf->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+		_comboArrow = new SurfaceToFrames(surf);
+
+		// TODO: choose the pointer depending on the active character
+		// For now, we pick Donna's
 		_mouseArrow = _donnaCursor;
 	} else {
 		// TODO: Where are the Amiga cursors?
 	}
-
-}
-
-void Parallaction_br::setMousePointer(int16 index) {
-	// FIXME: Where are the Amiga cursors?
-	if (getPlatform() == Common::kPlatformAmiga)
-		return;
-
-	Common::Rect r;
-	_mouseArrow->getRect(0, r);
-
-	_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
-	_system->showMouse(true);
 
 }
 
@@ -170,7 +197,12 @@ void Parallaction_br::initPart() {
 	_objectsNames = _disk->loadTable("objects");
 	_countersNames = _disk->loadTable("counters");
 
-//	_disk->loadObjects("icone.ico");
+	// TODO: maybe handle this into Disk
+	if (getPlatform() == Common::kPlatformPC) {
+		_char._objs = _disk->loadObjects("icone.ico");
+	} else {
+		_char._objs = _disk->loadObjects("icons.ico");
+	}
 
 }
 
@@ -185,11 +217,17 @@ void Parallaction_br::freePart() {
 	_countersNames = 0;
 }
 
-void Parallaction_br::startPart() {
+void Parallaction_br::startPart(uint part) {
+	_part = part;
+	_disk->selectArchive(_partNames[_part]);
 
 	initPart();
 
-	strcpy(_location._name, partFirstLocation[_part]);
+	if (getFeatures() & GF_DEMO) {
+		strcpy(_location._name, "camalb");
+	} else {
+		strcpy(_location._name, partFirstLocation[_part]);
+	}
 
 	parseLocation("common");
 	changeLocation(_location._name);
@@ -199,16 +237,26 @@ void Parallaction_br::startPart() {
 void Parallaction_br::runPendingZones() {
 	ZonePtr z;
 
+	_cmdExec->runSuspended();
+
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;
-		runZone(z);			// FIXME: BRA doesn't handle sound yet
+		if ((z->_type & 0xFFFF) == kZoneSpeak) {
+			enterDialogueMode(z);
+		} else {
+			runZone(z);			// FIXME: BRA doesn't handle sound yet
+		}
 	}
 
 	if (_activeZone2) {
 		z = _activeZone2;	// speak Zone or sound
 		_activeZone2 = nullZonePtr;
-		runZone(z);
+		if ((z->_type & 0xFFFF) == kZoneSpeak) {
+			enterDialogueMode(z);
+		} else {
+			runZone(z);			// FIXME: BRA doesn't handle sound yet
+		}
 	}
 }
 
@@ -218,21 +266,35 @@ void Parallaction_br::changeLocation(char *location) {
 	// free open location stuff
 	clearSubtitles();
 	freeBackground();
-	_gfx->clearGfxObjects();
+	_gfx->clearGfxObjects(kGfxObjNormal);
+	_gfx->freeLabels();
+	_subtitle[0] = _subtitle[1] = -1;
+
 	_location._programs.clear();
+
+	_location._animations.remove(_char._ani);
+
 	freeZones();
 	freeAnimations();
+
+	_location._animations.push_front(_char._ani);
+
 //	free(_location._comment);
 //	_location._comment = 0;
-//	_location._commands.clear();
-//	_location._aCommands.clear();
-
+	_location._commands.clear();
+	_location._aCommands.clear();
 
 	// load new location
 	parseLocation(location);
-	runCommands(_location._commands);
+
+	// kFlagsRemove is cleared because the character defaults to visible on new locations
+	// script command can hide the character, anyway, so that's why the flag is cleared
+	// before _location._commands are executed
+	_char._ani->_flags &= ~kFlagsRemove;
+
+	_cmdExec->run(_location._commands);
 //	doLocationEnterTransition();
-	runCommands(_location._aCommands);
+	_cmdExec->run(_location._aCommands);
 
 	_engineFlags &= ~kEngineChangeLocation;
 }
@@ -282,25 +344,45 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 void Parallaction_br::changeCharacter(const char *name) {
 	const char *charName = _char.getName();
-	if (!scumm_stricmp(charName, name)) {
-		return;
+
+	if (scumm_stricmp(charName, name)) {
+		debugC(1, kDebugExec, "changeCharacter(%s)", name);
+
+		_char.setName(name);
+		_char._ani->gfxobj = _gfx->loadAnim(name);
+		_char._ani->gfxobj->setFlags(kGfxObjCharacter);
+		_char._ani->gfxobj->clearFlags(kGfxObjNormal);
+		_char._talk = _disk->loadTalk(name);
 	}
 
-	_char.setName(name);
-	_char._talk = _disk->loadTalk(name);
+	_char._ani->_flags |= kFlagsActive;
 }
 
 
 void Parallaction_br::setArrowCursor() {
+	// FIXME: Where are the Amiga cursors?
+	if (getPlatform() == Common::kPlatformAmiga)
+		return;
 
+	Common::Rect r;
+	_mouseArrow->getRect(0, r);
 
+	_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
+	_system->showMouse(true);
 
+	_input->_activeItem._id = 0;
 }
 
-void Parallaction_br::setInventoryCursor(int pos) {
+void Parallaction_br::setInventoryCursor(ItemName name) {
+	assert(name > 0);
 
+	byte *src = _mouseArrow->getData(0);
+	byte *dst = _comboArrow->getData(0);
+	memcpy(dst, src, _comboArrow->getSize(0));
 
-
+	// FIXME: destination offseting is not clear
+	_inventoryRenderer->drawItem(name, dst + _mouseComboProps_BR._yOffset * _mouseComboProps_BR._width + _mouseComboProps_BR._xOffset, _mouseComboProps_BR._width);
+	_system->setMouseCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
 }
 
 } // namespace Parallaction

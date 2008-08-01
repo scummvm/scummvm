@@ -33,7 +33,7 @@
 #include "gui/Actions.h"
 #include "gui/Key.h"
 #include "gui/message.h"
-
+#include "sound/mixer_intern.h"
 #include "..\..\sdl\main.cpp"
 
 #ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
@@ -42,9 +42,21 @@
   #define SAMPLES_PER_SEC 16000
 #endif
 
+#define KInputBufferLength 128
+// Symbian libc file functionality in order to provide shared file handles
+struct TSymbianFileEntry {
+	RFile iFileHandle;
+	char iInputBuffer[KInputBufferLength];
+	TInt iInputBufferLen;
+	TInt iInputPos;
+};
+
+#define FILE void
 
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
+
+
 
 // Show a simple Symbian Info win with Msg & exit
 void FatalError(const char *msg) {
@@ -173,11 +185,8 @@ void OSystem_SDL_Symbian::quit() {
 	OSystem_SDL::quit();
 }
 
-bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
+void OSystem_SDL_Symbian::setupMixer() {
 
-	// First save the proc and param
-	_sound_proc_param = param;
-	_sound_proc = proc;
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
@@ -207,48 +216,53 @@ bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;
-#ifdef S60
 	desired.callback = symbianMixCallback;
 	desired.userdata = this;
-#else
-	desired.callback = proc;
-	desired.userdata = param;
-#endif
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		return false;
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		_channels = obtained.channels;
+	
+		// Need to create mixbuffer for stereo mix to downmix
+		if (_channels != 2) {
+			_stereo_mix_buffer = new byte [obtained.size*2];//*2 for stereo values
+		}
+	
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+		SDL_PauseAudio(0);
 	}
-	// Note: This should be the obtained output rate, but it seems that at
-	// least on some platforms SDL will lie and claim it did get the rate
-	// even if it didn't. Probably only happens for "weird" rates, though.
-	_samplesPerSec = obtained.freq;
-	_channels = obtained.channels;
-
-	// Need to create mixbuffer for stereo mix to downmix
-	if (_channels != 2) {
-		_stereo_mix_buffer = new byte [obtained.size*2];//*2 for stereo values
-	}
-
-	SDL_PauseAudio(0);
-	return true;
 }
 
 /**
  * The mixer callback function, passed on to OSystem::setSoundCallback().
  * This simply calls the mix() method.
  */
-void OSystem_SDL_Symbian::symbianMixCallback(void *s, byte *samples, int len) {
-	static_cast <OSystem_SDL_Symbian*>(s)->symbianMix(samples,len);
-}
+void OSystem_SDL_Symbian::symbianMixCallback(void *sys, byte *samples, int len) {
+	OSystem_SDL_Symbian *this_ = (OSystem_SDL_Symbian *)sys;
+	assert(this_);
 
+	if (!this_->_mixer)
+		return;
 
-/**
- * Actual mixing implementation
- */
-void OSystem_SDL_Symbian::symbianMix(byte *samples, int len) {
+#if defined (S60) && !defined(S60V3)
 	// If not stereo then we need to downmix
-	if (_channels != 2) {
-		_sound_proc(_sound_proc_param, _stereo_mix_buffer, len * 2);
+	if (this_->_mixer->_channels != 2) {
+		this_->_mixer->mixCallback(_stereo_mix_buffer, len * 2);
+
 		int16 *bitmixDst = (int16 *)samples;
 		int16 *bitmixSrc = (int16 *)_stereo_mix_buffer;
 
@@ -258,8 +272,11 @@ void OSystem_SDL_Symbian::symbianMix(byte *samples, int len) {
 			bitmixSrc += 2;
 		}
 	} else
-		_sound_proc(_sound_proc_param, samples, len);
+#else
+	this_->_mixer->mixCallback(samples, len);
+#endif
 }
+
 
 /**
  * This is an implementation by the remapKey function
@@ -438,15 +455,9 @@ void OSystem_SDL_Symbian::initZones() {
 	}
 }
 
-// Symbian libc file functionality in order to provide shared file handles
-struct TSymbianFileEntry {
-	RFile iFileHandle;
-};
-
-#define FILE void
-
 FILE*	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
+	fileEntry->iInputPos = KErrNotFound;
 
 	if (fileEntry != NULL) {
 		TInt modeLen = strlen(mode);
@@ -504,9 +515,71 @@ void symbian_fclose(FILE* handle) {
 }
 
 size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
-	TPtr8 pointer( (unsigned char*) ptr, size*numItems);
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
+	TUint32 totsize = size*numItems;
+	TPtr8 pointer ( (unsigned char*) ptr, totsize);
 
-	((TSymbianFileEntry*)(handle))->iFileHandle.Read(pointer);
+	// Nothing cached and we want to load at least KInputBufferLength bytes
+	if(totsize >= KInputBufferLength) {	
+		TUint32 totLength = 0;
+		if(entry->iInputPos != KErrNotFound)
+		{
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer+entry->iInputPos, entry->iInputBufferLen - entry->iInputPos, KInputBufferLength);
+			pointer.Append(cacheBuffer);
+			entry->iInputPos = KErrNotFound;
+			totLength+=pointer.Length();
+			pointer.Set(totLength+(unsigned char*) ptr, 0, totsize-totLength);
+		}
+
+		entry->iFileHandle.Read(pointer);
+		totLength+=pointer.Length();
+
+		pointer.Set((unsigned char*) ptr, totLength, totsize);
+
+	}
+	else {
+		// Nothing in buffer	
+		if(entry->iInputPos == KErrNotFound) {
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, KInputBufferLength);
+			entry->iFileHandle.Read(cacheBuffer);
+
+			if(cacheBuffer.Length() >= totsize) {
+				pointer.Copy(cacheBuffer.Left(totsize));
+				entry->iInputPos = totsize;
+				entry->iInputBufferLen = cacheBuffer.Length();
+			}
+			else {
+				pointer.Copy(cacheBuffer);
+				entry->iInputPos = KErrNotFound;
+			}
+
+		}
+		else {
+			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, entry->iInputBufferLen, KInputBufferLength);
+
+			if(entry->iInputPos+totsize < entry->iInputBufferLen) {
+				pointer.Copy(cacheBuffer.Mid(entry->iInputPos, totsize));
+				entry->iInputPos+=totsize;
+			}
+			else {
+			
+			pointer.Copy(cacheBuffer.Mid(entry->iInputPos, entry->iInputBufferLen-entry->iInputPos));
+			cacheBuffer.SetLength(0);
+			entry->iFileHandle.Read(cacheBuffer);
+
+			if(cacheBuffer.Length() >= totsize-pointer.Length()) {
+					TUint32 restSize = totsize-pointer.Length();
+					pointer.Append(cacheBuffer.Left(restSize));
+					entry->iInputPos = restSize;
+					entry->iInputBufferLen = cacheBuffer.Length();
+				}
+				else {
+					pointer.Append(cacheBuffer);
+					entry->iInputPos = KErrNotFound;
+				}
+			}
+		}
+	}	
 
 	return pointer.Length()/size;
 }
@@ -514,6 +587,7 @@ size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle
 size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 	TPtrC8 pointer( (unsigned char*) ptr, size*numItems);
 
+	((TSymbianFileEntry*)(handle))->iInputPos = KErrNotFound;
 	if (((TSymbianFileEntry*)(handle))->iFileHandle.Write(pointer) == KErrNone) {
 		return numItems;
 	}
@@ -523,12 +597,18 @@ size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handl
 
 bool symbian_feof(FILE* handle) {
 	TInt pos = 0;
-	if (((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
+
+	if (entry->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
 
 		TInt size = 0;
-		if (((TSymbianFileEntry*)(handle))->iFileHandle.Size(size) == KErrNone) {
-			if (pos == size)
+		if (entry->iFileHandle.Size(size) == KErrNone) {
+			if(entry->iInputPos == KErrNotFound && pos == size) 			
 				return true;
+
+			if(entry->iInputPos != KErrNotFound && pos == size && entry->iInputPos == entry->iInputBufferLen)
+				return true;
+
 			return false;
 		}
 	}
@@ -537,15 +617,21 @@ bool symbian_feof(FILE* handle) {
 
 long int symbian_ftell(FILE* handle) {
 	TInt pos = 0;
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
 
-	((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos);
-
+	entry->iFileHandle.Seek(ESeekCurrent, pos);
+	if(entry->iInputPos != KErrNotFound)
+		{
+		pos+=(entry->iInputPos - entry->iInputBufferLen);
+		}
 	return pos;
 }
 
 int symbian_fseek(FILE* handle, long int offset, int whence) {
+
 	TSeek seekMode = ESeekStart;
 	TInt pos = offset;
+	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
 
 	switch(whence) {
 	case SEEK_SET:
@@ -553,14 +639,19 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 		break;
 	case SEEK_CUR:
 		seekMode = ESeekCurrent;
+		if(entry->iInputPos != KErrNotFound) {
+			pos+=(entry->iInputPos - entry->iInputBufferLen);
+		}
 		break;
 	case SEEK_END:
 		seekMode = ESeekEnd;
 		break;
 
 	}
+	
+	entry->iInputPos = KErrNotFound;
 
-	return ((TSymbianFileEntry*)(handle))->iFileHandle.Seek(seekMode, pos);
+	return entry->iFileHandle.Seek(seekMode, pos);
 }
 
 void symbian_clearerr(FILE* /*handle*/) {

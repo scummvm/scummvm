@@ -44,6 +44,11 @@ namespace Kyra {
 
 struct GameFlags {
 	Common::Language lang;
+
+	// language overwrites of fan translations (only needed for multilingual games)
+	Common::Language fanLang;
+	Common::Language replacedLang;
+
 	Common::Platform platform;
 
 	bool isDemo					: 1;
@@ -59,7 +64,8 @@ struct GameFlags {
 enum {
 	GI_KYRA1 = 0,
 	GI_KYRA2 = 1,
-	GI_KYRA3 = 2
+	GI_KYRA3 = 2,
+	GI_LOL = 4
 };
 
 struct AudioDataStruct {
@@ -212,7 +218,6 @@ protected:
 
 	// detection
 	GameFlags _flags;
-	int _lang;
 
 	// opcode
 	virtual void setupOpcodeTable() = 0;

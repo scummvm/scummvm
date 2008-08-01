@@ -35,7 +35,7 @@
 namespace Kyra {
 EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
 #define COMMAND(x) { &EMCInterpreter::x, #x }
-	static CommandEntry commandProcs[] = {
+	static const CommandEntry commandProcs[] = {
 		// 0x00
 		COMMAND(cmd_jmpTo),
 		COMMAND(cmd_setRetValue),
@@ -132,6 +132,8 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	scriptData->opcodes = opcodes;
 
+	strncpy(scriptData->filename, filename, 13);
+
 	return true;
 }
 
@@ -205,7 +207,7 @@ bool EMCInterpreter::run(EMCState *script) {
 	}
 
 	if (opcode > 18) {
-		error("Script unknown command: %d", opcode);
+		error("Script unknown command: %d in file '%s' at offset 0x%.08X", opcode, script->dataPtr->filename, instOffset);
 	} else {
 		debugC(5, kDebugLevelScript, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset, _commands[opcode].desc, _parameter, (uint)_parameter);
 		(this->*(_commands[opcode].proc))(script);
@@ -388,7 +390,7 @@ void EMCInterpreter::cmd_execOpcode(EMCState* script) {
 		script->retValue = (*(*script->dataPtr->opcodes)[opcode])(script);
 	} else {
 		script->retValue = 0;
-		warning("calling unimplemented opcode(0x%.02X/%d)", opcode, opcode);
+		warning("Calling unimplemented opcode(0x%.02X/%d) from file '%s'", opcode, opcode, script->dataPtr->filename);
 	}
 }
 

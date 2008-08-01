@@ -34,7 +34,10 @@ namespace Cine {
 typedef char CommandeType[20];
 
 extern byte *textDataPtr;
-extern byte textTable[256][2][16 * 8];
+
+struct TextHandler {
+	byte textTable[256][2][16 * 8];
+};
 
 extern const char **failureMessages;
 extern const CommandeType *defaultActionCommand;

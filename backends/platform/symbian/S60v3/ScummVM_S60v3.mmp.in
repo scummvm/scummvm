@@ -29,7 +29,7 @@
 TARGET          ScummVM.exe
 TARGETPATH      sys\bin
 TARGETTYPE      exe
-OPTION			GCCE -Wno-multichar -Wno-reorder -fsigned-char
+OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
 
 UID             0x100039ce 0xA0000657
 
@@ -80,13 +80,6 @@ ALWAYS_BUILD_AS_ARM
 // *** Static Libraries
 
 STATICLIBRARY esdl.lib
-
-#if !defined(WINS)
-staticlibrary rate_arm_asm.o 
-staticlibrary proc3arm.o
-staticlibrary codec47ARM.o 
-staticlibrary gfxARM.o 
-#endif
 
 // *** Include paths
 

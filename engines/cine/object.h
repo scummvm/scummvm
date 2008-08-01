@@ -50,7 +50,7 @@ struct overlay {
 };
 
 #define NUM_MAX_OBJECT 255
-#define NUM_MAX_VAR 256
+#define NUM_MAX_VAR 255
 
 extern objectStruct objectTable[NUM_MAX_OBJECT];
 
@@ -60,15 +60,17 @@ void loadObject(char *pObjectName);
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 
-void addOverlay(uint16 objIdx, uint16 param);
+void addOverlay(uint16 objIdx, uint16 type);
 int removeOverlay(uint16 objIdx, uint16 param);
-void addGfxElementA0(int16 objIdx, int16 param);
-void removeGfxElementA0(int16 objIdx, int16 param);
+void addGfxElement(int16 objIdx, int16 param, int16 type);
+void removeGfxElement(int16 objIdx, int16 param, int16 type);
 
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx);
 
 void addObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 void subObjectParam(byte objIdx, byte paramIdx, int16 newValue);
+bool compareRanges(uint16 aStart, uint16 aEnd, uint16 bStart, uint16 bEnd);
+uint16 compareObjectParamRanges(uint16 objIdx1, uint16 xAdd1, uint16 yAdd1, uint16 maskAdd1, uint16 objIdx2, uint16 xAdd2, uint16 yAdd2, uint16 maskAdd2);
 uint16 compareObjectParam(byte objIdx, byte param1, int16 param2);
 
 } // End of namespace Cine

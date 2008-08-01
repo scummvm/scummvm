@@ -131,7 +131,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_transformPaletteRange, "bbwww" },
 	/* 48 */
 	{ 0, 0 },
-	{ &FWScript::o1_setDefaultMenuColor2, "b" },
+	{ &FWScript::o1_setDefaultMenuBgColor, "b" },
 	{ &FWScript::o1_palRotate, "bbb" },
 	{ 0, 0 },
 	/* 4C */
@@ -170,7 +170,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o1_setZoneDataEntry, "bw" },
 	{ &FWScript::o1_getZoneDataEntry, "bb" },
 	/* 68 */
-	{ &FWScript::o1_setDefaultMenuColor, "b" },
+	{ &FWScript::o1_setPlayerCommandPosY, "b" },
 	{ &FWScript::o1_allowPlayerInput, "" },
 	{ &FWScript::o1_disallowPlayerInput, "" },
 	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x95 and 0xA9. */
@@ -202,7 +202,7 @@ const Opcode OSScript::_opcodeTable[] = {
 	/* 80 */
 	{ &FWScript::o2_removeSeq, "bb" },
 	{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_op82, "bbwwb" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_modifySeqListElement, "bbwwb" },
 	{ &FWScript::o2_isSeqRunning, "bb" },
 	/* 84 */
 	{ &FWScript::o2_gotoIfSupNearest, "b" },
@@ -240,10 +240,10 @@ const Opcode OSScript::_opcodeTable[] = {
 	{ &FWScript::o2_setAdditionalBgVScroll, "c" },
 	{ &FWScript::o2_op9F, "ww" }, /* TODO: Name this opcode properly. */
 	/* A0 */
-	{ &FWScript::o2_addGfxElementA0, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_removeGfxElementA0, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_opA2, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_opA3, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_addGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_removeGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_addGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
+	{ &FWScript::o2_removeGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
 	/* A4 */
 	{ &FWScript::o2_loadMask22, "b" }, /* TODO: Name this opcode properly. */
 	{ &FWScript::o2_unloadMask22, "b" }, /* TODO: Name this opcode properly. */
@@ -442,6 +442,7 @@ int FWScript::o2_removeSeq() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op81() {
 	warning("STUB: o2_op81()");
@@ -449,23 +450,25 @@ int FWScript::o2_op81() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_op82() {
+int FWScript::o2_modifySeqListElement() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 	uint16 c = getNextWord();
 	uint16 d = getNextWord();
 	byte e = getNextByte();
-	warning("STUB: o2_op82(%x, %x, %x, %x, %x)", a, b, c, d, e);
+	debugC(5, kCineDebugScript, "Line: %d: o2_modifySeqListElement(%d,%d,%d,%d,%d)", _line, a, b, c, d, e);
+
+	modifySeqListElement(a, 0, b, c, d, e);	
 	return 0;
 }
 
+/*! \todo Check whether this opcode's name is backwards (i.e. should it be o2_isSeqNotRunning?)
+ */
 int FWScript::o2_isSeqRunning() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: OP83(%d,%d) -> TODO", _line, a, b);
+	debugC(5, kCineDebugScript, "Line: %d: o2_isSeqRunning(%d,%d)", _line, a, b);
 
 	if (isSeqRunning(a, 0, b)) {
 		_compare = 1;
@@ -593,19 +596,18 @@ int FWScript::o2_stopObjectScript() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
 int FWScript::o2_op8D() {
-	uint16 a = getNextWord();
-	uint16 b = getNextWord();
-	uint16 c = getNextWord();
-	uint16 d = getNextWord();
-	uint16 e = getNextWord();
-	uint16 f = getNextWord();
-	uint16 g = getNextWord();
-	uint16 h = getNextWord();
-	warning("STUB: o2_op8D(%x, %x, %x, %x, %x, %x, %x, %x)", a, b, c, d, e, f, g, h);
-	// _currentScriptElement->compareResult = ...
+	uint16 objIdx1  = getNextWord();
+	uint16 xAdd1    = getNextWord();
+	uint16 yAdd1    = getNextWord();
+	uint16 maskAdd1 = getNextWord();
+	uint16 objIdx2  = getNextWord();
+	uint16 xAdd2    = getNextWord();
+	uint16 yAdd2    = getNextWord();
+	uint16 maskAdd2 = getNextWord();
+	debugC(5, kCineDebugScript, "Line: %d: o2_op8D(%d, %d, %d, %d, %d, %d, %d, %d)", _line, objIdx1, xAdd1, yAdd1, maskAdd1, objIdx2, xAdd2, yAdd2, maskAdd2);
+
+	_compare = compareObjectParamRanges(objIdx1, xAdd1, yAdd1, maskAdd1, objIdx2, xAdd2, yAdd2, maskAdd2);
 	return 0;
 }
 
@@ -649,16 +651,15 @@ int FWScript::o2_loadBg() {
 	return 0;
 }
 
-/*! \todo Check the current implementation for correctness
- */
 int FWScript::o2_wasZoneChecked() {
 	byte param = getNextByte();
-	_compare = (param < 16 && zoneData[param]);
+	_compare = (param < NUM_MAX_ZONE && zoneQuery[param]) ? 1 : 0;
 	debugC(5, kCineDebugScript, "Line: %d: o2_wasZoneChecked(%d)", _line, param);
 	return 0;
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9B() {
 	uint16 a = getNextWord();
@@ -674,6 +675,7 @@ int FWScript::o2_op9B() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9C() {
 	uint16 a = getNextWord();
@@ -713,6 +715,7 @@ int FWScript::o2_setAdditionalBgVScroll() {
 }
 
 /*! \todo Implement this instruction
+ * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9F() {
 	warning("o2_op9F()");
@@ -721,42 +724,36 @@ int FWScript::o2_op9F() {
 	return 0;
 }
 
-int FWScript::o2_addGfxElementA0() {
+int FWScript::o2_addGfxElementType20() {
 	uint16 param1 = getNextWord();
 	uint16 param2 = getNextWord();
 
-	debugC(5, kCineDebugScript, "Line: %d: addGfxElementA0(%d,%d)", _line, param1, param2);
-	addGfxElementA0(param1, param2);
+	debugC(5, kCineDebugScript, "Line: %d: o2_addGfxElementType20(%d,%d)", _line, param1, param2);
+	addGfxElement(param1, param2, 20);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_removeGfxElementA0() {
+int FWScript::o2_removeGfxElementType20() {
 	uint16 idx = getNextWord();
 	uint16 param = getNextWord();
-	warning("STUB? o2_removeGfxElementA0(%x, %x)", idx, param);
-	removeGfxElementA0(idx, param);
+	debugC(5, kCineDebugScript, "Line: %d: o2_removeGfxElementType20(%d,%d)", _line, idx, param);
+	removeGfxElement(idx, param, 20);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_opA2() {
+int FWScript::o2_addGfxElementType21() {
 	uint16 a = getNextWord();
 	uint16 b = getNextWord();
-	warning("STUB: o2_opA2(%x, %x)", a, b);
-	// addGfxElementA2();
+	debugC(5, kCineDebugScript, "Line: %d: o2_addGfxElementType21(%d,%d)", _line, a, b);
+	addGfxElement(a, b, 21);
 	return 0;
 }
 
-/*! \todo Implement this instruction
- */
-int FWScript::o2_opA3() {
+int FWScript::o2_removeGfxElementType21() {
 	uint16 a = getNextWord();
 	uint16 b = getNextWord();
-	warning("STUB: o2_opA3(%x, %x)", a, b);
-	// removeGfxElementA2();
+	debugC(5, kCineDebugScript, "Line: %d: o2_removeGfxElementType21(%d,%d)", _line, a, b);
+	removeGfxElement(a, b, 21);
 	return 0;
 }
 

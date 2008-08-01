@@ -410,7 +410,7 @@ void AGOSEngine::o_msg() {
 
 void AGOSEngine::o_end() {
 	// 68: exit interpreter
-	shutdown();
+	_quit = true;
 }
 
 void AGOSEngine::o_done() {
@@ -965,6 +965,9 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 int AGOSEngine::runScript() {
 	bool flag;
 
+	if (_quit)
+		return 1;
+
 	do {
 		if (_continousMainScript)
 			dumpOpcode(_codePtr);
@@ -1007,7 +1010,7 @@ int AGOSEngine::runScript() {
 			error("Invalid opcode '%d' encountered", _opcode);
 
 		executeOpcode(_opcode);
-	} while (getScriptCondition() != flag && !getScriptReturn());
+	} while  (getScriptCondition() != flag && !getScriptReturn() && !_quit);
 
 	return getScriptReturn();
 }
@@ -1063,7 +1066,7 @@ void AGOSEngine::waitForSync(uint a) {
 	_exitCutscene = false;
 	_rightButtonDown = false;
 
-	while (_vgaWaitFor != 0) {
+	while (_vgaWaitFor != 0 && !_quit) {
 		if (_rightButtonDown) {
 			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
 				skipSpeech();

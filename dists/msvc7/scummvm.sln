@@ -60,6 +60,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m4", "m4.vcproj", "{6D576A2
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "made", "made.vcproj", "{E29B5D40-08F7-11DD-BD0B-0800200C9A66}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinsel", "tinsel.vcproj", "{22AA7760-2C91-11DD-BD0B-0800200C9A66}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -146,6 +148,10 @@ Global
 		{E29B5D40-08F7-11DD-BD0B-0800200C9A66}.Debug|Win32.Build.0 = Debug|Win32
 		{E29B5D40-08F7-11DD-BD0B-0800200C9A66}.Release|Win32.ActiveCfg = Release|Win32
 		{E29B5D40-08F7-11DD-BD0B-0800200C9A66}.Release|Win32.Build.0 = Release|Win32
+		{22AA7760-2C91-11DD-BD0B-0800200C9A66}.Debug|Win32.ActiveCfg = Debug|Win32
+		{22AA7760-2C91-11DD-BD0B-0800200C9A66}.Debug|Win32.Build.0 = Debug|Win32
+		{22AA7760-2C91-11DD-BD0B-0800200C9A66}.Release|Win32.ActiveCfg = Release|Win32
+		{22AA7760-2C91-11DD-BD0B-0800200C9A66}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

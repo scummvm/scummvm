@@ -1,0 +1,144 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ * Palette Allocator Definitions
+ */
+
+#ifndef TINSEL_PALETTE_H	// prevent multiple includes
+#define TINSEL_PALETTE_H
+
+#include "tinsel/dw.h"
+
+namespace Tinsel {
+
+typedef	uint32	COLORREF;
+
+#define RGB(r,g,b)	((COLORREF)TO_LE_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
+
+#define GetRValue(rgb)	((uint8)(FROM_LE_32(rgb)))
+#define GetGValue(rgb)	((uint8)(((uint16)(FROM_LE_32(rgb))) >> 8))
+#define GetBValue(rgb)	((uint8)((FROM_LE_32(rgb))>>16))
+
+enum {
+	MAX_COLOURS		= 256,	//!< maximum number of colours - for VGA 256
+	BITS_PER_PIXEL	= 8,	//!< number of bits per pixel for VGA 256
+	MAX_INTENSITY	= 255,	//!< the biggest value R, G or B can have
+	NUM_PALETTES	= 3,	//!< number of palettes
+
+	// Discworld has some fixed apportioned bits in the palette.
+	BGND_DAC_INDEX	= 0,	//!< index of background colour in Video DAC
+	FGND_DAC_INDEX	= 1,	//!< index of first foreground colour in Video DAC
+	TBLUE1			= 228,	//!< Blue used in translucent rectangles
+	TBLUE2			= 229,	//!< Blue used in translucent rectangles
+	TBLUE3			= 230,	//!< Blue used in translucent rectangles
+	TBLUE4			= 231,	//!< Blue used in translucent rectangles
+	TALKFONT_COL	= 233
+};
+
+// some common colours
+
+#define	BLACK	(RGB(0, 0, 0))
+#define	WHITE	(RGB(MAX_INTENSITY, MAX_INTENSITY, MAX_INTENSITY))
+#define	RED		(RGB(MAX_INTENSITY, 0, 0))
+#define	GREEN	(RGB(0, MAX_INTENSITY, 0))
+#define	BLUE	(RGB(0, 0, MAX_INTENSITY))
+#define	YELLOW	(RGB(MAX_INTENSITY, MAX_INTENSITY, 0))
+#define	MAGENTA	(RGB(MAX_INTENSITY, 0, MAX_INTENSITY))
+#define	CYAN	(RGB(0, MAX_INTENSITY, MAX_INTENSITY))
+
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
+/** hardware palette structure */
+struct PALETTE {
+	int32 numColours;		//!< number of colours in the palette
+	COLORREF palRGB[MAX_COLOURS];	//!< actual palette colours
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+
+/** palette queue structure */
+struct PALQ {
+	SCNHANDLE hPal;		//!< handle to palette data struct
+	int objCount;		//!< number of objects using this palette
+	int posInDAC;		//!< palette position in the video DAC
+	int numColours;		//!< number of colours in the palette
+};
+
+
+#define	PALETTE_MOVED	0x8000	// when this bit is set in the "posInDAC"
+				// field - the palette entry has moved
+
+// Translucent objects have NULL pPal
+#define	HasPalMoved(pPal) (((pPal) != NULL) && ((pPal)->posInDAC & PALETTE_MOVED))
+
+
+/*----------------------------------------------------------------------*\
+|*			Palette Manager Function Prototypes		*|
+\*----------------------------------------------------------------------*/
+
+void ResetPalAllocator(void);	// wipe out all palettes
+
+#ifdef	DEBUG
+void PaletteStats(void);	// Shows the maximum number of palettes used at once
+#endif
+
+void PalettesToVideoDAC(void);	// Update the video DAC with palettes currently the the DAC queue
+
+void UpdateDACqueueHandle(
+	int posInDAC,		// position in video DAC
+	int numColours,		// number of colours in palette
+	SCNHANDLE hPalette);	// handle to palette
+
+void UpdateDACqueue(		// places a palette in the video DAC queue
+	int posInDAC,		// position in video DAC
+	int numColours,		// number of colours in palette
+	COLORREF *pColours);	// list of RGB tripples
+
+PALQ *AllocPalette(		// allocate a new palette
+	SCNHANDLE hNewPal);	// palette to allocate
+
+void FreePalette(		// free a palette allocated with "AllocPalette"
+	PALQ *pFreePal);	// palette queue entry to free
+
+PALQ *FindPalette(		// find a palette in the palette queue
+	SCNHANDLE hSrchPal);	// palette to search for
+
+void SwapPalette(		// swaps palettes at the specified palette queue position
+	PALQ *pPalQ,		// palette queue position
+	SCNHANDLE hNewPal);	// new palette
+
+PALQ *GetNextPalette(		// returns the next palette in the queue
+	PALQ *pStrtPal);	// queue position to start from - when NULL will start from beginning of queue
+
+COLORREF GetBgndColour(void);	// returns current background colour
+
+void SetBgndColour(		// sets current background colour
+	COLORREF colour);	// colour to set the background to
+
+void CreateTranslucentPalette(SCNHANDLE BackPal);
+
+} // end of namespace Tinsel
+
+#endif	// TINSEL_PALETTE_H

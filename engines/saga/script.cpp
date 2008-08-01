@@ -150,6 +150,7 @@ Script::~Script() {
 	debug(8, "Shutting down scripting subsystem.");
 
 	_mainStrings.freeMem();
+	_globalVoiceLUT.freeMem();
 
 	freeModules();
 	free(_modules);

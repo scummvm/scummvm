@@ -349,6 +349,7 @@ void Resources::reloadData() {
 		_indexedRoomExitHospots.push_back(RoomExitIndexedHotspotList::value_type(new RoomExitIndexedHotspotData(indexedRec)));
 		indexedRec++;
 	}
+	delete mb;
 
 	// Initialise delay list
 	_delayList.clear(true);

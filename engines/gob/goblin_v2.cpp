@@ -88,7 +88,7 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (y + 1) / 2;
 		*obj->pPosX = x * _vm->_map->_tilesWidth;
 	} else {
-		if (obj->goblinStates[state] != 0) {
+		if ((obj->goblinStates != 0) && (obj->goblinStates[state] != 0)) {
 			layer = obj->goblinStates[state][0].layer;
 			animation = obj->goblinStates[state][0].animation;
 			objAnim->state = state;

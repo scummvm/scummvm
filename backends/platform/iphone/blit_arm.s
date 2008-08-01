@@ -36,47 +36,47 @@ _blitLandscapeScreenRect16bpp:
 	@ r3 = h
 	@ <> = _screenWidth
 	@ <> = _screenHeight
-	MOV	r12,r13
-	STMFD	r13!,{r4-r11,r14}
-	LDMFD	r12,{r12,r14}		@ r12 = _screenWidth
+	mov		r12,r13
+	stmfd	r13!,{r4-r11,r14}
+	ldmfd	r12,{r12,r14}		@ r12 = _screenWidth
 					@ r14 = _screenHeight
-	ADD	r14,r14,r3		@ r14 = _screenHeight + h
-	MVN	r11,#0
-	MLA	r11,r3,r12,r11		@ r11= _screenWidth*h-1
-	ADD	r12,r12,r12
+	add	r14,r14,r3		@ r14 = _screenHeight + h
+	mvn	r11,#0
+	mla	r11,r3,r12,r11		@ r11= _screenWidth*h-1
+	add	r12,r12,r12
 xloop:
-	SUBS	r4,r3,#5		@ r4 = y = h
-	BLE	thin
+	subs	r4,r3,#5		@ r4 = y = h
+	ble		thin
 yloop:
-	LDRH	r5, [r1],r12		@ r5 = *src    src += _screenWidth
-	LDRH	r6, [r1],r12		@ r6 = *src    src += _screenWidth
-	LDRH	r7, [r1],r12		@ r7 = *src    src += _screenWidth
-	LDRH	r8, [r1],r12		@ r8 = *src    src += _screenWidth
-	LDRH	r9, [r1],r12		@ r9 = *src    src += _screenWidth
-	LDRH	r10,[r1],r12		@ r10= *src    src += _screenWidth
-	SUBS	r4,r4,#6
-	STRH	r5, [r0],#2		@ *dst++ = r5
-	STRH	r6, [r0],#2		@ *dst++ = r6
-	STRH	r7, [r0],#2		@ *dst++ = r7
-	STRH	r8, [r0],#2		@ *dst++ = r8
-	STRH	r9, [r0],#2		@ *dst++ = r9
-	STRH	r10,[r0],#2		@ *dst++ = r10
-	BGT	yloop
+	ldrh	r5, [r1],r12		@ r5 = *src    src += _screenWidth
+	ldrh	r6, [r1],r12		@ r6 = *src    src += _screenWidth
+	ldrh	r7, [r1],r12		@ r7 = *src    src += _screenWidth
+	ldrh	r8, [r1],r12		@ r8 = *src    src += _screenWidth
+	ldrh	r9, [r1],r12		@ r9 = *src    src += _screenWidth
+	ldrh	r10,[r1],r12		@ r10= *src    src += _screenWidth
+	subs	r4,r4,#6
+	strh	r5, [r0],#2		@ *dst++ = r5
+	strh	r6, [r0],#2		@ *dst++ = r6
+	strh	r7, [r0],#2		@ *dst++ = r7
+	strh	r8, [r0],#2		@ *dst++ = r8
+	strh	r9, [r0],#2		@ *dst++ = r9
+	strh	r10,[r0],#2		@ *dst++ = r10
+	bgt		yloop
 thin:
-	ADDS	r4,r4,#5
-	BEQ	lineend
+	adds	r4,r4,#5
+	beq		lineend
 thin_loop:
-	LDRH	r5,[r1],r12		@ r5 = *src    src += _screenWidth
-	SUBS	r4,r4,#1
-	STRH	r5,[r0],#2		@ *dst++ = r5
-	BGT	thin_loop
+	ldrh	r5,[r1],r12		@ r5 = *src    src += _screenWidth
+	subs	r4,r4,#1
+	strh	r5,[r0],#2		@ *dst++ = r5
+	bgt	thin_loop
 lineend:
-	SUB	r0,r0,r14,LSL #1	@ dst -= _screenHeight + h
-	SUB	r1,r1,r11,LSL #1	@ src += 1-_screenWidth*h
-	SUBS	r2,r2,#1
-	BGT	xloop
+	sub	r0,r0,r14,LSL #1	@ dst -= _screenHeight + h
+	sub	r1,r1,r11,LSL #1	@ src += 1-_screenWidth*h
+	subs	r2,r2,#1
+	bgt	xloop
 
-	LDMFD	r13!,{r4-r11,PC}
+	ldmfd	r13!,{r4-r11,PC}
 
 _blitLandscapeScreenRect8bpp:
 	@ r0 = dst
@@ -86,55 +86,55 @@ _blitLandscapeScreenRect8bpp:
 	@ <> = _palette
 	@ <> = _screenWidth
 	@ <> = _screenHeight
-	MOV	r12,r13
-	STMFD	r13!,{r4-r11,r14}
-	LDMFD	r12,{r11,r12,r14}	@ r11 = _palette
+	mov		r12,r13
+	stmfd	r13!,{r4-r11,r14}
+	ldmfd	r12,{r11,r12,r14}	@ r11 = _palette
 					@ r12 = _screenWidth
 					@ r14 = _screenHeight
-	ADD	r14,r14,r3		@ r14 = _screenHeight + h
-	MVN	r6,#0
-	MLA	r6,r3,r12,r6		@ r6 = _screenWidth*h-1
+	add		r14,r14,r3		@ r14 = _screenHeight + h
+	mvn		r6,#0
+	mla		r6,r3,r12,r6		@ r6 = _screenWidth*h-1
 xloop8:
-	MOV	r4,r3			@ r4 = y = h
-	SUBS	r4,r3,#4		@ r4 = y = h
-	BLE	thin8
+	mov		r4,r3			@ r4 = y = h
+	subs	r4,r3,#4		@ r4 = y = h
+	ble		thin8
 yloop8:
-	LDRB	r5, [r1],r12		@ r5 = *src    src += _screenWidth
-	LDRB	r7, [r1],r12		@ r7 = *src    src += _screenWidth
-	LDRB	r8, [r1],r12		@ r8 = *src    src += _screenWidth
-	LDRB	r9, [r1],r12		@ r9 = *src    src += _screenWidth
-	LDRB	r10,[r1],r12		@ r10= *src    src += _screenWidth
-	ADD	r5, r5, r5
-	ADD	r7, r7, r7
-	ADD	r8, r8, r8
-	ADD	r9, r9, r9
-	ADD	r10,r10,r10
-	LDRH	r5, [r11,r5]
-	LDRH	r7, [r11,r7]
-	LDRH	r8, [r11,r8]
-	LDRH	r9, [r11,r9]
-	LDRH	r10,[r11,r10]
-	SUBS	r4,r4,#5
-	STRH	r5, [r0],#2		@ *dst++ = r5
-	STRH	r7, [r0],#2		@ *dst++ = r7
-	STRH	r8, [r0],#2		@ *dst++ = r8
-	STRH	r9, [r0],#2		@ *dst++ = r9
-	STRH	r10,[r0],#2		@ *dst++ = r10
-	BGT	yloop8
+	ldrb	r5, [r1],r12		@ r5 = *src    src += _screenWidth
+	ldrb	r7, [r1],r12		@ r7 = *src    src += _screenWidth
+	ldrb	r8, [r1],r12		@ r8 = *src    src += _screenWidth
+	ldrb	r9, [r1],r12		@ r9 = *src    src += _screenWidth
+	ldrb	r10,[r1],r12		@ r10= *src    src += _screenWidth
+	add	r5, r5, r5
+	add	r7, r7, r7
+	add	r8, r8, r8
+	add	r9, r9, r9
+	add	r10,r10,r10
+	ldrh	r5, [r11,r5]
+	ldrh	r7, [r11,r7]
+	ldrh	r8, [r11,r8]
+	ldrh	r9, [r11,r9]
+	ldrh	r10,[r11,r10]
+	subs	r4,r4,#5
+	strh	r5, [r0],#2		@ *dst++ = r5
+	strh	r7, [r0],#2		@ *dst++ = r7
+	strh	r8, [r0],#2		@ *dst++ = r8
+	strh	r9, [r0],#2		@ *dst++ = r9
+	strh	r10,[r0],#2		@ *dst++ = r10
+	bgt	yloop8
 thin8:
-	ADDS	r4,r4,#4
-	BEQ	lineend8
+	adds	r4,r4,#4
+	beq		lineend8
 thin_loop8:
-	LDRB	r5,[r1],r12		@ r5 = *src    src += _screenWidth
-	ADD	r5,r5,r5
-	LDRH	r5,[r11,r5]
-	SUBS	r4,r4,#1
-	STRH	r5,[r0],#2		@ *dst++ = r5
-	BGT	thin_loop8
+	ldrb	r5,[r1],r12		@ r5 = *src    src += _screenWidth
+	add	r5,r5,r5
+	ldrh	r5,[r11,r5]
+	subs	r4,r4,#1
+	strh	r5,[r0],#2		@ *dst++ = r5
+	bgt	thin_loop8
 lineend8:
-	SUB	r0,r0,r14,LSL #1	@ dst -= _screenHeight + h
-	SUB	r1,r1,r6		@ src += 1-_screenWidth*h
-	SUBS	r2,r2,#1
-	BGT	xloop8
+	sub	r0,r0,r14,LSL #1	@ dst -= _screenHeight + h
+	sub	r1,r1,r6		@ src += 1-_screenWidth*h
+	subs	r2,r2,#1
+	bgt	xloop8
 
-	LDMFD	r13!,{r4-r11,PC}
+	ldmfd	r13!,{r4-r11,PC}

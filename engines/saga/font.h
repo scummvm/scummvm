@@ -158,6 +158,7 @@ class Font {
 	 };
 
 	 Font::FontId knownFont2FontIdx(KnownFont font);
+	 int translateChar(int charId);
 
 	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
 	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
@@ -196,7 +197,7 @@ class Font {
 		 return byteLength;
 	 }
 
-	static const int _charMap[256];
+	static const int _charMap[128];
 	SagaEngine *_vm;
 
 	bool _initialized;

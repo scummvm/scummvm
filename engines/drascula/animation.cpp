@@ -372,7 +372,11 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		clearRoom();
 
-		playMusic(2);
+		if (_lang == kSpanish)
+			playMusic(31);
+		else
+			playMusic(2);
+
 		pause(5);
 		playFLI("intro.bin", 12);
 		term_int = 1;
@@ -1669,7 +1673,7 @@ void DrasculaEngine::animation_12_5() {
 	const int frusky_x[] = {100, 139, 178, 217, 100, 178, 217, 139, 100, 139};
 	const int elfrusky_x[] = {1, 68, 135, 1, 68, 135, 1, 68, 135, 68, 1, 135, 68, 135, 68};
 	int color, component;
-	char fade;
+	signed char fade;
 
 	playMusic(26);
 	updateRoom();

@@ -297,7 +297,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	case GUI::kListSelectionChangedCmd: {
 		if (_gfxWidget) {
-			updateInfos();
+			updateInfos(true);
 		}
 
 		if (_saveMode) {
@@ -350,7 +350,7 @@ void SaveLoadChooser::reflowLayout() {
 		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
 		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
-		updateInfos();
+		updateInfos(false);
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
@@ -362,7 +362,7 @@ void SaveLoadChooser::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-void SaveLoadChooser::updateInfos() {
+void SaveLoadChooser::updateInfos(bool redraw) {
 	int selItem = _list->getSelected();
 	Graphics::Surface *thumb;
 	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
@@ -376,7 +376,8 @@ void SaveLoadChooser::updateInfos() {
 	}
 
 	delete thumb;
-	_gfxWidget->draw();
+	if (redraw)
+		_gfxWidget->draw();
 
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
@@ -386,12 +387,14 @@ void SaveLoadChooser::updateInfos() {
 			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
 			infos.date & 0xFFFF);
 		_date->setLabel(buffer);
-		_date->draw();
+		if (redraw)
+			_date->draw();
 
 		snprintf(buffer, 32, "Time: %.2d:%.2d",
 			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
 		_time->setLabel(buffer);
-		_time->draw();
+		if (redraw)
+			_time->draw();
 
 		int minutes = infos.playtime / 60;
 		int hours = minutes / 60;
@@ -400,19 +403,23 @@ void SaveLoadChooser::updateInfos() {
 		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
 			hours & 0xFF, minutes & 0xFF);
 		_playtime->setLabel(buffer);
-		_playtime->draw();
+		if (redraw)
+			_playtime->draw();
 	} else {
 		snprintf(buffer, 32, "No date saved");
 		_date->setLabel(buffer);
-		_date->draw();
+		if (redraw)
+			_date->draw();
 
 		snprintf(buffer, 32, "No time saved");
 		_time->setLabel(buffer);
-		_time->draw();
+		if (redraw)
+			_time->draw();
 
 		snprintf(buffer, 32, "No playtime saved");
 		_playtime->setLabel(buffer);
-		_playtime->draw();
+		if (redraw)
+			_playtime->draw();
 	}
 }
 

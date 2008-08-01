@@ -30,7 +30,7 @@
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer.h"
+#include "sound/mixer_intern.h"
 
 #include "icons/scummvm.xpm"
 
@@ -131,9 +131,7 @@ void OSystem_SDL::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
-		_mixer = new Audio::Mixer();
-		bool result = setSoundCallback(Audio::Mixer::mixCallback, _mixer);
-		_mixer->setReady(result);
+		setupMixer();
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for
@@ -172,6 +170,10 @@ OSystem_SDL::OSystem_SDL()
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+#ifdef MIXER_DOUBLE_BUFFERING
+	_soundMutex(0), _soundCond(0), _soundThread(0),
+	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
+#endif
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
@@ -193,7 +195,7 @@ OSystem_SDL::OSystem_SDL()
 
 OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
-	SDL_CloseAudio();
+	closeMixer();
 
 	free(_dirtyChecksums);
 	free(_currentPalette);
@@ -201,7 +203,6 @@ OSystem_SDL::~OSystem_SDL() {
 	free(_mouseData);
 
 	delete _savefile;
-	delete _mixer;
 	delete _timer;
 }
 
@@ -308,7 +309,7 @@ void OSystem_SDL::quit() {
 	SDL_ShowCursor(SDL_ENABLE);
 
 	SDL_RemoveTimer(_timerID);
-	SDL_CloseAudio();
+	closeMixer();
 
 	free(_dirtyChecksums);
 	free(_currentPalette);
@@ -316,7 +317,6 @@ void OSystem_SDL::quit() {
 	free(_mouseData);
 
 	delete _savefile;
-	delete _mixer;
 	delete _timer;
 
 	SDL_Quit();
@@ -391,7 +391,111 @@ void OSystem_SDL::deleteMutex(MutexRef mutex) {
 #pragma mark --- Audio ---
 #pragma mark -
 
-bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
+#ifdef MIXER_DOUBLE_BUFFERING
+
+void OSystem_SDL::mixerProducerThread() {
+	byte nextSoundBuffer;
+
+	SDL_LockMutex(_soundMutex);
+	while (true) {
+		// Wait till we are allowed to produce data
+		SDL_CondWait(_soundCond, _soundMutex);
+
+		if (_soundThreadShouldQuit)
+			break;
+
+		// Generate samples and put them into the next buffer
+		nextSoundBuffer = _activeSoundBuf ^ 1;
+		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
+		
+		// Swap buffers
+		_activeSoundBuf = nextSoundBuffer;
+	}
+	SDL_UnlockMutex(_soundMutex);
+}
+
+int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
+	OSystem_SDL *this_ = (OSystem_SDL *)arg;
+	assert(this_);
+	this_->mixerProducerThread();
+	return 0;
+}
+
+
+void OSystem_SDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
+	_soundThreadIsRunning = false;
+	_soundThreadShouldQuit = false;
+
+	// Create mutex and condition variable
+	_soundMutex = SDL_CreateMutex();
+	_soundCond = SDL_CreateCond();
+
+	// Create two sound buffers
+	_activeSoundBuf = 0;
+	_soundBufSize = bufSize;
+	_soundBuffers[0] = (byte *)calloc(1, bufSize);
+	_soundBuffers[1] = (byte *)calloc(1, bufSize);
+
+	_soundThreadIsRunning = true;
+
+	// Finally start the thread
+	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
+}
+
+void OSystem_SDL::deinitThreadedMixer() {
+	// Kill thread?? _soundThread
+
+	if (_soundThreadIsRunning) {
+		// Signal the producer thread to end, and wait for it to actually finish.
+		_soundThreadShouldQuit = true;
+		SDL_CondBroadcast(_soundCond);
+		SDL_WaitThread(_soundThread, NULL);
+
+		// Kill the mutex & cond variables. 
+		// Attention: AT this point, the mixer callback must not be running
+		// anymore, else we will crash!
+		SDL_DestroyMutex(_soundMutex);
+		SDL_DestroyCond(_soundCond);
+
+		_soundThreadIsRunning = false;
+
+		free(_soundBuffers[0]);
+		free(_soundBuffers[1]);
+	}
+}
+
+
+void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
+	OSystem_SDL *this_ = (OSystem_SDL *)arg;
+	assert(this_);
+	assert(this_->_mixer);
+
+	assert((int)this_->_soundBufSize == len);
+
+	// Lock mutex, to ensure our data is not overwritten by the producer thread
+	SDL_LockMutex(this_->_soundMutex);
+	
+	// Copy data from the current sound buffer
+	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
+	
+	// Unlock mutex and wake up the produced thread
+	SDL_UnlockMutex(this_->_soundMutex);
+	SDL_CondSignal(this_->_soundCond);
+}
+
+#else
+
+void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_SDL *this_ = (OSystem_SDL *)sys;
+	assert(this_);
+	assert(this_->_mixer);
+
+	this_->_mixer->mixCallback(samples, len);
+}
+
+#endif
+
+void OSystem_SDL::setupMixer() {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
@@ -403,7 +507,7 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/32th of a second. Note that it must be a power of two.
+	// about 1/16th of a second. Note that it must be a power of two.
 	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
 	int samples = 8192;
 	while (16 * samples >= _samplesPerSec) {
@@ -415,23 +519,51 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;
-	desired.callback = proc;
-	desired.userdata = param;
+	desired.callback = mixCallback;
+	desired.userdata = this;
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		return false;
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
+	
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+
+#ifdef MIXER_DOUBLE_BUFFERING
+		initThreadedMixer(_mixer, obtained.samples * 4);
+#endif
+
+		// start the sound system
+		SDL_PauseAudio(0);
 	}
-	// Note: This should be the obtained output rate, but it seems that at
-	// least on some platforms SDL will lie and claim it did get the rate
-	// even if it didn't. Probably only happens for "weird" rates, though.
-	_samplesPerSec = obtained.freq;
-	debug(1, "Output sample rate: %d Hz", _samplesPerSec);
-	SDL_PauseAudio(0);
-	return true;
 }
 
-int OSystem_SDL::getOutputSampleRate() const {
-	return _samplesPerSec;
+void OSystem_SDL::closeMixer() {
+	if (_mixer)
+		_mixer->setReady(false);
+
+	SDL_CloseAudio();
+
+	delete _mixer;
+	_mixer = 0;
+
+#ifdef MIXER_DOUBLE_BUFFERING
+	deinitThreadedMixer();
+#endif
+
 }
 
 Audio::Mixer *OSystem_SDL::getMixer() {

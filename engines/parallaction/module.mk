@@ -1,6 +1,7 @@
 MODULE := engines/parallaction
 
 MODULE_OBJS := \
+	balloons.o \
 	callables_br.o \
 	callables_ns.o \
 	debug.o \
@@ -13,6 +14,7 @@ MODULE_OBJS := \
 	font.o \
 	gfxbase.o \
 	graphics.o \
+	gui.o \
 	gui_br.o \
 	gui_ns.o \
 	input.o \

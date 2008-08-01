@@ -104,7 +104,7 @@
 	//#define fgets(str, size, file)				DS::std_fgets(str, size, file)	// not used
 	//#define getc(handle)						DS::std_getc(handle)	// not used
 	//#define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)	// not used
-	//#define ferror(handle)						DS::std_ferror(handle)	// not used
+	#define ferror(handle)						DS::std_ferror(handle)
 
 #endif
 
@@ -273,26 +273,14 @@ File::File()
 	: _handle(0), _ioFailed(false) {
 }
 
-//#define DEBUG_FILE_REFCOUNT
-
 File::~File() {
-#ifdef DEBUG_FILE_REFCOUNT
-	warning("File::~File on file '%s'", _name.c_str());
-#endif
 	close();
 }
 
 
-bool File::open(const String &filename, AccessMode mode) {
-	assert(mode == kFileReadMode || mode == kFileWriteMode);
-
-	if (filename.empty()) {
-		error("File::open: No filename was specified");
-	}
-
-	if (_handle) {
-		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
-	}
+bool File::open(const String &filename) {
+	assert(!filename.empty());
+	assert(!_handle);
 
 	_name.clear();
 	clearIOFailed();
@@ -300,32 +288,29 @@ bool File::open(const String &filename, AccessMode mode) {
 	String fname(filename);
 	fname.toLowercase();
 
-	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
-	if (mode == kFileWriteMode) {
-		_handle = fopenNoCase(filename, "", modeStr);
-	} else if (_filesMap && _filesMap->contains(fname)) {
+	if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
 		debug(3, "Opening hashed: %s", fname.c_str());
-		_handle = fopen(fname.c_str(), modeStr);
+		_handle = fopen(fname.c_str(), "rb");
 	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		fname = (*_filesMap)[fname + "."];
 		debug(3, "Opening hashed: %s", fname.c_str());
-		_handle = fopen(fname.c_str(), modeStr);
+		_handle = fopen(fname.c_str(), "rb");
 	} else {
 
 		if (_defaultDirectories) {
 			// Try all default directories
 			StringIntMap::const_iterator x(_defaultDirectories->begin());
 			for (; _handle == NULL && x != _defaultDirectories->end(); ++x) {
-				_handle = fopenNoCase(filename, x->_key, modeStr);
+				_handle = fopenNoCase(filename, x->_key, "rb");
 			}
 		}
 
 		// Last resort: try the current directory
 		if (_handle == NULL)
-			_handle = fopenNoCase(filename, "", modeStr);
+			_handle = fopenNoCase(filename, "", "rb");
 
 		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
 #if defined(MACOSX) || defined(IPHONE)
@@ -335,7 +320,7 @@ bool File::open(const String &filename, AccessMode mode) {
 			if (fileUrl) {
 				UInt8 buf[256];
 				if (CFURLGetFileSystemRepresentation(fileUrl, false, (UInt8 *)buf, 256)) {
-					_handle = fopen((char *)buf, modeStr);
+					_handle = fopen((char *)buf, "rb");
 				}
 				CFRelease(fileUrl);
 			}
@@ -345,26 +330,15 @@ bool File::open(const String &filename, AccessMode mode) {
 
 	}
 
-	if (_handle == NULL) {
-		if (mode == kFileReadMode)
-			debug(2, "File %s not found", filename.c_str());
-		else
-			debug(2, "File %s not opened", filename.c_str());
-		return false;
-	}
+	if (_handle == NULL)
+		debug(2, "File %s not opened", filename.c_str());
+	else
+		_name = filename;
 
-
-	_name = filename;
-
-#ifdef DEBUG_FILE_REFCOUNT
-	warning("File::open on file '%s'", _name.c_str());
-#endif
-
-	return true;
+	return _handle != NULL;
 }
 
-bool File::open(const FilesystemNode &node, AccessMode mode) {
-	assert(mode == kFileReadMode || mode == kFileWriteMode);
+bool File::open(const FilesystemNode &node) {
 
 	if (!node.exists()) {
 		warning("File::open: Trying to open a FilesystemNode which does not exist");
@@ -389,25 +363,14 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 	clearIOFailed();
 	_name.clear();
 
-	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
+	_handle = fopen(node.getPath().c_str(), "rb");
 
-	_handle = fopen(node.getPath().c_str(), modeStr);
+	if (_handle == NULL)
+		debug(2, "File %s not found", filename.c_str());
+	else
+		_name = filename;
 
-	if (_handle == NULL) {
-		if (mode == kFileReadMode)
-			debug(2, "File %s not found", filename.c_str());
-		else
-			debug(2, "File %s not opened", filename.c_str());
-		return false;
-	}
-
-	_name = filename;
-
-#ifdef DEBUG_FILE_REFCOUNT
-	warning("File::open on file '%s'", _name.c_str());
-#endif
-
-	return true;
+	return _handle != NULL;
 }
 
 bool File::exists(const String &filename) {
@@ -438,7 +401,7 @@ bool File::exists(const String &filename) {
 
 	//Try opening the file inside the local directory as a last resort
 	File tmp;
-	return tmp.open(filename, kFileReadMode);
+	return tmp.open(filename);
 }
 
 void File::close() {
@@ -452,36 +415,29 @@ bool File::isOpen() const {
 }
 
 bool File::ioFailed() const {
+	// TODO/FIXME: Just use ferror() here?
 	return _ioFailed != 0;
 }
 
 void File::clearIOFailed() {
+	// TODO/FIXME: Just use clearerr() here?
 	_ioFailed = false;
 }
 
 bool File::eof() const {
-	if (_handle == NULL) {
-		error("File::eof: File is not open!");
-		return false;
-	}
+	assert(_handle);
 
 	return feof((FILE *)_handle) != 0;
 }
 
 uint32 File::pos() const {
-	if (_handle == NULL) {
-		error("File::pos: File is not open!");
-		return 0;
-	}
+	assert(_handle);
 
 	return ftell((FILE *)_handle);
 }
 
 uint32 File::size() const {
-	if (_handle == NULL) {
-		error("File::size: File is not open!");
-		return 0;
-	}
+	assert(_handle);
 
 	uint32 oldPos = ftell((FILE *)_handle);
 	fseek((FILE *)_handle, 0, SEEK_END);
@@ -492,10 +448,7 @@ uint32 File::size() const {
 }
 
 void File::seek(int32 offs, int whence) {
-	if (_handle == NULL) {
-		error("File::seek: File is not open!");
-		return;
-	}
+	assert(_handle);
 
 	if (fseek((FILE *)_handle, offs, whence) != 0)
 		clearerr((FILE *)_handle);
@@ -505,10 +458,7 @@ uint32 File::read(void *ptr, uint32 len) {
 	byte *ptr2 = (byte *)ptr;
 	uint32 real_len;
 
-	if (_handle == NULL) {
-		error("File::read: File is not open!");
-		return 0;
-	}
+	assert(_handle);
 
 	if (len == 0)
 		return 0;
@@ -521,20 +471,62 @@ uint32 File::read(void *ptr, uint32 len) {
 	return real_len;
 }
 
-uint32 File::write(const void *ptr, uint32 len) {
-	if (_handle == NULL) {
-		error("File::write: File is not open!");
-		return 0;
-	}
+
+DumpFile::DumpFile() : _handle(0) {
+}
+
+DumpFile::~DumpFile() {
+	close();
+}
+
+bool DumpFile::open(const String &filename) {
+	assert(!filename.empty());
+	assert(!_handle);
+
+	String fname(filename);
+	fname.toLowercase();
+	
+	_handle = fopenNoCase(filename, "", "wb");
+
+	if (_handle == NULL)
+		debug(2, "Failed to open '%s' for writing", filename.c_str());
+
+	return _handle != NULL;
+}
+
+void DumpFile::close() {
+	if (_handle)
+		fclose((FILE *)_handle);
+	_handle = NULL;
+}
+
+bool DumpFile::isOpen() const {
+	return _handle != NULL;
+}
+
+bool DumpFile::ioFailed() const {
+	assert(_handle);
+	return ferror((FILE *)_handle) != 0;
+}
+
+void DumpFile::clearIOFailed() {
+	assert(_handle);
+	clearerr((FILE *)_handle);
+}
+
+bool DumpFile::eof() const {
+	assert(_handle);
+	return feof((FILE *)_handle) != 0;
+}
+
+uint32 DumpFile::write(const void *ptr, uint32 len) {
+	assert(_handle);
 
 	if (len == 0)
 		return 0;
 
-	if ((uint32)fwrite(ptr, 1, len, (FILE *)_handle) != len) {
-		_ioFailed = true;
-	}
-
-	return len;
+	return (uint32)fwrite(ptr, 1, len, (FILE *)_handle);
 }
+
 
 }	// End of namespace Common

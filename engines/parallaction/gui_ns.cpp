@@ -24,7 +24,9 @@
  */
 
 #include "common/system.h"
+#include "common/hashmap.h"
 
+#include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
@@ -32,35 +34,233 @@
 
 namespace Parallaction {
 
-const char *introMsg1[] = {
-	"INSERISCI IL CODICE",
-	"ENTREZ CODE",
-	"ENTER CODE",
-	"GIB DEN KODE EIN"
+class SplashInputState_NS : public MenuInputState {
+protected:
+	Common::String _slideName;
+	uint32 _timeOut;
+	Common::String _nextState;
+	uint32	_startTime;
+
+	Parallaction_ns *_vm;
+
+public:
+	SplashInputState_NS(Parallaction_ns *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	}
+
+	virtual MenuInputState* run() {
+		uint32 curTime = g_system->getMillis();
+		if (curTime - _startTime > _timeOut) {
+			_vm->freeBackground();
+			return _helper->getState(_nextState);
+		}
+		return this;
+	}
+
+	virtual void enter() {
+		_vm->_input->setMouseState(MOUSE_DISABLED);
+		_vm->showSlide(_slideName.c_str());
+		_startTime = g_system->getMillis();
+	}
 };
 
-const char *introMsg2[] = {
-	"CODICE ERRATO",
-	"CODE ERRONE",
-	"WRONG CODE",
-	"GIB DEN KODE EIN"
+class SplashInputState0_NS : public SplashInputState_NS {
+
+public:
+	SplashInputState0_NS(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro0", helper)  {
+		_slideName = "intro";
+		_timeOut = 2000;
+		_nextState = "intro1";
+	}
 };
 
-const char *introMsg3[] = {
-	"PRESS LEFT MOUSE BUTTON",
-	"TO SEE INTRO",
-	"PRESS RIGHT MOUSE BUTTON",
-	"TO START"
+class SplashInputState1_NS : public SplashInputState_NS {
+
+public:
+	SplashInputState1_NS(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro1", helper) {
+		_slideName = "minintro";
+		_timeOut = 2000;
+		_nextState = "chooselanguage";
+	}
 };
 
-const char *newGameMsg[] = {
+
+class ChooseLanguageInputState_NS : public MenuInputState {
+	#define BLOCK_WIDTH		16
+	#define BLOCK_HEIGHT	24
+
+	#define BLOCK_X			112
+	#define BLOCK_Y			130
+
+	#define BLOCK_SELECTION_X		  (BLOCK_X-1)
+	#define BLOCK_SELECTION_Y		  (BLOCK_Y-1)
+
+	#define BLOCK_X_OFFSET	(BLOCK_WIDTH+1)
+	#define BLOCK_Y_OFFSET	9
+
+	//	destination slots for code blocks
+	//
+	#define SLOT_X			61
+	#define SLOT_Y			64
+	#define SLOT_WIDTH		(BLOCK_WIDTH+2)
+
+	int	_language;
+	bool	_allowChoice;
+	Common::String _nextState;
+
+	static const Common::Rect _dosLanguageSelectBlocks[4];
+	static const Common::Rect _amigaLanguageSelectBlocks[4];
+	const Common::Rect *_blocks;
+
+	Parallaction_ns *_vm;
+
+public:
+	ChooseLanguageInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
+		_allowChoice = false;
+		_nextState = "selectgame";
+
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			if (!(_vm->getFeatures() & GF_LANG_MULT)) {
+				if (_vm->getFeatures() & GF_DEMO) {
+					_language = 1;	// Amiga Demo supports English
+					_nextState = "startdemo";
+					return;
+				} else {
+					_language = 0;	// The only other non multi-lingual version just supports Italian
+					return;
+				}
+			}
+
+			_blocks = _amigaLanguageSelectBlocks;
+		} else {
+			_blocks = _dosLanguageSelectBlocks;
+		}
+
+		_language = -1;
+		_allowChoice = true;
+	}
+
+	virtual MenuInputState* run() {
+		if (!_allowChoice) {
+			_vm->setInternLanguage(_language);
+			return _helper->getState(_nextState);
+		}
+
+		int event = _vm->_input->getLastButtonEvent();
+		if (event != kMouseLeftUp) {
+			return this;
+		}
+
+		Common::Point p;
+		_vm->_input->getCursorPos(p);
+
+		for (uint16 i = 0; i < 4; i++) {
+			if (_blocks[i].contains(p)) {
+				_vm->setInternLanguage(i);
+				_vm->beep();
+				_vm->_gfx->freeLabels();
+				return _helper->getState(_nextState);
+			}
+		}
+
+		return this;
+	}
+
+	virtual void enter() {
+		if (!_allowChoice) {
+			return;
+		}
+
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
+
+		// user can choose language in this version
+		_vm->showSlide("lingua");
+
+		uint id = _vm->_gfx->createLabel(_vm->_introFont, "SELECT LANGUAGE", 1);
+		_vm->_gfx->showLabel(id, 60, 30);
+
+		_vm->setArrowCursor();
+	}
+};
+
+const Common::Rect ChooseLanguageInputState_NS::_dosLanguageSelectBlocks[4] = {
+	Common::Rect(  80, 110, 128, 180 ),	// Italian
+	Common::Rect( 129,  85, 177, 155 ),	// French
+	Common::Rect( 178,  60, 226, 130 ),	// English
+	Common::Rect( 227,  35, 275, 105 )	// German
+};
+
+const Common::Rect ChooseLanguageInputState_NS::_amigaLanguageSelectBlocks[4] = {
+	Common::Rect(  -1,  -1,  -1,  -1 ),	// Italian: not supported by Amiga multi-lingual version
+	Common::Rect( 129,  85, 177, 155 ),	// French
+	Common::Rect( 178,  60, 226, 130 ),	// English
+	Common::Rect( 227,  35, 275, 105 )	// German
+};
+
+class SelectGameInputState_NS : public MenuInputState {
+
+	int _choice, _oldChoice;
+	Common::String _nextState[2];
+
+	uint	_labels[2];
+
+	Parallaction_ns *_vm;
+
+	static const char *newGameMsg[4];
+	static const char *loadGameMsg[4];
+
+public:
+	SelectGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectgame", helper), _vm(vm) {
+		_choice = 0;
+		_oldChoice = -1;
+
+		_nextState[0] = "newgame";
+		_nextState[1] = "loadgame";
+	}
+
+
+	virtual MenuInputState *run() {
+		int event = _vm->_input->getLastButtonEvent();
+
+		if (event == kMouseLeftUp) {
+			_vm->_gfx->freeLabels();
+			return _helper->getState(_nextState[_choice]);
+		}
+
+		Common::Point p;
+		_vm->_input->getCursorPos(p);
+		_choice = (p.x > 160) ? 1 : 0;
+
+		if (_choice != _oldChoice) {
+			if (_oldChoice != -1)
+				_vm->_gfx->hideLabel(_labels[_oldChoice]);
+
+			if (_choice != -1)
+				_vm->_gfx->showLabel(_labels[_choice], 60, 30);
+
+			_oldChoice = _choice;
+		}
+
+		return this;
+	}
+
+	virtual void enter() {
+		_vm->showSlide("restore");
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
+
+		_labels[0] = _vm->_gfx->createLabel(_vm->_introFont, newGameMsg[_vm->getInternLanguage()], 1);
+		_labels[1] = _vm->_gfx->createLabel(_vm->_introFont, loadGameMsg[_vm->getInternLanguage()], 1);
+	}
+
+};
+
+const char *SelectGameInputState_NS::newGameMsg[4] = {
 	"NUOVO GIOCO",
 	"NEUF JEU",
 	"NEW GAME",
 	"NEUES SPIEL"
 };
 
-const char *loadGameMsg[] = {
+const char *SelectGameInputState_NS::loadGameMsg[4] = {
 	"GIOCO SALVATO",
 	"JEU SAUVE'",
 	"SAVED GAME",
@@ -68,275 +268,333 @@ const char *loadGameMsg[] = {
 };
 
 
-#define BLOCK_WIDTH		16
-#define BLOCK_HEIGHT	24
 
-#define BLOCK_X			112
-#define BLOCK_Y			130
+class LoadGameInputState_NS : public MenuInputState {
+	bool _result;
+	Parallaction_ns *_vm;
 
-#define BLOCK_SELECTION_X		  (BLOCK_X-1)
-#define BLOCK_SELECTION_Y		  (BLOCK_Y-1)
+public:
+	LoadGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
 
-#define BLOCK_X_OFFSET	(BLOCK_WIDTH+1)
-#define BLOCK_Y_OFFSET	9
+	virtual MenuInputState* run() {
+		if (!_result) {
+			_vm->scheduleLocationSwitch("fogne.dough");
+		}
+		return 0;
+	}
 
-//	destination slots for code blocks
-//
-#define SLOT_X			61
-#define SLOT_Y			64
-#define SLOT_WIDTH		(BLOCK_WIDTH+2)
+	virtual void enter() {
+		_result = _vm->loadGame();
+	}
+};
 
-#define PASSWORD_LEN	6
 
-#define CHAR_DINO	0
-#define CHAR_DONNA	1
-#define CHAR_DOUGH	2
 
-static const uint16 _amigaKeys[][PASSWORD_LEN] = {
+class NewGameInputState_NS : public MenuInputState {
+	Parallaction_ns *_vm;
+
+	static const char *introMsg3[4];
+
+public:
+	NewGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
+	}
+
+	virtual MenuInputState* run() {
+		int event = _vm->_input->getLastButtonEvent();
+
+		if (event == kMouseLeftUp || event == kMouseRightUp) {
+			_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
+			_vm->_gfx->freeLabels();
+
+			if (event == kMouseLeftUp) {
+				_vm->scheduleLocationSwitch("fogne.dough");
+				return 0;
+			}
+
+			return _helper->getState("selectcharacter");
+		}
+
+		return this;
+	}
+
+	virtual void enter() {
+		_vm->_disk->selectArchive("disk1");
+		_vm->setBackground("test", NULL, NULL);
+		_vm->_input->setMouseState(MOUSE_ENABLED_HIDE);
+
+		uint id[4];
+		id[0] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[0], 1);
+		id[1] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[1], 1);
+		id[2] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[2], 1);
+		id[3] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[3], 1);
+		_vm->_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 50);
+		_vm->_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 70);
+		_vm->_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 100);
+		_vm->_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 120);
+	}
+};
+
+const char *NewGameInputState_NS::introMsg3[4] = {
+	"PRESS LEFT MOUSE BUTTON",
+	"TO SEE INTRO",
+	"PRESS RIGHT MOUSE BUTTON",
+	"TO START"
+};
+
+
+
+class StartDemoInputState_NS : public MenuInputState {
+	Parallaction_ns *_vm;
+
+public:
+	StartDemoInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
+	}
+
+	virtual MenuInputState* run() {
+		_vm->scheduleLocationSwitch("fognedemo.dough");
+		return 0;
+	}
+
+	virtual void enter() {
+		_vm->_input->setMouseState(MOUSE_DISABLED);
+	}
+};
+
+class SelectCharacterInputState_NS : public MenuInputState {
+
+	#define PASSWORD_LEN	6
+
+	#define CHAR_DINO	0
+	#define CHAR_DONNA	1
+	#define CHAR_DOUGH	2
+
+	static const Common::Rect codeSelectBlocks[9];
+	static const Common::Rect codeTrueBlocks[9];
+
+	Parallaction_ns *_vm;
+
+	int guiGetSelectedBlock(const Common::Point &p) {
+
+		int selection = -1;
+
+		for (uint16 i = 0; i < 9; i++) {
+			if (codeSelectBlocks[i].contains(p)) {
+				selection = i;
+				break;
+			}
+		}
+
+		if ((selection != -1) && (_vm->getPlatform() == Common::kPlatformAmiga)) {
+			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
+			_vm->_gfx->updateScreen();
+			_vm->beep();
+			g_system->delayMillis(100);
+			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
+			_vm->_gfx->updateScreen();
+		}
+
+		return selection;
+	}
+
+	byte	_points[3];
+	bool 	_fail;
+	const uint16 (*_keys)[PASSWORD_LEN];
+	Graphics::Surface _block;
+	Graphics::Surface _emptySlots;
+
+	uint	_labels[2];
+	uint	_len;
+	uint32	_startTime;
+
+	enum {
+		CHOICE,
+		FAIL,
+		SUCCESS,
+		DELAY
+	};
+
+	uint	_state;
+
+	static const char *introMsg1[4];
+	static const char *introMsg2[4];
+
+	static const uint16 _amigaKeys[3][PASSWORD_LEN];
+	static const uint16 _pcKeys[3][PASSWORD_LEN];
+	static const char *_charStartLocation[3];
+
+
+public:
+	SelectCharacterInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
+		_keys = (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
+		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
+	}
+
+	~SelectCharacterInputState_NS() {
+		_block.free();
+		_emptySlots.free();
+	}
+
+	void cleanup() {
+		_points[0] = _points[1] = _points[2] = 0;
+		_vm->_gfx->hideLabel(_labels[1]);
+		_vm->_gfx->showLabel(_labels[0], 60, 30);
+		_fail = false;
+		_len = 0;
+	}
+
+	void delay() {
+		if (g_system->getMillis() - _startTime < 2000) {
+			return;
+		}
+		cleanup();
+		_state = CHOICE;
+	}
+
+	void choice() {
+		int event = _vm->_input->getLastButtonEvent();
+		if (event != kMouseLeftUp) {
+			return;
+		}
+
+		Common::Point p;
+		_vm->_input->getCursorPos(p);
+		int _si = guiGetSelectedBlock(p);
+
+		if (_si != -1) {
+			_vm->_gfx->grabBackground(codeTrueBlocks[_si], _block);
+			_vm->_gfx->patchBackground(_block, _len * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
+
+			if (_keys[0][_len] != _si && _keys[1][_len] != _si && _keys[2][_len] != _si) {
+				_fail = true;
+			}
+
+			// build user preference
+			_points[0] += (_keys[0][_len] == _si);
+			_points[1] += (_keys[1][_len] == _si);
+			_points[2] += (_keys[2][_len] == _si);
+
+			_len++;
+		}
+
+		if (_len == PASSWORD_LEN) {
+			_state = _fail ? FAIL : SUCCESS;
+		}
+	}
+
+	void fail() {
+		_vm->_gfx->patchBackground(_emptySlots, SLOT_X, SLOT_Y, false);
+		_vm->_gfx->hideLabel(_labels[0]);
+		_vm->_gfx->showLabel(_labels[1], 60, 30);
+		_startTime = g_system->getMillis();
+		_state = DELAY;
+	}
+
+	void success() {
+		_vm->_gfx->freeLabels();
+		_vm->_gfx->setBlackPalette();
+		_emptySlots.free();
+
+		// actually select character
+		int character = -1;
+		if (_points[0] >= _points[1] && _points[0] >= _points[2]) {
+			character = CHAR_DINO;
+		} else
+		if (_points[1] >= _points[0] && _points[1] >= _points[2]) {
+			character = CHAR_DONNA;
+		} else
+		if (_points[2] >= _points[0] && _points[2] >= _points[1]) {
+			character = CHAR_DOUGH;
+		} else {
+			error("If you read this, either your CPU or transivity is broken (we believe the former).");
+		}
+
+		_vm->_inTestResult = false;
+		_vm->cleanupGame();
+		_vm->scheduleLocationSwitch(_charStartLocation[character]);
+	}
+
+	virtual MenuInputState* run() {
+		MenuInputState* nextState = this;
+
+		switch (_state) {
+		case DELAY:
+			delay();
+			break;
+
+		case CHOICE:
+			choice();
+			break;
+
+		case FAIL:
+			fail();
+			break;
+
+		case SUCCESS:
+			success();
+			nextState = 0;
+			break;
+
+		default:
+			error("unknown state in SelectCharacterInputState");
+		}
+
+		return nextState;
+	}
+
+	virtual void enter() {
+		_vm->_soundMan->stopMusic();
+		_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+		_vm->showSlide("password");
+
+		_emptySlots.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
+		Common::Rect rect(SLOT_X, SLOT_Y, SLOT_X + BLOCK_WIDTH * 8, SLOT_Y + BLOCK_HEIGHT);
+		_vm->_gfx->grabBackground(rect, _emptySlots);
+
+		_labels[0] = _vm->_gfx->createLabel(_vm->_introFont, introMsg1[_vm->getInternLanguage()], 1);
+		_labels[1] = _vm->_gfx->createLabel(_vm->_introFont, introMsg2[_vm->getInternLanguage()], 1);
+
+		cleanup();
+
+		_vm->setArrowCursor();
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
+		_state = CHOICE;
+	}
+};
+
+const char *SelectCharacterInputState_NS::introMsg1[4] = {
+	"INSERISCI IL CODICE",
+	"ENTREZ CODE",
+	"ENTER CODE",
+	"GIB DEN KODE EIN"
+};
+
+const char *SelectCharacterInputState_NS::introMsg2[4] = {
+	"CODICE ERRATO",
+	"CODE ERRONE",
+	"WRONG CODE",
+	"GIB DEN KODE EIN"
+};
+
+const uint16 SelectCharacterInputState_NS::_amigaKeys[][PASSWORD_LEN] = {
 	{ 5, 3, 6, 2, 2, 7 },		// dino
 	{ 0, 3, 6, 2, 2, 6 },		// donna
 	{ 1, 3 ,7, 2, 4, 6 }		// dough
 };
 
-static const uint16 _pcKeys[][PASSWORD_LEN] = {
+const uint16 SelectCharacterInputState_NS::_pcKeys[][PASSWORD_LEN] = {
 	{ 5, 3, 6, 1, 4, 7 },		// dino
 	{ 0, 2, 8, 5, 5, 1 },		// donna
 	{ 1, 7 ,7, 2, 2, 6 }		// dough
 };
 
-static const char *_charStartLocation[] = {
+const char *SelectCharacterInputState_NS::_charStartLocation[] = {
 	"test.dino",
 	"test.donna",
 	"test.dough"
 };
 
-enum {
-	NEW_GAME,
-	LOAD_GAME
-};
 
-enum {
-	START_DEMO,
-	START_INTRO,
-	GAME_LOADED,
-	SELECT_CHARACTER
-};
-
-void Parallaction_ns::guiStart() {
-
-	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-
-	guiSplash();
-
-	_language = guiChooseLanguage();
-	_disk->setLanguage(_language);
-
-	int event;
-
-	if (getFeatures() & GF_DEMO) {
-		event = START_DEMO;
-	} else {
-		if (guiSelectGame() == NEW_GAME) {
-			event = guiNewGame();
-		} else {
-			event = loadGame() ? GAME_LOADED : START_INTRO;
-		}
-	}
-
-	switch (event) {
-	case START_DEMO:
-		strcpy(_location._name, "fognedemo.dough");
-		break;
-
-	case START_INTRO:
-		strcpy(_location._name, "fogne.dough");
-		break;
-
-	case GAME_LOADED:
-		// nothing to do here
-		return;
-
-	case SELECT_CHARACTER:
-		selectStartLocation();
-		break;
-
-	}
-
-	return;
-}
-
-void Parallaction_ns::selectStartLocation() {
-	int character = guiSelectCharacter();
-	if (character == -1)
-		error("invalid character selected from menu screen");
-
-	scheduleLocationSwitch(_charStartLocation[character]);
-}
-
-
-void Parallaction_ns::guiSplash() {
-
-	showSlide("intro");
-	_gfx->updateScreen();
-	g_system->delayMillis(2000);
-	freeBackground();
-
-	showSlide("minintro");
-	_gfx->updateScreen();
-	g_system->delayMillis(2000);
-	freeBackground();
-}
-
-int Parallaction_ns::guiNewGame() {
-
-	const char **v14 = introMsg3;
-
-	_disk->selectArchive("disk1");
-
-	setBackground("test", NULL, NULL);
-
-	_gfx->updateScreen();
-
-	uint id[4];
-	id[0] = _gfx->createLabel(_menuFont, v14[0], 1);
-	id[1] = _gfx->createLabel(_menuFont, v14[1], 1);
-	id[2] = _gfx->createLabel(_menuFont, v14[2], 1);
-	id[3] = _gfx->createLabel(_menuFont, v14[3], 1);
-	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 50);
-	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 70);
-	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 100);
-	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 120);
-
-	_input->showCursor(false);
-
-	_gfx->updateScreen();
-
-	_input->waitForButtonEvent(kMouseLeftUp | kMouseRightUp);
-	uint32 event = _input->getLastButtonEvent();
-
-	_input->showCursor(true);
-
-	_gfx->freeLabels();
-
-	if (event != kMouseRightUp) {
-		return START_INTRO;
-	}
-
-	return SELECT_CHARACTER;
-}
-
-static const Common::Rect _dosLanguageSelectBlocks[4] = {
-	Common::Rect(  80, 110, 128, 180 ),	// Italian
-	Common::Rect( 129,  85, 177, 155 ),	// French
-	Common::Rect( 178,  60, 226, 130 ),	// English
-	Common::Rect( 227,  35, 275, 105 )	// German
-};
-
-static const Common::Rect _amigaLanguageSelectBlocks[4] = {
-	Common::Rect(  -1,  -1,  -1,  -1 ),	// Italian: not supported by Amiga multi-lingual version
-	Common::Rect( 129,  85, 177, 155 ),	// French
-	Common::Rect( 178,  60, 226, 130 ),	// English
-	Common::Rect( 227,  35, 275, 105 )	// German
-};
-
-
-uint16 Parallaction_ns::guiChooseLanguage() {
-
-	const Common::Rect *blocks;
-
-	if (getPlatform() == Common::kPlatformAmiga) {
-		if (!(getFeatures() & GF_LANG_MULT)) {
-			if (getFeatures() & GF_DEMO) {
-				return 1;		// Amiga Demo supports English
-			} else {
-				return 0;		// The only other non multi-lingual version just supports Italian
-			}
-		}
-
-		blocks = _amigaLanguageSelectBlocks;
-	} else {
-		blocks = _dosLanguageSelectBlocks;
-	}
-
-	// user can choose language in dos version
-	showSlide("lingua");
-
-	uint id = _gfx->createLabel(_introFont, "SELECT LANGUAGE", 1);
-	_gfx->showLabel(id, 60, 30);
-
-	setArrowCursor();
-
-	Common::Point p;
-
-	int selection = -1;
-	while (selection == -1) {
-		_input->waitUntilLeftClick();
-		_input->getCursorPos(p);
-		for (uint16 i = 0; i < 4; i++) {
-			if (blocks[i].contains(p)) {
-				selection = i;
-				break;
-			}
-		}
-	}
-
-	beep();
-
-	_gfx->freeLabels();
-
-	return selection;
-}
-
-
-
-uint16 Parallaction_ns::guiSelectGame() {
-//	  printf("selectGame()\n");
-
-	showSlide("restore");
-
-	uint16 _si = 0;
-	uint16 _di = 3;
-
-	uint id0, id1;
-	id0 = _gfx->createLabel(_introFont, loadGameMsg[_language], 1);
-	id1 = _gfx->createLabel(_introFont, newGameMsg[_language], 1);
-
-	Common::Point p;
-
-	_input->readInput();
-	uint32 event = _input->getLastButtonEvent();
-
-	while (event != kMouseLeftUp) {
-
-		_input->readInput();
-		_input->getCursorPos(p);
-		event = _input->getLastButtonEvent();
-
-		_si = (p.x > 160) ? 1 : 0;
-
-		if (_si != _di) {
-			if (_si != 0) {
-				// load a game
-				_gfx->hideLabel(id1);
-				_gfx->showLabel(id0, 60, 30);
-			} else {
-				// new game
-				_gfx->hideLabel(id0);
-				_gfx->showLabel(id1, 60, 30);
-			}
-			_di = _si;
-		}
-
-		_gfx->updateScreen();
-		g_system->delayMillis(30);
-	}
-
-	_gfx->freeLabels();
-
-	return _si ? LOAD_GAME : NEW_GAME;
-}
-
-static const Common::Rect codeSelectBlocks[9] = {
+const Common::Rect SelectCharacterInputState_NS::codeSelectBlocks[9] = {
 	Common::Rect( 111, 129, 127, 153 ),		// na
 	Common::Rect( 128, 120, 144, 144 ),		// wa
 	Common::Rect( 145, 111, 161, 135 ),		// ra
@@ -348,7 +606,7 @@ static const Common::Rect codeSelectBlocks[9] = {
 	Common::Rect( 247, 57, 263, 81 )		// ka
 };
 
-static const Common::Rect codeTrueBlocks[9] = {
+const Common::Rect SelectCharacterInputState_NS::codeTrueBlocks[9] = {
 	Common::Rect( 112, 130, 128, 154 ),
 	Common::Rect( 129, 121, 145, 145 ),
 	Common::Rect( 146, 112, 162, 136 ),
@@ -361,146 +619,219 @@ static const Common::Rect codeTrueBlocks[9] = {
 };
 
 
-int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p) {
+class ShowCreditsInputState_NS : public MenuInputState {
+	Parallaction_ns *_vm;
+	int	_current;
+	uint32 _startTime;
 
-	int selection = -1;
+	struct Credit {
+		const char *_role;
+		const char *_name;
+	};
 
-	for (uint16 i = 0; i < 9; i++) {
-		if (codeSelectBlocks[i].contains(p)) {
-			selection = i;
-			break;
+	static const Credit _credits[6];
+
+public:
+	ShowCreditsInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("showcredits", helper), _vm(vm) {
+	}
+
+	void drawCurrentLabel() {
+		uint id[2];
+		id[0] = _vm->_gfx->createLabel(_vm->_menuFont, _credits[_current]._role, 1);
+		id[1] = _vm->_gfx->createLabel(_vm->_menuFont, _credits[_current]._name, 1);
+		_vm->_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
+		_vm->_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
+	}
+
+
+	virtual MenuInputState* run() {
+		if (_current == -1) {
+			_startTime = g_system->getMillis();
+			_current = 0;
+			drawCurrentLabel();
+			return this;
 		}
-	}
 
-	if ((selection != -1) && (getPlatform() == Common::kPlatformAmiga)) {
-		_gfx->invertBackground(codeTrueBlocks[selection]);
-		_gfx->updateScreen();
-		beep();
-		g_system->delayMillis(100);
-		_gfx->invertBackground(codeTrueBlocks[selection]);
-		_gfx->updateScreen();
-	}
+		int event = _vm->_input->getLastButtonEvent();
+		uint32 curTime = g_system->getMillis();
+		if ((event == kMouseLeftUp) || (curTime - _startTime > 5500)) {
+			_current++;
+			_startTime = curTime;
+			_vm->_gfx->freeLabels();
 
-	return selection;
-}
-
-
-//
-//	character selection and protection
-//
-int Parallaction_ns::guiSelectCharacter() {
-	debugC(1, kDebugMenu, "Parallaction_ns::guiselectCharacter()");
-
-	setArrowCursor();
-	_soundMan->stopMusic();
-
-	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-
-	showSlide("password");
-
-
-	const uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
-	uint16 _di = 0;
-	byte points[3] = { 0, 0, 0 };
-
-	bool fail;
-
-	uint id[2];
-	id[0] = _gfx->createLabel(_introFont, introMsg1[_language], 1);
-	id[1] = _gfx->createLabel(_introFont, introMsg2[_language], 1);
-
-	Graphics::Surface v14;
-	v14.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
-	Common::Rect rect(SLOT_X, SLOT_Y, SLOT_X + BLOCK_WIDTH * 8, SLOT_Y + BLOCK_HEIGHT);
-	_gfx->grabBackground(rect, v14);
-
-	Graphics::Surface block;
-	block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
-
-	Common::Point p;
-
-	while (true) {
-
-		points[0] = 0;
-		points[1] = 0;
-		points[2] = 0;
-		fail = false;
-
-		_gfx->hideLabel(id[1]);
-		_gfx->showLabel(id[0], 60, 30);
-
-		_di = 0;
-		while (_di < PASSWORD_LEN) {
-
-			_input->waitUntilLeftClick();
-			_input->getCursorPos(p);
-
-			int _si = guiGetSelectedBlock(p);
-
-			if (_si != -1) {
-				_gfx->grabBackground(codeTrueBlocks[_si], block);
-				_gfx->patchBackground(block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
-
-				if (keys[0][_di] == _si) {
-					points[0]++;
-				} else
-				if (keys[1][_di] == _si) {
-					points[1]++;
-				} else
-				if (keys[2][_di] == _si) {
-					points[2]++;
-				} else {
-					fail = true;
-				}
-
-				// build user preference
-				points[0] += (keys[0][_di] == _si);
-				points[1] += (keys[1][_di] == _si);
-				points[2] += (keys[2][_di] == _si);
-
-				_di++;
+			if (_current == 6) {
+				return _helper->getState("endintro");
 			}
 
+			drawCurrentLabel();
 		}
 
-		if (!fail) {
-			break;
+		return this;
+	}
+
+	virtual void enter() {
+		_current = -1;
+		_vm->_input->setMouseState(MOUSE_DISABLED);
+	}
+};
+
+const ShowCreditsInputState_NS::Credit ShowCreditsInputState_NS::_credits[6] = {
+	{"Music and Sound Effects", "MARCO CAPRELLI"},
+	{"PC Version", "RICCARDO BALLARINO"},
+	{"Project Manager", "LOVRANO CANEPA"},
+	{"Production", "BRUNO BOZ"},
+	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
+	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
+};
+
+class EndIntroInputState_NS : public MenuInputState {
+	Parallaction_ns *_vm;
+	bool _isDemo;
+
+public:
+	EndIntroInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
+		_isDemo = (_vm->getFeatures() & GF_DEMO) != 0;
+	}
+
+	virtual MenuInputState* run() {
+
+		int event = _vm->_input->getLastButtonEvent();
+		if (event != kMouseLeftUp) {
+			return this;
 		}
 
-		_gfx->patchBackground(v14, SLOT_X, SLOT_Y, false);
+		if (_isDemo) {
+			_engineFlags |= kEngineQuit;
+			return 0;
+		}
 
-		_gfx->hideLabel(id[0]);
-		_gfx->showLabel(id[1], 60, 30);
-
-		_gfx->updateScreen();
-
-		g_system->delayMillis(2000);
+		_vm->_gfx->freeLabels();
+		return _helper->getState("selectcharacter");
 	}
 
-	_gfx->freeLabels();
+	virtual void enter() {
+		_vm->_soundMan->stopMusic();
+		_vm->_input->setMouseState(MOUSE_DISABLED);
 
-	_gfx->setBlackPalette();
-	_gfx->updateScreen();
+		if (!_isDemo) {
+			int label = _vm->_gfx->createLabel(_vm->_menuFont, "CLICK MOUSE BUTTON TO START", 1);
+			_vm->_gfx->showLabel(label, CENTER_LABEL_HORIZONTAL, 80);
+		}
+	}
+};
 
-	v14.free();
+
+class EndPartInputState_NS : public MenuInputState {
+	Parallaction_ns *_vm;
+	bool _allPartsComplete;
+
+	// part completion messages
+	static const char *endMsg0[4];
+	static const char *endMsg1[4];
+	static const char *endMsg2[4];
+	static const char *endMsg3[4];
+	// game completion messages
+	static const char *endMsg4[4];
+	static const char *endMsg5[4];
+	static const char *endMsg6[4];
+	static const char *endMsg7[4];
 
 
-	// actually select character
-
-	int character = -1;
-	if (points[0] >= points[1] && points[0] >= points[2]) {
-		character = CHAR_DINO;
-	} else
-	if (points[1] >= points[0] && points[1] >= points[2]) {
-		character = CHAR_DONNA;
-	} else
-	if (points[2] >= points[0] && points[2] >= points[1]) {
-		character = CHAR_DOUGH;
-	} else {
-		error("If you read this, either your CPU or transivity is broken (we believe the former).");
+public:
+	EndPartInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endpart", helper), _vm(vm) {
 	}
 
-	return character;
+	virtual MenuInputState* run() {
+		int event = _vm->_input->getLastButtonEvent();
+		if (event != kMouseLeftUp) {
+			return this;
+		}
+
+		_vm->_gfx->freeLabels();
+
+		if (_allPartsComplete) {
+			_vm->scheduleLocationSwitch("estgrotta.drki");
+			return 0;
+		}
+
+		return _helper->getState("selectcharacter");
+	}
+
+	virtual void enter() {
+		_allPartsComplete = _vm->allPartsComplete();
+		_vm->_input->setMouseState(MOUSE_DISABLED);
+
+		uint id[4];
+		if (_allPartsComplete) {
+			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg4[_language], 1);
+			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg5[_language], 1);
+			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg6[_language], 1);
+			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg7[_language], 1);
+		} else {
+			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg0[_language], 1);
+			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg1[_language], 1);
+			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg2[_language], 1);
+			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg3[_language], 1);
+		}
+
+		_vm->_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 70);
+		_vm->_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
+		_vm->_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 130);
+		_vm->_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 160);
+	}
+};
+
+// part completion messages
+const char *EndPartInputState_NS::endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
+const char *EndPartInputState_NS::endMsg1[] = {"HAI FINITO QUESTA PARTE", "TU AS COMPLETE' CETTE AVENTURE", "YOU HAVE COMPLETED THIS PART", "DU HAST EIN ABENTEUER ERFOLGREICH"};
+const char *EndPartInputState_NS::endMsg2[] = {"ORA COMPLETA IL RESTO ", "AVEC SUCCES.",  "NOW GO ON WITH THE REST OF", "ZU ENDE GEFUHRT"};
+const char *EndPartInputState_NS::endMsg3[] = {"DELL' AVVENTURA",  "CONTINUE AVEC LES AUTRES", "THIS ADVENTURE", "MACH' MIT DEN ANDEREN WEITER"};
+// game completion messages
+const char *EndPartInputState_NS::endMsg4[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
+const char *EndPartInputState_NS::endMsg5[] = {"HAI FINITO LE TRE PARTI", "TU AS COMPLETE' LES TROIS PARTIES", "YOU HAVE COMPLETED THE THREE PARTS", "DU HAST DREI ABENTEURE ERFOLGREICH"};
+const char *EndPartInputState_NS::endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE", "OF THIS ADVENTURE", "ZU ENDE GEFUHRT"};
+const char *EndPartInputState_NS::endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
+
+void Parallaction_ns::startGui() {
+	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+
+	_menuHelper = new MenuInputHelper;
+	assert(_menuHelper);
+
+	new SelectGameInputState_NS(this, _menuHelper);
+	new LoadGameInputState_NS(this, _menuHelper);
+	new NewGameInputState_NS(this, _menuHelper);
+	new StartDemoInputState_NS(this, _menuHelper);
+	new SelectCharacterInputState_NS(this, _menuHelper);
+	new ChooseLanguageInputState_NS(this, _menuHelper);
+	new SplashInputState1_NS(this, _menuHelper);
+	new SplashInputState0_NS(this, _menuHelper);
+	_menuHelper->setState("intro0");
+
+	_input->_inputMode = Input::kInputModeMenu;
+}
+
+void Parallaction_ns::startCreditSequence() {
+	_menuHelper = new MenuInputHelper;
+	assert(_menuHelper);
+
+	new ShowCreditsInputState_NS(this, _menuHelper);
+	new EndIntroInputState_NS(this, _menuHelper);
+	new SelectCharacterInputState_NS(this, _menuHelper);
+	_menuHelper->setState("showcredits");
+
+	_input->_inputMode = Input::kInputModeMenu;
+}
+
+void Parallaction_ns::startEndPartSequence() {
+	_menuHelper = new MenuInputHelper;
+	assert(_menuHelper);
+
+	new EndPartInputState_NS(this, _menuHelper);
+	new SelectCharacterInputState_NS(this, _menuHelper);
+	_menuHelper->setState("endpart");
+
+	_input->_inputMode = Input::kInputModeMenu;
 }
 
 

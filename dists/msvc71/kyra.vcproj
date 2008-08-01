@@ -207,6 +207,12 @@
 			RelativePath="..\..\engines\kyra\kyra_v2.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\lol.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\lol.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\resource.cpp">
 		</File>
 		<File
@@ -256,6 +262,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\screen_lok.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_lol.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_lol.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\screen_mr.cpp">

@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	kyra_v2.o \
 	kyra_hof.o \
 	kyra_mr.o \
+	lol.o \
 	resource.o \
 	saveload.o \
 	saveload_lok.o \
@@ -33,6 +34,7 @@ MODULE_OBJS := \
 	scene_mr.o \
 	screen.o \
 	screen_lok.o \
+	screen_lol.o \
 	screen_v2.o \
 	screen_hof.o \
 	screen_mr.o \

@@ -26,7 +26,62 @@
 #ifndef CINE_ANIM_H
 #define CINE_ANIM_H
 
+#include "common/endian.h"
+
 namespace Cine {
+
+/**
+ * Cine engine's save game formats.
+ * Enumeration entries (Excluding the one used as an error)
+ * are sorted according to age (i.e. top one is oldest, last one newest etc).
+ *
+ * ANIMSIZE_UNKNOWN:
+ * - Animation data entry size is unknown (Used as an error).
+ *
+ * ANIMSIZE_23:
+ * - Animation data entry size is 23 bytes.
+ * - Used at least by 0.11.0 and 0.11.1 releases of ScummVM.
+ * - Introduced in revision 21772, stopped using in revision 31444.
+ *
+ * ANIMSIZE_30_PTRS_BROKEN:
+ * - Animation data entry size is 30 bytes.
+ * - Data and mask pointers in the saved structs are always NULL.
+ * - Introduced in revision 31453, stopped using in revision 32073.
+ *
+ * ANIMSIZE_30_PTRS_INTACT:
+ * - Animation data entry size is 30 bytes.
+ * - Data and mask pointers in the saved structs are intact,
+ *   so you can test them for equality or inequality with NULL
+ *   but don't try using them for anything else, it won't work.
+ * - Introduced in revision 31444, got broken in revision 31453,
+ *   got fixed in revision 32073 and used after that.
+ *
+ * TEMP_OS_FORMAT:
+ * - Temporary Operation Stealth savegame format.
+ * - NOT backward compatible and NOT to be supported in the future.
+ *   This format should ONLY be used during development and abandoned
+ *   later in favor of a better format!
+ */
+enum CineSaveGameFormat {
+	ANIMSIZE_UNKNOWN,
+	ANIMSIZE_23,
+	ANIMSIZE_30_PTRS_BROKEN,
+	ANIMSIZE_30_PTRS_INTACT,
+	TEMP_OS_FORMAT
+};
+
+/** Identifier for the temporary Operation Stealth savegame format. */
+static const uint32 TEMP_OS_FORMAT_ID = MKID_BE('TEMP');
+
+/** The current version number of Operation Stealth's savegame format. */
+static const uint32 CURRENT_OS_SAVE_VER = 0;
+
+/** Chunk header used by the temporary Operation Stealth savegame format. */
+struct ChunkHeader {
+	uint32 id;      ///< Identifier (e.g. MKID_BE('TEMP'))
+	uint32 version; ///< Version number
+	uint32 size;    ///< Size of the chunk after this header in bytes
+};
 
 struct AnimHeaderStruct {
 	byte field_0;
@@ -101,7 +156,7 @@ void freeAnimDataTable(void);
 void freeAnimDataRange(byte startIdx, byte numIdx);
 void loadResource(const char *resourceName);
 void loadAbs(const char *resourceName, uint16 idx);
-void loadResourcesFromSave(Common::InSaveFile &fHandle, bool broken);
+void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat);
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
 } // End of namespace Cine

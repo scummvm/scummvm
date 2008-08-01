@@ -26,6 +26,8 @@
 #ifndef PARALLACTION_INPUT_H
 #define PARALLACTION_INPUT_H
 
+#include "common/keyboard.h"
+
 #include "parallaction/objects.h"
 #include "parallaction/inventory.h"
 
@@ -44,52 +46,68 @@ struct InputData {
 	Common::Point	_mousePos;
 	int16		_inventoryIndex;
 	ZonePtr		_zone;
-	Label*			_label;
+	uint		_label;
+};
+
+enum MouseTriState {
+	MOUSE_ENABLED_SHOW,
+	MOUSE_ENABLED_HIDE,
+	MOUSE_DISABLED
 };
 
 class Input {
 	void updateGameInput();
-	void updateCommentInput();
 
 	// input-only
 	InputData	_inputData;
-	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
-	// these two could/should be merged as they carry on the same duty in two member functions,
-	// respectively processInput and translateInput
+
+	bool		_hasKeyPressEvent;
+	Common::KeyState _keyPressed;
+
+	bool		_hasDelayedAction;  // actived when the character needs to move before taking an action
+	ZonePtr		_delayedActionZone;
+
 	int16		_transCurrentHoverItem;
 
 	InputData	*translateInput();
 	bool		translateGameInput();
-	bool		translateInventoryInput();
+	bool		updateInventoryInput();
+	void 		takeAction(ZonePtr z);
+	void 		walkTo(const Common::Point &dest);
 
 	Parallaction	*_vm;
 
 	Common::Point	_mousePos;
 	uint16	_mouseButtons;
 
-	bool		_mouseHidden;
 	ZonePtr			_hoverZone;
+
+	void	enterInventoryMode();
+	void 	exitInventoryMode();
 
 public:
 	enum {
 		kInputModeGame = 0,
-		kInputModeComment = 1
+		kInputModeComment = 1,
+		kInputModeDialogue = 2,
+		kInputModeInventory = 3,
+		kInputModeMenu = 4
 	};
 
 
 	Input(Parallaction *vm) : _vm(vm) {
 		_transCurrentHoverItem = 0;
-		_actionAfterWalk = false;  // actived when the character needs to move before taking an action
-		_mouseHidden = false;
+		_hasDelayedAction = false;  // actived when the character needs to move before taking an action
+		_mouseState = MOUSE_DISABLED;
 		_activeItem._index = 0;
 		_activeItem._id = 0;
 		_mouseButtons = 0;
+		_delayedActionZone = nullZonePtr;
 	}
 
 	virtual ~Input() { }
 
 
-	void		showCursor(bool visible);
 	void			getCursorPos(Common::Point& p) {
 		p = _mousePos;
 	}
@@ -97,16 +115,20 @@ public:
 	int				_inputMode;
 	InventoryItem	_activeItem;
 
-	uint16	readInput();
+	void	readInput();
 	InputData* 	updateInput();
-	void 	waitUntilLeftClick();
+	void	trackMouse(ZonePtr z);
 	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
+	bool  	getLastKeyDown(uint16 &ascii);
 
-	void stopHovering() {
-		_hoverZone = nullZonePtr;
-	}
+	void stopHovering();
 
+	MouseTriState _mouseState;
+
+	void setMouseState(MouseTriState state);
+	MouseTriState getMouseState();
+	bool isMouseEnabled();
 };
 
 } // namespace Parallaction

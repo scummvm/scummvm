@@ -29,43 +29,89 @@
 #include "common/ptr.h"
 #include "common/list.h"
 
+#include "parallaction/objects.h"
+
+
 namespace Parallaction {
 
-struct Animation;
-
-struct WalkNode {
-	int16	_x;
-	int16	_y;
-
-public:
-	WalkNode();
-	WalkNode(int16 x, int16 y);
-	WalkNode(const WalkNode& w);
-
-	void getPoint(Common::Point &p) const;
-};
-
-typedef Common::SharedPtr<WalkNode> WalkNodePtr;
-typedef Common::List<WalkNodePtr> WalkNodeList;
-
+struct Character;
 
 class PathBuilder {
 
-	AnimationPtr	_anim;
+protected:
+	Character *_ch;
 
-	WalkNodeList	*_list;
-	WalkNodeList	_subPath;
+public:
+	PathBuilder(Character *ch) : _ch(ch) { }
+	virtual ~PathBuilder() { }
+
+	virtual void buildPath(uint16 x, uint16 y) = 0;
+};
+
+
+class PathBuilder_NS : public PathBuilder {
+
+	PointList	*_list;
+	PointList	_subPath;
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
-	uint16 walkFunc1(int16 x, int16 y, WalkNodePtr Node);
+	uint16 walkFunc1(const Common::Point &to, Common::Point& node);
 
 public:
-	PathBuilder(AnimationPtr anim);
-	WalkNodeList* buildPath(uint16 x, uint16 y);
-
+	PathBuilder_NS(Character *ch);
+	void buildPath(uint16 x, uint16 y);
 };
 
+
+class PathBuilder_BR : public PathBuilder {
+
+	bool directPathExists(const Common::Point &from, const Common::Point &to);
+
+public:
+	PathBuilder_BR(Character *ch);
+	void buildPath(uint16 x, uint16 y);
+};
+
+class PathWalker {
+protected:
+	Character	*_ch;
+public:
+	PathWalker(Character *ch) : _ch(ch) { }
+	virtual ~PathWalker() { }
+	virtual void walk() = 0;
+};
+
+class PathWalker_NS : public PathWalker {
+
+
+	void finalizeWalk();
+	void clipMove(Common::Point& pos, const Common::Point& to);
+	void checkDoor(const Common::Point &foot);
+
+public:
+	PathWalker_NS(Character *ch) : PathWalker(ch) { }
+	void walk();
+};
+
+
+class PathWalker_BR : public PathWalker {
+
+
+	int			_walkDelay;
+	int			_fieldC;
+	Common::Point _startFoot;
+	bool		_first;
+	int			_step;
+
+	int			_dirFrame;
+
+	void finalizeWalk();
+
+public:
+	PathWalker_BR(Character *ch);
+	void walk();
+};
 
 }
 

@@ -56,6 +56,7 @@ private:
 	uint8 _numEntries;
 public:
 	MenuRecord(const MenuRecordBounds *bounds, int numParams, ...);
+	~MenuRecord();
 
 	uint16 xstart() { return _xstart; }
 	uint16 width() { return _width; }

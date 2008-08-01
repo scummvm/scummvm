@@ -38,14 +38,15 @@ private:
 	void *_timerHandler;
 	TimerSlot *_head;
 
-
 public:
 	DefaultTimerManager();
 	~DefaultTimerManager();
 	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
 	void removeTimerProc(TimerProc proc);
 
-	// Timer callback, to be invoked at regular time intervals by the backend.
+	/**
+	 * Timer callback, to be invoked at regular time intervals by the backend.
+	 */
 	void handler();
 };
 

@@ -33,6 +33,7 @@
 
 #include "engines/engine.h"
 
+#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
@@ -100,10 +101,8 @@ enum {
 enum EngineFlags {
 	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
-	kEngineInventory	= (1 << 2),
 	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
-	kEngineBlockInput	= (1 << 5),
 	kEngineDragging		= (1 << 6),
 	kEngineTransformedDonna	= (1 << 7),
 
@@ -113,14 +112,6 @@ enum EngineFlags {
 
 enum {
 	kEvNone			= 0,
-	kEvEnterZone		= 1,
-	kEvExitZone		= 2,
-	kEvAction		= 3,
-	kEvOpenInventory	= 4,
-	kEvCloseInventory	= 5,
-	kEvHoverInventory	= 6,
-	kEvWalk			= 7,
-	kEvQuitGame		= 1000,
 	kEvSaveGame		= 2000,
 	kEvLoadGame		= 4000
 };
@@ -164,6 +155,8 @@ class Debugger;
 class Gfx;
 class SoundMan;
 class Input;
+class DialogueManager;
+class MenuInputHelper;
 
 struct Location {
 
@@ -184,7 +177,7 @@ struct Location {
 	char		_soundFile[50];
 
 	// NS specific
-	WalkNodeList	_walkNodes;
+	PointList	_walkPoints;
 	char _slideText[2][MAX_TOKEN_LEN];
 
 	// BRA specific
@@ -202,13 +195,16 @@ struct Character {
 
 
 	AnimationPtr	_ani;
-	Frames			*_head;
-	Frames			*_talk;
-	Frames			*_objs;
-	PathBuilder		_builder;
-	WalkNodeList	*_walkPath;
+	GfxObj			*_head;
+	GfxObj			*_talk;
+	GfxObj			*_objs;
+	PathBuilder		*_builder;
+	PathWalker		*_walker;
+	PointList		_walkPath;
 
 	Character(Parallaction *vm);
+	~Character();
+
 	void getFoot(Common::Point &foot);
 	void setFoot(const Common::Point &foot);
 	void scheduleWalk(int16 x, int16 y);
@@ -228,18 +224,19 @@ protected:
 	static const char _suffixTras[];
 	static const char _empty[];
 
+	int16		_direction, _step;
+
 public:
 	void setName(const char *name);
 	const char *getName() const;
 	const char *getBaseName() const;
 	const char *getFullName() const;
 	bool dummy() const;
+
+	void updateDirection(const Common::Point& pos, const Common::Point& to);
+
 };
 
-
-
-#define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
-#define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
 
 
 #define NUM_LOCATIONS 120
@@ -259,40 +256,15 @@ public:
 
 	Input	*_input;
 
-	OpcodeSet	_commandOpcodes;
-
-	struct ParallactionStruct1 {
-		CommandPtr cmd;
-		ZonePtr	z;
-	} _cmdRunCtxt;
-
-	OpcodeSet	_instructionOpcodes;
-
-	struct ParallactionStruct2 {
-		AnimationPtr	anim;
-		ProgramPtr		program;
-		InstructionList::iterator inst;
-		uint16		modCounter;
-		bool		suspend;
-	} _instRunCtxt;
-
 	void		processInput(InputData* data);
 
 	void		pauseJobs();
 	void		resumeJobs();
 
-	void		finalizeWalk(WalkNodeList *list);
-	int16		selectWalkFrame(const Common::Point& pos, const WalkNodePtr from);
-	void		clipMove(Common::Point& pos, const WalkNodePtr from);
-
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	uint16		runZone(ZonePtr z);
 	void		freeZones();
-
-	void		runDialogue(SpeakData*);
-
-	void		runCommands(CommandList& list, ZonePtr z = nullZonePtr);
 
 	AnimationPtr findAnimation(const char *name);
 	void		freeAnimations();
@@ -327,6 +299,8 @@ public:
 	Gfx*			_gfx;
 	Disk*			_disk;
 
+	CommandExec*	_cmdExec;
+	ProgramExec*	_programExec;
 	Character		_char;
 
 	void			setLocationFlags(uint32 flags);
@@ -351,6 +325,7 @@ public:
 	Common::RandomSource _rnd;
 
 	Debugger	*_debugger;
+	Frames	*_comboArrow;
 
 
 protected:		// data
@@ -367,10 +342,8 @@ protected:		// members
 	void		runGame();
 	void		updateView();
 
-	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();
 	virtual void changeLocation(char *location) = 0;
-	virtual void changeCharacter(const char *name) = 0;
 	virtual void runPendingZones() = 0;
 	void		allocateLocationSlot(const char *name);
 	void		finalizeLocationParsing();
@@ -379,27 +352,32 @@ protected:		// members
 
 	void		displayComment(ExamineData *data);
 
-	uint16		checkDoor();
-
 	void		freeCharacter();
 
 	int16		pickupItem(ZonePtr z);
 
+	void 		clearSet(OpcodeSet &opcodes);
+
+
 public:
+	void		scheduleLocationSwitch(const char *location);
+	virtual void changeCharacter(const char *name) = 0;
+
 	virtual	void callFunction(uint index, void* parm) { }
 
 	virtual void setArrowCursor() = 0;
-	virtual void setInventoryCursor(int pos) = 0;
+	virtual void setInventoryCursor(ItemName name) = 0;
 
 	virtual void parseLocation(const char* name) = 0;
 
 	void updateDoor(ZonePtr z);
 
-	virtual void runScripts() = 0;
-	virtual void walk() = 0;
 	virtual void drawAnimations() = 0;
 
 	void		beep();
+
+	ZonePtr		_zoneTrap;
+	PathBuilder* getPathBuilder(Character *ch);
 
 public:
 //	const char **_zoneFlagNamesRes;
@@ -425,6 +403,27 @@ public:
 	Inventory *_inventory;
 	InventoryRenderer *_inventoryRenderer;
 
+	BalloonManager *_balloonMan;
+
+	void setupBalloonManager();
+
+	void hideDialogueStuff();
+	DialogueManager	*_dialogueMan;
+	void enterDialogueMode(ZonePtr z);
+	void exitDialogueMode();
+	void runDialogueFrame();
+
+	MenuInputHelper *_menuHelper;
+	void runGuiFrame();
+	void cleanupGui();
+
+	ZonePtr	_commentZone;
+	void enterCommentMode(ZonePtr z);
+	void exitCommentMode();
+	void runCommentFrame();
+
+	void setInternLanguage(uint id);
+	uint getInternLanguage();
 };
 
 
@@ -483,12 +482,18 @@ public:
 	typedef void (Parallaction_ns::*Callable)(void*);
 
 	virtual	void callFunction(uint index, void* parm);
-	void setMousePointer(uint32 value);
 
 	bool loadGame();
 	bool saveGame();
 
 	void		switchBackground(const char* background, const char* mask);
+	void		showSlide(const char *name, int x = 0, int y = 0);
+	void 		setArrowCursor();
+
+	// TODO: this should be private!!!!!!!
+	bool	_inTestResult;
+	void cleanupGame();
+	bool allPartsComplete();
 
 private:
 	LocationParser_ns		*_locationParser;
@@ -500,17 +505,14 @@ private:
 	Common::String genSaveFileName(uint slot, bool oldStyle = false);
 	Common::InSaveFile *getInSaveFile(uint slot);
 	Common::OutSaveFile *getOutSaveFile(uint slot);
-	bool allPartsComplete();
 	void setPartComplete(const Character& character);
 
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
 	void runPendingZones();
-	void cleanupGame();
 
-	void setArrowCursor();
-	void setInventoryCursor(int pos);
+	void setInventoryCursor(ItemName name);
 
 
 	void doLoadGame(uint16 slot);
@@ -520,11 +522,9 @@ private:
 
 	void initResources();
 	void initCursors();
-	void initParsers();
 
 	static byte _resMouseArrow[256];
 	byte	*_mouseArrow;
-	Frames	*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -580,60 +580,16 @@ private:
 	const Callable *_callables;
 
 protected:
-	void runScripts();
-	void walk();
 	void drawAnimations();
 
 	void		parseLocation(const char *filename);
 	void		loadProgram(AnimationPtr a, const char *filename);
 
-	void		initOpcodes();
-
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(clear);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(start);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(speak);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(get);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(close);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(on);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(off);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(call);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(toggle);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(drop);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(quit);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(invalid);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endloop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(null);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(call);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(wait);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(start);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
-
 	void		selectStartLocation();
 
-	void		guiStart();
-	int			guiSelectCharacter();
-	void		guiSplash();
-	int			guiNewGame();
-	uint16		guiChooseLanguage();
-	uint16		guiSelectGame();
-	int			guiGetSelectedBlock(const Common::Point &p);
-
-	void		showSlide(const char *name);
+	void		startGui();
+	void		startCreditSequence();
+	void		startEndPartSequence();
 };
 
 
@@ -655,6 +611,9 @@ public:
 	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
 	void		changeCharacter(const char *name);
+	void setupSubtitles(char *s, char *s2, int y);
+	void clearSubtitles();
+
 
 public:
 	Table		*_countersNames;
@@ -674,7 +633,8 @@ public:
 	int32		_counters[32];
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
-
+	void		startPart(uint part);
+	void 		setArrowCursor();
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
@@ -682,20 +642,15 @@ private:
 	void		initResources();
 	void		initFonts();
 	void		freeFonts();
-	void		initOpcodes();
-	void		initParsers();
 
-	void setArrowCursor();
-	void setInventoryCursor(int pos);
+	void setInventoryCursor(ItemName name);
 
 	void		changeLocation(char *location);
 	void 		runPendingZones();
 
 	void		initPart();
 	void		freePart();
-	void		startPart();
 
-	void setMousePointer(int16 index);
 	void initCursors();
 
 	Frames	*_dinoCursor;
@@ -706,10 +661,7 @@ private:
 
 	static const char *_partNames[];
 
-	void guiStart();
-	int guiShowMenu();
-	void guiSplash(const char *name);
-	Frames* guiRenderMenuItem(const char *text);
+	void startGui();
 
 	static const Callable _dosCallables[6];
 
@@ -725,68 +677,6 @@ private:
 	void parseLocation(const char* name);
 	void loadProgram(AnimationPtr a, const char *filename);
 
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(close);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(on);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(off);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(call);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(drop);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(start);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(character);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(followme);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onmouse);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offmouse);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(add);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(leave);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(inc);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(dec);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ifeq);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(iflt);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ifgt);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(let);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(music);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(fix);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(unfix);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(zeta);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(scroll);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(swap);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(give);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(text);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(part);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(testsfx);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ret);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onsave);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offsave);
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(dec);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(wait);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(start);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(process);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(color);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(mask);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(print);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(text);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(mul);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(div);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifeq);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(iflt);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifgt);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
-
-	void setupSubtitles(char *s, char *s2, int y);
-	void clearSubtitles();
 #if 0
 	void jobWaitRemoveLabelJob(void *parm, Job *job);
 	void jobPauseSfx(void *parm, Job *job);

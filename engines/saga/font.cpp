@@ -63,6 +63,8 @@ Font::~Font(void) {
 
 		free(_fonts[i]);
 	}
+
+	free(_fonts);
 }
 
 
@@ -238,6 +240,13 @@ void Font::createOutline(FontData *font) {
 	}
 }
 
+int Font::translateChar(int charId) {
+	if (charId <= 127)
+		return charId;					// normal character
+	else
+		return _charMap[charId - 128];	// extended character
+}
+
 // Returns the horizontal length in pixels of the graphical representation
 // of at most 'count' characters of the string 'text', taking
 // into account any formatting options specified by 'flags'.
@@ -257,7 +266,7 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
 		// Translate character
-		ch = _charMap[ch];
+		ch = translateChar(ch);
 		assert(ch < FONT_CHARCOUNT);
 		width += font->normal.fontCharEntry[ch].tracking;
 	}
@@ -336,11 +345,11 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 				// Don't do any special font mapping for the Italian fan
 				// translation of ITE
 				if (_vm->getLanguage() != Common::IT_ITA)
-					c_code = _charMap[c_code];
+					c_code = translateChar(c_code);
 			}
 		} else if (_fontMapping == 1) {
 			// Force font mapping
-			c_code = _charMap[c_code];
+			c_code = translateChar(c_code);
 		} else {
 			// In all other cases, ignore font mapping
 		}

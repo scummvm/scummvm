@@ -31,7 +31,7 @@ namespace Cine {
 extern ScriptList globalScripts;
 extern ScriptList objectScripts;
 
-void loadPrc(const char *pPrcName);
+bool loadPrc(const char *pPrcName);
 
 } // End of namespace Cine
 

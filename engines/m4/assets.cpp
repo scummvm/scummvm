@@ -201,6 +201,7 @@ void SpriteAsset::loadMadsSpriteAsset(M4Engine *vm, Common::SeekableReadStream* 
 	Common::SeekableReadStream *spriteDataStream = sprite.getItemStream(3);
 	SpriteAssetFrame frame;
 	for (curFrame = 0; curFrame < _frameCount; curFrame++) {
+		frame.stream = 0;
 		frame.comp = 0;
 		frameOffset = spriteStream->readUint32LE();
 		_frameOffsets.push_back(frameOffset);

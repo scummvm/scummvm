@@ -120,6 +120,7 @@ public:
 	int _engineVersion;
 
 	int32 _timers[50];
+	int16 getTicks();
 	int16 getTimer(int16 timerNum);
 	void setTimer(int16 timerNum, int16 value);
 	void resetTimer(int16 timerNum);

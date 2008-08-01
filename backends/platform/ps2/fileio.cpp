@@ -340,8 +340,6 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		assert(cacheListSema >= 0);
 	}
 
-	//printf("ps2_fopen: %s, %s\n", fname, mode);
-
 	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
 		printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
 		return NULL;
@@ -363,6 +361,8 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	} else {
 		// Regular access to one of the devices
 
+		printf("ps2_fopen = %s\n", fname); // romeo : temp
+
 		if (!rdOnly)
 			return NULL; // we only provide readaccess for cd,dvd,hdd,usb
 
@@ -378,19 +378,22 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		}
 
 		int64 cacheId = -1;
-		if (rdOnly && tocManager.haveEntries())
+		if (tocManager.haveEntries())
 			cacheId = tocManager.fileExists(fname);
 
 		if (cacheId != 0) {
 			Ps2File *file = findInCache(cacheId);
-			if (file)
+			if (file) {
+				printf("  findInCache(%x)\n", cacheId); // romeo : temp
 				return (FILE*)file;
+			}
 
 			bool isAudioFile = strstr(fname, ".bun") || strstr(fname, ".BUN") || strstr(fname, ".Bun");
 			file = new Ps2ReadFile(cacheId, isAudioFile);
 
 			if (file->open(fname)) {
 				openFileCount++;
+				printf("  new cacheID = %x\n", cacheId); // romeo : temp
 				return (FILE*)file;
 			} else
 				delete file;
@@ -579,7 +582,7 @@ void TocManager::readEntries(const char *root) {
 	}
 	char readPath[256];
 	sprintf(readPath, "%s/", _root);
-	printf("readDir: %s\n", readPath);
+	printf("readDir: %s    (root: %s )\n", readPath, root);
 	readDir(readPath, &_rootNode, 0);
 }
 
@@ -587,28 +590,62 @@ void TocManager::readDir(const char *path, TocNode **node, int level) {
 	if (level <= 2) { // we don't scan deeper than that
 		iox_dirent_t dirent;
 		int fd = fio.dopen(path);
-		if (fd >= 0) {
-			while (fio.dread(fd, &dirent) > 0)
-				if (dirent.name[0] != '.') { // skip '.' and '..'
-					*node = new TocNode;
-					(*node)->sub = (*node)->next = NULL;
+		TocNode *eNode = NULL; // = *node; // entry node
+		bool first = true;
 
+		printf("path=%s - level=%d fd=%d\n", path, level, fd); // romeo : temp
+		if (fd >= 0) {
+			while (fio.dread(fd, &dirent) > 0) {
+				if (dirent.name[0] != '.') { // skip '.' & '..' - romeo : check
+				                             // --- do we have them on PS2?
+					*node = new TocNode;
+					if (first) {
+						eNode = *node;
+						first = false;
+					}
+					(*node)->sub = (*node)->next = NULL;
 					(*node)->nameLen = strlen(dirent.name);
 					memcpy((*node)->name, dirent.name, (*node)->nameLen + 1);
 
-					if (dirent.stat.mode & FIO_S_IFDIR) { // directory
+					if (dirent.stat.mode & FIO_S_IFDIR) {
 						(*node)->isDir = true;
-						char nextPath[256];
-						sprintf(nextPath, "%s%s/", path, dirent.name);
-						readDir(nextPath, &((*node)->sub), level + 1);
-					} else
+						printf("dirent.name = %s [DIR]\n", dirent.name);
+					}
+					else {
 						(*node)->isDir = false;
+						printf("dirent.name = %s\n", dirent.name);
+					}
+
 					node = &((*node)->next);
 				}
+			}
+
 			fio.dclose(fd);
-		} else
-			printf("Can't open path: %s\n", path);
+		}
+
+		TocNode *iNode = eNode;
+		char nextPath[256];
+
+		while (iNode) {
+			if (iNode->isDir == true) {
+				sprintf(nextPath, "%s%s/", path, iNode->name);
+				readDir(nextPath, &(iNode->sub), level + 1);
+			}
+			iNode = iNode->next;
+		}
+
 	}
+
+	/*
+		** Wizard of Oz' trick (to get all games running from USB on PS2):
+
+		1. Make a list of files / dirs in level #0 (dclose before continuing)
+
+		2. Go through the dirs : dopen / dread them / mark dirs / dclose
+
+		   It's a safe recursion, cause it recurses on 'isDir' nodes
+		   after dclosing the higher hierarchy
+	*/
 }
 
 int64 TocManager::fileExists(const char *name) {

@@ -46,7 +46,7 @@ public:
 		NUM_CHANNELS = 16
 	};
 
-	MidiPlayer(MidiDriver *driver, bool nativeMT32);
+	MidiPlayer();
 	~MidiPlayer();
 
 	void play(Common::ReadStream &stream, int size, bool loop = false);

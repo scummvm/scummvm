@@ -49,7 +49,7 @@ public:
 		MOUSE_RBUTTON = 2
 	};
 
-	Input(Common::Language language, OSystem *system);
+	Input(Common::Language language, OSystem *system, QueenEngine *vm);
 
 	void delay(uint amount);
 
@@ -98,6 +98,8 @@ private:
 	OSystem *_system;
 
 	Common::EventManager *_eventMan;
+
+	QueenEngine *_vm;
 
 	//! some cutaways require update() run faster
 	bool _fastMode;

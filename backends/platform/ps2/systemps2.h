@@ -33,6 +33,7 @@ class DefaultTimerManager;
 class Gs2dScreen;
 class Ps2Input;
 class Ps2SaveFileManager;
+// class Ps2FilesystemFactory;
 struct IrxReference;
 
 #define MAX_MUTEXES 16
@@ -48,7 +49,7 @@ namespace Common {
 };
 
 namespace Audio {
-	class Mixer;
+	class MixerImpl;
 };
 
 class OSystem_PS2 : public OSystem {
@@ -87,7 +88,6 @@ public:
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual Audio::Mixer *getMixer();
-	virtual int  getOutputSampleRate(void) const;
 
 	virtual bool openCD(int drive);
 	virtual bool pollCD();
@@ -112,6 +112,7 @@ public:
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 	virtual Common::SaveFileManager *getSavefileManager();
+	virtual FilesystemFactory *getFilesystemFactory();
 
 	virtual void getTimeAndDate(struct tm &t) const;
 
@@ -133,7 +134,7 @@ private:
 	void readRtcTime(void);
 
 	DefaultTimerManager *_scummTimerManager;
-	Audio::Mixer *_scummMixer;
+	Audio::MixerImpl *_scummMixer;
 
 
 	bool _mouseVisible;

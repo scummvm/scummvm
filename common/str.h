@@ -96,10 +96,24 @@ public:
 	static const char *emptyString;
 #endif
 
+	/** Construct a new empty string. */
 	String() : _len(0), _str(_storage) { _storage[0] = 0; }
-	String(const char *str, uint32 len = 0);
+
+	/** Construct a new string from the given NULL-terminated C string. */
+	String(const char *str);
+
+	/** Construct a new string containing exactly len characters read from address str. */
+	String(const char *str, uint32 len);
+	
+	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
+	String(const char *beginP, const char *endP);
+	
+	/** Construct a copy of the given string. */
 	String(const String &str);
+	
+	/** Construct a string consisting of the given character. */
 	String(char c);
+
 	~String();
 
 	String &operator  =(const char *str);
@@ -162,6 +176,8 @@ public:
 
 	void toLowercase();
 	void toUppercase();
+	
+	void trim();
 
 	uint hash() const;
 
@@ -186,9 +202,11 @@ public:
 	}
 
 protected:
+	void makeUnique();
 	void ensureCapacity(uint32 new_len, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
+	void initWithCStr(const char *str, uint32 len);
 };
 
 // Append two strings to form a new (temp) string
