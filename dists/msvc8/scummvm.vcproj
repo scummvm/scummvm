@@ -1057,6 +1057,14 @@
 				Name="common"
 				>
 				<File
+					RelativePath="..\..\backends\common\action.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\common\action.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\common\hardware-key.h"
 					>
 				</File>
@@ -1082,14 +1090,6 @@
 				</File>
 				<File
 					RelativePath="..\..\backends\common\keymapper.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\backends\common\user-action.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\backends\common\user-action.h"
 					>
 				</File>
 				<File

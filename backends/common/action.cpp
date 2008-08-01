@@ -23,12 +23,12 @@
 *
 */
 
-#include "backends/common/user-action.h"
+#include "backends/common/action.h"
 #include "backends/common/keymap.h"
 
 namespace Common {
 
-UserAction::UserAction(String des, UserActionCategory cat, UserActionType ty, 
+Action::Action(String des, ActionCategory cat, ActionType ty, 
 					   int pr, int gr, int fl) {
 	description = des;
 	category = cat;
@@ -40,18 +40,18 @@ UserAction::UserAction(String des, UserActionCategory cat, UserActionType ty,
 	_parent = 0;
 }
 
-void UserAction::setParent(Keymap *parent) {
+void Action::setParent(Keymap *parent) {
 	_parent = parent;
 }
 
-void UserAction::mapKey(const HardwareKey *key) {
+void Action::mapKey(const HardwareKey *key) {
 	assert(_parent);
 	if (_hwKey) _parent->unregisterMapping(this);
 	_hwKey = key;
 	if (_hwKey) _parent->registerMapping(this, key);
 }
 
-const HardwareKey *UserAction::getMappedKey() const {
+const HardwareKey *Action::getMappedKey() const {
 	return _hwKey;
 }
 

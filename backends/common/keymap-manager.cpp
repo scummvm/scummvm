@@ -24,6 +24,7 @@
 */
 
 #include "backends/common/keymap-manager.h"
+#include "common/algorithm.h"
 
 namespace Common {
 
@@ -112,17 +113,17 @@ bool KeymapManager::loadKeymap(ConfigManager::Domain *domain,
 		if (!key.hasPrefix(prefix.c_str()))
 			continue;
 
-		// parse UserAction ID
+		// parse Action ID
 		const char *actionIdStart = key.c_str() + prefix.size();
 		char *err;
 		int32 actionId = (int32) strtol(actionIdStart, &err, 0);
 		if (err == actionIdStart) {
-			warning("'%s' is not a valid UserAction ID", err);
+			warning("'%s' is not a valid Action ID", err);
 			continue;
 		}
-		UserAction *ua = map->getUserAction(actionId);
+		Action *ua = map->getAction(actionId);
 		if (!ua) {
-			warning("'%s' keymap does not contain UserAction with ID %d", 
+			warning("'%s' keymap does not contain Action with ID %d", 
 				name.c_str(), (int)actionId);
 			continue;
 		}
@@ -145,29 +146,71 @@ bool KeymapManager::loadKeymap(ConfigManager::Domain *domain,
 }
 
 bool KeymapManager::isMapComplete(const Keymap *map) {
-	return false;
+	const List<Action*>& actions = map->getActions();
+	List<Action*>::const_iterator it;
+	bool allMapped = true;
+	uint numberMapped = 0;
+	for (it = actions.begin(); it != actions.end(); it++) {
+		if ((*it)->getMappedKey()) {
+			numberMapped++;
+		} else {
+			allMapped = false;
+			break;
+		}
+	}
+	return (allMapped || numberMapped == _hardwareKeys->count());
 }
 
 void KeymapManager::saveKeymap(ConfigManager::Domain *domain, 
 							   const String& name, 
 							   const Keymap *map) {
-	const Array<UserAction>& actions = map->getUserActions();
-	Array<UserAction>::const_iterator it;
+	const List<Action*>& actions = map->getActions();
+	List<Action*>::const_iterator it;
 	char buf[11];
 	for (it = actions.begin(); it != actions.end(); it++) {
 		String key("km_");
-		sprintf(buf, "%d", it->id);
+		sprintf(buf, "%d", (*it)->id);
 		key += name + "_" + buf;
-		if (it->getMappedKey())
-			sprintf(buf, "%d", it->getMappedKey()->id);
+		if ((*it)->getMappedKey())
+			sprintf(buf, "%d", (*it)->getMappedKey()->id);
 		else
 			strcpy(buf, "");
 		domain->setVal(key, buf);
 	}
 }
 
-
 void KeymapManager::automaticMap(Keymap *map) {
+	List<Action*> actions(map->getActions()), unmapped;
+	List<Action*>::iterator actIt;
+	List<HardwareKey*> keys = _hardwareKeys->getHardwareKeys();
+	List<HardwareKey*>::iterator keyIt, selectedKey;
+
+	// sort by priority
+	ActionPriorityComp priorityComp;
+	sort(actions.begin(), actions.end(), priorityComp);
+
+	for (actIt = actions.begin(); actIt != actions.end(); actIt++) {
+		selectedKey = keys.end();
+		Action *act = *actIt;
+		for (keyIt = keys.begin(); keyIt != keys.end(); keyIt++) {
+			if ((*keyIt)->preferredType == act->type) {
+				selectedKey = keyIt;
+				break;
+			} else if ((*keyIt)->preferredCategory == act->category) {
+				selectedKey = keyIt;
+			}
+		}
+		if (selectedKey != keys.end()) {
+			act->mapKey(*selectedKey);
+			keys.erase(selectedKey);
+		} else
+			unmapped.push_back(act);
+	}
+
+	actIt = unmapped.begin();
+	keyIt = keys.begin();
+	while (actIt != unmapped.end() && keyIt != keys.end())
+		(*actIt)->mapKey(*keyIt);
 
 }
 

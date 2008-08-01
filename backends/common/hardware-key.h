@@ -26,7 +26,7 @@
 #ifndef COMMON_HARDWAREKEY
 #define COMMON_HARDWAREKEY
 
-#include "backends/common/user-action.h"
+#include "backends/common/action.h"
 
 namespace Common {
 
@@ -44,13 +44,13 @@ struct HardwareKey {
 	*/
 	KeyState key;
 
-	UserActionCategory preferredCategory;
-	UserActionType preferredType;
+	ActionCategory preferredCategory;
+	ActionType preferredType;
 	int16 group;
 
 	HardwareKey(KeyState ks = KeyState(), String des = "",
-		UserActionCategory cat = kGenericUserActionCategory,
-		UserActionType ty = kGenericUserActionType,	int gr = 0) {
+		ActionCategory cat = kGenericActionCategory,
+		ActionType ty = kGenericActionType,	int gr = 0) {
 			key = ks;
 			description = des;
 			preferredCategory = cat;
@@ -96,6 +96,14 @@ public:
 				return (*it);
 		}
 		return 0;
+	}
+
+	List<HardwareKey*> getHardwareKeys() const {
+		return _keys;
+	}
+
+	uint count() const {
+		return _keys.size();
 	}
 
 

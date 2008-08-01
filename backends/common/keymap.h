@@ -26,11 +26,11 @@
 #ifndef COMMON_KEYMAP
 #define COMMON_KEYMAP
 
-#include "common/array.h"
-#include "common/keyboard.h"
 #include "common/func.h"
 #include "common/hashmap.h"
-#include "backends/common/user-action.h"
+#include "common/keyboard.h"
+#include "common/list.h"
+#include "backends/common/action.h"
 
 namespace Common {
 
@@ -49,62 +49,60 @@ template<> struct Hash<KeyState>
 
 class Keymap {
 public:
-	Keymap() { init(); }
+	Keymap() {}
 	Keymap(const Keymap& km);
-private:
-	void init();
 
 public:
 	/**
-	 * Adds a new UserAction to this Map, 
+	 * Adds a new Action to this Map, 
 	 * adding it at the back of the internal array
-	 * @param action the UserAction to add
+	 * @param action the Action to add
 	 */
-	void addAction(UserAction& action);
+	void addAction(Action *action);
 
 	/**
-	 * Retrieves the UserAction with the given id
-	 * @param id id of UserAction to retrieve
-	 * @return Pointer to the UserAction or 0 if not found
+	 * Retrieves the Action with the given id
+	 * @param id id of Action to retrieve
+	 * @return Pointer to the Action or 0 if not found
 	 */
-	UserAction *getUserAction(int32 id);
+	Action *getAction(int32 id);
 
 	/**
-	 * Get a read-only array of all the UserActions contained in this Keymap
+	 * Get a read-only array of all the Actions contained in this Keymap
 	 */
-	const Array<UserAction>& getUserActions() const { return _actions; }
+	const List<Action*>& getActions() const { return _actions; }
 
 	/**
-	 * Find the UserAction that a key is mapped to
-	 * @param key the key that is mapped to the required UserAction
-	 * @return a pointer to the UserAction or 0 if no
+	 * Find the Action that a key is mapped to
+	 * @param key the key that is mapped to the required Action
+	 * @return a pointer to the Action or 0 if no
 	 */
-	UserAction *getMappedAction(const KeyState& ks) const;
+	Action *getMappedAction(const KeyState& ks) const;
 
 private:
-	friend struct UserAction;
+	friend struct Action;
 	/**
-	* Registers a HardwareKey to the given UserAction
-	* @param action UserAction in this Keymap
+	* Registers a HardwareKey to the given Action
+	* @param action Action in this Keymap
 	* @param key pointer to HardwareKey to map
-	* @see UserAction::mapKey
+	* @see Action::mapKey
 	*/
-	void registerMapping(UserAction *action, const HardwareKey *key);
+	void registerMapping(Action *action, const HardwareKey *key);
 
 	/**
-	* Unregisters a HardwareKey from the given UserAction (if one is mapped)
-	* @param action UserAction in this Keymap
-	* @see UserAction::mapKey
+	* Unregisters a HardwareKey from the given Action (if one is mapped)
+	* @param action Action in this Keymap
+	* @see Action::mapKey
 	*/
-	void unregisterMapping(UserAction *action);
+	void unregisterMapping(Action *action);
 
-	UserAction *findUserAction(int32 id);
-	const UserAction *findUserAction(int32 id) const;
+	Action *findAction(int32 id);
+	const Action *findAction(int32 id) const;
 
-	void internalMapKey(UserAction *action, HardwareKey *hwKey);
+	void internalMapKey(Action *action, HardwareKey *hwKey);
 
-	Array<UserAction> _actions;
-	HashMap<KeyState, UserAction*> _keymap; 
+	List<Action*> _actions;
+	HashMap<KeyState, Action*> _keymap; 
 
 };
 

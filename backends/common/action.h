@@ -23,10 +23,11 @@
 *
 */
 
-#ifndef COMMON_USERACTION
-#define COMMON_USERACTION
+#ifndef COMMON_ACTION
+#define COMMON_ACTION
 
 #include "common/events.h"
+#include "common/func.h"
 #include "common/list.h"
 #include "common/str.h"
 
@@ -36,32 +37,34 @@ struct HardwareKey;
 class Keymap;
 
 
-enum UserActionType {
-	kGenericUserActionType,
+enum ActionType {
+	kGenericActionType,
 
 	// common actions
-	kDirectionUpUserAction,
-	kDirectionDownUserAction,
-	kDirectionLeftUserAction,
-	kDirectionRightUserAction,
-	kLeftClickUserAction,
-	kRightClickUserAction,
-	kSaveUserAction,
-	kMenuUserAction,
+	kDirectionUpAction,
+	kDirectionDownAction,
+	kDirectionLeftAction,
+	kDirectionRightAction,
+	kLeftClickAction,
+	kRightClickAction,
+	kSaveAction,
+	kMenuAction,
+	kVirtualKeyboardAction,
+	kRemapKeysAction,
 
-	kUserActionTypeMax
+	kActionTypeMax
 };
 
-enum UserActionCategory {
-	kGenericUserActionCategory,
+enum ActionCategory {
+	kGenericActionCategory,
 	// classes of action - probably need to be slightly more specific than this
-	kInGameUserAction,   // effects the actual gameplay
-	kSystemUserAction,   //show a menu / change volume / etc
+	kInGameAction,   // effects the actual gameplay
+	kSystemAction,   //show a menu / change volume / etc
 
-	kUserActionCategoryMax
+	kActionCategoryMax
 };
 
-struct UserAction {
+struct Action {
 	/** unique id used for saving/loading to config */
 	int32 id;
 	/** Human readable description */
@@ -69,21 +72,21 @@ struct UserAction {
 	/** Events to be sent when mapped key is pressed */
 	List<Event> events;
 
-	UserActionCategory category;
-	UserActionType type;
+	ActionCategory category;
+	ActionType type;
 	int priority;
 	int group;
 	int flags;
 
 private:
-	/** Hardware key that is mapped to this UserAction */
+	/** Hardware key that is mapped to this Action */
 	const HardwareKey *_hwKey;
 	Keymap *_parent;
 
 public:
-	UserAction(	String des = "", 
-		UserActionCategory cat = kGenericUserActionCategory,
-		UserActionType ty = kGenericUserActionType,
+	Action(	String des = "", 
+		ActionCategory cat = kGenericActionCategory,
+		ActionType ty = kGenericActionType,
 		int pr = 0, int gr = 0, int fl = 0 );
 
 	void setParent(Keymap *parent);
@@ -91,6 +94,15 @@ public:
 	void mapKey(const HardwareKey *key);
 
 	const HardwareKey *getMappedKey() const;
+};
+
+struct ActionPriorityComp : public BinaryFunction<Action, Action, bool> {
+	bool operator()(const Action *x, const Action *y) const { 
+		return x->priority > y->priority;
+	}
+	bool operator()(const Action &x, const Action &y) const { 
+		return x.priority > y.priority;
+	}
 };
 
 } // end of namespace Common

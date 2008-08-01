@@ -81,8 +81,8 @@ public:
 
 	/**
 	* @brief Map a key press event.
-	* If the active keymap contains a UserAction mapped to the given key, then 
-	* the UserAction's events are pushed into the EventManager's event queue.
+	* If the active keymap contains a Action mapped to the given key, then 
+	* the Action's events are pushed into the EventManager's event queue.
 	* @param key key that was pressed
 	* @param isKeyDown true for key down, false for key up
 	* @return true if key was mapped

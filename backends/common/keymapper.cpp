@@ -86,7 +86,7 @@ bool Keymapper::mapKeyUp(const KeyState& key) {
 
 bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 	if (!_currentMap) return false;
-	UserAction *action = _currentMap->getMappedAction(key);
+	Action *action = _currentMap->getMappedAction(key);
 	if (!action) return false;
 	List<Event>::iterator it;
 	for (it = action->events.begin(); it != action->events.end(); it++) {

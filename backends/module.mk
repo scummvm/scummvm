@@ -34,7 +34,7 @@ MODULE_OBJS := \
 	common/keymap.o \
 	common/keymap-manager.o \
 	common/keymapper.o \
-	common/user-action.o \
+	common/action.o \
 
 # Include common rules
 include $(srcdir)/rules.mk
