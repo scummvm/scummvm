@@ -393,8 +393,8 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	printf("%-20s %s\n", "grim", "Grim Fandando");
-	printf("%-20s %s\n", "grimdemo", "Grim Fandando Demo");
+	printf("%-20s %s\n", "grim", "Grim Fandango");
+	printf("%-20s %s\n", "grimdemo", "Grim Fandango Demo");
 	//printf("%-20s %s\n"), "monkey", "Escape from Monkey Island");
 	//printf("%-20s %s\n"), "monkeydemo", "Escape from Monkey Island Demo");
 }
