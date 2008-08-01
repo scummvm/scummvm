@@ -94,7 +94,7 @@ static int IHNMTextStringIdsLUT[56] = {
 	8,	// Give
 	10,	// Options
 	11,	// Test
-	12,	//
+	12,	// Demo
 	13,	// Help
 	14,	// Quit Game
 	16,	// Fast
@@ -905,10 +905,13 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
 	} else {
-		if (panelButton->id < 39 || panelButton->id > 50) {
+		if ((panelButton->id < 39 || panelButton->id > 50) && panelButton->id != kTextLoadSavedGame) {
 			// Read non-hardcoded strings from the LUT string table, loaded from the game
 			// data files
 			text = _vm->_script->_mainStrings.getString(IHNMTextStringIdsLUT[panelButton->id]);
+		} else if (panelButton->id == kTextLoadSavedGame) {
+			// a bit of a kludge, but it will do
+			text = _vm->getTextString(52);
 		} else {
 			// Hardcoded strings in IHNM are read from the ITE hardcoded strings
 			text = _vm->getTextString(panelButton->id);
@@ -1142,7 +1145,21 @@ void Interface::setLoad(PanelButton *panelButton) {
 	_loadPanel.currentButton = NULL;
 	switch (panelButton->id) {
 		case kTextOK:
-			setMode(kPanelMain);
+			if (_vm->getGameType() == GType_ITE) {
+				setMode(kPanelMain);
+			} else {
+				if (_vm->getSaveFilesCount() > 0) {
+					if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+						debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+						setMode(kPanelMain);
+						_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+					}
+				}
+			}
+			break;
+		case kTextCancel:
+			// IHNM only
+			setMode(kPanelOption);
 			break;
 	}
 }
@@ -1573,7 +1590,6 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 }
 
 void Interface::setOption(PanelButton *panelButton) {
-	char * fileName;
 	_optionPanel.currentButton = NULL;
 	switch (panelButton->id) {
 	case kTextContinuePlaying:
@@ -1594,13 +1610,16 @@ void Interface::setOption(PanelButton *panelButton) {
 		setMode(kPanelQuit);
 		break;
 	case kTextLoad:
-		if (_vm->getSaveFilesCount() > 0) {
-			if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
-				debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-				setMode(kPanelMain);
-				_vm->load(fileName);
+		if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getSaveFilesCount() > 0) {
+				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+					debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+					setMode(kPanelMain);
+					_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+				}
 			}
+		} else {
+			setMode(kPanelLoad);
 		}
 		break;
 	case kTextSave:

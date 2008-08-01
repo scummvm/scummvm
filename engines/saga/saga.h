@@ -295,7 +295,8 @@ enum TextStringIds {
 	kTextVoices,
 	kTextText,
 	kTextAudio,
-	kTextBoth
+	kTextBoth,
+	kTextLoadSavedGame
 };
 
 struct GameResourceDescription {
