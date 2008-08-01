@@ -468,6 +468,7 @@ protected:
 	Graphics::DrawStep *newDrawStep();
 	Graphics::DrawStep *defaultDrawStep();
 	bool parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific);
+	bool parseCommonLayoutProps(ParserNode *node, const Common::String &var);
 
 	Graphics::DrawStep *_defaultStepGlobal;
 	Graphics::DrawStep *_defaultStepLocal;

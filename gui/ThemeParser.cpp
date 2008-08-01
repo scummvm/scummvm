@@ -446,7 +446,6 @@ bool ThemeParser::parserCallback_def(ParserNode *node) {
 
 bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	Common::String var;
-	int width, height, x, y, paddingL, paddingR, paddingT, paddingB;
 	
 	if (getParentNode(node)->name == "globals")
 		var = "Globals." + node->values["name"] + ".";
@@ -455,25 +454,38 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	else 
 		assert(!"Corruption in XML parser.");
 	
+	if (!parseCommonLayoutProps(node, var))
+		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+	
+	return true;
+}
+
+bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String &var) {
 	if (node->values.contains("size")) {
+		int width, height;
+		
 		if (!parseIntegerKey(node->values["size"].c_str(), 2, &width, &height))
-			return parserError("Invalid definition for '%sSize'.", var.c_str());
+			return false;
 		
 		_theme->themeEval()->setVar(var + "Width", width);
 		_theme->themeEval()->setVar(var + "Height", height);
 	}
 	
 	if (node->values.contains("pos")) {
+		int x, y;
+		
 		if (!parseIntegerKey(node->values["pos"].c_str(), 2, &x, &y))
-			return parserError("Invalid definition for '%sPosition'.", var.c_str());
+			return false;
 		
 		_theme->themeEval()->setVar(var + "X", x);
 		_theme->themeEval()->setVar(var + "Y", y);
 	}
 	
 	if (node->values.contains("padding")) {
+		int paddingL, paddingR, paddingT, paddingB;
+		
 		if (!parseIntegerKey(node->values["padding"].c_str(), 4, &paddingL, &paddingR, &paddingT, &paddingB))
-			return parserError("Invalid definition for '%sPadding'.", var.c_str());
+			return false;
 		
 		_theme->themeEval()->setVar(var + "Padding.Left", paddingL);
 		_theme->themeEval()->setVar(var + "Padding.Right", paddingR);

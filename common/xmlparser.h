@@ -108,6 +108,10 @@ namespace Common {
 	contained children keys, using the XML_KEY() macro again.
 	The scope of a XML key is closed with the KEY_END() macro.
 	
+	Keys which may contain any kind of Property names may be defined with the
+	XML_PROP_ANY() macro instead of the XML_PROP() macro. This macro takes no
+	arguments.
+	
 	As an example, the following XML layout:
 	
 		XML_KEY(palette)
@@ -178,6 +182,7 @@ namespace Common {
 	
 #define XML_KEY(keyName) {\
 		lay = new XMLKeyLayout; \
+		lay->anyProps = false; \
 		lay->custom = new kLocalParserName::CustomParserCallback; \
 		((kLocalParserName::CustomParserCallback*)(lay->custom))->callback = (&kLocalParserName::parserCallback_##keyName); \
 		layout.top()->children[#keyName] = lay; \
@@ -189,6 +194,9 @@ namespace Common {
 		prop.name = #propName; \
 		prop.required = req; \
 		layout.top()->properties.push_back(prop); }\
+		
+#define XML_PROP_ANY() {\
+		layout.top()->anyProps = true; }
 	
 #define CUSTOM_XML_PARSER(parserName) \
 	protected: \
@@ -291,6 +299,7 @@ public:
 		};
 		
 		Common::List<XMLKeyProperty> properties;
+		bool anyProps;
 		ChildMap children;
 		
 		~XMLKeyLayout() {
