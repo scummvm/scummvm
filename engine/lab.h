@@ -28,12 +28,9 @@
 
 #include <string>
 #include <cstring>
-#include <cstdio>
 #include <map>
 
-namespace Common {
-	class File;
-}
+#include "common/file.h"
 
 class Block {
 public:
@@ -55,7 +52,7 @@ public:
 	Lab() : _f(NULL) { }
 	explicit Lab(const char *filename) : _f(NULL) { open(filename); }
 	bool open(const char *filename);
-	bool isOpen() const { return _f != NULL; }
+	bool isOpen() const { return _f->isOpen(); }
 	void close();
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
@@ -71,7 +68,7 @@ private:
 		int offset, len;
 	};
 
-	std::FILE *_f;
+	Common::File *_f;
 	typedef std::map<std::string, LabEntry> FileMapType;
 	FileMapType _fileMap;
 	std::string _labFileName;

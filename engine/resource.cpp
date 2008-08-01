@@ -25,6 +25,7 @@
 
 #include "common/sys.h"
 #include "common/debug.h"
+#include "common/fs.h"
 
 #include "engine/resource.h"
 #include "engine/registry.h"
@@ -55,71 +56,48 @@ ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
 	const char *directory = g_registry->get("GrimDataDir", ".");
-	std::string dir_str = (directory != NULL ? directory : ".");
-	dir_str += '/';
 	int lab_counter = 0;
+	FSList *fslist;
+	FilesystemNode *fsdir;
 
-#ifdef _WIN32
-	WIN32_FIND_DATAA find_file_data;
-	std::string dir_strWin32 = dir_str + '*';
-	HANDLE d = FindFirstFile(dir_strWin32.c_str(), &find_file_data);
-#else
-	DIR *d = opendir(dir_str.c_str());
-#endif
+	fslist = new FSList();
+	fsdir = new FilesystemNode(directory);
+	fsdir->lookupFile(*fslist, "*.lab", false, true, 0);
+	if (fslist->empty())
+		error("Cannot find game data - check configuration file");
 
-	if (!directory)
-		error("Cannot find DataDir registry entry - check configuration file");
+	Lab *l;
 
-	if (!d)
-		error("Cannot open DataDir (%s)- check configuration file", dir_str.c_str());
-
-#ifdef _WIN32
-	do {
-		int namelen = strlen(find_file_data.cFileName);
-		if (namelen > 4 && ((stricmp(find_file_data.cFileName + namelen - 4, ".lab") == 0) || (stricmp(find_file_data.cFileName + namelen - 4, ".mus") == 0))) {
-			std::string fullname = dir_str + find_file_data.cFileName;
-			Lab *l = new Lab(fullname.c_str());
+	for (FSList::const_iterator findfile = fslist->begin(); findfile != fslist->end(); ++findfile) {
+		Common::String filename(findfile->getName());
+		l = new Lab(findfile->getPath().c_str());
+		if (l->isOpen()) {
+			if (filename == "005.lab")
+				_labs.push_front(l);
+			else {
+				if (filename == "gfdemo01.lab")
+					g_flags |= GF_DEMO;
+				_labs.push_back(l);
+			}
 			lab_counter++;
-			if (l->isOpen()) {
-				if (strstr(find_file_data.cFileName, "005"))
-					_labs.push_front(l);
-				else {
-					if (strstr(find_file_data.cFileName, "gfdemo01"))
-						g_flags |= GF_DEMO;
-					_labs.push_back(l);
-				}
-			} else
-				delete l;
-		}
-	} while (FindNextFile(d, &find_file_data));
-	FindClose(d);
-#else
-	dirent *de;
-	while ((de = readdir(d))) {
-		int namelen = strlen(de->d_name);
-		if (namelen > 4 && ((strcasecmp(de->d_name + namelen - 4, ".lab") == 0) || (strcasecmp(de->d_name + namelen - 4, ".mus") == 0))) {
-			std::string fullname = dir_str + de->d_name;
-			Lab *l = new Lab(fullname.c_str());
-			lab_counter++;
-			if (l->isOpen())
-				// Handle the Grim 1.1 patch's datafile
-				if (strstr(de->d_name, "005"))
-					_labs.push_front(l);
-				else {
-					if (strstr(de->d_name, "gfdemo01"))
-						g_flags |= GF_DEMO;
-					_labs.push_back(l);
-				}
-			else
-				delete l;
+		} else {
+			delete l;
 		}
 	}
 
-	closedir(d);
-#endif
-
-	if (lab_counter == 0)
-		error("Cannot find any resource files in %s - check configuration file", dir_str.c_str());
+	fsdir->lookupFile(*fslist, "*.mus", false, true, 0);
+	for (FSList::const_iterator findfile = fslist->begin(); findfile != fslist->end(); ++findfile) {
+		Common::String filename(findfile->getName());
+		l = new Lab(filename.c_str());
+		if (l->isOpen()) {
+			_labs.push_back(l);
+			lab_counter++;
+		} else {
+			delete l;
+		}
+	}
+	delete fsdir;
+	delete fslist;
 }
 
 ResourceLoader::~ResourceLoader() {

@@ -66,7 +66,7 @@ Engine::Engine() :
 	for (int i = 0; i < lastKey; i++)
 		_controlsEnabled[i] = false;
 	_speechMode = 3; // VOICE + TEXT
-	_textSpeed = 6;
+	_textSpeed = 7;
 	_mode = _previousMode = ENGINE_MODE_IDLE;
 	_flipEnable = true;
 	_lastUpdateTime = 0;

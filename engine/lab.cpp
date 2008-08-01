@@ -37,12 +37,13 @@ bool Lab::open(const char *filename) {
 	_labFileName = filename;
 
 	close();
-	_f = std::fopen(filename, "rb");
-	if (!isOpen())
+	_f = new Common::File();
+	_f->open(filename);
+	if (!_f->isOpen())
 		return false;
 
 	char header[16];
-	if (std::fread(header, 1, sizeof(header), _f) < sizeof(header)) {
+	if (_f->read(header, sizeof(header)) < sizeof(header)) {
 		close();
 		return false;
 	}
@@ -55,13 +56,13 @@ bool Lab::open(const char *filename) {
 	int string_table_size = READ_LE_UINT32(header + 12);
 
 	char *string_table = new char[string_table_size];
-	std::fseek(_f, 16 * (num_entries + 1), SEEK_SET);
-	std::fread(string_table, 1, string_table_size, _f);
+	_f->seek(16 * (num_entries + 1), SEEK_SET);
+	_f->read(string_table, string_table_size);
 
-	std::fseek(_f, 16, SEEK_SET);
+	_f->seek(16, SEEK_SET);
 	char binary_entry[16];
 	for (int i = 0; i < num_entries; i++) {
-		std::fread(binary_entry, 1, 16, _f);
+		_f->read(binary_entry, 16);
 		int fname_offset = READ_LE_UINT32(binary_entry);
 		int start = READ_LE_UINT32(binary_entry + 4);
 		int size = READ_LE_UINT32(binary_entry + 8);
@@ -86,13 +87,13 @@ Block *Lab::getFileBlock(const char *filename) const {
 	if (i == _fileMap.end())
 		return NULL;
 
-	std::fseek(_f, i->second.offset, SEEK_SET);
+	_f->seek(i->second.offset, SEEK_SET);
 
 	// The sound decoder reads up to two bytes past the end of data
 	// (but shouldn't actually use those bytes).  So allocate two extra bytes
 	// to be safe against crashes.
 	char *data = new char[i->second.len + 2];
-	std::fread(data, 1, i->second.len, _f);
+	_f->read(data, i->second.len);
 	data[i->second.len] = '\0';	// For valgrind cleanness
 	data[i->second.len + 1] = '\0';
 	return new Block(data, i->second.len);
@@ -127,7 +128,7 @@ Lab::FileMapType::const_iterator Lab::findFilename(const char *filename) const {
 
 void Lab::close() {
 	if (_f)
-		std::fclose(_f);
+		delete _f;
 	_f = NULL;
 	_fileMap.clear();
 }

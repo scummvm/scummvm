@@ -34,6 +34,7 @@
 #include "mixer/mixer.h"
 
 #include "engine/lua.h"
+#include "engine/cmd_line.h"
 #include "engine/resource.h"
 #include "engine/actor.h"
 #include "engine/registry.h"
@@ -2137,14 +2138,6 @@ static void luaFileFindNext() {
 	}
 }
 
-#ifdef UNIX
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/Residual Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".residual"
-#endif
-#endif
-
 static void luaFileFindFirst() {
 	const char *path, *extension;
 	lua_Object pathObj;
@@ -2155,16 +2148,10 @@ static void luaFileFindFirst() {
 	FileFindDispose();
 
 	if (lua_isnil(pathObj)) {
-		path = "";
-#ifdef DEFAULT_SAVE_PATH
-#if defined(UNIX)
-		char tmpPath[MAXPATHLEN];
-		const char *home = getenv("HOME");
-		if (home && *home && strlen(home) < MAXPATHLEN) {
-			snprintf(tmpPath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
-			path = tmpPath;
-		}
-#endif
+		path = ConfMan.get("savepath").c_str();
+#ifdef _WIN32_WCE
+		if (path.empty())
+			path = ConfMan.get("path").c_str();
 #endif
 	} else
 		path = lua_getstring(pathObj);

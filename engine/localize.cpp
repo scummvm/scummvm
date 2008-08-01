@@ -25,18 +25,18 @@
 
 #include "common/sys.h"
 #include "common/debug.h"
+#include "common/file.h"
 
 #include "engine/localize.h"
 #include "engine/registry.h"
 #include "engine/engine.h"
 
-#include <cstdio>
 #include <cstring>
 
 Localizer *g_localizer = NULL;
 
 Localizer::Localizer() {
-	std::FILE *f;
+	Common::File f;
 	const char *namesToTry[] = { "/GRIM.TAB", "/Grim.tab", "/grim.tab" };
 
 	if (g_flags & GF_DEMO)
@@ -46,25 +46,22 @@ Localizer::Localizer() {
 		const char *datadir = g_registry->get("GrimDataDir", ".");
 		std::string fname = (datadir != NULL ? datadir : ".");
 		fname += namesToTry[i];
-		f = std::fopen(fname.c_str(), "rb");
-		if (f)
+		f.open(fname.c_str());
+		if (f.isOpen())
 			break;
 	}
-	if (!f) {
+	if (!f.isOpen()) {
 		error("Localizer::Localizer: Unable to find localization information (grim.tab)!");
 		return;
 	}
 
-	// Get the file size
-	std::fseek(f, 0, SEEK_END);
-	long filesize = std::ftell(f);
-	std::fseek(f, 0, SEEK_SET);
+	long filesize = f.size();
 
 	// Read in the data
 	char *data = new char[filesize + 1];
-	std::fread(data, 1, filesize, f);
+	f.read(data, filesize);
 	data[filesize] = '\0';
-	std::fclose(f);
+	f.close();
 
 	if (filesize < 4 || std::memcmp(data, "RCNE", 4) != 0)
 		error("Invalid magic reading grim.tab\n");
@@ -98,7 +95,7 @@ Localizer::Localizer() {
 std::string Localizer::localize(const char *str) const {
 	assert(str);
 
-	if ((str[0] != '/') || (str[0] == 0))
+	if (str[0] != '/' || str[0] == 0)
 		return str;
 
 	const char *slash2 = std::strchr(str + 1, '/');

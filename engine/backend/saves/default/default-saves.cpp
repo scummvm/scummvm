@@ -30,7 +30,7 @@
 #include "common/debug.h"
 #include "common/fs.h"
 #include "common/file.h"
-//#include "common/config-manager.h"
+#include "common/config-manager.h"
 #include "engine/backend/saves/default/default-saves.h"
 #include "engine/backend/saves/compressed/compressed-saves.h"
 
@@ -262,18 +262,10 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	}
 }
 
-#ifdef UNIX
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/Residual Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".residual"
-#endif
-#endif
-
 Common::String DefaultSaveFileManager::getSavePath() const {
 
 	Common::String dir;
-/*
+
 	// Try to use game specific savepath from config
 	dir = ConfMan.get("savepath");
 
@@ -288,17 +280,6 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 #ifdef _WIN32_WCE
 	if (dir.empty())
 		dir = ConfMan.get("path");
-#endif
-*/
-#ifdef DEFAULT_SAVE_PATH
-	char savePath[MAXPATHLEN];
-#if defined(UNIX)
-	const char *home = getenv("HOME");
-	if (home && *home && strlen(home) < MAXPATHLEN) {
-		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
-		dir = savePath;
-	}
-#endif
 #endif
 
 	return dir;
