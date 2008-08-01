@@ -460,12 +460,65 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	return true;
 }
 
+bool ThemeParser::parserCallback_child(ParserNode *node) {
+	Common::String var = "Globals." + getParentNode(node)->values["name"] + "." + node->values["name"] + ".";
+	
+	if (!parseCommonLayoutProps(node, var))
+		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+	
+	return true;
+}
+
+bool ThemeParser::parserCallback_dialog(ParserNode *node) {
+	Common::String var = "Dialog." + node->values["name"] + ".";
+	
+	if (!parseCommonLayoutProps(node, var))
+		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+		
+	return true;
+}
+
 bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String &var) {
 	if (node->values.contains("size")) {
 		int width, height;
 		
-		if (!parseIntegerKey(node->values["size"].c_str(), 2, &width, &height))
-			return false;
+		if (!parseIntegerKey(node->values["size"].c_str(), 2, &width, &height)) {
+			Common::StringTokenizer tokenizer(node->values["size"], " ,");
+			Common::String wtoken, htoken;
+			char *parseEnd;
+			
+			wtoken = tokenizer.nextToken();
+			
+			if (_theme->themeEval()->hasVar(wtoken)) {
+				width = _theme->themeEval()->getVar(wtoken);
+			} else {
+				width = strtol(wtoken.c_str(), &parseEnd, 10);
+				
+				if (*parseEnd != 0 && !(*parseEnd == '%' && *(parseEnd + 1) == 0))
+					return false;
+				
+				if (wtoken.lastChar() == '%')
+					width = g_system->getOverlayWidth() * width / 100;
+			}
+			
+			htoken = tokenizer.nextToken();
+			
+			if (_theme->themeEval()->hasVar(htoken)) {
+				height = _theme->themeEval()->getVar(htoken);
+			} else {
+				height = strtol(htoken.c_str(), &parseEnd, 10);
+				
+				if (*parseEnd != 0 && !(*parseEnd == '%' && *(parseEnd + 1) == 0))
+					return false;
+				
+				if (htoken.lastChar() == '%')
+					height = g_system->getOverlayHeight() * height / 100;
+			}
+			
+			if (!tokenizer.empty())
+				return false;
+		}
+			
 		
 		_theme->themeEval()->setVar(var + "Width", width);
 		_theme->themeEval()->setVar(var + "Height", height);
@@ -474,8 +527,54 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("pos")) {
 		int x, y;
 		
-		if (!parseIntegerKey(node->values["pos"].c_str(), 2, &x, &y))
-			return false;
+		if (!parseIntegerKey(node->values["pos"].c_str(), 2, &x, &y)) {
+			Common::StringTokenizer tokenizer(node->values["pos"], " ,");
+			Common::String xpos, ypos;
+			char *parseEnd;
+			
+			xpos = tokenizer.nextToken();
+			
+			if (xpos == "center") {
+				if (!_theme->themeEval()->hasVar(var + "Width"))
+					return false;
+					
+				x = (g_system->getOverlayWidth() / 2) - (_theme->themeEval()->getVar(var + "Width") / 2);
+				
+			} else if (_theme->themeEval()->hasVar(xpos)) {
+				x = _theme->themeEval()->getVar(xpos);
+			} else {
+				x = strtol(xpos.c_str(), &parseEnd, 10);
+				
+				if (*parseEnd != 0 && !(*parseEnd == 'r' && *(parseEnd + 1) == 0))
+					return false;
+				
+				if (xpos.lastChar() == 'r')
+					x = g_system->getOverlayWidth() - x;
+			}	
+			
+			ypos = tokenizer.nextToken();
+			
+			if (ypos == "center") {
+				if (!_theme->themeEval()->hasVar(var + "Height"))
+					return false;
+					
+				y = (g_system->getOverlayHeight() / 2) - (_theme->themeEval()->getVar(var + "Height") / 2);
+				
+			} else if (_theme->themeEval()->hasVar(ypos)) {
+				y = _theme->themeEval()->getVar(ypos);
+			} else {
+				y = strtol(ypos.c_str(), &parseEnd, 10);
+				
+				if (*parseEnd != 0 && !(*parseEnd == 'b' && *(parseEnd + 1) == 0))
+					return false;
+				
+				if (ypos.lastChar() == 'b')
+					y = g_system->getOverlayHeight() - y;
+			}
+			
+			if (!tokenizer.empty())
+				return false;
+		}
 		
 		_theme->themeEval()->setVar(var + "X", x);
 		_theme->themeEval()->setVar(var + "Y", y);

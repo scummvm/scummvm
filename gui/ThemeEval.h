@@ -62,6 +62,8 @@ public:
 	
 	void setVar(const String &name, int val) { _vars[name] = val; }
 	
+	bool hasVar(const Common::String &name) { return _vars.contains(name); }
+	
 	void debugPrint() {
 		printf("Debug variable list:\n");
 		

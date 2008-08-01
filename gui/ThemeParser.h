@@ -312,7 +312,7 @@ class ThemeRenderer;
 
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
-
+	
 public:
 	ThemeParser(GUI::ThemeRenderer *parent);
 	
@@ -460,8 +460,8 @@ protected:
 	bool parserCallback_globals(ParserNode *node) { return true; }
 	bool parserCallback_def(ParserNode *node);
 	bool parserCallback_widget(ParserNode *node);
-	bool parserCallback_dialog(ParserNode *node) { return true; }
-	bool parserCallback_child(ParserNode *node) { return true; }
+	bool parserCallback_dialog(ParserNode *node);
+	bool parserCallback_child(ParserNode *node);
 	
 	void cleanup();
 

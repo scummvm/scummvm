@@ -169,13 +169,23 @@ bool ThemeRenderer::loadDefaultXML() {
 		"<widget name = 'Console' padding = '7, 5, 5, 5' />"
 		
 		"<widget name = 'TabWidget'>"
-			"<child name = 'Tab' size = '75, 27' />"
+			"<child name = 'Tab' size = '75, 27' padding = '0, 0, 8, 0' />"
 			"<child name = 'NavButton' size = '15, 18' padding = '0, 3, 4, 0' />"
 		"</widget>"
 	"</globals>"
 	
-	"<dialog name = 'GlobalOptions'>"
-		"<widget name = 'scrollbar' />"
+	"<dialog name = 'Launcher'>"
+		"<widget name = 'Version' pos = 'center, 21' size = '247, Globals.Line.Height' />"
+		"<widget name = 'Logo' pos = 'center, 5' size = '283, 80' />"
+		"<widget name = 'GameList' pos = 'Globals.Inset.X, Globals.Inset.Y' size = 'Globals.Inset.Width, Globals.Inset.Height' />"
+		
+		"<widget name = 'StartButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
+		"<widget name = 'AddGameButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
+		"<widget name = 'EditGameButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
+		"<widget name = 'RemoveGameButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
+		"<widget name = 'OptionsButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
+		"<widget name = 'AboutButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
+		"<widget name = 'QuittButton' size = 'Globals.Button.Width, Globals.Button.Height' />"
 	"</dialog>"
 "</layout_info>";
 
