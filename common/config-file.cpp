@@ -204,8 +204,8 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 		stream.writeString(i->name);
 		stream.writeByte(']');
 #ifdef _WIN32
-		stream.writeByte(0x0d);
-		stream.writeByte(0x0a);
+		stream.writeByte('\r');
+		stream.writeByte('\n');
 #else
 		stream.writeByte('\n');
 #endif
@@ -221,8 +221,8 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 			stream.writeByte('=');
 			stream.writeString(kv->value);
 #ifdef _WIN32
-			stream.writeByte(0x0d);
-			stream.writeByte(0x0a);
+			stream.writeByte('\r');
+			stream.writeByte('\n');
 #else
 			stream.writeByte('\n');
 #endif

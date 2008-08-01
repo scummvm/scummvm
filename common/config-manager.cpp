@@ -173,7 +173,7 @@ void ConfigManager::loadFile(const String &filename) {
 			// Read a line
 			String line;
 #ifdef _WIN32
-			while (line.lastChar() != 0x0a) {
+			while (line.lastChar() != '\r' && line.lastChar() != '\n') {
 #else
 			while (line.lastChar() != '\n') {
 #endif
@@ -328,8 +328,8 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 	stream.writeString(name);
 	stream.writeByte(']');
 #ifdef _WIN32
-	stream.writeByte(0x0d);
-	stream.writeByte(0x0a);
+	stream.writeByte('\r');
+	stream.writeByte('\n');
 #else
 	stream.writeByte('\n');
 #endif
@@ -348,16 +348,16 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 			stream.writeByte('=');
 			stream.writeString(x->_value);
 #ifdef _WIN32
-			stream.writeByte(0x0d);
-			stream.writeByte(0x0a);
+			stream.writeByte('\r');
+			stream.writeByte('\n');
 #else
 			stream.writeByte('\n');
 #endif
 		}
 	}
 #ifdef _WIN32
-	stream.writeByte(0x0d);
-	stream.writeByte(0x0a);
+	stream.writeByte('\r');
+	stream.writeByte('\n');
 #else
 	stream.writeByte('\n');
 #endif
