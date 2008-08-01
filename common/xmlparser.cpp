@@ -112,7 +112,7 @@ bool XMLParser::parseActiveKey(bool closed) {
 			return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
 	}
 	
-	if (key->layout.anyProps == false && localMap.empty() == false)
+	if (key->layout->anyProps == false && localMap.empty() == false)
 		return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
 
 	// check if any of the parents must be ignored.
