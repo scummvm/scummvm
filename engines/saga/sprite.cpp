@@ -74,9 +74,11 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 Sprite::~Sprite(void) {
 	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
-	_inventorySprites.freeMem();
-	_arrowSprites.freeMem();
-	_saveReminderSprites.freeMem();
+	if (_vm->getGameType() == GType_IHNM) {
+		_inventorySprites.freeMem();
+		_arrowSprites.freeMem();
+		_saveReminderSprites.freeMem();
+	}
 	free(_decodeBuf);
 }
 
