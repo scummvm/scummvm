@@ -133,6 +133,9 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 					}
 				}
 			}
+		} else if (info.basic.param1 >= 0x6e && info.basic.param1 <= 0x78) {
+			warning("Unsupported XMIDI controller %d (0x%2x)",
+				info.basic.param1, info.basic.param1);
 		}
 		break;
 
