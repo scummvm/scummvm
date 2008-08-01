@@ -394,7 +394,9 @@ static void listGames() {
 	       "-------------------- ------------------------------------------------------\n");
 
 	printf("%-20s %s\n", "grim", "Grim Fandando");
-	//printf("%-20s %s\n"), "monkey", "Monkey Island 4");
+	printf("%-20s %s\n", "grimdemo", "Grim Fandando Demo");
+	//printf("%-20s %s\n"), "monkey", "Escape from Monkey Island");
+	//printf("%-20s %s\n"), "monkeydemo", "Escape from Monkey Island Demo");
 }
 
 bool processSettings(Common::String &command, Common::StringMap &settings) {
@@ -414,7 +416,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		if (command.compareToIgnoreCase("grim")/* || command.compareToIgnoreCase("monkey")*/) {
+		if (command.compareToIgnoreCase("grim") || command.compareToIgnoreCase("grimdemo")
+			/* || command.compareToIgnoreCase("monkey") || command.compareToIgnoreCase("monkeydemo")*/) {
 			ConfMan.setActiveDomain(command);
 		} else {
 			usage("Unrecognized game target '%s'", command.c_str());
