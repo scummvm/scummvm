@@ -30,8 +30,6 @@
 #include "engine/lab.h"
 
 #include <algorithm>
-#include <cstdlib>
-#include <cctype>
 
 bool Lab::open(const char *filename) {
 	_labFileName = filename;

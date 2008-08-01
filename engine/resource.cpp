@@ -39,14 +39,7 @@
 #include "engine/engine.h"
 #include "engine/lipsynch.h"
 
-#include <cstring>
-#include <cctype>
-#include <string>
 #include <algorithm>
-
-#ifdef _WIN32
-#include <windows.h>
-#endif
 
 static void makeLower(std::string& s) {
 	std::transform(s.begin(), s.end(), s.begin(), tolower);
