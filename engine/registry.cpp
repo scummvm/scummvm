@@ -47,29 +47,29 @@ Registry *g_registry = NULL;
 // LastSavedGame
 // good_times
 
-// fps
-// gl_zbuffer
-// soft_renderer
+// show-fps
+// gl-zbuffer
+// soft-renderer
 // fullscreen
 
 Registry::Registry() : _dirty(true) {
-	_develMode = ConfMan.get("game_devel_mode");
+	_develMode = ConfMan.get("game-devel-mode");
 	_dataPath = ConfMan.get("path");
-	_lastSet = ConfMan.get("last_set");
-	_musicVolume = ConfMan.get("music_volume");
-	_sfxVolume = ConfMan.get("sfx_volume");
-	_voiceVolume = ConfMan.get("voice_volume");
-	_lastSavedGame = ConfMan.get("last_saved_game");
+	_lastSet = ConfMan.get("last-set");
+	_musicVolume = ConfMan.get("music-volume");
+	_sfxVolume = ConfMan.get("sfx-volume");
+	_voiceVolume = ConfMan.get("voice-volume");
+	_lastSavedGame = ConfMan.get("last-saved-game");
 	_gamma = ConfMan.get("gamma");
-	_voiceEffects = ConfMan.get("voice_effects");
-	_textSpeed = ConfMan.get("text_speed");
+	_voiceEffects = ConfMan.get("voice-effects");
+	_textSpeed = ConfMan.get("text-speed");
 	_speechMode = ConfMan.get("speech_mode");
 	_movement = ConfMan.get("movement");
 	_joystick = ConfMan.get("joystick");
-	_spewOnError = ConfMan.get("spew_on_error");
-	_showFps = ConfMan.get("show_fps");
-	_softRenderer = ConfMan.get("soft_renderer");
-	_glZbuffer = ConfMan.get("gl_zbuffer");
+	_spewOnError = ConfMan.get("spew-on-error");
+	_showFps = ConfMan.get("show-fps");
+	_softRenderer = ConfMan.get("soft-renderer");
+	_glZbuffer = ConfMan.get("gl-zbuffer");
 	_fullscreen = ConfMan.get("fullscreen");
 }
 
@@ -102,11 +102,11 @@ const char *Registry::get(const char *key, const char *defval) const {
 		return _joystick.c_str();
 	} else if (strcasecmp("SpewOnError", key) == 0) {
 		return _spewOnError.c_str();
-	} else if (strcasecmp("show_fps", key) == 0) {
+	} else if (strcasecmp("show-fps", key) == 0) {
 		return _showFps.c_str();
-	} else if (strcasecmp("soft_renderer", key) == 0) {
+	} else if (strcasecmp("soft-renderer", key) == 0) {
 		return _softRenderer.c_str();
-	} else if (strcasecmp("gl_zbuffer", key) == 0) {
+	} else if (strcasecmp("gl-zbuffer", key) == 0) {
 		return _glZbuffer.c_str();
 	} else if (strcasecmp("fullscreen", key) == 0) {
 		return _fullscreen.c_str();
@@ -166,13 +166,13 @@ void Registry::set(const char *key, const char *val) {
 	} else if (strcasecmp("SpewOnError", key) == 0) {
 		_spewOnError = val;
 		return;
-	} else if (strcasecmp("show_fps", key) == 0) {
+	} else if (strcasecmp("show-fps", key) == 0) {
 		_showFps = val;
 		return;
-	} else if (strcasecmp("soft_renderer", key) == 0) {
+	} else if (strcasecmp("soft-renderer", key) == 0) {
 		_softRenderer = val;
 		return;
-	} else if (strcasecmp("gl_zbuffer", key) == 0) {
+	} else if (strcasecmp("gl-zbuffer", key) == 0) {
 		_glZbuffer = val;
 		return;
 	} else if (strcasecmp("fullscreen", key) == 0) {
