@@ -248,16 +248,15 @@ bool ThemeRenderer::loadDefaultXML() {
 	</drawdata>																 \
 																			 \
 	<drawdata id = 'popup_idle' cache = false>								 \
-		<drawstep	func = 'square'											 \
+		<drawstep	func = 'roundedsq'										 \
 					stroke = 0												 \
-					fg_color = '0, 0, 0'									 \
-					fill = 'gradient'										 \
-					gradient_start = '214, 113, 8'							 \
-					gradient_end = '240, 200, 25'							 \
-					shadow = 3												 \
+					radius = 4												 \
+					fill = 'foreground'										 \
+					fg_color = '250, 237, 190'								 \
+					shadow = 2												 \
 		/>																	 \
 		<drawstep	func = 'triangle'										 \
-					fg_color = '0, 0, 0'									 \
+					fg_color = '63, 60, 52'									 \
 					fill = 'foreground'										 \
 					width = 'height'										 \
 					height = 'auto'											 \
@@ -273,16 +272,16 @@ bool ThemeRenderer::loadDefaultXML() {
 																			 \
 																			 \
 	<drawdata id = 'popup_hover' cache = false>								 \
-		<drawstep	func = 'square'											 \
+		<drawstep	func = 'roundedsq'										 \
 					stroke = 0												 \
-					fg_color = 'black'										 \
+					radius = 4												 \
 					fill = 'gradient'										 \
-					gradient_start = '214, 113, 8'							 \
-					gradient_end = '240, 200, 25'							 \
+					gradient_start = 'blandyellow'							 \
+					gradient_end = '250, 237, 190'							 \
 					shadow = 0												 \
-		/>																	 \
+		/>																 	 \
 		<drawstep	func = 'triangle'										 \
-					fg_color = '0, 0, 0'									 \
+					fg_color = '63, 60, 52'									 \
 					fill = 'foreground'										 \
 					width = 'height'										 \
 					height = 'auto'											 \

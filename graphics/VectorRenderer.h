@@ -856,6 +856,11 @@ protected:
 	 * @see VectorRenderer::drawRoundedAlg()
 	 */
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
+	
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur) {
+		Base::drawRoundedSquareShadow(x, y, r, w, h, blur);
+		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur, Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
+	}
 };
 
 } // end of namespace Graphics
