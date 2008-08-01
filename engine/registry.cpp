@@ -185,23 +185,23 @@ void Registry::save() {
 	if (!_dirty)
 		return;
 
-	ConfMan.set("game_devel_mode", _develMode);
+	ConfMan.set("gam-devel-mode", _develMode);
 	ConfMan.set("path", _dataPath);
-	ConfMan.set("last_set", _lastSet);
-	ConfMan.set("music_volume", _musicVolume);
-	ConfMan.set("sfx_volume", _sfxVolume);
-	ConfMan.set("voice_volume", _voiceVolume);
-	ConfMan.set("last_saved_game", _lastSavedGame);
+	ConfMan.set("last-set", _lastSet);
+	ConfMan.set("music-volume", _musicVolume);
+	ConfMan.set("sfx-volume", _sfxVolume);
+	ConfMan.set("voice-volume", _voiceVolume);
+	ConfMan.set("last-saved-game", _lastSavedGame);
 	ConfMan.set("gamma", _gamma);
-	ConfMan.set("voice_effects", _voiceEffects);
-	ConfMan.set("text_speed", _textSpeed);
-	ConfMan.set("speech_mode", _speechMode);
+	ConfMan.set("voice-effects", _voiceEffects);
+	ConfMan.set("text-speed", _textSpeed);
+	ConfMan.set("speech-mode", _speechMode);
 	ConfMan.set("movement", _movement);
 	ConfMan.set("joystick", _joystick);
-	ConfMan.set("spew_on_error", _spewOnError);
-	ConfMan.set("show_fps", _showFps);
+	ConfMan.set("spew-on-error", _spewOnError);
+	ConfMan.set("show-fps", _showFps);
 	ConfMan.set("soft_renderer", _softRenderer);
-	ConfMan.set("gl_zbuffer", _glZbuffer);
+	ConfMan.set("gl-zbuffer", _glZbuffer);
 	ConfMan.set("fullscreen", _fullscreen);
 
 	ConfMan.flushToDisk();
