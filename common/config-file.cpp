@@ -98,7 +98,11 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// of a new section, or a key-value-pair, we associate the value
 			// of the 'comment' variable with that entity.
 			comment += buf;
+#ifdef _WIN32
+			comment += "\r\n";
+#else
 			comment += "\n";
+#endif
 		} else if (buf[0] == '(') {
 			// HACK: The following is a hack added by Kirben to support the
 			// "map.ini" used in the HE SCUMM game "SPY Fox in Hold the Mustard".
@@ -108,7 +112,11 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// in a nice fashion (a "isMustard" parameter is *not* a nice
 			// solution).
 			comment += buf;
+#ifdef _WIN32
+			comment += "\r\n";
+#else
 			comment += "\n";
+#endif
 		} else if (buf[0] == '[') {
 			// It's a new section which begins here.
 			char *p = buf + 1;
