@@ -119,11 +119,13 @@ protected:
 
 		kDDSliderFull,
 
-		kDDCheckboxEnabled,
+		kDDCheckboxDefault,
 		kDDCheckboxDisabled,
+		kDDCheckboxSelected,
 
 		kDDTabActive,
 		kDDTabInactive,
+		kDDTabBackground,
 
 		kDDScrollbarBase,
 		kDDScrollbarButtonIdle,
@@ -168,6 +170,8 @@ protected:
 		kTextDataHover,
 		kTextDataDisabled,
 		kTextDataInverted,
+		kTextDataButton,
+		kTextDataButtonHover,
 		kTextDataMAX
 	};
 	

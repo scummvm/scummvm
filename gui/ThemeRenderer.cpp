@@ -58,11 +58,13 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 
 	{kDDSliderFull, "slider_full", false, kDDNone},
 
-	{kDDCheckboxEnabled, "checkbox_enabled", false, kDDCheckboxDisabled},
+	{kDDCheckboxDefault, "checkbox_default", true, kDDNone},
 	{kDDCheckboxDisabled, "checkbox_disabled", true, kDDNone},
+	{kDDCheckboxSelected, "checkbox_selected", false, kDDCheckboxDefault},
 
 	{kDDTabActive, "tab_active", false, kDDTabInactive},
 	{kDDTabInactive, "tab_inactive", true, kDDNone},
+	{kDDTabBackground, "tab_background", true, kDDNone},
 
 	{kDDScrollbarBase, "scrollbar_base", true, kDDNone},
 	
@@ -83,7 +85,9 @@ const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
 	{kTextDataDefault, "text_default"},
 	{kTextDataHover, "text_hover"},
 	{kTextDataDisabled, "text_disabled"},
-	{kTextDataInverted, "text_inverted"}
+	{kTextDataInverted, "text_inverted"},
+	{kTextDataButton, "text_button"},
+	{kTextDataButtonHover, "text_button_hover"}
 };
 
 
@@ -446,7 +450,15 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 		return;
 
 	Common::Rect r2 = r;
-	DrawData dd = checked ? kDDCheckboxEnabled : kDDCheckboxDisabled;
+	DrawData dd = kDDCheckboxDefault;
+	
+	if (checked)
+		dd = kDDCheckboxSelected;
+		
+	if (state == kStateDisabled)
+		dd = kDDCheckboxDisabled;
+	
+	TextData td = (state == kStateHighlight) ? kTextDataHover : getTextData(dd);
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
 	r2.bottom = r2.top + checkBoxSize;
@@ -457,7 +469,7 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 	
-	queueDDText(getTextData(dd), r2, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(td, r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -564,12 +576,14 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 	if (!ready())
 		return;
 		
-	const int tabOffset = 1;
+	const int tabOffset = 3;
+	
+	queueDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
 	
 	for (int i = 0; i < (int)tabs.size(); ++i) {
 		if (i == active)
 			continue;
-
+	
 		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
 		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);

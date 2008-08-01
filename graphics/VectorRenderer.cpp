@@ -517,7 +517,7 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawTab(int x, int y, int r, int w, int h) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
-		w <= 0 || h <= 0 || x < 0 || y < 0 || (r << 1) > w || (r << 1) > h)
+		w <= 0 || h <= 0 || x < 0 || y < 0 || r > w || r > h)
 		return;
 	
 	switch (Base::_fillMode) {
