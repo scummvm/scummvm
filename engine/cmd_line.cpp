@@ -71,10 +71,19 @@ static const char HELP_STRING[] =
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
-	"  -F, --no-fullscreen      Force windowed mode\n"
-	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
-	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
-	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
+	"  -m, --music-volume=NUM   Set the music volume, 0-127 (default: 127)\n"
+	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
+	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
+	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Voice Only, 3-Voice and Text\n"
+	"  --text-speed=NUM         Set talk speed for games (default: 7)\n"
+	"  --transcript=BOOL        Set the turn on/off dialog logs: TRUE/FALSE\n"
+	"  --game-devel-mode=BOOL   Set the turn on/off game engine development mode: TRUE/FALSE\n"
+	"  --joystick=BOOL          Set the turn on/off joystick control: TRUE/FALSE\n"
+	"  --movement=STRING        Set the Manny walking mode: Character/Camera\n"
+	"  --gamma=FLOAT            Set the gamma correction\n"
+	"  --show-fps=BOOL          Set the turn on/off display FPS info: TRUE/FALSE\n"
+	"  --gl-zbuffer=BOOL        Set the turn on/off Z Buffer in OpenGL display\n"
+	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: TRUE/FALSE\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
@@ -83,8 +92,6 @@ static const char HELP_STRING[] =
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"\n"
-	"  --textspeed=NUM          Set talk speed for games (default: 7)\n"
 	"\n"
 ;
 #endif
@@ -109,28 +116,30 @@ static void usage(const char *s, ...) {
 
 void registerDefaults() {
 	// Sound & Music
-	ConfMan.registerDefault("music_volume", 127);
-	ConfMan.registerDefault("sfx_volume", 127);
-	ConfMan.registerDefault("speech_volume", 127);
+	ConfMan.registerDefault("music-volume", 127);
+	ConfMan.registerDefault("sfx-volume", 127);
+	ConfMan.registerDefault("speech-volume", 127);
 
 	// Game specific
 	ConfMan.registerDefault("path", ".");
 	ConfMan.registerDefault("savepath", "");
 
-	ConfMan.registerDefault("boot_param", "0");
-	ConfMan.registerDefault("text_speed", "7");
-	ConfMan.registerDefault("speech_mode", "3");
+	ConfMan.registerDefault("boot-param", "");
+	ConfMan.registerDefault("text-speed", "7");
+	ConfMan.registerDefault("speech-mode", "3");
 	ConfMan.registerDefault("transcript", "TRUE");
-	ConfMan.registerDefault("game_devel_mode", "TRUE");
+	ConfMan.registerDefault("game-devel-mode", "TRUE");
 	ConfMan.registerDefault("joystick", "TRUE");
 	ConfMan.registerDefault("movement", "Character");
+	ConfMan.registerDefault("gamma", "1.0");
 
 	// Miscellaneous
-	ConfMan.registerDefault("disable_sdl_parachute", false);
-	ConfMan.registerDefault("show_fps", "TRUE");
-	ConfMan.registerDefault("gl_zbuffer", "TRUE");
-	ConfMan.registerDefault("soft_renderer", "TRUE");
+	ConfMan.registerDefault("show-fps", "TRUE");
+	ConfMan.registerDefault("gl-zbuffer", "TRUE");
+	ConfMan.registerDefault("soft-renderer", "TRUE");
 	ConfMan.registerDefault("fullscreen", "FALSE");
+
+	ConfMan.registerDefault("disable_sdl_parachute", false);
 
 	// Register default savepath
 #ifdef DEFAULT_SAVE_PATH
