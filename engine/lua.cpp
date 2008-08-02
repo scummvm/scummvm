@@ -2061,7 +2061,7 @@ static void ImSetSequence() {
 static void SaveIMuse() {
 	DEBUG_FUNCTION();
 	SaveGame *savedIMuse = new SaveGame("grim.tmp", true);
-	if (savedIMuse)
+	if (!savedIMuse)
 		return;
 	g_imuse->saveState(savedIMuse);
 	delete savedIMuse;
@@ -2070,7 +2070,7 @@ static void SaveIMuse() {
 static void RestoreIMuse() {
 	DEBUG_FUNCTION();
 	SaveGame *savedIMuse = new SaveGame("grim.tmp", false);
-	if (savedIMuse)
+	if (!savedIMuse)
 		return;
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
