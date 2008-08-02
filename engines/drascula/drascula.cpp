@@ -987,9 +987,14 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 }
 
 void DrasculaEngine::freeTexts(char ***ptr) {
+	if (!ptr)
+		return;
+
 	for (int lang = 0; lang < _numLangs; lang++) {
-		free(ptr[lang][0] - DATAALIGNMENT);
-		free(ptr[lang]);
+		if (ptr[lang]) {
+			free(ptr[lang][0] - DATAALIGNMENT);
+			free(ptr[lang]);
+		}
 	}
 	free(ptr);
 }
