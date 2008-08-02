@@ -95,6 +95,9 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::InSave
 	if (header.version <= 8) {
 		char buffer[31];
 		in->read(buffer, 31);
+		// WORKAROUND: Old savegames could contain a missing termination 0 at the
+		// end so we manually add it.
+		buffer[30] = 0;
 		header.description = buffer;
 	} else {
 		header.description = "";

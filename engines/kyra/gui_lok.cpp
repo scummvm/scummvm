@@ -673,7 +673,7 @@ void GUI_LoK::updateSavegameString() {
 		length = strlen(_savegameName);
 
 		if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127) {
-			if (length < 31) {
+			if (length < ARRAYSIZE(_savegameName)-1) {
 				_savegameName[length] = _keyPressed.ascii;
 				_savegameName[length+1] = 0;
 				redrawTextfield();
