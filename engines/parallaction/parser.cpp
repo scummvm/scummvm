@@ -28,8 +28,10 @@
 
 namespace Parallaction {
 
+#define MAX_TOKENS	50
+
 int				_numTokens;
-char			_tokens[20][MAX_TOKEN_LEN];
+char			_tokens[MAX_TOKENS][MAX_TOKEN_LEN];
 
 Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {}
 
@@ -66,7 +68,7 @@ char *Script::readLine(char *buf, size_t bufSize) {
 
 void Script::clearTokens() {
 
-	for (uint16 i = 0; i < 20; i++)
+	for (uint16 i = 0; i < MAX_TOKENS; i++)
 		_tokens[i][0] = '\0';
 
 	_numTokens = 0;
@@ -154,7 +156,7 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ign
 uint16 Script::fillTokens(char* line) {
 
 	uint16 i = 0;
-	while (strlen(line) > 0 && i < 20) {
+	while (strlen(line) > 0 && i < MAX_TOKENS) {
 		line = parseNextToken(line, _tokens[i], MAX_TOKEN_LEN, " \t\n");
 		line = Common::ltrim(line);
 		i++;
@@ -315,10 +317,10 @@ class CommentStatementDef : public StatementDef {
 
 	Common::String parseComment(Script &script) {
 		Common::String result;
-		char buf[129];
+		char buf[401];
 
 		do {
-			script.readLine(buf, 128);
+			script.readLine(buf, 400);
 			buf[strlen(buf)-1] = '\0';
 			if (!scumm_stricmp(buf, "endtext"))
 				break;
