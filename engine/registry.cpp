@@ -63,7 +63,7 @@ Registry::Registry() : _dirty(true) {
 	_gamma = ConfMan.get("gamma");
 	_voiceEffects = ConfMan.get("voice-effects");
 	_textSpeed = ConfMan.get("text-speed");
-	_speechMode = ConfMan.get("speech_mode");
+	_speechMode = ConfMan.get("speech-mode");
 	_movement = ConfMan.get("movement");
 	_joystick = ConfMan.get("joystick");
 	_spewOnError = ConfMan.get("spew-on-error");
@@ -200,7 +200,7 @@ void Registry::save() {
 	ConfMan.set("joystick", _joystick);
 	ConfMan.set("spew-on-error", _spewOnError);
 	ConfMan.set("show-fps", _showFps);
-	ConfMan.set("soft_renderer", _softRenderer);
+	ConfMan.set("soft-renderer", _softRenderer);
 	ConfMan.set("gl-zbuffer", _glZbuffer);
 	ConfMan.set("fullscreen", _fullscreen);
 
