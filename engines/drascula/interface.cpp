@@ -128,12 +128,8 @@ void DrasculaEngine::enterName() {
 		if (key != 0) {
 			if (key >= 0 && key <= 0xFF && isalpha(key))
 				select2[v] = tolower(key);
-			else if ((key == Common::KEYCODE_LCTRL) || (key == Common::KEYCODE_RCTRL))
-				select2[v] = '\164';
-			else if (key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9)
+			else if ((key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9) || key == Common::KEYCODE_SPACE)
 				select2[v] = key;
-			else if (key == Common::KEYCODE_SPACE)
-				select2[v] = '\167';
 			else if (key == Common::KEYCODE_ESCAPE)
 				break;
 			else if (key == Common::KEYCODE_RETURN) {
