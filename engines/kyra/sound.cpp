@@ -104,6 +104,11 @@ int32 Sound::voicePlay(const char *file, bool isSfx) {
 		fileSize = 0;
 	}
 
+	if (!audioStream) {
+		warning("Couldn't load sound file '%s'", file);
+		return 0;
+	}
+
 	_soundChannels[h].file = file;
 	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
 
