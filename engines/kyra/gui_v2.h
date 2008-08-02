@@ -188,7 +188,7 @@ protected:
 	// save menu
 	bool _noSaveProcess;
 	int _saveSlot;
-	char _saveDescription[0x50];
+	char _saveDescription[0x51];
 
 	int saveMenu(Button *caller);
 	int clickSaveSlot(Button *caller);

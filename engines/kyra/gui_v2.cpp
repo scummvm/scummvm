@@ -456,6 +456,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
 			strncpy(getTableString(menu.item[i].itemId), header.description.c_str(), 80);
+			getTableString(menu.item[i].itemId)[79] = 0;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
 			delete in;
