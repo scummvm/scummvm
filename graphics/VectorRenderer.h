@@ -432,7 +432,9 @@ public:
 	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) = 0;
 	
 	virtual void applyConvolutionMatrix(const ConvolutionData id, const Common::Rect &area) {
+#ifdef ENABLE_CONVOLUTIONS
 		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
+#endif
 	}
 
 protected:

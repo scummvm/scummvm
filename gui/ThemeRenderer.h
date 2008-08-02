@@ -118,6 +118,8 @@ protected:
 		kDDButtonDisabled,
 
 		kDDSliderFull,
+		kDDSliderHover,
+		kDDSliderDisabled,
 
 		kDDCheckboxDefault,
 		kDDCheckboxDisabled,

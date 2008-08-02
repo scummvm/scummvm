@@ -471,13 +471,6 @@ protected:
 			return true;
 		}
 
-		if (_text[_pos] == '/' && _text[_pos + 1] == '/') {
-			_pos += 2;
-			while (_text[_pos] && _text[_pos] != '\n' && _text[_pos] != '\r')
-				_pos++;
-			return true;
-		}
-
 		return false;
 	}
 

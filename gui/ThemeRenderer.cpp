@@ -57,6 +57,8 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDButtonDisabled, "button_disabled", true, kDDNone},
 
 	{kDDSliderFull, "slider_full", false, kDDNone},
+	{kDDSliderHover, "slider_hover", false, kDDNone},
+	{kDDSliderDisabled, "slider_disabled", true, kDDNone},
 
 	{kDDCheckboxDefault, "checkbox_default", true, kDDNone},
 	{kDDCheckboxDisabled, "checkbox_disabled", true, kDDNone},
@@ -110,7 +112,7 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	_graphicsMode = mode;
 	setGraphicsMode(_graphicsMode);
 
-	loadConfigFile("classic");
+	loadConfigFile("modern");
 
 	if (_screen->w >= 400 && _screen->h >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
@@ -297,6 +299,22 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 	return true;
 }
 
+bool ThemeRenderer::loadDefaultXML() {
+	
+	// The default XML theme is included on runtime from a pregenerated
+	// file inside the themes directory.
+	// Use the Python script "makedeftheme.py" to convert a normal XML theme
+	// into the "default.inc" file, which is ready to be included in the code.
+	const char *defaultXML =
+#include "themes/default.inc"
+	;
+	
+	if (!parser()->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
+		return false;
+
+	return parser()->parse();
+}
+
 bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	assert(_parser);
 
@@ -475,12 +493,22 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
 	if (!ready())
 		return;
+		
+	DrawData dd = kDDSliderFull;
+	
+	if (state == kStateHighlight)
+		dd = kDDSliderHover;
+	else if (state == kStateDisabled)
+		dd = kDDSliderDisabled;
 
 	Common::Rect r2 = r;
 	r2.setWidth(MIN((int16)width, r.width()));
+	r2.top++; r2.bottom--; r2.left++; r2.right--;
 
 	drawWidgetBackground(r, 0, kWidgetBackgroundSlider, kStateEnabled);
-	queueDD(kDDSliderFull, r2);
+	
+	if (width > r.width() * 5 / 100)
+		queueDD(dd, r2);
 }
 
 void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
@@ -576,7 +604,7 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 	if (!ready())
 		return;
 		
-	const int tabOffset = 3;
+	const int tabOffset = 1;
 	
 	queueDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
 	
