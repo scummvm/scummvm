@@ -459,8 +459,6 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	balloon->obj->y = y + balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
 
-	printf("balloon (%i, %i)\n", balloon->obj->x, balloon->obj->y);
-
 	_numBalloons++;
 
 	return id;

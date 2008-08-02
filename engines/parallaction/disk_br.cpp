@@ -733,8 +733,6 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 	while ((ch = stream.readByte()) != 0) fontFile += ch;
 	stream.close();
 
-	printf("fontDir = %s, fontFile = %s\n", fontDir.c_str(), fontFile.c_str());
-
 	node = _fntDir.getChild(fontDir);
 	if (!node.exists()) {
 		errorFileNotFound(_fntDir, fontDir);
