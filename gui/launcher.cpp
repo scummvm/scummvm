@@ -450,7 +450,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getEditString());
 		if (newDomain != _domain) {
-			if (newDomain.empty() || ConfMan.hasGameDomain(newDomain)) {
+			if (newDomain.empty() || ConfMan.hasGameDomain(newDomain) || newDomain == "scummvm") {
 				MessageDialog alert("This game ID is already taken. Please choose another one.");
 				alert.runModal();
 				return;
