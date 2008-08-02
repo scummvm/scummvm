@@ -185,7 +185,7 @@ void Registry::save() {
 	if (!_dirty)
 		return;
 
-	ConfMan.set("gam-devel-mode", _develMode);
+	ConfMan.set("game-devel-mode", _develMode);
 	ConfMan.set("path", _dataPath);
 	ConfMan.set("last-set", _lastSet);
 	ConfMan.set("music-volume", _musicVolume);
