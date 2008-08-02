@@ -62,7 +62,7 @@ struct DrawStep {
 		kVectorAlignCenter
 	} xAlign, yAlign;
 
-	uint8 shadow, stroke, factor, radius; /** Misc options... */
+	uint8 shadow, stroke, factor, radius, innerShadow; /** Misc options... */
 
 	uint8 fillMode; /** active fill mode */
 	uint32 extraData; /** Generic parameter for extra options (orientation/bevel) */
@@ -329,6 +329,11 @@ public:
 		if (offset >= 0)
 			_shadowOffset = offset;
 	}
+	
+	virtual void setInnerShadowOffset(int offset) {
+		if (offset >= 0)
+			_innerShadowOffset = offset;
+	}
 
 	/**
 	 * Sets the multiplication factor of the active gradient.
@@ -445,6 +450,7 @@ protected:
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
 	int _shadowOffset; /** offset for drawn shadows */
+	int _innerShadowOffset;
 	bool _disableShadows; /** Disables temporarily shadow drawing for overlayed images. */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
 	uint32 _dynamicData; /** Dynamic data from the GUI Theme that modifies the drawing of the current shape */
@@ -677,6 +683,8 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
+		if (!ptr) return;
+			
 		if (alpha == 255) {
 			*ptr = color;
 			return;
@@ -729,6 +737,7 @@ protected:
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
+	virtual void drawRoundedSquareInnerShadow(int x, int y, int r, int w, int h, int bur);
 
 	/**
 	 * Calculates the color gradient on a given point.

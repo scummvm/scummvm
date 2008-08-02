@@ -217,18 +217,20 @@
 
 	<drawdata id = 'widget_slider' cache = false>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 8
-					fill = 'none'
-					fg_color = '0, 0, 0'
+					stroke = 0
+					radius = 4
+					fill = 'foreground'
+					fg_color = 'blandyellow'
+					inner_shadow = 1
 		/>
 	</drawdata>
 
 	<drawdata id = 'slider_full' cache = false>
 		<drawstep	func = 'roundedsq'
-					stroke = 0
+					stroke = 1
 					radius = 4
 					fill = 'gradient'
+					fg_color = '123, 112, 56'
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
 		/>
@@ -236,9 +238,10 @@
 
 	<drawdata id = 'slider_hover' cache = false>
 		<drawstep	func = 'roundedsq'
-					stroke = 0
+					stroke = 1
 					radius = 4
 					fill = 'gradient'
+					fg_color = '123, 112, 56'
 					gradient_start = 'xtrabrightred'
 					gradient_end = 'darkred'
 		/>

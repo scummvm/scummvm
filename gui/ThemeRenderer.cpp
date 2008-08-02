@@ -508,7 +508,7 @@ void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo
 
 	Common::Rect r2 = r;
 	r2.setWidth(MIN((int16)width, r.width()));
-	r2.top++; r2.bottom--; r2.left++; r2.right--;
+//	r2.top++; r2.bottom--; r2.left++; r2.right--;
 
 	drawWidgetBackground(r, 0, kWidgetBackgroundSlider, kStateEnabled);
 	

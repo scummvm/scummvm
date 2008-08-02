@@ -88,6 +88,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
 	step->shadow = 0;
+	step->innerShadow = 0;
 	step->stroke = 0;
 	step->radius = 0xFF;
 
@@ -306,6 +307,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	}
 
 	__PARSER_ASSIGN_INT(stroke, "stroke", false);
+	__PARSER_ASSIGN_INT(innerShadow, "inner_shadow", false);
 	__PARSER_ASSIGN_INT(shadow, "shadow", false);
 	__PARSER_ASSIGN_INT(factor, "gradient_factor", false);
 

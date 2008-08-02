@@ -75,6 +75,7 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
 	setShadowOffset(_disableShadows ? 0 : step.shadow);
+	setInnerShadowOffset(_disableShadows ? 0 : step.innerShadow);
 	setGradientFactor(step.factor);
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
@@ -511,6 +512,9 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		}
 		break;
 	}
+	
+	if (Base::_innerShadowOffset)
+		drawRoundedSquareInnerShadow(x, y, r, w, h, Base::_innerShadowOffset);
 }
 
 template<typename PixelType, typename PixelFormat>
@@ -1154,6 +1158,62 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 	}
 }
 
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawRoundedSquareInnerShadow(int x1, int y1, int r, int w, int h, int blur) {
+	int x, y;
+	int p = Base::surfacePitch(), px, py;
+	int sw = 0, sp = 0;
+
+	uint32 rsq = (r * r) << 16;
+	uint32 T = 0, oldT;
+	uint8 a1, a2;
+	
+	PixelType color = RGBToColor<PixelFormat>(63, 60, 17);
+
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	int short_h = h - 2 * r;
+	
+	while (sw++ < blur) {
+		colorFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
+		sp += p;
+
+		x = r - (sw - 1); y = 0; T = 0;
+		px = p * x; py = 0;
+		
+		while (x > y++) {
+			__WU_ALGORITHM();
+
+			a1 = a1 * 3 / 4;
+			a2 = a2 * 3 / 4;
+			
+			blendPixelPtr(ptr_tr + (y) - (px - p), color, a2);
+			blendPixelPtr(ptr_tr + (x - 1) - (py), color, a2);
+			blendPixelPtr(ptr_tl - (x - 1) - (py), color, a2);
+			blendPixelPtr(ptr_tl - (y) - (px - p), color, a2);
+			blendPixelPtr(ptr_bl - (y) + (px - p), color, a2);
+			blendPixelPtr(ptr_bl - (x - 1) + (py), color, a2);
+			
+			blendPixelPtr(ptr_tr + (y) - (px), color, a1);
+			blendPixelPtr(ptr_tr + (x) - (py), color, a1);
+			blendPixelPtr(ptr_tl - (x) - (py), color, a1);
+			blendPixelPtr(ptr_tl - (y) - (px), color, a1);
+			blendPixelPtr(ptr_bl - (y) + (px), color, a1);
+			blendPixelPtr(ptr_bl - (x) + (py), color, a1);
+		} 
+	}
+
+	ptr_fill += p * r;
+	while (short_h-- >= 0) {
+		colorFill(ptr_fill, ptr_fill + blur, color);
+		ptr_fill += p;
+	}
+}
+
 
 /********************************************************************
  * ANTIALIASED PRIMITIVES drawing algorithms - VectorRendererAA
@@ -1255,7 +1315,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth, color);
 			colorFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
 			ptr_fill += p;
-		}
+		} 
 	} else {
 		x = r; y = 0; T = 0;
 		px = p * x; py = 0;
