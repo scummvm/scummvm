@@ -201,10 +201,13 @@ bool getLocalMouseCoords(CGPoint *point) {
 		[screenLayer setFrame: _screenRect];
 	} else {
 		float ratio = (float)_height / (float)_width;
-		_screenRect = CGRectMake(0, 0, _fullWidth, _fullWidth * ratio);
+		int height = _fullWidth * ratio;
+		//printf("Making rect (%u, %u)\n", _fullWidth, height);
+		_screenRect = CGRectMake(0, 0, _fullWidth - 1, height - 1);
 		[screenLayer setFrame: _screenRect];
 
-		CGRect keyFrame = CGRectMake(0.0f, _screenRect.size.height, _fullWidth, _fullHeight - _screenRect.size.height);
+		//CGRect keyFrame = CGRectMake(0.0f, _screenRect.size.height, _fullWidth, _fullHeight - _screenRect.size.height);
+		CGRect keyFrame = CGRectMake(0.0f, 0.0f, 0.0f, 0.0f);
 		if (_keyboardView == nil) {
 			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
 			[_keyboardView setInputDelegate:self];
@@ -246,9 +249,6 @@ bool getLocalMouseCoords(CGPoint *point) {
 	[self lock];
 
 	id event = [_events objectAtIndex: 0];
-	if (event == nil) {
-		return nil;
-	}
 
 	[_events removeObjectAtIndex: 0];
 	[self unlock];
