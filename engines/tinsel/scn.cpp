@@ -50,7 +50,7 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 	// V1 chunk types can be found by substracting 2 from the
 	// chunk type. Note that CHUNK_STRING and CHUNK_BITMAP are
 	// the same in V1 and V2
-	if (_vm->getVersion() == TINSEL_V1 && 
+	if (_vm->getVersion() == TINSEL_V0 && 
 		chunk != CHUNK_STRING && chunk != CHUNK_BITMAP)
 		chunk -= 0x2L;
 
