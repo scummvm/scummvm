@@ -489,7 +489,8 @@ void Engine::savegameRestore() {
 		strcpy(filename, _savegameFileName);
 	}
 	_savedState = new SaveGame(filename, false);
-
+	if (!_savedState)
+		return;
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
 	g_smush->stop();
@@ -555,6 +556,8 @@ void Engine::savegameSave() {
 		strcpy(filename, _savegameFileName);
 	}
 	_savedState = new SaveGame(filename, true);
+	if (!_savedState)
+		return;
 
 	storeSaveGameImage(_savedState);
 
