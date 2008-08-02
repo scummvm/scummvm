@@ -189,7 +189,7 @@ void ThemeModern::disable() {
 	_enabled = false;
 }
 
-void ThemeModern::openDialog(bool topDialog) {
+void ThemeModern::openDialog(bool topDialog, ShadingStyle shading) {
 	if (!_dialog) {
 		_dialog = new DialogState;
 		assert(_dialog);

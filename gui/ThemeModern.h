@@ -46,7 +46,7 @@ public:
 	void enable();
 	void disable();
 
-	void openDialog(bool topDialog);
+	void openDialog(bool topDialog, ShadingStyle = kShadingNone);
 	void closeAllDialogs();
 
 	void clearAll();

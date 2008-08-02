@@ -604,7 +604,8 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 	if (!ready())
 		return;
 		
-	const int tabOffset = 1;
+	const int tabOffset = 2;
+	tabWidth -= tabOffset;
 	
 	queueDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
 	
@@ -707,9 +708,14 @@ void ThemeRenderer::renderDirtyScreen() {
 	_dirtyScreen.clear();
 }
 
-void ThemeRenderer::openDialog(bool doBuffer) {
+void ThemeRenderer::openDialog(bool doBuffer, ShadingStyle style) {
 	if (doBuffer)
 		_buffering = true;
+		
+	if (style != kShadingNone) {
+		_vectorRenderer->applyScreenShading(style);
+		addDirtyRect(Common::Rect(0, 0, _screen->w, _screen->h));
+	}
 
 	_vectorRenderer->setSurface(_backBuffer);
 	_vectorRenderer->blitSurface(_screen, Common::Rect(0, 0, _screen->w, _screen->h));

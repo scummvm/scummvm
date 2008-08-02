@@ -118,7 +118,7 @@ void ThemeClassic::disable() {
 	_enabled = false;
 }
 
-void ThemeClassic::openDialog(bool topDialog) {
+void ThemeClassic::openDialog(bool topDialog, ShadingStyle shading) {
 #ifndef CT_NO_TRANSPARENCY
 	if (!_dialog) {
 		_dialog = new DialogState;

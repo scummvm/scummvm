@@ -207,7 +207,7 @@
 
 	<drawdata id = 'tab_background' cache = false>
 		<drawstep	func = 'tab'
-					radius = '12'
+					radius = '8'
 					stroke = '0'
 					fill = 'foreground'
 					fg_color = '232, 180, 81'

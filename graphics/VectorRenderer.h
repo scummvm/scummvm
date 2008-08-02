@@ -436,6 +436,8 @@ public:
 		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
 #endif
 	}
+	
+	virtual void applyScreenShading(GUI::Theme::ShadingStyle) = 0;
 
 protected:
 	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
@@ -451,6 +453,8 @@ protected:
 	int _gradientBytes[3]; /** Color bytes of the active gradient, used to speed up calculation */
 	
 	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
+	
+	static const int _dimPercentValue = 256 * 50 / 100;
 };
 
 /**
@@ -603,6 +607,29 @@ public:
 			colorCopy(src_ptr, dst_ptr, w);
 			dst_ptr += dst_pitch;
 			src_ptr += src_pitch;
+		}
+	}
+	
+	virtual void applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
+		int pixels = _activeSurface->w * _activeSurface->h;
+		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
+		uint8 r, g, b;
+		uint lum;
+		
+		if (shadingStyle == GUI::Theme::kShadingDim) {
+			while (pixels--) {
+				colorToRGB<PixelFormat>(*ptr, r, g, b);
+				r = r * _dimPercentValue >> 8;
+				g = g * _dimPercentValue >> 8;
+				b = b * _dimPercentValue >> 8;
+				*ptr++ = RGBToColor<PixelFormat>(r, g, b);
+			}
+		} else if (shadingStyle == GUI::Theme::kShadingLuminance) {
+			while (pixels--) {
+				colorToRGB<PixelFormat>(*ptr, r, g, b);
+				lum = (r >> 2) + (g >> 1) + (b >> 3);
+				*ptr++ = RGBToColor<PixelFormat>(lum, lum, lum);
+			}
 		}
 	}
 

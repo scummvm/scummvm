@@ -242,7 +242,7 @@ public:
 	 *						  drawing this dialog, and will continue enabled
 	 *						  until disabled.
 	 */
-	void openDialog(bool enableBuffering);
+	void openDialog(bool enableBuffering, ShadingStyle shading = kShadingNone);
 	
 	/**
 	 *	The updateScreen() method is called every frame.

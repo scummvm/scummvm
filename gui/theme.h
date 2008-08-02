@@ -229,7 +229,7 @@ public:
 	 *
 	 * @see closeAllDialogs
 	 */
-	virtual void openDialog(bool topDialog) = 0;
+	virtual void openDialog(bool topDialog, ShadingStyle shading = kShadingNone) = 0;
 
 	/**
 	 * This indicates that all dialogs have been closed.
