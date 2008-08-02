@@ -154,8 +154,7 @@ extern AnimData animDataTable[NUM_MAX_ANIMDATA];
 
 void freeAnimDataTable(void);
 void freeAnimDataRange(byte startIdx, byte numIdx);
-void loadResource(const char *resourceName);
-void loadAbs(const char *resourceName, uint16 idx);
+int loadResource(const char *resourceName, int16 idx = -1);
 void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat);
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 

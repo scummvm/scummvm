@@ -636,7 +636,7 @@ int FWScript::o2_loadAbs() {
 	const char *param2 = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadABS(%d,%s)", _line, param1, param2);
-	loadAbs(param2, param1);
+	loadResource(param2, param1);
 	return 0;
 }
 
