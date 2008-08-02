@@ -762,17 +762,9 @@ int loadResource(const char *resourceName, int16 idx) {
  * at a time.
  */
 void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat) {
-	int16 currentAnim, foundFileIdx;
-	int8 isMask = 0, isSpl = 0;
-	byte *dataPtr, *ptr;
-	char *animName, part[256];
-	byte transparentColor = 0;
-	AnimHeaderStruct animHeader;
-
+	int16 currentAnim, foundFileIdx, frame;
+	char *animName, part[256], name[10];
 	uint16 width, height, bpp, var1;
-	int16  frame;
-	char name[10];
-	int type;
 
 	strcpy(part, currentPartName);
 
@@ -781,11 +773,8 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 	const int entrySize = ((saveGameFormat == ANIMSIZE_23) ? 23 : 30);
 	const int fileStartPos = fHandle.pos();
-	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim += animHeader.numFrames) {
-		// Initialize the number of frames variable to a sane number.
-		// This is needed when using continue later in this function.
-		animHeader.numFrames = 1;
-
+	currentAnim = 0;
+	while (currentAnim < NUM_MAX_ANIMDATA) {
 		// Seek to the start of the current animation's entry
 		fHandle.seek(fileStartPos + currentAnim * entrySize);
 		// Read in the current animation entry
@@ -812,6 +801,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 		// Don't try to load invalid entries.
 		if (foundFileIdx < 0 || !validPtr) {
+			currentAnim++; // Jump over the invalid entry
 			continue;
 		}
 
@@ -822,52 +812,10 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 		}
 
 		animName = partBuffer[foundFileIdx].partName;
-		ptr = dataPtr = readBundleFile(foundFileIdx);
-
-		// isSpl and isMask are mutually exclusive cases
-		isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;
-		isMask = (strstr(animName, ".MSK")) ? 1 : 0;
-
-		if (isSpl) {
-			width = (uint16) partBuffer[foundFileIdx].unpackedSize;
-			height = 1;
-			animHeader.numFrames = 1;
-			type = ANIM_RAW;
-		} else {
-			Common::MemoryReadStream readS(ptr, 0x16);
-			loadAnimHeader(animHeader, readS);
-			ptr += 0x16;
-
-			width = animHeader.frameWidth;
-			height = animHeader.frameHeight;
-
-			if (isMask) {
-				type = ANIM_MASK;
-			} else {
-				type = ANIM_MASKSPRITE;
-			}
-		}
-
-		loadRelatedPalette(animName);
-		transparentColor = getAnimTransparentColor(animName);
-		// Make sure we load at least one frame and also that we
-		// don't overflow the animDataTable by writing beyond its end.
-		animHeader.numFrames = CLIP<uint16>(animHeader.numFrames, 1, NUM_MAX_ANIMDATA - currentAnim);
-
-		// Load the frames
-		for (frame = 0; frame < animHeader.numFrames; frame++) {
-			// special case transparency handling
-			if (!strcmp(animName, "L2202.ANI")) {
-				transparentColor = (frame < 2) ? 0 : 7;
-			} else if (!strcmp(animName, "L4601.ANI")) {
-				transparentColor = (frame < 1) ? 0xE : 0;
-			}
-
-			// Load a single frame
-			animDataTable[currentAnim + frame].load(ptr + frame * width * height, type, width, height, foundFileIdx, frame, name, transparentColor);
-		}
-
-		free(dataPtr);
+		loadRelatedPalette(animName); // Is this for Future Wars only?
+		const int16 prevAnim = currentAnim;
+		currentAnim = loadResource(animName, currentAnim);
+		assert(currentAnim > prevAnim); // Make sure we advance forward
 	}
 
 	loadPart(part);
