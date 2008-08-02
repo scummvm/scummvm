@@ -264,13 +264,14 @@ protected:
 	}
 
 public:
-	uint score;
-	const char*	name;
+	uint _score;
+	const char*	_name;
 
 
-	StatementDef(uint score, const char *name) : score(score), name(name) { }
+	StatementDef(uint score, const char *name) : _score(score), _name(name) { }
+	virtual ~StatementDef() { }
 
-	virtual Common::String makeLine(Script &script) = 0;;
+	virtual Common::String makeLine(Script &script) = 0;
 
 };
 
@@ -290,12 +291,12 @@ public:
 
 class BlockStatementDef : public StatementDef {
 
-	const char*	ending1;
-	const char*	ending2;
+	const char*	_ending1;
+	const char*	_ending2;
 
 public:
-	BlockStatementDef(uint score, const char *name, const char *ending1, const char *ending2 = 0) : StatementDef(score, name), ending1(ending1),
-		ending2(ending2) { }
+	BlockStatementDef(uint score, const char *name, const char *ending1, const char *ending2 = 0) : StatementDef(score, name), _ending1(ending1),
+		_ending2(ending2) { }
 
 	Common::String makeLine(Script &script) {
 		Common::String text = makeLineFromTokens();
@@ -303,7 +304,7 @@ public:
 		do {
 			script.readLineToken(true);
 			text += makeLineFromTokens();
-			end = !scumm_stricmp(ending1, _tokens[0]) || (ending2 && !scumm_stricmp(ending2, _tokens[0]));
+			end = !scumm_stricmp(_ending1, _tokens[0]) || (_ending2 && !scumm_stricmp(_ending2, _tokens[0]));
 		} while (!end);
 		return text;
 	}
@@ -373,7 +374,7 @@ PreProcessor::~PreProcessor() {
 StatementDef* PreProcessor::findDef(const char* name) {
 	DefList::iterator it = _defs.begin();
 	for (; it != _defs.end(); it++) {
-		if (!scumm_stricmp((*it)->name, name)) {
+		if (!scumm_stricmp((*it)->_name, name)) {
 			return *it;
 		}
 	}
@@ -383,11 +384,11 @@ StatementDef* PreProcessor::findDef(const char* name) {
 
 
 uint PreProcessor::getDefScore(StatementDef* def) {
-	if (def->score == BLOCK_BASE) {
+	if (def->_score == BLOCK_BASE) {
 		_numZones++;
 		return (_numZones + BLOCK_BASE);
 	}
-	return def->score;
+	return def->_score;
 }
 
 
@@ -404,7 +405,7 @@ void PreProcessor::preprocessScript(Script &script, StatementList &list) {
 
 		text = def->makeLine(script);
 		int score = getDefScore(def);
-		list.push_back(StatementListNode(score, def->name, text));
+		list.push_back(StatementListNode(score, def->_name, text));
 	} while (true);
 	Common::sort(list.begin(), list.end());
 }
