@@ -67,7 +67,7 @@ public:
 
 protected:
 	ScummEngine *_vm;
-	byte _curId;
+	int32 _curId;
 
 public:
 	CharsetRenderer(ScummEngine *vm);
@@ -80,7 +80,7 @@ public:
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 
-	virtual void setCurID(byte id) = 0;
+	virtual void setCurID(int32 id) = 0;
 	int getCurID() { return _curId; }
 
 	virtual int getFontHeight() = 0;
@@ -113,7 +113,7 @@ protected:
 public:
 	CharsetRendererCommon(ScummEngine *vm);
 
-	void setCurID(byte id);
+	void setCurID(int32 id);
 
 	int getFontHeight();
 };
@@ -142,7 +142,7 @@ protected:
 public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
-	void setCurID(byte id) {}
+	void setCurID(int32 id) {}
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
@@ -159,7 +159,7 @@ public:
 
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
-	void setCurID(byte id);
+	void setCurID(int32 id);
 	void setColor(byte color);
 	int getCharWidth(byte chr);
 };
@@ -168,7 +168,7 @@ class CharsetRendererV2 : public CharsetRendererV3 {
 public:
 	CharsetRendererV2(ScummEngine *vm, Common::Language language);
 
-	void setCurID(byte id) {}
+	void setCurID(int32 id) {}
 	int getCharWidth(byte chr) { return 8; }
 };
 
@@ -184,7 +184,7 @@ public:
 
 	void printChar(int chr, bool ignoreCharsetMask);
 
-	void setCurID(byte id);
+	void setCurID(int32 id);
 
 	int getFontHeight();
 	int getCharHeight(byte chr);
