@@ -90,6 +90,8 @@ static void upgradeTargetIfNecessary(const Common::ADParams &params) {
 
 			warning("Target upgraded from %s to %s", o->from, o->to);
 
+			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching
+			// undefined target adds launcher entry"
 			if (ConfMan.hasKey("id_came_from_command_line")) {
 				warning("Target came from command line. Skipping save");
 			} else {
