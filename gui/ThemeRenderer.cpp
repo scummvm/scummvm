@@ -362,7 +362,12 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 			if (kDrawDataDefaults[type].parent != kDDNone && kDrawDataDefaults[type].parent != type)
 				queueDD(kDrawDataDefaults[type].parent, r);
 
-			_screenQueue.push_back(q);
+			// HACK: text selection backgrounds must be drawn before other widgets, because
+			// they are implemented poorly and they overlap.
+			if (type == kDDTextSelectionBackground)
+				_screenQueue.push_front(q);
+			else
+				_screenQueue.push_back(q);
 		}
 	} else {
 		drawDD(q, !_widgets[type]->_buffer, _widgets[type]->_buffer);
