@@ -324,6 +324,12 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 	if (domain.empty())
 		return;		// Don't bother writing empty domains.
 
+	// WORKAROUND: Fix for bug #1972625 "ALL: On-the-fly targets are
+	// written to the config file": Do not save domains that came from
+	// the command line
+	if (domain.contains("id_came_from_command_line"))
+		return;
+
 	String comment;
 
 	// Write domain comment (if any)
