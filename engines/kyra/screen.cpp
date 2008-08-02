@@ -413,7 +413,9 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
 	debugC(9, kDebugLevelScreen, "Screen::getFadeParams(%p, %d, %p, %p)", (const void *)palette, delay, (const void *)&delayInc, (const void *)&diff);
 	uint8 maxDiff = 0;
-	for (int i = 0; i < 768; ++i) {
+
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
+	for (int i = 0; i < colors; ++i) {
 		diff = ABS(palette[i] - _screenPalette[i]);
 		maxDiff = MAX<uint8>(maxDiff, diff);
 	}
@@ -438,7 +440,8 @@ int Screen::fadePalStep(const uint8 *palette, int diff) {
 	memcpy(fadePal, _screenPalette, 768);
 	
 	bool needRefresh = false;
-	for (int i = 0; i < 768; ++i) {
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
+	for (int i = 0; i < colors; ++i) {
 		int c1 = palette[i];
 		int c2 = fadePal[i];
 		if (c1 != c2) {
@@ -476,7 +479,7 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 
-	int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 	if (palData != _screenPalette)
 		memcpy(_screenPalette, palData, colors*3);
 

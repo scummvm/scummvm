@@ -1068,7 +1068,8 @@ void KyraEngine_LoK::initStaticResource() {
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
 		_soundData = soundData_TOWNS/*soundData_PC98*/;
-
+	else
+		_soundData = 0;
 }
 
 void KyraEngine_LoK::loadMouseShapes() {
