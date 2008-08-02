@@ -188,7 +188,6 @@ static void io_writeto() {
 static void io_appendto() {
 	const char *s = luaL_check_string(FIRSTARG);
 	Common::File file;
-	Common::File *current = new Common::File();
 	Common::String dir = ConfMan.get("savepath");
 #ifdef _WIN32_WCE
 	if (dir.empty())
