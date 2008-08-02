@@ -17,6 +17,7 @@
 #include "engine/lua/ltable.h"
 #include "engine/lua/ltask.h"
 #include "engine/lua/ltm.h"
+#include "engine/lua/lualib.h"
 
 lua_State *lua_state = NULL;
 
@@ -93,6 +94,7 @@ void lua_close() {
 	luaM_free(L->Mbuffer);
 	luaM_free(L);
 	L = NULL;
+	lua_iolibclose();
 #ifdef LUA_DEBUG
 	printf("total de blocos: %ld\n", numblocks);
 	printf("total de memoria: %ld\n", totalmem);

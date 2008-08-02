@@ -13,6 +13,7 @@
 void lua_iolibopen();
 void lua_strlibopen();
 void lua_mathlibopen();
+void lua_iolibclose();
 
 // To keep compatibility with old versions
 

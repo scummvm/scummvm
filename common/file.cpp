@@ -146,9 +146,20 @@ static StringIntMap *_defaultDirectories;
 static StringMap *_filesMap;
 
 static FILE *fopenNoCase(const String &filename, const String &directory, const char *mode) {
-	FILE *file;
+	FILE *file = NULL;
 	String dirBuf(directory);
 	String fileBuf(filename);
+
+	if (fileBuf == "(stdin)") {
+		return stdin;
+	} else if (fileBuf == "(stdout)") {
+		return stdout;
+	} else if (fileBuf == "(stderr)") {
+		return stderr;
+	}
+	if (file)
+		return file;
+
 
 #if !defined(__GP32__) && !defined(PALMOS_MODE)
 	// Add a trailing slash, if necessary.
@@ -443,7 +454,7 @@ bool File::exists(const String &filename) {
 }
 
 void File::close() {
-	if (_handle)
+	if (_handle && !(_handle == stdin || _handle == stdout || _handle == stderr))
 		fclose((FILE *)_handle);
 	_handle = NULL;
 }
