@@ -245,6 +245,8 @@ void BalloonManager_ns::freeBalloons() {
 	_numBalloons = 0;
 }
 
+// TODO: get rid of parseNextToken from here. Use the
+// StringTokenizer instead.
 void BalloonManager_ns::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
 
 	uint16 lines = 0;
@@ -302,6 +304,8 @@ void BalloonManager_ns::drawWrappedText(Font *font, Graphics::Surface* surf, cha
 
 }
 
+// TODO: get rid of parseNextToken from here. Use the
+// StringTokenizer instead.
 void BalloonManager_ns::getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height) {
 
 	uint16 lines = 0;
