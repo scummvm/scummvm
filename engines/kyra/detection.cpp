@@ -65,7 +65,7 @@ namespace {
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
-	{
+	/*{
 		{
 			"kyra1",
 			0,
@@ -86,7 +86,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
-	},
+	},*/
 	{
 		{
 			"kyra1",
@@ -176,7 +176,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{
+	/*{
 		{
 			"kyra1",
 			0,
@@ -186,7 +186,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		KYRA1_AMIGA_FLAGS
-	},
+	},*/
 
 	{
 		{
@@ -454,11 +454,11 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_DEMO_FLAGS
 	},
 
-	{ // Non-Interactive Demo
+	{ // Non-Interactive Demos
 		{
 			"kyra2",
 			"Demo",
-			AD_ENTRY1("GENERAL.PAK", "35825783e5b60755fd520360079f9c15"),
+			AD_ENTRY1("VOC.PAK", "ecb3561b63749158172bf21528cf5f45"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
