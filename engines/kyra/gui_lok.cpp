@@ -530,7 +530,7 @@ int GUI_LoK::resumeGame(Button *button) {
 
 void GUI_LoK::setupSavegames(Menu &menu, int num) {
 	Common::InSaveFile *in;
-	static char savenames[5][31];
+	static char savenames[5][35];
 	uint8 startSlot;
 	assert(num <= 5);
 
@@ -549,7 +549,8 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 	KyraEngine_v1::SaveHeader header;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); i++) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
-			strncpy(savenames[i], header.description.c_str(), 31);
+			strncpy(savenames[i], header.description.c_str(), ARRAYSIZE(savenames[0]));
+			savenames[i][34] = 0;
 			menu.item[i].itemString = savenames[i];
 			menu.item[i].enabled = 1;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];

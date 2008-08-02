@@ -162,7 +162,7 @@ private:
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;
 	int _savegameOffset;
-	char _savegameName[40];
+	char _savegameName[35];
 	const char *_specialSavegameString;
 	Common::KeyState _keyPressed;
 	int8 _mouseWheel;
