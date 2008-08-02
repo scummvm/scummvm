@@ -45,7 +45,7 @@ DECLARE_SINGLETON(Common::ConfigManager);
 
 #if defined(UNIX)
 #ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/Resdial Preferences"
+#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
 #else
 #define DEFAULT_CONFIG_FILE ".residualrc"
 #endif
