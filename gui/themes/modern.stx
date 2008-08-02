@@ -358,9 +358,10 @@
 		/>
 		<drawstep	func = 'roundedsq'
 					fill = 'none'
-					radius = 8
+					radius = 4
 					fg_color = 'black'
 					shadow = 0
+					inner_shadow = 1
 		/>
 	</drawdata>
 
@@ -369,15 +370,15 @@
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
-		<drawstep	func = 'square'
+		<drawstep	func = 'roundedsq'
 					fill = 'gradient'
-					gradient_start = '206, 121, 99'
-					gradient_end = '173, 40, 8'
+					radius = 4
+					fg_color = 'white'
+					gradient_start = 'brightred'
+					gradient_end = 'darkred'
 					shadow = 0
-		/>
-		<drawstep	func = 'circle'
-					radius = '4'
-					fill = 'foreground'
+					stroke = 1
+					inner_shadow = 1
 		/>
 	</drawdata>
 
@@ -386,11 +387,12 @@
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
-		<drawstep	func = 'square'
-					fill = 'gradient'
-					gradient_start = '206, 121, 99'
-					gradient_end = '173, 40, 8'
+		<drawstep	func = 'roundedsq'
+					fill = 'foreground'
+					radius = 4
+					fg_color = 'blandyellow'
 					shadow = 0
+					inner_shadow = 1
 		/>
 	</drawdata>
 
