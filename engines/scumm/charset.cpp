@@ -49,7 +49,7 @@ void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
-	_newLineCharacter = 0xfe;
+	_newLineCharacter = 0;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
