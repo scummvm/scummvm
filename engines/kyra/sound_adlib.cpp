@@ -2225,7 +2225,7 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	assert(_driver);
 
 	_sfxPlayingSound = -1;
-	_soundFileLoaded = (uint)-1;
+	_soundFileLoaded.clear();
 
 	if (_v2) {
 		// TODO: Figure out if Kyra 2 uses sound triggers at all.
@@ -2269,7 +2269,7 @@ void SoundAdlibPC::playTrack(uint8 track) {
 		// sync for each loop. To avoid that, we declare that all four
 		// of the song channels have to jump "in sync".
 
-		if (track == 4 && scumm_stricmp(fileListEntry(_soundFileLoaded), "KYRA1B") == 0)
+		if (track == 4 && _soundFileLoaded.equalsIgnoreCase("KYRA1B.ADL"))
 			_driver->setSyncJumpMask(0x000F);
 		else
 			_driver->setSyncJumpMask(0);
@@ -2348,6 +2348,15 @@ void SoundAdlibPC::beginFadeOut() {
 }
 
 void SoundAdlibPC::loadSoundFile(uint file) {
+	internalLoadFile(fileListEntry(file));
+}
+
+void SoundAdlibPC::loadSoundFile(Common::String file) {
+	internalLoadFile(file);
+}
+
+void SoundAdlibPC::internalLoadFile(Common::String file) {
+	file += ".ADL";
 	if (_soundFileLoaded == file)
 		return;
 
@@ -2356,12 +2365,9 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 
 	uint8 *file_data = 0; uint32 file_size = 0;
 
-	char filename[25];
-	sprintf(filename, "%s.ADL", fileListEntry(file));
-
-	file_data = _vm->resource()->fileData(filename, &file_size);
+	file_data = _vm->resource()->fileData(file.c_str(), &file_size);
 	if (!file_data) {
-		warning("Couldn't find music file: '%s'", filename);
+		warning("Couldn't find music file: '%s'", file.c_str());
 		return;
 	}
 

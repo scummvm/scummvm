@@ -328,7 +328,17 @@ struct DeleterArray {
 void SoundMidiPC::loadSoundFile(uint file) {
 	Common::StackLock lock(_mutex);
 
-	Common::String filename = fileListEntry(file);
+	internalLoadFile(fileListEntry(file));
+}
+
+void SoundMidiPC::loadSoundFile(Common::String file) {
+	Common::StackLock lock(_mutex);
+
+	internalLoadFile(file);
+}
+
+void SoundMidiPC::internalLoadFile(Common::String file) {
+	Common::String filename = file;
 	filename += ".";
 	filename += _useC55 ? "C55" : "XMI";
 

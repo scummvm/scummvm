@@ -559,15 +559,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 
 int TIMInterpreter::cmd_loadSoundFile(const uint16 *param) {
 	const char *file = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[0]<<1)));
-	
-	static char * fileList[] = { 0 };
-	fileList[0] = _audioFilename;
-	static AudioDataStruct audioList = { fileList, 1, 0, 0 };
-
-	strncpy(_audioFilename, file, sizeof(_audioFilename));
-
-	_vm->sound()->setSoundList(&audioList);
-	_vm->sound()->loadSoundFile(0);
+	_vm->sound()->loadSoundFile(file);
 	return 1;
 }
 
