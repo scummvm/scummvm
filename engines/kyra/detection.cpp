@@ -66,6 +66,9 @@ namespace {
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_LOL)
+#define LOL_PC98_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_LOL)
+#define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
 	{
@@ -210,7 +213,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // FM-Towns version
 		{
 			"kyra1",
-			0,
+			"CD",
 			{
 				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
 				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
@@ -218,14 +221,14 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA1_TOWNS_FLAGS
 	},
 	{
 		{
 			"kyra1",
-			0,
+			"CD",
 			{
 				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
 				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
@@ -233,7 +236,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
@@ -472,44 +475,44 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // FM-Towns
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_FLAGS
 	},
 	{
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
 	{ // PC-9821
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::EN_ANY,
 			Common::kPlatformPC98,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_FLAGS
 	},
 	{
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::JA_JPN,
 			Common::kPlatformPC98,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
@@ -752,7 +755,102 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
 	
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+	
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+	
+	/*{
+		{
+			"lol",
+			0,
+			{
+				{ "GENERAL.PAK", 0, "3fe6539b9b09084c0984eaf7170464e9", -1 },
+				{ "MUS.PAK", 0, "008dc69d8cbcdb6bae30e270fab26e76", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_PC98_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "GENERAL.PAK", 0, "3fe6539b9b09084c0984eaf7170464e9", -1 },
+				{ "MUS.PAK", 0, "008dc69d8cbcdb6bae30e270fab26e76", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_PC98_SJIS_FLAGS
+	},*/
+
+	{
+		{
+			"lol",
+			"Demo",
+			{
+				{ "GENERAL.PAK", 0, "e94863d86c4597a2d581d05481c152ba", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_DEMO_FLAGS
+	},
+
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
 };
 

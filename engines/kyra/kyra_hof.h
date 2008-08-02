@@ -97,6 +97,20 @@ enum kNestedSequencesDemo {
 	kSequenceDemoDig
 };
 
+enum kSequencesLolDemo {
+	kSequenceLolDemoScene1 = 0,
+	kSequenceLolDemoText1,
+	kSequenceLolDemoScene2,
+	kSequenceLolDemoText2,
+	kSequenceLolDemoScene3,
+	kSequenceLolDemoText3,
+	kSequenceLolDemoScene4,
+	kSequenceLolDemoText4,
+	kSequenceLolDemoScene5,
+	kSequenceLolDemoText5,
+	kSequenceLolDemoScene6
+};
+
 class WSAMovie_v2;
 class KyraEngine_HoF;
 class TextDisplayer_HoF;
@@ -242,6 +256,14 @@ protected:
 	int seq_demoBail(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 	int seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
+	int seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_lolDemoScene2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_lolDemoScene3(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_lolDemoScene4(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_lolDemoScene5(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_lolDemoText5(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+	int seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+
 	void seq_sequenceCommand(int command);
 	void seq_loadNestedSequence(int wsaNum, int seqNum);
 	void seq_nestedSequenceFrame(int command, int wsaNum);
@@ -264,7 +286,7 @@ protected:
 		WSAMovie_v2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
 	void seq_finaleActorScreen();
 	void seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
-	void seq_scrollPage();
+	void seq_scrollPage(int bottom, int top);
 	void seq_showStarcraftLogo();
 
 	void seq_init();

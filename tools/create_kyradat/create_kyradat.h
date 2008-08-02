@@ -174,6 +174,8 @@ enum kExtractID {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
+	lSeqplayIntroTracks,
+
 	kMaxResIDs
 };
 
@@ -212,10 +214,10 @@ enum kSpecial {
 	k2FloppyFile2 = 16,
 
 	k2DemoVersion = 17,
-
 	k2DemoVersionTlkE = 18,
 	k2DemoVersionTlkF = 19,
-	k2DemoVersionTlkG = 20
+	k2DemoVersionTlkG = 20,
+	k2DemoLol = 21
 };
 
 struct SpecialExtension {
@@ -225,8 +227,9 @@ struct SpecialExtension {
 
 enum kGame {
 	kKyra1 = 0,
-	kKyra2,
-	kKyra3
+	kKyra2 = 1,
+	kKyra3 = 2,
+	kLol = 4
 };
 
 struct Game {

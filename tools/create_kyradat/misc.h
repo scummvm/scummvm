@@ -472,6 +472,15 @@ const int kyra3Need[] = {
 	-1
 };
 
+const int lolDemoNeed[] = {
+	k2SeqplayPakFiles,
+	k2SeqplayStrings,
+	k2SeqplaySeqData,
+	k2SeqplaySfxFiles,
+	lSeqplayIntroTracks,
+	-1
+};
+
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, -1, kyra1FloppyNeed },
 	{ kKyra1, kTalkieVersion, kyra1CDNeed },
@@ -496,6 +505,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2DemoVersionTlkE, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkF, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkG, kyra2TlkDemoNeed},
+	{ kLol, k2DemoLol, lolDemoNeed},
 
 	{ kKyra3, -1, kyra3Need },
 
@@ -520,6 +530,7 @@ const SpecialExtension specialTable[] = {
 	{ k2TownsFile2E, "TNS" },
 	{ k2TownsFile2J, "TNS" },
 	{ k2DemoVersion, "DEM" },
+	{ k2DemoLol, "DEM" },	
 
 	{ -1, 0 }
 };

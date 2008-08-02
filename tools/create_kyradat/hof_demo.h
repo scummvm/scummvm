@@ -26,7 +26,8 @@ const Game kyra2Demos[] = {
 	{ kKyra2, EN_ANY, k2DemoVersion, "a620a37579dd44ab0403482285e3897f", kyra2Demo},
 	{ kKyra2, EN_ANY, k2CDFile2E, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDE},
 	{ kKyra2, FR_FRA, k2CDFile2F, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDF},
-	{ kKyra2, DE_DEU, k2CDFile2G, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDG},
-	
+	{ kKyra2, DE_DEU, k2CDFile2G, "fa54d8abfe05f9186c05f7de7eaf1480", kyra2DemoCDG},	
 	GAME_DUMMY_ENTRY
 };
+
+
