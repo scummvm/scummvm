@@ -1,3 +1,9 @@
+#include "engine/savegame.h"
+#include "engine/engine.h"
+
+#include "common/endian.h"
+#include "common/debug.h"
+
 #include "engine/lua/ltask.h"
 #include "engine/lua/lauxlib.h"
 #include "engine/lua/lmem.h"
@@ -8,9 +14,6 @@
 #include "engine/lua/lopcodes.h"
 #include "engine/lua/lstring.h"
 #include "engine/lua/lua.h"
-
-#include "common/endian.h"
-#include "common/debug.h"
 
 PointerId makeIdFromPointer(void *ptr) {
 	PointerId pointer;
@@ -218,6 +221,8 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	// save maximum length for string
 	saveSint32(maxStringLength);
 
+	//printf("1: %d\n", g_engine->_savedState->getBufferPos());
+
 	// save hash tables for strings and user data
 	TaggedString *tempString;
 	for (i = 0; i < NUM_HASHS; i++) {
@@ -234,16 +239,18 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 					saveStream(tempString->str, tempString->u.s.len);
 				} else {
 					if (saveCallbackPtr) {
-						PointerId ptr = makeIdFromPointer(tempString->u.s.globalval.value.ts);
-						ptr = saveCallbackPtr(tempString->u.s.globalval.ttype, ptr, saveSint32);
-						tempString->u.s.globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
+						PointerId ptr = makeIdFromPointer(tempString->u.d.v);
+						ptr = saveCallbackPtr(tempString->u.d.tag, ptr, saveSint32);
+						tempString->u.d.v = makePointerFromId(ptr);
 					}
-					saveObjectValue(&tempString->u.s.globalval, saveSint32, saveUint32);
+					saveObjectValue((TObject *)&tempString->u.d, saveSint32, saveUint32);
 				}
 			}
 		}
 	}
-	
+
+	//printf("2: %d\n", g_engine->_savedState->getBufferPos());
+
 	Closure *tempClosure = (Closure *)L->rootcl.next;
 	while (tempClosure) {
 		saveUint32(makeIdFromPointer(tempClosure).low);

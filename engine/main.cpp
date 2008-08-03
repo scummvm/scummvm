@@ -166,6 +166,7 @@ void quit() {
 	if (g_lua_initialized) {
 		lua_removelibslists();
 		lua_close();
+		lua_iolibclose();
 		g_lua_initialized = false;
 	}
 	if (g_registry) {

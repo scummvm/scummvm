@@ -94,7 +94,6 @@ void lua_close() {
 	luaM_free(L->Mbuffer);
 	luaM_free(L);
 	L = NULL;
-	lua_iolibclose();
 #ifdef LUA_DEBUG
 	printf("total de blocos: %ld\n", numblocks);
 	printf("total de memoria: %ld\n", totalmem);

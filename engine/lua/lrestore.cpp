@@ -1,3 +1,9 @@
+#include "common/endian.h"
+#include "common/debug.h"
+
+#include "engine/engine.h"
+#include "engine/savegame.h"
+
 #include "engine/lua/ltask.h"
 #include "engine/lua/lauxlib.h"
 #include "engine/lua/lmem.h"
@@ -8,9 +14,6 @@
 #include "engine/lua/lopcodes.h"
 #include "engine/lua/lstring.h"
 #include "engine/lua/lua.h"
-
-#include "common/endian.h"
-#include "common/debug.h"
 
 RestoreCallback restoreCallbackPtr = NULL;
 
@@ -251,32 +254,35 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	maxStringsLength = restoreSint32();
 	char *tempStringBuffer = (char *)luaM_malloc(maxStringsLength);
 
+	//printf("1: %d\n", g_engine->_savedState->getBufferPos());
+
 	int32 i;
 	for (i = 0; i < arrayStringsCount; i++) {
 		arraysObj->idObj.low = restoreSint32();
 		arraysObj->idObj.hi = restoreSint32();
 		int32 constIndex = restoreSint32();
-		lua_Type tag = (lua_Type)restoreSint32();
-		PointerId ptr;
-		ptr.low = restoreUint32();
-		ptr.hi = restoreUint32();
 
 		TaggedString *tempString;
 		if (constIndex != -1) {
+			TObject obj;
+			restoreObjectValue(&obj, restoreSint32, restoreUint32);
 			int32 length = restoreSint32();
 			restoreStream(tempStringBuffer, length);
 			tempString = luaS_newlstr(tempStringBuffer, length);
-			tempString->u.s.globalval.ttype = tag;
-			tempString->u.s.globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
+			tempString->u.s.globalval = obj;
 		} else {
+			PointerId ptr;
+			lua_Type tag = (lua_Type)restoreSint32();
+			ptr.low = restoreUint32();
+			ptr.hi = restoreUint32();
 			if (tag == 0)
 				tempString = luaS_createudata((void *)makePointerFromId(ptr), LUA_ANYTAG);
 			else
 				tempString = luaS_createudata((void *)makePointerFromId(ptr), tag);
 			if (restoreCallbackPtr) {
-				PointerId ptr = makeIdFromPointer(tempString->u.s.globalval.value.ts);
-				ptr = restoreCallbackPtr(tempString->u.s.globalval.ttype, ptr, restoreSint32);
-				tempString->u.s.globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
+				PointerId ptr = makeIdFromPointer(tempString->u.d.v);
+				ptr = restoreCallbackPtr(tempString->u.d.tag, ptr, restoreSint32);
+				tempString->u.d.v = makePointerFromId(ptr);
 			}
 		}
 		tempString->constindex = constIndex;
@@ -284,6 +290,8 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		arraysObj++;
 	}
 	luaM_free(tempStringBuffer);
+
+	//printf("2: %d\n", g_engine->_savedState->getBufferPos());
 
 	int32 l;
 	Closure *tempClosure;
