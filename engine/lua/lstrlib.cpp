@@ -279,7 +279,7 @@ init:
 			case '-':
 				{  // repetition
 					const char *res;
-					if (res = match(s, ep + 1, cap))
+					if ((res = match(s, ep + 1, cap)))
 						return res;
 					else if (s1 && s1 > s) {
 						s = s1;

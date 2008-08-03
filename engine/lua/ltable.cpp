@@ -18,7 +18,7 @@
 #define TagDefault		LUA_T_ARRAY;
 
 #ifdef TARGET_64BITS
-static int64 int hashindex(TObject *ref) {
+static int64 hashindex(TObject *ref) {
 	int64 h;
 
 	switch (ttype(ref)) {
