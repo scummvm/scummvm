@@ -89,6 +89,8 @@ private:
 	uint8 *_sampleRates, *_sfxInfo;
 	uint8 _mainSfxVolume;
 
+	bool _isPaused;
+
 	static uint16 _speechConvertTable[8];
 	static SfxQueue _sfxQueue[MAX_QUEUED_FX];
 };
