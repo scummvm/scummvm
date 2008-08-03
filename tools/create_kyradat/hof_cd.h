@@ -60,4 +60,3 @@ const Game kyra2TalkieGames[] = {
 	GAME_DUMMY_ENTRY
 };
 
-/// debug\kyra_Towns debug\kyra_amiga_en debug\kyra_dos_CD_en debug\kyra_dos_CD_de debug\kyra_dos_CD_fr debug\kyra_dos_CD_ita debug\kyra_dos_Floppy_En debug\kyra_dos_Floppy_dE debug\kyra_dos_Floppy_fr debug\kyra_dos_floppy_ita debug\kyra_dos_Floppy_spa debug\kyra_dos_demo debug\hof_dos_floppy_De_1 debug\hof_dos_floppy_De_2 debug\hof_dos_floppy_En_1 debug\hof_dos_floppy_En_2 debug\hof_dos_floppy_Fr_1 debug\hof_dos_floppy_Fr_2 debug\hof_dos_CD_1 debug\hof_dos_CD_2 debug\hof_towns_1 debug\hof_towns_2 debug\hof_dos_demo debug\lol_dos_demo debug\hof_dos_CD_demo debug\mr_dos_cd 
