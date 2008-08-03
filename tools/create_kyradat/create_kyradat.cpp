@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 30,
+	kKyraDatVersion = 31,
 	kIndexSize = 12
 };
 
@@ -1070,7 +1070,7 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->game == kKyra3)
+	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->game == kKyra3)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion || g->special == k2DemoVersion || g->special == k2DemoLol)
 		features |= GF_DEMO;

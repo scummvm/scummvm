@@ -363,6 +363,7 @@ const int kyra2CDFile1EngNeed[] = {
 	k2SeqplayCreditsSpecial,
 	k2SeqplayStrings,
 	k2SeqplaySfxFiles,
+	k2SeqplayTlkFiles,
 	k2SeqplaySeqData,
 	k2SeqplayIntroTracks,
 	k2SeqplayFinaleTracks,
@@ -371,11 +372,19 @@ const int kyra2CDFile1EngNeed[] = {
 
 const int kyra2CDFile1FreNeed[] = {
 	k2SeqplayStrings,
+	k2SeqplayTlkFiles,
 	-1
 };
 
 const int kyra2CDFile1GerNeed[] = {
 	k2SeqplayStrings,
+	k2SeqplayTlkFiles,
+	-1
+};
+
+const int kyra2CDFile1ItaNeed[] = {
+	k2SeqplayStrings,
+	k2SeqplayTlkFiles,
 	-1
 };
 
@@ -494,7 +503,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2CDFile1E, kyra2CDFile1EngNeed },
 	{ kKyra2, k2CDFile1F, kyra2CDFile1FreNeed },
 	{ kKyra2, k2CDFile1G, kyra2CDFile1GerNeed },
-	{ kKyra2, k2CDFile1I, kyra2CDFile1EngNeed }, // Italian fan translation
+	{ kKyra2, k2CDFile1I, kyra2CDFile1ItaNeed }, // Italian fan translation
 	{ kKyra2, k2CDFile2E, kyra2CDFile2EngNeed },
 	{ kKyra2, k2CDFile2F, kyra2CDFile2FreNeed },
 	{ kKyra2, k2CDFile2G, kyra2CDFile2GerNeed },
