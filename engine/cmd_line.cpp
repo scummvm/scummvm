@@ -289,34 +289,34 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_OPTION_BOOL('f', "fullscreen")
 			END_OPTION
 
-			DO_OPTION_INT('m', "music_volume")
+			DO_OPTION_INT('m', "music-volume")
 			END_OPTION
 
-			DO_OPTION('s', "sfx_volume")
+			DO_OPTION('s', "sfx-volume")
 			END_OPTION
 
-			DO_OPTION('r', "speech_volume")
+			DO_OPTION('r', "speech-volume")
 			END_OPTION
 
 			DO_LONG_OPTION("transcript")
 			END_OPTION
 
-			DO_LONG_OPTION("game_devel_mode")
+			DO_LONG_OPTION("game-devel-mode")
 			END_OPTION
 
 			DO_LONG_OPTION("joystick")
 			END_OPTION
 
-			DO_LONG_OPTION("show_fps")
+			DO_LONG_OPTION("show-fps")
 			END_OPTION
 
-			DO_LONG_OPTION("gl_zbuffer")
+			DO_LONG_OPTION("gl-zbuffer")
 			END_OPTION
 
-			DO_LONG_OPTION("soft_renderer")
+			DO_LONG_OPTION("soft-renderer")
 			END_OPTION
 
-			DO_LONG_OPTION("manny_state")
+			DO_LONG_OPTION("manny-state")
 			END_OPTION
 
 			DO_LONG_OPTION("movement")
@@ -355,10 +355,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 				}
 			END_OPTION
 
-			DO_LONG_OPTION("text_speed")
+			DO_LONG_OPTION("text-speed")
 			END_OPTION
 
-			DO_LONG_OPTION("speech_mode")
+			DO_LONG_OPTION("speech-mode")
 			END_OPTION
 
 			DO_LONG_OPTION("record-mode")
