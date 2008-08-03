@@ -123,20 +123,14 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 				saveSint32(0);
 			}
 			break;
-		case MKID_BE('ACTR'):
-		case MKID_BE('COLR'):
-		case MKID_BE('STAT'):
-		case MKID_BE('FONT'):
-		case MKID_BE('VBUF'):
-		case MKID_BE('PRIM'):
-		case MKID_BE('TEXT'):
-			{ // TODO
+		default:
+			if (object->ttype == MKID_BE('ACTR') || object->ttype == MKID_BE('COLR') || object->ttype == MKID_BE('STAT') || object->ttype == MKID_BE('FONT')
+						|| object->ttype == MKID_BE('VBUF') || object->ttype == MKID_BE('PRIM') || object->ttype == MKID_BE('TEXT')) {
 				saveUint32(makeIdFromPointer(object->value.ts).low);
 				saveUint32(makeIdFromPointer(object->value.ts).hi);
+			} else {
+				lua_error("saveObjectValue: Unsupported object type");
 			}
-			break;
-		default:
-			lua_error("saveObjectValue: Unsupported object type");
 	}
 }
 

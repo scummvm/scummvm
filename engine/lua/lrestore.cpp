@@ -92,22 +92,16 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 				restoreSint32();
 			}
 			break;
-		case MKID_BE('ACTR'):
-		case MKID_BE('COLR'):
-		case MKID_BE('STAT'):
-		case MKID_BE('FONT'):
-		case MKID_BE('VBUF'):
-		case MKID_BE('PRIM'):
-		case MKID_BE('TEXT'):
-			{ // TODO
+		default:
+			if (object->ttype == MKID_BE('ACTR') || object->ttype == MKID_BE('COLR') || object->ttype == MKID_BE('STAT') || object->ttype == MKID_BE('FONT')
+					|| object->ttype == MKID_BE('VBUF') || object->ttype == MKID_BE('PRIM') || object->ttype == MKID_BE('TEXT')) {
 				PointerId ptr;
 				ptr.low = restoreUint32();
 				ptr.hi = restoreUint32();
 				object->value.ts = (TaggedString *)makePointerFromId(ptr);
+			} else {
+				lua_error("restoreObjectValue: Unsupported object type");
 			}
-			break;
-		default:
-			lua_error("saveObjectValue: Unsupported object type");
 	}
 }
 
