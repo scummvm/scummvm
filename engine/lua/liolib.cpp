@@ -18,6 +18,10 @@
 #include "engine/savegame.h"
 #include "engine/backend/platform/driver.h"
 
+#if defined(UNIX) || defined(__SYMBIAN32__)
+#include <sys/stat.h>
+#endif
+
 #ifdef _WIN32
 #include <direct.h>
 #endif
