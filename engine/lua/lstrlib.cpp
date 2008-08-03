@@ -163,7 +163,8 @@ int32 luaI_singlematch(int32 c, const char *p, const char **ep) {
 	case '[': {
 		const char *end = bracket_end(p + 1);
 		int32 sig = *(p + 1) == '^' ? (p++, 0) : 1;
-		if (!end) lua_error("incorrect pattern (missing `]')");
+		if (!end)
+			lua_error("incorrect pattern (missing `]')");
 		*ep = end + 1;
 		while (++p < end) {
 			if (*p == ESC) {

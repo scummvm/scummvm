@@ -10,6 +10,7 @@
 #include "engine/lua/lua.h"
 
 #include "common/endian.h"
+#include "common/debug.h"
 
 PointerId makeIdFromPointer(void *ptr) {
 	PointerId pointer;
@@ -68,7 +69,7 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 		case LUA_T_NUMBER:
 		case LUA_T_TASK:
 			{
-				byte *udata = (byte *)(&object->value.n);
+/*				byte *udata = (byte *)(&object->value.n);
 				uint32 v;
 #if defined(SYSTEM_LITTLE_ENDIAN)
 				byte b[4];
@@ -80,7 +81,7 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 #else
 				memcpy(&v, udata, 4);
 #endif
-				saveUint32(v);
+*/				saveUint32(object->value.n);
 				saveUint32(0);
 			}
 			break;
@@ -129,7 +130,7 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 				saveUint32(makeIdFromPointer(object->value.ts).low);
 				saveUint32(makeIdFromPointer(object->value.ts).hi);
 			} else {
-				lua_error("saveObjectValue: Unsupported object type");
+				error("saveObjectValue: Unsupported object type");
 			}
 	}
 }
