@@ -109,10 +109,10 @@ static void join_paths(const char *filename, const char *directory,
 #endif
 
 #if !defined(__GP32__)
-		strncat(buf, "/", bufsize-1);	// prevent double /
+		strncat(buf, "/", bufsize -1 );	// prevent double /
 #endif
 	}
-	strncat(buf, filename, bufsize-1);
+	strncat(buf, filename, bufsize - 1);
 }
 
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
