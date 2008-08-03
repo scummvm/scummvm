@@ -30,6 +30,7 @@
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "gui/Actions.h"
 #include "gui/Key.h"
 #include "gui/message.h"
@@ -41,6 +42,10 @@
 #else
   #define SAMPLES_PER_SEC 16000
 #endif
+
+
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+
 
 #define KInputBufferLength 128
 // Symbian libc file functionality in order to provide shared file handles
@@ -121,6 +126,34 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 FilesystemFactory *OSystem_SDL_Symbian::getFilesystemFactory() {
 	return &SymbianFilesystemFactory::instance();
 }
+
+static Common::String getDefaultConfigFileName() {
+	char configFile[MAXPATHLEN];
+	strcpy(configFile, Symbian::GetExecutablePath());
+	strcat(configFile, DEFAULT_CONFIG_FILE);
+	return configFile;
+}
+
+Common::SeekableReadStream *OSystem_SDL_Symbian::openConfigFileForReading() {
+	Common::File *confFile = new Common::File();
+	assert(confFile);
+	if (!confFile->open(getDefaultConfigFileName())) {
+		delete confFile;
+		confFile = 0;
+	}
+	return confFile;
+}
+
+Common::WriteStream *OSystem_SDL_Symbian::openConfigFileForWriting() {
+	Common::DumpFile *confFile = new Common::DumpFile();
+	assert(confFile);
+	if (!confFile->open(getDefaultConfigFileName())) {
+		delete confFile;
+		confFile = 0;
+	}
+	return confFile;
+}
+
 
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
