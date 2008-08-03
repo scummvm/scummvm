@@ -2751,7 +2751,6 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 
 void KyraEngine_HoF::seq_scrollPage(int bottom, int top) {
 	int dstY, dstH, srcH;
-	//int mgY;
 
 	static const ScreenDim d = { 0x00, 0x00, 0x28, 0x320, 0xFF, 0xFE, 0x00, 0x00 };
 

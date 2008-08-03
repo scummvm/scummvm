@@ -494,6 +494,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2CDFile1E, kyra2CDFile1EngNeed },
 	{ kKyra2, k2CDFile1F, kyra2CDFile1FreNeed },
 	{ kKyra2, k2CDFile1G, kyra2CDFile1GerNeed },
+	{ kKyra2, k2CDFile1I, kyra2CDFile1EngNeed }, // Italian fan translation
 	{ kKyra2, k2CDFile2E, kyra2CDFile2EngNeed },
 	{ kKyra2, k2CDFile2F, kyra2CDFile2FreNeed },
 	{ kKyra2, k2CDFile2G, kyra2CDFile2GerNeed },
@@ -522,9 +523,11 @@ const SpecialExtension specialTable[] = {
 	{ k2CDFile1E, "CD" },
 	{ k2CDFile1F, "CD" },
 	{ k2CDFile1G, "CD" },
+	{ k2CDFile1I, "CD" },
 	{ k2CDFile2E, "CD" },
 	{ k2CDFile2F, "CD" },
 	{ k2CDFile2G, "CD" },
+	
 	{ k2TownsFile1E, "TNS" },
 	{ k2TownsFile1J, "TNS" },
 	{ k2TownsFile2E, "TNS" },

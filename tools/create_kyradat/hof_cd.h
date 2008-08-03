@@ -23,6 +23,12 @@ const ExtractEntry kyra2File1CDG[] = {
 	{ -1, 0, 0 }
 };
 
+const ExtractEntry kyra2File1CDI[] = {
+	{ k2SeqplayStrings, 0x0002C566, 0x0002CE7C },
+	{ k2SeqplayTlkFiles, 0x0002A2AC, 0x0002A349 },
+	{ -1, 0, 0 }
+};
+
 const ExtractEntry kyra2File2CDE[] = {
 	{ k2IngameSfxFiles, 0x0002CB30, 0x0002D221 },
 	{ k2IngameSfxIndex, 0x000294F0, 0x00029848 },
@@ -47,5 +53,9 @@ const Game kyra2TalkieGames[] = {
 	{ kKyra2, EN_ANY, k2CDFile2E, "e20d0d2e500f01e399ec588247a7e213", kyra2File2CDE},
 	{ kKyra2, FR_FRA, k2CDFile2F, "e20d0d2e500f01e399ec588247a7e213", kyra2File2CDF},
 	{ kKyra2, DE_DEU, k2CDFile2G, "e20d0d2e500f01e399ec588247a7e213", kyra2File2CDG},
+
+	// Italian Fan Translation (using same offsets as English) 
+	{ kKyra2, IT_ITA, k2CDFile1I, "130795aa8f2333250c895dae9028b9bb", kyra2File1CDI},
+
 	GAME_DUMMY_ENTRY
 };
