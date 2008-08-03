@@ -6,6 +6,7 @@
 
 
 #include "common/savefile.h"
+#include "common/fs.h"
 
 #include "engine/lua/lauxlib.h"
 #include "engine/lua/lua.h"
@@ -16,6 +17,10 @@
 #include "engine/cmd_line.h"
 #include "engine/savegame.h"
 #include "engine/backend/platform/driver.h"
+
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 #define CLOSEDTAG	2
 #define IOTAG		1
@@ -33,6 +38,20 @@ Common::File *g_stderr;
 
 
 extern Common::SaveFileManager *g_saveFileMan;
+
+static void checkPath(const Common::String &path) {
+	FilesystemNode node(path);
+	if (node.exists() && node.isDirectory())
+		return;
+#if defined(UNIX) || defined(__SYMBIAN32__)
+	if (mkdir(path.c_str(), 0755) == 0)
+		return;
+#elif defined(_WIN32)
+	if (_mkdir(path.c_str()) == 0)
+		return;
+#endif
+	warning("Can't creating missing director for save path: %s", path.c_str());
+}
 
 static void join_paths(const char *filename, const char *directory,
 								 char *buf, int bufsize) {
@@ -137,6 +156,7 @@ static void io_readfrom() {
 		if (dir.empty())
 			dir = ConfMan.get("path");
 #endif
+		checkPath(dir);
 		char buf[256];
 		join_paths(s, dir.c_str(), buf, sizeof(buf));
 		if (current->exists(buf))
@@ -173,6 +193,7 @@ static void io_writeto() {
 		if (dir.empty())
 			dir = ConfMan.get("path");
 #endif
+		checkPath(dir);
 		char buf[256];
 		join_paths(s, dir.c_str(), buf, sizeof(buf));
 		current->open(buf, Common::File::kFileWriteMode);
@@ -193,6 +214,7 @@ static void io_appendto() {
 	if (dir.empty())
 		dir = ConfMan.get("path");
 #endif
+	checkPath(dir);
 	char path[256];
 	join_paths(s, dir.c_str(), path, sizeof(path));
 	file.open(path);

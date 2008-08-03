@@ -42,6 +42,9 @@
 #include <sys/stat.h>
 #endif
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 class StdioSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 private:
@@ -196,6 +199,12 @@ void DefaultSaveFileManager::checkPath(const Common::String &path) {
 			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
 		}
 	}
+#elif defined(_WIN32)
+	FilesystemNode node(path);
+	if (node.exists() && node.isDirectory())
+		return;
+	if (_mkdir(path.c_str()) == 0)
+		return;
 #endif
 }
 
