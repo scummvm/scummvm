@@ -89,10 +89,9 @@ public:
 	}
 };
 
-static void join_paths(const char *filename, const char *directory,
-								 char *buf, int bufsize) {
-	buf[bufsize-1] = '\0';
-	strncpy(buf, directory, bufsize-1);
+static void join_paths(const char *filename, const char *directory, char *buf, int bufsize) {
+	buf[bufsize - 1] = '\0';
+	strncpy(buf, directory, bufsize - 1);
 
 #ifdef WIN32
 	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
@@ -105,11 +104,11 @@ static void join_paths(const char *filename, const char *directory,
 
 	if (dirLen > 0) {
 #if defined(__MORPHOS__) || defined(__amigaos4__)
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
+		if (buf[dirLen - 1] != ':' && buf[dirLen - 1] != '/')
 #endif
 
 #if !defined(__GP32__)
-		strncat(buf, "/", bufsize -1 );	// prevent double /
+		strncat(buf, "/", bufsize - 1);	// prevent double /
 #endif
 	}
 	strncat(buf, filename, bufsize - 1);
