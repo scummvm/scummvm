@@ -2134,7 +2134,7 @@ static void FileFindDispose() {
 
 static void luaFileFindNext() {
 	if (g_findfile != g_fslist->end()) {
-		lua_pushstring(g_findfile->getPath().c_str());
+		lua_pushstring(g_findfile->getName().c_str());
 		g_findfile++;
 	} else {
 		lua_pushnil();
@@ -2144,21 +2144,17 @@ static void luaFileFindNext() {
 
 static void luaFileFindFirst() {
 	const char *path, *extension;
-	lua_Object pathObj;
 
 	DEBUG_FUNCTION();
 	extension = luaL_check_string(1);
-	pathObj = lua_getparam(2);
+	lua_getparam(2); // overrinding below devel external gama data path to savepath
 	FileFindDispose();
 
-	if (lua_isnil(pathObj)) {
-		path = ConfMan.get("savepath").c_str();
+	path = ConfMan.get("savepath").c_str();
 #ifdef _WIN32_WCE
-		if (path.empty())
-			path = ConfMan.get("path").c_str();
+	if (path.empty())
+		path = ConfMan.get("path").c_str();
 #endif
-	} else
-		path = lua_getstring(pathObj);
 
 	g_fslist = new FSList();
 	g_fsdir = new FilesystemNode(path);
