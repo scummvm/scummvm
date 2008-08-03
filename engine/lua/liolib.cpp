@@ -341,43 +341,45 @@ static void lua_printstack() {
 		const char *filename;
 		int32 linedefined;
 		lua_funcinfo(func, &filename, &linedefined);
-		printf(buf, (level == 2) ? "Active Stack:\n\t" : "\t");
+		sprintf(buf, (level == 2) ? "Active Stack:\n\t" : "\t");
 		g_stderr->write(buf, strlen(buf));
 		switch (*lua_getobjname(func, &name)) {
 		case 'g':
-			printf(buf, "function %s", name);
+			sprintf(buf, "function %s", name);
 			break;
 		case 't':
-			printf(buf, "`%s' tag method", name);
+			sprintf(buf, "`%s' tag method", name);
 			break;
 		default: 
 			{
 				if (linedefined == 0)
-					printf(buf, "main of %s", filename);
+					sprintf(buf, "main of %s", filename);
 				else if (linedefined < 0)
-					printf(buf, "%s", filename);
+					sprintf(buf, "%s", filename);
 				else
-					printf(buf, "function (%s:%d)", filename, (int)linedefined);
+					sprintf(buf, "function (%s:%d)", filename, (int)linedefined);
 				filename = NULL;
 			}
 		}
 		g_stderr->write(buf, strlen(buf));
 
 		if ((currentline = lua_currentline(func)) > 0) {
-			printf(buf, " at line %d", (int)currentline);
+			sprintf(buf, " at line %d", (int)currentline);
 			g_stderr->write(buf, strlen(buf));
 		}
 		if (filename) {
-			printf(buf, " [in file %s]", filename);
+			sprintf(buf, " [in file %s]", filename);
 			g_stderr->write(buf, strlen(buf));
 		}
-		printf(buf, "\n");
+		sprintf(buf, "\n");
 		g_stderr->write(buf, strlen(buf));
 	}
 }
 
 static void errorfb() {
-	fprintf(stderr, "lua: %s\n", lua_getstring(lua_getparam(1)));
+	char buf[256];
+	sprintf(buf, "lua: %s\n", lua_getstring(lua_getparam(1)));
+	g_stderr->write(buf, strlen(buf));
 	lua_printstack();
 }
 
