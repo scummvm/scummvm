@@ -125,7 +125,7 @@ public:
 	virtual ~DumpFile();
 
 	virtual bool open(const String &filename);
-	//virtual bool open(const FilesystemNode &node);
+	virtual bool open(const FilesystemNode &node);
 
 	virtual void close();
 

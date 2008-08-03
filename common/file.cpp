@@ -494,6 +494,31 @@ bool DumpFile::open(const String &filename) {
 	return _handle != NULL;
 }
 
+bool DumpFile::open(const FilesystemNode &node) {
+	assert(!_handle);
+
+	if (!node.exists()) {
+		warning("File::open: Trying to open a FilesystemNode which does not exist");
+		return false;
+	} else if (node.isDirectory()) {
+		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		return false;
+	} /*else if (!node.isReadable() && mode == kFileReadMode) {
+		warning("File::open: Trying to open an unreadable FilesystemNode object for reading");
+		return false;
+	} else if (!node.isWritable() && mode == kFileWriteMode) {
+		warning("File::open: Trying to open an unwritable FilesystemNode object for writing");
+		return false;
+	}*/
+
+	_handle = fopen(node.getPath().c_str(), "rb");
+
+	if (_handle == NULL)
+		debug(2, "File %s not found", node.getName().c_str());
+
+	return _handle != NULL;
+}
+
 void DumpFile::close() {
 	if (_handle)
 		fclose((FILE *)_handle);
