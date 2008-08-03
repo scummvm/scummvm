@@ -50,7 +50,7 @@ int32 numblocks = 0;
 int32 totalmem = 0;
 
 static void *checkblock(void *block) {
-	int32 *b = (uint32 *)((char *)block - HEADER);
+	int32 *b = (int32 *)((char *)block - HEADER);
 	int32 size = *b;
 	LUA_ASSERT(*(((char *)b) + size + HEADER) == MARK, "corrupted block");
 	numblocks--;

@@ -4,6 +4,7 @@
 ** See Copyright Notice in lua.h
 */
 
+#include "common/util.h"
 
 #include "engine/lua/lmem.h"
 #include "engine/lua/lobject.h"
@@ -29,7 +30,7 @@ void luaS_init() {
 static uint32 hash_s(const char *s, int32 l) {
 	uint32 h = 0;
 	while (l--)
-		h = ((h << 5) - h) ^ (byte) * (s++);
+		h = ((h << 5) - h) ^ (byte)*(s++);
 	return h;
 }
 
@@ -103,14 +104,14 @@ static TaggedString *insert_s (const char *str, int32 l, stringtable *tb) {
 	int32 size = tb->size;
 	int32 i;
 	int32 j = -1;
-	if ((int32)tb->nuse * 3 >= size * 2) {
+	if (tb->nuse * 3 >= size * 2) {
 		grow(tb);
 		size = tb->size;
 	}
 	for (i = h % size; (ts = tb->hash[i]); ) {
 		if (ts == &EMPTY)
 			j = i;
-		else if (ts->constindex >= 0 && ts->u.s.len == l && (memcmp(str, ts->str, l) == 0))
+		else if (ts->constindex >= 0 && ts->u.s.len == l && (memcmp(str, ts->str, MAX(l, ts->u.s.len)) == 0))
 			return ts;
 		if (++i == size)
 			i = 0;
@@ -126,7 +127,11 @@ static TaggedString *insert_s (const char *str, int32 l, stringtable *tb) {
 
 static TaggedString *insert_u(void *buff, int32 tag, stringtable *tb) {
 	TaggedString *ts;
-	unsigned long h = (unsigned long)buff;
+#ifdef TARGET_64BITS
+	uint32 h = (uint64)buff;
+#else
+	uint32 h = (uint32)buff;
+#endif
 	int32 size = tb->size;
 	int32 i;
 	int32 j = -1;
@@ -147,12 +152,16 @@ static TaggedString *insert_u(void *buff, int32 tag, stringtable *tb) {
 		i = j;
 	else
 		tb->nuse++;
-	ts = tb->hash[i] = newone_u((char*)buff, tag, h);
+	ts = tb->hash[i] = newone_u((char *)buff, tag, h);
 	return ts;
 }
 
 TaggedString *luaS_createudata(void *udata, int32 tag) {
-	return insert_u(udata, tag, &L->string_root[(unsigned long)udata % NUM_HASHS]);
+#ifdef TARGET_64BITS
+	return insert_u(udata, tag, &L->string_root[(uint64)udata % NUM_HASHS]);
+#else
+	return insert_u(udata, tag, &L->string_root[(uint32)udata % NUM_HASHS]);
+#endif
 }
 
 TaggedString *luaS_newlstr(const char *str, int32 l) {

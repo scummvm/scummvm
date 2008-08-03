@@ -90,7 +90,7 @@ typedef struct GCnode {
 
 typedef struct TaggedString {
 	GCnode head;
-	unsigned long hash;
+	uint32 hash;
 	int32 constindex;  // hint to reuse constants (= -1 if this is a userdata)
 	union {
 		struct {

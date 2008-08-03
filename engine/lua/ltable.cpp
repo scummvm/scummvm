@@ -17,30 +17,32 @@
 #define REHASH_LIMIT	0.70    // avoid more than this % full
 #define TagDefault		LUA_T_ARRAY;
 
-static long int hashindex(TObject *ref) {
-	long int h;
+#ifdef TARGET_64BITS
+static int64 int hashindex(TObject *ref) {
+	int64 h;
+
 	switch (ttype(ref)) {
 	case LUA_T_NUMBER:
-		h = (long int)nvalue(ref);
+		h = (int64)nvalue(ref);
 		break;
 	case LUA_T_STRING:
 	case LUA_T_USERDATA:
-		h = (long int)tsvalue(ref);
+		h = (int64)tsvalue(ref);
 		break;
 	case LUA_T_ARRAY:
-		h = (long int)avalue(ref);
+		h = (int64)avalue(ref);
 		break;
 	case LUA_T_PROTO:
-		h = (long int)tfvalue(ref);
+		h = (int64)tfvalue(ref);
 		break;
 	case LUA_T_CPROTO:
-		h = (long int)fvalue(ref);
+		h = (int64)fvalue(ref);
 		break;
 	case LUA_T_CLOSURE:
-		h = (long int)clvalue(ref);
+		h = (int64)clvalue(ref);
 		break;
 	case LUA_T_TASK:
-		h = (long int)nvalue(ref);
+		h = (int64)nvalue(ref);
 		break;
 	default:
 		lua_error("unexpected type to index table");
@@ -49,9 +51,46 @@ static long int hashindex(TObject *ref) {
 	return (h >= 0 ? h : -(h + 1));
 }
 
+#else
+
+static int32 hashindex(TObject *ref) {
+	int32 h;
+
+	switch (ttype(ref)) {
+	case LUA_T_NUMBER:
+		h = (int32)nvalue(ref);
+		break;
+	case LUA_T_STRING:
+	case LUA_T_USERDATA:
+		h = (int32)tsvalue(ref);
+		break;
+	case LUA_T_ARRAY:
+		h = (int32)avalue(ref);
+		break;
+	case LUA_T_PROTO:
+		h = (int32)tfvalue(ref);
+		break;
+	case LUA_T_CPROTO:
+		h = (int32)fvalue(ref);
+		break;
+	case LUA_T_CLOSURE:
+		h = (int32)clvalue(ref);
+		break;
+	case LUA_T_TASK:
+		h = (int32)nvalue(ref);
+		break;
+	default:
+		lua_error("unexpected type to index table");
+		h = 0;  // to avoid warnings
+	}
+	return (h >= 0 ? h : -(h + 1));
+}
+
+#endif
+
 int32 present(Hash *t, TObject *key) {
 	int32 tsize = nhash(t);
-	long int h = hashindex(key);
+	int32 h = (int32)hashindex(key);
 	int32 h1 = h % tsize;
 	TObject *rf = ref(node(t, h1));
 	if (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf)) {
