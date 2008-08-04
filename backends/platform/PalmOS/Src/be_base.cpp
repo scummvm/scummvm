@@ -30,6 +30,9 @@
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
 
+#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
+
+
 OSystem_PalmBase::OSystem_PalmBase() {
 	_overlayVisible = false;
 
@@ -100,7 +103,7 @@ void OSystem_PalmBase::initBackend() {
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_saveMgr == 0) {
-		_saveMgr = new DefaultSaveFileManager();
+		_saveMgr = new DefaultSaveFileManager(DEFAULT_SAVE_PATH);
 	}
 
 	// Create and hook up the mixer, if none exists yet (we check for this to

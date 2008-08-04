@@ -88,7 +88,7 @@ int OSystem_IPHONE::timerHandler(int t) {
 }
 
 void OSystem_IPHONE::initBackend() {
-	_savefile = new DefaultSaveFileManager();
+	_savefile = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
 	_timer = new DefaultTimerManager();
 
 	gettimeofday(&_startTime, NULL);
@@ -1194,10 +1194,6 @@ OSystem *OSystem_IPHONE_create() {
 
 const char* OSystem_IPHONE::getConfigPath() {
 	return SCUMMVM_PREFS_PATH;
-}
-
-const char* OSystem_IPHONE::getSavePath() {
-	return SCUMMVM_SAVE_PATH;
 }
 
 void OSystem_IPHONE::migrateApp() {

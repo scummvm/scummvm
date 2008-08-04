@@ -172,7 +172,6 @@ public:
 
 	static void migrateApp();
 	static const char* getConfigPath();
-	static const char* getSavePath();	
 
 protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
