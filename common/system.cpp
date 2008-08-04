@@ -145,12 +145,6 @@ FIXME: The config file loading code below needs to be cleaned up.
 #include "backends/platform/iphone/osys_iphone.h"
 #endif
 
-#if defined(WIN32)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
-
 
 #if defined(UNIX)
 #define DEFAULT_CONFIG_FILE ".scummvmrc"

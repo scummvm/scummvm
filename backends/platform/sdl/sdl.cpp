@@ -70,17 +70,6 @@
 
 
 
-/*
- * Include header files needed for getDefaultConfigFileName().
- */
-#if defined(WIN32)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
-
-
-
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;
