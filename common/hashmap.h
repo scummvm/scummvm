@@ -65,7 +65,11 @@
 // on every system we support, so we should get rid of this.
 // The solution should be to write a simple placement new
 // on our own.
+
+// Symbian does not have <new> but the new operator 
+#if !defined(__SYMBIAN32__) 
 #include <new>
+#endif
 #endif
 
 namespace Common {

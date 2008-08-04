@@ -2363,7 +2363,7 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_numSSG(type == OD_TOWNS ? 0 : 3), _hasADPCM(type == OD_TYPE86 ? true : false),
 	_numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true) {	
 	setTempo(84);
-	_baserate = (double)getRate() / 10368.0;
+	_baserate = (486202500.0 / (double)getRate()) / 10368.0;
 }
 
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {

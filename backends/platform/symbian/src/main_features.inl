@@ -27,62 +27,61 @@
 
 // we want a list of supported engines visible in the program,
 // because we also release special builds with only one engine
-#ifndef DISABLE_SCUMM
+#ifdef ENABLE_SCUMM
 	"SCUMM "
 #endif
-#ifndef DISABLE_AGOS
+#ifdef ENABLE_AGOS
 	"AGOS "
 #endif
-#ifndef DISABLE_SKY
+#ifdef ENABLE_SKY
 	"Sky "
 #endif
-#ifndef DISABLE_QUEEN
+#ifdef ENABLE_QUEEN
 	"Queen "
 #endif
-#ifndef DISABLE_GOB
+#ifdef ENABLE_GOB
 	"Gob "
 #endif
-#ifndef DISABLE_SAGA
+#ifdef ENABLE_SAGA
 	"Saga "
 #endif
-#ifndef DISABLE_KYRA
+#ifdef ENABLE_KYRA
 	"Kyra "
 #endif
-#ifndef DISABLE_SWORD1
+#ifdef ENABLE_SWORD1
 	"Sword1 "
 #endif
-#ifndef DISABLE_SWORD2
+#ifdef ENABLE_SWORD2
 	"Sword2 "
 #endif
-#ifndef DISABLE_CINE
+#ifdef ENABLE_CINE
 	"Cine "
 #endif
-#ifndef DISABLE_LURE
+#ifdef ENABLE_LURE
 	"Lure "
 #endif
-#ifndef DISABLE_AGI
+#ifdef ENABLE_AGI
 	"AGI "
 #endif
-#ifndef DISABLE_TOUCHE
+#ifdef ENABLE_TOUCHE
 	"Touche "
 #endif
-#ifndef DISABLE_DRASCULA
+#ifdef ENABLE_DRASCULA
 	"Drascula "
 #endif
-#ifndef DISABLE_IGOR
+#ifdef ENABLE_IGOR
 	"Igor "
 #endif
-#ifndef DISABLE_PARALLACTION
+#ifdef ENABLE_PARALLACTION
 	"Parallaction "
 #endif
-#ifndef DISABLE_CRUISE
+#ifdef ENABLE_CRUISE
 	"Cruise "
 #endif
-#ifndef DISABLE_MADE
+#ifdef ENABLE_MADE
 	"MADE "
 #endif
-
-#ifndef DISABLE_M4
+#ifdef ENABLE_M4
 	"M4 "
 #endif
 

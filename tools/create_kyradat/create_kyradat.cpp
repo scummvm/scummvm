@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 28,
+	kKyraDatVersion = 31,
 	kIndexSize = 12
 };
 
@@ -52,6 +52,8 @@ enum {
 #include "hof_demo.h"
 
 #include "malcolm.h"
+
+#include "lol_demo.h"
 
 const Game kyra1FanTranslations[] = {
 	{ kKyra1, IT_ITA, kTalkieVersion, "d0f1752098236083d81b9497bd2b6989", kyra1FreCD },
@@ -251,6 +253,11 @@ const ExtractFilename extractFilenames[] = {
 	{ k3ItemMagicTable, k3TypeRaw16to8, "ITEMMAGIC.MAP" },
 	{ k3ItemStringMap, kTypeRawData, "ITEMSTRINGS.MAP" },
 
+	// LANDS OF LORE
+
+	// Demo Sequence Player
+	{ lSeqplayIntroTracks, k2TypeSoundList, "S_INTRO.TRA" },
+
 	{ -1, 0, 0 }
 };
 
@@ -288,7 +295,7 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
+	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };	
 	strcat(dstFilename, gidExtensions[gid]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
@@ -311,7 +318,7 @@ void createLangFilename(char *dstFilename, const int gid, const int lang, const 
 		}
 	}
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
+	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };	
 	strcat(dstFilename, gidExtensions[gid]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
@@ -723,11 +730,11 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					controlOffs = 0;
 
 				WRITE_BE_UINT16(output, controlOffs);
-				if (g->special != k2DemoVersion)
+				if (g->special != k2DemoVersion && g->special != k2DemoLol)
 					ptr += 4;
 				output += 2;
 
-				if (g->special != k2DemoVersion) {
+				if (g->special != k2DemoVersion && g->special != k2DemoLol) {
 					for (int w = 0; w < 2; w++) { //startupCommand, finalCommand
 						WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
 						ptr += 2;
@@ -1063,9 +1070,9 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->game == kKyra3)
+	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->game == kKyra3)
 		features |= GF_TALKIE;
-	else if (g->special == kDemoVersion || g->special == k2DemoVersion)
+	else if (g->special == kDemoVersion || g->special == k2DemoVersion || g->special == k2DemoLol)
 		features |= GF_DEMO;
 	else if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
@@ -1343,6 +1350,8 @@ const Game *gameDescs[] = {
 	kyra2Demos,
 
 	kyra3Games,
+
+	lolDemos,
 
 	0
 };

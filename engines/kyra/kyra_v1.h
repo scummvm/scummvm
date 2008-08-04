@@ -34,8 +34,8 @@
 #include "kyra/script.h"
 
 namespace Common {
-class InSaveFile;
-class OutSaveFile;
+class SeekableReadStream;
+class WriteStream;
 } // end of namespace Common
 
 class KyraMetaEngine;
@@ -64,7 +64,8 @@ struct GameFlags {
 enum {
 	GI_KYRA1 = 0,
 	GI_KYRA2 = 1,
-	GI_KYRA3 = 2
+	GI_KYRA3 = 2,
+	GI_LOL = 4
 };
 
 struct AudioDataStruct {
@@ -293,10 +294,10 @@ protected:
 		kRSHEIoError = 3
 	};
 
-	static kReadSaveHeaderError readSaveHeader(Common::InSaveFile *file, SaveHeader &header);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, SaveHeader &header);
 
-	Common::InSaveFile *openSaveForReading(const char *filename, SaveHeader &header);
-	Common::OutSaveFile *openSaveForWriting(const char *filename, const char *saveName) const;
+	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
+	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName) const;
 };
 
 } // End of namespace Kyra

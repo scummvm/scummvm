@@ -234,7 +234,6 @@ bool ResourceManager::init() {
 /**
  * Returns the address of a resource. Loads if not in memory. Retains a count.
  */
-
 byte *ResourceManager::openResource(uint32 res, bool dump) {
 	assert(res < _totalResFiles);
 
@@ -287,7 +286,6 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		if (dump) {
 			char buf[256];
 			const char *tag;
-			Common::File out;
 
 			switch (fetchType(_resList[res].ptr)) {
 			case ANIMATION_FILE:
@@ -337,7 +335,8 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 			sprintf(buf, "dumps/%s-%d.dmp", tag, res);
 
 			if (!Common::File::exists(buf)) {
-				if (out.open(buf, Common::File::kFileWriteMode))
+				Common::DumpFile out;
+				if (out.open(buf))
 					out.write(_resList[res].ptr, len);
 			}
 		}

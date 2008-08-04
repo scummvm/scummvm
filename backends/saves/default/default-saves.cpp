@@ -41,78 +41,41 @@
 #include <sys/stat.h>
 #endif
 
-
-class StdioSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
-private:
-	FILE *fh;
-public:
-	StdioSaveFile(const char *filename, bool saveOrLoad) {
-		fh = ::fopen(filename, (saveOrLoad? "wb" : "rb"));
-	}
-	~StdioSaveFile() {
-		if (fh)
-			::fclose(fh);
-	}
-
-	bool eos() const { return feof(fh) != 0; }
-	bool ioFailed() const { return ferror(fh) != 0; }
-	void clearIOFailed() { clearerr(fh); }
-
-	bool isOpen() const { return fh != 0; }
-
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		assert(fh);
-		return fread(dataPtr, 1, dataSize, fh);
-	}
-	uint32 write(const void *dataPtr, uint32 dataSize) {
-		assert(fh);
-		return fwrite(dataPtr, 1, dataSize, fh);
-	}
-
-	uint32 pos() const {
-		assert(fh);
-		return ftell(fh);
-	}
-	uint32 size() const {
-		assert(fh);
-		uint32 oldPos = ftell(fh);
-		fseek(fh, 0, SEEK_END);
-		uint32 length = ftell(fh);
-		fseek(fh, oldPos, SEEK_SET);
-		return length;
-	}
-
-	void seek(int32 offs, int whence = SEEK_SET) {
-		assert(fh);
-		fseek(fh, offs, whence);
-	}
-};
-
-static void join_paths(const char *filename, const char *directory,
-								 char *buf, int bufsize) {
-	buf[bufsize-1] = '\0';
-	strncpy(buf, directory, bufsize-1);
-
-#ifdef WIN32
-	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
-	if ((buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
-		buf[2] = 0;
-	}
+#ifdef UNIX
+#ifdef MACOSX
+#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
+#else
+#define DEFAULT_SAVE_PATH ".scummvm"
+#endif
+#elif defined(__SYMBIAN32__)
+#define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
-	const int dirLen = strlen(buf);
-
-	if (dirLen > 0) {
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
-#endif
-
-#if !defined(__GP32__)
-		strncat(buf, "/", bufsize-1);	// prevent double /
-#endif
+DefaultSaveFileManager::DefaultSaveFileManager() {
+	// Register default savepath
+	// TODO: Remove this code here, and instead leave setting the
+	// default savepath to the ports using this class.
+#ifdef DEFAULT_SAVE_PATH
+	Common::String savePath;
+#if defined(UNIX) && !defined(IPHONE)
+	const char *home = getenv("HOME");
+	if (home && *home && strlen(home) < MAXPATHLEN) {
+		savePath = home;
+		savePath += "/" DEFAULT_SAVE_PATH;
+		ConfMan.registerDefault("savepath", savePath);
 	}
-	strncat(buf, filename, bufsize-1);
+#elif defined(__SYMBIAN32__)
+	savePath = Symbian::GetExecutablePath();
+	savePath += DEFAULT_SAVE_PATH "\\";
+	ConfMan.registerDefault("savepath", savePath);
+#endif
+#endif // #ifdef DEFAULT_SAVE_PATH
 }
+
+DefaultSaveFileManager::DefaultSaveFileManager(const Common::String &defaultSavepath) {
+	ConfMan.registerDefault("savepath", defaultSavepath);
+}
+
 
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	FilesystemNode savePath(getSavePath());
@@ -129,7 +92,8 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	return results;
 }
 
-void DefaultSaveFileManager::checkPath(const Common::String &path) {
+void DefaultSaveFileManager::checkPath(const FilesystemNode &dir) {
+	const Common::String path = dir.getPath();
 	clearError();
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
@@ -196,23 +160,27 @@ void DefaultSaveFileManager::checkPath(const Common::String &path) {
 			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
 		}
 	}
+#else
+	if (!dir.exists()) {
+		// TODO: We could try to mkdir the directory here; or rather, we could
+		// add a mkdir method to FilesystemNode and invoke that here.
+		setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+path);
+	} else if (!dir.isDirectory()) {
+		setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
+	}
 #endif
 }
 
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	char buf[256];
-	Common::String savePath = getSavePath();
+	FilesystemNode savePath(getSavePath());
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
-		StdioSaveFile *sf = new StdioSaveFile(buf, false);
+		FilesystemNode file = savePath.getChild(filename);
 
-		if (!sf->isOpen()) {
-			delete sf;
-			sf = 0;
-		}
+		// Open the file for reading
+		Common::SeekableReadStream *sf = file.openForReading();
 
 		return wrapInSaveFile(sf);
 	} else {
@@ -222,18 +190,14 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	char buf[256];
-	Common::String savePath = getSavePath();
+	FilesystemNode savePath(getSavePath());
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
-		StdioSaveFile *sf = new StdioSaveFile(buf, true);
+		FilesystemNode file = savePath.getChild(filename);
 
-		if (!sf->isOpen()) {
-			delete sf;
-			sf = 0;
-		}
+		// Open the file for saving
+		Common::WriteStream *sf = file.openForWriting();
 
 		return wrapOutSaveFile(sf);
 	} else {
@@ -242,18 +206,19 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 }
 
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
-	char buf[256];
 	clearError();
-	Common::String filenameStr;
-	join_paths(filename, getSavePath().c_str(), buf, sizeof(buf));
 
-	if (remove(buf) != 0) {
+	FilesystemNode savePath(getSavePath());
+	FilesystemNode file = savePath.getChild(filename);
+
+	// TODO: Add new method FilesystemNode::remove()
+	if (remove(file.getPath().c_str()) != 0) {
 #ifndef _WIN32_WCE
 		if (errno == EACCES)
-			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+filenameStr);
+			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+file.getName());
 
 		if (errno == ENOENT)
-			setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+filenameStr);
+			setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+file.getName());
 #endif
 		return false;
 	} else {

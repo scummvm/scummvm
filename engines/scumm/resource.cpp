@@ -1299,7 +1299,7 @@ void ScummEngine::allocateArrays() {
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
 	char buf[256];
-	Common::File out;
+	Common::DumpFile out;
 
 	uint32 size;
 	if (length >= 0)
@@ -1313,7 +1313,7 @@ void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int le
 
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
 
-	out.open(buf, Common::File::kFileWriteMode);
+	out.open(buf);
 	if (out.isOpen() == false)
 		return;
 	out.write(ptr, size);

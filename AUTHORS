@@ -6,6 +6,11 @@ ScummVM Team
      Max Horn             
      Eugene Sandulenko    
 
+  Retired Project Leaders
+  -----------------------
+     Vincent Hamm          - ScummVM co-founder, Original Cruise/CinE author
+     Ludvig Strigeus       - Original ScummVM and SimonVM author
+
   Engine Teams
   ------------
     SCUMM:
@@ -94,9 +99,18 @@ ScummVM Team
 
     SAGA:
        Torbjorn Andersson   
+       Sven Hesse           
        Filippos Karapetis   
        Andrew Kurushin      
        Eugene Sandulenko    
+
+    Tinsel;:
+       Torbjorn Andersson   
+       Paul Gilbert         
+       Sven Hesse           
+       Max Horn             
+       Filippos Karapetis   
+       Joost Peters         
 
     Touche:
        Gregory Montoir      
@@ -176,12 +190,10 @@ ScummVM Team
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
      Ruediger Hanke        - Port: MorphOS
-     Vincent Hamm          - ScummVM co-founder, Original Cruise/CinE author
      Felix Jakschitsch     - Zak256 reverse engineering
      Mutwin Kraus          - Original MacOS porter
      Peter Moraliyski      - Port: GP32
      Jeremy Newman         - Former webmaster
-     Ludvig Strigeus       - Original ScummVM and SimonVM author
      Lionel Ulmer          - Port: X11
      Won Star              - Former GP32 porter
 

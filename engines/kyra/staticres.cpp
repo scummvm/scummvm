@@ -23,16 +23,17 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
+#include "kyra/lol.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_lok.h"
+#include "kyra/screen_lol.h"
 #include "kyra/screen_hof.h"
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
@@ -42,7 +43,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 28
+#define RESFILE_VERSION 31
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -278,6 +279,16 @@ bool StaticResource::init() {
 		{ 0, 0, 0 }
 	};
 
+	static const FilenameTable lolStaticRes[] = {
+		// Demo Sequence Player
+		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
+		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
+		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
+		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
+		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
+		{ 0, 0, 0 }
+	};
+
 	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
 		_filenameTable = kyra1StaticRes;
@@ -287,8 +298,13 @@ bool StaticResource::init() {
 	} else if (_vm->game() == GI_KYRA3) {
 		_builtIn = 0;
 		_filenameTable = kyra3StaticRes;
+	} else if (_vm->game() == GI_LOL) {
+		if (!_vm->gameFlags().isDemo)
+			return true;
+		_builtIn = 0;
+		_filenameTable = lolStaticRes;
 	} else {
-		error("unknown game ID");
+		error("StaticResource: Unknown game ID");
 	}
 
 	char errorBuffer[100];
@@ -917,6 +933,8 @@ const char *StaticResource::getFilename(const char *name) {
 		filename += ".K2";
 	else if (_vm->gameFlags().gameID == GI_KYRA3)
 		filename += ".K3";
+	else if (_vm->gameFlags().gameID == GI_LOL)
+		filename += ".LOL";
 
 	if (_vm->gameFlags().isTalkie && _vm->gameFlags().gameID != GI_KYRA3)
 		filename += ".CD";
@@ -1034,10 +1052,8 @@ void KyraEngine_LoK::initStaticResource() {
 	}
 
 	// audio data tables
-#if 0
 	static const char *tIntro98[] = { "intro%d.dat" };
 	static const char *tIngame98[] = { "kyram%d.dat" };
-#endif
 
 	static const AudioDataStruct soundData_PC[] = {
 		{ _soundFilesIntro, _soundFilesIntroSize, 0, 0 },
@@ -1051,21 +1067,20 @@ void KyraEngine_LoK::initStaticResource() {
 		{ 0, 0, 0, 0}
 	};
 
-#if 0
 	static const AudioDataStruct soundData_PC98[] = {
 		{ tIntro98, 1, 0, 0 },
 		{ tIngame98, 1, 0, 0 },
 		{ 0, 0, 0, 0}
 	};
-#endif
 
 	if (_flags.platform == Common::kPlatformPC)
 		_soundData = soundData_PC;
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_TOWNS/*soundData_PC98*/;
-
+		_soundData = soundData_PC98;
+	else
+		_soundData = 0;
 }
 
 void KyraEngine_LoK::loadMouseShapes() {
@@ -1263,11 +1278,9 @@ void KyraEngine_HoF::initStaticResource() {
 	static const char *fmtMusicFileListFinale[] = { "finale%d.twn" };
 	static const char *fmtMusicFileListIngame[] = { "km%02d.twn" };
 
-#if 0
 	static const char *pc98MusicFileListIntro[] = { "intro%d.86" };
 	static const char *pc98MusicFileListFinale[] = { "finale%d.86" };
 	static const char *pc98MusicFileListIngame[] = { "km%02d.86" };
-#endif
 
 	static const AudioDataStruct soundData_PC[] = {
 		{ _musicFileListIntro, _musicFileListIntroSize, 0, 0 },
@@ -1281,20 +1294,18 @@ void KyraEngine_HoF::initStaticResource() {
 		{ fmtMusicFileListFinale, 1, _cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1 }
 	};
 
-#if 0
 	static const AudioDataStruct soundData_PC98[] = {
 		{ pc98MusicFileListIntro, 1, 0, 0 },
 		{ pc98MusicFileListIngame, 1, 0, 0 },
 		{ pc98MusicFileListFinale, 1, 0, 0 }		
 	};
-#endif
 
 	if (_flags.platform == Common::kPlatformPC)
 		_soundData = soundData_PC;
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		_soundData = soundData_TOWNS;
 	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_TOWNS/*soundData_PC98*/;
+		_soundData = soundData_PC98;
 
 	// setup sequence data
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
@@ -1333,8 +1344,17 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_demoDig, 0
 	};
 
-	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
-	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
+	static const SeqProc lolDemoSequenceCallbacks[] = {
+		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
+		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
+		&KyraEngine_HoF::seq_lolDemoScene5, &KyraEngine_HoF::seq_lolDemoText5,
+		&KyraEngine_HoF::seq_lolDemoScene6, 0
+	};
+
+	static const SeqProc lolDemoNestedSequenceCallbacks[] = { 0	};
+
+	_callbackS = _flags.gameID == GI_LOL ? lolDemoSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
+	_callbackN = _flags.gameID == GI_LOL ? lolDemoNestedSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }
 
 void KyraEngine_MR::initStaticResource() {
@@ -2234,6 +2254,106 @@ const int8 KyraEngine_MR::_albumWSAX[] = {
 const int8 KyraEngine_MR::_albumWSAY[] = {
 	 0, -1, 3, 0, -1,  0, -2, 0,
 	-1, -2, 2, 2, -6, -6, -6, 0
+};
+
+// lands of lore static res
+
+const ScreenDim Screen_LoL::_screenDimTable[] = {
+	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 }
+};
+
+const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable);
+
+const char * const LoLEngine::_languageExt[] = {
+	"ENG",
+	"FRE",
+	"GER"
+};
+
+const LoLEngine::CharacterPrev LoLEngine::_charPreviews[] = {
+	{ "Ak\'shel", 0x060, 0x7F, { 0x0F, 0x08, 0x05 } },
+	{  "Michael", 0x09A, 0x7F, { 0x06, 0x0A, 0x0F } },
+	{   "Kieran", 0x0D4, 0x7F, { 0x08, 0x06, 0x08 } },
+	{   "Conrad", 0x10F, 0x7F, { 0x0A, 0x0C, 0x0A } }
+};
+
+const uint8 LoLEngine::_chargenFrameTable[] = {
+	0x00, 0x01, 0x02, 0x03, 0x04,
+	0x05, 0x04, 0x03, 0x02, 0x01,
+	0x00, 0x00, 0x01, 0x02, 0x03,
+	0x04, 0x05, 0x06, 0x07, 0x08,
+	0x09, 0x0A, 0x0B, 0x0C, 0x0D,
+	0x0E, 0x0F, 0x10, 0x11, 0x12
+};
+
+const uint16 LoLEngine::_selectionPosTable[] = {
+	0x6F, 0x00, 0x8F, 0x00, 0xAF, 0x00,  0xCF, 0x00,
+	0xEF, 0x00, 0x6F, 0x20, 0x8F, 0x20,  0xAF, 0x20,
+	0xCF, 0x20, 0xEF, 0x20, 0x6F, 0x40,  0x8F, 0x40,
+	0xAF, 0x40, 0xCF, 0x40, 0xEF, 0x40, 0x10F, 0x00
+};
+
+const uint8 LoLEngine::_selectionChar1IdxTable[] = {
+	0, 0, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 0, 0, 5, 5, 5,
+	5, 5, 5, 5, 0, 0, 5, 5,
+	5, 5, 5
+};
+
+const uint8 LoLEngine::_selectionChar2IdxTable[] = {
+	1, 1, 6, 6, 1, 1, 6, 6,
+	6, 6, 6, 6, 6, 1, 1, 6,
+	6, 6, 1, 1, 6, 6, 6, 6,
+	6, 6, 6
+};
+
+const uint8 LoLEngine::_selectionChar3IdxTable[] = {
+	2, 2, 7, 7, 7, 7, 2, 2,
+	7, 7, 7, 7, 7, 7, 7, 2,
+	2, 7, 7, 7, 7, 2, 2, 7,
+	7, 7, 7
+};
+
+const uint8 LoLEngine::_selectionChar4IdxTable[] = {
+	3, 3, 8, 8, 8, 8, 3, 3,
+	8, 8, 3, 3, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 3, 3, 8,
+	8, 8, 8
+};
+
+const uint8 LoLEngine::_reminderChar1IdxTable[] = {
+	4, 4, 4, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	5
+};
+
+const uint8 LoLEngine::_reminderChar2IdxTable[] = {
+	9, 9, 9, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 6, 6,
+	6
+};
+
+const uint8 LoLEngine::_reminderChar3IdxTable[] = {
+	0xE, 0xE, 0xE, 0x7, 0x7, 0x7, 0x7, 0x7,
+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
+	0x7
+};
+
+const uint8 LoLEngine::_reminderChar4IdxTable[] = {
+	0xF, 0xF, 0xF, 0x8, 0x8, 0x8, 0x8, 0x8,
+	0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8,
+	0x8
+};
+
+const uint8 LoLEngine::_selectionAnimIndexTable[] = {
+	0, 5, 1, 6, 2, 7, 3, 8
+};
+
+const uint8 LoLEngine::_charInfoFrameTable[] = {
+	0x0, 0x7, 0x8, 0x9, 0xA, 0xB, 0xA, 0x9,
+	0x8, 0x7, 0x0, 0x0, 0x7, 0x8, 0x9, 0xA,
+	0xB, 0xA, 0x9, 0x8, 0x7, 0x0, 0x0, 0x7,
+	0x8, 0x9, 0xA, 0xB, 0xA, 0x9, 0x8, 0x7
 };
 
 } // End of namespace Kyra

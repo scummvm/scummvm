@@ -202,7 +202,7 @@ const Common::File *DataIO::file_getHandle(int16 handle) const {
 	return &_filesHandles[handle];
 }
 
-int16 DataIO::file_open(const char *path, Common::File::AccessMode mode) {
+int16 DataIO::file_open(const char *path) {
 	int16 i;
 
 	for (i = 0; i < MAX_FILES; i++) {
@@ -212,7 +212,7 @@ int16 DataIO::file_open(const char *path, Common::File::AccessMode mode) {
 	if (i == MAX_FILES)
 		return -1;
 
-	file_getHandle(i)->open(path, mode);
+	file_getHandle(i)->open(path);
 
 	if (file_getHandle(i)->isOpen())
 		return i;
@@ -467,17 +467,14 @@ void DataIO::closeData(int16 handle) {
 		file_getHandle(handle)->close();
 }
 
-int16 DataIO::openData(const char *path, Common::File::AccessMode mode) {
+int16 DataIO::openData(const char *path) {
 	int16 handle;
-
-	if (mode != Common::File::kFileReadMode)
-		return file_open(path, mode);
 
 	handle = getChunk(path);
 	if (handle >= 0)
 		return handle;
 
-	return file_open(path, mode);
+	return file_open(path);
 }
 
 DataStream *DataIO::openAsStream(int16 handle, bool dispose) {

@@ -110,7 +110,7 @@ public:
 
 	void registerArchive(const String &filename);
 
-	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
+	bool open(const Common::String &filename);
 	void close();
 
 	uint32 read(void *dataPtr, uint32 dataSize);

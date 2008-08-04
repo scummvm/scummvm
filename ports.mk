@@ -118,7 +118,7 @@ iphone: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework CoreSurface \
-		-framework LayerKit -framework GraphicsServices -framework CoreFoundation \
+		-framework GraphicsServices -framework CoreFoundation -framework QuartzCore \
 		-framework Foundation -framework AudioToolbox -framework CoreAudio \
 		-lobjc -lz
 

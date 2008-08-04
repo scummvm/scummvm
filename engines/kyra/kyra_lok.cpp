@@ -173,7 +173,8 @@ int KyraEngine_LoK::init() {
 
 	initStaticResource();
 
-	_sound->setSoundList(&_soundData[kMusicIntro]);
+	if (_soundData)
+		_sound->setSoundList(&_soundData[kMusicIntro]);
 
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;
@@ -316,7 +317,8 @@ void KyraEngine_LoK::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::startup()");
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
-	_sound->setSoundList(&_soundData[kMusicIngame]);
+	if (_soundData)
+		_sound->setSoundList(&_soundData[kMusicIngame]);
 	_sound->loadSoundFile(0);
 //	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);

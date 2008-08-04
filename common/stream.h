@@ -78,6 +78,22 @@ public:
 	 */
 	virtual void flush() {}
 
+	/**
+	 * Finalize and close this stream. To be called right before this
+	 * stream instance is deleted. The goal here is to enable calling
+	 * code to detect and handle I/O errors which might occur when
+	 * closing (and this flushing, if buffered) the stream.
+	 *
+	 * After this method has been called, no further writes may be
+	 * peformed on the stream. Calling ioFailed() is allowed.
+	 *
+	 * By default, this just flushes the stream.
+	 */
+	virtual void finalize() {
+		flush();
+	}
+
+
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.
 
@@ -350,15 +366,17 @@ public:
 class SubReadStream : virtual public ReadStream {
 protected:
 	ReadStream *_parentStream;
+	bool _disposeParentStream;
 	uint32 _pos;
 	uint32 _end;
-	bool _disposeParentStream;
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
 		: _parentStream(parentStream),
+		  _disposeParentStream(disposeParentStream),
 		  _pos(0),
-		  _end(end),
-		  _disposeParentStream(disposeParentStream) {}
+		  _end(end) {
+		assert(parentStream);
+	}
 	~SubReadStream() {
 		if (_disposeParentStream) delete _parentStream;
 	}
@@ -413,6 +431,48 @@ public:
 		return (int32)readUint32();
 	}
 };
+
+/**
+ * Wrapper class which adds buffering to any given ReadStream.
+ * Users can specify how big the buffer should be, and whether the
+ * wrapped stream should be disposed when the wrapper is disposed.
+ */
+class BufferedReadStream : virtual public ReadStream {
+protected:
+	ReadStream *_parentStream;
+	bool _disposeParentStream;
+	byte *_buf;
+	uint32 _pos;
+	uint32 _bufSize;
+	uint32 _realBufSize;
+
+public:
+	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+	~BufferedReadStream();
+
+	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
+	virtual bool ioFailed() const { return _parentStream->ioFailed(); }
+	virtual void clearIOFailed() { _parentStream->clearIOFailed(); }
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+/**
+ * Wrapper class which adds buffering to any given SeekableReadStream.
+ * @see BufferedReadStream
+ */
+class BufferedSeekableReadStream : public BufferedReadStream, public SeekableReadStream {
+protected:
+	SeekableReadStream *_parentStream;
+public:
+	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+
+	virtual uint32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual uint32 size() const { return _parentStream->size(); }
+
+	virtual void seek(int32 offset, int whence = SEEK_SET);
+};
+
 
 
 /**
@@ -514,9 +574,9 @@ public:
 	uint32 size() const { return _bufSize; }
 };
 
-/** 
+/**
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
- * that grows as it's written to. 
+ * that grows as it's written to.
  */
 class MemoryWriteStreamDynamic : public Common::WriteStream {
 private:

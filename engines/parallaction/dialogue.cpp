@@ -33,7 +33,7 @@
 namespace Parallaction {
 
 #define MAX_PASSWORD_LENGTH			 7
-
+/*
 #define QUESTION_BALLOON_X			140
 #define QUESTION_BALLOON_Y			10
 #define QUESTION_CHARACTER_X		  190
@@ -41,6 +41,25 @@ namespace Parallaction {
 
 #define ANSWER_CHARACTER_X			10
 #define ANSWER_CHARACTER_Y			80
+*/
+struct BalloonPositions {
+	Common::Point	_questionBalloon;
+	Common::Point	_questionChar;
+
+	Common::Point	_answerChar;
+};
+
+BalloonPositions _balloonPositions_NS = {
+	Common::Point(140, 10),
+	Common::Point(190, 80),
+	Common::Point(10, 80)
+};
+
+BalloonPositions _balloonPositions_BR = {
+	Common::Point(0, 0),
+	Common::Point(380, 80),
+	Common::Point(10, 80)
+};
 
 
 class DialogueManager {
@@ -78,6 +97,7 @@ class DialogueManager {
 	bool			_isKeyDown;
 	uint16			_downKey;
 
+	BalloonPositions	_ballonPos;
 
 public:
 	DialogueManager(Parallaction *vm, ZonePtr z);
@@ -112,6 +132,15 @@ protected:
 };
 
 DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
+	int gtype = vm->getGameType();
+	if (gtype == GType_Nippon) {
+		_ballonPos = _balloonPositions_NS;
+	} else
+	if (gtype == GType_BRA) {
+		_ballonPos = _balloonPositions_BR;
+	} else
+		error("unsupported game in DialogueManager");
+
 	_dialogue = _z->u.speak->_dialogue;
 	isNpc = scumm_stricmp(_z->u.speak->_name, "yourself") && _z->u.speak->_name[0] != '\0';
 	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u.speak->_name) : _vm->_char._talk;
@@ -168,16 +197,16 @@ bool DialogueManager::displayAnswers() {
 	if (_askPassword) {
 		resetPassword();
 //		_vm->_balloonMan->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
-		int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
 		_vm->_gfx->setItemFrame(id, 0);
 	} else
 	if (_numVisAnswers == 1) {
-		int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
 		_vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
 		_vm->_balloonMan->setBalloonText(0, _q->_answers[_visAnswers[0]]->_text, 0);
 	} else
 	if (_numVisAnswers > 1) {
-		int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
 		_vm->_gfx->setItemFrame(id, _q->_answers[_visAnswers[0]]->_mood & 0xF);
 		_oldSelection = -1;
 		_selection = 0;
@@ -189,8 +218,8 @@ bool DialogueManager::displayAnswers() {
 bool DialogueManager::displayQuestion() {
 	if (!scumm_stricmp(_q->_text, "NULL")) return false;
 
-	_vm->_balloonMan->setSingleBalloon(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, _q->_mood & 0x10, 0);
-	int id = _vm->_gfx->setItem(_questioner, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y);
+	_vm->_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->_mood & 0x10, 0);
+	int id = _vm->_gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
 	_vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
 
 	return true;
@@ -361,9 +390,6 @@ void DialogueManager::run() {
 		break;
 
 	case DIALOGUE_OVER:
-		if (_cmdList) {
-			_vm->_cmdExec->run(*_cmdList);
-		}
 		break;
 
 	default:
@@ -382,6 +408,10 @@ void Parallaction::enterDialogueMode(ZonePtr z) {
 void Parallaction::exitDialogueMode() {
 	debugC(1, kDebugDialogue, "Parallaction::exitDialogueMode()");
 	_input->_inputMode = Input::kInputModeGame;
+
+	if (_dialogueMan->_cmdList) {
+		_vm->_cmdExec->run(*_dialogueMan->_cmdList);
+	}
 
 	// The current instance of _dialogueMan must be destroyed before the zone commands
 	// are executed, because they may create another instance of _dialogueMan that

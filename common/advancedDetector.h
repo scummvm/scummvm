@@ -69,11 +69,6 @@ struct ADGameDescription {
 };
 
 /**
- * A list of pointers to ADGameDescription structs (or subclasses thereof).
- */
-typedef Array<const ADGameDescription*> ADGameDescList;
-
-/**
  * End marker for a table of ADGameDescription structs. Use this to
  * terminate a list to be passed to the AdvancedDetector API.
  */

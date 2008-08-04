@@ -100,10 +100,8 @@ enum {
 
 enum EngineFlags {
 	kEnginePauseJobs	= (1 << 1),
-	kEngineInventory	= (1 << 2),
 	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
-	kEngineBlockInput	= (1 << 5),
 	kEngineDragging		= (1 << 6),
 	kEngineTransformedDonna	= (1 << 7),
 
@@ -113,12 +111,6 @@ enum EngineFlags {
 
 enum {
 	kEvNone			= 0,
-	kEvAction		= 3,
-	kEvOpenInventory	= 4,
-	kEvCloseInventory	= 5,
-	kEvHoverInventory	= 6,
-	kEvWalk			= 7,
-	kEvQuitGame		= 1000,
 	kEvSaveGame		= 2000,
 	kEvLoadGame		= 4000
 };
@@ -163,6 +155,7 @@ class Gfx;
 class SoundMan;
 class Input;
 class DialogueManager;
+class MenuInputHelper;
 
 struct Location {
 
@@ -183,7 +176,7 @@ struct Location {
 	char		_soundFile[50];
 
 	// NS specific
-	WalkNodeList	_walkNodes;
+	PointList	_walkPoints;
 	char _slideText[2][MAX_TOKEN_LEN];
 
 	// BRA specific
@@ -204,10 +197,13 @@ struct Character {
 	GfxObj			*_head;
 	GfxObj			*_talk;
 	GfxObj			*_objs;
-	PathBuilder		_builder;
-	WalkNodeList	*_walkPath;
+	PathBuilder		*_builder;
+	PathWalker		*_walker;
+	PointList		_walkPath;
 
 	Character(Parallaction *vm);
+	~Character();
+
 	void getFoot(Common::Point &foot);
 	void setFoot(const Common::Point &foot);
 	void scheduleWalk(int16 x, int16 y);
@@ -270,10 +266,6 @@ public:
 	void		resumeJobs();
 
 	virtual void 	syncSoundSettings();
-
-	void		finalizeWalk(Character &character);
-	int16		selectWalkFrame(Character &character, const Common::Point& pos, const WalkNodePtr to);
-	void		clipMove(Common::Point& pos, const Common::Point& to);
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
@@ -339,6 +331,7 @@ public:
 	Common::RandomSource _rnd;
 
 	Debugger	*_debugger;
+	Frames	*_comboArrow;
 
 
 protected:		// data
@@ -366,8 +359,6 @@ protected:		// members
 
 	void		displayComment(ExamineData *data);
 
-	void		checkDoor(const Common::Point &foot);
-
 	void		freeCharacter();
 
 	int16		pickupItem(ZonePtr z);
@@ -382,18 +373,18 @@ public:
 	virtual	void callFunction(uint index, void* parm) { }
 
 	virtual void setArrowCursor() = 0;
-	virtual void setInventoryCursor(int pos) = 0;
+	virtual void setInventoryCursor(ItemName name) = 0;
 
 	virtual void parseLocation(const char* name) = 0;
 
 	void updateDoor(ZonePtr z);
 
-	virtual void walk(Character &character) = 0;
 	virtual void drawAnimations() = 0;
 
 	void		beep();
 
 	ZonePtr		_zoneTrap;
+	PathBuilder* getPathBuilder(Character *ch);
 
 public:
 //	const char **_zoneFlagNamesRes;
@@ -429,6 +420,17 @@ public:
 	void exitDialogueMode();
 	void runDialogueFrame();
 
+	MenuInputHelper *_menuHelper;
+	void runGuiFrame();
+	void cleanupGui();
+
+	ZonePtr	_commentZone;
+	void enterCommentMode(ZonePtr z);
+	void exitCommentMode();
+	void runCommentFrame();
+
+	void setInternLanguage(uint id);
+	uint getInternLanguage();
 };
 
 
@@ -487,12 +489,18 @@ public:
 	typedef void (Parallaction_ns::*Callable)(void*);
 
 	virtual	void callFunction(uint index, void* parm);
-	void setMousePointer(uint32 value);
 
 	bool loadGame();
 	bool saveGame();
 
 	void		switchBackground(const char* background, const char* mask);
+	void		showSlide(const char *name, int x = 0, int y = 0);
+	void 		setArrowCursor();
+
+	// TODO: this should be private!!!!!!!
+	bool	_inTestResult;
+	void cleanupGame();
+	bool allPartsComplete();
 
 private:
 	LocationParser_ns		*_locationParser;
@@ -504,17 +512,14 @@ private:
 	Common::String genSaveFileName(uint slot, bool oldStyle = false);
 	Common::InSaveFile *getInSaveFile(uint slot);
 	Common::OutSaveFile *getOutSaveFile(uint slot);
-	bool allPartsComplete();
 	void setPartComplete(const Character& character);
 
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
 	void runPendingZones();
-	void cleanupGame();
 
-	void setArrowCursor();
-	void setInventoryCursor(int pos);
+	void setInventoryCursor(ItemName name);
 
 
 	void doLoadGame(uint16 slot);
@@ -527,7 +532,6 @@ private:
 
 	static byte _resMouseArrow[256];
 	byte	*_mouseArrow;
-	Frames	*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -546,9 +550,6 @@ private:
 	ZonePtr _moveSarcZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
-
-	bool	_inTestResult;
-
 
 	// common callables
 	void _c_play_boogie(void*);
@@ -586,7 +587,6 @@ private:
 	const Callable *_callables;
 
 protected:
-	void walk(Character &character);
 	void drawAnimations();
 
 	void		parseLocation(const char *filename);
@@ -594,15 +594,9 @@ protected:
 
 	void		selectStartLocation();
 
-	void		guiStart();
-	int			guiSelectCharacter();
-	void		guiSplash();
-	int			guiNewGame();
-	uint16		guiChooseLanguage();
-	uint16		guiSelectGame();
-	int			guiGetSelectedBlock(const Common::Point &p);
-
-	void		showSlide(const char *name);
+	void		startGui();
+	void		startCreditSequence();
+	void		startEndPartSequence();
 };
 
 
@@ -646,7 +640,8 @@ public:
 	int32		_counters[32];
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
-
+	void		startPart(uint part);
+	void 		setArrowCursor();
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
@@ -655,17 +650,14 @@ private:
 	void		initFonts();
 	void		freeFonts();
 
-	void setArrowCursor();
-	void setInventoryCursor(int pos);
+	void setInventoryCursor(ItemName name);
 
 	void		changeLocation(char *location);
 	void 		runPendingZones();
 
 	void		initPart();
 	void		freePart();
-	void		startPart();
 
-	void setMousePointer(int16 index);
 	void initCursors();
 
 	Frames	*_dinoCursor;
@@ -676,10 +668,7 @@ private:
 
 	static const char *_partNames[];
 
-	void guiStart();
-	int guiShowMenu();
-	void guiSplash(const char *name);
-	Frames* guiRenderMenuItem(const char *text);
+	void startGui();
 
 	static const Callable _dosCallables[6];
 

@@ -61,7 +61,7 @@ typedef Common::Functor0Mem<void, ProgramExec_ns> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_ns::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_ns::instOp_##op()
 
-
+extern const char *_instructionNamesRes_ns[];
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
@@ -81,13 +81,13 @@ DECLARE_INSTRUCTION_OPCODE(loop) {
 	InstructionPtr inst = *_ctxt.inst;
 
 	_ctxt.program->_loopCounter = inst->_opB.getRValue();
-	_ctxt.program->_loopStart = _ctxt.inst;
+	_ctxt.program->_loopStart = _ctxt.ip;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(endloop) {
 	if (--_ctxt.program->_loopCounter > 0) {
-		_ctxt.inst = _ctxt.program->_loopStart;
+		_ctxt.ip = _ctxt.program->_loopStart;
 	}
 }
 
@@ -97,7 +97,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (_si > 0 ? _si : -_si);
-		if (_modCounter % _bx != 0) return;
+		if (_ctxt.modCounter % _bx != 0) return;
 
 		_si = (_si > 0 ?  1 : -1);
 	}
@@ -142,8 +142,8 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	_vm->_gfx->patchBackground(v18, x, y, mask);
 }
 
-DECLARE_INSTRUCTION_OPCODE(null) {
-
+DECLARE_INSTRUCTION_OPCODE(show) {
+	_ctxt.suspend = true;
 }
 
 DECLARE_INSTRUCTION_OPCODE(invalid) {
@@ -156,8 +156,10 @@ DECLARE_INSTRUCTION_OPCODE(call) {
 
 
 DECLARE_INSTRUCTION_OPCODE(wait) {
-	if (_engineFlags & kEngineWalking)
+	if (_engineFlags & kEngineWalking) {
+		_ctxt.ip--;
 		_ctxt.suspend = true;
+	}
 }
 
 
@@ -186,8 +188,8 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
 		_ctxt.program->_status = kProgramDone;
 	}
-	_ctxt.program->_ip = _ctxt.program->_instructions.begin();
 
+	_ctxt.ip = _ctxt.program->_instructions.begin();
 	_ctxt.suspend = true;
 }
 
@@ -332,35 +334,40 @@ void Parallaction_ns::drawAnimations() {
 
 	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
 
-		AnimationPtr v18 = *it;
-		GfxObj *obj = v18->gfxobj;
+		AnimationPtr anim = *it;
+		GfxObj *obj = anim->gfxobj;
 
-		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
+		// Validation is performed here, so that every animation is affected, instead that only the ones
+		// who *own* a script. In fact, some scripts can change values in other animations.
+		// The right way to do this would be to enforce validation when any variable is modified from
+		// a script.
+		anim->validateScriptVars();
 
-			int16 frame = CLIP((int)v18->_frame, 0, v18->getFrameNum()-1);
-			if (v18->_flags & kFlagsNoMasked)
+		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
+
+			if (anim->_flags & kFlagsNoMasked)
 				layer = 3;
 			else
-				layer = _gfx->_backgroundInfo.getLayer(v18->_top + v18->height());
+				layer = _gfx->_backgroundInfo->getLayer(anim->_top + anim->height());
 
 			if (obj) {
 				_gfx->showGfxObj(obj, true);
-				obj->frame = frame;
-				obj->x = v18->_left;
-				obj->y = v18->_top;
-				obj->z = v18->_z;
+				obj->frame =  anim->_frame;
+				obj->x = anim->_left;
+				obj->y = anim->_top;
+				obj->z = anim->_z;
 				obj->layer = layer;
 			}
 		}
 
-		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
-			v18->_flags &= ~kFlagsRemove;
-			v18->_oldPos.x = -1000;
+		if (((anim->_flags & kFlagsActive) == 0) && (anim->_flags & kFlagsRemove))   {
+			anim->_flags &= ~kFlagsRemove;
+			anim->_oldPos.x = -1000;
 		}
 
-		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
-			v18->_flags &= ~kFlagsActive;
-			v18->_flags |= kFlagsRemove;
+		if ((anim->_flags & kFlagsActive) && (anim->_flags & kFlagsRemove))	{
+			anim->_flags &= ~kFlagsActive;
+			anim->_flags |= kFlagsRemove;
 			if (obj) {
 				_gfx->showGfxObj(obj, false);
 			}
@@ -372,13 +379,40 @@ void Parallaction_ns::drawAnimations() {
 	return;
 }
 
+void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
+	debugC(9, kDebugExec, "runScript(Animation = %s)", a->_name);
+
+	_ctxt.ip = script->_ip;
+	_ctxt.anim = a;
+	_ctxt.program = script;
+	_ctxt.suspend = false;
+	_ctxt.modCounter = _modCounter;
+
+	InstructionList::iterator inst;
+	for ( ; (a->_flags & kFlagsActing) ; ) {
+
+		inst = _ctxt.ip;
+		_ctxt.inst = inst;
+		_ctxt.ip++;
+
+		debugC(9, kDebugExec, "inst [%02i] %s\n", (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
+
+		script->_status = kProgramRunning;
+
+		(*_opcodes[(*inst)->_index])();
+
+		if (_ctxt.suspend)
+			break;
+
+	}
+	script->_ip = _ctxt.ip;
+
+}
 
 void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator last) {
 	if (_engineFlags & kEnginePauseJobs) {
 		return;
 	}
-
-	debugC(9, kDebugExec, "runScripts");
 
 	for (ProgramList::iterator it = first; it != last; it++) {
 
@@ -390,31 +424,8 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
 
-		InstructionList::iterator inst = (*it)->_ip;
-		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
+		runScript(*it, a);
 
-			(*it)->_status = kProgramRunning;
-
-			debugC(9, kDebugExec, "Animation: %s, instruction: %i", a->_name, (*inst)->_index); //_instructionNamesRes[(*inst)->_index - 1]);
-
-			_ctxt.inst = inst;
-			_ctxt.anim = AnimationPtr(a);
-			_ctxt.program = *it;
-			_ctxt.suspend = false;
-
-			(*_opcodes[(*inst)->_index])();
-
-			inst = _ctxt.inst;		// handles endloop correctly
-
-			if (_ctxt.suspend)
-				goto label1;
-
-			inst++;
-		}
-
-		(*it)->_ip = ++inst;
-
-label1:
 		if (a->_flags & kFlagsCharacter)
 			a->_z = a->_top + a->height();
 	}
@@ -424,24 +435,19 @@ label1:
 	return;
 }
 
-void CommandExec::run(CommandList& list, ZonePtr z) {
-	if (list.size() == 0) {
-		debugC(3, kDebugExec, "runCommands: nothing to do");
-		return;
-	}
-
-	debugC(3, kDebugExec, "runCommands starting");
+void CommandExec::runList(CommandList::iterator first, CommandList::iterator last) {
 
 	uint32 useFlags = 0;
 	bool useLocalFlags;
 
-	CommandList::iterator it = list.begin();
-	for ( ; it != list.end(); it++) {
+	_ctxt.suspend = false;
+
+	for ( ; first != last; first++) {
 
 		if (_vm->quit())
 			break;
 
-		CommandPtr cmd = *it;
+		CommandPtr cmd = *first;
 
 		if (_vm->quit())
 			break;
@@ -462,16 +468,65 @@ void CommandExec::run(CommandList& list, ZonePtr z) {
 
 		if (!onMatch || !offMatch) continue;
 
-		_ctxt.z = z;
+		_ctxt.z = _execZone;
 		_ctxt.cmd = cmd;
 
 		(*_opcodes[cmd->_id])();
+
+		if (_ctxt.suspend) {
+			createSuspendList(++first, last);
+			return;
+		}
 	}
 
+}
+
+void CommandExec::run(CommandList& list, ZonePtr z) {
+	if (list.size() == 0) {
+		debugC(3, kDebugExec, "runCommands: nothing to do");
+		return;
+	}
+
+	_execZone = z;
+
+	debugC(3, kDebugExec, "runCommands starting");
+	runList(list.begin(), list.end());
 	debugC(3, kDebugExec, "runCommands completed");
+}
 
-	return;
+void CommandExec::createSuspendList(CommandList::iterator first, CommandList::iterator last) {
+	if (first == last) {
+		return;
+	}
 
+	debugC(3, kDebugExec, "CommandExec::createSuspendList()");
+
+	_suspendedCtxt.valid = true;
+	_suspendedCtxt.first = first;
+	_suspendedCtxt.last = last;
+	_suspendedCtxt.zone = _execZone;
+}
+
+void CommandExec::cleanSuspendedList() {
+	debugC(3, kDebugExec, "CommandExec::cleanSuspended()");
+
+	_suspendedCtxt.valid = false;
+	_suspendedCtxt.first = _suspendedCtxt.last;
+	_suspendedCtxt.zone = nullZonePtr;
+}
+
+void CommandExec::runSuspended() {
+	if (_engineFlags & kEngineWalking) {
+		return;
+	}
+
+	if (_suspendedCtxt.valid) {
+		debugC(3, kDebugExec, "CommandExec::runSuspended()");
+
+		_execZone = _suspendedCtxt.zone;
+		runList(_suspendedCtxt.first, _suspendedCtxt.last);
+		cleanSuspendedList();
+	}
 }
 
 CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : _vm(vm) {
@@ -486,35 +541,69 @@ CommandExec_ns::~CommandExec_ns() {
 //	ZONE TYPE: EXAMINE
 //
 
-void Parallaction::displayComment(ExamineData *data) {
+void Parallaction::enterCommentMode(ZonePtr z) {
+	if (!z) {
+		return;
+	}
+
+	_commentZone = z;
+
+	ExamineData *data = _commentZone->u.examine;
+
 	if (!data->_description) {
 		return;
 	}
 
-	int id;
+	// TODO: move this balloons stuff into DialogueManager and BalloonManager
+	if (getGameType() == GType_Nippon) {
+		int id;
+		if (data->_filename) {
+			if (data->_cnv == 0) {
+				data->_cnv = _disk->loadStatic(data->_filename);
+			}
 
-	if (data->_filename) {
-		if (data->_cnv == 0) {
-			data->_cnv = _disk->loadStatic(data->_filename);
+			_gfx->setHalfbriteMode(true);
+			_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, 0);
+			Common::Rect r;
+			data->_cnv->getRect(0, r);
+			id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
+			_gfx->setItemFrame(id, 0);
+			id = _gfx->setItem(_char._head, 100, 152);
+			_gfx->setItemFrame(id, 0);
+		} else {
+			_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, 0);
+			id = _gfx->setItem(_char._talk, 190, 80);
+			_gfx->setItemFrame(id, 0);
 		}
-
-		_gfx->setHalfbriteMode(true);
-		_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, 0);
-		Common::Rect r;
-		data->_cnv->getRect(0, r);
-		id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
-		_gfx->setItemFrame(id, 0);
-		id = _gfx->setItem(_char._head, 100, 152);
-		_gfx->setItemFrame(id, 0);
-	} else {
-		_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, 0);
-		id = _gfx->setItem(_char._talk, 190, 80);
+	} else
+	if (getGameType() == GType_BRA) {
+		_balloonMan->setSingleBalloon(data->_description, 0, 0, 1, 0);
+		int id = _gfx->setItem(_char._talk, 10, 80);
 		_gfx->setItemFrame(id, 0);
 	}
 
 	_input->_inputMode = Input::kInputModeComment;
 }
 
+void Parallaction::exitCommentMode() {
+	_input->_inputMode = Input::kInputModeGame;
+
+	hideDialogueStuff();
+	_gfx->setHalfbriteMode(false);
+
+	_cmdExec->run(_commentZone->_commands, _commentZone);
+	_commentZone = nullZonePtr;
+}
+
+void Parallaction::runCommentFrame() {
+	if (_input->_inputMode != Input::kInputModeComment) {
+		return;
+	}
+
+	if (_input->getLastButtonEvent() == kMouseLeftUp) {
+		exitCommentMode();
+	}
+}
 
 
 uint16 Parallaction::runZone(ZonePtr z) {
@@ -526,8 +615,8 @@ uint16 Parallaction::runZone(ZonePtr z) {
 	switch(subtype) {
 
 	case kZoneExamine:
-		displayComment(z->u.examine);
-		break;
+		enterCommentMode(z);
+		return 0;
 
 	case kZoneGet:
 		if (z->_flags & kFlagsFixed) break;
@@ -718,7 +807,7 @@ void ProgramExec_ns::init() {
 	INSTRUCTION_OPCODE(set);		// f
 	INSTRUCTION_OPCODE(loop);
 	INSTRUCTION_OPCODE(endloop);
-	INSTRUCTION_OPCODE(null);
+	INSTRUCTION_OPCODE(show);
 	INSTRUCTION_OPCODE(inc);
 	INSTRUCTION_OPCODE(inc);		// dec
 	INSTRUCTION_OPCODE(set);
@@ -733,6 +822,7 @@ void ProgramExec_ns::init() {
 }
 
 ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
+	_instructionNames = _instructionNamesRes_ns;
 }
 
 ProgramExec_ns::~ProgramExec_ns() {

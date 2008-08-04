@@ -61,7 +61,7 @@ private:
 public:
 	// Explicit to prevent var=0 instead of var[i]=0 typos.
 	explicit ScriptVars(unsigned int len = 50);
-	ScriptVars(Common::InSaveFile &fHandle, unsigned int len = 50);
+	ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len = 50);
 	ScriptVars(const ScriptVars &src);
 	~ScriptVars(void);
 
@@ -71,8 +71,8 @@ public:
 
 	void save(Common::OutSaveFile &fHandle) const;
 	void save(Common::OutSaveFile &fHandle, unsigned int len) const;
-	void load(Common::InSaveFile &fHandle);
-	void load(Common::InSaveFile &fHandle, unsigned int len);
+	void load(Common::SeekableReadStream &fHandle);
+	void load(Common::SeekableReadStream &fHandle, unsigned int len);
 	void reset(void);
 };
 
@@ -198,7 +198,7 @@ protected:
 	int o1_blitAndFade();
 	int o1_fadeToBlack();
 	int o1_transformPaletteRange();
-	int o1_setDefaultMenuColor2();
+	int o1_setDefaultMenuBgColor();
 	int o1_palRotate();
 	int o1_break();
 	int o1_endScript();
@@ -213,7 +213,7 @@ protected:
 	int o1_initializeZoneData();
 	int o1_setZoneDataEntry();
 	int o1_getZoneDataEntry();
-	int o1_setDefaultMenuColor();
+	int o1_setPlayerCommandPosY();
 	int o1_allowPlayerInput();
 	int o1_disallowPlayerInput();
 	int o1_changeDataDisk();
@@ -371,16 +371,16 @@ void dumpScript(char *dumpName);
 #define OP_requestCheckPendingDataLoad  0x42
 #define OP_endScript                    0x50
 
-void addScriptToList0(uint16 idx);
+void addScriptToGlobalScripts(uint16 idx);
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);
 
 void runObjectScript(int16 entryIdx);
 
-void executeList1(void);
-void executeList0(void);
+void executeObjectScripts(void);
+void executeGlobalScripts(void);
 
-void purgeList1(void);
-void purgeList0(void);
+void purgeObjectScripts(void);
+void purgeGlobalScripts(void);
 
 } // End of namespace Cine
 

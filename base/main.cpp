@@ -111,35 +111,8 @@ static const EnginePlugin *detectPlugin() {
 
 // TODO: specify the possible return values here
 static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::String &edebuglevels) {
-	Common::String gameDataPath(ConfMan.get("path"));
-	if (gameDataPath.empty()) {
-	} else if (gameDataPath.lastChar() != '/'
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-					&& gameDataPath.lastChar() != ':'
-#endif
-					&& gameDataPath.lastChar() != '\\') {
-		gameDataPath += '/';
-		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
-	}
-
-	// We add the game "path" to the file search path via File::addDefaultDirectory(),
-	// so that MD5-based detection will be able to properly find files with mixed case
-	// filenames.
-	// FIXME/TODO: Fingolfin still doesn't like this; if those MD5-based detectors used
-	// FSNodes instead of File::open, they wouldn't have to do this.
-	Common::String path;
-	if (ConfMan.hasKey("path")) {
-		path = ConfMan.get("path");
-		FilesystemNode dir(path);
-		if (!dir.isDirectory()) {
-			warning("Game directory does not exist (%s)", path.c_str());
-			return 0;
-		}
-	} else {
-		path = ".";
-		warning("No path was provided. Assuming the data files are in the current directory");
-	}
-	Common::File::addDefaultDirectory(path);
+	// Query  the game data path, for messages
+	Common::String path = ConfMan.hasKey("path") ? ConfMan.get("path") : ".";
 
 	// Create the game engine
 	Engine *engine = 0;
@@ -182,15 +155,14 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 		system.setWindowCaption(caption.c_str());
 	}
 
-	if (ConfMan.hasKey("path"))
-		Common::File::addDefaultDirectory(ConfMan.get("path"));
-	else
-		Common::File::addDefaultDirectory(".");
+	// Add the game path to the directory search list
+	Common::File::addDefaultDirectory(path);
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 
+	// If a second extrapath is specified on the app domain level, add that as well.
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
 

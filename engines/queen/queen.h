@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 
 namespace Common {
-	class InSaveFile;
+	class SeekableReadStream;
 }
 
 #if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)
@@ -112,7 +112,7 @@ public:
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);
-	Common::InSaveFile *readGameStateHeader(int slot, GameStateHeader *gsh);
+	Common::SeekableReadStream *readGameStateHeader(int slot, GameStateHeader *gsh);
 
 	enum {
 		SAVESTATE_CUR_VER  = 1,

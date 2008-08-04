@@ -348,9 +348,9 @@ static PanelButton IHNM_QuitPanelButtons[] = {
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
-	// TODO
-	{kPanelButtonLoad, 101,19, 60,16, kTextOK,'o',0, 0,0,0},
-	{kPanelButtonLoadText, -1,5, 0,0, kTextLoadSuccessful,'-',0, 0,0,0},
+	{kPanelButtonLoad,		26,80,	80,25,	kTextOK,'o',0, 0,0,0},
+	{kPanelButtonLoad,		156,80,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonLoadText,	-1,30,	0,0,	kTextLoadSavedGame,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_SavePanelButtons[] = {

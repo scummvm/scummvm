@@ -380,61 +380,23 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d, %p)", (const void *)palData, delay, (const void*)upFunc);
 	updateScreen();
 
-	uint8 fadePal[768];
-	memcpy(fadePal, _screenPalette, 768);
-	uint8 diff, maxDiff = 0;
-	for (int i = 0; i < 768; ++i) {
-		diff = ABS(palData[i] - fadePal[i]);
-		if (diff > maxDiff) {
-			maxDiff = diff;
-		}
-	}
-
-	int16 delayInc = delay << 8;
-	if (maxDiff != 0)
-		delayInc /= maxDiff;
-
-	delay = delayInc;
-	for (diff = 1; diff <= maxDiff; ++diff) {
-		if (delayInc >= 512)
-			break;
-		delayInc += delay;
-	}
+	int diff = 0, delayInc = 0;
+	getFadeParams(palData, delay, delayInc, diff);
 
 	int delayAcc = 0;
 	while (!_vm->quit()) {
 		delayAcc += delayInc;
-		bool needRefresh = false;
-		for (int i = 0; i < 768; ++i) {
-			int c1 = palData[i];
-			int c2 = fadePal[i];
-			if (c1 != c2) {
-				needRefresh = true;
-				if (c1 > c2) {
-					c2 += diff;
-					if (c1 < c2)
-						c2 = c1;
-				}
 
-				if (c1 < c2) {
-					c2 -= diff;
-					if (c1 > c2)
-						c2 = c1;
-				}
+		int refreshed = fadePalStep(palData, diff);
 
-				fadePal[i] = (uint8)c2;
-			}
-		}
-
-		if (!needRefresh)
-			break;
-
-		setScreenPalette(fadePal);
 		if (upFunc && upFunc->isValid())
 			(*upFunc)();
 		else
 			_system->updateScreen();
-		//_system->delayMillis((delayAcc >> 8) * 1000 / 60);
+
+		if (!refreshed)
+			break;
+
 		_vm->delay((delayAcc >> 8) * 1000 / 60);
 		delayAcc &= 0xFF;
 	}
@@ -448,6 +410,64 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	}
 }
 
+void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
+	debugC(9, kDebugLevelScreen, "Screen::getFadeParams(%p, %d, %p, %p)", (const void *)palette, delay, (const void *)&delayInc, (const void *)&diff);
+	uint8 maxDiff = 0;
+
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
+	for (int i = 0; i < colors; ++i) {
+		diff = ABS(palette[i] - _screenPalette[i]);
+		maxDiff = MAX<uint8>(maxDiff, diff);
+	}
+
+	delayInc = delay << 8;
+	if (maxDiff != 0)
+		delayInc /= maxDiff;
+	delayInc &= 0x7FFF;
+
+	delay = delayInc;
+	for (diff = 1; diff <= maxDiff; ++diff) {
+		if (delayInc >= 512)
+			break;
+		delayInc += delay;
+	}
+}
+
+int Screen::fadePalStep(const uint8 *palette, int diff) {
+	debugC(9, kDebugLevelScreen, "Screen::fadePalStep(%p, %d)", (const void *)palette, diff);
+
+	uint8 fadePal[768];
+	memcpy(fadePal, _screenPalette, 768);
+	
+	bool needRefresh = false;
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
+	for (int i = 0; i < colors; ++i) {
+		int c1 = palette[i];
+		int c2 = fadePal[i];
+		if (c1 != c2) {
+			needRefresh = true;
+			if (c1 > c2) {
+				c2 += diff;
+				if (c1 < c2)
+					c2 = c1;
+			}
+
+			if (c1 < c2) {
+				c2 -= diff;
+				if (c1 > c2)
+					c2 = c1;
+			}
+
+			fadePal[i] = (uint8)c2;
+		}
+	}
+	
+	if (needRefresh)
+		setScreenPalette(fadePal);
+
+	return needRefresh ? 1 : 0;
+}
+
 void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 	debugC(9, kDebugLevelScreen, "Screen::setPaletteIndex(%u, %u, %u, %u)", index, red, green, blue);
 	_currentPalette[index * 3 + 0] = red;
@@ -459,7 +479,7 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 
-	int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 	if (palData != _screenPalette)
 		memcpy(_screenPalette, palData, colors*3);
 
@@ -2442,7 +2462,7 @@ void Screen::setShapePages(int page1, int page2, int minY, int maxY) {
 	_maskMaxY = maxY;
 }
 
-void Screen::setMouseCursor(int x, int y, byte *shape) {
+void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	debugC(9, kDebugLevelScreen, "Screen::setMouseCursor(%d, %d, %p)", x, y, (const void *)shape);
 	if (!shape)
 		return;

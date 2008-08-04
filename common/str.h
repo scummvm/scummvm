@@ -177,6 +177,8 @@ public:
 	void toLowercase();
 	void toUppercase();
 	
+	void trim();
+
 	uint hash() const;
 
 public:
@@ -200,6 +202,7 @@ public:
 	}
 
 protected:
+	void makeUnique();
 	void ensureCapacity(uint32 new_len, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);

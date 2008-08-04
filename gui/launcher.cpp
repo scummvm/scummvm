@@ -452,7 +452,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getEditString());
 		if (newDomain != _domain) {
-			if (newDomain.empty() || ConfMan.hasGameDomain(newDomain)) {
+			if (newDomain.empty()
+				|| newDomain.hasPrefix("_")
+				|| newDomain == ConfigManager::kApplicationDomain
+				|| ConfMan.hasGameDomain(newDomain)) {
 				MessageDialog alert("This game ID is already taken. Please choose another one.");
 				alert.runModal();
 				return;
@@ -837,12 +840,7 @@ Common::String addGameToConf(const GameDescriptor &result) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	String domain;
-
-	if (result.contains("preferredtarget"))
-		domain = result["preferredtarget"];
-	else
-		domain = result.gameid();
+	String domain = result.preferredtarget();
 
 	assert(!domain.empty());
 	if (ConfMan.hasGameDomain(domain)) {

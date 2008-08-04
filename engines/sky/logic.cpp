@@ -1774,6 +1774,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		uint32 size = ((dataFileHeader *)data)->s_height * ((dataFileHeader *)data)->s_width;
 		uint32 index = 0;
 		uint32 width = ((dataFileHeader *)data)->s_width;
+		uint32 height = ((dataFileHeader *)data)->s_height;
 
 		data += sizeof(dataFileHeader);
 
@@ -1794,7 +1795,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 
 		textCompact->xcood = TOP_LEFT_X; // set coordinates
 		textCompact->ycood = ycood;
-		ycood += 12;
+		ycood += height;
 	}
 
 	if (p == _scriptVariables + TEXT1)

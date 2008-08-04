@@ -2,12 +2,11 @@
 ##################################################################################################################
 
 	@WorkingEngines = qw(
-		scumm agos sky queen gob saga 
-		kyra lure agi 
+		scumm agos sky queen gob saga drascula 
+		kyra lure agi touche parallaction 
 	);
 	@TestingEngines = qw(
-		cine cruise touche parallaction 
-		drascula igor made m4
+		cruise igor made m4 cine 		
 	);
 	@BrokenEngines = qw(
 		sword1
@@ -29,21 +28,21 @@
 	);
 	
 	# these are normally enabled for each variation
-	$DefaultFeatures = qw(zlib tremor);
-	#$DefaultFeatures = qw(zlib mad tremor);
+	#$DefaultFeatures = qw(zlib,mad);
+	$DefaultFeatures = qw(zlib,mad,tremor);
 
 	
-														# you can use these below for speed & clarity or override with custom settings
-														$DefaultTopMacros = "
-															MACRO			USE_ZLIB			// LIB:zlib.lib
-															//MACRO			USE_MAD				// LIB:libmad.lib
-															MACRO			USE_TREMOR			// LIB:libtremor.lib
-														";
+	# you can use these below for speed & clarity or override with custom settings
+	$DefaultTopMacros = "
+		MACRO			USE_ZLIB			// LIB:zlib.lib
+		MACRO			USE_MAD				// LIB:libmad.lib
+		MACRO			USE_TREMOR			// LIB:libtremor.lib
+	";
 													
-														$DefaultBottomMacros = "
-															MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
-															MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
-														";
+	$DefaultBottomMacros = "
+		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
+		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+	";
 													
 ##################################################################################################################
 	##

@@ -79,8 +79,7 @@ public:
 	void closeDataFile(bool itk = 0);
 	byte *getUnpackedData(const char *name);
 	void closeData(int16 handle);
-	int16 openData(const char *path,
-			Common::File::AccessMode mode = Common::File::kFileReadMode);
+	int16 openData(const char *path);
 	DataStream *openAsStream(int16 handle, bool dispose = false);
 
 	int32 getDataSize(const char *name);
@@ -104,8 +103,7 @@ protected:
 
 	class GobEngine *_vm;
 
-	int16 file_open(const char *path,
-			Common::File::AccessMode mode = Common::File::kFileReadMode);
+	int16 file_open(const char *path);
 	Common::File *file_getHandle(int16 handle);
 	const Common::File *file_getHandle(int16 handle) const;
 

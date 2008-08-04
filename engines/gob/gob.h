@@ -79,6 +79,11 @@ class SaveLoad;
 #define VAR(var)                    READ_VAR_UINT32(var)
 
 
+enum Endianness {
+	kEndiannessLE,
+	kEndiannessBE
+};
+
 enum GameType {
 	kGameTypeNone = 0,
 	kGameTypeGob1,
@@ -227,6 +232,7 @@ public:
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);
 
+	Endianness getEndianness() const;
 	Common::Platform getPlatform() const;
 	GameType getGameType() const;
 	bool isCD() const;

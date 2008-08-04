@@ -231,7 +231,7 @@ ArjHeader *ArjFile::readHeader() {
 }
 
 
-bool ArjFile::open(const Common::String &filename, AccessMode mode) {
+bool ArjFile::open(const Common::String &filename) {
 	if (_isOpen)
 		error("Attempt to open another instance of archive");
 

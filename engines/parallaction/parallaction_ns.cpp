@@ -34,6 +34,7 @@
 
 namespace Parallaction {
 
+
 #define MOUSEARROW_WIDTH		16
 #define MOUSEARROW_HEIGHT		16
 
@@ -165,7 +166,6 @@ Parallaction_ns::~Parallaction_ns() {
 
 	delete _locationParser;
 	delete _programParser;
-	delete _mouseComposedArrow;
 
 	_location._animations.remove(_char._ani);
 
@@ -182,7 +182,7 @@ void Parallaction_ns::freeFonts() {
 }
 
 void Parallaction_ns::initCursors() {
-	_mouseComposedArrow = _disk->loadPointer("pointer");
+	_comboArrow = _disk->loadPointer("pointer");
 	_mouseArrow = _resMouseArrow;
 }
 
@@ -195,36 +195,16 @@ void Parallaction_ns::setArrowCursor() {
 	_input->_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-	_system->showMouse(true);
-
 }
 
-void Parallaction_ns::setInventoryCursor(int pos) {
+void Parallaction_ns::setInventoryCursor(ItemName name) {
+	assert(name > 0);
 
-	if (pos == -1)
-		return;
-
-	const InventoryItem *item = getInventoryItem(pos);
-	if (item->_index == 0)
-		return;
-
-	_input->_activeItem._id = item->_id;
-
-	byte *v8 = _mouseComposedArrow->getData(0);
+	byte *v8 = _comboArrow->getData(0);
 
 	// FIXME: destination offseting is not clear
-	byte* s = _char._objs->getData(item->_index);
-	byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
-
-	for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		s += INVENTORYITEM_PITCH;
-		d += MOUSECOMBO_WIDTH;
-	}
-
+	_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
 	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
-
 }
 
 
@@ -247,24 +227,19 @@ int Parallaction_ns::go() {
 			_gameToLoad = -1;
 	}
 	if (_gameToLoad == -1) {
-		guiStart();
-	} else { 
+		startGui();
+	} else {
 		_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-		_language = guiChooseLanguage();
-		_disk->setLanguage(_language);
+		
+		_menuHelper = new MenuInputHelper;
+		assert(_menuHelper);
+		
+		new ChooseLanguageInputState_NS(this, _menuHelper);
 		doLoadGame(_gameToLoad);
 	}
+	
+	startGui();
 
-
-	if (quit())
-		return _eventMan->shouldRTL();
-
-	changeLocation(_location._name);
-
-	if (quit())
-		return _eventMan->shouldRTL();
-
-	_input->_inputMode = Input::kInputModeGame;
 	while (!quit()) {
 		runGame();
 	}
@@ -296,8 +271,14 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 }
 
 
-void Parallaction_ns::showSlide(const char *name) {
-	_gfx->setBackground(kBackgroundSlide, name, 0, 0);
+void Parallaction_ns::showSlide(const char *name, int x, int y) {
+	BackgroundInfo *info = new BackgroundInfo;
+	_disk->loadSlide(*info, name);
+
+	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_vm->_screenWidth - info->width) >> 1) : x;
+	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_vm->_screenHeight - info->height) >> 1) : y;
+
+	_gfx->setBackground(kBackgroundSlide, info);
 }
 
 void Parallaction_ns::runPendingZones() {
@@ -314,6 +295,9 @@ void Parallaction_ns::runPendingZones() {
 void Parallaction_ns::changeLocation(char *location) {
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
+	MouseTriState oldMouseState = _input->getMouseState();
+	_input->setMouseState(MOUSE_DISABLED);
+
 	_soundMan->playLocationMusic(location);
 
 	_input->stopHovering();
@@ -321,9 +305,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_zoneTrap = nullZonePtr;
 
-	if (_engineFlags & kEngineBlockInput) {
-		setArrowCursor();
-	}
+	setArrowCursor();
 
 	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);
@@ -337,7 +319,9 @@ void Parallaction_ns::changeLocation(char *location) {
 		showSlide(locname.slide());
 		uint id = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
-		_input->waitUntilLeftClick();
+		_gfx->updateScreen();
+
+		_input->waitForButtonEvent(kMouseLeftUp);
 		_gfx->freeLabels();
 		freeBackground();
 	}
@@ -381,10 +365,9 @@ void Parallaction_ns::changeLocation(char *location) {
 	if (_location._hasSound)
 		_soundMan->playSfx(_location._soundFile, 0, true);
 
+	_input->setMouseState(oldMouseState);
+
 	debugC(1, kDebugExec, "changeLocation() done");
-
-	return;
-
 }
 
 

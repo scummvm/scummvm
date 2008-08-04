@@ -299,6 +299,7 @@ void LocationParser_ns::parseAnimation(AnimationList &list, char *name) {
 	AnimationPtr a(new Animation);
 
 	strncpy(a->_name, name, ZONENAME_LENGTH);
+	a->_flags |= kFlagsIsAnimation;
 
 	list.push_front(AnimationPtr(a));
 
@@ -658,7 +659,7 @@ DECLARE_COMMAND_PARSER(location)  {
 }
 
 
-DECLARE_COMMAND_PARSER(drop)  {
+DECLARE_COMMAND_PARSER(invObject)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(drop) ");
 
 	createCommand(_parser->_lookup);
@@ -1011,7 +1012,7 @@ DECLARE_LOCATION_PARSER(disk)  {
 DECLARE_LOCATION_PARSER(nodes)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(nodes) ");
 
-	parseWalkNodes(_vm->_location._walkNodes);
+	parsePointList(_vm->_location._walkPoints);
 }
 
 
@@ -1124,26 +1125,20 @@ void LocationParser_ns::parse(Script *script) {
 	resolveCommandForwards();
 }
 
-void LocationParser_ns::parseWalkNodes(WalkNodeList &list) {
-	debugC(5, kDebugParser, "parseWalkNodes()");
+void LocationParser_ns::parsePointList(PointList &list) {
+	debugC(5, kDebugParser, "parsePointList()");
 
 	_script->readLineToken(true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
-
-			WalkNodePtr v4(new WalkNode(
-				atoi(_tokens[1]),
-				atoi(_tokens[2])
-			));
-
-			list.push_front(v4);
+			list.push_front(Common::Point(atoi(_tokens[1]), atoi(_tokens[2])));
 		}
 
 		_script->readLineToken(true);
 	}
 
-	debugC(5, kDebugParser, "parseWalkNodes() done");
+	debugC(5, kDebugParser, "parsePointList() done");
 
 	return;
 }
@@ -1203,7 +1198,7 @@ void LocationParser_ns::init() {
 	COMMAND_PARSER(zone);			// off
 	COMMAND_PARSER(call);			// call
 	COMMAND_PARSER(flags);			// toggle
-	COMMAND_PARSER(drop);			// drop
+	COMMAND_PARSER(invObject);			// drop
 	COMMAND_PARSER(simple);			// quit
 	COMMAND_PARSER(move);			// move
 	COMMAND_PARSER(zone);		// stop
@@ -1397,7 +1392,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	list.push_front(z);
 
 	_parser->pushTables(&_locationZoneParsers, _locationZoneStmt);
-	
+
 	return;
 }
 

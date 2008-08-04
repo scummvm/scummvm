@@ -26,6 +26,11 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/file.h"
+#if defined(WIN32) && defined(ARRAYSIZE)
+// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
+#undef ARRAYSIZE
+#endif
 #include "common/util.h"
 
 #include "backends/saves/default/default-saves.h"
@@ -40,6 +45,7 @@
 #define SAMPLES_PER_SEC 22050
 //#define SAMPLES_PER_SEC 44100
 
+
 /*
  * Include header files needed for the getFilesystemFactory() method.
  */
@@ -50,6 +56,18 @@
 #elif defined(WIN32)
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
+
+
+#if defined(UNIX)
+#ifdef MACOSX
+#define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
+#else
+#define DEFAULT_CONFIG_FILE ".scummvmrc"
+#endif
+#else
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#endif
+
 
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
@@ -170,6 +188,10 @@ OSystem_SDL::OSystem_SDL()
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+#ifdef MIXER_DOUBLE_BUFFERING
+	_soundMutex(0), _soundCond(0), _soundThread(0),
+	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
+#endif
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
@@ -239,6 +261,92 @@ FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
 	#else
 		#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
 	#endif
+}
+
+static Common::String getDefaultConfigFileName() {
+	char configFile[MAXPATHLEN];
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	OSVERSIONINFO win32OsVersion;
+	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&win32OsVersion);
+	// Check for non-9X version of Windows.
+	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+		// Use the Application Data directory of the user profile.
+		if (win32OsVersion.dwMajorVersion >= 5) {
+			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
+				error("Unable to access application data directory");
+		} else {
+			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
+				error("Unable to access user profile directory");
+
+			strcat(configFile, "\\Application Data");
+			CreateDirectory(configFile, NULL);
+		}
+
+		strcat(configFile, "\\ScummVM");
+		CreateDirectory(configFile, NULL);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+
+		if (fopen(configFile, "r") == NULL) {
+			// Check windows directory
+			char oldConfigFile[MAXPATHLEN];
+			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
+			if (fopen(oldConfigFile, "r")) {
+				printf("The default location of the config file (scummvm.ini) in ScummVM has changed,\n");
+				printf("under Windows NT4/2000/XP/Vista. You may want to consider moving your config\n");
+				printf("file from the old default location:\n");
+				printf("%s\n", oldConfigFile);
+				printf("to the new default location:\n");
+				printf("%s\n\n", configFile);
+				strcpy(configFile, oldConfigFile);
+			}
+		}
+	} else {
+		// Check windows directory
+		GetWindowsDirectory(configFile, MAXPATHLEN);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+	}
+#elif defined(UNIX)
+	// On UNIX type systems, by default we store the config file inside
+	// to the HOME directory of the user.
+	//
+	// GP2X is Linux based but Home dir can be read only so do not use
+	// it and put the config in the executable dir.
+	//
+	// On the iPhone, the home dir of the user when you launch the app
+	// from the Springboard, is /. Which we don't want.
+	const char *home = getenv("HOME");
+	if (home != NULL && strlen(home) < MAXPATHLEN)
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
+	else
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
+#else
+	strcpy(configFile, DEFAULT_CONFIG_FILE);
+#endif
+
+	return configFile;
+}
+
+Common::SeekableReadStream *OSystem_SDL::openConfigFileForReading() {
+	Common::File *confFile = new Common::File();
+	assert(confFile);
+	if (!confFile->open(getDefaultConfigFileName())) {
+		delete confFile;
+		confFile = 0;
+	}
+	return confFile;
+}
+
+Common::WriteStream *OSystem_SDL::openConfigFileForWriting() {
+	Common::DumpFile *confFile = new Common::DumpFile();
+	assert(confFile);
+	if (!confFile->open(getDefaultConfigFileName())) {
+		delete confFile;
+		confFile = 0;
+	}
+	return confFile;
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {

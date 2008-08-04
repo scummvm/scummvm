@@ -210,6 +210,9 @@ public:
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 
+	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::WriteStream *openConfigFileForWriting();
+
 protected:
 	bool _inited;
 

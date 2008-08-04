@@ -1881,7 +1881,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 			memcpy(filename, params->filename, 260);
 			_vm->convertFilePath(filename);
 
-			if (f.open((const char *)filename, Common::File::kFileReadMode)) {
+			if (f.open((const char *)filename)) {
 				uint32 id = f.readUint32BE();
 				if (id == MKID_BE('AWIZ') || id == MKID_BE('MULT')) {
 					uint32 size = f.readUint32BE();
@@ -1911,7 +1911,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 4:
 		if (params->processFlags & kWPFUseFile) {
-			Common::File f;
+			Common::DumpFile f;
 
 			switch (params->fileWriteMode) {
 			case 2:
@@ -1924,7 +1924,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 				memcpy(filename, params->filename, 260);
 				_vm->convertFilePath(filename);
 
-				if (!f.open((const char *)filename, Common::File::kFileWriteMode)) {
+				if (!f.open((const char *)filename)) {
 					debug(0, "Unable to open for write '%s'", filename);
 					_vm->VAR(119) = -3;
 				} else {

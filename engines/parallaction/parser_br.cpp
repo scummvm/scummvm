@@ -25,6 +25,7 @@
 
 
 #include "parallaction/parallaction.h"
+
 #include "parallaction/sound.h"
 
 namespace Parallaction {
@@ -103,6 +104,7 @@ namespace Parallaction {
 #define INST_IFGT		29
 #define INST_ENDIF		30
 #define INST_STOP		31
+
 
 const char *_zoneTypeNamesRes_br[] = {
 	"examine",
@@ -442,7 +444,7 @@ DECLARE_LOCATION_PARSER(redundant)  {
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
 
-	ctxt.characterName = strdup(_tokens[0]);
+	ctxt.characterName = strdup(_tokens[1]);
 }
 
 
@@ -464,9 +466,9 @@ DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
 	ctxt.maskName = strdup(_tokens[1]);
-	_vm->_gfx->_backgroundInfo.layers[0] = atoi(_tokens[2]);
-	_vm->_gfx->_backgroundInfo.layers[1] = atoi(_tokens[3]);
-	_vm->_gfx->_backgroundInfo.layers[2] = atoi(_tokens[4]);
+	ctxt.info->layers[0] = atoi(_tokens[2]);
+	ctxt.info->layers[1] = atoi(_tokens[3]);
+	ctxt.info->layers[2] = atoi(_tokens[4]);
 }
 
 
@@ -750,6 +752,67 @@ DECLARE_ZONE_PARSER(type)  {
 	_parser->popTables();
 }
 
+void LocationParser_br::parsePathData(ZonePtr z) {
+
+	PathData *data = new PathData;
+
+	do {
+
+		if (!scumm_stricmp("zone", _tokens[0])) {
+			int id = atoi(_tokens[1]);
+			parsePointList(data->_lists[id]);
+			data->_numLists++;
+		}
+
+		_script->readLineToken(true);
+	} while (scumm_stricmp("endzone", _tokens[0]));
+
+	z->u.path = data;
+}
+
+void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
+	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
+
+	switch (z->_type & 0xFFFF) {
+	case kZoneExamine:	// examine Zone alloc
+		parseExamineData(z);
+		break;
+
+	case kZoneDoor: // door Zone alloc
+		parseDoorData(z);
+		break;
+
+	case kZoneGet:	// get Zone alloc
+		parseGetData(z);
+		break;
+
+	case kZoneMerge:	// merge Zone alloc
+		parseMergeData(z);
+		break;
+
+	case kZoneHear: // hear Zone alloc
+		parseHearData(z);
+		break;
+
+	case kZoneSpeak:	// speak Zone alloc
+		parseSpeakData(z);
+		break;
+
+	// BRA specific zone
+	case kZonePath:
+		parsePathData(z);
+		break;
+
+	default:
+		// eats up 'ENDZONE' line for unprocessed zone types
+		_script->readLineToken(true);
+		break;
+	}
+
+	debugC(7, kDebugParser, "parseZoneTypeBlock() done");
+
+	return;
+}
 
 DECLARE_ANIM_PARSER(file)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(file) ");
@@ -983,7 +1046,7 @@ void LocationParser_br::init() {
 	COMMAND_PARSER(zone);		// off
 	COMMAND_PARSER(call);
 	COMMAND_PARSER(flags);		// toggle
-	COMMAND_PARSER(drop);
+	COMMAND_PARSER(invObject);	// drop
 	COMMAND_PARSER(simple);		// quit
 	COMMAND_PARSER(move);
 	COMMAND_PARSER(zone);	// stop
@@ -991,7 +1054,7 @@ void LocationParser_br::init() {
 	COMMAND_PARSER(string);		// followme
 	COMMAND_PARSER(simple);		// onmouse
 	COMMAND_PARSER(simple);		// offmouse
-	COMMAND_PARSER(drop);		// add
+	COMMAND_PARSER(invObject);		// add
 	COMMAND_PARSER(zone);		// leave
 	COMMAND_PARSER(math);		// inc
 	COMMAND_PARSER(math);		// dec
@@ -1107,18 +1170,40 @@ void ProgramParser_br::init() {
 	INSTRUCTION_PARSER(endscript);
 }
 
+
+/*
+	Ancillary routine to support hooking preprocessor and
+	parser.
+*/
+Common::ReadStream *getStream(StatementList &list) {
+	Common::String text;
+	StatementList::iterator it = list.begin();
+	for ( ; it != list.end(); it++) {
+		text += (*it)._text;
+	}
+	return new ReadStringStream(text);
+}
+
 void LocationParser_br::parse(Script *script) {
+
+	PreProcessor pp;
+	StatementList list;
+	pp.preprocessScript(*script, list);
+	Script *script2 = new Script(getStream(list), true);
 
 	ctxt.numZones = 0;
 	ctxt.bgName = 0;
 	ctxt.maskName = 0;
 	ctxt.pathName = 0;
 	ctxt.characterName = 0;
+	ctxt.info = new BackgroundInfo;
 
-	LocationParser_ns::parse(script);
+	LocationParser_ns::parse(script2);
 
-	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.bgName, ctxt.maskName, ctxt.pathName);
-	_vm->_pathBuffer = &_vm->_gfx->_backgroundInfo.path;
+	_vm->_disk->loadScenery(*ctxt.info, ctxt.bgName, ctxt.maskName, ctxt.pathName);
+	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
+	_vm->_pathBuffer = &ctxt.info->path;
+
 
 	if (ctxt.characterName) {
 		_vm->changeCharacter(ctxt.characterName);
@@ -1129,6 +1214,7 @@ void LocationParser_br::parse(Script *script) {
 	free(ctxt.pathName);
 	free(ctxt.characterName);
 
+	delete script2;
 }
 
 } // namespace Parallaction

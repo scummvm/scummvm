@@ -112,7 +112,7 @@ int KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformPC98) {
 			if (_flags.gameID == GI_KYRA1)
-				_sound = new SoundTowns/*SoundPC98*/(this, _mixer);
+				_sound = new SoundPC98(this, _mixer);
 			else
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
@@ -150,6 +150,16 @@ int KyraEngine_v1::init() {
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
+
+	if (_flags.isDemo) {
+		// HACK: check whether this is the HOF demo or the LOL demo.
+		// The LOL demo needs to be detected and run as KyraEngine_HoF,
+		// but the static resource loader and the sequence player will
+		// need correct IDs.
+		if (_res->exists("scene1.cps"))
+			_flags.gameID = GI_LOL;
+	}
+
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())

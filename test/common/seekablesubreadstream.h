@@ -2,22 +2,19 @@
 
 #include "common/stream.h"
 
-class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite
-{
+class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite {
 	public:
-	void test_traverse( void )
-	{
+	void test_traverse(void) {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		Common::MemoryReadStream ms = Common::MemoryReadStream(contents, 10);
+		Common::MemoryReadStream ms(contents, 10);
 
 		int start = 2, end = 8;
 
-		Common::SeekableSubReadStream ssrs = Common::SeekableSubReadStream(&ms, start, end);
+		Common::SeekableSubReadStream ssrs(&ms, start, end);
 
 		int i;
 		byte b;
-		for (i = start; i < end; ++i)
-		{
+		for (i = start; i < end; ++i) {
 			TS_ASSERT( !ssrs.eos() );
 
 			TS_ASSERT_EQUALS( uint32(i - start), ssrs.pos() );
@@ -29,12 +26,11 @@ class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( ssrs.eos() );
 	}
 
-	void test_seek( void )
-	{
+	void test_seek(void) {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		Common::MemoryReadStream ms = Common::MemoryReadStream(contents, 10);
+		Common::MemoryReadStream ms(contents, 10);
 
-		Common::SeekableSubReadStream ssrs = Common::SeekableSubReadStream(&ms, 1, 9);
+		Common::SeekableSubReadStream ssrs(&ms, 1, 9);
 		byte b;
 
 		TS_ASSERT_EQUALS( ssrs.pos(), (uint32)0 );

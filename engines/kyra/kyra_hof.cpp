@@ -230,7 +230,7 @@ int KyraEngine_HoF::init() {
 	_gui = new GUI_HoF(this);
 	assert(_gui);
 	_gui->initStaticData();
-	_tim = new TIMInterpreter(this, _system);
+	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
 
 	if (_flags.isDemo && !_flags.isTalkie) {
@@ -251,7 +251,7 @@ int KyraEngine_HoF::init() {
 	_abortIntroFlag = false;
 
 	if (_sequenceStrings) {
-		for (int i = 0; i < 33; i++)
+		for (int i = 0; i < MIN(33, _sequenceStringsSize); i++)
 			_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
 	}
 
@@ -278,7 +278,10 @@ int KyraEngine_HoF::go() {
 			seq_showStarcraftLogo();
 
 		if (_flags.isDemo && !_flags.isTalkie) {
-			seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
+			if (_flags.gameID == GI_LOL)
+				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);	
+			else
+				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
 			_menuChoice = 4;
 		} else {
 			seq_playSequences(kSequenceVirgin, kSequenceZanfaun);

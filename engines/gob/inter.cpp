@@ -296,9 +296,7 @@ void Inter::callSub(int16 retFlag) {
 }
 
 void Inter::allocateVars(uint32 count) {
-	if ((_vm->getPlatform() == Common::kPlatformAmiga) ||
-	    (_vm->getPlatform() == Common::kPlatformMacintosh) ||
-	    (_vm->getPlatform() == Common::kPlatformAtariST))
+	if (_vm->getEndianness() == kEndiannessBE)
 		_variables = new VariablesBE(count * 4);
 	else
 		_variables = new VariablesLE(count * 4);

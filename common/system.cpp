@@ -29,6 +29,10 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/timer.h"
+#if defined(WIN32) && defined(ARRAYSIZE)
+// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
+#undef ARRAYSIZE
+#endif
 #include "common/util.h"
 
 #include "graphics/colormasks.h"
@@ -120,4 +124,71 @@ void OSystem::clearScreen() {
 	Graphics::Surface *screen = lockScreen();
 	memset(screen->pixels, 0, screen->h * screen->pitch);
 	unlockScreen();
+}
+
+
+/*
+FIXME: The config file loading code below needs to be cleaned up.
+ Port specific variants should be pushed into the respective ports.
+
+ Ideally, the default OSystem::openConfigFileForReading/Writing methods
+ should be removed completely. 
+*/
+
+#include "common/file.h"
+
+#ifdef __PLAYSTATION2__
+#include "backends/platform/ps2/systemps2.h"
+#endif
+
+#ifdef IPHONE
+#include "backends/platform/iphone/osys_iphone.h"
+#endif
+
+
+#if defined(UNIX)
+#define DEFAULT_CONFIG_FILE ".scummvmrc"
+#else
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#endif
+
+static Common::String getDefaultConfigFileName() {
+	char configFile[MAXPATHLEN];
+#if defined(PALMOS_MODE)
+	strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
+#elif defined(IPHONE)
+	strcpy(configFile, OSystem_IPHONE::getConfigPath());
+#elif defined(__PLAYSTATION2__)
+	((OSystem_PS2*)g_system)->makeConfigPath(configFile);
+#elif defined(__PSP__)
+	strcpy(configFile, "ms0:/" DEFAULT_CONFIG_FILE);
+#else
+	strcpy(configFile, DEFAULT_CONFIG_FILE);
+#endif
+
+	return configFile;
+}
+
+Common::SeekableReadStream *OSystem::openConfigFileForReading() {
+	Common::File *confFile = new Common::File();
+	assert(confFile);
+	if (!confFile->open(getDefaultConfigFileName())) {
+		delete confFile;
+		confFile = 0;
+	}
+	return confFile;
+}
+
+Common::WriteStream *OSystem::openConfigFileForWriting() {
+#ifdef __DC__
+	return 0;
+#else
+	Common::DumpFile *confFile = new Common::DumpFile();
+	assert(confFile);
+	if (!confFile->open(getDefaultConfigFileName())) {
+		delete confFile;
+		confFile = 0;
+	}
+	return confFile;
+#endif
 }

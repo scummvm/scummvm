@@ -261,6 +261,7 @@ public:
 
 	void makeBlack();
 	void setEntries(byte* data, uint first, uint num);
+	void getEntry(uint index, int &red, int &green, int &blue);
 	void setEntry(uint index, int red, int green, int blue);
 	void makeGrayscale();
 	void fadeTo(const Palette& target, uint step);
@@ -435,7 +436,7 @@ struct BackgroundInfo {
 		return LAYER_FOREGROUND;
 	}
 
-	void free() {
+	~BackgroundInfo() {
 		bg.free();
 		mask.free();
 		path.free();
@@ -471,6 +472,9 @@ typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::
 
 class Gfx {
 
+protected:
+	Parallaction*		_vm;
+
 public:
 	Disk *_disk;
 	VarMap _vars;
@@ -496,7 +500,6 @@ public:
 	void freeLabels();
 
 	// dialogue balloons
-	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
 	GfxObj* registerBalloon(Frames *frames, const char *text);
 	void destroyBalloons();
 
@@ -508,8 +511,8 @@ public:
 	void freeItems();
 
 	// background surface
-	BackgroundInfo	_backgroundInfo;
-	void setBackground(uint type, const char* name, const char* mask, const char* path);
+	BackgroundInfo	*_backgroundInfo;
+	void setBackground(uint type, BackgroundInfo *info);
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
 	void fillBackground(const Common::Rect& r, byte color);
@@ -550,11 +553,15 @@ public:
 	byte				*_unpackedBitmap;
 
 protected:
-	Parallaction*		_vm;
 	bool				_halfbrite;
+
+	bool 				_skipBackground;
 
 	Common::Point		_hbCirclePos;
 	int				_hbCircleRadius;
+
+	// BRA specific
+	Palette				_backupPal;
 
 	// frame data stored in programmable variables
 	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask
@@ -562,6 +569,7 @@ protected:
 	int32				_varAnimRenderMode;	// 1 = normal, 2 = flat
 	int32				_varMiscRenderMode;	// 1 = normal, 2 = flat
 	int32				_varRenderMode;
+	int32				_varDrawPathZones;	// 0 = don't draw, 1 = draw
 	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
 
@@ -592,7 +600,6 @@ public:
 
 	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
-	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
 	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);

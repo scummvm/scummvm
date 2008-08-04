@@ -34,22 +34,6 @@
 
 #include "sound/mididrv.h"
 
-#ifdef IPHONE
-#include "backends/platform/iphone/osys_iphone.h"
-#endif
-
-#ifdef UNIX
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".scummvm"
-#endif
-#elif defined(__SYMBIAN32__)
-#define DEFAULT_SAVE_PATH "Savegames"
-#elif defined(PALMOS_MODE)
-#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
-#endif
-
 #define DETECTOR_TESTING_HACK
 
 namespace Base {
@@ -181,9 +165,6 @@ void registerDefaults() {
 
 	// Game specific
 	ConfMan.registerDefault("path", "");
-	ConfMan.registerDefault("savepath", "");
-
-//	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("subtitles", false);
@@ -215,27 +196,6 @@ void registerDefaults() {
 #ifdef USE_ALSA
 	ConfMan.registerDefault("alsa_port", "65:0");
 #endif
-
-	// Register default savepath
-#ifdef DEFAULT_SAVE_PATH
-	char savePath[MAXPATHLEN];
-#if defined(UNIX) && !defined(IPHONE)
-	const char *home = getenv("HOME");
-	if (home && *home && strlen(home) < MAXPATHLEN) {
-		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
-		ConfMan.registerDefault("savepath", savePath);
-	}
-#elif defined(__SYMBIAN32__)
-	strcpy(savePath, Symbian::GetExecutablePath());
-	strcat(savePath, DEFAULT_SAVE_PATH);
-	ConfMan.registerDefault("savepath", savePath);
-#elif defined (IPHONE)
-	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
-
-#elif defined(PALMOS_MODE)
-	ConfMan.registerDefault("savepath", DEFAULT_SAVE_PATH);
-#endif
-#endif // #ifdef DEFAULT_SAVE_PATH
 
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
@@ -684,9 +644,9 @@ static void runDetectorTest() {
 			failure++;
 		} else if (candidates.size() > 1) {
 			if (gameidDiffers) {
-				printf(" FAILURE: Multiple games detected, some/all with wrong gameid\n");
+				printf(" WARNING: Multiple games detected, some/all with wrong gameid\n");
 			} else {
-				printf(" FAILURE: Multiple games detected, but all have the same gameid\n");
+				printf(" WARNING: Multiple games detected, but all have the same gameid\n");
 			}
 			failure++;
 		} else if (gameidDiffers) {

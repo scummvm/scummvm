@@ -153,6 +153,13 @@ void Palette::setEntry(uint index, int red, int green, int blue) {
 		_data[index*3+2] = blue & 0xFF;
 }
 
+void Palette::getEntry(uint index, int &red, int &green, int &blue) {
+	assert(index < _colors);
+	red   = _data[index*3];
+	green = _data[index*3+1];
+	blue  = _data[index*3+2];
+}
+
 void Palette::makeGrayscale() {
 	byte v;
 	for (uint16 i = 0; i < _colors; i++) {
@@ -262,7 +269,7 @@ void Gfx::animatePalette() {
 
 	PaletteFxRange *range;
 	for (uint16 i = 0; i < 4; i++) {
-		range = &_backgroundInfo.ranges[i];
+		range = &_backgroundInfo->ranges[i];
 
 		if ((range->_flags & 1) == 0) continue;		// animated palette
 		range->_timer += range->_step * 2;	// update timer
@@ -307,8 +314,12 @@ void Gfx::setProjectorProgram(int16 *data) {
 }
 
 void Gfx::drawInventory() {
-
+/*
 	if ((_engineFlags & kEngineInventory) == 0) {
+		return;
+	}
+*/
+	if (_vm->_input->_inputMode != Input::kInputModeInventory) {
 		return;
 	}
 
@@ -348,29 +359,37 @@ void Gfx::clearScreen() {
 }
 
 void Gfx::beginFrame() {
+	_skipBackground = (_backgroundInfo->bg.pixels == 0);	// don't render frame if background is missing
 
-	int32 oldBackgroundMode = _varBackgroundMode;
-	_varBackgroundMode = getVar("background_mode");
-
-	if (oldBackgroundMode != _varBackgroundMode) {
-		switch (_varBackgroundMode) {
-		case 1:
-			_bitmapMask.free();
-			break;
-		case 2:
-			_bitmapMask.create(_backgroundInfo.width, _backgroundInfo.height, 1);
-			byte *data = (byte*)_bitmapMask.pixels;
-			for (uint y = 0; y < _bitmapMask.h; y++) {
-				for (uint x = 0; x < _bitmapMask.w; x++) {
-					*data++ = _backgroundInfo.mask.getValue(x, y);
+	if (!_skipBackground) {
+		int32 oldBackgroundMode = _varBackgroundMode;
+		_varBackgroundMode = getVar("background_mode");
+		if (oldBackgroundMode != _varBackgroundMode) {
+			switch (_varBackgroundMode) {
+			case 1:
+				_bitmapMask.free();
+				break;
+			case 2:
+				_bitmapMask.create(_backgroundInfo->width, _backgroundInfo->height, 1);
+				byte *data = (byte*)_bitmapMask.pixels;
+				for (uint y = 0; y < _bitmapMask.h; y++) {
+					for (uint x = 0; x < _bitmapMask.w; x++) {
+						*data++ = _backgroundInfo->mask.getValue(x, y);
+					}
 				}
+				break;
 			}
-			break;
 		}
 	}
 
+	_varDrawPathZones = getVar("draw_path_zones");
+	if (_varDrawPathZones == 1 && _vm->getGameType() != GType_BRA) {
+		setVar("draw_path_zones", 0);
+		_varDrawPathZones = 0;
+		warning("Path zones are supported only in Big Red Adventure");
+	}
 
-	if (_vm->_screenWidth >= _backgroundInfo.width) {
+	if (_skipBackground || (_vm->_screenWidth >= _backgroundInfo->width)) {
 		_varScrollX = 0;
 	} else {
 		_varScrollX = getVar("scroll_x");
@@ -395,24 +414,38 @@ int32 Gfx::getRenderMode(const char *type) {
 
 void Gfx::updateScreen() {
 
-	// background may not cover the whole screen, so adjust bulk update size
-	uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
-	uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
+	if (!_skipBackground) {
+		// background may not cover the whole screen, so adjust bulk update size
+		uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo->width);
+		uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo->height);
 
-	byte *backgroundData = 0;
-	uint16 backgroundPitch = 0;
-	switch (_varBackgroundMode) {
-	case 1:
-		backgroundData = (byte*)_backgroundInfo.bg.getBasePtr(_varScrollX, 0);
-		backgroundPitch = _backgroundInfo.bg.pitch;
-		break;
-	case 2:
-		backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
-		backgroundPitch = _bitmapMask.pitch;
-		break;
+		byte *backgroundData = 0;
+		uint16 backgroundPitch = 0;
+		switch (_varBackgroundMode) {
+		case 1:
+			backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(_varScrollX, 0);
+			backgroundPitch = _backgroundInfo->bg.pitch;
+			break;
+		case 2:
+			backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
+			backgroundPitch = _bitmapMask.pitch;
+			break;
+		}
+		g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
 	}
-	g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
 
+	if (_varDrawPathZones == 1) {
+		Graphics::Surface *surf = g_system->lockScreen();
+		ZoneList::iterator b = _vm->_location._zones.begin();
+		ZoneList::iterator e = _vm->_location._zones.end();
+		for (; b != e; b++) {
+			ZonePtr z = *b;
+			if (z->_type & kZonePath) {
+				surf->frameRect(Common::Rect(z->_left, z->_top, z->_right, z->_bottom), 2);
+			}
+		}
+		g_system->unlockScreen();
+	}
 
 	_varRenderMode = _varAnimRenderMode;
 
@@ -466,17 +499,17 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	Common::Rect r(surf.w, surf.h);
 	r.moveTo(x, y);
 
-	uint16 z = (mask) ? _backgroundInfo.getLayer(y) : LAYER_FOREGROUND;
-	blt(r, (byte*)surf.pixels, &_backgroundInfo.bg, z, 0);
+	uint16 z = (mask) ? _backgroundInfo->getLayer(y) : LAYER_FOREGROUND;
+	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 0);
 }
 
 void Gfx::fillBackground(const Common::Rect& r, byte color) {
-	_backgroundInfo.bg.fillRect(r, color);
+	_backgroundInfo->bg.fillRect(r, color);
 }
 
 void Gfx::invertBackground(const Common::Rect& r) {
 
-	byte *d = (byte*)_backgroundInfo.bg.getBasePtr(r.left, r.top);
+	byte *d = (byte*)_backgroundInfo->bg.getBasePtr(r.left, r.top);
 
 	for (int i = 0; i < r.height(); i++) {
 		for (int j = 0; j < r.width(); j++) {
@@ -484,7 +517,7 @@ void Gfx::invertBackground(const Common::Rect& r) {
 			d++;
 		}
 
-		d += (_backgroundInfo.bg.pitch - r.width());
+		d += (_backgroundInfo->bg.pitch - r.width());
 	}
 
 }
@@ -674,49 +707,6 @@ void Gfx::drawLabels() {
 }
 
 
-void Gfx::getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height) {
-
-	uint16 lines = 0;
-	uint16 w = 0;
-	*width = 0;
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	char token[MAX_TOKEN_LEN];
-
-	while (strlen(text) != 0) {
-
-		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
-		tokenWidth = font->getStringWidth(token);
-
-		w += tokenWidth;
-
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-		} else {
-			if (w > maxwidth) {
-				w -= tokenWidth;
-				lines++;
-				if (w > *width)
-					*width = w;
-
-				w = tokenWidth;
-			}
-		}
-
-		w += blankWidth;
-		text = Common::ltrim(text);
-	}
-
-	if (*width < w) *width = w;
-	*width += 10;
-
-	*height = lines * 10 + 20;
-
-	return;
-}
-
 
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
 
@@ -734,7 +724,7 @@ void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surf
 }
 
 void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
-	copyRect(r, _backgroundInfo.bg, dst);
+	copyRect(r, _backgroundInfo->bg, dst);
 }
 
 
@@ -754,6 +744,8 @@ Gfx::Gfx(Parallaction* vm) :
 	_screenX = 0;
 	_screenY = 0;
 
+	_backgroundInfo = 0;
+
 	_halfbrite = false;
 	_hbCircleRadius = 0;
 
@@ -769,12 +761,22 @@ Gfx::Gfx(Parallaction* vm) :
 	registerVar("anim_render_mode", 1);
 	registerVar("misc_render_mode", 1);
 
+	registerVar("draw_path_zones", 0);
+
+	if ((_vm->getGameType() == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+	// this loads the backup palette needed by the PC version of BRA (see setBackground()).
+		BackgroundInfo	paletteInfo;
+		_disk->loadSlide(paletteInfo, "pointer");
+		_backupPal.clone(paletteInfo.palette);
+	}
+
 	return;
 }
 
 Gfx::~Gfx() {
 
-	freeBackground();
+	delete _backgroundInfo;
+
 	freeLabels();
 
 	delete []_unpackedBitmap;
@@ -829,23 +831,29 @@ void Gfx::freeItems() {
 	_numItems = 0;
 }
 
-void Gfx::freeBackground() {
-	_backgroundInfo.free();
-}
-
-void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
-
-	freeBackground();
+void Gfx::setBackground(uint type, BackgroundInfo *info) {
+	delete _backgroundInfo;
+	_backgroundInfo = info;
 
 	if (type == kBackgroundLocation) {
-		_disk->loadScenery(_backgroundInfo, name, mask, path);
-		setPalette(_backgroundInfo.palette);
-		_palette.clone(_backgroundInfo.palette);
-	} else {
-		_disk->loadSlide(_backgroundInfo, name);
-		setPalette(_backgroundInfo.palette);
-	}
+		// The PC version of BRA needs the entries 20-31 of the palette to be constant, but
+		// the background resource files are screwed up. The right colors come from an unused
+		// bitmap (pointer.bmp). Nothing is known about the Amiga version so far.
+		if ((_vm->getGameType() == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+			int r, g, b;
+			for (uint i = 16; i < 32; i++) {
+				_backupPal.getEntry(i, r, g, b);
+				_backgroundInfo->palette.setEntry(i, r, g, b);
+			}
+		}
 
+		setPalette(_backgroundInfo->palette);
+		_palette.clone(_backgroundInfo->palette);
+	} else {
+		for (uint i = 0; i < 6; i++)
+			_backgroundInfo->ranges[i]._flags = 0;	// disable palette cycling for slides
+		setPalette(_backgroundInfo->palette);
+	}
 }
 
 } // namespace Parallaction
