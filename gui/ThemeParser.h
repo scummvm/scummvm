@@ -351,12 +351,13 @@ protected:
 			XML_KEY(defaults)
 				XML_PROP(stroke, false)
 				XML_PROP(shadow, false)
-				XML_PROP(inner_shadow, false)
+				XML_PROP(bevel, false)
 				XML_PROP(factor, false)
 				XML_PROP(fg_color, false)
 				XML_PROP(bg_color, false)
 				XML_PROP(gradient_start, false)
 				XML_PROP(gradient_end, false)
+				XML_PROP(bevel_color, false)
 				XML_PROP(gradient_factor, false)
 				XML_PROP(fill, false)
 			KEY_END()
@@ -368,12 +369,13 @@ protected:
 				XML_KEY(defaults)
 					XML_PROP(stroke, false)
 					XML_PROP(shadow, false)
-					XML_PROP(inner_shadow, false)
+					XML_PROP(bevel, false)
 					XML_PROP(factor, false)
 					XML_PROP(fg_color, false)
 					XML_PROP(bg_color, false)
 					XML_PROP(gradient_start, false)
 					XML_PROP(gradient_end, false)
+					XML_PROP(bevel_color, false)
 					XML_PROP(gradient_factor, false)
 					XML_PROP(fill, false)
 				KEY_END()
@@ -382,13 +384,14 @@ protected:
 					XML_PROP(func, true)
 					XML_PROP(stroke, false)
 					XML_PROP(shadow, false)
-					XML_PROP(inner_shadow, false)
+					XML_PROP(bevel, false)
 					XML_PROP(factor, false)
 					XML_PROP(fg_color, false)
 					XML_PROP(bg_color, false)
 					XML_PROP(gradient_start, false)
 					XML_PROP(gradient_end, false)
 					XML_PROP(gradient_factor, false)
+					XML_PROP(bevel_color, false)
 					XML_PROP(fill, false)
 					XML_PROP(bevel, false)
 					XML_PROP(radius, false)
@@ -432,15 +435,21 @@ protected:
 			
 			XML_KEY(dialog)
 				XML_PROP(name, true)
-				XML_PROP(size, false)
-				XML_PROP(pos, false)
-				XML_PROP(resolution, false)
-				
-				XML_KEY(widget)
-					XML_PROP(name, true)
-					XML_PROP(size, false)
-					XML_PROP(pos, false)
-					XML_PROP(padding, false)
+				XML_KEY(layout)
+					XML_PROP(type, true)
+					XML_PROP(align, false)
+					XML_PROP(direction, false)
+					XML_KEY(widget)
+						XML_PROP(name, true)
+						XML_PROP(width, false)
+						XML_PROP(height, false)
+					KEY_END()
+					
+					XML_KEY(space)
+						XML_PROP(size, true)
+					KEY_END()
+					
+					XML_KEY_RECURSIVE(layout)
 				KEY_END()
 			KEY_END()
 		KEY_END() 
@@ -465,6 +474,10 @@ protected:
 	bool parserCallback_widget(ParserNode *node);
 	bool parserCallback_dialog(ParserNode *node);
 	bool parserCallback_child(ParserNode *node);
+	bool parserCallback_layout(ParserNode *node);
+	bool parserCallback_space(ParserNode *node) { return true; }
+	
+	bool closedKeyCallback(ParserNode *node);
 	
 	void cleanup();
 

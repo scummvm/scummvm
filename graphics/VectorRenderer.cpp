@@ -69,13 +69,16 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 
 	if (step.fgColor.set)
 		setFgColor(step.fgColor.r, step.fgColor.g, step.fgColor.b);
+		
+	if (step.bevelColor.set)
+		setBevelColor(step.bevelColor.r, step.bevelColor.g, step.bevelColor.b);
 
 	if (step.gradColor1.set && step.gradColor2.set)
 		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b, 
 						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
 	setShadowOffset(_disableShadows ? 0 : step.shadow);
-	setInnerShadowOffset(_disableShadows ? 0 : step.innerShadow);
+	setBevel(step.bevel);
 	setGradientFactor(step.factor);
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
@@ -513,8 +516,8 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		break;
 	}
 	
-	if (Base::_innerShadowOffset)
-		drawRoundedSquareInnerShadow(x, y, r, w, h, Base::_innerShadowOffset);
+	if (Base::_bevel)
+		drawRoundedSquareFakeBevel(x, y, r, w, h, Base::_bevel);
 }
 
 template<typename PixelType, typename PixelFormat>
@@ -945,6 +948,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	int pitch = Base::surfacePitch();
 	int sw = 0, sp = 0, hp = h * pitch;
 	
+//	if (r < 8) r = 3;
+	
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
 	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
@@ -1160,7 +1165,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawRoundedSquareInnerShadow(int x1, int y1, int r, int w, int h, int blur) {
+drawRoundedSquareFakeBevel(int x1, int y1, int r, int w, int h, int amount) {
 	int x, y;
 	int p = Base::surfacePitch(), px, py;
 	int sw = 0, sp = 0;
@@ -1169,7 +1174,7 @@ drawRoundedSquareInnerShadow(int x1, int y1, int r, int w, int h, int blur) {
 	uint32 T = 0, oldT;
 	uint8 a1, a2;
 	
-	PixelType color = RGBToColor<PixelFormat>(63, 60, 17);
+	PixelType color = _bevelColor; //RGBToColor<PixelFormat>(63, 60, 17);
 
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
@@ -1178,7 +1183,7 @@ drawRoundedSquareInnerShadow(int x1, int y1, int r, int w, int h, int blur) {
 
 	int short_h = h - 2 * r;
 	
-	while (sw++ < blur) {
+	while (sw++ < amount) {
 		colorFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color);
 		sp += p;
 
@@ -1188,9 +1193,6 @@ drawRoundedSquareInnerShadow(int x1, int y1, int r, int w, int h, int blur) {
 		while (x > y++) {
 			__WU_ALGORITHM();
 
-			a1 = a1 * 3 / 4;
-			a2 = a2 * 3 / 4;
-			
 			blendPixelPtr(ptr_tr + (y) - (px - p), color, a2);
 			blendPixelPtr(ptr_tr + (x - 1) - (py), color, a2);
 			blendPixelPtr(ptr_tl - (x - 1) - (py), color, a2);
@@ -1209,7 +1211,7 @@ drawRoundedSquareInnerShadow(int x1, int y1, int r, int w, int h, int blur) {
 
 	ptr_fill += p * r;
 	while (short_h-- >= 0) {
-		colorFill(ptr_fill, ptr_fill + blur, color);
+		colorFill(ptr_fill, ptr_fill + amount, color);
 		ptr_fill += p;
 	}
 }

@@ -88,7 +88,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
 	step->shadow = 0;
-	step->innerShadow = 0;
+	step->bevel = 0;
 	step->stroke = 0;
 	step->radius = 0xFF;
 
@@ -307,7 +307,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	}
 
 	__PARSER_ASSIGN_INT(stroke, "stroke", false);
-	__PARSER_ASSIGN_INT(innerShadow, "inner_shadow", false);
+	__PARSER_ASSIGN_INT(bevel, "bevel", false);
 	__PARSER_ASSIGN_INT(shadow, "shadow", false);
 	__PARSER_ASSIGN_INT(factor, "gradient_factor", false);
 
@@ -315,6 +315,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	__PARSER_ASSIGN_RGB(bgColor, "bg_color");
 	__PARSER_ASSIGN_RGB(gradColor1, "gradient_start");
 	__PARSER_ASSIGN_RGB(gradColor2, "gradient_end");
+	__PARSER_ASSIGN_RGB(bevelColor, "bevel_color");
 
 	if (functionSpecific) {
 		assert(stepNode->values.contains("func"));
@@ -449,16 +450,35 @@ bool ThemeParser::parserCallback_def(ParserNode *node) {
 bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	Common::String var;
 	
-	if (getParentNode(node)->name == "globals")
+	if (getParentNode(node)->name == "globals") {
 		var = "Globals." + node->values["name"] + ".";
-	else if (getParentNode(node)->name == "dialog")
-		var = "Dialog." + getParentNode(node)->values["name"] + "." + node->values["name"] + ".";
-	else 
-		assert(!"Corruption in XML parser.");
-	
-	if (!parseCommonLayoutProps(node, var))
-		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
-	
+		if (!parseCommonLayoutProps(node, var))
+			return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+	} else {
+		var = node->values["name"];
+		int width = -1;
+		int height = -1;
+		
+		if (node->values.contains("width")) {
+			if (_theme->themeEval()->hasVar(node->values["width"]) == true)
+				width = _theme->themeEval()->getVar(node->values["width"]);
+				
+			else if (!parseIntegerKey(node->values["width"].c_str(), 1, &width))
+				return parserError("Corrupted width value in key for %s", var.c_str());
+		}
+		
+		if (node->values.contains("height")) {
+			if (_theme->themeEval()->hasVar(node->values["height"]) == true)
+				height = _theme->themeEval()->getVar(node->values["height"]);
+				
+			else if (!parseIntegerKey(node->values["height"].c_str(), 1, &height))
+				return parserError("Corrupted height value in key for %s", var.c_str());
+		}
+		
+		_theme->themeEval()->addWidget(var, width, height);
+		
+	}
+
 	return true;
 }
 
@@ -474,8 +494,35 @@ bool ThemeParser::parserCallback_child(ParserNode *node) {
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"] + ".";
 	
-	if (!parseCommonLayoutProps(node, var))
-		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+//	if (!parseCommonLayoutProps(node, var))
+//		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+		
+	_theme->themeEval()->addDialog(var);
+		
+	return true;
+}
+
+bool ThemeParser::parserCallback_layout(ParserNode *node) {
+	
+	if (!node->values.contains("type"))
+		return parserError("Layouts need a specific type (vertical or horizontal).");
+		
+	GUI::ThemeLayout::LayoutType type = GUI::ThemeLayout::kLayoutNone;
+	
+	if (node->values["type"] == "vertical")
+		type = GUI::ThemeLayout::kLayoutVertical;
+	else if (node->values["type"] == "horizontal")
+		type = GUI::ThemeLayout::kLayoutHorizontal;
+		
+	_theme->themeEval()->addLayout(type, GUI::ThemeLayout::kLayoutParseDefault);
+	return true;
+}
+
+bool ThemeParser::closedKeyCallback(ParserNode *node) {
+	if (node->name == "layout")
+		_theme->themeEval()->closeLayout();
+	else if (node->name == "dialog")
+		_theme->themeEval()->closeDialog();
 		
 	return true;
 }

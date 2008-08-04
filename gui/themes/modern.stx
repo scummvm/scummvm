@@ -52,6 +52,9 @@
 		<color name = 'white'
 				rgb = '255, 255, 255'
 		/>
+		<color name = 'shadowcolor'
+				rgb = '63, 60, 17'
+		/>
 	</palette>
 
 	<fonts>
@@ -81,7 +84,7 @@
 		/>
 	</fonts>
 
-	<defaults fill = 'gradient' fg_color = 'white' />
+	<defaults fill = 'gradient' fg_color = 'white' bevel_color = '237, 169, 72'/>
 
 	<drawdata id = 'text_selection' cache = false>
 		<drawstep	func = 'square'
@@ -221,7 +224,8 @@
 					radius = 4
 					fill = 'foreground'
 					fg_color = 'blandyellow'
-					inner_shadow = 1
+					bevel = 1
+					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
@@ -314,10 +318,11 @@
 					radius = '6'
 					stroke = 1
 					fill = 'gradient'
-					shadow = 2
-					fg_color = 'blandyellow'
+					shadow = 0
+					fg_color = 'shadowcolor'
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
+					bevel = 1
 		/>
 	</drawdata>
 
@@ -329,11 +334,14 @@
 		<drawstep	func = 'roundedsq'
 					radius = '6'
 					gradient_factor = 1
-					stroke = 1 fill = 'gradient'
+					stroke = 1 
+					fill = 'gradient'
 					shadow = 0
-					fg_color = 'blandyellow'
+					fg_color = 'shadowcolor'
 					gradient_start = 'xtrabrightred'
 					gradient_end = 'darkred'
+					bevel_color = 'xtrabrightred'
+					bevel = 1
 		/>
 	</drawdata>
 
@@ -361,7 +369,8 @@
 					radius = 4
 					fg_color = 'black'
 					shadow = 0
-					inner_shadow = 1
+					bevel = 1
+					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
@@ -377,8 +386,8 @@
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
 					shadow = 0
-					stroke = 1
-					inner_shadow = 1
+					bevel = 1
+					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
@@ -392,7 +401,8 @@
 					radius = 4
 					fg_color = 'blandyellow'
 					shadow = 0
-					inner_shadow = 1
+					bevel = 1
+					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
@@ -410,9 +420,14 @@
 
 <layout_info>
 	<globals>
-		<def var = 'Widget.Size' value = '30' />
+		<def var = 'Widget.Size' value = '32' />
 		<def var = 'Line.Height' value = '16' />
 		<def var = 'Font.Height' value = '16' />
+		
+		<def var = 'Padding.Bottom' value = '16' />
+		<def var = 'Padding.Left' value = '16' />
+		<def var = 'Padding.Right' value = '16' />
+		<def var = 'Padding.Top' value = '16' />
 
 		<widget name = 'Inset'
 				pos = '23, 94'
@@ -450,39 +465,49 @@
 	</globals>
 
 	<dialog name = 'Launcher'>
-		<widget name = 'Version'
-				pos = 'center, 21'
-				size = '247, Globals.Line.Height'
-		/>
-		<widget name = 'Logo'
-				pos = 'center, 5'
-				size = '283, 80'
-		/>
-		<widget name = 'GameList'
-				pos = 'Globals.Inset.X, Globals.Inset.Y'
-				size = 'Globals.Inset.Width, Globals.Inset.Height'
-		/>
-
-		<widget name = 'StartButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
-		<widget name = 'AddGameButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
-		<widget name = 'EditGameButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
-		<widget name = 'RemoveGameButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
-		<widget name = 'OptionsButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
-		<widget name = 'AboutButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
-		<widget name = 'QuittButton'
-				size = 'Globals.Button.Width, Globals.Button.Height'
-		/>
+		<layout type = 'vertical' align = 'center'>
+			<widget name = 'Version'
+					width = '247'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Logo'
+					width = '283'
+					height = '80'
+			/>
+			<layout type = 'horizontal' direction = 'right2left'>
+				<layout type = 'vertical'>
+					<widget name = 'StartButton'
+							width = 'Globals.Button.Width'
+							height = 'Globals.Button.Height'
+					/>
+					<space size = 20 />
+					<widget name = 'AddGameButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+					/>
+					<widget name = 'EditGameButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+					/>
+					<widget name = 'RemoveGameButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+					/>
+					<widget name = 'OptionsButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+					/>
+					<widget name = 'AboutButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+					/>
+					<widget name = 'QuittButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+					/>
+				</layout>
+				<widget name = 'GameList'/>
+			</layout>
+		</layout>
 	</dialog>
 </layout_info>

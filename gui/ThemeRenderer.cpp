@@ -693,8 +693,11 @@ void ThemeRenderer::updateScreen() {
 		_textQueue.clear();
 	}
 		
-	renderDirtyScreen();
-//	_vectorRenderer->copyWholeFrame(_system);
+//	renderDirtyScreen();
+
+	_vectorRenderer->fillSurface();
+	themeEval()->debugDraw(_screen, _font);
+	_vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {

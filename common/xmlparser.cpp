@@ -98,22 +98,23 @@ bool XMLParser::parseActiveKey(bool closed) {
 	ParserNode *key = _activeKey.top();
 	XMLKeyLayout *layout = (_activeKey.size() == 1) ? _XMLkeys : getParentNode(key)->layout;
 	
-	if (layout->children.contains(key->name) == false)
+	if (layout->children.contains(key->name)) {
+		key->layout = layout->children[key->name];
+	
+		Common::StringMap localMap = key->values;
+	
+		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
+			if (localMap.contains(i->name))
+				localMap.erase(i->name);
+			else if (i->required)
+				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
+		}
+	
+		if (key->layout->anyProps == false && localMap.empty() == false)
+			return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
+	} else if (layout->anyKeys == false) {
 		return parserError("Unexpected key in the active scope: '%s'.", key->name.c_str());
-		
-	key->layout = layout->children[key->name];
-	
-	Common::StringMap localMap = key->values;
-	
-	for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
-		if (localMap.contains(i->name))
-			localMap.erase(i->name);
-		else if (i->required)
-			return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
 	}
-	
-	if (key->layout->anyProps == false && localMap.empty() == false)
-		return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
 
 	// check if any of the parents must be ignored.
 	// if a parent is ignored, all children are too.

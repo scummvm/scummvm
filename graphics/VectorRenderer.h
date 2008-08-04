@@ -47,7 +47,8 @@ struct DrawStep {
 	fgColor, /** Foreground color */
 	bgColor, /** backgroudn color */
 	gradColor1, /** gradient start*/
-	gradColor2; /** gradient end */
+	gradColor2, /** gradient end */
+	bevelColor;
 
 	bool autoWidth, autoHeight;
 	int16 x, y, w, h; /** width, height and position, if not measured automatically.
@@ -62,7 +63,7 @@ struct DrawStep {
 		kVectorAlignCenter
 	} xAlign, yAlign;
 
-	uint8 shadow, stroke, factor, radius, innerShadow; /** Misc options... */
+	uint8 shadow, stroke, factor, radius, bevel; /** Misc options... */
 
 	uint8 fillMode; /** active fill mode */
 	uint32 extraData; /** Generic parameter for extra options (orientation/bevel) */
@@ -257,6 +258,8 @@ public:
 	 * @param b	value of the blue color byte
 	 */
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
+	
+	virtual void setBevelColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
 	 * Set the active gradient color. All shapes drawn using kFillGradient
@@ -330,9 +333,9 @@ public:
 			_shadowOffset = offset;
 	}
 	
-	virtual void setInnerShadowOffset(int offset) {
-		if (offset >= 0)
-			_innerShadowOffset = offset;
+	virtual void setBevel(int amount) {
+		if (amount >= 0)
+			_bevel = amount;
 	}
 
 	/**
@@ -450,7 +453,7 @@ protected:
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
 	int _shadowOffset; /** offset for drawn shadows */
-	int _innerShadowOffset;
+	int _bevel;
 	bool _disableShadows; /** Disables temporarily shadow drawing for overlayed images. */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
 	uint32 _dynamicData; /** Dynamic data from the GUI Theme that modifies the drawing of the current shape */
@@ -537,6 +540,10 @@ public:
 	 */
 	void setBgColor(uint8 r, uint8 g, uint8 b) {
 		this->_bgColor = RGBToColor<PixelFormat>(r, g, b);
+	}
+	
+	void setBevelColor(uint8 r, uint8 g, uint8 b) {
+		this->_bevelColor = RGBToColor<PixelFormat>(r, g, b);
 	}
 
 	/**
@@ -737,7 +744,7 @@ protected:
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
-	virtual void drawRoundedSquareInnerShadow(int x, int y, int r, int w, int h, int bur);
+	virtual void drawRoundedSquareFakeBevel(int x, int y, int r, int w, int h, int amount);
 
 	/**
 	 * Calculates the color gradient on a given point.
@@ -846,6 +853,8 @@ protected:
 
 	PixelType _gradientStart; /** Start color for the fill gradient */
 	PixelType _gradientEnd; /** End color for the fill gradient */
+	
+	PixelType _bevelColor;
 };
 
 /**

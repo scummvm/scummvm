@@ -163,6 +163,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	cfg.clear(); */
 
 	_theme = new ThemeRenderer(style, GUI::ThemeRenderer::kGfxAntialias16bit);
+//	_theme = new ThemeRenderer(style, GUI::ThemeRenderer::kGfxStandard16bit);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);
@@ -244,6 +245,8 @@ void NewGui::runLoop() {
 	}
 
 	Common::EventManager *eventMan = _system->getEventManager();
+	uint32 lastRedraw = 0;
+	const uint32 waitTime = 1000 / 45;
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		redraw();
@@ -255,9 +258,15 @@ void NewGui::runLoop() {
 
 		if (_useStdCursor)
 			animateCursor();
-		_theme->updateScreen();
-		_system->updateScreen();
-
+//		_theme->updateScreen();
+//		_system->updateScreen();
+		
+		if (lastRedraw + waitTime < _system->getMillis()) {
+			_theme->updateScreen();
+			_system->updateScreen();
+			lastRedraw = _system->getMillis();
+		}
+	
 		Common::Event event;
 
 		while (eventMan->pollEvent(event)) {
@@ -279,6 +288,12 @@ void NewGui::runLoop() {
 				_themeChange = false;
 				_redrawStatus = kRedrawFull;
 				redraw();
+			}
+			
+			if (lastRedraw + waitTime < _system->getMillis()) {
+				_theme->updateScreen();
+				_system->updateScreen();
+				lastRedraw = _system->getMillis();
 			}
 
 			switch (event.type) {
