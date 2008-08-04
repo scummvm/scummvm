@@ -189,6 +189,15 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 		frame = ABS((int16)(objectTable[it->objIdx].frame));
 		part = objectTable[it->objIdx].part;
 
+		// Additional case for negative frame values in Operation Stealth
+		if (g_cine->getGameType() == Cine::GType_OS && objectTable[it->objIdx].frame < 0) {
+			if ((it->type == 1) && (x >= objX) && (objX + frame >= x) && (y >= objY) && (objY + part >= y)) {
+				return it->objIdx;
+			} else {
+				continue;
+			}
+		}
+
 		if (it->type == 0) {
 			threshold = animDataTable[frame]._var1;
 		} else {
@@ -201,16 +210,19 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 		xdif = x - objX;
 		ydif = y - objY;
 
-		if ((xdif < 0) || ((threshold << 4) <= xdif) || (ydif < 0) || (ydif >= height) || !animDataTable[frame].data()) {
+		if ((xdif < 0) || ((threshold << 4) <= xdif) || (ydif <= 0) || (ydif >= height) || !animDataTable[frame].data()) {
 			continue;
 		}
 
 		if (g_cine->getGameType() == Cine::GType_OS) {
+			// This test isn't present in Operation Stealth's PC version's disassembly
+			// but removing it makes things crash sometimes (e.g. when selecting a verb
+			// and moving the mouse cursor around the floor in the airport's bathroom).
 			if (xdif >= width) {
 				continue;
 			}
 
-			if (it->type == 0 && animDataTable[frame].getColor(xdif, ydif) != part) {
+			if (it->type == 0 && animDataTable[frame].getColor(xdif, ydif) != (part & 0x0F)) {
 				return it->objIdx;
 			} else if (it->type == 1 && gfxGetBit(xdif, ydif, animDataTable[frame].data(), animDataTable[frame]._width * 4)) {
 				return it->objIdx;
