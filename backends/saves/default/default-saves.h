@@ -53,7 +53,7 @@ protected:
 	 * Checks the given path for read access, existence, etc.
 	 * Sets the internal error and error message accordingly.
 	 */
-	void checkPath(const Common::String &path);
+	void checkPath(const FilesystemNode &dir);
 };
 
 #endif
