@@ -88,32 +88,6 @@ public:
 	}
 };
 
-static void join_paths(const char *filename, const char *directory,
-								 char *buf, int bufsize) {
-	buf[bufsize-1] = '\0';
-	strncpy(buf, directory, bufsize-1);
-
-#ifdef WIN32
-	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
-	if ((buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
-		buf[2] = 0;
-	}
-#endif
-
-	const int dirLen = strlen(buf);
-
-	if (dirLen > 0) {
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
-#endif
-
-#if !defined(__GP32__)
-		strncat(buf, "/", bufsize-1);	// prevent double /
-#endif
-	}
-	strncat(buf, filename, bufsize-1);
-}
-
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	FilesystemNode savePath(getSavePath());
 	FSList savefiles;
@@ -136,6 +110,7 @@ void DefaultSaveFileManager::checkPath(const Common::String &path) {
 	struct stat sb;
 
 	// Check whether the dir exists
+	// TODO: Use the FSNode API instead
 	if (stat(path.c_str(), &sb) == -1) {
 		// The dir does not exist, or stat failed for some other reason.
 		// If the problem was that the path pointed to nothing, try
@@ -201,13 +176,15 @@ void DefaultSaveFileManager::checkPath(const Common::String &path) {
 
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	char buf[256];
 	Common::String savePath = getSavePath();
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
-		StdioSaveFile *sf = new StdioSaveFile(buf, false);
+		FilesystemNode saveDir(getSavePath());
+		FilesystemNode file = saveDir.getChild(filename);
+
+		// TODO: switch to file.openForLoading()
+		StdioSaveFile *sf = new StdioSaveFile(file.getPath().c_str(), false);
 
 		if (!sf->isOpen()) {
 			delete sf;
@@ -222,13 +199,15 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	char buf[256];
 	Common::String savePath = getSavePath();
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
-		StdioSaveFile *sf = new StdioSaveFile(buf, true);
+		FilesystemNode saveDir(getSavePath());
+		FilesystemNode file = saveDir.getChild(filename);
+
+		// TODO: switch to file.openForSaving()
+		StdioSaveFile *sf = new StdioSaveFile(file.getPath().c_str(), true);
 
 		if (!sf->isOpen()) {
 			delete sf;
@@ -242,18 +221,19 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 }
 
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
-	char buf[256];
 	clearError();
-	Common::String filenameStr;
-	join_paths(filename, getSavePath().c_str(), buf, sizeof(buf));
 
-	if (remove(buf) != 0) {
+	FilesystemNode saveDir(getSavePath());
+	FilesystemNode file = saveDir.getChild(filename);
+
+	// TODO: Add new method FilesystemNode::remove()
+	if (remove(file.getPath().c_str()) != 0) {
 #ifndef _WIN32_WCE
 		if (errno == EACCES)
-			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+filenameStr);
+			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+file.getName());
 
 		if (errno == ENOENT)
-			setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+filenameStr);
+			setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+file.getName());
 #endif
 		return false;
 	} else {
