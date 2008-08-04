@@ -297,7 +297,6 @@ void CharsetRendererCommon::setCurID(int32 id) {
 
 	_curId = id;
 
-	debug(0, "boo %d", id);
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
