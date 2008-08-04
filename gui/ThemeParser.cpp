@@ -508,13 +508,19 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		return parserError("Layouts need a specific type (vertical or horizontal).");
 		
 	GUI::ThemeLayout::LayoutType type = GUI::ThemeLayout::kLayoutNone;
+	GUI::ThemeLayout::LayoutParsing parsing = GUI::ThemeLayout::kLayoutParseDefault;
 	
 	if (node->values["type"] == "vertical")
 		type = GUI::ThemeLayout::kLayoutVertical;
 	else if (node->values["type"] == "horizontal")
 		type = GUI::ThemeLayout::kLayoutHorizontal;
+
+	if (node->values.contains("direction")) {
+		if (node->values["direction"] == "right2left")
+			parsing = GUI::ThemeLayout::kLayoutParseRight2Left;
+	}
 		
-	_theme->themeEval()->addLayout(type, GUI::ThemeLayout::kLayoutParseDefault);
+	_theme->themeEval()->addLayout(type, parsing);
 	return true;
 }
 

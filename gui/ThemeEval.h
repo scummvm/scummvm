@@ -79,8 +79,8 @@ public:
 	
 	virtual const char *getName() { return "Global Layout"; }
 	
-	int16 getParentW() { return parent ? parent->w : g_system->getOverlayWidth(); }
-	int16 getParentH() { return parent ? parent->w : g_system->getOverlayHeight(); }
+	int16 getParentW() { return parent ? parent->w - parent->paddingLeft - parent->paddingRight : g_system->getOverlayWidth(); }
+	int16 getParentH() { return parent ? parent->h - parent->paddingTop - parent->paddingBottom : g_system->getOverlayHeight(); }
 	int16 getParentX() { return parent ? parent->x : 0; }
 	int16 getParentY() { return parent ? parent->y : 0; }
 	
@@ -209,18 +209,10 @@ public:
 	const char *getName() { return "Horizontal Layout"; }
 	
 	void reflowLayout() {
-		int curX, curY, mul;
-		
-		if (parsingMode == kLayoutParseLeft2Right) {
-			curX = paddingLeft;
-			curY = paddingTop;
-			mul = 1;
-		} else {
-			curX = getParentW() - paddingRight;
-			curY = paddingTop;
-			mul = -1;
-		}
-
+		int curX, curY;
+	
+		curX = paddingLeft;
+		curY = paddingTop;
 		w = paddingLeft + paddingRight;
 			
 		for (uint i = 0; i < children.size(); ++i) {
@@ -235,15 +227,24 @@ public:
 				assert(children[i]->h != -1);
 			
 			
-			children[i]->setX((parsingMode == kLayoutParseRight2Left) ? (curX - children[i]->w) : (curX));
+			children[i]->setX(curX);
 			children[i]->setY(curY);
 		
 			if (children[i]->h == -1)
 				children[i]->h = h - paddingTop - paddingBottom;
+
+			if (children[i]->w == -1)
+				children[i]->w = getParentW() - w - spacing;
 				
 			h = MAX(h, (int16)(children[i]->h + paddingTop + paddingBottom));
-	
-			curX += (children[i]->w + spacing) * mul;
+
+			if (parsingMode == kLayoutParseRight2Left) {
+				for (int j = i - 1; j >= 0; --j)
+					children[j]->setX(children[i]->w + spacing);
+			} else {
+				curX += (children[i]->w + spacing);
+			}
+
 			w += children[i]->w + spacing;
 		}
 	}
