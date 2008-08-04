@@ -34,6 +34,8 @@
  */
 class DefaultSaveFileManager : public Common::SaveFileManager {
 public:
+	DefaultSaveFileManager();
+
 	virtual Common::StringList listSavefiles(const char *pattern);
 	virtual Common::InSaveFile *openForLoading(const char *filename);
 	virtual Common::OutSaveFile *openForSaving(const char *filename);

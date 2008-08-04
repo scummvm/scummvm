@@ -41,6 +41,50 @@
 #include <sys/stat.h>
 #endif
 
+#ifdef IPHONE
+#include "backends/platform/iphone/osys_iphone.h"
+#endif
+
+#ifdef UNIX
+#ifdef MACOSX
+#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
+#else
+#define DEFAULT_SAVE_PATH ".scummvm"
+#endif
+#elif defined(__SYMBIAN32__)
+#define DEFAULT_SAVE_PATH "Savegames"
+#elif defined(PALMOS_MODE)
+#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
+#endif
+
+DefaultSaveFileManager::DefaultSaveFileManager() {
+	// Register default savepath
+	// TODO: Remove this code here, and instead leave setting the
+	// default savepath to the ports using this class.
+#ifdef DEFAULT_SAVE_PATH
+	char savePath[MAXPATHLEN];
+#if defined(UNIX) && !defined(IPHONE)
+	const char *home = getenv("HOME");
+	if (home && *home && strlen(home) < MAXPATHLEN) {
+		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
+		ConfMan.registerDefault("savepath", savePath);
+	}
+#elif defined(__SYMBIAN32__)
+	strcpy(savePath, Symbian::GetExecutablePath());
+	strcat(savePath, DEFAULT_SAVE_PATH);
+	strcat(savePath, "\\");
+	ConfMan.registerDefault("savepath", savePath);
+#elif defined (IPHONE)
+	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
+
+#elif defined(PALMOS_MODE)
+	ConfMan.registerDefault("savepath", DEFAULT_SAVE_PATH);
+#endif
+#endif // #ifdef DEFAULT_SAVE_PATH
+}
+
+
+
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	FilesystemNode savePath(getSavePath());
 	FSList savefiles;
