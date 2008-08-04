@@ -49,11 +49,11 @@ Input::Input(PictureEngine *vm) : _vm(vm) {
 	_mouseCounter = 0;
 	_mouseButtonPressedFlag = false;
 	_mouseButton = 0;
-    _mouseDisabled = 0;
+	_mouseDisabled = 0;
 
-    _leftButtonDown = false;
+	_leftButtonDown = false;
 	_rightButtonDown = false;
-    
+
 }
 
 Input::~Input() {
@@ -75,22 +75,22 @@ void Input::update() {
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
-		    _leftButtonDown = true;
+			_leftButtonDown = true;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
-		    _leftButtonDown = false;
+			_leftButtonDown = false;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
-		    _rightButtonDown = true;
+			_rightButtonDown = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
-		    _rightButtonDown = false;
+			_rightButtonDown = false;
 			break;
 		default:
 			break;
@@ -101,27 +101,27 @@ void Input::update() {
 		_mousePosDelta = _mousePosDelta + _mouseY - _mouseX;
 		
 		if (_mouseCounter > 0)
-		    _mouseCounter--;
-		    
+			_mouseCounter--;
+
 		byte mouseButtons = 0;
 		if (_leftButtonDown)
-		    mouseButtons |= 1;
+			mouseButtons |= 1;
 		if (_rightButtonDown)
-		    mouseButtons |= 2;
-		    
+			mouseButtons |= 2;
+
 		if (mouseButtons != 0) {
 			if (!_mouseButtonPressedFlag) {
-			    _mouseButton = mouseButtons;
-			    if (_mouseCounter != 0)
-			        _mouseButton |= 0x80;
+				_mouseButton = mouseButtons;
+				if (_mouseCounter != 0)
+					_mouseButton |= 0x80;
 				_mouseCounter = 30; // maybe TODO
 				_mouseButtonPressedFlag = true;
 			} else {
-			    _mouseButton = 0;
+				_mouseButton = 0;
 			}
 		} else {
-		    _mouseButtonPressedFlag = false;
-		    _mouseButton = 0;
+			_mouseButtonPressedFlag = false;
+			_mouseButton = 0;
 		}
 
 	}

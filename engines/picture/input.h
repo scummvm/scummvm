@@ -48,8 +48,8 @@ namespace Picture {
 
 class Input {
 public:
-    Input(PictureEngine *vm);
-    ~Input();
+	Input(PictureEngine *vm);
+	~Input();
 
 	void update();
 	
@@ -60,7 +60,7 @@ public:
 
 //protected:
 public:
-    PictureEngine *_vm;
+	PictureEngine *_vm;
 
 	int16 _mouseX, _mouseY;
 	int16 _mousePosDelta;

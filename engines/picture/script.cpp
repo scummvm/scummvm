@@ -62,7 +62,7 @@ ScriptInterpreter::~ScriptInterpreter() {
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 
 	if (_slots[slotIndex].data) {
-	    delete[] _slots[slotIndex].data;
+		delete[] _slots[slotIndex].data;
 	}
 
  	_slots[slotIndex].resIndex = resIndex;
@@ -357,8 +357,8 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_switchStack1 = true;
 		break;
 	case 49:
-	    ofs = readByte();
-	    debug(0, "49, len = %d", ofs);
+		ofs = readByte();
+		debug(0, "49, len = %d", ofs);
 		_code += ofs;
 		break;
 	case 50:
@@ -1049,8 +1049,8 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 			value = _vm->_sceneResIndex;
 			break;
 		case 19:
-		    value = _vm->_cameraTop;
-		    break;
+			value = _vm->_cameraTop;
+			break;
 		case 20:
 			value = _vm->_sceneHeight;
 			break;
@@ -1123,8 +1123,8 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 			_vm->_sceneResIndex = value;
 			break;
 		case 19:
-		    _vm->_cameraTop = value;
-		    break;
+			_vm->_cameraTop = value;
+			break;
 		case 20:
 			_vm->_sceneHeight = value;
 			break;

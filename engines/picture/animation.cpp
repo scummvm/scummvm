@@ -41,7 +41,7 @@
 namespace Picture {
 
 AnimationPlayer::AnimationPlayer(PictureEngine *vm) : _vm(vm) {
-    _animBuffer = new byte[262144];
+	_animBuffer = new byte[262144];
 }
 
 AnimationPlayer::~AnimationPlayer() {
@@ -66,7 +66,7 @@ void AnimationPlayer::start(uint resIndex) {
 
 	debug(1, "AnimationPlayer::start() width = %d; height = %d; frameCount = %d", _width, _height, _frameCount);
 
-    unpackFrame();
+	unpackFrame();
 
 	_keepFrameCounter = 0;
 	_frameNumber = 0;
@@ -94,8 +94,8 @@ void AnimationPlayer::nextFrame() {
 	debug(1, "AnimationPlayer::nextFrame() frameNumber = %d", _frameNumber);
 
 	if (_keepFrameCounter > 0) {
-	    _keepFrameCounter--;
-	    return;
+		_keepFrameCounter--;
+		return;
 	}
 	
 	_vm->_arc->openResource(_resIndex);
@@ -103,18 +103,18 @@ void AnimationPlayer::nextFrame() {
 	_curFrameSize = _nextFrameSize;
 	
 	if (_curFrameSize == 0)
-	    _curFrameSize = 1;
+		_curFrameSize = 1;
 	
 	_vm->_arc->read(_animBuffer, _curFrameSize);
 	_nextFrameSize = _vm->_arc->readUint32LE();
 	_nextFrameOffset += _curFrameSize + 4;
 	
 	if (_curFrameSize > 1) {
-        unpackFrame();
-        // TODO mov animDrawFrameFlag, 0FFFFh
+		unpackFrame();
+		// TODO mov animDrawFrameFlag, 0FFFFh
 	} else {
-	    _keepFrameCounter = _animBuffer[0] - 1;
-	    // TODO mov animDrawFrameFlag, 0
+		_keepFrameCounter = _animBuffer[0] - 1;
+		// TODO mov animDrawFrameFlag, 0
 	}
 
 	_vm->_arc->closeResource();
@@ -126,16 +126,16 @@ int16 AnimationPlayer::getStatus() {
 	debug(1, "AnimationPlayer::getStatus()");
 	int16 status = -1;
 	if (_frameNumber == _frameCount)
-	    status = 0;
+		status = 0;
 	else if (_frameNumber == _frameCount - 1)
-	    status = 1;
+		status = 1;
 	debug(1, "AnimationPlayer::getStatus() status = %d", status);
 	return status;
 }
 
 void AnimationPlayer::unpackFrame() {
-    _vm->_screen->unpackRle(_animBuffer, _vm->_screen->_frontScreen, _width, _height);
-    _vm->_screen->unpackRle(_animBuffer, _vm->_screen->_backScreen, _width, _height);
+	_vm->_screen->unpackRle(_animBuffer, _vm->_screen->_frontScreen, _width, _height);
+	_vm->_screen->unpackRle(_animBuffer, _vm->_screen->_backScreen, _width, _height);
 }
 
 } // End of namespace Picture

@@ -81,7 +81,7 @@ public:
 
 	void updateScreen();
 
-    void setCamera(int16 x, int16 y);
+	void setCamera(int16 x, int16 y);
 	void setCameraTop(int16 top);
 	void scrollCameraUp(int16 delta);
 	void scrollCameraDown(int16 delta);

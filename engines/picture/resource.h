@@ -50,7 +50,7 @@ namespace Picture {
 	TODO:
 	
 	ArchiveReader:
-	    - Add support for external resources; and check if they're used
+		- Add support for external resources; and check if they're used
 
 */
 
@@ -60,20 +60,20 @@ const uint kMaxCacheSize = 8 * 1024 * 1024; // 8 MB
 
 class ArchiveReader : public Common::File {
 public:
-    ArchiveReader();
-    ~ArchiveReader();
-    
-    void openArchive(const char *filename);
-    
-    // Returns the size of the opened resource
-    uint32 openResource(uint resIndex);
-    // Closes the resource
-    void closeResource();
-    // Returns the size of the resource
-    uint32 getResourceSize(uint resIndex);
+	ArchiveReader();
+	~ArchiveReader();
 
-    void dump(uint resIndex, const char *prefix = NULL);
-    
+	void openArchive(const char *filename);
+
+	// Returns the size of the opened resource
+	uint32 openResource(uint resIndex);
+	// Closes the resource
+	void closeResource();
+	// Returns the size of the resource
+	uint32 getResourceSize(uint resIndex);
+
+	void dump(uint resIndex, const char *prefix = NULL);
+
 protected:
 	uint32 _offsets[10000];
 
@@ -81,23 +81,23 @@ protected:
 
 class ResourceCache {
 public:
-    ResourceCache(PictureEngine *vm);
-    ~ResourceCache();
-    
-    byte *load(uint resIndex);
-    uint32 getCurItemSize() const { return _curItemSize; }
+	ResourceCache(PictureEngine *vm);
+	~ResourceCache();
+
+	byte *load(uint resIndex);
+	uint32 getCurItemSize() const { return _curItemSize; }
 
 protected:
 
 	struct CacheItem {
-	    uint resIndex;
-	    //int value;	// what is this?
-	    int32 offset;	// offset into _base
-	    uint32 size;    // size of the item
+		uint resIndex;
+		//int value;	// what is this?
+		int32 offset;	// offset into _base
+		uint32 size;	// size of the item
 	};
 
-    PictureEngine *_vm;
-    
+	PictureEngine *_vm;
+
 	byte *_base;
 	uint32 _bytesUsed;
 	uint32 _curItemOffset, _curItemSize;

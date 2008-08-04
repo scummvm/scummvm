@@ -88,8 +88,8 @@ int PictureEngine::init() {
 
 int PictureEngine::go() {
 
-    _system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-    
+	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
  	_quitGame = false;
 	_counter01 = 0;
 	_counter02 = 0;
@@ -110,7 +110,7 @@ int PictureEngine::go() {
 	_doSpeech = true;
 	_doText = true;
 
-    _walkSpeedY = 5;
+	_walkSpeedY = 5;
 	_walkSpeedX = 1;
 
 	_arc = new ArchiveReader();
@@ -126,8 +126,8 @@ int PictureEngine::go() {
 	_segmap = new SegmentMap(this);
 	_input = new Input(this);
 
-    _system->showMouse(true);
-    
+	_system->showMouse(true);
+
 #if 1
 
 	_script->loadScript(0, 0);
@@ -153,7 +153,7 @@ void PictureEngine::loadScene(uint resIndex) {
 	byte *scene = _res->load(resIndex);
 
 	uint32 imageSize = READ_LE_UINT32(scene);
-    _sceneResIndex = resIndex;
+	_sceneResIndex = resIndex;
 	_sceneHeight = READ_LE_UINT16(scene + 4);
 	_sceneWidth = READ_LE_UINT16(scene + 6);
 
@@ -194,10 +194,10 @@ void PictureEngine::updateScreen() {
 		srcp += _sceneWidth;
 	}
 
-    _screen->drawSprites();
-    _screen->clearSprites();
+	_screen->drawSprites();
+	_screen->clearSprites();
 
-    _screen->drawTalkTextItems();
+	_screen->drawTalkTextItems();
 
 	_system->copyRectToScreen((const byte *)_screen->_frontScreen, 640, 0, 0, 640, 400);
 	_system->updateScreen();
@@ -210,10 +210,10 @@ void PictureEngine::setCamera(int16 x, int16 y) {
 	// TODO font_sub_4B5BB()
 	
 	if (x > _sceneWidth)
-	    x = _sceneWidth;
+		x = _sceneWidth;
 	
 	if (y > _sceneHeight - _cameraHeight)
-	    y = _sceneHeight - _cameraHeight;
+		y = _sceneHeight - _cameraHeight;
 
 	// TODO DirtyRect clearing stuff
 	
@@ -323,28 +323,28 @@ void PictureEngine::talk(int16 slotIndex, int16 slotOffset) {
 	
 	while (*scanData < 0xF0) {
 	
-	    if (*scanData == 0x19) {
-	        scanData++;
+		if (*scanData == 0x19) {
+			scanData++;
 		} else if (*scanData == 0x14) {
-		    scanData++;
+			scanData++;
 		} else if (*scanData == 0x0A) {
-		    scanData += 4;
+			scanData += 4;
 		} else if (*scanData < 0x0A) {
-		    scanData++;
+			scanData++;
 		}
 	
-	    scanData++;
+		scanData++;
 	}
 	
 	if (*scanData == 0xFE) {
-	    if (_doSpeech) {
-	        int16 resIndex = READ_LE_UINT16(scanData + 1);
-	        debug(0, "PictureEngine::talk() playSound(resIndex: %d)", resIndex);
+		if (_doSpeech) {
+			int16 resIndex = READ_LE_UINT16(scanData + 1);
+			debug(0, "PictureEngine::talk() playSound(resIndex: %d)", resIndex);
 		}
 		if (_doText) {
-		    _screen->updateTalkText(slotIndex, slotOffset);
+			_screen->updateTalkText(slotIndex, slotOffset);
 		} else {
-		    // TODO: font_sub_4B3E2
+			// TODO: font_sub_4B3E2
 		}
 	} else {
 		_screen->updateTalkText(slotIndex, slotOffset);
@@ -360,9 +360,9 @@ void PictureEngine::playText(int16 slotIndex, int16 slotOffset) {
 
 	Common::String str;
 	while (*textData < 0xF0) {
-	    if (*textData >= 32)
-	    	str += (char)*textData;
-	    textData++;
+		if (*textData >= 32)
+			str += (char)*textData;
+		textData++;
 	}
 	
 	debug(0, "PictureEngine::playText() [%s]", str.c_str());
@@ -389,21 +389,21 @@ void PictureEngine::walk(byte *walkData) {
 	walkInfo.scaling = -_segmap->getScalingAtPoint(walkInfo.x, walkInfo.y);
 
 	if (walkInfo.y1 < walkInfo.y2)
-	    ystep = -1;
+		ystep = -1;
 	else
 		ystep = 1;
 	ydelta = ABS(walkInfo.y1 - walkInfo.y2) * _walkSpeedY;
 	
 	if (walkInfo.x1 < walkInfo.x2)
-	    xstep = -1;
+		xstep = -1;
 	else
 		xstep = 1;
 	xdelta = ABS(walkInfo.x1 - walkInfo.x2) * _walkSpeedX;
 
-    debug(0, "PictureEngine::walk() xdelta = %d; ydelta = %d", xdelta, ydelta);
+	debug(0, "PictureEngine::walk() xdelta = %d; ydelta = %d", xdelta, ydelta);
 
 	if (xdelta > ydelta)
-	    SWAP(xdelta, ydelta);
+		SWAP(xdelta, ydelta);
 
 	v8 = 100 * xdelta;
 	if (v8 != 0) {
@@ -416,8 +416,8 @@ void PictureEngine::walk(byte *walkData) {
 	}
 
 	if (ydelta > ABS(walkInfo.x1 - walkInfo.x2) * _walkSpeedX) {
-    	v10 = 100 - walkInfo.scaling;
-    	v11 = v8;
+		v10 = 100 - walkInfo.scaling;
+		v11 = v8;
   	} else {
 		v10 = v8;
   		v11 = 100 - walkInfo.scaling;
@@ -461,18 +461,18 @@ int16 PictureEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 ind
 	rectData += index * itemSize;
 	
 	while (1) {
-	    int16 rectY = READ_LE_UINT16(rectData);
-	    if (rectY == -10)
-	        break;
-	    int16 rectX = READ_LE_UINT16(rectData + 2);
-	    int16 rectH = READ_LE_UINT16(rectData + 4);
-	    int16 rectW = READ_LE_UINT16(rectData + 6);
-	    
-	    debug(0, "x = %d; y = %d; x1 = %d; y2 = %d; w = %d; h = %d",
-	        x, y, rectX, rectY, rectW, rectH);
-	    
-	    if (x >= rectX && x <= rectX + rectW && y >= rectY && y <= rectY + rectH) {
-	        return index;
+		int16 rectY = READ_LE_UINT16(rectData);
+		if (rectY == -10)
+			break;
+		int16 rectX = READ_LE_UINT16(rectData + 2);
+		int16 rectH = READ_LE_UINT16(rectData + 4);
+		int16 rectW = READ_LE_UINT16(rectData + 6);
+
+		debug(0, "x = %d; y = %d; x1 = %d; y2 = %d; w = %d; h = %d",
+			x, y, rectX, rectY, rectW, rectH);
+
+		if (x >= rectX && x <= rectX + rectW && y >= rectY && y <= rectY + rectH) {
+			return index;
 		}
 		index++;
 		rectData += itemSize;

@@ -51,23 +51,23 @@ namespace Picture {
 
 class AnimationPlayer {
 public:
-    AnimationPlayer(PictureEngine *vm);
-    ~AnimationPlayer();
-    
-    void start(uint resIndex);
-    void nextFrame();
-    int16 getStatus();
-    uint16 getFrameNumber() const { return _frameNumber; }
-    
+	AnimationPlayer(PictureEngine *vm);
+	~AnimationPlayer();
+
+	void start(uint resIndex);
+	void nextFrame();
+	int16 getStatus();
+	uint16 getFrameNumber() const { return _frameNumber; }
+
 //protected:
 public:
-    PictureEngine *_vm;
+	PictureEngine *_vm;
 
 	// 262144
-    byte *_animBuffer;
-    
-    uint _resIndex;
-    byte _palette[768];
+	byte *_animBuffer;
+
+	uint _resIndex;
+	byte _palette[768];
 
 	uint16 _width, _height;
 	uint16 _frameNumber, _frameCount;

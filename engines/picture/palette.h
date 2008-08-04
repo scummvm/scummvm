@@ -51,37 +51,37 @@ namespace Picture {
 
 class Palette {
 public:
-    Palette(PictureEngine *vm);
-    ~Palette();
+	Palette(PictureEngine *vm);
+	~Palette();
 
 	void setFullPalette(byte *palette);
 	void setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 count, int16 startIndex);
-    
-    void loadAddPalette(uint resIndex, byte startIndex);
-    void loadAddPaletteFrom(byte *source, byte startIndex, byte count);
 
-    void addFragment(uint resIndex, int16 id);
-    uint16 findFragment(int16 id);
-    void clearFragments();
-    
-    byte *getMainPalette() { return _mainPalette; }
-    
+	void loadAddPalette(uint resIndex, byte startIndex);
+	void loadAddPaletteFrom(byte *source, byte startIndex, byte count);
+
+	void addFragment(uint resIndex, int16 id);
+	uint16 findFragment(int16 id);
+	void clearFragments();
+
+	byte *getMainPalette() { return _mainPalette; }
+
 protected:
 
 	struct PaletteFragment {
-	    int16 id;
-	    byte index, count;
+		int16 id;
+		byte index, count;
 	};
 	
 	typedef Common::Array<PaletteFragment> PaletteFragmentArray;
 
-    PictureEngine *_vm;
-    
-    byte _mainPalette[768];
-    
+	PictureEngine *_vm;
+
+	byte _mainPalette[768];
+
 	PaletteFragmentArray _fragments;
 	byte _fragmentIndex;
-    
+
 };
 
 } // End of namespace Picture

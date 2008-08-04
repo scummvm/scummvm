@@ -50,19 +50,19 @@ const int kMaxScriptSlots = 50;
 
 class ScriptInterpreter {
 public:
-    ScriptInterpreter(PictureEngine *vm);
-    ~ScriptInterpreter();
-    
+	ScriptInterpreter(PictureEngine *vm);
+	~ScriptInterpreter();
+
 	void loadScript(uint resIndex, uint slotIndex);
 	void runScript(uint slotIndex);
-    
+
 	byte *getSlotData(int slotIndex) const { return _slots[slotIndex].data; }
 
 protected:
 
 	enum VarType {
-	    vtByte,
-	    vtWord
+		vtByte,
+		vtWord
 	};
 
 	struct ScriptRegs {
@@ -78,15 +78,15 @@ protected:
 	};
 
 	struct ScriptSlot {
-	    byte *data;
-	    int32 size;
-	    uint resIndex;
+		byte *data;
+		int32 size;
+		uint resIndex;
 	};
 
-    PictureEngine *_vm;
-    
-    byte *_stack;
-    
+	PictureEngine *_vm;
+
+	byte *_stack;
+
 	byte *_code, *_subCode;
 	byte *_localData;
 	bool _switchStack1, _switchStack2, _switchStack3;

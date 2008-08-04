@@ -124,16 +124,16 @@ enum SpriteReaderStatus {
 
 class SpriteFilter {
 public:
-    SpriteFilter(SpriteDrawItem *sprite) : _sprite(sprite) {
+	SpriteFilter(SpriteDrawItem *sprite) : _sprite(sprite) {
 	}
 	virtual SpriteReaderStatus readPacket(PixelPacket &packet) = 0;
 protected:
-    SpriteDrawItem *_sprite;
+	SpriteDrawItem *_sprite;
 };
 
 class SpriteReader : public SpriteFilter {
 public:
-    SpriteReader(byte *source, SpriteDrawItem *sprite) : SpriteFilter(sprite), _source(source) {
+	SpriteReader(byte *source, SpriteDrawItem *sprite) : SpriteFilter(sprite), _source(source) {
 		_curWidth = _sprite->origWidth;
 		_curHeight = _sprite->origHeight;
 	}
@@ -148,23 +148,23 @@ public:
 		}
 		_curWidth -= packet.count;
 		if (_curWidth <= 0) {
-		    _curHeight--;
-		    if (_curHeight == 0) {
-		    	return kSrsEndOfSprite;
+			_curHeight--;
+			if (_curHeight == 0) {
+				return kSrsEndOfSprite;
 			} else {
-			    _curWidth = _sprite->origWidth;
-		    	return kSrsEndOfLine;
+				_curWidth = _sprite->origWidth;
+				return kSrsEndOfLine;
 			}
 		} else {
-		    return kSrsPixelsLeft;
+			return kSrsPixelsLeft;
 		}
 	}
 	byte *getSource() {
-	    return _source;
+		return _source;
 	}
 	void setSource(byte *source) {
-	    _source = source;
-	    _curHeight++;
+		_source = source;
+		_curHeight++;
 	}
 protected:
 	byte *_source;
@@ -173,49 +173,49 @@ protected:
 
 class SpriteFilterScaleDown : public SpriteFilter {
 public:
-    SpriteFilterScaleDown(SpriteDrawItem *sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
+	SpriteFilterScaleDown(SpriteDrawItem *sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
 		_height = _sprite->height;
 		_yerror = _sprite->yerror;
 		_origHeight = _sprite->origHeight;
 		_scalerStatus = 0;
 	}
 	SpriteReaderStatus readPacket(PixelPacket &packet) {
-        SpriteReaderStatus status;
+		SpriteReaderStatus status;
 		if (_scalerStatus == 0) {
 			_xerror = _sprite->xdelta;
 			_yerror -= 100;
 			while (_yerror <= 0) {
-			    do {
-			        status = _reader->readPacket(packet);
+				do {
+					status = _reader->readPacket(packet);
 				} while (status == kSrsPixelsLeft);
 				_yerror += _sprite->ydelta - 100;
 			}
 			if (status == kSrsEndOfSprite)
-			    return kSrsEndOfSprite;
-		    _scalerStatus = 1;
+				return kSrsEndOfSprite;
+			_scalerStatus = 1;
 		}
 		if (_scalerStatus == 1) {
-		    status = _reader->readPacket(packet);
-		    byte updcount = packet.count;
-		    while (updcount--) {
+			status = _reader->readPacket(packet);
+			byte updcount = packet.count;
+			while (updcount--) {
 				_xerror -= 100;
 				if (_xerror <= 0) {
-				    if (packet.count > 0)
-				        packet.count--;
-				    _xerror += _sprite->xdelta;
+					if (packet.count > 0)
+						packet.count--;
+					_xerror += _sprite->xdelta;
 				}
 			}
 			if (status == kSrsEndOfLine) {
 				if (--_height == 0)
 					return kSrsEndOfSprite;
-	            _scalerStatus = 0;
-	            return kSrsEndOfLine;
+				_scalerStatus = 0;
+				return kSrsEndOfLine;
 			}
 		}
 		return kSrsPixelsLeft;
 	}
 protected:
-    SpriteReader *_reader;
+	SpriteReader *_reader;
 	int16 _xerror, _yerror;
 	int16 _height;
 	int16 _origHeight;
@@ -224,46 +224,46 @@ protected:
 
 class SpriteFilterScaleUp : public SpriteFilter {
 public:
-    SpriteFilterScaleUp(SpriteDrawItem *sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
+	SpriteFilterScaleUp(SpriteDrawItem *sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
 		_height = _sprite->height;
 		_yerror = _sprite->yerror;
 		_origHeight = _sprite->origHeight;
 		_scalerStatus = 0;
 	}
 	SpriteReaderStatus readPacket(PixelPacket &packet) {
-        SpriteReaderStatus status;
-        if (_scalerStatus == 0) {
+		SpriteReaderStatus status;
+		if (_scalerStatus == 0) {
 			_xerror = _sprite->xdelta;
 			_sourcep = _reader->getSource();
-		    _scalerStatus = 1;
+			_scalerStatus = 1;
 		}
 		if (_scalerStatus == 1) {
-		    status = _reader->readPacket(packet);
-		    byte updcount = packet.count;
+			status = _reader->readPacket(packet);
+			byte updcount = packet.count;
 			while (updcount--) {
-			    _xerror -= 100;
-			    if (_xerror <= 0) {
-			        packet.count++;
-			        _xerror += _sprite->xdelta;
+				_xerror -= 100;
+				if (_xerror <= 0) {
+					packet.count++;
+					_xerror += _sprite->xdelta;
 				}
 			}
 			if (status == kSrsEndOfLine) {
 				if (--_height == 0)
 					return kSrsEndOfSprite;
-		    	_yerror -= 100;
+				_yerror -= 100;
 				if (_yerror <= 0) {
-				    _reader->setSource(_sourcep);
+					_reader->setSource(_sourcep);
 					_yerror += _sprite->ydelta + 100;
 				}
-	            _scalerStatus = 0;
-	            return kSrsEndOfLine;
+				_scalerStatus = 0;
+				return kSrsEndOfLine;
 			}
 		}
 		return kSrsPixelsLeft;
 	}
 protected:
-    SpriteReader *_reader;
-    byte *_sourcep;
+	SpriteReader *_reader;
+	byte *_sourcep;
 	int16 _xerror, _yerror;
 	int16 _height;
 	int16 _origHeight;
@@ -273,7 +273,7 @@ protected:
 //*END*TEST*CODE**********************************************************************************************
 
 struct TextRect {
-    int16 x, y;
+	int16 x, y;
 	int16 width, length;
 };
 
@@ -308,8 +308,8 @@ public:
 	void clearSprites();
 
 	// Sprite drawing
-    void drawSprite(SpriteDrawItem *sprite);
-    void drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sprite);
+	void drawSprite(SpriteDrawItem *sprite);
+	void drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sprite);
 	void drawSprites();
 
 	// Verb line
@@ -333,12 +333,12 @@ public:
 public:
 
 	struct VerbLineItem {
-	    int16 slotIndex;
+		int16 slotIndex;
 		int16 slotOffset;
 	};
 	
 	struct Rect {
-	    int16 x, y, width, height;
+		int16 x, y, width, height;
 	};
 
 	PictureEngine *_vm;
@@ -347,11 +347,11 @@ public:
 	
 	Common::List<SpriteDrawItem> _spriteDrawList;
 
-    uint _fontResIndexArray[10];
-    byte _fontColor1, _fontColor2;
-    
-    byte _tempString[100];
-    byte _tempStringLen1, _tempStringLen2;
+	uint _fontResIndexArray[10];
+	byte _fontColor1, _fontColor2;
+
+	byte _tempString[100];
+	byte _tempStringLen1, _tempStringLen2;
 
 	// Screen shaking
 	bool _shakeActive;
