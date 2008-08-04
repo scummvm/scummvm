@@ -49,23 +49,23 @@ namespace Toltecs {
 
 class AnimationPlayer {
 public:
-    AnimationPlayer(ToltecsEngine *vm);
-    ~AnimationPlayer();
-    
-    void start(uint resIndex);
-    void nextFrame();
-    int16 getStatus();
-    uint16 getFrameNumber() const { return _frameNumber; }
-    
+	AnimationPlayer(ToltecsEngine *vm);
+	~AnimationPlayer();
+
+	void start(uint resIndex);
+	void nextFrame();
+	int16 getStatus();
+	uint16 getFrameNumber() const { return _frameNumber; }
+
 //protected:
 public:
-    ToltecsEngine *_vm;
+	ToltecsEngine *_vm;
 
 	// 262144
-    byte *_animBuffer;
-    
-    uint _resIndex;
-    byte _palette[768];
+	byte *_animBuffer;
+
+	uint _resIndex;
+	byte _palette[768];
 
 	uint16 _width, _height;
 	uint16 _frameNumber, _frameCount;

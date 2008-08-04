@@ -49,7 +49,7 @@ ArchiveReader::~ArchiveReader() {
 void ArchiveReader::openArchive(const char *filename) {
 	open(filename);
 	for (uint i = 0; i < 10000; i++)
-	    _offsets[i] = readUint32LE();
+		_offsets[i] = readUint32LE();
 }
 
 uint32 ArchiveReader::openResource(uint resIndex) {
@@ -98,8 +98,8 @@ ResourceCache::ResourceCache(ToltecsEngine *vm) : _vm(vm) {
 	memset(_cache, 0, sizeof(_cache));
 	_cacheCount = 0;
 
-    _curItemOffset = 0;
-    _curItemSize = 0;
+	_curItemOffset = 0;
+	_curItemSize = 0;
 
 }
 
@@ -110,11 +110,11 @@ ResourceCache::~ResourceCache() {
 byte *ResourceCache::load(uint resIndex) {
 	byte *data = NULL;
 	if (existsItem(resIndex)) {
-	    debug(1, "ResourceCache::load(%d) From cache", resIndex);
-	    data = _base + _curItemOffset;
+		debug(1, "ResourceCache::load(%d) From cache", resIndex);
+		data = _base + _curItemOffset;
 	} else {
-	    debug(1, "ResourceCache::load(%d) From disk", resIndex);
-	    uint32 size = _vm->_arc->openResource(resIndex);
+		debug(1, "ResourceCache::load(%d) From disk", resIndex);
+		uint32 size = _vm->_arc->openResource(resIndex);
 		data = addItem(resIndex, size);
 		_vm->_arc->read(data, size);
 		_vm->_arc->closeResource();
@@ -124,10 +124,10 @@ byte *ResourceCache::load(uint resIndex) {
 
 bool ResourceCache::existsItem(uint resIndex) {
 	for (uint i = 0; i < _cacheCount; i++) {
-	    if (_cache[i].resIndex == resIndex) {
-		    _curItemOffset = _cache[i].offset;
-		    _curItemSize = _cache[i].size;
-		    return true;
+		if (_cache[i].resIndex == resIndex) {
+			_curItemOffset = _cache[i].offset;
+			_curItemSize = _cache[i].size;
+			return true;
 		}
 	}
 	return false;
@@ -137,15 +137,15 @@ byte *ResourceCache::addItem(uint resIndex, uint32 size) {
 
 	checkCapacity(size);
 
-    _curItemOffset = _bytesUsed;
-    _curItemSize = size;
+	_curItemOffset = _bytesUsed;
+	_curItemSize = size;
 
-    _cache[_cacheCount].resIndex = resIndex;
-    _cache[_cacheCount].offset = _curItemOffset;
-    _cache[_cacheCount].size = _curItemSize;
-    _cacheCount++;
-    
-    _bytesUsed += size;
+	_cache[_cacheCount].resIndex = resIndex;
+	_cache[_cacheCount].offset = _curItemOffset;
+	_cache[_cacheCount].size = _curItemSize;
+	_cacheCount++;
+
+	_bytesUsed += size;
 
 	return _base + _curItemOffset;
 
@@ -153,8 +153,8 @@ byte *ResourceCache::addItem(uint resIndex, uint32 size) {
 
 void ResourceCache::checkCapacity(uint32 size) {
 	if (_cacheCount > kMaxCacheItems || _bytesUsed + size > kMaxCacheSize) {
-        _cacheCount = 0;
-        _bytesUsed = 0;
+		_cacheCount = 0;
+		_bytesUsed = 0;
 	}
 }
 

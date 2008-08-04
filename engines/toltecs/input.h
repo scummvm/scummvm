@@ -46,8 +46,8 @@ namespace Toltecs {
 
 class Input {
 public:
-    Input(ToltecsEngine *vm);
-    ~Input();
+	Input(ToltecsEngine *vm);
+	~Input();
 
 	void update();
 	
@@ -58,7 +58,7 @@ public:
 
 //protected:
 public:
-    ToltecsEngine *_vm;
+	ToltecsEngine *_vm;
 
 	int16 _mouseX, _mouseY;
 	int16 _mousePosDelta;

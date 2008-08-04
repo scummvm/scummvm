@@ -58,17 +58,17 @@ struct ScriptWalk {
 
 class SegmentMap {
 public:
-    SegmentMap(ToltecsEngine *vm);
-    ~SegmentMap();
+	SegmentMap(ToltecsEngine *vm);
+	~SegmentMap();
 
 	void load(byte *source);
-    
-    int findPathRectAtPoint(int x, int y);
-    void adjustPathPoint(int x, int y);
-    
-    void findPath(int16 *pointsArray, int destX, int destY, int x, int y);
-    
-    int8 getScalingAtPoint(int16 x, int16 y);
+
+	int findPathRectAtPoint(int x, int y);
+	void adjustPathPoint(int x, int y);
+
+	void findPath(int16 *pointsArray, int destX, int destY, int x, int y);
+
+	int8 getScalingAtPoint(int16 x, int16 y);
 	void getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byte &g, byte &b);
 
 	void restoreMasksBySprite(SpriteDrawItem *sprite);
@@ -99,20 +99,20 @@ public: // for debugging purposes
 	};
 	
 	struct PathPoint {
-	    int16 y, x;
+		int16 y, x;
 	};
 	
 	typedef Common::Array<SegmapMaskRect> SegmapMaskRectArray;
 	typedef Common::Array<SegmapPathRect> SegmapPathRectArray;
 	typedef Common::Array<SegmapInfoRect> SegmapInfoRectArray;
 
-    ToltecsEngine *_vm;
-    
-    SegmapMaskRectArray _maskRects;
-    byte *_maskRectData;
+	ToltecsEngine *_vm;
 
-    SegmapPathRectArray _pathRects;
-    SegmapInfoRectArray _infoRects;
+	SegmapMaskRectArray _maskRects;
+	byte *_maskRectData;
+
+	SegmapPathRectArray _pathRects;
+	SegmapInfoRectArray _infoRects;
 
 	int _rectIndexArray1[1000];
 	uint _rectIndexArray1Count;
@@ -123,10 +123,10 @@ public: // for debugging purposes
 	PathPoint _pointsArray[1000];
 	int16 _pointsCount;
 
-    int _x, _y;
-    
-    int findNextPathRect(int srcRectIndex);
-    
+	int _x, _y;
+
+	int findNextPathRect(int srcRectIndex);
+
 };
 
 } // End of namespace Toltecs

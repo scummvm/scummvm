@@ -45,12 +45,12 @@ namespace Toltecs {
 
 Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
 
-    _frontScreen = new byte[268800];
+	_frontScreen = new byte[268800];
 	_backScreen = new byte[870400];
 
 	memset(_fontResIndexArray, 0, sizeof(_fontResIndexArray));
-    _fontColor1 = 0;
-    _fontColor2 = 0;
+	_fontColor1 = 0;
+	_fontColor2 = 0;
 
 	// Screen shaking
 	_shakeActive = false;
@@ -85,37 +85,37 @@ Screen::~Screen() {
 
 void Screen::unpackRle(byte *source, byte *dest, uint16 width, uint16 height) {
 	int32 size = width * height;
-    while (size > 0) {
-        byte a = *source++;
-        byte b = *source++;
-        if (a == 0) {
-            dest += b;
-            size -= b;
-        } else {
-            b = ((b << 4) & 0xF0) | ((b >> 4) & 0x0F);
-            memset(dest, b, a);
-            dest += a;
-            size -= a;
-        }
-    }
+	while (size > 0) {
+		byte a = *source++;
+		byte b = *source++;
+		if (a == 0) {
+			dest += b;
+			size -= b;
+		} else {
+			b = ((b << 4) & 0xF0) | ((b >> 4) & 0x0F);
+			memset(dest, b, a);
+			dest += a;
+			size -= a;
+		}
+	}
 }
 
 void Screen::loadMouseCursor(uint resIndex) {
 	byte mouseCursor[16 * 16], *mouseCursorP = mouseCursor;
 	byte *cursorData = _vm->_res->load(resIndex);
 	for (int i = 0; i < 32; i++) {
-	    byte pixel;
-	    byte mask1 = *cursorData++;
-	    byte mask2 = *cursorData++;
-	    for (int j = 0; j < 8; j++) {
-		    pixel = 0xE5;
-		    if ((mask2 & 0x80) == 0)
-		        pixel = 0xE0;
-		    mask2 <<= 1;
-		    if ((mask1 & 0x80) == 0)
-		        pixel = 0;
-		    mask1 <<= 1;
-		    *mouseCursorP++ = pixel;
+		byte pixel;
+		byte mask1 = *cursorData++;
+		byte mask2 = *cursorData++;
+		for (int j = 0; j < 8; j++) {
+			pixel = 0xE5;
+			if ((mask2 & 0x80) == 0)
+				pixel = 0xE0;
+			mask2 <<= 1;
+			if ((mask1 & 0x80) == 0)
+				pixel = 0;
+			mask1 <<= 1;
+			*mouseCursorP++ = pixel;
 		}
 	}
 	//CursorMan.replaceCursor((const byte*)mouseCursor, 16, 16, 0, 0, 0);
@@ -151,9 +151,9 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 			*dest++ = pixel;
 			workWidth--;
 			if (workWidth == 0) {
-			    workHeight--;
-			    dest += 640 - width;
-			    workWidth = width;
+				workHeight--;
+				dest += 640 - width;
+				workWidth = width;
 			}
 		}
 	}
@@ -174,11 +174,11 @@ void Screen::stopShakeScreen() {
 
 void Screen::updateShakeScreen() {
 	if (_shakeActive) {
-	    _shakeCounter--;
-	    if (_shakeCounter == 0) {
-	        _shakeCounter = _shakeCounterInit;
-	        _shakePos ^= 8;
-	        _vm->_system->setShakePos(_shakePos);
+		_shakeCounter--;
+		if (_shakeCounter == 0) {
+			_shakeCounter = _shakeCounterInit;
+			_shakePos ^= 8;
+			_vm->_system->setShakePos(_shakePos);
 		}
 	}
 }
@@ -198,13 +198,13 @@ void Screen::addStaticSprite(byte *spriteItem) {
 
 	debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
 
-    addDrawRequest(drawRequest);
+	addDrawRequest(drawRequest);
 
 }
 
 void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, int16 *spriteArray, bool loop, int mode) {
 
-    debug(0, "Screen::addAnimatedSprite(%d, %d, %d)", x, y, fragmentId);
+	debug(0, "Screen::addAnimatedSprite(%d, %d, %d)", x, y, fragmentId);
 
 	DrawRequest drawRequest;
 	memset(&drawRequest, 0, sizeof(drawRequest));
@@ -245,13 +245,13 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 			loopNum++;
 			if (loopNum == loopCount) {
 				if (loop) {
-				    loopNum = 0;
+					loopNum = 0;
 				} else {
-			    	loopNum--;
+					loopNum--;
 				}
 			}
 		} else {
-		    loopNum |= 0x8000;
+			loopNum |= 0x8000;
 		}
 		
 		WRITE_LE_UINT16(spriteItem + 0, loopNum);
@@ -263,8 +263,8 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 
 void Screen::clearSprites() {
 
-    _spriteDrawList.clear();
-    // TODO
+	_spriteDrawList.clear();
+	// TODO
 
 }
 
@@ -275,12 +275,12 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	byte *spriteData;
 	int16 frameNum;
 
-    SpriteDrawItem sprite;
-    memset(&sprite, 0, sizeof(SpriteDrawItem));
+	SpriteDrawItem sprite;
+	memset(&sprite, 0, sizeof(SpriteDrawItem));
 
 	if (drawRequest.flags == 0xFFFF)
-	    return;
-	    
+		return;
+
 	sprite.flags = 0;
 	sprite.baseColor = drawRequest.baseColor;
 	sprite.x = drawRequest.x;
@@ -291,11 +291,11 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	spriteData = _vm->_res->load(drawRequest.resIndex);
 	
 	if (drawRequest.flags & 0x2000) {
-	    sprite.flags |= 0x10;
+		sprite.flags |= 0x10;
 	}
 	
 	if (drawRequest.flags & 0x4000) {
-	    sprite.flags |= 0x40;
+		sprite.flags |= 0x40;
 	}
 
 	frameNum = drawRequest.flags & 0x0FFF;
@@ -305,7 +305,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	SpriteFrameEntry spriteFrameEntry(spriteData + frameNum * 12);
 	
 	if (spriteFrameEntry.w == 0 || spriteFrameEntry.h == 0)
-	    return;
+		return;
 	
 	sprite.offset = spriteFrameEntry.offset;
 
@@ -316,9 +316,9 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	sprite.origHeight = spriteFrameEntry.h;
 
 	if (drawRequest.flags & 0x1000) {
-	    spriteDraw_X = spriteFrameEntry.w - spriteFrameEntry.x;
+		spriteDraw_X = spriteFrameEntry.w - spriteFrameEntry.x;
 	} else {
-	    spriteDraw_X = spriteFrameEntry.x;
+		spriteDraw_X = spriteFrameEntry.x;
 	}
 
 	spriteDraw_Y = spriteFrameEntry.y;
@@ -327,7 +327,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 
 	if (drawRequest.scaling != 0) {
 
-        byte scaleValue = ABS(drawRequest.scaling);
+		byte scaleValue = ABS(drawRequest.scaling);
 
 		scaleValueX = scaleValue * sprite.origWidth;
 		sprite.xdelta = (10000 * sprite.origWidth) / scaleValueX;
@@ -338,63 +338,63 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 		scaleValueY /= 100;
 
 		if (drawRequest.scaling > 0) {
-		    sprite.flags |= 2;
-		    sprite.width = sprite.origWidth + scaleValueX;
-		    sprite.height = sprite.origHeight + scaleValueY;
-		    spriteDraw_X += (spriteDraw_X * scaleValue) / 100;
-		    spriteDraw_Y += (spriteDraw_Y * scaleValue) / 100;
+			sprite.flags |= 2;
+			sprite.width = sprite.origWidth + scaleValueX;
+			sprite.height = sprite.origHeight + scaleValueY;
+			spriteDraw_X += (spriteDraw_X * scaleValue) / 100;
+			spriteDraw_Y += (spriteDraw_Y * scaleValue) / 100;
 		} else {
-		    sprite.flags |= 1;
+			sprite.flags |= 1;
 			sprite.width = sprite.origWidth - scaleValueX;
-		    sprite.height = sprite.origHeight - 1 - scaleValueY;
+			sprite.height = sprite.origHeight - 1 - scaleValueY;
 			if (sprite.width <= 0 || sprite.height <= 0)
-			    return;
-		    spriteDraw_X -= (spriteDraw_X * scaleValue) / 100;
-		    spriteDraw_Y -= (spriteDraw_Y * scaleValue) / 100;
+				return;
+			spriteDraw_X -= (spriteDraw_X * scaleValue) / 100;
+			spriteDraw_Y -= (spriteDraw_Y * scaleValue) / 100;
 		}
 		
 	}
 	
 	sprite.x -= spriteDraw_X;
-    sprite.y -= spriteDraw_Y;
+	sprite.y -= spriteDraw_Y;
 
-    sprite.yerror = sprite.ydelta;
+	sprite.yerror = sprite.ydelta;
 
 	// Now we check if the sprite needs to be clipped
 
 	// Clip Y
-    if (sprite.y - _vm->_cameraY < 0) {
-    
-        int16 clipHeight = ABS(sprite.y - _vm->_cameraY);
-        int16 chopHeight, skipHeight, lineWidth;
-        byte *spriteFrameData;
+	if (sprite.y - _vm->_cameraY < 0) {
+
+		int16 clipHeight = ABS(sprite.y - _vm->_cameraY);
+		int16 chopHeight, skipHeight, lineWidth;
+		byte *spriteFrameData;
 
 		sprite.height -= clipHeight;
 		if (sprite.height <= 0)
-		    return;
+			return;
 		
-        sprite.y = _vm->_cameraY;
-        
-        // If the sprite is scaled
-        if (sprite.flags & 3) {
-            chopHeight = sprite.ydelta;
+		sprite.y = _vm->_cameraY;
+
+		// If the sprite is scaled
+		if (sprite.flags & 3) {
+			chopHeight = sprite.ydelta;
 			skipHeight = clipHeight;
-            if ((sprite.flags & 2) == 0) {
-                do {
-                    chopHeight -= 100;
-                    if (chopHeight <= 0) {
-                        skipHeight++;
-                        chopHeight += sprite.ydelta;
+			if ((sprite.flags & 2) == 0) {
+				do {
+					chopHeight -= 100;
+					if (chopHeight <= 0) {
+						skipHeight++;
+						chopHeight += sprite.ydelta;
 					} else {
-					    clipHeight--;
+						clipHeight--;
 					}
 				} while (clipHeight > 0);
 			} else {
-			    do {
-			        chopHeight -= 100;
-			        if (chopHeight < 0) {
-			            skipHeight--;
-			            chopHeight += sprite.ydelta + 100;
+				do {
+					chopHeight -= 100;
+					if (chopHeight < 0) {
+						skipHeight--;
+						chopHeight += sprite.ydelta + 100;
 					}
 					clipHeight--;
 				} while (clipHeight > 0);
@@ -407,72 +407,72 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 		// Now the sprite's offset is adjusted to point to the starting line
 		if ((sprite.flags & 0x10) == 0) {
 			while (clipHeight--) {
-		    	lineWidth = 0;
-		    	while (lineWidth </*CHECKME was != */ sprite.origWidth) {
-				    sprite.offset++;
-				    lineWidth += (*spriteFrameData++) & 0x0F;
+				lineWidth = 0;
+				while (lineWidth </*CHECKME was != */ sprite.origWidth) {
+					sprite.offset++;
+					lineWidth += (*spriteFrameData++) & 0x0F;
 				}
 			}
 		} else {
-		    lineWidth = 0;
+			lineWidth = 0;
 			while (clipHeight--) {
-		    	while (lineWidth < sprite.origWidth) {
-			    	sprite.offset += 2;
-			    	spriteFrameData++;
+				while (lineWidth < sprite.origWidth) {
+					sprite.offset += 2;
+					spriteFrameData++;
 					lineWidth += *spriteFrameData++;
 				}
 			}
 		}
-        
+
 	}
 
 	if (sprite.y + sprite.height - _vm->_cameraY - _vm->_cameraHeight > 0)
-	    sprite.height -= sprite.y + sprite.height - _vm->_cameraY - _vm->_cameraHeight;
+		sprite.height -= sprite.y + sprite.height - _vm->_cameraY - _vm->_cameraHeight;
 	if (sprite.height <= 0)
-	    return;
-	    
+		return;
+
 	sprite.value1 = 0;
 	
 	if (drawRequest.flags & 0x1000) {
-	    // Left border
-	    sprite.flags |= 4;
-	    if (sprite.x - _vm->_cameraX < 0) {
-	        sprite.width -= ABS(sprite.x - _vm->_cameraX);
-	        if (sprite.width <= 0)
-	            return;
+		// Left border
+		sprite.flags |= 4;
+		if (sprite.x - _vm->_cameraX < 0) {
+			sprite.width -= ABS(sprite.x - _vm->_cameraX);
+			if (sprite.width <= 0)
+				return;
 			sprite.x = _vm->_cameraX;
 		}
-	    // Right border
+		// Right border
 		if (sprite.x + sprite.width - _vm->_cameraX - 640 > 0) {
-		    sprite.flags |= 8;
-		    sprite.width -= sprite.x + sprite.width - _vm->_cameraX - 640;
-	        if (sprite.width <= 0)
-	            return;
+			sprite.flags |= 8;
+			sprite.width -= sprite.x + sprite.width - _vm->_cameraX - 640;
+			if (sprite.width <= 0)
+				return;
 			sprite.value1 = sprite.x + sprite.width - _vm->_cameraX - 640;
 		}
 	} else {
-	    // Left border
-	    if (sprite.x - _vm->_cameraX < 0) {
-		    sprite.flags |= 8;
-	        sprite.width -= ABS(sprite.x - _vm->_cameraX);
-	        if (sprite.width <= 0)
-	            return;
-            sprite.value1 = ABS(sprite.x - _vm->_cameraX);
-            sprite.x = _vm->_cameraX;
+		// Left border
+		if (sprite.x - _vm->_cameraX < 0) {
+			sprite.flags |= 8;
+			sprite.width -= ABS(sprite.x - _vm->_cameraX);
+			if (sprite.width <= 0)
+				return;
+			sprite.value1 = ABS(sprite.x - _vm->_cameraX);
+			sprite.x = _vm->_cameraX;
 		}
-	    // Right border
+		// Right border
 		if (sprite.x + sprite.width - _vm->_cameraX - 640 > 0) {
-		    sprite.flags |= 8;
+			sprite.flags |= 8;
 			sprite.width -= sprite.x + sprite.width - _vm->_cameraX - 640;
-	        if (sprite.width <= 0)
-	            return;
+			if (sprite.width <= 0)
+				return;
 		}
 	}
 
 	// Add sprite sorted by priority
 	Common::List<SpriteDrawItem>::iterator iter = _spriteDrawList.begin();
 	while (iter != _spriteDrawList.end() && (*iter).ybottom <= sprite.ybottom) {
-	    iter++;
+		iter++;
 	}
 	_spriteDrawList.insert(iter, sprite);
 	
@@ -480,43 +480,43 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 
 void Screen::drawSprite(SpriteDrawItem *sprite) {
 
-    debug(0, "Screen::drawSprite() x = %d; y = %d; flags = %04X; resIndex = %d; offset = %08X; drawX = %d; drawY = %d",
+	debug(0, "Screen::drawSprite() x = %d; y = %d; flags = %04X; resIndex = %d; offset = %08X; drawX = %d; drawY = %d",
 		sprite->x, sprite->y, sprite->flags, sprite->resIndex, sprite->offset,
 		sprite->x - _vm->_cameraX, sprite->y - _vm->_cameraY);
-    debug(0, "Screen::drawSprite() width = %d; height = %d; origWidth = %d; origHeight = %d",
+	debug(0, "Screen::drawSprite() width = %d; height = %d; origWidth = %d; origHeight = %d",
 		sprite->width, sprite->height, sprite->origWidth, sprite->origHeight);
 
-    byte *source = _vm->_res->load(sprite->resIndex) + sprite->offset;
-    byte *dest = _frontScreen + (sprite->x - _vm->_cameraX) + (sprite->y - _vm->_cameraY) * 640;
+	byte *source = _vm->_res->load(sprite->resIndex) + sprite->offset;
+	byte *dest = _frontScreen + (sprite->x - _vm->_cameraX) + (sprite->y - _vm->_cameraY) * 640;
 
 	// FIXME: Temporary hack until proper clipping is implemented
 	/*
 	int16 dx = sprite->x - _vm->_cameraX, dy = sprite->y - _vm->_cameraY;
 	if (dx < 0 || dy < 0 || dx + sprite->width >= 640 || dy + sprite->height >= 400)
-	    return;
-	    */
+		return;
+		*/
 
-    SpriteReader spriteReader(source, sprite);
-    
+	SpriteReader spriteReader(source, sprite);
+
 	if (sprite->flags & 0x40) {
-	    // TODO: Shadow sprites
+		// TODO: Shadow sprites
 	} else if (sprite->flags & 0x10) {
-	    // 256 color sprite
-        drawSpriteCore(dest, spriteReader, sprite);
+		// 256 color sprite
+		drawSpriteCore(dest, spriteReader, sprite);
 	} else {
-	    // 16 color sprite
-	    if (sprite->flags & 1) {
-            SpriteFilterScaleDown spriteScaler(sprite, &spriteReader);
-            drawSpriteCore(dest, spriteScaler, sprite);
+		// 16 color sprite
+		if (sprite->flags & 1) {
+			SpriteFilterScaleDown spriteScaler(sprite, &spriteReader);
+			drawSpriteCore(dest, spriteScaler, sprite);
 		} else if (sprite->flags & 2) {
-            SpriteFilterScaleUp spriteScaler(sprite, &spriteReader);
-            drawSpriteCore(dest, spriteScaler, sprite);
+			SpriteFilterScaleUp spriteScaler(sprite, &spriteReader);
+			drawSpriteCore(dest, spriteScaler, sprite);
 		} else {
-            drawSpriteCore(dest, spriteReader, sprite);
+			drawSpriteCore(dest, spriteReader, sprite);
 		}
 	}
 
-    debug(0, "Screen::drawSprite() ok");
+	debug(0, "Screen::drawSprite() ok");
 
 }
 
@@ -526,14 +526,14 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 
 	/*
 	if ((sprite->flags & 8))
-	    return;
-	    */
+		return;
+		*/
 
 	if (sprite->flags & 4) {
-	    destInc = -1;
+		destInc = -1;
 		dest += sprite->width;
 	} else {
-	    destInc = 1;
+		destInc = 1;
 	}
 	
 	SpriteReaderStatus status;
@@ -546,29 +546,29 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 		status = reader.readPacket(packet);
 
 		if (skipX > 0) {
-		    while (skipX > 0) {
-		        skipX -= packet.count;
-		        if (skipX < 0) {
+			while (skipX > 0) {
+				skipX -= packet.count;
+				if (skipX < 0) {
 					packet.count = ABS(skipX);
 					break;
 				}
-		        status = reader.readPacket(packet);
+				status = reader.readPacket(packet);
 			}
 		}
 		
 		if (((sprite->flags & 0x10) && (packet.pixel != 0xFF)) || !(sprite->flags & 0x10) && (packet.pixel != 0)) {
 			if (sprite->flags & 0x40) {
 			} else if (sprite->flags & 0x10) {
-	            packet.pixel = ((packet.pixel << 4) & 0xF0) | ((packet.pixel >> 4) & 0x0F);
+				packet.pixel = ((packet.pixel << 4) & 0xF0) | ((packet.pixel >> 4) & 0x0F);
 			} else {
-	        	packet.pixel += sprite->baseColor - 1;
-	        }
-	    	while (packet.count--) {
-	    		*dest = packet.pixel;
+				packet.pixel += sprite->baseColor - 1;
+			}
+			while (packet.count--) {
+				*dest = packet.pixel;
 				dest += destInc;
 			}
 		} else {
-		    dest += packet.count * destInc;
+			dest += packet.count * destInc;
 		}
 
 		if (status == kSrsEndOfLine) {
@@ -583,7 +583,7 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 
 void Screen::drawSprites() {
 	for (Common::List<SpriteDrawItem>::iterator iter = _spriteDrawList.begin(); iter != _spriteDrawList.end(); iter++) {
-        SpriteDrawItem *sprite = &(*iter);
+		SpriteDrawItem *sprite = &(*iter);
 		drawSprite(sprite);
 		_vm->_segmap->restoreMasksBySprite(sprite);
 	}
@@ -596,16 +596,16 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 
 	Font font(_vm->_res->load(_fontResIndexArray[0]));
 
-    _verbLineItems[_verbLineNum].slotIndex = slotIndex;
-    _verbLineItems[_verbLineNum].slotOffset = slotOffset;
+	_verbLineItems[_verbLineNum].slotIndex = slotIndex;
+	_verbLineItems[_verbLineNum].slotOffset = slotOffset;
 
 	// First clear the line
 	int16 y = _verbLineY;
 	for (int16 i = 0; i < _verbLineCount; i++) {
 		byte *dest = _frontScreen + _verbLineX - _verbLineWidth / 2 + (y - 1 + _vm->_cameraHeight) * 640;
 		for (int16 j = 0; j < 20; j++) {
-		    memset(dest, 0xE0, _verbLineWidth);
-		    dest += 640;
+			memset(dest, 0xE0, _verbLineWidth);
+			dest += 640;
 		}
 		y += 18;
 	}
@@ -622,19 +622,19 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	memset(_tempString, 0, sizeof(_tempString));
 	
 	for (int16 i = 0; i <= _verbLineNum; i++) {
-	    sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
+		sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
 		preprocessText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
 		_tempStringLen1 += len;
 	}
 
 	if (_verbLineCount != 1) {
-	    int16 charWidth;
-	    if (*sourceString < 0xF0) {
+		int16 charWidth;
+		if (*sourceString < 0xF0) {
 			while (*sourceString > 0x20 && *sourceString < 0xF0 && len > 0/*CHECKME, len check added*/) {
-			    byte ch = *sourceString--;
-	        	_tempStringLen1--;
-	        	len--;
-           		charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
+				byte ch = *sourceString--;
+				_tempStringLen1--;
+				len--;
+		   		charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
 				width -= charWidth;
 			}
 			width += charWidth;
@@ -642,14 +642,14 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			_tempStringLen1 -= len;
 			_tempStringLen2 = len + 1;
 			
-            drawString(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+			drawString(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
 
    			destString = _tempString;
 			width = 0;
 			preprocessText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
 			
 			_tempStringLen1 += len;
-	        y += 9;
+			y += 9;
 		}
 		y += 9;
 	}
@@ -667,10 +667,10 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	byte durationModifier = 1;
 	byte *textData = _vm->_script->getSlotData(slotIndex) + slotOffset;
 
-    TalkTextItem *item = &_talkTextItems[_talkTextItemNum];
+	TalkTextItem *item = &_talkTextItems[_talkTextItemNum];
 
-    item->fontNum = 0;
-    item->color = _talkTextFontColor;
+	item->fontNum = 0;
+	item->color = _talkTextFontColor;
 
 	//debug(0, "## _talkTextMaxWidth = %d", _talkTextMaxWidth);
 
@@ -680,53 +680,53 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	maxWidth = 624 - ABS(x - 320) * 2;
 
 	while (1) {
-	    if (*textData == 0x0A) {
+		if (*textData == 0x0A) {
 			x = CLIP<int16>(textData[3], 120, _talkTextMaxWidth);
 			y = CLIP<int16>(READ_LE_UINT16(&textData[1]), 4, _vm->_cameraHeight - 16);
 			maxWidth = 624 - ABS(x - 320) * 2;
 			textData += 4;
 		} else if (*textData == 0x14) {
-		    item->color = textData[1];
-		    textData += 2;
+			item->color = textData[1];
+			textData += 2;
 		} else if (*textData == 0x19) {
-		    durationModifier = textData[1];
-		    textData += 2;
+			durationModifier = textData[1];
+			textData += 2;
 		} else if (*textData < 0x0A) {
-		    item->fontNum = textData[1];
-		    textData += 2;
+			item->fontNum = textData[1];
+			textData += 2;
 		} else
-		    break;
+			break;
 	}
 	
-    item->slotIndex = slotIndex;
-    item->slotOffset = textData - _vm->_script->getSlotData(slotIndex);
-    
-    width = 0;
-    length = 0;
-    
-    item->rectCount = 0;
-    
-    Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
+	item->slotIndex = slotIndex;
+	item->slotOffset = textData - _vm->_script->getSlotData(slotIndex);
+
+	width = 0;
+	length = 0;
+
+	item->rectCount = 0;
+
+	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
 	int16 wordLength, wordWidth;
 
-    while (*textData < 0xF0) {
+	while (*textData < 0xF0) {
 		if (*textData == 0x1E) {
-		    textData++;
-		    addTalkTextRect(font, x, y, length, width, item);
-		    // CHECKME?
+			textData++;
+			addTalkTextRect(font, x, y, length, width, item);
+			// CHECKME?
 			width = 0;
 			length = 0;
 		} else {
-		    wordLength = 0;
-		    wordWidth = 0;
-		    while (*textData >= 0x20 && *textData < 0xF0) {
-		        byte ch = *textData++;
-		        wordLength++;
-		        if (ch == 0x20) {
-		            wordWidth += font.getWidth();
-		            break;
+			wordLength = 0;
+			wordWidth = 0;
+			while (*textData >= 0x20 && *textData < 0xF0) {
+				byte ch = *textData++;
+				wordLength++;
+				if (ch == 0x20) {
+					wordWidth += font.getWidth();
+					break;
 				} else {
-				    wordWidth += font.getCharWidth(ch) + font.getSpacing() - 1;
+					wordWidth += font.getCharWidth(ch) + font.getSpacing() - 1;
 				}
 			}
 			
@@ -751,7 +751,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	int16 textDurationMultiplier = item->duration + 8;
 	// TODO: Check sound/text flags
 	if (*textData == 0xFE) {
-	    //textDurationMultiplier += 100;
+		//textDurationMultiplier += 100;
 	}
 	item->duration = 4 * textDurationMultiplier * durationModifier;
 
@@ -760,14 +760,14 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item) {
 
 	if (width > 0) {
-    	TextRect *textRect = &item->rects[item->rectCount];
-	    width = width + 1 - font.getSpacing();
-	    textRect->width = width;
-	    item->duration += length;
-	    textRect->length = length;
-	    textRect->y = y;
-	    textRect->x = CLIP<int16>(x - width / 2, 0, 640);
-	    item->rectCount++;
+		TextRect *textRect = &item->rects[item->rectCount];
+		width = width + 1 - font.getSpacing();
+		textRect->width = width;
+		item->duration += length;
+		textRect->length = length;
+		textRect->y = y;
+		textRect->x = CLIP<int16>(x - width / 2, 0, 640);
+		item->rectCount++;
 	}
 	
 	y += font.getHeight() - 1;
@@ -782,25 +782,25 @@ void Screen::drawTalkTextItems() {
 		TalkTextItem *item = &_talkTextItems[i];
 		byte *text = _vm->_script->getSlotData(item->slotIndex) + item->slotOffset;
 
-	    if (item->fontNum == -1 || item->duration == 0)
-	        continue;
+		if (item->fontNum == -1 || item->duration == 0)
+			continue;
 
 		item->duration -= _vm->_counter01;
 		if (item->duration < 0)
-		    item->duration = 0;
-	    
-    	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
+			item->duration = 0;
+
+		Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
 		for (byte j = 0; j < item->rectCount; j++) {
 			int16 x = item->rects[j].x;
 			for (byte pos = 0; pos < item->rects[j].length; pos++) {
-	    		byte ch = *text++;
-	    		if (ch < 0x20)
-	    		    continue;
-			    if (ch == 0x20) {
-			        x += font.getWidth();
+				byte ch = *text++;
+				if (ch < 0x20)
+					continue;
+				if (ch == 0x20) {
+					x += font.getWidth();
 				} else {
-				    drawChar2(font, _frontScreen, x, item->rects[j].y, ch, item->color);
-				    x += font.getCharWidth(ch) + font.getSpacing() - 1;
+					drawChar2(font, _frontScreen, x, item->rects[j].y, ch, item->color);
+					x += font.getCharWidth(ch) + font.getSpacing() - 1;
 				}
 			}
 		}
@@ -822,30 +822,30 @@ void Screen::printText(byte *textData) {
 
 	// Really strange stuff.
 	for (int i = 30; i >= 0; i--) {
-	    if (textData[i] >= 0xF0)
-	        break;
+		if (textData[i] >= 0xF0)
+			break;
 		if (i == 0)
-		    return;
+			return;
 	}
 
 	do {
 	
-	    if (*textData == 0x0A) {
-	        // Set text position
-	        y = textData[1];
-	        x = READ_LE_UINT32(textData + 2);
-	        textData += 4;
+		if (*textData == 0x0A) {
+			// Set text position
+			y = textData[1];
+			x = READ_LE_UINT32(textData + 2);
+			textData += 4;
 		} else if (*textData == 0x0B) {
-	        // Inc text position
-		    y += textData[1]; // CHECKME: Maybe these are signed?
-		    x += textData[2];
-		    textData += 3;
+			// Inc text position
+			y += textData[1]; // CHECKME: Maybe these are signed?
+			x += textData[2];
+			textData += 3;
 		} else {
 			byte *destString = _tempString;
 			int width = 0;
 			_tempStringLen1 = 0;
-            preprocessText(_fontResIndexArray[1], 640, width, textData, destString, _tempStringLen2);
-            drawString(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
+			preprocessText(_fontResIndexArray[1], 640, width, textData, destString, _tempStringLen2);
+			drawString(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
 		}
 	
 	} while (*textData != 0xFF);
@@ -858,17 +858,17 @@ void Screen::preprocessText(uint fontResIndex, int maxWidth, int &width, byte *&
 
 	len = 0;
 	while (*sourceString >= 0x20 && *sourceString < 0xF0) {
-	    byte ch = *sourceString;
+		byte ch = *sourceString;
 		byte charWidth;
-	    if (ch <= 0x20)
-	        charWidth = font.getWidth();
+		if (ch <= 0x20)
+			charWidth = font.getWidth();
 		else
 			charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
 		if (width + charWidth >= maxWidth)
-		    break;
+			break;
 		len++;
 		width += charWidth;
-	    *destString++ = *sourceString++;
+		*destString++ = *sourceString++;
 	}
 }
 
@@ -884,16 +884,16 @@ void Screen::drawString(int16 x, int16 y, byte fontColor1, byte fontColor2, uint
 	int16 yadd = 1;
 	
 	for (byte pos = 0; pos < len; pos++) {
-	    if (pos == _tempStringLen1) {
-	        color = fontColor2;
+		if (pos == _tempStringLen1) {
+			color = fontColor2;
 		}
-	    byte ch = *text++;
-	    if (ch <= 0x20) {
-	        x += font.getWidth();
+		byte ch = *text++;
+		if (ch <= 0x20) {
+			x += font.getWidth();
 		} else {
-		    drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color);
-		    x += font.getCharWidth(ch) + font.getSpacing() - 1;
-		    yadd = -yadd;
+			drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color);
+			x += font.getCharWidth(ch) + font.getSpacing() - 1;
+			yadd = -yadd;
 		}
 	}
 	
@@ -912,19 +912,19 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 	charHeight = font.getHeight() - 2;
 	charData = font.getCharData(ch);
 
-    while (charHeight--) {
-        byte lineWidth = charWidth;
-        while (lineWidth > 0) {
-            byte count = charData[0] & 0x0F;
-            byte flags = charData[0] & 0xF0;
+	while (charHeight--) {
+		byte lineWidth = charWidth;
+		while (lineWidth > 0) {
+			byte count = charData[0] & 0x0F;
+			byte flags = charData[0] & 0xF0;
 			charData++;
 			lineWidth -= count;
 			if (!(flags & 0x80) && (flags & 0x10)) {
-			    memset(dest, color, count);
+				memset(dest, color, count);
 			}
 			dest += count;
 		}
-    	dest += 640 - charWidth;
+		dest += 640 - charWidth;
 	}
 
 }
@@ -940,25 +940,25 @@ void Screen::drawChar2(const Font &font, byte *dest, int16 x, int16 y, byte ch, 
 	charHeight = font.getHeight() - 2;
 	charData = font.getCharData(ch);
 
-    while (charHeight--) {
-        byte lineWidth = charWidth;
-        while (lineWidth > 0) {
-            byte count = charData[0] & 0x0F;
-            byte flags = charData[0] & 0xF0;
+	while (charHeight--) {
+		byte lineWidth = charWidth;
+		while (lineWidth > 0) {
+			byte count = charData[0] & 0x0F;
+			byte flags = charData[0] & 0xF0;
 			charData++;
 			lineWidth -= count;
 
 			if ((flags & 0x80) == 0) {
  				if ((flags & 0x10) == 0) {
-			    	memset(dest, 0, count);
-			    } else {
-			    	memset(dest, color, count);
+					memset(dest, 0, count);
+				} else {
+					memset(dest, color, count);
 				}
 			}
 
 			dest += count;
 		}
-    	dest += 640 - charWidth;
+		dest += 640 - charWidth;
 	}
 
 }
