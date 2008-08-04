@@ -27,6 +27,10 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#if defined(WIN32) && defined(ARRAYSIZE)
+// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
+#undef ARRAYSIZE
+#endif
 #include "common/util.h"
 
 #include "backends/saves/default/default-saves.h"
