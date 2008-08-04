@@ -553,5 +553,12 @@ uint32 DumpFile::write(const void *ptr, uint32 len) {
 	return (uint32)fwrite(ptr, 1, len, (FILE *)_handle);
 }
 
+void DumpFile::flush() {
+	assert(_handle);
+	// TODO: Should check the return value of fflush, and if it is non-zero,
+	// check errno and set an error flag.
+	fflush((FILE *)_handle);
+}
+
 
 }	// End of namespace Common

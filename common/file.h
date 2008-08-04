@@ -148,7 +148,9 @@ public:
 	 */
 	virtual bool eof() const;
 
-	uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+
+	virtual void flush();
 };
 
 

@@ -39,6 +39,7 @@ namespace Common {
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
+//typedef SeekableReadStream InSaveFile;
 class InSaveFile : public SeekableReadStream {};
 
 /**
@@ -46,20 +47,8 @@ class InSaveFile : public SeekableReadStream {};
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile : public WriteStream {
-public:
-	/**
-	 * Close this savefile, to be called right before destruction of this
-	 * savefile. The idea is that this ways, I/O errors that occur
-	 * during closing/flushing of the file can still be handled by the
-	 * game engine.
-	 *
-	 * By default, this just flushes the stream.
-	 */
-	virtual void finalize() {
-		flush();
-	}
-};
+//typedef WriteStream OutSaveFile;
+class OutSaveFile : public WriteStream {};
 
 
 /**
