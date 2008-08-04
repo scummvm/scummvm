@@ -497,10 +497,7 @@ bool DumpFile::open(const String &filename) {
 bool DumpFile::open(const FilesystemNode &node) {
 	assert(!_handle);
 
-	if (!node.exists()) {
-		warning("File::open: Trying to open a FilesystemNode which does not exist");
-		return false;
-	} else if (node.isDirectory()) {
+	if (node.isDirectory()) {
 		warning("File::open: Trying to open a FilesystemNode which is a directory");
 		return false;
 	} /*else if (!node.isReadable() && mode == kFileReadMode) {
@@ -511,7 +508,7 @@ bool DumpFile::open(const FilesystemNode &node) {
 		return false;
 	}*/
 
-	_handle = fopen(node.getPath().c_str(), "rb");
+	_handle = fopen(node.getPath().c_str(), "wb");
 
 	if (_handle == NULL)
 		debug(2, "File %s not found", node.getName().c_str());
