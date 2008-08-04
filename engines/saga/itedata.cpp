@@ -401,7 +401,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"Non saprei come farlo.",
 		"Dialoghi",
 		"Come risponderebbe Rif?",
-		"Loading a saved game"		// TODO
+		"Vuoi davvero caricare il gioco?"
 	},
 	// Spanish IHNM
 	{
