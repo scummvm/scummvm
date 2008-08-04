@@ -31,7 +31,7 @@
 
 namespace Common {
 	class SeekableReadStream;
-	class OutSaveFile;
+	class WriteStream;
 }
 
 namespace Scumm {
@@ -125,7 +125,7 @@ struct SaveLoadEntry {
 
 class Serializer {
 public:
-	Serializer(Common::SeekableReadStream *in, Common::OutSaveFile *out, uint32 savegameVersion)
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out, uint32 savegameVersion)
 		: _loadStream(in), _saveStream(out),
 		  _savegameVersion(savegameVersion)
 	{ }
@@ -151,7 +151,7 @@ public:
 
 protected:
 	Common::SeekableReadStream *_loadStream;
-	Common::OutSaveFile *_saveStream;
+	Common::WriteStream *_saveStream;
 	uint32 _savegameVersion;
 
 	void saveArrayOf(void *b, int len, int datasize, byte filetype);

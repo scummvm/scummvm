@@ -39,16 +39,14 @@ namespace Common {
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-//typedef SeekableReadStream InSaveFile;
-class InSaveFile : public SeekableReadStream {};
+typedef SeekableReadStream InSaveFile;
 
 /**
  * A class which allows game engines to save game state data.
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-//typedef WriteStream OutSaveFile;
-class OutSaveFile : public WriteStream {};
+typedef WriteStream OutSaveFile;
 
 
 /**

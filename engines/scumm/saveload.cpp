@@ -595,7 +595,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff) 
 	return true;
 }
 
-void ScummEngine::saveInfos(Common::OutSaveFile* file) {
+void ScummEngine::saveInfos(Common::WriteStream* file) {
 	SaveInfoSection section;
 	section.type = MKID_BE('INFO');
 	section.version = INFOSECTION_VERSION;

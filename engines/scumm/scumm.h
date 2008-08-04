@@ -46,7 +46,7 @@ namespace GUI {
 using GUI::Dialog;
 namespace Common {
 	class SeekableReadStream;
-	class OutSaveFile;
+	class WriteStream;
 }
 
 namespace Scumm {
@@ -637,8 +637,8 @@ public:
 protected:
 	Graphics::Surface *loadThumbnail(Common::SeekableReadStream *file);
 	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
-	void saveThumbnail(Common::OutSaveFile *file);
-	void saveInfos(Common::OutSaveFile* file);
+	void saveThumbnail(Common::WriteStream *file);
+	void saveInfos(Common::WriteStream* file);
 
 	int32 _engineStartTime;
 	int32 _pauseStartTime;
