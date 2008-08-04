@@ -41,53 +41,6 @@
 #include <sys/stat.h>
 #endif
 
-
-class StdioSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
-private:
-	FILE *fh;
-public:
-	StdioSaveFile(const char *filename, bool saveOrLoad) {
-		fh = ::fopen(filename, (saveOrLoad? "wb" : "rb"));
-	}
-	~StdioSaveFile() {
-		if (fh)
-			::fclose(fh);
-	}
-
-	bool eos() const { return feof(fh) != 0; }
-	bool ioFailed() const { return ferror(fh) != 0; }
-	void clearIOFailed() { clearerr(fh); }
-
-	bool isOpen() const { return fh != 0; }
-
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		assert(fh);
-		return fread(dataPtr, 1, dataSize, fh);
-	}
-	uint32 write(const void *dataPtr, uint32 dataSize) {
-		assert(fh);
-		return fwrite(dataPtr, 1, dataSize, fh);
-	}
-
-	uint32 pos() const {
-		assert(fh);
-		return ftell(fh);
-	}
-	uint32 size() const {
-		assert(fh);
-		uint32 oldPos = ftell(fh);
-		fseek(fh, 0, SEEK_END);
-		uint32 length = ftell(fh);
-		fseek(fh, oldPos, SEEK_SET);
-		return length;
-	}
-
-	void seek(int32 offs, int whence = SEEK_SET) {
-		assert(fh);
-		fseek(fh, offs, whence);
-	}
-};
-
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	FilesystemNode savePath(getSavePath());
 	FSList savefiles;
@@ -183,13 +136,8 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 		FilesystemNode saveDir(getSavePath());
 		FilesystemNode file = saveDir.getChild(filename);
 
-		// TODO: switch to file.openForLoading()
-		StdioSaveFile *sf = new StdioSaveFile(file.getPath().c_str(), false);
-
-		if (!sf->isOpen()) {
-			delete sf;
-			sf = 0;
-		}
+		// Open the file for reading
+		Common::SeekableReadStream *sf = file.openForReading();
 
 		return wrapInSaveFile(sf);
 	} else {
@@ -206,13 +154,8 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 		FilesystemNode saveDir(getSavePath());
 		FilesystemNode file = saveDir.getChild(filename);
 
-		// TODO: switch to file.openForSaving()
-		StdioSaveFile *sf = new StdioSaveFile(file.getPath().c_str(), true);
-
-		if (!sf->isOpen()) {
-			delete sf;
-			sf = 0;
-		}
+		// Open the file for saving
+		Common::WriteStream *sf = file.openForWriting();
 
 		return wrapOutSaveFile(sf);
 	} else {
