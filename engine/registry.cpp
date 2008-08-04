@@ -47,29 +47,29 @@ Registry *g_registry = NULL;
 // LastSavedGame
 // good_times
 
-// show-fps
-// gl-zbuffer
-// soft-renderer
+// show_fps
+// gl_zbuffer
+// soft_renderer
 // fullscreen
 
 Registry::Registry() : _dirty(true) {
-	_develMode = ConfMan.get("game-devel-mode");
+	_develMode = ConfMan.get("game_devel_mode");
 	_dataPath = ConfMan.get("path");
-	_lastSet = ConfMan.get("last-set");
-	_musicVolume = ConfMan.get("music-volume");
-	_sfxVolume = ConfMan.get("sfx-volume");
-	_voiceVolume = ConfMan.get("voice-volume");
-	_lastSavedGame = ConfMan.get("last-saved-game");
+	_lastSet = ConfMan.get("last_set");
+	_musicVolume = ConfMan.get("music_volume");
+	_sfxVolume = ConfMan.get("sfx_volume");
+	_voiceVolume = ConfMan.get("voice_volume");
+	_lastSavedGame = ConfMan.get("last_saved_game");
 	_gamma = ConfMan.get("gamma");
-	_voiceEffects = ConfMan.get("voice-effects");
-	_textSpeed = ConfMan.get("text-speed");
-	_speechMode = ConfMan.get("speech-mode");
+	_voiceEffects = ConfMan.get("voice_effects");
+	_textSpeed = ConfMan.get("text_speed");
+	_speechMode = ConfMan.get("speech_mode");
 	_movement = ConfMan.get("movement");
 	_joystick = ConfMan.get("joystick");
-	_spewOnError = ConfMan.get("spew-on-error");
-	_showFps = ConfMan.get("show-fps");
-	_softRenderer = ConfMan.get("soft-renderer");
-	_glZbuffer = ConfMan.get("gl-zbuffer");
+	_spewOnError = ConfMan.get("spew_on_error");
+	_showFps = ConfMan.get("show_fps");
+	_softRenderer = ConfMan.get("soft_renderer");
+	_glZbuffer = ConfMan.get("gl_zbuffer");
 	_fullscreen = ConfMan.get("fullscreen");
 }
 
@@ -102,11 +102,11 @@ const char *Registry::get(const char *key, const char *defval) const {
 		return _joystick.c_str();
 	} else if (strcasecmp("SpewOnError", key) == 0) {
 		return _spewOnError.c_str();
-	} else if (strcasecmp("show-fps", key) == 0) {
+	} else if (strcasecmp("show_fps", key) == 0) {
 		return _showFps.c_str();
-	} else if (strcasecmp("soft-renderer", key) == 0) {
+	} else if (strcasecmp("soft_renderer", key) == 0) {
 		return _softRenderer.c_str();
-	} else if (strcasecmp("gl-zbuffer", key) == 0) {
+	} else if (strcasecmp("gl_zbuffer", key) == 0) {
 		return _glZbuffer.c_str();
 	} else if (strcasecmp("fullscreen", key) == 0) {
 		return _fullscreen.c_str();
@@ -166,13 +166,13 @@ void Registry::set(const char *key, const char *val) {
 	} else if (strcasecmp("SpewOnError", key) == 0) {
 		_spewOnError = val;
 		return;
-	} else if (strcasecmp("show-fps", key) == 0) {
+	} else if (strcasecmp("show_fps", key) == 0) {
 		_showFps = val;
 		return;
-	} else if (strcasecmp("soft-renderer", key) == 0) {
+	} else if (strcasecmp("soft_renderer", key) == 0) {
 		_softRenderer = val;
 		return;
-	} else if (strcasecmp("gl-zbuffer", key) == 0) {
+	} else if (strcasecmp("gl_zbuffer", key) == 0) {
 		_glZbuffer = val;
 		return;
 	} else if (strcasecmp("fullscreen", key) == 0) {
@@ -185,23 +185,23 @@ void Registry::save() {
 	if (!_dirty)
 		return;
 
-	ConfMan.set("game-devel-mode", _develMode);
+	ConfMan.set("game_devel_mode", _develMode);
 	ConfMan.set("path", _dataPath);
-	ConfMan.set("last-set", _lastSet);
-	ConfMan.set("music-volume", _musicVolume);
-	ConfMan.set("sfx-volume", _sfxVolume);
-	ConfMan.set("voice-volume", _voiceVolume);
-	ConfMan.set("last-saved-game", _lastSavedGame);
+	ConfMan.set("last_set", _lastSet);
+	ConfMan.set("music_volume", _musicVolume);
+	ConfMan.set("sfx_volume", _sfxVolume);
+	ConfMan.set("voice_volume", _voiceVolume);
+	ConfMan.set("last_saved_game", _lastSavedGame);
 	ConfMan.set("gamma", _gamma);
-	ConfMan.set("voice-effects", _voiceEffects);
-	ConfMan.set("text-speed", _textSpeed);
-	ConfMan.set("speech-mode", _speechMode);
+	ConfMan.set("voice_effects", _voiceEffects);
+	ConfMan.set("text_speed", _textSpeed);
+	ConfMan.set("speech_mode", _speechMode);
 	ConfMan.set("movement", _movement);
 	ConfMan.set("joystick", _joystick);
-	ConfMan.set("spew-on-error", _spewOnError);
-	ConfMan.set("show-fps", _showFps);
-	ConfMan.set("soft-renderer", _softRenderer);
-	ConfMan.set("gl-zbuffer", _glZbuffer);
+	ConfMan.set("spew_on_error", _spewOnError);
+	ConfMan.set("show_fps", _showFps);
+	ConfMan.set("soft_renderer", _softRenderer);
+	ConfMan.set("gl_zbuffer", _glZbuffer);
 	ConfMan.set("fullscreen", _fullscreen);
 
 	ConfMan.flushToDisk();

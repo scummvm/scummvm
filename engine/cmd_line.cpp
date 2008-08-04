@@ -116,27 +116,26 @@ static void usage(const char *s, ...) {
 
 void registerDefaults() {
 	// Sound & Music
-	ConfMan.registerDefault("music-volume", 127);
-	ConfMan.registerDefault("sfx-volume", 127);
-	ConfMan.registerDefault("speech-volume", 127);
+	ConfMan.registerDefault("music_volume", 127);
+	ConfMan.registerDefault("sfx_volume", 127);
+	ConfMan.registerDefault("speech_volume", 127);
 
 	// Game specific
 	ConfMan.registerDefault("path", ".");
-	ConfMan.registerDefault("savepath", "");
 
-	ConfMan.registerDefault("boot-param", "");
-	ConfMan.registerDefault("text-speed", "7");
-	ConfMan.registerDefault("speech-mode", "3");
+	ConfMan.registerDefault("boot_param", "");
+	ConfMan.registerDefault("text_speed", "7");
+	ConfMan.registerDefault("speech_mode", "3");
 	ConfMan.registerDefault("transcript", "TRUE");
-	ConfMan.registerDefault("game-devel-mode", "TRUE");
+	ConfMan.registerDefault("game_devel_mode", "TRUE");
 	ConfMan.registerDefault("joystick", "TRUE");
 	ConfMan.registerDefault("movement", "Character");
 	ConfMan.registerDefault("gamma", "1.0");
 
 	// Miscellaneous
-	ConfMan.registerDefault("show-fps", "TRUE");
-	ConfMan.registerDefault("gl-zbuffer", "TRUE");
-	ConfMan.registerDefault("soft-renderer", "TRUE");
+	ConfMan.registerDefault("show_fps", "TRUE");
+	ConfMan.registerDefault("gl_zbuffer", "TRUE");
+	ConfMan.registerDefault("soft_renderer", "TRUE");
 	ConfMan.registerDefault("fullscreen", "FALSE");
 
 	ConfMan.registerDefault("disable_sdl_parachute", false);

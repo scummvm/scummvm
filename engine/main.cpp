@@ -96,9 +96,9 @@ extern "C" int residual_main(int argc, char *argv[]) {
 
 	g_registry = new Registry();
 
-	SHOWFPS_GLOBAL = (tolower(g_registry->get("show-fps", "FALSE")[0]) == 't');
-	TINYGL_GLOBAL = (tolower(g_registry->get("soft-renderer", "FALSE")[0]) == 't');
-	ZBUFFER_GLOBAL = (tolower(g_registry->get("gl-zbuffer", "FALSE")[0]) == 't');
+	SHOWFPS_GLOBAL = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
+	TINYGL_GLOBAL = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
+	ZBUFFER_GLOBAL = (tolower(g_registry->get("gl_zbuffer", "FALSE")[0]) == 't');
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
