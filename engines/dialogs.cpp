@@ -134,6 +134,31 @@ enum {
 	kKeysCmd = 'KEYS'
 };
 
+// FIXME: We use the empty string as domain name here. This tells the
+// ConfigManager to use the 'default' domain for all its actions. We do that
+// to get as close as possible to editing the 'active' settings.
+//
+// However, that requires bad & evil hacks in the ConfigManager code,
+// and even then still doesn't work quite correctly.
+// For example, if the transient domain contains 'false' for the 'fullscreen'
+// flag, but the user used a hotkey to switch to windowed mode, then the dialog
+// will display the wrong value anyway.
+//
+// Proposed solution consisting of multiple steps:
+// 1) Add special code to the open() code that reads out everything stored
+//    in the transient domain that is controlled by this dialog, and updates
+//    the dialog accordingly.
+// 2) Even more code is added to query the backend for current settings, like
+//    the fullscreen mode flag etc., and also updates the dialog accordingly.
+// 3) The domain being edited is set to the active game domain.
+// 4) If the dialog is closed with the "OK" button, then we remove everything
+//    stored in the transient domain (or at least everything corresponding to
+//    switches in this dialog.
+//    If OTOH the dialog is closed with "Cancel" we do no such thing.
+//
+// These changes will achieve two things at once: Allow us to get rid of using
+//  "" as value for the domain, and in fact provide a somewhat better user
+// experience at the same time.
 ConfigDialog::ConfigDialog()
 	: GUI::OptionsDialog("", "scummconfig") {
 
