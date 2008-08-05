@@ -421,7 +421,6 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 		return;
 
 	bool isMusic = (soundNumber & 0x80) != 0;
-	uint8 volume = isMusic ? game.musicVolume() : game.sfxVolume();
 
 	if (!game.soundFlag())
 		// Don't play sounds if sound is turned off

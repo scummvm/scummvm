@@ -228,7 +228,7 @@ int Engine::runDialog(Dialog &dialog) {
 	
 	pauseEngine(true);
 
-	int result = dialog.runModal();
+	dialog.runModal();
 
 	pauseEngine(false);
 
