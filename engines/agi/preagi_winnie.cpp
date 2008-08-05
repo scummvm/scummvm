@@ -240,7 +240,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 	// extract header from buffer
 	parseRoomHeader(&hdr, buffer, sizeof(WTP_ROOM_HDR));
 
-	while (!_vm->quit()) {
+	for (;;) {
 		pc = startpc;
 
 		// check if block is to be run
