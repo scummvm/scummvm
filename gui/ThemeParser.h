@@ -439,6 +439,8 @@ protected:
 					XML_PROP(type, true)
 					XML_PROP(align, false)
 					XML_PROP(direction, false)
+					XML_PROP(padding, false)
+					XML_PROP(spacing, false)
 					XML_KEY(widget)
 						XML_PROP(name, true)
 						XML_PROP(width, false)
@@ -446,7 +448,7 @@ protected:
 					KEY_END()
 					
 					XML_KEY(space)
-						XML_PROP(size, true)
+						XML_PROP(size, false)
 					KEY_END()
 					
 					XML_KEY_RECURSIVE(layout)
@@ -475,7 +477,7 @@ protected:
 	bool parserCallback_dialog(ParserNode *node);
 	bool parserCallback_child(ParserNode *node);
 	bool parserCallback_layout(ParserNode *node);
-	bool parserCallback_space(ParserNode *node) { return true; }
+	bool parserCallback_space(ParserNode *node);
 	
 	bool closedKeyCallback(ParserNode *node);
 	

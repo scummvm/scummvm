@@ -504,7 +504,7 @@ protected:
 		while (isValidNameChar(_text[_pos]))
 			_token += _text[_pos++];
 
-		return isspace(_text[_pos]) != 0 || _text[_pos] == '>' || _text[_pos] == '=';
+		return isspace(_text[_pos]) != 0 || _text[_pos] == '>' || _text[_pos] == '=' || _text[_pos] == '/';
 	}
 
 	/**

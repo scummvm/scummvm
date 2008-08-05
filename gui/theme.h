@@ -365,6 +365,8 @@ public:
 	void loadTheme(Common::ConfigFile &config, bool reset = true);
 	void loadTheme(Common::ConfigFile &config, bool reset, bool doBackendSpecificPostProcessing);
 	Eval *_evaluator;
+	
+	virtual void *evaluator() { return (void*)_evaluator; }
 
 	static bool themeConfigUseable(const Common::String &file, const Common::String &style="", Common::String *cStyle=0, Common::ConfigFile *cfg=0);
 

@@ -480,7 +480,6 @@
 							width = 'Globals.Button.Width'
 							height = 'Globals.Button.Height'
 					/>
-					<space size = 20 />
 					<widget name = 'AddGameButton'
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
@@ -505,6 +504,7 @@
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
 					/>
+					<space/>
 				</layout>
 				<widget name = 'GameList'/>
 			</layout>

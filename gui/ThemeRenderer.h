@@ -412,6 +412,8 @@ public:
 	void finishBuffering() {
 		_buffering = false;
 	}
+	
+	void *evaluator() { return _themeEval; }
 
 protected:
 	

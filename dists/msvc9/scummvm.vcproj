@@ -1244,6 +1244,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\ThemeEval.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\ThemeRenderer.h"
 				>
 			</File>

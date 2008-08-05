@@ -492,11 +492,7 @@ bool ThemeParser::parserCallback_child(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
-	Common::String var = "Dialog." + node->values["name"] + ".";
-	
-//	if (!parseCommonLayoutProps(node, var))
-//		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
-		
+	Common::String var = "Dialog." + node->values["name"];
 	_theme->themeEval()->addDialog(var);
 		
 	return true;
@@ -504,23 +500,22 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	
-	if (!node->values.contains("type"))
-		return parserError("Layouts need a specific type (vertical or horizontal).");
-		
-	GUI::ThemeLayout::LayoutType type = GUI::ThemeLayout::kLayoutNone;
-	GUI::ThemeLayout::LayoutParsing parsing = GUI::ThemeLayout::kLayoutParseDefault;
-	
 	if (node->values["type"] == "vertical")
-		type = GUI::ThemeLayout::kLayoutVertical;
+		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutVertical, node->values["direction"] == "bottom2top");
 	else if (node->values["type"] == "horizontal")
-		type = GUI::ThemeLayout::kLayoutHorizontal;
+		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, node->values["direction"] == "right2left");
 
-	if (node->values.contains("direction")) {
-		if (node->values["direction"] == "right2left")
-			parsing = GUI::ThemeLayout::kLayoutParseRight2Left;
-	}
-		
-	_theme->themeEval()->addLayout(type, parsing);
+	return true;
+}
+
+bool ThemeParser::parserCallback_space(ParserNode *node) {
+	int size = -1;
+	
+	if (node->values.contains("size"))
+		if (!parseIntegerKey(node->values["size"].c_str(), 1, &size))
+			return parserError("Invalid value for Spacing size.");
+			
+	_theme->themeEval()->addSpacing(size);
 	return true;
 }
 

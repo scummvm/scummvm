@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	themebrowser.o \
 	widget.o \
 	theme.o \
+	ThemeEval.o \
 	ThemeClassic.o \
 	ThemeModern.o \
 	ThemeParser.o \

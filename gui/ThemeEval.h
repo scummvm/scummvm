@@ -40,227 +40,179 @@
 namespace GUI {
 	
 class ThemeLayout {
-public:
-	int16 x, y, w, h;
-	int paddingTop, paddingBottom, paddingLeft, paddingRight;
-	int spacing;
-	Common::Array<ThemeLayout*> children;
-	ThemeLayout *parent;
 
-	uint16 debugcolor;
-	
+public:
 	enum LayoutType {
-		kLayoutNone,
+		kLayoutMain,
 		kLayoutVertical,
 		kLayoutHorizontal,
 		kLayoutWidget
 	};
 	
-	enum LayoutParsing {
-		kLayoutParseDefault,
-		kLayoutParseTop2Bottom,
-		kLayoutParseBottom2Top,
-		kLayoutParseLeft2Right,
-		kLayoutParseRight2Left
-	} parsingMode;
-	
-	virtual LayoutType getLayoutType() { return kLayoutNone; }
-	virtual void reflowLayout() {
-		assert(children.size() <= 1);
+	ThemeLayout(ThemeLayout *p, const Common::String &name) : 
+		_parent(p), _name(name), _x(0), _y(0), _w(-1), _h(-1), _reverse(false),
+			_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0) { }
 		
-		if (children.size()) {
-			children[0]->w = w;
-			children[0]->h = h;
-			children[0]->reflowLayout();
-			children[0]->setX(0);
-			children[0]->setY(0);
-		}
+	virtual ~ThemeLayout() {
+		_children.clear();
+	}
+		
+	virtual void reflowLayout() = 0;
+	
+	void addChild(ThemeLayout *child) { _children.push_back(child); }
+	
+	void setPadding(int8 left, int8 right, int8 top, int8 bottom) {
+		_paddingLeft = left;
+		_paddingRight = right;
+		_paddingTop = top;
+		_paddingBottom = bottom;
 	}
 	
-	virtual const char *getName() { return "Global Layout"; }
+	void setSpacing(int8 spacing) {
+		_spacing = spacing;
+	}
+
+	int16 getParentX() { return _parent ? _parent->_x : 0; }
+	int16 getParentY() { return _parent ? _parent->_y : 0; }
 	
-	int16 getParentW() { return parent ? parent->w - parent->paddingLeft - parent->paddingRight : g_system->getOverlayWidth(); }
-	int16 getParentH() { return parent ? parent->h - parent->paddingTop - parent->paddingBottom : g_system->getOverlayHeight(); }
-	int16 getParentX() { return parent ? parent->x : 0; }
-	int16 getParentY() { return parent ? parent->y : 0; }
+	int16 getParentW() {
+		ThemeLayout *p = _parent;
+		int width = 0;
+		
+		while (p && p->getLayoutType() != kLayoutMain) {
+			width += p->_paddingRight + p->_paddingLeft;
+			if (p->getLayoutType() == kLayoutHorizontal) {
+				for (uint i = 0; i < p->_children.size(); ++i)
+					if (p->_children[i]->getLayoutType() == kLayoutWidget)
+						width += p->_children[i]->getHeight() + p->_spacing;
+			}
+			p = p->_parent;
+		}
+		
+		return p->getWidth() - width;
+	}
+	
+	int16 getParentH() {
+		ThemeLayout *p = _parent;
+		int height = 0;
+		
+		while (p && p->getLayoutType() != kLayoutMain) {
+			height += p->_paddingBottom + p->_paddingTop;
+			if (p->getLayoutType() == kLayoutVertical) {
+				for (uint i = 0; i < p->_children.size(); ++i)
+					if (p->_children[i]->getLayoutType() == kLayoutWidget)
+						height += p->_children[i]->getHeight() + p->_spacing;
+			}
+			p = p->_parent;
+		}
+		
+		return p->getHeight() - height;
+	}
+	
+	int16 getX() { return _x; }
+	int16 getY() { return _y; }
+	int16 getWidth() { return _w; }
+	int16 getHeight() { return _h; }
 	
 	void setX(int newX) {
-		x += newX;
-		for (uint i = 0; i < children.size(); ++i)
-			children[i]->setX(newX);
+		_x += newX;
+		for (uint i = 0; i < _children.size(); ++i)
+			_children[i]->setX(newX);
 	}
 	
 	void setY(int newY) {
-		y += newY;
-		for (uint i = 0; i < children.size(); ++i)
-			children[i]->setY(newY);
+		_y += newY;
+		for (uint i = 0; i < _children.size(); ++i)
+			_children[i]->setY(newY);
 	}
 	
-	ThemeLayout(ThemeLayout *p) : parent(p), x(0), y(0), w(-1), h(-1) { debugcolor = rand() % 0xFFFF; }
+	void setWidth(int16 width) { _w = width; }
+	void setHeight(int16 height) { _h = height; }
 	
-	virtual void debugPrintIndent(int indent) {
-		while (indent--)
-			printf("    ");
-	}
-
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		uint16 color = debugcolor;
-		font->drawString(screen, getName(), x, y, w, color, Graphics::kTextAlignRight, 0, true);
-		screen->hLine(x, y, x + w, color);
-		screen->hLine(x, y + h, x + w, color);
-		screen->vLine(x, y, y + h, color);
-		screen->vLine(x + w, y, y + h, color);
+		uint16 color = 0xFFFF;
+		font->drawString(screen, getName(), _x, _y, _w, color, Graphics::kTextAlignRight, 0, true);
+		screen->hLine(_x, _y, _x + _w, color);
+		screen->hLine(_x, _y + _h, _x + _w , color);
+		screen->vLine(_x, _y, _y + _h, color);
+		screen->vLine(_x + _w, _y, _y + _h, color);
 
-		for (uint i = 0; i < children.size(); ++i)
-			children[i]->debugDraw(screen, font);
+		for (uint i = 0; i < _children.size(); ++i)
+			_children[i]->debugDraw(screen, font);
 	}
 	
-	virtual void debugPrint(int indent = 0) {
-		debugPrintIndent(indent);
-		switch (getLayoutType()) {
-			case kLayoutNone:
-				printf("Dialog Layout  ::  ");
-				break;
-			
-			case kLayoutVertical:
-				printf("Vertical Layout  ::  ");
-				break;
-				
-			case kLayoutHorizontal:
-				printf("Horizontal Layout  ::  ");
-				break;
-				
-			case kLayoutWidget:
-				printf("WIDGET (%s)  ::  ", getName());
-				break;
-		}
+	virtual LayoutType getLayoutType() = 0;
+	virtual const char *getName() { return _name.c_str(); }
 	
-		printf("X: %d / Y: %d / W: %d / H: %d\n", x, y, w, h);
-		
-		for (uint i = 0; i < children.size(); ++i)
-			children[i]->debugPrint(indent + 1);
-	}
+	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h);
 	
-	virtual ~ThemeLayout() {
-		children.clear();
-	}
+protected:
+	int16 _x, _y, _w, _h;
+	int8 _paddingTop, _paddingBottom, _paddingLeft, _paddingRight;
+	int8 _spacing;
+	Common::Array<ThemeLayout*> _children;
+	ThemeLayout *_parent;
+	bool _reverse;
+	Common::String _name;
 };
+
+class ThemeLayoutMain : public ThemeLayout {
+public:
+	ThemeLayoutMain() : ThemeLayout(0, "") {}
+	void reflowLayout();
+	const char *getName() { return "Global Layout"; }
+	LayoutType getLayoutType() { return kLayoutMain; }
+};	
 
 class ThemeLayoutVertical : public ThemeLayout {
 public:
-	LayoutType getLayoutType() { return kLayoutVertical; }
-	
-	ThemeLayoutVertical(ThemeLayout *p) : ThemeLayout(p) {}
-
-	const char *getName() { return "Vertical Layout"; }
-	
-	void reflowLayout() {
-		int curX, curY, mul;
-		
-		if (parsingMode == kLayoutParseTop2Bottom) {
-			curX = paddingLeft;
-			curY = paddingTop;
-			mul = 1;
-		} else {
-			curX = paddingLeft;
-			curY = getParentH() - paddingBottom;
-			mul = -1;
-		}
-
-		h = paddingTop + paddingBottom;
-		
-		for (uint i = 0; i < children.size(); ++i) {
-			assert(children[i]->getLayoutType() != kLayoutVertical);
-		
-			children[i]->reflowLayout();
-		
-			if (i != children.size() - 1)
-				assert(children[i]->h != -1);
-			
-			if (i == 0)
-				assert(children[i]->w != -1);
-				
-			children[i]->setX(curX);
-			children[i]->setY((parsingMode == kLayoutParseBottom2Top) ? curY - children[i]->h : curY);
-		
-			if (children[i]->w == -1)
-				children[i]->w = w - paddingLeft - paddingRight;
-				
-			w = MAX(w, (int16)(children[i]->w + paddingLeft + paddingRight));
-				
-			if (children[i]->h == -1)
-				children[i]->h = 32;
-			
-			h += children[i]->h + spacing;
-	
-			curY += (children[i]->h + spacing) * mul;
-		}
-		
-		
+	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool reverse) : ThemeLayout(p, "") {
+		_spacing = spacing;
+		_reverse = reverse;
 	}
+		
+	void reflowLayout();
+	const char *getName() { return "Vertical Layout"; }
+	LayoutType getLayoutType() { return kLayoutVertical; }
 };
 
 class ThemeLayoutHorizontal : public ThemeLayout {
 public:
-	LayoutType getLayoutType() { return kLayoutHorizontal; }
-	
-	ThemeLayoutHorizontal(ThemeLayout *p) : ThemeLayout(p) {}
-
-	const char *getName() { return "Horizontal Layout"; }
-	
-	void reflowLayout() {
-		int curX, curY;
-	
-		curX = paddingLeft;
-		curY = paddingTop;
-		w = paddingLeft + paddingRight;
-			
-		for (uint i = 0; i < children.size(); ++i) {
-			assert(children[i]->getLayoutType() != kLayoutHorizontal);
-		
-			children[i]->reflowLayout();
-		
-			if (i != children.size() - 1)
-				assert(children[i]->w != -1);
-				
-			if (i == 0)
-				assert(children[i]->h != -1);
-			
-			
-			children[i]->setX(curX);
-			children[i]->setY(curY);
-		
-			if (children[i]->h == -1)
-				children[i]->h = h - paddingTop - paddingBottom;
-
-			if (children[i]->w == -1)
-				children[i]->w = getParentW() - w - spacing;
-				
-			h = MAX(h, (int16)(children[i]->h + paddingTop + paddingBottom));
-
-			if (parsingMode == kLayoutParseRight2Left) {
-				for (int j = i - 1; j >= 0; --j)
-					children[j]->setX(children[i]->w + spacing);
-			} else {
-				curX += (children[i]->w + spacing);
-			}
-
-			w += children[i]->w + spacing;
-		}
+	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool reverse) : 
+		ThemeLayout(p, "") {
+		_spacing = spacing;
+		_reverse = reverse;
 	}
+		
+	void reflowLayout();
+	const char *getName() { return "Horizontal Layout"; }
+	LayoutType getLayoutType() { return kLayoutHorizontal; }
 };
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name) : ThemeLayout(p, name) {}
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h);
+	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
-	void reflowLayout() {
-		
+};
+
+class ThemeLayoutSpacing : public ThemeLayout {
+public:
+	ThemeLayoutSpacing(ThemeLayout *p, int size) : ThemeLayout(p, "") {
+		if (p->getLayoutType() == kLayoutHorizontal) {
+			_w = size;
+			_h = 1;
+		} else if (p->getLayoutType() == kLayoutVertical) {
+			_w = 1;
+			_h = size;
+		}
 	}
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name) : ThemeLayout(p), widgetName(name) {}
 	
-	const char *getName() { return widgetName.c_str(); }
-	
-	Common::String widgetName;
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) { return false; }
+	void reflowLayout() {}
+	LayoutType getLayoutType() { return kLayoutWidget; }
+	const char *getName() { return "SPACE"; }
 };
 	
 class ThemeEval {
@@ -275,7 +227,7 @@ public:
 	int getVar(const Common::String &s) {
 		if (!_vars.contains(s)) {
 			warning("Missing variable: '%s'", s.c_str());
-			return -1;
+			return -13375; //EVAL_UNDEF_VAR
 		} 
 		
 		return _vars[s];
@@ -289,66 +241,15 @@ public:
 	
 	bool hasVar(const Common::String &name) { return _vars.contains(name); }
 	
-	void addDialog(const Common::String &name) {
-		ThemeLayout *layout = new ThemeLayout(0);
-		_layouts[name] = layout;
-		
-		layout->x = 0;
-		layout->y = 0;
-		layout->w = g_system->getOverlayWidth();
-		layout->h = g_system->getOverlayHeight();
-
-		layout->paddingBottom = getVar("Globals.Padding.Bottom", 0);
-		layout->paddingTop = getVar("Globals.Padding.Top", 0);
-		layout->paddingRight = getVar("Globals.Padding.Right", 0);
-		layout->paddingLeft = getVar("Globals.Padding.Left", 0);
-		
-		_curLayout.push(layout);
-	}
+	void addDialog(const Common::String &name);
+	void addLayout(ThemeLayout::LayoutType type, bool reverse);
+	void addWidget(const Common::String &name, int w, int h);
+	void addSpacing(int size);
 	
-	void addLayout(ThemeLayout::LayoutType type, ThemeLayout::LayoutParsing parsingMode) {
-		ThemeLayout *layout = 0;
-		ThemeLayout::LayoutParsing def = ThemeLayout::kLayoutParseDefault;
-		
-		if (type == ThemeLayout::kLayoutVertical) {
-			layout = new ThemeLayoutVertical(_curLayout.top());
-			def = ThemeLayout::kLayoutParseTop2Bottom;
-		} else if (type == ThemeLayout::kLayoutHorizontal) {
-			layout = new ThemeLayoutHorizontal(_curLayout.top());
-			def = ThemeLayout::kLayoutParseLeft2Right;
-		}
-		
-		layout->parsingMode = (parsingMode == ThemeLayout::kLayoutParseDefault) ? def : parsingMode;
-		layout->paddingBottom = getVar("Globals.Padding.Bottom", 0);
-		layout->paddingTop = getVar("Globals.Padding.Top", 0);
-		layout->paddingRight = getVar("Globals.Padding.Right", 0);
-		layout->paddingLeft = getVar("Globals.Padding.Left", 0);
-
-		layout->spacing = 4;
-		
-		_curLayout.top()->children.push_back(layout);
-		_curLayout.push(layout);
-	}
+	void closeLayout() { _curLayout.pop(); }
+	void closeDialog() { _curLayout.pop()->reflowLayout(); }
 	
-	void closeLayout() {
-		_curLayout.pop();
-	}
 	
-	void closeDialog() {
-		_curLayout.top()->reflowLayout();
-		printf("DEBUG LAYOUT PRINT:\n");
-		
-		_curLayout.top()->debugPrint();
-	}
-	
-	void addWidget(const Common::String &name, int w, int h) {
-		ThemeLayoutWidget *widget = new ThemeLayoutWidget(_curLayout.top(), name);
-		
-		widget->w = w;
-		widget->h = h;
-		
-		_curLayout.top()->children.push_back(widget);
-	}
 	
 	void debugPrint() {
 		printf("Debug variable list:\n");
@@ -360,7 +261,7 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_curLayout.top()->debugDraw(screen, font);
+		_layouts["Dialog.Launcher"]->debugDraw(screen, font);
 	}
 	
 private:
