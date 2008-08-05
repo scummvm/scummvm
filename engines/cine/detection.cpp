@@ -251,6 +251,21 @@ static const CINEGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// This is a 16 color PC version (It came on three 720kB 3.5" disks).
+		// The protagonist is named John Glames in this version.
+		{
+			"os",
+			"",
+			AD_ENTRY1("procs1", "9629129b86979fa592c1787385bf3695"),
+			Common::EN_GRB,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_OS,
+		0,
+	},
+
+	{
 		{
 			"os",
 			"",
