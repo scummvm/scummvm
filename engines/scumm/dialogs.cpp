@@ -364,8 +364,9 @@ void SaveLoadChooser::reflowLayout() {
 
 void SaveLoadChooser::updateInfos(bool redraw) {
 	int selItem = _list->getSelected();
-	Graphics::Surface *thumb;
-	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
+	Graphics::Surface *thumb = 0;
+	if (selItem >= 0)
+		thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
 
 	if (thumb) {
 		_gfxWidget->setGfx(thumb);
@@ -382,7 +383,7 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
 	char buffer[32];
-	if (_vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+	if (selItem >= 0 && _vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
 		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
 			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
 			infos.date & 0xFFFF);
