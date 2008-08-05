@@ -28,16 +28,9 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
-#include "common/timer.h"
-#if defined(WIN32) && defined(ARRAYSIZE)
-// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
-#undef ARRAYSIZE
-#endif
-#include "common/util.h"
 
 #include "graphics/colormasks.h"
 #include "gui/message.h"
-#include "sound/mixer.h"
 
 OSystem *g_system = 0;
 
