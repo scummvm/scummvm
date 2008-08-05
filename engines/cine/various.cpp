@@ -1518,6 +1518,7 @@ void makeCommandLine(void) {
 	}
 
 	if (!disableSystemMenu) {
+		isDrawCommandEnabled = 1;
 		renderer->setCommand(commandBuffer);
 	}
 }
@@ -1690,6 +1691,11 @@ uint16 executePlayerInput(void) {
 	}
 
 	if (allowPlayerInput) {
+		if (isDrawCommandEnabled) {
+			renderer->setCommand(commandBuffer);
+			isDrawCommandEnabled = 0;
+		}
+		
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && currentEntry < 200) {
