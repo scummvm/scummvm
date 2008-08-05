@@ -89,14 +89,17 @@ bool Resource::reset() {
 
 		return true;
 	} else if (_vm->game() == GI_KYRA3) {
-		if (_vm->gameFlags().useInstallerPackage)
-			loadPakFile("WESTWOOD.001");
+		if (_vm->gameFlags().useInstallerPackage) {
+			if (!loadPakFile("WESTWOOD.001"))
+				error("couldn't load file: 'WESTWOOD.001'");
+		}
 
 		// Add default file directories
 		Common::File::addDefaultDirectory(ConfMan.get("path") + "malcolm");
 		Common::File::addDefaultDirectory(ConfMan.get("path") + "MALCOLM");
 
-		loadFileList("FILEDATA.FDT");
+		if (!loadFileList("FILEDATA.FDT"))
+			error("couldn't load file: 'FILEDATA.FDT'");
 
 		return true;
 	}

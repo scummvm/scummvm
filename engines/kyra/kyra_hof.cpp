@@ -292,10 +292,12 @@ int KyraEngine_HoF::go() {
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
-		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
-			_res->loadFileList("FILEDATA.FDT");
-		else
+		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
+			if (!_res->loadFileList("FILEDATA.FDT"))
+				error("couldn't load 'FILEDATA.FDT'");
+		} else {
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
+		}
 
 		if (_flags.platform == Common::kPlatformPC98)
 			_res->loadPakFile("AUDIO.PAK");
