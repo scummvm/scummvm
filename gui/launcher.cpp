@@ -481,35 +481,35 @@ LauncherDialog::LauncherDialog()
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
-		_logo = new GraphicsWidget(this, "launcher_logo");
+		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
 
-		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
+		new StaticTextWidget(this, "Launcher.Version", gScummVMVersionDate);
 	} else
-		new StaticTextWidget(this, "launcher_version", gScummVMFullVersion);
+		new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion);
+	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 
-	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q');
-	new ButtonWidget(this, "launcher_about_button", "About", kAboutCmd, 'B');
-	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');
+	new ButtonWidget(this, "Launcher.QuitButton", "Quit", kQuitCmd, 'Q');
+	new ButtonWidget(this, "Launcher.AboutButton", "About", kAboutCmd, 'B');
+	new ButtonWidget(this, "Launcher.OptionsButton", "Options", kOptionsCmd, 'O');
 	_startButton =
-			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
+			new ButtonWidget(this, "Launcher.StartButton", "Start", kStartCmd, 'S');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
-		new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A');
+		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game...", kAddGameCmd, 'A');
 	_editButton =
-		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E');
+		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game...", kEditGameCmd, 'E');
 	_removeButton =
-		new ButtonWidget(this, "launcher_removeGame_button", "Remove Game", kRemoveGameCmd, 'R');
+		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
 
 	// Add list with game titles
-	_list = new ListWidget(this, "launcher_list");
+	_list = new ListWidget(this, "Launcher.GameList");
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 

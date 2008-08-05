@@ -51,7 +51,8 @@ public:
 	
 	ThemeLayout(ThemeLayout *p, const Common::String &name) : 
 		_parent(p), _name(name), _x(0), _y(0), _w(-1), _h(-1), _reverse(false),
-			_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0) { }
+		_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0), 
+		_centered(false) { }
 		
 	virtual ~ThemeLayout() {
 		_children.clear();
@@ -144,7 +145,7 @@ public:
 	virtual LayoutType getLayoutType() = 0;
 	virtual const char *getName() { return _name.c_str(); }
 	
-	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h);
+	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 	
 protected:
 	int16 _x, _y, _w, _h;
@@ -153,6 +154,7 @@ protected:
 	Common::Array<ThemeLayout*> _children;
 	ThemeLayout *_parent;
 	bool _reverse;
+	bool _centered;
 	Common::String _name;
 };
 
@@ -166,9 +168,11 @@ public:
 
 class ThemeLayoutVertical : public ThemeLayout {
 public:
-	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool reverse) : ThemeLayout(p, "") {
+	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool reverse, bool center) :
+	 	ThemeLayout(p, "") {
 		_spacing = spacing;
 		_reverse = reverse;
+		_centered = center;
 	}
 		
 	void reflowLayout();
@@ -178,10 +182,11 @@ public:
 
 class ThemeLayoutHorizontal : public ThemeLayout {
 public:
-	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool reverse) : 
+	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool reverse, bool center) : 
 		ThemeLayout(p, "") {
 		_spacing = spacing;
 		_reverse = reverse;
+		_centered = center;
 	}
 		
 	void reflowLayout();
@@ -192,7 +197,7 @@ public:
 class ThemeLayoutWidget : public ThemeLayout {
 public:
 	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name) : ThemeLayout(p, name) {}
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h);
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
 };
@@ -209,7 +214,7 @@ public:
 		}
 	}
 	
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) { return false; }
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) { return false; }
 	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
 	const char *getName() { return "SPACE"; }
@@ -242,14 +247,27 @@ public:
 	bool hasVar(const Common::String &name) { return _vars.contains(name); }
 	
 	void addDialog(const Common::String &name);
-	void addLayout(ThemeLayout::LayoutType type, bool reverse);
+	void addLayout(ThemeLayout::LayoutType type, bool reverse, bool center = false);
 	void addWidget(const Common::String &name, int w, int h);
 	void addSpacing(int size);
+	
+	void addPadding(int16 l, int16 r, int16 t, int16 b) {
+		_curLayout.top()->setPadding(l, r, t, b);
+	}
 	
 	void closeLayout() { _curLayout.pop(); }
 	void closeDialog() { _curLayout.pop()->reflowLayout(); }
 	
-	
+	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+		Common::StringTokenizer tokenizer(widget, ".");
+		Common::String dialogName = "Dialog." + tokenizer.nextToken();
+		Common::String widgetName = tokenizer.nextToken();
+		
+		if (!_layouts.contains(dialogName)) 
+			return false;
+			
+		return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h);
+	}
 	
 	void debugPrint() {
 		printf("Debug variable list:\n");

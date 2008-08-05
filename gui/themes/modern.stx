@@ -465,7 +465,7 @@
 	</globals>
 
 	<dialog name = 'Launcher'>
-		<layout type = 'vertical' align = 'center'>
+		<layout type = 'vertical' center = 'true' padding = '23, 23, 8, 23'>
 			<widget name = 'Version'
 					width = '247'
 					height = 'Globals.Line.Height'
@@ -474,12 +474,13 @@
 					width = '283'
 					height = '80'
 			/>
-			<layout type = 'horizontal' direction = 'right2left'>
-				<layout type = 'vertical'>
+			<layout type = 'horizontal' direction = 'right2left' padding = '0, 0, 0, 0'>
+				<layout type = 'vertical' padding = '16, 0, 0, 0'>
 					<widget name = 'StartButton'
 							width = 'Globals.Button.Width'
 							height = 'Globals.Button.Height'
 					/>
+					<space size = '16' />
 					<widget name = 'AddGameButton'
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
@@ -492,6 +493,7 @@
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
 					/>
+					<space size = '16' />
 					<widget name = 'OptionsButton'
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
@@ -500,7 +502,8 @@
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
 					/>
-					<widget name = 'QuittButton'
+					<space size = '16' />
+					<widget name = 'QuitButton'
 						width = 'Globals.Button.Width'
 						height = 'Globals.Button.Height'
 					/>

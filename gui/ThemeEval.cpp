@@ -36,7 +36,7 @@
 
 namespace GUI {
 	
-bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) {
+bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 	if (name == _name) {
 		x = _x; y = _y;
 		w = _w; h = _h;
@@ -46,7 +46,7 @@ bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int1
 	return false;
 }
 
-bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) {
+bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 	for (uint i = 0; i < _children.size(); ++i) {
 		if (_children[i]->getWidgetData(name, x, y, w, h))
 			return true;
@@ -82,15 +82,19 @@ void ThemeLayoutVertical::reflowLayout() {
 		
 		if (i == 0)
 			assert(_children[i]->getWidth() != -1);
-			
-		_children[i]->setX(curX);
-		_children[i]->setY(curY);
 	
 		if (_children[i]->getWidth() == -1)
 			_children[i]->setWidth(_w - _paddingLeft - _paddingRight);
 			
 		if (_children[i]->getHeight() == -1)
 			_children[i]->setHeight(getParentH() - _h - _spacing);
+			
+		_children[i]->setY(curY);
+		
+		if (_centered)
+			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
+		else
+			_children[i]->setX(curX);
 
 		if (_reverse) {
 			for (int j = i - 1; j >= 0; --j)
@@ -121,15 +125,15 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			
 		if (i == 0)
 			assert(_children[i]->getHeight() != -1);
-		
-		_children[i]->setX(curX);
-		_children[i]->setY(curY);
 	
 		if (_children[i]->getHeight() == -1)
 			_children[i]->setHeight(_h - _paddingTop - _paddingBottom);
 
 		if (_children[i]->getWidth() == -1)
 			_children[i]->setWidth(getParentW() - _w - _spacing);
+			
+		_children[i]->setX(curX);
+		_children[i]->setY(curY);
 			
 		if (_reverse) {
 			for (int j = i - 1; j >= 0; --j)
@@ -172,13 +176,13 @@ void ThemeEval::addDialog(const Common::String &name) {
 	_curLayout.push(layout);
 }
 
-void ThemeEval::addLayout(ThemeLayout::LayoutType type, bool reverse) {
+void ThemeEval::addLayout(ThemeLayout::LayoutType type, bool reverse, bool center) {
 	ThemeLayout *layout = 0;
 	
 	if (type == ThemeLayout::kLayoutVertical)
-		layout = new ThemeLayoutVertical(_curLayout.top(), getVar("Globals.Layout.Spacing", 4), reverse);
+		layout = new ThemeLayoutVertical(_curLayout.top(), getVar("Globals.Layout.Spacing", 4), reverse, center);
 	else if (type == ThemeLayout::kLayoutHorizontal)
-		layout = new ThemeLayoutHorizontal(_curLayout.top(), getVar("Globals.Layout.Spacing", 4), reverse);
+		layout = new ThemeLayoutHorizontal(_curLayout.top(), getVar("Globals.Layout.Spacing", 4), reverse, center);
 	
 	layout->setPadding(
 		getVar("Globals.Padding.Left", 0),
@@ -186,8 +190,6 @@ void ThemeEval::addLayout(ThemeLayout::LayoutType type, bool reverse) {
 		getVar("Globals.Padding.Top", 0),
 		getVar("Globals.Padding.Bottom", 0)
 		);
-	
-	layout->setSpacing(4);
 	
 	_curLayout.top()->addChild(layout);
 	_curLayout.push(layout);
