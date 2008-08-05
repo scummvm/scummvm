@@ -701,7 +701,7 @@ public:
 		}
 
 		if (_isDemo) {
-			_engineFlags |= kEngineQuit;
+			_vm->quitGame();
 			return 0;
 		}
 
