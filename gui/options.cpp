@@ -659,27 +659,27 @@ void OptionsDialog::reflowLayout() {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog()
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "globaloptions") {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions") {
 
 	// The tab widget
-	TabWidget *tab = new TabWidget(this, "globaloptions_tabwidget");
+	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
 	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The graphics tab
 	//
 	tab->addTab("Graphics");
-	addGraphicControls(tab, "globaloptions_");
+	addGraphicControls(tab, "GlobalOptions_Graphics.");
 
 	//
 	// 2) The audio tab
 	//
 	tab->addTab("Audio");
-	addAudioControls(tab, "globaloptions_");
-	addSubtitleControls(tab, "globaloptions_");
+	addAudioControls(tab, "GlobalOptions.");
+	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
 	tab->addTab("Volume");
-	addVolumeControls(tab, "globaloptions_");
+	addVolumeControls(tab, "GlobalOptions_Volume.");
 
 	// TODO: cd drive setting
 
@@ -687,7 +687,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// 3) The MIDI tab
 	//
 	tab->addTab("MIDI");
-	addMIDIControls(tab, "globaloptions_");
+	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
 	// 4) The miscellaneous tab
@@ -699,33 +699,33 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, "globaloptions_savebutton", "Save Path: ", kChooseSaveDirCmd, 0);
-	_savePath = new StaticTextWidget(tab, "globaloptions_savepath", "/foo/bar");
+	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", "Save Path: ", kChooseSaveDirCmd, 0);
+	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar");
 
-	new ButtonWidget(tab, "globaloptions_themebutton", "Theme Path:", kChooseThemeDirCmd, 0);
-	_themePath = new StaticTextWidget(tab, "globaloptions_themepath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", "Theme Path:", kChooseThemeDirCmd, 0);
+	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", "None");
 
-	new ButtonWidget(tab, "globaloptions_extrabutton", "Extra Path:", kChooseExtraDirCmd, 0);
-	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", "Extra Path:", kChooseExtraDirCmd, 0);
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", "None");
 
 #ifdef DYNAMIC_MODULES
-	new ButtonWidget(tab, "globaloptions_pluginsbutton", "Plugins Path:", kChoosePluginsDirCmd, 0);
-	_pluginsPath = new StaticTextWidget(tab, "globaloptions_pluginspath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", "Plugins Path:", kChoosePluginsDirCmd, 0);
+	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", "None");
 #endif
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
-	new ButtonWidget(tab, "globaloptions_keysbutton", "Keys", kChooseKeyMappingCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
 #endif
 
 	tab->addTab("Misc");
 
-	new ButtonWidget(tab, "globaloptions_themebutton2", "Theme:", kChooseThemeCmd, 0);
-	_curTheme = new StaticTextWidget(tab, "globaloptions_curtheme", g_gui.theme()->getThemeName());
+	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
+	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
-	_autosavePeriodPopUp = new PopUpWidget(tab, "globaloptions_autosaveperiod", "Autosave:", labelWidth);
+	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);
@@ -738,8 +738,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "globaloptions_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "globaloptions_ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Ok", "OK", kOKCmd, 0);
 
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();

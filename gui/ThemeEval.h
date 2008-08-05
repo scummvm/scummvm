@@ -146,6 +146,13 @@ public:
 	virtual const char *getName() { return _name.c_str(); }
 	
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
+
+	virtual bool getDialogData(int16 &x, int16 &y, uint16 &w, uint16 &h) {
+		assert(getLayoutType() == kLayoutMain);
+		x = _x; y = _y;
+		w = _w; h = _h;
+		return true;
+	}
 	
 protected:
 	int16 _x, _y, _w, _h;
@@ -246,7 +253,7 @@ public:
 	
 	bool hasVar(const Common::String &name) { return _vars.contains(name); }
 	
-	void addDialog(const Common::String &name);
+	void addDialog(const Common::String &name, const Common::String &overlays);
 	void addLayout(ThemeLayout::LayoutType type, bool reverse, bool center = false);
 	void addWidget(const Common::String &name, int w, int h);
 	void addSpacing(int size);
@@ -261,10 +268,17 @@ public:
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 		Common::StringTokenizer tokenizer(widget, ".");
 		Common::String dialogName = "Dialog." + tokenizer.nextToken();
+
+		if (dialogName == "Dialog.Dialog")
+			dialogName = "Dialog." + tokenizer.nextToken();
+
 		Common::String widgetName = tokenizer.nextToken();
 		
 		if (!_layouts.contains(dialogName)) 
 			return false;
+
+		if (widgetName.empty())
+			return _layouts[dialogName]->getDialogData(x, y, w, h);
 			
 		return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h);
 	}
@@ -279,7 +293,8 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts["Dialog.Launcher"]->debugDraw(screen, font);
+		_layouts["Dialog.GlobalOptions"]->debugDraw(screen, font);
+		_layouts["Dialog.GlobalOptions_Graphics"]->debugDraw(screen, font);
 	}
 	
 private:

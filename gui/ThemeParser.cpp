@@ -493,7 +493,7 @@ bool ThemeParser::parserCallback_child(ParserNode *node) {
 
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"];
-	_theme->themeEval()->addDialog(var);
+	_theme->themeEval()->addDialog(var, node->values["overlays"]);
 		
 	return true;
 }

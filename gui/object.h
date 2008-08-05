@@ -78,7 +78,10 @@ public:
 	virtual uint16	getWidth() const	{ return _w; }
 	virtual uint16	getHeight() const	{ return _h; }
 
+//	Tanoku-TODO: fix this back
 	virtual bool	isVisible() const = 0;
+	bool _debugVisible;
+
 
 	virtual void	draw() = 0;
 

@@ -157,15 +157,26 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h) {
 	_curLayout.top()->addChild(widget);
 }
 
-void ThemeEval::addDialog(const Common::String &name) {
+void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays) {
 	ThemeLayout *layout = new ThemeLayoutMain();
 	_layouts[name] = layout;
+
+	int16 x, y;
+	uint16 w, h;
 	
-	layout->setX(0);
-	layout->setY(0);
-	layout->setWidth(g_system->getOverlayWidth());
-	layout->setHeight(g_system->getOverlayHeight());
+	if (overlays == "screen" || overlays.empty()) {
+		x = y = 0;
+		w = g_system->getOverlayWidth();
+		h = g_system->getOverlayHeight();
+	} else if (!getWidgetData(overlays, x, y, w, h)) {
+		error("Error when loading dialog position for '%s'", overlays.c_str());
+	}
 	
+	layout->setX(x);
+	layout->setY(y);
+	layout->setWidth(w);
+	layout->setHeight(h);
+
 	layout->setPadding(
 		getVar("Globals.Padding.Left", 0),
 		getVar("Globals.Padding.Right", 0),

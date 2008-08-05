@@ -464,7 +464,7 @@
 		</widget>
 	</globals>
 
-	<dialog name = 'Launcher'>
+	<dialog name = 'Launcher' overlays = 'screen'>
 		<layout type = 'vertical' center = 'true' padding = '23, 23, 8, 23'>
 			<widget name = 'Version'
 					width = '247'
@@ -511,6 +511,44 @@
 				</layout>
 				<widget name = 'GameList'/>
 			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' direction = 'bottom2top'>
+			<layout type = 'horizontal' direction = 'right2left' padding = '16, 16, 16, 16'>
+				<widget name = 'Ok'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'Cancel'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<space/>
+			</layout>
+			<widget name = 'TabWidget'/>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<widget name = 'grModePopup'
+					width = '512'
+					height = '64'
+			/>
+			<widget name = 'grRenderPopup'
+					width = '512'
+					height = '64'
+			/>
+			<widget name = 'grAspectCheckbox'
+					width = '256'
+					height = '32'
+			/>
+			<widget name = 'grFullscreenCheckbox'
+					width = '256'
+					height = '32'
+			/>
 		</layout>
 	</dialog>
 </layout_info>
