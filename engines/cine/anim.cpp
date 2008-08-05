@@ -535,10 +535,14 @@ int loadSpl(const char *resourceName, int16 idx) {
 /*! \brief Load 1bpp mask
  * \param resourceName Mask filename
  * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded mask
+ * \return The number of the animDataTable entry after the loaded mask (-1 if error)
  */
 int loadMsk(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
 	int entry = 0;
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	byte *ptr;
@@ -562,10 +566,14 @@ int loadMsk(const char *resourceName, int16 idx) {
 /*! \brief Load animation
  * \param resourceName Animation filename
  * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded animation
+ * \return The number of the animDataTable entry after the loaded animation (-1 if error)
  */
 int loadAni(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
 	int entry = 0;
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	byte *ptr;
@@ -651,7 +659,7 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
 /*! \brief Load image set
  * \param resourceName Image set filename
  * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded image set
+ * \return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
 int loadSet(const char *resourceName, int16 idx) {
 	AnimHeader2Struct header2;
@@ -660,6 +668,10 @@ int loadSet(const char *resourceName, int16 idx) {
 	int16 entry;
 	byte *ptr, *startOfDataPtr, *dataPtr, *origDataPtr;
 	int type;
+
+	if (foundFileIdx < 0) {
+		return -1;
+	}
 
 	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 	assert(!memcmp(dataPtr, "SET", 3));
@@ -708,10 +720,14 @@ int loadSet(const char *resourceName, int16 idx) {
 /*! \brief Load SEQ data into animDataTable
  * \param resourceName SEQ data filename
  * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded SEQ data
+ * \return The number of the animDataTable entry after the loaded SEQ data (-1 if error)
  */
 int loadSeq(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
 
