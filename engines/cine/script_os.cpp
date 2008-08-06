@@ -365,6 +365,7 @@ FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index, const
 // OPERATION STEALTH opcodes
 // ------------------------------------------------------------------------
 
+/*! \brief Load collision table data */
 int FWScript::o2_loadCt() {
 	const char *param = getNextString();
 

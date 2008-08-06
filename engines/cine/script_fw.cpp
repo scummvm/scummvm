@@ -1319,6 +1319,7 @@ int FWScript::o1_loadBg() {
 	return 0;
 }
 
+/*! \brief Load collision table data */
 int FWScript::o1_loadCt() {
 	const char *param = getNextString();
 
