@@ -261,6 +261,24 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			}
 		}
 
+		// HACK: In Operation Stealth after the first arcade sequence jump player's position to avoid getting stuck.
+		// After the first arcade sequence the player comes up stairs from
+		// the water in Santa Paragua's downtown in front of the flower shop.
+		// Previously he was completely stuck after getting up the stairs.
+		// If the background is the one used in the flower shop scene ("21.PI1")
+		// and the player is at the exact location after getting up the stairs
+		// then we just nudge him a tiny bit away from the stairs and voila, he's free!
+		// Maybe the real problem behind all this is collision data related as it looks
+		// like there's some boundary right there near position (204, 110) which we can
+		// jump over by moving the character to (204, 109). The script handling the
+		// flower shop scene is AIRPORT.PRC's 13th script.
+		// FIXME: Remove the hack and solve what's really causing the problem in the first place.
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			if (scumm_stricmp(renderer->getBgName(), "21.PI1") == 0 && objectTable[1].x == 204 && objectTable[1].y == 110) {
+				objectTable[1].y--; // Move the player character upward on-screen by one pixel
+			}
+		}
+
 		stopMusicAfterFadeOut();
 		di = executePlayerInput();
 		
