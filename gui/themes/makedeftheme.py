@@ -10,9 +10,10 @@ def main():
 	try:
 		output = "\""
 		for line in theme_file:
-			output += (line.rstrip("\n\r ").lstrip() + " ")
+			if (len(line)):
+				output += (line.rstrip("\n\r\t ").lstrip() + " ")
 		
-		output = re.sub("\/\*(.*?)\*\/", "", output)
+		output = re.sub("\/\*(.*?)\*\/", "", output).replace("\t", " ").replace("  ", " ")
 		def_file.write(output + "\"\n")
 	finally:
 		theme_file.close()
