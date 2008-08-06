@@ -100,7 +100,6 @@ public:
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	bool quitFlag;
 
 	SoundManager *_sound;
 	MusicPlayer *_music;

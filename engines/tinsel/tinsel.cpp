@@ -638,7 +638,6 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_mousePos.y = 0;
 	_keyHandler = NULL;
 	_dosPlayerDir = 0;
-	quitFlag = false;
 }
 
 TinselEngine::~TinselEngine() {
@@ -678,6 +677,8 @@ int TinselEngine::init() {
 #if 1
 	// FIXME: The following is taken from RestartGame().
 	// It may have to be adjusted a bit
+	CountOut = 1;
+
 	RebootCursor();
 	RebootDeadTags();
 	RebootMovers();
@@ -755,7 +756,7 @@ int TinselEngine::go() {
 
 	// Foreground loop
 
-	while (!quitFlag) {
+	while (!quit()) {
 		assert(_console);
 		if (_console->isAttached())
 			_console->onFrame();
@@ -789,7 +790,7 @@ int TinselEngine::go() {
 	// Write configuration
 	WriteConfig();
 
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 
@@ -819,10 +820,6 @@ bool TinselEngine::pollEvent() {
 
 	// Handle the various kind of events
 	switch (event.type) {
-	case Common::EVENT_QUIT:
-		quitFlag = true;
-		break;
-
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:

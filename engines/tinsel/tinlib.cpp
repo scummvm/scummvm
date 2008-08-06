@@ -1271,7 +1271,7 @@ void printtag(HPOLYGON hp, SCNHANDLE text) {
 void quitgame(void) {
 	stopmidi();
 	stopsample();
-	_vm->quitFlag = true;
+	_vm->quitGame();
 }
 
 /**
