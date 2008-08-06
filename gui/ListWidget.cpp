@@ -30,6 +30,8 @@
 #include "gui/eval.h"
 #include "gui/newgui.h"
 
+#include "gui/ThemeEval.h"
+
 namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, const String &name)
@@ -374,7 +376,8 @@ void ListWidget::drawWidget() {
 			if (_hasFocus)
 				inverted = true;
 			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), _hints, Theme::kWidgetBackgroundBorderSmall);
+				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), 
+													_hints, Theme::kWidgetBackgroundBorderSmall);
 		}
 
 		Common::Rect r(getEditRect());
@@ -385,7 +388,8 @@ void ListWidget::drawWidget() {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), buffer, _state, Theme::kTextAlignLeft, inverted, _leftPadding);
+			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), 
+									buffer, _state, Theme::kTextAlignLeft, inverted, _leftPadding);
 			pad = 0;
 		}
 
@@ -395,7 +399,8 @@ void ListWidget::drawWidget() {
 			buffer = _editString;
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), buffer, _state, Theme::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), 
+									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
@@ -407,7 +412,8 @@ void ListWidget::drawWidget() {
 				width = _w - r.left - _hlRightPadding;
 			if (width > maxWidth)
 				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), buffer, _state, Theme::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), 
+									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		}
 
 		_textWidth[i] = width;
@@ -480,12 +486,12 @@ void ListWidget::abortEditMode() {
 void ListWidget::reflowLayout() {
 	Widget::reflowLayout();
 
-	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);
-	_topPadding = g_gui.evaluator()->getVar("ListWidget.topPadding", 0);
-	_bottomPadding = g_gui.evaluator()->getVar("ListWidget.bottomPadding", 0);
-	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
-	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
+	_leftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Left", 0);
+	_rightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Right", 0);
+	_topPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Top", 0);
+	_bottomPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Bottom", 0);
+	_hlLeftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlLeftPadding", 0);
+	_hlRightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlRightPadding", 0);
 
 	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		_scrollBarWidth =  kBigScrollBarWidth;

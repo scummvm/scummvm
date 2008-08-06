@@ -246,7 +246,12 @@ public:
 	}
 	
 	int getVar(const Common::String &s, int def) {
-		return (_vars.contains(s)) ? _vars[s] : def;
+		if (_vars.contains(s))
+			return _vars[s];
+		
+		warning("Returning default value %d for '%s'", def, s.c_str());
+		return def;
+//		return (_vars.contains(s)) ? _vars[s] : def;
 	}
 	
 	void setVar(const String &name, int val) { _vars[name] = val; }

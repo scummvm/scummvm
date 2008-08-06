@@ -54,8 +54,13 @@ public:
 	void setStringVar(const String &name, const String &val) { _strings[name] = val; }
 	void setAlias(const Common::String &name, const String &val) { _aliases[name] = val; }
 
-	int getVar(const Common::String &s) { return getVar_(s); }
+	int getVar(const Common::String &s) { 
+		warning("Old evaluator access: '%s'", s.c_str());
+		return getVar_(s); 
+	}
+	
 	int getVar(const Common::String &s, int def) {
+		warning("Old evaluator access: '%s'", s.c_str());
 		int val = getVar_(s);
 		return (val == EVAL_UNDEF_VAR) ? def : val;
 	}
