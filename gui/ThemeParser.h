@@ -446,6 +446,7 @@ protected:
 						XML_PROP(name, true)
 						XML_PROP(width, false)
 						XML_PROP(height, false)
+						XML_PROP(type, false)
 					KEY_END()
 					
 					XML_KEY(space)

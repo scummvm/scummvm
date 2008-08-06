@@ -437,7 +437,7 @@
 		<def var = 'ListWidget.hlRightPadding' value = '16'/>
 
 		<widget name = 'OptionsLabel'
-				size = '110, 16'
+				size = '110, Globals.Line.Height'
 		/>
 		<widget name = 'Button'
 				size = '120, 25'
@@ -447,6 +447,9 @@
 		/>
 		<widget name = 'PopUp'
 				size = '-1, 19'
+		/>
+		<widget name = 'Checkbox'
+				size = '-1, Globals.Line.Height'
 		/>
 		<widget name = 'ListWidget'
 				padding = '7, 5, 3, 3'
@@ -485,36 +488,29 @@
 			/>
 			<layout type = 'horizontal' direction = 'right2left' padding = '0, 0, 0, 0'>
 				<layout type = 'vertical' padding = '16, 0, 0, 0'>
-					<widget name = 'StartButton'
-							width = 'Globals.Button.Width'
-							height = 'Globals.Button.Height'
+					<widget name = 'StartButton' 
+							type = 'Button'
 					/>
 					<space size = '16' />
-					<widget name = 'AddGameButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+					<widget name = 'AddGameButton' 
+							type = 'Button' 
 					/>
-					<widget name = 'EditGameButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+					<widget name = 'EditGameButton' 
+							type = 'Button' 
 					/>
-					<widget name = 'RemoveGameButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+					<widget name = 'RemoveGameButton' 
+							type = 'Button' 
 					/>
 					<space size = '16' />
-					<widget name = 'OptionsButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+					<widget name = 'OptionsButton' 
+							type = 'Button' 
 					/>
-					<widget name = 'AboutButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+					<widget name = 'AboutButton' 
+							type = 'Button' 
 					/>
 					<space size = '16' />
-					<widget name = 'QuitButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+					<widget name = 'QuitButton' 
+							type = 'Button' 
 					/>
 					<space/>
 				</layout>
@@ -526,13 +522,11 @@
 	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' direction = 'bottom2top'>
 			<layout type = 'horizontal' direction = 'right2left' padding = '16, 16, 16, 16'>
-				<widget name = 'Ok'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+				<widget name = 'Ok' 
+						type = 'Button'
 				/>
 				<widget name = 'Cancel'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+						type = 'Button'
 				/>
 				<space/>
 			</layout>
@@ -543,16 +537,16 @@
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'grModePopup'
-					height = 'Globals.PopUp.Height'
+					type = 'PopUp'
 			/>
 			<widget name = 'grRenderPopup'
-					height = 'Globals.PopUp.Height'
+					type = 'PopUp'
 			/>
 			<widget name = 'grAspectCheckbox'
-					height = 'Globals.Line.Height'
+					type = 'Checkbox'
 			/>
 			<widget name = 'grFullscreenCheckbox'
-					height = 'Globals.Line.Height'
+					type = 'Checkbox'
 			/>
 		</layout>
 	</dialog>
@@ -560,15 +554,14 @@
 	<dialog name = 'GlobalOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'auMidiPopup'
-					height = 'Globals.Line.Height'
+					type = 'PopUp'
 			/>
 			<widget name = 'auSampleRatePopup'
-					height = 'Globals.Line.Height'
+					type = 'PopUp'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'subToggleDesc'
-						width = 'Globals.OptionsLabel.Width'
-						height = 'Globals.OptionsLabel.Height'
+						type = 'OptionsLabel'
 				/>
 				<widget name = 'subToggleButton'
 						width = '150'
@@ -577,12 +570,10 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'subSubtitleSpeedDesc'
-						width = 'Globals.OptionsLabel.Width'
-						height = 'Globals.OptionsLabel.Height'
+						type = 'OptionsLabel'
 				/>
 				<widget name = 'subSubtitleSpeedSlider'
-						width = 'Globals.Slider.Width'
-						height = 'Globals.Slider.Height'
+						type = 'Slider'
 				/>
 				<widget name = 'subSubtitleSpeedLabel'
 						width = '32'
@@ -596,12 +587,10 @@
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'vcMusicText'
-						width = 'Globals.OptionsLabel.Width'
-						height = 'Globals.OptionsLabel.Height'
+						type = 'OptionsLabel'
 				/>
 				<widget name = 'vcMusicSlider'
-						width = 'Globals.Slider.Width'
-						height = 'Globals.Slider.Height'
+						type = 'Slider'
 				/>
 				<widget name = 'vcMusicLabel'
 						width = '32'
@@ -610,12 +599,10 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'vcSfxText'
-						width = 'Globals.OptionsLabel.Width'
-						height = 'Globals.OptionsLabel.Height'
+						type = 'OptionsLabel'
 				/>
 				<widget name = 'vcSfxSlider'
-						width = 'Globals.Slider.Width'
-						height = 'Globals.Slider.Height'
+						type = 'Slider'
 				/>
 				<widget name = 'vcSfxLabel'
 						width = '32'
@@ -624,12 +611,10 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'vcSpeechText'
-						width = 'Globals.OptionsLabel.Width'
-						height = 'Globals.OptionsLabel.Height'
+						type = 'OptionsLabel'
 				/>
 				<widget name = 'vcSpeechSlider'
-						width = 'Globals.Slider.Width'
-						height = 'Globals.Slider.Height'
+						type = 'Slider'
 				/>
 				<widget name = 'vcSpeechLabel'
 						width = '32'
@@ -643,8 +628,7 @@
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'mcFontButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+						type = 'Button'
 				/>
 				<widget name = 'mcFontClearButton'
 						height = 'Globals.Line.Height'
@@ -655,22 +639,20 @@
 				/>
 			</layout>
 			<widget name = 'mcMixedCheckbox'
-					height = 'Globals.Line.Height'
+					type = 'Checkbox'
 			/>
 			<widget name = 'mcMt32Checkbox'
-					height = 'Globals.Line.Height'
+					type = 'Checkbox'
 			/>
 			<widget name = 'mcGSCheckbox'
-					height = 'Globals.Line.Height'
+					type = 'Checkbox'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'mcMidiGainText'
-						width = 'Globals.OptionsLabel.Width'
-						height = 'Globals.OptionsLabel.Height'
+						type = 'OptionsLabel'
 				/>
 				<widget name = 'mcMidiGainSlider'
-						width = 'Globals.Slider.Width'
-						height = 'Globals.Slider.Height'
+						type = 'Slider'
 				/>
 				<widget name = 'mcMidiGainLabel'
 						width = '32'
@@ -684,8 +666,7 @@
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'SaveButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+						type = 'Button'
 				/>
 				<widget name = 'SavePath'
 						height = 'Globals.Line.Height'
@@ -693,8 +674,7 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'ThemeButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+						type = 'Button'
 				/>
 				<widget name = 'ThemePath'
 						height = 'Globals.Line.Height'
@@ -702,8 +682,7 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'ExtraButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+						type = 'Button'
 				/>
 				<widget name = 'ExtraPath'
 						height = 'Globals.Line.Height'
@@ -716,15 +695,14 @@
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'ThemeButton'
-						width = 'Globals.Button.Width'
-						height = 'Globals.Button.Height'
+						type = 'Button'
 				/>
 				<widget name = 'CurTheme'
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
 			<widget name = 'AutosavePeriod'
-					height = 'Globals.PopUp.Height'
+					type = 'PopUp'
 			/>
 		</layout>
 	</dialog>

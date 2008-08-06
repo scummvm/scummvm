@@ -145,11 +145,19 @@ void ThemeLayoutHorizontal::reflowLayout() {
 }
 
 
-void ThemeEval::addWidget(const Common::String &name, int w, int h) {
+void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common::String &type) {
 	ThemeLayoutWidget *widget = new ThemeLayoutWidget(_curLayout.top(), name);
 	
-	widget->setWidth(w);
-	widget->setHeight(h);
+	int typeW = -1;
+	int typeH = -1;
+	
+	if (!type.empty()) {
+		typeW = getVar("Globals." + type + ".Width", -1);
+		typeH = getVar("Globals." + type + ".Height", -1);
+	}	
+	
+	widget->setWidth(typeW == -1 ? w : typeW);
+	widget->setHeight(typeH == -1 ? h : typeH);
 	
 	_curLayout.top()->addChild(widget);
 }

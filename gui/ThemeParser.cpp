@@ -475,8 +475,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Corrupted height value in key for %s", var.c_str());
 		}
 		
-		_theme->themeEval()->addWidget(var, width, height);
-		
+		_theme->themeEval()->addWidget(var, width, height, node->values["type"]);	
 	}
 
 	return true;

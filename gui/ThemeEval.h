@@ -260,7 +260,7 @@ public:
 	
 	void addDialog(const Common::String &name, const Common::String &overlays);
 	void addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center = false);
-	void addWidget(const Common::String &name, int w, int h);
+	void addWidget(const Common::String &name, int w, int h, const Common::String &type);
 	void addSpace(int size);
 	
 	void addPadding(int16 l, int16 r, int16 t, int16 b) {
