@@ -298,6 +298,10 @@
 				horizontal_align = 'right'
 		/>
 	</drawdata>
+	
+/* Tanoku-TODO: text editing width + CARET!
+/*	<drawdata id = 'widget_textedit' cache = false>
+		<drawstep	func = 'roundedsq' */
 
 	<drawdata id = 'default_bg' cache = false>
 		<drawstep	func = 'roundedsq'
@@ -429,15 +433,17 @@
 		<def var = 'Padding.Right' value = '16' />
 		<def var = 'Padding.Top' value = '16' />
 
-		<widget name = 'Inset'
-				pos = '23, 94'
-				size = '666, 666'
+		<widget name = 'OptionsLabel'
+				size = '110, 16'
 		/>
 		<widget name = 'Button'
 				size = '120, 25'
 		/>
 		<widget name = 'Slider'
-				size = '666, 666'
+				size = '256, 32'
+		/>
+		<widget name = 'PopUp'
+				size = '-1, 19'
 		/>
 		<widget name = 'ListWidget'
 				padding = '7, 5, 5, 5'
@@ -532,22 +538,190 @@
 	</dialog>
 	
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'grModePopup'
-					width = '512'
-					height = '64'
+					height = 'Globals.PopUp.Height'
 			/>
 			<widget name = 'grRenderPopup'
-					width = '512'
-					height = '64'
+					height = 'Globals.PopUp.Height'
 			/>
 			<widget name = 'grAspectCheckbox'
-					width = '256'
-					height = '32'
+					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'grFullscreenCheckbox'
-					width = '256'
-					height = '32'
+					height = 'Globals.Line.Height'
+			/>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'auMidiPopup'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'auSampleRatePopup'
+					height = 'Globals.Line.Height'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'subToggleDesc'
+						width = 'Globals.OptionsLabel.Width'
+						height = 'Globals.OptionsLabel.Height'
+				/>
+				<widget name = 'subToggleButton'
+						width = '150'
+						height = 'Globals.Slider.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'subSubtitleSpeedDesc'
+						width = 'Globals.OptionsLabel.Width'
+						height = 'Globals.OptionsLabel.Height'
+				/>
+				<widget name = 'subSubtitleSpeedSlider'
+						width = 'Globals.Slider.Width'
+						height = 'Globals.Slider.Height'
+				/>
+				<widget name = 'subSubtitleSpeedLabel'
+						width = '32'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'vcMusicText'
+						width = 'Globals.OptionsLabel.Width'
+						height = 'Globals.OptionsLabel.Height'
+				/>
+				<widget name = 'vcMusicSlider'
+						width = 'Globals.Slider.Width'
+						height = 'Globals.Slider.Height'
+				/>
+				<widget name = 'vcMusicLabel'
+						width = '32'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'vcSfxText'
+						width = 'Globals.OptionsLabel.Width'
+						height = 'Globals.OptionsLabel.Height'
+				/>
+				<widget name = 'vcSfxSlider'
+						width = 'Globals.Slider.Width'
+						height = 'Globals.Slider.Height'
+				/>
+				<widget name = 'vcSfxLabel'
+						width = '32'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'vcSpeechText'
+						width = 'Globals.OptionsLabel.Width'
+						height = 'Globals.OptionsLabel.Height'
+				/>
+				<widget name = 'vcSpeechSlider'
+						width = 'Globals.Slider.Width'
+						height = 'Globals.Slider.Height'
+				/>
+				<widget name = 'vcSpeechLabel'
+						width = '32'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'mcFontButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'mcFontClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>		
+				<widget name = 'mcFontPath'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<widget name = 'mcMixedCheckbox'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'mcMt32Checkbox'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'mcGSCheckbox'
+					height = 'Globals.Line.Height'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'mcMidiGainText'
+						width = 'Globals.OptionsLabel.Width'
+						height = 'Globals.OptionsLabel.Height'
+				/>
+				<widget name = 'mcMidiGainSlider'
+						width = 'Globals.Slider.Width'
+						height = 'Globals.Slider.Height'
+				/>
+				<widget name = 'mcMidiGainLabel'
+						width = '32'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions_Paths' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+				<widget name = 'SaveButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'SavePath'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+				<widget name = 'ThemeButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'ThemePath'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+				<widget name = 'ExtraButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'ExtraPath'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalOptions_Misc' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+				<widget name = 'ThemeButton'
+						width = 'Globals.Button.Width'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'CurTheme'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<widget name = 'AutosavePeriod'
+					height = 'Globals.PopUp.Height'
 			/>
 		</layout>
 	</dialog>

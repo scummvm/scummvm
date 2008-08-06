@@ -675,7 +675,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// 2) The audio tab
 	//
 	tab->addTab("Audio");
-	addAudioControls(tab, "GlobalOptions.");
+	addAudioControls(tab, "GlobalOptions_Audio.");
 	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
 	tab->addTab("Volume");

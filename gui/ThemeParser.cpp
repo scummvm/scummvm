@@ -499,14 +499,20 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
+	int spacing = -1;
+	
+	if (node->values.contains("spacing")) {
+		if (!parseIntegerKey(node->values["spacing"].c_str(), 1, &spacing))
+			return false;
+	}
 	
 	if (node->values["type"] == "vertical")
-		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutVertical, 
+		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing,
 		node->values["direction"] == "bottom2top",
 		node->values["center"] == "true");
 		
 	else if (node->values["type"] == "horizontal")
-		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, 
+		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing,
 		node->values["direction"] == "right2left", 
 		node->values["center"] == "true");
 		
@@ -518,6 +524,8 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		
 		_theme->themeEval()->addPadding(paddingL, paddingR, paddingT, paddingB);
 	}
+	
+	
 
 	return true;
 }
@@ -529,7 +537,7 @@ bool ThemeParser::parserCallback_space(ParserNode *node) {
 		if (!parseIntegerKey(node->values["size"].c_str(), 1, &size))
 			return parserError("Invalid value for Spacing size.");
 			
-	_theme->themeEval()->addSpacing(size);
+	_theme->themeEval()->addSpace(size);
 	return true;
 }
 

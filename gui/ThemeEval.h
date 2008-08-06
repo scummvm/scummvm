@@ -254,9 +254,9 @@ public:
 	bool hasVar(const Common::String &name) { return _vars.contains(name); }
 	
 	void addDialog(const Common::String &name, const Common::String &overlays);
-	void addLayout(ThemeLayout::LayoutType type, bool reverse, bool center = false);
+	void addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center = false);
 	void addWidget(const Common::String &name, int w, int h);
-	void addSpacing(int size);
+	void addSpace(int size);
 	
 	void addPadding(int16 l, int16 r, int16 t, int16 b) {
 		_curLayout.top()->setPadding(l, r, t, b);
@@ -267,11 +267,11 @@ public:
 	
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 		Common::StringTokenizer tokenizer(widget, ".");
+		
+		if (widget.hasPrefix("Dialog."))
+			tokenizer.nextToken();
+	
 		Common::String dialogName = "Dialog." + tokenizer.nextToken();
-
-		if (dialogName == "Dialog.Dialog")
-			dialogName = "Dialog." + tokenizer.nextToken();
-
 		Common::String widgetName = tokenizer.nextToken();
 		
 		if (!_layouts.contains(dialogName)) 
