@@ -28,14 +28,16 @@
 
 namespace Common {
 
-Action::Action(String des, ActionCategory cat, ActionType ty, 
-					   int pr, int gr, int fl) {
+Action::Action(int32 i, String des, 
+			   ActionCategory cat, ActionType typ, 
+			   int pri, int grp, int flg) {
+	id = i;
 	description = des;
 	category = cat;
-	type = ty;
-	priority = pr;
-	group = gr;
-	flags = fl;
+	type = typ;
+	priority = pri;
+	group = grp;
+	flags = flg;
 	_hwKey = 0;
 	_parent = 0;
 }

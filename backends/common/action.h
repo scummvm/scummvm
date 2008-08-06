@@ -49,8 +49,12 @@ enum ActionType {
 	kRightClickAction,
 	kSaveAction,
 	kMenuAction,
+	kQuitAction,
 	kVirtualKeyboardAction,
-	kRemapKeysAction,
+	kKeyRemapAction,
+	kVolumeUpAction,
+	kVolumeDownAction,
+
 
 	kActionTypeMax
 };
@@ -69,9 +73,9 @@ struct Action {
 	int32 id;
 	/** Human readable description */
 	String description;
+
 	/** Events to be sent when mapped key is pressed */
 	List<Event> events;
-
 	ActionCategory category;
 	ActionType type;
 	int priority;
@@ -84,16 +88,17 @@ private:
 	Keymap *_parent;
 
 public:
-	Action(	String des = "", 
-		ActionCategory cat = kGenericActionCategory,
-		ActionType ty = kGenericActionType,
-		int pr = 0, int gr = 0, int fl = 0 );
+	Action(	int32 id,
+			String des = "", 
+			ActionCategory cat = kGenericActionCategory,
+			ActionType typ = kGenericActionType,
+			int pri = 0, int grp = 0, int flg = 0 );
 
+	void addEvent(const Event &evt) { events.push_back(evt); }
 	void setParent(Keymap *parent);
-
 	void mapKey(const HardwareKey *key);
-
 	const HardwareKey *getMappedKey() const;
+
 };
 
 struct ActionPriorityComp : public BinaryFunction<Action, Action, bool> {

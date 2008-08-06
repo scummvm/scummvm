@@ -32,7 +32,6 @@
 
 namespace Common {
 	class VirtualKeyboard;
-	class Keymapper;
 }
 
 /*
@@ -51,7 +50,7 @@ class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
 
 	Common::VirtualKeyboard *_vk;
-	Common::Keymapper *_keyMapper;
+	Common::Keymapper *_keymapper;
 
 	Common::Queue<Common::Event> _artificialEventQueue;
 	int _artificialEventCounter;
@@ -130,6 +129,7 @@ public:
 	virtual int getButtonState() const { return _buttonState; }
 	virtual int getModifierState() const { return _modifierState; }
 	virtual int shouldQuit() const { return _shouldQuit; }
+	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
 };
 
 #endif

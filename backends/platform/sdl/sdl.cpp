@@ -148,6 +148,9 @@ void OSystem_SDL::initBackend() {
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
 
+	// Provide the keymapper with backend's set of keys
+	setupKeymapper();
+
 	// Invoke parent implementation of this method
 	OSystem::initBackend();
 

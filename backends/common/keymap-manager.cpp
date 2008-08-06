@@ -28,13 +28,14 @@
 
 namespace Common {
 
-
-void KeymapManager::Domain::addDefaultKeymap(Keymap *map) {
+void KeymapManager::Domain::setDefaultKeymap(Keymap *map) {
+	delete _defaultKeymap;
 	_defaultKeymap = map;
 }
 
 void KeymapManager::Domain::addKeymap(const String& name, Keymap *map) {
-	if (_keymaps.contains(name))
+	KeymapMap::iterator it = _keymaps.find(name);
+	if (it != _keymaps.end())
 		delete _keymaps[name];
 	_keymaps[name] = map;
 }
@@ -44,6 +45,7 @@ void KeymapManager::Domain::deleteAllKeyMaps() {
 	for (it = _keymaps.begin(); it != _keymaps.end(); it++)
 		delete it->_value;
 	_keymaps.clear();
+	delete _defaultKeymap;
 }
 
 Keymap *KeymapManager::Domain::getDefaultKeymap() {
@@ -58,6 +60,15 @@ Keymap *KeymapManager::Domain::getKeymap(const String& name) {
 		return 0;
 }
 
+KeymapManager::KeymapManager() {
+	_hardwareKeys = 0;
+}
+	
+KeymapManager::~KeymapManager() {
+	delete _hardwareKeys;
+}
+
+
 void KeymapManager::registerHardwareKeySet(HardwareKeySet *keys) {
 	if (_hardwareKeys)
 		error("Hardware key set already registered!");
@@ -68,7 +79,7 @@ void KeymapManager::registerDefaultGlobalKeymap(Keymap *map) {
 	ConfigManager::Domain *dom = ConfMan.getDomain(ConfigManager::kApplicationDomain);
 	assert(dom);
 	initKeymap(dom, "default", map);
-	_globalDomain.addDefaultKeymap(map);
+	_globalDomain.setDefaultKeymap(map);
 }
 
 void KeymapManager::registerGlobalKeymap(const String& name, Keymap *map) {
@@ -84,7 +95,7 @@ void KeymapManager::registerDefaultGameKeymap(Keymap *map) {
 	assert(dom);
 
 	initKeymap(dom, "default", map);
-	_gameDomain.addDefaultKeymap(map);
+	_gameDomain.setDefaultKeymap(map);
 }
 
 void KeymapManager::registerGameKeymap(const String& name, Keymap *map) {
@@ -99,8 +110,7 @@ void KeymapManager::initKeymap(ConfigManager::Domain *domain,
 							   const String& name, 
 							   Keymap *map) {
 	if (!loadKeymap(domain, name, map))
-		return;
-	automaticMap(map);
+		automaticMap(map);
 }
 
 bool KeymapManager::loadKeymap(ConfigManager::Domain *domain, 
@@ -155,10 +165,9 @@ bool KeymapManager::isMapComplete(const Keymap *map) {
 			numberMapped++;
 		} else {
 			allMapped = false;
-			break;
 		}
 	}
-	return (allMapped || numberMapped == _hardwareKeys->count());
+	return allMapped || (numberMapped == _hardwareKeys->count());
 }
 
 void KeymapManager::saveKeymap(ConfigManager::Domain *domain, 
@@ -196,7 +205,7 @@ void KeymapManager::automaticMap(Keymap *map) {
 			if ((*keyIt)->preferredType == act->type) {
 				selectedKey = keyIt;
 				break;
-			} else if ((*keyIt)->preferredCategory == act->category) {
+			} else if ((*keyIt)->preferredCategory == act->category && selectedKey == keys.end()) {
 				selectedKey = keyIt;
 			}
 		}

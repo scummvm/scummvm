@@ -196,10 +196,11 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	}
 
 	_vk = new Common::VirtualKeyboard();
-	_keyMapper = new Common::Keymapper(this);
+	_keymapper = new Common::Keymapper(this);
 }
 
 DefaultEventManager::~DefaultEventManager() {
+	delete _keymapper;
 	delete _vk;
 	_boss->lockMutex(_timeMutex);
 	_boss->lockMutex(_recorderMutex);
@@ -372,10 +373,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (result) {
 			// send key press events to keymapper
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_keyMapper->mapKeyDown(event.kbd))
+				if (_keymapper->mapKeyDown(event.kbd))
 					result = false;
 			} else if (event.type == Common::EVENT_KEYUP) {
-				if (_keyMapper->mapKeyUp(event.kbd))
+				if (_keymapper->mapKeyUp(event.kbd))
 					result = false;
 			}
 		}

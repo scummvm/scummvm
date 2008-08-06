@@ -42,7 +42,7 @@ public:
 		Domain() : _defaultKeymap(0) {}
 		~Domain() { deleteAllKeyMaps(); }
 
-		void addDefaultKeymap(Keymap *map);
+		void setDefaultKeymap(Keymap *map);
 		void addKeymap(const String& name, Keymap *map);
 
 		void deleteAllKeyMaps();
@@ -57,6 +57,9 @@ public:
 		Keymap *_defaultKeymap;
 		KeymapMap _keymaps;
 	};
+
+	KeymapManager();
+	~KeymapManager();
 
 	void registerHardwareKeySet(HardwareKeySet *keys);
 

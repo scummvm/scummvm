@@ -24,31 +24,50 @@
 */
 
 #include "backends/common/keymapper.h"
-#include "backends/common/keymap-manager.h"
 #include "common/config-manager.h"
 namespace Common {
 
 Keymapper::Keymapper(EventManager *evtMgr) {
 	_eventMan = evtMgr;
 	_keymapMan = new KeymapManager();
-	_currentMap = 0;
+}
+
+Keymapper::~Keymapper() {
+	delete _keymapMan;
 }
 
 void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
 	_keymapMan->registerHardwareKeySet(keys);
 }
 
-void Keymapper::addGlobalKeyMap(const String& name, Keymap *keymap) {
+void Keymapper::addGlobalKeymap(const String& name, Keymap *keymap) {
 	_keymapMan->registerGlobalKeymap(name, keymap);
 }
 
-void Keymapper::addGameKeyMap(const String& name, Keymap *keymap) {
-	if (_gameId.size() == 0) {
-		initGame();
-		if (_gameId.size() == 0)
-			return;
+void Keymapper::setDefaultGlobalKeymap(Keymap *keymap) {
+	_keymapMan->registerDefaultGlobalKeymap(keymap);
+	pushKeymap(keymap, false);
+}
+
+void Keymapper::addGameKeymap(const String& name, Keymap *keymap) {
+	if (checkGameInit())
+		_keymapMan->registerGameKeymap(name, keymap);
+}
+
+void Keymapper::setDefaultGameKeymap(Keymap *keymap) {
+	if (checkGameInit()) {
+		_keymapMan->registerDefaultGameKeymap(keymap);
+		pushKeymap(keymap, true);
 	}
-	_keymapMan->registerGameKeymap(name, keymap);
+}
+
+bool Keymapper::checkGameInit() {
+	if (_gameId.empty()) {
+		initGame();
+		if (_gameId.empty())
+			return false;
+	}
+	return true;
 }
 
 void Keymapper::initGame() {
@@ -65,15 +84,26 @@ void Keymapper::cleanupGame() {
 	_gameId.clear();
 }
 
-
-bool Keymapper::switchKeymap(const String& name) {
-	Keymap *new_map = _keymapMan->getKeymap(name);
-	if (!new_map) {
+bool Keymapper::pushKeymap(const String& name, bool inherit) {
+	Keymap *newMap = _keymapMan->getKeymap(name);
+	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());
 		return false;
 	}
-	_currentMap = new_map;
+	pushKeymap(newMap, inherit);
 	return true;
+}
+
+void Keymapper::pushKeymap(Keymap *newMap, bool inherit) {
+	MapRecord mr;
+	mr.inherit = inherit;
+	mr.keymap = newMap;
+	_activeMaps.push(mr);
+}
+
+void Keymapper::popKeymap() {
+	if (!_activeMaps.empty())
+		_activeMaps.pop();
 }
 
 bool Keymapper::mapKeyDown(const KeyState& key) {
@@ -85,9 +115,16 @@ bool Keymapper::mapKeyUp(const KeyState& key) {
 }
 
 bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
-	if (!_currentMap) return false;
-	Action *action = _currentMap->getMappedAction(key);
+	if (_activeMaps.empty()) return false;
+
+	Action *action = 0;
+	for (int i = _activeMaps.size() - 1; !action && i >= 0; i++) {
+		MapRecord mr = _activeMaps[i];
+		action = mr.keymap->getMappedAction(key);
+		if (mr.inherit == false) break;
+	}
 	if (!action) return false;
+
 	List<Event>::iterator it;
 	for (it = action->events.begin(); it != action->events.end(); it++) {
 		Event evt = *it;

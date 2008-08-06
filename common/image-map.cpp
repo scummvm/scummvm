@@ -33,7 +33,7 @@ ImageMap::~ImageMap() {
 
 Rect *ImageMap::createRectArea(const String& id) {
 	if (_areas.contains(id)) {
-		warning("Image map already contains an area with target of '%s'");
+		warning("Image map already contains an area with target of '%s'", id.c_str());
 		return 0;
 	}
 	Rect *r = new Rect();
@@ -43,7 +43,7 @@ Rect *ImageMap::createRectArea(const String& id) {
 
 Polygon *ImageMap::createPolygonArea(const String& id) {
 	if (_areas.contains(id)) {
-		warning("Image map already contains an area with target of '%s'");
+		warning("Image map already contains an area with target of '%s'", id.c_str());
 		return 0;
 	}
 	Polygon *p = new Polygon();

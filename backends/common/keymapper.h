@@ -28,19 +28,18 @@
 
 #include "common/events.h"
 #include "common/list.h"
-
+#include "common/stack.h"
+#include "backends/common/hardware-key.h"
+#include "backends/common/keymap.h"
+#include "backends/common/keymap-manager.h"
 
 namespace Common {
-
-struct HardwareKey;
-class HardwareKeySet;
-class KeymapManager;
-class Keymap;
 
 class Keymapper {
 public:
 
 	Keymapper(EventManager *eventMan);
+	~Keymapper();
 
 	/**
 	 * Registers a HardwareKeySet with the Keymapper
@@ -48,19 +47,30 @@ public:
 	 */
 	void registerHardwareKeySet(HardwareKeySet *keys);
 
+
 	/**
-	 * Add a keymap to the global domain.
+	 * Add a general keymap to the global domain.
 	 * If a saved key setup exists for it in the ini file it will be used.
 	 * Else, the key setup will be automatically mapped.
 	 */
-	void addGlobalKeyMap(const String& name, Keymap *keymap);
+	void addGlobalKeymap(const String& name, Keymap *keymap);
 
 	/**
-	* Add a keymap to the game domain.
+	* Sets the default keymap for the global domain.
+	*/
+	void setDefaultGlobalKeymap(Keymap *keymap);
+
+	/**
+	* Add a general keymap to the game domain.
 	* @see addGlobalKeyMap
 	* @note initGame() should be called before any game keymaps are added.
 	*/
-	void addGameKeyMap(const String& name, Keymap *keymap);
+	void addGameKeymap(const String& name, Keymap *keymap);
+
+	/**
+	* Sets the default keymap for the game domain.
+	*/
+	void setDefaultGameKeymap(Keymap *keymap);
 
 	/**
 	 * Initialise the keymapper for a new game
@@ -73,19 +83,25 @@ public:
 	void cleanupGame();
 
 	/**
-	 * Switch the active keymap.
-	 * @param name name of the new keymap
+	 * Push a new keymap to the top of the active stack, activating it for use.
+	 * @param name		name of the keymap to push
+	 * @param inherit	if true 
 	 * @return true if successful
 	 */
-	bool switchKeymap(const String& name);
+	bool pushKeymap(const String& name, bool inherit = false);
+
+	/**
+	 * Pop the active keymap off the stack.
+	 */
+	void popKeymap();
 
 	/**
 	* @brief Map a key press event.
 	* If the active keymap contains a Action mapped to the given key, then 
 	* the Action's events are pushed into the EventManager's event queue.
-	* @param key key that was pressed
-	* @param isKeyDown true for key down, false for key up
-	* @return true if key was mapped
+	* @param key		key that was pressed
+	* @param isKeyDown	true for key down, false for key up
+	* @return			true if key was mapped
 	*/
 	bool mapKey(const KeyState& key, bool isKeyDown);
 
@@ -103,6 +119,9 @@ public:
 
 private:
 
+	void pushKeymap(Keymap *newMap, bool inherit);
+	bool checkGameInit();
+
 	typedef List<HardwareKey*>::iterator Iterator;
 
 	EventManager *_eventMan;
@@ -110,7 +129,12 @@ private:
 
 	String _gameId;
 
-	Keymap *_currentMap;
+	struct MapRecord {
+		Keymap* keymap;
+		bool inherit;
+	};
+
+	Stack<MapRecord> _activeMaps;
 
 };
 

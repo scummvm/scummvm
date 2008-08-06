@@ -119,6 +119,7 @@ struct Event {
 	Common::Point mouse;
 };
 
+class Keymapper;
 
 /**
  * The EventManager provides user input events to the client code.
@@ -178,6 +179,8 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
+
+	virtual Common::Keymapper *getKeymapper() = 0;
 };
 
 } // End of namespace Common

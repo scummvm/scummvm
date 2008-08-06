@@ -24,6 +24,7 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/common/keymapper.h"
 #include "common/util.h"
 #include "common/events.h"
 
@@ -518,5 +519,38 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 #endif
 	return false;
+}
+
+void OSystem_SDL::setupKeymapper() {
+	using namespace Common;
+	Keymapper *mapper = getEventManager()->getKeymapper();
+
+	HardwareKeySet *keySet = new HardwareKeySet();
+	keySet->addHardwareKey(new HardwareKey( 'a', KeyState(KEYCODE_a), "a" ));
+	keySet->addHardwareKey(new HardwareKey( 's', KeyState(KEYCODE_s), "s" ));
+	keySet->addHardwareKey(new HardwareKey( 'd', KeyState(KEYCODE_d), "d" ));
+	keySet->addHardwareKey(new HardwareKey( 'f', KeyState(KEYCODE_f), "f" ));
+	mapper->registerHardwareKeySet(keySet);
+
+	Keymap *global = new Keymap();
+	Action *act;
+	Event evt;
+
+	#define ADD_KEYDOWN_EVENT(kc, asc, flags) \
+		evt.type = EVENT_KEYDOWN; \
+		evt.kbd = KeyState(kc, asc, flags); \
+		act->events.push_back(evt);
+
+	act = new Action('MENU', "Menu", kGenericActionCategory, kMenuAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_F5, ASCII_F5, 0)
+	global->addAction(act);
+	
+	act = new Action('QUIT', "Quit", kGenericActionCategory, kQuitAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	global->addAction(act);
+
+	#undef ADD_KEYDOWN_EVENT
+
+	mapper->setDefaultGlobalKeymap(global);
 }
 

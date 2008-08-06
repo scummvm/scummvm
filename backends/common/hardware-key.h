@@ -48,14 +48,15 @@ struct HardwareKey {
 	ActionType preferredType;
 	int16 group;
 
-	HardwareKey(KeyState ks = KeyState(), String des = "",
-		ActionCategory cat = kGenericActionCategory,
-		ActionType ty = kGenericActionType,	int gr = 0) {
-			key = ks;
-			description = des;
-			preferredCategory = cat;
-			preferredType = ty;
-			group = gr;
+	HardwareKey(int32 i, KeyState ks = KeyState(), String des = "",
+				ActionCategory cat = kGenericActionCategory,
+				ActionType ty = kGenericActionType,	int gr = 0) {
+		id = i;
+		key = ks;
+		description = des;
+		preferredCategory = cat;
+		preferredType = ty;
+		group = gr;
 	}
 };
 
@@ -69,7 +70,7 @@ class HardwareKeySet {
 public:
 
 	HardwareKeySet() {}
-	~HardwareKeySet() {
+	virtual ~HardwareKeySet() {
 		List<HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++)
 			delete *it;
@@ -113,9 +114,9 @@ private:
 		List<HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->id == key->id)
-				error("HardwareKey with id %d already given!", key->id);
+				error("Error adding HardwareKey '%s' - id of %d already in use!", key->description.c_str(), key->id);
 			else if ((*it)->key == key->key)
-				error("HardwareKey with same KeyState already given!");
+				error("Error adding HardwareKey '%s' - key already in use!", key->description.c_str());
 		}
 	}
 
