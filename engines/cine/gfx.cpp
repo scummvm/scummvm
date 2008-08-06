@@ -36,7 +36,7 @@
 
 namespace Cine {
 
-byte *page3Raw;
+byte *collisionPage;
 FWRenderer *renderer = NULL;
 
 static const byte mouseCursorNormal[] = {

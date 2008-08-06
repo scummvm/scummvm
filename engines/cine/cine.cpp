@@ -100,7 +100,7 @@ int CineEngine::go() {
 	mainLoop(1);
 
 	delete renderer;
-	delete[] page3Raw;
+	delete[] collisionPage;
 	delete g_sound;
 	return 0;
 }
@@ -117,7 +117,7 @@ void CineEngine::initialize() {
 		renderer = new FWRenderer;
 	}
 
-	page3Raw = new byte[320 * 200];
+	collisionPage = new byte[320 * 200];
 	textDataPtr = (byte *)malloc(8000);
 
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));

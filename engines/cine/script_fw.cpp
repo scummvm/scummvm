@@ -1796,7 +1796,7 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 			}
 		}
 
-		idx = getZoneFromPositionRaw(page3Raw, lx + i, ly, 320);
+		idx = getZoneFromPositionRaw(collisionPage, lx + i, ly, 320);
 
 		assert(idx >= 0 && idx < NUM_MAX_ZONE);
 

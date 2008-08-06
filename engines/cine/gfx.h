@@ -183,7 +183,7 @@ public:
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern byte *page3Raw;
+extern byte *collisionPage;
 extern FWRenderer *renderer;
 
 void setMouseCursor(int cursor);
