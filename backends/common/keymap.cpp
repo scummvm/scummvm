@@ -92,4 +92,58 @@ Action *Keymap::getMappedAction(const KeyState& ks) const {
 		return it->_value;
 }
 
+void Keymap::loadMappings(ConfigManager::Domain *domain, const String& name, const HardwareKeySet *hwKeys) {
+	ConfigManager::Domain::iterator it;	
+	String prefix = "km_" + name + "_";
+	for (it = domain->begin(); it != domain->end(); it++) {
+		const String& key = it->_key;
+		if (!key.hasPrefix(prefix.c_str()))
+			continue;
+
+		// parse Action ID
+		const char *actionIdStart = key.c_str() + prefix.size();
+		char *err;
+		int32 actionId = (int32) strtol(actionIdStart, &err, 0);
+		if (err == actionIdStart) {
+			warning("'%s' is not a valid Action ID", err);
+			continue;
+		}
+		Action *ua = getAction(actionId);
+		if (!ua) {
+			warning("'%s' keymap does not contain Action with ID %d", 
+				name.c_str(), (int)actionId);
+			continue;
+		}
+
+		// parse HardwareKey ID
+		int32 hwKeyId = (int32) strtol(it->_value.c_str(), &err, 0);
+		if (err == it->_value.c_str()) {
+			warning("'%s' is not a valid HardwareKey ID", err);
+			continue;
+		}
+		const HardwareKey *hwKey = hwKeys->findHardwareKey(hwKeyId);
+		if (!hwKey) {
+			warning("HardwareKey with ID %d not known", (int)hwKeyId);
+			continue;
+		}
+
+		ua->mapKey(hwKey);
+	}
+}
+
+void Keymap::saveMappings(ConfigManager::Domain *domain, const String& name) {
+	List<Action*>::const_iterator it;
+	char buf[11];
+	for (it = _actions.begin(); it != _actions.end(); it++) {
+		String key("km_");
+		sprintf(buf, "%d", (*it)->id);
+		key += name + "_" + buf;
+		if ((*it)->getMappedKey())
+			sprintf(buf, "%d", (*it)->getMappedKey()->id);
+		else
+			strcpy(buf, "");
+		domain->setVal(key, buf);
+	}
+}
+
 } // end of namespace Common

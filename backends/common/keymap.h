@@ -26,6 +26,7 @@
 #ifndef COMMON_KEYMAP
 #define COMMON_KEYMAP
 
+#include "common/config-manager.h"
 #include "common/func.h"
 #include "common/hashmap.h"
 #include "common/keyboard.h"
@@ -35,6 +36,7 @@
 namespace Common {
 
 struct HardwareKey;
+class HardwareKeySet;
 
 /**
  * Hash function for KeyState
@@ -74,10 +76,25 @@ public:
 
 	/**
 	 * Find the Action that a key is mapped to
-	 * @param key the key that is mapped to the required Action
-	 * @return a pointer to the Action or 0 if no
+	 * @param key	the key that is mapped to the required Action
+	 * @return		a pointer to the Action or 0 if no
 	 */
 	Action *getMappedAction(const KeyState& ks) const;
+
+	/**
+	 * Load this keymap's mappings from the given config domain and hardware key set
+	 * @param domain	config domain to load keymap from
+	 * @param name		name of the keymap to load
+	 * @param hwKeys	the set to retrieve hardware key pointers from
+	 */
+	void loadMappings(ConfigManager::Domain *domain, const String& name, const HardwareKeySet *hwKeys);
+
+	/**
+	 * Save this keymap's mappings to the given config domain
+	 * @param domain	config domain to save keymap to
+	 * @param name		name to save the keymap under
+	 */
+	void saveMappings(ConfigManager::Domain *domain, const String& name);
 
 private:
 	friend struct Action;

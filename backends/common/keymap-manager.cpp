@@ -42,8 +42,10 @@ void KeymapManager::Domain::addKeymap(const String& name, Keymap *map) {
 
 void KeymapManager::Domain::deleteAllKeyMaps() {
 	KeymapMap::iterator it;
-	for (it = _keymaps.begin(); it != _keymaps.end(); it++)
+	for (it = _keymaps.begin(); it != _keymaps.end(); it++) {
+		//it->_value->saveMappings()
 		delete it->_value;
+	}
 	_keymaps.clear();
 	delete _defaultKeymap;
 }
@@ -109,50 +111,9 @@ void KeymapManager::registerGameKeymap(const String& name, Keymap *map) {
 void KeymapManager::initKeymap(ConfigManager::Domain *domain, 
 							   const String& name, 
 							   Keymap *map) {
-	if (!loadKeymap(domain, name, map))
+	map->loadMappings(domain, name, _hardwareKeys);
+	if (isMapComplete(map) == false)
 		automaticMap(map);
-}
-
-bool KeymapManager::loadKeymap(ConfigManager::Domain *domain, 
-							   const String& name, 
-							   Keymap *map) {
-	ConfigManager::Domain::iterator it;	
-	String prefix = "km_" + name + "_";
-	for (it = domain->begin(); it != domain->end(); it++) {
-		const String& key = it->_key;
-		if (!key.hasPrefix(prefix.c_str()))
-			continue;
-
-		// parse Action ID
-		const char *actionIdStart = key.c_str() + prefix.size();
-		char *err;
-		int32 actionId = (int32) strtol(actionIdStart, &err, 0);
-		if (err == actionIdStart) {
-			warning("'%s' is not a valid Action ID", err);
-			continue;
-		}
-		Action *ua = map->getAction(actionId);
-		if (!ua) {
-			warning("'%s' keymap does not contain Action with ID %d", 
-				name.c_str(), (int)actionId);
-			continue;
-		}
-
-		// parse HardwareKey ID
-		int32 hwKeyId = (int32) strtol(it->_value.c_str(), &err, 0);
-		if (err == it->_value.c_str()) {
-			warning("'%s' is not a valid HardwareKey ID", err);
-			continue;
-		}
-		const HardwareKey *hwKey = _hardwareKeys->findHardwareKey(hwKeyId);
-		if (!hwKey) {
-			warning("HardwareKey with ID %d not known", (int)hwKeyId);
-			continue;
-		}
-
-		ua->mapKey(hwKey);
-	}
-	return isMapComplete(map);
 }
 
 bool KeymapManager::isMapComplete(const Keymap *map) {
@@ -168,24 +129,6 @@ bool KeymapManager::isMapComplete(const Keymap *map) {
 		}
 	}
 	return allMapped || (numberMapped == _hardwareKeys->count());
-}
-
-void KeymapManager::saveKeymap(ConfigManager::Domain *domain, 
-							   const String& name, 
-							   const Keymap *map) {
-	const List<Action*>& actions = map->getActions();
-	List<Action*>::const_iterator it;
-	char buf[11];
-	for (it = actions.begin(); it != actions.end(); it++) {
-		String key("km_");
-		sprintf(buf, "%d", (*it)->id);
-		key += name + "_" + buf;
-		if ((*it)->getMappedKey())
-			sprintf(buf, "%d", (*it)->getMappedKey()->id);
-		else
-			strcpy(buf, "");
-		domain->setVal(key, buf);
-	}
 }
 
 void KeymapManager::automaticMap(Keymap *map) {

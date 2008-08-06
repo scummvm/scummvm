@@ -28,7 +28,6 @@
 
 #include "backends/common/hardware-key.h"
 #include "backends/common/keymap.h"
-#include "common/config-manager.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 
@@ -76,8 +75,6 @@ public:
 private:
 
 	void initKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
-	bool loadKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
-	void saveKeymap(ConfigManager::Domain *domain, const String& name, const Keymap *keymap);
 	void automaticMap(Keymap *map);
 	bool isMapComplete(const Keymap *map);
 
