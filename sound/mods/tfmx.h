@@ -34,29 +34,32 @@ namespace Audio {
 
 class Tfmx : public Paula {
 public:
-		//constructor with appropiate default values and initialization
+		//TODO:: Ctor + Dtor might need some repair/cleanup
 		Tfmx(bool stereo = false, int rate = 44100, int interruptFreq = 0);
 		~Tfmx();
-
-		//temporary loader function, will be moved to one below
+	
+		//TODO:: Will change to bool load(Common::SeekableReadStream &stream) 
+		//TODO:: Will change to bool loadSamples(Common::SeekableReadStream &stream)
 		void load();
 		void loadSamples();
 
-		//load function loads file from stream, performs checks, initializes some variables
-		bool load(Common::SeekableReadStream &stream);
-		bool loadSamples(Common::SeekableReadStream &stream);
-
-		//generic function to start playback
-		//will likely change to playSong(uint8 songNumber)
-		bool play();
+		//After the TFMX file is loaded, you chose which song to playback.
+		//The song will end automatically or when you call stop().
+		void playSong(uint8 songNumber);
+		void stop();
 		
+		//DEBUGGING FUNCTION:: Temporary function to test individual macros for playback
+		void testMacro(uint8 macroNumber);
+	
 protected:
+		//DEBUGGING::
+		bool _macroTest;
+	
 		//uint8 stream for whole MDAT file
 		uint8 *_data;      
 		uint32 _dataSize; 
 
-		//uint8 stream for sample data from SMPL file
-		uint8 *_sampleDataU;
+		//uint8 stream for whole SMPL file
 		int8 *_sampleData;
 		uint32 _sampleSize;
 
@@ -65,17 +68,18 @@ protected:
 		uint32 _patternTableOffset;
 		uint32 _macroTableOffset;
 
-		//addresses of patterns and macros in MDAT file
+		//addresses of patterns and macros from MDAT file
 		uint32 _patternPointers[128];
 		uint32 _macroPointers[128];  
 
 		//uint16 stream for current song trackstep
-		//need count and length to keep running tally
 		uint16 *_trackData;
 		uint32 _trackCount;
 		uint32 _trackLength;
+		bool _trackAdvance;
+		bool _trackEnd;
 		uint16 _tempo; //current value for tempo
-
+		
 		//note table
 		static const uint16 periods[]; 
 
@@ -86,95 +90,78 @@ protected:
 			uint16 tempoValue;
 		}_songs[32];
 		
-		//Note structure
-		//Will eliminate after revision and read these properties directly 
-		//into Macro structure and Channel structure
-		struct Note {
-			uint8 noteNumber;
-			uint8 macroNumber;
-			uint8 channelNumber;
-			uint8 volume;
-			uint8 wait;
-			uint8 type; //3 types of notes
-		};
-
-		//Pattern structure; contains note
+		//Pattern structure
 		struct Pattern {
 			uint32 *data;
-			uint8 number;
-			uint8 transpose;
-			uint32 count;
-			bool newFlag;
-			bool jumpFlag;
-			bool returnFlag;
-			Note note;
-			uint8 wait;
-			uint16 offset;
-			uint8 saveNumber1;
-			uint8 saveNumber2;
-			uint32 length;
+			uint32 patternCount;
+			uint32 patternLength;
+			uint8 patternWait;
+			uint8 patternTranspose;
+			bool newPattern;
+		//	bool patternEnd;
+		//	uint16 offset;
+		//	uint8 saveNumber1;
+		//	uint8 saveNumber2;
+		//	bool jumpFlag;
+		//	bool returnFlag;
 		//	bool loopFlag;
 		//	uint16 loopCount;
 		};
 
-		//Macro structure for macro data; very similiar to pattern data
+		//Macro structure
 		struct Macro {
 			uint32 *data;
-			uint32 count;
-			uint32 length;
-			bool newFlag;
-			//uint8 number;
-			//will need some other properties here
+			uint32 macroCount;
+			uint32 macroLength;
+			uint16 macroWait; //internal wait
+			//external note stuff here
+			uint8 noteNumber;
+			uint8 notePeriod;
+			uint8 noteVolume;
+			uint8 noteChannel;
+			uint8 noteType;
+			uint8 noteWait;  //external wait
 		};
 
-		//Sample structure; initialized by macro commands
-		struct Sample {
-			//int8 *data;
-			uint32 offset; //offset into sample file
-			uint32 length; //length of sample /number of bytes
-			bool onFlag;
-		};
-
-		//Track structure; contains pattern
-		//Setup as 8-track array, each track gets updated on interrupt
+		//Track structure
 		struct Track {
 			uint16 data;
-			bool updateFlag;
-			bool activeFlag;
-			Pattern pattern;
-			Macro macro;
-			Sample sample;
+			bool trackOn;
+			bool patternOn;
+			bool macroOn;
+			uint8 patternNumber;
+			uint8 macroNumber;
+			Pattern activePattern;
+			Macro activeMacro;
 		//	uint16 volume;
 		//	bool loopFlag;
 		//	uint16 loopCount;
 		}_tracks[8];
 		
 		//Channel structure
-		//TODO: Need to setup the nessecary information in channel to pass to PAULA via interrupt()
 		struct Channel {
 			uint8 period;
 			int8 volume;
+			uint32 sampleOffset;
+			uint32 sampleLength;
+			bool sampleOn;
 		}_channels[4];
-
-		//functions used in playback (in order by relationship)
-		void playSong(uint8 songNumber);
-		void updateTrackstep();
-		void updatePattern(uint8 trackNumber);
-		void updateNote(uint8 trackNumber);
-		void doMacros(uint8 trackNumber);
-		
-		//trackstep functions
-		void stopPlayer();
-		void setTempo();
-		void volumeSlide();
 
 		//PAULA Interrupt override
 		virtual void interrupt(void);
 
-		//Debugging function to dump information to console
-		void dumpTracks();
+		bool loadSong(uint8 songNumber);
+		void updateTrackstep();
+		void loadPattern(uint8 trackNumber, uint8 patternNumber);
+		void updatePattern(uint8 trackNumber);
+		void loadMacro(uint8 trackNumber, uint8 macroNumber);
+		void doMacro(uint8 trackNumber);
+		
+		//Trackstep functions
+		void setTempo();
+		void volumeSlide();
 
-};//End of TFMX class
-} // End of namespace Audio
+};//End of Tfmx class
+} //End of namespace Audio
 
 #endif

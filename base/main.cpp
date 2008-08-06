@@ -291,19 +291,20 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 	
+	//Tfmx test creation.
 	Audio::SoundHandle _handle;
 	Audio::Tfmx _aTfmx;
 	_aTfmx.load();
-	
-
+	_aTfmx.loadSamples();
+	//_aTfmx.playSong(0);
+	//_aTfmx.testMacro(9);
 
 	system.getMixer()->playInputStream( Audio::Mixer::kMusicSoundType, &_handle, &_aTfmx );
 	system.delayMillis( 999999 );
-	
+	//Tfmx test end.
 
 
 /*
-
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain()) {
 		launcherDialog(system);
