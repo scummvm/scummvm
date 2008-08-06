@@ -38,13 +38,13 @@ const uint16 Tfmx::periods[] =
 
 Tfmx::Tfmx(bool stereo, int rate, int interruptFreq)
 	: Paula(stereo, rate, interruptFreq) {
+		_data = 0;
+		_trackData = 0;
+		_sampleData = 0;
 } 
 Tfmx::~Tfmx() {
-	if (_data)
 		delete[] _data;
-	if (_trackData)
 		delete[] _trackData;
-	if (_sampleData)
 		delete[] _sampleData;
 }
 void Tfmx::playSong(uint8 songNumber){
