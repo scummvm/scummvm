@@ -228,11 +228,11 @@ int Engine::runDialog(Dialog &dialog) {
 	
 	pauseEngine(true);
 
-	dialog.runModal();
+	int result = dialog.runModal();
 
 	pauseEngine(false);
 
-	return 0;
+	return result;
 }
 
 void Engine::syncSoundSettings() {
