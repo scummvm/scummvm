@@ -449,7 +449,7 @@
 				size = '-1, 19'
 		/>
 		<widget name = 'ListWidget'
-				padding = '7, 5, 5, 5'
+				padding = '7, 5, 3, 3'
 		/>
 		<widget name = 'PopUpWidget'
 				padding = '7, 5, 0, 0'
