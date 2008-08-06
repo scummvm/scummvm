@@ -519,7 +519,7 @@
 		</layout>
 	</dialog>
 	
-	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList'>
+	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' direction = 'bottom2top'>
 			<layout type = 'horizontal' direction = 'right2left' padding = '16, 16, 16, 16'>
 				<widget name = 'Ok' 

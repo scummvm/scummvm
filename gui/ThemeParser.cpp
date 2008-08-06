@@ -493,6 +493,17 @@ bool ThemeParser::parserCallback_child(ParserNode *node) {
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"];
 	_theme->themeEval()->addDialog(var, node->values["overlays"]);
+	
+	if (node->values.contains("shading")) {
+		int shading = 0;
+		if (node->values["shading"] == "dim")
+			shading = 1;
+		else if (node->values["shading"] == "luminance")
+			shading = 2;
+		else return parserError("Invalid value for Dialog background shading.");
+		
+		_theme->themeEval()->setVar(var + ".Shading", shading);
+	}
 		
 	return true;
 }

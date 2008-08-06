@@ -436,6 +436,7 @@ protected:
 			XML_KEY(dialog)
 				XML_PROP(name, true)
 				XML_PROP(overlays, true)
+				XML_PROP(shading, false)
 				XML_KEY(layout)
 					XML_PROP(type, true)
 					XML_PROP(center, false)

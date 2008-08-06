@@ -214,7 +214,7 @@ void NewGui::redraw() {
 			_theme->updateScreen();
 
 		case kRedrawOpenDialog:
-			_theme->openDialog(true, GUI::Theme::kShadingDim);
+			_theme->openDialog(true, (Theme::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0));
 			_dialogStack.top()->drawDialog();
 			_theme->finishBuffering();
 			break;
