@@ -919,33 +919,40 @@ void LauncherDialog::editGame(int item) {
 }
 
 void LauncherDialog::loadGame(int item) {
-	int idx;
-	_loadDialog->setList(generateSavegameList(item));
-	idx = _loadDialog->runModal();
-	if (idx >= 0) {
-		ConfMan.setInt("save_slot", idx);
-		ConfMan.setActiveDomain(_domains[item]);
-		close();
-	}	
-}
-
-Common::StringList LauncherDialog::generateSavegameList(int item) {
 	String gameId = ConfMan.get("gameid", _domains[item]);
 	if (gameId.empty())
 		gameId = _domains[item];
-	
-	String description = _domains[item];
-	description.toLowercase();
-	
+
 	const EnginePlugin *plugin = 0;
 	GameDescriptor game = EngineMan.findGame(gameId, &plugin);
 	
-	SaveStateList saveList = (*plugin)->listSaves(description.c_str());
-	StringList saveNames;
-
-	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-		saveNames.push_back(x->description().c_str());
+	if (plugin) {
+		_loadDialog->setList(generateSavegameList(item, plugin));
+		int idx = _loadDialog->runModal();
+		if (idx >= 0) {
+			ConfMan.setInt("save_slot", idx);
+			ConfMan.setActiveDomain(_domains[item]);
+			close();
+		}
+	} else {
+		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
+		dialog.runModal();
 	}
+}
+
+Common::StringList LauncherDialog::generateSavegameList(int item, const EnginePlugin *plugin) {
+	String gameId = ConfMan.get("gameid", _domains[item]);
+	if (gameId.empty())
+		gameId = _domains[item];
+
+	String description = _domains[item];
+	description.toLowercase();
+	
+	StringList saveNames;
+	SaveStateList saveList = (*plugin)->listSaves(description.c_str());
+
+	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x)
+		saveNames.push_back(x->description().c_str());
 
 	return saveNames;
 }

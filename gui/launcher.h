@@ -75,7 +75,7 @@ protected:
 	void editGame(int item);
 	void loadGame(int item);
 	
-	StringList generateSavegameList(int item);
+	StringList generateSavegameList(int item, const EnginePlugin *plugin);
 
 	void selectGame(const String &name);
 };
