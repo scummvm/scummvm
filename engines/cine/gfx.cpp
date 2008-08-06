@@ -617,6 +617,11 @@ void FWRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	fHandle.write(_bgName, 13);
 }
 
+const char *FWRenderer::getBgName(uint idx) const {
+	assert(idx == 0);
+	return _bgName;
+}
+
 /*! \brief Restore active and backup palette from save
  * \param fHandle Savefile open for reading
  */
@@ -1330,6 +1335,11 @@ void OSRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	for (int i = 0; i < 8; i++) {
 		fHandle.write(_bgTable[i].name, 13);
 	}
+}
+
+const char *OSRenderer::getBgName(uint idx) const {
+	assert(idx < 9);
+	return _bgTable[idx].name;
 }
 
 /*! \brief Fade to black

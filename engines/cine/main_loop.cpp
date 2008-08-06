@@ -247,6 +247,20 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	}
 
 	do {
+		// HACK: Force amount of oxygen left to maximum during Operation Stealth's first arcade sequence.
+		//       This makes it possible to pass the arcade sequence for now.
+		// FIXME: Remove the hack and make the first arcade sequence normally playable.
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			Common::String bgName(renderer->getBgName());
+			// Check if the background is one of the three backgrounds
+			// that are only used during the first arcade sequence.
+			if (bgName == "28.PI1" || bgName == "29.PI1" || bgName == "30.PI1") {
+				static const uint oxygenObjNum = 202, maxOxygen = 264;
+				// Force the amount of oxygen left to the maximum.
+				objectTable[oxygenObjNum].x = maxOxygen;
+			}
+		}
+
 		stopMusicAfterFadeOut();
 		di = executePlayerInput();
 		
