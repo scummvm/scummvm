@@ -86,6 +86,8 @@ public:
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
+	int modifyGameSpeed(int speedChange);
+	int getTimerDelay() const;
 
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
@@ -109,6 +111,7 @@ private:
 	void readVolCnf();
 
 	bool _preLoad;
+	int _timerDelayMultiplier;
 };
 
 extern CineEngine *g_cine;

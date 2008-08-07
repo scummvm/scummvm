@@ -105,8 +105,22 @@ int CineEngine::go() {
 	return 0;
 }
 
+int CineEngine::getTimerDelay() const {
+	return (10923000 * _timerDelayMultiplier) / 1193180;
+}
+
+/*! \brief Modify game speed
+ * \param speedChange Negative values slow game down, positive values speed it up, zero does nothing
+ * \return Timer delay multiplier's value after the game speed change
+ */
+int CineEngine::modifyGameSpeed(int speedChange) {
+	// If we want more speed we decrement the timer delay multiplier and vice versa.
+	_timerDelayMultiplier = CLIP(_timerDelayMultiplier - speedChange, 1, 50);
+	return _timerDelayMultiplier;
+}
 
 void CineEngine::initialize() {
+	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());

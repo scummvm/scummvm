@@ -125,6 +125,14 @@ static void processEvent(Common::Event &event) {
 				g_cine->makeSystemMenu();
 			}
 			break;
+		case Common::KEYCODE_MINUS:
+		case Common::KEYCODE_KP_MINUS:
+			g_cine->modifyGameSpeed(-1); // Slower
+			break;
+		case Common::KEYCODE_PLUS:
+		case Common::KEYCODE_KP_PLUS:
+			g_cine->modifyGameSpeed(+1); // Faster
+			break;
 		default:
 			lastKeyStroke = event.kbd.keycode;
 			break;
@@ -138,7 +146,7 @@ static void processEvent(Common::Event &event) {
 void manageEvents() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 
-	uint32 nextFrame = g_system->getMillis() + kGameTimerDelay * kGameSpeed;
+	uint32 nextFrame = g_system->getMillis() + g_cine->getTimerDelay();
 	do {
 		Common::Event event;
 		while (eventMan->pollEvent(event)) {
