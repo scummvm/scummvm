@@ -6,15 +6,18 @@ import re
 def main():
 	theme_file = open(sys.argv[1], "r")
 	def_file = open("default.inc", "w")
+	comm = re.compile("\/\*(.*?)\*\/", re.DOTALL)
 	
 	try:
-		output = "\""
+		output = ""
 		for line in theme_file:
-			if (len(line)):
-				output += (line.rstrip("\n\r\t ").lstrip() + " ")
+			output +=  line.rstrip("\r\n\t ").lstrip() + " \n"
 		
-		output = re.sub("\/\*(.*?)\*\/", "", output).replace("\t", " ").replace("  ", " ")
-		def_file.write(output + "\"\n")
+		output = re.sub(comm, "", output).replace("\t", " ").replace("  ", " ").splitlines()
+		
+		for line in output:
+			if line and not line.isspace():
+				def_file.write("\"" + line + "\"\n") 
 	finally:
 		theme_file.close()
 		def_file.close()
