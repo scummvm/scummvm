@@ -174,6 +174,7 @@ protected:
 		kTextDataInverted,
 		kTextDataButton,
 		kTextDataButtonHover,
+		kTextDataNormalFont,
 		kTextDataMAX
 	};
 	
@@ -264,10 +265,30 @@ public:
 	/**
 	 *	FONT MANAGEMENT METHODS
 	 */
-	const Graphics::Font *getFont(FontStyle font) const { return _font; }
-	int getFontHeight(FontStyle font = kFontStyleBold) const { if (_initOk) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const Common::String &str, FontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
-	int getCharWidth(byte c, FontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
+	
+	TextData fontStyleToData(FontStyle font) const {
+		switch (font) {
+			case kFontStyleNormal:
+				return kTextDataNormalFont;
+			
+			default:
+				return kTextDataDefault;
+		}
+	}
+	
+	const Graphics::Font *getFont(FontStyle font) const { return _texts[fontStyleToData(font)]->_fontPtr; }
+	
+	int getFontHeight(FontStyle font = kFontStyleBold) const { 
+		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getFontHeight() : 0;
+	}
+	
+	int getStringWidth(const Common::String &str, FontStyle font) const {
+		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
+	}
+	
+	int getCharWidth(byte c, FontStyle font) const { 
+		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0; 
+	}
 
 
 	/**
@@ -372,7 +393,7 @@ public:
 	 *	@param cached Whether this DD set will be cached beforehand.
 	 */ 
 	bool addDrawData(const Common::String &data, bool cached);
-	bool addFont(const Common::String &fontName, int r, int g, int b);
+	bool addFont(const Common::String &fontName, const Common::String &file, int r, int g, int b);
 	
 	/**
 	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the 
@@ -391,7 +412,7 @@ public:
 	 *	this checks if the renderer is initialized AND if the theme
 	 *	is loaded.
 	 */
-	bool ready() {
+	bool ready() const {
 		return _initOk && _themeOk;
 	}
 

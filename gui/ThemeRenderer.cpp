@@ -89,7 +89,8 @@ const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
 	{kTextDataDisabled, "text_disabled"},
 	{kTextDataInverted, "text_inverted"},
 	{kTextDataButton, "text_button"},
-	{kTextDataButtonHover, "text_button_hover"}
+	{kTextDataButtonHover, "text_button_hover"},
+	{kTextDataNormalFont, "text_normal"}
 };
 
 
@@ -232,7 +233,7 @@ bool ThemeRenderer::addTextData(const Common::String &drawDataId, const Common::
 	return true;
 }
 
-bool ThemeRenderer::addFont(const Common::String &fontId, int r, int g, int b) {
+bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &file, int r, int g, int b) {
 	TextData textId = getTextDataId(fontId);
 	
 	if (textId == -1)
@@ -243,8 +244,22 @@ bool ThemeRenderer::addFont(const Common::String &fontId, int r, int g, int b) {
 		
 	_texts[textId] = new TextDrawData;
 	
-	// TODO: Allow the user to specify the font he wants, instead of choosing based on resolution
-	_texts[textId]->_fontPtr = _font;
+//	_texts[textId]->_fontPtr = _font;
+	
+	if (file == "default") {
+		_texts[textId]->_fontPtr = _font;
+	} else {
+		_texts[textId]->_fontPtr = FontMan.getFontByName(file);
+
+		if (!_texts[textId]->_fontPtr) {
+			_texts[textId]->_fontPtr = loadFont(file.c_str());
+			
+			if (!_texts[textId]->_fontPtr)
+				error("Couldn't load %s font '%s'", fontId.c_str(), file.c_str());
+
+			FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+		}
+	}
 	
 	_texts[textId]->_color.r = r;
 	_texts[textId]->_color.g = g;
@@ -552,8 +567,12 @@ void ThemeRenderer::drawDialogBackground(const Common::Rect &r, uint16 hints, Wi
 void ThemeRenderer::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state) {
 	if (!ready())
 		return;
-
-	debugWidgetPosition("Caret", r);
+	
+	if (erase) {
+		restoreBackground(r);
+		addDirtyRect(r);
+	} else
+		queueDD(kDDCaret, r);
 }
 
 void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
@@ -636,19 +655,28 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align);
 		return;
 	}
+	
+	switch (font) {
+		case kFontStyleNormal:
+			queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align);
+			return;
+			
+		default:
+			break;
+	}
 
 	switch (state) {
 		case kStateDisabled:
 			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align);
-			break;
+			return;
 			
 		case kStateHighlight:
 			queueDDText(kTextDataHover, r, str, true, useEllipsis, align);
-			break;
+			return;
 		
 		case kStateEnabled:
 			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align);
-			break;
+			return;
 	}
 }
 

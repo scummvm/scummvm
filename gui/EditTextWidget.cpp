@@ -27,6 +27,8 @@
 #include "gui/eval.h"
 #include "gui/newgui.h"
 
+#include "gui/ThemeEval.h"
+
 namespace GUI {
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
@@ -52,10 +54,10 @@ void EditTextWidget::setEditString(const String &str) {
 }
 
 void EditTextWidget::reflowLayout() {
-	_leftPadding = g_gui.evaluator()->getVar("EditTextWidget.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("EditTextWidget.rightPadding", 0);
+	_leftPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Left", 0);
+	_rightPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Right", 0);
 
-	_font = (Theme::FontStyle)g_gui.evaluator()->getVar("EditTextWidget.font", Theme::kFontStyleNormal);
+	_font = (Theme::FontStyle)g_gui.xmlEval()->getVar("EditTextWidget.Font", Theme::kFontStyleNormal);
 
 	EditableWidget::reflowLayout();
 }

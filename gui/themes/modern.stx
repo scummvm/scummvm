@@ -59,28 +59,32 @@
 
 	<fonts>
 		<font	id = 'text_default'
-				type = 'default'
+				file = 'default'
 				color = 'black'
 		/>
 		<font	id = 'text_hover'
-				type = 'default'
+				file = 'default'
 				color = 'bgreen'
 		/>
 		<font	id = 'text_disabled'
-				type = 'default'
+				file = 'default'
 				color = '128, 128, 128'
 		/>
 		<font	id = 'text_inverted'
-				type = 'default'
+				file = 'default'
 				color = '0, 0, 0'
 		/>
 		<font	id = 'text_button'
-				type = 'default'
+				file = 'default'
 				color = 'white'
 		/>
 		<font	id = 'text_button_hover'
-				type = 'default'
+				file = 'default'
 				color = 'blandyellow'
+		/>
+		<font	id = 'text_normal'
+				file = 'helvr12-l1.bdf'
+				color = 'black'
 		/>
 	</fonts>
 
@@ -298,10 +302,24 @@
 				horizontal_align = 'right'
 		/>
 	</drawdata>
+
+	<drawdata id = 'widget_textedit' cache = false>
+		<drawstep	func = 'roundedsq'
+					fill = 'foreground'
+					radius = 4
+					fg_color = 'blandyellow'
+					shadow = 0
+					bevel = 1
+					bevel_color = 'shadowcolor'
+		/>
+	</drawdata>
 	
-/* Tanoku-TODO: text editing width + CARET!
-/*	<drawdata id = 'widget_textedit' cache = false>
-		<drawstep	func = 'roundedsq' */
+	<drawdata id = 'caret' cache = false>
+		<drawstep	func = 'square'
+					fill = 'foreground'
+					fg_color = 'black'
+		/>
+	</drawdata>
 
 	<drawdata id = 'default_bg' cache = false>
 		<drawstep	func = 'roundedsq'
@@ -435,6 +453,7 @@
 		
 		<def var = 'ListWidget.hlLeftPadding' value = '8'/>
 		<def var = 'ListWidget.hlRightPadding' value = '16'/>
+		<def var = 'PopUpWidget.labelSpacing' value = '10' />
 
 		<widget name = 'OptionsLabel'
 				size = '110, Globals.Line.Height'

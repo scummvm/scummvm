@@ -30,6 +30,8 @@
 #include "gui/PopUpWidget.h"
 #include "engines/engine.h"
 
+#include "gui/ThemeEval.h"
+
 namespace GUI {
 
 //
@@ -380,9 +382,9 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void PopUpWidget::reflowLayout() {
-	_leftPadding = g_gui.evaluator()->getVar("PopUpWidget.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("PopUpWidget.rightPadding", 0);
-	_labelSpacing = g_gui.evaluator()->getVar("PopUpWidget.labelSpacing", 0);
+	_leftPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Left", 0);
+	_rightPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Right", 0);
+	_labelSpacing = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelSpacing", 10);
 
 	Widget::reflowLayout();
 }

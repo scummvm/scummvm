@@ -135,7 +135,7 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
 		return parserError("Error when parsing color value for font definition.");
 	
-	if (!_theme->addFont(node->values["id"], red, green, blue))
+	if (!_theme->addFont(node->values["id"], node->values["file"], red, green, blue))
 		return parserError("Error when loading Font in theme engine.");
 		
 	return true;

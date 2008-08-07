@@ -343,7 +343,7 @@ protected:
 			XML_KEY(fonts)
 				XML_KEY(font)
 					XML_PROP(id, true)
-					XML_PROP(type, true)
+					XML_PROP(file, true)
 					XML_PROP(color, true)
 				KEY_END()
 			KEY_END()
