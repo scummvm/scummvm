@@ -718,9 +718,9 @@ void ThemeRenderer::updateScreen() {
 		
 	renderDirtyScreen();
 
-// 	_vectorRenderer->fillSurface();
-// 	themeEval()->debugDraw(_screen, _font);
-// 	_vectorRenderer->copyWholeFrame(_system);
+//	_vectorRenderer->fillSurface();
+//	themeEval()->debugDraw(_screen, _font);
+//	_vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {

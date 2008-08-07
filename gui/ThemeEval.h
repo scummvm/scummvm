@@ -365,8 +365,8 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts["Dialog.GameOptions"]->debugDraw(screen, font);
-		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
+		_layouts["Dialog.ScummConfig"]->debugDraw(screen, font);
+//		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
 	}
 	
 private:

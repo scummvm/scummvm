@@ -64,8 +64,17 @@ void ThemeLayoutMain::reflowLayout() {
 		_children[0]->setHeight(_h);
 		_children[0]->reflowLayout();
 		
-//		_children[0]->setX(_x);
-//		_children[0]->setY(_y);
+		if (_w == -1)
+			_w = _children[0]->getWidth();
+			
+		if (_h == -1)
+			_h = _children[0]->getHeight();
+		
+		if (_y == -1)
+			_y = (g_system->getOverlayHeight() >> 1) - (_h >> 1);
+		
+		if (_x == -1)
+			_x = (g_system->getOverlayWidth() >> 1) - (_w >> 1);
 	}
 }
 
@@ -171,13 +180,15 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 
 void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled) {
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	
-	if (overlays == "screen" || overlays.empty()) {
+	if (overlays == "screen") {
 		x = y = 0;
 		w = g_system->getOverlayWidth();
 		h = g_system->getOverlayHeight();
-	} else if (!getWidgetData(overlays, x, y, w, h)) {
+	} else if (overlays == "screen_center") {
+		x = y = w = h = -1;
+	} else if (!getWidgetData(overlays, x, y, (uint16&)w, (uint16&)h)) {
 		error("Error when loading dialog position for '%s'", overlays.c_str());
 	}
 	

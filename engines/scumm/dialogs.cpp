@@ -443,20 +443,20 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 }
 
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
-	: ScummDialog("scummmain"), _vm(scumm) {
+	: ScummDialog("ScummMain"), _vm(scumm) {
 
-	new GUI::ButtonWidget(this, "scummmain_resume", "Resume", kPlayCmd, 'P');
+	new GUI::ButtonWidget(this, "ScummMain.Resume", "Resume", kPlayCmd, 'P');
 
-	new GUI::ButtonWidget(this, "scummmain_load", "Load", kLoadCmd, 'L');
-	new GUI::ButtonWidget(this, "scummmain_save", "Save", kSaveCmd, 'S');
+	new GUI::ButtonWidget(this, "ScummMain.Load", "Load", kLoadCmd, 'L');
+	new GUI::ButtonWidget(this, "ScummMain.Save", "Save", kSaveCmd, 'S');
 
-	new GUI::ButtonWidget(this, "scummmain_options", "Options", kOptionsCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummMain.Options", "Options", kOptionsCmd, 'O');
 #ifndef DISABLE_HELP
-	new GUI::ButtonWidget(this, "scummmain_help", "Help", kHelpCmd, 'H');
+	new GUI::ButtonWidget(this, "ScummMain.Help", "Help", kHelpCmd, 'H');
 #endif
-	new GUI::ButtonWidget(this, "scummmain_about", "About", kAboutCmd, 'A');
+	new GUI::ButtonWidget(this, "ScummMain.About", "About", kAboutCmd, 'A');
 
-	new GUI::ButtonWidget(this, "scummmain_quit", "Quit", kQuitCmd, 'Q');
+	new GUI::ButtonWidget(this, "ScummMain.Quit", "Quit", kQuitCmd, 'Q');
 
 	//
 	// Create the sub dialog(s)
@@ -576,29 +576,29 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog()
-	: GUI::OptionsDialog("", "scummconfig") {
+	: GUI::OptionsDialog("", "ScummConfig") {
 
 	//
 	// Sound controllers
 	//
 
-	addVolumeControls(this, "scummconfig_");
+	addVolumeControls(this, "ScummConfig.");
 
 	//
 	// Some misc options
 	//
 
 	// SCUMM has a talkspeed range of 0-9
-	addSubtitleControls(this, "scummconfig_", 9);
+	addSubtitleControls(this, "ScummConfig.", 9);
 
 	//
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "scummconfig_ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "scummconfig_cancel", "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
 #ifdef SMALL_SCREEN_DEVICE
-	new GUI::ButtonWidget(this, "scummconfig_keys", "Keys", kKeysCmd, 'K');
+	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE

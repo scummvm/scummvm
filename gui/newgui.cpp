@@ -60,18 +60,7 @@ void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
 			warning("Could not load widget position for '%s'", _name.c_str());
-			
-//			if ((_x = g_gui.evaluator()->getVar(_name + ".x")) == EVAL_UNDEF_VAR)
-//				error("Undefined variable %s.x", _name.c_str());
-//			if ((_y = g_gui.evaluator()->getVar(_name + ".y")) == EVAL_UNDEF_VAR)
-//				error("Undefined variable %s.y", _name.c_str());
-//			_w = g_gui.evaluator()->getVar(_name + ".w");
-//			_h = g_gui.evaluator()->getVar(_name + ".h");
-			_w = _x = _y = _h = 32;
-			_debugVisible = false;
 		}
-		
-		_debugVisible = true;
 
 		if (_x < 0)
 			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);

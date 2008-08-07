@@ -565,9 +565,13 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 bool ThemeParser::parserCallback_space(ParserNode *node) {
 	int size = -1;
 	
-	if (node->values.contains("size"))
-		if (!parseIntegerKey(node->values["size"].c_str(), 1, &size))
+	if (node->values.contains("size")) {
+		if (_theme->themeEval()->hasVar(node->values["size"]))
+			size = _theme->themeEval()->getVar(node->values["size"]);
+			
+		else if (!parseIntegerKey(node->values["size"].c_str(), 1, &size))
 			return parserError("Invalid value for Spacing size.");
+	}
 			
 	_theme->themeEval()->addSpace(size);
 	return true;
