@@ -143,7 +143,7 @@ protected:
 };
 
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
-	: OptionsDialog(domain, "gameoptions") {
+	: OptionsDialog(domain, "GameOptions") {
 
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
@@ -159,7 +159,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// GUI:  Add tab widget
-	TabWidget *tab = new TabWidget(this, "gameoptions_tabwidget");
+	TabWidget *tab = new TabWidget(this, "GameOptions.TabWidget");
 	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
@@ -168,15 +168,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("Game");
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "gameoptions_id", "ID:");
-	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
+	new StaticTextWidget(tab, "GameOptions_Game.Id", "ID:");
+	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "gameoptions_name", "Name:");
-	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
+	new StaticTextWidget(tab, "GameOptions_Game.Name", "Name:");
+	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language:", labelWidth);
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.Lang", "Language:", labelWidth);
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -185,7 +185,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform:", labelWidth);
+	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.Platform", "Platform:", labelWidth);
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -198,37 +198,37 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab("Graphics");
 
-	_globalGraphicsOverride = new CheckboxWidget(tab, "gameoptions_graphicsCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
+	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
 
-	addGraphicControls(tab, "gameoptions_");
+	addGraphicControls(tab, "GameOptions_Graphics.");
 
 	//
 	// 4) The audio tab
 	//
 	tab->addTab("Audio");
 
-	_globalAudioOverride = new CheckboxWidget(tab, "gameoptions_audioCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
+	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
 
-	addAudioControls(tab, "gameoptions_");
-	addSubtitleControls(tab, "gameoptions_");
+	addAudioControls(tab, "GameOptions_Audio.");
+	addSubtitleControls(tab, "GameOptions_Audio.");
 
 	//
 	// 5) The volume tab
 	//
 	tab->addTab("Volume");
 
-	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
-	addVolumeControls(tab, "gameoptions_");
+	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
 	// 6) The MIDI tab
 	//
 	tab->addTab("MIDI");
 
-	_globalMIDIOverride = new CheckboxWidget(tab, "gameoptions_midiCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
 
-	addMIDIControls(tab, "gameoptions_");
+	addMIDIControls(tab, "GameOptions_MIDI.");
 
 	//
 	// 2) The 'Path' tab
@@ -239,29 +239,29 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path:", kCmdGameBrowser, 0);
-	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
+	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", "Game Path:", kCmdGameBrowser, 0);
+	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
-	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath);
+	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", "Extra Path:", kCmdExtraBrowser, 0);
+	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath);
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "gameoptions_savepath", "Save Path:", kCmdSaveBrowser, 0);
-	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
+	new ButtonWidget(tab, "GameOptions_Paths.Savepath", "Save Path:", kCmdSaveBrowser, 0);
+	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath);
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
-
+	
 	// Activate the first tab
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "gameoptions_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "gameoptions_ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "GameOptions.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "GameOptions.Ok", "OK", kOKCmd, 0);
 }
 
 void EditGameDialog::reflowLayout() {

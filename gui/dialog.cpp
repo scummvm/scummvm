@@ -150,7 +150,8 @@ void Dialog::drawDialog() {
 	// Draw all children
 	Widget *w = _firstWidget;
 	while (w) {
-		if (w->_debugVisible) w->draw();
+		//if (w->_debugVisible) 
+		w->draw();
 		w = w->_next;
 	}
 }

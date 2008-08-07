@@ -60,6 +60,13 @@ public:
 		
 	virtual void reflowLayout() = 0;
 	
+	virtual void resetLayout() {
+		_x = 0;
+		_y = 0;
+		_w = _defaultW;
+		_h = _defaultH;
+	}
+	
 	void addChild(ThemeLayout *child) { _children.push_back(child); }
 	
 	void setPadding(int8 left, int8 right, int8 top, int8 bottom) {
@@ -154,8 +161,27 @@ public:
 		return true;
 	}
 	
+	virtual ThemeLayout *buildCopy() = 0;
+	
+	void importLayout(ThemeLayout *layout) {
+		assert(layout->getLayoutType() == kLayoutMain);
+		
+		if (layout->_children.size() == 0)
+			return;
+		
+		layout = layout->_children[0];
+		
+		if (getLayoutType() == layout->getLayoutType()) {
+			for (uint i = 0; i < layout->_children.size(); ++i)
+				_children.push_back(layout->_children[i]->buildCopy()); 
+		} else {
+			_children.push_back(layout->buildCopy()); 
+		}
+	}
+	
 protected:
 	int16 _x, _y, _w, _h;
+	int16 _defaultW, _defaultH;
 	int8 _paddingTop, _paddingBottom, _paddingLeft, _paddingRight;
 	int8 _spacing;
 	Common::Array<ThemeLayout*> _children;
@@ -167,10 +193,28 @@ protected:
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain() : ThemeLayout(0, "") {}
+	ThemeLayoutMain(int16 x, int16 y, int16 w, int16 h) : ThemeLayout(0, "") {
+		_w = _defaultW = w;
+		_h = _defaultH = h;
+		_x = _defaultX = x;
+		_y = _defaultY = y;
+	}
 	void reflowLayout();
+	
+	void resetLayout() {
+		ThemeLayout::resetLayout();
+		_x = _defaultX;
+		_y = _defaultY;
+	}
+	
 	const char *getName() { return "Global Layout"; }
 	LayoutType getLayoutType() { return kLayoutMain; }
+	
+	ThemeLayout *buildCopy() { assert(!"Do not copy Main Layouts!"); return 0; }
+	
+protected:
+	int16 _defaultX;
+	int16 _defaultY;
 };	
 
 class ThemeLayoutVertical : public ThemeLayout {
@@ -185,6 +229,16 @@ public:
 	void reflowLayout();
 	const char *getName() { return "Vertical Layout"; }
 	LayoutType getLayoutType() { return kLayoutVertical; }
+	
+	
+	ThemeLayout *buildCopy() { 
+		ThemeLayoutVertical *n = new ThemeLayoutVertical(*this);
+		
+		for (uint i = 0; i < n->_children.size(); ++ i)
+			n->_children[i] = n->_children[i]->buildCopy();
+		
+		return n;
+	}
 };
 
 class ThemeLayoutHorizontal : public ThemeLayout {
@@ -199,25 +253,40 @@ public:
 	void reflowLayout();
 	const char *getName() { return "Horizontal Layout"; }
 	LayoutType getLayoutType() { return kLayoutHorizontal; }
+	
+	ThemeLayout *buildCopy() { 
+		ThemeLayoutHorizontal *n = new ThemeLayoutHorizontal(*this);
+		
+		for (uint i = 0; i < n->_children.size(); ++ i)
+			n->_children[i] = n->_children[i]->buildCopy();
+		
+		return n;
+	}
 };
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name) : ThemeLayout(p, name) {}
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h) : ThemeLayout(p, name) {
+		_w = _defaultW = w;
+		_h = _defaultH = h;
+	}
+	
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
+	
+	ThemeLayout *buildCopy() { return new ThemeLayoutWidget(*this); }
 };
 
 class ThemeLayoutSpacing : public ThemeLayout {
 public:
 	ThemeLayoutSpacing(ThemeLayout *p, int size) : ThemeLayout(p, "") {
 		if (p->getLayoutType() == kLayoutHorizontal) {
-			_w = size;
-			_h = 1;
+			_w = _defaultW = size;
+			_h = _defaultH = 1;
 		} else if (p->getLayoutType() == kLayoutVertical) {
-			_w = 1;
-			_h = size;
+			_w = _defaultW = 1;
+			_h = _defaultH = size;
 		}
 	}
 	
@@ -225,6 +294,8 @@ public:
 	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
 	const char *getName() { return "SPACE"; }
+	
+	ThemeLayout *buildCopy() { return new ThemeLayoutSpacing(*this); }
 };
 	
 class ThemeEval {
@@ -238,7 +309,7 @@ public:
 	
 	int getVar(const Common::String &s) {
 		if (!_vars.contains(s)) {
-			warning("Missing variable: '%s'", s.c_str());
+			error("CRITICAL: Missing variable: '%s'", s.c_str());
 			return -13375; //EVAL_UNDEF_VAR
 		} 
 		
@@ -246,21 +317,17 @@ public:
 	}
 	
 	int getVar(const Common::String &s, int def) {
-		if (_vars.contains(s))
-			return _vars[s];
-		
-		warning("Returning default value %d for '%s'", def, s.c_str());
-		return def;
-//		return (_vars.contains(s)) ? _vars[s] : def;
+		return (_vars.contains(s)) ? _vars[s] : def;
 	}
 	
 	void setVar(const String &name, int val) { _vars[name] = val; }
 	
 	bool hasVar(const Common::String &name) { return _vars.contains(name); }
 	
-	void addDialog(const Common::String &name, const Common::String &overlays);
+	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true);
 	void addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center = false);
-	void addWidget(const Common::String &name, int w, int h, const Common::String &type);
+	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true);
+	bool addImportedLayout(const Common::String &name);
 	void addSpace(int size);
 	
 	void addPadding(int16 l, int16 r, int16 t, int16 b) {
@@ -268,7 +335,7 @@ public:
 	}
 	
 	void closeLayout() { _curLayout.pop(); }
-	void closeDialog() { _curLayout.pop()->reflowLayout(); }
+	void closeDialog() { _curLayout.pop()->reflowLayout(); _curDialog.clear(); }
 	
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 		Common::StringTokenizer tokenizer(widget, ".");
@@ -298,14 +365,15 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts["Dialog.GlobalOptions"]->debugDraw(screen, font);
-		_layouts["Dialog.GlobalOptions_Graphics"]->debugDraw(screen, font);
+		_layouts["Dialog.GameOptions"]->debugDraw(screen, font);
+		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
 	}
 	
 private:
 	VariablesMap _vars;
 	LayoutsMap _layouts;
 	Common::Stack<ThemeLayout*> _curLayout;
+	Common::String _curDialog;
 };
 
 

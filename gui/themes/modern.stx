@@ -706,4 +706,111 @@
 			/>
 		</layout>
 	</dialog>
+	
+	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' direction = 'bottom2top' spacing = '16'>
+			<layout type = 'horizontal' direction = 'right2left' padding = '16, 16, 16, 16'>
+				<widget name = 'Ok' 
+						type = 'Button'
+				/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<space/>
+			</layout>
+			<widget name = 'TabWidget'/>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_Graphics' />
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_Audio' />
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_MIDI' />
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_Volume' />
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_Game' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+				<widget name = 'Id'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'Domain'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+				<widget name = 'Name'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'Desc'
+						type = 'PopUp'
+				/>
+			</layout>
+			<widget name = 'Lang'
+					type = 'PopUp'
+			/>
+			<widget name = 'Platform'
+					type = 'PopUp'
+			/>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_Paths' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
+				<widget name = 'Savepath'
+						type = 'Button'
+				/>
+				<widget name = 'SavepathText'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
+				<widget name = 'Extrapath'
+						type = 'Button'
+				/>
+				<widget name = 'ExtrapathText'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
+				<widget name = 'Gamepath'
+						type = 'Button'
+				/>
+				<widget name = 'GamepathText'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
 </layout_info>

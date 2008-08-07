@@ -437,17 +437,24 @@ protected:
 				XML_PROP(name, true)
 				XML_PROP(overlays, true)
 				XML_PROP(shading, false)
+				XML_PROP(enabled, false)
 				XML_KEY(layout)
 					XML_PROP(type, true)
 					XML_PROP(center, false)
 					XML_PROP(direction, false)
 					XML_PROP(padding, false)
 					XML_PROP(spacing, false)
+					
+					XML_KEY(import)
+						XML_PROP(layout, true)
+					KEY_END()
+					
 					XML_KEY(widget)
 						XML_PROP(name, true)
 						XML_PROP(width, false)
 						XML_PROP(height, false)
 						XML_PROP(type, false)
+						XML_PROP(enabled, false)
 					KEY_END()
 					
 					XML_KEY(space)
@@ -481,6 +488,7 @@ protected:
 	bool parserCallback_child(ParserNode *node);
 	bool parserCallback_layout(ParserNode *node);
 	bool parserCallback_space(ParserNode *node);
+	bool parserCallback_import(ParserNode *node);
 	
 	bool closedKeyCallback(ParserNode *node);
 	

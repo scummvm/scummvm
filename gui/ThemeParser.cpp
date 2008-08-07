@@ -458,6 +458,14 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		var = node->values["name"];
 		int width = -1;
 		int height = -1;
+		bool enabled = true;
+
+		if (node->values.contains("enabled")) {
+			if (node->values["enabled"] == "false")
+				enabled = false;
+			else if (node->values["enabled"] != "true")
+				return parserError("Invalid value for Widget enabling (expecting true/false)");
+		}
 		
 		if (node->values.contains("width")) {
 			if (_theme->themeEval()->hasVar(node->values["width"]) == true)
@@ -475,7 +483,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Corrupted height value in key for %s", var.c_str());
 		}
 		
-		_theme->themeEval()->addWidget(var, width, height, node->values["type"]);	
+		_theme->themeEval()->addWidget(var, width, height, node->values["type"], enabled);	
 	}
 
 	return true;
@@ -492,7 +500,16 @@ bool ThemeParser::parserCallback_child(ParserNode *node) {
 
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"];
-	_theme->themeEval()->addDialog(var, node->values["overlays"]);
+	bool enabled = true;
+	
+	if (node->values.contains("enabled")) {
+		if (node->values["enabled"] == "false")
+			enabled = false;
+		else if (node->values["enabled"] != "true")
+			return parserError("Invalid value for Dialog enabling (expecting true/false)");
+	}
+	
+	_theme->themeEval()->addDialog(var, node->values["overlays"], enabled);
 	
 	if (node->values.contains("shading")) {
 		int shading = 0;
@@ -505,6 +522,13 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 		_theme->themeEval()->setVar(var + ".Shading", shading);
 	}
 		
+	return true;
+}
+
+bool ThemeParser::parserCallback_import(ParserNode *node) {
+	
+	if (!_theme->themeEval()->addImportedLayout(node->values["layout"]))
+		return parserError("Error when importing external layout");
 	return true;
 }
 
@@ -535,8 +559,6 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		_theme->themeEval()->addPadding(paddingL, paddingR, paddingT, paddingB);
 	}
 	
-	
-
 	return true;
 }
 

@@ -28,6 +28,8 @@
 #include "gui/newgui.h"
 #include "gui/eval.h"
 
+#include "gui/ThemeEval.h"
+
 namespace GUI {
 
 enum {
@@ -55,14 +57,14 @@ void TabWidget::init() {
 	_activeTab = -1;
 	_firstVisibleTab = 0;
 
-	_tabWidth = g_gui.evaluator()->getVar("TabWidget.tabWidth");
-	_tabHeight = g_gui.evaluator()->getVar("TabWidget.tabHeight");
-	_titleVPad = g_gui.evaluator()->getVar("TabWidget.titleVPad");
+	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
+	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
-	_butRP = g_gui.evaluator()->getVar("TabWidget.navButtonRightPad", 0);
-	_butTP = g_gui.evaluator()->getVar("TabWidget.navButtonTopPad", 0);
-	_butW = g_gui.evaluator()->getVar("TabWidget.navButtonW", 10);
-	_butH = g_gui.evaluator()->getVar("TabWidget.navButtonH", 10);
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.navButtonPadding.Right", 0);
+	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
+	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
+	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
@@ -96,7 +98,7 @@ int TabWidget::addTab(const String &title) {
 
 	int numTabs = _tabs.size();
 
-	if (g_gui.evaluator()->getVar("TabWidget.tabWidth") == 0) {
+	if (g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width") == 0) {
 		if (_tabWidth == 0)
 			_tabWidth = 40;
 		// Determine the new tab width
@@ -216,9 +218,9 @@ void TabWidget::reflowLayout() {
 		}
 	}
 
-	_tabHeight = g_gui.evaluator()->getVar("TabWidget.tabHeight");
-	_tabWidth = g_gui.evaluator()->getVar("TabWidget.tabWidth");
-	_titleVPad = g_gui.evaluator()->getVar("TabWidget.titleVPad");
+	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
+	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
 	if (_tabWidth == 0) {
 		_tabWidth = 40;
@@ -234,10 +236,10 @@ void TabWidget::reflowLayout() {
 		}
 	}
 
-	_butRP = g_gui.evaluator()->getVar("TabWidget.navButtonRightPad", 0);
-	_butTP = g_gui.evaluator()->getVar("TabWidget.navButtonTopPad", 0);
-	_butW = g_gui.evaluator()->getVar("TabWidget.navButtonW", 10);
-	_butH = g_gui.evaluator()->getVar("TabWidget.navButtonH", 10);
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.PaddingRight", 0);
+	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
+	_butW = g_gui.xmlEval()->getVar("GlobalsTabWidget.NavButton.Width", 10);
+	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;

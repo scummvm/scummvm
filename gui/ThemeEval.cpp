@@ -59,9 +59,13 @@ void ThemeLayoutMain::reflowLayout() {
 	assert(_children.size() <= 1);
 	
 	if (_children.size()) {
+		_children[0]->resetLayout();
 		_children[0]->setWidth(_w);
 		_children[0]->setHeight(_h);
 		_children[0]->reflowLayout();
+		
+//		_children[0]->setX(_x);
+//		_children[0]->setY(_y);
 	}
 }
 
@@ -75,6 +79,7 @@ void ThemeLayoutVertical::reflowLayout() {
 	for (uint i = 0; i < _children.size(); ++i) {
 		assert(_children[i]->getLayoutType() != kLayoutVertical);
 	
+		_children[i]->resetLayout();
 		_children[i]->reflowLayout();
 	
 		if (i != _children.size() - 1)
@@ -88,7 +93,7 @@ void ThemeLayoutVertical::reflowLayout() {
 			
 		_children[i]->setY(curY);
 		
-		if (_centered)
+		if (_centered && _children[i]->getWidth() < _w)
 			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
 		else
 			_children[i]->setX(curX);
@@ -115,22 +120,24 @@ void ThemeLayoutHorizontal::reflowLayout() {
 	for (uint i = 0; i < _children.size(); ++i) {
 		assert(_children[i]->getLayoutType() != kLayoutHorizontal);
 	
+		_children[i]->resetLayout();
 		_children[i]->reflowLayout();
 	
 		if (i != _children.size() - 1)
 			assert(_children[i]->getWidth() != -1);
-			
-		if (i == 0)
-			assert(_children[i]->getHeight() != -1);
 	
 		if (_children[i]->getHeight() == -1)
-			_children[i]->setHeight(_h - _paddingTop - _paddingBottom);
+			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _paddingTop - _paddingBottom);
 
 		if (_children[i]->getWidth() == -1)
 			_children[i]->setWidth(getParentW() - _w - _spacing);
 			
 		_children[i]->setX(curX);
-		_children[i]->setY(curY);
+		
+		if (_centered && _children[i]->getHeight() < _h)
+			_children[i]->setY((_h >> 1) - (_children[i]->getHeight() >> 1));
+		else
+			_children[i]->setY(curY);
 			
 		if (_reverse) {
 			for (int j = i - 1; j >= 0; --j)
@@ -145,27 +152,24 @@ void ThemeLayoutHorizontal::reflowLayout() {
 }
 
 
-void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common::String &type) {
-	ThemeLayoutWidget *widget = new ThemeLayoutWidget(_curLayout.top(), name);
-	
+void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled) {	
 	int typeW = -1;
 	int typeH = -1;
 	
 	if (!type.empty()) {
 		typeW = getVar("Globals." + type + ".Width", -1);
 		typeH = getVar("Globals." + type + ".Height", -1);
-	}	
+	}
 	
-	widget->setWidth(typeW == -1 ? w : typeW);
-	widget->setHeight(typeH == -1 ? h : typeH);
+	ThemeLayoutWidget *widget = new ThemeLayoutWidget(_curLayout.top(), name, 
+								typeW == -1 ? w : typeW, 
+								typeH == -1 ? h : typeH);
 	
 	_curLayout.top()->addChild(widget);
+	setVar(_curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
 }
 
-void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays) {
-	ThemeLayout *layout = new ThemeLayoutMain();
-	_layouts[name] = layout;
-
+void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled) {
 	int16 x, y;
 	uint16 w, h;
 	
@@ -177,10 +181,8 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 		error("Error when loading dialog position for '%s'", overlays.c_str());
 	}
 	
-	layout->setX(x);
-	layout->setY(y);
-	layout->setWidth(w);
-	layout->setHeight(h);
+	ThemeLayout *layout = new ThemeLayoutMain(x, y, w, h);
+	_layouts[name] = layout;
 
 	layout->setPadding(
 		getVar("Globals.Padding.Left", 0),
@@ -190,6 +192,8 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 		);
 	
 	_curLayout.push(layout);
+	_curDialog = name;
+	setVar(name + ".Enabled", enabled ? 1 : 0);
 }
 
 void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center) {
@@ -217,6 +221,14 @@ void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool revers
 void ThemeEval::addSpace(int size) {
 	ThemeLayout *space = new ThemeLayoutSpacing(_curLayout.top(), size);
 	_curLayout.top()->addChild(space);
+}
+
+bool ThemeEval::addImportedLayout(const Common::String &name) {
+	if (!_layouts.contains(name))
+		return false;
+		
+	_curLayout.top()->importLayout(_layouts[name]);
+	return true;
 }
 
 }

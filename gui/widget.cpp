@@ -29,6 +29,8 @@
 #include "gui/eval.h"
 #include "gui/newgui.h"
 
+#include "gui/ThemeEval.h"
+
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
@@ -153,14 +155,14 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 }
 
 bool Widget::isEnabled() const {
-	if (g_gui.evaluator()->getVar(_name + ".enabled") == 0) {
+	if (g_gui.xmlEval()->getVar("Dialog." + _name + ".Enabled", 1) == 0) {
 		return false;
 	}
 	return ((_flags & WIDGET_ENABLED) != 0);
 }
 
 bool Widget::isVisible() const {
-	if (g_gui.evaluator()->getVar(_name + ".visible") == 0)
+	if (g_gui.xmlEval()->getVar("Dialog." + _name + ".Visible", 1) == 0)
 		return false;
 
 	return !(_flags & WIDGET_INVISIBLE);
