@@ -1041,8 +1041,12 @@ void OSRenderer::drawBackground() {
 
 		assert(scroll);
 
-		memcpy(_backBuffer, main + mainShift, mainSize);
-		memcpy(_backBuffer + mainSize, scroll, mainShift);
+		if (mainSize > 0) { // Just a precaution
+			memcpy(_backBuffer, main + mainShift, mainSize);
+		}
+		if (mainShift > 0) { // Just a precaution
+			memcpy(_backBuffer + mainSize, scroll, mainShift);
+		}
 	}
 }
 
