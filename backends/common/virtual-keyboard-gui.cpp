@@ -43,6 +43,8 @@ VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd) {
 	_firstRun = true;
 
 	_displayEnabled = false;
+
+	_cursorAnimateTimer = 0;
 }
 
 void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
@@ -266,6 +268,7 @@ void VirtualKeyboardGUI::redraw() {
 	OverlayColor *scr = (OverlayColor *)surf.pixels;
 	const OverlayColor *ove = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
 	int16 h = surf.h;
+
 	while (h-- > 0) {
 		memcpy(scr, ove, surf.w * sizeof(OverlayColor));
 		scr += surf.w;

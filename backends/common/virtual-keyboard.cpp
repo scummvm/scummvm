@@ -67,7 +67,6 @@ void VirtualKeyboard::reset() {
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
-
 	if (Common::File::exists(packName + ".xml")) {
 		// uncompressed keyboard pack
 		if (!_parser->loadFile(packName + ".xml"))
@@ -81,7 +80,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);
 			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			byte *buffer = new byte[fileInfo.uncompressed_size+1];
+			byte *buffer = (byte *)malloc(fileInfo.uncompressed_size+1 * sizeof(byte));
 			assert(buffer);
 			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(byte));
 			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
