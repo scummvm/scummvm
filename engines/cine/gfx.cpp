@@ -282,20 +282,43 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	int i;
-	byte *dest = _backBuffer + y * 320 + x;
 
+	// Handle horizontally flipped boxes
 	if (width < 0) {
 		x += width;
-		width = -width;
+		width = ABS(width);
 	}
 
+	// Handle vertically flipped boxes
 	if (height < 0) {
 		y += height;
-		height = -height;
+		height = ABS(height);
 	}
 
-	for (i = 0; i < height; i++) {
-		memset(dest + i * 320, color, width);
+	// Handle horizontal boundaries
+	if (x < 0) {
+		width += x; // Remove invisible columns
+		x = 0; // Start drawing at the screen's left border
+	} else if (x > 319) {
+		// Nothing left to draw as we're over the screen's right border
+		width = 0;
+	}
+
+	// Handle vertical boundaries
+	if (y < 0) {
+		height += y; // Remove invisible rows
+		y = 0; // Start drawing at the screen's top border
+	} else if (y > 199) {
+		// Nothing left to draw as we're below the screen's bottom border
+		height = 0;
+	}
+
+	// Draw the box if it's not empty
+	if (width > 0 && height > 0) {
+		byte *dest = _backBuffer + y * 320 + x;
+		for (i = 0; i < height; i++) {
+			memset(dest + i * 320, color, width);
+		}
 	}
 }
 
